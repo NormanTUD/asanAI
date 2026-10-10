@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "calculus_on_manifolds.html",
+  "b": "projection.html",
+  "a_title": "Spivak · Calculus on Manifolds — Interaktiv",
+  "b_title": "Projektions-Demonstrator: Punkt-zu-Linie",
+  "combined_theme": "dimension-reduction",
+  "one_line": "Dimension reduction is the shared heart: A's Stokes theorem reduces a k-dimensional integral to its (k-1)-dimensional boundary, B's light reduces a 2D scene to a 1D wall — both track what survives (A: orientation/sign, B: color) and both hinge on a linear differential that drops rank.",
+  "contradictions": [
+    "Linearity vs nonlinearity: A insists the derivative is a *linear* map (the universal local model); B's projection is a genuinely *nonlinear* (central/perspective, linear-fractional) map.",
+    "Invertibility vs many-to-one: A's inverse function theorem prizes locally *invertible* maps (det!=0, diffeomorphisms); B's projection is deliberately *many-to-one* (a whole ray collapses to one shadow) and cannot be inverted.",
+    "Faithful boundary vs lossy image: A's boundary integral is an *exact, equal-valued* proxy for the interior (Stokes: int_M dω = int_boundary ω); B's 1D wall is a *lossy* proxy for the 2D scene (many scenes give the same wall)."
+  ],
+  "resolution": "Both are one family of smooth maps f: M -> N with dim N < dim M. B is the concrete rank-dropping (2->1) example; A is the general theory. The linear differential Df is the local model of B's projection and always has rank <= dim N < dim M, so a genuine dimension reduction is the *opposite* of a chart. Lost information is exactly ker Df; a discrete label (B: color, A: orientation/sign) recovers a section of it. The reduction is lossless for global integral quantities (the boundary suffices - Stokes/Fubini) but lossy for local point data (the wall alone cannot recover the scene - needs color). Fubini (A) is the analytic shadow of projective slicing (B).",
+  "viz": "Interactive canvas: a movable light projects 4 colored 2D points onto a 1D wall (B); a selected focus point shows its linear differential Dπ (a 1x2 map, rank 1<2), the Jacobian collapse factor ||Dπ||, the singularity at x=light.x (det=0), the image of a small square as a 1D bar on the wall, and color as the preserved label (the orientation analogue). Wall-distance slider, presets, theme-reactive, all data inline, no network."
+}

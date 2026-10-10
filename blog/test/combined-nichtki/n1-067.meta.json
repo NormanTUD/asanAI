@@ -1,0 +1,16 @@
+{
+  "no": "067",
+  "a": "consciousness_overview.html",
+  "b": "hott4.html",
+  "a_title": "Theorien des Bewusstseins — Interaktive Zusammenfassung (Seth & Bayne 2022, Nature Reviews Neuroscience)",
+  "b_title": "Set Theory vs Homotopy Type Theory — Foundations of Mathematics",
+  "combined_theme": "hoehere-struktur-als-grundlage",
+  "one_line": "Die Essenz eines Systems liegt in der höheren relationalen Struktur (Integration/Meta-Repräsentation bei IIT+HOT · Pfade/Homotopien bei HoTT), nicht in den Teilen der ersten Ordnung.",
+  "contradictions": [
+    "Reduktion vs. Irreduzibilität: B/ZFC hält Identität = Menge der Teile (extensional, von ∅ aufwärts, zerlegbar), A/IIT hält Φ für irreduzible Information des Ganzen, die sich nicht aus den Teilen ableiten lässt.",
+    "Externe vs. intrinsische Grundlage: B/ZFC braucht eine externe Logikschicht (first-order logic steht vor den Axiomen, Kohärenz wird von oben imponiert), A/IIT sieht Bewusstsein als intrinsische Eigenschaft der kausalen Struktur des Systems selbst.",
+    "Berechenbarkeit: B/HoTT ist rechnerisch nativ (Beweise=Programme, 2+2 berechnet sich, maschinengeprüft), A/IIT behauptet, Φ sei in realen Systemen praktisch nicht berechenbar."
+  ],
+  "resolution": "Trenne Inhalt (zerleg- und berechenbar) von Identität (irreduzibel): Das Oben (Selbstrepräsentation / integrierte Kausalität / Typregeln) erzeugt das Unten, statt von außen imponiert zu werden; formal ist prüfbar, die Essenz (Φ / Gleichheit-bis-zur-Äquivalenz) ein physikalisch gemessenes, irreduzibles Faktum. HoTT — nicht ZFC — kodiert diese Zweiteilung (Pfadraum statt Extensionalität) nativ.",
+  "viz": "Interaktives Canvas: 7 identische Basis-Knoten (1. Ordnung) + Slider 'Höhere Struktur' und zwei Modi (Bewusstsein IIT+HOT / Mathematik HoTT), die dieselben Punkte überlagern — im einen als Integration (Φ) + gestricheltes Selbstmodell (HOT), im anderen als Pfade, Homotopien und 2-Homotopien (∞-Gruppoid); themenreaktiv."
+}

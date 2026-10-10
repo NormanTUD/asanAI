@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Spaß ist die Welle, die sich ihrer selbst vergisst · fun.html ✕ Watts/The Book</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(255,110,199,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:72ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+td:nth-child(2){color:var(--sky);font-weight:500}
+.k{color:var(--acc)} .b{color:var(--sky)} .bad{color:var(--bad)} .ok{color:var(--acc)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 160px;min-width:150px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer;background:color-mix(in srgb,var(--acc) 5%,transparent);user-select:none}
+.chip input{accent-color:var(--acc);margin:0}
+.chip:has(input:checked){border-color:var(--acc);background:color-mix(in srgb,var(--acc) 18%,transparent)}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.86rem;margin-top:12px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<article>
+  <div class="tag">Round 1 · Nicht-KI-Track · Pair 082</div>
+  <h1>Spaß ist die Welle, die sich ihrer selbst vergisst</h1>
+  <p class="sub">Fusion aus: fun.html ✕ the_book_of_the_taboo_of_knowing_who_you_are.html</p>
+
+  <section id="these">
+    <div class="tag">01 · Kernthese der Fusion</div>
+    <h2>Ein und dasselbe Erlebnis — von innen und von außen</h2>
+    <p>
+      <b>A</b> (<span class="mono">fun.html</span>, englisch) ist eine interaktive
+      <b>Neurobiologie des Spasses</b>: Spaß ist eine <i>emergente Eigenschaft</i> mehrerer
+      überlappender Nervensysteme — Dopamin/Antizipation, <i>Flow</i> (Csikszentmihalyi),
+      Endorphine/Lachen, Oxytocin/Soziales, Neuheit und psychologische Sicherheit. Das Gehirn
+      sagt damit: <b>„sicher, neu, sozial, belohnend — tu es wieder, hier wächst man."</b>
+      Der „Fun-Meter" macht das sogar messbar.
+    </p>
+    <p>
+      <b>B</b> (Alan Watts, „The Book: On the Taboo Against Knowing Who You Are", deutsch) ist
+      die Gegenbewegung von oben nach unten: <b>„Die vorherrschende Empfindung von sich selbst
+      als ein separates Ego, eingeschlossen in einem Hautsack, ist eine Halluzination."</b>
+      Du bist das Universum, das sich selbst erlebt — und im <b>Versteckspiel</b> des Selbst
+      vor sich selbst ist genau das <i>Vergessen</i> dieser Einheit der Spaß am Spiel.
+    </p>
+    <p>
+      Die fusionierte Position: <b>Spaß entsteht genau dann, wenn der Hautsack-Ego seinen Griff
+      lockert und das größere Ganze wieder mitspielt.</b> A ist das <i>gefühlte, bottom-up
+      Signal</i> dieses Moments; B benennt die <i>top-down Wahrheit</i>, die dahintersteckt —
+      die Nicht-Trennung. A's <b>Flow</b> (Präfrontalkortex verstummt, man verschmilzt mit der
+      Tätigkeit) ist exakt B's „<b>Ich BIN die Welt</b>". A's letzter Term der Spaßformel,
+      <span class="mono">÷ Selbstbewusstsein</span>, ist exakt B's <b>Ego-Illusion</b>.
+      Die zwei Papiere sind keine Rivalen, sondern <b>Innen und Außen derselben Möbiusfläche</b>:
+      derselbe Puls, einmal von den Schaltkreisen her, einmal von der Welle her beschrieben.
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <div class="tag">02 · Widersprüche zwischen A und B</div>
+    <h2>Drei echte Spannungen (kein harter Widerspruch)</h2>
+    <p>
+      Die Papiere leben in verschiedenen Domänen (empirische Neurologie vs. Philosophie) und
+      widersprechen einander <b>nicht</b> im strengen Sinn. Folgende Stellen sind die nächstliegenden
+      <b>echten Spannungen</b> — jeweils konkret benannt, was welches Papier behauptet.
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Das getrennte Selbst: real vs. Halluzination</h3>
+      <p><b>A</b> verankert Spaß in deinem <i>konkreten, begrenzten</i> Gehirn: echte Schaltkreise
+      (ventrales tegmentales Gebiet → Nucleus accumbens, Amygdala, Hippocampus) und ein
+      <i>messa­barer</i> „Fun-Meter". Die Einheit ist das <b>Individuum</b>; der Hautsack ist das
+      <i>Wohnzimmer</i> des Mechanismus. <b>B</b> sagt genau das Gegenteil: das Gefühl, ein
+      separates „Ich in einem Hautsack" zu sein, ist eine <b>Halluzination</b>; das Individuum
+      ist ein flüchtiger Prozess, das <b>Ganze</b> ist die Einheit — der Hautsack ist die
+      Illusion selbst. <i>Spannung:</i> A braucht den begrenzten „Dich", B nennt dieselbe
+      Begrenztheit den Irrtum, den man durchschauen soll.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Spaß durch Zueilen &amp; Sammeln vs. durch Loslassen</h3>
+      <p><b>A</b> ist appetitiv: Dopamin = <i>Wollen/Antizipation</i>; der Belohnungs-Button,
+      Zähler, Serien, Achievements, „<i>I CAN'T STOP (that's dopamine!)</i>" — je mehr man
+      <i>tut und sammelt</i>, desto mehr Spaß. <b>B</b> warnt, dass man das Eigentliche gerade
+      <i>durch Ergreifen verliert</i>: die <b>Doppelbindung</b> („Sei spontan!" als Befehl),
+      Festhalten erstickt („Wenn du versuchst, den Atem festzuhalten, erstickst du"),
+      „<i>Nichts scheitert wie Erfolg</i>". <i>Spannung:</i> A belohnt Anstreben &amp;
+      Anhäufen, B sagt, dass Anstreben des Natürlichsten es zerstört.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Neuheit als endliche Ressource vs. ewiger Kreislauf</h3>
+      <p><b>A</b>: <i>Habituation</i> — „der Spaß wird mit jedem Reveal etwas schwächer …
+      <b>Neuheit ist eine endliche Ressource!</b>" Spaß geht auf; man braucht immer mehr
+      Neues (linear, konsumtiv). <b>B</b>: Existenz ist <i>zyklisch, ewig, rhythmisch</i> —
+      „Es gab nie eine Zeit, als die Welt begann, denn sie dreht sich im Kreis … wie der
+      Atem." Man konsumiert den Rhythmus nicht, man <i>ist</i> ein Puls darin (nicht
+      aufgebrauchbar). <i>Spannung:</i> A's Neuheit geht auf; B's Rhythmus nie.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <div class="tag">03 · Auflösung</div>
+    <h2>Möbius statt Widerspruch</h2>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Das Gehirn IST, wie sich die Welle fühlt</h3>
+      <p>A's Schaltkreise sind nicht die Rivalen von B's „Ganzem", sondern <i>dessen Wie</i>:
+      das Universum erlebt sich <b>durch</b> Gehirne, also durch Wellen, die vom Inneren des
+      Hautsacks her empfinden. Die Schaltkreise sind real (A) <b>und</b> die Trennung, die sie
+      nahelegen, ist die Illusion (B) — zwei Ebenen eines Ereignisses, exakt B's
+      <i>Figur/Grund</i>- und <i>Möbius</i>-BilD. Aushandlung: „echtes Gehirn" und „illusorische
+      Trennung" koexistieren; der Spaß wird im <i>Riss</i> zwischen beiden gespürt.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Flow ist die Brücke: Zueilen, dann Nicht-Mehr-Versuchen</h3>
+      <p>A's <b>Flow</b> ist B's Loslassen: im Flow verstummt der präfrontale
+      „Versuch/Kontroller" und man verschmilzt mit der Tätigkeit (A) — das ist B's
+      „<b>Ich BIN die Welt</b>". <i>Antizipation</i> (Dopamin) ist der <b>Einstieg</b>; die
+      Auflösung der <b>Höhepunkt</b>. B's <b>Doppelbindung</b> passiert genau dann, wenn man
+      Flow <i>erzwingen</i> will („Sei spontan! auf Befehl"); A's <i>begrenzter sicherer
+      Rahmen</i> ist, was das Loslassen überhaupt möglich macht. Aushandlung: <b>man kommt
+      durch Engagement rein und hört dann auf zu versuchen.</b></p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Endlich, wenn man von außen greift — unendlich, wenn man die Welle reitet</h3>
+      <p><b>Habituation</b> (A) ist real <i>für den ergreifenden Zuschauer</i>: Der Hautsack
+      steht außerhalb des Spiels und „verbraucht" Neuheit, deshalb geht sie auf. B's
+      <i>ewiger Rhythmus</i> ist dasselbe Spiel, von <i>innen</i> gesehen: Wer ein Puls im
+      Atem ist, statt daneben zu stehen, verbraucht nichts. Aushandlung: <b>Neuheit „geht
+      auf" nur, solange man außerhalb steht und anhäuft; im Rhythmus ist sie unerschöpflich.</b></p>
+    </div>
+    <p class="note"><b>Fusionierte Schlussfolgerung:</b>
+    <span class="mono">SPASS = [Sicher + Neu + Optimal-Herausfordernd + Sozial + Belohnend]
+    × (Aufmerksamkeit ÷ Selbstbewusstsein)</span> — und B liest den letzten Term um:
+    <b>Je weniger der getrennte Ego besteht, desto größer der Spaß, weil das Ganze hereinkommt.</b></p>
+  </section>
+
+  <section id="inhalt">
+    <div class="tag">04 · Fusionierter Inhalt</div>
+    <h2>Das gemeinsame Vokabular: Gehirn ↔ Welle</h2>
+    <p>
+      Die zwei Texte werden coherent, wenn man sie durch dieselben Variablen liest. Die Tabelle
+      ist das Herz der Fusion — jede Zeile ist ein A-Konzept, sein B-Analogon und die
+      fusionierte Lesart:
+    </p>
+    <table>
+      <thead><tr><th>A — fun.html (Neurologie)</th><th>B — Watts (Philosophie)</th><th>Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td>Dopamin / Antizipation (VTA → Nucleus accumbens)</td><td>Versteckspiel: „das Vergessen ist der Spaß"</td><td>die Anspannung des Spiels — das Selbst vergisst, wo es sich versteckt</td></tr>
+        <tr><td>Flow: Präfrontalkortex verstummt, Zeit verzieht sich</td><td>Ego-Illusion / „Ich BIN die Welt"</td><td>der Moment der Nicht-Trennung — der getrennte Kontroller fällt weg</td></tr>
+        <tr><td>Endorphine / Lachen (Inkongruenz-Auflösung)</td><td>Schwarz &amp; Weiß (Gegensätze als Partner)</td><td>Lachen über das beiläufige Auflösen eines Widerspruchs</td></tr>
+        <tr><td>Oxytocin / soziale Bindung (reduziert Angst)</td><td>„Alles ist verbunden" / „Blätter aus einem Baum"</td><td>Bindung ist die <i>ge­fühlte</i> Form von Nicht-Trennung</td></tr>
+        <tr><td>Neuheit (Substantia nigra/VTA) + Habituation</td><td>das Universum „versteckt sich vor sich selbst" in endloser Neuheit</td><td>jedes neue Muster ist das Selbst, das sich neu versteckt</td></tr>
+        <tr><td>Psychologische Sicherheit (Amygdala muss ruhig sein)</td><td>die Welle nicht „erfassen" / Loslassen</td><td>Ruhe ist die Bedingung, unter der man die Welle überhaupt sieht</td></tr>
+        <tr><td>messa­barer „Fun-Meter" / Emergenz</td><td>„Du bist ES" (das Unmessbare, das Ganze)</td><td>ein und derselbe Puls — einmal in Einheiten, einmal als Sein</td></tr>
+        <tr><td>Formel-Term <span class="mono">÷ Selbstbewusstsein</span></td><td>das Tabu gegen zu wissen, wer du bist</td><td>der getrennte Ego als Divisor: kleiner Ego → größeres Ganzes</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Was A trägt (die Schaltkreise des Spasses)</h3>
+    <p>
+      <b>Die Formel:</b>
+      <span class="mono">SPASS = Neuheit + Optimale-Herausforderung + Belohnungs-Antizipation
+      + Soziale-Verbindung + Psychologische-Sicherheit,  × Aufmerksamkeit ÷ Selbstbewusstsein</span>.
+      <b>Dopamin</b> ist nicht Belohnung, sondern <i>Wollen/Antizipation</i> (ventrales
+      tegmentales Gebiet → Nucleus accumbens): die Antizipation ist, wo der Spaß beginnt.
+      <b>Flow</b> (Csikszentmihalyi) tritt ein, wenn Herausforderung ≈ Fertigkeit:
+      Präfrontalkortex legt sich zurück, Zeit verzieht sich, man wird eins mit der Tätigkeit.
+      <b>Lachen</b> entsteht durch <i>Inkongruenz-Auflösung</i> und schüttet Endorphine aus
+      (soziales Bindungssignal). <b>Oxytocin</b> (Bindung) dämpft die Amygdala (Angst) und
+      verstärkt geteilten Spaß. <b>Neuheit</b> wird von der Substantia nigra / VTA belohnt
+      und habitu­iert — deshalb „endlich". <b>Spielen</b> ist der Lernmodus des Gehirns;
+      <b>Sicherheit</b> (ruhende Amygdala) ist die Bedingung, ohne die kein Spaß möglich ist.
+    </p>
+    <p>
+      <b>Die Regionen:</b> Präfrontaler Cortex (plant/Antizipation — verstummt im Flow),
+      Nucleus accumbens (Belohnungszentrum), Amygdala (Sicherheits-Gate), Hippocampus
+      (Neuheit &amp; Erinnerung), VTA (Dopamin-Fabrik), Kleinhirn (Timing/Motorik für
+      Tanz, Musik, Sport).
+    </p>
+
+    <h3>Was B trägt (die zehn Bilder von Watts)</h3>
+    <p>
+      <b>Ego-Illusion</b> (Hautsack-Halluzination) · <b>Schwarz &amp; Weiß</b> (die Welt ist
+      Vibration; Gipfel und Tal sind Partner, „kein An ohne Aus") · <b>Figur &amp; Grund</b>
+      (Organismus = Umwelt, Innen/Außen definieren sich gegenseitig) · <b>Versteckspiel</b>
+      (Gott versteckt sich vor sich selbst; Vergessen ist der Spaß) · <b>Doppelbindung</b>
+      („Sei frei!" als Befehl; „nichts scheitert wie Erfolg") · <b>Möbiusband</b> (eine
+      Fläche, kein Innen/Außen) · <b>Alles verbunden</b> (ein „Ding" ist ein Prozess in
+      Beziehung) · <b>Rhythmus der Existenz</b> (Atem, Kommen &amp; Gehen) ·
+      <b>Aufmerksamkeit als Scheinwerfer</b> (verengte Wahrnehmung macht „separate Teile") ·
+      <b>IT / „Du bist ES"</b> (das Universum schaut sich durch deine Augen selbst an).
+    </p>
+    <p class="note">Kernzitate: „Wir kommen nicht IN diese Welt; wir kommen AUS ihr, wie Blätter
+    aus einem Baum." — „Das Innen und das Außen von Gott sind dasselbe." — „Dies ist das Tabu
+    der Tabus: Du bist ES!"</p>
+
+    <h3>Die Mathematik beider</h3>
+    <p>
+      <b>Die Welle (B):</b> <span class="mono">y = A·sin(2π·f·x + φ)</span>. Gipfel
+      (Licht/Leben/Freude) und Tal (Dunkelheit/Tod/Ruhe) sind <b>Pole derselben Sache</b> und
+      untrennbar. Nur die Gipfel zuzulassen macht das Leben flach — wie Einatmen ohne
+      Ausatmen (B's „Unterdrückungs"-Modus).
+    </p>
+    <p>
+      <b>Das Möbiusband (B):</b>
+      <span class="mono">x = (1 + v·cos(twist·u/2))·cos u</span>,
+      <span class="mono">y = (1 + v·cos(twist·u/2))·sin u</span>,
+      <span class="mono">z = v·sin(twist·u/2)</span>. Bei <span class="mono">twist = 0</span>
+      ein Ring (2 Seiten, Innen/Außen); bei halber Verdrehung ein Möbiusband (1 Seite, kein
+      Innen/Außen).
+    </p>
+    <p>
+      <b>Fusioniert gelesen:</b> Die Wellen-<i>Amplitude</i> ist das „Spaß-Level"; der Gipfel
+      ist Belohnung/Antizipation, das Tal ist Sicherheit/Ruhe — man hat keinen Gipfel ohne
+      Tal. Und der Term <span class="mono">÷ Selbstbewusstsein</span> ist die Möbius-<i>Verdrehung</i>:
+      Je weniger das Selbst besteht, desto mehr werden die beiden Seiten (Selbst/Welt,
+      Gipfel/Tal) zu einer einzigen Fläche.
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <div class="tag">05 · Visualisierung</div>
+    <h2>Spaß = die Welle, deren Ego sich auflöst</h2>
+    <p>
+      Ein „Ich" (der Hautsack) schwebt in einem verbundenen Feld (das Ganze) über einer
+      vibrierenden Welle. Ziehe <b>Ego-Separation/Selbstbewusstsein</b> nach unten: die
+      rote Hautsack-Grenze löst sich auf, die Verbindungen leuchten auf, „Ich" wird zu
+      „Ich BIN die Welle". Schalte die <b>5 Zutaten</b> (A) an, um den Spaß zu heben — und
+      ziehe <b>Klammern/Festhalten</b> (B) hoch: die Welle flacht ab (der Atem wird
+      eingesperrt). Bei allen Zutaten + niedrigem Ego + wenig Festhalten tritt der
+      <b>Flow-Zustand</b> ein.
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c"><label>Ego-Separation / Selbstbewusstsein <b id="v-ego">60</b></label><input type="range" id="s-ego" min="0" max="100" step="1" value="60"></div>
+        <div class="c"><label>Klammern / Festhalten <b id="v-cling">25</b></label><input type="range" id="s-cling" min="0" max="100" step="1" value="25"></div>
+      </div>
+      <div class="ctrl">
+        <div class="c"><label style="margin-bottom:6px">Die 5 Zutaten des Spasses (A):</label>
+          <div class="btnrow" style="margin-top:0">
+            <label class="chip"><input type="checkbox" id="i-safety" checked> Sicherheit</label>
+            <label class="chip"><input type="checkbox" id="i-novelty" checked> Neuheit</label>
+            <label class="chip"><input type="checkbox" id="i-challenge"> Optimale H.</label>
+            <label class="chip"><input type="checkbox" id="i-social" checked> Sozial</label>
+            <label class="chip"><input type="checkbox" id="i-reward"> Belohnung</label>
+          </div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="b-theme" class="alt">🌙/☀️ Theme</button>
+      </div>
+      <canvas id="viz" height="520"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--acc)"></i>das Ganze / Wellenlinie</span>
+        <span><i style="background:var(--sky)"></i>Gipfel (Freude)</span>
+        <span><i style="background:var(--bad)"></i>Hautsack / Tal (Ruhe)</span>
+      </div>
+      <div class="stat">
+        <span>Spaß: <b id="r-fun">—</b></span>
+        <span>Status: <b id="r-st">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <div class="tag">06 · Provenienz</div>
+    <h2>Die beiden Quellen</h2>
+    <div class="card">
+      <b>A — <a href="../fun.html">fun.html</a></b>
+      <p>Interaktive „Science of Fun" (englisch): eine bottom-up Neurobiologie des Spasses über
+      Dopamin/Antizipation, Flow, Lachen/Inkongruenz, Oxytocin/Soziales, Neuheit &amp;
+      Habituation und psychologische Sicherheit — mit „Fun-Meter", Belohnungs-Button,
+      Flow-Spiel, Gehirn-Diagramm und der Spaßformel <span class="mono">× Aufmerksamkeit ÷
+      Selbstbewusstsein</span>.</p>
+    </div>
+    <div class="card">
+      <b>B — <a href="../buecher/the_book_of_the_taboo_of_knowing_who_you_are.html">buecher/the_book_of_the_taboo_of_knowing_who_you_are.html</a></b>
+      <p>Interaktive Konzeptvisualisierung (deutsch) von Alan Watts' <i>The Book: On the Taboo
+      Against Knowing Who You Are</i> — Ego-Illusion, Schwarz &amp; Weiß, Figur/Grund,
+      kosmisches Versteckspiel, Doppelbindung, Möbiusband, Verbundenheit, Existenz-Rhythmus,
+      Aufmerksamkeit als Scheinwerfer und die Schlussformel „Du bist ES".</p>
+    </div>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 520, phase = 0;
+
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function hexA(hex, a){
+    if(hex && hex.charAt(0)==='#'){
+      var h = hex.slice(1);
+      if(h.length===3){ h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+      var n = parseInt(h,16);
+      return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+    }
+    return hex;
+  }
+
+  var nodes = [];
+  (function(){
+    function ring(count, rad, off){
+      for(var i=0;i<count;i++){
+        var ang = (i/count)*TAU + (off||0);
+        nodes.push({ ux:Math.cos(ang)*rad, uy:Math.sin(ang)*rad });
+      }
+    }
+    ring(8, 0.34, 0.0);
+    ring(13, 0.60, 0.22);
+    ring(18, 0.88, 0.07);
+  })();
+
+  function fit(){
+    var r = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    canvas.width  = Math.max(1, Math.floor(r.width*dpr));
+    canvas.height = Math.max(1, Math.floor(H*dpr));
+    canvas.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = r.width;
+  }
+
+  function controls(){
+    return {
+      ego: +document.getElementById('s-ego').value,
+      cling: +document.getElementById('s-cling').value,
+      ings: [
+        document.getElementById('i-safety').checked,
+        document.getElementById('i-novelty').checked,
+        document.getElementById('i-challenge').checked,
+        document.getElementById('i-social').checked,
+        document.getElementById('i-reward').checked
+      ]
+    };
+  }
+  function funValue(c){
+    var raw = 0, i;
+    for(i=0;i<5;i++) if(c.ings[i]) raw++;
+    raw /= 5;
+    var antiEgo = 1 - c.ego/100;
+    var clingPen = 1 - (c.cling/100)*0.8;
+    return Math.max(0, Math.min(100, 100*raw*antiEgo*clingPen));
+  }
+  function roundRect(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function draw(){
+    fit();
+    var INK=cssv('--ink','#e7ecf6'), DIM=cssv('--dim','#8b93a9'),
+        ACC=cssv('--acc','#64ffda'), SKY=cssv('--sky','#7aa2ff'),
+        WARN=cssv('--warn','#ffd166'), BAD=cssv('--bad','#ff6f6f');
+    var c = controls(), fun = funValue(c);
+    var conn = 1 - c.ego/100;
+    ctx.clearRect(0,0,W,H);
+
+    var cx = W*0.5, cy = H*0.40, R = Math.min(W*0.40, H*0.30);
+
+    var glow = ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.15);
+    glow.addColorStop(0, hexA(ACC, 0.05 + conn*0.10));
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0,0,W, cy + R*1.2);
+
+    ctx.lineWidth = 0.8;
+    var i, n, px, py;
+    for(i=0;i<nodes.length;i++){
+      n = nodes[i]; px = cx + n.ux*R; py = cy + n.uy*R;
+      ctx.strokeStyle = hexA(ACC, 0.03 + conn*0.22);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+    }
+    ctx.lineWidth = 0.6;
+    function ringLinks(start, count){
+      for(var j=0;j<count;j++){
+        var a = nodes[start+j], b = nodes[start + (j+1)%count];
+        ctx.strokeStyle = hexA(SKY, 0.02 + conn*0.16);
+        ctx.beginPath();
+        ctx.moveTo(cx+a.ux*R, cy+a.uy*R); ctx.lineTo(cx+b.ux*R, cy+b.uy*R); ctx.stroke();
+      }
+    }
+    ringLinks(0,8); ringLinks(8,13); ringLinks(21,18);
+
+    var PAL = [ACC, SKY, WARN, BAD];
+    for(i=0;i<nodes.length;i++){
+      n = nodes[i]; px = cx + n.ux*R; py = cy + n.uy*R;
+      ctx.fillStyle = hexA(PAL[i%4], 0.30 + conn*0.55);
+      ctx.beginPath(); ctx.arc(px,py, 2.6, 0, TAU); ctx.fill();
+    }
+
+    var bagR = R*0.17;
+    ctx.strokeStyle = hexA(BAD, c.ego/100);
+    ctx.lineWidth = 1 + (c.ego/100)*3.5;
+    ctx.beginPath(); ctx.arc(cx,cy,bagR,0,TAU); ctx.stroke();
+    if(c.ego > 8){
+      ctx.fillStyle = hexA(BAD, Math.min(0.9, c.ego/120));
+      ctx.font = '10px ui-monospace,monospace'; ctx.textAlign = 'center';
+      ctx.fillText('Hautsack', cx, cy - bagR - 6);
+    }
+
+    var flowState = fun > 70 && c.ego < 25 && c.cling < 30;
+    if(flowState){
+      var fg = ctx.createRadialGradient(cx,cy,0,cx,cy,bagR*2.6);
+      fg.addColorStop(0, hexA(WARN, 0.5)); fg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(cx,cy,bagR*2.6,0,TAU); ctx.fill();
+    }
+    ctx.fillStyle = hexA(ACC, 0.9);
+    ctx.beginPath(); ctx.arc(cx,cy,9,0,TAU); ctx.fill();
+    ctx.fillStyle = INK; ctx.font = '600 12px ui-sans-serif,system-ui'; ctx.textAlign = 'center';
+    var lbl = c.ego > 55 ? '"Ich"' : (c.ego > 28 ? '"Ich … Welt"' : '"Ich BIN die Welle"');
+    ctx.fillText(lbl, cx, cy + 28);
+
+    var midY = H*0.82, amp = H*0.085*(1 - (c.cling/100)*0.6), f = 3;
+    function wy(x){ return midY - Math.sin((x/W)*f*TAU + phase)*amp; }
+    ctx.beginPath(); ctx.moveTo(0, midY);
+    var x;
+    for(x=0;x<=W;x+=4){ ctx.lineTo(x, Math.min(wy(x), midY)); }
+    ctx.lineTo(W, midY); ctx.closePath();
+    ctx.fillStyle = hexA(SKY, 0.14); ctx.fill();
+
+    ctx.beginPath(); ctx.moveTo(0, midY);
+    for(x=0;x<=W;x+=4){ ctx.lineTo(x, Math.max(wy(x), midY)); }
+    ctx.lineTo(W, midY); ctx.closePath();
+    ctx.fillStyle = hexA(BAD, 0.10); ctx.fill();
+
+    ctx.beginPath();
+    for(x=0;x<=W;x+=3){ var y = wy(x); if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.strokeStyle = hexA(ACC, 0.9); ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.setLineDash([4,5]); ctx.strokeStyle = hexA(DIM, 0.5); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0,midY); ctx.lineTo(W,midY); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.fillStyle = hexA(DIM, 0.9); ctx.font = '10px ui-monospace,monospace';
+    ctx.textAlign = 'left';  ctx.fillText('Licht / Leben / Freude', 8, midY - amp - 6);
+    ctx.textAlign = 'right'; ctx.fillText('Dunkelheit / Tod / Ruhe', W-8, midY + amp + 12);
+    ctx.textAlign = 'left';
+
+    var bw = Math.min(360, W*0.62), bx = (W-bw)/2, by = 18, bh = 8;
+    ctx.fillStyle = hexA(DIM, 0.22); roundRect(bx,by,bw,bh,4); ctx.fill();
+    var grd = ctx.createLinearGradient(bx,0,bx+bw,0); grd.addColorStop(0,ACC); grd.addColorStop(1,SKY);
+    ctx.fillStyle = grd; roundRect(bx,by,Math.max(2,bw*fun/100),bh,4); ctx.fill();
+    ctx.fillStyle = INK; ctx.font = '600 12px ui-monospace,monospace'; ctx.textAlign = 'center';
+    ctx.fillText('Spaß: '+Math.round(fun)+'/100', W*0.5, by + bh + 16);
+
+    document.getElementById('r-fun').textContent = Math.round(fun)+'/100';
+    var st = document.getElementById('r-st');
+    if(flowState){ st.textContent = 'FLOW — das Ego verstummt, die Welle weiß von sich'; st.className = 'ok'; }
+    else if(c.cling > 60){ st.textContent = 'Festhalten flacht die Welle (erstickt den Atem)'; st.className = 'bad'; }
+    else if(c.ego > 70){ st.textContent = 'Starker Ego: „Ich gegen die Welt" (getrennt)'; st.className = 'bad'; }
+    else if(fun > 45){ st.textContent = 'Anspannung steigt — fast in der Welle'; st.className = 'ok'; }
+    else { st.textContent = '— noch nicht in der Welle'; st.className = ''; }
+    document.getElementById('v-ego').textContent = c.ego;
+    document.getElementById('v-cling').textContent = c.cling;
+    phase += 0.03;
+  }
+
+  document.getElementById('b-theme').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  (function loop(){ draw(); requestAnimationFrame(loop); })();
+})();
+</script>
+</body>
+</html>

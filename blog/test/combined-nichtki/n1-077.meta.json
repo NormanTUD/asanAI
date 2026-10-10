@@ -1,0 +1,17 @@
+{
+  "no": "077",
+  "a": "johnson_lindenstrauss.html",
+  "b": "buecher/kc.html",
+  "a_title": "Johnson–Lindenstrauss · visuell",
+  "b_title": "In den Unterwelten des Web 2.0 – Visuelle Konzeptkarte",
+  "combined_theme": "compression-as-structure",
+  "one_line": "Beide Papiere tun dasselbe — sie projizieren ein hochdimensionales Objekt (Punktfeld / soziales Feld) auf wenige Achsen, wobei der Wert einer Darstellung an der erhaltenen Struktur (Verzerrung) gemessen wird: A beweist die scharfe, dimensionen-unabhängige JL-Schranke, B ist derselbe Akt als hermeneutische Konzeptkarte.",
+  "contradictions": [
+    "A garantiert eine scharfe, dimensionen-unabhängige Schranke k=⌈K(ε)·log n⌉ (untere Schranke k≥log n/log 4 über die 4^k-Packing-Schranke) für jede Punktmenge; B wählt 'vier analytische Hauptdimensionen' und 6 Strukturdimensionen als hermeneutische Achsen ohne Optimalitäts- oder Fehlerschranke.",
+    "A: 'Zufall ist gut genug' — eine zufällige Projektion braucht keine Klugheit; B: der Wert der Karte liegt gerade in der bewussten Auswahl der Konzepte (Dawkins, Connell, Freud, Goffman), Zufall wäre dort wertlos.",
+    "A bewahrt eine Metrik (‖x−y‖ innerhalb 1±ε); B bewahrt einen ideellen Rahmen ('Lulz', 'Bernd' als Projektionsfläche) — quantitative Invariante vs. qualitative Rahmung.",
+    "A hat einen scharfen Phasenübergang bei k≈log n/ε² (darunter ist Struktur beweisbar verloren); B's Achsenzahl hat keine solche untere Schranke — die Karte ist beliebig vergröber-/verfeinerbar."
+  ],
+  "resolution": "A ist der Satz, B die Praxis desselben Akts: Zufall ist der Existenzbeweis, dass eine niedrigdimensionale Darstellung existiert; Kuratierung findet die intrinsischen Achsen, über die das Phänomen spricht; und A's 4^k-Packing-Schranke liefert den fehlenden 'ist meine Karte zu grob?'-Test für B. B tut den ehrlichen Teil bereits, indem es seine eigene Projektion benennt (Bernd als 'Projektionsfläche').",
+  "viz": "Canvas: Punktfeld in d Dimensionen (A) mit Cluster-Struktur → zufällige JL-Projektion auf k Achsen; bei k=4 exakt die 'vier analytischen Hauptdimensionen' (B) als Achsenlabels; Verzerrungshistogramm aller Paare mit ε-Band plus scharfer k=8·ln n/ε²-Schwelle (A) als 'zu grob?'-Test. Theme-aware, inline data only."
+}

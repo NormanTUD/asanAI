@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Zahlenraum und seine Primkante — Faserbündel × Lücken-Geometrie</title>
+<style>
+:root{
+  --bg:#f7f5ee; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff;
+  --border:#d8d3c4; --accent:#c2185b; --accent-soft:rgba(194,24,91,.12);
+  --prime:#0097a7; --comp-hue:300;
+  --code:#eef1f6; --code-fg:#1e2530;
+  --inset-bg:rgba(255,255,255,.78);
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 8px 28px rgba(20,20,20,.08);
+}
+html.dark{
+  --bg:#05060d; --fg:#dfe6f2; --muted:#8592ab; --panel:#0c0f1a;
+  --border:#1c2440; --accent:#ff2d78; --accent-soft:rgba(255,45,120,.14);
+  --prime:#00e5ff; --comp-hue:300;
+  --code:#0b1220; --code-fg:#c9d4e6;
+  --inset-bg:rgba(8,12,22,.80);
+  --shadow:0 1px 2px rgba(0,0,0,.55),0 12px 34px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.68; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:44px 24px 100px;}
+header{margin-bottom:30px;}
+h1{font-size:2.05rem; line-height:1.14; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 34px;}
+section > h2{
+  font-size:1.34rem; margin:0 0 14px; padding-bottom:7px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul,ol{margin:6px 0 16px; padding-left:24px;}
+li{margin:0 0 9px;}
+.tension{margin:0 0 16px; padding:12px 16px; border-left:3px solid var(--accent-soft);
+  background:var(--panel); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:8px;}
+.tension b{color:var(--accent);}
+.tension .who{display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); font-weight:700; margin-right:6px;}
+code,.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.88em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.84rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.formula{
+  font-family:"SFMono-Regular",Consolas,monospace; font-size:.95rem;
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:8px;
+  padding:10px 14px; margin:10px 0; overflow-x:auto; display:block; white-space:pre;
+}
+sub,sup{font-size:.72em;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center;
+  background:var(--panel); border:1px solid var(--border); border-radius:10px;
+  padding:12px 16px; margin:0 0 12px; font-size:.9rem;
+}
+.viz-controls label{display:flex; align-items:center; gap:8px; color:var(--muted);
+  font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; font-weight:700;}
+.viz-controls input[type=range]{accent-color:var(--accent); cursor:pointer; width:130px;}
+.viz-controls select{background:var(--code); color:var(--code-fg); border:1px solid var(--border);
+  border-radius:6px; padding:3px 6px; font-family:monospace;}
+.viz-controls .val{color:var(--accent); font-family:monospace; font-size:.9rem; min-width:34px; text-align:right;}
+.viz-controls button{
+  background:var(--code); color:var(--code-fg); border:1px solid var(--border);
+  border-radius:6px; padding:5px 12px; cursor:pointer; font-size:.82rem; font-weight:700;
+}
+.viz-controls button:hover{border-color:var(--accent); color:var(--accent);}
+#viz{
+  position:relative; width:100%; height:640px;
+  border:1px solid var(--border); border-radius:12px; background:var(--bg);
+  box-shadow:var(--shadow); overflow:hidden;
+}
+#bundle{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:grab;}
+#bundle:active{cursor:grabbing;}
+#inset{position:absolute; top:12px; right:12px; width:300px; height:210px;
+  border-radius:8px; box-shadow:0 2px 14px rgba(0,0,0,.35);}
+.inset-title{position:absolute; top:22px; right:330px; width:150px; text-align:right;
+  font-size:.72rem; color:var(--muted); line-height:1.35; pointer-events:none;}
+.legend{position:absolute; left:14px; bottom:12px; font-size:.76rem; color:var(--muted);
+  line-height:1.5; pointer-events:none;}
+.legend .p{color:var(--prime); font-weight:700;}
+.legend .c{color:var(--accent); font-weight:700;}
+#hud{
+  position:absolute; display:none; pointer-events:none; z-index:20;
+  background:var(--panel); border:1px solid var(--accent); border-radius:8px;
+  padding:10px 12px; font-size:.78rem; line-height:1.5; width:210px;
+  box-shadow:var(--shadow); color:var(--fg);
+}
+#hud .big{font-size:1.05rem; font-weight:800; font-family:monospace;}
+#hud hr{border:0; border-top:1px solid var(--border); margin:7px 0;}
+#hud .k{color:var(--muted);}
+.viz-hint{font-size:.82rem; color:var(--muted); margin:10px 0 0;}
+.prov{display:flex; gap:18px; flex-wrap:wrap;}
+.prov a{
+  display:block; flex:1 1 320px; background:var(--panel); border:1px solid var(--border);
+  border-radius:10px; padding:14px 16px; color:var(--fg); text-decoration:none;
+}
+.prov a:hover{border-color:var(--accent);}
+.prov .tag{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent);
+  font-weight:800; display:block; margin-bottom:4px;}
+.prov code{font-size:.92rem;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Der Zahlenraum und seine Primkante</h1>
+  <p class="subtitle">Fusion aus: <code>pz6.html</code> ✕ <code>pz10.html</code> — Lücken-Geometrie (A) × arithmetisches Faserbündel (B)</p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere legen die natürlichen Zahlen in einen geometrischen Raum, um <em>Primzahlhaft</em> sichtbar zu machen. Sie sind zwei Projektionen eines einzigen Objekts — eines <strong>Zahlenraums</strong> (einer multiplikativen Mannigfaltigkeit), auf dem jede Zahl <code>n</code> zwei unabhängige Signaturen trägt:</p>
+  <ul>
+    <li>die <strong>additiv- / modulare Signatur</strong> — der Restklassen-Ort <code>n mod M</code> und (nur für Primzahlen) die <em>Lücke</em> zur nächsten Primzahl. Das ist <strong>A</strong> (<code>pz6.html</code>).</li>
+    <li>die <strong>multiplikative Signatur</strong> — die Primfaktor-Zerlegung von <code>n</code>, die <strong>B</strong> (<code>pz10.html</code>) als <em>Torsions-Phase</em> einer Faser kodiert.</li>
+  </ul>
+  <p>Die gemeinsame Position lautet: <strong>Die natürlichen Zahlen bilden einen strukturierten Raum, auf dem die Primzahlen die einfachste, niedrig-komplexe <em>Haupt-Sektion</em> (das „Rückgrat") sind, während die zusammengesetzten Zahlen den umgebenden Raum höherer Sektionen füllen.</strong> A sieht nur diese Sektion (es zeichnet ausschließlich Primzahlen) und liest dort Muster in Restklassen und Lücken ab; B sieht die ganze Mannigfaltigkeit (alle Zahlen <code>2..N</code>) und markiert die Primzahlen als die flache, triviale Sektion („Sektions-Nullpunkt", <code>ω=1</code>). Was A „Takt" und „Lücke" nennt und was B „Torsion" und „Homotopiegrad" nennt, ist dieselbe Struktur aus zwei Blickwinkeln — die Geometrie der <em>Primkante</em> innerhalb des Zahlenraums.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <div class="tension"><b>1 · Primäre Organisationsgröße — additiv/relational vs. multiplikativ/intrinsisch.</b><br>
+  <span class="who">A / pz6</span>A organisiert die Punkte über <em>(Rest mod M, Lücke zur nächsten Primzahl)</em>: die Lücke <code>g(p)=p<sub>i+1</sub>−p<sub>i</sub></code> ist eine <em>relationale, additive</em> Größe, die von der Nachbarschaft abhängt. Die Aussage: Struktur komme aus den <em>Abständen zwischen</em> Primzahlen und deren Restklasse.<br>
+  <span class="who">B / pz10</span>B organisiert die Punkte über die <em>multiplikative, intrinsische</em> Primfaktor-Zerlegung (Phase <code>v=τ·Σ√f</code> über die Faktoren von <code>n</code>) — sie hängt nur von der Zahl selbst ab. Die Aussage: Struktur komme aus dem <em>inneren Aufbau</em> jeder einzelnen Zahl. → Zwei inkompatible primäre Linsen.</div>
+
+  <div class="tension"><b>2 · Dimension / Form — flache 2D vs. 3D-Bündel.</b><br>
+  <span class="who">A / pz6</span>A zeichnet eine <em>flache 2D-Streufläche</em> (Rest × Lücke) und legt nahe, dass 2D ausreicht, um „vertikale Linien" und „bevorzugte Lücken" zu sehen.<br>
+  <span class="who">B / pz10</span>B baut ein <em>gekrümmtes 3D-Faserbündel</em> (Hauptring + lokale Faser mit Torsion) und legt nahe, die Struktur trete erst in 3D mit Torsion auf. → Inkompatible Annahme über die Dimension/Form, die die Struktur sichtbar macht.</div>
+
+  <div class="tension"><b>3 · Der Weltraum — nur Primzahlen vs. alle Zahlen.</b><br>
+  <span class="who">A / pz6</span>A zeichnet <em>ausschließlich Primzahlen</em>; zusammengesetzte Zahlen existieren im Modell nicht (der Gegenstand sind die Lücken <em>zwischen</em> Primzahlen).<br>
+  <span class="who">B / pz10</span>B zeichnet <em>alle</em> Zahlen <code>2..N</code>; die zusammengesetzten sind „Composite Sections", im UI als „Noise" bezeichnet, aber mit voller Komplexität/Phase kodiert. → Inkompatible Annahme, ob zusammengesetzte Zahlen zum Objekt gehören.</div>
+
+  <div class="tension"><b>4 · Entdeckt vs. konstruiert.</b><br>
+  <span class="who">A / pz6</span>A liest Struktur <em>aus den Daten ab</em> („Look for: vertical lines / preferred gaps") — ein empirisches Muster.<br>
+  <span class="who">B / pz10</span>B <em>konstruiert</em> die Struktur durch eine gewählte Parametrisierung (<code>u=n·0.025</code>, <code>v=Σ√f·τ</code>), in der Primzahlen <em>per Konstruktion</em> die triviale „Sektions-Nullpunkt"-Sektion sind. → Spannung: Ist die Struktur der Primzahlen entdeckt (A) oder durch die Wahl der Koordinaten aufgebaut (B)?</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>Zu 1 —</strong> Lücke und Faktorisierung sind keine Rivalen, sondern <em>zwei Koordinaten auf derselben Mannigfaltigkeit</em>: Die Restklasse/Lücke misst die <em>lokale, positionale</em> Struktur (wo sitzt <code>n</code> relativ zu Nachbarn, auf welchem „Takt"), die Faktorisierung die <em>intrinsische</em> Struktur (aus was besteht <code>n</code>). Bemerkenswert: „Lücke zur nächsten Primzahl" ist nur <em>auf dem Primuntergitter</em> definiert — genau dort, wo B die „Haupt-Sektion" sieht. A beschreibt also die Geometrie <em>der Sektion</em>, B die Geometrie <em>des Raums</em>, in dem die Sektion liegt. <em>Fusion:</em> Primzahlen = <code>ω=1</code>-Sektion, auf der zusätzlich die Lücken-/Restklassen-Geometrie lebt; zusammengesetzte Zahlen = Umgebung ohne Prim-Lücken, aber mit eigener Faktorisierungs-Geometrie.</p>
+  <p><strong>Zu 2 —</strong> 2D und 3D sind <em>verschiedene Projektionen</em> desselben hochdimensionalen Signaturenraums. Der vollständige Ort einer Zahl hat mindestens drei Komponenten (Rest, Lücke, Basis-Ort, Faserphase, Komplexität). A ist die <em>(Rest, Lücke)-Projektion</em> der Primsektion; B ist die <em>(Basis, Faserphase, Höhe)-Projektion</em> des Gesamtraums. Die fusionierte Visualisierung trägt beide Koordinaten gleichzeitig (3D-Bündel + 2D-Einbettung), statt sich für eine zu entscheiden.</p>
+  <p><strong>Zu 3 —</strong> Zusammenge-setzte Zahlen sind <em>weder reines Rauschen noch der eigentliche Gegenstand</em> — sie sind der <em>umgebende Raum</em> (die Basis), in die die Primsektion eingebettet ist. A sieht nur die Sektion, B sieht Sektion + Basis. B's UI-Nennung „Noise" wird aufgelöst: zusammengesetzte Zahlen <em>haben</em> Struktur (ihre Faktorisierung, „Homotopiegrad"), sind aber <em>keine</em> Primzahlen — daher existiert die <em>Prim-</em>Lücken-Geometrie (A) nur auf der cyanen Sektion. „Noise" bedeutet also: <em>nicht-prim, aber strukturiert</em>.</p>
+  <p><strong>Zu 4 —</strong> Beide Ebenen sind real und komplementär. Die <em>Karte / Parametrisierung</em> (B's Bündelkonstruktion) ist ein <em>Koordinatensystem</em> (konstruiert); das <em>Muster</em>, das sie offenlegt — Primzahlen als niedrig-komplexe triviale Sektion, Primzahlen besetzen nur die zu 2·3·5 koprimen Restklassen, Lücken haben bestimmte Häufigkeiten — ist <em>echter Zahleninhalt</em> (entdeckt). A's „Read-off" und B's „Construction" treffen zusammen: <em>Das Rauschen (B) ist strukturiert; das Muster (A) ist eine Eigenschaft der Haupt-Sektion. Ein gewähltes Fenster zeigt eine wahre Struktur.</em></p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <p><strong>Das fusionierte Objekt — der Zahlenraum.</strong> Jede natürliche Zahl <code>n≥2</code> trägt beide Signaturen zugleich:</p>
+  <span class="formula">additiv/positional :  n mod M        (M = Primorial, z.B. 30 = 2·3·5, 210 = 2·3·5·7)
+                      g(n) = nextPrime(n) − n   (definiert nur für Primzahlen)
+
+multiplikativ       :  Primfaktor-Zerlegung  n = f1·f2·…
+                      ω(n) = Anzahl der distinkten Primfaktoren
+                      v(n) = τ · Σ √f    über alle distinkten Primfaktoren f</span>
+
+  <p><strong>A (pz6) — Rest &amp; Lücke, die Geometrie der Sektion.</strong> Mit dem Sieb des Eratosthenes wird die Primliste erzeugt und jede Primzahl <code>p</code> auf <code>(p mod M, gap)</code> abgebildet. A's Kernbeobachtung: Wählt man <code>M=30</code> (= 2·3·5), so können Primzahlen &gt; 5 nur auf die <code>φ(30)=8</code> Restklassen fallen, die zu 30 koprim sind — <code>{1,7,11,13,17,19,23,29}</code>. „Vertikale Linien" bedeuten: Primzahlen bevorzugen genau diese „Takte"; „bevorzugte Lücken" bedeuten: bestimmte Lückengrößen wiederkehren. Das ist die <em>additiv-modulare</em> Struktur der Primmenge.</p>
+
+  <p><strong>B (pz10) — Faserbündel &amp; Torsion, die Geometrie des Raums.</strong> Jede Zahl <code>n</code> wird auf ein 3D-Bündel gelegt:</p>
+  <span class="formula">Basis (Hauptring)   :  θ(n) = n·α            (α ≈ 0.03)
+Faser-Phase (Torsion):  v = τ · Σ √f            (Rotation in der lokalen Faser)
+Faser-Radius          :  r(n) = r0 + k·ω(n)      (Komplexität / „Homotopiegrad")
+
+Punkt :  ( (R + r·cos v)·cos θ , (R + r·cos v)·sin θ , r·sin v )</span>
+  <p>Farbe nach Komplexität: Primzahlen = cyan („Sektions-Nullpunkt", <code>ω=1</code>, Haupt-Faser), zusammengesetzte = magenta/violett, Farbton nach <code>ω(n)</code>. Die Drehung + Zoom lassen das Bündel als Spirale/Feder lesen — die Zahlen als zusammenhängende Bahn, deren Windung von der Faktorisierung gesteuert wird.</p>
+
+  <p><strong>Die Primkante — wie die beiden „Strukturen" zusammengehören.</strong> Die Primzahlen bilden die <code>ω=1</code>-Haupt-Sektion des Raums; <em>auf dieser Sektion</em> lebt die Lücken-/Restklassen-Geometrie (A), während die umgebenden zusammengesetzten Zahlen (B) höhere <code>ω</code> tragen. A ist die <em>(Rest, Lücke)-Projektion</em> der Sektion, B die <em>(Basis, Phase, Höhe)-Projektion</em> des Ganzen. Der tiefe Zusammenhang: Der Grund, warum A's Modulus 30 funktioniert (Primzahlen meiden Vielfache von 2, 3, 5), ist <em>dieselbe</em> multiplikative Tatsache, die B visualisiert — die kleinen Primfaktoren 2, 3, 5 strukturieren sowohl die Restklassen-Landschaft (A) als auch den „Homotopiegrad"/die Torsion (B). <em>„Welchen Takt trifft die Primzahl?" (A) und „Wie viele/which Faktoren trägt n?" (B) sind zwei Seiten derselben kleinen-Primzahl-Teilbarkeit.</em></p>
+
+  <p><strong>Faustregel der Fusion:</strong> Je näher eine Zahl an einer Primzahl liegt (klein <code>ω</code>, einfache Faktorisierung, glücklicher Rest), desto näher liegt sie an der Primkante; je weiter sie davon entfernt (groß <code>ω</code>), desto „tiefer" in der Umgebung. Der Zahlenraum ist damit nach <em>Abstand von der Primkante</em> geschichtet.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion: der Zahlenraum mit seiner Primkante</h2>
+  <p>Ein drehbares <strong>3D-Faserbündel</strong> (B) über alle Zahlen <code>2..N</code> — Basiswinkel nach <code>n</code>, Faserphase nach Faktorisierung, Radius nach Komplexität, Primzahlen als leuchtende cyan-farbene Haupt-Sektion — mit einer verlinkten <strong>2D-Residue–Gap-Einbettung</strong> (A) in der Ecke, die die Primsektion als „Takt × Lücke" mit den zulässigen Restklassen (<code>mod 30</code>/<code>mod 210</code>) zeigt. Beides teilt sich dieselbe Primzahlenmenge und die Hover-Auswahl. Reine Inline-Daten, themenreaktiv.</p>
+
+  <div class="viz-controls">
+    <label>N <span class="val" id="nVal">1500</span>
+      <input type="range" id="nRange" min="100" max="6000" step="100" value="1500">
+    </label>
+    <label>Torsion τ <span class="val" id="tVal">2.0</span>
+      <input type="range" id="tRange" min="0.1" max="10" step="0.1" value="2">
+    </label>
+    <label>Clock M
+      <select id="mSel"><option value="30">30</option><option value="210">210</option></select>
+    </label>
+    <label class="chk"><input type="checkbox" id="showComp" checked> zusammengesetzt zeigen</label>
+    <button id="themeBtn" type="button">☾ dunkel</button>
+  </div>
+
+  <div id="viz">
+    <canvas id="bundle"></canvas>
+    <div class="inset-title">Residue–Gap<br>Decoder (A: pz6)</div>
+    <canvas id="inset" width="300" height="210"></canvas>
+    <div class="legend"><span class="p">●</span> Primzahlen — Haupt-Sektion (ω=1)<br>
+      <span class="c">●</span> zusammengesetzt — Farbe nach ω(n)</div>
+    <div id="hud"></div>
+  </div>
+  <p class="viz-hint">Ziehen = drehen · Mausrad = zoomen · über einen Punkt fahren = Signatur (inkl. Restklasse &amp; Lücke der Primzahl) anzeigen.</p>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../pz6.html"><span class="tag">A · Source</span>
+      <code>pz6.html</code> — „Prime Geometry Decoder": 2D-Streuung <em>(Rest mod M, Lücke zur nächsten Primzahl)</em>; Primzahlen als „Takte" im Primorial-Rhythmus, Muster in den Lücken.
+    </a>
+    <a href="../pz10.html"><span class="tag">B · Source</span>
+      <code>pz10.html</code> — „Arithmetic Fiber Bundle – Spectral Phase": 3D-Faserbündel <em>(Basiswinkel, Torsions-Phase aus der Primfaktor-Zerlegung, Komplexität)</em>; Primzahlen als cyan-farbene „Sektions-Nullpunkt".
+    </a>
+  </div>
+</section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('bundle');
+  var ctx = canvas.getContext('2d');
+  var inset = document.getElementById('inset');
+  var ic = inset.getContext('2d');
+  var hud = document.getElementById('hud');
+  var nRange = document.getElementById('nRange');
+  var tRange = document.getElementById('tRange');
+  var mSel = document.getElementById('mSel');
+  var showComp = document.getElementById('showComp');
+  var themeBtn = document.getElementById('themeBtn');
+  var nVal = document.getElementById('nVal');
+  var tVal = document.getElementById('tVal');
+
+  var MAXN = 6000;
+  var SIEVE_LIMIT = MAXN + 1000;
+
+  function gcd(a, b){ while(b){ var t=a%b; a=b; b=t; } return a; }
+
+  function sieve(limit){
+    var s = new Uint8Array(limit+1).fill(1);
+    if(limit>=0) s[0]=0; if(limit>=1) s[1]=0;
+    for(var i=2;i*i<=limit;i++){ if(s[i]){ for(var j=i*i;j<=limit;j+=i){ s[j]=0; } } }
+    var primes=[]; for(var k=2;k<=limit;k++){ if(s[k]) primes.push(k); }
+    return { sieve:s, primes:primes };
+  }
+
+  function factorsOf(n){
+    var f=[], d=2, t=n;
+    while(t>1){
+      if(t%d===0){ f.push(d); while(t%d===0){ t/=d; } }
+      d++;
+      if(d*d>t){ if(t>1) f.push(t); break; }
+    }
+    return f;
+  }
+
+  var sv = sieve(SIEVE_LIMIT);
+  var primes = sv.primes;
+  var nextPrime = {};
+  for(var i=0;i<primes.length-1;i++){ nextPrime[primes[i]] = primes[i+1]; }
+  var gapOf = {};
+  for(var pi=0; pi<primes.length; pi++){
+    var p = primes[pi];
+    if(p<=MAXN && nextPrime[p]!==undefined){ gapOf[p] = nextPrime[p]-p; }
+  }
+
+  var base = new Array(MAXN+1);
+  for(var n=2; n<=MAXN; n++){
+    var f = factorsOf(n);
+    var omega = f.length;
+    var ph = 0; for(var q=0;q<f.length;q++){ ph += Math.sqrt(f[q]); }
+    base[n] = { f:f, omega:omega, isPrime:(omega===1 && f[0]===n), phase:ph, theta:n*0.03 };
+  }
+
+  var colors = {};
+  function readTheme(){
+    var cs = getComputedStyle(document.documentElement);
+    var g = function(name){ return cs.getPropertyValue(name).trim(); };
+    colors.bg = g('--bg');
+    colors.fg = g('--fg');
+    colors.muted = g('--muted');
+    colors.prime = g('--prime');
+    colors.accent = g('--accent');
+    colors.insetBg = g('--inset-bg');
+    var hue = parseInt(g('--comp-hue'), 10);
+    colors.compHue = isNaN(hue) ? 300 : hue;
+  }
+
+  var angleX = 0.6, angleY = 0.4, zoom = 1.0;
+  var insetDirty = true;
+  var framePoints = [];
+  var R = 240, rk = 16, r0 = 34, FOCAL = 900;
+
+  function sizeCanvases(){
+    canvas.width = canvas.clientWidth || 800;
+    canvas.height = canvas.clientHeight || 640;
+    inset.width = 300; inset.height = 210;
+    insetDirty = true;
+  }
+
+  function drawInset(){
+    var W = inset.width, H = inset.height;
+    var padL = 16, padR = 10, padT = 12, padB = 20;
+    ic.clearRect(0,0,W,H);
+    ic.fillStyle = colors.insetBg;
+    ic.fillRect(0,0,W,H);
+    ic.strokeStyle = colors.muted; ic.lineWidth = 1; ic.globalAlpha = 0.4;
+    ic.strokeRect(0.5,0.5,W-1,H-1); ic.globalAlpha = 1;
+
+    var N = parseInt(nRange.value,10);
+    var M = parseInt(mSel.value,10);
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+
+    var maxGap = 4;
+    for(var a=2;a<=N;a++){ if(base[a].isPrime && gapOf[a]!==undefined){ if(gapOf[a]>maxGap) maxGap=gapOf[a]; } }
+    if(maxGap<1) maxGap=10;
+
+    ic.save();
+    ic.beginPath(); ic.rect(padL,padT,plotW,plotH); ic.clip();
+    ic.globalCompositeOperation = 'lighter';
+    for(var b=2;b<=N;b++){
+      var bb = base[b]; if(!bb.isPrime) continue;
+      var gap = gapOf[b]; if(gap===undefined) continue;
+      var res = b % M;
+      var px = padL + (res/M)*plotW;
+      var py = padT + plotH - (gap/maxGap)*plotH;
+      ic.fillStyle = colors.prime; ic.globalAlpha = 0.55;
+      ic.beginPath(); ic.arc(px,py,1.5,0,6.2832); ic.fill();
+    }
+    ic.restore();
+    ic.globalCompositeOperation = 'source-over'; ic.globalAlpha = 1;
+
+    for(var r=0;r<M;r++){
+      if(gcd(r,M)===1){
+        var tx = padL + (r/M)*plotW;
+        ic.fillStyle = colors.accent; ic.globalAlpha = 0.65;
+        ic.fillRect(tx-1, H-padB+3, 2, 6);
+      }
+    }
+    ic.globalAlpha = 1;
+    ic.fillStyle = colors.muted; ic.font = '10px monospace';
+    ic.fillText('rest mod '+M, padL, H-5);
+    ic.save(); ic.translate(11, H-6); ic.rotate(-Math.PI/2); ic.fillText('gap →', 0, 0); ic.restore();
+  }
+
+  function render(){
+    var N = parseInt(nRange.value,10);
+    var tau = parseFloat(tRange.value);
+    var comp = showComp.checked;
+    var cx = canvas.width/2, cy = canvas.height/2;
+    ctx.fillStyle = colors.bg;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    var sY=Math.sin(angleY), cY=Math.cos(angleY), sX=Math.sin(angleX), cX=Math.cos(angleX);
+    var primeCount=0;
+    for(var a=2;a<=N;a++){ if(base[a].isPrime) primeCount++; }
+    var useGlow = primeCount < 450;
+
+    var pts=[];
+    for(var n=2;n<=N;n++){
+      var b=base[n];
+      if(!b.isPrime && !comp) continue;
+      var rFiber = r0 + b.omega*rk;
+      var ph = tau * b.phase;
+      var rr = R + rFiber*Math.cos(ph);
+      var x = rr*Math.cos(b.theta);
+      var y = rr*Math.sin(b.theta);
+      var z = rFiber*Math.sin(ph);
+      var x1 = x*cY - z*sY;
+      var z1 = x*sY + z*cY;
+      var y2 = y*cX - z1*sX;
+      var z2 = y*sX + z1*cX;
+      var persp = FOCAL/(FOCAL+z2);
+      if(persp<=0) continue;
+      var sx = x1*persp*zoom + cx;
+      var sy = y2*persp*zoom + cy;
+      pts.push({ n:n, sx:sx, sy:sy, scale:persp, sz:z2, isPrime:b.isPrime, omega:b.omega, f:b.f });
+    }
+    pts.sort(function(p,q){ return q.sz - p.sz; });
+
+    for(var d=0; d<pts.length; d++){
+      var pt = pts[d];
+      if(pt.scale<0) continue;
+      if(pt.isPrime){
+        ctx.fillStyle = colors.prime;
+        if(useGlow){ ctx.shadowBlur = 11*pt.scale; ctx.shadowColor = colors.prime; }
+      } else {
+        var hue = colors.compHue + pt.omega*12;
+        ctx.fillStyle = 'hsl(' + hue + ',82%,56%)';
+      }
+      ctx.globalAlpha = pt.isPrime ? 0.92 : 0.32;
+      var size = (pt.isPrime ? 3.4 : 1.9) * pt.scale * zoom;
+      ctx.beginPath();
+      ctx.arc(pt.sx, pt.sy, size, 0, 6.2832);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+    }
+    framePoints = pts;
+
+    if(insetDirty){ drawInset(); insetDirty=false; }
+    requestAnimationFrame(render);
+  }
+
+  var dragging=false, lx=0, ly=0;
+  canvas.addEventListener('mousedown', function(e){ dragging=true; lx=e.clientX; ly=e.clientY; });
+  window.addEventListener('mouseup', function(){ dragging=false; });
+  window.addEventListener('mousemove', function(e){
+    if(dragging){
+      angleY += (e.clientX-lx)*0.007;
+      angleX += (e.clientY-ly)*0.007;
+      lx=e.clientX; ly=e.clientY;
+    }
+    var rect = canvas.getBoundingClientRect();
+    var mx = e.clientX - rect.left;
+    var my = e.clientY - rect.top;
+    var M = parseInt(mSel.value,10);
+    var found=null;
+    for(var i=0;i<framePoints.length;i++){
+      var p = framePoints[i];
+      if(Math.abs(p.sx-mx)<8 && Math.abs(p.sy-my)<8){ found=p; break; }
+    }
+    if(found){
+      hud.style.display='block';
+      var posX = e.clientX + 20;
+      var posY = e.clientY - 20;
+      if(posX + 220 > window.innerWidth) posX = e.clientX - 235;
+      if(posY + 150 > window.innerHeight) posY = e.clientY - 150;
+      hud.style.left = posX + 'px';
+      hud.style.top = posY + 'px';
+      var typeStr = found.isPrime ? 'Haupt-Sektion (Primzahl)' : 'umgebende Sektion (zusammengesetzt)';
+      var extra = '';
+      if(found.isPrime){
+        extra = '<hr><span class="k">Restklasse (A):</span> ' + found.n + ' mod ' + M + ' = ' + (found.n % M) +
+                '<br><span class="k">Lücke zur nächsten (A):</span> ' + (gapOf[found.n]!==undefined ? gapOf[found.n] : '—') +
+                '  → next = ' + (nextPrime[found.n]!==undefined ? nextPrime[found.n] : '—');
+      }
+      hud.innerHTML =
+        '<div class="big" style="color:' + (found.isPrime ? colors.prime : colors.accent) + '">n = ' + found.n + '</div>' +
+        '<span class="k">Typ (B):</span> ' + typeStr +
+        '<br><span class="k">Faktoren:</span> ' + (found.f.length ? found.f.join(' × ') : '—') +
+        '<br><span class="k">Komplexität ω(n):</span> ' + found.omega + extra;
+    } else {
+      hud.style.display='none';
+    }
+  });
+  canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    zoom *= (e.deltaY > 0 ? 0.92 : 1.08);
+    if(zoom<0.25) zoom=0.25; if(zoom>5) zoom=5;
+  }, { passive:false });
+
+  function toggleTheme(){
+    var dark = document.documentElement.classList.toggle('dark');
+    themeBtn.textContent = dark ? '☀ hell' : '☾ dunkel';
+    readTheme();
+    insetDirty = true;
+  }
+
+  nRange.addEventListener('input', function(){ nVal.textContent = nRange.value; insetDirty = true; });
+  tRange.addEventListener('input', function(){ tVal.textContent = parseFloat(tRange.value).toFixed(1); });
+  mSel.addEventListener('change', function(){ insetDirty = true; });
+  themeBtn.addEventListener('click', toggleTheme);
+  window.addEventListener('resize', sizeCanvases);
+
+  readTheme();
+  themeBtn.textContent = document.documentElement.classList.contains('dark') ? '☀ hell' : '☾ dunkel';
+  sizeCanvases();
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>

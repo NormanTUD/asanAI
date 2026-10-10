@@ -1,0 +1,15 @@
+{
+  "no": "060",
+  "a": "monster.html",
+  "b": "france.html",
+  "a_title": "Die Monster-Gruppe – Visuell Erklärt",
+  "b_title": "🇫🇷 FRANKREICH ERLEBEN 🇫🇷",
+  "combined_theme": "tastbare-symmetrie",
+  "one_line": "Monster-Gruppe und Frankreich-Erlebnis sind dieselbe Idee in maximaler und minimaler Form: Symmetrie = die Menge aller Transformationen, unter denen das Wesentliche gleich bleibt — im Monster als versteckte Ordnung in 196.883 Dimensionen (Ordnung ≈ 8×10⁵³, Moonshine: 196884 = 196883 + 1), im Frankreich-Erlebnis als offene, sensorisch tastbare französische Invarianz aus getrennten Elementen.",
+  "contradictions": [
+    "Tiefe vs. Oberfläche: monster.html versteckt das Wesentliche hinter Abstraktion — das Monster lebt in 196.883 Dimensionen, hat ≈ 8×10⁵³ Symmetrien und wird als 'tief und mysteriös' gerahmt; france.html legt das Wesentliche auf die greifbare Oberfläche (Käse, Baguette, Lavendel, Wein) und offenbart es durch Berührung.",
+    "Exakte Reduktion vs. generative Zufallsfülle: monster.html reduziert deterministisch auf unteilbare 'Symmetrie-Atome' (feste Ordnung, exakte Moonshine-Gleichung); france.html ist durchgehend generativ (Math.random: Sterne, Krümel, Konfetti, Croissant-Regen, Duft) und 'Zerlegen' erzeugt dort mehr (Baguette bricht → Krümel, Käse schneiden → Geruch)."
+  ],
+  "resolution": "Beide Spannungen lösen sich auf, weil beide Papiere dieselbe Definition von monster.html umsetzen — 'eine Bewegung, nach der ein Objekt gleich aussieht'. (1) Tiefe vs. Oberfläche: das 2-D-Bild des Monsters ist selbst eine Projektion, das 'Französische' projiziert aus wenigen Regeln hoch — Oberfläche und Tiefe sind dieselbe Struktur in unterschiedlichem Zoom. (2) Reduktion vs. Zufall: generative Fülle, die das Wesentliche bei jedem Zufallssamen bewahrt, ist Invarianz unter Transformation — genau wie die exakte Monster-Ordnung; beide sind Gruppen im Sinne von A, nur auf zwei Skalen. Fusionierte Schlussposition: die gemeinsame Form ist 'Symmetrie verbindet das Getrennte', maximal (Monster) und minimal (tastbares Ensemble) realisiert.",
+  "viz": "Ein-Canvas-Zwei-Panel: links (tastbare B-Seite) ein dreh- und spiegelbares n-Eck in französischer Macaron-Palette mit Symmetrienerkennung (grünes Leuchten) und |D_n| = 2n; rechts (abstrakte A-Seite) ein Mini-Balkendiagramm des Monstrous Moonshine (j-Koeffizienten vs. Monster-Dimensionen, log-Skala) mit der exakten Identität 196884 = 196883 + 1. Slider für n und Drehwinkel, Spiegeln-Toggle, 'Drehen'/Reset-Buttons, themenreaktiv über CSS-Variablen, keine externen Libs, keine Netz-Daten."
+}

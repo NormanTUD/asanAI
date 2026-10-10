@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tastbare Symmetrie — Das Monster trifft Frankreich</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#2563eb;
+  --mn-accent2:#0e7490; --mn-accent3:#be185d; --mn-accent4:#b45309;
+  --mn-border:#d8d2c4; --mn-panel:#fffdf9; --mn-panel2:#f1ece0;
+  --mn-boundary:#dc2626; --mn-ok:#16a34a;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#60a5fa;
+  --mn-accent2:#22d3ee; --mn-accent3:#f472b6; --mn-accent4:#fbbf24;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-boundary:#f87171; --mn-ok:#4ade80;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--mn-bg); color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:24px 20px 80px;}
+.tricolore{display:flex; height:8px; border-radius:6px; overflow:hidden; border:1px solid var(--mn-border); margin-bottom:20px;}
+.tricolore i{flex:1;}
+.tricolore .b{background:#002395;}
+.tricolore .w{background:#f6f6f2;}
+.tricolore .r{background:#ED2939;}
+header.hero{
+  padding:28px 22px; border:1px solid var(--mn-border); border-radius:14px;
+  background:var(--mn-panel); margin-bottom:26px;
+}
+header.hero h1{font-size:1.75em; line-height:1.25; margin-bottom:10px; color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2); font-weight:600; font-size:.98em;}
+.toggle{
+  margin-top:16px; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel2); color:var(--mn-fg); border-radius:22px;
+  cursor:pointer; font-size:.9em; transition:.2s;
+}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 30px;}
+section h2{
+  font-size:1.35em; margin-bottom:12px; color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border); padding-bottom:6px;
+}
+p{margin-bottom:12px;}
+.lede{font-size:1.06em;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{
+  border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel);
+  padding:14px 16px;
+}
+.card h3{font-size:1.04em; margin-bottom:8px; color:var(--mn-fg);}
+.card a{color:var(--mn-accent2); text-decoration:none; font-weight:600;}
+.card a:hover{text-decoration:underline;}
+.card small{color:var(--mn-dim);}
+.wc{border-left:4px solid var(--mn-boundary);}
+.wc b{color:var(--mn-boundary);}
+.res{border-left:4px solid var(--mn-ok);}
+.res b{color:var(--mn-ok);}
+.note{font-size:.9em; color:var(--mn-dim); font-style:italic;}
+.formula{
+  font-family:'Courier New',monospace; background:var(--mn-panel2);
+  border:1px solid var(--mn-border); border-radius:8px; padding:14px 16px;
+  margin:12px 0; overflow-x:auto; white-space:pre; font-size:.84em; color:var(--mn-fg);
+}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:2px 8px; border-radius:6px; margin-bottom:8px;
+  background:var(--mn-panel2); color:var(--mn-accent); border:1px solid var(--mn-border);
+}
+.tag.b{color:var(--mn-accent2);}
+.ladder{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px; margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:6px; font-size:.95em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+.viz{
+  border:1px solid var(--mn-border); border-radius:14px; background:var(--mn-panel);
+  padding:16px; margin-top:6px;
+}
+.viz canvas{width:100%; display:block; border-radius:10px; background:var(--mn-panel2); border:1px solid var(--mn-border);}
+.viz .controls{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1; min-width:140px; accent-color:var(--mn-accent);}
+.viz .controls input[type=checkbox]{width:18px; height:18px; accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700; white-space:nowrap; font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{margin-left:auto; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel); color:var(--mn-fg); border-radius:8px; cursor:pointer;
+  font-weight:700; font-size:.9em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.primary{background:var(--mn-accent); color:var(--mn-bg); border-color:var(--mn-accent);}
+.viz .readout{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+@media(max-width:620px){.viz .readout{grid-template-columns:1fr;}}
+.readbox{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel2); padding:12px 14px; font-size:.94em;}
+.readbox .rb-title{font-weight:700; margin-bottom:6px;}
+.readbox.a .rb-title{color:var(--mn-accent);}
+.readbox.b .rb-title{color:var(--mn-accent2);}
+.readbox .regime{font-weight:700; margin:6px 0;}
+.readbox .desc{color:var(--mn-dim);}
+footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-dim); font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="tricolore" title="Tricolore (france.html)"><i class="b"></i><i class="w"></i><i class="r"></i></div>
+
+<header class="hero">
+  <h1>Tastbare Symmetrie — Das Monster trifft Frankreich</h1>
+  <div class="subtitle">Fusion aus: monster.html ✕ france.html</div>
+  <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Zwei Papiere über völlig verschiedene Welten hängen an einem einzigen gemeinsamen Faden: an einer <em>Menge von Bewegungen, unter denen das Wesentliche gleich aussieht</em>. Das ist A's (<b>monster.html</b>) eigene Definition von Symmetrie — „eine Bewegung, nach der ein Objekt gleich aussieht". Aus dieser einen Idee wird sowohl die tiefste Struktur der abstrakten Mathematik erklärt als auch ein kleines, greifbares Erlebnis.</p>
+  <p>Bei <b>A</b> ist das Objekt die <strong>Monster-Gruppe</strong> — die größte sporadische einfache Gruppe, das „größte Schneeflocken-Atom" der Mathematik mit einer Ordnung von rund <strong>8 × 10⁵³ Symmetrien</strong>, das in einem Raum mit <strong>196.883 Dimensionen</strong> lebt. Monstrous Moonshine zeigt, dass ihre starre Symmetrie die Koeffizienten der zahlentheoretischen j-Funktion <em>geheim</em> bestimmt: „196884 = 196883 + 1" — „wie wenn Biologie plötzlich in der Musik auftaucht". Die tiefe Struktur ist hier <em>verborgen</em> hinter Abstraktion.</p>
+  <p>Bei <b>B</b> (<b>france.html</b>) gibt es keine Textbehauptung: es ist ein rein sensorisches, interaktives „Frankreich erleben" — eine endliche Menge <em>tastbarer</em> Elemente (Eiffelturm, Wein, Käse, Lavendel, Akkordeon, Baguette, Parfüm, Hahn, Lilie, Macaron, Seine), die durch einfache Regeln (Vollbild-Sektionen, wiederkehrende Motive, die Tricolore, generative Zufallseffekte) ein kohärentes „Ganze" formen. Hier liegt dieselbe Struktur <em>offen und greifbar</em> auf der Oberfläche.</p>
+  <p>Die fusionierte Position: <strong>Ein Symmetriegruppe ist genau die Menge aller Transformationen, unter denen das Wesentliche gleich bleibt.</strong> Das Monster ist diese Idee in maximaler, unvorstellbarer Form (hohe Dimension, 8 × 10⁵³ Elemente); das Frankreich-Erlebnis ist dieselbe Idee in minimaler, tastbarer Form (ein Vieleck, das man dreht, ein Baguette, das man bricht). Eine einzige Definition trägt beides: <em>Ordnung, die das scheinbar Getrennte verbindet</em> — einmal versteckt in 196.883 Dimensionen, einmal sichtbar auf der Handfläche.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p class="note">Die beiden Papiere stehen in völlig verschiedenen Domänen (abstrakte Gruppentheorie vs. sensorisches Web-Erlebnis) und machen keine direkt kollidierenden Faktenbehauptungen — sie „widersprechen" sich also im wörtlichen Sinn nicht. Die <em>nächsten echten Spannungen</em>, die man zwischen ihren Stimmungen und Annahmen ablesen kann, sind zwei:</p>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Wo liegt das Wesentliche?</span>
+    <h3>Verborgene Tiefe (A) vs. offene Oberfläche (B)</h3>
+    <p><b>A</b> versteckt sein Objekt <em>hinter</em> der Abstraktion: Das Monster lebt in <strong>196.883 Dimensionen</strong> und wird ausdrücklich als „eines der tiefsten und mysteriösesten Objekte der gesamten Mathematik" gerahmt. Je tiefer man gräbt, desto <em>unvorstellbarer</em> wird es — man <em>kann</em> es sich nicht mehr bildlich vorstellen.</p>
+    <p><b>B</b> legt sein Wesentliches <em>auf</em> die Oberfläche: Käsehöhlen, Baguette-Krümel, Lavendelduft werden sofort und sensorisch erfahrbar. Je mehr man es <em>berührt</em> (Käse an-schneiden, Baguette brechen, Parfüm einsprühen), desto <em>mehr</em> offenbart es sich. A: die tiefste Wahrheit ist hinter Abstraktion versteckt. B: die Essenz ist hier und jetzt in der Wahrnehmung.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 2 · Reduktion vs. Proliferation</span>
+    <h3>Exakte Zerlegung auf Atome (A) vs. generative Zufallsfülle (B)</h3>
+    <p><b>A</b> ist durchgehend <em>exakt und deterministisch</em>: Die Ordnung ist eine feste Ganzzahl; einfache Gruppen sind „Symmetrie-Atome", auf die man <em>reduziert</em>, bis nichts mehr geht (Zerlegen → Atome). Monstrous Moonshine ist eine <em>exakte</em> Gleichung. Zerlegung = Reduktion auf das Unteilbare.</p>
+    <p><b>B</b> ist dagegen fast vollständig <em>generativ und zufällig</em> (Math.random): Sterne, Krümel, Konfetti, Croissant-Regen, Duftpartikel, Mäuse-Spur. Und die „Zerlegung" <em>vervielfacht</em> hier: Das Baguette brechen <em>erzeugt</em> Krümel, den Käse schneiden <em>löst</em> Geruch frei, Parfüm sprühen <em>verstreut</em> Partikel. Zerlegung = Proliferation durch kontrolliertes Chaos.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag">Auflösung 1 · Oberfläche und Tiefe sind dieselbe Struktur</span>
+    <p>Beides ist eine <em>Projektion</em> einer tieferen Struktur auf eine andere Auflösung. Das Monster-Objekt in 196.883 Dimensionen wird auf dem Bildschirm von <b>A</b> ja selbst zu einer <em>2-dimensionalen Projektion</em> gerendert; das „Französische" von <b>B</b> projiziert sich dagegen <em>hoch</em>, aus wenigen einfachen Regeln (Sektionen + wiederkehrende Motive + Tricolore) zum Ganzen. Oberfläche und Tiefe sind also keine Gegensätze, sondern die <em>dieselbe Struktur in unterschiedlichem Zoom</em>. <b>Fusioniert:</b> <em>Die greifbare Oberfläche ist ein Schatten (eine Projektion) einer tieferen Symmetrie.</em> Man muss nicht zwischen „tief" und „greifbar" wählen — das Greifbare <em>ist</em> das Tiefe, nur in niedriger Dimension gerendert.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag">Auflösung 2 · Reduktion und Zufall sind dieselbe Invarianz</span>
+    <p>Beides ist eine Formulierung von <em>Invarianz unter Transformation</em> — und genau das ist A's Definition von Symmetrie. Zufall, der das Wesentliche <em>bewahrt</em> (Croissant-Regen, Krümel, Konfetti sehen bei <em>jedem</em> Zufallssamen trotzdem „französisch" aus), ist Invarianz <em>in Aktion</em>. Das Monster ist die <em>maximale</em> Menge solcher invarianten, „gleich-aussehenden" Transformationen; das Frankreich-Erlebnis ist eine <em>kleine, konkrete</em> Menge. <b>Fusioniert:</b> <em>Die exakte Reduktion (A) und die generative Fülle (B) sind dieselbe Idee — die Menge aller Transformationen, die das Wesentliche gleich aussehen lassen.</em> Eine Gruppe im Sinne von A, nur auf zwei Skalen.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px; border-left-color:var(--mn-accent);">
+    <span class="tag">Gefasste Schlussposition</span>
+    <p>Die gemeinsame Form ist <strong>„Symmetrie = die Transformationen, unter denen das Wesentliche gleich bleibt — und sie verbindet das Getrennte."</strong> In <b>A</b> verbindet die versteckte Symmetrie des Monsters zwei scheinbar ferne Welten (algebraische Gruppe und zahlentheoretische j-Funktion, per Moonshine); in <b>B</b> verbindet die „französische" Invarianz viele getrennte Sinneseindrücke zu einem Ganzen. Das Monster ist die <em>maximale</em> Realisierung dieser Idee (8 × 10⁵³ Elementen, 196.883 Dimensionen); das Frankreich-Erlebnis ist die <em>minimale, tastbare</em>. Beide beantworten „Was ist dieses Objekt?" mit: <em>Welche Transformationen lassen es gleich aussehen?</em></p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Das gemeinsame Skelett hat fünf Teile: eine <strong>Definition von Symmetrie</strong>, eine <strong>Zusammensetzbarkeit zu Gruppen</strong>, das Konzept <strong>unteilbarer „Atome"</strong>, eine <strong>Klassifikation</strong> und ein <strong>Objekt in maximaler vs. minimaler Form</strong>, verknüpft durch eine <strong>verborgene Verbindung</strong>. A füllt alle fünf Slots auf höchster Stufe aus; B hält dieselben Slots als greifbare, sensorische Instanz.</p>
+
+  <div class="ladder">
+    <span class="tag">A · monster.html (die abstrakte, tiefe Seite)</span>
+    <ol>
+      <li><b>Symmetrie</b> = „eine Bewegung, nach der ein Objekt gleich aussieht". Ein regelmäßiges n-Eck hat <b>2n Symmetrien</b> (n Drehungen + n Spiegelungen) → die Diedergruppe <b>D_n</b>.</li>
+      <li><b>Zwei Symmetrien hintereinander = wieder eine Symmetrie</b> → die Symmetrien bilden eine <em>Gruppe</em> (Komposition, Einheit, Inverse).</li>
+      <li><b>Einfache Gruppen</b> = „Symmetrie-Atome": unteilbar, nicht weiter zerlegbar (Analogie: H₂O → H + H + O; das H-Atom ist „einfach").</li>
+      <li><b>Klassifikation</b> (Beweis ~10.000 Seiten): genau <b>4 Familien</b> — zyklisch (Z_p), Lie-Typ, alternierend (A_n), und <b>26 sporadische</b> „Einzelgänger"; davon <b>20 „Happy Family"</b> (verwandt mit dem Monster) + <b>6 „Parias"</b>.</li>
+      <li><b>Das Monster</b>: größte sporadische einfache Gruppe, entdeckt 1973 (Fischer &amp; Griess); Ordnung ≈ <b>8 × 10⁵³</b>, lebt in <b>196.883 Dimensionen</b>. Vergleich: Quadrat = 8, Ikosaeder = 120, Monster = 8 × 10⁵³.</li>
+      <li><b>Monstrous Moonshine</b> (McKay 1979): j-Koeffizienten <em>1, 744, 196884, 21493760, …</em> sind <em>Summen</em> der Monster-Darstellungsdimensionen <em>1, 196883, 21296876, …</em>: <b>196884 = 196883 + 1</b>; <b>21493760 = 21296876 + 196883 + 1</b>. Richard <b>Borcherds</b> bewies es 1992 → Fields-Medaille.</li>
+    </ol>
+  </div>
+
+  <div class="ladder b">
+    <span class="tag b">B · france.html (die tastbare, sensorische Seite)</span>
+    <ol>
+      <li><b>Keine Textbehauptung</b> — eine rein interaktive, sensorische Erfahrung: <b>11 Vollbild-Sektionen</b> (Eiffelturm, Wein, Käse, Lavendel, Akkordeon, Baguette, Parfüm, Hahn, Lilie, Macaron, Seine), je ein „Element" mit Click-/Scroll-Interaktion.</li>
+      <li><b>Wiederkehrende Invarianten</b>: die <b>Tricolore</b> (3 Farben: Blau, Weiß, Rot) als festes Muster; Gold als durchgehendes Motiv; das Vollbild-Raster als gemeinsame „Regel".</li>
+      <li><b>Generative Zufallseffekte</b> (Math.random): 100 Sterne, Krümel, Konfetti, Croissant-Regen beim Scrollen, Duft-/Sprüh-Partikel, Mäuse-Spur, Doppelklick-Beret, Tastatur-Easter-Egg („france").</li>
+      <li><b>Zerlegen erzeugt mehr</b>: Baguette brechen → Krümel; Käse schneiden → Geruchs-Symbole; Macaron klicken → Krümel; Wein einschenken → Füllstand; Akkordeon/Hahn → Web-Audio-Töne.</li>
+    </ol>
+  </div>
+
+  <p class="note">Ehrlichkeitshinweis: <b>B</b> macht keinerlei mathematische Behauptungen. Die Zuordnung der B-Seite in A's Gruppensprache (Elemente, Invarianten, „Zerlegen erzeugt mehr" als Invarianz) ist die <em>Linse dieser Fusion</em>, nicht ein Inhalt von B selbst.</p>
+
+  <p><strong>Die isomorphe Einbettung (der eigentliche Fusionsinhalt) — dieselben fünf Slots, zwei Skalen:</strong></p>
+  <div class="formula">  monster.html (A · tief)                 france.html (B · greifbar)   [Linse der Fusion]
+──────────────────────────────────────────────────────────────────────────────────────────
+Symmetrie   "Bewegung, nach der es gleich  (kein Text) — aber die "französische"
+            aussieht" (eigene Definition)    Erfahrung bleibt unter Kombination gleich
+
+Gruppe      Diedergruppe D_n, |D_n| = 2n;   11 Sektionen / Tricolore (3 Farben)
+            Komposition → Gruppe             als endliche Elementmenge + Regel
+
+"Atom"      einfache Gruppen = unteilbare    Grund-Bausteine (Eiffel, Käse, Baguette …)
+            Symmetrie-Atome                  als tastbare Atome
+
+Klassif.    4 Familien + 26 sporadisch       wiederkehrende Motive = kleine
+            (Happy 20 + Parias 6)             "Klassifikation" der Elemente
+
+Objekt      Monster: Ordnung ≈ 8×10⁵³,       (unvorstellbares Gegenstück zum
+            196.883 Dimensionen               greifbaren Kleinen)
+
+Verborgene  Monstrous Moonshine:              getrennte Sinneseindrücke bilden
+Verbindung  196884 = 196883 + 1               ein Ganzes (Sektionen + Motive)</div>
+
+  <p>Die tiefe Einheit: <strong>„Was ist dieses Objekt?" wird in beiden Papieren durch „Welche Transformationen lassen es gleich aussehen?" beantwortet.</strong> Das Monster und das Frankreich-Erlebnis sind dieselbe Idee in zwei Realisierungen: eine <em>Maximalinstanz</em> (eine riesige, in 196.883 Dimensionen lebende Gruppe, deren versteckte Symmetrie die Zahlentheorie regiert) und eine <em>Minimalinstanz</em> (ein kleines, in niedriger Dimension tastbares Ensemble, dessen „französische" Invarianz viele getrennte Eindrücke zu einem Ganzen bindet). Die <em>verborgene Verbindung</em> ist der springende Punkt: A findet sie als <em>exakte Gleichung</em> (Moonshine), B als <em>wahrnehmbare Kohärenz</em> (aus getrennten Sektionen entsteht ein „Ganze"). Beide zeigen, dass das, was getrennt aussieht, unter der richtigen Symmetrie eins ist.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — dieselbe Idee, zwei Skalen</h2>
+  <p>Ein Canvas, zwei Panels, <em>dieselbe</em> Definition („Symmetrie = Transformation, nach der das Wesentliche gleich bleibt"). Links die <strong>tastbare</strong> Seite: ein n-Eck in <em>französischer Macaron-Palette</em>, das du drehen und spiegeln kannst — bei jedem Drehwinkel, unter dem es gleich aussieht, leuchtet es grün, und |D_n| = 2n wird abgelesen. Rechts die <strong>abstrakte, tiefe</strong> Seite: das <strong>Monstrous Moonshine</strong> — j-Koeffizienten (blau) gegen Monster-Darstellungsdimensionen (rosa), mit der exakten Identität <strong>196884 = 196883 + 1</strong>. Drehe das linke Vieleck, schau auf die rechte Gleichung — zwei Skalen, ein Objekt.</p>
+
+  <div class="viz">
+    <canvas id="vizCanvas" height="470"></canvas>
+    <div class="controls">
+      <label for="nSlider" class="cl">Ecken n (links): <b id="nLab">5</b></label>
+      <input type="range" id="nSlider" min="3" max="12" step="1" value="5">
+    </div>
+    <div class="controls">
+      <label for="rotSlider" class="cl">Drehwinkel: <b id="rotLab">0°</b></label>
+      <input type="range" id="rotSlider" min="0" max="360" step="1" value="0">
+      <label class="cl" for="mirrorBox">Spiegeln</label>
+      <input type="checkbox" id="mirrorBox">
+    </div>
+    <div class="controls">
+      <button class="btn primary" id="spinBtn">▶ Drehen</button>
+      <button class="btn" id="resetBtn">↺ Reset</button>
+    </div>
+    <div class="readout">
+      <div class="readbox a">
+        <div class="rb-title">Tastbare Gruppe (B-Seite)</div>
+        <div>n = <b id="nVal">5</b> &nbsp;·&nbsp; |D_n| = 2n = <b id="ordVal">10</b></div>
+        <div>Drehwinkel = <b id="rotVal">0°</b> &nbsp;·&nbsp; <b id="mirVal">reine Drehung</b></div>
+        <div class="regime" id="symState">—</div>
+        <div class="desc">Drehe auf ein Vielfaches von 360/n° — das n-Eck sieht dann <em>gleich</em> aus (Symmetrie, grün). Das ist eine konkrete, tastbare Symmetriegruppe in der französischen Palette.</div>
+      </div>
+      <div class="readbox b">
+        <div class="rb-title">Das Monster (A-Seite)</div>
+        <div>Ordnung ≈ 8 × 10⁵³ &nbsp;·&nbsp; 196.883 Dimensionen</div>
+        <div class="regime" style="color:var(--mn-ok);">196884 = 196883 + 1</div>
+        <div class="desc">Dieselbe Idee, maximal: die j-Funktion (Zahlentheorie) wird von der Monster-Symmetrie bestimmt (Moonshine). Die kleine, tastbare Gruppe links und das Monster rechts sind die <em>selbe</em> Definition — „Transformation, nach der das Wesentliche gleich bleibt".</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Quelle A</span>
+      <h3><a href="../monster.html">monster.html</a></h3>
+      <p><small>„Die Monster-Gruppe – Visuell Erklärt": interaktive Reise von Symmetrie über Gruppen und einfache Gruppen („Symmetrie-Atome"), der Klassifikation (4 Familien + 26 sporadische, Happy Family + Parias) zum Monster (Ordnung ≈ 8 × 10⁵³, 196.883 Dimensionen) und Monstrous Moonshine (j-Funktion, Borcherds 1992).</small></p>
+    </div>
+    <div class="card">
+      <span class="tag b">Quelle B</span>
+      <h3><a href="../france.html">france.html</a></h3>
+      <p><small>„FRANKREICH ERLEBEN": rein interaktives, sensorisches Erlebnis ohne Text — Eiffelturm, Wein, Käse, Lavendel, Akkordeon, Baguette, Parfüm, Hahn, Lilie, Macaron, Seine; jede Sektion mit Click-/Scroll-Interaktion und generativen Zufallseffekten (Sterne, Krümel, Konfetti, Croissant-Regen, Web-Audio).</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion N1-060 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('vizCanvas');
+  if(!canvas||!canvas.getContext){return;}
+  var ctx=canvas.getContext('2d');
+  var nSlider=document.getElementById('nSlider');
+  var rotSlider=document.getElementById('rotSlider');
+  var mirrorBox=document.getElementById('mirrorBox');
+  var spinBtn=document.getElementById('spinBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var nLab=document.getElementById('nLab');
+  var rotLab=document.getElementById('rotLab');
+
+  var H=470, TAU=Math.PI*2;
+  var FRENCH=['#FF69B4','#98FB98','#DDA0DD','#F0E68C','#87CEEB','#FFA07A','#E6E6FA','#FFB6C1','#FFDAB9','#B0E0E6','#DEB887','#F5DEB3'];
+  var J=[1,744,196884,21493760,864299970,20245856256];
+  var MDIM=[1,196883,21296876,842609326,18538750076,190356155880];
+
+  var state={n:5, rot:0, mirror:false, spinning:false, raf:null};
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';}
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function label(t,x,y,color,font,align){ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align||'center';ctx.textBaseline='middle';ctx.fillText(t,x,y);}
+
+  function renderLeft(lx0,lx1,C){
+    var cx=(lx0+lx1)/2, cy=205, R=Math.min(118,(lx1-lx0)*0.30);
+    var n=state.n, step=360/n, rot=state.rot, rr=rot*Math.PI/180, m=state.mirror?-1:1;
+    var sym=isSymmetry();
+    label('TASTBARE GRUPPE  ·  D_n',cx,26,C.fg,'bold 14px Segoe UI, sans-serif');
+    label('französische Palette = die greifbare Seite',cx,46,C.dim,'12px Segoe UI, sans-serif');
+    ctx.strokeStyle=hexToRgba(C.A,0.16);ctx.lineWidth=1;
+    for(var g=0;g<n;g++){var ga=(TAU*g)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*1.16*Math.cos(ga),cy+R*1.16*Math.sin(ga));ctx.stroke();}
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(rr);ctx.scale(m,1);
+    if(sym){ctx.shadowColor=C.ok;ctx.shadowBlur=22;}
+    ctx.beginPath();
+    for(var i=0;i<n;i++){var a=(TAU*i)/n-Math.PI/2;var x=R*Math.cos(a),y=R*Math.sin(a);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.closePath();
+    ctx.strokeStyle=sym?C.ok:C.A;ctx.lineWidth=3;ctx.stroke();ctx.shadowBlur=0;
+    ctx.globalAlpha=0.07;ctx.fillStyle=C.A;ctx.fill();ctx.globalAlpha=1;
+    for(var i=0;i<n;i++){var a=(TAU*i)/n-Math.PI/2;var x=R*Math.cos(a),y=R*Math.sin(a);
+      ctx.beginPath();ctx.arc(x,y,9,0,TAU);ctx.fillStyle=FRENCH[i%FRENCH.length];ctx.fill();
+      ctx.lineWidth=1.5;ctx.strokeStyle=hexToRgba(C.fg,0.55);ctx.stroke();
+      var lx=(R+18)*Math.cos(a),ly=(R+18)*Math.sin(a);
+      label(String(i+1),lx,ly,C.dim,'12px monospace','center');}
+    ctx.restore();
+    ctx.beginPath();ctx.arc(cx,cy,3,0,TAU);ctx.fillStyle=C.gold;ctx.fill();
+    label('n = '+n,cx,cy+R+32,C.fg,'bold 15px Segoe UI, sans-serif');
+    label('|D_'+n+'| = 2n = '+(2*n)+'  (n Drehungen + n Spiegelungen)',cx,cy+R+52,C.dim,'12px Segoe UI, sans-serif');
+  }
+
+  function renderRight(rx2,rx3,C){
+    var cw=rx3-rx2, cx=(rx2+rx3)/2;
+    label('DAS MONSTER  ·  Moonshine',cx,26,C.fg,'bold 14px Segoe UI, sans-serif');
+    label('die abstrakte, tiefe Seite (196.883 Dimensionen)',cx,46,C.dim,'12px Segoe UI, sans-serif');
+    var rx0=rx2+22, rx1=rx3-22, baseY=320, topY=120;
+    var terms=5, maxLog=Math.log10(J[terms-1]+1), span=rx1-rx0, unit=span/terms;
+    var bw=Math.min(18,unit*0.34);
+    for(var i=0;i<terms;i++){
+      var x=rx0+i*unit;
+      var jh=(Math.log10(J[i]+1)/maxLog)*(baseY-topY);
+      var mh=(Math.log10(MDIM[i]+1)/maxLog)*(baseY-topY);
+      ctx.globalAlpha=0.85;ctx.fillStyle=C.A;ctx.fillRect(x+unit*0.16, baseY-jh, bw, jh);ctx.globalAlpha=1;
+      ctx.globalAlpha=0.85;ctx.fillStyle=C.A3;ctx.fillRect(x+unit*0.16+bw+3, baseY-mh, bw, mh);ctx.globalAlpha=1;
+      label('n='+i, x+unit*0.16+bw+1.5, baseY+14, C.dim,'10px monospace','center');
+    }
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(rx0,baseY);ctx.lineTo(rx1,baseY);ctx.stroke();
+    ctx.fillStyle=C.A;ctx.fillRect(rx0,96,12,9);label('j-Funktion',rx0+16,100,C.fg,'11px Segoe UI, sans-serif','left');
+    ctx.fillStyle=C.A3;ctx.fillRect(rx0+92,96,12,9);label('Monster-Dimension',rx0+108,100,C.fg,'11px Segoe UI, sans-serif','left');
+    label('196884  =  196883 + 1',cx,baseY+42,C.ok,'bold 13px monospace');
+    label('21493760  =  21296876 + 196883 + 1',cx,baseY+64,C.fg,'12px monospace');
+    label('Ordnung ≈ 8×10⁵³  ·  196.883 Dimensionen',cx,baseY+88,C.gold,'12px Segoe UI, sans-serif');
+    label('Borcherds (1992, Fields-Medaille) bewies die Verbindung',cx,baseY+108,C.dim,'11px Segoe UI, sans-serif');
+  }
+
+  function isSymmetry(){
+    var step=360/state.n, r=((state.rot%step)+step)%step;
+    return r<1.5 || (step-r)<1.5;
+  }
+
+  function render(){
+    if(!ctx)return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||700;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--mn-panel2');ctx.fillRect(0,0,W,H);
+    var C={A:cssVar('--mn-accent'),A3:cssVar('--mn-accent3')||cssVar('--mn-accent'),ok:cssVar('--mn-ok'),gold:cssVar('--mn-accent4')||'#b45309',fg:cssVar('--mn-fg'),dim:cssVar('--mn-dim'),border:cssVar('--mn-border')};
+    var gap=Math.min(24,W*0.03);
+    var lx0=12,lx1=(W-gap)/2,rx2=(W+gap)/2,rx3=W-12;
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W/2,64);ctx.lineTo(W/2,H-16);ctx.stroke();
+    label('Symmetrie  =  die Transformationen, unter denen das Wesentliche gleich aussieht',W/2,16,C.dim,'11px Segoe UI, sans-serif');
+    renderLeft(lx0,lx1,C);
+    renderRight(rx2,rx3,C);
+  }
+
+  function updateReadout(){
+    var n=state.n, step=360/state.n, r=((state.rot%step)+step)%step, sym=(r<1.5||(step-r)<1.5);
+    document.getElementById('nVal').textContent=n;
+    document.getElementById('ordVal').textContent=2*n;
+    document.getElementById('rotVal').textContent=state.rot.toFixed(0)+'°';
+    document.getElementById('mirVal').textContent=state.mirror?'Drehung + Spiegelung':'reine Drehung';
+    var st=document.getElementById('symState');
+    if(sym){st.textContent='✅ SYMMETRIE — das n-Eck sieht gleich aus';st.style.color=cssVar('--mn-ok');}
+    else{st.textContent='❌ keine Symmetrie — nächste bei k·'+step.toFixed(1)+'°';st.style.color=cssVar('--mn-boundary');}
+  }
+
+  function stop(){if(state.raf)cancelAnimationFrame(state.raf);state.raf=null;state.spinning=false;if(spinBtn)spinBtn.textContent='▶ Drehen';}
+  function spin(){
+    if(state.spinning){stop();return;}
+    stop();state.spinning=true;spinBtn.textContent='⏸ Stop';
+    (function step(){state.rot=(state.rot+0.8)%360;if(rotSlider)rotSlider.value=state.rot;if(rotLab)rotLab.textContent=state.rot.toFixed(0)+'°';render();updateReadout();state.raf=requestAnimationFrame(step);})();
+  }
+  function reset(){stop();state.n=5;state.rot=0;state.mirror=false;if(nSlider)nSlider.value=5;if(rotSlider)rotSlider.value=0;if(mirrorBox)mirrorBox.checked=false;if(nLab)nLab.textContent='5';if(rotLab)rotLab.textContent='0°';render();updateReadout();}
+
+  function refresh(){render();updateReadout();}
+
+  state.n=parseInt(nSlider.value,10);
+  state.rot=parseFloat(rotSlider.value);
+  state.mirror=mirrorBox.checked;
+
+  nSlider.addEventListener('input',function(){state.n=parseInt(nSlider.value,10);if(nLab)nLab.textContent=state.n;refresh();});
+  rotSlider.addEventListener('input',function(){state.rot=parseFloat(rotSlider.value);if(rotLab)rotLab.textContent=state.rot.toFixed(0)+'°';refresh();});
+  mirrorBox.addEventListener('change',function(){state.mirror=mirrorBox.checked;refresh();});
+  spinBtn.addEventListener('click',spin);
+  resetBtn.addEventListener('click',reset);
+
+  window.toggleTheme=function(){document.documentElement.classList.toggle('dark');render();};
+  window.addEventListener('resize',refresh);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+  refresh();
+})();
+</script>
+</body>
+</html>

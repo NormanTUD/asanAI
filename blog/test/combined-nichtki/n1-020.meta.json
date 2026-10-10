@@ -1,0 +1,17 @@
+{
+  "no": "020",
+  "a": "monoid.html",
+  "b": "adjunct_functor.html",
+  "a_title": "What is a Monoid? — Interactive Visual Explainer",
+  "b_title": "Adjoint Functors — Interactive Explorer",
+  "combined_theme": "monoid-adjunction-fusion",
+  "one_line": "A monoid is the shadow an adjunction casts when its two categories are glued into one: the identity element e is the identity morphism id, associativity is associativity of composition, and the free monoid L(X)=X* is the single object that is simultaneously a monoid (A) and the left adjoint of a forgetful functor (B).",
+  "contradictions": [
+    "Closure (sealed) vs boundary-crossing (open): A asserts closure — 'combining two elements always produces another element in the same set' (structure sealed in one set); B has no closure at all — L:𝒞→𝒟 and R:𝒟→𝒞 deliberately cross the boundary between two different categories, and the hom-set bijection IS that crossing.",
+    "Passive element vs active map: A's identity e is a do-nothing MEMBER of the set (a∘e=e∘a=a); B's neutral object is the identity morphism id, but id is only the SEED of the unit η_c:c→R(L(c)), which is explicitly NOT do-nothing ('the best approximation of c inside R's image').",
+    "Internal regrouping vs cross-boundary round-trip: A's core law is associativity (regrouping ONE operation on three elements is flexible); B's core laws are the triangle/zig-zag identities (a round trip through BOTH functors collapses to id — a rigidity across two operations forcing L and R to be inverses up to a canonical map).",
+    "Symmetric/self-contained vs asymmetric/two-sided: A presents the identity acting identically on both sides (a 'Swap (e∘a)' control, a∘e=e∘a); B is asymmetric by construction (L is 'free/left', R is 'forgetful/right', and L⊣R is not interchangeable with R⊣L)."
+  ],
+  "resolution": "A monoid is a category with ONE object: its operation is composition, its identity element e is the identity morphism id, and its associativity is associativity of composition. An adjunction is that one-object structure lifted across TWO interacting worlds, so e splits into unit η and counit ε ('what the identity becomes under a change of world') and associativity becomes the zig-zag. Each tension dissolves: closure = one object so no boundary to cross (the identity adjunction id⊣id on a one-object category); e = id in the collapsed world with η,ε = id transported across the boundary; associativity and the triangles are the same coherence family at two arities; asymmetry is exactly the information gained by having two different categories (A is the symmetric quotient). The free monoid L(X)=X* is the concrete bridge: a monoid under concatenation (identity=ε, associative) AND the left adjoint of the forgetful functor via Hom_Mon(L(X),M)≅Hom_Set(X,U(M)), with unit x↦[x] and counit=fold.",
+  "viz": "Interactive <canvas> (theme-reactive via CSS vars): LEFT = the word monoid L({a,b})={a,b}* (words of length ≤2) — click words to concatenate them and watch the identity ε; '⟳ Associativity' shows (x·y)·z = x·(y·z) on random words. RIGHT = the adjunction L⊣U made literal: the four functions f:{a,b}→{0,1} are in bijection with the four monoid homomorphisms L({a,b})→{0,1} (M={0,1},×,1) — clicking a chip highlights its unique partner through the ≅. Below: live unit η(x)=[x], counit ε(word)=fold by ×, and the triangle identity ε∘L(η)(w)=id(w) computed for any chosen word. All data inline, no network fetches, zero console errors."
+}

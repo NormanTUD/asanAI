@@ -1,0 +1,16 @@
+{
+  "no": "009",
+  "a": "mnist_foam/viewer.html",
+  "b": "inftytopoi.html",
+  "a_title": "MNIST Foam Viewer",
+  "b_title": "∞-Topoi — Interactive Visual Explorer",
+  "combined_theme": "higher-structure-of-flat-data",
+  "one_line": "A flat image and a point of a space are both cross-sections of a hidden higher structure: A's 3D brightness 'foam' is a depth-1 truncation of B's ∞-tower, unified as the moment expansion (support, mean, variance, skew) of each pixel's local brightness distribution, where A's augmentation residual Δ aug−raw is the measurable coherence-defect of a transform that B's exact functors idealize to zero.",
+  "contradictions": [
+    "Exhaustible vs unbounded: A (mnist_foam) treats the object as a finite, fully-renderable 28×28×64 voxel volume (ray-march / MIP / count every voxel, all visible at once), while B (inftytopoi) treats the structure as essentially infinite ('never stops') and hard-truncates at MAX_DEPTH=5 because the tower cannot terminate.",
+    "Static density vs relational gluing: A's object is a static voxel-count density cloud (structure = shape/mass of a fixed point set you slice and colour); B's objects are processes — local sections gluing into a global sheaf and functors mapping one layering to another (structure = how parts cohere, not their density).",
+    "Approximate/empirical vs exact/formal transform: A's augmentation (rotation+shift) is a lossy heuristic perturbation whose very Δ aug−raw variant proves it is NOT structure-preserving; B's morphisms/functors are exact, structure-preserving, coherent by axiom. Opposite stances on whether a transformation preserves structure."
+  ],
+  "resolution": "Read the object as a sheaf of local brightness distributions carrying a moment tower. (a) Truncation is the bridge: an ∞-structure is accessed only via finite windows — A is the k=1 window (2D→3D), B's graph a k=5 window; exhaustibility is an ideal, not a mode of access. (b) The density IS the stalk: each pixel's brightness histogram is a sheaf stalk; A's 2D field of them is a presheaf and B's gluing assembles stalks into the global digit (density vs glue = stalks vs global sections of one sheaf). (c) Augmentation is a functor up to defect: A's Δ aug−raw is the measured coherence-defect of a non-exact higher-morphism, while B's exact functors are the zero-defect ideal.",
+  "viz": "Self-contained 3D Canvas point-cloud (no CDN, no network): a synthetic digit-like ink field rendered as A's 3D (x, y, brightness-bin) 'foam'; an ∞-tower depth slider that walks up B's higher-morphism tower as moment strata (0=silhouette/MIP shadow, 1=+foam brightness axis, 2=+variance layer, 3=+skew layer, 4=all moments=full local distribution drawn as per-pixel columns); a 'Δ transform defect' toggle that applies a shear (augmentation) and overlays Δ aug−raw as ghost points (the transform's coherence-defect); drag-rotate + scroll-zoom + auto-rotate; theme-aware via CSS variables (reads --grid), inline generated data only, zero console errors."
+}

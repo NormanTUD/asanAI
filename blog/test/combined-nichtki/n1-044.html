@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unterscheidung &amp; Quality — Die Geburt der Form aus dem Ungeteilten</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}if(!s){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js" onerror="window.__temml_failed=true"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.min.css">
+<style>
+:root{
+  --bg:#faf8f1; --ink:#1f2430; --muted:#5a6272; --card:#ffffff; --card-ink:#1f2430;
+  --accent:#b5651d; --accent2:#2b6cb0; --line:#d8d2c4; --soft:#f0ece1;
+  --canvas-bg:#fffdf8; --grid:#e8e2d4; --ok:#2f8f4e; --warn:#c0392b;
+}
+html.dark{
+  --bg:#12151f; --ink:#e6e8ee; --muted:#9aa3b5; --card:#1a1f2e; --card-ink:#e6e8ee;
+  --accent:#f0a500; --accent2:#5aa9ff; --line:#2a3348; --soft:#161b28;
+  --canvas-bg:#0d1019; --grid:#232b3d; --ok:#5ecb83; --warn:#ff7a6b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Georgia','Times New Roman',serif;
+  background:var(--bg); color:var(--ink); line-height:1.75;
+  transition:background .3s,color .3s; overflow-x:hidden;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+h1{font-size:2.15em;line-height:1.2;margin:18px 0 6px;color:var(--ink);}
+.subtitle{color:var(--muted);font-size:1em;margin-bottom:6px;letter-spacing:.2px;}
+.lede{color:var(--muted);font-size:1.02em;margin-bottom:26px;font-style:italic;}
+section{margin:42px 0;scroll-margin-top:20px;}
+h2{font-size:1.5em;color:var(--accent);margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+h3{font-size:1.14em;color:var(--accent2);margin:22px 0 8px;}
+p{margin:0 0 14px;}
+p a,li a{color:var(--accent2);}
+ul{padding-left:22px;margin:0 0 14px;}
+li{margin-bottom:8px;}
+.card{background:var(--card);color:var(--card-ink);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0;}
+.card p:last-child{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-right:6px;vertical-align:middle;}
+.tag.a{background:rgba(181,101,29,.16);color:var(--accent);}
+.tag.b{background:rgba(43,108,176,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.formula{display:block;text-align:center;margin:14px 0;padding:12px;background:var(--soft);border-radius:8px;overflow-x:auto;}
+.insight{border-left:4px solid var(--accent);background:var(--soft);padding:12px 18px;border-radius:0 8px 8px 0;font-style:italic;margin:14px 0;color:var(--card-ink);}
+.insight b{font-style:normal;color:var(--accent);}
+table{border-collapse:collapse;margin:14px auto;font-size:.95em;width:100%;}
+th,td{border:1px solid var(--line);padding:7px 12px;text-align:center;}
+th{background:var(--soft);color:var(--accent);}
+.viz-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;}
+#cutCanvas{width:100%;height:auto;display:block;border-radius:8px;cursor:crosshair;background:var(--canvas-bg);border:1px solid var(--line);}
+.btnrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+button.btn{background:var(--accent);color:var(--bg);border:none;padding:9px 18px;border-radius:6px;font-size:.95em;font-weight:bold;cursor:pointer;font-family:inherit;}
+button.btn:hover{opacity:.9;transform:translateY(-1px);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:1em;}
+.prov{display:block;padding:10px 0;border-bottom:1px dashed var(--line);}
+.prov:last-child{border-bottom:none;}
+.prov .src{font-weight:bold;color:var(--accent2);}
+@media (max-width:560px){h1{font-size:1.6em;}article{padding:28px 16px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="Farbschema wechseln" onclick="toggleTheme()">◐</button>
+<article>
+
+<h1>Unterscheidung &amp; Quality</h1>
+<p class="subtitle">Fusion aus: lawsofform2.html ✕ zen_und_die_kunst_ein_motorrad_zu_warten.html</p>
+<p class="lede">Die Geburt der Form aus dem Ungeteilten — Spencer-Browns Kalkül der Unterscheidungen trifft auf PirSIGs Quality als „Schneide der Gegenwart".</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Texte drehen sich um denselben Urakt: eine <strong>Unterscheidung, die in ein Ungeteiltes gesetzt wird</strong>. Spencer-Brown (<em>Laws of Form</em>) leitet ab, dass „ein Universum entsteht, wenn ein Raum getrennt oder auseinandergenommen wird" — die in das Leere gezeichnete Mark ist der Ursprung aller Form und Logik. Pirsig (<em>Zen und die Kunst der Motorradwartung</em>) benennt denselben Ort anders: Quality ist das ungeteilte Ereignis, die „Schneide der Gegenwart", und die Analyse ist ein Messer, das dieses Ungeteilte in Kategorien schneidet.</p>
+<p>Die fusionierte These lautet: Es gibt <strong>ein einziges Ungeteiltes</strong> — Spencer-Browns Leeres (Void) und PirSIGs Quality sind zwei Namen desselben Grundes. Der Akt, eine Unterscheidung zu treffen (die Mark / der Schnitt), ist der eine Schöpfungsakt, aus dem die geordnete Welt von Formen und Kategorien hervorgeht. Derselbe Akt wird von zwei Seiten her gesehen: von der Seite der <strong>FORM</strong> ist er reine Erzeugung (er erzeugt Logik, Struktur, Kategorien); von der Seite der <strong>PRÄSENZ</strong> ist er ein Verlust (jeder Schnitt kostet ein Stück des ungeteilten Quality).</p>
+<p>„Gesetze der Form" und „Zen und die Kunst der Motorradwartung" sind zwei Gesichter eines einzigen Einsichts: <strong>Alles, was man denken oder reparieren kann, beginnt mit einem Schnitt — und jeder Schnitt ist zugleich Erschaffung und Verlust.</strong></p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+
+<h3>1. Ist die Unterscheidung ein Gewinn oder ein Verlust?</h3>
+<div class="card">
+<p><span class="tag a">A · Spencer-Brown</span> Die Unterscheidung ist der Urgrund und <em>reine Erzeugung</em>: „Ein Universum entsteht, wenn ein Raum getrennt oder auseinandergenommen wird." Der Trennungsakt ist der generative Urakt, aus dem alles Weitere (die gesamte Logik) folgt. Er ist formal und neutral — das einzige, was man braucht.</p>
+<p><span class="tag b">B · Pirsig</span> Der Schnitt ist ein <em>Abfall vom Echten</em>: Quality liegt <em>vor</em> der Teilung, und jede Analyse entfernt uns von der einen Wahrheit („wenn man sich durch Anwendung wissenschaftlicher Methode auf unveränderliche Wahrheit zubewegt, bewegt man sich tatsächlich von ihr weg"). Die Unterscheidung ist also ein Verlust, kein Gewinn.</p>
+<p><span class="tag x">Spannung</span> Der Urakt ist bei A die Quelle alles Guten, bei B der Beginn des Abfalls.</p>
+</div>
+
+<h3>2. Ist der Grund leer oder gefüllt?</h3>
+<div class="card">
+<p><span class="tag a">A · Spencer-Brown</span> Das Leere (unmarkierter Zustand) ist buchstäblich <em>Nichts</em> — „leerer Raum", neutral, leer. Die Form besteht nur in der Mark, die in diese Leere gezeichnet wird.</p>
+<p><span class="tag b">B · Pirsig</span> Das Grund (Quality) ist das „Ganze", das <em>Vollste</em> — erfüllt von unmittelbarer Erscheinung, Gefühl und Ästhetik. Es ist eine Fülle, kein Leerzustand.</p>
+<p><span class="tag x">Spannung</span> Derselbe ungeteilte Grund ist bei A leeres Nichts, bei B volle Präsenz.</p>
+</div>
+
+<h3>3. Lässt sich das Ganze aus dem Akt formal ableiten?</h3>
+<div class="card">
+<p><span class="tag a">A · Spencer-Brown</span> <em>Ja</em> — die gesamte Aussagenlogik (Boolesche Algebra) lässt sich aus den zwei Axiomen ableiten; das formale System ist geschlossen und vollständig.</p>
+<p><span class="tag b">B · Pirsig</span> <em>Nein</em> — je mehr man formalisiert und analysiert, desto mehr Hypothesen entstehen, nicht weniger; die klassische/formale Schneise erfasst Quality nicht.</p>
+<p><span class="tag x">Spannung</span> A hält das formale System für vollständig; B hält Formalisierung für reduktiv und divergent.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<h3>1. Ein Akt, zwei Seiten (eine Münze)</h3>
+<p>Die Unterscheidung erzeugt Form (A) <em>und</em> verlässt zugleich das Ungeteilte (B) — das ist kein Widerspruch, sondern zwei Register desselben Akts. <strong>Fusioniert:</strong> Der Schnitt ist zugleich Ursprung aller Form <em>und</em> Ursprung aller Entfremdung vom Ungeteilten. Weisheit besteht darin, zu wissen, in welchem Register man gerade arbeitet — im Moment des Bauens denkt man in A (Erzeugung), im Moment des Wartens in B (Präsenz).</p>
+
+<h3>2. Leere und Fülle sind dieselbe Grundfläche, zwei Beschreibungen</h3>
+<p>Das formale Leere (A) ist der Grund, <em>wenn man ihm jede Form abzieht</em>; Quality (B) ist derselbe Grund, <em>gesehen von der Seite der unmittelbaren Erscheinung</em>. Der Grund ist weder leeres Nichts noch volle Fülle, sondern <em>undeterminiert</em> — seine „Farbe" hängt vom Register ab (formal: Leere; erfahrungsmäßig: Fülle). Die Mark wird in <em>dieselbe</em> Fläche gezeichnet, unabhängig davon, wie man sie nennt.</p>
+
+<h3>3. Vollständigkeit ist domänenrelativ</h3>
+<p>Spencer-Browns Kalkül ist vollständig <em>als Kalkül der FORM</em> — er leitet die ganze Aussagenlogik ab, ein abgeschlossenes symbolisches System. PirSIGs Kritik zielt auf Wirklichkeit und Wissen, nicht auf die interne Konsistenz der Logik: Das formale System modelliert die <strong>FORM-Seite</strong>, nicht die <strong>QUALITY-Seite</strong>. <strong>Fusioniert:</strong> Ein formales Kalkül der Unterscheidungen ist über der Form vollständig, aber über dem Quality offen und unausschöpfbar. „Vollständig" gilt nur innerhalb des Formalen.</p>
+
+<div class="insight"><b>Gesamtfolgerung:</b> Die Unterscheidung ist der eine Urakt. Sie ist domänenrelativ generativ (Form) und zugleich eine Abwendung (Präsenz). Das Ungeteilte ist weder leer noch voll, sondern undeterminiert. Ein formales System der Form ist vollständig — Quality bleibt ihm als die <em>andere</em> Seite des Grundes voraus.</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>Seite A — Spencer-Brown: der Kalkül der Unterscheidungen</h3>
+<p>Alles beginnt mit dem <strong>Leeren</strong> (Void, unmarkierter Zustand). Der Urakt ist die <strong>Unterscheidung</strong>: man zeichnet eine Grenze und erzeugt damit Innen (markiert) und Außen (unmarkiert). Die Grenze wird die <strong>Mark</strong> (⌐) genannt. Aus ihr folgen genau zwei Axiome:</p>
+<div class="formula" id="ax1">⌐ ⌐ = ⌐ &nbsp;&nbsp;(Ruf: doppelte Mark = einfache Mark)</div>
+<div class="formula" id="ax2">⌐(⌐) = ∅ &nbsp;&nbsp;(Kreuzen: doppelte Kreuzung hebt sich auf)</div>
+<p>Daraus ein vollständiger Kalkül: eine <em>leere</em> Mark ist <strong>markiert</strong>; eine Mark, die <em>Markiertes</em> enthält, wird durch Kreuzung <strong>unmarkiert</strong>; Juxtaposition folgt der <strong>Dominanzregel</strong> (wenn ein Teil markiert ist, ist der Raum markiert). Die gesamte Aussagenlogik ist eine Interpretation dieses Kalküls:</p>
+<table>
+<tr><th>Operator</th><th>Form</th><th>Bedeutung</th></tr>
+<tr><td>NOT a</td><td>⌐(a)</td><td>a in eine Mark setzen</td></tr>
+<tr><td>a OR b</td><td>a&thinsp;b</td><td>nebeneinander, Dominanz</td></tr>
+<tr><td>a AND b</td><td>⌐(⌐a&thinsp;⌐b)</td><td>doppelte Negation</td></tr>
+<tr><td>a → b</td><td>⌐(a&thinsp;⌐b)</td><td>falsch nur bei a=W, b=F</td></tr>
+<tr><td>a NAND b (Sheffer)</td><td>⌐(a&thinsp;b)</td><td>allein baut er die ganze Logik</td></tr>
+</table>
+<p>Spencer-Brown: „Boolesche Algebra ist nur eine Interpretation seines Kalküls"; aus einer Unterscheidung entsteht ein Universum.</p>
+
+<h3>Seite B — Pirsig: Quality, das Messer und die Explosion</h3>
+<p><strong>Quality</strong> ist kein Ding, sondern ein <em>Ereignis</em> — der Moment vor der Trennung von Subjekt und Objekt, die „Schneide der Gegenwart". Die Welt spaltet sich in zwei Sichtweisen: <strong>klassisch</strong> (zugrunde liegende Form, Struktur, Analyse) und <strong>romantisch</strong> (unmittelbare Erscheinung, Gefühl, Intuition). Quality ist die Quelle von beidem.</p>
+<p>Die Analyse arbeitet wie ein <strong>Messer</strong>: jeder Schnitt erzeugt Kategorien — aber Kategorien sind <em>keine</em> Realität, sondern Entscheidungen darüber, wie man schneidet („jede Klassifikation ist eine menschliche Erfindung, kein Naturgesetz"). Phædrus' Entdeckung: die Anzahl rationaler Hypothesen ist <em>unendlich</em> und wächst mit jedem Experiment — Wissenschaft multipliziert, statt zu konvergieren. Dazu: <strong>Gumption</strong> (Treibstoff), <strong>Stuckness</strong> (der Wert des Feststeckens als Vorläufer des Verstehens), <strong>Seelenfrieden</strong> (Material und Gedanke werden eins). Schluss: „Das echte Motorrad, an dem du arbeitest, ist ein Motorrad namens ‚du selbst'."</p>
+
+<h3>Die fusionierte Verknüpfung</h3>
+<ul>
+<li><strong>Die Mark (A) ist der Schnitt des Messers (B)</strong> — derselbe Grenzakt.</li>
+<li><strong>Das Leere (A) ist das Ungeteilte vor dem ersten Schnitt (B)</strong> — derselbe Grund.</li>
+<li><strong>Die zwei Axiome (A) sind die zwei verfügbaren Züge des Schneiders (B)</strong>: Ruf (⌐⌐=⌐) — zwei gleiche Schnitte erzeugen keinen neuen Zustand; Kreuzen (⌐(⌐)=∅) — ein doppelter Schnitt hebt sich auf.</li>
+<li><strong>Das 2ⁿ-Wachstum der Kategorien (B) ist der formale Schatten der Unterscheidung (A)</strong>: jede Unterscheidung verdoppelt die möglichen Zustände — genau das, was die Dominanz-/Juxtapositionsregeln der Mark erzeugen.</li>
+<li><strong>Die Spannung wird formalisierbar:</strong> ein einziger Eingangsparameter <em>C</em> (Anzahl der Unterscheidungen) steuert zwei Ausgangsgrößen — die Präsenz <span style="color:var(--accent2)">Q = Q₀·e^(−k·C)</span> (sinkt) und die Struktur <span style="color:var(--accent)">F = 100·(1 − e^(−k′·C))</span> (steigt).</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung — Das Ungeteilte schneiden</h2>
+<p>Der Punktewolke entspricht das Ungeteilte (Quality / das Leere). <strong>Klicke in das Feld</strong>, um Unterscheidungen (Schnitte) zu setzen. Jeder Schnitt färbt die Punkte neu ein (2ⁿ Kategorien — der formale Schatten) und verändert zugleich zwei Größen: die <span style="color:var(--accent2)">Präsenz (Quality)</span> nimmt ab, die <span style="color:var(--accent)">Form/Struktur</span> nimmt zu. Derselbe Akt, zwei Folgen — die Fusion in einem Bild.</p>
+
+<div class="formula" id="vizmath">Q = Q₀·e^(−k·C) &nbsp;&nbsp;|&nbsp;&nbsp; F = 100·(1 − e^(−k′·C)) &nbsp;&nbsp;(k = 0,35; k′ = 0,5)</div>
+
+<div class="viz-box">
+<canvas id="cutCanvas" width="720" height="420"></canvas>
+<div class="btnrow">
+<button class="btn" id="cutReset">↺ Neu (Ungeteiltes)</button>
+<span id="cutHint" style="color:var(--muted);font-size:.9em;">Klicken = Unterscheidung / Schnitt setzen.</span>
+</div>
+</div>
+<div class="insight"><b>Was du siehst:</b> Je mehr du schneidest, desto klarer wird die Struktur (Form↑) — und desto matter wird die unmittelbare Präsenz (Quality↓). Spencer-Brown würde sagen: Du baust ein Universum. Pirsig würde sagen: Du entfernst dich vom Motorrad „da draußen". Beides ist derselbe Handgriff.</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<span class="prov"><span class="src">A — <a href="../lawsofform2.html">lawsofform2.html</a></span><br>G. Spencer-Brown, <em>Laws of Form</em> (1969), interaktiv: Leeres, Mark, die zwei Axiome (Ruf/Kreuzen) und die Ableitung der Aussagenlogik.</span>
+<span class="prov"><span class="src">B — <a href="../buecher/zen_und_die_kunst_ein_motorrad_zu_warten.html">zen_und_die_kunst_ein_motorrad_zu_warten.html</a></span><br>Robert M. Pirsig, <em>Zen und die Kunst der Motorradwartung</em>, interaktiv: Quality als Ereignis, das analytische Messer, Hypothesen-Explosion, Gumption, Stuckness.</span>
+</section>
+
+</article>
+
+<script>
+function toggleTheme(){
+  var d=document.documentElement;
+  var dark=d.classList.toggle('dark');
+  try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+}
+function renderMath(id, tex, fallback){
+  var el=document.getElementById(id); if(!el) return;
+  try{ if(window.temml && !window.__temml_failed){ el.innerHTML=temml.renderToString(tex,{displayMode:true}); return; } }catch(e){}
+  el.textContent=fallback||tex;
+}
+window.addEventListener('DOMContentLoaded', function(){
+  renderMath('ax1', String.raw`\ulcorner\!\ulcorner \;=\; \ulcorner`, '⌐ ⌐ = ⌐   (Ruf)');
+  renderMath('ax2', String.raw`\ulcorner\ulcorner\lrcorner\lrcorner \;=\; \varnothing`, '⌐(⌐) = ∅   (Kreuzen)');
+  renderMath('vizmath', String.raw`Q = Q_{0}\,e^{-k\,C} \qquad F = 100\left(1-e^{-k'\,C}\right)`, 'Q = Q0·e^(-k·C) | F = 100·(1-e^(-k\'·C))');
+});
+
+(function(){
+  var canvas=document.getElementById('cutCanvas');
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height;
+  var points=[], cuts=[], N=1000, K=0.35, Kp=0.5;
+  var hues=[38,18,330,200,210,265,150,60,280,120,230,25,45,190,255,350];
+  function css(n){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v;}
+  function init(){
+    points=[];
+    for(var i=0;i<N;i++) points.push({x:Math.random(),y:Math.random(),r:0});
+  }
+  function assign(){
+    cuts.forEach(function(c,ci){
+      for(var i=0;i<points.length;i++){
+        var p=points[i];
+        var dx=p.x-c.x, dy=p.y-c.y;
+        var side=dx*Math.sin(c.angle)+dy*Math.cos(c.angle);
+        if(side>0) p.r=p.r|(1<<ci);
+      }
+    });
+  }
+  function gauge(x,y,w,h,val,label,color){
+    ctx.fillStyle='rgba(127,127,127,0.22)'; ctx.fillRect(x,y,w,h);
+    ctx.fillStyle=color; ctx.fillRect(x,y,w*Math.max(0,Math.min(100,val))/100,h);
+    ctx.fillStyle=css('--muted')||'#9aa3b5'; ctx.font='11px Georgia'; ctx.textAlign='left';
+    ctx.fillText(label+' '+val.toFixed(0)+'%', x, y-5);
+  }
+  function draw(){
+    ctx.fillStyle=css('--canvas-bg')||'#0d1019'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=css('--grid')||'#232b3d'; ctx.lineWidth=1;
+    for(var gx=0;gx<=W;gx+=50){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(var gy=0;gy<=H;gy+=50){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+    for(var i=0;i<points.length;i++){
+      var p=points[i];
+      ctx.fillStyle='hsl('+hues[p.r%hues.length]+',72%,60%)';
+      ctx.fillRect(p.x*W,p.y*H,2,2);
+    }
+    var accent=css('--accent')||'#f0a500';
+    ctx.lineWidth=2;
+    cuts.forEach(function(c){
+      ctx.strokeStyle=accent; ctx.beginPath();
+      var len=1400;
+      ctx.moveTo(c.x*W-len*Math.cos(c.angle), c.y*H-len*Math.sin(c.angle));
+      ctx.lineTo(c.x*W+len*Math.cos(c.angle), c.y*H+len*Math.sin(c.angle));
+      ctx.stroke();
+    });
+    var C=cuts.length;
+    var quality=100*Math.exp(-K*C);
+    var form=100*(1-Math.exp(-Kp*C));
+    var cats=Math.min(Math.pow(2,C),64);
+    gauge(24,34,240,13,quality,'Quality (Ungeteilt)',css('--accent2')||'#5aa9ff');
+    gauge(24,64,240,13,form,'Form / Struktur (Logik)',accent);
+    ctx.fillStyle=css('--muted')||'#9aa3b5'; ctx.font='13px Georgia'; ctx.textAlign='left';
+    ctx.fillText('Schnitte: '+C+'   Kategorien: '+cats+'   Q: '+quality.toFixed(0)+'%   F: '+form.toFixed(0)+'%', 24, 100);
+    ctx.fillStyle=css('--ink')||'#e6e8ee'; ctx.font='12px Georgia';
+    ctx.fillText('Jeder Schnitt = eine Unterscheidung: erzeugt Form, kostet Präsenz.', 24, H-14);
+  }
+  canvas.addEventListener('click',function(e){
+    var rect=canvas.getBoundingClientRect();
+    var x=(e.clientX-rect.left)/rect.width;
+    var y=(e.clientY-rect.top)/rect.height;
+    x=Math.max(0,Math.min(1,x)); y=Math.max(0,Math.min(1,y));
+    cuts.push({x:x,y:y,angle:Math.random()*Math.PI});
+    for(var i=0;i<points.length;i++) points[i].r=0;
+    assign(); draw();
+  });
+  var rb=document.getElementById('cutReset');
+  if(rb) rb.addEventListener('click',function(){
+    cuts=[]; for(var i=0;i<points.length;i++) points[i].r=0; draw();
+  });
+  new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  init(); draw();
+})();
+</script>
+</body>
+</html>

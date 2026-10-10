@@ -1,0 +1,15 @@
+{
+  "no": "035",
+  "a": "christoffel.html",
+  "b": "pullback.html",
+  "a_title": "Christoffel Symbols — Visual Explorer",
+  "b_title": "Der Pullback in der Differentialtopologie",
+  "combined_theme": "pullback-feeds-christoffel-pipeline",
+  "one_line": "Christoffel-Symbole entstehen nicht aus dem Nichts: Die Metrik einer eingebetteten Fläche ist der Pullback ι*g_E der flachen Umgebungsmetrik, und deren Ableitungen ergeben die Christoffel-Symbole — Pullback (B) liefert den Input, Differenzierung (A) den Verarbeitungsschritt, Integration liefert Transport und Geodäten.",
+  "contradictions": [
+    "Transportrichtung: A zentriert kontravariante Vektor-/Basisobjekte, die vorwärts entlang der Geometrie laufen (dφ schiebt Tangentialvektoren in Richtung der Karte); B zentriert kovariante Differentialformen (inkl. Metrik), die rückwärts gezogen werden (φ* läuft N→M, gegen die Karte). Dieselbe lineare Abbildung dφ, entgegengesetzte Rolle.",
+    "Fundamentaler Input: A behandelt die Metrik g als gegebenes Primär-Objekt (man justiert g11,g22,g12) und leitet Γ, Transport und Geodäten daraus ab; B behandelt die Metrik als abgeleitetes Objekt (induzierte Metrik einer Einbettung = ι*g, ein Pullback einer Umgebungsmetrik) — B demotiert damit A's Primär-Objekt zur abgeleiteten Größe."
+  ],
+  "resolution": "dφ spielt beides: es ist Push-Forward von Vektoren (vorwärts) und der Kern des Pullbacks von Formen (rückwärts) — dieselbe Abbildung auf dualen Räumen; A und B lösen dasselbe Grundproblem (Tangentialräume an verschiedenen Punkten sind verschiedene Vektorräume) — A mit dem Zusammenhang/Christoffel auf der Vektorseite, B mit dem Pullback auf der Formenseite. Und die von A abgeleitete Metrik ist für eingebettete Flächen genau B's Pullback: A's Demo-4-Formel g11=1+hx^2, g12=hx*hy, g22=1+hy^2 ist symbolisch B's ι*(du^2+dv^2+dw^2). Fusionierte Kette: Umgebungsmetrik g_E → Pullback ι* → Flächelmetrik g → Ableitung → Christoffel Γ → Paralleltransport & Geodäten; einziger Input ist die flache Umgebungsmetrik plus die Einbettung.",
+  "viz": "2D-Canvas: eine Graphfläche z=h(x,y) (wellenförmig / Gauß-Wulst / flach) mit Höhenfärbung; ein ziehbarer Punkt zeigt den Einheitskreis der induzierten Metrik g=ι*g_E als Ellipse (B, Pullback), den Gradienten (hx,hy) und die Koordinatenbasis; HTML-Readout zeigt g11,g22,g12, det(g), den Basiswinkel und numerisch (zentral differenziert) berechnete Christoffel-Symbole Γ111, Γ122, Γ212 (A). Themenbewusst, alle Daten inline, kein Netzwerk."
+}

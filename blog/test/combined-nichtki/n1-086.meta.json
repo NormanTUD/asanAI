@@ -1,0 +1,18 @@
+{
+  "no": "086",
+  "a": "voidstar.html",
+  "b": "understanding.html",
+  "a_title": "VOIDST★R — Eine interaktive Reise (Album-Analyse: Grim Salvo × Witchhouse 40k)",
+  "b_title": "Understanding Understanding (interaktive Epistemologie des Verstehens)",
+  "combined_theme": "verstehen-als-verfall",
+  "one_line": "Verstehen ist kein Besitz, sondern ein Kreislauf: Rauschen wird zu einem tragenden Kern komprimiert (Verfall), aus dem neues wächst (Regeneration) — B's 'To understand is to compress' und A's 'growing from the ground' sind derselbe Operator.",
+  "contradictions": [
+    "Transformation: B (understanding) sieht jede Stufenerhöhung als Fortschritt bis 'Creation' (Netto-Gewinn, 'deepest understanding of all'); A (voidstar) sieht die Verwandlung als Aufgabe ohne Gegenwert — 'I did what I was supposed to. It's not fair.', das Ritual ändert nichts, Ende ist Warten.",
+    "Verbindung: B behauptet, Verstehen beginnt mit dem Verknüpfen isolierter Fakten zu Netzwerken (mehr Kanten = mehr Verstehen); A lässt den Sprecher Verbindungen durchtrennen ('I cut my ties', 'cut it all down') — die zärtlichste Zeile kommt aus dem Alleinsein, der Coven ist eine Gemeinschaft der Toten.",
+    "Körper: B preist 'Embodied Intuition' ('your body understands gravity before your mind does') als legitimes Sinnesorgan; A macht den Körper zum Verfallsort ('Flies living inside of your eyes', 'no reflection in the mirror, I don't know myself') — eine Wunde, kein Instrument.",
+    "Kompression: B definiert Kompression als Gewinn/Befreiung (viele Beobachtungen auf wenige Prinzipien); A erlebt dieselbe Reduktion als Verlust der Identität (Fleisch wird Knochen, das Selbst komprimiert bis zur Unkenntlichkeit).",
+    "Agency: B ist aktiv — 'You just experienced understanding by doing' (klicken, rotieren, vorhersagen); A ist passiv/gezwungen — 'Wir tanzen alle. Wir wissen nicht warum. Wir können nicht aufhören.' (Zwang, die Flut 'kommt', der Regen hört nicht auf)."
+  ],
+  "resolution": "Kein Widerspruch ist ein Logikbruch — jeder ist derselbe Operator auf anderer Skala/anderem Objekt. (1) B's Transformation ist lokal & sicher (rührt Identität nicht an → Gewinn), A's ist global & identitätsdurchgreifend (→ Verlust): Verstehen ist der Moment, in dem die sichere Kompression tief genug wird, um das Selbst zu treffen. (2) Durchtrennen ist negative Verbindung — der komprimierteste Zustand (A's 'float without pain') ist der auf ein Node reduzierte Graph; B's Transfer fügt Kanten, A's 'cut my ties' löscht sie — beide editieren denselben Graphen. (3) Der Körper ist zugleich Leser und Text: A's 'I don't know myself' ist ein gebrochenes B-Selbst-Modell. (4) Kompression ist selektiv — B wirft Details weg (Befreiung), A die Identität (Verlust); Verstehen = wählen, was man behält. (5) Jedes bewusste Verstehen beginnt unwillkürlich (das Aha ist Bewegt-Werden); die Tanzwut ist die unwillkürliche Kompression, das Aha die freiwillige — Tiefe holt Agency vom Zwang zurück, indem man den Tanz bennt (SLEUTH).",
+  "viz": "Selbstgeschriebene Canvas-Partikel-Simulation des fusionierten Kreislaufs 'Rauschen → Kompression/Verfall → Kern (VOIDSTAR) → Regeneration', steuerbar über drei Regler (Kompression/Verfall, Regeneration/Wachstum, Rauschen/Flut als Fehlschlagmodus). Zeigt Kompressionsrate (= B's 'understood'/Kolmogorov), Struktur, Flut und die aktuelle Phase; theme-aware über CSS-Variablen; alle Daten inline."
+}

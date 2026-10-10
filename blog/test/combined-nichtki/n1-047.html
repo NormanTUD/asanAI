@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Ansteckende Attraktoren – Konflikte &amp; Sagen</title>
+<style>
+:root{
+  --bg:#f6f4ee; --card:#fffefb; --ink:#211f26; --muted:#6b6876;
+  --border:#e5e1d6; --accent:#b23a5e; --accent2:#2f6f6a;
+  --viz-cold:#efece4; --viz-hot:#b23a5e; --code:#f0ede4;
+}
+html.dark{
+  --bg:#0d0f14; --card:#161a22; --ink:#e8eaf0; --muted:#9aa0ad;
+  --border:#262c37; --accent:#ff5a7d; --accent2:#39c0b3;
+  --viz-cold:#10141b; --viz-hot:#ff5a7d; --code:#111722;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:Georgia,'Iowan Old Style',serif;line-height:1.6}
+body{transition:background .25s,color .25s}
+article{max-width:820px;margin:0 auto;padding:40px 22px 80px}
+h1{font-size:clamp(1.9rem,4.5vw,2.9rem);line-height:1.15;margin:0 0 6px;
+  letter-spacing:.2px;color:var(--accent)}
+.subtitle{color:var(--muted);font-style:italic;margin:0 0 8px;font-size:.95rem}
+.lead{font-size:1.12rem;color:var(--ink);border-left:3px solid var(--accent2);
+  padding:10px 16px;margin:26px 0;background:var(--card);border-radius:0 8px 8px 0}
+section{margin:44px 0;padding:26px;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;scroll-margin-top:20px}
+section h2{margin-top:0;color:var(--accent);font-size:1.5rem;border-bottom:1px solid var(--border);
+  padding-bottom:8px}
+section h3{color:var(--accent2);margin:22px 0 8px;font-size:1.1rem}
+p{margin:12px 0}
+ul{margin:10px 0;padding-left:22px}
+li{margin:7px 0}
+.muted{color:var(--muted)}
+.kicker{color:var(--accent2);font-weight:bold;text-transform:uppercase;font-size:.72rem;
+  letter-spacing:.08em}
+.formula{background:var(--code);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;margin:12px 0;font-family:'Cambria Math','STIX Two Math',Georgia,serif;
+  font-size:1.06rem;overflow-x:auto;color:var(--ink)}
+.formula i{font-style:italic}
+sup,sub{font-size:.72em}
+.tag{display:inline-block;background:var(--accent);color:#fff;padding:1px 9px;border-radius:12px;
+  font-size:.74rem;font-weight:bold;margin:2px 3px 2px 0;font-family:system-ui,sans-serif}
+.tag.b{background:var(--accent2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px}
+.card h4{margin:0 0 8px;color:var(--accent);font-size:1rem}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg);color:var(--accent2)}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:14px 0;
+  padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border)}
+.controls label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);
+  font-family:system-ui,sans-serif;min-width:130px}
+input[type=range]{width:170px;accent-color:var(--accent)}
+button{cursor:pointer;background:var(--accent);color:#fff;border:none;padding:8px 14px;
+  border-radius:8px;font-weight:bold;font-family:system-ui,sans-serif;font-size:.85rem}
+button.sec{background:var(--accent2)}
+button:hover{filter:brightness(1.1)}
+canvas{display:block;background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  max-width:100%;margin:10px auto}
+.readout{font-family:system-ui,sans-serif;font-size:.9rem;margin-top:6px}
+.readout b{font-size:1.2rem}
+.note{font-size:.85rem;color:var(--muted);font-style:italic}
+.themebtn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--ink);
+  border:1px solid var(--border)}
+a{color:var(--accent2)}
+footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);
+  font-size:.85rem}
+</style>
+</head>
+<body>
+<button class="themebtn" onclick="toggleTheme()">☾ / ☀</button>
+<article>
+
+<h1>Ansteckende Attraktoren</h1>
+<p class="subtitle">Wie ein Konflikt und eine Sage exakt dieselbe Dynamik haben –
+Fusion aus: dynamische_systeme_und_konflikte.html ✕ brednich.html</p>
+
+<p class="lead"><span class="kicker">Kurzformel</span><br>
+<strong>Wahrheit impft, Feedback erhält.</strong> Der reale (wenn auch kleine) Kern ist nur der
+Impfstoff; erst das selbstverstärkende Feedback-System hält den Zustand am Leben –
+unabhängig davon, ob der Kern danach noch „wahr" bleibt.</p>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Papiere beschreiben unabhängig voneinander <strong>dasselbe Objekt</strong>: einen
+<strong>selbstorganisierenden, selbstverstärkenden, schwellen-gesteuerten Attraktor</strong>, der sich
+in einem gekoppelten soziales System <em>ansteckungsartig</em> ausbreitet, von einem kleinen
+reellen Kern eingesät wird und sich über seine eigene Rückkopplungsstruktur aufrechterhält –
+länger, als der ursprüngliche Anlass existiert.</p>
+<p>Papier&nbsp;A modelliert das mit <em>Konflikten</em>: Emotionale Zustände rollen in ein Tal
+(eine <em>Attraktor-Landschaft</em>), kompetitives Verhalten erzeugt kompetitive Orientierung, die
+wiederum kompetitives Verhalten verstärkt (Deutschs „Crude Law") – und selbst nach Entfernung
+der Ursache <em>reinstalliert</em> sich der Konflikt. Papier&nbsp;B beschreibt exakt das gleiche
+Muster, nur mit <em>Sagen</em>: eine Geschichte „verhält sich genau wie ein Gerücht", breitet sich
+in <em>Ansteckungswachstum</em> aus, wird für wahr gehalten und hält sich – auch wenn sie fast nie
+tatsächlich passiert ist.</p>
+<p>Die fusionierte Position: <strong>Ein Konflikt und eine moderne Sage sind dieselbe
+Dynamik in zwei Gewändern.</strong> A liefert den formalen Apparat (Attraktoren,
+Differentialgleichungen, Bifurkation, Hysterese), B liefert die qualitative Seele (der plötzliche
+„Bruch", die FoaF-Kette, das „Fünkchen Wahrheit", der Medien-Rücklauf). Zusammen ergeben sie ein
+einheitliches Modell, das wir <em>Ansteckender Attraktor</em> nennen: ein stabiler soziales
+Zustand, der durch einen kleinen wahren Samen angelegt und durch ein Feedback-System
+selbsterhaltend getragen wird.</p>
+</section>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+<p>Die beiden stehen sich an mehreren echten Punkten gegenüber – keine erfundenen, sondern
+konkrete, im Text verankerte Haltungen:</p>
+
+<h3>W1 · Stetiges Kontinuum vs. plötzlicher Bruch</h3>
+<p>A modelliert Konflikte als <em>stetige</em> Bewegung: Differentialgleichungen, sanfte
+Gradienten, eine Kugel, die „immer ins Tal" rollt. Der qualitative Sprung ist bei A nur ein
+<em>Sonderfall</em> (Nichtlinearität/Katastrophe mit Hysterese). B macht genau diesen Sprung zum
+<em>Kern</em>: Die Anatomie jeder Sage ist der Dreischritt Alltag → <strong>„Bruch ins Unerhörte"</strong>
+→ Pointe. Der Bruch ist bei B nicht ein emergentes Randphänomen, sondern das <em>konstituierende</em>
+Element. A sucht die Dynamik in der Glätte, B in der Diskontinuität.</p>
+
+<h3>W2 · Normativ-heilend vs. wertfrei-feiernd</h3>
+<p>A ist <em>preskriptiv</em>: Es existiert, um Konflikte <strong>aufzulösen</strong>
+(„Friedensdynamik", Attraktor-Dekonstruktion, „nachhaltiger Frieden"). Der stabile
+Konflikt-Attraktor ist dort eine <em>Pathologie, aus der man hinauswill</em>. B hat <em>kein Ziel
+und kein Heilmittel</em>: Der stabile, weithin geglaubte Sage-Zustand ist dort kein Problem, sondern
+das faszinierende Objekt – „spiele, klicke, wundere dich". A will die Schleife brechen; B
+feiert sie.</p>
+
+<h3>W3 · Starker Agent vs. entlasteter Übermittler</h3>
+<p>A sagt: „Eine Gruppe allein kann durch Strategiewechsel beide Dynamiken ändern" – der
+Einzelne ist eine <em>potente Stellgröße</em>, ein Hebel, der das ganze System verschiebt. B tut das
+Gegenteil: Die FoaF-Kette <em>entlässt</em> den Erzähler aus der Verantwortung („der Erzähler ist
+völlig raus aus der Verantwortung", er hat nichts erlebt). Bei A ist der Akteur ein Hebel, bei B ein
+passiver Kanal.</p>
+
+<h3>W4 · Wirkliche Zustände vs. wahrheitsentkoppelte Inhalte</h3>
+<p>A setzt voraus, dass die Zustandsgrößen <em>echte</em> (messbare) emotionale Zustände realer
+Gruppen sind. B koppelt Wahrheit von Ausbreitung ausdrücklich ent: „Ob nun so etwas tatsächlich
+passiert oder ob es sich die Betroffenen nur einbilden, ist <em>nebensächlich</em>. Es wirkt
+jedenfalls" (Hohler). A modelliert Wirkliches; B funktioniert <em>obwohl</em> der Inhalt
+(un-)wahr ist.</p>
+</section>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+
+<h3>W1 → Der Bruch <em>ist</em> die Katastrophe</h3>
+<p>A's nichtlineares Regime (lange Resistenz, dann plötzlicher Umschlag, Hysterese) ist
+mathematisch <em>genau</em> B's „Bruch". Die Diskontinuität ist keine Ausnahme zur Dynamik, sondern
+die <em>Signatur eines flachen Beckens nahe einer Bifurkation</em>. Fusioniert: Modelliere Sagen als
+Systeme, die <em>nahe einer Schwelle</em> sitzen – ein einziges greifbares Detail (die Tarantel im
+Topf) genügt, den plötzlichen qualitativen Umschlag auszulösen.</p>
+
+<h3>W2 → Der Zweck ist ein Parameter über der Dynamik</h3>
+<p>Die Dynamik ist <em>wertfrei</em>; der Attraktor existiert, ob man ihn will oder nicht. A's
+Friedensarbeit ist nichts anderes, als den <em>Kontrollparameter</em> so zu ändern, dass der
+Konflikt-Attraktor seine Stabilität verliert (Bifurkation). B-leser ändern den Parameter nicht –
+sie <em>studieren</em> den Attraktor. Gleiche Werkzeuge, andere Haltung: Becken verstehen, dann
+entweder destabilisieren (A) oder die Ausbreitung vorhersagen (B).</p>
+
+<h3>W3 → Heterogene Knoten: Hebel und Kanäle</h3>
+<p>Beides gilt in einem <em>heterogenen</em> Netzwerk. A's strategischer Akteur ist ein
+<strong>Stark-Knoten</strong> (Hub), dessen Strategiewechsel viele verschiebt; B's FoaF-Kette ist der
+<strong>typische</strong> Fall tausender austauschbarer, entlasteter Kanäle. Die Ausbreitung hat also
+wenige echte Hebel (Presse, ein Anführer – die „Quellen"-Zellen in A's Simulation) und eine
+Masse passiver Übermittler. <em>Handlung ist real, aber konzentriert.</em></p>
+
+<h3>W4 → Wahrheit als Samen, nicht als Kraftstoff</h3>
+<p>Das löst den tiefsten Punkt: A's „latenter Attraktor" (ein positiver Zustand, der bereits real
+existiert, unsichtbar) und B's „Fünkchen Wahrheit" (der reale Kern) sind <em>derselbe Impfstoff</em>.
+Sobald das Feedback läuft, besteht der stabile Zustand unabhängig davon, ob der Kern weiter real
+ist. <strong>Wahrheit impft, Feedback erhält.</strong></p>
+
+<p><strong>Fusions-Schlussfolgerung:</strong> Ein Konflikt und eine Sage sind <em>ansteckende
+Attraktoren</em>. Der wahre/positive Kern legt ihn an; das Feedback-System (Crude Law
+beziehungsweise FoaF&nbsp;+ Medien-Kreis) hält ihn aufrecht – jenseits seiner eigenen Ursache.
+Therapie heißt in beiden Fällen <em>Kontrollparameter ändern</em>: bei A die Feedback-Schleifen
+brechen (Lewin: Unfreeze&nbsp;→&nbsp;Move&nbsp;→&nbsp;Refreeze), bei B die Kette überprüfbar machen
+beziehungsweise den Medien-Kreis durchbrechen.</p>
+</section>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<h3>4.1 Der Apparat (aus A)</h3>
+<p>Ein <strong>Attraktor</strong> ist ein Zustand, zu dem ein System konvergiert; er wird als Tal in
+einem Potential dargestellt:</p>
+<div class="formula"><i>V</i>(<i>x</i>) = −<i>a</i><sub>1</sub>&thinsp;e<sup>−(x−μ<sub>1</sub>)²/2σ<sub>1</sub>²</sup> − <i>a</i><sub>2</sub>&thinsp;e<sup>−(x−μ<sub>2</sub>)²/2σ<sub>2</sub>²</sup></div>
+<p>…zwei Täler = ein positiver (A) und ein negativer/konfliktuöser (B) Zustand. <em>Tiefe</em> =
+Stärke des Attraktors (schwer zu verlassen), <em>Breite</em> = Becken der Anziehung (Basin of
+Attraction).</p>
+<p><strong>Feedback-Schleifen:</strong> Verstärkende Schleifen amplifizieren den Zustand
+(→ Polarisierung/Intraktabilität), hemmende bremsen und regulieren; gesunde
+Selbstregulation = <em>Balance</em> beider.</p>
+<p><strong>Gekoppelte Gruppendynamik</strong> (zwei Gruppen, emotionale Zustände <i>x</i>,&nbsp;<i>y</i> ∈
+[−1,1], <i>f</i> = tanh für Kooperation, −tanh für Kompetition):</p>
+<div class="formula">d<i>x</i>/dt = m<sub>x</sub><i>x</i> + b<sub>x</sub> + c<sub>x</sub> f<sub>x</sub>(<i>y</i>) ,&nbsp;&nbsp; d<i>y</i>/dt = m<sub>y</sub><i>y</i> + b<sub>y</sub> + c<sub>y</sub> f<sub>y</sub>(<i>x</i>)</div>
+<p>Kooperation/Kooperation → beide konvergieren positiv; Kompetition/Kompetition → einer positiv,
+einer negativ; Kooperation/Kompetition → <em>Oszillation</em>.</p>
+<p><strong>Eskalation:</strong> Hohe Komplexität → proportional (linear, tit-for-tat). Niedrige
+Komplexität → nichtlinear/Katastrophe mit <em>Hysterese</em>: Deeskalation braucht <em>mehr</em>
+als die Eskalation brauchte (de-eskalierende Schwelle &lt; eskalierende Schwelle).</p>
+<p><strong>Crude Law (Deutsch):</strong> kompetitives Verhalten → kompetitive Orientierung →
+verstärkt kompetitives Verhalten. Selbsterhaltend, breitet sich aus, reinstalliert sich nach
+Entfernung der Ursache. Die Ausbreitung wird mit den Parametern <em>Reproduktion</em>,
+<em>Zerfall</em>, <em>Diffusion</em> simuliert.</p>
+<p><strong>Transformation:</strong> (a) Attraktor-Dekonstruktion (Schleifen aufbrechen, Lewin
+Unfreeze→Move→Refreeze); (b) latente Attraktoren aktivieren; (c) <em>Bifurkation</em> über den
+Kontrollparameter μ, Gabelung dx/dt = μ<i>x</i> − <i>x</i>³: für μ&lt;0 ein stabiler Attraktor,
+für μ&gt;0 zwei (x = ±√μ) – die <em>Anzahl/Art</em> der Zustände ändert sich qualitativ.</p>
+<p><strong>Nachhaltiger Frieden:</strong> Positivitäts-Ratio ≈ 3:1–5:1; hohe Komplexität +
+Adaptivität = Resilienz gegen Rückfall.</p>
+
+<h3>4.2 Die Seele (aus B)</h3>
+<p><strong>Definition:</strong> „Sage: Erzählung von einem sonderbaren Erlebnis, das geglaubt und
+für wahr gehalten wird" (Ranke, 1937). Moderner Name: <em>urban/contemporary legend</em>.</p>
+<p><strong>FoaF-Kette:</strong> Die Beglaubigung über „Freund eines Freundes" schafft Distanz →
+<em>unangreifbar</em>; der Erzähler hat nichts erlebt. Je länger die Kette, desto entlasteter.</p>
+<p><strong>Anatomie (Dreischritt):</strong> Alltag (vertraute Quelle/Ort/Personen) →
+<strong>Bruch</strong> („Zu ihrem Entsetzen…", das Unerhörte bricht ein) → Pointe (Horror,
+Schadenfreude, Ironie, Moral).</p>
+<p><strong>Ansteckung (SIR):</strong> S = Anfällige, I = Erzählende, R = Gesättigte:</p>
+<div class="formula">d<i>S</i>/dt = −β·<i>SI</i>/N ,&nbsp;&nbsp; d<i>I</i>/dt = β·<i>SI</i>/N − γ·<i>I</i> ,&nbsp;&nbsp; d<i>R</i>/dt = γ·<i>I</i>&nbsp;&nbsp; → &nbsp;R<sub>0</sub> = β/γ</div>
+<p>Die Sage „überlebt" als Welle, wenn R<sub>0</sub>&gt;1 (ein Erzähler steckt im Schnitt &gt;1
+Person an), sonst stirbt sie „mangels Bestätigung wieder in sich zusammen".</p>
+<p><strong>Themen:</strong> Sagen sind <em>Spiegel gesellschaftlicher Ängste</em>; negative Themen
+dominieren (Maletzke 1988: der Mensch muss Bedrohungen erkennen); Rache-Geschichten sind ein
+sozial akzeptiertes Ventil (af Klintberg).</p>
+<p><strong>Wahrheit &amp; Drift:</strong> Manche Sagen haben einen realen Kern („Fünkchen Wahrheit";
+z.&nbsp;B. „Fliegendes Eis" ist wahr, „Kein Wasser und Brot" = Mihavecs 1979). Jede Weitergabe fügt
+Motive hinzu und <em>driftet</em> die Story ins Unerkennbare.</p>
+<p><strong>Medien-Rücklauf:</strong> mündlich → Presse/Boulevard → (Film/Literatur) → wieder
+mündlich. Jede Station verstärkt und variiert; der Kreis schließt sich (z.&nbsp;B. „Batman").</p>
+
+<h3>4.3 Die Übersetzung A ↔ B</h3>
+<table>
+<tr><th>Begriff A (Konflikt)</th><th>Gegenstück B (Sage)</th><th>Fusioniertes Bild</th></tr>
+<tr><td>Attraktor / Tal</td><td>der weithin geglaubte Zustand der Sage</td><td>stabiler, selbsttragender Sozialzustand</td></tr>
+<tr><td>Becken der Anziehung</td><td>das Publikum, das sie glaubt</td><td>Reichweite, die „reinrollt"</td></tr>
+<tr><td>Feedback-Schleife (Crude Law)</td><td>FoaF + Medien-Kreis</td><td>das eigentliche Aufrechterhaltungssystem</td></tr>
+<tr><td>Reproduktionsrate</td><td>Ansteckungsrate β</td><td>Wie schnell ein Erzähler neue erzähler erzeugt</td></tr>
+<tr><td>Zerfallsrate</td><td>„mangels Bestätigung zusammenfällt" (γ)</td><td>Verlust durch Sättigung/Vergessen</td></tr>
+<tr><td>„Quelle"-Zelle (Stark-Knoten)</td><td>Presse / ein prominenter Erzähler</td><td>der echte Hebel im Netzwerk</td></tr>
+<tr><td>Bifurkationsschwelle μ / Hysterese</td><td>R<sub>0</sub>&gt;1 / der „Bruch"</td><td>plötzlicher qualitativer Umschlag</td></tr>
+<tr><td>latenter (unsichtbarer) positiver Attraktor</td><td>„Fünkchen Wahrheit" / realer Kern</td><td>der reale <em>Samen</em> des Attraktors</td></tr>
+<tr><td>Dekonstruktion / Kontrollparameter ändern</td><td>Kette überprüfbar machen / Medien-Kreis brechen</td><td>Therapie: Attraktor destabilisieren</td></tr>
+</table>
+</section>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: Ansteckender Attraktor</h2>
+<p class="note">Ein Raster aus „Glauben/Erregung". Ein einzelner <em>reeller Kern</em> (Quelle)
+impft das Feld; über Reproduktion (β), Zerfall (γ) und Diffusion breitet es sich wie eine
+Epidemie aus. Schiebt du R<sub>0</sub>&nbsp;=&nbsp;β/γ über 1, nimmt es Fahrt auf – genau B's
+Schwelle. Entferne den Kern (Button), siehst du A's Pointe: Das System hält sich
+<strong>selbst</strong>, jenseits seiner Ursache.</p>
+
+<div class="controls">
+  <label>Reproduktion β: <span id="bVal">0.35</span>
+    <input type="range" id="bEta" min="0.05" max="0.9" step="0.01" value="0.35"></label>
+  <label>Zerfall γ: <span id="gVal">0.20</span>
+    <input type="range" id="gEta" min="0.02" max="0.9" step="0.01" value="0.20"></label>
+  <label>Diffusion: <span id="dVal">0.25</span>
+    <input type="range" id="dEta" min="0" max="0.5" step="0.01" value="0.25"></label>
+</div>
+<div class="controls">
+  <button id="playBtn" onclick="togglePlay()">⏸ Pause</button>
+  <button class="sec" onclick="reseed()">🎲 Neu impfen</button>
+  <button onclick="removeKernel()">🧯 Kern entfernen</button>
+  <span class="readout" id="readout"></span>
+</div>
+
+<canvas id="field" width="600" height="440"></canvas>
+<canvas id="spark" width="600" height="90"></canvas>
+<p class="note" id="sparkNote"></p>
+</section>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<p><span class="tag">A</span>
+<a href="../buecher/dynamische_systeme_und_konflikte.html">dynamische_systeme_und_konflikte.html</a>
+– „Dynamische Systeme &amp; Konflikte": Interaktive Visualisierung der Kernkonzepte aus
+„Attracted to Conflict" (Vallacher et al., 2013) – Attraktor-Landschaft, Feedback-Loops,
+Kooperation/Kompetition, Eskalations-Katastrophe, Crude-Law-Ausbreitung, Transformation,
+Friedensdynamik. Liefert den <em>formalen Apparat</em>.</p>
+<p><span class="tag b">B</span>
+<a href="../brednich.html">brednich.html</a>
+– „Die Spinne in der Yucca-Palme": Interaktive Aufbereitung von Brednichs Sammlungen moderner
+Sagen – FoaF-Kette, Anatomie (Alltag→Bruch→Pointe), SIR-Ansteckung, Ängste/Themen,
+Wahrheits-Drift, Medien-Rücklauf, Sagen-Zoo und -Labor. Liefert die
+<em>qualitative Seele</em>.</p>
+
+<footer>Fusion Round 1 · Pair 047 · „Ansteckende Attraktoren" – Wahrheit impft, Feedback erhält.
+Alle Inhalte aus den beiden Quellpapieren; keine erfundenen Behauptungen.</footer>
+</section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var N=44;
+  var grid=[], source={x:22,y:22}, running=true, kernelRemoved=false, hist=[];
+  var field=document.getElementById('field'), fctx=field.getContext('2d');
+  var spark=document.getElementById('spark'), sctx=spark.getContext('2d');
+  var bEta=document.getElementById('bEta'), gEta=document.getElementById('gEta'), dEta=document.getElementById('dEta');
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function hexToRgb(h){h=(h||'').replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];var n=parseInt(h,16);return[(n>>16)&255,(n>>8)&255,n&255];}
+  function lerp(a,b,t){return Math.round(a+(b-a)*t);}
+  function mix(c1,c2,t){var a=hexToRgb(c1),b=hexToRgb(c2);return 'rgb('+lerp(a[0],b[0],t)+','+lerp(a[1],b[1],t)+','+lerp(a[2],b[2],t)+')';}
+  function rnd(a,b){return a+Math.random()*(b-a);}
+
+  function reseed(){
+    grid=[];for(var i=0;i<N;i++){grid[i]=[];for(var j=0;j<N;j++)grid[i][j]=rnd(0.02,0.05);}
+    source={x:Math.floor(rnd(N*0.25,N*0.75)),y:Math.floor(rnd(N*0.25,N*0.75))};
+    for(var di=-1;di<=1;di++)for(var dj=-1;dj<=1;dj++){var ii=source.x+di,jj=source.y+dj;if(ii>=0&&ii<N&&jj>=0&&jj<N)grid[ii][jj]=1;}
+    kernelRemoved=false;hist=[];
+  }
+  function removeKernel(){kernelRemoved=true;}
+  function togglePlay(){running=!running;document.getElementById('playBtn').textContent=running?'⏸ Pause':'▶ Los';}
+
+  function status(){
+    var R0=parseFloat(bEta.value)/parseFloat(gEta.value);
+    if(R0<1)return{R0:R0,label:'dormant — stirbt aus',col:cssVar('--muted')};
+    if(R0<1.4)return{R0:R0,label:'kritisch — nahe der Schwelle',col:cssVar('--accent2')};
+    return{R0:R0,label:'Ansteckung — breitet sich aus',col:cssVar('--accent')};
+  }
+  function readout(){var s=status();document.getElementById('readout').innerHTML=
+    'R<sub>0</sub>&nbsp;=&nbsp;β/γ&nbsp;=&nbsp;<b style="color:'+s.col+'">'+s.R0.toFixed(2)+'</b> — '+s.label;}
+
+  function step(){
+    var b=parseFloat(bEta.value),g=parseFloat(gEta.value),d=parseFloat(dEta.value);
+    var ng=grid.map(function(r){return r.slice();});
+    for(var i=0;i<N;i++)for(var j=0;j<N;j++){
+      var v=grid[i][j],nbr=0,c=0;
+      if(i>0){nbr+=grid[i-1][j];c++;} if(i<N-1){nbr+=grid[i+1][j];c++;}
+      if(j>0){nbr+=grid[i][j-1];c++;} if(j<N-1){nbr+=grid[i][j+1];c++;}
+      var isSrc=!kernelRemoved&&Math.abs(i-source.x)<=1&&Math.abs(j-source.y)<=1;
+      var ngv=v+v*b*(isSrc?3:1)*(0.5+Math.random()*0.5)-v*g+(nbr/Math.max(1,c))*d*0.3;
+      ng[i][j]=ngv<0?0:(ngv>1?1:ngv);
+    }
+    grid=ng;
+    var sum=0;for(var i2=0;i2<N;i2++)for(var j2=0;j2<N;j2++)sum+=grid[i2][j2];
+    hist.push(sum/(N*N));if(hist.length>240)hist.shift();
+  }
+  function draw(){
+    var cold=cssVar('--viz-cold')||'#10141b',hot=cssVar('--viz-hot')||'#ff5a7d';
+    var cell=field.width/N;
+    for(var i=0;i<N;i++)for(var j=0;j<N;j++){
+      fctx.fillStyle=mix(cold,hot,grid[i][j]);
+      fctx.fillRect(i*cell,j*cell,cell,cell);
+    }
+    if(!kernelRemoved){
+      fctx.strokeStyle=cssVar('--ink');fctx.lineWidth=2;
+      fctx.strokeRect((source.x-1.5)*cell,(source.y-1.5)*cell,3*cell,3*cell);
+      fctx.fillStyle=cssVar('--ink');fctx.font='11px sans-serif';
+      fctx.fillText('Kern',source.x*cell+cell,source.y*cell-4);
+    }
+  }
+  function drawSpark(){
+    var s=status(),W=spark.width,H=spark.height;
+    sctx.clearRect(0,0,W,H);
+    sctx.strokeStyle=cssVar('--border');sctx.lineWidth=1;
+    var yth=H-12;
+    sctx.setLineDash([4,4]);sctx.beginPath();sctx.moveTo(8,yth);sctx.lineTo(W-8,yth);sctx.stroke();sctx.setLineDash([]);
+    sctx.fillStyle=cssVar('--muted');sctx.font='10px sans-serif';sctx.fillText('Schwelle',8,yth-3);
+    if(hist.length<2)return;
+    var mx=Math.max(0.05,Math.max.apply(null,hist));
+    sctx.strokeStyle=s.col;sctx.lineWidth=2;sctx.beginPath();
+    for(var i=0;i<hist.length;i++){
+      var x=8+(i/(hist.length-1))*(W-16);
+      var y=H-8-(hist[i]/mx)*(H-20);
+      if(i===0)sctx.moveTo(x,y);else sctx.lineTo(x,y);
+    }
+    sctx.stroke();
+    document.getElementById('sparkNote').textContent=
+      'Aktive Erregung im Feld über die Zeit. '+(s.R0<1?'Unter R₀=1 fällt die Welle in sich zusammen (Sagen-„mangelnde Bestätigung").':'Über R₀=1 entsteht eine Ausbreitungswelle — bei A der Eskalations-Umschlag, bei B die Übernahmewelle.');
+  }
+
+  function labels(){
+    document.getElementById('bVal').textContent=parseFloat(bEta.value).toFixed(2);
+    document.getElementById('gVal').textContent=parseFloat(gEta.value).toFixed(2);
+    document.getElementById('dVal').textContent=parseFloat(dEta.value).toFixed(2);
+    readout();
+  }
+  [bEta,gEta,dEta].forEach(function(el){el.addEventListener('input',labels);});
+  window.togglePlay=togglePlay;window.reseed=reseed;window.removeKernel=removeKernel;
+  window.toggleTheme=function(){document.documentElement.classList.toggle('dark');draw();drawSpark();readout();};
+
+  reseed();labels();draw();drawSpark();
+  function loop(){if(running){step();draw();drawSpark();}requestAnimationFrame(loop);}
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

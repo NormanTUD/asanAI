@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identität als Prozess — Bordismus trifft Nervenfeld (Bordismus ✕ Schreber)</title>
+<style>
+  :root {
+    --bg: #faf8f1;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e6e1d6;
+    --accent: #6d28d9;
+    --accent2: #1d4ed8;
+    --coral: #e11d48;
+    --code-bg: #f1ede1;
+    --shadow: 0 2px 14px rgba(30,25,10,.08);
+    --viz-canvas-bg: #f4f1e8;
+    --viz-accent: #6d28d9;
+    --viz-m1: #e11d48;
+    --viz-m2: #1d4ed8;
+    --viz-ray: #0284c7;
+    --viz-txt: #334155;
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #172033;
+    --card-border: #2b3650;
+    --accent: #a78bfa;
+    --accent2: #60a5fa;
+    --coral: #fb7185;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.5);
+    --viz-canvas-bg: #0b1020;
+    --viz-accent: #a78bfa;
+    --viz-m1: #fb7185;
+    --viz-m2: #60a5fa;
+    --viz-ray: #38bdf8;
+    --viz-txt: #cbd5e1;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.68; font-size: 16px; }
+  article { max-width: 820px; margin: 0 auto; padding: 42px 22px 90px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.05em; line-height: 1.2; margin: 0 0 10px; color: var(--fg); }
+  .subtitle { color: var(--muted); font-size: .98em; margin: 0; }
+  .subtitle b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle { position: absolute; top: 0; right: 0; background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: .82em; }
+  section { margin-top: 40px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#widersprueche h2, section#aufloesung h2 { color: var(--accent2); }
+  section#inhalt h2 { color: var(--coral); }
+  h3 { font-size: 1.12em; margin: 22px 0 8px; color: var(--fg); }
+  p { margin: 0 0 14px; }
+  .lead { font-size: 1.05em; }
+  .kv { background: var(--card); border: 1px solid var(--card-border); border-radius: 10px;
+    padding: 14px 16px; margin: 16px 0; box-shadow: var(--shadow); }
+  .kv .tag { display: inline-block; font-size: .72em; letter-spacing: .04em; text-transform: uppercase;
+    font-weight: 700; color: var(--card); background: var(--accent2); border-radius: 5px; padding: 2px 8px; margin-right: 8px; vertical-align: middle; }
+  .kv.a .tag { background: var(--coral); }
+  .kv b { color: var(--fg); }
+  ul { margin: 8px 0 14px; padding-left: 22px; }
+  li { margin: 6px 0; }
+  code { background: var(--code-bg); border-radius: 4px; padding: 1px 6px; font-size: .9em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .math { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg);
+    border-radius: 6px; padding: 10px 14px; display: block; margin: 12px 0; overflow-x: auto; line-height: 1.9; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92em; }
+  th, td { text-align: left; padding: 9px 11px; border-bottom: 1px solid var(--card-border); vertical-align: top; }
+  th { color: var(--accent); font-weight: 600; }
+  section#inhalt th { color: var(--coral); }
+  tr:last-child td { border-bottom: none; }
+  .viz-wrap { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; box-shadow: var(--shadow); }
+  #viz { display: block; width: 100%; height: auto; border-radius: 8px; background: var(--viz-canvas-bg); }
+  .ops { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .op { flex: 1 1 130px; background: var(--card); color: var(--fg); border: 1px solid var(--card-border);
+    border-radius: 8px; padding: 9px 12px; cursor: pointer; font-size: .85em; }
+  .op:hover { border-color: var(--accent2); }
+  .op.active { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+  .readout { margin-top: 12px; font-size: .95em; line-height: 1.6; color: var(--fg); }
+  .readout b { color: var(--accent); }
+  .note { font-size: .88em; color: var(--muted); margin-top: 10px; }
+  .prov { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+  .prov .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .prov .card .lbl { font-size: .72em; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; color: var(--muted); }
+  .prov .card a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .prov .card a:hover { text-decoration: underline; }
+  .prov .card p { margin: 8px 0 0; font-size: .92em; color: var(--fg); }
+  @media (max-width: 640px) { .prov { grid-template-columns: 1fr; } .theme-toggle { position: static; display: inline-block; margin-bottom: 8px; } }
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <button class="theme-toggle" id="themeToggle" type="button">🌗 Thema</button>
+    <h1>Identität als Prozess</h1>
+    <p class="subtitle">Fusion aus: <b>bordism.html</b> ✕ <b>schreber.html</b></p>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Zwei Texte, die auf den ersten Blick nichts miteinander zu tun haben — ein <em>Bordismus-Explorer</em> aus der algebraischen Topologie und die Selbstbeschreibung eines in die Psychiatrie eingewiesenen Richters (Schreber, 1903) — konvergieren auf dieselbe tiefste These: <b>Das Ding ist keine Substanz, sondern ein Prozess.</b></p>
+    <p>Im Bordismus ist eine Mannigfaltigkeit <em>M</em> nicht ein Eigenes: Sie ist <b>definiert als</b> Rand <code>∂W</code> eines höheren <em>W</em>, und zwei Ränder <em>M₁</em>, <em>M₂</em> sind „dasselbe“ (bordant) genau dann, wenn ein <b>gemeinsames Inneres</b> <em>W</em> zwischen ihnen läuft. Der Rand ist der Schatten; <em>W</em> ist die Substanz. Bei Schreber ist die Seele nicht ein Ding, sondern ein <b>Feld aus „Strahlen/Nerven“</b>, das zwischen Gott und Leib läuft; ein Ich ist, was von denselben Strahlen durchzogen ist — und nach dem Tod „steigen reine Nerven zu Gott auf“.</p>
+    <p>Beides sagt denselben Satz: <b>Identität ist eine Äquivalenzklasse von Prozessen, keine Substanz.</b> Der Rand (Manifold-Ende / Leib) ist epiphänomenal zum Medium (<em>W</em> / Nervenfeld); alles, was sich „verändert“ (Geburt, Tod, Spaltung, Verdopplung, Verwandlung), ist bloß eine Umverteilung des Mediums. <b>Das Dazwischen tut die Arbeit</b> — der Rand wandelt sich, das Medium bleibt und vollzieht die Wandlung.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>A (<em>bordism.html</em>, Englisch) und B (<em>schreber.html</em>, Deutsch) leben in völlig unterschiedlichen Domänen — reine Topologie einerseits, psychiatrisch-theologische Selbstbeschreibung andererseits — und erheben keine widersprüchlichen faktischen Behauptungen über eine gemeinsame Sache. Es gibt daher <b>keine direkte sachliche Kontradiktion</b>. Aber auf der Ebene von Haltung und Struktur bestehen drei scharfe, echte Spannungen, die dieselbe Struktur aus entgegengesetzten Positionen betrachten:</p>
+
+    <div class="kv a"><span class="tag">A</span><b>Rang der Ordnung — Freiheit vs. Zwang.</b> A beschreibt die Herrschaftsgesetze (Bordismus = Äquivalenzrelation, abelsche Gruppe, Ring) als etwas <b>Objektives und Exaktes</b>, das der Nutzer <b>frei gestaltet</b>: „Drag, twist, and play“ — der Betrachter steht <em>außen</em> als Gestalter/Designer, der das ganze <em>W</em> in Händen hält. B erlebt seine Weltordnung dagegen als <b>auferlegten Zwang</b>: <em>Denkzwang</em>, unaufhörliche Stimmen, die „ohne Pause, Tag und Nacht“ zwingen; das Subjekt steht <em>innen</em> als <b>transformierter Gegenstand</b>, nicht als Gestalter.</div>
+
+    <div class="kv"><span class="tag">B</span><span class="tag" style="background:var(--coral)">A↔B</span><b>Gesetzlichkeit des Verschwindens — Zug vs. Mord.</b> A hält das Verschwinden eines Randes für einen <b>völlig legitimen, neutralen und erhaltenden</b> Zug im Bordismus-Ring: die Kappe <code>S¹ → ∅</code> und die Vernichtung <code>2·S¹ → ∅</code> sind gesetzlich — in der unorientierten Bordismengruppe ist <code>S¹ = 0</code> (der Kreis umschließt eine Scheibe), und genau dieser Zug ist die „Multiplikation, die null ergibt“. B erlebt <b>dieselbe Form</b> — eine Seele wird zugeignet/vernichtet, als Flechsig sich „Gottes Nerven“ aneigneigt („Seelenmord“) — als die <b>tiefste Verletzung</b>, eine Wunde, die die Weltordnung zerreißt. Nicht neutral: traumatisch.</div>
+
+    <div class="kv a"><span class="tag">A</span><span class="tag" style="background:var(--coral)">A↔B</span><b>Garantiert vs. wiederhergestellt.</b> In A ist die Ordnung <b>axiomatisch geschlossen</b> (Gruppen-/Ringaxome erzwingen Schließung): Es gibt dort keine Krise, nichts zu reparieren, der Zustand ist unverwundbar. In B <b>kann</b> die Weltordnung <b>zerrissen werden</b> und muss sich <b>selbst heilen</b>: „Die Weltordnung trägt die Heilmittel für die ihr geschlagenen Wunden in sich selbst“, sie „siegt am Ende“. A’s Ordnung ist statisch-evident; B’s Ordnung ist verwundbar und narrativ wiederhergestellt.</div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><b>1 · Freiheit vs. Zwang</b> ist bloß der Unterschied der <em>Perspektive</em> auf dieselbe Beziehung. Der Gestalter in A blickt von <b>außen</b> auf <em>W</em> (die Freiheit, die Gruppe zu manipulieren); das Ich in B ist von <b>innen</b> durch <em>W</em> durchströmt (der Zwang, vom Nervenfeld bewegt zu werden). Beide Seiten sind dieselbe Gleichung <code>∂W = M₁ ⊔ M₂</code> — einmal von der Designer-Seite, einmal von der Medium-Seite. <em>Fusion:</em> Die Gesetzmäßigkeit ist eine; nur der Standpunkt (Gestalter / Getriebenes) wechselt. Freiheit = <em>W</em> von außen halten; Zwang = <em>W</em> von innen erlitten.</p>
+    <p><b>2 · Zug vs. Mord:</b> „Rand → null“ ist <em>formal</em> legitim und <em>existenziell</em> verheerend — je nachdem, wer den Zug vollzieht. Die Bordismus-Gruppe sagt nur, dass der Zug <b>möglich und konsistent</b> ist. Schreber sagt, dass derselbe Zug, wenn er einem Ich <b>aufgezwungen</b> wird statt von ihm vollzogen, als Gewalt registriert wird. <em>Fusion:</em> Ein „Seelenmord“ ist exakt eine Kappe/Vernichtung, die <b>um</b> das Subjekt herum geroutet ist statt <b>durch</b> es — <em>W</em> wird so gelegt, dass die Seele als Rand verschwindet, während sie nicht beteiligt ist. Die Wunde ist der Unterschied zwischen einer Bordismus, die man <b>vornimmt</b>, und einer, die man <b>erleidet</b>.</p>
+    <p><b>3 · Garantiert vs. wiederhergestellt:</b> B’s „Selbstheilung der Weltordnung“ <em>ist</em> A’s Schließung, erzählt. Dass die Weltordnung „die Heilmittel … in sich selbst“ trägt und „am Ende siegt“, ist die narrative Form davon, dass die Äquivalenzklasse <b>invariant</b> ist: Der Mensch als Äquivalenzklasse von Prozessen überlebt die Umverlegung des Mediums. <em>Fusion (Gesamt):</em> Die Weltordnung <b>ist</b> die Bordismus-Struktur, von innen erzählt. Die Krise (Seelenmord) ist eine Bordismus, die das Subjekt erleidet; die Heilung ist die Schließung der Gruppe; der „Sieg“ Schrebers ist der Satz, dass die Invariante bleibt.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Der gemeinsame Kern, aus dem beide Texte unabhängig auf dieselbe These laufen, lässt sich in einem <b>Korrespondenzraster</b> fassen. Spalte A ist die strenge Topologie, Spalte B die Schreber’sche Mythologie; die Mitte ist die fusionierte Lesart.</p>
+
+    <h3>Die Maschine aus A (Bordismus)</h3>
+    <ul>
+      <li><b>Definition:</b> Ein Bordismus zwischen <em>M₁</em> und <em>M₂</em> ist eine Mannigfaltigkeit <em>W</em> mit <code>∂W = M₁ ⊔ M₂</code>. Die Ränder sind die „Enden“, <em>W</em> das „Dazwischen“.</li>
+      <li><b>Äquivalenzrelation:</b> reflexiv über den <b>Zylinder</b>, symmetrisch über das <b>Umdrehen</b> von <em>W</em>, transitiv über das <b>Verkleben</b> zweier Bordismen.</li>
+      <li><b>Bordismengruppen:</b> Mannigfaltigkeiten modulo Bordismus, abelsch unter disjunkten Vereinigung. Wichtig: <code>Ω₀^O = ℤ</code>, <code>Ω₁^O = 0</code>, <code>Ω₂^O = ℤ/2</code>. Aus <code>Ω₁^O = 0</code> folgt <b>jeder Kreis bordant zum Leeren</b> — die Kappe ist der triviale Fall.</li>
+      <li><b>Ringstruktur:</b> Die <b>Hose</b> (<code>S¹ → S¹ ⊔ S¹</code>) ist die Multiplikation; <code>S¹ · S¹ = S²</code>. Die Kappe liefert Einheits-/Bewertungselement (TQFT-Lesung: Hose = Produkt, Kappe = Unit/Evaluation).</li>
+    </ul>
+    <span class="math">∂W = M₁ ⊔ M₂ &nbsp;&nbsp;·&nbsp;&nbsp; bordant ⇔ ∃ W mit ∂W = M₁ ⊔ M₂ &nbsp;&nbsp;·&nbsp;&nbsp; Ω₁^O = 0 ⇒ S¹ ≅ ∅ &nbsp;&nbsp;·&nbsp;&nbsp; [S¹]·[S¹] = [S²]</span>
+
+    <h3>Die Mythologie aus B (Schreber, 1903)</h3>
+    <ul>
+      <li><b>Gott = Nerven = Strahlen:</b> Gott besteht aus Nerven („Strahlen“), die alles erschaffen; die menschliche Seele ist ebenfalls Nerven; nach dem Tod steigen reine Nerven zu Gott auf. Zwei Götter: <b>Ariman</b> (unterer) und <b>Ormuzd</b> (oberer).</li>
+      <li><b>Seelenmord:</b> Schreber ist überzeugt, der Arzt Prof. Flechsig habe sich „Gottes Nerven“ angeeignet und so die Weltordnung zerrissen.</li>
+      <li><b>Denkzwang / Stimmen:</b> Unaufhörliche Stimmen sprechen in seine Nerven, stellen sinnlose Fragen („Warum nur?“), reden nicht aus und zwingen ihn zum Denken — ohne Pause, Tag und Nacht.</li>
+      <li><b>Verwandlung / Seelenwollust:</b> Die Weltordnung verlange seine Verwandlung in eine Frau zur Neuerschaffung der Menschheit; „Wollustnerven“ durchziehen seinen Körper.</li>
+      <li><b>Sieg der Weltordnung:</b> „Die Weltordnung trägt die Heilmittel für die ihr geschlagenen Wunden in sich selbst.“ Er wird entlassen und gewinnt seinen Prozess.</li>
+    </ul>
+
+    <h3>Das Korrespondenzraster (Fusion)</h3>
+    <table>
+      <thead><tr><th>Bordismus (A)</th><th>Schreber (B)</th><th>Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td>Ränder <code>M₁, M₂</code></td><td>Seelen-/Körperzustände (vor/nach, Richter / Verwandler, Aufstieg)</td><td>Der „Rand“ = die sichtbare Form des Ichs zu einem Zeitpunkt</td></tr>
+        <tr><td>das Medium <code>W</code></td><td>das Nervenfeld / die Strahlen zwischen Gott und Leib</td><td>das eigentliche Substrat, das die Identität trägt</td></tr>
+        <tr><td><code>∂W = M₁ ⊔ M₂</code></td><td>Die Zustände der Seele sind durch das Nervenfeld festgelegt</td><td>die Form ist der Schatten des Mediums</td></tr>
+        <tr><td>bordant (Äquivalenz)</td><td>von denselben Strahlen durchzogen</td><td>Identität = Prozess, nicht Substanz</td></tr>
+        <tr><td>Zylinder <code>S¹ → S¹</code></td><td>Beständigkeit des Ichs</td><td>das Medium läuft unverändert durch</td></tr>
+        <tr><td>Hose <code>S¹ → S¹⊔S¹</code> (Produkt)</td><td>Verwandlung „zur Neuerschaffung der Menschheit“ (1 → Viele)</td><td>generativer Zug: eine Seele als Ursprung von Vielen</td></tr>
+        <tr><td>Kappe / Vernichtung <code>→ ∅</code> (<code>S¹ = 0</code>)</td><td>Aufstieg zu Gott / „Seelenmord“ (Seele wird zugeignet)</td><td>derselbe Zug — legitim, wenn vollzogen; Wunde, wenn erlitten</td></tr>
+        <tr><td>die Bordismengruppe (Invariante)</td><td>die Weltordnung (erhaltene Struktur, „Heilmittel in sich“)</td><td>die Invariante, die die Umverlegung überlebt</td></tr>
+        <tr><td>Querschnittsweep (W durchschneiden)</td><td>das Memoiren-Lesen (das Ich wechselt von Seite zu Seite)</td><td>das Durchschneiden des Mediums zeigt, wie sich der Rand umformt</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Kurzformel der Fusion: <b>Identität</b> ≡ (Randzustände, die von einem gemeinsamen Medium verbunden sind). <b>Veränderung</b> ≡ Umverlegung des Mediums. <b>Krise</b> ≡ eine Bordismus, die man erleidet statt vornimmt. <b>Heilung/Sieg</b> ≡ Invarianz der Äquivalenzklasse (Schließung der Gruppe).</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung: das Medium als Nervenfeld</h2>
+    <p>Ein Bordismus <em>W</em> als Medium zwischen zwei Rändern, durchströmt von fließenden <b>Strahlen/Nerven</b> — der gemeinsame Kern beider Texte. Wähle einen Zug: der Rand (links <b>M₁</b>, rechts <b>M₂</b>/<b>∅</b>) wandelt sich, das Medium bleibt. Der querende Scan „durchschneidet“ <em>W</em> und zeigt den lokalen Querschnitt.</p>
+    <div class="viz-wrap">
+      <canvas id="viz" width="880" height="440"></canvas>
+      <div class="ops">
+        <button class="op" data-op="cylinder" type="button">Zylinder <small>S¹→S¹</small></button>
+        <button class="op" data-op="pants" type="button">Hosen <small>S¹→S¹⊔S¹</small></button>
+        <button class="op" data-op="cap" type="button">Kappe <small>S¹→∅</small></button>
+        <button class="op" data-op="birth" type="button">Geburt <small>∅→S¹</small></button>
+      </div>
+      <div class="readout" id="readout"></div>
+      <p class="note">M₁ = <span style="color:var(--viz-m1)">■</span> linker Rand · M₂ = <span style="color:var(--viz-m2)">■</span> rechter Rand · Strahlen = <span style="color:var(--viz-ray)">●</span> · Kappe = „Aufstieg/Seelenmord“ (Rand → ∅), Hose = „Neuschöpfung“ (1 → 2).</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <div class="lbl">Quelle A</div>
+        <a href="../bordism.html">bordism.html</a>
+        <p>„Interactive Bordism Explorer“: drehbare 3D-Visualisierung von Bordismen (Zylinder, Hose, Kappe, Geburt, Verschmelzung, Genus, Identität, Vernichtung) mit Lern-Tab. Kern: <code>W</code> mit <code>∂W = M₁ ⊔ M₂</code>, Bordismus als Äquivalenzrelation, Bordismengruppen und Ringstruktur.</p>
+      </div>
+      <div class="card">
+        <div class="lbl">Quelle B</div>
+        <a href="../buecher/schreber.html">buecher/schreber.html</a>
+        <p>„Denkwürdigkeiten eines Nervenkranken“ (Daniel Paul Schreber, 1903) als interaktive Erzählung in fünf Akten: Gott = Nerven = Strahlen (Ariman/Ormuzd), Seelenmord (Flechsig), Denkzwang/Stimmen, Verwandlung/Seelenwollust, Sieg der Weltordnung.</p>
+      </div>
+    </div>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function readPalette(){
+    var cs = getComputedStyle(document.documentElement);
+    function g(n,d){ var v = cs.getPropertyValue(n).trim(); return v || d; }
+    window.__pal = {
+      bg: g('--viz-canvas-bg','#0b1020'),
+      accent: g('--viz-accent','#a78bfa'),
+      m1: g('--viz-m1','#fb7185'),
+      m2: g('--viz-m2','#60a5fa'),
+      ray: g('--viz-ray','#38bdf8'),
+      txt: g('--viz-txt','#cbd5e1')
+    };
+  }
+  function parseColor(str){
+    str = (str||'').trim();
+    if(str.charAt(0)==='#'){
+      var h = str.slice(1);
+      if(h.length===3){ h = h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n = parseInt(h,16);
+      return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+    }
+    var m = str.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p = m[1].split(','); return { r:parseFloat(p[0]), g:parseFloat(p[1]), b:parseFloat(p[2]) }; }
+    return { r:148, g:163, b:184 };
+  }
+  function rgba(str,a){ var c = parseColor(str); return 'rgba('+(c.r|0)+','+(c.g|0)+','+(c.b|0)+','+a+')'; }
+
+  var cv = document.getElementById('viz');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+  var xL = 130, xR = W-130, cy = H/2, R0 = 74, R2 = 44;
+  var S = 64, N = 92;
+  var op = 'cylinder';
+  var t = 0;
+  var parts = [];
+
+  function sstep(e0,e1,x){ x = Math.max(0, Math.min(1, (x-e0)/(e1-e0))); return x*x*(3-2*x); }
+  function lerp(a,b,tt){ return a+(b-a)*tt; }
+  function px(x){ return xL + x*(xR-xL); }
+
+  function makeParts(){
+    parts = [];
+    for(var i=0;i<N;i++){
+      parts.push({ x:Math.random(), lane:(Math.random()*2-1), branch:(Math.random()<0.5?'top':'bot') });
+    }
+  }
+
+  function profile(x){
+    if(op==='cylinder'){
+      return { top:cy-R0, bot:cy+R0, cTop:cy, hTop:R0, cBot:cy, hBot:R0 };
+    }
+    if(op==='pants'){
+      var s = sstep(0.32,0.8,x);
+      return {
+        cTop: lerp(cy, cy-98, s), cBot: lerp(cy, cy+98, s),
+        hTop: lerp(R0, R2, s), hBot: lerp(R0, R2, s),
+        top: lerp(cy,cy-98,s)-lerp(R0,R2,s), bot: lerp(cy,cy+98,s)+lerp(R0,R2,s)
+      };
+    }
+    if(op==='cap'){
+      var sh = 1-Math.pow(x,1.1);
+      return { top:cy-R0*sh, bot:cy+R0*sh, cTop:cy, hTop:R0*sh, cBot:cy, hBot:R0*sh };
+    }
+    if(op==='birth'){
+      var gr = Math.pow(x,1.1);
+      return { top:cy-R0*gr, bot:cy+R0*gr, cTop:cy, hTop:R0*gr, cBot:cy, hBot:R0*gr };
+    }
+    return { top:cy-R0, bot:cy+R0, cTop:cy, hTop:R0, cBot:cy, hBot:R0 };
+  }
+
+  function particleY(pp){
+    var pr = profile(pp.x);
+    var c,h;
+    if(op==='pants'){
+      if(pp.branch==='top'){ c=pr.cTop; h=pr.hTop; } else { c=pr.cBot; h=pr.hBot; }
+    } else { c=pr.cTop; h=pr.hTop; }
+    return c + pp.lane*h;
+  }
+
+  function glowSeg(x,y1,y2,col){
+    ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=12;
+    ctx.strokeStyle=col; ctx.lineWidth=4; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x,y1); ctx.lineTo(x,y2); ctx.stroke();
+    ctx.restore();
+  }
+  function glowDot(x,y,col){
+    ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=14;
+    ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawBoundary(u,P){
+    var pr = profile(u);
+    var X = px(u);
+    var isPointL = (op==='birth');
+    var isPointR = (op==='cap');
+    ctx.textAlign='center';
+    if(u===0){
+      if(isPointL){
+        glowDot(X,cy,P.m1);
+        ctx.fillStyle=P.txt; ctx.font='15px ui-monospace,monospace'; ctx.fillText('∅', X, cy-34);
+      } else {
+        glowSeg(X, pr.top, pr.bot, P.m1);
+        ctx.fillStyle=P.m1; ctx.font='bold 15px ui-monospace,monospace'; ctx.fillText('M₁', X, pr.top-14);
+      }
+    } else {
+      if(op==='pants'){
+        glowSeg(X, pr.cTop-pr.hTop, pr.cTop+pr.hTop, P.m2);
+        glowSeg(X, pr.cBot-pr.hBot, pr.cBot+pr.hBot, P.m2);
+        ctx.fillStyle=P.m2; ctx.font='bold 14px ui-monospace,monospace';
+        ctx.fillText('M₂', X+30, pr.cTop-pr.hTop-10);
+        ctx.fillText('M₂', X+30, pr.cBot+pr.hBot+16);
+      } else if(isPointR){
+        glowDot(X,cy,P.m1);
+        ctx.fillStyle=P.txt; ctx.font='15px ui-monospace,monospace'; ctx.fillText('∅', X, cy-34);
+      } else {
+        glowSeg(X, pr.top, pr.bot, P.m2);
+        ctx.fillStyle=P.m2; ctx.font='bold 15px ui-monospace,monospace'; ctx.fillText('M₂', X, pr.top-14);
+      }
+    }
+  }
+
+  function drawLabels(P){
+    var eq = {
+      cylinder:'∂W = S¹ ⊔ S¹',
+      pants:'∂W = S¹ ⊔ (S¹ ⊔ S¹)',
+      cap:'∂W = S¹ ⊔ ∅',
+      birth:'∂W = ∅ ⊔ S¹'
+    }[op] || '';
+    ctx.fillStyle = rgba(P.txt,0.8);
+    ctx.font = '13px ui-monospace,monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(eq, 16, H-16);
+  }
+
+  function draw(){
+    var P = window.__pal;
+    if(!P){ readPalette(); P = window.__pal; }
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = P.bg; ctx.fillRect(0,0,W,H);
+
+    // Medium fill (envelope)
+    ctx.beginPath();
+    ctx.moveTo(px(0), profile(0).top);
+    for(var i=1;i<=S;i++){ var x0=i/S; ctx.lineTo(px(x0), profile(x0).top); }
+    for(var j=S;j>=0;j--){ var x1=j/S; ctx.lineTo(px(x1), profile(x1).bot); }
+    ctx.closePath();
+    ctx.fillStyle = rgba(P.accent,0.10); ctx.fill();
+    ctx.strokeStyle = rgba(P.accent,0.30); ctx.lineWidth=1; ctx.stroke();
+
+    // Centerlines (show the split)
+    ctx.lineWidth=1;
+    if(op==='pants'){
+      [function(pr){return pr.cTop;}, function(pr){return pr.cBot;}].forEach(function(f){
+        ctx.beginPath();
+        for(var k=0;k<=S;k++){ var xx=k/S; var yy=f(profile(xx)); if(k===0)ctx.moveTo(px(xx),yy); else ctx.lineTo(px(xx),yy); }
+        ctx.strokeStyle=rgba(P.accent,0.24); ctx.stroke();
+      });
+    } else {
+      ctx.beginPath();
+      for(var m=0;m<=S;m++){ var xm=m/S; var ym=profile(xm).cTop; if(m===0)ctx.moveTo(px(xm),ym); else ctx.lineTo(px(xm),ym); }
+      ctx.strokeStyle=rgba(P.accent,0.24); ctx.stroke();
+    }
+
+    // Rays / nerves (particles with trail)
+    for(var p=0;p<parts.length;p++){
+      var pt = parts[p];
+      pt.x += 0.006; if(pt.x>1) pt.x-=1;
+      var y = particleY(pt);
+      var xPrev = Math.max(0, pt.x-0.06);
+      var yPrev = particleY({ x:xPrev, lane:pt.lane, branch:pt.branch });
+      ctx.beginPath();
+      ctx.moveTo(px(xPrev), yPrev);
+      ctx.lineTo(px(pt.x), y);
+      ctx.strokeStyle = rgba(P.ray,0.35); ctx.lineWidth=1.4; ctx.stroke();
+      ctx.beginPath(); ctx.arc(px(pt.x), y, 2.1, 0, Math.PI*2);
+      ctx.fillStyle = rgba(P.ray,0.9); ctx.fill();
+    }
+
+    // Cross-section sweep (nod to A's sweep + B's reading-through)
+    var sx = (Math.sin(t*0.3)+1)/2;
+    var spr = profile(sx);
+    ctx.beginPath(); ctx.moveTo(px(sx), spr.top); ctx.lineTo(px(sx), spr.bot);
+    ctx.strokeStyle = rgba(P.m2,0.85); ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle = rgba(P.m2,0.9); ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('t='+sx.toFixed(2), px(sx), spr.top-8);
+
+    drawBoundary(0,P);
+    drawBoundary(1,P);
+    drawLabels(P);
+
+    t += 0.02;
+  }
+
+  var OPS = {
+    cylinder:{ a:'Zylinder · S¹ → S¹  (∂W = S¹ ⊔ S¹)', b:'Beständigkeit — das Medium läuft unverändert durch; das Ich bleibt sich selbst gleich.' },
+    pants:{ a:'Hosen · S¹ → S¹ ⊔ S¹  (∂W = S¹ ⊔ (S¹⊔S¹))', b:'Neuschöpfung — ein Ich als generativer Ursprung von Vielen (1 → 2), die „Verwandlung zur Neuerschaffung der Menschheit“.' },
+    cap:{ a:'Kappe · S¹ → ∅  (∂W = S¹ ⊔ ∅,  S¹ = 0 in Ω₁^O)', b:'Auflösung / Aufstieg — die Seele wird aufgenommen (→ ∅); derselbe Zug ist der „Seelenmord“, wenn er erlitten statt vollzogen wird.' },
+    birth:{ a:'Geburt · ∅ → S¹  (∂W = ∅ ⊔ S¹)', b:'Entstehung — die Seele tritt aus dem Leeren hervor; reine Nerven, die einen Rand bilden.' }
+  };
+  function setOp(name){
+    op = name; makeParts();
+    var r = document.getElementById('readout');
+    if(r){ r.innerHTML = '<b>'+OPS[name].a+'</b><br>'+OPS[name].b; }
+    var btns = document.querySelectorAll('.op');
+    for(var i=0;i<btns.length;i++){ btns[i].classList.toggle('active', btns[i].getAttribute('data-op')===name); }
+  }
+
+  function applyTheme(dark){
+    document.documentElement.classList.toggle('dark', dark);
+    try{ localStorage.setItem('n023-theme', dark?'dark':'light'); }catch(e){}
+    readPalette();
+  }
+
+  function init(){
+    readPalette();
+    var stored = null;
+    try{ stored = localStorage.getItem('n023-theme'); }catch(e){}
+    if(stored==='light'){ document.documentElement.classList.remove('dark'); readPalette(); }
+    var tbtn = document.getElementById('themeToggle');
+    if(tbtn){ tbtn.onclick = function(){ applyTheme(!document.documentElement.classList.contains('dark')); }; }
+    var ops = document.querySelectorAll('.op');
+    for(var i=0;i<ops.length;i++){ (function(b){ b.onclick = function(){ setOp(b.getAttribute('data-op')); }; })(ops[i]); }
+    setOp('cylinder');
+    (function loop(){ draw(); requestAnimationFrame(loop); })();
+  }
+
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

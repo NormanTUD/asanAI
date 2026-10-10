@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persistenz — Die gemeinsame Topologie von Form und Geschichte</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --bg2:#efe9dd; --card:#ffffff; --text:#1c2530; --muted:#5f6b78;
+    --border:#d9d2c4; --accent:#0369a1; --accent2:#a21caf; --accent3:#b45309;
+    --good:#15803d; --viz-bg:#ffffff; --grid:#e7e1d4; --panel:#fbfaf6;
+  }
+  html.dark{
+    --bg:#0a0e1a; --bg2:#0e1424; --card:#141b30; --text:#e2e8f0; --muted:#94a3b8;
+    --border:#2a3556; --accent:#7dd3fc; --accent2:#f0abfc; --accent3:#fde047;
+    --good:#4ade80; --viz-bg:#0a0e1a; --grid:#1a2340; --panel:#111829;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.72;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+  header.top{padding:1.5rem 0 2rem;border-bottom:2px solid var(--border);margin-bottom:2.2rem}
+  h1{font-size:clamp(1.9rem,4.4vw,2.7rem);font-weight:800;line-height:1.15;margin-bottom:.6rem}
+  h1 .acc{color:var(--accent)}
+  .sub{color:var(--muted);font-size:1rem;font-style:italic}
+  .themebtn{margin-top:1rem;background:var(--card);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:.4rem .9rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+  .themebtn:hover{border-color:var(--accent)}
+  section{margin:2.4rem 0}
+  h2{font-size:1.5rem;font-weight:750;margin-bottom:.9rem;color:var(--accent);
+    padding-bottom:.35rem;border-bottom:1px solid var(--border)}
+  h3{font-size:1.12rem;font-weight:650;margin:1.4rem 0 .5rem;color:var(--accent2)}
+  p{margin:0 0 1rem}
+  .lead{color:var(--muted);font-style:italic;margin-bottom:1.2rem}
+  ul{margin:0 0 1rem 1.3rem;color:var(--text)}
+  li{margin:.35rem 0}
+  strong{color:var(--text)}
+  em.k{color:var(--accent3);font-style:normal;font-weight:650}
+  .callout{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+    padding:.9rem 1.1rem;margin:1.1rem 0}
+  .callout.warn{border-color:var(--accent2)}
+  .callout.win{border-color:var(--accent3)}
+  .callout b{color:var(--text)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+  @media (max-width:600px){.pair{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+  .card h4{font-size:.98rem;margin-bottom:.5rem;color:var(--accent)}
+  .card.b h4{color:var(--accent2)}
+  .card p{font-size:.92rem;margin:0;color:var(--muted)}
+  .math{font-family:'Cambria Math','Times New Roman',serif;background:var(--panel);
+    border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;margin:.7rem 0;
+    font-size:1.02rem;overflow-x:auto}
+  .math sub,.math sup{font-size:.72em}
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
+  th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--accent);font-weight:650}
+  td.a{color:var(--accent)} td.b{color:var(--accent2)}
+  .viz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem;margin-top:.5rem}
+  .viz-ctrl{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center;margin-bottom:.9rem}
+  .viz-ctrl label{font-size:.82rem;color:var(--muted);display:block;margin-bottom:.2rem}
+  .viz-ctrl .val{color:var(--accent3);font-variant-numeric:tabular-nums;font-weight:600}
+  input[type=range]{-webkit-appearance:none;width:190px;height:6px;background:var(--grid);
+    border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+    background:var(--accent);border-radius:50%;cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--accent);
+    border-radius:50%;cursor:pointer;border:none}
+  button.vbtn{background:var(--accent);color:var(--bg);border:none;padding:.5rem 1rem;
+    border-radius:8px;font-weight:650;cursor:pointer;font-family:inherit;font-size:.85rem}
+  button.vbtn:hover{filter:brightness(1.1)}
+  button.vbtn.alt{background:var(--accent2)}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media (max-width:640px){.panels{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:.6rem}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--viz-bg)}
+  .cap{font-size:.8rem;color:var(--muted);margin-top:.45rem;font-style:italic}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;margin-top:1rem}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:8px;text-align:center;padding:.6rem}
+  .stat .n{font-size:1.5rem;font-weight:800;color:var(--accent3);font-variant-numeric:tabular-nums}
+  .stat .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.6rem;font-size:.8rem;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:.35rem}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .prov{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin:.8rem 0}
+  .prov a{color:var(--accent);font-weight:650;text-decoration:none}
+  .prov a:hover{text-decoration:underline}
+  .prov p{margin:.3rem 0 0;color:var(--muted);font-size:.92rem}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);
+    color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Persistenz: Die <span class="acc">gemeinsame Topologie</span> von Form &amp; Geschichte</h1>
+  <p class="sub">Fusion aus: holes.html &times; history.html</p>
+  <button class="themebtn" id="themeBtn">&#9790; Theme wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Eine Struktur ist <em class="k">echt</em> genau dann, wenn sie &uuml;ber viele Skalen &uuml;berlebt und St&ouml;rungen &uuml;bersteht. Derselbe Test, den die persistente Homologie an Datenformen anwendet, trennt Braudels <em>longue dur&eacute;e</em> (die tiefe, langsame, wiederkehrende Struktur) von den <em>&eacute;v&eacute;nements</em> (das schnelle, br&uuml;chige Rauschen der Oberfl&auml;che).</p>
+  <p>Beide Papiere tragen denselben Titelbegriff <strong>Topologie</strong>, meinen aber zun&auml;chst verschiedene Dinge &mdash; und genau dort liegt der Gewinn der Fusion. <strong>holes.html</strong> macht Topologie zur <em>pr&auml;zisen Messlehre</em>: Eine Form wird zu einem Simplizial-Komplex zerlegt, ihre L&ouml;cher werden als Betti-Zahlen <span class="math" style="display:inline;padding:.1rem .4rem">β<sub>k</sub></span> gez&auml;hlt, und die <strong>persistente Homologie</strong> beantwortet die entscheidende Frage &mdash; <em>wie lange</em> &uuml;berlebt ein Loch, w&auml;hrend man um jeden Punkt einen Radius <span class="math" style="display:inline;padding:.1rem .4rem">&epsilon;</span> wachsen l&auml;sst? Langlebige L&ouml;cher sind Signal, kurzlebige Rauschen; das Persistenz-Diagramm ist der stabile, maschinenlesbare Fingerabdruck der Daten.</p>
+  <p><strong>history.html</strong> dagegen gebraucht &bdquo;Topologie&ldquo; als <em>leitende Metapher</em> f&uuml;r Geschichte: Warum reimt sich Geschichte, statt sie sich zu wiederholen? Weil hinter der Oberfl&auml;che <em>wiederkehrende Strukturen</em> stecken &mdash; Zyklen (Aufstieg&ndash;Bl&uuml;te&ndash;Niedergang), Feedback-Schleifen, Attraktoren, Pfadabh&auml;ngigkeit &mdash; und vor allem &mdash; bei Braudel &mdash; &uuml;berlagerte <em>Zeitschichten</em> (longue dur&eacute;e, Konjunkturen, Ereignisse). Die Fusion vereinigt beides: <strong>A liefert das Messinstrument, B den Pr&uuml;fstein und den Beweis, dass es gebraucht wird.</strong> Die &bdquo;reimende&ldquo; historische Struktur ist nichts anderes als ein langlebiges topologisches Merkmal; das einmalige Ereignis ist ein kurzlebiges. Persistenz wird so zur gemeinsamen W&auml;hrung von Geometrie und Zeit.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p class="lead">Streng genommen widersprechen sich die zwei Papiere nicht &mdash; sie arbeiten an verschiedenen Objekten (A: r&auml;umliche Datenformen, B: zeitliche Geschichtsprozesse). Die n&auml;chsten echten Spannungen, an denen die zwei aufeinanderprallen:</p>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; holes.html</h4><p><strong>Stabilit&auml;t als Tugend.</strong> &bdquo;Es ist stabil (kleine &Auml;nderungen an den Daten &rarr; kleine &Auml;nderungen am Diagramm)&ldquo; &mdash; die ganze Methode ruht auf Invarianz unter Perturbation. Rauschen darf nichts &Auml;ndern.</p></div>
+    <div class="card b"><h4>B &mdash; history.html</h4><p><strong>Sensitivit&auml;t als Prinzip.</strong> Pfadabh&auml;ngigkeit: &bdquo;Kleine Ursachen, gro&szlig;e Wirkungen&ldquo;, &bdquo;Die Geschichte ist nicht ergodisch&ldquo;, Regler &bdquo;Sensitivit&auml;t (Chaos)&ldquo;. Winzige St&ouml;rungen an einem Bifurkationspunkt divergieren den ganzen Verlauf.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 1 &mdash; Stabilit&auml;t vs. Empfindlichkeit.</b> A setzt darauf, dass die Struktur der Perturbation &uuml;bersteht; B setzt genau das Gegenteil f&uuml;r den <em>Verlauf</em> ein (Schmetterlingseffekt, Lock-in).</p></div>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; holes.html</h4><p><strong>Literale Mathematik.</strong> Echte algebraische Topologie: Simpliziale Komplexe, Homologie <span class="math" style="display:inline;padding:.1rem .4rem">H<sub>k</sub>=Z<sub>k</sub>/B<sub>k</sub></span>, Betti-Zahlen, Vietoris-Rips-Filtration &mdash; alles definiert und berechenbar.</p></div>
+    <div class="card b"><h4>B &mdash; history.html</h4><p><strong>Bildliche Metapher.</strong> &bdquo;Die Topologie zeigt dir, warum Geschichte sich reimt&ldquo; &mdash; das Wort wird als Struktur-Analogie gebraucht; es gibt keine Homologie-, keine Betti-Mathematik, nur dynamische Modelle.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 2 &mdash; Werkzeug vs. Metapher.</b> A verlangt f&uuml;r jeden Begriff eine Definition und eine Zahl; B l&auml;sst &bdquo;Topologie&ldquo; bewusst offen, um ein Gef&uuml;hl f&uuml;r Struktur zu erzeugen. Die Pr&auml;zision, die A erzwingt, fehlt B prinzipiell.</p></div>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; holes.html</h4><p><strong>Wiederholbarer Fingerabdruck.</strong> Das Persistenz-Diagramm ist ein stabiles, reproduzierbares Objekt: &bdquo;Wenn im Persistenz-Diagramm ein Punkt weit &uuml;ber der Diagonale bei β<sub>1</sub> existiert &mdash; ja, es ist ein Ring.&ldquo; Man erkennt es zuverl&auml;ssig wieder.</p></div>
+    <div class="card b"><h4>B &mdash; history.html</h4><p><strong>&bdquo;Reimt, nicht wiederholt.&ldquo;</strong> Jede historische Realisierung ist einze&shy;lig und kontingent &mdash; genau dieselbe Konstellation kommt nie zur&uuml;ck. Der konkrete Ausgang h&auml;ngt vom Pfad ab.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 3 &mdash; Wiederholbare Invariante vs. einze&shy;lige Realisierung.</b> A feiert das <em>stabil Wiederkommende</em>; B besteht darauf, dass das <em>konkret Kommende</em> sich nie exakt wiederholt.</p></div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p class="lead">Alle drei Spannungen l&ouml;sen sich auf, sobald man zwei Ebenen trennt: die <strong>Struktur</strong> (was existiert?) und den <strong>Zustand/Bahn</strong> (wo genau? wie genau?).</p>
+  <h3>1. Stabilit&auml;t vs. Empfindlichkeit &mdash; Invariante &ne; Bahn</h3>
+  <p>A spricht von der Stabilit&auml;t der <em>topologischen Eigenschaft</em> (das Loch/die Schleife existiert &uuml;ber ein ganzes &epsilon;-Intervall; kleine St&ouml;rungen verschieben die Persistenz nur geringf&uuml;gig). B spricht von der Sensitivit&auml;t der <em>Phase-Ortung</em> (in welches Attraktorbecken man f&auml;llt, welchen Pfad man nimmt). Das ist kein Widerspruch, sondern zwei Seiten derselben M&uuml;nze: <strong>Die Existenz des Zyklus ist stabil und topologisch; die genaue Bahn innerhalb des Phasenraums ist empfindlich und einmalig.</strong> Der Torus bleibt ein Torus (β<sub>1</sub>=2), egal wie man ihn w&auml;lzelt (A) &mdash; aber ob eine Zivilisation am Ende &bdquo;Demokratie&ldquo; oder &bdquo;Zerfall&ldquo; ist, h&auml;ngt vom Zufall am Bifurkationspunkt ab (B).</p>
+  <h3>2. Werkzeug vs. Metapher &mdash; das Instrument wird auf den Gegenstand angewandt</h3>
+  <p>Bs Bild &bdquo;Topologie der Geschichte&ldquo; wird <em>literal</em>, sobald man As Maschinerie auf die Zustandsfolge einer Zivilisation l&auml;sst: Man nimmt die Zeitreihe der Systemzust&auml;nde, bildet die Vietoris-Rips-Filtration &uuml;ber sie und liest das Persistenz-Diagramm ab. Der wiederkehrende Zyklus, den B qual&shy;itativ als &bdquo;reimende Struktur&ldquo; beschreibt, ist genau ein <strong>persistentes β<sub>1</sub>-Merkmal</strong> (ein Grenzzyklus = ein Loch, das &uuml;ber viele Skalen &uuml;berlebt). Die Metapher wird dadurch zu einer Methode &mdash; B liefert den Anwendungsfall, A den Rechner.</p>
+  <h3>3. Wiederholbar vs. &bdquo;reimt, nicht wiederholt&ldquo; &mdash; gerade das sagt eine stabile Invariante voraus</h3>
+  <p>&bdquo;Reimt, aber nicht wiederholt&ldquo; ist <em>exakt</em> die Vorhersage einer stabilen topologischen Invariante: Die <strong>Topologie reimt sich</strong> (die Betti-Zahlen, die Existenz des Zyklus, die Anzahl der Becken bleiben gleich &mdash; das ist der Reim), w&auml;hrend die <strong>konkreten Datenwerte sich nie wiederholen</strong> (Amplitude, genaue Ereignisse, exakter Pfad sind kontingent). A's Persistenz-Diagramm ist strukturell stabil (reimt) und gleichzeitig an jeder Einzelstelle anders (wird nicht wiederholt). <strong>Stabile Topologie + kontingente Realisierung = der Reim ohne die Wiederholung.</strong></p>
+  <div class="callout win"><b>Fusionierte Schlussfolgerung:</b> Persistenz &mdash; &uuml;berleben &uuml;ber eine Skalenreihe, &uuml;berstehen von St&ouml;rung &mdash; ist der gemeinsame Kalk&uuml;l. Was persistiert, ist die <em>Form des Ganzen</em> (die lange Zeitschicht, der Zyklus, der Attraktor); was nur flackert, ist <em>Rauschen</em> (das Ereignis, der Einzelzustand). A macht es messbar, B zeigt, dass es der Kern des Verst&auml;ndnisses von Geschichte ist.</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Die zwei Werkzeuge, ineinander gefaltet &mdash; kein Anekdoten-Stapel, sondern ein durchgehender Argumentationsfaden.</p>
+
+  <h3>Der Werkzeugkasten von A (holes.html) &mdash; die Messlehre</h3>
+  <ul>
+    <li><strong>L&ouml;cher sind Invarianten:</strong> Was &uuml;brig bleibt, wenn man eine Form beliebig deformiert (ohne zu zerrei&szlig;en oder zu verkleben). Kaffeetasse und Donut sind topologisch gleich (je ein Loch).</li>
+    <li><strong>Betti-Zahlen</strong> <span class="math" style="display:inline;padding:.1rem .4rem">β<sub>0</sub>, β<sub>1</sub>, β<sub>2</sub>,&hellip;</span> = Anzahl der k-dimensionalen L&ouml;cher: β<sub>0</sub> zusammenh&auml;ngende Komponenten, β<sub>1</sub> Tunnel/Schleifen, β<sub>2</sub> Hohlr&auml;ume. Punkt (1,0,0&hellip;), Kreis (1,1,0&hellip;), Kugel (1,0,1), Torus (1,2,1), Brezel Genus 3 (1,6,1).</li>
+    <li><strong>Homologie als Algebra:</strong> Ein <em>Zyklus</em> ist eine geschlossene Form, ein <em>Rand</em> ein Zyklus, der etwas umschlie&szlig;t, ein <em>Loch</em> ein Zyklus, der <em>kein</em> Rand ist. Die k-te Homologiegruppe ist der Quotient:
+      <div class="math">H<sub>k</sub> = Zyklen / R&auml;nder = Z<sub>k</sub> / B<sub>k</sub> &nbsp;&nbsp;und&nbsp;&nbsp; β<sub>k</sub> = dim H<sub>k</sub></div>
+    </li>
+    <li><strong>Homotopie-Test:</strong> Eine Schleife, die man nicht zu einem Punkt zusammenziehen kann, umschlie&szlig;t ein Loch. Zwei Schleifen sind homotop, wenn eine stetig in die andere deformiert werden kann.</li>
+    <li><strong>Simpliziale Komplexe &amp; Euler:</strong> Formen aus 0-/1-/2-/3-Simplices (Punkt, Kante, Dreieck, Tetraeder). Die Euler-Charakteristik <span class="math" style="display:inline;padding:.1rem .4rem">χ = V &minus; E + F</span> ist die erste Invariante (Kugel χ=2, Torus χ=0) und verkn&uuml;pft sich mit den Betti-Zahlen zu <span class="math" style="display:inline;padding:.1rem .4rem">χ = &Sigma; (-1)<sup>k</sup> β<sub>k</sub></span>.</li>
+    <li><strong>Persistente Homologie (der Kern):</strong> Um jeden Punkt eine Kugel Radius &epsilon; zeichnen, &epsilon; wachsen lassen. Jedes Merkmal bekommt Geburts- und Todesradius; man plottet (Geburt, Tod). <strong>Weit &uuml;ber der Diagonale = langlebig = echt; nahe der Diagonale = Rauschen.</strong> Persistenz = Tod &minus; Geburt; unendlich persistente Merkmale sind die wahren Invarianten. Das Diagramm ist <em>stabil</em> (kleine Daten-&Auml;nderung &rarr; kleine Diagramm-&Auml;nderung).</li>
+    <li><strong>Anwendungen:</strong> Grid Cells im Hippocampus kodieren einen Torus; die kosmische Großstruktur (Voids, Filamente) wird mit Betti-Zahlen quantifiziert; Sensornetzwerke fragen &bdquo;Gibt es ein un&uuml;berwachtes Loch?&ldquo; als β<sub>1</sub>-Berechnung; Zeitreihen (EKG, Klima) erkennen Attraktoren &uuml;ber Delay-Embedding + persistente Homologie.</li>
+  </ul>
+
+  <h3>Der Werkzeugkasten von B (history.html) &mdash; der Gegenstand</h3>
+  <ul>
+    <li><strong>&bdquo;Geschichte reimt sich, sie wiederholt sich nicht.&ldquo;</strong> Wiederkehrende Strukturen &mdash; nicht kopie-gleiche Episoden.</li>
+    <li><strong>Zyklische Dynamik:</strong> Aufstieg&ndash;Bl&uuml;te&ndash;Niedergang&ndash;Erneuerung als quasi-periodische Oszillation mit variabler Amplitude (Ibn Khalduns <em>Asabiyyah</em>, Spengler, Toynbee, Turchins Cliodynamik); D&auml;mpfung = &bdquo;Lernen&ldquo;.</li>
+    <li><strong>Feedback-Schleifen:</strong> positive (Eskalation: Wettr&uuml;sten, Blasen) vs. negative (Stabilisierung: Institutionen) R&uuml;ckkopplung mit Verz&ouml;gerung und externem Rauschen.</li>
+    <li><strong>Emergenz:</strong> globale Muster (St&auml;dte, M&auml;rkte, Normen) emergieren aus lokalen Regeln vieler Akteure &mdash; gemessen &uuml;ber Entropie/Diversit&auml;t.</li>
+    <li><strong>Pfadabh&auml;ngigkeit:</strong> Lock-in, Bifurkationspunkte, Nicht-Ergodizit&auml;t &mdash; der Pfad z&auml;hlt, nicht nur der Zustand (QWERTY, Reformation).</li>
+    <li><strong>Attraktoren &amp; Phasenr&auml;ume:</strong> Fixpunkt, Grenzzyklus, seltsamer Attraktor (Chaos); Revolutionen = Spr&uuml;nge zwischen Attraktorbecken (Demokratie/Autokratie/Anarchie).</li>
+    <li><strong>Braudels Zeitschichten:</strong> drei Ebenen &mdash; <em>longue dur&eacute;e</em> (Geographie, Klima, Mentalit&auml;ten; Jahrhunderte), <em>Konjunkturen</em> (Wirtschaft; Jahrzehnte), <em>&eacute;v&eacute;nements</em> (Politik, Kriege; Tage/Jahre) &mdash; alle &uuml;berlagern sich und koppeln.</li>
+  </ul>
+
+  <h3>Die Faltung &mdash; jedes Prinzip von B bekommt ein Topologien-Instrument von A</h3>
+  <table>
+    <tr><th>B (Prinzip)</th><th>Topologische Entsprechung (A)</th><th>Fusionierte Lesart</th></tr>
+    <tr><td class="b">Zykliche Dynamik / Grenzzyklus</td><td class="a">persistentes H<sub>1</sub>-Loch (β<sub>1</sub>&ge;1)</td><td>Der Zyklus ist ein Loch, das &uuml;ber ein weites &epsilon;-Intervall &uuml;berlebt = die <em>longue dur&eacute;e</em> als messbare Invariante.</td></tr>
+    <tr><td class="b">Attraktoren (Fixpunkt / Zyklus / Chaos)</td><td class="a">persistente Phase-Struktur (H<sub>0</sub>-Kern / H<sub>1</sub>-Schleife / fraktale Persistenz)</td><td>Das Attraktorbecken ist die langlebige Region; der Sprung dazwischen (Revolution) ist der Bifurkationspunkt.</td></tr>
+    <tr><td class="b">Braudels Zeitschichten</td><td class="a">Persistenz &uuml;ber Skalen: weit &uuml;ber der Diagonale vs. nahe daran</td><td><em>Longue dur&eacute;e</em> = Merkmale mit l&auml;ngster Persistenz (Signal); <em>&eacute;v&eacute;nements</em> = kurzlebige Flicker an der Diagonale (Rauschen). Kopplung = Wechselwirkung der Persistenzstufen.</td></tr>
+    <tr><td class="b">Feedback-Schleifen</td><td class="a">Geburt/Tod der L&ouml;cher bei wachsendem &epsilon;</td><td>Positive R&uuml;ckkopplung <em>erzeugt</em> das persistente H<sub>1</sub>; negative R&uuml;ckkopplung <em>schlie&szlig;t</em> das Loch (Tod des Merkmals).</td></tr>
+    <tr><td class="b">Pfadabh&auml;ngigkeit / Chaos</td><td class="a">stabile Invariante vs. sensible Bahn</td><td>Die Topologie (welche L&ouml;cher existieren) ist stabil; die Phase-Ortung (welcher Pfad) ist empfindlich &mdash; zwei Ebenen, kein Widerspruch.</td></tr>
+    <tr><td class="b">Emergenz</td><td class="a">selbstorganisiertes Simplizial-Netz mit emergenten Betti-Zahlen</td><td>Lokale Regeln bauen den Komplex; die Betti-Zahlen sind die emergenten, stabilen Invarianten der globalen Form.</td></tr>
+  </table>
+
+  <h3>Die vereinigte Formel</h3>
+  <div class="math">
+    Persistenz eines Merkmals &nbsp;=&nbsp; Tod &minus; Geburt &nbsp;&nbsp;(je gr&ouml;&szlig;er, desto &bdquo;echter&ldquo;)<br>
+    &epsilon; klein &rarr; &epsilon; gro&szlig; &nbsp;:&nbsp; viele Komponenten &rarr; verschmelzen &rarr; eine solide Masse<br>
+    langlebige H<sub>1</sub> &nbsp;=&nbsp; der Zyklus &nbsp;=&nbsp; Braudels <em>longue dur&eacute;e</em> &nbsp;(weit &uuml;ber der Diagonale)<br>
+    kurzlebige H<sub>0</sub>-Flicker &nbsp;=&nbsp; die Ereignisse &nbsp;=&nbsp; Rauschen &nbsp;(an der Diagonale)<br>
+    Stabile Topologie (reimt) &nbsp;+&nbsp; kontingente Realisierung (wird nicht wiederholt) &nbsp;=&nbsp; &bdquo;reimt, nicht wiederholt&ldquo;
+  </div>
+  <div class="callout"><b>Kurz:</b> A's persistente Homologie ist der Rechner, B's Prinzipien sind die Messgr&ouml;&szlig;en. Die &bdquo;Topologie der Geschichte&ldquo; ist nicht Metapher, sondern das Persistenz-Diagramm einer Zivilisations-Zustandsreihe &mdash; in dem der Zyklus weit &uuml;ber der Diagonale steht und die Ereignisse dicht an ihr.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion</h2>
+  <p class="lead">Eine verrauschte <strong>Grenzzyklus</strong>-Punktwolke (B's &bdquo;wiederkehrender Zyklus&ldquo;), durchlaufen mit A's <strong>Vietoris-Rips-Filtration</strong>. Links wachsen die &epsilon;-Kugeln; rechts entsteht das Persistenz-Diagramm. Der langlebige H<sub>1</sub>-Zyklus (die <em>longue dur&eacute;e</em>) steht weit &uuml;ber der Diagonale; die kurzlebigen Flicker (die <em>&eacute;v&eacute;nements</em>, graue Punkte) kleben an ihr &mdash; Signal vs. Rauschen auf einen Blick.</p>
+
+  <div class="viz">
+    <div class="viz-ctrl">
+      <div>
+        <label>Radius &epsilon;: <span class="val" id="epsVal">0.000</span></label>
+        <input type="range" id="epsSlider" min="0" max="1000" value="250">
+      </div>
+      <div><button class="vbtn" id="playBtn">&#9654; Filtration</button></div>
+      <div><button class="vbtn alt" id="neuBtn">&#8635; Neu w&uuml;rfeln</button></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <canvas id="fviz" width="480" height="400"></canvas>
+        <div class="cap">Vietoris-Rips-Filtration &mdash; Zyklus (blau) vs. Ereignisse (grau) bei wachsendem &epsilon;.</div>
+      </div>
+      <div class="panel">
+        <canvas id="pd" width="480" height="400"></canvas>
+        <div class="cap">Persistenz-Diagramm &mdash; je weiter &uuml;ber der Diagonalen, desto langlebiger / &bdquo;echter&ldquo;.</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent)"></i> Zyklus-Punkte (wiederkehrende Struktur)</span>
+      <span><i class="dot" style="background:var(--muted)"></i> Ereignis-Punkte (Rauschen)</span>
+      <span><i class="dot" style="background:var(--accent2)"></i> H<sub>1</sub>-Merkmal (Loch/Zyklus)</span>
+      <span><i class="dot" style="background:var(--accent3)"></i> langlebigster Zyklus (longue dur&eacute;e)</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stB0">&ndash;</div><div class="l">β<sub>0</sub> Komponenten</div></div>
+      <div class="stat"><div class="n" id="stB1">&ndash;</div><div class="l">β<sub>1</sub> L&ouml;cher jetzt</div></div>
+      <div class="stat"><div class="n" id="stEps">&ndash;</div><div class="l">Radius &epsilon;</div></div>
+      <div class="stat"><div class="n" id="stPers">&ndash;</div><div class="l">Persistenz des Zyklus</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../holes.html">holes.html</a> &mdash; <em>&bdquo;Topologische L&ouml;cher &mdash; Eine interaktive Reise&ldquo;</em>
+    <p>Das Messinstrument: Betti-Zahlen, Homologie <span class="math" style="display:inline;padding:.1rem .4rem">H<sub>k</sub>=Z<sub>k</sub>/B<sub>k</sub></span>, Homotopie, Simpliziale Komplexe und vor allem persistente Homologie (Vietoris-Rips-Filtration, Persistenz-Diagramm, Stabilit&auml;t) &mdash; mit Anwendungen von der Neurowissenschaft bis zur Kosmologie.</p>
+  </div>
+  <div class="prov">
+    <a href="../history.html">history.html</a> &mdash; <em>&bdquo;Topologie der Geschichte &ndash; Interaktiver Explorer&ldquo;</em>
+    <p>Der Gegenstand: sechs Prinzipien wiederkehrender historischer Strukturen (zyklische Dynamik, Feedback, Emergenz, Pfadabh&auml;ngigkeit, Attraktoren, Braudels Zeitschichten) und die Leitidee, dass sich Geschichte <em>reimt, aber nicht wiederholt</em>.</p>
+  </div>
+</section>
+
+<footer>Fusion n1-066 &middot; Round 1 (non-AI track) &middot; holes.html &times; history.html &middot; selbstst&auml;ndig, alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var MAXEPS = 1.3;
+  var fcv = document.getElementById('fviz'), fx = fcv.getContext('2d');
+  var pcv = document.getElementById('pd'),   px = pcv.getContext('2d');
+  var epsSlider = document.getElementById('epsSlider');
+  var epsVal = document.getElementById('epsVal');
+  var playBtn = document.getElementById('playBtn');
+  var neuBtn = document.getElementById('neuBtn');
+  var themeBtn = document.getElementById('themeBtn');
+  var stB0=document.getElementById('stB0'), stB1=document.getElementById('stB1'),
+      stEps=document.getElementById('stEps'), stPers=document.getElementById('stPers');
+
+  var C = {};
+  function cssVar(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); v = (v||'').trim(); return v || fb; }
+  function readTheme(){
+    C = {
+      bg: cssVar('--viz-bg','#0a0e1a'), grid: cssVar('--grid','#1a2340'),
+      text: cssVar('--text','#e2e8f0'), muted: cssVar('--muted','#94a3b8'),
+      accent: cssVar('--accent','#7dd3fc'), accent2: cssVar('--accent2','#f0abfc'),
+      accent3: cssVar('--accent3','#fde047'), good: cssVar('--good','#4ade80')
+    };
+  }
+  function hexA(hex, a){
+    hex = String(hex).replace('#','');
+    if(hex.length===3){ hex = hex.split('').map(function(c){return c+c;}).join(''); }
+    if(!/^[0-9a-fA-F]{6}$/.test(hex)){ hex='7dd3fc'; }
+    var n = parseInt(hex,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+
+  // seeded RNG for stable, reproducible data
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  var pts=[], pairs=[], N=0, feat0=[], feat1=[], maxH1=null;
+  function genData(seed){
+    var rng = mulberry32(seed);
+    pts=[];
+    var NC=44;
+    for(var i=0;i<NC;i++){
+      var ang = i/NC*Math.PI*2 + (rng()-0.5)*0.10;
+      var r = 1.0 + (rng()-0.5)*0.12;
+      pts.push({x:Math.cos(ang)*r, y:Math.sin(ang)*r, cyc:true});
+    }
+    var NN=15;
+    for(var j=0;j<NN;j++){
+      pts.push({x:(rng()-0.5)*2.7, y:(rng()-0.5)*2.7, cyc:false});
+    }
+    N=pts.length;
+    pairs=[];
+    for(var a=0;a<N;a++) for(var b=a+1;b<N;b++){
+      var d=Math.hypot(pts[a].x-pts[b].x, pts[a].y-pts[b].y);
+      pairs.push([d,a,b]);
+    }
+    pairs.sort(function(p,q){return p[0]-q[0];});
+  }
+
+  function computeState(eps){
+    var adj=Array.from({length:N},function(){return new Set();});
+    var E=0, edges=[];
+    for(var k=0;k<pairs.length;k++){
+      var p=pairs[k];
+      if(p[0]<=2*eps){ adj[p[1]].add(p[2]); adj[p[2]].add(p[1]); E++; edges.push([p[1],p[2]]); }
+    }
+    var uf=Array.from({length:N},function(_,i){return i;});
+    function find(x){ while(uf[x]!==x){ uf[x]=uf[uf[x]]; x=uf[x]; } return x; }
+    function un(i,j){ var ra=find(i), rb=find(j); if(ra!==rb) uf[ra]=rb; }
+    for(var e=0;e<edges.length;e++) un(edges[e][0], edges[e][1]);
+    var roots=new Set(); for(var i=0;i<N;i++) roots.add(find(i));
+    var b0=roots.size;
+    var T=0;
+    for(var i2=0;i2<N;i2++){
+      var ai=adj[i2];
+      ai.forEach(function(jj){
+        if(jj<=i2) return;
+        var aj=adj[jj];
+        aj.forEach(function(kk){ if(kk>jj && ai.has(kk)) T++; });
+      });
+    }
+    var b1=Math.max(0, E - N + b0 - T);
+    return {b0:b0, b1:b1, edges:edges};
+  }
+
+  function runSweep(){
+    feat0=[]; feat1=[];
+    var uf=Array.from({length:N},function(_,i){return i;});
+    function find(x){ while(uf[x]!==x){ uf[x]=uf[uf[x]]; x=uf[x]; } return x; }
+    for(var k=0;k<pairs.length;k++){
+      var p=pairs[k]; var eps=p[0]/2;
+      if(eps>MAXEPS) break;
+      var ri=find(p[1]), rj=find(p[2]);
+      if(ri!==rj){ uf[ri]=rj; feat0.push({b:0, d:eps}); }
+    }
+    var surv=new Set(); for(var i=0;i<N;i++) surv.add(find(i));
+    for(var s=0;s<surv.size;s++) feat0.push({b:0, d:MAXEPS});
+
+    var K=150, alive=[];
+    for(var kk=1;kk<=K;kk++){
+      var e2=kk/K*MAXEPS;
+      var b1=computeState(e2).b1;
+      while(alive.length<b1) alive.push(e2);
+      while(alive.length>b1) feat1.push({b:alive.pop(), d:e2});
+    }
+    for(var m=0;m<alive.length;m++) feat1.push({b:alive[m], d:MAXEPS});
+
+    maxH1=null; var best=-1;
+    for(var f=0;f<feat1.length;f++){
+      var per=feat1[f].d-feat1[f].b;
+      if(per>best){ best=per; maxH1=feat1[f]; }
+    }
+  }
+
+  function drawFiltration(){
+    var w=fcv.width, h=fcv.height;
+    fx.clearRect(0,0,w,h); fx.fillStyle=C.bg; fx.fillRect(0,0,w,h);
+    fx.strokeStyle=hexA(C.grid,0.6); fx.lineWidth=1;
+    var step=Math.max(20, w/12);
+    for(var gx=step; gx<w; gx+=step){ fx.beginPath(); fx.moveTo(gx,0); fx.lineTo(gx,h); fx.stroke(); }
+    for(var gy=step; gy<h; gy+=step){ fx.beginPath(); fx.moveTo(0,gy); fx.lineTo(w,gy); fx.stroke(); }
+
+    var cx=w/2, cy=h/2, sc=Math.min(w,h)/3.4;
+    var eps=(+epsSlider.value)/1000*MAXEPS;
+    var st=computeState(eps);
+    // balls
+    for(var i=0;i<N;i++){
+      var p=pts[i];
+      fx.beginPath(); fx.arc(cx+p.x*sc, cy+p.y*sc, Math.max(0.5, eps*sc), 0, Math.PI*2);
+      fx.fillStyle = p.cyc ? hexA(C.accent,0.10) : hexA(C.muted,0.07); fx.fill();
+    }
+    // edges
+    fx.strokeStyle=hexA(C.accent2,0.55); fx.lineWidth=1;
+    for(var e=0;e<st.edges.length;e++){
+      var a=pts[st.edges[e][0]], b=pts[st.edges[e][1]];
+      fx.beginPath(); fx.moveTo(cx+a.x*sc, cy+a.y*sc); fx.lineTo(cx+b.x*sc, cy+b.y*sc); fx.stroke();
+    }
+    // points
+    for(var q=0;q<N;q++){
+      var pt=pts[q];
+      fx.fillStyle = pt.cyc ? C.accent : C.muted;
+      fx.beginPath(); fx.arc(cx+pt.x*sc, cy+pt.y*sc, pt.cyc?4:3, 0, Math.PI*2); fx.fill();
+    }
+  }
+
+  function drawDiagram(){
+    var w=pcv.width, h=pcv.height;
+    px.clearRect(0,0,w,h); px.fillStyle=C.bg; px.fillRect(0,0,w,h);
+    var pad=46, VW=w-2*pad, VH=h-2*pad, maxV=MAXEPS*1.06;
+    function X(b){ return pad + (b/maxV)*VW; }
+    function Y(d){ return h-pad - (d/maxV)*VH; }
+    // grid
+    px.strokeStyle=hexA(C.grid,0.5); px.lineWidth=1;
+    for(var g=0;g<=4;g++){ var t=g/4*MAXEPS;
+      px.beginPath(); px.moveTo(X(t),Y(0)); px.lineTo(X(t),Y(MAXEPS)); px.stroke();
+      px.beginPath(); px.moveTo(X(0),Y(t)); px.lineTo(X(MAXEPS),Y(t)); px.stroke();
+    }
+    // signal/noise zone hint
+    px.fillStyle=hexA(C.accent2,0.05);
+    px.beginPath(); px.moveTo(X(0),Y(0)); px.lineTo(X(maxV),Y(maxV)); px.lineTo(X(maxV),Y(0)); px.closePath(); px.fill();
+    // diagonal
+    px.strokeStyle=hexA(C.muted,0.7); px.setLineDash([5,4]); px.lineWidth=1.2;
+    px.beginPath(); px.moveTo(X(0),Y(0)); px.lineTo(X(maxV),Y(maxV)); px.stroke();
+    px.setLineDash([]);
+    px.fillStyle=C.muted; px.font='11px sans-serif'; px.textAlign='left';
+    px.fillText('Diagonale = null Persistenz (Rauschen)', X(0)+6, Y(0)+16);
+
+    // H0
+    for(var i=0;i<feat0.length;i++){ var f0=feat0[i];
+      px.fillStyle=hexA(C.accent,0.75); px.beginPath(); px.arc(X(f0.b),Y(f0.d),4,0,Math.PI*2); px.fill();
+    }
+    // H1
+    for(var j=0;j<feat1.length;j++){ var f1=feat1[j];
+      px.fillStyle=C.accent2; px.beginPath(); px.arc(X(f1.b),Y(f1.d),5,0,Math.PI*2); px.fill();
+    }
+    // highlight max H1
+    if(maxH1){
+      px.strokeStyle=C.accent3; px.lineWidth=2;
+      px.beginPath(); px.arc(X(maxH1.b),Y(maxH1.d),11,0,Math.PI*2); px.stroke();
+      px.fillStyle=C.accent3; px.font='bold 12px sans-serif'; px.textAlign='center';
+      px.fillText('der Zyklus (longue dur\xe9e)', Math.min(w-70, X(maxH1.b)), Math.max(14, Y(maxH1.d)-16));
+    }
+    // axes labels
+    px.fillStyle=C.text; px.font='12px sans-serif';
+    px.textAlign='center'; px.fillText('Geburt \u03b5', w/2, h-8);
+    px.save(); px.translate(12,h/2); px.rotate(-Math.PI/2); px.textAlign='center'; px.fillText('Tod \u03b5',0,0); px.restore();
+  }
+
+  function updateStats(){
+    var eps=(+epsSlider.value)/1000*MAXEPS;
+    var st=computeState(eps);
+    stB0.textContent=st.b0; stB1.textContent=st.b1;
+    stEps.textContent=eps.toFixed(3);
+    stPers.textContent = maxH1 ? (maxH1.d-maxH1.b).toFixed(3) : '\u2013';
+    epsVal.textContent=eps.toFixed(3);
+  }
+
+  function drawAll(){ drawFiltration(); drawDiagram(); updateStats(); }
+
+  var animId=null;
+  function stopAnim(){ if(animId){ cancelAnimationFrame(animId); animId=null; playBtn.innerHTML='&#9654; Filtration'; } }
+  function play(){
+    if(animId){ stopAnim(); return; }
+    playBtn.innerHTML='&#10074;&#10074; Pause';
+    (function step(){
+      var v=+epsSlider.value; v+=6;
+      if(v>1000){ v=1000; epsSlider.value=v; drawAll(); stopAnim(); return; }
+      epsSlider.value=v; drawAll();
+      animId=requestAnimationFrame(step);
+    })();
+  }
+
+  function rebuild(){
+    stopAnim();
+    genData(Math.floor(Math.random()*1e9)+1);
+    runSweep();
+    epsSlider.value=250;
+    drawAll();
+  }
+
+  themeBtn.addEventListener('click', function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    themeBtn.innerHTML = dark ? '\u263E Theme wechseln' : '\u2600 Theme wechseln';
+    readTheme(); drawAll();
+  });
+  epsSlider.addEventListener('input', function(){ stopAnim(); drawAll(); });
+  playBtn.addEventListener('click', play);
+  neuBtn.addEventListener('click', rebuild);
+
+  // init
+  readTheme();
+  genData(20260610);
+  runSweep();
+  drawAll();
+})();
+</script>
+</body>
+</html>

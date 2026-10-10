@@ -1,0 +1,17 @@
+{
+  "no": "007",
+  "a": "pz6.html",
+  "b": "pz10.html",
+  "a_title": "Prime Geometry Decoder",
+  "b_title": "Arithmetic Fiber Bundle - Spectral Phase",
+  "combined_theme": "prime-number-manifold",
+  "one_line": "Die natürlichen Zahlen bilden einen strukturierten Zahlenraum, auf dem die Primzahlen die niedrig-komplexe Haupt-Sektion (Primkante, ω=1) sind: die Lücken-/Restklassen-Geometrie (A) und die Faser-Torsion/Faktorisierungs-Geometrie (B) sind zwei Projektionen desselben Objekts.",
+  "contradictions": [
+    "Primäre Organisationsgröße: A (pz6) organisiert über (Rest mod M, Lücke zur nächsten Primzahl) — eine additive, relationale Größe, die von der Nachbarschaft abhängt; B (pz10) organisiert über die multiplikative, intrinsische Primfaktor-Zerlegung (Phase = τ·Σ√f), die nur von der Zahl selbst abhängt — zwei inkompatible primäre Linsen.",
+    "Dimension/Form: A (pz6) zeichnet eine flache 2D-Streuung (Rest × Lücke) und legt nahe, 2D reiche aus; B (pz10) baut ein gekrümmtes 3D-Faserbündel (Hauptring + Torsions-Faser) und legt nahe, die Struktur trete erst in 3D auf — inkompatible Annahme über die Dimension, die die Struktur sichtbar macht.",
+    "Weltraum: A (pz6) zeichnet ausschließlich Primzahlen (zusammengesetzte Zahlen existieren nicht im Modell); B (pz10) zeichnet alle Zahlen 2..N (zusammengesetzte als 'Composite Sections'/'Noise', aber mit voller Komplexität/Phase kodiert) — inkompatible Annahme, ob zusammengesetzte Zahlen zum Objekt gehören.",
+    "Entdeckt vs. konstruiert: A (pz6) liest Struktur aus den Daten ab ('look for vertical lines / preferred gaps'); B (pz10) konstruiert die Struktur durch eine gewählte Parametrisierung, in der Primzahlen per Konstruktion die triviale 'Sektions-Nullpunkt'-Sektion sind — Spannung über die Quelle der Struktur."
+  ],
+  "resolution": "Lücke/Restklasse und Faktorisierung sind zwei Koordinaten auf derselben multiplikativen Mannigfaltigkeit: Primzahlen sind die ω=1-Haupt-Sektion, auf der die (nur dort definierte) Lücken-/Restklassen-Geometrie (A) lebt, zusammengesetzte Zahlen sind der umgebende, höher-komplexe Raum (B). 2D und 3D sind Projektionen desselben Signaturenraums; die Karte/Parametrisierung ist konstruiert, das von ihr offengelegte Muster (niedrig-komplexe triviale Sektion, Primzahlen nur auf zu 2·3·5 koprimen Restklassen) ist echter Zahleninhalt — ein gewähltes Fenster zeigt eine wahre Struktur.",
+  "viz": "Drehbares 3D-Faserbündel-Canvas (B) über 2..N: Basiswinkel nach n, Faserphase nach Faktorisierung (τ·Σ√f), Radius nach ω(n), Primzahlen als leuchtende cyan-farbene Haupt-Sektion; verlinkte 2D-Residue–Gap-Einbettung (A) in der Ecke (mod 30/210) mit markierten zulässigen Restklassen; geteilte Primzahlenmenge + Hover-HUD (Faktoren, ω, Restklasse, Lücke); themenreaktiv (hell/dunkel), reine Inline-Daten, kein Netzwerk."
+}

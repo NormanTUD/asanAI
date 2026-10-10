@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Boundary of Wisdom — what survives ∂</title>
+<style>
+:root{
+  --bg:#f3f6fc; --surface:#ffffff; --sub:#eef2f9; --border:#d3dae7;
+  --text:#1a2230; --muted:#5a6678; --accent:#3566c9; --green:#1f9d55; --red:#c8402f;
+  --ring:#1f9d55;
+}
+html.dark{
+  --bg:#0f1420; --surface:#1a2130; --sub:#141a27; --border:#2a3448;
+  --text:#e6e9ef; --muted:#8b95a7; --accent:#7ca5ff; --green:#4ade80; --red:#f87171;
+  --ring:#4ade80;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:Georgia,'Iowan Old Style','Times New Roman',serif;
+  line-height:1.62;padding:0 0 4rem}
+.wrap{max-width:820px;margin:0 auto;padding:2.2rem 1.2rem}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:.4rem}
+h1{font-size:1.9rem;margin:.2rem 0 .3rem;line-height:1.25;color:var(--text)}
+h2{color:var(--accent);font-size:1.28rem;margin:2.4rem 0 .5rem;
+  border-bottom:1px solid var(--border);padding-bottom:.4rem;font-family:Georgia,serif}
+.sub{color:var(--muted);font-style:italic;font-size:.98rem;margin:0 0 1.2rem}
+p{margin:.7rem 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.15rem;margin:1rem 0}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;padding:2px 9px;border-radius:99px;margin-right:.5rem}
+.tag.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+.tag.b{background:color-mix(in srgb,var(--green) 22%,transparent);color:var(--green)}
+.tag.f{background:color-mix(in srgb,var(--red) 22%,transparent);color:var(--red)}
+.math{background:var(--sub);padding:.55rem .85rem;border-radius:8px;margin:.6rem 0;
+  overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92rem;
+  text-align:center;color:var(--text)}
+.sub{font-style:italic}
+b.acc{color:var(--accent)} b.grn{color:var(--green)} b.red{color:var(--red)}
+ul{margin:.5rem 0 .5rem 1.1rem;padding:0}
+li{margin:.35rem 0}
+.kv{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86rem}
+.note{color:var(--muted);font-size:.9rem}
+.vizbox{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.15rem;margin:1rem 0}
+canvas{width:100%;height:auto;display:block;background:var(--sub);
+  border:1px solid var(--border);border-radius:10px;margin:.5rem 0}
+.controls{margin:.8rem 0}
+.controls label{display:block;font-size:.95rem;color:var(--muted);margin-bottom:.4rem}
+input[type=range]{width:100%;height:8px;border-radius:4px;appearance:none;-webkit-appearance:none;
+  background:var(--border);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;
+  border-radius:50%;background:var(--accent);border:2px solid var(--surface);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  background:var(--accent);border:2px solid var(--surface);cursor:pointer}
+.msg{margin-top:.9rem;padding:.8rem 1rem;border-radius:10px;background:var(--sub);
+  border-left:3px solid var(--accent);font-size:.98rem;min-height:3.2em;line-height:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.7rem;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+button.theme{background:var(--surface);color:var(--text);border:1px solid var(--border);
+  border-radius:8px;padding:.35rem .7rem;cursor:pointer;font-size:.9rem;white-space:nowrap}
+button.theme:hover{border-color:var(--accent)}
+a{color:var(--accent)}
+.prov li{margin:.5rem 0}
+.prov .t{font-weight:700;color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <h1>The Boundary of Wisdom</h1>
+    <p class="sub">what survives &part;&part; — a fusion of a homology tutorial and an essay on wisdom</p>
+  </div>
+  <button class="theme" id="themeBtn" type="button">&#127769; dark</button>
+</header>
+<p class="sub">Fusion aus: task.html &#9998; wisdom.html</p>
+
+<!-- ============================================================ -->
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p><span class="tag a">A &middot; task.html</span> reduces a shape to <b>simplices</b> and defines a single
+operator, the <b>boundary map &part;</b>, that strips off the edge/rim/skin of each piece. Its deepest
+fact is <b class="grn">&part;&part; = 0</b>: the boundary of a boundary is nothing. Because the edges
+cancel, the only thing that genuinely <i>remains</i> is an <b>invariant</b> &mdash; a hole, counted by the
+Betti numbers. The worldview is total certainty: the rule is exact, mechanical, and closed.</p>
+<p><span class="tag b">B &middot; wisdom.html</span> insists that <b>wisdom &ne; knowledge</b>: knowledge
+is knowing fire is hot; wisdom is knowing <i>when</i> to use fire and <i>when</i> to walk away. It lives in
+<b>balance</b> (holding the tension between extremes), its virtue is the <b>pause</b> (respond from clarity
+rather than react from emotion), and it prizes <b>holding the question open</b> (comfort with uncertainty).</p>
+<p><b class="acc">The fused position.</b> Wisdom is the practice of running a boundary operator on a situation.
+The boundary map is a formal picture of the wise attention: apply &part; to a situation and you separate what
+is <i>boundary</i> (transient, reactive &mdash; the "head minus tail" edges that will cancel) from what is
+<i>invariant</i> (the hole &mdash; the real structure that remains). <b class="grn">&part;&part; = 0</b> is
+the mathematics of not over-rotating: a reaction to a reaction cancels out, so pure reactivity has no interior
+and no content ("a rim has no ends"). The Betti number &mdash; what survives &mdash; is exactly what is worth
+acting on. So A supplies <i>what cancels</i> (the map), and B supplies <i>where to stop and let it cancel</i>
+(the when). <b>Act on the invariant, let the boundary cancel, and pause just long enough to reach the hole.</b></p>
+</section>
+
+<!-- ============================================================ -->
+<section id="widersprueche">
+<h2>Widerspr&uuml;che zwischen A und B</h2>
+<p>On no shared <i>factual</i> claim do the two papers contradict &mdash; they inhabit different domains (A:
+formal mathematics; B: practical philosophy). But their <i>stances</i> stand in three real tensions.</p>
+
+<div class="card">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>1. The rule as essence &mdash; vs. the rule as insufficient.</b></p>
+<p><span class="tag a">A</span> treats the precise mechanical rule as <i>the substance</i>: "the formula builds
+that rim by a little ritual: delete each corner in turn&hellip; the signs +, &minus;, + are put in so the three
+edges join up head-to-tail"; once shapes are chains and &part; is defined, the holes are counted, and that is the
+point. <span class="tag b">B</span> demotes the bare rule to a tier <i>below</i> wisdom: "Knowledge is knowing
+fire is hot. Wisdom is knowing <em>when</em> to use fire" &mdash; and "Collecting advice you never use" is
+listed under <b>not</b>-wisdom. The exact rule that A crowns, B explicitly judges incomplete.</p>
+</div>
+
+<div class="card">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>2. Closure / certainty &mdash; vs. holding-open / uncertainty.</b></p>
+<p><span class="tag a">A</span> is a closed, deterministic system: &part;&part; = 0 is a theorem, the Betti
+numbers are invariants, and the ideal is settling &mdash; "Nothing survives. A rim has no ends." There are no open
+questions; everything cancels predictably. <span class="tag b">B</span>'s pillar 4 is the opposite value:
+"<b>Comfort with Uncertainty</b> &mdash; Saying 'I don't know' without panic. The wise hold questions open longer
+than the anxious." A's deepest achievement is <i>closing</i> the question; B's deepest virtue is <i>keeping it
+open</i>.</p>
+</div>
+
+<div class="card">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>3. Insight as downstream output &mdash; vs. insight as upstream pause.</b></p>
+<p><span class="tag a">A</span>: understanding <i>emerges after</i> you faithfully execute the procedure &mdash; run
+the delete-a-vertex ritual, and the cancellation reveals the hole. Do the steps, the aha appears.
+<span class="tag b">B</span>: the virtue <i>is</i> the upstream pause <i>before</i> action &mdash; "reacting from
+emotion" (not-wisdom) vs. "responding from clarity" (wisdom); "the quiet voice that says <em>wait</em> when
+everything screams <em>go</em>." B: the understanding is the refusal to just do the (impulsive) steps.</p>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="aufloesung">
+<h2>Aufl&ouml;sung</h2>
+<p>The three tensions dissolve once you read A and B as two <i>levels of one reflex</i>, not as rivals. The rule
+is the <b>form</b> (the "what"); the when is the <b>praxis</b> (the stance toward the form).</p>
+
+<div class="card">
+<p><b>&#8594; Rule vs. when.</b> They operate at different levels of the same structure. The rule computes
+<i>what cancels</i>; the when decides <i>where to stop and let it cancel</i>. The rule is necessary but not
+sufficient &mdash; A's "delete each vertex <i>in turn</i>, <i>one at a time</i>, <i>in order</i>" is already a
+pacing discipline, a seed of B's "when," just never named as such. <b>Fused:</b> the rule supplies the map; wisdom
+is the foot that stops on the right cell.</p>
+</div>
+
+<div class="card">
+<p><b>&#8594; Closure vs. open.</b> They are the two ends of the very balance B's slider describes. A's
+&part;&part; = 0 is the <i>closed</i> end (good: reactivity has a definite, predictable end &mdash; stop
+reacting). B's "hold the question open" is the <i>open</i> end (the cycle that is <i>not</i> a boundary &mdash;
+the invariant). Wisdom holds both: close what is a boundary, keep open what is a genuine hole. <b>Fused:</b>
+certainty where there is certainty (the transient cancels, stop), an open question where there is an invariant
+(the hole, Betti &gt; 0, keep attending). The sweet spot of the slider is exactly where you let the boundary
+cancel <i>and</i> keep the hole open.</p>
+</div>
+
+<div class="card">
+<p><b>&#8594; Downstream vs. upstream.</b> They are the two halves of one gesture. The <i>upstream pause</i> (B)
+is the decision to <i>apply &part; at all</i> &mdash; to stop and look at the boundary instead of just acting.
+The <i>downstream insight</i> (A) is what you <i>see</i> once you apply it &mdash; the cancellation, the hole.
+B is the <b>trigger</b>, A is the <b>payload</b>, of the same reflex: <b>pause &rarr; run &part; &rarr; the
+transient cancels, the invariant remains &rarr; respond from clarity.</b> <b>Fused conclusion:</b> the pause and
+the procedure are one motion &mdash; "wait" (B) is the moment you decide to compute &part;, and "the hole" (A) is
+what you were waiting for.</p>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<div class="card">
+<p><span class="tag a">A</span><b>The formal core (from task.html).</b> A shape is glued from <b>simplices</b>:
+0-simplex = point, 1-simplex = edge <span class="kv">[v&#8320;,v&#8321;]</span>, 2-simplex = filled triangle
+<span class="kv">[v&#8320;,v&#8321;,v&#8322;]</span>, 3-simplex = tetrahedron. <b>Ordering the vertices by index</b>
+puts arrows (an orientation) on every edge &mdash; low index to high index &mdash; and is the source of the signs.</p>
+<p>A <b>chain</b> is a weighted collection of n-simplices (a vector space over &Ropf;): the "shopping list"
+<span class="kv">2a + b &minus; c</span>; a minus sign means "walked backwards." The <b>boundary</b> of an edge is
+head minus tail:</p>
+<div class="math">&part;[v<sub>i</sub>,v<sub>j</sub>] = v<sub>j</sub> &minus; v<sub>i</sub></div>
+<p>The boundary of an n-simplex deletes one vertex at a time, each face weighted by (&minus;1)<sup>i</sup>:</p>
+<div class="math">&part;[v<sub>0</sub>,&hellip;,v<sub>n</sub>] = &Sigma;<sub>i</sub> (&minus;1)<sup>i</sup>
+[v<sub>0</sub>,&hellip;,&#772;<sub>v<sub>i</sub></sub>,&hellip;,v<sub>n</sub>]</div>
+<p>For the triangle: <span class="kv">&part;[v&#8320;,v&#8321;,v&#8322;] = +[v&#8321;,v&#8322;] &minus;
+[v&#8320;,v&#8322;] + [v&#8320;,v&#8321;]</span> &mdash; the three edges oriented head-to-tail into one loop.</p>
+<p>The crown jewel is <b class="grn">&part;&part; = 0</b>. Take the boundary of the triangle's rim: at every
+corner one edge ends (<b class="grn">+1</b>, a head) and the next begins (<b class="red">&minus;1</b>, a tail);
+the +1 and &minus;1 land on the same point and cancel. Nothing survives &mdash; "a rim has no ends."</p>
+<p>What survives the boundary operation is counted by the <b>Betti numbers</b>:</p>
+<div class="math">b<sub>n</sub> = (# n-simplices) &minus; rank &part;<sub>n</sub> &minus; rank &part;<sub>n+1</sub>
+&nbsp;&nbsp;( = rank H<sub>n</sub>, H<sub>n</sub> = ker &part;<sub>n</sub> / im &part;<sub>n+1</sub>)</div>
+<p class="note">b&#8320; = connected clusters &middot; b&#8321; = independent loops &middot; b&#8322; = enclosed voids.</p>
+</div>
+
+<div class="card">
+<p><span class="tag b">B</span><b>The praxis core (from wisdom.html).</b> <b>Wisdom &ne; knowledge</b>: knowledge
+is knowing fire is hot; wisdom is knowing <i>when</i> to use fire and <i>when</i> to walk away. <b>Wisdom lives in
+balance</b> &mdash; it holds the tension between the extremes without choosing a side. Its signature move is the
+<b>pause</b> (the wiser of "fire back immediately" vs. "pause, respond later"; "responding from clarity" beats
+"reacting from emotion"). Its five pillars: (1) <b>Self-awareness</b> &mdash; "Am I seeing clearly, or seeing what
+I want to see?"; (2) <b>Long-term thinking</b> &mdash; the marshmallow test of life, every day; (3) <b>Empathy</b>
+&mdash; everyone is fighting a battle you can't see; (4) <b>Comfort with uncertainty</b> &mdash; "I don't know"
+without panic, holding questions open; (5) <b>Learning from pain</b> &mdash; "the scar becomes a teacher only if you
+listen." And its final line: "It's the quiet voice that says <i>wait</i> when everything screams <i>go</i>. It's
+not a destination. It's a practice."</p>
+</div>
+
+<div class="card">
+<p><span class="tag f">F</span><b>The fused model &mdash; B read in A's notation.</b> (This is the synthesis; each
+line maps a B-theme onto an A-object, both traceable to the sources.)</p>
+<ul>
+<li><b>a piece of the situation</b> (an event, a move, an impulse) &harr; <b>a simplex</b>.</li>
+<li><b>the reactive edge / "what this will cancel into"</b> &harr; <b>the boundary &part;</b> (head minus tail).</li>
+<li><b>reacting from emotion</b> &harr; <b>a boundary</b> (z = &part;c): a derivative of a prior state; it will
+  cancel; it has no invariant content.</li>
+<li><b>a balanced, self-consistent state</b> ("holds both courage and caution") &harr; <b>a cycle</b> (&part;z = 0):
+  no net reaction &mdash; the slider's sweet spot.</li>
+<li><b>the thing that remains / the real structure</b> &harr; <b>a cycle that is <i>not</i> a boundary</b>
+  (the hole, Betti &gt; 0) &mdash; wisdom's object of attention.</li>
+<li><b>"a reaction to a reaction"</b> &harr; <b>&part;&part; = 0</b>: pure reactivity has no interior and no content
+  &mdash; "a rim has no ends."</li>
+<li><b>"how many things are actually worth acting on"</b> &harr; <b>the Betti number</b> (the count of invariants).</li>
+<li><b>"knowing when to use fire"</b> &harr; knowing <i>which</i> &part; to apply and <i>where</i> to stop.</li>
+<li><b>"comfort with uncertainty / holding the question open"</b> &harr; attending to the nontrivial cycle &mdash;
+  the question that refuses to reduce to a boundary.</li>
+<li><b>"the scar becomes a teacher only if you listen"</b> &harr; the invariant is visible only once you have
+  <i>looked at the boundary</i>; the hole is real but hidden until &part; is run.</li>
+</ul>
+</div>
+
+<div class="card">
+<p><span class="tag f">F</span><b>One-line carry-forward for a later round.</b> Treat any situation as a chain;
+apply &part; to separate the transient (the boundary &mdash; let it cancel, since &part;&part; = 0 guarantees a
+reaction has no content) from the invariant (the hole, counted by Betti); pause until the cancellation is complete;
+then act on the invariant. Certainty governs what cancels; the when governs where to stop; and what genuinely
+survives is what is worth doing.</p>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="visualisierung">
+<h2>Visualisierung</h2>
+<div class="vizbox">
+<p class="note">Left: a triangle whose boundary runs the <b class="grn">&part;&part; = 0</b> cancellation loop &mdash;
+reacting has no content. Right: a glowing ring, the <b class="grn">hole</b> &mdash; the invariant that remains
+(Betti&nbsp;1&nbsp;&gt;&nbsp;0). Slide <b>Pause &harr; Act</b> (caution &larr; &rarr; impulse, B's axis) to see where
+your action ("the fire") lands: on the transient (wasted &mdash; it cancels) or on the invariant (counted).</p>
+<canvas id="viz" width="760" height="460"></canvas>
+<div class="controls">
+  <label for="bal">Pause (caution / "wait") &harr; Act (impulse / "go")</label>
+  <input type="range" id="bal" min="0" max="100" value="50">
+</div>
+<div class="msg" id="msg"></div>
+<div class="legend">
+  <span><i class="dot" style="background:var(--accent)"></i> boundary (transient &mdash; cancels)</span>
+  <span><i class="dot" style="background:var(--ring)"></i> hole (invariant &mdash; remains)</span>
+  <span><i class="dot" style="background:var(--red)"></i> action on the transient (wasted)</span>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul class="prov">
+<li><span class="t"><a href="../task.html">task.html</a></span> &mdash; "Boundary maps, one picture at a time": a
+picture-first tutorial on simplices, orientation, the boundary map &part;, the identity &part;&part; = 0, and the
+Betti numbers that count the holes that survive.</li>
+<li><span class="t"><a href="../wisdom.html">wisdom.html</a></span> &mdash; "What is Wisdom?": an interactive
+essay arguing that wisdom is not knowledge but the <i>when</i>, that it lives in balance, that its virtue is the
+pause, and that comfort with uncertainty is a pillar of it.</li>
+</ul>
+</section>
+
+</div><!--/wrap-->
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz');
+  var slider=document.getElementById('bal');
+  var msgEl=document.getElementById('msg');
+  var g=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function p(n){return cs.getPropertyValue(n).trim();}
+    return {surface:p('--surface'),sub:p('--sub'),text:p('--text'),muted:p('--muted'),
+            accent:p('--accent'),green:p('--green'),red:p('--red'),border:p('--border'),ring:p('--ring')};
+  }
+  var COL=readTheme();
+
+  function bandIndex(v){ if(v<=15)return 0; if(v<=35)return 1; if(v<=65)return 2; if(v<=85)return 3; return 4; }
+  var MSGS=[
+    "\u{1F624} All caution, no action. You keep reading the boundary and never act on the invariant &mdash; fear disguised as prudence. Nothing you do survives.",
+    "\u{1F914} Leaning cautious. You pause enough to watch some edges cancel (&part;&part;=0), but you may act before the invariant (the hole) is claimed.",
+    "\u{1F3AF} The sweet spot. The transient has cancelled (&part;&part;=0) and the invariant (the hole) glows. Act on the hole &mdash; hold both courage and caution; respond from clarity.",
+    "\u26A1 Leaning bold. The invariant glows, but the token is drifting back toward the edges &mdash; are you still on the hole, or slipping onto the transient?",
+    "\u{1F525} All impulse, no reflection. You act on the boundary <i>before</i> it cancels &mdash; confidence without awareness is recklessness. The anxious hold questions open longest; the wise just long enough to reach the hole."
+  ];
+  // geometry
+  var A=[150,330], B=[360,330], C=[255,140];      // triangle v0,v1,v2
+  var O=[575,225], OR=105, IR=64;                 // the hole (annulus)
+  var token={x:O[0],y:O[1]};
+
+  function arrow(x1,y1,x2,y2,col,w){
+    g.strokeStyle=col;g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+    var mx=(x1+x2)/2,my=(y1+y2)/2,a=Math.atan2(y2-y1,x2-x1),h=9;
+    g.fillStyle=col;g.beginPath();
+    g.moveTo(mx+Math.cos(a)*h,my+Math.sin(a)*h);
+    g.lineTo(mx+Math.cos(a+2.5)*h,my+Math.sin(a+2.5)*h);
+    g.lineTo(mx+Math.cos(a-2.5)*h,my+Math.sin(a-2.5)*h);
+    g.closePath();g.fill();
+  }
+  function dot(p,r,col){g.beginPath();g.arc(p[0],p[1],r,0,7);g.fillStyle=col;g.fill();}
+  function lbl(t,x,y,col,size,align){
+    g.fillStyle=col;g.font=(size||15)+'px ui-monospace,Menlo,monospace';
+    g.textAlign=align||'center';g.textBaseline='middle';g.fillText(t,x,y);
+  }
+  function faceEdge(P,Q,col,sign,signCol){
+    arrow(P[0],P[1],Q[0],Q[1],col,2.6);
+    var mx=(P[0]+Q[0])/2,my=(P[1]+Q[1])/2;
+    lbl(sign,mx+16,my-14,signCol,22);
+  }
+
+  function draw(now){
+    var t=now/1000, pulse=0.5+0.5*Math.sin(t*2.2);
+    var v=parseFloat(slider.value), band=bandIndex(v);
+    g.clearRect(0,0,W,H);
+
+    // ---------- LEFT: triangle + boundary + cancellation (∂∂=0) ----------
+    g.save();
+    g.globalAlpha=0.10; g.fillStyle=COL.accent;
+    g.beginPath();g.moveTo(A[0],A[1]);g.lineTo(B[0],B[1]);g.lineTo(C[0],C[1]);g.closePath();g.fill();
+    g.restore();
+    // boundary edges (∂[v0,v1,v2] = +[v1,v2] − [v0,v2] + [v0,v1])
+    faceEdge(A,B,COL.accent,'+',COL.green);   // [v0,v1] +
+    faceEdge(A,C,COL.accent,'−',COL.red);     // [v0,v2] −  (negative)
+    faceEdge(B,C,COL.accent,'+',COL.green);   // [v1,v2] +
+    // vertices: +head / −tail cancel → ∂∂=0
+    [A,B,C].forEach(function(p){
+      dot(p,6,COL.text);
+      g.save();
+      g.globalAlpha=0.35+0.55*pulse;
+      g.strokeStyle=COL.green;g.lineWidth=2;
+      g.beginPath();g.arc(p[0],p[1],11,0,7);g.stroke();
+      g.restore();
+      lbl('±',p[0],p[1]-22,COL.green,15);
+    });
+    lbl('v0',A[0]-18,A[1]+14,COL.muted,14);
+    lbl('v1',B[0]+18,B[1]+14,COL.muted,14);
+    lbl('v2',C[0],C[1]-20,COL.muted,14);
+    lbl('∂∂ = 0',255,375,COL.green,18);
+    lbl('reacting has no content',255,398,COL.muted,12);
+
+    // ---------- RIGHT: the hole (invariant ring) ----------
+    var ringFocus=(band===2)?1:((band===1||band===3)?0.55:0.15);
+    g.save();
+    g.shadowColor=COL.ring; g.shadowBlur=8+30*ringFocus*(0.6+0.4*pulse);
+    g.globalAlpha=0.30+0.25*ringFocus;
+    g.fillStyle=COL.ring;
+    g.beginPath();
+    g.arc(O[0],O[1],OR,0,Math.PI*2);
+    g.arc(O[0],O[1],IR,0,Math.PI*2,true);
+    g.fill();
+    g.globalAlpha=1; g.shadowBlur=0;
+    g.strokeStyle=COL.ring; g.lineWidth=2;
+    g.beginPath();g.arc(O[0],O[1],OR,0,Math.PI*2);g.stroke();
+    g.beginPath();g.arc(O[0],O[1],IR,0,Math.PI*2);g.stroke();
+    g.restore();
+    lbl('the hole',O[0],O[1],COL.ring,16);
+    lbl('invariant',O[0],O[1]+18,COL.muted,12);
+    lbl('Betti 1 > 0',O[0],O[1]+OR+22,COL.muted,12);
+
+    // ---------- FIRE token: where does the action land? ----------
+    var targets=[ [165,405],[245,392],O,[472,300],[(B[0]+C[0])/2,(B[1]+C[1])/2] ];
+    var cols=[COL.muted,COL.accent,COL.green,COL.accent,COL.red];
+    var inten=[0.5,0.7,1,0.9,1];
+    var tp=targets[band];
+    token.x+=(tp[0]-token.x)*0.12;
+    token.y+=(tp[1]-token.y)*0.12;
+    g.save();
+    g.shadowColor=cols[band]; g.shadowBlur=16*inten[band]*(0.7+0.3*pulse);
+    g.globalAlpha=0.45+0.55*inten[band];
+    g.fillStyle=cols[band];
+    g.beginPath();g.arc(token.x,token.y,11,0,7);g.fill();
+    g.globalAlpha=1; g.shadowBlur=0;
+    g.fillStyle=COL.text;
+    g.beginPath();g.arc(token.x,token.y,4,0,7);g.fill();
+    g.restore();
+    if(band===4){
+      g.save();
+      g.globalAlpha=0.35+0.5*pulse; g.strokeStyle=COL.red; g.lineWidth=2.5;
+      g.beginPath();g.arc(token.x,token.y,18,0,7);g.stroke();
+      g.restore();
+      lbl('it cancels — wasted',token.x,token.y+34,COL.red,12);
+    }
+    if(band===2){
+      lbl('acts on the invariant',token.x,token.y-30,COL.green,12);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  function setMsg(band){ msgEl.innerHTML=MSGS[band]; }
+
+  slider.addEventListener('input',function(){ setMsg(bandIndex(parseFloat(this.value))); });
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var d=document.documentElement.classList.toggle('dark');
+    this.innerHTML=(d?'&#127769; dark':'&#9728;&#65039; light');
+    COL=readTheme();
+  });
+
+  setMsg(2);
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

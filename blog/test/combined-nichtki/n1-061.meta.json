@@ -1,0 +1,16 @@
+{
+  "no": "061",
+  "a": "hausdorff.html",
+  "b": "strukturwissenschaften.html",
+  "a_title": "Interactive Topology Explorer",
+  "b_title": "Strukturwissenschaften – Visuelle Intuition",
+  "combined_theme": "topologie-als-struktur",
+  "one_line": "Eine Topologie ist eine Relationsstruktur auf einer Menge; die Trennungsaxiome sind eine Constraint-Familie, die zwischen Indifferenzierbarkeit (indiscret) und voller Unterscheidbarkeit (metrisch, eindeutige Grenzwerte) schaltet — und genau dieses Wohlverhalten ist die Bühne, auf der Bifurkation, Attraktoren und Selbstorganisation erst definierbar werden.",
+  "contradictions": [
+    "Position des Spannenden auf dem Ordnungs-Regler: A zeigt '↑ Stronger separation' als Zielrichtung (Metrik/Normal = Ideal, indiscret 'No separation at all' = tot); B sagt, maximale Ordnung ('starrer Regularität', minimale Entropie) sei ein toter Pol genau wie maximaler Zufall — das Lebendige liege in der Mitte. A's Nordstern (volle Trennung) ist in B's Vokabular ein minimum-Entropie-Totpunkt.",
+    "Nicht-Trennung: A rahmt Nicht-Hausdorff-Räume (Gerade mit zwei Ursprüngen, cofinite Topologie, Sierpiński) als Pathologie ('See what breaks when the Hausdorff condition fails', verlorene eindeutige Grenzwerte); B behandelt den gekoppelten/nicht-getrennten Zustand als den Ort der Handlung — 'Symmetriebrechung' sei 'der Weg zum Chaos', der Ursprung der Komplexität.",
+    "Statische vs. dynamische Struktur: A's Topologie ist ein fest gegebenes Axiom-Gerüst (man prüft T₀/T₁/T₂ an einem Raum); B's Strukturen sind emergent und entwickeln sich über die Zeit aus einer Dynamik (logistische Karte, Lorenz, Gray-Scott, Evolution)."
+  ],
+  "resolution": "A ist die Bühne, B das Drama: Hausdorff-Eigenschaft (eindeutige Grenzwerte) ist Voraussetzung dafür, dass B's Attraktoren als wohldefinierte Grenzwerte überhaupt Sinn ergeben — B's Systeme laufen in Hausdorff-/Metrik-Räumen (ℝⁿ). Die 'spannende Mitte' (B) ist eine Eigenschaft der Dynamik auf A's wohlverhaltenen Räumen, nicht der Topologie; volle Trennung (A's Top) ist das ablesbare Gerüst, nicht das Ziel. Nicht-Hausdorff-Paare (zwei Ursprünge, 0/1 im Sierpiński-Raum) sind topologisch ungebrochene Symmetrie; B's Symmetriebrechung ist genau der Akt, sie durch disjunkte Umgebungen Hausdorff-trennbar zu machen — Symmetriebrechung = Trennung gewinnen. A's statische Topologie ist B's 'Constraint' (Menge + Relationen), B's Dynamik die Lebensform, die dieser Constraint beherbergt.",
+  "viz": "Interaktiver Trennungs-Regler (2D-Canvas, inline, themenaktiv): s∈[0,1] schaltet die Topologie durch die Axiom-Hierarchie (indiscret → T₀/T₁/T₂ → metrisch); live gezählte disjunkt-trennbare Punkt-Paare (A's T₂-Kern) plus ein blass gezeichneter Glocken-Overlay (B), der die generative Mitte zwischen den 'starr'-Polen markiert — A's Top als 'starr regulär' sichtbar gemacht."
+}

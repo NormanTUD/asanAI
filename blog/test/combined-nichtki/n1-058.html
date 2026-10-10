@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stabilität als normale Form — Chemie × Homotopietypentheorie</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#2563a8;
+  --mn-accent2:#a843a0; --mn-accent3:#1f9d55; --mn-accent4:#c2410c; --mn-accent5:#7c3aed;
+  --mn-border:#d8d2c4; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+  --mn-boundary:#dc2626; --mn-ok:#16a34a; --mn-grid:rgba(0,0,0,0.08);
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#60a5fa;
+  --mn-accent2:#ce93d8; --mn-accent3:#34d399; --mn-accent4:#ff8a65; --mn-accent5:#a78bfa;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-boundary:#f87171; --mn-ok:#4ade80; --mn-grid:rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--mn-bg); color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:24px 20px 80px;}
+header.hero{
+  padding:28px 22px; border:1px solid var(--mn-border); border-radius:14px;
+  background:var(--mn-panel); margin-bottom:26px;
+}
+header.hero h1{font-size:1.75em; line-height:1.25; margin-bottom:10px; color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2); font-weight:600; font-size:.98em;}
+.toggle{
+  margin-top:16px; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel2); color:var(--mn-fg); border-radius:22px;
+  cursor:pointer; font-size:.9em; transition:.2s;
+}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 30px;}
+section h2{
+  font-size:1.35em; margin-bottom:12px; color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border); padding-bottom:6px;
+}
+section h3{font-size:1.06em; margin:16px 0 6px; color:var(--mn-accent2);}
+p{margin-bottom:12px;}
+.lede{font-size:1.06em;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{
+  border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel);
+  padding:14px 16px;
+}
+.card h3{font-size:1.04em; margin:0 0 8px; color:var(--mn-fg);}
+.card a{color:var(--mn-accent2); text-decoration:none; font-weight:600;}
+.card a:hover{text-decoration:underline;}
+.card small{color:var(--mn-dim);}
+.wc{border-left:4px solid var(--mn-boundary);}
+.wc b{color:var(--mn-boundary);}
+.res{border-left:4px solid var(--mn-ok);}
+.res b{color:var(--mn-ok);}
+.formula{
+  font-family:'Courier New',monospace; background:var(--mn-panel2);
+  border:1px solid var(--mn-border); border-radius:8px; padding:12px 14px;
+  margin:10px 0; overflow-x:auto; white-space:pre; font-size:.86em; color:var(--mn-fg);
+}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:2px 8px; border-radius:6px; margin-bottom:8px;
+  background:var(--mn-panel2); color:var(--mn-accent); border:1px solid var(--mn-border);
+}
+.tag.b{color:var(--mn-accent2);}
+.ladder{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px; margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:6px; font-size:.96em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+table.map{width:100%; border-collapse:collapse; margin:12px 0; font-size:.93em;}
+table.map th,table.map td{border:1px solid var(--mn-border); padding:8px 10px; text-align:left; vertical-align:top;}
+table.map th{background:var(--mn-panel2); color:var(--mn-accent);}
+table.map td:first-child{color:var(--mn-accent2); font-weight:600; white-space:nowrap;}
+.viz{
+  border:1px solid var(--mn-border); border-radius:14px; background:var(--mn-panel);
+  padding:16px; margin-top:6px;
+}
+.viz canvas{width:100%; display:block; border-radius:10px; background:var(--mn-panel2); border:1px solid var(--mn-border);}
+.viz .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1; min-width:140px; accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700; white-space:nowrap; font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel); color:var(--mn-fg); border-radius:8px; cursor:pointer;
+  font-weight:700; font-size:.9em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.primary{margin-left:auto; background:var(--mn-accent); color:var(--mn-bg); border-color:var(--mn-accent);}
+.viz .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:.85em; color:var(--mn-dim);}
+.viz .legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-dim); font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Stabilität als normale Form — Chemie × Homotopietypentheorie</h1>
+  <div class="subtitle">Fusion aus: chemistry.html ✕ hott6.html</div>
+  <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Beide Papiere sind <em>Grundlagen-Texte</em>, die ihr Fach als etwas vorstellen, das aus <strong>einigen primitiven Bausteinen nach einheitlichen, regelgesteuerten Regeln</strong> entsteht — und „richtig"/„stabil" als eine <em>operative</em> Eigenschaft lesen: eine Konfiguration ist korrekt, wenn sie <strong>fertig reduziert</strong> ist. <b>A</b> (Chemie) nimmt das dynamisch: Elektronen + Kerne folgen drei uniformen Gesetzen (Energie-Minimierung, Elektrostatik, Oktettregel), und ein Molekül ist „stabil", wenn der Ball in das Energie-Minimum <em>gerollt</em> ist — die <strong>normale Form</strong> der Konfiguration. <b>B</b> (HoTT) nimmt es konstruktiv: Typen + Konstruktoren folgen der einheitlichen FIEC-Architektur (Formation / Introduction / Elimination / Computation), und ein Term ist „korrekt", wenn er auf seine <strong>Normalform</strong> reduziert ist (f(3) ≡ 3+3, double(2) ≡ 4).</p>
+  <p>Die gemeinsame Form lautet: <strong>„Primitive + uniforme Reduktionsregeln → stabile Normalform, und die <em>Verbindungen zwischen</em> Konfigurationen sind selbst bedeutsam."</strong> In A sind das die Reaktionswege / Elektronen-Transfer-Trajektorien, die ins Minimum führen; in B sind das die <em>Pfade</em> der Identitätstypen a =<sub>A</sub> b. Ein Molekül ist nicht nur sein Minimum — es ist das Minimum <em>plus</em> der Raum der Wege dorthin. Genau das ist in B ein <strong>kontraktibler Typ</strong>: ein eindeutiger Punkt, umgeben von einem Raum der (zum Konstanten-Pfad homotopen) Pfade.</p>
+  <p>Der fusionierte Grundsatz in einem Satz: <strong>Ein stabiles Molekül ist eine normale Form; eine Bindung ist ein Pfad; die Oktettregel ist eine Faserung.</strong> A liefert den Punkt (das kanonische Minimum), B liefert die Pfad- und Faserstruktur — zusammen beschreiben sie dasselbe fundamentale Gerüst, das A in der Materie und B in der Mathematik instantiiert.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere liegen in <em>verschiedenen</em> Domänen (Elektronen vs. Typen) und widersprechen sich also nicht in Fakten. Doch ihre <em>fundamentalen Stellungen</em> zu Struktur tragen reale, benennbare Spannungen:</p>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Endzustand: eindeutig vs. strukturreich</span>
+    <h3>A kollabiert auf <em>einen</em> kanonischen Punkt · B behält die Pfad-Struktur</h3>
+    <p><b>A</b> lässt das System zu <em>einem</em> eindeutigen, algorithmisch entscheidbaren Minimum relaxen: „minimaler Energie", ein einzelner Gleichgewichtsabstand r = re, „maximale elektrische Stabilität". Es gibt <em>den</em> stabilen Zustand — alles andere rollt zu ihm. Stabilität ist eine eindeutige, entscheidbare Zielpunkt-Eigenschaft.</p>
+    <p><b>B</b> sagt über Gleichheit/Identität das Gegenteil-Grundverständnis: Die Identitätstypen a =<sub>A</sub> b sind <em>Typen mit (potenziell) vielen Pfaden</em>, die „can be non-trivial" — Gleichheit trägt Struktur (Gruppoid: Komposition, Inverse, refl). B verweigert gerade die Kürzung vieler Verbindungen auf einen einzigen kanonischen Punkt. A würde alle Pfade zum Minimum <em>quotieren</em>; B hält genau diese Mehrdeutung für den Inhalt.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 2 · Was ist „Fundamental": eine Zahl vs. ein Typ</span>
+    <h3>Skalare Wahrheit (A) vs. typ-/strukturbasierte Wahrheit (B)</h3>
+    <p><b>A</b> reduziert Stabilität auf eine <em>reellwertige</em> Größe: die potentielle Energie E(r) → ℝ. „Ist es stabil?" ist eine Skalare Minimierung / ein Zahlenvergleich. Das Fundamentale ist <em>ein Skalar</em>, der gesenkt wird.</p>
+    <p><b>B</b> macht die Grundobjekte zu <em>Typen</em>: „Korrektheit" ist <em>Typisierung</em> (ein strukturelles Urteil), und selbst „a = b" ist ein <em>Typ</em> (ein Raum), kein Bit, kein Skalar. B's Eröffnung betont: es gibt <em>ein</em> Grundkonzept (Typen), nicht zwei Ebenen. Die ontologische Grundannahme über „was fundamental ist" — eine Zahl (A) vs. ein Typ/Raum (B) — steht diametral.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 3 · Geometrie: diskret vs. kontinuierlich</span>
+    <h3>Quantisierte Schalen (A) vs. topologische Räume (B)</h3>
+    <p><b>A</b> ist im Kern <em>diskret/quantisiert</em>: ganzzahlige Schalenkapazitäten [2, 8, 8, 8], ganzzahlige Elektronenzahlen, ein kombinatorisches Oktett („volle Außenschale"). Die Welt besteht aus zählbaren Elektronen in festen Bahnen.</p>
+    <p><b>B</b> ist prinzipiell <em>kontinuierlich-geometrisch</em>: „types are spaces, functions are continuous maps", Identitätstypen sind <em>Pfade</em> (stetige Kurven in einem Raum). A's Fundament ist ein diskretes Gitter; B's ist ein kontinuierlicher Raum. Zwei unvereinbar wirkende „Grundgeometrien".</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag" style="background:transparent;">Auflösung 1 · Ein Punkt + ein Pfadraum = ein kontraktibler Typ</span>
+    <p>Der Widerspruch 1 löst sich auf <em>zwei Ebenen</em> auf. Auf der <em>Energie-Landschaft</em> (A) gibt es tatsächlich <em>einen</em> kanonischen Punkt — das Minimum. Aber der <em>Raum der Relaxations-/Reaktionswege</em>, die dorthin führen, ist vielfältig und strukturiert (B). In B ist genau das ein <em>kontraktibler Typ</em>: ein eindeutiger Punkt, zwischen dem und jedem anderen Punkt Pfade existieren, die alle zum konstanten Pfad (refl) homotop sind. <strong>Fusioniert:</strong> Das stabile Molekül ist ein <em>kontraktibler Typ</em> — A liefert den eindeutigen Punkt (Minimum/Normalform), B die Pfadstruktur drumherum (Reaktionswege). Kein Widerspruch, sondern zwei Seiten desselben Kontraktilen: der <em>Endzustand</em> ist kanonisch (A), der <em>Weg dorthin</em> ist strukturiert (B).</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 2 · Die Energiefunktion <em>ist</em> eine Faserung</span>
+    <p>Der Widerspruch 2 (Skalar vs. Typ) löst sich, indem man A's Skalar als <em>eine Faser</em> über einer strukturierten Faserung liest. A's Oktett-Schalen sind eine <em>abhängige Typ-Familie</em> B : A → U: über der Basis A = „Atome" hängt die Faser B(a) = „zulässige Elektronen-Konfigurationen von a" (die Schalenfüllungen mit Kapazitäten 2,8,8,8). Der skalare Energiewert E(r) ist dann nur <em>ein Invariantes-Etikett</em> über dieser Faserung — der Durchschnitt, den B's Struktur unter sich verbirgt. <strong>Fusioniert:</strong> „Stabilität" ist nicht eine Zahl, sondern ein <em>sektiertes Objekt</em>; A's Skalar ist der Durchschnitt über B's Faser, und die Faserung ist die eigentliche Grundstruktur. B's Sprache (Faserung, Sektion, Totalraum) beschreibt A's Schalenarchitektur wörtlich.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 3 · Diskret und kontinuierlich sind dual, nicht entgegengesetzt</span>
+    <p>Der Widerspruch 3 löst sich auf, weil <em>beide</em> Papiere diskret <em>und</em> kontinuierlich kombinieren — nur in umgekehrter Gewichtung. A: <em>diskrete</em> Elektronen-Zustände (Schalen) + <em>kontinuierliche</em> Relaxationsdynamik (Morse-Kurve, rollender Ball). B: <em>diskrete</em> Konstruktoren (0, star, 0₂/1₂, succ) erzeugen <em>kontinuierliche</em> Typen und Pfade. <strong>Fusioniert:</strong> Beide sind „<em>diskrete Regeln, die kontinuierliches Verhalten erzeugen</em>". A's ganzzahlige Oktetts sind die <em>Konstruktoren</em>; seine Morse-Dynamik die <em>Pfade</em>. B's Konstruktoren sind die „Schalen" seiner Typen; seine Pfad-Pfade die „Relaxation". Diskret = Bausteine, kontinuierlich = das, was sie zusammensetzen — in beiden Papieren.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px; border-left-color:var(--mn-accent);">
+    <span class="tag" style="background:transparent;">Gefasste Schlussposition</span>
+    <p>Chemie und HoTT instantiieren <em>dasselbe</em> fundamentale Gerüst: <strong>Primitive + uniforme, regelgesteuerte, konstruktive Reduktion → stabile Normalform, wobei der Raum der Übergänge zwischen Zuständen selbst Inhalt trägt.</strong> A's „Energie-Minimum erreichen" ist B's „auf Normalform reduzieren"; A's „Reaktionsweg" ist B's „Pfad in einer Identität"; A's „Oktett-Schalen" sind B's „Faser über der Basis der Atome". Die scheinbaren Widersprüche (eindeutig vs. strukturreich, Skalar vs. Typ, diskret vs. kontinuierlich) sind drei Schnittdurchschnitte eines einzigen Kontraktilen — der stabile Zustand ist die Spitze, und um ihn herum lebt die Struktur.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Das gemeinsame Skelett: <strong>Primitive</strong> (Bausteine) → <strong>uniforme Regeln</strong> (wie man daraus baut) → <strong>operative Korrektheit</strong> (fertig reduziert = stabil/typisiert) → <strong>Pfad-/Faserstruktur</strong> (die Verbindungen sind selbst Objekte). A und B füllen diese vier Slots isomorph aus.</p>
+
+  <div class="ladder">
+    <span class="tag">A · Chemie — Grundprinzipien (Materie)</span>
+    <ol>
+      <li><b>Leitbild:</b> „Chemie ist die Umverteilung von Elektronen zwischen Atomkernen, um einen Zustand maximaler elektrischer Stabilität und minimaler Energie zu erreichen."</li>
+      <li><b>Energie-Minimierung</b> (Morse-Potential): E(r) = De·(1 − e<sup>−a(r−re)</sup>)² − De, Kraft F(r) = −2a·De·(1−e<sup>−a(r−re)</sup>)·e<sup>−a(r−re)</sup>. Der Ball rollt zum Minimum r = re → Bindung bildet sich, das Molekül ist stabiler als die Einzelteile. De = Bindungsstärke, re = Gleichgewichtsabstand.</li>
+      <li><b>Elektrostatik</b> (Coulomb): F = k·q₁·q₂/r². Das Tauziehen zwischen + Kernen und − Elektronen bestimmt Elektronegativität, Polarität und ob ein Stoff Metall, Salz oder Gas ist.</li>
+      <li><b>Oktettregel</b>: Ziel = volle Außenschale (Kapazitäten 2,8,8,8). Drei Mechanismen: <em>ionisch</em> (Elektronen-Übergabe: Na+Cl, Li+F — je 1 e⁻), <em>kovalent</em> (Teilung: O+O teilt 4 e⁻, Doppelbindung), <em>polar</em> (ungleiche Teilung: H₂O, O zieht e⁻ an, Dipol). Elektronegativität (A): H 2.2, Na 0.9, Cl 3.2, O 3.5, F 4.0.</li>
+    </ol>
+  </div>
+
+  <div class="ladder b">
+    <span class="tag b">B · HoTT Kapitel 1 — Typentheorie (Mathematik)</span>
+    <ol>
+      <li><b>Leitbild:</b> „types are spaces, terms are points, and equality is paths" — ein einziges Grundkonzept (Typen), keine zwei Ebenen wie in der Mengenlehre.</li>
+      <li><b>Zwei Gleichheitsbegriffe:</b> <em>Judgmental</em> (a ≡ b : A — entscheidbar, metatheoretisch, „by definition") vs. <em>propositional</em> (a =<sub>A</sub> b — ein <em>Typ</em>, ein Element p : a =<sub>A</sub> b ist ein Pfad/Beweis, „can be non-trivial").</li>
+      <li><b>FIEC-Architektur</b> für jeden Typen-Former: Formation / Introduction / Elimination / Computation. Former: 0 (leer/False), 1 (Einheit/True, star), 2 (Bool), + (Koprodukt, inl/inr), × (Produkt, (a,b)), N (natürliche Zahlen, 0/succ).</li>
+      <li><b>Abhängige Typen</b> = Faserungen: B : A → U ordnet jedem a : A die Faser B(a) zu. <em>Pi</em> Prod(x:A) B(x) = Sektion (abhängige Funktion), <em>Sigma</em> Sum(x:A) B(x) = Totalraum (abhängiges Paar).</li>
+      <li><b>Identitätstypen</b> = Pfade: refl_a (konstanter Pfad), Komposition p·q, Inverse p⁻¹ → Gruppoid-Struktur.</li>
+      <li><b>Curry-Howard:</b> True↔1, False↔0, ∧↔×, ∨↔+, →↔→, ¬↔(A→0), ∀↔Π, ∃↔Σ. Ein Beweis von „A und B" ist ein Paar (a, b).</li>
+    </ol>
+  </div>
+
+  <p><strong>Die isomorphe Einbettung (der eigentliche Fusionsinhalt) — dieselben Slots, zwei Realisierungen:</strong></p>
+  <table class="map">
+    <tr><th>Slot</th><th>A · Chemie (Materie)</th><th>B · HoTT (Mathematik)</th></tr>
+    <tr><td>Primitive</td><td>Elektronen + Atomkerne</td><td>Typen + Konstruktoren (0,1,2,+,×,N,λ)</td></tr>
+    <tr><td>Uniforme Regeln</td><td>3 Gesetze: Minimierung, Elektrostatik, Oktett</td><td>FIEC: Formation/Introduction/Elimination/Computation</td></tr>
+    <tr><td>Stabil = fertig reduziert</td><td>Ball rollt zum Energie-Minimum (r = re)</td><td>Term reduziert auf Normalform (f(3) ≡ 3+3)</td></tr>
+    <tr><td>Grundquantität</td><td>Skalare Energie E(r) → ℝ</td><td>Typ / Raum (Faser über Basis)</td></tr>
+    <tr><td>Verbindung zwischen Zuständen</td><td>Reaktionsweg / Elektronen-Transfer</td><td>Pfad in der Identität a =<sub>A</sub> b</td></tr>
+    <tr><td>Stabiler Zustand</td><td>Einziges Minimum (kanonisch)</td><td>Kontraktibler Typ (ein Punkt + Pfadraum)</td></tr>
+    <tr><td>Basis + Faser</td><td>Basis = Atome, Faser = Schalenfüllung [2,8,8,8]</td><td>Basis A, Faser B(a)</td></tr>
+    <tr><td>Diskret</td><td>ganzzahlige Schalen / Elektronen</td><td>Konstruktoren (0, star, succ, inl/inr)</td></tr>
+    <tr><td>Kontinuierlich</td><td>Morse-Dynamik, rollender Ball</td><td>Pfade / stetige Abbildungen</td></tr>
+  </table>
+
+  <h3>Die drei Prinzipien (A) in B's Sprache übersetzt</h3>
+  <p><b>Energie-Minimierung ↔ Computation Rule.</b> A's „Ball rollt zum Minimum" ist B's „Reduktion auf Normalform": man <em>assertiert</em> Stabilität nicht, man <em>baut</em> sie — durch laufe Reduktion, bis nichts mehr geht. Das Minimum des Morse-Potentials <em>ist</em> die Normalform des Moleküls. Die Morse-Kraft F(r) = −dE/dr ist der „Gradient" der Reduktion; der Ball folgt ihm, exakt wie ein Term den β-/Computation-Schritten folgt.</p>
+  <p><b>Elektrostatik ↔ die Faser-Differenz (Polarität).</b> Coulomb's „Tauziehen" zwischen Kernen und Elektronen bestimmt, ob eine Bindung gleich oder ungleich geteilt wird. In B's Sprache: der Elektronegativitäts-Unterschied ist eine <em>ungleiche Faserung</em> — ein Sigma-Paar, in dem die gemeinsame Faser (das geteilte Elektronenpaar) zur Seite des stärkeren Partners (O in H₂O) verschoben ist. Polare Bindung = <em>verschobene Sektion</em>; ionische = <em>komplett übergebene Faser</em>.</p>
+  <p><b>Oktettregel ↔ Faserung + Kontraktion.</b> Die Oktettregel ist die Faserung B : A → U, deren Faser B(a) die „vollständigen" Schalenfüllungen des Atoms a sind. Ein Atom ist „stabil/edelig", wenn seine Faser <em>kontrahiert</em> ist (voll, ein kontraktibler Typ — nur eine Konfiguration, das „star"). Drei Mechanismen = drei Arten, die Faser zu füllen: ionisch (Pfad der <em>Übertragung</em> einer Faser von a nach b), kovalent (<em>gemeinsame</em> Faser / geteilter Pfad), polar (<em>verschobene</em> gemeinsame Faser).</p>
+
+  <h3>Typen-Former (B) als „Bindungs-Former" (A)</h3>
+  <table class="map">
+    <tr><th>Former (B)</th><th>Chemische Entsprechung (A)</th></tr>
+    <tr><td>0 — leer (False)</td><td>keine / verbotene Konfiguration (reaktives Radikal ohne Oktett → „ex falso": zerfällt oder reagiert)</td></tr>
+    <tr><td>1 — Einheit (True, star)</td><td>Edelgas / abgeschlossene Schale (triviale, stabile Konfiguration, trägt keine Info)</td></tr>
+    <tr><td>2 — Bool</td><td>zwei diskrete Bindungszustände (gebunden / ungebunden)</td></tr>
+    <tr><td>+ — Koprodukt (∨)</td><td>alternative Bindung — ein Molekül ist ionisch <em>oder</em> kovalent; der „Beweis" sagt, <em>welche</em> (NaCl ionisch, O₂ kovalent)</td></tr>
+    <tr><td>× — Produkt (∧)</td><td>gleichzeitige Mehrfachbindungen — H₂O trägt <em>zwei</em> O–H-Bindungen zugleich = ein Paar (a, b)</td></tr>
+    <tr><td>Π — abhängige Funktion (∀)</td><td>„für <em>jedes</em> Atom gilt die Oktettregel" — eine Sektion der Faserung</td></tr>
+    <tr><td>Σ — abhängiges Paar (∃)</td><td>„es <em>existiert</em> eine Konfiguration, die das Oktett erfüllt" — der Totalraum</td></tr>
+    <tr><td>N — Induktion</td><td>die Schalen als <em>induktiv</em> aufgebaute Struktur (Schale n+1 erst nach Schale n — „um die volle Schale zu füllen, fülle vorher die innere")</td></tr>
+  </table>
+
+  <h3>Pfade &amp; Identität (B) ↔ Reaktionswege (A)</h3>
+  <p>B: <em>refl</em> (konstanter Pfad), <em>Komposition</em> p·q, <em>Inverse</em> p⁻¹ → Gruppoid. A: Die Elektronen-Übertragung Na→Cl <em>ist</em> ein Pfad; die Dissoziation (Rückweg) ist die <em>Inverse</em>; zwei aufeinanderfolgende Reaktionen <em>komponieren</em>. Das Netz möglicher Molekül-Zustände und ihrer Übergänge ist ein <em>Gruppoid der Reaktionen</em> — und sein kontrahierender Kern (das stabile Molekül) ist ein <em>kontraktibler Typ</em>: ein Minimum (Punkt) plus der Raum der Reaktionswege (Pfade) dorthin.</p>
+  <p><strong>Big Picture (fusioniert):</strong> „Typen sind Räume, Terme sind Punkte, Funktionen sind stetige Abbildungen, Typenfamilien sind Faserungen" (B) wird zu „Konfigurationen sind Räume, Moleküle sind Punkte (die Minima), Bindungen sind stetige Verformungen dorthin, Reaktionswege sind Pfade, und die Oktettregel ist eine Faserung über dem Raum der Atome" (A). <em>Stabilität ist die Normalform; die Bindung ist der Pfad; das Oktett ist die Faser.</em></p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — ein Minimum, viele Pfade: der stabile Zustand als kontraktibler Typ</h2>
+  <p>Ein Canvas, zwei Panels, <em>ein</em> Prinzip: <strong>alles rollt zu <em>demselben</em> Minimum, aber jeder nimmt einen <em>anderen</em> Weg dorthin.</strong> Links (A, Chemie) iteriert die Morse-Energie ihre Normalform: der Ball rutscht die Kurve E(r) hinab und bleibt beim Gleichgewichtsabstand re (die <em>normale Form</em>). Rechts (B, HoTT) rutschen <em>sechs Teilchen</em> von verschiedenen Startpunkten einer Energie-Schale in dasselbe Zentrum — jedes hinterlässt einen <em>farbigen Relaxationspfad</em>; das Zentrum ist als <em>kontraktibler Typ</em> mit einer pulsierenden <em>refl</em>-Schleife markiert. <b>Bindungsstärke De</b> vertieft beide Potentialmulden (links: De der Morse-Mulde, rechts: Steifigkeit der Schale); <b>Teilchen</b> steuert die Anzahl der Pfade. Drücke ▶ — beide Panels reduzieren parallel auf ihre stabile Normalform.</p>
+
+  <div class="viz">
+    <canvas id="vizCanvas" height="470"></canvas>
+    <div class="controls">
+      <label for="deSlider" class="cl">Bindungsstärke De: <b id="deLab">3.0</b></label>
+      <input type="range" id="deSlider" min="1" max="5" step="0.1" value="3">
+    </div>
+    <div class="controls">
+      <label for="cntSlider" class="cl">Pfade / Teilchen (B): <b id="cntLab">6</b></label>
+      <input type="range" id="cntSlider" min="2" max="12" step="1" value="6">
+      <button class="btn primary" id="runBtn">▶ Loslassen &amp; reduzieren</button>
+      <button class="btn" id="resetBtn">↺ Bereit</button>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent)"></i> A: Morse-Kurve / Ball</span>
+      <span><i class="dot" style="background:var(--mn-ok)"></i> Minimum = normale Form</span>
+      <span><i class="dot" style="background:var(--mn-accent2)"></i> B: Teilchen / Pfade</span>
+      <span><i class="dot" style="background:var(--mn-dim)"></i> Energie-Konturen</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Quelle A</span>
+      <h3><a href="../chemistry.html">chemistry.html</a></h3>
+      <p><small>„Die Grundprinzipien der Chemie – Interaktiv": drei Prinzipien als Plotly/Canvas-Demos — (1) Energie-Minimierung über dem Morse-Potential (Ball rollt zur Bindung), (2) Elektrostatik / Coulomb-Kräfte auf einem Ladungsfeld, (3) Oktettregel mit animierter Elektronenübertragung (NaCl, O₂, H₂O, LiF).</small></p>
+    </div>
+    <div class="card">
+      <span class="tag b">Quelle B</span>
+      <h3><a href="../hott6.html">hott6.html</a></h3>
+      <p><small>„HoTT Chapter 1: Type Theory — Visual Explorer": interaktive Erkundung der Typentheorie — Typen vs. Mengen, judgmentale vs. propositionale Gleichheit, Funktions- und abhängige Typen (Faserungen), Typen-Former (FIEC), natürliche Zahlen/Induktion, Identitätstypen als Pfade (refl/Komposition/Inverse) und Curry-Howard.</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion N1-058 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('vizCanvas');
+  if(!canvas||!canvas.getContext){return;}
+  var ctx=canvas.getContext('2d');
+  var deSlider=document.getElementById('deSlider');
+  var cntSlider=document.getElementById('cntSlider');
+  var runBtn=document.getElementById('runBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var deLab=document.getElementById('deLab');
+  var cntLab=document.getElementById('cntLab');
+
+  var H=470, TAU=Math.PI*2;
+  var state={De:3.0, count:6, running:false, raf:null,
+             ball:{r:5.0, v:0, trail:[]},
+             parts:[]};
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';}
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+
+  // A: Morse potential (faithful to chemistry.html)
+  function morseE(r,De,re){var a=1.5,e=Math.exp(-a*(r-re));return De*(1-e)*(1-e)-De;}
+  function morseF(r,De,re){var a=1.5,e=Math.exp(-a*(r-re));return -2*a*De*(1-e)*e;}
+  var RE=2.0, RMIN=0.5, RMAX=8.0;
+
+  function initParts(){
+    state.parts=[];
+    for(var i=0;i<state.count;i++){
+      var ang=(i/state.count)*TAU + (Math.random()*0.5-0.25);
+      var rad=0.58 + Math.random()*0.24;
+      state.parts.push({
+        nx:Math.cos(ang)*rad, ny:Math.sin(ang)*rad,
+        vx:0, vy:0, trail:[],
+        colvar: ['--mn-accent','--mn-accent2','--mn-accent3','--mn-accent4','--mn-accent5'][i%5]
+      });
+    }
+  }
+  function ready(){
+    stop();
+    state.ball={r:5.0, v:0, trail:[]};
+    initParts();
+    render();
+  }
+  function stop(){if(state.raf){cancelAnimationFrame(state.raf);state.raf=null;}state.running=false;}
+
+  function release(){
+    stop();
+    state.ball={r:5.0, v:0, trail:[]};
+    initParts();
+    state.running=true;
+    loop();
+  }
+
+  function integrate(){
+    var dt=0.04, damp=0.92;
+    // A ball on Morse curve
+    var b=state.ball;
+    var F=morseF(b.r, state.De, RE);
+    b.v=(b.v + F*dt)*damp;
+    b.r+=b.v*dt;
+    if(b.r<RMIN+0.1){b.r=RMIN+0.1;b.v=Math.abs(b.v)*0.5;}
+    if(b.r>RMAX-0.1){b.r=RMAX-0.1;b.v=-Math.abs(b.v)*0.5;}
+    b.trail.push(b.r);
+    if(b.trail.length>200){b.trail.shift();}
+    // B particles in the 2D bowl
+    var k=0.6 + state.De*0.32;
+    var dt2=0.016, damp2=0.90;
+    var allSettled=true;
+    for(var i=0;i<state.parts.length;i++){
+      var p=state.parts[i];
+      var ax=-k*p.nx, ay=-k*p.ny;
+      p.vx=(p.vx+ax*dt2)*damp2;
+      p.vy=(p.vy+ay*dt2)*damp2;
+      p.nx+=p.vx*dt2;
+      p.ny+=p.vy*dt2;
+      var d=Math.sqrt(p.nx*p.nx+p.ny*p.ny);
+      if(d<0.012){p.nx=0;p.ny=0;p.vx=0;p.vy=0;}
+      else{allSettled=false;}
+      p.trail.push([p.nx,p.ny]);
+      if(p.trail.length>170){p.trail.shift();}
+    }
+    var bSettled=Math.abs(b.v)<0.006 && Math.abs(b.r-RE)<0.02;
+    if(bSettled){b.r=RE;b.v=0;}
+    if(bSettled && allSettled){state.running=false;}
+  }
+
+  function loop(){
+    if(!state.running){return;}
+    integrate();
+    render();
+    if(state.running){state.raf=requestAnimationFrame(loop);}
+    else{render();}
+  }
+
+  function render(){
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||700;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--mn-panel2');ctx.fillRect(0,0,W,H);
+    var C={
+      A:cssVar('--mn-accent'), B:cssVar('--mn-accent2'),
+      B3:cssVar('--mn-accent3')||cssVar('--mn-accent2'),
+      A4:cssVar('--mn-accent4')||'#b45309', A5:cssVar('--mn-accent5')||'#7c3aed',
+      fg:cssVar('--mn-fg'), dim:cssVar('--mn-dim'),
+      border:cssVar('--mn-border'), ok:cssVar('--mn-ok'),
+      grid:cssVar('--mn-grid')||'rgba(150,150,150,0.18)'
+    };
+    var gap=Math.min(28,W*0.035);
+    var lx0=14, lx1=(W-gap)/2, rx2=(W+gap)/2, rx3=W-14;
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W/2,58);ctx.lineTo(W/2,H-16);ctx.stroke();
+    ctx.fillStyle=C.dim;ctx.font='11px Segoe UI, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Stabilität = normale Form  ·  Bindung = Pfad  ·  Oktett = Faserung', W/2, 16);
+
+    renderLeft(lx0,lx1,C);
+    renderRight(rx2,rx3,C);
+  }
+
+  function renderLeft(lx0,lx1,C){
+    var top=54, bot=H-40, inner0=lx0+18, inner1=lx1-14, iW=inner1-inner0;
+    ctx.textBaseline='middle';
+    ctx.fillStyle=C.fg;ctx.font='bold 14px Segoe UI, sans-serif';ctx.textAlign='center';
+    ctx.fillText('MORSE-POTENTIAL  ·  A (Chemie)', (lx0+lx1)/2, 30);
+    ctx.fillStyle=C.dim;ctx.font='11px Segoe UI, sans-serif';
+    ctx.fillText('der Ball rollt zur normalen Form (r = re)', (lx0+lx1)/2, 46);
+    var De=state.De;
+    var Emin=-De-0.4, Emax=De*0.85;
+    function X(r){return inner0 + (r-RMIN)/(RMAX-RMIN)*iW;}
+    function Y(E){return top + (Emax-E)/(Emax-Emin)*(bot-top);}
+    // axis
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(inner0,top);ctx.lineTo(inner0,bot);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(inner0,bot);ctx.lineTo(inner1,bot);ctx.stroke();
+    // full curve (dim)
+    ctx.strokeStyle=C.grid;ctx.lineWidth=2;ctx.beginPath();
+    for(var s=0;s<=140;s++){var r=RMIN+(RMAX-RMIN)*s/140;var px=X(r),py=Y(morseE(r,De,RE));if(s===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.stroke();
+    // traversed path (accent), from start r=5 to current ball.r
+    var b=state.ball;
+    if(b.trail.length>1){
+      ctx.strokeStyle=C.A;ctx.lineWidth=3;ctx.beginPath();
+      for(var s=0;s<b.trail.length;s++){var rr=b.trail[s];var px=X(rr),py=Y(morseE(rr,De,RE));if(s===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+      ctx.stroke();
+    }
+    // equilibrium / minimum marker
+    var mx=X(RE),my=Y(morseE(RE,De,RE));
+    ctx.fillStyle=C.ok;ctx.beginPath();ctx.arc(mx,my,5,0,TAU);ctx.fill();
+    ctx.fillStyle=C.ok;ctx.font='bold 11px Segoe UI, sans-serif';ctx.textAlign='center';
+    ctx.fillText('normale Form (re = '+RE.toFixed(1)+' Å)', mx, my+20);
+    // ball
+    var bx=X(clamp(b.r,RMIN,RMAX)), by=Y(morseE(clamp(b.r,RMIN,RMAX),De,RE));
+    ctx.fillStyle=C.A;ctx.beginPath();ctx.arc(bx,by,7,0,TAU);ctx.fill();
+    ctx.strokeStyle=C.fg;ctx.lineWidth=1;ctx.stroke();
+    // axis labels
+    ctx.fillStyle=C.dim;ctx.font='10px Segoe UI, sans-serif';ctx.textAlign='left';
+    ctx.fillText('r (Å) →', inner1-46, bot+14);
+    ctx.textAlign='left';
+    ctx.fillText('E', inner0-14, top+8);
+  }
+
+  function renderRight(rx2,rx3,C){
+    var iW=rx3-rx2;
+    var cx=rx2+iW/2, cy=(H+40)/2;
+    var sx=iW/2-30, sy=(H-40)/2-46;
+    function X(nx){return cx+nx*sx;}
+    function Y(ny){return cy+ny*sy;}
+    ctx.textBaseline='middle';
+    ctx.fillStyle=C.fg;ctx.font='bold 14px Segoe UI, sans-serif';ctx.textAlign='center';
+    ctx.fillText('ENERGIE-SCHALE  ·  B (HoTT)', (rx2+rx3)/2, 30);
+    ctx.fillStyle=C.dim;ctx.font='11px Segoe UI, sans-serif';
+    ctx.fillText('viele Pfade → ein Minimum = kontraktibler Typ', (rx2+rx3)/2, 46);
+    // contour rings (energy levels)
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;
+    for(var k=1;k<=4;k++){
+      var rr=k/4;
+      ctx.beginPath();ctx.ellipse(cx,cy,rr*sx,rr*sy,0,0,TAU);ctx.stroke();
+    }
+    // trails
+    for(var i=0;i<state.parts.length;i++){
+      var p=state.parts[i];
+      var col=cssVar(p.colvar)||C.B;
+      if(p.trail.length<2){continue;}
+      for(var t=1;t<p.trail.length;t++){
+        var alpha=(t/p.trail.length)*0.85;
+        ctx.strokeStyle=hexToRgba(col,alpha);ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(X(p.trail[t-1][0]),Y(p.trail[t-1][1]));
+        ctx.lineTo(X(p.trail[t][0]),Y(p.trail[t][1]));
+        ctx.stroke();
+      }
+    }
+    // particles
+    for(var i=0;i<state.parts.length;i++){
+      var p=state.parts[i];
+      var col=cssVar(p.colvar)||C.B;
+      var px=X(p.nx),py=Y(p.ny);
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(px,py,6,0,TAU);ctx.fill();
+      ctx.strokeStyle=hexToRgba(C.fg,0.25);ctx.lineWidth=1;ctx.stroke();
+    }
+    // center: minimum = normal form = contractible type (refl self-loop)
+    var pr=13 + Math.sin((performance.now()/1000)*2)*3;
+    ctx.strokeStyle=C.ok;ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx,cy,pr,0,TAU);ctx.stroke();
+    ctx.fillStyle=C.ok;ctx.beginPath();ctx.arc(cx,cy,5,0,TAU);ctx.fill();
+    ctx.fillStyle=C.fg;ctx.font='bold 12px Segoe UI, sans-serif';ctx.textAlign='center';
+    ctx.fillText('Minimum = normale Form', cx, cy+pr+18);
+    ctx.fillStyle=C.dim;ctx.font='11px Segoe UI, sans-serif';
+    ctx.fillText('kontraktibler Typ  ·  refl', cx, cy+pr+34);
+  }
+
+  runBtn.addEventListener('click',release);
+  resetBtn.addEventListener('click',ready);
+  deSlider.addEventListener('input',function(){
+    state.De=parseFloat(deSlider.value);
+    deLab.textContent=state.De.toFixed(1);
+    if(!state.running){render();}
+  });
+  cntSlider.addEventListener('input',function(){
+    state.count=parseInt(cntSlider.value,10);
+    cntLab.textContent=state.count;
+    if(!state.running){initParts();render();}
+  });
+
+  window.toggleTheme=function(){document.documentElement.classList.toggle('dark');render();};
+  window.addEventListener('resize',function(){render();});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+  ready();
+})();
+</script>
+</body>
+</html>

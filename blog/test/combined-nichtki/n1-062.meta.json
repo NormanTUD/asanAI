@@ -1,0 +1,16 @@
+{
+  "no": "062",
+  "a": "psychologische_feldtheorie.html",
+  "b": "lie.html",
+  "a_title": "Lewins Feldtheorie – Interaktive Erkundung (Topologische & Vektorpsychologie)",
+  "b_title": "Lie-Gruppen – Visuell Erleben",
+  "combined_theme": "kraftfeld-als-fluss",
+  "one_line": "Both papers are field/flow theories: an instantaneous vector of forces (Lewin, V=f(P,U)) or an infinitesimal generator (Lie, the Regler) integrated over a space yields a global trajectory (behavior / a transformation); a life space is a manifold with a vector field, the person is the constant generator P, the environment the position-dependent field U, behavior the flow of P+U(x), and conflict a zero-generator equilibrium whose irreducible non-commutativity is the Lie bracket [P,U].",
+  "contradictions": [
+    "Determinism vs. contingency: lie.html says the flow is fully determined by generator+start point ('Die Lie-Algebra bestimmt die Form der Bahn', exp(X) definite), while feldtheorie.html says in the approach-approach conflict (Buridans Esel) 'Kleine Zufälle entscheiden' (chance breaks the tie at the symmetric equilibrium).",
+    "Topological vs. metric space: feldtheorie.html declares the life space explicitly topological/non-metric ('ohne Rücksicht auf Form und Größe ... nicht metrisch, sondern strukturell') yet uses a metric force law (Kraft ∝ Valenz/Distanz²); lie.html is thoroughly metric/analytic (manifold geometry, exp map, commutator gap given as a norm '∝ ε²').",
+    "Constant vs. position-dependent force: lie.html's Regler are constant (left-invariant) Lie-algebra elements applied uniformly over the flow, while feldtheorie.html's valence force depends on distance to each object (inverse-square, singular near objects) — a position-dependent field."
+  ],
+  "resolution": "Split the two natures into the two factors of V=f(P,U): the person P is the CONSTANT generator (a Lie-algebra element / need-structure), the environment U is the POSITION-DEPENDENT valence vector field (the distance² objects); behavior V is the FLOW of the sum P+U(x) on a manifold (topology = regions/barriers; the metric layer = force law + exp map). Conflicts are zero-generator equilibria; 'chance decides' = an infinitesimal perturbation amplified along the unstable direction of the linearized field; the Lie bracket [P,U] measures the irreducible (non-commuting) conflict ([P,U]=0 iff the forces commute / no conflict). Topology vs. metric are reconciled as two description levels (topology = whether/possibility, metric+field = how/dynamics), not rivals.",
+  "viz": "Theme-aware 2D canvas: a person-ball integrates the sum of its constant need-generator P and the environment's position-dependent valence vector field (Lewin flow), leaving a trail; a corner inset computes the discrete commutator loop [P,U(x)] (Lie gap ∝ ε²) at the person's current position. Three scenarios (Annäherung / Ambivalenz-Konflikt / Nicht-kommutativ) + a 'Zufallsimpuls' button (chance breaks the equilibrium tie) + a theme toggle; all data inline, no network."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "069",
+  "a": "sobolev_raum.html",
+  "b": "topological_data_analysis.html",
+  "a_title": "Sobolev-Räume W^{k,p}(Ω) — Visuelle Erklärung",
+  "b_title": "Topological Data Analysis — Visual Explorer",
+  "combined_theme": "regularitaet-und-topologie",
+  "one_line": "Analytische Regelmäßigkeit (Sobolev: wie glatt) und topologische Form (TDA: wie verbunden) sind zwei orthogonale, über eine Skala organisierte und per Stabilität gekoppelte Linsen auf demselben Objekt.",
+  "contradictions": [
+    "Wildheit: A bestraft hohe Frequenz (H¹-Norm wächst, |x|^{1/2} ∉ W^{1,2}) — Wildheit ist Regelmäßigkeits-Mangel; B ist darauf gebaut, Wildheit/Noise zu überstehen, topologische Persistenz bleibt unter analytischer Wildheit stabil.",
+    "Punktweise Stetigkeit: A (Morrey, kp>n) erzwingt und belohnt Stetigkeit (Hölder, α=k−n/p) als Folge von Regelmäßigkeit; B blendet Glattheit/Stetigkeit vollständig aus — topologisch äquivalente Daten sind für B identisch, der Hölder-Exponent ist unsichtbar.",
+    "Skala/Hierarchie: A ordnet absteigend nach Regularität (C∞⊂C^k⊂W^{k,p}⊂L^p⊂D', Schwelle kp vs n, kontinuierlich-analytisch); B ordnet aufsteigend nach Radius ε/α (Punkte→Kanten→Flächen→kontrahierbar, diskrete Geburts-/Todsschwellen)."
+  ],
+  "resolution": "Sie messen Orthogonales am selben Objekt und sind quantitativ gekoppelt: (i) Persistence-Landschaften (B) leben in einem L²-Hilbert-Raum = dem Sobolev-Raum H⁰ (A); (ii) der Stabilitätssatz der Persistenzhomologie (Cohen-Steiner/Edelsbrunner/Johnson 2007) besagt, dass die L∞-Distanz der Filterfunktionen die Bottleneck-Distanz der Persistenzdiagramme beschränkt — analytische Nähe (A) kontrolliert topologische Nähe (B), dieselbe 'Analyse kontrolliert Struktur'-Logik wie die Sobolev-Einbettungen. Fusioniertes Objekt: ein Datensatz trägt beide Signaturen (welches W^{k,p}/H^k + welche β₀/β₁-Persistenzlücken) — orthogonale Koordinaten, durch Stabilität verbunden.",
+  "viz": "Ein Ring mit radialer Oszillation (Frequenz ω) + Vietoris–Rips-Skala ε: links der Komplex (Punkte/Kanten/Flächen), rechts die Persistenzkurven β₀(ε) und β₁(ε). ω hochdrehen ⇒ die Sobolev-Norm H¹ (analytische Kosten) steigt, aber die β₁-Lücke bleibt an gleicher Stelle/Höhe erhalten — die Form ist unter analytischer Wildheit stabil."
+}

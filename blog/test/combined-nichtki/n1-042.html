@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Abstrakte Strukturen × Category Theory</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#211f3a; --muted:#6b6890; --panel:#ffffff; --border:#e2ddce;
+  --accent:#6e56cf; --accent-soft:rgba(110,86,207,.12);
+  --accent2:#d6409f; --accent3:#2f7fe0; --accent4:#a8710f;
+  --grid:#6e56cf; --code:#f1eee6; --code-fg:#211f3a;
+  --shadow:0 1px 2px rgba(30,20,60,.06),0 6px 24px rgba(30,20,60,.06);
+}
+html.dark{
+  --bg:#08081a; --fg:#e6e6f5; --muted:#9a97c0; --panel:#101028; --border:#24244a;
+  --accent:#8a72ff; --accent-soft:rgba(138,114,255,.14);
+  --accent2:#f76cc6; --accent3:#38bdf8; --accent4:#ffcc6a;
+  --grid:#8a72ff; --code:#0c0c22; --code-fg:#c9c6e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:40px 24px 90px;}
+header{margin-bottom:28px;}
+h1{font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{font-size:1.35rem; margin:0 0 12px; padding-bottom:6px; border-bottom:2px solid var(--accent-soft); color:var(--fg);}
+h3{font-size:1.02rem; margin:18px 0 8px; color:var(--accent);}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 10px;}
+code,.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.6;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);}
+.card .tag{display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);}
+.note b{color:var(--fg);}
+table.map{width:100%; border-collapse:collapse; margin:14px 0; font-size:.9rem;}
+table.map th,table.map td{border:1px solid var(--border); padding:9px 11px; vertical-align:top; text-align:left;}
+table.map th{background:var(--panel); color:var(--accent); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em;}
+table.map td:first-child{color:var(--muted);}
+#vizwrap{position:relative; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--panel); box-shadow:var(--shadow);}
+#viz{display:block; width:100%; height:480px; touch-action:none;}
+.viz-controls{display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; padding:12px 14px; border-top:1px solid var(--border);}
+.viz-controls .grp{display:flex; flex-direction:column; gap:5px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:140px;}
+.viz-controls .hint{margin-left:auto; font-size:.72rem; color:var(--muted); max-width:220px; line-height:1.4;}
+button.ctl{background:var(--panel); color:var(--fg); border:1px solid var(--border); border-radius:8px; padding:7px 12px; cursor:pointer; font:inherit; font-size:.82rem;}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+.readout{padding:12px 16px; border-top:1px solid var(--border); font-size:.9rem; color:var(--muted); line-height:1.5;}
+.readout b{color:var(--fg);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:6px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Das Objekt ist seine Pfeile</h1>
+  <p class="subtitle">Fusion aus: <code>abstract.html</code> &times; <code>categorytheorie.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere treffen sich auf einer einzigen These: <strong>Identität ist konstitutiv relational</strong> &mdash;
+  ein Ding <em>ist</em> seine Beziehungen, nicht ein Substrat, das Beziehungen <em>hat</em>.
+  In <strong>categorytheorie.html (B)</strong> ist das ein <em>Satz</em>: Das Yoneda-Lemma (&sect;7) besagt, dass ein Objekt A
+  <em>vollständig</em> durch alle Pfeile in/aus ihm bestimmt ist &mdash; „The arrows ARE the object." Man kann das Objekt
+  selbst löschen („Remove the Object"); seine Hom-Pfeile bleiben und bestimmen es trotzdem.
+  In <strong>abstract.html (A)</strong> ist dasselbe eine <em>Erfahrung</em>: „Die allererste Struktur überhaupt:
+  <strong>Etwas von etwas anderem zu unterscheiden</strong>" (ein Schnitt in die Einheit), und in Panel&nbsp;4
+  „Beziehung/Netzwerk": „Dinge existieren nicht isoliert &mdash; sie werden durch ihre <strong>Beziehungen</strong> definiert."
+  A nennt es phänomenologisch, B nennt es Yoneda &mdash; es ist dieselbe Geste.</p>
+  <p>Die Fusion liest beides als <strong>einen Vorgang mit drei Ebenen</strong>. <strong>(0)</strong> Die
+  <em>Leere</em> (A, Panel&nbsp;7 „Leere/Potenzialität" &mdash; „das Nichts, das alles enthält") ist der <em>Raum aller
+  möglichen Relationen</em>, also der Raum aller Kategorien; dort ist nichts fixiert, alles nur Möglichkeit.
+  <strong>(1)</strong> Der <em>Schnitt</em> (A, Panel&nbsp;1/3) zeichnet die ersten Pfeile &mdash; das ist der kategoriale Akt
+  des <em>Wählens</em> einer konkreten Struktur aus dem Nichts. <strong>(2)</strong> Die <em>fixierte Kategorie</em>
+  (B, Objekte&nbsp;+&nbsp;Pfeile&nbsp;+&nbsp;assoziative Komposition&nbsp;+&nbsp;Identität) bestimmt das Objekt dann vollständig (Yoneda).
+  A&rsquo;s „Beobachtung &rarr; Formen kristallisieren" ist <em>genau</em> dieser Akt des Fixierens der Relationen;
+  B&rsquo;s Yoneda-Lemma ist der <em>Beweis</em>, dass die so gezeichnete Zeichnung das Ding vollständig bestimmt.</p>
+  <p>Zusammen: A liefert die <em>Erfahrung</em> und den <em>Grund</em> (die Leere, den ersten Schnitt),
+  B liefert die <em>Maschinerie</em> und die <em>Garantie</em> (Pfeile, Komposition, universelle Eigenschaften, Yoneda).
+  „Verstehe durch Sehen" (A) und „You are your relationships" (B) verschmelzen zu:
+  <em>ein Ding zu verstehen heißt, seine Pfeile zu zeichnen</em> &mdash; die Leere ist der Raum aller Zeichnungen,
+  Beobachtung wählt eine Zeichnung, und Yoneda verbürgt, dass die Zeichnung das Ding ausmacht.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht grundlegend &mdash; sie arbeiten auf der <em>gleichen</em> Achse
+  (Identität&nbsp;=&nbsp;Relation). Aber sie stehen an <em>unterschiedlichen Polen</em> derselben Spannung. Die drei konkreten
+  Punkte:</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src">1 · Determination</div>
+      <h3>B: totale Bestimmtheit</h3>
+      <p>Yoneda (&sect;7): „an object A is <strong>completely determined</strong> by all the arrows into it &hellip;
+      The arrows ARE the object." Fundament ist, dass am Ende <em>nichts</em> offen bleibt.</p>
+    </div>
+    <div class="col">
+      <div class="src">1 · Potenzialität</div>
+      <h3>A: reines Potenzial</h3>
+      <p>Panel&nbsp;7 „Leere": „das Nichts, das alles enthält &hellip; reines Potenzial &mdash; wie ein unbeschriebenes
+      Blatt, das alle Geschichten gleichzeitig ist." Das <em>Abstrakteste</em> ist hier gerade das
+      <strong>Unspezifizierbare</strong>, das sich jeder Bestimmung entzieht.</p>
+    </div>
+  </div>
+  <p class="note"><b>Spannung:</b> B verlangt volle Bestimmtheit als Fundament (nichts darf unbestimmt bleiben);
+  A macht das Unbestimmte zur <em>tiefsten</em> Schicht. Das eine will, dass alles fixiert ist; das andere behauptet,
+  die letzte Schicht ist offen.</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src">2 · Der Grund</div>
+      <h3>A: ein vor-strukturelles Eins</h3>
+      <p>Panel&nbsp;1 &amp; 3 (Spencer-Brown, „Laws of Form"): „Eine Unterscheidung erzeugt automatisch zwei Seiten."
+      Es gibt eine <em>ununterschiedene Einheit</em> (das Eins), die als <em>Grund</em> da ist und dann <em>geschnitten</em> wird
+      &mdash; ein monistischer Ursprung.</p>
+    </div>
+    <div class="col">
+      <div class="src">2 · Kein Grund</div>
+      <h3>B: unbegründete Struktur</h3>
+      <p>&sect;1 „Objects &amp; Arrows": „Objects have <strong>no internal structure</strong>." Objekte und Pfeile
+      <em>sind schlicht da</em>, geregelt durch Axiome (assoziative Komposition, Identitätspfeile). Es gibt
+      <em>keine</em> Vor-Einheit, die zuerst geschnitten würde.</p>
+    </div>
+  </div>
+  <p class="note"><b>Spannung:</b> A ist <em>gegründet</em> (das Eins existiert vor der Struktur und wird geschnitten);
+  B ist <em>unbegründet</em> (Struktur hat keinen Ursprung in einer Einheit). A hat einen Anfangsakt (den Schnitt), B keinen.</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src">3 · Substanz</div>
+      <h3>A: Substanz + Relation</h3>
+      <p>Jedes Panel zeichnet <em>konkrete Dinge</em> (Entitäten, Boids, Knoten), die sich <em>bewegen</em> und dann
+      zueinander in Relation gesetzt werden. Die <em>Substanz</em> ist primär &mdash; es braucht ein Ding, das sich definiert.</p>
+    </div>
+    <div class="col">
+      <div class="src">3 · Reine Relation</div>
+      <h3>B: Substanz entfällt</h3>
+      <p>Yoneda-Play (&sect;7): „Remove the Object &mdash; the hom-sets remain, and they still define it completely."
+      Das Ding selbst lässt sich <em>löschen</em>; die Relationen genügen. Reine Relation ohne Substrat.</p>
+    </div>
+  </div>
+  <p class="note"><b>Spannung</b> (ein Gradient, keine harte Kollision): A bleibt bei „Substanz&nbsp;+&nbsp;Relation"
+  (es muss ein Ding sein, das sich definiert); B eliminiert die Substanz vollständig (Relation allein genügt).
+  Gleiche Richtung, aber B geht eine ganze Stufe weiter.</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>1. Potenzial vs. totale Bestimmtheit &rarr; zwei Grenzfälle eines Vorgangs</h3>
+  <p>Die „Leere" (A) ist der Zustand <em>vor</em> der Wahl einer Struktur &mdash; der Raum aller möglichen Kategorien,
+  in dem alles nur Möglichkeit ist. Sobald der <em>Schnitt</em> die Pfeile fixiert, übernimmt Yoneda (B) und das Objekt
+  wird voll bestimmt. A&rsquo;s „Beobachtung &rarr; Kollaps der Potenziale in Formen" <em>ist</em> der Akt des Fixierens
+  der Relationen; B&rsquo;s „completely determined" ist das, was <em>nachher</em> gilt. Auflösung:
+  <strong>Potenzial &rarr; Schnitt/Wahl &rarr; totale Bestimmtheit</strong> &mdash; das ist <em>vorher/nachher</em>
+  desselben Vorgangs, kein Widerspruch. Die Leere und die Bestimmtheit sind zwei <em>Enden</em> eines Reglers
+  (genau den zeigt die Visualisierung).</p>
+
+  <h3>2. Einheit vs. unbegründet &rarr; zwei Ebenen</h3>
+  <p>A&rsquo;s „Eins / ununterschiedene Einheit" ist die <em>Meta-Ebene</em>: der Raum <em>aller</em> Strukturen/Kategorien.
+  B&rsquo;s Kategorien sind <em>Instanzen innerhalb</em> dieses Raums. Der „Schnitt" (A) ist der Akt des
+  <em>Wählens</em> einer konkreten Kategorie aus dem umgebenden Eins. A beschreibt auf der Meta-Ebene (den Raum der
+  Strukturen), B innerhalb einer gewählten Struktur. Auflösung: keine Inkonsistenz, sondern
+  <strong>verschiedene deskriptive Ebenen</strong> &mdash; „die Leere ist der Raum aller Kategorien" (Meta) vs.
+  „eine konkrete Kategorie" (Instanz). B setzt die Meta-Ebene schlicht voraus, die A explizit sichtbar macht.</p>
+
+  <h3>3. Substanz+Relation vs. reine Relation &rarr; Idealisierung</h3>
+  <p>Für konkrete Dinge (Boids, Entitäten) ist „Substanz&nbsp;+&nbsp;Relation" das <em>brauchbare</em> Modell &mdash;
+  man beginnt immer, <em>Dinge</em> zu sehen (A&rsquo;s phänomenologischer Ausgangspunkt). Yoneda (B) ist die
+  <em>Idealgrenze</em>, in der die Substanz vollständig aus den Relationen wiederhergestellt ist. Auflösung:
+  <strong>starte bei Substanz+Relation, ende bei reiner Relation</strong>; der <em>Verständnisprozess selbst</em>
+  ist genau dieser Übergang von Substanzsprache zu Pfeilsprache. „Du bist deine Beziehungen" (B) ist, was man
+  <em>am Ende</em> sieht, nachdem man die Substanz durch die Relationen durchgezogen hat &mdash; A liefert den Anfang,
+  B die Grenze.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Der fusionierte Standpunkt lässt sich als <strong>drei Ebenen eines Vorgangs</strong> zusammenfassen, bei dem A
+  die untere (Erfahrung/Grund) und B die obere (Maschinerie/Garantie) besetzt. Die „Grammatik", in der beide sprechen,
+  ist dieselbe. Die sieben Strukturen von A lassen sich präzise auf die acht Konzepte von B abbiegen:</p>
+
+  <table class="map">
+    <thead><tr><th>abstract.html (A) &mdash; phänomenologisch</th><th>categorytheorie.html (B) &mdash; formal</th></tr></thead>
+    <tbody>
+      <tr><td>① Identität &amp; Unterscheidung &mdash; „Schnitt in die Einheit"</td>
+        <td>Objects &amp; Arrows + Identitätspfeile <code>id:A&rarr;A</code>; ein nicht-identischer Pfeil ist der „Schnitt", der A von B unterscheidet.</td></tr>
+      <tr><td>② Selbstbezug / Rekursion &mdash; „eine Regel + Selbstanwendung &rarr; Komplexität"</td>
+        <td>Komposition (die einzige Regel) + Selbstreferenz: ein Pfeil auf sich selbst ist ein Endomorphismus; Wiederholung = wiederholte Komposition <code>f&circ;f&circ;f&hellip;</code>.</td></tr>
+      <tr><td>③ Grenze / Innen-Außen &mdash; „eine Unterscheidung erzeugt zwei Seiten"</td>
+        <td>Der Morphismus <em>als</em> Struktur: eine Grenze <em>ist</em> eine Relation; Innen/Außen = Quelle/Ziel eines Pfeils <code>A&rarr;B</code>.</td></tr>
+      <tr><td>④ Beziehung / Netzwerk &mdash; „Dinge werden durch Beziehungen definiert"</td>
+        <td>Die gesamte Kategorientheorie + Functoren: dieselbe Struktur (Pfeilnetz) in zwei Welten, strukturerhaltend abgebildet.</td></tr>
+      <tr><td>⑤ Emergenz &mdash; „einfache Teile &rarr; komplexes Ganzes, ohne Dirigent"</td>
+        <td>Universelle Eigenschaften / Limes: das Ganze ist das „beste Objekt", <em>einzig</em> durch seine Relationen zu den Teilen bestimmt (Limes-Kegel).</td></tr>
+      <tr><td>⑥ Dualität &mdash; „Figur/Grund definieren sich gegenseitig"</td>
+        <td>Produkte &amp; Koprodukte sind <em>dual</em> (alle Pfeile umdrehen); Kategorie C &harr; C<sup>op</sup>; Adjunktionen <code>L &lrcor; R</code>.</td></tr>
+      <tr><td>⑦ Leere / Potenzialität &mdash; „das Nichts, das alles enthält"</td>
+        <td>Der Raum <em>aller</em> Kategorien (Meta-Ebene); Anfangs-/Endobjekte; „Beobachtung &rarr; Kollaps" = Fixieren einer konkreten Kategorie.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Die Grammatik (die fusionierte Mathematik)</h3>
+  <p>Alles, was beide Papiere brauchen, steckt in diesen wenigen Regeln &mdash; A <em>erlebt</em> sie, B <em>beweist</em> sie:</p>
+  <pre><code>Komposition (die einzige Regel):  f: A&rarr;B,  g: B&rarr;C   &Rightarrow;   g&circ;f: A&rarr;C
+  assoziativ: h&circ;(g&circ;f) = (h&circ;g)&circ;f        Identität: id_A: A&rarr;A
+
+Isomorphie („gleich"):           f:A&rarr;B, g:B&rarr;A   mit   g&circ;f = id_A  und  f&circ;g = id_B
+Funktoren (Struktur-Map):        F(g&circ;f) = F(g)&circ;F(f)  und  F(id) = id
+Natürliche Transformation:       &alpha;_B &circ; F(f)  =  G(f) &circ; &alpha;_A   (Naturlichkeits-Quadrat)
+Produkt (universell):            A&times;B mit &pi;&sub1;,&pi;&sub2; &mdash; &exist;! &lang;f,g&rang;: C&rarr;A&times;B
+  mit  &pi;&sub1;&lang;f,g&rang; = f ,  &pi;&sub2;&lang;f,g&rang; = g      (Koprodukt = DUAL, Pfeile umgedreht)
+
+YONEDA (das Herz der Fusion):    Hom(&minus;, A)   bestimmt A   (bis auf Isomorphie)
+  Nat(Hom(&minus;,&minus;), A) &cong; A         &ldquo;Das Objekt IST die Totalität seiner Relationen.&rdquo;
+
+Adjunktion (Rosetta-Stein):      Hom_D(L A, B)  &cong;  Hom_C(A, R B)   natürlich in A, B
+  Free &lrcor; Forgetful  &harr;  A&rsquo;s  „Unterscheidung" (Struktur hinzufügen) / „Verschmelzung" (Struktur entfernen)</code></pre>
+  <p>Das Herz der Fusion ist die Gleichung zwischen <strong>Potenzial &mdash; Schnitt &mdash; Bestimmtheit</strong>
+  und <strong>Raum aller Kategorien &mdash; gezeichnete Pfeile &mdash; Yoneda</strong>.
+  Die Adjunktion <code>Free &lrcor; Forgetful</code> ist dabei der formale Schatten von A&rsquo;s
+  Grunddialektik: „Free" fügt Struktur hinzu (= der <em>Schnitt</em>, der Unterschied hervorbringt),
+  „Forgetful" streift sie ab (= die Rückkehr zur <em>Verschmelzung</em>/Einheit).
+  <em>Zu verstehen heißt also: aus der Leere eine Zeichnung wählen, deren Pfeile das Ding vollständig ausmachen.</em></p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung: der Yoneda-Kollaps</h2>
+  <p>Eins von A&rsquo;s Panels (Leere/Beobachtung) mit B&rsquo;s Yoneda-Play verschmolzen: Das Objekt
+  <strong>A</strong> liegt im Zentrum, umgeben von Satteliten <code>X&hellip;U</code>. Jeder Satellit trägt
+  <em>Potenzial</em>-Pfeile in A (gestrichelt &mdash; die Leere, „alles, was sein könnte"). Der Regler
+  <em>Beobachtung/Strukturierung</em> fixiert diese Relationen zu festen Pfeilen; je mehr fixiert sind, desto
+  mehr kristallisiert A aus dem Nichts und desto mehr verblasst die Leere.
+  <button class="ctl" id="removeBtn">Objekt A entfernen (Yoneda)</button> entfernt A &mdash; die Pfeile bleiben und
+  bestimmen es trotzdem: das ist Yoneda, sichtbar.</p>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="viz-controls">
+      <div class="grp"><label for="fracRange">Beobachtung / Strukturierung</label>
+        <input type="range" id="fracRange" min="0" max="100" value="65"><b id="fracVal">65%</b></div>
+      <div class="grp"><label>&nbsp;</label><button class="ctl" id="themeBtn">Theme</button></div>
+      <div class="grp hint">&rarr; nach A: fixierte Relation &middot; Knoten X&hellip;U: Satteliten &middot; A: das Objekt &middot; gestrichelt: mögliche Relation (die Leere)</div>
+    </div>
+    <div class="readout" id="readout"></div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../abstract.html"><strong>abstract.html &mdash; Abstrakte Strukturen, visuell erforscht</strong></a>
+  &mdash; Sieben phänomenologische Panels (Identität/Unterscheidung, Rekursion, Grenze, Beziehung/Netzwerk, Emergenz,
+  Dualität, Leere/Potenzialität), jeweils mit Reglern und Canvas. Leitidee: „Bewege die Regler. Beobachte.
+  Verstehe durch Sehen." Quelle A &mdash; die Erfahrung und der Grund (die Leere, der erste Schnitt).</p>
+  <p class="src"><a href="../categorytheorie.html"><strong>categorytheorie.html &mdash; Category Theory: The Algebra of Everything</strong></a>
+  &mdash; Acht aufbauende Konzepte (Objekte&amp;Pfeile, Komposition, Isomorphie, Functoren, natürliche Transformationen,
+  Produkte/Koprodukte, Yoneda-Lemma, Adjunktionen) mit interaktiven Demos. Leitidee: „Everything is arrows."
+  Quelle B &mdash; die Maschinerie und die Garantie (Yoneda).</p>
+</section>
+
+<footer>
+  Fusion (Round 1, nicht-AI-Track, Paar 042). Selbstenthalten, ohne Netzwerk-Datenzugriffe; alle Daten
+  (Satteliten, Hom-Pfeile, Kollapszustand) werden inline im Browser berechnet.
+</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var wrap=document.getElementById('vizwrap');
+  var readout=document.getElementById('readout');
+  if(!canvas||!wrap||!canvas.getContext){return;}
+  var ctx=canvas.getContext('2d');
+  var TAU=Math.PI*2;
+  var counts=[3,2,4,2,3,3];
+  var labels=['X','Y','Z','W','V','U'];
+  var slots=[];
+  (function(){for(var i=0;i<counts.length;i++){for(var k=0;k<counts[i];k++){slots.push({i:i,k:k});}}})();
+  var total=slots.length;
+  var state={frac:0.65, removed:false, t:0};
+  var pal={};
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){var h=s.slice(1);if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}var n=parseInt(h,16);if(isNaN(n))return[138,114,255];return[(n>>16)&255,(n>>8)&255,n&255];}
+    var m=s.match(/[\d.]+/g);if(m&&m.length>=3){return[+m[0],+m[1],+m[2]];}return[138,114,255];
+  }
+  function rgba(c,a){return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+  function readPal(){pal={bg:toRgb(cssVar('--bg')),fg:toRgb(cssVar('--fg')),a:toRgb(cssVar('--accent')),sat:toRgb(cssVar('--accent3')),obj:toRgb(cssVar('--accent4'))};}
+
+  function arrowTo(x1,y1,x2,y2,col,lw,head){
+    var dx=x2-x1,dy=y2-y1,l=Math.sqrt(dx*dx+dy*dy);
+    if(l<1){return;}
+    var a=Math.atan2(dy,dx),hs=head||7;
+    ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.42),y2-hs*Math.sin(a-0.42));
+    ctx.lineTo(x2-hs*Math.cos(a+0.42),y2-hs*Math.sin(a+0.42));
+    ctx.closePath();ctx.fill();
+  }
+
+  function satPos(i,cx,cy,R){
+    var ang=-Math.PI/2 + i*(TAU/counts.length);
+    return {x:cx+R*Math.cos(ang), y:cy+R*Math.sin(ang)};
+  }
+
+  function drawArrow(sl,S,cx,cy,aR,sR,col,lw,dashed){
+    var s=S[sl.i];
+    var ux=cx-s.x, uy=cy-s.y, L=Math.sqrt(ux*ux+uy*uy)||1;
+    ux=ux/L; uy=uy/L;
+    var px=-uy, py=ux;
+    var c=counts[sl.i], off=(sl.k-(c-1)/2)*7;
+    var x1=s.x+ux*(sR+2)+px*off, y1=s.y+uy*(sR+2)+py*off;
+    var x2=cx-ux*(aR+2)+px*off, y2=cy-uy*(aR+2)+py*off;
+    if(dashed){ctx.setLineDash([4,5]);}
+    arrowTo(x1,y1,x2,y2,col,lw,6);
+    if(dashed){ctx.setLineDash([]);}
+  }
+
+  function updateReadout(realized,frac){
+    var pct=Math.round(frac*100), msg;
+    if(state.removed){
+      msg='Objekt A entfernt &mdash; die Pfeile bleiben. <b>Yoneda:</b> Hom(&minus;,A) bestimmt A; das Objekt ist &uuml;berfl&uuml;ssig. <em>A ist die Totalit&auml;t seiner Relationen.</em>';
+    } else if(pct<15){
+      msg='Leere (Potenzialit&auml;t): reines Nichts, das alles enth&auml;lt. A ist ein flimmernder Umriss, die Pfeile nur blasse M&ouml;glichkeiten &mdash; der Raum aller Relationen, noch nichts fixiert.';
+    } else if(pct<50){
+      msg='Der Schnitt: Unterscheidungen werden gezeichnet. A kristallisiert aus dem Nichts, die Leere verblasst.';
+    } else if(pct<85){
+      msg='Strukturierung: A wird zunehmend durch seine Hom-Pfeile bestimmt. Je mehr fixiert, desto mehr ist A genau <em>das</em>.';
+    } else {
+      msg='Totale Bestimmtheit: alle Relationen fixiert. <b>Yoneda:</b> A ist vollst&auml;ndig durch Hom(&minus;,A) bestimmt &mdash; nichts bleibt unbestimmt.';
+    }
+    readout.innerHTML='A ist zu <b>'+pct+'%</b> durch seine Relationen bestimmt &middot; '+realized+'/'+total+' Pfeile fixiert. '+msg;
+  }
+
+  function draw(){
+    var w=wrap.clientWidth||720, h=480, dpr=Math.min(window.devicePixelRatio||1,2);
+    if(w<2){w=2;}
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;}
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1);ctx.fillRect(0,0,w,h);
+    var cx=w/2, cy=h/2, R=Math.min(w,h)*0.35, aR=30, sR=20;
+    var frac=state.frac, realized=Math.round(frac*total);
+    var pulse=0.5+0.5*Math.sin(state.t*1.6);
+
+    var vg=(1-frac)*0.22;
+    if(vg>0.01){
+      var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*0.75);
+      g.addColorStop(0,rgba(pal.a,vg));g.addColorStop(1,rgba(pal.a,0));
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }
+
+    var S=[],i;
+    for(i=0;i<counts.length;i++){S.push(satPos(i,cx,cy,R));}
+
+    for(var s=0;s<slots.length;s++){
+      drawArrow(slots[s],S,cx,cy,aR,sR,rgba(pal.fg,0.10+0.06*pulse),1,true);
+    }
+    for(var r=0;r<realized;r++){
+      drawArrow(slots[r],S,cx,cy,aR,sR,rgba(pal.a,0.55+0.35*pulse),1.9,false);
+    }
+
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    for(i=0;i<S.length;i++){
+      var p=S[i];
+      ctx.beginPath();ctx.arc(p.x,p.y,sR,0,TAU);ctx.fillStyle=rgba(pal.bg,1);ctx.fill();
+      ctx.lineWidth=2;ctx.strokeStyle=rgba(pal.sat,0.9);ctx.stroke();
+      ctx.fillStyle=rgba(pal.fg,0.95);ctx.font='bold 15px sans-serif';ctx.fillText(labels[i],p.x,p.y);
+    }
+
+    if(state.removed){
+      ctx.beginPath();ctx.arc(cx,cy,aR,0,TAU);ctx.setLineDash([5,5]);
+      ctx.strokeStyle=rgba(pal.obj,0.5);ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle=rgba(pal.obj,0.6);ctx.font='bold 15px sans-serif';ctx.fillText('A?',cx,cy);
+    } else {
+      if(frac>0.6){
+        ctx.beginPath();ctx.arc(cx,cy,aR+8+6*pulse,0,TAU);
+        ctx.strokeStyle=rgba(pal.obj,(frac-0.6)*0.5);ctx.lineWidth=1.5;ctx.stroke();
+      }
+      var al=0.25+0.75*frac;
+      ctx.beginPath();ctx.arc(cx,cy,aR,0,TAU);ctx.fillStyle=rgba(pal.bg,1);ctx.fill();
+      ctx.lineWidth=3;ctx.strokeStyle=rgba(pal.obj,al);ctx.stroke();
+      ctx.fillStyle=rgba(pal.obj,al);ctx.beginPath();ctx.arc(cx,cy,aR*0.55,0,TAU);ctx.fill();
+      ctx.fillStyle=rgba(pal.fg,al);ctx.font='bold 16px sans-serif';ctx.fillText('A',cx,cy);
+    }
+    updateReadout(realized,frac);
+  }
+
+  var fr=document.getElementById('fracRange'), fval=document.getElementById('fracVal');
+  if(fr){fr.addEventListener('input',function(){state.frac=parseInt(this.value,10)/100;if(fval){fval.textContent=this.value+'%';}});}
+  var rbtn=document.getElementById('removeBtn');
+  if(rbtn){rbtn.addEventListener('click',function(){state.removed=!state.removed;this.classList.toggle('on',state.removed);this.textContent=state.removed?'Objekt A wiederherstellen':'Objekt A entfernen (Yoneda)';});}
+  var tbtn=document.getElementById('themeBtn');
+  if(tbtn){tbtn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');readPal();});}
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){readPal();};
+    if(mq.addEventListener){mq.addEventListener('change',onScheme);}
+  }
+
+  var last=performance.now();
+  function loop(now){var dt=(now-last)/1000;last=now;if(dt>0.1){dt=0.1;}state.t+=dt;draw();requestAnimationFrame(loop);}
+  readPal();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Topologie als Struktur — Trennungsaxiome als Constraints</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --fg:#1c1b22; --muted:#5c5a63; --card:#ffffff; --card2:#faf8f2;
+    --border:#ddd6c8; --accent:#2563eb; --accent2:#b45309; --band:#2563eb;
+    --h1-grad-a:#2563eb; --h1-grad-b:#b45309;
+    --viz-bg:#ffffff; --viz-grid:#e7e2d6; --viz-text:#1c1b22; --viz-muted:#8a8774;
+    --viz-point:#2563eb; --viz-point-fill:#ffffff; --viz-nb:rgba(37,99,235,0.14);
+    --viz-nb-stroke:rgba(37,99,235,0.55); --viz-band:rgba(180,83,9,0.10);
+    --viz-band-strong:#b45309; --viz-starr:rgba(100,100,110,0.14); --viz-indis:#b45309;
+    --viz-label:#5c5a63;
+  }
+  html.dark{
+    --bg:#0f172a; --fg:#e6e9ef; --muted:#98a2b3; --card:#111c30; --card2:#0d1526;
+    --border:#26344d; --accent:#60a5fa; --accent2:#fbbf24; --band:#fbbf24;
+    --h1-grad-a:#60a5fa; --h1-grad-b:#fbbf24;
+    --viz-bg:#0b1322; --viz-grid:#1b2740; --viz-text:#e6e9ef; --viz-muted:#7d8aa3;
+    --viz-point:#60a5fa; --viz-point-fill:#0b1322; --viz-nb:rgba(96,165,250,0.16);
+    --viz-nb-stroke:rgba(96,165,250,0.6); --viz-band:rgba(251,191,36,0.10);
+    --viz-band-strong:#fbbf24; --viz-starr:rgba(150,160,180,0.14); --viz-indis:#fbbf24;
+    --viz-label:#98a2b3;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  article{max-width:820px; margin:0 auto; padding:40px 20px 80px;}
+  h1{
+    font-size:2.05rem; line-height:1.2; margin:0 0 6px;
+    background:linear-gradient(90deg,var(--h1-grad-a),var(--h1-grad-b));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .subtitle{color:var(--muted); font-size:.98rem; margin:0 0 4px; font-family:ui-monospace,Menlo,monospace;}
+  .lede{color:var(--muted); font-size:1.02rem; margin:14px 0 30px; border-left:3px solid var(--accent); padding-left:14px;}
+  section{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:22px 24px; margin:20px 0;
+  }
+  section h2{font-size:1.35rem; margin:0 0 12px; color:var(--fg);}
+  section h2 .tag{
+    display:inline-block; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--card2); border:1px solid var(--border); color:var(--muted);
+    padding:2px 8px; border-radius:20px; vertical-align:middle; margin-left:8px;
+  }
+  p{margin:10px 0;}
+  .whoA{color:var(--accent); font-weight:600;}
+  .whoB{color:var(--accent2); font-weight:600;}
+  .claim{
+    background:var(--card2); border-left:3px solid var(--border);
+    padding:8px 14px; margin:8px 0; border-radius:0 8px 8px 0; font-size:.95rem;
+  }
+  .claimA{border-left-color:var(--accent);}
+  .claimB{border-left-color:var(--accent2);}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+  .resbox{background:var(--card2); border:1px dashed var(--border); border-radius:10px; padding:12px 14px; margin:10px 0;}
+  .resbox h3{margin:0 0 6px; font-size:1.02rem;}
+  .fused{background:linear-gradient(90deg,var(--viz-band),transparent); border-left:3px solid var(--accent); padding:10px 14px; border-radius:0 8px 8px 0; margin-top:12px; font-weight:500;}
+  code{background:var(--card2); border:1px solid var(--border); padding:1px 6px; border-radius:5px; font-size:.9em; font-family:ui-monospace,Menlo,monospace;}
+  .viz-wrap{position:relative; margin-top:6px;}
+  canvas#vizCanvas{display:block; width:100%; height:auto; max-width:760px; margin:0 auto; border:1px solid var(--border); border-radius:12px; background:var(--viz-bg);}
+  .controls{display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:center; margin:14px 0 6px;}
+  .ctl{display:flex; flex-direction:column; gap:4px; min-width:260px;}
+  .ctl label{font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between;}
+  .ctl input[type=range]{width:100%; accent-color:var(--accent);}
+  .readout{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:6px;}
+  .chip{background:var(--card2); border:1px solid var(--border); border-radius:20px; padding:5px 14px; font-size:.9rem;}
+  .chip b{color:var(--accent);}
+  .chip.gold b{color:var(--accent2);}
+  button.toggle{
+    background:var(--card2); color:var(--fg); border:1px solid var(--border);
+    padding:8px 16px; border-radius:20px; cursor:pointer; font-size:.88rem;
+  }
+  button.toggle:hover{border-color:var(--accent);}
+  .legend{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:10px; font-size:.82rem; color:var(--muted);}
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid var(--border);}
+  .prov li{margin:8px 0;}
+  .prov a{color:var(--accent); text-decoration:none; font-weight:600;}
+  .prov a:hover{text-decoration:underline;}
+  .prov small{color:var(--muted); display:block;}
+  .note{font-size:.85rem; color:var(--muted);}
+</style>
+</head>
+<body>
+<article>
+  <h1>Topologie als Struktur</h1>
+  <p class="subtitle">Fusion aus: hausdorff.html ✕ strukturwissenschaften.html</p>
+  <p class="lede">
+    Beide Quellen drehen sich um dasselbe Wort: <strong>Struktur</strong>. Die eine definiert sie exakt
+    (ein topologischer Raum = Punktmenge + offene Mengen, also eine <em>Beziehungsstruktur</em>),
+    die andere definiert sie breit (Struktur = <em>Menge + Relationen</em>). Diese Fusion legt beide
+    aufeinander: Die Trennungsaxiome der Topologie sind nichts anderes als eine <em>Familie von
+    Constraints</em>, die schaltet zwischen „nichts ist unterscheidbar“ und „alles ist unterscheidbar“ —
+    und genau das wohlverhalten ist die Bühne, auf der die Dynamik der anderen Quelle stattfindet.
+  </p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion <span class="tag">A ∩ B</span></h2>
+    <p>
+      <span class="whoB">B</span> beginnt mit der These: Eine Struktur ist eine <em>Menge</em> von Objekten
+      <strong>plus</strong> die Beziehungen zwischen ihnen — ohne Relationen sei eine Menge „langweilig“.
+      Als Beispiel führt B gerade an, dass die reellen Zahlen <em>mehrere</em> Strukturen tragen:
+      algebraisch (Körper), Ordnungsstruktur (linear) und <em>topologisch (Umgebungen)</em>.
+      <span class="whoA">A</span> ist die ausführliche Behandlung genau dieser <em>einen</em> Struktur:
+      eines topologischen Raumes als Punktmenge mit einer Sammlung offener Mengen (der Topologie).
+    </p>
+    <p>
+      Die <strong>einteilige, fusionierte Position</strong>: <em>Eine Topologie ist eine Relationsstruktur
+      auf einer Menge</em> — der Topologie-Raum von A ist ein Beispiel-Struktur von B. Die Axiome der
+      Trennung (T₀ &lt; T₁ &lt; T₂ &lt; T₂.₅ &lt; T₃ &lt; T₃.₅ &lt; T₄, dazu Abzählbarkeit und
+      Metrisierbarkeit) sind eine <em>Constraint-Familie auf dieser Struktur</em>: Sie regeln, wie stark
+      die Topologie zwei Punkte voneinander <em>unterscheiden</em> darf. B sagt, Constraints verwandeln ein
+      freies/zufälliges System in Struktur („zu wenige → reine Zufälligkeit, zu viele → Erstarrung, dazwischen
+      → Komplexität“); A liefert die konkreteste Realisierung dieses Gedankens: Die Trennungsaxiome sind die
+      Constraints, die entscheiden, ob Punkte überhaupt unterscheidbar sind.
+    </p>
+    <p>
+      Und damit verbindet sich auch B's Zentrum — Selbstorganisation, Attraktoren, Symmetriebrechung
+      <em>fern vom Gleichgewicht</em> — an A: Ein Attraktor ist ein <strong>Grenzwert</strong> einer
+      Trajektorie, und Grenzwerte sind <em>eindeutig</em> genau in Hausdorff-Räumen (die zentrale Eigenschaft
+      von A). B's „spannende Mitte“ braucht A's wohlverhaltenes Ende als <em>Voraussetzung</em>. A ist die
+      Bühne und das Gerüst; B ist das Drama darauf.
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B <span class="tag">konkrete Stellschrauben</span></h2>
+
+    <h3>1. Wo auf dem Regler „Ordnung ↔ Unordnung“ das Spannende liegt</h3>
+    <div class="grid2">
+      <div class="claim claimA"><span class="whoA">A:</span> Die Hierarchie zeigt buchstäblich
+        „↑ Stronger separation“ als Zielrichtung. Das Ideal ist der <em>oberste</em> Punkt —
+        Metrisierbarkeit („Always Hausdorff, 1st countable, paracompact, and normal“), also maximale
+        Unterscheidbarkeit, eindeutige Grenzwerte, Vorhersehbarkeit. Der tote Punkt ist das <em>Untere</em>:
+        das indiscrete „No separation at all. Not T₀“.</div>
+      <div class="claim claimB"><span class="whoB">B:</span> Genau das Gegenteil: Maximalordnung („starrer
+        Regularität“, minimale Entropie) ist ein <em>toter Pol</em>, genau so wie maximaler Zufall („weißes
+        Rauschen“, maximale Entropie). Das Lebendige liegt in der <em>Mitte</em>: „Komplexe Information liegt
+        zwischen reinem Zufall und starrer Regularität.“</div>
+    </div>
+    <p class="note">
+      <strong>Unvereinbar:</strong> A's Nordstern — volle Trennung / maximale Ordnung — ist in B's Vokabular
+      „starrer Regularität“, also ein minimum-Entropie-Totpunkt. Die beiden streiten darüber, ob das Top der
+      Hierarchie der beste Ort ist.
+    </p>
+
+    <h3>2. Nicht-Trennung: Pathologie oder Erzeugungs-Mechanismus?</h3>
+    <div class="grid2">
+      <div class="claim claimA"><span class="whoA">A:</span> Nicht-Hausdorff-Räume (Gerade mit zwei Ursprüngen,
+        cofinite Topologie, Sierpiński-Raum) werden als <em>defekte</em> Fälle inszeniert — „See what breaks
+        when the Hausdorff condition fails“; man verliert die schöne Eigenschaft (eindeutige Grenzwerte).</div>
+      <div class="claim claimB"><span class="whoB">B:</span> Der gekoppelte / nicht-getrennte Zustand ist
+        genau <em>hier</em> die Handlung: „Symmetriebrechung“ ist „der Weg zum Chaos“, der Ursprung der
+        Komplexität; Selbstorganisation entsteht aus Kopplung fern vom Gleichgewicht. Den „sauber getrennten“
+        Zustand zu <em>brechen</em> ist der Erzeugungsakt — keine Pathologie.</div>
+    </div>
+    <p class="note">
+      <strong>Unvereinbar:</strong> Für A ist <em>verlorene</em> Trennung ein Fehler, der Eigenschaften bricht.
+      Für B ist <em>verlorene</em> Symmetrie/Trennung der Akt, aus dem Komplexität entsteht.
+    </p>
+
+    <h3>3. Statische vs. dynamische Struktur</h3>
+    <p>
+      <span class="whoA">A's</span> Topologie ist <em>gegeben</em> — ein Raum <em>ist</em> eine feste
+      Sammlung offener Mengen (eine statische Relationsstruktur; man prüft Axiome, man lässt nicht „laufen“).
+      <span class="whoB">B's</span> Strukturen sind <em>emergent</em>: sie entstehen, bifurkieren und
+      selbstorganisieren sich <em>über die Zeit</em> aus einer Dynamik (logistische Karte, Lorenz,
+      Gray-Scott). Unterschied im Ontologie-Grund: Struktur als festes Gerüst (A) vs. Struktur als
+      Prozess (B).
+    </p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung <span class="tag">für jeden Punkt</span></h2>
+
+    <div class="resbox">
+      <h3>1. Die Hierarchie ist die Arena, nicht das Ziel</h3>
+      <p>Hausdorff-Eigenschaft (eindeutige Grenzwerte) ist <em>genau das</em>, was B's „Attraktor = wohldefinierter
+        Grenzwert einer Trajektorie“ überhaupt <em>sinnvoll</em> macht. Logistische Karte, Lorenz-System und
+        Gray-Scott laufen alle in Hausdorff-/Metrik-Räumen (ℝⁿ). A liefert den Raum, in dem Grenzen eindeutig
+        sind; B's „spannende Mitte“ ist eine Eigenschaft der <em>Dynamik auf</em> diesem Raum, nicht der Topologie.
+        Die volle Trennung (A's Top) ist das <em>Gerüst</em>, das erlaubt, die generative Mitte ablesbar zu machen.</p>
+    </div>
+    <div class="resbox">
+      <h3>2. Symmetriebrechung <em>ist</em> topologische Trennung</h3>
+      <p>Ein nicht-Hausdorff-Paare — die zwei ineinander verflochtenen Ursprünge, oder 0 und 1 im Sierpiński-Raum —
+        ist topologisch ein <em>symmetrischer</em> Zustand: zwei Objekte, die man <em>nicht</em> unterscheiden
+        kann, also ungebrochene Symmetrie. B's Symmetriebrechung ist der Akt, sie unterscheidbar zu machen —
+        die Bifurkation <em>ist</em> die Trennung durch disjunkte Umgebungen. Vor Bifurkation: symmetrisch
+        (nicht-Hausdorff); danach: Hausdorff-trennbar.</p>
+    </div>
+    <div class="resbox">
+      <h3>3. Constraint = Topologie; Dynamik = die Lebensform darauf</h3>
+      <p>A's statische Topologie <em>ist</em> B's „Constraint“ (das feste Regelwerk, „Menge + Relationen“).
+        B's Dynamik sind die Trajektorien, die diesem Constraint unterworfen sind. Die Struktur (A) ist die
+        Bühne, ihre Topologie der Constraint; Bifurkation/Attraktor (B) die Vorstellung, die der Constraint
+        beherbergt.</p>
+    </div>
+    <p class="fused">
+      Fusionierter Schluss: <em>Constraints (B) sind die Trennungsaxiome (A); die Topologie ist die Struktur,
+      die Dynamik ist das Leben, das sie beherbergt. Symmetriebrechung = Trennung gewinnen.</em>
+    </p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt <span class="tag">integriert, nicht aneinandergereiht</span></h2>
+
+    <h3>Struktur als Menge + Relation — die Topologie ist ein Sonderfall</h3>
+    <p>
+      <span class="whoB">B:</span> Struktur = Menge + Relationen/Funktionen/Konstanten; erst Beziehungen
+      machen eine Menge interessant. ℝ trägt algebraisch (Körper), Ordnung (linear) und topologisch
+      (Umgebungen) — <em>mehrere</em> Strukturen zugleich.
+      <span class="whoA">A:</span> Der topologische Raum (X, τ) ist genau diese topologische Struktur: X ist die
+      Menge, τ die <em>Relationsstruktur</em> der offenen Mengen, die festlegt, welche Punkte als „Nähe“,
+      „Grenzwert“, „Häufung“ zueinander stehen. A ist also das vertiefte Kapitel zu B's Beispiel (3) „topologisch
+      (Umgebungen)“.
+    </p>
+
+    <h3>Die Trennungshierarchie als Constraint-Spektrum</h3>
+    <p>
+      <span class="whoA">A</span> gibt die Ladder (stärkere Trennung nach oben):
+      <strong>Indiscret</strong> (nur ∅, X — keine Trennung, nicht einmal T₀) →
+      <strong>T₀</strong> (Kolmogorov: <em>mindestens eine</em> Richtung trennbar) →
+      <strong>T₁</strong> (Fréchet: <em>beide</em> Richtungen; Einmengen abgeschlossen) →
+      <strong>T₂</strong> (Hausdorff: <em>disjunkte</em> offene Umgebungen ⇒ eindeutige Folgegrenzwerte) →
+      <strong>T₂.₅</strong> (Urysohn: durch <em>abgeschlossene</em> Umgebungen) →
+      <strong>T₃</strong> (regulär: Punkt vs. abgeschlossene Menge) →
+      <strong>T₃.₅</strong> (Tychonoff: durch stetige Funktionen, eingebettbar in [0,1]ᴵ) →
+      <strong>T₄</strong> (normal: zwei disjunkte abgeschlossene Mengen; Urysohn-Lemma greift).
+      Dazu die <em>Abzählbarkeits</em>-Achse: <strong>1st countable</strong> (zählbare lokale Basis ⇒
+      Folgen genügen; jeder Metrik-Raum ist 1st countable) und <strong>2nd countable</strong> (zählbare
+      globale Basis ⇒ separabel, Lindelöf; ℝⁿ ist 2nd countable). Metrisierbarkeit ⇒ Hausdorff + 1st countable
+      + parakompakt + normal.
+    </p>
+    <p>
+      Gelesen als B's Constraint-Regel: <em>jedes Axiom ist ein Constraint auf die Topologie</em>, das die
+      Unterscheidbarkeit der Punkte erhöht. Das ist die direkte Umsetzung von B's „Constraints ermöglichen
+      Struktur“: Zu wenig Constraint (indiscret) = keine Unterscheidbarkeit = „langweilige“ Menge; zu viel
+      (metrisch/normal) = volle, ablesbare Unterscheidbarkeit; dazwischen liegen T₀/T₁ als Teil-Constraints
+      (eine Richtung / beide Richtungen, aber Überlappung erlaubt).
+    </p>
+
+    <h3>Nicht-Hausdorff — die Schattenbilder von Symmetrie</h3>
+    <p>
+      <span class="whoA">A's</span> drei Gegenbeispiele, neu gedeutet als <span class="whoB">B's</span>
+      Symmetrie-Zustände:
+    </p>
+    <p>
+      • <em>Gerade mit zwei Ursprüngen</em> (0 und 0′): Jede offene Umgebung von 0 enthält auch 0′ — nie
+        disjunkt trennbar. = <em>ungebrochene Symmetrie</em>, zwei „Kopien“ desselben Punktes.
+      • <em>Cofinite Topologie</em> auf ℤ: offene Mengen = komplementär endlich ⇒ zwei offene Mengen <em>müssen</em>
+        sich schneiden (Schnitt cofinit). = maximale Kopplung, keine lokale Trennung.
+      • <em>Sierpiński-Raum {0,1}</em>, τ = {∅, {1}, {0,1}}: 1 hat eine Umgebung {1} ohne 0, 0 hat <em>keine</em>
+        Umgebung ohne 1. T₀, aber nicht T₁. = asymmetrische, „halb gebrochene“ Symmetrie.
+    </p>
+
+    <h3>Die Dynamik, die A's Bühne beherbergt (B's Konzepte)</h3>
+    <p>
+      <span class="whoB">B</span> liefert das, was auf A's wohlverhaltenen Räumen <em>passiert</em>:
+      <em>Nichtlinearität</em> als notwendige Bedingung für Chaos/Selbstorganisation; <em>Constraints</em>
+      (holonom = verbotene Orte vs. nichtholonom = verbotene Richtungen); <em>Bifurkation &amp;
+      Symmetriebrechung</em> an der logistischen Karte x ↦ r·x·(1−x) (Fixpunkt → 2 → 4 → 8 → Chaos,
+      Feigenbaum-Diagramm); <em>Attraktoren</em> (Punkt/Zyklus/Torus/seltsamer; Lorenz „Schmetterling“);
+      <em>Information &amp; Entropie</em> (Shannon H; komplex dazwischen); <em>Selbstorganisation</em>
+      (Gray-Scott-Reaktions-Diffusion, Turing-Muster); <em>Evolution</em> (Variation + Vererbung + Selektion,
+      verschachtelte Feedback-Schleifen); <em>Hierarchie &amp; Integration</em> („more is different“);
+      <em>Bottom-Up vs. Top-Down-Constraints</em> (Juarrero; Boids).
+    </p>
+    <p>
+      <strong>Integriert:</strong> Der Regler s∈[0,1] der Visualisierung unten ist die Trennungsachse (A):
+      s=0 indiscret (max. Symmetrie, alle Punkte identisch), s=1 metrisch (max. Unterscheidbarkeit, eindeutige
+      Grenzwerte). B sagt: Die beiden Enden sind „starr“ (Symmetrie bzw. Regularität), die <em>Mitte</em> ist
+      generativ — und sie ist erst <em>auf</em> A's Hausdorff-Seite definierbar, denn dort sind die Attraktoren
+      (Grenzwerte) eindeutig. Symmetriebrechung (B) = der Moment, in dem ein entartetes Paar topologisch
+      trennbar wird (A).
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Fusion: Der Trennungs-Regler <span class="tag">Canvas, inline, themenaktiv</span></h2>
+    <p class="note">
+      Schiebe den Regler <em>s</em>. Er schaltet die Topologie durch die Hierarchie — von
+      <strong>indiscret</strong> (eine offene Menge, nichts unterscheidbar, A's Unterpunkt) über
+      T₀/T₁/T₂ (Teiltrennung, Überlappung) bis <strong>metrisch</strong> (disjunkte Umgebungen, A's Obertup).
+      Der <em>separable-Paare</em>-Wert (rechts) misst live, wie viele Punkt-Paare durch <em>disjunkte</em>
+      Umgebungen getrennt sind (A's T₂-Kern). Die blass gezeichnete Glocke (B) markiert, wo nach B das
+      <em>Generative</em> lebt — in der Mitte, nicht an den Enden.
+    </p>
+
+    <div class="viz-wrap">
+      <canvas id="vizCanvas" width="760" height="460"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <label><span>Trennungsstärke s (Constraint auf die Topologie)</span><span id="sLabel">0.50</span></label>
+        <input type="range" id="sepSlider" min="0" max="1" step="0.001" value="0.5">
+      </div>
+      <button class="toggle" id="themeToggle">🌙/☀️ Theme</button>
+    </div>
+
+    <div class="readout">
+      <span class="chip">Axiom-Stufe: <b id="axLevel">—</b></span>
+      <span class="chip gold">Trennbare Punkt-Paare (T₂): <b id="sepPct">—</b></span>
+      <span class="chip">Zone (B): <b id="zone">—</b></span>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--viz-point)"></i> Punkt</span>
+      <span><i style="background:var(--viz-nb);border-color:var(--viz-nb-stroke)"></i> Umgebung U(x)</span>
+      <span><i style="background:var(--viz-band);border-color:var(--viz-band-strong)"></i> Generative Zone (B)</span>
+      <span><i style="background:var(--viz-starr);border-color:var(--viz-starr)"></i> „starr“ (B: toter Pol)</span>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz <span class="tag">Quellen</span></h2>
+    <ul class="prov">
+      <li>
+        <a href="../hausdorff.html">A — hausdorff.html (Interactive Topology Explorer)</a>
+        <small>Interaktives Topologie-Playground: Trennungsaxiome (T₂/T₁/T₀), Nicht-Hausdorff-Beispiele,
+          Abzählbarkeit und die Axiom-Hierarchie — Punkte platzieren und disjunkte offene Mengen beobachten.</small>
+      </li>
+      <li>
+        <a href="../strukturwissenschaften.html">B — strukturwissenschaften.html (Strukturwissenschaften – Visuelle Intuition)</a>
+        <small>Visuelle Intuition zu Kernkonzepten der Strukturwissenschaften: Struktur = Menge + Relationen,
+          Nichtlinearität, Constraints, Bifurkation, Emergenz, Attraktoren, Entropie, Selbstorganisation,
+          Evolution, Hierarchie, Bottom-Up/Top-Down.</small>
+      </li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var slider = document.getElementById('sepSlider');
+  var sLabel = document.getElementById('sLabel');
+  var axLevel = document.getElementById('axLevel');
+  var sepPct = document.getElementById('sepPct');
+  var zone = document.getElementById('zone');
+  var W = canvas.width, H = canvas.height;
+
+  function cssVar(n){
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  }
+
+  // deterministische Punkte: Ring aus 12 (inline, kein Zufall)
+  var PTS = [];
+  for(var i=0;i<12;i++){
+    var a = -Math.PI/2 + (i/12)*Math.PI*2;
+    PTS.push({u:Math.cos(a), v:Math.sin(a)});
+  }
+  // kleinster Paar-Abstand (für disjunkte Umgebungen)
+  function dU(a,b){ return Math.hypot(a.u-b.u, a.v-b.v); }
+  var minD = Infinity, pairs = [];
+  for(var p=0;p<PTS.length;p++){
+    for(var q=p+1;q<PTS.length;q++){
+      var dd = dU(PTS[p],PTS[q]);
+      if(dd<minD) minD = dd;
+      pairs.push([p,q,dd]);
+    }
+  }
+
+  var rBig = 1.42, rSmall = 0.20*minD*2.0; // rSmall: 2r < minD -> alle disjunkt
+  // sicherstellen, dass bei s=1 ALLE Paare disjunkt sind
+  rSmall = minD/2 - 0.02;
+  if(rSmall < 0.02) rSmall = 0.02;
+
+  function radiusAt(s){ return rBig + (rSmall - rBig)*s; }
+
+  function axiomLabel(s){
+    if(s < 0.14) return 'Indiscret';
+    if(s < 0.40) return 'T₀ (eine Richtung)';
+    if(s < 0.62) return 'T₁ (beide, Überlapp ok)';
+    if(s < 0.82) return 'T₂ Hausdorff (disjunkt)';
+    return 'T₄ normal / metrisch';
+  }
+  function zoneLabel(s){
+    if(s < 0.28) return 'starr — symmetrisch';
+    if(s > 0.72) return 'starr — regulär';
+    return 'generativ (B)';
+  }
+
+  function draw(){
+    var s = parseFloat(slider.value);
+    var bg = cssVar('--viz-bg') || '#0b1322';
+    var gridC = cssVar('--viz-grid') || '#1b2740';
+    var txtC = cssVar('--viz-text') || '#e6e9ef';
+    var mutedC = cssVar('--viz-muted') || '#7d8aa3';
+    var pointC = cssVar('--viz-point') || '#60a5fa';
+    var pointFill = cssVar('--viz-point-fill') || bg;
+    var nb = cssVar('--viz-nb') || 'rgba(96,165,250,0.16)';
+    var nbSt = cssVar('--viz-nb-stroke') || 'rgba(96,165,250,0.6)';
+    var band = cssVar('--viz-band') || 'rgba(251,191,36,0.10)';
+    var bandStrong = cssVar('--viz-band-strong') || '#fbbf24';
+    var starr = cssVar('--viz-starr') || 'rgba(150,160,180,0.14)';
+    var indis = cssVar('--viz-indis') || '#fbbf24';
+    var labelC = cssVar('--viz-label') || '#98a2b3';
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    var cx = W/2, cy = H/2 + 24, R = 150;
+
+    // Raster (dezente Achsen)
+    ctx.strokeStyle = gridC; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(20, cy); ctx.lineTo(W-20, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 70); ctx.lineTo(cx, H-20); ctx.stroke();
+
+    // --- Generative-Glocke (B) oben hinter allem ---
+    var gTop = 60, gH = 46;
+    ctx.beginPath();
+    ctx.moveTo(0, gTop+gH);
+    for(var gx=0; gx<=W; gx+=4){
+      var t = (gx - W/2)/(W*0.34);
+      var yv = gTop + gH*(1 - Math.exp(-t*t));
+      ctx.lineTo(gx, yv);
+    }
+    ctx.lineTo(W, gTop+gH); ctx.closePath();
+    ctx.fillStyle = band; ctx.fill();
+    ctx.strokeStyle = bandStrong; ctx.lineWidth = 1.2; ctx.stroke();
+
+    // starr-Enden (B: tote Pole)
+    ctx.fillStyle = starr;
+    ctx.fillRect(0, gTop, W*0.14, gH);
+    ctx.fillRect(W*0.86, gTop, W*0.14, gH);
+
+    ctx.fillStyle = labelC; ctx.font = '12px -apple-system, sans-serif';
+    ctx.textAlign = 'left';  ctx.fillText('starr: symmetrisch (indiscret)', 10, gTop-6);
+    ctx.textAlign = 'center';ctx.fillText('generativ: Bifurkation & Selbstorganisation', W/2, gTop-6);
+    ctx.textAlign = 'right'; ctx.fillText('starr: regulär (metrisch, eindeutige Grenzen)', W-10, gTop-6);
+
+    // Indikator für aktuelle Position s auf der Glocke
+    var ix = s*W;
+    ctx.strokeStyle = bandStrong; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(ix, gTop-4); ctx.lineTo(ix, gTop+gH+4); ctx.stroke();
+
+    // --- Umgebungen (Punkte) ---
+    var rPx = radiusAt(s)*R; // Radius in Einheiten, mit R in Pixel
+
+    // indiscrete Einzelmenge (s klein): ein großes gestricheltes "X"
+    if(s < 0.20){
+      var alpha = Math.max(0, 1 - s/0.20);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([7,5]);
+      ctx.strokeStyle = indis; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx, cy, R + 34, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = indis; ctx.font = 'bold 13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('indiscret: nur ∅ und X offen', cx, cy + R + 54);
+      ctx.globalAlpha = 1;
+    }
+
+    // per-Punkt-Umgebungen
+    for(var k=0;k<PTS.length;k++){
+      var px = cx + PTS[k].u*R, py = cy + PTS[k].v*R;
+      ctx.beginPath(); ctx.arc(px, py, rPx, 0, Math.PI*2);
+      ctx.fillStyle = nb; ctx.fill();
+      ctx.strokeStyle = nbSt; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+
+    // Punkte
+    for(var m=0;m<PTS.length;m++){
+      var mx = cx + PTS[m].u*R, my = cy + PTS[m].v*R;
+      ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI*2);
+      ctx.fillStyle = pointC; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = pointFill; ctx.stroke();
+    }
+
+    // Trennungs-Achse unten (s-Regler-Spiegel)
+    var axY = H - 16;
+    ctx.strokeStyle = gridC; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(40, axY); ctx.lineTo(W-40, axY); ctx.stroke();
+    ctx.fillStyle = mutedC; ctx.font = '11px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('s = 0  (Constraint aus, keine Unterscheidbarkeit)', 40, axY-8);
+    ctx.textAlign='right';
+    ctx.fillText('Constraint voll (volle Unterscheidbarkeit)  s = 1', W-40, axY-8);
+
+    // Live-Werte
+    sLabel.textContent = s.toFixed(2);
+    axLevel.textContent = axiomLabel(s);
+    zone.textContent = zoneLabel(s);
+
+    var r2 = 2*radiusAt(s);
+    var sep = 0;
+    for(var j=0;j<pairs.length;j++){
+      if(pairs[j][2] >= r2 - 1e-9) sep++;
+    }
+    sepPct.textContent = Math.round(100*sep/pairs.length) + '  (' + sep + '/' + pairs.length + ')';
+  }
+
+  if(slider) slider.addEventListener('input', draw);
+  var tbtn = document.getElementById('themeToggle');
+  if(tbtn) tbtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    requestAnimationFrame(draw);
+  });
+  window.addEventListener('resize', function(){ requestAnimationFrame(draw); });
+
+  draw();
+})();
+</script>
+</body>
+</html>

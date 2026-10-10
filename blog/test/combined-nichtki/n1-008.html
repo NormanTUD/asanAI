@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Vom Halm zur Galaxie — lokales Verkleben zum globalen Bild</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f8fa;
+    --fg: #1e293b;
+    --muted: #5b6b82;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --accent: #1e3a8a;
+    --accent2: #2563eb;
+    --ok: #15803d;
+    --ok-bg: #dcfce7;
+    --no: #b45309;
+    --no-bg: #fef3c7;
+    --code-bg: #f1f5f9;
+    --viz-canvas-bg: #ffffff;
+    --viz-dot: #0e7490;
+    --viz-arm: #cbd5e1;
+    --viz-text: #1e293b;
+    --viz-accent: #2563eb;
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #93a3ba;
+    --card: #16213a;
+    --border: #2b3a55;
+    --accent: #7aa2ff;
+    --accent2: #3b82f6;
+    --ok: #4ade80;
+    --ok-bg: #0f2a1c;
+    --no: #fbbf24;
+    --no-bg: #2a2208;
+    --code-bg: #1b2740;
+    --viz-canvas-bg: #0b1120;
+    --viz-dot: #22d3ee;
+    --viz-arm: #33455f;
+    --viz-text: #e2e8f0;
+    --viz-accent: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.62;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 20px 72px;
+  }
+  h1 {
+    font-size: 1.9rem;
+    line-height: 1.22;
+    letter-spacing: -0.5px;
+    margin: 0 0 6px;
+    color: var(--fg);
+  }
+  .subtitle {
+    margin: 0 0 4px;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+  .lede {
+    color: var(--muted);
+    font-size: 0.98rem;
+    margin: 0 0 8px;
+  }
+  section { margin: 34px 0; }
+  h2 {
+    font-size: 1.32rem;
+    border-bottom: 2px solid var(--accent2);
+    padding-bottom: 5px;
+    margin: 0 0 14px;
+    letter-spacing: -0.3px;
+  }
+  h3 { font-size: 1.06rem; margin: 20px 0 8px; color: var(--accent); }
+  p { margin: 0 0 12px; }
+  a { color: var(--accent2); }
+  strong { color: var(--fg); }
+  .math {
+    font-family: "Times New Roman", Times, serif;
+    font-style: italic;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 14px 0;
+  }
+  .tension {
+    border-left: 3px solid var(--accent2);
+    background: var(--card);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 16px;
+    margin: 12px 0;
+  }
+  .tension b.tag { color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.92rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 700; }
+  tr:last-child td { border-bottom: none; }
+  td.b { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  ul { margin: 8px 0 12px; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .note { font-size: 0.88rem; color: var(--muted); }
+  code, .mono {
+    font-family: "Courier New", Courier, monospace;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+  .prov a { font-weight: 700; }
+  .prov li { margin: 8px 0; }
+
+  /* viz */
+  .viz { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .viz-controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-bottom: 10px; }
+  .viz-controls label { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  select, input[type="range"] { accent-color: var(--accent2); }
+  select { background: var(--code-bg); color: var(--fg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; }
+  input[type="range"] { width: 150px; }
+  .val { color: var(--accent2); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 2px; }
+  .presets button {
+    background: var(--code-bg); color: var(--fg); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 11px; font-size: 0.8rem; cursor: pointer;
+  }
+  .presets button:hover { border-color: var(--accent2); color: var(--accent2); }
+  .viz-stage { width: 100%; }
+  #vizCanvas { width: 100%; height: auto; display: block; background: var(--viz-canvas-bg); border-radius: 8px; border: 1px solid var(--border); }
+  .viz-panel { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; margin-top: 12px; font-size: 0.9rem; }
+  .viz-panel .row { display: flex; gap: 8px; align-items: baseline; }
+  .viz-panel .row span { color: var(--muted); }
+  .viz-panel .row b { color: var(--fg); font-variant-numeric: tabular-nums; }
+  .viz-panel .row b.small { font-size: 0.8rem; }
+  .status {
+    width: 100%; border-radius: 8px; padding: 10px 14px; font-size: 0.92rem; margin-top: 4px;
+    border: 1px solid var(--border);
+  }
+  .status.ok { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); }
+  .status.no { background: var(--no-bg); color: var(--no); border-color: var(--no); }
+  .status strong { color: inherit; }
+  .themebtn {
+    float: right; background: var(--code-bg); color: var(--fg); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="themebtn" id="themeBtn">Theme wechseln</button>
+  <h1>Vom Halm zur Galaxie: Wie lokale Daten zum globalen Bild verkleben</h1>
+  <p class="subtitle">Fusion aus: pz.html &times; garben_uebersicht.html</p>
+  <p class="lede">Ein geometrischer Primzahlexplorer und eine Garben-Tafel, gelesen als zwei Regi­ster desselben Prinzips.</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Auf den ersten Blick fremd: <em>pz.html</em> ist ein interaktives Spielzeug, das Primzahlen in polare und phyllotaktische Koordinaten wirft und &bdquo;galaktische&ldquo; Spiralstrukturen zeigt; <em>garben_uebersicht.html</em> ist ein trockenes Lexikon, das die Begriffe der Garbentheorie (Schnitt, Halm, Keim, Pr&auml;garbe, Garbe) in drei Spalten &ndash; Intuition, Bild, exakter Formalismus &ndash; ausleuchtet. Die Fusion besagt, dass beide Papiere <strong>zwei Regi­ster eines einzigen Prinzips</strong> sind: des <strong>Lokal-Global-Prinzips</strong>.</p>
+    <p>Formal ist dieses Prinzip die <em>Garbe-Bedingung</em> der Kategorie&nbsp;B: Eine Pr&auml;garbe wird zur Garbe, wenn (1)&nbsp;zwei Schnitte, die auf <em>allen</em> Teilen einer &Uuml;berdeckung &uuml;bereinstimmen, global gleich sind (Unizit&auml;t), und (2)&nbsp;lokale Schnitte, die auf allen &Uuml;berlappungen zusammenpassen, sich zu <em>genau einem</em> globalen Schnitt verkleben lassen (Existenz). Kurz: <span class="math">lokal kompatibel &rArr; global eindeutig.</span></p>
+    <p>Dasselbe Prinzip macht der Primzahlexplorer zu etwas <em>Sichtbarem</em>. Jede Primzahl ist ein lokaler Keim (ein einzelner Punkt); die Winkelregel <span class="math">&theta; = p&middot;k</span> ist die Kompatibilit&auml;tsbedingung, unter der die lokalen Punkte geordnet werden. Schlie&szlig;t sich diese Regel &ndash; d.&nbsp;h. ist der Winkel&nbsp;<span class="math">k</span> eine kleine rationale Gr&ouml;&szlig;e von&nbsp;<span class="math">&pi;</span> &ndash; so verkleben die lokalen Punkte zu einem koh&auml;renten globalen Arm-Bild (der &bdquo;Galaxie&ldquo;). Schlie&szlig;t sie sich nicht (fast irrationaler Winkel), streuen die lokalen Daten ohne jedes globale Muster. <strong>Die Spiralgalaxie ist damit ein globaler Schnitt &ndash; das Objekt, das aus verklebten lokalen Daten entsteht; das Fehlen von Armen ist die Pr&auml;garbe, die sich nicht zur Garbe verklebt.</strong> Was B als Axiom ausspricht, wird bei A zu einem Ph&auml;non, das man mit den Augen sieht.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Ein direkter <em>Fakten-</em>Widerspruch existiert nicht &ndash; die beiden Papiere behandeln verschiedene Gegenst&auml;nde (arithmetic-geometrische Visualisierung einerseits, abstrakte Garbenaxiome andererseits) und treffen keine kollidierenden Aussagen &uuml;ber dieselbe Sache. Es gibt aber drei echte, methodologische Spannungen, die im Kern liegen:</p>
+    <div class="tension"><b class="tag">1. Epistemisch &ndash; Sehen vs. Beweisen.</b>
+      A (pz.html) begr&uuml;ndet durch <em>empirisches Sehen</em>: Der Hinweis im Code lautet w&ouml;rtlich &bdquo;Try sliding this very slowly! Values near PI or fractions of PI create massive galactic structures.&ldquo; Die Erkenntnis ist eine <em>beobachtete</em> Muster-Hypothese &ndash; unbest&auml;tigt, vom Auge erzeugt, kein Beweis. B (garben_uebersicht) begr&uuml;ndet im Gegenteil nur durch das <em>exakte Axiom</em>: Die ganze Tabelle ist darauf gebaut, von &bdquo;Deine Intuition&ldquo; und der &bdquo;Bildlichen Vorstellung&ldquo; zur Spalte &bdquo;Technisch exakter &amp; abstrakter Formalismus&ldquo; &uuml;berzugehen. A vertraut dem Bild; B misstraut dem Bild, bis es ein Axiom ist.</p>
+    </div>
+    <div class="tension"><b class="tag">2. Orientierung &ndash; global-first vs. lokal-first.</b>
+      Bei A lebt die Bedeutung <em>nur im Ganzen</em>: eine einzelne Primzahl ist Rauschen; erst die &bdquo;Galaxie&ldquo; (alle Punkte zusammen) tr&auml;gt Struktur. A ist global-first, lokal bedeutungslos. B baut global <em>aus</em> lokal: Der Halm <span class="math">F_x</span> (Kolist &uuml;ber alle Umgebungen von&nbsp;x), der Keim <span class="math">[s]_x</span> und die Schnitte auf offenen Mengen <span class="math">U</span> sind prim&auml;r; das globale Objekt wird daraus abgeleitet. B ist lokal-first, global abgeleitet.</p>
+    </div>
+    <div class="tension"><b class="tag">3. Der Parameter &ndash; kontinuierlich vs. diskret.</b>
+      Die Struktur bei A entsteht durch das <em>kontinuierliche</em> Verschieben eines Reglers (Winkelmultiplikator&nbsp;k, Schrittbreite&nbsp;0.00001). Die Struktur bei B ist ein <em>bin&auml;res</em> Ja/Nein-Axiom &uuml;ber <em>diskrete</em> offene Mengen &ndash; es gibt dort keinen Regler, kein Tuning. A: Struktur entsteht durch stetiges Abstimmen. B: Struktur ist eine diskrete Eigenschaft.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <p>Jede der drei Spannungen l&ouml;st sich auf, sobald man erkennt, dass A und B dasselbe Objekt in zwei Regi­stern lesen &ndash; und B selbst schon die Br&uuml;cke benennt:</p>
+    <ul>
+      <li><strong>Sehen vs. Beweisen.</strong> B tr&auml;gt die Spalten &bdquo;Intuition&ldquo; und &bdquo;Bildliche Vorstellung&ldquo; <em>neben</em> &bdquo;Formalismus&ldquo; &ndash; B br&uuml;ckt also selbst schon von Bild zu Axiom. A liefert genau die Art von Bild, die B als Einstiegspunkt deklariert. Fusi­ons­schluss: <em>Das Bild ist eine g&uuml;ltige Beweismethode (visueller Beweis); das Axiom ist das Theorem.</em> Das Bild motiviert und verifiziert die Bedingung; die Bedingung macht das Bild zu einem Satz. Die beiden sind komplement&auml;r, nicht gegenl&auml;ufig.</li>
+      <li><strong>Global-first vs. lokal-first.</strong> Das sind duale Lesearten <em>eines</em> Objekts. Per Equalizer-Definition <em>ist</em> der globale Schnitt die kompatible Familie lokaler Daten: <span class="math">F(U) = \prod F(U_i) \Rightarrow \prod F(U_i \cap U_j)</span>. &bdquo;Galaxie&ldquo; (global) und &bdquo;verklebte Keime&ldquo; (lokal) beschreiben dasselbe, nur von entgegengesetzten Seiten gelesen. Die Spannung l&ouml;st sich in eine Dualit&auml;t auf.</li>
+      <li><strong>Kontinuierlich vs. diskret.</strong> Die Rationale-Heits von <span class="math">k/\pi</span> ist eine <em>diskrete, algebraische Invariante</em>, die &uuml;ber einen <em>kontinuierlichen</em> Regler abgefragt wird. Der Regler ist das Instrument; rational/irrational ist die Eigenschaft, die er misst. Das kontinuierliche Tuning <em>entdeckt</em> eine diskrete Klassifikation &ndash; genau wie die Garbe-Bedingung (diskret) durch Variation der lokalen &Uuml;berdeckung (stetig) gepr&uuml;ft wird.</li>
+    </ul>
+    <p class="card"><strong>Fusionierte Schlussfolgerung:</strong> Ein Prinzip, zwei Regi­ster. Die Garbe-Bedingung ist die <em>formale</em> Aussage des Lokal-Global-Prinzips; der Primzahlexplorer ist seine <em>geometrische Embodiment</em>. &bdquo;Verkleben&ldquo; ist kein abstraktes Konstrukt, sondern ein Ph&auml;non, das man sieht: Die Arme sind das globale Objekt, das existiert, wenn die lokale Kompatibilit&auml;tsbedingung (der Winkel schlie&szlig;t sich) erf&uuml;llt ist.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Was A beitr&auml;gt: Primzahlen &amp; Geometrie</h3>
+    <p>Primzahlen <span class="math">p_1 &lt; p_2 &lt; \cdots</span> werden mit dem Sieb des Eratosthenes erzeugt. Das <em>Primzahlsatz</em>-Verhalten ist die lokale Dichte: <span class="math">&pi;(x) \sim x/\ln x</span> und <span class="math">p_n \sim n \ln n</span> (diese letztere Approximation nutzt A, um aus der Zielanzahl&nbsp;N die ben&ouml;tigte Siebgrenze abzusch&auml;tzen). A kartiert jede Primzahl auf einen Punkt im (x,y)-Plan:</p>
+    <ul>
+      <li><strong>Polar:</strong> <span class="math">r = p</span>, <span class="math">&theta; = p&middot;k</span></li>
+      <li><strong>Phyllotaxis (Sonnenblume):</strong> <span class="math">r = \sqrt{p}</span>, <span class="math">&theta; = p&middot;k</span></li>
+      <li><strong>Ulam-Spirale:</strong> quadratische Spirale, Gitterkoordinate aus&nbsp;p</li>
+    </ul>
+    <p>Der entscheidende Grad der Freiheit ist der <em>Winkelmultiplikator k</em>. A beobachtet (empirisch): F&uuml;rt man&nbsp;k nahe eine kleine rationale Gr&ouml;&szlig;e von&nbsp;<span class="math">&pi;</span>, bilden sich koh&auml;rente Spiralarme (&bdquo;galactic structures&ldquo;); f&uuml;hrt man k auf einen &bdquo;am irrationalsten&ldquo; Wert (goldener Winkel), wird das Bild zu einer gleichm&auml;&szlig;igen, armlosen Scheibe. Das ist derselbe Effekt, den die Phyllotaxis-Geometrie seit der Sonnenblume kennt: kleine rationale Winkel erzeugen Arme, der goldene Winkel vermeidet sie.</p>
+
+    <h3>Was B beitr&auml;gt: Garben (Formalismus)</h3>
+    <p>B legt f&uuml;ren Begriff die drei Ebenen Intuition / Bild / Formalismus fest &ndash; und diese Dreierstruktur ist selbst schon die Br&uuml;cke zu A:</p>
+    <table>
+      <thead><tr><th>Begriff</th><th>Bild</th><th>Formalismus</th></tr></thead>
+      <tbody>
+        <tr><td class="b">Raum/Situs</td><td>das Terrain / die Landkarte</td><td><span class="math">(X, \tau)</span> mit Topologie&nbsp;<span class="math">\tau</span> auf&nbsp;<span class="math">X</span></td></tr>
+        <tr><td class="b">Schnitt</td><td>Puzzleteil / Transparentschicht &uuml;ber&nbsp;U</td><td><span class="math">s \in F(U) = \Gamma(U,F)</span></td></tr>
+        <tr><td class="b">Einschr&auml;nkung</td><td>Ausschneiden eines Teilfensters</td><td><span class="math">\rho_{U,V}: F(U) \to F(V)</span> f&uuml;r&nbsp;<span class="math">V \subseteq U</span></td></tr>
+        <tr><td class="b">Halm (Stalk)</td><td>Sichtkegel / Lichtstrahl durch&nbsp;x</td><td><span class="math">F_x = \varinjlim F(U)</span> &uuml;ber <span class="math">U \ni x</span></td></tr>
+        <tr><td class="b">Keim (Germ)</td><td>Schnittpunkt Strahl mit Blatt&nbsp;s</td><td>&Auml;quivalenzklasse <span class="math">[s,U]</span> an&nbsp;x</td></tr>
+        <tr><td class="b">Pr&auml;garbe</td><td>Puzzleteile ohne Randpr&uuml;fung</td><td>kontravarianter Funktor <span class="math">F: \mathcal{O}(X)^{op} \to \text{Set}</span></td></tr>
+        <tr><td class="b">Garbe</td><td>perfektes Puzzle: lokale Passt-stellen &rArr; ein Gesamtbild</td><td>Pr&auml;garbe, die das Equalizer-Diagramm exakt macht</td></tr>
+      </tbody>
+    </table>
+    <p>Die zwei Axiome der Garbe (f&uuml;r eine offene &Uuml;berdeckung <span class="math">U = \bigcup_i U_i</span>):</p>
+    <ul>
+      <li><strong>Unizit&auml;t (Separatedness):</strong> <span class="math">(\forall i: s|_{U_i} = t|_{U_i}) \Rightarrow s = t</span> &ndash; zwei Schnitte, die lokal &uuml;berall gleich sind, sind global gleich.</li>
+      <li><strong>Verklebbarkeit (Gluing):</strong> Lokale Schnitte <span class="math">s_i \in F(U_i)</span>, die auf allen &Uuml;berlappungen &uuml;bereinstimmen, verkleben zu genau einem globalen&nbsp;<span class="math">s \in F(U)</span>.</li>
+    </ul>
+
+    <h3>Die Br&uuml;cke: jedes Garben-Begriff wird zum Primzahlen-Bild</h3>
+    <table>
+      <thead><tr><th>Garben-Begriff (B)</th><th>Primzahlen-Gegenst&uuml;ck (A)</th></tr></thead>
+      <tbody>
+        <tr><td>Raum <span class="math">(X,\tau)</span></td><td>die Menge der Primzahlen / der Winkelraum als &bdquo;Terrain&ldquo;</td></tr>
+        <tr><td>Schnitt <span class="math">s \in F(U)</span></td><td>ein St&uuml;ck des Musters auf einem Winkelbogen&nbsp;U</td></tr>
+        <tr><td>Einschr&auml;nkung <span class="math">\rho_{U,V}</span></td><td>&bdquo;hineinzoomen&ldquo; auf einen Teilbogen&nbsp;V (der Regler Zoom/Scale)</td></tr>
+        <tr><td>Halm <span class="math">F_x</span></td><td>alles, was an der Winkelrichtung&nbsp;x &bdquo;gerade passiert&ldquo; &ndash; der Lichtstrahl, der in Richtung&nbsp;x alle Primzahlen trifft</td></tr>
+        <tr><td>Keim <span class="math">[s]_x</span></td><td>eine einzelne Primzahl in Richtung&nbsp;x (ein Punkt)</td></tr>
+        <tr><td>Pr&auml;garbe</td><td>die Punkte <em>ohne</em> schlie&szlig;ende Winkelregel &ndash; beschriftet, aber nicht zusammenpr&uuml;fbar</td></tr>
+        <tr><td>Garbe</td><td>die Punkte <em>mit</em> schlie&szlig;ender Winkelregel (<span class="math">k/\pi</span> klein rational) &ndash; lokale St&uuml;cke passen an den N&auml;hten &rArr; eindeutig globales Arm-Bild</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Die beiden Axiome im Bild.</strong> Unizit&auml;t: zwei Spiralgalaxien, die in <em>jedem</em> Arm &uuml;bereinstimmen, sind die gleiche (lokal-identisch &rArr; global-identisch). Verklebbarkeit: passen die lokalen Arm-St&uuml;cke auf allen &Uuml;berlappungen (N&auml;hten) zusammen, existiert <em>genau eine</em> globale Galaxie &ndash; genau das, was beim schlie&szlig;enden Winkel sichtbar wird, und was beim nicht-schlie&szlig;enden fehlt.</p>
+
+    <h3>Die formale Br&uuml;cke (Kompatibilit&auml;tsbedingung)</h3>
+    <p>Setze <span class="math">\alpha = k/\pi</span>. Die Regel <span class="math">&theta; = p&middot;k</span> &bdquo;schlie&szlig;t sich&ldquo; &ndash; erzeugt also ein koh&auml;rentes globales Arm-Bild mit Periode&nbsp;q &ndash; genau dann, wenn&nbsp;<span class="math">\alpha</span> durch eine kleine rationale Gr&ouml;&szlig;e <span class="math">p/q</span> gut angen&auml;hert wird; dann hat das Muster q-fache Symmetrie (ein &bdquo;globaler Schnitt&ldquo; mit Periode&nbsp;q). Ist <span class="math">\alpha</span> &bdquo;am irrationalsten&ldquo; (goldener Winkel), approximiert keine kleine&nbsp;q ihn gut; die lokalen Daten f&uuml;llen die Anulus-Region gleichm&auml;&szlig;ig &ndash; es gibt <em>kein</em> einzelnes globales Arm-Bild. In Garben-Sprache: der Winkel ist der <em>Kokzyklus</em>, dessen Abschlie&szlig;en die lokale Datenfamilie zu einer globalen macht. Die Periode&nbsp;q spielt die Rolle des gemeinsamen Verfeinerungs-Index, ab dem die lokalen Daten global konsistent werden. <span class="note">(Dies ist die interpretierende Br&uuml;cke der Fusion &ndash; ein von beiden Quellen geteilter, von keiner allein beworbener Lesart; A liefert die empirische Beobachtung, B das Axiom.)</span></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung: Der Verklebungs-Regler</h2>
+    <p>Schiebe den Regler <em>Winkel k</em> langsam. Links im Bild entsteht die &bdquo;Galaxie&ldquo; aus den Primzahlen (lokale Keime); oben rechts zeigt ein kleines Kompass-Inset, was der einzelne Winkelschritt nach 30 Schritten macht: <strong>clustern die Marker (Regel schlie&szlig;t sich) &rArr; Arme &rArr; globales Bild (Garbe-Bedingung erf&uuml;llt)</strong>; <strong>streuen sie (Regel fast irrational) &rArr; kein globales Bild (Pr&auml;garbe ohne Verklebung)</strong>. Die Presets springen zu kanonischen Winkeln.</p>
+    <div class="viz">
+      <div class="viz-controls">
+        <label>Modus
+          <select id="vMode">
+            <option value="phyllotaxis">Phyllotaxis (r=&radic;p)</option>
+            <option value="polar">Polar (r=p)</option>
+            <option value="ulam">Ulam (quadratisch)</option>
+          </select>
+        </label>
+        <label>Anzahl <span class="val" id="cCountVal"></span>
+          <input type="range" id="vCount" min="200" max="8000" step="100" value="1500">
+        </label>
+        <label>Winkel k <span class="val" id="cAngleVal"></span>
+          <input type="range" id="vAngle" min="0" max="6.2831853" step="0.0001" value="0.897598">
+        </label>
+        <label>Punkt <span class="val" id="cDotVal"></span>
+          <input type="range" id="vDot" min="0.5" max="5" step="0.1" value="1.6">
+        </label>
+        <div class="presets">
+          <button data-k="0.897598">2&pi;/7</button>
+          <button data-k="1.256637">2&pi;/5</button>
+          <button data-k="1.884956">3&pi;/5</button>
+          <button data-k="1.570796">&pi;/2</button>
+          <button data-k="3.141593">&pi;</button>
+          <button data-k="2.399963">Goldener &oslash;</button>
+          <button data-k="0.5">random</button>
+        </div>
+      </div>
+      <div class="viz-stage">
+        <canvas id="vizCanvas"></canvas>
+      </div>
+      <div class="viz-panel">
+        <div class="row"><span>k</span><b id="outK"></b></div>
+        <div class="row"><span>k / &pi;</span><b id="outKAp"></b></div>
+        <div class="row"><span>beste kleine N&auml;herung</span><b id="outQ"></b></div>
+        <div class="row"><span>Kettenbruch-Konvergenten (k/&pi;)</span><b id="outConv" class="small"></b></div>
+        <div class="status" id="statusBox"><span id="outStatus"></span></div>
+      </div>
+      <p class="note">Der Readout ist eine Heuristik: er findet die beste rationale N&auml;herung <span class="mono">p/q</span> mit <span class="mono">q &le; 18</span> an <span class="mono">k/&pi;</span>. Kleine Periode&nbsp;q + exakte N&auml;herung &rArr; klare Arme &rArr; &bdquo;Garbe&ldquo;; fast irrationaler Winkel &rArr; Gleichverteilung &rArr; &bdquo;keine Verklebung&ldquo;. Alle Daten (Primzahlen) werden inline per Sieb erzeugt; es gibt keine externen Abfragen und keine externen Bibliotheken.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../pz.html">pz.html</a> &ndash; <em>Prime Pattern Explorer</em>: interaktive geometrische Darstellung von Primzahlen in drei Modi (polar, Phyllotaxis, Ulam) mit Sieb des Eratosthenes und Primzahlsatz-N&auml;herung; der Winkelmultiplikator erzeugt je nach Wert Spiralarme oder Gleichverteilung.</li>
+      <li><a href="../garben_uebersicht.html">garben_uebersicht.html</a> &ndash; <em>Garben: Intuition, Bilder und Abstrakter Formalismus</em>: strukturierte Gegen&uuml;berstellung der Garben-Begriffe (Raum, Schnitt, Einschr&auml;nkung, Halm, Keim, Pr&auml;garbe, Garbe) in drei Spalten plus die beiden Grundaxiome (Unizit&auml;t und Verklebbarkeit) in Formeln.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  var ctx = canvas.getContext('2d');
+  var ctrl = {
+    mode:  document.getElementById('vMode'),
+    count: document.getElementById('vCount'),
+    angle: document.getElementById('vAngle'),
+    dot:   document.getElementById('vDot')
+  };
+  var disp = {
+    count: document.getElementById('cCountVal'),
+    angle: document.getElementById('cAngleVal'),
+    dot:   document.getElementById('cDotVal')
+  };
+  var out = {
+    k:  document.getElementById('outK'),
+    kap:document.getElementById('outKAp'),
+    q:  document.getElementById('outQ'),
+    conv:document.getElementById('outConv'),
+    status:document.getElementById('outStatus'),
+    box:document.getElementById('statusBox')
+  };
+
+  var primes = [];
+  (function genPrimes(limit){
+    var s = new Uint8Array(limit + 1);
+    for (var p = 2; p <= limit; p++) {
+      if (!s[p]) {
+        primes.push(p);
+        if (p * p <= limit) {
+          for (var i = p * p; i <= limit; i += p) s[i] = 1;
+        }
+      }
+    }
+  })(200000);
+
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function colors(){
+    return {
+      bg:     cssVar('--viz-canvas-bg'),
+      dot:    cssVar('--viz-dot'),
+      arm:    cssVar('--viz-arm'),
+      text:   cssVar('--viz-text'),
+      accent: cssVar('--viz-accent')
+    };
+  }
+
+  function convergents(x, maxTerms){
+    var res = [];
+    if (!isFinite(x)) return res;
+    var a = Math.floor(x);
+    res.push({ p: a, q: 1 });
+    var h0 = a, h1 = 1, k0 = 1, k1 = 0;
+    var frac = x - a;
+    for (var n = 1; n < maxTerms && frac > 1e-9; n++) {
+      var x1 = 1 / frac;
+      a = Math.floor(x1);
+      var h2 = a * h1 + h0, k2 = a * k1 + k0;
+      res.push({ p: h2, q: k2 });
+      h0 = h1; h1 = h2; k0 = k1; k1 = k2;
+      frac = x1 - a;
+      if (k2 > 1000000) break;
+    }
+    return res;
+  }
+
+  function bestRational(x, qmax){
+    var best = { p: 0, q: 1, err: Infinity };
+    for (var q = 1; q <= qmax; q++) {
+      var p = Math.round(x * q);
+      var err = Math.abs(x - p / q);
+      if (err < best.err) best = { p: p, q: q, err: err };
+    }
+    return best;
+  }
+
+  function fitCanvas(){
+    var wrap = canvas.parentElement;
+    var w = Math.max(320, Math.floor(wrap.clientWidth));
+    canvas.width = w;
+    canvas.height = 440;
+  }
+
+  function drawCompass(col, k){
+    var R = 36;
+    var cx = canvas.width - R - 18;
+    var cy = R + 18;
+    ctx.save();
+    ctx.strokeStyle = col.arm;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy);
+    ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R);
+    ctx.stroke();
+    ctx.strokeStyle = col.accent;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(k), cy + R * Math.sin(k));
+    ctx.stroke();
+    var N = 30;
+    for (var i = 1; i <= N; i++) {
+      var a = i * k;
+      var x = cx + R * Math.cos(a);
+      var y = cy + R * Math.sin(a);
+      ctx.globalAlpha = 0.25 + 0.75 * (i / N);
+      ctx.fillStyle = col.accent;
+      ctx.beginPath(); ctx.arc(x, y, 2, 0, 2 * Math.PI); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = col.text;
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Winkelschritt k (30 Schritte)', cx, cy + R + 13);
+    ctx.restore();
+  }
+
+  function updateReadout(k){
+    var alpha = k / Math.PI;
+    out.k.textContent = k.toFixed(5);
+    out.kap.textContent = alpha.toFixed(5);
+    var convs = convergents(alpha, 8);
+    out.conv.textContent = convs.map(function(c){ return c.p + '/' + c.q; }).join('  ');
+    var br = bestRational(alpha, 18);
+    out.q.textContent = br.p + '/' + br.q + '  (Periode ' + br.q + ')';
+    var cls, msg;
+    if (br.err < 0.005) {
+      cls = 'ok';
+      msg = '\u2714 Koh&auml;rent &mdash; k/&pi; &asymp; p/q (Periode ' + br.q + '). Der Winkelschritt schlie&szlig;t sich: lokale Punkte verkleben zu <strong>einem globalen Arm-Bild</strong>. Garbe-Bedingung erf&uuml;llt &rArr; globales Objekt existiert.';
+    } else {
+      cls = 'no';
+      msg = '\u2718 Nicht koh&auml;rent (fast irrational, z.&nbsp;B. goldener Winkel) &mdash; der Winkelschritt schlie&szlig;t sich nicht: lokale Punkte streuen ohne globales Arm-Bild. Die Pr&auml;garbe wird nicht zur Garbe (keine Verklebung).';
+    }
+    out.box.className = 'status ' + cls;
+    out.status.innerHTML = msg;
+  }
+
+  function draw(){
+    var w = canvas.width, h = canvas.height;
+    var col = colors();
+    ctx.fillStyle = col.bg;
+    ctx.fillRect(0, 0, w, h);
+    var mode = ctrl.mode.value;
+    var count = Math.min(parseInt(ctrl.count.value, 10) || 0, primes.length);
+    if (count < 2) count = 2;
+    var dot = parseFloat(ctrl.dot.value);
+    var k = parseFloat(ctrl.angle.value);
+    var cx = w / 2, cy = h / 2;
+    var R = Math.min(w, h) / 2 - 16;
+    var maxP = primes[count - 1];
+    var scale;
+    if (mode === 'phyllotaxis') scale = R / Math.sqrt(maxP);
+    else if (mode === 'polar') scale = R / maxP;
+    else scale = R / (Math.sqrt(maxP) / 2);
+
+    ctx.fillStyle = col.dot;
+    for (var i = 0; i < count; i++) {
+      var p = primes[i];
+      var x, y;
+      if (mode === 'phyllotaxis') {
+        var r1 = Math.sqrt(p) * scale;
+        var th1 = p * k;
+        x = cx + r1 * Math.cos(th1);
+        y = cy + r1 * Math.sin(th1);
+      } else if (mode === 'polar') {
+        var r2 = p * scale;
+        var th2 = p * k;
+        x = cx + r2 * Math.cos(th2);
+        y = cy + r2 * Math.sin(th2);
+      } else {
+        var kk = Math.ceil((Math.sqrt(p) - 1) / 2);
+        var t = 2 * kk;
+        var m = (t + 1) * (t + 1);
+        var gx, gy;
+        if (p >= m - t) { gx = kk - (m - p); gy = -kk; }
+        else {
+          m -= t;
+          if (p >= m - t) { gx = -kk; gy = -kk + (m - p); }
+          else {
+            m -= t;
+            if (p >= m - t) { gx = -kk + (m - p); gy = kk; }
+            else { gx = kk; gy = kk - (m - p - t); }
+          }
+        }
+        x = cx + gx * scale;
+        y = cy + gy * scale;
+      }
+      if (x >= 0 && x <= w && y >= 0 && y <= h) {
+        ctx.beginPath();
+        ctx.arc(x, y, dot, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+    drawCompass(col, k);
+    updateReadout(k);
+  }
+
+  function refreshDisplays(){
+    disp.count.textContent = ctrl.count.value;
+    disp.angle.textContent = parseFloat(ctrl.angle.value).toFixed(5);
+    disp.dot.textContent = ctrl.dot.value;
+  }
+  function onInput(){ refreshDisplays(); draw(); }
+
+  function setAngle(v){
+    ctrl.angle.value = v;
+    refreshDisplays();
+    draw();
+  }
+
+  ctrl.mode.addEventListener('change', draw);
+  ctrl.count.addEventListener('input', onInput);
+  ctrl.angle.addEventListener('input', onInput);
+  ctrl.dot.addEventListener('input', onInput);
+
+  var presetBtns = document.querySelectorAll('.presets button');
+  for (var i = 0; i < presetBtns.length; i++) {
+    presetBtns[i].addEventListener('click', function(){
+      if (this.dataset.k === 'random') {
+        setAngle(Math.random() * Math.PI * 2);
+      } else {
+        setAngle(parseFloat(this.dataset.k));
+      }
+    });
+  }
+
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  window.addEventListener('resize', function(){ fitCanvas(); draw(); });
+
+  fitCanvas();
+  refreshDisplays();
+  draw();
+})();
+</script>
+</body>
+</html>

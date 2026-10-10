@@ -1,0 +1,15 @@
+{
+  "no": "085",
+  "a": "useful_math.html",
+  "b": "orbifold.html",
+  "a_title": "The Hidden Algebra of Everything",
+  "b_title": "Manifolds & Orbifolds",
+  "combined_theme": "symmetry-quotient-manifold-orbifold",
+  "one_line": "Symmetrie-Quotienten X/G sind die Meisteridee: wirkt die Gruppe frei, ist der Quotient eine glatte Mannigfaltigkeit (A); hat sie Fixpunkte mit Stabilisator C_n, werden daraus Kegel-Punkte und der Quotient ein Orbifold (B) — A's Fixpunkt ist genau B's Kegel-Punkt.",
+  "contradictions": [
+    "Glattheit als Default: A (Mannigfaltigkeits-Hypothese) setzt Daten auf glatten, singuläritätsfreien Blättern an ('curse of dimensionality is a blessing'), während B (Orbifold) Kegel-Punkte mit nur 360°/n Winkel zum Normalfall macht — für B ist Glattheit der Ausnahmefall, nicht der Default.",
+    "Ziel des Gruppenquotienten: A behauptet 'Manifolds are the quotient spaces of groups' (Quotient = glatte Mannigfaltigkeit), während B zeigt, dass der Quotient einer nicht-freien Symmetrie (Falten) ein Orbifold mit Kanten/Kegel-Punkten ist — A's Slogan gilt nur für freie Wirkungen."
+  ],
+  "resolution": "Auflösung über freie vs. nicht-freie Gruppenwirkung auf denselben Quotienten X/G: trivialer Stabilisator → glatte Mannigfaltigkeit (A), nichttrivialer Stabilisator C_n → Kegel-Punkt der Ordnung n und Orbifold (B). A's Fixpunkt (g·x=x, triviale Wirkung) und B's Kegel-Punkt (n Blätter identifiziert, Winkel 2π/n) sind derselbe Punkt; die fraktionale Orbifold-Euler-Kennzahl χ_orb = 2 − Σ(1−1/n_i) macht B's 'fractional local structure' präzise und verallgemeinert A's glatte Blätter zu gefalteten Orbifolds.",
+  "viz": "Theme-aware Canvas: eine C_n-Rotation faltet eine volle 360°-Nachbarschaft; Schieberegler für die Ordnung n (2–8) und ein frei/nicht-frei-Schalter zeigen Fundamental-Domain, Kegelwinkel 360°/n, den Kegel-Punkt als Fixpunkt (Stabilisator C_n) sowie den χ_orb-Beitrag (1−1/n) — frei = glatte Mannigfaltigkeit, nicht-frei = Orbifold."
+}

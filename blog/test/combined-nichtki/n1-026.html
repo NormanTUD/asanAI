@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidenz als Oszillation – Fusion: Schmitz ✕ Miller–Rabin</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1c1c; --muted:#5b5b5b; --card:#ffffff; --border:#e2ddd0;
+  --accent:#c0392b; --accent2:#1a5c4c; --code-bg:#f0ece1; --code-fg:#7a2ea0;
+  --good:#1a7a3a; --warn:#b8860b; --bad:#b02a1e; --glow:rgba(192,57,43,0.14);
+}
+html.dark{
+  --bg:#0f1420; --fg:#e6edf3; --muted:#8b949e; --card:#161b22; --border:#30363d;
+  --accent:#e94560; --accent2:#4ecdc4; --code-bg:#0d1117; --code-fg:#f0883e;
+  --good:#3fb950; --warn:#f5a623; --bad:#f85149; --glow:rgba(233,69,96,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Segoe UI',system-ui,'Lingua Franca',Georgia,serif;
+  background:var(--bg);color:var(--fg);line-height:1.7;padding:2.5rem 1.2rem 4rem;
+  transition:background .3s,color .3s;
+}
+article{max-width:820px;margin:0 auto}
+h1{font-size:2rem;line-height:1.25;margin-bottom:.4rem;letter-spacing:-.01em}
+.fuse-sub{color:var(--muted);font-size:.95rem;margin-bottom:1.8rem;font-family:ui-monospace,monospace}
+.fuse-sub b{color:var(--accent)}
+section{margin:2.6rem 0}
+h2{font-size:1.4rem;color:var(--accent);margin-bottom:.9rem;border-bottom:1px solid var(--border);padding-bottom:.35rem}
+h3{font-size:1.08rem;color:var(--accent2);margin:1.1rem 0 .5rem}
+p{margin:.7rem 0}
+ul{margin:.6rem 0 .6rem 1.3rem}
+li{margin:.45rem 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;margin:.9rem 0}
+.m{font-family:ui-monospace,'Courier New',monospace;background:var(--code-bg);color:var(--code-fg);
+  padding:.05em .4em;border-radius:5px;white-space:nowrap;font-size:.95em}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  padding:.12em .5em;border-radius:20px;margin-right:.4rem;vertical-align:middle}
+.tag.a{background:var(--glow);color:var(--accent);border:1px solid var(--accent)}
+.tag.b{background:var(--glow);color:var(--accent2);border:1px solid var(--accent2)}
+.note{border-left:3px solid var(--accent2);background:var(--card);padding:.7rem 1rem;border-radius:0 8px 8px 0;margin:.8rem 0;font-size:.95rem}
+.prov a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.prov a:hover{color:var(--accent2)}
+.prov li{margin:.7rem 0}
+table.map{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+table.map th,table.map td{text-align:left;padding:.5rem .6rem;border:1px solid var(--border)}
+table.map th{background:var(--card);color:var(--accent)}
+table.map td.l{color:var(--accent2);font-weight:600}
+.viz-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem}
+canvas{width:100%;height:auto;display:block;border-radius:10px;background:var(--bg);border:1px solid var(--border)}
+.viz-ctrl{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:.9rem 0}
+button{background:var(--accent);color:#fff;border:none;padding:.55rem 1rem;border-radius:9px;cursor:pointer;font-size:.9rem;font-weight:600;transition:transform .12s,filter .2s}
+button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+button.sec{background:var(--card);color:var(--fg);border:1px solid var(--border)}
+button.alt{background:var(--accent2)}
+.ctrl-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:.7rem 0;font-size:.9rem}
+.ctrl-row label{color:var(--muted);min-width:110px}
+.ctrl-row input[type=range]{flex:1;accent-color:var(--accent);min-width:120px}
+.readout{font-family:ui-monospace,monospace;color:var(--accent2);font-weight:700}
+#vizStatus{margin-top:.7rem;padding:.7rem .9rem;border-radius:9px;background:var(--code-bg);
+  border:1px solid var(--border);font-size:.95rem;min-height:2.6em;line-height:1.5}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-top:.6rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:.3rem;vertical-align:-1px}
+.topline{display:flex;justify-content:flex-end;margin-bottom:.6rem}
+</style>
+</head>
+<body>
+<article>
+  <div class="topline"><button class="sec" onclick="toggleTheme()">☾ / ☀ Thema</button></div>
+  <h1>Evidenz als Oszillation</h1>
+  <div class="fuse-sub">Fusion aus: <b>hermann_schmitz2.html</b> ✕ <b>miller_rabin.html</b></div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Zwei Texte, die auf den ersten Blick nichts miteinander zu tun haben – eine
+    <span class="tag a">A</span>Leib-Philosophie und ein
+    <span class="tag b">B</span>Primzahltest – beschreiben denselben epistemischen Aufbau:
+    <strong>Evidenz ist nie das Ergebnis eines einzelnen Blicks, sondern das Ergebnis eines
+    oszillierenden Zeugen.</strong> In B wird die Zahl von einem <em>Zeugen</em> <span class="m">a</span>
+    befragt, der auf dem Zahlenkreis <span class="m">mod n</span> Schritt für Schritt quadriert;
+    in A wird die <em>Du-Evidenz</em> – die Gewissheit, es mit einem Bewusstseinsinhaber zu tun zu haben –
+    nicht durch Sprache oder Analogieschluss gewonnen, sondern durch das <em>Fluktuieren der Dominanz</em>
+    in einem gemeinsamen vitalen Antrieb (Einleibung). In beiden Fällen ist das Wissen der
+    <strong>Ausgangspunkt einer Schwingung, nicht eines Urteils von außen.</strong></p>
+    <p>Und beide teilen dieselbe Asymmetrie: Ein <em>definitives</em> Urteil ist ein <strong>Kollaps</strong>
+    der Oszillation (B: „definitiv zusammengesetzt“ – ein Zeuge fängt den unmöglichen Sprung, die Schwingung
+    stoppt; A: die <em>Verklammung</em>, der eingefrorene Antrieb). Der <em>positive / lebendige</em> Fall
+    dagegen ist die Oszillation, die <strong>weiter frei schwingt</strong> (B: „wahrscheinlich prim“;
+    A: der frei schwingende vitale Antrieb). Daraus folgt die Fusionsposition:
+    <em>Was man „definitiv“ erkennt, ist ein eingefrorener Oszillator – und deshalb kann man einen Leib
+    nie „definitiv erkennen“, ohne ihn zu töten.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+
+    <h3>1. Einseitige Befragung <span class="tag b">B</span> ↔ wechselseitige Teilnahme <span class="tag a">A</span></h3>
+    <div class="card">
+      <p><span class="tag b">B</span> „Dieser Zeuge wird die Zahl <em>’befragen’</em>“ – die Zahl ist
+      <strong>passiv</strong>, der Zeuge aktiv; das Wissen kommt <strong>einseitig von außen</strong> herein
+      (die Basis <span class="m">a</span> läuft über die Zahl, die Zahl reagiert nur).</p>
+      <p><span class="tag a">A</span> Die Du-Evidenz entsteht <strong>nur wechselseitig</strong>, in
+      „<em>wechselseitiger Einleibung</em>“: „Das funktioniert mit Tieren genauso! Keine Sprache nötig,
+      kein Analogieschluss – nur leibliche Kommunikation.“ Die Dominanz <em>fluktuiert zwischen beiden</em>
+      (Du ↔ Anderer). Man kann ein Bewusstsein nicht einseitig „befragen“ wie eine Zahl.</p>
+      <p><strong>Spannung:</strong> Ist ein Bewusstseinsinhaber überhaupt „testbar“, oder ist die
+      Wechselseitigkeit selbst eine konstituierende Bedingung der Evidenz, die B strukturell fehlt?</p>
+    </div>
+
+    <h3>2. Wahrscheinlichkeit als endgültiger Deckel <span class="tag b">B</span> ↔ unmittelbare, nicht-wahrscheinliche Gewissheit <span class="tag a">A</span></h3>
+    <div class="card">
+      <p><span class="tag b">B</span> Das Beste, was man über Primalität sagt, ist
+      <strong>wahrscheinlich</strong>: Fehlerwahrscheinlichkeit ≤ <span class="m">(1/4)^k</span> – ein
+      <strong>endgültiger Deckel</strong>. Positives Wissen („prim“) wird nie definit; man bleibt im
+      Wahrscheinlichen, auch bei k = 20.</p>
+      <p><span class="tag a">A</span> Die <strong>tiefste</strong> Evidenz, die wir haben –
+      „die <em>Gewissheit</em>, es mit einem Bewusstseinsinhaber zu tun zu haben“ – ist
+      <strong>unmittelbar</strong> und „mehr sicher als jeder wissenschaftliche Beweis“; sie ist nicht auf
+      Wahrscheinlichkeit oder Inferenz zurückführbar.</p>
+      <p><strong>Spannung:</strong> Löst A’s unmittelbare Gewissheit den Wahrscheinlichkeitsdeckel von B
+      auf? Oder ist A’s „Gewissheit“ schlicht ein unbegründetes <span class="m">(1/4)^0 = 100%</span>?</p>
+    </div>
+
+    <h3>3. „Definitiv zusammengesetzt“ ist der wertvollste Zustand <span class="tag b">B</span> ↔ Fixierung ist Tod <span class="tag a">A</span></h3>
+    <div class="card">
+      <p><span class="tag b">B</span> Der stärkste epistemische Zustand ist der
+      <strong>definitive Beweis</strong> – „definitiv zusammengesetzt“: die Oszillation
+      <strong>stoppt, wird fixiert</strong> (ein einzelner Zeuge genügt). Stille = Wahrheit.</p>
+      <p><span class="tag a">A</span> Der <strong>fixierte / eingefrorene</strong> Zustand ist das
+      <strong>Pathologische</strong>: „Die Menschheit wird auf einem zu hohen Niveau personaler Emanzipation
+      <em>festgeklemmt</em>“ (Atombombe); Leben heißt „fallen + sicher hochkommen“ (Lachen), <strong>nie
+      Fixierung</strong>. Stille = Tod.</p>
+      <p><strong>Spannung:</strong> B’s Ideal (definitiver Beweis = eingefrorener Oszillator) ist exakt
+      A’s Krankheit (Verklammung = erloshener Antrieb).</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <p><strong>(1) Der Zeuge als gemeinsame Wurzel.</strong> Beide Texte hängen an dem Wort
+    <em>Zeuge</em>. Aber beide Oszillationen sind <em>asymmetrisch</em>: In B läuft die „einseitige“
+    Befragung <strong>im eigenen Raum der Zahl</strong> (die Trajektorie auf dem Zahlenkreis – der Zeuge
+    zwingt der Zahl nichts von außen auf, er bewegt sich in ihrer Struktur); in A ist die
+    „Wechselseitigkeit“ eine <strong>asymmetrische Fluktuation</strong> (es führt immer einer – die
+    Dominanz schwingt, sie ist nie gleich). <strong>Fusion:</strong> Evidenz ist die
+    <em>Trajektorie eines Zeugen <strong>im</strong> Objekt, nie ein Urteil von außen</em>.
+    Rest: je „lebendiger“ das Objekt, desto stärker muss die Zeugenschaft internalisieren – also wechselseitig werden.</p>
+
+    <p><strong>(2) Gewissheit ist Grenzwert, kein Schritt.</strong> B’s
+    <span class="m">(1/4)^k</span> strebt für <span class="m">k → ∞</span> gegen 0 – die Wahrscheinlichkeit
+    erreicht Gewissheit <strong>im Grenzwert, ohne je in Beweis überzugehn</strong>. A’s „unmittelbare“
+    Gewissheit ist gerade kein <span class="m">(1/4)^0 = 1</span>, sondern das Ergebnis <em>unzähliger</em>
+    Zeugenschaften eines ganzen Lebens wechselseitiger Einleibung (<span class="m">k → ∞</span> über die
+    Zeit): Sie <em>fühlt</em> sich an wie Gewissheit, ruht aber auf keinem einzigen Schritt. <strong>Fusion:</strong>
+    A’s unmittelbare Gewissheit <em>ist</em> B’s Fehlerterm im Grenzwert – beides ist Gewissheit als
+    <strong>Limes, nicht als Einzelakt</strong>.</p>
+
+    <p><strong>(3) Derselbe Kollaps, anderes Valenzzeichen.</strong> „Definitiv zusammengesetzt“ (B) und
+    „Verklammung“ (A) sind <strong>derselbe Strukturvorgang</strong> – ein Kollaps der Oszillation – nur mit
+    anderem Vorzeichen, weil das <em>Objekt</em> anders ist: Für eine <strong>Zahl</strong> ist der Kollaps
+    <em>Wahrheit</em> (gut, Erkenntnis errungen); für einen <strong>Leib</strong> ist er <em>Tod des
+    Antriebs</em> (schlecht, das Leben erlischt). <strong>Fusions-Schluss:</strong> Ein Bewusstseinsinhaber
+    ist <strong>nie „definitiv erkennbar“</strong> – nur „wahrscheinlich, stets wechselseitig, stets
+    flukturierend“. Der Miller–Rabin-Test, auf einen Menschen angewandt, würde <em>genau das zerstören,
+    was er testet</em>.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Was A (Schmitz) beisteuert</h3>
+    <ul>
+      <li><strong>Leib ≠ Körper.</strong> Der Körper ist sichtbar, tastbar, in Flächen und Rändern; der
+      <em>Leib</em> ist prädimensionales Volumen – „flächellos, randlos, in Inseln organisiert, die kommen
+      und gehen“. Bewusstsein braucht <em>leibliches</em> Gespür, nicht Messung.</li>
+      <li><strong>Enge ↔ Weite / vitaler Antrieb.</strong> Alles leibliche Erleben schwingt zwischen
+      <em>Engung</em> (Schreck, Schmerz; Spannung) und <em>Weitung</em> (Erleichterung; Schwellung).
+      Dieses Zusammenspiel ist der <strong>vitale Antrieb</strong> – „ohne ihn: kein Bewusstsein“.</li>
+      <li><strong>Eineibe / Einleibung.</strong> Leiber verschmelzen zu einem gemeinsamen vitalen Antrieb:
+      <em>antagonistisch</em> (Blickwechsel, Ringkampf – <strong>Dominanz fluktuiert</strong>) und
+      <em>solidarisch</em> (gemeinsames Singen, Marschieren). Sogar mit Maschinen.</li>
+      <li><strong>Person.</strong> Person = Fähigkeit zur Selbstzuschreibung, die nur über
+      <em>affektives Betroffensein</em> (leiblich) geht; sie lebt im Spagat
+      <strong>personale Emanzipation ↔ personale Regression</strong> („beide brauchen einander“),
+      stabilisiert durch <em>Fassung</em>. Typen: Bathmo-/Zyklo-/Schizothymiker.</li>
+      <li><strong>Atombombe.</strong> Der Krieg war eine „ernste Schule“ der Integration beider Pole;
+      die Bombe <strong>verklemmt</strong> die Menschheit auf zu hoher Emanzipation – das Bedürfnis nach
+      Regression bleibt, der Antrieb ist eingefroren.</li>
+      <li><strong>Tiere &amp; Du-Evidenz.</strong> Die Gewissheit eines Gegenübers entsteht durch
+      wechselseitige Einleibung (Dominanz-Fluktuation) – ohne Sprache, ohne Analogieschluss.</li>
+    </ul>
+
+    <h3>Was B (Miller–Rabin) beisteuert</h3>
+    <ul>
+      <li><strong>Zerlegung:</strong> <span class="m">n − 1 = 2^s · d</span> mit ungeradem <span class="m">d</span>
+      (so oft wie möglich durch 2 teilen). <span class="m">s</span> = Anzahl der Quadrierungsschritte,
+      <span class="m">d</span> = ungerade Startzahl.</li>
+      <li><strong>Zeuge <span class="m">a</span></strong> (Basis) zwischen 2 und <span class="m">n−2</span>
+      „befragt“ die Zahl.</li>
+      <li><strong>Sequenz:</strong> rechne <span class="m">x = a^d mod n</span>, dann
+      <span class="m">s</span>× quadriere: <span class="m">x ← x² mod n</span>.</li>
+      <li><strong>Prima-Regel:</strong> entweder <span class="m">a^d ≡ 1 (mod n)</span>,
+      <strong>oder</strong> ein <span class="m">a^(2^r·d) ≡ −1 (mod n)</span> auf dem Weg; sonst
+      <strong>definitiv zusammengesetzt</strong> (ein Zeuge genügt).</li>
+      <li><strong>Asymmetrie:</strong> „zusammengesetzt“ wird <em>bewiesen</em> (definit),
+      „prim“ ist nur <em>wahrscheinlich</em>; mit <span class="m">k</span> Zeugen sinkt der Fehler auf
+      <span class="m">(1/4)^k</span>.</li>
+      <li><strong>Zahlenkreis-Geometrie:</strong> die Zahlen <span class="m">0…n−1</span> auf einem
+      Kreis; die Quadrierung „springt“ – bei Primzahlen regelmäßig, bei Kompositen mit „unmöglichen“ Sprüngen.</li>
+    </ul>
+
+    <h3>Die geteilte Struktur (die eigentliche Fusion)</h3>
+    <p>Beide Texte sind über ihren Gegenstand hinweg auf dieselbe Maschinerie reduziert:
+    einen <strong>Oszillator</strong> (A: vitaler Antrieb / Dominanz-Fluktuation · B: die
+    Quadrierungs-Sequenz auf dem Kreis) und einen <strong>Zeugen</strong> (A: der wechselseitige Blick ·
+    B: die Basis <span class="m">a</span>), dessen <em>Bewegung durch das Objekt</em> die Evidenz erzeugt.
+    Die Asymmetrie ist identisch: <em>Kollaps</em> = definitives Urteil; <em>freie Schwingung</em> = der
+    positive, lebendige Fall.</p>
+
+    <table class="map">
+      <tr><th>Begriff A (Leib)</th><th>Begriff B (Zahl)</th><th>Gemeinsame Rolle</th></tr>
+      <tr><td class="l">vitaler Antrieb (Spannung↔Schwellung)</td><td class="l">Quadrierungs-Sequenz auf dem Kreis</td><td>der Oszillator, der das Wissen erzeugt</td></tr>
+      <tr><td class="l">Dominanz-Fluktuation (Du↔Anderer)</td><td class="l">Springen von Zeuge <span class="m">a</span> auf dem Kreis</td><td>das Hin-und-Her, das befragt</td></tr>
+      <tr><td class="l">Du-Evidenz (Gewissheit eines Bewusstseins)</td><td class="l">„wahrscheinlich prim“</td><td>der positive Fall: frei schwingend, nie definit</td></tr>
+      <tr><td class="l">Verklammung / eingefrorener Antrieb (Atombombe)</td><td class="l">„definitiv zusammengesetzt“</td><td>der Kollaps: Stille, Fixierung, Oszillation gestoppt</td></tr>
+      <tr><td class="l">lebenslange Zeugenschaft (k→∞)</td><td class="l">Fehler ≤ <span class="m">(1/4)^k</span>, k→∞</td><td>Gewissheit als <em>Limes</em></td></tr>
+      <tr><td class="l">Leib (selbst-verschiebend, „lebendig“)</td><td class="l">Zahl (inert, passiv)</td><td>Objekt: je lebendiger, desto wechselseitiger muss die Zeugenschaft sein</td></tr>
+    </table>
+
+    <div class="note">
+      <strong>Einordnung in die Metapher:</strong> B’s „definitiv zusammengesetzt“ ist A’s „Verklammung“
+      – der <em>eine</em> Kollaps, nur für die Zahl wertvoll (Wahrheit), für den Leib tödlich.
+      B’s „wahrscheinlich prim“ ist A’s Du-Evidenz – die <em>eine</em> freie Schwingung, die nie in einen
+      Schritt übergeht, sondern als <span class="m">(1/4)^k → 0</span> bzw. „unmittelbare Gewissheit“
+      nur im <strong>Grenzwert der Zeugenschaft</strong> existiert.
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung: Der Oszillierende Zeuge</h2>
+    <p class="note">Derselbe Oszillator, derselbe Zeuge – aber der Kollaps heißt in
+    <strong>Zahl-Modus</strong> <em>Erkenntnis</em> (definitiv zusammengesetzt), in
+    <strong>Leib-Modus</strong> <em>Tod</em> (Verklammung, Antrieb erlischt). In Leib-Modus verschiebt sich
+    die Mittellinie selbst (Dominanz fluktuiert); in Zahl-Modus bleibt sie starr (die Zahl ist inert).
+    „Zeugen befragen“ = definitiven Test ansetzen → die Amplitude kollabiert. „Loslassen“ = den Antrieb
+    wieder frei schwingen lassen.</p>
+
+    <div class="viz-wrap">
+      <canvas id="vizCanvas" width="760" height="340"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--accent)"></span>Spannung (Enge)</span>
+        <span><span class="dot" style="background:var(--accent2)"></span>Schwellung (Weite)</span>
+        <span><span class="dot" style="background:var(--warn)"></span>Zeuge a</span>
+        <span style="color:var(--muted)">Amplitude = Lebhaftigkeit des Antriebs</span>
+      </div>
+      <div class="viz-ctrl">
+        <button id="btnMode" onclick="setMode()">Modus: Zahl (Miller–Rabin)</button>
+        <button class="alt" onclick="befragen()">Zeugen befragen</button>
+        <button class="sec" onclick="loslassen()">Loslassen</button>
+      </div>
+      <div class="ctrl-row">
+        <label>Zeugen k (nur Zahl):</label>
+        <input type="range" id="kSlider" min="1" max="12" value="5" oninput="updateK(this.value)">
+        <span>→ Fehler ≤ (1/4)<sup id="kSup">5</sup> = <span class="readout" id="errVal">9.54e-4</span></span>
+      </div>
+      <div id="vizStatus">Bereit. Wähle Modus und setze einen Zeugen an.</div>
+    </div>
+  </section>
+
+  <section id="provenienz" class="prov">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><span class="tag a">A</span>
+        <a href="../buecher/hermann_schmitz2.html">hermann_schmitz2.html</a> –
+        Interaktive Einführung in Hermann Schmitz’ Philosophie des Leibes: Leib≠Körper, vitaler Antrieb
+        (Enge↔Weite), Gefühle als Atmosphären, Einleibung, Person (Emanzipation↔Regression), die
+        Atombombe als Verklammung und Du-Evidenz bei Tieren.</li>
+      <li><span class="tag b">B</span>
+        <a href="../miller_rabin.html">miller_rabin.html</a> –
+        Interaktiver Miller–Rabin-Primzahltest: Zerlegung <span class="m">n−1=2^s·d</span>, Zeugen
+        <span class="m">a</span>, Quadrierungs-Sequenz mit Zahlenkreis-Geometrie, definit „zusammengesetzt“
+        vs. wahrscheinlich „prim“ mit Fehler ≤ <span class="m">(1/4)^k</span>.</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+var canvas=document.getElementById('vizCanvas');
+var ctx=canvas.getContext('2d');
+var W=canvas.width,H=canvas.height;
+var mode='zahl',t=0,amp=1,ampTarget=1,collapsed=false,testIdx=0,lastN=null;
+var PAL={};
+
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function readPal(){
+  PAL={bg:cssVar('--bg'),card:cssVar('--card'),fg:cssVar('--fg'),muted:cssVar('--muted'),
+       border:cssVar('--border'),accent:cssVar('--accent'),accent2:cssVar('--accent2'),
+       warn:cssVar('--warn'),bad:cssVar('--bad')};
+}
+readPal();
+
+function modPow(base,exp,mod){
+  if(mod===1)return 0;
+  var result=1; base=base%mod;
+  while(exp>0){
+    if(exp%2===1) result=(result*base)%mod;
+    exp=Math.floor(exp/2); base=(base*base)%mod;
+  }
+  return result;
+}
+function mr(n,a){
+  var nm1=n-1,s=0,d=nm1;
+  while(d%2===0){d/=2;s++;}
+  var x=modPow(a,d,n);
+  if(x===1||x===n-1) return {comp:false,x:x,s:s,d:d};
+  for(var r=1;r<s;r++){ x=(x*x)%n; if(x===n-1) return {comp:false,x:x,s:s,d:d}; }
+  return {comp:true,x:x,s:s,d:d};
+}
+var TESTS=[
+  {n:101,a:7},
+  {n:15,a:7},
+  {n:91,a:3},
+  {n:561,a:2},
+  {n:2047,a:2},
+  {n:221,a:174}
+];
+
+function setCollapsed(v){ ampTarget=v?0:1; collapsed=v; }
+function setStatus(s){ document.getElementById('vizStatus').textContent=s; }
+
+function setMode(){
+  mode = (mode==='zahl')?'leib':'zahl';
+  var b=document.getElementById('btnMode');
+  b.textContent = mode==='zahl' ? 'Modus: Zahl (Miller–Rabin)' : 'Modus: Leib (Schmitz)';
+  setCollapsed(false);
+  lastN=null;
+  setStatus(mode==='zahl'
+    ? 'Zahl-Modus: die Mittellinie ist starr (inerte Zahl). „Zeugen befragen“ setzt einen Miller–Rabin-Zeugen an; wird ein Zeuge „zusammengesetzt“ gefangen, kollabiert der Oszillator (definitiv bewiesen).'
+    : 'Leib-Modus: die Mittellinie verschiebt sich selbst (Dominanz fluktuiert zwischen Du und Anderem). „Zeugen befragen“ = definitiven Test ansetzen → der Antrieb erlischt (Verklammung).');
+}
+function befragen(){
+  if(mode==='zahl'){
+    var T=TESTS[testIdx%TESTS.length]; testIdx++;
+    var res=mr(T.n,T.a);
+    lastN=T.n;
+    if(res.comp){
+      setCollapsed(true);
+      setStatus('n='+T.n+' (Zeuge a='+T.a+') ist DEFINITIV ZUSAMMENGESETZT – der Zeuge fängt den unmöglichen Sprung, die Oszillation stoppt: Stille = Wahrheit.');
+    } else {
+      setCollapsed(false);
+      setStatus('n='+T.n+' (Zeuge a='+T.a+') ist WAHRSCHEINLICH PRIM – die Oszillation schwingt frei weiter; Fehler ≤ (1/4)^k. Ist die Zahl wirklich prim (101) ist das korrekt – ist sie aber zusammengesetzt (2047=23·89, 221=13·17), hat der Zeuge den unmöglichen Sprung verpasst: genau das ist der (1/4)^k-Deckel, nie Gewissheit.');
+    }
+  } else {
+    setCollapsed(true);
+    setStatus('DEFINITIV „ERKANNT“ – der vitale Antrieb ist erloschen (Verklammung). Ein Leib wird nicht „bewiesen“: der definitive Test tötet genau das, was er testet.');
+  }
+}
+function loslassen(){
+  setCollapsed(false); lastN=null;
+  setStatus(mode==='leib'
+    ? 'Der Antrieb lebt wieder – fallen + sicher hochkommen (Lachen = Triumph). Die Schwingung ist der Beweis des Lebens, nicht dessen Gegenteil.'
+    : 'Oszillator neu gestartet: der Zeuge läuft wieder frei über den Zahlenkreis.');
+}
+function updateK(v){
+  document.getElementById('kSup').textContent=v;
+  document.getElementById('errVal').textContent=Math.pow(0.25,Number(v)).toExponential(2);
+}
+
+function wave(x0,y0,A,freq,phase,color,alpha,w){
+  ctx.beginPath();
+  for(var x=0;x<=W;x+=4){
+    var y=y0-A*Math.sin(x*freq+phase+t*0.05);
+    if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle=color;ctx.globalAlpha=alpha;ctx.lineWidth=w;ctx.stroke();ctx.globalAlpha=1;
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=PAL.bg;ctx.fillRect(0,0,W,H);
+  var mid=H*0.5;
+  var baseY=mid;
+  if(mode==='leib'&&!collapsed){ baseY=mid+Math.sin(t*0.012)*H*0.16; }
+
+  // reference line (fixed, the "inert" axis)
+  ctx.strokeStyle=PAL.border;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
+
+  // amplitude easing
+  amp+=(ampTarget-amp)*0.06;
+  var A=H*0.34*amp;
+
+  // two overlapping waves (tension / swelling)
+  var freq=0.018;
+  wave(0,baseY,A,freq,0,PAL.accent,0.85,2.4);
+  wave(0,baseY,A*0.8,freq*1.15,Math.PI*0.5,PAL.accent2,0.7,2);
+
+  // Zeuge marker riding the wave (only while alive)
+  if(amp>0.02){
+    var xz=(t*2.2)%W;
+    var yz=baseY-A*Math.sin(xz*freq+0+t*0.05);
+    ctx.beginPath();ctx.arc(xz,yz,7,0,Math.PI*2);
+    ctx.fillStyle=PAL.warn;ctx.fill();
+    ctx.strokeStyle=PAL.fg;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle=PAL.fg;ctx.font='12px system-ui,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Zeuge a',xz,yz-14);
+  }
+
+  // collapsed banner
+  if(collapsed){
+    ctx.fillStyle=PAL.bad;ctx.font='bold 22px system-ui,sans-serif';ctx.textAlign='center';
+    ctx.fillText(mode==='zahl'?'OSZILLATOR EINGEFROREN':'ANTRIB ERLOSHEN – VERKLAMMUNG',W/2,34);
+  }
+
+  // mode label
+  ctx.fillStyle=PAL.muted;ctx.font='12px system-ui,sans-serif';ctx.textAlign='left';
+  ctx.fillText(mode==='zahl'?'MODUS ZAHL (inert, starr)':'MODUS LEIB (selbst-verschiebend)',12,H-14);
+
+  // poles for leib
+  if(mode==='leib'){
+    ctx.font='11px system-ui,sans-serif';
+    ctx.fillStyle=PAL.accent;ctx.textAlign='left';ctx.fillText('Du (dominiert) ←',12,mid+H*0.2);
+    ctx.fillStyle=PAL.accent2;ctx.textAlign='right';ctx.fillText('→ Anderer (dominiert)',W-12,mid+H*0.2);
+  }
+  t++;
+  requestAnimationFrame(draw);
+}
+
+function toggleTheme(){
+  document.documentElement.classList.toggle('dark');
+  readPal();
+}
+
+updateK(5);
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

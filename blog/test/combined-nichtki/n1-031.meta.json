@@ -1,0 +1,16 @@
+{
+  "no": "031",
+  "a": "garben_zug.html",
+  "b": "modelltheorie.html",
+  "a_title": "Die Garbentheorie eines vorbeifahrenden Zuges",
+  "b_title": "Modelltheorie – Interaktiv erklärt",
+  "combined_theme": "verklebung-modellerfullung",
+  "one_line": "Beide Papiere fragen, wann lokale, getrennt gegebene Stücke sich zu einem konsistenten Ganzen verkleben — Garben-Schnitte (topologisch) und Modell-Erfüllung (logisch) sind zwei Seiten desselben Verklebungsprinzips: Ein Modell ist die globale Sektion der Constraint-Garbe, Verklebung ist Modellerfüllung.",
+  "contradictions": [
+    "Einzigartigkeit des Ganzen: A (Garbe) behauptet ein eindeutiges globales Objekt (∃! s, 'DER Zug — kein anderer, keiner mehr'); B (Modelltheorie) zeigt, dass dieselben Axiome (dichte Ordnung) von mehreren Strukturen erfüllt werden (ℚ und ℝ), während ℕ/ℤ sie verletzen — die Theorie wählt kein einziges Modell aus.",
+    "Richtung des Aufbaus: A konstruiert das Ganze bottom-up aus erweiterbaren Daten (Schnitte werden restringiert und verklebt); B validiert top-down eine Kandidat-Struktur gegen Axiome (𝒜 ⊨ φ) statt das Ganze aus Stücken zu erzeugen.",
+    "Bedeutung von 'lokal': A topologisch (offene Umgebungen im Raum ℝ, Keime, direkter Limes, echte Überlappungen U∩V); B logisch (Formeln/Atome über Tupeln, gemeinsame Wahrheit, kein topologisches Verkleben)."
+  ],
+  "resolution": "Existenz ist der gemeinsame Kern (kompatible lokale Stücke ⇒ kohärentes Ganzes ⇔ gemeinsame Erfüllbarkeit der Axiome); Einzigartigkeit ist eine Zusatz-Eigenschaft, in A von der Topologie erzwungen, in B äquivalent zu Kategorialität/Vollständigkeit. Gefasst: Ein Modell einer Theorie T ist die globale Sektion der von T definierten Constraint-Garbe; Satisfaction = Verkleben lokaler Wahrheit; Kompatibilität = Übereinstimmung auf gemeinsamen Variablen (= Gleichheit auf U∩V).",
+  "viz": "Interaktives Canvas: zwei überlappende Kontexte U und V tragen je ein lokales Stück (Wellenform) auf einer gemeinsamen Basislinie; ein Schalter vereinbart/entkoppelt die Stücke auf der Überlappung U∩V — bei Übereinstimmung entsteht ein eindeutiger globaler Schnitt ('DER Zug'), sonst scheitert die Verklebung. Daneben Panel: dieselben Axiome (dichte Ordnung) haben mehrere Modelle (ℚ✓ ℝ✓ vs. ℕ✗ ℤ✗)."
+}

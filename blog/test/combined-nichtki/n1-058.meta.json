@@ -1,0 +1,16 @@
+{
+  "no": "058",
+  "a": "chemistry.html",
+  "b": "hott6.html",
+  "a_title": "Die Grundprinzipien der Chemie – Interaktiv",
+  "b_title": "HoTT Chapter 1: Type Theory - Visual Explorer",
+  "combined_theme": "stabilitaet-als-normale-form",
+  "one_line": "Chemie und HoTT instantiieren dasselbe Gerüst: Primitive + uniforme, konstruktive Reduktion -> stabile Normalform, wobei die Verbindungen zwischen Zuständen selbst Inhalt tragen — das stabile Molekül (Energie-Minimum) ist ein kontraktibler Typ, die Bindung ein Pfad, die Oktettregel eine Faserung über dem Raum der Atome.",
+  "contradictions": [
+    "Endzustand: A lässt das System zu EINEM eindeutigen, entscheidbaren Minimum relaxen ('minimaler Energie', eindeutiger Gleichgewichtsabstand re) und quotiert alle Wege auf den kanonischen Punkt; B hält Identität/Gleichheit als Typ mit VIELEN Pfaden (Gruppoid, 'can be non-trivial') und verweigert genau diese Kürzung auf einen Punkt.",
+    "Was fundamental ist: A reduziert Stabilität auf eine reellwertige Größe (E(r) -> R), 'stabil?' ist ein Skalar-Vergleich — das Fundamentale ist eine Zahl; B macht die Grundobjekte zu Typen, 'Korrektheit' ist Typisierung (strukturelles Urteil) und selbst 'a = b' ein Typ/Raum, kein Bit — eine Zahl (A) vs. ein Typ (B).",
+    "Geometrie: A ist im Kern diskret/quantisiert (ganzzahlige Schalenkapazitäten [2,8,8,8], ganzzahlige Elektronenzahlen, kombinatorisches Oktett); B ist prinzipiell kontinuierlich-geometrisch ('types are spaces, functions are continuous maps', Identitätstypen sind stetige Pfade) — ein diskretes Gitter (A) vs. ein kontinuierlicher Raum (B)."
+  ],
+  "resolution": "Unterschiedliche Ebenen desselben Kontraktilen: auf der Energie-Landschaft (A) gibt es einen kanonischen Punkt (das Minimum/Normalform), aber der Raum der Relaxations-/Reaktionswege dorthin ist strukturiert (B) — zusammen ein KONTRAKTIBLER TYP (ein Punkt + Raum der dorthin führenden, zu refl homotopen Pfade). A's Skalar ist eine einzige Faser über A's echter Grundstruktur: die Oktett-Schalen sind eine Faserung B : A -> U (Basis = Atome, Faser = Schalenfüllung). Diskret und kontinuierlich sind dual: beide kombinieren diskrete Bausteine (Elektronen-Schalen / Konstruktoren) mit kontinuierlicher Dynamik (Morse-Relaxation / Pfade). Fusioniert: Stabilität = Normalform, Bindung = Pfad, Oktett = Faserung.",
+  "viz": "Ein-Canvas-Zwei-Panel, ein Prinzip: alles rollt zu demselben Minimum, jeder über einen anderen Weg. Links (A) iteriert die Morse-Energie E(r)=De(1-e^-a(r-re))^2-De ihre Normalform (Ball rutscht die Kurve hinab zu re = normale Form); rechts (B) rutschen N Teilchen von verschiedenen Startpunkten einer 2D-Energie-Schale in dasselbe Zentrum und hinterlassen farbige Relaxationspfade; das Zentrum ist als kontraktibler Typ mit pulsierender refl-Schleife markiert. Slider Bindungsstärke De (vertieft Morse-Mulde + Schalen-Steifigkeit) und Teilchenzahl (Pfadanzahl); Buttons 'Loslassen & reduzieren' und 'Bereit'; themenreaktiv über CSS-Variablen, keine externen Libs, keine Netz-Daten."
+}

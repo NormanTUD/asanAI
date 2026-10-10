@@ -1,0 +1,16 @@
+{
+  "no": "036",
+  "a": "paper/hott.html",
+  "b": "hott.html",
+  "a_title": "Visual Guide to Homotopy Type Theory",
+  "b_title": "Homotopy Type Theory — Visual Explorer",
+  "combined_theme": "hott-types-as-spaces",
+  "one_line": "Beide Papiere sind visuelle Einführungen in dieselbe Theorie: In HoTT ist ein Typ ein Raum, ein Term ein Punkt und eine Gleichheit ein Pfad; der Kreis S¹ ist zugleich der HIT-Kreis (1 Punkt + 1 Loop, π₁≃ℤ) und der topologische Kreis, und das Univalence-Axiom (A=B)≃(A≃B) macht Äquivalenz zu Gleichheit — Topologie, Logik und Typentheorie werden zur selben Sprache.",
+  "contradictions": [
+    "Was der Kreis S¹ 'ist': A definiert ihn induktiv als 1 Basispunkt + 1 Loop-Generator (diskretes logisches Objekt) und liest π₁(S¹)≃ℤ daraus ab; B zeichnet ihn als kontinuierlichen geometrischen Ring aus ~100 Punkten (Kontinuum von Punkten) mit Basispunkt und Loop. Inkompatible Bilder desselben Symbols (diskret vs. kontinuierlich).",
+    "Wie Univalence begründet wird: A verankert (A=B)≃(A≃B) an diskreten endlichen Mengen ({0,1} vs. {true,false}, 'verschiedene aber isomorphe Mengen'); B verankert es an kontinuierlichen topologischen Formen (Dreieck ≃ Kreis, homöomorph). Diskrete vs. kontinuierliche Instanziierung desselben Prinzips.",
+    "Register: A ist formel- und algebra-lastig (Pfad-Gruppoid mit refl/p⁻¹/p·q, Assoziativität nur bis 2-Pfad α, Transport p_*:P(x)→P(y), Homotopiestufenleiter -2..2); B erklärt sich explizit 'no formulas, just shapes and intuition' und entwickelt Gruppoid-Axiome, Transport und Stufenleiter gar nicht. Formales schwaches-∞-Gruppoid-Register vs. intuitives anti-formelles Register."
+  ],
+  "resolution": "Auflösung 1: Der HIT-Kreis (1 Punkt + 1 Loop) ist nicht ein anderes Objekt, sondern die Definition, die zum topologischen Kreis äquivalent ist — Univalence macht daraus Gleichheit; beide tragen denselben Loop-Raum ℤ (Wicklungszahl = Fundamentalgruppe), also ist der 'einzige Punkt' nur eine Präsentationswahl und das Kontinuum das geometrische Modell. Auflösung 2: Ein Axiom, zwei Register — das diskrete Beispiel (A) macht 'Bijektion + Kohärenz' sichtbar, das kontinuierliche (B) macht 'deformierbar/homotop' sichtbar; beide sind dieselbe Aussage (A≃B)≃(A=B) von der mengen- bzw. topologischen Seite, also parallel, nicht widersprüchlich. Auflösung 3: Die Register ergänzen sich — B's Intuition ist der Einstieg, A's Formalismus (Gruppoid-Operationen, Assoziativität bis Homotopie, Transport, Stufenleiter) benennt präzise, was die Formen sind; Intuition motiviert, Notation erfasst (mit Ehrlichkeits-Hinweis: beide sind expositorische Visualisierungs-Guides, nicht formale Papiere).",
+  "viz": "Ein Objekt, zwei Bilder: derselbe Wicklungszahl-Loop n im Loop-Raum des Kreises. Links (B) der topologische S¹ als Kontinuum von Punkten, rechts (A) der HIT-S¹ als 1 Basispunkt + 1 Loop; in der Mitte ≃ (Univalence). Wicklungszahl n per Slider/Buttons/Drum-durch-die-linken-Kreis änderbar — π₁(S¹)≃ℤ aktualisiert live, Zeichen kodiert das Vorzeichen (warm +n, kühl -n)."
+}

@@ -1,0 +1,17 @@
+{
+  "no": "041",
+  "a": "foam_of_meaning.html",
+  "b": "homological_scaffolds/index.html",
+  "a_title": "The Foam of Meaning",
+  "b_title": "Persistent Homology of Brain Networks — Psilocybin vs Placebo",
+  "combined_theme": "persistent-topology-of-structured-systems",
+  "one_line": "Bedeutung (A) und Konnektom (B) sind dasselbe Objekt in zwei Dichten: eine skaleninvariante topologische Skelettstruktur (Betti β0/β1), bei der permanente Homologie (B) als das eine Instrument A's Metapher messbar und falsifizierbar macht.",
+  "contradictions": [
+    "Status: A ist eine spekulative, metaphorische These, die Topologie nur als Label behauptet ('cosmologist's instruments transfer', 'topological signature β0,β1') und nie eine Filtration rechnet; B ist ein laufendes, datengetriebenes β0/β1-Computing (Union-Find, Zyklerkennung, 2-Facetten) an echten fMRE-Konnektomen (Petri 2014) — A untestbar, B falsifizierbar.",
+    "Void-Ontologie: A definiert Void als *Richtung* (vier semantische Voids: syntaktisch/semantisch/grounding/epistemisch); B definiert Void als die *Diagonale* des Persistenz-Diagramms (kurzlebige Features, topologisches Rauschen) — zwei Ontologien desselben Wortes.",
+    "Scharfer Snap vs. verteilte Persistenz: A behauptet, Bedeutung *schnappe* an einer einzigen Phasenübergangs-Grenze ∂M, die 'mehr Information trägt als beide Innenräume'; B's Signatur ist das über den ganzen Skalenbereich verteilte Persistenz-Spektrum (Barcode/Betti-Kurve), also explizit nicht auf eine Schwelle reduzierbar.",
+    "Objekt & Ebene: A's Objekt ist der kombinatorische Möglichkeitsraum aller Äußerungen (~10^94, meist Void) plus ein Form→Bedeutung-Faserbündel (Kompositionalität π′∘f=g∘π); B's Objekt ist ein endliches, realisiertes Netz (Hunderte Knoten) auf einer einzigen Ebene ohne dieses Faserbündel."
+  ],
+  "resolution": "A liefert die a-priori Struktur-Hypothese (welche Features ein Bedeutungsraum haben muss: β0=Konventionen, beständige β1=Grammatik-/Metaphor-Filamente, Void=leerer Raum in vier Richtungen, Skaleninvarianz, ∂M=Knie), B das a-posteriori Instrument (ω-Filtration, Union-Find β0, Zyklerkennung+2-Facetten β1, Persistenzdiagramm). Gefusioniert: B's Pipeline auf A's Äußerungs-Punktwolke anwenden — A wird dadurch falsifizierbar. A's vier Void-Richtungen sind Projektionen von B's kurzlebigem Void auf vier semantische Achsen (B liefert die Skalare Persistenz, A die semantische Achse); A's scharfe Grenze ∂M ist ein steiles Knie der von B gemessenen Persistenzlandschaft (fern der Diagonale = Signal); und A's Möglichkeitsraum vs. B's Konnektom sind dasselbe Objekt in zwei Dichten — 'Kosmos ≅ Sprache' wird zu 'Kosmos ≅ Sprache ≅ Konnektom'.",
+  "viz": "Interaktive ω-Filtration eines synthetischen 'Bedeutungs-Webs' (3 Konventions-Cluster + 1 Metaphor-Ring): echter Algorithmus live — β0 per Union-Find, β1 per Zyklenzählung mit Dreieck-Kill (2-Facetten); links das Web mit aktiven Kanten/Dreiecken, rechts die Betti-Kurven β0(ω)/β1(ω) mit ∂M-Marker am β1-Peak. Themeneaktiv (CSS-Variablen), deterministische inline Daten, keine Netzabrufe."
+}

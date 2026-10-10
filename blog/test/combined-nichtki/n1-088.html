@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zwei Auflösungen, ein System — Fusion: exotische Sphären × Körper</title>
+<style>
+:root{
+  --bg:#f6f7fb; --fg:#1a1f2b; --muted:#5b6472; --card:#ffffff; --border:#e2e6ee;
+  --accent:#5b6ee1; --accent2:#7a4fb0; --good:#1f9d55; --warn:#c7720a; --bad:#dc2626;
+  --code:#f0f2f8; --viz-bg:#eef1f8; --shadow:0 10px 30px rgba(20,30,60,.08);
+}
+html.dark{
+  --bg:#0b1020; --fg:#e6e9f2; --muted:#98a2b8; --card:#131a2e; --border:#243052;
+  --accent:#8496ff; --accent2:#b07fd6; --good:#34d399; --warn:#f5a524; --bad:#f87171;
+  --code:#0f1626; --viz-bg:#0a0f1e; --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--fg); line-height:1.65; overflow-x:hidden;
+}
+.wrap{max-width:820px;margin:0 auto;padding:34px 20px 70px;}
+h1{font-size:1.9rem;line-height:1.25;margin-bottom:6px;}
+.subtitle{color:var(--accent);font-size:.95rem;margin-bottom:26px;font-weight:600;letter-spacing:.2px;}
+section{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:22px 24px;margin-bottom:20px;box-shadow:var(--shadow);
+}
+section>h2{font-size:1.28rem;margin-bottom:12px;color:var(--accent);}
+html.dark section>h2{color:var(--accent2);}
+p{margin-bottom:12px;}
+p:last-child{margin-bottom:0;}
+strong{color:var(--fg);}
+.hl{color:var(--accent);font-weight:600;}
+.slogan{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.05rem;color:var(--accent);letter-spacing:.5px;}
+table{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:.9rem;}
+th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top;}
+th{background:var(--code);font-weight:600;}
+code{background:var(--code);padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;}
+.badge{display:inline-block;padding:2px 9px;border-radius:11px;font-size:.78rem;font-weight:600;
+  background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);margin-left:6px;}
+.note{border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);
+  padding:10px 14px;border-radius:0 9px 9px 0;font-size:.92rem;margin:12px 0;}
+.note.good{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent);}
+.note.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent);}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:center;margin:14px 0 8px;font-size:.9rem;}
+.viz-controls label{color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:190px;height:6px;border-radius:3px;background:var(--border);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent);cursor:pointer;}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+.seg button{padding:7px 13px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:.86rem;font-family:inherit;}
+.seg button.active{background:var(--accent);color:#fff;}
+#theme-toggle{margin-left:auto;padding:7px 13px;border:1px solid var(--border);border-radius:9px;background:var(--code);color:var(--fg);cursor:pointer;font-size:.86rem;font-family:inherit;}
+#sphere-canvas{width:100%;height:420px;display:block;border:1px solid var(--border);border-radius:12px;background:var(--viz-bg);cursor:grab;touch-action:none;}
+#sphere-canvas:active{cursor:grabbing;}
+.readout{display:grid;gap:8px;margin-top:12px;}
+.ro{display:flex;gap:10px;align-items:baseline;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.9rem;}
+.ro .rol{flex:0 0 158px;font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px;}
+#ro-state.cat{color:var(--bad);} #ro-state.con{color:var(--good);}
+.viz-cap{font-size:.88rem;color:var(--muted);margin-top:10px;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--muted);margin-top:10px;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+@media(max-width:560px){.ro{flex-direction:column;gap:4px;}.ro .rol{flex:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Gleiche Gestalt, verborgene Feinstruktur</h1>
+  <div class="subtitle">Fusion aus: exotic_spheres.html ✕ essen.html</div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere beschreiben — in völlig verschiedenen Domänen — dasselbe Phänomen:
+    <span class="hl">Ein System kann auf einer Beschreibungs­ebene <em>identisch</em> aussehen und auf einer feineren
+    <em>grundlegend, nicht weg­verformbar verschieden</em> sein.</span> A (exotische Sphären) zeigt, dass zwei Sphären
+    <span class="slogan">topologisch ≅</span>, aber <span class="slogan">glatt ≠</span> sein können: Der Unterschied
+    wohnt in der <em>Feinstruktur</em> (dem Koordinaten­atlas, den Übergangskarten) und ist <em>global</em> — keine
+    lokale Stelle verrät ihn, keine glatte Deformation kann ihn rückgängig machen. B (Körper als System) zeigt dasselbe
+    Muster auf Alltagsebene: Auf der groben Ebene ist der Körper eine einfache <code>Input → Output</code>-Maschine
+    („Kalorien­bilanz … so einfach ist das Grundprinzip“), aber auf der feinen Ebene — glykämischer Index, Fett­typ,
+    Mahlzeiten­timing — entsteht genau das <em>erlebte</em> Verhalten (Blutzucker­spike, Insulin, Crash, Schwitzen).</p>
+    <p>Die integrierte Position lautet: <span class="hl">Ein System besitzt eine Hierarchie von Invarianten über
+    mehrere <em>Auflösungs­stufen</em>.</span> Die <em>grobe Invariante</em> (Topologie bzw. Kalorien­bilanz)
+    <strong>klassifiziert</strong>; die <em>feine Struktur</em> (Glattstruktur bzw. GI/Fett-Dynamik) bestimmt die
+    <strong>funktionelle Erfahrung</strong>. Und entscheidend: Die <em>beobachtbaren Zustände</em> sind in beiden
+    Welten <strong>kategorisch</strong> (eine von 28 Glattstrukturen; „Schwitzen: wahrscheinlich / möglich /
+    unwahrscheinlich“), während die <em>zugrunde liegenden Parameter</em> <strong>kontinuierlich</strong> sind
+    (der Verklebungs-/Twist-Parameter; Kalorien, GI, gesättigter Fettanteil). Die gemeinsame epistemische Regel beider
+    Papiere: <span class="hl">Nenne deine Näherung und dein offenes Problem.</span> A gibt das 4-dimensionale
+    Smooth-Poincaré-Problem als offen zu; B nennt den Mifflin-St-Jeor-Grundumsatz ausdrücklich eine
+    „male approximation, age ~30“. Die fusionierte Faustregel: <em>Benenne deine Auflösung — die relevante
+    Unterschiedlichkeit lebt genau auf der Auflösung, in der deine Frage gestellt wird.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Wichtig vorab: Die beiden Papiere arbeiten in <strong>unterschiedlichen Domänen</strong> (abstrakte
+    Differentialtopologie vs. angewandte Ernährungs­physiologie) und treffen <em>keine direkt widersprüchlichen
+    Tatsachen­aussagen</em>. Es gibt also keinen fak­tischen Konflikt — den würden wir nicht erfinden. Es gibt aber
+    <strong>echte, nicht konstruierte Spannungen in der Haltung</strong> (in welcher Ebene das Wesentliche liegt und wie
+    man den Zustandsraum auffasst):</p>
+    <p><strong>1) Granularität als Kern vs. Granularität als Rand.</strong>
+    A behauptet, die <em>Fein­struktur</em> sei <strong>der irreduzible Punkt</strong> und sei <strong>nicht
+    wegzuglättbar</strong>: „the twist is ‘baked in’ to its smooth structure forever. No smooth deformation can undo
+    it.“ B behauptet quasi das Gegenteil über die Ebenen­hierarchie: Die <em>grobe</em> Ebene sei das Grundprinzip —
+    „Isst du mehr Energie als du verbrauchst → Körper speichert den Rest als Fett. <strong>So einfach ist das
+    Grundprinzip.</strong>“ Die Fein­struktur (GI, Fett­typ) wird in B erst als <em>sekundäre Verfeinerung</em> auf dem
+    einfachen Modell erzählt. <span class="badge">in­kom­pati­bel</span> A: die feine Struktur ist der Kern und
+    unveränderlich. B: die grobe Bilanz ist der Kern, das Feine ist nach­rüstbar.</p>
+    <p><strong>2) Diskret/irreversibel/kategorisch vs. kontinuierlich/reversibel/justierbar.</strong>
+    A: Glattstrukturen kommen in <strong>diskreten, kategorischen</strong> Klassen (genau 28 auf <code>S⁷</code>); eine
+    exotische Sphäre lässt sich <strong>nicht</strong> kontinuierlich in die andere oder in die Standard­sphäre
+    verformen — der Unterschied ist dauerhaft und irreversibel. B modelliert den Körper <strong>vollständig
+    kontinuierlich und reversibel</strong>: alles ist ein Regler, den man beliebig hin- und her­schieben kann; jedes
+    „Problem“ (Zunahme) hat ein kontinuierliches Korrektiv (Defizit). Es gibt in B keinen irreversiblen, kategorischen
+    Zustand — nur Gradualität. <span class="badge">in­kom­pati­bel</span> A: kategorische, irre­versibele
+    Nicht­ver­form­barkeit. B: nur kontinuierliche, reversible Justier­barkeit.</p>
+    <p><strong>3) Global/Nicht­lokal vs. lokal/additiv.</strong> (Feinere Spannung.) A: Die Exotizität ist eine
+    <strong>global</strong> Eigenschaft — <em>keine</em> einzelne Koordinaten­karte offenbart sie; nur die
+    Übergänge zwischen allen Karten zusammen. B: Der Körper wird als <strong>Summe lokaler Beiträge</strong> modelliert
+    — jede Zutat addiert ihre kcal, jede Mahlzeit addiert ihren Spike; das Ganze ist die Summe der Teile. A warnt, dass
+    „Summe der lokalen Teile“ genau die globale Struktur ver­pässen kann, die B per Konstruktion nicht sieht.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>Zu 1) (welche Ebene ist fundamental?):</strong> Das ist keine either/or-Frage, sondern zwei
+    <em>verschiedene Fragen über dasselbe System</em>. Auflösung: Man braucht den <span class="hl">ganzen
+    Auflösungs­stapel</span>, und <em>welche</em> Ebene zählt, hängt von der Frage ab. Für B: Die Kalorien­bilanz
+    <strong>klassifiziert</strong> das langfristige Gewicht (grob), aber GI/Fett-Typ bestimmen, was man
+    <strong>fühlt</strong> (Schwitzen, Crash) — das Feine ist hier nicht nebensächlich, es ist die <em>Erfahrung</em>.
+    Für A: Die Topologie klassifiziert die Konnektivität, die Glattstruktur klassifiziert das mögliche
+    <em>Calculus</em>. Fusionierte Regel: <em>Keine Ebene „ist“ der Punkt — die relevante Unterschiedlichkeit lebt auf
+    der Auflösung, in der man fragt.</em> Beide Papiere sind dann konsistent: A fragt nach <em>Klassifikation</em>
+    (feine Ebene gewinnt), B fragt nach <em>Alltagsoptimierung</em> (grobe Ebene reicht zur ersten Näherung).</p>
+    <p><strong>Zu 2) (diskret-irreversibel vs. kontinuierlich-reversibel):</strong> Der entscheidende Brückenschlag:
+    <span class="hl">B enthält bereits die diskrete Ebene — sie ist nur versteckt.</span> Die „Impact-Karten“ in B sind
+    <em>kategoriale</em> Lese­werte auf kontinuierlichen Reglern: „Schwitzen: wahrscheinlich / möglich /
+    unwahrscheinlich“, „Herz: gut / mäßig / belastet“, „Blutzucker: stabil / mäßig / instabil“. Das ist exakt dieselbe
+    Architektur wie bei A: ein <em>kontinuierlicher Parameter</em> (Twist/Verklebung bzw. kcal/GI) bestimmt einen
+    <em>kategorischen Zustand</em> (eine von 28 Glattstrukturen bzw. eine Impact-Einstufung). Auflösung: Modelliere
+    jedes Teilsystem auf <em>seiner natürlichen Ebene</em> — kontinuierliche Regler, wo es wirklich reversibel ist
+    (Gewicht, Blutzucker), kategorische Etiketten, wo Struktur wirklich diskret ist (Glattklassen; und bei B die
+    Gesundheitsschwellen wie „Insulinresistenz an/aus“, BMI-Kategorien). Die <em>Karte</em> „Regler → Klasse“
+    (Parameter → kategorischer Zustand) ist in beiden Welten der Ort, an dem die eigentliche Information sitzt.</p>
+    <p><strong>Fusioniertes Fazit:</strong> Beide Systeme sind <span class="hl">kontinuierliche Knöpfe, die
+    kategorische Zustände ansteuern</span>, und beide erfordern die Benennung ihrer Auflösung. A ist das Extrem „Kategorisches
+    dominiert / irreversibel“ (die Fein­struktur ist nicht wegzudrücken), B das Extrem „Kontinuierliches dominiert /
+    reversibel“ (alles justierbar). Die Wahrheit liegt im Spektrum dazwischen — und genau darin, <em>welche</em> Ebene
+    für die <em>eigene</em> Frage relevant ist.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <p><strong>Das Zwei-Ebenen-Modell (gemeinsames Rückgrat).</strong> Jedes System wird hier als Paar gelesen:
+    (grobe Invariante, feine Struktur), beobachtet mit einstellbarer Auflösung. Das Leit­motto von A —
+    <span class="slogan">topologisch ≅, glatt ≠</span> — erhält in B seinen Alltags­zweiling:
+    <span class="slogan">Kalorien­bilanz ≅, GI/Fett ≠</span>. Gleiche Bilanz (oder gleiche Topologie), aber andere
+    Fein­struktur → anderes Ergebnis (Crash/Schwitzen; unverform­barer Twist).</p>
+
+    <p><strong>A — Exotische Sphären (Kern­inhalte).</strong> Eine <em>exotische Sphäre</em> ist topologisch eine
+    gewöhnliche Kugel (keine Löcher, gleiche Konnektivität), trägt aber eine <em>Glatt­struktur</em> (ein Atlas von
+    Koordinaten­karten mit glatten Übergängen), die man nicht glatt in die Standard­struktur über­führen kann.
+    Bau­bild: Zwei Halbkugeln entlang ihres Äquators <em>verkleben</em>; verdreht man eine vor dem Verkleben, ist die
+    Verdrehung „baked in“ und unverform­bar. John <strong>Milnor (1956)</strong> fand auf <code>S⁷</code> genau
+    <strong>28</strong> glatte Strukturen (1 standard + 27 exotisch). Dimension 4 ist das offene
+    <em>Smooth-Poincaré-Problem</em> — man weiß nicht, ob es exotische 4-Sphären gibt. Anzahl der glatten Strukturen
+    pro Dimension (nach A, inline):</p>
+    <table>
+      <tr><th>Dimension n</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>11</th><th>15</th><th>31</th></tr>
+      <tr><td># glatte Strukturen</td><td>1</td><td>1</td><td>1</td><td><b>? (offen)</b></td><td>1</td><td>1</td><td><b>28</b></td><td>2</td><td>992</td><td>16256</td><td>16&nbsp;931&nbsp;177</td></tr>
+    </table>
+    <p class="viz-cap">Muster: Dimensionen 4k−1 (7, 11, 15, 31) tragen auffällig viele; das Wachstum wird astronomisch.
+    A illustriert die Sphäre in 7 interaktiven Blöcken (Topologie, Atlas, Twist, Dimension, Verklebung, Analogien, 3D-Explorer).</p>
+
+    <p><strong>B — Der Körper als System (Kern­inhalte).</strong> Jede Zutat ist ein Vektor
+    <code>{kcal, carbs, fat, protein, gi, satFat}</code>; die Zutatensumme ergibt den Tages­wert. Beispiel­daten
+    (inline, gekürzt aus B):</p>
+    <table>
+      <tr><th>Zutat</th><th>kcal</th><th>KH (g)</th><th>Fett (g)</th><th>Prot (g)</th><th>GI</th><th>gesätt. Anteil</th></tr>
+      <tr><td>Pommes</td><td>350</td><td>45</td><td>17</td><td>4</td><td>75</td><td>0.40</td></tr>
+      <tr><td>Pizza (Stück)</td><td>240</td><td>30</td><td>10</td><td>9</td><td>80</td><td>0.50</td></tr>
+      <tr><td>Käse</td><td>110</td><td>0</td><td>9</td><td>7</td><td>0</td><td>0.65</td></tr>
+      <tr><td>Hülsenfrüchte</td><td>180</td><td>25</td><td>2</td><td>14</td><td>25</td><td>0.10</td></tr>
+      <tr><td>Nüsse</td><td>180</td><td>5</td><td>16</td><td>5</td><td>15</td><td>0.10</td></tr>
+      <tr><td>Cola</td><td>140</td><td>35</td><td>0</td><td>0</td><td>95</td><td>0</td></tr>
+    </table>
+    <p>Verarbeitung: <code>BMR</code> = Mifflin-St-Jeor <code>10·Gewicht + 6.25·Größe − 5·Alter + 5</code>
+    (männlich, Alter ≈ 30 — <em>ausdrücklich Näherung</em>). <code>TDEE</code> = BMR · (1.2 + Bewegung/60·0.2) +
+    Laufband- + Kraft­training-Verbrauch. <code>Bilanz</code> = Aufnahme − TDEE; <strong>≈ 7700 kcal = 1 kg
+    Fett</strong>. Makro-Kalorien: KH ×4, Fett ×9, Protein ×4. Ein hoher <em>glykämischer Index</em> erzeugt
+    Blutzucker­spikes → viel Insulin → Crash → <strong>Schwitzen/Heißhunger</strong> (vereinfacht
+    <code>sugarLevel = min(avgGI·0.8 + carbs·0.15, 100)</code>). <em>Fett­typen:</em> gesättigt (Käse, Mayo) erhöhen
+    Cholesterin, ungesättigt (Nüsse, Olivenöl) senken es; Richtwert ⅔ ungesättigt. Am Ende liefert B <em>kategoriale
+    Impact-Karten</em> (Schwitzen, Gewicht, Herz, Blutzucker, Energie, Rücken, Schlaf, Konzentration) — die
+    „Regler → Klasse“-Ebene.</p>
+
+    <p><strong>Die gemeinsame Architektur (die eigentliche Fusion).</strong> Beide Papiere sind dieselbe Maschinerie
+    auf zwei Ebenen:</p>
+    <table>
+      <tr><th>Ebene</th><th>A — exotische Sphären</th><th>B — Körper als System</th></tr>
+      <tr><td><b>Grobe Invariante</b> (klassifiziert)</td><td>Topologie: Kugel Sⁿ, ohne Löcher</td><td>Kalorien­bilanz: Aufnahme − Verbrauch</td></tr>
+      <tr><td><b>Feine Struktur</b> (bestimmt die Funktion)</td><td>Glatt­struktur: Atlas &amp; Übergangs­karten</td><td>GI + Fett-Typ + Mahlzeiten-Timing</td></tr>
+      <tr><td><b>Auflösung</b> (wählbar)</td><td>wie viele Koordinaten­karten man betrachtet</td><td>wie fein man Zutaten/Mahlzeiten auflöst</td></tr>
+      <tr><td><b>Kategorischer Zustand</b> (beobachtbar)</td><td>eine von 28 Glatt­strukturen (S⁷)</td><td>Impact-Karte: z. B. Schwitzen wahrscheinlich/möglich/unwahrsch.</td></tr>
+    </table>
+    <div class="note good"><strong>Fusionierter Grundsatz „Regler → Klasse“:</strong> Kontinuierliche Knöpfe
+    (Twist/Verklebung · kcal/GI/gesättigtes-Fett) steuern kategorische Zustände (Glatt­klasse · Impact-Einstufung).
+    Die <em>Karte dazwischen</em> ist der Ort der Information — und sie sagt: <strong>grobe Invariante + feine
+    Struktur + benannte Auflösung</strong> zusammen erst ergeben, was mit dem System <em>passiert</em>.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung — eine Kugel, zwei Auflösungen</h2>
+    <p>Ein rotierender Draht­körper (Flow-Lines, drag to rotate). Der Regler <strong>Feinstruktur τ</strong> „backt“
+    eine Ver­dre­hung in die Karten­übergänge ein (wie bei A der exotische Twist) — bei <code>τ=0</code> standard,
+    bei <code>τ=1</code> exotisch. Der Regler <strong>Auflösung</strong> steuert, wie viele Karten du siehst: bei
+    <em>grobe</em> Auflösung sieht die exotische Sphäre wie die normale aus (die grobe Invariante ist gleich), bei
+    <em>feiner</em> Auflösung wird die Ver­dre­hung sichtbar. Der Modus­wechsel zeigt die zweite Spannung:
+    <strong>Kontinuierlich</strong> (B: reversibler Regler, beliebig justierbar) vs. <strong>Diskret</strong>
+    (A: τ wird auf eine von 28 Glatt­strukturen <em>snappt</em> — kategorisch, irreversibel).</p>
+
+    <div class="viz-controls">
+      <label>Feinstruktur τ
+        <input type="range" id="twist" min="0" max="100" value="0">
+      </label>
+      <label>Auflösung
+        <input type="range" id="reso" min="1" max="10" value="5">
+      </label>
+      <div class="seg" role="group" aria-label="Modus">
+        <button id="mode-cont" class="active">Kontinuierlich (Körper)</button>
+        <button id="mode-disc">Diskret (S⁷, 28 Strukturen)</button>
+      </div>
+      <button id="theme-toggle" title="Theme wechseln">☾ Dunkel</button>
+    </div>
+
+    <canvas id="sphere-canvas" aria-label="Rotierende Kugel mit verstellbarer Feinstruktur"></canvas>
+
+    <div class="readout">
+      <div class="ro"><span class="rol">Grobe Invariante</span>
+        <div>Topologisch: Kugel Sⁿ — <b>invariant</b>, in <em>allen</em> Zuständen gleich. (Körper-Analog: die
+        Kalorien­bilanz als ein einziger grober Wert.)</div></div>
+      <div class="ro"><span class="rol">Feine Struktur</span><div id="ro-fine"></div></div>
+      <div class="ro"><span class="rol">Beobachtbarer Zustand</span><div id="ro-state"></div></div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--good)"></span> standard (τ≈0)</span>
+      <span><span class="dot" style="background:var(--warn)"></span> Übergang</span>
+      <span><span class="dot" style="background:var(--bad)"></span> exotisch / stark verdreht</span>
+    </div>
+    <p class="viz-cap">Vereinfachung für die Anschauung: A behandelt die 28 Strukturen als diskrete Klassen; wir
+    zeigen sie als Quantisierung eines Parameters. Die „28“ stammt aus Milnors Zählung auf S⁷ (A).</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p><strong>A —</strong> <a href="../exotic_spheres.html">exotic_spheres.html</a>
+      <span class="badge">Quelle A</span> — Interaktive 3D-Anleitung zu exotischen Sphären: topologisch Kugel,
+      glatt verschieden; Verklebungs-/Twist-Bild, Milnor 1956 (28 Strukturen auf S⁷) und die offene 4D-Frage
+      (Smooth Poincaré). Liegt ein Verzeichnis über uns, daher relativer Link.</p>
+    <p><strong>B —</strong> <a href="../essen.html">essen.html</a>
+      <span class="badge">Quelle B</span> — „Dein Körper als System“: Makro-/Kalorien­bilanz, Blutzucker­GI,
+      gesättigtes vs. ungesättigtes Fett und kategoriale Impact-Karten, live per Reglern (inkl. Laufband/Kraft).
+      Ebenfalls ein Verzeichnis über uns, daher relativer Link.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('sphere-canvas');
+  var ctx = canvas.getContext('2d');
+  var twistEl = document.getElementById('twist');
+  var resoEl = document.getElementById('reso');
+  var roFine = document.getElementById('ro-fine');
+  var roState = document.getElementById('ro-state');
+  var btnCont = document.getElementById('mode-cont');
+  var btnDisc = document.getElementById('mode-disc');
+  var themeBtn = document.getElementById('theme-toggle');
+
+  var rotX = 0.35, rotY = 0.5;
+  var mouseDown = false, lastX = 0, lastY = 0;
+  var mode = 'cont';
+  var C = { text:'#e6e9f2', muted:'#98a2b8', accent:'#8496ff', good:'#34d399', warn:'#f5a524', bad:'#f87171' };
+
+  function readPalette(){
+    var cs = getComputedStyle(document.documentElement);
+    C.text   = cs.getPropertyValue('--fg').trim()   || C.text;
+    C.muted  = cs.getPropertyValue('--muted').trim()|| C.muted;
+    C.accent = cs.getPropertyValue('--accent').trim()|| C.accent;
+    C.good   = cs.getPropertyValue('--good').trim() || C.good;
+    C.warn   = cs.getPropertyValue('--warn').trim() || C.warn;
+    C.bad    = cs.getPropertyValue('--bad').trim()  || C.bad;
+    themeBtn.textContent = document.documentElement.classList.contains('dark') ? '☀ Helles Theme' : '☾ Dunkles Theme';
+  }
+
+  function spherePoint(R, theta, phi){
+    return { x: R*Math.sin(theta)*Math.cos(phi), y: R*Math.cos(theta), z: R*Math.sin(theta)*Math.sin(phi) };
+  }
+  function project3D(x, y, z){
+    var y1 = y*Math.cos(rotX) - z*Math.sin(rotX);
+    var z1 = y*Math.sin(rotX) + z*Math.cos(rotX);
+    var x2 = x*Math.cos(rotY) - z1*Math.sin(rotY);
+    var z2 = x*Math.sin(rotY) + z1*Math.cos(rotY);
+    var p = 400/(400 + z2);
+    return { x: x2*p, y: y1*p };
+  }
+  function rawTwist(){ return (+twistEl.value)/100; }
+  function twistIndex(){ return Math.round(rawTwist()*27); }
+  function effTwist(){ return mode === 'disc' ? (twistIndex()/27) : rawTwist(); }
+
+  function layout(){
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    if (w > 0 && h > 0){ canvas.width = w*dpr; canvas.height = h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+  }
+
+  function updateReadout(){
+    var tw = effTwist();
+    var idx = twistIndex();
+    roFine.textContent = 'Feinstruktur τ = ' + tw.toFixed(2) +
+      (mode === 'disc' ? '  →  snappt auf ' + idx + ' von 28 Glatt­strukturen (S⁷)' : '  (Körper: kcal/GI/gesättigtes-Fett)');
+    if (mode === 'disc'){
+      roState.textContent = 'KATEGORISCH — Glatt­struktur #' + idx + ' (0 = standard, 1–27 = exotisch); nicht glättbar, irreversibel. (Körper-Analog: Impact-Karte, z. B. „Schwitzen: wahrscheinlich/möglich/unwahrscheinlich“.)';
+      roState.className = 'cat';
+    } else {
+      roState.textContent = 'KONTINUIERLICH — reversibel, beliebig justierbar (wie ein Regler). (A-Analog: man könnte τ stufenlos bewegen — das ist aber NICHT das, was Glatt­strukturen sind.)';
+      roState.className = 'con';
+    }
+  }
+
+  function draw(){
+    var W = canvas.clientWidth, H = canvas.clientHeight;
+    if (W > 0 && H > 0){
+      ctx.clearRect(0,0,W,H);
+      if (!mouseDown) rotY += 0.004;
+      var cx = W/2, cy = H/2;
+      var R = Math.min(W,H)*0.38;
+      var tw = effTwist();
+      var reso = +resoEl.value;
+      var numLines = 8 + (reso-1)*7;
+
+      for (var i=0;i<numLines;i++){
+        var startPhi = (i/numLines)*Math.PI*2;
+        var hue = (i/numLines)*360;
+        ctx.beginPath();
+        var first = true;
+        for (var t=0;t<=1.0001;t+=0.01){
+          var theta = t*Math.PI;
+          var ep = Math.exp(-Math.pow((theta-Math.PI/2)*2.5,2));
+          var phi = startPhi + tw*Math.PI*2*ep;
+          var pt = spherePoint(R, theta, phi);
+          var pr = project3D(pt.x, pt.y, pt.z);
+          var x = cx+pr.x, y = cy+pr.y;
+          if (first){ ctx.moveTo(x,y); first=false; } else { ctx.lineTo(x,y); }
+        }
+        ctx.strokeStyle = 'hsla('+hue+',65%,62%,'+(0.32+tw*0.42)+')';
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+      }
+
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+      ctx.globalAlpha = 0.5; ctx.strokeStyle = C.accent; ctx.lineWidth = 1.4; ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      for (var j=0;j<=72;j++){
+        var a2 = (j/72)*Math.PI*2;
+        var p2 = spherePoint(R, Math.PI/2, a2 + tw*Math.PI*2);
+        var pr2 = project3D(p2.x, p2.y, p2.z);
+        if (j===0) ctx.moveTo(cx+pr2.x, cy+pr2.y); else ctx.lineTo(cx+pr2.x, cy+pr2.y);
+      }
+      var eqc = tw>0.5 ? C.bad : (tw>0.02 ? C.warn : C.good);
+      ctx.globalAlpha = 0.85; ctx.strokeStyle = eqc; ctx.lineWidth = 3; ctx.stroke(); ctx.globalAlpha = 1;
+
+      ctx.fillStyle = C.muted; ctx.font = '12px system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('Auflösung: ' + (reso<=4 ? 'grob (wenige Karten)' : (reso<=7 ? 'mittel' : 'fein (viele Karten)')), 12, H-12);
+      ctx.textAlign = 'right';
+      ctx.fillText(mode==='disc' ? ('Diskret: Struktur #'+twistIndex()+' / 28') : ('Kontinuierlich: τ='+tw.toFixed(2)), W-12, H-12);
+    }
+    requestAnimationFrame(draw);
+  }
+
+  function setMode(m){
+    mode = m;
+    btnCont.classList.toggle('active', m==='cont');
+    btnDisc.classList.toggle('active', m==='disc');
+    updateReadout();
+  }
+
+  canvas.addEventListener('mousedown', function(e){ mouseDown=true; lastX=e.offsetX; lastY=e.offsetY; });
+  window.addEventListener('mousemove', function(e){
+    if (!mouseDown) return;
+    var r = canvas.getBoundingClientRect();
+    rotY += (e.clientX - r.left - lastX)*0.01;
+    rotX += (e.clientY - r.top - lastY)*0.01;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    lastX = e.clientX - r.left; lastY = e.clientY - r.top;
+  });
+  window.addEventListener('mouseup', function(){ mouseDown=false; });
+  canvas.addEventListener('touchstart', function(e){
+    if (e.touches.length){ mouseDown=true; var r=canvas.getBoundingClientRect(); lastX=e.touches[0].clientX-r.left; lastY=e.touches[0].clientY-r.top; }
+  }, {passive:true});
+  canvas.addEventListener('touchmove', function(e){
+    if (mouseDown && e.touches.length){ e.preventDefault(); var r=canvas.getBoundingClientRect();
+      var tx=e.touches[0].clientX-r.left, ty=e.touches[0].clientY-r.top;
+      rotY += (tx-lastX)*0.01; rotX += (ty-lastY)*0.01;
+      rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX)); lastX=tx; lastY=ty; }
+  }, {passive:false});
+  canvas.addEventListener('touchend', function(){ mouseDown=false; });
+
+  twistEl.addEventListener('input', updateReadout);
+  resoEl.addEventListener('input', updateReadout);
+  btnCont.addEventListener('click', function(){ setMode('cont'); });
+  btnDisc.addEventListener('click', function(){ setMode('disc'); });
+  themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    readPalette();
+  });
+  window.addEventListener('resize', layout);
+
+  readPalette();
+  layout();
+  updateReadout();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

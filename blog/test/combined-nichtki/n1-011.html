@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Über der Evidenzgrenze: Interpolation × Selbstorganisation</title>
+<style>
+:root{
+  --bg:#f6f5f1; --fg:#1e2530; --muted:#5b6575; --panel:#fbfaf6;
+  --border:#d8d3c4; --accent:#4f46e5; --accent-soft:rgba(79,70,229,.12);
+  --code:#eef1f6; --code-fg:#1e2530;
+  --data-lo:#2563eb; --data-hi:#f59e0b; --halluc-tint:#e11d48; --evidence-tag:#059669;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0a1a; --fg:#e2e8f0; --muted:#94a3b8; --panel:#111127;
+  --border:#282846; --accent:#8b5cf6; --accent-soft:rgba(139,92,246,.14);
+  --code:#0c1526; --code-fg:#c9d4e6;
+  --data-lo:#38bdf8; --data-hi:#fbbf24; --halluc-tint:#fb7185; --evidence-tag:#34d399;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:40px 24px 90px;}
+header{margin-bottom:28px;}
+h1{font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+.note{border-left:3px solid var(--accent); padding:6px 0 6px 14px; margin:12px 0; color:var(--muted);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#halluc{display:block; width:100%; height:auto;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:18px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:130px;}
+.viz-controls label{display:flex; flex-direction:column; gap:3px; font-size:.74rem; color:var(--muted);}
+.viz-controls label span{color:var(--fg);}
+.viz-controls input[type=radio]{accent-color:var(--accent);}
+#readout{padding:10px 14px; border-top:1px solid var(--border); font-size:.82rem; color:var(--muted);}
+#readout b{color:var(--fg);}
+#themeBtn{
+  margin-left:auto; background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+#themeBtn:hover{border-color:var(--accent); color:var(--accent);}
+.viz-caption{font-size:.82rem; color:var(--muted); margin:10px 2px 0;}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:6px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Über der Evidenzgrenze: Interpolation &times; Selbstorganisation</h1>
+  <p class="subtitle">Fusion aus: <code>hologram4.html</code> &times; <code>kluever.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere tragen denselben Begriff in sich &mdash; <em>die Halluzination</em> &mdash; und bauen auf
+  ihm, von zwei entgegengesetzten Seiten her, ein und dieselbe Grenz-Erscheinung: den Punkt, an dem die
+  Ausgabe eines <strong>rekonstruktiven Systems</strong> nicht mehr von seiner <em>Evidenz</em>
+  festgelegt wird, sondern von seiner <em>eigenen Inneren Dynamik</em>. <strong>Lens Focus Explorer (A)</strong>
+  legt ein Bild veränderbar scharf auf eine Bodenfläche: unterhalb der nativen Auflösung des Signals ist die
+  Ausgabe noch <em>gemes­sene</em> Information, darüber wird der Lückenteil durch Interpolation gefüllt und
+  als „&cap; HALLUCINATION" markiert. <strong>Geometrische Visuelle Halluzinationen (B)</strong> zeigt, dass
+  der primäre visuelle Cortex V1, sobald ein Steuerparameter (Drogenwirkung, entfallene Hemmung) eine
+  Stabilitätsschwelle überschreitet, durch eine Turing-Instabilität spontan die <em>Formkonstanten</em>
+  Klüvers (Tunnel/Spiralen/Gitter/Spinnweben) erzeugt.</p>
+  <p>Die vereinte Position lautet: <strong>Eine Halluzination ist das, was ein System in die Lücke zwischen
+  geforderter Ausgabe und verfügbarer Evidenz mit seinem eigenen Prior / seiner eigenen Dynamik füllt.</strong>
+  Die „Grenze" &mdash; bei A die native Auflösung der Quelle, bei B die Stabilitätsschwelle des Cortex &mdash;
+  ist ein und derselbe Punkt, von zwei Seiten gesehen. Und die <em>Form</em> der Halluzination verrät die
+  Struktur des Generators, der die Lücke füllt: ein <strong>schwacher, glatter Prior</strong> (Interpolation in A)
+  erzeugt informationssparenden Brei, ein <strong>strukturierter, bifurkierender Prior</strong>
+  (Turing-Instabilität + euklidische Symmetrie in B) erzeugt universelle Formkonstanten.</p>
+  <p>Darum ist A&rsquo;s Halluzination <em>nichtssagend</em> (reine Glättung) und B&rsquo;s
+  <em>architektur-offenbarnd</em> (Formkonstanten, die die Struktur von V1 widerspiegeln): derselbe Vorgang
+  (Lückenausfüllung jenseits der Evidenz), verschiedene Prior-Strukturen. Die beiden „Halluzinationen"
+  sind dieselbe Kategorie, unterschieden nur durch den Generator, der das Jenseite der Evidenz füllt.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die zwei Papiere sind nicht oberflächlich vereinbar &mdash; sie nehmen drei konkrete, unvereinbare
+  Stellungen zur selben Wort-Erscheinung ein:</p>
+  <div class="vs">
+    <div class="col"><span class="src">A &middot; hologram4.html</span>
+      <h3>Halluzination = markiertes Artefakt</h3>
+      <p style="font-size:.92rem;margin:0;">„Focus beyond native resolution &rarr; &cap; HALLUCINATION
+      (interpolated beyond real data)." Jenseits der nativen Auflösung wird die Zelle rot eingefärbt und mit
+      einem Badge „&cap; HALLUC" versehen: die Ausgabe gilt als <em>nicht echt</em>, als Fehler, der abgefangen
+      und angezeigt werden muss. Es ist ein <strong>epistemischer</strong> Verstoß.</p>
+    </div>
+    <div class="col"><span class="src">B &middot; kluever.html</span>
+      <h3>Halluzination = universale Signatur</h3>
+      <p style="font-size:.92rem;margin:0;">Klüvers vier Formkonstanten sind <em>universell</em>; Bressloff,
+      Cowan &amp; Golubitsky erklären sie als Abbild der euklid-symmetrischen Architektur von V1. Die
+      Halluzination ist hier <em>nicht falsch</em>, sondern eine <strong>naturliche, informative Eigendynamik</strong>
+      des Cortex &mdash; sie offenbart genau das, was im System steckt.</p>
+    </div>
+  </div>
+  <ul>
+    <li><strong>Valenz / Bedeutung.</strong> A behandelt das Jenseite als <em>Defekt</em> (rot, abzuwehren,
+    „nicht real"); B behandelt es als <em>Eigenschaft</em> (universell, architecture-true, „informativ").
+    Dasselbe Wort &mdash; entgegengesetzte moralische/epistemische Bewertung.</li>
+    <li><strong>Härte &amp; Ort der Grenze.</strong> A setzt eine <em>harte, externe, feste</em> Grenze: die native
+    Pixelauflösung der Quelldaten (exogen, eine Eigenschaft des Signals, z.&nbsp;B.
+    <code>NATIVE_THRESHOLD</code>). B kennt keine externe „native Auflösung" &mdash; die Grenze ist eine
+    <em>weiche, interne, parameterabhängige</em> Stabilitätsschwelle (Turing-Bifurkation), die ein Steuerparameter
+    (Erregbarkeit&nbsp;&mu;, Hemmung) durchwandert; die Wellenlänge wird von der Dispersionsrelation
+    <code>&lambda;(q) = -1 + &mu;&middot;ŵ(q)</code> gesetzt, nicht von einer Datenquelle.</li>
+    <li><strong>Was „jenseits" ist: Information vs. Struktur.</strong> Bei A fügt die Interpolation
+    <em>keine neue Information</em> hinzu &mdash; sie glättet bloß („beyond real data"). Bei B erzeugt die
+    Selbstorganisation <em>neue, symmetrie-selektierte, universale Struktur</em> (Rollen/Quadrate/Hexagone als
+    stabile Planformen unter den axialen Untergruppen der euklidischen Gruppe E(2)).</li>
+  </ul>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p>Der scheinbare Widerspruch löst sich auf, sobald man fragt, <em>dessen</em> „Echtheit" wir überhaupt
+  meinen &mdash; und merkt, dass beide Seiten eine und dieselbe <em>Relation</em> beschreiben.</p>
+  <p><strong>1. Valenz.</strong> Eine Halluzination ist <em>keine intrinsische Eigenschaft des Outputs</em>,
+  sondern eine Beziehung zwischen <em>Output</em> und <em>Evidenz</em>. Sie ist nur dann ein „Fehler" (wie in A),
+  wenn das System so tut, als stammte der Output aus der Evidenz &mdash; d.&nbsp;h. wenn der generierende Prior
+  <em>versteckt</em> ist. Ist der Output hingegen <em>offenbare Eigendynamik</em> und wird er als solche erkannt
+  (wie in B), ist er eine Signatur, kein Defekt. <strong>Fused:</strong> dieselbe Ausgabe ist „Fehler" oder
+  „Signatur", je nachdem, ob der Prior, der die Lücke füllt, diskret oder offengelegt ist.</p>
+  <p><strong>2. Grenze.</strong> „Native Auflösung" (A) und „Stabilitätsschwelle" (B) sind dieselbe Größe auf zwei
+  Ebenen: der <em>Anteil der Ausgabe, den die Evidenz noch fixiert</em>. A hält diesen Anteil durch die Daten fest
+  (außen), B lässt ihn durch einen Steuerparameter wandern (innen). Überschreitet die geforderte Ausgabe diesen
+  fixierbaren Anteil, übernimmt die Eigen-Dynamik. <strong>Fused:</strong> eine einzige Größe &mdash; die
+  Evidenz-Abdeckung <em>c</em>&nbsp;&isin;&nbsp;[0,1] &mdash; bestimmt die Grenze; nur ihr Mechanismus (extern
+  vs. intern) unterscheidet sich.</p>
+  <p><strong>3. Information vs. Struktur.</strong> Beide füllen dieselbe Lücke; die <em>Menge neuer Struktur</em>,
+  die entsteht, ist exakt die <em>Komplexität des Priors</em>. Ein glatter Prior (Interpolation, kurze
+  Beschreibungslänge) erzeugt keinen neuen Inhalt; ein bifurkierender, symmetrie-tragender Prior erzeugt
+  universelle Formkonstanten. <strong>Fused (vorhersagend):</strong> Man kann den <em>Generator an der Form seiner
+  Halluzination ablesen</em> &mdash; Brei verrät einen flachen Prior, Formkonstanten verraten einen
+  symmetrie-strukturierten, bifurkierenden.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p><strong>Der Mechanismus von A (Signal-Ebene).</strong> Ein Bild wird auf ein 6&times;5-Raster von
+  „Linsen" gelegt; jede Zelle hat ein Fokussniveau <code>f</code>&nbsp;&isin;&nbsp;[0,&nbsp;MAX]. Die effektive
+  Sample-Auflösung wächst exponentiell mit dem Fokus:</p>
+  <pre><code>R(f) = minBlocks &middot; (maxBlocks / minBlocks)<sup>f / MAX_FOCUS</sup></code></pre>
+  <p>Unterreicht <code>R(f)</code> die native Auflösung, wird block-geglättet (Blur); erreicht/überschreitet es
+  sie, wird bilinear über den gemes­senen Pixeln interpoliert &mdash; und ab <code>focus &gt; NATIVE_THRESHOLD</code>
+  ist die Zelle „halluzinierend". Die Fokussniveaus werden über das Raster <em>gaussgewichtet</em> gemischt,
+  damit Übergänge nahtlos sind. Kernpunkt: <em>jenseits der nativen Auflösung steuert kein Signal mehr die
+  Ausgabe, sondern ein (schwacher) Interpolations-Prior.</em></p>
+  <p><strong>Der Mechanismus von B (Cortex-Ebene).</strong> Das Gesichtsfeld wird log-polaren auf V1 abgebildet:
+  <code>x = ln(r), y = &theta;</code> &mdash; Kreise werden zu vertikalen Linien, Strahlen zu horizontalen,
+  Spiralen zu diagona­len. Streifen neuronaler Aktivität in V1 erscheinen deshalb als Spiralen/Tunnel/Gitter im
+  Gesichtsfeld. Exzitatorische (kurzreichweite) = Aktivator, inhibitorische (langreichweite) = Inhibitor; das
+  System ist ein Reaktions-Diffusions-/Wilson-Cowan-Netz. Die <em>Dispersionsrelation</em> entscheidet, welche
+  Wellenzahl instabil wird:</p>
+  <pre><code>&lambda;(q) = -1 + &mu; &middot; 5 &middot; &hat;w(q)
+&hat;w(q) = exp(-&sigma;<sub>e</sub>&sup2;q&sup2;/2) - A&middot;exp(-&sigma;<sub>i</sub>&sup2;q&sup2;/2)
+      (Mexican-Hat; &sigma;<sub>e</sub> klein = kurzreichweitig, &sigma;<sub>i</sub> groß = langreichweitig)</code></pre>
+  <p>Überschreitet <code>&mu;</code> (Drogenwirkung/Erregbarkeit) die Schwelle, wird <code>&lambda;(q*) &gt; 0</code>
+  an genau einem <code>q*</code> &mdash; das Muster wächst spontan. Die <em>Planformen</em> (Rollen/Streifen,
+  Quadrate, Hexagone, Dreiecke) werden durch die axialen Untergruppen der euklidischen Gruppe E(2) auf
+  quadratischen/rhombischen/hexagonalen Gittern selektiert &mdash; darum sind sie <strong>Formkonstanten</strong>:
+  sie hängen von der Architektur, nicht vom Input ab. Goldenfeld ergänzt: spärliche inhibitorische Verbindungen
+  unterdrücken im Normalfall die spontane Musterbildung (darum halluzinieren wir nicht ständig); Drogen stören
+  diesen Filter.</p>
+
+  <div class="card">
+    <span class="tag">Vereinigtes Modell</span>
+    <p style="margin-top:0;">Ein rekonstruktives System&nbsp;S mit Evidenz&nbsp;E und Generator/Prior&nbsp;G.
+    Pro Ortsfrequenz&nbsp;<em>q</em> konkurriert der von der Evidenz getragene Term mit dem eigen-generierten Term:</p>
+    <pre><code>Ausgabe(q) = Evidenz(q),   falls  E(q) &ge; G(q)     (echt)
+          = Prior / G(q),    falls  E(q) &lt;  G(q)     (Halluzination)</code></pre>
+    <p style="margin-bottom:0;"><strong>A:</strong> G ist <em>flach &amp; klein</em> (Interpolation) und E bricht bei
+    der native Frequenz ab &rarr; oberhalb gewinnt G &rarr; <em>Brei</em> (keine neue Info).
+    <strong>B:</strong> G&nbsp;=&nbsp;&lambda;(q) ist <em>gipfelig bei q*</em> (Turing) und E fällt, wenn
+    Antrieb/Hemmung die Schwelle überschreiten &rarr; Modi nahe q* selbstorganisieren &rarr;
+    <em>Formkonstanten</em> (neue, universale Struktur). <em>Dieselbe Ungleichung, verschiedener G.</em>
+    Die Menge neuer Struktur &asymp; der Komplexität des Priors.</p>
+  </div>
+  <div class="note">Faithfulness-Check: A liefert Signal-Ebene (Fokus/R(f)/native Grenze/Interpolation), B
+  liefert Cortex-Ebene (log-polare Karte, Dispersionsrelation, Planformen, Formkonstanten). Das vereinigte
+  „E(q) vs. G(q)"-Kriterium ist die gemeinsame Abstraktion beider Mechanismen, keine neue Behauptung über die
+  Quellen.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung: Was füllt die Lücke jenseits der Evidenz?</h2>
+  <p>Ein Feld ist in <strong>Evidenz</strong> (links, ein echtes Signal mit Merkmalen) und einen
+  <strong>Jenseits-Bereich</strong> (rechts) geteilt. Der <em>Grenzen</em>-Slider schiebt die
+  Evidenz-/Jenseits-Grenze (A: native Schärfe &harr; B: Stabilitätsschwelle &mdash; hier eine Größe). Der
+  Generator-Umschalter wählt, <em>was die Lücke füllt</em>: ein <strong>schwacher Prior</strong> (Interpolation &rarr;
+  Brei, wie A) oder ein <strong>strukturierter Prior</strong> (Turing: Rollen/Quadrate/Hexagone + Wellenzahl, wie B).
+  Der Jenseits-Bereich erhält einen rötlichen Stich &mdash; das „&cap; HALLUC"-Markieren aus A. Die
+  <em>Form</em> rechts verrät den Prior.</p>
+  <div id="vizwrap">
+    <canvas id="halluc" width="720" height="300"></canvas>
+    <div class="viz-controls">
+      <label>Grenze (Evidenz&nbsp;&harr;&nbsp;Halluzination)
+        <input type="range" id="ctl-boundary" min="5" max="95" value="50">
+        <b id="boundary-val">50%</b>
+      </label>
+      <label>Generator der Lücke
+        <span>
+          <label style="flex-direction:row;gap:5px;"><input type="radio" name="gen" value="interp"> Interpolation (schwach)</label>
+          <label style="flex-direction:row;gap:5px;"><input type="radio" name="gen" value="turing" checked> Turing (strukturiert)</label>
+        </span>
+      </label>
+      <div id="turing-wrap">
+        <label>Planform
+          <span>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="mode" value="rolls" checked> Rollen</label>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="mode" value="squares"> Quadrate</label>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="mode" value="hexagons"> Hexagone</label>
+          </span>
+        </label>
+        <label>Wellenzahl q
+          <input type="range" id="ctl-q" min="2" max="16" value="6">
+          <b id="q-val">6</b>
+        </label>
+      </div>
+      <label>Kontrast (Generator-Stärke)
+        <input type="range" id="ctl-contrast" min="0" max="100" value="85">
+        <b id="contrast-val">85%</b>
+      </label>
+      <button id="themeBtn" type="button">Theme umschalten</button>
+    </div>
+    <div id="readout"></div>
+  </div>
+  <p class="viz-caption">Unten links: <strong>Evidenz</strong> = echtes Signal (gemes­sen). Rechts der
+  Grenzen: <strong>Halluzination</strong> = vom wählbaren Prior erzeugte Struktur. Wechsel den Generator
+  bei gleicher Grenze: dieselbe Lücke wird entweder zu glattem Brei (schwacher Prior, A) oder zu
+  universellen Formkonstanten (strukturierter Prior, B). Themen-reaktiv, nur Inline-Daten, kein Netzwerk.</p>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="card">
+    <span class="tag">A</span>
+    <p style="margin-bottom:6px;"><a href="../hologram4.html"><code>hologram4.html</code></a> &mdash;
+    <em>Lens Focus Explorer &ndash; Image on Ground.</em> Ein Bild auf einer perspektivischen Bodenfläche mit
+    6&times;5-Fokus-Linsen: unterhalb der nativen Auflösung echte Details, darüber bilineare Interpolation, die
+    als „&cap; HALLUCINATION" (rot + Badge) markiert wird; gaussgewogene Fokuss-Mischung, exponentielle
+    Fokus&rarr;Auflösungs-Mapping.</p>
+  </div>
+  <div class="card">
+    <span class="tag">B</span>
+    <p style="margin-bottom:6px;"><a href="../kluever.html"><code>kluever.html</code></a> &mdash;
+    <em>Geometrische Visuelle Halluzinationen (Interaktiv).</em> Klüvers vier Formkonstanten + die
+    Turing-/Cortex-Erklärung: Geschichte (Klüver 1920er, Turing 1952, Ermentrout &amp; Cowan 1979,
+    Bressloff/Cowan/Golubitsky 2001, Goldenfeld 2018), retino-kortikale log-polare Karte
+    <code>x=ln(r), y=&theta;</code>, Dispersionsrelation &lambda;(q), Planformen und Wilson-Cowan-Simulation.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="src">Runde 1 &middot; Nicht-AI-Track &middot; Paar 011. Fusion aus
+  <code>hologram4.html</code> &times; <code>kluever.html</code>.</div>
+  <div class="src">Thema: die Halluzination als Lückenausfüllung jenseits der Evidenz; ihre Form kodiert den
+  strukturierenden Prior (Interpolation &rarr; Brei vs. Turing-Symmetrie &rarr; Formkonstanten).</div>
+</footer>
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var canvas = document.getElementById('halluc');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var boundary = document.getElementById('ctl-boundary');
+  var boundaryVal = document.getElementById('boundary-val');
+  var qSlider = document.getElementById('ctl-q');
+  var qVal = document.getElementById('q-val');
+  var contrast = document.getElementById('ctl-contrast');
+  var contrastVal = document.getElementById('contrast-val');
+  var readout = document.getElementById('readout');
+  var themeBtn = document.getElementById('themeBtn');
+  var turingWrap = document.getElementById('turing-wrap');
+
+  // --- signal (evidence): smooth field with a few "objects" ---
+  function gauss(x, y, cx, cy, s){ var dx=x-cx, dy=y-cy; return Math.exp(-(dx*dx+dy*dy)/(2*s*s)); }
+  function evidence(nx, ny){
+    var v = 0.32*Math.sin(nx*3.1)*Math.cos(ny*2.2);
+    v += 0.95*gauss(nx, ny, 0.30, 0.40, 0.10);
+    v += 0.80*gauss(nx, ny, 0.60, 0.60, 0.08);
+    v -= 0.70*gauss(nx, ny, 0.44, 0.74, 0.13);
+    return v;
+  }
+
+  // --- weak prior: heavy low-pass of the evidence (interpolation -> mush) ---
+  var LPW = 12, LPH = 8, lowpass = new Float32Array(LPW*LPH);
+  function buildLowPass(){
+    for (var j=0; j<LPH; j++){
+      for (var i=0; i<LPW; i++){
+        var cx=(i+0.5)/LPW, cy=(j+0.5)/LPH, s=0, n=0;
+        for (var k=-1; k<=1; k++){
+          for (var l=-1; l<=1; l++){ s += evidence(cx+k*0.045, cy+l*0.045); n++; }
+        }
+        lowpass[j*LPW+i] = s/n;
+      }
+    }
+  }
+  function lpSample(nx, ny){
+    var fx=nx*LPW-0.5, fy=ny*LPH-0.5;
+    var x0=Math.floor(fx), y0=Math.floor(fy);
+    var tx=fx-x0, ty=fy-y0;
+    var xa=Math.max(0, Math.min(LPW-1, x0)), xb=Math.max(0, Math.min(LPW-1, x0+1));
+    var ya=Math.max(0, Math.min(LPH-1, y0)), yb=Math.max(0, Math.min(LPH-1, y0+1));
+    var a=lowpass[ya*LPW+xa], b=lowpass[ya*LPW+xb], c=lowpass[yb*LPW+xa], d=lowpass[yb*LPW+xb];
+    return a*(1-tx)*(1-ty) + b*tx*(1-ty) + c*(1-tx)*ty + d*tx*ty;
+  }
+  function interpFill(nx, ny){ return lpSample(nx, ny) * 0.85; }
+
+  // --- structured prior: Turing planforms (form constants) ---
+  function turingFill(nx, ny, mode, q){
+    var X = nx*Math.PI*2*(q/4), Y = ny*Math.PI*2*(q/4);
+    if (mode === 'rolls')   return Math.cos(Y);
+    if (mode === 'squares') return (Math.cos(X) + Math.cos(Y)) / 2;
+    return (Math.cos(X) + Math.cos(-0.5*X + 0.866*Y) + Math.cos(-0.5*X - 0.866*Y)) / 3;
+  }
+
+  // --- theme-aware colors (read from CSS vars) ---
+  var C = {
+    lo:[56,189,248], hi:[251,191,36], mid:[17,17,39],
+    hall:[251,113,133], fg:[226,232,240], accent:[139,92,246],
+    border:[40,40,70], ev:[52,211,153]
+  };
+  function hex2rgb(h){
+    h = h.trim(); if (h[0] === '#') h = h.slice(1);
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  function readColors(){
+    var cs = getComputedStyle(document.documentElement);
+    function g(name){
+      var v = cs.getPropertyValue(name);
+      if (!v) return null; v = v.trim();
+      if (v[0] === '#') return hex2rgb(v);
+      var m = v.match(/rgba?\(([^)]+)\)/);
+      if (m){ var p = m[1].split(',').map(parseFloat); return [p[0], p[1], p[2]]; }
+      return null;
+    }
+    var v;
+    if ((v = g('--data-lo')) !== null) C.lo = v;
+    if ((v = g('--data-hi')) !== null) C.hi = v;
+    if ((v = g('--surface')) === null && (v = g('--panel')) !== null) C.mid = v;
+    else if ((v = g('--surface')) !== null) C.mid = v;
+    if ((v = g('--halluc-tint')) !== null) C.hall = v;
+    if ((v = g('--fg')) !== null) C.fg = v;
+    if ((v = g('--accent')) !== null) C.accent = v;
+    if ((v = g('--border')) !== null) C.border = v;
+    if ((v = g('--evidence-tag')) !== null) C.ev = v;
+  }
+  function mix(a, b, t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function cmap(val){
+    val = Math.max(-1, Math.min(1, val));
+    return val >= 0 ? mix(C.mid, C.hi, val) : mix(C.mid, C.lo, -val);
+  }
+
+  function getGen(){
+    var el = document.querySelector('input[name=gen]:checked');
+    return el ? el.value : 'turing';
+  }
+  function getMode(){
+    var el = document.querySelector('input[name=mode]:checked');
+    return el ? el.value : 'rolls';
+  }
+
+  function render(){
+    readColors();
+    var b = parseInt(boundary.value, 10) / 100;
+    var gen = getGen();
+    var mode = getMode();
+    var q = parseInt(qSlider.value, 10);
+    var amp = parseInt(contrast.value, 10) / 100;
+    turingWrap.style.display = (gen === 'turing') ? '' : 'none';
+
+    var img = ctx.createImageData(W, H);
+    var d = img.data;
+    var band = 0.05;
+    for (var py = 0; py < H; py++){
+      var ny = (py + 0.5) / H;
+      for (var px = 0; px < W; px++){
+        var nx = (px + 0.5) / W;
+        var ev = evidence(nx, ny);
+        var gval = (gen === 'turing') ? turingFill(nx, ny, mode, q) * amp : interpFill(nx, ny);
+        var val;
+        if (nx < b - band) val = ev;
+        else if (nx > b + band) val = gval;
+        else { var t = (nx - (b - band)) / (2 * band); t = t*t*(3 - 2*t); val = ev*(1-t) + gval*t; }
+        var col = cmap(val);
+        var idx = (py*W + px) * 4;
+        d[idx]   = col[0];
+        d[idx+1] = col[1];
+        d[idx+2] = col[2];
+        d[idx+3] = 255;
+        if (nx > b - band){
+          var f = 0.14;
+          d[idx]   = col[0]*(1-f) + C.hall[0]*f;
+          d[idx+1] = col[1]*(1-f) + C.hall[1]*f;
+          d[idx+2] = col[2]*(1-f) + C.hall[2]*f;
+        }
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // divider at the boundary
+    var bx = Math.round(b * W);
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = 'rgba(' + C.accent[0] + ',' + C.accent[1] + ',' + C.accent[2] + ',0.9)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(bx, 0); ctx.lineTo(bx, H); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // labels
+    ctx.font = '600 15px system-ui, sans-serif';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(' + C.ev[0] + ',' + C.ev[1] + ',' + C.ev[2] + ',0.95)';
+    ctx.fillText('EVIDENZ (echte Daten)', 12, 10);
+    var lab = 'HALLUZINATION (vom Generator)';
+    ctx.fillStyle = 'rgba(' + C.hall[0] + ',' + C.hall[1] + ',' + C.hall[2] + ',0.95)';
+    ctx.fillText(lab, W - ctx.measureText(lab).width - 12, 10);
+
+    // readout
+    var pctEv = Math.round(b * 100);
+    var modeNames = { rolls:'Rollen', squares:'Quadrate', hexagons:'Hexagone' };
+    var genName = (gen === 'turing')
+      ? ('Turing / ' + modeNames[mode] + ' (q=' + q + ')')
+      : 'Interpolation (schwacher Prior)';
+    readout.innerHTML = 'Grenze <b>' + pctEv + '%</b> &middot; Generator: <b>' + genName +
+      '</b> &middot; Kontrast <b>' + Math.round(amp * 100) + '%</b> &middot; ' +
+      'Evidenz &asymp; ' + pctEv + '% / Halluzination &asymp; ' + (100 - pctEv) + '%';
+  }
+
+  function syncLabels(){
+    boundaryVal.textContent = boundary.value + '%';
+    qVal.textContent = qSlider.value;
+    contrastVal.textContent = contrast.value + '%';
+  }
+
+  [boundary, qSlider, contrast].forEach(function(el){
+    el.addEventListener('input', function(){ syncLabels(); render(); });
+  });
+  document.querySelectorAll('input[name=gen]').forEach(function(el){
+    el.addEventListener('change', render);
+  });
+  document.querySelectorAll('input[name=mode]').forEach(function(el){
+    el.addEventListener('change', render);
+  });
+
+  themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    render();
+  });
+  if (window.matchMedia){
+    try {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+    } catch (e) { /* older Safari: addListener fallback */ }
+  }
+
+  buildLowPass();
+  syncLabels();
+  render();
+})();
+</script>
+</body>
+</html>

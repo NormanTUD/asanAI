@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verstehen ist ein leibliches Kippen — Fusion</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ede2; --ink:#1c2230; --dim:#5a6478;
+  --accent:#0f7ea8; --accent2:#6d4fc0; --warm:#b5651d; --danger:#b23a3a;
+  --line:rgba(0,0,0,.12); --card:#fffdf8;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+}
+html.dark{
+  --bg:#0a0e16; --bg2:#10151f; --ink:#e8edf7; --dim:#8c97ad;
+  --accent:#6ee7ff; --accent2:#a78bfa; --warm:#ffb86b; --danger:#ff8a8a;
+  --line:rgba(255,255,255,.10); --card:#0e131d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+article{max-width:820px;margin:0 auto;padding:clamp(2rem,6vw,4.5rem) 1.4rem 6rem}
+h1{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;
+  font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.08}
+.subtitle{font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);margin-top:1rem}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.6vw,2.1rem);
+  line-height:1.15;margin:0 0 1.1rem;color:var(--ink)}
+section{margin-top:clamp(2.6rem,7vw,4rem);scroll-margin-top:1rem}
+p{max-width:68ch;font-size:1.05rem;color:var(--ink)}
+p+p{margin-top:1rem}
+.lead{font-size:1.14rem;color:var(--dim)}
+.hl{font-style:normal;color:var(--ink);
+  background:linear-gradient(transparent 62%,color-mix(in srgb,var(--accent) 26%,transparent) 62%)}
+.k{color:var(--accent);font-weight:600}
+.k2{color:var(--accent2);font-weight:600}
+.warm{color:var(--warm);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:1.3rem 1.4rem;margin:1.2rem 0}
+.card h3{font-family:var(--serif);font-weight:400;font-size:1.2rem;margin-bottom:.5rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.15rem .5rem;border-radius:6px;border:1px solid var(--line);color:var(--dim);margin-right:.4rem}
+.tag.a{color:var(--accent)} .tag.b{color:var(--accent2)}
+/* stage */
+.stage{position:relative;width:100%;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
+  background:var(--bg2);border:1px solid var(--line);
+  box-shadow:0 30px 60px -40px rgba(0,0,0,.6),inset 0 1px 0 var(--line)}
+.stage canvas{width:100%;height:100%;display:block}
+.readout{position:absolute;left:0;right:0;bottom:0;padding:.7rem 1rem;
+  font-size:.78rem;letter-spacing:.04em;color:var(--dim);
+  background:linear-gradient(0deg,color-mix(in srgb,var(--bg2) 88%,transparent),transparent);
+  pointer-events:none;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.ctrl{display:flex;align-items:center;gap:.9rem;margin-top:1.1rem;flex-wrap:wrap}
+.ctrl label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:160px;height:3px;
+  border-radius:3px;background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);cursor:grab;box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 16%,transparent)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radius:50%;
+  background:var(--accent);cursor:grab}
+.out{font-variant-numeric:tabular-nums;font-size:.85rem;min-width:22ch;text-align:right}
+.toggle{position:fixed;top:12px;right:12px;z-index:50;background:var(--card);
+  border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:.35rem .8rem;font-size:.72rem;cursor:pointer;letter-spacing:.08em}
+footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--line);
+  color:var(--dim);font-size:.8rem}
+.prov{display:flex;gap:.8rem;align-items:baseline;padding:.7rem 0;border-bottom:1px dashed var(--line)}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600}
+.prov span{color:var(--dim);font-size:.92rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" aria-label="Farbschema wechseln">☾ / ☀</button>
+<article>
+
+<h1>Verstehen ist ein leibliches Kippen</h1>
+<div class="subtitle">Fusion aus: anatomie_des_verstehens.html ✕ hermann_schmitz.html</div>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Texte verwerfen denselben atomistischen Grundgedanken — nur an zwei verschiedenen Stellen.
+Die <span class="k">Anatomie des Verstehens</span> verweigert dem <em>Einzelnen Fakt</em> Bedeutung:
+Verstehen ist keine Liste, die man länger macht, sondern ein <span class="hl">Netz, das sich schließt</span>;
+die Bedeutung eines Elements entsteht erst in seinen <em>Beziehungen</em>, und das Verstehen passiert
+nicht allmählich, sondern in einem <em>Phasenübergang</em>, an dem eine winzige zusätzliche Verbindung
+das ganze System auf einmal kippt. <span class="k2">Hermann Schmitz</span> verweigert derselben Bewegung
+den Boden: Erfahrung ist nicht aus privaten, abgegrenzten <em>Empfindungen</em> zusammengesetzt,
+sondern besteht aus <span class="hl">flächenlosen Leibesinseln</span> in einem <em>vitalen Feld</em>,
+das zwischen <em>Engung</em> und <em>Weitung</em> pendelt, und Gefühle sind keine inneren Zustände,
+sondern <em>Atmosphären</em>, die man räumlich betritt.</p>
+<p>Die fusionierte Position lautet deshalb: <span class="hl">Verstehen ist ein Phasenübergang,
+der im Leib stattfindet.</span> Das, was die Anatomie von außen als topologisches Kippen eines
+Gewebe-Modells beschreibt — der Moment, in dem die größte zusammenhängende Komponente des Wissens
+über die <em>Perkolationsschwelle</em> springt —, ist dasselbe Ereignis, das Schmitz von innen
+als <em>Kippen des vitalen Antriebs</em> beschreibt: von der <em>Engung</em> (Zusammenziehen,
+Nicht-Verstehen, Schreck) in die <em>Weitung</em> (Erleichterung, „pötzlich einfach“). Der Aha-Moment
+ist <em>sowohl</em> der geschlossene Knoten im Netz <em>als</em> der Atem, der sich endlich öffnet.
+Die „Einheit“ in beiden Texten ist nie das Element (Fakt / Empfindung), sondern das
+<em>Medium</em> — Gewebe einerseits, Atmosphäre andererseits — und der Übergang ist in beiden
+nicht-linear und emergent.</p>
+<p>Daraus folgt ein gemeinsames Bild: Verstehen ist <em>leibliche Einleibung</em>, die sich zu
+struktureller <em>Vernetzung</em> verdichtet, bis die <em>Schwelle</em> kippt und sich als
+<em>Weitung/Erleichterung</em> meldet. Die Anatomie liefert das Gerüst, Schmitz das Fleisch —
+oder umgekehrt: Schmitz das Fleisch, die Anatomie das Gerüst, das man nach dem Kippen benennen kann.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden Texte widersprechen sich nicht an ihrer Oberthese (beide: nicht-linear, relational,
+anti-atomistisch). Sie stehen aber an drei konkreten Punkten unvereinbar nebeneinander.</p>
+<div class="grid2">
+<div class="card">
+<h3>1. Substrat: neutral vs. leiblich</h3>
+<p><span class="tag a">A</span> Die Anatomie beschreibt Verstehen als <em>neutrale</em>
+Topologie: Nicht-Verstehen ist „kein Mangel an Information — es ist ein Mangel an <em>Ordnung</em>“.
+Körper, Gefühl, Leib kommen nicht vor; das Modell ist rein informations- und strukturtheoretisch.
+Der „Kippen“-Punkt ist ein objektives Graphen-Ereignis.</p>
+<p style="margin-top:.8rem"><span class="tag b">B</span> Schmitz behauptet das Gegenteil als
+Konstitutionsprinzip: Es gibt <em>kein</em> Bewusstsein ohne den vitalen Antrieb (Enge/Weite),
+und jede Erfahrung ist <em>schon</em> leiblich-affektiv. Der „Mangel an Ordnung“ wäre für ihn
+unerreichbar zu denken, ohne dass man gleichzeitig <em>Engung</em> im Leib spürt. Für B ist der
+topologische Zustand immer bereits ein <em>gefühlter</em> Zustand.</p>
+</div>
+<div class="card">
+<h3>2. Wo das Kippen sitzt</h3>
+<p><span class="tag a">A</span> Das Phasenübergangs-Kippen passiert im <em>Strukturraum des
+Netzes</em> (Perkolation: genug Kanten, die Riesenkomponente entsteht). Es wird durch „eine
+winzige zusätzliche Verbindung“ ausgelöst — ein abstrakter, zählbarer Mechanismus.</p>
+<p style="margin-top:.8rem"><span class="tag b">B</span> Der nicht-lineare Kipp-Moment sitzt im
+<em>Körper</em>: im vitalen Antrieb, der zwischen Spannung (Engung) und Schwellung (Weitung)
+umschaltet. Er ist ein <em>first-person-somatischer</em> Vorgang, kein zählbarer Graph.</p>
+</div>
+</div>
+<div class="card">
+<h3>3. Brücke: Analogie vs. Einleibung</h3>
+<p><span class="tag a">A</span> Hebel Nr. 2 lautet <em>Analogie</em>: „Neues versteht man nur mit
+altem Material. Baue Brücken, keine Türme.“ Verstehen über Grenzen hinweg ist für A
+<em>vermittelt</em> — über vorhandenes Wissen, das man auf das Neue überträgt.</p>
+<p style="margin-top:.8rem"><span class="tag b">B</span> Schmitz kennt eine <em>unvermittelte</em>
+Quellenebene darunter: die <em>Einleibung</em>. Du-Evidenz (sogar gegenüber Tieren) entsteht ohne
+Sprache und ohne Analogieschluss, durch das <em>wechselseitige</em> Einanderverflechten zweier
+Leiber in einem gemeinsamen vitalen Antrieb (Dominanz fluktuiert). Man muss nicht erst eine Brücke
+bauen — die beiden Leiber <em>verschmelzen zuerst</em>, das Verstehen ist die Folge, nicht die Bedingung.</p>
+<p style="margin-top:.8rem">Für A ist die Vermittlung (Analogie) der <em>Weg</em> zum Verstehen;
+für B ist die Vermittlung erst das <em>Spätprodukt</em> einer tieferen, körperlichen Verschmelzung.
+Die Reihenfolge ist umgekehrt.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p><strong>Zum Substrat (1):</strong> Die Neutralität der Anatomie ist keine Rivalen-Behauptung,
+sondern ihr <em>Schattenbild</em>. Ein Graph hat von Haus aus keinen Leib; er ist die
+<em>abstrahierte Form</em> dessen, was Schmitz konkret beschreibt. Man löst den Widerspruch
+dadurch auf, dass man die Kanten des Netzes <em>deutet</em>: jede Verbindung zwischen zwei
+„Wissens-Einheiten“ <em>ist</em> eine Einleibung — eine Atmosphäre, die das eigene Erleben mit
+einem anderen „verwebt“. Die topologische Ordnung (A) ist das, was übrig bleibt, wenn man die
+leiblichen Atmosphären (B) auf ihre <em>Struktur</em> reduziert. A ist B minus Leib; B ist A
+plus Leib. Beide beschreiben dieselbe Ordnung, auf zwei Ebenen. Das Kippen ist in beiden dasselbe
+Ereignis — nur A liest es ab, B spürt es.</p>
+<p><strong>Zum Ort des Kippens (2):</strong> Man muss nicht wählen, <em>wo</em> es passiert.
+Die Struktur kippt, <em>weil</em> der Leib kippt: die Riesenkomponente bildet sich genau dann,
+wenn der vitale Antrieb von Engung in Weitung schaltet. Man kann das als <em>Korrespondenz</em>
+festhalten: der Perkolationsparameter (wie viele Verbindungen existieren) ist die messbare Größe,
+die <em>gefühlt</em> wird als Grad der Erleichterung. Unterhalb der Schwelle = Engung (anstrengend,
+zugeschnürt, „ich krieg das nicht hin“); oberhalb = Weitung (Aha, Luft wird, „pötzlich einfach“).
+Die winzige zusätzliche Verbindung (A) ist das, was den Atem freigibt (B).</p>
+<p><strong>Zur Brücke (3):</strong> Hier löst sich der Widerspruch in einer <em>Reihenfolge</em>
+auf, nicht in einer Wahl. <em>Einleibung</em> (B) ist das <em>Substrat</em>: man <em>erlebt sich
+hinein</em> in ein Gebiet, bevor man es benennen kann — das ist das unreflektierte, körperliche
+Betreten einer Atmosphäre. <em>Analogie</em> (A) ist das darauf aufgebaute <em>Gerüst</em>: erst
+weil man sich eingelebt hat, gibt es altes Material, mit dem man das Neue überbrücken und
+<em>fixieren</em> kann. Ohne Einleibung hätte die Analogie nichts, woran sie sich festhält;
+ohne Analogie bliebe die Einleibung flüchtig und unhaltbar. Beide sind nötig, in dieser Reihenfolge:
+<span class="k2">einleiben</span> → <span class="k">vernetzen/analogisieren</span> → <span class="warm">kippen</span> → einfach.</p>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p>Das integrierte Modell liest sich als eine <em>Pipeline</em> mit vier Stationen, in der jeder
+Begriff von A einen Partner bei B hat:</p>
+
+<div class="card">
+<h3>Station 1 — Ausgang: Überfluss / primitive Gegenwart</h3>
+<p><span class="tag a">A</span> „Am Anfang steht nie Leere, sondern <em>Überfluss</em>. Hunderte
+Einzelheiten, alle gleich laut.“ Nicht-Verstehen ist ein Mangel an <em>Ordnung</em>, nicht an
+Information. <span class="tag b">B</span> Das Gegenstück ist die <em>primitive Gegenwart</em> und
+die <em>Engung</em>: ein un-differenziertes, alles-gleich-drückendes Feld, das Zusammenziehen
+(Schreck, Angst, „ich krieg das nicht hin“). In beiden: <em>alles ist da, nichts ist sortiert</em> —
+und genau das wird als Unbehagen <em>gefühlt</em>.</p>
+</div>
+
+<div class="card">
+<h3>Station 2 — Vernetzung durch Beziehungen / Einleibung</h3>
+<p><span class="tag a">A</span> „Ein einzelner Fakt ist fast wertlos. Seine Bedeutung entsteht erst
+durch die Beziehungen zu dem, was du schon weißt.“ Man baut ein <em>Gewebe</em>, keine Liste.
+<span class="tag b">B</span> Jede solche Beziehung ist eine <em>Einleibung</em>: zwei Leiber
+(oder zwei ErfahrungsinSELN) verschmelzen in einem gemeinsamen vitalen Antrieb. Man „tritt“ in eine
+<em>Atmosphäre</em> ein, so wie man in schwüle Luft tritt — und das Neue wird Teil des eigenen
+Flusses. Die „Brücke“ (Analogie, A) funktioniert, <em>weil</em> die Einleibung (B) sie erst ermöglicht.</p>
+</div>
+
+<div class="card">
+<h3>Station 3 — Schwelle / Kippen des vitalen Antriebs</h3>
+<p><span class="tag a">A</span> Verstehen ist ein <em>Phasenübergang</em> (Perkolation): lange
+geschieht scheinbar nichts, dann kippt das System durch <em>eine winzige zusätzliche Verbindung</em>
+auf einmal — die größte zusammenhängende Komponente wächst über die Schwelle.
+<span class="tag b">B</span> Dasselbe Kippen ist der Umschlag des <em>vitalen Antriebs</em> von
+<em>Engung</em> (Spannung) in <em>Weitung</em> (Schwellung/Erleichterung). Der Atem, der sich
+öffnet, die „privative Weitung“ — Loslassen. <em>Fusion:</em> Die Struktur kippt, <em>weil</em>
+der Leib kippt. Der Perkolationsparameter ist die messbare Größe der gefühlten Erleichterung.</p>
+</div>
+
+<div class="card">
+<h3>Station 4 — Ergebnis: geschlossenes Netz / „pötzlich einfach“</h3>
+<p><span class="tag a">A</span> „Das Netz ist geschlossen. Was eben noch unmöglich wirkte, ist jetzt
+bloß noch offensichtlich.“ <span class="tag b">B</span> Das ist die <em>Weitung</em> als
+<em>Erleichterung</em> — der triumphale Moment, den Schmitz auch im Lachen findet („fallen +
+sicher wieder hochkommen = Triumph“). <em>Fusion:</em> „einfach“ (A) <em>ist</em> Weitung (B).
+Das Verstehen <em>fühlt sich an wie</em>, was es topologisch <em>tut</em>.</p>
+</div>
+
+<div class="grid2">
+<div class="card">
+<h3>Die vier Hebel (A), leiblich neu gelesen (B)</h3>
+<p><strong>Reduktion</strong> = Enge, die nicht trägt, wird freigegeben → Weitung.<br>
+<strong>Analogie</strong> = gezielte Einleibung in altes Material.<br>
+<strong>Eigenaktivität</strong> = der Leib muss die Spur <em>selbst</em> einleiben (Abruf formt,
+nicht Aufnahme).<br>
+<strong>Pause</strong> = offline-Konsolidierung, in der der vitale Antrieb die Inseln neu ordnet.</p>
+</div>
+<div class="card">
+<h3>Begriffe, die kein Gegenstück haben</h3>
+<p>Umgerecht hält die Anatomie auch etwas vor, das bei Schmitz fehlt: ein <em>abstrahierbares
+Modell</em>, das man nach dem Kippen <em>bene</em>nen kann (das Netz, die Kanten, die
+Riesenkomponente). Schmitz bleibt im <em>Erfahrenen</em>; die Anatomie liefert die
+<em>Metasicht</em> darüber. Und Schmitz trägt Teile, die bei A keinen Platz haben: die
+<em>Atombombe</em> als ethische „Bruchstelle“ (Menschheit „auf zu hohem Emanzipationsniveau
+festgeklemmt“) und <em>Tiere als Bewussthaber</em> (Du-Evidenz über Einleibung, ohne Sprache).
+Beides sind B’s eigene Erweiterungen — die Fusion übernimmt sie als <em>Rahmen</em>, findet aber
+in A dafür keinen Partner; sie bleiben Schmitz’ eigener Horizont.</p>
+</div>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung: Das leibliche Kippen</h2>
+<p>Ein Feld aus <em>Leibesinseln</em> (A’s Netz, B’s flächenlose Inseln). Der Regler steuert den
+<em>vitalen Antrieb</em> (B): links <em>Engung</em>, rechts <em>Weitung</em>. Je weiter nach
+rechts, desto mehr Verbindungen entstehen zwischen den Inseln. Unterhalb der
+<em>Perkolationsschwelle</em> (A) bleibt das Feld fragmentiert und <em>engespannt</em> —
+Nicht-Verstehen. Springt die größte zusammenhängende Komponente über die Schwelle,
+<em>kippt</em> das Feld auf einmal in <em>Weitung</em> — das Aha, die Erleichterung,
+„pötzlich einfach“. Bewege den Regler langsam über die Schwelle und beobachte den Moment,
+in dem Struktur <em>und</em> Stimmung zusammen umschlagen.</p>
+
+<div class="stage">
+  <canvas id="fuse"></canvas>
+  <div class="readout">
+    <span id="stateLabel">…</span>
+    <span id="fracLabel">—</span>
+  </div>
+</div>
+<div class="ctrl">
+  <label>Vitaler Antrieb</label>
+  <span style="font-size:.72rem;color:var(--dim)">ENGE</span>
+  <input type="range" id="vital" min="0" max="100" value="14">
+  <span style="font-size:.72rem;color:var(--dim)">WEITE</span>
+  <span class="out" id="pct">0&nbsp;% der Inseln im Ganzen</span>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../anatomie_des_verstehens.html">anatomie_des_verstehens.html</a>
+<span>— „Die Anatomie des Verstehens“: Verstehen als sich schließendes Netz, Phasenübergang
+(Perkolation) und vier beschleunigende Hebel; rein strukturtheoretisch, leiblich neutral.</span></div>
+<div class="prov"><a href="../buecher/hermann_schmitz.html">buecher/hermann_schmitz.html</a>
+<span>— „Hermann Schmitz – Philosophie des Leibes“: Leib ≠ Körper, Enge/Weite als vitaler Antrieb,
+Gefühle als Atmosphären, Einleibung, Person, Atombombe, Tiere als Bewussthaber.</span></div>
+</section>
+
+<footer>Fusion n1-015 · Round 1 · Nicht-KI-Track · self-contained, no external data.</footer>
+</article>
+
+<script>
+(function(){
+  var c = document.getElementById('fuse');
+  var x = c.getContext('2d');
+  var slider = document.getElementById('vital');
+  var stateLabel = document.getElementById('stateLabel');
+  var fracLabel = document.getElementById('fracLabel');
+  var pct = document.getElementById('pct');
+  var W=0,H=0,N=[],E=[];
+
+  function readTheme(){
+    var cs = getComputedStyle(document.documentElement);
+    return {
+      accent: cs.getPropertyValue('--accent').trim(),
+      accent2: cs.getPropertyValue('--accent2').trim(),
+      warm: cs.getPropertyValue('--warm').trim(),
+      danger: cs.getPropertyValue('--danger').trim(),
+      dim: cs.getPropertyValue('--dim').trim()
+    };
+  }
+  var theme = readTheme();
+
+  function fit(){
+    var d = Math.min(window.devicePixelRatio||1,2);
+    var r = c.getBoundingClientRect();
+    c.width = Math.max(1,Math.round(r.width*d));
+    c.height = Math.max(1,Math.round(r.height*d));
+    x.setTransform(d,0,0,d,0,0);
+    W = r.width; H = r.height;
+  }
+
+  function build(){
+    fit();
+    N=[];
+    var n = Math.min(92, Math.max(34, Math.floor(W*H/5200)));
+    for(var i=0;i<n;i++){
+      var best=null,bd=-1;
+      for(var k=0;k<12;k++){
+        var p={x:30+Math.random()*(W-60), y:24+Math.random()*(H-48)};
+        var dd = N.length ? Math.min.apply(null,N.map(function(q){return Math.hypot(q.x-p.x,q.y-p.y);})) : 1e9;
+        if(dd>bd){bd=dd;best=p;}
+      }
+      best.ph = Math.random()*6.283;
+      best.g = 0;
+      N.push(best);
+    }
+    E=[];
+    var maxD = Math.min(W,H)*0.42;
+    for(var a=0;a<N.length;a++)for(var b=a+1;b<N.length;b++){
+      var d = Math.hypot(N[a].x-N[b].x,N[a].y-N[b].y);
+      if(d<maxD) E.push({i:a,j:b,d:d,w:Math.random()});
+    }
+    E.sort(function(p,q){return p.d-q.d;});
+  }
+
+  function comps(active){
+    var par = N.map(function(_,i){return i;});
+    function find(a){while(par[a]!==a){par[a]=par[par[a]];a=par[a];}return a;}
+    for(var m=0;m<active.length;m++){var e=active[m],ra=find(e.i),rb=find(e.j); if(ra!==rb)par[ra]=rb;}
+    var size={},big=0,root=-1;
+    for(var i=0;i<N.length;i++){var r=find(i);size[r]=(size[r]||0)+1; if(size[r]>big){big=size[r];root=r;}}
+    return {find:find,root:root,big:big};
+  }
+
+  function lerp(a,b,t){return a+(b-a)*t;}
+
+  var t=0, flash=0, wasWhole=false;
+  var labels = {
+    low:'ENGE — nicht verstehen (Zusammenziehen, Anspannung)',
+    mid:'Kippen… (die Riesenkomponente wächst)',
+    high:'WEITE — Verstehen (Erleichterung, plötzlich einfach)'
+  };
+
+  function loop(){
+    t+=0.01;
+    x.clearRect(0,0,W,H);
+    var p = (+slider.value)/100;
+    var cut = E.length * Math.pow(p,1.12);
+    var active=[];
+    for(var i=0;i<E.length;i++){ if(i<cut && E[i].w < 0.32+p*0.78) active.push(E[i]); }
+    var r = comps(active);
+    var frac = r.big/N.length;
+
+    if(frac>0.9 && !wasWhole){ flash=1; wasWhole=true; }
+    if(frac<0.82) wasWhole=false;
+    flash*=0.95;
+
+    if(flash>0.01){
+      var g=x.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.75);
+      g.addColorStop(0,'rgba('+hexA(theme.warm,flash*0.35)+')');
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      x.fillStyle=g; x.fillRect(0,0,W,H);
+    }
+
+    var eng = 1-p;
+    for(var e=0;e<active.length;e++){
+      var ed=active[e], inBig = r.find(ed.i)===r.root;
+      if(inBig){
+        x.strokeStyle='rgba('+hexA(theme.accent,0.30+frac*0.5+flash*0.4)+')';
+        x.lineWidth=1+frac*1.1;
+      } else {
+        x.strokeStyle='rgba('+hexA(theme.danger,0.10+eng*0.22)+')';
+        x.lineWidth=0.6;
+      }
+      x.beginPath();
+      x.moveTo(N[ed.i].x,N[ed.i].y); x.lineTo(N[ed.j].x,N[ed.j].y); x.stroke();
+    }
+    for(var n2=0;n2<N.length;n2++){
+      var nd=N[n2], inBig2 = r.find(n2)===r.root;
+      nd.g = lerp(nd.g, inBig2?1:0, 0.12);
+      var wob = (1-nd.g)*3.2*eng;
+      var px = nd.x + Math.sin(t*2.2+nd.ph)*wob;
+      var py = nd.y + Math.cos(t*1.8+nd.ph)*wob;
+      var rad = 2.2 + nd.g*2.4 + flash*3;
+      if(nd.g>0.05){
+        x.fillStyle='rgba('+hexA(theme.accent,0.10*nd.g+flash*0.2)+')';
+        x.beginPath(); x.arc(px,py,rad*5,0,6.283); x.fill();
+      }
+      var col = inBig2 ? theme.accent : (nd.g<0.5 ? theme.danger : theme.accent2);
+      x.fillStyle='rgba('+hexA(col,0.55+nd.g*0.45)+')';
+      x.beginPath(); x.arc(px,py,rad,0,6.283); x.fill();
+    }
+
+    var key = frac>0.82 ? 'high' : (frac>0.45 ? 'mid' : 'low');
+    stateLabel.textContent = labels[key];
+    stateLabel.style.color = key==='high'?theme.accent : (key==='mid'?theme.warm:theme.danger);
+    var pctv = Math.round(frac*100);
+    fracLabel.textContent = 'größte Komponente: '+pctv+' %';
+    pct.innerHTML = pctv+'&nbsp;% der Inseln im Ganzen';
+
+    requestAnimationFrame(loop);
+  }
+
+  function hexA(hex,a){
+    if(!hex || hex.charAt(0)!=='#') return '255,255,255';
+    var h=hex.replace('#','');
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var r=parseInt(h.substr(0,2),16), g=parseInt(h.substr(2,2),16), b=parseInt(h.substr(4,2),16);
+    return r+','+g+','+b;
+  }
+
+  function rebuild(){ build(); theme = readTheme(); }
+  window.addEventListener('resize', rebuild);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    theme = readTheme();
+  });
+  rebuild();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

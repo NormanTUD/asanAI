@@ -1,0 +1,15 @@
+{
+  "no": "034",
+  "a": "kult_der_statistischen_signifikanz_very_simple.html",
+  "b": "fibrebundleslab.html",
+  "a_title": "Der Kult der statistischen Signifikanz — ganz einfach erklärt (Ziliak & McCloskey)",
+  "b_title": "Fiber Bundles — An Interactive Journey",
+  "combined_theme": "gauge-vs-invariant",
+  "one_line": "Beide Schriften warnen davor, eine lokale, präzise 'Gauge'-Größe (den t-Wert bzw. die lokale Trivialisierung) mit der wahren, globalen Invariante (die Effektgröße bzw. die Holonomie/Topologie) zu verwechseln — die Disziplin in beiden Feldern: lokalen Gauge entlarven, global vergleichen.",
+  "contradictions": [
+    "Status des Entscheidungskriteriums: A hält die 5%-Signifikanzlinie (t=1,96) für eine willkürliche, irreführende Konvention ohne Theorem dahinter (Fisher: 'bequem, persönlich'); B stellt das Entscheidungskriterium (den Möbius-Flip / die Holonomie −1 via Strukturgruppe Z_2 und Kokongelbedingung) als notwendige, objektive Invariante dar.",
+    "Remedium für die lokale Präzision: A verlangt, das lokale Signifikanz-Ritual aufzugeben (Signifikanz sei 'wertlos', der Größenblinder Stare sei 'die Krankheit'); B behandelt die lokale Trivialisierung als legitime Grundlage (definiertes Axiom) und vervollständigt sie um eine Verbindung, statt sie zu verwerfen."
+  ],
+  "resolution": "Zwei Auflösungen. (1) Es gibt zwei Arten von 'Entscheidungskriterium': A's 5%-Linie ist ein verlustbehafteter Cut auf einer kontinuierlichen Größe (t) — dort ist Konvention die Fehlerquelle; B's Topologie ist kein Cut, sondern eine Eigenschaft des Raumes — dort ist die Invariante die Wahrheit. Man muss nur nicht die Konvention für die Invariante halten (Fischers Fehler). (2) Man verwirft den lokalen Gauge nicht, sondern erkennt ihn als Gauge und führt den globalen Vergleich ein, der die Invariante zurückgewinnt (Effektgröße berichten / Vektor transportieren). A's 'Ritual aufgeben' und B's 'Verbindung hinzufügen' sind derselbe Zug: lokalen Gauge entlarven, global vergleichen, Invariante berichten. Fused conclusion: Gauge-Essentialismus ist der gemeinsame Fehler; die verdeckte Invariante ist epistemisch (Effektgröße) in A und ontisch (Krümmung/Verdrillung) in B.",
+  "viz": "Ein themenreaktives Canvas mit zwei gekoppelten Panels und einem zentralen Readout, das 'Gauge vs. Invariante' zeigt: links (A) die Null-Verteilung mit t-Marker, 1,96-Linie, p-Schweif und einem Größenbalken für μ plus 'sizeless'-Fixier-Regler (t bleibt stur, während μ sich ändert); rechts (B) eine Schleife mit lokal rotierenden Rahmen und einem wandernden Vektor, bei dem die Verdrillung von 0° (Zylinder) bis 180° (Möbius, Holonomie −1) gedreht werden kann und die Holonomie abgelesen wird. Alle Daten inline, null Konsolenfehler."
+}

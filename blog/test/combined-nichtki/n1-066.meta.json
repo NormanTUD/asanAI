@@ -1,0 +1,16 @@
+{
+  "no": "066",
+  "a": "holes.html",
+  "b": "history.html",
+  "a_title": "Topologische Löcher — Eine interaktive Reise",
+  "b_title": "Topologie der Geschichte – Interaktiver Explorer",
+  "combined_theme": "persistenz-form-und-zeit",
+  "one_line": "Persistenz als gemeinsame Währung von Geometrie und Zeit: Was über eine Skalenreihe überlebt und Störung übersteht, ist die Form des Ganzen (Betti-Merkmale, der wiederkehrende Zyklus, Braudels longue durée); was nur flackert, ist Rauschen (Ereignis, Einzelzustand) — A liefert das Messinstrument (persistente Homologie, Persistenz-Diagramm), B den Gegenstand und den Beweis, dass er gebraucht wird.",
+  "contradictions": [
+    "Stabilität vs. Empfindlichkeit: A (holes.html) ruht auf Invarianz unter Perturbation — 'kleine Änderungen an den Daten → kleine Änderungen am Diagramm', Stabilität ist die Tugend der Methode; B (history.html) macht Pfadabhängigkeit/Chaos zum Prinzip — 'Kleine Ursachen, große Wirkungen', 'nicht ergodisch', Regler 'Sensitivität (Chaos)', winzige Störung divergiert den ganzen Verlauf.",
+    "Werkzeug vs. Metapher: A gebraucht 'Topologie' als präzise, berechenbare algebraische Topologie (Simpliziale Komplexe, Homologie H_k=Z_k/B_k, Betti-Zahlen, Vietoris-Rips); B gebraucht 'Topologie' bildlich ('Die Topologie zeigt dir, warum Geschichte sich reimt') ohne jegliche Homologie-Mathematik — die Prägung, die A erzwingt, fehlt B.",
+    "Wiederholbare Invariante vs. 'reimt, nicht wiederholt': A preist das stabile, reproduzierbare Fingerabdruck-Objekt (besteht der langlebige β1-Punkt, 'es ist ein Ring'); B besteht auf der einzeiligen, kontingenten Realisierung — dieselbe historische Konstellation kommt nie wieder."
+  ],
+  "resolution": "Zwei Ebenen trennen die zwei: Struktur (was existiert?) vs. Zustand/Bahn (wo genau? wie genau?). (1) A's Stabilität gilt der topologischen Eigenschaft (Existenz des Lochs/Zyklus über ein ε-Intervall), B's Sensitivität gilt der Phase-Ortung (welches Becken, welcher Pfad) — dieselbe Münze, kein Widerspruch. (2) B's Metapher wird literal, sobald A's Maschinerie auf eine Zivilisations-Zustandsreihe läuft: der 'reimende' Zyklus ist genau ein persistentes β1-Loch. (3) 'Reimt, nicht wiederholt' ist die Vorhersage einer stabilen Invariante: die Topologie reimt sich (Betti-Zahlen/Zyklus-Existenz gleich), die konkreten Datenwerte werden nie wiederholt (kontingent) — stabile Topologie + kontingente Realisierung = Reim ohne Wiederholung.",
+  "viz": "Reines Canvas (Inline-Daten, themenreaktiv hell/dunkel, null Fetches): eine verrauschte Grenzzyklus-Punktwolke (B's wiederkehrender Zyklus = blaue Punkte; graue Punkte = Ereignisse/Rauschen), durchlaufen mit A's Vietoris-Rips-Filtration. Links wachsen die ε-Kugeln; rechts baut sich live das Persistenz-Diagramm — der langlebige H1-Zyklus (gelb umringt, 'longue durée') steht weit über der Diagonalen, die kurzlebigen H0-Flicker kleben an ihr (Signal vs. Rauschen). ε-Slider, ▶-Filtration, Neu würfeln, Theme-Button; Stats β0/β1/ε/Persistenz des Zyklus."
+}

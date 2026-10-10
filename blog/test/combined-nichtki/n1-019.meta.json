@@ -1,0 +1,15 @@
+{
+  "no": "019",
+  "a": "hologram2.html",
+  "b": "hologram5.html",
+  "a_title": "Holographic FFT Smiley — All Cells Active + Overzoom Estimation",
+  "b_title": "Stacked Holographic Lens Explorer – Infinite Zoom",
+  "combined_theme": "holographisches-zoomen",
+  "one_line": "Beide Papiere zoomen über die native Auflösung hinaus: A nennt es Schätzung (bandbegrenzte sinc-Rekonstruktion), B nennt es Halluzination (Rauschen) — fusioniert: Overzoom ist immer eine Prior-Extrapolation, deren Ehrlichkeit der Außerband-Anteil H = E_out/(E_in+E_out) misst.",
+  "contradictions": [
+    "Charakterisierung des Overzoom: A = 'Overzoom Estimation' (rekonstruiert mit Sinuswellen-Patches, Badge ~SINE, keine Warnung — als legitime Inferenz gerahmt) vs. B = '⚠ HALLUCINATION' (Badge ⚠, sichtbare Artefakte — als Fiktion gerahmt); dieselbe Operation, entgegengesetzte Wertung.",
+    "Bedeutung von 'holographisch': A = räumlich (jede der 3×3 Zellen kodiert das ganze Smiley, jeder-Teil-ist-das-Ganze) vs. B = skalig (7-Lagen-Stack mit steigendem Basis-Fokus, Zellen gewöhnliche räumliche Kacheln, Detail über die Lagen, keine einzige Lage = das Ganze)."
+  ],
+  "resolution": "Beide beschreiben dieselbe unterbestimmte Extrapolation mit zwei verschiedenen Priors: A's sinc-Rekonstruktion = bandbegrenzter Prior (minimaler Halluzinations-Anteil, Energie bleibt in-Band, H≈0), B's Rauschen = falscher Prior (Energie leckt aus der Band, H hoch). 'Schätzung' und 'Halluzination' sind Punkte auf einem Kontinuum, gemessen durch H = E_out/(E_in+E_out). Für die Hologram-Achsen: räumlich (A) und skalig (B) sind orthogonal — das vollständige holographische Linsensystem ist mehrskalig-redundant (jede Zelle, in jeder Skala, dekodiert diese Band des Ganzen).",
+  "viz": "Interaktives Overzoom-Prior-Experiment: Zoom-Regler (1–24, native L12) + Prior-Umschalter A (bandbegrenzt/sinc = Schätzung) / B (Rauschen = Halluzination). Links rekonstruiertes Smiley, rechts FFT-Amplitudenspektrum mit nativer Band-Kreis; Balken zeigt den Außerband-Anteil H. Unterhalb native identisch (H=0); oberhalb bleibt A in-Band/clean, B leckt aus der Band (H steigt)."
+}

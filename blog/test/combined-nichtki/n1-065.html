@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vervollständigung als Auswahl — Cauchy/Dedekind ✕ Die Welt ist 3-dimensional</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#6d28d9;
+  --mn-accent2:#0e7490; --mn-accent3:#be185d; --mn-accent4:#b45309;
+  --mn-border:#d8d2c4; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+  --mn-boundary:#dc2626; --mn-ok:#16a34a;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#a78bfa;
+  --mn-accent2:#22d3ee; --mn-accent3:#f472b6; --mn-accent4:#fbbf24;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-boundary:#f87171; --mn-ok:#4ade80;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--mn-bg); color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:24px 20px 80px;}
+header.hero{
+  padding:28px 22px; border:1px solid var(--mn-border); border-radius:14px;
+  background:var(--mn-panel); margin-bottom:26px;
+}
+header.hero h1{font-size:1.7em; line-height:1.25; margin-bottom:10px; color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2); font-weight:600; font-size:.98em;}
+.toggle{
+  margin-top:16px; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel2); color:var(--mn-fg); border-radius:22px;
+  cursor:pointer; font-size:.9em; transition:.2s;
+}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 30px;}
+section h2{
+  font-size:1.35em; margin-bottom:12px; color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border); padding-bottom:6px;
+}
+p{margin-bottom:12px;}
+.lede{font-size:1.06em;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px;}
+.card h3{font-size:1.04em; margin-bottom:8px; color:var(--mn-fg);}
+.card a{color:var(--mn-accent2); text-decoration:none; font-weight:600;}
+.card a:hover{text-decoration:underline;}
+.card small{color:var(--mn-dim);}
+.wc{border-left:4px solid var(--mn-boundary);}
+.wc b{color:var(--mn-boundary);}
+.res{border-left:4px solid var(--mn-ok);}
+.res b{color:var(--mn-ok);}
+.formula{
+  font-family:'Courier New',monospace; background:var(--mn-panel2);
+  border:1px solid var(--mn-border); border-radius:8px; padding:12px 14px;
+  margin:10px 0; overflow-x:auto; white-space:pre; font-size:.86em; color:var(--mn-fg);
+}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:2px 8px; border-radius:6px; margin-bottom:8px;
+  background:var(--mn-panel2); color:var(--mn-accent); border:1px solid var(--mn-border);
+}
+.tag.b{color:var(--mn-accent2);}
+.ladder{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px; margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:6px; font-size:.95em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+.viz{border:1px solid var(--mn-border); border-radius:14px; background:var(--mn-panel); padding:16px; margin-top:6px;}
+.viz canvas{width:100%; display:block; border-radius:10px; background:var(--mn-panel2); border:1px solid var(--mn-border);}
+.viz .controls{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1; min-width:150px; accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700; white-space:nowrap; font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{margin-left:auto; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel); color:var(--mn-fg); border-radius:8px; cursor:pointer;
+  font-weight:700; font-size:.9em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.primary{background:var(--mn-accent); color:var(--mn-bg); border-color:var(--mn-accent);}
+.viz .btn.alt{margin-left:0;}
+.viz .readout{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+@media(max-width:620px){.viz .readout{grid-template-columns:1fr;}}
+.readbox{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel2); padding:12px 14px; font-size:.94em;}
+.readbox .rb-title{font-weight:700; margin-bottom:6px;}
+.readbox.a .rb-title{color:var(--mn-accent);}
+.readbox.b .rb-title{color:var(--mn-accent2);}
+.readbox .regime{font-weight:700; margin:5px 0;}
+.readbox .desc{color:var(--mn-dim);}
+.viz .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:.85em; color:var(--mn-dim);}
+.viz .legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-dim); font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Vervollständigung als Auswahl — <em>der eine feste Punkt</em></h1>
+  <div class="subtitle">Fusion aus: cauchydedeking.html ✕ a_simple_proof_the_world_is_three_dimensional.html</div>
+  <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Beide Papiere stellen <em>dieselbe</em> Frage, nur auf unterschiedlichem Material: <strong>Wie wird ein Objekt <em>genau</em> bestimmt, wenn es in der Grundmenge, von der man ausgeht, nicht vorkommt?</strong> — und beide beantworten sie sie mit demselben Mechanismus: <strong>einer Vervollständigungs- / Grenzbedingung, die aus einer Menge von Kandidaten genau <em>einen</em> Punkt <em>auswählt</em>.</strong></p>
+  <p>Bei <b>A</b> (Cauchy-Sequenzen &amp; Dedekind-Schnitte) ist die Grundmenge die rationalen Zahlen ℚ, und das „fehlende" Objekt ist eine irrationale Zahl wie √2. Diese ist in ℚ nicht da, aber sie ist <em>eindeutig fixiert</em> — einmal <em>dynamisch/metrisch</em> als Grenze einer Cauchy-Sequenz (die Glieder rücken beliebig dicht zusammen, ∀ε&gt;0 ∃N), zumal <em>statisch/ordnungstheoretisch</em> als Dedekind-Schnitt (die Lücke, in die alle „kleineren" Rationalen links und alle „größeren" rechts fallen). A: <em>„Die Zahl sitzt in der Lücke."</em> Beide Wege liefern <em>isomorphe</em> reelle Zahlen ℝ.</p>
+  <p>Bei <b>B</b> (Warum die Welt 3-dimensional ist, nach Tom Morley 1985) ist die Grundmenge die Menge der Raumdimensionen {1,2,3,4,…}, und das „fehlende" Objekt ist die <em>eine</em> physikalisch sinnvolle Dimension. Sie wird nicht direkt vorgegeben, sondern <em>als Überlebende einer Grenzbedingung</em> ausgewählt: eine radial-symmetrische Welle muss bis zum Unendlichen (r→∞) <em>verzerrungsfrei</em> ankommen (die Form des Signals f bleibt erhalten). Nur n=1 und n=3 überleben diese Asymptote; verlangt man zusätzlich, dass die Amplitude <em>abklingt</em> (α(r)→0), bleibt exakt <strong>n=3</strong>.</p>
+  <p>Die gemeinsame Form, die die Fusion aufstellt, lautet <strong>„Vervollständigung = Auswahl":</strong> Ein Objekt wird zu einer <em>Zahl</em> bzw. zur <em>Dimension der Welt</em>, sobald eine Vervollständigkeitsbedingung (Konvergenz, Schnitt, Ausbreitung bis r→∞) einen <em>einzigartigen Stabilisierungspunkt</em> erzwingt. √2 (A) und die 3 (B) sind <em>derselbe Typ</em> von Objekt: <strong>der eine feste Punkt, der einer Vervollständigungsbedingung aus einer dichten bzw. strukturierten Menge übersteht</strong> — ein Punkt, der selbst zur Grundmenge gehört, aber ausschließlich durch sein Verhältnis zu ihr bestimmt ist. A <em>beweist</em>, dass die beiden Gesichter (metrisches Limit ↔ ordnungstheoretischer Schnitt) dasselbe ℝ treffen; B <em>vollzieht</em> dieselbe Logik an der Dimensionslinie nach, um die Welt auszuwählen, in der wir leben.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Womit wird das Objekt festgemacht?</span>
+    <h3>Ohne jede Metrik, allein per Ordnung (A) vs. nur über Metrik &amp; Asymptotik (B)</h3>
+    <p><b>A</b> betont ausdrücklich, dass eine reelle Zahl sich <em>ohne jeden Abstandsbegriff und ohne jedes Grenzwertverfahren</em> fixieren lässt: Der Dedekind-Schnitt ist ein <em>statischer</em> „Schnitt" der totalen Ordnung (L ∪ R = ℚ, L maxlos), den A als <em>„weniger konstruktiv"</em> und als <em>„Ordnungs-Vervollständigung"</em> der <em>„Metrischen Vervollständigung"</em> (Cauchy) gegenüberstellt. Die Zahl braucht bei A <em>keine</em> Distanz, kein ε, keine Bewegung.</p>
+    <p><b>B</b> kann die Dimension <em>nur</em> über eine <em>metrische, grenzwertige</em> Route fassen: es braucht den Abstand r, die Ausbreitungsgeschwindigkeit c und die <em>Asymptote r→∞</em> („das Signal kommt bis ins Unendliche unverzerrt an"), und die entscheidende Größe ist ein Abstandsgesetz α(r)=1/r. Ein <em>„Dedekind-Schnitt der Dimension"</em> — eine reine Ordnungs-Lücke ohne Limit — existiert in B <em>nicht</em>. Die beiden stehen also unvereinbar da, ob das Objekt schon <em>ohne</em> Grenze festgemacht werden <em>kann</em> (A: ja) oder <em>nur</em> durch eine (B: ja).</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 2 · Liefert die Bedingung genau EINES?</span>
+    <h3>Automatisch eindeutig (A) vs. zweielementig + Tie-Breaker (B)</h3>
+    <p><b>A</b>: Die Vervollständigung liefert <em>automatisch einen einzigen Punkt</em>. √2 ist <em>die eine</em> Grenze der Newton-Sequenz <em>und</em> <em>der eine</em> Schnitt; A fasst das zusammen: „Beide liefern <em>isomorphe</em> reelle Zahlen ℝ". Eindeutigkeit ist ein <em>direkter</em> mathematischer Erfolg der Vervollständigung.</p>
+    <p><b>B</b>: Die Bedingung „verzerrungsfrei" liefert <em>allein</em> eine <em>zweielementige</em> Überlebensmenge {n=1, n=3} — <em>keine</em> eindeutige Dimension. Die eindeutige „3" entsteht erst, nachdem man einen <em>zusätzlichen, physikalischen</em> Tie-Breaker anhängt: In 1D gilt α(r)=1, es gibt <em>keine</em> Abschwächung → „unerträglich laut", „unendlich laut" → unphysikalisch. B's Mathematik also <em>unterbestimmt</em> die Antwort; Eindeutigkeit ist hier <em>kein</em> Folge der Grenzbedingung, sondern wird von außen importiert.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 3 · Wodurch ist der Überlebende „speziell"?</span>
+    <h3>Lage in dichter Ordnung (A) vs. algebraische Koinzidenz (B)</h3>
+    <p><b>A</b> macht √2 speziell durch seine <em>ordnungstopologische Lage</em>: Es ist der <em>Rand</em> / die <em>Lücke</em> in der dichten Menge ℚ — zwischen den beiden unbeschränkten Mengen L={q:q²&lt;2} und R={q:q²≥2} gibt es <em>keine rationale</em> Zahl. Die Sonderstellung ist also <em>relational / positional</em>.</p>
+    <p><b>B</b> macht die 3 speziell durch ein <em>algebraisches, fast zufälliges</em> Phänomen: Zwei <em>unabhängige</em> Gleichungen — aus der Koeffizientenanalyse β(β+n−2)=0 (also β=0 oder β=2−n) einerseits und β=(n−1)/2 andererseits — sind <em>gleichzeitig</em> erfüllbar <em>gerade</em> bei n=1 und n=3. Das ist keine „Position in einer dichten Menge" (die Dimensionen sind diskret!), sondern ein <em>Lösbarkeits-Zusammenstoß</em> zweier Bedingungen. A gründet die Sonderstellung auf <em>Ordnung/Lücke</em>, B auf <em>gleichzeitige algebraische Lösbarkeit</em>.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag" style="background:transparent;">Auflösung 1 · Schnitt und Limit sind zwei Gesichter desselben</span>
+    <p>A <em>beweist</em> genau das: Die metrische (Cauchy) und die ordnungstheoretische (Dedekind) Vervollständigung treffen auf <em>dasselbe</em> Objekt (isomorphes ℝ). Der Scheinwiderspruch „kann ohne Grenze" (A) vs. „nur mit Grenze" (B) löst sich auf, wenn man B's Resultat als <em>Schnitt an der Dimensionslinie</em> liest: „3 ist der isolierte Überlebende" ist strukturell ein Schnitt, <em>erreicht</em> über ein Limit (r→∞). <strong>Fusioniert:</strong> Ein Objekt ist bestimmt, wenn <em>Schnitt und Limit dasselbe treffen</em>; A tut es für ℝ, B tut es für die Dimension — B braucht das Limit nur, weil seine „Linie" (die Dimensionen) <em>diskret</em> ist und der Schnitt dort nur über die Asymptote greift.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 2 · B's Tie-Breaker ist selbst ein Limit</span>
+    <p>Der scheinbar „von außen importierte" physikalische Ausschluß von n=1 ist in Wahrheit <em>genau</em> eine weitere Grenzbedingung: die Forderung, dass die Dämpfung <em>verschwinde</em>, α(r)→0 für r→∞. Für n=3 gilt α=1/r→0 (Signal wird leiser), für n=1 gilt α=1 (bleibt laut). Legt man <em>diese zweite Grenze</em> an, so kollabiert die Menge {1,3} auf die <em>eindeutige</em> 3 — <em>genau wie</em> in A, wo das ε→0-Limit das ε-Band auf den <em>einen</em> Punkt √2 zusammenzieht. <strong>Fusioniert:</strong> In <em>beiden</em> Papieren entsteht Eindeutigkeit aus einem <em>Limit</em>; B's „Physik-Argument" ist nur das r→∞-Limit, in physikalischer Sprache umgeschrieben. Der Widerspruch „automatisch eindeutig vs. erst durch Tie-Breaker" fällt weg, sobald man den Tie-Breaker als <em>weitere</em> (Dekay-)Grenze erkennt.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 3 · Dichte Linie vs. diskrete Linie</span>
+    <p>Warum ist bei A die „Lücke" ein einzelner <em>Punkt</em> (√2) und bei B eine <em>Menge</em> ({1,3})? Weil A's Grundmenge ℚ <em>dicht</em> ist (zwischen je zwei Rationalen liegt wieder eine) und B's Grundmenge {1,2,3,4,…} <em>diskret</em>. <strong>Fusioniert:</strong> An einer <em>dichten</em> Linie ist ein Schnitt ein einzelner Punkt in der Menge — der „reelle Punkt". An einer <em>diskreten</em> Linie degeneriert der „Schnitt" zu einer Menge <em>isolierter</em> Lösungspunkte. B's algebraische Koinzidenz ist damit das <em>diskrete Pendant</em> zu A's ordnungstheoretischer Lücke: dieselbe Auswahl-Operation, auf zwei verschiedenen Linientypen angewandt.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px; border-left-color:var(--mn-accent);">
+    <span class="tag" style="background:transparent;">Gefasste Schlussposition</span>
+    <p>√2 und die 3 sind <em>beide</em> <strong>der eine Punkt, den eine Vervollständigungs-Bedingung (Grenze / Schnitt / Ausbreitung bis r→∞) aus einer dichten bzw. strukturierten Menge aussondert.</strong> Die drei Widersprüche (Metrik-vs-Schnitt, Eindeutigkeit, Art der Sonderstellung) sind keine echten Kontradictionen, sondern die <em>drei Gesichter</em> eines Prinzips — <strong>Vervollständigung = Auswahl</strong>: Man geht von einer unvollständigen, „löchrigen" Menge aus (ℚ ohne √2; Dimensionen ohne „die Welt") und lässt eine Grenzbedingung laufen; was als <em>einziges Überleben / Fixpunkt</em> übrig bleibt, ist das Objekt. A liefert die <em>dichte, bewiesene</em> Version; B die <em>diskrete, physikalische</em> Version desselben Auswahlmechanismus.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Das gemeinsame Skelett hat vier Slots: eine <strong>Grundmenge</strong> (unvollständig, „löchrig"), eine <strong>Vervollständigungs-Bedingung</strong> (ein Limit / ein Schnitt), einen <strong>Grenzwert</strong> (ε→0 bzw. r→∞), und einen <strong>Überlebenden</strong> (genau EINE Zahl / EINE Dimension). A und B füllen diese Slots aus — A auf der <em>dichten</em> Zahlenlinie, B auf der <em>diskreten</em> Dimensionslinie.</p>
+
+  <div class="ladder">
+    <span class="tag">A · Die reelle Zahl (√2) als fester Punkt</span>
+    <ol>
+      <li><b>Cauchy-Definition (metrische Vervollständigung):</b> Eine Folge rationaler Zahlen (a₁,a₂,…) ist Cauchy, wenn ∀ε&gt;0 ∃N ∀m,n≥N: |aₘ−aₙ|&lt;ε. Jede reelle Zahl ist eine <em>Äquivalenzklasse</em> solcher Folgen. Man braucht eine <em>Metrik</em>; man erhält <em>Approximationen</em> (konstruktiv).</li>
+      <li><b>Beispiel-Sequenzen auf √2 und Freunde:</b> √2 via Newton aₙ₊₁=(aₙ+2/aₙ)/2 (a₀=1); e via Partialsummen Σ1/k!; π via Leibniz 4·Σ(−1)ᵏ/(2k+1); φ via Fibonacci-Quotienten; (−1)ⁿ/n→0. Gegenbeispiel: sin(n) ist <em>keine</em> Cauchy-Sequenz (keine Lücke, keine Grenze).</li>
+      <li><b>Dedekind-Schnitt (ordnungstheoretische Vervollständigung):</b> Teilt ℚ in L (links) und R (rechts) mit L&lt;R, L maxlos, L∪R=ℚ. Für √2: L={q∈ℚ : q²&lt;2}, R={q∈ℚ : q²≥2}. „Egal wie weit man reinzoomt — es gibt immer Rationale auf beiden Seiten, <em>keine</em> genau am Schnitt." Man braucht eine <em>totale Ordnung</em>, keine Metrik (statisch, „weniger konstruktiv").</li>
+      <li><b>Ergebnis:</b> Beide Wege liefern <em>isomorphe</em> ℝ. Kernsatz: <em>Cauchy</em> = „Ich nähere mich Schritt für Schritt an"; <em>Dedekind</em> = „Ich teile ALLE Rationale in kleiner/größer — die Zahl ist die Grenze dazwischen".</li>
+    </ol>
+  </div>
+
+  <div class="ladder b">
+    <span class="tag b">B · Die Dimension (3) als fester Punkt</span>
+    <ol>
+      <li><b>n-dimensionale Wellengleichung:</b> ∑ᵢ uₓᵢₓᵢ = (1/c²)·u_tt. Radial-symmetrisch (v(r,t)=u(x,t), r=√(x₁²+…+xₙ²)): v_rr + (n−1)/r·v_r = (1/c²)·v_tt. Der Term (n−1)/r steuert, wie die Welle „verdünnt".</li>
+      <li><b>Ansatz „verzerrungsfrei":</b> v(r,t) = α(r)·f(t−δ(r)), mit Dämpfung α(r)&gt;0, α(0)=1, Verzögerung δ(r)&gt;0, δ(0)=0 — die <em>Form</em> des Signals f bleibt unverändert (nur leiser + verspätet, wie ein Radio).</li>
+      <li><b>Koeffizientenvergleich:</b> Weil es für <em>jedes</em> Signal f gelten muss, fallen die Koeffizienten von f, f′, f″ einzeln raus → (1) αδ′²=α/c² ⇒ δ=r/c; (3) α″+(n−1)/r·α′=0; (4) −2α′+(n−1)/r·α=0.</li>
+      <li><b>Potenzgesetz α=K·r^β:</b> aus (3): β(β−1)+(n−1)β=0 ⇒ β=0 oder β=2−n; aus (4): β=(n−1)/2. Gleichzeitig erfüllbar <em>nur</em> bei <b>n=1</b> (β=0, α=1 — keine Dämpfung) und <b>n=3</b> (β=−1, α=1/r — saubere Dämpfung); n=2 und n≥4 unmöglich.</li>
+      <li><b>Ergebnis:</b> v(r,t)=f(t−r/c) (1D) bzw. <b>v(r,t)=(1/r)·f(t−r/c)</b> (3D). Die 3D-Welle kommt sauber an und wird mit 1/r schwächer — „perfekt für Kommunikation". Mit der Zusatz-Grenze α(r)→0 (n=1 bleibt „unendlich laut") wird die 3 <em>eindeutig</em>.</li>
+    </ol>
+  </div>
+
+  <p><strong>Die isomorphe Einbettung (der eigentliche Fusionsinhalt) — dieselben vier Slots, zwei Linientypen:</strong></p>
+  <div class="formula">                 A (reelle Zahl √2)                B (Dimension der Welt 3)
+Grundmenge     ℚ  (dicht, unvollständig)            {1,2,3,4,5,…}  (diskret, „die Welt fehlt")
+Bedingung      Cauchy-Limit  ODER  Dedekind-Schnitt  "verzerrungsfreie Ausbreitung bis r→∞"
+Grenzwert      ε→0  (ε-Band um √2)                   r→∞  (Signalform bleibt f)  +  α→0
+Überlebende    √2  (EIN Punkt, isomorphes ℝ)          {1,3}  →  nach α→0:  EINDEUTIG 3
+Sonderstellung Lücke in DICHTER Ordnung ℚ             algebraische KOINZIDENZ (β-Glgn.)
+Ergebnis       EINE reelle Zahl                       EINE Dimension  (3)</div>
+
+  <p>Die <em>tiefe Einheit</em>: In beiden Fällen ist das finale Objekt <em>nicht</em> ein Element der Grundmenge, sondern der <em>einzigartige Stabilisierungspunkt</em> eines Grenzprozesses. √2 ist der Punkt, auf den <em>jede</em> hinreichend gute Approximation (Cauchy) zwingt — und die Lücke, die <em>keine</em> rationale Zahl füllt (Dedekind). Die 3 ist die Dimension, auf die <em>jedes</em> bis ins Unendliche unverzerrt weiterlaufende Signal (B) zwingt — nach α→0 die <em>einzige</em>. A liefert den <em>Beweis</em>, dass zwei unterschiedliche Grenzzugänge dasselbe Objekt erzeugen (Metrik ↔ Ordnung); B ist der <em>Physik-Anwendungsfall</em> desselben Gedankens: Ein Grenzgesetz (Wellenausbreitung) wird über die <em>ganze</em> Menge der Kandidaten (Dimensionen) laufen gelassen, und der Überlebende <em>ist</em> die Welt, in der Kommunikation — Radio, Licht, Sprache, Astronomie — überhaupt möglich ist.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — aus dichtem Raster wird genau EIN fester Punkt</h2>
+  <p>Ein Canvas, zwei Panels, <em>dieselbe</em> Geste <strong>„Vervollständigung = Auswahl"</strong>. Oben (A) konvergiert die Cauchy-Sequenz (Newton auf √2) in ein ε-Band, das beim ε→0 auf den <em>einen</em> Punkt √2 zusammenfällt — der ε-N-Checker zeigt, ab welchem Glied alles im Band liegt. Unten (B) zeigt die Dimensionslinie {1,2,3,4,5} die „Lücke": n=1 und n=3 leuchten als <em>Überlebende</em> der Bedingung „verzerrungsfrei"; n=2,4,5 erlöschen. Der Schalter <em>„Dämpfung α→0"</em> merkt n=1 aus (bleibt sonst „unendlich laut") und isoliert die <em>eindeutige</em> 3. Drücke ▶ — beide Panels laufen simultan auf ihren <em>einen</em> festen Punkt zusammen (ε→0 links, α→0 rechts).</p>
+
+  <div class="viz">
+    <canvas id="vizCanvas" height="440"></canvas>
+    <div class="controls">
+      <label for="epsSlider" class="cl">ε (A): <b id="epsLab">0.20</b></label>
+      <input type="range" id="epsSlider" min="0" max="100" step="1" value="13">
+    </div>
+    <div class="controls">
+      <button class="btn alt" id="decayBtn" style="margin-left:0;">Dämpfung α→0 (B): AUS</button>
+      <button class="btn" id="resetBtn">↺ Reset</button>
+      <button class="btn primary" id="runBtn">▶ Auswahl läuft</button>
+    </div>
+    <div class="readout">
+      <div class="readbox a">
+        <div class="rb-title">A · reelle Zahl √2 (dichte Linie ℚ)</div>
+        <div>ε = <b id="epsVal">0.20</b> &nbsp;·&nbsp; ab N = <b id="nVal">—</b> liegt alles im ε-Band</div>
+        <div class="regime" id="regimeA">→ EIN fester Punkt: √2 = 1.4142…</div>
+        <div class="desc">Metrische Vervollständigung: Die Cauchy-Sequenz „vergisst" ihre Anfangsglieder; das ε→0-Band isoliert den einzigen Grenzwert. Die Zahl ist der eine Punkt, der dem Raster übersteht.</div>
+      </div>
+      <div class="readbox b">
+        <div class="rb-title">B · Dimension n (diskrete Linie {1..5})</div>
+        <div>verzerrungsfrei: <b id="bSet">{ 1, 3 }</b></div>
+        <div class="regime" id="regimeB">ohne α→0: zwei Überlebende {1, 3}</div>
+        <div class="desc">Asymptotische Vervollständigung: Das Signal muss bis r→∞ Form und (nach α→0) Abklingen behalten. Wie ε→0 links fixiert α→0 rechts die eindeutige 3.</div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent)"></i> A / Sequenz / Grenze</span>
+      <span><i class="dot" style="background:var(--mn-accent2)"></i> B / Überlebende n=1</span>
+      <span><i class="dot" style="background:var(--mn-ok)"></i> fixierter Punkt / eindeutige 3</span>
+      <span><i class="dot" style="background:var(--mn-boundary)"></i> ausgeschlossen / nicht Cauchy</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Quelle A</span>
+      <h3><a href="../cauchydedeking.html">cauchydedeking.html</a></h3>
+      <p><small>„Cauchy-Sequenzen &amp; Dedekind-Schnitte – Interaktiv": Zwei Wege, die reellen Zahlen zu konstruieren — Cauchy (metrische Vervollständigung, Annäherung, Äquivalenzklassen, ε-Band, ε-N-Checker) und Dedekind (ordnungstheoretische Vervollständigung, L|Schnitt in ℚ, „die Zahl sitzt in der Lücke"), plus Seitenan-Seiten-Vergleich: beide liefern isomorphe ℝ.</small></p>
+    </div>
+    <div class="card">
+      <span class="tag b">Quelle B</span>
+      <h3><a href="../buecher/a_simple_proof_the_world_is_three_dimensional.html">a_simple_proof_the_world_is_three_dimensional.html</a></h3>
+      <p><small>„Warum die Welt 3-dimensional ist" (Visualisierung von Tom Morley 1985, SIAM Review 27(1)): Aus der n-dimensionalen Wellengleichung und dem Ansatz „verzerrungsfreie, radial-symmetrische Ausbreitung" folgt per Koeffizientenvergleich + Potenzgesetz, dass nur n=1 und n=3 funktionieren — und (weil in 1D keine Abschwächung α=1) bleibt physikalisch nur n=3.</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion N1-065 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs, reines Canvas). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('vizCanvas');
+  var ctx=canvas.getContext('2d');
+  var epsSlider=document.getElementById('epsSlider');
+  var decayBtn=document.getElementById('decayBtn');
+  var runBtn=document.getElementById('runBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var H=440, TAU=Math.PI*2;
+  var EPS_LO=0.0005, EPS_HI=0.5;
+
+  var seq=[];
+  (function(){var x=1;seq.push(x);for(var i=0;i<40;i++){x=(x+2/x)/2;seq.push(x);}})();
+  var SQRT2=Math.SQRT2;
+
+  var state={eps:0.2, decay:0, t:0, running:false, raf:null};
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';}
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function smooth(x){x=clamp(x,0,1);return x*x*(3-2*x);}
+  function line(x0,y0,x1,y1){ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();}
+  function label(t,x,y,color,font,align){ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align||'center';ctx.textBaseline='middle';ctx.fillText(t,x,y);}
+  function dot(x,y,r,fill,glow){
+    if(glow){ctx.globalAlpha=0.22;ctx.beginPath();ctx.arc(x,y,r+7,0,TAU);ctx.fillStyle=fill;ctx.fill();ctx.globalAlpha=1;}
+    ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle=fill;ctx.fill();
+  }
+  function cross(x,y,col){
+    ctx.strokeStyle=col;ctx.lineWidth=2;
+    var s=7;line(x-s,y-s,x+s,y+s);line(x-s,y+s,x+s,y-s);
+  }
+  function findN(eps){
+    for(var N=0;N<seq.length;N++){
+      var ok=true;
+      for(var m=N;m<seq.length;m++){if(Math.abs(seq[m]-SQRT2)>=eps){ok=false;break;}}
+      if(ok)return N;
+    }
+    return -1;
+  }
+  function epsFromSlider(v){v=+v;return Math.exp(Math.log(EPS_HI)+ (v/100)*(Math.log(EPS_LO)-Math.log(EPS_HI)));}
+  function sliderFromEps(e){return (Math.log(e)-Math.log(EPS_HI))/(Math.log(EPS_LO)-Math.log(EPS_HI))*100;}
+
+  function renderA(lx0,lx1,C){
+    var top=54, bot=182, inner0=lx0+14, inner1=lx1-14, i;
+    var vMin=0.95, vMax=1.55;
+    function yA(v){return top+(1-(v-vMin)/(vMax-vMin))*(bot-top);}
+    function xA(n){return inner0+(n/10)*(inner1-inner0);}
+    label('CAUCHY / LIMIT   ·   A',(lx0+lx1)/2,26,C.fg,'bold 14px Segoe UI, sans-serif');
+    label('Newton auf √2  :  aₙ₊₁ = (aₙ + 2/aₙ) / 2   ·   ε-Band kollabiert auf EINE Zahl',(lx0+lx1)/2,44,C.dim,'11px Segoe UI, sans-serif');
+    // horizontal grid
+    ctx.strokeStyle=hexToRgba(C.border,0.6);ctx.lineWidth=1;
+    for(i=0;i<=3;i++){var gy=top+(i/3)*(bot-top);line(inner0,gy,inner1,gy);}
+    // eps band
+    var bT=yA(SQRT2+state.eps), bB=yA(SQRT2-state.eps);
+    if(bT<top)bT=top; if(bB>bot)bB=bot;
+    ctx.fillStyle=hexToRgba(C.ok,0.12);ctx.fillRect(inner0,bT,inner1-inner0,Math.max(0,bB-bT));
+    ctx.strokeStyle=hexToRgba(C.ok,0.55);ctx.setLineDash([4,4]);
+    line(inner0,bT,inner1,bT); line(inner0,bB,inner1,bB); ctx.setLineDash([]);
+    // limit line
+    var yl=yA(SQRT2);
+    ctx.strokeStyle=C.A;ctx.lineWidth=1.6;ctx.setLineDash([7,4]);
+    line(inner0,yl,inner1,yl);ctx.setLineDash([]);
+    label('Grenzwert √2',inner0+4,yl-8,C.A,'11px Segoe UI, sans-serif','left');
+    // connecting line
+    if(seq.length>1){
+      ctx.strokeStyle=hexToRgba(C.A,0.5);ctx.lineWidth=1.6;ctx.beginPath();
+      for(i=0;i<=10;i++){var px=xA(i),py=yA(seq[i]);if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+      ctx.stroke();
+    }
+    // points
+    for(i=0;i<=10;i++){
+      var inband=Math.abs(seq[i]-SQRT2)<state.eps;
+      dot(xA(i),yA(seq[i]),4,inband?C.ok:C.boundary,false);
+    }
+    // fixed point marker (right end)
+    dot(xA(10),yA(SQRT2),7,C.ok,true);
+    label('√2 = 1.4142…',xA(10),yA(SQRT2)-18,C.ok,'bold 11px Segoe UI, sans-serif');
+    label('EIN fester Punkt',xA(10),yA(SQRT2)+16,C.dim,'10px Segoe UI, sans-serif');
+    // x labels
+    ctx.fillStyle=C.dim;ctx.font='10px Segoe UI, sans-serif';ctx.textAlign='center';
+    ctx.fillText('n = 0',xA(0),bot+14);
+    ctx.fillText('n = 10',xA(10),bot+14);
+  }
+
+  function renderB(rx0,rx1,C){
+    var yLine=332, inner0=rx0+14, inner1=rx1-14, i;
+    label('WELLE / ASYMPTOTE   ·   B',(rx0+rx1)/2,238,C.fg,'bold 14px Segoe UI, sans-serif');
+    label('Dimensionslinie {1…5}  ·  Überlebende der Bedingung „verzerrungsfrei"  ·  α→0 isoliert die 3',(rx0+rx1)/2,256,C.dim,'11px Segoe UI, sans-serif');
+    // survivor counter
+    if(state.decay>0.5){label('eindeutig:  n = 3   ✓',inner1,286,C.ok,'bold 14px Segoe UI, sans-serif','right');}
+    else{label('Überlebende:  { 1 , 3 }',inner1,286,C.B,'bold 14px Segoe UI, sans-serif','right');}
+    // dimension line
+    ctx.strokeStyle=C.border;ctx.lineWidth=2;line(inner0,yLine,inner1,yLine);
+    var dims=[1,2,3,4,5];
+    for(i=0;i<5;i++){
+      var n=dims[i];
+      var px=inner0+((n-1)/4)*(inner1-inner0);
+      var isSolv=(n===1||n===3);
+      if(isSolv){
+        var isOne=(n===1);
+        var col=isOne?C.B:C.ok;
+        if(isOne){ctx.globalAlpha=1-state.decay;}
+        dot(px,yLine,9,col,true);
+        ctx.globalAlpha=1;
+        if(isOne){
+          if(state.decay>0.5){cross(px,yLine,C.boundary);label('α=1 → bleibt laut  ✗',px,yLine-26,C.boundary,'10px Segoe UI, sans-serif');}
+          else{label('α=1  (keine Dämpfung)',px,yLine-26,C.B,'10px Segoe UI, sans-serif');}
+        }else{
+          label('α=1/r → 0   ✓',px,yLine-26,C.ok,'10px Segoe UI, sans-serif');
+          label('β = −1',px,yLine+22,C.dim,'10px Segoe UI, sans-serif');
+        }
+        label('n = '+n,px,yLine+ (isOne?22:36),col,'bold 12px Segoe UI, sans-serif');
+      }else{
+        dot(px,yLine,6,C.dim,false);
+        cross(px,yLine,hexToRgba(C.boundary,0.85));
+        label('keine Lösung',px,yLine-26,C.dim,'10px Segoe UI, sans-serif');
+        label('n = '+n,px,yLine+22,C.dim,'11px Segoe UI, sans-serif');
+      }
+    }
+  }
+
+  function render(){
+    if(!ctx)return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||700;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--mn-panel2');ctx.fillRect(0,0,W,H);
+    var C={
+      A:cssVar('--mn-accent'), B:cssVar('--mn-accent2'),
+      ok:cssVar('--mn-ok'), boundary:cssVar('--mn-boundary'),
+      fg:cssVar('--mn-fg'), dim:cssVar('--mn-dim'), border:cssVar('--mn-border')
+    };
+    var gap=Math.min(24,W*0.03);
+    var lx0=12, lx1=(W-gap)/2, rx2=(W+gap)/2, rx3=W-12;
+    label('VERVOLLSTÄNDIGUNG  =  AUSWAHL   —   dichtes Raster  →  genau EIN fester Punkt',W/2,14,C.dim,'11px Segoe UI, sans-serif');
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;line(12,206,W-12,206);
+    renderA(lx0,lx1,C);
+    renderB(rx2,rx3,C);
+  }
+
+  function updateReadout(){
+    var C={ok:cssVar('--mn-ok'),boundary:cssVar('--mn-boundary')};
+    document.getElementById('epsLab').textContent=state.eps<0.01?state.eps.toFixed(4):state.eps.toFixed(2);
+    document.getElementById('epsVal').textContent=state.eps<0.01?state.eps.toFixed(4):state.eps.toFixed(2);
+    var N=findN(state.eps);
+    document.getElementById('nVal').textContent=N<0?'—':N;
+    var ra=document.getElementById('regimeA');
+    ra.textContent='→ EIN fester Punkt: √2 = 1.4142…';
+    ra.style.color=C.ok;
+    var bs=state.decay>0.5?'n = 3 (eindeutig)':'{ 1, 3 }';
+    document.getElementById('bSet').textContent=bs;
+    var rb=document.getElementById('regimeB');
+    if(state.decay>0.5){rb.textContent='nach α→0:  eindeutig  n = 3  ✓';rb.style.color=C.ok;}
+    else{rb.textContent='ohne α→0:  zwei Überlebende  {1, 3}';rb.style.color=C.boundary;}
+  }
+
+  function syncControls(){
+    epsSlider.value=Math.round(sliderFromEps(state.eps));
+    var on=state.decay>0.5;
+    decayBtn.textContent='Dämpfung α→0 (B): '+(on?'AN':'AUS');
+    decayBtn.style.borderColor=on?cssVar('--mn-ok'):'';
+  }
+
+  function stop(){if(state.raf)cancelAnimationFrame(state.raf);state.raf=null;state.running=false;}
+  function run(){
+    stop();state.t=0;state.running=true;
+    function step(){
+      state.t=Math.min(1,state.t+1/220);
+      var t=state.t;
+      state.eps=Math.exp(Math.log(EPS_HI)+t*(Math.log(EPS_LO)-Math.log(EPS_HI)));
+      state.decay=smooth((t-0.45)/0.55);
+      syncControls();render();updateReadout();
+      if(state.t<1){state.raf=requestAnimationFrame(step);}
+      else{state.raf=null;state.running=false;syncControls();render();updateReadout();}
+    }
+    state.raf=requestAnimationFrame(step);
+  }
+  function reset(){stop();state.eps=0.2;state.decay=0;state.t=0;syncControls();render();updateReadout();}
+
+  runBtn.addEventListener('click',run);
+  resetBtn.addEventListener('click',reset);
+  epsSlider.addEventListener('input',function(){if(state.running)stop();state.eps=epsFromSlider(+this.value);render();updateReadout();});
+  decayBtn.addEventListener('click',function(){if(state.running)stop();state.decay=state.decay>0.5?0:1;syncControls();render();updateReadout();});
+
+  window.toggleTheme=function(){document.documentElement.classList.toggle('dark');render();};
+  window.addEventListener('resize',function(){render();});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+  syncControls();render();updateReadout();
+})();
+</script>
+</body>
+</html>

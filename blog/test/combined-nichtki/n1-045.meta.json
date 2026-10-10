@@ -1,0 +1,16 @@
+{
+  "no": "045",
+  "a": "topology_examples.html",
+  "b": "paper/fibrations.html",
+  "a_title": "Topology You Can See",
+  "b_title": "Fibrationen \u2014 Formalismus & Intuition",
+  "combined_theme": "faserbundel-und-topologische-invarianten",
+  "one_line": "Die Projektion p:E\u2192B (Faserb\u00fcndel) ist das eine Objekt, das Pac-Mans Torus, den Igel-Satz und Eulers Z\u00e4hlung als Spezialf\u00e4lle von \u00ablokal trivial, global verklebt\u00bb vereinigt.",
+  "contradictions": [
+    "A ist formelfrei (\u00abno formulas needed, just your eyes and mouse\u00bb), B verlangt jede Formel mit \\underbrace-Beschriftung als gleichwertiges R\u00fcckgrat neben den Bildern.",
+    "A reduziert die Topologie auf eine einzelne Zahl (Euler-Charakteristik: Kugel 2, Torus 0), B beh\u00e4lt die ganze Leiter der Homotopiegruppen \u03c0_n plus Monodromie \u2014 grober Fingerabdruck vs. feine Struktur.",
+    "A stellt den Igel-Satz als Existenzgarantie (irgendwo ist der Wind garantiert 0) dar, B als Obstruktion (TS\u00b2 hat keine nirgends-verschwindende Schnitt)."
+  ],
+  "resolution": "Intuition und Formalismus sind zwei Altituden desselben Faserb\u00fcndels (kein Widerspruch, sondern Altituden); Eulers Zahl ist der grobe Schatten der feinen Homotopie-/Monodromiestruktur; \u00abes gibt eine Nullstelle\u00bb ist logisch \u00e4quivalent zu \u00abes gibt keinen nirgends-verschwindenden Schnitt\u00bb \u2014 ein Satz, zwei Namen.",
+  "viz": "Theme-aware Canvas \u00abMonodromie & der fehlende Schnitt\u00bb: Basis S\u1d57 mit umlaufendem Punkt, Faser [\u22121,1] mit transportiertem Vektor (Trivial \u03c1\u2261id vs M\u00f6bius \u03c1(1)=\u2212id) und der Schnittkurve s(\u03b8)=cos(\u03b8/2), die bei M\u00f6bius zwingend 0 wird \u2014 der Igel-Satz als fehlender Schnitt. Inline, keine Netzdaten."
+}

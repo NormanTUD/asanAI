@@ -1,0 +1,16 @@
+{
+  "no": "015",
+  "a": "anatomie_des_verstehens.html",
+  "b": "buecher/hermann_schmitz.html",
+  "a_title": "Die Anatomie des Verstehens",
+  "b_title": "Hermann Schmitz – Philosophie des Leibes",
+  "combined_theme": "leibliches-verstehen-phasenuebergang",
+  "one_line": "Verstehen ist ein Phasenübergang, der im Leib stattfindet: A's sich schließendes Netz (Perkolation) kippt genau dann, wenn B's vitaler Antrieb von Engung in Weitung umschaltet.",
+  "contradictions": [
+    "Substrat: A modelliert Verstehen leiblich-neutral als reine Topologie (Mangel an Ordnung, nicht Information), B macht Leib/Affekt zum Konstitutionsprinzip — ohne vitalen Antrieb kein Bewusstsein, jede Erfahrung ist schon gefühlt.",
+    "Ort des Kippens: A lokalisiert den Phasenübergang im Strukturraum des Netzes (Riesenkomponente, zählbar), B im Körper (Umschlag des vitalen Antriebs Enge/Weite, first-person-somatisch).",
+    "Vermittlung: A verlangt Analogie (Neues nur mit altem Material, vermittelte Brücken) als Weg zum Verstehen, B setzt darunter die unreflektierte, unreflektierte Einleibung (Du-Evidenz ohne Sprache/Analogie) — die Reihenfolge aus A und B ist umgekehrt."
+  ],
+  "resolution": "A ist B minus Leib, B ist A plus Leib: A liefert das abstrahierbare Schattengerüst (Metasicht), B das fleischige Erleben; dieselbe Ordnung auf zwei Ebenen. Das Kippen ist ein und dasselbe Ereignis — Struktur kippt, weil der Leib kippt (Perkolationsparameter = gefühlte Erleichterung). Analogie (A) baut auf Einleibung (B) auf: erst einleiben, dann analogisieren, dann kippen.",
+  "viz": "Canvas-Feld aus Leibesinseln; Regler steuert vitalen Antrieb (Enge<->Weite); unterhalb der Perkolationsschwelle fragmentiert/engespannt, oberhalb kippt die größte Komponente auf einmal in Weitung/Erleichterung — A's Phasenübergang als B's somatisches Kippen."
+}

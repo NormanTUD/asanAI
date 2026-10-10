@@ -1,0 +1,16 @@
+{
+  "no": "070",
+  "a": "bundles.html",
+  "b": "finneganswake3.html",
+  "a_title": "Principal Bundles – Interaktives Lerntool",
+  "b_title": "Finnegans Wake",
+  "combined_theme": "holonomie-des-zyklus",
+  "one_line": "Ein Principal Bundle ist ein Zyklus mit Gedächtnis: Die Holonomie (der Twist nach einem Umlauf) ist dasselbe wie Finnegans Wakes kreisende Erzählung, die jeder Runde verändert zurückkehrt.",
+  "contradictions": [
+    "Linear vs. zirkular: A ist lineare Didaktik mit Endpunkt (Fortschrittsbalken, abschließender Quiz-Score); B ist explizit zyklisch (Kapitel 8 macht startTransition(0), 'Cycle restarts', Fluss->Meer->Sturz).",
+    "Feste Wahrheit vs. wandernde Bedeutung: A-Quiz hat genau eine stabile richtige Antwort pro Frage; B-Rätselkapitel (Kap. 6) rotiert das Ziel über die Zeit (quizTarget=floor(timer/5)), keine Antwort bleibt gültig.",
+    "Ruhe/Null als Ursprung vs. der Sturz: A-Grundzustand ist das triviale Bündel / F=0 (Twist=0, 'immer parallel'); B beginnt mit dem katastrophalen Fall (Kap. 0), der zugleich Anfang und (zyklisch) Ende ist."
+  ],
+  "resolution": "Beides ist dieselbe Struktur auf verschiedenen Ebenen: Der Zusammenhang A ist der Twist, den eine geschlossene Schleife trägt, und A's Aharonov-Bohm beweist, dass genau dieses Nicht-Zurückkommen-Triviale den Inhalt trägt (A ist real, nicht nur F). A's lineare Didaktik ist nur eine lokale Karte (Trivialisierung); B's Kreis ist das globale Objekt (Holonomie/Übergangsfunktionen). Reduktion auf die Invariante (A) und Bedeutung aus der Wiederholung (B) sind zwei Seiten derselben Münze: Übergangsfunktionen = Puns/Umstimmen, Äquivarianz = Kohärenz der Erzählstimme, Krümmung = lokale Spannung, Holonomie = Sinn-Gehalt einer Runde.",
+  "viz": "Holonomie-Uhr auf der Wakeschleife (Canvas): Eine Uhr (Faser U(1)) wandert um einen Kreis (B's Zyklus); ein Twist-Regler steuert, wie stark sie nach einem Umlauf gedreht ist (A's Holonomie exp(i*integral A)). Unten das Aharonov-Bohm-Zwei-Pfade-Diagramm mit Interferenzpunkt. Themensensitiv, Inline-Daten, requestAnimationFrame."
+}

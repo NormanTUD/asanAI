@@ -1,0 +1,16 @@
+{
+  "no": "046",
+  "a": "loopspaces.html",
+  "b": "laplace.html",
+  "a_title": "Ω — Loop Spaces in der Homotopietypentheorie",
+  "b_title": "∇² — Den Laplace-Operator intuitiv verstehen",
+  "combined_theme": "local-density-global-invariant",
+  "one_line": "Beide Papiere sind 'Abweichung vom Zentrum + Iteration → abelsche Struktur': A misst, wie weit eine Schleife von der Identitätsschleife refl abweicht (Windungszahl n ∈ ℤ, π₁(S¹)≅ℤ), B wie weit ein Punkt vom Nachbar-Mittel abweicht (Δf); die lokale Größe Δf (oszilliert um 0) ist das Analogon der lokalen Wendungs-/Krümmungsdichte einer Schleife, deren Integration über eine volle Umdrehung die exakte globale Invariante n·2π ergibt (Wendungszahl-Satz), und Eckmann–Hilton (Ω² abelsch) ist die Topologie-Seite davon, dass der lineare Mittelungsoperator des Laplace von vornherein abelsch ist.",
+  "contradictions": [
+    "Lokal vs. global: laplace.html — Δ ist ein lokaler, punktueller Differentialoperator (Wert an x hängt nur von einer ε-Nachbarschaft ab); loopspaces.html — die Windungszahl/π₁ ist eine globale topologische Invariante, die unter beliebig kleinen lokalen Deformationen der Schleife invariant bleibt.",
+    "Abelsch vs. nichtabel'sch (Stufe 1): laplace.html — der Mittelungs-/Laplacian-Operator ist linear und überall kommutativ (5-Punkt-Stencil summiert symmetrisch, Diffusionsschritte vertauschbar), abelsch auf jeder Stufe; loopspaces.html — Ω¹ (Fundamentalgruppe) ist im Allgemeinen nichtabel'sch (p·q ≠ q·p) und wird erst ab Ω² abelsch (Eckmann–Hilton).",
+    "Approximativ vs. exakt: laplace.html — der diskrete Laplacian (5-Punkt-Stencil) ist nur eine Approximation des kontinuierlichen Operators mit ε→0-Grenzwert und Fehler O(ε²); loopspaces.html — Homotopieklassen/π₁ sind exakt, diskret und kombinatorisch definiert (ein ganzzahliges Zählen ohne Grenzwert oder Approximationsfehler)."
+  ],
+  "resolution": "Die lokalen Größen sind Dichten, deren Integration die globale Invariante ergibt: Wendungszahl-Satz (1/2π)∮dθ = n ∈ ℤ zeigt, dass die lokale Wende-/Krümmungsdichte (≈ Δf, Mittel 0) über den ganzen Pfad die exakte topologische Ganzzahl ergibt (lokal=Dichte, global=Integral); Eckmann–Hilton ist die Auflösung von abelsch↔nichtabel'sch — der lineare Mittelungs-/Laplacian-Operator ist bereits das abelsche Regime, das der Abelschung π₁→H₁ entspricht, wobei Ω²/H₁ der Treffpunkt beider Seiten ist; und exakt↔approximativ löst sich im ε→0-Limit auf, da die diskrete Approximation gegen den exakten Operator konvergiert und die topologische Invariante von Haus aus ein exaktes ganzzahliges Zählen ist — beide werden 'exakt', sobald die lokale Dichte integriert und ganzzahlig abgelesen wird.",
+  "viz": "2D-Canvas (reine Inline-Daten, themenreaktiv hell/dunkel): geschlossene Schleife um den Ursprung mit einstellbarer Windungszahl n (π₁(S¹)≅ℤ); jeder Kurvenabschnitt nach dem Vorzeichen seiner lokalen Wende-/Krümmungsdichte gefärbt (rot >0 / grün <0, exakt wie Δf Tal/Berg); darunter die Dichte dθ/dt über die Umlauf-Koordinate (oszilliert um 0, Ø=0), deren Summe über eine Umdrehung die exakte globale Invariante n·2π ist. Gelber Punkt läuft die Schleife ab; Regler n (−3..3) und Wobble, Play- und Theme-Button, live-Readout mit Σdθ und gerundeter Windungszahl ∈ ℤ."
+}

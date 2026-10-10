@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 035: Pullback speist die Christoffel-Maschinerie</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#7c3aed; --accent2:#0f766e; --good:#16a34a; --warn:#d97706;
+  --viz-bg1:232,240,233; --viz-bg2:124,58,237; --viz-line:#c9c4b8; --viz-grid:rgba(20,20,40,0.10);
+  --viz-grad:#b45309; --viz-ellipse:#0f766e; --viz-base:#7c3aed; --viz-text:#1a1a24;
+}
+html.dark{
+  --bg:#0b0f1a; --panel:#121a2b; --text:#e8edf7; --muted:#9aa7bf; --line:#263149;
+  --accent:#c4b5fd; --accent2:#2dd4bf; --good:#86efac; --warn:#fbbf24;
+  --viz-bg1:15,23,42; --viz-bg2:168,85,247; --viz-line:#263149; --viz-grid:rgba(255,255,255,0.10);
+  --viz-grad:#fbbf24; --viz-ellipse:#2dd4bf; --viz-base:#c4b5fd; --viz-text:#f1f5f9;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.62 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.1;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 30px}
+h2{font-size:22px;margin:42px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:16.5px;margin:26px 0 8px;color:var(--accent)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 8px}
+b{color:var(--text)}
+em{color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:color-mix(in srgb, var(--line) 22%, var(--panel));border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.7}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:color-mix(in srgb, var(--line) 30%, var(--panel))}
+td:first-child{white-space:nowrap;font-weight:700;color:var(--accent)}
+canvas#viz{display:block;width:100%;height:440px;background:var(--bg);border:1px solid var(--viz-line);border-radius:12px;margin:6px 0;touch-action:none;cursor:crosshair}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+select,input[type=range]{padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-size:14px}
+input[type=range]{width:180px;padding:0}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0;font-size:13px}
+.ro{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.ro .k{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.ro .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;color:var(--accent2);font-variant-numeric:tabular-nums}
+button.action{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:13px}
+button.action:hover{border-color:var(--accent)}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.hint{color:var(--muted);font-size:13.5px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">☀ / ☾</button>
+<article>
+<h1>Der Pullback speist die Christoffel-Maschinerie</h1>
+<p class="subtitle">Fusion aus: christoffel.html ✕ pullback.html</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere erzählen, wie aus <b>einer flacheren Geometrie</b> eine <b>kurvige</b> wird — und sie sind die <b>zwei Hälften derselben Pipeline</b>. <b>B</b> (Pullback) liefert die <em>Input-Seite</em>: Eine Form — und mit ihr, entscheidend, <b>eine Metrik</b> — lebt auf einem Raum <i>N</i>; über eine glatte Abbildung <i>φ : M → N</i> wird sie <b>zurückgezogen</b> auf <i>M</i>, indem man Tangentialvektoren von <i>M</i> erst mit dem Differential <i>dφ</i> nach <i>N</i> schiebt und dann die Form darauf auswertet. Die <b>induzierte Metrik</b> einer Einbettung <i>ι : S → M</i> ist genau <i>ι*g</i>. <b>A</b> (Christoffel-Symbole) liefert die <em>Verarbeitungs- und Output-Seite</em>: Aus einer Metrik <i>g</i> berechnet man die Christoffel-Symbole <i>Γ</i> — die <b>Ableitungen</b> der Metrik — und aus ihnen <b>Paralleltransport</b> und <b>Geodäten</b>.</p>
+<p>Die fusionierte Position: <b>Die Christoffel-Symbole, die in A die „Krümmung der Koordinaten“ visualisieren, sind kein eigenes Eingabedatum — sie werden aus einer Metrik abgeleitet, und diese Metrik ist, sobald die Fläche in einen flacheren Raum eingebettet ist, selbst ein Pullback (B) der Umgebungsmetrik.</b> A's eigene Geodäten-Demo berechnet bereits die <em>induzierte Metrik</em> einer Graphfläche <i>g<sub>ij</sub> = δ<sub>ij</sub> + (∂h/∂xⁱ)(∂h/∂xⱼ)</i> — und das ist <b>exakt</b> B's Pullback <i>ι*(du²+dv²+dw²)</i> der euklidischen Metrik von ℝ³. „Wie sich die Koordinaten krümmen“ (A) ist also vollständig von einem flacheren Umgebungsräum <b>per Pullback ererbt</b> (B) — keine neue Eingabe.</p>
+<p>kurz: <b>B liefert die Metrik (Input), A differenziert sie (Verarbeitung) und integriert die Christoffel-Symbole zu Transport und Geodäten (Output).</b> Pullback und Christoffel-Symbol sind zwei aufeinanderfolgende Glieder einer Kette, keine konkurrierenden Theorien.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden Papiere widersprechen sich <b>nicht</b> in einer harten Behauptung — sie sind komplementär. Doch sie beziehen an zwei Punkten <b>inkompatible, teils entgegengesetzte Stellungen</b>:</p>
+<ul>
+<li><b>1 · Transportrichtung: vorwärts vs. rückwärts (kontravariant vs. kovariant).</b>
+<b>A</b> ist um <b>Tangential- und Basisvektoren</b> herum aufgebaut — kontravariante Objekte, die <b>vorwärts</b> entlang der Geometrie laufen: Bewegt man sich, drehen und strecken sich die Basisvektoren, und das Differential schiebt Vektoren in Richtung der Abbildung (<i>v ↦ dφ(v)</i>, dieselbe Richtung wie die Karte).
+<b>B</b> ist um <b>Differentialformen / Kovektoren</b> aufgebaut (die Metrik eingeschlossen als (0,2)-Tensor), die <b>rückwärts</b> gezogen werden: <i>φ*</i> läuft von <i>N</i> nach <i>M</i>, also <b>gegen</b> die Karte <i>φ</i>. Dieselbe lineare Abbildung <i>dφ</i>, die A zum Vorwärtsschieben von Vektoren nutzt, ist bei B die Pfeilspitze, an der Formen <b>zurückgezogen</b> werden. Die „natürliche“ Richtung der zentralen Operation zeigt in den beiden Papieren entgegengesetzt.</li>
+<li><b>2 · Was ist fundamental: die Metrik als gegeben vs. die Metrik als abgeleitet.</b>
+<b>A</b> behandelt die <b>Metrik <i>g</i> als das fundamentale Gegebene</b> (Demo 5: man justiert <i>g₁₁, g₂₂, g₁₂</i>) und leitet alles daraus ab — Christoffel-Symbole, Transport, Geodäten.
+<b>B</b> behandelt die Metrik in Abschnitt 5 explizit als <b>abgeleitetes Objekt</b>: Die induzierte Metrik einer Einbettung ist <i>ι*g</i>, ein Pullback einer <em>Umgebungsmetrik</em>. B demotiert damit A's Primär-Objekt (die Metrik) zu einem <em>abgeleiteten</em> — das echte Primär-Objekt wird zur <b>Karte + einer Umgebungsvorgabe</b>. A sagt „die Metrik ist gegeben“, B sagt „die Metrik wird zurückgezogen“.</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p>Zwei Auflösungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussfolgerung.</p>
+<div class="card">
+<h3>Auflösung 1 — dφ macht beides: Vorwärtsschieben UND Rückwärtsziehen</h3>
+<p>Die Spannungen lösen sich, sobald man sieht, dass <i>dφ</i> <b>beide Rollen</b> spielt: Es ist das <b>Push-Forward</b> von Vektoren (vorwärts) <em>und</em> der Kern des <b>Pullbacks</b> von Formen (rückwärts) — dieselbe lineare Abbildung, auf duale Räume angewandt. Tiefer: A und B lösen <b>dasselbe Grundproblem</b>. Tangentialräume an verschiedenen Punkten sind <b>verschiedene Vektorräume</b> — man kann einen Vektor an <i>p</i> nicht ohne Regel mit einem an <i>q</i> vergleichen. A's Antwort auf der Vektorseite ist der <b>Zusammenhang / die Christoffel-Symbole</b> (Paralleltransport); B's Antwort auf der Formenseite ist der <b>Pullback</b>.</p>
+<p><b>Fusion:</b> Zusammenhang (A) und Pullback (B) sind <b>zwei Gesichter derselben Operation</b> — „Geometrie zwischen Punkten bewegen“ — die kontravariante und die kovariante Seite. Der Christoffel-Symbol-Term <i>Γ v</i> in A ist die <b>kovariante Korrektur</b>, die nötig wird, weil die Basis selbst mitläuft; B's <i>dφ</i> ist der Mechanismus, der Formen dagegen koordinatenfest zurücktransportiert. Kein Widerspruch, nur zwei Hälften eines dualen Paares.</p>
+</div>
+<div class="card">
+<h3>Auflösung 2 — die „gegebene“ Metrik von A IST der Pullback von B</h3>
+<p>B's Satz „die Metrik ist ein Pullback“ ist genau die <b>Quelle</b> von A's Christoffel-Symbolen. Die Metrik, die A differenziert, um <i>Γ</i> zu bekommen, ist für eine eingebettete Fläche <b>genau</b> B's <i>ι*g_E</i>. A's Demo 4 rechnet sie numerisch (aus der Flächenhöhe <i>h</i>: <i>g₁₁=1+hₓ², g₁₂=hₓhᵧ, g₂₂=1+hᵧ²</i>) — B liefert denselben Ausdruck symbolisch (<i>ι*(du²+dv²+dw²)</i>). Das „Gegebene“ bei A ist also der <b>Output</b> von B's Pullback.</p>
+<p><b>Fusion — die vollständige Kette:</b> Umgebungsmetrik <i>g_E</i> (flach) &nbsp;→&nbsp; Pullback <i>ι*</i> &nbsp;→&nbsp; Flächelmetrik <i>g</i> &nbsp;→&nbsp; Ableitung <i>∂g</i> &nbsp;→&nbsp; Christoffel <i>Γ</i> &nbsp;→&nbsp; Integration &nbsp;→&nbsp; Paralleltransport &amp; Geodäten. Alles nach dem ersten Pfeil ist <b>abgeleitet</b>; der einzige echte Input sind die flache Umgebungsmetrik und die Einbettung. „Kurven in gekrümmten Koordinaten“ (A) = flache euklidische Geometrie, <b>gesehen durch einen Pullback</b> (B).</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>B — Der Pullback (Input-Seite)</h3>
+<p>Gegeben Mannigfaltigkeiten <i>M, N</i>, eine glatte Karte <i>φ : M → N</i> und eine Differentialform <i>ω</i> auf <i>N</i>. Der Pullback <i>φ*ω</i> ist eine Form auf <i>M</i>:</p>
+<div class="mathblock">(φ*ω)_p (v₁, …, vₖ) = ω_{φ(p)} ( dφ_p(v₁), …, dφ_p(vₖ) )</div>
+<p>Vektoren gehen <b>vorwärts</b> durch <i>dφ</i>; die Form wird dann auf den hinübergeschobenen Vektoren ausgewertet. Konkretes Beispiel: <i>φ(x,y)=(x², xy)</i>, <i>ω = u·du + v·dv</i> auf <i>N=ℝ²</i> (Koordinaten <i>u,v</i>):</p>
+<div class="mathblock">φ*ω = x²·d(x²) + xy·d(xy)
+     = 2x³·dx + x²y·dx + x²y·dy
+     = (2x³ + x²y) dx + x²y dy</div>
+<p>Struktur-Eigenschaften: <b>linear</b> (<i>φ*(ω+η)=φ*ω+φ*η</i>, <i>φ*(cω)=c φ*ω</i>); <b>verträglich mit dem Keilprodukt</b> (<i>φ*(ω∧η)=φ*ω∧φ*η</i>); <b>kommutiert mit <i>d</i></b> (<i>φ*(dω)=d(φ*ω)</i>); <b>funktoral</b> (<i>(ψ∘φ)* = φ*∘ψ*</i>, die Reihenfolge kehrt sich); für 0-Formen/Funktionen ist es bloße Komposition (<i>φ*f = f∘φ</i>). Wozu: Substitutionsregel/Integration (= Pullback), <b>induzierte Metrik einer Einbettung = ι*g</b>, Zusammenhänge auf Faserbündeln, Symplektomorphismen (<i>φ*ω=ω</i>), de-Rham-Kohomologie.</p>
+
+<h3>A — Die Christoffel-Symbole (Verarbeitungs-/Output-Seite)</h3>
+<p>Lesart: <i>Γᵏᵢⱼ</i> = „Wenn ich in Richtung <i>j</i> gehe, wie stark ändert sich Basisvektor <i>eᵢ</i> in Richtung <i>eₖ</i>?“ Sie entstehen aus der Metrik:</p>
+<div class="mathblock">Γᵏᵢⱼ = ½ gᵏˡ ( ∂ᵢ gⱼˡ + ∂ⱼ gᵢˡ − ∂ˡ gᵢⱼ )</div>
+<p>Polar-Koordinaten <i>(r,θ)</i>: <i>Γʳ_θθ = −r</i> (zentripetal), <i>Γᶿ_rθ = Γᶿ_θr = 1/r</i> (koriolisartig), alle anderen = 0. Paralleltransport: <i>∇ⱼ vⁱ = ∂ⱼ vⁱ + Γⁱⱼₖ vᵏ = 0</i>. Geodäten: <i>d²xᵏ/dt² + Γᵏᵢⱼ (dxⁱ/dt)(dxʲ/dt) = 0</i>.</p>
+
+<h3>Die Brücke — die induzierte Metrik IST ein Pullback</h3>
+<p>Nimm ℝ³ mit der flachen Metrik <i>g_E = du²+dv²+dw²</i> und die Graph-Einbettung <i>ι(x,y) = (x, y, h(x,y))</i>. Dann ist <i>du=dx, dv=dy, dw = dh = hₓ dx + hᵧ dy</i>. Zurückziehen:</p>
+<div class="mathblock">g = ι*g_E = dx² + dy² + (hₓ dx + hᵧ dy)²
+        = (1 + hₓ²) dx² + 2 hₓ hᵧ dx dy + (1 + hᵧ²) dy²
+
+g₁₁ = 1 + hₓ²      g₁₂ = hₓ hᵧ      g₂₂ = 1 + hᵧ²</div>
+<p>Dies ist <b>litera</b> A's Demo-4-Formel <i>getMetricAt</i> (<code>g11: 1+hx*hx, g12: hx*hy, g22: 1+hy*hy</code>). A's numerisch berechnete Metrik und B's symbolischer Pullback sind dieselbe Größe für dieselbe Fläche.</p>
+<div class="mathblock">PIPELINE (der fusionierte Gegenstand):
+  g_E (flach, ℝ³)  →  ι* (Pullback, B)  →  g (Flächemetrik)
+  g  →  ∂g (Ableitung, A)  →  Γ (Christoffel)
+  Γ  →  ∫ (Integration)  →  Paralleltransport & Geodäten
+
+Jeder Pfeil nach dem ersten ist abgeleitet; einziger Input:
+  g_E  +  die Einbettung ι.</div>
+
+<h3>Numerisch — von der Metrik zu Γ (A's Rezept, hier live)</h3>
+<p>A differenziert die Metrik numerisch: an Nachbarn <i>p±ε·eᵢ</i> wird <i>g</i> ausgewertet, die Ableitungen <i>∂ᵢ gⱼₖ</i> zentral differenziert, die Metrik invertiert (<i>det g = g₁₁g₂₂−g₁₂²</i>), dann für alle <i>k,i,j ∈ {1,2}</i>:</p>
+<div class="mathblock">Γᵏᵢⱼ = ½ Σ_ˡ gᵏˡ ( ∂ᵢ gⱼˡ + ∂ⱼ gᵢˡ − ∂ˡ gᵢⱼ )</div>
+<p>Der <b>Einheitskreis</b> der induzierten Metrik in der Tangentenebene — die Menge der Längeneins-Vektoren — ist eine Ellipse; ihr Verlauf zeigt, wie der Pullback die Längen verzerrt. Wo <i>hₓ, hᵧ</i> klein sind, ist <i>g ≈ δ</i> und <i>Γ ≈ 0</i> (flach); wo die Fläche schiebt, wird <i>g</i> nicht-identisch und <i>Γ</i> wächst. Das ist der ganze Fusionsgedanke in einer Formel: <b>der Pullback formt die Ellipse (Metrik), deren Ableitung die Christoffel-Symbole (Krümmung) ist.</b></p>
+</section>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung</h2>
+<p>Ein ziehbarer Punkt auf einer <b>Graphfläche</b> <i>z=h(x,y)</i> in flachem ℝ³. Die <b>Ellipse</b> am Punkt ist der <b>Einheitskreis der induzierten Metrik</b> — das Ergebnis des <b>Pullbacks</b> <i>ι*g_E</i> (B). Der <b>Gradient</b> <i>(hₓ,hᵧ)</i> ist die Schiefe, die alles antreibt. Die Readout-Werte zeigen die Metrikkomponenten (Pullback) und <b>numerisch berechnete Christoffel-Symbole</b> (A) — dieselbe Fläche, beide Seiten derselben Kette. Wechsle die Fläche, ändere die Amplitude, ziehe den Punkt, blende das Thema um.</p>
+<canvas id="viz" height="440"></canvas>
+<div class="viz-controls">
+  <label>Fläche
+    <select id="surfSel">
+      <option value="wavy" selected>wellenförmig (cos·sin)</option>
+      <option value="bump">Gauß-Wulst</option>
+      <option value="flat">flach</option>
+    </select>
+  </label>
+  <label>Amplitude <span class="hint" id="ampVal">0.9</span>
+    <input type="range" id="ampSlider" min="0" max="1.5" step="0.05" value="0.9">
+  </label>
+</div>
+<div class="readout">
+  <div class="ro"><span class="k">Punkt (x, y)</span><span class="v" id="rP">–</span></div>
+  <div class="ro"><span class="k">Schiefe hₓ , hᵧ</span><span class="v" id="rSlope">–</span></div>
+  <div class="ro"><span class="k">g₁₁ , g₂₂ , g₁₂ (Pullback)</span><span class="v" id="rG">–</span></div>
+  <div class="ro"><span class="k">det(g) , ∠(∂x,∂y)</span><span class="v" id="rDet">–</span></div>
+  <div class="ro"><span class="k">Γ¹₁₁ (numerisch)</span><span class="v" id="rC11">–</span></div>
+  <div class="ro"><span class="k">Γ¹₂₂ (numerisch)</span><span class="v" id="rC22">–</span></div>
+  <div class="ro"><span class="k">Γ²₁₂ (numerisch)</span><span class="v" id="rC12">–</span></div>
+</div>
+<p class="viz-cap">Ellipse = Einheitskreis der Metrik <i>g = ι*g_E</i> (B, Pullback). Gradient = Schiefe der Fläche. Christoffel-Werte = zentrale Differenz der Metrik (A). <b>Flach</b> ⇒ <i>g≈δ, Γ≈0</i>; <b>schiefe Fläche</b> ⇒ <i>g</i> nicht-identisch, <i>Γ</i> wachst. Alle Daten inline, themenbewusst, ohne Netzwerk.</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../christoffel.html">A · Christoffel Symbols — Visual Explorer</a><br><span class="hint">Fünf interaktive Canvas-Demos: wie sich Basisvektoren in gekrümmten Koordinaten drehen/strecken, Paralleltransport, die Komponenten Γʳ_θθ=−r und Γᶿ_rθ=1/r, Geodäten (numerisch aus der induzierten Metrik) und das Rezept Γᵏᵢⱼ=½ gᵏˡ(∂ᵢgⱼˡ+∂ⱼgᵢˡ−∂ˡgᵢⱼ).</span></div>
+<div class="prov"><a href="../pullback.html">B · Der Pullback in der Differentialtopologie</a><br><span class="hint">Visuelle Erklärung des Pullbacks φ*ω (Schritt-für-Schritt-Diagramm, konkretes 1-Form-Beispiel φ(x,y)=(x²,xy)), die Struktur-Eigenschaften (Linearität, Keilprodukt, Kommutieren mit d, Funktorialität) und die Anwendungen — u. a. die induzierte Metrik ι*g.</span></div>
+<p class="foot">Fusion 035 · Runde 1 (non-AI-Track) · autonom, keine Netzwerte — alle Daten inline.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  var canvas=document.getElementById('viz');
+  var ctx=canvas.getContext('2d');
+  var surfSel=document.getElementById('surfSel');
+  var ampSlider=document.getElementById('ampSlider');
+  var ampVal=document.getElementById('ampVal');
+
+  var cssW=0, cssH=440;
+  var point={x:0.7,y:0.4};
+  var dragging=false;
+
+  var XMIN=-2, XMAX=2, YMIN=-1.25, YMAX=1.25;
+
+  function fit(){
+    var d=window.devicePixelRatio||1;
+    cssW=canvas.clientWidth||720; cssH=440;
+    canvas.width=Math.round(cssW*d); canvas.height=Math.round(cssH*d);
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function curAmp(){var a=parseFloat(ampSlider.value);return isNaN(a)?0:a;}
+
+  function hAt(x,y){
+    var A=curAmp(), s=surfSel.value;
+    if(s==='flat') return 0;
+    if(s==='wavy') return A*Math.cos(x*1.3)*Math.sin(y*1.3);
+    var w=1.2; return A*Math.exp(-(x*x+y*y)/(w*w));
+  }
+  function metricAt(x,y){
+    var e=1e-3;
+    var hx=(hAt(x+e,y)-hAt(x-e,y))/(2*e);
+    var hy=(hAt(x,y+e)-hAt(x,y-e))/(2*e);
+    return {g11:1+hx*hx, g12:hx*hy, g22:1+hy*hy, hx:hx, hy:hy};
+  }
+  function make3(){return [[[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]]];}
+  function christoffelAt(x,y){
+    var e=1e-2;
+    var c=metricAt(x,y);
+    var gR=metricAt(x+e,y), gL=metricAt(x-e,y);
+    var hU=metricAt(x,y+e), hD=metricAt(x,y-e);
+    var dg=make3();
+    dg[1][1][1]=(gR.g11-gL.g11)/(2*e); dg[1][1][2]=(hU.g11-hD.g11)/(2*e);
+    dg[1][2][1]=(gR.g12-gL.g12)/(2*e); dg[1][2][2]=(hU.g12-hD.g12)/(2*e);
+    dg[2][2][1]=(gR.g22-gL.g22)/(2*e); dg[2][2][2]=(hU.g22-hD.g22)/(2*e);
+    dg[2][1][1]=dg[1][2][1]; dg[2][1][2]=dg[1][2][2];
+    var det=c.g11*c.g22-c.g12*c.g12;
+    if(Math.abs(det)<1e-9) return null;
+    var inv=make3();
+    inv[1][1]=c.g22/det; inv[1][2]=-c.g12/det;
+    inv[2][1]=-c.g12/det; inv[2][2]=c.g11/det;
+    var C=make3();
+    for(var k=1;k<=2;k++)for(var i=1;i<=2;i++)for(var j=1;j<=2;j++){
+      var s=0;
+      for(var l=1;l<=2;l++){ s+=inv[k][l]*(dg[j][l][i]+dg[i][l][j]-dg[i][j][l]); }
+      C[k][i][j]=0.5*s;
+    }
+    return C;
+  }
+
+  function sx(x){return (x-XMIN)/(XMAX-XMIN)*cssW;}
+  function sy(y){return (YMAX-y)/(YMAX-YMIN)*cssH;}
+  function invX(px){return XMIN+px/cssW*(XMAX-XMIN);}
+  function invY(py){return YMAX-py/cssH*(YMAX-YMIN);}
+  var SX=(XMAX-XMIN)/1, SY=(YMAX-YMIN)/1;
+  function scalePX(){return cssW/(XMAX-XMIN);}
+
+  function arrow(x1,y1,x2,y2,color,lw){
+    var a=Math.atan2(y2-y1,x2-x1), hl=Math.min(11,10);
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hl*Math.cos(a-0.4), y2-hl*Math.sin(a-0.4));
+    ctx.lineTo(x2-hl*Math.cos(a+0.4), y2-hl*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(){
+    var lo=cssVar('--viz-bg1').split(',').map(Number);
+    var hi=cssVar('--viz-bg2').split(',').map(Number);
+    var grid=cssVar('--viz-grid'), grad=cssVar('--viz-grad');
+    var ell=cssVar('--viz-ellipse'), base=cssVar('--viz-base'), txt=cssVar('--viz-text');
+    ctx.clearRect(0,0,cssW,cssH);
+
+    var A=curAmp(), step=4;
+    for(var px=0;px<cssW;px+=step){
+      for(var py=0;py<cssH;py+=step){
+        var h=hAt(invX(px),invY(py));
+        var t=0.5;
+        if(A>1e-3) t=clamp(0.5+0.5*h/A,0,1);
+        var r=Math.round(lo[0]+(hi[0]-lo[0])*t);
+        var g=Math.round(lo[1]+(hi[1]-lo[1])*t);
+        var b=Math.round(lo[2]+(hi[2]-lo[2])*t);
+        ctx.fillStyle='rgb('+r+','+g+','+b+')';
+        ctx.fillRect(px,py,step,step);
+      }
+    }
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var gx=XMIN;gx<=XMAX+1e-9;gx+=1){ ctx.beginPath(); ctx.moveTo(sx(gx),0); ctx.lineTo(sx(gx),cssH); ctx.stroke(); }
+    for(var gy=Math.ceil(YMIN);gy<=YMAX+1e-9;gy+=0.5){ ctx.beginPath(); ctx.moveTo(0,sy(gy)); ctx.lineTo(cssW,sy(gy)); ctx.stroke(); }
+
+    var p=point, pxx=sx(p.x), pyy=sy(p.y);
+    var m=metricAt(p.x,p.y);
+
+    ctx.strokeStyle=ell; ctx.lineWidth=2; ctx.beginPath();
+    var s0=null;
+    for(var a=0;a<=Math.PI*2+0.02;a+=0.05){
+      var c=Math.cos(a), s=Math.sin(a);
+      var rad=1/Math.sqrt(Math.max(1e-9, m.g11*c*c + 2*m.g12*c*s + m.g22*s*s));
+      var ex=pxx+scalePX()*rad*c, ey=pyy-scalePX()*rad*s;
+      if(s0===null){ctx.moveTo(ex,ey);s0=1;} else ctx.lineTo(ex,ey);
+    }
+    ctx.closePath(); ctx.stroke();
+
+    var bl=scalePX()*0.55;
+    arrow(pxx,pyy,pxx+bl,pyy,base,2);
+    arrow(pxx,pyy,pxx,pyy-bl,base,2);
+
+    var gl=Math.hypot(m.hx,m.hy);
+    if(gl>1e-6){
+      var L=48;
+      arrow(pxx,pyy,pxx+scalePX()*m.hx/gl*L,pyy-scalePX()*m.hy/gl*L,grad,3);
+    }
+
+    ctx.beginPath(); ctx.arc(pxx,pyy,5,0,Math.PI*2); ctx.fillStyle=txt; ctx.fill();
+
+    update(p,m);
+  }
+
+  function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+  function fmt(v){return (v===null||!isFinite(v))?'–':v.toFixed(3);}
+  function update(p,m){
+    set('rP', p.x.toFixed(2)+' , '+p.y.toFixed(2));
+    set('rSlope', m.hx.toFixed(3)+' , '+m.hy.toFixed(3));
+    set('rG', m.g11.toFixed(3)+' , '+m.g22.toFixed(3)+' , '+m.g12.toFixed(3));
+    var det=m.g11*m.g22-m.g12*m.g12;
+    var ang=Math.acos(clamp(m.g12/Math.sqrt(m.g11*m.g22),-1,1))*180/Math.PI;
+    set('rDet', det.toFixed(3)+' , '+ang.toFixed(1)+'°');
+    var C=christoffelAt(p.x,p.y);
+    set('rC11', C?fmt(C[1][1][1]):'–');
+    set('rC22', C?fmt(C[1][2][2]):'–');
+    set('rC12', C?fmt(C[2][1][2]):'–');
+  }
+
+  function move(e){
+    var r=canvas.getBoundingClientRect();
+    var px=(e.clientX-r.left)*(cssW/r.width);
+    var py=(e.clientY-r.top)*(cssH/r.height);
+    point.x=clamp(invX(px),XMIN,XMAX);
+    point.y=clamp(invY(py),YMIN,YMAX);
+    draw();
+  }
+  canvas.addEventListener('pointerdown',function(e){dragging=true;try{canvas.setPointerCapture(e.pointerId);}catch(_){}move(e);});
+  canvas.addEventListener('pointermove',function(e){if(dragging)move(e);});
+  canvas.addEventListener('pointerup',function(){dragging=false;});
+  canvas.addEventListener('pointercancel',function(){dragging=false;});
+
+  ampSlider.addEventListener('input',function(){ampVal.textContent=curAmp().toFixed(2);draw();});
+  surfSel.addEventListener('change',function(){draw();});
+  document.getElementById('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+  var mo=new MutationObserver(function(){draw();});
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',function(){fit();draw();});
+
+  fit(); ampVal.textContent=curAmp().toFixed(2); draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Karte und der Score — Weltgenerierung trifft inferentielle Bedeutung</title>
+<style>
+  :root{
+    --bg:#f5f2ea; --bg2:#ece7da; --card:#fffdf8; --text:#211f1a; --muted:#5f5a4c;
+    --border:#d8d0bd; --accent:#a34e10; --accent2:#2f6df0; --accent3:#a82e6a;
+    --good:#1c7a4a; --viz-bg:#efeadd; --grid:#e4ddca; --panel:#fbf8f0;
+    --bm1:#6fa85a; --bm2:#4f97d6; --bm3:#c89a3a; --bm4:#7a4fa3; --bm5:#d0562a; --bm6:#3a9aa0;
+  }
+  html.dark{
+    --bg:#0a0e1a; --bg2:#0e1424; --card:#131b30; --text:#e8ecf7; --muted:#93a0b8;
+    --border:#283356; --accent:#ffb454; --accent2:#7c9eff; --accent3:#ff7ab6;
+    --good:#5eead4; --viz-bg:#0a0e1a; --grid:#18203a; --panel:#111829;
+    --bm1:#4a8c5c; --bm2:#3e5c94; --bm3:#cd853f; --bm4:#6a3fa0; --bm5:#c0491f; --bm6:#2f7d86;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+  header.top{padding:1rem 0 1.8rem;border-bottom:2px solid var(--border);margin-bottom:2rem}
+  h1{font-size:clamp(1.9rem,4.6vw,2.7rem);font-weight:800;line-height:1.14;margin-bottom:.65rem}
+  h1 .acc{color:var(--accent)}
+  .subtitle{color:var(--muted);font-size:1rem;font-style:italic}
+  .themebtn{margin-top:1rem;background:var(--card);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:.45rem .95rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+  .themebtn:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin:2.5rem 0}
+  h2{font-size:1.5rem;font-weight:750;margin-bottom:1rem;color:var(--accent);
+    padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h3{font-size:1.12rem;font-weight:680;margin:1.5rem 0 .55rem;color:var(--accent2)}
+  p{margin:0 0 1rem}
+  .lead{color:var(--muted);font-style:italic;margin-bottom:1.2rem}
+  ul,ol{margin:0 0 1rem 1.35rem}
+  li{margin:.4rem 0}
+  strong{color:var(--text);font-weight:700}
+  em.k{color:var(--accent3);font-style:normal;font-weight:680}
+  code{font-family:'JetBrains Mono','Consolas',monospace;font-size:.86em;background:var(--panel);
+    border:1px solid var(--border);border-radius:5px;padding:.05em .38em}
+  .callout{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+    padding:.95rem 1.1rem;margin:1.1rem 0}
+  .callout.warn{border-color:var(--accent2)}
+  .callout.win{border-color:var(--accent3)}
+  .callout b{color:var(--text)}
+  .tag{display:inline-block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:700;color:var(--accent);margin-right:.35rem}
+  .tag.b{color:var(--accent2)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+  @media (max-width:600px){.pair{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+  .card h4{font-size:.98rem;margin-bottom:.5rem;color:var(--accent)}
+  .card.b h4{color:var(--accent2)}
+  .card p{font-size:.92rem;margin:0;color:var(--muted)}
+  .math{font-family:'Cambria Math','Times New Roman',serif;background:var(--panel);
+    border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;margin:.8rem 0;
+    font-size:1.02rem;overflow-x:auto;line-height:1.5}
+  .math sub,.math sup{font-size:.72em}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:680}
+  .prov a:hover{text-decoration:underline}
+  .prov p{margin-bottom:.9rem}
+
+  /* VIZ */
+  .viz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;margin:1.2rem 0}
+  .viz canvas{display:block;width:100%;height:auto;border-radius:10px;background:var(--viz-bg);
+    border:1px solid var(--border)}
+  .vcontrols{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.9rem 0 .4rem}
+  .vcontrols button{background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:.45rem .8rem;font-size:.84rem;cursor:pointer;font-family:inherit;
+    transition:border-color .15s,color .15s}
+  .vcontrols button:hover{border-color:var(--accent);color:var(--accent)}
+  .vcontrols button.on{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:700}
+  .vcontrols .hint{font-size:.8rem;color:var(--muted);font-style:italic}
+  .scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.6rem;margin-top:.8rem}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:.6rem .75rem}
+  .stat .n{font-size:1.45rem;font-weight:800;color:var(--accent);line-height:1.1}
+  .stat.e .n{color:var(--good)}
+  .stat .l{font-size:.74rem;color:var(--muted);letter-spacing:.03em}
+  .log{margin-top:.8rem;background:var(--bg2);border:1px solid var(--border);border-radius:9px;
+    padding:.65rem .85rem;font-family:'JetBrains Mono','Consolas',monospace;font-size:.8rem;
+    color:var(--good);min-height:2.6em;white-space:pre-wrap;max-height:120px;overflow:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Die Karte und der Score: <span class="acc">Weltgenerierung</span> trifft <span class="acc">inferentielle Bedeutung</span></h1>
+  <div class="subtitle">Fusion aus: game.html ✕ making_it_explicit.html</div>
+  <button class="themebtn" id="themebtn">🌗 Theme wechseln</button>
+</header>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Zwei Gegenpole, eine einzige Münze: die deterministische Karte, die alles schon festlegt, und der Score, der aus ihr erst Bedeutung macht.</p>
+  <p>
+    <span class="tag">A</span> <em>game.html</em> — <em>Infinite Wanderer</em> — erzeugt eine endlos wandelbare Welt aus einer einzigen
+    <em>endlichen Funktion</em>: ein fester Seed bestimmt über Gradienten- und fBm-Noise jedes Terrain, jeden Biome und
+    jeden Fund deterministisch. Die Welt ist <strong>unendlich, aber geschlossen</strong>: Was „über dem nächsten Hügel" liegt,
+    stand seit dem ersten Frame fest. Der Spieler <em>entdeckt</em>; er erfährt nichts, was nicht schon da war.
+  </p>
+  <p>
+    <span class="tag b">B</span> <em>making_it_explicit.html</em> — Brandoms <em>Making It Explicit</em> — behauptet das Gegenteil von dem,
+    was A tut: Bedeutung ist <strong>keine Repräsentation von Dingen</strong>, sondern die <em>inferentielle Rolle</em>, die ein Ausdruck im
+    <em>Spiel des Gebens und Verlangens von Gründen</em> spielt. Was eine Behauptung <em>bedeutet</em>, ist der <em>deontische Score</em>,
+    den sie ändert — die Verpflichtungen (C) und Berechtigungen (E), die Sprecher und Zuhörer auf- und zuschreiben.
+  </p>
+  <div class="callout win">
+    <b>Die eine integrierte Position:</b> <em>Inhalt ist nicht in der Karte, er ist im Score, den du führst, während du sie durchläufst.</em>
+    A liefert das <strong>Material</strong> (eine deterministische, unendliche Welt voller Tokens); B liefert die
+    <strong>Norm</strong>, die aus diesem Material erst etwas <em>Bedeutendes</em> macht. Ein wandernder Agent wird
+    zum Scorekeeper: Jeder Schritt verpflichtet ihn auf Folgeschritte, jeder Fund ist keine bloße Abbildung eines Dings,
+    sondern eine <em>Behauptung</em>, die C und E erzeugt. Die Welt (Sein) und der Score (Meinen) sind dasselbe Feld,
+    gesehen von zwei Seiten — und <em>Objektivität</em> ist genau die Struktur, die beide trennt.
+  </div>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Texte stehen nicht im flachen Widerspruch — sie nehmen <em>inkompatible Grundannahmen</em> über
+  denselben Vorgang (ein Wesen, das durch eine Welt geht und Dinge „findet") vor. Drei echte Spannungslinien:</p>
+
+  <div class="pair">
+    <div class="card">
+      <h4>1 · Repräsentation (A) vs. Anti-Repräsentation (B)</h4>
+      <p><span class="tag">A</span> Die Welt besteht aus <em>Dingen</em>, die gefunden werden: „Glowing Mushroom", „Void Pearl", „THE ARTIFACT".
+      Bedeutung ist hier naiv-repräsentational — der Fund <em>zeigt auf</em> ein Objekt, das die Welt enthält. Der Spieler sammelt
+      Referenten.
+      <br><br><span class="tag b">B</span> Brandom <em>lehnt genau diese Bildsprache ab</em>: „Inferentialismus — Bedeutung als Rolle im
+      Schlussfolgern. Nicht was er repräsentiert, sondern was aus ihm folgt." Der Papagei sagt „rot" und nichts folgt;
+      der Mensch sagt „rot" und verpflichtet sich auf eine Kaskade. A ist, gemessen an B, ein <em>Papagei mit Karte</em>.</p>
+    </div>
+    <div class="card b">
+      <h4>2 · Deterministische „God's-Eye" (A) vs. Objektivität ohne Standpunkt (B)</h4>
+      <p><span class="tag">A</span> Der Seed (42, 137, …) ist ein versteckter <em>Standpunkt von nirgendwo</em>: Er entscheidet, was wahr
+      ist und wo es ist. „Die Welt ist unendlich" heißt hier: <em>geschlossen und determiniert</em>. Es gibt keinen Irrtum — die
+      Karte ist die Karte.
+      <br><br><span class="tag b">B</span> Brandom <em>bestreitet</em>, dass Objektivität ein metaphysischer Standpunkt ist (Demo 9):
+      Wahrheit ≠ Konsens, die Gemeinschaft <em>kann sich irren</em> (Aristoteles). Objektivität ist eine
+      <em>strukturelle Eigenschaft jeder Perspektive</em> (I-Du-Sozialität) — kein meta-physischer Aussichtsberg.</p>
+    </div>
+    <div class="card">
+      <h4>3 · Entdecken (A) vs. Konstituieren (B)</h4>
+      <p><span class="tag">A</span> Der Agent <em>empängt</em>: Die Welt ist reicher als er. „What's over that next hill?" — die
+      Fülle liegt dort, unabhängig vom Spieler. Seltenheit ist <em>intrinsisch</em> dem Objekt (Rarität 1–6).
+      <br><br><span class="tag b">B</span> Es gibt kein „Entdecken" von Vor-ge-gemachtem Inhalt: Wer behauptet,
+      <em>konstituiert</em> Inhalt durch die Verpflichtungen, die er eingeht. Der Score entsteht <em>durch</em> den Score-Akt.
+      Es gibt nichts zu finden — es gibt nur etwas zu <em>machen explizit</em>.</p>
+    </div>
+    <div class="card b">
+      <h4>4 · Stille Maschine vs. sprechendes Wesen</h4>
+      <p><span class="tag">A</span> Die Welt ist <em>stumme</em> Mechanik: Noise, Hash, partikel. Niemand behauptet etwas;
+      die „Auto-Explore"-Logik ist ein reines Steuerungs-Policy, keine Absicht.
+      <br><br><span class="tag b">B</span> Intentionalität ist <em>nicht</em> Reaktivität (Kant, Wittgenstein): Wir sind
+      „die Wesen, die 'wir' sagen können". Ein Wesen, das Gründe geben <em>kann</em>, ist erst ein Wesen, das
+      etwas tut. A ohne B ist ein Thermostat, das sehr hübsch durch Landschaften rutscht.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p>Jede Spannung löst sich, sobald man <em>zwei Ebenen</em> sauber trennt: die <em>Material-Ebene</em> (die Karte) und die
+  <em>Norm-Ebene</em> (der Score). Die beiden Papiere besetzen genau diese Ebenen — sie widersprechen nur,
+  solange man sie verwechselt.</p>
+
+  <h3>1 · Tokens vs. Rollen</h3>
+  <p>Demotion der Repräsentation: A's Objekte sind <em>beiläufige Token</em>, keine Referenten. Ihre
+  <strong>Signifikanz</strong> für den Wanderer kommt nicht von ihrem Abbilden eines Dings, sondern von den
+  <em>Verpflichtungen</em>, die der Wanderer eingeht, indem er sie berührt. „Ich habe THE ARTIFACT gefunden"
+  ist eine <em>Behauptung</em> — sie verpflichtet auf Nachbarn, auf Seltenheit, auf den Report.
+  <div class="callout win"><b>Fusion:</b> Der Fund ist der <em>Anlass</em>, der Score ist der <em>Inhalt</em>. A liefert
+  das Material; B liefert das, was dem Material Gewicht gibt.</div>
+  </p>
+
+  <h3>2 · Der Seed als „Sein", der Score als „Meinen"</h3>
+  <p>Der Seed darf die <em>Karte</em> festlegen (was wo ist — ein determinierbarer Sachverhalt). Aber <em>Wissen</em>
+  über die Karte ist ein <em>sozialer Score</em>, der irren kann. Damit harmonisiert sich A mit B: B's Objektivität
+  = die strukturelle Fähigkeit, <em>Sein</em> (die Karte, der Seed) von <em>Meinen</em> (der Score des Wanderers)
+  zu <em>unterscheiden</em> — nicht sie zu <em>identifizieren</em>. A liefert die „Sein"-Seite, B die „Meinen"-Seite.
+  <div class="callout win"><b>Fusion:</b> Objektivität ist kein Standpunkt (weder der Seed noch die Gemeinschaft),
+  sondern die <em>Gestaltung der Unterscheidung selbst</em>.</div>
+  </p>
+
+  <h3>3 · Entdecken = Schnittmenge</h3>
+  <p>„Entdecken" im Wanderer ist beides: das <em>Objekt</em> war vorher da (Seed-bestimmt → Sein), aber die
+  <em>Bedeutung</em> des gefundenen Objekts entsteht erst im Score (Rarität, Streak, „it sees you too" —
+  all das existiert nur <em>für den Wanderer</em>).
+  <div class="callout win"><b>Fusion:</b> Inhalt = der Punkt, an dem die feste Karte den lebenden Score trifft.
+  Nicht die Karte <em>und</em> nicht der Score allein — ihr <em>Schnitt</em>.</div>
+  </p>
+
+  <h3>4 · Die stille Maschine wird Scorekeeper</h3>
+  <p>A's „Auto-Explore" ist, durch B gelesen, bereits ein <em>unbenannter Scorekeeper</em>: Er bewertet Richtungen
+  nach <em>unbesuchten Chunks</em> (Verpflichtungen: „dort ist noch nicht erkundet") und <em>Noise-Novelty</em>
+  (Berechtigungen: „dort verspricht sich der Agent etwas Neues"). A liefert die <em>Praxis</em>; B liefert
+  die <em>Norm, die in der Praxis implizit ist</em> (Wittgensteinscher Regress: die Auto-Explore braucht
+  keine Meta-Regel, sie ist selbst die praktische Kompetenz).
+  <div class="callout win"><b>Fusion:</b> A ist die <em>normlose Oberfläche</em> von B — oder umgekehrt:
+  B ist das <em>unbewusste Regelwerk</em> hinter A. Die Wanderung wird dadurch zu einem <em>Spiel des Gebens
+  und Verlangens von Gründen</em>, das nur keine Gründe nennt.</div>
+  </p>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Die integrierte Mechanik — genug Substanz, damit eine spätere Runde allein davon arbeiten kann.</p>
+
+  <h3>Die deterministische Karte (von A)</h3>
+  <p>Die Welt ist eine <em>endliche Funktion einer endlichen Größe</em> über einer unendlichen Ebene:</p>
+  <div class="math">
+    <strong>world</strong> = f(seed): &nbsp;R<sup>2</sup> → B, &nbsp; wobei B die Menge der Zustände (Biome, Höhe, Token) ist.<br>
+    <strong>Biome</strong>(x, y) = discretize( fbm(N₁(x·k, y·k), oct=3) + fbm(N₂(x·k′, y·k′), oct=2) )<br>
+    <strong>Token</strong>(x, y) = { t : hash⊕(⌊x/s⌋, ⌊y/s⌋) &lt; p(t.rarity) }
+  </div>
+  <ul>
+    <li><em>seed</em>: 32-bit integer → <code>mulberry32</code> → deterministischer PRNG.</li>
+    <li><em>fbm</em>: fraktale Brownische Bewegung über Gradienten-Noise (Perlin-Style), 2–6 Oktaven.</li>
+    <li><em>hash⊕</em>: per-Cell-Hash; jede Cell (Größe s) trägt <em>einen</em> deterministischen Zustand.</li>
+    <li><em>unendlich, aber geschlossen</em>: Die Funktion ist überall definiert, aber jede Auswertung ist von
+    seed vorher bestimbar — es gibt keine Kontingenz.</li>
+  </ul>
+
+  <h3>Der Score des Wanderers (von B)</h3>
+  <p>Der Agent hält einen <em>deontischen Score</em> über die von ihm besuchten und geclaimten Tokens:</p>
+  <div class="math">
+    <strong>Score</strong> = S ⊆ &nbsp;T &times; 2<sup>T</sup> &times; 2<sup>T</sup>, &nbsp; wobei (t, C<sub>t</sub>, E<sub>t</sub>) ∈ S<br>
+    C<sub>t</sub> = Verpflichtungen, E<sub>t</sub> = Berechtigungen, die der Agent mit dem Claim von t eingeht.
+  </div>
+  <ul>
+    <li><em>Inferentielle Rolle</em> eines Tokens t = die Menge der (C, E)-Paare, die mit t stehen und fallen.</li>
+    <li><em>Material Inferenz</em>: „t ist ein Void-Object" → „t gehört zum Void-Biome" → „t hat Rarität ≥ 4".
+    Die Verbindung ist <em>nicht</em> logisch-formal, sondern <em>material</em> — sie kommt von der Bedeutung.</li>
+    <li><em>Score ist sozial</em> (bei Brandom): Der Agent kann sich <em>irren</em>; andere Agenten können
+    den Score <em>hinterfragen</em>. Objektivität = die Struktur, die Sein (Karte) und Meinen (Score) trennt.</li>
+  </ul>
+
+  <h3>Die Auto-Explore als inferentielles Policy</h3>
+  <p>A's Auto-Explore ist, formalisiert, ein <em>Score-basiertes</em> Navigations-Policy:</p>
+  <div class="math">
+    <strong>score</strong>(direction a) = w₁ · <em>unexplored</em>(a) + w₂ · <em>novelty</em>(a)<br>
+    <em>unexplored</em>(a) = 1 ⟺ chunk(a) ∉ visited &nbsp;&nbsp; (Verpflichtung: „dort ist noch offen")<br>
+    <em>novelty</em>(a) = N₂(a) &nbsp;&nbsp; (Berechtigung: „dort verspricht sich der Agent etwas Neues")
+  </div>
+  <p>Das ist <em>genau</em> die Brandomsche Gestalt: Die Bewegung des Agenten ist nicht willkürliches Rauschen,
+  sondern <em>normativ gesteuert</em> — durch Verpflichtungen (was noch offen ist) und Berechtigungen (was
+  Versprechen birgt). Die Praxis (A) ist die Norm (B), noch nicht explizit gemacht.</p>
+
+  <h3>Seltenheit als Commitment-Gradient</h3>
+  <p>A's Raritätsstufen (1–6, „Rainbow Slime" → „THE ARTIFACT") sind <em>Commitment-Gradien</em>: Je seltener,
+  desto <em>mehr</em> Verpflichtungen gehen mit dem Claim einher (mehr Nachbarn, mehr Rechtfertigungsdruck,
+  mehr Verantwortung). Die „Rarität" eines Fundes ist nicht intrinsisch — sie ist die <em>Größe des Scores,
+  den der Claim erzeugt</em>.</p>
+
+  <h3>Objektivität als Struktur (B, angewendet auf A)</h3>
+  <div class="math">
+    <em>truth</em>(t) = seed(t) &nbsp;&nbsp; (die Karte sagt, was ist — Sein)<br>
+    <em>believed</em>(t) = S(t) &nbsp;&nbsp; (der Score sagt, was als wahr gehalten wird — Meinen)<br>
+    <strong>Objektivität</strong> = die strukturelle Fähigkeit, truth ≠ believed zu <em>unterscheiden</em>
+  </div>
+  <p>Die Wanderer-Gemeinschaft <em>kann sich irren</em> über die Karte (falscher Raritäts-Claim, übersehener
+  Token). Der Seed ist nicht die Objektivität — er ist nur das Sein. Die Objektivität liegt in der
+  <em>Gestaltung der Unterscheidung</em>: Jeder Agent, der die Karte liest, muss <em>intern</em> zwischen
+  „was ist" und „was halte ich für wahr" unterscheiden. Das ist B's I-Du-Sozialität, angewandt auf A's Welt.</p>
+
+  <div class="callout">
+    <b>Die integrierte These in einem Satz:</b> <em>Weltgenerierung (A) ist die Material-Ebene des
+    inferentiellen Scorekessings (B); Bedeutung entsteht dort, wo die deterministische Karte auf den
+    normativen Score trifft — und Objektivität ist die Struktur, die beide trennt, nicht der Seed und
+    nicht die Gemeinschaft.</em>
+  </div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Visualisierung — Der Scorekeeper wandert durch die Karte</h2>
+  <p class="lead">Ein Agent (der Scorekeeper) wandert durch eine deterministisch generierte Welt. Jeder Fund
+  erzeugt Verpflichtungen (C) und Berechtigungen (E). Wechsle zwischen „Karte (Sein)" und „Score (Meinen)" —
+  dieselbe Karte, zwei Seiten.</p>
+
+  <div class="viz">
+    <canvas id="viz" width="760" height="460"></canvas>
+    <div class="vcontrols">
+      <button id="btn-mode">Ansicht: <b id="mode-lbl">Beide</b></button>
+      <button id="btn-roam" class="on">▶ Auto-Roam an</button>
+      <button id="btn-reset">↺ Score zurücksetzen</button>
+      <span class="hint">Klick ins Bild → Agent springt dorthin. Die Karte ist deterministisch — jeder Seed ergibt dieselbe Welt.</span>
+    </div>
+    <div class="scoreboard">
+      <div class="stat"><div class="n" id="s-c">0</div><div class="l">VERPFLICHTUNGEN (C)</div></div>
+      <div class="stat e"><div class="n" id="s-e">0</div><div class="l">BERECHTIGUNGEN (E)</div></div>
+      <div class="stat"><div class="n" id="s-f">0</div><div class="l">ENTDECKTE TOKENS</div></div>
+      <div class="stat e"><div class="n" id="s-streak">0</div><div class="l">STREAK</div></div>
+    </div>
+    <div class="log" id="vlog">Agent startet Auto-Roam. Jede Entdeckung erzeugt C (Verpflichtungen) und E (Berechtigungen).</div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <p>
+      <span class="tag">A</span>
+      <a href="../game.html">game.html</a> — <em>„Infinite Wanderer"</em>.
+      Ein Single-File-Canvas-Game: endlose, prozedural generierte Welt aus fBm-Noise + seeded RNG;
+      10 Biome, 25 Raritäts-1–6-Token („Glowing Mushroom" → „THE ARTIFACT"), deterministisch per
+      Cell-Hash plaziert; Auto-Explore-Policy, minimap, prozedurales Web-Audio.
+      Quelle für <em>Material</em>: die deterministische Karte, den Seed, den Noise, die Token,
+      die Raritäts-Gradienten und die Auto-Explore-Logik.
+    </p>
+    <p>
+      <span class="tag b">B</span>
+      <a href="../making_it_explicit.html">making_it_explicit.html</a> — <em>„Making It Explicit — Interaktive
+      Reise durch Brandoms Meisterwerk"</em>. Eine 9-Kapitel-Reise durch Robert B. Brandoms
+      <em>Making It Explicit</em> (1994): Normativität (Kant, Wittgenstein), Inferentialismus,
+      deontisches Scorekeeping (Commitments C / Entitlements E), Perzeption & Handlung,
+      Wahrheit als prosententialer Operator, Substitution, Anaphora, de re/de dicto,
+      Objektivität als Struktur.
+      Quelle für <em>Norm</em>: den Score, die inferentielle Rolle, das Sein/Meinen-Schema
+      und die I-Du-Sozialität.
+    </p>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var SEED = 42;
+
+  // ---- deterministic PRNG (mulberry32) ----
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function hashStr(s){
+    var h = 0;
+    for(var i=0;i<s.length;i++){ h = ((h<<5)-h) + s.charCodeAt(i); h |= 0; }
+    return h;
+  }
+
+  // ---- value noise (deterministic) ----
+  var perm = (function(){
+    var rng = mulberry32(SEED);
+    var p = [];
+    for(var i=0;i<256;i++) p[i]=i;
+    for(var j=255;j>0;j--){ var k = Math.floor(rng()*(j+1)); var tmp=p[j]; p[j]=p[k]; p[k]=tmp; }
+    return p.concat(p);
+  })();
+  function fade(t){ return t*t*t*(t*(t*6-15)+10); }
+  function lerp(a,b,t){ return a + t*(b-a); }
+  function valueNoise(x, y){
+    var X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+    x -= Math.floor(x); y -= Math.floor(y);
+    var u = fade(x), v = fade(y);
+    var A = perm[X]+Y, B = perm[X+1]+Y;
+    function h(i,j){ return (perm[(perm[i]+j)&255] / 255.0) * 2 - 1; }
+    return lerp(lerp(h(A,Y), h(B,Y), u), lerp(h(A+1,Y+1), h(B+1,Y+1), u), v);
+  }
+  function fbm(x, y, oct){
+    var v=0, a=1, f=1, m=0;
+    for(var i=0;i<oct;i++){ v += valueNoise(x*f, y*f)*a; m+=a; a*=0.5; f*=2; }
+    return v/m;
+  }
+  function biome(x, y){
+    var n1 = fbm(x*0.28, y*0.28, 3);
+    var n2 = fbm(x*0.18 + 100, y*0.18 + 100, 2);
+    var v = (n1+1)*0.5*0.7 + (n2+1)*0.5*0.3;
+    var idx = Math.floor(v*6);
+    return Math.max(0, Math.min(5, idx));
+  }
+
+  // ---- theme colors from CSS vars ----
+  function readTheme(){
+    var cs = getComputedStyle(document.documentElement);
+    function g(n){ return cs.getPropertyValue(n).trim(); }
+    return {
+      bg:   g('--viz-bg')   || '#0a0e1a',
+      ink:  g('--text')     || '#e8ecf7',
+      dim:  g('--muted')    || '#93a0b8',
+      acc:  g('--accent')   || '#ffb454',
+      acc2: g('--accent2')  || '#7c9eff',
+      acc3: g('--accent3')  || '#ff7ab6',
+      good: g('--good')     || '#5eead4',
+      grid: g('--grid')     || '#18203a',
+      bm:   [g('--bm1'),g('--bm2'),g('--bm3'),g('--bm4'),g('--bm5'),g('--bm6')]
+    };
+  }
+  var theme = readTheme();
+
+  // ---- world tokens (deterministic per cell) ----
+  // token types with rarity 1..6
+  var TOKENS = [
+    {n:'Singing Stone', e:'🪨', r:1},
+    {n:'Glowing Mushroom', e:'🍄', r:1},
+    {n:'Crystal Cluster', e:'💎', r:2},
+    {n:'Living Flame', e:'🔥', r:2},
+    {n:'Tiny Portal', e:'🌀', r:3},
+    {n:'Star Fragment', e:'⭐', r:3},
+    {n:'Dragon Scale', e:'🐉', r:4},
+    {n:'Void Pearl', e:'⚫', r:4},
+    {n:'Time Crystal', e:'⏳', r:5},
+    {n:'THE ARTIFACT', e:'👁️', r:6}
+  ];
+  var CELL = 34; // world cell size (px)
+  function tokenAt(cx, cy){
+    var key = 'tok'+cx+','+cy;
+    var rng = mulberry32(hashStr(key));
+    if(rng() > 0.28) return null;
+    var roll = rng();
+    var filtered;
+    if(roll < 0.008) filtered = TOKENS.filter(function(t){return t.r>=5;});
+    else if(roll < 0.04) filtered = TOKENS.filter(function(t){return t.r===4;});
+    else if(roll < 0.12) filtered = TOKENS.filter(function(t){return t.r===3;});
+    else if(roll < 0.32) filtered = TOKENS.filter(function(t){return t.r===2;});
+    else filtered = TOKENS.filter(function(t){return t.r<=1;});
+    var t = filtered[Math.floor(rng()*filtered.length)];
+    var ox = (rng()-0.5)*CELL*0.7;
+    var oy = (rng()-0.5)*CELL*0.7;
+    return { t:t, x:cx*CELL+CELL/2+ox, y:cy*CELL+CELL/2+oy, key:key };
+  }
+
+  // ---- state ----
+  var cam = { x: 0, y: 0, tx: 0, ty: 0 };
+  var agent = { x: 0, y: 0, tx: 0, ty: 0, speed: 1.4 };
+  var discovered = {}; // key -> token
+  var commitCount = 0, entitleCount = 0, foundCount = 0, streak = 0, lastFind = 0;
+  var visited = {}; // cellKey -> true (commitment: "here I was")
+  var roam = true;
+  var mode = 2; // 0=Map, 1=Score, 2=Beide
+  var modeLbl = ['Karte (Sein)', 'Score (Meinen)', 'Beide'];
+  var trail = []; // recent positions for score path
+  var logEl = document.getElementById('vlog');
+
+  function cellKey(x,y){ return Math.floor(x/CELL)+','+Math.floor(y/CELL); }
+  function markVisited(x,y){
+    var k = cellKey(x,y);
+    if(!visited[k]){ visited[k] = true; commitCount++; updateStats(); }
+  }
+  function discover(tok, now){
+    if(discovered[tok.key]) return;
+    discovered[tok.key] = tok;
+    foundCount++;
+    // commitment cascade: each token commits to rarity*2 commitments and rarity entitlements
+    commitCount += tok.t.r * 2;
+    entitleCount += tok.t.r;
+    if(now - lastFind < 6000) streak++; else streak = 1;
+    lastFind = now;
+    logEl.textContent = '➕ ' + tok.t.e + ' ' + tok.t.n + ' (Rarität ' + tok.t.r +
+      ') → C+' + (tok.t.r*2) + ' (Nachbarn, Rechtfertigung) · E+' + tok.t.r + ' (Weitersagen, Anspruch)';
+    updateStats();
+  }
+  function updateStats(){
+    var c = document.getElementById('s-c'), e = document.getElementById('s-e');
+    var f = document.getElementById('s-f'), s = document.getElementById('s-streak');
+    if(c) c.textContent = commitCount;
+    if(e) e.textContent = entitleCount;
+    if(f) f.textContent = foundCount;
+    if(s) s.textContent = streak;
+  }
+
+  // ---- rendering ----
+  function drawGrid(){
+    // world region we render
+    var scale = 1;
+    var startX = Math.floor((cam.x - W/2/scale)/CELL)*CELL;
+    var startY = Math.floor((cam.y - H/2/scale)/CELL)*CELL;
+    for(var wy = startY; wy < cam.y + H/2/scale + CELL; wy += CELL){
+      for(var wx = startX; wx < cam.x + W/2/scale + CELL; wx += CELL){
+        var b = biome(wx*0.003, wy*0.003);
+        var sx = (wx - cam.x) + W/2;
+        var sy = (wy - cam.y) + H/2;
+        var col = theme.bm[b];
+        var modeShowMap = (mode===0 || mode===2);
+        var modeShowScore = (mode===1 || mode===2);
+        // base tile
+        if(modeShowMap){
+          ctx.globalAlpha = 1.0;
+          ctx.fillStyle = col;
+          ctx.fillRect(sx, sy, CELL+1, CELL+1);
+        } else {
+          ctx.globalAlpha = 0.15;
+          ctx.fillStyle = col;
+          ctx.fillRect(sx, sy, CELL+1, CELL+1);
+        }
+        ctx.globalAlpha = 1;
+        // visited cells (commitment path)
+        if(modeShowScore){
+          var ck = cellKey(wx,wy);
+          if(visited[ck]){
+            ctx.globalAlpha = 0.42;
+            ctx.fillStyle = theme.acc;
+            ctx.fillRect(sx, sy, CELL+1, CELL+1);
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    }
+    // grid lines
+    ctx.strokeStyle = theme.grid;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.5;
+    for(var wx2 = startX; wx2 < cam.x + W/2 + CELL; wx2 += CELL){
+      var sx2 = (wx2 - cam.x) + W/2;
+      ctx.beginPath(); ctx.moveTo(sx2, 0); ctx.lineTo(sx2, H); ctx.stroke();
+    }
+    for(var wy2 = startY; wy2 < cam.y + H/2 + CELL; wy2 += CELL){
+      var sy2 = (wy2 - cam.y) + H/2;
+      ctx.beginPath(); ctx.moveTo(0, sy2); ctx.lineTo(W, sy2); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawTokens(){
+    var showMap = (mode===0 || mode===2);
+    var showScore = (mode===1 || mode===2);
+    var cx0 = Math.floor((cam.x - W/2)/CELL) - 2;
+    var cx1 = Math.floor((cam.x + W/2)/CELL) + 2;
+    var cy0 = Math.floor((cam.y - H/2)/CELL) - 2;
+    var cy1 = Math.floor((cam.y + H/2)/CELL) + 2;
+    for(var cy=cy0; cy<=cy1; cy++){
+      for(var cx=cx0; cx<=cx1; cx++){
+        var tok = tokenAt(cx, cy);
+        if(!tok) continue;
+        var sx = (tok.x - cam.x) + W/2;
+        var sy = (tok.y - cam.y) + H/2;
+        if(sx < -40 || sx > W+40 || sy < -40 || sy > H+40) continue;
+        var disc = !!discovered[tok.key];
+        if(showMap){
+          // token as faint marker (Sein)
+          ctx.globalAlpha = disc ? 0.3 : 0.6;
+          ctx.fillStyle = disc ? theme.dim : (tok.t.r>=4 ? theme.acc : theme.acc2);
+          ctx.beginPath(); ctx.arc(sx, sy, 5, 0, Math.PI*2); ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.font = '13px serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(tok.t.e, sx, sy+5);
+        }
+        if(showScore && disc){
+          // discovered: inferential cascade (commitment arrows to neighbors)
+          ctx.strokeStyle = theme.acc3;
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = 0.7;
+          for(var i=0;i<4;i++){
+            var ang = (i/4)*Math.PI*2 + 0.4;
+            ctx.beginPath(); ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + Math.cos(ang)*18, sy + Math.sin(ang)*18);
+            ctx.stroke();
+          }
+          ctx.globalAlpha = 1;
+          // commitment ring
+          ctx.strokeStyle = theme.acc;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(sx, sy, 11, 0, Math.PI*2); ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function drawAgent(){
+    var sx = (agent.x - cam.x) + W/2;
+    var sy = (agent.y - cam.y) + H/2;
+    // trail (score path)
+    if(mode===1 || mode===2){
+      ctx.strokeStyle = theme.acc;
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      for(var i=0;i<trail.length;i++){
+        var tx = (trail[i].x - cam.x) + W/2;
+        var ty = (trail[i].y - cam.y) + H/2;
+        if(i===0) ctx.moveTo(tx,ty); else ctx.lineTo(tx,ty);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    // agent body
+    ctx.fillStyle = theme.ink;
+    ctx.shadowBlur = 14; ctx.shadowColor = theme.acc;
+    ctx.beginPath(); ctx.arc(sx, sy, 7, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = theme.bg;
+    ctx.beginPath(); ctx.arc(sx, sy, 3, 0, Math.PI*2); ctx.fill();
+  }
+
+  function drawHud(){
+    ctx.font = '12px -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = theme.dim;
+    ctx.fillText('Mode: ' + modeLbl[mode] + '   ·   Roam: ' + (roam?'AN':'AUS') + '   ·   Seed: ' + SEED, 12, 18);
+  }
+
+  // ---- update loop ----
+  var lastT = 0;
+  function frame(now){
+    var dt = Math.min(50, now - lastT); lastT = now;
+    if(roam){
+      // auto-roam: score directions by unexplored + noise novelty
+      var bestA = null, bestS = -1e9;
+      for(var a=0; a<Math.PI*2; a += Math.PI/8){
+        var tx = agent.x + Math.cos(a)*120;
+        var ty = agent.y + Math.sin(a)*120;
+        var ck = cellKey(tx,ty);
+        var s = (visited[ck] ? 0 : 10) + valueNoise(tx*0.01, ty*0.01)*3;
+        if(s > bestS){ bestS = s; bestA = a; }
+      }
+      agent.tx = agent.x + Math.cos(bestA)*agent.speed;
+      agent.ty = agent.y + Math.sin(bestA)*agent.speed;
+    }
+    agent.x += (agent.tx - agent.x) * 0.08;
+    agent.y += (agent.ty - agent.y) * 0.08;
+    cam.x  += (agent.x - cam.x) * 0.12;
+    cam.y  += (agent.y - cam.y) * 0.12;
+    trail.push({x:agent.x, y:agent.y});
+    if(trail.length > 260) trail.shift();
+    markVisited(agent.x, agent.y);
+    // check tokens near agent
+    var near = 26;
+    var cx0 = Math.floor((agent.x - near)/CELL) - 1;
+    var cx1 = Math.floor((agent.x + near)/CELL) + 1;
+    var cy0 = Math.floor((agent.y - near)/CELL) - 1;
+    var cy1 = Math.floor((agent.y + near)/CELL) + 1;
+    for(var cy=cy0; cy<=cy1; cy++){
+      for(var cx=cx0; cx<=cx1; cx++){
+        var tok = tokenAt(cx, cy);
+        if(!tok) continue;
+        var d = Math.hypot(tok.x - agent.x, tok.y - agent.y);
+        if(d < 14) discover(tok, now);
+      }
+    }
+
+    ctx.fillStyle = theme.bg;
+    ctx.fillRect(0,0,W,H);
+    drawGrid();
+    drawTokens();
+    drawAgent();
+    drawHud();
+    requestAnimationFrame(frame);
+  }
+
+  // ---- controls ----
+  var btnMode = document.getElementById('btn-mode');
+  var modeLblEl = document.getElementById('mode-lbl');
+  if(btnMode) btnMode.addEventListener('click', function(){
+    mode = (mode + 1) % 3;
+    if(modeLblEl) modeLblEl.textContent = modeLbl[mode];
+    theme = readTheme();
+  });
+  var btnRoam = document.getElementById('btn-roam');
+  if(btnRoam) btnRoam.addEventListener('click', function(){
+    roam = !roam;
+    btnRoam.classList.toggle('on', roam);
+    btnRoam.textContent = (roam ? '▶ Auto-Roam an' : '⏸ Auto-Roam aus');
+  });
+  var btnReset = document.getElementById('btn-reset');
+  if(btnReset) btnReset.addEventListener('click', function(){
+    discovered = {}; visited = {}; trail = [];
+    commitCount = 0; entitleCount = 0; foundCount = 0; streak = 0; lastFind = 0;
+    updateStats();
+    if(logEl) logEl.textContent = 'Score zurückgesetzt. Der Score ist kein Teil der Karte — er entsteht erst im Gehen.';
+  });
+  if(canvas) canvas.addEventListener('click', function(ev){
+    var rect = canvas.getBoundingClientRect();
+    var mx = (ev.clientX - rect.left) * (canvas.width / rect.width);
+    var my = (ev.clientY - rect.top) * (canvas.height / rect.height);
+    agent.tx = cam.x + (mx - W/2);
+    agent.ty = cam.y + (my - H/2);
+  });
+  var themeBtn = document.getElementById('themebtn');
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    theme = readTheme();
+  });
+
+  updateStats();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

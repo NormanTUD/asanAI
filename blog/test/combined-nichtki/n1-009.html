@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Higher Structure of Flat Things — Fusion 009</title>
+<style>
+:root{
+  --bg:#f6f4ee; --fg:#1c1c24; --panel:#ffffff; --panel-brd:#e6e2d8;
+  --muted:#6a6a76; --accent:#4361c8; --grid:rgba(20,20,30,0.12);
+  --code-bg:#efece3; --viz-bg:#f1efe8;
+}
+html.dark{
+  --bg:#0b0b12; --fg:#e8e8ea; --panel:#14141c; --panel-brd:#24242e;
+  --muted:#8a8a98; --accent:#7eb4ff; --grid:rgba(200,200,220,0.10);
+  --code-bg:#0f0f16; --viz-bg:#0e0e16;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:48px 22px 90px;}
+h1{
+  font-size:2.15rem; line-height:1.2; margin:0 0 6px; letter-spacing:-0.01em;
+  background:linear-gradient(90deg,var(--accent),#c084fc,#f472b6);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.subtitle{
+  color:var(--muted); font-size:0.95rem; margin:0 0 6px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+}
+.lede{
+  font-size:1.05rem; color:var(--fg); margin:22px 0 8px;
+  border-left:3px solid var(--accent); padding-left:14px;
+}
+section{margin-top:46px;}
+h2{font-size:1.4rem; margin:0 0 14px; padding-bottom:8px; border-bottom:1px solid var(--panel-brd);}
+h2 .no{color:var(--accent); font-weight:600; margin-right:8px;}
+h3{font-size:1.06rem; margin:26px 0 8px; color:var(--fg);}
+p{margin:0 0 14px;}
+strong{font-weight:600;}
+ul{margin:0 0 14px; padding-left:22px;}
+li{margin:0 0 10px;}
+.m{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.92em;
+  background:var(--code-bg); padding:1px 5px; border-radius:4px; white-space:nowrap;}
+.sub-box{background:var(--panel); border:1px solid var(--panel-brd); border-radius:10px;
+  padding:16px 18px; margin:16px 0;}
+.sub-box p:last-child{margin-bottom:0;}
+.viz-wrap{position:relative; height:480px; border:1px solid var(--panel-brd);
+  border-radius:12px; overflow:hidden; background:var(--viz-bg);}
+#viz{display:block; width:100%; height:100%; cursor:grab; touch-action:none;}
+#viz:active{cursor:grabbing;}
+.controls{display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center;
+  margin-top:14px; padding:14px 16px; background:var(--panel);
+  border:1px solid var(--panel-brd); border-radius:12px;}
+.ctrl{display:flex; flex-direction:column; gap:6px; min-width:150px; flex:1;}
+.ctrl label{font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted);}
+.ctrl .val{font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--accent); font-size:0.8rem;}
+input[type=range]{width:100%; accent-color:var(--accent);}
+.chk{flex-direction:row; align-items:center; gap:8px; min-width:auto;}
+.chk input{width:16px; height:16px; accent-color:var(--accent);}
+button{background:var(--panel); color:var(--fg); border:1px solid var(--panel-brd);
+  padding:7px 14px; border-radius:8px; cursor:pointer; font-size:0.82rem;}
+button:hover{border-color:var(--accent); color:var(--accent);}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:12px; font-size:0.8rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{width:11px; height:11px; border-radius:50%; display:inline-block;}
+.viz-cap{color:var(--muted); font-size:0.86rem; margin-top:12px;}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.prov{display:block; padding:12px 14px; border:1px solid var(--panel-brd);
+  border-radius:10px; margin-bottom:12px; background:var(--panel);}
+.prov .path{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.85rem;}
+</style>
+</head>
+<body>
+<article>
+  <h1>The Higher Structure of Flat Things</h1>
+  <p class="subtitle">Fusion aus: mnist_foam/viewer.html &times; inftytopoi.html</p>
+  <p class="lede">A flat image and a point of a space are both cross-sections of a hidden
+  higher-dimensional structure. This paper fuses the <em>MNIST Foam Viewer</em> (a 2-D pixel grid
+  revealed as a 3-D point cloud) with the <em>&infin;-Topoi Explorer</em> (a point revealed under an
+  unbounded tower of higher morphisms) into one position: <strong>the content of an object is its
+  higher structure</strong>.</p>
+
+  <section id="these">
+    <h2><span class="no">1</span>Kernthese der Fusion</h2>
+    <p>Both papers begin from the same observation, phrased in their own vocabularies. A 28&times;28
+    image is not a 2-D picture but a <strong>3-D point cloud</strong>: every pixel carries a brightness
+    value, so the image is a spatial grid extruded along an intensity axis. A 0-cell of an
+    &infin;-topos is not a bare point but a seed of an <strong>unbounded tower</strong>: paths
+    (1-morphisms) between points, homotopies (2-morphisms, symmetries of symmetries) between paths,
+    and coherence data above that, &ldquo;going up forever.&rdquo; In each case the low-dimensional
+    thing you see is a cross-section; the object&rsquo;s real content lives in the higher structure it
+    is a slice of.</p>
+    <p>The fused position is that these are the <em>same</em> idea at different depths. Read at the
+    level of each pixel&rsquo;s <strong>local brightness distribution</strong> &mdash; the histogram of
+    brightness values that pixel takes across the sample of images &mdash; the Foam&rsquo;s 3-D column
+    and the Topos&rsquo;s &infin;-tower are one object: the tower of levels is the <strong>moment
+    expansion</strong> of that local distribution (support, mean, variance, skew, &hellip;). The Foam is
+    the full local distribution (all moments at once, i.e. depth &infin; at every pixel); the silhouette
+    / max-intensity projection is its depth-0 truncation. And the &ldquo;&Delta; aug &minus; raw&rdquo;
+    volume the Foam isolates is exactly the measurable form of the <em>coherence</em> that the
+    Topos&rsquo;s functors demand exactly &mdash; a transform&rsquo;s coherence-defect, made visible.</p>
+    <p>In short: <strong>to understand an object, lift it into its full higher-dimensional home and
+    study how its layers cohere.</strong> The 3-D foam is a depth-1 window; the &infin;-tower is the
+    same window concept carried to the limit. They disagree on finiteness, on statics vs. dynamics, and
+    on exactness vs. approximation &mdash; and each disagreement dissolves once the object is read as a
+    sheaf of local distributions with a moment tower.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="no">2</span>Widerspr&uuml;che zwischen A und B</h2>
+    <p>The two are in genuine tension on three specific points. Each is a real, named claim in the
+    sources, not a manufactured one.</p>
+    <h3>(a) Exhaustible object vs. unbounded structure</h3>
+    <p><strong>A</strong> (mnist_foam) treats the object as <em>finite and fully renderable</em>: a
+    bounded 28&times;28&times;64 voxel volume you can ray-march, max-intensity-project, and count
+    voxel-by-voxel; the entire distribution is on screen at once, with histograms of voxel count and
+    brightness bin. <strong>B</strong> (inftytopoi) treats the structure as <em>essentially
+    infinite</em>: the tower of higher morphisms &ldquo;never stops,&rdquo; and its own explorer
+    hard-truncates at depth 5 (<code>MAX_DEPTH = 5</code>) precisely because the process cannot
+    terminate. A&rsquo;s stance: the whole object is visible at once. B&rsquo;s stance: you can only ever
+    see finite truncations. They make incompatible claims about whether a structure is ever fully
+    exhausted.</p>
+    <h3>(b) Static density vs. relational gluing</h3>
+    <p><strong>A</strong>&rsquo;s central object is a <em>static distribution</em> &mdash; voxel counts,
+    a density cloud. &ldquo;Structure&rdquo; means the shape and mass of a fixed point set, which you
+    slice, clip, and colour. <strong>B</strong>&rsquo;s central objects are <em>processes</em>: local
+    sections gluing into a global sheaf, and functors mapping one layering to another. &ldquo;Structure&rdquo;
+    means how parts <em>cohere</em>, not what their density is. A asks &ldquo;what is the mass
+    distribution?&rdquo;; B asks &ldquo;how do local pieces assemble into a whole?&rdquo;</p>
+    <h3>(c) Approximate, empirical transform vs. exact, formal coherence</h3>
+    <p><strong>A</strong>&rsquo;s augmentation (rotation + shift) is a <em>heuristic, lossy</em>
+    perturbation. The very existence of the <em>&Delta; aug &minus; raw</em> variant proves the transform
+    is <strong>not</strong> structure-preserving: it deliberately moves mass, and the app measures how far
+    it departs from the identity. <strong>B</strong>&rsquo;s morphisms and functors are <em>exact and
+    structure-preserving by axiom</em> (coherent, associative up to the prescribed higher equivalences).
+    A&rsquo;s &ldquo;symmetry&rdquo; is deliberately broken and empirical; B&rsquo;s is exact by
+    definition. Opposite stances on whether a transformation preserves structure.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="no">3</span>Aufl&ouml;sung</h2>
+    <p>Each tension resolves once the object is read as a <em>sheaf of local brightness
+    distributions</em> carrying a moment tower.</p>
+    <h3>(a) &rarr; Truncation is the bridge, not a limitation</h3>
+    <p>B already <em>works by</em> truncation (depth &le; 5, &ldquo;the tower keeps going&hellip;&rdquo;),
+    and A <em>is</em> what a finite truncation of a higher structure looks like. Fused: an &infin;-structure
+    is <em>accessed only through finite windows</em>; A is the k = 1 window (2-D &rarr; 3-D), B&rsquo;s
+    graph a k = 5 window. &ldquo;Exhaustibility&rdquo; is a limiting ideal, not a mode of access. Every
+    concrete view &mdash; A&rsquo;s volume, B&rsquo;s depth-5 graph &mdash; is a truncation, and that is
+    the fundamental epistemic situation, not a defect to be overcome.</p>
+    <h3>(b) &rarr; The density is the stalk; the glue is the assembly</h3>
+    <p>At each pixel (x,y), A stores a <em>local</em> brightness distribution &mdash; a function over the
+    brightness bins &mdash; which is exactly a <strong>sheaf stalk</strong>. A&rsquo;s 2-D field of these
+    local distributions is a presheaf on the pixel grid, and B&rsquo;s gluing is the mechanism that
+    assembles stalks into the global object. Fused: A&rsquo;s density field is the lowest layer of a
+    sheaf; B&rsquo;s gluing explains <em>why</em> the global digit is more than the sum of its pixels &mdash;
+    the coherence of how local distributions vary over the 2-D manifold is the higher content. Density
+    (A) and glue (B) are two views of one sheaf: stalks vs. global sections.</p>
+    <h3>(c) &rarr; Augmentation is a functor up to defect</h3>
+    <p>B&rsquo;s functor preserves structure exactly (defect 0). A&rsquo;s augmentation is a
+    higher-morphism on the foam that is only <em>approximately</em> structure-preserving; the
+    &ldquo;&Delta; aug &minus; raw&rdquo; volume is precisely the <em>measured failure of coherence</em>
+    &mdash; the morphism&rsquo;s defect. Fused: every transformation is a functor; A makes the
+    coherence-defect quantitative and visible (the &Delta; cloud is the transform&rsquo;s
+    &ldquo;curvature&rdquo;), while B&rsquo;s exact functors are the zero-defect ideal. The &Delta; is not
+    a bug but the object&rsquo;s measurable non-coherence.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+    <h3>A &mdash; the image as a 3-D foam</h3>
+    <p>An image is a 28&times;28 grid of pixels, each brightness in 0&ndash;255, bucketed into bins. The
+    <strong>foam</strong> is a 3-D histogram with axes x, y &isin; [0,28) and a brightness bin &isin;
+    [0,64). The voxel (x,y,b) holds a <em>count</em>: how many images in the selected volume had a pixel
+    at (x,y) falling in bin b. Three data variants are compared &mdash; raw, augmented (rotation +
+    shift), and <strong>&Delta; aug &minus; raw</strong> (the augmentation-only residual). Render modes
+    include surface shell, points, ray-marched volume, and <strong>max-intensity projection
+    (MIP)</strong>, which collapses the brightness axis by taking the maximum count along each (x,y)
+    ray &mdash; i.e. it projects the 3-D foam down to its 2-D shadow. Counts are shown on a log scale;
+    the digit&rsquo;s identity lives in the 3-D shape, not the 2-D silhouette.</p>
+    <h3>B &mdash; the &infin;-topos as a tower</h3>
+    <p>An &infin;-topos is a universe of spaces with higher structure. Its levels: <strong>0-cells</strong>
+    (objects &mdash; points, like open sets), <strong>1-cells</strong> (morphisms &mdash; paths /
+    continuous maps), <strong>2-cells</strong> (2-morphisms &mdash; homotopies, &ldquo;symmetries of
+    symmetries&rdquo;), and 3/4/5&hellip;-cells (higher coherence data), the tower unbounded. Two
+    structural operations: <strong>sheaf gluing</strong> (local sections that agree on overlaps assemble
+    into a global section) and <strong>functoriality</strong> (a functor maps one layering to another,
+    commuting with composition). Coherence laws hold; the explorer truncates at depth 5 because the
+    tower never terminates.</p>
+    <h3>The unifying object: a local distribution and its moments</h3>
+    <p>For each pixel (x,y) let <span class="m">h(x,y,b)</span> be the count in brightness bin b
+    (A&rsquo;s local column). Its <strong>moment sequence</strong> is a tower:</p>
+    <div class="sub-box">
+      <p>support/mass &nbsp;<span class="m">m = &Sigma;<sub>b</sub> h(x,y,b)</span></p>
+      <p>mean (1st) &nbsp;<span class="m">&mu;<sub>1</sub> = (1/m)&middot;&Sigma;<sub>b</sub> b&middot;h(x,y,b)</span></p>
+      <p>variance (2nd) &nbsp;<span class="m">&sigma;&sup2; = (1/m)&middot;&Sigma;<sub>b</sub> (b&minus;&mu;<sub>1</sub>)&sup2;&middot;h(x,y,b)</span></p>
+      <p>skew (3rd) &nbsp;<span class="m">&gamma; = (1/m)&middot;&Sigma;<sub>b</sub> ((b&minus;&mu;<sub>1</sub>)/&sigma;)&sup3;&middot;h(x,y,b)</span></p>
+    </div>
+    <p>This single object plays both roles. <strong>A&rsquo;s foam</strong> is the full histogram &mdash;
+    all moments at once (the complete local distribution, i.e. depth &infin; at every pixel).
+    <strong>B&rsquo;s tower</strong> is the same moments re-indexed as levels: level 0 = support (where it
+    is non-zero &rarr; the silhouette), level 1 = mean (the foam surface / brightness axis), level 2 =
+    variance (spread / curvature), level 3 = skew (higher coherence), &hellip;. The reason the
+    &infin;-limit recovers the whole object is the <em>moment problem</em>: the full sequence of moments
+    determines the distribution. So B&rsquo;s &ldquo;going up forever&rdquo; is exactly A&rsquo;s &ldquo;the
+    whole histogram at every pixel.&rdquo;</p>
+    <h3>Transforms as functors; the defect as coherence</h3>
+    <p>A transform T (augmentation = per-image rotation + shift + shear + noise) acts on each local
+    distribution, hence on the whole moment tower: a functor <span class="m">T<sub>*</sub></span>. The
+    exact-functor ideal (B) preserves every moment (defect 0). A&rsquo;s augmentation is non-exact; its
+    <strong>defect</strong> <span class="m">&delta;T</span> is the change it induces, and A&rsquo;s
+    &ldquo;&Delta; aug &minus; raw&rdquo; is <span class="m">&delta;T</span> rendered as a point cloud
+    &mdash; the morphism&rsquo;s curvature / failure of coherence, made visible.</p>
+    <h3>MIP as a projection functor</h3>
+    <p>A&rsquo;s MIP (max along the brightness axis) is a functor that <em>forgets</em> the brightness
+    axis: it sends the 3-D foam to the 2-D silhouette by an extreme-valued reduction. In B&rsquo;s
+    language it is a functor between two truncations that discards level 1 and keeps level 0 &mdash; a
+    shadow, not a deformation.</p>
+    <h3>Computable recipe (what a later round works from)</h3>
+    <p>Given a sample of images: (1) bin each pixel&rsquo;s brightness &rarr; per-pixel histograms
+    <span class="m">h(x,y,b)</span>; (2) compute the moment fields m, &mu;<sub>1</sub>, &sigma;&sup2;,
+    &gamma;; (3) the <strong>foam</strong> = the histograms themselves; (4) the <strong>tower</strong> =
+    the moment fields, one stratum per level; (5) the <strong>silhouette / MIP</strong> = the support /
+    mass (or the axis-maximum); (6) the <strong>defect</strong> = the difference of two transformed
+    moment fields. That is a complete, self-contained object &mdash; flat data, its higher structure, and
+    its coherence-defect.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="no">5</span>Visualisierung</h2>
+    <p>The interactive below renders a synthetic digit-like ink field as A&rsquo;s 3-D (x, y, brightness)
+    <strong>foam</strong>. The <strong>&infin;-tower depth</strong> slider walks up B&rsquo;s
+    higher-morphism tower as <em>moment strata</em>: 0 = silhouette (the 2-D shadow / MIP), 1 = + the foam
+    (brightness axis), 2 = + the variance layer, 3 = + the skew layer, 4 = all moments (the full local
+    distribution). The <strong>&Delta; transform defect</strong> toggle shears the field (an augmentation)
+    and overlays <strong>&Delta; aug &minus; raw</strong> as ghost points &mdash; the measurable
+    coherence-defect of the transform. Drag to rotate, scroll to zoom.</p>
+    <div class="viz-wrap"><canvas id="viz"></canvas></div>
+    <div class="controls">
+      <div class="ctrl">
+        <label>&infin;-tower depth &mdash; <span class="val" id="depth-label">+ foam (brightness axis)</span></label>
+        <input type="range" id="depth" min="0" max="4" step="1" value="1">
+      </div>
+      <label class="ctrl chk"><input type="checkbox" id="aug"> &Delta; transform defect (aug &minus; raw)</label>
+      <label class="ctrl chk"><input type="checkbox" id="rot" checked> auto-rotate</label>
+      <div class="ctrl" style="min-width:auto;">
+        <button id="reset">Reset view</button>
+        <button id="theme">Light / Dark</button>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:#7eb4ff"></i>0 silhouette / mass</span>
+      <span><i class="dot" style="background:#f472b6"></i>1 foam (brightness)</span>
+      <span><i class="dot" style="background:#facc15"></i>2 variance</span>
+      <span><i class="dot" style="background:#34d399"></i>3 skew</span>
+      <span><i class="dot" style="background:#c084fc"></i>4 all moments (&infin;)</span>
+      <span><i class="dot" style="background:#ff5470"></i>&Delta; defect</span>
+    </div>
+    <p class="viz-cap">Lower strata are lower morphisms; the tower stacks upward per pixel. The foam
+    (level 1) is A; the moment strata (levels 2&ndash;3) and the &ldquo;never stops&rdquo; idea are B; the
+    ghost &Delta; points are A&rsquo;s augmentation residual read as B&rsquo;s functor defect. All data is
+    generated inline &mdash; no network fetches.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="no">6</span>Provenienz</h2>
+    <span class="prov">
+      <strong>A</strong> &mdash; <a class="path" href="../mnist_foam/viewer.html">mnist_foam/viewer.html</a><br>
+      MNIST Foam Viewer: renders MNIST digits as a 3-D (x, y, brightness-bin) voxel &ldquo;foam&rdquo;;
+      compares raw vs. augmented (rotation + shift) distributions and isolates &Delta; aug &minus; raw;
+      surface / point / ray-march / MIP render modes.
+    </span>
+    <span class="prov">
+      <strong>B</strong> &mdash; <a class="path" href="../inftytopoi.html">inftytopoi.html</a><br>
+      &infin;-Topoi Visual Explorer: a d3 force graph of a space&rsquo;s higher structure (0-cells
+      &rarr; higher morphisms, &ldquo;going up forever&rdquo;), with interactive levels, sheaf gluing, and
+      functoriality modes.
+    </span>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var wrap=canvas.parentElement;
+  if(!canvas||!canvas.getContext) return;
+  var ctx=canvas.getContext('2d');
+
+  var N=26, NBIN=12, S=160;
+  var LEVEL_COLORS=['#7eb4ff','#f472b6','#facc15','#34d399','#c084fc'];
+  var DEFECT_COLOR='#ff5470';
+  var DEPTH_LABELS=['silhouette (shadow)','+ foam (brightness axis)','+ variance layer','+ skew layer','all moments (∞)'];
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  function baseField(x,y){
+    var a=(x-12.5)/8.5, b=(y-13)/10.5;
+    var r=Math.sqrt(a*a+b*b);
+    var t=Math.abs(r-0.78);
+    var v=Math.exp(-(t*t)/0.10);
+    if(r<0.30) v=0;
+    return Math.min(1,Math.max(0,v));
+  }
+
+  function sampleImages(aug,rng){
+    var imgs=[];
+    for(var s=0;s<S;s++){
+      var img=new Float32Array(N*N);
+      var rot=(rng()-0.5)*0.25;
+      var shx=(rng()-0.5)*4, shy=(rng()-0.5)*4;
+      var shear=aug?0.5:0;
+      var scale=aug?1.0+(rng()-0.5)*0.3:1.0;
+      var cr=Math.cos(rot), sr=Math.sin(rot);
+      for(var y=0;y<N;y++)for(var x=0;x<N;x++){
+        var px=(x-12.5)/scale+shx;
+        var py=(y-13)/scale+shy;
+        var xr=px*cr-py*sr;
+        var yr=px*sr+py*cr;
+        var xs=xr+shear*yr;
+        var v=baseField(12.5+xs,13+yr);
+        v+=(rng()-0.5)*0.06;
+        img[y*N+x]=Math.min(1,Math.max(0,v));
+      }
+      imgs.push(img);
+    }
+    return imgs;
+  }
+
+  function buildHistogram(imgs){
+    var V=new Float32Array(N*N*NBIN);
+    for(var s=0;s<imgs.length;s++){
+      var img=imgs[s];
+      for(var i=0;i<N*N;i++){
+        var v=img[i];
+        if(v<=0.001) continue;
+        var b=Math.floor(v*NBIN);
+        if(b>=NBIN)b=NBIN-1; if(b<0)b=0;
+        V[i*NBIN+b]++;
+      }
+    }
+    return V;
+  }
+
+  function moments(V){
+    var mass=new Float32Array(N*N), mean=new Float32Array(N*N), varr=new Float32Array(N*N), skew=new Float32Array(N*N);
+    for(var i=0;i<N*N;i++){
+      var tot=0,s1=0,s2=0,s3=0;
+      for(var b=0;b<NBIN;b++){var c=V[i*NBIN+b]; if(!c)continue; var bv=(b+0.5)/NBIN; tot+=c; s1+=bv*c; s2+=bv*bv*c; s3+=bv*bv*bv*c;}
+      if(tot<=0) continue;
+      var m1=s1/tot, m2=s2/tot, m3=s3/tot;
+      mass[i]=tot; mean[i]=m1;
+      varr[i]=Math.max(0,m2-m1*m1);
+      var sd=Math.sqrt(varr[i]);
+      skew[i]=sd>1e-6?(m3-3*m1*m2+2*m1*m1*m1)/(sd*sd*sd):0;
+    }
+    return {mass:mass,mean:mean,varr:varr,skew:skew};
+  }
+
+  function buildSets(V,mom){
+    var S0=[],S1=[],S2=[],S3=[];
+    var lm=Math.log(1+S);
+    for(var y=0;y<N;y++)for(var x=0;x<N;x++){
+      var i=y*N+x;
+      if(mom.mass[i]<=0) continue;
+      S0.push({x:x,y:y,z:0,r:2+(Math.log(1+mom.mass[i])/lm)*5,a:0.9});
+      for(var b=0;b<NBIN;b++){var c=V[i*NBIN+b]; if(c<=0)continue; S1.push({x:x,y:y,z:b*1.2,r:1.1+Math.log(1+c)*0.7,a:0.85});}
+      S2.push({x:x,y:y,z:16+mom.varr[i]*18,r:2.4,a:0.95});
+      S3.push({x:x,y:y,z:24+Math.abs(mom.skew[i])*7,r:2.4,a:0.95});
+    }
+    return [S0,S1,S2,S3];
+  }
+
+  function buildDefect(D){
+    var P=[];
+    for(var y=0;y<N;y++)for(var x=0;x<N;x++){var i=y*N+x;
+      for(var b=0;b<NBIN;b++){var d=D[i*NBIN+b]; if(d<=0.5)continue; P.push({x:x,y:y,z:b*1.2,r:1.0+Math.log(1+d)*0.5,a:0.55});}}
+    return P;
+  }
+
+  var rng=mulberry32(20240510);
+  var rawV=buildHistogram(sampleImages(false,rng));
+  var augV=buildHistogram(sampleImages(true,mulberry32(777)));
+  var rawM=moments(rawV), augM=moments(augV);
+  var rawSets=buildSets(rawV,rawM), augSets=buildSets(augV,augM);
+  var D=new Float32Array(rawV.length);
+  for(var di=0;di<rawV.length;di++) D[di]=Math.abs(augV[di]-rawV[di]);
+  var defectPts=buildDefect(D);
+
+  var zGlobal=0;
+  function trackMax(arr){for(var i=0;i<arr.length;i++)if(arr[i].z>zGlobal)zGlobal=arr[i].z;}
+  [rawSets,augSets].forEach(function(sets){sets.forEach(trackMax);});
+  if(zGlobal<30) zGlobal=30;
+
+  var state={depth:1,aug:false,rot:true};
+  var rotY=0.7, rotX=-0.5, zoom=1.0;
+  var W=800, H=480, scale=10;
+  var cx0=(N-1)/2, cy0=(N-1)/2, cz0=zGlobal/2;
+  var dragging=false, lastX=0, lastY=0;
+
+  function fitCanvas(){
+    var rect=wrap.getBoundingClientRect();
+    W=Math.max(200,rect.width); H=Math.max(200,rect.height);
+    var dpr=window.devicePixelRatio||1;
+    canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var maxDim=Math.max(N-1,zGlobal);
+    scale=(Math.min(W,H)*0.82/maxDim)*zoom;
+  }
+
+  function themeGrid(){
+    var cs=getComputedStyle(document.documentElement);
+    return cs.getPropertyValue('--grid').trim()||'rgba(128,128,128,0.18)';
+  }
+
+  function project(wx,wy,wz){
+    var x=wx-cx0, y=wy-cy0, z=wz-cz0;
+    var ca=Math.cos(rotY), sa=Math.sin(rotY), cb=Math.cos(rotX), sb=Math.sin(rotX);
+    var x1=x*ca-y*sa, y1=x*sa+y*ca, z1=z;
+    var x2=x1, y2=y1*cb-z1*sb, z2=y1*sb+z1*cb;
+    var sx=W/2+x2*scale;
+    var sy=H/2-z2*scale;
+    var depth=(y2/zGlobal+1)*0.5;
+    if(depth<0)depth=0; if(depth>1)depth=1;
+    return {sx:sx,sy:sy,depth:depth};
+  }
+
+  function drawPoint(p,color,alpha){
+    var q=project(p.x,p.y,p.z);
+    var sz=p.r*(0.6+0.8*q.depth);
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.arc(q.sx,q.sy,sz,0,6.2832);
+    ctx.fill();
+  }
+
+  function drawFloor(gridColor){
+    ctx.strokeStyle=gridColor; ctx.globalAlpha=0.5; ctx.lineWidth=1;
+    var p00=project(0,0,0),p10=project(N,0,0),p11=project(N,N,0),p01=project(0,N,0);
+    ctx.beginPath();
+    ctx.moveTo(p00.sx,p00.sy); ctx.lineTo(p10.sx,p10.sy);
+    ctx.lineTo(p11.sx,p11.sy); ctx.lineTo(p01.sx,p01.sy);
+    ctx.closePath(); ctx.stroke();
+    ctx.beginPath();
+    for(var k=0;k<=N;k+=7){
+      var a=project(k,0,0),b=project(k,N,0); ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);
+      a=project(0,k,0); b=project(N,k,0); ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);
+    }
+    ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  function drawColumns(set1,color){
+    ctx.strokeStyle=color; ctx.globalAlpha=0.18; ctx.lineWidth=1;
+    ctx.beginPath();
+    for(var i=0;i<set1.length;i++){
+      var p=set1[i];
+      var a=project(p.x,p.y,0), b=project(p.x,p.y,p.z);
+      ctx.moveTo(a.sx,a.sy); ctx.lineTo(b.sx,b.sy);
+    }
+    ctx.stroke(); ctx.globalAlpha=1;
+  }
+
+  var depthEl=document.getElementById('depth');
+  var depthLabel=document.getElementById('depth-label');
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    drawFloor(themeGrid());
+    var sets=state.aug?augSets:rawSets;
+    var maxL=Math.min(state.depth,3);
+    for(var L=0;L<=maxL;L++){
+      var pts=sets[L];
+      for(var i=0;i<pts.length;i++) drawPoint(pts[i],LEVEL_COLORS[L],pts[i].a);
+    }
+    if(state.depth>=4) drawColumns(sets[1],LEVEL_COLORS[4]);
+    if(state.aug){
+      for(var j=0;j<defectPts.length;j++) drawPoint(defectPts[j],DEFECT_COLOR,defectPts[j].a);
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function loop(){
+    if(state.rot&&!dragging) rotY+=0.004;
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  canvas.addEventListener('pointerdown',function(e){dragging=true;lastX=e.clientX;lastY=e.clientY;e.preventDefault();});
+  window.addEventListener('pointermove',function(e){
+    if(!dragging)return;
+    rotY+=(e.clientX-lastX)*0.008;
+    rotX+=(e.clientY-lastY)*0.008;
+    if(rotX>1.4)rotX=1.4; if(rotX<-1.4)rotX=-1.4;
+    lastX=e.clientX; lastY=e.clientY;
+  });
+  window.addEventListener('pointerup',function(){dragging=false;});
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    zoom*=(e.deltaY<0?1.08:0.92);
+    if(zoom<0.5)zoom=0.5; if(zoom>2.5)zoom=2.5;
+    fitCanvas();
+  },{passive:false});
+
+  document.getElementById('reset').addEventListener('click',function(){rotY=0.7;rotX=-0.5;zoom=1.0;fitCanvas();});
+  document.getElementById('theme').addEventListener('click',function(){document.documentElement.classList.toggle('dark');});
+  depthEl.addEventListener('input',function(){state.depth=parseInt(depthEl.value,10);depthLabel.textContent=DEPTH_LABELS[state.depth];});
+  document.getElementById('aug').addEventListener('change',function(e){state.aug=e.target.checked;});
+  document.getElementById('rot').addEventListener('change',function(e){state.rot=e.target.checked;});
+
+  var rt;
+  window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(fitCanvas,150);});
+
+  fitCanvas();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

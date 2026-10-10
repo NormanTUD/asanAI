@@ -1,0 +1,16 @@
+{
+  "no": "016",
+  "a": "ÉtaleRaum.html",
+  "b": "buecher/history_of_mathematical_notation.html",
+  "a_title": "Étale Raum & Étale Kohomologie — visuell",
+  "b_title": "Die Geheime Geschichte der Mathe-Symbole",
+  "combined_theme": "notation-als-hebel",
+  "one_line": "Die Geschichte der Mathesymbole (B) liefert das Gesetz, das erklärt, warum Grothendiecks étale Neu-Kodierung (A) ganze Gebiete freisetzte: Notation ist der Hebel des mathematischen Fortschritts.",
+  "contradictions": [
+    "Konkret/suggestiv (B: das dekadische Zeichen wirkt, weil konkret & leicht zu schreiben, Cajori 'suggestiv') vs. Abstrakt/punkt-frei (A: der Durchbruch kommt, weil Punkte & offene Mengen WEGFALLEN, 'man braucht keine Punkte') — A ist ein Gegenbeispiel zu Bs Konkretheits-Heuristik.",
+    "Langsamer sozialer Standardisierungskampf (B: + vs p/m 130 J., = >100 J., 'dauert Jahrhunderte', bottom-up) vs. schneller individueller top-down Sprung (A: 'Grothendiecks Sprung' definiert das Framework in einem Akt).",
+    "Der Hebel liegt im Glyph (B: das Zeichen +, =, 0) vs. in einer grundlegenden Definition/Ontologie-Neuordnung (A: eine Grothendieck-Topologie, d.h. Neudefinition von 'Überdeckung/Kleben', kein Schriftzeichen) — Bs 'Notation=Macht' wäre zu schmal, wenn sie nur Glyphen meint."
+  ],
+  "resolution": "Notation ist ein Spektrum von Glyph bis Grundbegriff und der Hebel ist strukturelle Suggestivität (das Zeichen trägt die nötige Struktur), nicht Bildhaftigkeit: Die Erfindung ist ein individueller top-down Sprung, die Durchsetzung ein sozialer bottom-up Prozess, den ein spektakulärer Payoff (Weil-Vermutungen/Deligne) von Jahrhunderten auf Jahre komprimiert — B (Glyphen) und A (Definitionen) sind zwei Stufen desselben Gesetzes.",
+  "viz": "Side-by-side-Canvas 'Notationshebel': dieselbe Basis X unter alter Notation (1 Halm, H1=0, verhindert) vs. neuer Notation (n étale Blätter mit rotierender Monodromie, H1_et != 0, ermöglicht); Slider für n, Play/Pause, theme-aware via CSS-Variablen."
+}

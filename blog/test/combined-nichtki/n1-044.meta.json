@@ -1,0 +1,16 @@
+{
+  "no": "044",
+  "a": "lawsofform2.html",
+  "b": "buecher/zen_und_die_kunst_ein_motorrad_zu_warten.html",
+  "a_title": "Laws of Form – Interaktiv (G. Spencer-Brown 1969)",
+  "b_title": "Zen und die Kunst der Motorradwartung – Interaktiv (Robert M. Pirsig)",
+  "combined_theme": "unterscheidung-und-quality",
+  "one_line": "Derselbe Urakt — eine Unterscheidung im Ungeteilten — ist bei Spencer-Brown die reine Erzeugung von Form/Logik (Mark im Leeren) und bei Pirsig der Schnitt, der Quality verliert; fusioniert zu: jeder Schnitt ist zugleich Erschaffung und Verlust.",
+  "contradictions": [
+    "Erzeugung vs. Verlust: A (Spencer-Brown) nennt die Unterscheidung den generativen Urakt ('ein Universum entsteht, wenn ein Raum getrennt wird'), B (Pirsig) nennt den Schnitt einen Abfall vom Echten (Quality liegt vor der Teilung, Analyse entfernt von der Wahrheit).",
+    "Leere vs. Fülle: A's Grund (Void) ist leeres Nichts, B's Grund (Quality) ist volle Präsenz/das Ganze — derselbe ungeteilte Grund wird als leer und als gefüllt beschrieben.",
+    "Vollständigkeit vs. Offenheit: A behauptet, die gesamte Aussagenlogik sei aus zwei Axiomen formal ableitbar (geschlossen); B behauptet, Formalisierung/Analyse sei reduktiv und vermehre Hypothesen statt zu konvergieren (Quality unerschaepfbar)."
+  ],
+  "resolution": "Ein Urakt, zwei Register: Die Unterscheidung ist domänenrelativ generativ (Form) und zugleich Abwendung (Präsenz). Das Ungeteilte ist weder leer noch voll, sondern undeterminiert — formal gesehen Leere, erfahrungsmäßig gesehen Fülle. Ein formales Kalkül ist über der Form vollständig, über dem Quality offen; 'Vollständigkeit' gilt nur innerhalb des Formalen. Mark (A) = Schnitt des Messers (B); Leeres (A) = Ungeteiltes vor dem ersten Schnitt (B).",
+  "viz": "Interaktives Canvas 'Das Ungeteilte schneiden': Punktewolke (Quality/Leere), per Klick werden Unterscheidungen/Schnitte gesetzt, die Punkte in 2^n Kategorien einfärben; zwei Gauge-Linien zeigen simultan, wie Präsenz Q=Q0*e^(-kC) sinkt und Form F=100*(1-e^(-k'C)) steigt — derselbe Akt, zwei Folgen."
+}

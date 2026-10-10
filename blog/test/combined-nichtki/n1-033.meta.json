@@ -1,0 +1,16 @@
+{
+  "no": "033",
+  "a": "buecher/what_the_frogs_eye_tell_the_frogs_brain.html",
+  "b": "new_kind_of_science.html",
+  "a_title": "Was das Froschauge dem Froschgehirn erzählt (Lettvin, Maturana, McCulloch & Pitts 1959)",
+  "b_title": "A New Kind of Science — Interactive Explorer (Stephen Wolfram 2002)",
+  "combined_theme": "perception-as-local-computation",
+  "one_line": "Das Froschauge ist ein biologisches Beispiel von Wolframs Prinzip: einfache lokale Regeln in parallelen Einheiten erzeugen interpretierte, 'bedeutungsvolle' Ausgänge, ohne zentrales Verstehens-Modul.",
+  "contradictions": [
+    "Bedeutung vs. Bedeutungslosigkeit: A sagt, das Auge spricht in einer 'bereits interpretierten' (bedeutungsvollen) Sprache; B (PCE) hält jede Berechnung substrat- und zweckunabhängig und bedeutungsfrei — Gehirn = Rule 110 = Wetter.",
+    "Reduzierbar vs. irreduzibel: A beschreibt vier benennbare, vorhersagbare Filter (ohne den Frosch laufen zu lassen); B (computational irreducibility) behauptet, komplexe Systeme seien nur durch Simulation vorhersagbar.",
+    "Analog vs. diskret: A hängt die Funktion an kontinuierlicher Biophysik (Fasern 20-50 cm/s bis 10 m/s, ~18/s-Oszillation, Felder 2-15 Grad, Membran-Gedächtnis); B arbeitet mit 2-Zustands-Zellen und 256 expliziten Regeln, für die PCE das Substrat als irrelevant ansieht."
+  ],
+  "resolution": "Bedeutung ist auf zwei Ebenen zu trennen: syntaktisch (B) ist die Retina nur eine berechnete Abbildung ohne inhärente Bedeutung, funktional (A) hat die Evolution genau diese lokalen Regeln selektiert, so dass Ausgänge mit Überlebens-Ereignissen kovariieren — Bedeutung ist aufgelegtes Kovariationsmuster, nicht inhärent. Reduzierbarkeit (A) und Irreduzibilität (B) gelten auf verschiedenen Skalen: einzelne Detektoren sind Klasse 1/2 (beschreibbar), die Zusammengesetztheit ist Klasse 3/4 (irreduzibel). PCE ist eine Leistungs- (keine Mechanismus-)Aussage: sie erlaubt, die analoge Retina mit diskreten einfachen Regeln zu modellieren — analoge Parameter sind die physikalische Realisierung des diskreten Modells.",
+  "viz": "Ein elementarer zellularer Automat (256 Regeln) läuft als 'einfache lokale Regel'; aus demselben Frame werden live die vier Frosch-Detektor-Kanäle (Kontrast/Kanten, Bewegung, Konvexität/Käfer, Verdunkelung) abgeleitet — dieselbe lokale Berechnung, vier 'interpretierte' Ausgänge."
+}

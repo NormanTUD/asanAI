@@ -1,0 +1,16 @@
+{
+  "no": "051",
+  "a": "frege.html",
+  "b": "wahrscheinlichkeit.html",
+  "a_title": "Frege's Grundlagen der Arithmetik — Interactive Explorer",
+  "b_title": "Was ist Wahrscheinlichkeit? – Interaktiv erkunden",
+  "combined_theme": "objektive-bedeutung-im-kontext",
+  "one_line": "Zahl und Wahrscheinlichkeit sind objektive logische Gegenstände, deren Bedeutung nicht durch ein inneres Wesen, sondern durch die Kontexte/Sätze festgelegt wird, in denen sie auftreten — relational definiert (Freges Humesches Prinzip ↔ Kolmogorov-Axiome); die sechs Wahrscheinlichkeits-Interpretationen sind Kontexte, keine rivalisierenden Wesen.",
+  "contradictions": [
+    "Objektivität vs. Subjektivität: A (Frege, Anti-Psychologismus) verlangt objektive, verstandsunabhängige logische Gegenstände (‚deins und meins 3 sind derselbe Gegenstand'); B (Bayes) erklärt Wahrscheinlichkeit als subjektiven Grad der Überzeugung (degree of belief) — Frege würde das als Psychologismus ablehnen.",
+    "Anti-Empirismus vs. Frequentismus: A (Frege, Ablehnung Mills) bestreitet, dass Zahlen Eigenschaften physischer Haufen seien (‚welcher Haufen ist 0?'); B (von Mises) definiert Wahrscheinlichkeit als Grenzwert der relativen Häufigkeit wiederholbarer physischer Experimente — die empiristische Reduktion, die Frege angreift (Einzelereignis-/n→∞-Problem).",
+    "Einheitliches Wesen vs. Pluralismus: A liefert eine einzige Definition (Zahlen SIND logische Gegenstände via HP + Kontextprinzip); B antwortet auf ‚Was ist Wahrscheinlichkeit?' mit sechs Perspektiven, vereint nur durch Kolmogorows Axiome — ein Wesens-Modell gegen ein Familien-Modell."
+  ],
+  "resolution": "Der Gegenstand bleibt objektiv, die Lesart wird zum Kontext (Kontextprinzip). p ist — wie Frege's 3 — derselbe objektive logische Gegenstand für alle (dein p = mein p); Subjektivität (Bayes) und Empirismus (Frequentismus) sind nur Wege/Labels zum Wert, nicht dessen Wesen. Kolmogorovs Axiome sind der Wahrscheinlichkeits-Zwilling des Humeschen Prinzips: beides definiert über Relationen. B's Pluralismus wird damit zu einem Frege'schen Kontext-Pluralismus über einem einzigen objektiven Gegenstand; die axiomatische Fassung löst zudem die Grenzfälle (P(∅)=0, P(Ω)=1; Frege's 0 = leere Extension).",
+  "viz": "Canvas-2D ‚Ein Wert, viele Kontexte': links die Zählung (Ω-Punkte, A hervorgehoben, #A/#Ω, Humesches Prinzip), mitte der invariante Wert p=a/|Ω| als pulsierender objektiver logischer Gegenstand, rechts vier Kontext-Linsen (Klassisch/Frequenz/Bayes/Maß) mit Verbindungslinien auf denselben p. Slider a/|Ω| + Linsen-Toggle: beim Wechsel der Lesart ändert sich nur der Kontext, der mittlere Wert bleibt exakt gleich. Theme-aware via CSS-Variablen, inline Daten, requestAnimationFrame-Loop."
+}

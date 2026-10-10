@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Power of Analogy ✕ Products &amp; Coproducts — Die universelle Form der Kombination</title>
+<style>
+  :root {
+    --bg: #faf9f4;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e2e8f0;
+    --accent: #1e3a8a;
+    --accent2: #0f766e;
+    --ok: #16a34a;
+    --bad: #dc2626;
+    --warn: #b45309;
+    --code-bg: #eef2f7;
+    --shadow: 0 2px 14px rgba(15,23,42,.08);
+    --viz-canvas-bg: #f7f8fc;
+    --viz-silk: #1e3a8a;
+    --viz-music: #9d174d;
+    --viz-func: #b45309;
+    --viz-arr: #475569;
+    --viz-text: #1e293b;
+    --viz-grid: #cbd5e1;
+    --viz-ok: #16a34a;
+    --viz-warn: #b45309;
+    --viz-bad: #dc2626;
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --accent: #93c5fd;
+    --accent2: #5eead4;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.45);
+    --viz-canvas-bg: #0a1120;
+    --viz-silk: #58a6ff;
+    --viz-music: #ff7eb6;
+    --viz-func: #ffd24d;
+    --viz-arr: #94a3b8;
+    --viz-text: #e2e8f0;
+    --viz-grid: #243449;
+    --viz-ok: #4ade80;
+    --viz-warn: #fbbf24;
+    --viz-bad: #f87171;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65; font-size: 16px; }
+  article { max-width: 820px; margin: 0 auto; padding: 40px 22px 80px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.0em; line-height: 1.22; margin: 0 0 8px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle { position: absolute; top: 0; right: 0; background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: .85em; }
+  section { margin-top: 38px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  h3 { font-size: 1.08em; color: var(--fg); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 8px; }
+  code, .math { font-family: "SFMono-Regular", Consolas, "Fira Code", monospace;
+    background: var(--code-bg); color: var(--fg); padding: 1px 6px; border-radius: 4px; font-size: .88em; }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .mathblock { display: block; text-align: center; font-size: 1.02em; background: var(--code-bg);
+    border-left: 3px solid var(--accent2); padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 12px 0; overflow-x: auto; }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .9em; }
+  th, td { border: 1px solid var(--card-border); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; align-items: center; }
+  .ctl-row label { font-size: .92em; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+  .ctl-row select, .ctl-row input[type=range] { background: var(--code-bg); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 8px; padding: 6px 10px; }
+  .ctl-row input[type=range] { padding: 0; width: 130px; }
+  .btn { background: var(--code-bg); color: var(--fg); border: 1px solid var(--card-border); border-radius: 8px;
+    padding: 7px 14px; cursor: pointer; font-weight: 600; font-size: .9em; }
+  .btn:hover { border-color: var(--accent); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+  .chip { padding: 6px 12px; border-radius: 8px; font-size: .85em; border: 1px solid var(--card-border); color: var(--muted); }
+  .chip.chip-on { color: var(--fg); border-color: var(--accent); font-weight: 700; }
+  #viz { display: block; width: 100%; max-width: 720px; height: auto; margin: 6px auto;
+    background: var(--viz-canvas-bg); border: 1px solid var(--card-border); border-radius: 12px; }
+  .verdict { margin-top: 12px; padding: 12px 15px; border-radius: 10px; font-weight: 600;
+    border-left: 5px solid var(--muted); background: var(--code-bg); font-size: .95em; }
+  .v-ok { border-left-color: var(--ok); color: var(--ok); }
+  .v-dual { border-left-color: var(--warn); color: var(--warn); }
+  .viz-note { color: var(--muted); font-size: .9em; margin-top: 12px; }
+  .proven a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .proven a:hover { text-decoration: underline; }
+  footer { margin-top: 46px; color: var(--muted); font-size: .85em; text-align: center;
+    border-top: 1px solid var(--card-border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" type="button">☾ / ☀</button>
+    <h1>Die Macht der Analogie in der Sprache von Produkt &amp; Koprodukt</h1>
+    <p class="fusion-line">Fusion aus: <b>power_of_analogy.html</b> ✕ <b>product_coproduct.html</b></p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>A ist die visuelle Paper-Tour zu Giesa, Spivak &amp; Buehler (2011): <strong>Spinnenseide</strong> (Biomaterial) und <strong>klassische Musik</strong> teilen dieselbe <em>hierarchische Bauart</em>, und das soll man <em>mathematisch beweisen</em> können — nicht bloß behaupten. Das Werkzeug ist die <strong>Kategorientheorie</strong>: ein <em>Olog</em> ist eine Kategorie (Objekte = Sets, Pfeile = Funktionen), und die Analogie selbst ist ein <em><strong>Funktor</strong></em> — eine strukturerhaltende Abbildung zwischen der „Seide-Kategorie" und der „Musik-Kategorie". Das tragende Objekt bei A ist also die <strong>Brücke</strong> (der Funktor).</p>
+    <p>B ist der interaktive Grundlagen-Explorer für <strong>Produkt &amp; Koprodukt</strong> in der Kategorientheorie: ein Produkt <span class="math">A × B</span> trägt Projektionen <span class="math">π₁,π₂</span> („beides kombinieren und wieder herausziehen"), ein Koprodukt <span class="math">A + B</span> trägt Injektionen <span class="math">ι₁,ι₂</span> („kombinieren und Herkunft merken"), und die beiden sind <strong>dual</strong> — man kommt von dem einen zum anderen, indem man <em>alle Pfeile umdreht</em> (Produkt in <span class="math">C</span> = Koprodukt in <span class="math">C^op</span>). Das tragende Objekt bei B ist der <strong>Bauplan</strong> (die universelle Eigenschaft / Dualität).</p>
+    <p><strong>Die fusionierte Position (ein einziger Satz):</strong> Ein zuverlässiger Funktor ist genau dann strukturell treu, wenn er die universellen Konstruktionsformen — Produkt, Koprodukt und deren Dualität — <em>bewahrt</em>. Genau deshalb trägt die Analogie: Es wandert nicht der <em>Inhalt</em> (Aminosäuren ↔ Klangwellen), sondern die <em>universelle Form der Kombination</em> von einer Domäne zur anderen. Die „Macht der Analogie" (A) ist nur die <strong>funktoriale Invarianz</strong> dieser Kombinationsform (B). Produkt ↔ Koprodukt ist der Bauplan; der Funktor ist der Transport, der ihn von Domäne zu Domäne trägt.</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Texte widerlegen sich in ihren tatsächlichen Behauptungen <em>nicht</em> — beide leben in derselben Sprache (Kategorientheorie), A <em>angewandt</em> (Analogie beweisen), B <em>grundlegend</em> (was ein Limes/Kolimes ist). Sie treffen aber auf drei konkreten Punkten auf <strong>unvereinbare Stellungen</strong>:</p>
+    <div class="card">
+      <h3>① Wo wohnt die Kraft? — Brücke vs. Bauplan</h3>
+      <p><span class="tagA">A</span> lokalisert die ganze Macht im <strong>Funktor / Mapping</strong>: „Ologs erzwingen <em>Rigorosität</em> beim Analogisieren — jeder Begriff in System A muss <em>präzise</em> einem Begriff in System B zugeordnet werden, sonst ist es kein Funktor." Die Strenge sitzt im <em>Transport</em>. <span class="tagB">B</span> lokalisert die Macht in der <strong>universellen Eigenschaft / Dualität</strong>: „Jeder Satz über Produkte ergibt automatisch einen Satz über Koprodukte (und umgekehrt), indem man die Pfeile umdreht." Die Strenge sitzt im <em>Konstrukt</em>. Das sind zwei unterschiedliche Antworten darauf, <em>was</em> die tragende Rolle spielt.</p>
+    </div>
+    <div class="card">
+      <h3>② Eindeutigkeit <span class="math">∃!</span> — Axiom vs. Bedrohung</h3>
+      <p><span class="tagB">B</span> ruht durchgehend auf <strong>garantiert eindeutiger</strong> Abbildung: die universelle Eigenschaft sagt <span class="math">∃!</span> (existiert <em>einzig</em>). In <strong>Set</strong> ist das eisenfest (kartesisches Produkt / disjunkte Vereinigung). <span class="tagA">A</span> (Kritik 1) hält dagegen: die Faltung ist <em>nicht immer deterministisch</em> — dasselbe Protein kann sich in <em>mehrere</em> Sekundärstrukturen falten — und das „gefährdet die Eindeutigkeit der funktionalen Beziehungen im Olog". Spannung: Bei B ist <span class="math">∃!</span> ein <em>Axiom</em>; in A's konkreter Domäne wird es zum <span class="math">∃?</span>.</p>
+    </div>
+    <div class="card">
+      <h3>③ Verlustfrei vs. verlustbehafteter Transfer</h3>
+      <p><span class="tagB">B</span> ist <strong>absolut / verlustfrei</strong>: „Every theorem about products automatically gives a theorem about coproducts (and vice versa) by reversing arrows" — der Transfer trägt <em>alles</em> 1:1. <span class="tagA">A</span> (Kritik 2) macht eine <em>Grenze</em> aus: „Der Funktor überträgt Struktur, aber die <strong>Bewertung</strong> ist grundverschieden" — die Materialseite ist <em>objektiv</em> messbar (Scherfestigkeit in MPa), die Musikseite <em>subjektiv</em>/kulturell geprägt. Inkompatibel ist die Haltung dazu, wie „sauber" ein kategorientheoretischer Transfer ist: B sagt verlustfrei, A sagt verlustfrei <em>auf der Struktur-Ebene</em> aber verlustbehaftet an der Bewertung.</p>
+    </p>
+    <p><strong>Die schärfste reale Spannung</strong> ist ② als Frage: <em>Ist die verbindende Abbildung eindeutig, oder kann sie in einer realen Domäne mehrdeutig werden?</em> — B: eindeutig durch Konstruktion. A: vom physikalischen Mechanismus aus bedroht. A liefert dafür keinen Begriff; B kennt die Versagensmöglichkeit nicht.</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>① Transport und Fracht sind dasselbe Ding</h3>
+      <p>Funktor und universelle Eigenschaften sind keine Rivalen. <em>Definitionsgemäß</em> ist ein Funktor die Abbildung, die Struktur <em>erhält</em> — und „Struktur erhalten" heißt im starken Fall genau: <em>Limes und Kolimes erhalten</em>, also Produkte ↔ Produkte und Koprodukte ↔ Koprodukte (und damit auch die Dualität) mitnehmen. Die „Brücke" (A) ist deshalb überhaupt sinnvoll, weil sie den „Bauplan" (B) respektiert. <strong>Fusioniertes Objekt:</strong> ein <strong>limes-/kolimes-erhaltender Funktor</strong> zwischen den zwei Domänen-Kategorien. Die Macht sitzt also an <em>beiden</em> Stellen zugleich: im Transport, der den Bauplan verknüpft.</p>
+    </div>
+    <div class="card">
+      <h3>② <span class="math">∃!</span> gilt auf der Form-Ebene, nicht auf der Mechanismus-Ebene</h3>
+      <p>Der Nicht-Determinismus der Faltung ändert <em>welche konkrete</em> Konformation ein Protein annimmt — aber nicht das <em>hierarchische Form-Skelett</em>, das der Funktor codiert (5 Ebenen, Kombination, ausgezeichnete Teilstufe). Die Eindeutigkeit <span class="math">∃!</span> bleibt also auf der <em>abstrakten Kategorie-Ebene</em> gültig, selbst wo der physikalische Mechanismus mehrdeutig ist. A's eigener Lösungsvorschlag — „Umgebungsbedingungen spezifizieren → eine ‚Protein-Grammatik' definieren" — ist genau das: er macht die Abbildung <em>auf der Form-Ebene</em> wieder eindeutig, indem er den Kontext als Teil der Objekte auffasst. Die Spannung löst sich in zwei Ebenen auf: Form (eindeutig) vs. Materialisierung (mehrdeutig).</p>
+    </div>
+    <div class="card">
+      <h3>③ Verlustfrei im Strukturgefüge, still an der Bewertung</h3>
+      <p>Der Transfer ist <strong>verlustfrei innerhalb der strukturellen Kategorie</strong> (Form, Ebenen, Kombination, Distinguished-Members) und <em>explizit still</em> auf der <em>Bewertungs-Ebene</em>. Das ist kein Fehler, sondern eine <strong>Scope-Grenze</strong>: Universelle Eigenschaften (Struktur) sind unter Funktor und Dualität invariant — Bewertungen („objektiv MPa" vs. „subjektiv schön") gehören <em>gar nicht</em> zur Kategorie, weil sie keine Pfeile/Objekte sind. A's Vorsicht ist damit B's Rahmen, präzise gemacht: man trägt die <em>Kategorie</em>, nicht die „Bedeutung". <strong>Fusionierter Schluss:</strong> Eine zuverlässige Analogie = ein struktur-erhaltender (genauer: limes-/kolimes-erhaltender) Funktor; er ist verlustfrei auf dem Struktur-Skelett und bewusst still an der Bewertungs-Ebene.</p>
+    </div>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die Karte verknüpft die zentralen Begriffe beider Papiere mit ihrer fusionierten Rolle — so, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+    <table>
+      <thead><tr><th style="width:34%">A (Seide↔Musik / Olog)</th><th style="width:34%">B (Produkt / Koprodukt)</th><th style="width:32%">Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Olog = Kategorie: Objekte = Sets, Pfeile = Funktionen, Funktor = Analogie</td><td class="kv">Produkt <span class="math">A×B</span> (π₁,π₂); Koprodukt <span class="math">A+B</span> (ι₁,ι₂); universelle Eigenschaft <span class="math">∃!</span></td><td>Die Hierarchie-Ebenen sind die <em>Objekte</em>; „Aufbauen" ist eine <em>Kombination</em> (Koprodukt-artig: Herkunft bleibt), „Analysieren/Zerlegen" eine <em>Projektion</em> (Produkt-artig: Komponente herausziehen).</td></tr>
+        <tr><td class="kv">5 Ebenen Seide: Aminosäure → Peptid → Polypeptid → Protein (α-Helix, β-Sheet) → Nanocomposite</td><td class="kv">5 Ebenen Musik: Klangwelle → Stack → Ton → Akkord (Dur/Moll) → Riff</td><td>Jede Ebene kombiniert die darunter. <em>Riff = disjunkte Vereinigung von Akkorden</em> (Koprodukt, jeder Akkord „erinnert" Herkunft); <em>Akkord → Töne</em> = Projektion (beide Teile kombinieren, jede Note wieder ziehen).</td></tr>
+        <tr><td class="kv">Ausgezeichnete Teilleinheiten: Enzyme (aktives Zentrum) ↔ Dur-Akkorde (Grundton) = „distinguished members"</td><td class="kv">Auswahl einer Teilmenge / Spezialfall eines Limes (Terminal-Objekt als „bestes" Ziel)</td><td>„Distinguished members" sind eine <em>selektierte</em> Teilstufe, die an eine niedrigere Ebene gebunden ist — eine <em>Strukturrolle</em>, die der Funktor als solche erhält (nicht Material).</td></tr>
+        <tr><td class="kv">Konsonanz: <span class="math">c·log₂(f₂/f₁) ∈ ℤ</span>, c = 12; Frequenzmatrix <span class="math">[x_ij]</span> alle ganzzahlig; C-Dur (261.63/329.63/392.00 Hz)</td><td class="kv">Einzigartigkeit <span class="math">∃!</span> der universalen Abbildung</td><td>Die „ganzzahlige" Bedingung ist die <em>diskrete</em> Fassung der Eindeutigkeit: C-Dur-Matrix ≈ ganz ⇒ „konsonant" = eindeutig kombinierbar (ein wohldefinierter <em>best</em>-Kombinationspunkt).</td></tr>
+        <tr><td class="kv">H-Bond-Cluster: <span class="math">τ_cluster(N) ≫ N·τ_single</span> für N ≈ 3–4; <em>mehr ist nicht besser</em>; geometrische Einschränkung im Nanomaßstab</td><td class="kv">„Bestes Objekt" = Limes (ein optimaler Punkt, nicht „das meiste")</td><td>Das Optimum bei 3–4 ist ein <em>echtes Limes</em> einer <em>nicht-monotonen</em> Stärke: der beste Kombinationspunkt existiert, ist aber <em>kein Maximum der Menge</em> — Emergenz durch Bündelung, überproportional dann umschlagend.</td></tr>
+        <tr><td class="kv">Schadenstoleranz (lokale Defekte treffen Gesamtfunktion nicht); Pattern-Building → Makro-Funktion (Fibrille ~50 nm → Zähigkeit; Akkordsequenzen → musikalische Spannung)</td><td class="kv">Universelle Eigenschaften sind „stabil" unter Isomorphie</td><td>Redundante/verbundene Stufen ⇒ lokale Störung bleibt lokal — die universelle <em>Form</em> bleibt erhalten (beide Systeme robust).</td></tr>
+        <tr><td class="kv">Kritik A: Nicht-Determinismus; objektiv vs. subjektiv; nur ein Ausschnitt (Anker „a bond"/„a stack"); Struktur ≠ Funktion überlappen</td><td class="kv">B kennt keine solche Kritik — Dualität gilt absolut</td><td>Diese Kritikpunkte <em>markieren die Scope-Grenzen</em> des Funktors: genau dort, wo <span class="math">∃!</span> und „verlustfreier Transfer" abbrechen.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Die Brücke: die 5-Ebenen-Treppe als Limes-/Kolimes-Stufe</h3>
+      <p><strong>Koprodukt-artig (Aufbauen).</strong> Ein Riff entsteht, indem man Akkorde <em>kombiniert und ihre Herkunft behält</em> — genau eine disjunkte Vereinigung: <span class="math">A + B</span> mit Injektionen <span class="math">ι₁,ι₂</span>, die jedem Teil seinen Ursprung aktenkundig machen. Analog bei der Seide: ein Nanocomposite kombiniert β-Sheet- und amorphe Phase; jede Phase bleibt als solche identifizierbar.</p>
+      <p><strong>Produkt-artig (Analysieren).</strong> Ein Akkord <em>kombiniert Töne und lässt jede einzelne wieder ziehen</em> (Projektion <span class="math">π</span> auf die Tonhöhe) — ein kartesisches Produkt <span class="math">A × B</span> mit Projektionen. Man „dekomponiert" das Ganze in seine Komponenten, ohne Information zu verlieren.</p>
+      <p><strong>Dualität &amp; Distinguished-Members.</strong> Die „ausgezeichneten" Einheiten (Enzym ↔ Dur-Akkord) sind eine <em>selektierte</em> Teilstufe; in B's Sprache ein Spezialfall eines Limes (ein „bestes" Ziel-Objekt). Weil die Dualität <em>alle</em> Pfeile umdreht, gibt es zu jeder „Auffahrts"-Lesart (Koprodukt) eine „Abarbeitungs"-Lesart (Produkt) — und der Funktor hält beide zugleich.</p>
+    </div>
+
+    <div class="card">
+      <h3>Die Formeln (beide, fusioniert)</h3>
+      <span class="mathblock">Produkt: &nbsp;∀ X, f:X→A, g:X→B &nbsp;⇒&nbsp; ∃! ⟨f,g⟩:X→A×B &nbsp; mit &nbsp; π₁∘⟨f,g⟩=f, &nbsp; π₂∘⟨f,g⟩=g</span>
+      <span class="mathblock">Koprodukt: &nbsp;∀ X, f:A→X, g:B→X &nbsp;⇒&nbsp; ∃! [f,g]:A+B→X &nbsp; mit &nbsp; [f,g]∘ι₁=f, &nbsp; [f,g]∘ι₂=g</span>
+      <span class="mathblock">Dualität: &nbsp;Produkt in C &nbsp;=&nbsp; Koprodukt in C<sup>op</sup> &nbsp; (alle Pfeile umdrehen)</span>
+      <span class="mathblock">In Set: &nbsp;|A×B| = |A|·|B| &nbsp;&nbsp;(kartesisches Produkt) &nbsp;&nbsp;|A+B| = |A|+|B| &nbsp;&nbsp;(disjunkte Vereinigung)</span>
+      <span class="mathblock">Konsonanz (A): &nbsp; c·log₂(f₂/f₁) ∈ ℤ, &nbsp; c = 12 &nbsp;&nbsp;·&nbsp;&nbsp; C-Dur ≈ ganzzahlige Frequenzmatrix ⇒ KONSONANT</span>
+      <span class="mathblock">H-Bond-Cluster (A): &nbsp; τ_cluster(N) ≫ N·τ_single &nbsp; für N ≈ 3–4 &nbsp; (mehr ist nicht besser)</span>
+    </div>
+
+    <div class="card">
+      <h3>Das Neue in A — und der Rahmen in B</h3>
+      <ul>
+        <li><strong>A:</strong> <em>hierarchische Ologs</em> (neue Notation mit verschachtelten Snapshot-Boxen; Kategorie <span class="math">C</span> mit Unterkategorie <span class="math">H</span>, Baum-Struktur, <span class="math">Ob(C)=Ob(H)</span>); Musikpartitur als <em>gewichteter Graph</em> (Akkord = Knoten, Länge = Kantengewicht); Grundlage für <strong>Materiomics</strong> als disziplin-übergreifende Wissenschaft.</li>
+        <li><strong>A:</strong> 4-Schritte-Methode — (1) Bausteine identifizieren, (2) übergeordnete Einheiten definieren, (3) Struktur–Funktion-Beziehungen, (4) <em>Funktor bauen</em> (der formale Beweis der Analogie).</li>
+        <li><strong>B:</strong> Die universelle Eigenschaft (<span class="math">∃!</span>) und die Dualität sind die <em>Invarianz-Klasse</em>, die A's Funktor erhalten muss — sie sind der Maßstab, an dem man prüft, ob eine Analogie „strukturtreu" ist oder bloß eine Metapher bleibt.</li>
+        <li><strong>Fusion:</strong> Die Isomorphie Seide ↔ Musik aus A ist am stärksten, wenn sie als <em>limes-/kolimes-erhaltender</em> Funktor gelesen wird — dann erklärt B, <em>warum</em> die 5 Ebenen, die Distinguished-Members und die Cluster-Dynamik überhaupt übertragbar sind.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: die Funktor-Brücke, die die Dualität übersteht</h2>
+    <p>Interaktive Verkörperung der fusionierten These. <strong>Oben</strong>: zwei 5-Ebenen-Kolumnen (links Spinnenseide, rechts Musik) mit horizontalen <em>Funktor-Pfeilen ≅</em> — das ist die Analogie aus A. <strong>Vertikale Pfeile</strong> zeigen das „Kombinieren" einer Ebene in die nächsthöhere. Der Umschalter <em>Umdrehen (Dualität)</em> dreht <em>alle</em> vertikalen Pfeile um (B): aus <em>Kombination/Koprodukt</em> wird <em>Projektion/Produkt</em> — und man sieht, dass die <em>Funktor-Pfeile ≅</em> (die Analogie) dabei <strong>erhalten bleiben</strong>: die Form der Kombination übersteht die Umkehrung. <strong>Unten</strong>: die nicht-monotone Kurve <span class="math">τ(N)</span> (N-Regler) — Peak bei 3–4 (optimal, „kooperativer Bruch"), Abfall bei 8 („mehr ist nicht besser"); der beste Kombinationspunkt ist ein echtes Limes, nicht das „Menge-Maximum".</p>
+
+    <div class="viz-card">
+      <div class="ctl-row">
+        <label>Vertikale Pfeile:
+          <select id="vMode">
+            <option value="build" selected>Kombination (Koprodukt-artig)</option>
+            <option value="dual">Projektion (Produkt-artig) — Dualität</option>
+          </select>
+        </label>
+        <label>H-Brücken N: <input type="range" id="vN" min="1" max="8" value="3"> <span id="vNv">3</span></label>
+        <button class="btn" id="btnPlay" type="button">▶ Animieren</button>
+      </div>
+
+      <div class="chip-row">
+        <span class="chip" id="chipCo">Koprodukt: ∃! [f,g] · [f,g]∘ι₁=f · [f,g]∘ι₂=g</span>
+        <span class="chip" id="chipProd">Produkt: ∃! ⟨f,g⟩ · π₁∘⟨f,g⟩=f · π₂∘⟨f,g⟩=g</span>
+      </div>
+
+      <canvas id="viz" width="720" height="620"></canvas>
+
+      <div class="verdict v-ok" id="verdict">Kombination (Koprodukt-artig): kleinere Einheiten bauen nach oben auf; jeder Teil behält seine Herkunft (Injektionen ι₁, ι₂). Die Funktor-Pfeile ≅ verknüpfen Seide und Musik auf jeder Ebene.</div>
+      <div class="verdict v-dual" id="vInfo" style="margin-top:8px;">N=3 H-Brücken → relative Scherfestigkeit 100% — OPTIMAL.</div>
+      <p class="viz-note">Konvention: oben ≅ = Funktor/Analogie (A), vertikal = Kombination vs. Projektion (B); unten τ(N) = Scherfestigkeit des β-Sheet-Clusters (A, 3–4 optimal). Alle Daten inline, keine externen Abfragen, themenreaktiv (Farben aus CSS-Variablen).</p>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../paper/power_of_analogy.html"><strong>A — paper/power_of_analogy.html:</strong> „Spinnenseide ↔ Musik — Visuelle Paper-Tour"</a> — interaktive Tour zu Giesa, Spivak &amp; Buehler (2011): hierarchische Ologs, funktorialer Isomorphismus Seide↔Musik, Konsonanz-Formel <span class="math">c·log₂(f₂/f₁)∈ℤ</span>, H-Bond-Clustering (3–4 optimal), Schadenstoleranz, Kritik (Nicht-Determinismus, objektiv vs. subjektiv) und das Neue (hierarchische Ologs, Musik als gewichteter Graph, Materiomics).</li>
+      <li><a href="../product_coproduct.html"><strong>B — product_coproduct.html:</strong> „Products ⊗ Coproducts — Category Theory Interactive Explorer"</a> — interaktiver Explorer für Produkt &amp; Koprodukt: universelle Eigenschaften (<span class="math">∃! ⟨f,g⟩</span> / <span class="math">∃! [f,g]</span>), Projektionen/Injektionen, die Dualität (Pfeile umkehren, <span class="math">C</span> vs. <span class="math">C^op</span>) und das konkrete Set-Beispiel (kartesisches Produkt vs. disjunkte Vereinigung, <span class="math">|A×B|=|A|·|B|</span>, <span class="math">|A+B|=|A|+|B|</span>).</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Runde 1, Paar 027) — Power of Analogy ✕ Products &amp; Coproducts · die universelle Form der Kombination (Produkt/Koprodukt + Dualität) ist funktorial invariant — sie ist der Grund, warum die Analogie trägt.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var modeEl = document.getElementById('vMode');
+  var nEl = document.getElementById('vN');
+  var nVal = document.getElementById('vNv');
+  var btnPlay = document.getElementById('btnPlay');
+  var verdict = document.getElementById('verdict');
+  var vInfo = document.getElementById('vInfo');
+  var chipProd = document.getElementById('chipProd');
+  var chipCo = document.getElementById('chipCo');
+
+  var W = 720, H = 620;
+  cv.width = W; cv.height = H;
+
+  var SILK_X = 150, MUSIC_X = 570, R = 30;
+  var Y = [70, 155, 240, 325, 410];
+  var SILK = ['Aminosäure','Peptid','Polypeptid','Protein','Nanocomposite'];
+  var MUSIC = ['Klangwelle','Stack','Ton','Akkord','Riff'];
+  var ST = [0,20,60,100,100,70,55,48,40];
+  var CX0 = 90, CX1 = 660, CY0 = 560, CY1 = 476;
+
+  var mode = 'build';
+  var playTimer = null;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function C(){ return {
+    bg: cssVar('--viz-canvas-bg') || '#0a1120',
+    silk: cssVar('--viz-silk') || '#58a6ff',
+    music: cssVar('--viz-music') || '#ff7eb6',
+    func: cssVar('--viz-func') || '#ffd24d',
+    arr: cssVar('--viz-arr') || '#94a3b8',
+    text: cssVar('--viz-text') || '#e2e8f0',
+    grid: cssVar('--viz-grid') || '#243449',
+    ok: cssVar('--viz-ok') || '#4ade80',
+    warn: cssVar('--viz-warn') || '#fbbf24',
+    bad: cssVar('--viz-bad') || '#f87171'
+  }; }
+
+  function line(x1,y1,x2,y2,col,w){ ctx.strokeStyle=col; ctx.lineWidth=w||2; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); }
+  function arrow(x1,y1,x2,y2,col){
+    var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy); if(len<1) return;
+    var ux=dx/len, uy=dy/len, ah=9;
+    line(x1,y1,x2-ux*ah,y2-uy*ah,col,2);
+    ctx.fillStyle=col; ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-ux*ah-uy*5, y2-uy*ah+ux*5);
+    ctx.lineTo(x2-ux*ah+uy*5, y2-uy*ah-ux*5);
+    ctx.closePath(); ctx.fill();
+  }
+  function txt(t,x,y,col,size,align,bold){
+    ctx.fillStyle=col; ctx.font=(bold?'bold ':'')+(size||13)+'px system-ui, -apple-system, sans-serif';
+    ctx.textAlign=align||'center'; ctx.textBaseline='middle'; ctx.fillText(t,x,y);
+  }
+  function node(x,y,col,label){
+    ctx.globalAlpha=0.16; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,R,0,2*Math.PI); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(x,y,R,0,2*Math.PI); ctx.stroke();
+    txt(label,x,y, C().text, 12, 'center', true);
+  }
+  function msgOf(n){
+    if(n===1) return 'Schwach — Einzelbindung reißt sofort.';
+    if(n===2) return 'Suboptimal, aber besser als eine.';
+    if(n===3||n===4) return 'OPTIMAL — kooperativer Bruch, maximale Scherfestigkeit.';
+    if(n===5) return 'Beginnt zu versagen — Kraft ungleich verteilt.';
+    return 'Zu groß — Cluster bricht frühzeitig. Mehr ist nicht besser.';
+  }
+
+  function draw(){
+    var c = C();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=c.bg; ctx.fillRect(0,0,W,H);
+
+    txt('SPINNENSEIDE', SILK_X, 28, c.silk, 15, 'center', true);
+    txt('MUSIK', MUSIC_X, 28, c.music, 15, 'center', true);
+    txt('Funktor ≅ (Analogie)', 360, 28, c.func, 13, 'center', true);
+
+    for(var i=0;i<5;i++){
+      line(SILK_X+R+8, Y[i], MUSIC_X-R-8, Y[i], c.func, 2);
+      txt('≅', 360, Y[i], c.func, 16, 'center', true);
+    }
+    for(var j=0;j<4;j++){
+      if(mode==='build'){
+        arrow(SILK_X, Y[j]+R+6, SILK_X, Y[j+1]-R-6, c.arr);
+        arrow(MUSIC_X, Y[j]+R+6, MUSIC_X, Y[j+1]-R-6, c.arr);
+      } else {
+        arrow(SILK_X, Y[j+1]-R-6, SILK_X, Y[j]+R+6, c.arr);
+        arrow(MUSIC_X, Y[j+1]-R-6, MUSIC_X, Y[j]+R+6, c.arr);
+      }
+    }
+    txt(mode==='build' ? 'Kombination (Koprodukt)' : 'Projektion (Produkt) — DUALITÄT', 360, 448, c.arr, 12, 'center', true);
+
+    for(var k=0;k<5;k++){
+      node(SILK_X, Y[k], c.silk, SILK[k]);
+      node(MUSIC_X, Y[k], c.music, MUSIC[k]);
+    }
+
+    txt('H-Bindungs-Cluster:  τ(N)  — „mehr ist nicht besser"', 375, 470, c.text, 12, 'center', true);
+    line(CX0, CY0, CX1, CY0, c.grid, 1.5);
+    function nx(n){ return CX0 + (n-1)*(CX1-CX0)/7; }
+    function ny(s){ return CY0 - (s/100)*(CY0-CY1); }
+    for(var t=1;t<=8;t++){ line(nx(t), CY0, nx(t), CY0+5, c.grid, 1); txt(String(t), nx(t), CY0+15, c.grid, 10, 'center'); }
+    txt('0', CX0-12, CY0, c.grid, 10, 'center');
+    txt('100', CX0-18, CY1, c.grid, 10, 'center');
+    txt('N (H-Brücken) →', 375, CY0+30, c.grid, 10, 'center');
+
+    ctx.strokeStyle=c.arr; ctx.lineWidth=2; ctx.beginPath();
+    for(var m=1;m<=8;m++){ var xx=nx(m), yy=ny(ST[m]); if(m===1) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }
+    ctx.stroke();
+    for(var p=1;p<=8;p++){
+      var s=ST[p]; var col=s>=90?c.ok:(s>=50?c.warn:c.bad);
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(nx(p), ny(s), 5, 0, 2*Math.PI); ctx.fill();
+    }
+    var selN = nEl ? (+nEl.value) : 3;
+    if(selN<1) selN=1; if(selN>8) selN=8;
+    var selS=ST[selN]; var selCol=selS>=90?c.ok:(selS>=50?c.warn:c.bad);
+    ctx.save(); ctx.strokeStyle=selCol; ctx.setLineDash([5,4]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(nx(selN), CY0); ctx.lineTo(nx(selN), ny(selS)); ctx.stroke(); ctx.restore();
+    ctx.strokeStyle=selCol; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(nx(selN), ny(selS), 8, 0, 2*Math.PI); ctx.stroke();
+    if(nVal) nVal.textContent = selN;
+
+    if(vInfo) vInfo.textContent = 'N='+selN+' H-Brücken → relative Scherfestigkeit '+selS+'% — '+msgOf(selN);
+    if(verdict){
+      if(mode==='build'){
+        verdict.className='verdict v-ok';
+        verdict.textContent='Kombination (Koprodukt-artig): kleinere Einheiten bauen nach oben auf; jeder Teil behält seine Herkunft (Injektionen ι₁, ι₂). Die Funktor-Pfeile ≅ verknüpfen Seide und Musik auf jeder Ebene.';
+      } else {
+        verdict.className='verdict v-dual';
+        verdict.textContent='Projektion (Produkt-artig) — DUALITÄT: alle Pfeile umgekehrt. Einheiten werden in Komponenten zerlegt (Projektionen π₁, π₂). Die Funktor-Pfeile ≅ bleiben erhalten — die Form der Analogie übersteht die Umkehrung (Produkt in C = Koprodukt in C^op).';
+      }
+    }
+    if(chipProd) chipProd.classList.toggle('chip-on', mode==='dual');
+    if(chipCo) chipCo.classList.toggle('chip-on', mode==='build');
+  }
+
+  function setMode(m){ mode=m; if(modeEl) modeEl.value=m; draw(); }
+  if(modeEl) modeEl.addEventListener('change', function(){ setMode(this.value); });
+  if(nEl) nEl.addEventListener('input', draw);
+  if(btnPlay) btnPlay.addEventListener('click', function(){
+    if(playTimer){ clearInterval(playTimer); playTimer=null; btnPlay.textContent='▶ Animieren'; }
+    else { btnPlay.textContent='⏸ Stoppe'; playTimer=setInterval(function(){ setMode(mode==='build'?'dual':'build'); }, 1600); }
+  });
+  var tgl = document.getElementById('themeToggle');
+  if(tgl) tgl.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); requestAnimationFrame(draw); });
+
+  setMode('build');
+})();
+</script>
+</body>
+</html>

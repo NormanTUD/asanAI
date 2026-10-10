@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Invariante der Iteration — Anzieher × Windungszahl</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#6d28d9;
+  --mn-accent2:#0e7490; --mn-accent3:#be185d; --mn-accent4:#b45309;
+  --mn-border:#d8d2c4; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+  --mn-boundary:#dc2626; --mn-ok:#16a34a;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#a78bfa;
+  --mn-accent2:#22d3ee; --mn-accent3:#f472b6; --mn-accent4:#fbbf24;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-boundary:#f87171; --mn-ok:#4ade80;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--mn-bg); color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:24px 20px 80px;}
+header.hero{
+  padding:28px 22px; border:1px solid var(--mn-border); border-radius:14px;
+  background:var(--mn-panel); margin-bottom:26px;
+}
+header.hero h1{font-size:1.75em; line-height:1.25; margin-bottom:10px; color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2); font-weight:600; font-size:.98em;}
+.toggle{
+  margin-top:16px; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel2); color:var(--mn-fg); border-radius:22px;
+  cursor:pointer; font-size:.9em; transition:.2s;
+}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 30px;}
+section h2{
+  font-size:1.35em; margin-bottom:12px; color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border); padding-bottom:6px;
+}
+p{margin-bottom:12px;}
+.lede{font-size:1.06em;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{
+  border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel);
+  padding:14px 16px;
+}
+.card h3{font-size:1.04em; margin-bottom:8px; color:var(--mn-fg);}
+.card a{color:var(--mn-accent2); text-decoration:none; font-weight:600;}
+.card a:hover{text-decoration:underline;}
+.card small{color:var(--mn-dim);}
+.wc{border-left:4px solid var(--mn-boundary);}
+.wc b{color:var(--mn-boundary);}
+.res{border-left:4px solid var(--mn-ok);}
+.res b{color:var(--mn-ok);}
+.formula{
+  font-family:'Courier New',monospace; background:var(--mn-panel2);
+  border:1px solid var(--mn-border); border-radius:8px; padding:12px 14px;
+  margin:10px 0; overflow-x:auto; white-space:pre; font-size:.9em; color:var(--mn-fg);
+}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:2px 8px; border-radius:6px; margin-bottom:8px;
+  background:var(--mn-panel2); color:var(--mn-accent); border:1px solid var(--mn-border);
+}
+.tag.b{color:var(--mn-accent2);}
+.ladder{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px; margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:6px; font-size:.96em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+.viz{
+  border:1px solid var(--mn-border); border-radius:14px; background:var(--mn-panel);
+  padding:16px; margin-top:6px;
+}
+.viz canvas{width:100%; display:block; border-radius:10px; background:var(--mn-panel2); border:1px solid var(--mn-border);}
+.viz .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1; min-width:150px; accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700; white-space:nowrap; font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{margin-left:auto; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel); color:var(--mn-fg); border-radius:8px; cursor:pointer;
+  font-weight:700; font-size:.9em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.primary{background:var(--mn-accent); color:var(--mn-bg); border-color:var(--mn-accent);}
+.viz .readout{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+@media(max-width:620px){.viz .readout{grid-template-columns:1fr;}}
+.readbox{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel2); padding:12px 14px; font-size:.94em;}
+.readbox .rb-title{font-weight:700; margin-bottom:6px;}
+.readbox.a .rb-title{color:var(--mn-accent);}
+.readbox.b .rb-title{color:var(--mn-accent2);}
+.readbox .regime{font-weight:700; margin:5px 0;}
+.readbox .desc{color:var(--mn-dim);}
+.viz .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:.85em; color:var(--mn-dim);}
+.viz .legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-dim); font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Die Invariante der Iteration — Anzieher &amp; Windungszahl</h1>
+  <div class="subtitle">Fusion aus: nonlinear_workbook.html ✕ hott_addition.html</div>
+  <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Beide Papiere untersuchen <em>dasselbe</em> Phänomen von entgegengesetzten Seiten: <strong>Iteriert man eine einfache Generator-Regel, entsteht eine stabile Struktur — und diese Struktur liest man als <em>Invariante</em> ab.</strong> Der einzelne Zustand (der Punkt x<sub>t</sub>, der eine bestimmte Schleife) ist dabei entbehrlich; das Objekt, das bleibt, ist die <em>Äquivalenzklasse / Grenzstruktur</em>, auf die alles zustrebt.</p>
+  <p>Bei <b>A</b> (das nichtlineare Workbook) ist der Generator eine einzige quadratische Karte x ↦ r·x(1−x). Der Orbit „vergisst" seinen Startwert x₀ und landet auf einem <strong>Anzieher</strong> — einer Menge, deren Charakter (Fixpunkt, 2er-Zyklus, Chaos) durch Invarianten zusammengefasst wird: den <strong>Lyapunov-Exponenten λ</strong>, die <strong>invariante Verteilung</strong>, die <strong>fraktale Dimension</strong>. Der Punkt ist ein Wegwerfteil; der <em>Anzieher</em> ist das Objekt.</p>
+  <p>Bei <b>B</b> (Addition in der Homotopie-Typentheorie) ist der Generator „einmal um den Kreis herumlaufen" (eine Schleife), und die Iteration ist <strong>Pfadverkettung</strong>. Der Orbit „vergisst" die konkrete Schleife und landet auf einer <strong>Homotopieklasse</strong> — der <strong>Windungszahl n</strong>. Die konkrete Schleife ist ein Wegwerfteil; die <em>Homotopieklasse</em> ist das Objekt, und das Verketten solcher Klassen ist exakt die Addition von ℤ (Ω(S¹) ≅ ℤ).</p>
+  <p>Die Fusion behauptet also eine gemeinsame Form — <strong>„Generator + Iteration → stabile Struktur → Invariante"</strong>: A nimmt die Invariante <em>dynamisch</em> (Grenzmenge unter Iteration, gemessen durch λ und das invariante Maß); B nimmt sie <em>geometrisch</em> (Grenzklasse unter stetiger Verformung, gemessen durch die Windungszahl). Die beiden sind dieselbe Idee: <strong>Das interessante Objekt ist die stabile / feste Struktur einer einfachen Operation, und ihre Identität ist eine topologische Invariante.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Was ist eine Zahl?</span>
+    <h3>Passiver reeller Zustand (A) vs. aktives topologisches Objekt (B)</h3>
+    <p><b>A</b> behandelt Zahlen als <em>passive</em> reelle Zustände: x<sub>t</sub> ∈ [0,1] ist ein Wert, den eine Karte wandelt. Die Karte (die Nichtlinearität) ist der Star; die Zahl selbst ist nur ein Wert auf der Strecke. Zahlen = Werte in ℝ, Struktur kommt von der <em>Abbildung</em>.</p>
+    <p><b>B</b> behandelt Zahlen als <em>aktive topologische Objekte</em>: Die Zahl n <em>ist</em> die Homotopieklasse der Schleife, die den Kreis n-mal umrundet (Ω(S¹) ≅ ℤ). Eine Zahl ist selbst eine Pfad-Struktur, und die Addition <em>ist</em> Pfadverkettung. Zahlen = Äquivalenzklassen von Pfade, Struktur kommt von der <em>Topologie des Raums</em>.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 2 · Gleichheit: zerbrechlich vs. tragfähig</span>
+    <h3>Sensible Abhängigkeit zerstört Gleichheit (A) vs. Gleichheit als Pfad (B)</h3>
+    <p><b>A</b> hat als Kernphänomen die <em>sensible Abhängigkeit von Anfangsbedingungen</em>: Zwei fast gleiche Startwerte (x₀ und x₀+10⁻⁴) divergieren exponentiell (bei r=4 gilt λ = ln 2 &gt; 0). Zwei „gleiche" Trajektorien sind nach wenigen Iterationen <em>ununterscheidbar weit</em> auseinander — Gleichheit zwischen Zuständen wird von der Iteration <em>zerstört</em>.</p>
+    <p><b>B</b> macht aus <em>Gleichheit selbst</em> den Grundbaustein: In HoTT ist Gleichheit ein <em>Pfad</em>, und zwischen Pfaden gibt es <em>Homotopien</em> (Pfade zwischen Pfaden = Gleichheit zwischen Gleichheiten). Gleichheit ist hier eine <em>stabile, manipulierbare, hierarchisch reiche</em> Struktur, auf der man die gesamte Arithmetik aufbaut. Das Leitbild von A (Gleichheit wird durch Iteration vernichtet) ist das <em>Antithese</em> zum Fundament von B (Gleichheit als stabiler Boden).</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 3 · Woher kommt die Struktur — Karte oder Raum?</span>
+    <h3>Komplexe Karte auf trivialem Raum (A) vs. einfache Operation auf reichem Raum (B)</h3>
+    <p><b>A</b> erzeugt Komplexität (Chaos, Fraktale, Anzieher) durch eine <em>komplizierte nichtlineare Karte</em> auf einem <em>topologisch trivialen</em> Raum — das Intervall [0,1] ist zusammenziehbar, hat keine nichttriviale Fundamentalgruppe. Die „Topologie-Budget" wird in die <em>Abbildung</em> gesteckt.</p>
+    <p><b>B</b> erzeugt Algebra (die ganzen Zahlen + Addition) durch die <em>Topologie des Raums selbst</em> (der Kreis S¹ mit π₁ ≅ ℤ) unter einer <em>einfachen</em> Operation (Schleifen umlaufen und verketteten). Die „Topologie-Budget" wird in den <em>Raum</em> gesteckt. Das ist eine saubere <em>Inversion</em>: A — trivialer Raum, reiche Karte; B — reicher Raum, einfache Karte.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag" style="background:transparent;">Auflösung 1 · Zahl = Invariante eines Prozesses</span>
+    <p>A: Der Wert x<sub>t</sub> ist ein Punkt <em>auf</em> der Trajektorie, aber das <em>charakterisierende</em> Objekt ist der Anzieher bzw. λ — die Invariante unter Iteration. B: Die Zahl n <em>ist</em> die Invariante (Windungszahl) unter Verformung. <strong>Fusioniert:</strong> Beides spricht letztlich dasselbe Objekt an — eine <em>stabile Invariante eines einfachen Generators</em>, keine Punktmenge. Eine „Zahl" bzw. ein „Systemzustand" ist eine Äquivalenzklasse / Grenzstruktur, nicht ein einzelner Punkt. Der scheinbare Widerspruch (passiver Wert vs. aktives Objekt) löst sich auf: auch der reelle Zustand von A ist erst durch seine Lage <em>auf</em> dem Anzieher, d.h. durch seine Invariante, bestimmt.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 2 · Zwei Ebenen von Gleichheit</span>
+    <p>A zerbricht die Gleichheit auf der <em>Punkt-Ebene</em> (0-dimensionale Zustände): Punkte, die gleich starten, divergieren. B baut auf der <em>Homotopieklasse-Ebene</em> (1-dimensionale Pfade, mod stetiger Verformung): eine viel <em>grobere, nachsichtigere</em> Äquivalenz. <strong>Fusioniert:</strong> Punktweise Gleichheit ist <em>zerbrechlich</em>; grobe Äquivalenz (Anzieher in A, Homotopieklasse in B) ist <em>stabil</em>. Chaos zerstört die punktweise Gleichheit, <em>erhält aber</em> die grobe Invariante (Anzieher, λ, invariante Verteilung) — genau die Ebene, auf der B beginnt. Die beiden Papiere <em>widersprechen sich auf Punkt-Ebene und stimmen auf Invariante-Ebene überein</em>; die HoTT-Hierarchie (Gleichheit → Gleichheit der Gleichheiten) ist die geordnete Fortsetzung der „grobe Struktur, die Chaos überlebt".</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 3 · Raum × Operation — eine Dualität, kein Entweder-oder</span>
+    <p>Es ist nicht „Karte <em>oder</em> Raum", sondern das <em>Paar</em> (Raum, Operation) erzeugt die Struktur. A lädt die Komplexität in die Karte (trivialer Raum, reiche Nichtlinearität); B lädt sie in den Raum (reicher Kreis, einfache Verkettung). Das sind <em>duale</em> Platzierungen derselben Komplexität. <strong>Fusioniert:</strong> Struktur = die stabile Grenzstruktur von (Raum, Operation) unter Iteration — ein <em>Anzieher</em>, wenn die Karte reich ist; eine <em>Gruppe</em>, wenn der Raum reich ist. In beiden Fällen liest man Invarianten ab.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px; border-left-color:var(--mn-accent);">
+    <span class="tag" style="background:transparent;">Gefasste Schlussposition</span>
+    <p>Die gemeinsame Form ist <strong>„Iteration einer einfachen Generator-Regel → stabile Struktur → Invariante"</strong>. Der <em>Anzieher</em> (A) und die <em>Windungszahl / Homotopieklasse</em> (B) sind dieselbe Idee in zwei Realisierungen: beides eine Äquivalenzklasse, die unter der jeweiligen Dynamik (Iteration bzw. stetige Verformung) <em>stabil</em> bleibt. Die Windungszahl ist die <em>algebraische</em> Invariante; der Lyapunov-Exponent und die fraktale Dimension sind die <em>metrisch-dynamischen</em> Invarianten. Beide beantworten „Was ist dieses Objekt?" mit „Zu welcher stabilen Struktur gehört es, und wie lautet deren Invariante?".</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Das gemeinsame Skelett hat vier Teile: einen <strong>Generator</strong> (eine einfache Regel), eine <strong>Iteration</strong> (Wiederholung der Regel), eine <strong>stabile Struktur</strong> (das, was bleibt) und eine <strong>Invariante</strong> (das, was die Struktur kennzeichnet). A und B füllen diese vier Slots unterschiedlich — aber isomorph — aus.</p>
+
+  <div class="ladder">
+    <span class="tag">A · Nichtlineare Dynamik (stabile Strukturen &amp; ihre Invarianten)</span>
+    <ol>
+      <li><b>Logistikkarte</b> x<sub>t+1</sub> = r·x<sub>t</sub>(1−x<sub>t</sub>), x₀ ∈ [0,1], r ∈ [0,4]. Fixpunkte x* = 0 und x* = 1−1/r; Stabilität über |f′(x*)| = |r(1−2x*)| &lt; 1.</li>
+      <li><b>Bifurkation</b>: Periode-Vergabel-Kaskade 1→2→4→8→…, akkumulierend bei r<sub>∞</sub> ≈ 3.5699; Feigenbaum-Konstante δ ≈ 4.669 (Universalität).</li>
+      <li><b>Lyapunov-Exponent</b> λ = lim<sub>T→∞</sub> (1/T)·Σ<sub>t</sub> ln|f′(x<sub>t</sub>)|; λ&gt;0 chaotisch, λ&lt;0 stabil/periodisch, λ=0 Bifurkationspunkt. Bei r=4: λ = ln 2 ≈ 0.693.</li>
+      <li><b>Hénon-Karte</b> x′ = 1 + y − a·x², y′ = b·x; a=1.4, b=0.3 → seltsamer Anzieher, fraktale Dimension ≈ 1.26, det = b (dissipativ, invertierbar).</li>
+      <li><b>Lorenz-System</b> σ=10, ρ=28, b=8/3 → „Schmetterling"; hier (Lorenz 1963) entdeckt die sensible Abhängigkeit zuerst.</li>
+      <li><b>Fraktale</b> (Mandelbrot M = {c ∈ ℂ : der Orbit von 0 unter z↦z²+c bleibt beschränkt}, Julia, Sierpinski) — nicht-ganzzahlige Dimension als Invariante der Selbstähnlichkeit.</li>
+      <li><b>Zelluläre Automaten &amp; Hopfield-Netz</b>: Rule 90 → Sierpinski, Rule 30 → scheinbare Zufälligkeit; das Hopfield-Netz speichert Muster als Anzieher einer monoton fallenden Energie E(s) = −½ sᵀWs.</li>
+    </ol>
+  </div>
+
+  <div class="ladder b">
+    <span class="tag b">B · Homotopie-Typentheorie (Pfade, Schleifen, Gruppen)</span>
+    <ol>
+      <li><b>Gleichheit ist ein Pfad</b>: Statt „A = B" sagt man „es gibt einen Weg von A nach B". Gleichheit ist ein Objekt — untersuchbar, verformbar, verkettbar.</li>
+      <li><b>Schleifen sind Zahlen</b>: Auf dem Kreis S¹ mit Basispunkt läuft eine Schleife n-mal herum → die Zahl n. Die Fundamentalgruppe ist Ω(S¹) ≅ π₁(S¹) ≅ ℤ.</li>
+      <li><b>Pfadverkettung = Addition</b>: Erst a-mal, dann b-mal herum = (a+b)-mal. Assoziativ bis auf Homotopie, neutrales Element = konstanter Pfad (0), Inverses = rückwärts laufen (−n). Das ist eine Gruppe — und genau ℤ.</li>
+      <li><b>Homotopie = Gleichheit zwischen Gleichheiten</b>: Zwei Pfade sind „gleich", wenn sich der eine stetig in den anderen verformen lässt. Es gibt unendlich viele Ebenen (Pfade zwischen Pfaden zwischen Pfaden …) — die ∞-Gruppoiden-Struktur.</li>
+      <li><b>Alles ist Topologie</b>: Typen = Räume, Terme = Punkte, Gleichheiten = Pfade. Die gesamte Arithmetik entsteht aus der topologischen Struktur des Kreises.</li>
+    </ol>
+  </div>
+
+  <p><strong>Die isomorphe Einbettung (der eigentliche Fusionsinhalt) — dieselben vier Slots, zwei Realisierungen:</strong></p>
+  <div class="formula">                 A (Nichtlineare Dynamik)          B (HoTT / Topologie)
+Generator        x ↦ r·x(1-x)   (Karte)      "einmal um den Kreis"  (Schleife)
+Iteration        Komposition f∘f∘…            Pfadverkettung  (·)
+Raum             [0,1]  (zusammenziehbar)     S¹  (π₁ ≅ ℤ, nichttrivial)
+Stabile Struktur Anzieher / Grenzmenge         Homotopieklasse / Windungszahl
+Invariante       λ, fraktale Dim., invar. Maß  n ∈ ℤ  (Gruppe unter Verkettung)
+"Gleichheit"     "lands auf demselben Anzieher"  "homotop (stetig verformbar)"
+Topologie-Budget in die KARTE gesteckt            in den RAUM gesteckt</div>
+
+  <p>Die <em>Dualität</em> ist der springende Punkt: A lädt die Komplexität in eine <em>reiche Karte auf trivialem Raum</em> (das Intervall ist zusammenziehbar, π₁ trivial — und trotzdem Chaos); B lädt sie in einen <em>reichen Raum unter einfacher Operation</em> (der Kreis hat eine nichttriviale Fundamentalgruppe — und daraus wird die ganze Gruppe ℤ). Das „Topologie-Budget" wird an zwei Stellen ausgegeben: in der Abbildung oder im Raum. Der Output ist jeweils eine <em>stabile Struktur</em>, charakterisiert durch eine <em>Invariante</em> — einen <em>Anzieher</em> (eine Menge, ein Grenzobjekt) hier, ein <em>Gruppenelement</em> (eine Klasse) dort. Beide sind <em>Quotienten</em>: Der Anzieher identifiziert Punkte, die auf dieselbe Grenzmenge landen; die Homotopieklasse identifiziert Pfade, die stetig ineinander verformbar sind.</p>
+
+  <p>Die tiefe Einheit: <strong>„Was ist dieses Objekt?" wird in beiden Papieren durch „Welche stabile Struktur gehört es an, und wie lautet deren Invariante?" beantwortet.</strong> Der Lyapunov-Exponent und die fraktale Dimension sind die <em>metrisch-dynamischen</em> Invarianten (wie schnell divergiert, wie „dick" ist der Anzieher); die Windungszahl ist die <em>algebraische</em> Invariante (wie oft umrundet, welche Gruppenklasse). HoTT liefert die konzeptionelle Rechtfertigung dafür, <em>warum</em> man Invarianten und nicht Punkte studiert: weil Gleichheit selbst ein Pfad ist und man auf der Ebene der Pfade / Homotopieklassen erst die stabile, berechenbare Struktur sieht, die Chaos auf Punkt-Ebene gerade verdeckt.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — eine Generator-Regel, zwei stabile Strukturen</h2>
+  <p>Ein Canvas, zwei Panels, <em>dieselbe</em> Geste: links (A) iteriert die Logistikkarte ihren <strong>Anzieher</strong> live — der Tracer-Dot wandert auf dem Intervall [0,1], das Histogramm oben zeigt die konvergierte <em>invariante Verteilung</em>, und λ(r) ordnet das Regime zu. Rechts (B) verkettet der Kreis S¹ eine <strong>a-Schleife</strong> und eine <strong>b-Schleife</strong> zur Windungszahl a+b (π₁(S¹) ≅ ℤ). Drücke ▶ — beide Panels iterieren ihren Generator gleichzeitig und konvergieren auf ihre stabile Struktur (die Invariante). R (links) und a, b (rechts) sind frei regelbar.</p>
+
+  <div class="viz">
+    <canvas id="vizCanvas" height="470"></canvas>
+    <div class="controls">
+      <label for="rSlider" class="cl">r (A): <b id="rLab">3.99</b></label>
+      <input type="range" id="rSlider" min="2" max="4" step="0.01" value="3.99">
+    </div>
+    <div class="controls">
+      <label for="aSlider" class="cl">a (B): <b id="aLab">2</b></label>
+      <input type="range" id="aSlider" min="0" max="4" step="1" value="2">
+      <label for="bSlider" class="cl">b (B): <b id="bLab">3</b></label>
+      <input type="range" id="bSlider" min="0" max="4" step="1" value="3">
+    </div>
+    <div class="controls">
+      <button class="btn primary" id="runBtn">▶ Iterieren &amp; Verketten</button>
+      <button class="btn" id="resetBtn">↺ Reset</button>
+    </div>
+    <div class="readout">
+      <div class="readbox a">
+        <div class="rb-title">Nichtlineare Dynamik (A)</div>
+        <div>r = <b id="rVal">3.99</b> &nbsp;·&nbsp; λ = <b id="lamVal">0.693</b></div>
+        <div class="regime" id="regimeA">—</div>
+        <div class="desc">Iteriere x → r·x(1−x): Der Orbit vergisst x₀ und bleibt auf dem Anzieher. Die Invariante (λ, invariante Verteilung) kennzeichnet das Regime — chaotisch (λ&gt;0) oder stabil (λ≤0).</div>
+      </div>
+      <div class="readbox b">
+        <div class="rb-title">Homotopie-Typentheorie (B)</div>
+        <div>a = <b id="aVal">2</b> &nbsp;·&nbsp; b = <b id="bVal">3</b> &nbsp;→&nbsp; a + b = <b id="sumVal">5</b> &nbsp;∈ ℤ</div>
+        <div class="regime" id="regimeB" style="color:var(--mn-accent2);">Ω(S¹) ≅ ℤ — assoziativ, neutral 0, Inverses −n</div>
+        <div class="desc">Verkettest du eine a-Schleife mit einer b-Schleife, erhältst du die (a+b)-Schleife. Verkettung = Addition, Homotopie = Gleichheit. Die Windungszahl ist die algebraische Invariante — das stabile Gruppenelement.</div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent)"></i> A: Karte / Tracer / a-Schleife</span>
+      <span><i class="dot" style="background:var(--mn-accent2)"></i> B: a+b-Ergebnis</span>
+      <span><i class="dot" style="background:var(--mn-accent3)"></i> b-Schleife</span>
+      <span><i class="dot" style="background:var(--mn-accent4)"></i> Orbit-Spur (A)</span>
+      <span><i class="dot" style="background:var(--mn-dim)"></i> konvergierter Anzieher / Windungsringe</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Quelle A</span>
+      <h3><a href="../buecher/nonlinear_workbook.html">nonlinear_workbook.html</a></h3>
+      <p><small>„The Nonlinear Workbook — Interactive Explorer": interaktive Erkundung nichtlinearer Dynamik — Logistikkarte, Bifurkationsdiagramm, Lyapunov-Spektrum, Hénon-, Lorenz-Attraktor, Fraktale (Mandelbrot/Julia/Sierpinski), zelluläre Automaten und Hopfield-Netz, alles als Plotly/Canvas-Demo.</small></p>
+    </div>
+    <div class="card">
+      <span class="tag b">Quelle B</span>
+      <h3><a href="../hott_addition.html">hott_addition.html</a></h3>
+      <p><small>„Addition in der Homotopie-Typentheorie – Visuell erklärt": Schritt für Schritt, wie aus Schleifen auf dem Kreis eine Addition wird — Pfad = Gleichheit, Schleife = Zahl (Ω(S¹) ≅ ℤ), Pfadverkettung = Addition, Homotopie = Wege zwischen Wegen — als animiertes Canvas.</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion N1-055 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('vizCanvas');
+  var ctx=canvas.getContext('2d');
+  var rSlider=document.getElementById('rSlider');
+  var aSlider=document.getElementById('aSlider');
+  var bSlider=document.getElementById('bSlider');
+  var runBtn=document.getElementById('runBtn');
+  var resetBtn=document.getElementById('resetBtn');
+
+  var H=470, NB=40, TAU=Math.PI*2;
+
+  var state={r:3.99, a:2, b:3, x:0.2, spark:[], ang:-Math.PI/2, running:false, raf:null, frame:0, DUR:360};
+  var hist=new Array(NB).fill(0), histMax=1, lambda=0;
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';}
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function circle(cx,cy,r,color,lw){ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.stroke();}
+  function dot(x,y,r,fill,glow){
+    if(glow){ctx.globalAlpha=0.22;ctx.beginPath();ctx.arc(x,y,r+6,0,TAU);ctx.fillStyle=fill;ctx.fill();ctx.globalAlpha=1;}
+    ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fillStyle=fill;ctx.fill();
+  }
+  function label(t,x,y,color,font,align){ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align||'center';ctx.textBaseline='middle';ctx.fillText(t,x,y);}
+  function rings(cx,cy,r,count,color){
+    var max=Math.min(count,7);
+    for(var i=1;i<=max;i++){
+      var rr=r-i*4.5; if(rr<8)break;
+      ctx.strokeStyle=hexToRgba(color,0.4);ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.stroke();
+    }
+  }
+
+  function recompute(){
+    var x=0.5,i,bi;
+    hist=new Array(NB).fill(0);
+    for(i=0;i<300;i++)x=state.r*x*(1-x);
+    for(i=0;i<4000;i++){x=state.r*x*(1-x);bi=clamp(Math.floor(x*NB),0,NB-1);hist[bi]++;}
+    histMax=1;for(i=0;i<NB;i++)if(hist[i]>histMax)histMax=hist[i];
+    var xx=0.5,s=0;
+    for(i=0;i<500;i++)xx=state.r*xx*(1-xx);
+    for(i=0;i<3000;i++){xx=state.r*xx*(1-xx);var d=Math.abs(state.r*(1-2*xx));if(d>0)s+=Math.log(d);}
+    lambda=s/3000;
+  }
+
+  function renderLeft(lx0,lx1,C){
+    var inner0=lx0+16, inner1=lx1-16, innerW=inner1-inner0, i;
+    label('LOGISTIK-KARTE  ·  A',(lx0+lx1)/2,26,C.fg,'bold 15px Segoe UI, sans-serif');
+    label('Anzieher  =  invariante Verteilung',(lx0+lx1)/2,46,C.dim,'12px Segoe UI, sans-serif');
+    var baseY=226, maxH=112, barW=innerW/NB;
+    for(i=0;i<NB;i++){
+      var h=(hist[i]/histMax)*maxH;
+      ctx.globalAlpha=0.32;ctx.fillStyle=C.A;ctx.fillRect(inner0+i*barW+0.5, baseY-h, barW-1, h);
+    }
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=C.border;ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(inner0,baseY);ctx.lineTo(inner1,baseY);ctx.stroke();
+    var sbY=248;
+    ctx.strokeStyle=C.dim;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(inner0,sbY);ctx.lineTo(inner1,sbY);ctx.stroke();
+    label('0',inner0,sbY+16,C.dim,'11px Segoe UI, sans-serif','left');
+    label('1',inner1,sbY+16,C.dim,'11px Segoe UI, sans-serif','right');
+    var tx=inner0+clamp(state.x,0,1)*innerW;
+    dot(tx,sbY,6,C.A,true);
+    var sTop=286,sBot=356;
+    if(state.spark.length>1){
+      ctx.strokeStyle=C.A4;ctx.lineWidth=1.6;ctx.beginPath();
+      for(var k=0;k<state.spark.length;k++){
+        var sx=inner0+(k/59)*innerW;
+        var sy=sBot-clamp(state.spark[k],0,1)*(sBot-sTop);
+        if(k===0)ctx.moveTo(sx,sy);else ctx.lineTo(sx,sy);
+      }
+      ctx.stroke();
+    }
+    label('Orbit  x(t)  (letzte 60 Schritte)',(lx0+lx1)/2,372,C.dim,'11px Segoe UI, sans-serif');
+  }
+
+  function renderRight(rx2,rx3,C){
+    var cw=rx3-rx2;
+    label('KREIS  S¹  ·  B',(rx2+rx3)/2,26,C.fg,'bold 15px Segoe UI, sans-serif');
+    label('Ω(S¹) ≅ π₁(S¹) ≅ ℤ',(rx2+rx3)/2,46,C.dim,'12px Segoe UI, sans-serif');
+    var cy=192, R=Math.min(48,cw*0.15);
+    var cA=rx2+cw*0.20, cC=rx2+cw*0.50, cB=rx2+cw*0.80;
+    circle(cA,cy,R,C.border,2);
+    circle(cC,cy,R,C.border,2);
+    circle(cB,cy,R,C.border,2);
+    rings(cA,cy,R,state.a,C.A);
+    rings(cC,cy,R,state.a+state.b,C.B);
+    rings(cB,cy,R,state.b,C.B3);
+    var sAng=-Math.PI/2;
+    if(state.a>0){ctx.strokeStyle=C.A;ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(cC,cy,R,sAng,sAng+state.a*TAU,false);ctx.stroke();}
+    if(state.b>0){ctx.strokeStyle=C.B3;ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(cC,cy,R,sAng+state.a*TAU,sAng+(state.a+state.b)*TAU,false);ctx.stroke();}
+    dot(cA,cy-R,4,C.A,false);
+    dot(cC,cy-R,4,C.B,false);
+    dot(cB,cy-R,4,C.B3,false);
+    var Wsum=state.a+state.b;
+    if(state.running && Wsum>0){
+      var tA=(state.ang-sAng)/TAU;
+      var tcol=(tA<state.a)?C.A:C.B3;
+      dot(cC+R*Math.cos(state.ang),cy+R*Math.sin(state.ang),6,tcol,true);
+    }
+    label('a = '+state.a,cA,cy+R+18,C.A,'bold 13px Segoe UI, sans-serif');
+    label('a + b = '+(state.a+state.b),cC,cy+R+18,C.B,'bold 13px Segoe UI, sans-serif');
+    label('b = '+state.b,cB,cy+R+18,C.B3,'bold 13px Segoe UI, sans-serif');
+    label('Verkettung von Schleifen  =  Addition',(rx2+rx3)/2,cy+R+44,C.dim,'11px Segoe UI, sans-serif');
+  }
+
+  function render(){
+    if(!ctx)return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||700;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--mn-panel2');ctx.fillRect(0,0,W,H);
+    var C={
+      A:cssVar('--mn-accent'), B:cssVar('--mn-accent2'),
+      B3:cssVar('--mn-accent3')||cssVar('--mn-accent2'), A4:cssVar('--mn-accent4')||'#b45309',
+      fg:cssVar('--mn-fg'), dim:cssVar('--mn-dim'), border:cssVar('--mn-border')
+    };
+    var gap=Math.min(24,W*0.03);
+    var lx0=12, lx1=(W-gap)/2, rx2=(W+gap)/2, rx3=W-12;
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W/2,64);ctx.lineTo(W/2,H-16);ctx.stroke();
+    label('einfache Generator-Regel  →  stabile Struktur  →  Invariante',W/2,16,C.dim,'11px Segoe UI, sans-serif');
+    renderLeft(lx0,lx1,C);
+    renderRight(rx2,rx3,C);
+  }
+
+  function updateReadout(){
+    document.getElementById('rVal').textContent=state.r.toFixed(2);
+    document.getElementById('aVal').textContent=state.a;
+    document.getElementById('bVal').textContent=state.b;
+    document.getElementById('sumVal').textContent=(state.a+state.b);
+    document.getElementById('lamVal').textContent=lambda.toFixed(3);
+    var regA=document.getElementById('regimeA');
+    if(lambda>0){regA.textContent='CHAOTISCH  (λ > 0) — sensible Abhängigkeit von x₀';regA.style.color=cssVar('--mn-boundary');}
+    else{regA.textContent='STABIL / PERIODISCH  (λ ≤ 0) — Anzieher = Fixpunkt / Periode';regA.style.color=cssVar('--mn-ok');}
+  }
+
+  function stop(){if(state.raf)cancelAnimationFrame(state.raf);state.raf=null;state.running=false;}
+  function run(){
+    stop();
+    state.x=0.2;state.spark=[];state.ang=-Math.PI/2;state.frame=0;
+    var Wsum=state.a+state.b;state.running=true;
+    function step(){
+      for(var k=0;k<3;k++){state.x=state.r*state.x*(1-state.x);state.spark.push(state.x);if(state.spark.length>60)state.spark.shift();}
+      if(Wsum>0){state.ang+=(Wsum*TAU)/state.DUR;var end=-Math.PI/2+Wsum*TAU;if(state.ang>=end)state.ang=end;}
+      state.frame++;
+      render();updateReadout();
+      if(state.frame<state.DUR){state.raf=requestAnimationFrame(step);}
+      else{state.running=false;render();updateReadout();}
+    }
+    state.raf=requestAnimationFrame(step);
+  }
+  function reset(){stop();state.x=0.2;state.spark=[];state.ang=-Math.PI/2;render();updateReadout();}
+
+  function refresh(){render();updateReadout();}
+
+  state.r=parseFloat(rSlider.value);
+  state.a=parseInt(aSlider.value,10);
+  state.b=parseInt(bSlider.value,10);
+  recompute();
+
+  runBtn.addEventListener('click',run);
+  resetBtn.addEventListener('click',reset);
+  rSlider.addEventListener('input',function(){state.r=parseFloat(rSlider.value);document.getElementById('rLab').textContent=state.r.toFixed(2);recompute();refresh();});
+  aSlider.addEventListener('input',function(){state.a=parseInt(aSlider.value,10);document.getElementById('aLab').textContent=state.a;refresh();});
+  bSlider.addEventListener('input',function(){state.b=parseInt(bSlider.value,10);document.getElementById('bLab').textContent=state.b;refresh();});
+
+  window.toggleTheme=function(){document.documentElement.classList.toggle('dark');render();};
+  window.addEventListener('resize',refresh);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+  refresh();
+})();
+</script>
+</body>
+</html>

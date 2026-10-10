@@ -1,0 +1,15 @@
+{
+  "no": "037",
+  "a": "pullback2.html",
+  "b": "paris.html",
+  "a_title": "Was ist ein Pullback? (Pullback – Visuell erklärt)",
+  "b_title": "Hauptstadt von Frankreich",
+  "combined_theme": "merkmal-transport-ueber-abbildung",
+  "one_line": "Ein Pullback und „Paris = Hauptstadt von Frankreich“ sind dasselbe: ein Merkmal, das über eine Abbildung zwischen zwei Welten transportiert wird, ohne zu zerreißen — A (pullback2.html) benennt die allgemeine Regel (Komposition g∘f, Invarianz), B (paris.html) ist der kanonische Einpunkt-Beispiel auf einem 3-elementigen Set.",
+  "contradictions": [
+    "Richtung des Transports: A (pullback2.html) erklärt die rückwärts gerichtete Information (B→A, g∘f) als den Kern des Pullbacks („Der Pullback geht rückwärts“); B (paris.html) übt in allen 6 Spielen nur vorwärts (Land→Stadt) bzw. Pairing, zieht nie ein Merkmal von der Stadt zurück ins Land.",
+    "Universal-abstrakt vs. konkret-spezifisch: A behauptet, der Pullback gelte für beliebige Welten, beliebige nichtlineare Formen und beliebige Struktur (der Inhalt ist variabel); B reduziert das auf ein einzelnes festes Label („Hauptstadt“) an einem benannten Objekt (Paris) auf einem 3-elementigen Beispiel — ein Datum, keine Mechanik."
+  ],
+  "resolution": "Richtungs-Stellung: Die beiden Seiten sind die zwei Hälften derselben Abbildung, nicht im Widerspruch — A's vorwärts-Karte (A→B) ist B's „Hauptstadt-von“-Lookup (Land→Stadt), A's rückwärts-Zug (B→A) ist B's „Verbinde Land & Hauptstadt“-Spiel (Stadt→Land, die Inverse). A liefert das allgemeine Gesetz (beide Richtungen, Rückwärts = die aktive), B ist ein Toy-Modell auf {FR,DE,ES}×{Paris,Berlin,Madrid}, das beide Richtungen abarbeitet. Universal-vs.-konkret löst sich durch Spezialisierung: B ist der n=3-Besonderungsfall von A's allgenereller Aussage — komplementär (Regel + ihr kanonischer Einpunkt-Beispiel), nicht widersprüchlich.",
+  "viz": "Zwei-Welten-Canvas (themen-reaktiv, inline Data): links Länder (Welt A, die Frage), rechts Städte + Temperaturfeld g (Welt B, hat die Info); lila vorwärts-Pfeile f (Land→Stadt, wie paris.html) und goldene gestrichelte Pullback-Pfeile g∘f (Stadt→Land, wie pullback2.html), die die Länder-Karten färben; ziehbarer Cursor mit Live-Wert (g∘f)(a)=g(f(a)); Warp-Regler (nichtlineare Verzerrung von f) + Pullback-An/aus; Paris rot+gesternt hervorgehoben."
+}

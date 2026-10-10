@@ -1,0 +1,16 @@
+{
+  "no": "053",
+  "a": "inaccessible.html",
+  "b": "os.html",
+  "a_title": "Große Kardinalzahlen – Interaktive Hierarchie",
+  "b_title": "Betriebssysteme – Visuell erklärt",
+  "combined_theme": "grenzen-architektur",
+  "one_line": "Beide Papiere sind Leitern mit einer Zugriffs-Grenze: das inaccessible Kardinal ist die User/Kernel-Grenze der Mengenlehre, und die elementare Einbettung j:V→M deren 'Page Table' (virtuell↔physisch).",
+  "contradictions": [
+    "Richtung der Mächtigkeit: A legt die stärkste/gefährlichste Stufe (0=1, I0–I3) OBEN und das Fundament (ℵ₀, inaccessible) unten ('je höher, desto stärker'); B legt die mächtigste Schicht (Kernel, Kernel-Modus, direkter HW-Zugriff) am UNTERNEN Ende und die am wenigsten privilegierte (User) oben.",
+    "Grenze Mauer vs. Tor: A definiert das inaccessible Kardinal als von unten unerreichbar (regulär + starker Limes: keine <κ-Leiter, kein 2^λ-Sprung) — eine absolute Mauer; B macht die User/Kernel-Grenze zu einem gestalteten, bewusst überquerten Tor via System Calls.",
+    "Eine Größe vs. viele Funktionen: A ordnet alle Stufen auf eine einzige, zeitlose Konsistenzstärkeachse (gleiche Objekte, nur stärker); B ist ein zeitabhängiger Stack heterogener Funktionen (Scheduling, Paging, I/O, Ticks, Interrupts)."
+  ],
+  "resolution": "Gemeinsame Form ist das Grenz-Gestufte-System (geordnete Ebenen + scharfe Zugriffs-Grenze + Regel zum Überschreiten). Richtung (A aufsteigende Beweiskraft / B absteigendes Privileg), Durchlässigkeit (A Mauer / B Tor) und Zeit (A statisch / B dynamisch) sind freie Designparameter, keine Widersprüche. Das inaccessible Kardinal ist die User/Kernel-Grenze der Mengenlehre; stärkere Kardinals sind deren privilegierte 'System Calls' (Axiom-Postulate), und j:V→M ist die 'Page Table' des Universums (V≈physisch, M≈virtueller Adressraum, Elementarität≈strukturerhaltende Adressübersetzung).",
+  "viz": "Canvas: zwei parallele Leitern (OS-Schicht-Stack links, Kardinal-Hierarchie rechts), je mit einer Zugriffs-Grenze (User/Kernel-Tor / inaccessible-Mauer), plus ein gemeinsamer Positions-Slider, der eine 'Du'-Cursor-Linie beide Leitern gleichzeitig steigen lässt und beide Regime (User/Kernel, ZFC/großes Kardinal) live im Readout anzeigt; themenreaktiv über CSS-Variablen."
+}

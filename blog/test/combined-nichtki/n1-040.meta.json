@@ -1,0 +1,15 @@
+{
+  "no": "040",
+  "a": "ricci_fluss.html",
+  "b": "sheaf.html",
+  "a_title": "Der Ricci-Fluss",
+  "b_title": "Topoi & Sheaves — Where Geometry Meets Logic",
+  "combined_theme": "lokal-zu-global",
+  "one_line": "Beide Papiere lehren, dass das Ganze aus dem Lokalen entsteht — B (Sheaves) tut es exakt und zeitlos (Bündel-Verklebung, nichts geht verloren), A (Ricci-Fluss) tut es dynamisch und verlustreich (Krümmung glättet die Metrik in der Zeit).",
+  "contradictions": [
+    "Verlustreich vs. verlustfrei: A's Fluss ist verlustig und viel-zu-eins (viele unterschiedliche Metriken laufen auf dieselbe runde Grenze zu, Details klingen aus); B's Verklebung ist exakt und verlustfrei (Lokalität: übereinstimmende lokale Sektionen sind global identisch, die globale Sektion ist eindeutig).",
+    "Verwandelter Raum vs. fester Raum: A's Metrik läuft in der Zeit und die Chirurgie ändert sogar die Topologie (Singularität herauschneiden, Enden kappen); B's topologischer Raum X ist fix und passiv — 'space is what you can observe on it' (nur die Sektionen variieren, der Träger bleibt unverändert)."
+  ],
+  "resolution": "Zwei orthogonale Achsen desselben Prinzips trennen: Raum (fester Zeitpunkt) = B — die Metrik g(t) ist eine exakt und verlustfrei über einem Atlas verklebte globale Sektion; Zeit (Verlauf) = A — der Fluss ist eine verlustreiche Projektion, die Krümmungs-Richtungen herausschmilzt (Mittelwert='Masse' bleibt erhalten, Varianz geht verloren; 2D-Äquivalent: Gauss-Bonnet ∫K dA = 2πχ(M) topologisch invariant). Die Chirurgie ist der Moment, in dem A die Topologie ändert und B das neue Objekt exakt und verlustfrei aus den Stücken wieder verklebt — die 'neue' Topologie IST die eindeutige Verklebung der Stück-bündel.",
+  "viz": "Canvas-Demo: ein Kreis (Basisraum S¹) mit vier überlappenden Bögen als lokale Sektionen (Krümmungshöhen). 'Vereinbar/Nicht vereinbar' demonstriert B's exakte Verklebung (eindeutige globale Sektion vs. Konflikt-Marker auf der Überdeckung); '▶ Ricci-Fluss' glättet die Sektion diskret (Laplace/Wärme), wobei die Varianz ('Information') bei konstantem Mittelwert ('Masse', topologisch invariant) ausklingt."
+}

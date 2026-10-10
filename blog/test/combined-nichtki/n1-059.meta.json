@@ -1,0 +1,16 @@
+{
+  "no": "059",
+  "a": "asymptotische_gleichverteilungseigenschaft.html",
+  "b": "finneganswake2.html",
+  "a_title": "Die Asymptotische Gleichverteilungseigenschaft — AEP & Shannon–McMillan–Breiman (interaktive Reise)",
+  "b_title": "Finnegans Wake — A Visual Journey",
+  "combined_theme": "typischer-kern-im-geraeuschkanal",
+  "one_line": "Shannons typische Menge und Joyce' Vico-Zyklus sind dieselbe Aussage: fast das gesamte Gewicht einer Quelle liegt in einem winzigen, sich wiederholenden Kern — und Joyces Rauschen (Gerücht, Traum, Litter) ist genau das, was Shannons Redundanz als Fehlerkorrektur übersteht.",
+  "contradictions": [
+    "A hält an irreduzibler Zufälligkeit/Entropie fest (man kommt nie unter H Bits, Zufall ist die Grundsubstanz); B beschreibt eine Welt totaler Muster und Verknüpfung ('ONE story, endlessly retold', 'the same returns') — dort sei nichts zufällig, der Zyklus unausweichlich.",
+    "A setzt auf verlustfreie, exakte Rekonstruktion EINER wohldefinierten Quellennachricht (Fehler -> 0, Rate >= Kapazität); B verweigert jede eindeutige, wiederherstellbare Bedeutung ('EVERYONE wrote it, at ALL times, in ALL languages', die Tat des HCE bleibt nie klar).",
+    "A will Redundanz eliminieren und auf H Bits komprimieren (Wirtschaftlichkeit, Wegwerfen der atypischen Sequenzen); B macht aus maximaler Redundanz und Wörtern, die 'Multitudes' tragen, den eigentlichen Wert (Multiplikation statt Minimierung)."
+  ],
+  "resolution": "Ergodizität plus die Trennung von Kanal und Quelle lösen alle drei auf: B's 'totales Muster' ist der fast-sichere Grenzwert von A's Grundzufälligkeit (Rauschen im Pixel, Muster am Zoom-out); verlustfreie Rekonstruktion gilt für den Kanal, während die Quelle selbst mehrdeutig bleibt (Signallektüre vs. Quellsemeantik); und Komprimierung (Code) sowie Expansion (Text) sind zwei Stellungen eines Rate-Distortion-Reglers, wobei Redundanz exakt die Fehlerkorrektur ist, die Joyces Bedeutung durch den maximalen Rauschkanal (Traum/Gerücht/Litter) rettet.",
+  "viz": "Interaktives Plotly-Histogramm: 'saubere' Bernoulli-Sequenzen (empirische Entropie - (1/n)log2 p konvergiert per AEP gegen H(X)) gegen 'geräuschte' Sequenzen (jedes Symbol mit Wahrscheinlichkeit q gedreht = das Gerücht / der Rauschkanal). Schieberegler p, n, q; gestrichene Linie bei H(X) als typischer Kern. Bei q=0 (Shannons Welt) fallen beide Verteilungen auf den Kern zusammen; mit wachsendem q wandert die rosa Masse in den atypischen Bereich. Theme-reaktiv (CSS-Variablen, ☾/☀-Toggle), Inline-Daten."
+}

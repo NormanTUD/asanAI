@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regelmäßigkeit &amp; Form — Sobolev-Räume ✕ Topologische Datenanalyse</title>
+<style>
+:root{
+  --bg:#f5f3ec; --fg:#1c1c1e; --muted:#66666b; --card:#fbfaf7; --border:#d9d4c6;
+  --accent:#0b7285; --accent2:#c2255c; --loop:#e8590c; --grid:#d9d4c6;
+  --viz-bg:#ffffff; --fill:rgba(11,114,133,0.12); --code:#b4451f; --shadow:rgba(0,0,0,0.06);
+}
+html.dark{
+  --bg:#0d1117; --fg:#e6edf3; --muted:#8b949e; --card:#161b22; --border:#30363d;
+  --accent:#58a6ff; --accent2:#3fb950; --loop:#ffa657; --grid:#30363d;
+  --viz-bg:#0d1117; --fill:rgba(88,166,255,0.14); --code:#ffa657; --shadow:rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,Tahoma,sans-serif;
+  background:var(--bg); color:var(--fg); line-height:1.7; font-size:16px;
+  transition:background .25s,color .25s;
+}
+.wrap{max-width:820px;margin:0 auto;padding:34px 20px 70px;}
+header{margin-bottom:26px;}
+h1{font-size:2.05em;line-height:1.2;margin:0 0 8px;color:var(--fg);}
+.subtitle{color:var(--muted);font-size:1.02em;margin:0 0 4px;font-family:monospace;}
+section{
+  background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:22px 24px; margin:18px 0; box-shadow:0 1px 3px var(--shadow);
+}
+h2{font-size:1.4em;margin:0 0 12px;color:var(--accent);line-height:1.25;}
+h3{font-size:1.12em;margin:18px 0 6px;color:var(--fg);}
+p{margin:0 0 12px;}
+ul{margin:0 0 12px;padding-left:22px;}
+li{margin:6px 0;}
+code,.m{background:transparent;color:var(--code);font-family:'Courier New',monospace;}
+.m{padding:0 1px;white-space:nowrap;}
+.formula{
+  background:var(--fill); border-left:4px solid var(--accent);
+  padding:12px 16px; margin:14px 0; border-radius:0 10px 10px 0;
+  font-family:'Courier New',monospace; font-size:1.02em; overflow-x:auto;
+}
+.note{font-size:.95em;color:var(--muted);}
+.tag{display:inline-block;font-family:monospace;font-size:.82em;padding:1px 8px;border-radius:20px;border:1px solid var(--border);color:var(--muted);margin-right:6px;}
+.a{color:var(--accent);} .b{color:var(--accent2);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+.cell{border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:var(--card);}
+.cell h4{margin:0 0 6px;font-size:1em;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:6px 0 14px;}
+.viz-controls label{font-size:.92em;color:var(--muted);}
+.viz-controls input[type=range]{accent-color:var(--accent);width:170px;vertical-align:middle;}
+.viz-controls button{padding:7px 16px;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:8px;cursor:pointer;font-size:.9em;}
+.viz-controls button:hover{border-color:var(--accent);}
+canvas{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:10px;background:var(--viz-bg);}
+.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 6px;}
+@media(max-width:640px){.readouts{grid-template-columns:repeat(2,1fr);}}
+.ro{border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center;}
+.ro .k{font-size:.82em;color:var(--muted);}
+.ro .v{font-size:1.4em;font-weight:700;font-family:monospace;margin-top:2px;}
+.bar{height:8px;border-radius:6px;background:var(--border);overflow:hidden;margin-top:6px;}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--loop));transition:width .2s;}
+.stab{font-size:.95em;color:var(--muted);border-top:1px dashed var(--border);margin-top:12px;padding-top:12px;}
+.stab b{color:var(--loop);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--fg);cursor:pointer;font-size:.85em;}
+a{color:var(--accent);}
+footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px;}
+</style>
+<script>(function(){try{var t=localStorage.getItem('fuse-theme');if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">🌗</button>
+<div class="wrap">
+
+<header>
+  <h1>Regelmäßigkeit &amp; Form</h1>
+  <p class="subtitle">Fusion aus: sobolev_raum.html ✕ topological_data_analysis.html</p>
+  <p class="note">Sobolev-Analytik (A) misst <em>wie glatt</em> — topologische Datenanalyse (B) misst <em>wie verbunden</em>.
+  Zwei Linsen auf demselben Objekt, über eine Skala organisiert und quantitativ gekoppelt.</p>
+</header>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere sind <strong>Theoreme über Struktur über eine Skala</strong> — sie fragen nur nach
+  <em>anderem</em> Struktur. Papier&nbsp;A (Sobolev-Räume) definiert <span class="m">W<sup>k,p</sup>(Ω)</span> über
+  <strong>schwache Ableitungen</strong>: eine Funktion zählt dann als „regelmäßig", je mehr ihrer
+  Ableitungen (bis zur Ordnung <span class="m">k</span>) in <span class="m">L<sup>p</sup></span> integrierbar sind.
+  Papier&nbsp;B (TDA) definiert Struktur über <strong>verbundene Komponenten, Löcher und Hohlräume</strong>,
+  die in einer Filtration <em>geboren</em> und <em>getötet</em> werden, während ein Skalensystem (Radius
+  <span class="m">ε</span>, α, oder der Wert einer Filterfunktion) wächst.</p>
+  <p>Die fusionierte Position: <strong>Regelmäßigkeit und Topologie sind die beiden Seiten derselben
+  Skala.</strong> A fragt nach der <em>analytischen</em> Glätte (Ableitungen, Normen, die Schwelle
+  <span class="m">kp&nbsp;vs.&nbsp;n</span>), B fragt nach der <em>topologischen</em> Gestalt (Persistenz von
+  <span class="m">β₀</span>, <span class="m">β₁</span> über <span class="m">ε</span>). Sie sind nicht
+  konkurrierend, sondern <strong>orthogonale Koordinaten auf dem Raum der Datensätze</strong> — und sie
+  sind durch <em>Stabilität</em> verknüpft: genau die analytische Nähe, die A misst, ist die Größe,
+  die die topologische Stabilität, die B ausnutzt, <em>garantiert</em>.</p>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p class="note">Drei Stellen, an denen die Papiere tatsächlich gegensätzliche Haltung beziehen — keine erfunden,
+  jede paraphrasiert aus dem Original:</p>
+
+  <h3>1. „Wildheit" ist Defekt vs. Brennstoff</h3>
+  <p><span class="tag a">A</span> Die Sobolev-Norm <em>bestraft</em> hohe Frequenz: die H¹-Seminorm
+  <span class="m">‖f′‖<sub>L²</sub></span> wächst mit der Oszillationsfrequenz (A zeigt explizit:
+  „Sobolev bestraft Oszillationen"); die Spitze <span class="m">|x|<sup>1/2</sup></span> fällt sogar
+  <em>heraus</em> aus <span class="m">W<sup>1,2</sup></span>, weil <span class="m">∫|f′|²</span> divergiert.
+  Wildheit ist hier ein <strong>Mangel</strong> an Regelmäßigkeit, den man durch höheres <span class="m">k</span> „bezahlt".</p>
+  <p><span class="tag b">B</span> TDA ist genau dafür gebaut, Wildheit <em>zu überstehen</em>: Persistenz
+  extrahiert die stabile Gestalt <em>aus</em> verrauschten, wilden Daten. Wildheit ist hier die
+  <strong>Eingabe</strong>, derentwegen die Methode existiert. — <em>Gegensatz:</em> A verurteilt genau
+  das, wofür B dankbar ist.</p>
+
+  <h3>2. Punktweise Stetigkeit: erzwungen vs. unsichtbar</h3>
+  <p><span class="tag a">A</span> Der Morrey-Einbettungssatz sagt: wenn <span class="m">kp&nbsp;&gt;&nbsp;n</span>,
+  dann sind die Funktionen <em>automatisch stetig</em> (Hölder, Exponent <span class="m">α = k − n/p</span>).
+  A <strong>erzwingt und belohnt</strong> punktweise Stetigkeit als logische Folge von Regelmäßigkeit.</p>
+  <p><span class="tag b">B</span> B blendet Stetigkeit/Glattheit <em>komplett aus</em>: zwei topologisch
+  äquivalente Daten (gleiches Zusammensein der Komponenten/Löcher) sind für B <strong>identisch</strong>,
+  egal wie wild der eine und wie glatt der andere ist. Der Hölder-Exponent — die zentrale quantitative
+  Größe aus A — ist in B prinzipiell unsichtbar. — <em>Gegensatz:</em> A beweist Stetigkeit als Preis
+  von Ableitungen; B macht sie zur Nebensache.</p>
+
+  <h3>3. Die „Skala" organisiert entgegengesetzte Hierarchien</h3>
+  <p><span class="tag a">A</span> A ordnet <em>absteigend</em> nach Regularität:
+  <span class="m">C<sup>∞</sup> ⊂ C<sup>k</sup> ⊂ W<sup>k,p</sup> ⊂ L<sup>p</sup> ⊂ D′</span> —
+  mehr Ableitungen ⇒ kleinerer, „glatterer" Raum; die Schwelle <span class="m">kp&nbsp;vs.&nbsp;n</span>
+  ist ein <em>kontinuierlich-analytischer</em> Phasenübergang (sub-/kritisch/superkritisch).</p>
+  <p><span class="tag b">B</span> B ordnet <em>aufsteigend</em> nach Radius: Punkte → Kanten → Flächen →
+  kontrahierbar; Merkmale werden an <em>diskreten</em> Schwellen geboren und getötet (ε/α bzw.
+  Filterwert). — <em>Gegensatz:</em> gleicher Begriff „Skala/Hierarchie", aber entgegengesetzte Richtung
+  und andere Art der Schwelle.</p>
+</section>
+
+<!-- ============ 3. AUF LÖSUNG ============ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <div class="grid2">
+    <div class="cell"><h4>1 → Wildheit</h4>
+      <p>Es werden <em>Orthogonales</em> gemessen: A misst die <em>Amplitude der Ableitung</em>
+      (Energie), B die <em>Konnektivität</em>. Eine wilde Funktion kann hohe H¹-Norm (A) und zugleich
+      triviale, stabile Topologie (B) haben. Fusion: die vollständige Beschreibung eines Objekts ist das
+      <strong>Paar</strong> (analytische Regelmäßigkeit, topologische Form) — keine der beiden subsumiert die andere.
+      Und der Stabilitätssatz (s. u.) zeigt, dass A's „Kosten" für Wildheit <em>genau das</em> sind, was B's
+      Topologie stabil hält.</p></div>
+    <div class="cell"><h4>2 → Stetigkeit</h4>
+      <p>A berechnet, <em>wie weit</em> eine Funktion von einer Sprungstelle entfernt ist (quantitative
+      L<sup>p</sup>-Aussage); B notiert nur, <em>ob</em> ein Merkmal überlebt (qualitativ). Der Morrey-Exponent α
+      ist <em>quantitatives Analytik-Daten</em>, das B <em>absichtlich vergisst</em> — und genau dieses
+      Vergessen macht B robust. Fusion: Regelmäßigkeit ist der <strong>Messstab</strong>, Topologie das
+      <strong>Ergebnis</strong>, das unter Noise überlebt.</p></div>
+  </div>
+  <div class="grid2">
+    <div class="cell"><h4>3 → Skala / Hierarchie</h4>
+      <p>A's Nesting-nach-Regularität und B's Nesting-nach-Radius sind zwei Zerschnitte <em>desselben</em>
+      Objekts durch einen Parameter. Die „Schwelle" (<span class="m">kp = n</span> bei A; die
+      Geburts-/Todsschwelle bei ε bei B) ist in beiden Fällen ein <strong>Phasenübergang</strong>.
+      Fusion: eine gemeinsame Skalenachse, auf der beide die analytische Regelmäßigkeit <em>und</em> die
+      topologische Komplexität abgelesen werden.</p></div>
+    <div class="cell"><h4>Die Brücke (quantitativ)</h4>
+      <p>(i) Persistence-Landschaften (B) leben in einem <strong>L²-Hilbert-Raum</strong> — das ist
+      exakt der Sobolev-Raum <span class="m">H⁰ = L²</span> (A). B's Ausgaberaum ist also ein Sobolev-Raum.
+      (ii) Der <strong>Stabilitätssatz der Persistenzhomologie</strong> (Cohen-Steiner/Edelsbrunner/Johnson 2007)
+      besagt: die L<sup>∞</sup>-Distanz zweier Filterfunktionen <em>schränkt</em> die Bottleneck-Distanz ihrer
+      Persistenzdiagramme ein. — Eine <em>analytische</em> Metrik (A) kontrolliert eine <em>topologische</em>
+      Metrik (B): dieselbe „Analyse kontrolliert Struktur"-Logik wie bei den Sobolev-Einbettungen.</p></div>
+  </div>
+  <p><strong>Fusioniertes Fazit:</strong> Das Objekt ist ein <em>Datensatz</em> = eine Funktion auf einem Gebiet.
+  Lese ihm zwei Signaturen ab: <strong>(a)</strong> welches <span class="m">W<sup>k,p</sup>/H<sup>k</sup></span>
+  er erfüllt (analytisch) und <strong>(b)</strong> welche Persistenzlücken (<span class="m">β₀,β₁</span>)
+  mit welcher Persistenz er trägt (topologisch). Beide sind orthogonale Koordinaten, die durch Stabilität
+  gekoppelt sind: kleine analytische Störung ⇒ kleine topologische Änderung. „Wie glatt" <em>und</em>
+  „wie verbunden" — erst zusammen ergibt es das ganze Bild.</p>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>A — Die analytische Linse (Sobolev)</h3>
+  <p><strong>Definition.</strong>
+    <span class="formula">W<sup>k,p</sup>(Ω) = { u ∈ L<sup>p</sup>(Ω) : D<sup>α</sup>u ∈ L<sup>p</sup>(Ω) für alle |α| ≤ k }</span>
+  Die schwache Ableitung <span class="m">v</span> von <span class="m">u</span> ord. α ist durch
+  <span class="m">∫Ω u·D<sup>α</sup>φ = (−1)<sup>|α|</sup> ∫Ω v·φ</span> für alle
+  <span class="m">φ ∈ C<sub>0</sub><sup>∞</sup></span> definiert — die Ableitung wird per partieller
+  Integration auf Testfunktionen „geschippt". Für <span class="m">p=2</span> wird
+  <span class="m">H<sup>k</sup>=W<sup>k,2</sup></span> ein Hilbert-Raum:
+  <span class="formula">‖u‖<sub>H¹</sub> = ( ∫|u|² + ∫|u′|² )<sup>1/2</sup></span>
+  </p>
+  <p><strong>Regelmäßigkeit als Norm.</strong> Der Preis für Oszillation:
+  <span class="m">f=sin(ωπx)</span> ⇒ <span class="m">‖f′‖<sub>L²</sub> ~ ω</span>. Beispiel
+  <span class="m">|x| ∈ H¹</span> (schwache Ableitung = sign&nbsp;x), aber
+  <span class="m">Heaviside ∉ W<sup>1,p</sup></span> (schwache Ableitung wäre δ(0), keine L<sup>p</sup>-Funktion).
+  Hierarchie: <span class="m">C<sup>∞</sup> ⊂ C<sup>k</sup> ⊂ W<sup>k,p</sup> ⊂ L<sup>p</sup> ⊂ D′</span>.</p>
+  <p><strong>Einbettungssätze</strong> (das Herzstück — „Analyse erzwingt Punktweise"):
+    <span class="formula">kp &lt; n:  W<sup>k,p</sup> ↪ L<sup>q</sup>,  q = np/(n − kp)   (Sobolev, gewinnt Integrierbarkeit)
+kp &gt; n:  W<sup>k,p</sup> ↪ C<sup>0,α</sup>,  α = k − n/p   (Morrey, erzwingt Stetigkeit)</span>
+  </p>
+  <p><strong>Lösung von PDEs.</strong> Schwache Formulierung → Bilinearform
+  <span class="m">a(u,v)=∫∇u·∇v</span>, Koerzivität via Poincaré → <strong>Lax–Milgram</strong>
+  liefert ∃! schwache Lösung in <span class="m">H₀¹</span>. Anwendungen: Wärme-, Wellengleichung,
+  Elastizität, Navier–Stokes, FEM, Quantenmechanik (kinetische Energie = <span class="m">∫|∇ψ|²</span> = H¹-Seminorm),
+  und <em>Sobolev-Training</em> im ML (Regularisierung über die Sobolev-Norm).</p>
+
+  <h3>B — Die topologische Linse (TDA)</h3>
+  <p><strong>Vietoris–Rips-Komplex.</strong> Punkte + Radius ε: Kante, wenn
+  <span class="m">dist ≤ 2ε</span>, Clique ⇒ Simplex. Bei ε=0 nur Punkte; wächst ε, entstehen Kanten,
+  dann Flächen, bis alles zu einem Simplex verschmilzt. <strong>Alpha-Komplex:</strong> geometrisch
+  faithfulere Variante (Subkomplex der Delaunay-Triangulierung, Simplexe mit Umkreisradius ≤ α).
+  </p>
+  <p><strong>Persistenz.</strong> Merkmalsgeburten/-tode über ε ⇒ Persistenzdiagramm.
+  <strong>Persistence-Landschaften</strong> (Bubenik 2015): jedes Intervall <span class="m">[b,d]</span>
+  wird eine Zeltfunktion; <span class="m">λ₁,λ₂,...</span> = punktweise max, 2-greatest, … — eine
+  Folge, die einen <strong>Hilbert-Raum</strong> bildet (⇒ Mittel, Varianz, Distanzen; Brücke zu A's H⁰).
+  </p>
+  <p><strong>Mapper</strong> (Singh/Mémoli/Carlsson 2007) &amp; <strong>Reeb-Graph:</strong>
+  Filterfunktion <span class="m">f:X→ℝ</span> → überlappende Deckung → Clustering → Graph; der Reeb-Graph
+  kontrahiert jede Zusammenhangskomponente jeder Faser <span class="m">f<sup>−1</sup>(t)</span> zu einem Punkt
+  und kodiert das „Skelett" der Form. <strong>Euler-Kurve:</strong>
+  <span class="m">χ(ε) = V − E + F</span> als Funktion von ε — kompakte topologische Signatur.
+  </p>
+
+  <h3>Die Fusion — eine gemeinsame Lesart</h3>
+  <p>Beide sind <strong>Skalen-Theoreme</strong>: A interpoliert über die Ableitungsordnung
+  <span class="m">k</span> (relativ zur Dimension <span class="m">n</span>) zwischen L<sup>p</sup>- und
+  punktweiser Regelmäßigkeit; B interpoliert über den Radius <span class="m">ε</span> zwischen isolierten
+  Punkten und globaler Konnektivität. In beiden ist die „Schwelle" ein Phasenübergang
+  (<span class="m">kp=n</span> bzw. die Geburts-/Todsschwelle eines Merkmals).</p>
+  <div class="formula">
+    Brücke 1:  Persistenz-Landschaft ∈ L²-Hilbert-Raum  =  Sobolev-Raum H⁰  (B's Ausgabe ist ein A-Raum)<br>
+    Brücke 2:  ‖f − g‖<sub>L∞</sub>  ≥  d<sub>bottleneck</sub>(Pers(f), Pers(g))  (Stabilitätssatz)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⇒  <em>analytische</em> Nähe (A)  kontrolliert  <em>topologische</em> Nähe (B)<br>
+    Brücke 3:  β₁(ε) = β₀(ε) − χ(ε),  χ = V − E + F  (topologische Signatur aus Kombinatorik des VR-Komplexes)
+  </div>
+  <p><strong>Kern:</strong> Lies einem Datensatz beide Signaturen ab — Sobolev-Regelmäßigkeit
+  (welches <span class="m">W<sup>k,p</sup></span>) und Persistenz (welche Lücken, wie lange).
+  A erklärt, <em>was die Wildheit kostet</em>; B erklärt, <em>was trotz Wildheit bleibt</em>.</p>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Interaktive Fusion: Wildheit vs. stabile Form</h2>
+  <p>Ein <strong>Ring mit radialer Oszillation</strong> (Frequenz <span class="m">ω</span>) dient als
+  ein Objekt, das beide Linsen tragen. Drehst du <span class="m">ω</span> hoch, wird die Form <em>wilder</em>
+  (mehr Rippeln): die <strong>Sobolev-Norm H¹</strong> (analytische Kosten, unten links) <em>steigt</em> —
+  aber der Vietoris–Rips-Komplex (links) und seine <strong>Persistenzkurven</strong>
+  <span class="m">β₀(ε)</span>, <span class="m">β₁(ε)</span> (rechts) zeigen dieselbe β₁-Lücke an
+  <em>dieselben ε-Stellen</em>: die <strong>Topologie ist unter analytischer Wildheit stabil</strong>.
+  Genau das ist die Fusion — A's Kosten steigen, B's Gestalt bleibt.</p>
+
+  <div class="viz-controls">
+    <label>Wildheit ω: <b id="wLbl">5</b></label>
+    <input type="range" id="wS" min="1" max="12" value="5" step="1">
+    <label>Skala ε: <b id="eLbl">40</b></label>
+    <input type="range" id="eS" min="0" max="150" value="40" step="1">
+    <button id="newBtn" type="button">Neuer Ring</button>
+  </div>
+
+  <canvas id="viz" width="820" height="470"></canvas>
+
+  <div class="readouts">
+    <div class="ro"><div class="k">Sobolev-Kosten ‖·‖<sub>H¹</sub></div><div class="v" id="ro-h1">–</div>
+      <div class="bar"><i id="ro-h1bar" style="width:0%"></i></div></div>
+    <div class="ro"><div class="k">β₀ — Komponenten</div><div class="v" id="ro-b0">–</div></div>
+    <div class="ro"><div class="k">β₁ — Loops</div><div class="v" id="ro-b1">–</div></div>
+    <div class="ro"><div class="k">χ = V−E+F</div><div class="v" id="ro-chi">–</div></div>
+  </div>
+  <p class="stab" id="ro-stab"></p>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../sobolev_raum.html">A — Sobolev-Räume W<sup>k,p</sup>(Ω)</a>
+      <span class="note">Interaktive Einführung in die Funktionalanalyse: schwache Ableitungen,
+      H<sup>k</sup>-Normen, Hierarchie, Einbettungssätze (Sobolev/Morrey), Lax–Milgram, Anwendungen.</span></li>
+    <li><a href="../topological_data_analysis.html">B — Topological Data Analysis — Visual Explorer</a>
+      <span class="note">Sechs TDA-Methoden jenseits von Barcodes: Vietoris–Rips, Mapper, Alpha-Komplex,
+      Persistence-Landschaften, Euler-Kurve, Reeb-Graph.</span></li>
+  </ul>
+</section>
+
+<footer>Selbstständige Fusion (Runde 1, Paar 069) — keine externe Datenabrufe, alle Daten inline.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var EPSMAX = 150;
+  var state = { omega:5, eps:40, R:130, A:22, rot:0 };
+  var pts = [];
+
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || '#888'; }
+  function $(id){ return document.getElementById(id); }
+
+  function ringPoints(){
+    var N = 24, arr = [], i, th, r;
+    for(i=0;i<N;i++){
+      th = state.rot + i/N*2*Math.PI;
+      r = state.R + state.A*Math.sin(state.omega*th);
+      arr.push({x:Math.cos(th)*r, y:Math.sin(th)*r});
+    }
+    return arr;
+  }
+
+  function newRing(){
+    state.R = 112 + Math.random()*30;
+    state.A = 14 + Math.random()*14;
+    state.rot = Math.random()*Math.PI*2;
+    pts = ringPoints();
+  }
+
+  function computeComplex(P, eps){
+    var N = P.length, thr = 2*eps, thr2 = thr*thr, i, j, k, dx, dy;
+    var E = 0, F = 0, edges = [], tris = [];
+    var adj = P.map(function(){ return {}; });
+    for(i=0;i<N;i++) for(j=i+1;j<N;j++){
+      dx=P[i].x-P[j].x; dy=P[i].y-P[j].y;
+      if(dx*dx+dy*dy <= thr2){ E++; edges.push([i,j]); adj[i][j]=1; adj[j][i]=1; }
+    }
+    for(i=0;i<N;i++){
+      for(j in adj[i]){ j=+j; if(j<=i) continue;
+        for(k in adj[j]){ k=+k; if(k<=j) continue; if(adj[i][k]){ F++; tris.push([i,j,k]); } }
+      }
+    }
+    var parent = P.map(function(_,x){ return x; });
+    function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+    function uni(a,b){ a=find(a); b=find(b); if(a!==b) parent[a]=b; }
+    edges.forEach(function(e){ uni(e[0],e[1]); });
+    var roots = {};
+    for(i=0;i<N;i++){ roots[find(i)]=1; }
+    var C = Object.keys(roots).length;
+    var chi = N - E + F;
+    var b0 = C;
+    var b1 = C - chi; if(b1 < 0) b1 = 0;
+    return {E:E,F:F,C:C,chi:chi,b0:b0,b1:b1,edges:edges,tris:tris};
+  }
+
+  function h1normAt(w){
+    var M = 720, dth = 2*Math.PI/M, e = 0, pr = null, i, th, r, dr;
+    for(i=0;i<=M;i++){ th = i*dth; r = state.R + state.A*Math.sin(w*th);
+      if(pr!==null){ dr = (r-pr)/dth; e += dr*dr*dth; } pr = r; }
+    return Math.sqrt(e);
+  }
+
+  var cv = $('viz'), ctx = cv.getContext('2d');
+
+  function drawComplex(){
+    var c = computeComplex(pts, state.eps);
+    var cx = 205, cy = 235;
+    var i, t, a, b, k;
+    ctx.fillStyle = cssVar('--fill');
+    for(i=0;i<c.tris.length;i++){ t=c.tris[i];
+      ctx.beginPath();
+      ctx.moveTo(cx+pts[t[0]].x, cy+pts[t[0]].y);
+      ctx.lineTo(cx+pts[t[1]].x, cy+pts[t[1]].y);
+      ctx.lineTo(cx+pts[t[2]].x, cy+pts[t[2]].y);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = cssVar('--accent2'); ctx.lineWidth = 1; ctx.stroke();
+    }
+    ctx.strokeStyle = cssVar('--accent2'); ctx.lineWidth = 1.4;
+    for(i=0;i<c.edges.length;i++){ a=c.edges[i][0]; b=c.edges[i][1];
+      ctx.beginPath();
+      ctx.moveTo(cx+pts[a].x, cy+pts[a].y);
+      ctx.lineTo(cx+pts[b].x, cy+pts[b].y);
+      ctx.stroke();
+    }
+    ctx.fillStyle = cssVar('--accent');
+    for(i=0;i<pts.length;i++){ ctx.beginPath(); ctx.arc(cx+pts[i].x, cy+pts[i].y, 4, 0, 7); ctx.fill(); }
+    ctx.fillStyle = cssVar('--muted'); ctx.font = '12px monospace'; ctx.textAlign='left';
+    ctx.fillText('Vietoris–Rips @ ε='+state.eps, 24, 38);
+    return c;
+  }
+
+  function sweep(){
+    var epsSteps = [], b0arr = [], b1arr = [], e;
+    for(e=0; e<=EPSMAX; e+=3){
+      var cc = computeComplex(pts, e);
+      epsSteps.push(e); b0arr.push(cc.b0);
+      var b1 = cc.b1; if(b1>2) b1=2; b1arr.push(b1);
+    }
+    return {eps:epsSteps, b0:b0arr, b1:b1arr};
+  }
+
+  function chart(x,y,w,h,arr,epsSteps,yMax,color,label,epsCur){
+    ctx.strokeStyle = cssVar('--grid'); ctx.lineWidth = 1;
+    ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle = cssVar('--muted'); ctx.font = '12px monospace'; ctx.textAlign='left';
+    ctx.fillText(label, x+4, y-6);
+    if(arr.length>1){
+      ctx.beginPath();
+      for(var i=0;i<arr.length;i++){
+        var px = x + (epsSteps[i]/EPSMAX)*w;
+        var py = y + h - (arr[i]/yMax)*h;
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+    }
+    var mx = x + (epsCur/EPSMAX)*w;
+    ctx.strokeStyle = cssVar('--loop'); ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(mx,y); ctx.lineTo(mx,y+h); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  function drawCharts(s){
+    chart(420, 80, 372, 140, s.b0, s.eps, 24, cssVar('--accent2'), 'β₀(ε) — Komponenten', state.eps);
+    chart(420, 285, 372, 140, s.b1, s.eps, 2, cssVar('--loop'), 'β₁(ε) — Loops (Lücke)', state.eps);
+    ctx.fillStyle = cssVar('--muted'); ctx.font = '11px monospace';
+    ctx.fillText('ε →', 760, 448);
+  }
+
+  function draw(){
+    var W = cv.width, H = cv.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = cssVar('--viz-bg'); ctx.fillRect(0,0,W,H);
+    var cur = drawComplex();
+    var s = sweep();
+    drawCharts(s);
+    return cur;
+  }
+
+  function updateReadouts(c){
+    var h1 = h1normAt(state.omega);
+    var h1ref = h1normAt(12);
+    $('ro-h1').textContent = h1.toFixed(1);
+    $('ro-h1bar').style.width = Math.min(100, h1/h1ref*100).toFixed(1) + '%';
+    $('ro-b0').textContent = c.b0;
+    $('ro-b1').textContent = c.b1;
+    $('ro-chi').textContent = c.chi;
+    var alive = c.b1 > 0;
+    $('ro-stab').innerHTML = 'ω='+state.omega+' ⇒ H¹-Kosten <b>'+h1.toFixed(1)+'</b> (steigt mit ω). '
+      + 'Topologische β₁-Lücke: <b>'+(alive?'erhalten':'noch nicht / gefüllt')+'</b> bei ε='+state.eps+
+      '. — <em>A bestreitet die Wildheit, B übersteht sie:</em> die Gestalt (β₁) bleibt, während die '
+      + 'analytische Norm wächst. Kleine analytische Störung ⇒ kleine topologische Änderung (Stabilität).</em>';
+  }
+
+  function refresh(){
+    $('wLbl').textContent = state.omega;
+    $('eLbl').textContent = state.eps;
+    var c = draw();
+    updateReadouts(c);
+  }
+
+  $('wS').addEventListener('input', function(){ state.omega = +this.value; pts = ringPoints(); refresh(); });
+  $('eS').addEventListener('input', function(){ state.eps = +this.value; refresh(); });
+  $('newBtn').addEventListener('click', function(){ newRing(); refresh(); });
+
+  function toggleTheme(){
+    var d = document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('fuse-theme', d?'dark':'light'); }catch(e){}
+    $('themeBtn').textContent = d ? '☀️' : '🌙';
+    draw();
+  }
+  $('themeBtn').addEventListener('click', toggleTheme);
+  $('themeBtn').textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+
+  newRing();
+  refresh();
+})();
+</script>
+</body>
+</html>

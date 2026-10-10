@@ -1,0 +1,16 @@
+{
+  "no": "080",
+  "a": "fibrebundles.html",
+  "b": "sheaving.html",
+  "a_title": "Interactive Fiber Bundles Explorer",
+  "b_title": "Sheaving — Interaktive Reise durch Phillips (2019)",
+  "combined_theme": "lokal-zu-global-koherenz",
+  "one_line": "Faserbündel und Sheaves sind zwei Seiten desselben Mechanismus: lokale Daten über einer Basis, die an einer Kohärenzregel (Torsion/Topologie) global verklebt werden — das Faserbündel ist die geometrische Gestalt, Sheaving die kategoriale, und ein Invariant (Monodromie) entscheidet, ob globale Sections existieren.",
+  "contradictions": [
+    "Konstruktionsrichtung: A (fibrebundles) geht vom fertigen, sichtbaren globalen Totalraum E mit Projektion pi:E->B aus und liest Fasern/Abschnitte ab (Ganzes->Teile, geometrisch); B (sheaving) geht von lokalen Daten auf offenen Mengen (Presheaf) aus und erzeugt das Ganze durch Sheaving (Teile->Ganzes, kategorial).",
+    "Hindernis vs. Garantie: A's Headline ist ein Nichtexistenz-Ergebnis (Moebius: keine nicht-verschwindende globale Section, Torsion blockiert das globale Objekt); B's Headline ist ein Existenz+Einzigkeit-Ergebnis (Sheaving erzeugt aus jedem Presheaf den Sheaf F+ universell, immer erfolgreich, bis auf eindeutigen Isomorphismus).",
+    "Bewertung trivial vs. nicht-trivial: B feiert den Produkt/trivial-Fall (diskrete Topologie -> alle 52 Karten -> Systematizitaet) als den nützlichen; A feiert den nicht-trivialen/Torsions-Fall (Moebius, Hopf-Faserung als 'die schoenste nicht-triviale Faserung') als das Tragende."
+  ],
+  "resolution": "Dasselbe Objekt von zwei Seiten: Zu einem Faserbündel E->B gehört der Sheaf seiner stetigen Abschnitte (Faser=Stalk, Section=Section). B's 'existiert immer' gilt fuer den Sheaf als Zuordnung (Sheafification F+ ist immer ein Objekt); A's 'keine globale Section' gilt fuer globale Abschnitte eines konkreten Sheafs — zwei verschachtelte Ebenen, beides wahr. Trivialitaet maximiert den Output (Kompositionalitaet zahlt sich aus), Nicht-Trivialitaet den Informationsgehalt (Monodromie (−1)^w).",
+  "viz": "Interaktives 2-Panel-Canvas: links das w-Halbwindungs-Linienbündel über S¹ (3D, drehbar) mit Basis-Kreis, Fasern und der 'konstanten' Section; rechts die Verklebe-Bedingung an der Naht als Kurve v(θ)=h·cos((w/2)θ) ueber θ∈[0,2π], mit 0- und 2π-Punkten (identischer Basispunkt), 0-Schnitten und Start/Ende-Marker — zeigend, dass gerades w verklebt (globale Section existiert) und ungerades w flippt (Section muss 0 schneiden). Slider w, h; Abschnitt animieren; Theme-Toggle. Theme-aware, inline data only, null Console-Errors."
+}

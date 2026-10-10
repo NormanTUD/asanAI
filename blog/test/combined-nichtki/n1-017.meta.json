@@ -1,0 +1,16 @@
+{
+  "no": "017",
+  "a": "phasenuebergaenge.html",
+  "b": "buecher/fritz_zorn.html",
+  "a_title": "Phasenübergänge",
+  "b_title": "Mars im Exil – Interaktiv erleben",
+  "combined_theme": "spannung-bis-zum-bruch",
+  "one_line": "Jeder stabile Zustand zahlt versteckte Energie, um seine eigene Veränderung zu unterdrücken; an der Schwelle bricht er — in neue Phase (echte Struktur) oder in Zerfall (gezwungene Struktur).",
+  "contradictions": [
+    "Natürliche Schwelle vs. künstlicher Käfig: A hält den festen Zustand für einen echten, natürlichen Gleichgewichtszustand, in dem man ruhen darf; B sagt, die 'Harmonie' sei 'kein Zustand, sondern ein Zwang' — 'nicht in einer unglücklichen, sondern in einer verlogenen' Welt.",
+    "Konservative Umwandlung vs. zerstörerischer Bruch: A behauptet 'Nichts wird hinzugefügt, nichts verschwindet' (verlustfreie Phasenumwandlung, Wasser bleibt Wasser); B zeigt, dass der Bruch (der Krebs) nicht umwandelt, sondern zerstört — Zorn stirbt 1976 mit 32.",
+    "Ehrliches Plateau vs. verlogene Stille: Bei A bleibt die Temperatur messbar flach, weil Energie ehrlich in Bindungen fließt (latente Wärme, etwas Reales geschieht); bei B ist das Fehlen von Konflikten eine hergestellte Lüge — 'Es gab keine Probleme', weil sie nicht durften; die Energie fließt nirgendwohin, sie wird nur weggesperrt."
+  ],
+  "resolution": "A ist das gesunde Vorbild, B der degenerierte Fall: A zeigt, was eine echte Phase tun kann (umordnen, substanz­erhaltend), B, was passiert, wenn man eine Phasen­umwandlung fälscht — man hält ein 'festes Gitter' (Harmonie) bei einer Temperatur, bei der es ehrlich längst flüssig wäre, und verbrennt die Energie im Plateau statt sie zu investieren. Eine Umwandlung erhält nur, was wirklich da war; die falsche Harmonie hat heimlich Substanz (eigene Meinung, Gefühl, Urteil) subtrahiert, also gibt es beim Bruch nichts Echtes umzuordnen — nur den aufgestauten Leerraum, der eruptiert. Beide Plateaus sind flach, aber die Energie geht anderswohin: ehrliche latente Wärme → Strukturwandel (Werden); unterdrückte 'latente Wärme' → Schuld (Zerfall). Maßstab eines stabilen Zustands ist nicht seine Flachheit, sondern die Richtung seiner verborgenen Energie: bauen oder begraben.",
+  "viz": "Partikel-Gitter + Heizkurve auf einem Canvas: Energiezufuhr (Slider/▶) hält das Gitter im Plateau, während die 'verborgene Energie' monoton steigt und die 'Meßgröße' (Temperatur/Ruhe) flach bleibt; an der Schwelle (e≈0.5, Akzent-Strich) zweigt der Ausgang — Modus A (Substanz) schmilzt verlustfrei zur neuen Phase, Modus B (Harmonie) bricht explosiv (Riss + roter Blitz). Three meters (Meßgröße/verborgene Energie/Zusammenhalt) + Verdict; theme-aware über CSS-Variablen, alle Daten inline."
+}

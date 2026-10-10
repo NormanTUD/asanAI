@@ -1,0 +1,16 @@
+{
+  "no": "010",
+  "a": "buecher/hermann_schmitz3.html",
+  "b": "buecher/whitehead.html",
+  "a_title": "Der Leib – Hermann Schmitz interaktiv",
+  "b_title": "Process & Reality – Interaktiv Erleben",
+  "combined_theme": "leib-als-prozess-des-erlebens",
+  "one_line": "Der Leib ist kein Ding, sondern ein Prozess: viele diffuse Momente (protopathische Enge) verdichten sich durch Konkreszenz zu einem bestimmten, gerichteten Erlebnis (Satisfaction), das vergeht und als objektive Daten in der Zukunft lebt — Schmitz' vitaler Antrieb ist Whiteheads Kreativität / Subjective Aim.",
+  "contradictions": [
+    "Dauerhaftigkeit: Schmitz' Leib ist ein anhaltendes, kontinuierliches Spannungsfeld (Inseln bilden sich und schwinden, der Leib bleibt); Whiteheads actual occasions sind diskrete, selbst-vergehende Augenblicke (perpetual perishing), nichts besteht als Substanz.",
+    "Antrieb: Schmitz' vitaler Antrieb ist eine vor-intentionale, dumpfe (protopathische) Spannung ohne Ziel; Whitehead schreibt jedem Moment ein intrinsisch zweckgerichtetes Subjective Aim (finale Kausalität, Kreativität hat Richtung) zu.",
+    "Bestimmtheit: Schmitz' Leibesinseln sind randlos und ohne klarer Ränder (nicht lokalisierbar); Whitehead's Occasion erreicht eine bestimmte, individuell abgeschlossene Satisfaction (determiniert)."
+  ],
+  "resolution": "Die Kontinuität des Leibes ist aus dem Vergehen diskreter Momente aufgebaut (objektive Unsterblichkeit: jeder Moment vergeht und wird zu objektiven Daten der nächsten). Die ziellose protopathische Spannung differenziert sich in der Konkreszenz selbst zum gerichteten Subjective Aim (Teleologie als epikritische Schärfung). Und das Moment ist innerlich bestimmt (Satisfaction) und zugleich äußerlich randlos (das Gewoge) — relative Bestimmtheit: determiniert in sich, indeterminate in seinen Verbindungen.",
+  "viz": "Konkreszenz-Simulation (Canvas): viele protopathische, diffuse Inseln verschmelzen zu einem bestimmten, gerichteten Moment (Satisfaction mit Aim-Pfeil), der vergeht und als objektiv-unsterbliche Datenpunkte die nächsten Momente beeinflusst; ein Regler steuert den protopathisch↔epikritisch-Übergang; themenreaktiv, Auto-/Moment-/Reset-/Theme-Buttons."
+}

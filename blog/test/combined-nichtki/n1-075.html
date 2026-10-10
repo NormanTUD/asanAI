@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktur, die bleibt — Fusion: Raum (IIT) ✕ Ologs</title>
+<style>
+  :root{
+    --bg:#faf8f1; --ink:#243040; --muted:#5b6b7f; --panel:#ffffff; --line:#e2e8f0;
+    --box:#eef2f7; --acc:#2563a8; --acc2:#7c5cbf; --ok:#1f9d63; --warn:#a97800; --bad:#c0392b;
+  }
+  html.dark{
+    --bg:#0f172a; --ink:#e5e7eb; --muted:#94a3b8; --panel:#0b1220; --line:#1f2937;
+    --box:#1e293b; --acc:#38bdf8; --acc2:#a78bfa; --ok:#34d399; --warn:#fbbf24; --bad:#f87171;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.62}
+  article{max-width:820px;margin:0 auto;padding:24px 20px 80px}
+  header.hero{padding:34px 0 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  h1{font-size:clamp(26px,4vw,38px);line-height:1.15;margin:0 0 10px;letter-spacing:-.02em}
+  .subtitle{color:var(--muted);font-size:15px;font-family:'JetBrains Mono',ui-monospace,monospace}
+  .lede{color:var(--muted);font-size:15px;margin:14px 0 0}
+  section{margin:40px 0;padding:26px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+  section h2{margin:0 0 6px;font-size:24px;letter-spacing:-.01em}
+  section h2 .num{color:var(--acc);font-family:'JetBrains Mono',monospace;margin-right:10px;font-size:.8em;vertical-align:middle}
+  section .lead{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+  h3{color:var(--ink);font-size:18px;margin:22px 0 8px}
+  p{margin:10px 0}
+  strong{color:var(--ink)}
+  .tag{display:inline-block;padding:1px 8px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;
+    margin-right:6px;border:1px solid var(--line)}
+  .tag.a{color:var(--acc);background:rgba(56,189,248,.10)}
+  .tag.b{color:var(--acc2);background:rgba(167,139,250,.12)}
+  .note{background:linear-gradient(90deg,rgba(56,189,248,.08),rgba(167,139,250,.08));
+    border-left:3px solid var(--acc);padding:12px 14px;border-radius:8px;margin:14px 0;font-size:14.5px}
+  .c-card{background:var(--box);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .c-card h4{margin:0 0 6px;font-size:15px;color:var(--acc)}
+  .c-card.res h4{color:var(--ok)}
+  .c-card p{margin:6px 0;font-size:14.5px;color:var(--ink)}
+  table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+  table.tbl th,table.tbl td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  table.tbl th{color:var(--acc);font-weight:600;background:rgba(56,189,248,.06)}
+  table.tbl td:first-child{color:var(--acc);font-weight:500}
+  table.tbl td:nth-child(2){color:var(--acc2);font-weight:500}
+  .viz-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  button{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--bg);border:none;
+    padding:9px 14px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;font-family:inherit}
+  button:hover{transform:translateY(-1px)}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .viz-info{font-size:13.5px;font-family:'JetBrains Mono',ui-monospace,monospace;color:var(--muted);
+    background:var(--box);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:6px;
+    min-height:44px;line-height:1.7}
+  .viz-info b{color:var(--ok)}
+  .canvas-wrap{background:var(--box);border:1px solid var(--line);border-radius:12px;padding:10px;overflow:hidden}
+  canvas{display:block;width:100%;height:auto;border-radius:8px}
+  .two{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+  @media(max-width:720px){.two{grid-template-columns:1fr}}
+  .hint{color:var(--muted);font-size:12.5px;font-style:italic;margin-top:6px}
+  a{color:var(--acc)}
+  .prov{background:var(--box);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .prov b{font-family:'JetBrains Mono',monospace;font-size:13px}
+  footer{text-align:center;padding:30px 20px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);margin-top:40px}
+  ul{margin:8px 0 8px 20px;padding:0}
+  li{margin:5px 0}
+</style>
+</head>
+<body>
+<article>
+  <header class="hero">
+    <h1>Struktur, die bleibt</h1>
+    <div class="subtitle">Fusion aus: warum_fuehlt_sich_raum_so_an.html ✕ ologs.html</div>
+    <p class="lede">Zwei Papiere, eine Wette: Das Eigentliche ist nicht das einzelne Element — Neuron, Box, Wort — sondern die <strong>Struktur der Beziehungen</strong> zwischen ihnen. A erklärt, wie sich diese Struktur im Erleben <em>herausbildet</em>; B liefert die Sprache, in der man sie <em>präzise aufschreibt</em>.</p>
+  </header>
+
+  <section id="these">
+    <h2><span class="num">§1</span>Kernthese der Fusion</h2>
+    <p><strong>Paper A</strong> (<span class="tag a">Raum / IIT</span>, zu Haun &amp; Tononi 2019) argumentiert bottom-up: Eine winzige physikalische Schicht — ein 1D-Grid aus acht Einheiten, die stark mit sich selbst und schwach mit den Nachbarn verbunden sind — <em>zeugt</em> durch ihre Kausal-Dynamik eine enorme Ursache–Wirkungs-Struktur. Ausgedehntheit (Verbindung, Verschmelzung, Einschluss der „Spots") ist kein Hinzusetzen, sondern etwas, das aus der lokalen Physik <em>emerging</em> folgt. Die Phänomenologie des Raums muss dieser kausalen Struktur <strong>eins-zu-eins</strong> entsprechen: „nichts mehr, nichts weniger".</p>
+    <p><strong>Paper B</strong> (<span class="tag b">Ologs</span>, zu Spivak &amp; Kent 2012) argumentiert top-down: Man <em>erklärt</em> wenige Erzeuger — Boxen (Konzepte), Pfeile (Funktionen) und kommutative Fakten (Pfad-Äquivalenzen) — und die ganze Struktur entsteht als <strong>Abgeschlossenheit unter Komposition</strong>. „Kategorien = Graphen + Pfad-Äquivalenzen"; das kleine „+" ist der gesamte Unterschied zwischen einem Fakten-Wirrwarr und einer präzisen, übersetzbaren Wissensrepräsentation.</p>
+    <p class="note"><strong>Integrierte Position.</strong> Beide Papiere setzen dasselbe ein: <em>Struktur ist die Abgeschlossenheit einer kleinen Menge lokaler Erzeuger unter einer Kompositions-/Wechselwirkungsoperation.</em> In A ist die Operation kausal (Dynamik des Grids), in B algebraisch (Komposition von Morphismen); beides erzeugt aus wenigen Regeln ein reiches Ganzes. „Treue" bedeutet dabei, dass die Abbildung auf das, wofür die Struktur steht, die Struktur erhält — eine bijektive bzw. strukturerhaltende (funktoriale) Entsprechung. Bewusster Raum (A) und kategoriales Wissen (B) sind zwei Instanzen desselben Musters, und die <em>Kategorientheorie ist die gemeinsame Sprache</em>, in der man sogar A's Raumstruktur notieren kann: Spots = Objekte, Einschluss = Morphismus, Ausgedehntheit = eine Topologie, die B selbst als „(pseudo-)metrischer Raum als Olog" demonstriert.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">§2</span>Widersprüche zwischen A und B</h2>
+    <p class="lead">Die zwei stehen sich an drei Punkten frontal gegenüber — jeweils benannt, welches Papier was behauptet.</p>
+
+    <div class="c-card">
+      <h4>① Ursprung der Struktur: Herausbildung (A) vs. Verkündung (B)</h4>
+      <p><strong>A:</strong> Die räumliche Struktur <em>entsteht</em> aus dem Substrat; sie ist nicht entworfen, sondern fällt aus der Kausal-Dynamik des Grids heraus („Das Grid sieht einfach aus, aber seine kausale Struktur ist enorm reich"). Richtung: Physik → Phänomen.</p>
+      <p><strong>B:</strong> Ein Olog wird <em>verfasst</em>: Ein Autor <em>wählt</em> Boxen, Pfeile und erklärt explizit, welche Pfade gleich sind (z.&nbsp;B. „Mutter = weibl. Elter"). Es gibt kein Emergen; Bedeutung wird top-down durch Deklaration festgenagelt. Richtung: Autor → Struktur.</p>
+    </div>
+
+    <div class="c-card">
+      <h4>② Identität: strikte 1:1-Abbildung (A) vs. Quotientierung (B)</h4>
+      <p><strong>A:</strong> verlangt eine <em>bijektive</em> Entsprechung zwischen phänomenalen und kausalen Unterscheidungen — „nichts mehr, nichts weniger". Nichts darf zusammengefasst oder verloren gehen; die Karte ist so groß wie das Territorium.</p>
+      <p><strong>B:</strong> ist gerade auf das Gegenteil angewiesen: Sein Kernzug ist, zwei <em>verschiedene</em> Pfade als <strong>gleich</strong> zu erklären (kommutatives Diagramm) — also eine Äquivalenz-/Quotientenoperation, die unterscheidbare Wege kollabiert. Die gesamte Präzision kommt vom Zerkleinern der Pfade auf Identitätsklassen.</p>
+    </div>
+
+    <div class="c-card">
+      <h4>③ Status der Formalstruktur: ontisch (A) vs. instrumentell (B)</h4>
+      <p><strong>A (IIT):</strong> Die Ursache–Wirkungs-Struktur <em>ist</em> das Bewusstsein — ontisch, „was die Welt <em>ist</em>". Das Formalgebilde ist reale Beschaffenheit des Erlebens (gemessen als Φ).</p>
+      <p><strong>B:</strong> Kategorien sind ein <em>Werkzeug</em> für präzise Wissensrepräsentation und Übersetzung zwischen Autoren — instrumentell, „wie man Wissen sauber <em>festhält</em>". Das Formalgebilde ist ein nützliches Modell, nicht die Sache selbst.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">§3</span>Auflösung</h2>
+    <p class="lead">Jeder Widerspruch löst sich auf, sobald man die Ebene benennt, auf der er stattfindet — und wird zu einer Komplementarität.</p>
+
+    <div class="c-card res">
+      <h4>① → Generatoren + Abgeschlossenheit (beide Richtungen, ein Zug)</h4>
+      <p>Der „Autor" in A ist die Natur-Dynamik: Die lokalen Regeln des Grids (Selbst- + Nachbar-Verbindung) „verkünden" die globale ausgedehnte Struktur, und sie <em>emerge</em>n, weil das System unter der kausalen Operation abgeschlossen ist. In B sind die Erklärungen des Autors die „Dynamik" einer Kategorie: Sobald Erzeuger (Boxen, Pfeile) und Relationen (Fakten) gesetzt sind, <em>entsteht</em> die ganze Kategorie durch Abgeschlossenheit unter Komposition. <strong>Verknüpft:</strong> Ein Olog-Grid und ein IIT-Grid sind beide <em>generative Systeme</em> — wenige lokale Regeln, ein Abgeschlossenheitsoperator, ein reiches Ganzes. Emergen (A) und Verfasstsein (B) sind die zwei Seiten desselben Schlüsselsatzes: <em>Struktur = closure(lokal, Komposition).</em></p>
+    </div>
+
+    <div class="c-card res">
+      <h4>② → bijektiv zwischen Ebenen, quotientiert innerhalb einer Ebene</h4>
+      <p>A's 1:1 ist die Abbildung <em>von</em> der phänomenalen <em>auf</em> die kausale Ebene (ein Repräsentationstheorem, zwei Ebenen desselben Realen). B's Quotient findet <em>innerhalb</em> einer Ebene statt (zwei Morphismen nennen dasselbe). Kein echter Konflikt: <strong>Verknüpft:</strong> Eine treue Repräsentation braucht <em>beides</em> — eine strukturerhaltende, verlustfreie Abbildung auf das, was sie darstellt (A), <em>und</em> interne Identifikationen, um Bedeutung festzunageln (B). B's Funktoren sind genau die strukturerhaltenden Abbilder; die „Fusion" über Common Grounds respektiert alle Identifikationen — A's „nichts mehr, nichts weniger" ist die <em>Treuebedingung</em>, die B's Funktoren wahren.</p>
+    </div>
+
+    <div class="c-card res">
+      <h4>③ → die Karte ist wie das Territorium strukturiert, aber die Karte ist, was wir hantieren</h4>
+      <p>B's Instrumentalismus ist die epistemische Seite (wie wir präzise Modelle bauen), A's IIT die ontische (woraus solche Strukturen bestehen und warum sie Erleben geben). <strong>Verknüpft:</strong> A's zentrale These ist <em>selbst</em> eine Aussage über eine strukturerhaltende Abbildung zwischen zwei strukturierten Dingen (phänomenaler Raum ↔ kausales Substrat) — also <em>funktorial im Geist</em>. Und A's Ausgedehntheit — Verbindung = Schnitt, Verschmelzung = Vereinigung, Einschluss — ist buchstäblich die <em>Topologie</em> eines Raums, die B (in §9) explizit als Olog ausdrucken kann. <strong>Fusion:</strong> <em>Ologs sind eine natürliche kategoriale Notation für IIT's Raumstruktur.</em> Der „Spot-Raum" mit seiner Topologie ist ein kategorieller/topos-artiger Gegenstand; IIT's 1:1 ist ein <em>treuer Funktor</em> von der phänomenalen in die kausale Kategorie.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">§4</span>Fusionierter Inhalt</h2>
+    <p class="lead">Der zusammengeführte, eigenständig nutzbare Stoff beider Papiere — A's Raum-IIT und B's Kategorien, ineinander übersetzt.</p>
+
+    <h3>A — Was sich Raum „ausmacht" (IIT-Geist)</h3>
+    <ul>
+      <li><strong>Spots</strong> = jeder unterscheidbare Bereich im erlebten Raum, vom Punkt bis zum ganzen Gesichtsfeld. Jeder Spot überlappt sich selbst (Reflexivität); der Raum existiert auch <em>ohne</em> Objekte (leerer dunkler Himmel ist ebenso räumlich).</li>
+      <li><strong>Ausgedehntheit</strong> = drei Grundbeziehungen: <em>Verbindung</em> (Schnitt zweier überlappender Spots ist Spot), <em>Verschmelzung</em> (Vereinigung ist Spot), <em>Einschluss</em> (jeder Spot liegt in einem Größeren und enthält Kleinere). Daraus abgeleitet: Region, Ort („Adresse"), Größe, Grenze, Abstand.</li>
+      <li><strong>IIT</strong>: Bewusstsein = die Ursache–Wirkungs-Struktur des Substrats. Fünf Axiome: <em>Intrinsisch, Komposition, Information, Integration, Exklusion</em>.</li>
+      <li><strong>Zentrale These:</strong> jede phänomenale Unterscheidung/Beziehung ↔ genau eine kausale (1:1).</li>
+      <li><strong>Grid-Modell:</strong> 8 Einheiten (A–H), Selbst-Verbindung w=1, Nachbar-Verbindung w=¼ → 133 kausale Unterscheidungen, ~7976 Relationen 2. Ordnung, 870.000+ Relationen 3. Ordnung. <em>Nur</em> das Grid ist ausgedehnt (117/133); ein gleich großes Zufallsnetzwerk ist es nicht (0/153).</li>
+      <li><strong>Inhomogenität</strong> (= „Stern"): einige Einheiten AN → Region salienter, Grenzen betont — aber der Raum bleibt ausgedehnt. <strong>Aufmerksamkeit</strong> = Gain-Erhöhung (Empfindlichkeit, nicht Zustand).</li>
+      <li><strong>Vorhersagen:</strong> (1) Inaktiv (fähig) ≠ deaktiviert — Raum braucht kein „Feuer"; (2) Verbindungsstärken ändern Raum <em>ohne</em> Aktivitätsänderung (Punkte erscheinen nach synchronen Stimuli näher — beobachtet); (3) Läsionen lassen Raum <em>verschwinden</em> (Hemianopsie, Neglect, Skotome, Phosphene); (4) Grid erweitern → Raum erweitern (implantierte kortikale Organoide).</li>
+    </ul>
+
+    <h3>B — Was ein Olog „ausmacht" (kategorial)</h3>
+    <ul>
+      <li><strong>Olog</strong> = beschriftete Kategorie/Sketch: Boxen = <em>Types</em> („a person"), Pfeile = <em>Aspects</em> = Funktionen zwischen Mengen (jede Instanz der Quelle → genau eine des Ziels, keine Ambiguität), kommutative Diagramme = <em>Facts</em> (zwei Pfade äquivalent).</li>
+      <li><strong>Instanzen</strong> = ein Funktor $I:C\to\mathbf{Set}$: Box→Menge, Pfeil→Funktion, Fakt→Gleichung. Ein Olog ist damit ein DB-Schema; die Daten sind das, was der Funktor auffüllt.</li>
+      <li><strong>Funktoren</strong> = Übersetzung zwischen Ologs; <em>Common Ground</em> (Span) = gemeinsame Referenz-Ontologie; direkter/inverser Informationsfluss.</li>
+      <li><strong>Limits</strong> = Layouts: Produkt $A\times B$ (alle Paare), Pullback $A\times_C B=\{(a,b)\mid f(a)=g(b)\}$ („Dinge mit derselben Eigenschaft"). <strong>Kolimits</strong> = Groupings: Coproduct $A\sqcup B$ (disjunkte Vereinigung), Pushout (Verkleben an einer Naht, Naht wird einmal gezählt).</li>
+      <li><strong>Rekursion:</strong> jede primitiv-rekursive Funktion ist ein Olog — demonstriert an $n!$ (5 Boxen, 7 Pfeile; Fakten = $f(0)=1$, $f(n)=n\cdot f(n-1)$).</li>
+      <li><strong>Mathematik als Olog:</strong> ein (pseudo-)metrischer Raum $(X,d)$ mit $d(x,x)=0$, $d(x,y)=d(y,x)$, Dreiecks-Ungleichung — die drei Axiome werden drei kommutative Diagramme.</li>
+      <li><strong>Netzwerke aus Ologs:</strong> verteilte Ologs + Common Grounds → Channel-Fluss → <em>Fusion</em> (Kolimit) = Interoperabilität.</li>
+    </ul>
+
+    <h3>Die Übersetzung: A in B's Sprache</h3>
+    <p>Setzt man A's Raum neben B's Kategorien, fallen die Begriffe fast gegeneinander:</p>
+    <table class="tbl">
+      <tr><th>A — Raum / IIT</th><th>B — Ologs</th><th>Fused read</th></tr>
+      <tr><td>Spot (unterscheidbarer Bereich)</td><td>Objekt (Box) der Kategorie</td><td>Element des „Spot-Raums"</td></tr>
+      <tr><td>Einschluss $S\subset T$</td><td>Morphismus (Pfeil / Aspect)</td><td>Pfeile = Einschlussrelationen</td></tr>
+      <tr><td>Verbindung (Schnitt) / Verschmelzung (Vereinigung)</td><td>Pullback (Limit) / Coproduct–Pushout (Kolimit)</td><td>Ausgedehntheit = Topologie, kategoriale Struktur</td></tr>
+      <tr><td>Ausgedehntheit des Raums</td><td>(pseudo-)metrischer Raum als Olog (§9)</td><td>Topologie eines (topos-ähnlichen) Objekts</td></tr>
+      <tr><td>1:1 phänomenal ↔ kausal (IIT)</td><td>treuer / strukturerhaltender Funktor</td><td>die „Karte ≅ Territorium"-Abbildung</td></tr>
+      <tr><td>Inhomogenität (Stern) / Aufmerksamkeit (Gain)</td><td>Instanzen-Funktor $I$ ändert sich, Schema bleibt</td><td>Daten ändern, Struktur bleibt — Raum „überlebt"</td></tr>
+      <tr><td>Grid-Substrat (8 Einheiten)</td><td>Erzeuger (Boxen + Pfeile)</td><td>wenige lokale Regeln</td></tr>
+      <tr><td>Raum existiert ohne Objekte</td><td>Schema existiert ohne Instanzen ($I$ auf leere Mengen)</td><td>Struktur ist inhaltlich unabhängig</td></tr>
+    </table>
+    <div class="note">Damit ist der Bogen geschlossen: A's „ausgedehnter Raum" <em>ist</em> eine kategoriale Topologie, und A's 1:1-These <em>ist</em> ein Funktor. B liefert die Syntax, A den Inhalt — <strong>ein Olog, der den erlebten Raum als Topologie von Spots mit einem treuen Funktor auf das kausale Grid beschreibt</strong>, ist die Fusion in einem Satz.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">§5</span>Visualisierung: Die Spot-Kategorie des Raums</h2>
+    <div class="lead">Ein Grid (A's Substrat) trägt einen „Spot-Raum" (A). Klicke Einheiten an/ab (<em>Inhomogenität</em> = „Stern", das Schema bleibt) und wähle bis zu zwei Spots, um ihre Beziehung — Schnitt, Vereinigung, Einschluss — zu sehen. Rechts das kategoriale Diagramm (B): Spots = Boxen, Einschluss = Pfeile, die kommutative Fläche = das <em>Fakt</em>, dass Einschluss komponiert (Pfad-Äquivalenz).</div>
+
+    <div class="two">
+      <div>
+        <div class="canvas-wrap"><canvas id="spotSpace" width="760" height="480"></canvas></div>
+      </div>
+      <div>
+        <div class="canvas-wrap"><canvas id="catDiagram" width="360" height="300"></canvas></div>
+        <div class="hint">Die kommutative Fläche (✓) ist B's „Fakt": $S\subset T$, $T\subset$ Top $\Rightarrow$ $S\subset$ Top.</div>
+      </div>
+    </div>
+
+    <div class="viz-controls">
+      <button onclick="viz.reset()">Zurücksetzen</button>
+      <button class="ghost" onclick="viz.suggest()">Beispiel wählen (ABCD ∩ CDEF)</button>
+      <button class="ghost" id="themeBtn" onclick="toggleTheme()">🌓 Theme</button>
+      <span class="hint">Einheiten klicken = Inhomogenität · Spot-Bänder klicken = auswählen (max. 2)</span>
+    </div>
+    <div id="vizInfo" class="viz-info">Wähle Einheiten und Spots, um die Struktur zu erkunden.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">§6</span>Provenienz</h2>
+    <div class="prov">
+      <b>A — warum_fuehlt_sich_raum_so_an.html</b><br>
+      <a href="../warum_fuehlt_sich_raum_so_an.html">→ zum Original</a>
+      <p>Interaktive Erklärung von Haun &amp; Tononi (2019) / IIT: Warum sich Raum ausgedehnt anfühlt — Spots, Ausgedehntheit, Grid-Substrat, Inhomogenitäten &amp; Vorhersagen (Läsionen, Phosphene, Verzerrung).</p>
+    </div>
+    <div class="prov">
+      <b>B — ologs.html</b><br>
+      <a href="../ologs.html">→ zum Original</a>
+      <p>Interaktive Reise durch Spivak &amp; Kent (2012) „Ologs: A Categorical Framework for Knowledge Representation": Ologs als beschriftete Kategorien, Instanzen als Funktoren, Limits/Kolimits, Rekursion, metrische Räume, Fusion.</p>
+    </div>
+  </section>
+
+  <footer>ROUND 1 · Paar 075 · Fusion (nicht-KI-Track) · Eigenständige, themenbewusste Einzelseite — alle Daten inline, keine Netzabfragen.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var N = 8;
+  var units = [false,false,false,true,true,true,true,false,false]; // CDEF an (A's Inhomogenitäts-Beispiel)
+  var SPOTS = [
+    {label:'AB',         start:0, end:2},
+    {label:'ABCD',       start:0, end:4},
+    {label:'CDEF',       start:2, end:6},
+    {label:'CD',         start:2, end:4},
+    {label:'EF',         start:4, end:6},
+    {label:'Gesamtraum', start:0, end:8}
+  ];
+  var selected = [];
+
+  var spotC = document.getElementById('spotSpace');
+  var catC  = document.getElementById('catDiagram');
+
+  function getVar(name, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fb;
+  }
+  function palette(){
+    return {
+      ink:getVar('--ink','#243040'), muted:getVar('--muted','#5b6b7f'),
+      line:getVar('--line','#e2e8f0'), box:getVar('--box','#eef2f7'),
+      panel:getVar('--panel','#ffffff'), acc:getVar('--acc','#2563a8'),
+      acc2:getVar('--acc2','#7c5cbf'), ok:getVar('--ok','#1f9d63'),
+      warn:getVar('--warn','#a97800'), bad:getVar('--bad','#c0392b')
+    };
+  }
+  function rgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3) hex=hex.split('').map(function(c){return c+c;}).join('');
+    if(hex.length!==6) return 'rgba(120,120,120,'+a+')';
+    var n=parseInt(hex,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function rr(ctx,x,y,w,h,r){
+    r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function arrow(ctx,x1,y1,x2,y2,color,w){
+    ctx.save();
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w||2;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a=Math.atan2(y2-y1,x2-x1), s=9;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-s*Math.cos(a-0.42), y2-s*Math.sin(a-0.42));
+    ctx.lineTo(x2-s*Math.cos(a+0.42), y2-s*Math.sin(a+0.42));
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function unitName(i){ return String.fromCharCode(65+i); }
+  function intLabel(iv){ return iv ? ('Einheiten '+unitName(iv.start)+'–'+unitName(iv.end-1)) : '∅ (leer)'; }
+
+  var geo = { padL:96, padR:20, gridY:46, gridH:36, bandTop:120, bandH:32, bandGap:12 };
+
+  function overlap(a,b){ var s=Math.max(a.start,b.start), e=Math.min(a.end,b.end); return e>s?{start:s,end:e}:null; }
+  function unionInt(a,b){ return {start:Math.min(a.start,b.start), end:Math.max(a.end,b.end)}; }
+  function subset(a,b){ return a.start>=b.start && a.end<=b.end && (a.start>b.start || a.end<b.end); }
+
+  function drawSpot(){
+    var ctx=spotC.getContext('2d');
+    var W=spotC.width, H=spotC.height, C=palette();
+    ctx.clearRect(0,0,W,H);
+    var padL=geo.padL, padR=geo.padR, cellW=(W-padL-padR)/N;
+    var t=performance.now()/1000, pulse=0.5+0.5*Math.sin(t*3);
+
+    // title
+    ctx.fillStyle=C.muted; ctx.font='12px Inter, sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Substrat: 1D-Grid (A) — Einheiten A–H. Ausgedehnter Spot-Raum darüber (A), kategoriales Diagramm rechts (B).', padL, 26);
+
+    // units
+    for(var i=0;i<N;i++){
+      var x=padL+i*cellW, on=units[i];
+      ctx.fillStyle = on ? rgba(C.acc,0.28) : rgba(C.line,0.25);
+      ctx.strokeStyle = on ? C.acc : C.line; ctx.lineWidth=1.5;
+      rr(ctx,x+2,geo.gridY,cellW-4,geo.gridH,6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = on ? C.ink : C.muted;
+      ctx.font='bold 13px Inter, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(unitName(i), x+cellW/2, geo.gridY+geo.gridH/2);
+    }
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle=C.muted; ctx.font='11px Inter, sans-serif'; ctx.textAlign='left';
+    var act=units.map(function(u,i){return u?unitName(i):'';}).join('');
+    ctx.fillText(act ? ('Aktive (Stärken) Region: '+act+'  →  salient, aber der Raum bleibt ausgedehnt') : 'Alle AUS → leeres dunkles Gesichtsfeld — der Raum ist trotzdem da', padL, geo.gridY+geo.gridH+16);
+
+    // spot bands
+    var cols=[C.acc,C.acc2,C.ok,C.warn,C.bad,C.ink];
+    var bandRects=[];
+    for(var j=0;j<SPOTS.length;j++){
+      var s=SPOTS[j], by=geo.bandTop+j*(geo.bandH+geo.bandGap);
+      var bx=padL+s.start*cellW, bw=(s.end-s.start)*cellW;
+      var isSel = selected.indexOf(j)>=0;
+      ctx.fillStyle = rgba(cols[j], isSel?0.34:0.16);
+      ctx.strokeStyle = cols[j]; ctx.lineWidth = isSel?2.5:1.4;
+      rr(ctx,bx,by,bw,geo.bandH,6); ctx.fill(); ctx.stroke();
+      if(isSel){
+        ctx.save(); ctx.globalAlpha=0.5+0.5*pulse;
+        ctx.strokeStyle=cols[j]; ctx.lineWidth=2;
+        rr(ctx,bx-2,by-2,bw+4,geo.bandH+4,8); ctx.stroke(); ctx.restore();
+      }
+      ctx.fillStyle=C.ink; ctx.font='bold 12px Inter, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(s.label, bx+bw/2, by+geo.bandH/2);
+      bandRects.push({i:j, x:bx, y:by, w:bw, h:geo.bandH});
+    }
+    ctx.textBaseline='alphabetic';
+
+    // intersection / union rows (only if 2 selected)
+    if(selected.length===2){
+      var a=SPOTS[selected[0]], b=SPOTS[selected[1]];
+      var inter=overlap(a,b), uni=unionInt(a,b);
+      var r6=geo.bandTop+6*(geo.bandH+geo.bandGap);
+      var r7=r6+geo.bandH+geo.bandGap;
+      // intersection
+      ctx.fillStyle=C.muted; ctx.font='bold 12px Inter, sans-serif'; ctx.textAlign='left';
+      ctx.fillText('∩ Schnitt:', 6, r6+geo.bandH/2+4);
+      if(inter){
+        ctx.setLineDash([5,4]); ctx.strokeStyle=C.ok; ctx.lineWidth=2;
+        ctx.fillStyle=rgba(C.ok,0.22);
+        var ix=padL+inter.start*cellW, iw=(inter.end-inter.start)*cellW;
+        rr(ctx,ix,r6,iw,geo.bandH,6); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=C.ink; ctx.font='bold 11px Inter, sans-serif'; ctx.textAlign='center';
+        ctx.fillText(intLabel(inter), ix+iw/2, r6+geo.bandH/2+4);
+      } else {
+        ctx.fillStyle=C.muted; ctx.font='12px Inter, sans-serif'; ctx.textAlign='left';
+        ctx.fillText(' disjunkt — kein gemeinsamer Spot', padL, r6+geo.bandH/2+4);
+      }
+      // union
+      ctx.fillStyle=C.muted; ctx.font='bold 12px Inter, sans-serif'; ctx.textAlign='left';
+      ctx.fillText('∪ Verschm:', 6, r7+geo.bandH/2+4);
+      ctx.setLineDash([2,4]); ctx.strokeStyle=C.warn; ctx.lineWidth=2;
+      ctx.fillStyle=rgba(C.warn,0.18);
+      var ux=padL+uni.start*cellW, uw=(uni.end-uni.start)*cellW;
+      rr(ctx,ux,r7,uw,geo.bandH,6); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.ink; ctx.font='bold 11px Inter, sans-serif'; ctx.textAlign='center';
+      ctx.fillText(intLabel(uni), ux+uw/2, r7+geo.bandH/2+4);
+      geo.bandRects=bandRects; geo.cellW=cellW;
+    } else {
+      geo.bandRects=bandRects; geo.cellW=cellW;
+    }
+    geo.padL=padL;
+  }
+
+  function drawCat(){
+    var ctx=catC.getContext('2d');
+    var W=catC.width, H=catC.height, C=palette();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.muted; ctx.font='12px Inter, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Kategoriales Diagramm (B)', 12, 20);
+
+    // Top object (Gesamtraum) always
+    var top={x:W/2, y:64, label:'Gesamtraum'};
+    var spots=[];
+    for(var k=0;k<selected.length;k++) spots.push(SPOTS[selected[k]]);
+    var boxes=[{x:W/2,y:top.y,w:120,h:34,label:top.label,color:C.ink,top:true}];
+    if(spots.length===1){
+      boxes.push({x:W/2,y:180,w:120,h:34,label:spots[0].label,color:C.acc});
+    } else if(spots.length===2){
+      boxes.push({x:W*0.28,y:180,w:110,h:34,label:spots[0].label,color:C.acc});
+      boxes.push({x:W*0.72,y:180,w:110,h:34,label:spots[1].label,color:C.acc2});
+    } else {
+      boxes.push({x:W*0.28,y:180,w:110,h:34,label:'Spot X',color:C.muted,ghost:true});
+      boxes.push({x:W*0.72,y:180,w:110,h:34,label:'Spot Y',color:C.muted,ghost:true});
+    }
+
+    // commutative triangle when 2 selected and one is subset of the other (both into top)
+    var hasSquare=false, leftBox=null, rightBox=null;
+    if(spots.length===2){
+      var A=spots[0], B=spots[1];
+      if(subset(A,B)){ leftBox=boxes[1]; rightBox=boxes[2]; hasSquare=true; }
+      else if(subset(B,A)){ leftBox=boxes[2]; rightBox=boxes[1]; hasSquare=true; }
+    }
+    if(hasSquare){
+      ctx.fillStyle=rgba(C.ok,0.10);
+      ctx.beginPath();
+      ctx.moveTo(leftBox.x, leftBox.y-14);
+      ctx.lineTo(rightBox.x, rightBox.y-14);
+      ctx.lineTo(top.x, top.y+20);
+      ctx.closePath(); ctx.fill();
+    }
+
+    // arrows: each spot -> top (inclusion); left -> right if subset
+    for(var m=1;m<boxes.length;m++){
+      var b=boxes[m];
+      if(b.ghost) continue;
+      arrow(ctx, b.x, b.y-17, top.x, top.y+18, rgba(b.color===C.muted?C.muted:b.color,0.8), 2);
+    }
+    if(hasSquare){
+      arrow(ctx, rightBox.x-2, rightBox.y, leftBox.x+2, leftBox.y, rgba(C.ok,0.9), 2.2);
+      ctx.fillStyle=C.ok; ctx.font='bold 22px Inter, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('✓', (leftBox.x+rightBox.x)/2, (leftBox.y+top.y)/2+6);
+    }
+
+    // boxes
+    for(var q=0;q<boxes.length;q++){
+      var bb=boxes[q];
+      ctx.fillStyle = bb.ghost ? rgba(C.box,0.5) : rgba(bb.color,0.16);
+      ctx.strokeStyle = bb.ghost ? C.muted : bb.color; ctx.lineWidth=bb.top?2.4:2;
+      if(bb.ghost) ctx.setLineDash([5,4]); else ctx.setLineDash([]);
+      rr(ctx,bb.x-bb.w/2,bb.y-bb.h/2,bb.w,bb.h,8); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = bb.ghost ? C.muted : C.ink;
+      ctx.font=(bb.top?'bold 12px':'bold 12px')+' Inter, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(bb.label, bb.x, bb.y);
+    }
+    ctx.textBaseline='alphabetic';
+
+    // caption
+    ctx.fillStyle=C.muted; ctx.font='11px Inter, sans-serif'; ctx.textAlign='left';
+    var cap = spots.length===0 ? 'Wähle Spots, um ihre Einschluss-Struktur zu sehen.'
+      : hasSquare ? 'Fakt (kommutiert): Einschluss komponiert — S⊂T⊂Top ⇒ S⊂Top.'
+      : 'Jeder Spot ⊂ Gesamtraum. Einschluss = Pfeil (Aspect = Funktion).';
+    ctx.fillText(cap, 12, H-14);
+  }
+
+  function updateInfo(){
+    var el=document.getElementById('vizInfo');
+    if(!el) return;
+    var parts=[];
+    parts.push('<b>1:1 treu:</b> jeder Spot ↔ genau ein zusammenhängender Einheiten-Lauf (nichts mehr, nichts weniger).');
+    if(selected.length===1){
+      var s=SPOTS[selected[0]];
+      parts.push('Ausgewählt: <b>'+s.label+'</b> ('+intLabel(s)+') ⊂ Gesamtraum.');
+    } else if(selected.length===2){
+      var a=SPOTS[selected[0]], b=SPOTS[selected[1]];
+      var inter=overlap(a,b), uni=unionInt(a,b);
+      var rel='';
+      if(subset(a,b)) rel=a.label+' ⊂ '+b.label;
+      else if(subset(b,a)) rel=b.label+' ⊂ '+a.label;
+      else if(inter) rel='teilweise überlappend';
+      else rel='disjunkt';
+      parts.push('<b>'+a.label+' ∩ '+b.label+'</b> = '+intLabel(inter)+'  ·  <b>'+a.label+' ∪ '+b.label+'</b> = '+intLabel(uni)+'  ·  '+rel+'.');
+    }
+    parts.push('Substrat (Grid A–H): <b>133</b> kausale Unterscheidungen → ausgedehnt. Schema bleibt, nur die Instanzen (Daten/Funktor I) ändern sich.');
+    el.innerHTML=parts.join('<br>');
+  }
+
+  function onSpotClick(e){
+    var r=spotC.getBoundingClientRect();
+    var x=(e.clientX-r.left)*spotC.width/r.width;
+    var y=(e.clientY-r.top)*spotC.height/r.height;
+    // unit?
+    if(y>=geo.gridY && y<=geo.gridY+geo.gridH && x>=geo.padL && x<=spotC.width-geo.padR && geo.cellW){
+      var idx=Math.floor((x-geo.padL)/geo.cellW);
+      if(idx>=0 && idx<N){ units[idx]=!units[idx]; refresh(); return; }
+    }
+    // band?
+    var br=geo.bandRects||[];
+    for(var i=0;i<br.length;i++){
+      var b=br[i];
+      if(y>=b.y && y<=b.y+b.h && x>=b.x && x<=b.x+b.w){
+        var p=selected.indexOf(b.i);
+        if(p>=0){ selected.splice(p,1); }
+        else { if(selected.length>=2) selected.shift(); selected.push(b.i); }
+        refresh(); return;
+      }
+    }
+  }
+
+  function refresh(){ drawSpot(); drawCat(); updateInfo(); }
+
+  var viz={
+    reset:function(){ selected=[]; units=[false,false,false,true,true,true,true,false,false]; refresh(); },
+    suggest:function(){ selected=[1,2]; refresh(); } // ABCD ∩ CDEF = CD
+  };
+  window.viz=viz;
+
+  window.toggleTheme=function(){
+    document.documentElement.classList.toggle('dark');
+    refresh();
+  };
+
+  spotC.addEventListener('click', onSpotClick);
+
+  function loop(){ drawSpot(); drawCat(); requestAnimationFrame(loop); }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    geo.bandRects=[]; geo.cellW=(spotC.width-geo.padL-geo.padR)/N;
+    refresh();
+    requestAnimationFrame(loop);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "075",
+  "a": "warum_fuehlt_sich_raum_so_an.html",
+  "b": "ologs.html",
+  "a_title": "Warum fühlt sich Raum so an? (IIT / Haun & Tononi 2019)",
+  "b_title": "Ologs – Interaktive Reise durch Spivak & Kent (2012)",
+  "combined_theme": "strukturbildung-raum-und-kategorien",
+  "one_line": "Struktur ist die Abgeschlossenheit weniger lokaler Erzeuger unter einer Kompositionsoperation: A erzeugt den Raum bottom-up aus der Kausal-Dynamik eines Grids, B konstruiert Wissen top-down als Kategorie — und die Kategorie ist die gemeinsame Sprache, in der man A's Spot-Raum als Topologie mit einem treuen Funktor aufschreibt.",
+  "contradictions": [
+    "Ursprung der Struktur: A behauptet, die räumliche Struktur entsteht bottom-up aus der Kausal-Dynamik des Grids (Emergen, Physik -> Phänomen); B behauptet, ein Olog wird top-down von einem Autor verfasst, der Boxen, Pfeile und kommutative Fakten explizit erklärt.",
+    "Identität: A verlangt eine strikt 1:1 (bijektive) Entsprechung zwischen phänomenalen und kausalen Unterscheidungen ('nichts mehr, nichts weniger'); B's Kernzug ist gerade das Quotientieren — zwei verschiedene Pfade als gleich erklären (kommutatives Diagramm).",
+    "Status der Formalstruktur: A (IIT) ist die Ursache-Wirkungs-Struktur ontisch (Bewusstsein IST diese Struktur); B behandelt Kategorien instrumentell als Werkzeug für präzise, übersetzbare Wissensrepräsentation (Modell, nicht Sache)."
+  ],
+  "resolution": "Beide sind dieselbe Geste auf zwei Ebenen: Struktur = closure(lokal, Komposition). In A sind die lokalen Regeln die Grid-Verbindungen und der Operator kausal; in B die Erzeuger Boxen/Pfeile und der Operator die Komposition. A's 1:1 ist die strukturerhaltende Abbildung ZWISCHEN den Ebenen (Modell -> Welt), B's Quotient ist die Identifikation INNERHALB einer Ebene — komplementär, nicht widersprüchlich. Ontisch (A) und instrumentell (B) fallen zusammen, sobald A's Ausgedehntheit (Schnitt/Vereinigung/Einschluss) als Topologie und A's 1:1 als treuer Funktor gelesen wird: Ologs sind die kategoriale Notation für IIT's Raumstruktur.",
+  "viz": "Interaktives Canvas 'Spot-Kategorie des Raums': ein 1D-Grid (8 Einheiten, A's Substrat) trägt einen Spot-Raum; Einheiten an/ab-klicken erzeugt Inhomogenität (Stern) bei stabilem Schema, zwei wählbare Spots zeigen Schnitt/Vereinigung/Einschluss, rechts ein kategoriales Diagramm (B) mit Einschluss-Pfeilen und kommutativer Fläche (das 'Fakt' der komponierenden Inklusion). Theme-aktiv, alle Daten inline."
+}

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiederkunft — die gemeinsame Dynamik von Regel &amp; Fluss</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --bg2:#efe9dd; --card:#ffffff; --text:#1c2530; --muted:#5f6b78;
+    --border:#d9d2c4; --accent:#0369a1; --accent2:#a21caf; --accent3:#b45309;
+    --good:#15803d; --viz-bg:#ffffff; --grid:#e7e1d4; --panel:#fbfaf6;
+  }
+  html.dark{
+    --bg:#0a0e1a; --bg2:#0e1424; --card:#141b30; --text:#e2e8f0; --muted:#94a3b8;
+    --border:#2a3556; --accent:#7dd3fc; --accent2:#f0abfc; --accent3:#fde047;
+    --good:#4ade80; --viz-bg:#0a0e1a; --grid:#1a2340; --panel:#111829;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.72;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+  header.top{padding:1.5rem 0 2rem;border-bottom:2px solid var(--border);margin-bottom:2.2rem}
+  h1{font-size:clamp(1.9rem,4.4vw,2.7rem);font-weight:800;line-height:1.15;margin-bottom:.6rem}
+  h1 .acc{color:var(--accent)}
+  .sub{color:var(--muted);font-size:1rem;font-style:italic}
+  .themebtn{margin-top:1rem;background:var(--card);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:.4rem .9rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+  .themebtn:hover{border-color:var(--accent)}
+  section{margin:2.4rem 0}
+  h2{font-size:1.5rem;font-weight:750;margin-bottom:.9rem;color:var(--accent);
+    padding-bottom:.35rem;border-bottom:1px solid var(--border)}
+  h3{font-size:1.12rem;font-weight:650;margin:1.4rem 0 .5rem;color:var(--accent2)}
+  p{margin:0 0 1rem}
+  .lead{color:var(--muted);font-style:italic;margin-bottom:1.2rem}
+  ul{margin:0 0 1rem 1.3rem;color:var(--text)}
+  li{margin:.35rem 0}
+  strong{color:var(--text)}
+  em.k{color:var(--accent3);font-style:normal;font-weight:650}
+  .callout{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+    padding:.9rem 1.1rem;margin:1.1rem 0}
+  .callout.warn{border-color:var(--accent2)}
+  .callout.win{border-color:var(--accent3)}
+  .callout b{color:var(--text)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+  @media (max-width:600px){.pair{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+  .card h4{font-size:.98rem;margin-bottom:.5rem;color:var(--accent)}
+  .card.b h4{color:var(--accent2)}
+  .card p{font-size:.92rem;margin:0;color:var(--muted)}
+  .math{font-family:'Cambria Math','Times New Roman',serif;background:var(--panel);
+    border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;margin:.7rem 0;
+    font-size:1.02rem;overflow-x:auto}
+  .math sub,.math sup{font-size:.72em}
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
+  th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--accent);font-weight:650}
+  td.a{color:var(--accent)} td.b{color:var(--accent2)}
+  .viz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem;margin-top:.5rem}
+  .viz-ctrl{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center;margin-bottom:.9rem}
+  .viz-ctrl label{font-size:.82rem;color:var(--muted);display:block;margin-bottom:.2rem}
+  .viz-ctrl select,.viz-ctrl .grp{font-family:inherit;font-size:.85rem;color:var(--text);
+    background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:.4rem .6rem}
+  .viz-ctrl .val{color:var(--accent3);font-variant-numeric:tabular-nums;font-weight:600}
+  input[type=range]{-webkit-appearance:none;width:150px;height:6px;background:var(--grid);border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:none}
+  button.vbtn{background:var(--accent);color:var(--bg);border:none;padding:.5rem 1rem;border-radius:8px;font-weight:650;cursor:pointer;font-family:inherit;font-size:.85rem}
+  button.vbtn:hover{filter:brightness(1.1)}
+  button.vbtn.alt{background:var(--accent2)}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;background:var(--viz-bg)}
+  .cap{font-size:.8rem;color:var(--muted);margin-top:.45rem;font-style:italic}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:.6rem;margin-top:1rem}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:8px;text-align:center;padding:.6rem}
+  .stat .n{font-size:1.35rem;font-weight:800;color:var(--accent3);font-variant-numeric:tabular-nums}
+  .stat .l{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.7rem;font-size:.8rem;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:.35rem}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .prov{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin:.8rem 0}
+  .prov a{color:var(--accent);font-weight:650;text-decoration:none}
+  .prov a:hover{text-decoration:underline}
+  .prov p{margin:.3rem 0 0;color:var(--muted);font-size:.92rem}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Wiederkunft: die <span class="acc">gemeinsame Dynamik</span> von Regel &amp; Fluss</h1>
+  <p class="sub">Fusion aus: cellular.html &times; finneganswake.html</p>
+  <button class="themebtn" id="themeBtn">&#9790; Theme wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere beschreiben dasselbe Ph&auml;nenon &mdash; ein <em class="k">geschlossenes, selbstreferenzielles System</em>, das aus einer einfachen lokalen Regel heraus <em class="k">Wiederkunft</em> erzeugt &mdash; nur von zwei Seiten her: von der Mathematik her (A) und vom Traum her (B). Und genau in dieser Wiederkunft entsteht beides: messbare <em>Form</em> und offene <em>Bedeutung</em>.</p>
+  <p><strong>cellular.html</strong> zeigt es als Kalk&uuml;l: Ein zellul&auml;rer Automat l&auml;uft eine lokale Regel
+  <span class="math" style="display:inline;padding:.1rem .4rem">s<sub>i</sub><sup>t+1</sup> = f(s<sub>i&minus;1</sub><sup>t</sup>, s<sub>i</sub><sup>t</sup>, s<sub>i+1</sub><sup>t</sup>)</span>
+  in diskreten Schritten durch, wobei der <em>n&auml;chste</em> Zustand als <em>n&auml;chste</em> Eingabe zur&uuml;ckflie&szlig;t &mdash; ein R&uuml;ckkopplungskreislauf. Oszillatoren (Blinker, Pulsar), der Waldbrand in selbstorganisierter Kritikalit&auml;t und die Entropiekurve sind allesamt <em>Zyklen und Attraktoren</em>; der ganze Komplex aus Chaos, Emergenz und Komputation ist an dieses stete Zur&uuml;ckkehren gekoppelt.</p>
+  <p><strong>finneganswake.html</strong> zeigt es als gelebte, gedeutete Wirklichkeit: Der Fluss <em>rezirkuliert</em> &mdash; &bdquo;riverrun, past Eve and Adam&rsquo;s, from swerve of shore to bend of bay, brings us by a commodius vicus of recirculation back to Howth Castle and Environs&ldquo; &mdash; Vicos Rad dreht sich (Geburt, Hochzeit, Tod, Auferstehung), und die <em>Letter</em> ist selbstreferenzielle Gesamtheit: &bdquo;the entire history of the world written on a single page&ldquo;, &bdquo;a polyhedron of scripture&ldquo;. Der letzte Buchstabe flie&szlig;t in den ersten zur&uuml;ck; das Ende wird zum Anfang.</p>
+  <p><strong>A liefert den Rechner, B den Gegenstand und den Grund, warum er gebraucht wird.</strong> Die fusionierte These lautet: <em>Ein System, das so einfach ist, dass es sich als Regel formulieren l&auml;sst, ist &mdash; weil es sich selbst zur Eingabe macht &mdash; gro&szlig; genug, um von dieser Regel nicht mehr erfasst werden zu k&ouml;nnen.</em> Das Determinierte, Reduzierbare, Messbare (der Automat, die Entropie, der Attraktor) und das Offene, Selbstreferenzielle, &bdquo;Unfasse&shy;bare&ldquo; (die Letter, der Traum, Vicos Rad) sind zwei Seiten derselben Wiederkunft: Ordnung aus Wiederkunft.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p class="lead">Streng genommen widersprechen sich die zwei Papiere nicht direkt &mdash; sie arbeiten an verschiedenen Objekten (A: deterministische Rechensysteme, B: eine literarische Traumwelt als interaktive Erz&auml;hlung). Die n&auml;chsten echten Spannungen, an denen sie aufeinanderprallen:</p>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; cellular.html</h4><p><strong>Determinismus &amp; Messbarkeit.</strong> &bdquo;CAs are fully deterministic (same input always gives same output)&ldquo;; Unordnung wird exakt mit der Shannon-Entropie (eine Zahl 0&ndash;1) und einem &bdquo;Lyapunov-like Exponent&ldquo; gemessen. Es gibt eine messbare Wahrheit &mdash; die Hamming-Distanz, die n&auml;chste Zeile.</p></div>
+    <div class="card b"><h4>B &mdash; finneganswake.html</h4><p><strong>Das Unfasse&shy;bare.</strong> &bdquo;In the dream, HCE is both guilty and innocent&ldquo;; &bdquo;the crime is unknowable&ldquo;; &bdquo;There is not one tittle of truth&ldquo;; &bdquo;The unfacts, did we possess them, are too imprecisely few to warrant our certitude.&ldquo; Bedeutung weicht, wenn man greift.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 1 &mdash; Bestimmt &amp; messbar vs. unfassbar &amp; unmessbar.</b> A h&auml;lt das System f&uuml;r vollst&auml;ndig determiniert und quantifizierbar (Entropie als Zahl); B verweigert genau diese Bestimmtheit und Messbarkeit der Bedeutung.</p></div>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; cellular.html</h4><p><strong>Reduktion gen&uuml;gt.</strong> &bdquo;complexity does not require complex rules&ldquo;: Jede Zelle kennt nur ihre drei Nachbarn, und das <em>Ganze</em> wird durch diese eine lokale Regel erkl&auml;rt. Komplexit&auml;t ist auf die einfache Regel zur&uuml;ckf&uuml;hrbar.</p></div>
+    <div class="card b"><h4>B &mdash; finneganswake.html</h4><p><strong>Irreduzible Gesamtheit.</strong> Shem: &bdquo;You want a simple answer? There ARE no simple answers.&ldquo;; &bdquo;The letter is life. Life is the letter.&ldquo; &mdash; das Ganze (die Letter, das Leben) l&auml;sst sich durch keine einfache Regel oder Antwort erfassen.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 2 &mdash; Reduktion vs. Irreduzibilit&auml;t.</b> A: eine einfache lokale Regel erzeugt und erkl&auml;rt das Ganze. B: das Ganze ist durch keine einfache Regel/Antwort erfassbar &mdash; es ist selbstreferenziell und h&auml;lt sich zusammen.</p></div>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; cellular.html</h4><p><strong>Irreversibler, vorw&auml;rtstreibender Zyklus.</strong> Zyklen laufen in der Zeit voran; die Entropie steigt oder stabilisiert (chaotisch maximal, geordnet fixiert) &mdash; sie wird nicht zur&uuml;ckgesetzt. Der &bdquo;edge of chaos&ldquo; wird in Richtung Unordnung &uuml;berschritten.</p></div>
+    <div class="card b"><h4>B &mdash; finneganswake.html</h4><p><strong>Regenerative, anti-entropische R&uuml;ckkehr.</strong> &bdquo;the sea becomes rain, which will fall again &hellip; become the river again&ldquo;; &bdquo;The fall is the beginning&ldquo;; Vicos Rad: &bdquo;Birth, marriage, death, resurrection&ldquo;. Das Ende wird zum Anfang; der Zeitpfeil wird umgekehrt.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 3 &mdash; vorw&auml;rts/irreversibel vs. regenerativ/R&uuml;ckkehr.</b> A konserviert bzw. erh&ouml;ht die Entropie und bewegt sich irreversibel voran; B kehrt regenerativ in den eigenen Ursprung zur&uuml;ck &mdash; Tod f&uuml;hrt zu Leben, das Ende ist der Anfang.</p></div>
+
+  <div class="pair">
+    <div class="card a"><h4>A &mdash; cellular.html</h4><p><strong>Externer Beobachter.</strong> Die Simulation l&auml;uft unabh&auml;ngig davon, ob jemand zuschaut; man misst von au&szlig;en (Hamming-Distanz, Entropie). Der Beobachter steht au&szlig;erhalb des Systems.</p></div>
+    <div class="card b"><h4>B &mdash; finneganswake.html</h4><p><strong>Teilnehmender Beobachter.</strong> &bdquo;You ARE the dream now&ldquo;; die W&auml;hlungen des Spielers &auml;ndern den Verlauf (HCEs Schicksal wird &bdquo;Defended / Condemned / Unknowable&ldquo;) und man kann Teil des Traums werden. Der Beobachter ist konstitutiv.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 4 &mdash; externer vs. teilnehmender Beobachter.</b> A: der Beobachter misst ein System, das ohne ihn l&auml;uft. B: der Beobachter gestaltet das System mit und kann von ihm aufgesogen werden.</p></div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p class="lead">Alle vier Spannungen l&ouml;sen sich auf, sobald man zwei Ebenen trennt: den <strong>Generator</strong> (die Regel) und die <strong>Interpretation</strong> (die Deutung) &mdash; bzw. den <strong>Mechanismus</strong> (bottom-up) und die <strong>Ph&auml;nomenologie</strong> (top-down).</p>
+  <h3>1. Bestimmt vs. unfassbar &mdash; Generator &ne; Interpretation</h3>
+  <p>Rule 30s Ausgabe ist <em>exakt festgelegt</em>, erscheint aber zuf&auml;llig und bedeutungslos, bis jemand sie deutet &mdash; genau wie die Letter, deren Tinte determiniert ist und dennoch &bdquo;&uuml;ber alles und nichts&ldquo; spricht. <strong>Der Determinismus des Generators und die Offenheit der Interpretation koexistieren:</strong> Die Hamming-Distanz ist die Tatsache; ihre Bedeutung ist der Traum. A misst den Generator, B deutet seinen Output &mdash; beides stimmt zugleich.</p>
+  <h3>2. Reduktion vs. Irreduzibilit&auml;t &mdash; zwei Ebenen der Beschreibung</h3>
+  <p>Die lokale Regel ist der <em>Mechanismus</em> (bottom-up, Emergenz); die selbstreferenzielle Gesamtheit ist die <em>Ph&auml;nomenologie</em> (top-down, Bedeutung). Emergenz ist <em>genau die L&uuml;cke</em> zwischen beiden. &bdquo;Komplexit&auml;t braucht keine komplexen Regeln&ldquo; (A) und &bdquo;es gibt keine einfachen Antworten&ldquo; (B) sind <strong>komplement&auml;r</strong>: die <em>Regel</em> ist einfach, die <em>Antwort/die Bedeutung</em> nicht. Das Ganze ist einfach <em>erzeugt</em>, aber nicht einfach <em>verstanden</em>.</p>
+  <h3>3. Vorw&auml;rts vs. regenerativ &mdash; selbstorganisierte Kritikalit&auml;t mit Attraktor am Ursprung</h3>
+  <p>Das Waldbrand-Modell (A) zeigt: Das System driftet von selbst in einen <em>kritischen Zustand</em>, in dem Br&auml;nde aller Gr&ouml;&szlig;e auftreten (Potenzgesetz) &mdash; eine R&uuml;ckkehr ohne Steuerung. Vicos Rad (B) treibt diese Rekurrenz auf die Spitze: Der Attraktor ist nicht irgendein kritischer Zustand, sondern <em>der eigene Ursprung</em> (der Fall = der Anfang). Die <strong>anti-entropische R&uuml;ckkehr ist selbstorganisierte Kritikalit&auml;t, deren Fixpunkt die Anfangsbedingung selbst ist:</strong> abbrennen, nachwachsen, wieder kritisch &mdash; bzw. Meer &rarr; Regen &rarr; Fluss &rarr; Leben.</p>
+  <h3>4. Extern vs. teilnehmend &mdash; der Spieler als St&ouml;rung auf einem selbstorganisierenden System</h3>
+  <p>In A &auml;ndert das Umkippingen einer einzigen Zelle die ganze Trajektorie (sensitive Dependence). In B sind die W&auml;hlungen des Spielers <em>genau diese eine umgekippte Zelle</em>: eine St&ouml;rung, die den Traum umformt &mdash; aber innerhalb eines selbstorganisierenden Attraktors (der Zyklus dreht sich immer, der Fluss kehrt immer zur&uuml;ck). <strong>Die Struktur ist fix, die Trajektorie wird gew&auml;hlt</strong>; der Determinismus des Rades und die Agens des Spielers sind beide wahr.</p>
+  <div class="callout win"><b>Fusionierte Schlussfolgerung:</b> Ein selbstorganisierendes, zyklisches System &mdash; eine einfache Regel als geschlossener R&uuml;ckkopplungskreislauf &mdash; erzeugt sowohl <em>Form</em> (determiniert, quantifizierbar, reduzierbar: der Automat, die Entropie, der Attraktor) als auch <em>Bedeutung</em> (interpretativ offen, selbstreferenziell, holistisch: die Letter, der Traum, Vicos Rad). Ordnung und das Unfasse&shy;bare sind zwei Seiten derselben Wiederkunft: <em>Ein System, das einfach genug ist, um eine Regel zu sein, ist &mdash; weil es sich selbst zur Eingabe macht &mdash; zu gro&szlig;, um von dieser Regel erfasst zu werden.</em></div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Die zwei Systeme, ineinander gefaltet &mdash; kein Anekdoten-Stapel, sondern ein durchgehender Argumentationsfaden.</p>
+
+  <h3>Der Rechner von A (cellular.html) &mdash; Formel &amp; Klassen</h3>
+  <ul>
+    <li><strong>Zellul&auml;rer Automat (CA):</strong> ein Gitter aus Zellen &times; diskrete Zeit, endliche Zust&auml;nde, eine Nachbarschaft und eine lokale Regel. Alles ist <em>lokal</em>: eine Zelle entscheidet nur anhand ihrer Nachbarn.</li>
+    <li><strong>Elementare CA (Wolfram):</strong> eine Zeile von 0/1-Zellen; 8 Nachbar-Konfigurationen (2<sup>3</sup>), also 256 Regeln (2<sup>8</sup>). Die Regelnummer ist die 8-stellige Bitfolge der Ausgaben:
+      <div class="math">s<sub>i</sub><sup>t+1</sup> = f(s<sub>i&minus;1</sub><sup>t</sup>, s<sub>i</sub><sup>t</sup>, s<sub>i+1</sub><sup>t</sup>) &nbsp;&nbsp;&mdash;&nbsp;&nbsp; Regelschreibweise: (111)(110)(101)(100)(011)(010)(001)(000)</div>
+    </li>
+    <li><strong>Wolframs vier Klassen:</strong> I &rarr; homogen (alles gleich), II &rarr; einfache Perioden, III &rarr; chaotisch/aperiodisch, IV &rarr; komplex, langlebige Strukturen (die <em>Kante des Chaos</em>).</li>
+    <li><strong>Klassische Regeln:</strong> Rule 30 (chaotisch, Pseudozufallszahlengenerator), Rule 110 (bewiesen Turing-vollst&auml;ndig), Rule 90 (Sierpinski-Triangle, &auml;quivalent zu XOR der Nachbarn), Rule 184 (Verkehrsfluss).</li>
+    <li><strong>Conways Game of Life (1970):</strong> 2D, vier einfache Regeln, Turing-vollst&auml;ndig &mdash; universell rechnend aus lokalsten Regeln.</li>
+  </ul>
+
+  <h3>Wiederkunft in A &mdash; die Zyklen und ihre Ma&szlig;e</h3>
+  <ul>
+    <li><strong>Oszillatoren &amp; bewegte Figuren:</strong> Blinker, Pulsar und Gosper-Gun kehren zu fr&uuml;heren Zust&auml;nden zur&uuml;ck oder laufen periodisch &mdash; das System ist ein <em>Rad</em> im Zustandsraum.</li>
+    <li><strong>Selbstorganisierte Kritikalit&auml;t (Waldbrand):</strong> Das System entwickelt sich <em>ohne Steuerung</em> in einen kritischen Zustand, in dem Br&auml;nde aller Gr&ouml;&szlig;e auftreten &mdash; eine Potenzgesetz-Verteilung, ein Rekurrenz-Attraktor.</li>
+    <li><strong>Sensitive Dependence:</strong> eine umgekippte Zelle erzeugt eine neue Trajektorie; die <em>Hamming-Distanz</em> zwischen den zwei L&auml;ufen w&auml;chst (divergiert), ein &bdquo;Lyapunov-like Exponent&ldquo; ma&szlig;t die Divergenzrate.</li>
+    <li><strong>Shannon-Entropie</strong> ma&szlig;t Ordnung/Unordnung als Zahl in 0&ndash;1:
+      <div class="math">H = &minus; &Sigma;<sub>i</sub> p<sub>i</sub> log<sub>2</sub> p<sub>i</sub> &nbsp;&nbsp;(chaotisch &rarr; H maximal, geordnet &rarr; H fixiert)</div>
+    </li>
+  </ul>
+
+  <h3>Der Gegenstand von B (finneganswake.html) &mdash; der radierende Fluss</h3>
+  <ul>
+    <li><strong>Vicos Rad:</strong> &bdquo;Birth, marriage, death, resurrection&ldquo; &mdash; der Zyklus dreht sich; &bdquo;the cycle completes &hellip; and so it begins again. As it always has. As it always will.&ldquo;</li>
+    <li><strong>Rezirkulation als Regel:</strong> &bdquo;riverrun, past Eve and Adam&rsquo;s, &hellip; back to Howth Castle and Environs&ldquo;; am Ende flie&szlig;t der letzte Buchstabe &bdquo;the&ldquo; in den ersten &bdquo;riverrun&ldquo; zur&uuml;ck.</li>
+    <li><strong>Der Fall &amp; das Erwachen:</strong> Finnegan, der Baumeister, f&auml;llt und wird auf seiner Beerdigung durch einen Spritzer Whiskey zu &bdquo;Finnagain&ldquo; erweckt; &bdquo;The fall is the beginning. Without the fall, no story.&ldquo;</li>
+    <li><strong>Die Letter (mamafesta):</strong> &bdquo;the entire history of the world written on a single page&ldquo;, &bdquo;a polyhedron of scripture&ldquo;, &bdquo;The letter is life. Life is the letter.&ldquo; &mdash; eine selbstreferenzielle Gesamtheit, die &auml;lls und nichts ist.</li>
+    <li><strong>Shem &amp; Shaun (das gedoppelte Ich):</strong> Shem, der Schreiber (links, der Exil, der das N&auml;chste aus dem Vorg&auml;ngigen verfasst) vs. Shaun, der Post (rechts, der Konformist, der nur Briefe tr&auml;gt, die nie zugestellt werden, und nur vorw&auml;rts geht).</li>
+    <li><strong>Traumlogik:</strong> &bdquo;every question contains its own answer and every answer spawns new questions&ldquo;; HCE ist schuldig und unschuldig zugleich; das Verbrechen ist die Ur-S&uuml;nde, endlos wiederholt, endlos vergeben.</li>
+    <li><strong>Die anti-entropische R&uuml;ckkehr:</strong> &bdquo;the sea becomes rain, which will fall again &hellip; become the river again&ldquo; &mdash; das Ende wird zum Anfang.</li>
+  </ul>
+
+  <h3>Die Faltung &mdash; jede Struktur von A bekommt einen Gegenpart von B</h3>
+  <table>
+    <tr><th>A (Struktur)</th><th>B (Gegenpart)</th><th>Fusionierte Lesart</th></tr>
+    <tr><td class="a">lokale Update-Regel f(s<sub>i&minus;1</sub>,s<sub>i</sub>,s<sub>i+1</sub>)</td><td class="b">die Rezirkulations-Regel des Flusses (riverrun &hellip; back to riverrun)</td><td>beide: eine einfache Abbildung, die auf sich selbst gelassen wird.</td></tr>
+    <tr><td class="a">Oszillator (Blinker, Periode 2)</td><td class="b">Vicos Rad (Periode 4: Geburt/Hochzeit/Tod/Auferstehung)</td><td>ein kurzer Perioden-Attraktor = &bdquo;das Rad dreht sich&ldquo;.</td></tr>
+    <tr><td class="a">selbstorganisierte Kritikalit&auml;t (Waldbrand)</td><td class="b">R&uuml;ckkehr zum Fall (Ende = Anfang)</td><td>der Attraktor ist der eigene Ursprung des Systems.</td></tr>
+    <tr><td class="a">sensitive Dependence (eine Zelle umkippen)</td><td class="b">die Wahl des Spielers als St&ouml;rung</td><td>eine St&ouml;rung formt die Trajektorie um &mdash; der Beobachter ist darin.</td></tr>
+    <tr><td class="a">Turing-Vollst&auml;ndigkeit (Rule 110 / Game of Life)</td><td class="b">&bdquo;Here Comes Everybody&ldquo; (HCE)</td><td>das einfache System enth&auml;lt Jeden / Einiges &mdash; Universalit&auml;t.</td></tr>
+    <tr><td class="a">Shannon-Entropie (Ordnung messbar, 0&ndash;1)</td><td class="b">die &bdquo;Unfacts&ldquo; (Bedeutung unmessbar)</td><td>die Tatsache (H) vs. die Deutung der Tatsache &mdash; zwei Ebenen.</td></tr>
+    <tr><td class="a">der Zustandsvektor / das 2D-Feld</td><td class="b">die Letter (&bdquo;a polyhedron of scripture&ldquo;)</td><td>das Ganze als ein einziges selbstreferenzielles Objekt.</td></tr>
+    <tr><td class="a">s<sup>t+1</sup> = f(s<sup>t</sup>) (der n&auml;chste Zustand entsteht aus dem aktuellen)</td><td class="b">Shem schreibt das N&auml;chste aus dem Vorg&auml;ngigen</td><td>Generativit&auml;t: der Output wird n&auml;chste Eingabe.</td></tr>
+    <tr><td class="a">der R&uuml;ckkopplungskreislauf (Output = n&auml;chste Eingabe)</td><td class="b">der selbstreferenzielle Traum</td><td>das System f&auml;hrt sich selbst an &mdash; der Kern der Wiederkunft.</td></tr>
+  </table>
+
+  <h3>Die vereinigte Formel</h3>
+  <div class="math">
+    der Kreislauf als Abbildung auf sich selbst &nbsp;:&nbsp; x<sub>t+1</sub> = f(x<sub>t</sub>)<br>
+    Fixpunkt / Periode-p-Zyklus &nbsp;=&nbsp; Vicos Rad &nbsp;(&bdquo;das Rad dreht sich&ldquo;)<br>
+    chaotische Regel &nbsp;=&nbsp; kein endlicher Zyklus im Beobachtungsfenster &nbsp;=&nbsp; der Fluss l&auml;uft weiter (Kante des Chaos)<br>
+    Entropie H &nbsp;=&nbsp; die Tatsache &nbsp;&nbsp;&middot;&nbsp;&nbsp; der Zyklus/Attraktor &nbsp;=&nbsp; die Form &nbsp;&nbsp;&middot;&nbsp;&nbsp; die Deutung &nbsp;=&nbsp; die Bedeutung<br>
+    einfach genug, um eine Regel zu sein &nbsp;+&nbsp; selbstreferenziell (Output = Eingabe) &nbsp;=&nbsp; zu gro&szlig;, um von der Regel erfasst zu werden
+  </div>
+  <div class="callout"><b>Kurz:</b> A gibt den Rechner (einfache Regel + die Ma&szlig;e, die ihre Wiederkunft quantifizierbar machen); B gibt den Gegenstand, der ihn braucht (ein Traum, der sich rezirkuliert und sich selbst mit seinem ersten Wort benennt). Der <em>riverrun</em> ist der Oszillator; Vicos Rad ist der Attraktor; die Letter ist der selbstreferenzielle Zustandsraum. Ordnung aus Wiederkunft.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion</h2>
+  <p class="lead">Ein lebendiger 1D-elementarer Automat, der als <strong>&bdquo;riverrun&ldquo;-S&auml;ule</strong> nach unten flie&szlig;t. Oben die Zellen (A), unten die <strong>Population- und Entropie-Kurve</strong> (die messbare Form). Ein <strong>Zyklen-Detektor</strong> zeigt, wann eine Zeile sich wiederholt: geordnete Regeln (Rule 184) finden schnell einen kurzen Zyklus = <em>Vicos Rad</em>; an der Kante des Chaos (Rule 30/110) &bdquo;l&auml;uft es weiter&ldquo; = <em>der Fluss</em>. Der <strong>St&ouml;ren</strong>-Button kippert eine einzige Zelle und spawnt eine Zwilling-Bahn &mdash; du siehst den <em>Beobachter als St&ouml;rung</em>, der die Trajektorie divergieren l&auml;sst (Hamming-Δ).</p>
+
+  <div class="viz">
+    <div class="viz-ctrl">
+      <div>
+        <label>Regel (Klasse)</label>
+        <select id="ruleSel" class="grp">
+          <option value="184">Rule 184 &mdash; geordnet (Verkehr, Klasse II)</option>
+          <option value="30">Rule 30 &mdash; chaotisch (Klasse III)</option>
+          <option value="110">Rule 110 &mdash; Kante des Chaos (Klasse IV)</option>
+          <option value="90">Rule 90 &mdash; Fraktal / XOR (Klasse III)</option>
+        </select>
+      </div>
+      <div>
+        <label>Anfangszustand</label>
+        <select id="initSel" class="grp">
+          <option value="random">Zufall</option>
+          <option value="single">Eine Zelle</option>
+          <option value="alternating">Alternierend</option>
+        </select>
+      </div>
+      <div>
+        <label>Tempo: <span class="val" id="speedVal">4</span> Zeilen/Bild</label>
+        <input type="range" id="speedSlider" min="1" max="10" value="4">
+      </div>
+      <div><button class="vbtn" id="playBtn">&#10074;&#10074; Pause</button></div>
+      <div><button class="vbtn" id="resetBtn">&#8635; Neu</button></div>
+      <div><button class="vbtn alt" id="perturbBtn">~ St&ouml;ren (1 Zelle)</button></div>
+    </div>
+
+    <canvas id="caViz" width="720" height="440"></canvas>
+    <div class="cap">Oben: der Automat (riverrun-S&auml;ule, neueste Zeile unten; bei Wiederholung pulsiert sie gelb). Unten: Population (blau) &amp; Shannon-Entropie H (gr&uuml;n) &uuml;ber die Generationen. Magenta-Punkte = Divergenz der Zwilling-Bahn.</div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent)"></i> lebendige Zelle / Population</span>
+      <span><i class="dot" style="background:var(--good)"></i> Shannon-Entropie H</span>
+      <span><i class="dot" style="background:var(--accent2)"></i> Divergenz (Zwilling)</span>
+      <span><i class="dot" style="background:var(--accent3)"></i> Wiederholung (das &bdquo;Rad&ldquo;)</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="sGen">0</div><div class="l">Generation (t)</div></div>
+      <div class="stat"><div class="n" id="sPop">0</div><div class="l">Population</div></div>
+      <div class="stat"><div class="n" id="sEnt">0.00</div><div class="l">Entropie H</div></div>
+      <div class="stat"><div class="n" id="sRec">&hellip;</div><div class="l">Wiederholung / Periode</div></div>
+      <div class="stat"><div class="n" id="sDelta">&ndash;</div><div class="l">&Delta; Zwilling (Hamming)</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../cellular.html">cellular.html</a> &mdash; <em>&bdquo;Cellular Automata: Order from Simple Rules&ldquo;</em>
+    <p>Der Rechner: elementare CA (256 Regeln, Wolframs vier Klassen, Rule 30/110/90/184), Conways Game of Life, Chaos-Theorie (sensitive Dependence, Kante des Chaos, Shannon-Entropie, Lyapunov-artiger Exponent) und selbstorganisierte Kritikalit&auml;t (Waldbrand-Modell) &mdash; mit der These, dass Komplexit&auml;t keine komplexen Regeln braucht.</p>
+  </div>
+  <div class="prov">
+    <a href="../finneganswake.html">finneganswake.html</a> &mdash; <em>&bdquo;Finnegans Wake: The Dreaming&ldquo;</em>
+    <p>Der Gegenstand: ein zyklisches Text-Abenteuer durch die Traumwelt Dublins &mdash; Vicos Rad (Geburt/Hochzeit/Tod/Auferstehung), die Rezirkulation des Flusses (&bdquo;riverrun&ldquo;), der Fall &amp; das Erwachen (Finnegan&rarr;Finnagain), die selbstreferenzielle Letter (&bdquo;a polyhedron of scripture&ldquo;), die Shem/Shaun-Doppelspur, die Traumlogik des Unfasse&shy;baren und die anti-entropische R&uuml;ckkehr (Meer &rarr; Regen &rarr; Fluss).</p>
+  </div>
+</section>
+
+<footer>Fusion n1-071 &middot; Round 1 (non-AI track) &middot; cellular.html &times; finneganswake.html &middot; selbstst&auml;ndig, alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('caViz'), ctx = cv.getContext('2d');
+  var ruleSel = document.getElementById('ruleSel');
+  var initSel = document.getElementById('initSel');
+  var speedSlider = document.getElementById('speedSlider');
+  var speedVal = document.getElementById('speedVal');
+  var playBtn = document.getElementById('playBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var perturbBtn = document.getElementById('perturbBtn');
+  var themeBtn = document.getElementById('themeBtn');
+  var sGen = document.getElementById('sGen'), sPop = document.getElementById('sPop'),
+      sEnt = document.getElementById('sEnt'), sRec = document.getElementById('sRec'),
+      sDelta = document.getElementById('sDelta');
+
+  var CW = cv.width, CH = cv.height;
+  var cell = 4, W = CW / cell;          /* 720/4 = 180 Zellen */
+  var caH = 344, maxRows = caH / cell;  /* 86 sichtbare Zeilen */
+
+  var bits = [], cells = new Uint8Array(W), twin = null;
+  var frames = [], tframes = [], gen = 0;
+  var seen = new Map(), recFound = false, recPeriod = 0, recFirst = 0;
+  var running = true, speed = 4;
+  var C = {};
+
+  function cssVar(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); v = (v||'').trim(); return v || fb; }
+  function readTheme(){
+    C = {
+      bg: cssVar('--viz-bg','#0a0e1a'), grid: cssVar('--grid','#1a2340'),
+      text: cssVar('--text','#e2e8f0'), muted: cssVar('--muted','#94a3b8'),
+      accent: cssVar('--accent','#7dd3fc'), accent2: cssVar('--accent2','#f0abfc'),
+      accent3: cssVar('--accent3','#fde047'), good: cssVar('--good','#4ade80')
+    };
+  }
+  function hexA(hex, a){
+    hex = String(hex).replace('#','');
+    if(hex.length===3){ hex = hex.split('').map(function(c){return c+c;}).join(''); }
+    if(!/^[0-9a-fA-F]{6}$/.test(hex)){ hex='7dd3fc'; }
+    var n = parseInt(hex,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+
+  function ruleBits(r){ var b=new Array(8); for(var i=0;i<8;i++) b[i]=(r>>i)&1; return b; }
+  function stepArr(arr,bb){
+    var n=new Uint8Array(W);
+    for(var i=0;i<W;i++){
+      var l=arr[(i-1+W)%W], c=arr[i], r=arr[(i+1)%W];
+      n[i]=bb[(l<<2)|(c<<1)|r];
+    }
+    return n;
+  }
+  function popOf(a){ var p=0; for(var i=0;i<a.length;i++) p+=a[i]; return p; }
+  function entOf(a){
+    var p=popOf(a)/a.length;
+    if(p<=0||p>=1) return 0;
+    return -(p*Math.log(p)/Math.LN2 + (1-p)*Math.log(1-p)/Math.LN2);
+  }
+  function keyOf(a){ var s=''; for(var i=0;i<a.length;i++) s+=a[i]; return s; }
+  function hamming(a,b){ var d=0; for(var i=0;i<a.length;i++) if(a[i]!==b[i]) d++; return d; }
+
+  function initArr(){
+    var m=initSel.value;
+    cells=new Uint8Array(W);
+    if(m==='single'){ cells[W>>1]=1; }
+    else if(m==='alternating'){ for(var i=0;i<W;i++) cells[i]=i%2; }
+    else { for(var j=0;j<W;j++) cells[j]=Math.random()<0.5?1:0; }
+  }
+  function pushFrame(){
+    frames.push({s:cells.slice(), pop:popOf(cells), ent:entOf(cells)});
+    if(frames.length>240) frames.shift();
+  }
+  function doStep(){
+    cells=stepArr(cells,bits);
+    if(twin) twin=stepArr(twin,bits);
+    gen++;
+    pushFrame();
+    if(twin){ tframes.push(twin.slice()); if(tframes.length>240) tframes.shift(); }
+    if(!recFound){
+      var key=keyOf(cells);
+      if(seen.has(key)){ recFound=true; recFirst=seen.get(key); recPeriod=gen-seen.get(key); }
+      else { seen.set(key,gen); if(seen.size>8000){ seen=new Map(); } }
+    }
+  }
+  function reset(){
+    bits=ruleBits(+ruleSel.value);
+    initArr();
+    twin=null; tframes=[];
+    frames=[]; gen=0;
+    seen=new Map(); recFound=false; recPeriod=0; recFirst=0;
+    pushFrame();
+    draw();
+  }
+  function perturb(){
+    twin=cells.slice();
+    var pos=(Math.random()*W)|0;
+    twin[pos]=twin[pos]?0:1;
+    tframes=[];
+  }
+
+  function draw(){
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,CW,CH);
+    for(var i=0;i<maxRows;i++){
+      var fi=frames.length-1-i; if(fi<0) break;
+      var row=frames[fi].s;
+      var y=caH-(i+1)*cell;
+      ctx.fillStyle=((i===0)&&recFound)?C.accent3:C.accent;
+      for(var j=0;j<W;j++){ if(row[j]) ctx.fillRect(j*cell, y, cell-1, cell-1); }
+      if(twin){
+        var ti=tframes.length-1-i;
+        if(ti>=0){
+          var tr=tframes[ti].s;
+          ctx.fillStyle=C.accent2;
+          for(var j2=0;j2<W;j2++){ if(tr[j2] && !row[j2]) ctx.fillRect(j2*cell, y, cell-1, cell-1); }
+        }
+      }
+    }
+    ctx.strokeStyle=hexA(C.grid,0.8); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,caH+0.5); ctx.lineTo(CW,caH+0.5); ctx.stroke();
+    drawSpark();
+    updateStats();
+  }
+
+  function drawSpark(){
+    var w=cv.width, top=caH+8, bot=CH-18, x0=8, x1=w-8;
+    ctx.strokeStyle=hexA(C.grid,0.6); ctx.lineWidth=1;
+    ctx.fillStyle=C.muted; ctx.font='10px sans-serif'; ctx.textAlign='left';
+    for(var g=0;g<=2;g++){
+      var v=g/2, y=bot-v*(bot-top);
+      ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+      ctx.fillText(v.toFixed(1), 1, y+3);
+    }
+    var N=frames.length;
+    if(N<2) return;
+    function X(k){ return x0 + k/(N-1)*(x1-x0); }
+    function Y(v){ return bot - v*(bot-top); }
+    ctx.strokeStyle=C.accent; ctx.lineWidth=1.6; ctx.beginPath();
+    for(var k=0;k<N;k++){ var x=X(k), y=Y(frames[k].pop/W); if(k===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.stroke();
+    ctx.strokeStyle=C.good; ctx.lineWidth=1.6; ctx.beginPath();
+    for(var k2=0;k2<N;k2++){ var x2=X(k2), y2=Y(frames[k2].ent); if(k2===0)ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2); }
+    ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.fillText('Generation \u2192', (x0+x1)/2, CH-4);
+  }
+
+  function updateStats(){
+    sGen.textContent=gen;
+    sPop.textContent=popOf(cells);
+    sEnt.textContent=entOf(cells).toFixed(2);
+    if(recFound){ sRec.textContent='Periode '+recPeriod; }
+    else { sRec.textContent = gen>40 ? 'l\u00e4uft weiter' : '\u2026'; }
+    sDelta.textContent = twin ? hamming(cells,twin) : '\u2013';
+  }
+
+  function loop(){
+    if(running){ for(var s=0;s<speed && running;s++) doStep(); }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  themeBtn.addEventListener('click', function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    themeBtn.innerHTML = dark ? '\u263E Theme wechseln' : '\u2600 Theme wechseln';
+    readTheme(); draw();
+  });
+  playBtn.addEventListener('click', function(){
+    running=!running;
+    playBtn.innerHTML = running ? '\u25aa\u25aa Pause' : '\u25b6 Los';
+  });
+  resetBtn.addEventListener('click', reset);
+  perturbBtn.addEventListener('click', perturb);
+  ruleSel.addEventListener('change', reset);
+  initSel.addEventListener('change', reset);
+  speedSlider.addEventListener('input', function(){ speed=+speedSlider.value; speedVal.textContent=speed; });
+
+  readTheme();
+  reset();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

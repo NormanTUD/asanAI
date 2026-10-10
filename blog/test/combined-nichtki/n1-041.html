@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die eine Topologie zweier Formen – Bedeutung &amp; Konnektom (Fusion)</title>
+<style>
+  :root{
+    --bg:#FAF8F1;
+    --bg-soft:#f1ede2;
+    --text:#20242e;
+    --muted:#5c6470;
+    --accent:#2f6fb0;
+    --accent2:#b98800;
+    --good:#0a7a4a;
+    --bad:#c0392b;
+    --card-bg:rgba(20,25,35,0.035);
+    --card-border:rgba(20,25,35,0.14);
+    --line:rgba(20,25,35,0.16);
+  }
+  html.dark{
+    --bg:#0d1017;
+    --bg-soft:#12161f;
+    --text:#e7e2d6;
+    --muted:#98a0ad;
+    --accent:#6cc0ff;
+    --accent2:#ffd766;
+    --good:#4fe0a0;
+    --bad:#ff7a8a;
+    --card-bg:rgba(255,255,255,0.04);
+    --card-border:rgba(255,255,255,0.13);
+    --line:rgba(255,255,255,0.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Georgia','Iowan Old Style',serif;
+    line-height:1.75;overflow-x:hidden;
+    transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:34px;}
+  h1{font-size:2.05em;line-height:1.2;color:var(--accent);margin-bottom:10px;}
+  .sub{color:var(--muted);font-style:italic;font-size:1.02em;}
+  .tagline{margin-top:12px;font-size:.95em;color:var(--muted);}
+  .tagline b{color:var(--text);}
+  .theme-btn{
+    position:fixed;top:14px;right:16px;z-index:50;
+    background:var(--card-bg);color:var(--text);
+    border:1px solid var(--card-border);border-radius:20px;
+    padding:7px 14px;cursor:pointer;font-size:.85em;font-family:inherit;
+    backdrop-filter:blur(4px);
+  }
+  section{margin:0 0 42px;}
+  h2{font-size:1.5em;color:var(--accent2);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  h3{font-size:1.12em;margin:22px 0 8px;color:var(--accent);}
+  p{margin:0 0 14px;}
+  blockquote{
+    border-left:3px solid var(--accent);
+    padding:6px 0 6px 16px;margin:14px 0;color:var(--muted);font-style:italic;
+  }
+  .card{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    border-radius:12px;padding:16px 18px;margin:14px 0;
+  }
+  .card h4{color:var(--accent2);margin:0 0 6px;font-size:1.02em;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+  .a b,.b b{font-weight:bold;}
+  .a .lbl{color:var(--accent);}
+  .b .lbl{color:var(--accent2);}
+  .pill{
+    display:inline-block;font-size:.72em;letter-spacing:.04em;
+    border:1px solid var(--card-border);border-radius:12px;
+    padding:2px 9px;margin-right:6px;color:var(--muted);
+  }
+  code{font-family:ui-monospace,monospace;font-size:.9em;background:var(--card-bg);padding:1px 5px;border-radius:4px;}
+  .eq{
+    font-family:ui-monospace,monospace;background:var(--card-bg);
+    border:1px solid var(--card-border);border-radius:8px;
+    padding:10px 14px;margin:12px 0;font-size:.95em;overflow-x:auto;white-space:pre;
+  }
+  .viz-shell{
+    background:var(--bg-soft);border:1px solid var(--card-border);
+    border-radius:14px;padding:16px;margin:14px 0;
+  }
+  .viz-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .viz-row canvas{flex:1;min-width:290px;height:300px;display:block;border-radius:10px;background:var(--bg);border:1px solid var(--card-border);}
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;}
+  .ctrl label{font-size:.88em;color:var(--muted);}
+  input[type=range]{
+    flex:1;min-width:150px;-webkit-appearance:none;appearance:none;height:8px;
+    border-radius:4px;outline:none;
+    background:linear-gradient(90deg,var(--accent),var(--bad));
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--accent2);cursor:pointer;border:2px solid var(--bg);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;background:var(--accent2);cursor:pointer;border:2px solid var(--bg);
+  }
+  .btn{
+    background:var(--card-bg);color:var(--text);border:1px solid var(--card-border);
+    border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85em;font-family:inherit;
+  }
+  .readout{margin-top:14px;}
+  .readout .st{color:var(--accent2);font-weight:bold;font-size:1.05em;}
+  .readout .ds{color:var(--muted);margin-top:4px;font-size:.96em;}
+  .statrow{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:.9em;}
+  .statrow span b{color:var(--text);}
+  .statrow .c0 b{color:var(--accent);}
+  .statrow .c1 b{color:var(--bad);}
+  .note{font-size:.85em;color:var(--muted);margin-top:10px;}
+  .prov{display:flex;gap:16px;flex-wrap:wrap;}
+  .prov .card{flex:1;min-width:240px;}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:bold;}
+  .prov a:hover{text-decoration:underline;}
+  .prov p{font-size:.92em;color:var(--muted);margin:8px 0 0;}
+  footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.85em;}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeToggle" type="button">☀ Hell</button>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Die eine Topologie zweier Formen</h1>
+    <div class="sub">Fusion aus: foam_of_meaning.html ✕ homological_scaffolds/index.html</div>
+    <div class="tagline">
+      <b>„The Foam of Meaning“</b> (A) behauptet: Bedeutung ist die <b>Geometrie</b> des Raums aller möglichen
+      Äußerungen — Cluster, Filamente, Void — mit einer <b>topologischen Signatur</b> (β₀, β₁) und
+      <b>Skaleninvarianz</b>. <b>„Homological Scaffolds“</b> (B) ist das <b>laufende Instrument</b>, das exakt
+      diese Betti-Zahlen β₀/β₁ auf echten fMRE-Konnektomen (Petri et al. 2014, Placebo vs. Psilocybin)
+      <i>rechnet</i>. Die Fusion: <b>permanente Homologie ist das eine Instrument, das A's Metapher messbar und
+      falsifizierbar macht</b> — „unterschiedliche Physik, identische Geometrie“ gilt nun für Kosmos ≅ Sprache ≅
+      Konnektom.
+    </div>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>
+      Beide Papiere sind sich über die <b>Art des Objekts</b> einig: Ein hinreichend strukturiertes System —
+      der Möglichkeitsraum einer Sprache, das funktionelle Konnektom eines Gehirns — besitzt eine
+      <b>skaleninvariante, messbare Form</b>, die nicht an einzelne Punkte (Wörter / Hirnareale) haftet, sondern an
+      der <b>Weise, wie sie sich über Skalen verbinden</b>. Diese Form wird durch zwei topologische Invarianten
+      erfasst: <b>β₀</b> = Anzahl der Zusammenhangskomponenten (Cluster / konventionelle Bedeutungsräume) und
+      <b>β₁</b> = Anzahl der unabhängigen, <i>beständig überlebenden</i> Schleifen (Filamente / produktive Grammatik,
+      Metapher).
+    </p>
+    <p>
+      A macht dies zu einer <b>a-priori These über Bedeutung</b>: Der Raum „alles Sagbaren“ ist eine Wüste
+      (Vokabular 50 000, Länge 20 → ≈ 10⁹⁴ Sequenzen, mehr als die Atome des Universums, 10⁸⁰), und die
+      <i>bedeutsame</i> Sprache ist nur ein winziger Streifen darin — geformt zu <b>Clustern</b> (Konvention,
+      Idiom), <b>Filamenten</b> (produktive Grammatik, Metapher) und <b>Void</b> (Ungrammatisches, nie Gesagtes).
+      A überträgt die „Instrumente des Kosmologen“ auf die Sprache und behauptet, die Struktur trage eine
+      <i>topologische Signatur</i> und eine <i>Skaleninvarianz</i>; „Verstehen ist das Wissen um diese Form“.
+    </p>
+    <p>
+      B ist die <b>a-posteriori Verifikation derselben Idee an realen Daten</b>: Es füttert die funktionelle
+      Konnektivität (gewichtete Kanten) zweier fMRE-Datensätze in eine <b>Filtration</b>, die über eine Skala
+      <code>ω</code> gefahren wird, und rechnet dabei live <b>β₀</b> (Union-Find über Komponenten) und
+      <b>β₁</b> (Zykelerkennung, getötet durch 2-Facetten / Dreiecke) — daraus entstehen
+      <b>Persistenzdiagramm</b>, <b>Barcode</b>, <b>Betti-Kurven</b> und Persistenz-/Geburtsdichten. Der
+      Placebo-/Psilocybin-Vergleich zeigt, dass die <i>beständigen</i> Topologien (Punkte fern der Diagonale)
+      das Signal sind, das kurze (nah der Diagonale) Rauschen. <b>Einheitliche Position: Es gibt eine einzige
+      Form-Sprache — die persistente Homologie — die sowohl die Geometrie der Bedeutung (A) als auch die des
+      Konnektoms (B) beschreibt; A benennt, was zu suchen ist, B liefert den Algorithmus, der es liest.</b>
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden stimmen in der <i>These</i> überein, widersprechen sich aber in <b>Status, Ontologie und
+    Maßstab</b>. Konkrete Punkte:</p>
+
+    <div class="card a">
+      <h4><span class="lbl">A (Foam of Meaning)</span> · Topologie als Metapher, nicht als Messung</h4>
+      <p>
+        A ist eine <b>spekulative, konzeptionelle These</b>. „Die Instrumente des Kosmologen übertragen sich“ ist
+        eine <i>Behauptung</i>; „topological signature β₀, β₁“ und „scale invariance“ erscheinen am Ende
+        ausschließlich als <b>Labels/Chips</b> (in der Triptychon-Folie „Dissolve the structure — everything
+        collapses at once“). A baut <b>keine</b> Filtration, rechnet <b>keine</b> Geburts-/Todeswerte, zeichnet
+        <b>kein</b> Persistenzdiagramm. Die Topologie bleibt Illustration — und damit prinzipiell <b>nicht
+        falsifizierbar</b>.
+      </p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B (Homological Scaffolds)</span> · Topologie als laufende Berechnung an echten Daten</h4>
+      <p>
+        B ist ein <b>falsifizierbares, datengetriebenes Werkzeug</b>: <code>computeFiltration()</code> führt die
+        Kanten nach normalisiertem Gewicht ein, zählt β₀ mit Union-Find, findet β₁-Zyklen per BFS
+        (<code>findCycle</code>) und tötet sie mit Dreiecken (2-Facetten). Es lädt zwei echte Datensätze
+        (rsif-2014-0873, Placebo/Psilocybin) und zeichnet Betti-Kurven, Persistenzdiagramm, Barcode, Dichten.
+        Die Topologie ist hier <b>Ergebnis, nicht Zier</b>.
+      </p>
+    </div>
+
+    <div class="card a">
+      <h4><span class="lbl">A</span> · Void ist eine <i>Richtung</i></h4>
+      <p>„Void is a direction, not a place“: A definiert <b>vier semantische Void-Richtungen</b> —
+      <i>syntaktisch</i> („asdf qwer blue table“: keine Syntax), <i>semantisch</i> („The thought drinks the square
+      Tuesday“: keine Semantik), <i>grounding</i> („∀ prime p, p mod 6 ∈ {1,5}“: berührt keine Welt),
+      <i>epistemisch</i> („Maybe it rains tomorrow“: Wahrheit noch offen). Void ist für A eine
+      <b>semantische Klassifikation von Inkohärenz</b>.</p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B</span> · Void ist die <i>Diagonale</i></h4>
+      <p>
+        Für B ist „Nichts/ Rauschen“ die <b>Diagonale des Persistenzdiagramms</b>: Features mit
+        Geburt ≈ Tod, also <b>kurzer Persistenz</b>. Das ist ein rein <b>topologisches</b> Urteil (lebt das
+        Feature lange genug?), kein semantisches. A's Void = <i>Art der Inkohärenz</i>; B's Void = <i>Lebensdauer
+        eines Features</i>. Zwei Ontologien desselben Wortes.
+      </p>
+    </div>
+
+    <div class="card a">
+      <h4><span class="lbl">A</span> · Bedeutung <i>schnappe</i> — eine einzige Grenze ∂M</h4>
+      <p>„Meaning doesn't fade. It snaps“ — ein <b>Phasenübergang wie Wasser zu Eis</b>, und „the boundary ∂M
+      carries more information than either interior“. A komprimiert die Topologie auf einen
+      <b>scharfen Grenzwert</b>, an dem die Information konzentriert ist.</p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B</span> · Die Signatur ist das <i>gesamte</i> Persistenz-Spektrum</h4>
+      <p>
+        B's Information liegt im <b>Barcode über den ganzen Skalenbereich verteilt</b> (Betti-Kurve, Persistenz-,
+        Geburtsdichte). Die Methode verweigert sich explizit der Reduktion auf <i>eine</i> Schwelle — sie ist
+        genau die <b>Persistenz-Streuung</b> über ω. A sagt „eine Grenze“, B misst „ein ganzes Spektrum“.
+      </p>
+    </div>
+
+    <div class="card a">
+      <h4><span class="lbl">A</span> · Objekt: der Möglichkeitsraum + Faserbündel Form→Bedeutung</h4>
+      <p>
+        A's Objekt ist der <b>kombinatorische Raum aller Äußerungen</b> (≈ 10⁹⁴, überwiegend Void) plus eine
+        <b>zweistufige</b> Struktur: eine Abbildung π: X (Formen) → S (Bedeutungen), Paraphrase = Bewegung
+        <i>innerhalb</i> einer Faser, Kompositionalität = kommutatives Quadrat <code>π′∘f = g∘π</code>.
+      </p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B</span> · Objekt: ein endliches, realisiertes Netz, eine Ebene</h4>
+      <p>
+        B's Objekt ist ein <b>endliches, konkretes</b> funktionelles Netz (Hunderte Knoten, gewichtete Kanten).
+        Es operiert auf <b>einer einzigen Ebene</b> (Hirnareale); ein Form→Bedeutung-Faserbündel, eine
+        Quotientenstruktur π, eine zweite „Bedeutungsebene“ existiert in B <b>nicht</b>.
+      </p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>
+      Die Widersprüche fallen weg, wenn man A und B nicht als zwei rivalisierende Aussagen liest, sondern als
+      <b>zwei Stufen derselben Erkenntnis</b>: A liefert die <b>Struktur-Hypothese</b> (was eine
+      Bedeutungslandschaft <i>sein muss</i>), B den <b>Beobachter</b> (wie man es an <i>jedem</i> realisierten
+      System abliest). Zu jedem Paar:
+    </p>
+
+    <div class="card">
+      <h4>1. Metapher vs. Messung → eine Hierarchie, kein Konflikt</h4>
+      <p>
+        A ist der <b>Name</b> der Kategorie, B der <b>Algorithmus</b>. Die Auflösung ist die Anwendung: Führe
+        B's Pipeline (Filtration → β₀/β₁ → Persistenzdiagramm) auf A's Äußerungs-Punktwolke aus
+        (Vietoris–Rips-artige Filtration über metrischer Distanz). Damit wird A's „topologische Signatur
+        β₀, β₁“ aus einem <i>Slogan</i> ein <i>messbarer Vektor</i> und die These <b>falsifizierbar</b>: Findet
+        man an echten Korpora keine beständigen β₁-Schleifen / keine Skaleninvarianz, ist A widerlegt.
+        <b>A sagt, <i>was</i> zu suchen ist; B sagt, <i>wie</i>. Zusammen ergeben sie eine vollständige,
+        überprüfbare Disziplin.</b>
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>2. Void-Richtung vs. Void-Diagonale → zwei Projektionen desselben Ereignisses</h4>
+      <p>
+        Beide beschreiben denselben topologischen Vorgang — <b>das Verschwinden eines Features</b> (Komponente
+        stirbt / Schleife wird von einer 2-Facetten gefüllt) — nur in unterschiedlichen Koordinaten. B liefert
+        die <b>Skalare</b>: <i>wie lange</i> das Feature persistierte (Position in der Persistenzdichte). A liefert
+        die <b>semantische Achse</b>: <i>welche der vier</i> Void-Richtungen (syntaktisch / semantisch / grounding
+        / epistemisch) das Kollabieren betrifft. <b>Fusion: A's vier Richtungen sind Projektionen von B's
+        kurzlebigem/topologischem Void auf vier Bedeutungsachsen</b> — komplementär, nicht widersprüchlich.
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>3. Scharfer Snap vs. verteilte Persistenz → das Knie der Kurve</h4>
+      <p>
+        A's „∂M“ <b>ist</b> eine Eigenschaft von B's Persistenzlandschaft: das <b>Knie / die
+        Hoch-Persistenz-Band</b>, an dem viele Features zugleich geboren bzw. getötet werden. A hat recht, dass
+        „die Grenze die Information trägt“ — ein Persistenzdiagramm misst <i>genau das</i>: Punkte <b>fern der
+        Diagonale</b> (hohe Persistenz) sind das Signal, die Diagonale ist der Void. <b>Fusion: Die „Grenze“ ist
+        kein Punkt, sondern ein Band hoher Persistenz.</b> Ein <i>scharfer</i> Snap (A) ist der Grenzfall eines
+        <i>steilen Knies</i> (B); B's allgemeinere Kurve enthält A als Sonderfall.
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>4. Möglichkeitsraum vs. Konnektom → dasselbe Objekt in zwei Dichten</h4>
+      <p>
+        A's Raum aller Äußerungen und B's Konnektom sind <b>dasselbe topologische Objekt in zwei
+        Besetzungsdichten</b>: A ist der <i>volle</i> (zu ~99,9…% leere) Raum, B ist eine <i>Realisierung</i> /
+        ein <i>Sample</i> daraus — so wie ein Galaxienklumpen zur kosmischen Schwemme gehört. A's
+        „Kosmos ≅ Sprache“ verallgemeinert sich zu <b>„Kosmos ≅ Sprache ≅ Konnektom“</b>: drei dünne Punktmenge,
+        deren großskalige Topologie skaleninvariant ist. B's fehlende Form→Bedeutungs-Ebene ist dabei kein
+        Widerspruch, sondern die <b>niedrigerdimensionale Realisierung</b> von A's Faserbündel (B zeigt nur die
+        Basis, nicht die Fasern).
+      </p>
+    </div>
+
+    <div class="card" style="border-color:var(--accent);">
+      <h4>Der fusionierte Schluss</h4>
+      <p>
+        Es gibt <b>eine</b> Form-Sprache — die <b>permanente Homologie</b> — die jede hinreichend strukturierte
+        Punktmenge beschreibt. β₀ zählt die Konventionen/Cluster, β₁ die beständigen Filamente/Metaphern, die
+        Persistenz (Geburt − Tod) misst, wie „tragend“ ein Feature ist, und das ∂M ist das Hoch-Persistenz-Knie.
+        <b>„The Foam of Meaning“ ist die a-priori Grammatik dieser Sprache; „Homological Scaffolds“ ist ihr
+        a-posterioriCompiler</b> — zusammen machen sie aus der Behauptung „Bedeutung hat eine Form“ das
+        berechenbare Programm „<i>extract</i>(Punktwolke) → Persistenzlandschaft“.
+      </p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Beide Papiere zusammen ergeben ein kohärentes, vierstufes Modell — ich verflechte sie statt sie aneinander
+    zureihen.</p>
+
+    <h3>Schicht 1 — Das gemeinsame formale Objekt</h3>
+    <p>
+      Gegeben ist eine <b>endliche Punktmenge</b> (Äußerungen / Hirnareale) mit einem Abstands- bzw.
+      Konnektivitätsmaß, und eine <b>Skala ω</b> (Entfernung / inverse Gewicht). Eine <b>Filtration</b> wächst
+      mit ω: bei ω=0 nur Punkte; Kanten (1-Simplex) erscheinen, sobald die Distanz ≤ ω; Dreiecke (2-Simplex),
+      sobald alle drei Kanten vorhanden. Die zwei zentralen Invarianten:
+      <div class="eq">β₀(ω) = # Zusammenhangskomponenten   (Cluster, Konventionen)
+β₁(ω) = # unabhängige, überlebende Schleifen  (Filamente, Grammatik, Metapher)
+Persistenz eines Features = Tod − Geburt   (weit über ω beständig = Signal, kurz = Void/Rauschen)</div>
+    </p>
+
+    <h3>Schicht 2 — A's semantische Taxonomie der Features</h3>
+    <p>
+      A benennt, <b>was</b> die Topologie für Bedeutung bedeutet: <b>Cluster</b> = Konvention/Idiom/häufige
+      Wendung; <b>Filamente</b> = produktive Grammatik, die Brücken; <b>Metapher</b> = ein <i>langer
+      Reichweiten-Filament</i>, der Struktur über den Void von einer Region in eine ferne transportiert
+      („Time is a river“); <b>Void</b> = vier Richtungen (syntaktisch/semantisch/grounding/epistemisch);
+      <b>vier Kohärenzfelder</b> (Syntax C, Semantik S, Grounding G, Epistemisch E) als Radar-Asse;
+      <b>Skaleninvarianz</b> (Diskurs → Absatz → Satz → Phrase → Token, „keine bevorzugte Skala“);
+      <b>Faserbündel</b> Form→Bedeutung (Paraphrase = Bewegung in der Faser, Synonymie = Faser-Eigenschaft);
+      <b>Kompositionalität</b> als kommutatives Quadrat
+      <div class="eq">X  (Formen)   --f-->   X′  (transformierte Form)
+  | π                        | π′
+  v                          v
+S  (Bedeutungen) --g-->  S′     wobei  π′ ∘ f = g ∘ π</div>
+      und das <b>Dreier-Zusammenbrechen</b>: Geometrie, Topologie und Skaleninvarianz degradieren <i>zusammen</i>
+      — „die Signatur eines einzigen zugrunde liegenden strukturierten Raums“.
+    </p>
+
+    <h3>Schicht 3 — B's Messung der Form</h3>
+    <p>
+      B liefert die <b>Operationalisierung</b>: Kanteneinführung nach normalisiertem Gewicht
+      <code>wn=(w−wmin)/(wmax−wmin)</code>; <b>β₀</b> per Union-Find (Rank/Path-Kompression); <b>β₁</b> per BFS
+      <code>findCycle</code>, wenn eine Kante zwei bereits verbundene Komponenten schließt; <b>2-Facetten</b>
+      (Dreiecke) töten Zyklen (β₁ −= 1). Aus der Filtration: <b>Persistenzdiagramm</b> (Geburt × Tod, Diagonale
+      = Rauschen, Fernbereich = Signal), <b>Barcode H₁</b>, <b>Betti-Kurven</b> β₀(ω)/β₁(ω),
+      <b>Persistenzdichte P(π)</b> und <b>Geburtsdichte P(β)</b> (lin/log). Daten: Petri et al. 2014
+      (rsif-2014-0873), Placebo vs. Psilocybin, Kreis-/Force-Layout.
+    </p>
+
+    <h3>Schicht 4 — Das fusionierte Instrument (die Synthese)</h3>
+    <p>
+      Wende B's Pipeline auf A's Objekt an: Einbettung der Äußerungen in einen metrischen Raum → ω-Filtration →
+      β₀/β₁ lesen. Dann wird A's „Verstehen = Wissen um die Form“ <b>operational</b>: <b>Verstehen = die
+      Persistenzlandschaft.</b>
+    </p>
+    <div class="card">
+      <h4>Lexikon der Fusion (Feature ↔ Topologie ↔ Bedeutung)</h4>
+      <p style="margin:0;">
+        <b>β₀-Cluster</b> ↔ Konvention/Bedeutungsraum &nbsp;·&nbsp; <b>beständige β₁-Schleife</b> ↔
+        Grammatik-/Metaphor-Filament &nbsp;·&nbsp; <b>kurzlebige β₁</b> ↔ lokale Füllungen ≈ Void/Rauschen
+        (Diagonale) &nbsp;·&nbsp; <b>∂M</b> ↔ Hoch-Persistenz-Knie der Betti-Kurve &nbsp;·&nbsp;
+        <b>leerer Raum</b> zwischen Clustern ↔ A's semantischer Void (vier Richtungen) &nbsp;·&nbsp;
+        <b>Skaleninvarianz</b> ↔ selbstähnliche Persistenz über ω (A's Zoom) &nbsp;·&nbsp; <b>π: X→S</b> ↔ die
+        Quotienten-Ebene, die B als „Basis“ realisiert zeigt.
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>Zusammen in einer Zeile</h4>
+      <p>
+        <b>Punktmenge</b> (Äußerung ≙ Hirnareal) → <b>Filtration über ω</b> → <b>β₀/β₁</b> (Cluster ≙ Komponenten,
+        Filamente ≙ Schleifen) → <b>Persistenz</b> (Signal ≙ beständige Schleife) → <b>∂M</b> (Knie ≙
+        Phasenübergang). Fünf Stufen, zwei Quellen, ein Instrument: <i>permanente Homologie als Grammatik der
+        Form.</i>
+      </p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — ein „Bedeutungs-Web“ unter ω-Filtration</h2>
+    <p>
+      Links: ein synthetisches <b>Bedeutungs-Web</b> — drei <b>Konventions-Cluster</b> (blau/gold/grün) und ein
+      <b>Metaphor-Ring</b> (korall), der eine Struktur über den Void trägt. Rechts: die live berechneten
+      <b>Betti-Kurven</b> β₀(ω) und β₁(ω). Schiebe die Skala ω — sie entspricht A's „Zoom“ und B's Filtration.
+    </p>
+    <ul style="margin:0 0 6px 20px;color:var(--muted);font-size:.95em;">
+      <li><b style="color:var(--accent)">Cluster (β₀):</b> konventionelle Bedeutungsräume; sie verschmelzen erst
+        bei hohem ω über den Void (β₀ bricht).</li>
+      <li><b style="color:var(--bad)">Metaphor-Ring (β₁):</b> eine Schleife, die <i>beständig</i> überlebt — das
+        Signal, weit von der Persistenz-Diagonale entfernt.</li>
+      <li><b style="color:var(--good)">∂M:</b> die Skala des steilsten topologischen Übergangs
+        (Phasenübergang) — „die Grenze trägt die Information“ (A), gemessen als größte Änderung von β₀/β₁
+        pro ω (B).</li>
+    </ul>
+    <div class="viz-shell">
+      <div class="viz-row">
+        <canvas id="vweb" width="400" height="300"></canvas>
+        <canvas id="vcurves" width="400" height="300"></canvas>
+      </div>
+      <div class="ctrl">
+        <label for="viz-omega">fein ω</label>
+        <input type="range" id="viz-omega" min="0" max="1000" value="350" step="1"
+               aria-label="Filtrations-Skala ω">
+        <label for="viz-omega">grob ω</label>
+        <button class="btn" id="viz-anim" type="button">▶ ω animieren</button>
+      </div>
+      <div class="readout">
+        <div class="st" id="vizState"></div>
+        <div class="ds" id="vizReadout"></div>
+        <div class="statrow">
+          <span class="c0">β₀ Komponenten = <b id="viz-b0">–</b></span>
+          <span class="c1">β₁ Schleifen = <b id="viz-b1">–</b></span>
+          <span>ω = <b id="viz-omval">–</b></span>
+          <span>∂M bei ω* = <b id="viz-peak">–</b></span>
+        </div>
+      </div>
+      <p class="note">Echter Algorithmus, inline Daten, keine Netzabrufe: β₀ per Union-Find, β₁ als
+      cyclomatische Zahl des 1-Gerüsts (β₁ = E − V + β₀, also immer ≥ 0). Dieselbe ω-Filtration, die B an
+      echten Konnektomen fährt — hier auf A's „Bedeutungs-Web“ angewandt.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <span class="pill">A</span>
+        <a href="../foam_of_meaning.html">foam_of_meaning.html</a>
+        <p>„The Foam of Meaning“: Bedeutung als Geometrie des Raums aller Äußerungen — die Arena
+        (≈ 10⁹⁴ Sequenzen), Cluster/Filamente/Void, Kosmos ≅ Sprache, vier Void-Richtungen, vier Kohärenzfelder,
+        Skaleninvarianz, Metapher als Längsten-Filament, Faserbündel Form→Bedeutung, Kompositionalität
+        (π′∘f=g∘π) und die „topologische Signatur β₀,β₁“.</p>
+      </div>
+      <div class="card">
+        <span class="pill">B</span>
+        <a href="../homological_scaffolds/index.html">homological_scaffolds/index.html</a>
+        <p>„Persistent Homology of Brain Networks — Psilocybin vs Placebo“: interaktiver Scaffold-Explorer nach
+        Petri et al. (2014); ω-Filtration über Konnektivität, β₀ (Union-Find), β₁ (Zyklerkennung + 2-Facetten),
+        Persistenzdiagramm, Barcode H₁, Betti-Kurven und Persistenz-/Geburtsdichten an zwei echten fMRE-Datensätzen.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion · Runde 1 · Paar 041 · nicht-AI-Spur. Selbstbezügliche, themenreaktive HTML-Datei; alle Daten inline,
+    keine Netzabrufe.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cweb = document.getElementById('vweb');
+  var ccur = document.getElementById('vcurves');
+  if(!cweb || !ccur || !cweb.getContext || !ccur.getContext){ return; }
+  var ctxW = cweb.getContext('2d');
+  var ctxC = ccur.getContext('2d');
+  var slider = document.getElementById('viz-omega');
+  var animBtn = document.getElementById('viz-anim');
+  var b0El = document.getElementById('viz-b0');
+  var b1El = document.getElementById('viz-b1');
+  var omEl = document.getElementById('viz-omval');
+  var peakEl = document.getElementById('viz-peak');
+  var stateEl = document.getElementById('vizState');
+  var readEl = document.getElementById('vizReadout');
+
+  var DPR = 1, W1=1, H1=1, W2=1, H2=1;
+  function fitOne(c){
+    var r = c.getBoundingClientRect();
+    var w = Math.max(1, r.width), h = Math.max(1, r.height);
+    c.width = Math.round(w*DPR); c.height = Math.round(h*DPR);
+    var ctx = c.getContext('2d');
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    return {ctx:ctx, W:w, H:h};
+  }
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    var a = fitOne(cweb); W1=a.W; H1=a.H;
+    var b = fitOne(ccur); W2=b.W; H2=b.H;
+    redraw();
+  }
+
+  /* ---------- Daten: Bedeutung-Web (deterministisch, inline) ---------- */
+  var P = [];
+  function add(x,y,c){ P.push([x,y,c]); }
+  function cluster(cx,cy,n,r,seed){
+    for(var k=0;k<n;k++){
+      var a = seed + k*2*Math.PI/n + k*0.13;
+      var rr = r*(0.55 + 0.45*(((k*37)%10)/10));
+      add(cx+Math.cos(a)*rr, cy+Math.sin(a)*rr, 0);
+    }
+  }
+  cluster(0.18,0.22,6,0.05,0.3);   // Konventionen
+  cluster(0.82,0.24,6,0.05,1.2);   // Idiom
+  cluster(0.18,0.80,5,0.05,2.3);   // Häufiges
+  for(var rk=0; rk<8; rk++){       // Metaphor-Ring (langer Filament über den Void)
+    var ra = rk*2*Math.PI/8 - 0.3;
+    add(0.55+Math.cos(ra)*0.11, 0.60+Math.sin(ra)*0.11, 3);
+  }
+  var V = P.length;
+
+  function dist(a,b){ return Math.hypot(a[0]-b[0], a[1]-b[1]); }
+  function key(i,j){ return i<j ? i+'_'+j : j+'_'+i; }
+  var EMAX = 0.42, WMAX = 0.40;
+  var edges = [];
+  for(var i=0;i<V;i++) for(var j=i+1;j<V;j++){
+    var d = dist(P[i],P[j]);
+    if(d < EMAX){ edges.push({i:i,j:j,w:d}); }
+  }
+  edges.sort(function(a,b){ return a.w-b.w; });
+
+  function compute(omega){
+    var parent = new Array(V); for(var i=0;i<V;i++) parent[i]=i;
+    var rank = new Array(V); for(var r=0;r<V;r++) rank[r]=0;
+    function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+    function union(a,b){
+      a=find(a); b=find(b); if(a===b) return false;
+      if(rank[a]<rank[b]){ var t=a;a=b;b=t; }
+      parent[b]=a; if(rank[a]===rank[b]) rank[a]++; return true;
+    }
+    var beta0=V, E=0, activeE=[];
+    for(var e2=0; e2<edges.length; e2++){
+      var ed = edges[e2];
+      if(ed.w > omega) break;
+      E++; activeE.push(ed);
+      if(union(ed.i, ed.j)) beta0--;
+    }
+    var beta1 = E - V + beta0; // cyclomatische Zahl des 1-Gerüsts (>= 0)
+    return {beta0:beta0, beta1:beta1, activeE:activeE};
+  }
+
+  /* Kurven einmal sampeln; ∂M = Skala des steilsten topologischen Übergangs */
+  var CURV = null, TRANS = null;
+  function buildCurves(){
+    var ws=[], c0=[], c1=[], S=160;
+    for(var s=0; s<=S; s++){
+      var w = WMAX*s/S;
+      var r = compute(w);
+      ws.push(w); c0.push(r.beta0); c1.push(r.beta1);
+    }
+    CURV = {ws:ws, c0:c0, c1:c1};
+    var pi=1, best=-1;
+    for(var i2=1;i2<c0.length;i2++){
+      var ch = Math.abs(c0[i2]-c0[i2-1]) + Math.abs(c1[i2]-c1[i2-1]);
+      if(ch>best){ best=ch; pi=i2; }
+    }
+    TRANS = {w:ws[pi], c1:c1[pi]};
+  }
+
+  /* ---------- Farben (themereaktiv) ---------- */
+  function cssVar(name){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function withAlpha(color,a){
+    if(color && color.charAt(0)==='#' && color.length===7){
+      var r=parseInt(color.slice(1,3),16), g=parseInt(color.slice(3,5),16), b=parseInt(color.slice(5,7),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }
+    if(color && color.charAt(0)==='#' && color.length===4){
+      var h=color.charAt(1),h2=color.charAt(2),h3=color.charAt(3);
+      return 'rgba('+parseInt(h+h2,16)+','+parseInt(h2+h3,16)+','+parseInt(h3+h,16)+','+a+')';
+    }
+    return 'rgba(180,180,180,'+a+')';
+  }
+  function cols(){
+    return {
+      accent: cssVar('--accent')||'#6cc0ff',
+      accent2: cssVar('--accent2')||'#ffd766',
+      good: cssVar('--good')||'#4fe0a0',
+      bad: cssVar('--bad')||'#ff7a8a',
+      text: cssVar('--text')||'#e7e2d6',
+      muted: cssVar('--muted')||'#98a0ad',
+      line: cssVar('--line')||'rgba(255,255,255,0.15)',
+      bgSoft: cssVar('--bg-soft')||'#12161f'
+    };
+  }
+  function clusterCol(c, C){
+    if(c===1) return C.accent2;
+    if(c===2) return C.good;
+    if(c===3) return C.bad;
+    return C.accent;
+  }
+
+  /* ---------- Web zeichnen ---------- */
+  function drawWeb(omega){
+    var C = cols();
+    ctxW.clearRect(0,0,W1,H1);
+    var pad = 22;
+    var s = Math.min(W1,H1) - 2*pad;
+    var ox = (W1-s)/2, oy = (H1-s)/2;
+    function mx(x){ return ox + x*s; }
+    function my(y){ return oy + y*s; }
+
+    var res = compute(omega);
+    ctxW.lineWidth = 1;
+    for(var e=0;e<res.activeE.length;e++){
+      var ed = res.activeE[e];
+      ctxW.strokeStyle = withAlpha(C.accent, 0.45);
+      ctxW.beginPath();
+      ctxW.moveTo(mx(P[ed.i][0]),my(P[ed.i][1]));
+      ctxW.lineTo(mx(P[ed.j][0]),my(P[ed.j][1]));
+      ctxW.stroke();
+    }
+    // Punkte
+    for(var p=0;p<V;p++){
+      var pt = P[p];
+      ctxW.fillStyle = clusterCol(pt[2], C);
+      ctxW.beginPath();
+      ctxW.arc(mx(pt[0]), my(pt[1]), (pt[2]===3?4:3.2), 0, Math.PI*2);
+      ctxW.fill();
+    }
+    // Labels
+    ctxW.font = '600 11px ui-monospace,monospace';
+    ctxW.fillStyle = C.muted;
+    ctxW.textAlign = 'left';
+    ctxW.fillText('Bedeutungs-Web (Formen X)', 10, 16);
+    ctxW.fillStyle = C.accent;  ctxW.fillText('Konventionen', mx(0.18)-26, my(0.22)-22);
+    ctxW.fillStyle = C.accent2; ctxW.fillText('Idiom', mx(0.82)-12, my(0.24)-22);
+    ctxW.fillStyle = C.good;    ctxW.fillText('Häufiges', mx(0.18)-26, my(0.80)+30);
+    ctxW.fillStyle = C.bad;     ctxW.fillText('Metaphor-Ring', mx(0.55)-34, my(0.60)-26);
+  }
+
+  /* ---------- Betti-Kurven zeichnen ---------- */
+  function drawCurves(omega){
+    var C = cols();
+    ctxC.clearRect(0,0,W2,H2);
+    var pad = 30, pw = W2-2*pad, ph = H2-2*pad;
+    var maxB = 1;
+    for(var i=0;i<CURV.c0.length;i++){ if(CURV.c0[i]>maxB) maxB=CURV.c0[i]; }
+    for(var j=0;j<CURV.c1.length;j++){ if(CURV.c1[j]>maxB) maxB=CURV.c1[j]; }
+    function X(w){ return pad + (w/WMAX)*pw; }
+    function Y(v){ return pad + ph - (v/maxB)*ph; }
+
+    // Gitter
+    ctxC.strokeStyle = C.line; ctxC.lineWidth = 1;
+    for(var g=0; g<=4; g++){
+      var gy = pad + ph*g/4;
+      ctxC.beginPath(); ctxC.moveTo(pad,gy); ctxC.lineTo(pad+pw,gy); ctxC.stroke();
+      var gx = pad + pw*g/4;
+      ctxC.beginPath(); ctxC.moveTo(gx,pad); ctxC.lineTo(gx,pad+ph); ctxC.stroke();
+    }
+    // β0
+    ctxC.strokeStyle = C.accent; ctxC.lineWidth = 2.2;
+    ctxC.beginPath();
+    for(var a=0;a<CURV.ws.length;a++){ var x=X(CURV.ws[a]), y=Y(CURV.c0[a]); a?ctxC.lineTo(x,y):ctxC.moveTo(x,y); }
+    ctxC.stroke();
+    // β1
+    ctxC.strokeStyle = C.bad; ctxC.lineWidth = 2.2;
+    ctxC.beginPath();
+    for(var b=0;b<CURV.ws.length;b++){ var x2=X(CURV.ws[b]), y2=Y(CURV.c1[b]); b?ctxC.lineTo(x2,y2):ctxC.moveTo(x2,y2); }
+    ctxC.stroke();
+    // ∂M (steilster topologischer Übergang)
+    ctxC.strokeStyle = C.good; ctxC.setLineDash([4,4]); ctxC.lineWidth = 1.4;
+    ctxC.beginPath(); ctxC.moveTo(X(TRANS.w),pad); ctxC.lineTo(X(TRANS.w),pad+ph); ctxC.stroke();
+    ctxC.setLineDash([]);
+    // ω-Marker
+    ctxC.strokeStyle = C.muted; ctxC.lineWidth = 1.2;
+    ctxC.beginPath(); ctxC.moveTo(X(omega),pad); ctxC.lineTo(X(omega),pad+ph); ctxC.stroke();
+
+    ctxC.font = '600 11px ui-monospace,monospace';
+    ctxC.textAlign = 'left';
+    ctxC.fillStyle = C.accent; ctxC.fillText('β0 · Komponenten', pad+6, pad+14);
+    ctxC.fillStyle = C.bad;    ctxC.fillText('β1 · Schleifen',  pad+6, pad+29);
+    ctxC.fillStyle = C.good;   ctxC.fillText('∂M', X(TRANS.w)+4, pad+14);
+    ctxC.fillStyle = C.muted;  ctxC.textAlign='right'; ctxC.fillText('ω (Skala)', pad+pw, H2-8);
+    ctxC.textAlign='left';
+  }
+
+  /* ---------- Readout ---------- */
+  function regime(omega, beta0, beta1){
+    if(omega < 0.06) return {
+      s:'Isolierte Cluster bilden sich — β₀ bricht, erste Schleifen',
+      d:'β₀ fällt von V auf wenige Komponenten, während die Cluster sich intern verbinden; die Leerräume dazwischen sind A’s vier Void-Richtungen (die Wüste).'
+    };
+    if(omega < 0.30) return {
+      s:'Metaphor-Ring geschlossen — eine beständige H₁-Schleife',
+      d:'β₁ springt und überlebt über viele ω hinweg (fern der Persistenz-Diagonale = Signal). Das ist A’s „langer Filament über den Void“ als messbare, beständige Schleife.'
+    };
+    return {
+      s:'Cluster verschmelzen über den Void — β₀ bricht Richtung 1',
+      d:'Neue Makro-Schleifen (β₁) entstehen, während β₀ zusammenfällt und der Void überbrückt wird. Der steilste Übergang (∂M) ist A’s Phasenübergangs-Grenze: hier trägt die Grenze die meiste Information.'
+    };
+  }
+
+  function redraw(){
+    if(!CURV) buildCurves();
+    var omega = (parseInt(slider.value,10)||0)/1000 * WMAX;
+    var res = compute(omega);
+    var C = cols();
+    omEl.textContent = omega.toFixed(3);
+    b0El.textContent = String(res.beta0);
+    b1El.textContent = String(res.beta1);
+    peakEl.textContent = TRANS.w.toFixed(3);
+    var rg = regime(omega, res.beta0, res.beta1);
+    stateEl.textContent = rg.s;
+    readEl.textContent = rg.d;
+    drawWeb(omega);
+    drawCurves(omega);
+  }
+
+  /* ---------- Steuerung ---------- */
+  var animId = null, dir = 1;
+  if(animBtn){
+    animBtn.addEventListener('click', function(){
+      if(animId){ cancelAnimationFrame(animId); animId=null; animBtn.textContent='▶ ω animieren'; return; }
+      animBtn.textContent='⏸ stop';
+      (function step(){
+        var v = parseInt(slider.value,10) + dir*7;
+        if(v>=1000){ v=1000; dir=-1; }
+        if(v<=0){ v=0; dir=1; }
+        slider.value = v; redraw();
+        animId = requestAnimationFrame(step);
+      })();
+    });
+  }
+  if(slider) slider.addEventListener('input', redraw);
+  var toggle = document.getElementById('themeToggle');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var h = document.documentElement;
+      h.classList.toggle('dark');
+      toggle.textContent = h.classList.contains('dark') ? '☀ Hell' : '🌙 Dunkel';
+      redraw();
+    });
+  }
+  window.addEventListener('resize', resize);
+  slider.value = 350;
+  resize();
+})();
+</script>
+</body>
+</html>

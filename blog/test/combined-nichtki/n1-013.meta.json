@@ -1,0 +1,16 @@
+{
+  "no": "013",
+  "a": "hologram3.html",
+  "b": "new_idea.html",
+  "a_title": "5-Layer Stacked Holographic FFT Smiley — Additive Focus",
+  "b_title": "Kohärente Verschiedenheit — interaktive Reise",
+  "combined_theme": "additive-koharente-rekonstruktion",
+  "one_line": "Das Ganze entsteht aus der kohärenten Zusammensetzung seiner lokalen Teile; A's additiver Multi-Skala-Fokus (mit FFT als Kohärenz-Nachweis) ist B's Garben-Klebung/∞-Kohärenz-Leiter als lauffähiges, pixelgenaues Modell.",
+  "contradictions": [
+    "Klebregel: A klebt durch additive Superposition (Gauß-gewichtet, nie entfernt), B (klassische Garbe, Schritt 4) verlangt strikte Gleichheit auf Überlappungen s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}.",
+    "Ontologie des Ganzen: A behandelt den Smiley als feste vorgegebene Funktion, die der Fokus nur enthüllt; B (Schritt 6/8) bestreitet eine privilegierte Unterlage — das Objekt entsteht aus der Kohärenz seiner Manifestationen.",
+    "Metrisch vs. topologisch/homotopisch: A ist grundlegend metrisch/quantitativ (Pixel, Blockzählung, euklidischer Abstand, σ=0.7, kein Äquivalenz-Begriff); B will das Metrische transzendieren (Topologie, dann Homotopie ≃, explizit nicht bloß metrische Nähe)."
+  ],
+  "resolution": "Additives Kleben ist kohärentes Kleben im Spezialfall (lineare Superposition erfüllt Kompatibilität per Konstruktion; B's Schritt 5 lockert = zu ≃ und schafft genau den Raum dafür). Fest vs. emergent sind duale Grenzen desselben Zusammensetzungsprozesses (fixiertes Basisdatum → Enthüllung; nur durch Zusammensetzung definiert → Entstehung). A ist B's metrischer Spezialfall, B A's begriffliche Vollendung: Karten = Zellen×Schichten, Faser = lokale Auflösung, Übergang = additive Mischung, globaler Schnitt = rekonstruiertes Ganzes. Das Wesentliche ist Kohärenz unter Verfeinerung, nicht die konkrete Klebregel.",
+  "viz": "Interaktives Canvas: 3×3 lokale Karten (Klick = additiv verfeinern) links; globaler Schnitt rechts, geklebt aus den lokalen Zellen; drei Klebregeln (Gleichheit/Additiv/∞-Kohärenz) + Kohärenz-Meter auf Überlappungen; themenreaktiv, nur inline-Daten."
+}

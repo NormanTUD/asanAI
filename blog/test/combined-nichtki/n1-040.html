@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lokales bestimmt Globales — Ricci-Fluss ✕ Sheaves</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --bg-card:#ffffff; --text:#1c1c28; --dim:#565666;
+    --accent:#6a4cff; --accent2:#e8397a; --accent3:#0e9f6e; --accent4:#0e8fc4;
+    --border:rgba(20,20,40,.14); --canvas:#ffffff; --code-bg:rgba(106,76,255,.08);
+    --warn:#d1362f; --ok:#0e9f6e;
+  }
+  html.dark{
+    --bg:#0b0b18; --bg-card:#12122a; --text:#e6e4f5; --dim:#a7a4c0;
+    --accent:#a78bfa; --accent2:#ff7eb3; --accent3:#34d399; --accent4:#38bdf8;
+    --border:rgba(255,255,255,.14); --canvas:#0a0a1a; --code-bg:rgba(167,139,250,.12);
+    --warn:#ff5d5d; --ok:#34d399;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Segoe UI',system-ui,Tahoma,sans-serif;
+    line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 90px}
+  header{padding:52px 20px 26px;text-align:center;border-bottom:1px solid var(--border);max-width:820px;margin:0 auto}
+  h1{font-size:clamp(1.9rem,5.5vw,2.9rem);font-weight:800;line-height:1.15;
+     background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));
+     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{margin-top:12px;color:var(--dim);font-size:1rem}
+  .subtitle .fx{color:var(--accent2)}
+  .theme-btn{margin-top:18px;background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+     padding:8px 18px;border-radius:22px;cursor:pointer;font-size:.9rem;transition:.2s}
+  .theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin-top:44px}
+  h2{font-size:1.5rem;margin-bottom:14px;padding-left:14px;border-left:4px solid var(--accent);line-height:1.2}
+  h3{font-size:1.08rem;margin:22px 0 8px;color:var(--accent)}
+  p{margin-bottom:13px;color:var(--text)}
+  .dim{color:var(--dim)}
+  strong{color:var(--text)}
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin:16px 0}
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+  .ab>div{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .ab .tagA{border-top:3px solid var(--accent)}
+  .ab .tagB{border-top:3px solid var(--accent3)}
+  .who{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .ab .tagA .who{color:var(--accent)}
+  .ab .tagB .who{color:var(--accent3)}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;
+     padding:16px 18px;margin:16px 0;text-align:center;font-family:'Courier New',monospace;
+     font-size:1.08rem;overflow-x:auto;color:var(--text)}
+  .formula sub{font-size:.72em}
+  .note{background:var(--bg-card);border-left:3px solid var(--accent4);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+  .list{margin:8px 0 8px 2px;list-style:none}
+  .list li{padding:8px 0 8px 26px;position:relative}
+  .list li::before{content:'▸';position:absolute;left:6px;color:var(--accent)}
+  .prov{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .prov a{display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+     padding:16px 18px;text-decoration:none;color:var(--text);transition:.2s}
+  .prov a:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .prov .k{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:6px}
+  .prov .t{font-weight:700;margin-bottom:4px}
+  .prov .d{font-size:.9rem;color:var(--dim)}
+  /* ---- viz ---- */
+  .viz-box{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:14px}
+  #fuzCanvas{display:block;width:100%;height:auto;border-radius:10px;background:var(--canvas);border:1px solid var(--border)}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+  .controls button{background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+     padding:9px 16px;border-radius:9px;cursor:pointer;font-size:.9rem;transition:.15s}
+  .controls button:hover{border-color:var(--accent)}
+  .controls button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .controls .lbl{font-size:.85rem;color:var(--dim)}
+  @media(max-width:620px){.ab,.prov{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lokales bestimmt Globales</h1>
+  <div class="subtitle">Ricci-Fluss <span class="fx">✕</span> Sheaves &amp; Topoi — Fusion aus: ricci_fluss.html ✕ sheaf.html</div>
+  <button class="theme-btn" id="themeBtn">🌙 / ☀️ Theme</button>
+</header>
+
+<div class="wrap">
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere sind zwei Gesichter eines einzigen Prinzips: <strong>Das Ganze entsteht aus dem Lokalen.</strong>
+    In <em>sheaf.html</em> (B) geschieht dies <strong>exakt, algebraisch und zeitlos</strong>: übereinstimmende lokale
+    Sektionen auf überlappenden offenen Mengen verkleben zu einer <em>eindeutigen</em> globalen Sektion — und nichts
+    geht dabei verloren (Lokalität: wer lokal überall gleich ist, ist global identisch). In <em>ricci_fluss.html</em>
+    (A) geschieht dasselbe <strong>dynamisch, analytisch und in der Zeit</strong>: die <em>lokale</em> Krümmung treibt
+    eine Evolutionsgleichung, die die Metrik <em>glättet</em>, bis der Raum eine kanonische Form mit konstanter
+    Krümmung erreicht — ein Prozess, der Information <em>verliert</em>.</p>
+    <p>Die integrierte Position lautet: <strong>Lokales bestimmt Globales — exakt im Raum, verlustreich in der Zeit.</strong>
+    Bei jedem festen Zeitpunkt <em>t</em> ist die Metrik <em>g(t)</em> ein exakt verklebtes, verlustfreies globales Objekt
+    (die Welt von B); ihre <em>Zeitentwicklung</em> ist eine verlustreiche Glättung, die Krümmungs-Richtungen herausschmilzt
+    (die Welt von A). Was der Fluss im Mittel <em>erhält</em> (die „Gesamtmasse“ / die Totalkrümmung) ist zugleich die
+    topologische Invariante, die B im Zentrum seines Bildes von „Raum = Topos“ stellt: Die beiden Papiere beschreiben
+    dieselbe Maschine aus zwei Richtungen — B liefert die <strong>Raumachse</strong> (Konsistenz), A die
+    <strong>Zeitachse</strong> (Dynamik).</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="dim">Zwei echte, im Wortlaut der Quellen verankerte Spannungen — keine erdachte, sondern die tatsächlichen
+    Gegenpositionen beider Texte.</p>
+
+    <h3>Widerspruch 1 — verlustreich vs. verlustfrei</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · ricci_fluss.html</div>
+        <p>Lokales→Globales ist ein <strong>dynamischer, verlustiger</strong> Vorgang. Der Fluss „glättet“ die Geometrie
+        wie Wärmeleitung: Kurven schrumpfen zur Kugel, Länge und Fläche nehmen ab, hochfrequente Details klingen aus.
+        Viele <em>verschiedene</em> Ausgangsformen laufen auf dieselbe runde Grenze zu — die Abbildung ist
+        <strong>viel-zu-eins, nicht injektiv</strong>; Information geht verloren.</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · sheaf.html</div>
+        <p>Lokales→Globales ist <strong>exakt und verlustfrei</strong>. Das Verklebungs-Axiom garantiert eine
+        <em>eindeutige</em> globale Sektion, und die <em>Lokalität</em> sagt: stimmen zwei Sektionen auf jedem
+        Uᵢ überein, so sind sie <em>identisch</em> (s = t). Nichts wird vergessen — die lokalen Daten
+        <strong>erzeugen</strong> das Ganze ohne Informationverlust.</p>
+      </div>
+    </div>
+    <p class="dim"><strong>Kern des Streits:</strong> A sagt „das Lokale bestimmt das Ganze nur <em>approximativ</em> und
+    der Prozess <em>vergisst</em>“; B sagt „das Lokale bestimmt das Ganze <em>exakt und eindeutig</em>, <em>nichts</em>
+    wird vergessen“. Genau das Gegenteil bei der Informationsbilanz.</p>
+
+    <h3>Widerspruch 2 — der Raum verwandelt sich vs. der Raum ist fix</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · ricci_fluss.html</div>
+        <p>Der Raum <strong>verwandelt sich selbst</strong>: Die Metrik läuft in der Zeit, und die <em>Chirurgie</em>
+        (Singularität → „herausschneiden, Enden mit Kappen verschließen“) <strong>ändert sogar die Topologie</strong> der
+        Mannigfaltigkeit. Die Bühne, auf der alles geschieht, ist <em>keine</em> feste Größe.</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · sheaf.html</div>
+        <p>Der topologische Raum X ist <strong>fix und passiv</strong> gegeben; das Bündel lebt <em>auf</em> ihm. Die
+        Leitidee „<em>space is what you can observe on it</em>“ liest sich so: Der Raum ist ein <strong>statischer
+        Behälter</strong>, der <em>von den Daten auf ihm</em> mitbestimmt wird — nur die Sektionen variieren, der
+        Träger bleibt unverändert.</p>
+      </div>
+    </div>
+    <p class="dim"><strong>Kern des Streits:</strong> Für B ist der Raum die <em>gegebene, unveränderliche Grundlage</em>,
+    die das Datenobjekt trägt; für A <em>reißt</em> der Prozess diese Grundlage aktiv um (Geometrie läuft, Topologie wird
+    chirurgisch ersetzt).</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Die beiden Sätze widersprechen sich nicht, weil sie <strong>verschiedene Achsen</strong> desselben Prinzips
+    beschreiben. Man trennt <em>Raum</em> (Zeitpunkt) von <em>Zeit</em> (Verlauf):</p>
+
+    <h3>Auflösung zu Widerspruch 1 (Verlust)</h3>
+    <div class="note">
+      <p><strong>Im Raum ist alles exakt, in der Zeit ist alles verlustreich — und das widerspricht sich nicht.</strong>
+      Bei festem <em>t</em> ist die Metrik <em>g(t)</em> eine <em>eindeutig verklebte</em> globale Sektion über einem
+      Atlas: Hier herrscht B (Lokalität = Eindeutigkeit, nichts geht verloren). Die <em>Zeit</em> aber ist eine
+      <strong>projektive</strong> Abbildung: Der Fluss ist wie die rechte Adjunkte — er <em>projiziert</em> den
+      Zustandraum auf die kleinere Schar der kanonischen Formen und <em>schmilzt</em> die „Krümmungs-Richtungen“
+      heraus. Was bleibt, ist der <strong>Mittelwert</strong> (erhaltene „Masse“); was verloren geht, ist die
+      <strong>Varianz</strong> (das lokale Detail). In der 2-D-Geometrie ist genau das durch <strong>Gauss-Bonnet</strong>
+      abgesichert: Die Totalkrümmung ∫ K dA = 2πχ(M) ist topologisch invariant und <em>kann</em> vom Fluss nicht
+      verändert werden. A verliert also nur das, was topologisch <em>keine</em> Information ist — die verlustfreie
+      Invariante bleibt, der verlustreiche Rest glättet.</p>
+    </div>
+
+    <h3>Auflösung zu Widerspruch 2 (fixer Raum)</h3>
+    <div class="note">
+      <p><strong>Bs „fester Raum“ gilt nur <em>zwischen</em> den Chirurgien; die Chirurgie <em>ist</em> die
+      Verklebung auf neuem Träger.</strong> Innerhalb einer geometrischen Phase ist X tatsächlich fix (B). Der
+      chirurgische Moment ist genau der, in dem A die Topologie ändert — und dieser Wechsel wird <em>nicht</em>
+      willkürlich, sondern <strong>mit Bs Verklebungs-Maschinerie</strong> durchgeführt: Man schneidet die
+      Singularität heraus, kappt die Enden und <em>verklebt</em> das Ergebnis zu einer neuen, glatten Mannigfaltigkeit,
+      auf der der Fluss weiterläuft. Die „neue“ Topologie ist also die <em>eindeutige Verklebung</em> der
+      Stück-bündel. Bs Behauptung „Raum = Behälter, der von den Daten bestimmt wird“ überlebt die Chirurgie: Der Raum
+      ist stückweise fix, und jede Topologie-Änderung <em>ist</em> eine Verklebung. A und B greifen ineinander wie
+      Zahnrad auf Zahnrad: A löst die Topologie-Änderung aus, B führt sie exakt und verlustfrei aus.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Die Maschine: Lokales → Globales</h3>
+    <p>Der gemeinsame Kern. B formuliert ihn als <strong>Kategorie</strong>: Ein Prerbündel ist ein
+    <strong>kontravarianter Funktor</strong>
+    <em>F : O(X)ᵒᵖ → Set</em>, der jeder offenen Menge U eine Menge Sektionen F(U) zuordnet und jede Einbettung
+    U ⊆ V auf eine <strong>Restriktionsabbildung</strong> F(V) → F(U) (die Pfeile drehen sich um). Ein
+    <strong>Bündel</strong> (Sheaf) ist ein Prerbündel, das zwei Axiome für jede Überdeckung {Uᵢ} von U erfüllt:</p>
+    <ul class="list">
+      <li><strong>Lokalität:</strong> s, t ∈ F(U) stimmen auf jedem Uᵢ überein ⇒ s = t. (Eindeutigkeit / nichts wird vergessen.)</li>
+      <li><strong>Verklebung:</strong> Sektionen sᵢ ∈ F(Uᵢ), die auf allen Schnitten Uᵢ∩Uⱼ übereinstimmen, besitzen eine <em>eindeutige</em> globale Sektion s ∈ F(U). (Existenz / das Ganze entsteht.)</li>
+    </ul>
+    <p>Bs revolutionärer Schritt: Eine <strong>Grothendieck-Topologie</strong> braucht <em>keinen</em> Punktraum —
+    sie ist bloß eine Regel auf einer Kategorie, welche Pfeilfamilien „Überdeckungen“ sind. Damit gilt:
+    <strong>„Die Topologie IST die Geometrie“</strong>. Ein <strong>Topos</strong> ist die Kategorie aller Bündel
+    auf einem Site (C, J) — eine „Universum“, die wie Set funktioniert, aber <em>von der Geometrie verdrillt</em>
+    ist: mit Subjekt-Klassifizierer Ω, Exponenten, endlichen Limiten/Colimiten. Und in der
+    <strong>inneren Logik</strong> ist die Wahrheit eine <em>offene Menge</em>: In Set ist Ω = {⊤, ⊥}; in Sh(X) ist
+    Ω = Open(X). Ein Satz kann „auf U wahr, auf V falsch“ sein — und so kann das <strong>Ausschlussprinzip</strong>
+    P ∨ ¬P <em>fehlen</em> (es deckt einen Grenzpunkt nicht ab). <strong>Wahrheit wird lokal — wie die Geometrie.</strong></p>
+
+    <h3>A: derselbe Kern als Dynamik</h3>
+    <p>A liefert das <em>dynamische</em> Pendant. Die Gleichung</p>
+    <div class="formula">∂g<sub>ij</sub> / ∂t = −2 R<sub>ij</sub> &nbsp;&nbsp;(Ricci-Fluss, Hamilton 1982)</div>
+    <p>sagt: Die Metrik <em>g</em> (wie man Abstände misst) verändert sich proportional zur
+    <strong>Ricci-Krümmung</strong> R<sub>ij</sub> — positive Krümmung schrumpft, negative dehnt. Die Analogie ist die
+    <strong>Wärmeleitung</strong> ∂u/∂t = Δu: Wie sich Temperatur ausgleicht, <em>glättet</em> der Fluss die
+    Geometrie. Das Ziel ist eine konstante Krümmung (z.&nbsp;B. die Kugel); Hindernis sind
+    <strong>Singularitäten</strong> (Hals-Einengung), die Perelman durch <strong>Chirurgie</strong> überwindet —
+    Herauschnitt + Kappe — und so 1904→2003 die Poincaré-Vermutung / Thurston-Geometrisierung bewies.</p>
+
+    <h3>Die Verschmelzung (das ist mehr als A + B)</h3>
+    <ul class="list">
+      <li><strong>Krümmung ist ein Bündel-Objekt.</strong> Die Krümmung R<sub>ij</sub> ist ein <em>Tensorfeld</em>,
+      also eine <strong>globale Sektion eines Vektorbündels</strong> — A’s Treiber ist ein <em>Beispiel</em> für B’s
+      Gegenstand. A’s „lokale Daten“ sind buchstäblich B’s „Sektionen“.</li>
+      <li><strong>g(t) verklebt exakt.</strong> Die Metrik zu einem Zeitpunkt ist eine globale Sektion, die über einem
+      Atlas <em>eindeutig</em> aus Karten verklebt ist (B). Die <em>exakte</em> Seite des „Lokal→Global“ sitzt in A’s
+      <strong>Zustand</strong> (Raum).</li>
+      <li><strong>Fluss = Projektion, Verklebung = Einbettung.</strong> B’s Sheafifizierung <em>a ⊣ i</em> (linke
+      Adjunkte zur Inklusion Sh(C,J) ↪ [Cᵒᵖ,Set]) ist die <em>exakte</em> Abbildung (verliert nichts). A’s Fluss ist die
+      <em>projektive</em> Seite: er schmilzt Richtungen heraus. Raum exakt / Zeit verlustreich — eine
+      <strong>Adjunktions-Polarität</strong> derselben Maschine.</li>
+      <li><strong>Erhaltene Masse ↔ topologische Invariante.</strong> Der Fluss erhält den <em>Mittelwert</em>
+      (Gesamtmasse, wie die Wärme die Integral-Masse), während die Varianz verloren geht. In 2-D sichert
+      <strong>Gauss-Bonnet</strong> ∫ K dA = 2πχ(M): Die Totalkrümmung ist eine <em>topologische</em> Größe — genau die
+      Sorte „Raum, der von seiner Datenstruktur festgelegt ist“, die B als Topos feiert.</li>
+      <li><strong>Ω = Open(X) ↔ die Atlas-Karten.</strong> In B ist Wahrheit = offene Menge; in A ist die Krümmung auf
+      den <em>offenen Karten</em> definiert, über die die Metrik verklebt wird. Das fehlende Ausschlussprinzip in B
+      (P∨¬P deckt einen Punkt nicht ab) hat sein geometrisches Echo in A: „Hier ist die Metrik rund“ ist ein
+      <em>lokaler</em> Satz, der ohne den Fluss nicht global wird.</li>
+    </ul>
+    <div class="formula">
+      Raum: &nbsp; F : O(X)ᵒᵖ → Set, &nbsp; ∃! s &nbsp;(exakt, verlustfrei, B)<br>
+      Zeit: &nbsp; ∂g/∂t = −2 Ric(g), &nbsp; Mittel=const, &nbsp; Varianz→0 &nbsp;(verlustreich, A)<br>
+      Invariante: &nbsp; ∫ K dA = 2πχ(M) &nbsp;— bleibt in beiden erhalten
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <p>Ein Kreis (Basisraum, wie B’s S¹) mit vier überlappenden Bögen; jeder Bogen trägt eine <em>lokale
+    Sektion</em> (eine „Krümmungs-Höhe“ um den Ring). Die Demo zeigt die <strong>Fusion</strong> auf einem Objekt:</p>
+    <ul class="list">
+      <li><strong>Verklebung (B — exakt, im Raum):</strong> „Vereinbar“ → alle Bögen stimmen auf den Überdeckungen
+      überein ⇒ eine <em>eindeutige globale Sektion</em> (gestrichelte Ringkurve). „Nicht vereinbar“ → ein Bogen springt
+      auf der Überdeckung ab ⇒ <em>keine</em> globale Sektion (Konflikt-Marker).</li>
+      <li><strong>Ricci-Fluss (A — verlustreich, in der Zeit):</strong> „▶ Fluss“ glättet die Sektion diskret
+      (Laplace/Wärme): die <strong>Varianz</strong> (lokalen Details, „Information“) klingt aus, der
+      <strong>Mittelwert</strong> („Gesamtmasse“, topologisch invariant) bleibt exakt erhalten.</li>
+    </ul>
+
+    <div class="viz-box">
+      <canvas id="fuzCanvas" width="860" height="520"></canvas>
+      <div class="controls">
+        <button id="btnCompat" class="on">Vereinbar (Sheaf ✓)</button>
+        <button id="btnIncompat">Nicht vereinbar (✗)</button>
+        <span style="width:100%"></span>
+        <button id="btnFlow">▶ Ricci-Fluss</button>
+        <button id="btnReset">↺ Reset</button>
+        <span class="lbl">Bögen = lokale Sektionen · Ring = verklebte globale Sektion</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p class="dim">Zu den beiden Original-Papieren dieser Fusion (relative Links, dieses File liegt in
+    <code>combined-nichtki/</code>):</p>
+    <div class="prov">
+      <a href="../ricci_fluss.html">
+        <div class="k">A · Quelle</div>
+        <div class="t">Der Ricci-Fluss</div>
+        <div class="d">Visuelle Erklärung der Evolutionsgleichung ∂g/∂t = −2Ric: Wärme-Analogie,
+        Konvergenz zur Kugel, Singularitäten und Perelmans Chirurgie, Poincaré.</div>
+      </a>
+      <a href="../sheaf.html">
+        <div class="k">B · Quelle</div>
+        <div class="t">Topoi &amp; Sheaves</div>
+        <div class="d">Sieben Schritte von Prerbündeln über das Verklebungsproblem zu Grothendieck-Topologien,
+        Sites, dem Topos und der inneren Logik, in der Wahrheit lokal (Ω = Open(X)) wird.</div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('fuzCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var N = 160;                 // Stützpunkte um den Ring
+  var cx = W/2, cy = 278, R = 150, S = 54;
+  var mode = 'compat';         // 'compat' | 'incompat'
+  var flowing = false;
+  var BAD_ARC = 2;             // Bogen, der bei 'incompat' springt
+  var JUMP = 0.42;             // Größe des Sprungs
+
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function palette(){
+    return {
+      canvas: cssVar('--canvas'), text: cssVar('--text'), dim: cssVar('--dim'),
+      accent: cssVar('--accent'), accent2: cssVar('--accent2'),
+      accent3: cssVar('--accent3'), accent4: cssVar('--accent4'),
+      border: cssVar('--border'), warn: cssVar('--warn'), ok: cssVar('--ok')
+    };
+  }
+
+  // startendes, welliges Feld (lokale "Krümmungshöhe")
+  var field = [];
+  function initField(){
+    field = [];
+    for(var i=0;i<N;i++){
+      var a = 2*Math.PI*i/N;
+      field[i] = 0.52 + 0.30*Math.sin(2*a) + 0.17*Math.cos(3*a + 0.7) + 0.10*Math.sin(5*a);
+    }
+  }
+  initField();
+
+  function stats(){
+    var m=0,i; for(i=0;i<N;i++) m+=field[i]; m/=N;
+    var v=0; for(i=0;i<N;i++) v+=(field[i]-m)*(field[i]-m); v/=N;
+    return {mean:m, varr:v};
+  }
+
+  function flowStep(dt){
+    var nf=[], i, prev, next, cur;
+    for(i=0;i<N;i++){
+      prev=field[(i-1+N)%N]; next=field[(i+1)%N]; cur=field[i];
+      var lap=(prev+next)/2 - cur;
+      nf[i]=cur + dt*lap;
+    }
+    field=nf;
+  }
+
+  // 4 überlappende Bögen
+  function arcs(){
+    var base = Math.PI/2, ov = 0.55, out=[];
+    for(var i=0;i<4;i++){
+      out.push({ start: i*base - ov/2, end: (i+1)*base + ov/2 });
+    }
+    return out;
+  }
+  function arcColors(p){ return [p.accent, p.accent2, p.accent3, p.accent4]; }
+
+  function radiusAt(i, arcIdx){
+    var h = field[i];
+    if(mode==='incompat' && arcIdx===BAD_ARC) h += JUMP;
+    return R + h*S;
+  }
+  function angleOf(i){ return 2*Math.PI*i/N - Math.PI/2; }
+
+  function draw(){
+    var p = palette();
+    ctx.clearRect(0,0,W,H);
+
+    // Basis-Kreis
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI);
+    ctx.strokeStyle=p.border; ctx.lineWidth=1; ctx.stroke();
+    ctx.font='12px sans-serif'; ctx.fillStyle=p.dim; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('Basisraum S¹', cx, cy + R + 22);
+
+    var cols = arcColors(p), ar = arcs();
+
+    // Bögen (lokale Sektionen)
+    for(var aIdx=0;aIdx<4;aIdx++){
+      var a0=ar[aIdx].start, a1=ar[aIdx].end;
+      ctx.beginPath();
+      var started=false;
+      for(var i=0;i<N;i++){
+        var ang=angleOf(i);
+        if(ang<a0 || ang>a1) continue;
+        var r=radiusAt(i,aIdx);
+        var x=cx + r*Math.cos(ang), y=cy + r*Math.sin(ang);
+        if(!started){ ctx.moveTo(x,y); started=true; } else { ctx.lineTo(x,y); }
+      }
+      ctx.strokeStyle=cols[aIdx]; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.stroke();
+    }
+
+    if(mode==='compat'){
+      // eindeutige globale Sektion
+      ctx.beginPath();
+      for(var i2=0;i2<N;i2++){
+        var ang2=angleOf(i2), r2=radiusAt(i2,-1);
+        var x2=cx + r2*Math.cos(ang2), y2=cy + r2*Math.sin(ang2);
+        if(i2===0) ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2);
+      }
+      ctx.closePath();
+      ctx.strokeStyle=p.accent4; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      // Konflikt-Marker an den beiden Überdeckungen des springenden Bogens
+      var badMid = (ar[BAD_ARC].start + ar[BAD_ARC].end)/2;
+      var ovEdges = [ar[BAD_ARC].start, ar[BAD_ARC].end];
+      for(var e=0;e<2;e++){
+        var ea=ovEdges[e];
+        var iNear=0; for(var k=0;k<N;k++){ if(Math.abs(angleOf(k)-ea)<Math.abs(angleOf(iNear)-ea)) iNear=k; }
+        var rg=radiusAt(iNear,-1), rj=radiusAt(iNear,BAD_ARC);
+        var gx=cx + ((rg+rj)/2)*Math.cos(ea), gy=cy + ((rg+rj)/2)*Math.sin(ea);
+        ctx.beginPath(); ctx.moveTo(cx+rg*Math.cos(ea),cy+rg*Math.sin(ea));
+        ctx.lineTo(cx+rj*Math.cos(ea),cy+rj*Math.sin(ea));
+        ctx.strokeStyle=p.warn; ctx.lineWidth=2; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=p.warn; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('✗', gx, gy);
+      }
+    }
+
+    // Kopf-Leiste: Status + Statistiken
+    var st=stats();
+    var yy=26;
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    if(mode==='compat'){
+      ctx.fillStyle=p.ok; ctx.font='bold 15px sans-serif';
+      ctx.fillText('✓ vereinbar → eindeutige globale Sektion (exakt, B)', 18, yy);
+    } else {
+      ctx.fillStyle=p.warn; ctx.font='bold 15px sans-serif';
+      ctx.fillText('✗ nicht vereinbar → keine globale Sektion (Verklebung scheitert)', 18, yy);
+    }
+    ctx.font='13px sans-serif'; ctx.fillStyle=p.text;
+    ctx.fillText('Mittel (erhalten, „Masse“): ' + st.mean.toFixed(3), 18, yy+24);
+    ctx.fillText('Varianz (lokal, „Info“):    ' + st.varr.toFixed(4), 18, yy+42);
+    if(mode==='compat'){
+      ctx.fillStyle=p.dim; ctx.font='12px sans-serif';
+      ctx.fillText('▶ Fluss: Varianz→0 bei konstantem Mittel  ·  ∫K dA = 2πχ (invariant)', 18, yy+62);
+    }
+
+    // kleine Legende rechts
+    ctx.textAlign='right';
+    var lx=W-18;
+    ctx.font='12px sans-serif';
+    ctx.fillStyle=p.dim;
+    ctx.fillText('4 lokale Sektionen (Bögen)', lx, yy);
+    ctx.fillStyle=p.accent4;
+    ctx.fillText('— — verklebte globale Sektion', lx, yy+20);
+    ctx.fillStyle=p.dim;
+    ctx.fillText('S¹ mit Überdeckung', lx, yy+40);
+  }
+
+  function loop(){
+    if(flowing){ flowStep(0.10); flowStep(0.10); flowStep(0.10); }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // Controls
+  var bC=document.getElementById('btnCompat'), bI=document.getElementById('btnIncompat'),
+      bF=document.getElementById('btnFlow'), bR=document.getElementById('btnReset');
+  function setMode(m){
+    mode=m;
+    bC.classList.toggle('on', m==='compat');
+    bI.classList.toggle('on', m==='incompat');
+    draw();
+  }
+  bC.addEventListener('click', function(){ setMode('compat'); });
+  bI.addEventListener('click', function(){ setMode('incompat'); });
+  bF.addEventListener('click', function(){
+    flowing=!flowing;
+    bF.classList.toggle('on', flowing);
+    bF.textContent = flowing ? '⏸ Fluss läuft' : '▶ Ricci-Fluss';
+  });
+  bR.addEventListener('click', function(){
+    flowing=false; bF.classList.remove('on'); bF.textContent='▶ Ricci-Fluss';
+    initField(); setMode('compat');
+  });
+
+  // Theme-Toggle
+  var tb=document.getElementById('themeBtn');
+  tb.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  loop();
+})();
+</script>
+</body>
+</html>

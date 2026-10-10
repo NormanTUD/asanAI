@@ -1,0 +1,15 @@
+{
+  "no": "022",
+  "a": "garben.html",
+  "b": "kluever2.html",
+  "a_title": "Garbentheorie: Intuition, Visualisierung & Formalismus",
+  "b_title": "Warum du auf Lachgas eine Spirale gesehen hast",
+  "combined_theme": "lokal-zu-global-log-polar-garbe",
+  "one_line": "Der log-polare V1-Atlas ist eine Garbe: lokale Streifen verkleben ueber R^2\\{0} exakt zu globalen Kluver-Mustern (Spirale = schrage Streifen), an der Fovea wird der Chart singular (log r -> -inf) und aus der Garbe wird eine Praegarbe.",
+  "contradictions": [
+    "Exaktheit vs. singulaerer Mittelpunkt: A (Garbenaxiome) garantieren, dass lokale Daten das Globale ueberall eindeutig rekonstruieren (exakter Equalizer, kein Abbruch); B (log-polare Abbildung) ist nur ausserhalb der Fovea lokal invertierbar, dort bricht die Rekonstruktion ab (log r -> -inf, 'die Mitte bekommt VIEL mehr Platz') — genau am Verankerungspunkt der Halluzination.",
+    "Kompatibilitaet als Axiom vs. als Emergenz: A (Garbe) behandelt lokale Kompatibilitaet s_i|_{Ui∩Uj}=s_j|_{Ui∩Uj} als auferlegtes Axiom/Voraussetzung und dramatisiert die verletzende Praegarbe ('K Konflikt'); B nimmt Kompatibilitaet nirgends an, sie emergiert aus dem lokalen Turing-Mechanismus (Aktivator-Inhibitor, N2O-getriebene E/I-Instabilitaet) als abgeleitete Folge einer PDE."
+  ],
+  "resolution": "Die Garbenbedingung ist kein Naturgesetz, sondern das Kriterium, wann ein Koordinatenatlas lokal->global treu rekonstruiert. B's log-Abbildung ist eine echte Garbe auf R^2\\{0} (dort exakt) und genau die physikalische Realisation von A's Verklebungsaxiom: die Turing-PDE erzwingt die Kompatibilitaet by construction (orientierungsselektive anisotrope Kopplung zwingt benachbarte Streifen zu wechselseitiger Konsistenz). An der Fovea degeneriert der Chart zur Praegarbe — A's 'K Konflikt' ist damit die foveale Signatur von B's singulaeren Chart; die Halluzination ist ein Schnitt ueber dem punktierten Gesichtsfeld, der an der Fovea smearst.",
+  "viz": "Canvas-Dual: Chart V1 (Streifenrichtung waagerecht=Kreise / senkrecht=Strahlen / schraeg=Spirale, Dichteregler) -> inverse log-polare Projektion ins Gesichtsfeld; Umschalter 'Praegarbe-Konflikt' setzt einen Phasensprung in der zentralen Region (sichtbare Naht) und 'Fovea markieren' die Singularitaet log r -> -inf; Farben aus CSS-Variablen (:root Light / html.dark Dark-Default) gelesen, themenreaktiv, inline Daten, kein CDN."
+}

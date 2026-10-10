@@ -1,0 +1,16 @@
+{
+  "no": "072",
+  "a": "schleifenraum.html",
+  "b": "paper/perceive_this_as_that.html",
+  "a_title": "Der Schleifenraum ΩX – interaktiv verstehen",
+  "b_title": "Sorting with Bialgebras and Distributive Laws",
+  "combined_theme": "dualitaet-adjunktion-zwei-wege-ein-ziel",
+  "one_line": "Beide Papiere sind Fälle derselben Metatheorie: Eine Adjunktion zwischen einem 'erzeugenden' (Σ / unfold) und einem 'konsumierenden' (Ω / fold) Funktor liefert über ein einzelnes Kohärenzgesetz (Currying / Bialgebragesetz 'swap') die kostenlose Herleitung des einen aus dem anderen — zwei Wege, ein Ziel.",
+  "contradictions": [
+    "Art der Identifikation: A (schleifenraum) formuliert die Dualität Σ⊣Ω als natürliche Bijektion von Abbildungsmengen [ΣX,Y]≅[X,ΩY] (Currying); B (perceive) formuliert sie als Eindeutigkeitsaussage — bubbleSort und naiveInsertionSort sind dieselbe eindeutige Abbildung von der initialen zur finalen Bialgebra. Bijektion von Mengen vs. Gleichheit eines einzigen Objekts.",
+    "Logische Stärke: A arbeitet 'bis auf Homotopie' — Verknüpfung nur homotopie-assoziativ (A∞-Struktur), Gruppen entstehen erst nach Quotientierung; B arbeitet mit strikten Gleichungen — das Bialgebragesetz c·a = map a·swap·map c und bubbleSort=naiveInsertSort gelten als exakte Programme.",
+    "Was 'kostenlos' hergeleitet wird: A verschiebt Dimensionen (πₖ(X)≅πₖ₋₁(ΩX)) — aus einer hochdimensionalen Frage wird eine niedrigdimensionale über einen komplizierteren Raum; B kehrt die Datenflussrichtung bei gleichem Aufbau um (dualer Algorithmus, gleiche Komplexitätsklasse) — keine Dimensionsverschiebung."
+  ],
+  "resolution": "Beide Seiten sind (Ko-)Adjunktionen: Σ linksadjungiert zu Ω (A), Fold bzw. Unfold als (Ko-)initiale/(Ko-)finale Rekursionsschemata (B). Das Kohärenzgesetz ist dasselbe: das Bialgebragesetz c·a=map a·swap·map c (B) ist die strikte Version desselben Kohärenz, das A nur bis auf Homotopie (A∞) trägt; Currying und 'swap' sind Unit/Co-Unit der Adjunktion. Die 'kostenlose' Herleitung ist immer die adjunkte Transposition: man trägt einen 'Form-Parameter' über die Adjunktion hinweg — in A ist dieser Parameter die Homotopie-Dimension (daher Dimensionsverschiebung), in B die Datenflussrichtung (daher Richtungswechsel). A ist die unrigidierte (bis-auf-Homotopie), B die rigidierte (strikte) Instanz desselben Satzes: eine Adjunktion macht ein Quadrat kommutieren und liefert so Zielobjekt/Zielalgorithmus zweifach, identisch.",
+  "viz": "Interaktives 'kommutierendes Quadrat' (Canvas): zwei Routen von einem Eckpunkt zum gegenüberliegenden — in Homotopie-Ansicht die Σ-Naturlichkeit (X→Y→ΣY vs. X→ΣX→ΣY), in Algorithmen-Ansicht das Bialgebragesetz (c∘a vs. map a∘swap∘map c). Ein Kohärenz-Regler: bei 100 % treffen beide Routen im selben Ziel (✓ [ΣX,Y]≅[X,ΩY], bubbleSort=naïveInsertSort); unter 100 % divergieren sie (✗ Quadrat kommutiert nicht). Theme-aware, Inline-Daten."
+}

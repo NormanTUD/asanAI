@@ -1,0 +1,16 @@
+{
+  "no": "088",
+  "a": "exotic_spheres.html",
+  "b": "essen.html",
+  "a_title": "Exotic Spheres - Visual Explorer",
+  "b_title": "Körper-System Visualisierung (Dein Körper als System)",
+  "combined_theme": "two-resolutions-one-system",
+  "one_line": "Gleiche Gestalt, verborgene Feinstruktur: ein System kann auf grober Ebene identisch (Topologie / Kalorienbilanz) und auf feiner Ebene nicht wegwegformbar verschieden (Glattstruktur / GI+Fett-Typ) sein — kontinuierliche Regler, die kategorische Zustände (28 Glattstrukturen / Impact-Karten) ansteuern, bei benannter Auflösung.",
+  "contradictions": [
+    "Granularität: A hält die Feinstruktur für den irreduziblen, nicht glättbaren KERN (exotische Sphäre: Twist ist 'baked in', irreversible); B hält die grobe Ebene für den Kern ('Kalorienbilanz ... so einfach ist das Grundprinzip') und erzählt GI/Fett-Typ nur als sekundäre Verfeinerung. Inkompatibel, welche Ebene fundamental ist.",
+    "Zustandsraum: A modelliert diskrete, kategorische, irreversibel Nicht-verformbare Klassen (genau 28 Glattstrukturen auf S^7); B modelliert den Körper ausschließlich als kontinuierliche, reversible, beliebig justierbare Regler ohne irreversiblen Zustand. Inkompatibel, ob der Zustand diskret-irreversibel oder kontinuierlich-reversibel ist.",
+    "Strukturumfang: A betont, die Exotizität sei eine GLOBAL/nicht-lokale Eigenschaft (keine einzelne Koordinatenkarte verrät sie); B modelliert den Körper als lokale, additive Summe seiner Teile (jede Zutat addiert kcal, jede Mahlzeit addiert ihren Spike) und übersieht per Konstruktion die globale Struktur."
+  ],
+  "resolution": "Kein fak­tischer Konflikt (unterschiedliche Domänen), sondern Haltung. (1) 'Welche Ebene zählt' hängt von der Frage ab: man braucht den ganzen Auflösungsstapel — A fragt nach Klassifikation (feine Ebene), B nach Alltagsoptimierung (grobe Ebene reicht zur ersten Näherung); bei B ist das Feine (GI/Fett-Typ) genau das Erlebte (Schwitzen/Crash). (2) Der Brückenschlag: B enthält die diskrete Ebene bereits versteckt — seine Impact-Karten ('Schwitzen: wahrscheinlich/möglich/unwahrscheinlich', 'Herz: gut/mäßig/belastet') sind kategoriale Lese­werte auf kontinuierlichen Reglern, exakt wie A's kontinuierlicher Twist-Parameter, der auf eine von 28 Glattklassen snappt. Fusion: jedes Teilsystem auf seiner natürlichen Ebene modellieren — kontinuierliche Knöpfe wo reversibel, kategorische Etiketten wo diskret; die Karte 'Regler -> Klasse' ist der Ort der Information. Gemeinsame epistemische Regel: Näherung und offenes Problem benennen (A: 4D-Smooth-Poincaré offen; B: BMR = männlich/Alter-30-Näherung).",
+  "viz": "Eine rotierende Flow-Lines-Kugel (drag-to-rotate) mit zwei Reglern: 'Feinstruktur tau' backt eine Verdrehung in die Kartenuebergänge (exotischer Twist), 'Aufloesung' steuert die Anzahl sichtbarer Karten (grob=exotisch sieht wie standard aus, fein=Verdrehung sichtbar). Moduswechsel 'Kontinuierlich (Körper)' vs. 'Diskret (S^7, 28 Strukturen)' snappt tau auf eine von 28 Glattklassen und schaltet die Lese­zeige auf kategorisch/irreversibel. Theme-reaktiv per CSS-Variablen (Dunkel default, Toggle)."
+}

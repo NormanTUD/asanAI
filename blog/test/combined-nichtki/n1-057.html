@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verstehst du, wie Wein entsteht? — IOED trifft Weinherstellung</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ece0; --card:#fffdf8; --ink:#20242f;
+  --muted:#6b6f7d; --accent:#b5541f; --accent2:#7a2e5a; --good:#2f7d3f;
+  --warn:#8a6400; --bad:#b53030; --line:#e4ddcc; --canvas:#fffdf8; --grid:#ece5d5;
+  --halo:#2f7d3f; --unkn:#9a9180;
+}
+html.dark{
+  --bg:#0f1320; --bg2:#141a2b; --card:#161d31; --ink:#e8ecf7;
+  --muted:#9aa2b8; --accent:#d0913f; --accent2:#d1719f; --good:#4ade80;
+  --warn:#fbbf24; --bad:#f87171; --line:#252c44; --canvas:#0b1020; --grid:#232b45;
+  --halo:#4ade80; --unkn:#5a6178;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink); line-height:1.62;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:48px 22px 120px}
+header{margin-bottom:34px}
+h1{font-size:clamp(26px,4.6vw,40px);line-height:1.12;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
+h1 .gr{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:15px;margin:0}
+.subtitle{margin-top:14px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding:6px 0 6px 14px}
+.subtitle a{color:var(--accent);text-decoration:none}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 26px 24px;margin:22px 0;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+h2{font-size:20px;margin:0 0 14px;display:flex;align-items:center;gap:11px;color:var(--ink)}
+h2 .num{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;width:30px;height:30px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:0 0 auto}
+p{font-size:15px;margin:10px 0}
+.lead{color:var(--muted)}
+.quote{border-left:3px solid var(--accent2);background:color-mix(in srgb, var(--accent2) 8%, transparent);padding:12px 16px;border-radius:0 10px 10px 0;font-style:italic;margin:14px 0;font-size:14.5px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+.card{background:color-mix(in srgb, var(--card) 60%, var(--bg));border:1px solid var(--line);border-radius:12px;padding:15px}
+.card h3{margin:0 0 8px;font-size:14.5px;color:var(--accent)}
+.card p{font-size:13.5px;margin:6px 0}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.03em}
+.p-hi{background:color-mix(in srgb, var(--bad) 18%, transparent);color:var(--bad)}
+.p-lo{background:color-mix(in srgb, var(--good) 18%, transparent);color:var(--good)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.06em}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:color-mix(in srgb, var(--accent) 12%, transparent);padding:1px 6px;border-radius:6px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer}
+/* viz */
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:6px 0 12px}
+.ctrl{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);min-width:200px;flex:1}
+.ctrl span{color:var(--ink);font-weight:600}
+input[type=range]{accent-color:var(--accent);width:100%}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer;font-size:14px;transition:transform .12s}
+button:hover{transform:translateY(-1px)}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+button:disabled{opacity:.5;cursor:default;transform:none}
+canvas{display:block;width:100%;border-radius:12px;border:1px solid var(--line)}
+.stat-line{font-size:14px;margin-top:12px;padding:12px 14px;background:color-mix(in srgb, var(--accent) 8%, transparent);border-radius:10px;border-left:3px solid var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12.5px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:6px;vertical-align:-2px}
+.hint{font-size:13px;color:var(--muted);font-style:italic;margin-top:10px}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{color:var(--muted);font-size:12.5px;text-align:center;margin-top:30px}
+</style>
+</head>
+<body>
+<button class="theme-btn" onclick="toggleTheme()" aria-label="Theme wechseln">◐ Theme</button>
+<article>
+
+<header>
+  <h1>Verstehst du, wie <span class="gr">Wein entsteht</span>?</h1>
+  <p class="sub">Ein interaktiver Wein-Lab als Fallbeispiel für die Illusion erklärender Tiefe: Warum ein Rechner dir das Gefühl von Tiefe geben kann, während du sie gar nicht im Kopf hast.</p>
+  <div class="subtitle">Fusion aus: <a href="../buecher/weinherstellung.html">weinherstellung.html</a> ✕ <a href="../illusion_erklaerender_tiefe.html">illusion_erklaerender_tiefe.html</a></div>
+</header>
+
+<!-- 1 THESE -->
+<section id="these">
+  <h2><span class="num">1</span> Kernthese der Fusion</h2>
+  <p>Weinherstellung ist das <b>ideale Fallbeispiel</b> für die Illusion erklärender Tiefe (IOED). Das eine Papier baut einen interaktiven Wein-Lab, in dem man Zucker, Säure, Gärung, Schwefel und Alkohol am Regler <em>anfasst</em>; das andere Papier zeigt: Genau dieses Anfassen erzeugt das <em>Gefühl</em> von Tiefe — nicht die Tiefe selbst. Der Rechner rechnet das SO₂ für dich, der Regler wandelt °Oe in Vol% um, und du liest das Ergebnis ab. Dabei verwechselst du zwei ganz verschiedene Dinge: <b>Wissen aus der Umwelt ablesen</b> (das Artefakt hält es für dich fest) und <b>Wissen im Kopf haben</b> (du könntest es blind reproduzieren).</p>
+  <p>Die vereinigte Position: <b>Ein interaktives Lehr-Artefakt ist gleichzeitig das beste und das täuschendste Mittel.</b> Es ist das beste, weil es den prozeduralen Teil — „Wein herstellen" — wirklich gut beibringt und diesen Teil ist die IOED-Forschung <em>gut kalibriert</em>: Wer Wein gemacht hat, weiß, dass er ihn gemacht hat. Es ist das täuschendste, weil es den mechanistischen Teil — <em>warum</em> Gärung Ethanol macht, wie SO₂ pH-abhängig dissoziiert, was hinter „°Oe" steckt — <em>fühlen</em> lässt wie Verstanden, während die Details draußen im Artefakt liegen und nicht drinnen im Kopf.</p>
+  <p>Die Fusion behauptet daher: <b>Verstehen eines Handwerks wie der Weinherstellung hat zwei Schichten, und nur die eine ist echt.</b> Die Schicht „Was tue ich, in welcher Reihenfolge, bei welcher Temperatur" ist prozedural und ehrlich. Die Schicht „Warum funktioniert das auf der Ebene des Mechanismus" ist, bei fast allen, ein Skelett, das sich wie eine Blaupause anfühlt. Die Illusion entsteht nicht aus Ignoranz, sondern aus dem <em>Design</em> solcher Lab-Systeme: Sie liefern die Antwort, bevor die Frage im Kopf stand.</p>
+</section>
+
+<!-- 2 WIDERSPRUECHE -->
+<section id="widersprueche">
+  <h2><span class="num">2</span> Widersprüche zwischen A und B</h2>
+  <p class="lead">Die beiden stehen in einem echten, nicht nur oberflächlichen Spannungsverhältnis — sie widersprechen sich an vier konkreten Punkten:</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>① Werkzeug des Lernens vs. Werkzeug der Täuschung</h3>
+      <p><b>A (Wein-Lab)</b> baut seine gesamte Didaktik auf dem Prinzip „Show, don't tell" auf: Man lernt, indem man am Artefakt <em>spielt</em> — der SO₂-Rechner, der °Oe-Regler, die Promille-Tabelle sollen Verständnis <b>aufbauen</b>.</p>
+      <p><b>B (IOED)</b> sagt das Gegenteil: Umweltunterstützung — Werte vom Bildschirm ablesen, anstatt sie zu haben — ist nicht das Heilmittel, sondern die <b>Ursache</b> der Illusion. Der stärkste Prädiktor für Überkonfidenz ist gerade das <em>Sichbar-Sein</em> der Teile (R² ≈ .47).</p>
+    </div>
+    <div class="card">
+      <h3>② Formeln als Kern vs. Formeln als Label</h3>
+      <p><b>A</b> präsentiert Gleichungen als die tiefe Erklärungsschicht: <code>C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂</code>, <code>n = 1000·(ρ_Most − ρ_Wasser)</code>, <code>%molekular = 100/(1+10^(pH−1,81))</code>.</p>
+      <p><b>B</b> listet „Label ↔ Mechanismus" als eine der drei zentralen Verwechslungen: Namen und Symbole („°Oe", „chaptalisieren", die Gleichung) <em>heißen</em> das Ding, ohne es zu <em>erklären</em>. Eine reichhaltig aussehende Formel kann eben so ein Label sein.</p>
+    </div>
+    <div class="card">
+      <h3>③ Einheitliches „Gelernt" vs. domänenspezifisch</h3>
+      <p><b>A</b> behandelt das Weinwissen als eine Einheit, die das Lab „liefert" — Mostgewicht, Gärung, Schwefelung, Promille stehen nebeneinander als gleich bereitetes Wissen.</p>
+      <p><b>B</b> zeigt, dass die Illusion <em>an der Struktur des Wissens</em> hängt: Prozeduren („Wein herstellen") haben <b>kaum</b> Illusion (klarer Endzustand, oft getan, Δ ≈ +0,17), Naturphänomene/Geräte („Warum Gärung wirkt") <b>sehr viel</b> (Δ ≈ −0,86 bis −0,92). A vermischt beides in einem Kessel.</p>
+    </div>
+    <div class="card">
+      <h3>④ Funktion vs. Mechanismus</h3>
+      <p><b>A</b> lehrt Weinherstellung überwiegend auf <em>Funktions-</em> und <em>Rezeptur-</em>Ebene: Zielwerte, Temperaturen, Abfolgen, Mengenangaben.</p>
+      <p><b>B</b> warnt vor genau dieser Ebene: „Ich weiß, was die Bremse <em>tut</em>" ist nicht „Ich weiß, <em>wie</em> sie es tut" — Funktion ≠ Mechanismus. A stoppt bei „Hefe macht Alkohol"; B sagt: Genau dort, wo A aufhört, beginnt die Illusion.</p>
+    </div>
+  </div>
+  <p class="hint">Nähester echter Konflikt: A's Poesie („anfassen = verstehen") kollidiert mit B's Befund („anfassen = sich etwas anfühlen, das nicht drin ist"). Die beiden sind nicht falsche Freunde — sie sind zwei Seiten desselben Artefakts.</p>
+</section>
+
+<!-- 3 AUFLOESUNG -->
+<section id="aufloesung">
+  <h2><span class="num">3</span> Auflösung</h2>
+  <p>Jeder der vier Konflikte löst sich auf, wenn man Weinwissen in seine zwei Schichten trennt und das Artefakt für genau <em>eine</em> von ihnen einsetzt:</p>
+
+  <table>
+    <thead><tr><th>Widerspruch</th><th>Auflösung</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>① Werkzeug: Lernen vs. Täuschen</td>
+        <td>Das Lab ist für die <b>prozedurale</b> Schicht ein echtes Lernwerkzeug (dort ist die Illusion laut B gering). Für die <b>mechanistische</b> Schicht ist es ein Täuschungsgenerator. Auflösung: Das Artefakt nutzt man, um <em>Reihenfolge und Werte</em> zu internalisieren — und <em>verweigert</em> es, wenn man Mechanismuswissen prüft.</td>
+      </tr>
+      <tr>
+        <td>② Formeln: Kern vs. Label</td>
+        <td>Die Gleichungen bleiben, aber sie werden <b>herabgestuft</b> zu Labels mit einem Pfeil nach unten: „<code>C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂</code> ist der Name der Gärung, nicht ihre Erklärung." Die echte Erklärung liegt eine Ebene tiefer (Glykolyse, Enzymkaskade) — genau da, wo das Lab bewusst <em>nicht</em> hinkommt.</td>
+      </tr>
+      <tr>
+        <td>③ Einheitlich vs. domänenspezifisch</td>
+        <td>Weinwissen wird <b>gespalten</b>: „Wein <em>machen</em>" (Prozedur, ehrlich, wohlkalibriert) vs. „Gärung <em>verstehen</em>" (Mechanismus, illudiert). Die IOED-Forschung liefert die Skala, A liefert das Material: Am Wein kann man beide Schichten <em>getrennt</em> messen.</td>
+      </tr>
+      <tr>
+        <td>④ Funktion vs. Mechanismus</td>
+        <td>A liefert die Funktionsebene als <em>legitimen Endzustand</em> für den Winzer (funktioniert!). B liefert den <b>Test</b>, ob jemand darüber hinausgeht: Kann er aus dem Kopf, ohne Regler, die Glykolyse-Stufen nennen? Falls nicht — ist er bei der Funktionsebene geblieben, und das ist ehrlich so.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quote"><b>Fusionierter Schluss:</b> Tiefe ist nicht das, was der Rechner anzeigt, sondern das, was bleibt, wenn der Rechner weg ist. Der IOED-Test (Rating vorher → erklären → Rating nachher) am Wein macht die Lücke zwischen „ich hab's im Lab durchgeklickt" und „ich kann es erklären" <em>sichtbar und messbar</em> — und genau das ist der ehrlichste Umgang mit beiden Papieren.</div>
+</section>
+
+<!-- 4 INHALT -->
+<section id="inhalt">
+  <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+  <h3 style="margin-top:6px;color:var(--accent)">4.1 · Die Wein-Seite (A) — was wirklich im Most passiert</h3>
+  <p>Wein entsteht durch <b>alkoholische Gärung</b>: Hefe (<em>Saccharomyces cerevisiae</em>) spaltet Zucker (Glucose/Fructose) zu Ethanol und CO₂. Das ist die Funktionsgleichung, die A als „tiefe" Schicht ausgibt:</p>
+  <p><code>C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂</code> &nbsp;(exotherm)</p>
+  <p>Darum herum baut A ein Netz aus <b>Rezeptur-Regeln</b>, die auf der Funktions-/Zielebene sitzen:</p>
+  <ul style="font-size:14.5px;line-height:1.7">
+    <li><b>Mostgewicht (°Oe)</b> = <code>1000·(ρ_Most − ρ_Wasser)</code>; grob <code>°Oe / 7,5 ≈ Vol%</code> und <code>°Oe × 2,5 ≈ g Zucker/L</code>. Weißwein-Ziel 80–85, Rotwein 90–100 °Oe.</li>
+    <li><b>Chaptalisierung:</b> pro fehlendem °Oe <code>2,6 g Zucker/L</code> zugeben (Zuckerbedarf = fehlende °Oe × 2,6 × Liter).</li>
+    <li><b>Säure & pH:</b> Gesamtsäure (Weiß 7–9, Rot ≤7 g/L). pH steuert Farbe, Stabilität und SO₂-Wirksamkeit.</li>
+    <li><b>Schwefelung (SO₂):</b> nur die <em>molekulare</em> Form ist antimikrobiell; ihr Anteil ist pH-abhängig nach Henderson–Hasselbalch: <code>%molekular = 100/(1+10^(pH−1,81))</code>. Rotwein-Minimum ≈ 0,5, Weißwein-Standard ≈ 0,8 mg/L molekular.</li>
+    <li><b>Gärtemperatur:</b> Weiß ≈ 15 °C, Rot ≈ 20 °C; Hefe stirbt > 35 °C. Potenzieller Alkohol ≈ <code>Brix × 0,55</code>.</li>
+    <li><b>Rotwein-Farbextraktion:</b> &gt;90 % der Farbe in den ersten ~4 Tagen; Tannine steigen über ~30 Tage weiter an.</li>
+  </ul>
+  <p>Kritisch-bemerkt: Fast alle diese Regeln sind <b>Zielwerte und Heuristiken</b> — sie sagen, <em>was</em> man einstellen soll, nicht <em>warum</em> die Hefe sich so verhält. Die „Warum"-Ebene (Enzymkinetik, Metabolismus, Dissoziation) wird von A bewusst nicht betreten.</p>
+
+  <h3 style="margin-top:18px;color:var(--accent)">4.2 · Die IOED-Seite (B) — wie man misst, ob man etwas wirklich versteht</h3>
+  <p>Rozenblit &amp; Keil (2002) zeigen: Menschen überschätzen die <em>Tiefe</em> ihres erklärenden Wissens systematisch. Das <b>T1–T5-Paradigma</b> misst es, ohne einen objektiven Standard nötig zu haben — man vergleicht die Person mit sich selbst:</p>
+  <table>
+    <thead><tr><th>Phase</th><th>Was passiert</th><th>Warum</th></tr></thead>
+    <tbody>
+      <tr><td>T1</td><td>Selbstrating 1–7 „Wie gut verstehst du es?"</td><td>Baseline, uneingeweiht.</td></tr>
+      <tr><td>T2</td><td>Schritt-für-Schritt-Erklärung schreiben</td><td>Die Erklärung <em>zwingt</em> — das Rating fällt.</td></tr>
+      <tr><td>T3</td><td>Kritische Diagnosefrage</td><td>Reinigt „ich werd vorsichtiger" als Erklärung.</td></tr>
+      <tr><td>T4</td><td>Expertentext lesen, altes Wissen neu raten</td><td>Re-Kalibrierung im Licht des neuen.</td></tr>
+      <tr><td>T5</td><td>Rating des <em>neuen</em> Wissens</td><td>Steigt wieder → die Skala funktioniert (kein generelles Bescheidener-werden).</td></tr>
+    </tbody>
+  </table>
+  <p>Der Effekt ist <b>massiv und robust</b> (η² ≈ 0,54; Δ T1→T3 ≈ −1,4 auf der 7er-Skala; 4/4 Populationen; fremde Rater bestätigen; bleibt auch bei Vorwarnung). Und er ist <b>domänenspezifisch</b>:</p>
+  <table>
+    <thead><tr><th>Domäne</th><th>Δ T1→T2</th><th>Illusion</th><th>Wein-Äquivalent</th></tr></thead>
+    <tbody>
+      <tr><td>Geräte</td><td>−0,92</td><td><span class="pill p-hi">HOCH</span></td><td>Der Gärkessel als „Maschine"</td></tr>
+      <tr><td>Naturphänomene</td><td>−0,86</td><td><span class="pill p-hi">HOCH</span></td><td>Warum Gärung Ethanol macht</td></tr>
+      <tr><td>Fakten</td><td>−0,29</td><td><span class="pill p-lo">MITTEL</span></td><td>„Weißwein gärt bei 15 °C?"</td></tr>
+      <tr><td>Prozeduren</td><td>+0,17</td><td><span class="pill p-lo">NULL</span></td><td>Wein <em>herstellen</em> (Rezeptur)</td></tr>
+      <tr><td>Narrative</td><td>−0,35</td><td><span class="pill p-lo">NULL</span></td><td>Winzer-Sagen</td></tr>
+    </tbody>
+  </table>
+  <p><b>Der Killer-Prädiktor</b> (Studie 12): Das Verhältnis <em>sichtbarer zu versteckter</em> Teile erklärt ~47 % der Varianz (β ≈ .69) — je mehr man <em>sehen</em> kann, desto stärker die Illusion. Vertrautheit und bekannte Teilnamen erklären (nach Sichtbarkeit) nichts mehr.</p>
+  <p><b>Die drei Verwechslungen</b>, auf Wein übertragen:</p>
+  <ul style="font-size:14.5px;line-height:1.7">
+    <li><b>Umwelt ↔ Kopf:</b> „Der Rechner zeigt mir das SO₂" → „ich kenne das SO₂." Das Wissen liegt draußen im Artefakt.</li>
+    <li><b>Ebene ↔ Ebene:</b> „Ich weiß, was Gärung tut (Ethanol)" → „ich weiß, <em>wie</em> (Glykolyse: Glucose→2 Pyruvat, 2 ATP, 2 NADH)." Funktion ≠ Mechanismus.</li>
+    <li><b>Label ↔ Mechanismus:</b> „Ich kenne °Oe, Bentonit, Chaptalisierung" → „ich verstehe die Weinherstellung." Namen tragen nicht die Erklärung.</li>
+  </ul>
+
+  <h3 style="margin-top:18px;color:var(--accent)">4.3 · Die verschmolzene These — Wein als IOED-Labor</h3>
+  <p>Wein ist so gut wie gemacht, um beide Papiere zu verbinden: Es ist <em>gleichzeitig</em> eine Prozedur (gut kalibriert, echt gelernt) <em>und</em> ein Naturphänomen/Gerät (stark illudiert). Das interaktive Wein-Lab (A) ist daher die perfekte Bühne für den IOED-Test (B): Der Winzer, der sein Rezepturwissen hoch rated, wird <em>ehrlich</em> sein (Prozedur, low Illusion). Der Student, der die Gärungschemie hoch rated, wird nach der Schritt-für-Schritt-Forderung <em>einbrechen</em> (Mechanismus, high Illusion). Die Lücke zwischen den beiden Ratings ist die Illusion — und sie wird <em>genau dort</em> am größten, wo A die Formeln als Label hinstellt und das Artefakt die Antwort liefert, bevor die Frage im Kopf stand.</p>
+  <p>Die adaptive Lesart von B (die Illusion als „Governor", der die endlose Suche nach Tiefe abkürzt) trifft auf A als Praxis: Für den <em>Macher</em> ist die Funktionsebene genug — der Governor ist hier <em>gut</em>. Für den <em>Forscher</em> ist sie der Anfang. Das Artefakt muss wissen, für wen es arbeitet.</p>
+</section>
+
+<!-- 5 VISUALISIERUNG -->
+<section id="visualisierung">
+  <h2><span class="num">5</span> Interaktiv: Der Wein-Blindspot</h2>
+  <p class="lead">Eine Wissenshierarchie der Weinherstellung. Rote Knoten = was du <b>wirklich</b> im Kopf hast. Grüner Halo = was du dir <em>einbildest</em>, zu wissen (abgeleitet aus deinem Selbstrating). Grau = unbekannt. Zieh den Regler, dann klick „Erklären" und sieh, wie der IOED-Einbruch den Halo auf die roten Knoten kollabieren lässt.</p>
+
+  <div class="viz-controls">
+    <div class="ctrl">
+      <label>Dein Selbstrating (T1): <span id="t1val">5 / 7</span></label>
+      <input type="range" id="t1" min="1" max="7" step="1" value="5" oninput="onT1()">
+    </div>
+    <button id="revealBtn" onclick="doReveal()">Nun: Erkläre die Gärung Schritt für Schritt →</button>
+    <button class="ghost" onclick="doReset()">Zurücksetzen</button>
+  </div>
+
+  <canvas id="vizCanvas" height="420"></canvas>
+
+  <div class="legend">
+    <span><i style="background:var(--bad)"></i> Wirklich bekannt</span>
+    <span><i style="background:var(--halo)"></i> Eingebildet bekannt (Halo)</span>
+    <span><i style="background:var(--unkn)"></i> Unbekannt</span>
+  </div>
+
+  <div class="stat-line" id="ioedStat"></div>
+  <p class="hint">Jeder Knoten ist eine echte Aussage aus weinherstellung.html. Der grüne Halo ist B's „what you think you know"; die rote Menge ist B's „what you really know". Der Klick auf „Erklären" entspricht B's T2 — und die Lücke zwischen Halo und Rot ist die IOED.</p>
+</section>
+
+<!-- 6 PROVENIENZ -->
+<section id="provenienz">
+  <h2><span class="num">6</span> Provenienz</h2>
+  <p>
+    <b>A — <a href="../buecher/weinherstellung.html">buecher/weinherstellung.html</a></b> · „Weinherstellung Interaktiv – Theorie &amp; Praxis": Ein tabbasiertes interaktives Wein-Lab (°Oe/Zucker, Säure/pH, Gärung, SO₂, Alkohol/Promille, Prozessablauf) mit Plotly-Charts, Canvas-Flussdiagrammen und Regel-basierten Rechnern. Quelle für alle Wein-Formeln, Zielwerte und Rezeptur-Regeln.
+  </p>
+  <p>
+    <b>B — <a href="../illusion_erklaerender_tiefe.html">illusion_erklaerender_tiefe.html</a></b> · „Die Illusion erklärender Tiefe — Interaktive Reise": Eine 12-Kapitel-Reise durch Rozenblit &amp; Keil (2002) mit T1–T5-Paradigma, Domänen-Spezifität, dem Killer-Prädiktor (sichtbare Teile, R²≈.47) und den drei Verwechslungen. Quelle für die IOED-Mechanik, den Blindspot-Test und die Kalibrierungs-Befunde.
+  </p>
+</section>
+
+<footer>Fusion Round 1 · nicht-AI-Track · Paare 057 · weinherstellung.html ✕ illusion_erklaerender_tiefe.html</footer>
+
+</article>
+
+<script>
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function hexA(hex,a){
+  hex=hex.replace('#','');
+  if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');
+  if(hex.length<6)return 'rgba(127,127,127,'+a+')';
+  var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+function toggleTheme(){document.documentElement.classList.toggle('dark');drawViz();}
+
+var TRUE_LEVEL=2;
+var NODES=[
+  {x:.50,y:.10,d:1,parent:-1,lines:['Wein entsteht','durch Gärung']},
+  {x:.27,y:.35,d:2,parent:0,lines:['Hefe → Ethanol','+ CO₂']},
+  {x:.73,y:.35,d:2,parent:0,lines:['°Oe misst','den Zucker']},
+  {x:.15,y:.60,d:3,parent:1,lines:['Gärtemperatur','→ Aromen']},
+  {x:.42,y:.60,d:3,parent:1,lines:['Zucker → ~55% Brix','→ Vol%']},
+  {x:.74,y:.60,d:3,parent:2,lines:['SO₂ wirkt nur','molekular (pH)']},
+  {x:.30,y:.87,d:4,parent:1,lines:['Glykolyse: Glucose →','2 Pyruvat + 2 ATP']},
+  {x:.72,y:.87,d:5,parent:6,lines:['Enzymkinetik /','Hefe-Metabolismus']}
+];
+var revealed=false;
+
+function assumedFrom(t1){return Math.max(1,Math.min(5,Math.round(1+(t1-1)/6*4)));}
+function curAssumed(){return revealed?TRUE_LEVEL:assumedFrom(+document.getElementById('t1').value);}
+
+function onT1(){
+  var t1=+document.getElementById('t1').value;
+  document.getElementById('t1val').textContent=t1+' / 7';
+  if(!revealed){updateStat(t1,null);}
+  drawViz();
+}
+function doReveal(){
+  if(revealed)return;
+  revealed=true;
+  var t1=+document.getElementById('t1').value;
+  var before=assumedFrom(t1);
+  var delta=Math.max(0,before-TRUE_LEVEL);
+  var t2=Math.max(1,t1-(delta*0.55+0.4));
+  updateStat(t1,t2,delta);
+  var b=document.getElementById('revealBtn');
+  b.textContent='Erklärung gegeben ✓';b.disabled=true;
+  drawViz();
+}
+function doReset(){
+  revealed=false;
+  document.getElementById('t1').value=5;
+  var b=document.getElementById('revealBtn');
+  b.textContent='Nun: Erkläre die Gärung Schritt für Schritt →';b.disabled=false;
+  onT1();
+}
+function updateStat(t1,t2,delta){
+  var el=document.getElementById('ioedStat');
+  if(t2==null){
+    var a=assumedFrom(t1);
+    el.innerHTML='Dein Rating <b>T1 = '+t1+'/7</b> · Du glaubst, du verstehst Wein <em>bis Ebene '+a+'</em>. Wirklich im Kopf: nur bis Ebene '+TRUE_LEVEL+'. <em>Klick „Erklären"</em>, um die Lücke zu sehen.';
+  }else{
+    el.innerHTML='<b>IOED-Einbruch:</b> T1 = '+t1+' → <b style="color:var(--bad)">T2 = '+t2.toFixed(1)+'</b> · Lücke = <b>'+delta+' Ebenen</b> zwischen „was ich für weiß gehalten hab" und „was wirklich drin ist". Der grüne Halo ist kollabiert — genau das ist die Illusion erklärender Tiefe, am Wein gemessen.';
+  }
+}
+function drawViz(){
+  var c=document.getElementById('vizCanvas');
+  var r=c.getBoundingClientRect();
+  var w=r.width,H=420,dpr=window.devicePixelRatio||1;
+  if(w<10)return;
+  c.width=w*dpr;c.height=H*dpr;c.style.height=H+'px';
+  var ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  var ink=cssVar('--ink'),muted=cssVar('--muted'),grid=cssVar('--grid'),line=cssVar('--line'),
+      good=cssVar('--halo'),bad=cssVar('--bad'),unkn=cssVar('--unkn'),bg=cssVar('--canvas');
+  ctx.clearRect(0,0,w,H);ctx.fillStyle=bg;ctx.fillRect(0,0,w,H);
+  ctx.strokeStyle=grid;ctx.lineWidth=1;
+  for(var i=1;i<6;i++){var x=w*i/6;ctx.beginPath();ctx.moveTo(x,16);ctx.lineTo(x,H-16);ctx.stroke();}
+  var rad=Math.max(17,Math.min(27,w/36));
+  var assumed=curAssumed();
+  ctx.strokeStyle=line;ctx.lineWidth=2;
+  NODES.forEach(function(n){if(n.parent>=0){var p=NODES[n.parent];ctx.beginPath();ctx.moveTo(p.x*w,p.y*H);ctx.lineTo(n.x*w,n.y*H);ctx.stroke();}});
+  NODES.forEach(function(n){
+    if(n.d>TRUE_LEVEL&&n.d<=assumed){
+      ctx.fillStyle=hexA(good,.14);ctx.beginPath();ctx.arc(n.x*w,n.y*H,rad+11,0,7);ctx.fill();
+      ctx.strokeStyle=hexA(good,.6);ctx.lineWidth=2;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.arc(n.x*w,n.y*H,rad+11,0,7);ctx.stroke();ctx.setLineDash([]);
+    }
+  });
+  ctx.textAlign='center';
+  NODES.forEach(function(n){
+    var known=n.d<=TRUE_LEVEL,assum=!known&&n.d<=assumed;
+    ctx.fillStyle=known?bad:(assum?hexA(good,.85):hexA(unkn,.28));
+    ctx.strokeStyle=known?ink:(assum?good:hexA(unkn,.5));
+    ctx.lineWidth=known?3:2;
+    ctx.beginPath();ctx.arc(n.x*w,n.y*H,rad,0,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle=known?'#fff':muted;
+    ctx.font='600 10px system-ui,sans-serif';
+    ctx.fillText('E'+n.d,n.x*w,n.y*H+3);
+    ctx.fillStyle=known?ink:(assum?ink:muted);
+    ctx.font='11px system-ui,sans-serif';
+    var ly=n.y*H+rad+14;
+    for(var k=0;k<n.lines.length;k++){ctx.fillText(n.lines[k],n.x*w,ly+k*12);}
+  });
+  ctx.textAlign='left';
+}
+window.addEventListener('resize',function(){drawViz();});
+document.addEventListener('DOMContentLoaded',function(){
+  updateStat(5,null);
+  drawViz();
+});
+</script>
+</body>
+</html>

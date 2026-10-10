@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stabilität unter verborgener Spannung — Fusion: Phasenübergänge ✕ Mars im Exil</title>
+<style>
+  :root{
+    --bg:#f4f2ea; --card:#fbfaf6; --fg:#1c1b24; --muted:#6a6a7a;
+    --accent:#6d4ae0; --accent2:#c0392b; --accent3:#b8860b;
+    --line:#e2ddcf; --code:#efece2;
+    --ice:#2563eb; --water:#1d4ed8; --gold:#b8860b; --danger:#c0392b; --ok:#2e7d32;
+  }
+  html.dark{
+    --bg:#0b0f1a; --card:#111827; --fg:#e8ecf7; --muted:#9aa6bf;
+    --accent:#a48bff; --accent2:#ff6b4a; --accent3:#ffd166;
+    --line:#262f45; --code:#0d1424;
+    --ice:#7fd4ff; --water:#4f92ff; --gold:#ffd166; --danger:#ff6b4a; --ok:#5fd08a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 700px at 15% -10%, var(--card) 0%, var(--bg) 55%) fixed;
+    color:var(--fg);
+    font-family:"Georgia","Iowan Old Style",serif;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bar{
+    position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+    gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line);
+    font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted);
+  }
+  .bar b{color:var(--fg)}
+  #themeToggle{
+    background:transparent;color:var(--fg);border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit;
+  }
+  #themeToggle:hover{border-color:var(--accent)}
+  .wrap{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+  header{text-align:center;margin-bottom:26px}
+  header h1{
+    font-size:clamp(1.8rem,4.6vw,2.7rem);margin:0 0 10px;line-height:1.14;letter-spacing:-.01em;
+  }
+  header h1 .g{
+    background:linear-gradient(90deg,var(--ice),var(--accent),var(--danger));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;margin:0}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:24px 26px;margin:22px 0;box-shadow:0 14px 40px rgba(0,0,0,.12);
+  }
+  section h2{
+    margin:0 0 14px;font-size:1.4rem;color:var(--accent);
+    font-family:system-ui,sans-serif;letter-spacing:-.01em;
+  }
+  section h3{color:var(--accent2);margin:20px 0 8px;font-family:system-ui,sans-serif;font-size:1.08rem}
+  p{margin:10px 0}
+  .lead{font-size:1.06rem}
+  .tag{
+    display:inline-block;font-family:system-ui,sans-serif;font-size:.68rem;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--muted);border:1px solid var(--line);
+    border-radius:99px;padding:2px 10px;margin:0 6px 4px 0;
+  }
+  .tag.a{color:var(--water);border-color:var(--water)}
+  .tag.b{color:var(--accent2);border-color:var(--accent2)}
+  blockquote{
+    margin:16px 0;padding:12px 18px;border-left:3px solid var(--accent);
+    background:color-mix(in srgb, var(--accent) 8%, transparent);
+    border-radius:0 10px 10px 0;font-style:italic;
+  }
+  blockquote .attr{display:block;margin-top:6px;font-style:normal;font-size:.82rem;color:var(--muted)}
+  ul{margin:8px 0 14px;padding-left:22px}
+  li{margin:0 0 8px}
+  .contrad{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  .contrad .h{font-family:system-ui,sans-serif;font-weight:700;margin:0 0 8px;color:var(--fg)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+  .vs > div{border-radius:10px;padding:10px 12px;font-size:.95rem}
+  .vs .a{background:color-mix(in srgb, var(--ice) 12%, transparent)}
+  .vs .b{background:color-mix(in srgb, var(--danger) 12%, transparent)}
+  .vs .who{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;opacity:.75;display:block;margin-bottom:4px}
+  .res{border-left:4px solid var(--accent3);padding:10px 16px;margin:14px 0;background:color-mix(in srgb, var(--accent3) 8%, transparent);border-radius:0 10px 10px 0}
+  .res .h{font-family:system-ui,sans-serif;font-weight:700;margin:0 0 4px}
+  .prov{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:12px;margin:12px 0;background:var(--code)}
+  .prov .badge{font-family:system-ui,sans-serif;font-weight:800;font-size:1rem;min-width:20px}
+  .prov .badge.a{color:var(--water)} .prov .badge.b{color:var(--accent2)}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:700;font-family:system-ui,sans-serif}
+  .prov a:hover{text-decoration:underline}
+  .prov .desc{color:var(--muted);font-size:.92rem;margin-top:4px}
+  /* ---- viz ---- */
+  .viz-wrap{margin-top:14px}
+  .viz-box{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--code)}
+  #fzCanvas{width:100%;height:440px;display:block}
+  @media (max-width:560px){ #fzCanvas{height:380px} }
+  .controls{padding:14px 16px 4px;font-family:system-ui,sans-serif}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .mode{
+    flex:1;min-width:150px;cursor:pointer;font:inherit;color:var(--fg);
+    background:transparent;border:1px solid var(--line);border-radius:10px;padding:9px 12px;
+  }
+  .mode .t{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;opacity:.6;display:block}
+  .mode.on{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, transparent);box-shadow:0 0 0 1px var(--accent) inset}
+  .sliderrow{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .sliderrow label{font-size:.85rem;color:var(--muted);white-space:nowrap}
+  input[type=range]{flex:1;accent-color:var(--accent);height:6px}
+  .sliderrow .val{font-variant-numeric:tabular-nums;font-size:.85rem;min-width:44px;text-align:right;color:var(--fg)}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .btnrow button{
+    cursor:pointer;font:inherit;color:var(--fg);background:transparent;
+    border:1px solid var(--line);border-radius:10px;padding:8px 14px;
+  }
+  .btnrow button:hover{border-color:var(--accent)}
+  .meters{display:grid;grid-template-columns:1fr;gap:10px;padding:14px 16px 6px;font-family:system-ui,sans-serif}
+  .meter{display:flex;align-items:center;gap:10px}
+  .meter .lab{flex:0 0 190px;font-size:.8rem;color:var(--fg)}
+  .meter .lab small{display:block;color:var(--muted);font-size:.72rem}
+  .meter .bar{flex:1;height:11px;border-radius:99px;background:color-mix(in srgb, var(--fg) 12%, transparent);overflow:hidden}
+  .meter .bar i{display:block;height:100%;width:0;border-radius:99px;transition:width .08s linear}
+  .meter .num{flex:0 0 42px;text-align:right;font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
+  .verdict{
+    margin:8px 16px 18px;padding:12px 16px;border:1px solid var(--line);border-radius:10px;
+    font-family:system-ui,sans-serif;font-size:.92rem;background:var(--code);
+  }
+  .verdict.ok{border-color:var(--ok);color:var(--ok)}
+  .verdict.danger{border-color:var(--danger);color:var(--danger)}
+  .note{font-size:.85rem;color:var(--muted);margin:12px 0 0;font-family:system-ui,sans-serif}
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.85rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div><b>Kombination R1 · 017</b> &nbsp;Phasenübergänge ✕ Mars im Exil</div>
+  <button id="themeToggle" type="button">☾ / ☀ Theme</button>
+</div>
+
+<div class="wrap">
+<header>
+  <h1>Stabile Zustände zahlen <span class="g">verborgene Spannung</span></h1>
+  <p class="subtitle">Fusion aus: phasenuebergaenge.html ✕ fritz_zorn.html</p>
+</header>
+
+<!-- ═════════════ 1. THESE ═════════════ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">
+    Zwei ganz verschiedene Texte — eine Physik-Präsentation über das Schmelzen und
+    Verdampfen von Wasser und eine interaktive Lektüre von Fritz Zorns <em>Mars
+    im Exil</em> — beschreiben exakt denselben Aufbau eines Systems, das eine
+    <strong>sichtbare, stabile Form</strong> nur dadurch behält, dass es
+    <strong>versteckte Energie ausgibt, um seine eigene Veränderung zu
+    unterdrücken</strong>.
+  </p>
+  <p>
+    In der Physik hält das Eis seine Gitterform, indem Kohäsion (Zusammenhalt)
+    die Bewegung der Moleküle bändigt. Der Mensch in der „heilen" Familie hält
+    seine Ruhe, indem Harmonie (Zusammenhalt) den Konflikt (Bewegung) bändigt.
+    In beiden Systemen gibt es eine <strong>Meßgröße</strong> — Temperatur auf
+    der einen, sichtbare Ruhe auf der anderen Seite —, die <strong>am
+    Schwellenwert flach bleibt</strong>, während im Verborgenen Energie
+    akkumuliert: als <em>latente Wärme</em> im Wasser, als <em>unterdrückte
+    Gefühle</em> im Menschen. Das System sieht von außen unverändert aus;
+    innen wird es gerade aufgebrochen.
+  </p>
+  <p>
+    Die fusionierte Position lautet: <strong>Ein Übergang ist nur so gesund wie
+    die Struktur, die er bricht.</strong> Wo die Struktur echt ist (Materie),
+    ist die versteckte Energie ein Produkt — die latente Wärme verwandelt die
+    Phase verlustfrei in eine neue, gleichwertige Ordnung („dasselbe Ding,
+    drei Gesichter"). Wo die Struktur ein Zwang ist (eine Harmonie, die kein
+    Zustand ist), ist dieselbe Energie eine Schuld — sie kann beim Bruch nichts
+    umordnen, weil das, was „aufbewahrt" wurde, nie echt war; sie bricht
+    stattdessen aus und zerstört. Maßstab eines stabilen Zustandes ist also
+    nicht seine <em>Flachheit</em>, sondern die Richtung, in die seine
+    verborgene Energie fließt: <em>bauen oder begraben</em>.
+  </p>
+</section>
+
+<!-- ═════════════ 2. WIDERSPRÜCHE ═════════════ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>
+    Die beiden Texte sind auf der Ebene des <em>Mechanismus</em> (Stabilität
+    durch Unterdrückung, flache Meßgröße, Schwellenwert, Bruch) einig. Sie
+    widersprechen sich dort, wo sie über das <em>Was</em> der Struktur und über
+    das <em>Wie</em> des Bruchs sprechen. Drei echte Spannungen:
+  </p>
+
+  <div class="contrad">
+    <p class="h">1. Naturliche Schwelle vs. künstlicher Käfig — was ist die stabile Struktur überhaupt?</p>
+    <div class="vs">
+      <div class="a"><span class="who">A · Phasenübergänge</span>
+        Der feste Zustand ist ein <strong>echter, natürlicher
+        Gleichgewichtszustand</strong>. Es gibt keine moralische Wertung: fest
+        ist so legitim wie gasförmig. Man darf in der Struktur „ruhen" — sie
+        ist ein echter Zustand der Materie, in den man einrastet.</div>
+      <div class="b"><span class="who">B · Mars im Exil</span>
+        Die „Harmonie" ist <strong>kein Zustand, sondern ein
+        Zwang</strong>. Der Erzähler: „Nicht in einer unglücklichen Welt bin
+        ich aufgewachsen, sondern in einer <em>verlogenen</em>." Die Stabilität
+        ist selbst das Gift; es gab keine Probleme, „weil sie nicht existieren
+        durften".</div>
+    </div>
+  </div>
+
+  <div class="contrad">
+    <p class="h">2. Konservative Umwandlung vs. zerstörerischer Bruch — was bleibt nach dem Übergang?</p>
+    <div class="vs">
+      <div class="a"><span class="who">A · Phasenübergänge</span>
+        „Nichts wird hinzugefügt. Nichts verschwindet." Der Übergang ist
+        <strong>verlustfrei</strong>: Das Wasser bleibt Wasser, nur anders
+        geordnet. Das Brechen der Struktur ist eine Transformation in eine
+        neue, gleichwertige Phase — konservativ, nicht zerstörerisch.</div>
+      <div class="b"><span class="who">B · Mars im Exil</span>
+        Der Bruch ist <strong>nicht eine Umwandlung, sondern Zerstörung</strong>.
+        Der Krebs — „das bei weitem Gescheiteste, was ich je in meinem Leben
+        getan habe" — bricht das Lebense aus, das nie sein durfte, und tötet
+        den Erzähler. Zorn starb 1976 mit 32. Der Übergang führt nicht in eine
+        neue Phase, sondern in den Tod.</div>
+    </div>
+  </div>
+
+  <div class="contrad">
+    <p class="h">3. Ehrliches Plateau vs. verlogene Stille — was bedeutet die „flache" Meßgröße?</p>
+    <div class="vs">
+      <div class="a"><span class="who">A · Phasenübergänge</span>
+        Das flache Plateau ist eine <strong>ehrliche, messbare
+        physikalische Tatsache</strong>: Die Temperatur bleibt flach, weil die
+        zugeführte Energie <em>real</em> in Bindungen fließt, statt zu heizen.
+        Die scheinbare Stagnation ist täuschungsfrei — latente Wärme ist
+        tatsächlich etwas, das geschieht.</div>
+      <div class="b"><span class="who">B · Mars im Exil</span>
+        Das Fehlen sichtbarer Probleme ist eine <strong>hergestellte
+        Lüge</strong>: „Alles ist wunderbar … Es gibt keine Probleme." Dabei
+        durfte niemand eine eigene Meinung haben. Die scheinbare Stille ist
+        herbeigeführt und verdeckt, dass nichts „richtig" geschieht — die
+        Energie fließt nirgendwohin, sie wird nur weggesperrt und re-akkumuliert.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ 3. AUFLÖSUNG ═════════════ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="res">
+    <p class="h">Zu (1) — A ist das gesunde Vorbild, B der degenerierte Fall</p>
+    <p>
+      Die Physik zeigt, was eine <em>echte</em> Phase tun <strong>kann</strong>:
+      sich umordnen. Zorn zeigt, was passiert, wenn man eine Phasen­umwandlung
+      <strong>fälscht</strong>: Man hält ein „festes Gitter" (die Harmonie) bei
+      einer Temperatur, bei der es ehrlich längst flüssig wäre, und verbrennt
+      die Energie im Plateau, statt sie zu investieren. A und B widersprechen
+      sich nicht, sondern A liefert die <em>Referenz</em>, an der B sich
+      misst: B ist, was aus einem Phasen­übergang wird, wenn man die Struktur
+      künstlich festhält, statt sie umwandeln zu lassen.
+    </p>
+  </div>
+
+  <div class="res">
+    <p class="h">Zu (2) — Eine Umwandlung erhält nur, was wirklich da war</p>
+    <p>
+      „Nichts verschwindet" (A) gilt für Materie, die ihre Masse durch die
+      Phasen trägt. Die „Harmonie" hat aber <em>heimlich Substanz
+      subtrahiert</em> — die eigenen Meinungen, Gefühle, Urteile wurden
+      verdrängt, „gespart" wurde „nicht das Leid, sondern … die Probleme". Beim
+      Bruch gibt es daher nichts Echtes mehr, was sich neu ordnen könnte: nur
+      den aufgestauten Leerraum, der eruptiert. Die Umwandlung erhält nur, was
+      vorhanden war; weil in der falschen Harmonie nichts Echtes aufbewahrt
+      wurde, ist <em>ihre</em> Umwandlung verlustbehaftet und zerstörerisch.
+    </p>
+  </div>
+
+  <div class="res">
+    <p class="h">Zu (3) — Beide Plateaus sind „flach", aber die Energie geht anderswohin</p>
+    <p>
+      In beiden Systemen bleibt die Meßgröße im Plateau flach, während Energie
+      akkumuliert. Der Unterschied ist das <strong>Ziel</strong> der Energie:
+      Ehrliche latente Wärme fließt in <em>Strukturwandel</em> (Werden).
+      Unterdrückte „latente Wärme" fließt in <em>nichts</em> — sie wird nur
+      gehalten und zu Schuld. Die Flachheit einer Meßgröße sagt nur, dass
+      Energie aufgenommen wird; erst die Frage „wohin?" verrät, ob die Struktur
+      echt ist. <strong>Die fusionierte Schlussfolgerung:</strong> Stabilität
+      ist nicht das Gegenteil von Veränderung, sondern ihr teuer bezahltes
+      Vorschuss — und sie ist nur dann lebbar, wenn der Vorschuss in ein
+      künftiges Werden geht, nicht in ein künftiges Zerfallen.
+    </p>
+  </div>
+</section>
+
+<!-- ═════════════ 4. INHALT ═════════════ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>
+    Der gemeinsame Modellrahmen hat vier Stufen. Auf jeder Stufe stehen die
+    Physik (A) und die Erzählung (B) nebeneinander — bis die vierte Stufe die
+    <em>Diagnose</em> ist, die beide erst zusammen lesbar macht.
+  </p>
+
+  <h3>I. Das stabile System und wie es gehalten wird</h3>
+  <p>
+    <span class="tag a">A</span>
+    Materie kommt in drei Gesichtern vor: fest, flüssig, gasförmig. „Dasselbe
+    Ding, drei Gesichter" — es wird nichts hinzugefügt, nichts verschwindet,
+    nur <em>Energie</em> kommt dazu. Die feste Phase ist ein Gitter: Die
+    Moleküle sitzen auf festen Plätzen, halten sich über Bindungen zusammen
+    und vibrieren nur. Zusammenhalt &gt; Bewegung.
+  </p>
+  <p>
+    <span class="tag b">B</span>
+    Die „heile" Familie ist das soziale Gegenstück zum Gitter: Alle sitzen auf
+    ihren festen Plätzen, halten sich über <em>Harmonie</em> zusammen. Aber
+    Harmonie ist hier kein Zustand, sondern ein <em>Zwang</em> — die Familie
+    konnte nicht streiten, „genau so, wie jemand nicht wissen kann, wie man
+    Trompete bläst". Zusammenhalt &gt; Bewegung, nur dass die Bewegung (der
+    Konflikt, die eigene Meinung) nicht gedämpft wird, sondern
+    <em>verboten</em> ist.
+  </p>
+
+  <h3>II. Das Plateau — die flache Meßgröße und die verborgene Energie</h3>
+  <p>
+    <span class="tag a">A</span>
+    Beim Erhitzen steigt die Temperatur erst (fest), dann <strong>bleibt sie
+    beim Schmelzen (0&nbsp;°C) und beim Verdampfen (100&nbsp;°C)
+    flach</strong> — das Plateau. Die zugeführte Energie heizt in diesem
+    Abschnitt <em>nicht</em>; sie reißt die Bindungen. Das ist die
+    <em>latente Wärme</em>. Meßgröße flach, im Inneren läuft der Wandel.
+  </p>
+  <p>
+    <span class="tag b">B</span>
+    Die soziale Meßgröße ist die <em>sichtbare Ruhe</em>: „Es gab keine
+    Probleme. Alles ist gut." Auch sie ist ein Plateau — die „Stille" ist
+    gehalten, während im Inneren alles akkumuliert, was sein darf. Drei
+    <em>Werkzeuge der Stille</em> halten das Plateau:
+    <ul>
+      <li><strong>„Schwierig"</strong> — das Zauberwort, das unbequeme Themen
+        (Politik, Religion, Sexualität, Geld, Beziehungen, eigene Gefühle)
+        sofort totsagt: „Das ist halt schwierig." Was blieb? Essen, Wetter,
+        Schule, tote Klassiker.</li>
+      <li><strong>„Unvergleichbar"</strong> — keine Wertung ist möglich, damit
+        nie gewählt werden muss (der „gestohlene Geschmack").</li>
+      <li><strong>„Oder"</strong> — die Mutter auflöst jede Aussage, bis
+        „nichts mehr fest ist und alles unwirklich wird"; die Sprache zerfällt
+        „in eine amorphe Masse von bedeutungslosen Partikeln".</li>
+    </ul>
+    Beide Plateaus zeigen: <em>die Meßgröße flacht nicht, weil nichts geschehe
+    — sie flacht, weil Geschehen auf ein Verborgenes abgelenkt wird.</em>
+  </p>
+
+  <h3>III. Die Schwelle und was beim Bruch passiert</h3>
+  <p>
+    <span class="tag a">A</span>
+    Ein Phasen­übergang ist der Moment, „wenn Zusammenhalt gegen Bewegung
+    verliert". An der Schwelle gibt es keinen sanften Mittelweg — das System
+    rastet in der neuen Phase ein. Die Bindungen, die im Plateau gerissen
+    wurden, sind der Preis, den die neue Ordnung <em>geplant</em> bezahlt hat.
+    Nebenprodukt: <em>Verdunstungskühlung</em> — die schnellsten Teilchen
+    entkommen der Oberfläche, der langsame Rest bleibt zurück; der Mittelwert
+    sinkt, also wird es kälter. (Deshalb kühlt Schwitzen.) Auch hier gilt:
+    Eine Struktur verändert ihren Zustand, indem sie die Extremen abgibt.
+  </p>
+  <p>
+    <span class="tag b">B</span>
+    Die Schwelle ist die <em>Krankheit</em>. Der Krebs wird vom Erzähler zum
+    Metaphern-Kern: „das bei weitem Gescheiteste, was ich je in meinem Leben
+    getan habe." Die körperliche Krankheit ist zugleich seelisch — der
+    <em>Ausbruch</em> von allem, was nie sein durfte. Erst die Schwelle
+    zwingt den Erzähler hinzusehen. Und das Ergebnis ist nicht die neue Phase,
+    sondern der Tod: 1976 mit 32 Jahren; <em>Mars im Exil</em> erscheint
+    posthum 1977.
+  </p>
+
+  <h3>IV. Diagnose — wohin fließt die verborgene Energie?</h3>
+  <p>
+    Die vierte Stufe trennt die beiden Systeme:
+  </p>
+  <ul>
+    <li>
+      <strong>Echte Struktur (A):</strong> Die Energie fließt in
+      <em>Strukturwandel</em>. Die latente Wärme ist ein <em>Investment in
+      Werden</em> — das Gitter zahlt, um flüssig zu werden, und das gezahlte
+      wird zur neuen Ordnung. Verlustfrei. „Nichts wird hinzugefügt, nichts
+      verschwindet."
+    </li>
+    <li>
+      <strong>Falsche Struktur (B):</strong> Die Energie fließt in
+      <em>nichts</em>. Sie wird nur <em>gehalten</em> (Schwierig, Unvergleichbar,
+      Oder) und zu <em>Schuld</em>. Beim Bruch gibt es nichts Neues, in das sie
+      fließen könnte — nur den Leerraum, der eruptiert. Zerstörerisch.
+    </li>
+  </ul>
+  <p>
+    Die Fusion liest A als die <em>Theorie dessen, was eine Phase tun
+    kann</em> (umordnen), und B als den <em>Wirklichkeitsbeweis dessen, was
+    eine ge­fälschte Phase tut</em> (zerfallen). Und sie liefert ein
+    <em>Prädikt</em> für jedes beliebige stabile System — eine Gewohnheit,
+    eine Organisation, ein Ich: <strong>Wenn die Meßgröße flach bleibt, während
+    die verborgene Energie steigt, fragt nicht „wie lange hält das?", sondern
+    „wohin fließt das?".</strong>
+  </p>
+
+  <blockquote>
+    „Nicht in einer unglücklichen Welt bin ich aufgewachsen, sondern in einer
+    verlogenen."
+    <span class="attr">— Fritz Zorn, <em>Mars im Exil</em> (Quelle B)</span>
+  </blockquote>
+  <blockquote>
+    „Beim Übergang steigt die Temperatur <b>nicht</b>. Die Energie zerreißt
+    die Bindungen — statt zu heizen."
+    <span class="attr">— Phasenübergänge (Quelle A)</span>
+  </blockquote>
+</section>
+
+<!-- ═════════════ 5. VISUALISIERUNG ═════════════ -->
+<section id="visualisierung">
+  <h2>Visualisierung — das Plateau, das sich in zwei Richtungen bricht</h2>
+  <p>
+    Ziehe an der Energiezufuhr (oder lasse „Zuführen" laufen). Oben siehst du
+    die <em>Struktur</em>: ein Gitter, das beim Plateau flach bleibt, während
+    die verborgene Energie akkumuliert. Unten die <em>Heizkurve</em>: die
+    Meßgröße (gestrichelt-los, dunkel) bleibt am Plateau flach, während die
+    verborgene Energie (gestrichelt, gold/rot) monoton steigt — genau der
+    Widerspruch, der die Fusion trägt.
+  </p>
+  <p>
+    Wähle den Modus und ziehe die Energie über die Schwelle (e&nbsp;≈&nbsp;0.5,
+    markiert durch den Akzent-Strich). <strong>Modus A (Substanz)</strong>
+    schmilzt verlustfrei in eine neue Phase — dieselbe Substanz, anders
+    geordnet. <strong>Modus B (Harmonie)</strong> bricht explosiv: Riss, roter
+    Blitz, nichts reorganisiert sich.
+  </p>
+  <div class="viz-wrap">
+    <div class="viz-box"><canvas id="fzCanvas"></canvas></div>
+    <div class="controls">
+      <div class="modes">
+        <button id="modeA" class="mode on" type="button"><span class="t">A · Substanz (Wasser)</span>echt → neue Phase</button>
+        <button id="modeB" class="mode" type="button"><span class="t">B · Harmonie (Zorn)</span>falsch → Zerfall</button>
+      </div>
+      <div class="sliderrow">
+        <label for="energySlider">Energiezufuhr</label>
+        <input type="range" id="energySlider" min="0" max="100" value="8">
+        <span class="val" id="energyVal">8%</span>
+      </div>
+      <div class="btnrow">
+        <button id="autoBtn" type="button">▶ Zuführen</button>
+        <button id="resetBtn" type="button">↺ Reset</button>
+      </div>
+    </div>
+    <div class="meters">
+      <div class="meter"><div class="lab">Meßgröße<small>(A: Temperatur · B: sichtbare Ruhe)</small></div><div class="bar"><i id="mMeasure"></i></div><div class="num" id="oMeasure">0%</div></div>
+      <div class="meter"><div class="lab">Verborgene Energie<small>(A: latente Wärme · B: unterdrückte Gefühle)</small></div><div class="bar"><i id="mHidden"></i></div><div class="num" id="oHidden">0%</div></div>
+      <div class="meter"><div class="lab">Zusammenhalt<small>(bindet, bis die Schwelle kommt)</small></div><div class="bar"><i id="mCohesion"></i></div><div class="num" id="oCohesion">100%</div></div>
+    </div>
+    <div id="fzVerdict" class="verdict"></div>
+    <p class="note">Alle Daten inline, keine Netz­werk-Aufrufe. Theme-aware über CSS-Variablen; die Partikel­farben, die Chart-Linien und die Panel-Ränder lesen <var>--ice / --water / --gold / --danger / --accent</var> vom Theme.</p>
+  </div>
+</section>
+
+<!-- ═════════════ 6. PROVENIENZ ═════════════ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <div class="badge a">A</div>
+    <div>
+      <a href="../phasenuebergaenge.html">phasenuebergaenge.html</a>
+      <div class="desc">Interaktive Physik-Präsentation zu Phasenübergängen (fest / flüssig / gasförmig): nur Energie ändert den Zustand, beim Übergang bleibt die Temperatur flach (latente Wärme), und Verdunstung kühlt, weil die schnellsten Teilchen entkommen.</div>
+    </div>
+  </div>
+  <div class="prov">
+    <div class="badge b">B</div>
+    <div>
+      <a href="../buecher/fritz_zorn.html">buecher/fritz_zorn.html</a>
+      <div class="desc">Interaktive Lektüre von Fritz Zorns <em>Mars im Exil</em>: wie eine Familie, die alle Konflikte verbietet, einen Menschen zerlegt — Harmonie als Zwang, das „Schwierig"-Ritual, der gestohlene Geschmack, das auflösende „Oder" und der Krebs als Ausbruch des Unterdrückten (Zorn † 1976, Buch 1977).</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  R1-Kombination 017 · non-AI-Synthese · Quellen: <code>phasenuebergaenge.html</code> ✕ <code>buecher/fritz_zorn.html</code>
+</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var cv=document.getElementById('fzCanvas');
+  if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var DPR=1, W=0, H=0;
+  var CHART_H=96, EC=0.5;
+
+  var theme={ice:'#7fd4ff',water:'#4f92ff',gold:'#ffd166',danger:'#ff6b4a',ok:'#5fd08a',accent:'#a48bff',ink:'#e8ecf7',muted:'#9aa6bf'};
+  function readTheme(){
+    try{
+      var cs=getComputedStyle(document.documentElement);
+      function g(n,d){var v=cs.getPropertyValue(n);v=(v==null?'':v.trim());return v||d;}
+      theme.ice=g('--ice',theme.ice);
+      theme.water=g('--water',theme.water);
+      theme.gold=g('--gold',theme.gold);
+      theme.danger=g('--danger',theme.danger);
+      theme.ok=g('--ok',theme.ok);
+      theme.accent=g('--accent',theme.accent);
+      theme.ink=g('--fg',theme.ink);
+      theme.muted=g('--muted',theme.muted);
+    }catch(e){}
+  }
+  function hexToArr(hex){
+    if(typeof hex!=='string'||hex.charAt(0)!=='#')return null;
+    var h=hex.slice(1);
+    if(h.length===3)h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+    var n=parseInt(h,16);
+    if(isNaN(n))return null;
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function hexA(hex,a){
+    var c=hexToArr(hex);
+    if(!c)return hex;
+    return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';
+  }
+  function lerpHexArr(a,b,t){
+    var A=hexToArr(a)||[200,200,200],B=hexToArr(b)||[120,120,120];
+    var r=Math.round(A[0]+(B[0]-A[0])*t);
+    var g=Math.round(A[1]+(B[1]-A[1])*t);
+    var bl=Math.round(A[2]+(B[2]-A[2])*t);
+    return [r,g,bl];
+  }
+  function rgb(c){return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
+  function rgba(c,a){return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+  var clamp=function(v,a,b){return v<a?a:(v>b?b:v);};
+  var lerp=function(a,b,t){return a+(b-a)*t;};
+  function smoothstep(a,b,x){var t=clamp((x-a)/(b-a||1),0,1);return t*t*(3-2*t);}
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  var VW=100,VH=62,COLS=15,ROWS=6,N=COLS*ROWS,P=[];
+  function initParticles(){
+    P=[];
+    var gx=VW/(COLS+1),gy=VH/(ROWS+1);
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var hx=(c+1)*gx+((r%2)?gx*0.28:-gx*0.28);
+        var hy=(r+1)*gy;
+        P.push({x:hx,y:hy,hx:hx,hy:hy,vx:0,vy:0,ph:Math.random()*6.283,seed:Math.random()});
+      }
+    }
+  }
+  var state={e:0.08,mode:'A',auto:false,brokenB:false,flash:0,prevE:0.08};
+
+  function meltAt(e){return smoothstep(EC-0.08,EC+0.08,e);}
+  function measuredT(e){
+    if(e<0.42)return (e/0.42)*0.55;
+    if(e>0.58)return 0.55+((e-0.58)/0.42)*0.45;
+    return 0.55;
+  }
+
+  var el={
+    slider:document.getElementById('energySlider'),
+    val:document.getElementById('energyVal'),
+    autoBtn:document.getElementById('autoBtn'),
+    resetBtn:document.getElementById('resetBtn'),
+    modeA:document.getElementById('modeA'),
+    modeB:document.getElementById('modeB'),
+    mMeasure:document.getElementById('mMeasure'),
+    mHidden:document.getElementById('mHidden'),
+    mCohesion:document.getElementById('mCohesion'),
+    oMeasure:document.getElementById('oMeasure'),
+    oHidden:document.getElementById('oHidden'),
+    oCohesion:document.getElementById('oCohesion'),
+    verdict:document.getElementById('fzVerdict'),
+    toggle:document.getElementById('themeToggle')
+  };
+
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    var rect=cv.getBoundingClientRect();
+    W=Math.max(240,rect.width);
+    H=Math.max(240,rect.height);
+    cv.width=Math.floor(W*DPR);
+    cv.height=Math.floor(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function mapSim(x,y){
+    var top=18,bot=H-CHART_H-10,left=18,right=W-18;
+    var sw=right-left,sh=bot-top;
+    return [left+(x/VW)*sw, top+(y/VH)*sh];
+  }
+
+  function drawCrack(l,t,w,h,col){
+    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.shadowColor=col;ctx.shadowBlur=14;
+    var x0=l+w*0.16,y0=t+4,x1=l+w*0.5,y1=t+h*0.5,x2=l+w*0.84,y2=t+h-4;
+    ctx.beginPath();ctx.moveTo(x0,y0);
+    var seg=6,i,t2,xx,yy,t3,xk,yk;
+    for(i=1;i<=seg;i++){
+      t2=i/seg;
+      xx=lerp(x0,x1,t2)+(Math.sin(t2*7.3)*6)*(i%2?1:-1);
+      yy=lerp(y0,y1,t2)+(Math.cos(t2*6.1)*5)*(i%2?1:-1);
+      ctx.lineTo(xx,yy);
+    }
+    for(i=1;i<=seg;i++){
+      t3=i/seg;
+      xk=lerp(x1,x2,t3)+(Math.sin(t3*8.1)*6)*(i%2?1:-1);
+      yk=lerp(y1,y2,t3)+(Math.cos(t3*5.7)*5)*(i%2?1:-1);
+      ctx.lineTo(xk,yk);
+    }
+    ctx.stroke();ctx.shadowBlur=0;
+  }
+
+  function step(){
+    var e=state.e,melt=meltAt(e),cohesion=1-melt;
+    var j=0.35+e*1.5;
+    var i,p,m,mx,m2,mx2,k,cx=VW/2,cy=VH/2;
+    for(i=0;i<N;i++){
+      p=P[i];
+      p.ph+=0.05+e*0.25;
+      if(melt<0.02){
+        k=0.06*cohesion;
+        p.vx+=(p.hx-p.x)*k;p.vy+=(p.hy-p.y)*k;
+        p.vx+=Math.cos(p.ph*1.7+p.seed*9)*j*0.32;
+        p.vy+=Math.sin(p.ph*1.3+p.seed*5)*j*0.32;
+        if(melt>0.01)p.vy+=0.01*melt;
+        p.vx*=0.86;p.vy*=0.86;
+      }else{
+        if(state.mode==='A'){
+          p.vy+=0.02;
+          p.vx+=(Math.random()-0.5)*0.5*melt;
+          p.vy+=(Math.random()-0.5)*0.3*melt;
+          p.vx*=0.90;p.vy*=0.90;
+          m=Math.hypot(p.vx,p.vy);mx=1.1;
+          if(m>mx){p.vx*=mx/m;p.vy*=mx/m;}
+        }else{
+          p.vx+=(Math.random()-0.5)*2.4*melt;
+          p.vy+=(Math.random()-0.5)*2.4*melt;
+          p.vx*=0.965;p.vy*=0.965;
+          m2=Math.hypot(p.vx,p.vy);mx2=2.6;
+          if(m2>mx2){p.vx*=mx2/m2;p.vy*=mx2/m2;}
+        }
+      }
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0){p.x=0;p.vx=Math.abs(p.vx)*0.7;}
+      if(p.x>VW){p.x=VW;p.vx=-Math.abs(p.vx)*0.7;}
+      if(p.y<0){p.y=0;p.vy=Math.abs(p.vy)*0.7;}
+      if(p.y>VH){p.y=VH;p.vy=-Math.abs(p.vy)*0.7;}
+    }
+    if(state.mode==='B'){
+      if(state.prevE<EC && e>=EC && !state.brokenB){
+        state.brokenB=true;state.flash=1;
+        for(i=0;i<N;i++){p=P[i];var dx=p.x-cx,dy=p.y-cy;var dl=Math.hypot(dx,dy)||1;p.vx+=dx/dl*3.4;p.vy+=dy/dl*3.4;}
+      }
+      if(e<EC)state.brokenB=false;
+    }else{
+      state.brokenB=false;
+    }
+    state.flash*=0.9;
+    if(state.flash<0.01)state.flash=0;
+    state.prevE=e;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var e=state.e,melt=meltAt(e),cohesion=1-melt;
+    var broken=(state.mode==='B'&&e>=EC);
+    var solidColor=state.mode==='A'?theme.ice:theme.gold;
+    var liquidColor=state.mode==='A'?theme.water:theme.danger;
+    var bx=18,by=18,bw=W-36,bh=(H-CHART_H-10)-18;
+    var left=bx,top=by,right=bx+bw,bot=by+bh;
+
+    ctx.lineWidth=2;
+    if(state.mode==='A'){
+      ctx.strokeStyle=(melt>0.5)?theme.water:hexA(theme.ink,0.25);
+      roundRect(left,top,bw,bh,12);ctx.stroke();
+    }else{
+      if(!broken){
+        ctx.strokeStyle=theme.gold;ctx.shadowColor=theme.gold;ctx.shadowBlur=12;
+        roundRect(left,top,bw,bh,12);ctx.stroke();ctx.shadowBlur=0;
+      }else{
+        ctx.strokeStyle=theme.danger;ctx.setLineDash([6,5]);
+        roundRect(left,top,bw,bh,12);ctx.stroke();ctx.setLineDash([]);
+        drawCrack(left,top,bw,bh,theme.danger);
+        if(state.flash>0){
+          ctx.fillStyle=hexA(theme.danger,state.flash*0.35);
+          ctx.fillRect(left,top,bw,bh);
+        }
+      }
+    }
+
+    // bonds
+    var bondD=(VW/(COLS+1))*1.55;
+    var bondOn=cohesion>0.03 && !(state.mode==='B'&&broken);
+    if(bondOn){
+      var bondCol=state.mode==='A'?theme.water:theme.gold;
+      var baseA=0.10+cohesion*0.55;
+      var i2,j2,a,b,dx,dy,dd,A1,B1;
+      ctx.lineWidth=1.25;
+      for(i2=0;i2<N;i2++){
+        a=P[i2];
+        for(j2=i2+1;j2<Math.min(N,i2+16);j2++){
+          b=P[j2];
+          dx=b.x-a.x;dy=b.y-a.y;dd=Math.sqrt(dx*dx+dy*dy);
+          if(dd<bondD){
+            A1=mapSim(a.x,a.y);B1=mapSim(b.x,b.y);
+            ctx.strokeStyle=hexA(bondCol,baseA*(1-dd/bondD));
+            ctx.beginPath();ctx.moveTo(A1[0],A1[1]);ctx.lineTo(B1[0],B1[1]);ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // particles
+    ctx.globalCompositeOperation='lighter';
+    var r=4.4,gi,gx2,gy2,col,gr,pt;
+    for(gi=0;gi<N;gi++){
+      p=P[gi];
+      pt=mapSim(p.x,p.y);
+      col=lerpHexArr(solidColor,liquidColor,melt);
+      gr=ctx.createRadialGradient(pt[0],pt[1],0,pt[0],pt[1],r*2.6);
+      gr.addColorStop(0,'rgba(255,255,255,'+(0.9-melt*0.25)+')');
+      gr.addColorStop(0.32,rgba(col,0.85-melt*0.2));
+      gr.addColorStop(1,rgba(col,0));
+      ctx.fillStyle=gr;
+      ctx.beginPath();ctx.arc(pt[0],pt[1],r*2.6,0,6.283);ctx.fill();
+    }
+    ctx.globalCompositeOperation='source-over';
+
+    // caption
+    ctx.font='600 12px system-ui, sans-serif';
+    ctx.textAlign='left';
+    ctx.fillStyle=hexA(theme.ink,0.85);
+    var cap=state.mode==='A'
+      ? (broken?'Neue Phase — dieselbe Substanz, anders geordnet':'Gitter — zusammenhält, bis die Schwelle')
+      : (broken?'Bruch — nichts reorganisiert sich':'Harmonie — Zwang, der die Ruhe hält');
+    ctx.fillText(cap,left+10,top+18);
+    ctx.font='500 10px system-ui, sans-serif';
+    ctx.fillStyle=hexA(theme.muted,0.9);
+    ctx.fillText('Schwelle e≈0.5',left+10,top+32);
+  }
+
+  function drawChart(){
+    var e=state.e;
+    var top=H-CHART_H+8,bot=H-14,left=44,right=W-18;
+    var cw=right-left,ch=bot-top;
+    function X(v){return left+v*cw;}
+    function Y(v){return bot-v*ch;}
+
+    ctx.strokeStyle=hexA(theme.ink,0.2);ctx.lineWidth=1;
+    ctx.strokeRect(left,top,cw,ch);
+
+    // plateau shading
+    var pL=left+(EC-0.08)*cw,pR=left+(EC+0.08)*cw;
+    var plateCol=state.mode==='A'?theme.gold:theme.danger;
+    ctx.fillStyle=hexA(plateCol,0.12);
+    ctx.fillRect(pL,top,pR-pL,ch);
+    ctx.font='500 9px system-ui, sans-serif';
+    ctx.fillStyle=hexA(plateCol,0.95);
+    ctx.textAlign='center';
+    ctx.fillText('Plateau',left+EC*cw,top+11);
+
+    // dashed flat line at measuredT=0.55
+    var flatY=Y(0.55);
+    ctx.strokeStyle=hexA(theme.ink,0.25);ctx.setLineDash([2,4]);
+    ctx.beginPath();ctx.moveTo(left,flatY);ctx.lineTo(right,flatY);ctx.stroke();ctx.setLineDash([]);
+
+    // curve 1: Messgröße (flat at plateau)
+    ctx.strokeStyle=hexA(theme.ink,0.85);ctx.lineWidth=2;
+    ctx.beginPath();
+    for(var s=0;s<=1.0001;s+=0.02){
+      var v=measuredT(s),x=X(s),y=Y(v);
+      if(s===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // curve 2: versteckte Energie (monotonic)
+    ctx.strokeStyle=plateCol;ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(var s2=0;s2<=1.0001;s2+=0.02){
+      var v2=s2,x2=X(s2),y2=Y(v2);
+      if(s2===0)ctx.moveTo(x2,y2);else ctx.lineTo(x2,y2);
+    }
+    ctx.stroke();ctx.setLineDash([]);
+
+    // cursor
+    var cxp=X(e);
+    ctx.strokeStyle=theme.accent;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(cxp,top);ctx.lineTo(cxp,bot);ctx.stroke();
+    var my=Y(measuredT(e));
+    ctx.fillStyle=theme.accent;ctx.beginPath();ctx.arc(cxp,my,4,0,6.283);ctx.fill();
+
+    // legend
+    ctx.font='500 10px system-ui, sans-serif';
+    ctx.textAlign='left';
+    ctx.fillStyle=hexA(theme.ink,0.85);
+    ctx.fillText('Meßgröße',left+6,top+ch-6);
+    ctx.fillStyle=hexA(plateCol,0.95);
+    var leg2='verborgene Energie';
+    var tw=ctx.measureText(leg2).width;
+    ctx.fillText(leg2,right-tw-6,top+ch-6);
+
+    // x-axis label
+    ctx.fillStyle=hexA(theme.muted,0.8);
+    ctx.textAlign='center';
+    ctx.font='500 10px system-ui, sans-serif';
+    ctx.fillText('Energiezufuhr →',left+cw/2,bot-2);
+  }
+
+  function updateMeters(){
+    var e=state.e,melt=meltAt(e),cohesion=1-melt,mt=measuredT(e);
+    el.mMeasure.style.width=(mt*100)+'%';
+    el.mHidden.style.width=(e*100)+'%';
+    el.mCohesion.style.width=(cohesion*100)+'%';
+    el.oMeasure.textContent=Math.round(mt*100)+'%';
+    el.oHidden.textContent=Math.round(e*100)+'%';
+    el.oCohesion.textContent=Math.round(cohesion*100)+'%';
+    el.mMeasure.style.background=theme.muted;
+    el.mHidden.style.background=(state.mode==='A')?theme.gold:theme.danger;
+    el.mCohesion.style.background=(state.mode==='A')?theme.water:theme.gold;
+
+    var txt,cls;
+    if(melt<0.02){txt='Stabil — die Struktur hält. Verborgene Energie sammelt sich; die Meßgröße bleibt ruhig.';cls='';}
+    else if(melt<0.98){txt='Am Plateau — Energie fließt in den Zusammenhalt, die Meßgröße bleibt flach.';cls='';}
+    else if(state.mode==='A'){txt='Neue Phase — dieselbe Substanz, anders geordnet. Der Bruch verwandelt, nichts geht verloren.';cls='ok';}
+    else{txt='Bruch — nichts reorganisiert sich. Die unterdrückte Energie bricht aus und zerstört.';cls='danger';}
+    el.verdict.textContent=txt;
+    el.verdict.className='verdict'+(cls?' '+cls:'');
+  }
+
+  function syncSlider(){
+    el.slider.value=Math.round(state.e*100);
+    el.val.textContent=Math.round(state.e*100)+'%';
+  }
+  function setMode(m){
+    state.mode=m;
+    state.brokenB=false;
+    el.modeA.classList.toggle('on',m==='A');
+    el.modeB.classList.toggle('on',m==='B');
+  }
+
+  el.slider.addEventListener('input',function(){
+    state.e=+el.slider.value/100;
+    el.val.textContent=Math.round(state.e*100)+'%';
+    state.auto=false;
+    el.autoBtn.textContent='▶ Zuführen';
+  });
+  el.modeA.addEventListener('click',function(){setMode('A');});
+  el.modeB.addEventListener('click',function(){setMode('B');});
+  el.autoBtn.addEventListener('click',function(){
+    state.auto=!state.auto;
+    el.autoBtn.textContent=state.auto?'⏸ Stop':'▶ Zuführen';
+  });
+  el.resetBtn.addEventListener('click',function(){
+    state.e=0.08;state.brokenB=false;state.flash=0;state.prevE=0.08;
+    state.auto=false;el.autoBtn.textContent='▶ Zuführen';
+    syncSlider();
+  });
+  el.toggle.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  window.addEventListener('resize',resize);
+
+  readTheme();
+  resize();
+  initParticles();
+  for(var i=0;i<60;i++)step();
+  syncSlider();
+  updateMeters();
+
+  function loop(){
+    if(state.auto){
+      state.e=clamp(state.e+0.0035,0,1);
+      if(state.e>=1){state.auto=false;el.autoBtn.textContent='▶ Zuführen';}
+      syncSlider();
+    }
+    step();
+    draw();
+    drawChart();
+    updateMeters();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

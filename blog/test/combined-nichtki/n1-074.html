@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Kohärente Welt — Topos ✕ Garben-Weltsicht</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1c2b; --muted:#5b5b6b; --panel:#ffffff; --panel2:#f1ede2;
+  --accent:#2f5aa8; --accent2:#a92c86;
+  --good:#1f7a44; --bad:#b0342b; --warn:#b07000; --line:#d8d2c4;
+  --u:#2f5aa8; --comp:#8a8fa0; --gap:#c07000; --s1:#1f7a44; --s2:#a92c86;
+}
+html.dark{
+  --bg:#0d0d18; --fg:#e9e9f6; --muted:#9a9ab2; --panel:#15152a; --panel2:#1c1c36;
+  --accent:#7c9cff; --accent2:#ff7cc4;
+  --good:#4ade80; --bad:#ff6b5e; --warn:#ffb02e; --line:#2a2a4c;
+  --u:#5a8cff; --comp:#6b7186; --gap:#ffb02e; --s1:#4ade80; --s2:#ff7cc4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--fg);}
+body{font-family:Georgia,"Times New Roman",serif;line-height:1.72;
+  transition:background .3s,color .3s;}
+.wrap{max-width:820px;margin:0 auto;padding:40px 22px 80px;}
+h1{font-size:2.05rem;line-height:1.2;letter-spacing:.2px;}
+.subtitle{color:var(--muted);font-style:italic;margin:8px 0 4px;font-size:1.02rem;}
+.meta{color:var(--muted);font-size:.9rem;margin-bottom:8px;}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0;}
+section{margin:30px 0;}
+h2{font-size:1.5rem;color:var(--accent);margin-bottom:12px;}
+h3{font-size:1.12rem;color:var(--fg);margin:20px 0 8px;}
+p{margin:12px 0;}
+.math{font-family:"Courier New",monospace;background:var(--panel2);
+  padding:1px 7px;border-radius:5px;color:var(--accent);font-size:.95em;white-space:nowrap;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);
+  border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;}
+.aha b{color:var(--accent2);}
+.clash{background:var(--panel2);border-left:4px solid var(--bad);
+  border-radius:0 10px 10px 0;padding:12px 18px;margin:14px 0;font-size:.98rem;}
+.clash b{color:var(--bad);}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.95rem;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+.card p{margin:8px 0 0;}
+.tagA{color:var(--accent);font-weight:bold;font-family:"Courier New",monospace;}
+.tagB{color:var(--accent2);font-weight:bold;font-family:"Courier New",monospace;}
+ul,ol{padding-left:22px;margin:10px 0;}
+li{margin:7px 0;}
+.prov{display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);}
+.prov a{color:var(--accent);text-decoration:none;font-weight:bold;white-space:nowrap;}
+.prov a:hover{text-decoration:underline;}
+.prov .d{color:var(--muted);font-size:.95rem;}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px;margin:18px 0;}
+#vizCanvas{width:100%;height:auto;display:block;border-radius:8px;
+  border:1px solid var(--line);}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:14px;}
+.controls label{font-size:.92rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+input[type=range]{width:170px;accent-color:var(--accent);}
+button{font-family:inherit;font-size:.92rem;padding:9px 16px;border-radius:8px;
+  border:1px solid var(--accent);background:var(--panel2);color:var(--fg);cursor:pointer;}
+button:hover{border-color:var(--accent2);color:var(--accent2);}
+button.on{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.readouts{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:14px;font-size:.98rem;
+  border-top:1px dashed var(--line);padding-top:12px;}
+.lamp{display:inline-flex;align-items:center;gap:9px;}
+.dot{width:14px;height:14px;border-radius:50%;display:inline-block;flex:none;}
+.note{color:var(--muted);font-size:.9rem;font-style:italic;margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Kohärente Welt: der Topos als mögliches Universum</h1>
+<div class="subtitle">Fusion aus: topoi.html ✕ garben_weltsicht.html</div>
+<div class="meta">Runde 1 · Paar 074 · nicht-KI-Track · Sprache: Deutsch</div>
+
+<hr>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Quellen lesen dieselbe mathematische Maschine — Garben und Topoi — als Theorie
+  <em>kohärenter Welten</em>, aber aus entgegengesetzten Richtungen. <strong>A</strong>
+  (<span class="tagA">topoi.html</span>, nach Goldblatt) baut sie von <em>innen</em>: Ein
+  Topos ist eine Kategorie mit endlichen Limiten, Exponentialobjekten und einem
+  <span class="math">Subobjektklassifikator Ω</span>; daraus folgt eine
+  <em>selbstgenügsame</em> Welt, in der auch die Logik lebt — und die i. A.
+  <em>intuitionistisch</em> (Heyting) ist, weil an der Grenze zwischen „wahr“ und „falsch“
+  eine Lücke bleibt. <strong>B</strong> (<span class="tagB">garben_weltsicht.html</span>)
+  liest dieselbe Maschine von <em>außen / phänomenologisch</em>: Eine „kohärente Welt“ ist
+  ein Netz lokaler Messungen (Halme, Keime), die dort, wo sie sich überlappen, übereinstimmen;
+  aber <em>Kohärenz ist nicht Wahrheit</em> — eine voll stimmige Welt kann den verborgenen
+  <em>Situs</em> (das Ding selbst, φύσις κρύπτεσθαι φιλεῖ) verfehlen; und in der ∞-kategorischen
+  Lesart wird die Gleichheit zweier Halme von <em>strikter Gleichheit</em> zur
+  <em>kohärenten Äquivalenz</em> <span class="math">s₁ ≃ s₂ via f</span>.</p>
+  <p>Die eine integrierte Position lautet: <strong>Ein Topos ist eine <em>mögliche
+  kohärente Welt</em> — ein Verklebungs-Mechanismus, der aus lokalen, auf Überlappungen
+  übereinstimmenden Halmen eine globale Struktur mit eigener (i. A. intuitionistischer,
+  Heyting-wertiger) Logik erzeugt.</strong> Doch „kohärent“ ist nur die
+  <em>erste von drei</em> ineinander geschachtelten Schichten der Wahrheit. Schicht 1:
+  lokale↔globale Verklebung (die Garbenbedingung). Schicht 2: interne logische Konsistenz
+  (Ω / Heyting-Algebra). Schicht 3: Korrespondenz mit dem Ding-an-sich (dem Situs) — und
+  genau diese dritte Schicht benennt B, während A sie als geschlossenen, extensionalen
+  1-Topos stillschweigend weglässt. B’s ∞-Lift (<span class="math">s₁ ≃ s₂</span>) ist
+  deren Aussage, dass schon Schicht 1–2 nur <em>bis auf kohärente Äquivalenz</em> zu
+  verstehen ist, nicht bis auf strikte Gleichheit.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden widersprechen sich an drei konkreten Stellen. Sie sind keine
+  Widersprüche der Mathematik (beide nutzen dieselbe Garben-Theorie), sondern der
+  <em>Grundannahmen über Identität, Welt und Wahrheit</em>.</p>
+
+  <h3>Widerspruch 1 — Strikte Gleichheit vs. kohärente Äquivalenz (das Verklebungsaxiom)</h3>
+  <div class="grid">
+    <div class="card">
+      <span class="tagA">A · topoi.html</span>
+      <p>Die Garbenbedingung verlangt <em>strikte Gleichheit</em> auf Überlappungen:
+      für eine offene Überdeckung <span class="math">{Uᵢ}</span> und eine kompatible
+      Familie <span class="math">sᵢ ∈ F(Uᵢ)</span> mit
+      <span class="math">sᵢ|₍Uᵢ∩Uⱼ₎ = sⱼ|₍Uᵢ∩Uⱼ₎</span> gibt es <em>genau ein</em>
+      globales <span class="math">s ∈ F(U)</span>. Die interne Logik ist eine
+      Heyting-Algebra — eine Halbordnung, also <em>extensional und 1-trunkiert</em>.
+      A’s Welt ist ein 1-Topos, gebaut auf <span class="math">Set</span>.</p>
+    </div>
+    <div class="card">
+      <span class="tagB">B · garben_weltsicht.html</span>
+      <p>Führt die <em>∞-Garbe</em> ein: <span class="math">s₁ ≃ s₂ via f</span> —
+      eine <em>kohärente Äquivalenz / Homotopie</em>, nicht strikte Gleichheit. Das
+      „Blitz-und-Donner“-Beispiel + die „Equalizer-Funktion“
+      <span class="math">t_Ton = t_Blitz + d/v</span> + „Manhattan homotop“ existieren
+      gerade, um zu zeigen, dass Halme <em>bis auf eine reversible Transformation</em>
+      gleich sein sollen, nicht buchstäblich.</p>
+    </div>
+  </div>
+  <div class="clash"><b>Unvereinbare Stance:</b> A = strikte Gleichheit im
+  Verklebungsaxiom (1-Topos, extensional, 1-trunkiert); B = Gleichheit nur bis auf
+  Homotopie (∞-Topos, nicht-1-trunkiert, die Transformation <span class="math">f</span>
+  bleibt als Daten erhalten).</div>
+
+  <h3>Widerspruch 2 — Geschlossene Welt (Wahrheit ist intern) vs. offene Welt (Kohärent ≠ wahr)</h3>
+  <div class="grid">
+    <div class="card">
+      <span class="tagA">A · topoi.html</span>
+      <p>Der Topos ist ein <em>vollständiges, abgeschlossenes</em> Universum. Wahrheit ist
+      <em>intern</em>: Jedes Subobjekt hat einen bestimmten Wahrheitswert in Ω, und die
+      interne Logik <em>ist</em> die Logik dieser Welt. Es gibt kein „außerhalb“ des
+      Topos, das er verfehlen könnte — die Welt ist logisch selbstgenügsam
+      („Toposes are the natural home of mathematics“).</p>
+    </div>
+    <div class="card">
+      <span class="tagB">B · garben_weltsicht.html</span>
+      <p>„<em>Kohärent ≠ wahr</em>“ — eine kohärente Welt kann trotzdem <em>am Situs
+      vorbeilaufen</em>. Die Grenzen (Gödel: nicht alles beweisbar; Turing: nicht alles
+      berechenbar; Heisenberg: nicht alles messbar) + Heraklit („Die Natur liebt es, sich
+      zu verbergen“) behaupten, dass ein stimmiges Modell die (verborgene) Realität
+      verfehlen <em>kann</em>. Es gibt also ein <em>externes</em> Maß, das das Modell
+      nicht erreichen muss.</p>
+    </div>
+  </div>
+  <div class="clash"><b>Unvereinbare Stance:</b> A behandelt den Topos als <em>die ganze
+  Welt</em> (Wahrheit intern, geschlossen); B behandelt das kohärente Modell als
+  <em>Linse</em>, die stimmig und trotzdem falsch sein kann (Wahrheit extern, offen).</div>
+
+  <h3>Widerspruch 3 — Was ein „Ding“ ist: innere Elemente vs. Netz der Erscheinungen (Yoneda)</h3>
+  <div class="grid">
+    <div class="card">
+      <span class="tagA">A · topoi.html</span>
+      <p>Objekte sind <em>Mengen / Funktoren mit inneren Elementen</em> — umgeschrieben
+      als Pfeile <span class="math">x : 1 → A</span> (der „Instead of Epsilon“-Move),
+      aber das Objekt <em>hat</em> weiterhin innere Struktur (Elemente, Subobjekte,
+      Wahrheitswerte). Identität ist extensional / elementbasiert.</p>
+    </div>
+    <div class="card">
+      <span class="tagB">B · garben_weltsicht.html</span>
+      <p>Rückt <em>Yoneda</em> in den Vordergrund: „Ein Ding ist das kohärente Netzwerk
+      seiner möglichen Erscheinungen.“ Ein Ding wird durch seine <em>Erscheinungen</em>
+      (Morphismen auf es) <em>erschöpft</em>, nicht durch innere Elemente. Identität ist
+      relational / repräsentativ.</p>
+    </div>
+  </div>
+  <div class="clash"><b>Unvereinbare Stance:</b> A: ein Ding = eine Menge von
+  (Pfeil-)Elementen (Internismus). B: ein Ding = das Netz seiner Erscheinungen
+  (Relationalismus). Zwei unterschiedliche Identitätsbegriffe.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>Auflösung 1 — A’s 1-Garbe ist der Schatten von B’s ∞-Garbe</h3>
+  <p>Die strikte 1-Garbe von A ist die <em>1-Trunkierung / der Schatten</em> der
+  ∞-Garbe von B. B’s „Equalizer-Funktion“ <span class="math">f</span> ist genau der
+  2-Morphismus (die Homotopie), den (∞,1)-Topos-Theorie <em>über</em> A’s striktem
+  Verkleben hinzubaut. In einem 1-Topos quotientiert man nach strikter Gleichheit und
+  <em>vergisst</em> die Transformation; in einem ∞-Topos <em>bewahrt</em> man
+  <span class="math">f</span> als Daten.</p>
+  <div class="aha"><b>Fusionierter Schluss:</b> <em>Strikte Gleichheit ist der Schatten
+  der kohärenten Äquivalenz.</em> A beschreibt die 1-trunkierte Basisschicht
+  (wo <span class="math">f</span> vergessen und <span class="math">s₁ = s₂</span>
+  erzwungen wird); B die volle ∞-Schicht (wo <span class="math">f</span> erhalten
+  bleibt). Beide sind auf ihrer Trunkierungsebene richtig — A ist die „kristallisierte“
+  Form von B.</div>
+
+  <h3>Auflösung 2 — Interne Wahrheit ist Wahrheit relativ zu einer Welt; der Situs ist die absolute Schicht</h3>
+  <p>A’s „interne Wahrheit“ ist Wahrheit <em>relativ zu einer gewählten Welt / einem
+  gewählten Topos</em>. B’s „Situs“ ist der <em>absolute</em> Grund, den kein einzelnes
+  Modell erschöpft. Ein Grothendieck-Topos ist eine <em>mögliche Welt</em> = ein
+  kohärentes Lesen eines Sites; der Situs ist die (zum Teil verborgene) Familie
+  <em>aller</em> solchen Lesarten + der Rest, der sich jeder Lesart entzieht.</p>
+  <div class="aha"><b>Fusionierter Schluss:</b> <em>Wahrheit ist dreischichtig.</em>
+  (1) Kohärenz (Verklebung — A’s Kern); (2) interne logische Konsistenz (Ω/Heyting — A);
+  (3) Korrespondenz mit dem Situs (B’s offene Dimension, nie voll schließbar).
+  Gödel / Turing / Heisenberg markieren genau die Stelle, an der Schicht (3) den
+  Schichten (1)–(2) entkommt. A’s geschlossenes Universum ist <em>eine</em> kohärente
+  Welt (ein stimmiges Lesen); B’s offenes System ist <em>der Raum aller solchen Welten</em>
+  plus dem verborgenen Rest. Keines ist falsch: A begrenzt Wahrheit auf eine Welt, B
+  weigert sich, „ein stimmiges Lesen“ mit „der Welt“ gleichzusetzen.</div>
+
+  <h3>Auflösung 3 — Yonedas Lemma ist die Brücke zwischen Element-Identität und Erscheinungs-Identität</h3>
+  <p>Yonedas Lemma sagt: Ein Objekt <span class="math">X</span> wird durch den Funktor
+  <span class="math">Hom(–, X)</span> — sein Netz der Erscheinungen — bestimmt.
+  A’s „Elemente als Pfeile“ <span class="math">x : 1 → A</span> sind genau die
+  <em>globalen</em> Erscheinungen (der Wert von <span class="math">Hom(–,A)</span> an
+  1); A’s Subobjekte und Ω sind das Erscheinungsnetz, <em>eingeschränkt / komponiert</em>
+  entlang der Garbe. Innere Elemente (A) und das Netz der Erscheinungen (B) sind also
+  zwei Gesichter einer einzigen Yoneda-Einbettung.</p>
+  <div class="aha"><b>Fusionierter Schluss:</b> <em>Ein Ding ist sowohl sein inneres
+  Element (A) als auch sein äußeres Erscheinungsmuster (B)</em> — Yoneda identifiziert
+  sie, und die Garbenbedingung sagt, dass das <em>äußere</em> Erscheinungsmuster das
+  <em>innere</em> bestimmt (lokal→global). Identität ist zugleich extensional (A) und
+  repräsentativ (B), vereinigt durch Yoneda + Garbenbedingung.</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Die beiden Quellen zusammen ergeben ein zusammenhängendes, dreischichtiges
+  Gefüge. Hier der integrierte Stoff — genug, damit eine spätere Runde allein davon
+  arbeiten kann.</p>
+
+  <h3>1. Der Topos als Universum (A)</h3>
+  <p>Ein <em>elementarer Topos</em> <span class="math">ℰ</span> ist eine Kategorie mit:
+  (1) endlichen Limiten (Terminalobjekt <span class="math">1</span>, Pullbacks),
+  (2) Exponentialobjekten <span class="math">bᵃ</span> (kartesisch abgeschlossen),
+  (3) einem Subobjektklassifikator <span class="math">Ω</span> mit
+  <span class="math">⊤ : 1 → Ω</span>. Paré: endliche Kolimiten folgen bereits aus
+  (1)+(2)+(3). Der Topos ist zugleich ein Universum für Mathematik, eine verallgemeinerte
+  Geometrie und ein Modell für Logik. Die drei historischen Wurzeln: <strong>Grothendieck</strong>
+  (Sites, Garben, étale Topologie), <strong>Lawvere–Tierney</strong> (Axiomatisierung, Ω),
+  <strong>Cohen–Scott–Solovay</strong> (Forcing, Boolean→Heyting-wertige Modelle). Beispiele:
+  <span class="math">Set</span> (klassisch, Ω = {0,1}), <span class="math">Set²</span>,
+  <span class="math">Set→</span> (3 Wahrheitswerte, nicht klassisch),
+  <span class="math">Sh(X)</span>, <span class="math">M₂-Set</span> (bivalent, aber
+  nicht klassisch — Goldblatts Lieblings-Gegenbeispiel).</p>
+
+  <h3>2. Das Verkleben: lokale Halme → globale Sektion (beide)</h3>
+  <p>Eine <em>Prägarbe</em> auf einem topologischen Raum <span class="math">X</span> ist
+  ein kontravarianter Funktor <span class="math">F : O(X)ᵒᵖ → Set</span>.
+  <span class="math">F(U)</span> ist die „Menge der Objekte, die auf U definiert sind“;
+  <span class="math">F(V⊆U)</span> die Einschränkung. Die <em>Halm</em>-/
+  <em>Keim</em>-Lesart beider: ein <span class="math">Halm F_x</span> ist
+  <span class="math">colim₍U∋x₎ F(U)</span> — „die“ Messungen am Punkt x (B’s
+  Thermometer/Farbe/Ton/Feuchte/Druck als Faser über x); der <span class="math">Keim</span>
+  ist das Verhalten in beliebig kleiner Umgebung um x. Die <em>Garbenbedingung</em>
+  (Verklebung): lokale, auf Überlappungen <em>strikte</em> übereinstimmende Schnitte
+  <span class="math">sᵢ ∈ F(Uᵢ)</span> setzen sich zu <em>genau einem</em> globalen
+  <span class="math">s ∈ F(U)</span> zusammen. B liest dieselbe Bedingung epistemisch:
+  übereinstimmende Messungen = <em>Kohärenz</em>; widersprechende Messungen auf der
+  Überlappung = Messfehler / falsches Modell / verschiedene Objekte / Lüge /
+  Halluzination.</p>
+
+  <h3>3. Die interne Logik: Ω, Heyting, LEM-Scheitern (A)</h3>
+  <p><span class="math">Ω</span> ist die interne „Menge der Wahrheitswerte“; für jedes
+  Objekt trägt <span class="math">Sub(d)</span> die Struktur einer
+  <em>Heyting-Algebra</em>. Operationen als Pfeile:
+  <span class="math">⊤, ⊥, ∧, ∨, ⇒, ¬</span>. Für einen Raum
+  <span class="math">X</span> ist <span class="math">O(X)</span> (offene Mengen) eine
+  Heyting-Algebra: <span class="math">U∧V = U∩V</span>,
+  <span class="math">U∨V = U∪V</span>,
+  <span class="math">U⇒V = int((X \ U) ∪ V)</span>,
+  <span class="math">¬U = int(X \ U)</span>. Der Clou:
+  <span class="math">U ∪ ¬U = X \ ∂U ≠ X</span> — der <em>Rand</em> von U gehört weder zu U
+  noch zu ¬U. Deshalb scheitert das Gesetz vom ausgeschlossenen Dritten
+  <span class="math">p ∨ ¬p = ⊤</span> und die doppelte Negationselimination
+  <span class="math">¬¬p = p</span> — die Logik ist <em>intuitionistisch</em>. Topoi ↔
+  Kripke-Modelle: Für ein Poset <span class="math">P</span> realisiert
+  <span class="math">Set^{Pᵒᵖ}</span> (Prägarben) genau die Kripke-Semantik der
+  intuitionistischen Logik über <span class="math">P</span>.</p>
+
+  <h3>4. Die phänomenologische Lesart: Messung, Keim, Kohärenz, Situs (B)</h3>
+  <p>B baut die Welt Schritt für Schritt: Punkt → Umgebung (Nachbarschaft <em>ohne
+  Distanz</em>, also Topologie ohne Metrik) → Messung (Thermometer→Zahl) →
+  <span class="math">Halm</span> (viele Messungen an einem Punkt) →
+  <span class="math">Keim</span> (Verhalten in beliebig kleiner Umgebung) →
+  Überlappung → Kompatibilität <span class="math">s₁|₍U∩V₎ = s₂|₍U∩V₎</span> →
+  Garbe (Verkleben) → <em>∞-Garbe</em> (<span class="math">s₁ ≃ s₂ via f</span>) →
+  <span class="math">Kohärent ≠ wahr</span> (die in sich stimmige Welt kann am
+  <em>Situs</em> vorbeilaufen) → <em>Situs</em> (alle Perspektiven zeigen auf ein Ding;
+  jedes Ding ist ein Knoten im Netz) → <em>Yoneda</em> („Ein Ding ist das kohärente
+  Netzwerk seiner möglichen Erscheinungen“ — Yoneda, Whitehead, Buddhismus, Leibniz) →
+  Grenzen (Gödel / Turing / Heisenberg) → Heraklit (φύσις κρύπτεσθαι φιλεῖ).</p>
+
+  <h3>5. Strenge vs. kohärente Gleichheit: 1- vs. ∞-Garbe (A ↔ B)</h3>
+  <table>
+    <tr><th>Dimension</th><th>A · topoi.html (1-Topos)</th><th>B · garben_weltsicht.html (∞-Garbe)</th></tr>
+    <tr><td>Gleichheit der Schnitte</td><td>strikte: <span class="math">s₁ = s₂</span></td><td>kohärente: <span class="math">s₁ ≃ s₂ via f</span></td></tr>
+    <tr><td>Wahrheitswerte Ω</td><td>1-trunkiert, extensional (Heyting/Halbordnung)</td><td>bis auf Homotopie (nicht-1-trunkiert)</td></tr>
+    <tr><td>Welt</td><td>geschlossenes, selbstgenügsames Universum</td><td>offene Linse; kann am Situs vorbeilaufen</td></tr>
+    <tr><td>Wahrheit</td><td>intern (in Ω), vollständig bestimmt</td><td>Kohärenz ≠ Wahrheit; externer, verborgener Grund</td></tr>
+    <tr><td>Identität eines Dinges</td><td>innere (Pfeil-)Elemente, extensional</td><td>Yoneda: Netz der Erscheinungen, relational</td></tr>
+  </table>
+
+  <h3>6. Die dreischichtige Wahrheit (Fusion)</h3>
+  <p>Die Integration beider: Eine kohärente Welt (ein Topos) erfüllt
+  <strong>Schicht 1</strong> (Verklebung, Garbenbedingung — lokal→global, A’s
+  Grundaxiom) und <strong>Schicht 2</strong> (interne logische Konsistenz — Ω, Heyting,
+  A’s interne Logik). <strong>Schicht 3</strong> (Korrespondenz mit dem verborgenen
+  Situs — B) ist <em>nicht</em> von 1–2 garantiert; sie ist das, was Gödel/Turing/
+  Heisenberg und Heraklit benennen. B’s ∞-Lift (Schicht 1–2 nur bis auf
+  <span class="math">f</span>) sagt außerdem, dass schon die „strenge“ Kohärenz ein
+  kristallisierter Grenzfall ist. Fusion: <em>Ein Topos ist eine mögliche kohärente
+  Welt; Kohärenz ist notwendige, aber nicht hinreichende Bedingung für Wahrheit; und
+  strikte Gleichheit ist der 1-trunkierte Schatten der kohärenten Äquivalenz.</em></p>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung: Die kohärente Welt</h2>
+  <p>Ein Raum <span class="math">X</span> mit der offenen Menge
+  <span class="math">U</span> (Kreis), ihrem Inneren-Komplement
+  <span class="math">¬U</span> und dem <em>Rand</em>
+  <span class="math">∂U</span> (Ring) — der Heyting-Lücke, wo
+  <span class="math">p ∨ ¬p ≠ ⊤</span>. Zwei überlappende lokale Halme
+  <span class="math">s₁</span>, <span class="math">s₂</span> liegen auf
+  <span class="math">∂U</span>. Wechsle den Modus:
+  <strong>1-Garbe (A)</strong> verlangt strikte Gleichheit auf der Überlappung;
+  <strong>∞-Garbe (B)</strong> akzeptiert die Kohärenz bis auf die Homotopie
+  <span class="math">f</span> (Slider / „anwenden“). Die <em>Situs</em>-Lampe zeigt,
+  dass Kohärenz Wahrheit nicht garantiert.</p>
+
+  <div class="viz-panel">
+    <canvas id="vizCanvas" width="760" height="400"></canvas>
+    <div class="controls">
+      <button id="mStrict" class="on">1-Garbe · strikt (A)</button>
+      <button id="mInf">∞-Garbe · s₁≃s₂ (B)</button>
+      <label>Homotopie f <input type="range" id="fSlider" min="0" max="100" value="0"></label>
+      <label>Radius R <input type="range" id="rSlider" min="45" max="115" value="82"></label>
+      <button id="animBtn">▶ Homotopie anwenden</button>
+    </div>
+    <div class="readouts">
+      <span class="lamp"><span class="dot" id="lampCoh" style="background:var(--bad)"></span> Kohärenz: <span id="txtCoh">–</span></span>
+      <span class="lamp"><span class="dot" id="lampSitus" style="background:var(--warn)"></span> Situs: <span id="txtSitus">–</span></span>
+    </div>
+    <div class="note" id="note"></div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov"><a href="../topoi.html">A · topoi.html</a>
+    <span class="d">„Topoi — Eine interaktive Reise“ nach Goldblatt: Topos-Definition,
+    Subobjektklassifikator Ω, Heyting-Algebra der offenen Mengen, LEM-Scheitern,
+    Garbenbedingung, interne (intuitionistische) Logik.</span></div>
+  <div class="prov"><a href="../garben_weltsicht.html">B · garben_weltsicht.html</a>
+    <span class="d">„Kohärente Welt“: Phänomenologie von Halm/Keim, Kompatibilität auf
+    Überlappungen, ∞-Garbe (s₁≃s₂ via f), Blitz-und-Donner-Equalizer, Kohärent≠wahr,
+    Situs, Yoneda, Grenzen (Gödel/Turing/Heisenberg), Heraklit.</span></div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var cv = document.getElementById('vizCanvas');
+  var ctx = cv.getContext('2d');
+  var state = { mode:'strict', f:0, R:82 };
+  var V1 = 0.30, V2B = 0.78, EPS = 0.06;
+  var W = 760, H = 400;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function rgba(hex,a){
+    hex = (hex||'').replace('#','');
+    if(hex.length===3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    if(hex.length<6) return 'rgba(127,127,127,'+a+')';
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function sizeCanvas(){
+    var dpr = window.devicePixelRatio||1;
+    cv.width = W*dpr; cv.height = H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function arc(c, r, a0, a1){ ctx.beginPath(); ctx.arc(c[0],c[1],r,a0,a1); }
+
+  function render(){
+    var cU=cssVar('--u'), cComp=cssVar('--comp'), cGap=cssVar('--gap');
+    var cS1=cssVar('--s1'), cS2=cssVar('--s2');
+    var fg=cssVar('--fg'), muted=cssVar('--muted'), panel2=cssVar('--panel2'), line=cssVar('--line');
+    var good=cssVar('--good'), bad=cssVar('--bad');
+
+    ctx.clearRect(0,0,W,H);
+    var sx=8, sy=8, sw=W-16, sh=H-16;
+    var cx=W*0.42, cy=sy+sh/2, R=state.R;
+
+    ctx.fillStyle = rgba(cComp,0.16);
+    ctx.fillRect(sx,sy,sw,sh);
+    ctx.strokeStyle = line; ctx.lineWidth=1.5;
+    ctx.strokeRect(sx,sy,sw,sh);
+
+    // U disk
+    ctx.beginPath(); ctx.arc(cx,cy,Math.max(4,R-3.5),0,Math.PI*2);
+    ctx.fillStyle = rgba(cU,0.42); ctx.fill();
+    // gap ring (boundary)
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle = cGap; ctx.lineWidth=7; ctx.stroke();
+
+    // no-truth dots along the ring
+    var M=72;
+    for(var i=0;i<M;i++){
+      var a=(i/M)*Math.PI*2;
+      ctx.beginPath(); ctx.arc(cx+R*Math.cos(a), cy+R*Math.sin(a), 1.6, 0, Math.PI*2);
+      ctx.fillStyle = rgba(cGap,0.55); ctx.fill();
+    }
+
+    // two local sections (boundary arcs)
+    var a1s=-1.85, a1e=-0.75, a2s=-1.25, a2e=-0.15, ovS=-1.25, ovE=-0.75;
+    var v2eff = (state.mode==='inf') ? V2B + state.f*(V1-V2B) : V2B;
+    var delta = Math.abs(V1 - v2eff);
+    var gluable = (state.mode==='strict') ? (delta<EPS) : (state.f>0.15);
+
+    ctx.lineCap='round';
+    arc(ctx,R,a1s,a1e); ctx.strokeStyle=cS1; ctx.lineWidth=10; ctx.stroke();
+    arc(ctx,R,a2s,a2e); ctx.strokeStyle=cS2; ctx.lineWidth=10; ctx.stroke();
+    arc(ctx,R,ovS,ovE); ctx.strokeStyle = gluable?good:bad; ctx.lineWidth=12; ctx.stroke();
+    ctx.lineCap='butt';
+
+    // value labels
+    ctx.font='15px "Courier New",monospace';
+    var la=midArc(cx,cy,R,-1.55,1.18); ctx.fillStyle=cS1; ctx.fillText('s1=0.30', la[0], la[1]);
+    var lb=midArc(cx,cy,R,-0.45,1.18); ctx.fillStyle=cS2; ctx.fillText('s2='+v2eff.toFixed(2), lb[0], lb[1]);
+
+    // region labels
+    ctx.font='bold 16px Georgia,serif';
+    ctx.fillStyle=fg; ctx.fillText('U', cx-6, cy+6);
+    ctx.fillStyle=muted; ctx.font='14px Georgia,serif';
+    ctx.fillText('¬U  (offenes Komplement)', sx+14, sy+22);
+    ctx.fillStyle=cGap;
+    var gl=midArc(cx,cy,R,2.05,1.0);
+    ctx.fillText('∂U  (Lücke: weder U noch ¬U)', gl[0], gl[1]);
+
+    updateReadouts(delta, v2eff, gluable);
+  }
+  function midArc(cx,cy,r,a,rad){
+    var x=cx+(r+rad)*Math.cos(a), y=cy+(r+rad)*Math.sin(a);
+    return [x-30, y-4];
+  }
+  function updateReadouts(delta, v2eff, gluable){
+    var good=cssVar('--good'), bad=cssVar('--bad'), warn=cssVar('--warn');
+    var lc=document.getElementById('lampCoh'), tc=document.getElementById('txtCoh');
+    var ls=document.getElementById('lampSitus'), ts=document.getElementById('txtSitus');
+    lc.style.background = gluable?good:bad;
+    ts.style.background = warn;
+    if(state.mode==='strict'){
+      tc.textContent = gluable ? '✓ verklebt (s₁| = s₂| strikt)' : '✗ keine Verklebung (Δ='+delta.toFixed(2)+' — strikte Gleichheit fehlt)';
+    } else {
+      tc.textContent = gluable ? '✓ s₁ ≃ s₂ via f (kohärente Äquivalenz)' : '— Homotopie f anwenden (f='+state.f.toFixed(2)+')';
+    }
+    ts.textContent = '∂U bleibt dem Modell verborgen (Kohärent ≠ wahr)';
+    var R=state.R;
+    document.getElementById('note').textContent =
+      'Modus: '+(state.mode==='strict'?'1-Garbe · strikte Gleichheit (A)':'∞-Garbe · s₁≃s₂ via f (B)')+
+      '   ·   s₁|∩=0.30, s₂|∩='+v2eff.toFixed(2)+' (Δ='+delta.toFixed(2)+')'+
+      '   ·   U ∪ ¬U = X \\ ∂U ≠ X  ⇒  p ∨ ¬p ≠ ⊤ (intuitionistisch)'+
+      '   ·   Lücke ∂U ≈ 2πR ≈ '+(2*Math.PI*R).toFixed(0)+' Längenein. ohne scharfen Wahrheitswert.';
+    document.getElementById('fSlider').disabled = (state.mode!=='inf');
+  }
+
+  function setMode(m){
+    state.mode=m;
+    document.getElementById('mStrict').classList.toggle('on', m==='strict');
+    document.getElementById('mInf').classList.toggle('on', m==='inf');
+    render();
+  }
+
+  var animId=null;
+  function animateF(){
+    if(state.mode!=='inf') setMode('inf');
+    if(animId) cancelAnimationFrame(animId);
+    var start=performance.now(), from=state.f, to=1, dur=850;
+    function step(t){
+      var p=Math.min(1,(t-start)/dur);
+      state.f=from+(to-from)*p;
+      document.getElementById('fSlider').value=Math.round(state.f*100);
+      render();
+      if(p<1) animId=requestAnimationFrame(step);
+    }
+    animId=requestAnimationFrame(step);
+  }
+
+  document.getElementById('mStrict').addEventListener('click',function(){setMode('strict');});
+  document.getElementById('mInf').addEventListener('click',function(){setMode('inf');});
+  document.getElementById('fSlider').addEventListener('input',function(){
+    state.f=this.value/100; if(animId){cancelAnimationFrame(animId);animId=null;} render();
+  });
+  document.getElementById('rSlider').addEventListener('input',function(){
+    state.R=+this.value; render();
+  });
+  document.getElementById('animBtn').addEventListener('click',animateF);
+  window.addEventListener('resize',function(){ sizeCanvas(); render(); });
+
+  sizeCanvas();
+  render();
+})();
+</script>
+</body>
+</html>

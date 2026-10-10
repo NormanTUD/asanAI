@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Holografisches Zoomen: Schätzung oder Halluzination? — Fusion</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ede2; --ink:#1c2230; --dim:#5a6478;
+  --accent:#0f7ea8; --accent2:#6d4fc0; --warm:#b5651d; --danger:#b23a3a;
+  --line:rgba(0,0,0,.12); --card:#fffdf8;
+  --native:#b45309; --ok:#15803d; --bad:#b23a3a; --track:#e7e1d3;
+  --img-lo:#efe9da; --img-hi:#f59e0b; --spec-lo:#12233b; --spec-hi:#ffffff;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+}
+html.dark{
+  --bg:#0a0e16; --bg2:#10151f; --ink:#e8edf7; --dim:#8c97ad;
+  --accent:#6ee7ff; --accent2:#a78bfa; --warm:#ffb86b; --danger:#ff8a8a;
+  --line:rgba(255,255,255,.10); --card:#0e131d;
+  --native:#fbbf24; --ok:#4ade80; --bad:#ff8a8a; --track:#1e293b;
+  --img-lo:#0a0a1a; --img-hi:#ffcf4a; --spec-lo:#0a0a1a; --spec-hi:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+article{max-width:820px;margin:0 auto;padding:clamp(2rem,6vw,4.5rem) 1.4rem 6rem}
+h1{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;
+  font-size:clamp(2.1rem,6vw,3.5rem);line-height:1.1}
+.subtitle{font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);margin-top:1rem}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.6vw,2.1rem);
+  line-height:1.15;margin:0 0 1.1rem;color:var(--ink)}
+section{margin-top:clamp(2.6rem,7vw,4rem);scroll-margin-top:1rem}
+p{max-width:70ch;font-size:1.05rem;color:var(--ink)}
+p+p{margin-top:1rem}
+.hl{font-style:normal;color:var(--ink);
+  background:linear-gradient(transparent 62%,color-mix(in srgb,var(--accent) 26%,transparent) 62%)}
+.k{color:var(--accent);font-weight:600}
+.k2{color:var(--accent2);font-weight:600}
+.warm{color:var(--warm);font-weight:600}
+.dgr{color:var(--danger);font-weight:600}
+.m{font-family:var(--serif);font-style:italic;white-space:nowrap}
+.m sub,.m sup{font-size:.68em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:1.2rem 1.3rem;margin:1.1rem 0}
+.card h3{font-family:var(--serif);font-weight:400;font-size:1.16rem;margin-bottom:.5rem}
+.card p+p{margin-top:.7rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.12rem .5rem;border-radius:6px;border:1px solid var(--line);color:var(--dim);margin-right:.4rem;vertical-align:middle}
+.tag.a{color:var(--accent)} .tag.b{color:var(--accent2)}
+.stage{position:relative;width:100%;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
+  background:var(--bg2);border:1px solid var(--line);
+  box-shadow:0 30px 60px -40px rgba(0,0,0,.6),inset 0 1px 0 var(--line)}
+.stage canvas{width:100%;height:100%;display:block}
+.readout{position:absolute;left:0;right:0;bottom:0;padding:.7rem 1rem;
+  font-size:.78rem;letter-spacing:.04em;pointer-events:none;
+  background:linear-gradient(0deg,color-mix(in srgb,var(--bg2) 90%,transparent),transparent);
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.meter{margin-top:1.1rem}
+.meter-head{display:flex;justify-content:space-between;font-size:.7rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:.4rem}
+.meter-track{height:9px;border-radius:6px;background:var(--track);overflow:hidden;border:1px solid var(--line)}
+.meter-fill{height:100%;width:0%;background:var(--ok);transition:width .12s,background .12s}
+.ctrl{display:flex;align-items:center;gap:.9rem;margin-top:1.1rem;flex-wrap:wrap}
+.ctrl>label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.sliderwrap{position:relative;flex:1;min-width:180px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;
+  border-radius:3px;background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);cursor:grab;box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 16%,transparent)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radius:50%;background:var(--accent);cursor:grab}
+.nativedot{position:absolute;top:50%;left:47.8%;width:2px;height:18px;margin-top:-9px;
+  background:var(--native);transform:translateX(-1px);pointer-events:none;opacity:.85}
+.modes{display:flex;gap:.5rem;flex-wrap:wrap}
+.modebtn{background:var(--card);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:.42rem .8rem;font-size:.72rem;cursor:pointer;letter-spacing:.03em;font-family:var(--sans)}
+.modebtn:hover{color:var(--ink)}
+.modebtn.a.active{color:var(--ink);border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+.modebtn.b.active{color:var(--ink);border-color:var(--danger);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--danger) 16%,transparent)}
+.out{font-variant-numeric:tabular-nums;font-size:.85rem;color:var(--ink);min-width:16ch;text-align:right}
+.toggle{position:fixed;top:12px;right:12px;z-index:50;background:var(--card);
+  border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:.35rem .8rem;font-size:.72rem;cursor:pointer;letter-spacing:.08em}
+footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--dim);font-size:.8rem}
+.prov{display:flex;gap:.8rem;align-items:baseline;padding:.7rem 0;border-bottom:1px dashed var(--line)}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600}
+.prov span{color:var(--dim);font-size:.92rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" aria-label="Farbschema wechseln">☾ / ☀</button>
+<article>
+
+<h1>Holografisches Zoomen: Schätzung oder Halluzination?</h1>
+<div class="subtitle">Fusion aus: hologram2.html ✕ hologram5.html</div>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere fahren denselben Versuch — nur von entgegengesetzten Seiten einer einzigen
+Linie. Diese Linie ist die <span class="k">native Auflösung</span>: die feinste Detailstufe, die die
+gespeicherten Daten tatsächlich bestimmen. Darunter ist das Dekodieren eines Bereichs unmissverständlich —
+man liest gespeicherte Information ab. Darüber wird das Problem <em>unterbestimmt</em>:
+unendlich viele Signale passen zu den gespeicherten Abtastwerten, also kann „mehr Detail“ nur aus einem
+<em>Prior</em> stammen, nicht aus den Daten. Genau hier laufen die beiden Papiere auseinander.</p>
+<p>Die fusionierte Position lautet: <span class="hl">ein holographisches Zoomen ist ein Zweigregime-System.</span>
+In-Band (≤ native) ist es <span class="k">Schätzung</span> — der datenbestimmte Anteil, den man durch
+<b>bandbegrenzte Rekonstruktion</b> zurückgewinnt (A’s Sinc- bzw. Sinuswellen-Patches). Out-of-Band
+(&gt; native) ist es <span class="k2">Prior-Extrapolation</span>. Der Unterschied zwischen
+„Schätzung“ und „Halluzination“ ist <em>kein</em> anderes Phänomen, sondern die <em>Korrektheit des
+Priors</em>, den man sich zunutze macht. A zeigt den <em>besten</em> Prior (bandbegrenzt / Sinc — er injiziert
+die wenigste Energie außerhalb des Bands und gewinnt das ideale kontinuierliche Signal zurück);
+B zeigt den <em>schlechtesten</em> (ein verrauschter Prior, der Feinstruktur erfindet). Eine ehrliche
+holographische Linse muss daher zwei Dinge tun, die A und B jeweils nur zur Hälfte tun:
+(1) die <span class="warm">native Linie</span> respektieren und
+(2) den <span class="dgr">Außerband-Anteil</span> dessen anzeigen, was sie zeigt — damit der Betrachter
+immer weiß, wie viel Daten und wie viel Vermutung er sieht.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Beide teilen die holographische Grundprämisse (jede Region trägt Frequenzinhalt des Ganzen),
+die native Auflösungsgrenze, die FFT-Visualisierung, das über Nachbarn geglättete Focus-/Level-Feld
+(Gauß-kern, σ≈0,55 bei A, σ≈0,6 bei B) und „Klick = zoomen herein, Rechtsklick = heraus“.
+An zwei konkreten Punkten stehen sie aber unvereinbar nebeneinander.</p>
+<div class="grid2">
+<div class="card">
+<h3>1. Was Overzoom <em>ist</em></h3>
+<p><span class="tag a">A</span> Nennt das Zoomen über das Native eine
+<strong>„Overzoom Estimation“</strong>: Es „rekonstruiert mit Sinuswellen-Patches, um Detail zu
+<em>schätzen</em>“ und kennzeichnet die Zelle mit <code>~SINE</code> — <em>ohne</em> Warnung. Das
+zusätzliche Detail wird als <span class="k">legitime Inferenz</span> aus dem gespeicherten
+Frequenzinhalt gerahmt.</p>
+<p style="margin-top:.8rem"><span class="tag b">B</span> Nennt dieselbe Operation
+<strong>„⚠ HALLUCINATION“</strong>: „Zoom beyond native resolution → ⚠ HALLUCINATION (visible
+artifacts, but you can keep going)“. Das zusätzliche Detail wird als <span class="dgr">Fiktion</span>
+gerahmt — sichtbar als Artefakt. <em>Ein und dieselbe Operation, entgegengesetzte Wertung:</em>
+Schätzung vs. Halluzination.</p>
+</div>
+<div class="card">
+<h3>2. Was „holographisch“ bedeutet</h3>
+<p><span class="tag a">A</span> Ist ein <em>räumliches</em> Hologramm: „All 9 cells are active and
+encode the full image“ — jede der 3×3 Zellen ist das <em>ganze</em> Smiley (jeder-Teil-ist-das-Ganze,
+redundant).</p>
+<p style="margin-top:.8rem"><span class="tag b">B</span> Ist ein <em>skaliges</em> Hologramm: „Each layer
+shows progressively more detail“ — seine Zellen sind gewöhnliche räumliche Kacheln (jede zeigt nur
+ihre eigene Region); die mehrauflösende Struktur sitzt in einem <em>Stack aus 7 Lagen</em> mit
+steigendem Basis-Fokus (eine Skalenpyramide, Detail über die Lagen hinweg; keine einzige Lage =
+das Ganze).</p>
+<p style="margin-top:.8rem">A: Ganzes-in-jedem-Teil (redundant). B: Detail-über-einen-Stack.
+Zwei verschiedene Achsen der Redundanz.</p>
+</div>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p><strong>Zum Overzoom (1):</strong> Beide beschreiben dieselbe <em>unterbestimmte</em>
+Extrapolation — nur mit zwei verschiedenen <em>Priors</em>. A’s Sinc-/Sinus-Rekonstruktion ist der
+<span class="k">bandbegrenzte Prior</span>: Er nimmt an, das wahre Signal trage <em>keine</em> Energie
+über den native Abschneidefrequenz hinaus, also ist die Rekonstruktion die Whittaker–Shannon-
+Interpolation — die <em>minimal-verpflichtende</em> Extrapolation, d. h. die mit dem
+<em>niedrigsten</em> Halluzinations-Anteil. B’s Fransen/Rauschen/Quantisierung ist ein
+<span class="dgr">falscher/verrauschter Prior</span>: Er injiziert Außerband-Energie, die in den Daten
+<em>nicht</em> steckt. „Schätzung“ und „Halluzination“ liegen somit auf <em>einem</em> Kontinuum,
+gemessen durch den Außerband-Anteil <span class="m">H = E<sub>out</sub> / (E<sub>in</sub> + E<sub>out</sub>)</span>.
+A sitzt bei <span class="k">H ≈ 0</span> (bandbegrenzt → Energie bleibt in-Band), B bei
+<span class="dgr">hohem H</span> (Energie leckt aus der Band). <em>Fusionierter Schluss:</em> Overzoom ist
+immer Prior-Extrapolation; seine <em>Ehrlichkeit</em> ist der Anteil des gezeigten Details, der
+tatsächlich datenbestimmt ist — und die Benutzeroberfläche muss genau diesen Anteil anzeigen.</p>
+<p><strong>Zur Hologram-Achse (2):</strong> „Holographisch“ hat zwei komplementäre, <em>orthogonale</em>
+Achsen — die <span class="k">räumliche</span> (A: jeder 2-D-Bereich trägt das Ganze) und die
+<span class="k2">skalige/tiefe</span> (B: ein mehrauflösender Stack verfeinert über die Lagen).
+Beide sind richtig; sie widersprechen sich nicht, sie ergänzen sich. <em>Fusionierter Schluss:</em> die
+vollständige holographische Linse ist <span class="hl">mehrskalig-redundant</span> — jede Zelle, in
+jeder Skala, dekodiert diese <em>Band</em> des Ganzen. A liefert die räumliche Achse (eine Ebene,
+jede Zelle = das Ganze); B liefert die skalige Achse (gestapelte Ebenen, Detail über die Lagen).
+Kombiniert: ein Stack räumlich-redundanter Ebenen, wobei jede Ebene eine Frequenzband trägt.</p>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p>Das integrierte Modell liest sich als durchgehende Pipeline, in der jeder Begriff von A einen
+Partner bei B hat:</p>
+
+<div class="card">
+<h3>Das kanonische Signal</h3>
+<p>Beide verwenden ein prozedurales <em>Smiley</em> als Grundwahrheit: Kreis + zwei Augen +
+Bogen-Mund. Es ist das Signal, das gespeichert, dekodiert und über die native Auflösung hinaus
+neu dekodiert wird — das gemeinsame Testobjekt, an dem sich Schätzung und Halluzination ablesen lassen.</p>
+</div>
+
+<div class="card">
+<h3>Die native Linie</h3>
+<p><span class="tag a">A</span> <code>NATIVE_LEVEL = 12</code> (von <code>MAX = 24</code>).
+<span class="tag b">B</span> <code>NATIVE_THRESHOLD = 7</code> (mit 7 Lagen des Basis-Fokus
+<code>[0.5 … 5.8]</code>). Darunter pixeliert der Dekoder (Block-Mittelwert) und verfeinert bilinear —
+reines Daten-Read-out, noch keine Extrapolation.</p>
+</div>
+
+<div class="card">
+<h3>Bandbegrenzte Rekonstruktion — die ehrliche Schätzung (A)</h3>
+<p>Die Whittaker–Shannon-Interpolation der nativen Abtastwerte:
+<span class="m">f(x) = Σ<sub>n</sub> f[n] · sinc(x − n)</span>, mit
+<span class="m">sinc(x) = sin(πx) / (πx)</span>. Sie gewinnt das ideale, bandbegrenzte
+Kontinuums-Signal zurück; ihr „Detail“ ist <em>durch die Daten bestimmt</em>. Die Sinuswellen-Ringe,
+die A zeichnet, sind das Sinc-Ringen (Gibbs) an Kanten — das sichtbare Signaturen eines
+bandbegrenzten Priors. <em>Das ist der Punkt, den B nicht hat:</em> Overzoom <em>ohne</em> erfundene
+Struktur.</p>
+</div>
+
+<div class="card">
+<h3>Die halluzinierende Extrapolation — B</h3>
+<p>Gleiche Basis <em>plus</em> Außerband-Injektion: Quantisierung + Fransen + glattes Rauschen, das
+mit dem Overzoom-Anteil wächst. Damit erfindet B Feinstruktur <em>über</em> der Abschneidefrequenz,
+die in den Daten nicht steckt. Visuell: das „⚠ HALLUCINATION“-Artefakt.
+<em>Fusion:</em> A und B sind die beiden Extremfälle desselben Mechanismus —
+„Basis-Rekonstruktion + gewählter Außerband-Prior“.</p>
+</div>
+
+<div class="grid2">
+<div class="card">
+<h3>Die Frequenzsicht (beide: 2-D-DFT-Amplitudenspektrum)</h3>
+<p>Die native Abschneidefrequenz ist <span class="m">f<sub>max</sub> = S / 2</span>
+Zyklen/Bild. In-Band = datenbestimmt; Außerband = Prior. Das DFT macht die Grenze sichtbar:
+A’s Spektrum bleibt <em>innerhalb</em> des nativen Kreises, B’s <em>leckt</em> hinaus.</p>
+</div>
+<div class="card">
+<h3>Die Metrik (der fusionierte Beitrag)</h3>
+<p><span class="m">H = E<sub>out</sub> / (E<sub>in</sub> + E<sub>out</sub>)</span> — der Anteil der
+spektralen Energie <em>außerhalb</em> des nativen Bands.
+<span class="k">L ≤ native ⇒ H = 0</span> (datenbestimmt). Modus A ⇒ H klein (bandbegrenzter Prior).
+Modus B ⇒ H groß (verrauschter Prior). Diese <em>einzige</em> Zahl vereinigt die zwei
+Widersprüchlichen Charakterisierungen zu einem Maß.</p>
+</div>
+</div>
+
+<div class="card">
+<h3>Gemeinsame Mechanik</h3>
+<p>Beide teilen: ein über 3×3-Nachbarn Gauß-gewichtetes Focus-/Level-Feld (A σ≈0,55, B σ≈0,6);
+„Klick = +zoom / Rechtsklick = −zoom“; den Übergang Pixelation → glatte Abtastung;
+log-skalierte FFT-Heatmaps; eine native Schwelle, über die „mehr“ beginnt. Die Fusion ändert an
+dieser Mechanik nichts — sie interpretiert sie neu.</p>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung: Das Overzoom-Prior-Experiment</h2>
+<p>Der Regler setzt die Zoom-Stufe (1–24, <span class="warm">native = L12</span>). Der Umschalter
+wählt den <em>Prior</em>: <span class="k">Modus A</span> (bandbegrenzt / Sinc = Schätzung) oder
+<span class="dgr">Modus B</span> (Rauschen = Halluzination). Links: das rekonstruierte Smiley.
+Rechts: sein FFT-Amplitudenspektrum mit dem <span class="warm">nativen Band-Kreis</span>.
+Der Balken meldet <span class="m">H</span>, den Außerband-Anteil. <em>Unterhalb</em> der nativen
+Stufe sind beide Modi identisch (datenbestimmt, H = 0). <em>Oberhalb</em> bleibt A sauber und
+in-Band; B züchtet Artefakte und leckt Energie aus der Band (H steigt). Die fusionierte Botschaft:
+Über derselben Linie ist der Unterschied zwischen Schätzung und Halluzination genau der
+Außerband-Anteil, den man sich einverleibt.</p>
+
+<div class="stage">
+  <canvas id="fuse"></canvas>
+  <div class="readout">
+    <span id="stateLabel">…</span>
+    <span id="fracLabel">H = —</span>
+  </div>
+</div>
+<div class="meter">
+  <div class="meter-head"><span>Außerband-Anteil H (Spektrum außerhalb des nativen Bands)</span>
+  <span id="hPct">0 %</span></div>
+  <div class="meter-track"><div class="meter-fill" id="hFill"></div></div>
+</div>
+<div class="ctrl">
+  <label>Zoom</label>
+  <div class="sliderwrap">
+    <input type="range" id="level" min="1" max="24" value="12">
+    <div class="nativedot"></div>
+  </div>
+  <div class="modes">
+    <button class="modebtn a active" id="modeA">A · sinc (Schätzung)</button>
+    <button class="modebtn b" id="modeB">B · Rauschen (Halluzination)</button>
+  </div>
+  <span class="out" id="lvl">L = 12 · native</span>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../hologram2.html">hologram2.html</a>
+<span>— „Holographic FFT Smiley — All Cells Active + Overzoom Estimation“: 3×3 räumlich-redundantes
+Hologramm, jede Zelle dekodiert das ganze Smiley; Overzoom als bandbegrenzte <em>Schätzung</em>
+(Sinc- / Sinuswellen-Patches) gerahmt, Badge <code>~SINE</code>.</span></div>
+<div class="prov"><a href="../hologram5.html">hologram5.html</a>
+<span>— „Stacked Holographic Lens Explorer – Infinite Zoom“: 7-Lagen-Skalen-Stack, Detail wächst
+aufwärts; Overzoom als <em>Halluzination</em> (sichtbare Artefakte, unbounded) gerahmt, Badge ⚠.</span></div>
+</section>
+
+<footer>Fusion n1-019 · Round 1 · Nicht-KI-Track · self-contained, no external data.</footer>
+</article>
+
+<script>
+(function(){
+  var c = document.getElementById('fuse');
+  var x = c.getContext('2d');
+  var slider = document.getElementById('level');
+  var stateLabel = document.getElementById('stateLabel');
+  var fracLabel = document.getElementById('fracLabel');
+  var hPct = document.getElementById('hPct');
+  var hFill = document.getElementById('hFill');
+  var lvl = document.getElementById('lvl');
+  var modeA = document.getElementById('modeA');
+  var modeB = document.getElementById('modeB');
+
+  var MAXL=24, NATIVE=12, S=48, N=32, NBR=8;
+  var R=96, RS=128;
+  var W=0,H=0;
+  var mode='A';
+  var dirty=true;
+
+  var offRecon=document.createElement('canvas'); offRecon.width=R; offRecon.height=R;
+  var offSpec=document.createElement('canvas');  offSpec.width=RS; offSpec.height=RS;
+
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function g(n){return cs.getPropertyValue(n).trim();}
+    return {
+      accent:g('--accent'), accent2:g('--accent2'), warm:g('--warm'), danger:g('--danger'),
+      dim:g('--dim'), native:g('--native'), ok:g('--ok'), bad:g('--bad'), line:g('--line'),
+      imgLo:rgb(g('--img-lo')), imgHi:rgb(g('--img-hi')),
+      specLo:rgb(g('--spec-lo')), specMid:rgb(g('--accent2')), specHi:rgb(g('--spec-hi'))
+    };
+  }
+  var theme=readTheme();
+
+  function rgb(h){
+    h=h.trim().replace('#','');
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+  }
+  function mix(a,b,t){return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];}
+
+  function smileyAt(nx,ny){
+    var cx=0.5, cy=0.5;
+    var dx=nx-cx, dy=ny-cy;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    var r=0.42;
+    if(dist>r+0.01) return 0;
+    if(dist>r-0.01) return Math.max(0,1-(dist-r+0.01)/0.02)*0.85;
+    var val=0.85;
+    if(Math.sqrt((nx-0.35)*(nx-0.35)+(ny-0.37)*(ny-0.37))<0.05) val=0.08;
+    if(Math.sqrt((nx-0.65)*(nx-0.65)+(ny-0.37)*(ny-0.37))<0.05) val=0.08;
+    var smCY=0.55, smR=0.22, smThick=0.035;
+    var smDist=Math.sqrt((nx-cx)*(nx-cx)+(ny-smCY)*(ny-smCY));
+    if(ny>smCY && smDist>smR-smThick && smDist<smR+smThick){
+      var t=1-Math.abs(smDist-smR)/smThick;
+      val=val*(1-t)+0.08*t;
+    }
+    return val;
+  }
+
+  var base=new Float64Array(S*S);
+  (function(){ for(var y=0;y<S;y++) for(var xx=0;xx<S;xx++) base[y*S+xx]=smileyAt((xx+0.5)/S,(y+0.5)/S); })();
+
+  function sinc(v){ return v===0?1:Math.sin(Math.PI*v)/(Math.PI*v); }
+  function reconA(nx,ny){
+    var gx=nx*(S-1), gy=ny*(S-1);
+    var ix=Math.round(gx), iy=Math.round(gy);
+    var K=3, sum=0, wsum=0;
+    for(var dy=-K;dy<=K;dy++){
+      var y0=iy+dy; if(y0<0||y0>=S) continue;
+      for(var dx=-K;dx<=K;dx++){
+        var x0=ix+dx; if(x0<0||x0>=S) continue;
+        var w=sinc(gx-x0)*sinc(gy-y0);
+        sum+=base[y0*S+x0]*w; wsum+=Math.abs(w);
+      }
+    }
+    return sum/(wsum||1);
+  }
+  function pixelate(nx,ny,blocks){
+    var b=1/blocks;
+    var bx=Math.min(Math.floor(nx/b),blocks-1);
+    var by=Math.min(Math.floor(ny/b),blocks-1);
+    var x0=Math.floor(bx*b*S), x1=Math.min(Math.floor((bx+1)*b*S),S);
+    var y0=Math.floor(by*b*S), y1=Math.min(Math.floor((by+1)*b*S),S);
+    var s=0,cc=0;
+    for(var y=y0;y<y1;y++) for(var xx=x0;xx<x1;xx++){ s+=base[y*S+xx]; cc++; }
+    return cc?s/cc:0;
+  }
+  function artifacts(nx,ny,amt){
+    var fringe=Math.sin(nx*400+1.3)*Math.sin(ny*360-0.7);
+    var n1=Math.sin(nx*700+ny*300+amt*5);
+    var n2=Math.sin(ny*520-nx*250+amt*3);
+    return (fringe*0.5+n1*0.3+n2*0.3)*amt*0.5;
+  }
+  function valAt(nx,ny,level){
+    if(level<=NATIVE){
+      var blocks=Math.max(2, Math.round(S*level/NATIVE));
+      return Math.max(0,Math.min(1,pixelate(nx,ny,blocks)));
+    }
+    var amt=(level-NATIVE)/(MAXL-NATIVE);
+    var v=reconA(nx,ny);
+    if(mode==='B') v+=artifacts(nx,ny,amt);
+    return Math.max(0,Math.min(1,v));
+  }
+
+  function dftMag(data,Nn){
+    var re=new Float64Array(Nn*Nn), im=new Float64Array(Nn*Nn);
+    for(var y=0;y<Nn;y++){
+      for(var u=0;u<Nn;u++){
+        var re0=0,im0=0;
+        for(var xx=0;xx<Nn;xx++){
+          var a=-2*Math.PI*u*xx/Nn;
+          re0+=data[y*Nn+xx]*Math.cos(a);
+          im0+=data[y*Nn+xx]*Math.sin(a);
+        }
+        re[y*Nn+u]=re0; im[y*Nn+u]=im0;
+      }
+    }
+    var mag=new Float64Array(Nn*Nn);
+    for(var uu=0;uu<Nn;uu++){
+      for(var v=0;v<Nn;v++){
+        var r0=0,i0=0;
+        for(var yy=0;yy<Nn;yy++){
+          var b=-2*Math.PI*v*yy/Nn;
+          r0+=re[yy*Nn+uu]*Math.cos(b)-im[yy*Nn+uu]*Math.sin(b);
+          i0+=re[yy*Nn+uu]*Math.sin(b)+im[yy*Nn+uu]*Math.cos(b);
+        }
+        var su=(uu+Nn/2)%Nn, sv=(v+Nn/2)%Nn;
+        mag[sv*Nn+su]=Math.sqrt(r0*r0+i0*i0);
+      }
+    }
+    return mag;
+  }
+
+  function drawRecon(level){
+    var ictx=offRecon.getContext('2d');
+    var img=ictx.createImageData(R,R);
+    var lo=theme.imgLo, hi=theme.imgHi;
+    for(var py=0;py<R;py++) for(var px=0;px<R;px++){
+      var v=valAt((px+0.5)/R,(py+0.5)/R,level);
+      var col=mix(lo,hi,v);
+      var i=(py*R+px)*4;
+      img.data[i]=col[0]; img.data[i+1]=col[1]; img.data[i+2]=col[2]; img.data[i+3]=255;
+    }
+    ictx.putImageData(img,0,0);
+  }
+
+  function drawSpec(level){
+    var ictx=offSpec.getContext('2d');
+    var patch=new Float64Array(N*N);
+    for(var y=0;y<N;y++) for(var xx=0;xx<N;xx++) patch[y*N+xx]=valAt((xx+0.5)/N,(y+0.5)/N,level);
+    var mag=dftMag(patch,N);
+    var mx=0,i;
+    for(i=0;i<mag.length;i++){ var lv=Math.log(1+mag[i]); if(lv>mx) mx=lv; }
+    if(!mx) mx=1;
+    var inb=0,outb=0;
+    for(y=0;y<N;y++) for(xx=0;xx<N;xx++){
+      var du=xx-N/2, dv=y-N/2, e=mag[y*N+xx]*mag[y*N+xx];
+      if(Math.sqrt(du*du+dv*dv)<NBR) inb+=e; else outb+=e;
+    }
+    var Hh=(inb+outb)>0? outb/(inb+outb):0;
+    var img=ictx.createImageData(RS,RS);
+    var lo=theme.specLo, mid=theme.specMid, hi=theme.specHi;
+    for(var py=0;py<RS;py++) for(var px=0;px<RS;px++){
+      var bx=Math.min(N-1,Math.floor(px/RS*N));
+      var by=Math.min(N-1,Math.floor(py/RS*N));
+      var val=Math.log(1+mag[by*N+bx])/mx;
+      var col=val<0.5? mix(lo,mid,val/0.5): mix(mid,hi,(val-0.5)/0.5);
+      var j=(py*RS+px)*4;
+      img.data[j]=col[0]; img.data[j+1]=col[1]; img.data[j+2]=col[2]; img.data[j+3]=255;
+    }
+    ictx.putImageData(img,0,0);
+    return Hh;
+  }
+
+  function fit(){
+    var d=Math.min(window.devicePixelRatio||1,2);
+    var r=c.getBoundingClientRect();
+    c.width=Math.max(1,Math.round(r.width*d));
+    c.height=Math.max(1,Math.round(r.height*d));
+    x.setTransform(d,0,0,d,0,0);
+    W=r.width; H=r.height;
+  }
+
+  function render(){
+    if(W<10||H<10) return;
+    x.clearRect(0,0,W,H);
+    var level=+slider.value;
+    drawRecon(level);
+    var Hh=drawSpec(level);
+
+    var pad=18, gap=26;
+    var avail=W-2*pad;
+    var colW=(avail-gap)/2;
+    var s=Math.min(colW, H-2*pad-8);
+    s=Math.max(40,s);
+    var pairW=2*s+gap;
+    var startX=(W-pairW)/2;
+    var leftX=startX, rightX=startX+s+gap;
+    var y=(H-s)/2-4;
+
+    x.drawImage(offRecon,leftX,y,s,s);
+    x.drawImage(offSpec,rightX,y,s,s);
+
+    x.strokeStyle=theme.line; x.lineWidth=1;
+    x.strokeRect(leftX+0.5,y+0.5,s,s);
+    x.strokeRect(rightX+0.5,y+0.5,s,s);
+
+    x.setLineDash([4,4]);
+    x.beginPath(); x.moveTo(leftX+s+gap/2,y-4); x.lineTo(leftX+s+gap/2,y+s+4); x.stroke();
+    x.setLineDash([]);
+
+    // native band circle on spectrum
+    var cx2=rightX+s/2, cy2=y+s/2;
+    x.setLineDash([5,4]);
+    x.strokeStyle=theme.native; x.lineWidth=1.5;
+    x.beginPath(); x.arc(cx2,cy2,s/4,0,6.2832); x.stroke();
+    x.setLineDash([]);
+    x.strokeStyle=theme.line; x.lineWidth=0.5;
+    x.beginPath(); x.moveTo(cx2,y+2); x.lineTo(cx2,y+s-2); x.stroke();
+    x.beginPath(); x.moveTo(rightX+2,cy2); x.lineTo(rightX+s-2,cy2); x.stroke();
+
+    x.fillStyle=theme.dim;
+    x.font='600 12px '+getComputedStyle(document.body).fontFamily;
+    x.textAlign='center';
+    x.fillText('Rekonstruktion', leftX+s/2, y+s+18);
+    x.fillText('Spektrum (FFT)', rightX+s/2, y+s+18);
+    x.fillStyle=theme.native;
+    x.font='11px '+getComputedStyle(document.body).fontFamily;
+    x.fillText('native Band', rightX+s/2, y+s/4+y-6);
+    x.textAlign='left';
+
+    // readout
+    var st, col;
+    if(level<=NATIVE){ st='In-Band (L ≤ 12) — datenbestimmt'; col=theme.accent; }
+    else if(mode==='A'){ st='Out-of-Band (L > 12) — Prior: bandbegrenzt · Schätzung (A)'; col=theme.warm; }
+    else { st='Out-of-Band (L > 12) — Prior: Rauschen · Halluzination (B)'; col=theme.danger; }
+    stateLabel.textContent=st; stateLabel.style.color=col;
+    fracLabel.textContent='H = '+(Hh*100).toFixed(1)+' %';
+    fracLabel.style.color=col;
+    hPct.textContent=(Hh*100).toFixed(1)+' %';
+    hFill.style.width=(Hh*100).toFixed(1)+'%';
+    hFill.style.background= Hh<0.12?theme.ok : (Hh<0.35?theme.warm:theme.bad);
+    lvl.textContent='L = '+level+(level<=NATIVE?' · native':' · overzoom');
+  }
+
+  function tick(){
+    if(dirty){ dirty=false; render(); }
+    requestAnimationFrame(tick);
+  }
+
+  function mark(){ dirty=true; }
+  slider.addEventListener('input',mark);
+  modeA.addEventListener('click',function(){ mode='A'; modeA.classList.add('active'); modeB.classList.remove('active'); mark(); });
+  modeB.addEventListener('click',function(){ mode='B'; modeB.classList.add('active'); modeA.classList.remove('active'); mark(); });
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark'); theme=readTheme(); mark();
+  });
+  window.addEventListener('resize',function(){ fit(); mark(); });
+
+  fit();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

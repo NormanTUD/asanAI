@@ -1,0 +1,16 @@
+{
+  "no": "074",
+  "a": "topoi.html",
+  "b": "garben_weltsicht.html",
+  "a_title": "Topoi — Eine interaktive Reise (Goldblatt)",
+  "b_title": "Kohärente Welt — Garben, Keime, Situs",
+  "combined_theme": "topos-als-koharente-welt",
+  "one_line": "Ein Topos ist eine mögliche kohärente Welt: lokale Halme verkleben zu einer globalen Struktur mit eigener (intuitionistischer, Heyting-wertiger) Logik — aber Kohärenz ist nur die erste von drei Schichten der Wahrheit, und strikte Gleichheit ist der Schatten der kohärenten Äquivalenz (∞-Garbe).",
+  "contradictions": [
+    "Verklebungsaxiom: A verlangt strikte Gleichheit der Schnitte auf Überlappungen (1-Garbe, extensional, 1-trunkiert, Ω als Halbordnung); B ersetzt sie durch kohärente Äquivalenz s₁ ≃ s₂ via f (∞-Garbe/Homotopie, f bleibt als Daten erhalten).",
+    "Welt & Wahrheit: A behandelt den Topos als geschlossenes, selbstgenügsames Universum, in dem Wahrheit intern und durch Ω vollständig bestimmt ist; B hält Kohärent ≠ wahr — ein stimmiges Modell kann den verborgenen Situs verfehlen (Gödel/Turing/Heisenberg, Heraklit).",
+    "Identität eines Dinges: A — ein Ding hat innere (Pfeil-)Elemente, extensional/elementbasiert; B (Yoneda) — ein Ding ist sein kohärentes Netz möglicher Erscheinungen, relational/repräsentativ."
+  ],
+  "resolution": "A's strikte 1-Garbe ist die 1-Trunkierung/den Schatten von B's ∞-Garbe (f = die Homotopie, die A weglässt); A's interne Wahrheit ist Wahrheit relativ zu einer Welt, während B's Situs die absolute Schicht ist, die kein einzelnes Modell erschöpft; Yoneda + Garbenbedingung identifizieren innere Elemente und äußere Erscheinungen. Fusion: Wahrheit ist dreischichtig — (1) Kohärenz/Verklebung, (2) interne logische Konsistenz (Ω/Heyting), (3) Korrespondenz mit dem (verborgenen) Situs — und strikte Gleichheit ist der kristallisierte Grenzfall der kohärenten Äquivalenz.",
+  "viz": "Interaktives Canvas: Raum X mit offener Menge U (Kreis), offenem Komplement ¬U und dem Rand ∂U (Heyting-Lücke, p∨¬p≠⊤); zwei überlappende lokale Halme s₁,s₂ auf ∂U; Umschalter 1-Garbe (strikte Gleichheit, A) vs. ∞-Garbe (s₁≃s₂ via f, B) mit Homotopie-Slider und 'anwenden'-Animation (rAF); Radius-Slider zeigt die Lückengröße 2πR; zwei Lampen Kohärenz (grün/rot) und Situs (kohärent≠wahr). Themensensitiv (CSS-Variablen), Inline-Daten, keine Netzabfragen."
+}

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offene Selbstüberschreitung — Gödel ✕ Whitehead (Fusion)</title>
+<style>
+  :root{
+    --bg:#faf8f1;
+    --surface:#ffffff;
+    --text:#1c1a17;
+    --text-muted:#5c574d;
+    --border:#e3ddce;
+    --accent:#b5651d;
+    --accent2:#7b2d8b;
+    --link:#8b3a13;
+    --card:#fffdf8;
+    --canvas-bg:#f4f1e8;
+    --badge-bg:rgba(0,0,0,0.04);
+  }
+  html.dark{
+    --bg:#0f172a;
+    --surface:#16213a;
+    --text:#e2e8f0;
+    --text-muted:#93a0b6;
+    --border:#2b3a57;
+    --accent:#f0b429;
+    --accent2:#c471f5;
+    --link:#7dd3fc;
+    --card:#16213a;
+    --canvas-bg:#0d0d24;
+    --badge-bg:rgba(255,255,255,0.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:Georgia,'Times New Roman',serif;
+    line-height:1.7;
+    transition:background .3s,color .3s;
+  }
+  article{
+    max-width:820px;
+    margin:0 auto;
+    padding:32px 20px 72px;
+  }
+  h1{
+    font-size:2rem;
+    line-height:1.2;
+    margin:0 0 6px;
+    color:var(--accent);
+  }
+  html.dark h1{color:var(--accent2);}
+  .fusion-sub{
+    font-style:italic;
+    color:var(--text-muted);
+    margin:0 0 28px;
+    font-size:1.02rem;
+    border-left:3px solid var(--accent2);
+    padding-left:12px;
+  }
+  section{margin:0 0 34px;}
+  h2{
+    font-size:1.35rem;
+    margin:0 0 12px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--border);
+    color:var(--text);
+  }
+  h2 .tag{color:var(--accent2);font-weight:normal;font-size:.9rem;}
+  p{margin:0 0 12px;}
+  strong{color:var(--accent);}
+  em{color:var(--text-muted);}
+  a{color:var(--link);text-decoration:none;border-bottom:1px solid var(--border);}
+  a:hover{border-bottom-color:var(--accent2);}
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 18px;
+    margin:12px 0;
+  }
+  .card h3{margin:0 0 8px;font-size:1.02rem;color:var(--accent2);}
+  .two-col{display:flex;gap:14px;flex-wrap:wrap;}
+  .two-col .card{flex:1 1 300px;}
+  .vs{color:var(--accent);font-weight:bold;}
+  .map{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0;}
+  .map th,.map td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top;}
+  .map th{background:var(--badge-bg);color:var(--accent2);}
+  .map td.a{color:var(--accent);}
+  ul{margin:6px 0 12px;padding-left:22px;}
+  li{margin-bottom:6px;}
+  .note{font-size:.85rem;color:var(--text-muted);font-style:italic;}
+  .conclusion{
+    background:var(--badge-bg);
+    border:1px solid var(--accent2);
+    border-left:4px solid var(--accent2);
+    border-radius:8px;
+    padding:14px 18px;
+    margin-top:8px;
+  }
+
+  /* ── Viz ── */
+  .viz-canvas-wrap{
+    position:relative;
+    width:100%;
+    height:420px;
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    background:var(--canvas-bg);
+  }
+  canvas{display:block;width:100%;height:100%;}
+  .viz-controls{
+    margin-top:14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .viz-controls label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:.86rem;
+    color:var(--text-muted);
+  }
+  .viz-controls label span{min-width:24px;text-align:right;color:var(--accent2);font-variant-numeric:tabular-nums;}
+  .viz-controls input[type=range]{flex:1;accent-color:var(--accent2);cursor:pointer;}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;}
+  .btns button{
+    font-family:inherit;
+    font-size:.82rem;
+    padding:7px 14px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    cursor:pointer;
+    transition:all .2s;
+  }
+  .btns button:hover{border-color:var(--accent2);}
+  .btns button.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+  .viz-read{
+    font-size:.8rem;
+    color:var(--text-muted);
+    font-variant-numeric:tabular-nums;
+    margin-top:4px;
+  }
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.78rem;color:var(--text-muted);margin-top:8px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .swatch{width:12px;height:12px;border-radius:50%;display:inline-block;}
+  footer{margin-top:40px;font-size:.8rem;color:var(--text-muted);text-align:center;}
+</style>
+</head>
+<body>
+<article>
+  <h1>Offene Selbstüberschreitung</h1>
+  <p class="fusion-sub">Wo Gödels Unvollständigkeit auf Whiteheads Kreativität trifft &mdash; Fusion aus: goedel2.html ✕ whitehead.html</p>
+
+  <!-- ── 1. KERNthese ── -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Zwei Papiere, die aus entgegengesetzten Richtungen kommen &mdash; das eine die <em>Grundlagen der Mathematik</em>, das andere eine <em>Metaphysik des Prozesses</em> &mdash; treffen auf denselben strukturellen Befund: <strong>Ein Selbst, das auf sich selbst referieren kann (Gödel) oder sich selbst fortwährend schafft (Whitehead), lässt sich durch keine geschlossene, fixierte Beschreibung fassen.</strong> Es bleibt immer ein Überschuss &mdash; eine unentscheidbare Wahrheit, ein neues Wirklichkeitsereignis &mdash; der die aktuelle Selbstbeschreibung übersteigt.</p>
+    <p><strong>Bei Gödel</strong> zeigt sich das so: Ein formales System, das stark genug ist, über seine eigene Beweisbarkeit zu sprechen, enthält notwendigerweise wahre Sätze, die es nicht beweisen kann (erster Satz), und kann seine eigene Widerspruchsfreiheit nicht beweisen (zweiter Satz). Wahrheit übertrumpft Beweisbarkeit &mdash; das Universum der Mathematik ist, wie der Erklärer zusammenfasst, &bdquo;not a closed book, but an open, endless adventure&ldquo;: Es gibt immer neue Wahrheiten. <strong>Bei Whitehead</strong> zeigt sich das so: Die Realität besteht nicht aus statischen Dingen, sondern aus <em>Actual Occasions</em> &mdash; Tropfen von Erfahrung, die ihre Umgebung fassen (<em>Prehension</em>), einem Ziel zustreben, sich in eine erfüllte Tatsache (<em>Satisfaction</em>) verdichten, vergehen und als Daten für neue Ereignisse weiterleben (<em>Objective Immortality</em>). <em>Creativity</em> ist das ultimative Prinzip: Das Universum ist ein unerschöpflicher Prozess von Neuheit.</p>
+    <p><strong>Die eine, fusionierte Position:</strong> <strong>Offenheit ist die tiefste Struktur des Formalen wie des Reellen.</strong> Gödel liefert das <em>Gesetz des Geschlossenen</em>: Jedes determinierte, selbstreferenzielle Ganze hat einen permanenten Überschuss jenseits seiner selbst (Wahrheit &gt; Beweisbarkeit). Whitehead liefert den <em>Motor des Offenen</em>: Kreativität erzeugt unentwegt neue Ganzes (Occasions/Systeme), die jedes das vorherige übersteigen. Gödelscher Rest und whiteheadsches neues Ereignis sind zwei Namen derselben Unerschöpflichkeit: <strong>die Fähigkeit eines Selbstes, seine jetzige, fixe Selbstbeschreibung zu übersteigen.</strong> Kein geschlossenes Buch ist das letzte; jede erfüllte Beschreibung ist ein Datum für die nächste.</p>
+  </section>
+
+  <!-- ── 2. WIDERSPRÜCHE ── -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere widersprechen sich nicht logisch direkt &mdash; sie betreffen unterschiedliche Ebenen (Logik vs. Ontologie). Aber sie treffen auf drei konkreten Punkten <em>inkompatible Stellungen</em>:</p>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>1. Feste Grenze &nbsp;<span class="vs">vs.</span>&nbsp; gar keine Grenze</h3>
+        <p><strong>A (Gödel)</strong> positiert eine <em>fixe, notwendige, dauerhafte</em> Grenze: Die Unentscheidbarkeit ist ein <em>Satz</em> &mdash; eine bestimmte, stabile Mauer, die ein gegebenes System nie überwinden kann. Inkomplettheit ist konservativ/negativ: Sie besagt, was <em>nicht</em> geht, und gilt für das System für immer.</p>
+        <p><strong>B (Whitehead)</strong> verneint jede endgültige Grenze: <em>Creativity</em> ist offen, unbegrenzt, generativ; der Prozess der Neuheit ist per Definition unerschöpflich &mdash; ohne Mauer, &bdquo;immer neue&ldquo; Wirklichkeitsereignisse.</p>
+        <p class="note">Spannung: eine reale, permanente Mauer (A) vs. überhaupt keine Mauer, nur endloses Werden (B).</p>
+      </div>
+      <div class="card">
+        <h3>2. Zeitlose Wahrheit &nbsp;<span class="vs">vs.</span>&nbsp; nichts Endgültig-Feststehendes</h3>
+        <p><strong>A (Gödel)</strong> setzt eine <em>zeitlose, absolute</em> Wahrheitslandschaft voraus: Die natürlichen Zahlen haben ein festes Standardmodell; der Gödel-Satz G ist <em>die</em> determinierte Tatsache, für immer wahr, unabhängig vom Geist. Die Lücke ist nur zwischen (fixer) Wahrheit und (begrenztem) Beweis.</p>
+        <p><strong>B (Whitehead)</strong> verneint jede endgültig feststehende Realität: Jede &bdquo;Tatsache&ldquo; (eine erfüllte Occasion) vergeht und wird neu erschaffen; Bestimmtheit ist nur momentane und provisorisch.</p>
+        <p class="note">Spannung: ewige, determinierte, objektive Wahrheit (A) vs. keine ewige feste Tatsache, nur dauernde Neuerschaffung (B).</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3. Struktur fixieren &nbsp;<span class="vs">vs.</span>&nbsp; Prozess</h3>
+      <p><strong>A (Gödel)</strong> gewinnt seine ganze Macht, indem er das Dynamische ins Statische <em>fixiert</em>: Die Gödel-Nummerierung kodiert jedes Zeichen, jede Formel, jeden Beweis als <em>feste natürliche Zahl</em> (2<sup>a</sup>·3<sup>b</sup>·5<sup>c</sup>…). Erst weil Beweisbarkeit zu zeitloser Zahlenstruktur reduziert wird, wird Selbstreferenz möglich.</p>
+      <p><strong>B (Whitehead)</strong> behauptet das Gegenteil als Kern: Realität lässt sich nicht in statische Formen/Objekte einfrieren; <em>Eternal Objects</em> sind reine <em>Möglichkeiten</em> (Daten), nie die Wirklichkeit selbst; Wirklichkeit ist stets <em>Concrescence</em> (Prozess).</p>
+      <p class="note">Spannung: formalisieren-und-einfrieren, um Macht zu gewinnen (A) vs. das Einfrieren in statische Objekte ist gerade das, was den Charakter der Realität verfehlt (B).</p>
+    </div>
+  </section>
+
+  <!-- ── 3. AUFLOESUNG ── -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="card">
+      <h3>1. Grenze lokal, Grenzenlosigkeit global</h3>
+      <p>Die Grenze ist <em>lokal</em> real &mdash; für jedes geschlossene, fixierte System (und, in der Fusion, für jede erfüllte Occasion) steht Gödels Mauer fest. Aber das <em>Ganze</em> ist kein einzelnes geschlossenes System; das Ganze ist der offene Prozess, der immer größere Systeme erzeugt (eine unentscheidbare Wahrheit als neues Axiom hinzunehmen &rarr; ein größeres, widerspruchsfreies, vollständigeres System; eine neue Occasion). <strong>Globally gibt es daher keine letzte Grenze.</strong> Fusion: &bdquo;Grenze&ldquo; gilt für jede geschlossene Einheit; &bdquo;Grenzenlosigkeit&ldquo; gilt für den kreativen Prozess, der nie abschließt. Die Mauer (A) ist real &mdash; aber sie ist eine Mauer <em>innerhalb</em> des offenen Prozesses (B), und der Prozess baut immer neue Räume jenseits von ihr.</p>
+    </div>
+
+    <div class="card">
+      <h3>2. Objektive Unsterblichkeit als Brücke</h3>
+      <p>Gödels Wahrheiten sind objektiv real und beständig &mdash; aber nicht <em>statisch besessen</em>. Sobald eine Wahrheit &bdquo;gesehen&ldquo; wird (in einem reicheren Metasystem bewiesen oder von einer Occasion gefasst), vergeht die Occasion, die sie erfüllte; der determinierte <em>Inhalt</em> aber überlebt als Daten (Whiteheads <em>Objective Immortality</em>), die zukünftige Occasions fassen. <strong>Das Vergehen des lebenden Ereignisses ist nicht die Vernichtung des Inhalts.</strong> Fusion: Gödels zeitlose Wahrheitslandschaft <em>ist</em> Whiteheads Bereich der ewigen Objekte / objektiv unsterblicher Daten. Eine Wahrheit &bdquo;vergeht&ldquo; als lebender Beweis, lebt aber für immer als fixer Gegenstand weiter, der neu gefasst werden kann. Bestimmtheit (A) und Momentanheit (B) koexistieren: der Inhalt ist ewig, die Erfüllung ist momentan.</p>
+    </div>
+
+    <div class="card">
+      <h3>3. Fixierung und Prozess &mdash; komplementär, nicht gegenläufig</h3>
+      <p>Gödels Nummerierung soll den Prozess nicht durch Zahlen <em>ersetzen</em> &mdash; sie ist ein Gerät, das dem Prozess erlaubt, <em>über sich selbst zu sprechen</em>. Eine Zahl ist die &bdquo;erfüllt-und-erhalten&ldquo;-Form eines Beweises: Sobald ein Beweis existiert, kann er als fixer Gegenstand (ein Eternal Object / ein Datum) erfasst werden; genau diese fixierte Form macht Selbstreferenz erst möglich. Die <em>Concrescence</em> (der lebende Beweisakt) erzeugt; das Erzeugte kann als Objekt fixiert werden; das fixierte Objekt speist neue Concrescence (als Axiom, als gefasstes Datum). <strong>Fusion:</strong> Zahl = die Objektebene eines Beweises (B: ewiges Objekt); Beweisakt = die Prozesseebene (B: Concrescence). A zeigt, dass die Objektebene sich selbst referieren kann; B zeigt, dass die Objektebene nur ein Schnappschuss eines laufenden Werdens ist.</p>
+    </div>
+
+    <div class="conclusion">
+      <strong>Fusionierter Schluss:</strong> Ein System/Occasion ist <em>zugleich</em> (a) ein geschlossenes, determiniertes, selbstreferenzielles Ganze &mdash; und damit gödelsch begrenzt &mdash; und (b) ein Moment eines offenen, kreativen Prozesses &mdash; und damit unerschöpflich. Der Widerspruch löst sich auf, sobald man sieht, dass &bdquo;geschlossen&ldquo; und &bdquo;offen&ldquo; <em>dasselbe</em> auf zwei Ebenen betreffen. Gödel gibt das Gesetz des Geschlossenen (Selbstreferenz &rarr; permanenter Überschuss jenseits jeder fixen Beschreibung); Whitehead den Motor des Offenen (Kreativität &rarr; neue Occasions/Axiome, die den Prozess immer wieder öffnen). <strong>Kreativität (B) ist der Grund, warum keine fixe Beschreibung je vollständig ist (A): Selbstreferenz und Kreativität sind zwei Beschreibungen derselben Unerschöpflichkeit &mdash; der Macht eines Selbstes, seine gegenwärtige fixe Selbstbeschreibung zu übersteigen.</strong>
+    </div>
+  </section>
+
+  <!-- ── 4. FUSIONIERTER INHALT ── -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <div class="card">
+      <h3>Der gödelsche Kern (aus A)</h3>
+      <ul>
+        <li><strong>Erster Satz (Satz VI):</strong> Jedes hinreichend starke, widerspruchsfreie, rekuriv axiomatisierbare formale System enthält wahre Sätze, die es selbst nicht beweisen kann.</li>
+        <li><strong>Zweiter Satz (Satz XI):</strong> Kein widerspruchsfreies System kann seine eigene Widerspruchsfreiheit beweisen.</li>
+        <li><strong>Gödel-Nummerierung:</strong> Jedes Zeichen/Formel/Beweis &harr; eine eindeutige natürliche Zahl über Primfaktorzerlegung 2<sup>n1</sup>&middot;3<sup>n2</sup>&middot;5<sup>n3</sup>&hellip;; die Eindeutigkeit der Primfaktorzerlegung garantiert, dass man jede Sequenz wieder <em>dekodieren</em> kann. &bdquo;Beweisbarkeit&ldquo; wird zur arithmetischen Eigenschaft von Zahlen.</li>
+        <li><strong>Selbstreferenz:</strong> Das Lügner-Paradoxon wird rigoros: eine Formel [R(q);q], die ihre <em>eigene</em> Unbeweisbarkeit behauptet (&bdquo;Diese Formel ist im System nicht beweisbar&ldquo;). Fallanalyse: beweisbar &rarr; Widerspruch; Negation beweisbar &rarr; Widerspruch; also <em>unentscheidbar</em> &mdash; und doch von außen <em>wahr</em>.</li>
+        <li><strong>Satz VII:</strong> Jede rekurrsive Relation ist arithmetisch &mdash; Fragen über Beweisbarkeit lassen sich auf +, &times; und Quantoren über ganzen Zahlen zurückführen. <strong>Satz X:</strong> Das Entscheidungsproblem der Prädikatenlogik 1. Stufe ist unentscheidbar.</li>
+        <li><strong>Folgen:</strong> Tod von Hilberts Programm (vollständig + konsistent + finit beweisbar ist unmöglich); Turings Halteproblem (1936); Church; Cohens Unabhängigkeit der Kontinuumshypothese (1963); Penroses (umstrittene) These, der Geist übersteige Algorithmen.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Der whiteheadsche Kern (aus B)</h3>
+      <ul>
+        <li>Die Realität ist ein <strong>Prozess von Actual Occasions</strong> (Tropfen der Erfahrung), nicht aus statischen Substanzen. Lebenszyklus: <em>Geburt &rarr; Prehension (Fühlen) &rarr; Concrescence (Werden) &rarr; Satisfaction (Erfüllung) &rarr; Vergehen &rarr; Daten für Neue (Objective Immortality)</em>.</li>
+        <li><strong>Creativity</strong> (das ultimative Prinzip, der Drang, immer neue Wirklichkeitsereignisse hervorzubringen); <strong>Prehension</strong> (ein Ereignis nimmt andere auf); <strong>Subjective Aim</strong> (inneres Ziel); <strong>Eternal Objects</strong> (reine Möglichkeiten &mdash; Formen/Farben/Muster, die in Occasions eintreten können); <strong>Concrescence</strong> (das vereinheitlichende Werden); <strong>Objective Immortality</strong> (vergangene Occasions leben als Daten weiter); <strong>Gott</strong> (kein Schöpfer, sondern das Ordnungsprinzip, das Möglichkeiten und Ordnung ins Universum einbringt).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Die Brückenkarte (A &harr; B)</h3>
+      <p class="note">Lesart der Fusion &mdash; keine Behauptung der einzelnen Papiere, sondern die Integration beider:</p>
+      <table class="map">
+        <tr><th>Gödel (A) &mdash; formal</th><th>Whitehead (B) &mdash; prozessual</th></tr>
+        <tr><td class="a">eine determinierte, selbstreferenzielle Formel / ein Beweis (ein geschlossenes, sich selbst betreffendes Ganzes)</td><td>eine <strong>Actual Occasion</strong> (ein geschlossenes, sich selbst betreffendes Ganzes)</td></tr>
+        <tr><td class="a">der lebende Beweisakt / Herleitung</td><td><strong>Concrescence</strong> (das vereinheitlichende Werden)</td></tr>
+        <tr><td class="a">ein bewiesener Satz (determinierte, fixe Wahrheit)</td><td><strong>Satisfaction</strong> (die erfüllte Tatsache)</td></tr>
+        <tr><td class="a">ein bewiesener Satz wird zu einem fixen, zeitlosen Fakt / Axiom in einem reicheren Metasystem</td><td><strong>Perishing + Objective Immortality</strong> (Wahrheit lebt als Daten weiter)</td></tr>
+        <tr><td class="a">ein größeres System nimmt die Resultate eines kleineren als Axiome auf</td><td><strong>Prehension</strong> (ein größeres System &bdquo;fasst&ldquo; ein kleineres)</td></tr>
+        <tr><td class="a">die fixen Formalstrukturen: die ganzen Zahlen, Formeln, Zahlen</td><td><strong>Eternal Objects</strong> (reine Möglichkeiten / formale Daten)</td></tr>
+        <tr><td class="a">Gödels Garantie, dass zu jedem System ein neuer wahrer Satz auftaucht (der unerschöpfliche Überschuss der Wahrheit)</td><td><strong>Creativity / Neuheit</strong> (unerschöpfliche Möglichkeit)</td></tr>
+        <tr><td class="a">das Meta-Level der Widerspruchsfreiheit / Ordnung, das den offenen Prozess kohärent hält (das stärkere System)</td><td><strong>Gott / Ordnungsprinzip</strong></td></tr>
+      </table>
+      <p>Damit: Gödels <em>fixe Wahrheit</em> (Objektebene) = Whiteheads ewige Objekte + objektive Unsterblichkeit; Gödels <em>Beweisprozess</em> = Whiteheads Concrescence; Gödels <em>nächstes, reicheres System</em> = Whiteheads <em>nächste Occasion</em>; Gödels <em>Unerschöpflichkeit der Wahrheit</em> = Whiteheads <em>Kreativität/Neuheit</em>. Die fixe Zahl ist die &bdquo;erfüllt-und-erhalten&ldquo;-Form eines Beweises; der Beweisakt ist die Concrescence. Selbstreferenz (A) und Kreativität (B) sind zwei Seiten derselben Unerschöpflichkeit.</p>
+    </div>
+  </section>
+
+  <!-- ── 5. VISUALISIERUNG ── -->
+  <section id="visualisierung">
+    <h2>Visualisierung <span class="tag">&mdash; das offene, sich übersteigende Geflecht</span></h2>
+    <p>Jeder leuchtende Knoten ist eine <em>Occasion / ein formales System</em> im Werden (<em>Concrescence</em>). Verdichtet er sich, wird er <em>erfüllt</em> (fix, &bdquo;geschlossen&ldquo;) und hinterlässt einen leuchtenden <strong>Gold-Rest</strong> &mdash; die gödelsche, von der fixen Beschreibung nicht erfasste Wahrheit. Aus diesem Rest entsteht, je nach <em>Selbstreferenz</em>, der <em>nächste, größere</em> Knoten. So wächst ein endlos offenes Geflecht: <strong>jedes geschlossene System erzeugt den Samen seiner eigenen Übersteigerung.</strong> Schiebt man <em>Selbstreferenz</em> auf 0, schließt sich das System und es entsteht nur ein stabiler, erstarnter Knoten &mdash; das &bdquo;geschlossene Buch&ldquo;. Alte, erfüllte Knoten verblassen zu <em>Resten</em> (objektive Unsterblichkeit) und bleiben als schwaches Datum im Hintergrund.</p>
+
+    <div class="viz-canvas-wrap">
+      <canvas id="viz"></canvas>
+    </div>
+
+    <div class="viz-controls">
+      <label>Selbstreferenz <span id="vSelf">70</span>%<input type="range" id="rSelf" min="0" max="100" value="70"></label>
+      <label>Kreativität <span id="vCre">50</span>%<input type="range" id="rCre" min="0" max="100" value="50"></label>
+      <label>Präension <span id="vPre">60</span>%<input type="range" id="rPre" min="0" max="100" value="60"></label>
+      <div class="btns">
+        <button id="bPause">&#10074;&#10074; Pause</button>
+        <button id="bReset">&#8635; Reset</button>
+        <button id="bTheme">&#9680; Thema</button>
+      </div>
+      <div class="viz-read" id="read"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#ff6b9d;"></span>Concrescence (Werden)</span>
+        <span><span class="swatch" style="background:#c471f5;"></span>Satisfaction (fix/erfüllt)</span>
+        <span><span class="swatch" style="background:#ffd700;"></span>Rest = unentscheidbare Wahrheit</span>
+        <span><span class="swatch" style="background:rgba(150,150,170,0.5);"></span>Objektive Unsterblichkeit (schwaches Datum)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 6. PROVENIENZ ── -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><a href="../goedel2.html">goedel2.html</a> &mdash; Interaktive Einführung in Gödels Unvollständigkeitssätze (1931): Gödel-Nummerierung, Selbstreferenz, der 9-Schritte-Beweis, die beiden Sätze, Theoreme VII/X und ihre Folgen (Hilbert, Turing, Church, Cohen, Penrose).</li>
+      <li><a href="../whitehead.html">whitehead.html</a> &mdash; Interaktive Prozessphilosophie nach Whitehead: Actual Occasions, Prehension, Concrescence, Satisfaction, Objective Immortality, Creativity und Gott als Ordnungsprinzip &mdash; als lebendes, steuerbares Teilchensystem.</li>
+    </ul>
+  </section>
+
+  <footer>Runde 1, Paar 018 &mdash; Synthese-Paper (nicht-künstliche-Intelligenz-Spur). Selbstreferenz (Gödel) und Kreativität (Whitehead) als zwei Namen derselben Offenheit.</footer>
+</article>
+
+<script>
+(function(){
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var rSelf=document.getElementById('rSelf'), vSelf=document.getElementById('vSelf');
+  var rCre=document.getElementById('rCre'),  vCre=document.getElementById('vCre');
+  var rPre=document.getElementById('rPre'),  vPre=document.getElementById('vPre');
+  var bPause=document.getElementById('bPause'), bReset=document.getElementById('bReset'), bTheme=document.getElementById('bTheme');
+  var read=document.getElementById('read');
+
+  var W=0,H=0;
+  function resize(){
+    var wrap = canvas.parentElement;
+    W = canvas.width = wrap.clientWidth;
+    H = canvas.height = wrap.clientHeight || 420;
+  }
+
+  var PAL={bg:[244,241,232], remnant:'#ffd700'};
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function hexToRgb(h){
+    h=h.replace('#','');
+    if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
+    return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
+  }
+  function readTheme(){
+    var bg=cssVar('--canvas-bg');
+    if(/^#[0-9a-fA-F]{3,6}$/.test(bg)){ PAL.bg=hexToRgb(bg); }
+    PAL.remnant = document.documentElement.classList.contains('dark') ? '#ffd700' : '#b8860b';
+  }
+
+  var ACCENTS=['#ff6b9d','#c471f5','#4fc3f7','#66bb6a','#ffa726','#ef5350'];
+  var MAXN=140, MAXG=220;
+  var nodes=[], ghosts=[], paused=false, t=0;
+
+  function seed(){
+    nodes=[]; ghosts=[]; t=0;
+    nodes.push({x:W/2,y:H/2,gen:0,r:7,age:0,life:60+Math.random()*40,sat:false,spawned:false,satAge:0,rem:0,color:ACCENTS[0],ang:0,vx:0,vy:0,dead:false});
+  }
+
+  function spawnChildren(node,n){
+    for(var k=0;k<n;k++){
+      if(nodes.length>=MAXN) break;
+      var a=node.ang+(Math.random()-0.5)*1.4;
+      var d=node.r*2.4+8+Math.random()*10;
+      nodes.push({
+        x:node.x+Math.cos(a)*d, y:node.y+Math.sin(a)*d,
+        gen:node.gen+1, r:Math.min(20,node.r+1.7),
+        age:0, life:60+Math.random()*50,
+        sat:false, spawned:false, satAge:0, rem:0,
+        color:ACCENTS[(node.gen+1)%ACCENTS.length],
+        ang:a, vx:Math.cos(a)*0.3, vy:Math.sin(a)*0.3, dead:false
+      });
+    }
+  }
+
+  function step(){
+    t++;
+    var self=+rSelf.value/100;
+    var cre=+rCre.value/100;
+    for(var i=0;i<nodes.length;i++){
+      var nd=nodes[i];
+      if(!nd.sat){
+        nd.age++;
+        if(nd.age>=nd.life){ nd.sat=true; nd.satAge=0; nd.rem=0; }
+      } else {
+        nd.satAge++;
+        nd.rem=Math.min(nd.rem+0.25,16);
+        if(!nd.spawned && nodes.length<MAXN){
+          var n=1+Math.round(cre*3);
+          if(self<=0){ nd.spawned=true; }
+          else if(Math.random()<self){ spawnChildren(nd,n); nd.spawned=true; }
+        }
+        if(self>0 && nd.satAge>500 && ghosts.length<MAXG){
+          ghosts.push({x:nd.x,y:nd.y,r:nd.r*0.7,color:nd.color,a:0.5});
+          nd.dead=true;
+        }
+      }
+      nd.vx+=(Math.random()-0.5)*0.02; nd.vy+=(Math.random()-0.5)*0.02;
+      nd.vx*=0.99; nd.vy*=0.99;
+      nd.x+=nd.vx; nd.y+=nd.vy;
+      if(nd.x<0)nd.x+=W; else if(nd.x>W)nd.x-=W;
+      if(nd.y<0)nd.y+=H; else if(nd.y>H)nd.y-=H;
+    }
+    var alive=[];
+    for(var j=0;j<nodes.length;j++){ if(!nodes[j].dead) alive.push(nodes[j]); }
+    nodes=alive;
+    for(var g=0;g<ghosts.length;g++){ ghosts[g].a=Math.max(0.05,ghosts[g].a-0.002); }
+  }
+
+  function drawPrehension(){
+    var pre=+rPre.value/100;
+    var range=40+pre*160;
+    if(pre<0.03 || nodes.length<2) return;
+    ctx.lineWidth=0.6;
+    var drawn=0;
+    for(var i=0;i<nodes.length;i++){
+      var a=nodes[i];
+      for(var j=i+1;j<nodes.length;j++){
+        var b=nodes[j];
+        var dx=a.x-b.x, dy=a.y-b.y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<range){
+          var al=(1-d/range)*pre*0.35;
+          ctx.strokeStyle='rgba(79,195,247,'+al.toFixed(3)+')';
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          if(++drawn>400) return;
+        }
+      }
+    }
+  }
+
+  function draw(){
+    var b=PAL.bg;
+    ctx.fillStyle='rgba('+b[0]+','+b[1]+','+b[2]+',0.28)';
+    ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle='rgba(120,115,245,0.05)';
+    ctx.lineWidth=0.5;
+    var sp=56;
+    for(var x=(t*0.15)%sp;x<W;x+=sp){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(var y=(t*0.1)%sp;y<H;y+=sp){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    for(var gi=0;gi<ghosts.length;gi++){
+      var g=ghosts[gi];
+      ctx.globalAlpha=g.a*0.5;
+      ctx.fillStyle=g.color;
+      ctx.beginPath();ctx.arc(g.x,g.y,g.r,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    drawPrehension();
+
+    for(var i=0;i<nodes.length;i++){
+      var nd=nodes[i];
+      ctx.globalAlpha=0.18;
+      ctx.fillStyle='#000000';
+      ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r*1.35,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=1;
+
+      if(!nd.sat){
+        var lr=nd.age/nd.life;
+        ctx.globalAlpha=0.35+0.35*lr;
+        ctx.fillStyle=nd.color;
+        ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r*lr,0,Math.PI*2);ctx.fill();
+        ctx.globalAlpha=1;
+      } else {
+        ctx.globalAlpha=0.9;
+        ctx.fillStyle=nd.color;
+        ctx.beginPath();ctx.arc(nd.x,nd.y,nd.r,0,Math.PI*2);ctx.fill();
+        ctx.globalAlpha=1;
+        var ra=nd.r+nd.rem;
+        ctx.strokeStyle=PAL.remnant;
+        ctx.globalAlpha=Math.max(0,0.6-nd.rem/40);
+        ctx.lineWidth=1.2;
+        ctx.beginPath();ctx.arc(nd.x,nd.y,ra,0,Math.PI*2);ctx.stroke();
+        ctx.globalAlpha=1;
+      }
+    }
+  }
+
+  function updateRead(){
+    var gen=0;
+    for(var i=0;i<nodes.length;i++){ if(nodes[i].gen>gen) gen=nodes[i].gen; }
+    read.textContent='Aktive Occasions: '+nodes.length+'  ·  Max. Generation: '+gen+'  ·  Objektive Unsterblichkeit (Reste): '+ghosts.length;
+  }
+
+  function loop(){
+    if(!paused) step();
+    draw();
+    updateRead();
+    requestAnimationFrame(loop);
+  }
+
+  rSelf.addEventListener('input',function(){vSelf.textContent=rSelf.value;});
+  rCre.addEventListener('input',function(){vCre.textContent=rCre.value;});
+  rPre.addEventListener('input',function(){vPre.textContent=rPre.value;});
+  bPause.addEventListener('click',function(){paused=!paused;bPause.innerHTML=paused?'&#9654; Play':'&#10074;&#10074; Pause';bPause.classList.toggle('active',paused);});
+  bReset.addEventListener('click',function(){resize();seed();});
+  bTheme.addEventListener('click',function(){document.documentElement.classList.toggle('dark');readTheme();});
+  window.addEventListener('resize',resize);
+
+  function init(){
+    resize(); readTheme(); seed(); loop();
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

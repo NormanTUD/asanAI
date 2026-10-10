@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symbiose oder Spiegel? — Exogene Neurotransmitter als heilige Technologie und als Falle</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root{
+    --bg:#f4f2ec; --bg-card:#ffffff; --text:#20242e; --dim:#5b6472;
+    --accent:#0f766e; --accent2:#b8860b; --accent3:#a0395b; --accent4:#5b4bc4;
+    --border:rgba(20,20,40,.14); --canvas:#ffffff; --code-bg:rgba(15,118,110,.08);
+    --chip:#efece2;
+  }
+  html.dark{
+    --bg:#0a0e1a; --bg-card:#141a2c; --text:#e8eefc; --dim:#8b9bb8;
+    --accent:#6fd6c4; --accent2:#e5b769; --accent3:#e97b8f; --accent4:#a794ff;
+    --border:rgba(255,255,255,.14); --canvas:#0b0f1c; --code-bg:rgba(111,214,196,.10);
+    --chip:#161d33;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+    line-height:1.72; -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 90px}
+  header{padding:50px 20px 24px;text-align:center;border-bottom:1px solid var(--border);max-width:820px;margin:0 auto}
+  .kicker{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+  h1{font-size:clamp(1.8rem,5.2vw,2.7rem);font-weight:800;line-height:1.14;
+     background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));
+     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{margin-top:12px;color:var(--dim);font-size:1rem}
+  .subtitle .fx{color:var(--accent2)}
+  .theme-btn{margin-top:16px;background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+     padding:8px 18px;border-radius:22px;cursor:pointer;font-size:.9rem;transition:.2s}
+  .theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin-top:42px}
+  h2{font-size:1.45rem;margin-bottom:14px;padding-left:14px;border-left:4px solid var(--accent);line-height:1.2}
+  h3{font-size:1.08rem;margin:22px 0 8px;color:var(--accent)}
+  p{margin-bottom:13px;color:var(--text)}
+  .dim{color:var(--dim)}
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+  .ab>div{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .ab .tagA{border-top:3px solid var(--accent2)}
+  .ab .tagB{border-top:3px solid var(--accent3)}
+  .who{font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .ab .tagA .who{color:var(--accent2)}
+  .ab .tagB .who{color:var(--accent3)}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;
+     padding:16px 18px;margin:16px 0;text-align:center;font-family:'Courier New',monospace;
+     font-size:1.06rem;overflow-x:auto;color:var(--text)}
+  .formula sub{font-size:.72em}
+  .note{background:var(--bg-card);border-left:3px solid var(--accent4);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+  .list{margin:8px 0 8px 2px;list-style:none}
+  .list li{padding:7px 0 7px 26px;position:relative}
+  .list li::before{content:'▸';position:absolute;left:6px;color:var(--accent)}
+  .prov{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .prov a{display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+     padding:16px 18px;text-decoration:none;color:var(--text);transition:.2s}
+  .prov a:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .prov .k{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:6px}
+  .prov .t{font-weight:700;margin-bottom:4px}
+  .prov .d{font-size:.9rem;color:var(--dim)}
+  /* viz */
+  .viz-box{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:14px}
+  #viz{width:100%;height:420px}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+  .controls button{background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+     padding:9px 16px;border-radius:9px;cursor:pointer;font-size:.9rem;transition:.15s}
+  .controls button:hover:not(:disabled){border-color:var(--accent)}
+  .controls button.on{background:var(--accent);color:#08110f;border-color:var(--accent);font-weight:700}
+  .controls button:disabled{opacity:.4;cursor:not-allowed}
+  .controls .lbl{font-size:.85rem;color:var(--dim)}
+  .controls .rng{display:flex;align-items:center;gap:8px}
+  input[type=range]{accent-color:var(--accent)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  .stat{background:var(--chip);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+  .stat .n{font-size:1.4rem;font-weight:800;font-variant-numeric:tabular-nums}
+  .stat .l{color:var(--dim);font-size:.76rem;margin-top:2px}
+  #status{margin-top:10px;font-weight:700;text-align:center}
+  @media(max-width:640px){.ab,.prov,.stats{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){try{var t=localStorage.getItem('theme');if(t!=='light'){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+</head>
+<body>
+<header>
+  <div class="kicker">Nicht-KI-Track · Runde 1 · Paar 043</div>
+  <h1>Symbiose oder Spiegel?</h1>
+  <div class="subtitle">Exogene Neurotransmitter als heilige Technologie und als Falle —
+    <span class="fx">Fusion aus: raetsch.html ✕ spiegelsaal.html</span></div>
+  <button class="theme-btn" id="themeBtn">🌙 / ☀️ Theme</button>
+</header>
+
+<div class="wrap">
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere — ein ethnobotanisches Werk über psychoaktive Pflanzen (A) und ein interaktives Buch über
+    narzisstische Manipulation (B) — beschreiben, auf völlig verschiedenen Oberflächen,
+    <strong>denselben grundlegenden Mechanismus</strong>: Ein <em>externer Agent</em> dockt in das
+    <strong>körpereigene Neurotransmitter-System eines Wirts</strong> an und erzeugt dadurch einen Zustand bzw. eine
+    Bindung, die sich <em>echt</em> anfühlt, aber von außen gesteuert ist.</p>
+    <p>In A tun das <strong>Pflanzenalkaloide</strong> — „strukturell verwandt oder identisch“ mit körpereigenen
+    Botenstoffen, die „an dieselben Rezeptoren an“ (Morphin→Endorphin, Nikotin→Acetylcholin, THC→Anandamid,
+    Kokain→Noradrenalin/Dopamin-Transporter). In B tut das <strong>der Manipulator</strong>, dessen „Love Bombing“
+    das Nervensystem „flutet — Dopamin, Oxytocin, Adrenalin. Kein Zufall.“ In beiden Fällen ist die erzeugte
+    Chemie <strong>exogen</strong>: sie kommt von außen und <em>benutzt</em> die eigene Biologie.</p>
+    <p>Die vereinte These: <strong>Dasselbe Muster — exogene Substanz flutet das eigene
+    Belohnungs-/Neurotransmitter-System — ist entweder heilige Technologie oder ausbeuterische Falle.</strong>
+    Der Ausschlag liegt nicht im Mechanismus, sondern in der <em>Qualität der Kopplung</em>: In A bleibt der Andere
+    (die Pflanze) ein <strong>eigenständiges Organ</strong>, das den Menschen ergänzt — <strong>Symbiose</strong>.
+    In B wird der Andere zur <strong>reflektierenden Fläche für das eigene Ich</strong> reduziert —
+    <strong>Spiegel</strong>. Und der Heilungsweg ist in beiden identisch: <strong>die Autonomie des eigenen Systems
+    zurückerobern</strong> — in A durch <em>Integration</em> nach der Erfahrung, in B durch den <em>Austritt</em>
+    aus der Bühne.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="dim">Die beiden arbeiten in verschiedenen Domänen und widersprechen sich also nicht faktisch direkt.
+    Aber sie treffen in drei Punkten so scharf aufeinander, dass sie zur <em>dasselben Struktur</em>
+    <em>entgegengesetzte Haltungen</em> einnehmen:</p>
+
+    <h3>Widerspruch 1 — Bewertung desselben Mechanismus</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · raetsch.html</div>
+        <p>Rahmt die Kopplung Pflanze–Mensch als wertvolle, beabsichtigte <strong>Ko-Evolution</strong> und
+        „schamanische Technologie“. Die veränderten Zustände dienen Heilung, Divination, Initiation,
+        „Kommunikation mit dem Numinosen“ — also <em>zweckvollem Gebrauch</em>.</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · spiegelsaal.html</div>
+        <p>Rahmt die <em>identische</em> Neurochemie-Flutung (Dopamin/Oxytocin/Adrenalin) als <strong>Falle</strong>:
+        „Der Motor läuft heiß, damit du keine Zeit hast, hinzusehen.“ — etwas, dem man entkommen <em>muss</em>.</p>
+      </div>
+    </div>
+    <p>Gleiche Chemie, entgegengesetztes Urteil: <strong>heilig vs. schädlich.</strong></p>
+
+    <h3>Widerspruch 2 — Reversibilität: Runde vs. Bruch</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · raetsch.html</div>
+        <p>Die „Universelle Ritualstruktur“ endet in <strong>„Integration (Erzählen, Deuten, Handeln)“</strong> —
+        eine <em>Rückkehr in dasselbe System</em>, wiederholbar, eine <strong>Rundreise</strong>
+        (Vorbereitung → Einnahme → Erfahrung → Integration).</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · spiegelsaal.html</div>
+        <p>Verlangt den <strong>endgültigen Austritt</strong>: „Verlasse die Bühne … Leise, geplant, endgültig“,
+        „Kein Kontakt.“ Die Rückkehr in dasselbe System ist bei B <em>genau der Zyklus</em> (Hoovering zieht zurück).</p>
+      </div>
+    </div>
+    <p>A: <em>gehen und zurückkommen.</em> B: <em>nur weggehen heilt.</em></p>
+
+    <h3>Widerspruch 3 — Agentur &amp; Einverständnis</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · raetsch.html</div>
+        <p>Der Mensch ist <strong>freiwilliger, vorbereiteter Nutzer</strong>, der die Dosis, die Zubereitung und den
+        „Schamanen/Leiter“ steuert (Dreistufenmodell der Dosierung, explizite „Vorbereitung“).</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · spiegelsaal.html</div>
+        <p>Das Opfer ist <strong>unwissendes „Publikum“/„Statistin“</strong>, das <em>geflutet</em> wird:
+        „du bist das Publikum, nie der Mitspieler.“</p>
+      </div>
+    </div>
+    <p>Dasselbe Kopplungsgeflecht (Agent + Wirt) — entgegengesetzte Einverständnislage: <strong>Nutzer vs. Benutztes.</strong></p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Jede Spannung löst sich auf, wenn man vom <em>Mechanismus</em> zur <em>Kopplungsqualität</em> wechselt.
+    Der Mechanismus ist derselbe; die <em>Beziehung</em> zu ihm ist der Unterschied.</p>
+
+    <h3>Auflösung 1 — Der Mechanismus ist neutral</h3>
+    <p>„Exogene Neurotransmitter, die an körpereigene Rezeptoren andocken und eine sich echt anfühlende Bindung
+    erzeugen“ kann eine <strong>wechselseitige, transparente, dosierbare Symbiose</strong> sein (A) <em>oder</em> eine
+    <strong>einseitige, versteckte, selbst-erneuernde Ausbeutung</strong> (B). Drei Fragen entscheiden:
+    <em>Wer bleibt im Fahrersitz? Trägt die Bindung beide oder nur den Agenten? Ist der Zustand integrierbar?</em>
+    A: ja / beide / ja. B: nein / nur den Agenten / nein.</p>
+    <div class="note"><strong>Fusionierter Schluss:</strong> Dieselbe Bindungschemie ist <em>heilig oder toxisch</em>
+    je nach Einwilligung, Reziprozität und Integration.</div>
+
+    <h3>Auflösung 2 — Integration ist der Test</h3>
+    <p>Reversibilität ist ein <strong>Kontinuum</strong>, gesteuert durch Dosierung und Integrierbarkeit. A's Zustand
+    ist <em>endlich und selbstbegrenzt</em> („Wirkdauer“) mit klarer „Rückkehr“ — also integrierbar. B's Zustand ist
+    <em>intermittierend und selbst-erneuernd</em> („derselbe Mechanismus wie beim Spielautomaten“, Hoovering =
+    erneute Verabreichung) — nicht integrierbar, weil das System sich selbst neu verabreicht, <em>um</em> die
+    Integration zu verhindern.</p>
+    <div class="note"><strong>Fusionierter Schluss:</strong> Integration ist der <em>Test</em>, ob eine Bindung
+    eine Rundreise oder eine Falle ist: Kehrst du heil zurück, war es Symbiose; hält das System dich fest, um dir
+    die Rückkehr zu verbauen, ist es der Spiegelsaal.</div>
+
+    <h3>Auflösung 3 — Schamane oder Narziss?</h3>
+    <p>Beide haben eine <strong>Leiter-Figur</strong> (A: „Schamane/Leiter“; B: der Manipulator). Der Unterschied
+    ist, <em>wem</em> der Leiter dient. In A speist der Leiter die Phase, um die <em>Teilnehmerin</em> zu tragen
+    (Sankey: „Schamane/Leiter → Visionäre Phase“). In B <em>verbraucht</em> der Agent die Partnerin als <strong>Supply</strong>
+    („Jeder Mensch um ihn herum wird zur reflektierenden Fläche für sein Ich“).</p>
+    <div class="note"><strong>Fusionierter Schluss:</strong> Eine Leitung, die dich <em>integriert</em>, ist
+    <strong>Schamane</strong>; eine, die dich <em>verbraucht</em>, ist <strong>Narziss</strong>. Die entscheidende
+    Unterscheidung ist <strong>Symbiose</strong> (der Andere bleibt ein <em>Anderer</em>, dessen Unterschied
+    <em>Wert trägt</em>) vs. <strong>Spiegel</strong> (der Andere wird zur <em>Kopie</em>; der Unterschied wird zur
+    <em>Bedrohung</em> — „Verdunkelst du [=eigene Meinung, Grenze], wirkt er verletzt“).</div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>1. Der gemeinsame Kern — der exogene Neurotransmitter</h3>
+    <p>A listet die Docking-Paare, bei denen ein Pflanzenstoff an ein körpereigenes System andockt:
+    <span class="dim">Morphin→Endorphin/Opioid-Rezeptor · Nikotin→Acetylcholin/nACh · THC→Anandamid ·
+    Koffein→Adenosin-Rezeptor · Kokain→Noradrenalin/Dopamin-Transporter · Ephedrin→Adrenalin/Adrenerg-Rezeptor ·
+    Atropin/Scopolamin→mACh-Rezeptor.</span> B beschreibt denselben Vorgang an einer anderen Stelle: „Love Bombing“
+    flutet das Opfer mit <strong>Dopamin, Oxytocin, Adrenalin</strong>.</p>
+    <p>Fusion: Das „Gefühl“ von Verbundenheit/Lebendigkeit ist in beiden Fällen <strong>echte Biochemie</strong>,
+    aber <em>von außen ausgelöst</em> — deshalb fühlt es sich „zu gut an, um wahr zu sein“ (B) und deshalb ist es
+    schwer, es zu verlassen, weil der Körper seine „Dosis“ will. Die Bindung ist <em>real</em> und
+    <em>extern gesteuert</em> zugleich.</p>
+
+    <h3>2. Das Synergismus-Prinzip — der Effekt braucht ein Paar</h3>
+    <p>A: „Viele psychoaktive Zubereitungen wirken nur durch die geschickte Kombination mehrerer Pflanzen.
+    <strong>Die Einzelbestandteile sind oft wirkungslos — erst die Kombination erzeugt den Effekt</strong>.“
+    (DMT oral unwirksam, erst der MAO-Hemmer; Coca + Kalk löst erst das Kokain.) B: der Spiegel braucht den
+    Anderen — „Im Innern ist es leer. Also stellt er Spiegel auf.“</p>
+    <p>Fusion: Beide Systeme sind <strong>dyadisch, und keine Hälfte wirkt allein</strong>. A's „zwei Zutaten“
+    (Wirkstoff-Lieferant + Enabler/Potentiator) = B's „Narziss + Spiegel“. Der Unterschied: In A sind es zwei
+    <em>unterschiedliche</em> Substanzen, die sich ergänzen; in B ist eine Hälfte nur eine <em>Fläche</em> für die andere.</p>
+
+    <h3>3. Dosis, Schwelle &amp; Zyklus</h3>
+    <p>A: das <strong>Dreistufenmodell der Dosierung</strong> — Niedrig (Stimulans) / Mittel (Heilmittel) /
+    Hoch (Entheogen/Gift) — „Dosis bestimmt Wirkung“, mit therapeutischem Fenster, Toxizitätsklippe und endlicher
+    „Wirkdauer“. B: der <strong>Zyklus</strong> — Idealisierung → Abwertung → Verwerfung → Hoovering — wobei
+    „die Abstände zwischen guten Zeiten länger, die Kränkungen tiefer“ werden (intermittierende Verstärkung,
+    „derselbe Mechanismus wie beim Spielautomaten“).</p>
+    <p>Fusion: Beide formen Verhalten über einen <strong>Verstärkungsplan</strong>. Der Unterschied: A's Dosis ist
+    <em>endlich und selbstbegrenzt</em> (der Effekt läuft ab); B's Plan ist <em>intermittierend und selbst-erneuernd</em>
+    (der „süße Moment“ kommt unvorhersehbar zurück → <strong>Traumabindung</strong>).</p>
+
+    <h3>4. Set &amp; Setting — die konstruierte Bühne</h3>
+    <p>A benennt es explizit: <strong>„Set &amp; Setting: Die Determinanten der Erfahrung“</strong> — Substanz 25 ·
+    Set 25 · Setting 25 · Ritualleiter 15 · Kulturelle Kodierung 10. Die Erfahrung ist also <em>vollständig</em>
+    vom Setting bestimmt. B macht es zur ganzen Metapher: „Die Bühne“ unter Scheinwerfern, „Beziehung ist ein
+    Volumen“, der Spiegelsaal — die Erfahrung ist das Produkt einer <em>konstruierten</em> Bühne.</p>
+    <p>Fusion: <strong>Jede intensive erfahrene Bindung ist Produkt eines Settings, nicht „nackter Wahrheit“.</strong>
+    Deshalb gilt: das Setting untersuchen — Wer ist der Leiter? Wer profitiert vom Scheinwerfer? Welche
+    „kulturelle Kodierung“ steckt dahinter?</p>
+
+    <h3>5. Der Ausgang — das eigene System zurückerobern</h3>
+    <p>A: Das Ritual endet in „Rückkehr → <strong>Integration (Erzählen, Deuten, Handeln)</strong>“ — Integration
+    ist der <em>Zweck</em>, man kehrt verändert aber unversehrt zurück. B: „Du kannst ihn nicht ändern. Du kannst nur
+    dein Verhalten, deine Grenzen und deinen Raum verändern. <strong>Sobald du dich veränderst, verändert sich das
+    ganze System</strong>“ — konkret: dokumentieren, Kommunikationsfläche verkleinern, Zeugen aufbauen, finanziell
+    trennen, den Zyklus erkennen, aufhören zu erklären, die Bühne verlassen.</p>
+    <p>Fusion: <strong>Beide verschreiben denselben letzten Zug — die betroffene Person erobert Autonomie über ihr
+    eigenes System zurück</strong> (A: erzähl/deute/handle; B: ändere dein Verhalten/deine Grenzen/deinen Raum).
+    Der gemeinsame Operator ist <em>selbstbestimmtes Handeln, das Autonomie stellt</em>. Unterschied: A integriert
+    <em>in</em> ein (gesundes) System; B integriert <em>heraus aus</em> einem (toxischen) System.</p>
+
+    <h3>6. Die Formel als Diskriminator</h3>
+    <div class="formula">Handeln &nbsp;=&nbsp; <sub>B</sub> (Bedürfnis) &minus; <sub>A</sub> (Angst) &nbsp;&gt;&nbsp; 0</div>
+    <p>B liefert die Formel explizit. Generalisiert: Eine Kopplung ist <strong>heilsam</strong>, solange dein
+    eigenes <em>Bedürfnis/deine Autonomie (B)</em> deine <em>Angst vor Verlust (A)</em> übertrifft; sie ist
+    <strong>fesselnd</strong>, solange die extern verabreichte Belohnung die Angst (A) über dem Bedürfnis (B) hält.
+    „Heilung heißt: nicht die Angst besiegen — sondern das Bedürfnis so wichtig nehmen, dass es endlich sichtbar
+    wird.“</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — Symbiose vs. Spiegel</h2>
+    <p>Ein einziger Mechanismus, zwei Regime. Der Plot zeigt über die Zeit (a) die <strong>Bindungsintensität</strong>
+    und (b) die <strong>Autonomie des Wirts</strong>. Wechsle den Modus und beobachte, was sich unterscheidet:</p>
+    <ul class="list">
+      <li><strong>Symbiose</strong> (A): ein <em>einmaliger, integrierbarer Puls</em> — die Bindung kehrt zur
+      Grundlinie zurück, die Autonomie erholt sich vollständig (<em>Rückkehr / Integration</em>).</li>
+      <li><strong>Spiegel</strong> (B): ein <em>abnehmender Zyklus</em> (Idealisierung→Abwertung→Verwerfung→Hoovering)
+      mit intermittierender Verstärkung — die „guten Zeiten“ werden leiser, die Autonomie zerfällt.
+      <strong>„Bühne verlassen“</strong> = B's Lösung: die Bindung bricht ab, die Autonomie kommt zurück.</li>
+    </ul>
+    <div class="viz-box">
+      <div id="viz"></div>
+      <div class="controls">
+        <button id="mSymbiose" class="on">Symbiose (A)</button>
+        <button id="mSpiegel">Spiegel (B)</button>
+        <button id="exitBtn" disabled>Bühne verlassen ⟶</button>
+        <span class="rng lbl">Dosis/Intensität
+          <input id="dose" type="range" min="10" max="100" value="60">
+          <b id="doseVal">60</b>
+        </span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="sB">–</div><div class="l">Bedürfnis (B)</div></div>
+        <div class="stat"><div class="n" id="sA">–</div><div class="l">Angst (A)</div></div>
+        <div class="stat"><div class="n" id="sD">–</div><div class="l">B − A (Handlungsspiel)</div></div>
+        <div class="stat"><div class="n" id="sPct" style="font-size:1rem;line-height:2.4">–</div><div class="l">Regime</div></div>
+      </div>
+      <div id="status"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <a href="../buecher/raetsch.html">
+        <div class="k">A · raetsch.html</div>
+        <div class="t">Enzyklopädie der Psychoaktiven Pflanzen</div>
+        <div class="d">Visuelle Abstraktion der Kernkonzepte: Synergismus, exogene Neurotransmitter, Set &amp;
+        Setting, universelle Ritualstruktur, Dreistufenmodell der Dosierung.</div>
+      </a>
+      <a href="../spiegelsaal.html">
+        <div class="k">B · spiegelsaal.html</div>
+        <div class="t">Der Spiegelsaal</div>
+        <div class="d">Interaktives Buch zum Erkennen narzisstischer Manipulation: Love Bombing, Gaslighting,
+        der Zyklus, DARVO, Flying Monkeys — und der Weg hinaus (B − A &gt; 0).</div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<script>
+'use strict';
+(function(){
+  var root=document.documentElement;
+  var el=document.getElementById('viz');
+  var mode='symbiose', dosis=60, exited=false;
+  var N=80;
+
+  function isDark(){ return root.classList.contains('dark'); }
+  function cssVar(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+  function hexA(hex,a){
+    hex=hex.replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  function gen(m,d,ex){
+    var bond=[],auton=[],i;
+    if(m==='symbiose'){
+      var amp=20+(d/100)*70, peak=36, sig=9;
+      for(i=0;i<N;i++){
+        var g=Math.exp(-Math.pow(i-peak,2)/(2*sig*sig));
+        bond[i]=amp*g;
+        var dip=Math.min(60,34*g*(d/100+0.35));
+        auton[i]= (i>peak+18) ? 100 : Math.max(20,100-dip);
+      }
+    } else if(ex){
+      for(i=0;i<N;i++){
+        var t=i/(N-1);
+        bond[i]=Math.max(0,10*(1-t));
+        auton[i]=15+60*Math.min(1,Math.max(0,(t-0.4)/0.6));
+      }
+      auton[N-1]=75;
+    } else {
+      var ampB=25+(d/100)*55, per=20;
+      for(i=0;i<N;i++){
+        var c=Math.floor(i/per), p=i%per, decay=1-c*0.12, b=0;
+        if(p<4){ b=ampB*decay*(p/4); }
+        else if(p<11){ b=ampB*decay*(1-(p-4)/7); }
+        else if(p<15){ b=0; }
+        else { b=ampB*decay*0.35*((p-15)/5); }
+        bond[i]=b;
+        var a=100-c*22;
+        if(p>=11&&p<15){ a-=(8+c*5); }
+        auton[i]=Math.max(8,a);
+      }
+    }
+    return {bond:bond,auton:auton};
+  }
+
+  function statusText(m,ex){
+    if(m==='symbiose') return 'Integrierbar — Rückkehr ins System (Rundreise)';
+    if(ex) return 'Ausgestiegen — Autonomie zurückerobert';
+    return 'Falle — Zyklus, Autonomie zerfällt';
+  }
+
+  function render(){
+    var ex=(mode==='spiegel'&&exited);
+    var d=gen(mode,dosis,ex);
+    var x=[],i;
+    for(i=0;i<N;i++) x.push(i);
+    var cBond=cssVar('--accent3'), cAuton=cssVar('--accent'), cGrid=cssVar('--border'),
+        cInk=cssVar('--text'), cDim=cssVar('--dim');
+    var shapes=[];
+    if(mode==='spiegel'){ for(var c=1;c<4;c++){ shapes.push({type:'line',x0:c*20,x1:c*20,y0:0,y1:100,line:{color:cGrid,width:1,dash:'dot'}}); } }
+    var traces=[
+      {x:x,y:d.bond,type:'scatter',mode:'lines',name:'Bindungsintensität',line:{color:cBond,width:3},fill:'tozeroy',fillcolor:hexA(cBond,0.14)},
+      {x:x,y:d.auton,type:'scatter',mode:'lines',name:'Autonomie des Wirts',line:{color:cAuton,width:3,dash:'dot'}}
+    ];
+    var layout={
+      paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+      font:{color:cInk},
+      xaxis:{title:{text:'Zeit →',font:{color:cDim}},gridcolor:cGrid,zeroline:false,showgrid:true},
+      yaxis:{title:{text:'Intensität (0–100)',font:{color:cDim}},gridcolor:cGrid,zeroline:false,range:[0,100],showgrid:true},
+      legend:{orientation:'h',y:1.14,font:{color:cInk}},
+      margin:{t:26,l:52,r:18,b:44}, showlegend:true
+    };
+    if(shapes.length){ layout.shapes=shapes; }
+    if(window.Plotly){ Plotly.react(el,traces,layout,{displayModeBar:false,responsive:true}); }
+    updateStats(d,ex);
+  }
+
+  function updateStats(d,ex){
+    var finalA=d.auton[d.auton.length-1];
+    var B=Math.round(finalA);
+    var A=Math.round(100-finalA+((mode==='spiegel'&&!exited)?25:0));
+    var diff=B-A;
+    document.getElementById('sB').textContent=B;
+    document.getElementById('sA').textContent=A;
+    var sD=document.getElementById('sD');
+    sD.textContent=(diff>0?'+':'')+diff;
+    sD.style.color = diff>0 ? cssVar('--accent') : cssVar('--accent3');
+    document.getElementById('sPct').textContent = mode==='symbiose' ? 'Rundreise' : (exited ? 'Austritt' : 'Zyklus');
+    var st=document.getElementById('status');
+    st.textContent=statusText(mode,exited);
+    st.style.color = (mode==='symbiose'||exited) ? cssVar('--accent') : cssVar('--accent3');
+  }
+
+  var bS=document.getElementById('mSymbiose'), bM=document.getElementById('mSpiegel'), exB=document.getElementById('exitBtn');
+  function setMode(m){
+    mode=m; if(m!=='spiegel'){ exited=false; }
+    bS.classList.toggle('on',m==='symbiose');
+    bM.classList.toggle('on',m==='spiegel');
+    exB.disabled=(m!=='spiegel');
+    exB.classList.toggle('on',exited);
+    render();
+  }
+  bS.onclick=function(){ setMode('symbiose'); };
+  bM.onclick=function(){ setMode('spiegel'); };
+  exB.onclick=function(){ exited=!exited; exB.classList.toggle('on',exited); render(); };
+  var dose=document.getElementById('dose');
+  dose.oninput=function(){ dosis=+dose.value; document.getElementById('doseVal').textContent=dosis; render(); };
+  document.getElementById('themeBtn').onclick=function(){
+    root.classList.toggle('dark');
+    try{ localStorage.setItem('theme',isDark()?'dark':'light'); }catch(e){}
+    render();
+  };
+  window.addEventListener('resize',function(){ if(window.Plotly&&window.Plotly.Plots){ Plotly.Plots.resize(el); } });
+
+  if(window.Plotly){ setMode('symbiose'); } else { window.addEventListener('load',function(){ setMode('symbiose'); }); }
+})();
+</script>
+</body>
+</html>

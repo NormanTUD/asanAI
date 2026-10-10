@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Betti-Zahlen × Zerlegung in Module</title>
+<script>
+(function(){try{
+  var m=null; try{m=document.cookie.match(/theme=(\w+)/);}catch(e){}
+  var dark = !m || m[1]!=='light';
+  if(dark) document.documentElement.classList.add('dark');
+}catch(e){ document.documentElement.classList.add('dark'); }
+})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f1ede2;
+  --text:#1f2937; --dim:#5b6570; --border:#d8d2c2;
+  --accent:#0f766e; --accent2:#b45309; --hl:#6d28d9;
+  --bad:#b91c1c; --good:#047857;
+  --viz-point:#0f766e; --viz-tri:#d97706; --viz-b0:#2563eb; --viz-b1:#dc2626;
+  --viz-text:#1f2933; --viz-grid:rgba(31,41,51,.12); --viz-mark:#7c3aed;
+  --viz-c1:#2563eb; --viz-c2:#dc2626; --viz-c3:#d97706; --viz-c4:#059669; --viz-c5:#7c3aed;
+  --shadow:rgba(0,0,0,.08);
+}
+html.dark{
+  --bg:#0f172a; --panel:#16203a; --panel2:#0e1830;
+  --text:#e5e7eb; --dim:#9aa6bd; --border:#26324d;
+  --accent:#2dd4bf; --accent2:#fbbf24; --hl:#c084fc;
+  --bad:#f87171; --good:#34d399;
+  --viz-point:#2dd4bf; --viz-tri:#fbbf24; --viz-b0:#60a5fa; --viz-b1:#f87171;
+  --viz-text:#e5e7eb; --viz-grid:rgba(229,231,235,.14); --viz-mark:#c084fc;
+  --viz-c1:#60a5fa; --viz-c2:#f87171; --viz-c3:#fbbf24; --viz-c4:#34d399; --viz-c5:#c084fc;
+  --shadow:rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Georgia','Iowan Old Style',serif; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:38px 20px 90px}
+header{text-align:center;margin-bottom:26px}
+h1{font-size:2.05em;line-height:1.22;margin:0 0 10px;color:var(--accent)}
+.subtitle{color:var(--dim);font-style:italic;margin:0 0 6px;font-size:1.02em}
+.meta-line{font-size:.85em;color:var(--dim)}
+.meta-line b{color:var(--accent2);font-weight:600}
+.theme-btn{
+  margin:14px auto 0;display:block;padding:.5rem 1rem;cursor:pointer;
+  background:var(--panel);color:var(--text);border:1px solid var(--border);
+  border-radius:999px;font:600 .82rem/1 system-ui,sans-serif;font-family:system-ui,sans-serif;
+  box-shadow:0 2px 8px var(--shadow);
+}
+section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin:0 0 24px;box-shadow:0 2px 14px var(--shadow)}
+section h2{color:var(--accent);border-left:4px solid var(--accent2);padding-left:12px;margin:0 0 16px;font-size:1.42em;line-height:1.25}
+h3{color:var(--hl);margin:20px 0 8px;font-size:1.08em}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:8px}
+a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+a:hover{color:var(--accent2);border-bottom-color:var(--accent2)}
+.lead{font-size:1.06em}
+.hl{color:var(--accent2);font-weight:600}
+.hl2{color:var(--hl);font-weight:600}
+.hlA{color:var(--accent);font-weight:600}
+.hlB{color:var(--accent2);font-weight:600}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.93em}
+th,td{border:1px solid var(--border);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+td.bad{color:var(--bad)}
+td.good{color:var(--good)}
+.mapbox{background:var(--panel2);border:1px dashed var(--border);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:.96em}
+.mapbox div{padding:3px 0}
+.badge{display:inline-block;font:700 .68rem/1 system-ui,sans-serif;letter-spacing:.03em;padding:3px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--border);color:var(--dim);vertical-align:middle}
+.viz-canvas{max-width:100%;height:auto;display:block;margin:12px auto;border-radius:10px;border:1px solid var(--border)}
+.viz-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;margin:16px 0;font:600 .95rem/1 system-ui,sans-serif}
+.viz-controls label{color:var(--dim)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:min(340px,72vw);height:6px;border-radius:3px;background:var(--border);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+.chips{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:6px 0 4px}
+.chip{font:700 1.02rem/1 system-ui,sans-serif;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:9px 14px}
+.chip span{font-weight:500;color:var(--dim);font-size:.82rem}
+.chip.b0{color:var(--viz-b0)}
+.chip.b1{color:var(--viz-b1)}
+.chip.eps{color:var(--viz-mark)}
+.interp{font-size:.95rem;color:var(--dim);font-style:italic;text-align:center;min-height:2.4em;margin:6px 0 0;padding:0 12px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;font-size:.92rem}
+@media(max-width:640px){.legend{grid-template-columns:1fr}}
+.legend div{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.legend b{color:var(--hl)}
+footer{text-align:center;color:var(--dim);font-size:.85em;margin-top:26px;line-height:1.6}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Löcher sind Module, die sich nicht ändern</h1>
+    <p class="subtitle">Fusion aus: betti.html ✕ model_decomposition.html</p>
+    <p class="meta-line"><b>Kernidee:</b> die rechte Zerlegung läuft über die unter Änderung stabilen Invarianten — über Löcher (Topologie) und versteckte Design-Entscheidungen (Software).</p>
+    <button class="theme-btn" id="themeToggle">🌗 Theme wechseln</button>
+  </header>
+
+  <!-- 1. THESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere antworten auf dieselbe Frage, nur in zwei Disziplinen: <em>Wie zerlegt man ein komplexes Ganzes in die Teile, die man behalten muss?</em> <span class="hlA">betti.html</span> zerlegt einen <em>geometrischen Raum</em> in topologische Invarianten — die Betti-Zahlen β₀, β₁, β₂ zählen die unabhängigen Löcher, die unter jeder stetigen Verformung unverändert bleiben. <span class="hlB">model_decomposition.html</span> (Parnas 1972) zerlegt ein <em>Softwaresystem</em> in Module — und behauptet, die rechte Grenze zieht man nicht am Ablaufdiagramm, sondern dort, wo eine <em>Design-Entscheidung versteckt wird, die sich voraussichtlich ändern wird</em>.</p>
+    <p>Die Einheit ist, dass <strong>beide Abstraktionstheorien unter Änderung</strong> sind. Topologie ist per Definition die Lehre dessen, <em>was sich unter Deformation nicht ändert</em>; Parnas' Informationsversteckung ist die Lehre dessen, <em>was sich unter Neugestaltung nicht ändern darf</em>. Ein „Loch" (β₁ &gt; 0) und eine „versteckte Design-Entscheidung" sind dieselbe Sache von zwei Seiten: eine <span class="hl">änderungsresistente, lokal stabile Eigenschaft, die sich in ihrer eigenen Einheit herauslösen lohnt</span>. Die Geometrie eines Raumes (Koordinaten, Krümmung) und das Ablaufdiagramm eines Programms (Ausführungsschritte) sind in beiden Fällen das <em>Flüchtige</em> — das, was man weglassen darf. Die Invarianten (Löcher / stabile Entscheidungen) sind das <em>Bleibende</em>.</p>
+    <p>Die Fusion behauptet damit: <strong>Decomposition = Identifizierung der Invarianten + Organisation der Invarianten.</strong> betti.html liefert das <em>mathematische Ideal</em> davon (was Invarianz bedeutet und wie man Stabilität misst), model_decomposition.html das <em>ingenieurhafte Kriterium</em> (welche Entscheidungen man schützen soll und wie man sie anordnet).</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>A = <a href="../betti.html">betti.html</a> (Betti-Zahlen, de) · B = <a href="../model_decomposition.html">model_decomposition.html</a> (Parnas, en). Drei echte, am Text verankerte Spannungen:</p>
+
+    <h3>① Vergröberung: Stärke an sich &nbsp;vs.&nbsp; nur ein Werkzeug</h3>
+    <p><span class="hlA">A</span> feiert maximale Vergröberung als <em>Stärke</em>: Betti-Zahlen werfen die meisten geometrischen Details weg, und dass „<em>Zwei sehr verschiedene Räume in allen Betti-Zahlen übereinstimmen</em>" wird ausdrücklich als Robustheit/Invarianz verkauft — Informationsverlust <em>ist</em> das Ziel. <span class="hlB">B</span> macht Vergröberung dagegen nur zum <em>Werkzeug</em>: Das Interface zeigt „<em>as little as possible</em>", aber die Zerlegung ist nur <em>gut</em>, wenn die <em>richtige</em> Design-Entscheidung versteckt wird. Versteckt man zu wenig — oder die Falsche —, ist das Design falsch, <em>auch wenn es abstrakt ist</em>. Für A ist „so grob wie möglich" ein Ziel; für B ist es ein Mittel, das erst an der Korrektheit der versteckten Entscheidung gemessen wird.</p>
+
+    <h3>② Zahlen &nbsp;vs.&nbsp; Struktur</h3>
+    <p><span class="hlA">A</span> reduziert den Raum auf drei <em>Zahlen</em> (β₀, β₁, β₂): wo die Löcher liegen, wie groß sie sind, wie sie ineinandergreifen, geht verloren — Betti-Zahlen sind „schwache" Invarianten. <span class="hlB">B</span> erzeugt dagegen ein <em>Poset</em> von Modulen mit Interfaces und einer „<em>uses</em>"-Abhängigkeit, die eine partielle Ordnung bildet (Dijkstras THE): die <em>Beziehungen zwischen den Stücken bleiben als Struktur erhalten</em>. Spannungsfrage: Löst die rechte Zerlegung das System auf in <em>Invarianten-Zahlen</em> (A) — oder behält es als <em>Invarianten-Struktur</em> (B)?</p>
+
+    <h3>③ Automatische Persistenz &nbsp;vs.&nbsp; menschliches Urteil</h3>
+    <p><span class="hlA">A</span> entscheidet, was „echt" ist, über <em>Persistenz über den kontinuierlichen ε-Parameter</em>: ein Merkmal ist real, wenn es über einen Skalenbereich <em>überlebt</em> — automatisch, quantitativ, datengetrieben (langer Barcode-Balken = Signal, kurzer = Rauschen). <span class="hlB">B</span> entscheidet, was ein Modul sein soll, über das <em>semantische Urteil</em> des Architekten, welche Design-Entscheidungen „<em>likely to change</em>" sind — qualitativ, expertengetrieben. A hat einen messbaren Filter; B hat eine Entscheidung. Wer hat recht, wenn der Filter und das Urteil auseinanderlaufen?</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Die drei Spannungen sind keine echten Konflikte, sondern <em>komplementäre Achsen</em> derselben Abstraktionstheorie. Man versöhnt sie, indem man A und B auf verschiedenen Stufen einer <strong>zweistufigen Zerlegung</strong> anordnet:</p>
+    <ul>
+      <li><strong>Zu ① (Vergröberung):</strong> A liefert das <em>Warum</em>, B das <em>Wie viel</em>. Vergröbern ist gut, <em>weil</em> Invarianz unter Änderung das Ziel ist (A). Aber man vergrößert genau <em>so weit wie nötig, um die eine volatile Entscheidung zu isolieren</em> — nicht einen Schritt weiter (B). Die Auflösung: <em>grob genug, um die Änderung zu absorbieren; fein genug, um nur die eine Entscheidung zu kapseln.</em> „So grob wie möglich" und „so grob wie nötig" sind zwei Grenzbedingungen derselben Optimierung, kein Widerspruch.</li>
+      <li><strong>Zu ② (Zahlen vs. Struktur):</strong> Man braucht <em>beide</em>. A's Betti-Zahlen sind die <em>skalaren Signaturen</em> (was ist stabil?); B's Modul-Poset ist die <em>Beziehungsstruktur</em> (wie hängen die stabilen Stücke voneinander ab?). A allein ist „schwach" (zwei verschiedene Systeme können dieselben Zahlen haben — A räumt das selbst ein); B allein hat keine <em>unabhängige</em> Stabilitätsmessung. Zusammen ergeben sie eine vollständige Zerlegung: <em>Signaturen + Abhängigkeitsgraph.</em></li>
+      <li><strong>Zu ③ (Persistenz vs. Urteil):</strong> A's Persistenz <em>operationalisiert</em> B's „wird sich ändern?". Statt <em>zu raten</em>, welche Entscheidungen volatil sind, kann man Stabilität <em>empirisch messen</em>: ein Strukturmerkmal, das über viele Variationen (Design-Iterationen, Testfälle, Skalen) <em>persistiert</em>, gehört in den stabilen Kern; eines, das nur bei einer Bedingung auftritt, ist ein Implementierungsdetail. <em>Urteil und Filter sollen dasselbe sagen — wenn sie es nicht tun, ist der Filter der objektivere Schlichter.</em></li>
+    </ul>
+    <div class="mapbox">
+      <strong>Fusionierte Schlussfolgerung:</strong> Das <span class="hl2">Interface eines Moduls</span> ist dessen <span class="hl2">Betti-Signatur</span> — eine grobe, änderungsresistente Beschreibung, die zwei ganz verschiedene Implementierungen <em>teilen</em> können, so wie zwei ganz verschiedene Formen dieselben Betti-Zahlen teilen. Die <span class="hl2">Persistenz</span> (A) ist der objektive Test, der B's „likely to change"-Urteil stützt. Das <span class="hl2">Modul-Poset</span> (B) ist die Struktur, die A's Zahlen verwerfen. <strong>Loch = versteckte Entscheidung = die Einheit, die man aus dem System herausschneidet, weil sie stabil ist und den Rest vor Änderung schützt.</strong>
+    </div>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>4.1 Was zerlegt wird, und was bleibt (gemeinsames Fundament)</h3>
+    <p>Beide Papiere trennen <em>Flüchtiges</em> vom <em>Bleibenden</em>. In A ist das Flüchtige die <em>Geometrie</em> (Exakte Lage, Radius, Krümmung eines Raumes), das Bleibende die <em>Topologie</em> (Anzahl unabhängiger Löcher). In B ist das Flüchtige der <em>Ablauf</em> (Ausführungsschritte, das Flowchart), das Bleibende die <em>Design-Entscheidung</em>. Parnas' Leitsatz, dass „in most cases, design decisions transcend time of execution, modules will not correspond to steps in the processing", ist exakt der topologische Gedanke: <em>die Module entsprechen nicht den Momenten, in denen sie sich zeigen, sondern den invarianten Entscheidungen, die sie kapseln</em>.</p>
+
+    <h3>4.2 Der topologische Anteil (A) — Löcher zählen</h3>
+    <p>Die <em>k</em>-te Betti-Zahl βₖ ist die Anzahl unabhängiger Löcher der Dimension <em>k</em> (Rang der <em>k</em>-ten Homologiegruppe, βₖ = rank(Hₖ(X))): β₀ zählt Zusammenhangskomponenten, β₁ Schleifen, β₂ Hohlräume. Benannt nach Enrico Betti, von Poincaré ausgebaut. Zusammengefasst im <strong>Poincaré-Polynom</strong> P(t) = Σₖ βₖ·tᵏ und in der <strong>Euler-Charakteristik</strong> χ = β₀ − β₁ + β₂ − …, beides Invarianten. Die <em>k</em>ünneth-Regel (Produkt X×Y: Betti-Zahlen durch Faltung) zeigt, dass die Zahlen unter „Multiplikation" von Räumen wohlverhalten sind — ein weiteres Indiz für ihre Stabilität.</p>
+    <table>
+      <thead><tr><th>Raum</th><th>β₀</th><th>β₁</th><th>β₂</th><th>χ</th></tr></thead>
+      <tbody>
+        <tr><td>Punkt</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Kreis S¹</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Sphäre S²</td><td>1</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td>Torus T²</td><td>1</td><td>2</td><td>1</td><td>0</td></tr>
+        <tr><td>Doppel-Torus (Genus 2)</td><td>1</td><td>4</td><td>1</td><td>−2</td></tr>
+        <tr><td>Fläche vom Genus g</td><td>1</td><td>2g</td><td>1</td><td>2−2g</td></tr>
+      </tbody>
+    </table>
+    <p>Die <em>persistente Homologie</em> macht diese Zahlen <em>skalenabhängig</em>: Eine Punktwolke wird über den Radius ε zu einem Vietoris-Rips-Komplex; jedes Merkmal hat eine <em>Geburts-</em> und <em>Todes-</em>Skala. Nur das <em>Überlebende</em> (langer Barcode) ist „Signal", das Kurzlebige ist „Rauschen". Anwendungen: Proteinfaltung/Tumor (Biologie), Abdeckungslücken (Sensornetzwerke, β₁&gt;0 = Loch ohne Sensor), rotationsskalen-invariante Features (ML), kosmische Voids/Filamente (Kosmologie).</p>
+
+    <h3>4.3 Der ingenieurhafte Anteil (B) — Entscheidungen verstecken</h3>
+    <p>Parnas' Kriterium: <em>Jedes Modul versteckt eine Design-Entscheidung, die sich wahrscheinlich ändern wird.</em> Sein Laufbeispiel, der KWIC-Index, wird <em>zweimal</em> zerlegt:</p>
+    <table>
+      <thead><tr><th></th><th>Dekomp. 1 — am Flowchart</th><th>Dekomp. 2 — Informationsversteckung</th></tr></thead>
+      <tbody>
+        <tr><td>Grenze nach</td><td>Ausführungsschritt</td><td>versteckter Entscheidung</td></tr>
+        <tr><td>Kommunikation</td><td>gemeinsame Datenformate</td><td>abstrakte Interfaces (Funktionaufrufe)</td></tr>
+        <tr><td>Kopplung</td><td>formatabhängig, hoch</td><td>abstrakt, niedrig</td></tr>
+      </tbody>
+    </table>
+    <p>Der entscheidende Vorteil zeigt sich bei <em>Änderungen</em>:</p>
+    <table>
+      <thead><tr><th>Design-Änderung</th><th>Decomp. 1</th><th>Decomp. 2</th></tr></thead>
+      <tbody>
+        <tr><td>Speicherentscheidung (nicht alles im Core)</td><td class="bad">alle Module</td><td class="good">1 Modul</td></tr>
+        <tr><td>Zeichen-Packung</td><td class="bad">alle Module</td><td class="good">1 Modul</td></tr>
+        <tr><td>Schleifen-Darstellung</td><td class="bad">3 Module</td><td class="good">1 Modul</td></tr>
+        <tr><td>Alphabetisierungsstrategie</td><td class="bad">2 Module</td><td class="good">1 Modul</td></tr>
+        <tr><td>Eingabeformat</td><td>1 Modul</td><td>1 Modul</td></tr>
+      </tbody>
+    </table>
+    <p>Zu verstecken: Datenstrukturen &amp; Zugriff, Aufrufsequenzen, Control-Block-Formate, Zeichenkodierungen &amp; Ordnungen, Verarbeitungsreihenfolgen. Die Zerlegung erzeugt eine <em>Hierarchie</em> („uses" = partielle Ordnung) mit drei Nutzen — <em>Vereinfachung</em> (obere Ebene nutzt untere), <em>Beschneidbarkeit</em> (obere Stufen abtrennbar, z. B. Line Storage als eigenständiges Produkt), <em>Wiederverwendung</em> (tiefe Module als Fundament für andere Systeme). Wichtig: Hierarchie und saubere Zerlegung sind <em>unabhängige</em> Eigenschaften. Vermächtnis: OOP-Kapselung, Microservices, APIs/SDKs, SOLID.</p>
+
+    <h3>4.4 Die Integration — die Karte der Fusion</h3>
+    <div class="mapbox">
+      <div><b>β₁-Loch (A)</b> &nbsp;⟷&nbsp; Modul, das eine volatile Entscheidung versteckt (B)</div>
+      <div><b>kurzlebiges β₀ / Rauschen (A)</b> &nbsp;⟷&nbsp; Implementierungsdetail hinter dem Interface (B)</div>
+      <div><b>Persistenz über ε (A)</b> &nbsp;⟷&nbsp; das objektive Maß für „wird sich ändern?" (B)</div>
+      <div><b>Betti-Signatur β₀,β₁,β₂ (A)</b> &nbsp;⟷&nbsp; das abstrakte Interface eines Moduls (B)</div>
+      <div><b>„uses"-Poset / Hierarchie (B)</b> &nbsp;⟷&nbsp; die Struktur, die A's Zahlen verwerfen (Füllung des ②-Widerspruchs)</div>
+      <div><b>Euler-Charakteristik χ (A)</b> &nbsp;⟷&nbsp; eine „Gesamt-Bilanz" der versteckten Entscheidungen (Σ(−1)ᵏ · Anzahl)</div>
+    </div>
+    <p>Der fusionsfähige Kern ist damit: <em>Zerlege nicht an der Oberfläche (Geometrie/Ablauf), sondern an den stabilen Invarianten (Löcher/Entscheidungen); messe ihre Stabilität (Persistenz) statt sie zu raten; und verbinde die Signaturen zu einer Abhängigkeitsstruktur, damit die Zerlegung vollständig wird (Zahlen + Poset).</em></p>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Interaktive Fusion: Stabilitäts-Explorer</h2>
+    <p>Eine Punktwolke (ein Ring = ein <em>Loch</em>, plus ein Cluster und Rauschpunkte) wird über den Skalenparameter <em>ε</em> zu einem Vietoris-Rips-Komplex. <strong>β₀/β₁ werden exakt</strong> über GF(2)-Randmatrizen berechnet. Beobachte: Das 1D-Loch (β₁) wird <em>geboren</em>, bleibt über ein breites ε <em>stabil</em> — <span class="hl2">das ist „echtes Invariant = Modul, das man behält"</span> — und wird schließlich <em>gefillt/sterbend</em>, wenn ε die Ring-Durchmesser übersteigt. Die frühen, schnell verschwindenden Komponenten sind „Rauschen/Details = was hinter dem Interface verschwindet". Bewege den Regler.</p>
+
+    <canvas id="complexCanvas" class="viz-canvas" data-w="560" data-h="430" width="560" height="430"></canvas>
+
+    <div class="viz-controls">
+      <label for="epsSlider">Skala ε</label>
+      <input type="range" id="epsSlider" min="0" max="300" step="1" value="130">
+      <span style="color:var(--dim)"><span id="epsVal">130</span></span>
+    </div>
+    <div class="chips">
+      <div class="chip eps">ε = <span id="epsVal2">130</span></div>
+      <div class="chip b0">β₀ = <span id="b0Val">–</span> <span>Komponenten</span></div>
+      <div class="chip b1">β₁ = <span id="b1Val">–</span> <span>Schleifen</span></div>
+    </div>
+    <p class="interp" id="interp"></p>
+
+    <canvas id="persistenceCanvas" class="viz-canvas" data-w="560" data-h="300" width="560" height="300"></canvas>
+
+    <div class="legend">
+      <div><b>Topologie (A) → Software (B), 1D:</b> Die stabile β₁-Phase (rotes Plateau) ist das <em>Loch</em> = die <em>Entscheidung, die sich nicht ändert</em> → <em>Modul, das man kapselt</em>.</div>
+      <div><b>Topologie (A) → Software (B), 0D:</b> β₀ (blau) fällt, wenn sich Struktur verbindet. Kurzlebige Komponenten sind <em>Details</em>, die beim Verbinden <em>verschwinden</em> = was hinter dem Interface liegt.</div>
+      <div><b>Persistenz = Stabilitätsfilter:</b> Die <em>Lebensdauer über ε</em> ist A's objektive Antwort auf B's „wird sich ändern?" — lange = Kern, kurz = Detail.</div>
+      <div><b>Interface = Betti-Signatur:</b> Das, was über die ganze ε-Phase <em>konstant bleibt</em> (β=1), ist die grobe, teilkonsistente „Signatur" — genau so, wie ein Interface zwei verschiedene Implementierungen teilt.</div>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p><a href="../betti.html">betti.html</a> — <span class="badge">A</span> Visuelle Einführung in Betti-Zahlen, algebraische Topologie und persistente Homologie/TDA (de): β₀/β₁/β₂ als Löcher, Euler-Charakteristik, Poincaré-Polynom, Künneth, ε-gesteuerter Vietoris-Rips-Barcode, Anwendungen (Bio, Sensornetze, ML, Kosmologie).</p>
+    <p><a href="../model_decomposition.html">model_decomposition.html</a> — <span class="badge">B</span> Visuelle Einführung in D. L. Parnas, „On the Criteria To Be Used in Decomposing Systems into Modules" (1972, en): Flowchart- vs. Informationsversteckungs-Zerlegung, KWIC-Beispiel, Change-Impact-Analyse, Hierarchie/„uses"-Poset, Kopplung, Vermächtnis (OOP, Microservices, SOLID).</p>
+  </section>
+
+  <footer>
+    Fusion aus betti.html ✕ model_decomposition.html — Round 1, nicht-KI-Track.<br>
+    Alle Daten inline, alle Berechnungen lokal im Browser (GF(2)-Homologie, Vietoris-Rips).
+  </footer>
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var root=document.documentElement;
+
+  function cssVar(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+
+  // ---------- theme toggle ----------
+  var themeBtn=document.getElementById('themeToggle');
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    var dark=!root.classList.contains('dark');
+    root.classList.toggle('dark',dark);
+    try{ document.cookie='theme='+(dark?'dark':'light')+'; path=/; max-age=31536000'; }catch(e){}
+    drawComplex(); drawPersistence();
+  }); }
+
+  // ---------- deterministic data ----------
+  function lcg(seed){ var s=seed>>>0; return function(){ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+  var rng=lcg(20261010);
+  var pts=[];
+  var RING_N=16, R=112, CX=198, CY=205;
+  for(var i=0;i<RING_N;i++){ var a=(i/RING_N)*Math.PI*2; var jr=(rng()-0.5)*16;
+    pts.push({x:CX+(R+jr)*Math.cos(a), y:CY+(R+jr)*Math.sin(a)*0.9}); }
+  for(var i=0;i<4;i++){ pts.push({x:452+(rng()-0.5)*48, y:95+(rng()-0.5)*48}); }   // cluster
+  var noise=[[86,345],[205,360],[340,345],[455,300]];
+  for(var i=0;i<4;i++){ pts.push({x:noise[i][0]+(rng()-0.5)*10, y:noise[i][1]+(rng()-0.5)*10}); } // noise
+  var N=pts.length;
+
+  // edges + triangles with Vietoris-Rips birth scale
+  var dmat=[], edges=[];
+  for(var i=0;i<N;i++){ dmat[i]=[]; for(var j=0;j<N;j++){ var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+    var d=Math.sqrt(dx*dx+dy*dy); dmat[i][j]=d; if(j>i) edges.push({i:i,j:j,d:d}); } }
+  edges.sort(function(a,b){return a.d-b.d;});
+  var tris=[];
+  for(var a=0;a<N;a++) for(var b=a+1;b<N;b++) for(var c=b+1;c<N;c++){
+    var dm=Math.max(dmat[a][b],dmat[b][c],dmat[a][c]);
+    tris.push({a:a,b:b,c:c,d:dm,e1:(a*N+b),e2:(b*N+c),e3:(a*N+c)});
+  }
+  tris.sort(function(p,q){return p.d-q.d;});
+
+  // ---------- GF(2) rank ----------
+  function rankGF2(rows, ncols){
+    var r=[]; for(var i=0;i<rows.length;i++){ if(rows[i]!==0n) r.push(rows[i]); }
+    var rank=0;
+    for(var col=0; col<ncols && rank<r.length; col++){
+      var piv=-1;
+      for(var i=rank;i<r.length;i++){ if(r[i] & (1n<<BigInt(col))){ piv=i; break; } }
+      if(piv<0) continue;
+      var t=r[rank]; r[rank]=r[piv]; r[piv]=t;
+      var pivotRow=r[rank];
+      for(var i=0;i<r.length;i++){ if(i!==rank && (r[i] & (1n<<BigInt(col)))) r[i]^=pivotRow; }
+      rank++;
+    }
+    return rank;
+  }
+
+  function unionFind(n){ var p=[]; for(var i=0;i<n;i++)p[i]=i;
+    function f(x){ while(p[x]!==x){ p[x]=p[p[x]]; x=p[x]; } return x; }
+    return {f:f, u:function(x,y){ var rx=f(x),ry=f(y); if(rx!==ry) p[ry]=rx; }};
+  }
+
+  function computeBetti(eps){
+    var activeMap=new Map(); var m=0; var rows1=[];
+    for(var e=0;e<edges.length;e++){ var ed=edges[e]; if(ed.d>eps)break;
+      activeMap.set(ed.i*N+ed.j, m); rows1.push((1n<<BigInt(ed.i))|(1n<<BigInt(ed.j))); m++; }
+    var uf=unionFind(N);
+    for(var k=0;k<edges.length;k++){ if(edges[k].d>eps)break; uf.u(edges[k].i,edges[k].j); }
+    var seen={}, b0=0;
+    for(var i=0;i<N;i++){ var r=uf.f(i); if(!seen[r]){ seen[r]=1; b0++; } }
+    var rank1=rankGF2(rows1, N);
+    var rows2=[];
+    for(var t=0;t<tris.length;t++){ var tr=tris[t]; if(tr.d>eps)break;
+      var i1=activeMap.get(tr.e1), i2=activeMap.get(tr.e2), i3=activeMap.get(tr.e3);
+      if(i1===undefined||i2===undefined||i3===undefined) continue;
+      rows2.push((1n<<BigInt(i1))|(1n<<BigInt(i2))|(1n<<BigInt(i3)));
+    }
+    var rank2=rankGF2(rows2, m);
+    var b1=m-rank1-rank2; if(b1<0)b1=0;
+    return {b0:b0,b1:b1};
+  }
+
+  // ---------- persistence curve (precomputed once) ----------
+  var EPS_MAX=300, SAMPLES=33;
+  var epsArr=[], b0Arr=[], b1Arr=[];
+  for(var s=0;s<SAMPLES;s++){
+    var eps=Math.round(EPS_MAX*s/(SAMPLES-1));
+    var r=computeBetti(eps);
+    epsArr.push(eps); b0Arr.push(r.b0); b1Arr.push(r.b1);
+  }
+
+  // ---------- canvases ----------
+  function setupCanvas(cv){
+    var w=+cv.getAttribute('data-w'), h=+cv.getAttribute('data-h');
+    var dpr=window.devicePixelRatio||1;
+    cv.width=w*dpr; cv.height=h*dpr; cv.style.width=w+'px'; cv.style.height=h+'px';
+    var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); return ctx;
+  }
+  var complexCtx=setupCanvas(document.getElementById('complexCanvas'));
+  var perfCtx=setupCanvas(document.getElementById('persistenceCanvas'));
+  var CW=560, CH=430, PW=560, PH=300;
+  var compColors=['--viz-c1','--viz-c2','--viz-c3','--viz-c4','--viz-c5'];
+
+  var slider=document.getElementById('epsSlider');
+  var curEps=+slider.value;
+
+  function drawComplex(){
+    var ctx=complexCtx; ctx.clearRect(0,0,CW,CH);
+    var cEdge=cssVar('--viz-point'), cTri=cssVar('--viz-tri'), cText=cssVar('--viz-text'), cBg=cssVar('--bg');
+    // active edges
+    ctx.strokeStyle=cEdge; ctx.globalAlpha=0.5; ctx.lineWidth=1.4;
+    for(var e=0;e<edges.length;e++){ var ed=edges[e]; if(ed.d>curEps)break;
+      ctx.beginPath(); ctx.moveTo(pts[ed.i].x,pts[ed.i].y); ctx.lineTo(pts[ed.j].x,pts[ed.j].y); ctx.stroke(); }
+    // active triangles
+    ctx.globalAlpha=0.10; ctx.fillStyle=cTri;
+    for(var t=0;t<tris.length;t++){ var tr=tris[t]; if(tr.d>curEps)break;
+      ctx.beginPath(); ctx.moveTo(pts[tr.a].x,pts[tr.a].y); ctx.lineTo(pts[tr.b].x,pts[tr.b].y);
+      ctx.lineTo(pts[tr.c].x,pts[tr.c].y); ctx.closePath(); ctx.fill(); }
+    ctx.globalAlpha=1;
+    // points colored by component
+    var r=computeBetti(curEps);
+    var uf=unionFind(N);
+    for(var k=0;k<edges.length;k++){ if(edges[k].d>curEps)break; uf.u(edges[k].i,edges[k].j); }
+    var rootId={}, idc=0;
+    for(var i=0;i<N;i++){ var rt=uf.f(i); if(!(rt in rootId)) rootId[rt]=idc++;
+      ctx.beginPath(); ctx.arc(pts[i].x,pts[i].y,5.5,0,Math.PI*2);
+      ctx.fillStyle=cssVar(compColors[rootId[rt]%compColors.length]); ctx.fill();
+      ctx.lineWidth=1.5; ctx.strokeStyle=cBg; ctx.stroke(); }
+    // title
+    ctx.fillStyle=cText; ctx.globalAlpha=0.8; ctx.font='12px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Vietoris-Rips-Komplex bei ε='+curEps.toFixed(0)+'   (Punkte nach Zusammenhangskomponente gefärbt)', 12, 20);
+    ctx.globalAlpha=1;
+    // readout
+    document.getElementById('b0Val').textContent=r.b0;
+    document.getElementById('b1Val').textContent=r.b1;
+    document.getElementById('epsVal').textContent=curEps.toFixed(0);
+    document.getElementById('epsVal2').textContent=curEps.toFixed(0);
+    var interp;
+    if(r.b1>0){ interp='β₁='+r.b1+'  →  die Schleife persistiert über dieses ε: ein echtes, stabiles Invariant — als Modul kapseln (B).'; }
+    else { interp='β₁=0  →  die Schleife ist (noch) nicht geboren bzw. bereits gefüllt: nur Rauschen/Details, das hinter dem Interface verschwindet (B).'; }
+    document.getElementById('interp').textContent=interp;
+  }
+
+  function drawPersistence(){
+    var ctx=perfCtx; ctx.clearRect(0,0,PW,PH);
+    var M={t:36,r:20,b:42,l:46}; var pw=PW-M.l-M.r, ph=PH-M.t-M.b;
+    var cText=cssVar('--viz-text'), cGrid=cssVar('--viz-grid'), cB0=cssVar('--viz-b0'), cB1=cssVar('--viz-b1'), cMark=cssVar('--viz-mark');
+    var ymax=0; for(var s=0;s<SAMPLES;s++) ymax=Math.max(ymax,b0Arr[s],b1Arr[s]); ymax=Math.max(2,ymax)+1;
+    function X(eps){ return M.l+(eps/EPS_MAX)*pw; }
+    function Y(v){ return M.t+ph-(v/ymax)*ph; }
+    // grid
+    ctx.strokeStyle=cGrid; ctx.lineWidth=1;
+    var step= ymax>10?5:1;
+    for(var g=0; g<=ymax; g+=step){ ctx.beginPath(); ctx.moveTo(M.l,Y(g)); ctx.lineTo(PW-M.r,Y(g)); ctx.stroke(); }
+    for(var gx=0; gx<=EPS_MAX; gx+=50){ ctx.beginPath(); ctx.moveTo(X(gx),M.t); ctx.lineTo(X(gx),M.t+ph); ctx.stroke(); }
+    // beta1 stable band
+    var firstB1=-1, lastB1=-1;
+    for(var s=0;s<SAMPLES;s++){ if(b1Arr[s]>0){ if(firstB1<0)firstB1=epsArr[s]; lastB1=epsArr[s]; } }
+    if(firstB1>=0){
+      ctx.fillStyle=cB1; ctx.globalAlpha=0.12; ctx.fillRect(X(firstB1),M.t,X(lastB1)-X(firstB1),ph); ctx.globalAlpha=1;
+      ctx.fillStyle=cB1; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('stabil: β₁=1  →  Modul behalten', (X(firstB1)+X(lastB1))/2, M.t+16);
+    }
+    // curves
+    function plot(arr,col){ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath();
+      for(var s=0;s<SAMPLES;s++){ var x=X(epsArr[s]), y=Y(arr[s]); if(s===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke(); }
+    plot(b0Arr,cB0); plot(b1Arr,cB1);
+    // current eps marker
+    ctx.strokeStyle=cMark; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(X(curEps),M.t); ctx.lineTo(X(curEps),M.t+ph); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=cMark; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('ε='+curEps.toFixed(0), X(curEps), M.t-8);
+    // annotations
+    ctx.fillStyle=cText; ctx.globalAlpha=0.85; ctx.font='11px system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.fillText('β₀ (blau): Komponenten — fallen, wenn sich Struktur verbindet (Details verschwinden)', M.l, PH-16);
+    ctx.textAlign='right'; ctx.fillText('β₁ (rot): Schleifen — der stabile Kern über ein ε-Intervall', PW-M.r, PH-16);
+    ctx.globalAlpha=1;
+    // title + axis
+    ctx.fillStyle=cText; ctx.font='bold 13px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Persistenz: Betti-Zahlen über den Skalenparameter ε', M.l, 16);
+    ctx.fillStyle=cText; ctx.globalAlpha=0.7; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('ε (Verbindungsradius)', M.l+pw/2, PH-3); ctx.globalAlpha=1;
+  }
+
+  slider.addEventListener('input', function(){ curEps=+slider.value; drawComplex(); drawPersistence(); });
+
+  drawComplex(); drawPersistence();
+})();
+</script>
+</body>
+</html>

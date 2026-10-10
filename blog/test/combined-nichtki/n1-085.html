@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quotient durch Symmetrie — Mannigfaltigkeiten & Orbifolds (Fusion 085)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f6f2; --bg-alt:#efece4; --surface:#ffffff;
+    --text:#1f2430; --muted:#5a6072; --border:#d8d4c8;
+    --accent:#4f5fd6;
+    --c-manifold:#3f56d6; --c-orbifold:#c92f98; --c-cone:#d92d2d;
+    --viz-bg:#ffffff; --shadow:0 10px 30px rgba(20,20,40,.08);
+  }
+  html.dark{
+    --bg:#0b0d16; --bg-alt:#0e1220; --surface:#141a2b;
+    --text:#e7e9f2; --muted:#9aa1b5; --border:#2a3145;
+    --accent:#8492ff;
+    --c-manifold:#6f8bff; --c-orbifold:#f07ad0; --c-cone:#ff6b6b;
+    --viz-bg:#0f1526; --shadow:0 12px 34px rgba(0,0,0,.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Georgia','Iowan Old Style',serif;
+    background:var(--bg); color:var(--text);
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+    transition:background .3s ease, color .3s ease;
+  }
+  article{max-width:820px; margin:0 auto; padding:48px 22px 90px;}
+  header{text-align:center; margin-bottom:38px; position:relative;}
+  h1{font-size:2.05rem; line-height:1.2; letter-spacing:-.5px; margin-bottom:10px;}
+  .subtitle{color:var(--muted); font-style:italic; font-size:1rem;}
+  .theme-btn{
+    position:absolute; top:0; right:0; cursor:pointer;
+    background:transparent; border:1px solid var(--border); color:var(--muted);
+    padding:6px 12px; border-radius:20px; font-size:.8rem; font-family:inherit;
+    transition:all .2s;
+  }
+  .theme-btn:hover{border-color:var(--accent); color:var(--accent);}
+  section{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:26px 28px; margin-bottom:26px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  section::before{
+    content:''; position:absolute; inset:0 0 auto 0; height:3px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:.6;
+  }
+  h2{font-size:1.35rem; margin-bottom:14px; color:var(--accent); letter-spacing:-.3px;}
+  h3{font-size:1.05rem; margin:20px 0 8px; color:var(--text);}
+  p{margin-bottom:12px; color:var(--text);}
+  p:last-child{margin-bottom:0;}
+  .lead{font-size:1.05rem;}
+  .muted{color:var(--muted);}
+  .tag{
+    display:inline-block; font-size:.72rem; font-family:monospace;
+    border:1px solid var(--border); border-radius:6px; padding:1px 7px;
+    color:var(--muted); margin-right:6px; vertical-align:middle;
+  }
+  .tag.A{color:var(--c-manifold); border-color:var(--c-manifold);}
+  .tag.B{color:var(--c-orbifold); border-color:var(--c-orbifold);}
+  .claim{
+    border-left:3px solid var(--border); padding:10px 16px; margin:14px 0;
+    background:var(--bg-alt); border-radius:0 8px 8px 0; font-size:.96rem;
+  }
+  .claim.A{border-left-color:var(--c-manifold);}
+  .claim.B{border-left-color:var(--c-orbifold);}
+  .claim .who{font-weight:bold; display:block; margin-bottom:4px; font-size:.85rem;}
+  .claim.A .who{color:var(--c-manifold);}
+  .claim.B .who{color:var(--c-orbifold);}
+  .bridge{
+    border-left:3px solid var(--accent); padding:10px 16px; margin:14px 0;
+    background:var(--bg-alt); border-radius:0 8px 8px 0;
+  }
+  .bridge .who{font-weight:bold; color:var(--accent); display:block; margin-bottom:4px; font-size:.85rem;}
+  .math{
+    text-align:center; margin:18px 0; overflow-x:auto;
+    color:var(--text); font-size:1.05rem;
+  }
+  .note{font-size:.86rem; color:var(--muted); margin-top:6px;}
+  ul{margin:8px 0 12px 22px;}
+  li{margin-bottom:7px;}
+  .prov a{color:var(--accent); text-decoration:none; border-bottom:1px dotted var(--accent);}
+  .prov a:hover{border-bottom-style:solid;}
+  .prov li{margin-bottom:14px;}
+  /* viz */
+  .viz-wrap{margin-top:18px;}
+  #vizCanvas{
+    display:block; width:100%; border:1px solid var(--border);
+    border-radius:10px; background:var(--viz-bg);
+  }
+  .viz-controls{
+    display:flex; flex-wrap:wrap; gap:14px; align-items:center;
+    margin-top:16px;
+  }
+  .viz-controls label{font-size:.9rem; color:var(--muted);}
+  .viz-controls input[type=range]{accent-color:var(--accent); width:150px; vertical-align:middle;}
+  .viz-controls .val{font-family:monospace; color:var(--accent); min-width:20px; display:inline-block;}
+  .mode-btn{
+    cursor:pointer; background:transparent; border:1px solid var(--accent);
+    color:var(--accent); padding:7px 14px; border-radius:8px; font-family:inherit;
+    font-size:.88rem; transition:all .2s;
+  }
+  .mode-btn:hover{background:var(--accent); color:var(--surface);}
+  #vizReadout{
+    margin-top:14px; font-family:monospace; font-size:.85rem;
+    background:var(--bg-alt); border:1px solid var(--border);
+    border-radius:8px; padding:12px 14px; color:var(--text); min-height:1.4em;
+  }
+  .caption{font-size:.86rem; color:var(--muted); margin-top:10px;}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Der Quotient durch Symmetrie</h1>
+    <p class="subtitle">Fusion aus: useful_math.html &#9829; orbifold.html</p>
+    <button class="theme-btn" id="themeToggle">Theme umschalten</button>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere drehen sich um <em>dieselbe Operation</em>: einen Raum durch eine Symmetrie
+    (eine Gruppenwirkung) zu fassen, also einen <strong>Quotienten&nbsp;X/G</strong> zu bilden.
+    <span class="tag A">A</span> behauptet, seine sechs Strukturen &ndash; Konvolution, Fixpunkte, Entropie,
+    Fouriersche Dualit&auml;t, Mannigfaltigkeiten, Gruppenwirkungen &ndash; seien allesamt Facetten der
+    Repr&auml;sentationstheorie: <em>&bdquo;It's all representation theory.&rdquo;</em> Dort ist Konvolution die Wirkung der
+    Translation, die Fourier-Transformation zerlegt in irreduzible Darstellungen, der Fixpunkt ist die Stelle,
+    an der die Gruppenwirkung trivial ist (<em>g&middot;x = x</em>), und <em>&bdquo;Manifolds are the quotient spaces of
+    high-dimensional groups.&rdquo;</em></p>
+    <p><span class="tag B">B</span> liefert genau die <em>Geometrie</em> dieser Quotienten: Eine glatte
+    Mannigfaltigkeit entsteht, wenn man flache St&uuml;cke zusammenklebt (freie Wirkung &mdash; Quadrat&nbsp;&rarr; Torus).
+    Ein <strong>Orbifold</strong> entsteht, wenn man eine Mannigfaltigkeit durch eine Symmetrie <em>faltet</em>: Dann
+    tauchen isolierte Singul&auml;rstellen (Kegel-Punkte) auf, und der kleinste kacheltende Baustein &ndash; die
+    Fundamental-Domain &ndash; <em>ist</em> der Orbifold.</p>
+    <p><strong>Der fusionierte Kern:</strong> Glattheit ist der Spezialfall, Singul&auml;rit&auml;t der allgemeine Fall &mdash;
+    und beides ist <em>dasselbe Objekt</em>, der Quotient&nbsp;X/G. Wirkt die Gruppe <em>frei</em> (kein Punkt bleibt fest),
+    ist X/G eine glatte Mannigfaltigkeit (A: &bdquo;d&uuml;nne gekr&uuml;mmte Bl&auml;tter&rdquo;, B: Sph&auml;re/Torus).
+    Wirkt sie <em>nicht frei</em>, hat ein Punkt einen nichttrivialen Stabilisator&nbsp;C<sub>n</sub>, wird sein
+    n-fach gefalteter Umlauf zum Kegel-Punkt der Ordnung&nbsp;n &mdash; und genau dieser Punkt ist, mit den Worten von
+    A, der <em>&bdquo;Fixpunkt, an dem die Gruppenwirkung trivial ist&rdquo;</em>. A's Mannigfaltigkeits-Hypothese
+    (Daten leben auf d&uuml;nnen glatten Bl&auml;ttern) ist damit die <em>freie</em> Version von B's Orbifold (d&uuml;nnes
+    Blatt, das an Symmetriezentren gefaltet ist). Eine einzige These verbindet sie:
+    <strong>Symmetrie-Quotienten sind die Meisteridee; A beschreibt den glatten (freien) Fall, B benennt den
+    allgemeinen Fall und zeigt, dass Kegel-Punkte nichts anderes sind als Fixpunkte der Wirkung.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p class="muted">Sie widersprechen sich nicht direkt &mdash; B verallgemeinert A explizit
+    (&bdquo;Orbifolds generalize manifolds the same way rational numbers generalize integers&rdquo;).
+    Es gibt aber zwei echte Reibungspunkte, an denen die beiden unterschiedlich positioniert sind:</p>
+
+    <div class="claim A">
+      <span class="who">A (Mannigfaltigkeits-Hypothese) &mdash; Glattheit als Default</span>
+      &bdquo;Real data lives on thin curved sheets in high-dimensional space.&rdquo; Die Daten liegen auf glatten,
+      singul&auml;rit&auml;tsfreien Untermannigfaltigkeiten; &bdquo;The &lsquo;curse of dimensionality&rsquo; is really a
+      <em>blessing</em> &mdash; because nothing real is actually high-dimensional.&rdquo; A setzt also glatte Bl&auml;tter
+      ohne Defekte als das <em>normale</em> Datenmodell voraus.
+    </div>
+    <div class="claim B">
+      <span class="who">B (Orbifold) &mdash; Singul&auml;r ist der Normalfall</span>
+      Das nat&uuml;rliche Objekt ist an Symmetriezentren <em>nicht</em> glatt: an einem Kegel-Punkt der Ordnung&nbsp;n
+      existiert &bdquo;only 360&deg;/n of angle instead of the full 360&deg;&rdquo;. B's Kernthese ist, dass Glattheit der
+      <em>Ausnahmefall</em> ist und Symmetrie-Defekte strukturell notwendig.
+    </div>
+    <p><strong>Reibungspunkt&nbsp;1 &mdash; Ist der Datenraum glatt?</strong> A sagt ja (singu&auml;rit&auml;tsfreie Bl&auml;tter,
+    &bdquo;blessing&rdquo;); B sagt: nur dort, wo keine Symmetrie wirksam wird. A's &bdquo;blessing&rdquo;-Argument greift
+    nur, solange man die Singul&auml;rit&auml;ten der gefalteten Quotienten ignoriert.</p>
+
+    <div class="claim A">
+      <span class="who">A (Einheit) &mdash; Quotient &rarr; glatte Mannigfaltigkeit</span>
+      &bdquo;Manifolds are the quotient spaces of high-dimensional groups.&rdquo; Der Quotient einer Gruppenwirkung
+      ist (in A's Lesart) eine glatte Mannigfaltigkeit.
+    </div>
+    <div class="claim B">
+      <span class="who">B (Kleben/Falten) &mdash; Quotient &rarr; Orbifold</span>
+      &bdquo;A flat square with opposite edges identified becomes a torus&rdquo; (frei &rarr; glatt), aber
+      &bdquo;folding a manifold using a symmetry&rdquo; erzeugt &bdquo;singular points&rdquo; (nicht frei &rarr; Orbifold).
+      Der Quotient einer <em>nicht</em> freien Wirkung ist also <em>keine</em> Mannigfaltigkeit.
+    </div>
+    <p><strong>Reibungspunkt&nbsp;2 &mdash; Was ist das Ziel des Quotienten?</strong> A's Slogan
+    &bdquo;Quotient &rarr; Mannigfaltigkeit&rdquo; gilt nur f&uuml;r <em>freie</em> Wirkungen; B zeigt, dass der allgemeine
+    Quotient ein Orbifold mit Kanten/Kegel-Punkten ist. A's Aussage ist unvollst&auml;ndig, B liefert den fehlenden Fall.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+
+    <h3>1. Frei vs. nicht-frei &mdash; der eine Quotient, zwei F&auml;lle</h3>
+    <div class="bridge"><span class="who">Aufl&ouml;sung</span>
+    Der Quotient&nbsp;X/G ist <em>dasselbe</em> Konstrukt in beiden Papieren. Hat <em>jeder</em> Punkt einen trivialen
+    Stabilisator (freie Wirkung), ist X/G eine glatte Mannigfaltigkeit &mdash; das sind A's Bl&auml;tter und B's
+    Sph&auml;re/Torus. Hat ein Punkt&nbsp;p einen endlichen, nichttrivialen Stabilisator G<sub>p</sub>&thinsp;&cong;&thinsp;C<sub>n</sub>
+    (n Bl&auml;tter fallen auf einen Punkt), so wird x/G dort zum Kegel-Punkt der Ordnung&nbsp;n &mdash; das ist B's Orbifold.
+    &bdquo;Glattheit = freie Wirkung, Singul&auml;rit&auml;t = Fixpunkt.&rdquo; Reibungspunkt&nbsp;2 l&ouml;st sich damit
+    vollst&auml;ndig auf: A und B beschreiben ein und denselben Quotienten, A nur seinen freien Unterfall.</div>
+
+    <h3>2. Fixpunkt = Kegel-Punkt &mdash; dieselbe Zahl von zwei Seiten</h3>
+    <div class="bridge"><span class="who">Aufl&ouml;sung</span>
+    A (Fixpunkte): &bdquo;A fixed point of f is where the group action is trivial: <em>g&middot;x = x</em>.&rdquo;
+    B (Kegel-Punkte): n-faches Falten identifiziert n Kopien eines vollen Umlaufs zu einem Winkel 2&pi;/n.
+    Genau das ist ein Punkt mit nichttrivialem Stabilisator C<sub>n</sub>. Die <em>Ordnung n</em> des Kegel-Punkts
+    ist <em>dieselbe Zahl</em> von zwei Seiten: in B als gefaltete Bl&auml;tter / reduzierter Winkel, in A als
+    Ordnung des Stabilisators, der den Punkt ortsfest l&auml;sst. A's Fixpunkt (Aktionsperspektive) und B's
+    Kegel-Punkt (Geometrie-Perspektive) sind der <em>gleiche Punkt</em>.</div>
+
+    <h3>3. Verfeinerte Mannigfaltigkeits-Hypothese</h3>
+    <div class="bridge"><span class="who">Fusions-Schlussfolgerung</span>
+    Echte Daten liegen auf einem <strong>Orbifold</strong> &mdash; einem d&uuml;nnen, <em>fast</em> glatten Blatt, das an
+    Symmetriezentren gefaltet sein darf &mdash; nicht nur auf einer glatten Mannigfaltigkeit. Das ist strikt
+    allgemeiner und konsistent mit A's &bdquo;quotienting by a group action&rdquo;, erg&auml;nzt um B's Pr&auml;zision.
+    Praktisch: Bilde- &amp; Pose-Daten modulo Rotation ergeben einen Orbifold, dessen Kegel-Punkte die
+    <em>symmetrischen</em> Bilder sind (ein perfekt symmetrisches Objekt hat nichttrivialen Stabilisator
+    &rarr; Kegel-Punkt). A's &bdquo;d&uuml;nnes gekr&uuml;mmtes Blatt&rdquo; wird zum &bdquo;d&uuml;nnen gekr&uuml;mmten Blatt,
+    ggf. gefaltet&rdquo; &mdash; und Reibungspunkt&nbsp;1 ist gel&ouml;st, weil &bdquo;glatt&rdquo; zum (n&uuml;tzlichen) Spezialfall wird.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Die eine Operation: Quotient durch Symmetrie</h3>
+    <p>Beide Papiere verwenden denselben Baustein. <span class="tag A">A</span>: &bdquo;Every time you say
+    &lsquo;these are essentially the same,&rsquo; you&rsquo;re quotienting by a group action.&rdquo;
+    <span class="tag B">B</span>: Die Fundamental-Domain &mdash; &bdquo;the smallest piece that tiles the plane&rdquo; &mdash;
+    <em>ist</em> der Orbifold, also der Quotient der Symmetrie. Beides ist X/G.</p>
+
+    <h3>Der glatte Fall (A &cap; B)</h3>
+    <p>Eine <strong>Mannigfaltigkeit</strong> ist lokal flach: jede kleine Umgebung sieht aus wie ℝ<sup>n</sup>.
+    <span class="tag B">B</span> baut sie durch Kleben (Kreis&nbsp;= 1D, Sph&auml;re/Torus&nbsp;= 2D, Quadrat mit
+    gegen&uuml;blichen Kanten&nbsp;&rarr; Torus). <span class="tag A">A</span> macht daraus die
+    <strong>Mannigfaltigkeits-Hypothese</strong>: Die Daten leben auf d&uuml;nnen gekr&uuml;mmten Bl&auml;ttern,
+    <span class="math" data-tex="\dim \mathcal{M} \ll \dim \mathbb{R}^{n}"></span>
+    &mdash; deshalb funktionieren PCA und neuronale Netze, und Abstraktion <em>ist</em> Dimensionsreduktion.
+    Beide Papiere stimmen hier &uuml;berein: glatt, keine besonderen Punkte.</p>
+
+    <h3>Der gefaltete Fall (B)</h3>
+    <p>Ein <strong>Orbifold</strong> ist &bdquo;almost a manifold, but has isolated singular points&rdquo;, erzeugt
+    durch das Falten mit einer Symmetrie: <em>Kegel-Punkte</em> (Order&nbsp;n &rarr; nur 360&deg;/n Winkel),
+    <em>Spiegelkanten</em> und <em>Ecken-Reflektoren</em>. Kanonische Beispiele: <em>Teardrop</em> (Sph&auml;re&nbsp;+
+    1 Kegel-Punkt), <em>Football</em> (2), <em>Pillow</em> (4 Ecken). Und: &bdquo;Every wallpaper pattern
+    corresponds to an orbifold&rdquo; &mdash; woran <span class="tag A">A</span> anklingt, wenn es feststellt:
+    &bdquo;There are exactly 17 wallpaper groups &mdash; this is a theorem, not a choice.&rdquo;</p>
+
+    <h3>Die Br&uuml;cke: Fixpunkt = Kegel-Punkt, Stabilisator = Ordnung</h3>
+    <p>Die Identit&auml;t, die die beiden Papiere wirklich verbindet:</p>
+    <p class="math" data-tex="\text{Stabilisator } G_p \cong C_n \;\Longleftrightarrow\; \text{Kegelwinkel } = \tfrac{2\pi}{n} = \tfrac{360^\circ}{n} \;\Longleftrightarrow\; n\ \text{Bl&auml;tter auf einen Punkt}"></p>
+    <p>Die &bdquo;Ordnung&rdquo; des Kegel-Punkts ist exakt die Ordnung des Stabilisators &mdash; also dieselbe Zahl,
+    die A unter &bdquo;Fixpunkt / triviale Wirkung&rdquo; versteht. A's sechs Facetten bleiben erhalten und werden
+    pr&auml;zisiert: Der Satz &bdquo;Manifolds are quotient spaces of groups&rdquo; wird zu
+    &bdquo;<em>X/G</em> ist glatt (frei) oder ein Orbifold (nicht frei); seine Kegel-Punkte sind die Fixpunkte,
+    die A feiert.&rdquo;</p>
+
+    <h3>Die fraktionale Invariante: Orbifold-Euler-Kennzahl</h3>
+    <p>B's Bild &mdash; &bdquo;fractional local structure&rdquo;, &bdquo;rational numbers generalize integers&rdquo; &mdash; wird
+    durch eine echte Invariante pr&auml;zise: die <strong>Orbifold-Euler-Kennzahl</strong>. F&uuml;r eine Sph&auml;re mit
+    Kegel-Punkten der Ordnungen n<sub>1</sub>,&hellip;,n<sub>k</sub>:</p>
+    <p class="math" data-tex="\chi_{\mathrm{orb}} = 2 - \sum_{i=1}^{k}\left(1 - \tfrac{1}{n_i}\right)"></p>
+    <p>Jeder Kegel-Punkt der Ordnung&nbsp;n liefert den <em>fraktionalen</em> Defekt (1&nbsp;&minus;&nbsp;1/n).
+    Beispiele: Teardrop S&sup2;(n): &chi;<sub>orb</sub>&thinsp;=&thinsp;1&thinsp;+&thinsp;1/n; Football S&sup2;(2,3): 1/2&thinsp;+&thinsp;1/3&thinsp;=&thinsp;5/6;
+    Pillow S&sup2;(2,2,2,2): 2&nbsp;&minus;&nbsp;4&middot;(1/2)&thinsp;=&thinsp;0. Die ganze Zahl &chi;&thinsp;=&thinsp;2 der glatten Sph&auml;re
+    (A's Fall) wird zur rationalen Orbifold-Kennzahl (B's Fall) verfeinert &mdash; w&oacute;rtlich die Verallgemeinerung,
+    die B verspricht.</p>
+
+    <h3>Die n&uuml;tzliche Math beider Papiere</h3>
+    <p>Die sechs A-Strukturen bleiben als Repr&auml;sentationstheorie erhalten und verankern den Quotienten:</p>
+    <p class="math" data-tex="(f * g)(t) = \int_{-\infty}^{\infty} f(\tau)\, g(t - \tau)\, d\tau \qquad (\text{Translation wirkt})"></p>
+    <p class="math" data-tex="x^{*} = f(x^{*}) \;\Longleftrightarrow\; g \cdot x^{*} = x^{*} \qquad (\text{Fixpunkt } = \text{ triviale Wirkung})"></p>
+    <p class="note">Erg&auml;nzt durch A: H(X) = &minus;&Sigma; p<sub>i</sub> log&thinsp;p<sub>i</sub> (Entropie &uuml;ber
+    Gruppen-Orbits) und Noether (Symmetrie &rarr; Erhaltungsgr&ouml;&szlig;e). Und durch B: Kegelwinkel 2&pi;/n sowie die
+    Orbifold-Euler-Kennzahl oben.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktiv: Eine C<sub>n</sub>-Wirkung faltet die Nachbarschaft</h2>
+    <p class="muted">Eine volle Umlauf-Nachbarschaft (360&deg;) wird von der n-fachen Rotation C<sub>n</sub>
+    gefaltet. Schalter &bdquo;frei&rdquo;: kein Punkt bleibt fest &rarr; glatte Mannigfaltigkeit. Schalter
+    &bdquo;nicht-frei&rdquo;: das Zentrum ist ein Fixpunkt &rarr; Kegel-Punkt, Kegelwinkel 360&deg;/n.</p>
+    <div class="viz-wrap">
+      <canvas id="vizCanvas"></canvas>
+      <div class="viz-controls">
+        <label>Ordnung n:
+          <input type="range" id="vizN" min="2" max="8" value="3" step="1">
+          <span class="val" id="vizNVal">3</span>
+        </label>
+        <button class="mode-btn" id="vizMode">Umstellen: &rarr; Mannigfaltigkeit (frei)</button>
+      </div>
+      <div id="vizReadout"></div>
+      <p class="caption">Fundamental-Domain (rosa Sektoren) &middot; rote Kegel-Punkte = Fixpunkte der Wirkung
+      (Stabilisator C<sub>n</sub>) &middot; blaue Motive = die n identifizierten Kopien &middot;
+      &chi;<sub>orb</sub>-Beitrag pro Kegel-Punkt = 1 &minus; 1/n.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../useful_math.html"><strong>A &mdash; useful_math.html</strong></a> &middot;
+        <em>&bdquo;The Hidden Algebra of Everything&rdquo;</em>: Sechs Strukturen (Konvolution, Fixpunkte,
+        Entropie, Fourier/Dualit&auml;t, Mannigfaltigkeiten, Gruppenwirkungen) als Facetten der
+        Repr&auml;sentationstheorie; liefert den Quotienten-Begriff und &bdquo;Fixpunkt = triviale
+        Gruppenwirkung&rdquo;.</li>
+      <li><a href="../orbifold.html"><strong>B &mdash; orbifold.html</strong></a> &middot;
+        <em>&bdquo;Manifolds &amp; Orbifolds &mdash; A Visual Journey&rdquo;</em>: Mannigfaltigkeiten durch Kleben,
+        Orbifolds durch Falten mit Symmetrie, Kegel-Punkte (Order&nbsp;n &rarr; 360&deg;/n), Fundamental-Domain,
+        &bdquo;fractional local structure&rdquo;.</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  // ---- Theme toggle (dark default; class on <html>) ----
+  var htmlEl = document.documentElement;
+  var tBtn = document.getElementById('themeToggle');
+  if (tBtn){
+    tBtn.addEventListener('click', function(){
+      htmlEl.classList.toggle('dark');
+    });
+  }
+
+  // ---- Math (Temml, optional) ----
+  function renderMath(){
+    var els = document.querySelectorAll('.math[data-tex]');
+    for (var i=0;i<els.length;i++){
+      var el = els[i], tex = el.getAttribute('data-tex');
+      var out = '';
+      try{
+        if (window.temml && temml.renderToString){
+          out = temml.renderToString(tex, { displayMode:true });
+        } else { out = ''; }
+      }catch(e){ out = ''; }
+      if (out){ el.innerHTML = out; }
+      else { el.textContent = tex; }
+    }
+  }
+
+  // ---- Viz: C_n quotient / cone-point builder ----
+  var canvas = document.getElementById('vizCanvas');
+  if (canvas && canvas.getContext){
+    var ctx = canvas.getContext('2d');
+    var nSlider = document.getElementById('vizN');
+    var nVal = document.getElementById('vizNVal');
+    var modeBtn = document.getElementById('vizMode');
+    var readout = document.getElementById('vizReadout');
+    var n = 3;
+    var orbifoldMode = true; // true = non-free (Orbifold), false = free (Mannigfaltigkeit)
+    var t = 0;
+
+    function cssVar(name){
+      return getComputedStyle(htmlEl).getPropertyValue(name).trim();
+    }
+    function colors(){
+      return {
+        bg: cssVar('--viz-bg') || '#0f1526',
+        text: cssVar('--text') || '#e7e9f2',
+        muted: cssVar('--muted') || '#9aa1b5',
+        manifold: cssVar('--c-manifold') || '#6f8bff',
+        orbifold: cssVar('--c-orbifold') || '#f07ad0',
+        cone: cssVar('--c-cone') || '#ff6b6b',
+        border: cssVar('--border') || '#2a3145'
+      };
+    }
+    function resize(){
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = canvas.parentElement ? canvas.parentElement.clientWidth : 700;
+      var h = Math.max(320, Math.min(460, Math.round(w * 0.6)));
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      canvas.width = Math.max(1, Math.round(w * dpr));
+      canvas.height = Math.max(1, Math.round(h * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw(){
+      var c = colors();
+      var W = canvas.clientWidth, H = canvas.clientHeight;
+      if (W < 2 || H < 2) return;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = c.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      var cx = W / 2, cy = H / 2;
+      var R = Math.min(W, H) * 0.4;
+      var sector = 2 * Math.PI / n;
+      var start = -Math.PI / 2 - sector / 2;
+
+      // full neighborhood disk
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.strokeStyle = c.border;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // fold lines (the n group elements)
+      ctx.strokeStyle = c.border;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1;
+      for (var i = 0; i < n; i++){
+        var a = (2 * Math.PI * i) / n - Math.PI / 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      // fundamental domain sector (1/n of the neighborhood)
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, R, start, start + sector);
+      ctx.closePath();
+      ctx.fillStyle = c.orbifold;
+      ctx.globalAlpha = 0.18;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = c.orbifold;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // n identified copies of a motif (slowly rotating within sectors)
+      var spin = t * 0.0015;
+      for (var k = 0; k < n; k++){
+        var base = (2 * Math.PI * k) / n - Math.PI / 2;
+        var mid = base + sector / 2 + spin * 0.25;
+        var dist = R * 0.55;
+        var mx = cx + dist * Math.cos(mid);
+        var my = cy + dist * Math.sin(mid);
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.rotate(mid + Math.PI / 2);
+        ctx.beginPath();
+        ctx.moveTo(0, -10);
+        ctx.lineTo(8, 8);
+        ctx.lineTo(-8, 8);
+        ctx.closePath();
+        ctx.fillStyle = (k === 0) ? c.orbifold : c.manifold;
+        ctx.globalAlpha = (k === 0) ? 0.9 : 0.5;
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+
+      if (orbifoldMode){
+        // cone point at center + the cone angle arc (2 pi / n)
+        var pulse = 0.5 + 0.5 * Math.sin(t * 0.004);
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * 0.26, start, start + sector);
+        ctx.strokeStyle = c.cone;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 13 + 7 * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = c.cone;
+        ctx.globalAlpha = 0.18;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+        ctx.fillStyle = c.cone;
+        ctx.fill();
+      } else {
+        // free action: no fixed point -> center not special, n images orbit the rim
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.strokeStyle = c.manifold;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        var oa = t * 0.0012;
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * 0.8, 0, Math.PI * 2);
+        ctx.strokeStyle = c.manifold;
+        ctx.globalAlpha = 0.4;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+        for (var j = 0; j < n; j++){
+          var a2 = oa + (2 * Math.PI * j) / n;
+          var px = cx + R * 0.8 * Math.cos(a2);
+          var py = cy + R * 0.8 * Math.sin(a2);
+          ctx.beginPath();
+          ctx.arc(px, py, 5, 0, Math.PI * 2);
+          ctx.fillStyle = c.manifold;
+          ctx.fill();
+        }
+      }
+
+      // labels
+      var deg = 360 / n;
+      var degStr = (deg % 1 === 0) ? deg.toFixed(0) : deg.toFixed(2);
+      ctx.textAlign = 'left';
+      ctx.font = '12px Georgia, serif';
+      ctx.fillStyle = c.muted;
+      if (orbifoldMode){
+        ctx.fillText('Kegelwinkel = ' + degStr + '\u00b0  (2\u03c0/n)', 14, 24);
+        ctx.fillStyle = c.cone;
+        ctx.fillText('\u25cf Kegel-Punkt der Ordnung ' + n + '  =  Fixpunkt (Stabilisator C_' + n + ')', 14, 42);
+      } else {
+        ctx.fillText('Stabilisator trivial \u2192 keine Singul\u00e4rit\u00e4t', 14, 24);
+        ctx.fillStyle = c.manifold;
+        ctx.fillText('n Bilder orbitieren; Zentrum frei \u2192 glatte Mannigfaltigkeit', 14, 42);
+      }
+    }
+
+    function updateReadout(){
+      if (!readout) return;
+      var deg = 360 / n;
+      var degStr = (deg % 1 === 0) ? deg.toFixed(0) : deg.toFixed(2);
+      if (orbifoldMode){
+        var defect = 1 - 1 / n;
+        readout.innerHTML = 'Modus: <b>Orbifold</b> (nicht-frei) &middot; n = ' + n +
+          ' &middot; Kegelwinkel = ' + degStr + '\u00b0 &middot; Stabilisator C_' + n +
+          ' &middot; \u03c7_orb-Beitrag = 1 &minus; 1/' + n + ' = ' + defect.toFixed(3) +
+          ' &middot; <b>X/G = Orbifold</b>';
+      } else {
+        readout.innerHTML = 'Modus: <b>Mannigfaltigkeit</b> (frei) &middot; n = ' + n +
+          ' &middot; Stabilisator trivial &middot; \u03c7_orb-Beitrag = 0 &middot; <b>X/G = glatte Mannigfaltigkeit</b>';
+      }
+    }
+
+    function frame(){
+      t = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      draw();
+      if (window.requestAnimationFrame) requestAnimationFrame(frame);
+      else setTimeout(function(){ frame(); }, 33);
+    }
+
+    function refresh(){
+      if (nVal) nVal.textContent = String(n);
+      if (modeBtn){
+        modeBtn.innerHTML = orbifoldMode
+          ? 'Umstellen: &rarr; Mannigfaltigkeit (frei)'
+          : 'Umstellen: &rarr; Orbifold (nicht-frei)';
+      }
+      updateReadout();
+    }
+
+    if (nSlider){
+      nSlider.addEventListener('input', function(){
+        n = Math.max(2, parseInt(nSlider.value, 10) || 2);
+        refresh();
+      });
+    }
+    if (modeBtn){
+      modeBtn.addEventListener('click', function(){
+        orbifoldMode = !orbifoldMode;
+        refresh();
+      });
+    }
+    window.addEventListener('resize', resize);
+    if (window.MutationObserver){
+      var mo = new MutationObserver(function(){ /* redraw uses fresh colors next frame */ });
+      mo.observe(htmlEl, { attributes:true, attributeFilter:['class'] });
+    }
+
+    resize();
+    refresh();
+    frame();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderMath);
+  } else {
+    renderMath();
+  }
+})();
+</script>
+</body>
+</html>

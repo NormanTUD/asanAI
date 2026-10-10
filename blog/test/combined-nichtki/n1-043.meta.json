@@ -1,0 +1,16 @@
+{
+  "no": "043",
+  "a": "buecher/raetsch.html",
+  "b": "spiegelsaal.html",
+  "a_title": "Enzyklopädie der Psychoaktiven Pflanzen — Visuelle Konzepte",
+  "b_title": "Der Spiegelsaal — Ein interaktives Verstehen",
+  "combined_theme": "exogene-bindungschemie",
+  "one_line": "Derselbe Mechanismus — ein externer Agent flutet das körpereigene Neurotransmitter-System des Wirts und erzeugt eine sich echt anfühlende Bindung — ist Symbiose (A: Pflanze als eigenständiges Organ, integrierbar, der Mensch im Fahrersitz) oder ausbeuterischer Spiegel (B: Partner zur Reflexionsfläche des Ichs reduziert, selbst-erneuernder Zyklus); der Heilungsweg ist in beiden identisch: die Autonomie des eigenen Systems zurückerobern.",
+  "contradictions": [
+    "Bewertung desselben Mechanismus: A (raetsch) feiert die Kopplung Pflanze–Mensch als wertvolle, beabsichtigte Ko-Evolution und 'schamanische Technologie' (zweckvoller Gebrauch); B (spiegelsaal) diagnostiziert die identische Neurochemie-Flutung (Dopamin/Oxytocin/Adrenalin) als ausbeuterische Falle, der man entkommen muss. Gleiche Chemie, entgegengesetztes Urteil.",
+    "Reversibilität: A's Ritualstruktur endet in 'Integration (Erzählen, Deuten, Handeln)' — Rückkehr in dasselbe System (Rundreise, wiederholbar); B verlangt den endgültigen Austritt ('Verlasse die Bühne … endgültig', 'Kein Kontakt'), denn die Rückkehr in dasselbe System ist genau der Zyklus (Hoovering zieht zurück).",
+    "Agentur/Einverständnis: A's Mensch ist freiwilliger, vorbereiteter Nutzer, der Dosis und 'Schamanen/Leiter' steuert (Dreistufenmodell der Dosierung); B's Opfer ist unwissendes 'Publikum/Statistin', das geflutet wird. Dasselbe Kopplungsgeflecht (Agent + Wirt), entgegengesetzte Einverständnislage (Nutzer vs. Benutztes)."
+  ],
+  "resolution": "Der Mechanismus (exogene Substanz dockt an körpereigene Rezeptoren an und erzeugt eine sich echt anfühlende Bindung) ist neutral; entscheidend ist die Qualität der Kopplung. Symbiose (der Andere bleibt ein eigenständiges Organ — wechselseitig, dosierbar, integrierbar, der Wirt im Fahrersitz) vs. Spiegel (der Andere wird zur Reflexionsfläche des eigenen Ichs reduziert — einseitig, selbst-erneuernd, nicht integrierbar). Diskriminator: Wird der Andere als Anderer (Unterschied trägt Wert) oder als Spiegel (Unterschied = Bedrohung) erfahren, und behält der Wirt Autonomie (Dosis, Integration, B−A>0)? Integration ist der Test: kehrst du heil zurück, war es Symbiose; hält das System dich fest, ist es der Spiegelsaal. In beiden ist der Heilungsweg identisch: Autonomie zurückerobern — A durch Integration nach der Erfahrung, B durch den Austritt aus der Bühne.",
+  "viz": "Plotly-Zeitreihe mit zwei Spuren — Bindungsintensität + Autonomie des Wirts — über die Zeit, mit Modus-Umschalter Symbiose (einmaliger, integrierbarer Puls, Autonomie erholt sich voll) ↔ Spiegel (abnehmender Missbrauch-Zyklus mit intermittierender Verstärkung, Autonomie zerfällt), Dosis-Regler und 'Bühne verlassen'-Button (B's Lösung: Bindung bricht ab, Autonomie kommt zurück). Zeigt live B (Bedürfnis), A (Angst) und B−A nach B's Formel. Themenreaktiv, alle Daten inline."
+}

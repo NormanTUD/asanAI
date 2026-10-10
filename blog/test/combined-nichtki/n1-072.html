@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion — Schleifenraum ΩX ✕ Sorting with Bialgebras (Adjunktion & Dualität)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+:root{
+  --bg:#f7f5ef; --panel:#ffffff; --panel2:#fbfaf6; --ink:#1b1b28; --dim:#5c5c72;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#4f46e5; --line:#ddd7c9;
+  --good:#15803d; --bad:#b91c1c;
+  --viz-bg:#ffffff; --viz-grid:#e6e1d4; --viz-ink:#1b1b28;
+  --viz-route1:#0f766e; --viz-route2:#b45309; --viz-node:#1b1b28;
+  --viz-good:#15803d; --viz-bad:#b91c1c;
+}
+html.dark{
+  --bg:#0b1020; --panel:#111a35; --panel2:#0d1631; --ink:#e7ecff; --dim:#9aa7d1;
+  --accent:#7cf9c8; --accent2:#ff8ad8; --accent3:#5aa9ff; --line:#2a366b;
+  --good:#7cf9c8; --bad:#ff8ad8;
+  --viz-bg:#070c1f; --viz-grid:#2a366b; --viz-ink:#e7ecff;
+  --viz-route1:#7cf9c8; --viz-route2:#ff8ad8; --viz-node:#e7ecff;
+  --viz-good:#7cf9c8; --viz-bad:#ff8ad8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,Inter,"Segoe UI",Roboto,system-ui,sans-serif;
+  line-height:1.62;font-size:17px}
+article{max-width:820px;margin:0 auto;padding:30px 20px 80px}
+header{padding:26px 0 10px;text-align:left}
+h1{font-size:clamp(27px,4.4vw,42px);line-height:1.12;margin:0 0 10px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.5px}
+.sub{color:var(--dim);font-size:14.5px;margin:0 0 6px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.meta{color:var(--dim);font-size:13.5px;margin:2px 0 0}
+section{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:24px 26px;margin:22px 0;box-shadow:0 12px 40px rgba(0,0,0,.10)}
+h2{margin:0 0 14px;font-size:23px;display:flex;align-items:center;gap:10px}
+h2 .n{font-size:13px;font-weight:800;padding:3px 10px;border-radius:99px;color:var(--bg);
+  background:linear-gradient(90deg,var(--accent),var(--accent2))}
+h3{font-size:17.5px;margin:22px 0 8px;color:var(--accent)}
+p{margin:10px 0}
+ul{margin:8px 0;padding-left:22px}
+li{margin:6px 0}
+.note{background:var(--panel2);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;
+  padding:12px 15px;margin:14px 0;font-size:15px}
+.note.warn{border-left-color:var(--accent2)}
+.note.ok{border-left-color:var(--good)}
+.note.bad{border-left-color:var(--bad)}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;font-weight:700;
+  border:1px solid var(--line);color:var(--dim);margin-right:4px}
+.kA{color:var(--accent);font-weight:700}
+.kB{color:var(--accent2);font-weight:700}
+.katex{font-size:1.06em}
+.mathrow{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center;font-size:18px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+th{background:var(--panel2);color:var(--accent3)}
+td:first-child{text-align:left;font-weight:600}
+.vizwrap{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+#viz{width:100%;height:440px;display:block;border-radius:10px}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:14px}
+.controls label{font-size:13px;color:var(--dim);display:flex;flex-direction:column;gap:5px;min-width:220px}
+input[type=range]{accent-color:var(--accent);width:100%}
+button{background:linear-gradient(90deg,var(--accent),var(--accent2));border:0;color:var(--bg);
+  padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13.5px}
+button.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--dim)}
+button.on{box-shadow:0 0 0 2px var(--accent3) inset}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--dim);margin-top:12px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;vertical-align:middle;margin-right:5px}
+a{color:var(--accent3)}
+.prov{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);
+  border-radius:10px;margin:10px 0;background:var(--panel2)}
+.prov .ic{font-size:22px;line-height:1.2}
+footer{color:var(--dim);font-size:13px;text-align:center;margin-top:30px}
+code{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.9em}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Dualität als Adjunktion — zwei Wege, ein Ziel</h1>
+  <p class="sub">Fusion aus: schleifenraum.html ✕ perceive_this_as_that.html</p>
+  <p class="meta">Knockout-Runde 1 (Nicht-KI-Spur), Paar 072 · Homotopietheorie ✕ Kategorien- / Rekursionstheorie des Sortierens</p>
+</header>
+
+<!-- ============ 1. THESE ============ -->
+<section id="these">
+  <h2><span class="n">1</span> Kernthese der Fusion</h2>
+  <p>Beide Papiere — auf den ersten Blick aus völlig unterschiedlichen Welten (die eine über Schleifen in topologischen Räumen, die andere über die kategorische Struktur von Sortieralgorithmen) — sind <b>die selbe Metatheorie in zwei Gewändern</b>: <b>Dualität ist eine Adjunktion zwischen einem „erzeugenden“ und einem „konsumierenden“ Funktor, und diese Adjunktion liefert über ein einziges Kohärenzgesetz die <em>kostenlose</em> Herleitung des einen aus dem anderen.</b></p>
+  <p>Auf der <span class="kA">ΩX-Seite (A)</span> ist Σ (die Einhängung) linksadjungiert zu Ω (dem Schleifenraum). Eine Abbildung „von ΣX nach Y“ ist <em>natürlich</em> dasselbe wie eine Abbildung „von X in den Schleifenraum ΩY“ — genau <b>Currying</b>: <span id="m1" class="mathrow"></span>. Auf der <span class="kB">Bialgebra-Seite (B)</span> sind Unfold (Anamorphism, <em>erzeugt</em> Struktur) und Fold (Catamorphism, <em>konsumiert</em> Struktur) die duale Paar, und ein einzelner Natürlicher Transformation <code>swap</code> — über das <b>Bialgebragesetz</b> <span id="m5"></span> — macht, dass Bubble-Sort und naive Einsetz-Sortierung <em>dieselbe eindeutige Abbildung</em> von der initialen zur finalen Bialgebra sind.</p>
+  <p>Der gemeinsame Kern ist ein <b>kommutierendes Quadrat</b>: Es gibt zwei Routen zwischen denselben Eckpunkten, und <em>weil</em> das Kohärenzgesetz gilt (Σ-functorial / Bialgebragesetz), landen beide Routen im <em>nämlichen</em> Ziel. Genau das „Zwei Wege, ein Ziel“ ist die operative Bedeutung von „einen Algorithmus/Invarianz aus dem anderen <em>für gratis</em> ableiten“ — in A wird daraus πₖ aus πₖ₋₁, in B wird daraus Bubble-Sort aus naivem Einsetzen (und umgekehrt).</p>
+</section>
+
+<!-- ============ 2. WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+  <h2><span class="n">2</span> Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere stehen in <b>keinem direkten faktischen Widerspruch</b> — sie leben in unterschiedlichen Disziplinen (stabile Homotopietheorie bzw. kategorische Rekursionstheorie). Es gibt keine Aussage „X ist wahr“ in dem einen und „X ist falsch“ in dem anderen. Wohl aber gibt es <b>echte Spannungen</b> in der <em>Art und Stärke</em>, mit der jedes die „Dualität“ begründet:</p>
+
+  <h3>W1 — Art der Identifikation: Bijektion von Mengen vs. Gleichheit eines einzigen Objekts</h3>
+  <p><span class="kA">A</span> formuliert die Dualität als <b>natürliche Bijektion von Abbildungsmengen</b>: <span id="m1b"></span>. Das ist eine <em>parametrische</em> Äquivalenz — für jede X und jedes Y gibt es eine Mengen-Bijektion, und „zwei Wege“ heißt hier: zwei <em>Parameterisierungen desselben</em> Abgebildeten (ein Punkt von ΣX ↔ ein Punkt von X, der eine Schleife in Y auswählt).</p>
+  <p><span class="kB">B</span> formuliert die Dualität als <b>Eindeutigkeitsaussage</b>: Bubble-Sort und naive Einsetz-Sortierung sind <em>die eine und einzige</em> Abbildung von der initialen zur finalen <code>swap</code>-Bialgebra. Die Identifikation ist also nicht „eine Bijektion zwischen Familien“, sondern „dieselbe <em>Einzel</em>-Morphismus, zweimal benannt“ (per (Ko-)Initialität).</p>
+  <div class="note warn">Kernspannung: <span class="kA">A</span> = „die Familien stehen in Bijektion“ (Currying); <span class="kB">B</span> = „es gibt genau ein Objekt und zwei Namen dafür“ (Eindeutigkeit). Das sind verwandt, aber logisch unterschiedlich starke Sätze.</div>
+
+  <h3>W2 — Logische Stärke: „bis auf Homotopie“ vs. strikte Gleichung</h3>
+  <p><span class="kA">A</span> arbeitet <b>bis auf Homotopie</b>. Die Schleifenverknüpfung <code>v ∗ w</code> ist <em>nicht</em> assoziativ „auf der Nase“; sie ist nur <em>bis auf Homotopie</em> assoziativ (eine <b>A∞-Struktur</b>). Die Gruppenstruktur entsteht erst <em>nach</em> Quotientierung durch Homotopie: <span id="m4"></span>. Die ganze Theorie ist also eine „up-to-homotopy“-Theorie.</p>
+  <p><span class="kB">B</span> arbeitet mit <b>strikten Gleichungen</b>. Das Bialgebragesetz <span id="m5b"></span> gilt als <em>exakte</em> Gleichheit von Programmen, und <code>bubbleSort = naiveInsertSort</code> ist eine <em>strikte</em> Identität (einziges Objekt, keine Homotopie-Klasse).</p>
+  <div class="note warn">Kernspannung: <span class="kA">A</span> = Kohärenz nur <em>bis auf Deformation</em> (A∞); <span class="kB">B</span> = Kohärenz als <em>exakte</em> Gleichung. Gleiche Aussage, unterschiedliches logisches Regime.</div>
+
+  <h3>W3 — Was „für gratis“ hergeleitet wird: Dimensionsverschiebung vs. Richtungswechsel</h3>
+  <p><span class="kA">A</span>s Gratis-Ableitung ist eine <b>Dimensionsverschiebung</b>: <span id="m2"></span>. Man tauscht eine <em>hochdimensionale</em> Frage („Wie sehen k-dimensionale Löcher in X aus?“) gegen eine <em>niedrigdimensionale</em> Frage über einen <em>komplizierteren</em> Raum („Welche Wegkomponenten hat ΩᵏX?“). Der erhaltene Invarianz ist <em>neue</em> Information (eine höhere Homotopiegruppe).</p>
+  <p><span class="kB">B</span>s Gratis-Ableitung ist ein <b>Richtungswechsel bei gleichem Aufbau</b>: aus einem Algorithmus entsteht sein dualer — <em>gleich</em> Komplexitätsklasse, <em>gegenteiliger</em> Datenfluss (Fold↔Unfold, Einsetzen↔Auswählen, QuickSort↔TreeSort, Heapsort↔Minglesort). Es wird <em>nichts</em> höher-dimensionales erzeugt, sondern die <em>selbe</em> Information in einem anderen Programm.</p>
+  <div class="note warn">Kernspannung: <span class="kA">A</span> verschiebt die <em>Dimension</em> des untersuchten Objekts; <span class="kB">B</span> dreht den <em>Datenfluss</em> bei erhaltener Gestalt.</div>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2><span class="n">3</span> Auflösung</h2>
+
+  <h3>A1 — Auflösung von W1 (Bijektion ↔ Eindeutigkeit)</h3>
+  <p>Beides ist ein Aspekt <em>einer</em> (Ko-)Adjunktion. Das „einzige Objekt von initial nach final Bialgebra“ existiert in <span class="kB">B</span> <em>weil</em> eine Adjunktions-(Ko-)Initialität vorliegt — das <code>swap</code> ist dabei die Co-Unit/Unit. In <span class="kA">A</span> ist die Mengen-Bijektion <em>genau</em> die Adjunktion. Wenn die „zwei Familien“ zu einem einzigen Objekt kollabieren (die relevante Abbildungsmenge hat genau ein Element), wird die <em>Bijektion zur Identität</em>. Also: <b>die Mengen-Bijektion ist die allgemeine Form; die Eindeutigkeits-Gleichheit ist ihr Spezialfall, in dem die Familie aus einem Element besteht.</b> Einheit: Dualität = Adjunktion; Unit/Co-Unit = Currying / <code>swap</code>; die Identifikation liegt auf einem Spektrum von „Bijektion von Familien“ (A) bis „Gleichheit des einzigen Elements“ (B), beides aus derselben (Ko-)Adjunktions-Logik.</p>
+
+  <h3>A2 — Auflösung von W2 (bis-auf-Homotopie ↔ strikt)</h3>
+  <p>Dies ist der Unterschied zwischen einer <em>homotopischen</em> Kategorie (Assoziativität ist nur kohärent bis auf Homotopie, A∞) und einer <em>strikten</em>. Das strikte Bialgebragesetz von <span class="kB">B</span> ist die <b>rigidierte Schattenform</b> dessen, was <span class="kA">A</span> nur bis auf Homotopie trägt. Umgekehrt ist die A∞-Kohärenz von <span class="kA">A</span> die <b>unrigidierte</b> Version des Bialgebragesetzes. Einheit: <span class="kB">B</span> ist das, was <span class="kA">A</span> „ausieht wie“ nach <em>Rigidifizierung</em> (oder in einer Umgebung, in der die relevanten Homotopien trivial sind); <span class="kA">A</span> ist dasselbe Kohärenz, bevor die Strenge erzwungen wird. Gleicher Satz — <span class="kB">B</span> strikt, <span class="kA">A</span> bis auf Deformation.</p>
+
+  <h3>A3 — Auflösung von W3 (Dimension ↔ Richtung)</h3>
+  <p>Beides ist <b>adjunkte Transposition</b>: Man trägt einen „Form-Parameter“ über die Adjunktion hinweg. In <span class="kA">A</span> ist dieser Parameter die <em>Homotopie-Dimension</em> (Σ/Ω bauen bzw. fressen Dimension) — daher <em>verschiebt</em> sich die Dimension. In <span class="kB">B</span> ist der Parameter die <em>Induktiv-/Koinduktivität</em> (µF↔νF, Datenflussrichtung) — daher <em>dreht</em> sich die Richtung. Einheit: „Für gratis ableiten“ = <em>adjunkte Transposition eines Form-Parameters</em>. Der <em>Parameter</em> unterscheidet sich: Dimension (A) gegen Datenflussrichtung (B). Die Dimensionsverschiebung ist einfach der Spezialfall, wenn der Form-Parameter die Homotopie-Dimension ist; der Richtungswechsel der, wenn er Induktivität ist.</p>
+
+  <div class="note ok"><b>Fusions-Schluss:</b> Dualität — in beiden Papieren — ist <em>Adjunktion</em>. Eine Adjunktion zwischen einem freien („erzeugt“: Σ / Unfold) und einem ko-freien („konsumiert“: Ω / Fold) Funktor liefert (i) eine natürliche Re-Indizierung (Currying / <code>swap</code>), (ii) ein Kohärenzgesetz (Bialgebragesetz ↔ Eckmann–Hilton / A∞-Kohärenz) und (iii) die „kostenlose“ Ableitung des ko-freien Objekts / Algorithmus aus dem freien. Die Unterschiede zwischen A und B sind nur der <em>Flavor des transponierten Parameters</em> (Dimension vs. Richtung) und der <em>Rigidität</em> (bis-auf-Homotopie vs. strikt). Operational: <b>die Adjunktion macht ein Quadrat kommutieren — und so landet man über zwei verschiedene Routen im selben Ziel.</b></div>
+</section>
+
+<!-- ============ 4. INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="n">4</span> Fusionierter Inhalt</h2>
+
+  <h3>4.1 Die beiden Konstruktionen als adjungiertes Paar</h3>
+  <p><span class="kA">A — Topologie.</span> Ein <em>punktierter Raum</em> (X,x₀) ist ein Raum mit ausgezeichnetem Basispunkt; eine Schleife ist w:[0,1]→X mit w(0)=w(1)=x₀ (äquivalent: eine punktierte Abbildung S¹→X). Der <b>Schleifenraum</b> ΩX ist die Menge aller solchen Schleifen, topologisiert durch die kompakt-offene Topologie (zwei Schleifen sind „nah“, wenn sie auf kompakten Stücken gleichmäßig nah sind). Mit der Basis-Schleife k ist ΩX wieder punktiert — man kann Ω rekursiv anwenden (Ω²X, Ω³X, …). Die <b>Einhängung</b> ΣX ist das duale Gegenstück: ΣX = (X×[0,1])/(X×{0} ∪ X×{1} ∪ {x₀}×[0,1]) — eine „Doppelspitze“; und ΣSⁿ = Sⁿ⁺¹.</p>
+  <div class="mathrow"><span id="m6"></span></div>
+  <div class="mathrow"><span id="m3"></span> &nbsp;&nbsp;·&nbsp;&nbsp; <span id="m4b"></span></div>
+
+  <p><span class="kB">B — Rekursion.</span> Ein <em>Fold</em> (Catamorphism) <code>fold : (F a → a) → µF → a</em> <em>konsumiert</em> Struktur: es ersetzt Konstruktoren durch Operationen. Ein <em>Unfold</em> (Anamorphism) <code>unfold : (a → F a) → a → νF</em> <em>erzeugt</em> Struktur aus einem Samen. Ein Sortieralgorithmus geht von <code>µList</code> (unsortiert, induktiv) nach <code>νList̄</code> (sortiert, koinduktiv) — als <em>Fold eines Unfold</em> oder <em>Unfold eines Fold</em>.</p>
+  <p>Die parallele Struktur ist exakt: <code>µ</code> (kleinster Fixpunkt, induktiv) ↔ „frei/initial“, <code>ν</code> (größter Fixpunkt, koinduktiv) ↔ „ko-frei/final“. Genau so wie Σ „erzeugt“ (ein Sphären-artiges Objekt) und Ω „konsumiert“ (einen Raum von Abbildungen).</p>
+
+  <h3>4.2 Das „für gratis“: adjunkte Transposition / Currying</h3>
+  <p>In <span class="kA">A</span> ist die adjunkte Transposition die <b>Currying</b>-Bijektion: eine Abbildung f:ΣX→Y ⇔ eine „curried“ Abbildung f̃:X→ΩY. Ein Punkt von ΣX (Winkel × Höhe) wird neu interpretiert: der Winkel wählt einen Punkt von X, der zu einer <em>ganzen Schleife</em> in Y wird; die Höhe sagt, an welchem Punkt der Schleife man ist. <em>Ein Bild = eine ganze Schleife.</em></p>
+  <p>In <span class="kB">B</span> ist dieselbe Transposition der <b>Swap</b>: ein einziger Natürlicher Transformation <code>swap : List (List̄ x) → List̄ (List x)</code> (vertausche zwei Nachbar-Elemente, wenn sie falsch sortiert sind) erzeugt <em>beide</em> — Bubble-Sort = <code>unfold ∘ fold</code> <em>und</em> naive Einsetz-Sort = <code>fold ∘ unfold</code>.</p>
+
+  <h3>4.3 Das Kohärenzgesetz (das Quadrat, das kommutiert)</h3>
+  <p>In <span class="kA">A</span> ist die Kohärenz die <b>Eckmann–Hilton-Adjunktion</b> Σ⊣Ω (natürlich in X, Y) — und die Tatsache, dass die Verknüpfung nur A∞-assoziativ ist, ist die „weichere“ Seite desselben. In <span class="kB">B</span> ist sie das strikte <b>Bialgebragesetz</b>:</p>
+  <div class="mathrow"><span id="m5c"></span></div>
+  <p>Dieses Gesetz ist <em>literal</em> ein kommutierendes Quadrat (siehe Visualisierung): <code>List X --map c→ List (List̄ X) --swap→ List̄ (List X) --map a→ List̄ X</code> muss dieselbe Abbildung wie die direkte <code>c ∘ a</code> liefern. Die <b>Consequence</b> in B: <code>bubbleSort = naiveInsertSort</code> — der einzige Pfeil von der initialen zur finalen Bialgebra. Die <b>Consequence</b> in A: aus der Adjunktion folgt sofort die schönste Formel der Homotopietheorie:</p>
+  <div class="mathrow"><span id="m2b"></span></div>
+
+  <h3>4.4 Die Tabelle der Dualpaare (B) — jetzt mit der ΩX-Seite (A) als zusätzliche Spalte</h3>
+  <table>
+    <thead><tr><th>Konzept</th><th>Erzeugen (initial / frei)</th><th>Konsumieren (final / ko-frei)</th></tr></thead>
+    <tbody>
+      <tr><td>Rekursionsschema</td><td>Unfold (Anamorphism)</td><td>Fold (Catamorphism)</td></tr>
+      <tr><td>Fixpunkt</td><td>νF (größter)</td><td>µF (kleinster)</td></tr>
+      <tr><td>Struktur</td><td>Coalgebra (A → F A)</td><td>Algebra (F A → A)</td></tr>
+      <tr><td>Σ / Ω (A)</td><td>ΣX (Einhängung, „erzeugt“)</td><td>ΩX (Schleifenraum, „konsumiert“)</td></tr>
+      <tr><td>Sort via <code>swap</code></td><td>Bubble Sort</td><td>Naive Insertion Sort</td></tr>
+      <tr><td>Sort via <code>swop</code></td><td>Selection Sort</td><td>Insertion Sort</td></tr>
+      <tr><td>Bäume via <code>sprout</code></td><td>QuickSort</td><td>TreeSort</td></tr>
+      <tr><td>Heaps via <code>pile</code></td><td>Minglesort</td><td>Heapsort</td></tr>
+      <tr><td>„Erweitert“ (A/B)</td><td>Iterierte Schleifenräume ΩᵏX (→ πₖ)</td><td>Para / Apomorphism (vorzeitiges Stoppen / Rest sehen)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.5 Die „Zwischenstruktur“ in beiden Papieren</h3>
+  <p>Beide führen ein <b>Zwischenobjekt</b> ein, um die Ableitung möglich zu machen. <span class="kB">B</span> braucht, um O(n²) zu schlagen, einen <em>intermediären Datentyp</em> (Suchbaum für Quick/Tree-Sort, Braun-Heap für Heapsort) — der Algorithmus wird zweiphasig (aufbauen, dann abziehen). <span class="kA">A</span> braucht den <em>Schleifenraum ΩX</em> als den „komplizierteren Raum“, in den man rekurviter eintaucht, um höhere Homotopiegruppen zu erreichen. In beiden ist die <em>Zwischenstruktur</em> der Ort, an dem die Gratis-Ableitung „stattfindet“.</p>
+  <table>
+    <thead><tr><th>n</th><th>π₀(ΩⁿX)</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>π₀(X)</td><td>Wegkomponenten</td></tr>
+      <tr><td>1</td><td>π₁(X)</td><td>Fundamentalgruppe (π₁(S¹) ≅ ℤ)</td></tr>
+      <tr><td>2</td><td>π₂(X)</td><td>2. Homotopiegruppe (kommutativ)</td></tr>
+      <tr><td>3</td><td>π₃(X)</td><td>3. Homotopiegruppe</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Zusammenfassend</b>: <span class="kA">A</span> liefert die <em>topologische</em> Instanz (Σ⊣Ω, Currying, A∞-Kohärenz, Dimensionsverschiebung); <span class="kB">B</span> liefert die <em>algorithmische</em> Instanz (Fold⊣Unfold, <code>swap</code>, striktes Bialgebragesetz, Richtungswechsel). Der fusionierte Satz ist: <b>Adjunktion ⇒ kommutierendes Quadrat ⇒ zwei Routen, ein Ziel ⇒ Gratis-Ableitung.</b> Der nächste Round-Teilnehmer arbeitet von dieser einen Stelle aus.</div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="n">5</span> Visualisierung — das kommutierende Quadrat</h2>
+  <p>Das Herzstück der Fusion als <em>ein</em> interaktives Quadrat: <b>zwei Routen, ein Ziel</b>. In der <em>Homotopie-Ansicht</em> ist es die Σ-Naturlichkeit (Routen: <code>X →f Y →Σ ΣY</code> vs. <code>X →Σ ΣX →Σf ΣY</code>). In der <em>Algorithmen-Ansicht</em> ist es <em>literal</em> das Bialgebragesetz (Routen: direkte <code>c ∘ a</code> vs. <code>map c → swap → map a</code>). Der <b>Kohärenz-Regler</b> steuert, ob das Gesetz gilt:</p>
+  <div class="note"><b>Bei Kohärenz = 100 %</b> (Gesetz hält) treffen beide Routen im <em>nämlichen</em> Eckpunkt an → <span id="v-ok-topo" style="display:none">[ΣX,Y]≅[X,ΩY] (Currying)</span><span id="v-ok-algo" style="display:none">bubbleSort = naïveInsertSort</span>. <b>Unter 100 %</b> bricht man das Gesetz — die Routen divergieren und das Quadrat <em>kommutiert nicht</em> (keine Dualität).</div>
+
+  <div class="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--viz-route1)"></span>Routen-1</span>
+      <span><span class="dot" style="background:var(--viz-route2)"></span>Routen-2</span>
+      <span><span class="dot" style="background:var(--viz-node)"></span>Token</span>
+      <span><span class="dot" style="border:2px solid var(--viz-good);background:transparent"></span>Ziel</span>
+    </div>
+    <div class="controls">
+      <button id="mTopo" class="on">Homotopie (Σ ⊣ Ω)</button>
+      <button id="mAlgo" class="alt">Algorithmen (Bialgebra / Sort)</button>
+      <button id="play">▶ Beide Wege abspielen</button>
+      <label>Kohärenz — Gesetz: <span id="cohLbl">100 %</span>
+        <input type="range" id="coh" min="0" max="100" step="1" value="100">
+      </label>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="n">6</span> Provenienz</h2>
+  <div class="prov"><div class="ic">🌀</div><div>
+    <b>A — <a href="../schleifenraum.html">schleifenraum.html</a></b><br>
+    „Der Schleifenraum ΩX — interaktiv verstehen“: Punktierter Raum, Schleifen, kompakt-offene Topologie, Homotopie &amp; Verknüpfung (A∞), π₁ = π₀(ΩX), Einhängung ΣX, Eckmann–Hilton-Adjunktion Σ⊣Ω (Currying) und πₖ(X) ≅ πₖ₋₁(ΩX).
+  </div></div>
+  <div class="prov"><div class="ic">🔀</div><div>
+    <b>B — <a href="../paper/perceive_this_as_that.html">paper/perceive_this_as_that.html</a></b><br>
+    „Sorting with Bialgebras &amp; Distributive Laws“ (nach Hinze, James, Harper, Wu &amp; Magalhães, WGP’12): Fold/Unfold-Dualität, die <code>swap</code>-Natürliche-Transformation, das Bialgebragesetz c·a = map a·swap·map c, bubbleSort = naiveInsertSort, Para-/Apomorphismen, Quick-/Tree-/Heap-/Minglesort.
+  </div></div>
+</section>
+
+<footer>Knockout-Fusion 072 · Nicht-KI-Spur · Runde 1 · Selbstbehaftetes HTML, Inline-Daten, Theme-aware.</footer>
+</article>
+
+<script>
+/* ---------- Theme handling: default dark, toggle via html class ---------- */
+(function(){
+  var h=document.documentElement;
+  if(!localStorage.getItem('n1072_theme')){ h.classList.add('dark'); }
+  else { h.classList.toggle('dark', localStorage.getItem('n1072_theme')==='dark'); }
+  var btn=document.createElement('button');
+  btn.className='ghost'; btn.style.cssText='position:fixed;top:14px;right:14px;z-index:9';
+  btn.textContent='🌓';
+  btn.onclick=function(){
+    h.classList.toggle('dark');
+    localStorage.setItem('n1072_theme', h.classList.contains('dark')?'dark':'light');
+    window.dispatchEvent(new CustomEvent('n1072-theme'));
+  };
+  document.body.appendChild(btn);
+})();
+
+/* ---------- KaTeX math (guarded) ---------- */
+var MATH = {
+  m1:'[\\Sigma X,\\,Y] \\;\\cong\\; [X,\\,\\Omega Y]',
+  m1b:'[\\Sigma X,\\,Y] \\;\\cong\\; [X,\\,\\Omega Y]',
+  m2:'\\pi_k(X) \\;\\cong\\; \\pi_{k-1}(\\Omega X)',
+  m2b:'\\pi_k(X) \\;\\cong\\; \\pi_{k-1}(\\Omega X)',
+  m3:'\\Sigma S^n = S^{n+1}',
+  m4:'\\pi_1(X,x_0) = \\pi_0(\\Omega X)',
+  m4b:'\\Sigma X = (X\\times[0,1])/(X{\\times}\\{0,1\\} \\cup {x_0}{\\times}[0,1])',
+  m5:'c \\cdot a \\;=\\; \\mathrm{map}(a)\\;\\cdot\\;\\mathrm{swap}\\;\\cdot\\;\\mathrm{map}(c)',
+  m5b:'c \\cdot a = \\mathrm{map}\\,a \\cdot \\mathrm{swap} \\cdot \\mathrm{map}\\,c',
+  m5c:'c \\cdot a \\;=\\; \\mathrm{map}(a)\\;\\cdot\\;\\mathrm{swap}\\;\\cdot\\;\\mathrm{map}(c)',
+  m6:'\\mathrm{fold}:(F a \\to a)\\to \\mu F \\to a \\qquad \\mathrm{unfold}:(a \\to F a)\\to a \\to \\nu F'
+};
+function renderMath(){
+  if(typeof katex==='undefined') return;
+  for(var id in MATH){
+    var el=document.getElementById(id);
+    if(!el) continue;
+    try{ el.innerHTML=katex.renderToString(MATH[id],{throwOnError:false,displayMode:false}); }
+    catch(e){ el.innerHTML='<code>'+MATH[id].replace(/</g,'&lt;')+'</code>'; }
+  }
+}
+window.addEventListener('load', function(){ renderMath(); });
+if(document.readyState==='complete'){ renderMath(); }
+
+/* ---------- The commuting-square visualization ---------- */
+(function(){
+  var cv=document.getElementById('viz');
+  if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var mode='topo', coh=100, prog=1, raf=null, playing=false;
+
+  function css(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||'#888'; }
+  function fit(){
+    var r=cv.getBoundingClientRect();
+    var dpr=window.devicePixelRatio||1;
+    cv.width=Math.max(320, r.width)*dpr; cv.height=440*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:r.width,h:440};
+  }
+  function corners(W,H){ var p=70; return {
+    TL:{x:p,y:p}, TR:{x:W-p,y:p}, BL:{x:p,y:H-p}, BR:{x:W-p,y:H-p}
+  }; }
+  function routeFor(mode,C){
+    if(mode==='topo') return { A:[C.TL,C.TR,C.BR], B:[C.TL,C.BL,C.BR], end:C.BR };
+    return { A:[C.TL,C.BL], B:[C.TL,C.TR,C.BR,C.BL], end:C.BL };
+  }
+  function polyLen(poly){ var t=0; for(var i=0;i<poly.length-1;i++){ t+=Math.hypot(poly[i+1].x-poly[i].x,poly[i+1].y-poly[i].y);} return t; }
+  function polyPoint(poly,p){
+    var total=polyLen(poly); if(total===0) return poly[0];
+    var target=Math.max(0,Math.min(1,p))*total, acc=0;
+    for(var i=0;i<poly.length-1;i++){
+      var a=poly[i],b=poly[i+1],d=Math.hypot(b.x-a.x,b.y-a.y);
+      if(target<=acc+d || i===poly.length-2){ var t=d===0?0:(target-acc)/d; return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}; }
+      acc+=d;
+    }
+    return poly[poly.length-1];
+  }
+  function arrow(x1,y1,x2,y2,col){
+    var ang=Math.atan2(y2-y1,x2-x1);
+    ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-11*Math.cos(ang-0.4),y2-11*Math.sin(ang-0.4));
+    ctx.lineTo(x2-11*Math.cos(ang+0.4),y2-11*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+  function label(txt,x,y,col,size,align){
+    ctx.fillStyle=col; ctx.font=(size||13)+'px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.textAlign=align||'center'; ctx.textBaseline='middle'; ctx.fillText(txt,x,y);
+  }
+
+  function draw(){
+    var dim=fit(), W=dim.w, H=dim.h;
+    var bg=css('--viz-bg'), grid=css('--viz-grid'), ink=css('--viz-ink');
+    var r1=css('--viz-route1'), r2=css('--viz-route2'), node=css('--viz-node');
+    var good=css('--viz-good'), bad=css('--viz-bad');
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+    var C=corners(W,H), R=routeFor(mode,C), d=(100-coh)/100;
+    var center={x:(C.TL.x+C.BR.x)/2, y:(C.TL.y+C.BR.y)/2};
+    var outx=R.end.x-center.x, outy=R.end.y-center.y, ol=Math.hypot(outx,outy)||1;
+    var off=d*52;
+
+    // grid
+    ctx.strokeStyle=grid; ctx.lineWidth=1; ctx.globalAlpha=0.35;
+    for(var gx=0;gx<W;gx+=40){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+    for(var gy=0;gy<H;gy+=40){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+    ctx.globalAlpha=1;
+
+    // square outline
+    ctx.strokeStyle=grid; ctx.lineWidth=1.5;
+    ctx.strokeRect(C.TL.x,C.TL.y,C.BR.x-C.TL.x,C.BL.y-C.TL.y);
+
+    // corner labels
+    var cl, el2;
+    if(mode==='topo'){ cl={TL:'X',TR:'Y',BL:'ΣX',BR:'ΣY'}; }
+    else { cl={TL:'List X',TR:'List (List̄ X)',BR:'List̄ (List X)',BL:'List̄ X'}; }
+    label(cl.TL,C.TL.x,C.TL.y-22,ink,15,'center');
+    label(cl.TR,C.TR.x,C.TR.y-22,ink,15,'center');
+    label(cl.BL,C.BL.x,C.BL.y+24,ink,15,'center');
+    label(cl.BR,C.BR.x,C.BR.y+24,ink,15,'center');
+    // corner dots
+    [C.TL,C.TR,C.BL,C.BR].forEach(function(p){ ctx.fillStyle=node; ctx.beginPath(); ctx.arc(p.x,p.y,4,0,7); ctx.fill(); });
+
+    // edge labels
+    var mid=function(a,b){return {x:(a.x+b.x)/2,y:(a.y+b.y)/2};};
+    if(mode==='topo'){
+      var t=mid(C.TL,C.TR); label('f : X → Y',t.x,t.y-12,ink,12.5);
+      var rt=mid(C.TR,C.BR); label('Σ',rt.x+16,rt.y,ink,12.5);
+      var lt=mid(C.TL,C.BL); label('Σ',lt.x-16,lt.y,ink,12.5);
+      var bt=mid(C.BR,C.BL); label('Σf : ΣX → ΣY',bt.x,bt.y+14,ink,12.5);
+    } else {
+      var t2=mid(C.TL,C.TR); label('map c',t2.x,t2.y-12,ink,12.5);
+      var rt2=mid(C.TR,C.BR); label('swap',rt2.x+18,rt2.y,ink,12.5);
+      var bt2=mid(C.BR,C.BL); label('map a',bt2.x,bt2.y+14,ink,12.5);
+      var lt2=mid(C.TL,C.BL); label('c ∘ a  (direkt)',lt2.x-8,lt2.y,ink,12.5);
+    }
+
+    // routes
+    function drawRoute(poly,col,dash,offVec){
+      ctx.strokeStyle=col; ctx.lineWidth=3.5;
+      if(dash) ctx.setLineDash([9,7]); else ctx.setLineDash([]);
+      ctx.beginPath();
+      for(var i=0;i<poly.length;i++){ if(i===0)ctx.moveTo(poly[i].x,poly[i].y); else ctx.lineTo(poly[i].x,poly[i].y); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    drawRoute(R.A,r1,false);
+    drawRoute(R.B,r2,true);
+
+    // target ring at end
+    ctx.strokeStyle=good; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(R.end.x,R.end.y,13,0,7); ctx.stroke();
+    ctx.strokeStyle=grid; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(R.end.x,R.end.y,6,0,7); ctx.stroke();
+
+    // tokens
+    function token(pt,col){
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(pt.x,pt.y,9,0,7); ctx.fill();
+      ctx.strokeStyle=bg; ctx.lineWidth=2; ctx.stroke();
+    }
+    var tA=polyPoint(R.A,prog);
+    var tBraw=polyPoint(R.B,prog);
+    var tB={x:tBraw.x + (outx/ol)*off*prog, y:tBraw.y + (outy/ol)*off*prog};
+    token(tA,r1); token(tB,r2);
+
+    // status
+    var ok = d<0.02;
+    var s1 = ok ? '✓ Beide Wege enden im selben Ziel — das Quadrat kommutiert.'
+                : '✗ Gesetz gebrochen: die Routen divergieren — kein kommutierendes Quadrat.';
+    var s2 = ok ? (mode==='topo' ? '[ΣX, Y] ≅ [X, ΩY]   (Currying)' : 'c·a = map a·swap·map c   ⇒   bubbleSort = naïveInsertSort')
+                : 'Ohne Kohärenzgesetz keine Dualität — die „Gratis“-Ableitung existiert nicht.';
+    label(s1,W/2,24, ok?good:bad, 14.5);
+    label(s2,W/2,44, ok?good:bad, 12.5);
+  }
+
+  function redraw(){ draw(); }
+
+  // controls
+  var bT=document.getElementById('mTopo'), bA=document.getElementById('mAlgo');
+  var cohSl=document.getElementById('coh'), cohL=document.getElementById('cohLbl');
+  var playB=document.getElementById('play');
+  if(bT) bT.onclick=function(){ mode='topo'; bT.classList.add('on'); bA.classList.remove('on'); bA.classList.add('alt'); prog=1; draw(); };
+  if(bA) bA.onclick=function(){ mode='algo'; bA.classList.add('on'); bT.classList.remove('on'); bT.classList.add('alt'); prog=1; draw(); };
+  if(cohSl) cohSl.oninput=function(){ coh=parseInt(cohSl.value,10)||0; if(cohL) cohL.textContent=coh+' %'; draw(); };
+  if(playB) playB.onclick=function(){
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    playing=true; prog=0;
+    function step(){
+      prog+=0.008;
+      if(prog>=1){ prog=1; playing=false; raf=null; draw(); return; }
+      draw(); raf=requestAnimationFrame(step);
+    }
+    raf=requestAnimationFrame(step);
+  };
+
+  window.addEventListener('resize', redraw);
+  window.addEventListener('n1072-theme', redraw);
+  // observe theme class changes (belt & suspenders)
+  if(typeof MutationObserver!=='undefined'){
+    var mo=new MutationObserver(function(){ draw(); });
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

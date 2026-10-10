@@ -1,0 +1,16 @@
+{
+  "no": "047",
+  "a": "buecher/dynamische_systeme_und_konflikte.html",
+  "b": "brednich.html",
+  "a_title": "Dynamische Systeme & Konflikte – Interaktive Visualisierung (Attracted to Conflict, Vallacher et al. 2013)",
+  "b_title": "Die Spinne in der Yucca-Palme – Brednich Interaktiv (moderne Sagen)",
+  "combined_theme": "ansteckende-attraktoren",
+  "one_line": "Konflikt und moderne Sage sind derselbe selbstorganisierende, schwellen-gesteuerte Attraktor, der sich ansteckungsartig ausbreitet: Wahrheit impft, Feedback erhält.",
+  "contradictions": [
+    "Stetiges Kontinuum vs. plötzlicher Bruch: A modelliert Konflikte als glatte Differentialgleichungen (Sprung nur als nichtlinearer Sonderfall mit Hysterese), B macht den qualitativen 'Bruch ins Unerhörte' zum konstituierenden Kern der Sage.",
+    "Normativ-heilend vs. wertfrei-feiernd: A will den Konflikt-Attraktor aktiv auflösen (Friedensdynamik, Dekonstruktion), B hat kein Heilmittel und feiert den weithin geglaubten Sage-Zustand als faszinierendes Objekt.",
+    "Starker Agent vs. entlasteter Übermittler: A sagt, ein einzelner Strategiewechsel ändere beide Dynamiken (Akteur = Hebel); B entlastet den Erzähler über die FoaF-Kette komplett (Akteur = passiver Kanal)."
+  ],
+  "resolution": "Beides ist dieselbe Dynamik in heterogenen Netzwerken: A's strategischer Akteur/Presse sind die wenigen Stark-Knoten (echte Hebel), B's FoaF-Kette die austauschbaren Kanäle. Der 'Bruch' ist mathematisch die Bifurkation/Hysterese nahe der Schwelle R0=1; A's latenter positiver Attraktor und B's 'Fünkchen Wahrheit' sind derselbe reale Samen. Der Zweck (heilen vs. beobachten) ist ein Parameter über der wertfreien Dynamik; Therapie = Kontrollparameter ändern, d.h. die Feedback-Schleife bzw. den Medien-Kreis durchbrechen.",
+  "viz": "Canvas-Epidemie auf einem Raster: ein reeller Kern impft das Feld, über Reproduktion (β), Zerfall (γ) und Diffusion breitet es sich aus; R0=β/γ als Schwelle, Button 'Kern entfernen' zeigt die Selbsttragende Persistenz jenseits der Ursache (A), plus Live-Wellen-Sparkline (B)."
+}

@@ -1,0 +1,17 @@
+{
+  "no": "057",
+  "a": "buecher/weinherstellung.html",
+  "b": "illusion_erklaerender_tiefe.html",
+  "a_title": "Weinherstellung Interaktiv – Theorie & Praxis",
+  "b_title": "Die Illusion erklärender Tiefe — Interaktive Reise",
+  "combined_theme": "ioed-weinherstellung",
+  "one_line": "Weinherstellung als IOED-Fallbeispiel: Der interaktive Wein-Lab erzeugt das Gefühl von Tiefe, weil er Wissen aus der Umwelt abliest statt es zu speichern — die T1→T2-Lücke trennt ehrliches prozedurales Handwerkswissen von illudiertem Mechanismuswissen.",
+  "contradictions": [
+    "A hält interaktive Rechner/Regler für Werkzeuge, die echtes Verständnis aufbauen; B besagt, genau diese Umweltunterstützung (Werte vom Artefakt ablesen) ist die Ursache der Illusion erklärender Tiefe (sichtbare Teile = stärkster Prädiktor, R²≈.47).",
+    "A präsentiert Formeln (Gärungsgleichung, °Oe, SO₂-Anteil) als tiefe Erklärungsschicht; B listet Label↔Mechanismus als zentrale Verwechslung — Namen/Gleichungen benennen, aber erklären nicht.",
+    "A behandelt Weinwissen als einheitlich 'gelernt'; B zeigt die Illusion ist domänenspezifisch — prozedurales 'Wein herstellen' (Δ≈+0,17, kaum Illusion) vs. mechanistisches 'Warum Gärung wirkt' (Δ≈−0,86, hohe Illusion), die A vermischt.",
+    "A lehrt Weinherstellung auf Funktions-/Rezepturebene (Zielwerte, Temperaturen, Reihenfolge); B warnt, Funktion≠Mechanismus — genau wo A aufhört, beginnt laut B die Illusion."
+  ],
+  "resolution": "Weinwissen wird in zwei Schichten getrennt: prozedurales 'Wein machen' (das Lab lehrt echt, wohlkalibriert) vs. mechanistisches 'Warum' (wo die Illusion wohnt). Das interaktive Artefakt ist für die erstere ein echtes Lernwerkzeug und für die zweite ein Täuschungsgenerator — Formeln werden zu Labels mit einem Pfeil nach unten (Glykolyse) herabgestuft. Tiefe = aus dem Kopf, ohne Regler erklären zu können; der T1→T2-Test am Wein macht die Lücke sichtbar und messbar.",
+  "viz": "Klickbare Wein-Wissenshierarchie auf Canvas: rote Knoten = wirklich bekannt (Wein←Gärung, Hefe→Ethanol), grüner Halo = fälschlich für bekannt gehalten (abgeleitet aus dem T1-Selbst-Rating), grau = unbekannt; der 'Erklären'-Button löst den IOED-T1→T2-Einbruch aus und lässt den Halo auf die roten Knoten kollabieren. Theme-reaktiv (CSS-Variablen), inline-Daten, null Netzwerk-Fetches."
+}

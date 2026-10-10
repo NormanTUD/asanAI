@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Analytischer Idealismus ✕ Sein und Zeit — ein phänomenales Feld und sein sich-erschließendes Da</title>
+<style>
+  :root {
+    --bg: #faf9f4;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e2e8f0;
+    --accent: #9a3412;
+    --accent2: #4338ca;
+    --ok: #16a34a;
+    --bad: #dc2626;
+    --warn: #b45309;
+    --code-bg: #eef2f7;
+    --shadow: 0 2px 14px rgba(15,23,42,.08);
+    --viz-gold: #a67c1a;
+    --viz-cyan: #0d7d8c;
+    --viz-green: #4e7d3a;
+    --viz-blue: #3a5b8f;
+    --viz-man: #6b6b80;
+    --viz-text: #1e293b;
+    --viz-line: rgba(30,41,59,.55);
+    --viz-canvas-bg: #fbf9f3;
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --accent: #fca5a5;
+    --accent2: #a5b4fc;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.45);
+    --viz-gold: #c9a96e;
+    --viz-cyan: #26c6da;
+    --viz-green: #7a9a6e;
+    --viz-blue: #6e86b0;
+    --viz-man: #8888aa;
+    --viz-text: #e6e2d8;
+    --viz-line: rgba(230,226,216,.5);
+    --viz-canvas-bg: #0d0d1a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  article { max-width: 820px; margin: 0 auto; padding: 40px 22px 80px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.05em; line-height: 1.22; margin: 0 0 6px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0 0 4px; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle {
+    position: absolute; top: 0; right: 0;
+    background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px;
+    padding: 6px 14px; cursor: pointer; font-size: .85em;
+  }
+  section { margin-top: 38px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 8px; font-size: 1.08em; color: var(--fg); }
+  code, .math {
+    font-family: "SFMono-Regular", Consolas, "Fira Code", monospace;
+    background: var(--code-bg); color: var(--fg);
+    padding: 1px 6px; border-radius: 4px; font-size: .9em;
+  }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92em; }
+  th, td { border: 1px solid var(--card-border); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+  .chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0; }
+  .chain .node { background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 5px 9px; font-size: .86em; font-weight: 600; }
+  .chain .arr { color: var(--muted); }
+
+  /* viz */
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+  .ctl { background: var(--code-bg); color: var(--fg); border: 1px solid var(--card-border); border-radius: 24px; padding: 8px 16px; cursor: pointer; font-size: .92em; font-weight: 600; }
+  .ctl:hover { border-color: var(--accent2); }
+  .ctl-active { background: var(--accent2); color: #0b1220; border-color: var(--accent2); }
+  .slider-wrap { margin: 6px 0 4px; }
+  .slider-wrap label { display: block; font-weight: 600; font-size: .92em; margin-bottom: 4px; }
+  input[type=range] { width: 100%; accent-color: var(--accent2); }
+  .slider-label { display: flex; justify-content: space-between; font-size: .82em; color: var(--muted); margin-top: 2px; }
+  canvas#fusionCanvas { display: block; width: 100%; height: 420px; background: var(--viz-canvas-bg); border: 1px solid var(--card-border); border-radius: 12px; margin: 8px 0; }
+  .readout { margin-top: 12px; padding: 12px 15px; border-radius: 10px; font-weight: 600; border-left: 5px solid var(--accent2); background: var(--code-bg); min-height: 3rem; }
+  .viz-note { color: var(--muted); font-size: .88em; margin-top: 10px; }
+
+  .proven a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .proven a:hover { text-decoration: underline; }
+  footer { margin-top: 46px; color: var(--muted); font-size: .85em; text-align: center; border-top: 1px solid var(--card-border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" type="button">&#9790; / &#9788;</button>
+    <h1>Ein phänomenales Feld und sein sich-erschließendes <em>Da</em></h1>
+    <p class="fusion-line">Fusion aus: <b>analytic_idealism.html</b> &#10005; <b>sein_und_zeit.html</b></p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere vollziehen, von zwei Seiten her, dieselbe Geste. <span class="tagA">A (Analytischer Idealismus, Kastrup 2019)</span> fragt: <em>Was ist letztlich real?</em> — und antwortet: ein einziges <strong>phänomenales Grundfeld</strong> (universelles Bewusstsein), dessen Selbsterregungsmuster alles übrige sind; Materie, Raum und Zeit sind bloße <em>erschienene Gestalt</em> dieses Feldes. <span class="tagB">B (Sein und Zeit, Heidegger 1927)</span> fragt: <em>Was heißt „Sein“?</em> — und antwortet: Es wird nicht durch eine Substanz „da“ gesetzt, sondern <strong>erschlossen durch das Seiende, das wir selbst sind</strong> (das <em>Dasein</em>). Die fusionierte These liest diese beiden Antworten als <em>ein und dasselbe Feld</em>, das zwei Mal benannt wird.</p>
+    <p>Die eine integrierte Position: <strong>Sein und Bewusstsein sind dasselbe.</strong> Es gibt ein Grund, das <em>in seiner Art phänomenal</em> ist; „Sein“ (B) ist <em>die Selbst-Erschließung</em> dieses Feldes, „universelles Bewusstsein“ (A) ist <em>dasselbe Feld</em>, genannt von der Seite, die fragt, was es ist. Und das <strong>Dasein ist kein Subjekt, das diesem Grund gegenüberstünde, sondern das eigentliche, zeitlich geformte, sich abgrenzende <em>Da</em> des Feldes</strong> — in A's Idiom ein „dissoziiertes Alter“, in B's ein „jemeiniges“ Seiendes, das in seiner <em>Sorge</em> (Sich-vorweg-schon-sein-in als Sein-bei) existiert und durch seine drei Ekstasen (Zukunft / Gewesenheit / Gegenwart) zeitlich ist.</p>
+    <p>Daraus folgt für die Welt: Sie ist <em>weder</em> eine Substanz (gegen A's Gegenseite, den Physikalismus) <em>noch</em> eine Projektion eines isolierten Subjekts (gegen B's Verwerfung des Subjekt-Objekt-Schemas). Die physische Welt ist <strong>die Art, wie sich das eine Feld <em>in und als</em> der Bedeutungs-Horizont eines in-der-Welt-seienden Daseins zeigt</strong> — A's „extrinsische Erscheinung“ ist exakt B's „Welt“ in ihrem Zuhandenen.</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Beide Papiere teilen die Grundgeste „das, was wir erleben, ist nicht aus toter Materie erklärbar; es geht um eine <em>Offenheit</em>“ — harte, unvereinbare Stellungen treffen sie trotzdem auf drei konkreten Punkten:</p>
+    <div class="card">
+      <h3>① Die Grundkategorie: Bewusstsein vs. Sein — und B's Verwerfung des Begriffs</h3>
+      <p><span class="tagA">A</span> postuliert „universelles phänomenales <strong>Bewusstsein</strong>“ als <em>das einzige</em> ontologische Primitiv; alles andere sei Muster/Erscheinung dieses Bewusstseins. <span class="tagB">B</span> hingegen beginnt explizit <em>gegen</em> diesen Begriff: Heidegger nenne den Menschen „Dasein“ — <em>nicht „Subjekt“, nicht „Bewusstsein“, nicht „Seele“</em> — und die Frage sei nicht nach einer Substanz, die „ist“, sondern nach dem <em>Sinn von Sein</em>. A baut also auf exakt der Kategorie (Bewusstsein), die B als Ausgangspunkt verwirft, weil sie noch im Subjekt-Objekt-Schema hängen bleibe, das B aufbrechen will.</p>
+    </div>
+    <div class="card">
+      <h3>② Die Individualität: auflösbare Alter vs. radikale Jemeinigkeit</h3>
+      <p><span class="tagA">A</span>: Wir sind „<strong>dissoziierte Alter</strong>“ des einen Bewusstseins; die Trennung ist <em>abgeleitet</em> und kann sich <em>lockern</em> — seine Evidenz zeigt ja, dass bei Hirnbeeinträchtigung (Hypoxie, Psychedelika, NDE) die Dissoziation schwächer wird und sich damit ein <em>erweitertes</em> Bewusstsein zeigt. Die Grenze zwischen den Subjekten ist flüchtig. <span class="tagB">B</span>: <strong>Jemeinigkeit</strong> — „Niemand kann dir dein Sein abnehmen“; der Tod „vereinzelt dich radikal“, „niemand kann für dich sterben“. Die Singulartät ist hier <em>unverlierbare Bedingung der Eigentlichkeit</em>, nicht etwas, das sich auflöst. Für A ist die Grenze ein Zustand, der sich <em>auflösen</em> kann; für B ist sie (das Eigene) der <em>Grund</em>.</p>
+    </div>
+    <div class="card">
+      <h3>③ Der Status der Welt: extrinsische Erscheinung vs. ursprüngliches In-der-Welt-sein</h3>
+      <p><span class="tagA">A</span>: „Die physische Welt ist die <strong>extrinsische Erscheinung</strong> transpersonaler Bewusstseinsaktivität“ — Materie ist sekundär, „wie inneres Leben von außen aussieht“. <span class="tagB">B</span>: <strong>In-der-Welt-sein</strong> ist die <em>Grundverfassung</em>; Dasein sei „nie ein isoliertes Subjekt, das erst nachträglich eine Beziehung zur Welt aufnimmt“ — die Welt sei <em>kein</em> „Erscheinen“ <em>für</em> ein Subjekt, sondern der ursprüngliche Horizont selbst. Der Begriff „Erscheinung“ (A) setzt wider B gerade ein Subjekt voraus, das etwas <em>erscheinen lässt</em> — das ist die Stelle, an der A's Formulierung das von B verworfene Subjekt-Objekt-Schema mitbringt.</p>
+    </div>
+    <p><strong>Die schärfste reale Spannung</strong> ist Punkt ① als Frage formuliert: <em>Ist „Bewusstsein“ die richtige Grundkategorie — oder muss man sie zugunsten von „Sein“/„Da“ aufgeben?</em> A sagt ja (Bewusstsein = das Feld). B sagt nein (Bewusstsein ist noch Subjekt; man muss beim „Da“ — der Erschließung — beginnen).</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>① Bewusstsein / Sein: zwei Namen einer Untersuchung, zwei Seiten eines Feldes</h3>
+      <p><span class="tagA">A</span> ist eine <em>Metaphysik</em> (was ist letztlich da → ein phänomenales Grund). <span class="tagB">B</span> ist eine <em>fundamentale Ontologie</em> (was ist der Sinn von Sein → durch das Dasein erschlossen). Die Auflösung hält von A die <em>These des Grundes</em> (das Feld ist phänomenal) und von B die <em>Methode</em> (der Grund wird durch die <em>Erschließung</em> an dem Sein, der wir sind, sichtbar). So wird „Bewusstsein“ (A) = das <em>offengegebene Da</em> (B). B's Ablehnung des <em>Begriffs</em> „Bewusstsein“ bleibt respektiert, weil die Fusion „Dasein“ (das sich erschließende Da) als Primärkategorie nimmt und „universelles Bewusstsein“ nur als Namen für <em>das Feld an sich / Sein-überhaupt</em> liest — nicht als ein Subjekt, das Objekte erlebt.</p>
+    </div>
+    <div class="card">
+      <h3>② Individualität: zwei Ebenen desselben Grenzwurfs</h3>
+      <p>Man trennt zwei Ebenen. <em>Ontisch (A):</em> die Individuation ist ein <strong>dissoziatives Muster</strong> in einem gemeinsamen Feld; seine Lockerung ist beobachtbar (NDE / Psychedelika / Hypoxie). <em>Existenziell (B):</em> Jemeinigkeit ist die <strong>sich-erschließende Haltung</strong> dieses Musters — seine eigene Grenze. Die fusionierte Identifikation: <strong>Die Dissoziationsgrenze eines Alters ist dieselbe Struktur wie B's „Sein-zum-Tode“</strong> — die „eigenste, unbezügliche, unüberholbare Möglichkeit“, die „Möglichkeit der Unmöglichkeit“. Die Grenze ist <em>zugleich</em> das <em>Limit</em> des Alters (Tod) <em>und</em> seine <em>Erschließung</em> (Existenz). „Niemand kann für dich sterben“ heißt: die Grenze deines Alters ist deine — aber die <em>Lockerung</em> dieser Grenze (erweiterte Erfahrung) ist der ontische Schatten desselben Vorgangs, den B als <em>Vorlaufen zum Tod</em> liest: das eigentliche Dasein läuft der Möglichkeit <em>eigener Auflösung</em> voran und individualisiert sich gerade darin.</p>
+    </div>
+    <div class="card">
+      <h3>③ Welt: Erscheinung und Weltlichkeit sind dasselbe Öffnen</h3>
+      <p>Die Welt ist in der Fusion <strong>die bedeutsame Manifestation des Feldes <em>in und als</em> dem Horizont eines in-der-Welt-seienden Daseins</strong>. Ihre „Erscheinungs“-Charakter (A) und ihre „Weltlichkeit“ (B) sind <em>zwei Seiten einer Öffnung</em>. In B's Sprache ist die <em>Bewandtnisganzheit</em> genau das, <em>wie</em> sich das transpersonale Feld einem Dasein zeigt; „extrinsische Erscheinung“ (A) ist <em>kein</em> Abklatsch eines inneren Originals, sondern die <em>eigene Art</em>, wie sich die Welt zeigt — vom <em>Zuhandenen</em> (der Hammer „verschwindet“ im Gebrauch) bis zum <em>Vorhandenen</em> (er „fällt auf“, wenn die Verweisung gestört ist). Damit ist die Welt weder Substanz noch Illusion: sie ist das Feld, das sich <em>einem Alter gegenüber</em> so zeigt, wie ein Werkzeug sich einem Handwerker zeigt.</p>
+    </div>
+    <p><strong>Fusionierter Schluss:</strong> Ein <em>phänomenales Feld</em> (A = Sein = Bewusstsein) ist sich nicht selbst gegenwärtig <em>an</em> einem Punkt. Es erschließt sich erst <em>in</em> einem sich abgrenzenden, zeitlichen <em>Da</em> (Dasein / dissoziiertes Alter). Das <em>Da</em> ist (i) jemeinig und auf den Tod begrenzt (B), (ii) ein abgeleitetes, auflösbares Muster des einen Feldes (A), und (iii) seine „Welt“ ist das Feld, wie es in diesem Da erscheint. Alles, was in den beiden Papieren als Grund, als Subjekt, als Welt oder als Tod auftritt, ist ein <em>Modus</em> dieses einen Vorgangs der Selbst-Erschließung.</p>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die folgende Karte verknüpft die zentralen Begriffe beider Papiere mit ihrer fusionierten Rolle. Sie ist so beschaffen, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+    <table>
+      <thead><tr><th style="width:30%">Begriff A (Analyt. Idealismus)</th><th style="width:30%">Begriff B (Sein und Zeit)</th><th style="width:40%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Universelles phänomenales Bewusstsein (Grund)</td><td class="kv">Der Sinn von Sein (das „Ge-Fragte“)</td><td>Das <em>eine</em> phänomenale Feld; „Sein“ = seine Selbst-Erschließung, „Bewusstsein“ = dasselbe Feld, genannt von der Frage „was ist es?“</td></tr>
+        <tr><td class="kv">Erfahrung als Selbsterregungsmuster (Wellen im Ozean)</td><td class="kv">Existenz vor Essenz (Dasein ist ein „Wie“, nicht ein „Was“)</td><td>Das sich selbst erregende, sich-entwerfende Muster des Feldes — keine feste Substanz, sondern ein Vorgang.</td></tr>
+        <tr><td class="kv">Dissoziiertes Alter</td><td class="kv">In-der-Welt-sein / Jemeinigkeit</td><td>Das sich abgrenzende, <em>je-meine</em> Selbst-Da des Feldes; abgeleitet (A) und zugleich unverlierbar-eigen (B).</td></tr>
+        <tr><td class="kv">Dissoziative Grenze</td><td class="kv">Sein-zum-Tode (eigenste, unbezügliche, unüberholbare Möglichkeit)</td><td>Die <em>Grenze</em> des Alters — als <em>Limit</em> (Tod) <em>und</em> als <em>Erschließung</em> (Existenz) zugleich; „Möglichkeit der Unmöglichkeit“.</td></tr>
+        <tr><td class="kv">Extrinsische Erscheinung der Welt (Materie sekundär)</td><td class="kv">Bewandtnisganzheit / Zuhandenes Zeug</td><td>Die Welt, wie sich das Feld <em>dem in-der-Welt-seienden</em> Dasein zeigt — weder Substanz noch Illusion.</td></tr>
+        <tr><td class="kv">Wahrnehmung: äußere Gedanken prallen auf die Grenze (Hoffman/Friston)</td><td class="kv">Zuhandenheit → Vorhandenheit (der Hammer fällt auf, wenn er kaputt geht)</td><td>Begegnung: Feld-Aktivität <em>wird am Alter zur Erfahrung</em>; ein Zeug „fällt auf“ (wird Vorhandenes), wenn die Verweisung gestört ist.</td></tr>
+        <tr><td class="kv">Gehirn = äußere Hülle; weniger Gehirn = mehr Bewusstsein (NDE, Psychedelika, Hypoxie)</td><td class="kv">Geworfenheit / Befindlichkeit (Stimmung erschließt die Welt)</td><td>Die „Materie“ als äußere Erscheinung des Feldes; die <em>Stimmung</em> als Offenbarung, dass man ist, <em>ohne es gewählt zu haben</em> — beides zeigt: das Dasein ist mehr als seine Hülle.</td></tr>
+        <tr><td class="kv">Kein Combination-Problem (ein Feld, keine Teil-Subjekte zu kombinieren)</td><td class="kv">das Man (Abständigkeit, Durchschnittlichkeit, Öffentlichkeit)</td><td>Keine „Viele“, die kombiniert werden müssten — nur ein Feld. „Das Man“ ist der <em>verfallene, abgestandene</em> Modus dieses einen Feldes, nicht eine zweite Substanz.</td></tr>
+        <tr><td class="kv">Feld → Selbsterregung → Erfahrung (Analogie: Feld → Teilchen)</td><td class="kv">Zeitlichkeit: Zukunft / Gewesenheit / Gegenwart = Sich-vorweg / Schon-sein-in / Sein-bei</td><td>Die <em>Zeitstruktur</em> des Dasein-Alters: Vorlaufen (Zukunft), Geworfen-bleiben (Gewesenheit), Verfallen (Gegenwart) — drei <em>gleichursprüngliche</em> Ekstasen, keine ist „früher“.</td></tr>
+        <tr><td class="kv">Erklärung des Paradoxons „weniger Hirn = reichere Erfahrung“</td><td class="kv">Eigentlichkeit (vorlaufende Entschlossenheit) vs. Uneigentlichkeit (das Man)</td><td>Die zwei Modi desselben Alters: <em>eigentlich</em> (dem Tod vorlaufend, sich ergreifend) ↔ <em>uneigentlich</em> (verfallen in das Man / die abgestandene Feld-Aktivität).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Die Strukturkarte (das fusionierte Gerüst)</h3>
+      <div class="chain">
+        <span class="node">Ein phänomenales Feld<br><small>(= Sein = Bewusstsein)</small></span>
+        <span class="arr">&#10230; Selbsterregung &#10230;</span>
+        <span class="node">Dissoziiertes Alter<br><small>(= Dasein, jemeiniges Da)</small></span>
+        <span class="arr">&#10230; Dissoziationsgrenze &#10230;</span>
+        <span class="node">Grenze = Tod<br><small>(Sein-zum-Tode)</small></span>
+        <span class="arr">&#10230; Erschließung &#10230;</span>
+        <span class="node">Welt = Bewandtnisganzheit<br><small>(das Feld, wie es dem Da erscheint)</small></span>
+      </div>
+      <p>Das <em>Da</em> des Daseins wird (nach B) durch drei gleichursprüngliche Erschließungen geöffnet: <strong>Befindlichkeit</strong> (Stimmung — „wie einem ist“), <strong>Verstehen</strong> (Entwurf auf Möglichkeiten), <strong>Rede</strong> (Artikulation). In A's Sprache: die <em>Stimmung</em> ist, wie sich das Feld dem Alter <em>von außen</em> als eigener Horizont anfühlt; das <em>Verstehen</em> ist die <em>Selbsterregung</em>, mit der das Alter sich auf seine Möglichkeiten entwirft; die <em>Rede</em> ist die <em>Codierung</em>, durch die die Feld-Aktivität „verstehbar“ wird.</p>
+    </div>
+
+    <div class="card">
+      <h3>Die Sorge-Formel (B) — durch A gelesen</h3>
+      <p><span class="math">Sich-vorweg-schon-sein-in-(der-Welt) als Sein-bei (innerweltlichem Seienden)</span> &nbsp;=&nbsp; <span class="kv">Existenzialität + Faktizität + Verfallen</span></p>
+      <ul>
+        <li><strong>Sich-vorweg-sein = Existenzialität = Zukunft</strong> — das Alter ist immer schon über sich hinaus auf Möglichkeiten entworfen; eigentlich: <em>Vorlaufen zum Tode</em>. <em>A:</em> das ist die Seite des Alters, die sich <em>vom Feld her</em> auf die eigene Auflösung zugewendet ist.</li>
+        <li><strong>Schon-sein-in = Faktizität / Geworfenheit = Gewesenheit</strong> — man findet sich immer schon in einer Situation, die man nicht gewählt hat. <em>A:</em> das Alter ist ein <em>abgeleitetes</em> Muster; seine „Geworfenheit“ ist seine Zugehörigkeit zum Feld.</li>
+        <li><strong>Sein-bei = Verfallen = Gegenwart</strong> — man geht in die besorgte Welt ein, verliert sich an Dinge und das Man. <em>A:</em> das ist, wie das Alter in die <em>abgestandene</em> Feld-Aktivität (das Man) eintaucht, statt sich selbst zu ergreifen.</li>
+      </ul>
+      <p>Die <strong>Angst</strong> (nicht Furcht!) — sie ängstet sich „vor dem In-der-Welt-sein als solchem, vor dem Nichts und Nirgends“ — ist in der Fusion der Moment, in dem das Alter auf die <em>Grenze zu seinem eigenen Nichtsein</em> blickt: A's Dissoziationsgrenze <em>als</em> B's Sein-zum-Tode. Die <strong>Gewissen</strong>-Stimme ruft „schuldig!” — nicht moralisch, sondern: <em>du bist der Grund deines eigenen Nichtseins</em> — also das Alter, das sich als <em>Grenze im Feld</em> erkennt.</p>
+    </div>
+
+    <div class="card">
+      <h3>A's Empirie — durch B gelesen (die Evidenz für das eine Feld)</h3>
+      <ul>
+        <li><strong>Zerebrale Hypoxie</strong> (Strangulation, holotropes Atmen, G-LOC bei Piloten) → euphorische, selbst-transzendierende Erfahrungen <em>trotz</em> Sauerstoffmangel. <em>B:</em> der Moment, in dem die Grenze lockert und das Dasein sich vorlaufend seinem Sein-zum-Tode (der Möglichkeit des Nichtseins) öffnet.</li>
+        <li><strong>Psychedelika</strong> (Carhart-Harris et al. 2012): Psilocybin → <em>nur</em> Abnahme der Hirndurchblutung; je stärker, desto intensiver die Erfahrung. <em>B:</em> das Verfallen (Sein-bei) lichtet sich; das Dasein greift sich aus dem Man zurück.</li>
+        <li><strong>Nahtoderfahrungen</strong> (dramatisch reduzierte Hirnfunktion bei Herzstillstand) → lebensverändernde Phänomenologie. <em>B:</em> die eigentliche Vorläufigkeit — das Dasein „vorlaufend” an der Grenze zur Unmöglichkeit.</li>
+        <li><strong>Physische Hirnschäden</strong> (Cristofori 2016: Frontal-/Parietalschäden erhöhen mystische Erfahrung) und <strong>Trance</strong> (Peres 2012: reduzierte Aktivität bei komplexerem Output). <em>B:</em> die Hülle (Gehirn) wird dünner, das <em>Erschließungs-Da</em> (Stimmung/Verstehen) tritt deutlicher hervor — die „Hülle“ war nie das Bewusstsein selbst.</li>
+      </ul>
+      <p class="viz-note">Alle fünf Fälle sind derselbe Befund: <em>die äußere Hülle (Gehirn/Materie) und die innere Erschließung (Dasein/Stimmung) entkoppeln</em> — unter A als „Lockerung der Dissoziation“, unter B als „Vorlaufen zum eigenen Nichtsein“.</p>
+    </div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: das Dasein im Feld</h2>
+    <p>Interaktive Verkörperung der fusionierten These. Der <strong>goldene Punkt</strong> in der Mitte ist das <strong>Dasein</strong> — das sich abgrenzende „Da“ des einen Feldes (A = B). Um es herum: das <strong>transpersonale Feld</strong> als treibende Partikel (A's Ozean / B's Welt der Verweisungen) und die <strong>drei Ekstasen der Zeitlichkeit</strong> als Dreieck (B's Sorge: <em>Sich-vorweg</em> oben = Zukunft/Sein-zum-Tode, <em>Schon-sein-in</em> links = Gewesenheit/Geworfenheit, <em>Sein-bei</em> rechts = Gegenwart/Verfallen). Oben links schwebt <strong>das Man</strong> (B) — der abgestandene Modus, in den das Dasein verfallen kann.</p>
+
+    <div class="viz-card">
+      <div class="ctl-row">
+        <button class="ctl" id="btnEig" onclick="setMode('eigentlich')" type="button">Eigentlich (vorlaufend zum Tode)</button>
+        <button class="ctl" id="btnUneig" onclick="setMode('uneigentlich')" type="button">Uneigentlich (verfallen in das Man)</button>
+      </div>
+      <div class="slider-wrap">
+        <label for="dissRange">Dissoziationsgrad der Grenze (A) &harr; Vorlaufen zur Möglichkeit des Nichtseins (B)</label>
+        <input type="range" id="dissRange" min="0" max="100" value="0" oninput="setDiss(this.value)">
+        <div class="slider-label"><span>scharf abgegrenztes Alter</span><span>gelockerte / aufgelöste Grenze (NDE-ähnlich)</span></div>
+      </div>
+
+      <canvas id="fusionCanvas" width="760" height="420"></canvas>
+
+      <div class="readout" id="vizReadout">Klare Grenze: das Dasein greift sich selbst (Eigentlichkeit, B). Das Alter ist ein scharf abgegrenztes Bewusstsein (A).</div>
+      <p class="viz-note">Je weiter der Regler nach rechts, desto dünner/das Dissoziationsring wird das <em>Gold</em> (A: Dissoziation lockert) und desto stärker das Feld-Leuchten — A's Evidenz „weniger Gehirnbindung = reichere Erfahrung“, gelesen als B's „Vorlaufen zum Tode”. Bewege die Maus über das Feld: die Verweisungen (A's „Gedanken“) treffen auf die Grenze und werden zur Erfahrung.</p>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../analytic_idealism.html"><strong>A — analytic_idealism.html:</strong> „Analytischer Idealismus — Interaktive Erklärung“</a> (basierend auf Kastrup, B. 2019, Radboud Nijmegen). Universal phänomenales Bewusstsein als einziges Primitiv; Erfahrungen als Selbsterregungsmuster; Lebewesen als <em>dissoziierte Alter</em>; die Welt als <em>extrinsische Erscheinung</em>; Evidenz für „weniger Gehirn = mehr Bewusstsein” (Hypoxie, Psychedelika, NDE, Hirnschäden, Trance).</li>
+      <li><a href="../buecher/sein_und_zeit.html"><strong>B — sein_und_zeit.html:</strong> „Sein und Zeit — Interaktiv“</a> (Heidegger 1927). Die Frage nach dem Sinn von <em>Sein</em> über das <em>Dasein</em>; In-der-Welt-sein; Zuhandenheit/Vorhandenheit; das Man; Befindlichkeit/Verstehen/Rede; Angst &amp; die <em>Sorge</em>-Struktur; die drei Ekstasen der <em>Zeitlichkeit</em>; Sein-zum-Tode, Jemeinigkeit, vorlaufende Entschlossenheit.</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Runde 1, Paar 032) — Analytischer Idealismus &#10005; Sein und Zeit &middot; ein-ph&auml;nomenales-feld &middot; Sein = Bewusstsein, Dasein = das sich-erschließende Da.</footer>
+</article>
+
+<script>
+  function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    if (window.__fusionReread) window.__fusionReread();
+  }
+
+  (function () {
+    var canvas = document.getElementById('fusionCanvas');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var C = {};
+    var KEYS = ['gold','cyan','green','blue','man','text','line','canvas-bg'];
+
+    function readColors() {
+      var s = getComputedStyle(document.documentElement);
+      for (var i = 0; i < KEYS.length; i++) {
+        C[KEYS[i]] = s.getPropertyValue('--viz-' + KEYS[i]).trim() || '#888888';
+      }
+    }
+    readColors();
+
+    function hexToRgba(hex, a) {
+      if (hex.charAt(0) !== '#') return 'rgba(140,140,140,' + a + ')';
+      var h = hex.slice(1);
+      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+      var n = parseInt(h, 16);
+      if (isNaN(n)) return 'rgba(140,140,140,' + a + ')';
+      var r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+
+    var W = 0, H = 0, particles = [];
+    function seed() {
+      particles = [];
+      var n = Math.max(26, Math.floor(W / 20));
+      for (var i = 0; i < n; i++) {
+        particles.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5,
+          s: Math.random() * 2.6 + 1.4
+        });
+      }
+    }
+    function resize() {
+      W = canvas.width = canvas.offsetWidth || 760;
+      H = canvas.height = canvas.offsetHeight || 420;
+      seed();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var mode = 'eigentlich';
+    var diss = 0;
+    var mouse = { x: null, y: null };
+
+    canvas.addEventListener('mousemove', function (e) {
+      var r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+    });
+    canvas.addEventListener('mouseleave', function () { mouse.x = null; mouse.y = null; });
+    canvas.addEventListener('touchmove', function (e) {
+      var r = canvas.getBoundingClientRect();
+      mouse.x = e.touches[0].clientX - r.left; mouse.y = e.touches[0].clientY - r.top;
+    }, { passive: true });
+
+    var nodes = {
+      future:  { a: -Math.PI / 2,      col: 'gold',  l1: 'Sich-vorweg',    l2: '(Zukunft · Sein-zum-Tode)' },
+      past:    { a: Math.PI - 0.55,    col: 'green', l1: 'Schon-sein-in',  l2: '(Gewesenheit · Geworfenheit)' },
+      present: { a: 0.55,              col: 'blue',  l1: 'Sein-bei',       l2: '(Gegenwart · Verfallen / Man)' }
+    };
+    var ORDER = ['future', 'past', 'present'];
+
+    function nodePos(a) {
+      var R = Math.min(W, H) * 0.34;
+      return { x: W / 2 + Math.cos(a) * R, y: H / 2 + Math.sin(a) * R * 0.82 };
+    }
+    function label(txt, x, y, color, size, alpha) {
+      ctx.globalAlpha = (alpha == null ? 1 : alpha);
+      ctx.fillStyle = color;
+      ctx.font = (size || 12) + 'px Georgia, "Times New Roman", serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(txt, x, y);
+      ctx.globalAlpha = 1;
+    }
+
+    function frame(t) {
+      var time = t * 0.001;
+      ctx.clearRect(0, 0, W, H);
+      var cx = W / 2, cy = H / 2;
+      var d = diss / 100;
+      var i, p;
+
+      // transpersonal field (A's ocean / B's world of references)
+      for (i = 0; i < particles.length; i++) {
+        p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+        var dist = Math.hypot(p.x - cx, p.y - cy);
+        ctx.globalAlpha = 0.28;
+        ctx.fillStyle = C.cyan;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill();
+        var reach = Math.min(W, H) * 0.42;
+        if (dist < reach) {
+          ctx.globalAlpha = (1 - dist / reach) * (0.10 + 0.30 * d);
+          ctx.strokeStyle = C.line;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y); ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+
+      // das Man cluster (upper-left) — B's fallen mode
+      var manx = W * 0.19, many = H * 0.24;
+      for (i = 0; i < 7; i++) {
+        var ang = (i / 7) * Math.PI * 2 + time * 0.3;
+        var rr = 40 + Math.sin(time + i) * 8;
+        var mx = manx + Math.cos(ang) * rr, my = many + Math.sin(ang) * rr;
+        ctx.globalAlpha = 0.4; ctx.strokeStyle = C.man; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(manx, many); ctx.lineTo(mx, my); ctx.stroke();
+        ctx.fillStyle = C.man;
+        ctx.beginPath(); ctx.arc(mx, my, 4, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 0.55; ctx.fillStyle = C.man;
+      ctx.beginPath(); ctx.arc(manx, many, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      label('das Man', manx, many - 54, C.man, 13, 0.9);
+
+      // Dasein position: eigentlich centered, uneigentlich pulled toward the Man
+      var bx = cx, by = cy;
+      if (mode === 'uneigentlich') { bx = cx - W * 0.085; by = cy - H * 0.03; }
+
+      // the three ecstases (Sorge triangle)
+      var fp = nodePos(nodes.future.a), pp = nodePos(nodes.past.a), pr = nodePos(nodes.present.a);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(fp.x, fp.y); ctx.lineTo(pp.x, pp.y); ctx.lineTo(pr.x, pr.y); ctx.closePath(); ctx.stroke();
+
+      // pulse traveling the triangle (unified structure)
+      var segs = [ [fp, pp], [pp, pr], [pr, fp] ];
+      var cyc = (time % 3) / 3, s2 = Math.floor(cyc * 3), tt = cyc * 3 - s2;
+      var A2 = segs[s2][0], B2 = segs[s2][1];
+      var px = A2.x + (B2.x - A2.x) * tt, py = A2.y + (B2.y - A2.y) * tt;
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+
+      // links Dasein -> ecstases
+      var oi, key, n, pos;
+      for (oi = 0; oi < ORDER.length; oi++) {
+        key = ORDER[oi]; n = nodes[key]; pos = nodePos(n.a);
+        ctx.globalAlpha = 0.5; ctx.strokeStyle = C[n.col]; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(pos.x, pos.y); ctx.stroke();
+        ctx.globalAlpha = 0.85; ctx.fillStyle = C[n.col];
+        ctx.beginPath(); ctx.arc(pos.x, pos.y, 15, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+        label(n.l1, pos.x, pos.y - 24, C.text, 13, 0.95);
+        label(n.l2, pos.x, pos.y + 34, C[n.col], 11, 0.82);
+      }
+
+      // mode link: eigentlich -> future (Sein-zum-Tode); uneigentlich -> das Man
+      if (mode === 'eigentlich') {
+        ctx.globalAlpha = 0.55 + 0.35 * Math.abs(Math.sin(time * 2));
+        ctx.strokeStyle = C.gold; ctx.lineWidth = 2; ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(fp.x, fp.y); ctx.stroke();
+      } else {
+        ctx.globalAlpha = 0.6; ctx.strokeStyle = C.man; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(manx, many); ctx.stroke();
+      }
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+      // dissociative boundary ring (A) — thins/dashes + grows with d
+      var rad = 14 + d * 26;
+      ctx.globalAlpha = 1 - 0.55 * d;
+      ctx.strokeStyle = C.gold;
+      ctx.lineWidth = 2 + (1 - d) * 2.5;
+      if (d > 0.35) ctx.setLineDash([6, 6]);
+      ctx.beginPath(); ctx.arc(bx, by, rad, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+      // expanded-experience glow (A: NDE/psychedelic) grows with d
+      if (d > 0.02) {
+        var gr = rad + 30 + d * 70;
+        var glow = ctx.createRadialGradient(bx, by, rad * 0.5, bx, by, gr);
+        glow.addColorStop(0, hexToRgba(C.gold, 0.28 * d));
+        glow.addColorStop(1, hexToRgba(C.gold, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath(); ctx.arc(bx, by, gr, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Dasein core
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(bx, by, 9 + d * 9, 0, Math.PI * 2); ctx.fill();
+      label('Dasein', bx, by + rad + 20, C.text, 14, 1);
+
+      // top caption
+      label('Ein phänomenales Feld  =  Sein  =  Bewusstsein', W / 2, 22, C.text, 13, 0.85);
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    window.__fusionReread = readColors;
+    window.__setModeViz = function (m) { mode = m; };
+    window.__setDissViz = function (v) { diss = v; };
+  })();
+
+  function setMode(m) {
+    if (window.__setModeViz) window.__setModeViz(m);
+    var be = document.getElementById('btnEig'), bu = document.getElementById('btnUneig');
+    if (be) be.className = 'ctl' + (m === 'eigentlich' ? ' ctl-active' : '');
+    if (bu) bu.className = 'ctl' + (m === 'uneigentlich' ? ' ctl-active' : '');
+  }
+  function setDiss(v) {
+    var d = parseInt(v, 10) || 0;
+    if (window.__setDissViz) window.__setDissViz(d);
+    var el = document.getElementById('vizReadout');
+    if (!el) return;
+    var dd = d / 100;
+    if (dd < 0.2) el.innerHTML = 'Klare Grenze: das Dasein greift sich selbst (Eigentlichkeit, B). Das Alter ist ein scharf abgegrenztes Bewusstsein (A).';
+    else if (dd < 0.5) el.innerHTML = 'Die Grenze hält, löst sich aber leicht: transpersonale Feld-Aktivität wird deutlicher (A). <em>B:</em> Verstehen als Entwurf auf die eigenen Möglichkeiten.';
+    else if (dd < 0.8) el.innerHTML = 'Die Grenze lockert sich: Feld-Aktivität dringt durch — <em>A</em> liest das als Psychedelika/Hypoxie (Erfahrung ↑, Gehirnbindung ↓). <em>B:</em> Vorlaufen zum Tode — die „Möglichkeit der Unmöglichkeit“.';
+    else el.innerHTML = 'Fast Auflösung: NDE-ähnlich erweitertes Bewusstsein (A). Die <em>Jemeinigkeit</em> (B) zeigt sich gerade in dieser Grenzüberschreitung als Horizont des eigenen Seins.';
+  }
+
+  // Note: the viz IIFE exposes window.__setModeViz / window.__setDissViz,
+  // which these handlers call to drive the closure-local mode/diss.
+</script>
+</body>
+</html>

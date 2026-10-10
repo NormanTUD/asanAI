@@ -1,0 +1,16 @@
+{
+  "no": "078",
+  "a": "donalds_theorem.html",
+  "b": "higher_topos_theory.html",
+  "a_title": "Donaldsons Theorem — Interaktive Reise",
+  "b_title": "∞-Kategorien & Topoi — ein interaktiver Streifzug",
+  "combined_theme": "higher-object-is-the-invariant",
+  "one_line": "Beide Papiere tun dieselbe Geste: eine niedrige, klassische, 1-dimensionale Beschreibung (Schnittform Q bzw. gewöhnlicher 1-Topos) bestimmt die Realität nicht eindeutig — die fehlende Information lebt in einem höheren Objekt (Modulraum ℳ der ASD-Verbindungen bzw. ∞-Topos Shv(X)), dessen globale/homotopische Struktur den Defekt auflöst; Schatten projiziert das eigentliche Objekt.",
+  "contradictions": [
+    "Starrheit vs. Flexibilität: A macht das höhere Objekt zum Verbot (starrer Modulraum ℳ streicht eine Möglichkeit: definite nicht-diagonale Form, z.B. E₈, trägt keine glatte Struktur), B macht es zum Enabler (∞-Topos vereinheitlicht/erweitert: klassische Kohomologie als Spezialfall, nicht-abelsch, höhere Grade).",
+    "Richtung des Trunkations-Defekts: bei A ist unten (topologisch) zu VOLL — Über-Approximation, Phantom-Objekte wie E₈ existieren topologisch, nicht glatt (topologisch ⊃ glatt); bei B ist unten (hC) zu LEER — Unter-Approximation, Morphismen gehen auf π₀ verloren (hC ⊂ C).",
+    "Ausnahme-Dimension vs. Regler: A zentriert die eine starre Ausnahmedimension 4 ('wilder Westen'), B macht Dimension zu einem uniformen, drehbaren Parameter (n-Abschnitt, Homotopie-Dimension ≤n, Hᵏ=0 für k>n) über alle Dimensionen."
+  ],
+  "resolution": "Beide Defekte sind dieselbe Lokalisierung aus zwei Seiten: Nach-unten-gehen streicht entweder Morphismen (B: Schatten zu arm) oder Strukturen auf Objekten (A: Schatten zu reich, da topologisch ⊃ glatt); die Richtung des Defekts sagt man voraus, indem man fragt, WELCHE Lokalisierung es ist. Ein wohlverhaltenes höheres Objekt ist zugleich starr genug für Sätze und flexibel genug als Sprache (Starrheit und Flexibilität sind zwei Seiten derselben Münze); die 'Ausnahmedimension 4' ist ein Phasenübergang im Dimension-Regler, an dem zwei ∞-kategoriale Strukturen (glatt vs. topologisch) über derselben Menge auseinanderklaffen.",
+  "viz": "Canvas (rAF, inline/prozeduraler Torus, keine externen Daten): rotierendes 3D-Punktewolken-Modell des 'höheren Objekts' (ℳ / ∞-Topos) mit Trunkationsregler t. Bei t→0 volle 3D-Struktur mit sichtbaren höheren Morphismen (bernstein, B) und ohne Phantome; bei t→1 abgeflachter 2D-Schatten, in dem Morphismen auf π₀ verschwinden (B: zu arm) und Phantom-Objekte (rot, z.B. E₈, A: zu reich) auftauchen — beide Defekt-Richtungen in einer Zeichnung. Theme-aware (liest CSS-Variablen, wechselt über Theme-Button), Pause/Neudrehen-Buttons."
+}

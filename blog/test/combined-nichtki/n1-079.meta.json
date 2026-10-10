@@ -1,0 +1,16 @@
+{
+  "no": "079",
+  "a": "takens_embedding_theorem.html",
+  "b": "signal_analysis.html",
+  "a_title": "Takens' Embedding Theorem — An Interactive Exploration",
+  "b_title": "Interactive Signal Analysis Explorer",
+  "combined_theme": "shadow-unprojection",
+  "one_line": "A time series is a 1-D shadow of a higher-dimensional object: Takens unprojects it back to space (delay embedding → attractor geometry/dynamics) and the DFT back to frequency (spectrum → sinusoids) — both faithful once the reconstruction dimension beats the object's complexity (d ≥ 2m+1 ↔ f_s ≥ 2·f_max), with the same failure below the bound (false neighbors ↔ aliasing).",
+  "contradictions": [
+    "B's foundational premise ('any signal is a sum of sinusoids'; a linear, harmonic toolkit) vs A's central object: a chaotic, nonlinear, aperiodic Lorenz projection that is NOT a sum of sinusoids — B's premise breaks exactly where A's delay embedding is the right tool.",
+    "Different inversion targets: B reconstructs the signal back to frequency (a fixed global sinusoid basis, amplitude + phase — 'which frequencies?'), while A reconstructs it back to space (the model-free geometric attractor in R^d and its dynamics/exponents — 'what shape and motion?').",
+    "Stationarity: B's clean spectrum and Nyquist analysis presume stationary signals and concede Fourier 'tells WHAT not WHEN' (hence wavelets), whereas A's data is inherently non-stationary and aperiodic, so B's primary tool is the wrong instrument for A's signal."
+  ],
+  "resolution": "Complementary coordinates, not rivals: Fourier recovers the linear/stationary/spectral coordinate, Takens the nonlinear/geometric/dynamical coordinate of the same shadow. Both are 'undo a linear projection by a generic lifting map' — the delay map Φ is linear and is an embedding iff d ≥ 2m+1; the DFT is invertible (Parseval) iff you keep enough bins / sample ≥ Nyquist. Fused rule: a faithful reconstruction exists once the reconstruction space exceeds the object's intrinsic complexity (d ≥ 2m+1 on the A-side, f_s ≥ 2·f_max on the B-side), and below that bound both fail in the same way (self-overlap/false neighbors ↔ aliasing/leakage). Wavelets are the bridge — time-local geometry × frequency-local content, where the two reconstructions meet.",
+  "viz": "One canvas, one 1-D shadow x(t) shown three ways: (top) the raw time series with a sweeping cursor, (bottom-left) its 2-D Takens delay embedding [x(t), x(t−τ)] — a closed Lissajous/limit-cycle loop for the periodic signal, an unfolding 2-D structure for Lorenz, collapsing to a thin diagonal at small τ and a diffuse cloud at large τ, (bottom-right) its DFT amplitude spectrum — two sharp peaks for the sum-of-sines, broadband for Lorenz. Toggling the system and dragging τ embodies the fused idea: the same shadow unprojects to space (delays) and to frequency (DFT)."
+}

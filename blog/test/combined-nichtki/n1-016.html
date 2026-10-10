@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notation als Hebel — Fusion: Étale Raum ✕ Geschichte der Mathe-Symbole</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --card:#ffffff; --fg:#1a1f3a; --muted:#5b6280;
+    --accent:#0f9d76; --accent2:#d6338a; --accent3:#b57e00;
+    --line:#e4ddcc; --code:#f2efe6;
+  }
+  html.dark{
+    --bg:#0b0d17; --card:#141828; --fg:#e9ecff; --muted:#9aa3c7;
+    --accent:#7cf9d0; --accent2:#ff77c8; --accent3:#ffd166;
+    --line:#2a2f4a; --code:#0d1224;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 700px at 15% -10%, var(--card) 0%, var(--bg) 55%) fixed;
+    color:var(--fg);
+    font-family:"Georgia","Iowan Old Style",serif;
+    line-height:1.6;
+  }
+  .bar{
+    position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+    gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line);
+    font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted);
+  }
+  .bar b{color:var(--fg)}
+  #themeToggle{
+    background:transparent;color:var(--fg);border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit;
+  }
+  #themeToggle:hover{border-color:var(--accent)}
+  .wrap{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+  header{text-align:center;margin-bottom:34px}
+  header h1{
+    font-size:clamp(1.9rem,5vw,3rem);margin:0 0 8px;line-height:1.15;
+    letter-spacing:-.01em;
+  }
+  header h1 .g{
+    background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;margin:0}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:24px 26px;margin:22px 0;box-shadow:0 14px 40px rgba(0,0,0,.12);
+  }
+  section h2{
+    margin:0 0 12px;font-size:1.45rem;color:var(--accent);
+    font-family:system-ui,sans-serif;letter-spacing:-.01em;
+  }
+  section h3{color:var(--accent2);margin:20px 0 8px;font-family:system-ui,sans-serif;font-size:1.08rem}
+  p{margin:10px 0}
+  .lead{font-size:1.06rem}
+  .pill{
+    display:inline-block;padding:1px 10px;border-radius:999px;font-size:.78rem;
+    font-family:system-ui,sans-serif;background:var(--code);color:var(--accent3);
+    border:1px solid var(--line);margin-right:6px;vertical-align:middle;
+  }
+  .pill.a{color:var(--accent)}
+  .pill.b{color:var(--accent2)}
+  .callout{
+    border-left:3px solid var(--accent3);padding:10px 16px;background:var(--code);
+    border-radius:8px;margin:14px 0;font-size:.98rem;
+  }
+  .callout.green{border-color:var(--accent)}
+  .callout.rose{border-color:var(--accent2)}
+  code{font-family:"JetBrains Mono",ui-monospace,monospace;background:var(--code);
+    padding:1px 6px;border-radius:5px;color:var(--accent3);font-size:.9em}
+  .eq{
+    text-align:center;background:var(--code);border:1px solid var(--line);
+    border-radius:10px;padding:12px;margin:14px 0;overflow-x:auto;
+    font-size:1.05rem;
+  }
+  .tex{color:var(--accent3)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.94rem;font-family:system-ui,sans-serif}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.74rem;letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  td.c{color:var(--fg);font-weight:600}
+  .viz-controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px;font-family:system-ui,sans-serif}
+  .viz-controls label{color:var(--muted);font-size:.9rem;display:flex;align-items:center;gap:8px}
+  input[type=range]{accent-color:var(--accent);width:150px}
+  button.vbtn{
+    background:var(--code);color:var(--fg);border:1px solid var(--line);
+    padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit;
+  }
+  button.vbtn:hover{border-color:var(--accent)}
+  canvas#vizCanvas{width:100%;height:440px;display:block;border:1px solid var(--line);
+    border-radius:12px;background:transparent;touch-action:none}
+  .viz-readout{
+    font-family:system-ui,sans-serif;font-size:.92rem;color:var(--muted);
+    margin-top:12px;padding:12px 14px;background:var(--code);border:1px solid var(--line);border-radius:10px;
+  }
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--accent);text-decoration:none;font-family:system-ui,sans-serif;font-weight:600}
+  .prov a:hover{text-decoration:underline}
+  .prov .desc{color:var(--muted);font-size:.95rem;margin-top:2px}
+  footer{color:var(--muted);text-align:center;padding:26px 10px;font-size:.85rem;font-family:system-ui,sans-serif}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.84rem;margin-top:10px;font-family:system-ui,sans-serif}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span><b>ROUND 1 · Pair 016</b> — Nicht-KI-Synthese</span>
+  <button id="themeToggle" type="button">☀ / 🌙 Thema</button>
+</div>
+
+<div class="wrap">
+<header>
+  <h1><span class="g">Notation als Hebel</span><br>des mathematischen Fortschritts</h1>
+  <p class="subtitle">Fusion aus: ÉtaleRaum.html ✕ history_of_mathematical_notation.html</p>
+</header>
+
+<!-- 1. THESE -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere, von entgegengesetzten Enden her, behaupten dasselbe Grundgesetz:
+  <b>Mathematischer Fortschritt wird durch Repräsentation gesteuert.</b> Nicht die rohe Intuition,
+  sondern die <em>Art, wie man einen Gegenstand kodiert</em> — als Glyph, als Formel, als grundlegende
+  Definition — entscheidet, welche Fragen überhaupt ask- und welche Gebiete zählbar werden.</p>
+  <p>Papier&nbsp;B liefert das Gesetz in historischer Form: Das dekadische Stellenwertzeichen mit der
+  Null machte Arithmetik erst möglich, während die 27 griechischen Buchstaben ein „Hindernis statt eine
+  Hilfe“ blieben; das <code>=</code> und das <code>+</code> mussten über 100&nbsp;Jahre für ihre
+  Durchsetzung kämpfen. „Schlechte Notation VERHINDERT Fortschritt. Gute Notation ERMÖGLICHT ihn.“
+  Papier&nbsp;A liefert denselben Satz als moderne, hochgesteckte Instanz: Unter der <em>alten</em>
+  Kodierung (Zariski-offene Mengen, Punkte) wurde Kohomologie mit <span class="tex" data-tex="\mathbb{Z}/\ell"></span>-Koeffizienten
+  trivial — ein toter Ast. Grothendiecks <em>Neu-Kodierung</em> — die étale Site, in der „offene Menge“
+  durch „étaler Morphismus“ und „Punkt“ durch „surjektive étale Familie“ ersetzt wird — machte aus dem
+  toten Ast eine Maschine, mit der die Weil-Vermutungen und (durch Deligne) die Riemann-Hypothese über
+  endlichen Körpern bewiesen wurden.</p>
+  <p>Die Fusion lautet also: <b>Die Geschichte der Symbole (B) ist die Theorie; die étale Kohomologie (A)
+  ist der moderne Beleg.</b> Beides ist derselbe Hebel — nur auf verschiedenen Stufen desselben Spektrums,
+  vom geschriebenen Zeichen bis zur grundlegenden Definition.</p>
+</section>
+
+<!-- 2. WIDERSPRÜCHE -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht im Ergebnis (beide: Repräsentation ist der Flaschenhals),
+  wohl aber in <b>drei konkreten Stellungen</b> darüber, <em>welche</em> Repräsentation wirkt und <em>wie</em>
+  sich eine neue durchsetzt:</p>
+
+  <h3>1 · Konkret/suggestiv <span class="pill b">B</span> vs. Abstrakt/punkt-frei <span class="pill a">A</span></h3>
+  <p><span class="pill b">B</span> In den Erkenntnissen (3) und bei Cajori wirkt gute Notation gerade, weil
+  sie <em>konkret, manipulierbar und „suggestiv“</em> ist: das dekadische Zeichen half, weil es „leicht zu
+  schreiben“ und ein sichtbares Zeichen ist; die griechischen Buchstaben scheiterten als reine
+  Gedächtnislast. Implizite Heuristik: <b>je konkreter/anschaulicher, desto besser.</b>
+  <br><span class="pill a">A</span> Der Durchbruch kommt hier genau dadurch, dass man Punkte und offene
+  Mengen <em>weglässt</em> — „man braucht keine Punkte, nur eine Kategorie mit Überdeckungsbegriff“ (Abs.
+  3). Die wirksame Kodierung ist also <b>abstrakter und weniger anschaulich</b> als die alte, nicht
+  konkreter.</p>
+  <p><b>Spannung:</b> A ist ein potenzielles Gegenbeispiel zu Bs Konkretheits-Heuristik — hier ist es die
+  Abstraktion (Punkte weg), die den Fortschritt freisetzt, nicht ein anschaulichereres Bild.</p>
+
+  <h3>2 · Langsamer sozialer Kampf <span class="pill b">B</span> vs. schneller individueller Sprung <span class="pill a">A</span></h3>
+  <p><span class="pill b">B</span> Vereinheitlichung ist <em>langsam, umkämpft und von unten</em> getrieben:
+  <code>+</code> gegen <code>p</code> über 130&nbsp;Jahre, <code>=</code> über 100&nbsp;Jahre; „Ohne
+  internationale Koordination dauert Vereinheitlichung Jahrhunderte.“
+  <br><span class="pill a">A</span> Die Umkodierung wird dagegen als <em>einzelner, schneller, top-down</em>
+  begrifflicher Akt eines Genies erzählt („Grothendiecks Sprung“, Abs. 3), der das Framework in einem Zug neu definiert.</p>
+  <p><b>Spannung:</b> Ist die entscheidende Umkodierung ein jahrhundertelanger sozialer
+  Standardisierungskampf (B) oder ein schneller individueller Intellektualsprung (A)?</p>
+
+  <h3>3 · Der Hebel liegt im Glyph <span class="pill b">B</span> vs. in einer Definition <span class="pill a">A</span></h3>
+  <p><span class="pill b">B</span> Der Hebel ist das <em>Schriftzeichen</em> an sich — das Glyph
+  <code>+</code>, <code>=</code>, <code>0</code>.
+  <br><span class="pill a">A</span> Der „neue Notationsakt“ ist gar kein Glyph, sondern eine
+  <em>grundlegende Definition</em> (was „Überdeckung“ und „Kleben“ bedeuten) — eine Grothendieck-Topologie,
+  also eine Neuordnung der Mathematik-Ontologie, kein Schriftbild.</p>
+  <p><b>Spannung:</b> Wenn Bs „Notation = Macht“ nur Glyphen meint, ist A gar kein Fall davon — es wäre
+  etwas Tieferes, und Bs Gesetz wäre zu schmal formuliert.</p>
+</section>
+
+<!-- 3. AUFLOESUNG -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>1 · Feinjustierung der Regel: „suggestiv“ heißt strukturell, nicht bildhaft</h3>
+  <p>Cajoris „suggestiv“ muss nicht „bildhaft/konkret“ lesen, sondern: <b>das Zeichen trägt die nötige
+  Struktur.</b> „étale“ kodiert wörtlich „flach + unverzweigt“ = „sieht lokal aus wie die Basis“; das
+  dekadische Zeichen kodiert „Position = Potenz der Basis“. Die Suggestivität ist also in beiden Fällen
+  <em>strukturell</em>. Die Abstraktion in A ist kein Verrat an der Regel, sondern ihr stärkster Fall:
+  Der Hebel ist nicht Konkretheit, sondern <b>strukturtreue Suggestivität</b>.</p>
+  <div class="callout green"><b>Fusionsschluss 1:</b> Der Hebel ist nicht „wie echt“, sondern „wie viel
+  der benötigten Struktur die Kodierung mitträgt“ — ein Bild (B) und eine Definition (A) können beide
+  voll suggestiv sein.</div>
+
+  <h3>2 · Zwei Phasen: Erfindung vs. Durchsetzung</h3>
+  <p>Man trennt <b>Erfindung</b> (individueller, top-down Sprung — Recordes <code>=</code>, Grothendiecks
+  Site) von <b>Durchsetzung</b> (sozialer, bottom-up Prozess — B). In As Fall war die Durchsetzung schnell,
+  weil ein <em>entscheidender, sichtbarer Beweis</em> (Weil-Vermutungen, Deligne) den Wert unbestreitbar
+  machte — ein Shortcut, den Alltagszeichen ohne spektakulären Payoff nicht hatten. Bs „Jahrhunderte“ ist
+  der Default; ein spektakulärer Payoff komprimiert ihn auf Jahre.</p>
+  <div class="callout"><b>Fusionsschluss 2:</b> Ein Genie erfindet; die Gemeinschaft festigt. Ein
+  demonstrativer Durchbruch (A: Weil/Deligne) ist der Katalysator, der Standardisierung von Jahrhunderten
+  auf Jahre verkürzt.</div>
+
+  <h3>3 · „Notation“ ist ein Spektrum: Glyph → Formel → Definition</h3>
+  <p>Man verallgemeinert den Begriff nach oben. Eine Grothendieck-Topologie ist Notation auf der Stufe der
+  <em>Definitionen</em> — sie fixiert, was „Überdeckung“ und „Klebebedingung“ bedeuten. B studiert das
+  untere Ende dieses Spektrums (Glyphen), A das obere (Grundbegriffe). <b>Dasselbe Gesetz</b> gilt auf
+  beiden Stufen: die richtige Umkodierung öffnet das Gebiet.</p>
+  <div class="callout rose"><b>Fusionsschluss 3:</b> „Notation“ ist nicht nur Schriftbild, sondern der
+  gesamte Vokabular-Begriff von der Glyph bis zur Grunddefinition. A und B sind zwei Stufen desselben
+  Hebel-Gesetzes — kein Widerspruch, sondern Bestätigung über die ganze Skala.</div>
+</section>
+
+<!-- 4. INHALT -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Der fusionierte Kern: ein <b>Hebel-Gesetz</b> (aus B) plus sein <b>modernster Beleg</b> (aus A).
+  B liefert die Theorie, A wird als Fallstudie durch sie gejagt.</p>
+
+  <h3>Aus B — das Hebel-Gesetz (Theorie)</h3>
+  <p>Fünf Erkenntnisse aus Cajoris <em>A History of Mathematical Notations</em> (1928/29), verdichtet:</p>
+  <table>
+    <thead><tr><th>Symbole</th><th>Datum / Urheber</th><th>Hebel-Punkt</th></tr></thead>
+    <tbody>
+      <tr><td class="c">Hindu-Ziffern + Null</td><td>~500 n. Chr. (Stellenwert ~7. Jh.)</td><td>Erst Position+Null machte Arithmetik möglich; „so einfach, dass wir ihre Genialität kaum noch sehen“.</td></tr>
+      <tr><td class="c">+ und −</td><td>1489, Widman, Leipzig</td><td>130 J. Kampf gegen <code>p</code>/<code>m</code>; Vereinheitlichung ohne Koordination dauert Jahrhunderte.</td></tr>
+      <tr><td class="c">×</td><td>1631, Oughtred</td><td>Leibniz lehnte es ab (Verwechslung mit <code>x</code>), schlug 1698 den Punkt vor.</td></tr>
+      <tr><td class="c">÷</td><td>1659, Rahn</td><td>In der Schweiz nie populär; nur GB/USA. „Politische Grenzen“ in der Mathematik.</td></tr>
+      <tr><td class="c">=</td><td>1557, Recorde</td><td>„Nothing can be more equal than two parallel lines“; über 100 J. bis zur Durchsetzung.</td></tr>
+      <tr><td class="c">Buchstaben a,b,c</td><td>1591, Viète</td><td>Erste systematische allgemeine (algebraische) Zahlen.</td></tr>
+    </tbody>
+  </table>
+  <p>Cajoris fünf Kriterien guter Notation: <span class="pill">kurz</span><span class="pill">eindeutig</span>
+  <span class="pill">leicht zu schreiben</span><span class="pill">suggestiv</span><span class="pill">erweiterbar</span>.
+  Dazu der historische Beleg für <em>schlechte</em> Notation als Bremse: die 27 griechischen Buchstaben
+  „ein Hindernis statt eine Hilfe“ — Archimedes und Apollonius verpassten Entdeckungen wegen ihrer Notation;
+  die Babylonier litten jahrhundertelang unter der fehlenden Null.</p>
+
+  <h3>Aus A — was die Neu-Kodierung freisetzt (Beleg)</h3>
+  <p>Die <b>alte Kodierung</b> (Zariski): Zu wenige offene Mengen → Kohomologie mit
+  <span class="tex" data-tex="\mathbb{Z}/\ell"></span>-Koeffizienten trivial. Die <b>neue Kodierung</b>
+  (étale) ist eine Umdefinition in fünf Schritten:</p>
+  <table>
+    <thead><tr><th>Gegenstand</th><th>Alte Kodierung</th><th>Étale Neu-Kodierung</th></tr></thead>
+    <tbody>
+      <tr><td class="c">Halm</td><td>—</td><td><span class="tex" data-tex="\mathcal{F}_x=\varinjlim_{x\in U}\mathcal{F}(U)"></span>; étale Raum = disjunkte Vereinigung, Projektion ein lokaler Homöomorphismus.</td></tr>
+      <tr><td class="c">„lokal wie die Basis“</td><td>offene Menge</td><td>étaler Morphismus = flach + unverzweigt; <span class="tex" data-tex="z\mapsto z^{n}"></span> auf <span class="tex" data-tex="\mathbb{C}^{\times}"></span>.</td></tr>
+      <tr><td class="c">Überdeckung</td><td>Vereinigung offener Teilmengen</td><td>surjektive étale Familie (Sur <span class="tex" data-tex="\bigsqcup U_i\to X"></span>); Punkte fallen weg.</td></tr>
+      <tr><td class="c">Kohomologie</td><td>(trivial)</td><td><span class="tex" data-tex="H^{i}_{\text{ét}}(X,\mathcal{F})=R^{i}\Gamma(X_{\text{ét}},\mathcal{F})"></span>.</td></tr>
+      <tr><td class="c">Kleben</td><td>—</td><td>Čech-Komplex <span class="tex" data-tex="\check{C}^{p}=\prod_{i_0&lt;\dots<i_p}\mathcal{F}(U_{i_0}\times_X\dots\times_X U_{i_p})"></span>, Kokette: <span class="tex" data-tex="c_{23}-c_{13}+c_{12}\equiv0"></span>.</td></tr>
+    </tbody>
+  </table>
+  <p>Und der <b>entscheidende Payoff</b> (der Katalysator aus Auflösung&nbsp;2), die Weil-Vermutungen:
+  für glatte projektive <span class="tex" data-tex="X/\mathbb{F}_q"></span> gilt</p>
+  <div class="eq" data-tex="\#X(\mathbb{F}_{q^{n}})=\sum_{i=0}^{2\dim X}(-1)^{i}\,\operatorname{tr}\!\big(\mathrm{Frob}^{n}\mid H^{i}_{\text{ét}}(X_{\bar{\mathbb{F}}_{q}},\mathbb{Q}_{\ell})\big)"></div>
+  <p>Die Eigenwerte des Frobenius auf <span class="tex" data-tex="H^i"></span> liegen auf Kreisen
+  <span class="tex" data-tex="|\alpha|=\sqrt{q}"></span> (Delignes Riemann-Hypothese über endlichen Körpern).
+  Die Kohomologie zählt also Punkte — genau das, was die alte Kodierung nicht konnte.</p>
+
+  <h3>Beide zusammen — Cajoris Kriterien auf der étale Neu-Kodierung</h3>
+  <table>
+    <thead><tr><th>Kriterium (B)</th><th>Beispiel Glyph (B)</th><th>Beispiel Definition (A)</th></tr></thead>
+    <tbody>
+      <tr><td class="c">kurz</td><td><code>=</code> statt „ist gleich“</td><td>ein Wort: „étale“</td></tr>
+      <tr><td class="c">eindeutig</td><td><code>÷</code> nur GB/USA → zeigt: Eindeutigkeit ist lokal</td><td>Site fixiert exakt, was „Überdeckung/Kleben“ heißt</td></tr>
+      <tr><td class="c">leicht zu schreiben</td><td>Stellenwert statt Römerzahlen</td><td>(Schwachpunkt: die Abstraktion ist kostenintensiv)</td></tr>
+      <tr><td class="c">suggestiv (strukturell)</td><td>Position = Potenz der Basis</td><td>„étale“ = flach+unverzweigt = „sieht lokal wie die Basis aus“</td></tr>
+      <tr><td class="c">erweiterbar</td><td>Null + Basis 10 → ganze Analysis</td><td>Site rahmt jede Basis: höherdim., positive Char., ℓ-adisch</td></tr>
+    </tbody>
+  </table>
+  <div class="callout green"><b>Fusion:</b> Die étale Site ist für die algebraische Geometrie, was die
+  Null+Stellenwert für die Arithmetik war (B): der fehlende Baustein, der einen toten Ast (triviale
+  Kohomologie / kaum mögliche Rechnung) in ein zählbares Gebiet verwandelt. B und A sind derselbe
+  Hebel — B auf Glyph-Stufe, A auf Definitions-Stufe.</div>
+</section>
+
+<!-- 5. VISUALISIERUNG -->
+<section id="visualisierung">
+  <h2>Visualisierung — der Notationshebel</h2>
+  <p>Dasselbe Basisobjekt <b>X</b>, zwei Notationen. Links die <em>alte</em> Kodierung (Punkte/offene
+  Mengen): ein einziger Halm, Kohomologie trivial, <b>verhindert</b>. Rechts die <em>neue</em> (étale
+  Site/Morphismen): <span class="tex" data-tex="n"></span> Blätter mit rotierender Monodromie,
+  <span class="tex" data-tex="H^{1}_{\text{ét}}\neq0"></span>, <b>ermöglicht</b>. Der Slider ändert den
+  Grad <span class="tex" data-tex="n"></span> der Überlagerung <span class="tex" data-tex="z\mapsto z^{n}"></span>.</p>
+  <canvas id="vizCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Blätter n: <input id="sheetsN" type="range" min="1" max="6" value="3"></label>
+    <button class="vbtn" id="playBtn" type="button">⏸ Pause</button>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--accent2)"></span>alte Notation (Punkte/offene Mengen)</span>
+    <span><span class="dot" style="background:var(--accent)"></span>neue Notation (étale Basis)</span>
+    <span><span class="dot" style="background:var(--accent2)"></span>Blätter / Monodromie</span>
+  </div>
+  <div class="viz-readout" id="vizReadout"></div>
+</section>
+
+<!-- 6. PROVENIENZ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <div>
+      <a href="../ÉtaleRaum.html">A — ÉtaleRaum.html</a>
+      <div class="desc">„Étale Raum &amp; Étale Kohomologie — visuell“: Garben, étale Überlagerungen, die
+      étale Site, Čech-Kohomologie und Weil/Deligne — der moderne Beleg für den Hebel.</div>
+    </div>
+    <div>
+      <a href="../buecher/history_of_mathematical_notation.html">B — history_of_mathematical_notation.html</a>
+      <div class="desc">„Die Geheime Geschichte der Mathe-Symbole“ (nach Cajori 1928/29): wie +, −, ×, ÷, =
+      und 0 den Fortschritt ermöglichten oder blockierten — die Theorie des Hebels.</div>
+    </div>
+  </div>
+</section>
+
+<footer>ROUND 1 · Pair 016 · Selbstständige Fusion — alle Daten inline, keine Netzwerk-Abfragen (nur statische CDN-Bibliothek für Math).</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function readPalette(){
+    return {
+      bg:cssVar('--bg'), card:cssVar('--card'), fg:cssVar('--fg'), muted:cssVar('--muted'),
+      accent:cssVar('--accent'), accent2:cssVar('--accent2'), accent3:cssVar('--accent3'), line:cssVar('--line')
+    };
+  }
+
+  var c=document.getElementById('vizCanvas');
+  var ctx=c.getContext('2d');
+  var W=0,H=0,dpr=1,pal=null;
+  var n=3, theta=0, playing=true;
+
+  function resize(){
+    var r=c.getBoundingClientRect();
+    dpr=window.devicePixelRatio||1;
+    c.width=Math.max(1,Math.round(r.width*dpr));
+    c.height=Math.max(1,Math.round(r.height*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W=r.width; H=r.height;
+  }
+
+  function drawOld(ox,ow){
+    var baseY=H-44;
+    ctx.strokeStyle=pal.accent2; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(ox+20,baseY); ctx.lineTo(ox+ow-20,baseY); ctx.stroke();
+    ctx.fillStyle=pal.accent2; ctx.font='13px system-ui, sans-serif';
+    ctx.fillText('X  (Basisraum)', ox+ow-118, baseY+20);
+    ctx.setLineDash([6,6]); ctx.strokeStyle=pal.muted; ctx.lineWidth=4;
+    for(var k=0;k<2;k++){
+      var x1=ox+34+k*(ow-68)*0.55, x2=x1+(ow-68)*0.30;
+      ctx.beginPath(); ctx.moveTo(x1,baseY); ctx.lineTo(x2,baseY); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.fillStyle=pal.muted;
+    ctx.beginPath(); ctx.arc(ox+ow*0.5, baseY-32, 5, 0, 7); ctx.fill();
+    ctx.font='12px system-ui, sans-serif'; ctx.fillText('1 Halm', ox+ow*0.5-16, baseY-46);
+    ctx.fillStyle=pal.muted; ctx.font='12px ui-monospace, monospace';
+    ctx.fillText('H1 = 0  (trivial)', ox+20, H-14);
+    ctx.fillStyle=pal.accent2; ctx.font='700 15px system-ui, sans-serif';
+    ctx.fillText('verhindert', ox+20, 46);
+  }
+
+  function drawNew(ox,ow){
+    var cx=ox+ow/2, cy=H-72, R=Math.min(ow,H)/2-48;
+    ctx.strokeStyle=pal.accent; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,R*0.5,0,7); ctx.stroke();
+    ctx.fillStyle=pal.accent; ctx.font='12px system-ui, sans-serif';
+    ctx.fillText('X  (Basis)', cx-24, cy+R*0.5+18);
+    var bx=cx+R*0.5*Math.cos(theta), by=cy+R*0.5*Math.sin(theta);
+    ctx.fillStyle=pal.accent; ctx.beginPath(); ctx.arc(bx,by,5,0,7); ctx.fill();
+    ctx.globalAlpha=0.30; ctx.strokeStyle=pal.accent2; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,R*0.92,0,7); ctx.stroke(); ctx.globalAlpha=1;
+    for(var k=0;k<n;k++){
+      var a=(theta+2*Math.PI*k)/n;
+      var px=cx+R*0.92*Math.cos(a), py=cy+R*0.92*Math.sin(a);
+      ctx.globalAlpha=0.35; ctx.strokeStyle=pal.accent2; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(px,py); ctx.stroke(); ctx.globalAlpha=1;
+      ctx.fillStyle=pal.accent2; ctx.beginPath(); ctx.arc(px,py,5,0,7); ctx.fill();
+    }
+    ctx.fillStyle=pal.fg; ctx.font='12px ui-monospace, monospace';
+    ctx.fillText('z → z^n', cx-22, cy-R*0.5-10);
+    ctx.fillStyle=pal.accent2; ctx.font='12px ui-monospace, monospace';
+    ctx.fillText('n = '+n+' Blaetter  ·  Monodromie', ox+18, H-14);
+    ctx.fillStyle=pal.accent; ctx.font='700 15px system-ui, sans-serif';
+    ctx.fillText('ermoeglicht  (H1_et != 0)', ox+18, 46);
+  }
+
+  function draw(){
+    if(!pal) pal=readPalette();
+    ctx.clearRect(0,0,W,H);
+    var mid=W/2;
+    ctx.strokeStyle=pal.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mid,36); ctx.lineTo(mid,H-12); ctx.stroke();
+    ctx.font='600 14px system-ui, sans-serif';
+    ctx.fillStyle=pal.accent3; ctx.fillText('ALTE Notation  —  offene Mengen / Punkte', 16, 24);
+    ctx.fillStyle=pal.accent;  ctx.fillText('NEUE Notation  —  etale Site / Morphismen', mid+16, 24);
+    drawOld(0,mid-1);
+    drawNew(mid,1);
+    if(playing) theta+=0.012;
+    requestAnimationFrame(draw);
+  }
+
+  function updateReadout(){
+    var el=document.getElementById('vizReadout');
+    el.innerHTML='Alte Notation: <b>1 Halm</b>, H<sup>1</sup> = 0 — <span style="color:var(--accent2)">verhindert</span>.'+
+      ' &nbsp;·&nbsp; Neue Notation: <b>'+n+' Blätter</b>, Monodromie, H<sup>1</sup><sub>ét</sub> ≠ 0 —'+
+      ' <span style="color:var(--accent)">ermöglicht</span> (Punkte zählen via Frobenius).';
+  }
+
+  function init(){
+    pal=readPalette();
+    resize();
+    window.addEventListener('resize',resize);
+    var nEl=document.getElementById('sheetsN');
+    nEl.addEventListener('input',function(e){ n=+e.target.value; updateReadout(); });
+    var playBtn=document.getElementById('playBtn');
+    playBtn.addEventListener('click',function(){ playing=!playing; playBtn.textContent=playing?'⏸ Pause':'▶ Monodromie'; });
+    document.getElementById('themeToggle').addEventListener('click',function(){
+      document.documentElement.classList.toggle('dark');
+      pal=readPalette();
+    });
+    var mo=new MutationObserver(function(){ pal=readPalette(); });
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    updateReadout();
+    draw();
+  }
+
+  function renderMath(){
+    if(!window.katex) return;
+    var nodes=document.querySelectorAll('[data-tex]');
+    for(var i=0;i<nodes.length;i++){
+      var el=nodes[i];
+      try{ katex.render(el.getAttribute('data-tex'), el, {throwOnError:false, displayMode:el.classList.contains('eq')}); }
+      catch(e){ /* ignore */ }
+    }
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', function(){ init(); renderMath(); });
+  } else { init(); renderMath(); }
+  window.addEventListener('load', renderMath);
+})();
+</script>
+</body>
+</html>

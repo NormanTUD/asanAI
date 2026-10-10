@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Laws of Form ✕ Shor's Algorithm</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --accent2:#2f6fd0; --accent3:#c0457f; --accent4:#b07d18;
+  --grid:#1e2530; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e; --border:#233450;
+  --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --accent2:#7aa2ff; --accent3:#ff8fd0; --accent4:#ffcc6a;
+  --grid:#93a0b6; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{ max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+header{margin-bottom:28px;}
+h1{ font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; }
+.subtitle{ color:var(--muted); font-size:1.02rem; margin:0; font-style:italic; }
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{ font-size:1.02rem; margin:18px 0 8px; color:var(--accent); }
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem; color:var(--accent);}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{
+  border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);
+}
+.note b{color:var(--fg);}
+.formula{
+  background:var(--code); color:var(--code-fg); border:1px solid var(--border);
+  border-radius:10px; padding:12px 16px; margin:12px 0; font-family:"SFMono-Regular",Consolas,monospace;
+  font-size:1.02rem; text-align:center;
+}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:470px; touch-action:none;}
+.legend{display:flex; flex-wrap:wrap; gap:14px; padding:8px 14px 2px; font-size:.76rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:150px;}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Die Periode ist die Antwort</h1>
+  <p class="subtitle">Fusion aus: <code>lawsofform.html</code> &times; <code>shors_algorithm.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere sagen &mdash; auf zwei ganz verschiedenen Skalen &mdash; dasselbe: <em>Ein
+  wiederholendes Objekt ist das Bild einer wiederholten Operation, und ein Transform
+  kollabiert die gesamte Redundanz auf eine einzige Periode, aus der die verdeckte Antwort
+  sofort ablesbar wird.</em> In <strong>Laws of Form (A)</strong> ist die Operation das
+  <em>Markieren</em> (der Cross <code>&larr;</code>), der Transform sind die zwei Axiome
+  &mdash; <em>Aufruf</em> <code>&larr;&larr;=&larr;</code> und <em>Überschreiten</em>
+  <code>&larr;(&larr;)=&empty;</code> &mdash; und das ganze Kalkül reduziert sich damit exakt
+  auf die <strong>Parität</strong> der Tiefe: einen Ab&nbsp;&rarr; <code>&larr;</code>, gerade
+  &rarr; <code>&empty;</code>. In <strong>Shor&rsquo;s Algorithmus (B)</strong> ist die
+  Operation die Abbildung <code>x &rarr; a<sup>x</sup> mod N</code>, der Transform die
+  <em>Quanten-Fourier-Transformation</em> (QFT), und die Antwort &mdash; der
+  Periodenwert <code>r</code> &mdash; erscheint als einziger Peak bei <code>k = N/r</code> im
+  Frequenzraum; daraus fallen die Faktoren von <code>N</code>.</p>
+  <p>Die fusionierte Position lautet: <strong>A ist der Periode-2-Prototyp von
+  &ldquo;Transform &rarr; Periode &rarr; Antwort&rdquo;, und B ist seine Verallgemeinerung auf
+  große Periode&nbsp;r.</strong> A beweist das Prinzip im kleinstmöglichen System &mdash;
+  <em>ein Symbol, zwei Axiome</em> erzeugen die gesamte Boolesche Algebra; der Wert jeder
+  Form ist determiniert und sofort lesbar. B wendet dasselbe Prinzip auf das größte
+  praktische Problem an &mdash; Faktorisierung, reduziert auf die Periode&nbsp;r eines
+  Gruppenhomomorphismus; klassisch unerschaubar teuer, auf einer Fourier-Maschine
+  polynomiell. Und beide Systeme <em>brechen genau dort auf</em>, wo die statische
+  binäre/echte Welt über sich selbst hinausgetrieben wird: A am <em>Re-Entry</em>
+  <code>f =&larr;(f)</code> (keine feste Boolesche Lösung &rarr; Oszillation, ein
+  &ldquo;imaginärer&rdquo; dritter Wert), B am Übergang vom klassischen
+  Ein-Wert-zu-einer-Zeit-Modell zur <em>Superposition</em> komplexer Amplituden. Der
+  &ldquo;imaginäre&rdquo; Faktor <code>&radic;(&minus;1)</code> ist das gemeinsame
+  Scharnier: in A der oszillierende, selbstreferenzierende Wert; in B die komplexe Phase
+  <code>e<sup>2&pi;ixk/N</sup></code>, die der Interferenz überhaupt erst erlaubt.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Beide Papiere widersprechen sich in <em>keinem</em> faktischen Anspruch &mdash; sie
+  arbeiten auf völlig verschiedenen Skalen (ein 1969er Formalkalkül vs. ein
+  quantenmechanischer Faktorisierungsalgorithmus). Aber sie nehmen drei unvereinbar
+  wirkende Staturen ein:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Geschlossene, zeitlose Form</h3>
+      <div class="src">A &mdash; Laws of Form</div>
+      <p>Das Kalkül ist eine <strong>abgeschlossene Algebra</strong>: der Wert einer Form
+      ist <em>inhärent und zeitlos</em> (gerade/ungerade Tiefe). Zeit und Oszillation
+      treten nur als <em>Ausnahme</em> auf &mdash; beim Re-Entry <code>f=&larr;(f)</code>,
+      wo das geschlossene System ausbricht.</p>
+    </div>
+    <div class="col">
+      <h3>1. Offener, zeitlicher Prozess</h3>
+      <div class="src">B &mdash; Shor</div>
+      <p>Der Algorithmus ist ein <strong>zeitlich geordnetes Schalten</strong>:
+      Initialisieren &rarr; Hadamard &rarr; modulare Exponentiation &rarr; inverse QFT
+      &rarr; Messen. Das Ergebnis existiert erst <em>nach Ausführung</em> und nur relativ
+      zu einem klassischen, mehrschrittigen Prozess. <em>&ldquo;Wie produziere ich es?&rdquo;</em></p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Determiniert &amp; entscheidbar</h3>
+      <div class="src">A &mdash; Laws of Form</div>
+      <p>Jede Form hat <strong>genau einen</strong> Wert (die Parität). Determiniert, ohne
+      Messen, ohne Fehler, ohne Wiederholung. Der Mark ist vollständig bekannt.</p>
+    </div>
+    <div class="col">
+      <h3>2. Probabilistisch</h3>
+      <div class="src">B &mdash; Shor</div>
+      <p>Nach der QFT wird <strong>gemessen</strong> und man erhält einen Wert nahe
+      <code>j&middot;(Q/r)</code>; die Periode folgt nur <em>&ldquo;meistens&rdquo;</em>, und
+      man wiederholt, bis es klappt. Faktorisierung gelingt mit <em>Wahrscheinlichkeit</em>.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. Minimality: Komplexität als Illusion</h3>
+      <div class="src">A &mdash; Laws of Form</div>
+      <p>Die Kernthese ist <strong>&ldquo;ein Symbol, zwei Axiome&rdquo;</strong> &mdash;
+      die gesamte Boolesche Algebra entsteht aus dem Mark. Komplexität wird
+      <em>erklärt weg</em>: alles kollabiert auf die Unterscheidung.</p>
+    </div>
+    <div class="col">
+      <h3>3. Hardness: Komplexität als Kosten</h3>
+      <div class="src">B &mdash; Shor</div>
+      <p>B räumt <strong>echte Härte</strong> ein: ein 2048-Bit-Zahl klassisch zu faktorisieren
+      dauert <em>~10&#8308;&#8308; Operationen</em> &mdash; &ldquo;länger als das Universum&rdquo;.
+      Die Antwort kommt aus <em>physischen Ressourcen</em> (Superposition, Hardware), nicht aus
+      einer Reduktion.</p>
+    </div>
+  </div>
+  <div class="note">Kein Widerspruch in den Fakten (sie berühren sich kaum), aber drei
+  unvereinbar wirkende Gesten: <b>zeitlose Form vs. zeitlicher Prozess</b>,
+  <b>garantierter Einzelwert vs. konzentrierte Wahrscheinlichkeit</b>,
+  <b>Komplexität-als-Illusion vs. Komplexität-als-Kosten</b>.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>1. Form &harr; Prozess sind zwei Ansichten eines Objekts.</strong> A&rsquo;s
+  Re-Entry ist der Beleg: Eine Form, die sich selbst referenziert, wird zur <em>Zeitreihe</em>
+  (&lt;code&gt;f&lt;/code&gt; bei <code>t</code>, <code>f</code> bei <code>t+1</code>, &hellip;) &mdash;
+  also zu einer Rechnung, einem endlichen Automaten. B&rsquo;s Schaltkreis umgekehrt ist eine
+  <em>Form, deren Wert erst nach Ausführung sichtbar wird</em>. <em>Fusionsschluss:</em> Ein
+  geschlossenes Form-System und ein offener Prozess sind dieselbe Struktur; der Unterschied ist
+  nur, ob man den <b>Festpunkt</b> (A&rsquo;s statischer Wert) oder die <b>Zeitreihe</b> (B&rsquo;s
+  Lauf) abliest. Re-Entry ist das Scharnier zwischen beiden.</p>
+  <p><strong>2. Determiniertheit ist die Ein-Lauf-Lesart, Wahrscheinlichkeit die
+  Viele-Läufe-Lesart.</strong> In A ist die Periode (2) <em>bekannt</em>, also die
+  Paritäts-Transformation exakt &mdash; ein einzelner, garantierter Wert. In B ist die Periode
+  <code>r</code> <em>unbekannt</em>, also schätzt man sie aus endlich vielen Messungen und
+  wiederholt; die Interferenz konzentriert die Wahrscheinlichkeitsmasse auf die richtigen
+  Frequenzen. B&rsquo;s Interferenz &mdash; andere Phasen heben sich auf, das Signal bleibt &mdash;
+  ist genau A&rsquo;s <em>Gesetz des Überschreitens</em> generalisiert: Redundanz hebt sich weg,
+  ein Wert bleibt. <em>Fusionsschluss:</em> &ldquo;Der Transform tötet die Redundanz; was übrig
+  bleibt, ist die Periode.&rdquo; In A exakt per Inspektion, in B konzentriert per Messung.</p>
+  <p><strong>3. Minimality und Hardness sind die beiden Enden von &ldquo;wie groß ist die zu
+  findende Periode&rdquo;.</strong> Beide wenden denselben Erkennungsansatz
+  (Transform&nbsp;&rarr;&nbsp;Periode&nbsp;&rarr;&nbsp;Antwort) an; der Preis ist eine Funktion
+  der Periodengröße. A&rsquo;s Periode ist 2 &mdash; gratis, per Blick (daher &ldquo;ein Symbol,
+  zwei Axiome&rdquo;). B&rsquo;s Periode <code>r</code> ist groß &mdash; klassisch subexponentiell
+  teuer, auf einer quanten-Fourier-Maschine polynomiell. <em>Fusionsschluss:</em> Das Prinzip ist
+  invariant; A ist der Periode-2-Prototyp, der es lesbar macht, B seine großperiodige
+  Anwendung. Komplexität-als-Illusion (A) und -als-Kosten (B) beschreiben dieselbe Achse bei
+  unterschiedlichem <code>r</code>.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Gemeinsamer formal-Gruppentheoretischer Kern</span>
+    <p>Beide lesen ein Objekt, das das Bild eines <em>Homomorphismus</em> ist, und ermitteln die
+    <em>Ordnung / den Periode</em> seines Bildes &mdash; dann kehren sie eine einfache Relation
+    um, um das Verborgene zu gewinnen.</p>
+    <ul>
+      <li><strong>A:</strong> Markieren wirkt als <em>Involution</em> (Ordnung 2); Zusammensetzung
+        <code>&cong;</code> Addition mod&nbsp;2. Der Wert jeder Form = ihr Bild im Gruppe
+        <code>&#8484;/2&#8484;</code>. Detecting = &ldquo;Parität berechnen&rdquo;. Geheimnis:
+        trivial (gerade/ungerade).</li>
+      <li><strong>B:</strong> <code>x &rarr; a<sup>x</sup> mod N</code> ist ein
+        Homomorphismus <code>&#8484; &rarr; (&#8484;/N&#8484;)<sup>*</sup></code> mit zyklischem
+        Bild der Ordnung <code>r = ord<sub>N</sub>(a)</code> (kleinstes <code>r</code> mit
+        <code>a<sup>r</sup> &equiv; 1 (mod N)</code>). Detecting <code>r</code> = das
+        Periodenfindungsproblem. Geheimnis: die Faktorisierung von <code>N</code>.</li>
+    </ul>
+  </div>
+
+  <h3>A &mdash; das Kalkül der Unterscheidung (Spencer-Brown, 1969)</h3>
+  <p>Alles beginnt mit der <strong>Unterscheidung</strong>: eine gezogene Grenze erzeugt zwei
+  Seiten &mdash; <em>marked</em> (innen, <code>&larr;</code>) und <em>unmarked</em> (außen,
+  <code>&empty;</code>); vorher ist das <em>Void</em>. Zwei Axiome bestimmen alles:</p>
+  <pre><code>Gesetz des Aufrufs (Calling):    &larr;&larr; = &larr;        (Idempotenz, redundante Unterscheidungen kollabieren)
+Gesetz des Überschreitens:        &larr;(&larr;) = ( )   (doppelte Negation hebt sich)</code></pre>
+  <p>Boolesche Lesart (A): Mark&nbsp;=&nbsp;<strong>True</strong>, unmarked&nbsp;=&nbsp;<strong>False</strong>;
+  der Cross wirkt als <strong>NOT</strong>, Nachbarschaft (Aufruf) als <strong>OR</strong>:</p>
+  <pre><code>&larr;(p)            =  &not;p                 (Negation)
+p q                =  p &or; q                (Aufruf = OR)
+&larr;(p q)          =  NOR(p,q)
+&larr;(&larr;(p) &larr;(q)) =  p &and; q
+&larr;(p) q          =  p &rarr; q               (Implikation)</code></pre>
+  <p>Der entscheidende Schritt der Fusion: Die zwei Axiome bedeuten, dass Mark-Zusammensetzung
+  <em>nur von der Tiefe mod&nbsp;2</em> abhängt &mdash; das gesamte endliche Kalkül <em>ist</em>
+  die Paritäts-Abbildung. Das ist A&rsquo;s &ldquo;Periode&nbsp;2&rdquo;. Und <strong>Re-Entry</strong>
+  <code>f =&larr;(f)</code> hat keine feste Boolesche Lösung (ist <code>f</code> marked, dann
+  unmarked &mdash; Widerspruch); die Auflösung ist, dass <code>f</code> <em>oszilliert</em>
+  (marked/unmarked in der Zeit) &mdash; ein dritter, <em>&ldquo;imaginärer&rdquo;</em> Wert,
+  analog zu <code>&radic;(&minus;1)</code>. Das ist der Punkt, an dem das geschlossene binäre
+  System über sich hinausgeht.</p>
+
+  <h3>B &mdash; Shor&rsquo;s Algorithmus (Faktorisierung)</h3>
+  <p>Ziel: Zu gegebenem <code>N = p&middot;q</code> die Faktoren finden. Klassisch kostet
+  Trial-Division <code>O(&radic;N)</code>, der beste bekannte klassische Algorithmus
+  subexponentielle Zeit; für 2048&nbsp;Bit ~<code>10&#8308;&#8308;</code> Operationen. Shor
+  läuft in <code>O((log N)&sup3;</code>) (~<code>10&#185;&#185;</code>). Der Kern:</p>
+  <div class="formula">f(x) = a<sup>x</sup> mod N,  &nbsp; Periodenwert r:  a<sup>r</sup> &equiv; 1 (mod N)</div>
+  <p>Gegeben <code>r</code> (im günstigen Fall <code>r</code> gerade und
+  <code>a<sup>r/2</sup> &ne; &minus;1 (mod N)</code>) liefert</p>
+  <div class="formula">GCD(a<sup>r/2</sup> &minus; 1, N)  und  GCD(a<sup>r/2</sup> + 1, N)</div>
+  <p>die nicht-trivialen Faktoren &mdash; denn <code>a<sup>r/2</sup></code> ist eine
+  Quadratwurzel von&nbsp;1 modulo&nbsp;<code>N</code>. Quanten-Teil (B): Schalten
+  <code>|0&lang;</code> &rarr; Hadamard (Superposition) &rarr; modulare Exponentiation &rarr;
+  inverse QFT &rarr; Messen. Die QFT ist das &ldquo;Geheimwaffe&rdquo; &mdash; sie wandelt das
+  periodische Muster in eine messbare Frequenz um:</p>
+  <div class="formula">QFT|x&lang; = (1/&radic;N) &sum;<sub>k</sub> e<sup>2&pi;ixk/N</sup> |k&lang;</div>
+  <p>Die periodische Funktion erzeugt Peaks bei Multiplen von <code>N/r</code>; ein
+  Fortgesetzte-Brüche-Schritt extrahiert <code>r</code> aus der Messung nahe
+  <code>j&middot;(Q/r)</code>. Konkret: <code>N=15, a=7</code> gibt die Sequenz
+  <code>7, 4, 13, 1</code> (Periode <code>r=4</code>);
+  <code>GCD(7&sup2;&minus;1,15)=GCD(48,15)=3</code> und
+  <code>GCD(7&sup2;+1,15)=GCD(50,15)=5</code> &rarr; <code>15 = 3&middot;5</code>.</p>
+
+  <h3>Die Verbindung &mdash; derselbe Peak, zwei Skalen</h3>
+  <p>Setzt man die beiden zusammen, ist A exakt B&rsquo;s Fall <code>r = 2</code>: Der
+  Cross&nbsp;=&nbsp;Involution, die zwei Axiome sind die beiden Reduktionsschritte, und der
+  &ldquo;Wert der Form&rdquo; ist der einzige Fourier-Peak bei der Nyquist-Frequenz
+  <code>k = N/2</code> (die Parität). B ist derselbe Peak für ein großes <code>r</code>:
+  die QFT ist buchstäblich die diskrete Fourier-Transformation, die den Peak bei
+  <code>k = N/r</code> hervorhebt. Und die &ldquo;imaginäre&rdquo; Ebene trifft sich in beiden:
+  A&rsquo;s oszillierender Re-Entry-Wert (logisches <code>&radic;(&minus;1)</code>) und
+  B&rsquo;s komplexe Phase <code>e<sup>2&pi;ixk/N</sup></code> (wörtliches
+  <code>i=&radic;(&minus;1)</code>) sind die zwei Gesichter desselben Phänomens &mdash;
+  der Moment, in dem die statische binäre/echte Welt zur oszillierenden/komplexen wird.
+  <strong>Minimality (A) und Hardness (B) sind die beiden Enden einer Achse: &ldquo;Wie groß
+  ist die Periode, die ich finden muss?&rdquo;</strong> &mdash; und das Erkennungsprinzip
+  <em>Transform &rarr; Periode &rarr; Antwort</em> bleibt dabei konstant.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p>Ein 2D-Canvas, das die fusionierte Idee lebt: <em>oben</em> die wiederholende Form/
+  Signal-Sequenz <code>s[x]</code> (eine &ldquo;Barcode&rdquo;-Zeile mit Periode&nbsp;r; bei
+  <code>r=2</code> die <code>&larr;</code>/<code>&empty;</code>-Oszillation aus A),
+  <em>unten</em> ihr Fourier-Spektrum <code>|DFT&nbsp;s[k]|</code> &mdash; mit genau einem
+  dominanten Peak bei <code>k = N/r</code>. Ein Regler wählt die Periode <code>r</code>
+  (Teiler von <code>N=60</code>): <strong>r=2 ist die Welt von A</strong> (Parität,
+  determiniert, Nyquist-Peak, <code>&larr;(&larr;)=&empty;</code>), <strong>r&gt;2 die Welt
+  von B</strong> (Shor-Periode, z.&nbsp;B. <code>N=15,a=7&rarr;r=4</code>, dann
+  <code>GCD(7&sup2;&plusmn;1,15)=3,5</code>). Ziehen Sie den Regler und beobachten Sie, wie
+  ein einziger Peak die Periode verrät &mdash; in beiden Papiern dieselbe Geste.</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>Signal s[x] = 1 (marked)</span>
+      <span><span class="sw" style="background:var(--grid); opacity:.4"></span>Signal s[x] = 0 (unmarked)</span>
+      <span><span class="sw" style="background:var(--accent2)"></span>Spektrum |DFT s[k]|</span>
+      <span><span class="sw" style="background:var(--accent4)"></span>dominanter Peak &rarr; Periode r</span>
+    </div>
+    <div class="viz-controls">
+      <div class="grp">Periode r (Teiler von N=60)
+        <input type="range" id="rRange" min="0" max="9" step="1" value="0"></div>
+      <div class="grp">r-Wert <b id="rVal">2</b>
+        <span></span></div>
+      <div class="grp">Bewegung
+        <button class="ctl on" id="playBtn">Pause</button></div>
+      <div class="grp">Theme
+        <button class="ctl" id="themeBtn">hell/dunkel</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../lawsofform.html"><strong>lawsofform.html &mdash; Laws of Form</strong></a>
+  &mdash; Interaktive Erkundung des Spencer-Brown-Kalküls (1969): die Unterscheidung, die zwei
+  Axiome (Aufruf <code>&larr;&larr;=&larr;</code>, Überschreiten <code>&larr;(&larr;)=&empty;</code>),
+  die Boolesche Lesart (Mark=NOT, Nachbarschaft=OR) und Re-Entry als selbstreferenzielle
+  Oszillation / &ldquo;imaginärer&rdquo; Wert. (Quelle A &mdash; der Periode-2-Prototyp.)</p>
+  <p class="src"><a href="../shors_algorithm.html"><strong>shors_algorithm.html &mdash; Shor&rsquo;s Algorithmus</strong></a>
+  &mdash; Interaktive Demo der quantenmechanischen Faktorisierung: Reduktion auf
+  Periodenfindung von <code>f(x)=a<sup>x</sup> mod N</code>, der QFT als Fourier-Peak bei
+  <code>N/r</code>, Fortgesetzte Brüche, und <code>GCD(a<sup>r/2</sup>&plusmn;1, N)</code> als
+  Faktor-Extraktion (z.&nbsp;B. <code>N=15,a=7&rarr;r=4&rarr;3&middot;5</code>). (Quelle B &mdash;
+  die großperiodige Anwendung.)</p>
+</section>
+
+<footer>
+  Fusion (Round 1, nicht-AI-Track, Paar 024). Selbstenthalten, ohne Netzwerk-Datenzugriffe;
+  alle Daten (Signal-Sequenz, DFT-Spektrum, konkrete Beispiele) werden im Browser berechnet.
+</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !readout || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2, L = 60;
+  var rList = [2,3,4,5,6,10,12,15,20,30];
+  var state = { idx:0, playing:true, t:0, s:[], mags:[], kstar:1, maxAll:1, r:2 };
+  var pal = {};
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg:    toRgb(cssVar('--bg')),
+      panel: toRgb(cssVar('--panel')),
+      grid:  toRgb(cssVar('--grid')),
+      border:toRgb(cssVar('--border')),
+      fg:    toRgb(cssVar('--fg')),
+      muted: toRgb(cssVar('--muted')),
+      accent:toRgb(cssVar('--accent')),
+      accent2:toRgb(cssVar('--accent2')),
+      accent3:toRgb(cssVar('--accent3')),
+      accent4:toRgb(cssVar('--accent4'))
+    };
+  }
+
+  function makeSignal(r){
+    var s=new Array(L), half=Math.ceil(r/2), x;
+    for(x=0;x<L;x++){ s[x]=((x%r)<half)?1:0; }
+    return s;
+  }
+  function dftMags(s){
+    var mags=new Array(L/2+1), k,x,ang,re,im;
+    for(k=0;k<=L/2;k++){
+      re=0; im=0;
+      for(x=0;x<L;x++){ ang=-TAU*x*k/L; re+=s[x]*Math.cos(ang); im+=s[x]*Math.sin(ang); }
+      mags[k]=Math.sqrt(re*re+im*im);
+    }
+    return mags;
+  }
+  function recompute(){
+    var r=rList[state.idx];
+    state.r=r;
+    state.s=makeSignal(r);
+    state.mags=dftMags(state.s);
+    var best=-1, ks=1, k;
+    for(k=1;k<=L/2;k++){ if(state.mags[k]>best){ best=state.mags[k]; ks=k; } }
+    state.kstar=ks;
+    state.maxAll=state.mags[0];
+    for(k=1;k<=L/2;k++){ if(state.mags[k]>state.maxAll){ state.maxAll=state.mags[k]; } }
+  }
+
+  function draw(t){
+    var w=wrap.clientWidth, h=470, dpr=Math.min(window.devicePixelRatio||1,2);
+    if(w<10){ w=10; }
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var r=state.r, s=state.s, mags=state.mags, kstar=state.kstar, maxAll=state.maxAll;
+    var padL=48, padR=18;
+    var top={x:padL, y:52, w:w-padL-padR, h:150};
+    var bot={x:padL, y:top.y+top.h+56, w:w-padL-padR, h:150};
+
+    ctx.textBaseline='top';
+    ctx.font='12px system-ui, sans-serif';
+    ctx.fillStyle=rgba(pal.muted,1);
+    ctx.fillText('Zeitdom\u00e4ne \u2014 die wiederholende Form  s[x]   (Periode r = '+r+')', top.x, top.y-30);
+    ctx.fillText('Spektrum \u2014 |DFT s[k]|   \u2192   einziger Peak bei k = N/r', bot.x, bot.y-30);
+
+    var n=L, step=top.w/n, x;
+    for(x=0;x<n;x++){
+      var xp=top.x + x*step;
+      if(s[x]){ ctx.fillStyle=rgba(pal.accent,0.85); ctx.fillRect(xp+0.5, top.y, step-1, top.h); }
+      else    { ctx.fillStyle=rgba(pal.grid,0.16);   ctx.fillRect(xp+0.5, top.y, step-1, top.h); }
+    }
+    ctx.strokeStyle=rgba(pal.border,0.9); ctx.lineWidth=1; ctx.strokeRect(top.x, top.y, top.w, top.h);
+
+    if(r===2){
+      ctx.font='13px monospace'; ctx.textBaseline='middle';
+      for(x=0;x<n;x+=2){
+        ctx.fillStyle=rgba(pal.accent4,0.95);
+        ctx.fillText('\u2310', top.x + x*step + step*0.5, top.y + top.h*0.32);
+        ctx.fillStyle=rgba(pal.muted,0.95);
+        ctx.fillText('\u2205', top.x + (x+1)*step + step*0.5, top.y + top.h*0.32);
+      }
+      ctx.textBaseline='top';
+    }
+
+    if(state.playing){
+      var sweep=((t*0.10)%1), sx=top.x + sweep*top.w;
+      ctx.strokeStyle=rgba(pal.accent3,0.7); ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(sx, top.y-4); ctx.lineTo(sx, top.y+top.h+4); ctx.stroke();
+    }
+
+    var nb=L/2, bstep=bot.w/(nb+1), pulse=0.5+0.5*Math.sin(t*3.5), kk;
+    for(kk=0;kk<=nb;kk++){
+      var bh=(mags[kk]/maxAll)*bot.h;
+      var bx=bot.x + kk*bstep + bstep*0.15, bw=bstep*0.7, by=bot.y + bot.h - bh;
+      var isPeak=(kk===kstar);
+      var col = kk===0 ? pal.muted : (isPeak ? pal.accent4 : pal.accent2);
+      var al = kk===0 ? 0.45 : (isPeak ? (0.55+0.45*pulse) : 0.9);
+      ctx.fillStyle=rgba(col, al);
+      ctx.fillRect(bx, by, bw, Math.max(1,bh));
+    }
+    ctx.strokeStyle=rgba(pal.border,0.9); ctx.lineWidth=1; ctx.strokeRect(bot.x, bot.y, bot.w, bot.h);
+
+    var mkx=bot.x + kstar*bstep + bstep*0.5;
+    ctx.strokeStyle=rgba(pal.accent4,0.95); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(mkx, bot.y-8); ctx.lineTo(mkx, bot.y+bot.h); ctx.stroke();
+    ctx.fillStyle=rgba(pal.accent4,1); ctx.font='12px system-ui, sans-serif'; ctx.textBaseline='bottom';
+    ctx.fillText('k* = '+kstar+'  \u2192  r = N/k* = '+Math.round(L/kstar), mkx+5, bot.y-6);
+
+    ctx.fillStyle=rgba(pal.muted,0.9); ctx.textBaseline='top'; ctx.font='10px system-ui, sans-serif';
+    ctx.fillText('k=0', bot.x, bot.y+bot.h+5);
+    ctx.fillText('k=N/2='+nb, bot.x+bot.w-40, bot.y+bot.h+5);
+    ctx.textBaseline='top';
+  }
+
+  function setReadout(){
+    var r=state.r, kr=Math.round(L/r);
+    if(r===2){
+      readout.innerHTML='<b>r = 2 \u2014 die Welt von A (Laws of Form).</b> Der Peak liegt bei '+
+        'k = N/2 = 30 (Nyquist). Die Form ist die Abfolge \u2310/\u2205; <code>\u2310(\u2310)=\u2205</code> '+
+        'und <code>\u2310\u2310=\u2310</code> sagen: nur die Parit\u00e4t z\u00e4hlt. Der Wert jeder Form '+
+        'ist <em>gerade/ungerade</em> \u2014 exakt, determiniert, ohne Messen. Der Fourier-Peak ist hier die '+
+        '<b>Parit\u00e4t</b> selbst.';
+    } else {
+      readout.innerHTML='<b>r = '+r+' \u2014 die Welt von B (Shor).</b> Die QFT hebt die Periode als Peak '+
+        'bei k = N/r = '+kr+' hervor; daraus folgt r = N/k*. So findet man die Periode von '+
+        '<code>f(x)=a^x mod N</code>. Konkret: <b>N=15, a=7</b> \u2192 Periode <code>r=4</code> \u2192 '+
+        '<code>GCD(7\u00b2\u22121,15)=3</code>, <code>GCD(7\u00b2+1,15)=5</code> \u2192 15 = 3\u00b75. '+
+        'Klassisch ~10<sup>300</sup> Schritte, Shor <code>O((log N)\u00b3)</code>. Der Wert ist hier '+
+        '<em>wahrscheinlich</em> (messen + wiederholen).';
+    }
+  }
+
+  var rRange=document.getElementById('rRange');
+  var rVal=document.getElementById('rVal');
+  var playBtn=document.getElementById('playBtn');
+  var themeBtn=document.getElementById('themeBtn');
+
+  if(rRange){
+    rRange.addEventListener('input',function(){
+      state.idx=parseInt(this.value,10)||0;
+      recompute();
+      setReadout();
+      if(rVal){ rVal.textContent=rList[state.idx]; }
+    });
+  }
+  if(playBtn){
+    playBtn.addEventListener('click',function(){
+      state.playing=!state.playing;
+      this.classList.toggle('on', state.playing);
+      this.textContent=state.playing?'Pause':'Play';
+    });
+  }
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      document.documentElement.classList.toggle('dark');
+      readPal();
+    });
+  }
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change', onScheme); }
+  }
+
+  readPal();
+  recompute();
+  setReadout();
+  if(rVal){ rVal.textContent=rList[state.idx]; }
+
+  var last=performance.now();
+  function loop(now){
+    var dt=(now-last)/1000; last=now;
+    if(dt>0.1){ dt=0.1; }
+    if(state.playing){ state.t += dt; }
+    draw(state.t);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

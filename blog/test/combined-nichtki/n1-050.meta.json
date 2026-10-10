@@ -1,0 +1,15 @@
+{
+  "no": "050",
+  "a": "bewusstsein.html",
+  "b": "windows.html",
+  "a_title": "Qualia & Bewusstsein – Interaktive Visualisierung",
+  "b_title": "Die Geschichte von Windows - Interaktive Reise",
+  "combined_theme": "bewusstsein-als-fenster",
+  "one_line": "Bewusstsein als „Fenster“ über dem neuronalen „Kernel“: Abstraktionsschichten (GUI über Kernel = phänomenales Erleben über neuronalen Prozessen), die sich vereinigen wie die DOS- und NT-Linie in Windows XP.",
+  "contradictions": [
+    "B (windows) reduziert jede Abstraktionsschicht auf den Kernel — die GUI ist „nichts außer“ dem Kernel; A (bewusstsein) hält das phänomenale Erleben für irreduzibel (Eigenschaftsdualismus, Zombie-Argument, Marys Zimmer): über den neuronalen Prozessen bleibt etwas Eigenes.",
+    "A behandelt die Erklärungslücke (Hard Problem) als fundamentales, möglicherweise unüberbrückbares Mysterium (Mystizianismus, McGinn); B behandelt Lücken als entworfen und schließbare Ingenieursprobleme, die man per Abstraktionsschicht „löst“."
+  ],
+  "resolution": "Reduktion und Irreduzibilität gelten auf verschiedenen Ebenen: der Zugang-„Kernel“ (die funktionellen „leichten Probleme“) ist reduzierbar, das „Fenster“ (das phänomenale Erleben) ist die emergente Präsentations-Eigenschaft der Schicht. Die Erklärungslücke ist damit die GUI/Kernel-Abstraktionsgrenze — real, aber Eigenschaft der Schichtung, kein Bug; die GWT ist der „XP-Merge“ von Zugang und phänomenalem Bewusstsein.",
+  "viz": "Canvas: zwei Linien (Zugang/„Kernel“, läuft immer + phänomenales „Fenster“) vereinigen sich im Globalen Arbeitsraum (≈ XP-Merge); ein Regler „Bewusstseinsgrad“ leuchtet das erlebte Fenster von Zombie (0, nur Kernel) bis vollem Erleben (100) auf."
+}

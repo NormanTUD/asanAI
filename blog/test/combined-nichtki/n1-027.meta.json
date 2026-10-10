@@ -1,0 +1,16 @@
+{
+  "no": "027",
+  "a": "paper/power_of_analogy.html",
+  "b": "product_coproduct.html",
+  "a_title": "Spinnenseide ↔ Musik — Visuelle Paper-Tour (Giesa, Spivak & Buehler 2011)",
+  "b_title": "Products ⊗ Coproducts — Category Theory Interactive Explorer",
+  "combined_theme": "strukturerhaltende-analogie",
+  "one_line": "Die Analogie trägt sich nicht über den Inhalt, sondern über die universelle Form der Kombination: ein Funktor (A) ist struktur- und damit limes-/kolimes-treu genau dann, wenn er Produkt/Koprodukt + Dualität (B) bewahrt.",
+  "contradictions": [
+    "Tragende Kraft: A lokalisiert die Macht im Funktor/Mapping (Strenge = jeder Begriff muss präzis zugeordnet sein, sonst kein Funktor — die Strenge des Transports); B lokalisiert sie in der universellen Eigenschaft/Dualität (jeder Produktsatz ⇔ Koproduktsatz — die Strenge des Konstruks). Brücke vs. Bauplan sind zwei unterschiedliche Antworten darauf, was die tragende Rolle spielt.",
+    "Eindeutigkeit ∃!: B ruht auf garantiert eindeutiger Abbildung (∃!, in Set eisenfest); A (Kritik 1) hält die Faltung für nicht-deterministisch (ein Protein → mehrere Sekundärstrukturen) und die Eindeutigkeit der funktionalen Beziehung für gefährdet — ∃!-Axiom vs. '∃?' in der realen Domäne.",
+    "Verlustfreiheit des Transfers: B's Dualität ist absolut/verlustfrei (Pfeile umkehren ⇒ jeder Satz trägt sich 1:1); A (Kritik 2) behauptet, ein Funktor übertrage Struktur, aber nicht Bewertung (objektiv MPa vs. subjektiv 'schön') — verlustfrei vs. verlustbehaftet."
+  ],
+  "resolution": "Transport vs. Fracht: Ein Funktor ist exakt die Abbildung, die universelle Eigenschaften erhält (limes-/kolimes-erhaltend), also fallen 'Brücke' (A) und 'Bauplan' (B) in einem limes-/kolimes-erhaltenden Funktor zusammen. ∃! gilt auf der abstrakten Form-Ebene (das hierarchische Skelett), auch wo der physikalische Mechanismus (Faltung) mehrdeutig ist — A's 'Protein-Grammatik' (Umgebungsbedingungen fixieren) macht es auf der Form-Ebene wieder eindeutig. Der Transfer ist verlustfrei innerhalb der strukturellen Kategorie und explizit still auf der Bewertungs-Ebene: Struktur ist unter Funktor/Dualität invariant, 'Bewertung' gehört gar nicht zur Kategorie. Fusionierter Schluss: eine zuverlässige Analogie = ein struktur-erhaltender (limes-/kolimes-erhaltender) Funktor zwischen zwei Domänen-Kategorien.",
+  "viz": "Canvas 'Funktor-Brücke': zwei 5-Ebenen-Kolumnen (Seide: Aminosäure→Peptid→Polypeptid→Protein→Nanocomposite; Musik: Klangwelle→Stack→Ton→Akkord→Riff) mit horizontalen Funktor-Pfeilen ≅ (Analogie, A) und vertikalen Kombinationspfeilen; Umschalter kehrt alle vertikalen Pfeile um (Kombination/Koprodukt ↔ Projektion/Produkt = B's Dualität) und zeigt, dass die ≅-Pfeile (die Analogie) dabei erhalten bleiben; darunter nicht-monotone Kurve τ(N) (N-Regler 1..8): Peak bei 3-4 (optimal, kooperativer Bruch), Abfall bei 8 (mehr ist nicht besser). Farben aus CSS-Variablen (:root Light / html.dark Dark-Default), themenreaktiv, inline Daten, kein CDN."
+}

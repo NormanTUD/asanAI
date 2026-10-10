@@ -1,0 +1,16 @@
+{
+  "no": "087",
+  "a": "commutative_diagram.html",
+  "b": "eigen.html",
+  "a_title": "Kommutative Diagramme – Visuell & Intuitiv",
+  "b_title": "Eigenvectors — See the Unseen Axes of Transformation",
+  "combined_theme": "kommutativ-eigen",
+  "one_line": "Ein Eigenvektor ist genau die Richtung, in der sich eine Transformation A mit dem Hinsehen auf sie (der Projektion P) vertauscht — A∘P = P∘A ist das kommutative Quadrat von A, auf eine Eigenlinie gekippt, und A v = λ v ist dieselbe Gleichung in Diagramm-Form.",
+  "contradictions": [
+    "Invarianz als Regel vs. Ausnahme: A feiert universelle Vertauschbarkeit ('egal welchen Weg, selbes Ziel', Garben-Bedingung als Konsistenz-Versprechen); B sagt, fast jede Richtung wird gedreht und nur wenige 'goldene Achsen' (Eigenvektoren) bleiben erhalten — Invarianz als Ausnahme, nicht Norm.",
+    "Die Zahl: A beginnt mit 'Vergiss Symbole' und behauptet, nur die Form der Komposition (β∘f = g∘α) zähle, nicht ihre Größe — der Skalierungsfaktor ist unsichtbar; B macht ausgerechnet diesen Faktor, den Eigenwert λ, zum Kern ('It tells you how much the vector gets scaled').",
+    "Existenz: A's Konsistenz-/Verklebungsvoraussetzung ist prüfbar und immer erfüllbar ('Stimmen überein → Verkleben möglich'); B zeigt, dass reelle Eigenvektoren gar nicht existieren können (reine Drehung → komplexe Eigenwerte, 'No direction stays on its line')."
+  ],
+  "resolution": "Beide stellen dieselbe Frage in zwei Zoomstufen: 'Auf welchen Weg / welchen Unterraum schließt das Diagramm?' Ein Eigenvektor ist ein eindimensionales kommutatives Quadrat (A bildet seine Linie auf sich ab, also A∘P=P∘A); λ ist die Größe, die das Quadrat durch Symmetrie versteckt und die Spektralansicht freilegt; 'kein reeller Eigenvektor' heißt 'das Quadrat schließt für keinen 1D-Unterraum' (reine Drehung dreht jede Linie weg).",
+  "viz": "Theme-aware Canvas: 2×2-Matrix-Editor; Pfeilfeld-Modus (36 Richtungen, Eigenachsen gold/türkis bleiben auf ihrer Linie) + Inset 'Das kommutative Quadrat des Eigenvektors' (v indigo, A v=λ v gold auf derselben Geraden → A∘P=P∘A ✓); Power-Iteration-Modus, in dem Aⁿ eine Vektorwolke auf den dominanten Eigenvektor konvergieren lässt. Inline data only, keine Netzwerk-Fetches."
+}

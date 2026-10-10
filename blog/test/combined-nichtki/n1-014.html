@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kohärente Verschiedenheit — Philosophie ohne Zentrum</title>
+<script>try{if(localStorage.getItem('n014theme')==='light')document.documentElement.classList.remove('dark');}catch(e){}</script>
+<style>
+  :root{
+    --bg:#f6f3ea;
+    --fg:#211d16;
+    --muted:#6d6250;
+    --card:#ffffff;
+    --card-2:#f0ecdf;
+    --border:#d8d1bf;
+    --accent:#a05a1e;
+    --accent-2:#3f6f5a;
+    --edge:#b9ae95;
+    --node-fill:#ffffff;
+    --node-hover:#fbe7cf;
+    --node-stroke:#3a2f1e;
+    --shadow:rgba(60,45,20,.10);
+  }
+  html.dark{
+    --bg:#0e0f13;
+    --fg:#ece7db;
+    --muted:#9a9284;
+    --card:#171922;
+    --card-2:#12141b;
+    --border:#2a2d3a;
+    --accent:#e0913f;
+    --accent-2:#6cc0a0;
+    --edge:#3a3d4c;
+    --node-fill:#1d2030;
+    --node-hover:#2b2436;
+    --node-stroke:#c9bda3;
+    --shadow:rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--bg);
+    color:var(--fg);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  article{
+    max-width:820px;
+    margin:0 auto;
+    padding:48px 22px 90px;
+  }
+  header h1{
+    font-size:clamp(1.9rem,4.6vw,2.9rem);
+    line-height:1.15;
+    letter-spacing:-.01em;
+    margin-bottom:.5rem;
+  }
+  .subtitle{
+    color:var(--muted);
+    font-style:italic;
+    font-size:1.02rem;
+    margin-bottom:2.2rem;
+    padding-bottom:1.2rem;
+    border-bottom:1px solid var(--border);
+  }
+  section{margin-bottom:2.6rem;}
+  section > h2{
+    font-size:1.45rem;
+    margin-bottom:1rem;
+    color:var(--accent);
+    border-left:4px solid var(--accent);
+    padding-left:.7rem;
+  }
+  section h3{
+    font-size:1.12rem;
+    margin:1.4rem 0 .5rem;
+    color:var(--accent-2);
+  }
+  p{margin-bottom:1rem;}
+  p:last-child{margin-bottom:0;}
+  em{color:var(--fg);}
+  strong{color:var(--fg);}
+  .lead{font-size:1.1rem;}
+  ul{margin:0 0 1rem 1.2rem;}
+  li{margin-bottom:.5rem;}
+  .tag{
+    display:inline-block;
+    font-size:.72rem;
+    font-family:system-ui,sans-serif;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    padding:.15rem .5rem;
+    border:1px solid var(--border);
+    border-radius:999px;
+    color:var(--muted);
+    margin-right:.35rem;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:1rem 1.2rem;
+    margin-bottom:.9rem;
+    box-shadow:0 6px 22px var(--shadow);
+  }
+  .card .name{font-weight:bold;}
+  .card .q{color:var(--muted);font-style:italic;font-size:.94rem;}
+  .branch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem;margin:.4rem 0 1rem;}
+  .math{
+    font-family:'Cambria Math','STIX Two Math',Georgia,serif;
+    background:var(--card-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:.9rem 1.1rem;
+    margin:.8rem 0;
+    font-size:1.02rem;
+    line-height:1.7;
+    overflow-x:auto;
+  }
+  .math .sym{color:var(--accent);font-style:italic;}
+  .prose-note{color:var(--muted);font-size:.95rem;}
+
+  /* ---- viz ---- */
+  .viz-wrap{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1rem;
+    box-shadow:0 8px 30px var(--shadow);
+  }
+  .viz-controls{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:.4rem 0 1rem;}
+  .viz-controls button{
+    font-family:inherit;font-size:.95rem;
+    background:var(--card-2);color:var(--fg);
+    border:1px solid var(--border);
+    padding:.55rem 1.05rem;border-radius:9px;cursor:pointer;
+    transition:background .2s,border-color .2s,transform .1s;
+  }
+  .viz-controls button:hover{border-color:var(--accent);}
+  .viz-controls button.active{background:var(--accent);color:var(--bg);border-color:var(--accent);transform:translateY(-1px);}
+  #viz{width:100%;height:auto;display:block;}
+  .edge{stroke:var(--edge);stroke-width:1.4;fill:none;transition:opacity .35s,stroke .35s,stroke-width .35s;}
+  .cohere{stroke-dasharray:5 5;opacity:.22;}
+  .cohere.on{opacity:.55;stroke:var(--accent-2);stroke-width:1.7;stroke-dasharray:none;}
+  .spoke{opacity:.16;}
+  .spoke.on{opacity:.85;stroke:var(--accent);stroke-width:2.2;}
+  .edge.focus{opacity:1 !important;stroke:var(--accent) !important;stroke-width:3.2 !important;stroke-dasharray:none;}
+  .center circle{fill:var(--node-fill);stroke:var(--accent);stroke-width:3.5;transition:opacity .45s;}
+  .center.ghost circle{opacity:.12;}
+  .center text{fill:var(--fg);transition:opacity .45s;}
+  .center.ghost .c-main{opacity:.5;}
+  .center.ghost .c-sub{opacity:.4;}
+  .c-main{font-size:26px;font-style:italic;}
+  .c-sub{font-size:12px;fill:var(--muted);}
+  .pnode circle{fill:var(--node-fill);stroke:var(--node-stroke);stroke-width:2.4;cursor:pointer;transition:stroke .2s,fill .2s,stroke-width .2s;}
+  .pnode:hover circle,.pnode.focus circle{stroke:var(--accent);fill:var(--node-hover);stroke-width:3.2;}
+  .pnode .glyph{font-size:24px;text-anchor:middle;pointer-events:none;}
+  .pnode .lbl{font-size:13px;fill:var(--fg);text-anchor:middle;pointer-events:none;font-family:system-ui,sans-serif;}
+  .viz-readout{
+    margin-top:1rem;min-height:3.2rem;text-align:center;
+    font-style:italic;color:var(--accent);
+    background:var(--card-2);border:1px solid var(--border);
+    border-radius:10px;padding:.8rem 1rem;
+  }
+  .viz-hint{text-align:center;color:var(--muted);font-size:.85rem;margin-top:.7rem;}
+
+  /* theme toggle */
+  #themeToggle{
+    position:fixed;top:16px;right:16px;z-index:50;
+    width:44px;height:44px;border-radius:50%;
+    background:var(--card);color:var(--fg);
+    border:1px solid var(--border);cursor:pointer;
+    font-size:1.2rem;box-shadow:0 4px 16px var(--shadow);
+  }
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--border);}
+  a:hover{border-bottom-color:var(--accent);}
+  footer{margin-top:3rem;color:var(--muted);font-size:.85rem;text-align:center;border-top:1px solid var(--border);padding-top:1.4rem;}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Theme wechseln" aria-label="Theme wechseln">🌙</button>
+<article>
+  <header>
+    <h1>Kohärente Verschiedenheit — Philosophie ohne Zentrum</h1>
+    <div class="subtitle">Fusion aus: philosophy.html ✕ zug_idee.html</div>
+  </header>
+
+  <!-- 1 -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">
+      Was wir „das Eine" nennen — eine Wirklichkeit, ein Sinn, eine Identität, ein „Gleiche" —
+      ist <strong>kein verborgenes Ding hinter den Dingen</strong>, sondern das
+      <em>kohärente Zusammenspiel verschiedener Perspektiven</em>. Diese eine These verbindet
+      beide Papiere: <span class="tag">philosophy.html</span> liefert die <em>Menge der
+      Perspektiven</em> (die fünf Fächer und ihre Fragen); <span class="tag">zug_idee.html</span>
+      liefert das <em>Klebeprinzip</em> (Einheit als Kohärenz, ohne Zentrum).
+    </p>
+    <p>
+      Die erste Seite ordnet Philosophie in fünf Fächer — Metaphysik, Erkenntnistheorie, Ethik,
+      Logik, Ästhetik — und zeigt an klassischen Dilemmata, wie große Denker darauf antworten.
+      Die zweite Seite reduziert das Ganze auf eine Struktur: Im Zug passen Sehen, Hören, Spüren
+      und Verorten zusammen, doch <em>keine</em> dieser Empfindungen „ist" der Zug, und kein
+      Zentrum muss dahinter stehen. „Dasselbe" ist das Netz der Kohärenzen.
+    </p>
+    <p>
+      Die Fusion lautet: Die fünf Fächer sind nicht auf ein „Gegenstands-Ding namens Philosophie"
+      gerichtet, sondern <em>aufeinander kohärent</em>. Erkenntnis, Sinn und Identität sind
+      <strong>kohärente Verschiedenheit</strong> — und Raum ist nur die Form, in der wir dieses
+      Prinzip am unmittelbarsten sehen (als Nähe, Ferne, Richtung, Weg).
+    </p>
+  </section>
+
+  <!-- 2 -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>
+      Die beiden Papiere stehen nicht bloß nebeneinander, sondern nehmen an zwei Punkten
+      unvereinbare Haltungen ein.
+    </p>
+
+    <h3>Widerspruch 1 — das Fundament: Substanz vs. Kohärenz</h3>
+    <p>
+      <span class="tag">A</span> setzt das klassische „Ding hinter den Erscheinungen" als
+      <em>Ausgangsposition</em>. Metaphysik fragt „Was ist Wirklichkeit?"; im Zeitleisten-Eintrag
+      steht Platons „Welt idealer <strong>Formen hinter</strong> unserer Wirklichkeit"; Descartes
+      findet, indem er alles bezweifelt, <em>eine</em> Sicherheit — das denkende Ding („Ich denke,
+      also bin ich"); Kant: unsere Geister formen die Wirklichkeit, <em>und die Wirklichkeit formt
+      unsere Geister</em>. Die ganze Landkarte von A baut auf stabilen, festen Objekten mit
+      starrer Identität auf (das Match-Spiel ordnet jedem Philosophen genau <em>eine</em> fixe Idee
+      zu).
+    </p>
+    <p>
+      <span class="tag">B</span> kehrt genau das um: „<em>Das Zentrum verschwindet.</em>" Es gibt
+      kein zentrales Ding; „Dasselbe" ist <strong>nicht</strong> ein verstecktes Ding hinter den
+      Perspektiven, sondern das Netz der Kohärenzen zwischen ihnen. „Verschiedenheit muss nicht
+      aufgehoben werden, um Einheit zu erzeugen." Das „bequeme" Zentrum, auf das A baut, erklärt B
+      zum Illusorischen.
+    </p>
+
+    <h3>Widerspruch 2 — intrinsischer Sinn vs. relationaler Sinn</h3>
+    <p>
+      <span class="tag">A</span> stellt die Frage „Kann eine Maschine wirklich denken?" als
+      <em>Substrat-Problem</em>: Searles Chinesischer Raum — „Symbole zu verarbeiten ist nicht
+      Verstehen" — und Chalmers' „hartes Problem des Bewusstseins" werden als <em>offene Frage
+      nach einem inneren Verstehen</em> präsentiert, das ein System <strong>hat</strong> oder
+      <strong>nicht hat</strong>. „Verstehen" ist hier eine Eigenschaft, die intrinsisch sein
+      müsste.
+    </p>
+    <p>
+      <span class="tag">B</span> leugnet intrinsischen Sinn von Grund auf: „Ein Sprachmodell weiß
+      nicht, was ‚Katze' <em>ist</em>. Es weiß nur, <strong>wo</strong> ‚Katze' in einem Netz von
+      Beziehungen liegt." Bedeutung ist <em>keine Eigenschaft des Wortes</em>, sondern eine
+      <em>Position im Relationsnetz</em>. Für B gibt es kein weiteres „Was-es-ist" hinter der
+      Position zu entdecken — genau das intrinsische „Verstehen", nach dem A (via Searle/Chalmers)
+      fragt, ist für B ein Fall derselben „verstecktes Zentrum"-Illusion.
+    </p>
+
+    <p class="prose-note">
+      <strong>Nächste echte Spannung (weicher, methodisch):</strong> A autorisiert durch
+      <em>Figuren</em> (Identität = Person + fixe Lehre), B durch <em>Struktur</em> (ein Muster,
+      isomorph in mehreren Domänen). Für B ist gerade die „Stabilität der Identität" das, was in
+      Frage steht — also das Gerüst, mit dem A argumentiert.
+    </p>
+  </section>
+
+  <!-- 3 -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <h3>Zu Widerspruch 1 — A liefert den Raum, B das Klebeprinzip</h3>
+    <p>
+      Die Rekonstruktion ist: A's Fächer sind keine Zeiger auf ein „Gegenstands-Ding", sondern
+      <em>einander begrenzende Perspektiven</em>. Ihr gemeinsamer „Gegenstand" ist keine Substanz,
+      sondern das Kohärenzmuster <em>zwischen</em> ihnen. Formal: Das „Objekt" <span class="sym">O</span>
+      ist der <strong>Limes</strong> (die Garbe) der Perspektive-Familie
+      <span class="sym">{P<sub>i</sub>}</span>, definiert durch deren Übereinstimmungen auf den
+      Überlappungen — <em>ohne</em> ein zusätzliches Zentrum. So werden Platons Ideen und
+      Descartes' Cogito von „Substanzen" zu <strong>Kohärenz-Polen</strong> umgedeutet: die
+      stabilsten Punkte <em>im</em> Netz, nicht Dinge <em>dahinter</em>. A behält seine Fächer,
+      aber sie sind jetzt Knoten eines Kohärenznetzes, nicht Anker an einer Substanz.
+    </p>
+
+    <h3>Zu Widerspruch 2 — das „harte Problem" verschiebt sich, statt sich aufzulösen</h3>
+    <p>
+      Unter B's relationaler These ist „Verstehen" keine innere Eigenschaft, die ein System hat
+      oder fehlt, sondern die <em>Kohärenz seiner relationalen Positionen</em>. A's Zweifel
+      (Searle, Chalmers) sind damit nicht widerlegt, aber <em>verschoben</em>: sie bleiben als
+      <strong>Perspektive im Netz</strong> bestehen — als kohärente Gegenposition, die das Netz
+      <em>aufnehmen</em> muss, statt sie zu widerlegen. Die Fusion hält A's Dilemmata als lebende
+      Knoten und B's Prinzip als <strong>Metaregel</strong>: <em>kein</em> Knoten — auch nicht
+      „intrinsisches Verstehen" — ist das Zentrum. „Das harte Problem" wird so zum
+      <em>Problem der Gewichtung der Kohärenzen</em>, nicht mehr zur Frage „hat das Substrat ein
+      inneres Ich?"
+    </p>
+  </section>
+
+  <!-- 4 -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>4.1 Die Fächer als Perspektiven (aus A)</h3>
+    <div class="branch-grid">
+      <div class="card"><span class="name">🤔 Metaphysik</span><br><span class="q">Was ist Wirklichkeit? Ist die Welt real, existiert Zeit, eine Seele — was heißt „sein"?</span></div>
+      <div class="card"><span class="name">🧠 Erkenntnistheorie</span><br><span class="q">Was können wir wissen? Wie wissen wir, was wir wissen? Können wir unseren Sinnen trauen?</span></div>
+      <div class="card"><span class="name">⚖️ Ethik</span><br><span class="q">Was ist richtig &amp; falsch? Liegen, um jemanden zu schützen — geht das? Stiehlt, um zu füttern?</span></div>
+      <div class="card"><span class="name">💬 Logik</span><br><span class="q">Wie sollen wir schlussfolgern? Gültige Argumente, Fehlschlüsse, Beweise Schritt für Schritt.</span></div>
+      <div class="card"><span class="name">🎨 Ästhetik</span><br><span class="q">Was ist Schönheit? Warum rührt ein Sonnenuntergang? Ist Geschmack subjektiv?</span></div>
+    </div>
+    <p class="prose-note">
+      Klassische Antworten, die A benennt: materialistisch (Schallwellen existieren ohne Ohr),
+      Berkeley („zusein heißt wahrgenommen werden"), Utilitaristen (größtes Gut), Kant (universelle
+      Regeln, keine Ausnahmen), Kohlberg (moralische Entwicklung), Spinoza (Harter Determinismus),
+      Hume (Kompatibilismus), Turing (verhält es sich wie Denken, genügt), Searle (Chinesischer
+      Raum), Chalmers (hartes Problem), Sartre („Existenz geht der Essenz vor"), Nietzsche
+      („Gott ist tot").
+    </p>
+
+    <h3>4.2 Das Zug-Experiment (aus B) — die Demonstration</h3>
+    <p>
+      Du sitzt im Zug. Sehen, Hören, Spüren, Verorten liefern Eindrücke, die <em>alle zueinander
+      passen</em> — sich nicht widersprechen, dieselbe Geschichte erzählen. Aber: kein einziger
+      Eindruck <strong>ist</strong> der Zug. Die klassische Antwort postiert ein Ding <em>hinter</em>
+      allen Empfindungen; die Empfindungen seien Perspektiven <em>auf</em> es. Der entscheidende
+      Sprung: Was, wenn es <em>kein</em> zentrales Ding gibt? „Der Zug" ist dann schlicht
+      <em>dass die Perspektiven zusammenpassen</em>. „Dasselbe" = das Netz der Kohärenzen.
+    </p>
+
+    <h3>4.3 Die Isomorphie-Familie (aus B) — dieselbe Struktur überall</h3>
+    <ul>
+      <li><strong>Zug:</strong> Sinnesmodalitäten, die zusammenpassen (lokal → kohärent → Einheit).</li>
+      <li><strong>KI-Embeddings:</strong> ein Wort „ist" nichts; Bedeutung = Position im Relationsnetz (nah „Hund", fern „Quasar").</li>
+      <li><strong>HoTT:</strong> „a = b" ist kein Ja/Nein, sondern ein <em>Raum von Wegen</em>; zwischen Wegen Homotopien — Gleichheit hat Struktur.</li>
+      <li><strong>Schmitz (Leibraum):</strong> Raum ist kein Punkt-Raum, sondern Enge, Weite, Richtung, Atmosphäre — Beziehung, aus der sich Räumlichkeit erst bildet.</li>
+      <li><strong>Garben:</strong> über jeder lokalen Region Daten, die auf Überlappungen zusammenpassen → kleben zu globalem Objekt.</li>
+      <li><strong>Kern:</strong> Verschiedenheit muss nicht aufgelöst werden, um Einheit zu erzeugen. Einheit <em>ist</em> das kohärente Zusammenspiel.</li>
+    </ul>
+
+    <h3>4.4 A's klassische Dilemmata als Instanzen der einen Struktur</h3>
+    <ul>
+      <li><strong>„Fällt ein Baum, niemand da — ertönt er?"</strong> → fragt „Was ist der Gegenstand?" Materialist: Kohärenz der Wellen; Berkeley: Kohärenz der Wahrnehmung; der Definitionsstreit <em>ist</em> das Netz der Kohärenz-Bedingungen.</li>
+      <li><strong>„Kann eine Maschine denken?"</strong> → Embeddings: Bedeutung als Position (Erkenntnistheorie/Ästhetik von A ↔ B). „Verstehen" = Kohärenz der relationalen Lage, kein Substrat.</li>
+      <li><strong>Freier Wille / Sinn des Lebens</strong> → die Zentrum-Frage: Gibt es eine Urheber/-Quelle (ein Zentrum), das „du" ist — oder nur Kohärenz, die als „du" auftritt?</li>
+    </ul>
+
+    <h3>4.5 Nützliche Mathematik (B, fusioniert)</h3>
+    <div class="math">
+      <strong>Garben / Kohärenz:</strong> lokale Schnitte <span class="sym">p<sub>i</sub></span> über Regionen
+      <span class="sym">U<sub>i</sub></span> kleben zu einem globalen <span class="sym">O</span>,
+      wenn sie auf den Überlappungen übereinstimmen:
+      <span class="sym">p<sub>i</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> = p<sub>j</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub></span>.
+      <span class="sym">O = lim {P<sub>i</sub>}</span> — global aus lokal Kohärentem, ohne Zentrum.<br><br>
+      <strong>HoTT:</strong> <span class="sym">a ≃ b</span> als <em>Raum</em> von Pfaden
+      <span class="sym">p: a → b</span>; zwischen Pfaden Homotopien, zwischen denen wieder —
+      Identität als (unendliche) Struktur, nicht als atomares <span class="sym">a = b</span>.<br><br>
+      <strong>Embeddings:</strong> Bedeutung ≈ Vektorposition <span class="sym">w ∈ ℝ<sup>n</sup></span>;
+      Ähnlichkeit = Nähe im metrischen Raum, z.&nbsp;B. <span class="sym">sim(u,v) = cos(w<sub>u</sub>, w<sub>v</sub>)</span>;
+      „Identität" = Nähe, nicht Intrinsik.<br><br>
+      <strong>Fusionsformel:</strong> Gegeben Perspektiven <span class="sym">{P<sub>i</sub>}</span> mit
+      Kohärenzrelationen (Übereinstimmung auf Überlappungen): Das „Objekt" <span class="sym">O</span>
+      ist definiert durch <span class="sym">{P<sub>i</sub>} +</span> ihre Kohärenzen, <em>ohne</em>
+      zusätzliches Zentrum. <strong>Einheit = kohärente Verschiedenheit.</strong>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="visualisierung">
+    <h2>Visualisierung — Perspektiven und das verschwindende Zentrum</h2>
+    <p>
+      Die fünf Fächer von A sind die fünf Perspektiven. In <em>klassischer</em> Mode steht hinter
+      ihnen ein zentrales „Ding" (die Substanz, auf die A's Landkarte baut). In <em>kohärenter</em>
+      Mode verschwindet das Zentrum — die Einheit ist dann nur noch das Netz der Kohärenzen
+      zwischen den Perspektiven (die Kernidee von B). Klicke eine Perspektive an, um zu sehen,
+      dass sie durch ihre <em>Kohärenz mit den anderen</em> zusammengehalten wird — nicht durch das
+      Zentrum.
+    </p>
+    <div class="viz-wrap">
+      <div class="viz-controls">
+        <button id="btnSubstance" class="active">Klassisch — Ding hinter den Perspektiven</button>
+        <button id="btnCoherence">Kohärent — Zentrum verschwindet</button>
+        <button id="btnReset">Zurücksetzen</button>
+      </div>
+      <svg id="viz" viewBox="0 0 700 640" role="img" aria-label="Fünf Perspektiven als Kohärenznetz mit optionaler Zentrum"></svg>
+      <div class="viz-readout" id="vizReadout"></div>
+      <div class="viz-hint">Tipp: „Klassisch" wählen, um das Zentrum zu sehen — dann „Kohärent", um es verschwinden zu lassen.</div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p>
+      <span class="tag">A</span>
+      <a href="../philosophy.html">philosophy.html</a> — <em>„Philosophy Made Simple":</em>
+      interaktive, fach- und personenbasierte Einführung in die fünf großen Fächer, klassische
+      Dilemmata mit Denkerpositionen und ein Zeitleisten-/Matching-Spiel.
+    </p>
+    <p>
+      <span class="tag">B</span>
+      <a href="../zug_idee.html">zug_idee.html</a> — <em>„Raum, Zug und kohärente
+      Verschiedenheit":</em> eine einzige These, dass Einheit Kohärenz ohne Zentrum ist, isomorph
+      demonstriert am Zug, an KI-Embeddings, an HoTT, Schmitz' Leibraum und Garben.
+    </p>
+  </section>
+
+  <footer>Fusion · Runde 1 · Paar 014 · nicht-künstlerische Sparte</footer>
+</article>
+
+<script>
+  // ---------- Theme toggle ----------
+  (function(){
+    var btn = document.getElementById('themeToggle');
+    function sync(){ btn.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀'; }
+    btn.addEventListener('click', function(){
+      var root = document.documentElement;
+      root.classList.toggle('dark');
+      try{ localStorage.setItem('n014theme', root.classList.contains('dark') ? 'dark' : 'light'); }catch(e){}
+      sync();
+    });
+    sync();
+  })();
+
+  // ---------- Viz ----------
+  (function(){
+    var SVGNS = 'http://www.w3.org/2000/svg';
+    var svg = document.getElementById('viz');
+    var readout = document.getElementById('vizReadout');
+    if(!svg || !readout) return;
+
+    var CX = 350, CY = 300, R = 200, NR = 46;
+    var P = [
+      {glyph:'🤔', name:'Metaphysik',        q:'Was ist Wirklichkeit?'},
+      {glyph:'🧠', name:'Erkenntnistheorie', q:'Was können wir wissen?'},
+      {glyph:'⚖️', name:'Ethik',           q:'Was ist richtig & falsch?'},
+      {glyph:'💬', name:'Logik',           q:'Wie sollen wir schlussfolgern?'},
+      {glyph:'🎨', name:'Ästhetik',        q:'Was ist Schönheit?'}
+    ];
+    var pos = P.map(function(_, i){
+      var a = -Math.PI/2 + i * 2*Math.PI / P.length;
+      return { x: CX + R*Math.cos(a), y: CY + R*Math.sin(a) };
+    });
+
+    var mode = 'substance';
+    var focus = null;
+
+    var gCohere = document.createElementNS(SVGNS,'g');
+    var gSpoke  = document.createElementNS(SVGNS,'g');
+    var gCenter = document.createElementNS(SVGNS,'g');
+    var gNodes  = document.createElementNS(SVGNS,'g');
+
+    // coherence edges (all pairs)
+    var cohereEls = [];
+    for(var i=0;i<P.length;i++){
+      for(var j=i+1;j<P.length;j++){
+        var l = document.createElementNS(SVGNS,'line');
+        l.setAttribute('x1',pos[i].x); l.setAttribute('y1',pos[i].y);
+        l.setAttribute('x2',pos[j].x); l.setAttribute('y2',pos[j].y);
+        l.setAttribute('data-i',i); l.setAttribute('data-j',j);
+        l.setAttribute('class','edge cohere');
+        gCohere.appendChild(l); cohereEls.push(l);
+      }
+    }
+    // spoke edges
+    var spokeEls = [];
+    for(var k=0;k<P.length;k++){
+      var s = document.createElementNS(SVGNS,'line');
+      s.setAttribute('x1',CX); s.setAttribute('y1',CY);
+      s.setAttribute('x2',pos[k].x); s.setAttribute('y2',pos[k].y);
+      s.setAttribute('data-i',k);
+      s.setAttribute('class','edge spoke');
+      gSpoke.appendChild(s); spokeEls.push(s);
+    }
+    // center
+    gCenter.setAttribute('class','center');
+    var cc = document.createElementNS(SVGNS,'circle');
+    cc.setAttribute('cx',CX); cc.setAttribute('cy',CY); cc.setAttribute('r',54);
+    gCenter.appendChild(cc);
+    var cMain = document.createElementNS(SVGNS,'text');
+    cMain.setAttribute('x',CX); cMain.setAttribute('y',CY+2);
+    cMain.setAttribute('text-anchor','middle'); cMain.setAttribute('class','c-main');
+    cMain.textContent = 'Zentrum';
+    gCenter.appendChild(cMain);
+    var cSub = document.createElementNS(SVGNS,'text');
+    cSub.setAttribute('x',CX); cSub.setAttribute('y',CY+22);
+    cSub.setAttribute('text-anchor','middle'); cSub.setAttribute('class','c-sub');
+    cSub.textContent = 'das Ding';
+    gCenter.appendChild(cSub);
+
+    // nodes
+    var nodeEls = [];
+    P.forEach(function(p,i){
+      var g = document.createElementNS(SVGNS,'g');
+      g.setAttribute('class','pnode'); g.setAttribute('data-i',i);
+      var c = document.createElementNS(SVGNS,'circle');
+      c.setAttribute('cx',pos[i].x); c.setAttribute('cy',pos[i].y); c.setAttribute('r',NR);
+      var gl = document.createElementNS(SVGNS,'text');
+      gl.setAttribute('x',pos[i].x); gl.setAttribute('y',pos[i].y+8);
+      gl.setAttribute('class','glyph'); gl.textContent = p.glyph;
+      var lb = document.createElementNS(SVGNS,'text');
+      lb.setAttribute('x',pos[i].x); lb.setAttribute('y',pos[i].y + NR + 18);
+      lb.setAttribute('class','lbl'); lb.textContent = p.name;
+      g.appendChild(c); g.appendChild(gl); g.appendChild(lb);
+      g.addEventListener('click', function(){
+        focus = (focus === i) ? null : i;
+        paint();
+      });
+      gNodes.appendChild(g); nodeEls.push(g);
+    });
+
+    svg.appendChild(gCohere);
+    svg.appendChild(gSpoke);
+    svg.appendChild(gCenter);
+    svg.appendChild(gNodes);
+
+    function paint(){
+      cohereEls.forEach(function(e){
+        var i = +e.getAttribute('data-i'), j = +e.getAttribute('data-j');
+        var cls = 'edge cohere';
+        if(mode === 'coherence') cls += ' on';
+        if(focus !== null && (i === focus || j === focus)) cls += ' focus';
+        e.setAttribute('class', cls);
+      });
+      spokeEls.forEach(function(e){
+        var i = +e.getAttribute('data-i');
+        var cls = 'edge spoke';
+        if(mode === 'substance') cls += ' on';
+        if(focus !== null && i === focus) cls += ' focus';
+        e.setAttribute('class', cls);
+      });
+      gCenter.classList.toggle('ghost', mode === 'coherence');
+      cMain.textContent = mode === 'coherence' ? '≃' : 'Zentrum';
+      cSub.textContent  = mode === 'coherence' ? 'nur Kohärenz' : 'das Ding';
+      nodeEls.forEach(function(g,i){
+        g.classList.toggle('focus', focus === i);
+      });
+      if(focus !== null){
+        readout.textContent = P[focus].name + ' (' + P[focus].q + ') ist an sich nicht die Einheit — sie wird durch ihre Kohärenz mit den übrigen Perspektiven zusammengehalten, nicht durch das Zentrum.';
+      } else if(mode === 'substance'){
+        readout.textContent = 'Klassisch (A): Hinter den Perspektiven steht ein zentrales Ding — „die Wirklichkeit", „das Subjekt", „der Sinn". Die Fächer sind Perspektiven auf es.';
+      } else {
+        readout.textContent = 'Kohärent (B): Es gibt kein Zentrum. Die Einheit IST das Netz der Kohärenzen zwischen den Perspektiven — Verschiedenheit braucht keine Auflösung.';
+      }
+    }
+
+    var bSub = document.getElementById('btnSubstance');
+    var bCoh = document.getElementById('btnCoherence');
+    var bRes = document.getElementById('btnReset');
+    function setMode(m){
+      mode = m; focus = null;
+      bSub.classList.toggle('active', m === 'substance');
+      bCoh.classList.toggle('active', m === 'coherence');
+      paint();
+    }
+    bSub.addEventListener('click', function(){ setMode('substance'); });
+    bCoh.addEventListener('click', function(){ setMode('coherence'); });
+    bRes.addEventListener('click', function(){ focus = null; paint(); });
+
+    paint();
+  })();
+</script>
+</body>
+</html>

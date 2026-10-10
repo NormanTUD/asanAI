@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Loop Spaces × Laplace-Operator</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#7b2ff7; --accent-soft:rgba(123,47,247,.12);
+  --accent2:#0b8fb0; --accent3:#d8492b; --accent4:#2f9e6f;
+  --pt:#d99a06; --grid:#1e2530; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1020; --fg:#e7ecf6; --muted:#93a0b6; --panel:#111a30; --border:#243455;
+  --accent:#b98cff; --accent-soft:rgba(185,140,255,.14);
+  --accent2:#3fd0ff; --accent3:#ff7a5c; --accent4:#57d99a;
+  --pt:#ffcf4d; --grid:#93a0b6; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{ max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+header{margin-bottom:28px;}
+h1{ font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; }
+.subtitle{ color:var(--muted); font-size:1.02rem; margin:0; font-style:italic; }
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{ font-size:1.02rem; margin:18px 0 8px; color:var(--accent); }
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent2); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.6;
+}
+pre code{background:none;padding:0;color:inherit;}
+.mathbox{
+  background:var(--code); color:var(--code-fg);
+  border-left:3px solid var(--accent); border-radius:0 8px 8px 0;
+  padding:10px 16px; margin:12px 0; font-size:.92rem; line-height:1.7;
+}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{
+  border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);
+}
+.note b{color:var(--fg);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:480px; touch-action:none;}
+.legend{display:flex; flex-wrap:wrap; gap:14px; padding:8px 14px 2px; font-size:.76rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:120px;}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted); max-width:230px;}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Lokale Dichte, globale Invariante</h1>
+  <p class="subtitle">Fusion aus: <code>loopspaces.html</code> ✕ <code>laplace.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere beschreiben dieselbe Grundidee aus zwei Perspektiven: <em>Struktur entsteht dadurch,
+  dass man einen lokalen Vergleich gegen einen kanonischen Mittelzustand (das &bdquo;Zentrum&ldquo;)
+  iteriert &mdash; und genau diese Iteration erzwingt auf der n&auml;chsten Ebene abelsche, kommutative
+  Struktur.</em> In <strong>loopspaces.html (A)</strong> ist das Zentrum die Identit&auml;tsschleife
+  <code>refl<sub>x&#8320;</sub></code>; eine Schleife <code>p</code> weicht von ihr ab, und ihre
+  Homotopieklasse <code>[p]</code> (f&uuml;r den Kreis <code>S&sup1;</code> die <em>Windungszahl</em>
+  <code>n &isin; &#8484;</code>) misst genau diese Abweichung. In <strong>laplace.html (B)</strong> ist das
+  Zentrum der harmonische Gleichgewichtspunkt, an dem <code>f(x)</code> gleich dem Mittel seiner Nachbarn
+  ist (<code>&Delta;f = 0</code>); der Wert <code>&Delta;f</code> misst, wie weit der Punkt vom lokalen
+  Nachbar-Mittel abweicht.</p>
+  <p>Die Fusion lautet: <strong>Der Laplace-Operator ist die lineare, abelsche &bdquo;Schattenform&ldquo;
+  der Loop-Space-Struktur.</strong> Die lokale Gr&ouml;&szlig;e <code>&Delta;f</code> (die um&nbsp;0
+  oszilliert, Mittel&nbsp;=&nbsp;0) entspricht der lokalen <em>Wende-/Kr&uuml;mmungsdichte</em> einer
+  Schleife; ihre Integration &uuml;ber eine volle Umdrehung ergibt eine <em>exakte, ganzzahlige
+  Invariante</em> &mdash; die Windungszahl <code>n &isin; &#8484;</code>, also <code>&pi;&#8321;(S&sup1;)
+  &cong; &#8484;</code> aus&nbsp;A. Und wie <code>&Omega;&sup2;(X,x&#8320;)</code> nach Eckmann&ndash;Hilton
+  abelsch wird, ist der Mittelungsoperator des Laplace von vornherein linear und kommutativ: Die
+  &bdquo;Laplace-Welt&ldquo; lebt bereits im abelschen Regime, in dem die Loop-Welt ab Stufe&nbsp;2 ankommt.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden Papiere behandeln unterschiedliche Gegenst&auml;nde (algebraische Topologie / Homotopie-Typen-
+  theorie einerseits, Analysis / PDE andererseits) und widersprechen sich in <em>keiner</em> einzelnen
+  faktischen Aussage direkt. Aber sie nehmen drei unvereinbar wirkende Staturen ein:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Lokal vs. global</h3>
+      <div class="src">B &mdash; laplace.html</div>
+      <p><code>&Delta;</code> ist ein <strong>lokaler, punktueller Differentialoperator</strong>: der Wert an
+      <code>x</code> h&auml;ngt nur von einer &epsilon;-Nachbarschaft ab. Alles wird &bdquo;im Kleinen&ldquo;
+      gemessen (Punkt gegen seine unmittelbaren Nachbarn).</p>
+    </div>
+    <div class="col">
+      <h3>1. Lokal vs. global</h3>
+      <div class="src">A &mdash; loopspaces.html</div>
+      <p>Die Windungszahl / <code>&pi;&#8321;</code> ist eine <strong>globale topologische Invariante</strong>,
+      die unter beliebig kleinen (lokalen) Deformationen der Schleife <em>invariant</em> bleibt. Es kommt auf
+      das ganze Objekt an, nicht auf einen Punkt.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Abelsch / linear</h3>
+      <div class="src">B &mdash; laplace.html</div>
+      <p>Der Mittelungs-/Laplacian-Operator ist <strong>linear und &uuml;berall kommutativ</strong>: Das
+      5-Punkt-Stencil summiert die Nachbarn symmetrisch; die Schrittfolge der Diffusion
+      (<code>&part;u/&part;t = &alpha;&Delta;u</code>) ist vertauschbar. Abelsch auf <em>jeder</em> Stufe.</p>
+    </div>
+    <div class="col">
+      <h3>2. Nichtabel'sch auf Stufe 1</h3>
+      <div class="src">A &mdash; loopspaces.html</div>
+      <p><code>&Omega;&sup1;</code> (die Fundamentalgruppe) ist im Allgemeinen <strong>nichtabel'sch</strong>
+      (Konkatenation <code>p&middot;q &ne; q&middot;p</code>); <em>erst</em> <code>&Omega;&sup2;</code> wird
+      abelsch (Eckmann&ndash;Hilton). Nichtabel'sch auf Stufe 1, abelsch ab Stufe 2.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. Approximativ</h3>
+      <div class="src">B &mdash; laplace.html</div>
+      <p>Der diskrete Laplacian (5-Punkt-Stencil) ist <strong>nur eine Approximation</strong> des
+      kontinuierlichen Operators, mit einem <code>&epsilon; &rarr; 0</code>-Grenzwert und Fehler
+      <code>O(&epsilon;&sup2;)</code>.</p>
+    </div>
+    <div class="col">
+      <h3>3. Exakt</h3>
+      <div class="src">A &mdash; loopspaces.html</div>
+      <p>Homotopieklassen / <code>&pi;&#8321;</code> sind <strong>exakt, diskret und kombinatorisch
+      definiert</strong> &mdash; ein ganzzahliges Z&auml;hlen (Windung), ohne Grenzwert oder
+      Approximationsfehler.</p>
+    </div>
+  </div>
+  <div class="note">Kein Widerspruch in der Mathematik (sie ber&uuml;hren sich kaum), aber drei unvereinbar
+  wirkende Gesten: lokal vs. global, abelsch vs. nichtabel'sch (Stufe 1), approximativ vs. exakt.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p><strong>1. Lokal &harr; global:</strong> Die lokale Gr&ouml;&szlig;e ist die <em>Dichte</em>, deren
+  Integration die globale Invariante ergibt. Nach dem Wendungszahl-Satz ist die totale Wendung einer
+  geschlossenen ebenen Kurve <code>(1/2&pi;)&int; d&theta; = n &isin; &#8484;</code> &mdash; eine lokale
+  Kr&uuml;mmungs-/Wendedichte, &uuml;ber den ganzen Pfad integriert, ergibt die exakte topologische
+  Ganzzahl. <code>&Delta;f</code> ist das analoge lokale &bdquo;Dichtemaul&ldquo;; seine globale
+  Integration (bzw. der harmonische Grenzfall) bestimmt die globale Struktur. <em>Fusionsschluss:</em>
+  lokal&nbsp;=&nbsp;Dichte, global&nbsp;=&nbsp;Integral &mdash; das hebt die Spannung auf.</p>
+  <p><strong>2. Abelsch &harr; nichtabel'sch:</strong> Eckmann&ndash;Hilton ist die Aufl&ouml;sung. Hat man
+  <em>zwei kompatible</em> Multiplikationen (genau das, was Iteration liefert: <code>&Omega;&sup2;</code>
+  hat zwei &bdquo;Kompositionsrichtungen&ldquo;), wird das Ergebnis abelsch. Der Mittelungs-/Laplacian-Operator
+  ist bereits das abelsche, linearisierte Regime &mdash; er entspricht dem Ubergang von der
+  Fundamentalgruppe <code>&pi;&#8321;</code> zu ihrer Abelschung <code>H&#8321;</code> (erste Homologie).
+  Die nichtabel'sche Schleifenstruktur (<code>&Omega;&sup1;</code>) wird durch Mittelung/Linearisierung
+  &bdquo;abgeschnitten&ldquo;. <em>Fusionsschluss:</em> Linearisierung ist der Abelschungs-Funktor; die
+  Loop-Welt bei <code>&Omega;&sup1;</code> = vor der Abelschung, die Laplace-Welt = nach der Abelschung;
+  sie treffen sich in <code>&Omega;&sup2;</code> / <code>H&#8321;</code>.</p>
+  <p><strong>3. Exakt &harr; approximativ:</strong> Im Grenzprozess <code>&epsilon; &rarr; 0</code>
+  konvergiert der diskrete Laplacian gegen den exakten Operator (Fehler &rarr; 0), und die topologische
+  Invariante ist von Haus aus exakt, weil sie ein ganzzahliges Z&auml;hlen ist (Windung <code>&isin;
+  &#8484;</code>; Wendungszahl = Wendung/2&pi; <code>&isin; &#8484;</code>). Die Approximation ist ein
+  numerisches Artefakt der Laplace-Seite, kein strukturelles. <em>Fusionsschluss:</em> Beide Seiten werden
+  &bdquo;exakt&ldquo;, sobald man die lokale Dichte integriert und ganzzahlig abliest: lokale Oszillation
+  (Mittel&nbsp;=&nbsp;0) &rarr; globales exaktes <code>&#8484;</code>.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Gemeinsames Leitmotiv</span>
+    <p>Beide Seiten sind &bdquo;Abweichung vom Zentrum + Iteration &rarr; abelsche Struktur&ldquo;: ein
+    kanonischer Festpunkt (Identit&auml;tsschleife <code>refl<sub>x&#8320;</sub></code> in A; harmonischer
+    Punkt <code>&Delta;f=0</code> in B), ein lokaler Abweichungs-Ma&szlig; (<code>[p]</code>/<code>n</code> in
+    A; <code>&Delta;f</code> in B) und eine Iteration, die auf Stufe&nbsp;2 abelsch wird (Eckmann&ndash;Hilton
+    in A; Linearität/Stencilsymmetrie in B).</p>
+  </div>
+
+  <h3>Der kanonische Zentrumszustand</h3>
+  <p>In beiden Papiere gibt es einen &bdquo;trivialen&ldquo; Referenzzustand, gegen den alles gemessen wird.
+  A definiert die <strong>Identit&auml;tsschleife</strong> als neutrales Element des Schleifenraums;
+  B definiert den <strong>harmonischen Punkt</strong> als fixen Punkt des Mittelungsoperators:</p>
+  <div class="mathbox">
+    A: &nbsp; <code>refl<sub>x&#8320;</sub> &middot; p = p = p &middot; refl<sub>x&#8320;</sub></code>, &nbsp;
+    <code>p &middot; p&#8315;&#185; = refl<sub>x&#8320;</sub></code><br>
+    B: &nbsp; <code>&Delta;f = 0 &nbsp;&harr;&nbsp; f(x) = (Mittel der Nachbarn)</code>
+    &nbsp; (Punkt liegt genau im Gleichgewicht mit seinen Nachbarn)
+  </div>
+
+  <h3>Abweichung vom Zentrum &mdash; lokal</h3>
+  <p>Beides misst <em>wie weit ein Objekt vom Zentrum abweicht</em>, und beides ist lokal (bzw. im
+  Schleifen-Fall &bdquo;punktweise auf dem Pfad&ldquo;):</p>
+  <ul>
+    <li><strong>B (Laplace):</strong> <code>&Delta;f &propto (Mittel der Nachbarn) &minus; f(x)</code>.
+      <code>&Delta;f &gt; 0</code> = Tal (Punkt <em>unter</em> dem Nachbar-Mittel); <code>&Delta;f &lt; 0</code>
+      = Berg (Punkt <em>über</em> dem Mittel); <code>&Delta;f = 0</code> = Gleichgewicht.
+      <code>&Delta;f</code> oszilliert um 0 &mdash; sein Mittelwert &uuml;ber eine geschlossene Kurve ist 0.</li>
+    <li><strong>A (Loop):</strong> Die Abweichung der Schleife <code>p</code> von <code>refl</code> wird durch
+      ihre Homotopieklasse <code>[p] &isin; &pi;&#8321;(X,x&#8320;) = &#8214;&Omega;(X,x&#8320;)&#8215;<sub>0</sub></code>
+      klassifiziert. F&uuml;r <code>S&sup1;</code>: <code>&pi;&#8321;(S&sup1;) &cong; &#8484;</code>, die
+      Windungszahl <code>n</code> ist die Abweichungs-Gr&ouml;&szlig;e &mdash; ebenfalls ganzzahlig und
+      &bdquo;um 0 herum&ldquo; (<code>n=0</code> = trivial = Identit&auml;tsschleife).</li>
+  </ul>
+
+  <h3>Iteration erzeugt h&ouml;here, abelsche Struktur</h3>
+  <p>Beide Papiere iterieren den lokalen Operator und erhalten auf Stufe&nbsp;2 Abelschheit:</p>
+  <div class="mathbox">
+    A: &nbsp; <code>&Omega;&sup0; = X</code>, &nbsp;
+    <code>&Omega;<sup>n+1</sup>(X,x&#8320;) = &Omega;(&Omega;<sup>n</sup>(X,x&#8320;), refl&hellip;)</code> &mdash;
+    &bdquo;Eckmann&ndash;Hilton: <code>&Omega;&sup2;</code> ist abelsch&ldquo;.<br>
+    B: &nbsp; Iteriere <code>&Delta;</code>: <code>&Delta;&#178;</code> (biharmonisch); der Mittelungsoperator
+    ist linear &mdash; <code>&Delta;(f+g) = &Delta;f + &Delta;g</code>, <code>&Delta;(cf) = c&Delta;f</code> &mdash;
+    also kommutativ/abel'sch bereits auf Stufe&nbsp;1.<br>
+    B: &nbsp; Dynamische Iteration = Diffusion: <code>&part;u/&part;t = &alpha;&middot;&Delta;u</code>
+    (W&auml;rme &rarr; relaxiert in den harmonischen Gleichgewichtszustand, d.h. zum &bdquo;Zentrum&ldquo;).
+  </div>
+
+  <h3>Die Schl&uuml;ssegleichungen (A + B, verschmolzen)</h3>
+  <pre><code># A — Loop Spaces / Homotopie-Typentheorie
+Omega(X, x0)      := (x0 =X x0)             # alle Schleifen am Basispunkt
+Omega^2(X, x0)    := Omega(Omega(X,x0), refl_x0)
+pi_1(X, x0)       := ||Omega(X, x0)||_0     # 0-Trunkierung
+pi_1(S^1)         ~= Z                      # Windungszahl n in Z
+(.) : Omega x Omega -&gt; Omega              # Konkatenation (Gruppe)
+
+# B — Laplace / Nachbar-Mittel
+Delta f           = d2f/dx2 + d2f/dy2
+f''(x)           ~= [f(x+e) - 2 f(x) + f(x-e)] / e^2
+                   = [ (f(x+e)+f(x-e))/2 - f(x) ] * 2/e^2     # = (Nachbar-Ø - f) * 2/e^2
+Delta f (2D)     ~= [f(x±e,y) + f(x,y±e) - 4 f(x,y)] / e^2   # 5-Punkt-Stencil
+Delta f = 0      # harmonisch            # Gleichgewicht / Zentrum
+Delta f = rho    # Poisson (Elektrostatik)
+d u/dt  = a Delta u     # Wärmeleitung (Diffusion)
+d2u/dt2 = c^2 Delta u   # Wellengleichung
+
+# Brücke — Wendungszahl-Satz (lokale Dichte -&gt; globale Invariante)
+(1 / 2 pi) * ∮ dθ  =  n  in Z   # totale Wendung = Windungszahl = π_1(S^1)</code></pre>
+
+  <h3>Die Br&uuml;cke: Dichte &rarr; Invariante, Linearisierung &rarr; Abelschung</h3>
+  <p>Liest man die lokale Wende-/Kr&uuml;mmungsdichte einer geschlossenen ebenen Kurve
+  (das direkte Analogue von <code>&Delta;f</code>: oszilliert um 0, Mittel&nbsp;=&nbsp;0) &uuml;ber den ganzen
+  Pfad, ergibt sich die <em>exakte</em> Windungszahl <code>n &isin; &#8484;</code> (Wendungszahl-Satz).
+  Damit ist A's <code>&pi;&#8321;</code> das <strong>globale Integral</strong> von B's lokal-abel'schen
+  Dichte &mdash; und B's Laplace/Lineralisierung ist die <strong>Abelschung</strong> von A's
+  Fundamentalgruppe: <code>&pi;&#8321; &rarr; H&#8321;</code>. Die beiden Papiere sind damit zwei Stufen
+  derselben Konstruktion, abgelesen auf unterschiedlichen Ebenen (lokale Dichte vs. globale Invariante;
+  nichtabel'sch vs. abelsch).</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p>Ein 2D-Canvas, das die fusionierte Idee lebt: eine <em>geschlossene Schleife</em> um den Ursprung mit
+  einstellbarer <strong>Windungszahl <code>n</code></strong> (A's <code>&pi;&#8321;(S&sup1;) &cong;
+  &#8484;</code>). Jeder Kurvenabschnitt ist nach dem <strong>Vorzeichen seiner lokalen Wende-/Kr&uuml;mmungs-
+  dichte</strong> gef&auml;rbt &mdash; rot f&uuml;r <code>&gt;0</code>, gr&uuml;n f&uuml;r <code>&lt;0</code>,
+  exakt wie B's <code>&Delta;f</code> (Tal/Berg). Unten die Dichte <code>d&theta;/dt</code> &uuml;ber die
+  Umlauf-Koordinate: Sie oszilliert um 0 (Mittel&nbsp;=&nbsp;0). Die <strong>Summe</strong> der lokalen
+  Dichte &uuml;ber eine volle Umdrehung ist aber eine <em>exakte Ganzzahl mal 2&pi;</em> &mdash; die globale
+  Invariante. Der gelbe Punkt l&auml;uft die Schleife ab (wie in beiden Originalen).</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent3)"></span>lokale Wendung &gt; 0 (≈ Δf &gt; 0)</span>
+      <span><span class="sw" style="background:var(--accent4)"></span>lokale Wendung &lt; 0 (≈ Δf &lt; 0)</span>
+      <span><span class="sw" style="background:var(--accent)"></span>Schleife (n = 0: trivial)</span>
+      <span><span class="sw" style="background:var(--pt)"></span>laufender Punkt</span>
+    </div>
+    <div class="viz-controls">
+      <div class="grp">Windungszahl <b id="nVal">1</b>
+        <input type="range" id="nRange" min="-3" max="3" step="1" value="1"></div>
+      <div class="grp">Wobble <b id="aVal">40</b>
+        <input type="range" id="aRange" min="0" max="70" step="1" value="40"></div>
+      <div class="grp">Bewegung
+        <button class="ctl on" id="playBtn">Pause</button></div>
+      <div class="grp">Theme
+        <button class="ctl" id="themeBtn">hell/dunkel</button></div>
+      <div class="hint">Lokal oszilliert (Ø=0) &middot; globales Integral = n &middot; 2&pi; &isin; &#8484;.</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2, R = 110, K = 3, N = 720;
+
+  var nEl = document.getElementById('nRange');
+  var aEl = document.getElementById('aRange');
+  var nVal = document.getElementById('nVal');
+  var aVal = document.getElementById('aVal');
+  var playBtn = document.getElementById('playBtn');
+  var themeBtn = document.getElementById('themeBtn');
+
+  var state = { playing:true, tMove:0 };
+  var pal = {};
+  var pts = [], seg = [], totalTurn = 0, turnNum = 0, maxAbs = 1;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg:   toRgb(cssVar('--bg')),
+      fg:   toRgb(cssVar('--fg')),
+      grid: toRgb(cssVar('--grid')),
+      loop: toRgb(cssVar('--accent')),
+      pos:  toRgb(cssVar('--accent3')),
+      neg:  toRgb(cssVar('--accent4')),
+      pt:   toRgb(cssVar('--pt'))
+    };
+  }
+
+  function curN(){ return parseInt(nEl.value,10)||0; }
+  function curA(){ return parseInt(aEl.value,10)||0; }
+
+  function posAt(t,n,A){
+    var phi = t*n*TAU;
+    var r = R + A*Math.sin(t*TAU*K);
+    return { x:r*Math.cos(phi), y:r*Math.sin(phi) };
+  }
+
+  function recompute(){
+    var n=curN(), A=curA();
+    pts = new Array(N+1);
+    for(var i=0;i<=N;i++){ pts[i] = posAt(i/N, n, A); }
+    if(n===0){
+      seg = new Array(N);
+      for(var j=0;j<N;j++){ seg[j]=0; }
+      totalTurn=0; turnNum=0; maxAbs=1;
+      return;
+    }
+    var tan = new Array(N);
+    for(var i2=0;i2<N;i2++){
+      var a=pts[Math.max(0,i2-1)], b=pts[Math.min(N,i2+1)];
+      var dx=b.x-a.x, dy=b.y-a.y;
+      tan[i2]=(dx===0&&dy===0)?0:Math.atan2(dy,dx);
+    }
+    seg = new Array(N);
+    var total=0;
+    for(var i3=0;i3<N;i3++){
+      var prev=(i3-1+N)%N;
+      var d=tan[i3]-tan[prev];
+      while(d>Math.PI)d-=TAU;
+      while(d<-Math.PI)d+=TAU;
+      seg[i3]=d; total+=d;
+    }
+    totalTurn=total; turnNum=total/TAU;
+    maxAbs=1e-6;
+    for(var i4=0;i4<N;i4++){ var av=Math.abs(seg[i4]); if(av>maxAbs)maxAbs=av; }
+  }
+
+  function draw(){
+    var w=wrap.clientWidth; if(w<2)w=2;
+    var h=480, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var n=curN(), A=curA();
+    var scale = 115/(R+A);
+    var cx=w/2, cyLoop=150;
+    function SX(p){ return cx+p.x*scale; }
+    function SY(p){ return cyLoop-p.y*scale; }
+
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    // grid (top)
+    ctx.strokeStyle=rgba(pal.grid,0.32); ctx.lineWidth=1;
+    for(var gx=30; gx<w; gx+=30){ ctx.beginPath(); ctx.moveTo(gx,10); ctx.lineTo(gx,295); ctx.stroke(); }
+    for(var gy=30; gy<295; gy+=30){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+    ctx.strokeStyle=rgba(pal.grid,0.5);
+    ctx.beginPath(); ctx.moveTo(cx,10); ctx.lineTo(cx,295); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cyLoop); ctx.lineTo(w,cyLoop); ctx.stroke();
+    ctx.fillStyle=rgba(pal.fg,0.7);
+    ctx.beginPath(); ctx.arc(cx,cyLoop,3.5,0,TAU); ctx.fill();
+
+    if(n!==0){
+      ctx.lineWidth=3;
+      for(var i=0;i<N;i++){
+        var a=pts[i], b=pts[i+1];
+        ctx.beginPath(); ctx.moveTo(SX(a),SY(a)); ctx.lineTo(SX(b),SY(b));
+        if(seg[i]>1e-4) ctx.strokeStyle=rgba(pal.pos,0.92);
+        else if(seg[i]<-1e-4) ctx.strokeStyle=rgba(pal.neg,0.92);
+        else ctx.strokeStyle=rgba(pal.loop,0.92);
+        ctx.stroke();
+      }
+      if(state.playing){ state.tMove=(state.tMove+0.0025)%1; }
+      var mp=posAt(state.tMove,n,A), tt, tr, tp;
+      for(tt=22; tt>=1; tt--){
+        tr=state.tMove-0.006*tt; if(tr<0)tr+=1;
+        tp=posAt(tr,n,A);
+        ctx.fillStyle=rgba(pal.pt,0.5*(1-tt/24));
+        ctx.beginPath(); ctx.arc(SX(tp),SY(tp),Math.max(1,4-0.13*tt),0,TAU); ctx.fill();
+      }
+      ctx.fillStyle=rgba(pal.pt,1);
+      ctx.beginPath(); ctx.arc(SX(mp),SY(mp),6,0,TAU); ctx.fill();
+      ctx.strokeStyle=rgba(pal.fg,0.85); ctx.lineWidth=1.5; ctx.stroke();
+    } else {
+      ctx.fillStyle=rgba(pal.pt,0.9);
+      ctx.beginPath(); ctx.arc(cx,cyLoop,6,0,TAU); ctx.fill();
+      ctx.strokeStyle=rgba(pal.fg,0.7); ctx.lineWidth=1.5; ctx.stroke();
+    }
+
+    ctx.fillStyle=rgba(pal.fg,0.92); ctx.font='bold 15px monospace';
+    ctx.fillText('Windungszahl  n = '+n, 14, 26);
+    ctx.font='12px monospace';
+    ctx.fillStyle=rgba(pal.pos,0.95); ctx.fillText('— lokale Wendung > 0   (≈ Δf > 0)', 14, 44);
+    ctx.fillStyle=rgba(pal.neg,0.95); ctx.fillText('— lokale Wendung < 0   (≈ Δf < 0)', 14, 60);
+    if(n===0){
+      ctx.fillStyle=rgba(pal.fg,0.6); ctx.font='12px monospace';
+      ctx.fillText('n = 0  →  Identitätsschleife refl (trivial, keine Wendung)', 14, 76);
+    }
+
+    // strip
+    var stripTop=315, stripBot=470, stripMid=(stripTop+stripBot)/2, stripH=((stripBot-stripTop)/2)-10;
+    ctx.strokeStyle=rgba(pal.grid,0.5); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,stripMid); ctx.lineTo(w,stripMid); ctx.stroke();
+    ctx.fillStyle=rgba(pal.fg,0.6); ctx.font='11px monospace';
+    ctx.fillText('lokale Wendedichte  dθ/dt  (Δf-Analogon)  ·  Ø = 0  ·  globales Integral = n·2π', 10, stripTop-8);
+    ctx.lineWidth=2;
+    for(var i2=0;i2<N-1;i2++){
+      var t0=i2/N, t1=(i2+1)/N;
+      var x0=t0*w, x1=t1*w;
+      var y0=stripMid-(seg[i2]/maxAbs)*stripH;
+      var y1=stripMid-(seg[i2+1]/maxAbs)*stripH;
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
+      ctx.strokeStyle=rgba(seg[i2]>1e-4?pal.pos:(seg[i2]<-1e-4?pal.neg:pal.loop),0.85);
+      ctx.stroke();
+    }
+    var xM=state.tMove*w;
+    ctx.strokeStyle=rgba(pal.pt,0.8); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(xM,stripTop); ctx.lineTo(xM,stripBot); ctx.stroke();
+  }
+
+  function updateReadout(){
+    var n=curN(), A=curA();
+    nVal.textContent = n; aVal.textContent = A;
+    if(n===0){
+      readout.innerHTML='n = 0: die <b>Identitätsschleife refl<sub>x&#8320;</sub></b> (A) &mdash; der triviale '
+        + 'Fall, der dem <b>harmonischen Punkt &Delta;f = 0</b> (B) entspricht: Abweichung vom Zentrum = 0. '
+        + 'Die lokale Dichte ist &uuml;berall 0, das globale Integral also 0 &isin; &#8484;.';
+      return;
+    }
+    var rn=Math.round(turnNum);
+    readout.innerHTML='Die lokale Wende-/Kr&uuml;mmungsdichte oszilliert um 0 (Ø = 0) &mdash; exakt wie <b>&Delta;f</b> '
+      + 'an einem Punkt (rot = Tal / gr&uuml;n = Berg). Summe &uuml;ber eine volle Umdrehung: <b>&Sigma; d&theta; = '
+      + totalTurn.toFixed(3) + '</b> = <b>' + turnNum.toFixed(3) + '&middot;2&pi;</b>. Daraus die <b>globale '
+      + 'Windungszahl = ' + rn + ' &isin; &#8484;</b> (A: &pi;&#8321;(S&sup1;) &cong; &#8484;). Die lokale Gr&ouml;&szlig;e '
+      + '(Dichte) integriert sich zur exakten topologischen Ganzzahl &mdash; die Fusion von <b>&Delta;f</b> (B) und '
+      + '<b>n</b> (A).' ;
+  }
+
+  function loop(){ draw(); requestAnimationFrame(loop); }
+
+  nEl.addEventListener('input', function(){ state.tMove=0; recompute(); updateReadout(); });
+  aEl.addEventListener('input', function(){ state.tMove=0; recompute(); updateReadout(); });
+  playBtn.addEventListener('click', function(){
+    state.playing=!state.playing;
+    this.classList.toggle('on', state.playing);
+    this.textContent=state.playing?'Pause':'Play';
+  });
+  themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    readPal();
+  });
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+  }
+
+  readPal();
+  recompute();
+  updateReadout();
+  requestAnimationFrame(loop);
+})();
+</script>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../loopspaces.html"><strong>loopspaces.html &mdash; &Omega;, Loop Spaces in der Homotopie-Typentheorie</strong></a>
+  &mdash; Interaktive Visualisierung von Schleifenr&auml;umen <code>&Omega;(X,x&#8320;)</code>: Basispunkt-Schleifen,
+  Homotopie zwischen Schleifen (<code>&Omega;&sup2;</code>), Schleifenkomposition (Gruppenstruktur),
+  iterierte <code>&Omega;<sup>n</sup></code> (Eckmann&ndash;Hilton, abelsch) und die Fundamentalgruppe
+  <code>&pi;&#8321;(S&sup1;) &cong; &#8484;</code> mit Windungszahlen. (Quelle A &mdash; die globale,
+  nichtabel'sche Schleifenstruktur.)</p>
+  <p class="src"><a href="../laplace.html"><strong>laplace.html &mdash; &nabla;&#178;, den Laplace-Operator intuitiv verstehen</strong></a>
+  &mdash; Der Laplace-Operator als &bdquo;Punkt gegen Nachbar-Mittel&ldquo;: 1D-Zweite-Ableitung, 2D-Farbkarte
+  (<code>&Delta;f&gt;0</code> Tal / <code>&Delta;f&lt;0</code> Berg / <code>&Delta;f=0</code> harmonisch),
+  Diffusion (<code>&part;u/&part;t = &alpha;&Delta;u</code>) und das 5-Punkt-Stencil als diskrete
+  Approximation. (Quelle B &mdash; die lokale, lineare/abel'sche Dichte.)</p>
+</section>
+
+<footer>
+  Fusion (Round 1, nicht-AI-Track, Paar 046). Selbstenthalten, ohne Netzwerk-Datenzugriffe; alle Daten
+  (Schleifengeometrie, lokale Wendungsdichte, globale Windungszahl) werden im Browser berechnet.
+</footer>
+</article>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "no": "083",
+  "a": "teichmueller.html",
+  "b": "kult_der_statistischen_signifikanz_simple.html",
+  "a_title": "Teichmüller Theory — Visual Explorer",
+  "b_title": "Der Kult der statistischen Signifikanz — Einfach erklärt",
+  "combined_theme": "invarianz-gegen-gauge",
+  "one_line": "Das Invariante messen, nicht den Gauge: A's Teichmüller-Distanz (½ ln der minimalen Dilatation) und B's Effektgröße+Kosten sind beide die gauge-invariante, entscheidungsrelevante Größe — der p-Wert bei fester 5%-Linie und ein roher Streckungsquotient sind der größenlose Blick auf eine konventionsgebundene Koordinate.",
+  "contradictions": [
+    "Richtung des Hinausdividierens: A macht den Weg zur wahren Form gerade durch Quotientieren (Moduli-Raum = Teichmüller-Raum / Mapping-Class-Gruppe, 'Forgetting the marking gives the Moduli space' — die reale Form ist die Äquivalenzklasse); B macht aus genau diesem Zusammenklappen in ein Label den Kernfehler ('nicht signifikant' → 'kein Effekt', Vioxx; 'Ein Befund ... ist für sich allein wertlos'). Dieselbe Operation ist bei A Weg zur Wahrheit, bei B krankheitsursächlicher Irrtum.",
+    "Der Quotient als Maß: A feiert eine quotientenartige Größe (Dilatation K, d = ½ ln K, 'at least a 2.5:1 stretch ratio') als das Maß dafür, wie unterschiedlich zwei Formen sind; B verurteilt genau solche Quotienten (t = Signal/Rauschen) als 'sizeless stare', denn derselbe t entsteht aus riesigem ungenauem und winzigem präzisen Effekt — 'p ist ein Präzisions-, kein Größenmaß'."
+  ],
+  "resolution": "Beide Spannungen lösen sich auf einer Achse — konventions/gauge-abhängig vs. invariant/entscheidungsrelevant. (1) Was wird dividiert: A dividiert reinen Gauge (Basis/Markierung, keine Entscheidungs-Info) → Moduli-Klasse legitim; B 'dividiert' Effektgröße+Kosten (hoch entscheidungsrelevant) weg → der Fehler. Regel: nur das Redundante dividieren, nie das Entscheidungsrelevante. (2) Das Infimum rettet den Quotienten: A nimmt das Infimum über alle Karten (minimale Dilatation), daraus wird d = ½ ln(min K) eine invariante Lückengröße statt größenloser Quotient; B verlangt die Effektgröße, nicht das t. Fusioniert: ein gutes Maß ist invariant, eine kontinuierliche Lückengröße (keine diskrete Schwelle) und entscheidungsrelevant — Teichmüller-Distanz (Geometrie) und Effektgröße+Verlustfunktion (Statistik) sind zwei Seiten desselben Arguments.",
+  "viz": "Einzelner theme-aware Canvas (CSS-Variablen, light/dark), nur Inline-Daten, null Netzaufrufe. Links (A): obere Halbebene ℍ mit SL(2,Z)-Fundamentalbereich, Gauge-Orbit des wählbaren τ_B (T, T⁻¹, S) und Teichmüller-Distanz d = ½ ln K zwischen Referenz τ_A = i und τ_B (Hyperbel-Geodäte). Rechts (B): der 'sizeless stare' — zwei Glocken (Oomph groß/ungenau, Precision klein/präzise) mit identischem t, aber 100× verschiedener Effektgröße, Schwelle bei 1,96. Slider: τ_B real/imag, großer Effekt, Rauschen; Live-Readouts für d, K, t, Effektgrößen, Faktor 100×; Thema-Toggle."
+}

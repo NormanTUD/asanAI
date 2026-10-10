@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Mannigfaltigkeiten × From Big Bang to ChatGPT</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --accent2:#2f6fd0; --accent3:#c0457f; --accent4:#b07d18;
+  --grid:#1e2530; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e; --border:#233450;
+  --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --accent2:#7aa2ff; --accent3:#ff8fd0; --accent4:#ffcc6a;
+  --grid:#93a0b6; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{ max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+header{margin-bottom:28px;}
+h1{ font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; }
+.subtitle{ color:var(--muted); font-size:1.02rem; margin:0; font-style:italic; }
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{ font-size:1.02rem; margin:18px 0 8px; color:var(--accent); }
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{
+  border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);
+}
+.note b{color:var(--fg);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:480px; touch-action:none;}
+.legend{display:flex; flex-wrap:wrap; gap:14px; padding:8px 14px 2px; font-size:.76rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:120px;}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted);}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Wie misst man eine Black&nbsp;Box?</h1>
+  <p class="subtitle">Fusion aus: <code>mannigfaltigkeiten.html</code> &times; <code>intro_preview.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere starten bei demselben Problem: einem Objekt <em>ohne globale Koordinaten</em>.
+  In <strong>Mannigfaltigkeiten (A)</strong> ist es eine Kugeloberfläche &mdash; &ldquo;kein Ursprung, keine Achsen,
+  kein geradeaus&rdquo; &mdash; auf der man trotzdem differenzieren, integrieren, Extrema suchen und Flächen berechnen
+  will. In <strong>intro_preview (B)</strong> ist es die &ldquo;Black&nbsp;Box&rdquo; eines modernen Sprachmodells;
+  der Titel <em>&ldquo;From Big Bang to ChatGPT&rdquo;</em> / <em>&ldquo;A Peek inside the Black Box&rdquo;</em>
+  verspricht, genau diese Box durch eine Reise durch acht Module
+  (Cosmos, Numbers, Geometry, Calculus, Logic, Signal, Language, Convergence) lesbar zu machen.</p>
+  <p>Beide lösen es mit derselben dreifachen Geste. <strong>(i)</strong> Das Ganze wird in
+  <em>lokale Stücke</em> zerlegt, die jeweils einfach aussehen &mdash; in A: <em>Karten</em>, in denen die Welt
+  wie&nbsp;ℝⁿ aussieht; in B: die acht Konzepte-Module als Koordinaten-Pflaster der Reise. <strong>(ii)</strong>
+  Daraus wird ein <em>lokales Messinstrument</em> gebaut, das <em>global verklebt</em> &mdash; in A: Differentialformen;
+  in B: die geordnete Modul-Spinne (Prerequisites). <strong>(iii)</strong> Ein <em>einziges vereinheitlichendes
+  Prinzip</em> macht aus den lokalen Daten eine globale Antwort &mdash; in A: der <em>Satz von Stokes</em>, der im
+  Igelsatz mündet; in B: das kumulative <em>Big-Bang&rarr;ChatGPT</em>-Narrativ.</p>
+  <p>Die Fusion lautet: <strong>Differentialgeometrie &mdash; Geometrie und Analysis zu einer einzigen
+  &ldquo;Mess-Sprache&rdquo; verschmolzen &mdash; ist genau die Disziplin, die diese Geste ausführt, und genau der
+  Baustein, aus dem B&rsquo;s Reise besteht.</strong> A ist eine Station dieser Reise, bis zum Abschluss durchentwickelt
+  (Motivation&nbsp;&rarr; Werkzeugkasten&nbsp;&rarr; Idee&nbsp;&rarr; Lösung&nbsp;&rarr; Antwort&nbsp;&rarr;
+  roter Faden); B ist das Titelscreen der ganzen Reise. A&rsquo;s &ldquo;Leitfrage&hellip;Antwort&rdquo;-Bogen ist eine
+  Miniatur von B&rsquo;s &ldquo;Big Bang&hellip;ChatGPT&rdquo;-Bogen: beides ein geschlossener Kreis, bei dem die
+  letzte Antwort auf die erste Frage zurückweist.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich in <em>keinem</em> faktischen Anspruch &mdash; sie arbeiten auf völlig
+  verschiedenen Skalen (ein abgeschlossenes Mikro-Skript vs. das Titelscreen eines ganzen Textbuchs).
+  Aber sie nehmen drei unvereinbar wirkende Staturen ein:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Zweck der Geometrie &mdash; Selbstzweck</h3>
+      <div class="src">A &mdash; Mannigfaltigkeiten</div>
+      <p>Differentialgeometrie ist ein <strong>abgeschlossenes, sich selbst genügendes</strong> Mikro-Skript.
+      Der Gewinn ist <em>intern</em>: die &ldquo;Antwort auf die Leitfrage&rdquo; (der Igelsatz).
+      KI/Sprachmodelle werden nie erwähnt.</p>
+    </div>
+    <div class="col">
+      <h3>1. Zweck der Geometrie &mdash; Mittel zum Zweck</h3>
+      <div class="src">B &mdash; intro_preview</div>
+      <p>&ldquo;Geometry&rdquo; und &ldquo;Calculus&rdquo; sind <strong>Stationen auf dem Weg zu einem einzigen
+      instrumentellen Ziel</strong>: &ldquo;A Peek inside the Black Box&rdquo; (Sprachmodelle verstehen).
+      Geometrie dient der KI.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Struktur &mdash; geschlossener Bogen</h3>
+      <div class="src">A &mdash; Mannigfaltigkeiten</div>
+      <p>Ein <strong>geschlossener logischer Kreis</strong>: Motivation&nbsp;&rarr;&hellip;&rarr;&nbsp;Antwort&nbsp;&rarr;
+      &ldquo;Der rote Faden&rdquo;, ein Beweisbaum (Abhängigkeitsgraph), der alles an die erste Frage zurückbindet.
+      Soll als Ganzes gelesen und nachgelesen werden.</p>
+    </div>
+    <div class="col">
+      <h3>2. Struktur &mdash; offene Reise</h3>
+      <div class="src">B &mdash; intro_preview</div>
+      <p>Eine <strong>offene, lineare, geordnete Reise</strong> (Big Bang&nbsp;&rarr;&hellip;&rarr;&nbsp;Convergence).
+      Der Loader zählt buchstäblich &ldquo;N of 8 modules loaded&rdquo; &mdash; eine Folge von Stationen, die man
+      <em>durchfährt</em>, nicht als Ganzes liest.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. Geometrie &amp; Analysis &mdash; ein Fach</h3>
+      <div class="src">A &mdash; Mannigfaltigkeiten</div>
+      <p>Das <strong>gesamte Thema ist die Verschmelzung</strong> von Geometrie und Analysis (Differentialgeometrie);
+      Stokes wird als &ldquo;das Herzstück&rdquo; vorgestellt, das <code>d</code> und <code>&int;</code> zusammenführt.</p>
+    </div>
+    <div class="col">
+      <h3>3. Geometrie &amp; Analysis &mdash; zwei Stationen</h3>
+      <div class="src">B &mdash; intro_preview</div>
+      <p>&ldquo;Geometry&rdquo; und &ldquo;Calculus&rdquo; sind <strong>zwei getrennte, benachbarte Module</strong>
+      der Achte-Welt &mdash; bewusst als einzelne Stationen voneinander abgegrenzt.</p>
+    </div>
+  </div>
+  <div class="note">Kein Widerspruch in der Mathematik (sie berühren sich kaum), aber drei unvereinbar wirkende
+  Gesten: Selbstzweck vs. Instrument, geschlossener Bogen vs. offene Reise, eines Fachs vs. zwei Stationen.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>1. A&rsquo;s geschlossener Bogen ist B&rsquo;s Station, ausgereizt.</strong> Der Igelsatz ist keine
+  Abschweifung vom KI-Ziel &mdash; er <em>demonstriert</em> die Geste (lokale Werkzeuge&nbsp;&rarr; globale Antwort),
+  die die ganze Reise wiederverwendet. Geometrie ist damit <em>sowohl</em> Selbstzweck <em>als auch</em> die Methode,
+  die die Reise braucht. <em>Fusionsschluss:</em> Jedes der acht Module ist ein Mini-&ldquo;Wie misst
+  man&hellip;?&rdquo;, das auf einer Antwort schließt; A liefert das vollständige Muster eines solchen Bogens.</p>
+  <p><strong>2. Offene Reise = Folge geschlossener Bögen.</strong> Man verschachtelt: B&rsquo;s offene Reise ist eine
+  Folge geschlossener Mikro-Bögen, und A ist der Prototyp eines solchen Bogens. A&rsquo;s Beweisbaum / &ldquo;roter
+  Faden&rdquo; verallgemeinert zu B&rsquo;s acht-Modul-Spinne; der Loader &ldquo;N of 8 modules loaded&rdquo; ist die
+  Makro-Version von A&rsquo;s Abhängigkeitsgraph &mdash; beides zählt Fortschritt als &ldquo;wie viel vom Beweis ist
+  bereits da&rdquo;.</p>
+  <p><strong>3. Die Verschmelzung ist keine Kosmetik.</strong> A zeigt, dass Geometrie (Karten, Atlanten,
+  Tangentialraum) und Analysis (Ableitung, <code>d</code>, <code>&int;</code>, Stokes) zu <em>einem</em> Instrument
+  zusammenwachsen. <em>Fusionsschluss:</em> B&rsquo;s &ldquo;Geometry&rdquo; und &ldquo;Calculus&rdquo; sind die
+  zwei Hälften <em>einer</em> Station (Differentialgeometrie); die fusionierte Lesart hält sie zu einer zusammen,
+  statt sie als zwei nebeneinander zu belassen.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Gemeinsames Leitmotiv</span>
+    <p>Legibility of the coordinate-free: Das <em>kurve Welt</em> (A) und die <em>Black&nbsp;Box</em> (B) sind dieselbe
+    Problemform &mdash; ein Objekt ohne globale Koordinaten. Der Zugang ist in beiden Fällen <em>lokal</em>: kleine
+    Stücke, die wie ein vertrauter Raum (ℝⁿ bzw. ein Modul-Konzept) aussehen, plus ein <em>global verklebendes
+    Prinzip</em>, das die lokalen Daten zu einer Antwort macht.</p>
+  </div>
+
+  <h3>A &mdash; die Leitfrage und der vierphasige Bogen</h3>
+  <p>A<sup>*</sup> stellt die <strong>Leitfrage</strong>: <em>Wie definiert man Ableitung, Integral, Volumen und
+  Extrema auf einem Objekt, das nur stückweise wie&nbsp;ℝⁿ aussieht &mdash; so, dass die Antwort nicht von der
+  gewählten Karte abhängt?</em> Der Bogen:</p>
+  <ul>
+    <li><strong>Problem:</strong> Analysis funktioniert nur auf&nbsp;ℝⁿ; die Welt ist nicht&nbsp;ℝⁿ.</li>
+    <li><strong>Idee:</strong> Lokal sieht alles wie&nbsp;ℝⁿ aus &mdash; nutze Karten und klebe sie glatt zusammen.</li>
+    <li><strong>Lösung:</strong> Differentialformen: Objekte, die kartenunabhängig integriert werden können.</li>
+    <li><strong>Antwort:</strong> Satz von Stokes&nbsp;&rArr; Igelsatz: Jedes Vektorfeld auf&nbsp;S² hat eine Nullstelle.</li>
+  </ul>
+
+  <h3>A &mdash; die Definition (Karten &amp; Atlanten)</h3>
+  <p>Eine <strong>Mannigfaltigkeit</strong> ist ein hausdorffscher, zweit-abzählbarer Raum mit Karten
+  <code>&psi;<sub>i</sub>:U<sub>i</sub> &cong; W<sub>i</sub> &sub; &RBB;</code> (offene Teilmengen von&nbsp;ℝⁿ),
+  deren <em>Kartenwechsel</em> <code>&psi;<sub>ij</sub> = &psi;<sub>i</sub>&circ;&psi;<sub>j</sub><sup>&minus;1</sup></code>
+  <code>C<sup>k</sup></code> sind. <em>Orientiert</em> genau dann, wenn zusätzlich
+  <code>det&nbsp;d&psi;<sub>ij</sub> &gt; 0</code>. Wichtige Beobachtung aus A: Für den Standard-Sphären-Atlas gilt
+  <code>det&nbsp;d&psi;<sub>12</sub>(z) = &minus;|z|<sup>&minus;2n</sup> &lt; 0</code> &mdash; der Atlas ist
+  <em>nicht</em> orientiert; man repariert das, indem man in einer Karte eine Koordinate spiegelt.</p>
+  <p>Weitere A-Elemente, die in die Fusion einfließen:</p>
+  <ul>
+    <li><strong>Tangentialraum = Ableitungen:</strong> Vektoren <em>sind</em> Herleitungen; Basiswechsel/Differential
+      einer Abbildung; Untermannigfaltigkeiten (Würfel &amp; Oktaeder sind <em>keine</em> &mdash; Ecken liegen in
+      <code>Sing<sub>0</sub></code>; Matrixgruppen <code>O(n), SO(n), SU(n)</code> sind Mannigfaltigkeiten,
+      <code>dim O(n) = n(n&minus;1)/2</code>).</li>
+    <li><strong>Optimieren:</strong> Lagrange-Multiplikatoren &mdash; max&nbsp;<code>xyz</code> auf&nbsp;S²
+      <code>= 1/(3&radic;3) &asymp; 0.19245</code>.</li>
+  </ul>
+
+  <h3>A &mdash; Differentialformen, Stokes, Igelsatz</h3>
+  <p>Nur <em>n-Formen</em> (nicht Funktionen) transformieren beim Kartenwechsel mit dem Jacobi-Faktor
+  <code>det&nbsp;d&psi;</code> &mdash; genau so, dass das Integral kartenunabhängig wird. A zitiert:
+  &ldquo;Ein wichtiger Punkt ist, dass eben nicht Funktionen, sondern n-Formen integriert werden!&rdquo;
+  Das äußere Differential <code>d</code> trägt vier Axiome; Orientierbarkeit ist äquivalent zur Existenz einer
+  Volumenform. <strong>Stokes</strong> ist &ldquo;das Herzstück&rdquo;:</p>
+  <pre><code>&int;_M d&omega; = &int;_{&part;M} i*&omega;,      &omega; &isin; A^{n-1}_0(M),  M orientiert, berandet</code></pre>
+  <p>Der <em>Teleskop-Trick</em> (Zerlegung in Zellen, innere Kanten heben sich mit entgegengesetzter Orientierung
+  weg) ist der Grund, warum nur der Rand übrig bleibt; die drei klassischen Sätze sind Spezialfälle
+  (n=1 Hauptsatz, n=2 Green/Rotation, n=3 Gauß/Divergenz). Der <strong>Igelsatz</strong> folgt per Widerspruch:
+  Ein nullstellenfreies Feld erzeugt eine Homotopie <code>H(u,t)=cos(&pi;t)u+sin(&pi;t)Y(u)</code> von
+  <code>id</code> nach <code>&minus;id</code>; da <code>(&minus;id)*&Omega; = (&minus;1)<sup>n+1</sup>&Omega;</code>,
+  liefert S² (n+1=3, ungerade) <code>4&pi; = &minus;4&pi;</code> &mdash; Widerspruch.
+  <em>Parität:</em> <strong>Sⁿ ist kämmbar genau dann, wenn n ungerade ist</strong>; S¹ ist kämmbar
+  (<code>&part;/&part;&varphi;</code> verschwindet nirgends). Konsequenz: <code>TS² &cong/ S² &times; &RBB;²</code>
+  (nicht triviales Bündel) &mdash; &ldquo;irgendwo auf der Erde ist Windstille&rdquo;.</p>
+  <p>A<sup>*</sup> reift weiter zu Riemannschen Metriken, Hodge-Stern und Laplace: harmonische Funktionen auf
+  kompaktem&nbsp;M sind konstant; <code>&Delta;u = f</code> ist lösbar nur, wenn
+  <code>&int;_M f&nbsp;&Omega;<sub>g</sub> = 0</code>. Konkrete A-Resultate: <code>&int;_{S²}&Omega; = 4&pi;</code>,
+  <code>&int;_{B_1}&eta;&andil;&omega; = (8/5)&pi;</code>, <code>&RBB;P<sup>n</sup></code> orientiert
+  &lArr; n ungerade.</p>
+
+  <h3>B &mdash; die Black-Box-Reise</h3>
+  <p>B ist das Lade-/Vorschau-Screen des Textbuchs <strong>&ldquo;From Big Bang to ChatGPT&rdquo;</strong>
+  (Tagline <em>&ldquo;A Peek inside the Black Box&rdquo;</em>). Sein Kern sind die <strong>acht Module</strong>
+  in fester Reihenfolge: <code>Cosmos &middot; Numbers &middot; Geometry &middot; Calculus &middot; Logic &middot;
+  Signal &middot; Language &middot; Convergence</code>. Zwei Merkmale gehören zur Fusion:
+  (1) der <strong>organische Netz-Hero</strong> &mdash; ein langsam driftender Knoten-/Kanten-Graph, dessen <em>lokale
+  Kanten</em> (Knoten innerhalb einer Reichweite) die &ldquo;Geometrie&rdquo; definieren, während die <em>globale
+  Gestalt</em> durch Resizes/Font-Wechsel persistiert (Seed einmal, danach nur Rescale) &mdash; der visuelle Zwilling
+  einer Mannigfaltigkeit; (2) der <strong>Modul-Loader</strong> &ldquo;N of 8 modules loaded&rdquo; mit Progressbar &mdash;
+  Fortschritt als &ldquo;wie viel der Beweis ist schon geladen&rdquo;.</p>
+
+  <h3>Die Verbindung &mdash; lokal zu global, im Kleinen und im Großen</h3>
+  <p>Liest man B&rsquo;s acht Module als die <strong>Karten des Kurses</strong> (jedes ein lokaler, einfacher
+  Koordinatenfleck) und die Kurs-Spinne (Prerequisites) als A&rsquo;s <strong>roten Faden</strong>, so ist B exakt
+  A&rsquo;s Geste im Makromassstab: lokale Pflaster, die zu einer globalen Antwort (&ldquo;ChatGPT lesbar&rdquo;)
+  verklebt werden. <strong>Geometry</strong> und <strong>Calculus</strong> sind darin die zwei Hälften der
+  Differentialgeometrie, die A in einem Skript vollständig ausbaut &mdash; und B&rsquo;s organisches Netz ist A&rsquo;s
+  &ldquo;Zoo&rdquo; zum Leben erweckt: lokal ein Pflaster, global eine glatte Mannigfaltigkeit.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p>Ein 2D-Canvas, das die fusionierte Idee lebt: ein <em>koordinatenfreier Körper</em>, dessen <em>lokale Struktur</em>
+  (Knoten, die nur mit nahen Nachbarn verknüpft sind &mdash; B&rsquo;s organisches Netz) die Geometrie definiert, während
+  ein <em>globales Prinzip</em> die Antwort liefert. In <strong>S²-Modus</strong> zeigt es A&rsquo;s gekrümmte Welt mit
+  einem Tangentialfeld, das <em>notgedrungen eine Nullstelle</em> hat (Igelsatz, gelbe Pulse), und blendbare lokale
+  Karten-Blasen (jede sieht wie&nbsp;ℝ² aus). In <strong>S¹-Modus</strong> wird der Körper zu einem Ring mit einem
+  <em>nirgends verschwindenden</em> Feld (kämmbar, ungerade Dimension). Ziehen dreht den Körper.</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>Knoten (lokale Pflaster)</span>
+      <span><span class="sw" style="background:var(--accent2)"></span>lokale Kanten / Feld</span>
+      <span><span class="sw" style="background:var(--accent3)"></span>Tangentialfeld</span>
+      <span><span class="sw" style="background:var(--accent4)"></span>Nullstelle (Igelsatz)</span>
+    </div>
+    <div class="viz-controls">
+      <div class="grp">Körper
+        <button class="ctl" id="modeBtn">S² &middot; gerade &middot; Igelsatz</button></div>
+      <div class="grp">Lokale Karten
+        <button class="ctl on" id="chartsBtn">Blasen: an</button></div>
+      <div class="grp">Bewegung
+        <button class="ctl on" id="playBtn">Pause</button></div>
+      <div class="grp">Tempo <b id="speedVal">1.0</b>
+        <input type="range" id="speedRange" min="0.2" max="2.5" step="0.1" value="1"></div>
+      <div class="hint">Ziehen: drehen &middot; Klick: Tempo pausieren</div>
+    </div>
+  </div>
+  <button class="ctl" id="themeBtn" style="margin-top:10px">Theme wechseln (hell/dunkel)</button>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2, TILT = -0.55;
+  var state = { mode:'s2', playing:true, charts:true, speed:1, t:0 };
+  var nodes = [];
+  var pal = {};
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg:    toRgb(cssVar('--bg')),
+      node:  toRgb(cssVar('--accent')),
+      edge:  toRgb(cssVar('--accent2')),
+      field: toRgb(cssVar('--accent3')),
+      zero:  toRgb(cssVar('--accent4')),
+      grid:  toRgb(cssVar('--grid')),
+      fg:    toRgb(cssVar('--fg'))
+    };
+  }
+
+  function initNodes(n){
+    nodes = [];
+    var ga = Math.PI*(3-Math.sqrt(5));
+    for(var i=0;i<n;i++){
+      var y = 1-(i/(n-1))*2;
+      var r = Math.sqrt(Math.max(0,1-y*y));
+      var th = ga*i;
+      nodes.push({ x:Math.cos(th)*r, y:y, z:Math.sin(th)*r, wob:Math.random()*TAU, ws:0.15+Math.random()*0.3 });
+    }
+  }
+
+  function rot(p,a){
+    var ca=Math.cos(a), sa=Math.sin(a);
+    var x1=p.x*ca+p.z*sa, z1=-p.x*sa+p.z*ca, y1=p.y;
+    var cb=Math.cos(TILT), sb=Math.sin(TILT);
+    return { x:x1, y:y1*cb - z1*sb, z:y1*sb + z1*cb };
+  }
+
+  function s2Body(i,t){
+    var n=nodes[i];
+    var wa = 0.20*Math.sin(n.ws*3*t + n.wob);
+    var cw=Math.cos(wa), sw=Math.sin(wa);
+    return { x:n.x*cw + n.z*sw, y:n.y, z:-n.x*sw + n.z*cw };
+  }
+  function s1Body(i,t){
+    var n=nodes[i];
+    var ph = n.wob + t*n.ws;
+    return { x:Math.cos(ph), y:0, z:Math.sin(ph) };
+  }
+
+  function drawEdgesNodes(pts,cx,cy,R,edgeC,nodeC){
+    var i,j,A,B,d2;
+    for(i=0;i<pts.length;i++){
+      for(j=i+1;j<pts.length;j++){
+        A=pts[i]; B=pts[j];
+        d2=(A.x-B.x)*(A.x-B.x)+(A.y-B.y)*(A.y-B.y)+(A.z-B.z)*(A.z-B.z);
+        if(d2<0.7225){
+          var d=Math.sqrt(d2), al=(1-d/0.85)*0.55, df=0.5+0.5*((A.z+B.z)/2);
+          ctx.strokeStyle=rgba(edgeC, al*(0.3+0.7*df)); ctx.lineWidth=0.7;
+          ctx.beginPath(); ctx.moveTo(cx+A.x*R,cy-A.y*R); ctx.lineTo(cx+B.x*R,cy-B.y*R); ctx.stroke();
+        }
+      }
+    }
+    for(i=0;i<pts.length;i++){
+      var P=pts[i], df2=0.5+0.5*P.z;
+      ctx.fillStyle=rgba(nodeC, 0.4+0.6*df2);
+      ctx.beginPath(); ctx.arc(cx+P.x*R, cy-P.y*R, 1.7+1.9*df2, 0, TAU); ctx.fill();
+    }
+  }
+
+  function arrowAt(x,y,dx,dy,col,lw){
+    var len=Math.sqrt(dx*dx+dy*dy);
+    if(len<0.6){ return; }
+    var hx=x+dx, hy=y+dy, a=Math.atan2(dy,dx), hs=4.5;
+    ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(hx,hy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hx,hy);
+    ctx.lineTo(hx-hs*Math.cos(a-0.42), hy-hs*Math.sin(a-0.42));
+    ctx.lineTo(hx-hs*Math.cos(a+0.42), hy-hs*Math.sin(a+0.42));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function wireSphere(cx,cy,R,a,col){
+    var lat,lon,i,th,ph,p,pts;
+    ctx.lineWidth=0.8;
+    for(lat=-60; lat<=60; lat+=30){
+      var yl=Math.sin(lat*Math.PI/180), rr=Math.cos(lat*Math.PI/180);
+      pts=[];
+      for(i=0;i<=44;i++){ th=i/44*TAU; p=rot({x:Math.cos(th)*rr, y:yl, z:Math.sin(th)*rr}, a); pts.push(p); }
+      strokePoly(pts,cx,cy,R,col,0.5);
+    }
+    for(lon=0; lon<180; lon+=30){
+      pts=[];
+      for(i=0;i<=44;i++){ ph=i/44*TAU; p=rot({x:Math.sin(ph)*Math.cos(lon*Math.PI/180), y:Math.cos(ph), z:Math.sin(ph)*Math.sin(lon*Math.PI/180)}, a); pts.push(p); }
+      strokePoly(pts,cx,cy,R,col,0.34);
+    }
+  }
+  function strokePoly(pts,cx,cy,R,col,al){
+    ctx.strokeStyle=rgba(col,al); ctx.lineWidth=1; ctx.beginPath();
+    for(var i=0;i<pts.length;i++){ var sx=cx+pts[i].x*R, sy=cy-pts[i].y*R; if(i===0)ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy); }
+    ctx.stroke();
+  }
+
+  function drawCharts(cx,cy,R,a){
+    var idx=[0,9,18], i, body, pos;
+    for(i=0;i<idx.length;i++){
+      body=s2Body(idx[i], state.t);
+      pos=rot(body,a);
+      var sx=cx+pos.x*R, sy=cy-pos.y*R, rad=R*0.15;
+      ctx.fillStyle=rgba(pal.edge,0.08); ctx.strokeStyle=rgba(pal.edge,0.4); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(sx,sy,rad,0,TAU); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle=rgba(pal.fg,0.35);
+      ctx.beginPath(); ctx.moveTo(sx-rad*0.7,sy); ctx.lineTo(sx+rad*0.7,sy);
+      ctx.moveTo(sx,sy-rad*0.7); ctx.lineTo(sx,sy+rad*0.7); ctx.stroke();
+    }
+  }
+
+  function drawS2(cx,cy,R,a,t){
+    wireSphere(cx,cy,R,a,pal.grid);
+    var body, pos, i;
+    var pts=[];
+    for(i=0;i<nodes.length;i++){ body=s2Body(i,t); pts.push(rot(body,a)); }
+    drawEdgesNodes(pts,cx,cy,R,pal.edge,pal.node);
+    if(state.charts){ drawCharts(cx,cy,R,a); }
+    for(i=0;i<nodes.length;i++){
+      body=s2Body(i,t);
+      var f=rot({x:body.y, y:-body.x, z:0}, a);
+      pos=pts[i];
+      arrowAt(cx+pos.x*R, cy-pos.y*R, f.x*R*0.24, -f.y*R*0.24, rgba(pal.field,0.85), 1.6);
+    }
+    var poles=[{x:0,y:1,z:0},{x:0,y:-1,z:0}];
+    for(i=0;i<poles.length;i++){
+      var zp=rot(poles[i],a), pulse=0.5+0.5*Math.sin(t*3.2);
+      ctx.strokeStyle=rgba(pal.zero, 0.5+0.4*pulse); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx+zp.x*R, cy-zp.y*R, R*0.05+3*pulse, 0, TAU); ctx.stroke();
+      ctx.fillStyle=rgba(pal.zero,0.9);
+      ctx.beginPath(); ctx.arc(cx+zp.x*R, cy-zp.y*R, 2.4, 0, TAU); ctx.fill();
+    }
+  }
+
+  function drawS1(cx,cy,R,a,t){
+    var i,ph,p,pts=[];
+    for(i=0;i<=60;i++){ ph=i/60*TAU; p=rot({x:Math.cos(ph),y:0,z:Math.sin(ph)},a); pts.push(p); }
+    strokePoly(pts,cx,cy,R,pal.grid,0.7);
+    for(i=0;i<16;i++){
+      ph=i/16*TAU;
+      var pos=rot({x:Math.cos(ph),y:0,z:Math.sin(ph)},a);
+      var Td=rot({x:-Math.sin(ph),y:0,z:Math.cos(ph)},a);
+      arrowAt(cx+pos.x*R, cy-pos.y*R, Td.x*R*0.22, -Td.y*R*0.22, rgba(pal.field,0.9), 1.6);
+    }
+    var npts=[];
+    for(i=0;i<nodes.length;i++){ npts.push(rot(s1Body(i,t),a)); }
+    drawEdgesNodes(npts,cx,cy,R,pal.edge,pal.node);
+  }
+
+  var dragging=false, lx=0, ly=0, baseTilt=0;
+  var extraRot=0;
+  canvas.addEventListener('mousedown',function(e){ dragging=true; lx=e.clientX; ly=e.clientY; });
+  window.addEventListener('mouseup',function(){ dragging=false; });
+  window.addEventListener('mousemove',function(e){
+    if(!dragging){ return; }
+    extraRot += (e.clientX-lx)*0.008;
+    lx=e.clientX; ly=e.clientY;
+  });
+
+  function draw(t){
+    var w=wrap.clientWidth, h=480, dpr=Math.min(window.devicePixelRatio||1,2);
+    if(w<2){ w=2; }
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+    var cx=w/2, cy=h/2, R=Math.min(w,h)*0.36, a=t*0.22 + extraRot;
+    if(state.mode==='s2'){ drawS2(cx,cy,R,a,t); } else { drawS1(cx,cy,R,a,t); }
+  }
+
+  var last=performance.now();
+  function loop(now){
+    var dt=(now-last)/1000; last=now;
+    if(dt>0.1){ dt=0.1; }
+    if(state.playing){ state.t += dt*state.speed; }
+    draw(state.t);
+    requestAnimationFrame(loop);
+  }
+
+  function setReadout(){
+    if(state.mode==='s2'){
+      readout.innerHTML='S² (gerade Dimension) &mdash; <b>Igelsatz</b>. Jedes glatte Tangentialfeld auf der Sphäre '
+        + 'hat eine Nullstelle: das Feld z&times;p verschwindet an Nord- und Südpol (gelbe Pulse). Beweis per Widerspruch: '
+        + 'Homotopie id&rarr;&minus;id mit (&minus;id)*&Omega;=(&minus;1)<sup>n+1</sup>&Omega; liefert 4&pi;=&minus;4&pi;. '
+        + 'Lokal sieht jede Karten-Blase wie&nbsp;ℝ² aus &mdash; global zwingt die Topologie die Lücke auf. Genau so ist '
+        + 'B&rsquo;s Black&nbsp;Box: lokal ein Pflaster, global ein glatter Körper ohne globale Koordinaten.';
+    } else {
+      readout.innerHTML='S¹ (ungerade Dimension) &mdash; <b>kämmbar</b>. Das Feld &part;/&part;&varphi; läuft ohne '
+        + 'Unterbrechung um den Ring &mdash; nirgends eine Nullstelle, denn (&minus;id)*&Omega;=(&minus;1)<sup>n+1</sup>&Omega; '
+        + 'mit n+1=2 liefert kein Minuszeichen. Der organische Knoten-Clump ist B&rsquo;s Black-Box-Echo: lokal ein '
+        + 'einfaches Pflaster, global eine glatte Mannigfaltigkeit &mdash; dieselbe Geste wie A&rsquo;s gekrümmte Welt.';
+    }
+  }
+
+  document.getElementById('modeBtn').addEventListener('click',function(){
+    state.mode = (state.mode==='s2') ? 's1' : 's2';
+    this.textContent = (state.mode==='s2') ? 'S² &middot; gerade &middot; Igelsatz' : 'S¹ &middot; ungerade &middot; kämmbar';
+    setReadout();
+  });
+  document.getElementById('chartsBtn').addEventListener('click',function(){
+    state.charts=!state.charts;
+    this.classList.toggle('on', state.charts);
+    this.textContent='Blasen: '+(state.charts?'an':'aus');
+  });
+  document.getElementById('playBtn').addEventListener('click',function(){
+    state.playing=!state.playing;
+    this.classList.toggle('on', state.playing);
+    this.textContent=state.playing?'Pause':'Play';
+  });
+  document.getElementById('speedRange').addEventListener('input',function(){
+    state.speed=parseFloat(this.value);
+    document.getElementById('speedVal').textContent=state.speed.toFixed(1);
+  });
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    readPal();
+  });
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+  }
+
+  readPal();
+  initNodes(26);
+  setReadout();
+  requestAnimationFrame(loop);
+})();
+</script>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../mannigfaltigkeiten.html"><strong>mannigfaltigkeiten.html &mdash; Mannigfaltigkeiten</strong></a>
+  &mdash; Interaktiver Begleiter zu &ldquo;Einführung in Mannigfaltigkeiten&rdquo; (PD Dr. M. Kühnel, Uni Freiburg).
+  Leitfrage &ldquo;Wie misst man auf einer gekrümmten Welt?&rdquo;; 23 Kapitel (Topologie, Karten/Atlanten,
+  Tangentialraum, Differentialformen, Stokes, Igelsatz, Riemannsche Metriken/Hodge/Laplace), 58 Demos.
+  (Quelle A &mdash; das geschlossene Mikro-Skript.)</p>
+  <p class="src"><a href="../intro_preview.html"><strong>intro_preview.html &mdash; From Big Bang to ChatGPT</strong></a>
+  &mdash; Lade-/Vorschau-Screen des Textbuchs (Tagline &ldquo;A Peek inside the Black Box&rdquo;): acht Module
+  (Cosmos, Numbers, Geometry, Calculus, Logic, Signal, Language, Convergence), organisches Netz-Hero,
+  Modul-Loader &ldquo;N of 8 modules loaded&rdquo;. (Quelle B &mdash; das Titelscreen der Reise.)</p>
+</section>
+
+<footer>
+  Fusion (Round 1, nicht-AI-Track, Paar 001). Selbstenthalten, ohne Netzwerk-Datenzugriffe; alle Daten
+  (Knoten auf S² / S¹, Felder, Karten) werden im Browser berechnet.
+</footer>
+</article>
+</body>
+</html>

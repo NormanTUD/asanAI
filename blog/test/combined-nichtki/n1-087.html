@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Der kommutative Eigenvektor · Diagramme ✕ Eigenvektoren</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#dcd9cf; --line:#e4e1d8; --acc:#4f46e5; --bad:#d1495b;
+  --warn:#b45309; --sky:#2f6fb0; --eig1:#b45309; --eig2:#0f766e;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#818cf8; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff; --eig1:#f59e0b; --eig2:#2dd4bf;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(129,140,248,.07) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(245,158,11,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:72ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.note{font-size:.88rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+.eq{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;
+  font-size:1.02rem;overflow-x:auto;color:var(--ink)}
+.eq b{color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+.k{color:var(--acc);font-weight:600}
+.b{color:var(--sky);font-weight:600}
+.e1{color:var(--eig1);font-weight:600}
+.bad{color:var(--bad)}
+.ok{color:var(--acc)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 120px;min-width:110px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+button.on{background:var(--acc);color:var(--card)}
+button.mode{border-style:dashed}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.86rem;margin-top:12px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<article>
+  <div class="tag">Round 1 · Nicht-KI-Track · Pair 087</div>
+  <h1>Der kommutative Eigenvektor</h1>
+  <p class="sub">Fusion aus: commutative_diagram.html ✕ eigen.html</p>
+
+  <section id="these">
+    <div class="tag">01 · These</div>
+    <h2>Kernthese der Fusion</h2>
+    <p>
+      Beide Papiere studieren dasselbe Phänomen — <b>was eine Transformation mit Struktur macht</b> —
+      und finden beide ihre Antwort in <i>demselben</i> Grundursprung: <b>Was bleibt gleich, wenn die
+      Transformation wirkt?</b> Das eine Papier (<span class="k">A</span>, kommutative Diagramme) stellt die
+      Frage <b>global und relational</b>: Führen zwei verschiedene Wege — <span class="mono">f</span> dann
+      <span class="mono">g</span> versus der direkte Weg <span class="mono">h</span> — zum selben Ziel?
+      Das andere Papier (<span class="b">B</span>, Eigenvektoren) stellt dieselbe Frage <b>lokal und
+      spektral</b>: Gibt es eine <i>Richtung</i>, die die Matrix <span class="mono">A</span> nicht einmal
+      dreht, sondern nur auf- oder abschwillt?
+    </p>
+    <p>
+      Die fusionierte Position: <b>Ein Eigenvektor ist genau die Richtung, in der eine Transformation mit
+      dem Hinsehen auf sie vertauschbar ist.</b> Nimm die Projektion <span class="mono">P</span> auf die
+      Gerade, die ein Eigenvektor <span class="mono">v</span> aufspannt. Weil <span class="mono">A</span>
+      diese Gerade auf sich selbst abbildet, <i>vertauschen sich</i> „erst transformieren, dann projizieren"
+      und „erst projizieren, dann transformieren":
+    </p>
+    <p class="eq"><b>A ∘ P = P ∘ A</b>  &nbsp;⟺&nbsp;  <span class="mono">v</span> ist Eigenvektor von <span class="mono">A</span></p>
+    <p>
+      Das ist <span class="k">A</span> im Wortsinne: <b>zwei Wege, ein Ergebnis</b> — das Kommutativitätsprinzip
+      („egal welchen Weg du nimmst, das Ergebnis ist dasselbe"), hier auf eine einzelne goldene Achse
+      zugeschnitten. Damit ist das <b>kommutative Quadrat</b> von <span class="k">A</span> (seins Herzstück:
+      <span class="mono">β∘f = g∘α</span>) die <i>Diagramm-Schreibweise</i> der
+      <span class="b">B</span>-Gleichung <span class="mono">A v = λ v</span>. <span class="k">A</span> feiert
+      Invarianz als <i>Regel</i>, <span class="b">B</span> als <i>Ausnahme</i> — fusioniert: <b>Die
+      Eigenvektoren sind die Orte, an denen <span class="k">A</span>’s Kommutativität in ihrer kleinsten,
+      eindimensionalen Form wahr wird.</b>
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <div class="tag">02 · Widersprüche</div>
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>
+      Die zwei Texte widersprechen einander <b>nicht</b> im strengen Sinn — sie beschreiben komplementäre
+      Seiten eines Objekts. Aber sie stehen sich in drei Punkten genuinely <i>entgegen</i>, und genau dort
+      entsteht die Spannung, die die Fusion aufzulösen hat.
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Invarianz als Regel vs. Invarianz als Ausnahme</h3>
+      <p>
+        <span class="k">A</span> hält Invarianz für den <b>Normalfall</b>: „Kommutativität = egal welchen Weg
+        du nimmst, das Ergebnis ist dasselbe." Die Garben-Bedingung ist ein <i>Konsistenz-Versprechen</i>, das
+        man erfüllt, um überhaupt zusammenzufügen („Stimmen überein! → Verkleben möglich!"). <span class="b">B</span>
+        hält Invarianz für das <b>Seltene</b>: „Most arrows get both rotated AND scaled. Eigenvectors are the
+        exceptions." Fast jede Richtung dreht ab; nur wenige „goldene Achsen" bleiben stehen. <span class="k">A</span>:
+        alles fügt sich. <span class="b">B</span>: fast alles verdreht sich.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Die Zahl ignorieren vs. die Zahl ist der Kern</h3>
+      <p>
+        <span class="k">A</span> beginnt mit „<b>Vergiss Symbole</b>" und behauptet, ein Pfeil sei eine
+        <i>Bewegung</i> — die Form der Komposition zählt, nicht ihre Größe. Das Quadrat
+        <span class="mono">β∘f = g∘α</span> sagt <i>nichts</i> darüber, wie stark etwas gedehnt wird;
+        der Skalierungsfaktor ist dort unsichtbar. <span class="b">B</span> macht ausgerechnet diese Zahl —
+        den Eigenwert <span class="e1">λ</span> — zum <i>Gegenstand</i>: „It tells you how much the vector
+        gets scaled." Wo <span class="k">A</span> die Größe bewusst weglässt, <i>ist</i> sie in
+        <span class="b">B</span> das, worum es geht.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Immer erfüllbar vs. manchmal gar nicht vorhanden</h3>
+      <p>
+        In <span class="k">A</span> ist die Konsistenz-/Verklebungsvoraussetzung ein <i>prüfbares, erfüllbares</i>
+        Kriterium: Man vergleicht lokal, und wenn es übereinstimmt, funktioniert das Diagramm. Das System ist
+        optimistisch: <b>die konsistente Struktur existiert und lässt sich finden.</b> <span class="b">B</span>
+        zeigt das Gegenteil für einen Spezialfall: Eine reine Drehung hat <b>keine reellen Eigenvektoren</b> —
+        „No direction stays on its line in real 2D space", die Eigenwerte werden komplex. Hier ist die
+        „versteckte Struktur" schlicht <b>abwesent</b>. <span class="k">A</span> verspricht: man findet die
+        konsistente Struktur immer. <span class="b">B</span> sagt: die spezielle Struktur kann nicht existieren.
+      </p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <div class="tag">03 · Auflösung</div>
+    <h2>Auflösung</h2>
+    <p>Alle drei Spannungen lösen sich auf, wenn man sie als <b>dieselbe Frage in zwei Zoomstufen</b> liest:
+    <i>„Auf welchen Weg / welchen Unterraum schließt das Diagramm?"</i></p>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Regel vs. Ausnahme → dieselbe Geste in zwei Größenordnungen</h3>
+      <p>
+        <span class="k">A</span>’s Kommutativität ist eine <b>relationale</b> Aussage über zwei zusammensetzbare
+        Wege. <span class="b">B</span>’s Eigenvektor ist eine <b>spektrale</b> Aussage über die invarianten
+        Geraden eines einzigen Operators. Beschränkt man die Matrix <span class="mono">A</span> auf eine
+        Eigenlinie <span class="mono">L</span>, so wird das kommutative Quadrat <b>eindimensional</b> und
+        schließt automatisch: <span class="mono">A(L)⊆L</span>. Ein Eigenvektor ist damit ein
+        <b>degeneriertes, eindimensionales kommutatives Quadrat</b>. <span class="k">A</span>’s
+        „universelle Vertauschbarkeit" und <span class="b">B</span>’s „selektive Invarianz" sind dieselbe Idee
+        — einmal auf den ganzen Pfad, einmal auf eine einzelne Achse fokussiert.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Zahl versteckt vs. Zahl sichtbar → λ ist die „Menge der Kommutativität"</h3>
+      <p>
+        <span class="k">A</span> ignoriert <span class="e1">λ</span>, weil in einem <i>kommutierenden</i> Quadrat
+        der Skalierungsfaktor auf <b>beiden Seiten steht und sich herauskürzt</b>: Fragt man nur „schließt das
+        Quadrat?", ist die Größe unsichtbar. <span class="b">B</span> fragt etwas anderes — <i>wie viel</i> wird
+        entlang der erhaltenen Achse gedehnt? — und dann <b>popt</b> genau die Größe heraus, die
+        <span class="k">A</span> durch Symmetrie versteckt hat. Fusioniert: <span class="e1">λ</span> ist der
+        Inhalt, den das Quadrat verschluckt, wenn es nur auf „ja/nein" abfragt, und der erscheint, wenn man
+        nach dem <i>Wie-much</i> fragt.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) „Immer da" vs. „manchmal weg" → „kein Eigenvektor" = „Quadrat schließt nie"</h3>
+      <p>
+        <span class="b">B</span>’s Fall „keine reellen Eigenvektoren" (reine Drehung) ist <i>exakt</i>
+        <span class="k">A</span>’s Fall, in dem <b>das Quadrat für keinen eindimensionalen Unterraum
+        schließt</b>: Eine Drehung dreht <i>jede</i> Linie weg, also gibt es kein <span class="mono">L</span>,
+        auf dem <span class="mono">A</span> mit der Projektion vertauscht. Die scheinbar widersprüchliche
+        Optimismus-/Pessimismus-Paarung fällt zusammen, weil beide dasselbe fragen — <i>finde die Wege /
+        Unterräume, auf denen das Diagramm kommutiert</i> — und nur verschieden beantworten, <i>wie viele</i>
+        es gibt.
+      </p>
+    </div>
+    <p class="note"><b>Gesamt-Ergebnis:</b> Kommutativität (A) und Eigenvektor (B) sind dieselbe Frage —
+    „wo schließt das Diagramm?" — in zwei Zoomstufen. Der Eigenvektor ist das kommutative Quadrat, das auf eine
+    Linie gekippt ist; λ ist die Größe, die es dabei freilegt; „kein reeller Eigenvektor" heißt „das Quadrat
+    schließt für keine Linie". A ist die Form, B ihr Inhalt auf der kleinsten Skala.</p>
+  </section>
+
+  <section id="inhalt">
+    <div class="tag">04 · Inhalt</div>
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die Tabelle übersetzt die Maschinen beider Papiere in ein gemeinsames Vokabular. Jede Zeile: ein Konzept
+    aus <span class="k">A</span>, sein <span class="b">B</span>-Analogon, und die fusionierte Lesart.</p>
+    <table>
+      <thead><tr><th>Diagramm-Welt (A)</th><th>Eigen-Welt (B)</th><th>Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td>Pfeil / Morphismus <span class="mono">f</span></td><td>Matrix <span class="mono">A</span> (Pfeil im Kategorie der Vektorräume)</td><td>beides: eine Abbildung, die Struktur von einem Ort zum anderen bewegt</td></tr>
+        <tr><td>Komposition <span class="mono">g∘f</span></td><td>Matrixmultiplikation <span class="mono">A·v</span>, <span class="mono">A²</span></td><td>Weg = Hintereinanderausführen; <span class="mono">Aⁿ</span> ist „dieselbe Bewegung, n-mal"</td></tr>
+        <tr><td>kommutatives Quadrat <span class="mono">β∘f = g∘α</span></td><td>Eigenbedingung <span class="mono">A v = λ v</span></td><td>das Quadrat auf einer Eigenlinie gekippt: <span class="mono">A∘P = P∘A</span></td></tr>
+        <tr><td>„Reihenfolge egal" (Pfad-Unabhängigkeit)</td><td>„Richtung bleibt" (Dreh-Immunität)</td><td>dasselbe Prinzip: Invarianz der Wirkung — einmal global, einmal an einer Achse</td></tr>
+        <tr><td>Homotopie <span class="mono">H: f ≃ g</span> (Fläche zwischen Pfaden)</td><td>— (fehlt in B)</td><td>„Gleichheit ist ein Pfad"; der Eigenvektor ist ein <i>starrer</i> Pfad, der sich nicht verformen lässt</td></tr>
+        <tr><td>Pullback <span class="mono">P = A×_C B = {(a,b): f(a)=g(b)}</span></td><td>Kern/Bild <span class="mono">ker / im</span> als „passende Paare"</td><td>beide sammeln „das, was übereinstimmt" — konsistente Paare</td></tr>
+        <tr><td>exakte Sequenz <span class="mono">im(f) = ker(g)</span></td><td>Stabilität: alle <span class="mono">|λ| &lt; 1</span> → Dämpfung</td><td>„Fluss ohne Verlust/Überschuss" — Information läuft sauber durch</td></tr>
+        <tr><td>Garben-Bedingung / Verkleben</td><td>Diagonalisierbarkeit: <span class="mono">V = span(v₁) ⊕ span(v₂)</span></td><td>lokale Daten fügen sich global zusammen, wenn sie lokal kommutieren</td></tr>
+        <tr><td>— (A ist „symbolfrei")</td><td>Eigenwert <span class="mono">λ</span> (Streckfaktor)</td><td>die Größe, die das Quadrat versteckt und die Spektralansicht freilegt</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Was A strukturell trägt</h3>
+    <p>
+      <b>Pfeil = Bewegung.</b> <span class="mono">A --f→ B</span>: „Etwas verwandelt sich in etwas anderes."
+      <b>Dreieck.</b> <span class="mono">g∘f = h</span>: „Zwei Wege, ein Ziel." <b>Quadrat.</b>
+      <span class="mono">β∘f = g∘α</span>: „Zwei Welten, eine Wahrheit" — erst übersetzen dann leben = erst
+      leben dann übersetzen. <b>Homotopie.</b> In HoTT ist Gleichheit ein Pfad <span class="mono">p,q : a =_A b</span>
+      und ein Beweis <span class="mono">H : p = q</span> eine <i>Fläche</i> (2-Zelle) zwischen den Pfaden.
+      <b>Pullback.</b> <span class="mono">P = A×_C B = {(a,b) : f(a) = g(b)}</span> — der Raum aller
+      <i>konsistenten Wahlen</i>. <b>Halm/Keim.</b> <span class="mono">F_x = colim_{U∋x} F(U)</span> — lokales
+      Wissen. <b>Exaktheit.</b> <span class="mono">im(f) = ker(g)</span>: „Was von A kommt, ist genau das, was
+      von g getötet wird — kein Tropfen verloren." <b>Étalé-Raum.</b> Die Garbe als „Wiese, über der an jedem
+      Punkt ein Halm wächst"; ein Schnitt ist eine glatte Auswahl.
+    </p>
+
+    <h3>Was B spektral trägt</h3>
+    <p>
+      <b>Matrix = Maschine.</b> Jede 2×2-Matrix nimmt einen 2D-Pfeil und spuckt einen neuen aus. <b>Die
+      Ausnahme.</b> Die meisten Richtungen werden gedreht <i>und</i> geskalen; Eigenvektoren
+      <span class="mono">v ≠ 0</span> mit <span class="mono">A v = λ v</span> bleiben <i>auf ihrer Linie</i>.
+      <b>Die Zahl.</b> <span class="e1">λ</span> &gt; 0: gleiche Richtung; <span class="e1">λ</span> &lt; 0:
+      180°-Flip; <span class="mono">|λ| &lt; 1</span>: Schrumpfen. <b>Die Algebra.</b>
+      <span class="mono">(A − λI)v = 0</span> braucht ein <span class="mono">v ≠ 0</span> genau dann, wenn
+      <span class="mono">det(A − λI) = 0</span> — die <i>charakteristische Gleichung</i>; für
+      <span class="mono">[[a,b],[c,d]]</span>: <span class="mono">λ² − (a+d)λ + (ad−bc) = 0</span>.
+      <b>Die Macht.</b> <span class="mono">Aⁿ</span> auf einen Zufallsvektor: alles <i>richtet sich</i> auf den
+      dominanten Eigenvektor (größtes <span class="mono">|λ|</span>) aus — <i>Power Iteration</i>, das Herz von
+      PageRank, Schwingungsmoden, PCA, Eigenfaces, Stabilitätsanalyse. <b>Der Spezialfall.</b> Reine Drehung:
+      keine reellen Eigenvektoren, Eigenwerte <span class="mono">±i</span>.
+    </p>
+
+    <h3>Die Brücke, in Formeln</h3>
+    <p>Sei <span class="mono">v</span> ein (einheitlicher) Eigenvektor von <span class="mono">A</span> mit
+    Eigenwert <span class="e1">λ</span> und <span class="mono">P</span> die (orthogonale) Projektion auf
+    <span class="mono">span(v)</span>. Im 2×2-Fall mit reellen, verschiedenen Eigenwerten sind sowohl
+    <span class="mono">span(v₁)</span> als auch sein Komplement <span class="mono">span(v₂)</span> invariant —
+    also:</p>
+    <p class="eq">P(A v) = P(λ v) = <b>λ v</b>  &nbsp;&nbsp;(erst transformieren, dann projizieren)<br/>
+       A(P v) = A v     = <b>λ v</b>  &nbsp;&nbsp;(erst projizieren, dann transformieren)</p>
+    <p>
+      Beide Seiten sind gleich ⇒ das Quadrat <span class="mono">V --A→ V / |P · P / V --λ·id→ …</span>
+      <b>schließt</b>, d.h. <span class="mono">A∘P = P∘A</span>. Die Eigenvektor-Bedingung
+      <span class="mono">A v = λ v</span> ist <i>genau</i> die Aussage, dass sich <span class="mono">A</span>
+      mit dem Hinsehen auf seine Eigenlinie vertauscht.
+    </p>
+    <p>
+      <b>Iteration = Selbstkomposition.</b> <span class="k">A</span>’s „Fluss der Information" ist
+      <span class="mono">Aⁿ = A∘A∘…</span> — dieselbe Bewegung, n-mal hintereinander. <span class="b">B</span>
+      sagt: Falls <span class="mono">|λ₁| &gt; |λ₂|</span>, konvergiert die (normalisierte) Wiederholung
+      <span class="mono">Aⁿ v</span> gegen den dominanten Eigenvektor <span class="mono">v₁</span>.
+      <b>Der Weg der wiederholten Komposition endet im Eigenvektor.</b> Zusammen mit der Stabilitäts-Lesart
+      (alle <span class="mono">|λ| &lt; 1</span> ⇒ Dämpfung, wie <span class="k">A</span>’s exaktes
+      „kein Tropfen verloren") ergibt sich ein vollständiges Bild: Kommutativität steuert die <i>Form</i> der
+      Komposition, die Eigenwerte steuern, ob die wiederholte Anwendung <i>wächst, zerfällt oder rotiert</i>.
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <div class="tag">05 · Visualisierung</div>
+    <h2>Das kommutative Quadrat, das sich schließt</h2>
+    <p>
+      <b>Links:</b> eine 2×2-Matrix <span class="mono">A</span> wirft ein <b>Pfeilfeld</b> (36 Richtungen) ab —
+      die meisten rotieren ab, die <span class="e1">goldene</span> und <span class="e1">türkis</span> Eigenachse
+      bleiben auf ihrer Linie (B). <b>Rechts:</b> das <b>kommutative Quadrat des Eigenvektors</b> —
+      <span class="mono">v</span> (indigo) und <span class="mono">A v = λ v</span> (gold) liegen auf
+      <i>derselben</i> Geraden, also schließt <span class="mono">A∘P = P∘A</span> (A). <b>Modus
+      „Iteration"</b> zeigt, wie <span class="mono">Aⁿ</span> (wiederholte Komposition) eine Vektorwolke auf
+      den dominanten Eigenvektor <i>konvergieren</i> lässt.
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c"><label>a (top-left) <b id="v-a">2.0</b></label><input type="range" id="s-a" min="-3" max="3" step="0.1" value="2"></div>
+        <div class="c"><label>b (top-right) <b id="v-b">1.0</b></label><input type="range" id="s-b" min="-3" max="3" step="0.1" value="1"></div>
+        <div class="c"><label>c (bot-left) <b id="v-c">0.0</b></label><input type="range" id="s-c" min="-3" max="3" step="0.1" value="0"></div>
+        <div class="c"><label>d (bot-right) <b id="v-d">3.0</b></label><input type="range" id="s-d" min="-3" max="3" step="0.1" value="3"></div>
+      </div>
+      <div class="btnrow">
+        <button id="m-field" class="mode on">① Pfeilfeld &amp; Eigenachsen</button>
+        <button id="m-iter" class="mode">② Power Iteration (Aⁿ)</button>
+        <button id="b-iter">🔁 Iterieren</button>
+        <button id="b-auto">⏩ Auto</button>
+        <button id="b-reset">↺ Reset</button>
+        <button id="b-theme">🌙/☀️ Theme</button>
+      </div>
+      <canvas id="viz" height="560"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--acc)"></i>normale Richtung (dreht ab)</span>
+        <span><i style="background:var(--eig1)"></i>Eigenachse v₁ (λ₁)</span>
+        <span><i style="background:var(--eig2)"></i>Eigenachse v₂ (λ₂)</span>
+        <span><i style="background:var(--sky)"></i>Iteration: dominante Achse</span>
+      </div>
+      <div class="stat">
+        <span>Spur tr(A): <b id="r-tr">—</b></span>
+        <span>det(A): <b id="r-det">—</b></span>
+        <span><b id="r-l1">λ₁</b></span>
+        <span><b id="r-l2">λ₂</b></span>
+        <span><b id="r-v1">v₁</b></span>
+        <span><b id="r-v2">v₂</b></span>
+        <span>Status: <b id="r-st">—</b></span>
+      </div>
+    </div>
+    <p class="note">Reine Drehung (z. B. a=0, b=−1, c=1, d=0) ⇒ komplexe Eigenwerte ⇒ das Quadrat schließt für
+    <i>keine</i> Linie — exakt B’s „keine reellen Eigenvektoren", gelesen als A’s „nicht kommutierend für
+    keinen 1D-Unterraum".</p>
+  </section>
+
+  <section id="provenienz">
+    <div class="tag">06 · Provenienz</div>
+    <h2>Provenienz</h2>
+    <div class="card">
+      <b>A — <a href="../commutative_diagram.html">commutative_diagram.html</a></b>
+      <p>„Kommutative Diagramme – Visuell &amp; Intuitiv" (de). Achterteil, symbolfreie Geometrie: Pfeil als
+      Bewegung, Dreieck/Quadrat als „zwei Wege, ein Ziel", Homotopie als Fläche zwischen Pfaden, Pullback als
+      konsistente Paare, Halme/Keime, exakte Sequenzen (<span class="mono">im f = ker g</span>) und der
+      Étalé-Raum als „Wiese mit Halmen". Kernidee: Kommutativität = Ergebnis unabhängig vom Weg.</p>
+    </div>
+    <div class="card">
+      <b>B — <a href="../eigen.html">eigen.html</a></b>
+      <p>„Eigenvectors — See the Unseen Axes of Transformation" (en). Interaktive Spektralgeometrie: Matrix als
+      Pfeil-Maschine, Eigenvektoren als „Richtungen, die sich weigern zu drehen" (<span class="mono">Av=λv</span>),
+      Eigenwert als Streckfaktor, char. Gleichung <span class="mono">det(A−λI)=0</span>, Power Iteration
+      (<span class="mono">Aⁿ</span> → dominante Achse) und Anwendungen (PageRank, Schwingungen, PCA, QM,
+      Eigenfaces, Stabilität). Kernidee: die wenige Achse, die die Transformation nicht dreht.</p>
+    </div>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 560;
+
+  var a = 2, b = 1, c = 0, d = 3;
+  var mode = 'field';
+  var cloud = [], iterCount = 0, alignPct = 0, autoId = null;
+
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function hexToRgba(hex, al){
+    var h = (hex||'').replace('#','').trim();
+    if(h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    if(h.length!==6) return hex;
+    var n = parseInt(h,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+al+')';
+  }
+  function computeEigen(a,b,c,d){
+    var trace = a+d, det = a*d - b*c, disc = trace*trace - 4*det;
+    if(disc < 0){
+      var re = trace/2, im = Math.sqrt(-disc)/2;
+      return { real:false, lambda1:{re:re,im:im}, lambda2:{re:re,im:-im}, v1:null, v2:null };
+    }
+    var s = Math.sqrt(disc), l1 = (trace+s)/2, l2 = (trace-s)/2;
+    function ev(lam){
+      var a1=a-lam, b1=b, c1=c, d1=d-lam, vx, vy;
+      if(Math.abs(b1)>1e-10){ vx=b1; vy=lam-a; }
+      else if(Math.abs(c1)>1e-10){ vx=lam-d; vy=c1; }
+      else if(Math.abs(a1)>1e-10){ vx=0; vy=1; }
+      else { vx=1; vy=0; }
+      var len=Math.sqrt(vx*vx+vy*vy); if(len>1e-10){ vx/=len; vy/=len; }
+      return {x:vx, y:vy};
+    }
+    return { real:true, lambda1:l1, lambda2:l2, v1:ev(l1), v2:ev(l2) };
+  }
+
+  function fit(){
+    var r = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    canvas.width = Math.max(1, Math.floor(r.width*dpr));
+    canvas.height = Math.max(1, Math.floor(H*dpr));
+    canvas.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = r.width;
+  }
+
+  function drawArrow(x1,y1,x2,y2,color,w){
+    var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy);
+    if(len<2) return;
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var hl=Math.min(9,len*0.3), ang=Math.atan2(dy,dx);
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hl*Math.cos(ang-0.4), y2-hl*Math.sin(ang-0.4));
+    ctx.lineTo(x2-hl*Math.cos(ang+0.4), y2-hl*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function drawGrid(cx,cy,span,grid,ink){
+    var n = Math.floor(span/40); if(n<2)n=2;
+    var i;
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(i=-n;i<=n;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*40, cy-span); ctx.lineTo(cx+i*40, cy+span); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-span, cy+i*40); ctx.lineTo(cx+span, cy+i*40); ctx.stroke();
+    }
+    ctx.strokeStyle=hexToRgba(ink,0.35);
+    ctx.beginPath(); ctx.moveTo(cx-span,cy); ctx.lineTo(cx+span,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy-span); ctx.lineTo(cx,cy+span); ctx.stroke();
+  }
+
+  function initCloud(){
+    cloud=[]; var i;
+    for(i=0;i<32;i++){
+      var ang=Math.random()*TAU, r=0.7+Math.random()*0.6;
+      cloud.push({x:Math.cos(ang)*r, y:Math.sin(ang)*r});
+    }
+    iterCount=0; alignPct=0;
+  }
+
+  function iterate(){
+    var eigen = computeEigen(a,b,c,d), i, v, nx, ny, len;
+    for(i=0;i<cloud.length;i++){
+      v=cloud[i]; nx=a*v.x+b*v.y; ny=c*v.x+d*v.y; len=Math.sqrt(nx*nx+ny*ny);
+      if(len>1e-6){ nx/=len; ny/=len; }
+      cloud[i]={x:nx, y:ny};
+    }
+    iterCount++;
+    if(eigen.real && eigen.v1){
+      var s=0; for(i=0;i<cloud.length;i++) s+=Math.abs(cloud[i].x*eigen.v1.x+cloud[i].y*eigen.v1.y);
+      alignPct=s/cloud.length*100;
+    } else alignPct=0;
+    draw();
+  }
+
+  function setT(id,txt){ var el=document.getElementById(id); if(el) el.textContent=txt; }
+
+  function draw(){
+    fit();
+    var INK=cssv('--ink','#e7ecf6'), DIM=cssv('--dim','#8b93a9'), GRID=cssv('--grid','#232a38'),
+        ACC=cssv('--acc','#818cf8'), BAD=cssv('--bad','#ff6f6f'), E1=cssv('--eig1','#f59e0b'),
+        E2=cssv('--eig2','#2dd4bf'), CARD=cssv('--card','#11151d'), LINE=cssv('--line','#1c2331'),
+        SKY=cssv('--sky','#7aa2ff');
+    var eigen = computeEigen(a,b,c,d), i, ang, vx, vy, tx, ty;
+    ctx.clearRect(0,0,W,H);
+
+    var leftW=Math.floor(W*0.62);
+    var sL=18,sT=18,sB=40,sR=16;
+    var pw=leftW-sL-sR, ph=H-sT-sB;
+    var sq=Math.min(pw,ph);
+    var ox=sL+(pw-sq)/2, oy=sT+(ph-sq)/2;
+    var cx=ox+sq/2, cy=oy+sq/2;
+    var span=sq/2;
+
+    drawGrid(cx,cy,span,GRID,INK);
+
+    var scale;
+    if(mode==='field'){
+      var maxMag=1;
+      for(i=0;i<36;i++){ ang=i/36*TAU; vx=Math.cos(ang); vy=Math.sin(ang);
+        tx=a*vx+b*vy; ty=c*vx+d*vy; var m=Math.sqrt(tx*tx+ty*ty); if(m>maxMag)maxMag=m; }
+      scale=(sq/2-26)/maxMag;
+      // unit circle
+      ctx.setLineDash([3,4]); ctx.strokeStyle=hexToRgba(INK,0.18); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(cx,cy,scale,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      // transformed field
+      for(i=0;i<36;i++){
+        ang=i/36*TAU; vx=Math.cos(ang); vy=Math.sin(ang);
+        tx=a*vx+b*vy; ty=c*vx+d*vy;
+        var isE=false, col=hexToRgba(ACC,0.5), w=1.6;
+        if(eigen.real && eigen.v1){
+          var d1=Math.abs(vx*eigen.v1.x+vy*eigen.v1.y);
+          var d2=Math.abs(vx*eigen.v2.x+vy*eigen.v2.y);
+          if(d1>0.97){ isE=true; col=E1; w=3.4; }
+          else if(d2>0.97){ isE=true; col=E2; w=3.4; }
+        }
+        drawArrow(cx,cy, cx+tx*scale, cy-ty*scale, col, w);
+      }
+      // eigen lines
+      if(eigen.real && eigen.v1){
+        var L=span*0.98;
+        ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
+        ctx.strokeStyle=hexToRgba(E1,0.45);
+        ctx.beginPath(); ctx.moveTo(cx-eigen.v1.x*L, cy+eigen.v1.y*L); ctx.lineTo(cx+eigen.v1.x*L, cy-eigen.v1.y*L); ctx.stroke();
+        ctx.strokeStyle=hexToRgba(E2,0.45);
+        ctx.beginPath(); ctx.moveTo(cx-eigen.v2.x*L, cy+eigen.v2.y*L); ctx.lineTo(cx+eigen.v2.x*L, cy-eigen.v2.y*L); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    } else {
+      scale=(sq/2-24)/1.35;
+      // dominant eigen line
+      if(eigen.real && eigen.v1){
+        var L2=span*0.98;
+        ctx.setLineDash([7,4]); ctx.lineWidth=2; ctx.strokeStyle=SKY;
+        ctx.beginPath(); ctx.moveTo(cx-eigen.v1.x*L2, cy+eigen.v1.y*L2); ctx.lineTo(cx+eigen.v1.x*L2, cy-eigen.v1.y*L2); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle=SKY; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+        ctx.fillText('dominante Achse v₁', cx+eigen.v1.x*span*0.6+6, cy-eigen.v1.y*span*0.6-6);
+      }
+      // unit circle
+      ctx.setLineDash([3,4]); ctx.strokeStyle=hexToRgba(INK,0.18); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(cx,cy,scale,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      // cloud
+      for(i=0;i<cloud.length;i++){
+        var hue=(i/cloud.length)*70+200;
+        var cc='hsla('+hue+',72%,64%,0.85)';
+        drawArrow(cx,cy, cx+cloud[i].x*scale, cy-cloud[i].y*scale, cc, 2.4);
+      }
+    }
+
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText(mode==='field' ? 'A wirft 36 Richtungen ab — die Eigenachsen bleiben stehen' : 'Aⁿ auf einer Wolke — alles richte auf v₁', sL, H-14);
+
+    // ---- right inset: commutative square of the eigenvector ----
+    var ix=leftW+16, iy=18, iw=W-ix-14, ih=190;
+    ctx.fillStyle=CARD; ctx.fillRect(ix,iy,iw,ih);
+    ctx.strokeStyle=LINE; ctx.lineWidth=1; ctx.strokeRect(ix,iy,iw,ih);
+    ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('Das kommutative Quadrat des Eigenvektors', ix+10, iy+16);
+    if(!eigen.real){
+      var midy=iy+ih/2+6;
+      ctx.fillStyle=BAD; ctx.font='bold 12px ui-sans-serif,system-ui';
+      ctx.fillText('kein reeller Eigenvektor', ix+12, midy-6);
+      ctx.fillStyle=DIM; ctx.font='11px ui-sans-serif,system-ui';
+      ctx.fillText('Quadrat schließt für keine', ix+12, midy+12);
+      ctx.fillText('1D-Richtung (komplexe λ)', ix+12, midy+28);
+      ctx.fillText('→ nicht kommutierend', ix+12, midy+44);
+    } else {
+      var v1=eigen.v1, lam=eigen.lambda1;
+      var icx=ix+iw/2, icy=iy+16+(ih-16-20)/2;
+      var s=(Math.min(iw/2,(ih-44)/2)-14)/Math.max(1.3,Math.abs(lam));
+      var ll=Math.min(iw/2-12,(ih-44)/2-6);
+      ctx.setLineDash([4,3]); ctx.strokeStyle=hexToRgba(E1,0.4); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(icx-v1.x*ll, icy+v1.y*ll); ctx.lineTo(icx+v1.x*ll, icy-v1.y*ll); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=INK; ctx.beginPath(); ctx.arc(icx,icy,2.2,0,TAU); ctx.fill();
+      drawArrow(icx,icy, icx+v1.x*s, icy-v1.y*s, ACC, 2.4);
+      drawArrow(icx,icy, icx+(v1.x*lam)*s, icy-(v1.y*lam)*s, E1, 3.2);
+      ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+      ctx.fillStyle=ACC; ctx.fillText('v', icx+v1.x*s*1.12+4, icy-v1.y*s*1.12);
+      ctx.fillStyle=E1; ctx.fillText('A v = λ v', icx+(v1.x*lam)*s*1.05+4, icy-(v1.y*lam)*s*1.05-4);
+      ctx.fillStyle=DIM; ctx.font='10px ui-sans-serif,system-ui'; ctx.textAlign='center';
+      ctx.fillText('P(A v) = A(P v)  ✓  kommutativ', icx, iy+ih-8);
+      ctx.textAlign='left';
+    }
+
+    // ---- readouts ----
+    setT('r-tr',(a+d).toFixed(2));
+    setT('r-det',(a*d-b*c).toFixed(2));
+    if(eigen.real){
+      setT('r-l1','λ₁='+eigen.lambda1.toFixed(3));
+      setT('r-l2','λ₂='+eigen.lambda2.toFixed(3));
+      setT('r-v1','v₁=(' + eigen.v1.x.toFixed(2)+', '+eigen.v1.y.toFixed(2)+')');
+      setT('r-v2','v₂=(' + eigen.v2.x.toFixed(2)+', '+eigen.v2.y.toFixed(2)+')');
+      var st=document.getElementById('r-st');
+      if(mode==='iter'){
+        st.textContent='Iterationen: '+iterCount+' · Ausrichtung: '+alignPct.toFixed(1)+'%';
+        st.className='ok';
+      } else { st.textContent='reelle Eigenvektoren ✓'; st.className='ok'; }
+    } else {
+      setT('r-l1','λ₁=' + eigen.lambda1.re.toFixed(2)+' + '+eigen.lambda1.im.toFixed(2)+'i');
+      setT('r-l2','λ₂=' + eigen.lambda2.re.toFixed(2)+' - '+eigen.lambda2.im.toFixed(2)+'i');
+      setT('r-v1','—'); setT('r-v2','—');
+      var st2=document.getElementById('r-st');
+      st2.textContent='komplexe Eigenwerte (Drehung)'; st2.className='bad';
+    }
+  }
+
+  function wire(id, set, label){
+    var el=document.getElementById(id);
+    el.addEventListener('input', function(){ set(el.value); if(label) document.getElementById(label).textContent=(+el.value).toFixed(1); draw(); });
+  }
+  wire('s-a', function(v){ a=+v; }, 'v-a');
+  wire('s-b', function(v){ b=+v; }, 'v-b');
+  wire('s-c', function(v){ c=+v; }, 'v-c');
+  wire('s-d', function(v){ d=+v; }, 'v-d');
+
+  document.getElementById('m-field').addEventListener('click', function(){
+    mode='field';
+    document.getElementById('m-field').classList.add('on');
+    document.getElementById('m-iter').classList.remove('on');
+    draw();
+  });
+  document.getElementById('m-iter').addEventListener('click', function(){
+    mode='iter';
+    if(!cloud.length) initCloud();
+    document.getElementById('m-iter').classList.add('on');
+    document.getElementById('m-field').classList.remove('on');
+    draw();
+  });
+  document.getElementById('b-iter').addEventListener('click', function(){
+    if(mode!=='iter'){
+      mode='iter';
+      document.getElementById('m-iter').classList.add('on');
+      document.getElementById('m-field').classList.remove('on');
+    }
+    if(!cloud.length) initCloud();
+    iterate();
+  });
+  document.getElementById('b-auto').addEventListener('click', function(){
+    if(mode!=='iter'){
+      mode='iter';
+      document.getElementById('m-iter').classList.add('on');
+      document.getElementById('m-field').classList.remove('on');
+    }
+    if(!cloud.length) initCloud();
+    var btn=this;
+    if(autoId){ clearInterval(autoId); autoId=null; btn.textContent='⏩ Auto'; btn.classList.remove('on'); }
+    else { autoId=setInterval(iterate, 450); btn.textContent='⏸ Stop'; btn.classList.add('on'); }
+  });
+  document.getElementById('b-reset').addEventListener('click', function(){
+    if(autoId){ clearInterval(autoId); autoId=null; document.getElementById('b-auto').textContent='⏩ Auto'; document.getElementById('b-auto').classList.remove('on'); }
+    if(mode!=='iter'){ mode='iter'; document.getElementById('m-iter').classList.add('on'); document.getElementById('m-field').classList.remove('on'); }
+    initCloud(); draw();
+  });
+  document.getElementById('b-theme').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); draw();
+  });
+
+  window.addEventListener('resize', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

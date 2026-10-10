@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "mannigfaltigkeiten.html",
+  "b": "intro_preview.html",
+  "a_title": "Mannigfaltigkeiten — Wie misst man auf einer gekrümmten Welt?",
+  "b_title": "From Big Bang to ChatGPT — A Peek inside the Black Box (Intro-Preview)",
+  "combined_theme": "local-instruments-global-answer",
+  "one_line": "Beide Texte machen ein koordinatenfreies Objekt (A: eine gekrümmte Welt, B: die LLM-Black-Box) lesbar durch dieselbe Geste: in lokale, einfache Stücke zerlegen (Karten bzw. die 8 Module), ein lokal verklebendes Messinstrument bauen (Differentialformen bzw. die Modul-Spinne) und ein einziges globales Prinzip zur Antwort machen (Satz von Stokes, der im Igelsatz mündet, bzw. das Big-Bang→ChatGPT-Narrativ); A ist eine derartige Reise-Station bis zum Abschluss durchentwickelt, B deren Titelscreen.",
+  "contradictions": [
+    "Zweck der Geometrie: A behandelt Differentialgeometrie als abgeschlossenes, sich selbst genügendes Mikro-Skript mit internem Gewinn (der Igelsatz als 'Antwort auf die Leitfrage'), KI wird nie erwähnt; B unterordnet 'Geometry' und 'Calculus' dem instrumentellen Ziel 'A Peek inside the Black Box' (Sprachmodelle verstehen).",
+    "Struktur: A ist ein geschlossener logischer Bogen (Motivation→Werkzeugkasten→Idee→Lösung→Antwort→'roter Faden' als Beweisbaum), der als Ganzes nachzulesen ist; B ist eine offene, lineare, geordnete Reise (Big Bang→…→Convergence), deren Loader 'N of 8 modules loaded' zählt und die man als Stationen durchfährt.",
+    "Geometrie & Analysis: A macht deren Verschmelzung zum gesamten Fach (Differentialgeometrie; Stokes als 'Herzstück', das d und ∫ zusammenführt); B hält 'Geometry' und 'Calculus' als zwei getrennte, benachbarte Module der Achte-Welt."
+  ],
+  "resolution": "Die drei Gesten sind zwei Stufen eines Musters, kein Widerspruch: A's geschlossener Bogen ist B's offene Reise-Station, ausgereizt (der Igelsatz demonstriert die Geste 'lokale Werkzeuge→globale Antwort', die die ganze Reise wiederverwendet); B's offene Reise ist eine Folge geschlossener Mikro-Bögen, wobei A der Prototyp ist (A's Beweisbaum/roter Faden = Makro-Loader 'N of 8'); und B's 'Geometry'+'Calculus' sind die zwei Hälften der einen Station Differentialgeometrie, die A vollständig ausbaut.",
+  "viz": "2D-Canvas (reine Inline-Daten, themenreaktiv hell/dunkel): ein koordinatenfreier Körper, dessen lokale Kanten (nur mit nahen Nachbarn verknüpfte Knoten, B's organisches Netz) die Geometrie definieren. S²-Modus = A's gekrümmte Welt mit einem Tangentialfeld, das notgedrungen eine Nullstelle hat (Igelsatz, gelbe Pulse) + blendbare lokale Karten-Blasen (jeweils wie ℝ²); S¹-Modus = Ring mit nirgends verschwindendem Feld (kämmbar, ungerade Dimension). Ziehen dreht; Regler für Modus/Karten/Play/Tempo + Theme-Button."
+}

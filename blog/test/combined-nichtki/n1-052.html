@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Versteckte Muster, Drift und Wahrnehmung — Fusion</title>
+<style>
+  :root{
+    --bg:#f5f6fb; --bg2:#ffffff; --card:#ffffff; --text:#191c28; --muted:#586074;
+    --border:#e2e5ee; --accent:#2f6df6; --good:#1f9d55; --bad:#e0453a;
+    --grid:rgba(0,0,0,0.06); --shadow:0 10px 30px rgba(20,30,60,0.08);
+  }
+  html.dark{
+    --bg:#0a0d16; --bg2:#10141f; --card:#121625; --text:#e7eaf2; --muted:#98a1b6;
+    --border:#232a3b; --accent:#6ea8ff; --good:#3fbf7a; --bad:#ff6b5e;
+    --grid:rgba(255,255,255,0.06); --shadow:0 12px 34px rgba(0,0,0,0.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--text);
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+    transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:40px 20px 80px;}
+  .topbar{
+    display:flex; justify-content:flex-end; margin-bottom:6px;
+  }
+  .themebtn{
+    background:var(--card); color:var(--text); border:1px solid var(--border);
+    padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px;
+  }
+  .themebtn:hover{border-color:var(--accent);}
+  h1{font-size:2.05em; line-height:1.25; margin:8px 0 6px; letter-spacing:-.01em;}
+  .subtitle{color:var(--accent); font-size:.95em; margin-bottom:4px;}
+  .lede{color:var(--muted); font-size:.95em; margin-bottom:26px;}
+  section{
+    background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:24px 26px; margin:20px 0; box-shadow:var(--shadow);
+  }
+  h2{font-size:1.28em; margin-bottom:14px; letter-spacing:-.01em;}
+  h2 .num{color:var(--accent); font-variant-numeric:tabular-nums;}
+  p{margin-bottom:13px; font-size:.98em;}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--text);}
+  .card{
+    background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:10px; padding:14px 16px; margin:14px 0; font-size:.95em;
+  }
+  .card b{color:var(--accent);}
+  .card.warn{border-left-color:var(--bad);}
+  .card.warn b{color:var(--bad);}
+  .card.ok{border-left-color:var(--good);}
+  .card.ok b{color:var(--good);}
+  ul{margin:10px 0 10px 20px; font-size:.96em;}
+  li{margin-bottom:8px;}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.88em;}
+  th,td{text-align:left; padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{color:var(--muted); font-weight:600; font-size:.82em; text-transform:uppercase; letter-spacing:.04em;}
+  td.a{color:var(--accent); font-weight:600; white-space:nowrap;}
+  td.b{color:var(--bad); font-weight:600; white-space:nowrap;}
+  .tagA{display:inline-block; font-size:.72em; font-weight:700; color:var(--accent); border:1px solid var(--accent); border-radius:5px; padding:1px 6px; margin-right:6px;}
+  .tagB{display:inline-block; font-size:.72em; font-weight:700; color:var(--bad); border:1px solid var(--bad); border-radius:5px; padding:1px 6px; margin-right:6px;}
+  .viz-controls{display:flex; flex-wrap:wrap; gap:14px; margin:8px 0 14px;}
+  .vc{flex:1 1 180px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px;}
+  .vc label{display:flex; justify-content:space-between; font-size:.82em; color:var(--muted); font-weight:600; margin-bottom:8px;}
+  .vc label span{color:var(--accent); font-variant-numeric:tabular-nums;}
+  .vc input[type=range]{width:100%; accent-color:var(--accent);}
+  canvas#viz{width:100%; height:470px; display:block; background:var(--bg2); border:1px solid var(--border); border-radius:12px;}
+  .vnote{font-size:.86em; color:var(--muted); margin-top:12px; line-height:1.6;}
+  .prov a{color:var(--accent); font-weight:600; text-decoration:none;}
+  .prov a:hover{text-decoration:underline;}
+  .prov li{margin-bottom:12px;}
+  footer{color:var(--muted); font-size:.82em; text-align:center; margin-top:26px;}
+  code{background:var(--bg2); border:1px solid var(--border); border-radius:5px; padding:1px 6px; font-size:.86em; font-family:ui-monospace,Menlo,monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar"><button class="themebtn" id="themeBtn">☀️ Hell / Dunkel</button></div>
+  <h1>Versteckte Muster, Drift und die Integrität der Wahrnehmung</h1>
+  <p class="subtitle">Fusion aus: pz2.html ✕ narcissism.html</p>
+  <p class="lede">Zwei scheinbar ferne Domains — Zahlentheorie und Psychologie — untersuchen denselben kognitiven Akt: eine <em>systematische Struktur</em> in etwas zu erkennen, das auf der Oberfläche zufällig oder unschuldig wirkt. Die Fusion liest beide als ein gemeinsames Signal-Modell.</p>
+
+  <section id="these">
+    <h2><span class="num">1.</span> Kernthese der Fusion</h2>
+    <p>Beide Papiere drehen sich um dasselbe Phänomen: <strong>Hinter scheinbarer Zufälligkeit steckt eine geordnete Struktur, und es ist schwer, sie zu sehen.</strong> In <span class="tagA">A</span> wirken Primzahlen willkürlich verstreut — und verstecken doch ein tiefes, gesetzmäßiges Gefüge (Ulam-Spiralen, Restklassen, die asymptotische Dichte&nbsp;1/ln&nbsp;n). In <span class="tagB">B</span> wirkt eine Beziehung wie Liebe — und versteckt doch eine systematische, zyklische Manipulationsstruktur (Idealisierung → Abwertung → Verwerfen → Hoovering), die <em>bewusst darauf ausgelegt</em> ist, falsch gelesen zu werden.</p>
+    <p>Die fusionierte Position: Das entscheidende Merkmal in beiden Fällen ist <strong>nicht die Komplexität des Musters, sondern (i) der <em>Drift</em> des Musters und (ii) die <em>Integrität der Wahrnehmung</em> des Beobachters</strong>. Ein <em>naturales</em> Muster (Primzahlen) ist <strong>stationär</strong> — stabiler, asymptotischer Trend, keine Drift — und seine Entdeckung <em>ermächtigt</em> einen ungeschädigten Beobachter. Ein <em>manipulatives</em> Muster (Narzissmus) ist <strong>degenerativ</strong> — negativer Drift, das Selbstwert-Gefälle sinkt von Zyklus zu Zyklus — und sein Erzeuger ist <em>adversarial</em>: Er existiert, um die Wahrnehmung des Opfers zu verderben (Gaslighting), damit das Muster <em>nicht</em> gesehen wird.</p>
+    <p>Gefolgt daraus: <strong>Dasselbe analytische Werkzeug decodiert beides — die richtige Projektion wählen, den Drift messen, die eigene Wahrnehmung an eine objektive Referenz abgleichen. Der einzige Unterschied ist, dass in B die Referenz erst <em>wiederhergestellt</em> werden muss (die Erholung), bevor das Muster überhaupt lesbar ist.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2.</span> Widersprüche zwischen A und B</h2>
+    <p>Die zwei Papiere widersprechen sich in einer konkreten, im Code verankerten Hinsicht — nicht auf der Oberfläche (dort sind sie komplementär), sondern in der <em>Dynamik des Zyklus</em> und in der <em>Position des Beobachters</em>.</p>
+
+    <div class="card">
+      <b>Widerspruch 1 — Stationärer Zyklus vs. degradierender Zyklus.</b>
+      <span class="tagA">A</span> Die Primzahlstruktur ist <strong>stabil und stationär</strong>: Die Verteilung über Restklassen (mod&nbsp;6: alle PZ&nbsp;&gt;3 sind ≡1&nbsp;oder&nbsp;5; mod&nbsp;30: die 8 Klassen) und die PNT-Dichte 1/ln&nbsp;n gelten in jeder Größenordnung gleich — Wiederholung ändert nichts. Es gibt keinen Abwärtstrend, keinen Verfall.
+      <span class="tagB">B</span> Der narzisstische Zyklus ist <strong>kumulativ schädigend mit Drift</strong>: Jede Wiederholung senkt die Baseline (im Code explizit <code>selfWorth -= c*12</code>), und über die Beziehungsdauer verfällt das Selbstwertgefühl exponentiell (Sektion&nbsp;4).
+      → Gleicher Begriff „Zyklus“, entgegengesetzte Dynamik: A ist ein geschlossenes, selbstähnliches Muster; B ist eine offene, nach unten führende Spirale.
+    </div>
+
+    <div class="card warn">
+      <b>Widerspruch 2 — Souveräner Beobachter vs. manipulierter Beobachter.</b>
+      <span class="tagA">A</span> setzt einen voll belastbaren, <strong>unvoreingenommenen Beobachter</strong> voraus, der die Linse frei wählt (Gitter / Ulam / Sacks / Modular) und dessen Wahrnehmung <em>vertrauenswürdig</em> ist — das Muster offenbart sich dem Meister (Pan / Zoom / Selektion).
+      <span class="tagB">B</span> macht den Beobachter (das Opfer) <strong>zum Ziel</strong>: Gaslighting <em>untergräbt systematisch</em> seine Wahrnehmung (das Selbstvertrauen sinkt mit der Gaslighting-Intensität), sodass er der eigenen Lesart nicht trauen kann.
+      → A behandelt Perspektive als freien, ermächtigenden Werkzeug; B behandelt Wahrnehmung als Angriffsfläche.
+    </div>
+
+    <div class="card ok">
+      <b>Widerspruch 3 — Neutrales Muster vs. feindliches Muster (die nächstliegende echte Spannung).</b>
+      <span class="tagA">A</span> Die Struktur ist <strong>neutral bzw. belohnend</strong>: Muster-Erkennung schenkt Vorhersage und Mastery; es gibt keinen adversarialen Akteur (eine Primzahl ist schlicht eine Primzahl).
+      <span class="tagB">B</span> Die Struktur ist <strong>aktiv feindlich</strong>: Sie wird von einem Akteur <em>mit feindlicher Absicht erzeugt</em>, um falsch wahrgenommen zu werden; Erkennung dient als <em>Schutz/Exit</em>, nicht als Belohnung.
+      → In A ist Muster-Erkennung <em>erworbene Macht</em>; in B ist sie <em>Austritts-Strategie</em>.
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3.</span> Auflösung</h2>
+    <p>Kein Widerspruch ist fundamental — sie entstehen dadurch, dass A nur den <em>stationären, agent-freien</em> Grenzfall des allgemeinen Modells betrachtet und B den <em>degradierenden, agent-getriebenen</em>. Drei Auflösungen:</p>
+
+    <div class="card">
+      <b>Auflösung 1 — Periodik vs. Trend (Drift) trennen.</b>
+      Ein stabiles Muster = Oszillation um eine <em>konstante</em> Baseline (Drift&nbsp;=&nbsp;0). Eine degenerierende Spirale = Oszillation um eine <em>fallende</em> Baseline (Drift&nbsp;&lt;&nbsp;0). Mathematisch sind beide derselbe Ausdruck: <code>Signal(t) = Trend(t) + Periode(t)</code>. <strong>Fusionierter Schluss: Ein Muster ist erst vollständig beschrieben, wenn sowohl seine <em>Periode</em> als auch sein <em>Trend</em> gemessen sind — und der schädliche ist genau der mit negativem Drift.</strong> Die eine Frage, die ein harmloses Muster von einem gefährlichen trennt, lautet: <em>Welche Richtung hat der Trend?</em>
+    </div>
+
+    <div class="card">
+      <b>Auflösung 2 — Objektive Referenz (Kalkulationsgrundlage).</b>
+      In A ist die Referenz (das Sieb, „ist es prim?“) <strong>extern und unveränderlich</strong> — man kann sie jederzeit neu berechnen. In B ist die Referenz des Opfers <strong>vergiftet</strong>. <strong>Fusionierter Schluss: Die Erholungs-Sektion von B ist exakt der Kalibrierungsschritt, den A gratis hat.</strong> In A ist die objektive Baseline gegeben (Mathematik); in B muss sie <em>rekonstruiert</em> werden (Therapie, No-Contact, Psychoedukation). Sobald die Referenz wiederhergestellt ist, funktioniert derselbe Abgleich „Wahrnehmung vs. Objektives“ in beiden.
+    </div>
+
+    <div class="card">
+      <b>Auflösung 3 — Erzeuger + Absicht.</b>
+      Die Struktur in A hat <strong>keinen Erzeuger mit Absicht</em> (es sind schlicht Zahlen); die Struktur in B wird <strong>von einem Akteur mit feindlicher Absicht erzeugt</strong>. <strong>Fusionierter Schluss: Struktur ohne adversarialen Erzeuger = ein Gesetz, das zu meistern ist; Struktur mit adversarialem Erzeuger = eine Manipulation, aus der man aussteigt.</strong> Man führt eine einzige Frage ins Werkzeug ein: <em>Wer/was erzeugt dieses Muster, und was will es?</em> Antwort „niemand“ → entdeckbares Gesetz. Antwort „jemand, der von deiner Fehlwahrnehmung profitiert“ → Manipulation. Das visuelle Analyseverfahren ist identisch; nur diese Frage unterscheidet die Fälle.
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4.</span> Fusionierter Inhalt</h2>
+    <p>Beide Papiere lassen sich in ein gemeinsames <strong>Signal-Modell</strong> gießen, in dem ein „Muster“ drei Komponenten hat:</p>
+    <div class="card">
+      <b>Ein Muster = Trend(t) + Periode(t) + Bezug zu einer Referenz.</b><br>
+      <em>Benign (A)</em>: stabiler/asymptotischer Trend, gegebene Referenz, souveräner Beobachter, Erkennung → Mastery.<br>
+      <em>Hostile (B)</em>: negativer Trend, vergiftete Referenz, geschädigter Beobachter, Erkennung → Exit — und sie beginnt mit der Wiederherstellung der Referenz (Erholung).
+    </div>
+
+    <table>
+      <thead><tr><th>Gemeinsame Größe</th><th><span style="color:var(--accent)">A · Primzahlen</span></th><th><span style="color:var(--bad)">B · Narzissmus</span></th></tr></thead>
+      <tbody>
+        <tr><td>Oberfläche (wirkt wie)</td><td>Zufall / Streuung</td><td>„Liebe“ / Zuwendung</td></tr>
+        <tr><td>Versteckte Struktur</td><td>Restklassen, PNT, Spiralen</td><td>4-Phasen-Zyklus, Taktiken-Profil</td></tr>
+        <tr><td>Periode</td><td>Oszillation der Dichte um die Asymptote</td><td>Idealisierung&nbsp;↔&nbsp;Abwertung</td></tr>
+        <tr><td>Trend / Drift</td><td>stabil, asymptotisch (1/ln&nbsp;n)</td><td>negativ (Selbstwert sinkt pro Zyklus)</td></tr>
+        <tr><td>Referenz</td><td>das Sieb (objektiv, immutable)</td><td>die objektive Realität (wird vergiftet)</td></tr>
+        <tr><td>Beobachter</td><td>souverän, wählt die Projektion</td><td>Opfer, Wahrnehmung wird zerstört</td></tr>
+        <tr><td>Muster-Erkennung</td><td>Mastery / Vorhersage</td><td>Schutz / Exit (Erholung)</td></tr>
+        <tr><td>Schlüsselgröße</td><td>Restklasse mod&nbsp;6 / mod&nbsp;30</td><td>Selbstwert-Baseline + Drift</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Substanz aus A (primzahlseitig):</strong> Das <em>Sieb des Eratosthenes</em> entscheidet prim/definitiv — deterministisch, aber auf den ersten Blick nicht offensichtlich. Die <em>Primzahldichtesatz</em>-Approximation π(n)~n/ln&nbsp;n gibt die Dichte ≈ 1/ln&nbsp;n. Struktur-Tatsachen: alle PZ&nbsp;&gt;3 sind ≡1 oder 5 (mod&nbsp;6); PZ&nbsp;&gt;5 liegen in den 8 Restklassen {1,7,11,13,17,19,23,29} (mod&nbsp;30); ihre Endziffer ist 1,3,7 oder 9. Spezialpaare: <em>Zwillings-Primzahlen</em> (Δ2), <em>Sexy-Primzahlen</em> (Δ6), <em>Sophie-Germain</em> (p und 2p+1 prim). Die <em>Goldbach-Zerlegung</em> zählt die Darstellungen einer geraden Zahl als Summe zweier PZ; <em>Lücken</em> (Abstände aufeinanderfolgender PZ) folgen im Mittel ≈ ln&nbsp;n. Sichtbar wird die Ordnung erst in der richtigen Projektion: in der <em>Ulam-Spirale</em> (PZ sammeln sich auf Diagonalen) und der <em>Sacks-Spirale</em> (Winkel&nbsp;=&nbsp;2π√n). Lehrsatz: <em>die Projektion bestimmt, welches Muster sichtbar wird.</em></p>
+
+    <p><strong>Substanz aus B (psychologisch):</strong> Der <em>4-Phasen-Zyklus</em> — Idealisierung (Love Bombing) → Abwertung → Verwerfen → Hoovering — wiederholt sich. <em>Intermittierende Verstärkung</em> (mal Liebe, mal Entzug) erzeugt eine <em>Trauma-Bindung</em>, suchtähnlich. Pro Zyklus sinkt die Baseline; über die Zeit verläuft ein <em>exponentieller Abbau</em> des Selbstwertgefühls, moduliert durch die Resilienz. <em>Gaslighting</em> verzerrt die Wahrnehmung systematisch (objektiv vs. verzerrt), das Selbstvertrauen fällt mit der Intensität. Acht <em>Taktiken</em> bilden das Profil: Love Bombing, Gaslighting, Silent Treatment, Triangulation, Projektion, Blame Shifting, Hoovering, Flying Monkeys. Das <em>Macht- &amp; Kontrollrad</em> ergänzt 8 Kontrollformen (emotionaler Missbrauch, Isolation, finanzielle Kontrolle, Einschüchterung, Kinder instrumentalisieren, Schuldumkehr, Minimieren &amp; Leugnen, Privilegien beanspruchen). Emotional: Selbstwert ↓, Angst ↑, soziale Isolation ↑, Abhängigkeit ↑. <em>Erholung</em> (No-Contact + Therapie) stellt das Selbstwertgefühl wieder her.</p>
+
+    <p><strong>Fusionierte Formel:</strong> Ein scheinbar zufälliges System ist <em>entweder ein Gesetz oder eine Falle</em>, und man unterscheidet sie, indem man drei Dinge misst — (1) die <em>Periode</em>, (2) den <em>Drift</em> und (3) die <em>Referenz</em>, an die man die eigene Wahrnehmung anlegt. Ist der Drift null und die Referenz unverletzt, hast du ein Muster, das zu meistern ist. Ist der Drift negativ und die Referenz vergiftet, hast du eine Manipulation — und dann beginnt das Sehen erst mit der Heilung.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5.</span> Visualisierung: Derselbe Zyklus — stabiler vs. degradierender Drift</h2>
+    <p>Oben <span class="tagA">A</span> die <strong>reale, stationäre</strong> Primzahldichte (loka­les Fenster um π(n)/n) mit ihrer Oszillation um die asymptotisch <em>stabile</em> Gerade 1/ln&nbsp;n. Unten <span class="tagB">B</span> ein <strong>degenerierender</strong> Zyklus (Selbstwert) mit einstellbarem <em>negativem Drift</em> — dieselbe Oszillationsform, aber das Gefälle sinkt. Die <em>rote</em> Linie ist die <strong>Wahrnehmung</strong>: Mit dem Gaslighting-Slider driftet sie vom objektiven (grünen) Kurs ab, wird verrauscht und verzerrt — die Fusion von A’s „objektiver Referenz“ und B’s „Realitätsverzerrung“.</p>
+
+    <div class="viz-controls">
+      <div class="vc">
+        <label>Anzahl Zyklen <span id="cycV">4</span></label>
+        <input type="range" id="cycles" min="1" max="8" value="4" step="1">
+      </div>
+      <div class="vc">
+        <label>Drift / Degradierung <span id="driftV">65%</span></label>
+        <input type="range" id="drift" min="0" max="100" value="65" step="1">
+      </div>
+      <div class="vc">
+        <label>Gaslighting / Verzerrung <span id="gasV">45%</span></label>
+        <input type="range" id="gaslight" min="0" max="100" value="45" step="1">
+      </div>
+    </div>
+
+    <canvas id="viz"></canvas>
+
+    <p class="vnote">
+      <span style="color:var(--accent)">●</span> Primzahldichte (real, stationär) &nbsp;
+      <span style="color:var(--good)">●</span> objektiver Selbstwert / stabile Referenz &nbsp;
+      <span style="color:var(--bad)">●</span> verzerrte Wahrnehmung.
+      Bei <em>Drift&nbsp;=0</em> wird der untere Zyklus zur stationären Kopie von A; bei <em>Drift&nbsp;&gt;0</em> zur abwärtsführenden Spirale von B. Bei <em>Gaslighting&nbsp;=0</em> fallen rot und grün zusammen — erst Verzerrung trennt Wahrnehmung von Objektiven.
+    </p>
+  </section>
+
+  <section id="provenienz" class="prov">
+    <h2><span class="num">6.</span> Provenienz</h2>
+    <ul>
+      <li><a href="../pz2.html">pz2.html</a> — <em>„🔢 Primzahl-Muster-Explorer“.</em> Interaktiver Explorer mit 7 Projektionen (Gitter, Ulam-, Sacks-Spirale, Goldbach, Lücken-Fluss, Modular-Ringe, Faktor-Landschaft), Sieb des Eratosthenes, PNT, Restklassen, Zwillings-/Sophie-Germain-Primzahlen — die Quelle für „stabil, agent-frei, souveräner Beobachter“.</li>
+      <li><a href="../narcissism.html">narcissism.html</a> — <em>„🎭 Narzisstische Manipulationsstrategien“.</em> Interaktive Visualisierungen: 4-Phasen-Zyklus, Gaslighting-Simulation, Taktiken-Radar, emotionale Auswirkungen, Macht- &amp; Kontrollrad, Erholungsverlauf — die Quelle für „degenerativ, adversarial, vergiftete Wahrnehmung“.</li>
+    </ul>
+    <footer>Fusion 052 · Runde 1 · nicht-AI-Track · selbstbezügliches HTML, keine externen Datenquellen.</footer>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var elCyc = document.getElementById('cycles');
+  var elDrift = document.getElementById('drift');
+  var elGas = document.getElementById('gaslight');
+  var vCyc = document.getElementById('cycV');
+  var vDrift = document.getElementById('driftV');
+  var vGas = document.getElementById('gasV');
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  // Inline prime data (sieve)
+  var N = 1500;
+  var piArr = (function(){
+    var mark = new Uint8Array(N+1);
+    for (var i=2; i*i<=N; i++){ if(!mark[i]){ for (var j=i*i; j<=N; j+=i){ mark[j]=1; } } }
+    var pi = new Array(N+1); pi[0]=0; pi[1]=0;
+    for (var k=2; k<=N; k++){ pi[k] = pi[k-1] + (mark[k]?0:1); }
+    return pi;
+  })();
+
+  function rnd(i){ var x = Math.sin(i*127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+  function fit(){
+    var w = canvas.parentElement.clientWidth;
+    if (w < 280) w = 280;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(470 * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = '470px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return w;
+  }
+
+  function draw(){
+    var W = fit();
+    var H = 470;
+    var bg = cssVar('--card') || '#fff';
+    var text = cssVar('--text') || '#000';
+    var muted = cssVar('--muted') || '#666';
+    var accent = cssVar('--accent') || '#2f6df6';
+    var good = cssVar('--good') || '#1f9d55';
+    var bad = cssVar('--bad') || '#e0453a';
+    var grid = cssVar('--grid') || 'rgba(0,0,0,0.08)';
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    var padL = 52, padR = 16;
+    var plotW = W - padL - padR;
+
+    var topTop = 58, topBot = 208;
+    var botTop = 292, botBot = 440;
+
+    function yIn(y0,y1,v){ return y1 - v*(y1-y0); }
+
+    // ---- grid for a panel ----
+    function gridLines(y0,y1){
+      ctx.strokeStyle = grid; ctx.lineWidth = 1;
+      for (var g=0; g<=4; g++){
+        var yy = y0 + (y1-y0)*g/4;
+        ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(W-padR, yy); ctx.stroke();
+      }
+      ctx.strokeStyle = muted; ctx.globalAlpha = 0.5; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, y0); ctx.lineTo(padL, y1); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    // ---- TOP panel : stable prime density ----
+    gridLines(topTop, topBot);
+    ctx.fillStyle = muted; ctx.font = '12px Segoe UI, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('A  ·  Primzahldichte (lokal, Fenster 50)', padL, 40);
+    ctx.textAlign = 'right'; ctx.fillStyle = muted;
+    ctx.fillText('asymptotisch stabil: 1/ln n', W-padR, 40);
+
+    var sA = 1/0.30; // scale density to panel
+    // asymptote 1/ln n
+    ctx.beginPath(); ctx.strokeStyle = muted; ctx.lineWidth = 1.5; ctx.setLineDash([6,4]);
+    for (var na=40; na<=N; na+=4){
+      var xa = padL + (na-40)/(N-40)*plotW;
+      var va = (1/Math.log(na))*sA;
+      var ya = yIn(topTop, topBot, Math.min(1, va));
+      if (na===40) ctx.moveTo(xa, ya); else ctx.lineTo(xa, ya);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    // local density (oscillating, real)
+    ctx.beginPath(); ctx.strokeStyle = accent; ctx.lineWidth = 2;
+    for (var n2=50; n2<=N; n2+=2){
+      var xd = padL + (n2-40)/(N-40)*plotW;
+      var dl = (piArr[n2]-piArr[n2-50])/50 * sA;
+      var yd = yIn(topTop, topBot, Math.max(0, Math.min(1, dl)));
+      if (n2===50) ctx.moveTo(xd, yd); else ctx.lineTo(xd, yd);
+    }
+    ctx.stroke();
+
+    // ---- BOTTOM panel : degenerative cycle ----
+    gridLines(botTop, botBot);
+    ctx.fillStyle = muted; ctx.textAlign = 'left';
+    ctx.fillText('B  ·  Selbstwert über die Zyklen', padL, 274);
+    ctx.textAlign = 'right';
+    ctx.fillText('Drift ' + Math.round(parseFloat(elDrift.value)/100*100) + '%', W-padR, 274);
+
+    var cyc = parseInt(elCyc.value,10);
+    var drift = parseFloat(elDrift.value)/100;
+    var gas = parseFloat(elGas.value)/100;
+    var steps = 400;
+    var TAU = Math.PI*2;
+    var amp = 0.22;
+
+    // objective self-worth (green)
+    ctx.beginPath(); ctx.strokeStyle = good; ctx.lineWidth = 2;
+    for (var i=0; i<=steps; i++){
+      var t = i/steps;
+      var baseline = 0.86 - drift*0.66*t;
+      var obj = baseline + amp*Math.sin(TAU*cyc*t + Math.PI/2);
+      obj = Math.max(0.04, Math.min(1, obj));
+      var xb = padL + t*plotW;
+      var yb = yIn(botTop, botBot, obj);
+      if (i===0) ctx.moveTo(xb, yb); else ctx.lineTo(xb, yb);
+    }
+    ctx.stroke();
+
+    // distorted perception (red)
+    ctx.beginPath(); ctx.strokeStyle = bad; ctx.lineWidth = 1.6;
+    for (var i2=0; i2<=steps; i2++){
+      var t2 = i2/steps;
+      var base2 = 0.86 - drift*0.66*t2;
+      var o2 = base2 + amp*Math.sin(TAU*cyc*t2 + Math.PI/2);
+      var noise = (rnd(i2)-0.5) * 0.9 * gas;
+      var phase = Math.sin(TAU*cyc*t2 + Math.PI/2 + 1.3) - Math.sin(TAU*cyc*t2 + Math.PI/2);
+      var pull = phase * 0.5 * gas;
+      var per = o2 + noise + pull;
+      per = Math.max(0, Math.min(1, per));
+      var xp = padL + t2*plotW;
+      var yp = yIn(botTop, botBot, per);
+      if (i2===0) ctx.moveTo(xp, yp); else ctx.lineTo(xp, yp);
+    }
+    ctx.stroke();
+
+    // legend at bottom
+    var ly = 460;
+    ctx.font = '12px Segoe UI, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillStyle = accent; ctx.fillText('● Primzahldichte (real, stationär)', padL, ly);
+    ctx.fillStyle = good; ctx.fillText('● objektiver Selbstwert / stabile Referenz', padL + 250, ly);
+    ctx.fillStyle = bad; ctx.fillText('● verzerrte Wahrnehmung', padL + 545, ly);
+  }
+
+  function syncLabels(){
+    vCyc.textContent = elCyc.value;
+    vDrift.textContent = elDrift.value + '%';
+    vGas.textContent = elGas.value + '%';
+  }
+  function onInput(){ syncLabels(); draw(); }
+
+  elCyc.addEventListener('input', onInput);
+  elDrift.addEventListener('input', onInput);
+  elGas.addEventListener('input', onInput);
+
+  var themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', function(){
+    var root = document.documentElement;
+    root.classList.toggle('dark');
+    draw();
+  });
+  window.addEventListener('resize', draw);
+
+  syncLabels();
+  draw();
+})();
+</script>
+</body>
+</html>

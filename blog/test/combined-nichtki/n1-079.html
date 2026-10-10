@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion: Takens' Embedding Theorem ✕ Interactive Signal Analysis</title>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --line:rgba(40,45,70,.16);
+  --text:#20242f; --dim:#5c6377;
+  --accent:#0f8fb0; --accent2:#c2336f; --accent3:#6a4fc0; --accent4:#1f9d5b;
+  --code:#eef1f6; --code-fg:#20242f;
+}
+html.dark{
+  --bg:#080a12; --panel:#141828; --line:rgba(120,140,220,.20);
+  --text:#e6ebff; --dim:#9aa6cc;
+  --accent:#5ee7ff; --accent2:#ff5ea8; --accent3:#a98bff; --accent4:#7dffb0;
+  --code:#0c1526; --code-fg:#c9d4e6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 620px at 12% -12%, rgba(94,231,255,.10), transparent 55%),
+    radial-gradient(1000px 620px at 92% -8%, rgba(169,139,255,.10), transparent 52%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  font-size:16px;line-height:1.66;-webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:42px 22px 90px}
+h1{font-size:clamp(1.65rem,4.4vw,2.45rem);line-height:1.08;margin:.15em 0 .3em;font-weight:800;letter-spacing:-.02em}
+.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 6px}
+.subtitle{font-family:ui-monospace,'SFMono-Regular',Consolas,monospace;font-size:.82rem;color:var(--dim);letter-spacing:.01em;margin:0 0 4px}
+.subtitle code{font-style:normal;background:none;color:var(--dim);padding:0}
+section{margin:0 0 30px;scroll-margin-top:20px}
+h2{font-size:clamp(1.22rem,2.8vw,1.6rem);margin:.2em 0 .55em;font-weight:800;letter-spacing:-.01em}
+h2 .num{font-family:ui-monospace,monospace;font-size:.56em;color:var(--accent);border:1px solid var(--line);padding:3px 9px;border-radius:7px;margin-right:10px;vertical-align:middle}
+h3{font-size:1.06rem;margin:22px 0 8px;color:var(--text);font-weight:700}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:6px 0}
+b,strong{font-weight:650;color:var(--text)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+a:hover{border-bottom-style:solid}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(--code);color:var(--code-fg);padding:1px 6px;border-radius:5px}
+.eq{font-family:ui-monospace,Consolas,monospace;background:var(--code);color:var(--code-fg);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin:14px 0;font-size:.92rem;overflow-x:auto;line-height:1.6}
+.note{border-left:3px solid var(--accent);background:rgba(94,231,255,.06);padding:13px 17px;border-radius:0 12px 12px 0;margin:18px 0;font-size:.95rem}
+.note b{color:var(--text)}
+.tagA{color:var(--accent);font-weight:700;font-size:.86em;letter-spacing:.02em}
+.tagB{color:var(--accent2);font-weight:700;font-size:.86em;letter-spacing:.02em}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media (max-width:640px){.vs{grid-template-columns:1fr}}
+.vs .col{border:1px solid var(--line);border-radius:12px;padding:12px 15px;background:var(--panel)}
+.vs .col h3{margin:0 0 6px;font-size:.98rem}
+.vs .col .src{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:700}
+/* viz */
+.viz-stage{position:relative;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 16px 44px rgba(0,0,0,.22)}
+.viz-stage canvas{width:100%;height:480px;display:block;border-radius:11px;touch-action:none}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--dim);margin:10px 4px 4px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ctrls{display:flex;flex-wrap:wrap;gap:12px 20px;margin:14px 2px 4px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:170px;flex:1}
+.ctrl label{font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:10px}
+.ctrl label .v{color:var(--accent);font-family:ui-monospace,monospace;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(94,231,255,.22);cursor:grab}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--accent);cursor:grab}
+.btnrow{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 4px}
+button.btn{background:transparent;border:1px solid var(--line);color:var(--dim);padding:7px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .16s}
+button.btn:hover{color:var(--text);border-color:var(--accent)}
+button.btn.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+button.btn.acc2.on{background:var(--accent2);border-color:var(--accent2)}
+.readout{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--accent4);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:12px 0 0;line-height:1.55}
+.prov{display:grid;gap:12px;margin:14px 0}
+.prov .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 18px}
+.prov .who{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--dim);margin-bottom:5px}
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:.85rem}
+</style>
+</head>
+<body>
+<article>
+  <p class="eyebrow">Fusion &middot; Round 1 &middot; non-AI track &middot; pair 079</p>
+  <h1>The signal as a shadow: unprojecting it back to space <em>and</em> back to frequency</h1>
+  <p class="subtitle">Fusion aus: <code>takens_embedding_theorem.html</code> ✕ <code>signal_analysis.html</code></p>
+
+  <!-- ═════════ 1 · KERNTHESE ═════════ -->
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>
+      Both papers open on the same starting point: you are handed a <b>single one-dimensional
+      time series</b> <code>x(t)</code>, and you want to know the richer object it came from.
+      <span class="tagA">A &mdash; Takens</span> says that series is the projection of a hidden
+      <i>dynamical system</i> (a weather field, a beating heart, a chaotic attractor) and that you can
+      <b>unproject it back to space</b>: stack time-delayed copies of the same measurement into
+      <code>Φ(t) = [x(t), x(t−τ), …, x(t−(d−1)τ)]</code> and, for a large enough <code>d</code>, the
+      result is a faithful geometric portrait of the original attractor.
+      <span class="tagB">B &mdash; Signal Analysis</span> says the series is a projection of a hidden
+      <i>set of sinusoids</i> and that you can <b>unproject it back to frequency</b>: correlate it with
+      complex exponentials (the DFT) and the answer is the amplitude and phase of every harmonic that
+      built the signal.
+    </p>
+    <p>
+      The single integrated position: <b>a time series is a one-dimensional shadow of a
+      higher-dimensional object, and both papers are &ldquo;unprojection&rdquo; algorithms &mdash;
+      Takens lifts the shadow into <i>state space</i> (geometry and dynamics), the DFT lifts it into
+      <i>frequency space</i> (spectral ingredients).</b> The two reconstructions are not rivals; they are
+      <b>two complementary coordinates of the same data</b>. One tells you <i>what shape the state lives
+      on and how it moves</i>; the other tells you <i>which sinusoids, with what strength and phase,
+      compose the projection</i>.
+    </p>
+    <p>
+      What unifies them is a shared, quantitative backbone: <b>the unprojection succeeds exactly when the
+      reconstruction space is large enough to hold the object&rsquo;s intrinsic complexity.</b> On the
+      Takens side that is counted in <i>geometric dimensions</i> &mdash; <code>d ≥ 2m+1</code> for an
+      <code>m</code>-dimensional attractor. On the Fourier side it is counted in <i>frequency bins /
+      sample rate</i> &mdash; <code>f_s ≥ 2·f_max</code> (Nyquist). Below that bound both theories predict
+      the <i>same</i> failure, in two guises: <b>self-overlap / false neighbors</b> (A) is the geometric
+      twin of <b>aliasing / spectral leakage</b> (B).
+    </p>
+  </section>
+
+  <!-- ═════════ 2 · WIDERSPRÜCHE ═════════ -->
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widersprüche zwischen A und B</h2>
+    <p>
+      The two papers do <b>not</b> contradict each other in any factual claim &mdash; each is correct inside
+      its own domain, and both are about &ldquo;recovery from a reduced measurement.&rdquo; But they take
+      mutually incompatible stances on <i>what the signal is assumed to be</i>, and three real tensions
+      follow directly from their own wording.
+    </p>
+    <div class="vs">
+      <div class="col">
+        <h3>1. What the signal is: nonlinear geometry</h3>
+        <div class="src">A &mdash; Takens</div>
+        <p>The series is the projection of a <b>deterministic, nonlinear, possibly chaotic</b> dynamical
+        system. The reconstruction is <b>model-free and geometric</b> &mdash; it recovers the specific
+        attractor, its strange shape, and invariants like <i>Lyapunov exponents</i> and <i>fractal
+        dimension</i>. A explicitly leans on chaos: &ldquo;even though the Lorenz system is chaotic
+        (sensitive to initial conditions), Takens&rsquo; embedding lets us make short-term predictions by
+        leveraging the geometry of the attractor.&rdquo;</p>
+      </div>
+      <div class="col">
+        <h3>1. What the signal is: a linear sum of sines</h3>
+        <div class="src">B &mdash; Signal Analysis</div>
+        <p>The series is <b>a linear superposition of sinusoids</b> &mdash; stationary, harmonic, built from
+        &ldquo;simple building blocks.&rdquo; B&rsquo;s own premise: &ldquo;this is the foundation of Fourier
+        analysis: <b>any signal is a sum of sinusoids</b>.&rdquo; The entire toolkit (Fourier series, DFT,
+        filtering) is <b>linear</b>. Chaos and nonlinearity are never its subject.</p>
+      </div>
+    </div>
+    <div class="vs">
+      <div class="col">
+        <h3>2. Inversion target: back to <i>space</i></h3>
+        <div class="src">A &mdash; Takens</div>
+        <p>The answer is a <b>shape</b> &mdash; the invariant set in &RBB;^<i>d</i> and the <b>dynamics on
+        it</b> (trajectory, loops, holes, exponents). The question answered is
+        <i>&ldquo;what geometry does the state live on, and how does it move?&rdquo;</i></p>
+      </div>
+      <div class="col">
+        <h3>2. Inversion target: back to <i>frequency</i></h3>
+        <div class="src">B &mdash; Signal Analysis</div>
+        <p>The answer is a <b>decomposition</b> &mdash; a fixed global basis of sinusoids with amplitude and
+        phase. The question answered is <i>&ldquo;which frequencies are present, at what strength, and with
+        what phase?&rdquo;</i> It is the same data, read as a spectrum rather than as a trajectory.</p>
+      </div>
+    </div>
+    <div class="vs">
+      <div class="col">
+        <h3>3. Stationarity: inherently aperiodic</h3>
+        <div class="src">A &mdash; Takens</div>
+        <p>A&rsquo;s canonical signal (a Lorenz projection) is <b>aperiodic and non-stationary</b>; its spectrum
+        is broadband, with no discrete set of clean frequencies to recover.</p>
+      </div>
+      <div class="col">
+        <h3>3. Stationarity: presumes clean spectra</h3>
+        <div class="src">B &mdash; Signal Analysis</div>
+        <p>B&rsquo;s clean-spectrum / Nyquist analysis is cleanest for <b>stationary</b> signals, and B itself
+        concedes the limit: &ldquo;Fourier analysis tells you <b>WHAT</b> frequencies are present but not
+        <b>WHEN</b> they occur,&rdquo; which is exactly why B must bolt on <b>wavelets</b> for
+        non-stationary data.</p>
+      </div>
+    </div>
+    <div class="note">
+      <b>Net:</b> no fact-level contradiction. The sharpest real tension is
+      <b>B&rsquo;s premise &ldquo;any signal is a sum of sinusoids&rdquo; versus A&rsquo;s object &mdash; a
+      chaotic, aperiodic, non-harmonic projection</b> &mdash; where the DFT of A&rsquo;s signal would be
+      broadband and uninformative, precisely the case where A&rsquo;s delay embedding is the right tool.
+    </div>
+  </section>
+
+  <!-- ═════════ 3 · AUFLOSUNG ═════════ -->
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Auflösung</h2>
+    <p><b>1. Complementary coordinates, not rivals.</b> Fourier recovers the
+    <i>linear / stationary / spectral</i> coordinate of the shadow; Takens recovers the
+    <i>nonlinear / geometric / dynamical</i> coordinate. A complete &ldquo;reconstruction from a
+    projection&rdquo; toolbox uses both: the spectrum is the right read for stationary, harmonic content
+    (and it hands you <i>phase</i> for free), while the delay embedding is the right read for the
+    nonlinear, aperiodic content. <em>Fused conclusion:</em> read the same <code>x(t)</code> in two
+    bases &mdash; the sinusoid basis (B) and the delay basis (A) &mdash; and the full picture is the union.</p>
+    <p><b>2. Both are &ldquo;undo a linear projection by a generic lifting map.&rdquo;</b> Takens&rsquo;
+    delay map <code>Φ</code> is <b>linear in the signal values</b>; it is a faithful <i>embedding</i> (an
+    injection whose inverse is continuous on the attractor) generically, and Takens&rsquo; theorem gives the
+    threshold: <code>d ≥ 2m+1</code>. The DFT is likewise a <b>linear</b> map from a sampled signal to the
+    frequency domain, and it is <b>invertible</b> (Parseval: no information lost) once you keep all
+    <code>N</code> bins / sample above Nyquist. <em>Fused conclusion:</em> the two &ldquo;big enough&rdquo;
+    theorems are the same statement about matching reconstruction dimension to intrinsic complexity.</p>
+    <p><b>3. The failure modes are twins.</b> Push the reconstruction below its bound and both collapse the
+    same way: too few delay dimensions &rarr; the attractor <b>folds over itself</b>, producing
+    <b>false nearest neighbors</b> (A); too few samples / below Nyquist &rarr; high frequencies
+    <b>fold into lower ones</b>, producing <b>aliasing</b> (B). Above the bound both are generically
+    invertible, and you can move freely among the time, space, and frequency views of the one shadow.
+    <b>Wavelets are the meeting point:</b> a wavelet is <i>time-local geometry</i> (A) <i>times</i>
+    <i>frequency-local content</i> (B) &mdash; the coordinate system where the two reconstructions meet.</p>
+  </section>
+
+  <!-- ═════════ 4 · INHALT ═════════ -->
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <div class="note">
+      <b>Shared lead-motif &mdash; the signal as a shadow.</b> In both papers the observed series
+      <code>x(t)</code> is a <i>projection</i>: a lossy one-dimensional image of a higher-dimensional object.
+      Understanding the system = <b>inverting the projection</b>. The only open question is <i>where the
+      object lives</i> &mdash; in state space (A) or in frequency space (B) &mdash; and the only real
+      constraint is a <b>lower bound on reconstruction dimension</b>.
+    </div>
+
+    <h3>A &mdash; Takens&rsquo; delay embedding (unproject to space)</h3>
+    <p>
+      A single scalar measurement, unfolded into a vector of its own time-delayed copies,
+    </p>
+    <div class="eq">Φ(t) = ( x(t), x(t−τ), x(t−2τ), …, x(t−(d−1)τ) )  &nbsp;&nbsp; d ≥ 2m + 1</div>
+    <p>
+      is, <b>generically, diffeomorphic to the true attractor</b> once the embedding dimension
+      <code>d</code> exceeds <code>2m+1</code> (<code>m</code> = attractor dimension). That one fact buys a
+      lot:
+    </p>
+    <ul>
+      <li><b>Topology preserved</b> &mdash; loops, holes, connectivity; the reconstructed set has the same
+        shape class as the original.</li>
+      <li><b>Dynamics preserved</b> &mdash; trajectories map to trajectories, so you can read the motion off
+        the reconstruction.</li>
+      <li><b>Invariants computable</b> &mdash; Lyapunov exponents (the rate of divergence, i.e.
+        the degree of chaos) and fractal dimensions can be measured on the shadow.</li>
+      <li><b>Prediction</b> &mdash; nearest-neighbor forecasting (Empirical Dynamic Modeling): find the
+        current state&rsquo;s neighbors in the embedding, average where they went next, and forecast &mdash;
+        even for chaotic systems, over short horizons.</li>
+    </ul>
+    <p>
+      <b>Choosing the parameters is the craft.</b> The delay <code>τ</code>: too small and
+      <code>x(t−τ) ≈ x(t)</code>, so the points pile up on the diagonal (no new information); too large and
+      the lags are uncorrelated, so the structure dissolves into a noise cloud; in between the attractor
+      unfolds cleanly. The dimension <code>d</code>: the <b>False Nearest Neighbors</b> method scans
+      <code>d</code> and stops where the percentage of false neighbors drops to &asymp; 0. Applications
+      listed by A: cardiology (single-lead ECG), weather/climate, finance, neuroscience (EEG), engineering
+      (vibration), ecology.
+    </p>
+
+    <h3>B &mdash; Fourier / DFT / wavelets (unproject to frequency)</h3>
+    <p>The signal as a sum of sinusoids:</p>
+    <div class="eq">x(t) = A·sin(2π·f·t + φ) + DC      →      x(t) = a₀/2 + Σₙ [ aₙ·cos(2πnf₀t) + bₙ·sin(2πnf₀t) ]</div>
+    <p>
+      <b>Fourier series</b> decomposes any <i>periodic</i> signal into harmonics with known coefficients
+      (square wave: <code>bₙ = 4/(nπ)</code>, odd <code>n</code>; sawtooth: <code>bₙ = −2(−1)ⁿ/(nπ)</code>;
+      triangle: <code>aₙ = −4/(nπ)²</code>, odd <code>n</code>; pulse: <code>aₙ = (2/(nπ))·sin(nπ/4)</code>).
+      The <b>DFT</b> is the discrete, finite-length, all-purpose engine behind digital signal processing:
+    </p>
+    <div class="eq">X[k] = Σₙ x[n]·e^{−j2πkn/N} ,  e^{jθ} = cos θ + j·sin θ      (Euler)</div>
+    <p>
+      where each bin <code>k</code> measures how much the signal &ldquo;correlates&rdquo; with a complex
+      sinusoid at that frequency; <b>magnitude = amplitude, phase = time shift</b>. The rest of B is
+      applications of this one transform:
+    </p>
+    <ul>
+      <li><b>Filtering</b> &mdash; multiply the spectrum by a gain <code>H(f)</code> (low / high /
+        band-pass) and inverse-transform: keep or kill chosen frequencies.</li>
+      <li><b>Sampling &amp; aliasing (Nyquist&ndash;Shannon)</b> &mdash; <code>f_s ≥ 2·f_max</code>; sample
+        slower and high frequencies <i>fold into</i> lower ones (aliasing).</li>
+      <li><b>Wavelets</b> &mdash; time-frequency localization: &ldquo;WHAT + WHEN,&rdquo; the fix Fourier
+        needs for non-stationary signals (a scalogram shows which frequency is active when).</li>
+      <li><b>Holographic storage</b> &mdash; an interference pattern stores amplitude <i>and</i> phase; the
+        hologram is the Fourier transform of the stored data, and reconstruction by diffraction is a Fourier
+        transform <i>performed by light</i>.</li>
+    </ul>
+
+    <h3>The bridge &mdash; one shadow, two unprojections</h3>
+    <p>
+      Read side by side, the two &ldquo;big enough&rdquo; theorems are the same rule in two units:
+    </p>
+    <div class="eq">
+      Takens:   d  ≥ 2m + 1        (geometric dimensions &rarr; no self-overlap / no false neighbors)<br>
+      Nyquist:  f_s ≥ 2·f_max      (frequency bins / rate &rarr; no aliasing / no spectral leakage)
+    </div>
+    <p>
+      Both say: <b>the reconstruction must be at least as rich as the object it shadows, plus a margin, or
+      the projection cannot be undone.</b> Below the bound, the two failure modes are the same fold:
+      geometric <i>folding / false neighbors</i> (A) is the spatial face of <i>aliasing / leakage</i>
+      (B). And <b>wavelets</b> are where the coordinate systems join: a wavelet coefficient is
+      <i>local-in-time</i> (A&rsquo;s geometry, the trajectory as it moves) convolved with
+      <i>local-in-frequency</i> (B&rsquo;s spectrum) &mdash; the time-frequency cell that a pure Fourier
+      line (global in time) or a pure delay portrait (global in frequency) cannot see.
+    </p>
+    <div class="note">
+      <b>Fused takeaway.</b> Give me any <code>x(t)</code> and I can read it three ways that are
+      <i>the same data</i>: as a <b>time-domain shadow</b> (raw), as a <b>space-domain attractor</b>
+      (delay embedding &mdash; its shape and dynamics), and as a <b>frequency-domain spectrum</b>
+      (DFT &mdash; its sinusoidal ingredients). For a periodic, harmonic signal the spectrum is a few clean
+      peaks and the embedding is a closed loop (B&rsquo;s world). For a chaotic, aperiodic signal the
+      spectrum is broadband and useless, but the embedding still unfolds the true geometry (A&rsquo;s
+      world). Choosing the right unprojection &mdash; and sizing it past its dimension bound &mdash; is the
+      whole game.
+    </div>
+  </section>
+
+  <!-- ═════════ 5 · VISUALISIERUNG ═════════ -->
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Fusionierte Visualisierung</h2>
+    <p>
+      One canvas, one <b>one-dimensional shadow</b> <code>x(t)</code> shown three ways at once:
+      the <b>raw time series</b> (top), its <b>2-D Takens delay embedding</b> <code>[x(t), x(t−τ)]</code>
+      (bottom-left, unprojected to <i>space</i>), and its <b>DFT amplitude spectrum</b>
+      <code>|X[k]|</code> (bottom-right, unprojected to <i>frequency</i>). Toggle the system: for the
+      <b>two-sine</b> signal the embedding closes on itself into a loop and the spectrum collapses to
+      sharp peaks (B&rsquo;s world); for <b>Lorenz</b> the spectrum goes broadband while the embedding
+      still unfolds a 2-D structure (A&rsquo;s world). Drag <code>τ</code> to watch the embedding
+      fold onto a diagonal (too small), dissolve into a cloud (too large), or unfold (in between).
+    </p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>System (the shadow)</label>
+        <div class="btnrow" style="margin:0">
+          <button class="btn on" id="sysLorenz">Lorenz (chaotic)</button>
+          <button class="btn acc2" id="sysTwoSine">Two-sine (periodic)</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <label>Time delay τ <span class="v" id="tauVal">25</span></label>
+        <input type="range" id="tauRange" min="1" max="200" step="1" value="25">
+      </div>
+      <div class="ctrl">
+        <label>Animation</label>
+        <div class="btnrow" style="margin:0">
+          <button class="btn on" id="playBtn">Pause</button>
+        </div>
+      </div>
+    </div>
+    <div class="viz-stage">
+      <canvas id="viz"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>time series x(t)</span>
+        <span><i style="background:var(--accent2)"></i>delay embedding [x(t), x(t−τ)]</span>
+        <span><i style="background:var(--accent3)"></i>DFT spectrum |X[k]|</span>
+        <span><i style="background:var(--accent4)"></i>current sample</span>
+      </div>
+    </div>
+    <div class="readout" id="readout"></div>
+    <div class="btnrow">
+      <button class="btn" id="themeBtn">Theme: dark / light</button>
+    </div>
+
+    <script>
+    (function(){
+      "use strict";
+      var canvas = document.getElementById('viz');
+      if(!canvas || !canvas.getContext){ return; }
+      var ctx = canvas.getContext('2d');
+      var readout = document.getElementById('readout');
+      var TAU = Math.PI*2;
+
+      var pal = {};
+      function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+      function toRgb(s){
+        s=(s||'').trim();
+        if(s.charAt(0)==='#'){
+          var h=s.slice(1);
+          if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+          var n=parseInt(h,16);
+          if(isNaN(n)) return [128,140,170];
+          return [(n>>16)&255,(n>>8)&255,n&255];
+        }
+        var m=s.match(/[\d.]+/g);
+        if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; }
+        return [128,140,170];
+      }
+      function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+      function readPal(){
+        pal = {
+          bg: toRgb(cssVar('--bg')),
+          panel: toRgb(cssVar('--panel')),
+          line: toRgb(cssVar('--line')),
+          text: toRgb(cssVar('--text')),
+          dim: toRgb(cssVar('--dim')),
+          accent: toRgb(cssVar('--accent')),
+          accent2: toRgb(cssVar('--accent2')),
+          accent3: toRgb(cssVar('--accent3')),
+          accent4: toRgb(cssVar('--accent4'))
+        };
+      }
+
+      var state = { system:'lorenz', tau:25, sweep:0, playing:true };
+
+      var N = 4096;      // length of the 1-D shadow
+      var M = 1024;      // DFT length (downsampled)
+      var FACTOR = N/M;  // 4
+      var signal = [];
+      var specMag = [];
+      var sigName = '';
+
+      function norm(){
+        var mn=Infinity,mx=-Infinity,i;
+        for(i=0;i<signal.length;i++){ if(signal[i]<mn)mn=signal[i]; if(signal[i]>mx)mx=signal[i]; }
+        var mid=(mn+mx)/2, sc=(mx-mn)/2||1;
+        for(i=0;i<signal.length;i++) signal[i]=(signal[i]-mid)/sc;
+      }
+      function genLorenz(){
+        var sigma=10, rho=28, beta=8/3, dt=0.005;
+        var x=1,y=1,z=1,i,dx,dy,dz;
+        for(i=0;i<2000;i++){ dx=sigma*(y-x); dy=x*(rho-z)-y; dz=x*y-beta*z; x+=dx*dt; y+=dy*dt; z+=dz*dt; }
+        signal=[];
+        for(i=0;i<N;i++){ dx=sigma*(y-x); dy=x*(rho-z)-y; dz=x*y-beta*z; x+=dx*dt; y+=dy*dt; z+=dz*dt; signal.push(x); }
+        norm();
+        sigName='Lorenz x(t)  ·  chaotic, aperiodic';
+      }
+      function genTwoSine(){
+        var i;
+        signal=[];
+        for(i=0;i<N;i++){
+          // 8 and 24 integer cycles over N -> clean DFT peaks after downsample by 4
+          signal.push(Math.sin(TAU*8*i/N) + 0.6*Math.sin(TAU*24*i/N + 0.7));
+        }
+        norm();
+        sigName='two-sine x(t)  ·  periodic, harmonic';
+      }
+      function computeDFT(){
+        var mag=new Array(M/2), k,n;
+        for(k=0;k<M/2;k++){
+          var re=0, im=0;
+          for(n=0;n<M;n++){
+            var x=signal[n*FACTOR];
+            var ang=-TAU*k*n/M;
+            re+=x*Math.cos(ang); im+=x*Math.sin(ang);
+          }
+          mag[k]=Math.sqrt(re*re+im*im)/M;
+        }
+        specMag=mag;
+      }
+      function peakFrac(){
+        if(!specMag.length) return 0;
+        var total=0,i;
+        for(i=0;i<specMag.length;i++) total+=specMag[i]*specMag[i];
+        var s=specMag.slice().sort(function(a,b){return b-a;});
+        var top=0; for(i=0;i<Math.min(3,s.length);i++) top+=s[i]*s[i];
+        return total>0 ? top/total : 0;
+      }
+
+      function regenSignal(){
+        if(state.system==='lorenz'){ genLorenz(); } else { genTwoSine(); }
+        computeDFT();
+      }
+
+      // ---- panel helpers ----
+      function frame(x0,y0,x1,y1,title){
+        var W=x1-x0, H=y1-y0;
+        ctx.strokeStyle=rgba(pal.line,1); ctx.lineWidth=1;
+        ctx.strokeRect(x0+0.5,y0+0.5,W-1,H-1);
+        ctx.fillStyle=rgba(pal.dim,1);
+        ctx.font='11px ui-monospace,Consolas,monospace';
+        ctx.textBaseline='top'; ctx.textAlign='left';
+        ctx.fillText(title, x0+7, y0+6);
+      }
+      function signalRange(){
+        var mn=Infinity,mx=-Infinity,i;
+        for(i=0;i<signal.length;i++){ if(signal[i]<mn)mn=signal[i]; if(signal[i]>mx)mx=signal[i]; }
+        return { mid:(mn+mx)/2, sc:(mx-mn)/2||1 };
+      }
+
+      function drawStrip(x0,y0,x1,y1){
+        var W=x1-x0, H=y1-y0, i;
+        frame(x0,y0,x1,y1,'1-D shadow  x(t)   ['+sigName+']');
+        var r=signalRange(), pad=14;
+        ctx.strokeStyle=rgba(pal.line,0.6); ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(x0,y0+H/2); ctx.lineTo(x1,y0+H/2); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle=rgba(pal.accent,0.9); ctx.lineWidth=1.3; ctx.beginPath();
+        var step=Math.max(1,Math.floor(signal.length/Math.max(1,W)));
+        for(i=0;i<signal.length;i+=step){
+          var px=x0+(i/signal.length)*W;
+          var py=y0+H/2 - (signal[i]/r.sc)*(H/2-pad);
+          if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        ctx.stroke();
+        var sxF=x0+state.sweep*W;
+        var ci=Math.floor(state.sweep*(signal.length-1));
+        ctx.strokeStyle=rgba(pal.accent4,0.85); ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(sxF,y0+2); ctx.lineTo(sxF,y0+H-2); ctx.stroke();
+        var sy=y0+H/2 - (signal[ci]/r.sc)*(H/2-pad);
+        ctx.fillStyle=rgba(pal.accent4,1); ctx.beginPath(); ctx.arc(sxF,sy,3.2,0,TAU); ctx.fill();
+      }
+
+      function drawEmbedding(x0,y0,x1,y1){
+        var W=x1-x0, H=y1-y0, i;
+        frame(x0,y0,x1,y1,'2-D delay embedding  [x(t), x(t−τ)]');
+        var r=signalRange(), pad=16;
+        var tau=state.tau, Np=signal.length;
+        var step=Math.max(1,Math.floor(Np/2048));
+        ctx.beginPath();
+        var started=false;
+        for(i=tau;i<Np;i+=step){
+          var a=signal[i], b=signal[i-tau];
+          var px=x0+W/2 + (a/r.sc)*(W/2-pad);
+          var py=y0+H/2 - (b/r.sc)*(H/2-pad);
+          if(!started){ ctx.moveTo(px,py); started=true; } else { ctx.lineTo(px,py); }
+        }
+        ctx.strokeStyle=rgba(pal.accent2,0.35); ctx.lineWidth=1; ctx.stroke();
+        var ci=tau+Math.floor(state.sweep*(Np-tau));
+        var ax=signal[ci], by=signal[ci-tau];
+        var hx=x0+W/2+(ax/r.sc)*(W/2-pad);
+        var hy=y0+H/2-(by/r.sc)*(H/2-pad);
+        ctx.strokeStyle=rgba(pal.accent4,0.5); ctx.setLineDash([2,3]);
+        ctx.beginPath(); ctx.moveTo(x0, y0+H/2); ctx.lineTo(hx, y0+H/2); ctx.lineTo(hx,hy);
+        ctx.moveTo(x0+W/2, y0); ctx.lineTo(x0+W/2, hy); ctx.lineTo(hx,hy); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=rgba(pal.accent4,1); ctx.beginPath(); ctx.arc(hx,hy,3.6,0,TAU); ctx.fill();
+      }
+
+      function drawSpectrum(x0,y0,x1,y1){
+        var W=x1-x0, H=y1-y0, i;
+        frame(x0,y0,x1,y1,'DFT amplitude  |X[k]|');
+        var K=specMag.length;
+        var mx=0; for(i=0;i<K;i++){ if(specMag[i]>mx)mx=specMag[i]; }
+        if(mx<=0) mx=1;
+        var pad=12, baseY=y0+H-pad;
+        var step=Math.max(1,Math.floor(K/Math.max(1,W/3)));
+        // filled area
+        ctx.beginPath();
+        ctx.moveTo(x0, baseY);
+        for(i=0;i<K;i+=step){
+          var px=x0+(i/K)*W;
+          var py=baseY - (specMag[i]/mx)*(H-2*pad-12);
+          ctx.lineTo(px,py);
+        }
+        ctx.lineTo(x1, baseY); ctx.lineTo(x0, baseY); ctx.closePath();
+        ctx.fillStyle=rgba(pal.accent3,0.25); ctx.fill();
+        // top line
+        ctx.beginPath();
+        for(i=0;i<K;i+=step){
+          var px2=x0+(i/K)*W;
+          var py2=baseY - (specMag[i]/mx)*(H-2*pad-12);
+          if(i===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2);
+        }
+        ctx.strokeStyle=rgba(pal.accent3,0.95); ctx.lineWidth=1.4; ctx.stroke();
+      }
+
+      function draw(){
+        var w=canvas.clientWidth||canvas.parentNode.clientWidth||600;
+        var h=480;
+        if(w<2) w=2;
+        var dpr=Math.min(window.devicePixelRatio||1,2);
+        var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+        if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+        var topY=8, topH=82, topBot=topY+topH, gap=10;
+        var botTop=topBot+gap+2, botBot=h-8;
+        var midX=w/2;
+        var leftX=8, leftR=midX-gap/2;
+        var rightX=midX+gap/2, rightR=w-8;
+
+        drawStrip(leftX, topY, rightR, topBot);
+        drawEmbedding(leftX, botTop, leftR, botBot);
+        drawSpectrum(rightX, botTop, rightR, botBot);
+      }
+
+      function setReadout(){
+        var pf=(peakFrac()*100).toFixed(0);
+        if(state.system==='twosine'){
+          readout.innerHTML='Two-sine shadow &mdash; <b>B&rsquo;s world</b>. The 2-D delay embedding '
+            +'<b>closes on itself</b> into a Lissajous / limit-cycle loop for <b>every</b> &tau; (a 1-D '
+            +'invariant curve), so no &tau; can unfold it further. The DFT collapses onto <b>sharp peaks</b> '
+            +'&mdash; harmonic energy in the top 3 bins &asymp; <b>'+pf+'%</b>: &ldquo;any signal is a sum of '
+            +'sinusoids&rdquo; holds literally, and a handful of frequency bins reconstruct the whole shadow.';
+        } else {
+          readout.innerHTML='Lorenz shadow &mdash; <b>A&rsquo;s world</b>. The series is <b>aperiodic &amp; '
+            +'chaotic</b>, so the DFT is <b>broadband</b> (energy in top 3 bins &asymp; <b>'+pf+'%</b> &mdash; '
+            +'no clean sinusoids; B&rsquo;s harmonic premise fails). But the delay embedding at a moderate '
+            +'&tau; <b>unfolds a 2-D structure</b> carrying the attractor&rsquo;s geometry. Same 1-D shadow, '
+            +'two unprojections: <b>delays &rarr; space</b> (A), <b>DFT &rarr; frequency</b> (B). '
+            +'Drag &tau;: small &rarr; thin diagonal (lags redundant); large &rarr; diffuse cloud (lags '
+            +'uncorrelated); middle &rarr; unfolded.';
+        }
+      }
+
+      var last=performance.now();
+      function loop(now){
+        var dt=(now-last)/1000; last=now; if(dt>0.1)dt=0.1;
+        if(state.playing){ state.sweep+=dt*0.11; if(state.sweep>1)state.sweep-=1; }
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      // ---- controls ----
+      var sysL=document.getElementById('sysLorenz');
+      var sysT=document.getElementById('sysTwoSine');
+      var tauRange=document.getElementById('tauRange');
+      var tauVal=document.getElementById('tauVal');
+      var playBtn=document.getElementById('playBtn');
+      var themeBtn=document.getElementById('themeBtn');
+
+      function setSystem(name){
+        state.system=name;
+        sysL.classList.toggle('on', name==='lorenz');
+        sysT.classList.toggle('on', name==='twosine');
+        regenSignal();
+        setReadout();
+        draw();
+      }
+      sysL.addEventListener('click',function(){ setSystem('lorenz'); });
+      sysT.addEventListener('click',function(){ setSystem('twosine'); });
+      tauRange.addEventListener('input',function(){
+        state.tau=parseInt(this.value,10);
+        tauVal.textContent=state.tau;
+        setReadout();
+        draw();
+      });
+      playBtn.addEventListener('click',function(){
+        state.playing=!state.playing;
+        this.classList.toggle('on', state.playing);
+        this.textContent=state.playing?'Pause':'Play';
+      });
+      themeBtn.addEventListener('click',function(){
+        document.documentElement.classList.toggle('dark');
+        readPal(); draw();
+      });
+
+      if(window.matchMedia){
+        var mq=window.matchMedia('(prefers-color-scheme: light)');
+        var onScheme=function(){ readPal(); draw(); };
+        if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+      }
+      window.addEventListener('resize',function(){ draw(); });
+
+      readPal();
+      regenSignal();
+      setReadout();
+      requestAnimationFrame(loop);
+    })();
+    </script>
+  </section>
+
+  <!-- ═════════ 6 · PROVENIENZ ═════════ -->
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <div class="who">Quelle A &mdash; unprojection to space</div>
+        <p><a href="../takens_embedding_theorem.html"><strong>takens_embedding_theorem.html &mdash; Takens&rsquo; Embedding Theorem</strong></a></p>
+        <p>Interactive exploration of Takens (1981): a single scalar time series unfolded via
+        time-delay coordinates <code>Φ(t)=[x(t), x(t−τ), …]</code> into a diffeomorphic portrait of the
+        attractor (for <code>d ≥ 2m+1</code>), with live Lorenz/Rössler attractors, a False-Nearest-Neighbor
+        dimension search, and nearest-neighbor (EDM) prediction of chaotic signals.</p>
+      </div>
+      <div class="card">
+        <div class="who">Quelle B &mdash; unprojection to frequency</div>
+        <p><a href="../signal_analysis.html"><strong>signal_analysis.html &mdash; Interactive Signal Analysis Explorer</strong></a></p>
+        <p>Interactive tour of the frequency-domain view of a signal: sinusoid building blocks, Fourier
+        series, the DFT (magnitude + phase via Euler), frequency-domain filtering, Nyquist sampling &amp;
+        aliasing, wavelet time-frequency localization, and holographic storage (interference = Fourier
+        transform of the stored data).</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion (Round 1, non-AI track, pair 079). Self-contained; no network data fetches &mdash; the Lorenz
+    trajectory, the two-sine signal, and the DFT are all computed inline in the browser.
+  </footer>
+</article>
+</body>
+</html>

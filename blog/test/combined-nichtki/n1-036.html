@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 036: HoTT — Types as Spaces, the Circle, and Univalence</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#3b4fd8; --accent2:#c77d1e;
+  --viz-bg:#ffffff; --viz-line:#d9d5cc; --viz-ring:#3b4fd8; --viz-dot:#a7adbf;
+  --loop-pos:#c77d1e; --loop-neg:#2f7de0; --viz-base:#d6336c; --viz-hit:#0f9d6b; --viz-mid:#3b4fd8;
+}
+html.dark{
+  --bg:#0b1018; --panel:#121a26; --text:#e8edf7; --muted:#9aa7bf; --line:#26343e;
+  --accent:#7b8cff; --accent2:#fbbf24;
+  --viz-bg:#0a1018; --viz-line:#26343e; --viz-ring:#7b8cff; --viz-dot:#55617a;
+  --loop-pos:#fbbf24; --loop-neg:#60a5fa; --viz-base:#f472b6; --viz-hit:#34d399; --viz-mid:#7b8cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.1;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 30px}
+h2{font-size:22px;margin:42px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:16.5px;margin:26px 0 8px;color:var(--accent)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 10px}
+b{color:var(--text)}
+em{color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:color-mix(in srgb, var(--line) 22%, var(--panel));border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.7}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:color-mix(in srgb, var(--line) 30%, var(--panel))}
+td:first-child{white-space:nowrap;font-weight:700;color:var(--accent)}
+canvas#viz{display:block;width:100%;height:420px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px;margin:6px 0;cursor:grab}
+canvas#viz:active{cursor:grabbing}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:16px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=range]{width:190px;accent-color:var(--accent)}
+button.action{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:13px}
+button.action:hover{border-color:var(--accent)}
+.hint{color:var(--muted);font-size:13px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">&#9728; / &#9790;</button>
+<article>
+<h1>Types as Spaces: The Circle and Univalence</h1>
+<p class="subtitle">Fusion aus: paper/hott.html &#10007; hott.html</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Both papers are visual introductions to the <b>same theory</b> — Homotopy Type Theory — and they make the identical foundational move: a <b>type is not a bag of elements but a space</b>. A term <code>x : A</code> is a <b>point</b>; a proof that <code>a = b</code> is not a true/false judgment but a <b>path</b> from <code>a</code> to <code>b</code>; a path between two paths (a <b>homotopy</b>) is an equality between equalities; and so on, forever. This is what makes every type an <b>&infin;-groupoid</b> — equality is not just true, it has <em>structure</em>.</p>
+<p>The single object that fuses the two together is the <b>circle S&#185;</b>. Paper&nbsp;A meets it as the <b>higher-inductive type</b> "one base point + one loop generator", from which it reads off <code>&pi;&#8321;(S&#185;) &#8769; &#8484;</code> (the winding number, via encode/decode transport). Paper&nbsp;B meets it as the <b>continuous topological circle</b> — a ring of points with a base point and a loop. The fused position is that these are <b>the same type</b>: the HIT circle is provably <em>equivalent</em> to the topological circle, and the <b>Univalence Axiom</b> — <code>(A = B) &#8769; (A &#8769; B)</code> — upgrades that equivalence to literal equality. The winding number is the bridge: at once the HIT's loop-space content and the topological fundamental group.</p>
+<p>In one line: <b>HoTT is a single language in which topology, logic, and type theory are the same subject</b>; A supplies the formal algebraic backbone (groupoid operations, transport, the homotopy-level ladder), B supplies the spatial intuition and the "why it matters" unification. Shapes first, notation to name what the shapes are.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>The two sources never contradict on a theorem — both correctly present HoTT. The tensions are in <b>which picture of the same objects they commit to</b>. Three specific, real ones:</p>
+<ul>
+<li><b>1 &middot; What the circle S&#185; "is".</b>
+<b>A</b> ("The Circle S&#185; and Its Loops") defines it inductively: <em>"The circle has one point <code>base</code> and one non-trivial loop <code>loop : base = base</code>"</em> — a single point plus a single loop generator, and it computes <code>&pi;&#8321;(S&#185;) &#8769; &#8484;</code> from that logical data.
+<b>B</b> ("Types as Spaces" &#8594; Circle S&#185;) draws it as a <b>continuous geometric ring</b> — ~100 plotted points, "a continuum of inhabitants", with a base point and a loop among them.
+The tension: A's S&#185; is a <b>discrete logical object</b> (exactly one point + one loop); B's S&#185; is a <b>geometric continuum</b> (infinitely many points). Incompatible pictures of the same symbol.</li>
+<li><b>2 &middot; How Univalence is grounded.</b>
+<b>A</b> (Univalence) grounds the axiom on <b>discrete finite sets</b>: <em>"In set theory, {0,1} and {true,false} are different sets that happen to be isomorphic. Univalence says: if they're equivalent, treat them as literally equal."</em>
+<b>B</b> (The Univalence Axiom) grounds it on <b>continuous topological shapes</b>: <em>"A triangle and a circle are topologically equivalent (homeomorphic). Univalence says we can treat them as literally the same type."</em>
+The tension: A instantiates <code>(A &#8769; B) &#8769; (A = B)</code> on finite/combinatorial sets; B on continuous/homeomorphic shapes. A discrete vs. a continuous reading of one principle.</li>
+<li><b>3 &middot; Register: formulas vs. "no formulas".</b>
+<b>A</b> is notation- and algebra-heavy: it develops the path <b>groupoid</b> (<code>refl</code>, <code>p&#8315;&#185;</code>, <code>p &middot; q</code>), stresses that composition is associative <b>only up to a 2-path</b> <code>&alpha;</code>, develops <b>transport</b> <code>p_* : P(x) &#8594; P(y)</b> / fibrations, and the <b>homotopy-level ladder</b> (&minus;2 &hellip; 2).
+<b>B</b> is explicit about its opposite stance — tagline <em>"no formulas, just shapes and intuition"</em> — and stays at pure spatial intuition (morphing curves, a 3D sphere for the higher-path tower, a Rosetta-Stone network); it does <b>not</b> develop the groupoid axioms, transport, or the level ladder.
+The tension: A's formal / weak-&infin;-groupoid register vs. B's intuition-only, anti-formula register.</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p>Three resolutions, one per tension; together they yield the fused conclusion.</p>
+<div class="card">
+<h3>Auflösung 1 — the HIT circle <b>is</b> the topological circle</h3>
+<p>The HIT <b>definition</b> (1 point + 1 loop) is not a different object from the geometric ring — it is <b>equivalent</b> to it, and Univalence turns that equivalence into equality. Both pictures carry the <b>same loop space</b> &#8484;: the winding number on A's HIT is exactly the fundamental group of B's topological circle.</p>
+<p><b>Fused:</b> present S&#185; first as the HIT (its clean logical definition), then immediately note <code>S&#185;(HIT) &#8769; S&#185;(topological)</code>. "One point" (A) is a <em>choice of presentation</em>; the "continuum of points" (B) is its <em>geometric model</em>. HoTT is precisely what lets you move between them — the integer <code>n</code> is the invariant they share.</p>
+</div>
+<div class="card">
+<h3>Auflösung 2 — one axiom, two registers</h3>
+<p>The discrete example (A) makes <b>"bijection + coherence"</b> visible — an equivalence is a two-way map that inverts up to the higher structure. The continuous example (B) makes <b>"deformable / homotopic"</b> visible — you can literally morph one shape into the other. These are the <em>same</em> content <code>(A &#8769; B) &#8769; (A = B)</code> seen from the set-theoretic and the topological side.</p>
+<p><b>Fused:</b> state the principle once, then illustrate with <b>both</b> a discrete instance ({0,1} &#8769; {true,false}) and a continuous one (triangle &#8769; circle). Discrete and continuous are complementary windows onto one axiom, not competing claims.</p>
+</div>
+<div class="card">
+<h3>Auflösung 3 — intuition motivates, formalism justifies</h3>
+<p>The two registers are <b>complementary, not contradictory</b>. B's "shapes and intuition" is the <em>entry point</em> for the reader; A's groupoid operations, up-to-homotopy associativity, transport, and level ladder are the <em>names for what the shapes are</em>. B shows that equality "has structure"; A writes down the algebra of that structure.</p>
+<p><b>Fused (with an honesty note):</b> use B's spatial pictures to <em>motivate</em>, then A's notation to <em>capture</em> each idea. Both sources are expository visual guides rather than formal papers, so these "contradictions" are of <b>emphasis and presentation</b> — the fusion keeps the intuition as the surface and the formalism as the backbone.</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>1 &middot; Types are spaces; terms are points</h3>
+<p>Both papers start here. A type <code>A</code> is a <b>space</b>; a term <code>x : A</code> is a <b>point</b>. The discrete anchors both agree on: <b>Bool</b> = {true, false} (2 isolated points, no path between them); <b>&#8469;</b> (B) as a countably infinite discrete line of points; the <b>empty type &empty;</b> (B) — the void, logic's <em>False</em>, a proposition with no proof; and the <b>contractible / Unit</b> type (A) — exactly one point up to homotopy.</p>
+
+<h3>2 &middot; Equality is a path (proof-relevance)</h3>
+<p>For <code>x, y : A</code>, the <b>identity type</b> <code>x = y</code> is the <b>space of paths</b> from <code>x</code> to <code>y</code>. A proof that <code>x = y</code> is a <em>specific</em> path; distinct proofs are distinct paths — this is <b>proof-relevant</b> mathematics, where the space of equalities can itself be rich. <code>refl_x : x = x</code> is the constant path. B makes it visual (morphing curves, each a different proof of the same equality); A names it and shows the continuous deformation.</p>
+
+<h3>3 &middot; Path operations — the weak &infin;-groupoid <span style="color:var(--muted)">(A's strength)</span></h3>
+<p>Paths carry three operations:</p>
+<ul>
+<li><b>Reflexivity</b> — <code>refl_x : x = x</code>, the constant path (identity).</li>
+<li><b>Inverse</b> — <code>p : x = y</code> gives <code>p&#8315;&#185; : y = x</code> (symmetry).</li>
+<li><b>Composition</b> — <code>p : x = y</code>, <code>q : y = z</code> give <code>p &middot; q : x = z</code> (transitivity).</li>
+</ul>
+<p>The decisive subtlety A stresses: composition is associative <b>only up to a higher path</b> — <code>(p &middot; q) &middot; r</code> and <code>p &middot; (q &middot; r)</code> are <em>not literally equal</em> but are joined by a 2-path <code>&alpha;</code>. This "weakness up to higher paths" is exactly what makes types <b>&infin;-groupoids</b>, not ordinary groups.</p>
+<div class="mathblock">refl  : x = x                 (identity path)
+p&#8315;&#185;     : y = x                 (inverse of p : x = y)
+p &middot; q : x = z                 (composition)
+&alpha;   : (p &middot; q) &middot; r = p &middot; (q &middot; r)   (associativity, only up to a 2-path)</div>
+
+<h3>4 &middot; Higher paths = homotopies; the tower to &infin;</h3>
+<p>A path <code>p = q</code> between two paths is a <b>2-path</b> / <b>homotopy</b> — a continuous deformation from one path to the other (A's filled green region; B's translucent surface/2-cell on a sphere). B makes the infinite <b>tower</b> explicit: points &#8594; paths &#8594; homotopies &#8594; homotopies of homotopies &#8594; &hellip; Each level is "the paths between" the previous one.</p>
+
+<h3>5 &middot; The homotopy-level ladder <span style="color:var(--muted)">(A's strength)</span></h3>
+<table>
+<tr><th>Level</th><th>Name</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>&minus;2</td><td>Contractible</td><td>exactly one point (up to homotopy)</td><td>Unit</td></tr>
+<tr><td>&minus;1</td><td>Mere proposition</td><td>at most one point; truth value, no data</td><td>a proposition</td></tr>
+<tr><td>0</td><td>Set</td><td>paths between two points are unique</td><td>&#8469;, Bool</td></tr>
+<tr><td>1</td><td>Groupoid</td><td>several paths, but none between paths</td><td>S&#185;, categories</td></tr>
+<tr><td>2</td><td>2-Groupoid</td><td>2-paths can be non-trivial</td><td>S&#178; (truncated)</td></tr>
+</table>
+<p>Every <code>n</code>-type is also an <code>(n+1)</code>-type; the ladder climbs to <b>&infin;</b>. B's 0/1/2 levels on a sphere are the geometric shadow of this ladder.</p>
+
+<h3>6 &middot; Transport along paths (fibrations) <span style="color:var(--muted)">(A's strength)</span></h3>
+<p>Given a family <code>P : A &#8594; Type</code> and a path <code>p : x = y</code>, <b>transport</b> gives a function between the fibers, <code>p_* : P(x) &#8594; P(y)</code>: carry an element of the fiber over <code>x</code> along <code>p</code> to an element over <code>y</code>. This makes type families into <b>fibrations</b>. It is the mechanism behind A's proof of <code>&pi;&#8321;(S&#185;) &#8769; &#8484;</code>: transport around the loop and apply successor / predecessor to <code>0</code> (the encode/decode construction).</p>
+
+<h3>7 &middot; The circle S&#185; — the fused object</h3>
+<p><b>A (HIT):</b> one point <code>base</code> + one loop <code>loop : base = base</code>; its loop space is &#8484;, so <code>&pi;&#8321;(S&#185;) &#8769; &#8484;</code>; the integer is the <b>winding number</b>.
+<b>B (topological):</b> a continuous ring of points with a base point and a loop; "the space of loops here is equivalent to the integers &#8484; (winding numbers)".
+<b>Fused:</b> same type. The HIT is a <em>definition</em> (1 point + 1 loop) provably equivalent to the topological circle; Univalence makes them equal. The winding number is simultaneously the HIT's loop-space content and the topological fundamental group.</p>
+<div class="mathblock">S&#185; (HIT)      : base : S&#185;,  loop : base = base      (1 point + 1 loop)
+S&#185; (topo)     : continuous ring, base : S&#185;, loop a path base &#8594; base
+S&#185;(HIT) &#8769; S&#185;(topo)                    (equivalent; hence equal, by Univalence)
+&pi;&#8321;(S&#185;) &#8769; &#8484;                    (winding number n &#8712; &#8484;)</div>
+
+<h3>8 &middot; Univalence</h3>
+<p>The Univalence Axiom: <code>(A = B) &#8769; (A &#8769; B)</code> — the type of <b>equivalences</b> between two types is itself the type of <b>equalities</b>. A's discrete instance: {0,1} &#8769; {true,false} — "different" sets in set theory, but equivalent, hence <em>equal</em> in HoTT, so every theorem about one transfers to the other for free. B's continuous instance: triangle &#8769; circle (homeomorphic) — deformable, hence equal. Consequence (both): <b>structure-preserving equivalence is identity</b>; isomorphic structures share all properties.</p>
+
+<h3>9 &middot; Why it matters — the Rosetta Stone <span style="color:var(--muted)">(B's strength)</span></h3>
+<p>B's unifying map: one language in which three fields are the same subject read in three dialects —</p>
+<table>
+<tr><th>Topology</th><th>Logic</th><th>Type theory</th></tr>
+<tr><td>Space</td><td>Proposition</td><td>Type</td></tr>
+<tr><td>Point</td><td>Proof</td><td>Term</td></tr>
+<tr><td>Path</td><td>Equality-proof</td><td>Identity type</td></tr>
+<tr><td>Homotopy</td><td>&mdash;</td><td>Path between paths</td></tr>
+<tr><td>Homeomorphism</td><td>Logical equivalence</td><td>Type equivalence</td></tr>
+</table>
+<p>Payoffs: reason about spaces <b>without point-set topology</b>; write <b>proofs that are programs</b> (computationally relevant); work with <b>equality that has structure</b>; all <b>machine-checkable</b>. A's formal backbone (sections 3&ndash;6) is the precise content of B's three columns.</p>
+</section>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung</h2>
+<p>One object, two pictures: the <b>same winding-number loop</b> <code>n</code> living in the loop space of the circle. <b>Left (B)</b> — the topological S&#185; as a continuum of points. <b>Right (A)</b> — the HIT S&#185; as one base point + one loop. The middle <code>&#8769;</code> is Univalence: equivalent, hence equal. Change the winding number <code>n</code> with the slider, the buttons, or by <b>dragging around the left circle</b> — the integer <code>&pi;&#8321;(S&#185;) &#8769; &#8484;</code> updates live.</p>
+<canvas id="viz" height="420"></canvas>
+<div class="viz-controls">
+  <label>Winding number <code>n</code> <input type="range" id="nSlider" min="-3" max="3" step="1" value="1"><span class="hint" id="nVal">n = 1</span></label>
+  <button class="action" id="minusBtn">&minus; loop&#8315;&#185;</button>
+  <button class="action" id="plusBtn">loop +</button>
+  <button class="action" id="resetBtn">&#8634; reset (0)</button>
+</div>
+<p class="viz-cap">The winding loop spirals outward on the ring; its colour encodes sign (warm = +n, cool = &minus;n). The only difference between the two panels is the <em>point-set</em>: a continuum (B) vs. a single base point (A) — the same loop space &#8484; in both, which is why Univalence can identify the types. Drag around the left circle to sweep the winding.</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../paper/hott.html">A &middot; Visual Guide to Homotopy Type Theory</a><br><span class="hint">Eight-section interactive guide (types-as-spaces, paths=equality, path groupoid with up-to-homotopy associativity, higher paths, transport/fibrations, the homotopy-level ladder, the HIT circle with &#960;&#8321;&#8769;&#8484;, and Univalence on {0,1} vs {true,false}). Formal, notation-driven register.</span></div>
+<div class="prov"><a href="../hott.html">B &middot; Homotopy Type Theory — Visual Explorer</a><br><span class="hint">Six-section Plotly explorer in an "no formulas, just shapes and intuition" register: types as spaces (Bool/&#8469;/S&#185;/empty), equality as morphing paths, homotopy, a 3D-sphere tower of higher paths, Univalence (triangle &#8769; circle), and a Rosetta-Stone unifying topology / logic / type theory.</span></div>
+<p class="foot">Fusion 036 &middot; Runde 1 (non-AI-Track) &middot; autonom, keine Netzwerte — alle Daten inline.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  var canvas=document.getElementById('viz');
+  if(!canvas){ return; }
+  var nSlider=document.getElementById('nSlider');
+  var nVal=document.getElementById('nVal');
+  var plusBtn=document.getElementById('plusBtn');
+  var minusBtn=document.getElementById('minusBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var themeBtn=document.getElementById('themeBtn');
+
+  var state={n:1, ctx:null, cssW:0, cssH:420, dragging:false, startN:0, lastA:0, sweep:0};
+
+  function fit(){
+    var d=window.devicePixelRatio||1;
+    var w=canvas.clientWidth||760;
+    state.cssW=w; state.cssH=420;
+    canvas.width=Math.round(w*d); canvas.height=Math.round(420*d);
+    state.ctx=canvas.getContext('2d');
+    state.ctx.setTransform(d,0,0,d,0,0);
+  }
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function clampN(v){ v=Math.round(v); if(v<-3)v=-3; if(v>3)v=3; return v; }
+  function geom(){
+    var W=state.cssW, H=state.cssH;
+    var R=Math.min(W*0.16,128);
+    return {W:W, H:H, R:R, cxL:W*0.27, cxR:W*0.73, cy:H*0.56, mx:W*0.5};
+  }
+
+  function drawCircle(g, cx, R, ring, dot, base, pos, neg, n, showDots){
+    var ctx=state.ctx;
+    ctx.strokeStyle=ring; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(cx,g.cy,R,0,Math.PI*2); ctx.stroke();
+    if(showDots){
+      ctx.fillStyle=dot;
+      var nd=72;
+      for(var i=0;i<nd;i++){
+        var a=i/nd*Math.PI*2;
+        ctx.beginPath(); ctx.arc(cx+R*Math.cos(a), g.cy+R*Math.sin(a), 1.7, 0, Math.PI*2); ctx.fill();
+      }
+    }
+    var bA=-Math.PI/2;
+    var bx=cx+R*Math.cos(bA), by=g.cy+R*Math.sin(bA);
+    ctx.fillStyle=base; ctx.beginPath(); ctx.arc(bx,by,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=base; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('base', bx+9, by+3);
+    if(n!==0){
+      var total=n*Math.PI*2, steps=Math.max(90,Math.abs(n)*55);
+      var col=n>0?pos:neg, s=Math.sign(n), k=Math.abs(n);
+      ctx.strokeStyle=col; ctx.lineWidth=3; ctx.lineJoin='round';
+      for(var i=0;i<steps;i++){
+        var t1=i/steps, t2=(i+1)/steps;
+        var a1=bA+total*t1, a2=bA+total*t2;
+        var rr1=R + t1*3*k*s, rr2=R + t2*3*k*s;
+        ctx.beginPath();
+        ctx.moveTo(cx+rr1*Math.cos(a1), g.cy+rr1*Math.sin(a1));
+        ctx.lineTo(cx+rr2*Math.cos(a2), g.cy+rr2*Math.sin(a2));
+        ctx.stroke();
+      }
+      var fA=bA+total, fR=R+3*k*s;
+      var ex=cx+fR*Math.cos(fA), ey=g.cy+fR*Math.sin(fA);
+      var tang=fA+Math.PI/2*s;
+      ctx.fillStyle=col; ctx.beginPath();
+      ctx.moveTo(ex,ey);
+      ctx.lineTo(ex+9*Math.cos(tang-0.4), ey+9*Math.sin(tang-0.4));
+      ctx.lineTo(ex+9*Math.cos(tang+0.4), ey+9*Math.sin(tang+0.4));
+      ctx.closePath(); ctx.fill();
+    }
+  }
+
+  function draw(){
+    var ctx=state.ctx; if(!ctx) return;
+    var g=geom();
+    var bg=cssVar('--viz-bg')||'#0a1018';
+    var ring=cssVar('--viz-ring')||'#7b8cff';
+    var dot=cssVar('--viz-dot')||'#55617a';
+    var base=cssVar('--viz-base')||'#f472b6';
+    var pos=cssVar('--loop-pos')||'#fbbf24';
+    var neg=cssVar('--loop-neg')||'#60a5fa';
+    var mid=cssVar('--viz-mid')||'#7b8cff';
+    var text=cssVar('--text')||'#e8edf7';
+    var muted=cssVar('--muted')||'#9aa7bf';
+
+    ctx.fillStyle=bg; ctx.fillRect(0,0,g.W,g.H);
+
+    var n=state.n;
+    ctx.textAlign='left';
+    ctx.fillStyle=text; ctx.font='700 28px ui-monospace,monospace';
+    ctx.fillText(String(n), 14, 30);
+    ctx.fillStyle=muted; ctx.font='italic 13px system-ui,sans-serif';
+    ctx.fillText('winding number  \u00b7  \u03c0\u2081(S\u00b9) \u2243 \u2124', 58, 30);
+
+    drawCircle(g, g.cxL, g.R, ring, dot, base, pos, neg, n, true);
+    drawCircle(g, g.cxR, g.R, ring, dot, base, pos, neg, n, false);
+
+    ctx.textAlign='center';
+    ctx.fillStyle=text; ctx.font='600 13px system-ui,sans-serif';
+    ctx.fillText('B \u00b7 topological S\u00b9', g.cxL, g.cy-g.R-16);
+    ctx.fillText('A \u00b7 HIT S\u00b9', g.cxR, g.cy-g.R-16);
+    ctx.fillStyle=muted; ctx.font='11.5px system-ui,sans-serif';
+    ctx.fillText('continuum of points + loop', g.cxL, g.cy+g.R+22);
+    ctx.fillText('1 base point + 1 loop', g.cxR, g.cy+g.R+22);
+
+    ctx.fillStyle=mid; ctx.font='700 30px ui-monospace,monospace';
+    ctx.fillText('\u2243', g.mx, g.cy+10);
+    ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif';
+    ctx.fillText('equal by', g.mx, g.cy-14);
+    ctx.fillText('Univalence', g.mx, g.cy+30);
+  }
+
+  function setN(v){
+    state.n=clampN(v);
+    if(nSlider) nSlider.value=String(state.n);
+    if(nVal) nVal.textContent='n = '+state.n;
+    draw();
+  }
+
+  if(plusBtn) plusBtn.addEventListener('click', function(){ setN(state.n+1); });
+  if(minusBtn) minusBtn.addEventListener('click', function(){ setN(state.n-1); });
+  if(resetBtn) resetBtn.addEventListener('click', function(){ setN(0); });
+  if(nSlider) nSlider.addEventListener('input', function(){ setN(+nSlider.value); });
+
+  function evPos(e){
+    var r=canvas.getBoundingClientRect();
+    return {x:e.clientX-r.left, y:e.clientY-r.top};
+  }
+  function angleAt(p){
+    var g=geom();
+    return Math.atan2(p.y-g.cy, p.x-g.cxL);
+  }
+  function inLeft(p){
+    var g=geom();
+    return Math.hypot(p.x-g.cxL, p.y-g.cy) < g.R*1.4;
+  }
+  canvas.addEventListener('pointerdown', function(e){
+    var p=evPos(e);
+    if(inLeft(p)){
+      state.dragging=true; state.startN=state.n; state.lastA=angleAt(p); state.sweep=0;
+      try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+    }
+  });
+  canvas.addEventListener('pointermove', function(e){
+    if(!state.dragging) return;
+    var p=evPos(e); var a=angleAt(p);
+    var d=a-state.lastA;
+    if(d>Math.PI)d-=2*Math.PI; if(d<-Math.PI)d+=2*Math.PI;
+    state.sweep+=d; state.lastA=a;
+    setN(state.startN + state.sweep/(2*Math.PI));
+  });
+  function endDrag(){ state.dragging=false; }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); draw();
+  });
+  try{
+    var mo=new MutationObserver(function(){ draw(); });
+    mo.observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }catch(_){}
+  window.addEventListener('resize', function(){ fit(); draw(); });
+
+  fit(); setN(1);
+})();
+</script>
+</body>
+</html>

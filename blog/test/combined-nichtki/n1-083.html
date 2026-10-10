@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Invariante Blick — Geometrie der Form und Größe des Effekts</title>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --panel2:#f1f0ea;
+  --ink:#1c2230; --ink-dim:#4a5468; --ink-faint:#8a93a6;
+  --stroke:rgba(20,26,40,.12); --stroke-hi:rgba(20,26,40,.28);
+  --acc:#7c3aed; --acc2:#d24a1e; --acc3:#0f9d8f;
+  --warn:#a9760a; --good:#2f8f4e; --bad:#c0392b;
+  --fd:rgba(124,58,237,.10); --fd-stroke:rgba(124,58,237,.45);
+}
+html.dark{
+  --bg:#0a0e18; --panel:#121a2c; --panel2:#0e1524;
+  --ink:#e8ecf6; --ink-dim:#9aa6c0; --ink-faint:#64708c;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.2);
+  --acc:#a78bfa; --acc2:#ff6b4a; --acc3:#5ee0d0;
+  --warn:#ffc860; --good:#7ee787; --bad:#ff8aa5;
+  --fd:rgba(167,139,250,.12); --fd-stroke:rgba(167,139,250,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+h1{font-size:clamp(26px,4.4vw,40px);line-height:1.12;letter-spacing:-.02em;font-weight:760;margin-bottom:10px}
+h1 em{font-style:normal;color:var(--acc)}
+.subtitle{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;color:var(--ink-faint);
+  border:1px solid var(--stroke);border-radius:99px;padding:6px 12px;display:inline-block;margin-bottom:8px}
+p{color:var(--ink-dim);margin:0 0 14px;max-width:74ch}
+p.lead{font-size:16.5px;color:var(--ink)}
+strong{color:var(--ink);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+section{padding:38px 0}
+section+section{border-top:1px solid var(--stroke)}
+h2{font-size:clamp(20px,2.8vw,28px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:16px;font-weight:660;margin:22px 0 8px;color:var(--ink)}
+.k{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.92em;background:rgba(127,127,127,.16);
+  padding:1px 6px;border-radius:5px;color:var(--ink)}
+.note{border-left:3px solid var(--acc);background:var(--fd);padding:13px 16px;border-radius:0 11px 11px 0;
+  margin:18px 0;font-size:14px;color:var(--ink-dim)}
+.note b{color:var(--ink)}
+.note .h{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:6px;display:block;font-weight:700}
+.note.t{border-color:var(--acc3);background:rgba(15,157,143,.08)}
+.takeaway{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:12px 15px;margin-bottom:10px;font-size:14px;color:var(--ink-dim);display:flex;gap:12px}
+.takeaway .num{font-family:ui-monospace,monospace;font-weight:700;color:var(--acc2);font-size:15px;flex:none}
+.takeaway a{color:var(--acc);text-decoration:none}
+.takeaway a:hover{text-decoration:underline}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border:1px solid var(--stroke);vertical-align:top}
+th{background:var(--panel2);color:var(--ink);font-weight:660;font-size:12.5px;letter-spacing:.02em}
+td{color:var(--ink-dim)}
+td .a{color:var(--acc);font-weight:600}
+td .b{color:var(--acc2);font-weight:600}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-dim);margin:10px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke-hi);border-radius:14px;padding:8px;margin:16px 0}
+canvas{display:block;width:100%;border-radius:8px}
+.vizbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.vizbar .hint{font-size:12px;color:var(--ink-faint)}
+button{font-family:inherit;font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;
+  border:1px solid var(--stroke-hi);background:var(--panel2);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--acc)}
+.ro{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));margin:14px 0}
+.ro .box{background:var(--panel2);border:1px solid var(--stroke);border-radius:10px;padding:9px 11px;text-align:center}
+.ro .box .k{font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:4px}
+.ro .box .v{font-family:ui-monospace,monospace;font-size:18px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.p{color:var(--acc3)} .ro .box .v.w{color:var(--warn)}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px;margin:6px 0 4px}
+.ctl{margin-bottom:12px}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-dim);margin-bottom:6px}
+.ctl-lab b{font-family:ui-monospace,monospace;color:var(--acc);font-weight:600}
+.ctl-lab b.m{color:var(--acc2)}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--panel)}
+footer{border-top:1px solid var(--stroke);padding:26px 20px;max-width:820px;margin:0 auto;color:var(--ink-faint);font-size:12.5px}
+footer a{color:var(--acc);text-decoration:none}
+footer a:hover{text-decoration:underline}
+@media(max-width:560px){.sliders{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <span class="subtitle">Fusion aus: teichmueller.html ✕ kult_der_statistischen_signifikanz_simple.html</span>
+  <h1>Der <em>Invariante</em> Blick<br>— Geometrie der Form und Größe des Effekts</h1>
+  <p class="lead">Zwei Papiere aus völlig verschiedenen Welten — eine pure Geometrie und ein Angriff auf die Statistik — treffen hier aufeinander. Beide machen denselben Fehler aus, nur in eigener Sprache: den, eine <strong>konventionsgebundene, koordinatenabhängige Größe</strong> für die <strong>echte, entscheidungsrelevante Struktur</strong> zu halten.</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>In Teichmüller-Theorie (A) ist eine Form <em>kein</em> einzelnes τ, das sich unter der modularen Gruppe verschiebt — die <strong>reale</strong> Form ist die <em>Äquivalenzklasse</em> τ / SL(2,Z), der Punkt im Moduli-Raum. Der Abstand zweier Formen ist keine willkürliche Strecke, sondern die <strong>Teichmüller-Distanz</strong> d = ½ ln K, mit K der <em>minimalen</em> quasikonformen Dilatation — eine <em>gauge-invariante Größe der echten Lücke</em>. In der Kult-Kritik (B) ist ein Befund <em>kein</em> p-Wert bei fester 5%-Linie — das <strong>Reale</strong> ist die <em>Effektgröße</em> gewogen an ihren <em>Kosten</em>. Der p-Wert ist ein „<em>sizeless stare</em>“: derselbe t entsteht aus einem riesigen ungenauen und einem winzigen präzisen Effekt.</p>
+    <p>Die gemeinsame Position lautet: <strong>JUDGE THE INVARIANT, NOT THE GAUGE.</strong> Mess die Größe, die unter Umbenennung / Umparametrisierung <em>unverändert</em> bleibt und die <em>Entscheidung</em> trägt — und nicht die Größe, die an eine willkürliche Konvention (ein festes n, ein festes α, eine „bequeme“ 5%-Linie; eine bestimmte Koordinatenwahl im τ) gekoppelt ist. Beide Papiere ersetzen damit eine starre Schwelle durch eine <em>kontinuierliche, invariante Lückengröße</em>.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden arbeiten in getrennten Domänen (reine Geometrie vs. Kritik statistischer Praxis) und widersprechen sich in <em>keiner</em> faktischen Aussage. Die <strong>echten, strukturellen Spannungen</strong> sind diese zwei:</p>
+    <h3>① Die Richtung des „Hinausdividierens”</h3>
+    <p><span class="k">A</span> macht den Weg zur wahren Form <em>gerade durch</em> Quotientieren: „Forgetting the marking gives the Moduli space”; der Moduli-Raum ist Teichmüller-Raum / Mapping-Class-Gruppe. Die <em>reale</em> Form ist die <strong>Äquivalenzklasse</strong> — A <em>vergisst</em> die redundante Markierung, um die Wahrheit zu erreichen.<br>
+    <span class="k">B</span> macht aus <em>genau diesem</em> Zusammenklappen in ein Label den <strong>Kernfehler</strong>: „nicht signifikant“ wurde zu „kein Effekt“ gelesen (Vioxx, 5 statt 8 Infarkte, ein Sterbefall) — und Takeaway 4: „Ein Befund von Signifikanz — oder ihr Fehlen — ist für sich allein wertlos.“ B <em>weigert</em> sich zu vergessen und beharrt auf der feingliedrigen Effektgröße.<br>
+    → Dieselbe Operation (Quotient / Zusammenklappen zu einem Label) ist bei A <em>Weg zur Wahrheit</em>, bei B <em>krankheitsursächlicher Irrtum</em>.</p>
+    <h3>② Der Quotient als Maß</h3>
+    <p><span class="k">A</span> <em>feiert</em> eine quotientenartige Größe als <em>das</em> Maß dafür, wie unterschiedlich zwei Formen sind: die Dilatation K und d = ½ ln K („you need at least a 2.5:1 stretch ratio“). Ein größeres K/d heißt: <strong>genuin</strong> unterschiedlicher.<br>
+    <span class="k">B</span> <em>verurteilt</em> genau solche Quotienten (t = Signal/Rauschen) als <strong>„sizeless stare“</strong>: „p ist ein Präzisions‑, kein Größenmaß“; derselbe t (z. B. 2) entsteht aus einem riesigen ungenauen und einem winzigen präzisen Effekt — der Quotient misst <em>keine Größe</em>.<br>
+    → A hält einen Quotienten für eine wahre Distanz; B sagt, solche Quotienten seien größenlos und entscheidungsblind.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Beide Spannungen lösen sich auf einer einzigen Achse: <strong>konventions‑/gauge‑abhängig vs. invariant/entscheidungsrelevant.</strong></p>
+    <p><strong>Auflösung ① — Was wird dividiert?</strong> A dividiert <em>reinen Gauge</em> heraus (Wahl der Basis/der Markierung — trägt keine Entscheidungs‑Information): die Moduli‑Klasse ist daher legitim das reelle Objekt. B „dividiert” dagegen <em>Effektgröße + Kosten</em> heraus (trägt <em>sehr</em> wohl Entscheidungs‑Information): <em>dass</em> ist der Fehler. Regel: <strong>dividiere nur das wirklich Redundante, niemals das Entscheidungsrelevante.</strong> A’s Markierung ist purer Gauge; B’s 5%-Label wirft die Effektgröße weg. Damit sind beide konsistent, sobald man die zwei unterscheidet.</p>
+    <p><strong>Auflösung ② — Das Infimum rettet den Quotienten.</strong> A rettet sich vor dem sizeless stare dadurch, dass er über <em>alle</em> Abbildungen minimiert — die <em>minimale</em> Dilatation. d = ½ ln(min K) ist dann eine <em>invariante Größe der strukturellen Lücke</em>, kein größenloser roher Quotient in einer festen Koordinate. B verlangt analog die <em>Effektgröße</em> (die invariante μ-Verschiebung), nicht das t. Beide konvergieren also: <strong>die invariante, optimierte, entscheidungsrelevante Größe ist real; der konventionsgebundene Quotient plus feste Schwelle ist die Falle.</strong> A’s Teichmüller-Distanz ist B’s Forderung nach „Größe“, in Geometrie umgesetzt.</p>
+    <div class="note t"><span class="h">Fusionierter Schluss</span>
+    Ein gutes Maß für „Wie unterschiedlich?” muss <b>(i)</b> invariant unter Umbenennung/Umparametrisierung sein, <b>(ii)</b> eine <em>kontinuierliche Größe</em> der echten Lücke und keine diskrete Schwelle, und <b>(iii)</b> entscheidungsrelevant (trägt Kosten/Wichtigkeit) sein. <b>Teichmüller-Distanz</b> (½ ln minimaler Dilatation) ist das geometrische Exempel; <b>Effektgröße + Verlustfunktion</b> (Gosset/DeGroot) das statistische. Fishers feste 5% und „nicht signifikant = kein Effekt” sind die statistische Variante von „roher gauge‑abhängiger Quotient, eingefroren in eine starre Linie”.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <h3>A — Teichmüller-Theorie (Formen-Raum)</h3>
+    <p>Man startet mit einer <strong>topologischen Fläche</strong> (Genus g = Anzahl Löcher; kein Zerkleinern/Kleben). Die Topologie ist fix; aber dieselbe Topologie trägt viele <strong>konforme Strukturen</strong> (Winkel‑Muster): ein dünner hoher und ein flacher breiter Tors sind topologisch gleich, geometrisch unterschiedlich. Der <strong>Teichmüller-Raum</strong> sammelt alle genuin verschiedenen Formen: Genus 0 (Kugel) → 0‑dim (ein Punkt); Genus 1 (Tors) → 2‑dim; Genus g ≥ 2 → <em>6g − 6</em>‑dim. Ein Tors ist ein <strong>Parallelogramm</strong> mit verklebten Gegenkanten; seine Form ist die komplexe Zahl <span class="k">τ = x + iy</span> in der oberen Halbebene ℍ (Re = Scherung, Im = Höhe). Zwei τ liefern dieselbe <em>unmarkierte</em> Form, wenn sie per Möbius-Transformation τ → (aτ+b)/(cτ+d) (ganzzahlig, det 1, SL(2,Z)) verknüpft sind; vergessen der Markierung gibt den <strong>Moduli-Raum</strong>. Eine <strong>konforme</strong> Abbildung (K = 1) erhält Winkel (Kreise bleiben Kreise); eine <strong>quasikonforme</strong> (K &gt; 1) verzerrt Winkel <em>beschränkt</em> — Kreise werden Ellipsen, Achsenquotient ≤ K („schlimmster Ellipsen‑Quotient“). Die <strong>Teichmüller-Distanz</strong> d = ½ ln K ist die hyperbolische Distanz: d = arccosh(1 + |Δτ|²/(2·Im τ₁·Im τ₂)); Geodäten sind Hyperbel‑Bögen (Halbkreise oder Vertikale). Das Ganze ist „die Geometrie der Geometrien” — verknüpft komplexe Analysis, hyperbolische Geometrie, Dynamik, Zahlentheorie, Stringtheorie.</p>
+    <h3>B — Kult der statistischen Signifikanz (Effekt-Raum)</h3>
+    <p>Gosset (Braumeister, Pseudonym „Student”) hatte recht, Fisher unrecht: <em>Passgenauigkeit ist nicht Bedeutung.</em> Zwei Zahlen bestimmen die Normalverteilung: Mittelwert μ und Streuung σ; „±2σ” fasst 95,4 % (Grenze 1,96). Die entscheidende Unterscheidung: <strong>σ ≠ SE</strong> — σ beschreibt, wie stark <em>einzelne Menschen</em> streuen (Eigenschaft der Welt, schrumpft <em>nicht</em>); der <strong>Standardfehler SE = σ/√n</strong> beschreibt, wie stark der <em>Mittelwert</em> streut (Eigenschaft des Experiments, schrumpft mit √n — „mit genug Probanden wird jeder SE beliebig klein“). <strong>t = Signal ÷ Rauschen</strong> ist nur ein Verhältnis („sizeless stare“): dieselbe Signifikanz aus riesigem ungenauem oder winzigem präzisen Effekt. Der <strong>p-Wert</strong> ist nur eine Umrechnung von t; die 5%-Linie ist arbitrar — Fishers ganze Begründung 1926: „Es ist bequem … Persönlich.“ <strong>Vioxx</strong>: 5 gemeldete statt 8 echte Infarkte → „nicht signifikant” → wurde zu „kein Effekt” gelesen (eine Fälschung, die nur lohnte, weil die Kultur so liest). Die richtige Idee ist die <strong>Verlustfunktion / Minimax</strong> (Fisher 1955: „keine Kostenfunktionen”; Gosset 1905: die Sicherheit muss vom geldwerten Vorteil vs. den Kosten abhängen) — Oomph dominiert Precision in <em>jedem</em> Zustand der Welt. <strong>DeGroot 20 000</strong>: ein winziger Effekt (0,1 Pfund) wird bei n = 20 000 signifikant — „Signifikanz misst dein Budget, nicht die Natur”; und man kann Insignifikanz <em>herstellen</em> (Vioxx). <strong>Power</strong>: Fisher schaut nur Fehler 1. Art (α) und ignoriert β (Fehler 2. Art) — die „Wippe”. Gossets „real error” wurde von Fisher aus dem Kanon <em>gelöscht</em>; sein Weg wurde zum Weg von Neyman &amp; Pearson, Wald, Savage, Jeffreys, Zellner: ein Verlustfunktions-Ansatz.</p>
+    <h3>Das gemeinsame Gerüst: rohe Koordinate → Invariante</h3>
+    <p>Beide Papiere sind dieselbe Operation in eigener Sprache: <em>von der konventionsgebundenen Koordinate zur invarianten Größe</em>.</p>
+    <table>
+      <thead><tr><th>Begriff aus A (Geometrie)</th><th>Entsprechendes aus B (Statistik)</th></tr></thead>
+      <tbody>
+        <tr><td><span class="a">τ = x + iy</span> (Koordinate, abhängig von der Basis)</td><td>das gewählte <span class="b">n</span> und <span class="b">α</span> (eine Gauge‑Wahl)</td></tr>
+        <tr><td><span class="a">modulare Gruppe SL(2,Z)</span> (Umparametrisierung)</td><td>die Freiheit, <span class="b">Stichprobe / Test</span> zu ändern (Umparametrisierung)</td></tr>
+        <tr><td><span class="a">Moduli-Klasse</span> τ / SL(2,Z) (das Reale)</td><td>die <span class="b">Effektgröße + Kosten</span> (invariant unter Umparametrisierung)</td></tr>
+        <tr><td><span class="a">Teichmüller-Distanz</span> d = ½ ln(min K)</td><td>die <span class="b">kosten‑gewichtete Effektgröße</span> (Entscheidungsgröße)</td></tr>
+        <tr><td><span class="a">K = 1 „keine Verzerrung”</span></td><td>„der Effekt ist, was er ist”, <span class="b">bevor</span> man misst</td></tr>
+        <tr><td><span class="a">Fundamentalbereich</span> (Orbit-Grenze, „gleich vs. verschieden”)</td><td>die <span class="b">5%-Linie</span> (B’s Ziel: durch kontinuierliche Kosten‑Abwägung ersetzen)</td></tr>
+        <tr><td><span class="a">„sizeless” rohes K in einer Koordinate</span></td><td><span class="b">„sizeless stare”</span>: t/p statt Effektgröße</td></tr>
+      </tbody>
+    </table>
+    <p>Der entscheidende Unterschied in der <em>Bewertung</em> desselben Zugriffs (Quotient / Label): A quotientiert <strong>reinen Gauge</strong> (Markierung) → legitime Invariante; B’s Label quotientiert <strong>Entscheidungsrelevantes</strong> (Effektgröße, Kosten) → Irrtum. Und A’s <strong>Infimum über alle Karten</strong> macht aus dem größenlosen Quotienten eine wahre Lückengröße — genau das, was B vom p-Wert verlangt. Die zwei Papiere sind zwei Seiten einer Medaille: <em>die Invariante messen, nicht den Gauge.</em></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung — der Invariante Blick</h2>
+    <p>Ein einziger Canvas, zwei Seiten desselben Arguments. <strong>Links (A · Geometrie):</strong> die obere Halbebene ℍ mit dem SL(2,Z)‑Fundamentalbereich, dem <em>Gauge-Orbit</em> des wählbaren τ<sub>B</sub> (die Bilder, die „vergessen” werden dürfen) und der Teichmüller-Distanz d = ½ ln K zwischen der Referenz τ<sub>A</sub> = i und τ<sub>B</sub>. <strong>Rechts (B · Statistik):</strong> der <em>sizeless stare</em> — zwei Glocken (Oomph: groß/ungenau, Precision: klein/präzise) mit <em>identischem</em> t, aber 100× verschiedener Effektgröße.</p>
+    <div class="vizbar">
+      <button id="theme">🌗 Thema umschalten</button>
+      <span class="hint">links = Geometrie (A) · rechts = Statistik (B) · alles Inline, keine Netzdaten</span>
+    </div>
+    <div class="vizwrap"><canvas id="cv"></canvas></div>
+    <div class="legend">
+      <span><i style="background:var(--acc)"></i>Referenz A = i</span>
+      <span><i style="background:var(--acc2)"></i>τ<sub>B</sub> / Oomph (groß)</span>
+      <span><i style="background:var(--acc3)"></i>Precision (klein, gleicher t)</span>
+      <span><i style="background:var(--warn)"></i>Fundamentalbereich / Schwelle 1,96</span>
+      <span><i style="background:var(--ink-faint)"></i>Gauge-Orbit / H₀</span>
+    </div>
+    <div class="ro">
+      <div class="box"><div class="k">τ<sub>B</sub> real</div><div class="v" id="v-re">0.30</div></div>
+      <div class="box"><div class="k">τ<sub>B</sub> imag</div><div class="v" id="v-im">1.50</div></div>
+      <div class="box"><div class="k">d = ½ ln K</div><div class="v w" id="v-d">–</div></div>
+      <div class="box"><div class="k">K = e^(2d)</div><div class="v w" id="v-k">–</div></div>
+      <div class="box"><div class="k">t (beide)</div><div class="v m" id="v-t">–</div></div>
+      <div class="box"><div class="k">Effekt Oomph</div><div class="v m" id="v-eo">–</div></div>
+      <div class="box"><div class="k">Effekt Präzision</div><div class="v p" id="v-ep">–</div></div>
+      <div class="box"><div class="k">Faktor</div><div class="v" id="v-fac">100×</div></div>
+    </div>
+    <div class="sliders">
+      <div class="ctl"><div class="ctl-lab"><span>τ<sub>B</sub> — Realteil (Scherung)</span><b id="lbl-re">0.30</b></div><input type="range" id="s-re" min="-0.5" max="0.5" step="0.01" value="0.3"></div>
+      <div class="ctl"><div class="ctl-lab"><span>τ<sub>B</sub> — Imaginärteil (Höhe)</span><b id="lbl-im">1.50</b></div><input type="range" id="s-im" min="0.5" max="3" step="0.01" value="1.5"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Großer Effekt (Pfund)</span><b class="m" id="lbl-ge">20.0</b></div><input type="range" id="s-ge" min="0.2" max="30" step="0.1" value="20"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Rauschen (Pfund)</span><b class="m" id="lbl-gn">10.0</b></div><input type="range" id="s-gn" min="0.5" max="15" step="0.1" value="10"></div>
+    </div>
+    <div class="note"><span class="h">Lesart</span>
+    <b>Links:</b> der Orbit (τ→τ+1, τ→τ−1, τ→−1/τ) ist der <b>Gauge</b>, den man <i>legitim</i> vergisst — die <b>invariante</b> Größe der Lücke ist d = ½ ln(min K), nicht die Streckung in einer festen Koordinate. <b>Rechts:</b> beide Glocken sehen <i>gleich</i> aus (gleicher t, gleicher Abstand zur 1,96er-Linie), aber die <b>Effektgrößen</b> unterscheiden sich um 100× — das ist der <b>sizeless stare</b>. <b>Gemeinsam:</b> die entscheidungsrelevante Größe (d bzw. Effektgröße) ist invariant; der rohe Quotient + feste Linie nicht.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="takeaway"><span class="num">A</span><div><a href="../teichmueller.html">teichmueller.html</a> — „Teichmüller Theory — Visual Explorer” (EN): interaktive visuelle Reise von Gummiblättern zum Raum aller Formen; Genus, konforme/quasikonforme Abbildungen (K = Dilatation), Tors aus Parallelogramm (τ ∈ ℍ), Teichmüller-Distanz d = ½ ln K, Moduli-Raum = Teichmüller / Mapping-Class-Gruppe.</div></div>
+    <div class="takeaway"><span class="num">B</span><div><a href="../kult_der_statistischen_signifikanz_simple.html">kult_der_statistischen_signifikanz_simple.html</a> — „Der Kult der statistischen Signifikanz — Einfach erklärt” (DE): Gosset vs. Fisher; σ ≠ SE, t = Signal/Rauschen, p-Wert, die willkürliche 5%-Linie, Vioxx, Verlustfunktion/Minimax, DeGroots 20 000, Power/α‑β‑Wippe, der „sizeless stare”.</div></div>
+  </section>
+</main>
+<footer>
+  <p>Fusion (Round 1, Paar 083, nicht-KI-Track). Beide Quelldokumente bleiben Quelle der Wahrheit; keine erfundenen Behauptungen. Konvention von A: d = ½ ln K mit K = e<sup>2d</sup>; hier d = arccosh(1 + |Δτ|²/(2·Im τ₁·Im τ₂)). Alle Diagramme laufen lokal im Browser — keine Daten verlassen diese Seite.</p>
+</footer>
+<script>
+"use strict";
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  function set(id,txt){var el=$(id);if(el)el.textContent=txt;}
+  function pdf(x,mu,s){var z=(x-mu)/s;return Math.exp(-0.5*z*z)/(s*Math.sqrt(2*Math.PI));}
+  function readColors(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n){var val=cs.getPropertyValue(n).trim();return val||'#888';}
+    return {panel:v('--panel'),panel2:v('--panel2'),ink:v('--ink'),dim:v('--ink-dim'),
+      faint:v('--ink-faint'),stroke:v('--stroke'),acc:v('--acc'),acc2:v('--acc2'),
+      acc3:v('--acc3'),warn:v('--warn'),fd:v('--fd'),fdS:v('--fd-stroke')};
+  }
+  function setupCanvas(){
+    var cv=$('cv'),w=Math.max(320,cv.parentElement.clientWidth||760),h=520;
+    var dpr=window.devicePixelRatio||1;
+    if(cv.width!==Math.round(w*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+    cv.style.width=w+'px';cv.style.height=h+'px';
+    var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+    return {g:g,W:w,H:h};
+  }
+  var reMin=-1.2,reMax=1.2,imMax=3.0;
+
+  function drawLeft(g,X0,X1,Y0,Y1,C){
+    function toPx(re,im){return {x:X0+(re-reMin)/(reMax-reMin)*(X1-X0), y:Y1-im/imMax*(Y1-Y0)};}
+    g.fillStyle=C.panel2;g.fillRect(X0,Y0,X1-X0,Y1-Y0);
+    g.strokeStyle=C.stroke;g.lineWidth=1;g.strokeRect(X0,Y0,X1-X0,Y1-Y0);
+    g.strokeStyle=C.stroke;g.lineWidth=0.6;
+    var re,im,p1,p2,q1,q2;
+    for(re=-1;re<=1.001;re+=0.5){p1=toPx(re,0);p2=toPx(re,imMax);g.beginPath();g.moveTo(p1.x,p1.y);g.lineTo(p2.x,p2.y);g.stroke();}
+    for(im=0.5;im<=imMax-0.01;im+=0.5){q1=toPx(reMin,im);q2=toPx(reMax,im);g.beginPath();g.moveTo(q1.x,q1.y);g.lineTo(q2.x,q2.y);g.stroke();}
+    g.beginPath();
+    var a1=toPx(-0.5,imMax);g.moveTo(a1.x,a1.y);
+    var c1=toPx(-0.5,Math.sqrt(0.75));g.lineTo(c1.x,c1.y);
+    var i,r,r2,imx,pp;
+    for(i=0;i<=48;i++){r=-0.5+i/48;r2=1-r*r;imx=Math.sqrt(r2>0?r2:0);pp=toPx(r,imx);g.lineTo(pp.x,pp.y);}
+    var c2=toPx(0.5,imMax);g.lineTo(c2.x,c2.y);g.closePath();
+    g.fillStyle=C.fd;g.fill();g.strokeStyle=C.fdS;g.lineWidth=1.4;g.stroke();
+    g.fillStyle=C.faint;g.font='10px sans-serif';g.textAlign='center';
+    var fc=toPx(0,2.45);g.fillText('Fundamentalbereich',fc.x,fc.y);
+    var ra1=toPx(reMin,0),ra2=toPx(reMax,0);
+    g.strokeStyle=C.faint;g.lineWidth=1.4;g.beginPath();g.moveTo(ra1.x,ra1.y);g.lineTo(ra2.x,ra2.y);g.stroke();
+    g.fillStyle=C.faint;g.textAlign='right';g.fillText('R',ra2.x,ra2.y-5);
+    var reB=+$('s-re').value,imB=+$('s-im').value,reA=0,imA=1;
+    g.strokeStyle=C.warn;g.lineWidth=1.6;g.setLineDash([6,4]);g.beginPath();
+    if(Math.abs(reA-reB)<1e-3){var g1=toPx(reA,imA),g2=toPx(reB,imB);g.moveTo(g1.x,g1.y);g.lineTo(g2.x,g2.y);}
+    else{
+      var mid=(reA+reB)/2+(imA*imA-imB*imB)/(2*(reB-reA));
+      var rr=Math.sqrt((reA-mid)*(reA-mid)+imA*imA);
+      var aa1=Math.atan2(imA,reA-mid),aa2=Math.atan2(imB,reB-mid);
+      var lo=Math.min(aa1,aa2),hi=Math.max(aa1,aa2),k,th,gre,gim,gp;
+      for(k=0;k<=60;k++){th=lo+(hi-lo)*k/60;gre=mid+rr*Math.cos(th);gim=rr*Math.sin(th);gp=toPx(gre,gim);if(k===0)g.moveTo(gp.x,gp.y);else g.lineTo(gp.x,gp.y);}
+    }
+    g.stroke();g.setLineDash([]);
+    var copies=[{re:reB+1,im:imB,lab:'T'},{re:reB-1,im:imB,lab:'T-1'}];
+    var den=reB*reB+imB*imB;if(den>1e-6){copies.push({re:-reB/den,im:imB/den,lab:'S'});}
+    var b0=toPx(reB,imB);
+    g.strokeStyle=C.faint;g.lineWidth=1;g.setLineDash([2,3]);
+    copies.forEach(function(c){
+      if(c.re<reMin||c.re>reMax||c.im<=0||c.im>imMax)return;
+      var cp=toPx(c.re,c.im);
+      g.beginPath();g.moveTo(b0.x,b0.y);g.lineTo(cp.x,cp.y);g.stroke();
+      g.setLineDash([]);
+      g.beginPath();g.arc(cp.x,cp.y,3.5,0,7);g.fillStyle=C.faint;g.fill();
+      g.fillStyle=C.faint;g.font='9px sans-serif';g.textAlign='center';g.fillText(c.lab,cp.x,cp.y-6);
+      g.setLineDash([2,3]);
+    });
+    g.setLineDash([]);
+    var pA=toPx(reA,imA);
+    g.fillStyle=C.acc;g.beginPath();g.arc(pA.x,pA.y,5,0,7);g.fill();
+    g.fillStyle=C.acc;g.font='bold 11px sans-serif';g.textAlign='left';g.fillText('A = i',pA.x+8,pA.y-4);
+    g.fillStyle=C.acc2;g.beginPath();g.arc(b0.x,b0.y,5.5,0,7);g.fill();
+    g.fillStyle=C.acc2;g.font='bold 11px sans-serif';g.textAlign='left';g.fillText('tau_B',b0.x+8,b0.y+4);
+  }
+
+  function bellArea(g,X,py,by1,lo,hi,mu,strokeCol,fillCol,fillA,lw){
+    var N=160,i,u;
+    g.beginPath();g.moveTo(X(lo),by1);
+    for(i=0;i<=N;i++){u=lo+(hi-lo)*i/N;g.lineTo(X(u),py(u,mu));}
+    g.lineTo(X(hi),by1);g.closePath();
+    g.globalAlpha=fillA;g.fillStyle=fillCol;g.fill();g.globalAlpha=1;
+    g.beginPath();
+    for(i=0;i<=N;i++){u=lo+(hi-lo)*i/N;if(i===0)g.moveTo(X(u),py(u,mu));else g.lineTo(X(u),py(u,mu));}
+    g.strokeStyle=strokeCol;g.lineWidth=lw;g.stroke();
+  }
+  function subBell(g,bx0,bx1,by0,by1,t,C,col){
+    var lo=-0.6,hi=Math.max(3.6,t+1.2);
+    function X(u){return bx0+(u-lo)/(hi-lo)*(bx1-bx0);}
+    var peak=pdf(0,0,1);
+    function py(u,mu){var d=pdf(u,mu,1)/peak;return by1-d*(by1-by0)*0.8;}
+    bellArea(g,X,py,by1,lo,hi,0,C.faint,C.faint,0.08,1.2);
+    bellArea(g,X,py,by1,lo,hi,t,col,col,0.18,2.2);
+    g.strokeStyle=C.faint;g.lineWidth=1;g.setLineDash([3,3]);
+    g.beginPath();g.moveTo(X(0),by0);g.lineTo(X(0),by1);g.stroke();g.setLineDash([]);
+    g.strokeStyle=C.warn;g.lineWidth=1.5;g.setLineDash([6,4]);
+    g.beginPath();g.moveTo(X(1.96),by0);g.lineTo(X(1.96),by1);g.stroke();g.setLineDash([]);
+    g.fillStyle=C.warn;g.font='10px sans-serif';g.textAlign='center';g.fillText('1.96',X(1.96),by0+11);
+    var mx=Math.min(t,hi-0.05);
+    g.fillStyle=col;g.beginPath();g.arc(X(mx),py(t,t),4.5,0,7);g.fill();
+  }
+  function drawRight(g,X0,X1,t0,t1,b0,b1,C,gE,gN,H){
+    var t=gE/gN;
+    g.textAlign='left';
+    g.font='bold 11px sans-serif';g.fillStyle=C.acc2;g.fillText('Oomph — gro\u00df, ungenau',X0+2,t0-34);
+    g.font='11px sans-serif';g.fillText('Effekt = '+gE.toFixed(1)+' Pfund   (\u03c3 = '+gN.toFixed(1)+')',X0+2,t0-20);
+    g.font='bold 11px sans-serif';g.fillStyle=C.acc3;g.fillText('Precision — klein, pr\u00e4zis',X0+2,b0-34);
+    g.font='11px sans-serif';g.fillText('Effekt = '+(gE/100).toFixed(2)+' Pfund   (\u03c3 = '+(gN/100).toFixed(2)+')  \u2192 gleicher t',X0+2,b0-20);
+    subBell(g,X0+2,X1,t0,t1,t,C,C.acc2);
+    subBell(g,X0+2,X1,b0,b1,t,C,C.acc3);
+    g.fillStyle=C.ink;g.font='bold 12px sans-serif';g.textAlign='center';
+    g.fillText('Gleicher t in beiden, Effektgr\u00f6\u00dfe 100\u00d7 verschieden \u2014 der sizeless stare',(X0+X1)/2,H-12);
+    return t;
+  }
+  function draw(){
+    var S=setupCanvas(),g=S.g,W=S.W,H=S.H,C=readColors();
+    g.clearRect(0,0,W,H);
+    g.fillStyle=C.panel;g.fillRect(0,0,W,H);
+    g.strokeStyle=C.stroke;g.lineWidth=1;g.beginPath();g.moveTo(W*0.5,6);g.lineTo(W*0.5,H-6);g.stroke();
+    g.fillStyle=C.ink;g.font='bold 12px sans-serif';g.textAlign='left';
+    g.fillText('A \u00b7 Geometrie: Teichm\u00fcller-Distanz',10,18);
+    g.textAlign='right';g.fillText('B \u00b7 Statistik: sizeless stare',W-10,18);
+    var gE=+$('s-ge').value,gN=+$('s-gn').value;
+    drawLeft(g,10,W*0.5-8,30,H-8,C);
+    var t=drawRight(g,W*0.5+8,W-10,80,H*0.44,H*0.53+6,H-40,C,gE,gN,H);
+    var reB=+$('s-re').value,imB=+$('s-im').value;
+    var dx=reB,dy=imB-1;
+    var coshD=1+(dx*dx+dy*dy)/(2*1*imB);
+    var d=Math.acosh(coshD),K=Math.exp(2*d);
+    set('v-re',reB.toFixed(2));set('v-im',imB.toFixed(2));
+    set('v-d',d.toFixed(3));set('v-k',K.toFixed(3));
+    set('v-t',t.toFixed(2));set('v-eo',gE.toFixed(1));set('v-ep',(gE/100).toFixed(2));
+    set('lbl-re',reB.toFixed(2));set('lbl-im',imB.toFixed(2));
+    set('lbl-ge',gE.toFixed(1));set('lbl-gn',gN.toFixed(1));
+  }
+  var ids=['s-re','s-im','s-ge','s-gn'],i;
+  for(i=0;i<ids.length;i++){$(ids[i]).addEventListener('input',draw);}
+  $('theme').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(draw,150);});
+  function boot(){draw();}
+  if(document.readyState==='complete'){boot();}else{window.addEventListener('load',boot);}
+})();
+</script>
+</body>
+</html>

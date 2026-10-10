@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologie, die man sehen und formal fassen kann — Torus, Igel-Satz & Fibrationen</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}if(!s){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js" onerror="window.__temml_failed=true"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.min.css">
+<style>
+:root{
+  --bg:#faf8f1; --ink:#1f2430; --muted:#5a6272; --card:#ffffff; --card-ink:#1f2430;
+  --accent:#b5651d; --accent2:#2b6cb0; --line:#d8d2c4; --soft:#f0ece1;
+  --canvas-bg:#fffdf8; --grid:#e8e2d4; --ok:#2f8f4e; --warn:#c0392b;
+  --viz-base:#1f8a4c; --viz-vec:#1f4fd8; --viz-zero:#e0392a; --viz-curve:#764ba2;
+}
+html.dark{
+  --bg:#12151f; --ink:#e6e8ee; --muted:#9aa3b5; --card:#1a1f2e; --card-ink:#e6e8ee;
+  --accent:#f0a500; --accent2:#5aa9ff; --line:#2a3348; --soft:#161b28;
+  --canvas-bg:#0d1019; --grid:#232b3d; --ok:#5ecb83; --warn:#ff7a6b;
+  --viz-base:#34d399; --viz-vec:#60a5fa; --viz-zero:#f87171; --viz-curve:#c4b5fd;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Georgia','Times New Roman',serif;
+  background:var(--bg); color:var(--ink); line-height:1.75;
+  transition:background .3s,color .3s; overflow-x:hidden;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+h1{font-size:2.15em;line-height:1.2;margin:18px 0 6px;color:var(--ink);}
+.subtitle{color:var(--muted);font-size:1em;margin-bottom:6px;letter-spacing:.2px;}
+.lede{color:var(--muted);font-size:1.02em;margin-bottom:26px;font-style:italic;}
+section{margin:42px 0;scroll-margin-top:20px;}
+h2{font-size:1.5em;color:var(--accent);margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+h3{font-size:1.14em;color:var(--accent2);margin:22px 0 8px;}
+p{margin:0 0 14px;}
+p a,li a{color:var(--accent2);}
+ul{padding-left:22px;margin:0 0 14px;}
+li{margin-bottom:8px;}
+.card{background:var(--card);color:var(--card-ink);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0;}
+.card p:last-child{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-right:6px;vertical-align:middle;}
+.tag.a{background:rgba(181,101,29,.16);color:var(--accent);}
+.tag.b{background:rgba(43,108,176,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.formula{display:block;text-align:center;margin:14px 0;padding:12px;background:var(--soft);border-radius:8px;overflow-x:auto;}
+.formula .fallback{opacity:.85;}
+.insight{border-left:4px solid var(--accent);background:var(--soft);padding:12px 18px;border-radius:0 8px 8px 0;font-style:italic;margin:14px 0;color:var(--card-ink);}
+.insight b{font-style:normal;color:var(--accent);}
+table{border-collapse:collapse;margin:14px auto;font-size:.95em;width:100%;}
+th,td{border:1px solid var(--line);padding:7px 12px;text-align:left;vertical-align:top;}
+th{background:var(--soft);color:var(--accent);}
+.viz-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;}
+#monoCanvas{width:100%;height:440px;display:block;border-radius:8px;cursor:default;background:var(--canvas-bg);border:1px solid var(--line);}
+.btnrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+.btnrow label{font-size:.9em;color:var(--muted);display:flex;flex-direction:column;gap:4px;font-weight:bold;}
+.btnrow input[type=range]{width:150px;}
+button.btn{background:var(--accent);color:var(--bg);border:none;padding:9px 18px;border-radius:6px;font-size:.95em;font-weight:bold;cursor:pointer;font-family:inherit;}
+button.btn:hover{opacity:.9;transform:translateY(-1px);}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+select{padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font-family:inherit;font-size:.92em;cursor:pointer;}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:1em;}
+.prov{display:block;padding:10px 0;border-bottom:1px dashed var(--line);}
+.prov:last-child{border-bottom:none;}
+.prov .src{font-weight:bold;color:var(--accent2);}
+@media (max-width:560px){h1{font-size:1.6em;}article{padding:28px 16px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="Farbschema wechseln" onclick="toggleTheme()">&#9680;</button>
+<article>
+
+<h1>Topologie, die man sehen und formal fassen kann</h1>
+<p class="subtitle">Fusion aus: topology_examples.html &#10007; fibrations.html</p>
+<p class="lede">Pac-Mans Torus, der Wind auf der Erde und Eulers Z&#228;hlung treffen auf Faserb&#252;ndel, Monodromie und die lange exakte Sequenz &#8212; ein und dasselbe Objekt, von zwei H&#246;hen her.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere drehen sich um denselben Urgegenstand: <strong>eine Abbildung, die einen Raum in einen anderen &#8222;aufwickelt&#8220; und &#252;ber jedem Punkt des Zielraums eine Faser h&#228;ngt.</strong> A (<em>Topology You Can See</em>) zeigt es mit Augen und Maus &#8212; Pac-Mans Torus, der Wind auf der Erde, Eulers Z&#228;hlung &#8212; und wirbt explizit um &#8222;keine Formeln&#8220;. B (<em>Fibrationen &#8212; Formalismus &amp; Intuition</em>) nennt denselben Gegenstand bei Namen: ein Faserb&#252;ndel, eine Serre-/Hurewicz-Fibration, mit der Projektion <span style="color:var(--accent2)">p : E &#8594; B</span>, der Faser F, lokaler Trivialisierung, &#220;bergangsfunktionen (Kozykel), Monodromie und der langen exakten Homotopie-Sequenz.</p>
+<p>Die fusionierte These lautet: <strong>A's drei Spielzeuge sind Spezial- und Anschauungsf&#228;lle von B's all­gemeinen Faserb&#252;ndel, und B's abstrakten Leits&#228;tze werden in A's T&#246;chern sichtbar.</strong> Die Klammer ist B's Slogan &#8222;lokal trivial, global verklebt&#8220;: Pac-Mans Bildschirm ist <em>lokal</em> flach (eine kleine Region l&#228;sst sich ganz normal durchmessen) und <em>global</em> zu einem Torus verklebt (es gibt keinen Rand, der k&#252;rzeste Weg f&#252;hrt durch die Wand). Genau das ist B's lokale Trivialisierung plus die globale Verklebung durch &#220;bergangsfunktionen.</p>
+<p>Und A's Igel-Satz &#8212; &#8222;ein Windfeld auf der Kugel muss irgendwo stehen&#8220; &#8212; ist in B's Sprache der Satz, dass das Tangentialb&#252;ndel <span style="color:var(--accent2)">TS&#178; &#8594; S&#178;</span> <strong>keine nirgends-verschwindende Schnitt</strong> besitzt. Ein Satz, zwei Namen. Die Topologie l&#228;sst sich also <em>z&#228;hlen</em> (A) <em>und</em> <em>hochheben, transportieren, exakt verkn&#252;pfen</em> (B) &#8212; beides wird aus derselben Projektion abgelesen.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widerspr&#252;che zwischen A und B</h2>
+
+<h3>1. Formelfrei vs. jede-Formel-beschriftet</h3>
+<div class="card">
+<p><span class="tag a">A &#183; Topology You Can See</span> Das Fehlen von Formeln ist das ausdr&#252;ckliche Versprechen der Seite: &#8222;no formulas needed, just your eyes and mouse&#8220;. Die Botschaft soll rein anschaulich &#8212; &#8222;just your eyes&#8220; &#8212; transportiert werden; jede Formel w&#228;re hier ein St&#246;rungsfaktor.</p>
+<p><span class="tag b">B &#183; Fibrationen</span> Der Anspruch lautet: &#8222;sowohl <b>formal</b> (jede Formel mit <code>\underbrace</code>-Beschriftungen) <b>als auch visuell</b>: <b>jeder</b> Abschnitt hat sein eigenes interaktives Bild&#8220;. Formeln sind hier ein gleichwertiges, beschriftetes R&#252;ckgrat neben den Bildern.</p>
+<p><span class="tag x">Spannung</span> Inkompatibler Standpunkt zur Rolle des Formalismus: A macht die Formel zum Feind der Anschauung, B verwebt beide und verlangt jede Formel beschriftet.</p>
+</div>
+
+<h3>2. Eine Zahl vs. die ganze Leiter</h3>
+<div class="card">
+<p><span class="tag a">A &#183; Topology You Can See</span> A reduziert die Topologie auf <em>eine einzige</em> Integer-Gr&#246;&#223;e, die Euler-Charakteristik: Kugel &#967; = 2, Torus &#967; = 0, per Z&#228;hlen &#8222;V &#8722; E + F&#8220;. Der Fingerabdruck ist grob, diskret, ein einzelnes Zeichen.</p>
+<p><span class="tag b">B &#183; Fibrationen</span> B beh&#228;lt die <em>gesamte</em> algebraische Struktur: die ganze Leiter der Homotopiegruppen &#960;&#8348;(F), &#960;&#8348;(E), &#960;&#8348;(B), verkn&#252;pft durch die lange exakte Sequenz, plus die Monodromiedarstellung &#961;. Das ist eine fein aufl&#246;sungsreiche, mehrdimensionale Signatur.</p>
+<p><span class="tag x">Spannung</span> Unterschiedliche Invarianten mit unterschiedlicher Trennsch&#228;rfe: A's Fingerprint ist grob (ein Integer), B's fein (eine ganze Gruppe-Leiter).</p>
+</div>
+
+<h3>3. Existenzgarantie vs. Obstruktion</h3>
+<div class="card">
+<p><span class="tag a">A &#183; Topology You Can See</span> A stellt den Igel-Satz als <em>Garantie / Erkl&#228;rung</em> dar: er &#8222;guarantees that at any moment, somewhere on Earth the wind speed is exactly zero&#8220; &#8212; ein positiv geladener, konstruktiv-gekl&#246;hter Fakt, der Zyklone erkl&#228;rt.</p>
+<p><span class="tag b">B &#183; Fibrationen</span> B stellt denselben Satz als <em>Nicht-Existenz</em> dar: &#8222;<b>Igel-Satz:</b> TS&#178; hat keinen nirgends-verschwindenden Schnitt&#8220; &#8212; ein fehlendes Objekt, in der Sprache der Obstruktions-Theorie.</p>
+<p><span class="tag x">Spannung</span> Gleicher Satz, entgegengesetzte Wertung: A sagt &#8222;da ist etwas (eine Nullstelle)&#8220;, B sagt &#8222;es fehlt etwas (ein Schnitt)&#8220;.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Aufl&#246;sung</h2>
+
+<h3>1. Intuition und Formalismus sind zwei Altituden desselben Objekts</h3>
+<p>Das ist kein echter Widerspruch, sondern ein Spektrum. A ist die formelfreie &#8222;Augen-und-Maus-T&#252;r&#8220;, B das beschriftete, formale Stockwerk dar&#252;ber. B's &#8222;jede Formel mit <code>\underbrace</code>&#8220; ist im Grunde nichts anderes als ein <em>beschriftetes Diagramm</em> &#8212; also genau A's Methode, nur in Zeichen. <strong>Fusioniert:</strong> dasselbe Faserb&#252;ndel, einmal als Bild, einmal als Signatur. Man steigt bei A ein und klettert zu B; die Anschauung bleibt dabei tragen, statt ersetzt zu werden.</p>
+
+<h3>2. Eulers Zahl ist der Schatten der feinen Struktur</h3>
+<p>A's Euler-Charakteristik ist ein grober, diskreter Fingerabdruck der <em>Fl&#228;che</em> (Kugel 2, Torus 0); B's Homotopiegruppen und Monodromie sind feine Instrumente, die auch R&#228;ume unterscheiden, die &#967; nicht trennt. Beide werden aus <em>derselben</em> Projektion abgelesen. <strong>Fusioniert:</strong> A's &#8222;Z&#228;hlen&#8220; ist die Grobkorn-Variante, B's &#8222;Schleifen &amp; Hochheben&#8220; die Feinkorn-Variante desselben Gegenstands. Die grobe Zahl ist ein Schatten der feinen Gruppe-Leiter &#8212; kompatibel, nicht konkurrierend.</p>
+
+<h3>3. Garantie und Obstruktion sind logisch &#228;quivalent</h3>
+<p>&#8222;Jedes stetige Vektorfeld auf S&#178; hat eine Nullstelle&#8220; &#10234; &#8222;Es gibt keine nirgends-verschwindende Schnitt von TS&#178;&#8220; &#8212; das ist derselbe Satz, einmal bejaht, einmal negiert. A's Zyklon-Geschichte ist die geometrische Seite, B's Schnitt-Sprache die algebraische. <strong>Fusioniert:</strong> ein Satz, zwei Namen &#8212; die Nullstelle existiert <em>weil</em> der Schnitt fehlt.</p>
+
+<div class="insight"><b>Gesamtfolgerung:</b> A und B sind ein und derselbe Gegenstand &#8212; die Projektion p : E &#8594; B &#8212; auf zwei H&#246;hen. A liefert die fassbare Anschauung (Torus, Zyklon, Z&#228;hl), B die formale Tiefe (HLP, Kozykel, Monodromie, exakte Sequenz). &#8222;Lokal trivial, global verklebt&#8220; ist der Satz, der beide verbindet: das, was A <em>sehen</em> l&#228;sst, ist das, was B <em>beweist</em>.</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>4.1 Das gemeinsame Objekt &#8212; die Projektion</h3>
+<p>Alles dreht sich um eine surjektive Abbildung, &#252;ber deren Zielraum Faser h&#228;ngen:</p>
+<div class="formula" id="f_fib"><span class="fallback">F &#8594; E &nbsp;&#10230;<sub>p</sub>&nbsp; B &nbsp;&nbsp;(E&#291;&#8822;&#8822; &nbsp;= alle Punkte &#252;ber b, hom&#246;omorph zur Faser F)</span></div>
+<p>A's Torus ist das schlichte Beispiel: <em>S&#185;&#215;S&#185;</em> ist ein triviales B&#252;ndel &#252;ber S&#185; mit Faser S&#185;. B verallgemeinert: die Faser F kann beliebig sein, die Basis B beliebig, und die Projektion braucht lokal nur &#8222;Produkt&#8220; zu sein.</p>
+
+<h3>4.2 &#8222;Lokal trivial, global verklebt&#8220; &#8212; A's Torus als sichtbarer Fall</h3>
+<p>Dies ist das Herzst&#252;ck der Fusion. Pac-Mans Bildschirm <em>sieht</em> lokal wie eine flache Ebene aus &#8212; dort k&#246;nnen wir normal messen, normal k&#228;mmen, normal z&#228;hlen. <em>Global</em> aber sind die Kanten identifiziert, und aus dem flachen Quadrat wird ein Torus ohne Rand. In B's Sprache hei&#223;t derselbe Sachverhalt: lokal gilt eine Trivialisierung</p>
+<div class="formula" id="f_triv"><span class="fallback">&#966;&#945; : p&#8314;&#8317;(U&#945;) &#8773; U&#945; &#215; F</span></div>
+<p>und auf den &#220;berlappungen der Karten bestimmen &#220;bergangsfunktionen (ein Kozykel) die globale Verklebung:</p>
+<div class="formula" id="f_coc"><span class="fallback">g&#945;&#946; &#183; g&#946;&#947; = g&#945;&#947; &nbsp;&nbsp;(Kozykel-Bedingung)</span></div>
+<p>Die &#8222;Wrapping&#8220;-Kante bei A &#8212; die unsichtbare Naht, die den Rand verschwinden l&#228;sst &#8212; <em>ist</em> die globale Verklebung bei B. &#8222;Kein Rand, der k&#252;rzeste Weg durch die Wand&#8220; (A) und &#8222;lokal Produkt, global verklebt&#8220; (B) sind dieselbe Aussage.</p>
+
+<h3>4.3 Der Igel-Satz als fehlender Schnitt</h3>
+<p>A: &#8222;Du kannst eine behaarte Kugel nicht glatt k&#228;mmen &#8212; irgendwo gibt es eine wirre Stelle / einen Zyklon&#8220;. B benennt dasselbe als fehlenden Schnitt des Tangentialb&#252;ndels:</p>
+<div class="formula" id="f_hairy"><span class="fallback">TS&#178; &#8594; S&#178; hat keine nirgends-verschwindende Schnitt s</span></div>
+<p>Beide beschreiben ein <em>Vektorfeld auf der Kugel, das irgendwo null werden muss</em>. Das M&#246;bius-Band macht den Mechanismus greifbar &#8212; die <strong>Monodromie</strong>:</p>
+<div class="formula" id="f_mono"><span class="fallback">&#961; : &#960;&#8321;(B, b&#8320;) &#8594; Aut(F), &nbsp;&nbsp; M&#246;bius: &#961;(1) = &#8722;id, &nbsp; Trivial: &#961; &#8801; id</span></div>
+<p>Ein Vektor, der einmal um den Basis-Kreis transportiert wird, kommt beim M&#246;bius-Band <em>gespiegelt</em> zur&#252;ck (&#961;(1) = &#8722;id); beim trivialen Zylinder bleibt er gleich. Diese eine Umdrehung erzwingt, dass jede geschlossene Schnitt-Linie irgendwo durch null gehen muss &#8212; das ist der Igel-Satz in B's Sprache.</p>
+
+<h3>4.4 Invarianten aus der Projektion &#8212; grob vs. fein</h3>
+<p>A liefert den groben Fingerabdruck, die Euler-Charakteristik:</p>
+<div class="formula" id="f_euler"><span class="fallback">&#967;(S&#178;) = 2, &nbsp; &#967;(T&#185;) = 0, &nbsp; &#967; = V &#8722; E + F</span></div>
+<p>Die Zahl 2 trennt Kugel von Torus &#8212; &#8222;nicht durch Aussehen, sondern durch Z&#228;hlen&#8220; (A). B liefert die feinen Instrumente, die die Homotopie von Faser, Totalraum und Basis verkn&#252;pfen &#8212; die lange exakte Sequenz:</p>
+<div class="formula" id="f_lex"><span class="fallback">&#8943; &#8594; &#960;&#8348;(F) &#10230;<sub>i*</sub> &#960;&#8348;(E) &#10230;<sub>p*</sub> &#960;&#8348;(B) &#10230;<sub>&#8706;</sub> &#960;8348&#8315;1(F) &#8594; &#8943;</span></div>
+<p>Davon l&#228;uft die ganze Rechenkraft der Homotopietheorie; A's Homotopie-Hochheben (&#8222;die Bewegung unten l&#228;sst sich oben nachzeichnen&#8220;) ist die anschauliche Kehrseite der Formalen.</p>
+
+<h3>Die Karte der Fusion &#8212; A &#8596; B</h3>
+<table>
+<tr><th>A &#183; Topologie zum Sehen</th><th>B &#183; Fibrationen</th></tr>
+<tr><td>Pac-Mans Torus: Bildschirm lokal flach, global verklebt, kein Rand, Weg &#8222;durch die Wand&#8220;</td><td>Lokale Trivialisierung p&#8314;&#8317;(U) &#8773; U&#215;F + globale Verklebung / Kozykel &#8222;lokal trivial, global verklebt&#8220;</td></tr>
+<tr><td>Igel-Satz: ein Windfeld auf der Kugel muss irgendwo stehen (Zyklone)</td><td>TS&#178; &#8594; S&#178; hat keine nirgends-verschwindende Schnitt; Monodromie &#961; erzwingt die Nullstelle</td></tr>
+<tr><td>Eulers Z&#228;hlung V&#8722;E+F = &#967; (Kugel 2, Torus 0) &#8212; &#8222;z&#228;hlen statt aussehen&#8220;</td><td>Lange exakte Sequenz + Monodromie &#8212; feinere, gruppentheoretische Invarianten desselben p</td></tr>
+</table>
+
+<div class="insight"><b>Ein Gedanke, vier Gesichter:</b> (1) Pac-Man sieht, dass lokal-flach + global-verklebt = Torus. (2) Der Igel-Satz sieht, dass ein globales Vektorfeld zwingend eine Nullstelle hat. (3) Eulers Zahl z&#228;hlt, dass Kugel und Torus fundamental verschieden sind. (4) Die Fibration benennt all das: Projektion, lokale Trivialisierung, Kozykel, Monodromie, exakte Sequenz. <em>Sehen, Z&#228;hlen und Beweisen sind hier dieselbe T&#228;tigkeit.</em></div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung &#8212; Monodromie &amp; der fehlende Schnitt</h2>
+<p>Ein Punkt umrundet die Basis <span style="color:var(--accent2)">B = S&#185;</span>. In der Faser <span style="color:var(--accent2)">F = [&#8722;1, 1]</span> wird ein Vektor transportiert. <strong>Trivial (Zylinder):</strong> der Vektor kommt unver&#228;ndert zur&#252;ck (&#961; &#8801; id) &#8212; die Schnitt-Linie bleibt positiv, ein Schnitt existiert. <strong>M&#246;bius:</strong> der Vektor kommt gespiegelt zur&#252;ck (&#961;(1) = &#8722;id) &#8212; und die Schnitt-Linie <em>muss</em> null werden (rotes &#215;). Das ist A's Igel-Satz, gesprochen in B's Sprache. Ziehe den Winkel oder starte die Animation.</p>
+
+<div class="formula" id="f_viz"><span class="fallback">s(&#952;) = cos(&#952;/2) &nbsp;&nbsp;|&nbsp;&nbsp; Trivial: &#961; &#8801; id (Schnitt existiert), &nbsp; M&#246;bius: &#961;(1) = &#8722;id (Schnitt muss 0 werden)</span></div>
+
+<div class="viz-box">
+<canvas id="monoCanvas" width="760" height="440"></canvas>
+<div class="btnrow">
+<label>Winkel um S&#185;: &#952;
+  <input type="range" id="theta" min="0" max="100" value="0">
+</label>
+<label>B&#252;ndeltyp
+  <select id="mode">
+    <option value="moebius" selected>M&#246;bius (Twist)</option>
+    <option value="trivial">Trivial (Zylinder)</option>
+  </select>
+</label>
+<button class="btn" id="go">&#9654; eine Umrundung</button>
+<button class="btn ghost" id="reset">&#8634; 0&#176;</button>
+</div>
+<div id="vstat" style="margin-top:10px;color:var(--muted);font-size:.92em;"></div>
+</div>
+<div class="insight"><b>Was du siehst:</b> Bei M&#246;bius kippt der Faser-Vektor nach einer Runde ins Negative &#8212; die Schnitt-Kurve muss durch null (rotes &#215;). Genau das ist der Igel-Satz: ein globales Vektorfeld auf der Kugel <em>muss</em> eine Nullstelle haben, weil die Monodromie nicht die Identit&#228;t sein kann.</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<span class="prov"><span class="src">A &#8212; <a href="../topology_examples.html">topology_examples.html</a></span><br>&#8222;Topology You Can See&#8220; &#8212; formelfrei und interaktiv: Pac-Mans Torus (Wrap-Arbeit, Weg durch die Wand), der Igel-Satz / Wind auf der Erde (ein Windfeld auf S&#178; hat eine Nullstelle), Eulers Zaubersahl V&#8722;E+F = 2 (Kugel) vs. 0 (Torus).</span>
+<span class="prov"><span class="src">B &#8212; <a href="../paper/fibrations.html">paper/fibrations.html</a></span><br>&#8222;Fibrationen &#8212; Formalismus &amp; Intuition&#8220; &#8212; jedes Bild mit beschrifteter Formel: Faserb&#252;ndel, Homotopie-Hochhebungs-Eigenschaft (HLP), lokale Trivialisierung, Kozykel, Paralleltransport &amp; Monodromie, lange exakte Homotopie-Sequenz, Hopf-Fibration, Schnitte (Igel-Satz).</span>
+</section>
+
+</article>
+
+<script>
+function toggleTheme(){
+  var d=document.documentElement;
+  var dark=d.classList.toggle('dark');
+  try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+  if(window.__redrawViz) window.__redrawViz();
+}
+function renderMath(id, tex, fallback){
+  var el=document.getElementById(id); if(!el) return;
+  try{
+    if(window.temml && !window.__temml_failed){
+      el.innerHTML = temml.renderToString(tex, {displayMode:true});
+      return;
+    }
+  }catch(e){}
+  el.innerHTML = '<span class="fallback">'+fallback+'</span>';
+}
+window.addEventListener('DOMContentLoaded', function(){
+  renderMath('f_fib',   String.raw`F \hookrightarrow E \xrightarrow{\;p\;} B \qquad E_b = p^{-1}(b) \cong F`, 'F \u2192 E \u27f5_p B   (E_b = p\u2071\u2071(b) \u2245 F)');
+  renderMath('f_triv',  String.raw`\varphi_\alpha : p^{-1}(U_\alpha) \cong U_\alpha \times F`, '\u03c6_\u03b1 : p\u2071\u2071(U_\u03b1) \u2245 U_\u03b1 \u00d7 F');
+  renderMath('f_coc',   String.raw`g_{\alpha\beta}\cdot g_{\beta\gamma} = g_{\alpha\gamma}`, 'g\u03b1\u03b2 \u00b7 g\u03b2\u03b3 = g\u03b1\u03b3');
+  renderMath('f_hairy', String.raw`TS^2 \to S^2 \ \text{hat keine nirgends-verschwindende Schnitt } s`, 'TS\u00b2 \u2192 S\u00b2 hat keine nirgends-verschwindende Schnitt s');
+  renderMath('f_mono',  String.raw`\rho : \pi_1(B,b_0) \to \mathrm{Aut}(F), \qquad \rho(1) = -\mathrm{id}_{\text{M\"obius}}`, '\u03c1 : \u03c0\u2081(B,b\u2080) \u2192 Aut(F),  \u03c1(1) = \u2212id');
+  renderMath('f_euler', String.raw`\chi(S^2)=2, \qquad \chi(T^2)=0, \qquad \chi = V - E + F`, '\u03c7(S\u00b2)=2,  \u03c7(T\u00b2)=0,  \u03c7 = V \u2212 E + F');
+  renderMath('f_lex',   String.raw`\cdots \to \pi_n(F) \xrightarrow{i_*} \pi_n(E) \xrightarrow{p_*} \pi_n(B) \xrightarrow{\partial} \pi_{n-1}(F) \to \cdots`, '\u2026 \u2192 \u03c0\u2099(F) \u27f5 \u03c0\u2099(E) \u27f5 \u03c0\u2099(B) \u27f5 \u03c0\u2099\u207b\u00b9(F) \u2192 \u2026');
+  renderMath('f_viz',   String.raw`s(\theta)=\cos(\theta/2), \qquad \rho \equiv \mathrm{id}_{\text{trivial}}, \ \ \ \rho(1)=-\mathrm{id}_{\text{M\"obius}}`, 's(\u03b8)=cos(\u03b8/2)   |   \u03c1\u2261id (trivial),  \u03c1(1)=\u2212id (M\u00f6bius)');
+});
+
+(function(){
+  var canvas=document.getElementById('monoCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var theta=0, mode='moebius', animating=false, rafId=null;
+
+  function css(n,fb){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}
+  function secVal(t,m){ return m==='trivial' ? 0.85 : 0.85*Math.cos(t/2); }
+  function drawX(x,y,s){ ctx.beginPath(); ctx.moveTo(x-s,y-s); ctx.lineTo(x+s,y+s); ctx.moveTo(x+s,y-s); ctx.lineTo(x-s,y+s); ctx.stroke(); }
+
+  function resize(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return;
+    canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function draw(){
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return;
+    ctx.clearRect(0,0,w,h);
+    var ink=css('--ink','#e6e8ee'), muted=css('--muted','#9aa3b5'), grid=css('--grid','#232b3d');
+    var base=css('--viz-base','#34d399'), vec=css('--viz-vec','#60a5fa'), zero=css('--viz-zero','#f87171'), curve=css('--viz-curve','#c4b5fd'), accent=css('--accent','#f0a500');
+
+    var top=h*0.14, bot=h*0.68, mid=(top+bot)/2, half=(bot-top)/2;
+    ctx.textBaseline='middle';
+
+    // ---- Panel 1: base circle B = S^1 ----
+    var cx1=w*0.17, cy1=mid, R=Math.min(w,h)*0.22;
+    ctx.strokeStyle=base; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(cx1,cy1,R,0,2*Math.PI); ctx.stroke();
+    var b0x=cx1+R, b0y=cy1;
+    ctx.fillStyle=ink; ctx.beginPath(); ctx.arc(b0x,b0y,4,0,2*Math.PI); ctx.fill();
+    ctx.font='12px Georgia'; ctx.textAlign='left'; ctx.fillText('b\u2080', b0x+8, b0y-2);
+    // moving point
+    var sa=-theta;
+    var bx=cx1+R*Math.cos(sa), by=cy1+R*Math.sin(sa);
+    // travel-direction arrow (small tangent)
+    ctx.strokeStyle=accent; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx1,cy1,R, sa-0.5, sa+0.02); ctx.stroke();
+    ctx.fillStyle=accent; ctx.beginPath(); ctx.arc(bx,by,6,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=ink; ctx.font='12px Georgia'; ctx.textAlign='left'; ctx.fillText('b(\u03b8)', bx+8, by-14);
+    ctx.textAlign='center'; ctx.fillStyle=ink; ctx.font='bold 14px Georgia';
+    ctx.fillText('Basis B = S\u1d57', cx1, h*0.82);
+    ctx.font='11px Georgia'; ctx.fillStyle=muted;
+    ctx.fillText('Punkt umrundet die Basis', cx1, h*0.82+17);
+
+    // ---- Panel 2: fiber F = [-1,1] ----
+    var fx=w*0.42;
+    ctx.strokeStyle=grid; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(fx,top); ctx.lineTo(fx,bot); ctx.stroke();
+    ctx.font='12px Georgia'; ctx.textAlign='right'; ctx.fillStyle=ink;
+    ctx.fillText('+1', fx-10, top); ctx.fillText(' 0', fx-10, mid); ctx.fillText('\u22121', fx-10, bot);
+    var val=secVal(theta, mode);
+    var vy=mid - val*half;
+    ctx.strokeStyle=vec; ctx.lineWidth=5;
+    ctx.beginPath(); ctx.moveTo(fx,mid); ctx.lineTo(fx,vy); ctx.stroke();
+    var dir=vy<mid?-1:1;
+    ctx.fillStyle=vec;
+    ctx.beginPath(); ctx.moveTo(fx,vy); ctx.lineTo(fx-6,vy+dir*11); ctx.lineTo(fx+6,vy+dir*11); ctx.closePath(); ctx.fill();
+    ctx.textAlign='left'; ctx.fillStyle=vec;
+    ctx.fillText('v = '+val.toFixed(2), fx+12, vy);
+    ctx.textAlign='center'; ctx.fillStyle=ink; ctx.font='bold 14px Georgia';
+    ctx.fillText('Faser F = [\u22121, 1]', fx, h*0.82);
+    ctx.font='11px Georgia'; ctx.fillStyle=mode==='moebius'?zero:muted;
+    ctx.fillText(mode==='moebius'?'\u03c1(1) = \u2212id (gespiegelt)':'\u03c1 \u2261 id (unver\u00e4ndert)', fx, h*0.82+17);
+
+    // ---- Panel 3: section curve s(\u03b8) over [0,2\u03c0] ----
+    var p0=w*0.55, p1=w*0.96;
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(p0,mid); ctx.lineTo(p1,mid); ctx.stroke();
+    ctx.font='11px Georgia'; ctx.fillStyle=muted; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText('0', p0, bot+6); ctx.fillText('\u03c0', (p0+p1)/2, bot+6); ctx.fillText('2\u03c0', p1, bot+6);
+    // curve
+    ctx.strokeStyle=curve; ctx.lineWidth=2.5; ctx.beginPath();
+    var N=180;
+    for(var i=0;i<=N;i++){
+      var t=(i/N)*2*Math.PI;
+      var v=secVal(t,mode);
+      var x=p0+(p1-p0)*(i/N);
+      var y=mid - v*half;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // zero crossings (red)
+    ctx.strokeStyle=zero; ctx.lineWidth=2;
+    if(mode==='moebius'){
+      var zx=p0+(p1-p0)*0.5;
+      drawX(zx, mid, 8);
+      ctx.fillStyle=zero; ctx.font='bold 12px Georgia'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+      ctx.fillText('Schnitt = 0  \u2192  Igel-Satz', zx, mid-14);
+    }
+    // current theta marker
+    var cmx=p0+(p1-p0)*(theta/(2*Math.PI));
+    ctx.strokeStyle=accent; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(cmx,top); ctx.lineTo(cmx,bot); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=accent; ctx.beginPath(); ctx.arc(cmx, mid-secVal(theta,mode)*half, 5, 0, 2*Math.PI); ctx.fill();
+    ctx.fillStyle=ink; ctx.font='bold 14px Georgia'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Schnitt s(\u03b8) \u2536ber einer Umrundung', (p0+p1)/2, h*0.82);
+    ctx.font='11px Georgia'; ctx.fillStyle=muted;
+    ctx.fillText(mode==='moebius'?'muss 0 werden (kein nirgends-verschwindender Schnitt)':'bleibt positiv (Schnitt existiert)', (p0+p1)/2, h*0.82+17);
+
+    // status
+    var deg=Math.round(theta*180/Math.PI);
+    var st='';
+    if(mode==='moebius'){
+      st = deg+' \u00b7 M\u00f6bius \u2014 Vektor = '+val.toFixed(2)+(deg>=359?'  \u2192  gespiegelt! (\u03c1(1)=\u2212id)':'');
+    } else {
+      st = deg+' \u00b7 Trivial \u2014 Vektor = '+val.toFixed(2)+(deg>=359?'  \u2192  unver\u00e4ndert (\u03c1\u2261id)':'');
+    }
+    var statEl=document.getElementById('vstat');
+    if(statEl) statEl.textContent = st;
+  }
+
+  function updateSlider(){ var s=document.getElementById('theta'); if(s) s.value=Math.round(theta/(2*Math.PI)*100); }
+  function tick(){
+    theta += 0.02;
+    if(theta >= 2*Math.PI){ theta=2*Math.PI; animating=false; if(document.getElementById('go')) document.getElementById('go').innerHTML='\u25b6 eine Umrundung'; }
+    updateSlider(); draw();
+    if(animating) rafId=requestAnimationFrame(tick);
+  }
+
+  var th=document.getElementById('theta');
+  if(th) th.addEventListener('input', function(){ theta=th.value/100*2*Math.PI; if(animating){cancelAnimationFrame(rafId);animating=false;} draw(); });
+  var md=document.getElementById('mode');
+  if(md) md.addEventListener('input', function(){ mode=md.value; draw(); });
+  var go=document.getElementById('go');
+  if(go) go.addEventListener('click', function(){
+    animating=!animating;
+    if(animating){ if(theta>=2*Math.PI) theta=0; go.innerHTML='\u23f8 Pause'; rafId=requestAnimationFrame(tick); }
+    else { cancelAnimationFrame(rafId); go.innerHTML='\u25b6 eine Umrundung'; }
+  });
+  var rs=document.getElementById('reset');
+  if(rs) rs.addEventListener('click', function(){ if(animating){cancelAnimationFrame(rafId);animating=false;if(go)go.innerHTML='\u25b6 eine Umrundung';} theta=0; updateSlider(); draw(); });
+
+  window.addEventListener('resize', resize);
+  new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.__redrawViz = function(){ draw(); };
+  resize();
+})();
+</script>
+</body>
+</html>

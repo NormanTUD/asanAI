@@ -1,0 +1,16 @@
+{
+  "no": "021",
+  "a": "paper/olog.html",
+  "b": "garben_2.html",
+  "a_title": "Ologs — Ontology Logs interaktiv erklärt",
+  "b_title": "Garbentheorie am Beispiel: Ein KI-Dokument mit Widerspruch",
+  "combined_theme": "konsistenz-kategorisch",
+  "one_line": "Ologs (kommutatives Typ-Gerüst) und Garben (lokale Daten, die zu einem eindeutigen globalen Schnitt verkleben) sind zwei unabhängige Ebenen derselben kategorischen Konsistenz: die Form muss kommutieren UND der Inhalt muss auf Überlappungen übereinstimmen.",
+  "contradictions": [
+    "Pfeilrichtung/Varianz: A (Olog) setzt Aspekte vorwärts zusammen (kovariant, f:A→B schiebt Werte), B (Garbe) schränkt rückwärts ein (kontravariant, ρ_{U,V}:F(U)→F(V) zieht Daten von groß nach klein).",
+    "Tragweite des Konsistenzgesetzes: A macht Kommutativität zur Struktur-/Gerüst-Regel und zur alleinigen Korrektheitsgarantie; B macht Konsistenz zu einem Inhalts-/Daten-Gesetz (Schnitte müssen im Überlapp U_i∩U_j übereinstimmen) — ein kommutierendes Olog kann trotzdem inkonsistente Daten tragen.",
+    "Granularität der Konflikterkennung: A prüft global über ein kommutatives Diagramm (grob, über das Typ-Netz); B lokalisiert den Widerspruch per Halm F_x auf einen Punkt (fein: [s1]_x ≠ [s5]_x bei x='erstes NN')."
+  ],
+  "resolution": "Die entgegengesetzten Pfeilrichtungen sind Basis und Faser eines Systems: das Olog ist die Form (Basis, vorwärts komponiert), die Garbe das Daten-Faser-System darüber (kontravariante Einschränkung). 'Konsistenz' spaltet sich in zwei unabhängige Schichten — (1) Struktur-Kommutativität (A) und (2) Inhalts-Verklebbarkeit/Exaktheit (B). Ein voll konsistenter Bestand erfüllt beides; der SNARC/Perzeptron-Fall ist genau 'strukturell kommutativ, aber keine Garbe'. Reparatur: Halm nutzt den Konflikt lokal zu finden, das Olog liefert die Form, die Garben-Verklebung (Daten angleichen, faktisch SNARC 1951 < Perzeptron 1958 entscheiden) stellt den eindeutigen globalen Schnitt wieder her.",
+  "viz": "Interaktives SVG: Olog-Gerüst (Dokument → Kapitel 1/5 → Thema 'erstes NN') mit zwei unabhängigen Umschaltern — 'Garben-Inhalt verkleben' (SNARC vs Perzeptron angleichen → eindeutiger globaler Schnitt) und 'Olog-Struktur brechen' (Pfade liefern ≠) — plus zwei Status-Chips und einer Urteil-Box (Nur Prägarbe / Voll konsistent / Struktur gebrochen / Beides gebrochen), themenreaktiv via CSS-Variablen."
+}

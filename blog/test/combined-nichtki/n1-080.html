@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lokal zu global: Faserbündel ✕ Sheaving</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(122,162,255,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+a{color:var(--sky);text-underline-offset:2px}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.note{font-size:.9rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.76rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--sky);font-weight:600;white-space:nowrap}
+td:nth-child(2){color:var(--ink);font-weight:600}
+.k{color:var(--acc)} .b{color:var(--sky)} .bad{color:var(--bad)} .ok{color:var(--acc)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+@media(max-width:640px){.duo{grid-template-columns:1fr}}
+.dnote{font-size:.76rem;letter-spacing:.03em;color:var(--dim);margin-bottom:6px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 150px;min-width:140px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+button.alt{background:transparent;color:var(--dim);border-color:var(--line)}
+button.alt:hover{background:color-mix(in srgb,var(--dim) 12%,transparent)}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.86rem;margin-top:14px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<article>
+  <div class="tag">Round 1 · Nicht-KI-Track · Pair 080</div>
+  <h1>Lokal zu global: Faserbündel ✕ Sheaving</h1>
+  <p class="sub">Fusion aus: fibrebundles.html ✕ sheaving.html</p>
+
+  <section id="these">
+    <div class="tag">01 · Kernthese der Fusion</div>
+    <h2>Lokale Daten, die an einer Kohärenzregel global verklebt werden</h2>
+    <p>
+      Auf den ersten Blick ist A eine <b>Geometrie</b> und B eine <b>Kategorientheorie</b>.
+      A dreht Faserbündel im Raum — Zylinder, Möbiusband, Tangentialbündel von S¹, Hopf-Faserung — und fragt,
+      welche <b>Abschnitte</b> (Sections) ein Bündel trägt und welche nicht. B baut, über Kategorien, Topologie
+      und Pullbacks, aus <b>lokalen Daten auf offenen Mengen</b> ein <b>global konsistentes Ganzes</b> (einen Sheaf).
+      Unter der Oberfläche tun beide aber exakt dieselbe Geste: <b>sie organisieren lokale Daten über einer Basis und
+      verlangen, dass diese an Überlappungen zusammenpassen</b> — und ein strukturelles Invariant (bei A die
+      <b>Torsion / Monodromie</b>, bei B die <b>Topologie</b> des Raums) entscheidet, ob das Verkleben gelingt.
+    </p>
+    <p>
+      Die fusionierte Position: <b>Ein kohärenter globaler Gegenstand ist exakt eine lokal gegebene Datenmenge plus
+      eine Übereinstimmungsbedingung auf den Überlappungen.</b> A liefert die <i>geometrische</i> Gestalt dieses
+      Objekts — den Totalraum <span class="mono">E</span> mit Projektion <span class="mono">π: E → B</span>, die Faser
+      <span class="mono">F</span> und die Torsion, die das Verkleben blockiert. B liefert die <i>kategoriale</i> Gestalt —
+      das Presheaf <span class="mono">F: U ↦ F(U)</span>, die beiden Sheaf-Axiome (Gluing + Locality) und
+      <b>Sheaving</b> als universelle Konstruktion. Sie sind zwei Projektionen eines einzigen Konzepts:
+      <b>Struktur = lokales Wissen, das sich an einer Kohärenzregel zu einem Ganzen fügt — und ob dieses Fügen
+      gelingt oder scheitert, regeln Invarianten, nicht Zufall.</b>
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <div class="tag">02 · Widersprüche zwischen A und B</div>
+    <h2>Kein harter Widerspruch — aber drei echte Spannungen</h2>
+    <p>
+      Die Papiere arbeiten auf verschiedenen Ebenen (geometrische Objekte vs. kategoriale Konstruktionen) und
+      widersprechen einander im strengen Sinn <b>nicht</b>. Folgende Stellen sind die nächstliegenden echten
+      Spannungen — jeweils konkret benannt, was welches Papier behauptet.
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Konstruktionsrichtung — Ganzes→Teile vs. Teile→Ganzes</h3>
+      <p>
+        <b>A</b> geht vom <i>schon fertigen, sichtbaren</i> globalen Objekt aus — dem Totalraum
+        <span class="mono">E</span> mit seiner Projektion <span class="mono">π</span> — und <i>liest</i> von dort
+        Fasern und Abschnitte ab („man dreht es, man liest die Faser am Punkt ab"). Die Konstruktion läuft also
+        <b>Ganzes → Teile</b>, geometrisch. <b>B</b> geht umgekehrt von <i>lokalen Daten</i> auf offenen Mengen
+        (Presheaf) aus und <i>erzeugt</i> das globale Ganze erst durch Verkleben/Sheaving. Die Konstruktion läuft
+        <b>Teile → Ganzes</b>, kategorial. Inkompatible Haltung, welche Richtung „die“ Konstruktion überhaupt ist.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Hindernis vs. Garantie — Nichtexistenz vs. Existenz+Einzigkeit</h3>
+      <p>
+        Das Headline-Ergebnis von <b>A</b> ist ein <i>Nichtexistenz</i>-Satz: Der Möbiusband (eine Halbwindung) hat
+        <b>keine</b> globale, nicht-verschwindende Section — die Torsion blockiert das globale Objekt („any section
+        must cross zero somewhere“). <b>B</b>‘s Headline ist dagegen ein <i>Existenz+Einzigkeit</i>-Satz: Sheaving
+        erzeugt aus <i>jedem</i> Presheaf den nächstgelegenen Sheaf <span class="mono">F⁺</span>, und zwar
+        <b>universell</b> — bis auf eindeutigen Isomorphismus, also <i>immer</i> erfolgreich, nie blockiert, „nicht
+        mehr, nicht weniger als nötig“. A sagt „manchmal geht es nicht“; B sagt „es geht immer (einzigartig)“.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Was zählt — Produkt/trivial vs. Torsion/nicht-trivial</h3>
+      <p>
+        <b>B</b> feiert den <i>trivialen / Produkt</i>-Fall: In der Spielkarten-Übung führt die <i>diskrete</i>
+        Topologie zum kartesischen Produkt → aus 3 bekannten Karten + den Dimensionen entstehen alle
+        <b>52</b> Karten → „Systematizität!“; die indiskrete Topologie bringt dagegen nichts. Produktivität =
+        Trivialität/Unabhängigkeit. <b>A</b> feiert genau das Gegenteil, den <i>nicht-trivialen / Torsions</i>-Fall:
+        der Möbiusband ist „non-trivial“, die Hopf-Faserung wird als „die schönste nicht-triviale Faserung“
+        bezeichnet. Trivial (Zylinder, „nur ein Direkprodukt“) ist dort das Langweilige. A bewertet
+        Nicht-Trivialität als das Tragende, B bewertet den Produkt-Fall als den nützlichen.
+      </p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <div class="tag">03 · Auflösung</div>
+    <h2>Dasselbe Objekt von zwei Seiten, auf verschiedenen Ebenen</h2>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Zwei Darstellungen einer Struktur</h3>
+      <p>
+        Zu jedem Faserbündel <span class="mono">E → B</span> gehört ein natürlicher Sheaf: der Sheaf seiner
+        <i>stetigen Abschnitte</i> über <span class="mono">B</span>. Die <b>Faser</b> <span class="mono">π⁻¹(b)</span>
+        ist dabei der <b>Stalk</b> <span class="mono">F_b</span> des Sheafs; die <b>Abschnitte</b> des Bündels sind
+        genau die (lokalen/globalen) <b>Sections</b> des Sheafs. „Ganzes→Teile“ (A: <span class="mono">E</span> in
+        Fasern projizieren) und „Teile→Ganzes“ (B: Abschnitte verkleben) sind damit zwei Seiten <i>einer</i> Struktur —
+        unterschiedliche Darstellungen, keine zwei Mathematiken.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Objekt vs. seine globalen Abschnitte — zwei Ebenen</h3>
+      <p>
+        B’s „existiert immer“ gilt für den <b>Sheaf als Zuordnung</b>: Die Sheafification
+        <span class="mono">F ↦ F⁺</span> ist für jedes Presheaf ein wohldefinertes Objekt. A’s „keine globale
+        Section“ gilt für <b>globale Abschnitte</b> eines <i>konkreten</i> Sheafs (stetige Abschnitte eines
+        gedrehten Bündels). Das sind zwei verschiedene Ebenen, die ineinander verschachtelt sind: Der Sheaf
+        existiert immer — aber er muss <i>keine</i> nicht-verschwindende globale Section besitzen. „Immer da (der
+        Sheaf)“ und „kann ohne globale Section sein“ sind damit beide wahr und kein Widerspruch.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Produktivität vs. Tiefe — Output vs. Invariant</h3>
+      <p>
+        Der <i>triviale / Produkt</i>-Fall liefert die <b>meisten globalen Daten</b> (B: Generalisierung, alle 52
+        Karten). Der <i>nicht-triviale</i> Fall trägt ein <b>echtes Invariant</b> (A: Monodromie
+        <span class="mono">(−1)^w</span>), das die lokale→globale Frage nicht-vakant und die Struktur interessant
+        macht. Die Auflösung: <b>Trivialität maximiert den Output (Kompositionalität zahlt sich aus),
+        Nicht-Trivialität maximiert den Informationsgehalt (Monodromie).</b>
+      </p>
+    </div>
+    <p class="note"><b>Fusionierte Schlussfolgerung:</b> Lokale→globale Kohärenz ist die gemeinsame Maschine. Sie
+    arbeitet (B) <i>über</i> der lokalen Trivialisierung — dort entsteht die meiste Bedeutung. Und sie wird (A) dann
+    <i>spannend</i>, wo ein Invariant (Torsion/Monodromie) das Verkleben blockiert — denn genau dort ist die
+    „lokale Daten = globales Ganzes“-Gleichung nicht trivial. Kompositionalität (B) und interessanter Aufbau (A)
+    sind zwei Seiten derselben Verklebe-Maschine.</p>
+  </section>
+
+  <section id="inhalt">
+    <div class="tag">04 · Fusionierter Inhalt</div>
+    <h2>Beide Matrizen, ineinander verschoben</h2>
+
+    <h3>Was A mitbringt — Faserbündel</h3>
+    <p>
+      Ein <b>Faserbündel</b> ist eine surjektive Abbildung <span class="mono">π: E → B</span> (Totalraum <b>E</b>,
+      Basis <b>B</b>) mit Faser <span class="mono">F = π⁻¹(b)</span>, die <b>lokal trivial</b> ist: über jeder
+      offenen Teilmenge <span class="mono">U ⊆ B</span> sieht <span class="mono">E|_U</span> aus wie
+      <span class="mono">U × F</span>. Eine <b>Section</b> ist eine Abbildung <span class="mono">s: B → E</span> mit
+      <span class="mono">π ∘ s = id_B</span> — eine fortlaufende Wahl eines Punkts in jeder Faser.
+    </p>
+    <ul>
+      <li><b>Trivial</b> (Zylinder <span class="mono">S¹ × ℝ</span>): <span class="mono">E = B × F</span>, globale Sections immer da.</li>
+      <li><b>Nicht-trivial</b> (Möbiusband, eine Halbwindung): eine Section „kann“ nach einem Umlauf nicht wieder da anfangen, wo sie aufhörte — es gibt <b>keine nicht-verschwindende globale Section</b>.</li>
+      <li><b>Tangentialbündel</b> <span class="mono">T(S¹)</span>: an jedem Punkt die Tangentenrichtung; hier wieder trivial.</li>
+      <li><b>Hopf-Faserung</b> <span class="mono">S³ → S²</span> mit Faser <span class="mono">S¹</span>: die nicht-triviale Faserung, in der je zwei Fasern verknüpft sind.</li>
+    </ul>
+
+    <h3>Was B mitbringt — Kategorien, Topologie, Sheaves</h3>
+    <p>
+      Eine <b>Kategorie</b> (Objekte, Morphismen, Komposition, Identität); ein <b>Funktor</b>
+      <span class="mono">F: C → D</span> übersetzt sie pfeiler- und kompositions-treu; eine <b>universelle
+      Konstruktion</b> ist die „beste“ Lösung, durch die alle anderen eindeutig hindurchgehen (z. B. das Produkt
+      <span class="mono">A × B</span> mit seinem eindeutigen <span class="mono">⟨f,g⟩</span>).
+    </p>
+    <ul>
+      <li><b>Topologie</b> = die Auswahl offener Mengen, die „Zusammenhang“ festlegt. <i>Diskret</i> (jede Teilmenge offen) → maximale Trennung; <i>indiskret</i> (nur <span class="mono">∅, X</span>) → alles gleich. Die Topologie ist der Regler, wie viel sich verkleben lässt.</li>
+      <li><b>Pullback</b> <span class="mono">A ×_C B = { (a,b) : f(a) = g(b) }</span> — das Produkt <i>eingeschränkt</i> auf übereinstimmende Werte; äquivalent zum Datenbank-<b>natural join</b> und zum Herzstück von Sheaving.</li>
+      <li><b>Presheaf</b> <span class="mono">F: U ↦ F(U)</span> mit Restriktion <span class="mono">F(U) → F(V)</span> für <span class="mono">V ⊆ U</span>.</li>
+      <li><b>Sheaf</b> = Presheaf + <b>Gluing</b> (lokale Übereinstimmung ⇒ globale Section) + <b>Locality</b> (einmal global, dann eindeutig).</li>
+      <li><b>Sheaving</b>: die universelle Konstruktion, die aus einem Presheaf <span class="mono">F</span> den
+        <i>nächstgelegenen</i> Sheaf <span class="mono">F⁺</span> macht — lokale Daten minimal so ergänzt, dass sie global kohärent werden.</li>
+    </ul>
+
+    <h3>Die Brücke — ein Objekt, zwei Darstellungen</h3>
+    <p>
+      Der gemeinsame Kern ist das <b>Verkleben lokaler Daten an Überlappungen</b>. Der Sheaf der stetigen
+      Abschnitte eines Bündels ist ein Sheaf; seine globalen Sections sind die globalen Sections des Bündels; seine
+      Stalks sind die Fasern. Die „konstante“ Section eines <span class="mono">w</span>-Halbwindungs-Bündels hat in
+      einem festen Rahmen die Höhe <span class="mono">v(θ) = h·cos((w/2)·θ)</span> auf <span class="mono">θ ∈ [0, 2π]</span>.
+      Sie ist genau dann <i>periodisch</i> (und damit eine gültige globale Section), wenn <span class="mono">w</span>
+      gerade ist; bei ungeradem <span class="mono">w</span> ist sie <i>anti-periodisch</i>
+      (<span class="mono">v(0) = −v(2π)</span>), durchläuft <span class="mono">0</span> und ist keine gültige globale
+      Section — genau A’s Möbius-Ergebnis, umformuliert als B’s gescheiterte Verklebe-Bedingung an der Naht
+      <span class="mono">θ = 0 ≈ 2π</span>.
+    </p>
+    <table>
+      <thead><tr><th>Faserbündel (A)</th><th>Sheaf / Sheaving (B)</th><th>Gemeinsam</th></tr></thead>
+      <tbody>
+        <tr><td>Totalraum E, Projektion π: E → B</td><td>Presheaf F: U ↦ F(U)</td><td>lokale Daten über Basis B</td></tr>
+        <tr><td>Faser π⁻¹(b)</td><td>Stalk F_b = lim F(U)</td><td>das „Lokale“ am Punkt b</td></tr>
+        <tr><td>lokale Trivialisierung E|_U ≅ U × F</td><td>Restriktion F(U) → F(V), V ⊆ U</td><td>Lokales ≅ triviales Produkt</td></tr>
+        <tr><td>Section s: B → E, π ∘ s = id</td><td>(globale) Section, Gluing-Axiom</td><td>fortlaufende globale Wahl</td></tr>
+        <tr><td>Torsion / Monodromie (−1)^w</td><td>gescheiterte Verklebung an der Naht</td><td>das Invariant, das blockiert</td></tr>
+        <tr><td>triviale Faserung = B × F</td><td>diskrete Topologie → kartesisches Produkt</td><td>„trivial“ = alles multipliziert sich</td></tr>
+        <tr><td>Pullback A ×_C B</td><td>natural join (Sheaving)</td><td>Verkleben an gemeinsamem Wert</td></tr>
+      </tbody>
+    </table>
+    <p>
+      <b>Monodromie-Zusammenfassung:</b> Der Umlauf um die Basis multipliziert die Faser mit
+      <span class="mono">m = (−1)^w</span>. <span class="k">w gerade → m = +1</span> (triviale Holonomie, globale
+      nicht-verschwindende Section existiert — der „Produkt“-Fall, bei dem Kompositionalität zahlt).
+      <span class="bad">w ungerade → m = −1</span> (nicht-triviale Holonomie, einzige globale Section ist
+      <span class="mono">0</span> — die Struktur, die ein Invariant trägt).
+    </p>
+
+    <h3>Die Beispiele vereinigt</h3>
+    <p>
+      B’s drei Anwendungsbeispiele sind Spezialfälle desselben Verklebens und passen zu A’s Klassikern:
+    </p>
+    <ul>
+      <li><b>Spielkarten</b> (diskret → 52 Karten, Systematizität) = der <i>triviale / Produkt</i>-Fall von A: das kartesische Produkt der Dimensionen ist genau die triviale Faserung, die alle globalen Sections trägt.</li>
+      <li><b>Feature-Binding</b> (Farbe, Form, Frequenz verheiratet am gemeinsamen <i>Ort L</i>) = ein <i>Pullback über L</i>; L ist die „globale“ Faser, die das Verkleben erzwingt — wie die Basis, die Fasern zusammenhält.</li>
+      <li><b>Tiefenwahrnehmung</b> (zwei Sichtstrahlen schneiden sich im Objekt) = <i>Pullback = Triangulation</i>: zwei lokale Messungen verkleben an der gemeinsamen Position P zu einem globalen 3D-Punkt.</li>
+    </ul>
+    <p class="note"><b>Brückensatz:</b> A sagt „ein gedrehtes Bündel <i>trägt</i> genau die globalen Sections, die unter
+    seiner Monodromie invariant sind“. B sagt „Sheaving liefert aus lokalen Daten den <i>einzigsten</i> kohärenten
+    globalen Gegenstand“. Zusammen: <b>globale Struktur = lokale Daten, gefiltert/verklebt durch ein Invariant
+    (Torsion bzw. Topologie)</b>.</p>
+  </section>
+
+  <section id="visualisierung">
+    <div class="tag">05 · Visualisierung</div>
+    <h2>Ein Bündel, das sich an seiner eigenen Naht verklebt</h2>
+    <p>
+      Ein interaktives Stück mit zwei Panels, die <i>dasselbe</i> <span class="mono">w</span>,
+      <span class="mono">h</span> und <span class="mono">θ</span> teilen:
+    </p>
+    <p>
+      <b>Links (A, geometrisch):</b> das <span class="mono">w</span>-Halbwindungs-Linienbündel über
+      <span class="mono">S¹</span> — Basis-Kreis (blau), Fasern, und die „konstante“ Section
+      <span class="mono">v(θ)=h·cos((w/2)θ)</span> (grün). Ziehen zum Drehen. Bei ungeradem <span class="mono">w</span>
+      sieht man, wie die Section am Ende auf der <i>anderen</i> Seite ankommt (der Flip).
+    </p>
+    <p>
+      <b>Rechts (B, kategorial):</b> die <b>Verklebe-Bedingung</b> an der Naht. Die Kurve
+      <span class="mono">v(θ)=h·cos((w/2)θ)</span> über <span class="mono">θ ∈ [0,2π]</span>; die Punkte
+      <span class="mono">θ=0</span> und <span class="mono">θ=2π</span> sind der <i>gleiche</i> Basispunkt. Verklebt
+      die Section dort (gleicher Wert, grün) oder flippt sie (−, rot) und muss durch <span class="mono">0</span>
+      (rote Schnittpunkte)? Genau das ist B’s Gluing-Axiom an der Überlappung, hier am Kreis.
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c"><label>Halbwindungen w <b id="v-w">1</b></label><input type="range" id="s-w" min="0" max="4" step="1" value="1"></div>
+        <div class="c"><label>Sectionshöhe h <b id="v-h">0.70</b></label><input type="range" id="s-h" min="0.2" max="1" step="0.05" value="0.7"></div>
+      </div>
+      <div class="btnrow">
+        <button id="b-play">Abschnitt animieren</button>
+        <button id="b-theme" class="alt">Theme wechseln</button>
+      </div>
+      <div class="duo">
+        <div>
+          <div class="dnote">A · GEOMETRISCH — Faserbündel über S¹</div>
+          <canvas id="cvRib"></canvas>
+        </div>
+        <div>
+          <div class="dnote">B · KATEGORIAL — Verklebung an der Naht</div>
+          <canvas id="cvGlue"></canvas>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--sky)"></i>Basis S¹</span>
+        <span><i style="background:var(--acc)"></i>„konstante“ Section</span>
+        <span><i style="background:var(--bad)"></i>0-Schnitte / Monodromie-Flip</span>
+        <span><i style="background:var(--warn)"></i>Position θ</span>
+      </div>
+      <div class="stat">
+        <span>Torsion w: <b id="r-w">—</b></span>
+        <span>Monodromie: <b id="r-mono">—</b></span>
+        <span>Verklebung an Naht: <b id="r-glue">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <div class="tag">06 · Provenienz</div>
+    <h2>Die beiden Quellen</h2>
+    <div class="card">
+      <b>A — <a href="../fibrebundles.html">fibrebundles.html</a></b>
+      <p>„Interactive Fiber Bundles Explorer“: fünf interaktive 3D-Tabs (triviales Zylinder-Bündel, Möbiusband,
+      Tangentialbündel von S¹, Hopf-Faserung, „eigene bauen“) — die <i>geometrische</i> Seite: Totalraum,
+      Projektion, Fasern, Torsion und der Existenz-/Nichtexistenz-Status globaler Sections.</p>
+    </div>
+    <div class="card">
+      <b>B — <a href="../sheaving.html">sheaving.html</a></b>
+      <p>„Sheaving — interaktive Reise durch Phillips (2019)“: die <i>kategoriale</i> Seite — Mengen, Kategorien,
+      Topologie, Funktoren, universelle Konstruktionen, Pullback (natural join), Presheaf/Sheaf und Sheaving, plus
+      drei Anwendungsbeispiele (Karten/Systematizität, Feature-Binding, binokulare Tiefe).</p>
+    </div>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var cvRib  = document.getElementById('cvRib');
+  var cvGlue = document.getElementById('cvGlue');
+
+  var S = { w:1, h:0.7, theta:0, playing:false, rotX:-0.35, rotY:0.55, dragging:false, lx:0, ly:0 };
+  var R = 90, FL = 45;
+
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function parseColor(c){
+    c=(c||'').trim();
+    if(c.charAt(0)==='#'){
+      var h=c.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    var m=c.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(','); return [parseFloat(p[0]), parseFloat(p[1]), parseFloat(p[2])]; }
+    return [120,120,120];
+  }
+  function rgba(c,a){ var p=parseColor(c); return 'rgba('+(p[0]|0)+','+(p[1]|0)+','+(p[2]|0)+','+a+')'; }
+  function clamp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function fit(cv, H){
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var cw = Math.max(1, Math.floor(r.width*dpr));
+    var ch = Math.max(1, Math.floor(H*dpr));
+    if(cv.width!==cw || cv.height!==ch){ cv.width=cw; cv.height=ch; cv.style.height=H+'px'; }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w:r.width, h:H, ctx:ctx };
+  }
+
+  function base(u){ return [R*Math.cos(u), 0, R*Math.sin(u)]; }
+  function rib(u, v){
+    var cu=Math.cos(u), su=Math.sin(u), a=(S.w/2)*u, ca=Math.cos(a), sa=Math.sin(a);
+    return [R*cu - v*sa*su, v*ca, R*su + v*sa*cu];
+  }
+  function rotXv(x,y,z,a){ var c=Math.cos(a),s=Math.sin(a); return [x, y*c-z*s, y*s+z*c]; }
+  function rotYv(x,y,z,a){ var c=Math.cos(a),s=Math.sin(a); return [x*c+z*s, y, -x*s+z*c]; }
+  function proj(x,y,z,cx,cy){
+    var p=rotXv(x,y,z,S.rotX); p=rotYv(p[0],p[1],p[2],S.rotY);
+    var f=300/(340+p[2]);
+    return [cx+p[0]*f, cy-p[1]*f, p[2]];
+  }
+
+  function drawRibbon(){
+    var o=fit(cvRib, 320), ctx=o.ctx, w=o.w, h=o.h;
+    var DIM=cssv('--dim','#8b93a9'), GRID=cssv('--grid','#232a38');
+    var ACC=cssv('--acc','#64ffda'), SKY=cssv('--sky','#7aa2ff'), BAD=cssv('--bad','#ff6f6f'), WARN=cssv('--warn','#ffd166');
+    ctx.clearRect(0,0,w,h);
+    var cx=w/2, cy=h/2, N=72, i, p;
+    ctx.strokeStyle=SKY; ctx.lineWidth=2.5; ctx.beginPath();
+    for(i=0;i<=N;i++){ var u=i/N*TAU; var bp=base(u); p=proj(bp[0],bp[1],bp[2],cx,cy); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+    ctx.stroke();
+    for(i=0;i<N;i++){ var uu=i/N*TAU;
+      var p1=proj(rib(uu,-FL)[0],rib(uu,-FL)[1],rib(uu,-FL)[2],cx,cy);
+      var p2=proj(rib(uu, FL)[0],rib(uu, FL)[1],rib(uu, FL)[2],cx,cy);
+      ctx.strokeStyle=rgba(GRID,0.9); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.stroke();
+    }
+    ctx.strokeStyle=ACC; ctx.lineWidth=3; ctx.beginPath();
+    var M=220;
+    for(i=0;i<=M;i++){ var ut=i/M*TAU; var q=rib(ut, S.h*FL); p=proj(q[0],q[1],q[2],cx,cy); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }
+    ctx.stroke();
+    var mq=rib(S.theta, S.h*FL); var mp=proj(mq[0],mq[1],mq[2],cx,cy);
+    ctx.fillStyle=BAD; ctx.beginPath(); ctx.arc(mp[0],mp[1],6,0,TAU); ctx.fill();
+    var mb=proj(base(S.theta)[0],base(S.theta)[1],base(S.theta)[2],cx,cy);
+    ctx.fillStyle=WARN; ctx.beginPath(); ctx.arc(mb[0],mb[1],4,0,TAU); ctx.fill();
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('Bündel über S¹ · w='+S.w+' · zieh zum Drehen', 10, h-10);
+  }
+
+  function drawGlue(){
+    var o=fit(cvGlue, 300), ctx=o.ctx, w=o.w, h=o.h;
+    var DIM=cssv('--dim','#8b93a9'), GRID=cssv('--grid','#232a38');
+    var ACC=cssv('--acc','#64ffda'), SKY=cssv('--sky','#7aa2ff'), BAD=cssv('--bad','#ff6f6f'), WARN=cssv('--warn','#ffd166');
+    ctx.clearRect(0,0,w,h);
+    var pad=44, padR=28, padT=34, padB=38;
+    var gw=w-pad-padR, gh=h-padT-padB;
+    function vOf(t){ return S.h*Math.cos((S.w/2)*t); }
+    var vMax=Math.max(S.h,0.25)*1.3;
+    function X(t){ return pad + (t/TAU)*gw; }
+    function Y(v){ return padT+gh/2 - (v/vMax)*(gh/2); }
+    ctx.strokeStyle=GRID; ctx.lineWidth=1; ctx.strokeRect(pad,padT,gw,gh);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=rgba(DIM,0.6);
+    ctx.beginPath(); ctx.moveTo(pad,Y(0)); ctx.lineTo(pad+gw,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=ACC; ctx.lineWidth=3; ctx.beginPath();
+    var M=240;
+    for(var i=0;i<=M;i++){ var t=i/M*TAU; var x=X(t), y=Y(vOf(t)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke();
+    if(S.w>0){
+      for(var k=0;;k++){
+        var tz=(Math.PI+2*k*Math.PI)/S.w;
+        if(tz>TAU-1e-6) break;
+        if(tz<0) continue;
+        ctx.fillStyle=BAD; ctx.beginPath(); ctx.arc(X(tz),Y(0),4,0,TAU); ctx.fill();
+      }
+    }
+    var v0=vOf(0), vE=vOf(TAU);
+    var flip=(S.w%2===1);
+    ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(DIM,0.5);
+    ctx.beginPath(); ctx.moveTo(X(0),Y(v0)); ctx.lineTo(X(0),Y(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(TAU),Y(vE)); ctx.lineTo(X(TAU),Y(0)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=SKY; ctx.beginPath(); ctx.arc(X(0),Y(v0),6,0,TAU); ctx.fill();
+    ctx.fillStyle=flip?BAD:ACC; ctx.beginPath(); ctx.arc(X(TAU),Y(vE),6,0,TAU); ctx.fill();
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('0', X(0), h-12); ctx.fillText('2π', X(TAU), h-12);
+    ctx.fillText('Basis S¹ — einmal herum', pad+gw/2, h-2);
+    ctx.textAlign='left'; ctx.fillStyle=SKY; ctx.fillText('v(0)=+'+S.h.toFixed(2), X(0)+9, Y(v0)-9);
+    ctx.textAlign=flip?'right':'left'; ctx.fillStyle=flip?BAD:ACC;
+    ctx.fillText('v(2π)='+(flip?'\u2212':'+')+S.h.toFixed(2), flip?X(TAU)-9:X(TAU)+9, Y(vE)-9);
+    var tm=S.theta, xM=X(tm), yM=Y(vOf(tm));
+    ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(WARN,0.85); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(xM,padT); ctx.lineTo(xM,padT+gh); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=WARN; ctx.beginPath(); ctx.arc(xM,yM,5,0,TAU); ctx.fill();
+  }
+
+  function stat(){
+    var flip=(S.w%2===1);
+    document.getElementById('r-w').textContent = S.w+' ('+(flip?'ungerade':'gerade')+')';
+    document.getElementById('r-mono').textContent = 'm = (\u22121)^'+S.w+' = '+(flip?'\u22121':'+1');
+    var g=document.getElementById('r-glue');
+    if(flip){ g.textContent='Flip \u2014 Section muss 0 schneiden, keine nicht-triv. globale Section'; g.className='bad'; }
+    else { g.textContent='Verklebt \u2014 globale nicht-verschwindende Section existiert'; g.className='ok'; }
+  }
+
+  function draw(){ drawRibbon(); drawGlue(); stat(); }
+  function loop(){ if(S.playing){ S.theta=(S.theta+0.02)%TAU; } draw(); requestAnimationFrame(loop); }
+
+  function wire(id, set){ document.getElementById(id).addEventListener('input', function(e){ set(e.target); draw(); }); }
+  wire('s-w', function(el){ S.w=parseInt(el.value,10); document.getElementById('v-w').textContent=S.w; });
+  wire('s-h', function(el){ S.h=parseFloat(el.value); document.getElementById('v-h').textContent=S.h.toFixed(2); });
+  document.getElementById('b-play').addEventListener('click', function(){
+    S.playing=!S.playing; this.textContent=S.playing?'Pause':'Abschnitt animieren';
+  });
+  document.getElementById('b-theme').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); draw();
+  });
+  cvRib.addEventListener('mousedown', function(e){ S.dragging=true; S.lx=e.clientX; S.ly=e.clientY; });
+  window.addEventListener('mousemove', function(e){
+    if(!S.dragging) return;
+    S.rotY+=(e.clientX-S.lx)*0.01;
+    S.rotX=clamp(S.rotX+(e.clientY-S.ly)*0.01, -1.35, 1.35);
+    S.lx=e.clientX; S.ly=e.clientY; draw();
+  });
+  window.addEventListener('mouseup', function(){ S.dragging=false; });
+  window.addEventListener('resize', draw);
+
+  draw();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

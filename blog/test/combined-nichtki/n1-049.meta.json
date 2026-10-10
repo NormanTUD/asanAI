@@ -1,0 +1,16 @@
+{
+  "no": "049",
+  "a": "montana_sacra.html",
+  "b": "stacks.html",
+  "a_title": "Der Heilige Berg — Eine interaktive Reise (Jodorowsky, 1973)",
+  "b_title": "Algebraic Stacks — An Interactive Journey",
+  "combined_theme": "descent-as-stack-the-empty-summit",
+  "one_line": "Both works perform 'Descent' — gluing local fragments into a global object — and both conclude the global is not a point at the center but a structure (a stack / a frame) carrying internal symmetries; the naive center (the immortals / the moduli point) is empty, a decoy.",
+  "contradictions": [
+    "Objective, unique gluing (B: descent 'only when they agree on overlaps', in a stack 'up to isomorphism' — the global is fixed by compatible local data) vs. private, irreducible experience (A: each pilgrim's 'persönliche symbolische Vision ... sie sind privat', checkable by no one) — does the local determine the global?",
+    "The summit as prize and usable framework (B: the algebraic stack is 'the ultimate framework for handling moduli problems', the destination to stay at and use) vs. the summit as empty decoy to be left (A: 'Es sind gesichtslose Puppen ... Es gibt keine Unsterblichen', 'Das echte Leben erwartet uns').",
+    "Symmetry as the thing to preserve (B: a stack 'remembers their automorphisms', the Z/2 on M_{1,1}) vs. symmetry as the thing to shatter (A: 'zerschmettert den Spiegel', the seven planets' ordered 'Architektur der Moderne' that the alchemist makes burn)."
+  ],
+  "resolution": "Separate structure from substance and type from instance. (1) Gluing is an objective formal rule, but the residual freedom it leaves undetermined is exactly the automorphism group — that 'private' part is formalized as 'up to isomorphism', so a stack is private experience made formal. (2) Keep the structure (the stack/frame/atlas), leave the substance (the immortals/naive point): the object is a frame/tool, not a treasure — B uses the stack, A discards the dummies. (3) Shatter the symmetric instance to expose the symmetric type: breaking the particular mirror reveals the Z/2 involution that was hidden in it. 'Shatter the instance, keep the type' is both the alchemical test and the algebraic-geometric descent.",
+  "viz": "Canvas 'Descent' viz: three local patches U1/U2/U3 glue (up to congruent/isomorphism) into a global orbit-object carrying an internal Z/2 mirror symmetry; a 'zoom back' slider reveals the object is only the atlas/frame of a larger structure and that the center is empty (no immortals / points are isomorphism classes); 'break the mirror' shatters the symmetric instance while the symmetry type (orbits) remains. Theme-aware via CSS vars, inline data only, no network fetches."
+}

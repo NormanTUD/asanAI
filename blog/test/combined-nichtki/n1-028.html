@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Récoltes et Semailles × Group Theory</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#211c12; --muted:#6b6352; --panel:#fffdf8; --border:#e2d8c3;
+  --accent:#8a6d1f; --accent-soft:rgba(138,109,31,.12);
+  --accent2:#6b4fb0; --accent3:#c0426b; --accent4:#1f6fa8;
+  --grid:#211c12; --code:#f0e9d8; --code-fg:#211c12;
+  --canvas-bg:#fffdf8; --shadow:0 1px 2px rgba(60,40,10,.06),0 6px 24px rgba(60,40,10,.06);
+}
+html.dark{
+  --bg:#0f0d1a; --fg:#f4ecd8; --muted:#8b86a3; --panel:#171232; --border:#2a2547;
+  --accent:#e8b923; --accent-soft:rgba(232,185,35,.14);
+  --accent2:#a78bfa; --accent3:#e76f9a; --accent4:#7dd3fc;
+  --grid:#8b86a3; --code:#0a0815; --code-fg:#f4ecd8;
+  --canvas-bg:#0a0815; --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Iowan Old Style",Georgia,system-ui,serif;
+  line-height:1.68; -webkit-font-smoothing:antialiased;
+}
+article{ max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+header{margin-bottom:26px;}
+h1{ font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; }
+.subtitle{ color:var(--muted); font-size:1.02rem; margin:0; font-style:italic; }
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{ font-size:1.04rem; margin:18px 0 8px; color:var(--accent); }
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code,.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+blockquote{
+  margin:14px 0; padding:8px 18px; border-left:3px solid var(--accent3);
+  color:var(--muted); font-style:italic; background:var(--panel);
+  border-radius:0 10px 10px 0;
+}
+/* viz */
+.viz-wrap{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px; margin:14px 0; box-shadow:var(--shadow);}
+#vizCanvas{display:block; max-width:100%; width:100%; height:auto; margin:0 auto; border-radius:10px;}
+.viz-controls{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:14px;}
+button,.select{
+  font-family:inherit; font-size:.9rem; cursor:pointer;
+  background:var(--panel); color:var(--fg);
+  border:1px solid var(--border); padding:7px 13px; border-radius:8px;
+  transition:border-color .15s, transform .1s;
+}
+button:hover{border-color:var(--accent); transform:translateY(-1px);}
+button:active{transform:scale(.98);}
+button.active{border-color:var(--accent); background:var(--accent-soft);}
+select{
+  font-family:inherit; font-size:.9rem; cursor:pointer;
+  background:var(--panel); color:var(--fg);
+  border:1px solid var(--border); padding:6px 10px; border-radius:8px;
+}
+.compose-row{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; margin-top:12px;}
+.viz-status{
+  text-align:center; margin-top:12px; font-size:.95rem; min-height:1.5em;
+  color:var(--accent2); font-weight:600; line-height:1.5;
+}
+.legend{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:10px; font-size:.82rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:5px;}
+.dot{width:11px; height:11px; border-radius:50%; display:inline-block;}
+.check{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; font-size:.9rem; color:var(--fg); cursor:pointer;}
+input[type=checkbox]{accent-color:var(--accent);}
+.theme-btn{position:fixed; top:14px; right:14px; z-index:50; font-size:.85rem;}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeToggle" onclick="toggleTheme()">☾/☀ Thema</button>
+<article>
+<header>
+  <h1>Das stille Objekt und seine Standpunkte</h1>
+  <p class="subtitle">Fusion aus: <code>saeen_und_ernten.html</code> ✕ <code>group.html</code> &nbsp;·&nbsp; Symmetrie ist Vision.</p>
+</header>
+
+<!-- ============ THESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Ein Objekt ist für sich stumm. Erst die Gesamtheit aller Möglichkeiten, es von verschiedenen Seiten zu betrachten — es so zu verwandeln, dass es sich selbst bleibt — lässt eine <em>Vision</em> aufleuchten. Diese eine Geste verbindet beide Texte, obwohl sie auf ersten Blick nichts miteinander zu tun haben zu scheinen: der eine ist ein poetisch-mathematisches Porträt von Alexandre Grothendiecks Weltanschauung, der andere eine präzise, elementare Einführung in die Gruppentheorie.</p>
+  <p>Das <strong>Paper A</strong> (interaktive Reise durch Grothendiecks <i>Récoltes et Semailles</i>) sagt: Ein einzelnes Objekt bleibt stumm; erst wenn viele <em>Standpunkte</em> auf dieselbe Wirklichkeit fallen, entsteht eine Vision — wie Sonnenlicht aus Spektralfarben. Und die tiefste mathematische Bewegung ist, die scheinbar getrennten Inkarnationen — ein Schema in allen Charakteristiken, ein Motiv in allen Kohomologie-Tonarten, diskrete Arithmetik zusammen mit kontinuierlicher Geometrie — in einem allgemeinen Behälter (Schema, Topos, Motiv) zu vereinigen.</p>
+  <p>Das <strong>Paper B</strong> (interaktive Gruppentheorie) sagt dasselbe präzise: Eine Gruppe ist genau die Menge aller selbstbewahrenden Transformationen eines Objekts, <em>zusammen mit dem Gesetz, wie sie zusammengesetzt werden</em>. Die Symmetriegruppe des Quadrats — die Diederale Gruppe <code>D₄</code> mit ihren 8 Elementen — ist die „Seele“ des Quadrats.</p>
+  <p><strong>Die fusionierte Kernthese:</strong> <em>Symmetrie ist Vision.</em> Die Gruppe ist der strenge Name für das, was Grothendieck Vision, Standpunkt, Melodie und steigende Flut nennt: die vollständige Struktur der Wege, auf denen ein stilles Objekt sich selbst bewahrt und dadurch sichtbar wird. Die 8 Symmetrien des Quadrats in B sind die 8 Standpunkte, aus denen A seine Vision destilliert — und die Gruppenoperation ist das Verklebungsgesetz, das aus den vielen lokalen Blicken ein Ganzes macht.</p>
+</section>
+
+<!-- ============ WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die zwei Texte widersprechen sich in keiner <em>faktischen</em> Aussage — der eine ist Philosophie, der andere eine Definition. Aber sie stehen in drei konkreten Punkten auf entgegengesetzten Polen:</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src">Paper A — saeen_und_ernten</div>
+      <h3>Methode: Empfangen &amp; Flut</h3>
+      <p>Die rechte Methode sei die <em>steigende Flut</em>: „Nicht mit Hammer &amp; Meißel auf die Nuss einschlagen. Sondern die Nuss in Wasser legen und warten, bis die steigende Flut sie sanft öffnet.“ Dazu kommt die <em>Yin</em>-Hälfte der Entdeckung (Empfangen, Träumen, die Form „aus dem Nebel“ erahnen), die A ausdrücklich gleichwertig neben die <em>Yang</em>-Hälfte (Bauen, Beweisen, Meißeln) stellt. Erkenntnis kommt teilweise durch <em>Empfang</em>.</p>
+    </div>
+    <div class="col">
+      <div class="src">Paper B — group</div>
+      <h3>Methode: Axiome &amp; Tabelle</h3>
+      <p>Die rechte Methode ist rein konstruktiv-axiomatisch: vier knappe Regeln (Klausur, Assoziativität, Neutral-, Inverses), eine nachprüfbare Multiplikationstabelle (Cayley) und ein Algorithmus (auf der Uhr <em>mod&nbsp;n</em> addieren). Alles wird scharf, zählbar, checkbar gemacht. Kein Empfang, keine Flut — reines <em>Bauen</em>.</p>
+    </div>
+  </div>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src">Paper A — was ist primär</div>
+      <h3>Das Objekt, und seine Invarianz</h3>
+      <p>Das <em>Objekt</em> (Motiv / Varietät / Schema) steht im Vordergrund: Es ist „stumm“, und die Standpunkte/Inkarnationen enthüllen es. Die tiefste Idee ist <em>Invarianz</em> — verschiedene Kohomologie-Theorien (ℓ-adisch, de Rham, Hodge, kristallin) sind „verschiedene Tonarten desselben Motivs“ und liefern <strong>dieselben</strong> Betti-Zahlen.</p>
+    </div>
+    <div class="col">
+      <div class="src">Paper B — was ist primär</div>
+      <h3>Die Struktur, und ihre Reihenfolge</h3>
+      <p>Die <em>Struktur der Transformationen</em> (die Gruppe, die Operation, die Zusammengesetztheit) steht im Vordergrund; das Quadrat ist nur Bühne. Und B betont gerade das <em>Asymmetrische</em>: Die Cayley-Tabelle ist „nicht symmetrisch über der Diagonale“ — die Gruppe ist <strong>non-abelsch</strong>, die Reihenfolge zählt.</p>
+    </div>
+  </div>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src">Paper A — Umfang</div>
+      <h3>Totale Vereinigung</h3>
+      <p>A strebt <em>maximale</em> Vereinigung an: ein Schema fasst alle Charakteristiken, ein Motiv alle Kohomologie-Theorien, ein Topos diskret und kontinuierlich zusammen. „Alle Pferde des Königs könnten daraus zugleich trinken.“ Es ist eine fast totalisierende Vision.</p>
+    </div>
+    <div class="col">
+      <div class="src">Paper B — Umfang</div>
+      <h3>Lokales Muster</h3>
+      <p>B bleibt <em>lokal und bescheiden</em>: ein Quadrat, eine Uhr, ein Untergruppen-Gitter. Es sagt, Gruppen „stützen“ Physik, Chemie, Kryptographie, Musik — behauptet aber nicht, die Gruppe vereinige die gesamte Mathematik zu einem einzigen Objekt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>B ist das konkrete, strenge Beispiel; A ist die allgemeine Methode, die B still voraussetzt.</strong> Die drei „Widersprüche“ sind zwei Stufen desselben Musters, kein echtes Auseinanderfallen:</p>
+
+  <h3>1. Empfangen &amp; Bauen → Yin &amp; Yang desselben Akts</h3>
+  <p>B baut die Gruppe (Yang); A erhält die Vision, dass Symmetrie überhaupt der Schlüssel ist (Yin). Man <em>baut</em> die Gruppe präzise <em>weil</em> man zuerst die <em>Vision</em> empfangen hat. Grothendiecks eigene Yin/Yang-Dichotomie löst den Widerspruch auf: A predigt beides (Empfang <em>und</em> Bauen, „Mutter und Vater der Schöpfung“), B zeigt die gebauten, checkbaren Folgen eines solchen Empfangs. A wäre wohl derjenige, der B als „Zu viel Yang: sterile Muskelspiele“ tadelt — aber genau diese Muskelspiele sind, was aus der Vision im Stein wird.</p>
+
+  <h3>2. Objekt vs. Struktur → die Gruppe ist die Sichtbarkeitsweise des Objekts</h3>
+  <p>Das „stille Objekt“ von A und die „Struktur der Transformationen“ von B sind zwei Ansichten desselben: Die Symmetriegruppe <em>ist</em> die Menge der Standpunkte, die das Objekt sichtbar machen. A feiert die Invarianz (dieselbe Melodie in allen Tonarten); B feiert die Reihenfolgeabhängigkeit. Die Versöhnung: Beides ist wahr, weil die Gruppe <em>auf etwas wirkt</em> — die Invariante (A) ist genau die Größe, die unter der Gruppenwirkung <em>fix</em> bleibt (z.&nbsp;B. die Orbits, die Form des Quadrats), während die Nicht-Kommutativität (B) die <em>innere</em> Struktur dieser Wirkung beschreibt. Invarianz und Ordnung sind zwei Seiten derselben Wirkung.</p>
+
+  <h3>3. Totale Vereinigung vs. lokales Muster → das Quadrat als Keimzelle des Totals</h3>
+  <p>A's totale Vereinigung ist B's lokales Muster, verallgemeinert. Die Symmetriegruppe eines konkreten Objekts ist der <em>Keim</em> von allem: Grothendiecks Schema/Topos/Motiv sind, im Grunde, die Symmetriegruppe bzw. die Kategorie der Standpunkte, auf ein ganzes Feld verallgemeinert. B zeigt die Keimzelle (eins Quadrat); A beschreibt, was passiert, wenn man die Keimzelle zur ganzen Mathematik wachsend pflanzt. „Alle Pferde des Königs trinken“ ist der Grenzwert des Uhrzeigers, der <em>mod&nbsp;n</em> für alle n weiterzählt.</p>
+
+  <blockquote>„Der fruchtbare Standpunkt ist das Auge, das uns entdecken und erkennen lässt, wie in einer gemeinsamen Ganzheit organisiert das Vielfältige zusammengehört.“ — und dieses „zusammengehört“ ist, formal gesprochen, das Assoziativitätsgesetz der Gruppenoperation.</blockquote>
+</section>
+
+<!-- ============ INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>Der gemeinsame Kern (strenge Form von A's Vision)</h3>
+  <p>A sagt poetisch „viele Standpunkte → eine Vision; die vielen Inkarnationen gehören zusammen“. B liefert den genauen formalen Apparat, der diesen Satz wahr macht:</p>
+  <p>Ein Objekt (z.&nbsp;B. das Quadrat) besitzt eine Menge <code>G</code> von Transformationen, die es auf sich selbst abbilden, ohne es zu verändern. <code>G</code> trägt eine Operation <code>∘</code> (Zusammensetzen) und ist eine <strong>Gruppe</strong>, wenn es die vier Axiome erfüllt:</p>
+  <pre><code>1. Abgeschlossenheit (Closure)      a∘b ∈ G   für alle a,b ∈ G
+2. Assoziativität (Assoziativ)      (a∘b)∘c = a∘(b∘c)
+3. Neutrales Element (Identity)     ∃ e: e∘a = a∘e = a
+4. Inverses (Inverses)              ∀ a: ∃ a⁻¹: a∘a⁻¹ = a⁻¹∘a = e</code></pre>
+  <p><em>Diese vier Axiome sind die formale Übersetzung von A's „die Standpunkte verkleben sich zu einer Vision“:</em> Abgeschlossenheit heißt, zwei Standpunkte zusammenführen liefert wieder einen Standpunkt; Assoziativität heißt, dass es egal ist, in welcher Reihenfolge man drei Blickwinkel „verklebt“ — genau A's Forderung nach <em>Kohärenz</em> (Werte stimmen auf Überlappungen überein), die A an die Garbe stellt.</p>
+
+  <h3>Aus B: das konkrete Objekt — <code>D₄</code>, die Uhr, das Gitter</h3>
+  <p>Das Quadrat besitzt <strong>8</strong> Symmetrien: 4 Rotationen (R0, R90, R180, R270) und 4 Spiegelungen (horizontal, vertikal, über die beiden Diagonalen). Diese bilden die <strong>Diederale Gruppe <code>D₄</code></strong>:</p>
+  <pre><code>D₄ = ⟨ r, s | r⁴ = 1,  s² = 1,  s∘r∘s = r⁻¹ ⟩,   |D₄| = 8,  nicht abelsch</code></pre>
+  <ul>
+    <li><strong>Cayley-Tabelle</strong> (8×8): Zeigt das Ergebnis <code>zeile ∘ spalte</code>. Sie ist <em>nicht</em> symmetrisch über der Diagonale → die Gruppe ist <em>non-abelsch</em> (Reihenfolge zählt). z.&nbsp;B. R90 ∘ Fh ≠ Fh ∘ R90.</li>
+    <li><strong>Zyklische Gruppen <code>ℤₙ</code></strong> (die Uhr): Die einfachsten Gruppen — man zählt auf einer Uhr mit <em>n</em> Stunden und „wickelt um“ (<em>mod&nbsp;n</em>). <code>a + b ≡ (a+b) mod n</code>.</li>
+    <li><strong>Untergruppen &amp; Gitter:</strong> Eine Teilmenge, die selbst wieder Gruppe ist, heißt Untergruppe. <code>ℤ₁₂</code> hat (je genau eine für jeden Teiler) die Untergruppen <code>{0}</code> (Ordnung 1), <code>⟨6⟩={0,6}</code> (Ordnung 2), <code>⟨4⟩={0,4,8}</code> (Ordnung 3), <code>⟨3⟩={0,3,6,9}</code> (Ordnung 4), <code>⟨2⟩={0,2,4,6,8,10}</code> (Ordnung 6) und <code>ℤ₁₂</code> selbst (Ordnung 12). Die Einbettungsrelationen bilden ein <strong>Gitter</strong>: <code>ℤ₁₂ ⊃ ⟨2⟩ ⊃ ⟨4⟩ ⊃ {0}</code> und <code>ℤ₁₂ ⊃ ⟨3⟩ ⊃ ⟨6⟩ ⊃ {0}</code>.</li>
+  </ul>
+
+  <h3>Aus A: die philosophischen Begriffe (was die Gruppe „bedeutet“)</h3>
+  <ul>
+    <li><strong>Standpunkt &amp; Vision:</strong> Ein einzelner Standpunkt sieht nur einen Aspekt; erst viele zusammen erzeugen die Vision. → Die 8 Symmetrien sind die 8 Standpunkte des Quadrats; <code>D₄</code> ist die Vision.</li>
+    <li><strong>Garben (Leray):</strong> Statt ein Objekt mit <em>einem</em> Maßstab zu vermessen, gibt man ihm einen <em>Fächer</em> lokaler Messstäbe und verklebt sie kohärent zu globaler Information. → Die Gruppe ist ein „Fächer von Standpunkten“ mit einer Verklebungsregel (der Operation).</li>
+    <li><strong>Schemata:</strong> Vor Grothendieck: für jede Primzahl <code>p</code> eine eigene Geometrie „in Charakteristik <code>p</code>“. Ein einziges Schema vereint sie alle — „ein Fächer mit unendlich vielen Blättern“. → Das ist das Untergruppen-Gitter auf die Spitze getrieben: ein Ganzes mit strukturierten Inkarnationen.</li>
+    <li><strong>Topos:</strong> „Ein Raum ohne Punkte — nur definiert durch, was auf ihm lebt (Garben).“ Vereinigt diskrete Arithmetik und kontinuierliche Geometrie. → Die Gruppe (bzw. Kategorie) <em>ist</em> der Raum der Standpunkte; das Objekt wird durch seine selbstbewahrenden Abbildungen definiert.</li>
+    <li><strong>Motive:</strong> Verschiedene Kohomologie-Theorien sind „verschiedene Tonarten desselben Motivs“; die Betti-Zahlen sind in allen <em>dieselben</em> (elliptische Kurve: 1, 2, 1). → Die <em>Invariante</em>: die Größe, die unter dem Wechseln der „Tonart“ (Realisierung) / unter der Gruppenwirkung fest bleibt.</li>
+    <li><strong>Steigende Flut:</strong> Die richtige <em>allgemeine Theorie</em> macht das harte Problem trivial. → Konkret: das Finden der richtigen Struktur (Gruppe/Kategorie), in der das Problem sich auflöst.</li>
+    <li><strong>Das Kind:</strong> Die Gabe, mit <em>eigenen Augen</em> zu sehen, unabhängig vom Konsens. → Die Unabhängigkeit der Gruppe von der konkreten Darstellung: <code>D₄</code> ist, was sie ist, ob man sie als Quadrat-Symmetrien, als Permutationen oder als Matritzen schreibt.</li>
+  </ul>
+
+  <h3>Die Brücke — wie das eine das andere erklärt</h3>
+  <ul>
+    <li><strong>Standpunkte = Symmetrien.</strong> A's „viele Standpunkte auf dieselbe Wirklichkeit“ sind formal <em>genau</em> die selbstbewahrenden Transformationen, die B zählt.</li>
+    <li><strong>Verklebung = Operation.</strong> A's Kohärenzbedingung an die Garbe (Werte stimmen auf Überlappungen überein) ist die Assoziativität der Gruppenoperation; „verkleben“ heißt „zusammensetzen“.</li>
+    <li><strong>Gitter = Fächer der Inkarnationen.</strong> B's Untergruppen-Gitter <code>ℤ₁₂ ⊃ ⟨2⟩ ⊃ ⟨4⟩ ⊃ {0}</code> ist A's „Fächer mit unendlich vielen Blättern“ in miniaturisierter, endlicher Form: ein Ganzes enthält strukturierte Teilganze, wie ein Schema seine Charakteristik-Inkarnationen.</li>
+    <li><strong>Invariante Melodie = fixer Größen unter der Wirkung.</strong> A's „dieselben Betti-Zahlen in allen Tonarten“ ist die Größe, die unter dem Wechseln der Realisierung / der Gruppenwirkung <em>fix</em> bleibt — die Orbits, die Form, die charakteristischen Invarianten. Die Form des Quadrats bleibt unter allen 8 Symmetrien ein Quadrat; nur die Labels A–D permutieren.</li>
+    <li><strong>Steigende Flut = Struktur finden.</strong> „Die Nuss in Wasser legen und warten, bis sie sich öffnet“ heißt: das Problem in die richtige allgemeine Struktur versetzen. Findet man die Symmetriegruppe eines Problems, ist man exakt dort — das Problem ist nun „strukturierter“ und löst sich in der Gruppenrechnung auf.</li>
+  </ul>
+
+  <p><strong>Der fusionierte Leitsatz:</strong> Ein Objekt wird verständlich, indem man <em>seine Struktur der selbstbewahrenden Transformationen</em> — seine Symmetriegruppe — findet und versteht, wie sich diese zusammensetzen (Axiome/Verklebung), welche Unterstrukturen sie enthält (Gitter/Inkarnationen) und welche Größen dabei invariant bleiben (Melodie/Betti-Zahlen). B liefert die Rechnung; A liefert den Grund, warum es funktioniert: <em>weil ein Objekt genau durch die Gesamtheit der Wege sichtbar wird, auf denen es sich selbst bewahrt.</em></p>
+</section>
+
+<!-- ============ VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Visualisierung: Das stille Quadrat und seine 8 Standpunkte</h2>
+  <p>Ein interaktives Modell der fusionierten Idee: das Quadrat ist das <em>stille Objekt</em>; der Ring aus 8 Punkten sind seine <em>Standpunkte</em> (Symmetrien). Wende Transformationen an, berechne ihre <em>Zusammensetzung</em> <code>a ∘ b</code> (das Verklebungsgesetz) und hebe die <em>Untergruppe</em> <code>C₄</code> (nur Rotationen) hervor. Die <em>Invariante</em> — die Form bleibt ein Quadrat — ändert sich nie; nur die Labels A–D permutieren (die „Tonart“).</p>
+
+  <div class="viz-wrap">
+    <canvas id="vizCanvas" width="640" height="480"></canvas>
+
+    <div class="viz-controls" id="symBtns"></div>
+
+    <div class="compose-row">
+      <label>Zusammensetzung&nbsp;</label>
+      <select id="selA"></select>
+      <span>∘</span>
+      <select id="selB"></select>
+      <button onclick="doCompose()">a ∘ b berechnen</button>
+    </div>
+
+    <label class="check">
+      <input type="checkbox" id="subToggle" onchange="draw()">
+      Untergruppe C₄ (nur Rotationen) hervorheben — &nbsp;|C₄|=4 teilt |D₄|=8 (Lagrange)
+    </label>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent)"></i> aktiver Standpunkt</span>
+      <span><i class="dot" style="background:var(--accent3)"></i> Ergebnis a∘b</span>
+      <span><i class="dot" style="background:var(--accent4)"></i> Untergruppe C₄</span>
+    </div>
+
+    <div class="viz-status" id="vizStatus">Klicke einen Standpunkt oder eine Symmetrie. Das Quadrat ist stumm — erst seine 8 selbstbewahrenden Transformationen machen es sichtbar.</div>
+  </div>
+</section>
+
+<!-- ============ PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../buecher/saeen_und_ernten.html">A — <code>saeen_und_ernten.html</code></a> · „Récoltes et Semailles — Interaktiv“: Eine interaktive, deutschsprachige Reise durch Grothendiecks mathematische Philosophie (Standpunkte/Vision, Garben, Schemata, Topoi, Motive, Yin/Yang, die steigende Flut, das Kind).</li>
+    <li><a href="../group.html">B — <code>group.html</code></a> · „What is Group Theory? — An Interactive Visual Guide“: Eine englische, interaktive Einführung in die Gruppentheorie (Symmetrien des Quadrats D₄, die vier Axiome, Cayley-Tabelle, zyklische Gruppen ℤₙ, Untergruppen-Gitter).</li>
+  </ul>
+</section>
+
+</article>
+
+<script>
+"use strict";
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function toggleTheme(){
+  document.documentElement.classList.toggle('dark');
+  draw();
+}
+
+/* ---- D4: 8 Symmetrien als Permutationen der 4 Ecken (wie in group.html) ---- */
+var D4 = {
+  r0:[0,1,2,3], r1:[3,0,1,2], r2:[2,3,0,1], r3:[1,2,3,0],
+  fh:[3,2,1,0], fv:[1,0,3,2], fd1:[0,3,2,1], fd2:[2,1,0,3]
+};
+var D4keys = ['r0','r1','r2','r3','fh','fv','fd1','fd2'];
+var D4labels = ['R0','R90','R180','R270','Fh','Fv','F╲','F╱'];
+var ROTATIONS = ['r0','r1','r2','r3'];
+var cornerLabels = ['A','B','C','D'];
+
+function permToKey(p){
+  for (var k=0;k<D4keys.length;k++){
+    var key = D4keys[k];
+    if (D4[key].every(function(v,i){return v===p[i];})) return key;
+  }
+  return 'r0';
+}
+/* Zusammensetzung: erst a, dann b  ->  c[i] = a[b[i]]  (Konvention von group.html) */
+function composeKeys(a,b){
+  var pa = D4[a], pb = D4[b];
+  var c = new Array(4);
+  for (var i=0;i<4;i++) c[i] = pa[pb[i]];
+  return permToKey(c);
+}
+
+/* ---- Canvas-Setup ---- */
+var cv = document.getElementById('vizCanvas');
+var ctx = cv.getContext('2d');
+var W = cv.width, H = cv.height;
+var CX = W/2, CY = H/2;
+var S = 78;          // halbe Quadratseite
+var RING = 192;      // Ring-Radius der Standpunkte
+var DOTR = 14;
+
+var current = 'r0';       // aktuell angewendete Symmetrie
+var resultKey = null;     // Ergebnis von a∘b (Hervorhebung)
+var anim = null;
+
+function basePositions(){
+  return [
+    [CX-S, CY-S], [CX+S, CY-S], [CX+S, CY+S], [CX-S, CY+S]
+  ];
+}
+/* Label j sitzt an der Position, an der die Permutation j hat */
+function getPositions(perm){
+  var base = basePositions();
+  var out = [];
+  for (var j=0;j<4;j++){
+    var pos = perm.indexOf(j);
+    out.push(base[pos]);
+  }
+  return out;
+}
+function easeInOut(t){ return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+function dotAngle(i){ return -Math.PI/2 + i*Math.PI/4; }
+
+function drawScene(positions){
+  var bg = cssVar('--canvas-bg');
+  var ink = cssVar('--fg');
+  var dim = cssVar('--muted');
+  var line = cssVar('--border');
+  var accent = cssVar('--accent');
+  var accent2 = cssVar('--accent2');
+  var accent3 = cssVar('--accent3');
+  var accent4 = cssVar('--accent4');
+  var panel = cssVar('--panel');
+  var cornerCols = [accent3, accent2, accent4, accent];
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+
+  var subOn = document.getElementById('subToggle').checked;
+
+  /* Ring der 8 Standpunkte */
+  for (var i=0;i<8;i++){
+    var key = D4keys[i];
+    var a = dotAngle(i);
+    var dx = CX + RING*Math.cos(a);
+    var dy = CY + RING*Math.sin(a);
+    var isCur = (key===current);
+    var isRes = (key===resultKey);
+    var isRot = ROTATIONS.indexOf(key)>=0;
+    var fill, stroke;
+    if (isRes){ fill = accent3; stroke = accent3; }
+    else if (isCur){ fill = accent; stroke = accent; }
+    else if (subOn && isRot){ fill = accent4; stroke = accent4; }
+    else if (subOn && !isRot){ fill = panel; stroke = line; }
+    else { fill = panel; stroke = dim; }
+
+    ctx.beginPath();
+    ctx.arc(dx,dy,DOTR,0,Math.PI*2);
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = isCur||isRes|| (subOn&&isRot) ? 3 : 1.5;
+    ctx.strokeStyle = stroke; ctx.stroke();
+
+    /* Verbindungslinie zum Zentrum für den aktiven Standpunkt */
+    if (isCur){
+      ctx.beginPath();
+      ctx.moveTo(dx,dy); ctx.lineTo(CX,CY);
+      ctx.strokeStyle = accent; ctx.globalAlpha = 0.25; ctx.lineWidth = 2; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.fillStyle = isCur||isRes ? bg : (subOn&&isRot?accent4:dim);
+    ctx.font = '600 11px system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(D4labels[i], dx, dy);
+  }
+
+  /* Quadrat: Ecken in Position-Reihenfolge zeichnen; position p trägt Label = current[p] */
+  ctx.beginPath();
+  for (var p=0;p<4;p++){
+    /* welches Label ist an Position p? D4[current][p] */
+    var lab = D4[current][p];
+    var pt = positions[lab];
+    if (p===0) ctx.moveTo(pt[0],pt[1]); else ctx.lineTo(pt[0],pt[1]);
+  }
+  ctx.closePath();
+  ctx.fillStyle = panel;
+  ctx.globalAlpha = 0.55; ctx.fill(); ctx.globalAlpha = 1;
+  ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.stroke();
+
+  /* Ecken-Kreise + Labels */
+  for (var j=0;j<4;j++){
+    var pt = positions[j];
+    ctx.beginPath();
+    ctx.arc(pt[0],pt[1],17,0,Math.PI*2);
+    ctx.fillStyle = cornerCols[j]; ctx.fill();
+    ctx.fillStyle = '#1a1408';
+    ctx.font = '700 14px system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(cornerLabels[j], pt[0], pt[1]+1);
+  }
+
+  /* Invarianz-Hinweis oben links */
+  ctx.fillStyle = dim;
+  ctx.font = 'italic 12px system-ui,sans-serif';
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  ctx.fillText('Invariante: die Form bleibt ein Quadrat', 14, 20);
+  ctx.fillText('Permutiert: die Labels A–D (die „Tonart“)', 14, 36);
+}
+
+function draw(){
+  drawScene(getPositions(D4[current]));
+}
+
+function animateTo(targetKey, onDone){
+  var from = getPositions(D4[current]);
+  var to = getPositions(D4[targetKey]);
+  if (anim) cancelAnimationFrame(anim);
+  var p = 0;
+  var step = function(){
+    p += 0.05;
+    if (p>=1){
+      p = 1;
+      drawScene(to);
+      current = targetKey;
+      if (onDone) onDone();
+      return;
+    }
+    var t = easeInOut(p);
+    var pos = to.map(function(tp,i){
+      return [ from[i][0]+(tp[0]-from[i][0])*t, from[i][1]+(tp[1]-from[i][1])*t ];
+    });
+    drawScene(pos);
+    anim = requestAnimationFrame(step);
+  };
+  anim = requestAnimationFrame(step);
+}
+
+function applySym(key, msg){
+  resultKey = null;
+  updateStatus(msg || ('Standpunkt angewendet: ' + D4labels[D4keys.indexOf(key)] +
+    '  →  Ecken: [' + D4[key].map(function(c){return cornerLabels[c];}).join(', ') + ']'));
+  animateTo(key, function(){ markActive(key); });
+}
+function markActive(key){
+  var btns = document.querySelectorAll('#symBtns button');
+  btns.forEach(function(b){ b.classList.toggle('active', b.dataset.k===key); });
+}
+function updateStatus(t){ document.getElementById('vizStatus').textContent = t; }
+
+function doCompose(){
+  var a = document.getElementById('selA').value;
+  var b = document.getElementById('selB').value;
+  var c = composeKeys(a,b);
+  resultKey = c;
+  updateStatus(D4labels[D4keys.indexOf(a)] + ' ∘ ' + D4labels[D4keys.indexOf(b)] +
+    ' = ' + D4labels[D4keys.indexOf(c)] +
+    '   (erst ' + D4labels[D4keys.indexOf(a)] + ', dann ' + D4labels[D4keys.indexOf(b)] +
+    ')  —  das Verklebungsgesetz: zwei Standpunkte verkleben sich zu einem.');
+  markActive(null);
+  animateTo(a, function(){
+    animateTo(c, function(){ markActive(c); });
+  });
+}
+
+/* ---- UI aufbauen ---- */
+(function buildUI(){
+  var box = document.getElementById('symBtns');
+  D4keys.forEach(function(key){
+    var b = document.createElement('button');
+    b.textContent = D4labels[D4keys.indexOf(key)];
+    b.dataset.k = key;
+    if (key==='r0') b.classList.add('active');
+    b.onclick = function(){ applySym(key); };
+    box.appendChild(b);
+  });
+  var selA = document.getElementById('selA');
+  var selB = document.getElementById('selB');
+  D4keys.forEach(function(key){
+    var lab = D4labels[D4keys.indexOf(key)];
+    var o1 = document.createElement('option'); o1.value=key; o1.textContent=lab; selA.appendChild(o1);
+    var o2 = document.createElement('option'); o2.value=key; o2.textContent=lab; selB.appendChild(o2);
+  });
+  selA.value = 'r1'; selB.value = 'r1';
+})();
+
+draw();
+</script>
+</body>
+</html>

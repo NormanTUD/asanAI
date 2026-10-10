@@ -1,0 +1,16 @@
+{
+  "no": "042",
+  "a": "abstract.html",
+  "b": "categorytheorie.html",
+  "a_title": "Abstrakte Strukturen – Visuell Erforschen",
+  "b_title": "Category Theory — The Algebra of Everything",
+  "combined_theme": "identitaet-als-relation",
+  "one_line": "Identität ist konstitutiv relational: die Leere ist der Raum aller Relationen, der Schnitt zeichnet die Pfeile, und Yoneda bestimmt das Objekt vollständig aus ihnen.",
+  "contradictions": [
+    "Totale Bestimmtheit (B/Yoneda: ein Objekt ist 'completely determined' durch seine Pfeile, nichts bleibt offen) vs. reines Potenzial (A/Panel Leere: das Abstrakteste ist das Unspezifizierbare, 'das Nichts, das alles enthält').",
+    "Gegründeter Monismus (A: 'Schnitt in die Einheit', Spencer-Brown 'eine Unterscheidung erzeugt zwei Seiten' — ein vor-strukturelles Eins als Grund) vs. unbegründete Struktur (B: 'objects have no internal structure', nur Axiome, keine Vor-Einheit).",
+    "Substanz+Relation (A: konkrete Dinge/Boids werden gezeichnet und bewegen sich, dann in Relation gesetzt — Substanz primär) vs. reine Relation (B/Yoneda-Play: 'Remove the Object', die Relationen bestimmen es trotzdem — Substanz entfällt)."
+  ],
+  "resolution": "Kein harter Widerspruch, sondern Ebenen desselben Vorgangs: die 'Leere' (A) ist der Meta-Raum aller Kategorien (Potenzial), der 'Schnitt' (A) wählt eine konkrete Struktur (gezeichnete Pfeile), und die fixierte Kategorie determiniert das Objekt voll (Yoneda, B). A beschreibt auf der Meta-Ebene und bei konkreter Substanz; B innerhalb einer gewählten Struktur und in der Idealgrenze reiner Relation. 'Beobachtung/Kollaps' (A) IST das Fixieren der Relationen (B); Free⊣Forgetful (B) IST A's Unterscheidung/Verschmelzung. Fused: Potenziale→Schnitt→Bestimmtheit = Raum aller Kategorien→Pfeile→Yoneda; der Verständnisprozess ist der Übergang von Substanzsprache zu Pfeilsprache.",
+  "viz": "Interaktiver 'Yoneda-Kollaps' auf Canvas: Objekt A im Zentrum, umgeben von Satteliten X..U, deren Hom-Pfeile per Regler 'Beobachtung/Strukturierung' aus dem Potenzial (gestrichelte Geisterpfeile = die Leere) in fixierte helle Pfeile kollabieren; A kristallisiert aus dem Nichts, die Leere-Glow verblasst. Button 'Objekt A entfernen (Yoneda)' zeigt, dass die Pfeile A trotzdem bestimmen. Themenreaktiv (light/dark via CSS-Variablen), inline-Daten, keine Netzwerkzugriffe, keine Konsolenfehler."
+}

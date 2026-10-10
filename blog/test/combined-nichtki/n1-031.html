@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Garbentheorie ✕ Modelltheorie — Verklebung &amp; Modellerfüllung</title>
+<style>
+  :root {
+    --bg: #faf9f4;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e2e8f0;
+    --accent: #9a3412;   /* A — Garbe */
+    --accent2: #4338ca;  /* B — Modelltheorie */
+    --ok: #16a34a;
+    --bad: #dc2626;
+    --warn: #b45309;
+    --overlap: #d97706;
+    --u: #9a3412;
+    --v: #4338ca;
+    --global: #7c3aed;
+    --canvas-bg: #fbfaf6;
+    --code-bg: #eef2f7;
+    --shadow: 0 2px 14px rgba(15,23,42,.08);
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --accent: #fca5a5;
+    --accent2: #a5b4fc;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --overlap: #fbbf24;
+    --u: #fca5a5;
+    --v: #a5b4fc;
+    --global: #c4b5fd;
+    --canvas-bg: #0b1220;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  article { max-width: 820px; margin: 0 auto; padding: 40px 22px 80px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.05em; line-height: 1.2; margin: 0 0 6px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0 0 4px; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle {
+    position: absolute; top: 0; right: 0;
+    background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px;
+    padding: 6px 14px; cursor: pointer; font-size: .85em;
+  }
+  .theme-toggle:hover { border-color: var(--accent2); }
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  nav.toc a { font-size: .82em; color: var(--muted); text-decoration: none; border: 1px solid var(--card-border); border-radius: 14px; padding: 3px 10px; }
+  nav.toc a:hover { color: var(--fg); border-color: var(--accent2); }
+  section { margin-top: 38px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  section#aufloesung h2, section#visualisierung h2 { color: var(--global); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 8px; font-size: 1.08em; color: var(--fg); }
+  code, .math { font-family: "SFMono-Regular", Consolas, "Fira Code", monospace; background: var(--code-bg); color: var(--fg); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92em; }
+  th, td { border: 1px solid var(--card-border); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center; }
+  .ctl { background: var(--code-bg); color: var(--fg); border: 1px solid var(--card-border); border-radius: 24px; padding: 8px 16px; cursor: pointer; font-size: .92em; font-weight: 600; }
+  .ctl:hover { border-color: var(--accent2); }
+  canvas { display: block; width: 100%; height: 480px; border-radius: 10px; border: 1px solid var(--card-border); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+  .chip { padding: 6px 12px; border-radius: 8px; font-size: .88em; font-weight: 700; border: 1px solid var(--card-border); }
+  .chip-ok { color: var(--ok); border-color: var(--ok); }
+  .chip-bad { color: var(--bad); border-color: var(--bad); }
+  .verdict { margin-top: 12px; padding: 12px 15px; border-radius: 10px; font-weight: 600; border-left: 5px solid var(--muted); background: var(--code-bg); }
+  .v-ok { border-left-color: var(--ok); color: var(--ok); }
+  .v-bad { border-left-color: var(--bad); color: var(--bad); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85em; color: var(--muted); margin-top: 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  footer { margin-top: 40px; color: var(--muted); font-size: .85em; text-align: center; border-top: 1px solid var(--card-border); padding-top: 16px; }
+  a { color: var(--accent2); }
+</style>
+</head>
+<body>
+<article>
+
+<header>
+  <h1>Verklebung trifft Modellerfüllung</h1>
+  <p class="fusion-line">Fusion aus: <b>garben_zug.html</b> ✕ <b>modelltheorie.html</b></p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+  <button class="theme-toggle" id="themeBtn" type="button">🌗 Theme</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>
+    Auf den ersten Blick lehren die beiden Papiere fern voneinander liegende Mathematik:
+    <span class="tagA">A (Garbentheorie)</span> baut ein <em>topologisch-geometrisches</em> Bild —
+    einen vorbeifahrenden Zug, zerlegt in Keime, Halme, Schnitte, Prägarbe und Garbe — während
+    <span class="tagB">B (Modelltheorie)</span> ein <em>logisch-sprachliches</em> Bild zeichnet:
+    Regeln (Axiome) und die Frage, ob es eine „Welt“ (Struktur) gibt, in der sie alle gleichzeitig wahr sind.
+    Beide antworten aber auf <strong>dieselbe Grundfrage</strong>:
+    <em>Wann fassen viele lokale, getrennt gegebene Stücke sich zu genau einem konsistenten Ganzen zusammen?</em>
+  </p>
+  <p>
+    In A ist ein lokales Stück ein <strong>Schnitt</strong> <code class="math">s ∈ 𝓕(U)</strong> über einer offenen Menge
+    <code class="math">U</code> im Basisraum (der Zeit). In B ist ein lokales Stück eine <strong>Formel</strong> über einem
+    Variablenkontext. „Kompatibel“ heißt in A: die Schnitte stimmen auf der Überlappung überein
+    (<code class="math">sᵤ|_{U∩V} = sᵥ|_{U∩V}</code>); in B: die Aussagen stimmen auf ihren
+    <em>gemeinsamen Variablen</em> überein und sind gemeinsam wahr. Das verklebte / erfüllte Ganze ist in A der
+    <strong>eindeutige globale Schnitt</strong> („DER Zug“), in B das <strong>Modell</strong> <code class="math">𝒜 ⊨ T</code>.
+  </p>
+  <p>
+    Die einende Position der Fusion lautet daher:
+    <strong>Ein Modell einer Theorie <code class="math">T</code> ist die globale Sektion der von
+    <code class="math">T</code> definierten „Constraint-Garbe“. Verklebung ist Modellerfüllung.</strong>
+    Beide Theorien sind derselbe Verklebungs-Mechanismus auf unterschiedlichen Basen: A’s Basis ist ein
+    <em>topologischer Raum</em> (Umgebungen von Punkten), B’s Basis ist der „Raum“ der
+    <em>Variablenzuordnungen / Diagramme</em>. Die Topologie erzwinge die Einzigartigkeit; die Logik garantie die Existenz.
+  </p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere sind keine direkte Negation voneinander — sie sind komplementäre Seiten eines Mechanismus.
+     Doch an drei Stellen treffen <em>inkompatible Thesen</em> aufeinander:</p>
+
+  <div class="card">
+    <h3>W1 · Einzigartigkeit des Ganzen: <span class="tagA">„ein einziges Ganzes“</span> vs. <span class="tagB">„viele Modelle“</span></h3>
+    <p>
+      <span class="tagA">A</span> behauptet im Verklebungs-/Lokalitätsaxiom ein
+      <strong>eindeutiges</strong> globales Objekt: „<code class="math">∃! s</code>“, „DER Zug — <em>kein anderer, keiner mehr!</em>“
+      Die kompatiblen lokalen Stücke bestimmen das Ganze <em>eins zu eins</em>.
+    </p>
+    <p>
+      <span class="tagB">B</span> zeigt am Beispiel der <em>dichten Ordnung</em> das Gegenteil: Dieselben Axiome
+      (Trichotomie, Antisymmetrie, Transitivität, Offenheit, Dichtheit) werden von
+      <strong>ℚ erfüllt und ebenso von ℝ</strong> — die Theorie wählt also <em>kein</em> eindeutiges Modell aus,
+      während ℕ und ℤ sie verletzen. <strong>Ein Satz lokaler Regeln ⇒ viele globale Welten.</strong>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>W2 · Richtung des Aufbaus: <span class="tagA">bottom-up aus Daten</span> vs. <span class="tagB">top-down gegen Regeln</span></h3>
+    <p>
+      <span class="tagA">A</span> konstruiert das Ganze <em>von unten nach oben</em> aus <strong>Daten</strong>
+      (Licht-, Ton-, Vibrationsschnitte), die durch <em>Restriktion</em> lokal gemacht und dann <em>verklebt</em> werden:
+      das Ganze wird aus Stücken <strong>erzeugt</strong>.
+    </p>
+    <p>
+      <span class="tagB">B</span> geht <em>von oben nach unten</em>: Eine <strong>Kandidat-Struktur</strong>
+      (Universum + Relationen) wird an den <strong>Axiomen</strong> <strong>geprüft</strong>
+      (<code class="math">𝒜 ⊨ φ</code>). Das Ganze wird nicht aus Stücken gebaut, sondern ein vorgelegtes Ganzes
+      gegen die Stücke <strong>validiert</strong>.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>W3 · Was „lokal“ heißt: <span class="tagA">topologisch (Umgebung)</span> vs. <span class="tagB">logisch (Formel/Atom)</span></h3>
+    <p>
+      <span class="tagA">A</span>: „lokal“ = <em>offene Umgebung eines Punktes im Raum ℝ</em>; das globale Objekt wird
+      aus infinitesimalen <strong>Keimen</strong> rekonstruiert (direkter Limes <code class="math">𝓕ₓ = lim→_{U∋x} 𝓕(U)</code>),
+      es gibt echte Überlappungen <code class="math">U∩V</code> und topologisches Verkleben.
+    </p>
+    <p>
+      <span class="tagB">B</span>: „lokal“ = <em>eine Formel / ein Atom über einem Tuplel</em>. Es gibt
+      <strong>keine</strong> Umgebungen, keine räumliche Überlappung, kein topologisches Verkleben —
+      nur die gemeinsame <em>Wahrheit</em> in einer diskreten Menge von Individuen.
+      Das Wort „lokal“ meint in beiden Papiern Unvereinbares.
+    </p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card">
+    <h3>Auflösung zu W1 — Existenz vs. Einzigartigkeit</h3>
+    <p>
+      Garbentheorie hat <strong>zwei</strong> Axiome, die A zusammenfasst:
+      <em>Lokalität</em> (Einzigartigkeit) und <em>Verklebung</em> (Existenz). Die mit B geteilte Kernaussage ist
+      die <strong>Existenz</strong>: „konsistente lokale Stücke ⇒ kohärentes Ganzes“ ↔ „die Axiome sind gemeinsam
+      erfüllbar ⇒ es gibt ein Modell“. Die <strong>Einzigartigkeit</strong> ist dagegen eine <em>Zusatz-Eigenschaft</em>.
+      In der Logik heißt sie <em>Kategorialität</em>: Eine Theorie ist kategoriell (bzw. vollständig) genau dann,
+      wenn es bis auf Isomorphie <strong>genau ein</strong> Modell gibt. Der Zug von A ist der
+      <em>kategorielle Sonderfall</em>; „viele Modelle“ bei B ist der <em>allgemeine Fall</em>.
+    </p>
+    <p>
+      <strong>Fassung:</strong> Existenz ist das Gemeinsame; Einzigartigkeit wird in A von der <em>Topologie</em> erzwungen
+      (die offene Überdeckung zwingt zur Eindeutigkeit), in B nur unter einer <em>Extra-Voraussetzung</em> (Kategorialität).
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Auflösung zu W2 — zwei Seiten desselben Prädikats</h3>
+    <p>
+      Die beiden Richtungen sind <strong>dual</strong>. Ein Garben-Schnitt ist eine <em>globale Datenzuordnung,
+      die die Verklebungs-Bedingungen erfüllt</em>; ein Modell ist eine <em>globale Struktur, die die logischen
+      Bedingungen erfüllt</em>. Man liest die Axiome als eine Garbe „lokaler erfüllender Zuordnungen“, dann ist
+      ein <strong>Modell genau ein globales Element (Schnitt)</strong> dieser Garbe.
+    </p>
+    <p>
+      <strong>Fassung:</strong> <em>Satisfaction = Verkleben lokaler Wahrheit.</em> Verklebung (A) prüft, ob lokale
+      Daten auf der Überlappung übereinstimmen — genau das ist das Gleichzeitig-Wahrsein (B).
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Auflösung zu W3 — „lokal“ über Kontexte vereinheitlichen</h3>
+    <p>
+      A’s offene Mengen generalisieren sich zu B’s <strong>Variablenkontexten / Teildiagrammen</em>.
+      Eine Formel über ein Tuplel ist ein „Schnitt über ihrem Diagramm“; zwei Formeln sind kompatibel genau dann,
+      wenn sie auf den <strong>gemeinsamen Variablen</strong> übereinstimmen — das ist exakt das Pendant zur
+      Gleichheit auf <code class="math">U∩V</code>. Damit wird „lokal“ zu: <em>„bezogen auf einen Kontext
+      (offene Menge oder Variablenmenge)“</em>.
+    </p>
+    <p>
+      <strong>Fusionierte Schlussfolgerung:</strong> Beide Papiere sind dieselbe <em>Lokal-zu-Global-Kohärenz</em>.
+      Der einzige echte Unterschied ist die Art der Basis — topologisch (A) oder kontextuell-logisch (B) — und ob
+      die Basis die Einzigartigkeit des verklebten Ganzen erzwingt (ja bei A, nur bei Kategorialität bei B).
+    </p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <p>Das gemeinsame Schema — dieselben Rollen, zwei Füllungen:</p>
+  <table>
+    <tr><th>Rolle im Verklebungs-Mechanismus</th><th><span class="tagA">A · Garbe</span></th><th><span class="tagB">B · Modelltheorie</span></th></tr>
+    <tr><td class="kv">Basis / „Welt“</td><td>topologischer Raum <code class="math">X = ℝ</code> (Zeit)</td><td>Universum <code class="math">U</code> + Raum der Variablenkontexte/Diagramme</td></tr>
+    <tr><td class="kv">lokales Stück</td><td>Schnitt <code class="math">s ∈ 𝓕(U)</code> über offener <code class="math">U</code></td><td>Formel <code class="math">φ</code> über Kontext <code class="math">Γ</code> (Atom-Tupel)</td></tr>
+    <tr><td class="kv">Daten-Art des Stücks</td><td>Werte (Licht, Ton, Vibration, Druck, Temperatur)</td><td>Wahrheitswerte / Atome der Struktur</td></tr>
+    <tr><td class="kv">Kompatibilität</td><td><code class="math">sᵤ|_{U∩V} = sᵥ|_{U∩V}</code></td><td>Übereinstimmung auf gemeinsamen Variablen, gemeinsame Wahrheit</td></tr>
+    <tr><td class="kv">globales Objekt</td><td>verklebte Sektion <code class="math">s ∈ 𝓕(U∪V)</code> („DER Zug“)</td><td>Modell <code class="math">𝒜</code> mit <code class="math">𝒜 ⊨ T</code></td></tr>
+    <tr><td class="kv">Existenz</td><td>Verklebungsaxiom (garantiert)</td><td>gemeinsame Erfüllbarkeit (K. Gödel: Kompaktheit/ Vollständigkeit)</td></tr>
+    <tr><td class="kv">Einzigartigkeit</td><td>Lokalitätsaxiom (von der Topologie erzwungen)</td><td>nur bei <em>Kategorialität / Vollständigkeit</em> der Theorie</td></tr>
+  </table>
+
+  <div class="card">
+    <h3>Die Mathematik von A — Garben am Zug</h3>
+    <ul>
+      <li><strong>Halm</strong> an <code class="math">x</code>: direkter Limes über Umgebungen,
+          <code class="math">𝓕ₓ = lim→_{U∋x} 𝓕(U)</code>; ein <em>Keim</em> <code class="math">[s]ₓ</code> ist eine
+          Äquivalenzklasse von Schnitten, die auf einer beliebig kleinen Umgebung übereinstimmen.</li>
+      <li><strong>Restriktion</strong> <code class="math">ρ^U_V : 𝓕(U) → 𝓕(V)</code> für <code class="math">V ⊆ U</code>
+          mit <code class="math">ρ^U_U = id</code> und <code class="math">ρ^V_W ∘ ρ^U_V = ρ^U_W</code>.</li>
+      <li><strong>Prägarbe</strong>: kontravarianter Funktor <code class="math">𝓕 : Op(X)^{op} → Ab</code>.</li>
+      <li><strong>Garben-Bedingung</strong> (Equalizer für jede offene Überdeckung):
+          <code class="math">𝓕(U) → ∏_i 𝓕(U_i) ⇉ ∏_{i,j} 𝓕(U_i ∩ U_j)</code>.</li>
+      <li><strong>Lokalität:</strong> stimmen <code class="math">s,t</code> auf allen <code class="math">U_i</code> überein, so <code class="math">s=t</code>.</li>
+      <li><strong>Verklebung:</strong> passen <code class="math">s_i ∈ 𝓕(U_i)</code> auf allen Schnitten zusammen, so existiert <strong>eindeutig</strong> <code class="math">s ∈ 𝓕(U)</code>.</li>
+      <li><strong>Multi-Modal-Halm</strong> als Produkt-Garbe:
+          <code class="math">𝓕ₓ = 𝓕ᵛⁱˢₓ ⊕ 𝓕ᵃᵘᵈₓ ⊕ 𝓕ᵛⁱᵇₓ ⊕ 𝓕ᵖʳˢₓ ⊕ 𝓕ᵗᵐᵖₓ</code>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Die Mathematik von B — Modelle am Beispiel dichter Ordnung</h3>
+    <ul>
+      <li><strong>Signatur</strong> <code class="math">σ = (R, F, K, Ar)</code>: Relationssymbole, Funktionssymbole,
+          Konstantensymbole, Stelligkeit. Bauplan, der festlegt, <em>welche</em> Symbole existieren.</li>
+      <li><strong>Struktur</strong> <code class="math">𝒜 = (U, ·)</code>: Universum + konkrete Interpretation der Symbole.</li>
+      <li><strong>Erfüllung</strong>: <code class="math">𝒜 ⊨ φ</code> — „φ ist wahr in 𝒜“;
+          <code class="math">𝒜 ⊨ T</code> — „𝒜 ist ein Modell der Theorie T“.</li>
+      <li><strong>Dichte Ordnung</strong> (Axiome): Trichotomie, Antisymmetrie, Transitivität, Offenheit
+          (<code class="math">∀x ∃y,z: y&lt;x&lt;z</code>), Dichtheit
+          (<code class="math">∀x,y: x&lt;y → ∃z: x&lt;z&lt;y</code>).</li>
+      <li><strong>Modell-Vielfalt:</strong> <code class="math">ℚ ⊨ T</code> und <code class="math">ℝ ⊨ T</code>
+          (viele Modelle); <code class="math">ℤ ⊭ T</code>, <code class="math">ℕ ⊭ T</code> (Dichtheit verletzt).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Die fusionierte Aussage</h3>
+    <p>
+      Man definiert zu einer Theorie <code class="math">T</code> eine <strong>Constraint-Garbe</strong>
+      <code class="math">𝓢_T</code>: Sie ordnet jedem Kontext (Variablenmenge / Teildiagramm) die Menge der
+      <em>lokal erfüllenden, untereinander kompatiblen</em> Zuordnungen zu, und Restriktion ist die Einschränkung
+      auf Teil-Kontexte. Die <strong>Globale Sektion</strong> von <code class="math">𝓢_T</code> — also eine
+      Zuordnung, die auf <em>allen</em> Kontexten definiert ist und überall zu ihren Einschränkungen kompatibel ist —
+      ist exakt ein <strong>Modell</strong> von <code class="math">T</code>.
+    </p>
+    <p>
+      Damit wird die scheinbare Kluft überbrückt: <em>Verklebung (A)</em> und <em>Modellerfüllung (B)</em> sind
+      ein und dieselbe Operation, „lokale Stücke zusammenpassen lassen“, auf zwei Basen. Die Topologie von A ist die
+      besonders <em>eindeutigkeitserzeugende</em> Instanz dieses Mechanismus; die Logik von B ist die
+      <em>kontextuelle</em> Instanz, in der Einzigartigkeit zur Zusatzbedingung (Kategorialität) wird.
+    </p>
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung</h2>
+  <p>Zwei überlappende Kontexte <span class="tagA">U</span> und <span class="tagB">V</span> tragen je ein lokales Stück
+     (die Wellenform). Auf der Überlappung <code class="math">U∩V</code> (= gemeinsame Variablen) müssen sie
+     übereinstimmen. <strong>Verkleben</strong> sie die Stücke, entsteht der eindeutige globale Schnitt („DER Zug“);
+     <strong>entkoppeln</strong> sie sie, scheitert die Verklebung — und rechts siehst du, dass dieselben Regeln
+     trotzdem mehrere Modelle zulassen.</p>
+
+  <div class="viz-card">
+    <div class="ctl-row">
+      <button class="ctl" id="glueBtn" type="button">✗ Konflikt auf U∩V erzeugen</button>
+      <span style="color:var(--muted); font-size:.9em;" id="glueHint">Top-View: lokale Stücke auf einer gemeinsamen Basis</span>
+    </div>
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--u)"></span>U — lokales Stück sᵤ</span>
+      <span><span class="sw" style="background:var(--v)"></span>V — lokales Stück sᵥ</span>
+      <span><span class="sw" style="background:var(--overlap)"></span>U∩V (gemeinsame Variablen)</span>
+      <span><span class="sw" style="background:var(--global)"></span>globale Sektion</span>
+    </div>
+    <div class="verdict" id="vizStatus"></div>
+
+    <h3 style="margin-top:22px; color:var(--fg);">Die Kehrseite (B): dieselben Regeln ⇒ viele Modelle</h3>
+    <p style="color:var(--muted); font-size:.92em;">Theorie <code class="math">T</code> = dichte Ordnung (5 Axiome). Axiome gleichzeitig wahr in …</p>
+    <div class="chip-row">
+      <span class="chip chip-ok">ℚ ⊨ T ✓</span>
+      <span class="chip chip-ok">ℝ ⊨ T ✓</span>
+      <span class="chip chip-bad">ℕ ⊭ T ✗ (Dichtheit)</span>
+      <span class="chip chip-bad">ℤ ⊭ T ✗ (Dichtheit)</span>
+    </div>
+    <div class="verdict v-warn" style="border-left-color:var(--warn); color:var(--warn);">
+      A (Garbe): ein verklebtes Ganzes. B (Logik): mehrere Modelle derselben Theorie.
+      Gefasst: Ein Modell = globale Sektion der Constraint-Garbe; Einzigartigkeit ⇔ Kategorialität.
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li>
+      <span class="tagA">A · </span>
+      <a href="../garben_zug.html">garben_zug.html</a> — „Die Garbentheorie eines vorbeifahrenden Zuges“.
+      Interaktive Einführung in die Garbentheorie am Beispiel eines vorbeifahrenden Zuges:
+      Keim → Halm → Schnitt → Prägarbe → Garbe, mit Verklebungs- und Lokalitätsaxiom, Multi-Modal-Halm und Doppler-Audio.
+    </li>
+    <li>
+      <span class="tagB">B · </span>
+      <a href="../modelltheorie.html">modelltheorie.html</a> — „Modelltheorie – Interaktiv erklärt“.
+      Interaktive Einführung in die Modelltheorie: Universum, Relationen, Signatur, Struktur und die
+      Erfüllbarkeitsrelation <code class="math">𝒜 ⊨ φ</code>, am Beispiel der dichten Ordnung (ℚ vs. ℕ/ℤ) mit Quiz.
+    </li>
+  </ul>
+</section>
+
+<footer>
+  Fusion (nicht-k.i.-Track), Runde 1, Paar 031 · Garbentheorie ✕ Modelltheorie · Standalone, keine Netz-Daten.
+</footer>
+
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var agree = true;
+  var glueBtn = document.getElementById('glueBtn');
+  var vizStatus = document.getElementById('vizStatus');
+  var themeBtn = document.getElementById('themeBtn');
+
+  function cssVar(n) {
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  }
+
+  function draw() {
+    var rect = canvas.getBoundingClientRect();
+    if (rect.width < 4 || rect.height < 4) { return; }
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var w = rect.width, h = rect.height;
+
+    var fg = cssVar('--fg'), muted = cssVar('--muted'),
+        u = cssVar('--u'), v = cssVar('--v'),
+        overlap = cssVar('--overlap'), globalC = cssVar('--global'),
+        ok = cssVar('--ok'), bad = cssVar('--bad'),
+        canvasBg = cssVar('--canvas-bg');
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = canvasBg;
+    ctx.fillRect(0, 0, w, h);
+
+    var x0 = 70, x1 = w - 34, span = x1 - x0;
+    function X(t) { return x0 + t * span; }
+    var yBase = h * 0.79;
+    var uA = 0.15, uB = 0.55, vA = 0.45, vB = 0.85;
+    var iA = Math.max(uA, vA), iB = Math.min(uB, vB);
+
+    // base line + ticks
+    ctx.strokeStyle = muted; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0, yBase); ctx.lineTo(x1, yBase); ctx.stroke();
+    ctx.font = '11px monospace'; ctx.fillStyle = muted; ctx.textAlign = 'center';
+    for (var i = 0; i <= 10; i++) {
+      var tx = X(i / 10);
+      ctx.beginPath(); ctx.moveTo(tx, yBase - 4); ctx.lineTo(tx, yBase + 4); ctx.stroke();
+    }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = muted; ctx.font = '12px sans-serif';
+    ctx.fillText('Basisraum = Variablenkontexte / Diagramme  (≈ Zeit ℝ)', x0, yBase + 24);
+
+    // overlap vertical band (common variables)
+    var laneUtop = h * 0.12, laneUbot = h * 0.30;
+    var laneVtop = h * 0.40, laneVbot = h * 0.57;
+    ctx.save();
+    ctx.globalAlpha = 0.16; ctx.fillStyle = overlap;
+    ctx.fillRect(X(iA), laneUtop, X(iB) - X(iA), yBase - laneUtop);
+    ctx.restore();
+    ctx.textAlign = 'center'; ctx.fillStyle = overlap; ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('U ∩ V  (gemeinsame Variablen)', (X(iA) + X(iB)) / 2, h * 0.09);
+
+    function lane(top, bot, xFrom, xTo, color, sign, label, labelDy) {
+      // band
+      ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = color;
+      ctx.fillRect(X(xFrom), top, X(xTo) - X(xFrom), bot - top); ctx.restore();
+      ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+      ctx.strokeRect(X(xFrom), top, X(xTo) - X(xFrom), bot - top);
+      // waveform
+      var mid = (top + bot) / 2, amp = (bot - top) * 0.30;
+      ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.beginPath();
+      var first = true, px, t, y;
+      for (px = X(xFrom); px <= X(xTo); px += 2) {
+        t = (px - x0) / span;
+        y = mid - amp * Math.sin(t * Math.PI * 4) * sign;
+        if (first) { ctx.moveTo(px, y); first = false; } else { ctx.lineTo(px, y); }
+      }
+      ctx.stroke();
+      // label
+      ctx.textAlign = 'left'; ctx.fillStyle = color; ctx.font = 'bold 13px sans-serif';
+      ctx.fillText(label, X(xFrom) + 6, top - labelDy);
+    }
+    lane(laneUtop, laneUbot, uA, uB, u, 1, 'U — lokales Stück  sᵤ', 8);
+    lane(laneVtop, laneVbot, vA, vB, v, agree ? 1 : -1, 'V — lokales Stück  sᵥ', 8);
+
+    // overlap marker (✓ / ✗)
+    ctx.textAlign = 'center';
+    var markX = (X(iA) + X(iB)) / 2, markY = yBase - 10;
+    ctx.font = 'bold 20px sans-serif';
+    if (agree) { ctx.fillStyle = ok; ctx.fillText('✓', markX, markY); }
+    else { ctx.fillStyle = bad; ctx.fillText('✗', markX, markY); }
+
+    // global band
+    var gTop = h * 0.86, gBot = h * 0.94;
+    var gL = Math.min(uA, vA), gR = Math.max(uB, vB);
+    if (agree) {
+      ctx.save(); ctx.shadowColor = globalC; ctx.shadowBlur = 16;
+      ctx.fillStyle = globalC; ctx.globalAlpha = 0.85;
+      ctx.fillRect(X(gL), gTop, X(gR) - X(gL), gBot - gTop);
+      ctx.restore();
+      ctx.fillStyle = globalC; ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('✓ eindeutige globale Sektion  s ∈ 𝓕(U∪V)  —  DER ZUG', (X(gL) + X(gR)) / 2, gBot - 8);
+    } else {
+      ctx.strokeStyle = bad; ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
+      ctx.strokeRect(X(gL), gTop, X(gR) - X(gL), gBot - gTop);
+      ctx.setLineDash([]);
+      ctx.fillStyle = bad; ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('✗ keine globale Sektion — Konflikt auf U∩V', (X(gL) + X(gR)) / 2, gBot - 8);
+    }
+  }
+
+  function updateStatus() {
+    if (agree) {
+      vizStatus.className = 'verdict v-ok';
+      vizStatus.innerHTML = 'Kompatibel auf U∩V  ⇒  Verklebung gelingt: es existiert <b>eindeutig</b> ein globales Stück (A). ' +
+        'Gleichzeitig zeigen die Axiome rechts: dieselben Regeln haben <b>mehrere</b> Modelle (B).';
+    } else {
+      vizStatus.className = 'verdict v-bad';
+      vizStatus.innerHTML = 'Inkompatibel auf U∩V  ⇒  Verklebung scheitert: <b>kein</b> globales Stück (A). ' +
+        'Garben verlangen lokale Übereinstimmung; die Logik verlangt nur gemeinsame Wahrheit.';
+    }
+    glueBtn.textContent = agree ? '✗ Konflikt auf U∩V erzeugen' : '🧩 Auf U∩V vereinbaren';
+  }
+
+  glueBtn.addEventListener('click', function () { agree = !agree; updateStatus(); draw(); });
+  themeBtn.addEventListener('click', function () {
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  window.addEventListener('resize', draw);
+
+  updateStatus();
+  draw();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(draw).catch(function () {}); }
+})();
+</script>
+</body>
+</html>

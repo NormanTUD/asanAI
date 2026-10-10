@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluss &amp; Nerven – Die eine Weltordnung in zwei Stimmen (Fusion)</title>
+<style>
+  :root{
+    --bg:#FAF8F1;
+    --bg-soft:#f1ede2;
+    --text:#20242e;
+    --muted:#5c6470;
+    --accent:#e0521f;
+    --accent2:#b98800;
+    --card-bg:rgba(20,25,35,0.035);
+    --card-border:rgba(20,25,35,0.14);
+    --good:#0a7a4a;
+    --bad:#c0392b;
+    --line:rgba(20,25,35,0.16);
+  }
+  html.dark{
+    --bg:#0d1017;
+    --bg-soft:#12161f;
+    --text:#e7e2d6;
+    --muted:#98a0ad;
+    --accent:#ff7a3d;
+    --accent2:#ffd766;
+    --card-bg:rgba(255,255,255,0.04);
+    --card-border:rgba(255,255,255,0.13);
+    --good:#37c98d;
+    --bad:#ff6b6b;
+    --line:rgba(255,255,255,0.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Georgia','Iowan Old Style',serif;
+    line-height:1.75;overflow-x:hidden;
+    transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:34px;}
+  h1{font-size:2.05em;line-height:1.2;color:var(--accent);margin-bottom:10px;}
+  .sub{color:var(--muted);font-style:italic;font-size:1.02em;}
+  .tagline{margin-top:12px;font-size:.92em;color:var(--muted);}
+  .tagline b{color:var(--text);}
+  .theme-btn{
+    position:fixed;top:14px;right:16px;z-index:50;
+    background:var(--card-bg);color:var(--text);
+    border:1px solid var(--card-border);border-radius:20px;
+    padding:7px 14px;cursor:pointer;font-size:.85em;font-family:inherit;
+  }
+  section{margin:0 0 42px;}
+  h2{font-size:1.5em;color:var(--accent2);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  h3{font-size:1.12em;margin:22px 0 8px;color:var(--accent);}
+  p{margin:0 0 14px;}
+  blockquote{
+    border-left:3px solid var(--accent);
+    padding:6px 0 6px 16px;margin:14px 0;color:var(--muted);font-style:italic;
+  }
+  .card{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    border-radius:12px;padding:16px 18px;margin:14px 0;
+  }
+  .card h4{color:var(--accent2);margin:0 0 6px;font-size:1.02em;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+  .a b,.b b{font-weight:bold;}
+  .a .lbl{color:var(--accent);}
+  .b .lbl{color:var(--accent2);}
+  .pill{
+    display:inline-block;font-size:.72em;letter-spacing:.04em;
+    border:1px solid var(--card-border);border-radius:12px;
+    padding:2px 9px;margin-right:6px;color:var(--muted);
+  }
+  .viz-shell{
+    background:var(--bg-soft);border:1px solid var(--card-border);
+    border-radius:14px;padding:16px;margin:14px 0;
+  }
+  canvas#wviz{width:100%;height:380px;display:block;border-radius:10px;background:var(--bg);}
+  .ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;}
+  .ctrl label{font-size:.9em;color:var(--muted);}
+  input[type=range]{
+    flex:1;min-width:160px;-webkit-appearance:none;appearance:none;height:8px;
+    border-radius:4px;outline:none;
+    background:linear-gradient(90deg,var(--accent),var(--bad));
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+    background:var(--accent2);cursor:pointer;border:2px solid var(--bg);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:var(--accent2);
+    cursor:pointer;border:2px solid var(--bg);
+  }
+  .readout{margin-top:14px;}
+  .readout .st{color:var(--accent2);font-weight:bold;font-size:1.05em;}
+  .readout .ds{color:var(--muted);margin-top:4px;font-size:.96em;}
+  .note{font-size:.85em;color:var(--muted);margin-top:10px;}
+  .prov{display:flex;gap:16px;flex-wrap:wrap;}
+  .prov .card{flex:1;min-width:240px;}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:bold;}
+  .prov a:hover{text-decoration:underline;}
+  .prov p{font-size:.92em;color:var(--muted);margin:8px 0 0;}
+  footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.85em;}
+  code{font-family:ui-monospace,monospace;font-size:.9em;background:var(--card-bg);padding:1px 5px;border-radius:4px;}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeToggle" type="button">☀ Hell</button>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Fluss &amp; Nerven</h1>
+    <div class="sub">Fusion aus: heraklit.html ✕ daniel_paul_schreber.html</div>
+    <div class="tagline">
+      <b>Heraklit</b> (~535–475 v. Chr.) liest die Welt als <b>ewiges Feuer</b> und <b>Logos</b>;
+      <b>Daniel Paul Schreber</b> (1842–1911) liest dieselbe Welt als <b>Gottesnerven und Strahlen</b>,
+      die einen Subjekt zwingen. Beide beschreiben eine <b>immanente, sich total verwandelnde Weltordnung</b> —
+      und treffen sich genau an der Frage, wie diese Ordnung einem Menschen <i>begegnet</i>.
+    </div>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>
+      Unter der Oberfläche sind Heraklit und Schreber <b>derselben Überzeugung</b>: Die Realität ist kein
+      statischer Bestand, sondern ein <b>lebendiger Prozess aus sich umwandelnder Substanz mit einem in ihr selbst
+      ruhenden Ordnungsprinzip</b>. Bei Heraklit heißt diese Substanz <em>ewiges Feuer</em>, das „nach Maßen
+      erglimmend und nach Maßen erlöschend“ ist, und das Ordnungsprinzip der <em>Logos</em> — ein Weltgesetz,
+      das „ewig ist“ und alles durchdringt. Bei Schreber heißt dieselbe Substanz <em>Gottesnerven / Strahlen</em> —
+      „etwas der menschlichen Seele Verwandtes“, „unendlich oder ewig“, fähig, „sich umzusetzen in alle möglichen
+      Dinge der erschaffenen Welt“ — und das Ordnungsprinzip die <em>Weltordnung</em>, deren Gesetze den Subjekt
+      regelnd erreichen.
+    </p>
+    <p>
+      Die entscheidende Klammer: In <b>beiden</b> Systemen ist die Weltordnung <i>nicht</i> von außen, sondern
+      <b>immanent</b> — sie ist die Substanz selbst und kein fremder Herrscher über ihr. Heraklit: „Diese
+      Weltordnung hat kein Gott und kein Mensch geschaffen.“ Schreber: „Gott ist von vornherein nur Nerv, nicht
+      Körper“ — also kein Körper, der über der Welt steht, sondern die Substanz, aus der die Welt besteht. Beides
+      sind Varianten derselben These: <b>Ordnung ist keine Hülle über dem Werden, sondern die Form, die das Werden
+      selbst annehmen kann.</b>
+    </p>
+    <p>
+      Der Unterschied liegt nicht im Objekt, sondern im <b>Beziehungsmodus des Subjekts zur Ordnung</b>. Genauso
+      wie das <i>eine</i> Feuer je nachdem, wie man es betrachtet, ein wärmernder Herd oder eine verbrennende
+      Flamme ist, erscheint die eine Weltordnung je nach „Abstimmung“ des Subjekts als befreiende Harmonie oder als
+      erpressende Kompulsion. Die Fusion lautet: <b>Dieselbe Weltordnung — zwei Wahrnehmungspole.</b>
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>
+      Die beiden Texte sprechen über ein und denselben Gegenstand, halten aber über dessen <b>Charakter</b>
+      unvereinbare Thesen fest. Vier konkrete Punkte:
+    </p>
+
+    <div class="card a">
+      <h4><span class="lbl">A (Heraklit)</span> · Die Ordnung ist allen gemein — wer sie sieht, wird frei</h4>
+      <p>
+        Heraklit nennt die Weltvernunft ein Prinzip, das „ewig ist“ und „gemeinsam [ist] allen das Denken“ (Fr. 113).
+        Sie ist <b>anonym, universal und zugänglich</b>: Jeder, der aufwacht und „nach der Natur handelt, auf sie
+        hinhörend“, erkennt sie und wird ruhig („Trockner Glast: weiseste und beste Seele“, Fr. 118). Die meisten
+        dagegen leben „wie Schlafende“ — sie sind nicht unfähig, sondern nur nicht aufgewacht.
+      </p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B (Schreber)</span> · Die Ordnung ist persönlich — sie zwingt genau einen Subjekt</h4>
+      <p>
+        Bei Schreber ist dieselbe Weltordnung kein gemeines Gesetz, sondern ein <b>persönlicher, feindlicher Antrieb</b>,
+        der <i>ihn allein</i> gegen seinen Willen erfasst. Sein „Denkzwang“ besteht darin, dass seine Nerven
+        „von außen her und zwar unaufhörlich ohne jeden Unterlass in Bewegung gesetzt“ werden. Die Freiheit zu
+        denken („das natürliche Recht auf Nichtsdenken“) wird ihm verwehrt. Nicht alle sind gemeint — er ist das
+        auserwählte, markierte Ziel.
+      </p>
+    </div>
+
+    <div class="card a">
+      <h4><span class="lbl">A (Heraklit)</span> · Streit erzeugt die schönste Harmonie</h4>
+      <p>
+        Für Heraklit ist „alles“ durch den „Streit“ entstanden; „aus den verschiedenen Tönen entsteht die schönste
+        Harmonie“. Die Spannung von Bogen und Leier (Fr. 51) ist <b>kreativ und vereinigend</b>: Gegenstrebende
+        Kräfte gehen „auseinanderstrebend ineinander“. Der Gegensatz ist ein Partner, kein Feind.
+      </p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B (Schreber)</span> · Streit erzeugt einen ewigen, nie auflösbaren Krieg</h4>
+      <p>
+        Schreber kennt keinen harmonisierenden Streit, sondern einen <b>doppelten, unendlichen Konflikt</b>: den
+        Kampf zweier Götter (niedere <i>Ariman</i> gegen oberen <i>Ormuzd</i>) und den „Seelenmord“ durch die
+        „geprüfte Seele“ Flechsigs. Dieser Streit erzeugt keine Harmonie, sondern <b>Entmannung, Wunder der
+        Zerstörung und Qual</b> — und löst sich nie auf.
+      </p>
+    </div>
+
+    <div class="card a">
+      <h4><span class="lbl">A (Heraklit)</span> · Wandel ist die Natur — wer ihn annimmt, leidet weniger</h4>
+      <p>
+        „Panta Rhei“ — alles fließt. Veränderung ist <b>kein Unglück, sondern die Struktur der Realität</b>:
+        „Wer das akzeptiert, leidet weniger am Festhalten.“ Der Subjekt ist „ein Prozess, kein Ding“, und das ist
+        befreiend.
+      </p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B (Schreber)</span> · Wandel ist Verletzung — er wird aufgedrängt</h4>
+      <p>
+        Schreber erlebt denselben totalen Wandel — die „Entmannung“, die Verwandlung in ein Weib, die
+        Zerstückelung des Körpers durch Strahlen — als <b>aufgezwungene, widerstrebende Verletzung</b>, der er sich
+        „aus Vernunftgründen gar nichts anderes übrig bleibe, als mich mit dem Gedanken der Verwandlung … zu
+        befreunden“. Hier ist Wandel nicht Befreiung, sondern Einbruch.
+      </p>
+    </div>
+
+    <div class="card a">
+      <h4><span class="lbl">A (Heraklit)</span> · Die Ordnung sieht wie geratewohliges Chaos aus</h4>
+      <p>
+        „Die schönste Weltordnung ist wie ein aufs geratewohl hingeschütteter Kehrichthaufen“ (Fr. 124); „Die Zeit
+        ist ein Knabe, der spielt“ (Fr. 52). Die Ordnung ist <b>absichtslos, spielerisch, anonym</b>.
+      </p>
+    </div>
+    <div class="card b">
+      <h4><span class="lbl">B (Schreber)</span> · Die Ordnung ist ein beabsichtigter, strafender Plan</h4>
+      <p>
+        Für Schreber ist die Weltordnung ein <b>durchgängig beabsichtigter Plan</b> mit Absicht, Geschichte (das
+        „auserwählte Volk“ zieht weiter) und — wahnhaft — Zielrichtung auf den Einzelnen. Hinter dem Schein des
+        Zufalls steht ein Plan, der <i>ihn</i> im Auge hat.
+      </p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>
+      Die Widersprüche fallen weg, sobald man sie nicht als Aussagen über <b>zwei verschiedene Welten</b> liest,
+      sondern als <b>zwei Pole desselben Erlebens einer einzigen Weltordnung</b>. Zu jedem Paar:
+    </p>
+
+    <div class="card">
+      <h4>1. „Allen gemein / frei“ vs. „persönlich / gefangen“</h4>
+      <p>
+        Beide beschreiben ein <i>immanentes</i> Ordnungsprinzip, das auf den Subjekt wirkt. Der Unterschied ist die
+        <b>Empfindsamkeit des Aufnahmesystems</b>. Heraklits „trockene Seele“ ist <i>abgestimmt</i>: sie nimmt die
+        Ordnung als gemeines Gesetz wahr und bleibt souverän. Schrebers „überreizte Nerven“ sind <i>herausgestimmt</i>:
+        dieselbe Ordnung wirkt auf sie als unwiderstehliche, persönliche Anziehung — „die Nerven lebender Menschen
+        besitzen eine solche Anziehungskraft auf die Gottesnerven“. <b>Erkenntnis (A) und Denkzwang (B) sind die
+        gleiche Resonanz bei unterschiedlicher Abstimmung.</b> Wer wach ist, hört das Gesetz; wer überreizt ist,
+        wird von ihm überrollt.
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>2. „Harmonie aus Streit“ vs. „ewiger Krieg“</h4>
+      <p>
+        Heraklits Bogen/Leier und Schrebers Zwei-Götter-Kampf sind <b>derselbe Mechanismus auf unterschiedlicher
+        Spannung**. In der Leier erzeugt gegenstrebende Spannung Klang; in einem überhitzten System erzeugt dieselbe
+        Spannung Schreier. Heraklit betrachtet das Instrument <i>von außen</i> (es klingt), Schreber lebt <i>in</i>
+        dem überspannten Instrument (es brüllt). <b>Harmonie und Krieg sind die gleiche Spannung bei unterschiedlicher
+        Grenzfrequenz.</b> Deleuze &amp; Guattari lesen Schreber gerade so: als „Wunschmaschine“, als kreativen
+        Prozess — also als den brennenden Prozess von A, erlebt von der Innenseite der Überspannung.
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>3. „Wandel als Befreiung“ vs. „Wandel als Verletzung“</h4>
+      <p>
+        Panta Rhei und Entmannung sind <b>derselbe totalreale Wandel</b>. Heraklit, der den Fluss annimmt, erlebt ihn
+        als Erleichterung („leidet weniger am Festhalten“); Schreber, der sich als <i>fester</i> Subjekt begreift
+        (ein Richter, ein „Markgraf“), erlebt denselben Fluss als Bruch seiner Identität. <b>Wandel ist befreiend oder
+        verletzend, je nachdem, ob der Subjekt sich als Fluss versteht oder als Ding.</b> Heraklit hat sich längst
+        zum Prozess gemacht; Schreber kämpft als Ding gegen den Prozess.
+      </p>
+    </div>
+
+    <div class="card">
+      <h4>4. „Anonymes Chaos“ vs. „beabsichtigter Plan“</h4>
+      <p>
+        „Kehrichthaufen“ und „strafender Plan“ sind <b>derselbe Mangel an menschlicher Übersicht</b> — nur
+        personalisiert oder nicht. Wo Heraklit das Absichtslose der Ordnung <i>nach außen</i> projiziert (sie spielt
+        einfach), projiziert Schreber es <i>an eine Person</i> (Flechsigs „Seele“, der niedere Gott). <b>Der
+        „Plan“ ist der „Kehrichthaufen“, dem ein Täter zugewiesen wurde</b> — der klassisch wahnhafte Schritt, dem
+        Absichtslosen einen Adressaten zu geben.
+      </p>
+    </div>
+
+    <div class="card" style="border-color:var(--accent);">
+      <h4>Der fusionierte Schluss</h4>
+      <p>
+        Es gibt <b>eine</b> immanente Weltordnung aus sich umwandelnder Substanz (Feuer / Nerven-Strahlen). Wie sie
+        dem Subjekt begegnet — als gemeiner, befreiender Logos oder als persönlicher, erpressender Denkzwang —
+        entscheidet die <b>Abstimmung des Subjekts</b>: Klarheit/Trockenheit/Wachen auf der einen, Überreizung/
+        Festhaltung/Personalisierung auf der anderen Seite. <b>Heraklit ist der nüchterne Name für die Ordnung;
+        Schreber ist der wahnhafte Name für dieselbe Ordnung, wenn sie von innen und überspannt erlebt wird.</b>
+        Schrebers System ist damit kein Gegenentwurf zu Heraklit, sondern dessen pathologischer Schatten: ein
+        totalverwandelnder Prozess mit innerem Gesetz, den der Subjekt nicht als Fluß mitströmen darf, sondern nur
+        als Gegenwind.
+      </p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>
+      Die beiden Texte liefern zusammen ein kohärentes Modell in vier Schichten. Ich verflechte sie, nicht
+      aneinander:
+    </p>
+
+    <h3>Schicht 1 — Die Substanz: Feuer &amp; Nerven als dasselbe</h3>
+    <p>
+      Heraklit: Die Welt ist „ewig lebendiges Feuer, nach Maßen erglimmend und nach Maßen erlöschend“. Es ist
+      <i>Prozess</i>, kein Ding. Der Kreislauf der Elemente — „Feuer lebt der Erde Tod und Luft des Feuers Tod;
+      Wasser lebt der Luft Tod und Erde den des Wassers“ (Fr. 76/31) — ist totale Umwandlung ohne Verlust; das
+      Gold-Metapher (Fr. 90) sagt: der <b>Wert bleibt, die Form wechselt</b>. Schreber liefert die gleiche These in
+      biologischem Gewand: Die Seele ist „in den Nerven des Körpers enthalten“, „Gebilde von außerordentlicher
+      Feinheit – den feinsten Zwirnsfäden vergleichbar“, und Gottesnerven „besitzen die Fähigkeit, sich umzusetzen in
+      alle möglichen Dinge der erschaffenen Welt“. <b>Fusion: Die Welt besteht aus einer feinsten, total
+      umwandelbaren Substanz (Feuer ≙ Nerven/Strahlen), in der Wert/Seelenhaftes erhalten bleibt und nur die Form
+      wechselt</b> — Heraklits Energieerhaltung, die Schreber als „Gottesnerven“ wiederfindet.
+    </p>
+
+    <h3>Schicht 2 — Das in der Substanz ruhende Gesetz: Logos ≙ Weltordnung</h3>
+    <p>
+      Heraklit: Der <em>Logos</em> ist „Wort, Vernunft, Gesetz, Ordnung“ — „ob es gleich ewig ist, gewinnen die
+      Menschen kein Verständnis“. Er durchdringt alles. Schreber: Die <em>Weltordnung</em> hat eine „Tendenz“, regelt
+      die „hinteren Gottesreiche“ (Ariman/Ormuzd) und schreibt sogar über die „Grundsprache“, in der Gott redet.
+      <b>Fusion: Beide posieren ein Gesetz, das <i>in</i> der Substanz liegt und sie von innen ordnet — nicht ein
+      Gott, der über ihr steht.</b> Der Unterschied ist sprachlich: Heraklit nennt es abstrakt (Logos), Schreber
+      konkret-persönlich (Gott als Nerv, mit „Grundsprache“ und Euphemismen wie „Lohn“ = Strafe, „Gift“ = Speise).
+    </p>
+
+    <h3>Schicht 3 — Die Resonanz des Subjekts: Wachen ≙ Nerven</h3>
+    <p>
+      Heraklit: Die meisten sind „Schlafende“, „anwesend abwesend“ (Fr. 1, 34); Weisheit ist „die Wahrheit zu sagen
+      und nach der Natur zu handeln, auf sie hinhörend“ (Fr. 112) — also <b>auf die Ordnung hören</b>. Schreber:
+      Die „Nervensprache“ ist ein stilles inneres Sprechen durch Nerven-Schwingungen; bei ihm werden diese Nerven
+      „von außen … unaufhörlich“ bewegt (Denkzwang). <b>Fusion: Der Subjekt ist ein Resonanzkörper.</b>
+      Heraklit beschreibt den Zustand, in dem die Resonanz <i>frei</i> die Ordnung mitklingt (Wachen, „auf sie
+      hinhörend“); Schreber den Zustand, in dem dieselbe Resonanz <i>gezwungen</i> wird (Denkzwang, „Nervenanhang“).
+      Dazwischen liegt der gesamte Bereich der Abstimmung — von klar bis überreizt.
+    </p>
+
+    <h3>Schicht 4 — Die Struktur des Widerspruchs: Bogen/Leier ≙ Zwei-Götter-Krieg</h3>
+    <p>
+      Heraklit: „gegenstrebige Vereinigung wie beim Bogen und der Leier“ (Fr. 51); „Der Weg auf und ab ist ein und
+      derselbe“ (Fr. 60). Die Wirklichkeit lebt von <b>balancierter Spannung</b>. Schreber: Der ewige Kampf
+      Ariman/Ormuzd, der „Seelenmord“, die „Kopfzusammenschnürungsmaschine“ — <b>unbalancierte, personalisierte
+      Spannung</b>. <b>Fusion: Spannung ist der gemeinsame Mechanismus.</b> Im Gleichgewicht erzeugt sie
+      Harmonie/Funktion (A), im Ungleichgewicht Kompulsion/Qual (B). Deleuze &amp; Guattaris Lesart — Schreber als
+      „Wunschmaschine“, als kreativer Prozess, „über familiäre Konflikte hinaus“ — ist die Brücke: sie identifiziert
+      Schrebers Wahn mit genau dem brennenden, produktiven Prozess, den Heraklit feiert.
+    </p>
+
+    <div class="card">
+      <h4>Zusammen in einer Zeile</h4>
+      <p>
+        <b>Substanz</b> (Feuer ≙ Nerven) → <b>Ordnung in der Substanz</b> (Logos ≙ Weltordnung) →
+        <b>Resonanz des Subjekts</b> (Wachen ≙ Nervenanhang/Denkzwang) → <b>Spannungsbalance</b> (Bogen/Leier ≙
+        Zwei-Götter-Krieg). Vier Schichten, zwei Stimmen, ein Modell: <i>eine</i> umwandelnde Weltordnung, deren
+        Charakter für den Einzelnen an seiner eigenen Abstimmung hängt.
+      </p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — dieselbe Substanz, zwei Pole</h2>
+    <p>
+      Ein Partikelfeld aus derselben sich umwandelnden Substanz (Heraklits <b>Feuer</b> / Schrebers
+      <b>Strahlen</b>) — es <i>fließt</i> immer (Panta Rhei). Der Regler blendet nicht zwischen zwei Welten,
+      sondern zwischen <b>zwei Polen derselben Weltordnung</b>:
+    </p>
+    <ul style="margin:0 0 6px 20px;color:var(--muted);">
+      <li><b style="color:var(--accent)">Linke Seite (Logos / wach):</b> Die Substanz bildet symmetrische,
+        pulsierende <i>Ringe</i> um ein ruhiges Zentrum — balancierte Spannung, Bogen &amp; Leier, Harmonie.</li>
+      <li><b style="color:var(--bad)">Rechte Seite (Denkzwang / gefangen):</b> Dieselbe Substanz wird <i>auf ein
+        Zentrum zugesaugt</i>, zuckt, strahlt in „Strahlenzüge“ hinein — personalisierte, erpressende Kompulsion.</li>
+    </ul>
+    <div class="viz-shell">
+      <canvas id="wviz" width="800" height="380"></canvas>
+      <div class="ctrl">
+        <label for="tension">Logos (wach)</label>
+        <input type="range" id="tension" min="0" max="100" value="18" step="1"
+               aria-label="Abstimmung zwischen Logos und Denkzwang">
+        <label for="tension">Denkzwang (gefangen)</label>
+      </div>
+      <div class="readout">
+        <div class="st" id="vizState"></div>
+        <div class="ds" id="vizReadout"></div>
+      </div>
+      <p class="note">Eine Substanz, eine Ordnung, zwei Wahrnehmungspole. Schiebe den Regler langsam —
+      die Partikel sind in beiden Zuständen <i>dieselben</i>.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <span class="pill">A</span>
+        <a href="../buecher/heraklit.html">heraklit.html</a>
+        <p>„Heraklit Interaktiv – Die Fragmente erleben“: die fünf Kernideen (Panta Rhei, Einheit der Gegensätze,
+        ewiges Feuer, Logos, „Wach auf!“), der Elementkreislauf und das Gold-Metapher, die „Schlafenden“.</p>
+      </div>
+      <div class="card">
+        <span class="pill">B</span>
+        <a href="../buecher/daniel_paul_schreber.html">daniel_paul_schreber.html</a>
+        <p>„Daniel Paul Schreber – Denkwürdigkeiten eines Nervenkranken“: Gottesnerven/Strahlen, die Weltordnung,
+        Nervenanhang, Denkzwang, Entmannung, Seelenmord/Flechsig, Wunder &amp; Stimmen sowie die Rezeption
+        (Freud, Canetti, Deleuze &amp; Guattari u. a.).</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion · Runde 1 · Paar 039 · nicht-AI-Spur. Selbstbezügliche, themenreaktive HTML-Datei; alle Daten inline,
+    keine Netzabrufe.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('wviz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var slider = document.getElementById('tension');
+  var stateEl = document.getElementById('vizState');
+  var readoutEl = document.getElementById('vizReadout');
+
+  var W=0,H=0,DPR=1,cx=0,cy=0;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    var rect = canvas.getBoundingClientRect();
+    W = Math.max(1, rect.width);
+    H = Math.max(1, rect.height);
+    canvas.width = Math.round(W*DPR);
+    canvas.height = Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    cx = W/2; cy = H/2;
+  }
+
+  var N = 150;
+  var parts = [];
+  for(var i=0;i<N;i++){
+    parts.push({
+      phase: Math.random()*Math.PI*2,
+      dir: (Math.random()<0.5)?-1:1,
+      freq: 0.6 + Math.random()*0.8,
+      jit: Math.random()*Math.PI*2
+    });
+  }
+
+  function cssVar(name){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function withAlpha(color, a){
+    if(color && color.charAt(0)==='#' && color.length===7){
+      var r=parseInt(color.slice(1,3),16),
+          g=parseInt(color.slice(3,5),16),
+          b=parseInt(color.slice(5,7),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }
+    return 'rgba(200,200,200,'+a+')';
+  }
+
+  var MSGS = [
+    {s:"Logos · wach", d:"Dasselbe Feuer — als allen gemeinsame Weltvernunft. Wer klar denkt, sieht die Harmonie; die Gegensätze spannen sich wie Bogen und Leier."},
+    {s:"Übergang · Erregung", d:"Dieselbe Weltordnung, aber die Nerven werden erregt: die eine Ordnung beginnt, sich gegen den Subjekt zu richten."},
+    {s:"Denkzwang · gefangen", d:"Dasselbe Feuer — nun als persönliche Strahlenzüge, die einen Subjekt gegen seinen Willen zwingen. Aus Harmonie wird Kompulsion."}
+  ];
+  var lastBucket = -1;
+  function updateReadout(k){
+    var bucket = k<0.33?0:(k<0.66?1:2);
+    if(bucket!==lastBucket){
+      lastBucket = bucket;
+      stateEl.textContent = MSGS[bucket].s;
+      readoutEl.textContent = MSGS[bucket].d;
+    }
+  }
+
+  var t0 = performance.now();
+  function frame(now){
+    var t = now - t0;
+    ctx.clearRect(0,0,W,H);
+    var k = (parseInt(slider.value,10)||0)/100;
+    var accent = cssVar('--accent') || '#ff7a3d';
+    var accent2 = cssVar('--accent2') || '#ffd766';
+    var bad = cssVar('--bad') || '#ff6b6b';
+    var maxR = Math.min(W,H)*0.44;
+    var pulse = (Math.sin(t*0.0022)+1)/2;
+
+    var subjCol = (k<0.5)?accent:bad;
+    var subjR = 6 + k*16*(0.5+0.5*pulse);
+    ctx.beginPath();
+    ctx.arc(cx,cy,subjR+20,0,Math.PI*2);
+    ctx.fillStyle = withAlpha(subjCol, 0.08 + k*0.14);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx,cy,subjR,0,Math.PI*2);
+    ctx.fillStyle = withAlpha(subjCol, 0.85);
+    ctx.fill();
+
+    for(var i=0;i<N;i++){
+      var p = parts[i];
+      var ha = p.phase + t*0.0004*p.dir;
+      var hr = maxR*(0.45 + 0.45*Math.sin(t*0.001*p.freq + p.phase));
+      var hx = cx + Math.cos(ha)*hr;
+      var hy = cy + Math.sin(ha)*hr;
+
+      var pull = 0.12 + 0.88*((Math.sin(t*0.006 + p.phase)+1)/2);
+      var cr = maxR*(1-pull);
+      var cAng = p.phase + t*0.0012*p.dir;
+      var jamp = 5 + k*20;
+      var cxx = cx + Math.cos(cAng)*cr + Math.sin(t*0.01 + p.jit)*jamp;
+      var cyy = cy + Math.sin(cAng)*cr + Math.cos(t*0.013 + p.jit)*jamp;
+
+      var x = hx + (cxx-hx)*k;
+      var y = hy + (cyy-hy)*k;
+      var mix = i/N;
+      var base = (mix<0.5)?accent:accent2;
+      var size = 1.5 + 1.8*(1-Math.abs(mix-0.5)*2);
+
+      if(k>0.15 && (i%4===0)){
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+        ctx.lineTo(cx,cy);
+        ctx.strokeStyle = withAlpha(bad, (k-0.15)*0.4);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(x,y,size,0,Math.PI*2);
+      ctx.fillStyle = withAlpha(base, 0.55);
+      ctx.fill();
+    }
+
+    updateReadout(k);
+    requestAnimationFrame(frame);
+  }
+
+  var toggle = document.getElementById('themeToggle');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var h = document.documentElement;
+      h.classList.toggle('dark');
+      toggle.textContent = h.classList.contains('dark') ? '☀ Hell' : '🌙 Dunkel';
+      lastBucket = -1;
+    });
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

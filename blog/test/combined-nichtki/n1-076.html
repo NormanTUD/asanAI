@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architektur der Gewissheit — Kants Grenzen ✕ formaler Beweis</title>
+<style>
+:root{
+  --mn-bg:#f6f3ec; --mn-card:#fffdf8; --mn-ink:#1c2333; --mn-text:#232b3d;
+  --mn-muted:#5b6478; --mn-accent:#4b5bd6; --mn-accent2:#c23fa0; --mn-line:#d9d2c2;
+  --mn-good:#2f9e44; --mn-warn:#d97706; --mn-danger:#d6336c; --mn-chip:#efe9dc;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-card:#141d33; --mn-ink:#e6ebf5; --mn-text:#dbe2f0;
+  --mn-muted:#93a0bd; --mn-accent:#667eea; --mn-accent2:#f093fb; --mn-line:#2a3a5c;
+  --mn-good:#51cf66; --mn-warn:#ffa94d; --mn-danger:#ff6b9d; --mn-chip:#1b2745;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--mn-bg); color:var(--mn-text);
+  font-family:Georgia,'Times New Roman',serif; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.article{
+  max-width:820px; margin:0 auto; padding:34px 22px 80px;
+  background:var(--mn-card);
+  box-shadow:0 0 60px rgba(0,0,0,.25);
+  min-height:100vh;
+}
+header{border-bottom:2px solid var(--mn-line); padding-bottom:22px; margin-bottom:30px;}
+h1{
+  font-size:1.95em; line-height:1.25; color:var(--mn-ink);
+  margin-bottom:12px; letter-spacing:.2px;
+}
+.subtitle{
+  color:var(--mn-accent); font-size:.92em; font-style:italic;
+  border-left:3px solid var(--mn-accent); padding-left:12px;
+}
+.lead{color:var(--mn-muted); margin-top:14px; font-size:1.02em;}
+section{margin:38px 0;}
+h2{
+  color:var(--mn-ink); font-size:1.4em; margin-bottom:14px;
+  padding-bottom:8px; border-bottom:1px solid var(--mn-line);
+}
+h2 .no{color:var(--mn-accent); font-size:.8em; margin-right:8px;}
+h3{color:var(--mn-accent); font-size:1.1em; margin:20px 0 8px;}
+p{margin:12px 0;}
+strong{color:var(--mn-ink);}
+.k{color:var(--mn-accent); font-weight:bold;}
+.h{color:var(--mn-accent2); font-weight:bold;}
+.card{
+  background:var(--mn-chip); border:1px solid var(--mn-line);
+  border-radius:12px; padding:16px 18px; margin:16px 0;
+}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:bold; letter-spacing:.4px;
+  padding:2px 9px; border-radius:20px; margin-right:6px; vertical-align:middle;
+}
+.tag.a{background:var(--mn-accent); color:#fff;}
+.tag.b{background:var(--mn-accent2); color:#fff;}
+table{width:100%; border-collapse:collapse; margin:18px 0; font-size:.92em;}
+th,td{border:1px solid var(--mn-line); padding:9px 11px; text-align:left; vertical-align:top;}
+th{background:var(--mn-chip); color:var(--mn-ink);}
+td:first-child{color:var(--mn-muted); font-weight:bold; white-space:nowrap;}
+code{
+  font-family:'Courier New',monospace; background:var(--mn-chip);
+  border:1px solid var(--mn-line); border-radius:5px; padding:1px 6px;
+  font-size:.9em; color:var(--mn-ink);
+}
+.formula{
+  display:block; text-align:center; font-size:1.25em; margin:14px 0;
+  padding:12px; background:var(--mn-chip); border-radius:10px;
+  border:1px dashed var(--mn-line); color:var(--mn-ink);
+  font-family:'Cambria Math',Georgia,serif;
+}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+  margin:14px 0; justify-content:center;
+}
+button{
+  font-family:inherit; cursor:pointer; font-size:.85em;
+  padding:7px 14px; border-radius:20px; border:1px solid var(--mn-accent);
+  background:transparent; color:var(--mn-accent); transition:all .2s;
+}
+button:hover{background:var(--mn-accent); color:#fff;}
+button.on{background:var(--mn-accent); color:#fff;}
+#themeToggle{border-color:var(--mn-line); color:var(--mn-muted); margin-left:auto;}
+.viz-wrap{width:100%;}
+canvas#viz{width:100%; display:block; border-radius:12px; background:var(--mn-chip); border:1px solid var(--mn-line);}
+.slider-row{display:flex; align-items:center; gap:12px; margin:12px 0; flex-wrap:wrap;}
+.slider-row label{color:var(--mn-muted); font-size:.9em; min-width:150px;}
+input[type=range]{flex:1; accent-color:var(--mn-accent); min-width:120px;}
+#depthVal{color:var(--mn-accent); min-width:40px; font-weight:bold;}
+.readout{
+  background:var(--mn-chip); border:1px solid var(--mn-line);
+  border-radius:12px; padding:16px 18px; margin-top:14px;
+}
+.readout .t{color:var(--mn-ink); font-weight:bold; font-size:1.05em; margin-bottom:6px;}
+.readout .line{font-size:.9em; margin:4px 0;}
+.riskbar{height:10px; background:var(--mn-card); border:1px solid var(--mn-line); border-radius:6px; margin:10px 0; overflow:hidden;}
+#roBar{height:100%; background:linear-gradient(90deg,var(--mn-good),var(--mn-warn),var(--mn-danger)); width:100%; transition:width .25s;}
+#roBoundary{
+  display:none; margin-top:10px; padding:10px 12px; border-radius:8px;
+  border:1px dashed var(--mn-danger); color:var(--mn-danger); font-size:.88em;
+}
+.prov{display:flex; flex-wrap:wrap; gap:14px;}
+.prov a{
+  flex:1 1 300px; display:block; text-decoration:none;
+  background:var(--mn-chip); border:1px solid var(--mn-line);
+  border-radius:12px; padding:14px 16px; color:var(--mn-text); transition:all .2s;
+}
+.prov a:hover{border-color:var(--mn-accent); transform:translateY(-2px);}
+.prov a b{color:var(--mn-ink); display:block; margin-bottom:5px;}
+.prov a span{color:var(--mn-muted); font-size:.88em;}
+footer{margin-top:44px; padding-top:18px; border-top:1px solid var(--mn-line); color:var(--mn-muted); font-size:.85em;}
+@media(max-width:600px){ h1{font-size:1.5em;} .article{padding:24px 16px 60px;} }
+</style>
+</head>
+<body>
+<main class="article">
+<header>
+  <h1>Architektur der Gewissheit</h1>
+  <div class="subtitle">Fusion aus: kritik_der_reinen_vernunft.html &nbsp;✕&nbsp; formal_proof.html</div>
+  <p class="lead">Kant fragt, <em>was wir überhaupt wissen können</em>; Hales fragt, <em>wie ein mathematisches Ergebnis zweifelsfrei sicher wird</em>. Beides ist dieselbe Frage auf zwei Ebenen: die Abkehr vom passiven Spiegel und die Frage nach dem Fundament, das eine Architektur der Gewissheit mit den eigenen Werkzeugen nicht erreichen kann.</p>
+</header>
+
+<section id="these">
+  <h2><span class="no">1</span>Kernthese der Fusion</h2>
+  <p>Gewissheit ist <strong>keine Gabe eines passiven Abspiegels</strong>. <span class="k">Kant</span> bricht mit dem Dogmatismus, in dem der Geist ein bloßer „Spiegel" der Welt wäre („Erkenntnis = Kopie der Realität"); er dreht das Verhältnis um: die <em>Formen</em> (Raum, Zeit) und die <em>Kategorien</em> des Verstandes strukturieren die Erfahrung, nicht umgekehrt. <span class="h">Hales</span> bricht mit dem blinden Vertrauen auf Code und Mathematiker: ein Programmierer bringt ~1,5 Bugs pro Zeile ins Spiel und ~1 Fehler auf 100 Zeilen geht unentdeckt in Produktion. Gegen dieses „Vertrauen" stellt er den <em>formalen Beweis</em> — jede Folgerung wird von einer Maschine geprüft und bis zu winzigen Axiomen zurückverfolgt.</p>
+  <p>Beide Papiere tun also dasselbe: Sie ersetzen <strong>Vertrauen durch Struktur</strong>. Rohe, fehleranfällige Eingaben — bei Kant das ungeordnete Mannigfaltige der Sinnlichkeit, bei Hales der vom Menschen geschriebene Skript — werden durch eine <em>vorab gegebene Grammatik</em> in geordnete, notwendige Form gebracht. Kant liefert 12 Kategorien als „Grammatik des Denkens"; Hales liefert 10 Inferenzregeln und 3 Axiome als „logische Engine". Aus diesem aktiven Strukturieren entsteht Notwendigkeit: synthetische Urteile <em>a priori</em> (Kant) und maschinengeprüfte Theoreme (Hales) sind <strong>erweiternd und zugleich sicher</strong> — beides wäre weder im passiven Spiegel noch im bloßen Vertrauen möglich.</p>
+  <p>Und beide ziehen <strong>dieselbe Grenzlinie</strong>, nur an unterschiedlichen Orten. Kant: Die Kategorien begründen jede Erfahrung, sind aber selbst nicht „von der Erfahrung her" prüfbar — das <em>Ding an sich</em> bleibt unerreichbar, und wer die Grenze überschreitet, verfängt sich in Antinomien (unlösbare Widersprüche). Hales: Der Kernel (~500 Zeilen) trägt jeden Beweis, wird aber nicht <em>durch</em> die eigenen Inferenzregeln verifiziert, sondern durch Finitheit plus unabhängige Querverifizierung, deren Restrisiko mit <code>p<sup>n</sup></code> gegen Null <em>asymptotisch</em> strebt — aber nie ganz null wird. <strong>Die gemeinsame These: Jede Architektur der Gewissheit hat ein Fundament, das sie mit den eigenen Werkzeugen nicht erreicht; die letzte Rechtfertigung wechselt immer die Währung.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="no">2</span>Widersprüche zwischen A und B</h2>
+  <div class="card">
+    <p><span class="tag a">A · KANT</span><span class="tag b">B · HALE</span><strong>1. Status der Grenze — metaphysische Mauer vs. verschiebbare Baugrenze.</strong></p>
+    <p><span class="k">A (Kant)</span> nennt die Grenze zwischen Erscheinung und Ding an sich <em>absolut und unüberwindbar</em>: „Egal wie tief wir vordringen, wir bleiben immer in der Welt der Erscheinungen." Überschreitet die Vernunft sie, <em>muss</em> sie in Antinomien geraten — „können weder bejaht noch verneint werden", wobei „beide Beweise gültig" sind. Die Grenze ist Konstitution der Vernunft selbst.</p>
+    <p><span class="h">B (Hales)</span> behandelt die Grenze des Gewissen-Könnens als <em>praktisch und erweiterbar</em>: Die QED-Vision zielt explizit darauf, „a vast library of all significant mathematical results" zu formalisieren. Die heutige Automationsgrenze („undergraduate homework exercises") ist eine Ressourcen-/Ingenieursfrage, kein Naturgesetz der Vernunft.</p>
+    <p><strong>Widerspruch:</strong> Ist die Grenze der Gewissheit konstitutiv und absolut (Kant) oder kontingent und ausdehnbar (Hales)?</p>
+  </div>
+  <div class="card">
+    <p><span class="tag a">A · KANT</span><span class="tag b">B · HALE</span><strong>2. Ist das Fundament prüfbar? (a priori = unverifizierbar vs. Kernel = verifizierbar).</strong></p>
+    <p><span class="k">A (Kant)</span>: Die a priori-Formen sind <em>nicht</em> durch irgendein Verfahren geprüft — es gibt nichts über ihnen (das Ding an sich ist tabu), gegen das man sie prüfen könnte. Ihre Autorität besteht darin, dass sie Erfahrung <em>möglich machen</em> (transzendental, nicht empirisch gesichert).</p>
+    <p><span class="h">B (Hales)</span>: Der ganze Punkt des <em>kleinen</em> Kernels (~500 Zeilen) ist, dass das Fundament <em>prüfbar</em> gemacht wird — klein genug, um zeilenweise inspiziert und über unabhängige Systeme querverifiziert zu werden (Restrisiko <code>p<sup>n</sup></code>).</p>
+    <p><strong>Widerspruch:</strong> Für Kant ist das Fundament des Wissens <em>wesentlich unverifizierbar</em> (das ist „a priori"); für Hales wird das Fundament der Gewissheit <em>absichtlich verifizierbar</em>.</p>
+  </div>
+  <div class="card">
+    <p><span class="tag a">A · KANT</span><span class="tag b">B · HALE</span><strong>3. Wo sitzt die Garantie? (das spontane Subjekt vs. die prüfende Maschine).</strong></p>
+    <p><span class="k">A (Kant)</span>: Die notwendige Struktur wird vom <em>spontanen Subjekt</em> (Verstand/Vernunft) gesetzt — „die Gegenstände richten sich nach unserer Erkenntnis". Der Mensch ist der Garant der Notwendigkeit; nur das <em>Übergreifen</em> der Vernunft ist die Gefahr.</p>
+    <p><span class="h">B (Hales)</span>: Die <em>Machine</em> (der Kernel des Beweisassistenten) ist die Garantie der Korrektheit; der <em>Mensch</em> ist der fehleranfällige Teil (Bug-Dichte ~1/100). Vertrauen wird <em>von</em> der menschlichen Urteilskraft <em>zur</em> Maschinenprüfung verschoben.</p>
+    <p><strong>Widerspruch:</strong> Kant macht das <em>Subjekt</em> zum Garant (und sein Übergriff zur Gefahr); Hales macht das <em>Werkzeug</em> zum Garant und den <em>Menschen</em> zur Fehlerquelle.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="no">3</span>Auflösung</h2>
+  <h3>Auflösung 1 — dieselbe Grenze auf zwei Ebenen</h3>
+  <p>Kants und Hales' „Grenze" sind <strong>zwei Seiten derselben Architektur</strong>. Kants Grenze ist <em>ontisch-epistemisch</em>: Sie sagt, welche <em>Art von Gegenstand</em> die Formen überhaupt erreichen können (Erscheinungen, nie Dinge an sich). Hales' Grenze ist <em>methodisch-resource</em>: Sie sagt, wie <em>viele</em> das geprüfte System <em>jetzt</em> reduzieren kann. <strong>Fusion:</strong> Jede Gewissheits-Architektur hat (a) eine <em>Bereichsgrenze</em> — was sie prinzipiell erreichen kann — und (b) eine <em>Kapazitätsgrenze</em> — was sie aktuell verifiziert. (b) ist, wie Hales will, endlos ausdehnbar; (a) ist, wie Kant will, nicht durch mehr Kernel-Zeilen aufhebbar. Man erweitert (b) <em>innerhalb</em> von (a) — aber (a) verschwindet nicht.</p>
+  <h3>Auflösung 2 — p<sup>n</sup> ist die praktische Asymptote der Antinomie</h3>
+  <p>Beide Papiere stimmen zu, dass das Fundament <em>nicht</em> durch seine eigene Prozedur geschlossen wird; sie unterscheiden sich nur darin, <em>was</em> es sichert. <strong>Fusion:</strong> Hales' <code>p<sup>n</sup></code> ist die <em>praktische Asymptote</em> von Kants absoluter Grenze. Querverifizierung treibt den Restfehler gegen Null, <em>erreicht</em> ihn aber nie — der letzte Meter wird durch eine <em>andere, externe</em> Währung gedeckt: bei Hales die unabhängigen Systeme plus die Logiker-Inspektion, bei Kant die konstitutive Rolle des Subjekts. „Verifizierbarkeit" (Hales) ist also ein <em>begrenzter, asymptotischer</em> Zugang zu dem „Fundament" (Kant), das per Definition von innen nie vollständig erreicht wird. Die Antinomie und das p<sup>n</sup> sind <em>zwei Antworten auf dasselbe Problem: den Regress der Rechtfertigung.</em></p>
+  <h3>Auflösung 3 — der Garant ist die Architektur, nicht der Einzelne</h3>
+  <p>Beide lehnen das passive Spiegeln ab und verlegen die Notwendigkeit in <em>vorerfahrene Struktur</em>. <strong>Fusion:</strong> Kants spontanes Subjekt und Hales' prüfende Maschine sind dieselbe <em>Funktionsebene</em> in unterschiedlichem Maßstab: die Instanz, die rohen, fehlerhaften Input (das sinnliche Mannigfaltige / der geschriebene Code) in notwendige, geprüfte Struktur (Erfahrung / verifiziertes Theorem) übersetzt. In beiden ist der <em>Mensch die fehleranfällige Input-Seite</em> — Kant: die Sinnlichkeit liefert das rohe Mannigfaltige; Hales: der Mensch schreibt den Skript mit ~1,5 Bugs/Zeile. Die Garantie liegt nie beim Einzelnen, sondern an der <em>Grammatik</em> — an den Kategorien bzw. am Kernel.</p>
+</section>
+
+<section id="inhalt">
+  <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+  <p>Die zwei Architekturen lassen sich in <strong>eines</strong> zusammenlesen: eine <em>Trusted-Architektur</em> mit Schichten. Jede Schicht trägt die darüberliegende; je tiefer, desto weniger tragen die eigenen Regeln — am Fundament trägt die externe Währung.</p>
+  <table>
+    <thead><tr><th>Schicht</th><th>A · Kant</th><th>B · Hales</th></tr></thead>
+    <tbody>
+      <tr><td>Inhalt</td><td>Erscheinungen (Phänomene)</td><td>Bewiesene Sätze (Theorem-Bibliothek)</td></tr>
+      <tr><td>Grammatik</td><td>12 Kategorien (Quantität, Qualität, Relation, Modalität)</td><td>10 Inferenzregeln (Reflexivität, β-Reduktion, Modus Ponens, …)</td></tr>
+      <tr><td>Formen / Sprache</td><td>Raum &amp; Zeit (a priori)</td><td>Typen (<code>:bool</code>, <code>:ind</code>) &amp; λ-Terme; Konstanten <code>=</code>, <code>ε</code></td></tr>
+      <tr><td>Fundament</td><td>Verstand (Spontaneität)</td><td>Kernel (~500 Zeilen) + 3 Axiome (Extensionalität, Unendlichkeit, Choice)</td></tr>
+      <tr><td>Grenze</td><td>Ding an sich (unerreichbar) → Antinomien</td><td>Kernel nicht durch eigene Regeln prüfbar → Restrisiko p<sup>n</sup></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Die drei Fakultäten / die fünf Komponenten — eine Tabelle</h3>
+  <p>Kant gliedert das Erkenntnisvermögen in <span class="k">Sinnlichkeit</span> (Rezeptivität: Raum, Zeit, Empfindung), <span class="k">Verstand</span> (Spontaneität: Kausalität, Substanz, die Kategorien) und <span class="k">Vernunft</span> (Ideen: Gott, Freiheit, Seele — der Ort, an dem die Antinomien entstehen). Hales gliedert HOL Light in <span class="h">Typen</span>, <span class="h">Terme</span>, <span class="h">Theoreme</span>, <span class="h">Inferenzregeln</span> und <span class="h">Axiome</span>. Die Funktion ist parallel: eine <em>Rezeptionsschicht</em> (roher Input), eine <em>Operierungsschicht</em> (Struktur setzen), eine <em>Grenzsicht</em>, an der die eigene Methode versagt.</p>
+
+  <h3>Die zentralen Formeln der Fusion</h3>
+  <span class="formula">Restrisiko &nbsp;=&nbsp; p<sup>n</sup> &nbsp;&nbsp;(n unabhängige Systeme; p ≈ 10⁻⁴ → p⁶ ≈ 10⁻²⁴ ≈ „Zuverlässigkeit")</span>
+  <p>Kants Gegenstück zum p<sup>n</sup>: Je näher die Vernunft dem Fundament (den Ideen, dem Ding an sich) kommt, desto <em>stärker</em> der Widerspruch — die Antinomie ist das sichtbare Zeichen, dass die eigene Methode keine Währung mehr liefert.</p>
+  <span class="formula">De-Bruijn-Faktor ≈ 4× &nbsp;&nbsp;(Länge formaler Beweis / Länge traditioneller Beweis, erstaunlich stabil)</span>
+  <p>Der Preis der Struktur: Man zahlt ~1 Woche pro Seite Lehrbuch-Mathematik für die Formalisierung. Das ist das „synthetisch a priori" des Beweises — <em>erweiternd und teuer, aber sicher</em>, genau wie bei Kant die a priori-Formen Erfahrung ermöglichen, ohne selbst Erfahrung zu sein.</p>
+  <span class="formula">Kepler / FCC-Packing: Dichte = π / (3√2) ≈ 74,05 %</span>
+  <p>Flyspeck hat die Kepler-Vermutung in ~20 Arbeitsjahren (300 Seiten + 40.000 Zeilen) formal verifiziert — der konkrete Beleg, dass (b) <em>Kapazitätsgrenze</em> ausdehnbar ist, solange man innerhalb (a) bleibt.</p>
+  <span class="formula">1 + 1 = 1 + S(0) = S(1 + 0) = S(1) = 2</span>
+  <p>Sogar „1+1=2" wird im formalen System über die Nachfolgefunktion <code>S</code> hergeleitet — der kleinste Fall, an dem sichtbar wird, dass <em>jeder</em> Schritt durch die Inferenzregeln geprüft ist. Bei Kant wäre das Gegenstück ein <em>synthetisch a priori</em> Urteil, das ohne empirische Prüfung notwendig gilt (z. B. „7 + 5 = 12").</p>
+
+  <h3>Was aus beides für die Fusion übrig bleibt</h3>
+  <div class="card">
+    <p><strong>Fusionierte Forderungen an jede „Gewissheits-Architektur":</strong></p>
+    <p>1. <strong>Kein passiver Spiegel</strong> — roher Input muss durch vorgefundene Struktur (Formen / Kernel) geordnet werden, bevor Notwendigkeit entsteht.</p>
+    <p>2. <strong>Ein kleines, transparentes Fundament</strong> — Kant: die Kategorien sind wenige und klar; Hales: der Kernel ist ~500 Zeilen, öffentlich, über Jahrzehnte inspiziert.</p>
+    <p>3. <strong>Eine ausgesprochene Grenze</strong> — jede Architektur muss sagen, <em>was sie nicht erreicht</em>: das Ding an sich (Kant) bzw. das Nicht-Null-Restrisiko am Kernel (Hales).</p>
+    <p>4. <strong>Die Grenze wird sichtbar</strong> — als Antinomie (Kant) oder als p<sup>n</sup>-Kurve, die gegen Null strebt (Hales).</p>
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="no">5</span>Visualisierung — die Architektur der Gewissheit</h2>
+  <p>Führe den Regler „Tiefe der systeminternen Prüfung" durch die vier Schichten. Oben (Inhalt) trägt die Prüfung fast alles; je tiefer, desto weniger trägt die eigene Grammatik — am Fundament (Kernel / Verstand) endet die systeminterne Gewissheit an der <strong>Grenze</strong>. Die Modus-Schalter wechseln die Beschriftung zwischen Kant, Hales und beides.</p>
+  <div class="viz-controls">
+    <button id="modeKant">Kant</button>
+    <button id="modeHales">Hales</button>
+    <button id="modeFusion" class="on">Fusion</button>
+    <button id="themeToggle">☾ / ☀ Theme</button>
+  </div>
+  <div class="viz-wrap"><canvas id="viz"></canvas></div>
+  <div class="slider-row">
+    <label for="depthSlider">Tiefe der Prüfung:</label>
+    <input type="range" id="depthSlider" min="0" max="100" value="25" step="1">
+    <span id="depthVal">25%</span>
+  </div>
+  <div class="readout">
+    <div class="t" id="roTitle">—</div>
+    <div class="line" id="roKant"><span class="k">Kant:</span> —</div>
+    <div class="line" id="roHales"><span class="h">Hales:</span> —</div>
+    <div class="line" id="roDesc" style="color:var(--mn-muted);font-size:.9em;"></div>
+    <div class="line" id="roRisk" style="margin-top:8px;"></div>
+    <div class="riskbar"><div id="roBar"></div></div>
+    <div id="roBoundary"></div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="no">6</span>Provenienz</h2>
+  <div class="prov">
+    <a href="../buecher/kritik_der_reinen_vernunft.html">
+      <b>A — Kants Kritik der reinen Vernunft (Interaktiv)</b>
+      <span>Interaktive Erkundung: kopernikanische Wende, Raum &amp; Zeit, 12 Kategorien, analytisch/synthetisch, Erscheinung &amp; Ding an sich, die vier Antinomien — mit Canvas-Animationen und Drag-&amp;-Drop-Quiz.</span>
+    </a>
+    <a href="../paper/formal_proof.html">
+      <b>B — Formal Proof: An Interactive Visual Guide</b>
+      <span>Interaktive Erläuterung nach Thomas C. Hales (Notices of the AMS, 2008): Bug-Dichte, HOL Light (Kernel, 3 Axiome, 10 Inferenzregeln), p<sup>n</sup>-Querverifizierung, Flyspeck/Kepler, de Bruijn-Faktor, QED-Vision.</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  Fusion · Round 1 · Pair 076 · nicht-AI-Track · Sprache: Deutsch (gemischte Quellen). Alle Daten inline; keine Netzwerkabrufe.
+</footer>
+</main>
+
+<script>
+"use strict";
+var STRATA = [
+  { id:'domain', title:'Objekte der Gewissheit', n:6,
+    kant:'Erscheinungen (Phänomene)',
+    hales:'Bewiesene Sätze (Theorem-Bibliothek)',
+    desc:'Der Inhalt: Was als erkannt bzw. bewiesen gilt. Kant: nur Erscheinungen, nie Dinge an sich. Hales: nur Sätze, die sich auf den Kernel reduzieren. Querverifizierung senkt das Restrisiko auf p^n.' },
+  { id:'rules', title:'Grammatik / Inferenz', n:4,
+    kant:'12 Kategorien (Quantität, Qualität, Relation, Modalität)',
+    hales:'10 Inferenzregeln (logische Engine)',
+    desc:'Jeder Schritt wird geprüft. Kant: Kategorien ordnen das Mannigfaltige der Anschauung. Hales: Inferenzregeln leiten jedes Theorem her. Ohne diese Schicht bleibt Erfahrung ein Strom / der Beweis eine Kette unprüfter Schritte.' },
+  { id:'forms', title:'Formen / Sprache', n:2,
+    kant:'Raum & Zeit (Formen a priori)',
+    hales:'Typen (:bool, :ind) & lambda-Terme; Konstanten = und eps',
+    desc:'Vorab gegeben — nicht durch Erfahrung geprüft, sondern als GRUND der Prüfung. Kant: machen Erfahrung überhaupt möglich (deshalb gilt Geometrie a priori). Hales: Typsicherheit verhindert unsinnige Operationen.' },
+  { id:'base', title:'Fundament (System-Grund)', n:1,
+    kant:'Verstand (Spontaneität) — das Ding an sich dahinter',
+    hales:'Kernel (~500 Zeilen) + 3 Axiome (Extensionalität, Unendlichkeit, Choice)',
+    desc:'Trägt alles, ist aber selbst nicht durch die eigenen Regeln prüfbar. Hales: gesichert durch Finitheit + unabhängige Systeme (Restrisiko p^n -> 0, nie 0). Kant: das Ding an sich dahinter bleibt unerreichbar — Antinomien sind das Zeichen der Grenze.' }
+];
+var BOUNDARY = 'GRENZE: durch eigene Regeln nicht erreichbar. Kant: Ding an sich (unerreichbar) — die Antinomie macht die Grenze sichtbar. Hales: der Kernel wird extern gesichert (Logiker-Inspektion + unabhängige Systeme); p^n strebt gegen null, erreicht ihn nie. Die letzte Rechtfertigung wechselt immer die Währung.';
+var mode = 'fusion';
+var P = 1e-4;
+
+function theme(){
+  var cs = getComputedStyle(document.documentElement);
+  function g(n,d){ var v = cs.getPropertyValue(n).trim(); return v || d; }
+  return {
+    bg:g('--mn-bg','#0f172a'), card:g('--mn-card','#141d33'),
+    text:g('--mn-text','#dbe2f0'), ink:g('--mn-ink','#e6ebf5'),
+    muted:g('--mn-muted','#93a0bd'), accent:g('--mn-accent','#667eea'),
+    accent2:g('--mn-accent2','#f093fb'), line:g('--mn-line','#2a3a5c'),
+    good:g('--mn-good','#51cf66'), warn:g('--mn-warn','#ffa94d'),
+    danger:g('--mn-danger','#ff6b9d')
+  };
+}
+function hexA(hex,a){
+  hex = String(hex).replace('#','');
+  if(hex.length===3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  var r=parseInt(hex.substr(0,2),16), gg=parseInt(hex.substr(2,2),16), b=parseInt(hex.substr(4,2),16);
+  if(isNaN(r)) return 'rgba(120,120,160,'+a+')';
+  return 'rgba('+r+','+gg+','+b+','+a+')';
+}
+function roundRect(ctx,x,y,w,h,r){
+  if(w<2*r) r=w/2; if(h<2*r) r=h/2;
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function wrap2(ctx,text,x,y,maxW,lh,align){
+  var words=String(text).split(' '); var line=''; var lines=[];
+  for(var i=0;i<words.length;i++){
+    var t=line?line+' '+words[i]:words[i];
+    if(ctx.measureText(t).width>maxW && line){ lines.push(line); line=words[i]; }
+    else line=t;
+  }
+  if(line) lines.push(line);
+  if(lines.length>2) lines.length=2;
+  ctx.textAlign=align;
+  for(var j=0;j<lines.length;j++) ctx.fillText(lines[j], x, y+j*lh);
+}
+function setupCanvas(){
+  var c=document.getElementById('viz');
+  var wrap=c.parentElement;
+  var cssW=Math.max(320, wrap.clientWidth);
+  var cssH=440;
+  var dpr=window.devicePixelRatio||1;
+  c.style.width=cssW+'px'; c.style.height=cssH+'px';
+  c.width=Math.round(cssW*dpr); c.height=Math.round(cssH*dpr);
+  var ctx=c.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx, w:cssW, h:cssH};
+}
+function drawStack(){
+  var S=setupCanvas(); var ctx=S.ctx, w=S.w, h=S.h;
+  var T=theme();
+  ctx.clearRect(0,0,w,h);
+  ctx.textBaseline='alphabetic';
+  ctx.fillStyle=T.ink; ctx.font='bold 15px Georgia'; ctx.textAlign='left';
+  ctx.fillText('Die Architektur der Gewissheit', 18, 26);
+  ctx.fillStyle=T.muted; ctx.font='12px Georgia';
+  ctx.fillText('Vom Inhalt zum Fundament — je tiefer, desto weniger tragen die eigenen Regeln.', 18, 42);
+
+  var bandTop=56, bh=74, gap=9, x=18, bw=w-36;
+  var stackH=4*bh+3*gap;
+
+  for(var i=0;i<STRATA.length;i++){
+    var s=STRATA[i];
+    var y=bandTop+i*(bh+gap);
+    var isBase=(i===3);
+    var fillA=isBase?0.26:(0.10+i*0.05);
+    ctx.fillStyle=hexA(T.accent,fillA);
+    ctx.strokeStyle=T.accent; ctx.lineWidth=isBase?2:1.2;
+    roundRect(ctx,x,y,bw,bh,9); ctx.fill(); ctx.stroke();
+    if(isBase){
+      ctx.setLineDash([6,4]); ctx.strokeStyle=T.danger; ctx.lineWidth=1.4;
+      roundRect(ctx,x,y,bw,bh,9); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.textAlign='left'; ctx.fillStyle=T.ink; ctx.font='bold 13px Georgia';
+    ctx.fillText(s.title, x+14, y+21);
+    ctx.textAlign='right'; ctx.fillStyle=hexA(T.accent2,0.95); ctx.font='11px Georgia';
+    ctx.fillText('Restrisiko p^'+s.n, x+bw-14, y+21);
+    var subY=y+40, halfW=(bw-28);
+    ctx.font='12px Georgia';
+    if(mode!=='haless'){
+      ctx.fillStyle=T.text;
+      wrap2(ctx,s.kant, x+14, subY, mode==='fusion'?halfW*0.48:halfW, 15, 'left');
+    }
+    if(mode!=='kant'){
+      ctx.fillStyle=T.text;
+      wrap2(ctx,s.hales, x+bw-14, subY, mode==='fusion'?halfW*0.48:halfW, 15, 'right');
+    }
+  }
+
+  var bY=bandTop+stackH+10;
+  ctx.strokeStyle=T.danger; ctx.lineWidth=1.5; ctx.setLineDash([8,5]);
+  ctx.beginPath(); ctx.moveTo(x,bY); ctx.lineTo(x+bw,bY); ctx.stroke(); ctx.setLineDash([]);
+  ctx.textAlign='center'; ctx.fillStyle=T.danger; ctx.font='bold 12px Georgia';
+  ctx.fillText('GRENZE — durch eigene Regeln nicht erreichbar', x+bw/2, bY-6);
+  ctx.fillStyle=T.muted; ctx.font='11px Georgia';
+  ctx.fillText('(Ding an sich  ·  externe Kernel-Inspektion)', x+bw/2, bY+16);
+
+  var v=parseInt(document.getElementById('depthSlider').value,10);
+  var probeY=bandTop+(v/100)*stackH;
+  ctx.strokeStyle=hexA(T.accent2,0.35); ctx.lineWidth=7;
+  ctx.beginPath(); ctx.moveTo(x,probeY); ctx.lineTo(x+bw,probeY); ctx.stroke();
+  ctx.strokeStyle=T.accent2; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x,probeY); ctx.lineTo(x+bw,probeY); ctx.stroke();
+  ctx.fillStyle=T.accent2;
+  ctx.beginPath(); ctx.arc(x+bw,probeY,5,0,Math.PI*2); ctx.fill();
+  ctx.textAlign='right'; ctx.fillStyle=T.accent2; ctx.font='bold 11px Georgia';
+  ctx.fillText('Prüfung', x+bw-10, probeY-8);
+}
+function idxFromV(v){ return Math.min(3, Math.floor(v/25)); }
+function updateReadout(){
+  var v=parseInt(document.getElementById('depthSlider').value,10);
+  document.getElementById('depthVal').textContent=v+'%';
+  var idx=idxFromV(v); var s=STRATA[idx];
+  var exp=-4*s.n;
+  document.getElementById('roTitle').textContent=s.title;
+  var rk=document.getElementById('roKant'), rh=document.getElementById('roHales');
+  rk.innerHTML='<span class="k">Kant:</span> '+s.kant;
+  rh.innerHTML='<span class="h">Hales:</span> '+s.hales;
+  document.getElementById('roDesc').textContent=s.desc;
+  document.getElementById('roRisk').innerHTML='Restrisiko &asymp; 10<sup>'+exp+'</sup> &nbsp;(p<sup>n</sup>, n='+s.n+'): '+(exp<=-20?'nahe Sicherheit':exp<=-8?'sehr sicher':'nur extern gesichert');
+  document.getElementById('roBar').style.width=(s.n/6*100)+'%';
+  var rb=document.getElementById('roBoundary');
+  if(idx===3){ rb.style.display='block'; rb.textContent=BOUNDARY; }
+  else rb.style.display='none';
+  rk.style.display=(mode==='haless')?'none':'block';
+  rh.style.display=(mode==='kant')?'none':'block';
+}
+function setMode(m){
+  mode=m;
+  document.getElementById('modeKant').classList.toggle('on',m==='kant');
+  document.getElementById('modeHales').classList.toggle('on',m==='haless');
+  document.getElementById('modeFusion').classList.toggle('on',m==='fusion');
+  drawStack(); updateReadout();
+}
+function toggleTheme(){
+  document.documentElement.classList.toggle('dark');
+  drawStack();
+}
+var rt=null;
+function onResize(){ clearTimeout(rt); rt=setTimeout(drawStack,120); }
+function init(){
+  document.getElementById('depthSlider').addEventListener('input',function(){ drawStack(); updateReadout(); });
+  document.getElementById('modeKant').addEventListener('click',function(){ setMode('kant'); });
+  document.getElementById('modeHales').addEventListener('click',function(){ setMode('haless'); });
+  document.getElementById('modeFusion').addEventListener('click',function(){ setMode('fusion'); });
+  document.getElementById('themeToggle').addEventListener('click',toggleTheme);
+  window.addEventListener('resize',onResize);
+  drawStack(); updateReadout();
+}
+window.addEventListener('DOMContentLoaded',init);
+window.addEventListener('load',function(){ drawStack(); });
+</script>
+</body>
+</html>

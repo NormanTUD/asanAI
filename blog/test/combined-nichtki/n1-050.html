@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bewusstsein als Fenster über dem neuronalen Kernel — Fusion</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --text:#1b1a17; --muted:#5b574d; --card:#fffdf8;
+    --line:rgba(0,0,0,0.12); --accent:#7c3aed; --accent2:#0078d4;
+    --code-bg:rgba(0,0,0,0.05); --link:#0078d4;
+    --viz-bg:#f6f4ee; --viz-grid:rgba(0,0,0,0.07);
+    --viz-kernel:#0078d4; --viz-access:#0a93b8; --viz-merge:#7c3aed; --viz-window:#d11a6f;
+    --viz-text:#1b1a17; --viz-sub:#5b574d;
+  }
+  html.dark{
+    --bg:#0a0e27; --text:#e8ecf1; --muted:#94a3b8; --card:#111936;
+    --line:rgba(148,163,184,0.18); --accent:#a78bfa; --accent2:#38bdf8;
+    --code-bg:rgba(255,255,255,0.06); --link:#38bdf8;
+    --viz-bg:#0a0e27; --viz-grid:rgba(148,163,184,0.12);
+    --viz-kernel:#38bdf8; --viz-access:#22d3ee; --viz-merge:#a78bfa; --viz-window:#f472b6;
+    --viz-text:#e8ecf1; --viz-sub:#94a3b8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 90px;}
+  header.hero{padding:64px 22px 30px;text-align:center;}
+  header.hero .eyebrow{
+    text-transform:uppercase;letter-spacing:3px;font-size:0.72rem;color:var(--accent);
+    font-weight:700;margin-bottom:14px;
+  }
+  h1{
+    font-size:clamp(2rem,5.5vw,3rem);line-height:1.15;font-weight:800;letter-spacing:-0.5px;
+    background:linear-gradient(120deg,var(--accent2),var(--accent) 55%,var(--viz-window));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  }
+  .subtitle{margin-top:16px;color:var(--muted);font-size:1.02rem;}
+  .subtitle .x{color:var(--accent);font-weight:700;}
+  .theme-btn{
+    margin-top:20px;background:var(--card);color:var(--text);border:1px solid var(--line);
+    padding:8px 16px;border-radius:22px;cursor:pointer;font-size:0.85rem;font-weight:600;
+  }
+  .theme-btn:hover{border-color:var(--accent);}
+  article{margin-top:10px;}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:30px 30px;margin:26px 0;box-shadow:0 8px 30px rgba(0,0,0,0.06);
+  }
+  section h2{
+    font-size:1.5rem;font-weight:800;margin-bottom:16px;color:var(--text);
+    display:flex;align-items:center;gap:10px;
+  }
+  section h2 .num{
+    color:var(--accent);font-size:0.8rem;font-weight:700;letter-spacing:2px;
+    background:var(--code-bg);padding:3px 10px;border-radius:20px;
+  }
+  p{margin-bottom:14px;color:var(--text);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--text);}
+  .lead{font-size:1.08rem;color:var(--muted);}
+  code{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.86em;
+    background:var(--code-bg);padding:2px 6px;border-radius:5px;
+  }
+  .paper-tag{
+    display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 9px;border-radius:12px;
+    margin-right:6px;vertical-align:middle;
+  }
+  .tag-a{background:rgba(209,26,111,0.14);color:var(--viz-window);}
+  .tag-b{background:rgba(0,120,212,0.14);color:var(--accent2);}
+  ul{margin:6px 0 14px 22px;}
+  li{margin-bottom:9px;}
+  .tension{
+    border-left:4px solid var(--accent);background:var(--code-bg);
+    padding:16px 18px;border-radius:0 12px 12px 0;margin:16px 0;
+  }
+  .tension h4{font-size:1.02rem;margin-bottom:8px;color:var(--text);}
+  .tension .a{color:var(--viz-window);font-weight:700;}
+  .tension .b{color:var(--accent2);font-weight:700;}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.92rem;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{color:var(--muted);font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;}
+  td:first-child{color:var(--muted);}
+  .keybox{
+    background:linear-gradient(135deg,rgba(124,58,237,0.10),rgba(0,120,212,0.10));
+    border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0;font-size:1.02rem;
+  }
+  .keybox .k{color:var(--accent);font-weight:700;}
+  .viz-box{
+    background:var(--viz-bg);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0;
+  }
+  .viz-box canvas{width:100%;display:block;background:transparent;}
+  .viz-ctrl{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:6px 0 12px;}
+  .viz-ctrl label{font-size:0.9rem;color:var(--muted);font-weight:600;}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:220px;max-width:55vw;height:6px;border-radius:3px;
+    background:var(--line);outline:none;accent-color:var(--accent);
+  }
+  .viz-level{font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;}
+  #fuse-readout{
+    border-left:4px solid var(--accent);background:var(--code-bg);border-radius:0 10px 10px 0;
+    padding:13px 15px;font-size:0.95rem;margin-top:12px;min-height:48px;
+  }
+  .viz-cap{font-size:0.86rem;color:var(--muted);margin-top:12px;}
+  .prov{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
+  .prov a{
+    flex:1;min-width:240px;display:block;text-decoration:none;color:var(--text);
+    background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    transition:border-color .2s,transform .2s;
+  }
+  .prov a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .prov a .t{font-weight:700;color:var(--link);margin-bottom:6px;font-size:1.02rem;}
+  .prov a .d{font-size:0.9rem;color:var(--muted);}
+  footer{text-align:center;color:var(--muted);font-size:0.82rem;padding:30px 22px;border-top:1px solid var(--line);margin-top:30px;}
+  @media (max-width:560px){ section{padding:22px 18px;} }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="eyebrow">Fusion · Runde 1 · Paar 050 · nicht-KI-Track</div>
+  <h1>Bewusstsein als Fenster über dem neuronalen Kernel</h1>
+  <p class="subtitle">Fusion aus: <span class="x">bewusstsein.html</span> <span class="x">✕</span> <span class="x">windows.html</span></p>
+  <button class="theme-btn" id="theme-toggle">◐ Thema wechseln</button>
+</header>
+
+<article class="wrap">
+
+<section id="these">
+  <h2><span class="num">01</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere beschreiben, wie ein <strong>komplexes System sich selbst als etwas Einfaches präsentiert</strong> — und sie tun es auf identische Weise: durch <strong>Abstraktionsschichten</strong>, die Komplexität verbergen, und durch einen <strong>Vereinigungs-Moment</strong>, in dem zwei getrennte Linien zu einem System werden.</p>
+  <p><strong>„windows.html"</strong> zeigt: Ein Betriebssystem ist ein <em>Kernel</em> (ca. 50 Mio. Zeilen Code), über den eine grafische Oberfläche eine <em>GUI</em> legt. Der Nutzer sieht nie die rohen Prozesse — er sieht ein <strong>Fenster</strong>, eine begrenzte, vermittelte Ansicht. <strong>„bewusstsein.html"</strong> zeigt: Bewusstsein hat Ebenen — darunter das <em>phänomenale Bewusstsein</em> („wie es sich anfühlt") und das <em>Zugangsbewusstsein</em> (Information, verfügbar für Denken und Handeln). Auch hier gibt es eine Abstraktionsschicht über rohen neuronalen Prozessen.</p>
+  <p>Die integrierte Position lautet: <strong>Bewusstsein ist das „Fenster" eines Systems.</strong> Das Zugangsbewusstsein ist der <em>Kernel</em> — funktional, berechenbar, die „leichten Probleme". Das phänomenale Erleben ist die <em>GUI</em>, das vermittelte <em>Fenster</em> über diesem Kernel. So wie sich in Windows 2001 die DOS-/9x-Linie und die NT-Linie im „XP-Merge" zu einem Betriebssystem vereinten, so vereinen sich Zugang- und phänomenales Bewusstsein im <strong>Globalen Arbeitsraum</strong> (Global Workspace Theory). Die berüchtigte „Erklärungslücke" (das Hard Problem) ist damit kein Widerspruch zur Physik, sondern die <strong>Abstraktionsgrenze zwischen Kernel und GUI</strong> — real, aber eine Eigenschaft der Schichtung, kein Fehler.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span> Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere stehen an einer echten philosophischen Stelle gegeneinander. Der Konflikt ist real, nicht konstruiert — er ist der alte Streit zwischen <em>Reduktion</em> und <em>Irreduzibilität</em>.</p>
+
+  <div class="tension">
+    <h4>① Reduktion vs. Irreduzibilität der oberen Schicht</h4>
+    <p><span class="tag-b tag paper-tag">B · windows</span><span class="b">Jede Schicht ist auf die darunterliegende zurückführbar.</span> Die GUI ist „nichts außer" dem Kernel, anders präsentiert. Ein Fenster besteht aus Instruktionen; die Abstraktion hat kein Eigen-Dasein jenseits des Prozesses. Das ist ein konsequent materialistischer, reduktionistischer Standpunkt.</p>
+    <p style="margin-top:12px"><span class="tag-a tag paper-tag">A · bewusstsein</span><span class="a">Die obere Schicht ist NICHT reduzierbar.</span> Das phänomenale Erleben ist „etwas Eigenes": Eigenschaftsdualismus (Chalmers), das Zombie-Argument (gleiche Neuronen, null Erleben) und Marys Zimmer (Mary lernt draußen etwas, das keine physikalische Tatsache war) alle sagen: <em>über</em> den neuronalen Prozessen bleibt etwas, das die Physik nicht fängt.</p>
+  </div>
+
+  <div class="tension">
+    <h4>② Die Lücke: fundamentales Mysterium vs. lösbares Ingenieursproblem</h4>
+    <p><span class="tag-a tag paper-tag">A · bewusstsein</span><span class="a">Die Erklärungslücke ist eine Grenze.</span> Das Hard Problem (Chalmers 1995) ist möglicherweise <em>grundsätzlich</em> unüberbrückbar — der Mystizianismus (McGinn) hält es für möglich, dass das menschliche Gehirn schlicht nicht in der Lage ist, Bewusstsein zu verstehen, „wie eine Katze keine Quantenphysik versteht".</p>
+    <p style="margin-top:12px"><span class="tag-b tag paper-tag">B · windows</span><span class="b">Lücken sind entworfen und schließbar.</span> Windows „löst" die Terminal-Lücke, indem es eine Abstraktionsschicht darauf legt. Abstraktion ist ein Werkzeug, das Menschen bewusst bauen, um Komplexität handhabbar zu machen. Was wie eine Lücke wirkt, ist ein Design-Problem — und Design-Probleme werden gelöst (in 40 Jahren und 13+ Versionen).</p>
+  </div>
+
+  <div class="tension">
+    <h4>③ (Näherliegende Spannung) Statisch-deskriptiv vs. iterativ-entwickelnd</h4>
+    <p><span class="tag-a tag paper-tag">A · bewusstsein</span> beschreibt <em>Was</em>: Schichten, Theorien, Gedankenexperimente — aber ohne Entwicklungsverlauf, ohne „Versionen". Das System wird als fertiges Rätsel dargestellt.</p>
+    <p style="margin-top:12px"><span class="tag-b tag paper-tag">B · windows</span> beschreibt <em>Wie es entstanden ist</em>: Alpha- → Beta- → Insider-Kultur, Build-Nummern, die exponentiell wachsen. Das System <em>wird</em> durch Wiederholung, Feedback und „Millionen Nutzer als Mit-Entwickler".</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span> Auflösung</h2>
+  <p>Die Auflösung besteht darin, <strong>Reduktion und Irreduzibilität auf verschiedenen Ebenen zuzuschreiben</strong> — statt sie gegen das gleiche Objekt zu pressen.</p>
+
+  <p><strong>Zu ①:</strong> Der <em>Zugang-„Kernel"</em> (die funktionalen, berechenbaren „leichten Probleme") <strong>ist</strong> reduzierbar — er verhält sich wie ein Kernel. Aber das <em>Fenster</em> (das phänomenale Erleben) ist die <strong>Präsentations-Eigenschaft der Schicht selbst</strong>: ein Windows-Fenster besteht zwar aus Kernel-Instruktionen, und dennoch ist es ein „Fenster", das man nicht auf eine einzige Instruktion reduziert, ohne das zu verlieren, was es <em>zum Fenster macht</em> (seine begrenzende, präsentierende, benutzergewandte Natur). „Reduktion" (B) und „Irreduzibilität" (A) gelten also nicht widersprüchlich, sondern komplementär: <em>der Inhalt der Schicht ist reduziert, die Tatsache, dass er als Fenster erscheint, ist emergent.</em></p>
+
+  <p><strong>Zu ②:</strong> Die Erklärungslücke wird damit zu der <strong>GUI/Kernel-Abstraktionsgrenze</strong>. Sie ist real — aber man „löst" sie nicht wie einen Bug, indem man sie wegmacht. Man löst sie, indem man die <em>Ebenen unterscheidet</em>. Der mystische Rest bei A bleibt stehen: die <em>Qualität</em> der Erfahrung (das Wie-es-sich-anfühlt) <em>ist</em> das Fenster — nicht berechenbar aus dem Kernel, aber auch nicht „kaputt". Es ist die Schicht, nicht ein Defekt.</p>
+
+  <div class="keybox">
+    <span class="k">Fusionierter Schluss:</span> Beide Systeme sind <strong>geschichtete, entwickelte Systeme</strong>. Der „Kernel" (Zugang / neuronale Prozesse) ist reduzierbar und wird iterativ ausgebaut (B); das „Fenster" (phänomenales Erleben) ist die irreduzible Präsentations-Eigenschaft dieser Schicht (A). Das „Hard Problem" ist die Natur der Grenzfläche — kein Widerspruch, kein Patch, sondern das, was jede Abstraktionsschicht mit sich bringt. Und wie Windows 1.0 bis 11: Bewusstsein ist ein <strong>„Insider-Build"</strong> — ein sich entwickelnder Stand, an dem wir die ersten Nutzer unseres eigenen Builds sind.
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span> Fusionierter Inhalt</h2>
+
+  <h3 style="font-size:1.1rem;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Aus A — Bewusstsein & Qualia</h3>
+  <ul>
+    <li><strong>Qualia / phänomenales Bewusstsein:</strong> das „Wie-es-sich-anfühlt" — Röte, Schmerzhaftigkeit, Süße. Nicht objektiv messbar, nicht vollständig in Worte fassbar.</li>
+    <li><strong>Leichte vs. schwere Probleme</strong> (Chalmers 1995): Aufmerksamkeit, Gedächtnis, Verhaltenssteuerung sind prinzipiell neurowissenschaftlich erklärbar; das <em>Hard Problem</em> fragt, warum überhaupt etwas „sich anfühlt".</li>
+    <li><strong>Gedankenexperimente:</strong> <em>Marys Zimmer</em> (Frank Jackson) — physikalisches Wissen über Farben reicht nicht aus; draußen lernt Mary das Quale. <em>Zombie-Argument</em> — physisch identisch, null Erleben; ist es denkbar, ist Bewusstsein nicht physikalisch erklärbar. <em>Nagel:</em> „Wie fühlt es sich an, eine Fledermaus zu sein?"</li>
+    <li><strong>Drei Ebenen:</strong> phänomenal (Qualia) → Zugangs-Bewusstsein (Ned Block; Information für Kognition) → Selbst-Bewusstsein (Descartes' <em>cogito</em>, Spiegeltest).</li>
+    <li><strong>Theorien:</strong> Global Workspace Theory (Baars, Dehaene — Bewusstsein = breite Verfügbarkeit im „globalen Arbeitsraum"), IIT (Tononi — Bewusstsein = integrierte Information Φ), Eigenschaftsdualismus (Chalmers), Panpsychismus (Goff), Higher-Order-Theorien (Rosenthal), Mystizianismus (McGinn).</li>
+  </ul>
+
+  <h3 style="font-size:1.1rem;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Aus B — Windows: Schichten & Entwicklung</h3>
+  <ul>
+    <li><strong>Abstraktion als Motiv:</strong> Von <em>Textkommandos im schwarzen Terminal</em> (1981) zur grafischen Oberfläche. Die GUI ist ein bewusstes Mittel, um einen komplexen Kernel für „alle" zugänglich zu machen.</li>
+    <li><strong>Das WIMP-Paradigma:</strong> <strong>W</strong>indows, <strong>I</strong>cons, <strong>M</strong>enus, <strong>P</strong>ointer — die benutzergewandte Präsention über dem System.</li>
+    <li><strong>Zwei Kernel-Linien, ein Merge:</strong> die <em>Consumer-Linie</em> (MS-DOS → Win 3.x → 95 → 98 → ME, DOS-basiert) und die <em>Enterprise-Linie</em> (NT 3.1, 1993, neu von Dave Cutler; 32-Bit, sicher). Sie <strong>vereinigten sich 2001 in Windows XP</strong> — der zentrale „Merge"-Moment der Geschichte.</li>
+    <li><strong>Beta-Kultur:</strong> Pre-Alpha → Alpha → Beta → Release Candidate → RTM → GA. Windows 95: 400.000 Beta-Tester; seit 2014 das Insider-Programm mit Kanälen (Canary / Dev / Beta / Release Preview) nach <em>Risiko × Neuheit</em>.</li>
+    <li><strong>Maß für Komplexität:</strong> Build-Nummern wachsen von Win 3.1 (103) über Win 10 (10240) zu Win 11 24H2 (26100); ~50 Mio. Zeilen Kernel-Code.</li>
+  </ul>
+
+  <h3 style="font-size:1.1rem;margin:22px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Die fusionierte Entsprechung</h3>
+  <table>
+    <thead><tr><th>Ebene</th><th>Windows (B)</th><th>Bewusstsein (A)</th></tr></thead>
+    <tbody>
+      <tr><td>Kernel — reduzierbar</td><td>NT-Kernel, ~50 Mio. Zeilen</td><td>neuronale Prozesse / „leichte Probleme"</td></tr>
+      <tr><td>Abstraktionsgrenze</td><td>GUI ↔ Kernel</td><td>Erklärungslücke (Hard Problem)</td></tr>
+      <tr><td>„Fenster" / Präsention</td><td>WIMP-Desktop</td><td>phänomenales Erleben (Qualia)</td></tr>
+      <tr><td>Zwei Linien, ein Merge</td><td>DOS/9x + NT → XP (2001)</td><td>Zugang + phänomenal → Globaler Arbeitsraum</td></tr>
+      <tr><td>Iteration / Versionen</td><td>Win 1.0 → 11 (1985 → 2024)</td><td>Entwicklungsstufen des Geistes</td></tr>
+      <tr><td>„Insider"-Feedback</td><td>Insider-Builds, Millionen Tester</td><td>wir sind „Insider" unseres eigenen Erlebens</td></tr>
+    </tbody>
+  </table>
+  <div class="keybox">
+    <span class="k">Das fusionierte Modell in einem Satz:</span> Das Gehirn ist ein Kernel; die Evolution bautte die Abstraktionsschicht „Fenster" darüber; das Globale Arbeitsraum-Prinzip ist der „XP-Merge" von Zugang und phänomenalem Erleben; und das „Hard Problem" ist genau die Tatsache, dass man ein Fenster nicht in eine Kernel-Instruktion übersetzen kann, ohne es aufzuhören zu lassen, ein Fenster zu sein.
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span> Visualisierung: Zwei Linien, ein Fenster</h2>
+  <p>Zwei Linien laufen von links — <strong>„der Kernel"</strong> (Zugangsbewusstsein / neuronale Prozesse, <em>läuft immer</em>) und <strong>„das Phänomenale"</strong> — und vereinigen sich im <strong>Globalen Arbeitsraum</strong> (der „XP-Merge"). Rechts davon entsteht das erlebte <strong>Fenster</strong>. Bewege den Regler: Bei 0 läuft nur der Kernel und das Fenster ist dunkel — das ist Chalmers' <em>Zombie</em>. Bei 100 leuchtet das Fenster voll.</p>
+
+  <div class="viz-box">
+    <div class="viz-ctrl">
+      <label for="fuse-slider">Bewusstseinsgrad / phänomenales Erleben:</label>
+      <input type="range" id="fuse-slider" min="0" max="100" value="70">
+      <span class="viz-level" id="fuse-level">70</span>
+    </div>
+    <canvas id="fuse-canvas"></canvas>
+    <div id="fuse-readout"></div>
+    <p class="viz-cap">Wie die DOS- und die NT-Kernel-Linie, die sich 2001 in Windows XP vereinten, vereinigen sich hier <em>Zugang</em> und <em>phänomenales Bewusstsein</em>. Der „Kernel" feuert unabhängig vom Erleben weiter — genau das macht den Zombie denkbar.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span> Provenienz</h2>
+  <div class="prov">
+    <a href="../bewusstsein.html">
+      <div class="t">bewusstsein.html</div>
+      <div class="d">„Qualia &amp; Bewusstsein" — interaktive Reise in die Philosophie des Geistes: Qualia, Hard Problem, Marys Zimmer, Bewusstseinsebenen, Theorien (GWT, IIT, …) und das Zombie-Argument.</div>
+    </a>
+    <a href="../windows.html">
+      <div class="t">windows.html</div>
+      <div class="d">„Die Geschichte von Windows" — interaktive Reise durch 40 Jahre: GUI vs. Terminal, Versions-Zeitleiste, Beta-Kultur, Marktanteile, Insider-Kanäle und die Vereinigung der Kernel-Linien in XP.</div>
+    </a>
+  </div>
+</section>
+
+</article>
+
+<footer>
+  Fusion aus bewustsein.html ✕ windows.html · Runde 1 · Paar 050 · nicht-KI-Track
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('fuse-canvas');
+  var slider = document.getElementById('fuse-slider');
+  var levelEl = document.getElementById('fuse-level');
+  var readout = document.getElementById('fuse-readout');
+  if(!canvas || !slider) return;
+  var ctx = canvas.getContext('2d');
+  if(!ctx) return;
+
+  var dpr = 1, W = 760, H = 440;
+  function css(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function readTheme(){
+    return {
+      grid: css('--viz-grid') || 'rgba(128,128,128,0.15)',
+      kernel: css('--viz-kernel') || '#0078d4',
+      merge: css('--viz-merge') || '#7c3aed',
+      win: css('--viz-window') || '#e11d74',
+      text: css('--viz-text') || '#111',
+      sub: css('--viz-sub') || '#555'
+    };
+  }
+  var C = readTheme();
+
+  function hexA(hex, a){
+    hex = (hex || '').replace('#','');
+    if(hex.length === 3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    if(hex.length < 6){ return 'rgba(128,128,128,'+a+')'; }
+    var r = parseInt(hex.substr(0,2),16), g = parseInt(hex.substr(2,2),16), b = parseInt(hex.substr(4,2),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function roundRect(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    var cw = canvas.clientWidth || 760;
+    W = cw; H = 440;
+    canvas.width = Math.round(W*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.height = H + 'px';
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var dots = [];
+  for(var i=0;i<54;i++){ dots.push({p:Math.random(), phase:Math.random()*Math.PI*2}); }
+
+  var t = 0;
+  function frame(){
+    t += 1;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+
+    var level = (parseFloat(slider.value)||0)/100;
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = C.grid;
+    var step = 40;
+    var x, y;
+    for(x=0;x<=W;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(y=0;y<=H;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    var ml = 44, mr = W-44;
+    var mergeX = W*0.50;
+    var winLeft = W*0.68;
+    var winRight = mr;
+    var yTop = H*0.28;
+    var yBot = H*0.74;
+    var yMerge = H*0.51;
+    var winH = H*0.44;
+    var winTop = yMerge - winH/2;
+
+    // Fenster-Rahmen (GUI-Motiv)
+    roundRect(winLeft, winTop, winRight-winLeft, winH, 12);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = hexA(C.win, 0.3 + 0.7*level);
+    ctx.stroke();
+
+    // Fenster-Füllung (Glow)
+    ctx.save();
+    roundRect(winLeft, winTop, winRight-winLeft, winH, 12);
+    ctx.clip();
+    var cx = (winLeft+winRight)/2;
+    var grad = ctx.createRadialGradient(cx, yMerge, 4, cx, yMerge, winH*0.72);
+    grad.addColorStop(0, hexA(C.win, 0.12 + 0.6*level));
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(winLeft, winTop, winRight-winLeft, winH);
+    // Titelleiste
+    ctx.fillStyle = hexA(C.win, 0.2 + 0.55*level);
+    ctx.fillRect(winLeft+7, winTop+7, (winRight-winLeft)-14, 15);
+    ctx.restore();
+
+    // Kernel-Linie (läuft immer)
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = hexA(C.kernel, 0.85);
+    ctx.beginPath(); ctx.moveTo(ml, yBot); ctx.lineTo(mergeX, yMerge); ctx.stroke();
+
+    // Phänomenale Linie (mit Level moduliert)
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = hexA(C.win, 0.15 + 0.75*level);
+    ctx.beginPath(); ctx.moveTo(ml, yTop); ctx.lineTo(mergeX, yMerge); ctx.stroke();
+
+    // Vereinte Linie (Kernel -> Fenster)
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = hexA(C.merge, 0.25 + 0.65*level);
+    ctx.beginPath(); ctx.moveTo(mergeX, yMerge); ctx.lineTo(winLeft, yMerge); ctx.stroke();
+
+    // Neurales Rauschen auf der Kernel-Linie
+    for(var d=0; d<dots.length; d++){
+      var dot = dots[d];
+      var px = lerp(ml, mergeX, dot.p);
+      var py = lerp(yBot, yMerge, dot.p) + Math.sin(t*0.05 + dot.phase)*4;
+      var br = 0.3 + 0.7*(0.5 + 0.5*Math.sin(t*0.08 + dot.phase));
+      ctx.fillStyle = hexA(C.kernel, br*0.9);
+      ctx.beginPath(); ctx.arc(px, py, 1.4 + br*2.1, 0, Math.PI*2); ctx.fill();
+    }
+
+    // Merge-Knoten
+    ctx.fillStyle = C.merge;
+    ctx.beginPath(); ctx.arc(mergeX, yMerge, 8 + 4*level, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = hexA(C.merge, 0.4);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(mergeX, yMerge, 14 + 6*level, 0, Math.PI*2); ctx.stroke();
+
+    // Laufender Puls auf der Kernel-Linie (immer)
+    var pk = (t*0.012) % 1;
+    ctx.fillStyle = hexA(C.kernel, 0.95);
+    ctx.beginPath(); ctx.arc(lerp(ml, mergeX, pk), lerp(yBot, yMerge, pk), 4, 0, Math.PI*2); ctx.fill();
+
+    // Puls in das Fenster (nur bei Erleben)
+    if(level > 0.05){
+      var pm = (t*0.012) % 1;
+      ctx.fillStyle = hexA(C.merge, 0.95*level);
+      ctx.beginPath(); ctx.arc(lerp(mergeX, winLeft, pm), yMerge, 4, 0, Math.PI*2); ctx.fill();
+    }
+
+    // Beschriftungen
+    ctx.fillStyle = C.sub; ctx.font = '12px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('Ph\u00e4nomenal \u00b7 \u201edas Fenster\u201c', ml, yTop-14);
+    ctx.fillText('Zugang \u00b7 \u201eder Kernel\u201c (l\u00e4uft immer)', ml, yBot+22);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = C.text; ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('Globaler Arbeitsraum', mergeX, yMerge+30);
+    ctx.fillStyle = C.sub; ctx.font = '11px sans-serif';
+    ctx.fillText('(\u2248 \u201eXP-Merge\u201c)', mergeX, yMerge+45);
+
+    var wx = (winLeft+winRight)/2;
+    ctx.fillStyle = hexA(C.text, 0.35 + 0.65*level);
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(level < 0.2 ? '\u2014 dunkel \u2014' : 'Erleben', wx, yMerge+5);
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = hexA(C.win, 0.5 + 0.5*level);
+    ctx.fillText('das erlebte Fenster', wx, yMerge+22);
+
+    requestAnimationFrame(frame);
+  }
+
+  function updateReadout(){
+    var lv = parseInt(slider.value,10);
+    levelEl.textContent = lv;
+    var txt;
+    if(lv < 20){
+      txt = 'Zombie: Der \u201eKernel\u201c (neuronale Prozesse / Zugang) feuert voll \u2014 aber das \u201eFenster\u201c ist dunkel. Es f\u00fchlt sich an wie nichts. (Chalmers\u2019 Zombie-Argument: physisch identisch, null Erleben.)';
+    } else if(lv < 50){
+      txt = 'D\u00fcnnes Erleben / Blindsight: Einige Signale erreichen den globalen Arbeitsraum; das Fenster ist nur schwach angeleuchtet \u2014 Information ohne volles Erleben.';
+    } else if(lv < 80){
+      txt = 'Zugangs-Bewusstsein dominiert: Information ist f\u00fcr Denken und Sprechen verf\u00fcgbar (die \u201eleichten Probleme\u201c), aber das ph\u00e4nomenale Fenster ist noch nicht voll hell.';
+    } else {
+      txt = 'Volles ph\u00e4nomenales Erleben: Kernel und Fenster sind im globalen Arbeitsraum vereint \u2014 das \u201eFenster\u201c leuchtet. Genau hier liegt das \u201eHard Problem\u201c: die Abstraktionsgrenze, die man nicht wegmachen kann.';
+    }
+    readout.textContent = txt;
+    readout.style.borderColor = lv < 20 ? C.win : (lv < 80 ? C.merge : C.kernel);
+  }
+  slider.addEventListener('input', updateReadout);
+
+  document.getElementById('theme-toggle').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    C = readTheme();
+    updateReadout();
+  });
+
+  updateReadout();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

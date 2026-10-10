@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descent — der leere Gipfel als Stack — Fusion</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}if(!s){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js" onerror="window.__temml_failed=true"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.min.css">
+<style>
+:root{
+  --bg:#faf8f1; --ink:#1f2430; --muted:#5a6272; --card:#ffffff; --card-ink:#1f2430;
+  --accent:#b5651d; --accent2:#2b6cb0; --line:#d8d2c4; --soft:#f0ece1;
+  --canvas-bg:#fffdf8; --grid:#e8e2d4;
+  --viz-p1:#b5462d; --viz-p2:#2b6cb0; --viz-p3:#2f8f4e; --viz-frame:#b5651d; --viz-void:#c0392b;
+}
+html.dark{
+  --bg:#12151f; --ink:#e6e8ee; --muted:#9aa3b5; --card:#1a1f2e; --card-ink:#e6e8ee;
+  --accent:#f0a500; --accent2:#5aa9ff; --line:#2a3348; --soft:#161b28;
+  --canvas-bg:#0d1019; --grid:#232b3d;
+  --viz-p1:#ff8a7a; --viz-p2:#60a5fa; --viz-p3:#34d399; --viz-frame:#f0a500; --viz-void:#ff7a6b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Georgia','Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.75;transition:background .3s,color .3s;overflow-x:hidden;}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+h1{font-size:2.15em;line-height:1.2;margin:18px 0 6px;color:var(--ink);}
+.subtitle{color:var(--muted);font-size:1em;margin-bottom:6px;letter-spacing:.2px;}
+.lede{color:var(--muted);font-size:1.02em;margin-bottom:26px;font-style:italic;}
+section{margin:42px 0;scroll-margin-top:20px;}
+h2{font-size:1.5em;color:var(--accent);margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+h3{font-size:1.14em;color:var(--accent2);margin:22px 0 8px;}
+p{margin:0 0 14px;}
+p a,li a{color:var(--accent2);}
+ul{padding-left:22px;margin:0 0 14px;}
+li{margin-bottom:8px;}
+.card{background:var(--card);color:var(--card-ink);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0;}
+.card p:last-child{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-right:6px;vertical-align:middle;}
+.tag.a{background:rgba(181,101,29,.16);color:var(--accent);}
+.tag.b{background:rgba(43,108,176,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.formula{display:block;text-align:center;margin:14px 0;padding:12px;background:var(--soft);border-radius:8px;overflow-x:auto;}
+.formula .fallback{opacity:.85;}
+.insight{border-left:4px solid var(--accent);background:var(--soft);padding:12px 18px;border-radius:0 8px 8px 0;font-style:italic;margin:14px 0;color:var(--card-ink);}
+.insight b{font-style:normal;color:var(--accent);}
+table{border-collapse:collapse;margin:14px auto;font-size:.86em;width:100%;}
+th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top;}
+th{background:var(--soft);color:var(--accent);}
+.twrap{overflow-x:auto;}
+.viz-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;}
+#descCanvas{width:100%;height:440px;display:block;border-radius:8px;cursor:default;background:var(--canvas-bg);border:1px solid var(--line);}
+.btnrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+.btnrow label{font-size:.9em;color:var(--muted);display:flex;flex-direction:column;gap:4px;font-weight:bold;}
+.btnrow input[type=range]{width:170px;}
+button.btn{background:var(--accent);color:var(--bg);border:none;padding:9px 18px;border-radius:6px;font-size:.95em;font-weight:bold;cursor:pointer;font-family:inherit;}
+button.btn:hover{opacity:.9;transform:translateY(-1px);}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:1em;}
+.prov{display:block;padding:10px 0;border-bottom:1px dashed var(--line);}
+.prov:last-child{border-bottom:none;}
+.prov .src{font-weight:bold;color:var(--accent2);}
+@media (max-width:560px){h1{font-size:1.6em;}article{padding:28px 16px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="Farbschema wechseln" onclick="toggleTheme()">&#9680;</button>
+<article>
+
+<h1>Descent — der leere Gipfel als Stack</h1>
+<p class="subtitle">Fusion aus: montana_sacra.html &#10007; stacks.html</p>
+<p class="lede">A's leere Gipfel (Puppen statt Unsterblicher) und B's &ldquo;up to isomorphism&rdquo; sind derselbe Zug: Das Ganze ist kein Punkt im Zentrum, sondern eine Struktur — Stack bzw. Frame — mit inneren Symmetrien. Verkleben heißt hier: <em>zoom back</em>.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere sind <strong>Steigerungen (Ladders) eines Aufstiegs</strong>, und beide vollziehen am Ende dieselbe Operation, die B bei Namen nennt und A als Ritual spielt: <strong>Descent</strong> — das Verkleben lokaler Fragmente zu einem globalen Objekt. B (<em>stacks.html</em>) tut es formal: Garben tragen &ldquo;local data, globally&rdquo;, und Descent verklebt lokale Stücke &ldquo;only when they agree on overlaps&rdquo;, in einem Stack sogar nur <em>up to isomorphism</em>. A (<em>montana_sacra.html</em>) tut es mythisch: die alchemistische Transmutation (<em>nigredo → albedo → rubedo</em>), der Aufstieg der Zehn zum Berg, und das entscheidende &ldquo;Zoom back, camera!&rdquo;.</p>
+<p>Beide landen am selben Ort: <strong>das globale Objekt ist kein Punkt im Zentrum, sondern eine Struktur mit inneren Symmetrien</strong> — bei B ein <em>Stack</em> (ein Raum, der die Automorphismen seiner Objekte <em>erinnert</em> und nur bis auf Isomorphie klebt), bei A ein <em>Frame</em> (der selbstreferentielle Apparat — Kameras, Lichter, Schauspieler — den die Rückwärtskamera sichtbar macht). Die fusionierte These: <strong>die Wahrheit eines Zusammengesetzten liegt nicht in seiner Mitte, sondern in seiner Struktur des Verklebens und seiner Symmetrien.</strong> B's Satz &ldquo;descent works up to isomorphism&rdquo; und A's Geste &ldquo;zoom back, camera&rdquo; sind dasselbe: Das Ganze erreicht man nur, indem man es als <em>Frame mit Symmetrien</em> sieht statt als <em>Substanz im Zentrum</em>.</p>
+<p>In einem Satz: <strong>B beweist die Struktur</strong> (Stack, glatter Atlas, das ℤ/2), <strong>A vollzieht sie</strong> (Transmutation, gebrochener Spiegel, Puppen am Gipfel, zoom back). &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo; ist zugleich die alchemistische Prüfung und die algebraisch-geometrische Descent-Operation.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+
+<h3>1. Objektiv eindeutiges Verkleben vs. private, irreduzible Erfahrung</h3>
+<div class="card">
+<p><span class="tag b">B &#183; Algebraic Stacks</span> Descent ist eine <em>formale, überprüfbare</em> Regel: &ldquo;Descent is the art of gluing local pieces into a global object — but only when they agree on overlaps&rdquo;, und in einem Stack wirkt es &ldquo;up to isomorphism&rdquo;. Das globale Objekt ist also durch die (vereinbaren) lokalen Daten <em>eindeutig bestimmt</em> — objektive, teilbare Wahrheit.</p>
+<p><span class="tag a">A &#183; Der Heilige Berg</span> Das entscheidende lokale Datum ist <em>privat</em>: &ldquo;Jede und jeder muss unterwegs seiner persönlichen symbolischen Vision begegnen — der schlimmsten Angst, der tiefsten Obsession, dem eigenen Schatten. Der Film überspringt diese Visionen mit ritueller Knappheit; <em>sie sind privat</em>.&rdquo; Niemand kann sie nachprüfen.</p>
+<p><span class="tag x">Spannung</span> Bestimmt das Lokale das Globale <em>eindeutig</em> (B), oder enthält das Globale ein <em>privates Rest</em>, das die lokalen Daten <em>nicht</em> fixieren (A)?</p>
+</div>
+
+<h3>2. Der Gipfel als Preis vs. der Gipfel als Leere / Falle</h3>
+<div class="card">
+<p><span class="tag b">B &#183; Algebraic Stacks</span> Die Leiter <em>konzerviert auf ein reales, mächtiges, benutzbares Objekt</em>: der algebraische Stack ist &ldquo;the ultimate framework for handling moduli problems with symmetries&rdquo;. Das globale Objekt ist das <em>Ziel und die Ausbeute</em> — man bleibt oben, man <em>nutzt</em> es.</p>
+<p><span class="tag a">A &#183; Der Heilige Berg</span> Der Aufstieg <em>konzerviert auf Leere</em>: &ldquo;Es sind gesichtslose Puppen. Attrappen. <em>Es gibt keine Unsterblichen.</em>&rdquo; Der Gipfel (das Globale) ist ein <em>Köder</em>; der richtige Zug ist, ihn zu <em>verlassen</em>: &ldquo;Auf Wiedersehen, Heiliger Berg. Das echte Leben erwartet uns.&rdquo;</p>
+<p><span class="tag x">Spannung</span> Ist das globale Objekt <em>das Ziel und die Wahrheit</em> (B), oder der <em>Köder, den man verlassen muss</em> (A)?</p>
+</div>
+
+<h3>3. Symmetrie bewahren vs. Symmetrie zerbrechen</h3>
+<div class="card">
+<p><span class="tag b">B &#183; Algebraic Stacks</span> Das <em>definiierende</em> Merkmal eines Stacks ist, dass er Symmetrien/Automorphismen <em>erinnert</em>, die ein naiver Raum vergisst: &ldquo;remembers their automorphisms. Every elliptic curve has at least a ℤ/2 symmetry, so this can't be an ordinary space.&rdquo; Symmetrie = die tiefere Struktur, die <em>bewahrt</em> werden soll.</p>
+<p><span class="tag a">A &#183; Der Heilige Berg</span> Die zentrale alchemistische Prüfung ist, das <em>symmetrische Selbstbild zu zerbrechen</em>: &ldquo;Der Dieb sieht sein Gesicht — und zerschmettert den Spiegel mit dem Goldbarren.&rdquo; Und die geordnete Symmetrie der sieben Planeten ist &ldquo;die Architektur der Moderne&rdquo;, deren Geld und Wachs-Effigien der Alchimist <em>verbrennen</em> lässt. Symmetrie = die Illusion, die <em>zerbrochen</em> werden muss.</p>
+<p><span class="tag x">Spannung</span> Ist die Symmetrie das, was <em>erhalten bleiben</em> soll (B), oder das, was <em>zerbrochen</em> werden muss (A)?</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<h3>1. Trenne die Struktur des Verklebens vom Inhalt der Teile</h3>
+<p>Descent ist eine <em>objektive formale Regel</em> (B) darüber, wie vereinbare lokale Daten ein globales Objekt <em>up to isomorphism</em> bestimmen. Die <em>Rest-Freiheit</em>, die nach dem Verkleben <em>unbestimmt</em> bleibt, ist genau die <em>Automorphismus-Gruppe</em> — die subjektbezogene Identifikation. B's &ldquo;eindeutig bis auf Isomorphie&rdquo; ist damit der <em>formale Schatten</em> von A's &ldquo;privat&rdquo;: Das, was die lokalen Daten <em>nicht</em> fixieren, <em>ist</em> der Automorphismus — und dieser ist <em>persönlich</em> (je Objekt). <strong>Fusioniert:</strong> das Globale ist <em>objektiv strukturiert</em> (B) und zugleich <em>subjektiv realisiert</em> (A). Ein Stack <em>ist</em> die Mathematik der privaten Erfahrung, gemacht formal — ein globales Objekt, dessen Punkte <em>persönliche</em> Symmetrien tragen, die keine globale Koordinate fixiert. &ldquo;up to isomorphism&rdquo; = &ldquo;was privat ist&rdquo;.</p>
+
+<h3>2. Behalte die Struktur, verlass die Substanz</h3>
+<p>B's algebraischer Stack ist <em>tatsächlich</em> real und reich — aber er ist ein <em>Framework / Atlas</em> (eine Weise zu klassifizieren), kein &ldquo;Schatz, den man sich aneignet&rdquo;. A's Gipfel ist <em>tatsächlich</em> leer — aber diese Leere ist <em>informativ</em>: Sie <em>beweist</em>, dass der naive &ldquo;Preis&rdquo; (Unsterblichkeit = der Moduli-<em>raum</em>, der die Automorphismen vergessen hat) nie der Punkt war. <strong>Fusioniert:</strong> der Gipfel ist <em>beides</em> zugleich — er ist die <em>reale globale Struktur</em> (Stack / Frame / Atlas) <em>und</em> die <em>leere naive Ausbeute</em> (Puppen / der Punkt in der Mitte). <em>Behalte die Struktur, verlass die Substanz:</em> B behält den Stack (um elliptische Kurven zu klassifizieren), A verlässt die Puppen (um in das echte Leben zu kommen). Beide stimmen darin überein, dass das globale Objekt ein <em>Frame / Werkzeug</em> ist, keine <em>Substanz / kein Schatz</em>. &ldquo;Nein. Aber es kann dich hinausschicken.&rdquo; (A) = &ldquo;der Atlas bildet auf den Stack ab, ist aber nicht der Stack&rdquo; (B).</p>
+
+<h3>3. Zerbrich die Instanz, behalt den Typ</h3>
+<p>B bewahrt die Symmetrie <em>als Struktur</em> — den <em>Typ</em> des Automorphismus (das ℤ/2 als Isomorphieklasse von Abbildungen). A zerstört die Symmetrie <em>als Instanz</em> — die <em>bestimmte</em> Spiegelung in <em>deinem</em> Spiegel, die <em>bestimmte</em> geordnete Architektur <em>deiner</em> Moderne. Das ist derselbe Zug auf zwei Ebenen: Man <em>bricht das bestimmte symmetrische Bild</em> (A), um <em>die Symmetrie als allgemeine Invariante sichtbar zu machen</em> (B). Der zerschlagene Spiegel <em>ist</em> die Automorphismus-Gruppe, die sichtbar wird: Wer die <em>Instanz</em> bricht, enthüllt den <em>Typ</em> (die Involution / das ℤ/2), der in ihr versteckt war. <strong>Fusioniert — &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo;:</strong> die alchemistische Prüfung (Spiegel brechen, nigredo→rubedo) und die algebraisch-geometrische (Automorphismen aufzeichnen) sind derselbe Descent: Man klebt die <em>gebrochenen</em> Stücke <em>up to isomorphism</em> zum <em>Stack</em> — der <em>Typ</em> der Symmetrie überlebt das <em>Zerbrechen der Instanz</em>.</p>
+
+<div class="insight"><b>Gesamtfolgerung:</b> A und B vollziehen beide <em>Descent</em> — das Verkleben lokaler Fragmente zu einem Ganzen — und beide schließen, dass das Ganze <em>keine Substanz in der Mitte</em> ist, sondern ein <em>Frame mit inneren Symmetrien</em>. &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo; und &ldquo;Behalte die Struktur, verlass die Substanz&rdquo; sind die beiden Formulierungen desselben Satzes: Das, was bleibt, ist die Struktur des Verklebens und der Symmetrie — nicht der Punkt, an dem man erwartet hatte, etwas zu finden.</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<p>Die Fusion liest die mathematische Leiter von B als <em>Formalskelett</em> und die Handlung von A als <em>mythisches Fleisch</em> darüber — Stufe für Stufe. Jede Stufe trägt einen konkreten, gemeinsamen Gegenstand.</p>
+
+<div class="formula" id="f_descent"><span class="fallback">lokal —(vereinbar auf U&#8745;V)→ global&nbsp;&nbsp;(up to isomorphism)</span></div>
+
+<h3>4.1 Die gemeinsame Operation — Descent</h3>
+<p>Beide Werke sind Steigerungen, die am Ende <em>kleben</em>: lokale Fragmente werden zu einem globalen Objekt verbunden. B: Garbe (lokale Daten, kompatibel auf Überlappungen) → Descent (Verkleben) → Stack (Descent bis auf Isomorphie) → algebraischer Stack (Stack + glatter Atlas). A: Transmutation (nigredo→albedo→rubedo) → Aufstieg der Zehn → Gipfel → &ldquo;zoom back&rdquo;. Der gemeinsame Kern: <em>das Ganze entsteht aus dem Lokalen, und der Moment, in dem das Ganze <em>seine Struktur</em> statt seine Substanz zeigt, ist der Moment des Verstehens.</em></p>
+
+<div class="formula" id="f_z2"><span class="fallback">&#8484;/2: &nbsp;(P &#8594; &#8722;P)&#178; = id</span></div>
+
+<h3>4.2 Die Involution als gemeinsamer Gegenstand</h3>
+<p>Beide Werke kreisen um <em>derselben</em> kleinsten Symmetrie: die <strong>Involution</strong> (Anwendung = Identität). B: jede elliptische Kurve trägt die Negation <span style="color:var(--accent2)">P ↦ −P</span> mit <span style="color:var(--accent2)">(P↦−P)² = id</span> — das ℤ/2, das M<sub>1,1</sub> zu einem Stack statt einem Raum macht. A: der <em>Spiegel</em> (das Selbstbild) ist eine Involution — ein zweites Abbilden ergibt das Ausgangsbild. Der Spiegel in A <em>ist</em> das ℤ/2 in B: beides eine Symmetrie der Ordnung zwei. Der Unterschied ist der Umgang damit: B <em>erinnert</em> den Typ (er hält das ℤ/2 als Struktur fest), A <em>bricht</em> die Instanz (er zerschmettert das bestimmtes Spiegelbild). Daraus entsteht die zentrale Auflösung: <em>der Typ überlebt das Zerbrechen der Instanz.</em></p>
+
+<div class="formula" id="f_atlas"><span class="fallback">Atlas U &#8625; &#120120; (Stack)&nbsp;&nbsp;&#120120; &#8800; U</span></div>
+
+<h3>4.3 Atlas / Abdeckung — der Film ist nicht das Leben</h3>
+<p>B: ein algebraischer Stack ist ein Stack über den Schemata mit einem <em>glatten Atlas</em> — einem Schema U, das <em>auf</em> den Stack <span style="color:var(--accent2)">𝓧</span> <em>abbildet</em> (eine Abdeckung). Der Atlas ist das schöne lokale Objekt; der Stack ist das, was er abdeckt. <span style="color:var(--accent2)">𝓧 ≠ U.</span> A: der <em>Film</em> ist der <em>Atlas</em> (das schöne Objekt); das <em>echte Leben</em> (das &ldquo;Schema&rdquo;) ist das, was er abdeckt. &ldquo;Zoom back, camera&rdquo; zeigt, dass der Film nur die <em>Abdeckung</em> ist — nicht das abgedeckte Objekt. A's Meta-Offenbarung (&ldquo;Diese Seite ist HTML. Die Berge sind Dreiecke. Die Planeten sind SVG-Kreise.&rdquo;) ist B's Punkt, dass <em>das Objekt ein Frame für ein Moduli-Problem ist, kein Punkt</em>: der Stack ist nicht die Kurve, der Film ist nicht das Leben.</p>
+
+<div class="formula" id="f_m11"><span class="fallback">&#120120;<sub>1,1</sub>: elliptische Kurven — Automorphismen werden erinnert</span></div>
+
+<h3>4.4 Das leere Zentrum</h3>
+<p>B: Die &ldquo;Punkte&rdquo; eines Stacks sind <em>keine Punkte</em> — sie sind Isomorphieklassen von Objekten <em>mit</em> ihren Stabilisatoren (Automorphismen). Der naive &ldquo;Punkt in der Mitte&rdquo; (der Moduli-<em>raum</em>, der die Automorphismen vergessen hat) ist <em>falsch</em>. A: der Gipfel hat <em>keine</em> Unsterblichen — Puppen. <strong>Gemeinsam:</strong> der naive Mittelpunkt (die Unsterblichen / der Moduli-Punkt) ist ein <em>Köder</em>; die Wahrheit ist die <em>Struktur</em> des Stacks / Frames mit seinen Symmetrien. Man &ldquo;erreicht&rdquo; das Ganze, indem man begreift, dass dort, wo man einen <em>Punkt</em> erwartete, eine <em>Struktur</em> steht.</p>
+
+<h3>Die Karte der Fusion — Stufe für Stufe</h3>
+<div class="twrap">
+<table>
+<tr><th>Stufe</th><th>B (Formal) &#10022; A (Mythisch)</th><th>Fusion</th></tr>
+<tr><td>0 · Punkt</td><td>&ldquo;A set is a collection of things… a function maps.&rdquo; &#10022; &ldquo;Er hat keinen Namen… Der Narr — die Zahl Null.&rdquo;</td><td>Ausgangspunkt: der strukturlose Punkt (Mengen-Element / formloser Dieb = 0).</td></tr>
+<tr><td>1 · Lokale Daten</td><td>Garbe: &ldquo;assigns data to each region… compatible on overlaps.&rdquo; &#10022; jeder Akt / jede Planeten-Szene trägt Bedeutung; Metapher &ldquo;als Ereignis&rdquo;.</td><td>Lokale Daten mit Kompatibilitätsbedingung auf Überlappungen (formal in B, rituell-locker in A).</td></tr>
+<tr><td>2 · Kategorie &amp; Funktor</td><td>&ldquo;A functor is a map between categories… preserving structure.&rdquo; &#10022; der Cast (10) als Archetyp-Kategorie; Handlung als Abbildung auf reale Institutionen (die 7 Planeten).</td><td>Funktor von der mythischen Kategorie (Archetypen) auf die soziale Kategorie (Industrien).</td></tr>
+<tr><td>3 · Groupoid &amp; Symmetrie</td><td>&ldquo;every arrow is invertible — like symmetries&rdquo;; ℤ/2 (P↦−P, Involution). &#10022; der Spiegel (Selbstbild, Involution); 7 Planeten im symmetrischen Orbit.</td><td>Die Involution ist der gemeinsame Gegenstand: ℤ/2 = der Spiegel. B behält den Typ, A bricht die Instanz.</td></tr>
+<tr><td>4 · Descent / Verkleben</td><td>&ldquo;gluing local pieces into a global object — only when they agree on overlaps.&rdquo; &#10022; nigredo→albedo→rubedo; die Zehn verkleben zum Aufstieg.</td><td>Verkleben mit Bedingung (formal: Funktorialität / ritual: Feuer + Zeit + gebrochener Spiegel). &ldquo;Exkrement → Gold.&rdquo;</td></tr>
+<tr><td>5 · Stack</td><td>&ldquo;assigns entire categories… Descent works up to isomorphism.&rdquo; &#10022; &ldquo;Zehn ist die Zahl der Sephiroth, der Vollendung des Baums.&rdquo;</td><td>&ldquo;up to isomorphism&rdquo; = Vollendung als <em>Symmetrieklasse</em>, nicht fester Punkt. Die Zehn = Atlas / Abdeckung.</td></tr>
+<tr><td>6 · Leeres Zentrum</td><td>Algebraischer Stack + glatter Atlas; 𝓜<sub>1,1</sub> erinnert ℤ/2. &#10022; der Film als selbstreferentieller Frame; &ldquo;Zoom back&rdquo;; Gipfel = Puppen, keine Unsterblichen.</td><td>Atlas (Abdeckung) ≠ Stack (abgedecktes Objekt); der Film ≠ das Leben. Der naive Mittelpunkt ist ein Köder; die Wahrheit ist Frame + Symmetrie.</td></tr>
+</table>
+</div>
+
+<div class="insight"><b>Ein Gedanke, zwei Sprachen:</b> (1) B klebt lokale Garben <em>up to isomorphism</em> zum Stack. (2) A klebt alchemistische Stufen (nigredo→rubedo) und die Zehn Pilger zum Gipfel. (3) B's &ldquo;up to isomorphism&rdquo; ist der formale Name dafür, dass nach dem Verkleben ein <em>privater</em> Rest (der Automorphismus) bleibt. (4) A's &ldquo;zoom back&rdquo; ist die Geste, die zeigt, dass das Ergebnis ein <em>Frame</em> ist, kein Schatz. <em>Verkleben, Symmetrisieren und Hinausgehen sind hier dieselbe Tätigkeit.</em></div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung — Descent: vom Patch zum Stack</h2>
+<p>Drei lokale Patches <span style="color:var(--accent2)">U₁, U₂, U₃</span> (lokale Daten bei B / Akte und Szenen bei A) verkleben <em>up to ≅</em> zu einem globalen Objekt — einer Bahn mit drei Objekten, die eine <strong>innere Z/2-Symmetrie</strong> trägt (den Spiegel: das Objekt plus sein Spiegelbild, ≅). <strong>„Glue (Descent)&rdquo;</strong> verbindet die Patches mit der Bahn. <strong>„Zoom back&rdquo;</strong> (Regler) zieht die Kamera zurück: Das Objekt ist nur der <em>Atlas / Frame</em> einer größeren Struktur, und das <em>Zentrum ist leer</em> — keine Unsterblichen (A), „Punkte&rdquo; sind Isomorphieklassen (B). <strong>„Spiegel brechen&rdquo;</strong> zerbricht die symmetrische Instanz, während der Symmetrie-<em>Typ</em> (die Bahnen) bleibt — genau die Auflösung von Widerspruch 3.</p>
+
+<div class="formula" id="f_viz"><span class="fallback">Glue: U&#8321; &#8853; U&#8322; &#8853; U&#8323; &#10230; &#120120; (up to &#8773;)&nbsp;&nbsp;|&nbsp;&nbsp; Z/2-Symmetrie: (P &#8594; &#8722;P)&#178; = id</span></div>
+
+<div class="viz-box">
+<canvas id="descCanvas" width="760" height="440"></canvas>
+<div class="btnrow">
+<label>Kamera — &ldquo;zoom back&rdquo;
+  <input type="range" id="zoom" min="0" max="100" value="20">
+</label>
+<button class="btn" id="glue">&#10022; Glue (Descent)</button>
+<button class="btn ghost" id="mirror">&#9680; Spiegel brechen (Z/2)</button>
+</div>
+<div id="vstat" style="margin-top:10px;color:var(--muted);font-size:.92em;"></div>
+</div>
+<div class="insight"><b>Was du siehst:</b> Ungeklebt liegen die Patches lokal unten. „Glue&rdquo; hebt sie auf die Bahn — das globale Objekt entsteht <em>up to isomorphism</em>. Solange der Spiegel intakt ist, trägt das Objekt seine Z/2-Symmetrie (Spiegelbild, ≅). „Spiegel brechen&rdquo; zerstört die <em>Instanz</em> (Risse), aber die Bahnen — der <em>Typ</em> der Symmetrie — bleiben. „Zoom back&rdquo; entzieht das Objekt: es ist nur der <em>Frame</em>, und die Mitte ist leer. Das ist B's Descent, gesprochen in A's Sprache — und umgekehrt.</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<span class="prov"><span class="src">A — <a href="../montana_sacra.html">montana_sacra.html</a></span><br>&ldquo;Der Heilige Berg — Eine interaktive Reise&rdquo; — interaktive Erzählung des Films von Alejandro Jodorowsky (1973): alchemistische Transmutation (nigredo→albedo→rubedo), die sieben Planeten als „Architektur der Moderne“, der gebrochene Spiegel (Selbstbild), der leere Gipfel (Puppen, „Es gibt keine Unsterblichen“) und das selbstreferentielle „Zoom back, camera!“ als Auflösung.</span>
+<span class="prov"><span class="src">B — <a href="../stacks.html">stacks.html</a></span><br>&ldquo;Algebraic Stacks — An Interactive Journey&rdquo; — interaktive Steigerung von Mengen → Garben → Funktoren → Groupoiden → Descent → Stacks → algebraischen Stacks; das globale Objekt entsteht durch Verkleben lokaler Daten <em>up to isomorphism</em> und trägt innere Symmetrien (M<sub>1,1</sub> mit ℤ/2, glatter Atlas über Schemata).</span>
+</section>
+
+</article>
+
+<script>
+function toggleTheme(){
+  var d=document.documentElement;
+  var dark=d.classList.toggle('dark');
+  try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+  if(window.__redrawViz) window.__redrawViz();
+}
+function renderMath(id, tex, fallback){
+  var el=document.getElementById(id); if(!el) return;
+  try{
+    if(window.temml && !window.__temml_failed){
+      el.innerHTML = temml.renderToString(tex, {displayMode:true});
+      return;
+    }
+  }catch(e){}
+  el.innerHTML = '<span class="fallback">'+fallback+'</span>';
+}
+window.addEventListener('DOMContentLoaded', function(){
+  renderMath('f_descent', String.raw`\text{lokal} \xrightarrow{\;\text{vereinbar auf } U\cap V\;} \text{global}\ \ \ (\text{up to isomorphism})`, 'lokal \u2014(vereinbar auf U\u2229V)\u2192 global   (up to isomorphism)');
+  renderMath('f_z2', String.raw`\mathbb{Z}/2:\qquad (P \mapsto -P)^{\,2} = \mathrm{id}`, '\u2124/2:  (P \u2192 \u2212P)\u00b2 = id');
+  renderMath('f_atlas', String.raw`\text{Atlas } U \twoheadrightarrow \mathcal{X}\ \text{(Stack)}, \qquad \mathcal{X} \neq U`, 'Atlas U \u21a0 \u1d4d0 (Stack)   \u1d4d0 \u2260 U');
+  renderMath('f_m11', String.raw`\mathcal{M}_{1,1}:\ \text{elliptische Kurven — Automorphismen werden }erinnert`, '\u1d4d0\u2081,\u2081: elliptische Kurven \u2014 Automorphismen werden erinnert');
+  renderMath('f_viz', String.raw`\text{Glue: } U_1 \sqcup U_2 \sqcup U_3 \xrightarrow{\;\text{up to }\cong\;} \mathcal{X}, \qquad \text{Z/2: }(P\mapsto -P)^2=\mathrm{id}`, 'Glue: U\u2081 \u2283 U\u2082 \u2283 U\u2083 \u2192 \u1d4d0 (up to \u2245)   |   Z/2: (P\u2192\u2212P)\u00b2 = id');
+});
+
+(function(){
+  var canvas=document.getElementById('descCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var zoomT=0.20, glued=false, broken=false;
+
+  function css(n,fb){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function rrect(x,y,ww,hh,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+ww,y,x+ww,y+hh,r);
+    ctx.arcTo(x+ww,y+hh,x,y+hh,r);
+    ctx.arcTo(x,y+hh,x,y,r);
+    ctx.arcTo(x,y,x+ww,y,r);
+    ctx.closePath();
+  }
+
+  var patches=[
+    {label:'U\u2081', c:'--viz-p1'},
+    {label:'U\u2082', c:'--viz-p2'},
+    {label:'U\u2083', c:'--viz-p3'}
+  ];
+
+  function resize(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return;
+    canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function draw(){
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=css('--canvas-bg','#0d1019'); ctx.fillRect(0,0,w,h);
+
+    var ink=css('--ink','#e6e8ee'), muted=css('--muted','#9aa3b5');
+    var frame=css('--viz-frame','#f0a500'), voidc=css('--viz-void','#ff7a6b');
+    var accent=css('--accent','#f0a500');
+    var cx=w/2, cy=h/2-4;
+    var R=64*(1-zoomT*0.30);
+
+    ctx.textBaseline='middle'; ctx.textAlign='center';
+
+    // outer frame / atlas (fades in with zoom-back)
+    if(zoomT>0.03){
+      ctx.save(); ctx.globalAlpha=Math.min(1,zoomT*1.1);
+      var maxR=Math.min(w,h)/2-12;
+      for(var i=1;i<=3;i++){
+        var rr=Math.min(92+i*24, maxR);
+        ctx.beginPath(); ctx.strokeStyle=muted; ctx.setLineDash([4,6]); ctx.lineWidth=1;
+        ctx.arc(cx,cy,rr,0,2*Math.PI); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.fillStyle=muted; ctx.font='12px Georgia'; ctx.textAlign='center';
+      ctx.fillText('ATLAS / APPARAT   (B: glattes Atlas \u00b7 A: das Filmset)', cx, 16);
+      ctx.fillStyle=accent; ctx.font='italic 12px Georgia';
+      ctx.fillText('\u201cZoom back, camera!\u201d \u2192 der Film ist nur die *Abdeckung* des realen Lebens', cx, 32);
+      ctx.restore();
+    }
+
+    // phase indicator (top-left)
+    ctx.fillStyle=muted; ctx.font='11px Georgia'; ctx.textAlign='left';
+    var phase = zoomT<0.34 ? 'lokal' : (glued? 'verklebt (up to \u2245)' : 'zoom back / Frame');
+    ctx.fillText('Phase: '+phase, 12, 16);
+
+    // center void
+    ctx.beginPath(); ctx.fillStyle=ink; ctx.arc(cx,cy,5,0,2*Math.PI); ctx.fill();
+    if(zoomT>0.55){
+      ctx.fillStyle=voidc; ctx.font='bold 16px Georgia'; ctx.textAlign='center';
+      ctx.fillText('\u2205', cx, cy-16);
+      ctx.fillStyle=muted; ctx.font='11px Georgia';
+      ctx.fillText('Zentrum leer', cx, cy+22);
+      ctx.fillText('keine Unsterblichen (A)  \u00b7  \u201ePunkte\u201c = Isomorphieklassen (B)', cx, cy+36);
+    }
+
+    function drawOrbit(mirror){
+      var s=mirror?-1:1;
+      ctx.save();
+      ctx.translate(cx,0); ctx.scale(s,1); ctx.translate(-cx,0);
+      if(mirror) ctx.globalAlpha=0.38;
+      ctx.beginPath(); ctx.strokeStyle=frame; ctx.lineWidth=2.5;
+      ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+      for(var i=0;i<3;i++){
+        var a=-Math.PI/2 + i*(2*Math.PI/3);
+        var px=cx+Math.cos(a)*R, py=cy+Math.sin(a)*R;
+        ctx.beginPath(); ctx.fillStyle=css(patches[i].c,'#f0a500');
+        ctx.arc(px,py,8,0,2*Math.PI); ctx.fill();
+      }
+      ctx.restore();
+    }
+    drawOrbit(false);
+    if(!broken){
+      drawOrbit(true); // mirror twin => Z/2 (reflection) symmetry
+      ctx.fillStyle=accent; ctx.font='bold 20px Georgia'; ctx.textAlign='center';
+      ctx.fillText('\u2245', cx, cy-R-16);
+      ctx.fillStyle=muted; ctx.font='11px Georgia';
+      ctx.fillText('innere Z/2-Symmetrie (Spiegel) \u2014 B erinnert den Typ, A bricht die Instanz', cx, h-12);
+    } else {
+      ctx.strokeStyle=voidc; ctx.lineWidth=1.5;
+      for(var k=0;k<10;k++){
+        var aa=k/10*2*Math.PI + 0.35;
+        ctx.beginPath(); ctx.moveTo(cx+Math.cos(aa)*7,cy+Math.sin(aa)*7);
+        ctx.lineTo(cx+Math.cos(aa)*21,cy+Math.sin(aa)*21); ctx.stroke();
+      }
+      ctx.fillStyle=voidc; ctx.font='11px Georgia'; ctx.textAlign='center';
+      ctx.fillText('Spiegel gebrochen: Instanz zerf\u00e4llt \u00b7 der Symmetrie-*Typ* (Bahnen) bleibt', cx, h-12);
+    }
+
+    // object label above
+    ctx.fillStyle=ink; ctx.font='bold 13px Georgia'; ctx.textAlign='center';
+    ctx.fillText('Globales Objekt: Stack (B) \u00b7 der Frame (A)', cx, cy-R-40);
+
+    // local patches
+    var baseY=h-58;
+    var spread=(w-120)/3;
+    for(var i2=0;i2<3;i2++){
+      var bxx=60+spread*(i2+0.5), bxy=baseY;
+      var aT=-Math.PI/2 + i2*(2*Math.PI/3);
+      var tx=cx+Math.cos(aT)*R, ty=cy+Math.sin(aT)*R;
+      var t=glued?1:0;
+      var px2=lerp(bxx,tx,t), py2=lerp(bxy,ty,t);
+      rrect(px2-30,py2-15,60,30,8); ctx.fillStyle=css(patches[i2].c,'#f0a500'); ctx.fill();
+      ctx.fillStyle=css('--canvas-bg','#0d1019'); ctx.font='bold 13px Georgia'; ctx.textAlign='center';
+      ctx.fillText(patches[i2].label, px2, py2);
+      if(!glued){ ctx.fillStyle=muted; ctx.font='10px Georgia'; ctx.fillText('lokal', px2, py2+24); }
+    }
+
+    var statEl=document.getElementById('vstat');
+    if(statEl){
+      var msg='';
+      if(zoomT<0.34) msg='Lokale Daten U\u2081 U\u2082 U\u2083 \u2014 noch nicht verklebt.';
+      else if(!glued) msg='Kamera zur\u00fcckgezogen: das Objekt ist der Frame, das Zentrum ist leer.';
+      else if(!broken) msg='Verklebt up to \u2245 \u2014 das Objekt tr\u00e4gt die innere Z/2-Symmetrie (Spiegel).';
+      else msg='Verklebt, Spiegel gebrochen: die Instanz zerf\u00e4llt, der Symmetrie-Typ bleibt.';
+      statEl.textContent=msg;
+    }
+  }
+
+  var z=document.getElementById('zoom');
+  if(z) z.addEventListener('input', function(){ zoomT=z.value/100; draw(); });
+  var g=document.getElementById('glue');
+  if(g) g.addEventListener('click', function(){ glued=!glued; g.innerHTML=glued?'\u21a9 Entglue':'\u2726 Glue (Descent)'; draw(); });
+  var m=document.getElementById('mirror');
+  if(m) m.addEventListener('click', function(){ broken=!broken; m.innerHTML=broken?'\u25d1 Spiegel heilen':'\u25d0 Spiegel brechen (Z/2)'; draw(); });
+
+  window.addEventListener('resize', resize);
+  new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.__redrawViz=function(){ draw(); };
+  resize();
+})();
+</script>
+</body>
+</html>

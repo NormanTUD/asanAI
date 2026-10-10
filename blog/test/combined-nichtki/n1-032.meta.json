@@ -1,0 +1,16 @@
+{
+  "no": "032",
+  "a": "analytic_idealism.html",
+  "b": "buecher/sein_und_zeit.html",
+  "a_title": "Analytischer Idealismus — Interaktive Erklärung (Kastrup 2019)",
+  "b_title": "Sein und Zeit — Interaktiv (Heidegger 1927)",
+  "combined_theme": "ein-phänomenales-feld",
+  "one_line": "Sein und Bewusstsein sind dasselbe: ein phänomenales Grundfeld, das sich erst in einem sich abgrenzenden, zeitlichen Da erschließt — Dasein ist das dissoziierte Alter, dessen Grenze zugleich Tod (Sein-zum-Tode) und Eigentlichkeit ist, und dessen Welt das Feld ist, wie es in diesem Da erscheint.",
+  "contradictions": [
+    "Grundkategorie: A macht universelles phänomenales 'Bewusstsein' zum einzigen ontologischen Primitiv; B verwirft genau diesen Begriff als Ausgangspunkt (Dasein, 'nicht Subjekt, nicht Bewusstsein, nicht Seele') und fragt nach dem Sinn von Sein.",
+    "Individualität: A leitet Individuen als auflösbare 'dissoziierte Alter' eines gemeinsamen Bewusstseins ab (weniger Gehirn = erweitertes Bewusstsein, die Grenze lockert sich); B behauptet radikale, unverlierbare Jemeinigkeit — der Tod vereinzelt, 'niemand kann für dich sterben', die Grenze ist der Grund.",
+    "Status der Welt: A erklärt die physische Welt zur sekundären 'extrinsischen Erscheinung' des Bewusstseins; B hält In-der-Welt-sein für ursprünglich und ohne Subjekt-Projektion, also kein 'Erscheinen' für ein Subjekt."
+  ],
+  "resolution": "Zwei Namen eines Feldes von zwei Seiten: A (Metaphysik: was ist letztlich da) liefert die These des phänomenalen Grundes, B (fundamentale Ontologie: was ist der Sinn von Sein) die Methode der Erschließung. Das 'universelle Bewusstsein' (A) = das offengegebene 'Da' (B); Dasein wird Primärkategorie. Die Dissoziationsgrenze des Alters (A) ist dieselbe Struktur wie Sein-zum-Tode (B) — zugleich Limit (Tod) und Erschließung (Existenz); die 'extrinsische Erscheinung' der Welt (A) ist die Bewandtnisganzheit, wie sich das Feld dem in-der-Welt-seienden Dasein zeigt (B) — weder Substanz noch Illusion.",
+  "viz": "Interaktives Canvas: ein goldenes Dasein im transpersonalen Feld (treibende Partikel = A's Ozean / B's Verweisungen) mit den drei Ekstasen der Zeitlichkeit als Dreieck (B's Sorge: Sich-vorweg/Zukunft-Sein-zum-Tode, Schon-sein-in/Gewesenheit, Sein-bei/Gegenwart-Verfallen), dem 'das Man'-Cluster (B) oben links; ein Dissoziations-Regler (A: Grenze lockert → NDE-ähnliche Erweiterung; B: Vorlaufen zum Tode) und Eigentlich/Uneigentlich-Umschalter; themenreaktiv via CSS-Variablen, nur Inline-Daten, null Netzwerkabrufe."
+}

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 013: Additiver Fokus, kohärente Garbe</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#0ea5e9; --good:#16a34a; --warn:#d97706;
+  --viz-bg:#ffffff; --viz-line:#c9c4b8; --viz-grid:#e6e0d4;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#c4b5fd; --good:#86efac; --warn:#fbbf24;
+  --viz-bg:#0a1220; --viz-line:#263452; --viz-grid:#1c2740;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.62 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.08;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 30px}
+h2{font-size:22px;margin:42px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 8px}
+b{color:var(--text)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;background:color-mix(in srgb, var(--line) 22%, var(--panel));border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.55}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.viz-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.viz-wrap{grid-template-columns:1fr}}
+canvas{display:block;width:100%;height:320px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px;cursor:pointer}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=range]{width:170px}
+button.action{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:13px}
+button.action.active{border-color:var(--accent);color:var(--accent)}
+button.action:hover{border-color:var(--accent)}
+.meter{height:10px;border-radius:999px;background:var(--viz-grid);overflow:hidden;margin-top:6px;max-width:320px}
+.meter>div{height:100%;width:0;background:var(--good);transition:width .2s}
+.coherence-read{font-size:15px;font-weight:700}
+.coherence-box{margin-top:6px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.hint{color:var(--muted);font-size:13.5px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">☀ / ☾</button>
+<article>
+<h1>Lokaler additiver Fokus, globales kohärentes Ganzes</h1>
+<p class="subtitle">Fusion aus: hologram3.html ✕ new_idea.html</p>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Papiere beschreiben dieselbe Grundoperation, von zwei entgegengesetzten Enden her:
+<b>Ein globales Ganzes wird nicht von außen vorgegeben, sondern durch die kohärente Zusammensetzung
+seiner lokalen Teile konstituiert.</b></p>
+<p><b>A (hologram3.html)</b> tut das <em>rechnend</em>: Ein Smiley wird aus einem Stapel von fünf
+Auflösungsschichten aufgebaut; jede der neun lokalen Zellen kann man „fokussieren“, was Auflösung
+<b>additiv</b> und <b>nie rückholbar</b> nachfordert, und der „rekonstruierte“ Smiley ist der
+globale Schnitt, der entsteht, wenn die lokalen Verfeinerungen kombiniert werden. Das FFT-Spektrum
+ist der Ort, an dem die Teile aufeinander <em>passen</em> müssen. <b>B (new_idea.html)</b> tut das
+<em>begrifflich</em>: Unterscheidung → Relation → Lokalität → Garbe → ∞-Kohärenz; der zentrale
+Schritt ist das <b>Gluing</b> — lokale Schnitte, die auf Überlappungen übereinstimmen (oder äquivalent
+sind), fügen sich zu einem globalen Schnitt zusammen; das Objekt ist ≈ das kohärente Netz seiner
+Erscheinungsweisen.</p>
+<p><b>Fusionierte Position:</b> A ist ein lauffähiges, pixelgenaues <em>Instanzmodell</em> von B's
+Garben-Klebung/∞-Kohärenz-Leiter; B ist die begriffliche <em>Vollendung</em> von A's additiven
+Pyramiden. „Kohärente lokale Zusammensetzung“ ist der <b>einzige Mechanismus</b>, der aus Teilen ein
+Ganzes macht — und die konkrete Klebregel (Gleichheit / Äquivalenz / additive Superposition) ist
+ein <b>Parameter</b>, nicht das Wesentliche.</p>
+</section>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+<ul>
+<li><b>Die Klebregel — additiv vs. Gleichheit.</b> B (Schritt 4, Garbe) verlangt <b>strikte
+Gleichheit auf Überlappungen</b>: <code>s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}</code>. A passt nie auf
+Überlappungen „ab“ — seine Beiträge <b>addieren sich</b> (Gauß-gewichtete Superposition, „nie
+entfernt“). Inkompatibles Kleben: A = Superposition, B (klassisch) = Gleichheit.</li>
+<li><b>Die Ontologie des Ganzen — fest vs. emergent.</b> A behandelt den Smiley als <b>feste,
+vorgegebene</b> Funktion (<code>smileyAt</code>); der Schichten-Fokus <em>enthüllt</em> lediglich ein
+schon existierendes Ganzes. B (Schritt 6/8) bestreitet explizit eine privilegierte Unterlage:
+„Das Ganze ist nicht notwendig ein Behälter hinter den Teilen; es kann aus ihrer Kohärenz
+hervorgehen“ — das Objekt <em>entsteht</em> aus der Kohärenz seiner Manifestationen.</li>
+<li><b>Metrisch vs. topologisch/homotopisch.</b> B's ganzer Sinn ist es, <b>das Metrische zu
+transzendieren</b> (Schritt 3: „noch metrischer als allgemeine Topologie“; Schritt 5 nutzt
+Homotopie ≃, und der Fußvermerk warnt, das „ist nicht dasselbe wie eine bloß metrische Nähe“). A
+ist <b>grundsätzlich metrisch/quantitativ</b> — Pixel, Blockzählung, euklidischer Abstand, Gauß-σ=0.7 —
+ohne jeglichen Äquivalenz-Begriff.</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+<p><b>(1) Additives Kleben ist ein kohärentes Kleben im Spezialfall.</b> Lineare Superposition
+erfüllt die Kompatibilitätsbedingung auf einer festen Verfeinerung <em>per Konstruktion</em>. B's
+Schritt 5 (Gleichheit = zu Äquivalenz ≃ lockern) ist genau der Zug, der Nicht-Gleiches kleben
+<em>möglich</em> macht. <i>Fusion:</i> das Wesentliche ist „<b>Kohärenz unter Verfeinerung</b>“, nicht
+die konkrete Regel; Gleichheit, Äquivalenz und additive Superposition sind drei Instanzen desselben.</p>
+<p><b>(2) Fest vs. emergent sind duale Grenzen desselben Zusammensetzungsprozesses.</b> Das
+Basisdatum fix halten → „Enthüllung“ (A). Das Basisdatum selbst nur durch die kohärente
+Zusammensetzung definieren → „Entstehung“ (B). <i>Fusion:</i> derselbe lokale-zu-globale Vorgang
+liefert je nachdem, ob das Unterliegendes fixiert ist, das eine oder das andere; <b>Kohärenz ist der
+gemeinsame Mechanismus, die ontologische Setzung der Parameter.</b></p>
+<p><b>(3) A ist B's metrischer Spezialfall; B ist A's begriffliche Vollendung.</b> A's
+Gauß-gewichtete Block-Mischung ist ein <em>metrisches Modell</em> von B's „lokale Kompatibilität auf
+Überlappungen“. <i>Fusion:</i> A = ein <b>berechenbares Toy-Garbenmodell</b> (Karten = Zellen×Schichten,
+Faser = lokale Auflösungs-Daten, Übergang = additive Mischung, globaler Schnitt = rekonstruierter
+Smiley); B erklärt, <em>warum</em> es funktioniert.</p>
+</section>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Die Pyramide (A).</b> Fünf Schichten mit Basisauflösung <code>[2, 5, 10, 18, 30]</code>
+Blöcken und FOCUS_BOOST <code>[4, 6, 8, 12, 16]</code>. Fokussieren ist additiv (Stufe 0–5) und
+breitet sich in die Schichten darüber aus, mit Gauß-Überblendung über Nachbarzellen:
+<div class="mathblock">effBlocks(layer, x, y) = base_l + Σ_{n∈N(x)} FOCUS_l · focus_l[n] · exp(−d²(x,n)/(2σ²)),   σ = 0.7</div>
+Dies ist eine <em>Verfeinerungsfolge</em> (grob → fein), bei der Detail auf Abruf lokal hinzukommt.</p>
+
+<p><b>Lokale Karten (beide).</b> A's 3×3-Zellraster ist B's Umgebung <code>U_i</code>; Fokussieren
+= lokal die Anzahl der lokalen Erzeugenden (Auflösung) erhöhen. A's FFT ist der <em>globale
+Kohärenz-Nachweis</em>: das Ganze ist in einer geteilten Frequenzbasis kodiert,
+<div class="mathblock">F(u,v) = Σ_{x,y} f(x,y)·e^{−2πi(u·x+v·y)/N},   Bild = log(1+|F|)  (zentriert)</div>
+— der Ort, an dem alle lokalen Beiträge <em>zusammenpassen müssen</em>.</p>
+
+<p><b>Garbenklebung (B, Schritt 4).</b> Lokale Schnitte, die auf Schnitten übereinstimmen, geben
+einen globalen Schnitt; das ist der <em>Descent-/Gluing-Gedanke</em>:
+<div class="mathblock">s_i ∈ F(U_i),   s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}   ⇒   ein globaler s ∈ F(X)</div></p>
+
+<p><b>∞-Kohärenz (B, Schritt 5).</b> Strikte Gleichheit wird durch Äquivalenz ersetzt — und die
+Äquivalenzen selbst müssen wieder kohärent sein:
+<div class="mathblock">s_i|_{U_{ij}} ≃ s_j|_{U_{ij}},   α_{ij}: s_i ≃ s_j,   höhere Kohärenzen auf U_{ijk}, …</div></p>
+
+<p><b>Objekt ≈ Kohärenz (B, Schritt 6/8).</b> Keine privilegierte Mitte: visuell, auditiv, leiblich
+und räumlich sind lokale Erscheinungsweisen; das Objekt ist das kohärente Netz. Die Kette lautet:
+Unterscheidung → Relation → Lokalität → Kompatibilität → Kohärenz → Gluing → Globalität → Invarianz.</p>
+
+<p><b>Fusionierte Lesart.</b> Setze Karten = Zellen×Schichten, Faser = lokale Auflösungs-Daten,
+Übergang = additive/Überblending-Mischung, globaler Schnitt = rekonstruiertes Ganzes,
+Kohärenz-Maß = FFT- bzw. Überlappungs-Übereinstimmung. Dann ist A ein lauffähiger Knoten auf der
+„Lokalität → Garbe → Globalität“-Sprosse von B's Leiter — und B liefert die Begriffe, die A's
+additives „Nie-entfernen“ als <em>stabile Kohärenz unter Verfeinerung</em> lesen lassen.</p>
+</section>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: lokaler additiver Fokus → globales kohärentes Ganzes</h2>
+<p class="hint">Linke Zellen = lokale Karten <code>U_i</code>. Klicke eine Zelle, um sie lokal zu
+verfeinern (additiv, nie rückholbar). Das rechte Bild ist der <em>globale Schnitt</b> — er wird
+kohärent, wo sich die Zellen auf ihren Kanten einig sind. Wechsle die Klebregel und beobachte, wie
+sich das „Zusammenpassen“ ändert.</p>
+<div class="viz-wrap">
+  <div>
+    <canvas id="vizLocal"></canvas>
+    <div class="viz-cap">Lokale Karten · Klick = additiv verfeinern (× = Fokusstufe)</div>
+  </div>
+  <div>
+    <canvas id="vizGlobal"></canvas>
+    <div class="viz-cap">Globaler Schnitt · Kanten = Überlappung U<sub>i</sub>∩U<sub>j</sub></div>
+  </div>
+</div>
+<div class="card">
+  <div class="viz-controls">
+    <label>Basis-Auflösung (Pyramiden-Basis) <span id="baseV">6</span>
+      <input type="range" id="baseR" min="2" max="16" value="6">
+    </label>
+    <label>Klebregel
+      <span>
+        <button class="action" data-rule="gleichheit" id="btnG">Gleichheit (Garbe)</button>
+        <button class="action active" data-rule="additiv" id="btnA">Additiv (Hologramm)</button>
+        <button class="action" data-rule="inf" id="btnI">∞-Kohärenz (≃)</button>
+      </span>
+    </label>
+    <label>
+      <button class="action" id="resetBtn">Reset</button>
+    </label>
+  </div>
+  <div class="coherence-box">
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <span>Kohärenz auf Überlappungen:</span>
+      <span class="coherence-read" id="cohRead">0%</span>
+    </div>
+    <div class="meter"><div id="meterFill"></div></div>
+    <p class="hint" id="cohHint">Verfeinere Zellen, bis ihre Ränder auf Überlappungen zusammenpassen — die Naht verschwindet und die Kohärenz steigt.</p>
+  </div>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov">
+  <a href="../hologram3.html">hologram3.html</a> — <em>„5-Layer Stacked Holographic FFT Smiley —
+  Additive Focus“</em>: rechenbares Multi-Skala-Modell; lokaler, additiver, nie rückholbarer Fokus
+  über fünf Schichten; FFT-Spektrum als Kohärenz-Nachweis; rekonstruiertes Ganzes.
+</div>
+<div class="prov">
+  <a href="../new_idea.html">new_idea.html</a> — <em>„Kohärente Verschiedenheit — interaktive
+  Reise“</em>: begriffliche Leiter Unterscheidung → Relation → Lokalität → Garbe → ∞-Kohärenz →
+  Topos; Gluing als zentraler Schritt; Objekt ≈ kohärentes Netz seiner Erscheinungsweisen.
+</div>
+</section>
+
+<div class="foot">Mathematischer Hinweis: Die Visualisierung ist ein didaktisches Modell. Der
+„∞“-Modus stellt Äquivalenz/Homotopie dar — nicht bloße metrische Nähe (ebenso wie in B). Alle
+Daten sind inline; keine externen Abfragen.</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var dark = document.documentElement.classList.contains('dark');
+  var leftC = document.getElementById('vizLocal');
+  var rightC = document.getElementById('vizGlobal');
+  var baseR = document.getElementById('baseR');
+  var baseV = document.getElementById('baseV');
+  var meterFill = document.getElementById('meterFill');
+  var cohRead = document.getElementById('cohRead');
+  var cohHint = document.getElementById('cohHint');
+  var ruleBtns = [document.getElementById('btnG'),document.getElementById('btnA'),document.getElementById('btnI')];
+
+  var base = 6, rule = 'additiv';
+  var focus = [0,0,0,0,0,0,0,0,0];
+
+  function palette(){
+    if(dark){
+      return {bg:[10,18,32],line:[38,52,82],text:[232,237,247],accent:[125,211,252],
+              good:[134,239,172],warn:[251,191,36],accent2:[196,181,253],hi:[206,236,255]};
+    }
+    return {bg:[255,255,255],line:[201,196,184],text:[26,26,36],accent:[79,70,229],
+            good:[22,163,74],warn:[217,119,6],accent2:[14,165,233],hi:[40,36,92]};
+  }
+  function mix(a,b,t){return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];}
+  function truth(nx,ny){
+    var cx=0.5, cy=0.5, r=0.42;
+    var d=Math.sqrt((nx-cx)*(nx-cx)+(ny-cy)*(ny-cy));
+    if(d>r+0.02) return 0;
+    if(d>r-0.01) return Math.max(0,1-(d-(r-0.01))/0.03)*0.9;
+    var v=0.92;
+    if(Math.sqrt((nx-0.36)*(nx-0.36)+(ny-0.40)*(ny-0.40))<0.06) v=0.08;
+    if(Math.sqrt((nx-0.64)*(nx-0.64)+(ny-0.40)*(ny-0.40))<0.06) v=0.08;
+    var sc=0.58, ds=Math.sqrt((nx-cx)*(nx-cx)+(ny-sc)*(ny-sc));
+    if(ny>sc && ds>0.20 && ds<0.245){ var t=1-Math.abs(ds-0.22)/0.045; v=v*(1-t)+0.08*t; }
+    return v;
+  }
+  function sampleBlocky(nx,ny,blocks){
+    blocks=Math.max(1,Math.round(blocks));
+    var bx=Math.min(Math.floor(nx*blocks),blocks-1);
+    var by=Math.min(Math.floor(ny*blocks),blocks-1);
+    return truth((bx+0.5)/blocks,(by+0.5)/blocks);
+  }
+  function effRes(i){ return Math.min(48, base + focus[i]*4); }
+  function cellAt(nx,ny){
+    var c=Math.min(Math.floor(nx*3),2), r=Math.min(Math.floor(ny*3),2);
+    return r*3+c;
+  }
+  function reconAt(nx,ny){
+    nx=Math.min(Math.max(nx,0),0.9999); ny=Math.min(Math.max(ny,0),0.9999);
+    return sampleBlocky(nx,ny,effRes(cellAt(nx,ny)));
+  }
+  function fit(c){
+    var d=window.devicePixelRatio||1;
+    var w=c.clientWidth, h=c.clientHeight;
+    c.width=Math.round(w*d); c.height=Math.round(h*d);
+    var ctx=c.getContext('2d');
+    ctx.setTransform(d,0,0,d,0,0);
+    return [ctx,w,h];
+  }
+  function rgb(c){return 'rgb('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+')';}
+
+  function drawLocal(){
+    var f=fit(leftC), ctx=f[0], w=f[1], h=f[2], pal=palette();
+    ctx.clearRect(0,0,w,h);
+    var pad=6, gap=6, cell=(w-2*pad-2*gap)/3, cellh=(h-2*pad-2*gap)/3;
+    for(var r=0;r<3;r++)for(var c=0;c<3;c++){
+      var i=r*3+c;
+      var x=pad+c*(cell+gap), y=pad+r*(cellh+gap);
+      var res=Math.max(1,Math.round(effRes(i)/3));
+      var bw=cell/res, bh=cellh/res;
+      for(var by=0;by<res;by++)for(var bx=0;bx<res;bx++){
+        var nx=(c+(bx+0.5)/res)/3, ny=(r+(by+0.5)/res)/3;
+        var col=mix(pal.bg,pal.hi,truth(nx,ny));
+        ctx.fillStyle=rgb(col);
+        ctx.fillRect(x+bx*bw,y+by*bh,Math.ceil(bw)+0.6,Math.ceil(bh)+0.6);
+      }
+      ctx.lineWidth=focus[i]>0?2.5:1;
+      ctx.strokeStyle=focus[i]>0?rgb(pal.good):rgb(pal.line);
+      ctx.strokeRect(x,y,cell,cellh);
+      ctx.fillStyle=rgb(pal.text); ctx.font='11px system-ui';
+      ctx.fillText('×'+focus[i], x+5, y+14);
+    }
+  }
+  function seamColor(m,pal){
+    if(rule==='inf') return 'rgba('+pal.accent2.join(',')+',0.9)';
+    var t=Math.min(1,m/0.55);
+    return rgb(mix(pal.good,[236,86,86],t));
+  }
+  function drawBoundary(ctx,kind,k,w,h,pal){
+    var eps=1/256, S=48;
+    if(rule==='inf'){ ctx.setLineDash([7,5]); } else { ctx.setLineDash([]); }
+    ctx.lineWidth=2.5;
+    for(var s=0;s<S;s++){
+      var t0=s/S, t1=(s+1)/S, tm=(s+0.5)/S, m;
+      var p0,p1;
+      if(kind==='v'){ m=Math.abs(reconAt(k/3-eps,tm)-reconAt(k/3+eps,tm));
+        p0=[k/3*w, t0*h]; p1=[k/3*w, t1*h]; }
+      else { m=Math.abs(reconAt(tm,k/3-eps)-reconAt(tm,k/3+eps));
+        p0=[t0*w, k/3*h]; p1=[t1*w, k/3*h]; }
+      ctx.strokeStyle=seamColor(m,pal);
+      ctx.beginPath(); ctx.moveTo(p0[0],p0[1]); ctx.lineTo(p1[0],p1[1]); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+  function drawGlobal(){
+    var d=window.devicePixelRatio||1;
+    var w=rightC.clientWidth, h=rightC.clientHeight;
+    rightC.width=Math.round(w*d); rightC.height=Math.round(h*d);
+    var ctx=rightC.getContext('2d'), pal=palette();
+    var W=rightC.width, H=rightC.height;
+    var img=ctx.createImageData(W,H), data=img.data;
+    var lo=pal.bg, hi=pal.hi;
+    for(var py=0;py<H;py++){
+      var ny=(py+0.5)/H, rr=Math.min(Math.floor(ny*3),2);
+      for(var px=0;px<W;px++){
+        var nx=(px+0.5)/W, cc=Math.min(Math.floor(nx*3),2);
+        var t=sampleBlocky(nx,ny,effRes(rr*3+cc));
+        var o=(py*W+px)*4;
+        data[o]=lo[0]+(hi[0]-lo[0])*t;
+        data[o+1]=lo[1]+(hi[1]-lo[1])*t;
+        data[o+2]=lo[2]+(hi[2]-lo[2])*t;
+        data[o+3]=255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+    ctx.setTransform(d,0,0,d,0,0);
+    if(rule==='additiv'){
+      ctx.strokeStyle='rgba('+pal.good.join(',')+',0.45)';
+      ctx.lineWidth=2; ctx.strokeRect(1,1,w-2,h-2);
+      ctx.fillStyle=rgb(pal.text); ctx.font='12px system-ui';
+      ctx.fillText('superpositional geklebt — keine Nähte', 10, h-10);
+      return;
+    }
+    for(var k=1;k<3;k++){ drawBoundary(ctx,'v',k,w,h,pal); drawBoundary(ctx,'h',k,w,h,pal); }
+  }
+  function coherence(){
+    var eps=1/256, sum=0, n=0;
+    for(var k=1;k<3;k++){
+      for(var s=0;s<64;s++){
+        var t=(s+0.5)/64;
+        sum+=Math.abs(reconAt(k/3-eps,t)-reconAt(k/3+eps,t)); n++;
+        sum+=Math.abs(reconAt(t,k/3-eps)-reconAt(t,k/3+eps)); n++;
+      }
+    }
+    var avg=sum/n;
+    return {avg:avg, c:Math.max(0,Math.min(1,1-avg*2.4))};
+  }
+  function updateMeter(){
+    var r=coherence();
+    meterFill.style.width=(r.c*100).toFixed(0)+'%';
+    cohRead.textContent=Math.round(r.c*100)+'%';
+    if(r.c>0.75) cohHint.textContent='Hohe Kohärenz: lokale Daten passen auf Überlappungen zusammen — ein globaler Schnitt ist möglich.';
+    else if(r.c>0.45) cohHint.textContent='Teilkohärenz: einige Ränder stimmen, andere zeigen noch Nähte.';
+    else cohHint.textContent='Niedrige Kohärenz: viele Nähte — verfeinere die Zellen, um sie zu schließen.';
+  }
+  function redraw(){ drawLocal(); drawGlobal(); updateMeter(); }
+  function setRuleActive(){
+    ruleBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-rule')===rule); });
+  }
+  leftC.addEventListener('click', function(e){
+    var rect=leftC.getBoundingClientRect();
+    var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    var w=leftC.clientWidth, h=leftC.clientHeight;
+    var pad=6, gap=6, cell=(w-2*pad-2*gap)/3, cellh=(h-2*pad-2*gap)/3;
+    var c=Math.floor((mx-pad)/(cell+gap)), r=Math.floor((my-pad)/(cellh+gap));
+    if(c<0||c>2||r<0||r>2) return;
+    var i=r*3+c; focus[i]=Math.min(5,focus[i]+1); redraw();
+  });
+  baseR.addEventListener('input', function(){ base=+baseR.value; baseV.textContent=base; redraw(); });
+  ruleBtns.forEach(function(b){ b.addEventListener('click', function(){ rule=b.getAttribute('data-rule'); setRuleActive(); redraw(); }); });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    for(var i=0;i<9;i++) focus[i]=0;
+    base=6; baseR.value=6; baseV.textContent=6; rule='additiv'; setRuleActive(); redraw();
+  });
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    dark=document.documentElement.classList.contains('dark');
+    redraw();
+  });
+  window.addEventListener('resize', redraw);
+  setRuleActive();
+  redraw();
+})();
+</script>
+</body>
+</html>

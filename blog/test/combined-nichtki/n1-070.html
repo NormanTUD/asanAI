@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Holonomie des Zyklus — Bundles ✕ Finnegans Wake</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1c2b; --muted:#5b5b6b; --panel:#ffffff; --panel2:#f1ede2;
+  --accent:#3355aa; --accent2:#a92c86; --loop:#3355aa; --fiber:#a92c86;
+  --clock:#c07000; --good:#1f7a44; --bad:#b0342b; --line:#d8d2c4; --solenoid:#334;
+}
+html.dark{
+  --bg:#0d0d18; --fg:#e9e9f6; --muted:#9a9ab2; --panel:#15152a; --panel2:#1c1c36;
+  --accent:#7c9cff; --accent2:#ff7cc4; --loop:#7c9cff; --fiber:#ff7cc4;
+  --clock:#ffb02e; --good:#4ade80; --bad:#ff6b5e; --line:#2a2a4c; --solenoid:#223;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--fg);}
+body{font-family:Georgia,"Times New Roman",serif;line-height:1.72;
+  transition:background .3s,color .3s;}
+.wrap{max-width:820px;margin:0 auto;padding:40px 22px 80px;}
+h1{font-size:2.05rem;line-height:1.2;letter-spacing:.2px;}
+.subtitle{color:var(--muted);font-style:italic;margin:8px 0 4px;font-size:1.02rem;}
+.meta{color:var(--muted);font-size:.9rem;margin-bottom:8px;}
+hr{border:none;border-top:1px solid var(--line);margin:34px 0;}
+section{margin:30px 0;}
+h2{font-size:1.5rem;color:var(--accent);margin-bottom:12px;}
+h3{font-size:1.12rem;color:var(--fg);margin:18px 0 8px;}
+p{margin:12px 0;}
+.math{font-family:"Courier New",monospace;background:var(--panel2);
+  padding:1px 7px;border-radius:5px;color:var(--accent);font-size:.95em;white-space:nowrap;}
+.aha{background:var(--panel2);border-left:4px solid var(--fiber);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--fiber);}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.95rem;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+.tagA{color:var(--accent);font-weight:bold;}
+.tagB{color:var(--accent2);font-weight:bold;}
+ul{padding-left:22px;margin:10px 0;}
+li{margin:7px 0;}
+.prov{display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);}
+.prov a{color:var(--accent);text-decoration:none;font-weight:bold;}
+.prov a:hover{text-decoration:underline;}
+.prov .d{color:var(--muted);font-size:.95rem;}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px;margin:18px 0;}
+#holoCanvas{width:100%;height:420px;display:block;border-radius:8px;}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px;}
+.controls label{font-size:.92rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+input[type=range]{width:180px;accent-color:var(--accent);}
+button{font-family:inherit;font-size:.92rem;padding:9px 16px;border-radius:8px;
+  border:1px solid var(--accent);background:var(--panel2);color:var(--fg);cursor:pointer;}
+button:hover{border-color:var(--accent2);color:var(--accent2);}
+.readouts{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:12px;font-size:.95rem;}
+.readouts b{color:var(--accent);}
+.caption{color:var(--muted);font-size:.9rem;font-style:italic;margin-top:10px;}
+code{font-family:"Courier New",monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Der Zyklus mit Gedächtnis</h1>
+<p class="subtitle">Fusion aus: bundles.html ✕ finneganswake3.html</p>
+<p class="meta">Round 1 · Nicht-KI-Track · Paar 070 · Holonomie trifft Wiederholung</p>
+<hr>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Die tiefste Struktur, die beide Werke teilen, ist die <strong>geschlossene Schleife, die etwas
+mitnimmt</strong>. <span class="tagA">A</span> (Principal Bundles) sagt: Über jedem Punkt einer Basis
+„schwebt" eine Symmetriegruppe — eine kleine <em>Uhr</em> (die Faser <span class="math">U(1) ≅ S¹</span>).
+Der <em>gesamte</em> mathematische und physikalische Inhalt des Bündels steckt darin,
+<strong>was geschieht, wenn man diese Uhr einmal um eine geschlossene Kurve transportiert</strong>:
+Die <span class="math">Holonomie Hol(γ) = exp(i∮A)</span> ist genau der Winkel, um den die Uhr
+zurückgedreht wurde. Das Nicht-Zurückkehren-zum-Status-quo <em>ist</em> die Information.</p>
+<p><span class="tagB">B</span> (Finnegans Wake) treibt dieselbe Maschine mit anderen Worten:
+Die Erzählung läuft in einem <strong>Kreis</strong> — Sturz (Kap. 0) → … → Fluss → Meer →
+Sturz (Kap. 8 springt per <code>startTransition(0)</code) zurück an den Anfang, „Cycle restarts").
+Die Bedeutung liegt in keinem einzelnen Durchlauf, sondern darin, dass <strong>jeder Zyklus
+verändert zurückkehrt</strong>: Der Fluss „runs to the sea and back".</p>
+<p>Die Fusion lautet daher: <b>Holonomie und Wiederholung sind dasselbe Phänomen.</b>
+Ein Principal Bundle ist ein Zyklus mit Gedächtnis; der Twist / die Holonomie nach einem
+Umlauf ist das <em>Gedächtnis</em>, das die Schleife trägt. Joyce' kreisende Fiktion ist ein
+solches „Bündel", dessen Übergangsfunktionen die Umdeutungen (Puns, Re-Stimmungen) sind
+und dessen Holonomie die Sinne-Veränderung jeder Runde. Reduktion auf die Invariante
+(A) und Bedeutung aus der Rückkehr (B) sind zwei Seiten derselben Münze.</p>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+
+<div class="grid">
+  <div class="card">
+    <h3>1. Linear vs. zirkular</h3>
+    <p><span class="tagA">A</span> ist eine <strong>lineare</strong> Didaktik mit Endpunkt:
+    Tabs in fester Reihenfolge (Intuition → Theorie → Physik → Quiz), ein Fortschrittsbalken,
+    der von links nach rechts füllt, und ein abschließender Quiz-Score
+    („Ergebnis: 8/8 (100%)"). Es gibt einen Zustand <em>vor</em> und einen <em>nach</em>.</p>
+    <p><span class="tagB">B</span> ist explizit <strong>zyklisch</strong>: Das letzte Kapitel
+    führt per <code>startTransition(0)</code) ins erste zurück; die Kommentare nennen es
+    „Cycle restarts", „The river flowing to sea", „Everything dissolves". Es gibt keinen
+    Endpunkt, nur einen Kreislauf.</p>
+  </div>
+
+  <div class="card">
+    <h3>2. Feste Wahrheit vs. wandernde Bedeutung</h3>
+    <p><span class="tagA">A</span>'s Quiz hat <strong>genau eine stabile richtige Antwort</strong>
+    pro Frage (radio + „✓ Richtig!"), deterministisch, zeitunabhängig. Die Wahrheit ist eine
+    Invariante: Das Bündel ist „vollständig durch seine Übergangsfunktionen bestimmt".</p>
+    <p><span class="tagB">B</span>'s „quiz"-Kapitel (Kap. 6, Riddles) rotiert das Ziel
+    <strong>über die Zeit</strong>: <code>quizTarget = floor(timer/5)</code> wechselt das
+    „richtige" Symbol alle 5 s (Kreis → Dreieck → …). Keine Antwort bleibt gültig — die
+    „Richtigkeit" ist temporal und unstabil.</p>
+  </div>
+
+  <div class="card">
+    <h3>3. Ruhe als Ursprung vs. der Sturz</h3>
+    <p><span class="tagA">A</span> beginnt am <strong>Nullzustand</strong>: triviales Bündel,
+    <span class="math">Twist = 0</span>, „immer parallel", <span class="math">F = 0</span>.
+    Komplexität ist eine <em>Abweichung</em> von der Ruhe. (Subtil: A merkt, dass
+    <span class="math">F=0</span> ≠ trivial — aber der Ausgangs-/Ruhezustand ist die Null.)</p>
+    <p><span class="tagB">B</span> beginnt mit dem <strong>Sturz</strong> (Kap. 0, Finnegan
+    fällt vom Turm): der Ursprung ist eine Katastrophe / ein „Sin", und — zyklisch zugleich —
+    der Anfang <em>und</em> das Ende. Ursprung ist hier Unterbrechung, nicht Gleichgewicht.</p>
+  </div>
+
+  <div class="card">
+    <h3>4. Reduktion vs. Anhäufung</h3>
+    <p><span class="tagA">A</span> <strong>reduziert</strong>: ganze Physik zu wenigen
+    sauberen Formen — <span class="math">F = dA</span>, „Eichfelder = Zusammenhänge".
+    Ziel ist die komprimierte Invariante.</p>
+    <p><span class="tagB">B</span> <strong>häuft an</strong>: 9 Kapitel, 8 Beweise, 15
+    Geschenke, 20 Predigtrollen, 10 Tintenfässchen — Bedeutung entsteht aus dem <em>Sammeln
+    und Wiederholen</em>, nicht aus dem Weglassen.</p>
+  </div>
+</div>
+<p class="caption">Näheste echte Spannung (falls jemand meinte, sie „widersprechen" sich
+nicht): A ist objektiv-entdeckend (die Struktur existiert unabhängig vom Leser), B ist
+subjektiv-erfindend (Shem the Penman schreibt den Text auf den eigenen Körper). Struktur wird
+entdeckt vs. Bedeutung wird verfasst.</p>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<p><b>Linear vs. zirkular →</b> Die Linie ist nur eine <em>lokale Karte</em> (eine
+Trivialisierung auf einem Weg), der Kreis ist das <em>globale Objekt</em>. In A füllt der
+Fortschrittsbalken eine <em>Gegebenheitswahl</em> — einen Weg entlang der Basis. Die eigentliche
+Invariante ist aber die Holonomie <em>um die geschlossene Schleife</em>. A's Didaktik ist also
+nur eine lokale Trivialisierung desselben Bündels, dessen globale Form B's Kreis ist. Die
+scheinbare Opposition löst sich auf: lokal linear, global zyklisch.</p>
+
+<p><b>Feste Wahrheit vs. wandernde Bedeutung →</b> A's Quiz-Frage ist eine
+Übergangsfunktion auf einer Überlappung: Sie gilt <em>innerhalb</em> eines Patches. B's
+wechselndes Ziel ist dieselbe Funktion, <em>beobachtet, während man den Patch wechselt</em> —
+genau dort, wo die Patches sich überlappen, ist die Umdeutung nötig. Die „Wahrheit" ist lokal
+stabil (A) und wechselt global beim Überlappen (B) — das ist exakt die
+<strong>Kozyklus-Bedingung</strong> <span class="math">g_ij·g_jk·g_ki = e</span>: lokal
+beliebig, global konsistent. Beide behaupten dieselbe Kohärenz, nur auf unterschiedlicher Skala.</p>
+
+<p><b>Ruhe vs. Sturz →</b> Der Sturz ist die <em>erste nicht-triviale Holonomie</em>.
+A zeigt bereits: Auch bei <span class="math">F = 0</span> (lokal flach, „Ruhe") kann die
+Holonomie um eine geschlossene Kurve nicht-trivial sein (Aharonov–Bohm). B macht aus genau
+diesem Effekt die Handlung: Der scheinbar flache Anfang „stürzt" — das Nicht-Triviale ist
+nicht das Feld, sondern das, was der <em>Umlauf</em> mitnimmt. Ruhe und Sturz sind derselbe
+Randfall: ein flacher Zusammenhang mit nicht-trivialer Holonomie.</p>
+
+<p><b>Reduktion vs. Anhäufung →</b> Die Komprimierung (A) <em>ist</em> die Wiederholung
+(B), die konvergiert: Jedes Mal, wenn Joyce denselben Fluss von neuem erzählt, wird er
+durch die Übergangsfunktionen umgedeutet — und was bleibt, wenn man alle Umdeutungen
+mod out, ist die Invariante. B's Anhäufung <em>konvergiert gegen</em> A's Reduktion.
+Das „Mutter-Bündel" (A's Name „Principal") und die endlose Neu-Erzählung (B) sind
+beide nur dafür da, alle assoziierten Darstellungen aus sich hervorzubringen.</p>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>Die Maschine aus zwei Seiten</h3>
+<p>Nehme ein Objekt, das an jedem Punkt einer Schleife eine Uhr trägt, und definiere,
+wie die Uhr beim Umlaufen gedreht wird. Dann sind: die <strong>Übergangsfunktionen</strong>
+(„wie passt Patch an Patch") die <em>Puns / Umstimmen</em>; die <strong>Äquivarianz</strong>
+(„die Uhr folgt der Gruppenwirkung") die <em>Kohärenz der Erzählstimme</em>; die
+<strong>Krümmung</strong> <span class="math">Ω = dω + ½[ω,ω]</span> die <em>lokal sichtbare
+Spannung</em> (das offene Plot); und die <strong>Holonomie</strong>
+<span class="math">Hol(γ)=exp(i∮A)</span> der <em>Sinn-Gehalt der ganzen Runde</em> —
+sichtbar erst, wenn man <em>umrundet</em> hat.</p>
+
+<h3>Aus A (Bündel & Eichtheorie)</h3>
+<ul>
+  <li>Faserbündel: Totalraum <span class="math">E</span>, Basis <span class="math">B</span>,
+  Faser <span class="math">F</span>, Projektion <span class="math">π: E→B</span>; lokal
+  <span class="math">E ≈ U×F</span> (lokal trivial).</li>
+  <li>Principal-G-Bündel: Faser <span class="math">G</span> (Lie-Gruppe), wirkt
+  frei &amp; transitiv von rechts; <span class="math">M = P/G</span>; kein
+  ausgezeichneter Punkt in der Faser.</li>
+  <li>Übergangsfunktionen <span class="math">g_ij: U_i∩U_j→G</span> mit Kozyklus
+  <span class="math">g_ij·g_jk·g_ki = e</span>; bestimmen das Bündel bis auf Isomorphie.</li>
+  <li>Zusammenhang: <span class="math">𝔤</span>-wertige 1-Form <span class="math">ω</span>,
+  lokal <span class="math">A_i = s_i^*ω</span> = <strong>Eichpotential</strong>.
+  Krümmung <span class="math">Ω = dω + ½[ω,ω]</span>, lokal <span class="math">F = dA</span>
+  (abelsch) = Feldstärke.</li>
+  <li>Aharonov–Bohm: Auch bei <span class="math">F=0</span> ändert ein umlaufendes
+  Elektron seine Phase um <span class="math">exp(iΦ/ℏ)</span> → das Potential
+  <span class="math">A</span> (der Zusammenhang) ist physikalisch real, nicht nur <span class="math">F</span>.</li>
+</ul>
+
+<table>
+  <tr><th>Kraft</th><th>Gruppe G</th><th>Zusammenhang / Krümmung</th></tr>
+  <tr><td>Elektromagnetismus</td><td><span class="math">U(1)</span></td>
+      <td>Potential <span class="math">A_μ</span> / <span class="math">F_μν = ∂_μA_ν − ∂_νA_μ</span></td></tr>
+  <tr><td>Schwache</td><td><span class="math">SU(2)</span></td><td>W/Z / schwache Feldstärke</td></tr>
+  <tr><td>Starke (QCD)</td><td><span class="math">SU(3)</span></td><td>Gluonen (8 = dim <span class="math">𝔰𝔲(3)</span>)</td></tr>
+  <tr><td>Gravitation</td><td><span class="math">SO(3,1)</span></td><td>Spin / Riemann-Krümmung</td></tr>
+</table>
+
+<h3>Aus B (Finnegans Wake als Kreislauf)</h3>
+<ul>
+  <li>9 Kapitel (0–8), die der Struktur des Romans folgen: Sturz (0) → HCE/Phoenix Park (1) →
+  Prozess/Kneipe (2) → Shem der Schreiber / Tinte / Körper (3) → ALP / Fluss (4) →
+  Schiffer/Norwegens-Kapitän (5) → Rätsel (6) → Shaun's Predigt (7) → ALP, Fluss→Meer (8).</li>
+  <li>Die <strong>Übergangslogik</strong>: jedes Kapitel löst das nächste aus; Kap. 8 löst
+  per <code>startTransition(0)</code) wieder Kap. 0 aus — <em>der Kreis ist die Grammatik</em>.</li>
+  <li>Der <strong>Fluss</strong> als ordnendes Prinzip: ALP = Fluss, der „runs to the sea";
+  Shaun rollt als Fass den Fluss hinunter; der Sinn „fließt" und „dissolves".</li>
+  <li><strong>Shem the Penman</strong>: Schreiben ist Inkt auf dem eigenen Körper — die
+  Bedeutung wird <em>verfasst</em>, nicht nur gefunden (Kap. 3: Tinten-Spur, die bleibt).</li>
+  <li>Rätsel-Kapitel: das „Richtige" ist ein Ziel, das im Takt wechselt —
+  Wahrheit als <em>phaseshifted target</em>, nicht als Fixpunkt.</li>
+</ul>
+
+<div class="aha">
+  <b>Fusion in einer Gleichung:</b>
+  <span class="math">Bündel ≅ Zyklus mit Gedächtnis</span>.
+  Der „Twist" <span class="math">ω</span> (A) <em>ist</em> die Stimme, die jede Runde neu
+  stimmt (B). Das, was <span class="math">F=0</span> verbergen kann (A), ist genau das, was
+  Joyce' Kreislauf erst sichtbar macht (B): die <em>Retour-Veränderung</em>.
+  Und weil A das Potential <span class="math">A</span> für real hält — nicht nur
+  <span class="math">F</span> — gilt für B: das <em>Erzählen</em> selbst (Shems Tinte)
+  ist realer als die oberflächliche Handlung.
+</div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung: die Holonomie-Uhr auf der Wakeschleife</h2>
+<p>Eine kleine Uhr (die Faser <span class="math">U(1)</span>) wandert um einen Kreis —
+B's Zyklus. Der <b>Twist-Regler</b> steuert, wie stark die Uhr sich während eines Umlaufs
+dreht (A's Zusammenhang). Nach einer Runde zeigt die Holonomie, ob der Zyklus trivial
+zurückkehrt (0°/360°) oder <em>verändert</em>. Unten: das Aharonov–Bohm-Zwei-Pfade-Bild
+mit dem Interferenzpunkt, der denselben Twist abliest.</p>
+
+<div class="viz-panel">
+  <canvas id="holoCanvas"></canvas>
+  <div class="controls">
+    <label>Twist / Holonomie: <input type="range" id="twistSlider" min="0" max="628" value="0"
+           oninput="setTwist(this.value)"><span id="twistVal">0.00 rad</span></label>
+    <button id="playBtn" onclick="togglePlay()">▶ Umlauf starten</button>
+    <button onclick="setTwist(0)">↺ Twist=0</button>
+    <button onclick="setTwist(314)">½-Umdrehung (180°)</button>
+    <button onclick="document.documentElement.classList.toggle('dark')">🌓 Thema</button>
+  </div>
+  <div class="readouts">
+    <span>Holonomie nach 1 Umlauf: <b id="holoRead">0°</b></span>
+    <span id="verdict">—</span>
+    <span>Interferenz (2 Pfade): <b id="interpRead">konstruktiv</b></span>
+    <span>Position: <b id="loopPct">0%</b></span>
+  </div>
+  <p class="caption">0° und 360° sind trivial (die Uhr steht wieder wie am Start); 180° ist
+  maximal nicht-trivial (die Uhr zeigt in die Gegenrichtung — der „Sin", der jede Runde
+  mitnimmt). Genau das Spannungsfeld, in dem A's Aharonov–Bohm und B's Kreislauf leben.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov">
+  <a href="../bundles.html">A · bundles.html</a>
+  <span class="d">„Principal Bundles – Interaktives Lerntool" (Deutsch): lineares, rigoroses
+  Lerntool zu Faserbündeln, Übergangsfunktionen, Zusammenhängen, Krümmung, Aharonov–Bohm
+  und den vier Kräften; deterministisches Quiz.</span>
+</div>
+<div class="prov">
+  <a href="../finneganswake3.html">B · finneganswake3.html</a>
+  <span class="d">„Finnegans Wake" (Englisch): vollflächiges Canvas-Spiel, 9 zyklische Kapitel
+  nach Joyce; Sturz → Fluss → Meer → Sturz (Kap. 8 → 0), schreibender Shem, wechselnde
+  Rätselziele; Bedeutung aus Wiederholung.</span>
+</div>
+</section>
+
+</div>
+
+<script>
+const cv = document.getElementById('holoCanvas');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0;
+function resize(){
+  const r = cv.getBoundingClientRect();
+  W = cv.width = Math.max(300, r.width);
+  H = cv.height = Math.max(300, r.height);
+}
+function cssVar(n){
+  const v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  return v || '#888';
+}
+
+let twist = 0.0;
+let theta = 0.0;
+let playing = false;
+let lastT = 0;
+
+function setTwist(v){
+  twist = (parseFloat(v) || 0) / 100;
+  const el = document.getElementById('twistVal');
+  if (el) el.textContent = twist.toFixed(2) + ' rad';
+}
+function togglePlay(){
+  playing = !playing;
+  const b = document.getElementById('playBtn');
+  if (b) b.textContent = playing ? '⏸ Pause' : '▶ Umlauf starten';
+}
+
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  const loopCol = cssVar('--loop');
+  const fiberCol = cssVar('--fiber');
+  const clockCol = cssVar('--clock');
+  const panelCol = cssVar('--panel');
+  const muted = cssVar('--muted');
+  const goodCol = cssVar('--good');
+  const badCol = cssVar('--bad');
+  const solCol = cssVar('--solenoid');
+
+  const cx = W * 0.5, cy = H * 0.40, R = Math.min(W, H) * 0.26;
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillStyle = solCol;
+  ctx.beginPath(); ctx.arc(cx, cy, 15, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = muted; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, 15, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle = badCol; ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('B', cx, cy + 1);
+
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = loopCol;
+  ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI, 0, false); ctx.stroke();
+  ctx.strokeStyle = fiberCol;
+  ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI, 0, true); ctx.stroke();
+
+  const sx = cx + R * Math.cos(Math.PI), sy = cy + R * Math.sin(Math.PI);
+  ctx.fillStyle = goodCol;
+  ctx.beginPath(); ctx.arc(sx, sy, 6, 0, Math.PI*2); ctx.fill();
+
+  const interp = Math.cos(twist / 2);
+  const intPos = interp > 0;
+  const intCol = intPos ? goodCol : badCol;
+  const rx = cx + R, ry = cy;
+  ctx.globalAlpha = Math.min(1, Math.abs(interp));
+  ctx.fillStyle = intCol;
+  ctx.shadowColor = intCol; ctx.shadowBlur = 18;
+  ctx.beginPath(); ctx.arc(rx, ry, 12, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+
+  ctx.fillStyle = muted; ctx.font = '11px sans-serif';
+  ctx.fillText('Start', sx - 2, sy - 16);
+  ctx.fillText('Rückkehr', rx + 2, ry - 20);
+
+  const posA = Math.PI + theta;
+  ctx.lineWidth = 4; ctx.globalAlpha = 0.22; ctx.strokeStyle = clockCol;
+  ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI, posA, false); ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  const px = cx + R * Math.cos(posA);
+  const py = cy + R * Math.sin(posA);
+  const fiberAngle = twist * (theta / (Math.PI * 2));
+  const handA = posA + fiberAngle;
+  const cr = 15;
+
+  ctx.fillStyle = panelCol;
+  ctx.strokeStyle = clockCol; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.arc(px, py, cr, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  const hx = px + (cr - 3) * Math.cos(handA);
+  const hy = py + (cr - 3) * Math.sin(handA);
+  ctx.strokeStyle = clockCol; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(hx, hy); ctx.stroke();
+  ctx.fillStyle = clockCol;
+  ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI*2); ctx.fill();
+}
+
+function updateReadouts(){
+  const TAU = Math.PI * 2;
+  const deg = ((twist % TAU) + TAU) % TAU * 180 / Math.PI;
+  const wrap = Math.min(deg, 360 - deg);
+  const trivial = wrap < 5;
+  const holo = document.getElementById('holoRead');
+  if (holo) holo.textContent = deg.toFixed(0) + '°';
+  const v = document.getElementById('verdict');
+  if (v){
+    if (trivial){ v.textContent = 'trivial — kehrt gleich zurück'; v.style.color = cssVar('--good'); }
+    else { v.textContent = 'Nicht-trivial — kehrt VERÄNDERT zurück (Holonomie)'; v.style.color = cssVar('--bad'); }
+  }
+  const interp = Math.cos(twist / 2);
+  const il = document.getElementById('interpRead');
+  if (il){
+    let lab = 'teilweise';
+    if (interp > 0.3) lab = 'konstruktiv';
+    else if (interp < -0.3) lab = 'destruktiv';
+    il.textContent = lab;
+    il.style.color = interp > 0 ? cssVar('--good') : cssVar('--bad');
+  }
+  const lp = document.getElementById('loopPct');
+  if (lp) lp.textContent = Math.round((theta / TAU) * 100) + '%';
+}
+
+function frame(ts){
+  const dt = Math.min(0.05, (ts - lastT) / 1000) || 0;
+  lastT = ts;
+  if (playing){
+    theta += dt * 0.9;
+    if (theta >= Math.PI * 2) theta -= Math.PI * 2;
+  }
+  draw();
+  updateReadouts();
+  requestAnimationFrame(frame);
+}
+
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

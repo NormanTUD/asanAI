@@ -1,0 +1,15 @@
+{
+  "no": "025",
+  "a": "goedel.html",
+  "b": "buecher/an_experiment_with_time.html",
+  "a_title": "Gödel's Incompleteness Theorems — Interactive Explorer",
+  "b_title": "An Experiment with Time — Interaktiv (nach J. W. Dunne, 1927)",
+  "combined_theme": "ganzheit-jenseits-eigener-ebene",
+  "one_line": "Jede lokale, selbstbezügliche Perspektive — das formale System wie der Zeit-Beobachter — ist von innen unvollständig; das Ganze (alle Wahrheiten / die ganze Zeitlinie) liegt stets auf einer höheren, beliebig wiederholbaren Blickstufe.",
+  "contradictions": [
+    "Unendliche Kette / Regress: Gödel (2. Satz) hält das Selbst-begründen eines Systems für unmöglich — 'Schildkröten bis auf den Grund', keine letzte Begründung, eine permanente harte Grenze. Dunne sieht in exakt derselben Schachtelung (Zeit 1→2→3→…) ein ERFÜLLENDE Auflösung in einer Instanz, dem unsterblichen 'Beobachter bei Unendlich' (Transzendenz statt Grenze).",
+    "Bestimmtheit vs. Veränderbarkeit: Gödel setzt eine feste, bestimmte Menge wahrer Sätze voraus (der Gödel-Satz ist wahr, ob beweisbar oder nicht — Wahrheit ist determiniert). Dunne hält dagegen, die Zukunft sei NICHT festgelegt: 'Freier Wille existiert — du kannst die Zukunft ändern' (Handeln auf einen Traum ändert die geträumte Zukunft)."
+  ],
+  "resolution": "Die beiden beantworten verschiedene Fragen über dieselbe offene Hierarchie von Blickstufen. Gödel verneint nur die INTERNE Selbstbegründung (ein System kann sich nicht von sich aus konsistenzbeweisen), nicht aber höhere Stufen — Dannes ∞-Beobachter ist genau eine solche höhere Stufe (Gödels 'stärkeres System'), und nur die Metafrage, ob die Kette an einem echten Endpunkt endet, ist metaphysisch offen (weder bewiesen noch widerlegt). Determiniertes (Wahrheitssammlung / gesamte Zeitlandschaft = die Karte) und Offenes (welcher Erleben-Strang realisiert wird / Aufmerksamkeit des ∞-Beobachters = der gewählte Weg) leben auf verschiedenen Ebenen und widersprechen sich nicht.",
+  "viz": "Theme-aware 2D-Canvas: konzentrische Blick-Ebenen (Zeit 1…6) mit verschiebbarer Blick-Stufe; das grüne 'Beweis-/Wahrnehmungsfeld' wächst pro Ebene, bleibt aber stets hinter der äußeren Grenze (Gödel: wahr aber unbeweisbar / Dunne: unerkannte Zukunft). Checkbox '∞-Beobachter' (Dunne) als höhere Stufe deckt das Ganze ab; Gödel hält entgegen, dass auch diese Stufe von innen wieder unvollständig wäre. Inline-Daten, keine Netzwerkabrufe."
+}

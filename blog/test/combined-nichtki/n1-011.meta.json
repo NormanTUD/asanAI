@@ -1,0 +1,16 @@
+{
+  "no": "011",
+  "a": "hologram4.html",
+  "b": "kluever.html",
+  "a_title": "Lens Focus Explorer — Image on Ground",
+  "b_title": "Geometrische Visuelle Halluzinationen – Interaktiv",
+  "combined_theme": "evidence-gap-hallucination-prior",
+  "one_line": "Eine Halluzination ist das, was ein rekonstruktives System in die Lücke zwischen geforderter Ausgabe und verfügbarer Evidenz mit seinem eigenen Prior füllt; die Grenze (native Schärfe in A, Stabilitätsschwelle in B) ist ein Punkt von zwei Seiten, und die Form der Halluzination verrät den Prior (schwacher/glatter Prior -> Interpolationsbrei, strukturierter/bifurkierender Prior -> universelle Formkonstanten).",
+  "contradictions": [
+    "Valenz/Bedeutung: A (hologram4) markiert Jenseits-der-Nativauflösung als Fehler/Artefakt ('⚠ HALLUCINATION', rote Tönung + Badge '⚠ HALLUC') = 'nicht echt, abzuwehren' (epistemischer Verstoß); B (kluever) hält Klüvers Formkonstanten für eine natürliche, universale, architektur-offenbarende Eigendynamik von V1 = 'echt/informativ'.",
+    "Härte & Ort der Grenze: A setzt eine harte, externe, feste Grenze (native Pixelauflösung der Quelle, exogen, NATIVE_THRESHOLD); B kennt keine externe 'native Auflösung' — die Grenze ist eine weiche, interne, parameterabhängige Stabilitätsschwelle (Turing-Bifurkation, gesteuert durch Erregbarkeit μ/Hemmung), die Wellenlänge setzt λ(q)=-1+μ·ŵ(q).",
+    "Inhalt jenseits: A — bilineare Interpolation fügt KEINE neue Information hinzu (glatter Brei, 'interpolated beyond real data'); B — symmetrie-selektierte Planformen (axiale Untergruppen von E(2): Rollen/Quadrate/Hexagone) erzeugen NEUE, universale Struktur (Formkonstanten)."
+  ],
+  "resolution": "Beide Seiten beschreiben dieselbe Relation zwischen Output und Evidenz, nur auf zwei Ebenen: der Punkt, an dem die Evidenz die Ausgabe nicht mehr fixiert (Evidenz-Abdeckung c∈[0,1]). A = schwacher, glatter Prior (Interpolation) -> Brei (keine neue Info); B = strukturierter, bifurkierender Prior (Turing + euklidische Symmetrie) -> Formkonstanten (neue, universale Struktur). Pro Ortsfrequenz q: Ausgabe(q)=Evidenz, falls E(q)>=G(q), sonst Prior/G(q) — dieselbe Ungleichung, verschiedene G. Die 'Grenze' (native Schärfe/Stabilitätsschwelle) ist derselbe fixierbare Anteil; die Form der Halluzination kodiert die Komplexität des Priors, der die Lücke füllt — der Generator ist an der Form seiner Halluzination ablesbar.",
+  "viz": "Themen-reaktives Inline-Canvas: ein Feld geteilt in Evidenz (links, echtes Signal mit Merkmalen) und Jenseits-Bereich (rechts, rötlich '⚠ HALLUC'-tönt). Ein 'Grenze'-Slider schiebt die Evidenz/Jenseits-Grenze (A: native Schärfe ↔ B: Stabilitätsschwelle = eine Größe); ein Generator-Umschalter wählt, was die Lücke füllt — Interpolation (schwacher Prior, glatter Brei, A) vs. Turing (strukturierter Prior: Rollen/Quadrate/Hexagone + Wellenzahl q, B) plus Kontrast-Steuerung. Zeigt live, wie dieselbe Lücke je nach Prior zu Brei oder zu universellen Formkonstanten wird. Nur Inline-Daten, kein Netzwerk, Zero console errors."
+}

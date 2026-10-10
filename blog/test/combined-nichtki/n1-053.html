@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Architektur der Grenze – Leitern, Schichten und das Unzugängliche</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#6d28d9;
+  --mn-accent2:#0e7490; --mn-border:#d8d2c4; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+  --mn-boundary:#dc2626; --mn-ok:#16a34a; --mn-ink:#0b1120;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#a78bfa;
+  --mn-accent2:#22d3ee; --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-boundary:#f87171; --mn-ok:#4ade80; --mn-ink:#0b1120;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--mn-bg); color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:24px 20px 80px;}
+header.hero{
+  padding:28px 22px; border:1px solid var(--mn-border); border-radius:14px;
+  background:var(--mn-panel); margin-bottom:26px;
+}
+header.hero h1{font-size:1.75em; line-height:1.25; margin-bottom:10px; color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2); font-weight:600; font-size:.98em;}
+.toggle{
+  margin-top:16px; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel2); color:var(--mn-fg); border-radius:22px;
+  cursor:pointer; font-size:.9em; transition:.2s;
+}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 30px;}
+section h2{
+  font-size:1.35em; margin-bottom:12px; color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border); padding-bottom:6px;
+}
+p{margin-bottom:12px;}
+.lede{font-size:1.06em;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{
+  border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel);
+  padding:14px 16px;
+}
+.card h3{font-size:1.02em; margin-bottom:8px; color:var(--mn-fg);}
+.card a{color:var(--mn-accent2); text-decoration:none; font-weight:600;}
+.card a:hover{text-decoration:underline;}
+.card small{color:var(--mn-dim);}
+.wc{border-left:4px solid var(--mn-boundary);}
+.wc b{color:var(--mn-boundary);}
+.res{border-left:4px solid var(--mn-ok);}
+.formula{
+  font-family:'Courier New',monospace; background:var(--mn-panel2);
+  border:1px solid var(--mn-border); border-radius:8px; padding:10px 14px;
+  margin:10px 0; overflow-x:auto; white-space:pre; font-size:.92em; color:var(--mn-fg);
+}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:2px 8px; border-radius:6px; margin-bottom:6px;
+  background:var(--mn-panel2); color:var(--mn-accent); border:1px solid var(--mn-border);
+}
+.tag.b{color:var(--mn-accent2);}
+.ladder{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px; margin:12px 0;}
+.ladder ol{margin:6px 0 0 20px;}
+.ladder li{margin-bottom:5px; font-size:.96em;}
+.ladder li b{color:var(--mn-accent);}
+.viz{
+  border:1px solid var(--mn-border); border-radius:14px; background:var(--mn-panel);
+  padding:16px; margin-top:6px;
+}
+.viz canvas{width:100%; display:block; border-radius:10px; background:var(--mn-panel2); border:1px solid var(--mn-border);}
+.viz .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+.viz input[type=range]{flex:1; min-width:180px; accent-color:var(--mn-accent);}
+.viz .readout{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+@media(max-width:620px){.viz .readout{grid-template-columns:1fr;}}
+.readbox{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel2); padding:12px 14px; font-size:.94em;}
+.readbox .rb-title{font-weight:700; margin-bottom:4px;}
+.readbox.os .rb-title{color:var(--mn-accent2);}
+.readbox.card .rb-title{color:var(--mn-accent);}
+.readbox .regime{font-weight:700; margin:4px 0;}
+.readbox.regime-below{border-color:var(--mn-ok);}
+.readbox .desc{color:var(--mn-dim);}
+.viz .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:.85em; color:var(--mn-dim);}
+.viz .legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-dim); font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Die Architektur der Grenze — Leitern, Schichten und das Unzugängliche</h1>
+  <div class="subtitle">Fusion aus: inaccessible.html ✕ os.html</div>
+  <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Beide Papiere — die Hierarchie der <em>großen Kardinalzahlen</em> (A) und das <em>Schichtenmodell eines Betriebssystems</em> (B) — sind dieselbe Sache in zwei Sprachen: eine <strong>gestufte Welt mit einer Zugriffs-Grenze</strong>. Eine Welt, die aus Ebenen besteht, auf denen jede die darunterliegende trägt, und an der eine scharfe Linie ein „unten Erreichbares" von einem „oben Liegenden" trennt, das die Regeln des unteren Regimes nicht frei betreten können.</p>
+  <p>Das <strong>inaccessible Kardinal</strong> bei A und die <strong>User/Kernel-Grenze</strong> bei B sind dasselbe Phänomen. Das inaccessible Kardinal ist per Definition von unten nicht erreichbar (regulär + starker Limes): genau die Stelle, an der die Bauregeln des unteren Regimes (ZFC, bzw. der „User-Space" der Mengenlehre) aufhören zu reichen. Beim Betriebssystem ist es die Privilegien-Grenze, über die man nur mit System Call wechseln darf. Die <em>stärkeren</em> großen Kardinals bei A (measurable, supercompact, …) sind dann die „privilegierten System Calls" der Mathematik: Postulate, die das Regime selbst wechseln. B macht dasselbe konkret und zeitlich sichtbar.</p>
+  <p>Die Fusion behauptet also eine gemeinsame Form — das <strong>Grenz-Gestufte-System</strong>: (1) geordnete Ebenen, (2) eine scharfe Zugriffs-Grenze, (3) eine Regel, wie (oder ob) man sie überschreitet. Die Unterschiede zwischen A und B (Richtung der Mächtigkeit, Mauer-gegen-Tor, statisch-gegen-dynamisch) sind <em>freie Designparameter</em> dieser Form, keine Widersprüche.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Richtung der Mächtigkeit</span>
+    <h3>„Stärker" nach oben (A) vs. „mächtiger" nach unten (B)</h3>
+    <p><b>A</b> ordnet explizit „je höher in der Hierarchie, desto stärker": die stärkste und zugleich gefährlichste Stufe (0 = 1, I0–I3) steht <em>oben</em>, das erreichbare Fundament (ℵ₀, inaccessible) <em>unten</em>. Mächtigkeit steigt zur Spitze — und dort lauert die Inkonsistenz.</p>
+    <p><b>B</b> legt die mächtigste Schicht, den <em>Kernel im Kernel-Modus</em> mit direktem Hardware-Zugriff, am <em>unteren</em> Ende (direkt über den Treibern); die oberste Schicht (User/GUI) ist die am <em>wenigsten</em> privilegierte und muss über System Calls um Zugriffsrechte bitten. Mächtigkeit sinkt nach oben.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 2 · Mauer vs. Tor</span>
+    <h3>Die Grenze als Unmöglichkeit (A) vs. als gestaltetes Protokoll (B)</h3>
+    <p><b>A</b> definiert das inaccessible Kardinal κ durch <em>Unerreichbarkeit</em>: cf(κ)=κ und ∀λ&lt;κ&nbsp;2^λ&lt;κ — man kommt nicht „von der Seite" (keine &lt;κ-Leiter) und nicht „exponentiell" (kein 2^λ-Sprung) hinauf. Die Grenze ist eine absolute <em>Mauer</em>: per Definition nicht überschreitbar.</p>
+    <p><b>B</b> macht aus derselben Grenze ein <em>durchgängiges Tor</em>: User- und Kernel-Modus sind durch das System-Call-Interface verbunden, und man überschreitet die Grenze <em>bewusst und erlaubt</em>. Die Grenze ist ein Schutz-Protokoll, keine Unmöglichkeit.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 3 · eine Größe vs. viele Funktionen</span>
+    <h3>Ein zeitloses Maß (A) vs. ein zeitabhängiger Funktionsstack (B)</h3>
+    <p><b>A</b> ordnet <em>alle</em> Stufen auf <em>eine einzige</em> Achse — die Konsistenzstärke. Jede Sprosse ist derselbe Gegenstandstyp (ein Kardinal bzw. Axiom), nur stärker; das Gebilde ist <em>zeitlos/statisch</em> (es beschreibt, was beweisbar ist).</p>
+    <p><b>B</b> ist ein Stack <em>heterogener Funktionen</em> (CPU, RAM, Scheduler, Page Tables, VFS, Treiber), die <em>in der Zeit</em> laufen — Ticks, sich ändernder Zustand, Interrupts, Zu- und Freigabe von Speicher. Die Achse ist hier keine Größe, sondern die Abfolge von Zuständen.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag" style="background:transparent;">Auflösung 1 · Beweiskraft ≠ Privileg</span>
+    <p>A misst <em>Beweiskraft</em> (was man von einer hohen Stufe nach unten herleiten kann) — die wächst nach oben, weil oben mehr Struktur sichtbar ist (V_λ ⊆ M). B misst <em>Zugriff/Privileg</em> — das wird nach oben <em>abgeschirmt</em>, um das System gerade vor dieser Mächtigkeit zu schützen. Es sind zwei verschiedene Achsen („Beweiskraft" vs. „Privileg"), die man entgegengesetzt legen darf. <strong>Fusioniert:</strong> In einer Leitereinrichtung sind Stärke und Privileg frei platzierbar; invariant bleibt die <em>Grenze</em> selbst, nicht die Richtung, in der Mächtigkeit liegt.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 2 · Die Mauer ist das Tor im Grenzfall</span>
+    <p>Das inaccessible Kardinal <em>als ZFC-Begriff</em> ist unerreichbar — eine Mauer. Doch man kommt über sie hinaus, indem man ein stärkeres Axiom <em>postuliert</em> (measurable, …): das ist exakt der „System Call" der Mengenlehre, ein privilegierter Regimewechsel. B zeigt dasselbe: die Grenze ist ein Tor <em>mit</em> Protokoll. <strong>Fusioniert:</strong> Jede Grenze ist im gegebenen Regime eine Mauer und mit erlaubtem Übergang (Postulat / System Call) ein Tor. Das inaccessible Kardinal ist beides zugleich: Mauer für ZFC, Tor durch Axiom-Postulate.</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag" style="background:transparent;">Auflösung 3 · Eine Skala ist die Projektion eines Funktionsstacks</span>
+    <p>A projiziert die vielfältigen Einbettungs- und Abschlussbedingungen (j:V→M, M^{j(κ)}⊆M, V_λ⊆M) auf <em>eine</em> Konsistenzstärkeachse; B lässt die Funktionen (Scheduling, Paging, I/O) als getrennte Schichten <em>in der Zeit</em> ablaufen. <strong>Fusioniert:</strong> Die Hierarchie ist die gemeinsame Struktur; „Skala" (A) und „Laufzeit" (B) sind zwei Darstellungen derselben — die eine statisch (was gilt), die andere temporal (wie es läuft).</p>
+  </div>
+
+  <div class="card res" style="margin-top:14px; border-left-color:var(--mn-accent);">
+    <span class="tag" style="background:transparent;">Gefasste Schlussposition</span>
+    <p>Die gemeinsame Form ist das <strong>Grenz-Gestufte-System</strong>. A ist diese Form mathematisch und statisch (Mauer + Axiom-Tor); B dieselbe Form konkret und zeitlich (Schichten + System-Call-Tor). Das inaccessible Kardinal ist die <em>User/Kernel-Grenze der Mengenlehre</em>; die elementare Einbettung <strong>j:V→M</strong> ist die <em>„Page Table" des Universums</em> — sie übersetzt das echte Universum V in das Modell M und erhält dabei die Struktur (Elementarität), wie eine Adressübersetzung die Programmausführung erhält.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Das gemeinsame Skelett hat drei Teile: <strong>Ebenen</strong> (eine geordnete Folge von Zuständen), eine <strong>Grenze</strong> (eine scharfe Linie, an der die Regeln des unteren Regimes enden) und eine <strong>Überschreitungsregel</strong> (ob und wie man die Grenze passiert). A und B füllen diese drei Teile unterschiedlich aus.</p>
+
+  <div class="ladder">
+    <span class="tag b">A · Große Kardinalzahlen (Konsistenzstärkeachse, unten → oben)</span>
+    <ol>
+      <li><b>ℵ₀, ℵ₁, …</b> (ZFC) — von unten erreichbar, „normale" unendliche Kardinals.</li>
+      <li><b>Inaccessible</b> — die Mauer: regulär + starker Limes; V_κ ⊨ ZFC.</li>
+      <li><b>Mahlo, weakly compact</b> — Kompaktheit, Baumeigenschaft, Indescribability.</li>
+      <li><b>measurable</b> — nicht-trivialer κ-vollständiger Ultrafilter; V ≠ L.</li>
+      <li><b>strong, superstrong, supercompact</b> — Einbettungen mit wachsendem Abschluss.</li>
+      <li><b>extendible, huge, Woodin</b> — Selbstähnlichkeit, Determiniertheit.</li>
+      <li><b>I0–I3 / 0=1</b> — stärkste konsistente Axiome; 0=1 = Inkonsistenz (Top-Grenze).</li>
+    </ol>
+  </div>
+
+  <div class="ladder">
+    <span class="tag">B · Betriebssystem (Schicht-Stack, unten → oben)</span>
+    <ol>
+      <li><b>Hardware</b> — CPU, RAM, Disk, I/O.</li>
+      <li><b>Geräetreiber</b> — generische Befehle → gerätespezifische Anweisungen.</li>
+      <li><b>Kernel</b> (Kernel-Modus) — Prozesse, Speicher, FS; direkter HW-Zugriff.</li>
+      <li><b>System-Call-Interface</b> — das Tor zwischen den Modi.</li>
+      <li><b>System-Bibliotheken</b> (libc, Win32) — Wrapper um Syscalls.</li>
+      <li><b>Anwendungen</b> (User-Modus) — Browser, Editor, …</li>
+      <li><b>Benutzer / GUI</b> — Mensch &amp; Oberfläche, keine Privilegien.</li>
+    </ol>
+  </div>
+
+  <p><strong>Die Definitionen (A), alle im Format „Elementare Einbettung j mit Abschlussbedingung":</strong></p>
+  <div class="formula">κ inaccessible   ⟺  κ &gt; ω,  cf(κ) = κ,  ∀λ&lt;κ: 2^λ &lt; κ
+κ measurable     ⟺  ∃ nicht-trivialer κ-vollständiger Ultrafilter U auf κ
+                     ⟺ ∃ j: V → M mit crit(j) = κ
+κ weakly compact ⟺  κ unerreichbar + Baumeigenschaft  ⟺  κ → (κ)²₂  ⟺  Π¹₁-unbeschreibbar
+κ supercompact   ⟺  ∀λ ≥ κ ∃ j: V → M,  crit(j)=κ,  j(κ) &gt; λ,  M^λ ⊆ M
+κ huge           ⟺  ∃ j: V → M,  crit(j)=κ,  M^{j(κ)} ⊆ M
+Kunen:           es gibt KEINE elementare Einbettung j: V → V</div>
+  <p>Die <em>Abschlussbedingung</em> (V_λ ⊆ M bzw. M^λ ⊆ M) sagt: das Zielmodell M ist „dick" genug, dass alles unterhalb einer gewissen Höhe in M sichtbar bleibt — man kann dort „rechnen" ohne aus M herauszufallen. Je weiter die Höhe, desto stärker (und näher an der Inkonsistenz) das Axiom. <b>Kunen</b>s Ergebnis ist die harte Decke: Selbstähnlichkeit des ganzen Universums (j:V→V) geht nicht; I0–I3 sind die stärksten erlaubten Abschwächungen.</p>
+
+  <p><strong>Die Mechanismen (B), die dieselbe Form konkretisieren:</strong></p>
+  <ul style="margin:0 0 12px 20px;">
+    <li><b>Kernel-/User-Modus</b>: getrennte Privilegien; der Wechsel geht nur über <em>System Calls</em> — das Tor an der Grenze.</li>
+    <li><b>Paging</b>: virtueller Adressraum ↔ physischer RAM über die <em>Page Table</em>; bei vollem RAM <em>Swapping</em> auf Disk. (Noch eine Grenze: virtuell vs. physisch, überquert per Übersetzung.)</li>
+    <li><b>Round-Robin-Scheduling</b>: feste Zeitscheibe pro Prozess, kein Prozess „verhungert" — Fairness an einer begrenzten Ressource (der CPU).</li>
+    <li><b>Interrupt-basiertes I/O</b>: Gerät meldet „bereit", CPU wechsert kurz in den Handler — ein geordneter, ereignisgesteuerter Regimewechsel.</li>
+    <li><b>Dateisystem</b>: Baumstruktur (Verzeichnisse/Dateien) — dieselbe Ebenen-Rekursion, hier im Datenbereich.</li>
+  </ul>
+
+  <p><strong>Die Vereinigung (der eigentliche Fusionsinhalt):</strong></p>
+  <div class="formula">Universum V          ≈  physischer Speicher
+Modell M             ≈  virtueller Adressraum
+j : V → M           ≈  Page Table (übersetzt, erhält Struktur = Elementarität)
+crit(j) = κ         ≈  Basis des Adressraums (ab hier gilt die Übersetzung)
+Abschluss V_λ ⊆ M   ≈  „keine Page Fault": die Map deckt genug ab
+inaccessible κ      ≈  die User/Kernel-Grenze der Mengenlehre
+stärkeres Axiom     ≈  privilegierter System Call (postulierter Regimewechsel)
+Stärkeachse (A)     ↔  Privilegachse (B)     [entgegengesetzte Richtung, gleiche Form]
+statische Skala (A) ↔  Laufzeit-Stack (B)    [zwei Darstellungen derselben Struktur]</div>
+  <p>So liest sich die ganze Hierarchie der großen Kardinals als <em>ein Betriebssystem des mathematischen Universums</em>: unten der frei zugängliche „User-Space" (ZFC, die ℵ-Zahlen), an der inaccessible-Grenze der Umschaltpunkt, darüber jede größere Kardinal eine neue Privilegienstufe, die man — wie einen System Call — nur durch ein (stärkeres) Postulat betritt; und ganz oben die harte Sicherheits-Grenze (Kunen / 0=1), über die kein Regimewechsel mehr führt, ohne das System zu zerstören.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — Die zwei Leitern mit ihren Grenzen</h2>
+  <p>Zwei parallele Leitern: links der <em>Schicht-Stack des Betriebssystems</em> (B), rechts die <em>Hierarchie der großen Kardinals</em> (A). Jede trägt ihre eigene Zugriffs-Grenze (blau gestrichelt: User/Kernel-Tor; rot gestrichelt: die inaccessible-Mauer). Bewege den Regler: Die Cursor-Linie „Du" steigt beide Leitern <em>gleichzeitig</em> hoch — und du siehst live, wann du jeweils die Grenze deines Regimes überschreitest.</p>
+
+  <div class="viz">
+    <canvas id="vizCanvas" height="620"></canvas>
+    <div class="controls">
+      <label for="posSlider" style="font-weight:700;white-space:nowrap;">Position</label>
+      <input type="range" id="posSlider" min="0" max="6" step="0.1" value="0">
+    </div>
+    <div class="readout">
+      <div class="readbox os" id="osBox">
+        <div class="rb-title">Betriebssystem (B)</div>
+        <div>Stufe: <b id="osLevel">—</b></div>
+        <div class="regime" id="osRegime">—</div>
+        <div class="desc" id="osDesc">—</div>
+      </div>
+      <div class="readbox card" id="cardBox">
+        <div class="rb-title">Große Kardinalzahlen (A)</div>
+        <div>Stufe: <b id="cardLevel">—</b></div>
+        <div class="regime" id="cardRegime">—</div>
+        <div class="desc" id="cardDesc">—</div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent2)"></i> aktive OS-Stufe</span>
+      <span><i class="dot" style="background:var(--mn-accent)"></i> aktive Kardinalstufe</span>
+      <span><i class="dot" style="background:var(--mn-accent2);border-radius:50%"></i> Cursor „Du"</span>
+      <span><i class="dot" style="background:var(--mn-boundary);height:3px;border-radius:2px"></i> Zugriffs-Grenze</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Quelle A</span>
+      <h3><a href="../inaccessible.html">inaccessible.html</a></h3>
+      <p><small>„Große Kardinalzahlen – Interaktive Hierarchie": eine klickbare, nach Konsistenzstärke sortierte Leiter von ℵ₀ über das inaccessible Kardinal bis I0–I3/0=1, jede Stufe mit Einbettungs-Definition und Analogie; plus Graph-Ansicht.</small></p>
+    </div>
+    <div class="card">
+      <span class="tag b">Quelle B</span>
+      <h3><a href="../os.html">os.html</a></h3>
+      <p><small>„Betriebssysteme – Visuell erklärt": Schichtenmodell (Hardware→User) mit User/Kernel-Grenze, Round-Robin-Scheduling, Paging, Dateisystem-Baum und Interrupt-I/O — alles als Canvas-Demo.</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion N1-053 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  var ctx = canvas.getContext('2d');
+  var slider = document.getElementById('posSlider');
+
+  var OS = [
+    {n:'Hardware', d:'Physische Komponenten (CPU, RAM, Disk, I/O) — die Grundlage.'},
+    {n:'Geräetreiber', d:'Übersetzen generische OS-Befehle in gerätespezifische Anweisungen.'},
+    {n:'Kernel (Kernel-Modus)', d:'Privilegiertes Herz: Prozesse, Speicher, FS — direkter HW-Zugriff.'},
+    {n:'System-Call-Interface', d:'Das Tor: einzige erlaubte Brücke von User- in Kernel-Modus.'},
+    {n:'System-Bibliotheken', d:'libc / Win32 — Wrapper, über die Apps System Calls aufrufen.'},
+    {n:'Anwendungen (User-Modus)', d:'Browser, Editor, … — am wenigsten privilegiert, müssen bitten.'},
+    {n:'Benutzer / GUI', d:'Mensch & Oberfläche — das Ziel, ohne Privilegien.'}
+  ];
+  var CARD = [
+    {n:'ℵ₀, ℵ₁ … (ZFC)', d:'Die „normalen" unendlichen Kardinals — von unten erreichbar.'},
+    {n:'Inaccessible (Mauer)', d:'Regulär + starker Limes; von ZFC nicht erreichbar, V_κ ⊨ ZFC.'},
+    {n:'Weakly compact', d:'Baumeigenschaft, κ→(κ)²₂, Π¹₁-unbeschreibbar.'},
+    {n:'Measurable', d:'Nicht-trivialer κ-vollständiger Ultrafilter; impliziert V≠L.'},
+    {n:'Supercompact', d:'Für jedes λ: j:V→M mit j(κ)>λ und M^λ⊆M.'},
+    {n:'Huge / Woodin', d:'M^{j(κ)}⊆M bzw. zentral für Determiniertheit (PD, AD^{L(R)}).'},
+    {n:'I0–I3 / 0=1', d:'Stärkste bekannte konsistente Axiome; 0=1 = Inkonsistenz (Top-Grenze).'}
+  ];
+  var OS_BOUND = 3;    // User/Kernel-Tor bei System-Call-Interface
+  var CARD_BOUND = 1;  // inaccessible-Mauer
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || '#888'; }
+  function hexToRgba(hex, a){
+    hex = (hex||'').replace('#','');
+    if(hex.length===3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var r=parseInt(hex.substr(0,2),16), g=parseInt(hex.substr(2,2),16), b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){ return 'rgba(140,140,160,'+a+')'; }
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+  function layout(W,H){
+    var topPad=84, botPad=26;
+    var step=(H-topPad-botPad)/6;
+    return {topPad:topPad, botPad:botPad, step:step,
+            leftX:W*0.24, rightX:W*0.76, centerX:W*0.5,
+            boxW:Math.min(W*0.36,260),
+            yFor:function(i){ return (H-botPad) - i*step; },
+            boxH:Math.min(58, step*0.82)};
+  }
+
+  function drawColumn(L, col, items, active, bound, colName, activeColor){
+    var cx = (col==='os') ? L.leftX : L.rightX;
+    // header
+    ctx.fillStyle = cssVar('--mn-dim');
+    ctx.font='bold 15px Segoe UI, sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(colName, cx, 26);
+    // boundary band
+    var by = L.yFor(bound);
+    ctx.fillStyle = hexToRgba(cssVar('--mn-boundary'), 0.16);
+    ctx.fillRect(cx-L.boxW/2, by-13, L.boxW, 26);
+    ctx.strokeStyle = cssVar('--mn-boundary');
+    ctx.setLineDash([6,4]); ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(cx-L.boxW/2, by); ctx.lineTo(cx+L.boxW/2, by); ctx.stroke();
+    ctx.setLineDash([]);
+    // boxes
+    for(var i=0;i<items.length;i++){
+      var y = L.yFor(i);
+      var isActive = (i===active);
+      ctx.fillStyle = isActive ? activeColor : cssVar('--mn-panel2');
+      roundRect(cx-L.boxW/2, y-L.boxH/2, L.boxW, L.boxH, 9);
+      ctx.fill();
+      ctx.lineWidth = isActive ? 2.4 : 1.2;
+      ctx.strokeStyle = isActive ? activeColor : cssVar('--mn-border');
+      roundRect(cx-L.boxW/2, y-L.boxH/2, L.boxW, L.boxH, 9);
+      ctx.stroke();
+      ctx.fillStyle = isActive ? cssVar('--mn-bg') : cssVar('--mn-fg');
+      ctx.font = (isActive?'bold ':'')+'13px Segoe UI, sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText(items[i].n, cx, y+4);
+    }
+  }
+
+  function render(){
+    if(!ctx) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.clientWidth || 700;
+    var H = 620;
+    canvas.width = Math.round(W*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = cssVar('--mn-panel2');
+    ctx.fillRect(0,0,W,H);
+
+    var L = layout(W,H);
+    var p = parseFloat(slider.value) || 0;
+    var activeOS = clamp(Math.round(p),0,6);
+    var activeCard = clamp(Math.round(p),0,6);
+    var cy = L.yFor(p);
+
+    // central axis
+    ctx.strokeStyle = cssVar('--mn-border');
+    ctx.setLineDash([4,5]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(L.centerX, L.topPad-18); ctx.lineTo(L.centerX, H-L.botPad+10); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.save();
+    ctx.translate(L.centerX, H/2); ctx.rotate(Math.PI/2);
+    ctx.fillStyle = cssVar('--mn-dim');
+    ctx.font='12px Segoe UI, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Grenzenachse — zwei Leitern, eine Form', 0, 0);
+    ctx.restore();
+
+    drawColumn(L,'os',OS,activeOS,OS_BOUND,'Betriebssystem (B)', cssVar('--mn-accent2'));
+    drawColumn(L,'card',CARD,activeCard,CARD_BOUND,'Große Kardinalzahlen (A)', cssVar('--mn-accent'));
+
+    // boundary labels
+    ctx.font='bold 11px Segoe UI, sans-serif';
+    ctx.fillStyle = cssVar('--mn-boundary');
+    ctx.textAlign='left';
+    ctx.fillText('User/Kernel-Tor', L.leftX+L.boxW/2+4, L.yFor(OS_BOUND)+4);
+    ctx.textAlign='right';
+    ctx.fillText('Mauer: Inaccessible', L.rightX-L.boxW/2-4, L.yFor(CARD_BOUND)+4);
+
+    // cursor line
+    ctx.strokeStyle = cssVar('--mn-accent2');
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(10, cy); ctx.lineTo(W-10, cy); ctx.stroke();
+    // cursor marker
+    ctx.fillStyle = cssVar('--mn-accent2');
+    ctx.beginPath();
+    ctx.moveTo(L.centerX, cy-8); ctx.lineTo(L.centerX+10, cy); ctx.lineTo(L.centerX-10, cy);
+    ctx.closePath(); ctx.fill();
+    ctx.font='bold 12px Segoe UI, sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText('Du', L.centerX+14, cy+4);
+
+    // title
+    ctx.fillStyle = cssVar('--mn-fg');
+    ctx.font='bold 16px Segoe UI, sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('Leitern mit Zugriffs-Grenze — dieselbe Architektur, zwei Realisierungen', W/2, 52);
+  }
+
+  function updateReadout(){
+    var p = parseFloat(slider.value) || 0;
+    var aOS = clamp(Math.round(p),0,6);
+    var aCard = clamp(Math.round(p),0,6);
+
+    document.getElementById('osLevel').textContent = OS[aOS].n;
+    document.getElementById('osDesc').textContent = OS[aOS].d;
+    var osReg = document.getElementById('osRegime');
+    var osBox = document.getElementById('osBox');
+    osBox.classList.remove('regime-below');
+    if(p < OS_BOUND - 0.001){ osReg.textContent='Kernel-/Hardware-Seite (privilegiert)'; osBox.classList.add('regime-below'); }
+    else if(p > OS_BOUND + 0.001){ osReg.textContent='User-Seite (abgeschirmt)'; }
+    else { osReg.textContent='am Tor (System Call)'; }
+
+    document.getElementById('cardLevel').textContent = CARD[aCard].n;
+    document.getElementById('cardDesc').textContent = CARD[aCard].d;
+    var cReg = document.getElementById('cardRegime');
+    var cBox = document.getElementById('cardBox');
+    cBox.classList.remove('regime-below');
+    if(p < CARD_BOUND - 0.001){ cReg.textContent='ZFC-Regime (erreichbar)'; cBox.classList.add('regime-below'); }
+    else if(p > CARD_BOUND + 0.001){ cReg.textContent='Regime großer Kardinals (postuliert)'; }
+    else { cReg.textContent='an der Mauer (Inaccessible)'; }
+  }
+
+  function refresh(){ render(); updateReadout(); }
+
+  window.toggleTheme = function(){
+    document.documentElement.classList.toggle('dark');
+    refresh();
+  };
+
+  slider.addEventListener('input', refresh);
+  window.addEventListener('resize', refresh);
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ render(); }); }
+  refresh();
+})();
+</script>
+</body>
+</html>

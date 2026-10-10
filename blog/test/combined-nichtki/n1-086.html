@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verstehen ist Verfall — Fusion voidstar ✕ understanding</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --bg2:#f0ece0; --fg:#241d1a; --muted:#6b5f57;
+    --accent:#8b0a1a; --accent2:#9a7a3f; --accent3:#3f5a2e;
+    --panel:#ffffff; --panel2:#f4f0e6; --border:rgba(0,0,0,.12);
+    --code-bg:#f0ece0;
+    --viz-core:#8b0a1a; --viz-noise:#8a7f77; --viz-regrow:#3f5a2e; --viz-flood:#2a4a6e; --viz-bg:#efeadd;
+  }
+  html.dark{
+    --bg:#0a0508; --bg2:#14090f; --fg:#e8dcc4; --muted:#9a8f86;
+    --accent:#d81e2e; --accent2:#b8935a; --accent3:#7a9a5a;
+    --panel:#14090f; --panel2:#1a0d14; --border:rgba(216,30,46,.25);
+    --code-bg:#1a0d14;
+    --viz-core:#d81e2e; --viz-noise:#6b6167; --viz-regrow:#7a9a5a; --viz-flood:#3f6f9e; --viz-bg:#0d0710;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:Georgia,'Times New Roman',serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+    transition:background .3s,color .3s;
+  }
+  #article{max-width:820px;margin:0 auto;padding:3rem 1.4rem 5rem;}
+  header{border-bottom:1px solid var(--border);padding-bottom:1.6rem;margin-bottom:2.4rem;}
+  h1{font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.12;letter-spacing:.01em;margin:0 0 .6rem;}
+  h1 .star{color:var(--accent);}
+  .sub{color:var(--accent2);font-style:italic;font-size:1.02rem;letter-spacing:.04em;}
+  .kicker{color:var(--muted);text-transform:uppercase;letter-spacing:.22em;font-size:.72rem;margin-bottom:1rem;}
+  h2{font-size:1.5rem;margin:2.6rem 0 .6rem;border-left:3px solid var(--accent);padding-left:.7rem;}
+  h3{font-size:1.12rem;margin:1.6rem 0 .4rem;color:var(--accent2);}
+  p{margin:.7rem 0;}
+  section{margin:0 0 1.2rem;}
+  .lead{color:var(--muted);font-size:1.02rem;}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.2rem;margin:1.1rem 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;}
+  .card h4{margin:0 0 .4rem;color:var(--accent);font-size:1rem;}
+  .card .tag{display:inline-block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:.1rem .45rem;margin-bottom:.5rem;}
+  .card p{margin:.4rem 0;font-size:.95rem;}
+  .a{color:var(--accent);font-weight:600;}
+  .b{color:var(--accent3);font-weight:600;}
+  blockquote{margin:1rem 0;padding:.6rem 1rem;border-left:3px solid var(--accent2);color:var(--muted);font-style:italic;background:var(--panel2);border-radius:0 6px 6px 0;}
+  code{background:var(--code-bg);border:1px solid var(--border);border-radius:4px;padding:.05rem .35rem;font-size:.86em;font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .mathbox{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0;overflow-x:auto;}
+  .loop{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1.1rem 0;}
+  @media(max-width:680px){.loop{grid-template-columns:repeat(2,1fr);}}
+  .loop .step{background:var(--panel);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:6px;padding:.7rem .8rem;}
+  .loop .step .n{font-family:ui-monospace,monospace;color:var(--accent2);font-size:.8rem;}
+  .loop .step h4{margin:.2rem 0;font-size:.95rem;color:var(--fg);}
+  .loop .step p{margin:0;font-size:.82rem;color:var(--muted);line-height:1.5;}
+  ul,ol{padding-left:1.3rem;}
+  li{margin:.35rem 0;}
+  .proven{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+  @media(max-width:680px){.proven{grid-template-columns:1fr;}}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);}
+  a:hover{border-bottom-style:solid;}
+  .vizwrap{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin:1.2rem 0;}
+  #vizCanvas{display:block;width:100%;height:420px;border-radius:8px;background:var(--viz-bg);border:1px solid var(--border);}
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;margin:.9rem 0;}
+  .control{display:flex;flex-direction:column;min-width:170px;flex:1;}
+  .control label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent2);margin-bottom:.35rem;}
+  .control input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:3px;outline:none;}
+  .control input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;}
+  .control input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;}
+  .control .val{font-size:.82rem;color:var(--fg);margin-top:.3rem;font-family:ui-monospace,monospace;}
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.9rem;}
+  .chip{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:.4rem .7rem;font-size:.85rem;}
+  .chip b{font-family:ui-monospace,monospace;color:var(--accent);}
+  .chip.phase b{color:var(--accent2);}
+  .legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.7rem;font-size:.8rem;color:var(--muted);}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:.35rem;vertical-align:middle;}
+  .theme-toggle{position:fixed;top:1rem;right:1rem;z-index:50;background:var(--panel);border:1px solid var(--border);color:var(--fg);border-radius:20px;padding:.4rem .8rem;cursor:pointer;font-size:.78rem;font-family:inherit;}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;font-style:italic;text-align:center;}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">☾ / ☀ Thema</button>
+<article id="article">
+  <header>
+    <div class="kicker">Knockout-Synthese · Runde 1 · Paar 086 · nicht-KI-Track</div>
+    <h1>Verstehen ist <span class="star">Verfall</span> — der Zyklus von Kompression und Wiedergewinn</h1>
+    <p class="sub">Fusion aus: voidstar.html ✕ understanding.html</p>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Zwei Papiere, die auf den ersten Blick nichts miteinander zu tun haben — eine dunkle Album-Analyse und eine didaktische Epistemologie — beschreiben aus entgegengesetzten Richtungen <em>denselben Vorgang</em>.</p>
+    <p><span class="b">understanding.html</span> definiert Verstehen in einem Satz: <em>„To understand is to compress.“</em> Verstehen ist kein Anhäufen von Fakten, sondern die Reduktion vieler Beobachtungen auf wenige tragende Prinzipien (Kolmogorov-Komplexität). <span class="a">voidstar.html</span> beschreibt aus dem Dunkel heraus etwas Strukturell Identisches: Der Sprecher ist „schon tot, aber ich bin noch nicht gestorben“; der Körper wird zum Kompost, und <em>„I've been growing from the ground“</em> — aus dem Verfall wächst Neues. Verfall ist dort keine Endstation, sondern <em>Zustand</em>, aus dem sich etwas neu organisiert.</p>
+    <p>Die integrierte Position lautet: <strong>Verstehen ist ein Kreislauf.</strong> Man versteht ein Ding, indem man es in einen kleineren, tragenden <em>Kern</em> zerfallen (komprimieren) lässt — und dieser Kern ist kein totgeborenes Ergebnis, sondern <em>Keim</em>, aus dem neue Struktur wächst (Transfer, Wiederaufstieg, „growing from the ground“). Bedeutung ist daher keine Besitzgröße, die man besitzt, sondern eine <em>Phase</em> eines Prozesses: Rauschen → Kompression → Kern → Regeneration → neues Rauschen auf höherer Ebene. Beide Papiere insistieren außerdem, dass Verstehen nur im <em>Tun</em> geschieht — „You just experienced understanding by doing“ einerseits, „Klicke, schiebe, spiele“ andererseits. Das Wissen liegt im Vorgang der Transformation, nicht in einem statischen Faktum.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="lead">Die Papiere sind nicht logisch unvereinbar, aber sie stehen in fünf konkreten, scharfen Spannungen. Jede nennt, was welches Papier genau behauptet.</p>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="tag">Widerspruch 1</span>
+        <h4>Transformation = Fortschritt &nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">understanding.html</span>: Jede Stufe führt höher (Recognition → … → Creation), das Aha-Moment reorganisiert das Verstreute zu „a coherent whole“ — Netto-Gewinn. Schluss: Verstehen durch Tun ist „perhaps the deepest understanding of all.“</p>
+        <h4>Transformation = Aufgabe &nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">voidstar.html</span>: „I did what I was supposed to. It's not fair.“ Das Ritual hat nichts geändert; der Tanz endet im Tod; die Verwandlung (Hörner, Ziege, verkaufter Seele) <em>kostet</em> das Selbst. Ende ist <em>Warten</em>, nicht Ankunft.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Widerspruch 2</span>
+        <h4>Verbindung erzeugt Sinn &nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">understanding.html</span>: Verstehen <em>beginnt</em> mit Verbindung — „linking isolated facts into networks“; Transfer = noch mehr Querverbindungen über Domänen hinweg.</p>
+        <h4>Verbindung wird durchtrennt &nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">voidstar.html</span>: „I cut my ties“, „cut it all down“. Das Album erreicht nie Gemeinschaft; der Coven ist eine Gemeinschaft der Toten. Die zärtlichste Zeile („just to float / without pain“) kommt aus dem Alleinsein, nicht aus der Bindung.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Widerspruch 3</span>
+        <h4>Körper als Sinnesorgan &nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">understanding.html</span>: „Embodied Intuition“ — „Your body understands gravity before your mind does.“ Der Körper ist legitime epistemische Instanz.</p>
+        <h4>Körper als Verfallsort &nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">voidstar.html</span>: „Flies living inside of your eyes“, der Körper wird Landschaft für Ungeziefer, „no reflection in the mirror, I don't know myself“. Der Körper ist keine vertrauenswürdige Erkenntnisquelle, sondern eine Wunde.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Widerspruch 4</span>
+        <h4>Kompression = Gewinn &nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">understanding.html</span>: Viele Beobachtungen auf wenige Prinzipien zu komprimieren ist der <em>Zweck</em> — befreiend. „Random noise cannot be compressed — it cannot be understood.“</p>
+        <h4>Kompression = Verlust &nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">voidstar.html</span>: Das Selbst komprimiert bis zur Unkenntlichkeit — Fleisch wird Knochen, der Spiegel zeigt nichts. Die Reduktion frisst genau das, was man war.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Widerspruch 5</span>
+        <h4>Aktivität / Handeln &nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">understanding.html</span>: Der Lernende <em>macht</em> die Arbeit — klicken, rotieren, vorhersagen, lehren. „You just experienced understanding by doing.“</p>
+        <h4>Zwang / Passivität &nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">voidstar.html</span>: „Wir tanzen alle. Wir wissen nicht warum. Wir können nicht aufhören.“ Die Bedeutung <em>ergreift</em> den Sprecher; die Flut „kommt“, der Regen „hört nicht auf“.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p class="lead">Kein Widerspruch ist ein echter Logikbruch — jeder ist derselbe Operator auf einer anderen Skala oder einem anderen Objekt. So fassen sie sich.</p>
+
+    <h3>1. Fortschritt vs. Aufgabe</h3>
+    <p>Unterscheide <em>lokale</em> von <em>globaler</em> Transformation. B's Kompression ist eine sichere, reversible, werkebene Verwandlung — sie rührt die Identität nicht an, daher fühlt sie sich wie Gewinn an. A's Verfall ist eine identitätsebene Transformation — sie rührt das Selbst an, daher fühlt sie sich wie Verlust ohne Gegenwert. <strong>Fusion:</strong> Die Transformation ist nie ein Tauschgeschäft mit garantierter Rendite; sie ist im <em>Vorgang</em> bedeutsam. B zeigt die Transformation, bei der das Objekt überlebt; A die, bei der es nicht überlebt. Verstehen ist genau der Moment, in dem die sichere Transformation so tief wird, dass sie die Identität trifft — das Aha, das aufhört, ein Spiel zu sein.</p>
+
+    <h3>2. Verbindung vs. Durchtrennung</h3>
+    <p>Durchtrennen ist selbst ein Strukturakt — eine <em>negative Verbindung</em>. Der komprimierteste Zustand (A's „float without pain“, der auf ein einziges Selbst-Node reduzierte Graph) ist ein Netzwerk, das auf einen Knoten geschrumpft ist. <strong>Fusion:</strong> Ein echtes Modell enthält seine eigenen Schnitte. Kompression <em>ist</em> das Löschen von Kanten. B's Transfer <em>fügt</em> Kanten, A's „cut my ties“ <em>löscht</em> sie — beide editieren denselben Graphen, mit unterschiedlichem Vorzeichen.</p>
+
+    <h3>3. Körper als Organ vs. Körper als Substrat</h3>
+    <p>Der Körper ist <em>gleichzeitig</em> Leser und Text. In B <em>kodiert</em> der Körper Intuition; in A <em>ist</em> der Körper das, was transformiert wird. <strong>Fusion:</strong> Embodiment bedeutet, den Mental-Model-Loop auf sich selbst anzuwenden — das Objekt des Modells ist der Modellierer. A's „I don't know myself in the mirror“ ist dann ein <em>gebrochenes B-Modell</em>: Wenn sich das Selbst-Modell vom Körper entfernt, scheitert die Erkennung. A zeigt, wie B von innen aussieht, wenn das Modell in der Krise ist.</p>
+
+    <h3>4. Kompression als Gewinn vs. Verlust</h3>
+    <p>Kompression ist <em>selektiv</em>: sie behält die tragende Struktur, wirft den Rest weg. B wirft irrelevante Details weg (fühlt sich befreiend an); A wirft die Identität weg (fühlt sich wie Tod an). <strong>Fusion:</strong> Verstehen ist das <em>Auswählen, was man behält</em>. Der Schmerz in A ist der Preis, den Kern zu halten und das Selbst fallen zu lassen; die Erleichterung in B ist das Wegwerfen des Details und das Behalten des Musters. Derselbe Vorgang, anderes Objekt.</p>
+
+    <h3>5. Handeln vs. Zwang</h3>
+    <p>Jedes bewusste Verstehen beginnt unwillkürlich. Das Muster „tanzt“ sich in den Blick, <em>bevor</em> man es benennt; das Aha ist ein <em>Bewegt-Werden</em> von Struktur, nicht nur ein Bewegen. Die Tanzwut von 1518 ist die unwillkürliche Kompression; das Aha die freiwillige. <strong>Fusion:</strong> Das tiefste Verstehen holt sich die Agency vom Zwang zurück — man erkennt den Tanz und <em>nennt</em> ihn (genau das, was A's SLEUTH als „Trickster“ tut: „die härtesten Wahrheiten in Wortspielen“ sprechen).</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="lead">Das zusammengeführte Modell, aus dem spätere Runden allein arbeiten können.</p>
+
+    <h3>Der Kreislauf — vier Phasen</h3>
+    <p>Beide Papiere werden zu einem einzigen zyklischen Prozess. Jede Phase trägt zwei Vokabulare — das didaktische (B) und das dunkle (A):</p>
+    <div class="loop">
+      <div class="step"><div class="n">01</div><h4>Rauschen</h4><p>B: der unverstandene Input. A: der Körper, Fliegen, Blut, das undifferenzierte Selbst. Hochkomplex, „unkomprimierbar“.</p></div>
+      <div class="step"><div class="n">02</div><h4>Kompression / Verfall</h4><p>B: viele Beobachtungen → wenige Prinzipien. A: Fleisch → Knochen → Kompost. Reduktion auf das Tragende.</p></div>
+      <div class="step"><div class="n">03</div><h4>Kern</h4><p>B: das Muster, das Modell, das Aha, die These. A: „Verfall bei Bewusstsein“, der VOIDSTAR selbst — minimal, aber strahlend.</p></div>
+      <div class="step"><div class="n">04</div><h4>Regeneration / Transfer</h4><p>B: Anwendung in neuen Domänen, Creation (Stufe 6). A: „growing from the ground“, „hopping out the graves“ — der Kern keimt weiter.</p></div>
+    </div>
+    <p>Der Kreis schließt sich: aus dem regenerierten Kern entsteht auf höherer Ebene neues Rauschen, das erneut komprimiert wird. <strong>Verstehen ist also nicht eine Linie nach oben (wie B's Stufen es nahelegen), sondern eine Spirale</strong> — exakt die geometrische Form, in der A's Synthese den Erzähler durch die 12 Tracks führt („der Weg des Erzählers durch die 12 Tracks als Spirale nach unten und ein Aufblicken am Ende“).</p>
+
+    <h3>Die neun Facetten (B) als Operatoren des Zyklus</h3>
+    <p>B zählt neun Facetten von Verstehen. Sie sind keine Parallelen, sondern <em>Operatoren</em> innerhalb des einen Zyklus:</p>
+    <ul>
+      <li><strong>Connection &amp; Pattern</strong> — die <em>Kompressionsstufe</em>: Verbindung und Mustererkennung sind der Mechanismus, der Rauschen in Struktur verwandelt.</li>
+      <li><strong>Depth</strong> — die <em>Anzahl verschachtelter Kompressionen</em>: jede der sechs Stufen (Recognition … Creation) ist eine Kompression um eine Ebene tiefer.</li>
+      <li><strong>Prediction</strong> — der <em>Test</em>: ein Kern gilt erst als Kern, wenn er verallgemeinert (das nächste Glied vorhersagt).</li>
+      <li><strong>Modeling &amp; Insight</strong> — der <em>Kern-Zustand</em>: das stabile Muster; das Aha ist der Sprung in ihn.</li>
+      <li><strong>Transfer &amp; Embodiment</strong> — die <em>Regenerationsstufe</em>: Struktur wandert in neue Domänen und ins Körperwissen.</li>
+    </ul>
+
+    <h3>Die drei Stimmen (A) als Haltungen zum Verfall</h3>
+    <p>A's dreistimmiger Erzähler ist „einer in drei“. Jede Stimme ist eine Haltung, die man <em>in</em> der Kompression einnimmt — und mappt sauber auf B's Stufen:</p>
+    <div class="grid2">
+      <div class="card"><span class="tag">MOSSBACK</span><h4>Annahme — „the way is shut, I give up“</h4><p>Der Poet/Ritualist. Nimmt die Transformation an, vollzieht das Ritual, „lässt die Hörner wachsen“. ↔ B's <em>Recognition/Description</em>: die Oberfläche wird angenommen, bevor sie erklärt wird.</p></div>
+      <div class="card"><span class="tag">WITCHHOUSE 40k</span><h4>Fortsetzung — „I ain't gon' die“</h4><p>Der Kämpfer. Zwangst der Pattern <em>weiter</em>, trotzt dem Ende, „growing from the ground“. ↔ B's <em>Prediction/Creation</em>: das Muster wird in die Zukunft verlängert.</p></div>
+      <div class="card"><span class="tag">SLEUTH</span><h4>Benennung — „I'm drowning on dry land“</h4><p>Der Trickster. Spricht die Ursache aus, zappt gleichzeitig Mythos und Popkultur. ↔ B's <em>Explanation/Teaching</em>: die Kausalität wird <em>benannt</em> und übertragbar.</p></div>
+      <div class="card"><span class="tag">Zusammenspiel</span><h4>Einer in drei</h4><p>„Alle drei Personas singen denselben Refrain — sie sind eins in der Isolation.“ Der Kern entsteht erst aus der <em>Summe</em> der drei Haltungen — wie B sagt, hält vollständiges Verstehen oft <em>mehrere Modelle gleichzeitig</em>.</p></div>
+    </div>
+
+    <h3>Die Tanzwut von 1518 als zwangsläufige Kompression</h3>
+    <p>Track 6 macht Straßburgs Tanzwut zur Allegorie <em>jeder</em> selbstzerstörerischen Spirale. Im Modell des Zyklus ist der Tanz die Kompression, die <em>gegen den Willen</em> des Einzelnen abläuft: die Zwangshandlung als Transformator, der den Körper komprimiert, bis er kollabiert. Ihre Ausbreitung — eine Frau beginnt, binnen Monats 400 Menschen — ist <em>Transfer über eine Population</em>: dasselbe Muster springt auf neue Träger über. Das ist B's „Transfer“ in seiner düsteren Form: Verstehen/Muster breiten sich an, bis Erschöpfung (A's „Erschöpfung“-Regler) die Sättigung erzwingt.</p>
+
+    <h3>Die Flut als Fehlschlagmodus</h3>
+    <p>„Big old flood coming, I just shrug“ / „Why is it still raining? I did what I was supposed to.“ Wasser ist zweideutig: es reinigt <em>und</em> ertränkt. Im Zyklus ist die Flut der <em>Fehlschlag der Kompression</em> — wenn die Reduktion <em>zu weit</em> geht, überschießt sie den Kern und kehrt in reines Rauschen zurück. Genau das sagt B in seiner Kehrseite: „Random noise cannot be compressed — it cannot be understood.“ Die Flut ist also der Punkt, an dem „Verstehen“ in „Ertränkung“ umschlägt — Kompression, die das Muster nicht gefunden hat, sondern nur noch weggewaschen hat. Das Album endet nicht in Erlösung, sondern in diesem Wartend-im-Regen.</p>
+
+    <h3>Das VOIDSTAR als Kern</h3>
+    <p>Der titelgebende Begriff fasst die gesamte Fusion zusammen: <em>ein Stern in der Leere</em>. Er ist der komprimteste mögliche Kern — „kaum sichtbar, aber nicht erloschen“. Er ist das Minimum an Struktur, das noch <em>strahlt</em>: die kleinste These, die den Zyklus aufrechterhält, ohne zu explodieren. „All we want is just to float / Without pain in us to hide“ ist die Beschreibung dieses Kerns — die maximale Kompression des Schmerzes zu einem Punkt, der nur noch ist.</p>
+
+    <h3>Die Mathematik des Zyklus</h3>
+    <p>B's zentrale Behauptung ist Kolmogorov-Komplexität: die Komplexität \(K(x)\) einer Sequenz ist die Länge des kürzesten Programms, das \(x\) erzeugt. Eine gute Theorie senkt \(K\):</p>
+    <div class="mathbox">
+      <p>\[ K(x) = \min_{p:\; U(p)=x}\; |p| \]</p>
+      <p><em>Verständnis</em> misst die Komplexitätsdifferenz zwischen Rauschen und Kern:</p>
+      <p>\[ \text{Verständnis} \;\propto\; K(x_{\text{Rauschen}}) - K(x_{\text{Kern}}), \qquad r = 1 - \frac{K(x_{\text{Kern}})}{K(x_{\text{Rauschen}})} \]</p>
+      <p>Je näher \(r\to 1\), desto mehr ist „verstandenen“ (B's „understood“-Balken). Die Flut ist \(r\to 0\): kein Kern, reines Rauschen.</p>
+      <p><em>Tiefe</em> (B's Stufen) ist die Anzahl verschachtelter Kompressionen: \(K_n = K_0 / \lambda^n\) mit \(\lambda>1\) — jede Stufe komprimiert erneut.</p>
+      <p><em>Die Tanzwut</em> folgt einer logistischen Sättigung, an der A's „Erschöpfung“ die Bremsung setzt:</p>
+      <p>\[ D(t) = \frac{D_{\max}}{1 + e^{-k(t-t_0)}}, \quad \text{mit } k \downarrow \text{ bei Erschöpfung} \]
+      <p>Die Ansteckung wächst, bis der Energieverlust der Individuen die Kurve abbricht — „Eighth night flailing, I just can't seem to stop“, dann Stille.</p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — der Zyklus</h2>
+    <p class="lead">Ein Partikelfeld, das den fusionierten Kreislauf <strong>Rauschen → Kompression/Verfall → Kern → Regeneration</strong> darstellt. Die drei Regler steuern den Prozess: <em>Kompression</em> zieht das Rauschen in einen strahlenden Kern (Verfall), <em>Regeneration</em> lässt neuen Wuchs aus dem Kern schießen, <em>Rauschen/Flut</em> simuliert den Fehlschlag — zu viel Reduktion, die wieder in Unlesbarkeit ertrinkt.</p>
+    <div class="vizwrap">
+      <canvas id="vizCanvas"></canvas>
+      <div class="controls">
+        <div class="control"><label>Kompression / Verfall</label><input type="range" id="slC" min="0" max="100" value="55"><span class="val" id="vC">55%</span></div>
+        <div class="control"><label>Regeneration / Wachstum</label><input type="range" id="slG" min="0" max="100" value="40"><span class="val" id="vG">40%</span></div>
+        <div class="control"><label>Rauschen / Flut (Fehlschlag)</label><input type="range" id="slF" min="0" max="100" value="5"><span class="val" id="vF">5%</span></div>
+      </div>
+      <div class="stats">
+        <div class="chip">Kompressionsrate <b id="statComp">0%</b></div>
+        <div class="chip">Struktur (Kern) <b id="statOrder">0</b></div>
+        <div class="chip">Flut <b id="statFlood">0%</b></div>
+        <div class="chip phase">Phase: <b id="statPhase">—</b></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--viz-noise)"></span>Rauschen (unkomprimiert)</span>
+        <span><span class="dot" style="background:var(--viz-core)"></span>Kern / These (VOIDSTAR)</span>
+        <span><span class="dot" style="background:var(--viz-regrow)"></span>Regeneration (growing from the ground)</span>
+        <span><span class="dot" style="background:var(--viz-flood)"></span>Flut / Ertränkung</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="proven">
+      <div class="card">
+        <span class="tag">Quelle A</span>
+        <h4><a href="../voidstar.html">voidstar.html</a></h4>
+        <p>„VOIDST★R — Eine interaktive Reise“: dunkle Album-Analyse von Grim Salvo &amp; Witchhouse 40k (Grim Salvo × Witchhouse 40k, 25. Juli 2024); 12 Tracks als Abstieg &amp; Ritual, drei Stimmen, Verfall bei Bewusstsein, der Pakt mit Baphomet, die Tanzwut von 1518, die Flut und der flackernde VOIDSTAR. <em>A</em> liefert die existenzielle Transformation (Verfall → Wiederaufstieg).</p>
+      </div>
+      <div class="card">
+        <span class="tag">Quelle B</span>
+        <h4><a href="../understanding.html">understanding.html</a></h4>
+        <p>„Understanding Understanding“: interaktive Epistemologie des Verstehens in neun Facetten — Connection, Pattern, Depth, Compression, Prediction, Modeling, Insight, Transfer, Embodiment — mit der Kernaussage „To understand is to compress“ (Kolmogorov). <em>B</em> liefert den abstrakten Kompressionsoperator und die Stufenlogik.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion 086 · Runde 1 · nicht-KI-Track — voidstar.html ✕ understanding.html<br>
+    Alle Daten inline; die Visualisierung ist selbstgeschrieben (Canvas, ohne externe Abfragen).
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('vizCanvas');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var VIZ_H = 420;
+  var N = 240;
+  var parts = [];
+  for(var i=0;i<N;i++){
+    parts.push({
+      nx:(Math.random()*2-1)*0.95,
+      ny:(Math.random()*2-1)*0.92,
+      a:(i/N)*Math.PI*6,
+      spin:(Math.random()<0.5?-1:1)*(0.4+Math.random()*0.8)
+    });
+  }
+  var slC=document.getElementById('slC'), slG=document.getElementById('slG'), slF=document.getElementById('slF');
+  var vC=document.getElementById('vC'), vG=document.getElementById('vG'), vF=document.getElementById('vF');
+  var statComp=document.getElementById('statComp'), statOrder=document.getElementById('statOrder'),
+      statFlood=document.getElementById('statFlood'), statPhase=document.getElementById('statPhase');
+
+  function cssVar(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n);
+    v = v ? v.trim() : '';
+    return v || fb;
+  }
+  function hexToRgb(h){
+    h = (h||'').replace('#','');
+    if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+    if(h.length<6 || /[^0-9a-fA-F]/.test(h)) return [120,110,110];
+    var n=parseInt(h,16);
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function blend(a,b,t){
+    var A=hexToRgb(a), B=hexToRgb(b);
+    return 'rgb('+Math.round(A[0]+(B[0]-A[0])*t)+','+Math.round(A[1]+(B[1]-A[1])*t)+','+Math.round(A[2]+(B[2]-A[2])*t)+')';
+  }
+
+  function frame(now){
+    var dpr = window.devicePixelRatio||1;
+    var rect = cv.getBoundingClientRect();
+    var w = Math.max(10, rect.width);
+    var needW = Math.round(w*dpr), needH = Math.round(VIZ_H*dpr);
+    if(cv.width!==needW || cv.height!==needH){ cv.width=needW; cv.height=needH; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var c = (+slC.value)/100, g=(+slG.value)/100, f=(+slF.value)/100;
+    vC.textContent = Math.round(c*100)+'%';
+    vG.textContent = Math.round(g*100)+'%';
+    vF.textContent = Math.round(f*100)+'%';
+
+    var core = cssVar('--viz-core','#d81e2e'), noise=cssVar('--viz-noise','#6b6167'),
+        regrow=cssVar('--viz-regrow','#7a9a5a'), flood=cssVar('--viz-flood','#3f6f9e'),
+        bg = cssVar('--viz-bg','#0d0710');
+
+    var order = Math.max(0, Math.min(1, c*(1 - f*0.7)));
+    statComp.textContent = Math.round(c*100)+'%';
+    statOrder.textContent = Math.round(order*100);
+    statFlood.textContent = Math.round(f*100)+'%';
+    var phase;
+    if(f>0.6) phase='FLUT · Ertränkung (Fehlschlag)';
+    else if(c<0.33) phase='RAUSCHEN · komprimierbar?';
+    else if(c<0.68) phase='KOMPRESSION · Verfall';
+    else if(g>0.35) phase='WIEDERAUFLEBEN · neues wächst';
+    else phase='KERN · die These';
+    statPhase.textContent = phase;
+
+    var cx=w/2, cy=VIZ_H/2, R=Math.min(w,VIZ_H)*0.42, t=now||0;
+
+    ctx.clearRect(0,0,w,VIZ_H);
+    ctx.fillStyle = bg; ctx.fillRect(0,0,w,VIZ_H);
+
+    var i,p;
+    for(i=0;i<N;i++){
+      p=parts[i];
+      var nx=cx+p.nx*R*0.98, ny=cy+p.ny*R*0.95;
+      var a=p.a + t*0.00018*p.spin;
+      var starR=R*0.30*(0.72+0.28*Math.cos(5*a));
+      var kx=cx+Math.cos(a)*starR, ky=cy+Math.sin(a)*starR*0.9;
+      var x=nx+(kx-nx)*c, y=ny+(ky-ny)*c;
+      ctx.fillStyle = blend(noise, core, c);
+      ctx.beginPath(); ctx.arc(x,y,1.4+(1-c)*1.6,0,Math.PI*2); ctx.fill();
+    }
+
+    if(c>0.45){
+      ctx.save();
+      var glow=(c-0.45)/0.55;
+      ctx.shadowColor=core; ctx.shadowBlur=34*glow; ctx.globalAlpha=0.55*glow+0.1;
+      ctx.fillStyle=core;
+      ctx.beginPath();
+      for(var s=0;s<10;s++){
+        var aa=(s/10)*Math.PI*2 - Math.PI/2;
+        var rr=R*0.16*(s%2===0?1:0.42)*(0.8+0.2*Math.sin(t*0.002));
+        var px=cx+Math.cos(aa)*rr, py=cy+Math.sin(aa)*rr;
+        if(s===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath(); ctx.fill();
+      ctx.restore(); ctx.globalAlpha=1;
+    }
+
+    var nSpr=Math.floor(g*90);
+    ctx.globalAlpha=0.75;
+    for(i=0;i<nSpr;i++){
+      var sa=(i/nSpr)*Math.PI*2 + t*0.00012;
+      var sr=R*(0.22 + 0.55*g*Math.abs(Math.sin(i*1.7 + t*0.00022)));
+      ctx.fillStyle=regrow;
+      ctx.beginPath();
+      ctx.arc(cx+Math.cos(sa)*sr, cy+Math.sin(sa)*sr*0.7, 1.7, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    var nFl=Math.floor(f*180);
+    ctx.globalAlpha=0.5;
+    for(i=0;i<nFl;i++){
+      ctx.fillStyle=flood;
+      ctx.beginPath();
+      ctx.arc(Math.random()*w, Math.random()*VIZ_H, 1.5, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  var tg=document.getElementById('themeToggle');
+  if(tg){ tg.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); }); }
+
+  window.addEventListener('load', function(){
+    if(window.renderMathInElement){
+      try{
+        window.renderMathInElement(document.getElementById('article'),{
+          delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],
+          throwOnError:false
+        });
+      }catch(e){/* math is decorative; never break the page */}
+    }
+  });
+})();
+</script>
+</body>
+</html>

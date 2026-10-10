@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 034: Gauge und Invariante — Präzision ist kein Wahrheitsmaß</title>
+<style>
+:root{
+  --bg:#f7f4ee; --panel:#fffdf8; --text:#232630; --muted:#5b6270; --line:#e3ddce;
+  --accent:#0f766e; --accent2:#d9480f; --good:#16a34a; --warn:#d97706;
+  --violet:#6d28d9; --rose:#be185d;
+  --viz-bg:#fffdf8; --viz-line:#d9d3c4; --viz-grid:#efe9dc;
+}
+html.dark{
+  --bg:#0b0f1c; --panel:#121826; --text:#e8ecf7; --muted:#9aa7bf; --line:#26304a;
+  --accent:#2dd4bf; --accent2:#ff7a45; --good:#86efac; --warn:#fbbf24;
+  --violet:#a78bfa; --rose:#fb7185;
+  --viz-bg:#0c1120; --viz-line:#26304a; --viz-grid:#182034;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.62 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.1;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 6px}
+.tagline{color:var(--accent);font-size:15px;font-weight:600;margin:0 0 26px}
+h2{font-size:22px;margin:42px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:16.5px;margin:24px 0 8px;color:var(--accent)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 10px}
+li b{color:var(--text)}
+b{color:var(--text)}
+em{color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:color-mix(in srgb, var(--line) 22%, var(--panel));border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.6;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:color-mix(in srgb, var(--line) 30%, var(--panel))}
+td:first-child{white-space:nowrap;font-weight:700;color:var(--accent)}
+canvas#viz{display:block;width:100%;height:460px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px;margin:6px 0}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px 16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+.viz-controls label.chk{flex-direction:row;align-items:center;gap:7px;padding-bottom:8px}
+input[type=range]{width:150px}
+button.action{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:13px}
+button.action:hover{border-color:var(--accent)}
+button.preset{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);padding:5px 11px;cursor:pointer;font-size:12.5px}
+button.preset:hover{border-color:var(--accent);color:var(--accent)}
+.presets{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 4px;align-items:center}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13.5px;line-height:1.65}
+.readout b{color:var(--text)}
+.readout .a{color:var(--accent2);font-weight:700}
+.readout .b{color:var(--accent);font-weight:700}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.hint{color:var(--muted);font-size:13px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">☀ / ☾</button>
+<article>
+<h1>Gauge und Invariante</h1>
+<p class="subtitle">Fusion aus: kult_der_statistischen_signifikanz_very_simple.html ✕ fibrebundleslab.html</p>
+<p class="tagline">Präzision ist ein Koordinatensystem, keine Wahrheit — der t‑Wert und die lokale Trivialisierung sind beide <em>Gauge</em>; die globale Größe (Effektgröße bzw. Holonomie) ist die <em>Invariante</em>.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Schriften — die eine ein Plädoyer gegen den Signifikanzkult, die andere eine Geometrie der Verdrillung — sagen dasselbe in zwei Sprachen: <b>Was lokal exakt gemessen wird, ist blind für das, was global gilt.</b> A (Ziliak &amp; McCloskey) zeigt es an der Pille: Der t‑Wert (Signal ÷ Rauschen) ist ein <b>größenloser</b> Quotient — dieselbe Signifikanz t&nbsp;=&nbsp;2 liefert ein riesiger, ungenau gemessener Effekt und ein winziger, präzise gemessener. Wer auf t starrt, sieht die <b>Größe</b> nicht. B (Faserbündel) zeigt es am Möbiusband: <b>lokal</b> sieht es überall aus wie Zylinder&nbsp;×&nbsp;Faser; <b>global</b> ist es verdrillt, und nur der <b>Paralleltransport</b> (die Holonomie) deckt die Verdrillung auf. Das Möbiusband ist „lokal trivial, global nicht“.</p>
+<p>Die fusionierte These: <b>Präzision ist ein Gauge (ein Koordinatensystem), keine Wahrheit.</b> Sowohl der t‑Wert als auch die lokale Trivialisierung <code>π⁻¹(U) ≅ U×F</code> sind bequeme <b>lokale Beschreibungs­systeme</b>. In beiden Fällen ist die eigentliche, <b>Gauge-invariante</b> Größe etwas anderes: in A die <b>Effektgröße μ</b> (wie viel wirklich wirkt), in B die <b>Holonomie</b> bzw. die globale Topologie (der Flip, die Krümmung). Der entscheidende Akt — in beiden Disziplinen derselbe — ist nicht die lokale Messung, sondern der <b>globale Vergleich</b>: die Effektgröße berichten, den Vektor um die Schleife transportieren.</p>
+<p>kurz: A liefert den <b>Warnfall</b> (die Präzision wird zur Anbetungs-<em>Reliquie</em> erhoben, die die Größe verschleiert) und B die <b>Formalisierung</b> (der exakte Mechanismus, wie man von lokalen Systemen zur globalen Invariante gelangt: Verbindung, Paralleltransport, Holonomie). Zusammen: <em>Kennt, welchen Gauge du in der Hand hältst — und vergleiche global.</em></p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden widersprechen sich nicht in den Fakten, aber sie beziehen <b>inkompatible Stellungen</b> zu zwei Kernfragen:</p>
+<ul>
+<li><b>1 · Ist das Entscheidungskriterium willkürlich oder notwendig?</b>
+<b>A</b> hält den Dreh- und Angelpunkt — die Signifikanzlinie bei 5&nbsp;% (t&nbsp;=&nbsp;1,96) — für eine <b>willkürliche Konvention</b> ohne theoretischen Grund: Fischers Zitat „Es ist bequem … Persönlich zieht es der Verfasser vor …“; A folgert: „Es gibt <b>kein Theorem</b> dahinter.“ Die Linie ist verhandelbar und irreführend, weil sie eine kontinuierliche Größe (t) in ein binäres Urteil zerschnitten.
+<b>B</b> stellt das Entscheidungskriterium dagegen als <b>notwendige, objektive Invariante</b> dar: Der Möbius‑Flip (Holonomie&nbsp;=&nbsp;−1) wird von der Strukturgruppe ℤ₂&nbsp;=&nbsp;{+1,−1} und der Kokongelbedingung <code>g_αβ·g_βγ = g_αγ</code> <b>erzwungen</b> — er ist keine Wahl, sondern zwingende Mathematik.
+→ Die Spannung: Das, was „entscheidet“, ist bei A ein <b>Konventions-Artefakt</b> (Fehlerquelle), bei B eine <b>Invariante</b> (Wahrheitsträger).</li>
+<li><b>2 · Ist die lokale Präzision zu verwerfen oder zu vervollständigen?</b>
+<b>A</b> verlangt, das lokale Signifikanz-Ritual <b>aufzugeben</b>: Signifikanz sei „für sich allein <b>wertlos</b>“, „ein bedeutungsloses Gesellschaftsspiel“, und der „größenlose Stare“ sei „die Krankheit“ — das Remedium ist, t fallen zu lassen und die Größe zu berichten.
+<b>B</b> behandelt die lokale Beschreibung als <b>legitime Grundlage und Tugend</b>: „Local triviality“ ist das definierende Axiom, und man <b>verwirft</b> sie nicht — man <b>ergänzt</b> sie um eine <b>Verbindung</b>, die es erlaubt, Fasern über Punkte hinweg konsistent zu vergleichen.
+→ Die Spannung: A sagt <b>ablehnen</b> (der lokale Gauge ist eine Falle), B sagt <b>ervollständigen</b> (der lokale Gauge ist korrekt, ihm fehlt nur der globale Vergleich).</li>
+</ul>
+<p class="hint">Honesty-Notiz: Bei der Meta-Struktur sind beide einig (lokal präzise → global blind). Die beiden Punkte oben sind die realen Stel­lungen, an denen sie auseinanderlaufen — nicht erfundene Widersprüche.</p>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p>Zwei Auflösungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussfolgerung.</p>
+<div class="card">
+<h3>Auflösung 1 — zwei Arten von „Entscheidungskriterium“</h3>
+<p>A's 5%-Linie ist ein <b>Cut auf einer kontinuierlichen Größe</b> (t); solche Cuts sind konventionell und verlustbehaftet, und genau dort liegt die Fehlerquelle. B's Topologie ist <b>kein Cut</b>, sondern eine Eigenschaft des Raumes selbst, die man nicht „anders einstellen“ kann. <b>Fusion:</b> Das Entscheidungskriterium ist dort, wo man <b>eine Zahl auf ein Spektrum legen muss</b>, eine Konvention (Statistik: die α-Linie) — und dort, wo es <b>um die Struktur des Raumes selbst</b> geht, eine Invariante (Geometrie: die Holonomie). Man muss beides nicht gegeneinander ausspielen; man muss nur nicht <b>die Konvention für die Invariante halten</b>. Fischers Fehler ist, den Gauge-Cut (5&nbsp;%) als Invariante-Verdict zu verkaufen.</p>
+</div>
+<div class="card">
+<h3>Auflösung 2 — lokal beschreiben, global vergleichen</h3>
+<p>Man <b>verwirft</b> den lokalen Gauge nicht (weder t noch die Trivialisierung sind „falsch“ — sie sind exakt, was sie sein sollen: lokale Koordinaten). Man <b>erkennt ihn als Gauge</b> und führt den globalen Vergleich ein, der die Invariante zurückgewinnt: In A heißt das, die Effektgröße (und Konfidenzintervalle, Prior/Likelihood) zu berichten statt nur das ja/nein von t; in B heißt das, einen Vektor um die Schleife zu transportieren und die Holonomie abzulesen. A's „Ritual aufgeben“ und B's „Verbindung hinzufügen“ sind <b>derselbe Zug</b>: <b>den Gauge als Gauge entlarven und die Gauge-invariante Größe berichten.</b></p>
+</div>
+<div class="card">
+<h3>Fusionierte Schlussfolgerung</h3>
+<p><b>Gauge-Essentialismus</b> — die Überzeugung, das bequeme lokale System sei die Wahrheit — ist der gemeinsame Fehler. In der Statistik ist die verdeckte Invariante <b>epistemisch</b> (die wahre Effektgröße: ein Fakt über die Welt, verdeckt durch Budget und Rauschen); in der Geometrie ist sie <b>ontisch</b> (ein Fakt über den Raum: Krümmung, Verdrillung). Der Möbius-Flip ist für die Topologie das, was die Effektgröße für die Präzision ist — eine globale Wahrheit, die der lokalen Messung unsichtbar bleibt. Die Disziplin in beiden Feldern: <em>lokale Präzision ist ein Werkzeug; die globale Invariante ist das Ziel.</em></p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<h3>Das gemeinsame Skelett: lokal präzise, global blind</h3>
+<p>Beide Modelle haben dieselbe Form: ein System, das man in vielen kleinen, lokalen „Fasern“ (bzw. „Messungen“) beschreibt; jede lokale Faser sieht <b>aus wie eine Standardfaser</b>; erst der <b>globale Vergleich</b> (Transport um eine Schleife / Berichten der Größe) zeigt, ob das Ganze verdrillt bzw. bedeutsam ist. Die lokale Faser trägt eine <b>Gauge</b>; die Invariante lebt im Ganzen.</p>
+<table>
+<tr><th>A — Statistik</th><th>Rolle</th><th>B — Faserbündel</th><th>Rolle</th></tr>
+<tr><td>t‑Wert = Signal ÷ Rauschen</td><td>lokaler Gauge (größenlos)</td><td>lokale Trivialisierung π⁻¹(U) ≅ U×F</td><td>lokaler Gauge</td></tr>
+<tr><td>5%- / 1,96-Linie</td><td>willkürlicher Cut auf t</td><td>— (kein Gegenstück; es ist der Fehlerterm)</td><td>Fehlerquelle</td></tr>
+<tr><td>Effektgröße μ (wie viel wirkt)</td><td>die Invariante (verdeckt)</td><td>Holonomie / globale Topologie (Flip)</td><td>die Invariante (verdeckt)</td></tr>
+<tr><td>√n: SE = σ/√n, mehr Daten → t wächst</td><td>Skalenakkumulation (Gefahr)</td><td>Holonomie ∝ Krümmung × Fläche (Flux)</td><td>Skalenakkumulation (Ziel)</td></tr>
+<tr><td>Standardfehler SE (Rauschen)</td><td>lokale Unsicherheit</td><td>Verbindung (wie man Fasern vergleicht)</td><td>lokale Vergleichsregel</td></tr>
+</table>
+
+<h3>A — Die Gauge: t, p und die willkürliche Linie</h3>
+<ul>
+<li><b>t = Signal ÷ Rauschen</b> = Effekt ÷ Standardfehler. „Sizeless stare“: gleicher t aus großem ungenauem und kleinem präzisem Effekt — t sagt nichts über die Größe.</li>
+<li><b>p = 2·(1−Φ(|t|))</b>: Fläche im Schweif der Null-Verteilung. p misst Präzision, nicht Größe.</li>
+<li><b>5&nbsp;% = 1,96</b>: Fischers „bequem / persönlich“ — kein Theorem dahinter.</li>
+<li><b>DeGroot / √n:</b> SE = σ/√n → 0, also bei n&nbsp;=&nbsp;20&nbsp;000 wird selbst 0,1 Pfund „signifikant“. Signifikanz misst das Budget, nicht die Natur.</li>
+<li><b>Oomph</b> (μ=20, σ=10, t=2) vs. <b>Precision</b> (μ=5, σ=0,5, t=10): Precision gewinnt das Ritual, verliert die Bedeutung — 8–9 von 10 wählen Precision.</li>
+<li><b>Sechs Sätze:</b> Präzision≠Bedeutung; Signifikanz weder notw. noch hinreichend; Grenzen hängen von Wichtigkeit/Kosten ab; Signifikanz allein wertlos; Größe &amp; Wichtigkeit im Zentrum; „Size matters no matter where you draw the line of precision.“</li>
+</ul>
+
+<h3>B — Die Invariante: Bündel, Trivialisierung, Holonomie</h3>
+<ul>
+<li><b>Faserbündel (E,B,π,F,G):</b> lokale Trivialisierung; Übergangsfunktionen <code>g_αβ</code>; <b>Kokongelbedingung</b> <code>g_αβ·g_βγ = g_αγ</code>.</li>
+<li><b>Zylinder (trivial) vs. Möbius (nicht-trivial):</b> lokal identisch, global verdrillt; Strukturgruppe ℤ₂; der Flip ist Holonomie −1.</li>
+<li><b>Verbindung &amp; Paralleltransport:</b> „horizontal“ bewegen; Holonomie = Gesamtdrehung nach geschlossener Schleife = <b>Krümmung</b> (auf S²: = eingeschlossener Rauminwinkel).</li>
+<li><b>Hopf-Faserung S¹→S³→S²:</b> kreisförmige, gegeneinander <b>verlinkte</b> Fasern (Hopf-Link); erste Zeige, dass π₃(S²)≠0.</li>
+<li><b>Physik:</b> EM = U(1)-Bündel; Yang–Mills = SU(2)×U(1) / SU(3); <b>Krümmung = Feldstärke</b>; Berry-Phase = Holonomie; Monopol = nicht-triviales U(1)-Bündel über S²; Haarball-Theorem: TS² nicht-trivial.</li>
+</ul>
+
+<h3>Brückenschlag — die Entsprechung als Gesetz</h3>
+<p>Die Tabelle oben ist keine Spielerei, sondern ein <b>gemeinsames Gesetz</b>: Jede Disziplin, die ein lokales Koordinatensystem hat, trägt zwei Größen — die <b>Gauge</b> (lokal, exakt, aber blind) und die <b>Invariante</b> (global, der eigentliche Inhalt). A's t ist die Gauge, μ die Invariante; B's Trivialisierung ist die Gauge, die Holonomie die Invariante. Und die „Skalenakkumulation“ (√n bzw. Flux) ist in beiden der Mechanismus, mit dem die Invariante <b>mit der Skala wächst</b> — bei A eine <em>Gefahr</em> (sie fabriziert Signifikanz aus Nichts), bei B ein <em>Ziel</em> (sie misst echte Krümmung). Dasselbe Gesetz, entgegengesetzte Bewertung: Wer die Invariante will, muss den Gauge kontrollieren.</p>
+<div class="mathblock">-- A (Statistik) --
+t = Effekt / SE        SE = sigma / sqrt(n)
+p = 2 * (1 - Phi(|t|))  1,96  &lt;== 5%-Linie (Fisher: "bequem")
+n -&gt; 20 000  =&gt;  SE -&gt; 0  =&gt;  t -&gt; unbeschr.  (auch fuer Effekt = 0,1)
+
+-- B (Geometrie) --
+Bundel (E,B,pi,F,G):   pi^-1(U) ~= U x F    (lokal trivial)
+Transition:            g_ab * g_bc = g_ac   (Kokongel)
+Mobius:                G = Z_2 = {+1,-1}, Flip  =&gt; Holonomie = -1
+Parallel transport:    Holonomie  =  Kruemmung   (auf S^2: = Rauminwinkel)
+Physik:                EM = U(1),  Yang-Mills = SU(2)xU(1)/SU(3),  Kruemmung = Feldstaerke
+
+-- FUSION --
+Gauge      = lokale, exakte, blinde Koordinate   (t  |  Trivialisierung)
+Invariante = globale, eigentliche Groesse         (mu |  Holonomie/Topologie)
+Regel      = lokalen Gauge entlarven, global vergleichen, Invariante berichten</div>
+</section>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung</h2>
+<p>Eine Bühne, zwei Panels, ein Gesetz. <b>Links (A):</b> die Null-Verteilung, der t‑Marker, die 1,96-Linie und der <b>Größenbalken μ</b> — aktiviere „sizeless“, um zu sehen, wie μ sich ändert, während t (und damit das Urteil) stur bleibt. <b>Rechts (B):</b> die Schleife mit den lokal rotierenden Rahmen und dem wandernden Vektor; drehe die <b>Verdrillung</b> und lies die <b>Holonomie</b> ab. Der zentrale Readout koppelt beide: lokaler Gauge (links t, rechts Trivialisierung) vs. globale Invariante (links μ, rechts Holonomie).</p>
+<canvas id="viz"></canvas>
+<div class="viz-controls">
+  <label>Wahre Größe μ<input type="range" id="muSlider" min="0" max="40" step="0.5" value="20"></label>
+  <span class="hint" id="muVal">20,0</span>
+  <label>Rauschen SE<input type="range" id="seSlider" min="0.05" max="20" step="0.05" value="10"></label>
+  <span class="hint" id="seVal">10,00</span>
+  <label class="chk"><input type="checkbox" id="sizelessBox"> t fixieren (sizeless stare)</label>
+  <label>Verdrillung<input type="range" id="twistSlider" min="0" max="180" step="1" value="90"></label>
+  <span class="hint" id="twistVal">90°</span>
+  <button class="action" id="resetBtn">↺ Reset</button>
+</div>
+<div class="presets">
+  <span class="hint">A:</span>
+  <button class="preset" data-p="oomph">Oomph μ20/σ10</button>
+  <button class="preset" data-p="prec">Precision μ5/σ0,5</button>
+  <button class="preset" data-p="deg">DeGroot μ0,1/σ0,05</button>
+  <span class="hint" style="margin-left:12px">B:</span>
+  <button class="preset" data-g="0">Zylinder 0°</button>
+  <button class="preset" data-g="90">½ 90°</button>
+  <button class="preset" data-g="180">Möbius 180°</button>
+</div>
+<div id="readout" class="readout"></div>
+<p class="viz-cap">Die Pfade sind <em>Analogien</em>: der Größenbalken und die Holonomie-Zahl sind die gauge-invarianten Größen, die der lokale Gauge (t / Trivialisierung) nicht zeigt. Beim Möbius-Punkt (180°) dreht sich der transportierte Vektor nach einer Runde um die halbe Umdrehung — für eine (signierte) Faser ist das genau der Flip (Holonomie −1). Alles läuft lokal, keine externen Daten.</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../kult_der_statistischen_signifikanz_very_simple.html">A · Der Kult der statistischen Signifikanz — ganz einfach erklärt</a><br><span class="hint">Vereinfachte, interaktive Aufbereitung von Ziliak &amp; McCloskey (JSM 2009 / Univ. of Michigan Press 2008): t‑Wert als Signal÷Rauschen, der p‑Wert, Fischers willkürliche 5%-Linie und das √n‑Argument, mit dem jede winzige Größe „signifikant“ wird. „Size matters no matter where you draw the line of precision.“</span></div>
+<div class="prov"><a href="../fibrebundleslab.html">B · Fiber Bundles — An Interactive Journey</a><br><span class="hint">Interaktive Einführung in Faserbündel: kartesische Produkte, Trivialität vs. Verdrillung (Möbiusband), Übergangsfunktionen &amp; Kokongel, Hopf-Faserung, Verbindungen, Paralleltransport und Holonomie — und warum Krümmung = Feldstärke in der Physik.</span></div>
+<p class="foot">Fusion 034 · Runde 1 (non-AI-Track) · autonom, keine Netzwerte — alle Daten inline.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var S={mu:20,se:10,tLocked:null,sizeless:false,twist:90,angle:0,ctx:null,cssW:776,cssH:460};
+  var $=function(id){return document.getElementById(id);};
+  var muSlider=$('muSlider'),seSlider=$('seSlider'),twistSlider=$('twistSlider'),
+      sizelessBox=$('sizelessBox'),resetBtn=$('resetBtn'),readout=$('readout'),
+      muVal=$('muVal'),seVal=$('seVal'),twistVal=$('twistVal'),canvas=$('viz');
+
+  function fmt(x,d){return Number(x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function cssVar(n){var v=getComputedStyle(document.documentElement).getPropertyValue(n);return v?v.trim():'';}
+  function hexA(hex,a){if(!hex||hex.charAt(0)!=='#')return 'rgba(127,127,127,'+a+')';hex=hex.slice(1);
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';}
+  function erf(x){var s=x<0?-1:1;x=Math.abs(x);
+    var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+    var t=1/(1+p*x);var y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;}
+  function ncdf(x){return 0.5*(1+erf(x/Math.SQRT2));}
+  function normpdf(x,mu,sd){return Math.exp(-0.5*Math.pow((x-mu)/sd,2))/(sd*Math.sqrt(2*Math.PI));}
+  function curT(){return (S.sizeless&&S.tLocked)?S.tLocked:S.mu/S.se;}
+  function arrow(ctx,x,y,ang,len,col){var ex=x+Math.cos(ang)*len,ey=y+Math.sin(ang)*len;
+    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(ex,ey);ctx.stroke();
+    var ha=0.5;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-Math.cos(ang-ha)*6,ey-Math.sin(ang-ha)*6);
+    ctx.moveTo(ex,ey);ctx.lineTo(ex-Math.cos(ang+ha)*6,ey-Math.sin(ang+ha)*6);ctx.stroke();}
+
+  function fit(){
+    var d=window.devicePixelRatio||1;
+    var w=canvas.clientWidth||776;
+    S.cssW=w;S.cssH=460;
+    canvas.width=Math.round(w*d);canvas.height=Math.round(460*d);
+    S.ctx=canvas.getContext('2d');
+    if(S.ctx)S.ctx.setTransform(d,0,0,d,0,0);
+  }
+
+  function drawStats(ctx,x0,x1,y0,y1){
+    var ink=cssVar('--text'),muted=cssVar('--muted'),line=cssVar('--viz-line'),
+        a2=cssVar('--accent2'),vio=cssVar('--violet'),grid=cssVar('--viz-grid');
+    var t=curT(),tAbs=Math.min(Math.abs(t),3.5),p=2*(1-ncdf(Math.abs(t))),sig=Math.abs(t)>1.96;
+    ctx.font='bold 13px system-ui';ctx.fillStyle=a2;ctx.textAlign='left';
+    ctx.fillText('A · Statistik: t ist blind für Größe',x0+6,y0+16);
+    var cy0=y0+34,cy1=y0+(y1-y0)*0.60;
+    function X(v){return x0+12+(v+3.5)/7*(x1-x0-24);}
+    var ymax=normpdf(0,0,1)*1.08;
+    function Y(y){return cy1-(y/ymax)*(cy1-cy0);}
+    ctx.fillStyle=hexA(vio,0.30);
+    if(tAbs<3.5){
+      ctx.beginPath();ctx.moveTo(X(-3.5),cy1);
+      for(var i=0;i<=120;i++){var xv=-3.5+((-tAbs)-(-3.5))*i/120;ctx.lineTo(X(xv),Y(normpdf(xv,0,1)));}
+      ctx.lineTo(X(-tAbs),cy1);ctx.closePath();ctx.fill();
+      ctx.beginPath();ctx.moveTo(X(tAbs),cy1);
+      for(var j=0;j<=120;j++){var xv2=tAbs+(3.5-tAbs)*j/120;ctx.lineTo(X(xv2),Y(normpdf(xv2,0,1)));}
+      ctx.lineTo(X(3.5),cy1);ctx.closePath();ctx.fill();
+    }
+    ctx.strokeStyle=muted;ctx.lineWidth=2;ctx.beginPath();
+    for(var k=0;k<=200;k++){var cv=-3.5+7*k/200,cpx=X(cv),cpy=Y(normpdf(cv,0,1));if(k===0)ctx.moveTo(cpx,cpy);else ctx.lineTo(cpx,cpy);}
+    ctx.stroke();
+    ctx.strokeStyle=line;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0+8,cy1);ctx.lineTo(x1-8,cy1);ctx.stroke();
+    ctx.setLineDash([4,3]);ctx.strokeStyle=cssVar('--accent');ctx.lineWidth=1.5;
+    [1.96,-1.96].forEach(function(c){ctx.beginPath();ctx.moveTo(X(c),Y(normpdf(c,0,1)));ctx.lineTo(X(c),cy1);ctx.stroke();});
+    ctx.setLineDash([]);
+    ctx.font='10px system-ui';ctx.fillStyle=muted;ctx.textAlign='center';ctx.fillText('1,96',X(1.96),cy1+12);
+    var tx=clamp(t,-3.5,3.5);
+    ctx.strokeStyle=a2;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(X(tx),Y(normpdf(tx,0,1)));ctx.lineTo(X(tx),cy1);ctx.stroke();
+    ctx.fillStyle=a2;ctx.beginPath();ctx.arc(X(tx),Y(normpdf(tx,0,1)),4,0,7);ctx.fill();
+    ctx.font='bold 11px system-ui';ctx.textAlign=t>0?'right':'left';ctx.fillText('t = '+fmt(t,2),X(tx)+(t>0?-5:5),Y(normpdf(tx,0,1))-6);
+    ctx.font='10px system-ui';ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText('H₀: kein Effekt (Null-Verteilung)',x0+12,cy0-6);
+    var sbY=y0+(y1-y0)*0.74,bx0=x0+12,bx1=x1-12,mx=bx0+(S.mu/40)*(bx1-bx0);
+    ctx.font='11px system-ui';ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText('wahre Größe μ',bx0,sbY-8);
+    ctx.fillStyle=grid;ctx.fillRect(bx0,sbY,bx1-bx0,9);
+    ctx.fillRect(bx0,sbY,mx-bx0,9);
+    ctx.fillStyle=a2;ctx.beginPath();ctx.arc(mx,sbY+4.5,5,0,7);ctx.fill();
+    ctx.fillStyle=ink;ctx.font='bold 11px system-ui';ctx.textAlign='right';ctx.fillText('μ = '+fmt(S.mu,1),bx1,sbY-8);
+    var ry=y0+(y1-y0)*0.90;
+    ctx.font='12px system-ui';ctx.textAlign='left';
+    ctx.fillStyle=ink;ctx.fillText('Gauge  t = '+fmt(t,2)+'   ·   p = '+(p<0.0001?p.toExponential(1):fmt(p,3)),bx0,ry);
+    ctx.fillStyle=sig?cssVar('--warn'):cssVar('--good');
+    ctx.fillText('Urteil: '+(sig?'signifikant (t > 1,96)':'nicht signifikant'),bx0,ry+16);
+  }
+  function drawGeo(ctx,x0,x1,y0,y1){
+    var ink=cssVar('--text'),muted=cssVar('--muted'),line=cssVar('--viz-line'),
+        a=cssVar('--accent'),a2=cssVar('--accent2');
+    var f=S.twist/180;
+    ctx.font='bold 13px system-ui';ctx.fillStyle=a;ctx.textAlign='left';
+    ctx.fillText('B · Geometrie: Trivialisierung blind für Topologie',x0+6,y0+16);
+    var cx=(x0+x1)/2,cy=y0+(y1-y0)*0.44,R=Math.min((x1-x0),(y1-y0))*0.30;
+    ctx.strokeStyle=hexA(a,0.85);ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+    ctx.font='10px system-ui';ctx.fillStyle=muted;ctx.textAlign='center';ctx.fillText('Basis B (Schleife)',cx,cy);
+    var N=28;
+    for(var i=0;i<N;i++){
+      var ang=2*Math.PI*i/N;
+      var px=cx+R*Math.cos(ang),py=cy+R*Math.sin(ang);
+      var dir=ang+f*(ang/2);
+      ctx.strokeStyle=hexA(a,0.4);ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+Math.cos(dir)*13,py+Math.sin(dir)*13);ctx.stroke();
+    }
+    var sx=cx+R,sy=cy;
+    ctx.strokeStyle=muted;ctx.lineWidth=2;ctx.beginPath();
+    ctx.moveTo(sx-5,sy-5);ctx.lineTo(sx+5,sy+5);ctx.moveTo(sx+5,sy-5);ctx.lineTo(sx-5,sy+5);ctx.stroke();
+    ctx.fillStyle=muted;ctx.font='9px system-ui';ctx.textAlign='left';ctx.fillText('Naht',sx+8,sy+3);
+    var da=S.angle,dx=cx+R*Math.cos(da),dy=cy+R*Math.sin(da),ddir=da+f*(da/2);
+    ctx.fillStyle=a2;ctx.beginPath();ctx.arc(dx,dy,5,0,7);ctx.fill();
+    arrow(ctx,dx,dy,ddir,22,a2);
+    var hy=y0+(y1-y0)*0.82;
+    ctx.font='11px system-ui';ctx.fillStyle=muted;ctx.textAlign='left';
+    ctx.fillText('Vektor nach einer Runde rotiert um',x0+12,hy);
+    ctx.font='bold 15px system-ui';ctx.fillStyle=a;
+    ctx.fillText('Holonomie = '+fmt(S.twist,0)+'°',x0+12,hy+20);
+    var lab=f<0.03?'trivial (+1, Zylinder)':(f>0.97?'Möbius (−1, Flip)':'verdrillt (zwischen)');
+    ctx.font='11px system-ui';ctx.fillStyle=f>0.97?cssVar('--warn'):cssVar('--good');
+    ctx.fillText(lab,x0+12,hy+38);
+  }
+
+  function draw(){
+    var ctx=S.ctx;if(!ctx)return;
+    var W=S.cssW,H=S.cssH;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--viz-bg');ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=cssVar('--viz-line');ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W/2,10);ctx.lineTo(W/2,H-10);ctx.stroke();
+    ctx.font='bold 20px system-ui';ctx.fillStyle=cssVar('--muted');ctx.textAlign='center';
+    ctx.fillText('↔',W/2,H/2);
+    drawStats(ctx,14,W/2-14,12,H-12);
+    drawGeo(ctx,W/2+14,W-14,12,H-12);
+  }
+
+  function updateReadout(){
+    var t=curT(),p=2*(1-ncdf(Math.abs(t))),sig=Math.abs(t)>1.96,f=S.twist/180;
+    var lab=f<0.03?'trivial +1':(f>0.97?'Möbius −1':'zwischen');
+    readout.innerHTML='Links · <span class="a">Gauge t = '+fmt(t,2)+'</span> (Urteil: <b>'+(sig?'signifikant':'nicht signifikant')+'</b>) · verdeckte Invariante μ = <b>'+fmt(S.mu,1)+'</b><br>'+
+      'Rechts · lokale Trivialisierung identisch · <span class="b">Invariante Holonomie = '+fmt(S.twist,0)+'°</span> ('+lab+')<br>'+
+      '<em>Gemeinsam:</em> der lokale Gauge (t / Trivialisierung) ändert sich frei; die Invariante (μ / Holonomie) ist das, was wirklich gilt.';
+  }
+
+  function syncVals(){
+    muVal.textContent=fmt(S.mu,1);
+    seVal.textContent=fmt(S.se,2);
+    twistVal.textContent=fmt(S.twist,0)+'°';
+    updateReadout();
+  }
+
+  function loop(){
+    S.angle+=0.006;if(S.angle>Math.PI*2)S.angle-=Math.PI*2;
+    draw();requestAnimationFrame(loop);
+  }
+
+  muSlider.addEventListener('input',function(){
+    S.mu=+muSlider.value;
+    if(S.sizeless&&S.tLocked){S.se=clamp(S.mu/S.tLocked,0.05,20);seSlider.value=S.se;}
+    syncVals();
+  });
+  seSlider.addEventListener('input',function(){
+    if(S.sizeless)return;S.se=+seSlider.value;syncVals();
+  });
+  twistSlider.addEventListener('input',function(){S.twist=+twistSlider.value;syncVals();});
+  sizelessBox.addEventListener('change',function(){
+    if(sizelessBox.checked){S.sizeless=true;S.tLocked=S.mu/S.se;seSlider.disabled=true;}
+    else{S.sizeless=false;S.tLocked=null;seSlider.disabled=false;}
+    syncVals();
+  });
+  resetBtn.addEventListener('click',function(){
+    S.mu=20;S.se=10;S.twist=90;S.sizeless=false;S.tLocked=null;
+    seSlider.disabled=false;sizelessBox.checked=false;
+    muSlider.value=20;seSlider.value=10;twistSlider.value=90;syncVals();
+  });
+  [].slice.call(document.querySelectorAll('button.preset')).forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=b.getAttribute('data-p'),g=b.getAttribute('data-g');
+      if(p){
+        sizelessBox.checked=false;S.sizeless=false;S.tLocked=null;seSlider.disabled=false;
+        if(p==='oomph'){S.mu=20;S.se=10;}else if(p==='prec'){S.mu=5;S.se=0.5;}else if(p==='deg'){S.mu=0.1;S.se=0.05;}
+        muSlider.value=S.mu;seSlider.value=S.se;
+      }
+      if(g!==null&&g!==undefined){S.twist=+g;twistSlider.value=+g;}
+      syncVals();
+    });
+  });
+  $('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+  var mo=new MutationObserver(function(){draw();});
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',function(){fit();draw();});
+
+  fit();syncVals();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

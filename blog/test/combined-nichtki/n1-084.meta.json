@@ -1,0 +1,16 @@
+{
+  "no": "084",
+  "a": "berkeley.html",
+  "b": "sheaves.html",
+  "a_title": "BPF vs iptables vs ufw – Interaktive Erklärung",
+  "b_title": "Garbentheorie – Interaktiv & Intuitiv",
+  "combined_theme": "lokal-zu-global-exitpfad",
+  "one_line": "Ein Firewall-Stack ist ein stratifizierter Raum, dessen Paket ein Exit-Pfad ist: Das globale Schicksal (Colimit) ist durch konsistente lokale Halm-Entscheide festgelegt, und ein früher Drop am XDP-Hook legt es sofort fest (Kurzschluss = 'Halm bestimmt das Ganze').",
+  "contradictions": [
+    "Lokaler Kurzschluss vs. globales Verkleben: A behauptet, ein vollständiger Entscheid am frühesten/tiefsten Hook (XDP-Drop, 'nie den Kernel-Stack erreicht') macht den Rest irrelevant; B sagt, ein lokaler Schnitt ist nie von sich aus autoritativ — erst Übereinstimmung auf Überlappungen (S2) ergibt ein globales Objekt.",
+    "Externer Verifikator vs. interner Konsistenzaxiom: A erzwingt Sicherheit durch ein separates, mechanisches Gate (BPF-Verifier prüft vorab Bounds + Terminierung); B kennt keinen Verifikator — die Konsistenz (S1/S2) ist das Objekt selbst.",
+    "Lineare Tiefen-Hierarchie vs. überlappende Überdeckung: A ordnet die Hooks strikt nach Tiefe/Macht (BPF 'noch tiefer und schneller als Netfilter'); B behandelt offene Mengen als gleichberechtigte, überlappende Regionen ohne privilegierte Tiefe — zählt nur die Übereinstimmung auf Schnittmengen."
+  ],
+  "resolution": "Auflösung mit der eigenen avanciertesten Maschine von B (konstruierbare Garben, Stratifizierungen, Exit-Pfade): Der BPF-Stack IST ein stratifizierter Raum f:X→P, das Paket ein monotoner Exit-Pfad ('nur tiefer, nie zurück' in A == 'nur aufwärts, nie zurück' in B). Jeder Hook = ein Halm, globales Urteil = Colimit der Halm-Entscheide. Ein Drop fixiert das Colimit sofort (Kurzschluss = 'Halm bestimmt das Ganze'); ein voller Pass existiert nur, weil alle Hälme kompatibel sind (S2-Verkleben). Richtigkeit braucht beides: Verifikator-artige lokale Sicherheit (wohldefinierter Keim) + Verkleben-artige globale Konsistenz.",
+  "viz": "Canvas: Ein Paket wandert als Exit-Pfad durch den stratifizierten Firewall-Stack (NIC → XDP/BPF → Netfilter → iptables → App, von unten nach oben). Pro Schicht ein Halm-Entscheid (PASS/DROP); ein XDP-Drop kürzt den Pfad ab und legt das Colimit sofort fest, ein Pass verlangt Konsistenz über alle Hälme. Live-Panel mit Halm-Chips, Colimit-Urteil und Durchsatz-Regler (durchlaufene Schichten), theme-aware via CSS-Variablen, alle Daten inline."
+}

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Das höhere Objekt ist die Invariante · Donaldson ✕ Higher Topos</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(255,110,199,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;position:relative}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.94em;white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+td:nth-child(2){color:var(--sky)}
+td:nth-child(3){color:var(--warn)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 190px;min-width:150px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.86rem;margin-top:12px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.readout{background:color-mix(in srgb,var(--card) 60%,transparent);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.9rem;margin-top:12px;min-height:1.4em}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px}
+ul{margin:.6em 0;padding-left:1.2em}
+li{margin:.35em 0}
+.prov a{text-decoration:none;border-bottom:1px solid var(--line)}
+.prov a:hover{border-bottom-color:var(--acc)}
+.prov .d{display:block;color:var(--dim);font-size:.88rem;margin-top:3px}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Theme wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Round 1 &middot; Nicht-KI-Track &middot; Pair 078</div>
+  <h1>Das h&ouml;here Objekt ist die Invariante</h1>
+  <p class="sub">Fusion aus: donalds_theorem.html &#10005; higher_topos_theory.html</p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <div class="tag">01 &middot; Kernthese der Fusion</div>
+    <h2>Ein tiefer Schatten, ein h&ouml;heres Objekt, ein Defekt</h2>
+    <p>
+      Die zwei Texte scheinen in unterschiedlichen Galaxen zu leben: Das eine ist ein
+      <b>Starrheitssatz der 4-dimensionalen Topologie</b> (Donaldson, 1983), das andere eine
+      <b>Grundlagen-Gr&uuml;ndung der h&ouml;heren Kategorientheorie</b> (Lurie, &ldquo;Higher Topos Theory&rdquo;, 2009).
+      Unter der superficie tun aber beide <b>exakt dieselbe Geste</b>: Sie nehmen eine niedrige, klassische,
+      &ldquo;1-dimensionale&rdquo; Beschreibung, die die Realit&auml;t <b>nicht eindeutig bestimmt</b>, und zeigen, dass die
+      fehlende Information in einem <b>h&ouml;heren Objekt</b> lebt &mdash; dessen <i>globale</i> Struktur den Defekt aufl&ouml;st.
+    </p>
+    <p>
+      In <b>A</b> (Donaldson) ist die niedrige Beschreibung die <b>Schnittform</b> <span class="mono">Q</span> &mdash; eine
+      symmetrische, ganzzahlige Matrix, also rein algebraische/topologische Daten. Sie bestimmt die
+      <b>glatte</b> Struktur der 4-Mannigfaltigkeit nicht. Die fehlende Information steckt im
+      <b>5-dimensionalen Modulraum</b> <span class="mono">&#8499;</span> der anti-selbstdualen Yang&ndash;Mills-Verbindungen
+      (Instantonen); dessen Kompaktifizierung zu einem <b>Kobordismus</b> zwingt die Diagonalisierbarkeit von
+      <span class="mono">Q</span> &mdash; und damit, welche topologischen Formen &uberhaupt glatt sind.
+    </p>
+    <p>
+      In <b>B</b> (Lurie) ist die niedrige Beschreibung der gew&ouml;hnliche, <b>1-kategoriale Topos</b> der Garben von
+      <i>Mengen</i> (und die Homotopiekategorie <span class="mono">hC</span>). Sie bestimmt die <b>h&ouml;here / nicht-abelsche
+      Kohomologie</b> nicht. Die fehlende Information steckt im <b>&infin;-Topos</b> der Garben von <i>R&auml;umen</i>
+      <span class="mono">Shv(X)</span>; dessen Giraud-Axiome und geometrischen Morphismen rekonstruieren die gesamte klassische
+      Kohomologie &mdash; und mehr.
+    </p>
+    <p>
+      Die fusionierte Position in einem Satz: <b>&bdquo;Das h&ouml;here Objekt ist die Invariante.&rdquo;</b>
+      Schnittform <span class="mono">Q</span> und gew&ouml;hnlicher Topos sind <b>Schatten</b>; der Modulraum
+      <span class="mono">&#8499;</span> und der &infin;-Topos sind <b>das Eigentliche</b> &mdash; h&ouml;here Strukturen (R&auml;ume,
+      &infin;-Kategorien), deren interne / homotopische Topologie es ist, was die klassischen Invarianten nur
+      <i>projizieren</i>. Will man Glattheit oder h&ouml;here Kohomologie verstehen, mu&szlig; man aufh&ouml;ren, auf die Matrix
+      bzw. den mengenwertigen Garbenbegriff zu schauen, und das <i>Raum-der-L&ouml;sungen</i> bzw. die <i>Kategorie der
+      R&auml;ume-der-L&ouml;sungen</i> betrachten.
+    </p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <div class="tag">02 &middot; Widerspr&uuml;che zwischen A und B</div>
+    <h2>Kein direkter Widerspruch &mdash; drei echte Spannungen</h2>
+    <p>
+      Die Papiere leben in verschiedenen Dom&auml;nen (gaugetheoretischer Satz in Dim&nbsp;4 vs. h&ouml;her-kategoriale
+      Grundlagen) und widersprechen einander <b>nicht</b> im strengen Sinn. Folgende Stellen sind die
+      n&auml;chstliegenden <b>echten Spannungen</b> &mdash; jeweils konkret benannt, was welches Papier behauptet.
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Starrheit vs. Flexibilität &mdash; was das h&ouml;here Objekt <i>tut</i></h3>
+      <p>
+        <b>A</b> macht das h&ouml;here Objekt zum <b>Verbot</b>: Weil der Modulraum <span class="mono">&#8499;</span> in seiner globalen
+        Topologie starr ist, <i>streicht</i> er eine M&ouml;glichkeit &mdash; jede <b>definite, nicht-diagonale</b> Schnittform
+        (z.B. <span class="mono">E&#8328;</span>) tr&auml;gt <b>keine</b> glatte Struktur. Das h&ouml;here Objekt <b>schr&auml;nkt ein</b>.
+      </p>
+      <p>
+        <b>B</b> macht das h&ouml;here Objekt zum <b>Enabler</b>: Der &infin;-Topos <i>vereinheitlicht und erweitert</i> &mdash;
+        klassische Kohomologie f&auml;llt als Spezialfall heraus, und man kann auf nicht-abelsche Koeffizienten und
+        h&ouml;here Grade (Gerben, Stacks) generalisieren. Das h&ouml;here Objekt <b>er&ouml;ffnet mehr</b>.
+      </p>
+      <p class="note">Gegenpol: bei A verbietet die h&ouml;here Struktur, bei B erm&ouml;glicht sie.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Richtung des Trunkations-Defekts &mdash; &Uuml;ber- vs. Unter-Approximation</h3>
+      <p>
+        Beide stimmen zu: <i>Herunter-trunkieren verliert Information.</i> Aber der Defekt zeigt in
+        <b>entgegengesetzte Richtungen</b>.
+      </p>
+      <p>
+        <b>A:</b> Die topologische Kategorie ist eine <b>&Uuml;ber-</b>Approximation &mdash; sie hat <b>mehr Objekte</b> als die
+        glatte. Freedman realisiert <i>jede</i> symmetrische, ganzzahlige, unimodulare Matrix topologisch; die
+        <span class="mono">E&#8328;</span>-Mannigfaltigkeit existiert topologisch, ist aber <b>nicht gl&auml;ttbar</b>. Defekt =
+        <b>Phantom-Objekte unten</b> (&ldquo;zu viel&rdquo;).
+      </p>
+      <p>
+        <b>B:</b> Die 1-Trunkierung <span class="mono">hC</span> ist eine <b>Unter-</b>Approximation &mdash; sie hat <b>weniger
+        Morphismen</b> (nur <span class="mono">&pi;&#8320; Map(x,y)</span>) als die &infin;-Kategorie <span class="mono">C</span>. Defekt =
+        <b>verlorene h&ouml;here Morphismen unten</b> (&ldquo;zu wenig&rdquo;).
+      </p>
+      <p class="note">Beide: &bdquo;Trunkation ist verlustbehaftet&rdquo; &mdash; aber A sagt &ldquo;unten zu voll&rdquo;, B &ldquo;unten zu leer&rdquo;.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Ausnahme-Dimension vs. Dimension-Regler</h3>
+      <p>
+        <b>A</b> zentriert <b>die eine</b> starre, pathologische <b>Ausnahmedimension 4</b> (&ldquo;der wilde Westen&rdquo;) &mdash;
+        die Theorie ist &uuml;ber <i>genau eine</i> Dimension aufgebaut. <b>B</b> macht Dimension zu einem <b>uniformen,
+        drehbaren Parameter</b> (n-Abgeschnittene, Homotopie-Dimension <span class="mono">&le; n</span>, Verschwinden
+        <span class="mono">H&#178;=0</span> f&uuml;r <span class="mono">k&gt;n</span>) &mdash; die Theorie gilt <i>gleichm&auml;&szlig;ig &uuml;ber alle</i> Dimensionen.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <div class="tag">03 &middot; Aufl&ouml;sung</div>
+    <h2>Ein Mechanismus, zwei Gesichter</h2>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (a): Starrheit &amp; Flexibilität sind zwei Seiten derselben M&uuml;nze</h3>
+      <p>
+        Beide beschreiben <b>dasselbe h&ouml;here-Objekt-Konzept</b> aus komplement&auml;ren Seiten. <span class="mono">&#8499;</span> ist in
+        seiner globalen Topologie <i>starr</i> (seine Kompaktifizierung ist gezwungen &mdash; daraus folgt das
+        Verbot), aber seine <i>Existenz und Struktur</i> ist selbst ein universelles, flexibles Faktum. Der
+        &infin;-Topos ist als <i>Rahmen</i> flexibel, aber seine konkreten Instanzen sind starr bestimmt.
+      </p>
+      <p>
+        <b>Fusion:</b> Ein wohlverhaltenes h&ouml;heres Objekt ist <b>gleichzeitig starr genug, um S&auml;tze zu liefern, und
+        flexibel genug, um eine allgemeine Sprache zu sein.</b> &bdquo;Das h&ouml;here Objekt ist die Invariante&rdquo; heißt
+        zugleich &ldquo;es <i>zwangt</i>&rdquo; (an einer Stelle) und &ldquo;es <i>generalisiert</i>&rdquo; (im Ganzen).
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (b): Die beiden Defekte sind dual &mdash; nach unten ist immer eine Lokalisierung</h3>
+      <p>
+        &bdquo;Nach unten gehen&rdquo; ist immer eine <b>pr&auml;zise Lokalisierung</b>, die genau <i>etwas</i> streicht. Entweder
+        streicht man <b>Morphismen</b> (B: <span class="mono">&pi;&#8320;</span>-Trunkierung &rarr; Schatten <i>zu arm</i>) oder man streicht
+        <b>Strukturen auf Objekten</b>, die nicht &uuml;berleben (A: Glattheit &rarr; Schatten <i>zu reich</i>, denn
+        topologisch &supset; glatt). Die <b>Richtung des Defekts</b> wird vorhergesagt, indem man fragt:
+        <i>Welche</i> Lokalisierung ist es?
+      </p>
+      <p>
+        <b>Fusion:</b> Beide Papiere sind dann <b>zwei Instanzen eines Mechanismus</b>. Der Schatten ist so reich, wenn
+        die Lokalisierung <i>Objekte</i> wegl&auml;&szlig;t; er ist so arm, wenn sie <i>Morphismen</i> wegl&auml;&szlig;t. Donaldsons
+        &bdquo;Phantom&rdquo; <span class="mono">E&#8328;</span> und Luries &bdquo;verwischte&rdquo; Morphismen sind der <i>selbe</i> Informationsverlust, von zwei
+        Seiten beschaut.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (c): Der &bdquo;wilde Westen&rdquo; ist ein Phasen&uuml;bergang im Regler</h3>
+      <p>
+        Die &bdquo;Ausnahmedimension 4&rdquo; ist <b>kein Widerspruch</b> zu einem uniformen Gesetz, sondern ein
+        <b>Phasen&uuml;bergang</b> in einem uniformen Parameter. Luries Dimension-Regler macht solche &Uuml;berg&auml;nge zu
+        B&uuml;rgern ersten Rangs: genau dort, wo der Regler die Struktur wechselt &mdash; glatt vs. topologisch =
+        <i>zwei verschiedene</i> &infin;-kategoriale Strukturen &uuml;ber derselben zugrunde liegenden Menge &mdash; wird die
+        Theorie &ldquo;wild&rdquo;.
+      </p>
+      <p>
+        <b>Fusion:</b> Stare Ausnahmen sind <b>Phasen&uuml;berg&auml;nge in einem flexiblen Parameter</b>. Der &bdquo;wilde
+        Westen&rdquo; ist der Punkt, an dem zwei &infin;-strukturelle Beschreibungen derselben Menge auseinanderklaffen
+        &mdash; und die Glattheit (A) ist eine &infin;-kategoriale Struktur, die genau an diesem Punkt aufh&ouml;rt, vom
+        topologischen Schatten &uuml;berlebt zu werden.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <div class="tag">04 &middot; Fusionierter Inhalt</div>
+    <h2>Die D&uuml;alitat in der Tabelle &mdash; und die gemeinsame Mechanik</h2>
+    <p>
+      Der fusionierte Kern ist die folgende <b>D&uuml;alitat</b>: Jede der zwei Theorien hat einen <i>tieferen
+      Schatten</i> (eine Matrix bzw. eine 1-Kategorie) und ein <i>h&ouml;heres Objekt</i> (ein Raum bzw. ein
+      &infin;-Topos), das die L&uuml;cke schlie&szlig;t.
+    </p>
+    <table>
+      <thead><tr><th>Rolle</th><th>A &middot; Donaldson (Dim&nbsp;4)</th><th>B &middot; Lurie (&infin;-Topos)</th></tr></thead>
+      <tbody>
+        <tr><td>Tiefer Schatten</td><td>Schnittform <span class="mono">Q</span> (sym. ganzzahl. Matrix, topologisch)</td><td>gew&ouml;hnlicher Topos (Garben von Mengen), <span class="mono">hC</span></td></tr>
+        <tr><td>H&ouml;heres Objekt</td><td>Modulraum <span class="mono">&#8499;</span> ASD-Verbindungen (5-dim Raum)</td><td>&infin;-Topos <span class="mono">Shv(X)</span> (Garben von R&auml;umen)</td></tr>
+        <tr><td>Defekt unten</td><td>topologisch &supset; glatt &rarr; Phantom-Objekte (<span class="mono">E&#8328;</span>)</td><td><span class="mono">hC &sub; C</span> &rarr; verlorene Morphismen (<span class="mono">&pi;&#8320;</span>)</td></tr>
+        <tr><td>Trunkation</td><td>glatt &rarr; topologisch (lokalisiert auf Objekte)</td><td>&infin;-Kat &rarr; <span class="mono">hC</span> (lokalisiert auf Morphismen)</td></tr>
+        <tr><td>Schl&uuml;sselsatz</td><td>definit <span class="mono">Q</span> &rArr; diagonalisierbar &mdash; <span class="mono">&sigma;(X)=rang(Q)=n(Q)</span></td><td><span class="mono">[X,|K|] &cong; &pi;&#8320;(p_* p^* K)</span>; <span class="mono">q^* p_* &simeq p'_* q'^*</span></td></tr>
+        <tr><td>Dimension</td><td>4 = starrer Ausnahmefall</td><td><span class="mono">n</span> = Regler, uniform, mit Phasen&uuml;berg&auml;ngen</td></tr>
+        <tr><td>Ergebnis-Ton</td><td>Starrheit / Verbot (streicht Glattheit)</td><td>Flexibilität / Absorption (vereinheitlicht)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>A &mdash; die h&ouml;here Mechanik (Modulraum &rarr; Kobordismus)</h3>
+    <p>
+      Der Modulraum <span class="mono">&#8499;</span> der ASD-Verbindungen auf einem <span class="mono">SU(2)</span>-B&uuml;ndel mit
+      <span class="mono">c&#8322;=1</span> hat nach Atiyah&ndash;Singer Dimension
+      <span class="mono">dim &#8499; = 8k &minus; 3(1 &minus; b&#8321;(X) + b&#65099;(X))</span>; f&uuml;r einfach-zusammenh&auml;ngendes, definites
+      <span class="mono">X</span> und <span class="mono">k=1</span>: <span class="mono">dim &#8499; = 5</span>. Er hat ein offenes Ende
+      <span class="mono">&cong; X &times; (0,&epsilon;)</span> (Uhlenbeck&ndash;Taubes) und Singularit&auml;ten als Kegel &uuml;ber
+      <span class="mono">&#8450;P&#178;</span> bei den <i>reduziblen</i> Verbindungen. Donaldson kompaktifiziert: an jeder Singularit&auml;t
+      wird ein <span class="mono">&#8450;P&#178;</span;> eingeklebt, am Ende <span class="mono">X</span> selbst &mdash; das ergibt einen <b>Kobordismus</b>
+      zwischen <span class="mono">X</span> und <span class="mono">n(Q)</span> Kopien von <span class="mono">&#8450;P&#178;</span>. Die reduziblen Verbindungen
+      <span class="mono">E = L &oplus; L&#8315;&#185;</span> liefern die Zahlen <span class="mono">Q(&alpha;,&alpha;) = &minus;1</span>; das elementare Lemma
+      <span class="mono">n(Q) &le; rang(Q)</span> mit Gleichheit genau im diagonalisierbaren Fall trifft auf die
+      <b>Signatur-Invarianz</b> <span class="mono">rang(Q) = b&#8322;(X) = &sigma;(X) = &sigma;(&sqcup; n(Q)&middot;&#8450;P&#178;) &le; n(Q)</span>.
+      Klammernd folgt <span class="mono">n(Q) = rang(Q)</span>, also <b>Q ist &uuml;ber <span class="mono">&#8484;</span> diagonalisierbar</b>. Folgerung: Die
+      <span class="mono">E&#8328;</span>-Form ist definit und unimodular, aber nicht diagonalisierbar &rArr; topologisch existent,
+      <b>glatt unm&ouml;glich</b>; und es gibt unendlich viele <b>exotische <span class="mono">&#8477;&#8308;</span></b>.
+    </p>
+
+    <h3>B &mdash; die h&ouml;here Mechanik (&infin;-Topos rekonstruiert Kohomologie)</h3>
+    <p>
+      F&uuml;r einen parakompakten Raum <span class="mono">X</span> und Kan-Komplex <span class="mono">K</span> gilt
+      <span class="mono">[X,|K|] &cong; &pi;&#8320;(p_* p^* K)</span>: Die klassischen Homotopieklassen von Abbildungen
+      <span class="mono">X &rarr; |K|</span> sind genau die globalen Schnitte der konstanten Garbe <span class="mono">K</span> auf
+      <span class="mono">X</span> &mdash; rein aus der internen Homotopietheorie von <span class="mono">Shv(X)</span> rekonstruiert. Damit
+      <span class="mono">H&#750;?(X;G) &cong; [X, K(G,n)]</span>, beliebig hoch, beliebig nicht-abelsch (mit Gerben/Stacks).
+      Die Homotopiekategorie wirft die h&ouml;here Information weg:
+      <span class="mono">Hom_{hC}(x,y) = &pi;&#8320; Map_C(x,y)</span>. Ein &infin;-Topos ist (Giraud) pr&auml;sentierbar mit
+      universellen (Kolimiten unter Pullback), disjunkten (Koprodukten) und effektiven (Gruppoid-Objekten)
+      Axiomen. Und der <b>nicht-abelse eigentliche Basiswechsel</b>
+      <span class="mono">q^* p_* &simeq p'_* q'^*</span> gilt f&uuml;r Garben von R&auml;umen, w&auml;hrend das
+      <b>Grothendieck-Verschwinden</b> <span class="mono">H&#178;(X;G)=0</span> f&uuml;r <span class="mono">k&gt;n</span> die Dimension zu einem echten
+      Regler macht.
+    </p>
+
+    <h3>Was &uuml;brig bleibt</h3>
+    <p>
+      <b>Was &uuml;berlebt die Trunkation?</b> Genau das, was im h&ouml;heren Objekt eine <i>stabile</i>, von der Wahl
+      unabh&auml;ngige Struktur tr&auml;gt &mdash; bei A die Signatur und der Rang von <span class="mono">Q</span>, bei B die
+      &pi;&#8320;-Klassen und die Kohomologiegruppen. <b>Was nicht &uuml;berlebt?</b> Die feine
+      &infin;-Information: bei A die glatte Struktur (daher &bdquo;Phantom&rdquo;-Objekte), bei B die h&ouml;heren
+      Morphismen (daher der &bdquo;verwischte&rdquo; Schatten). Das h&ouml;here Objekt ist die Invariante; der Schatten ist
+      ihr Schatten.
+    </p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <div class="tag">05 &middot; Interaktive Visualisierung</div>
+    <h2>Der Regler zwischen hohem Objekt und tiefem Schatten</h2>
+    <p>
+      Die Punktwolke ist das <b>h&ouml;here Objekt</b> (der Modulraum <span class="mono">&#8499;</span> bzw. der &infin;-Topos),
+      gezeichnet als rotierender 3-D-Torus. Der Regler <b>trunkiert</b> von links (volles h&ouml;heres Objekt) nach
+      rechts (tiefer 2-D-Schatten, also <span class="mono">Q</span> / gew&ouml;hnlicher Topos). Zwei Farbcodierungen tragen die
+      <b>beiden Defekt-Richtungen</b> zugleich:
+    </p>
+    <ul>
+      <li><b>blau</b> &mdash; Objekte, die in <i>beiden</i> Ebenen &uuml;berleben (der gemeinsame Kern).</li>
+      <li><b>bernstein</b> (Linien) &mdash; h&ouml;here Morphismen: sichtbar oben, <i>verschwinden</i> beim Trunkieren
+        (B: <span class="mono">&pi;&#8320;</span> verwischt &rarr; Schatten <b>zu arm</b>).</li>
+      <li><b>rot</b> &mdash; Phantom-Objekte: unsichtbar oben, <i>tauchen unten auf</i> (A: topologisch &supset; glatt,
+        z.B. <span class="mono">E&#8328;</span> &rarr; Schatten <b>zu reich</b>).</li>
+    </ul>
+    <div class="vizbox">
+      <canvas id="fusionCanvas" height="440"></canvas>
+      <div class="ctrl">
+        <div class="c">
+          <label>Trunkation t &nbsp; <b id="truncVal">0.00</b></label>
+          <input type="range" id="truncSlider" min="0" max="1" step="0.01" value="0">
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="vizPause">&#9208; Pause</button>
+        <button id="vizReset">&#8635; Neudrehen</button>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--sky)"></i>&Uuml;berlebende Objekte</span>
+        <span><i style="background:var(--warn)"></i>h&ouml;here Morphismen (B)</span>
+        <span><i style="background:var(--bad)"></i>Phantom-Objekte (A)</span>
+      </div>
+      <div class="readout" id="fusionReadout"></div>
+    </div>
+    <p class="note">Alle Daten sind inline (der Torus wird prozedural erzeugt); die Farben lesen die Theme-Variablen und
+    wechseln mit dem Theme-Button oben rechts.</p>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <div class="tag">06 &middot; Provenienz</div>
+    <h2>Quellen</h2>
+    <div class="card prov">
+      <a href="../donalds_theorem.html">A &middot; Donaldsons Theorem &mdash; Interaktive Reise</a>
+      <span class="d">Interaktive Erl&auml;uterung von Donaldsons Theorem (1983): Mannigfaltigkeiten, Dimension&nbsp;4,
+      Schnittform <span class="mono">Q</span>, Yang&ndash;Mills/ASD, der 5-dim Modulraum <span class="mono">&#8499;</span>, der Kobordismus-Trick und die
+      Konsequenzen (<span class="mono">E&#8328;</span>, exotische <span class="mono">&#8477;&#8308;</span>, Klassifikation).</span>
+    </div>
+    <div class="card prov">
+      <a href="../higher_topos_theory.html">B &middot; &infin;-Kategorien &amp; Topoi &mdash; ein interaktiver Streifzug</a>
+      <span class="d">Interaktiver Streifzug durch Luries &bdquo;Higher Topos Theory&rdquo; (2009): simpliziale Mengen, Horns /
+      quasi-Kategorien, &infin;-Kategorien, Faserungen, Giraud-Axiome der &infin;-Topoi, parakompakte R&auml;ume,
+      nicht-abelscher Basiswechsel und Grothendieck-Verschwinden.</span>
+    </div>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  /* ---------- theme toggle ---------- */
+  var root=document.documentElement;
+  var tt=document.getElementById('themeToggle');
+  if(tt){ tt.addEventListener('click',function(){ root.classList.toggle('dark'); }); }
+
+  /* ---------- viz ---------- */
+  var canvas=document.getElementById('fusionCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var S=document.getElementById('fusionReadout');
+  var slider=document.getElementById('truncSlider');
+  var valEl=document.getElementById('truncVal');
+  var btnPause=document.getElementById('vizPause');
+  var btnReset=document.getElementById('vizReset');
+  var cssH=440;
+
+  var trunc=0, angle=0.6, paused=false, raf=0, C=null;
+
+  function gv(n,fb){ return (getComputedStyle(root).getPropertyValue(n)||'').trim()||fb; }
+  function refreshColors(){
+    C={ higher:gv('--acc','#0f9d7a'), sky:gv('--sky','#2f6fb0'),
+        warn:gv('--warn','#c98a1b'), bad:gv('--bad','#d1495b'),
+        dim:gv('--dim','#5b6472'), ink:gv('--ink','#1c2230') };
+  }
+
+  /* deterministic torus point cloud = the "higher object" */
+  var NU=30, NV=16, MAJ=2.2, MIN=0.95, pts=[];
+  for(var iu=0;iu<NU;iu++){ var u=iu/NU*2*Math.PI;
+    for(var iv=0;iv<NV;iv++){ var v=iv/NV*2*Math.PI;
+      var R=MAJ+MIN*Math.cos(v);
+      pts.push({x:R*Math.cos(u), y:MIN*Math.sin(v), z:R*Math.sin(u),
+                ph:(((iu*NV+iv)%6)===2)});
+    }
+  }
+  var arrows=[];
+  for(var iu=0;iu<NU;iu++){ for(var iv=0;iv<NV;iv+=2){
+    var a=iu*NV+iv, b=((iu+1)%NU)*NV+iv;
+    if(!pts[a].ph && !pts[b].ph) arrows.push([a,b]);
+  }}
+
+  function resize(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth||760;
+    canvas.width=Math.max(1,Math.round(w*dpr));
+    canvas.height=Math.max(1,Math.round(cssH*dpr));
+    canvas.style.height=cssH+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function project(p,w){
+    var cos=Math.cos(angle), sin=Math.sin(angle);
+    var x=p.x*cos-p.z*sin, z=p.x*sin+p.z*cos;
+    var flat=1-trunc;
+    var y=p.y*(0.12+0.88*flat);
+    var s=Math.min(72,w/14);
+    return {x:w/2+x*s, y:cssH/2+y*s, z:z};
+  }
+  function readout(){
+    if(!S) return;
+    if(trunc<0.25){
+      S.innerHTML='<b style="color:var(--acc)">Volles h&ouml;heres Objekt</b> (&#8499; / &infin;-Topos). Alle h&ouml;heren '
+        +'Morphismen <span style="color:var(--warn)">(bernstein)</span> sichtbar, Phantom-Objekte '
+        +'<span style="color:var(--bad)">(rot)</span> ausgeschlossen &mdash; die Invariante.';
+    } else if(trunc>0.75){
+      S.innerHTML='<b style="color:var(--bad)">Reiner tiefer Schatten</b> (Q / 1-Topos). Morphismen auf '
+        +'<span class="mono">&pi;&#8320;</span> verwischt; <span style="color:var(--bad)">Phantom-Objekte tauchen auf</span> '
+        +'(z.B. E&#8328;: topologisch da, nicht gl&auml;ttbar). Der Schatten bestimmt die Realit&auml;t nicht eindeutig.';
+    } else {
+      S.innerHTML='Zwischenstufe: das h&ouml;here Objekt verliert progressiv Struktur. Weiter nach rechts (t&rarr;1): '
+        +'Schatten <b>reicher an Phantomen</b> (A: &uuml;ber-voll unten) und <b>&auml;rmer an Morphismen</b> '
+        +'(B: unter-voll unten) &mdash; der doppelte Defekt in einer Zeichnung.';
+    }
+  }
+  function render(){
+    var w=canvas.clientWidth||760;
+    ctx.clearRect(0,0,w,cssH);
+    var proj=pts.map(function(p){return project(p,w);});
+    var ma=1-trunc;
+    if(ma>0.02){
+      ctx.globalAlpha=0.12+0.5*ma;
+      ctx.strokeStyle=C.warn; ctx.lineWidth=1;
+      for(var k=0;k<arrows.length;k++){
+        ctx.beginPath();
+        ctx.moveTo(proj[arrows[k][0]].x,proj[arrows[k][0]].y);
+        ctx.lineTo(proj[arrows[k][1]].x,proj[arrows[k][1]].y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+    }
+    var order=pts.map(function(p,i){return i;}).sort(function(i,j){return proj[i].z-proj[j].z;});
+    for(var m=0;m<order.length;m++){
+      var idx=order[m], p=pts[idx], P=proj[idx], col,al,r;
+      if(p.ph){ al=0.12+0.88*trunc; if(al<0.04) continue; col=C.bad; r=3.4; }
+      else { al=0.45+0.4*(1-trunc*0.4); col=C.sky; r=2.6; }
+      ctx.globalAlpha=Math.max(0,Math.min(1,al));
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(P.x,P.y,r,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    ctx.fillStyle=C.dim; ctx.font='12px ui-sans-serif,system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.fillText('\u2190 hohes Objekt (\u2133 / \u221E-Topos)',14,22);
+    ctx.textAlign='right'; ctx.fillText('tiefer Schatten (Q / 1-Topos) \u2192',w-14,cssH-12);
+    ctx.textAlign='left';
+  }
+  function frame(){
+    render();
+    if(!paused) angle+=0.0045;
+    raf=requestAnimationFrame(frame);
+  }
+
+  if(slider){
+    slider.addEventListener('input',function(){
+      trunc=parseFloat(slider.value);
+      if(valEl) valEl.textContent=trunc.toFixed(2);
+      readout();
+    });
+  }
+  if(btnPause){
+    btnPause.addEventListener('click',function(){
+      paused=!paused;
+      btnPause.textContent=paused?'\u25B6 Weiter':'\u23F8 Pause';
+    });
+  }
+  if(btnReset){ btnReset.addEventListener('click',function(){ angle=0.6; }); }
+
+  var lastCls=root.className;
+  var mo=new MutationObserver(function(){
+    if(root.className!==lastCls){ lastCls=root.className; refreshColors(); }
+  });
+  mo.observe(root,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',resize);
+
+  refreshColors();
+  resize();
+  readout();
+  raf=requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

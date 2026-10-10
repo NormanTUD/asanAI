@@ -1,0 +1,16 @@
+{
+  "no": "082",
+  "a": "fun.html",
+  "b": "buecher/the_book_of_the_taboo_of_knowing_who_you_are.html",
+  "a_title": "The Science of FUN (fun.html)",
+  "b_title": "Alan Watts – The Book: On the Taboo Against Knowing Who You Are (Interaktive Konzeptvisualisierung)",
+  "combined_theme": "spass-als-nicht-trennung",
+  "one_line": "Spaß ist das gefühlte Signal, dass der Hautsack-Ego seinen Griff lockert und das größere Ganze wieder mitspielt — A's bottom-up Neurologie ist B's top-down Welle von innen; Flow ist der Moment, in dem der Ego verstummt.",
+  "contradictions": [
+    "Das getrennte Selbst: A verankert Spaß in deinem realen, begrenzten Gehirn (echte Schaltkreise, messbarer Fun-Meter, das Individuum ist die Einheit); B nennt genau dieselbe Hautsack-Trennung eine Halluzination (das Individuum ist ein Prozess, das Ganze ist die Einheit).",
+    "Spaß durch Zueilen vs. Loslassen: A ist appetitiv (Dopamin=Antizipation, Zähler, Achievements, 'do more of this' — mehr Tun/Sammeln = mehr Spaß); B warnt, dass Ergreifen das Eigentliche verliert (Doppelbindung, Festhalten erstickt den Atem, 'nichts scheitert wie Erfolg').",
+    "Neuheit endlich vs. ewig: A sagt Habituation — 'Novelty is a finite resource', Spaß geht auf; B sagt, Existenz sei ein ewiger Kreislauf/Atem ('sie dreht sich im Kreis'), den man nicht verbraucht, weil man selbst ein Puls darin ist."
+  ],
+  "resolution": "Möbius statt Widerspruch: das Gehirn (A) ist das, wie sich die Welle (B) von innen des Hautsacks fühlt — real und illusorische Trennung koexistieren als zwei Ebenen eines Ereignisses. A's Flow ist B's Loslassen (der präfrontale 'Tryer' verstummt = 'Ich BIN die Welt'); Antizipation ist der Einstieg, Auflösung der Höhepunkt, und A's sicherer Rahmen ist, was B's Nicht-Versuchen erst möglich macht. A's endliche Neuheit gilt nur für den ergreifenden Zuschauer; im Rhythmus, von innen, ist sie unerschöpflich. Fusioniert: SPASS = [Sicher+Neu+Optimal+Sozial+Belohnend] × (Aufmerksamkeit ÷ Selbstbewusstsein), wobei B den letzten Term umliest — je kleiner der Ego, desto größer der Spaß.",
+  "viz": "Canvas: ein 'Ich' (Hautsack) in einem verbundenen Feld (das Ganze) über einer vibrierenden Welle (Gipfel=Freude, Tal=Ruhe). Slider Ego-Separation/Selbstbewusstsein (Hautsack-Grenze löst sich auf, Feld leuchtet auf, 'Ich' wird 'Ich BIN die Welle') und Klammern/Festhalten (Welle flacht ab = eingesperrter Atem) plus 5 Zutaten-Toggles (A); bei allen Zutaten + niedrigem Ego + wenig Festhalten tritt der Flow-Zustand ein. Theme-aware, inline data, zero network."
+}

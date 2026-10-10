@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Garbentheorie ✕ Lachgas-Spirale — Lokales verklebt zum Globalen</title>
+<style>
+  :root {
+    --bg: #faf9f4;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e2e8f0;
+    --accent: #1e3a8a;
+    --accent2: #0f766e;
+    --ok: #16a34a;
+    --bad: #dc2626;
+    --warn: #b45309;
+    --code-bg: #eef2f7;
+    --shadow: 0 2px 14px rgba(15,23,42,.08);
+    --viz-canvas-bg: #f7f8fc;
+    --viz-pat-hi: #1d4ed8;
+    --viz-pat-lo: #dbe2ee;
+    --viz-danger: #dc2626;
+    --viz-text: #1e293b;
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --accent: #93c5fd;
+    --accent2: #5eead4;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.45);
+    --viz-canvas-bg: #0a1120;
+    --viz-pat-hi: #38bdf8;
+    --viz-pat-lo: #16233c;
+    --viz-danger: #fb7185;
+    --viz-text: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65; font-size: 16px; }
+  article { max-width: 820px; margin: 0 auto; padding: 40px 22px 80px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.05em; line-height: 1.22; margin: 0 0 8px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle { position: absolute; top: 0; right: 0; background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: .85em; }
+  section { margin-top: 38px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  h3 { font-size: 1.08em; color: var(--fg); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 8px; }
+  code, .math { font-family: "SFMono-Regular", Consolas, "Fira Code", monospace;
+    background: var(--code-bg); color: var(--fg); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92em; }
+  th, td { border: 1px solid var(--card-border); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; align-items: center; }
+  .ctl-row label { font-size: .92em; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+  .ctl-row select, .ctl-row input[type=range] { background: var(--code-bg); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 8px; padding: 6px 10px; }
+  .ctl-row input[type=range] { padding: 0; width: 130px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+  .chip { padding: 6px 12px; border-radius: 8px; font-size: .88em; font-weight: 700; border: 1px solid var(--card-border); }
+  .chip-ok { color: var(--ok); border-color: var(--ok); }
+  .chip-bad { color: var(--bad); border-color: var(--bad); }
+  .panels { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: flex-start; }
+  .panel { text-align: center; }
+  .panel h3 { margin: 0 0 6px; }
+  .panel canvas { display: block; width: 320px; max-width: 100%; height: auto;
+    background: var(--viz-canvas-bg); border: 1px solid var(--card-border); border-radius: 10px; }
+  .panel .cap { font-size: .82em; color: var(--muted); margin-top: 6px; }
+  .arrow { font-size: 2.6em; color: var(--accent2); align-self: center; }
+  .viz-note { color: var(--muted); font-size: .9em; margin-top: 12px; }
+  .verdict { margin-top: 12px; padding: 12px 15px; border-radius: 10px; font-weight: 600;
+    border-left: 5px solid var(--muted); background: var(--code-bg); }
+  .v-ok { border-left-color: var(--ok); color: var(--ok); }
+  .v-bad { border-left-color: var(--bad); color: var(--bad); }
+  .proven a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .proven a:hover { text-decoration: underline; }
+  footer { margin-top: 46px; color: var(--muted); font-size: .85em; text-align: center;
+    border-top: 1px solid var(--card-border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" type="button">☾ / ☀</button>
+    <h1>Lokales verklebt zum Globalen: die Garbe in der Halluzination</h1>
+    <p class="fusion-line">Fusion aus: <b>garben.html</b> ✕ <b>kluever2.html</b></p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Auf den ersten Blick reden die beiden Papiere über etwas anderes: A ist <strong>Garbentheorie</strong> (wie lokale Daten auf einem topologischen Raum zu einem eindeutigen globalen Objekt <em>verkleben</em>), B eine <strong>neuronale Erklärung</strong>, warum Lachgas (N₂O) eine <em>Spirale</em> halluzinieren lässt. Beide sind aber <strong> dieselbe strukturelle These in zwei Registern</strong>: <em>Ein globales Objekt ist genau dann eindeutig bestimmt — und aus seinen lokalen Daten rekonstruierbar — wenn die lokalen Daten kompatibel sind bzw. die verbindende Abbildung lokal invertierbar ist.</em></p>
+    <p>Bei A ist das eine kategorische Aussage: Ein globaler Schnitt über <span class="math">U</span> ist das eindeutige Objekt, dessen Keime an jedem Punkt übereinstimmen; die zwei Garbenaxiome (Unizität ⇒ Eindeutigkeit, Verklebbarkeit ⇒ Existenz, zusammen das <em>Equalizer</em>-Diagramm) <em>sind</em> genau die Aussage „kompatible lokale Daten ⇔ eindeutiger globaler Schnitt". Bei B ist dieselbe Aussage analytisch: Das wahrgenommene Muster (die Spirale) ist das <em>eindeutige</em> Bild der lokalen neuronalen Aktivität (Streifen im flachen V1) unter der log-polaren Abbildung — und <em>der Grund, warum es eindeutig und treu ist, ist, dass die log-polare Abbildung eine lokale Homeomorphie ist</em> (lokal invertierbar; in B: „Inverse log-Abbildung").</p>
+    <p>Die fusionierte Position: <strong>Der visuelle Kortex ist ein <em>Atlas</em> über dem Gesichtsfeld; die log-polare Abbildung ist der <em>Chart</em>; das wahrgenommene Muster ist ein <em>Schnitt</em>; die lokale neuronale Aktivität an einer Kortex-Stelle ist der <em>Keim</em> — und „Verkleben" ist nichts als die Tatsache, dass der Chart lokal invertierbar ist.</strong> Der eine Punkt, an dem das bricht — die <em>Fovea</em>, wo <span class="math">log r → −∞</span> (in B: „die Mitte bekommt VIEL mehr Platz") — ist <em>genau</em> dort, wo die Garbenbedingung <em>scheitert</em> und aus dem Chart nur eine <em>Prägarbe</em> wird (der „✗ Konflikt" aus A). Die Halluzination ist damit ein <em>Schnitt über dem punktierten Gesichtsfeld</em>; die Fovea ist die Singularität, an der die Rekonstruktion versagt — und die Garben-/Prägarben-Unterscheidung aus A ist das <em>Diagnoseinstrument</em>, das genau das lokalis.</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Texte widerlegen sich in ihren <em>tatsächlichen</em> Behauptungen nicht — sie liegen in anderen Domänen (algebraische Topologie vs. visuelle Neurowissenschaft) und keiner widerlegt den anderen. Sie treffen aber auf zwei konkreten Punkten auf <strong>unvereinbare Stellungen</strong> dazu, wie lokale Daten mit dem Globalen zusammenhängen:</p>
+    <div class="card">
+      <h3>① Exaktheit vs. der singuläre Mittelpunkt</h3>
+      <p><span class="tagA">A (Garbe)</span>: Die Garbenaxiome garantieren, dass lokale Daten das Globale <em>überall</em> eindeutig rekonstruieren — das Equalizer-Diagramm ist exakt, es wird <em>kein</em> Abbruch zugelassen (Unizität + Existenz gelten global). <span class="tagB">B (Lachgas)</span>: Die log-polare Abbildung ist nur <em>außerhalb des Ursprungs</em> lokal invertierbar; an der Fovea explodiert sie (<span class="math">log r → −∞</span>, „die Mitte bekommt VIEL mehr Platz"). B's „Atlas" ist also eine <em>Garbe auf</em> <span class="math">ℝ² \ {0}</span>, aber eine <em>Prägarbe über</em> <span class="math">{0}</span> — die lokale→globale Rekonstruktion <em>versagt genau dort, wo die Halluzination verankert ist</em>. A kennt keine solche Versagensmöglichkeit; B's Phänomen ist an eine gebunden.</p>
+    </div>
+    <div class="card">
+      <h3>② Kompatibilität als Axiom vs. als Emergenz</h3>
+      <p><span class="tagA">A</span> behandelt lokale Kompatibilität (<span class="math">s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}</span>) als <em>auferlegte Vorbedingung / Axiom</em>: man muss sie annehmen und prüfen — und die ganze Dramatik des Papiers ist die <em>Prägarbe, die es verletzt</em> („✗ Konflikt!"). <span class="tagB">B</span> nimmt Kompatibilität <em>nirgends an</em> — sie <em>emergiert</em> aus einer lokalen Regel: dem Turing-Mechanismus (Aktivator–Inhibitor, kurze Erregung + lange Hemmung) plus dem N₂O-getriebenen Umschub der E/I-Balance. V1 wird zu einem stabilen Streifen-Zustand getrieben, so dass Kohärenz eine <em>abgeleitete Folge einer PDE</em> ist, keine Bedingung. A fragt „welche lokalen Familien sind global?"; B antwortet „die Dynamik <em>macht</em> sie global".</p>
+    </p>
+    <p><strong>Die schärfste reale Spannung</strong> ist Punkt ① als Frage: <em>Ist lokale→globale Rekonstruktion überall exakt, oder gibt es einen Punkt, an dem sie bricht?</em> — A: überall exakt (keine Singularität). B: bricht exakt an der Fovea, die das Muster verankert. A liefert keinen Begriff für dieses Versagen; B braucht es, um zu verstehen, warum gerade die Mitte des Musters am stärksten „smears".</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>① Die Garbenbedingung ist kein Naturgesetz, sondern das Kriterium</h3>
+      <p>Die Garbenbedingung ist nicht „die Natur", sondern das <em>Kriterium, wann ein Koordinatenatlas lokal→global treu rekonstruiert</em>. B's log-Abbildung liest man damit als: eine echte <em>Garbe auf</em> <span class="math">ℝ² \ {0}</span> (dort exakt) und eine <em>Prägarbe über der Fovea</em>. <strong>Fusionierter Schluss:</strong> A's Garben-/Prägarben-Unterscheidung ist das <em>Diagnoseinstrument</em>, das die Versagensstelle <em>lokalisiert</em>. Die Halluzination ist ein Schnitt, der auf <span class="math">ℝ² \ {0}</span> perfekt verklebt und am Ursprung <em>überdargestellt / undefiniert</em> wird — deshalb ist die Fovea das am stärksten verwaschene, instabilste Stück des Musters. A's „Konflikt" ist kein pathologischer Sonderfall, sondern die <em>fovale Signatur</em> von B's singulärem Chart.</p>
+    </div>
+    <div class="card">
+      <h3>② Zwei Ebenen desselben Satzes</h3>
+      <p>A liefert das <em>Kriterium</em> (eine Familie ist global ⇔ sie passt auf allen Überlappungen — das Equalizer). B liefert den <em>Mechanismus, der das Kriterium by construction erfüllt</em>: Weil benachbarte V1-Neuronen <em>gemeinsame Orientierungs-Tuning</em> und <em>anisotrope Kopplung</em> entlang dieser Orientierung haben, zwingt der Turing-Mechanismus benachbarte Streifen zu <em>wechselseitiger Konsistenz</em> — das „Verkleben" gilt also automatisch, ohne Annahme. <strong>Fusionierter Schluss:</strong> B's Turing-PDE ist eine <em>physikalische Realisation von A's Verklebungsaxiom</em>; das Equalizer-Diagramm aus A ist das <em>abstrakte Skelett</em> des stationären Zustands, in den B's Dynamik abklingt. A beschreibt den <em>Zustandsraum</em> (welche Familien Schnitte sind); B beschreibt den <em>Fluss</em> (wie N₂O-Instabilität das System zu einem kompatiblen Schnitt treibt). Die statische/dynamische Spaltung löst sich auf: <em>die Garbe ist die Form des Attraktors, die PDE der Weg dorthin.</em></p>
+    </div>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die folgende Karte verknüpft die zentralen Begriffe beider Papiere mit ihrer fusionierten Rolle — so, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+    <table>
+      <thead><tr><th style="width:30%">A (Garben)</th><th style="width:30%">B (Lachgas / V1)</th><th style="width:40%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Topologischer Raum (X, τ), offene U</td><td class="kv">Gesichtsfeld; V1 als aufgeklapptes Blatt</td><td>Die <em>Basis</em>: A's Raum ist das Gesichtsfeld <em>mit Fovea entfernt</em> (damit der Chart eine echte Garbe ist).</td></tr>
+        <tr><td class="kv">Restriktion ρ<sub>U,V</sub>: F(U)→F(V), V⊂U</td><td class="kv">„auf eine Teilregion des Kortex schauen"</td><td>Der <em>Transport</em> lokaler Daten nach unten; bei B das Beschränken der Aktivität auf eine Unterregion des Charts.</td></tr>
+        <tr><td class="kv">Keim [s]<sub>x</sub>, Halm F<sub>x</sub> = colim<sub>U∋x</sub></td><td class="kv">lokale neuronale Aktivität in einer sich verkleinernden Umgebung einer Kortex-Stelle p</td><td>Der <em>Keim</em> an p ist die lokale Streifenaktivität; der Halm bündelt alle Umgebungsschnitte am Punkt.</td></tr>
+        <tr><td class="kv">Schnitt s ∈ F(U)</td><td class="kv">das wahrgenommene Muster (z. B. die Spirale)</td><td>Das <em>globale Objekt</em>: A's Schnitt = B's wahrgenommene Form; beide sind ein und dasselbe.</td></tr>
+        <tr><td class="kv">Prägarbe (kontravarianter Funktor O(X)<sup>op</sup>→Set)</td><td class="kv">lokale Daten, die nicht zusammenpassen (smears, Naht)</td><td>Was B <em>an der Fovea</em> ist: ein Chart, dessen lokale Stücke nicht global verkleben.</td></tr>
+        <tr><td class="kv">Garbe + 2 Axiome (Unizität, Verklebbarkeit) / Equalizer</td><td class="kv">konsistentes, kohärentes globales Muster</td><td>Die Garbe-Annahme <em>gilt, weil</em> die log-Abbildung lokal invertierbar ist; das Axiom ist die Bedingung, B's PDE ihre physikalische Garantie.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Die Brücke: die log-polare Abbildung als Chart</h3>
+      <p><strong>Chart.</strong> Die Abbildung <span class="math">φ: (r, θ) ↦ (u, v) = (a + b·log(r/r₀), θ)</span> trägt das (punktierte) Gesichtsfeld auf das flache Blatt V1. Auf <span class="math">ℝ² \ {0}</span> ist <span class="math">φ</span> ein <em>Diffeomorphismus</em> (B: „Inverse log-Abbildung" existiert).</p>
+      <p><strong>Niveaumengen (Klüvers Formkonstanten = gerade Streifen im Chart):</strong></p>
+      <ul>
+        <li><span class="math">u = const</span> ⇔ <span class="math">log r = const</span> ⇔ <span class="math">r = const</span> ⇒ <em>Kreise / Tunnel-Ringe</em> (waagerechte Streifen in V1).</li>
+        <li><span class="math">v = const</span> ⇔ <span class="math">θ = const</span> ⇒ <em>Strahlen / Trichter</em> (senkrechte Streifen in V1).</li>
+        <li><span class="math">u + v = const</span> ⇔ <span class="math">log r + θ = const</span> ⇔ <span class="math">r = C·e^{−θ/b}</span> ⇒ <em>Logarithmische Spirale</em> (schräge Streifen) — <strong>genau das Lachgas-Erlebnis aus B.</strong></li>
+      </ul>
+      <p><strong>Singularität.</strong> An <span class="math">r = 0</span> (Fovea) ist <span class="math">φ</span> keine Homeomorphie mehr: <span class="math">log r → −∞</span> (B: „die Mitte bekommt VIEL mehr Platz"). Dort ist der Chart nur noch eine <em>Prägarbe</em> — die Fovea ist der Punkt, an dem A's Verklebungsaxiom versagt.</p>
+    </div>
+
+    <div class="card">
+      <h3>Der Mechanismus: warum die Garbe-Annahme hier erfüllt ist (und wo sie bricht)</h3>
+      <p><strong>Turing / Aktivator–Inhibitor (B, nach Turing 1952; Ermentrout &amp; Cowan 1979; Bressloff et al. 2001).</strong> Kurzreichweitige Erregung + langreichweitige Hemmung erzeugen aus homogenem Rauschen <em>regelmäßige Streifen</em> (derselbe Mechanismus hinter Leopardenflecken / Zebrastreifen). Die Fourier-Mode mit Wellenzahl <span class="math">q</span> wächst mit der <em>Dispersionsrate</em> <span class="math">λ(q)</span>; B modelliert sie als</p>
+      <p class="math" style="font-size:1.02em">λ(q) = −1 + 5·μ·( e^{−σₑ²q²/2} − 0.8·e^{−σᵢ²q²/2} )</p>
+      <p><strong>Stabilität vs. Instabilität.</strong> Stabil (keine Halluzination) genau dann, wenn <span class="math">λ(q) &lt; 0</span> für alle <span class="math">q</span> — das ist Goldenfelds (2018) Regime: <em>spärliche Verbindungen</em> unterdrücken spontane Muster, deshalb halluzinieren wir normalerweise <em>nicht</em>. Lachgas hebt die Erregbarkeit <span class="math">μ</span> (NMDA-Blockade + GABA-Potenzierung ⇒ E/I-Umschub), bis <span class="math">λ<sub>max</sub>(q*) &gt; 0</span> bei einer ausgewählten Wellenzahl <span class="math">q*</span> — dann wächst genau dieses Streifenmuster aus dem Rauschen.</p>
+      <p><strong>Warum gerade die Spirale.</strong> Die Kopplung ist <em>orientierungsselektiv / anisotrop</em> (Neuronen koppeln bevorzugt zu gleich orientierten Nachbarn <em>entlang</em> der Orientierung); das bricht die Rotationsinvarianz und begünstigt <em>schräge</em> Streifen <span class="math">u + v = const</span> — also im Gesichtsfeld <em>Logarithmische Spiralen</em>. Klüvers vier Formkonstanten (Tunnel, Spirale, Gitter, Spinnweb) sind damit alle nur <em>gerade Streifen im Chart</em>, je nach Richtung/Dichte der gewählten Mode.</p>
+    </div>
+
+    <div class="card">
+      <h3>Die fusionierte mathematische Fassung</h3>
+      <ul>
+        <li><strong>Globales Muster:</strong> <span class="math">s = φ⁻¹ ∘ a</span>, wobei <span class="math">a</span> die neuronale Aktivität auf dem Chart V1 und <span class="math">φ⁻¹</span> die inverse log-polare Abbildung ist (B: „Inverse log-Abbildung → Gesichtsfeld").</li>
+        <li><strong>Auswahl des Musters:</strong> <span class="math">a</span> ist der <em>stationäre Zustand</em> der Turing-PDE mit <span class="math">λ(q) &lt; 0</span> für alle <span class="math">q ≠ q*</span> und <span class="math">λ(q*) &gt; 0</span> — genau <em>ein</em> Modus wächst (Bressloff: erklärt alle Klüver-Muster).</li>
+        <li><strong>Treue:</strong> <span class="math">φ</span> lokal invertierbar auf <span class="math">ℝ² \ {0}</span> ⇒ <span class="math">s</span> ist dort ein wohldefinierter Schnitt (Garbe); bei <span class="math">r = 0</span> undefiniert ⇒ nur Prägarbe (der „Konflikt", die Fovea).</li>
+        <li><strong>Axiom ① (Unizität)</strong> = Injektivität der Keim-Zuordnung; <strong>Axiom ② (Verklebbarkeit)</strong> = die PDE erzeugt nur <em>kompatible</em> Familien (der Mechanismus erzwingt das Verkleben). Das <em>Equalizer</em> <span class="math">F(U) → ∏F(U_i) ⇉ ∏F(U_i∩U_j)</span> aus A ist die abstrakte Form der Menge der stationären Streifen-Zustände aus B.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: Chart → Gesichtsfeld, mit Prägarbe-Konflikt an der Fovea</h2>
+    <p>Interaktive Verkörperung der fusionierten These. Links: ein lokales Aktivitätsmuster <em>im Chart</em> V1 (Streifenrichtung wählbar). Rechts: dessen <em>log-polares Invers</em> im Gesichtsfeld — das, was man „sieht". Schräge Streifen ⇒ <strong>Spirale</strong> (das B-Erlebnis); waagerecht ⇒ Tunnel/Ringe; senkrecht ⇒ Strahlen. Der Umschalter <em>Prägarbe-Konflikt</em> erzwingt einen Phasensprung in der zentralen (fovalen) Region und macht sichtbar, wo die lokale Daten <em>nicht</em> verkleben — der „✗ Konflikt" aus A. <em>Fovea markieren</em> zeigt die Singularität, wo <span class="math">log r → −∞</span>.</p>
+
+    <div class="viz-card">
+      <div class="ctl-row">
+        <label>Muster in V1:
+          <select id="vPattern">
+            <option value="diagonal" selected>Schräg → Spirale (Lachgas)</option>
+            <option value="horizontal">Waagerecht → Tunnel / Ringe</option>
+            <option value="vertical">Senkrecht → Strahlen / Trichter</option>
+          </select>
+        </label>
+        <label>Dichte <input type="range" id="vQ" min="3" max="15" value="7"> <span id="vQv">7</span></label>
+        <label><input type="checkbox" id="vPresheaf"> Prägarbe-Konflikt (Fovea-Phasensprung)</label>
+        <label><input type="checkbox" id="vSing" checked> Fovea / Singularität markieren</label>
+      </div>
+
+      <div class="chip-row">
+        <span class="chip chip-ok" id="chipSheaf">Garben-Bedingung: ✓ lokal invertierbar (ℝ²\{0})</span>
+        <span class="chip" id="chipConflict" style="display:none">Prägarbe: ✗ Konflikt an der Fovea</span>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <h3>V1 (Chart, aufgeklappt)</h3>
+          <canvas id="cv1" width="320" height="320"></canvas>
+          <div class="cap">Streifen = abwechselnd aktive / gehemmte Neuronen. Konflikt = linke Hälfte (klein&nbsp;<span class="math">u</span>&nbsp;= foveal).</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="panel">
+          <h3>Gesichtsfeld (was du siehst)</h3>
+          <canvas id="cvf" width="320" height="320"></canvas>
+          <div class="cap">Inverse log-polare Abbildung. Roter Kreis = foveale Konfliktgrenze; Punkt = Singularität (Fovea).</div>
+        </div>
+      </div>
+
+      <div class="verdict v-ok" id="verdict">Garbe: die lokalen Streifen verkleben über ℝ²\{0} eindeutig zu einem globalen Muster; nur die Fovea (log r → −∞) bleibt singular.</div>
+      <p class="viz-note">Konvention (wie in B erklärt): waagerechte Streifen in V1 = <span class="math">log r</span>-Richtung ⇒ Ringe; senkrechte = Winkel-Richtung <span class="math">θ</span> ⇒ Strahlen; schräge = <span class="math">log r + θ</span> ⇒ Logarithmische Spirale. Alle Daten inline, keine externen Abfragen, themenreaktiv.</p>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../garben.html"><strong>A — garben.html:</strong> „Garbentheorie: Intuition, Visualisierung &amp; Formalismus"</a> — visuell-didaktischer Einstieg in Garben (Topologischer Raum, Schnitt, Einschränkung, Halm, Keim, Prägarbe, Garbe) mit durchgängigem Beispiel <span class="math">X = ℝ, F(U) = C(U, ℝ)</span> und den beiden Grundaxiomen (Unizität + Verklebbarkeit) als Equalizer.</li>
+      <li><a href="../kluever2.html"><strong>B — kluever2.html:</strong> „Warum du auf Lachgas eine Spirale gesehen hast"</a> — interaktive Erklärung der Klüver-Formkonstanten über die log-polare Kartierung von V1, den Turing-Aktivator–Inhibitor-Mechanismus, die Dispersionsrelation und den N₂O-getriebenen E/I-Umschub (Klüver 1920er, Turing 1952, Ermentrout &amp; Cowan 1979, Bressloff et al. 2001, Goldenfeld 2018).</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Runde 1, Paar 022) — Garbentheorie ✕ Lachgas-Spirale · lokal→global: der log-polare V1-Atlas ist eine Garbe über ℝ²\{0} und an der Fovea eine Prägarbe.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv1 = document.getElementById('cv1');
+  var cvf = document.getElementById('cvf');
+  var sel = document.getElementById('vPattern');
+  var qEl = document.getElementById('vQ');
+  var qVal = document.getElementById('vQv');
+  var pres = document.getElementById('vPresheaf');
+  var sing = document.getElementById('vSing');
+  var chipSheaf = document.getElementById('chipSheaf');
+  var chipConf = document.getElementById('chipConflict');
+  var verdict = document.getElementById('verdict');
+  if (!cv1 || !cvf || !sel || !qEl) return;
+
+  var S = 320, RMIN = 8, B = 2.0, A0 = -0.888;
+  var PI = Math.PI, PI2 = 2 * Math.PI;
+  var g1 = cv1.getContext('2d');
+  var g2 = cvf.getContext('2d');
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function hex(c){
+    c = c.replace('#','');
+    if (c.length === 3) c = c.charAt(0)+c.charAt(0)+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2);
+    var n = parseInt(c,16);
+    return [(n>>16)&255, (n>>8)&255, n&255];
+  }
+  function rgbArr(s){
+    s = (s || '').trim();
+    if (s.charAt(0) === '#') return hex(s);
+    var m = s.match(/\d+/g);
+    return m ? [parseInt(m[0],10), parseInt(m[1],10), parseInt(m[2],10)] : [0,0,0];
+  }
+  function mix(c1, c2, t){
+    var a = rgbArr(c1), b = rgbArr(c2);
+    return [Math.round(a[0]+(b[0]-a[0])*t), Math.round(a[1]+(b[1]-a[1])*t), Math.round(a[2]+(b[2]-a[2])*t)];
+  }
+  function pat(u, v, q){
+    var p = sel.value;
+    if (p === 'horizontal') return Math.cos(q * u);
+    if (p === 'vertical')   return Math.cos(q * v);
+    return Math.cos(q * (u + v) / 1.41421356);
+  }
+
+  function draw(){
+    var q = parseInt(qEl.value, 10);
+    if (qVal) qVal.textContent = q;
+    var isP = pres ? pres.checked : false;
+    var showS = sing ? sing.checked : true;
+    var hi = cssVar('--viz-pat-hi') || '#38bdf8';
+    var lo = cssVar('--viz-pat-lo') || '#16233c';
+    var danger = cssVar('--viz-danger') || '#fb7185';
+    var textc = cssVar('--viz-text') || '#e2e8f0';
+    var phase = PI;
+
+    // --- V1 chart ---
+    var img1 = g1.createImageData(S, S), d1 = img1.data;
+    for (var py = 0; py < S; py++){
+      var v = (py / S) * PI2;
+      for (var px = 0; px < S; px++){
+        var u = (px / S) * PI2;
+        var vv = pat(u, v, q);
+        var t = (vv + 1) / 2;
+        var c = mix(lo, hi, t);
+        var idx = (py * S + px) * 4;
+        d1[idx] = c[0]; d1[idx+1] = c[1]; d1[idx+2] = c[2]; d1[idx+3] = 255;
+      }
+    }
+    g1.putImageData(img1, 0, 0);
+    g1.strokeStyle = textc; g1.lineWidth = 1;
+    g1.beginPath(); g1.moveTo(0, S/2); g1.lineTo(S, S/2); g1.stroke();
+    if (isP){
+      g1.strokeStyle = danger; g1.lineWidth = 2.5; g1.setLineDash([7,5]);
+      g1.beginPath(); g1.moveTo(S/2, 0); g1.lineTo(S/2, S); g1.stroke(); g1.setLineDash([]);
+    }
+
+    // --- visual field ---
+    var img2 = g2.createImageData(S, S), d2 = img2.data;
+    var cx = S/2, cy = S/2, rmax = cx - 4;
+    for (var py2 = 0; py2 < S; py2++){
+      for (var px2 = 0; px2 < S; px2++){
+        var dx = px2 - cx, dy = py2 - cy;
+        var r = Math.sqrt(dx*dx + dy*dy);
+        var idx2 = (py2 * S + px2) * 4;
+        if (r < 3 || r > rmax){
+          d2[idx2] = 0; d2[idx2+1] = 0; d2[idx2+2] = 0; d2[idx2+3] = 255;
+          continue;
+        }
+        var th = Math.atan2(dy, dx);
+        var uu = A0 + B * Math.log(r / RMIN);
+        var v2 = th + PI;
+        var val = pat(uu, v2, q);
+        var tt = (val + 1) / 2;
+        var cc = mix(lo, hi, tt);
+        d2[idx2] = cc[0]; d2[idx2+1] = cc[1]; d2[idx2+2] = cc[2]; d2[idx2+3] = 255;
+      }
+    }
+    g2.putImageData(img2, 0, 0);
+
+    // conflict seam (circle at u = pi  <=>  r where A0 + B*ln(r/RMIN) = pi)
+    var rSeam = RMIN * Math.exp((PI - A0) / B);
+    if (isP){
+      g2.strokeStyle = danger; g2.lineWidth = 2.5; g2.setLineDash([7,5]);
+      g2.beginPath(); g2.arc(cx, cy, rSeam, 0, PI2); g2.stroke(); g2.setLineDash([]);
+    }
+
+    // fovea singularity
+    if (showS){
+      g2.fillStyle = danger; g2.beginPath(); g2.arc(cx, cy, 3, 0, PI2); g2.fill();
+      g2.fillStyle = textc; g2.font = '11px system-ui, sans-serif'; g2.textAlign = 'left';
+      g2.fillText('Fovea  (log r → −∞)', cx + 8, cy - 8);
+    }
+    g2.textAlign = 'left';
+
+    // chips + verdict
+    if (chipSheaf) chipSheaf.style.display = isP ? 'none' : '';
+    if (chipConf)  chipConf.style.display  = isP ? '' : 'none';
+    if (verdict){
+      if (isP){
+        verdict.className = 'verdict v-bad';
+        verdict.textContent = 'Prägarbe: die lokalen Streifen in der zentralen (fovalen) Region sind um π phasenversetzt — sie verkleben nicht. Sichtbar als Naht (Kreis) im Gesichtsfeld. Genau hier versagt A\'s Verklebungsaxiom.';
+      } else {
+        verdict.className = 'verdict v-ok';
+        verdict.textContent = 'Garbe: die lokalen Streifen verkleben über ℝ²\\{0} eindeutig zu einem globalen Muster; nur die Fovea (log r → −∞) bleibt singular.';
+      }
+    }
+  }
+
+  [sel, qEl, pres, sing].forEach(function(el){
+    if (!el) return;
+    el.addEventListener('change', draw);
+    el.addEventListener('input', draw);
+  });
+  window.addEventListener('resize', draw);
+
+  var tgl = document.getElementById('themeToggle');
+  if (tgl) tgl.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    requestAnimationFrame(draw);
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>

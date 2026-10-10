@@ -1,0 +1,15 @@
+{
+  "no": "029",
+  "a": "ehresmannconnection.html",
+  "b": "feedback.html",
+  "a_title": "The Ehresmann Connection - Interactive Visual Explainer",
+  "b_title": "Feedback Loops - Visual Mental Model",
+  "combined_theme": "kruemmung-als-nichtschliessend",
+  "one_line": "Ein Ehresmann-Konnektor und ein Paar Rückkopplungsschleifen sind dasselbe Objekt - eine Regel, die Baischritte in einen Zustandsraum hebt, in der Krümmung/positive Schleife das Nicht-Schließen (Holonomie) und die ausgleichende/negative Schleife die Projektion auf das Ziel ist.",
+  "contradictions": [
+    "A behandelt die Konnektor-Regel als freie, nicht-kanonische Wahl ('many possible choices') auf einem gegebenen Bündel; B behandelt die Rückkopplungsschleifen als feste, entdeckbare Struktur des Systems ('find them everywhere', 'which loop is dominant').",
+    "A wertet das Nicht-Schließen (Krümmung != 0 / Holonomie) als die Quelle aller Substanz und den flachen Fall als trivial; B wertet das analoge Driften (positive Schleife) als inhärente Instabilität, die der schließende Ausgleich bändigen muss - das Vorzeichen von 'gut' ist umgekehrt."
+  ],
+  "resolution": "GeltungsbereichsplussBilanz: A parametrisiert die Familie aller möglicher Gesetze (Regel = freie Wahl in der Theorie), B misst ein realisiertes Exemplar (Regel = Konstante in der Instanz); und Krümmung plus Ausgleich sind die zwei Terme einer einzigen Bilanz, bei der das S-Kurven-Plateau der Fixpunkt ist, an dem Trieb = Korrektur (Netto-Krümmung/Holonomie = 0).",
+  "viz": "Canvas-Simulation des diskreten Modells x[n+1] = x[n] + r*x[n]*(1 - x[n]/K): lila S-Kurve (Fusion: Trieb + Korrektur) vs. gestrichelte rote ungezähmte Krümmung (reine positive Schleife) vs. grüne Ziel-Faser/Tragfähigkeit K, mit live berechnetem 'ausgeglichener Holonomie'-Lücken-Balken am Laufpunkt; Slider für Krümmung r und Ziel K; theme-aware, inline-only."
+}

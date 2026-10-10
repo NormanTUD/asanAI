@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Der typische Kern im Rauschkanal — Shannon × Finnegans Wake</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>
+:root{
+  --bg:#faf8f1;
+  --panel:#ffffff;
+  --panel2:#f3efe4;
+  --ink:#1f2532;
+  --dim:#5b6472;
+  --accent:#2563eb;
+  --accent2:#db2777;
+  --good:#059669;
+  --warn:#b45309;
+  --border:#e2ddcf;
+  --chart-paper:#ffffff;
+  --chart-grid:#e7e2d3;
+  --chart-ink:#1f2532;
+}
+html.dark{
+  --bg:#0a0e1a;
+  --panel:#141b30;
+  --panel2:#1a2340;
+  --ink:#e7ecff;
+  --dim:#8892b8;
+  --accent:#7c9cff;
+  --accent2:#ff7ac6;
+  --good:#6ee7b7;
+  --warn:#fbbf24;
+  --border:#2a3358;
+  --chart-paper:#101627;
+  --chart-grid:#232d4d;
+  --chart-ink:#e7ecff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:2.05rem;line-height:1.22;margin:0 0 8px;font-weight:800;letter-spacing:-.02em}
+.subtitle{color:var(--dim);font-size:.95rem;margin:0 0 8px;font-style:italic}
+.subtitle .x{color:var(--accent2);font-style:normal;font-weight:700}
+h2{font-size:1.45rem;margin:46px 0 14px;padding-left:12px;border-left:4px solid var(--accent);line-height:1.25}
+h3{font-size:1.12rem;margin:22px 0 8px}
+p{margin:0 0 14px}
+section{scroll-margin-top:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:16px 0}
+.k{color:var(--dim);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px}
+.v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700}
+blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--accent2);background:var(--panel2);border-radius:0 8px 8px 0;font-style:italic}
+blockquote .src{display:block;font-style:normal;font-size:.8rem;color:var(--dim);margin-top:6px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:160px;flex:1}
+.ctrl label{font-size:.76rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+.ctrl .val{color:var(--ink);font-weight:700;font-family:ui-monospace,monospace;text-transform:none}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.primary:hover{opacity:.9}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;min-width:120px}
+.stat .k{margin-bottom:2px}
+.stat .v{font-size:1.05rem}
+.formula{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:12px 0;overflow-x:auto;min-height:1.4em}
+#vizPlot{width:100%;height:400px}
+.prov{padding:14px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;word-break:break-all}
+.prov a:hover{text-decoration:underline}
+.prov .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--dim);border:1px solid var(--border);border-radius:999px;padding:1px 8px;margin-right:8px}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:4px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:8px}
+.tagpill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.tagA{background:rgba(124,156,255,.16);color:var(--accent)}
+.tagB{background:rgba(255,122,198,.16);color:var(--accent2)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;margin:6px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Farbschema umschalten">☾ / ☀</button>
+<article>
+
+<h1>Der typische Kern im Rauschkanal</h1>
+<p class="subtitle">Shannons Asymptotische Gleichverteilungseigenschaft <span class="x">✕</span> James Joyces <i>Finnegans Wake</i></p>
+<p class="subtitle" style="font-style:normal;font-size:.82rem">Fusion aus: asymptotische_gleichverteilungseigenschaft.html ✕ finneganswake2.html</p>
+
+<!-- ============ THESE ============ -->
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere untersuchen <b>dasselbe Objekt von zwei entgegengesetzten Enden aus</b>. Das eine ist Shannons Informationstheorie — die Mathematik davon, wie eine <i>Nachricht</i> so weit wie möglich komprimiert und durch einen <i>Rauschkanal</i> geschickt werden muss, ohne verloren zu gehen. Das andere ist eine Lektüre von Joyces <i>Finnegans Wake</i> — ein Buch, das <i>selbst</i> eine Nachricht ist, die durch die rauschintensivsten möglichen Kanäle kreist: einen Traum, ein Gerücht, einen Litterhaufen, einen Fluss. Die Fusion lautet: <b>Beide sind zwei Grenzfälle einer einzigen Theorie der kreisenden Kommunikation.</b></p>
+<p>Das Kernaussage von A ist: Die Wirklichkeit lebt in einer winzigen <b>typischen Menge</b>. Von <span class="mono">2ⁿ</span> möglichen Sequenzen tragen nur etwa <span class="mono">2ⁿᴴ</span> fast die gesamte Wahrscheinlichkeitsmasse, und alle sind darin ungefähr gleich wahrscheinlich; ein einziger ergodischer Pfad erfasst das ganze Ensemble; das Untergrenzen-Maß ist <span class="mono">H</span> Bits. Das Kernaussage von B ist: Die Wirklichkeit ist ein kleiner, dichter, <b>wiederkehrender Kern</b> — ein Handvoll Motive und Wörter, die „Multitudes" tragen, in dem „every figure is every other figure" gilt und „the same returns" <i>„by a commodius vicus of recirculation"</i>.</p>
+<p>Das Verschmolzene: <b>Die typische Menge (A) und der wiederkehrende Kern des Wake (B) sind dieselbe Behauptung</b> — der astronomisch große Raum der Möglichkeiten ist eine Scheinwelt, und fast das gesamte Gewicht sitzt in einer kleinen, selbstähnlichen, sich wiederholenden Struktur. Shannon <i>quantifiziert</i> sie (<span class="mono">H</span> Bits, die ε-typische Menge, der exponentielle Abfall der atypischen Sequenzen); Joyce <i>inszeniert</i> sie (der Vico-Zyklus, das Wort, das ein ganzes Ensemble in sich trägt, der einzelne Träumer, der die ganze Geschichte enthält). Und das <b>Rauschen</b> bei B (Gerücht, Traum, Litter) ist exakt das, was die Theorie der großen Abweichungen bei A misst — während B's maximale Redundanz exakt A's Fehlerkorrektur ist.</p>
+</section>
+
+<!-- ============ WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden stehen sich in drei Punkten konkret und unvereinbar gegenüber — jeweils eine These von A gegen eine These von B:</p>
+
+<div class="card">
+<h3><span class="tagpill tagA">A</span> Irreduzible Zufälligkeit &nbsp;vs&nbsp; <span class="tagpill tagB">B</span> totales Muster / Schicksal</h3>
+<p><b>A sagt:</b> Die Quelle ist im Kern <b>zufällig</b>; es gibt irreduzible Entropie, also irreduzible Unsicherheit, und man kommt <b>nicht unter <span class="mono">H</span> Bits</b>. Das gesamte Gebäude ruht auf Wahrscheinlichkeit und dem Gesetz der großen Zahlen — Zufall ist die Grundsubstanz.</p>
+<p><b>B sagt:</b> Die Welt des Wake ist <b>totales Muster und totale Verknüpfung</b>: „every person, place and thing in the chaosmos of Alle anyway connected", „all of human experience … is ONE story, endlessly retold", „the same returns". Der Zyklus ist unausweichlich, der Fall ist vorherbestimmt, nichts ist zufällig.</p>
+<p style="color:var(--dim)"><b>Der scharfe Punkt:</b> A hält das Irreduzible für <i>Zufall/Entropie</i>, B für <i>Muster/Schicksal</i>. Auf den ersten Blick direkt unvereinbar.</p>
+</div>
+
+<div class="card">
+<h3><span class="tagpill tagA">A</span> Verlustfreie Rekonstruktion &nbsp;vs&nbsp; <span class="tagpill tagB">B</span> nicht-wiederherstellbare Vieldeutigkeit</h3>
+<p><b>A sagt:</b> Das Ideal ist die <b>treue, verlustfreie Rekonstruktion einer einzigen, wohldefinierten Quellennachricht</b> — man kann den Fehler beliebig klein machen (Rate ≥ Kapazität). Bedeutung ist stabil und wiederherstellbar.</p>
+<p><b>B sagt:</b> Es gibt <b>keine</b> eindeutige, wiederherstellbare Originalnachricht. Das Autorschafts-Problem des Briefs löst sich auf in „<i>Who wrote it? When? … The answer is that EVERYONE wrote it, at ALL times, in ALL languages</i>". Die eigentliche Tat des HCE wird nie klar erzählt; jede Weitererzählung ist eine andere, verzerrte Version. Bedeutung ist unentscheidbar und plural.</p>
+<p style="color:var(--dim)"><b>Der scharfe Punkt:</b> A: Die Nachricht <i>kann</i> exakt rekonstruiert werden. B: Es gibt <i>keine</i> exakte Nachricht, die zu rekonstruieren wäre.</p>
+</div>
+
+<div class="card">
+<h3><span class="tagpill tagA">A</span> Komprimierung / Redundanz tilgen &nbsp;vs&nbsp; <span class="tagpill tagB">B</span> Expansion / Redundanz maximieren</h3>
+<p><b>A sagt:</b> Das Ziel ist, die Nachricht auf <span class="mono">H</span> Bits zu <b>komprimieren</b> und Redundanz zu eliminieren; die typische Menge erlaubt es, die unwahrscheinlichen Sequenzen wegzuschmeißen. <i>Wirtschaftlichkeit</i> ist der Wert.</p>
+<p><b>B sagt:</b> Der Wert liegt in <b>maximaler Redundanz</b> — „every word contains multitudes", endlose Wortspiele, jedes Element enthält jedes andere. Das Wake ist das Gegenteil von Kompression: es <i>multipliziert</i> die Zeichen pro Bedeutung. <i>Überfluss</i> ist der Wert.</p>
+<p style="color:var(--dim)"><b>Der scharfe Punkt:</b> A strebt <i>minimale</i> Zeichen pro Nachricht, B <i>maximale</i> Zeichen pro Nachricht.</p>
+</div>
+</section>
+
+<!-- ============ AUFCLOESUNG ============ -->
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<div class="card">
+<h3>1. Zufall ↔ Muster: derselbe Gegenstand bei zwei Auflösungen</h3>
+<p>Der Brückenschlag ist <b>Ergodizität + die typische Menge</b>. Auf Mikro-Ebene ist der Prozess zufällig (jedes Symbol wird nach der Quellverteilung gezeichnet). Im Grenzwert ist er deterministisch: Die empirische Entropie konvergiert <i>fast sicher</i> gegen <span class="mono">H</span>, das Zeitmittel gegen die stationäre Verteilung. B's „totales Muster" ist also der <b>fast-sichere Grenzwert</b> von A's „Grundzufälligkeit" — keine Negation, sondern das <i>Zoom-out</i> davon: Rauschen im Pixel, Muster am Horizont. Der Zyklus widerspricht dem Zufall nicht; er ist sein Grenzwert. Und „ein einzelner, unendlich langer Pfad enthält bereits alle statistischen Informationen" (A) <i>ist</i> das, was B „Every figure is every other figure" nennt.</p>
+</div>
+
+<div class="card">
+<h3>2. Rekonstruktion ↔ Unentscheidbarkeit: Kanal von Quelle trennen</h3>
+<p>A's verlustfreie Rekonstruktion ist eine Aussage über den <b>Kanal</b>: Man stellt die <i>Bits</i> wieder her, die die Quelle gesendet hat, und treibt den Fehler gegen null. B's Unentscheidbarkeit ist eine Aussage über die <b>Quelle</b>: Es gibt keinen eindeutigen Urbild-Punkt, weil die Quelle der ganze Traum ist (eine Viele-zu-Eins-Abbildung). Kein Widerspruch, sobald die Ebenen getrennt werden: Das übertragene <i>Signal</i> lässt sich verlustfrei lesen (Shannon), während die <i>Signatur-Bedeutung</i> der Quelle keinen eindeutigen Antwortpunkt hat (Joyce). Die Bits des Briefs sind exakt lesbar; was sie <i>bedeuten</i>, ist der Plural des Traums.</p>
+</div>
+
+<div class="card">
+<h3>3. Komprimierung ↔ Expansion: Code von Text trennen, Redundanz = Fehlerkorrektur</h3>
+<p>A minimiert den <b>Code</b> (die Bits) bei Erhalt der Nachricht; B maximiert den <b>Text</b> (die Zeichen), während die zugrundeliegende Information — der wiederkehrende Kern, „the same returns" — fest bleibt. Das Wake ist damit eine <b>maximal redundante Kodierung eines kleinen, selbstähnlichen Kerns</b>. Und genau das ist der Trick: <b>Redundanz ist Fehlerkorrektur.</b> Wiederholung kauft Robustheit gegen Rausch. B's maximale Wortfülle ist also A's fehlerkorrigierender Code: viele Zeichen pro Bit, damit die Bedeutung den maximalen Rauschkanal aus Traum / Gerücht / Litter übersteht. Komprimierung und Expansion sind zwei Stellungen eines einzigen Reglers (Rate-Distortion).</p>
+</div>
+</section>
+
+<!-- ============ INHALT ============ -->
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>① Gemeinsame Bühne: Quelle, Kanal, Nachricht</h3>
+<p>A modelliert eine Quelle <span class="mono">X₁..Xₙ</span>, die Symbole mit Wahrscheinlichkeiten <span class="mono">p</span> ausspuckt, plus einen Kanal, der sie verzerrn kann. B ist dasselbe Drama: Der schlafende Träumer (HCE) ist die <b>Quelle</b>; das Gerücht, der Traum, der Litterhaufen und der Fluss Liffey sind der <b>Kanal</b>; der „Brief" ist die <b>Nachricht</b>.</p>
+<blockquote>“The letter is the book. The book is the letter. Both are the dreamer's attempt to explain himself.”<span class="src">— B, The Manifesta (Kap. I.5)</span></blockquote>
+<p>Der gemeinsame Rahmen der Fusion also: <b>Eine Quelle versucht, ihre Nachricht durch ein kreisendes, rauschendes Medium zu bringen.</b></p>
+
+<h3>② Die typische Menge ist der wiederkehrende Kern</h3>
+<p>Zentralsubjekt von A ist die ε-typische Menge:</p>
+<div class="formula" id="fTyp"></div>
+<p>Sie hat drei Eigenschaften: <span class="mono">P(A_ε⁽ⁿ⁾) → 1</span> (fast alles ist typisch), <span class="mono">|A| ≤ 2ⁿ⁽ᴴ⁺ᵋ⁾</span> (die Menge ist klein) und <span class="mono">p(x) ≈ 2⁻ⁿᴴ</span> für jedes typische <span class="mono">x</span>. Von <span class="mono">2ⁿ</span> Sequenzen zählen also nur ~<span class="mono">2ⁿᴴ</span>, und sie sind alle gleich wahrscheinlich — „alle typischen Sequenzen sind ungefähr gleich wahrscheinlich".</p>
+<p>B's Spiegelbild: Das Gewicht des Buches liegt in einer <b>kleinen Menge wiederkehrender Motive</b> (der Fall, die Auferstehung, der Fluss, der Traum, der Brief, der Vico-Zyklus mit seinen vier Zeitaltern: göttlich → heldisch → menschlich → <i>ricorso</i>) und in einer kleinen Menge von Wörtern („riverrun", „Anna Livia", „Howth", „wake", „thunder").</p>
+<blockquote>“Every word contains multitudes.”<span class="src">— B, The Dreamer and the Dream</span></blockquote>
+<p><b>Verschmolzen:</b> Typische Menge und dominante Motive des Wake sind dieselbe Behauptung — der große Raum ist Schein, fast alles Gewicht lebt im kleinen, selbstähnlichen, wiederkehrenden Kern. Shannon schreibt <span class="mono">2ⁿᴴ</span> von <span class="mono">2ⁿ</span>; Joyce schreibt „ONE story, endlessly retold".</p>
+
+<h3>③ Entropie als Überraschung = die Überraschung des Donners und des Wortspiels</h3>
+<div class="formula" id="fEnt"></div>
+<p>Ein Ereignis mit Wahrscheinlichkeit <span class="mono">p</span> trägt <span class="mono">−log p</span> Bits; die Entropie ist der erwartete Überraschungsgehalt; maximal bei Gleichverteilung, null bei Sicherheit.</p>
+<p>B's Spiegelbild: Das 100-Buchstaben-Donnerwort („bababadalgharaghtakamminarronn…") ist ein <b>Maximal-Überraschungs-Ereignis</b> — ein seltener, informationsdichter Ausbruch, der den Zyklus neu setzt. Die Wortspiele („riverrun" = river + run + <i>rêve</i>; „commodius vicus" = geräumige Straße + Vico) sind <i>seltene Koinzidenzen</i>, die die Information des Buches tragen.</p>
+<p><b>Verschmolzen:</b> Die informationsdichtesten Momente des Wake sind genau seine überraschendsten, unwahrscheinlichsten — exakt das, was <span class="mono">−log p</span> misst. <b>Ein Wortspiel ist ein negativer Log-Likelihood-Peak, der zu Sprache geworden ist.</b></p>
+
+<h3>④ Ergodizität: ein Pfad = das ganze Ensemble = ein Träumer = die ganze Geschichte</h3>
+<div class="formula" id="fErg"></div>
+<p>Zeitmittel = Ensembledurchschnitt; ein einzelner, unendlicher Pfad trägt alle statistische Information des Prozesses.</p>
+<blockquote>“Every figure is every other figure. Every word contains multitudes.”<span class="src">— B, The Dreamer and the Dream</span></blockquote>
+<p><b>Verschmolzen:</b> Der Vico-Zyklus (göttlich → heldisch → menschlich → <i>ricorso</i>) <i>ist</i> die ergodische Orbit. Die stationäre Verteilung der Markov-Kette ist das „commodius vicus of recirculation" — das Zeitmittel <b>kehrt zum selben Ort zurück</b>, genau wie der Fluss zum Meer, als Regen, zurück ins Land.</p>
+
+<h3>⑤ Rauschen, Gerücht, große Abweichungen</h3>
+<p>A: Die Wahrscheinlichkeit einer <i>atypischen</i> (stark verzerrten) Sequenz fällt <b>exponentiell</b> ab (Theorie der großen Abweichungen / Cramér); der Rauschkanal degradiert die Nachricht; <b>Redundanz (Wiederholung) ist das Gegenmittel</b> — fehlerkorrigierende Codes.</p>
+<blockquote>“The rumor spreads and mutates like a virus through Dublin.”<span class="src">— B, The Sin in the Park</span></blockquote>
+<blockquote>“[the letter] folded with cunning, sealed with crime, uptied by a harlot, undone by a child.”<span class="src">— B, The Hen and the Midden Heap</span></blockquote>
+<p>Bei B ist jede Weitererzählung eine <i>Kanalnutzung mit Fehler</i>; der Litterhaufen ist reines Rauschen; das „Ballad" und die „List of Names" sind die <b>empfangenen, verzerrten Signale</b>. <b>Verschmolzen:</b> Das Gerücht ist eine Kette rauschender Kanalnutzungen, und die maximale Redundanz des Wake ist die <i>Fehlerkorrektur</i>, die „the same returns" durch das Rauschen rettet.</p>
+
+<h3>⑥ Die Shannon-Grenze als Wirbelsäule des Buchs</h3>
+<div class="formula" id="fAep"></div>
+<p>A: <span class="mono">H</span> Bits/Symbol ist das <b>irreduzible Minimum</b> (Source-Coding-Theorem) — man muss nur die typischen Sequenzen kodieren.</p>
+<p>B's Spiegelbild: Der Brief ist die <i>komprimierte Selbst-Erklärung</i> des Träumers; die vier Bücher / vier Zeitalter sind die Blockstruktur des Codes.</p>
+<p><b>Verschmolzen:</b> Das Wake ist eine Nachricht, die sich <b>weigert, unter ihr <span class="mono">H</span> komprimiert zu werden</b> — sie gibt ihre überschüssige Redundanz für Schönheit und für das Überleben im rauschintensivsten aller Kanäle (einem Traum) aus.</p>
+</section>
+
+<!-- ============ VISUALISIERUNG ============ -->
+<section id="visualisierung">
+<h2>Interaktive Visualisierung</h2>
+<div class="card">
+<p><b>Shannons Kern, Joyces Rausch — in einer Abbildung.</b> Blaue Säulen: <i>saubere</i> Sequenzen aus einer Bernoulli-Quelle; ihre empirische Entropie <span class="mono">−(1/n)·log₂ p</span> konvergiert gegen <span class="mono">H(X)</span> (die AEP). Die gestrichene Linie ist <span class="mono">H(X)</span> — der <b>typische Kern / die Shannon-Grenze</b>, in der fast die gesamte Masse steckt. Rosa Säulen: dieselben Sequenzen nach jedem <i>Weitererzählen</i> (jedes Symbol wird mit Wahrscheinlichkeit <span class="mono">q</span> gedreht = das Gerücht, der Traum, der Litter).</p>
+<p>Bei <span class="mono">q = 0</span> (Shannons reine Welt) fallen beide Verteilungen auf den Kern zusammen. Steigert ihr <span class="mono">q</span> (Joyces Welt), wandert die rosa Masse <b>auf die atypische Seite</b> — der Rauschkanal zerlegt den Kern, aber der Kern bleibt die Referenz, zu der sich alles ergodisch „wieder zurück" bewegt. Schiebt <span class="mono">q</span> auf 0, seht ihr Shannons Minimum; schiebt es hoch, seht ihr Joyces Maximum — <b>zwei Stellungen desselben Reglers.</b></p>
+
+<div class="controls">
+  <div class="ctrl"><label>Quelle p (Fluss der Quelle) <span class="val" id="valP">0.30</span></label><input type="range" id="vizP" min="0.05" max="0.95" step="0.01" value="0.30"></div>
+  <div class="ctrl"><label>Blocklänge n (wie viel Nacht) <span class="val" id="valN">150</span></label><input type="range" id="vizN" min="20" max="400" step="10" value="150"></div>
+  <div class="ctrl"><label>Rausch q (Gerücht pro Symbol) <span class="val" id="valQ">0.15</span></label><input type="range" id="vizQ" min="0" max="0.5" step="0.01" value="0.15"></div>
+  <button class="primary" id="vizRun">Neu würfeln</button>
+</div>
+<div class="legend">
+  <span><span class="sw" style="background:var(--accent)"></span>sauber — Shannon-Kern (i.i.d.)</span>
+  <span><span class="sw" style="background:var(--accent2)"></span>geräuscht — das Gerücht / Rauschkanal</span>
+  <span><span class="sw" style="background:var(--good)"></span>H(X) — typischer Kern / Shannon-Grenze</span>
+</div>
+<div id="vizPlot"></div>
+<div class="statrow">
+  <div class="stat"><span class="k">H(X) — Shannon-Grenze</span><span class="v" id="stH">—</span></div>
+  <div class="stat"><span class="k">saubere Masse in ±0,1 um H</span><span class="v" id="stFClean" style="color:var(--accent)">—</span></div>
+  <div class="stat"><span class="k">geräuschte Masse in ±0,1 um H</span><span class="v" id="stFNoisy" style="color:var(--accent2)">—</span></div>
+</div>
+</div>
+</section>
+
+<!-- ============ PROVENIENZ ============ -->
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="card">
+  <div class="prov">
+    <div><span class="tag">A</span><a href="../asymptotische_gleichverteilungseigenschaft.html">asymptotische_gleichverteilungseigenschaft.html</a></div>
+    <div class="desc">Interaktive, deutschsprachige Reise durch das Herz der Informationstheorie: Shannons Frage, Entropie, Gesetz der großen Zahlen, die AEP, die typische Menge, Kompression, Ergodizität, der Shannon–McMillan–Breiman-Satz und der Algoet–Cover-„Sandwich"-Beweis — mit KaTeX-Formeln und Plotly-Experimenten (Münzwurf, Konvergenz, Markov-Ketten).</div>
+  </div>
+  <div class="prov">
+    <div><span class="tag">B</span><a href="../finneganswake2.html">finneganswake2.html</a></div>
+    <div class="desc">Englischsprachige visuelle Lektüre von James Joyces <i>Finnegans Wake</i> (1939): der Vico-Zyklus, die Figuren (HCE, ALP, Shem, Shaun, Issy), der Fall und das Donnerwort, die Sünde des HCE, das Gerücht, der „Brief" vom Litterhaufen, der Fluss- und Traumcharakter — mit einem kreisenden Zyklus-Diagramm und einer fließenden Fluss-Canvas-Animation.</div>
+  </div>
+</div>
+</section>
+
+</article>
+
+<script>
+function $(id){ return document.getElementById(id); }
+function binaryEntropy(p){ if(p<=0||p>=1) return 0; return -(p*Math.log(p)+(1-p)*Math.log(1-p))/Math.LN2; }
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+function drawViz(){
+  if(!window.Plotly) return;
+  var p=+$('vizP').value;
+  var n=+$('vizN').value;
+  var q=+$('vizQ').value;
+  $('valP').textContent=p.toFixed(2);
+  $('valN').textContent=n;
+  $('valQ').textContent=q.toFixed(2);
+  var M=3000;
+  var H=binaryEntropy(p);
+  var clean=new Array(M), noisy=new Array(M);
+  for(var m=0;m<M;m++){
+    var lc=0, ln=0;
+    for(var i=0;i<n;i++){
+      var x = (Math.random()<p)?1:0;
+      lc += x?Math.log(p):Math.log(1-p);
+      var y = (Math.random()<q)?(1-x):x;
+      ln += y?Math.log(p):Math.log(1-p);
+    }
+    clean[m]= -lc/n/Math.LN2;
+    noisy[m]= -ln/n/Math.LN2;
+  }
+  var eps=0.1;
+  function inBand(a){ var c=0; for(var j=0;j<a.length;j++){ if(Math.abs(a[j]-H)<=eps) c++; } return c/a.length; }
+  var fc=inBand(clean), fn=inBand(noisy);
+  $('stH').textContent=H.toFixed(3)+' bit';
+  $('stFClean').textContent=(fc*100).toFixed(1)+' %';
+  $('stFNoisy').textContent=(fn*100).toFixed(1)+' %';
+  var paper=cssVar('--chart-paper')||'#ffffff';
+  var grid=cssVar('--chart-grid')||'#e7e2d3';
+  var ink=cssVar('--chart-ink')||'#1f2532';
+  var acc=cssVar('--accent')||'#2563eb';
+  var acc2=cssVar('--accent2')||'#db2777';
+  var good=cssVar('--good')||'#059669';
+  Plotly.newPlot('vizPlot',[
+    {x:clean,type:'histogram',nbinsx:55,histnorm:'probability density',marker:{color:acc,opacity:.85,line:{width:0}},name:'sauber — Shannon-Kern (i.i.d.)'},
+    {x:noisy,type:'histogram',nbinsx:55,histnorm:'probability density',marker:{color:acc2,opacity:.55,line:{width:0}},name:'geräuscht — Gerücht / Rauschkanal'}
+  ],{
+    paper_bgcolor:paper,plot_bgcolor:paper,
+    font:{color:ink,family:'-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif'},
+    margin:{t:34,r:18,b:50,l:58},
+    barmode:'overlay',
+    xaxis:{title:'−(1/n)·log₂ p(x₁..xₙ)   (empirische Entropie)',gridcolor:grid,zmin:0},
+    yaxis:{title:'Dichte',gridcolor:grid},
+    legend:{orientation:'h',y:1.14,x:0,bgcolor:'rgba(0,0,0,0)'},
+    shapes:[{type:'line',x0:H,x1:H,yref:'paper',y0:0,y1:1,line:{color:good,width:3,dash:'dash'}}],
+    annotations:[{x:H,y:1.0,yref:'paper',xref:'x',text:'H(X) = typischer Kern',showarrow:true,arrowhead:2,ax:0,ay:-30,font:{color:good,size:12},bgcolor:paper,bordercolor:good,borderwidth:1,bordershape:'pitch'}]
+  },{displayModeBar:false,responsive:true});
+}
+
+function renderMath(){
+  var plain={
+    fEnt:'H(X) = Σ_x p(x)·(−log₂ p(x))  =  E[−log₂ p(X)]',
+    fAep:'−(1/n)·log₂ p(X₁,…,Xₙ)  →  H(X)      (fast sicher, n→∞)',
+    fTyp:'A_ε^(n) = { x :  | −(1/n)·log₂ p(x) − H(X) | < ε }',
+    fErg:'(1/n)·Σ_{i=1..n} g(X_i)  →  E[g(X)]      (fast sicher)'
+  };
+  if(!window.katex){
+    for(var k in plain){ var e=$(k); if(e) e.textContent=plain[k]; }
+    return;
+  }
+  var tex={
+    fEnt:'H(X)\\;=\\;\\sum_{x} p(x)\\,\\big(-\\log_2 p(x)\\big) \\;=\\; \\mathbb{E}\\,\\big[-\\log_2 p(X)\\big]',
+    fAep:'-\\frac{1}{n}\\log_2 p(X_1,\\dots,X_n) \\;\\xrightarrow{\\;\\text{fast sicher}\\;}\\; H(X)',
+    fTyp:'A_{\\varepsilon}^{(n)}\\;=\\;\\Big\\{\\,x\\,:\\,\\big|\\,-\\tfrac{1}{n}\\log_2 p(x)-H(X)\\,\\big|<\\varepsilon\\,\\Big\\}',
+    fErg:'\\frac{1}{n}\\sum_{i=1}^{n} g(X_i) \\;\\xrightarrow{\\text{fast sicher}}\\; \\mathbb{E}\\,[\\,g(X)\\,]'
+  };
+  for(var id in tex){
+    var el=$(id); if(!el) continue;
+    try{ katex.render(tex[id], el, {throwOnError:false, displayMode:true}); }
+    catch(err){ el.textContent=plain[id]; }
+  }
+}
+
+function wire(){
+  ['vizP','vizN','vizQ'].forEach(function(id){ $(id).addEventListener('input',drawViz); });
+  $('vizRun').addEventListener('click',drawViz);
+  $('themeToggle').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    drawViz();
+  });
+}
+
+window.addEventListener('load',function(){
+  wire();
+  renderMath();
+  drawViz();
+});
+</script>
+
+</body>
+</html>

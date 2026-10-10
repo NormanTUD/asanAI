@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Das Kraftfeld als Fluss — Lewin × Lie</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --fg:#1c1b22; --muted:#5c5a63; --card:#ffffff; --card2:#faf8f2;
+    --border:#ddd6c8; --accent:#0369a1; --accent2:#b45309;
+    --h1-grad-a:#0369a1; --h1-grad-b:#b45309;
+    --viz-bg:#ffffff; --viz-grid:#eceadf; --viz-text:#1c1b22; --viz-muted:#8a8774;
+    --viz-pos:#0a7d52; --viz-neg:#c0392b; --viz-amb:#7c3aed; --viz-person:#b45309;
+    --viz-field:#0369a1; --viz-need:#6d28d9; --viz-gap:#be185d;
+    --viz-inset:rgba(255,255,255,0.72); --viz-inset-stroke:#cfc8b4;
+  }
+  html.dark{
+    --bg:#0f172a; --fg:#e6e9ef; --muted:#98a2b3; --card:#111c30; --card2:#0d1526;
+    --border:#26344d; --accent:#38bdf8; --accent2:#fbbf24;
+    --h1-grad-a:#38bdf8; --h1-grad-b:#fbbf24;
+    --viz-bg:#0b1322; --viz-grid:#16233c; --viz-text:#e6e9ef; --viz-muted:#7d8aa3;
+    --viz-pos:#10b981; --viz-neg:#ef4444; --viz-amb:#a855f7; --viz-person:#f59e0b;
+    --viz-field:#38bdf8; --viz-need:#818cf8; --viz-gap:#f472b6;
+    --viz-inset:rgba(11,19,34,0.6); --viz-inset-stroke:#26344d;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  article{max-width:820px; margin:0 auto; padding:40px 20px 80px;}
+  h1{
+    font-size:2.05rem; line-height:1.2; margin:0 0 6px;
+    background:linear-gradient(90deg,var(--h1-grad-a),var(--h1-grad-b));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .subtitle{color:var(--muted); font-size:.98rem; margin:0 0 4px; font-family:ui-monospace,Menlo,monospace;}
+  .lede{color:var(--muted); font-size:1.02rem; margin:16px 0 26px; border-left:3px solid var(--accent); padding-left:14px;}
+  section{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:22px 24px; margin:20px 0;
+  }
+  section h2{font-size:1.35rem; margin:0 0 12px; color:var(--fg);}
+  section h2 .tag{
+    display:inline-block; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--card2); border:1px solid var(--border); color:var(--muted);
+    padding:2px 8px; border-radius:20px; vertical-align:middle; margin-left:8px;
+  }
+  p{margin:10px 0;}
+  .whoA{color:var(--accent); font-weight:600;}
+  .whoB{color:var(--accent2); font-weight:600;}
+  .claim{
+    background:var(--card2); border-left:3px solid var(--border);
+    padding:8px 14px; margin:8px 0; border-radius:0 8px 8px 0; font-size:.95rem;
+  }
+  .claimA{border-left-color:var(--accent);}
+  .claimB{border-left-color:var(--accent2);}
+  .math{
+    font-family:ui-monospace,Menlo,monospace; background:var(--card2);
+    border:1px solid var(--border); border-radius:6px; padding:1px 6px; font-size:.92em; white-space:nowrap;
+  }
+  .formula{
+    background:var(--card2); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:8px; padding:12px 16px; margin:12px 0;
+    font-family:ui-monospace,Menlo,monospace; font-size:1.02rem; text-align:center;
+  }
+  .conf{background:var(--card2); border:1px solid var(--border); border-left:4px solid var(--border); border-radius:10px; padding:14px 16px; margin:14px 0;}
+  .conf h3{margin:0 0 8px; font-size:1.03rem; color:var(--fg);}
+  .confA{border-left-color:var(--accent);}
+  .confB{border-left-color:var(--accent2);}
+  table.map{width:100%; border-collapse:collapse; margin:14px 0; font-size:.92rem;}
+  table.map th,table.map td{border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top;}
+  table.map th{background:var(--card2);}
+  table.map td:nth-child(2){color:var(--accent);}
+  table.map td:nth-child(3){color:var(--accent2);}
+  table.map td:nth-child(4){font-weight:600;}
+  ul{margin:8px 0; padding-left:22px;}
+  li{margin:6px 0;}
+  .vizwrap{border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--viz-bg); margin:10px 0;}
+  canvas{display:block; width:100%; height:auto; max-width:760px; margin:0 auto; touch-action:none;}
+  .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:14px 0 6px;}
+  .controls select, .controls button{
+    font:inherit; color:var(--fg); background:var(--card2); border:1px solid var(--border);
+    padding:8px 12px; border-radius:8px; cursor:pointer;
+  }
+  .controls select{min-width:220px;}
+  .controls button:hover{border-color:var(--accent);}
+  .readout{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0;}
+  .chip{
+    background:var(--card2); border:1px solid var(--border); border-radius:20px;
+    padding:4px 12px; font-size:.85rem; color:var(--muted);
+  }
+  .chip b{color:var(--fg); font-family:ui-monospace,Menlo,monospace;}
+  .chip.hot b{color:var(--accent2);}
+  .status{color:var(--muted); font-size:.9rem; margin:8px 0; min-height:1.2em;}
+  .legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; font-size:.82rem; color:var(--muted);}
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:14px; height:14px; border-radius:50%; display:inline-block; border:1px solid var(--border);}
+  ul.prov{list-style:none; padding:0; margin:0;}
+  ul.prov li{background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin:10px 0;}
+  ul.prov a{color:var(--accent); font-weight:600; text-decoration:none;}
+  ul.prov a:hover{text-decoration:underline;}
+  ul.prov small{color:var(--muted); display:block; margin-top:4px;}
+  .note{color:var(--muted); font-size:.88rem;}
+</style>
+</head>
+<body>
+<article>
+  <h1>Das Kraftfeld als Fluss</h1>
+  <p class="subtitle">Fusion aus: psychologische_feldtheorie.html &#10005; lie.html</p>
+  <p class="lede">
+    Beide Papiere sind, auf den Kern reduziert, dieselbe Art von Theorie:
+    Wie eine <em>lokale</em> Struktur — ein Momentbild von Kräften (Lewin) bzw. ein
+    infinitesimaler Generator (Lie) — über einen Raum integriert eine
+    <em>globale Bahn</em> erzeugt (ein Verhalten bzw. eine Transformation).
+    Die Fusion liest Lewins <span class="math">V = f(P, U)</span> als
+    einen <strong>Fluss eines Vektorfeldes</strong>: die Person ist ein konstanter
+    Generator, die Umwelt ein ortsabhängiges Feld, das Verhalten die Integralkurve.
+  </p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion <span class="tag">eine Position</span></h2>
+    <p>
+      <span class="whoA">Lewin</span> sagt: Verhalten <em>V</em> ist eine Funktion von Person <em>P</em>
+      und Umwelt <em>U</em> — <span class="math">V = f(P, U)</span> — und entsteht aus der
+      <em>aktuellen dynamischen Konstellation</em> aller gleichzeitig wirkenden Kräfte (Vektoren),
+      nicht aus Vergangenheit oder Zukunft. <span class="whoB">Lie</span> sagt: Eine Lie-Gruppe ist
+      eine <em>glatte Mannigfaltigkeit</em> aus Transformationen; ihr Tangentialraum an der
+      Identität — die <em>Lie-Algebra</em> — enthält die <em>infinitesimalen Generatoren</em>
+      („die Regler sind Lie-Algebra-Elemente“), und die <em>Exponentialabbildung</em>
+      <span class="math">exp</span> „exponiert“ einen solchen kleinen Pfeil zur vollen
+      Transformation; der <em>Einparameter-Fluss</em> ist die eigentliche Bahn.
+    </p>
+    <p>
+      Die integrierte These: <strong>Ein Lebensraum ist eine (topologische) Mannigfaltigkeit,
+      auf der ein Vektorfeld lebt; eine Person ist ein konstanter Generator
+      (ein Lie-Algebra-Element); das Verhalten ist der Fluss der Summe aus diesem
+      Generator und dem ortsabhängigen Valenzfeld der Umwelt.</strong>
+      Lewins „Resultante aller Kraftvektoren“ <em>ist</em> der Vektor des Feldes an der
+      aktuellen Stelle; Lewins „Massenpunkt bewegt sich“ <em>ist</em> die Integration dessen
+      zur Bahn. Und Lewins <em>Konflikt</em> <em>ist</em> ein Punkt, an dem der
+      Nettogenerator verschwindet — ein Gleichgewicht — dessen (Un)stabilität die
+      <em>Lie-Klammer</em> [P, U] misst: vertauschbare Kräfte bedeuten keinen Konflikt,
+      nicht-vertauschbare einen irreduziblen.
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B <span class="tag">konkret</span></h2>
+    <p>Die zwei Papiere sind nicht bloß verschieden, sie nehmen an drei Stellen
+    <em>inkompatible</em> Stellungen ein. Jede Behauptung wird unten der Quelle zugeordnet
+      (Paraphrase, keine Erfindung).</p>
+
+    <div class="conf">
+      <h3>① Determinismus vs. Zufall im Gleichgewicht</h3>
+      <div class="claim claimB"><span class="whoB">lie.html:</span> „Die Lie-Algebra bestimmt die Form der Bahn“ —
+        der Einparameter-Fluss ist durch Generator + Startpunkt <em>eindeutig</em> festgelegt;
+        <span class="math">exp(X)</span> liefert eine <em>bestimmte</em> Transformation. Kein Spielraum.</div>
+      <div class="claim claimA"><span class="whoA">feldtheorie.html:</span> Beim Annäherungs–Annäherungskonflikt
+        (Buridans Esel) „schwankt die Person zwischen ihnen. <em>Kleine Zufälle entscheiden.</em>“
+        Im Gleichgewicht ist das Verhalten <em>nicht</em> durch das Feld allein bestimmt.</div>
+      <p class="note">B: Bahn vollständig determiniert. A: am symmetrischen Gleichgewicht bricht ein
+      Zufall die Waage. — Direkte Inkompatibilität über die <em>Bestimmtheit</em> der Bahn.</p>
+    </div>
+
+    <div class="conf">
+      <h3>② Topologischer (qualitativer) vs. metrischer (quantitativer) Raum</h3>
+      <div class="claim claimA"><span class="whoA">feldtheorie.html:</span> Der Lebensraum ist ausdrücklich
+        <em>topologisch</em>: „räumliche Lagebeziehungen <em>ohne Rücksicht auf Form und Größe</em> …
+        nicht metrisch, sondern strukturell.“ Gleichzeitig aber: „Kraft ∝ Valenz / Distanz²“ —
+        ein <em>metrisches</em>, distances­abhängiges Kraftgesetz.</div>
+      <div class="claim claimB"><span class="whoB">lie.html:</span> Durchgehend <em>metrisch-analytisch</em>:
+        Mannigfaltigkeitsgeometrie, Exponentialabbildung, und die Kommutator-Lücke wird als
+        Norm angegeben („∝ ε²“). Die Struktur ist <em>messen</em> (Winkel, Längen, Normen).</div>
+      <p class="note">A's <em>Titel-Behauptung</em> ist nicht-metrisch/strukturell, seine Mechanik
+      aber metrisch. B setzt sich vollständig zur metrisch-analytischen Seite. — Ein
+      Widerspruch über die <em>Natur des Raumes</em> selbst.</p>
+    </div>
+
+    <div class="conf">
+      <h3>③ Konstanter Generator vs. ortsabhängige, zerfallende Kraft</h3>
+      <div class="claim claimB"><span class="whoB">lie.html:</span> Die Regler sind <em>konstante</em>
+        Lie-Algebra-Elemente; <span class="math">exp(tX)</span> wendet <em>dasselbe</em> infinitesimale
+        Element über den ganzen Fluss an (linksinvariant). Die „Kraft“ ist überall dieselbe.</div>
+      <div class="claim claimA"><span class="whoA">feldtheorie.html:</span> Die Valenz-Kraft <em>hängt von der
+        Distanz</em> zu jedem Objekt ab (umgekehrt-quadrateisch) — ein <em>ortsabhängiges</em>, nahe den
+        Objekten <em>singuläres</em> Feld.</div>
+      <p class="note">B: konstanter, uniformer Generator. A: ortsabhängiges, zerfallendes Feld. —
+      Ein Widerspruch über die <em>Räumlichkeit der Kraft</em>.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung <span class="tag">Vermittlung</span></h2>
+
+    <p><strong>① Determinismus vs. Zufall.</strong> Ein Vektorfeld <em>ist</em> eine
+    Differentialgleichung — determiniert <em>außerhalb</em> der Gleichgewichte. Genau
+    <em>am</em> degenerierten Gleichgewicht (Nettogenerator = 0, Sattel/Flachpunkt) entscheidet die
+    <em>linearisierte</em> Struktur — die Lie-Klammer / die Jakobi des Feldes — welche
+    Einparameter-Richtungen instabil sind. Ein infinitesimales Zucken („Kleiner Zufall“)
+    wird dann entlang der instabilen Richtung <em>verstärkt</em> und wählt die Ausrichtung.
+    Beides stimmt also: Das Feld bestimmt den Fluss (B); am Gleichgewicht wählt eine
+    infinitesimale Störung unter den verfügbaren Richtungen (A). „Kleine Zufälle entscheiden“
+    <em>ist</em> die Instabilität eines degenerierten Gleichgewichts.</p>
+
+    <p><strong>② Topologie vs. Metrik.</strong> Zwei <em>Beschreibungsebenen</em> eines
+    Objekts. Die topologische Ebene (Regionen, Barrieren, Konnektivität — <em>ob</em> man
+    hindurchkommt, welche Regionen erreichbar sind) ist qualitativ; die metrisch-differential­
+    geometrische Ebene (Kraftgrößen, Distanzen, die Exponentialabbildung, Krümmung) ist
+    quantitativ und trägt die Dynamik. Lewins „Topologie“ <em>ist</em> die Topologie der
+    Mannigfaltigkeit; Lewins verborgenes Distanz²-Gesetz plus Lies <span class="math">exp</span>
+    <em>sind</em> das Vektorfeld / die Verbindung darauf. Topologie sagt
+    <em>ob / möglich</em>, das Feld sagt <em>wie</em> (Dynamik). Keine Rivalen, sondern
+    Schichten.</p>
+
+    <p><strong>③ Konstant vs. ortsabhängig.</strong> Trennt man die zwei Naturen in die
+    zwei Faktoren von <span class="math">V = f(P, U)</span> auf, fällt der Widerspruch weg:
+    Die <em>Person P</em> trägt einen <em>konstanten</em> „Bedürfnis-Generator“ (ein festes
+    Lie-Algebra-Element: „ein Bedürfnis der Stärke s in Richtung d“) — das ist B's
+    konstante Regler. Die <em>Umwelt U</em> ist das <em>ortsabhängige</em> Valenzfeld
+    (die Distanz²-Objekte) — das ist A's zerfallende Kraft. Das <em>Verhalten V</em> ist
+    der Fluss der <em>Summe</em> <span class="math">P + U(x)</span>. Konstant + ortsabhängig
+    = Person + Umwelt.</p>
+
+    <div class="formula">
+      V = Fluss&#8201;&#123; P &nbsp;+&nbsp; U(x) &#125; &nbsp;&nbsp;|&nbsp;&nbsp;
+      Konflikt &#10232; [P, U] = 0 &nbsp;&nbsp;|&nbsp;&nbsp;
+      Gleichgewicht &#10232; P + U(x) = 0
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt <span class="tag">Substanz</span></h2>
+
+    <p><span class="whoA">A (Lewin) — Kraftfelder des Lebensraums.</span>
+    <span class="math">V = f(P, U)</span>; ein <em>Feld</em> ist die Gesamtheit aller
+    gleichzeitig wirkenden Kräfte; Objekte tragen <em>Aufforderungscharaktere</em> (Valenzen,
+    + anziehend / − abstoßend); <span class="math">Kraft ∝ Valenz / Distanz²</span>; die
+    Person bewegt sich in Richtung der <em>Summe</em> aller Vektoren. Der Lebensraum ist
+    topologisch: <em>Regionen</em> (Arbeit, Familie, …), getrennt durch <em>Barrieren</em>
+    (durchlässig bis rigide), die Person als „Massenpunkt“. Vier <em>Konflikttypen</em>:
+    Annäherung–Annäherung (Buridans Esel), Vermeidung–Vermeidung, <em>Ambivalenz</em>
+    (+/− am selben Objekt — das Kind vor dem Hund) und doppelte Ambivalenz (oszillierend,
+    „klassische Neurose“). <em>Spannungssysteme</em>: ein <em>Quasibedürfnis</em> (Vornahme,
+    Aufgabe) erzeugt innere Spannung; unbeendete Aufgaben werden besser erinnert als
+    beendete (<em>Zeigarnik-Effekt</em>); Unterbrochenes löst eine „außerordentlich starke
+    Wiederaufnahmetendenz“ aus (Ovsiankina), „auch Wochen später“. <em>Sättigung</em>
+    (Karsten): Wiederholung einer Handlung → Einarbeiten, Sättigung (Variationen/Zerfall),
+    Übersättigung (Fehler/Chaos), Affektausbruch.</p>
+
+    <p><span class="whoB">B (Lie) — Generatoren und Flüsse.</span>
+    Eine <em>Lie-Gruppe</em> = glatte Mannigfaltigkeit aus Transformationen (stufenlos
+    verbindbar, keine Sprünge). Die <em>Lie-Algebra</em> = Tangentialraum an der Identität
+    (= „nichts tun“) = die <em>infinitesimalen Generatoren</em> — „die Regler sind
+    Lie-Algebra-Elemente“ (wie schnell und in welche Richtung). Die
+    <em>Exponentialabbildung</em> <span class="math">exp: Algebra → Gruppe</span>,
+    <span class="math">exp(X) = lim (I + X/n)ⁿ</span>, verwandelt „Richtung + Stärke“ in eine
+    Transformation (wie <span class="math">e^{iθ}</span> einen Winkel auf den Einheitskreis
+    bringt). <em>Einparameter-Flüsse</em>: reiner Rotationsgenerator → Kreis; Skalierung →
+    Spirale; Mischung → logarithmische Spirale (<span class="math">GL(2,&#8477;)</span>) —
+    „Die Lie-Algebra bestimmt die Form der Bahn.“ Der <em>Kommutator</em>
+    <span class="math">[X, Y] = XY − YX</span> misst die Nicht-Vertauschbarkeit; die Lücke
+    des Hin–Her–Rückweges skaliert mit <span class="math">∝ ε²</span>;
+    <span class="math">[X, Y] = 0</span> für alle X, Y ⟺ die Gruppe ist abelsch. Der
+    <em>Zoo</em>: SO(2) (abelsch, S¹), SO(3) (nicht-abelsch, Reihenfolge zählt), SE(2),
+    SL(2,&#8477;), SU(2) (Spin), Heisenberg.</p>
+
+    <p><strong>Die Überführung (A ↔ B → Fusion):</strong></p>
+    <table class="map">
+      <tr><th>A (Lewin)</th><th>B (Lie)</th><th>Fusion</th></tr>
+      <tr>
+        <td>Lebensraum: Regionen + Barrieren (topologisch)</td>
+        <td>Lie-Gruppe = glatte Mannigfaltigkeit</td>
+        <td>Lebensraum = Mannigfaltigkeit (Topologie: Regionen/Barrieren = Konnektivität)</td>
+      </tr>
+      <tr>
+        <td>Feld = Gesamtheit aller Kräfte; Valenz ±</td>
+        <td>Vektorfeld / Generatoren</td>
+        <td>Valenz-Feld = Vektorfeld; Valenz = Vorzeichen des Feldes</td>
+      </tr>
+      <tr>
+        <td>Kraft ∝ Valenz / Distanz²</td>
+        <td>Exponentialabbildung exp</td>
+        <td>die metrische Schicht: Feldwert + exp = Dynamik</td>
+      </tr>
+      <tr>
+        <td>Person (P) als Massenpunkt</td>
+        <td>Lie-Algebra-Element (Regler, Tangentialvektor)</td>
+        <td>P = konstanter Generator (Bedürfnis-Struktur)</td>
+      </tr>
+      <tr>
+        <td>Umwelt (U): Valenzen der Objekte</td>
+        <td>— (Regler ist konstant)</td>
+        <td>U = ortsabhängiges Valenz-Feld</td>
+      </tr>
+      <tr>
+        <td>V = f(P,U); Resultante</td>
+        <td>Einparameter-Fluss (Bahn)</td>
+        <td>V = Fluss von P + U(x) (Integralkurve)</td>
+      </tr>
+      <tr>
+        <td>Konflikt (Ambivalenz, Gleichgewicht)</td>
+        <td>Nicht-Kommutativität [X,Y] ≠ 0; Lücke ∝ ε²</td>
+        <td>Konflikt = [P,U] ≠ 0 (vertauschbare Kräfte ⇒ kein Konflikt)</td>
+      </tr>
+      <tr>
+        <td>„Kleine Zufälle entscheiden“ (Gleichgewicht)</td>
+        <td>(linearisierte) Instabilität am Gleichgewicht</td>
+        <td>Zufall = infinitesimale Störung, verstärkt entlang instabiler Richtung</td>
+      </tr>
+      <tr>
+        <td>Zeigarnik: Unterbrochenes bleibt im Gedächtnis (Wiederaufnahme)</td>
+        <td>unterbrochener Fluss behält seinen Tangentialvektor</td>
+        <td>offene Bahn: unterbrochener Fluss = gespeicherter Generator</td>
+      </tr>
+    </table>
+
+    <p><strong>Zwei weiterführende Fusionen</strong> (aus beiden Quellen gebildet, nicht
+    von einem Autor behauptet): <em>Zeigarnik als offene Bahn</em> — eine unterbrochene
+    Aufgabe ist ein Fluss, der vor seinem Ziel („Identität“) gestoppt wurde; der
+    verbleibende Tangentialvektor <em>ist</em> die Wiederaufnahmetendenz (er „zeigt weiter“
+    in die Richtung des Unerledigten). <em>Reihenfolge zählt</em> — Lies Beobachtung, dass
+    bei SO(3) die <em>Reihenfolge</em> der Drehungen das Ergebnis ändert, liest man bei Lewin
+    als: Bei Konflikten bestimmt die <em>Konfiguration</em> (Anordnung) der Kräfte, nicht
+    bloß ihre Summe, das Verhalten — genau dort, wo die Kräfte nicht vertauschbar sind.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung <span class="tag">Feld &amp; Fluss</span></h2>
+    <p class="note">Die Person (oranger Punkt, mit „P“) integriert die <strong>Summe</strong>
+      ihres <em>konstanten</em> Bedürfnis-Generators <span style="color:var(--viz-need)">P</span>
+      und des <em>ortsabhängigen</em> Valenz-Felds <span style="color:var(--viz-field)">U(x)</span>
+      (Lewin-Fluss); die Spur ist die Integralkurve. Oben rechts rechnet eine Inset-Kiste den
+      <em>diskreten Kommutator</em> [P, U(x)] (Lie-Lücke ∝ ε²) <strong>an der aktuellen
+      Person-Position</strong>: klein wenn die Felder sich (fast) vertauschen, groß in
+      „Konfliktzonen“ (stark gekrümmtes Feld / Kreuzung). Drei Szenarien +
+      „Zufallsimpuls“ (der Kleiner Zufall, der ein Gleichgewicht bricht).</p>
+
+    <div class="vizwrap">
+      <canvas id="fieldCanvas" width="760" height="460"></canvas>
+    </div>
+
+    <div class="controls">
+      <select id="mode">
+        <option value="annaeherung">Szenario 1 — Annäherung (+)</option>
+        <option value="ambivalenz" selected>Szenario 2 — Ambivalenz (+/−, Konflikt)</option>
+        <option value="nichtkommutativ">Szenario 3 — Nicht-kommutativ (kreuzende Felder)</option>
+      </select>
+      <button id="btnNudge">⚡ Zufallsimpuls (Kleiner Zufall)</button>
+      <button id="btnReset">↺ Zurücksetzen</button>
+      <button id="themeToggle">🌙/☀️ Theme</button>
+    </div>
+
+    <div class="readout">
+      <span class="chip">Resultante |V|: <b id="roNet">—</b></span>
+      <span class="chip hot">Klammer-Lücke [P,U(x)]: <b id="roGap">—</b></span>
+    </div>
+    <p class="status" id="roStatus">—</p>
+
+    <div class="legend">
+      <span><i style="background:var(--viz-person)"></i> Person P (Massenpunkt / Generator)</span>
+      <span><i style="background:var(--viz-field)"></i> Valenz-Feld U(x) (Pfeilfeld + Resultante)</span>
+      <span><i style="background:var(--viz-pos)"></i> anziehende Region (+)</span>
+      <span><i style="background:var(--viz-amb)"></i> ambivalente Region (±)</span>
+      <span><i style="background:var(--viz-gap)"></i> Kommutator-Lücke (Konflikt)</span>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz <span class="tag">Quellen</span></h2>
+    <ul class="prov">
+      <li>
+        <a href="../psychologische_feldtheorie.html">A — psychologische_feldtheorie.html (Lewins Feldtheorie – Interaktive Erkundung)</a>
+        <small>Kurt Lewins topologische/Vektorpsychologie: V = f(P,U), Valenzen und Kraft ∝ Valenz/Distanz²,
+          topologischer Lebensraum (Regionen/Barrieren), die vier Konflikttypen (u. a. „Kleine Zufälle entscheiden“),
+          Spannungssysteme (Zeigarnik/Ovsiankina) und psychische Sättigung (Karsten), plus historische Zeitleiste.</small>
+      </li>
+      <li>
+        <a href="../lie.html">B — lie.html (Lie-Gruppen – Visuell Erleben)</a>
+        <small>Visuelle Lie-Gruppen: SO(2)/SO(3) (abelsch vs. nicht-abelsch, Reihenfolge zählt), Exponentialabbildung
+          exp(X)=lim(I+X/n)ⁿ, Einparameter-Flüsse (Kreis/Spirale/Log-Spirale), Kommutator [A,B] und die Lücke ∝ ε²,
+          sowie ein Zoo der Gruppen (SE(2), SL(2), SU(2), Heisenberg).</small>
+      </li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('fieldCanvas');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var modeSel = document.getElementById('mode');
+  var btnNudge = document.getElementById('btnNudge');
+  var btnReset = document.getElementById('btnReset');
+  var themeBtn = document.getElementById('themeToggle');
+  var roNet = document.getElementById('roNet');
+  var roGap = document.getElementById('roGap');
+  var roStatus = document.getElementById('roStatus');
+
+  var R = 110;
+  var state = {
+    mode: 'ambivalenz',
+    objects: [],
+    person: { x:120, y:230, vx:0, vy:0 },
+    need: { x:10, y:0 },
+    trail: []
+  };
+
+  function cssVar(n){
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  }
+  function palette(){
+    return {
+      bg:cssVar('--viz-bg')||'#0b1322',
+      grid:cssVar('--viz-grid')||'#16233c',
+      text:cssVar('--viz-text')||'#e6e9ef',
+      muted:cssVar('--viz-muted')||'#7d8aa3',
+      pos:cssVar('--viz-pos')||'#10b981',
+      neg:cssVar('--viz-neg')||'#ef4444',
+      amb:cssVar('--viz-amb')||'#a855f7',
+      person:cssVar('--viz-person')||'#f59e0b',
+      field:cssVar('--viz-field')||'#38bdf8',
+      need:cssVar('--viz-need')||'#818cf8',
+      gap:cssVar('--viz-gap')||'#f472b6',
+      inset:cssVar('--viz-inset')||'rgba(11,19,34,0.6)',
+      insetSt:cssVar('--viz-inset-stroke')||'#26344d'
+    };
+  }
+  function clamp(v,lo,hi){ return v<lo?lo:(v>hi?hi:v); }
+  function norm(v){ var m=Math.hypot(v.x,v.y); if(m<1e-6) return {x:0,y:0}; return {x:v.x/m,y:v.y/m}; }
+
+  function envForce(px,py){
+    var fx=0, fy=0, gain=H*0.062;
+    for(var i=0;i<state.objects.length;i++){
+      var o=state.objects[i];
+      var ox=o.x*W, oy=o.y*H;
+      var dx=ox-px, dy=oy-py;
+      var d=Math.max(16, Math.hypot(dx,dy));
+      var nx=dx/d, ny=dy/d;
+      var f=o.attract*(R/d) - o.repel*(R/d)*(R/d);
+      fx+=nx*f; fy+=ny*f;
+    }
+    return {x:fx*gain, y:fy*gain};
+  }
+
+  function commutator(px,py){
+    var uP=norm(state.need);
+    var s=8;
+    var a=[px+s*uP.x, py+s*uP.y];
+    var uEa=norm(envForce(a[0],a[1]));
+    var b=[a[0]+s*uEa.x, a[1]+s*uEa.y];
+    var c=[b[0]-s*uP.x, b[1]-s*uP.y];
+    var uEc=norm(envForce(c[0],c[1]));
+    var d=[c[0]-s*uEc.x, c[1]-s*uEc.y];
+    return { gap:Math.hypot(d[0]-px, d[1]-py), pts:[[px,py],a,b,c,d] };
+  }
+
+  function updateStatus(){
+    var s={
+      annaeherung:'Annäherung: der Fluss läuft zum Ziel zusammen — Klammer [P,U] ≈ 0 (Kräfte vertauschbar).',
+      ambivalenz:'Ambivalenz: Gleichgewicht/Ring — die Person stottert (Zittern). „Kleine Zufälle entscheiden“ → Zufallsimpuls drücken.',
+      nichtkommutativ:'Nicht-kommutativ: zwei kreuzende Felder — die Klammer-Lücke [P,U] wird groß (reduzibler Konflikt).'
+    }[state.mode] || '';
+    if(roStatus) roStatus.textContent = s;
+  }
+
+  function setScenario(m){
+    state.mode=m; state.trail=[];
+    if(m==='annaeherung'){
+      state.objects=[{x:0.74,y:0.26,attract:1.3,repel:0}];
+      state.person={x:120,y:230,vx:0,vy:0}; state.need={x:12,y:0};
+    } else if(m==='ambivalenz'){
+      state.objects=[{x:0.58,y:0.44,attract:1.0,repel:0.72}];
+      state.person={x:120,y:230,vx:0,vy:0}; state.need={x:10,y:0};
+    } else {
+      state.objects=[{x:0.84,y:0.5,attract:1.3,repel:0},{x:0.5,y:0.14,attract:1.3,repel:0}];
+      state.person={x:120,y:250,vx:0,vy:0}; state.need={x:11,y:0};
+    }
+    updateStatus();
+  }
+
+  function step(){
+    var px=state.person.x, py=state.person.y;
+    var E=envForce(px,py);
+    var P=state.need;
+    var fx=E.x+P.x, fy=E.y+P.y;
+    var net=Math.hypot(fx,fy);
+    if(state.mode==='ambivalenz' && net < H*0.05){
+      fx+=(Math.random()-0.5)*H*0.012;
+      fy+=(Math.random()-0.5)*H*0.012;
+    }
+    state.person.vx=(state.person.vx+fx*0.03)*0.9;
+    state.person.vy=(state.person.vy+fy*0.03)*0.9;
+    state.person.x=clamp(state.person.x+state.person.vx, 16, W-16);
+    state.person.y=clamp(state.person.y+state.person.vy, 16, H-16);
+    state.trail.push([state.person.x,state.person.y]);
+    if(state.trail.length>500) state.trail.shift();
+  }
+
+  function drawArrow(x1,y1,x2,y2,color,width){
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width||1.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var ang=Math.atan2(y2-y1,x2-x1); var h=6+(width||1.5);
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(ang-0.4), y2-h*Math.sin(ang-0.4));
+    ctx.lineTo(x2-h*Math.cos(ang+0.4), y2-h*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(){
+    var p=palette();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=p.bg; ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=p.grid; ctx.lineWidth=1;
+    var g;
+    for(g=0; g<W; g+=40){ ctx.beginPath(); ctx.moveTo(g,0); ctx.lineTo(g,H); ctx.stroke(); }
+    for(g=0; g<H; g+=40){ ctx.beginPath(); ctx.moveTo(0,g); ctx.lineTo(W,g); ctx.stroke(); }
+
+    ctx.lineWidth=1;
+    var gx,gy;
+    for(gx=38; gx<W; gx+=52){
+      for(gy=38; gy<H; gy+=52){
+        var E=envForce(gx,gy); var m=Math.hypot(E.x,E.y);
+        if(m>0.6){
+          var L=Math.min(16, 5+m*0.55);
+          drawArrow(gx,gy,gx+E.x/m*L,gy+E.y/m*L,p.field,1);
+        }
+      }
+    }
+
+    for(var i=0;i<state.objects.length;i++){
+      var o=state.objects[i]; var ox=o.x*W, oy=o.y*H;
+      var oc = o.repel>0.01 ? p.amb : p.pos;
+      ctx.beginPath(); ctx.arc(ox,oy,24,0,Math.PI*2);
+      ctx.fillStyle=oc; ctx.globalAlpha=0.85; ctx.fill(); ctx.globalAlpha=1;
+      ctx.lineWidth=2; ctx.strokeStyle=p.bg; ctx.stroke();
+      ctx.fillStyle=p.bg; ctx.font='bold 20px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(o.repel>0.01?'±':'+', ox, oy+1);
+      ctx.textBaseline='alphabetic';
+    }
+
+    if(state.trail.length>1){
+      ctx.beginPath(); ctx.moveTo(state.trail[0][0],state.trail[0][1]);
+      for(var t=1;t<state.trail.length;t++){ ctx.lineTo(state.trail[t][0],state.trail[t][1]); }
+      ctx.strokeStyle=p.person; ctx.globalAlpha=0.45; ctx.lineWidth=2; ctx.stroke(); ctx.globalAlpha=1;
+    }
+
+    var px=state.person.x, py=state.person.y;
+    var E2=envForce(px,py); var P2=state.need; var V={x:E2.x+P2.x, y:E2.y+P2.y};
+    var s=2.2;
+    drawArrow(px,py,px+P2.x*s,py+P2.y*s,p.need,2);
+    drawArrow(px,py,px+E2.x*s,py+E2.y*s,p.field,2);
+    drawArrow(px,py,px+V.x*s,py+V.y*s,p.person,3);
+
+    ctx.beginPath(); ctx.arc(px,py,11,0,Math.PI*2);
+    ctx.fillStyle=p.person; ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle=p.bg; ctx.stroke();
+    ctx.fillStyle=p.bg; ctx.font='bold 12px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('P',px,py+1);
+    ctx.textBaseline='alphabetic';
+
+    var cm=commutator(px,py);
+    var boxX=W-172, boxY=14, boxW=158, boxH=112;
+    ctx.fillStyle=p.inset; ctx.fillRect(boxX,boxY,boxW,boxH);
+    ctx.strokeStyle=p.insetSt; ctx.lineWidth=1; ctx.strokeRect(boxX,boxY,boxW,boxH);
+    ctx.fillStyle=p.muted; ctx.font='11px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Kommutator [P, U(x)]', boxX+8, boxY+16);
+    var sc=10, bcx=boxX+boxW/2, bcy=boxY+boxH/2+8;
+    ctx.beginPath();
+    for(var k=0;k<cm.pts.length;k++){
+      var lx=bcx+(cm.pts[k][0]-px)*sc, ly=bcy-(cm.pts[k][1]-py)*sc;
+      if(k===0) ctx.moveTo(lx,ly); else ctx.lineTo(lx,ly);
+    }
+    ctx.strokeStyle=p.field; ctx.lineWidth=1.6; ctx.stroke();
+    ctx.setLineDash([3,3]); ctx.strokeStyle=p.gap; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(bcx+(cm.pts[0][0]-px)*sc, bcy-(cm.pts[0][1]-py)*sc);
+    ctx.lineTo(bcx+(cm.pts[4][0]-px)*sc, bcy-(cm.pts[4][1]-py)*sc);
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=p.gap; ctx.font='bold 12px monospace';
+    ctx.fillText('Lücke ≈ '+cm.gap.toFixed(3), boxX+8, boxY+boxH-8);
+
+    ctx.font='11px sans-serif'; ctx.textAlign='left';
+    ctx.fillStyle=p.need; ctx.fillText('P — konstanter Generator (Person)', 10, H-24);
+    ctx.fillStyle=p.field; ctx.fillText('U(x) — Valenz-Feld (Umwelt)', 10, H-10);
+    ctx.fillStyle=p.person; ctx.fillText('V — Resultante / Fluss', 230, H-10);
+
+    if(roNet) roNet.textContent=(Math.hypot(V.x,V.y)/(H*0.062)).toFixed(2);
+    if(roGap) roGap.textContent=cm.gap.toFixed(3);
+  }
+
+  function frame(){ step(); draw(); requestAnimationFrame(frame); }
+
+  if(modeSel) modeSel.addEventListener('change', function(e){ setScenario(e.target.value); });
+  if(btnNudge) btnNudge.addEventListener('click', function(){
+    state.person.vx+=(Math.random()-0.5)*H*0.5;
+    state.person.vy+=(Math.random()-0.5)*H*0.5;
+  });
+  if(btnReset) btnReset.addEventListener('click', function(){ setScenario(state.mode); });
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+  });
+
+  setScenario('ambivalenz');
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

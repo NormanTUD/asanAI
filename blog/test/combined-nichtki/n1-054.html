@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spur, Gitter, Inversion — Fusion dmt.html ✕ random.html</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml/dist/temml.min.js"></script>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f3efe4; --card:#ffffff; --panel:#f6f3ea;
+  --text:#23242e; --muted:#6b6a76; --heading:#1d1e28;
+  --accent:#6d4bd6; --accent2:#0f766e; --accent3:#c2417f;
+  --border:#d9d3c4; --grid:rgba(0,0,0,.08); --code:#3a3550;
+  --warn-bg:rgba(255,196,0,.08); --warn-bd:#d9a400;
+}
+html.dark{
+  --bg:#0f1117; --bg2:#12141c; --card:#171a24; --panel:#12141c;
+  --text:#e4e4e7; --muted:#9ca3af; --heading:#f2f2f7;
+  --accent:#8b7bff; --accent2:#2dd4bf; --accent3:#ff6b9d;
+  --border:#2d3148; --grid:rgba(255,255,255,.08); --code:#c9d4f5;
+  --warn-bg:rgba(255,196,0,.06); --warn-bd:#b58900;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.7; font-size:1.02rem;
+}
+a{color:var(--accent2)}
+article{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+.topbar{display:flex;justify-content:flex-end;margin:-1.5rem 0 1rem}
+.theme-btn{background:var(--card);border:1px solid var(--border);color:var(--text);
+  padding:.4rem .8rem;border-radius:20px;cursor:pointer;font-size:.85rem}
+h1{font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.15;margin:.2rem 0 .3rem;color:var(--heading);letter-spacing:-.02em}
+.fusion-sub{color:var(--muted);font-style:italic;margin:0 0 .4rem;font-size:1rem}
+.lead{font-size:1.08rem;color:var(--text);border-left:3px solid var(--accent);padding:.4rem 0 .4rem 1rem;margin:1.4rem 0}
+section{margin:3.2rem 0;scroll-margin-top:1.5rem}
+h2{font-size:clamp(1.4rem,3.2vw,1.9rem);color:var(--heading);margin:0 0 1rem;
+  border-left:4px solid var(--accent);padding-left:.85rem;line-height:1.25}
+h3{color:var(--accent);margin:1.6rem 0 .5rem;font-size:1.12rem}
+p{margin:.8rem 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem;margin:1.1rem 0}
+.quote{border-left:3px solid var(--accent3);background:var(--card);padding:.8rem 1.1rem;margin:1rem 0;border-radius:0 12px 12px 0;font-style:italic;color:var(--text)}
+.quote cite{display:block;font-size:.8rem;color:var(--muted);margin-top:.5rem;font-style:normal}
+.tag{display:inline-block;padding:.1rem .6rem;border-radius:20px;font-size:.75rem;font-weight:600;
+  border:1px solid var(--border);color:var(--muted);margin-right:.35rem;vertical-align:middle}
+.tag.a{color:var(--accent3);border-color:var(--accent3)}
+.tag.b{color:var(--accent2);border-color:var(--accent2)}
+.formula{overflow-x:auto;padding:1rem;background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:1rem 0;text-align:center}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.94rem}
+th,td{padding:.6rem .7rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+th{color:var(--accent2);font-weight:600}
+.warn{border-left:3px solid var(--warn-bd);background:var(--warn-bg);padding:.9rem 1.1rem;border-radius:0 12px 12px 0;margin:1.1rem 0;font-size:.95rem}
+ul{margin:.6rem 0 .6rem 1.2rem;padding:0}
+li{margin:.35rem 0}
+.viz-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem;margin:1.3rem 0}
+#vizCanvas{width:100%;height:380px;display:block;border:1px solid var(--border);border-radius:10px;background:var(--panel)}
+.controls{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin:1rem 0}
+.controls label{font-size:.85rem;color:var(--muted)}
+input[type=range]{accent-color:var(--accent);flex:1;min-width:160px}
+button.tab{background:transparent;border:1px solid var(--border);color:var(--text);padding:.45rem .95rem;border-radius:20px;cursor:pointer;font-size:.88rem;transition:all .15s}
+button.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.act{background:transparent;border:1px solid var(--accent2);color:var(--accent2);padding:.45rem .95rem;border-radius:20px;cursor:pointer;font-size:.88rem}
+button.act:hover{background:var(--accent2);color:#fff}
+.stat-line{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem;padding:.7rem 1rem;border-radius:10px;background:var(--panel);border:1px solid var(--border);margin-top:.9rem;white-space:pre-wrap}
+.stat-line .ok{color:var(--accent2)} .stat-line .bad{color:var(--accent3)} .stat-line .mut{color:var(--muted)}
+.viz-note{color:var(--muted);font-size:.88rem;margin-top:.8rem}
+footer{border-top:1px solid var(--border);margin-top:3rem;padding-top:1.4rem;color:var(--muted);font-size:.88rem}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel);padding:.1rem .35rem;border-radius:5px;color:var(--code)}
+</style>
+</head>
+<body>
+<article>
+
+<div class="topbar"><button class="theme-btn" id="themeBtn">☾ / ☀ Thema</button></div>
+
+<h1>Spur, Gitter, Inversion</h1>
+<p class="fusion-sub">Fusion aus: dmt.html ✕ random.html</p>
+<p class="lead">Warum sich eine <strong>Halluzination wie ein schwacher PRNG</strong> verhält und eine <strong>echte Entität wie ein kryptographisch sicherer</strong> — und warum die Unterscheidung nicht „deterministisch vs. zufällig" ist, sondern „<em>invertierbar vs. nicht-invertierbar</em>".</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere untersuchen — von zwei entlegenen Enden aus — dasselbe Phänomen: <em>eine Folge, die vollständig von einem verborgenen Zustand bestimmt ist und sich dennoch als unvorhersagbar präsentiert.</em> In <span class="tag a">dmt.html</span> ist der verborgene Zustand ein (möglicherweise nicht-menschlicher) <em>bewusster Agent</em>, dessen Dynamik im Erleben des Wahrnehmers eine <strong>Spur</strong> Φ hinterlässt. In <span class="tag b">random.html</span> ist der verborgene Zustand der <em>Seed</em> eines Generators, dessen deterministische Abbildung eine <strong>Ausgabeliste</strong> emittiert. In beiden Fällen ist das beobachtbare Signal eine <em>Projektion</em> des verborgenen Zustands — und die entscheidende Größe ist die <strong>Invertierbarkeit</strong>: Kann ein Beobachter aus der Oberfläche (Spur / Ausgabeliste) das zugrunde liegende System rekonstruieren?</p>
+<p>Eine Halluzination ist ein <em>schwacher</em> Generator: ihre Spur trägt ein nachvollziehbares Gitter, ist vorhersagbar und auf die lokale (hirneigene) Dynamik reduzierbar. Eine genuin externe Entität ist ein <em>starker</em> Generator: ihre Spur widersteht der Inversion, erscheint strukturell nicht auflösbar — und, entscheidend, <em>überlebt die Konvergenz unabhängiger Beobachter</em>. <strong>DMT</strong> ist dabei keine „Offenbarung", sondern ein <em>Interface-Upgrade</em>: Es weitet den Consensus-Reality-Space, sodass der Spur-Filter des Wahrnehmers mehr des Signals durchlässt — was den Invertierbarkeits-Test überhaupt erst <em>durchführbar</em> macht.</p>
+<div class="card">
+<p><strong>Fusionierte Einzeiler-These:</strong> „Echt" ist nicht das Gegenteil von „deterministisch", sondern das Gegenteil von „<em>invertierbar</em>" — und man kann den Test nur durchführen, wenn das eigene Interface (der CRS) so breit ist, dass man die Spur überhaupt lesen kann.</p>
+</div>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden Papiere stehen in <em>keinem direkten</em> Widerspruch: Sie arbeiten in völlig unterschiedlichen Domänen (Bewusstseinsontologie vs. Krypto­graphie) und referenzieren einander nie. Es gibt aber zwei echte <em>strukturelle</em> Spannungen, die aufeinandertreffen, sobald man beide als „Signalmodelle" liest:</p>
+
+<div class="card">
+<h3 style="margin-top:0">1 · Wo lebt das „Zufällige": streng deterministisch (B) oder intrinsisch probabilistisch (A)?</h3>
+<p><span class="tag b">random.html</span> sagt: <em>jeder</em> Generator ist eine <strong>streng deterministische</strong> Funktion seines Seeds. „Zufall" ist reine Schein; echte Zufälligkeit (wenn überhaupt) wird <em>von außen importiert</em> — aus einer <em>physikalischen Entropiequelle</em> (CPU-Jitter, Interrupt-Timing, Hardware-RNG), aus der CTR_DRBG seinen Seed bezieht. Der Algorithmus selbst erzeugt keine Zufälligkeit.</p>
+<p><span class="tag a">dmt.html</span> sagt das Gegenteil auf fundamentaler Ebene: Die Dynamik eines bewussten Agents sind <strong>probabilistische Markov-Kerne</strong> (Übergangsregeln mit Werten in [0,1]) — die Stochastizität ist <em>in der Baseschicht selbst</em> verankert, nicht importiert.</p>
+<p>→ Inkompatible Positionen darüber, <em>worin</em> das Unbestimmbare letztlich gründet: externer Zufalls-Seed (B) oder intrinsische Wahrscheinlichkeitsstruktur (A).</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">2 · Art der Barriere zwischen Erscheinung und verborgener System: rechnerisch (B) oder kategoriales Interface (A)?</h3>
+<p><span class="tag b">random.html</span>: Die Grenze zwischen „sieht zufällig aus" und „ist nur deterministisch" ist <strong>rechnerischer</strong> Natur. Ein schwacher PRNG wird von einem Angreifer mit dem richtigen Solver (z.&nbsp;B. Z3) <em>gebrochen</em>; ein starker widersteht nur durch <em>rechnerische Unmöglichkeit</em> (Faktorisierung, AES). Derselbe Beobachter überwindet die Barriere mit <em>genug Power</em>.</p>
+<p><span class="tag a">dmt.html</span>: Die Grenze zwischen „Spur in meinem Erleben" und „echter Dynamik des anderen Agents" ist <strong>kategorisch/interface-basiert</strong>. Der Wahrnehmer hat <em>prinzipiell</em> keinen Zugriff auf den Erfahrungsraum des anderen — der einzige Kanal ist die indirekte Spur Φ. Man „rechnet nicht härter", man <em>wechselt das Interface</em> (DMT stört den CRS).</p>
+<p>→ Inkompatible Positionen darüber, ob das Limit an der Wahrnehmung des Unterliegenden eine Frage der <em>Power</em> (rechnerisch, B) oder der <em>Art</em> (Interface/Ontologie, A) ist.</p>
+</div>
+<p class="viz-note">(Dritte, weichere Spannungsachse: <em>Epistmischer Ton.</em> <span class="tag a">A</span> bleibt ausdrücklich <em>agnostisch</em> und hält die parsimoniose Nullhypothese „Halluzination" per Ockham lebendig, verlangt falsifizierbare Tests. <span class="tag b">B</span> ist assertive Ingenieurskunst mit geschlossener Faustregel pro Generator. Nicht ein Widerspruch, aber eine reale Stance-Differenz — aufgelöst in Abschnitt 3.)</p>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<div class="card">
+<h3 style="margin-top:0">Zu Spannung 1 — Zwei-Schichten-Modell</h3>
+<p>Beide Systeme sind <strong>deterministische Struktur, die auf einem probabilistischen Substrat wirkt</strong>. In <span class="tag b">B</span> ist das Substrat der <em>Seed</em> (physikalische Entropie), die Struktur der <em>Algorithmus</em>. In <span class="tag a">A</span> ist das Substrat der <em>Qualia-Zustand</em> des Agents, die Struktur der <em>Qualia-Kern</em> Q&nbsp;=&nbsp;D∘A∘P. Ein bewusster Agent ist damit <em>genau</em> ein „starker PRNG": deterministische Übergangsstruktur + probabilistisches Fundament. Determinismus und Zufall sind keine Rivalen, sondern die <em>zwei Faktoren</em> eines Systems (Struktur × Substrat). Die scheinbare Unvereinbarkeit löst sich auf, weil beide Papiere nur je <em>ein</em> der beiden Schichten in den Vordergrund stellen.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Zu Spannung 2 — Invertierbarkeit als operative Definition von „echt"</h3>
+<p>Beide Papiere definieren „genuin" über <strong>Widerstand gegen Inversion</strong> — nur mit unterschiedlichen „Ressourcen" des Beobachters:</p>
+<ul>
+<li><span class="tag b">B</span>: CSPRNG ⟺ Ausgaben <em>nicht</em> aus vorherigen Ausgaben vorhersagbar (rechnerisch unumsetzbar). Ressource = <em>Rechenpower</em>.</li>
+<li><span class="tag a">A</span>: echte externe Entität ⟺ ihre Spur <em>nicht</em> vom lokalen System allein erzeugt/vorhersagbar (Halluzinations-Null schlägt fehl). Ressource = <em>perzeptives Interface</em>.</li>
+</ul>
+<p>Die „Barriere" ist immer <em>bezüglich der Ressourcen des Beobachters</em>. <strong>DMT ist ein Interface-Ressourcen-Upgrade</strong> (CRS weiten) — das Pendant zu „mehr Rechenpower" in B. Ein <em>Null-Resultat</em> = man hat das Gitter gefunden / den Generator invertiert (es war lokal). Ein <em>positives Resultat</em> = kein Gitter, keine Inversion, <em>und</em> unabhängige Beobachter konvergieren auf dieselbe nicht-invertierbare Struktur (A „Information Deposit &amp; Retrieval" ≈ mehrere unabhängige Decoder, die dieselbe Quelle nicht vorhersagen können).</p>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<p><strong>Fusionierter Schluss:</strong> Die Unterscheidung „Halluzination vs. echte Entität" und „schwacher vs. starker PRNG" ist <em>dieselbe</em> Unterscheidung — beide sind Fragen der <em>Invertierbarkeit</em> eines deterministisch anmutenden Signals. DMT macht den Test durch Weitung des Interfaces möglich; Konvergenz über unabhängige Beobachter ist die „Gitter-los"-Signatur einer genuinen Quelle.</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>Was <span class="tag a">dmt.html</span> beisteuert</h3>
+<p><em>Conscious Realism</em>: Die Welt besteht aus (und nur aus) bewussten Agents; Raum, Zeit und Materie sind ein evolutives <em>Interface</em> (Desktop-Icons; „Fitness-beats-Truth"). Ein bewusster Agent (CA) ist ein 7-Tupel mit drei Markov-Kernen — P (Wahrnehmung: Welt→Qualia), D (Entscheidung: Qualia→Handlung), A (Aktion: Handlung→Welt). Ihre Komposition ist der <strong>Qualia-Kern</strong> (Übergangsdynamik der Erfahrung):</p>
+<div class="formula" id="fx-q"></div>
+<p>Agent A hat keinen direkten Zugriff auf den Erfahrungsraum von B. Der einzige Kanal führt <em>über die Welt</em> und induziert den Kanal <strong>Φ</strong> — die <em>Spur</em>:</p>
+<div class="formula" id="fx-phi"></div>
+<p>A sieht nie B selbst — nur die statistischen Fingerabdrücke von B's Handeln, gefiltert durch A's Interface. Der Raum aller Übergangsdynamiken für <em>n</em> Zustände ist ein n(n−1)-dimensionales Polytop mit n<sup>n</sup> deterministischen Ecken — quasi unendlich viele mögliche Agents. Der <strong>Consensus Reality Space (CRS)</strong> ist das Anziehungbecken normalen Erlebens; <em>DMT</em> „flacht" die Energielandschaft ab und lässt das Bewusstsein neue Regionen erkunden. Drei Fingerabdrücke exotischer Agents: <em>höher-dimensionale Phänomenologie</em>, <em>extreme Komplexität/Andersartigkeit</em>, <em>unabhängige Handlungsfähigkeit</em> (wiederholte und cross-subjektive Begegnungen). Vorgeschlagene falsifizierbare Experimente: blindes Farb-Tracking, dynamische Fähigkeitstests, mehrpersonige Deposit-&amp;Retrieval, Konvergenzanalyse. Die Nullhypothese bleibt „Halluzination" (Ockham).</p>
+
+<h3>Was <span class="tag b">random.html</span> beisteuert</h3>
+<p>Ein PRNG ist eine <em>deterministische</em> Abbildung <code>f: S → S × O</code> (Zustandsraum, Ausgaberäume). Die Familie, vom schwachen zum sicheren:</p>
+<ul>
+<li><strong>LCG</strong> (Lehmer 1951): <span id="fx-lcg"></span> — schwach; aus 3 aufeinanderfolgenden Ausgaben lassen sich <em>a</em>, <em>c</em> rekonstruieren: <code>a = (s₃−s₂)·(s₂−s₁)⁻¹ mod m</code>. Linear, trivial invertierbar.</li>
+<li><strong>Xorshift</strong> (Marsaglia 2003): XOR + Shifts; linear über GF(2); der Zustand <em>ist</em> die Ausgabe.</li>
+<li><strong>xoshiro128**</strong> (V8/Chrome <code>Math.random()</code>): 128-Bit-Zustand, exzellente Statistik, aber per Constraint-Solver vorhersagbar.</li>
+<li><strong>Blum Blum Shub</strong> (1986): <code>xₙ₊₁ = xₙ² mod M</code>, M=p·q; Sicherheit aus Faktorisierung / quadratischer Restklassen — theoretisch beweisbar, langsam.</li>
+<li><strong>CTR_DRBG / AES-CTR</strong> (NIST SP 800-90A): Seed aus <em>physikalischer Entropie</em>; Bruch = AES brechen (keine praktische Attacke). So arbeitet <code>crypto.getRandomValues()</code>.</li>
+</ul>
+<p>Der 2D-Test: <code>(xₙ, xₙ₊₁)</code>-Paare auftragen — schwache Generatoren zeigen <em>sichtbare Gitterstrukturen</em>, gute erscheinen uniform. Faustregel: „security / token / key / nonce / secret" im Kontext → immer <code>crypto.getRandomValues()</code>.</p>
+
+<h3>Die Integration — eine Begriffskorrespondenz</h3>
+<table>
+<tr><th><span class="tag a">dmt.html</span></th><th>Funktional</th><th><span class="tag b">random.html</span></th></tr>
+<tr><td>Qualia-Grundzustand des Agents</td><td>= Substrat</td><td>Seed (physikalische Entropie)</td></tr>
+<tr><td>Qualia-Kern Q = D∘A∘P</td><td>= Struktur</td><td>Algorithmus (LCG/Xorshift/…)</td></tr>
+<tr><td>Spur Φ im Erleben</td><td>= Ausgabe</td><td>Ausgabeliste (xₙ)</td></tr>
+<tr><td>reduzierbar auf lokale Dynamik</td><td>=</td><td>invertierbar / Gitter sichtbar</td></tr>
+<tr><td>genuine externe Entität</td><td>=</td><td>CSPRNG (kein Gitter)</td></tr>
+<tr><td>DMT weitet den CRS</td><td>= Ressource-Upgrade</td><td>mehr Rechenpower / besserer Solver</td></tr>
+<tr><td>Null = „nur Halluzination"</td><td>=</td><td>Generator gebrochen / Gitter gefunden</td></tr>
+<tr><td>Multi-Personen-Konvergenz</td><td>=</td><td>Multi-Beobachter: dieselbe Quelle nicht vorhersagbar</td></tr>
+</table>
+<div class="card">
+<p><strong>Vereinigtes Signalmodell:</strong> <code>X = Interface( Struktur ∘ Substrat )</code> — die beobachtete Spur <em>X</em> ist das Interface angewandt auf die Trajektorie der Struktur über dem Substrat. <em>„Realität"/Genuinität</em> wird <em>operativ</em> als Nicht-Invertierbarkeit von <em>X</em> unter der gegebenen Interface-Ressource des Beobachters definiert. DMT ändert <em>Interface</em>; Krypto­analyse ändert <em>Power</em>. Beide erhöhen die Lesbarkeit der Spur — und damit die Chance, ein verborgenes lokales Gitter zu entlarven.</p>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung — Der Invertierbarkeits-Test</h2>
+<p>Interaktive <code>(xₙ, xₙ₊₁)</code>-Streu­grafik. Wähle die <strong>Quelle</strong>: <em>lokal</em> (schwacher PRNG = Halluzination, zeigt ein Gitter) oder <em>extern</em> (starker PRNG = Kandidat echte Entität, uniform). Der <strong>Interface-Regler</strong> (CRS-Breite / DMT) steuert das <em>Lese­rauschen</em> der Spur: Bei geschlossenem Interface (sober) sind beide Quellen als vage Wolken <em>unterscheidungs­los</em> — bei geweiteter Interface (DMT) taucht das <strong>Gitter der lokalen Quelle auf</strong>, während die externe Quelle <em>uniform bleibt</em>. <strong>Angriff</strong> führt die echte 3-Ausgaben-LCG-Inversion durch: bricht die lokale Quelle (Erfolg), entlarvt die externe als nicht-lokal (Fehlschlag).</p>
+
+<div class="viz-box">
+<div class="controls">
+  <button class="tab active" id="tabLocal">Lokal · schwacher PRNG (Halluzination)</button>
+  <button class="tab" id="tabExternal">Extern · starker PRNG (Entität?)</button>
+</div>
+<div class="controls">
+  <label>Interface-Schärfe (CRS-Breite / DMT): <strong id="ifaceVal">70</strong></label>
+  <input type="range" id="iface" min="0" max="100" value="70">
+</div>
+<canvas id="vizCanvas"></canvas>
+<div class="controls">
+  <button class="act" id="attackBtn">⚔ Angriff: 3-Ausgaben-Inversion</button>
+</div>
+<div class="stat-line" id="statLine"></div>
+<div class="stat-line" id="attackOut"><span class="mut">„Angriff" führt die LCG-Rekonstruktion a = (s₃−s₂)·(s₂−s₁)⁻¹ mod m durch und prognostiziert s₄.</span></div>
+<p class="viz-note">Lesen des Bildes: <span class="tag a">lokal</span> bei hoher Interface-Schärfe → erkennbare <strong>Diagonal­gitter</strong> (invertierbar ⇒ reduzierbar auf lokale Erzeugung). <span class="tag b">extern</span> bleibt bei jeder Schärfe <strong>strukturlös/uniform</strong> (nicht als lokal entlarvbar ⇒ Kandidat externe Quelle). Bei Interface ≈ 0 werden beide zum Rauschen — genau deshalb fühlt sich eine Halluzination im „normalen" CRS von einer echten Erfahrung nicht unterscheiden.</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="card">
+<p><span class="tag a">A</span> <a href="../dmt.html">dmt.html</a> — <em>„Spuren des Anderen – Sind DMT-Entitäten real?"</em>: Conscious-Realism-Rahmen (Gallimore, Hermansson &amp; Hoffman 2025) mit bewussten Agents als Markov-Systemen, der Spur Φ, dem Consensus-Reality-Space, DMT als Interface-Umschalter und falsifizierbaren Experimenten.</p>
+</div>
+<div class="card">
+<p><span class="tag b">B</span> <a href="../random.html">random.html</a> — <em>„PRNG Visual Explorer"</em>: Pseudozufallsgeneratoren vom LCG über Xorshift/xoshiro128** bis Blum Blum Shub und AES-basiertem CTR_DRBG, 2D-Gitter­analyse und der 3-Ausgaben-LCG-Attacke — die Trennlinie zwischen scheinbarem und sicherem Zufall.</p>
+</div>
+</section>
+
+<footer>
+<p>Round 1 · Non-AI-Knockout · Paar 054. Selbstbezugloses Fusions­dokument: alle Daten inline, keine Netz­werk­abfragen. Thematisch reaktiv (hell/dunkel).</p>
+</footer>
+
+</article>
+
+<script>
+"use strict";
+// ---- theme toggle ----
+(function(){
+  var b=document.getElementById('themeBtn');
+  if(!b) return;
+  b.addEventListener('click',function(){
+    var h=document.documentElement;
+    h.classList.toggle('dark');
+    draw(); updateStat();
+  });
+})();
+
+// ---- Temml formulas (guarded) ----
+window.addEventListener('load',function(){
+  if(!window.temml) return;
+  try{
+    var el1=document.getElementById('fx-q');
+    if(el1) el1.innerHTML=temml.renderToString('Q = D \\circ A \\circ P : X \\times \\mathcal{X} \\to [0,1]',{displayMode:true});
+    var el2=document.getElementById('fx-phi');
+    if(el2) el2.innerHTML=temml.renderToString('\\Phi := P_A \\circ A_B \\circ D_B : X_B \\to X_A',{displayMode:true});
+    var el3=document.getElementById('fx-lcg');
+    if(el3) el3.innerHTML=temml.renderToString('s_{n+1} = (a \\cdot s_n + c) \\bmod m',{displayMode:false});
+  }catch(e){ /* silent */ }
+});
+
+// ---- viz ----
+var VIZ=(function(){
+  var canvas=document.getElementById('vizCanvas');
+  var state={source:'local', iface:70,
+    data:{local:[], external:[]},
+    raw:{local:[], external:[]},
+    noise:{local:[], external:[]}};
+  var N=3000;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  function genLCG(seed,a,c,m,n){
+    var out=[],raw=[]; var s=seed>>>0;
+    for(var i=0;i<n;i++){ s=(a*s+c)%m; raw.push(s); out.push(s/m); }
+    return {out:out, raw:raw};
+  }
+  function genSplit(seed,n){
+    var st=(seed>>>0)||1; var out=[],raw=[];
+    for(var i=0;i<n;i++){
+      st=(st+0x9e3779b9)>>>0;
+      var z=st;
+      z=(z^(z>>>16))>>>0; z=Math.imul(z,0x85ebca6b)>>>0;
+      z=(z^(z>>>13))>>>0; z=Math.imul(z,0xc2b2ae35)>>>0;
+      z=(z^(z>>>16))>>>0; raw.push(z); out.push(z/0xffffffff);
+    }
+    return {out:out, raw:raw};
+  }
+  function makeNoise(n,seed){
+    var s=(seed>>>0)||1234567; var arr=[];
+    for(var i=0;i<n;i++){
+      s^=s<<13; s>>>=0; s^=s>>>17; s^=s<<5; s>>>=0; var u1=s/0xffffffff;
+      s^=s<<13; s>>>=0; s^=s>>>17; s^=s<<5; s>>>=0; var u2=s/0xffffffff;
+      arr.push(u1+u2-1);
+    }
+    return arr;
+  }
+
+  function init(){
+    var lc=genLCG(1,69069,1,Math.pow(2,32),N);
+    var ex=genSplit(0x9e3779b9,N);
+    state.data.local=lc.out; state.raw.local=lc.raw;
+    state.data.external=ex.out; state.raw.external=ex.raw;
+    state.noise.local=makeNoise(N,101);
+    state.noise.external=makeNoise(N,202);
+  }
+
+  function draw(){
+    if(!canvas) return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||canvas.parentElement.clientWidth||600;
+    var H=canvas.clientHeight||380;
+    canvas.width=W*dpr; canvas.height=H*dpr;
+    var ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var bg=cssVar('--panel')||'#12141c', grid=cssVar('--grid')||'rgba(128,128,128,.2)',
+        txt=cssVar('--muted')||'#999',
+        acc=cssVar('--accent')||'#8b7bff', acc2=cssVar('--accent2')||'#2dd4bf';
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var i=0;i<=4;i++){
+      var gx=W/4*i, gy=H/4*i;
+      ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();
+    }
+    var data=state.data[state.source], noise=state.noise[state.source];
+    var sigma=(1-state.iface/100)*0.35;
+    var color=(state.source==='local')?acc:acc2;
+    ctx.fillStyle=color;
+    for(var k=0;k<data.length-1;k++){
+      var x=Math.max(0,Math.min(1, data[k]+noise[k]*sigma));
+      var y=Math.max(0,Math.min(1, data[k+1]+noise[k+1]*sigma));
+      var px=x*W, py=H-y*H;
+      ctx.globalAlpha=0.5;
+      ctx.fillRect(px,py,2,2);
+    }
+    ctx.globalAlpha=1;
+    ctx.fillStyle=txt; ctx.font='11px ui-monospace,Menlo,monospace';
+    ctx.fillText('x_n  →', W-46, H-8);
+    ctx.fillText('x_(n+1)  ↑', 8, 16);
+  }
+
+  function updateStat(){
+    var el=document.getElementById('statLine');
+    if(!el) return;
+    var readable=state.iface>=45;
+    var name=(state.source==='local')?'Lokal · schwacher PRNG':'Extern · starker PRNG';
+    var html='<span class="mut">Quelle: '+name+'</span>\n';
+    if(state.source==='local'){
+      html += readable
+        ? '<span class="bad">Gitter sichtbar → invertierbar → lokale Erzeugung (Halluzination).</span>\n'
+        : '<span class="mut">Gitter verdeckt (Interface zu schmal) — von externer Quelle nicht unterscheidbar.</span>\n';
+    }else{
+      html += readable
+        ? '<span class="ok">Kein Gitter → nicht invertierbar → Kandidat externe Entität.</span>\n'
+        : '<span class="mut">Struktur verdeckt (Interface zu schmal) — im normalen CRS unverfügbar.</span>\n';
+    }
+    el.innerHTML=html;
+  }
+
+  // ---- LCG inversion attack (BigInt, exact) ----
+  function modB(a,m){ var r=a%m; return r<0n? r+m : r; }
+  function egcd(a,b){
+    if(b===0n) return [a,(a>=0n?1n:-1n),0n];
+    var g=egcd(b,a%b);
+    return [g[0], g[2], g[1]-(a/b)*g[2]];
+  }
+  function modInv(a,m){
+    a=modB(a,m); if(a===0n) return null;
+    var g=egcd(a,m);
+    if(g[0]!==1n) return null;
+    return modB(g[1],m);
+  }
+  function runAttack(){
+    var out=document.getElementById('attackOut');
+    if(!out) return;
+    var MB=1n<<32n;
+    var raw=state.raw[state.source];
+    var s1=BigInt(raw[0]>>>0), s2=BigInt(raw[1]>>>0),
+        s3=BigInt(raw[2]>>>0), s4=BigInt(raw[3]>>>0);
+    var d1=modB(s2-s1,MB), d2=modB(s3-s2,MB);
+    var inv=modInv(d1,MB);
+    if(inv===null){
+      out.innerHTML='<span class="mut">Schritt 1:</span> s₁='+s1+' , s₂='+s2+' , s₃='+s3+'\n'+
+        '<span class="bad">Schritt 2:</span> (s₂−s₁) teilt sich nicht mit m=2³² → kein modularer Invers.\n'+
+        '<span class="ok">Fazit:</span> System ist <strong>nicht als LCG invertierbar</strong> → nicht-lokale Quelle ❌ (als Halluzination entlarvt? nein).';
+      return;
+    }
+    var ra=modB(d2*inv,MB);
+    var rc=modB(s2 - ra*s1, MB);
+    var pred=modB(ra*s3 + rc, MB);
+    var ok=(pred===s4);
+    out.innerHTML='<span class="mut">Schritt 1:</span> s₁='+s1+' , s₂='+s2+' , s₃='+s3+'\n'+
+      '<span class="mut">Schritt 2:</span> Δ₁='+d1+' , Δ₂='+d2+' , Invers='+inv+'\n'+
+      '<span class="mut">Schritt 3:</span> rekonstruiert a='+ra+' , c='+rc+'\n'+
+      (ok
+        ? '<span class="ok">Schritt 4:</span> Prognose s₄='+pred+' = tatsächlich '+s4+'  ✅ MATCH → <strong>lokal erzeugt (Halluzination)</strong>.'
+        : '<span class="bad">Schritt 4:</span> Prognose s₄='+pred+' ≠ tatsächlich '+s4+'  ❌ MISS → <strong>nicht lokales LCG</strong> (Kandidat externe Quelle).');
+  }
+
+  // wire controls
+  var tabL=document.getElementById('tabLocal'), tabE=document.getElementById('tabExternal');
+  var iface=document.getElementById('iface'), ifaceVal=document.getElementById('ifaceVal');
+  function setSource(s){
+    state.source=s;
+    if(tabL) tabL.classList.toggle('active', s==='local');
+    if(tabE) tabE.classList.toggle('active', s==='external');
+    draw(); updateStat();
+    var ao=document.getElementById('attackOut');
+    if(ao) ao.innerHTML='<span class="mut">„Angriff" führt die LCG-Rekonstruktion a = (s₃−s₂)·(s₂−s₁)⁻¹ mod m durch und prognostiziert s₄.</span>';
+  }
+  if(tabL) tabL.addEventListener('click',function(){ setSource('local'); });
+  if(tabE) tabE.addEventListener('click',function(){ setSource('external'); });
+  if(iface) iface.addEventListener('input',function(){
+    state.iface=parseInt(iface.value,10)||0;
+    if(ifaceVal) ifaceVal.textContent=state.iface;
+    draw(); updateStat();
+  });
+  var ab=document.getElementById('attackBtn');
+  if(ab) ab.addEventListener('click',runAttack);
+
+  window.addEventListener('resize',function(){ draw(); });
+
+  init();
+  draw(); updateStat();
+  return {draw:draw, updateStat:updateStat};
+})();
+
+// expose for theme re-render
+window.__fusionRedraw=function(){ if(VIZ){ VIZ.draw(); VIZ.updateStat(); } };
+</script>
+</body>
+</html>

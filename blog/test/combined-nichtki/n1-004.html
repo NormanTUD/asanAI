@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verifizierte Resonanz: Ordnung, die geprüft werden muss</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff;
+  --border:#d8d3c4; --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --accent2:#b0392f; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e;
+  --border:#233450; --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --accent2:#ff8a5c; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:40px 24px 90px;}
+header{margin-bottom:28px; position:relative;}
+h1{font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+#themeBtn{
+  position:absolute; top:0; right:0; cursor:pointer;
+  background:var(--panel); color:var(--muted); border:1px solid var(--border);
+  border-radius:20px; padding:5px 13px; font-size:.78rem; font-family:inherit;
+}
+#themeBtn:hover{color:var(--accent); border-color:var(--accent);}
+section{margin:0 0 32px;}
+section > h2{
+  font-size:1.32rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.88em;
+}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:15px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.card h3{margin:0 0 6px; font-size:1.02rem;}
+.src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+table{width:100%; border-collapse:collapse; margin:12px 0; font-size:.9rem;}
+th,td{border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top;}
+th{background:var(--accent-soft); color:var(--fg); font-weight:600;}
+td code{white-space:nowrap;}
+.note{border-left:3px solid var(--accent); padding:6px 0 6px 14px; margin:14px 0; color:var(--muted);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:520px;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:20px; align-items:center;
+  padding:12px 16px; border-bottom:1px solid var(--border);
+}
+.viz-controls label{font-size:.78rem; color:var(--muted); letter-spacing:.03em;}
+.viz-controls .mono{color:var(--accent);}
+.viz-controls input[type=range]{accent-color:var(--accent); vertical-align:middle; width:150px;}
+.viz-controls input[type=checkbox]{accent-color:var(--accent); vertical-align:middle; margin-right:5px;}
+#readout{
+  padding:12px 16px; font-size:.86rem; line-height:1.55; border-top:1px solid var(--border);
+}
+#readout .k{color:var(--accent); font-weight:bold;}
+#readout .honesty{color:var(--accent2); font-style:italic;}
+footer{margin-top:38px; color:var(--muted); font-size:.85rem; border-top:1px solid var(--border); padding-top:16px;}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <button id="themeBtn" type="button">🌓 Thema</button>
+    <h1>Verifizierte Resonanz: Ordnung, die geprüft werden muss</h1>
+    <p class="subtitle">Fusion aus: <code>good/good.html</code> ✕ <code>pz4.html</code></p>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Zwei Papiere auf den ersten Blick aus Welten, die nicht zusammengehören — eine <em>formell verifizierte Ethik</em> (A) und ein <em>harmonisches Primzahlsieb</em> (B) — teilen dieselbe Grundbewegung: <strong>Ordnung entsteht aus einfachen lokalen Regeln und muss sich von Rauschen unterscheiden lassen</strong>. Und vor allem: Man muss diese Ordnung nicht nur sehen, sondern <strong>prüfen</strong> und dann <strong>ehrlich</strong> melden.</p>
+    <p>A sagt: Ein konsistentes Moralsystem existiert <em>nur</em>, wenn seine lokalen Prinzipien (die „Schritte") auf ihren Überlappungen übereinstimmen — die sheaf-theoretische <em>Verklebungskondition</em>. Und A ist explizit bescheiden: Konsistenz ist <em>verifizierbar</em>, aber nicht dasselbe wie Wahrheit; „values are chosen, not proved". B sagt: Blickt man die Primzahlen durch einen <em>ganzzahligen</em> Modulus, so riegeln sie sich in vertikale „Spalten" ein — die diskrete Struktur der Restklassen — und nennt das „Harmonic Resonance", „columns of truth".</p>
+    <p>Die fusionierte These: Ordnung ist (i) ein Emergenz-Phänomen vom lokalen zum globalen in beiden Domänen; (ii) etwas, das man <strong>prüfen statt behaupten</strong> muss — A's Verklebungstest und B's ganzzahlige Modulus-Einordnung sind <em>dieselbe</em> Frage („stimmen die lokalen Teile überein?"); und (iii) etwas, das man <strong>ehrlich</strong> meldet — indem man die verifizierte, diskrete Tatsache (Primzahlen besetzen φ(m) Restklassen; die Prinzipien verkleben) von der ästhetischen Überbehauptung („Spalten der Wahrheit", „harmonische Resonanz") trennt und darüber hinaus die <em>Konsistenz</em> von der <em>Korrektheit</em> (A). Die fusionierte Methode lautet: <em>die Ausrichtung verifizieren, dann nur das behaupten, was die Verifizierung stützt, und die Lücke zwischen Struktur und Bedeutung benennen.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="note">Ehrliche Einordnung: Beide Papiere liegen in völlig unterschiedlichen Domänen (normative Ethik vs. Zahlentheorie/Visualisierung). Es gibt <strong>keinen</strong> direkten logischen Widerspruch. Hier sind die nächsten <em>echten</em> Spannungen, mit jeweils der konkreten Position:</p>
+    <div class="card">
+      <span class="tag">Spannung 1 · Epistemischer Modus</span>
+      <h3>Verifikation vs. Offenbarung</h3>
+      <p><span class="src">A</span> ist explizit bescheiden: „Not a proof that these values are correct — values are chosen, not proved". Es trennt <em>verifizierbare Konsistenz</em> von <em>Wahrheit/Korrektheit</em> und verlangt Ehrlichkeit über Unsicherheit. <span class="src">B</span> präsentiert sein Ergebnis dagegen in selbstbewussem, offenbarendem Ton — „perfect vertical 'columns of truth'", „Harmonic Resonance of prime gaps" — und gibt eine einfache, diskrete arithmetische Tatsache (Primzahlen in Restklassen) als tiefe, resonante, selbstverständliche <em>Wahrheit</em> aus. A würde B's „columns of truth" als Überbehauptung einstufen; B's Präsentation leistet genau die Überzeugungsarbeit, die nach A die <em>Verifikation</em> leisten müsste.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Spannung 2 · Herkunft der Ordnung</span>
+      <h3>Konstruiert-geprüft vs. entdeckt-offenbart</h3>
+      <p><span class="src">A</span>: Der globale Schnitt (die Konsistenz) existiert <em>nur wenn</em> die lokalen Schnitte auf den Überlappungen übereinstimmen — Konsistenz ist eine Eigenschaft, die man <em>bauen und prüfen</em> muss, und sie <em>kann scheitern</em> („If any two principles contradict … the global section does not exist"). <span class="src">B</span> behandelt die Spalten dagegen als latent und <em>vorausgesetzt</em> in den Primzahlen: Man <em>offenbart</em> sie lediglich, indem man den (ganzzahligen) Modulus richtig einstellt — sie sind unabhängig vom Betrachter vorhanden. A: Ordnung ist errungen, falsifizierbar. B: Ordnung ist immanent, nur aufgedeckt.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Spannung 3 · Diskret vs. kontinuierlich</span>
+      <h3>Exakte/binäre Konsistenz vs. approximative Resonanz</h3>
+      <p><span class="src">A</span>'s Konsistenz ist <em>binär und exakt</em>: Eine Handlung wird entweder gefordert <em>und</em> verboten (Widerspruch) oder nicht; das Ziel ist <em>null</em> Widerspruch. <span class="src">B</span>'s Phänomen ist ein <em>kontinuierliches Spektrum</em>: Man schiebt den Modulus „slowly" vom Rauschen (nicht-ganzzahlig, verstreut) zum Ordnungsgipfel (ganzzahlig, Spalten) — das Interessante ist der <em>Verlauf</em>, die kontinuierliche Annäherung an die Ausrichtung. A will alles-oder-nichts Nicht-Widersprüchlichkeit; B feiert den analogen Gradienten.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>(1) Modus.</strong> Beides behalten. B's Resonanz ist eine <em>echte, prüfbare</em> Struktur — aber die <em>Wörter</em> „Wahrheit"/„Resonanz" bleiben dem Vorbehalten, was die Prüfung stützt. Fusion: Berichte die verifizierte Tatsache („bei ganzzahligem m fallen die Primzahlen in φ(m) Restklassen") und kennzeichne den Rest als ästhetisch/interpretativ, <em>nicht</em> als Wahrheit. A's Ehrlichkeitsprinzip wird so zur <em>epistemischen Norm</em> für B's Visualisierung: Das Bild darf schön sein, aber nur die geprüfte Ausrichtung ist die Behauptung.</p>
+    <p><strong>(2) Konstruiert vs. entdeckt.</strong> Beide machen <em>dieselbe</em> Verifikation auf unterschiedlicher Ebene: A prüft, dass Prinzipien auf Überlappungen übereinstimmen; B prüft (visuell), dass sich die Punkte bei einem Schwellwert ausrichten. In beiden bedeutet „Ordnung existiert" = „der Test läuft durch". Fused conclusion: <em>Die Ausrichtung ist real, wenn und nur wenn der Test, der sie erzeugt, durchläuft</em> — die Struktur sitzt im Objekt, die Bestätigung im Test. A's „if and only if" und B's „when you hit an integer" sind dieselbe Kondition.</p>
+    <p><strong>(3) Binär vs. kontinuierlich.</strong> Trenne die zwei Größen, die A und B unterschiedlich verweben. A interessiert der <em>Schwellwert</em> (konsistent vs. widersprüchlich — binär auf Systemebene); B interessiert die <em>Antwortkurve</em> (Ordnungsscore vs. Modulus — kontinuierlich). Fusion: Modelliere Ordnung als <em>kontinuierlichen Score</em> (B) mit einem <em>expliziten Schwellwert</em> (A), der „Struktur vorhanden/abwesend" entscheidet. A's binäres Urteil wird aus B's Kurve <em>am Schwellwert abgelesen</em>. Resultat: <em>kontinuierliche Messung + expliziter Schwellwert + ehrliche Kennzeichnung, was der Schwellwert kauft</em> (Struktur — nicht Wahrheit).</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Beide Papiere sind „emergente Ordnung aus einer einfachen Regel" — A's Regel = <em>lokale Prinzipien + Verklebung</em>, B's Regel = <em>Sieb + modulare Projektion</em>. Beide fragen: <em>Stimmen die lokalen Teile zu einem globalen Muster aus? Und wie prüfe ich das?</em></p>
+
+    <div class="card">
+      <span class="tag">Aus A · Formell verifizierte Ethik</span>
+      <ul>
+        <li><strong>10 Schritte:</strong> 0 Minimiere Netto-Schaden · 1 Wachsam sein · 2 Ehrlich sein · 3 Andere als Gleiche behandeln · 4 Mäßigung · 5 Fair sein · 6 anderen helfen · 7 kontinuierlich wachsen · 8 Verantwortung übernehmen · 9 alle Prinzipien integrieren.</li>
+        <li><strong>12 Axiome</strong> (z.B. Agents Exist, Others Exist, Actions Have Effects, Finite Capacity, Context Determines Priority, Time Is Irreversible, Uncertainty Is Inherent, <em>Conflicts Between Principles Are Inevitable</em>).</li>
+        <li><strong>Sheaf-Maschinerie:</strong> offene Mengen = Lebensdomänen (Self, Other, Community, Temporal, Emergency); lokale Schnitte müssen auf Überlappungen <em>übereinstimmen</em> (gluing condition); der globale Schnitt existiert gdw die Verklebung durchläuft.</li>
+        <li><strong>Priorisierungsordnung:</strong> 0 &gt; 3 &gt; 2 &gt; 5 &gt; 8 &gt; 6 &gt; 7 &gt; 4 &gt; 1 (Schaden &gt; Gleichheit &gt; Ehrlichkeit &gt; Fairness &gt; Verantwortung &gt; Hilfe &gt; Wachstum &gt; Mäßigung &gt; Wachsamkeit).</li>
+        <li><strong>Meta-Theorem</strong> der globalen Konsistenz + Gödel'sche Einschränkung (das System kann seine eigene Konsistenz nicht beweisen) + die Ehrlichkeit „was es ist / ist nicht" + der „fundamentale Wetteinsatz".</li>
+        <li><strong>Methodik:</strong> Annahmen offen benennen (VULNERABILITY-Felder), Axiome (gewählt) von Theoremen (bewiesen) trennen, Verklebung verifizieren, das System zur Revision <em>offen</em> halten.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="tag">Aus B · Harmonisches Primzahlsieb</span>
+      <ul>
+        <li><strong>Sieb des Eratosthenes</strong> bis <code>LIMIT</code>; das Primzahlenfeld als Punktewolke.</li>
+        <li><strong>Modulare Projektion:</strong> <code>x = (p mod m)/m</code>, <code>y = p/LIMIT</code>; Farbe („Chroma") nach dem Rest.</li>
+        <li><strong>Ganzzahlige Einordnung in Spalten</strong> + die „Resonanz"-Lesart; Maus-Inspector („modulo phase"); Regler für Modulus / Dichte / Chroma.</li>
+        <li><strong>Kern-Mathematik:</strong> Für <em>ganzzahliges</em> m besetzen Primzahlen p &gt; m genau die Restklassen r mit ggT(r,m)=1 — also <em>φ(m)</em> Klassen → <em>φ(m)</em> Spalten. Eine konkrete, prüfbare Vorhersage (nicht nur ein hübsches Bild).</li>
+      </ul>
+    </div>
+
+    <p>Die Fusion verallgemeinert die gemeinsame Struktur: <strong>Jedes „System, das konsistent aussieht" — moralisch, numerisch, wie auch immer — sollte als (a) lokale Regel, (b) globales Muster, das entsteht, wenn die Regel stimmt, (c) Test, der das Muster bestätigt, und (d) ehrliche Aussage, was der Test feststellt und was nicht, präsentiert werden.</strong></p>
+
+    <table>
+      <thead><tr><th>A (Ethik)</th><th>B (Primzahlsieb)</th><th>Gemeinsame Idee</th></tr></thead>
+      <tbody>
+        <tr><td>lokales Prinzip / Schritt</td><td>Primzahl / Restklasse</td><td>die Bausteine</td></tr>
+        <tr><td>offene Menge (Domäne)</td><td>Modulus-Fenster / Phasenraum</td><td>der Betrachtungsbereich</td></tr>
+        <tr><td>Verklebungskondition</td><td>ganzzahlige Modulus-Ausrichtung</td><td><em>der Test</em></td></tr>
+        <tr><td>globaler Schnitt</td><td>die Spalten</td><td>das emergente Muster</td></tr>
+        <tr><td>Konsistenztest</td><td>Ordnungsscore (Grid-Lock)</td><td>die messbare Prüfung</td></tr>
+        <tr><td>Ehrlichkeitsprinzip</td><td>„columns of truth"-Disziplin</td><td>was man behaupten darf</td></tr>
+        <tr><td>Revisibilität (offenes System)</td><td>den Modulus schieben</td><td>die Regel variieren</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Nützliche Math.</strong> A's Schritt 0 ist ein <em>konstrainedes Optimierungsproblem</em>: <code>minimize_net_harm = Σ harmᵢ</code>, begrenzt durch <code>not_merely_means ∧ severity_bounded ∧ reversibility_preferred</code>; unter Unsicherheit wird erwartet → variiert → auf Reversibilität geordnet. B liefert die <em>Euler-φ</em>-Vorhersage: die Spaltenzahl bei ganzzahligem m ist <code>φ(m)</code>. Die Fusion fügt einen <em>Ordnungsscore</em> hinzu — den <em>Grid-Lock</em>: <code>order(m)</code> = Anteil der Primzahlen, deren normierter Rest <code>(p mod m)/m</code> innerhalb von <code>ε·(1/m)</code> eines Gitterpunkts liegt. <code>order(m) → 1</code> bei ganzzahligem m (Spalten), <code>→ ~0</code> dazwischen (Rauschen); „Struktur" gilt gdw <code>order(m) ≥ θ</code>.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung · Der Resonanz-Prüfstand</h2>
+    <p>Oben das Primzahlenfeld, projiziert durch <code>x=(p mod m)/m</code> — schiebe m und schau, wie es bei ganzzahligen Werten in Spalten einriegelt. Unten die <em>Ordnungskurve</em> (Grid-Lock-Score über m): die Peaks bei den ganzen Zahlen <em>sind</em> A's Konsistenztest, abgelesen aus B's Resonanz. Die „Ehrlichkeits"-Box (A) zeichnet den Schwellwert θ und benennt die Lücke „Struktur ≠ Wahrheit".</p>
+    <div id="vizwrap">
+      <div class="viz-controls">
+        <label>Modulus m <input type="range" id="cM" min="2" max="30" step="0.02" value="12"> <span id="mVal" class="mono">12.00</span></label>
+        <label>Chroma-Offset <input type="range" id="cCh" min="0" max="360" step="1" value="180"></label>
+        <label class="chk"><input type="checkbox" id="cH" checked> Ehrlichkeits-Overlay (A)</label>
+      </div>
+      <canvas id="viz"></canvas>
+      <div id="readout"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><a href="../good/good.html">good/good.html</a> — <em>„How to Live Well — A Formally Verified Ethical Logic"</em>: 10 Schritte, 12 Axiome, sheaf-theoretische Konsistenz, in Coq maschinell prüfbar; Konsistenz als verifizierbare, aber von Wahrheit getrennte Eigenschaft.</li>
+      <li><a href="../pz4.html">pz4.html</a> — <em>„Prime Harmonic Interference" (Harmonic Sieve)</em>: Canvas-Visualisierung der Primzahlen via Modular-Arithmetik; bei ganzzahligen Moduli riegeln sich die Punkte in vertikale „Spalten" ein („Harmonic Resonance", „columns of truth").</li>
+    </ul>
+  </section>
+
+  <footer>Fusion Round 1 · Paar 004 · nicht-künstliche-Intelligenz-Track. Rein Inline, kein Netzwerk, themenreaktiv.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var LIMIT = 10000;
+  var M_MIN = 2, M_MAX = 30, MSTEP = 0.02, THETA = 0.012;
+
+  function sieve(n){
+    var s = new Uint8Array(n+1), i, j;
+    for(i=2;i<=n;i++) s[i]=1;
+    s[0]=0; s[1]=0;
+    for(i=2;i*i<=n;i++){ if(s[i]){ for(j=i*i;j<=n;j+=i) s[j]=0; } }
+    var r=[]; for(i=2;i<=n;i++) if(s[i]) r.push(i);
+    return r;
+  }
+  var primes = sieve(LIMIT);
+
+  function phi(n){
+    var res=n, f;
+    for(f=2;f*f<=n;f++){ if(n%f===0){ while(n%f===0)n/=f; res-=res/f; } }
+    if(n>1) res-=res/n;
+    return Math.round(res);
+  }
+
+  var NBINS = 72;
+  function order(m){
+    var counts = new Float64Array(NBINS), total=0, i, p, r, rn, b, H=0;
+    for(i=0;i<primes.length;i++){
+      p = primes[i];
+      r = p - Math.floor(p/m)*m;      // p mod m in [0,m)
+      rn = r/m;                        // normiert [0,1)
+      b = Math.floor(rn*NBINS);
+      if(b>=NBINS) b=NBINS-1; if(b<0) b=0;
+      counts[b]++; total++;
+    }
+    for(i=0;i<NBINS;i++) H += counts[i]*counts[i];
+    H /= (total*total);                // Herfindahl in [1/NBINS, 1]
+    var o = (H - 1/NBINS) / (1 - 1/NBINS);
+    if(o<0)o=0; if(o>1)o=1;
+    return o;
+  }
+
+  var curve=[];
+  for(var m=M_MIN; m<=M_MAX+1e-9; m+=MSTEP){ curve.push({m:m, o:order(m)}); }
+
+  var state = { m:12, chroma:180, honesty:true };
+
+  function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function draw(){
+    if(!ctx) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.clientWidth, H = canvas.clientHeight;
+    if(W<10 || H<10) return;
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var panel = css('--panel') || '#0b1220';
+    var border = css('--border') || '#233450';
+    var muted  = css('--muted')  || '#93a0b6';
+    var accent = css('--accent') || '#64ffda';
+    var accent2= css('--accent2')|| '#ff8a5c';
+    var dark = document.documentElement.classList.contains('dark');
+    var ptL = dark ? 60 : 45;
+
+    ctx.fillStyle = panel; ctx.fillRect(0,0,W,H);
+
+    var ml=46, mr=18, plotW = W-ml-mr;
+    var sTop=22, sBot=292;      // scatter region
+    var cTop=330, cBot=474;     // curve region
+    var m = state.m;
+
+    // frame lines
+    ctx.strokeStyle = border; ctx.lineWidth=1;
+    ctx.strokeRect(ml, sTop, plotW, sBot-sTop);
+    ctx.strokeRect(ml, cTop, plotW, cBot-cTop);
+
+    // --- scatter of primes ---
+    for(var i=0;i<primes.length;i++){
+      var p = primes[i];
+      var r = p - Math.floor(p/m)*m;
+      var rn = r/m;
+      var x = ml + rn*plotW;
+      var y = sBot - (p/LIMIT)*(sBot-sTop);
+      var hue = (rn*360 + state.chroma) % 360;
+      ctx.fillStyle = 'hsla(' + hue.toFixed(0) + ',68%,' + ptL + '%,.85)';
+      ctx.fillRect(x-0.8, y-0.8, 1.7, 1.7);
+    }
+
+    // scatter axis label
+    ctx.fillStyle = muted; ctx.font='12px "SFMono-Regular",Consolas,monospace';
+    ctx.textAlign='left';
+    ctx.fillText('Primzahlen  (x = (p mod m)/m, y = p/LIMIT)', ml, sTop-7);
+
+    // --- order curve ---
+    var cx = function(mm){ return ml + (mm-M_MIN)/(M_MAX-M_MIN)*plotW; };
+    var cy = function(o){ return cBot - o*(cBot-cTop); };
+
+    // threshold line (honesty): A's binary read-off of B's continuous curve
+    if(state.honesty){
+      ctx.strokeStyle = accent2; ctx.lineWidth=1; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(ml, cy(THETA)); ctx.lineTo(ml+plotW, cy(THETA)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = accent2; ctx.font='11px "SFMono-Regular",Consolas,monospace';
+      ctx.fillText('Struktur (geprüft)', ml+6, cTop+11);
+      ctx.fillText('Rauschen  <  θ', ml+6, cBot-5);
+    }
+
+    // curve line
+    ctx.strokeStyle = accent; ctx.lineWidth=1.6;
+    ctx.beginPath();
+    for(var k=0;k<curve.length;k++){
+      var px = cx(curve[k].m), py = cy(curve[k].o);
+      if(k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+
+    // current-m marker
+    var mx = cx(m), mo = order(m), my = cy(mo);
+    ctx.strokeStyle = accent; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(mx, cTop); ctx.lineTo(mx, cBot); ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.beginPath(); ctx.arc(mx, my, 4, 0, Math.PI*2); ctx.fill();
+
+    // curve labels
+    ctx.fillStyle = muted; ctx.font='12px "SFMono-Regular",Consolas,monospace';
+    ctx.fillText('Ordnungsscore order(m) — Konzentration der Reste', ml, cTop-7);
+    ctx.textAlign='right'; ctx.fillText('modulus m →', ml+plotW, cBot+16);
+    ctx.textAlign='left';
+
+    // readout
+    var n = Math.round(m), near = Math.abs(m-n) < 0.15 && n>=2 && n<=30;
+    var msg;
+    if(near){
+      var kk = phi(n);
+      msg = 'Eingegipfelt bei n=' + n + ':  Primzahlen fallen in φ(n)=' + kk + ' Restklassen → ' + kk + ' Spalten' +
+            (state.honesty ? '  ·  <span class="honesty">verifiziert (Struktur ≠ „Wahrheit“)</span>' : '');
+    } else if(mo > THETA){
+      msg = 'Spalten sichtbar (order=' + mo.toFixed(3) + ' &gt; θ): diskrete Restklassen → Struktur' +
+            (state.honesty ? '  ·  <span class="honesty">verifiziert, nicht „Wahrheit“</span>' : '');
+    } else {
+      msg = 'Dichtes Rauschen (order=' + mo.toFixed(3) + ' &le; θ): Reste streuen sich kontinuierlich, keine klaren Spalten.';
+    }
+    var html = '<span class="k">m</span> = ' + m.toFixed(2) +
+               '   ·   <span class="k">order(m)</span> = ' + mo.toFixed(3) +
+               (state.honesty ? '   ·   <span class="k">θ</span> = ' + THETA : '') +
+               '<br>' + msg;
+    var ro = document.getElementById('readout');
+    if(ro) ro.innerHTML = html;
+    var mv = document.getElementById('mVal');
+    if(mv) mv.textContent = m.toFixed(2);
+  }
+
+  // controls
+  var cM = document.getElementById('cM');
+  var cCh = document.getElementById('cCh');
+  var cH = document.getElementById('cH');
+  if(cM) cM.addEventListener('input', function(){ state.m = parseFloat(cM.value); draw(); });
+  if(cCh) cCh.addEventListener('input', function(){ state.chroma = parseInt(cCh.value,10); draw(); });
+  if(cH) cH.addEventListener('change', function(){ state.honesty = cH.checked; draw(); });
+
+  var tb = document.getElementById('themeBtn');
+  if(tb) tb.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); });
+
+  window.addEventListener('resize', function(){ draw(); });
+  if(typeof MutationObserver !== 'undefined'){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  function kick(){ draw(); requestAnimationFrame(function(){ draw(); }); }
+  kick();
+})();
+</script>
+</body>
+</html>

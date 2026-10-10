@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Ehresmann-Konnektor ✕ Rückkopplungsschleifen — Krümmung als sich nicht schließender Kreislauf</title>
+<style>
+  :root {
+    --bg: #faf9f4;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e2e8f0;
+    --accent: #9a3412;
+    --accent2: #4338ca;
+    --ok: #16a34a;
+    --bad: #dc2626;
+    --code-bg: #eef2f7;
+    --shadow: 0 2px 14px rgba(15,23,42,.08);
+    --viz-grid: rgba(30,41,59,.07);
+    --viz-axis: #94a3b8;
+    --viz-text: #64748b;
+    --viz-curve: #7c3aed;
+    --viz-exp: rgba(220,38,38,.5);
+    --viz-target: rgba(22,163,74,.75);
+    --viz-dot: #7c3aed;
+    --viz-gap: #dc2626;
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --accent: #fca5a5;
+    --accent2: #a5b4fc;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.45);
+    --viz-grid: rgba(226,232,240,.06);
+    --viz-axis: #475569;
+    --viz-text: #94a3b8;
+    --viz-curve: #c4b5fd;
+    --viz-exp: rgba(248,113,113,.55);
+    --viz-target: rgba(74,222,128,.7);
+    --viz-dot: #c4b5fd;
+    --viz-gap: #f87171;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  article { max-width: 820px; margin: 0 auto; padding: 40px 22px 80px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.05em; line-height: 1.2; margin: 0 0 6px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0 0 4px; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle {
+    position: absolute; top: 0; right: 0;
+    background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px;
+    padding: 6px 14px; cursor: pointer; font-size: .85em;
+  }
+  section { margin-top: 38px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 8px; font-size: 1.08em; color: var(--fg); }
+  code, .math {
+    font-family: "SFMono-Regular", Consolas, "Fira Code", monospace;
+    background: var(--code-bg); color: var(--fg);
+    padding: 1px 6px; border-radius: 4px; font-size: .9em;
+  }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92em; }
+  th, td { border: 1px solid var(--card-border); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .viz-controls { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end; margin-bottom: 14px; }
+  .vg { min-width: 150px; flex: 1; }
+  .vg label { display: block; font-size: .82em; color: var(--muted); margin-bottom: 5px; }
+  .vg .val { font-size: 1.05em; font-weight: 700; color: var(--accent2); margin-bottom: 3px; }
+  input[type=range] { width: 100%; accent-color: var(--accent2); }
+  .ctl {
+    background: var(--code-bg); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 24px;
+    padding: 9px 18px; cursor: pointer; font-size: .92em; font-weight: 600;
+  }
+  .ctl:hover { border-color: var(--accent2); }
+  canvas { display: block; width: 100%; height: auto; background: var(--card); border: 1px solid var(--card-border); border-radius: 10px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 4px; }
+  .chip { padding: 5px 12px; border-radius: 8px; font-size: .85em; font-weight: 700; border: 1px solid var(--card-border); }
+  .c-curve { color: var(--viz-curve); border-color: var(--viz-curve); }
+  .c-exp { color: var(--viz-exp); border-color: var(--viz-exp); }
+  .c-target { color: var(--viz-target); border-color: var(--viz-target); }
+  .viz-note { color: var(--muted); font-size: .9em; margin-top: 10px; }
+  #fz-status { color: var(--fg); font-weight: 600; margin-top: 8px; min-height: 1.4em; }
+  .proven a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .proven a:hover { text-decoration: underline; }
+  footer { margin-top: 46px; color: var(--muted); font-size: .85em; text-align: center; border-top: 1px solid var(--card-border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" onclick="toggleTheme()" type="button">☾ / ☀</button>
+    <h1>Krümmung ist der sich nicht schließende Kreislauf</h1>
+    <p class="fusion-line">Fusion aus: <b>ehresmannconnection.html</b> ✕ <b>feedback.html</b></p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere beschreiben, unter ganz unterschiedlichem Gewand, <strong>dasselbe Objekt von zwei Seiten</strong>. Es gibt einen <em>Basisprozess</em> (eine Kurve <span class="math">γ(t)</span> in der Basis-Mannigfaltigkeit bei A, die Zeit bei B), einen darüber errichteten <em>Zustandsraum</em>, ein <em>kanonisches Referenz</em> (die Faser bei A, das Ziel/den Gleichgewichtspunkt bei B) und eine <em>Regel</em>, die bestimmt, wie ein Schritt in der Basis zu einer Bewegung im Zustandsraum gehoben („geliftet") wird. Alles Interessante an beiden Systemen dreht sich um genau eine Frage: <strong>Schließt sich die so geliftete Bewegung — oder driftet sie ab?</strong></p>
+    <p>Die Zuordnung ist eng. Das vertikale Unterraum <span class="math">V<sub>p</sub>E = ker(dπ<sub>p</sub>)</span> bei A — kanonisch, ohne jede Wahl — entspricht dem <em>Ziel/dem Gleichgewicht</em> bei B: der gegebenen Referenz, gegen die man gemessen wird. Die horizontale Konnektorwahl <span class="math">H<sub>p</sub>E</span> bei A — die freie Wahl — entspricht dem <em>Regelgesetz</em> (den Rückkopplungsschleifen) bei B: der Regel, die einen Basis-Schritt in eine Bewegung übersetzt. Paralleltransport bei A (der Basisvektor wird in den horizontalen Raum gehoben und entlang der Kurve verfolgt) ist exakt die <em>Entwicklung eines Systems unter seiner Regel</em> bei B.</p>
+    <p>Die tragende Identifikation lautet: <strong>Krümmung = positive Rückkopplung = das Nicht-Schließen.</strong> Bei A ist die Krümmung das Scheitern der horizontalen Verteilung, integrierbar zu sein — Paralleltransport um einen geschlossenen Weg kehrt nicht zum Start zurück, sondern hinterlässt eine Netto-Verschiebung: die <em>Holonomie</em>. Bei B ist die positive/verstärkende Schleife genau ein solches Nicht-Schließen: Die Ausgabe fließt als Eingang zurück und verstärkt ihn, sodass ein „Umlauf" das System auf einem höheren Niveau verlässt, als es begann — eine sich aufsummierende Netto-Veränderung. Die ausgleichende/negative Schleife ist der <em>flache Konnektor</em>: Sie projiziert zurück auf das Ziel, damit der Kreislauf schließt. Das S-Kurven-Plateau (Tragfähigkeit) ist der Fixpunkt, an dem Verstärkungs-Trieb und Ausgleich-Korrektur exakt aufheben — die einzige Ebene, an der die aufgespeicherte Holonomie vollständig absorbiert ist und die Netto-Bewegung momentweise „flach" wird.</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Ein harter, faktischer Widerspruch existiert nicht — die beiden Papiere leben in verschiedenen Domänen (Faserbündel-Geometrie vs. Systemdynamik) und machen keine gegenläufigen Tatsachenbehauptungen. Sie treffen aber auf zwei konkreten Punkten auf <strong>unvereinbare Stellungen</strong> zum <em>Charakter</em> und zur <em>Bewertung</em> der zentralen Größe:</p>
+    <div class="card">
+      <h3>① Wahl vs. Entdeckung — der Status der Regel</h3>
+      <p><span class="tagA">A (Ehresmann)</span> sagt explizit, die Konnektorwahl (die horizontale Aufspaltung <span class="math">T<sub>p</sub>E = V<sub>p</sub>E ⊕ H<sub>p</sub>E</span>) sei „<em>not canonical — there are many possible choices</em>": Die Regel wird dem <em>gegebenen</em> Bündel auferlegt, und die gesamte geometrische Substanz (Krümmung, Holonomie) ist eine Eigenschaft <em>der jeweils gewählten</em> Regel. Das Bündel ist fix, die Regel ist frei. <span class="tagB">B (Rückkopplung)</span> stellt die Schleifen dagegen als <em>objektive, entdeckbare Struktur</em> eines Phänomens dar — „Once you see them, you'll find them everywhere" — und die analytische Aufgabe ist „welche Schleife dominiert gerade", also die Schleifen werden im System <em>gefunden</em>, nicht von ihm gewählt. Unvereinbare Stellung: A = freie Wahl auf einem gegebenen Raum; B = feste, intrinsische, ablesbare Eigenschaft des Systems.</p>
+    </div>
+    <div class="card">
+      <h3>② Bewertung des Nicht-Schließens — welche Richtung ist „gut"</h3>
+      <p>Bei <span class="tagA">A</span> liegt gerade im <em>nicht-schließenden</em> Verhalten (Krümmung <span class="math">κ ≠ 0</span> → Holonomie) <strong>die gesamte Substanz</strong>; der flache Fall (<span class="math">κ = 0</span>, Umläufe schließen, Transport trivial) ist der <em>entartete/einfache</em> Fall. Krümmung ist das Interessante. Bei <span class="tagB">B</span> wird das analoge nicht-schließende Verhalten (die positive/verstärkende Schleife, die vom Ziel driftet) als „<em>inherently unstable</em>" gerahmt — sie „always accelerates toward explosion or collapse" — und das <em>Ziel</em> ist das schließende Verhalten (ausgleichende Schleife, Konvergenz zum Ziel = „Stability"). Umgekehrte Bewertung: Was A als <em>Quelle aller Substanz</em> behandelt (Drift/Nicht-Schließen), behandelt B als die <em>Störung</em>, die die andere Schleife dämpfen muss; A's „reiche" Region (Krümmung) ist B's „instabile" Region, und A's „triviale" Region (flach) ist B's „stabile/gute" Region.</p>
+    </div>
+    <p><strong>Die schärfste reale Spannung</strong> ist Punkt ② als Frage: <em>Ist Nicht-Schließen (Krümmung/Holonomie) gut oder schlecht?</em> — A: Es ist der Inhalt selbst. B: Es ist Instabilität, die der Ausgleich bändigen muss. Dahinter steht ①: <em>Wer legt die Regel fest — wir (Wahl) oder das System (Entdeckung)?</em></p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>① Wahl vs. Entdeckung — unterschiedliche Geltungsbereiche</h3>
+      <p>Die beiden Stellungen gelten auf <em>unterschiedlicher Stufe</em> und widersprechen sich nicht. A spricht über den <strong>raum aller möglichen Konnektoren</strong> über einem festen Bündel — eine universelle Aussage: Die Regel ist ein freier Parameter, und der <em>Vergleich</em> von Konnektoren (per Krümmung) ist der Inhalt. B spricht über <strong>ein realisiertes System</strong>, in dem die Regel das ist, was sie ist, und abgelesen statt gewählt werden muss. <strong>Fusioniert:</strong> Der Konnektor ist <em>in der Theorie eine Wahl</em> (ein Koordinatensatz einer Familie möglicher Gesetze) und <em>in jeder konkreten Instanz eine Konstante</em>. A parametrisiert das Modell, B misst ein Exemplar desselben Modells.</p>
+    </div>
+    <div class="card">
+      <h3>② Bewertung — zwei Terme einer einzigen Bilanz</h3>
+      <p>Das Vorzeichen-Dilemma löst sich, sobald man Krümmung und Ausgleich-Schleife nicht als Gegenpole, sondern als <strong>die beiden Terme einer einzigen Bilanz</strong> liest. Krümmung (der verstärkende/positive Trieb) ist nicht „schlecht"; sie ist der <em>Motor</em> der Veränderung. Die Ausgleich-Schleife ist nicht das Negativ der Krümmung, sondern ihr <em>Regler</em> — der flache/zielprojizierende Teil. „Stabilität" und „Krümmung" sind die zwei Terme einer Gleichung. Die wirklich interessante Region ist der <em>Übergang</em> — B's S-Kurve — die in A's Sprache genau die Region ist, in der die <strong>Netto-Krümmung das Vorzeichen wechselt</strong>: Unterhalb der Tragfähigkeit dominiert der verstärkende Term (Holonomie summiert sich, das System driftet nach oben), oberhalb dominiert der korrigierende Term (es driftet zurück), und bei K heben sie sich auf (Netto-Map momentweise flach = effektive Holonomie 0).</p>
+    </div>
+    <p><strong>Fusionierter Schluss:</strong> Weder Papier irrt — A beschreibt den <em>Mechanismus</em> (ein Konnektor mit Krümmung), B die <em>Dynamik</em>, die er erzeugt (Wachstum vs. Regulation). Zusammen gelesen: <strong>Krümmung ist der Kreislauf, der sich nicht schließt; Stabilität ist der Kreislauf, der sich schließt.</strong> Das S-Kurven-Plateau ist der Punkt, an dem sich das Nicht-Schließen (Holonomie) und das Schließen (Ausgleich) exakt die Waage halten — der eine Moment, in dem ein System mit Krümmung sich wie ein flaches verhält.</p>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die folgende Karte verknüpft die zentralen Begriffe beider Papiere mit ihrer fusionierten Rolle. Sie ist so beschaffen, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+    <table>
+      <thead><tr><th style="width:26%">Begriff A (Ehresmann)</th><th style="width:26%">Begriff B (Rückkopplung)</th><th style="width:48%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Faserbündel <span class="math">π: E → M</span> (lokal <span class="math">M × F</span>)</td><td class="kv">Dynamisches System über einer Basis (Zeit)</td><td>Der Zustandsraum, errichtet über dem Basisprozess.</td></tr>
+        <tr><td class="kv">Vertikaler Raum <span class="math">V<sub>p</sub>E = ker(dπ<sub>p</sub>)</span> (kanonisch)</td><td class="kv">Ziel / Gleichgewichtspunkt</td><td>Die gegebene Referenz — keine Wahl, nur Messung.</td></tr>
+        <tr><td class="kv">Horizontale Konnektorwahl <span class="math">H<sub>p</sub>E</span> (frei)</td><td class="kv">Regelgesetz / verstärkende Schleife</td><td>Die freie Regel: Schritt → Bewegung; variiert zwischen Systemen.</td></tr>
+        <tr><td class="kv"><span class="math">T<sub>p</sub>E = V<sub>p</sub>E ⊕ H<sub>p</sub>E</span></td><td class="kv">Gesamt-Bewegung = Trieb + Korrektur</td><td>Jeder Schritt zerfällt in einen „schließenden" (zum Ziel) und einen „driftenden" (vom Ziel) Anteil.</td></tr>
+        <tr><td class="kv">Paralleltransport (H entlang γ)</td><td class="kv">Entwicklung unter der Regel</td><td>Die Trajektorie des Systems.</td></tr>
+        <tr><td class="kv">Flacher Konnektor (<span class="math">κ=0</span>) → Umlauf trivial</td><td class="kv">Reine ausgleichende/negative Schleife → Konvergenz zum Ziel</td><td>Schließen; kein Netto-Wechsel. Stabil — aber, wie B warnt, auch Stagnation.</td></tr>
+        <tr><td class="kv">Krümmung <span class="math">κ≠0</span> → Holonomie (Umlauf schließt nicht)</td><td class="kv">Positive/verstärkende Schleife → Netto-Drift summiert sich</td><td>Nicht-Schließen; die überlebende Verschiebung nach einem Umlauf.</td></tr>
+        <tr><td class="kv">— (A kennt es nicht als Begriff)</td><td class="kv">Tragfähigkeit / Plateau der S-Kurve</td><td>Fixpunkt: Trieb = Korrektur; Netto-Map momentweise flach (effektive Holonomie 0).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Das fusionierte diskrete Modell (das die Simulation berechnet)</h3>
+      <p><span class="math">x<sub>n+1</sub> = x<sub>n</sub> + r·x<sub>n</sub>·(1 − x<sub>n</sub>/K)</span></p>
+      <ul>
+        <li><strong>Verstärkender Term <span class="math">r·x<sub>n</sub></span></strong> = Krümmung / Holonomie = positive Schleife (A: der nicht-schließende Trieb; B: Verstärkung).</li>
+        <li><strong>Korrigierender Term <span class="math">−r·x<sub>n</sub>²/K</span></strong> = Projektion auf die Tragfähigkeit = ausgleichende Schleife (A: der flache/zielprojizierende Teil; B: die Begrenzung).</li>
+        <li><strong>Gleichgewicht bei <span class="math">x = K</span></strong>, wo <span class="math">r·x = r·x²/K</span> — die beiden Terme heben sich auf → Plateau (Netto-Krümmung 0).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Die drei Regime</h3>
+      <ol>
+        <li><strong>Flacher Konnektor (A) = reine negative Schleife (B):</strong> Konvergenz zum Ziel, Umläufe schließen, keine Holonomie. Stabil, aber null Netto-Wechsel — B's Warnung vor <em>Stagnation</em> (jedes System, das „Widerstand gegen Veränderung" leistet, läuft eine solche Schleife).</li>
+        <li><strong>Maximal gekrümmt (A) = reine positive Schleife (B):</strong> <span class="math">x<sub>n</sub> = x<sub>0</sub>(1+r)<sup>n</sup></span>, exponentiell, schließt nie, „Explosion". Maximale Holonomie — „nichts wächst in der Natur für immer".</li>
+        <li><strong>Dazwischen (A: gekrümmter Konnektor mit Ziel) = kombiniert (B):</strong> die <strong>S-Kurve</strong>. Unter K dominiert der Trieb (Holonomie summiert), über K die Korrektur (Rück-Drift), bei K Netto-0. Das Plateau ist der Moment, in dem ein gekrümmtes System sich flach verhält.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>Schlüssel-Annahmen, treu übernommen</h3>
+      <p><span class="tagA">Aus A:</span> Faserbündel ist lokal ein Produkt <span class="math">M×F</span>; der vertikale Raum <span class="math">ker(dπ)</span> ist kanonisch; ein Konnektor ist eine glatte horizontale Verteilung mit <span class="math">T=V⊕H</span> und ist <em>nicht</em> kanonisch; Paralleltransport ist der eindeutige horizontale Lift des Basisvektors; Krümmung ist die Nicht-Integrierbarkeit der horizontalen Verteilung; <span class="math">κ=0</span> → flach → triviale Holonomie; <span class="math">κ≠0</span> → Holonomie (Faser-Verschiebung nach einem geschlossenen Umlauf).</p>
+      <p><span class="tagB">Aus B:</span> positive Schleife = Ausgabe verstärkt Eingang (Lawine, exponentiell, „inherently unstable", „always accelerates toward explosion or collapse"); negative Schleife = Selbst-Korrektur zum Ziel (Stabilität/Homöostase: Thermostat, Blutzucker, Angebot/Nachfrage); kombiniert = S-Kurve (langsamer Start, explosiver Mittelteil, Plateau bei der Tragfähigkeit); Meta-Insight = reale Systeme sind wettbewerbfähige Schleifen, und der Hebel ist „welche Schleife dominiert jetzt, und wann übernimmt die andere".</p>
+    </div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: Krümmung trifft Ausgleich</h2>
+    <p>Interaktive Verkörperung der fusionierten These am diskreten Modell <span class="math">x<sub>n+1</sub> = x<sub>n</sub> + r·x<sub>n</sub>·(1 − x<sub>n</sub>/K)</span>. Die <strong>lila S-Kurve</strong> ist das fusionierte System (Korrektur + Trieb). Die <strong>gestrichelte rote Linie</strong> ist die ungezähmte Krümmung (reine positive Schleife, würde ohne Ausgleich eskalieren). Die <strong>grüne Linie</strong> ist die Ziel-Faser/Tragfähigkeit K. Der <strong>rote Lücken-Balken</strong> am Laufpunkt ist die <em>aufgespeicherte Holonomie, die der ausgleichende Anteil bereits ausgeglichen hat</em>: klein am Anfang (Drift dominiert), maximal am Plateau (Krümmung vollständig absorbiert → Netto-Map momentweise flach).</p>
+
+    <div class="viz-card">
+      <div class="viz-controls">
+        <div class="vg">
+          <label>Krümmung r · positive Schleife (A: κ / B: Verstärkung)</label>
+          <div class="val" id="fz-rv">8%</div>
+          <input type="range" id="fz-r" min="1" max="30" value="8">
+        </div>
+        <div class="vg">
+          <label>Ziel-Faser K · Tragfähigkeit (A: Ziel / B: Carrying Capacity)</label>
+          <div class="val" id="fz-kv">80</div>
+          <input type="range" id="fz-k" min="20" max="100" value="80">
+        </div>
+        <button class="ctl" id="fz-run" type="button">▶ Animieren</button>
+      </div>
+
+      <canvas id="fz" width="820" height="420"></canvas>
+
+      <div class="chip-row">
+        <span class="chip c-curve">S-Kurve: Trieb + Korrektur (Fusion)</span>
+        <span class="chip c-exp">rot gestrichelt: ungezähmte Krümmung</span>
+        <span class="chip c-target">grün: Ziel-Faser / Tragfähigkeit K</span>
+      </div>
+      <div id="fz-status"></div>
+      <p class="viz-note">Reine negative Schleife (flacher Konnektor) ließe x direkt gegen K laufen; reine positive Schleife (maximale Krümmung) wäre die rote Linie, die das Diagramm verlässt. Die S-Kurve ist genau der Übergang, in dem die Holonomie aufgebraucht wird.</p>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../ehresmannconnection.html"><strong>A — ehresmannconnection.html:</strong> „The Ehresmann Connection — Interactive Visual Explainer"</a> — Faserbündel, kanonischer vertikaler vs. gewählter horizontaler Unterraum, Paralleltransport und Krümmung/Holonomie als Nicht-Integrierbarkeit der horizontalen Verteilung.</li>
+      <li><a href="../feedback.html"><strong>B — feedback.html:</strong> „Feedback Loops — Visual Mental Model"</a> — positive (verstärkende, instabile), negative (ausgleichende, stabile) und kombinierte (S-Kurve/Tragfähigkeit) Rückkopplungsschleifen als mentale Modell für Wachstum und Regulation.</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Runde 1, Paar 029) — Ehresmann-Konnektor ✕ Rückkopplungsschleifen · krümmung-als-nichtschliessend · Krümmung = der sich nicht schließende Kreislauf, Ausgleich = der sich schließende.</footer>
+</article>
+
+<script>
+  function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    if (window.dispatchEvent) window.dispatchEvent(new Event('fz-theme'));
+  }
+  (function () {
+    'use strict';
+    var canvas = document.getElementById('fz');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    var rS = document.getElementById('fz-r');
+    var kS = document.getElementById('fz-k');
+    var rV = document.getElementById('fz-rv');
+    var kV = document.getElementById('fz-kv');
+    var runBtn = document.getElementById('fz-run');
+    var statusEl = document.getElementById('fz-status');
+
+    var N = 140, x0 = 1;
+    var step = N - 1;
+    var anim = null;
+    var logV = [], expV = [];
+
+    function theme() {
+      var cs = getComputedStyle(document.documentElement);
+      return {
+        grid: cs.getPropertyValue('--viz-grid').trim(),
+        axis: cs.getPropertyValue('--viz-axis').trim(),
+        text: cs.getPropertyValue('--viz-text').trim(),
+        curve: cs.getPropertyValue('--viz-curve').trim(),
+        exp: cs.getPropertyValue('--viz-exp').trim(),
+        target: cs.getPropertyValue('--viz-target').trim(),
+        dot: cs.getPropertyValue('--viz-dot').trim(),
+        gap: cs.getPropertyValue('--viz-gap').trim()
+      };
+    }
+    var C = theme();
+
+    function rate() { return (+rS.value) / 100; }
+    function cap() { return +kS.value; }
+
+    function compute() {
+      if (rV) rV.textContent = rS.value + '%';
+      if (kV) kV.textContent = kS.value;
+      var r = rate(), K = cap();
+      logV = [x0]; expV = [x0];
+      for (var i = 1; i < N; i++) {
+        var x = logV[i - 1];
+        logV.push(x + r * x * (1 - x / K));
+        expV.push(expV[i - 1] * (1 + r));
+      }
+    }
+
+    var P = { l: 56, r: W - 16, t: 28, b: H - 34 };
+    function yMax() { return cap() * 1.12; }
+    function XP(i) { return P.l + (i / (N - 1)) * (P.r - P.l); }
+    function YP(v) { var m = yMax(); return P.b - (Math.min(v, m) / m) * (P.b - P.t); }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      var i, gx, gy;
+      ctx.lineWidth = 1; ctx.strokeStyle = C.grid;
+      for (gx = P.l; gx <= P.r; gx += 52) { ctx.beginPath(); ctx.moveTo(gx, P.t); ctx.lineTo(gx, P.b); ctx.stroke(); }
+      for (gy = P.b; gy >= P.t; gy -= 46) { ctx.beginPath(); ctx.moveTo(P.l, gy); ctx.lineTo(P.r, gy); ctx.stroke(); }
+      ctx.lineWidth = 1.5; ctx.strokeStyle = C.axis;
+      ctx.beginPath(); ctx.moveTo(P.l, P.t); ctx.lineTo(P.l, P.b); ctx.lineTo(P.r, P.b); ctx.stroke();
+      ctx.fillStyle = C.text; ctx.font = '12px system-ui, -apple-system, sans-serif';
+      ctx.fillText('Wert x', 12, P.t - 8);
+      ctx.fillText('Schritte →', W - 84, H - 12);
+
+      var K = cap();
+      var ty = YP(K);
+      ctx.save(); ctx.setLineDash([7, 5]); ctx.lineWidth = 2; ctx.strokeStyle = C.target;
+      ctx.beginPath(); ctx.moveTo(P.l, ty); ctx.lineTo(P.r, ty); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = C.target; ctx.font = '12px system-ui, sans-serif';
+      ctx.fillText('K = Ziel-Faser / Tragfähigkeit', P.r - 216, ty - 8);
+
+      ctx.save(); ctx.setLineDash([5, 4]); ctx.lineWidth = 2; ctx.strokeStyle = C.exp;
+      ctx.beginPath();
+      for (i = 0; i < N; i++) { var ex = XP(i), ey = YP(expV[i]); if (i) ctx.lineTo(ex, ey); else ctx.moveTo(ex, ey); }
+      ctx.stroke(); ctx.restore();
+      ctx.fillStyle = C.exp; ctx.font = '11px system-ui, sans-serif';
+      ctx.fillText('ungezähmte Krümmung (reine positive Schleife)', P.l + 6, P.t + 12);
+
+      ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = C.curve;
+      ctx.beginPath();
+      for (i = 0; i <= step; i++) { var px = XP(i), py = YP(logV[i]); if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+      ctx.stroke(); ctx.restore();
+
+      var cx = XP(step), cy = YP(logV[step]);
+      var ey2 = YP(expV[step]);
+      if (ey2 > P.t + 1) {
+        ctx.save(); ctx.setLineDash([3, 3]); ctx.lineWidth = 1.5; ctx.strokeStyle = C.gap;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, ey2); ctx.stroke(); ctx.restore();
+        ctx.fillStyle = C.gap; ctx.font = '11px system-ui, sans-serif';
+        ctx.fillText('ausgeglichene Holonomie ≈ ' + (expV[step] - logV[step]).toFixed(1), Math.min(cx + 6, P.r - 176), (cy + ey2) / 2 + 3);
+      }
+      ctx.save(); ctx.fillStyle = C.dot; ctx.shadowColor = C.dot; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      ctx.fillStyle = C.dot; ctx.font = 'bold 13px system-ui, sans-serif';
+      ctx.fillText(logV[step].toFixed(1), cx + 10, cy - 9);
+
+      var ratio = logV[step] / K, s;
+      if (ratio < 0.15) s = 'Langsamer Start — Krümmung/positive Schleife noch schwach, Holonomie summiert sich.';
+      else if (ratio < 0.5) s = 'Explosiv — Krümmung/Holonomie dominiert, das System driftet vom Ziel weg.';
+      else if (ratio < 0.85) s = 'Abbremsen — die ausgleichende Schleife (Korrektur) gewinnt.';
+      else s = 'Plateau bei K — Holonomie vollständig ausgeglichen, Netto-Krümmung ≈ 0 (momentweise flach).';
+      if (statusEl) statusEl.textContent = s;
+    }
+
+    function loop() {
+      if (step >= N - 1) { anim = null; return; }
+      step++; draw(); anim = requestAnimationFrame(loop);
+    }
+    function run() { if (anim) cancelAnimationFrame(anim); compute(); step = 0; loop(); }
+    function refresh() { if (anim) { cancelAnimationFrame(anim); anim = null; } compute(); step = N - 1; draw(); }
+
+    if (rS) rS.addEventListener('input', refresh);
+    if (kS) kS.addEventListener('input', refresh);
+    if (runBtn) runBtn.addEventListener('click', run);
+    window.addEventListener('fz-theme', function () { C = theme(); draw(); });
+    window.addEventListener('resize', function () { /* canvas skaliert via CSS */ });
+
+    refresh();
+  })();
+</script>
+</body>
+</html>

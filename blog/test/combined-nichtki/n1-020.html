@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Monoid &#10006; Adjoint Functors — the one-object limit</title>
+<style>
+  :root {
+    --bg: #faf9f4; --fg: #1e293b; --muted: #64748b;
+    --card: #ffffff; --card-border: #e2e8f0;
+    --accent: #7c3aed; --accent2: #0d9488;
+    --ok: #16a34a; --bad: #dc2626; --warn: #b45309;
+    --node-fill: #ffffff; --node-stroke: #94a3b8; --node-text: #1e293b;
+    --word-fill: #f1eafc; --word-ink: #1e293b;
+    --chip-l: #fde68a; --chip-r: #cffafe;
+    --code-bg: #eef2f7; --shadow: 0 2px 14px rgba(15,23,42,.08);
+  }
+  html.dark {
+    --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8;
+    --card: #1e293b; --card-border: #334155;
+    --accent: #a78bfa; --accent2: #2dd4bf;
+    --ok: #4ade80; --bad: #f87171; --warn: #fbbf24;
+    --node-fill: #1e293b; --node-stroke: #64748b; --node-text: #e2e8f0;
+    --word-fill: #2a2350; --word-ink: #e2e8f0;
+    --chip-l: #7c4a05; --chip-r: #0e4f5c;
+    --code-bg: #0b1220; --shadow: 0 2px 18px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65; font-size: 16px; }
+  article { max-width: 820px; margin: 0 auto; padding: 40px 22px 80px; }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.05em; line-height: 1.2; margin: 0 0 6px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0 0 4px; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle { position: absolute; top: 0; right: 0; background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: .85em; }
+  section { margin-top: 38px; }
+  h2 { font-size: 1.45em; margin: 0 0 14px; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 8px; font-size: 1.08em; color: var(--fg); }
+  code, .math { font-family: "SFMono-Regular", Consolas, "Fira Code", monospace;
+    background: var(--code-bg); color: var(--fg); padding: 1px 6px; border-radius: 4px; font-size: .9em; }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .9em; }
+  th, td { border: 1px solid var(--card-border); padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  #viz { width: 100%; height: auto; display: block; border-radius: 8px; }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 14px; }
+  .ctl { background: var(--code-bg); color: var(--fg); border: 1px solid var(--card-border);
+    border-radius: 24px; padding: 8px 16px; cursor: pointer; font-size: .92em; font-weight: 600; }
+  .ctl:hover { border-color: var(--accent2); }
+  .ro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; font-size: .9em; margin: 6px 0 16px; }
+  .ro-grid .lbl { color: var(--muted); }
+  .ro-grid .val { color: var(--accent); font-weight: 600; }
+  .uc-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 14px; }
+  .uc-box { background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px 14px; }
+  .uc-box h4 { margin: 0 0 6px; font-size: .95em; color: var(--accent2); }
+  .uc-box .hint { font-size: .82em; color: var(--muted); margin: 0 0 8px; }
+  .uc-btns { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+  .uc-btns button { background: var(--card); color: var(--fg); border: 1px solid var(--card-border);
+    border-radius: 8px; padding: 5px 11px; cursor: pointer; font-size: .85em; font-weight: 600; }
+  .uc-btns button:hover { border-color: var(--accent); color: var(--accent); }
+  .uc-out { font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; min-height: 22px; color: var(--warn); font-weight: 600; }
+  @media (max-width: 620px){ .ro-grid { grid-template-columns: 1fr; } }
+
+  .proven a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .proven a:hover { text-decoration: underline; }
+  .proven { list-style: none; padding: 0; }
+  .proven li { margin-bottom: 12px; }
+  footer { margin-top: 46px; color: var(--muted); font-size: .85em; text-align: center;
+    border-top: 1px solid var(--card-border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" type="button">&#9790; / &#9788;</button>
+    <h1>A Monoid Is an Adjunction Collapsed to One Object</h1>
+    <p class="fusion-line">Fusion aus: <b>monoid.html</b> &#10006; <b>adjunct_functor.html</b></p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Both papers study the <em>same pair of ingredients</em> — a <strong>neutral element</strong> and a <strong>coherence law</strong> that makes a way of combining things well-defined — but they place that pair at two different levels. Paper <span class="tagA">A</span> (monoid) places it <em>inside a single closed set</em>: a set of elements with a binary operation that is <strong>closed</strong>, a do-nothing <strong>identity element</strong> <code>e</code>, and <strong>associativity</strong> of the operation. Paper <span class="tagB">B</span> (adjunction) places it <em>across the boundary between two categories</em>: a pair of functors <code>L &lt;-&gt; R</code> linked by a <strong>hom-set bijection</strong>, where the <strong>unit</strong> <span class="math">&#951;<sub>c</sub>: c &#8594; R(L(c))</span> and <strong>counit</strong> <span class="math">&#949;<sub>d</sub>: L(R(d)) &#8594; d</span> are the canonical &ldquo;best-approximation&rdquo; maps and the <strong>triangle (zig-zag) identities</strong> are the coherence law.</p>
+    <p>The single integrated position that unites them: <strong>a monoid is exactly a category with one object</strong> (its operation <em>is</em> composition of morphisms, its identity element <code>e</code> <em>is</em> the identity morphism, and its associativity <em>is</em> associativity of composition), and <strong>an adjunction is what you get when you let that one-object structure live across two interacting worlds</strong>. When you cross the boundary, the single neutral element <code>e</code> <em>splits</em> into a unit and a counit, and the single associativity law <em>becomes</em> the zig-zag that forces the two functors to be genuine inverses up to a canonical map.</p>
+    <p>The concrete object where the two papers literally touch is the <strong>free monoid</strong> on a set <code>X</code> (the word monoid <span class="math">X*</span>): under concatenation it is a monoid in <span class="tagA">A</span>&rsquo;s sense (empty word <code>&#949;</code> as identity, associative), and it is the <em>left adjoint</em> of the forgetful functor in <span class="tagB">B</span>&rsquo;s sense, since <span class="math">Hom<sub>Mon</sub>(L(X), M) &#8773; Hom<sub>Set</sub>(X, U(M))</span>. It is one object wearing two hats — and that object <em>is</em> the fusion.</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>There is no hard, literal contradiction: <span class="tagA">A</span> talks about a <em>single closed algebraic object</em>, <span class="tagB">B</span> about a <em>relationship between two categories</em>. They do not make opposing factual claims. They do, however, take <strong>incompatible stances</strong> on where structure lives and what the neutral/coherence objects <em>do</em>. The four sharpest tensions:</p>
+    <div class="card">
+      <h3>&#9312; Closure (a sealed world) vs. boundary-crossing (an open one)</h3>
+      <p><span class="tagA">A</span> asserts <strong>closure</strong> as its first rule: &ldquo;Combining two elements always produces another element in the same set.&rdquo; The structure is sealed inside one set — there is nothing to leave. <span class="tagB">B</span> has <em>no</em> closure at all: <code>L : &#120139; &#8594; &#120138;</code> and <code>R : &#120138; &#8594; &#120139;</code> deliberately <em>cross the boundary</em> between two different categories, and the adjunction <em>is</em> that crossing (the hom-set bijection links a <span class="math">&#120138;</span>-side map <span class="math">L(c) &#8594; d</span> to a <span class="math">&#120139;</span>-side map <span class="math">c &#8594; R(d)</span>). <span class="tagA">A</span>&rsquo;s world is a closed system; <span class="tagB">B</span>&rsquo;s world is defined <em>by</em> its boundary.</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; A do-nothing element vs. an active approximation map</h3>
+      <p><span class="tagA">A</span>&rsquo;s identity is a <em>passive, do-nothing member</em> of the set: <span class="math">a &#8728; e = e &#8728; a = a</span>. <span class="tagB">B</span>&rsquo;s closest neutral object is the <em>identity morphism</em> <code>id</code> — but <code>id</code> is only the <strong>seed</strong>: the unit <span class="math">&#951;<sub>c</sub>: c &#8594; R(L(c))</span> is &ldquo;the adjunct of <code>id<sub>L(c)</sub></code>&rdquo; and is explicitly <em>not</em> do-nothing — it is &ldquo;the &lsquo;best approximation&rsquo; of <code>c</code> inside <code>R</code>&rsquo;s image.&rdquo; So what is passive-and-neutral in <span class="tagA">A</span> (<code>e</code>) becomes active-and-structural in <span class="tagB">B</span> (<span class="math">&#951;</span>, <span class="math">&#949;</span>). The &ldquo;do-nothing&rdquo; of <span class="tagA">A</span> is a <em>value</em>; the do-nothing object of <span class="tagB">B</span> (<code>id</code>) <em>generates</em> non-neutral maps.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Internal regrouping vs. cross-boundary round-trip</h3>
+      <p><span class="tagA">A</span>&rsquo;s central law is <strong>associativity</strong>: regrouping one operation on three elements does not matter — a flexibility <em>within</em> a single operation. <span class="tagB">B</span>&rsquo;s central laws are the <strong>triangle (zig-zag) identities</strong>: a round trip through <em>both</em> functors collapses to the identity, <span class="math">&#949;<sub>L(c)</sub> &#8728; L(&#951;<sub>c</sub>) = id<sub>L(c)</sub></span> and <span class="math">R(&#949;<sub>d</sub>) &#8728; &#951;<sub>R(d)</sub> = id<sub>R(d)</sub></span> — a <strong>rigidity</strong> <em>across</em> two operations that forces <code>L</code> and <code>R</code> to be true inverses up to a canonical map. One is the looseness of a single operation; the other is the constraint that two operations genuinely cancel.</p>
+    </div>
+    <div class="card">
+      <h3>&#9315; Symmetric &amp; self-contained vs. asymmetric &amp; two-sided</h3>
+      <p><span class="tagA">A</span> presents the identity as acting identically on both sides — it even ships a &ldquo;Swap (<code>e &#8728; a</code>)&rdquo; control, since <span class="math">a &#8728; e = e &#8728; a</span>; the object is symmetric and self-contained. <span class="tagB">B</span> is asymmetric <em>by construction</em>: <code>L</code> is the &ldquo;free/left&rdquo; functor and <code>R</code> the &ldquo;forgetful/right&rdquo; functor, and the bijection is directional — <span class="math">Hom<sub>&#120138;</sub>(L(c), d) &#8773; Hom<sub>&#120139;</sub>(c, R(d))</span> — with <code>L &#8862; R</code> not interchangeable with <code>R &#8862; L</code>. There is a built-in free-vs-forgetful hierarchy that <span class="tagA">A</span> simply does not have.</p>
+    </div>
+    <p><strong>The sharpest real tension</strong>, stated as a question: <em>Is a neutral element + a single coherence law enough, or do you need two worlds for the neutral object to become interesting?</em> <span class="tagA">A</span> says the neutral element is a passive ingredient of one closed set; <span class="tagB">B</span> says the neutral object (<code>id</code>) only earns its keep as the <em>generator</em> of two active, non-neutral maps that exist only because there are <em>two</em> categories to move between.</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>&#9312; Sealed vs. open &rarr; one-object category vs. two categories</h3>
+      <p><span class="tagA">A</span> is the <em>collapsed</em> special case of <span class="tagB">B</span>&rsquo;s world. A monoid is a category with a <em>single object</em> <code>&#8727;</code>, so there is exactly one object and therefore <em>no boundary to cross</em> — &ldquo;closure&rdquo; is just the statement that all hom-sets are the <em>same</em> set. <span class="tagB">B</span> relaxes this by using two categories; <code>L</code> and <code>R</code> <em>are</em> the crossings. Reconciled: a monoid is the identity adjunction <code>id &#8862; id</code> on a one-object category — there the &ldquo;free/forgetful&rdquo; distinction vanishes because both functors are the identity.</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; Passive e vs. active &#951;/&#949; &rarr; the identity, transported</h3>
+      <p>The identity morphism <code>id</code> (the seed of <span class="math">&#951;</span>/<span class="math">&#949;</span> in <span class="tagB">B</span>) <em>is</em> the monoid&rsquo;s <code>e</code> in the one-object picture: <code>e</code> is exactly what <code>id</code> <em>does</em> when there is only one object. The unit and counit are &ldquo;what the identity becomes under a change of world&rdquo; — the best approximation of an object <em>after</em> you move to a different category and back. Reconciled: <code>e</code> = <code>id</code> in the collapsed world; <span class="math">&#951;</span> and <span class="math">&#949;</span> = <code>id</code> transported across the boundary.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Associativity vs. triangles &rarr; one coherence family, two arities</h3>
+      <p>Composition-associativity in a one-object category <em>is</em> monoid associativity. The triangle identities are the adjunction&rsquo;s &ldquo;round-trip = identity&rdquo; laws, which reduce to trivialities in the one-object case. Both are the same <em>kind</em> of statement — a diagram of compositions is well-defined / commutes — differing only in how many objects are involved. Reconciled: <span class="tagA">A</span>&rsquo;s law is internal (one operation, regrouping three); <span class="tagB">B</span>&rsquo;s is external (two operations, round-trip through both).</p>
+    </div>
+    <div class="card">
+      <h3>&#9315; Symmetric vs. asymmetric &rarr; asymmetry = the number of worlds</h3>
+      <p>Collapse the adjunction to a one-object category with <code>L = R = id</code> and the asymmetry vanishes, recovering the symmetric monoid identity <span class="math">a &#8728; e = e &#8728; a</span>. <span class="tagB">B</span>&rsquo;s asymmetry is <em>exactly</em> the information gained by having two <em>different</em> categories; <span class="tagA">A</span> is the symmetric quotient of that. Reconciled: asymmetry &harr; two worlds; symmetry &harr; one world.</p>
+    </div>
+    <p><strong>Fused conclusion:</strong> <em>A monoid is the shadow an adjunction casts when its two categories are glued into one.</em> The identity element <code>e</code> is the identity morphism <code>id</code>; associativity is associativity of composition; the do-nothing law <span class="math">a &#8728; e = a</span> is the collapsed triangle identity. Conversely, <em>an adjunction is the monoid&rsquo;s idea — a neutral element plus a coherent operation — lifted from one object to two interacting worlds,</em> where the neutral element splits into unit and counit and associativity becomes the zig-zag. The free monoid is the concrete place where both are the same object.</p>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>The table below links the central terms of both papers to their fused role. It is written so a later round can work from it alone.</p>
+    <table>
+      <thead><tr><th style="width:26%"><span class="tagA">A</span> — Monoid</th><th style="width:26%"><span class="tagB">B</span> — Adjunction</th><th style="width:48%">Fused role</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Set of elements <code>M</code></td><td class="kv">One-object category: the single hom-set <span class="math">Hom(&#8727;,&#8727;)</span></td><td>The carrier. In a one-object category every morphism is an arrow <span class="math">&#8727; &#8594; &#8727;</span>, so all morphisms form one set — <span class="tagA">A</span>&rsquo;s <code>M</code>.</td></tr>
+        <tr><td class="kv">Combine operation <span class="math">a &#8728; b</span></td><td class="kv">Composition of morphisms <span class="math">g &#8728; f</span></td><td>The operation <em>is</em> composition. &ldquo;Closure&rdquo; = &ldquo;with one object, any two morphisms are composable by definition.&rdquo;</td></tr>
+        <tr><td class="kv">Identity element <code>e</code> (<span class="math">a&#8728;e=e&#8728;a=a</span>)</td><td class="kv">Identity morphism <span class="math">id<sub>&#8727;</sub></span></td><td><code>e</code> <em>is</em> the identity morphism — the do-nothing element is the do-nothing map. This is the seed of <span class="math">&#951;</span>/<span class="math">&#949;</span>.</td></tr>
+        <tr><td class="kv">Associativity <span class="math">(a&#8728;b)&#8728;c=a&#8728;(b&#8728;c)</span></td><td class="kv">Associativity of composition</td><td>The same law, stated as a category axiom. Internal flexibility of one operation.</td></tr>
+        <tr><td class="kv">— (A stops here)</td><td class="kv">Unit <span class="math">&#951;<sub>c</sub>: c &#8594; R(L(c))</span></td><td>&ldquo;The identity, seen after moving to another world and back&rdquo;: the best approximation of <code>c</code> inside <code>R</code>&rsquo;s image (adjunct of <span class="math">id<sub>L(c)</sub></span>).</td></tr>
+        <tr><td class="kv">— (A stops here)</td><td class="kv">Counit <span class="math">&#949;<sub>d</sub>: L(R(d)) &#8594; d</span></td><td>Best approximation of <code>d</code> from <code>L</code>&rsquo;s image (adjunct of <span class="math">id<sub>R(d)</sub></span>).</td></tr>
+        <tr><td class="kv">— (A stops here)</td><td class="kv">Triangle / zig-zag identities</td><td>Round-trip coherence: <span class="math">&#949;<sub>L(c)</sub>&#8728;L(&#951;<sub>c</sub>)=id<sub>L(c)</sub></span>. Collapses to trivialities in the one-object case.</td></tr>
+        <tr><td class="kv">Closure (stays in one set)</td><td class="kv"><span class="math">L &#8862; R</span> cross the &#120139;/&#120138; boundary</td><td><span class="tagA">A</span> = the collapsed (closed) case; <span class="tagB">B</span> = the two-world (open) case.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Monoid (A) — the three rules, integrated</h3>
+      <ul>
+        <li><strong>Closure:</strong> combining two elements gives another element of the same set.</li>
+        <li><strong>Associativity:</strong> <span class="math">(a &#8728; b) &#8728; c = a &#8728; (b &#8728; c)</span> — grouping does not matter.</li>
+        <li><strong>Identity:</strong> a special <code>e</code> with <span class="math">a &#8728; e = e &#8728; a = a</span> (shown symmetrically — a &ldquo;swap&rdquo; control).</li>
+        <li><em>Examples in A:</em> numbers under <code>+</code> (e = 0), strings under concatenation (e = &ldquo;&rdquo;), colors under averaging-blend (e = transparent). <em>Fused:</em> the strings/concat example <em>is</em> the free monoid on the alphabet — the bridge object below.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>The bridge — a monoid is a one-object category</h3>
+      <p>Take a category with a single object <code>&#8727;</code>. Then <span class="math">Hom(&#8727;,&#8727;)</span> is a set of morphisms; composing two of them is a binary operation on that set; <span class="math">id<sub>&#8727;</sub></span> is an identity for it; and associativity of composition is associativity of the operation. <strong>That is precisely a monoid.</strong> Reading it backwards: any monoid <code>(M, &#8728;, e)</code> <em>is</em> a one-object category. So <span class="tagA">A</span>&rsquo;s &ldquo;set + operation + identity&rdquo; and <span class="tagB">B</span>&rsquo;s &ldquo;category + morphisms&rdquo; are the same structure at different zoom levels.</p>
+    </div>
+
+    <div class="card">
+      <h3>Adjunction (B) — the definition, integrated</h3>
+      <ul>
+        <li><strong>Hom-set bijection:</strong> functors <span class="math">L : &#120139; &#8594; &#120138;</span>, <span class="math">R : &#120138; &#8594; &#120139;</span> with <span class="math">Hom<sub>&#120138;</sub>(L(c), d) &#8773; Hom<sub>&#120139;</sub>(c, R(d))</span>, natural in <code>c</code> and <code>d</code>. <span class="tagB">B</span> labels <code>L</code> &ldquo;free/best approximation&rdquo; and <code>R</code> &ldquo;forgetful/underlying&rdquo;.</li>
+        <li><strong>Unit</strong> <span class="math">&#951;<sub>c</sub>: c &#8594; R(L(c))</span> = adjunct of <span class="math">id<sub>L(c)</sub></span>; <strong>counit</strong> <span class="math">&#949;<sub>d</sub>: L(R(d)) &#8594; d</span> = adjunct of <span class="math">id<sub>R(d)</sub></span>.</li>
+        <li><strong>Triangle identities:</strong> <span class="math">&#949;<sub>L(c)</sub> &#8728; L(&#951;<sub>c</sub>) = id<sub>L(c)</sub></span> and <span class="math">R(&#949;<sub>d</sub>) &#8728; &#951;<sub>R(d)</sub> = id<sub>R(d)</sub></span>.</li>
+        <li><em>Examples in B:</em> Free &#8862; Forgetful (Sets &#8596; Grps), Discrete &#8862; Forgetful (Sets &#8596; Top), a simple 3&#215;3 example. <em>Fused:</em> &ldquo;Free &#8862; Forgetful&rdquo; is the exact adjunction where the free side is a <em>free monoid</em>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>The unified object — the free monoid L(X) = X*</h3>
+      <p>Let <code>X = {a, b}</code>. The <strong>free monoid</strong> <span class="math">L(X) = X*</span> is the set of all finite words (lists) over <code>X</code>. <span class="tagA">Monoid hat:</span> the operation is concatenation, the identity is the empty word <span class="math">&#949;</span>, and concatenation is associative — so <span class="math">X*</span> is a monoid in <span class="tagA">A</span>&rsquo;s sense. <span class="tagB">Adjunction hat:</span> there is a bijection</p>
+      <p class="math" style="font-size:1.05em;text-align:center">Hom<sub>Mon</sub>(L(X), M) &nbsp;&#8773;&nbsp; Hom<sub>Set</sub>(X, U(M))</p>
+      <p>natural in any monoid <code>M</code>, where <span class="math">U : Mon &#8594; Set</span> forgets the operation. A function <code>f : X &#8594; U(M)</code> extends <em>uniquely</em> to a monoid homomorphism <span class="math">&#772;f : L(X) &#8594; M</span> by evaluating a word with <code>M</code>&rsquo;s operation: <span class="math">&#772;f(x&#8321;&#8230;x&#8322;) = f(x&#8321) &#8728; &#8230; &#8728; f(x&#8322)</span>, <span class="math">&#772;f(&#949;) = id<sub>M</sub></span>. The two unit/counit maps, concretely:</p>
+      <ul>
+        <li><strong>Unit</strong> <span class="math">&#951;<sub>X</sub>: X &#8594; U(L(X))</span>: <span class="math">&#951;(x) = [x]</span> — wrap a bare letter in a one-letter word (&ldquo;best approximation of <code>x</code> inside a monoid&rdquo;).</li>
+        <li><strong>Counit</strong> <span class="math">&#949;<sub>M</sub>: L(U(M)) &#8594; M</span>: fold a word over the underlying set of <code>M</code> using <code>M</code>&rsquo;s operation (&ldquo;the free word collapses into <code>M</code> by its own operation&rdquo;).</li>
+        <li><strong>Triangle, worked:</strong> on the word <code>ab</code>, <span class="math">L(&#951;)(ab) = [a][b]</span>, then <span class="math">&#949;([a][b]) = [a] &#8728; [b] = ab = id(ab)</span> &#10003;.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: The Word Monoid — where A and B meet</h2>
+    <p>One object, two hats. The <strong>left</strong> panel is the <span class="tagA">monoid</span> <span class="math">L({a,b}) = {a,b}*</span> (words of length &#8804; 2): click words to combine them (concat), and watch the identity <code>&#949;</code>. The <strong>right</strong> panel is the <span class="tagB">adjunction</span> <span class="math">L &#8862; U</span> made literal: the four functions <code>f : {a,b} &#8594; {0,1}</code> on the left are in bijection with the four monoid homomorphisms <span class="math">L({a,b}) &#8594; {0,1}</span> on the right — click any chip to see its unique partner. Below: the unit, counit and triangle identity, computed live. Target monoid <span class="math">M = ({0,1}, &#215;, 1)</span>.</p>
+
+    <div class="viz-card">
+      <div class="ctl-row">
+        <button class="ctl" id="btnAssoc" onclick="doAssoc()" type="button">&#10227; Associativity (A)</button>
+        <button class="ctl" id="btnReset" onclick="doReset()" type="button">Reset</button>
+      </div>
+
+      <canvas id="viz" width="780" height="300" aria-label="Word monoid on the left, hom-set bijection on the right"></canvas>
+
+      <div class="ro-grid">
+        <div><span class="lbl">Concat (A):</span> <span class="val" id="roConcat">pick two words</span></div>
+        <div><span class="lbl">Associativity (A):</span> <span class="val" id="roAssoc">&mdash;</span></div>
+        <div><span class="lbl">Identity (A):</span> <span class="val" id="roId">pick a word</span></div>
+        <div><span class="lbl">Bijection (B):</span> <span class="val" id="roBij">click a pair</span></div>
+      </div>
+
+      <div class="uc-grid">
+        <div class="uc-box">
+          <h4>Unit &#951;<sub>X</sub> : X &#8594; U(L(X)) &mdash; &ldquo;best approximation into a monoid&rdquo;</h4>
+          <p class="hint">Wrap a bare letter in a one-letter word.</p>
+          <div class="uc-btns">
+            <button type="button" data-unit="a">a</button>
+            <button type="button" data-unit="b">b</button>
+          </div>
+          <div class="uc-out" id="roUnit">&nbsp;</div>
+        </div>
+        <div class="uc-box">
+          <h4>Counit &#949;<sub>M</sub> : L(U(M)) &#8594; M &mdash; &ldquo;free word collapses by M&rsquo;s operation&rdquo;</h4>
+          <p class="hint">Fold a word over {0,1} using &times; (M = {0,1}, &times;, 1).</p>
+          <div class="uc-btns">
+            <button type="button" data-counit="&#949;">&#949;</button>
+            <button type="button" data-counit="0">0</button>
+            <button type="button" data-counit="1">1</button>
+            <button type="button" data-counit="01">01</button>
+            <button type="button" data-counit="10">10</button>
+            <button type="button" data-counit="00">00</button>
+            <button type="button" data-counit="11">11</button>
+          </div>
+          <div class="uc-out" id="roCounit">&nbsp;</div>
+        </div>
+        <div class="uc-box">
+          <h4>Triangle identity (live): &#949; &#8728; L(&#951;) = id</h4>
+          <p class="hint">Box each letter (&#951;), then fold the boxes back (&#949;) &mdash; you get the word back.</p>
+          <div class="uc-btns">
+            <button type="button" data-tri="a">a</button>
+            <button type="button" data-tri="b">b</button>
+            <button type="button" data-tri="ab">ab</button>
+            <button type="button" data-tri="ba">ba</button>
+            <button type="button" data-tri="aa">aa</button>
+            <button type="button" data-tri="&#949;">&#949;</button>
+          </div>
+          <div class="uc-out" id="roTri">&nbsp;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../monoid.html"><strong>A &mdash; monoid.html:</strong> &ldquo;What is a Monoid? &mdash; Interactive Visual Explainer&rdquo;</a> — a set + closed, associative binary operation + a do-nothing identity element, explored hands-on over three example monoids (numbers/addition, strings/concatenation, colors/blend).</li>
+      <li><a href="../adjunct_functor.html"><strong>B &mdash; adjunct_functor.html:</strong> &ldquo;Adjoint Functors &mdash; Interactive Explorer&rdquo;</a> — a pair of functors <span class="math">L &#8862; R</span> defined by a hom-set bijection, with unit, counit and the triangle (zig-zag) identities, over Free &#8862; Forgetful, Discrete &#8862; Forgetful and a simple example.</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Round 1, pair 020) — Monoid &#10006; Adjoint Functors &middot; monoid-adjunction-fusion &middot; the one-object limit: e = id, associativity = composition, free monoid = the bridge.</footer>
+</article>
+
+<script>
+  function toggleTheme(){ document.documentElement.classList.toggle('dark'); }
+
+  function doAssoc(){
+    if (window.__viz) window.__viz.assoc();
+  }
+  function doReset(){
+    if (window.__viz) window.__viz.reset();
+  }
+
+  (function(){
+    var W = 780, H = 300;
+    var canvas = document.getElementById('viz');
+    var ctx = canvas.getContext('2d');
+
+    var words = ['\u03B5','a','b','aa','ab','ba','bb'];
+    var fns = [{a:0,b:0},{a:0,b:1},{a:1,b:0},{a:1,b:1}];
+
+    var selA = null, selB = null, selPair = -1;
+    var wordCenters = [], leftChipRects = [], rightChipRects = [];
+
+    function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+    function disp(w){ return w; }
+    function concat(w1,w2){
+      var s = (w1==='\u03B5'?'':w1) + (w2==='\u03B5'?'':w2);
+      return s==='' ? '\u03B5' : s;
+    }
+    function inRect(px,py,r){ return px>=r.x && px<=r.x+r.w && py>=r.y && py<=r.y+r.h; }
+    function dist(px,py,x,y){ var dx=px-x, dy=py-y; return Math.sqrt(dx*dx+dy*dy); }
+    function rr(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r);
+      g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+
+    function draw(){
+      var C = {
+        ink: cssVar('--fg'), muted: cssVar('--muted'), panel: cssVar('--card'),
+        accent: cssVar('--accent'), accent2: cssVar('--accent2'),
+        line: cssVar('--card-border'), wordFill: cssVar('--word-fill'), wordInk: cssVar('--word-ink'),
+        chipL: cssVar('--chip-l'), chipR: cssVar('--chip-r')
+      };
+      ctx.clearRect(0,0,W,H);
+      ctx.textBaseline = 'middle';
+
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(384,40); ctx.lineTo(384,H-16); ctx.stroke();
+
+      ctx.fillStyle = C.accent; ctx.font = '700 15px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('A \u00B7 Word monoid  L({a,b})', 190, 20);
+
+      wordCenters = [];
+      var cols = [80,165,250], rows = [80,140,200];
+      for (var i=0;i<words.length;i++){
+        var w = words[i];
+        var x = cols[i%3], y = rows[Math.floor(i/3)];
+        wordCenters.push({x:x,y:y});
+        var isId = (w==='\u03B5'), isA = (selA===w), isB = (selB===w);
+        ctx.beginPath(); ctx.arc(x,y,24,0,Math.PI*2);
+        ctx.fillStyle = (isA||isB) ? C.accent : C.wordFill; ctx.fill();
+        ctx.lineWidth = isId ? 3 : 2;
+        ctx.strokeStyle = isId ? C.accent2 : (isA ? C.accent : C.line);
+        if (isId) ctx.setLineDash([4,3]); else ctx.setLineDash([]);
+        ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = (isA||isB) ? '#ffffff' : C.wordInk;
+        ctx.font = '700 15px system-ui, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(w, x, y);
+        if (isA){ ctx.fillStyle = C.accent; ctx.font='700 11px system-ui'; ctx.fillText('A', x, y-33); }
+        if (isB){ ctx.fillStyle = C.accent; ctx.font='700 11px system-ui'; ctx.fillText('B', x, y+33); }
+        if (isId){ ctx.fillStyle = C.accent2; ctx.font='700 10px system-ui'; ctx.fillText('e', x, y+18); }
+      }
+
+      ctx.fillStyle = C.accent2; ctx.font = '700 15px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('B \u00B7 Hom-set bijection  L \u2283 U', 578, 20);
+
+      leftChipRects = []; rightChipRects = [];
+      var lcX = 402, rcX = 646, cw = 100, ch = 38, topY = 72, step = 52;
+      for (var j=0;j<4;j++){
+        var cy = topY + j*step;
+        var lr = {x:lcX,y:cy,w:cw,h:ch}, rrc = {x:rcX,y:cy,w:cw,h:ch};
+        leftChipRects.push(lr); rightChipRects.push(rrc);
+        var sel = (selPair===j);
+        ctx.fillStyle = sel ? C.accent : C.chipL; rr(ctx, lr.x, lr.y, lr.w, lr.h, 8); ctx.fill();
+        if (!sel){ ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke(); }
+        ctx.fillStyle = sel ? '#ffffff' : C.wordInk;
+        ctx.font = '600 11px "SFMono-Regular", Menlo, monospace';
+        ctx.fillText('a:'+fns[j].a+'  b:'+fns[j].b, lr.x + cw/2, lr.y + ch/2);
+        ctx.fillStyle = sel ? C.accent : C.chipR; rr(ctx, rrc.x, rrc.y, rrc.w, rrc.h, 8); ctx.fill();
+        if (!sel){ ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke(); }
+        ctx.fillStyle = sel ? '#ffffff' : C.wordInk;
+        ctx.fillText('h(a) '+fns[j].a+' h(b) '+fns[j].b, rrc.x + cw/2, rrc.y + ch/2);
+      }
+      var midY = topY + 1.5*step;
+      ctx.fillStyle = C.accent2; ctx.font = '700 22px system-ui'; ctx.textAlign='center';
+      ctx.fillText('\u2245', 574, midY);
+      ctx.font = '600 10px "SFMono-Regular", Menlo, monospace'; ctx.fillStyle = C.muted;
+      ctx.fillText('|.| = 4 = 4 \u2713', 574, midY + 18);
+      if (selPair >= 0){
+        var ly = topY + selPair*step + ch/2;
+        ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(lcX + cw, ly); ctx.lineTo(rcX, ly); ctx.stroke();
+      }
+    }
+
+    function updateReadouts(){
+      var rc = document.getElementById('roConcat');
+      if (selA!==null && selB!==null){
+        var s = '(' + disp(selA) + '\u00B7' + disp(selB) + ') = ' + disp(concat(selA,selB));
+        if (selA==='\u03B5') s += '   (e\u00B7x = x)';
+        else if (selB==='\u03B5') s += '   (x\u00B7e = x)';
+        rc.textContent = s;
+      } else rc.textContent = 'pick two words';
+      document.getElementById('roId').textContent =
+        (selA!==null) ? ('\u03B5\u00B7' + selA + ' = ' + selA + '\u00B7\u03B5 = ' + selA) : 'pick a word';
+      var rb = document.getElementById('roBij');
+      if (selPair >= 0){
+        var f = fns[selPair];
+        rb.textContent = 'a\u219A' + f.a + ', b\u219A' + f.b + '  \u21C4  the unique hom h with h(a)=' + f.a + ', h(b)=' + f.b + ' (h(\u03B5)=1)';
+      } else rb.textContent = 'click a pair to see the bijection';
+    }
+
+    function update(){ draw(); updateReadouts(); }
+
+    function handleWord(w){
+      if (selA===null){ selA = w; } else { selB = w; }
+      update();
+    }
+
+    canvas.addEventListener('click', function(e){
+      var rect = canvas.getBoundingClientRect();
+      var px = (e.clientX - rect.left) * (W / rect.width);
+      var py = (e.clientY - rect.top) * (H / rect.height);
+      for (var i=0;i<4;i++){ if (inRect(px,py,leftChipRects[i])){ selPair=i; update(); return; } }
+      for (var k=0;k<4;k++){ if (inRect(px,py,rightChipRects[k])){ selPair=k; update(); return; } }
+      for (var m=0;m<words.length;m++){ var c=wordCenters[m]; if (dist(px,py,c.x,c.y)<24){ handleWord(words[m]); return; } }
+    });
+
+    function assoc(){
+      var pool = words.slice(), pick = [];
+      while (pick.length < 3){ var j = Math.floor(Math.random()*pool.length); pick.push(pool.splice(j,1)[0]); }
+      var x = pick[0], y = pick[1], z = pick[2];
+      var left = concat(concat(x,y),z), right = concat(x,concat(y,z));
+      document.getElementById('roAssoc').textContent =
+        '(' + x + '\u00B7' + y + ')\u00B7' + z + ' = ' + x + '\u00B7(' + y + '\u00B7' + z + ') = ' + left + '  (= ' + right + ') \u2713';
+    }
+    function reset(){ selA = null; selB = null; selPair = -1; document.getElementById('roAssoc').textContent = '\u2014'; update(); }
+
+    function foldWord01(w){ if (w==='\u03B5') return 1; var acc = 1; for (var i=0;i<w.length;i++){ acc *= parseInt(w.charAt(i),10); } return acc; }
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-unit]'), function(b){
+      b.addEventListener('click', function(){
+        var x = b.getAttribute('data-unit');
+        document.getElementById('roUnit').textContent =
+          '\u03B7(' + x + ') = [' + x + ']   (wrap ' + x + ' in a one-letter word)';
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-counit]'), function(b){
+      b.addEventListener('click', function(){
+        var w = b.getAttribute('data-counit');
+        var v = foldWord01(w);
+        var s = (w==='\u03B5') ? '\u03B5(\u03B5) = 1' : '\u03B5(' + w + ') = ' + w.split('').join('\u00B7') + ' = ' + v;
+        document.getElementById('roCounit').textContent = s;
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-tri]'), function(b){
+      b.addEventListener('click', function(){
+        var w = b.getAttribute('data-tri');
+        var letters = (w==='\u03B5') ? [] : w.split('');
+        var box = letters.length ? letters.map(function(c){ return '['+c+']'; }).join('\u00B7') : '\u03B5 (empty)';
+        var folded = letters.length ? letters.join('\u00B7') : '\u03B5';
+        document.getElementById('roTri').textContent =
+          'L(\u03B7)(' + w + '): ' + box + '  \u2192  \u03B5: ' + folded + ' = id(' + w + ') \u2713';
+      });
+    });
+
+    var mo = new MutationObserver(function(){ draw(); });
+    mo.observe(document.documentElement, { attributes:true, attributeFilter:['class'] });
+    if (window.matchMedia){
+      var mm = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mm && mm.addEventListener) mm.addEventListener('change', function(){ draw(); });
+    }
+    window.addEventListener('resize', function(){ draw(); });
+
+    window.__viz = { assoc: assoc, reset: reset };
+    update();
+  })();
+</script>
+</body>
+</html>

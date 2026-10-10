@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Firewall-Stack als Garbe – Paket als Exit-Pfad</title>
+<style>
+:root{
+  --bg:#f6f8fa; --card:#ffffff; --ink:#1f2328; --ink-dim:#57606a;
+  --accent:#0b6bcb; --accent2:#c93a4c; --accent3:#1a7f37;
+  --border:#d0d7de; --code:#eaeef2; --lane:rgba(11,107,203,.08);
+  --shadow:0 1px 3px rgba(0,0,0,.08);
+}
+html.dark{
+  --bg:#0d1117; --card:#161b22; --ink:#c9d1d9; --ink-dim:#8b949e;
+  --accent:#58a6ff; --accent2:#f78166; --accent3:#7ee787;
+  --border:#30363d; --code:#0d1117; --lane:rgba(88,166,255,.08);
+  --shadow:0 1px 3px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink);
+  line-height:1.75; padding:32px 18px 80px;
+  transition:background .3s,color .3s;
+}
+article{max-width:820px;margin:0 auto;}
+header{text-align:center;margin-bottom:34px;}
+h1{font-size:2.05rem;line-height:1.25;color:var(--accent);font-weight:800;margin-bottom:10px;}
+.subtitle{color:var(--ink-dim);font-size:1.02rem;}
+.subtitle b{color:var(--ink-dim);font-weight:600;}
+h2{font-size:1.42rem;margin:40px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--ink);}
+h2 .no{color:var(--accent);font-weight:800;margin-right:8px;}
+h3{font-size:1.1rem;margin:22px 0 8px;color:var(--accent3);}
+p{margin:12px 0;}
+strong{color:var(--ink);}
+.lane{background:var(--lane);border-left:3px solid var(--accent);padding:10px 16px;border-radius:0 8px 8px 0;margin:14px 0;}
+.lane.t2{border-left-color:var(--accent2);}
+.lane.t3{border-left-color:var(--accent3);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:14px 0;box-shadow:var(--shadow);}
+.card h4{margin:0 0 6px;font-size:1rem;color:var(--accent);}
+.card .tag{display:inline-block;font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;font-weight:700;padding:2px 9px;border-radius:5px;margin-bottom:8px;}
+.tag-a{background:rgba(247,129,102,.16);color:var(--accent2);}
+.tag-b{background:rgba(88,166,255,.16);color:var(--accent);}
+.tag-f{background:rgba(126,231,135,.16);color:var(--accent3);}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:12px 0;overflow-x:auto;font-size:1.02rem;line-height:1.9;}
+.math .lbl{color:var(--accent2);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px;font-family:'Segoe UI',sans-serif;}
+code{font-family:'JetBrains Mono',Consolas,monospace;font-size:.86em;background:var(--code);border:1px solid var(--border);border-radius:5px;padding:1px 6px;}
+ul,ol{margin:10px 0 10px 22px;}
+li{margin:6px 0;}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem;}
+th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--code);color:var(--ink);}
+td.a{color:var(--accent2);}
+td.b{color:var(--accent);}
+td.f{color:var(--accent3);font-weight:600;}
+.prov{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border);}
+.prov:last-child{border-bottom:none;}
+.prov .dot{width:14px;height:14px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+.prov .dot.a{background:var(--accent2);}
+.prov .dot.b{background:var(--accent);}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;}
+.prov a:hover{text-decoration:underline;}
+.prov .desc{color:var(--ink-dim);font-size:.92rem;margin-top:2px;}
+.viz-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;box-shadow:var(--shadow);}
+.viz-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;}
+.btn{padding:8px 15px;border:1px solid var(--border);background:var(--code);color:var(--ink);border-radius:8px;cursor:pointer;font-size:.86rem;font-weight:600;transition:all .2s;}
+.btn:hover{border-color:var(--accent);color:var(--accent);}
+.btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.btn.danger.active{background:var(--accent2);border-color:var(--accent2);color:#fff;}
+.grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.grp .lab{color:var(--ink-dim);font-size:.82rem;margin-right:2px;}
+canvas#viz{width:100%;height:auto;border-radius:10px;border:1px solid var(--border);display:block;}
+.viz-side{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px;}
+.panel{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--code);}
+.panel h5{font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-dim);margin-bottom:8px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{font-size:.78rem;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--ink-dim);}
+.chip.pass{border-color:var(--accent3);color:var(--accent3);}
+.chip.drop{border-color:var(--accent2);color:var(--accent2);background:rgba(247,129,102,.12);}
+.chip.na{opacity:.5;}
+.verdict{font-size:1rem;font-weight:700;}
+.verdict.drop{color:var(--accent2);}
+.verdict.pass{color:var(--accent3);}
+.meter{height:10px;border-radius:6px;background:var(--border);overflow:hidden;margin-top:6px;}
+.meter .fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent));width:0;transition:width .5s;border-radius:6px;}
+.toggle-row{position:fixed;top:14px;right:14px;z-index:50;}
+.note{font-size:.85rem;color:var(--ink-dim);}
+@media(max-width:640px){h1{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+<div class="toggle-row"><button class="btn" id="themeToggle">🌗 Theme</button></div>
+<article>
+<header>
+  <h1>Die Firewall als Garbe: das Paket als Exit-Pfad</h1>
+  <p class="subtitle">Fusion aus: <b>berkeley.html</b> ✕ <b>sheaves.html</b></p>
+</header>
+
+<!-- ============ 1. THESE ============ -->
+<section id="these">
+<h2><span class="no">1</span>Kernthese der Fusion</h2>
+<p>Zwei scheinbar ferne Papiere erzählen dieselbe Geschichte in zwei Registern. Das eine
+(<em>berkeley.html</em>) erklärt Linux-Paketfilter — ufw, iptables und BPF/eBPF — als einen
+<em>Stack von Hooks</em>, durch den ein Paket wandert, bevor es die App erreicht. Das andere
+(<em>sheaves.html</em>) baut die Garbentheorie: Daten, die auf <em>offenen Mengen lokal</em>
+leben und sich unter Übereinstimmung auf den Überlappungen zu einem <em>globalen</em> Objekt
+verkleben lassen.</p>
+
+<p>Beide machen denselben Grundansatz: <strong>Das Ganze wird aus dem Lokalen aufgebaut —
+und ist oft schon durch das Lokale festgelegt, sofern die lokalen Teile konsistent sind.</strong>
+In <em>berkeley.html</em> ist das globale Schicksal eines Pakets (zugestellt oder verworfen) die
+Zusammenfassung lokaler Entscheide an jedem Hook; und der ganze Reiz von BPF/eBPF besteht darin,
+dass ein <em>entscheidender</em> lokaler Entscheid am frühesten, tiefsten Hook (XDP) den Rest
+<strong>kurzschließt</strong> — das Paket „nie den Kernel-Stack erreicht". In
+<em>sheaves.html</em> ist eine globale Sektion exakt das Kollimit kompatibler lokaler Schnitte
+über einem offenen Überdeckung, und der Schlüsselsatz sagt: ein Morphismus ist genau dann ein
+Isomorphismus, wenn er es auf <em>jedem Halm</em> (dem unendlich-kleinen, lokalsten Stück) ist.</p>
+
+<div class="lane">
+<strong>Die einzelne integrierte Position:</strong> Ein Firewall-Stack ist ein
+<em>stratifizierter Raum</em>, ein Paket ist ein <em>Exit-Pfad</em> durch seine Schichten, und das
+globale Urteil ist das <strong>Kollimit konsistenter lokaler (Halm-)Entscheide</strong>. Ein
+früher, entscheidender Drop (XDP) legt dieses Kollimit <em>sofort</em> fest — das ist exakt das
+Phänomen „der Halm bestimmt das Ganze", in der effizientesten, frühestmöglichen Form.
+</div>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+<h2><span class="no">2</span>Widersprüche zwischen A und B</h2>
+<p>Die beiden Papiere arbeiten in unterschiedlichen Domänen (Systeme vs. Mathematik) und
+widersprechen sich deshalb <strong>nicht direkt</strong>. Die nächsten echten Spannungen, die
+jeweils aus dem tatsächlich behaupteten Inhalt stammen:</p>
+
+<h3>T1 — Lokaler Kurzschluss vs. globales Verkleben</h3>
+<div class="card">
+<span class="tag tag-a">A · berkeley.html</span>
+<p>Der Wert von eBPF/XDP liegt darin, am <em>möglichst lokalen, frühesten</em> Hook eine
+<em>vollständige</em> Entscheidung zu treffen, sodass das Paket danach nicht mehr weiterverarbeitet
+wird („Paket verworfen, nie den Kernel-Stack erreicht — extrem effizient"). Das Lokale ist
+<em>autoritativ und final</em>.</p>
+</div>
+<div class="card">
+<span class="tag tag-b">B · sheaves.html</span>
+<p>Eine einzelne lokale Sektion ist <em>nie</em> von sich aus autoritativ: Ein globales Objekt
+existiert nur, weil lokale Schnitte auf den Überlappungen <em>übereinstimmen</em> und sich verkleben
+lassen (Axiom S2). Der Halm bestimmt einen Morphismus nur als <em>Limit über alle Umgebungen</em>,
+niemals als einzelnes Stück.</p>
+</div>
+<p class="note"><strong>Spannung:</strong> A sagt „das Lokale entscheidet, jetzt, endgültig"; B sagt
+„das Lokale ist erst sinnvoll, wenn es gegen die Nachbarn gecheckt wurde."</p>
+
+<h3>T2 — Externer Verifikator vs. interner Konsistenzaxiom</h3>
+<div class="card">
+<span class="tag tag-a">A · berkeley.html</span>
+<p>Sicherheit wird durch ein <em>separates, mechanisches Gate</em> erzwungen — den BPF-Verifier, der
+<em>vor</em> der Ausführung prüft, dass kein Programm Endlosschleifen oder illegale
+Speicherzugriffe hat, damit es JIT-kompiliert in den Kernel geladen werden kann. Richtigkeit ist eine
+<em>Voraussetzung</em>, die ein Programm bestehen muss.</p>
+</div>
+<div class="card">
+<span class="tag tag-b">B · sheaves.html</span>
+<p>Es gibt <em>keinen</em> separaten Verifikator. Richtigkeit ist eine <em>strukturelle Bedingung
+im Objekt selbst</em>: Stimmen die Schnitte auf den Überlappungen überein (S2) und sind sie auf einer
+Überdeckung eindeutig (S1), so entsteht das Verkleben automatisch.</p>
+</div>
+<p class="note"><strong>Spannung:</strong> A validiert das lokale Programm <em>extern</em> vor Zulassung;
+B hat keinen Validator — die Konsistenz <em>ist</em> das Objekt.</p>
+
+<h3>T3 — Lineare Tiefen-Hierarchie vs. überlappende Überdeckung</h3>
+<div class="card">
+<span class="tag tag-a">A · berkeley.html</span>
+<p>Die Ebenen bilden eine <em>strikte lineare Ordnung</em> der Tiefe/Macht: Userspace → ufw →
+iptables → Netfilter → BPF → NIC, wobei „tiefer und schneller" gilt — BPF sitzt explizit am
+unteren Ende und ist „noch tiefer und schneller als Netfilter".</p>
+</div>
+<div class="card">
+<span class="tag tag-b">B · sheaves.html</span>
+<p>Die offenen Mengen einer Überdeckung sind <em>überlappend und gleichberechtigt</em> — keine ist
+„tiefer" oder privilegiert; entscheidend ist nur die <em>paarweise Übereinstimmung</em> auf den
+Schnittmengen.</p>
+</div>
+<p class="note"><strong>Spannung:</strong> A ist eine Leiter (ein privilegiertes tiefstes Spross siegt);
+B ist ein Netz (alle Peers, Übereinstimmung zählt).</p>
+</section>
+
+<!-- ============ 3. AUFLÖSUNG ============ -->
+<section id="aufloesung">
+<h2><span class="no">3</span>Auflösung</h2>
+<p>Alle drei Spannungen lösen sich mit der <em>eigenen</em> fortschrittlichsten Maschine des
+Garben-Papiers auf: <strong>konstruierbare Garben, Stratifizierungen und Exit-Pfade</strong> (deren
+letzter Abschnitt).</p>
+
+<div class="lane t3">
+<strong>T3 zuerst — die Brücke:</strong> Eine <em>Stratifizierung</em> ist eine stetige Abbildung
+f&nbsp;:&nbsp;X&nbsp;→&nbsp;P in eine Teilordnung P mit der Alexandroff- (Aufwärts-)Topologie; ein
+<em>Exit-Pfad</em> ist ein monotoner Pfad, der nur „nach oben" (tiefer in Schichten) läuft und
+„nie zurück". Der BPF-Stack <em>ist</em> genau so ein stratifizierter Raum: seine Hooks sind die
+Schichten, geordnet nach Tiefe, und ein Paket, das am NIC eintritt und zur App steigt, beschreibt einen
+<em>monotonen Exit-Pfad</em> durch die Schichten. Das „nur tiefer, nie zurück" von A und das
+„nur aufwärts, nie zurück" von B sind <strong>die selbe Bedingung</strong>.
+</div>
+
+<div class="lane">
+<strong>T1 danach — Kurzschluss = Halm bestimmt das Ganze:</strong> Auf einem stratifizierten Raum
+wird die konstruierbare Garbe der „Urteile" durch ihre <strong>Hälme</strong> bestimmt — je einen pro
+Schicht (Hook). Der Garben-Schlüsselsatz (Morphismus ist Iso ⇔ Iso auf jedem Halm) wird zum:
+<strong>Das globale Schicksal des Pakets ist das Kollimit seiner pro-Hook- (Halm-)Entscheide.</strong>
+Ein Drop in <em>jeder</em> Schicht ist ein <em>entscheidender Keim</em>: Er legt das Kollimit sofort
+fest, sodass das Paket nicht weiterlaufen muss — exakt A's XDP-Kurzschluss, neu gesagt als
+„der Halm bestimmt das Ganze". Ein vollständiger <em>Pass</em> existiert dagegen nur, weil
+<em>alle</em> Entscheide kompatibel sind (kein Drop) — das ist S2-Verkleben: die globale „Sektion"
+( ein zustelltes Paket) wird aus konsistenten lokalen Passes zusammengesetzt.
+</div>
+
+<div class="lane t2">
+<strong>T2 zuletzt — Verifikator = wohldefinierter Keim, Verkleben = globale Wohldefiniertheit:</strong>
+Die beiden Richtigkeitsregimes sind komplementär, nicht gegensätzlich. Der BPF-Verifier garantiert,
+dass jedes lokale Programm <em>sicher</em> ist (begrenzter Speicherzugriff, Terminierung) — das
+Analogo eines <em>wohldefinierten Keims</em> (ein eindeutiges lokales Datum). Die Garbenaxiome
+garantieren, dass die lokalen Daten zu <em>einem</em> eindeutigen globalen Objekt <em>verkleben</em> —
+das Analogo eines globalen Urteils, das aus konsistenten lokalen Urteilen wohldefiniert ist.
+Ein wohlgeformter Pipeline-Bedarf <strong>beides</strong>: Jeder Hook-Entscheid muss lokal wohldefiniert
+seinen (Verifikator-artige Sicherheit) <em>und</em> die Entscheide müssen wechselseitig kompatibel
+(Verkleben-artige Konsistenz). Allein reicht keines: Ein unsicheres lokales Programm bricht das Lokale;
+inkonsistente lokale Entscheide brechen das Globale.
+</div>
+</section>
+
+<!-- ============ 4. INHALT ============ -->
+<section id="inhalt">
+<h2><span class="no">4</span>Fusionierter Inhalt</h2>
+
+<h3>Die beiden Objekte nebeneinander</h3>
+<div class="card">
+<span class="tag tag-a">A — der Firewall-Stack</span>
+<p>Ein Eingangspaket wandert durch Hooks, geordnet nach Tiefe (tiefer = früher = schneller):
+<code>NIC → XDP/BPF → Netfilter → iptables → App</code>. An jedem Hook trifft eine lokale Maschine
+einen lokalen Entscheid. Der Durchsatz sinkt mit jeder durchlaufenen Schicht (je mehr Stack, desto mehr
+Arbeit): BPF/XDP ≈ 24M pps, iptables ≈ 3,5M, ufw ≈ 3,2M. BPF ist eine <em>universelle</em>
+In-Kernel-Plattform (XDP, tc, seccomp, Tracing), nicht nur ein Filter.</p>
+</div>
+<div class="card">
+<span class="tag tag-b">B — die Garbe</span>
+<p>Eine Prägarbe ist ein kontravarianter Funktor
+<div class="math"><span class="lbl">Prägarbe</span>ℱ : Open(X)<sup>op</sup> → 𝒞, &nbsp; U ↦ ℱ(U)</div>
+mit Rückwärtsabbildungen ρ<sub>VU</sub>&nbsp;:&nbsp;ℱ(V)→ℱ(U) für V⊇U. Eine Garbe erfüllt zwei Axiome:</p>
+<div class="math"><span class="lbl">S1 — Eindeutigkeit</span>s₁|<sub>Uᵢ</sub> = s₂|<sub>Uᵢ</sub> ∀i ⇒ s₁ = s₂</div>
+<div class="math"><span class="lbl">S2 — Verkleben</span>sᵢ|<sub>Uᵢ∩Uⱼ</sub> = sⱼ|<sub>Uᵢ∩Uⱼ</sub> ∀i,j ⇒ ∃!&nbsp;s ∈ ℱ(⋃Uᵢ) mit s|<sub>Uᵢ</sub> = sᵢ</div>
+</div>
+
+<h3>Die geteilte Skelett-Struktur</h3>
+<p>Beide Objekte haben die <em>gleiche</em> Anatomie: (i) <em>lokale Daten</em> an kleinen Teilstücken
+des Raums, (ii) eine <em>Regel</em>, die lokales in globales überführt, und (iii) einen
+<strong>Satz, der die globale Wahrheit aus der lokalen ableitet</strong>.</p>
+<ul>
+<li><strong>B (formal):</strong> Halm ℱₓ = colim<sub>U∋x</sub> ℱ(U); Schlüsselsatz:
+φ:&nbsp;ℱ→𝒢 ist Iso <strong>⇔</strong> φₓ ist Iso für alle x (Hälme bestimmen den Morphismus).
+Garbifizierung θ:&nbsp;ℱ→ℱ⁺ ist universell und erhält die Hälme (ℱₓ ≅ ℱ⁺ₓ).
+Kohomologie H<sup>i</sup>(X,ℱ) misst, <em>wie sehr</em> sich lokale Daten nicht global verkleben
+lassen; Čech-Kohomologie und Mayer–Vietoris berechnen sie aus Überdeckungen.</li>
+<li><strong>A (angelehnt):</strong> Hooks = lokale Entscheidpunkte; der Verifier = lokale
+Wohldefiniertheit (kein unbeschränkter Zugriff, keine Endlosschleife ⇒ ein eindeutiger, terminierender
+Halm-Entscheid); XDP-Drop = entscheidender Keim (kurzschließt, bevor mehr Stack durchlaufen wird);
+Durchsatzkosten = Anzahl der durchlaufenen Schichten.</li>
+</ul>
+
+<h3>Das integrierte Wörterbuch</h3>
+<table>
+<tr><th>Berkeley (A)</th><th>Garben (B)</th><th>Fusionierte Lesart</th></tr>
+<tr><td class="a">ein Hook (XDP, iptables)</td><td class="b">offene Menge / Stratum</td><td class="f">lokale Region, an der ein Keim lebt</td></tr>
+<tr><td class="a">lokaler Entscheid PASS/DROP</td><td class="b">lokaler Schnitt / Keim</td><td class="f">Halm ℱₓ pro Schicht</td></tr>
+<tr><td class="a">globales Schicksal des Pakets</td><td class="b">globale Sektion</td><td class="f">Kollimit der Halm-Entscheide</td></tr>
+<tr><td class="a">BPF-Verifier (Bounds, Terminierung)</td><td class="b">Keim wohldefiniert</td><td class="f">lokale Sicherheit ⇒ eindeutiger Halm</td></tr>
+<tr><td class="a">XDP-Drop kurzschließt den Stack</td><td class="b">Halm bestimmt das Ganze</td><td class="f">entscheidender Keim fixiert das Kollimit sofort</td></tr>
+<tr><td class="a">Paket muss alle Hooks passieren</td><td class="b">S2: Schnittmengen stimmen überein</td><td class="f">vollständiger Pass = Verkleben kompatibler Hälme</td></tr>
+<tr><td class="a">je früher der Drop, desto schneller (24M vs 3,5M pps)</td><td class="b">tieferes Stratum = kleinere Umgebung</td><td class="f">weniger durchlaufene Schichten = weniger Arbeit</td></tr>
+<tr><td class="a">NIC → XDP → Netfilter → iptables → App</td><td class="b">Stratifizierung f:X→P + Exit-Pfad</td><td class="f">Paket = monotoner Exit-Pfad, „nur tiefer, nie zurück"</td></tr>
+<tr><td class="a">gesamtes Verhalten der Pipeline</td><td class="b">Cons<sub>P</sub>(X) ≃ Fun(Exit<sub>P</sub>(X), Set)</td><td class="f">Exodromie: Verhalten = Funktor auf den Exit-Pfaden (Paket-Trassen)</td></tr>
+</table>
+
+<div class="lane">
+<strong>Fusionierter Satz:</strong> Sei F ein stratifizierter Firewall-Raum mit Schichtordnung P.
+Jedes eingehende Paket ist ein monotoner Exit-Pfad γ durch F. Sein Urteil
+<code>verdict(γ)</code> ist das Kollimit der Halm-Entscheide
+<code>verdict(γ) = colim<sub>h ∈ γ</sub> v<sub>h</sub></code>. Gilt <em>mindestens ein</em> v<sub>h</sub> = DROP,
+so ist das Kollimit bereits an der <em>frühesten</em> solchen Schicht fixiert (Kurzschluss); ist
+<em>keiner</em> ein Drop, so existiert das globale „Zustellung"-Objekt genau, weil alle v<sub>h</sub>
+kompatibel sind (S2). Die Pipeline ist korrekt, wenn (a) jeder Halm-Entscheid lokal wohldefiniert ist
+(Verifier) und (b) die Hälme auf den gemeinsam durchlaufenen Schichten konsistent sind (Garbenaxiome).
+</div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+<h2><span class="no">5</span>Visualisierung: Paket als Exit-Pfad durch den stratifizierten Stack</h2>
+<p>Sende ein Paket; es wandert von unten (NIC, frühester/tiefster Hook) nach oben (App). Jede Schicht
+ist ein <em>Halm</em> mit einem lokalen Entscheid. Ein <strong>XDP-Drop</strong> legt das
+<strong>Kollimit sofort</strong> fest (Short-Circuit = „Halm bestimmt das Ganze"); ein <strong>Pass</strong>
+existiert nur, weil <em>alle</em> Hälme kompatibel sind (S2-Verkleben). Der Durchsatz-Regler zeigt:
+je weniger Schichten durchlaufen, desto schneller.</p>
+
+<div class="viz-wrap">
+  <div class="viz-top">
+    <div class="grp">
+      <span class="lab">Paket:</span>
+      <button class="btn active" id="pktGood">Gut (HTTP:80)</button>
+      <button class="btn danger" id="pktBad">Bösartig</button>
+    </div>
+    <div class="grp">
+      <span class="lab">XDP-Programm:</span>
+      <button class="btn active" id="xdpOn">geladen</button>
+      <button class="btn" id="xdpOff">nicht geladen</button>
+    </div>
+    <button class="btn" id="sendBtn">▶ Paket senden</button>
+  </div>
+
+  <canvas id="viz" width="760" height="430"></canvas>
+
+  <div class="viz-side">
+    <div class="panel">
+      <h5>Hälme (lokale Entscheide pro Schicht)</h5>
+      <div class="chips" id="chipRow"></div>
+    </div>
+    <div class="panel">
+      <h5>Colimit = globales Schicksal</h5>
+      <div class="verdict" id="verdictOut">— bereit —</div>
+      <p class="note" id="verdictWhy"></p>
+    </div>
+    <div class="panel">
+      <h5>Verklebung / Durchlauf</h5>
+      <div id="glueOut" class="note">Noch kein Paket.</div>
+      <div class="note" style="margin-top:8px;">Durchlaufene Schichten bis zur Entscheidung</div>
+      <div class="meter"><div class="fill" id="speedFill"></div></div>
+    </div>
+  </div>
+</div>
+<p class="note">Farben folgen dem Theme; der Canvas-Background liest die CSS-Variablen.
+Keine externen Daten — alles inline.</p>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+<h2><span class="no">6</span>Provenienz</h2>
+<div class="card">
+  <div class="prov">
+    <span class="dot a"></span>
+    <div>
+      <a href="../berkeley.html">berkeley.html</a> — „BPF vs iptables vs ufw" (Quelle A)
+      <div class="desc">Interaktive Erklärung der Linux-Paketfilter: ufw (einfaches Userspace-Frontend),
+      iptables (konfiguriert Netfilter), BPF/eBPF (programmierbare In-Kernel-VM am XDP-Hook, mit Verifier).
+      Kern: je früher/tiefer ein Paket abgefangen wird, desto weniger Overhead — 24M vs. ~3,5M pps.</div>
+    </div>
+  </div>
+  <div class="prov">
+    <span class="dot b"></span>
+    <div>
+      <a href="../sheaves.html">sheaves.html</a> — „Garbentheorie" (Quelle B)
+      <div class="desc">Von Prägarben (kontravariante Funktoren) über Garbenaxiome S1/S2, Hälme und die
+      Schlüsselsatz „Halm bestimmt den Morphismus", Garbifizierung, Kohomologie bis zu konstruierbaren
+      Garben, Stratifizierungen, Exit-Pfaden und der Exodromie Cons<sub>P</sub>(X) ≃ Fun(Exit<sub>P</sub>(X), Set).</div>
+    </div>
+  </div>
+</div>
+</section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var STRATA = [
+    { key:'app', name:'App / Userspace', sub:'Paket wird verarbeitet' },
+    { key:'ipt', name:'iptables',        sub:'Netfilter-Chains INPUT' },
+    { key:'nf',  name:'Netfilter',       sub:'Hooks PREROUTING/INPUT' },
+    { key:'xdp', name:'XDP / BPF',       sub:'frühester Hook, am Treiber' },
+    { key:'nic', name:'NIC / Treiber',   sub:'Paket kommt an (Einstieg)' }
+  ];
+  // index 0 = top (app), index 4 = bottom (nic)
+  var state = { type:'good', xdp:true };
+  var anim = { running:false, start:0, dur:0, decisionIndex:0, traversed:5, passed:[] };
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+
+  function bandY(i){
+    var top = 60, bottom = canvas.height - 40;
+    var step = (bottom - top) / STRATA.length;
+    return top + step*(i + 0.5);
+  }
+
+  function decide(){
+    // return decision index (0..4) and whether it's a drop
+    if(state.type === 'bad' && state.xdp){ return { idx:3, drop:true,  why:'XDP' }; }
+    if(state.type === 'bad' && !state.xdp){ return { idx:1, drop:true,  why:'iptables' }; }
+    return { idx:0, drop:false, why:'pass' };
+  }
+
+  function draw(){
+    var W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = cssVar('--card'); ctx.fillRect(0,0,W,H);
+
+    var dim = cssVar('--ink-dim');
+    var border = cssVar('--border');
+    var ink = cssVar('--ink');
+    var accent = cssVar('--accent');
+    var accent2 = cssVar('--accent2');
+    var accent3 = cssVar('--accent3');
+
+    // depth axis label
+    ctx.fillStyle = dim; ctx.font='12px sans-serif';
+    ctx.save();
+    ctx.translate(16, H/2); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.fillText('Tiefe / früher  ↓', 0, 0);
+    ctx.restore();
+
+    var left = 60, right = W - 30, bandH = (bandY(1)-bandY(0))-14;
+
+    // draw strata bands
+    for(var i=0;i<STRATA.length;i++){
+      var y = bandY(i);
+      var reached = anim.passed.indexOf(i) !== -1;
+      var isDecision = anim.running && i===anim.decisionIndex;
+      ctx.globalAlpha = reached || isDecision ? 1 : 0.5;
+      ctx.fillStyle = cssVar('--code');
+      roundRect(left, y-bandH/2, right-left, bandH, 8); ctx.fill();
+      ctx.strokeStyle = border; ctx.lineWidth=1; roundRect(left, y-bandH/2, right-left, bandH, 8); ctx.stroke();
+
+      // name
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = reached ? accent3 : ink;
+      ctx.font='bold 14px sans-serif'; ctx.textAlign='left';
+      ctx.fillText(STRATA[i].name, left+14, y-2);
+      ctx.fillStyle = dim; ctx.font='11px sans-serif';
+      ctx.fillText(STRATA[i].sub, left+14, y+15);
+
+      // verdict chip on right
+      var verdict = verdictFor(i);
+      var chipW = 66, chipX = right - chipW;
+      ctx.fillStyle = verdict==='PASS' ? 'rgba(126,231,135,.15)' :
+                      verdict==='DROP' ? 'rgba(247,129,102,.2)' : cssVar('--code');
+      roundRect(chipX, y-13, chipW, 26, 6); ctx.fill();
+      ctx.strokeStyle = verdict==='PASS' ? accent3 : verdict==='DROP' ? accent2 : border;
+      ctx.lineWidth = verdict==='na' ? 1 : 2;
+      roundRect(chipX, y-13, chipW, 26, 6); ctx.stroke();
+      ctx.fillStyle = verdict==='PASS' ? accent3 : verdict==='DROP' ? accent2 : dim;
+      ctx.font='bold 12px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(verdict==='na' ? '—' : (verdict==='PASS' ? '✓ PASS' : '✗ DROP'), chipX+chipW/2, y+4);
+    }
+
+    // exit path arrow (from nic up to decision)
+    if(anim.running || anim.passed.length){
+      var fromY = bandY(4), toY = bandY(anim.decisionIndex);
+      ctx.strokeStyle = accent; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo((left+right)/2, fromY); ctx.lineTo((left+right)/2, toY); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // packet dot
+    if(anim.running){
+      var p = animProgress();
+      var py = fromY2(4) + (fromY2(anim.decisionIndex)-fromY2(4))*p;
+      var px = (left+right)/2;
+      ctx.beginPath(); ctx.arc(px, py, 11, 0, 2*Math.PI);
+      ctx.fillStyle = accent; ctx.shadowColor = accent; ctx.shadowBlur=14; ctx.fill(); ctx.shadowBlur=0;
+      ctx.fillStyle = cssVar('--bg'); ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('pkt', px, py+4);
+    } else if(anim.passed.length){
+      var ey = fromY2(anim.decisionIndex);
+      var ex = (left+right)/2;
+      ctx.beginPath(); ctx.arc(ex, ey, 11, 0, 2*Math.PI);
+      ctx.fillStyle = anim.decisionIsDrop ? accent2 : accent3;
+      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur=12; ctx.fill(); ctx.shadowBlur=0;
+    }
+
+    function fromY2(i){ return bandY(i); }
+    function animProgress(){
+      if(!anim.running) return 0;
+      var t = (performance.now()-anim.start)/anim.dur;
+      return Math.min(1, t);
+    }
+    function verdictFor(i){
+      var d = decide();
+      if(anim.passed.indexOf(i) === -1) return 'na';
+      if(i===d.idx && d.drop) return 'DROP';
+      return 'PASS';
+    }
+    function roundRect(x,y,w,h,r){
+      ctx.beginPath();
+      ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+    }
+  }
+
+  function tick(){
+    var p = animProgress();
+    // mark passed strata (from nic upward) as packet passes them
+    var d = decide();
+    for(var i=4;i>=d.idx;i--){
+      // stratum i is passed when packet has reached bandY(i) from bottom
+      var fromY = bandY(4), toY = bandY(d.idx);
+      var py = fromY + (toY-fromY)*p;
+      if(py <= bandY(i)+1 && anim.passed.indexOf(i)===-1){
+        anim.passed.push(i);
+      }
+    }
+    draw();
+    if(p>=1){
+      anim.running=false;
+      finish();
+      return;
+    }
+    requestAnimationFrame(tick);
+  }
+  function animProgress(){
+    if(!anim.running) return 0;
+    return Math.min(1,(performance.now()-anim.start)/anim.dur);
+  }
+
+  function send(){
+    var d = decide();
+    anim = { running:true, start:performance.now(), dur: (5-d.idx)*450, decisionIndex:d.idx,
+             decisionIsDrop:d.drop, traversed:5-d.idx, passed:[] };
+    clearChips();
+    requestAnimationFrame(tick);
+  }
+
+  function finish(){
+    var d = decide();
+    var traversed = 5 - d.idx;
+    // chips
+    var chipRow = document.getElementById('chipRow');
+    chipRow.innerHTML = '';
+    for(var i=0;i<STRATA.length;i++){
+      var reached = (5-d.idx) >= (5-i); // stratum i reached if i >= d.idx
+      var c = document.createElement('span');
+      var txt = STRATA[i].name;
+      if(i < d.idx){ c.className='chip na'; c.textContent = txt + ' (—)'; }
+      else if(i===d.idx && d.drop){ c.className='chip drop'; c.textContent = txt + ' ✗'; }
+      else { c.className='chip pass'; c.textContent = txt + ' ✓'; }
+      chipRow.appendChild(c);
+    }
+    // verdict
+    var vo = document.getElementById('verdictOut');
+    var vw = document.getElementById('verdictWhy');
+    if(d.drop){
+      vo.className='verdict drop'; vo.textContent = '✗ DROP (verworfen)';
+      vw.textContent = 'Das Kollimit ist am Halm „'+d.why+'“ sofort festgelegt — der frühe Keim bestimmt das Ganze, der Rest des Pfads wird nie durchlaufen (Short-Circuit).';
+    } else {
+      vo.className='verdict pass'; vo.textContent = '✓ PASS (zustellt)';
+      vw.textContent = 'Das globale Zustellungs-Objekt existiert nur, weil alle durchlaufenen Hälme kompatibel sind (S2-Verkleben).';
+    }
+    // glue + speed
+    var g = document.getElementById('glueOut');
+    g.textContent = d.drop
+      ? 'Short-Circuit: ' + traversed + ' von 5 Schichten durchlaufen — kein Verkleben nötig, ein entscheidender Keim reicht.'
+      : 'Vollpfad: alle 5 Schichten durchlaufen und konsistent verklebt (S2).';
+    document.getElementById('speedFill').style.width = (traversed/5*100) + '%';
+    draw();
+  }
+
+  function clearChips(){ document.getElementById('chipRow').innerHTML=''; }
+
+  // controls
+  function setGroup(onSel,offSel){
+    document.querySelectorAll('.grp .btn').forEach(function(b){ b.classList.remove('active'); });
+  }
+  var pktGood=document.getElementById('pktGood'), pktBad=document.getElementById('pktBad');
+  pktGood.onclick=function(){ state.type='good'; pktGood.classList.add('active'); pktBad.classList.remove('active'); };
+  pktBad.onclick=function(){ state.type='bad'; pktBad.classList.add('active'); pktGood.classList.remove('active'); };
+  var xdpOn=document.getElementById('xdpOn'), xdpOff=document.getElementById('xdpOff');
+  xdpOn.onclick=function(){ state.xdp=true; xdpOn.classList.add('active'); xdpOff.classList.remove('active'); };
+  xdpOff.onclick=function(){ state.xdp=false; xdpOff.classList.add('active'); xdpOn.classList.remove('active'); };
+  document.getElementById('sendBtn').onclick=send;
+  document.getElementById('themeToggle').onclick=function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  };
+
+  // init
+  clearChips();
+  draw();
+})();
+</script>
+</body>
+</html>

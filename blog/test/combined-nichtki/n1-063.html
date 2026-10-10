@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Persistent Landscapes × Hermann Schmitz</title>
+<script>
+(function(){try{
+  var s=null; try{s=localStorage.getItem('n1-063-theme');}catch(e){}
+  var dark = s ? s==='dark' : true;
+  if(dark) document.documentElement.classList.add('dark');
+}catch(e){ document.documentElement.classList.add('dark'); }
+})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f1ede2;
+  --text:#1f2937; --dim:#6b7280; --border:#d8d2c2;
+  --accent:#b45309; --accent2:#be185d; --leib:#047857; --koerper:#1d4ed8;
+  --shadow:rgba(0,0,0,.08);
+}
+html.dark{
+  --bg:#0f172a; --panel:#1a2234; --panel2:#232b42;
+  --text:#e5e7eb; --dim:#9ca3af; --border:#2d3654;
+  --accent:#f59e0b; --accent2:#ec4899; --leib:#10b981; --koerper:#3b82f6;
+  --shadow:rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Georgia','Iowan Old Style',serif; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+nav{
+  position:sticky;top:0;z-index:20;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  padding:.55rem 1rem;display:flex;gap:.4rem;overflow-x:auto;white-space:nowrap;
+  font-size:.85rem;font-family:system-ui,sans-serif;
+}
+nav a{color:var(--dim);text-decoration:none;padding:.25rem .6rem;border-radius:6px}
+nav a:hover{color:var(--accent);background:var(--panel2)}
+main{max-width:820px;margin:0 auto;padding:2rem 1.25rem 5rem}
+header.page{padding:1.4rem 0 .4rem;border-bottom:2px solid var(--border);margin-bottom:2rem}
+h1{font-size:2.1rem;line-height:1.15;margin:0 0 .5rem;color:var(--accent);letter-spacing:-.01em}
+.fusion-src{color:var(--dim);font-style:italic;font-size:1.02rem;margin:0}
+section{margin:2.6rem 0;padding:1.6rem 1.7rem;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 24px var(--shadow)}
+section>h2{font-size:1.5rem;color:var(--accent2);margin:0 0 .9rem;border-bottom:1px solid var(--border);padding-bottom:.4rem}
+h3{color:var(--accent);font-size:1.12rem;margin:1.3rem 0 .4rem}
+p{margin:.7rem 0}
+.kern{background:var(--panel2);border-left:4px solid var(--accent);padding:.9rem 1.2rem;border-radius:6px;margin:1rem 0}
+.tag{display:inline-block;padding:.05rem .5rem;border:1px solid var(--border);border-radius:4px;font-size:.78rem;font-family:system-ui,sans-serif}
+.tag.a{color:var(--koerper);background:var(--panel2)}
+.tag.b{color:var(--leib);background:var(--panel2)}
+.code{font-family:'SF Mono',Consolas,monospace;font-size:.86em;background:var(--panel2);padding:.1rem .35rem;border-radius:4px}
+.vizbox{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+#viz{display:block;width:100%;height:auto;border-radius:8px;background:var(--bg)}
+.controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin:.9rem 0;font-family:system-ui,sans-serif;font-size:.9rem}
+.control{display:flex;flex-direction:column;gap:.2rem;min-width:220px}
+.control label{color:var(--dim);font-size:.82rem}
+.control input[type=range]{width:100%;accent-color:var(--accent)}
+.readout{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0}
+.chip{font-family:system-ui,sans-serif;font-size:.82rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.4rem .7rem;display:flex;flex-direction:column;gap:.1rem}
+.chip b{font-size:1.05rem}
+.chip.surv b{color:var(--koerper)}
+.chip.rest b{color:var(--accent2)}
+.chip.cost b{color:var(--accent)}
+.status{font-family:system-ui,sans-serif;font-size:.86rem;color:var(--text);background:var(--bg);border:1px dashed var(--border);border-radius:8px;padding:.7rem .9rem;margin-top:.6rem}
+button.thm{font-family:system-ui,sans-serif;background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:.4rem .9rem;border-radius:7px;cursor:pointer;font-weight:600}
+button.thm:hover{border-color:var(--accent);color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-family:system-ui,sans-serif;font-size:.82rem;color:var(--dim);margin-top:.6rem}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+ul{margin:.5rem 0;padding-left:1.2rem}
+li{margin:.4rem 0}
+small.note{color:var(--dim);font-size:.85rem}
+</style>
+</head>
+<body>
+<nav>
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Fusionierter Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<main>
+<header class="page">
+  <h1>Persistenz gegen Digitalisierung</h1>
+  <p class="fusion-src">Fusion aus: persistent_landscape.html ✕ schmitz.html</p>
+  <p class="fusion-src" style="font-style:normal">
+    <button class="thm" id="themeBtn" type="button">🌓 Theme</button>
+  </p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Zwei scheinbar ferne Disziplinen treffen hier zusammen: <span class="tag a">A</span> die
+  <em>Topologische Datenanalyse</em> (Persistenzdiagramme, persistente Landschaften, Wasserstein-1) und
+  <span class="tag b">B</span> die <em>Neue Phänomenologie</em> Hermann Schmitz'. Beide vollziehen denselben
+  Grundgestus: Sie trennen, was <strong>über Skalen hinweg persistiert / robust bleibt</strong>, von dem, was
+  <strong>vergänglich ist</strong> — und beide behaupten, dass die <em>eigentliche Struktur</em> sich
+  <strong>nicht restlos in neutrale Einzelpunkte auflösen lässt</strong>.</p>
+  <p>In A ist ein Persistenzdiagramm ein Multi-Set von Punkten <span class="code">(b, d)</span> (Geburt, Tod eines
+  topologischen Merkmals); Punkte nahe der Diagonalen sind <em>Rauschen</em>, Punkte weit davon sind
+  <em>signifikante, persistente Struktur</em>. In B ist das, was man <em>nicht</em> neutralisieren kann — das
+  <em>affektive Betroffensein</em>, der <em>Leib</em> — das Eigentliche; das neutral-objektive ist die Oberfläche.
+  Die Fusion hält fest: <strong>Die „persistente" Struktur ist in beiden Fällen nicht ein Haufen von Punkten,
+  sondern ein Feld — eine Landschaft <span class="code">λ(t)</span> bzw. eine Atmosphäre.</strong> Und die
+  „Distanz" zwischen zwei solchen Strukturen (Wasserstein-1 bzw. L¹-Landschaft) ist nichts anderes als die
+  <em>Arbeit</em>, eine Atmosphäre in eine andere zu verwandeln — das, was B als <em>Einleibung</em> und
+  <em>Wellenreiten</em> beschreibt, wenn ein Leib sich in einen anderen umformt.</p>
+  <div class="kern"><strong>Einheitsthese:</strong> Wirklichkeit — ob topologisch oder phänomenologisch — ist
+  <em>Persistenz über einen Kontinuum von Skalen / Öffnungen</em>. Sie wird nur von
+  <strong>feldhaften, umhüllenden Zusammenfassungen</strong> (Landschaften, Situationen) erfasst, nie von der
+  vollständigen Atomisierung in neutrale Punkte. Was bei der Vereinfachung übrig bleibt, ist ein
+  <em>Rest</em> — und genau dieser Rest ist in A der <em>Auflösungs-Ende</em> (Trunkierung), in B der
+  <em>„nicht digitalisierbare"</em> Rest: beides <em>dasselbe</em> Objekt, betrachtet von zwei Seiten.</div>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <h3>1 · Was wählt die Persistenz aus? (Invertierte Wertung)</h3>
+  <p><span class="tag a">A</span> sagt ausdrücklich: „Points near the diagonal are <em>noise</em>; points far
+  from the diagonal are <em>significant</em> features." Das <em>Überlebende</em> (weit von der Diagonalen,
+  robust) ist für A das <strong>Wichtige</strong>, das <em>Vergängliche</em> (nahe der Diagonalen) wird als
+  Rauschen verworfen.</p>
+  <p><span class="tag b">B</span> macht das Gegenteil: Das, was der Neutralisierung <em>übersteht</em> (die
+  objektive Tatsache, „kann jeder überprüfen"), ist für B die <strong>Hülle</strong>; das, was bei der
+  Neutralisierung <em>verschwindet</em> („eine tatsächliche <em>Kite</em>, die verschwindet, wenn ich sie
+  neutralisiere"), ist die <strong>Essenz</strong> — das <em>affektive Betroffensein</em>.</p>
+  <p><strong>Der Konflikt:</strong> A behauptet, die Persistenz selektiert das Wesentliche; B behauptet, die
+  Persistenz-unter-Neutralisierung selektiert das <em>Unwesentliche</em>, und das Wesentliche ist gerade das,
+  was <em>nicht</em> persistiert. Beide inverterten, was die Vereinfachung rettet.</p>
+
+  <h3>2 · Zerlegbarkeit: Teile→Ganzes vs. Ganzes→Teile</h3>
+  <p><span class="tag a">A</span> ist am Fundament <em>atomistisch</em>: Das Diagramm <em>ist</em> ein
+  diskretes Multi-Set von Punkten; die Landschaft wird <em>aus</em> den Punkten abgeleitet
+  (<span class="code">λₖ = k-tes größtes Zelt</span>). Punkte sind die Ground Truth, die Funktion nur eine
+  (treue) Zusammenfassung. Über die vollen Layer sind Teile und Ganzes sogar bijektiv.</p>
+  <p><span class="tag b">B</span> ist <em>holistisch</em>: Eine Situation ist ein <em>binnendifuses</em> Ganzes,
+  „NICHT alles darin ist einzeln". Man kann durch <em>Explikation</em> nur <em>teilweise</em> Einzelsachverhalte
+  herauslösen, und es bleibt immer ein <strong>„Nicht digitalisierbarer Rest"</strong>. Das Ganze ist primär,
+  die Teile eine verlustbehaftete, nie vollständige Projektion.</p>
+  <p><strong>Der Konflikt:</strong> A baut das Kontinuierliche treu aus Diskreten (Teile→Ganzes, lossless); B
+  sagt, das Diskrete ist eine verlustbehaftete, nie vollständige Auflösung des Kontinuierlichen (Ganzes→Teile,
+  lossy). Reduktion vs. Ganzheit.</p>
+
+  <h3>3 · Metrische Fläche vs. flächenloser Raum</h3>
+  <p><span class="tag a">A</span> setzt durchgehend eine <em>metrische Fläche</em> voraus: Birth-Death-Ebene,
+  Diagonale, Gitter, L∞-Metrik, Wasserstein-Metrik. Alles ist exakt messbar und berechenbar.</p>
+  <p><span class="tag b">B</span> lokalisiert den realsten Bereich gerade <em>nicht</em> dort: Der <em>Leib</em>
+  lebt in einem <strong>„flächenlosen Raum"</strong>, einem „<em>Gewoge verschwommener Inseln</em>" — ausdrücklich
+  <em>nicht</em> eine metrische, flächenhaltige Fläche (das ist der <em>Körper</em>). B verknüpft genau diese
+  Fläche <em>nicht</em>-Metrik mit der Unmöglichkeit, die Situation restlos zu digitalisieren.</p>
+  <p><strong>Der Konflikt:</strong> Das gesamte A-Gerät setzt eine metrische Fläche und eine Distanzfunktion
+  voraus; B's realster Bereich resistiert gegen genau diese Art metrischer Erfassung.</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>Auflösung zu (1): Zwei unterschiedliche „Persistenz"-Achsen</h3>
+  <p>A „persistiert" über <em>Skalen / Rauschen</em> (Robustheit gegenüber der Filtrationsstufe). B „persistiert"
+  über <em>Neutralisierung</em> — eine <em>andere</em> Operation. Mappt man B auf A: Das, was unter
+  Neutralisierung <em>verschwindet</em> (die kurze, dringliche <em>Kite</em>) entspricht in A dem
+  <em>kurzlebigen, nahe-der-Diagonalen</em>-Band. A's <em>vielschichtige</em> Landschaft
+  (<span class="code">λ₁, λ₂, …, λ_K</span>) <em>verwirft</em> dieses Band aber gar nicht — sie <em>bewahrt</em> es
+  in den höheren Layern auf (Layer k = Merkmale der k-ten Persistenz). Die „Rauschen-Verwerfung" entsteht erst
+  durch den <em>λ₁-Abschnitt</em>. <strong>Fusionierte Schlussfolgerung:</strong> Man verweigert den λ₁-Abschnitt.
+  Der von B als <em>Essenz</em> gewertete kurze Rest ist in A's vollständiger Layer-Stack bereits codiert — man
+  muss nur aufhören, bei der obersten Schicht stehen zu bleiben. Die Wasserstein-/L¹-Distanz vergleicht dann
+  den <em>vollen</em> Persistenzinhalt, nicht nur den abgeschnittenen Kern.</p>
+
+  <h3>Auflösung zu (2): Der „irreduzible Rest" = der Trunkierungs-Ende</h3>
+  <p>A's eigene Wahl „wie viele Landscape-Layer anzeigen" ist ein <em>Auflösungsparameter</em>: Zeigt man nur
+  <span class="code">λ₁..λ_K</span>, ist alles jenseits davon <em>weg</em> — aber durch ein Parameter, kein Naturgesetz.
+  <strong>Fusionierte Schlussfolgerung:</strong> B's „Nicht digitalisierbarer Rest" <em>ist</em> exakt dieser
+  Trunkierungs-Ende jenseits der gewählten Layer-Anzahl. Er ist nicht metaphysisch unauflösbar, sondern ein
+  <em>Rechnungsrest</em> — und zwar <em>derselbe</em>, den A kennt. Beide stimmen überein, dass das Ganze primär
+  ist und jede endliche Darstellung verlustbehaftet ist; sie differieren nur darin, ob der Verlust „metaphysisch"
+  (B) oder ein „Auflösungs-Parameter" (A) ist. Fusion: <em>Behandle ihn als Parameter</em> — mehr Layer = kleinerer
+  Rest, und die Frage „wie viel Rest ist akzeptabel?" wird zur Frage „bei welcher Persistenz-Schwelle darf ich
+  neutralisieren?", also genau zu B's Frage „Was <em>muss</em> ich gelten lassen?".</p>
+
+  <h3>Auflösung zu (3): Der flächenlose Leib <em>ist</em> die Landschaft</h3>
+  <p>A's L∞/Wasserstein-Metrik ist eine <em>gewählte</em> Struktur auf einer <em>gewählten</em> Menge; A selbst
+  bettet das Diagramm in einen <em>Funktionsraum</em> (L¹) ein, wo die Distanz ein Integral ist — ein <em>weicher,
+  kontinuierlicher</em> Vergleich statt harter Punkt-zu-Punkt-Matchings. <strong>Fusionierte Schlussfolgerung:</strong>
+  Der „flächenlose" Raum B's ist <em>mathematisch realisiert</em> durch die <em>Landschaft als kontinuierliche
+  Feld-Funktion</em> — nicht durch das Punktmengengerüst. A's Landschafts-Funktionen <em>sind</em> die flächenlose,
+  kontinuierliche Repräsentation; B's „Leib ist flächenlos" und „Gefühle als <em>Atmosphären</em>" werden dadurch
+  <em>exakt</em> abgebildet: Eine Atmosphäre ist eine Intensitäts-Funktion <span class="code">λ(t)</span>, und die
+  L¹-Distanz zwischen zwei Landschaften ist eine Distanz <em>zwischen Atmosphären</em> — das ist B's
+  <em>Einleibung</em> (ein Feld koppelt sich an ein anderes) und das <em>Wellenreiten</em> (eine Atmosphäre
+  oszilliert in der anderen).</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>Das gemeinsame Objekt: die persistente Struktur</h3>
+  <p>Beide Seiten arbeiten auf demselben Grundgegenstand: einer Struktur, die über einen Parameter (Filtrationsstufe
+  bei A, Öffnungs-/Eingangsgrad bei B) hinweg betrachtet wird und dabei Merkmale <em>geboren</em> und
+  <em>getötet</em> werden. Die Persistenz eines Merkmals ist seine Lebensdauer.</p>
+
+  <h3>Mathematik A (topologisch) — übernommen und als Feld gelesen</h3>
+  <p><em>Zeltfunktion</em> eines Merkmals <span class="code">(b, d)</span>: mit Mittel <span class="code">m=(b+d)/2</span>
+  und Höhe <span class="code">h=(d−b)/2</span>:<br>
+  <span class="code">tent(b,d,t) = 0</span> für t≤b oder t≥d;
+  <span class="code">= t−b</span> für b&lt;t≤m;
+  <span class="code">= d−t</span> für m&lt;t&lt;d.</p>
+  <p><em>Landschaft:</em> <span class="code">λₖ(t)</span> ist der k-Te größte Wert aller
+  <span class="code">tent(·,t)</span> — also eine absteigend sortierte Hülle. λ₁ = obere Hülle (das
+  „Ganze"), λ₂ = nächste, etc. Die Persistenzmasse eines Merkmals (Fläche seines Zeltes) ist
+  <span class="code">(d−b)²/4</span>.</p>
+  <p><em>Distanzen:</em> Wasserstein-1 = minimale „Arbeit" (Summe der L∞-Distanzen) einer optimalen Zuordnung,
+  wobei Punkte auch zur Diagonalen projiziert werden (Kosten zur Diagonalen = <span class="code">(d−b)/2</span>).
+  Landschafts-L¹ = <span class="code">∫|λᴬ(t) − λᴮ(t)| dt</span> — ein Integral, also eine
+  <em>Feld-Distanz</em>.</p>
+
+  <h3>Mathematik B (phänomenologisch) — übernommen und als Diagramm gelesen</h3>
+  <p><em>Antrieb:</em> <span class="code">A ≈ min(Enge, Weitung)</span> — nur wo beide Pole zugleich sind, entsteht
+  lebendige Kraft. <em>Ergriffenheit:</em> <span class="code">= Atmosphäre × Öffnung</span> (Einlassen). Der
+  Beobachter mit Öffnung=0 nimmt die Atmosphäre <em>wahr</em>, wird aber nicht <em>ergriffen</em> — das ist A's
+  „Punkt nahe der Diagonalen, der zwar im Diagramm steht, aber kaum Persistenz hat". <em>Wellenreiten / Reifung:</em>
+  der Rhythmus <em>Emanzipation ⇄ Regression</em> (Abstand/Vereinzelung/Neutralisierung ↔
+  Ergriffenheit/Zurückfließen-ins-Ganze).</p>
+
+  <h3>Die Fusion als eine Formel-Sprache</h3>
+  <ul>
+    <li><strong>Punkt (b,d)</strong> = ein Sachverhalt / ein Einzelmerkmal (flächenhaltig, zählbar, „objektiv").</li>
+    <li><strong>Persistenz (d−b)/2</strong> = Robustheit / Dauerhaftigkeit.</li>
+    <li><strong>Kurze Persistenz (nahe Diagonalen)</strong> = B's <em>Kite</em> / das Affektive / das, was
+      Neutralisierung tötet.</li>
+    <li><strong>Lange Persistenz (weit von Diagonalen)</strong> = B's objektive Tatsache / das Robuste / die Hülle.</li>
+    <li><strong>Landschaft λₖ</strong> = die Atmosphäre / die Situation als flächenloses Feld.</li>
+    <li><strong>λ₁-Abschnitt</strong> = Neutralisierung / Emanzipation (Abstand nehmen, Rauschen weg).</li>
+    <li><strong>Trunkierungs-Ende jenseits λ_K</strong> = B's „Nicht digitalisierbarer Rest".</li>
+    <li><strong>L¹ / Wasserstein-Distanz</strong> = die „Arbeit" der Umformung = die Kosten der Neutralisierung.</li>
+    <li><strong>Oszillation λ₁⇄voll</strong> = B's Wellenreiten / Reifung.</li>
+  </ul>
+  <div class="kern"><strong>Was man in einer späteren Runde von allein weiterbauen kann:</strong> Jede phänomenologische
+  Größe B's (Kite, Ergriffenheit, Rest, Wellenreiten) hat eine topologische Entsprechung A's (kurze Persistenz,
+  L¹-Überlappung, Trunkierungs-Ende, Oszillation der Layer). Umgekehrt hat jede topologische Operation A's
+  (Schwellen, Trunkieren, Wasserstein-Distanz) eine phänomenologische Lektüre B's (Neutralisieren,
+  Emanzipieren, Einleibung). Die Fusion ist damit eine <em>Glossar-Brücke</em> plus ein gemeinsames
+  <em>Modell</em>: „Struktur = Persistenz-Spektrum als Feld; Vereinfachung = Schwellen/Trunkieren;
+  Distanz = Feld-Integral; Rest = Parameter, nicht Gesetz."</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung: Die Neutralisierung des Gewoges</h2>
+  <p>Links das <strong>Persistenzdiagramm</strong> (Punkte, farbcodiert nach Schicksal: <span
+  style="color:var(--koerper)">blau</span> = robust/objektiv, weit von der Diagonalen;
+  <span style="color:var(--accent2)">pink</span> = Kite/affektiv, nahe der Diagonalen). Rechts daraus gewachsen
+  die <strong>Landschaft als „Atmosphäre"</strong> — überlagerte Zelt-Funktionen, umhüllt von der
+  flächenlosen Hülle λ₁. Der <em>Neutralisierungs</em>-Regler löscht die kurzlebigen (Kite-)Merkmale: Je weiter
+  rechts, desto mehr verschwindet Pink (= die Kite, B's Essenz), desto blauer/objektiver wird das Feld (= die
+  Hülle, A's „faithful core"). Der <em>Rest</em> ist der von B „irreduzibel" und von A „Auflösungsgrenze" genannte
+  Bereich — derselbe.</p>
+  <div class="vizbox">
+    <canvas id="viz" width="900" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Neutralisierung / Emanzipation (Abstand, Vereinzelung): <b id="nVal">15%</b></label>
+        <input type="range" id="nSlider" min="0" max="100" value="15">
+      </div>
+    </div>
+    <div class="readout">
+      <div class="chip surv"><span>Überlebt (robust / objektiv)</span><b id="survivePct">–</b></div>
+      <div class="chip rest"><span>Rest = Kite (affektiv)</span><b id="restPct">–</b></div>
+      <div class="chip cost"><span>Kosten der Neutralisierung (≈ W₁ / L¹)</span><b id="costVal">–</b></div>
+    </div>
+    <div class="controls">
+      <button class="thm" id="waveBtn" type="button">▶ Wellenreiten (Emanzipation ⇄ Regression)</button>
+    </div>
+    <div class="status" id="vizStatus">–</div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--koerper)"></span>Robust / objektiv (weit von der Diagonalen)</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>Kite / affektiv (nahe der Diagonalen)</span>
+      <span><span class="dot" style="background:var(--accent)"></span>Atmosphären-Hülle λ₁ (flächenloses Feld)</span>
+    </div>
+  </div>
+  <p class="note">Führung: Schiebe den Regler nach rechts — Pink (Kite) löst sich auf, der Rest wächst. Klicke
+  <em>Wellenreiten</em>: Der Regler oszilliert, und du siehst, wie B's personaler Rhythmus (Emanzipation ⇄
+  Regression) in A's Trunkierung der Landschaft aufgeht.</p>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../persistent_landscape.html"><strong>A · persistent_landscape.html</strong></a> —
+      „Interactive Persistent Landscapes &amp; Wasserstein-1 Distance Explorer": Persistenzdiagramme,
+      Tent-Funktionen, mehrschichtige Landschaften λₖ und Wasserstein-1 / L¹-Landschafts-Distanz (TDA).</li>
+    <li><a href="../schmitz.html"><strong>B · schmitz.html</strong></a> — „Hermann Schmitz – Die Neue
+      Phänomenologie interaktiv": affektives Betroffensein, Leib ≠ Körper, Enge/Weitung, Gefühle als
+      Atmosphären, binnendiffuse Situationen, Emanzipation ⇄ Regression, Grenzen der Digitalisierung.</li>
+  </ul>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+
+  var P = [
+    {b:0.4, d:9.2},
+    {b:1.2, d:8.1},
+    {b:2.4, d:7.2},
+    {b:3.1, d:7.6},
+    {b:4.2, d:5.4},
+    {b:5.6, d:6.9},
+    {b:6.4, d:7.1},
+    {b:7.3, d:8.2},
+    {b:1.4, d:2.3},
+    {b:2.6, d:3.4},
+    {b:4.9, d:5.5},
+    {b:6.2, d:6.7},
+    {b:8.1, d:8.6}
+  ];
+  var tMax = 10;
+  var pMax = 0;
+  for (var i=0;i<P.length;i++){ var pp=(P[i].d-P[i].b)/2; if(pp>pMax)pMax=pp; }
+
+  var L = {x0:45, y0:40, w:380, h:330};
+  var R = {x0:480, y0:40, w:380, h:330};
+  var state = { n:0.15, anim:false };
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function hexToRgb(h){
+    h = h.replace('#','');
+    if (h.length === 3){ h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    var n = parseInt(h,16);
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function rgba(c,a){ return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  function mix(c1,c2,t){ t=Math.max(0,Math.min(1,t)); return [0,1,2].map(function(k){return Math.round(c1[k]+(c2[k]-c1[k])*t);}); }
+
+  function tent(b,d,t){ var m=(b+d)/2; if(t<=b||t>=d) return 0; if(t<=m) return t-b; return d-t; }
+  function lambda(points,k,t){
+    var vals=[];
+    for(var i=0;i<points.length;i++) vals.push(tent(points[i].b,points[i].d,t));
+    vals.sort(function(a,b){return b-a;});
+    return (k<vals.length)? Math.max(0,vals[k]) : 0;
+  }
+
+  function toX(b){ return L.x0 + (b/tMax)*L.w; }
+  function toY(d){ return (L.y0+L.h) - (d/tMax)*L.h; }
+  function toXr(t){ return R.x0 + (t/tMax)*R.w; }
+  function toYr(v,mx){ return (R.y0+R.h) - (v/mx)*R.h; }
+
+  function threshold(){ return state.n * pMax; }
+
+  function areaOf(p){ return Math.pow(p.d-p.b,2)/4; }
+
+  function readout(){
+    var th = threshold();
+    var Mt=0, Ms=0;
+    for (var i=0;i<P.length;i++){
+      var a=areaOf(P[i]); Mt+=a;
+      if ((P[i].d-P[i].b)/2 >= th-1e-9) Ms+=a;
+    }
+    var surv = Mt>0 ? Ms/Mt : 1;
+    var rest = 1-surv;
+    var cost = Math.max(0, Mt-Ms);
+    var n=state.n;
+    var s;
+    if(n<0.12) s='Regression / volle Ergriffenheit: Das ganze Gewoge der Atmosphären ist da — Kite (pink) inklusive. Der Leib ist flächenlos, nicht zählbar.';
+    else if(n<0.40) s='Wellenreiten: Emanzipation nimmt Abstand. Der Rest (Kite) wächst — B nennt ihn „irreduzibel", A nur „Auflösungsgrenze".';
+    else if(n<0.70) s='Emanzipation: Fast nur das Robuste/Objektive (blau) bleibt. A: „faithful core". B: „Gerade die Kite ist vernichtet — die Essenz ist weg."';
+    else s='Erstarrung / volle Neutralisierung: Nur noch λ₁, nur objektive Fakten. Der pinkfarbene Rest (Kite) = irreduzibel? oder Auflösungsgrenze?';
+    var e1=document.getElementById('survivePct'); if(e1) e1.textContent=Math.round(surv*100)+'%';
+    var e2=document.getElementById('restPct'); if(e2) e2.textContent=Math.round(rest*100)+'%';
+    var e3=document.getElementById('costVal'); if(e3) e3.textContent=cost.toFixed(2)+' Feldfl.';
+    var e4=document.getElementById('vizStatus'); if(e4) e4.textContent=s;
+    var nv=document.getElementById('nVal'); if(nv) nv.textContent=Math.round(state.n*100)+'%';
+    var sl=document.getElementById('nSlider'); if(sl) sl.value=Math.round(state.n*100);
+  }
+
+  function drawFrame(col){
+    var th = threshold();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = col.bg;
+    ctx.fillRect(0,0,W,H);
+
+    // titles
+    ctx.fillStyle = col.dim; ctx.font='bold 13px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('PERSISTENZDIAGRAMM  (Punkte = Sachverhalte)', L.x0, 24);
+    ctx.fillText('LANDSCHAFT / ATMOSPHÄRE  (flächenloses Feld)', R.x0, 24);
+
+    // ===== LEFT: persistence diagram =====
+    // axes
+    ctx.strokeStyle = col.border; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(L.x0, L.y0+L.h); ctx.lineTo(L.x0+L.w, L.y0+L.h);
+    ctx.moveTo(L.x0, L.y0); ctx.lineTo(L.x0, L.y0+L.h);
+    ctx.stroke();
+    // diagonal
+    ctx.strokeStyle = col.diag; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    ctx.moveTo(toX(0), toY(0)); ctx.lineTo(toX(tMax), toY(tMax));
+    ctx.stroke(); ctx.setLineDash([]);
+    // grid ticks
+    ctx.fillStyle = col.dim; ctx.font='10px monospace'; ctx.textAlign='center';
+    for (var g=0; g<=5; g++){
+      var gv=(g/5)*tMax;
+      ctx.fillText(gv.toFixed(0), toX(gv), toY(0)+14);
+      ctx.textAlign='right'; ctx.fillText(gv.toFixed(0), L.x0-5, toY(gv)+4); ctx.textAlign='center';
+    }
+    ctx.fillText('Birth (b)', L.x0+L.w/2, L.y0+L.h+28);
+
+    // threshold line (survival boundary) in (b,d)-space: d - b = 2*th  ->  d = b + 2th
+    if (th>1e-6){
+      ctx.strokeStyle = col.accent2; ctx.lineWidth=1.5; ctx.setLineDash([3,4]);
+      ctx.beginPath();
+      var b0=Math.max(0,0), b1=tMax;
+      ctx.moveTo(toX(b0), toY(Math.min(tMax,b0+2*th)));
+      ctx.lineTo(toX(b1), toY(Math.min(tMax,b1+2*th)));
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // points
+    for (var i=0;i<P.length;i++){
+      var p=P[i], pers=(p.d-p.b)/2, fp=pers/pMax;
+      var colPt = mix(col.kite, col.robust, fp);
+      var survA = pers >= th-1e-9 ? 1 : Math.max(0, 1-(th-pers)/(0.25*pMax));
+      var a = 0.15 + 0.85*survA;
+      var cx=toX(p.b), cy=toY(p.d);
+      // vertical bar to diagonal (persistence)
+      ctx.strokeStyle = rgba(colPt, a*0.35); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,toY(p.b)); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy, 4+fp*6, 0, Math.PI*2);
+      ctx.fillStyle = rgba(colPt, a); ctx.fill();
+      ctx.strokeStyle = rgba(col.panel, a); ctx.lineWidth=1.2; ctx.stroke();
+    }
+
+    // ===== RIGHT: landscape / atmosphere =====
+    var mx = pMax*1.12;
+    // axes
+    ctx.strokeStyle = col.border; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(R.x0, R.y0+R.h); ctx.lineTo(R.x0+R.w, R.y0+R.h);
+    ctx.moveTo(R.x0, R.y0); ctx.lineTo(R.x0, R.y0+R.h);
+    ctx.stroke();
+    ctx.fillStyle = col.dim; ctx.font='10px monospace'; ctx.textAlign='center';
+    for (var gg=0; gg<=5; gg++){
+      var gv2=(gg/5)*tMax;
+      ctx.fillText(gv2.toFixed(0), toXr(gv2), toYr(0,mx)+14);
+    }
+    ctx.fillText('t (Filtration / Öffnung)', R.x0+R.w/2, R.y0+R.h+28);
+
+    var res=200;
+    // λ1 envelope fill (the whole atmosphere)
+    ctx.beginPath();
+    ctx.moveTo(toXr(0), toYr(0,mx));
+    for (var s2=0;s2<=res;s2++){ var t=s2/res*tMax; ctx.lineTo(toXr(t), toYr(lambda(P,0,t),mx)); }
+    ctx.lineTo(toXr(tMax), toYr(0,mx)); ctx.closePath();
+    ctx.fillStyle = rgba(col.accent, 0.10); ctx.fill();
+
+    // λ1 line
+    ctx.beginPath();
+    for (var s3=0;s3<=res;s3++){ var t3=s3/res*tMax; var vv=lambda(P,0,t3); if(s3===0) ctx.moveTo(toXr(t3),toYr(vv,mx)); else ctx.lineTo(toXr(t3),toYr(vv,mx)); }
+    ctx.strokeStyle = col.accent; ctx.lineWidth=2.5; ctx.stroke();
+    // λ2 line
+    ctx.beginPath();
+    for (var s4=0;s4<=res;s4++){ var t4=s4/res*tMax; var vv2=lambda(P,1,t4); if(s4===0) ctx.moveTo(toXr(t4),toYr(vv2,mx)); else ctx.lineTo(toXr(t4),toYr(vv2,mx)); }
+    ctx.strokeStyle = rgba(col.dim,0.9); ctx.lineWidth=1.5; ctx.stroke();
+    // labels
+    ctx.fillStyle = col.accent; ctx.font='bold 12px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('λ₁ (Hülle)', R.x0+4, R.y0+14);
+    ctx.fillStyle = col.dim; ctx.fillText('λ₂', R.x0+4, R.y0+30);
+
+    // colored tents by fate (the atmosphere itself)
+    for (var i2=0;i2<P.length;i2++){
+      var q=P[i2], per=(q.d-q.b)/2, fp2=per/pMax;
+      var cc = mix(col.kite, col.robust, fp2);
+      var survA2 = per >= th-1e-9 ? 1 : Math.max(0, 1-(th-per)/(0.25*pMax));
+      var a2 = 0.10 + 0.55*survA2;
+      var m=(q.b+q.d)/2, h=(q.d-q.b)/2;
+      ctx.beginPath();
+      ctx.moveTo(toXr(q.b), toYr(0,mx));
+      ctx.lineTo(toXr(m), toYr(h,mx));
+      ctx.lineTo(toXr(q.d), toYr(0,mx));
+      ctx.closePath();
+      ctx.fillStyle = rgba(cc, a2); ctx.fill();
+    }
+  }
+
+  function currentColors(){
+    return {
+      bg: cssVar('--bg') || '#111',
+      panel: cssVar('--panel') || '#fff',
+      text: cssVar('--text') || '#eee',
+      dim: cssVar('--dim') || '#888',
+      border: cssVar('--border') || '#444',
+      accent: cssVar('--accent') || '#f59e0b',
+      accent2: cssVar('--accent2') || '#ec4899',
+      leib: cssVar('--leib') || '#10b981',
+      koerper: cssVar('--koerper') || '#3b82f6',
+      diag: cssVar('--border') || '#444'
+    };
+  }
+  function currentRgb(){
+    var c=currentColors();
+    return {
+      bg:c.bg, panel:c.panel, text:c.text, dim:c.dim, border:c.border, diag:c.border,
+      accent: hexToRgb(c.accent), accent2: hexToRgb(c.accent2),
+      robust: hexToRgb(c.koerper), kite: hexToRgb(c.accent2),
+      koerper:c.koerper, accentHex:c.accent, accent2Hex:c.accent2
+    };
+  }
+
+  function render(){
+    var c = currentColors();
+    var rgb = currentRgb();
+    // build a unified color object for drawFrame
+    var col = {
+      bg: c.bg, panel: c.panel, dim: c.dim, border: c.border, diag: c.border,
+      accent: c.accent, accent2: c.accent2,
+      robust: rgb.robust, kite: rgb.kite
+    };
+    drawFrame(col);
+    readout();
+  }
+
+  var sl = document.getElementById('nSlider');
+  if (sl){ sl.addEventListener('input', function(){ state.n = (+this.value)/100; if(state.anim){ state.anim=false; document.getElementById('waveBtn').textContent='▶ Wellenreiten (Emanzipation ⇄ Regression)'; } render(); }); }
+  var wb = document.getElementById('waveBtn');
+  if (wb){ wb.addEventListener('click', function(){ state.anim=!state.anim; this.textContent = state.anim ? '⏸ Wellenreiten läuft…' : '▶ Wellenreiten (Emanzipation ⇄ Regression)'; }); }
+
+  var tb = document.getElementById('themeBtn');
+  if (tb){ tb.addEventListener('click', function(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n1-063-theme', d?'dark':'light'); }catch(e){}
+    setTimeout(render, 0);
+  }); }
+
+  var wt=0;
+  function loop(){
+    if (state.anim){
+      wt += 0.012;
+      state.n = 0.5 + 0.42*Math.sin(wt);
+      render();
+    }
+    requestAnimationFrame(loop);
+  }
+  render();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

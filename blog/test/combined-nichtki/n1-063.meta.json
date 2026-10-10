@@ -1,0 +1,16 @@
+{
+  "no": "063",
+  "a": "persistent_landscape.html",
+  "b": "schmitz.html",
+  "a_title": "Interactive Persistent Landscapes & Wasserstein-1 Distance Explorer",
+  "b_title": "Hermann Schmitz – Die Neue Phänomenologie interaktiv",
+  "combined_theme": "persistenz-gegen-digitalisierung",
+  "one_line": "TDA und Schmitz konvergieren: Das Echteste ist die Struktur, die über Skalen/Öffnungen persistiert, und sie lässt sich nie restlos in neutrale Punkte auflösen — der 'Rest' (B's Kite) ist zugleich das, was A als Rauschen/Trunkierungs-Ende verwirft und B als Essenz behält.",
+  "contradictions": [
+    "Was Persistenz auswählt (invertierte Wertung): A hält die robusten, weit-von-der-Diagonalen Punkte für 'signifikant' und die nahe der Diagonalen für 'Rauschen' (wird verworfen); B hält das Neutral-Überlebbare (objektive Tatsache) für die Hülle und das, was bei der Neutralisierung verschwindet (die subjektive Kite) für die Essenz — beide inverterten, was die Vereinfachung rettet.",
+    "Zerlegbarkeit (Teile→Ganzes vs. Ganzes→Teile): A baut die kontinuierliche Landschaft treu aus diskreten Punkten (bijektiv über alle Layer); B sagt, die Situation ist ein binnendifuses Ganzes, das sich nie vollständig in Einzelsachverhalte auflösen lässt (mit irreduziel-nicht-digitalisiertem Rest) — lossy.",
+    "Raumgeometrie: A setzt eine metrische Fläche voraus (Birth-Death-Ebene, Diagonale, L∞/Wasserstein-Metrik, exakt berechenbar); B's realster Bereich, der Leib, lebt in einem ausdrücklich flächenlosen, nicht-metrischen Raum ('Gewoge verschwommener Inseln'), der genau solche metrische Erfassung resistiert."
+  ],
+  "resolution": "Drei Auflösungen: (1) Man unterscheidet zwei Persistenz-Achsen (A: über Skalen/Rauschen, B: über Neutralisierung) und erkennt, dass die kurze Kite das A'sche nahe-der-Diagonalen-Band ist, das die vielschichtige Landschaft λ₁..λ_K gar nicht verwirft, sondern in den höheren Layern bewahrt — man verweigert also den λ₁-Abschnitt und vergleicht den vollen Persistenzinhalt. (2) B's 'Nicht digitalisierbarer Rest' IST A's Trunkierungs-Ende jenseits der gewählten Layer-Anzahl: kein metaphysisches Gesetz, sondern ein Auflösungsparameter (mehr Layer = kleinerer Rest), und die Frage 'wie viel Rest ist akzeptabel?' wird zu B's 'Was muss ich gelten lassen?'. (3) Der 'flächenlose' Leib wird mathematisch durch die Landschaft als kontinuierliche Feld-/Atmosphären-Funktion realisiert; die L¹-Distanz zwischen Landschaften ist eine Distanz zwischen Atmosphären — exakt B's 'Gefühle als Atmosphären' und 'Einleibung'.",
+  "viz": "Ein Canvas zeigt links das Persistenzdiagramm (Punkte farbcodiert nach Schicksal: blau=robust/objektiv, pink=Kite/affektiv, inkl. Überlebens-Schwelle) und rechts die daraus gewachsene Landschaft als 'Atmosphäre' (überlagerte Zelt-Funktionen, umhüllt von λ₁/λ₂). Ein 'Neutralisierung'-Regler (0–100%) löscht die kurzlebigen Kite-Merkmale, färbt die vernichtete Fläche ein und meldet 'Überlebendes (objektiv)' vs 'Rest (Kite)' sowie die 'Kosten der Neutralisierung (≈ W₁/L¹)'. Ein 'Wellenreiten'-Button animiert den Regler als Sinus (Emanzipation ⇄ Regression) und zeigt, dass B's 'irreduzibler Rest' und A's 'Auflösungsgrenze' derselbe Bereich sind. Theme-aware (CSS-Variablen), Inline-Daten, keine Netzwerkabrufe."
+}

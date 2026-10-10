@@ -1,0 +1,16 @@
+{
+  "no": "004",
+  "a": "good/good.html",
+  "b": "pz4.html",
+  "a_title": "How to Live Well — A Formally Verified Ethical Logic",
+  "b_title": "Prime Harmonic Interference (Harmonic Sieve)",
+  "combined_theme": "verified-resonance-emergence",
+  "one_line": "Ordnung entsteht aus einfachen lokalen Regeln und muss geprüft statt behauptet werden: A's Sheaf-Verklebungstest und B's ganzzahlige Primzahlausrichtung sind dieselbe Bewegung — die Ausrichtung verifizieren und dann nur das melden, was der Check stützt (Struktur, nicht Wahrheit).",
+  "contradictions": [
+    "Epistemischer Modus: A ist explizit bescheiden ('values are chosen, not proved', Konsistenz ≠ Korrektheit) und verlangt Ehrlichkeit über Unsicherheit, während B eine einfache diskrete Tatsache in selbstbewusstem, offenbarendem Ton als tiefe Wahrheit ausgibt ('perfect vertical columns of truth', 'Harmonic Resonance') — A würde das als Überbehauptung einstufen.",
+    "Herkunft der Ordnung: A's globaler Schnitt existiert 'nur wenn' die lokalen Schnitte auf Überlappungen übereinstimmen (Konsistenz wird gebaut, geprüft und kann scheitern), während B die Spalten als latent/vorausgesetzt in den Primzahlen sieht und sie lediglich durch den richtigen Modulus offenbart.",
+    "Diskret vs. kontinuierlich: A's Konsistenz ist binär und exakt (gefordert-und-verboten = Widerspruch, Ziel = null Widerspruch), während B ein kontinuierliches Spektrum feiert (Modulus 'slowly' vom Rauschen zum Resonanzgipfel schieben)."
+  ],
+  "resolution": "Ordnung ist im Daten entdeckt, aber durch einen Test verifiziert: (1) B's Resonanz ist eine echte, prüfbare Struktur — A's Ehrlichkeitsprinzip wird zur epistemischen Norm, nur die geprüfte Ausrichtung (Primzahlen in φ(m) Restklassen) ist die Behauptung, 'Wahrheit'/'Resonanz' bleibt interpretativ; (2) in beiden Domänen bedeutet 'Ordnung existiert' = 'der Test läuft durch' (Verklebung auf Überlappungen ↔ ganzzahlige Modulus-Ausrichtung), also: die Ausrichtung ist real gdw der erzeugende Check durchläuft; (3) Modelliere Ordnung als kontinuierlichen Score (Grid-Lock) mit explizitem Schwellwert — A's binäres Urteil wird aus B's Kurve am θ abgelesen — und benenne ehrlich, was θ kauft (Struktur, nicht Wahrheit).",
+  "viz": "Themenreaktives 2D-Canvas: oben das Primzahlenfeld, projiziert durch x=(p mod m)/m, das bei ganzzahligen Moduli in Spalten einriegelt; unten die Grid-Lock-Ordnungskurve über m∈[2,30] mit Peaks bei ganzen Zahlen (A's Konsistenztest, aus B's Resonanz abgelesen); φ(n)-Readout 'verifizierte Spaltenzahl'; Ehrlichkeits-Overlay (A) zeichnet den Schwellwert θ, färbt den Struktur-/Rauschen-Bereich und benennt die Lücke 'Struktur ≠ Wahrheit'. Regler: Modulus m, Chroma-Offset, Ehrlichkeits-Box. Reine Inline-Daten (Sieve zur Laufzeit), kein Netzwerk."
+}

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Pullback ✕ Hauptstadt von Frankreich</title>
+<script>
+(function(){
+  var d=document.documentElement, saved=null;
+  try{saved=localStorage.getItem('n1_037_theme');}catch(e){}
+  if(saved==='light'||saved==='dark'){ d.classList.toggle('dark', saved==='dark'); }
+  else {
+    var mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+    d.classList.toggle('dark', !(mq && mq.matches));
+  }
+})();
+</script>
+<style>
+:root{
+  --bg:#f5f3ee; --panel:#ffffff; --panel-border:#d8d2c4; --ink:#20222a; --muted:#5c6270;
+  --accentA:#0a7ea4; --accentB:#e8631a; --forward:#7c3aed; --pullback:#a3811d;
+  --gridline:#e6e0d2; --chip:#eef2f5; --codebg:#eceadf; --good:#1f7a3d;
+}
+html.dark{
+  --bg:#0b0e16; --panel:#11151f; --panel-border:#26304a; --ink:#e6ebf5; --muted:#93a0b8;
+  --accentA:#38bdf8; --accentB:#fb923c; --forward:#c084fc; --pullback:#facc15;
+  --gridline:#1a2233; --chip:#182133; --codebg:#141b29; --good:#4ade80;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Segoe UI',system-ui,-apple-system,Tahoma,sans-serif;
+  line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+.article{max-width:820px;margin:0 auto;padding:34px 20px 90px;}
+h1{font-size:2.05em;line-height:1.25;margin:0 0 6px;font-weight:800;}
+.subtitle{color:var(--muted);font-size:1.02em;margin:0 0 8px;font-style:italic;}
+.subtitle code{background:var(--codebg);padding:1px 6px;border-radius:5px;font-style:normal;}
+.lead{font-size:1.06em;margin:18px 0;}
+section{margin:34px 0;}
+h2{font-size:1.35em;margin:0 0 14px;padding-left:12px;border-left:4px solid var(--accentA);line-height:1.3;}
+#visualisierung h2{border-left-color:var(--pullback);}
+#provenienz h2{border-left-color:var(--accentB);}
+p{margin:10px 0;}
+strong{color:var(--ink);}
+.formula{font-family:'Cambria Math',Georgia,serif;background:var(--codebg);
+  padding:1px 7px;border-radius:6px;white-space:nowrap;font-size:1.02em;}
+.callout{background:var(--panel);border:1px solid var(--panel-border);border-left-width:4px;
+  border-radius:10px;padding:14px 18px;margin:16px 0;}
+.callout.a{border-left-color:var(--accentA);}
+.callout.b{border-left-color:var(--accentB);}
+.callout.p{border-left-color:var(--pullback);}
+.callout .tag{font-weight:700;font-size:.82em;letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:4px;}
+.callout.a .tag{color:var(--accentA);}
+.callout.b .tag{color:var(--accentB);}
+.callout.p .tag{color:var(--pullback);}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.97em;}
+th,td{border:1px solid var(--panel-border);padding:9px 12px;text-align:left;}
+th{background:var(--chip);font-weight:700;}
+ul,ol{margin:10px 0;padding-left:22px;}
+li{margin:6px 0;}
+.viz-wrap{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:16px;margin-top:8px;}
+canvas#viz{display:block;width:100%;border-radius:10px;background:var(--panel);touch-action:none;cursor:grab;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:12px 2px 4px;font-size:.95em;}
+.viz-controls label{display:flex;align-items:center;gap:8px;cursor:pointer;}
+input[type=range]{accent-color:var(--forward);width:150px;}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;margin-top:8px;
+  background:var(--codebg);border-radius:8px;padding:9px 12px;color:var(--ink);}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;font-size:.9em;color:var(--muted);}
+.legend .sw{display:inline-block;width:22px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px;}
+.sw.f{background:var(--forward);}
+.sw.p{background:var(--pullback);}
+.src{display:block;margin:10px 0;padding:12px 16px;background:var(--panel);
+  border:1px solid var(--panel-border);border-radius:10px;}
+.src a{color:var(--accentB);font-weight:700;text-decoration:none;}
+.src a:hover{text-decoration:underline;}
+.src .meta{color:var(--muted);font-size:.92em;}
+</style>
+</head>
+<body>
+<article class="article">
+
+  <h1>Das Merkmal, das über die Karte zieht</h1>
+  <p class="subtitle">Fusion aus: <code>pullback2.html</code> ✕ <code>paris.html</code></p>
+
+  <p class="lead">Beim ersten Blick sind das zwei völlig verschiedene Seiten: eine erklärt ein
+  abstraktes mathematisches Werkzeug, die andere ist ein Quiz über eine Stadt. Unter der Oberfläche
+  aber machen sie dasselbe — und diese Fusion verbindet sie an genau der Stelle, an der sie es können.</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Seiten drehen sich unter der Oberfläche um <strong>ein und denselben Gestus: eine
+    Abbildung zwischen zwei Welten und ein Merkmal, das entlang dieser Abbildung transportiert werden
+    muss, ohne dabei zu zerreißen.</strong> Nur dass eine Seite die Mechanik benennt und die andere
+    sie an einem einzigen Punkt ausführt.</p>
+    <p><strong><code>pullback2.html</code> (A)</strong> macht daraus die allgemeine, formale Regel.
+    Es gibt zwei Welten — <strong>Welt&nbsp;A</strong> (die „Ausgangs-/Quellenwelt“) und
+    <strong>Welt&nbsp;B</strong> (die „Ziel-/Kartenwelt“), eine <em>Abbildung</em>
+    <span class="formula">f : A → B</span>, die <em>vorwärts</em> zeigt, und eine Struktur
+    <span class="formula">g</span>, die auf der Zielwelt B lebt (bei A: ein Temperaturfeld). Der
+    <strong>Pullback</strong> ist genau die Komposition
+    <span class="formula">(f * g)(a) = g(f(a)) = g ∘ f</span> — er „zieht“ die Information, die auf B
+    lebt, <em>rückwärts</em> nach A. A sagt ausdrücklich: „Die Abbildung geht vorwärts (von A nach B).
+    Der Pullback geht rückwärts (Information von B zurück nach A).“</p>
+    <p><strong><code>paris.html</code> (B)</strong> ist die kleinste mögliche <em>konkrete Instanz</em>
+    derselben Geste. Die Funktion „Hauptstadt“ ordnet Ländern (Welt&nbsp;A) Städte (Welt&nbsp;B) zu:
+    Frankreich&nbsp;→&nbsp;Paris, Deutschland&nbsp;→&nbsp;Berlin, Spanien&nbsp;→&nbsp;Madrid. Das
+    Merkmal „ist Hauptstadt“ lebt auf der StädtestSeite, und der Satz
+    <em>„Paris ist die Hauptstadt von Frankreich“</em> ist exakt die Aussage, dass dieses Merkmal über
+    die Zuordnung korrekt von der Städte- zur Ländereite transportiert wurde. B's sechs Mini-Spiele —
+    Karte, Quiz, Drag&nbsp;&amp;&nbsp;Drop, „Verbinde Land &amp; Hauptstadt“, Kratzbild, Eiffelturm —
+    sind <strong>sechs verschiedene Wege, diese Transport-Korrektheit auf einem 3-elementigen Beispiel
+    zu prüfen.</strong></p>
+    <p class="callout p"><span class="tag">Kernthese in einem Satz</span>
+    Der <strong>Pullback ist das Allgemeine</strong> — die Regel, die für <em>beliebige</em> zwei Welten
+    und <em>beliebige</em> Merkmale gilt. <strong>„Paris = Hauptstadt von Frankreich“ ist der
+    kanonische Einpunkt-Beispiel-Fall derselben Regel.</strong> A liefert das Gesetz, B die eine Zeile,
+    die alle Kinder kennen.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Zunächst die ehrliche Einordnung: Die beiden Seiten widersprechen sich in <strong>keiner
+    einzelnen Tatsache</strong>. A ist ein abstraktes Konzept, B ein triviales Faktum — sie liegen auf
+    orthogonalen Ebenen. Aber auf <em>zwei geteilten Konzept-Achsen</em> nehmen sie genuin
+    <strong>unterschiedliche (teilweise entgegengesetzte) Stellungen</strong> ein. Das ist die nächste
+    echte Spannung, die diese Fusion lösen muss:</p>
+
+    <div class="callout a"><span class="tag">Spannung 1 · Richtung des Transports</span>
+    <p><strong>A</strong> (pullback2.html) behauptet ausdrücklich, dass der <em>Kern</em> des Pullbacks
+    die <strong>rückwärts</strong> gerichtete Information ist: „Der Pullback geht rückwärts
+    (Information von B zurück nach A).“ Die Rückwärts-Richtung <em>ist</em> der Punkt des ganzen
+    Konzepts — ohne sie gäbe es nur eine gewöhnliche Abbildung.</p>
+    <p><strong>B</strong> (paris.html) macht in <em>allen</em> seinen Interaktionen das Gegenteil:
+    vom Land zur Hauptstadt, also <strong>vorwärts</strong> (Quelle&nbsp;→&nbsp;Ziel). Karte, Quiz und
+    Drag&nbsp;&amp;&nbsp;Drop sind Vorwärts-Lookups; keines der Spiele „zieht“ ein Merkmal von der Stadt
+    zurück ins Land. B behandelt also genau die Richtung als Aufgabe, die A als „die langweilige
+    Hälfte“ bezeichnet.</p></div>
+
+    <div class="callout b"><span class="tag">Spannung 2 · Universal-abstrakt vs. konkret-spezifisch</span>
+    <p><strong>A</strong> behauptet Universalität: „Auch wenn Welt A und Welt B ganz unterschiedlich
+    geformt sind — der Pullback funktioniert trotzdem.“ Der Transport gilt für <em>beliebige</em>
+    Formen, <em>beliebige</em> nichtlineare Abbildungen und <em>beliebige</em> Struktur auf B; der
+    Inhalt ist <strong>variabel</strong>.</p>
+    <p><strong>B</strong> reduziert das auf ein <em>einzelnes festes</em> Label („Hauptstadt“) an
+    <em>einem benannten</em> Objekt (Paris) auf einem 3-elementigen Beispiel. B ist ein
+    <strong>Datum</strong> (ein Faktum), keine Mechanik — kein Spieler verändert die Abbildung oder das
+    Merkmal, es wird nur abgefragt.</p></div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>Spannung 1 (Richtung) löst sich, sobald man die Perspektive um 90° dreht:</strong> Beide
+    Richtungen werden gebraucht — und tatsächlich üben beide Seiten <em>beide</em> Richtungen, nur dass
+    A die Rückwärts-Hälfte als den Punkt markiert, B sie nur als eines von sechs Spielen. Man stelle die
+    beiden Seiten nebeneinander:</p>
+    <table>
+      <tr><th>Richtung</th><th>A (pullback2.html)</th><th>B (paris.html)</th></tr>
+      <tr><td>vorwärts&nbsp;A→B</td><td>die Abbildung <span class="formula">f</span> („verbinde Zimmer mit Karte“)</td>
+          <td>„Hauptstadt-von“-Lookup: Land&nbsp;→&nbsp;Stadt (Karte, Quiz, Drag)</td></tr>
+      <tr><td>rückwärts&nbsp;B→A</td><td>der Pullback <span class="formula">g ∘ f</span> („info zurückziehen“) — <em>der Punkt</em></td>
+          <td>„Verbinde Land &amp; Hauptstadt“-Spiel: Stadt&nbsp;→&nbsp;Land (die Inverse)</td></tr>
+    </table>
+    <p>A's <em>vorwärts</em>-Karte (A→B) ist also <em>genau</em> B's „Hauptstadt-von“-Frage; A's
+    <em>rückwärts</em>-Zug (B→A) ist <em>genau</em> B's Verbindungs-Spiel „welches Land hat diese
+    Stadt?“ Die beiden Seiten beschreiben die <strong>zwei Hälften derselben Abbildung</strong> — nicht
+    widersprüchlich, sondern zusammen das Ganze. B ist ein Toy-Modell, das beide Richtungen auf
+    <span class="formula">{FR,DE,ES} × {Paris,Berlin,Madrid}</span> abarbeitet; A liefert das Gesetz,
+    das beide Hälften für alle Größen erklärt.</p>
+    <p><strong>Spannung 2 (Universal vs. konkret) löst sich durch Spezialisierung:</strong> B ist ein
+    <em>Besonderungsfall</em> (n=3) von A's <em>allgemeiner</em> Aussage. A verallgemeinert, B
+    instanziiert — das ist Komplementarität, kein Widerspruch. A ohne B wäre eine Regel ohne
+    Beispiel; B ohne A wäre ein Faktum ohne Regel. Zusammen ergeben sie „Regel + ihr kanonischer
+    Einpunkt-Beispiel“, was für sich genommen das stärkste didaktische Paar ist, das man über einen
+    Pullback bauen kann.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Das ist der zusammengeführte Stoff, aus dem eine spätere Runde allein weiterarbeiten kann.</p>
+
+    <p><strong>(1) Die zwei Welten und die Abbildung.</strong> Welt&nbsp;A = die „Frage“-/Quellseite
+    (hier: die Länder). Welt&nbsp;B = die „Karte“-/Zielseite, die „die Info hat“ (hier: die Städte).
+    Die Abbildung <span class="formula">f : A → B</span> zeigt <em>vorwärts</em>. In A general ist
+    <span class="formula">f</span> nichtlinear (das Original verzerrt mit
+    <span class="formula">u = x² + 0.1·sin(4y)</span>,
+    <span class="formula">v = xy + 0.2·cos(3x)</span>). Konkret in B:
+    <span class="formula">f(Frankreich)=Paris</span>,
+    <span class="formula">f(Deutschland)=Berlin</span>,
+    <span class="formula">f(Spanien)=Madrid</span>.</p>
+
+    <p><strong>(2) Die Struktur, die auf B lebt.</strong> In A general ist das ein Skalarfeld
+    <span class="formula">g(u,v) = sin(3.5·u)·cos(3.5·v)</span> (ein Temperaturfeld, −1…+1). In B
+    konkret ist das Merkmal „ist Hauptstadt“ — ein boolesches Feld auf den Städten (bei Paris&nbsp;=
+    wahr). Wichtig: Das Merkmal <em>lebt auf B</em>, nicht auf A. Das ist der Ausgangspunkt, den beide
+    Seiten teilen.</p>
+
+    <p><strong>(3) Der Pullback = die Komposition.</strong> Der Pullback
+    <span class="formula">f * g = g ∘ f</span> ist eine Struktur auf A, definiert durch
+    <span class="formula">(f * g)(a) = g(f(a))</span>. Man liest den Wert nicht direkt in A ab, sondern
+    <em>geht erst vorwärts nach B</em> (<span class="formula">f(a)</span>) <em>und nimmt dort den Wert</em>
+    (<span class="formula">g</span>). Das ist der „rückwärts“-Gedanke: die Information stammt aus B,
+    sie wird nur nach A transportiert.</p>
+
+    <p><strong>(4) Invarianz — „das Label reitet mit“.</strong> Per Konstruktion gilt
+    <span class="formula">(f * g)(a) = g(f(a))</span>: Der Wert an einem Punkt a in A ist
+    <em>exakt</em> der Wert an seinem Bild <span class="formula">f(a)</span> in B. Bei einem
+    Koordinatenwechsel (Form-Verzerrung, Projection, Umtonung) <em>zerreißt</em> das Merkmal nicht.
+    In A sichtbar: die Temperatur-Farbe am A-Punkt = die Temperatur-Farbe am B-Bild. In B sichtbar:
+    „Hauptstadt“ bleibt „Hauptstadt“, egal ob man über Frankreich (A) oder über die Karte (B)
+    herangeht. Genau das verifizieren B's Spiele — jedes auf andere Weise:</p>
+    <ul>
+      <li><strong>Karte</strong>: das Label am <em>Punkt</em> Paris finden (Lokalisierung in B).</li>
+      <li><strong>Quiz / Drag</strong>: das Label dem <em>korrekten Objekt</em> zuordnen (vorwärts f).</li>
+      <li><strong>Verbinden</strong>: beide Seiten einer Zuordnung paaren (Graph von f, beidseitig).</li>
+      <li><strong>Kratzbild</strong>: das unveränderliche Label „Paris“ enthüllen (Invarianz).</li>
+    </ul>
+
+    <p><strong>(5) Der 3-elementige Toy-Modell — die kleinste vollständige Instanz.</strong>
+    A = {FR, DE, ES}, B = {Paris, Berlin, Madrid}, f = das Hauptstadt-Mapping (index-gleich),
+    g = „ist Hauptstadt“. Auf diesem winzigen Beispiel fallen Pullback und „Hauptstadt von
+    Frankreich“ exakt zusammen:</p>
+    <table>
+      <tr><th>a ∈ A (Land)</th><th>f(a) ∈ B (Stadt)</th><th>g(f(a)) — Merkmal</th></tr>
+      <tr><td>🇫🇷 Frankreich</td><td>Paris</td><td>ist Hauptstadt&nbsp;=&nbsp;wahr ⭐</td></tr>
+      <tr><td>🇩🇪 Deutschland</td><td>Berlin</td><td>ist Hauptstadt&nbsp;=&nbsp;wahr ⭐</td></tr>
+      <tr><td>🇪🇸 Spanien</td><td>Madrid</td><td>ist Hauptstadt&nbsp;=&nbsp;wahr ⭐</td></tr>
+    </table>
+
+    <p><strong>(6) Was jede Seite zur Fusion beiträgt.</strong> A liefert die
+    <em>Allgemeingültigkeit</em>: gleiche Regel bei beliebiger Form und beliebiger nichtlinearer
+    Verzerrung — die <em>Form</em> ändert sich, der <em>Zug</em> des Feldes nicht. B liefert die
+    <em>vollständige Konkretisierung</em> mit sechs Prüf-Modi und dem emotional verankerten
+    Beispiel (Paris, Eiffelturm, Flagge). Zusammen: <em>Regel (A) × kanonischer Beispiel-Fall (B) =</em>
+    ein Pullback, den man mit dem Finger zeigen und gleichzeitig beweisen kann.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <p>Links <strong>Welt A (Länder — die Frage)</strong>, rechts <strong>Welt B (Städte — hat die
+    Info: ein Temperaturfeld g)</strong>. Die lila Pfeile zeigen <em>vorwärts</em>
+    <span class="formula">f</span> (Land→Stadt, wie paris.html fragt). Die goldenen, gestrichelten
+    Pfeile zeigen den <strong>Pullback</strong> <em>rückwärts</em> <span class="formula">g ∘ f</span>
+    (Stadt→Land, wie pullback2.html meint): Der Temperatur-Wert am jeweiligen Bild in B wird auf das
+    Land in A gezogen — die Länder-Karten färben sich entsprechend. Ziehe den Cursor in Welt A, drehe
+    den <em>Warp</em> (nichtlineare Verzerrung von f) und schalte den Pullback an/aus.</p>
+
+    <div class="viz-wrap">
+      <canvas id="viz"></canvas>
+      <div class="viz-controls">
+        <label><input type="checkbox" id="pullbackOn" checked> Pullback anziehen (g ∘ f auf A zeigen)</label>
+        <label>Warp (Verzerrung von f): <input type="range" id="warp" min="0" max="100" value="35"></label>
+        <label><input type="checkbox" id="themeToggle"> 🌙 Dunkel</label>
+      </div>
+      <div class="readout" id="readout">Bereite die Welt vor…</div>
+      <div class="legend">
+        <span><span class="sw f"></span>vorwärts f (Land → Stadt)</span>
+        <span><span class="sw p"></span>rückwärts Pullback g ∘ f (Stadt → Land)</span>
+        <span>🔴 warm · 🔵 kalt = Temperaturfeld g auf B</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <span class="src">
+      <a href="../pullback2.html">A — pullback2.html</a><br>
+      <span class="meta">„Was ist ein Pullback?“ — visuell erklärte Landkarten-/Zimmer-Analogie mit
+      Schritt-für-Schritt-Story, ziehbarer Verzerrung und dem Leitsatz „Abbildung vorwärts, Info
+      rückwärts“. liefert die <em>allgemeine Regel</em> (Komposition g ∘ f, Invarianz, beliebige
+      Formen).</span>
+    </span>
+    <span class="src">
+      <a href="../paris.html">B — paris.html</a><br>
+      <span class="meta">„Hauptstadt von Frankreich“ — gamifiziertes Faktum mit sechs Mini-Spielen
+      (Karte, Eiffelturm, Drag&nbsp;&amp;&nbsp;Drop, Quiz, Land-Hauptstadt-Verbinden, Kratzbild).
+      liefert den <em>kanonischen Einpunkt-Beispiel-Fall</em> auf einem 3-elementigen Set.</span>
+    </span>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var readoutEl = document.getElementById('readout');
+  var warpEl = document.getElementById('warp');
+  var pullEl = document.getElementById('pullbackOn');
+  var themeEl = document.getElementById('themeToggle');
+
+  var W = 0, H = 0, dpr = 1;
+  function cssVar(name, dflt){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v && v.trim()) ? v.trim() : dflt;
+  }
+  function clamp01(x){ return x < 0 ? 0 : (x > 1 ? 1 : x); }
+
+  // ---- Data (inline only) ----
+  var A_PTS = [
+    { name:'Frankreich', flag:'🇫🇷', x:0.30, y:0.22 },
+    { name:'Deutschland', flag:'🇩🇪', x:0.72, y:0.50 },
+    { name:'Spanien', flag:'🇪🇸', x:0.30, y:0.78 }
+  ];
+  var CITY = [
+    { name:'Paris', flag:'🇫🇷', star:true },
+    { name:'Berlin', flag:'🇩🇪', star:false },
+    { name:'Madrid', flag:'🇪🇸', star:false }
+  ];
+
+  var cursor = { x:0.5, y:0.5, dragging:false };
+
+  // f : A -> B (nonlinear warp) and g : B-field
+  function fMap(x, y, warp){
+    var u = x + warp*0.20*Math.sin(3*y);
+    var v = y + warp*0.20*Math.cos(3*x);
+    return { u: clamp01(u), v: clamp01(v) };
+  }
+  function g(u, v){ return Math.sin(u*3.5)*Math.cos(v*3.5); }
+  function tempColor(v){
+    var r = Math.round(Math.max(0, v)*255);
+    var b = Math.round(Math.max(0, -v)*255);
+    var gr = Math.round(80 + Math.abs(v)*80);
+    return 'rgb('+r+','+gr+','+b+')';
+  }
+
+  // ---- Plane mapping (normalized -> px) ----
+  function ax(x){ return W*0.09 + x*(W*0.30); }
+  function ay(y){ return H*0.20 + y*(H*0.60); }
+  function bx(x){ return W*0.61 + x*(W*0.30); }
+  function by(y){ return H*0.20 + y*(H*0.60); }
+
+  function roundRect(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y); c.lineTo(x+w-r,y); c.quadraticCurveTo(x+w,y,x+w,y+r);
+    c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r);
+    c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y); c.closePath();
+  }
+  function arrow(c,x1,y1,x2,y2,color,lw,dashed){
+    c.save();
+    if(dashed) c.setLineDash([9,6]);
+    c.strokeStyle = color; c.lineWidth = lw; c.lineCap='round';
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+    c.setLineDash([]);
+    var a = Math.atan2(y2-y1,x2-x1), hs = Math.max(8, lw*3.2);
+    c.translate(x2,y2); c.rotate(a);
+    c.beginPath(); c.moveTo(0,0); c.lineTo(-hs,-hs*0.5); c.lineTo(-hs,hs*0.5); c.closePath();
+    c.fillStyle = color; c.fill();
+    c.restore();
+  }
+
+  function resize(){
+    var host = canvas.parentElement;
+    var cw = host ? host.clientWidth - 0 : 760;
+    if(cw < 320) cw = 320;
+    dpr = window.devicePixelRatio || 1;
+    W = cw; H = Math.round(cw * 0.52);
+    canvas.style.width = cw + 'px';
+    canvas.style.height = H + 'px';
+    canvas.width = Math.round(cw * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function draw(){
+    if(W === 0) return;
+    var ink = cssVar('--ink','#222');
+    var muted = cssVar('--muted','#666');
+    var accentA = cssVar('--accentA','#0a7ea4');
+    var accentB = cssVar('--accentB','#e8631a');
+    var forward = cssVar('--forward','#7c3aed');
+    var pullback = cssVar('--pullback','#c9a227');
+    var gridline = cssVar('--gridline','#e0e0e0');
+    var chip = cssVar('--chip','#eef2f5');
+    var border = cssVar('--panel-border','#ccc');
+    var pullOn = pullEl ? pullEl.checked : true;
+    var warp = (warpEl ? warpEl.value : 35) / 100;
+
+    ctx.clearRect(0,0,W,H);
+
+    // ---------- WORLD B (right): temperature field g ----------
+    var res = 15;
+    var bw = W*0.30, bh = H*0.60;
+    for(var i=0;i<res;i++){
+      for(var j=0;j<res;j++){
+        var u=(i+0.5)/res, v=(j+0.5)/res;
+        var val = g(u,v);
+        ctx.fillStyle = tempColor(val);
+        ctx.globalAlpha = 0.55;
+        ctx.fillRect(bx(u)- (bw/res), by(v)-(bh/res), bw/res+1, bh/res+1);
+      }
+    }
+    ctx.globalAlpha = 1;
+    // B panel frame
+    ctx.strokeStyle = border; ctx.lineWidth = 1.5;
+    roundRect(ctx, bx(0)-10, by(0)-10, bw+20, bh+20, 10); ctx.stroke();
+
+    ctx.fillStyle = accentB;
+    ctx.font = 'bold ' + Math.round(W*0.026) + 'px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Welt B — Städte (hat die Info g)', (bx(0)+bx(1))/2, by(0)-20);
+
+    // ---------- WORLD A (left): country chips ----------
+    ctx.strokeStyle = border; ctx.lineWidth = 1.5;
+    roundRect(ctx, ax(0)-10, ay(0)-10, W*0.30+20, H*0.60+20, 10); ctx.stroke();
+    ctx.fillStyle = accentA;
+    ctx.fillText('Welt A — Länder (die Frage)', (ax(0)+ax(1))/2, ay(0)-20);
+
+    var chipW = W*0.20, chipH = H*0.13;
+    var chipInfo = [];
+    for(var k=0;k<A_PTS.length;k++){
+      var p = A_PTS[k];
+      var cx = ax(p.x), cy = ay(p.y);
+      var fp = fMap(p.x, p.y, warp);
+      var pv = g(fp.u, fp.v);
+      // forward arrow A -> B (purple), drawn under chips
+      var bpx = bx(fp.u), bpy = by(fp.v);
+      arrow(ctx, cx, cy, bpx, bpy, forward, 2, false);
+      if(pullOn){
+        // backward pullback arrow B -> A (gold dashed)
+        arrow(ctx, bpx, bpy, cx, cy, pullback, 2, true);
+      }
+      // chip fill
+      ctx.save();
+      if(pullOn){
+        ctx.fillStyle = tempColor(pv); ctx.globalAlpha = 0.85;
+      } else {
+        ctx.fillStyle = chip; ctx.globalAlpha = 1;
+      }
+      roundRect(ctx, cx-chipW/2, cy-chipH/2, chipW, chipH, 8); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = accentA; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = pullOn ? (Math.abs(pv) > 0.35 ? '#fff' : '#111') : ink;
+      ctx.font = 'bold ' + Math.round(W*0.023) + 'px sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.flag + ' ' + p.name, cx, cy);
+      ctx.restore();
+      chipInfo.push({ cx:cx, cy:cy, bpx:bpx, bpy:bpy, pv:pv });
+    }
+
+    // city dots on B (Paris starred/red)
+    for(var c=0;c<CITY.length;c++){
+      var base = A_PTS[c];
+      var fp2 = fMap(base.x, base.y, warp);
+      var px2 = bx(fp2.u), py2 = by(fp2.v);
+      ctx.beginPath();
+      ctx.arc(px2, py2, CITY[c].star ? 9 : 7, 0, Math.PI*2);
+      ctx.fillStyle = CITY[c].star ? '#e11d48' : accentB;
+      ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = CITY[c].star ? '#e11d48' : muted;
+      ctx.font = 'bold ' + Math.round(W*0.02) + 'px sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText((CITY[c].star ? '⭐ ' : '') + CITY[c].name, px2, py2 + 12);
+      ctx.textBaseline = 'alphabetic';
+    }
+
+    // ---------- draggable cursor ----------
+    var cf = fMap(cursor.x, cursor.y, warp);
+    var cAx = ax(cursor.x), cAy = ay(cursor.y);
+    var cBx = bx(cf.u), cBy = by(cf.v);
+    var cVal = g(cf.u, cf.v);
+    // forward link for cursor
+    ctx.save(); ctx.globalAlpha = 0.9;
+    arrow(ctx, cAx, cAy, cBx, cBy, forward, 1.5, true);
+    ctx.restore();
+    // dot in B
+    ctx.beginPath(); ctx.arc(cBx, cBy, 7, 0, Math.PI*2);
+    ctx.fillStyle = tempColor(cVal); ctx.fill();
+    ctx.strokeStyle = ink; ctx.lineWidth = 2; ctx.stroke();
+    // dot in A (glow + ring)
+    ctx.save();
+    ctx.shadowColor = tempColor(cVal); ctx.shadowBlur = 16;
+    ctx.beginPath(); ctx.arc(cAx, cAy, 11, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(cAx, cAy, 11, 0, Math.PI*2);
+    ctx.strokeStyle = pullOn ? tempColor(cVal) : accentA; ctx.lineWidth = 3; ctx.stroke();
+
+    // readout
+    if(readoutEl){
+      var sign = cVal >= 0 ? '🔴 warm' : '🔵 kalt';
+      var pct = Math.round(Math.abs(cVal)*100);
+      readoutEl.textContent =
+        'Cursor A (' + cursor.x.toFixed(2) + ', ' + cursor.y.toFixed(2) + ')  →  Bild in B (' +
+        cf.u.toFixed(2) + ', ' + cf.v.toFixed(2) + ')   |   (g ∘ f)(a) = g(f(a)) = ' +
+        cVal.toFixed(3) + '  →  ' + sign + ' (' + pct + '%)   |   Pullback: ' +
+        (pullOn ? 'AN (färbt Welt A)' : 'AUS (nur vorwärts, wie paris.html)');
+    }
+  }
+
+  function loop(){ draw(); requestAnimationFrame(loop); }
+
+  // ---- Pointer interaction ----
+  function localPos(e){
+    var rect = canvas.getBoundingClientRect();
+    var lx = (e.clientX - rect.left) * (W / rect.width);
+    var ly = (e.clientY - rect.top) * (H / rect.height);
+    return { lx:lx, ly:ly };
+  }
+  function inAPlane(lx, ly){
+    return lx >= ax(0)-10 && lx <= ax(1)+10 && ly >= ay(0)-10 && ly <= ay(1)+10;
+  }
+  canvas.addEventListener('pointerdown', function(e){
+    var p = localPos(e);
+    if(inAPlane(p.lx, p.ly)){
+      cursor.dragging = true;
+      cursor.x = clamp01((p.lx - ax(0)) / (W*0.30));
+      cursor.y = clamp01((p.ly - ay(0)) / (H*0.60));
+      try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+      canvas.style.cursor = 'grabbing';
+    }
+  });
+  canvas.addEventListener('pointermove', function(e){
+    if(!cursor.dragging) return;
+    var p = localPos(e);
+    cursor.x = clamp01((p.lx - ax(0)) / (W*0.30));
+    cursor.y = clamp01((p.ly - ay(0)) / (H*0.60));
+  });
+  function endDrag(){ cursor.dragging = false; canvas.style.cursor = 'grab'; }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('pointerleave', endDrag);
+
+  // ---- Theme toggle ----
+  if(themeEl){
+    themeEl.checked = document.documentElement.classList.contains('dark');
+    themeEl.addEventListener('change', function(){
+      var dark = themeEl.checked;
+      document.documentElement.classList.toggle('dark', dark);
+      try{ localStorage.setItem('n1_037_theme', dark ? 'dark' : 'light'); }catch(_){}
+    });
+  }
+
+  // ---- Boot ----
+  window.addEventListener('resize', function(){ resize(); });
+  resize();
+  loop();
+})();
+</script>
+</body>
+</html>

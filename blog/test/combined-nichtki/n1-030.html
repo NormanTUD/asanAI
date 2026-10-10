@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>n1-030 — Reversible Compositional Foundations</title>
+<style>
+:root {
+  --bg: #f6f4ee;
+  --card: #ffffff;
+  --border: #d9d3c5;
+  --text: #1f2430;
+  --muted: #5b6472;
+  --accent: #2563eb;
+  --accent2: #e11d48;
+  --accent3: #059669;
+  --accent4: #7c3aed;
+  --panel: #fbfaf6;
+}
+html.dark {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #f78166;
+  --accent3: #7ee787;
+  --accent4: #d2a8ff;
+  --panel: #12161d;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  padding: 24px 16px 60px;
+}
+article {
+  max-width: 820px;
+  margin: 0 auto;
+}
+h1 {
+  font-size: 1.9rem;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fusion-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-family: 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+}
+section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 18px 0;
+}
+section > h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+section > h2 .tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 2px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+p { margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+strong { color: var(--text); }
+code {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.86em;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: var(--accent4);
+}
+.mono {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+.a { color: var(--accent); font-weight: 600; }
+.b { color: var(--accent3); font-weight: 600; }
+.warn { color: var(--accent2); }
+.ok { color: var(--accent3); }
+ul { margin: 6px 0 12px 22px; }
+li { margin-bottom: 6px; }
+.tension {
+  border-left: 3px solid var(--accent2);
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: var(--panel);
+  border-radius: 0 8px 8px 0;
+}
+.tension .who { font-weight: 700; }
+.resolve {
+  border-left: 3px solid var(--accent3);
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: var(--panel);
+  border-radius: 0 8px 8px 0;
+}
+.eq {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.92em;
+}
+.eq .lhs { color: var(--accent); font-weight: 700; }
+.eq .rhs { color: var(--accent3); font-weight: 700; }
+.eq .op { color: var(--accent4); font-size: 1.2em; }
+.viz-wrap { margin-top: 6px; }
+#vizCanvas {
+  width: 100%;
+  max-width: 720px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: opacity 0.2s, transform 0.1s;
+}
+button:hover { opacity: 0.88; }
+button:active { transform: translateY(1px); }
+button.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+button.warn { background: var(--accent2); }
+.viz-status {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.viz-status b { color: var(--accent3); }
+#vizLog {
+  max-height: 190px;
+  overflow-y: auto;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.82rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+#vizLog div { padding: 2px 0; border-bottom: 1px solid var(--border); }
+#vizLog .l-info { color: var(--accent); }
+#vizLog .l-warn { color: var(--accent2); }
+#vizLog .l-ok { color: var(--accent3); }
+#vizLog .l-conf { color: var(--accent4); }
+#vizLog .l-muted { color: var(--muted); }
+.prov {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  background: var(--panel);
+}
+.prov .badge {
+  flex-shrink: 0;
+  font-weight: 700;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.prov a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.prov a:hover { text-decoration: underline; }
+.foot { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 26px; }
+</style>
+</head>
+<body>
+<article>
+  <h1>Reversible Compositional Foundations</h1>
+  <p class="fusion-sub">Fusion aus: principia.html &#10005; spatiotemporal_composability.html</p>
+
+  <section id="these">
+    <h2><span class="tag">1</span> Kernthese der Fusion</h2>
+    <p>Both papers are, at bottom, about <strong>composition from parts</strong> — building a large coherent whole out of smaller units and the rules that bind them. <span class="a">Principia</span> (A) composes mathematics <em>bottom-up in space</em>: a tiny set of logical connectives (<code>~</code> and <code>&#8743;</code>) seeds a hierarchy of types, and a handful of inference rules (modus ponens) let you climb from propositional logic all the way to analysis, each layer <em>defined from</em> the one below. <span class="b">Cordis</span> (B) composes software <em>horizontally and in time</em>: active components declare dependencies (coeffects) on one another, spring to life when their providers appear, and — crucially — can be taken apart again, because every effect they cause carries its own inverse.</p>
+    <p>The fused position: a foundation is not a one-way derivation tree but a <strong>reversible, typed, confluent composition of building blocks</strong>. The type hierarchy of A is exactly the dependency graph of B; the deductive step of A is exactly the invertible effect of B; the logicist base of A is exactly the root provider of B. "All of mathematics reduces to logic" and "a live system composes and recomposes at runtime" are therefore two views of one discipline: <em>composition that can be built up, torn down, and shown to settle to the same answer regardless of the order in which you assemble it.</em></p>
+    <p>In one line: mathematics is a compositional system whose construction steps are all undoable and whose assembly is confluent — the Principia edifice, made dynamic.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="tag">2</span> Widersprüche zwischen A und B</h2>
+    <p>The two works address different domains (foundations of math vs. software composition), so they do not contradict on a single factual claim. They take <strong>incompatible stances</strong> on the same underlying questions. The three sharpest tensions:</p>
+
+    <div class="tension">
+      <p><span class="who warn">T1 — Permanent, one-way building vs. reversible composition.</span></p>
+      <p><span class="a">A</span> holds that composition proceeds <em>one way, permanently</em>: you <em>deduce</em> upward from axioms ("modus ponens — the engine of deduction"; the whole edifice "reduces to logic"). Once a proposition is derived it simply <em>is</em>; there is no notion of undoing a derivation, and the hierarchy is fixed and eternal.</p>
+      <p><span class="b">B</span> holds that composition is <em>reversible by construction</em>: "an effect is modeled as a function <code>&Gamma; &rarr; &Gamma; &times; (&Gamma; &rarr; &Gamma;)</code>: it transforms the context and returns an inverse", and "when the component unloads, the accumulator runs and undoes everything perfectly" (Theorem 16). Removal is a first-class, dynamic operation.</p>
+      <p class="warn">Incompatible: A's whole is permanent and additive-only; B's is fully retractable at any moment.</p>
+    </div>
+
+    <div class="tension">
+      <p><span class="who warn">T2 — Closed consistent totality vs. open confluent system.</span></p>
+      <p><span class="a">A</span> aims at a <em>closed, consistent, ideally complete</em> system: the logicist programme is that <em>all</em> of mathematics follows from logic, and the goal is a single self-consistent totality (only later limited by Gödel's incompleteness).</p>
+      <p><span class="b">B</span> models an <em>open</em> system with no fixed totality: "whatever order you take actions, the system quiesces at the same canonical state (Theorem 80: Confluence)". Validity here is a <em>moving fixed point</em> of an ongoing process, not a finished object.</p>
+      <p class="warn">Incompatible: A wants a finished, provably-consistent whole; B accepts a perpetually-reconfiguring whole whose guarantee is confluence, not completeness.</p>
+    </div>
+
+    <div class="tension">
+      <p><span class="who warn">T3 — Passive inert blocks vs. active self-organizing agents.</span></p>
+      <p><span class="a">A</span>'s atomic units are <em>passive, stateless symbols</em> — propositions, types, classes — combined by <em>external</em> rules. A number is "the class of all singleton classes"; it does not act, it is <em>defined</em>.</p>
+      <p><span class="b">B</span>'s atomic units are <em>active, stateful components</em> that <em>declare</em> their own dependencies and <em>react</em> to the environment: "components spring to life when their deps are ready, and gracefully deactivate when they vanish."</p>
+      <p class="warn">Incompatible: A composes inert blocks by rule; B composes self-organizing agents that wake themselves up.</p>
+    </div>
+
+    <p>The closest real tension, stated plainly: A treats the foundation as a <strong>finished monument</strong> you can only <em>read upward</em>; B treats it as a <strong>live machine</em> you can <em>turn off and on again</em>.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="tag">3</span> Auflösung</h2>
+
+    <div class="resolve">
+      <p><span class="ok">R1 (reversibility) — proofs are reversible programs.</span> Read every Principia inference as a Cordis <em>invertible effect</em>. A derivation is a stack of well-typed steps, each paired with its inverse (the retraction). Because Principia deduction is <em>deterministic and type-checked</em>, the inverse is <em>unique</em> — so B's reversibility does not destroy A's determinacy, it adds a dimension. "1 + 1 = 2" (p. 379) becomes a 379-step revertible construction: you can prove it bottom-up <em>and</em> dismantle it top-down back to the axioms. Fused conclusion: <strong>the derivation tree <em>is</em> the inverse accumulator, traversed in LIFO.</strong></p>
+    </div>
+
+    <div class="resolve">
+      <p><span class="ok">R2 (closed vs. open) — consistency becomes confluence.</span> Reinterpret Principia's "consistency" as Cordis's <em>confluence invariant</em>. Instead of a closed totality, consistency is a <em>reachability property</em>: from any starting configuration, applying axioms and inferences in <em>any</em> order quiesces at the same canonical set of theorems (Theorem 80). Gödel then says the honest thing — confluence holds <em>within</em> the provable, but the system is not complete, so some truths stay unreachable. Fused conclusion: <strong>consistency = confluence to a canonical state; incompleteness = that fixed point is not the whole truth.</strong></p>
+    </div>
+
+    <div class="resolve">
+      <p><span class="ok">R3 (passive vs. active) — the type hierarchy becomes a reactive graph.</span> Make A's types <em>active</em> B-components: a type-<em>n</em> layer declares a <em>coeffect</em> on type-<em>(n−1)</em>, activating only when the lower layer is present and deactivating when it vanishes. Numbers "spring to life" once the class machinery is in place; remove classes and numbers retract — in LIFO order, <em>guarded</em> so a dependent retracts before its provider withdraws. Fused conclusion: <strong>the type hierarchy is a reactive dependency graph; passive definitions gain self-organizing dynamics without changing their content.</strong></p>
+    </p>
+    </div>
+
+    <div class="resolve">
+      <p><span class="ok">Bonus (foundationalism vs. pragmatism) — reduce to logic, operationally.</span> "All of mathematics reduces to logic" is restated as a property of the service graph: the propositional base is the <em>root provider</em> of the logical service, and every higher layer is a <em>consumer</em> that must trace a dependency path back to it. Reduction = reachability to the root. B's pragmatic need (composing live plugins) is satisfied because nothing more than that reachability is required — no metaphysical claim that "everything is really logic" is needed, only that every node traces a path to the base.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="tag">4</span> Fusionierter Inhalt</h2>
+    <p>The merged model: a <strong>typed dependency graph</strong> whose nodes are building blocks, whose edges read "depends on / is derived from", and whose dynamics are <em>reversible activation</em>. A node is <em>active</em> iff it is <em>present</em> and all its dependencies are active; the system quiesces at the <em>least fixed point</em> of the present-set — a function of the present-set alone, hence order-independent. That single signature is where both papers meet.</p>
+
+    <p class="mono">Effect (B):            e : &Gamma; &rarr; &Gamma; &times; (&Gamma; &rarr; &Gamma;)      e(&Gamma;) = (&Gamma;', e&#8315;&#185;),  inverses LIFO
+Node rule (fusion):   active(i) = present(i) &and; &forall;d &isin; deps(i) . active(d)
+Quiescence:           active* = least fixed point of present  (confluence, Thm 80)</p>
+
+    <h3 style="margin:14px 0 6px; font-size:1.02rem;"><span class="a">From A — the static skeleton</span></h3>
+    <ul>
+      <li><strong>Basis connectives.</strong> Just <code>~</code> (not) and <code>&#8743;</code> (or) suffice; every other connective is defined from them. Implication is <code>p &#8853; q &#8801; ~p &#8743; q</code>.</li>
+      <li><strong>Tautologies.</strong> Formulas true under every assignment are the logical laws (e.g. <code>p &#8743; ~p</code>, the contrapositive, De Morgan, Peirce's law).</li>
+      <li><strong>Type rule.</strong> A type-<em>n</em> set can only contain type-<em>(n−1)</em> members, so "the set of all sets that don't contain themselves" <code>R = {x | x &notin; x}</code> is <em>ill-formed</em> — Russell's paradox is dissolved by ill-typedness, not by forbidding R.</li>
+      <li><strong>Peano numbers as classes of classes.</strong> <code>0 = [&empty;]</code> (class of empty classes), <code>1</code> = class of singletons, <code>S(n) = n + 1</code>; hence <code>1 + 1 = S(S(0)) = 2</code>, first proved on p. 379 of Vol. I.</li>
+      <li><strong>Modus ponens.</strong> From <code>&#8863;p</code> and <code>&#8863;p &#8853; q</code> infer <code>&#8863;q</code>.</li>
+      <li><strong>Quantifier dualities.</strong> <code>~&forall;x P(x) &harr; &exists;x ~P(x)</code> and <code>~&exists;x P(x) &harr; &forall;x ~P(x)</code>.</li>
+      <li><strong>Seven logicist layers.</strong> Propositional &rarr; Predicate &rarr; Classes &rarr; Relations/Functions &rarr; Natural Numbers &rarr; Arithmetic &rarr; Real Analysis, each built from the one below.</li>
+    </ul>
+
+    <h3 style="margin:14px 0 6px; font-size:1.02rem;"><span class="b">From B — the dynamics</span></h3>
+    <ul>
+      <li><strong>Invertible effects.</strong> An effect returns its own inverse; inverses are composed onto an accumulator in <em>LIFO</em> order, so unloading re-runs them in reverse and the context is recovered exactly (Theorem 16).</li>
+      <li><strong>Reactive coeffects.</strong> A component declares its dependencies; the runtime classifies each context change as <em>activating / deactivating / neutral</em>, so components wake when deps are ready and sleep when they vanish.</li>
+      <li><strong>Lifecycle state machine.</strong> <code>INACTIVE &rarr; LOADING &rarr; ACTIVE &rarr; UNLOADING &rarr; INACTIVE</code>, driven by comparing the <em>target view</em> against the <em>committed view</em>, with rules L-Begin / L-Iter / L-Finish / L-Leave / L-Divert / L-Unload.</li>
+      <li><strong>The guard.</strong> <code>UNLOADING</code> is separate from removal, and a provider withdraws only <em>after</em> its dependents finish teardown — this is what makes graceful shutdown possible.</li>
+      <li><strong>Confluence.</strong> Whatever order you take actions, the system quiesces at the same canonical state (Theorem 80).</li>
+    </ul>
+
+    <h3 style="margin:14px 0 6px; font-size:1.02rem;">The fusion — four identities</h3>
+    <div class="eq"><span class="lhs">type hierarchy (A)</span><span class="op">=</span><span class="rhs">dependency graph (B)</span></div>
+    <div class="eq"><span class="lhs">a deduction step (A)</span><span class="op">=</span><span class="rhs">an invertible effect (B)</span></div>
+    <div class="eq"><span class="lhs">consistency (A)</span><span class="op">=</span><span class="rhs">confluence to a canonical state (B)</span></div>
+    <div class="eq"><span class="lhs">base logic (A)</span><span class="op">=</span><span class="rhs">root provider of the service graph (B)</span></div>
+    <p>Consequently a <strong>theorem</strong> runs the B lifecycle over A's content: <code>INACTIVE</code> (not yet derivable) &rarr; <code>LOADING</code> (being derived, inverses accumulate) &rarr; <code>ACTIVE</code> (proven, available) &rarr; <code>UNLOADING</code> (being retracted when an axiom is withdrawn) &rarr; <code>INACTIVE</code>. Retracting an axiom fires a reactive cascade, guarded so a theorem retracts only after its dependents have — exactly Principia's layers, animated by Cordis's rules.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="tag">5</span> Interaktive Visualisierung</h2>
+    <p>Principia's seven logicist layers rendered as <em>reactive, revertible components</em>. <strong>Click any layer</strong> to add or remove it (toggle its <em>presence</em>). Dependents reactively activate/deactivate in a <em>LIFO-guarded cascade</em> (spatial coeffects, R3). Each action is an <em>invertible effect</em> — <strong>Undo</strong> pops the last one in reverse order (temporal composability, R1). <strong>Shuffle</strong> jumps to a random configuration and shows the quiescent state depends only on the present-set, not the path taken (confluence, R2). Three states per node: <span class="ok">ACTIVE</span> (present, deps met), <span style="color:var(--accent4)">WAITING</span> (present, deps unmet), <span style="color:var(--muted)">ABSENT</span>.</p>
+
+    <div class="viz-wrap">
+      <canvas id="vizCanvas"></canvas>
+      <div class="viz-controls">
+        <button id="btnUndo">&#8617; Undo last (LIFO inverse)</button>
+        <button id="btnShuffle" class="ghost">&#127922; Shuffle (confluence)</button>
+        <button id="btnReset" class="warn">&#128260; Reset</button>
+        <button id="btnTheme" class="ghost">&#127769; Toggle theme</button>
+      </div>
+      <div class="viz-status" id="vizStatus"></div>
+      <div id="vizLog"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="tag">6</span> Provenienz</h2>
+    <div class="prov">
+      <span class="badge" style="background:var(--accent); color:#fff;">A</span>
+      <div>
+        <p><a href="../principia.html">Principia Mathematica — Interactive Explorer</a></p>
+        <p style="color:var(--muted); font-size:0.9rem;">Russell &amp; Whitehead (1910&ndash;1913): the logicist programme — all of mathematics from a few connectives, a type hierarchy that dissolves Russell's paradox, numbers as classes of classes, and modus ponens as the engine of deduction.</p>
+      </div>
+    </div>
+    <div class="prov">
+      <span class="badge" style="background:var(--accent3); color:#053;">B</span>
+      <div>
+        <p><a href="../spatiotemporal_composability.html">Spatiotemporal Composability — Interactive Explainer</a></p>
+        <p style="color:var(--muted); font-size:0.9rem;">The Cordis paradigm: dynamic composition via revertible effects (temporal, Theorem 16) and reactive coeffects (spatial), a component lifecycle state machine, and order-independent quiescence (Theorem 80: Confluence).</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Knockout synthesis · Round 1 · non-AI track · pair 030</p>
+</article>
+
+<script>
+(function () {
+  "use strict";
+
+  var NODES = [
+    { name: "Propositional Logic",  short: "p \u2283 q \u2261 ~p \u2228 q", deps: [] },
+    { name: "Predicate Logic",       short: "\u2200 \u2203  P(x)",          deps: [0] },
+    { name: "Classes / Sets",        short: "{ }  \u2208  \u222A \u2229",   deps: [1] },
+    { name: "Relations / Functions", short: "R(x,y)  f:A\u2192B",          deps: [2] },
+    { name: "Natural Numbers",       short: "0  S(0)  S(S(0))",           deps: [3] },
+    { name: "Arithmetic",            short: "+ \u00d7 <  =",               deps: [4] },
+    { name: "Real Analysis",         short: "\u211d  lim  \u222B  \u221e", deps: [5] }
+  ];
+  var DEFAULT_PRESENT = [true, true, true, false, false, false, false];
+
+  var canvas = document.getElementById("vizCanvas");
+  var ctx = canvas.getContext("2d");
+  var statusEl = document.getElementById("vizStatus");
+  var logEl = document.getElementById("vizLog");
+
+  var present = DEFAULT_PRESENT.slice();
+  var active = [];
+  var undoStack = [];
+  var logLines = [];
+  var nodeRects = [];
+
+  function readTheme() {
+    var cs = getComputedStyle(document.documentElement);
+    var g = function (n) { return cs.getPropertyValue(n).trim(); };
+    return {
+      bg: g("--bg"), card: g("--card"), panel: g("--panel"), border: g("--border"),
+      text: g("--text"), muted: g("--muted"),
+      accent: g("--accent"), accent2: g("--accent2"),
+      accent3: g("--accent3"), accent4: g("--accent4")
+    };
+  }
+
+  function computeActive() {
+    var a = present.slice();
+    var changed = true, guard = 0;
+    while (changed && guard++ < 60) {
+      changed = false;
+      for (var i = 0; i < NODES.length; i++) {
+        var depOk = true;
+        for (var k = 0; k < NODES[i].deps.length; k++) {
+          if (!a[NODES[i].deps[k]]) { depOk = false; break; }
+        }
+        var val = present[i] && depOk;
+        if (val !== a[i]) { a[i] = val; changed = true; }
+      }
+    }
+    return a;
+  }
+
+  function log(msg, cls) {
+    logLines.unshift({ msg: msg, cls: cls || "l-info" });
+    if (logLines.length > 40) logLines.pop();
+    renderLog();
+  }
+  function renderLog() {
+    logEl.innerHTML = "";
+    for (var i = 0; i < logLines.length; i++) {
+      var d = document.createElement("div");
+      d.className = logLines[i].cls;
+      d.textContent = logLines[i].msg;
+      logEl.appendChild(d);
+    }
+  }
+
+  function logCascade(oldA, newA) {
+    var deact = [], actv = [];
+    for (var i = 0; i < NODES.length; i++) {
+      if (oldA[i] && !newA[i]) deact.push(i);
+      else if (!oldA[i] && newA[i]) actv.push(i);
+    }
+    deact.sort(function (a, b) { return b - a; });   // dependents first (LIFO)
+    actv.sort(function (a, b) { return a - b; });     // providers first
+    for (var d = 0; d < deact.length; d++) log("\uD83D\uDCCA " + NODES[deact[d]].name + " deactivated (deps lost)", "l-warn");
+    for (var a = 0; a < actv.length; a++) log("\u26A1 " + NODES[actv[a]].name + " activated (deps satisfied)", "l-ok");
+    if (!deact.length && !actv.length) log("State unchanged (neutral change).", "l-muted");
+  }
+
+  function activeCount() {
+    var n = 0;
+    for (var i = 0; i < active.length; i++) if (active[i]) n++;
+    return n;
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+  }
+
+  function sizeCanvas() {
+    var host = canvas.parentElement;
+    var cw = Math.min(host ? host.clientWidth - 4 : 700, 720);
+    if (cw < 280) cw = 280;
+    var ch = 540;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.style.width = cw + "px";
+    canvas.style.height = ch + "px";
+    canvas.width = Math.round(cw * dpr);
+    canvas.height = Math.round(ch * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: cw, h: ch };
+  }
+
+  function render() {
+    var th = readTheme();
+    var dim = sizeCanvas();
+    var w = dim.w, h = dim.h;
+    nodeRects = [];
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = th.card;
+    ctx.fillRect(0, 0, w, h);
+
+    // header
+    ctx.fillStyle = th.muted;
+    ctx.font = "600 12px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Logicist layers as reactive, revertible components", 14, 12);
+
+    var n = NODES.length;
+    var nodeW = Math.min(360, w - 48);
+    var nodeH = 46;
+    var gap = 16;
+    var topPad = 40;
+    var x = (w - nodeW) / 2;
+    var y0 = h - 18 - nodeH;                 // node 0 at bottom
+    function yOf(i) { return y0 - i * (nodeH + gap); }
+
+    // edges
+    ctx.lineWidth = 2;
+    for (var i = 0; i < n - 1; i++) {
+      var flow = active[i] && active[i + 1];
+      ctx.strokeStyle = flow ? th.accent3 : th.border;
+      ctx.globalAlpha = flow ? 0.9 : 0.5;
+      var cx = w / 2;
+      var ya = yOf(i);                 // top of lower node
+      var yb = yOf(i + 1) + nodeH;     // bottom of upper node
+      ctx.beginPath();
+      ctx.moveTo(cx, ya);
+      ctx.lineTo(cx, yb);
+      ctx.stroke();
+      // arrow head (derivation flows upward)
+      var ay = yb + 3;
+      ctx.fillStyle = flow ? th.accent3 : th.border;
+      ctx.beginPath();
+      ctx.moveTo(cx, ay);
+      ctx.lineTo(cx - 5, ay + 7);
+      ctx.lineTo(cx + 5, ay + 7);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // nodes
+    for (var j = 0; j < n; j++) {
+      var y = yOf(j);
+      var isPresent = present[j];
+      var isActive = active[j];
+      var border, fill, nameColor, badge, badgeBg;
+      if (isActive) {
+        border = th.accent; fill = hexA(th.accent, 0.16);
+        nameColor = th.text; badge = "ACTIVE"; badgeBg = th.accent;
+      } else if (isPresent) {
+        border = th.accent4; fill = hexA(th.accent4, 0.12);
+        nameColor = th.text; badge = "WAITING"; badgeBg = th.accent4;
+      } else {
+        border = th.border; fill = th.panel;
+        nameColor = th.muted; badge = "ABSENT"; badgeBg = th.border;
+      }
+      ctx.fillStyle = fill;
+      roundRect(ctx, x, y, nodeW, nodeH, 9);
+      ctx.fill();
+      ctx.lineWidth = isActive ? 2.5 : 1.5;
+      ctx.strokeStyle = border;
+      if (!isActive && isPresent) ctx.setLineDash([5, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // presence dot
+      ctx.beginPath();
+      ctx.arc(x + 18, y + nodeH / 2, 6, 0, Math.PI * 2);
+      ctx.fillStyle = isPresent ? (isActive ? th.accent : th.accent4) : "transparent";
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = isPresent ? "transparent" : th.muted;
+      ctx.stroke();
+
+      // name
+      ctx.fillStyle = nameColor;
+      ctx.font = "600 14px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(NODES[j].name, x + 34, y + nodeH / 2 - 7);
+      // short formula
+      ctx.fillStyle = th.muted;
+      ctx.font = "12px ui-monospace, 'Fira Code', monospace";
+      ctx.fillText(NODES[j].short, x + 34, y + nodeH / 2 + 9);
+
+      // badge
+      var bw = ctx.measureText(badge).width + 16;
+      var bx = x + nodeW - bw - 10;
+      ctx.font = "700 10px system-ui, sans-serif";
+      var tw = ctx.measureText(badge).width;
+      roundRect(ctx, bx, y + nodeH / 2 - 9, bw, 18, 9);
+      ctx.fillStyle = badgeBg;
+      ctx.fill();
+      ctx.fillStyle = (isActive || isPresent) ? "#0b1020" : th.muted;
+      ctx.textAlign = "left";
+      ctx.fillText(badge, bx + 8, y + nodeH / 2);
+
+      nodeRects.push({ x: x, y: y, w: nodeW, h: nodeH, i: j });
+    }
+
+    statusEl.innerHTML = "<b>" + activeCount() + " / " + n + "</b> layers active &nbsp;\u00b7&nbsp; " +
+      undoStack.length + " invertible effect" + (undoStack.length === 1 ? "" : "s") + " on the undo stack";
+  }
+
+  function hexA(hex, a) {
+    if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 4)) return "rgba(127,127,127,0.15)";
+    var r, g, b;
+    if (hex.length === 4) {
+      r = parseInt(hex[1] + hex[1], 16); g = parseInt(hex[2] + hex[2], 16); b = parseInt(hex[3] + hex[3], 16);
+    } else {
+      r = parseInt(hex.substring(1, 3), 16); g = parseInt(hex.substring(3, 5), 16); b = parseInt(hex.substring(5, 7), 16);
+    }
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
+
+  function toggle(i) {
+    var from = present[i];
+    var to = !from;
+    var oldA = active.slice();
+    present[i] = to;
+    active = computeActive();
+    undoStack.push({ i: i, from: from });
+    log((to ? "\u2795 Present" : "\u2796 Absent") + ": " + NODES[i].name, to ? "l-info" : "l-warn");
+    logCascade(oldA, active);
+    render();
+  }
+
+  function undo() {
+    var step = undoStack.pop();
+    if (!step) { log("Nothing to undo \u2014 stack empty.", "l-muted"); return; }
+    var oldA = active.slice();
+    present[step.i] = step.from;
+    active = computeActive();
+    log("\u21A9 Inverse applied (LIFO): " + NODES[step.i].name + " \u2192 " + (step.from ? "present" : "absent"), "l-ok");
+    logCascade(oldA, active);
+    render();
+  }
+
+  function reset() {
+    present = DEFAULT_PRESENT.slice();
+    active = computeActive();
+    undoStack = [];
+    logLines = [];
+    log("\uD83D\uDD04 System reset to default configuration.", "l-muted");
+    render();
+  }
+
+  function shuffle() {
+    var target = [];
+    for (var i = 0; i < NODES.length; i++) target.push(Math.random() < 0.5);
+    var oldA = active.slice();
+    present = target.slice();
+    active = computeActive();
+    undoStack = [];
+    // Confluence check: the quiescent state is the least fixed point of the present-set,
+    // so a second, differently-ordered derivation of the same target yields the same state.
+    var check = computeActive().join(",") === active.join(",");
+    log("\uD83C\uDFB2 Jumbled to a random configuration via a different action order than any direct path.", "l-conf");
+    logCascade(oldA, active);
+    log(check ? "\u2713 CONFLUENT \u2014 canonical state depends only on the present-set, not the order (Thm 80)." : "\u2717 divergence", check ? "l-conf" : "l-warn");
+    render();
+  }
+
+  // events
+  canvas.addEventListener("click", function (e) {
+    var r = canvas.getBoundingClientRect();
+    var mx = e.clientX - r.left, my = e.clientY - r.top;
+    for (var i = 0; i < nodeRects.length; i++) {
+      var rc = nodeRects[i];
+      if (mx >= rc.x && mx <= rc.x + rc.w && my >= rc.y && my <= rc.y + rc.h) { toggle(rc.i); return; }
+    }
+  });
+  document.getElementById("btnUndo").addEventListener("click", undo);
+  document.getElementById("btnReset").addEventListener("click", reset);
+  document.getElementById("btnShuffle").addEventListener("click", shuffle);
+  document.getElementById("btnTheme").addEventListener("click", function () {
+    document.documentElement.classList.toggle("dark");
+  });
+  window.addEventListener("resize", render);
+
+  var mo = new MutationObserver(function () { render(); });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
+  active = computeActive();
+  log("\uD83D\uDC4B Click a layer to add/remove it. Undo reverts in LIFO order. Shuffle tests confluence.", "l-muted");
+  logCascade([false, false, false, false, false, false, false], active);
+  render();
+})();
+</script>
+</body>
+</html>

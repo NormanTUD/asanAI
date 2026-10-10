@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Ologs ✕ Garbentheorie — kategorische Konsistenz von Wissen</title>
+<style>
+  :root {
+    --bg: #faf9f4;
+    --fg: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+    --card-border: #e2e8f0;
+    --accent: #9a3412;
+    --accent2: #4338ca;
+    --ok: #16a34a;
+    --bad: #dc2626;
+    --warn: #b45309;
+    --node-fill: #ffffff;
+    --node-stroke: #94a3b8;
+    --node-text: #1e293b;
+    --arrow: #64748b;
+    --arrow-label: #334155;
+    --overlap: #d97706;
+    --code-bg: #eef2f7;
+    --shadow: 0 2px 14px rgba(15,23,42,.08);
+  }
+  html.dark {
+    --bg: #0f172a;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --accent: #fca5a5;
+    --accent2: #a5b4fc;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --node-fill: #1e293b;
+    --node-stroke: #64748b;
+    --node-text: #e2e8f0;
+    --arrow: #94a3b8;
+    --arrow-label: #cbd5e1;
+    --overlap: #fbbf24;
+    --code-bg: #0b1220;
+    --shadow: 0 2px 18px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+  article {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 22px 80px;
+  }
+  header { border-bottom: 2px solid var(--card-border); padding-bottom: 18px; margin-bottom: 8px; position: relative; }
+  h1 { font-size: 2.1em; line-height: 1.2; margin: 0 0 6px; color: var(--fg); }
+  .fusion-line { color: var(--muted); font-size: .98em; margin: 0 0 4px; }
+  .fusion-line b { color: var(--accent2); font-weight: 600; }
+  .theme-toggle {
+    position: absolute; top: 0; right: 0;
+    background: var(--card); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 20px;
+    padding: 6px 14px; cursor: pointer; font-size: .85em;
+  }
+  section { margin-top: 38px; }
+  h2 {
+    font-size: 1.45em; margin: 0 0 14px; color: var(--accent);
+    border-bottom: 1px solid var(--card-border); padding-bottom: 6px;
+  }
+  section#inhalt h2, section#widersprueche h2 { color: var(--accent2); }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 16px 18px; margin: 14px 0; box-shadow: var(--shadow);
+  }
+  .card h3 { margin: 0 0 8px; font-size: 1.08em; color: var(--fg); }
+  code, .math {
+    font-family: "SFMono-Regular", Consolas, "Fira Code", monospace;
+    background: var(--code-bg); color: var(--fg);
+    padding: 1px 6px; border-radius: 4px; font-size: .9em;
+  }
+  .math { font-style: italic; background: transparent; color: var(--accent2); }
+  .tagA { color: var(--accent); font-weight: 700; }
+  .tagB { color: var(--accent2); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92em; }
+  th, td { border: 1px solid var(--card-border); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); color: var(--fg); }
+  .kv { font-weight: 700; color: var(--accent); }
+
+  /* viz */
+  .viz-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .ctl {
+    background: var(--code-bg); color: var(--fg);
+    border: 1px solid var(--card-border); border-radius: 24px;
+    padding: 8px 16px; cursor: pointer; font-size: .92em; font-weight: 600;
+  }
+  .ctl:hover { border-color: var(--accent2); }
+  .ctl-active { background: var(--accent2); color: #0b1220; border-color: var(--accent2); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+  .chip { padding: 6px 12px; border-radius: 8px; font-size: .88em; font-weight: 700; border: 1px solid var(--card-border); }
+  .chip-ok { color: var(--ok); border-color: var(--ok); }
+  .chip-bad { color: var(--bad); border-color: var(--bad); }
+  .verdict { margin-top: 12px; padding: 12px 15px; border-radius: 10px; font-weight: 600; border-left: 5px solid var(--muted); background: var(--code-bg); }
+  .v-ok { border-left-color: var(--ok); color: var(--ok); }
+  .v-warn { border-left-color: var(--warn); color: var(--warn); }
+  .v-bad { border-left-color: var(--bad); color: var(--bad); }
+  svg { display: block; width: 100%; height: auto; margin: 6px 0; }
+  .vnode rect { fill: var(--node-fill); stroke: var(--node-stroke); stroke-width: 2; }
+  .vnode text { fill: var(--node-text); font-size: 15px; font-weight: 600; }
+  .n-ok rect { stroke: var(--ok); }
+  .n-bad rect { stroke: var(--bad); }
+  .varrow { fill: none; stroke-width: 2.6; }
+  .a-ok { stroke: var(--arrow); }
+  .a-bad { stroke: var(--bad); }
+  .alabel { fill: var(--arrow-label); font-size: 13px; font-style: italic; }
+  .germ { font-size: 14px; font-weight: 700; }
+  .g-ok { fill: var(--ok); }
+  .g-bad { fill: var(--bad); }
+  .germstatus { font-size: 16px; font-weight: 800; }
+  .arrowhead { fill: var(--arrow); }
+  .viz-note { color: var(--muted); font-size: .88em; margin-top: 8px; }
+
+  .proven a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+  .proven a:hover { text-decoration: underline; }
+  footer { margin-top: 46px; color: var(--muted); font-size: .85em; text-align: center; border-top: 1px solid var(--card-border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" type="button">☾ / ☀</button>
+    <h1>Konsistenz von Wissen als kategorisches System</h1>
+    <p class="fusion-line">Fusion aus: <b>olog.html</b> ✕ <b>garben_2.html</b></p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere sind, unter der Oberfläche, dasselbe Projekt in zwei Schichten: <strong>Wissen kategorisch so zu beschreiben, dass „konsistent" eine prüfbare, strukturelle Eigenschaft wird statt eine Frage des guten Willens.</strong> Das Olog-Papier <span class="tagA">(A)</span> organisiert das <em>relationale Gerüst</em> des Wissens — Typen als Boxen, Aspekte (Funktionen) als Pfeile — und verlangt, dass dieses Gerüst <strong>kommutiert</strong>: Jeder zwei Wege zwischen denselben Boxen müssen dasselbe Ergebnis liefern. Das ist Konsistenz der <em>Form</em>. Die Garbentheorie <span class="tagB">(B)</span> befestigt daneben den <em>Inhalt</em> — Schnitte (konkrete Texte/Daten) an den offenen Teilbereichen eines Themenraums — und verlangt, dass dieser Inhalt <strong>verklebt</strong>: Lokale Daten müssen auf den Überlappungen übereinstimmen, damit aus ihnen ein eindeutiger globaler Schnitt wird. Das ist Konsistenz der <em>Substanz</em>.</p>
+    <p>Die fusionierte Position: <strong>Ein kohärentes Wissenskörper ist eine Garbe, deren Grundform ein Olog ist.</strong> „Konsistenz" hat zwei <em>unabhängige</em> Schichten, die beide erfüllt sein müssen: (1) das Typ-Gerüst muss kommutieren (das Olog-Gesetz aus A), und (2) der themenindexierte Inhalt muss lokal zu einem eindeutigen globalen Aussageschnitt verkleben (das Garben-Gesetz aus B). Keine der beiden allein genügt: Ein <em>kommutierendes</em> Olog kann trotzdem widersprüchliche Daten tragen (genau der SNARC-gegen-Perzeptron-Fall aus B), und eine verklebte Garbe ist ohne ein sinnvolles Typ-Gerüst unter ihr bedeutungslos. Zusammen ergeben sie eine vollständige, kategorische Bedeutung von „ein konsistenter Wissensbestand".</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Echte, harte Widersprüche gibt es nicht — beide Papiere nehmen „Konsistenz per Kategorientheorie" zum Ziel und teilen die Grundidee „Daten, die an den Kanten/Knoten passen, ergeben ein kohärentes Ganzes". Sie treffen aber auf drei konkreten Punkten <strong>unvereinbare Stellungen</strong>:</p>
+    <div class="card">
+      <h3>① Pfeilrichtung / Varianz des Morphismus</h3>
+      <p><span class="tagA">A (Olog)</span> setzt Aspekte <em>vorwärts</em> zusammen: ein Pfeil <code>f: A → B</code> schiebt ein Element von A auf genau ein Element von B — Wissen wird <em>kovariant</em> durch Zusammensetzung nach oben aufgebaut. <span class="tagB">B (Garbe)</span> schränkt dagegen <em>rückwärts</em> ein: die Restriktion <span class="math">ρ<sub>U,V</sub>: F(U) → F(V)</span> für <span class="math">V ⊂ U</span> zieht Daten von einem großen Themenbereich auf einen kleineren — ein <em>kontravarianter</em> Rückzug (ein Funktor auf <span class="math">O(X)<sup>op</sup></span>). Dieselbe Geste „Wissen fließt entlang der Pfeile" läuft in den beiden Papieren in entgegengesetzter Richtung.</p>
+    </div>
+    <div class="card">
+      <h3>② Wovon das Konsistenzgesetz spricht</h3>
+      <p><span class="tagA">A</span> stellt seine „Regel 4: Kompositionen müssen kommutieren" als <em>das</em> Konsistenzgesetz auf und definiert damit Korrektheit: „Damit das Olog <em>korrekt</em> ist, müssen beide Wege dasselbe Ergebnis liefern." Das ist ein <strong>Struktur-/Gerüst-Gesetz</strong> — es prüft, ob das Netz aus Funktionen kohärent ist, sagt aber <em>nichts</em> darüber, ob die <em>Werte/Daten</em> stimmen. <span class="tagB">B</span> macht Konsistenz dagegen zu einem <strong>Inhalts-/Daten-Gesetz</strong>: Die <em>Schnitte</em> müssen auf den Überlappungen <span class="math">U<sub>i</sub> ∩ U<sub>j</sub></span> übereinstimmen (Verklebbarkeit). A behauptet also implizit, Struktur-Kommutativität reiche für Konsistenz; B zeigt, dass ein strukturell kommutierendes Olog faktisch inkonsistente Daten tragen kann — Struktur-Kommutativität ist nur eine <em>notwendige</em>, keine hinreichende Bedingung.</p>
+    </div>
+    <div class="card">
+      <h3>③ Granularität der Konflikterkennung</h3>
+      <p><span class="tagA">A</span> erkennt Konsistenz <em>global über ein kommutatives Diagramm</em> — grob, über das ganze Typ-Netz (zwei Pfade zwischen Boxen). <span class="tagB">B</span> lokalisiert den Widerspruch dagegen <em>auf einen einzigen Punkt</em> per <strong>Halm</strong> <span class="math">F<sub>x</sub></span>: An <span class="math">x</span> = „erstes neuronales Netz" liegen zwei <em>verschiedene</em> Keime <span class="math">[s₁]<sub>x</sub> ≠ [s₅]<sub>x</sub></span> (SNARC vs. Perzeptron) — ein feines, lokales Diagnoseinstrument, das sagt, <em>wor</em> der Konflikt sitzt. A liefert keine vergleichbar lokale Diagnose.</p>
+    </div>
+    <p><strong>Die schärfste reale Spannung</strong> ist Punkt ② formuliert als Frage: <em>Ist strukturelle Kohärenz (Kommutativität) hinreichend für einen konsistenten Wissensbestand?</em> — A: ja, es ist die Goldene Regel. B: nein, das SNARC/Perzeptron-Dokument wäre ein völlig <em>kommutierendes</em> Olog und trotzdem <em>inkonsistent</em>, weil die Daten im Überlapp kollidieren („Die Voraussetzung der Verklebbarkeit ist gar nicht erfüllt … kein globaler Schnitt").</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>① Varianz: Basis und Faser eines Systems</h3>
+      <p>Die beiden „entgegengesetzten" Pfeilrichtungen sind keine contradiction, sondern die <em>zwei Seiten</em> eines einzigen Systems. Die kovarianten Olog-Pfeile beschreiben die <strong>Karte des Definitionsbereichs</strong> (wie die Typen miteinander zusammenhängen) — die <em>Basis</em>. Die kontravarianten Garben-Restriktionen beschreiben, <strong>wie Daten über diese Karte hinweggezogen werden</strong> — die <em>Faser</em>. „Daten entlang eines zusammengesetzten Olog-Pfads ziehen" ist exakt der funktoriale Rückzug <span class="math">ρ<sub>U,V</sub> ∘ ρ<sub>V,W</sub> = ρ<sub>U,W</sub></span>. Man liest das Ganze als <em>Garbe auf einer Olog-Basis</em>: Form nach vorn komponiert, Daten nach hinten beschränkt.</p>
+    </div>
+    <div class="card">
+      <h3>② Tragweite: Konsistenz spaltet sich in zwei Schichten</h3>
+      <p>Man behält von A genau das, was A wirklich leistet — <strong>Struktur-Kohärenz = Kommutativität</strong> — und von B, was B wirklich leistet — <strong>Inhalts-Kohärenz = Verklebbarkeit/Exaktheit</strong>. Ein <em>voll konsistentes</em> System erfüllt beides. Der SNARC/Perzeptron-Fall ist damit präzise zu beschreiben als „<em>strukturell kommutativ, aber keine Garbe</em>" — eine Diagnose, die die Olog-Einzelansicht aus A <em>übersieht</em> (weil dort nur das Gerüst geprüft wird) und die erst die Fusion korrekt leistet.</p>
+    </div>
+    <div class="card">
+      <h3>③ Granularität: Lokalisieren → Form verstehen → verkleben</h3>
+      <p>Die drei Instrumente bilden eine <strong>Reparatur-Pipeline</strong>: der <em>Halm</em> (B) ist die Lupe, die den Konflikt auf einen Punkt lokalisiert; das <em>Olog</em> (A) ist die Karte der relationalen Form um diesen Punkt herum; die <em>Garben-Verklebung</em> (B) ist das eigentliche Reparieren (Daten angleichen → eindeutiger globaler Schnitt). So wird A's globales Diagramm-Gesetz und B's lokale Halm-Diagnose zu einem einzigen Fluss: <em>Halm nutzt den Konflikt lokal zu finden → Olog liefert die Form → Verklebung stellt den globalen Schnitt wieder her.</em></p>
+    </div>
+    <p><strong>Fusionierter Schluss:</strong> Wissen ist konsistent <em>genau dann, wenn</em> (i) sein Typ-Gerüst kommutiert <em>und</em> (ii) sein themenindexierter Inhalt lokal zu einem eindeutigen globalen Satz verklebt. Sheafification heißt in der Praxis (nach B's Rezept): Halm nutzen, um den kollidierenden Punkt zu finden → faktisch entscheiden (SNARC 1951 ist älter als Perzeptron 1958) → beide Kapitel angleichen → Verklebbarkeit neu prüfen.</p>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die folgende Karte verknüpft die zentralen Begriffe beider Papiere mit ihrer fusionierten Rolle. Sie ist so beschaffen, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+    <table>
+      <thead><tr><th style="width:24%">Begriff A (Olog)</th><th style="width:24%">Begriff B (Garbe)</th><th style="width:52%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Typ (Box, Substantiv)</td><td class="kv">Topologischer Raum (X, τ) / offene Menge U</td><td>Die <em>Form</em> des Wissens: Typen bilden die Basis; offene Themenbereiche sind die Regionen, auf denen man reden kann.</td></tr>
+        <tr><td class="kv">Aspekt (Pfeil, Funktion) f: A→B</td><td class="kv">Restriktion ρ<sub>U,V</sub>: F(U)→F(V)</td><td>Der Transport. Vorwärts (Olog) = wie Typen verknüpft werden; rückwärts (Garbe) = wie Daten beschränkt werden. Funktorialität: ρ<sub>U,W</sub> = ρ<sub>V,W</sub> ∘ ρ<sub>U,V</sub>.</td></tr>
+        <tr><td class="kv">Kommutatives Diagramm (Pfad A = Pfad B)</td><td class="kv">Verklebbarkeit / Equalizer (Existenz)</td><td>Die zwei Gesichter des „passen muss": Komposition der Form muss eindeutig sein; der Inhalt muss auf U<sub>i</sub>∩U<sub>j</sub> übereinstimmen.</td></tr>
+        <tr><td class="kv">—</td><td class="kv">Lokal–Global-Identität (Unizität)</td><td>Ergänzung aus B, die A fehlt: stimmen zwei globale Schnitte lokal überall überein, so sind sie gleich. A's Kommutativität ist nur die „Existenz"-Hälfte.</td></tr>
+        <tr><td class="kv">—</td><td class="kv">Halm F<sub>x</sub> = colim<sub>U∋x</sub> F(U)</td><td>Die <em>Lupe</em>: bündelt alle Keime an einem Punkt; lokalisiert den Widerspruch ([s₁]<sub>x</sub> ≠ [s₅]<sub>x</sub>).</td></tr>
+        <tr><td class="kv">—</td><td class="kv">Keim [s]<sub>x</sub> (Äquivalenzklasse)</td><td>Einzelne lokale Aussage an x; zwei Kapitel liefern denselben Keim genau dann, wenn sie in <em>irgendeiner</em> gemeinsamen Umgebungen übereinstimmen.</td></tr>
+        <tr><td class="kv">Olog = „korrekte" Wissensbasis</td><td class="kv">Prägarbe vs. Garbe</td><td>Fusion: <strong>Olog = die Form, Garbe = die Daten darüber.</strong> Prägarbe = Gerüst ohne Inhalts-Check; Garbe = Gerüst + verklebter Inhalt. Ein konsistenter Bestand = kommutatives Olog + echte Garbe.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Die vier Goldenen Regeln (A) — integriert</h3>
+      <ul>
+        <li><strong>Boxen enthalten Substantive</strong> („ein Buch", „eine Zahl") — die Typen des Gerüsts.</li>
+        <li><strong>Pfeile sind Funktionen</strong> — jeder Pfeil <code>f: A → B</code> ordnet jedem Element von A genau eines von B zu.</li>
+        <li><strong>Der Text bildet einen sinnvollen Satz</strong> („ein Mensch <em>hat als Mutter</em> einen Menschen" ✓).</li>
+        <li><strong>Kompositionen müssen kommutieren</strong> — zwei Pfade zwischen denselben Boxen liefern dasselbe Ergebnis. <em>Fusion:</em> Diese Regel ist die <strong>Struktur-Hälfte</strong> der Konsistenz; sie garantiert Kohärenz des Gerüsts, aber — wie B zeigt — nicht Kohärenz der Daten.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Garben-Axiome (B) — integriert</h3>
+      <ul>
+        <li><strong>① Unizität (Lokal–Global-Identität):</strong> <span class="math">(∀ i: s|<sub>U<sub>i</sub></sub> = t|<sub>U<sub>i</sub></sub>) ⇒ s = t</span>. Trivial erfüllt — das SNARC/Perzeptron-Buch besteht diesen Test.</li>
+        <li><strong>② Verklebbarkeit (Existenz):</strong> <span class="math">s<sub>i</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> = s<sub>j</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> ⇒ ∃! s ∈ F(U)</span>. <em>Failed</em> im Beispiel: <span class="math">ρ<sub>U₁,V</sub>(s₁)</span> = „SNARC ist das erste NN" ≠ <span class="math">ρ<sub>U₅,V</sub>(s₅)</span> = „Perzeptron ist das erste NN".</li>
+        <li><strong>Diagnose (B):</strong> Die Zuordnung „Thema ↦ Kapiteltext" ist eine <em>Prägarbe</em>, aber <em>keine Garbe</em>; der Halm am Punkt „erstes NN" enthält zwei verschiedene Keime — der Fingerabdruck der Inkonsistenz an genau einer Stelle.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Fusionierte Konsistenzgesetze (das Ergebnis)</h3>
+      <p><strong>Struktur-Gesetz (aus A):</strong> Das Typ-Gerüst ist ein Olog — jeder zwei Wege zwischen denselben Typen kommutieren. Prüft die <em>Form</em>.</p>
+      <p><strong>Inhalt-Gesetz (aus B):</strong> Der themenindexierte Datenfunktor ist eine Garbe — lokale Schnitte verkleben zu einem eindeutigen globalen Schnitt. Prüft die <em>Substanz</em>.</p>
+      <p><strong>Vollständige Konsistenz:</strong> Struktur-Gesetz <em>und</em> Inhalt-Gesetz zugleich. <em>Reparatur (Sheafification):</em> (1) Halm-Trick, um den kollidierenden Punkt x zu finden; (2) faktisch entscheiden (SNARC 1951 &lt; Perzeptron 1958); (3) beide Kapitel angleichen; (4) Verklebbarkeit neu prüfen → eindeutiger globaler Schnitt <span class="math">s ∈ F(X)</span>.</p>
+      <p><strong>Anwendungsfelder (A, übernommen & erweitert):</strong> Datenbank-Design (Ologs mächtiger als ER-Diagramme), Bioinformatik, Wissensgraphen & KI, Systems Engineering, Wissenschaftskommunikation. <em>Fusion:</em> Überall dort, wo lokal erstellte Teilaussagen (Kapitel, Module, Quellen) zu einem Ganzen verklebt werden müssen, ist die Garben-Schicht die eigentliche Konsistenzprüfung — das Olog liefert die Karte, auf der die Prüfung stattfindet.</p>
+    </div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: Olog-Gerüst × Garben-Verklebung</h2>
+    <p>Interaktive Verkörperung der fusionierten These am SNARC/Perzeptron-Beispiel. Die <strong>oberen</strong> Pfeile (Dokument → Kapitel) sind die <em>Olog-Struktur</em> (Form, vorwärts komponiert); die <strong>unteren</strong> Pfeile (Kapitel → Thema) tragen die <em>Garben-Daten</em> (Keime, rückwärts beschränkt) auf den Überlapp <span class="math">V = U₁ ∩ U₅</span>. Schalte die beiden Ebenen unabhängig um und beobachte das Urteil.</p>
+
+    <div class="viz-card">
+      <div class="ctl-row">
+        <button class="ctl" id="btnSheaf" onclick="toggleSheaf()" type="button">Garben-Inhalt verkleben (Kap. 5 an Kap. 1 angleichen)</button>
+        <button class="ctl" id="btnBreak" onclick="toggleBreak()" type="button">Olog-Struktur brechen (Pfade liefern ≠)</button>
+      </div>
+
+      <div class="chip-row">
+        <span class="chip" id="chipStruct">Olog-Struktur: ✓ kommutativ</span>
+        <span class="chip" id="chipContent">Garben-Inhalt: ✗ kollidiert</span>
+      </div>
+
+      <svg viewBox="0 0 760 400" role="img" aria-label="Olog-Gerüst mit Garben-Daten am Überlapp">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <polygon class="arrowhead" points="0,0 8,3 0,6"></polygon>
+          </marker>
+        </defs>
+
+        <!-- structure arrows (top) -->
+        <path id="p-top1" class="varrow a-ok" d="M 335 64 L 145 150" marker-end="url(#ah)"></path>
+        <path id="p-top2" class="varrow a-ok" d="M 425 64 L 615 150" marker-end="url(#ah)"></path>
+        <text class="alabel" x="228" y="102">enthält</text>
+        <text class="alabel" x="497" y="102">enthält</text>
+
+        <!-- content arrows (bottom) -->
+        <path id="p-bot1" class="varrow a-bad" d="M 190 196 L 345 316" marker-end="url(#ah)"></path>
+        <path id="p-bot2" class="varrow a-bad" d="M 570 196 L 415 316" marker-end="url(#ah)"></path>
+        <text class="alabel" x="228" y="248">berührt</text>
+        <text class="alabel" x="497" y="248">berührt</text>
+
+        <!-- germs (data) -->
+        <text id="germ1" class="germ g-ok" x="205" y="284" text-anchor="middle">SNARC</text>
+        <text id="germ5" class="germ g-bad" x="515" y="284" text-anchor="middle">Perzeptron</text>
+        <text id="germStatus" class="germstatus g-bad" x="380" y="300" text-anchor="middle">✗ keime ≠</text>
+
+        <!-- nodes -->
+        <g class="vnode" id="n-dok">
+          <rect x="310" y="18" width="140" height="46" rx="10"></rect>
+          <text x="380" y="47" text-anchor="middle">Dokument</text>
+        </g>
+        <g class="vnode" id="n-kap1">
+          <rect x="55" y="150" width="150" height="46" rx="10"></rect>
+          <text x="130" y="179" text-anchor="middle">Kapitel 1</text>
+        </g>
+        <g class="vnode" id="n-kap5">
+          <rect x="555" y="150" width="150" height="46" rx="10"></rect>
+          <text x="630" y="179" text-anchor="middle">Kapitel 5</text>
+        </g>
+        <g class="vnode n-bad" id="n-thema">
+          <rect x="305" y="316" width="150" height="50" rx="10" style="stroke:var(--overlap)"></rect>
+          <text x="380" y="347" text-anchor="middle">Thema: erstes NN</text>
+        </g>
+      </svg>
+
+      <div class="verdict v-warn" id="verdict">Nur Prägarbe: das Olog kommutiert, aber die Keime kollidieren (SNARC ≠ Perzeptron) – kein globaler Schnitt.</div>
+      <p class="viz-note">Oberer Pfad = Olog-Form (Struktur). Unterer Pfad = Garben-Keime (Inhalt) am Überlapp „erstes NN". „Voll konsistent" ist erreicht, wenn beide Ebenen grün sind.</p>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../paper/olog.html"><strong>A — olog.html:</strong> „Ologs — Ontology Logs interaktiv erklärt"</a> — David Spivaks kategorische Wissensrepräsentation: Typen (Boxen) + Aspekte (Pfeile) und die vier Goldenen Regeln, deren vierte die <em>Kommutativität</em> des relationalen Gerüsts ist.</li>
+      <li><a href="../garben_2.html"><strong>B — garben_2.html:</strong> „Garbentheorie am Beispiel: Ein KI-Dokument mit Widerspruch"</a> — Garbentheorie am SNARC/Perzeptron-Konflikt: Prägarbe vs. Garbe, Halm, Keim, Restriktion und die Verklebungs-Axiome (Unizität + Existenz).</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Runde 1, Paare 021) — Ologs ✕ Garbentheorie · konsistenz-kategorisch · beide Ebenen: Struktur kommutiert & Inhalt verklebt.</footer>
+</article>
+
+<script>
+  var dataGlued = false;
+  var structCommuting = true;
+
+  function setClass(el, cls) { if (el) el.setAttribute('class', cls); }
+
+  function render() {
+    var s = structCommuting, c = dataGlued;
+    setClass(document.getElementById('p-top1'), 'varrow ' + (s ? 'a-ok' : 'a-bad'));
+    setClass(document.getElementById('p-top2'), 'varrow ' + (s ? 'a-ok' : 'a-bad'));
+    setClass(document.getElementById('p-bot1'), 'varrow ' + (c ? 'a-ok' : 'a-bad'));
+    setClass(document.getElementById('p-bot2'), 'varrow ' + (c ? 'a-ok' : 'a-bad'));
+
+    var g1 = document.getElementById('germ1');
+    setClass(g1, 'germ g-ok');
+    var g5 = document.getElementById('germ5');
+    if (g5) { g5.textContent = c ? 'SNARC (angleichen)' : 'Perzeptron'; setClass(g5, 'germ ' + (c ? 'g-ok' : 'g-bad')); }
+
+    var gs = document.getElementById('germStatus');
+    if (gs) { gs.textContent = c ? '✓ keime gleich' : '✗ keime ≠'; setClass(gs, 'germstatus ' + (c ? 'g-ok' : 'g-bad')); }
+
+    setClass(document.getElementById('n-thema'), 'vnode ' + (c ? 'n-ok' : 'n-bad'));
+
+    var cs = document.getElementById('chipStruct');
+    if (cs) { cs.textContent = s ? 'Olog-Struktur: ✓ kommutativ' : 'Olog-Struktur: ✗ Pfade ≠'; cs.className = 'chip ' + (s ? 'chip-ok' : 'chip-bad'); }
+    var cc = document.getElementById('chipContent');
+    if (cc) { cc.textContent = c ? 'Garben-Inhalt: ✓ verklebbar' : 'Garben-Inhalt: ✗ kollidiert'; cc.className = 'chip ' + (c ? 'chip-ok' : 'chip-bad'); }
+
+    var v = document.getElementById('verdict'), msg, cls;
+    if (s && c) { msg = 'Voll konsistent: kommutatives Olog + Garbe → eindeutiger globaler Schnitt.'; cls = 'v-ok'; }
+    else if (!s && c) { msg = 'Struktur gebrochen: das Olog kommutiert nicht – die Daten passen, aber der relationale Pfad ist inkonsistent.'; cls = 'v-warn'; }
+    else if (s && !c) { msg = 'Nur Prägarbe: das Olog kommutiert, aber die Keime kollidieren (SNARC ≠ Perzeptron) – kein globaler Schnitt.'; cls = 'v-warn'; }
+    else { msg = 'Beides gebrochen: weder kommutative Struktur noch verklebbarer Inhalt.'; cls = 'v-bad'; }
+    if (v) { v.textContent = msg; v.className = 'verdict ' + cls; }
+
+    var bs = document.getElementById('btnSheaf'); if (bs) bs.className = 'ctl' + (c ? ' ctl-active' : '');
+    var bb = document.getElementById('btnBreak'); if (bb) bb.className = 'ctl' + (s ? '' : ' ctl-active');
+  }
+
+  function toggleSheaf() { dataGlued = !dataGlued; render(); }
+  function toggleBreak() { structCommuting = !structCommuting; render(); }
+  function toggleTheme() { document.documentElement.classList.toggle('dark'); }
+
+  render();
+</script>
+</body>
+</html>

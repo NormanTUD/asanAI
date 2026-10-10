@@ -1,0 +1,16 @@
+{
+  "no": "055",
+  "a": "buecher/nonlinear_workbook.html",
+  "b": "hott_addition.html",
+  "a_title": "The Nonlinear Workbook — Interactive Explorer",
+  "b_title": "Addition in der Homotopie-Typentheorie – Visuell erklärt",
+  "combined_theme": "invarianten-der-iteration",
+  "one_line": "Beide Papiere lesen stabile Strukturen als Invarianten einer iterierten einfachen Generator-Regel ab: die Nichtlineare Dynamik den Anzieher (λ, invariante Verteilung, fraktale Dimension), die HoTT die Homotopieklasse (Windungszahl, Ω(S¹) ≅ ℤ) — der Anzieher ist die dynamische Invariante, die Windungszahl die algebraische; Struktur entsteht aus (Raum × Operation).",
+  "contradictions": [
+    "Zahl: In A ist eine Zahl ein passiver reeller Zustand (x_t ∈ [0,1]), den eine Karte wandelt — Struktur kommt von der Abbildung; in B ist die Zahl ein aktives topologisches Objekt (n = Homotopieklasse einer n-mal gewundenen Schleife, Ω(S¹) ≅ ℤ) — Struktur kommt von der Topologie des Raums.",
+    "Gleichheit: A's Kernphänomen ist sensible Abhängigkeit — fast gleiche Startwerte (x₀, x₀+10⁻⁴) divergieren exponentiell (λ=ln2>0) und Gleichheit zwischen Zuständen wird von der Iteration zerstört; B nimmt Gleichheit als Pfad (zwischen Pfaden: Homotopie = Gleichheit zwischen Gleichheiten) als stabile, manipulierbare, hierarchisch reiche Basis.",
+    "Quelle der Struktur (Inversion): A erzeugt Komplexität (Chaos, Fraktale) durch eine komplizierte nichtlineare Karte auf einem topologisch trivialen, zusammenziehbaren Raum (Intervall [0,1]); B erzeugt Algebra (ℤ + Addition) durch die Topologie des Raums (Kreis S¹, π₁ ≅ ℤ) unter einer einfachen Operation (Schleifenverkettung)."
+  ],
+  "resolution": "Auf der Ebene der Invarianten stimmen beide überein, obgleich sie auf der Punkt-Ebene widersprechen: punktweise Gleichheit ist zerbrechlich (A), grobe Äquivalenz — Anzieher in A, Homotopieklasse in B — ist stabil. Eine 'Zahl'/ein Systemzustand ist die stabile Invariante eines Generators (Äquivalenzklasse / Grenzstruktur), nicht ein Punkt. Struktur entsteht immer aus (Raum × Operation) unter Iteration: A lädt die Komplexität in die Karte (trivialer Raum, reiche Nichtlinearität), B in den Raum (reicher Kreis, einfache Verkettung) — duale Platzierungen desselben Komplexitätsbudgets; der Output ist jeweils eine stabile Struktur mit Invariante.",
+  "viz": "Ein-Canvas-Zwei-Panel: links (A) iteriert die Logistikkarte ihren Anzieher live (Tracer-Dot auf [0,1] + konvergiertes Histogramm der invarianten Verteilung + λ(r) und Regime); rechts (B) verkettet der Kreis S¹ eine a-Schleife und eine b-Schleife zur Windungszahl a+b (π₁(S¹) ≅ ℤ) mit Windungsringen. Ein Button 'Iterieren & Verketten' lässt beide Generatoren gleichzeitig laufen und konvergieren auf ihre stabile Struktur (die Invariante); r (links) und a, b (rechts) regelbar; themenreaktiv über CSS-Variablen, keine externen Libs, keine Netz-Daten."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "030",
+  "a": "principia.html",
+  "b": "spatiotemporal_composability.html",
+  "a_title": "Principia Mathematica — Interactive Explorer",
+  "b_title": "Spatiotemporal Composability — Interactive Explainer",
+  "combined_theme": "reversible-compositional-foundations",
+  "one_line": "Mathematics is a reversible, typed, confluent composition: every deduction step is an undoable effect on a dependency hierarchy that self-organizes and quiesces independent of assembly order.",
+  "contradictions": [
+    "A (Principia) treats composition as a one-way, permanent, additive-only deduction upward from axioms along a fixed type hierarchy, whereas B (Cordis) treats every composition step as reversible (each effect returns its inverse) so components can be unloaded at runtime.",
+    "A (Principia) aims at a closed, consistent, ideally complete totality where all of mathematics reduces to logic, whereas B (Cordis) models an open system with no fixed totality whose validity is only a canonical state reached by confluence (Theorem 80) and can keep changing.",
+    "A (Principia) composes passive, stateless symbols (propositions, types, classes) combined by external deduction rules, whereas B (Cordis) composes active, stateful components that self-organize by declaring dependencies (coeffects) and waking up reactively."
+  ],
+  "resolution": "Read Principia's deduction as Cordis's invertible effects and its type hierarchy as Cordis's dependency/coeffect graph: each inference is a revertible effect with a unique inverse (proofs can be dismantled in LIFO), consistency becomes confluence to a canonical quiescent state, and the logicist base becomes the root provider of a service graph that higher layers consume and react to.",
+  "viz": "Canvas dependency/derivation graph of the 7 Principia logicist layers as reactive components: click a layer to toggle presence, dependents activate/deactivate in a LIFO-guarded cascade (spatial coeffects), an undo stack reverses the last action (revertible effects), and a shuffle shows the quiescent state is order-independent (confluence). Theme-aware via CSS variables and a MutationObserver."
+}

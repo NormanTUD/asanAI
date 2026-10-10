@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Ganzheit liegt jenseits der eigenen Ebene — Fusion</title>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --text:#1c1a17; --muted:#6b675f;
+  --accent:#5b53d6; --accent2:#d81b4a; --accent3:#2e7d32;
+  --border:#e3ded2; --code:#f3efe6;
+  --mn-ring:#5b53d6; --mn-covered:#2e7d32; --mn-uncovered:#d81b4a;
+  --mn-vantage:#a67c00; --mn-text:#1c1a17; --mn-muted:#6b675f;
+}
+html.dark{
+  --bg:#0f1117; --card:#1a1d27; --text:#e4e6ee; --muted:#9a9db0;
+  --accent:#8b84ff; --accent2:#ff6584; --accent3:#43e97b;
+  --border:#2a2d3a; --code:#12141c;
+  --mn-ring:#8b84ff; --mn-covered:#43e97b; --mn-uncovered:#ff6584;
+  --mn-vantage:#feca57; --mn-text:#e4e6ee; --mn-muted:#9a9db0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:Georgia,'Times New Roman',serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.75; padding:32px 18px 64px;
+}
+article{max-width:820px;margin:0 auto;}
+h1{
+  font-size:2rem; line-height:1.25; margin-bottom:10px;
+  background:linear-gradient(120deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:var(--accent);
+}
+.subtitle{color:var(--muted); font-size:1rem; margin-bottom:6px; font-style:italic;}
+.fusion-tag{
+  display:inline-block; font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-size:0.82rem; color:var(--accent); border:1px solid var(--border);
+  border-radius:20px; padding:4px 12px; margin:8px 0 26px; background:var(--card);
+}
+section{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:26px 28px; margin-bottom:22px;
+}
+section h2{font-size:1.35rem; color:var(--accent); margin-bottom:6px;}
+section h2 .k{
+  display:inline-block; background:var(--accent); color:var(--bg);
+  width:26px;height:26px;border-radius:50%;text-align:center;line-height:26px;
+  font-size:0.8rem;font-family:ui-monospace,monospace;margin-right:9px;
+}
+section h3{font-size:1.06rem; color:var(--text); margin:18px 0 6px;}
+p{margin:12px 0;}
+section .lead{color:var(--muted); font-size:0.94rem; margin-bottom:14px;}
+code{
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+  background:var(--code); padding:2px 6px; border-radius:5px; font-size:0.9em;
+}
+.formula{
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+  background:var(--code); border-left:3px solid var(--accent);
+  padding:12px 16px; border-radius:8px; margin:14px 0; font-size:1.02rem;
+}
+ul,ol{padding-left:22px; margin:10px 0;}
+li{margin:7px 0;}
+.tagA{color:var(--accent2); font-weight:bold;}
+.tagB{color:var(--accent3); font-weight:bold;}
+.note{
+  border:1px dashed var(--border); border-radius:10px; padding:14px 16px;
+  font-size:0.92rem; margin:14px 0; color:var(--muted);
+}
+.note b{color:var(--text);}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:14px 0;}
+.viz-controls label{font-size:0.9rem;}
+.viz-controls input[type=range]{width:220px;accent-color:var(--accent);}
+.viz-controls .val{font-family:ui-monospace,monospace;color:var(--accent);font-weight:bold;min-width:30px;}
+button{
+  font:inherit; cursor:pointer; border:1px solid var(--border);
+  background:var(--card); color:var(--text); border-radius:8px;
+  padding:8px 14px; font-size:0.9rem;
+}
+button:hover{border-color:var(--accent); color:var(--accent);}
+#vantageCanvas{
+  width:100%; height:440px; display:block;
+  background:var(--code); border:1px solid var(--border); border-radius:12px;
+}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:0.85rem;margin-top:12px;color:var(--muted);}
+.legend span{display:flex;align-items:center;gap:6px;}
+.legend .sw{width:15px;height:15px;border-radius:4px;display:inline-block;}
+.result{
+  margin-top:14px; padding:14px 18px; border-radius:10px;
+  border-left:4px solid var(--accent); background:var(--code); font-size:0.94rem;
+}
+.result.warn{border-left-color:var(--accent2);}
+.result.ok{border-left-color:var(--accent3);}
+.prov a{color:var(--accent); text-decoration:none; font-family:ui-monospace,monospace;}
+.prov a:hover{text-decoration:underline;}
+.prov li{margin:14px 0;}
+.prov .lbl{font-weight:bold; color:var(--text);}
+footer{ text-align:center; color:var(--muted); font-size:0.85rem; margin-top:10px;}
+@media (max-width:600px){ section{padding:20px;} h1{font-size:1.5rem;} #vantageCanvas{height:360px;} }
+</style>
+</head>
+<body>
+<article>
+
+<h1>Die Ganzheit liegt jenseits der eigenen Ebene</h1>
+<p class="subtitle">Fusion aus: goedel.html ✕ an_experiment_with_time.html</p>
+<span class="fusion-tag">Round 1 · Non-AI · id 025 · Logik × Zeit-Phänomenologie</span>
+
+<!-- ===================== THESE ===================== -->
+<section id="these">
+<h2><span class="k">1</span>Kernthese der Fusion</h2>
+<p>Beide Papiere kommen aus entlegenen Disziplinen — Gödels formale Logik und J. W. Dannes
+Phänomenologie der Zeit — und stoßen auf dieselbe strukturelle Wahrheit:
+<b>Eine erste-, selbstbezügliche Perspektive erfasst nie das Ganze, dem sie angehört.</b></p>
+<p>Gödel zeigt: Ein formales System <em>innerhalb</em> seiner selbst kann seine eigene
+Konsistenz nicht beweisen; die Gesamtheit seiner wahren Sätze bleibt der aus seinem Inneren
+unvollständig erreichbar. Dunne zeigt: Der „Beobachter 1“ (das wache Gehirn) nimmt nur den
+Punkt <em>Jetzt</em> wahr; die vollständige Zeitlinie — Vergangenheit <em>und</em> Zukunft —
+wird erst von einer <em>höheren, serialen</em> Blickstufe aus sichtbar.</p>
+<p>Die fusionierte Position lautet: <b>Ganzheit — ob als Menge aller Wahrheiten oder als
+gesamte Zeitlandschaft — liegt stets auf einer Ebene über der, auf der man steht.</b>
+Vollständigkeit erreicht man nur, indem man um genau eine Blickstufe hinaussteigt — und diesen
+Schritt kann man immer wiederholen. Inkomplett-von-innen ist keine Eigenschaft der Mathematik
+oder der Träume, sondern eine <em>ebenen-unabhängige Struktur</em> jedes sich selbst
+begründen wollenden Systems.</p>
+</section>
+
+<!-- ===================== WIDERSPRUECHE ===================== -->
+<section id="widersprueche">
+<h2><span class="k">2</span>Widersprüche zwischen A und B</h2>
+<p class="lead">Zwei konkrete, belegbare Punkte, an denen die beiden Papiere inkompatible
+Positionen beziehen:</p>
+
+<h3>(a) Die unendliche Kette: harte Grenze vs. transzendierende Auflösung</h3>
+<p><span class="tagA">A (Gödel, 2. Unvollständigkeitssatz):</span> Ein System, das stark genug
+ist, um Arithmetik zu formulieren, <em>kann seine eigene Konsistenz nicht von innen beweisen</em>.
+Um S zu beweisen, bräuchte man ein stärkeres System — „aber wer beweist dann <em>dessen</em>
+Konsistenz? Schildkröten bis auf den Grund.“ Der Regress ist damit eine
+<b>unauflösbare, permanente Grenze</b>: Es gibt keine letzte Begründung, Inkomplett bleibt
+unreduzierbar.</p>
+<p><span class="tagB">B (Dunne, „Serielle Zeit“):</span> Dunne geht von exakt derselben
+Schachtelung aus — „Wenn Zeit 1 fließt, braucht dieses Fließen selbst Zeit 2; wenn Zeit 2
+fließt, braucht das Zeit 3 … und so weiter bis ins Unendliche.“ Bei ihm findet genau diese
+Kette aber <em>in einer Instanz ihr Ende</em>: dem <b>„Beobachter bei Unendlich“</b>, dem
+unsterblichen „wahren Selbst“, das in allen Zeitdimensionen existiert und den freien Willen
+liefert. Die Kette wird also <b>transzendiert</b>, nicht als Grenze hingenommen.</p>
+<p>→ Gleiches Struktur-Motiv (das Eigene kann sich nicht auf seiner eigenen Stufe fassen; es
+braucht eine höhere Perspektive), <em>gegenläufige</em> Schlussfolgerung: A — endlose,
+nicht-begründbare Grenze; B — die Kette kulminiert in einem tatsächlichen, alles
+umfassenden Transzendenzpunkt.</p>
+
+<h3>(b) Bestimmte Wahrheit vs. veränderbare Zukunft (freier Wille)</h3>
+<p><span class="tagA">A (Gödel):</span> Der Rahmen setzt eine <em>feste, bestimmte</em> Menge
+wahrer Sätze voraus: „wahr, aber im System unbeweisbare Sätze“ — der Gödel-Satz <em>ist</em>
+wahr, unabhängig davon, ob er beweisbar ist. Wahrheit ist hier determiniert: was wahr ist,
+ist wahr, Punkt.</p>
+<p><span class="tagB">B (Dunne):</span> Gegenläufig hält Dunne, die Zukunft sei
+<b>keineswegs festgelegt</b>: „Freier Wille existiert — du kannst die Zukunft ändern.“ Sein
+sechster Kernerkenntnis-Text: „Du kannst aufgrund eines Traums handeln und damit die geträumte
+Zukunft verändern. Das beweist: Die Zukunft ist nicht festgelegt.“</p>
+<p>→ A postuliert ein determiniertes Wahrheitsgefüge; B hält die Zukunft offen und durch
+Handeln veränderbar. (B ist in sich zudem gespannt: „die Zeit ist eine Landschaft, die bereits
+existiert“ trifft auf „die Zukunft ist veränderbar“.)</p>
+</section>
+
+<!-- ===================== AUFLOESUNG ===================== -->
+<section id="aufloesung">
+<h2><span class="k">3</span>Auflösung</h2>
+
+<h3>(a) Regress → verschiedene Fragen, dieselbe Hierarchie</h3>
+<p>Der Knoten löst sich auf, sobald man fragt, <em>welche</em> Frage jeweils beantwortet wird.
+Gödel widerlegt ausschließlich die <b>interne Selbstbegründung</b> — ein System kann sich
+nicht <em>von sich aus</em> konsistenzbeweisen. Das verneint aber nicht <em>höhere</em>
+Blickstufen; im Gegenteil, es setzt sie voraus (das „stärkere System“). Dunnes
+<b>„Beobachter bei Unendlich“ ist genau eine solche höhere Stufe</b> — er steht außerhalb des
+Systems, das er überschaut, und kann daher das sehen, was dem Inneren verschlossen bleibt.
+Gödel und Dunne beschreiben dieselbe <em>offene Hierarchie von Perspektiven</em>; nur die
+Metafrage „Ist die Kette an einem <em>tatsächlichen</em> Punkt beendet?“ bleibt offen — und
+diese Frage ist eine metaphysische, die Gödel weder beweist noch widerlegt (sein Satz sagt
+bloß: von <em>innen</em> nicht erreichbar).</p>
+<p><b>Fusionierter Schluss:</b> „Inkomplett-von-innen“ ist robust (Gödel) und mit einer
+offenen, beliebig hoch fortsetzbaren Hierarchie von Blickstufen vereinbar (beide akzeptieren
+diese); einzig die <em>Existenz eines letzten Endpunkts</em> (Dannes ∞-Beobachter) ist
+genuin strittig und von der logischen Unvollständigkeit zu trennen.</p>
+
+<h3>(b) Bestimmtes vs. Offenes → zwei Ebenen, keine Kollision</h3>
+<p>Die beiden Sätze betreffen verschiedene Größen. Gödels „Wahrheit“ ist
+<b>logisch-objektiv</b> (die Wahrheit mathematischer Sätze), nicht die zeitliche Zukunft.
+Dannes „die Zukunft ist veränderbar“ gilt für <b>empirisch-persönliche Ereignisse</b> und die
+Lenkung der Aufmerksamkeit. Man kann beides halten: Die <em>Karte</em> (die Gesamtheit aller
+Wahrheiten, die gesamte Zeitlandschaft) ist fix und vollständig; der
+<em>tatsächlich gewanderte Weg</em> (welcher Erleben-Strang realisiert wird, wo der
+∞-Beobachter seine Aufmerksamkeit lenkt) bleibt offen. Das Determinierte ist die
+Struktur, das Offene die Realisierung innerhalb dieser Struktur. Gödels bestimmte Wahrheiten
+sind die fixen Merkmale der Karte; Dannes freier Wille ist der Walker, der die Route wählt —
+zwei Ebenen desselben Ganzen.</p>
+</section>
+
+<!-- ===================== INHALT ===================== -->
+<section id="inhalt">
+<h2><span class="k">4</span>Fusionierter Inhalt</h2>
+
+<h3>Die gemeinsame Struktur: Hierarchien von Blickstufen</h3>
+<p>Beide Papiere sind dieselbe Idee in zwei Kleidern. <b>Die lokale Stufe ist unvollständig;
+das Ganze liegt eine Stufe höher; der Aufstieg wiederholt sich unendlich.</b> Gödel: System S
+kann S’s Vollständigkeits-Anspruch nicht von innen erfüllen → stärkstes System S′ ist
+nötig → das braucht wieder S″ usw. Dunne: Zeit 1 (das „Jetzt“-Feld) reicht nicht → Zeit 2
+sieht Vergangenheit <em>und</em> Zukunft → Zeit 3 umschließt Zeit 2 → ∞. In beiden Fällen
+ist „das Eigene“ blind für den Rahmen, der es einfasst.</p>
+
+<h3>Gödel (A): das logische Gerüst</h3>
+<ul>
+<li><b>1. Satz:</b> Jedes konsistente formale System, stark genug für die Arithmetik, enthält
+wahre Sätze, die es im System nicht beweisen kann.</li>
+<li><b>Gödel-Nummerierung:</b> Jedes Zeichen erhält einen Code, jede Formel wird auf eine
+Primzahlpotenz zugeordnet; die Formel wird zu einer einzigen Zahl — so kann das System
+„über sich selbst in Arithmetik“ reden.</li>
+<li><b>Selbstreferenz:</b> Der Gödel-Satz <em>G</em> sagt: „Ich bin in S nicht beweisbar.“
+Wenn S G beweist → G wäre falsch → Widerspruch. Also (wenn S konsistent) ist G
+<b>wahr, aber unbeweisbar</b> — die Unvollständigkeit ist erwiesen.</li>
+<li><b>Konsistenz ↔ Vollständigkeit:</b> Man kann beides nicht haben; mehr „Alles beweisen“
+kostet Konsistenz bis hin zur Trivialität (P ∧ ¬P).</li>
+<li><b>2. Satz:</b> Konsistenz ist äquivalent zu G; da G unbeweisbar, ist „S ist konsistent“
+im System S selbst unbeweisbar — keine Selbstbegründung.</li>
+</ul>
+<div class="formula">Gödel-Nummer einer Formel: &nbsp; N = ∏<sub>i</sub> p<sub>i</sub><sup>c<sub>i</sub></sup>
+ &nbsp; (p<sub>i</sub> = i-tes Primzahlpotenz, c<sub>i</sub> = Zeichen-Code)</div>
+
+<h3>Dunne (B): die phänomenologische Architektur</h3>
+<ul>
+<li><b>Träume zeigen Zukunft <em>und</em> Vergangenheit</b> — „genauso häufig“, und zwar als
+normales Merkmal der Zeitwahrnehmung, nicht als Paranoia/Hellseherei. Belegfälle:
+Mont-Pelée 1902 (Insel-Vulkan), das ausbrechende Pferd 1904, der Zugsturz „Flying Scotsman“
+1913 — jeweils eine Vorschau auf ein <em>eigenes</em> späteres Erleben (z. B. das Lesen der
+Zeitung), nicht auf das ferne Ereignis selbst.</li>
+<li><b>Zeit als Landschaft:</b> Vergangenheit und Zukunft existieren zugleich, wie Orte auf
+einer Landkarte; im Wachzustand sieht man nur den „Jetzt“-Punkt, im Schlaf wandert die
+Aufmerksamkeit frei.</li>
+<li><b>Serielle Zeit:</b> Jede Zeitbewegung braucht eine höhere Zeit — Zeit 1 → 2 → 3 → ∞, eine
+unendliche Schachtelung.</li>
+<li><b>Serieller Beobachter:</b> Beobachter 1 = Gehirn/„bewusster Automat“ (stirbt mit dem
+Körper); Beobachter 2+ sind unsterblich; Beobachter ∞ = das wahre Selbst. Bewusstsein
+entsteht erst durch diese Seriellität; der freie Wille kommt vom „Beobachter bei Unendlich“,
+der Aufmerksamkeit lenken und eingreifen kann. Tod = Ende von Feld 1, nicht das Ende von
+„dir“.</li>
+<li><b>Methode (Experiment):</b> Notizbuch ans Bett, <em>sofort</em> beim Aufwachen den Traum
+aufschreiben (bevor die Augen aufgehen), abends mit dem Tag vergleichen, auf ungewöhnliche
+Details achten, 2-Tage-Limit, Trennen von „Gesehenem“ und „Interpretiertem“.</li>
+</ul>
+
+<h3>Die Integration</h3>
+<p>Gesetzt wird die Hierarchie, bestritten nur der Status des Endpunkts. <b>Gödel liefert
+den logischen Beweis, dass jede Stufe von innen unvollständig ist;</b> Dunne liefert das
+<em>Erfahrungs-Modell</em> dieser Hierarchie (Träume als „Fenster“ auf die höheren Zeitstufen,
+der ∞-Beobachter als deren Grenze). Zusammen: Unvollständigkeit ist kein Mangel, sondern die
+Bedingung dafür, dass es überhaupt höhere Perspektiven geben kann — und dass das Bewusstsein
+(Dunne) bzw. die Wahrheit (Gödel) sich über die bloße eigene Stufe hinaus erstrecken muss.
+Wer die „Ganzheit“ will, muss die Ebene wechseln; ob am Ende ein <em>wirkliches</em> Selbst
+(Dunne) oder ein ewiger, nicht abschließbarer Regress (Gödel) steht, bleibt die eine offene
+Frage des Ganzen.</p>
+</section>
+
+<!-- ===================== VISUALISIERUNG ===================== -->
+<section id="visualisierung">
+<h2><span class="k">5</span>Interaktive Visualisierung — die Blick-Ebenen</h2>
+<p class="lead">Konzentrische Ringe = die Zeit-Ebenen / System-Stufen (1 innen … N außen).
+Der gelbe Punkt ist <em>dein Blick / System S</em>. Das <b>grüne Feld</b> ist, was diese
+Stufe „beweisen / wahrnehmen“ kann; die <b>rosa Außenzone</b> ist, was ihr verschlossen
+bleibt — Gödels „wahr, aber unbeweisbar“, Dannes „noch unerkannte Zukunft“. Verschiebe die
+Blick-Ebene und aktiviere den ∞-Beobachter (Dunne) als höhere Stufe.</p>
+
+<div class="viz-controls">
+  <label>Blick-Ebene (Level):
+    <input type="range" id="lvl" min="1" max="6" step="1" value="3">
+    <span class="val" id="lvlVal">3</span>
+  </label>
+  <label><input type="checkbox" id="inf"> ∞-Beobachter (Dunne) aktivieren</label>
+  <button id="themeBtn">Theme wechseln</button>
+</div>
+
+<canvas id="vantageCanvas"></canvas>
+
+<div class="legend">
+  <span><span class="sw" style="background:var(--mn-covered)"></span> beweisbar / wahrgenommen (von dieser Stufe)</span>
+  <span><span class="sw" style="background:var(--mn-uncovered)"></span> wahr aber unbeweisbar / unerkannte Zukunft</span>
+  <span><span class="sw" style="background:var(--mn-vantage);border-radius:50%"></span> dein Blick / System S</span>
+</div>
+
+<div class="result" id="vres"></div>
+<p class="note" id="vnote"><b>Lesart:</b> Pro Ebene wächst das Feld, bleibt aber immer hinter
+der äußeren Grenze — das ist Gödel. Klicke „∞-Beobachter“: Dann deckt eine <em>höhere</em>
+Stufe das Ganze ab (Dunne); Gödel erwidert nur, dass auch <em>diese</em> Stufe wieder von
+innen unvollständig wäre, sobald man sie als neues System betrachte.</p>
+</section>
+
+<!-- ===================== PROVENIENZ ===================== -->
+<section id="provenienz" class="prov">
+<h2><span class="k">6</span>Provenienz</h2>
+<ul>
+<li><span class="lbl">A —</span>
+<a href="../goedel.html">goedel.html</a>
+· „Gödel’s Incompleteness Theorems — Interactive Explorer“ (englisch).
+Interaktive Entdecker-Seite zu den beiden Unvollständigkeitssätzen: formale Systeme,
+Gödel-Nummerierung, Selbstreferenz, Konsistenz/Vollständigkeit-Abwägung, 2. Satz.</li>
+<li><span class="lbl">B —</span>
+<a href="../buecher/an_experiment_with_time.html">an_experiment_with_time.html</a>
+· „An Experiment with Time — Interaktiv“ (deutsch, nach J. W. Dunne, 1927).
+Interaktive Zusammenfassung: Träume als Zukunfts-Vorschau, Zeit als Landschaft,
+serielle Zeit, der serielle Beobachter, das Traum-Journal-Experiment.</li>
+</ul>
+</section>
+
+<footer>Round 1 · Non-AI · Fusion id 025 · Selbstständiges Standalone-HTML · alle Daten inline</footer>
+</article>
+
+<script>
+(function(){
+  var canvas = document.getElementById('vantageCanvas');
+  var ctx = canvas.getContext('2d');
+  var lvlEl = document.getElementById('lvl');
+  var lvlVal = document.getElementById('lvlVal');
+  var infEl = document.getElementById('inf');
+  var themeBtn = document.getElementById('themeBtn');
+  var resEl = document.getElementById('vres');
+  var MAXL = 6;
+
+  function cssVar(name, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fb;
+  }
+  function col(name, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fb;
+  }
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+
+  function sizeCanvas(){
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth;
+    var h = canvas.clientHeight;
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(){
+    sizeCanvas();
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    var cx = w/2, cy = h/2;
+    var level = +lvlEl.value;
+    var inf = infEl.checked;
+
+    var cRing   = col('--mn-ring', '#8b84ff');
+    var cCover  = col('--mn-covered', '#43e97b');
+    var cUncov  = col('--mn-uncovered', '#ff6584');
+    var cVant   = col('--mn-vantage', '#feca57');
+    var cText   = col('--mn-text', '#e4e6ee');
+    var cMuted  = col('--mn-muted', '#9a9db0');
+    var cLine   = isDark() ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.16)';
+
+    var maxR = Math.min(w, h)/2 - 34;
+    var minR = 30;
+    var step = (maxR - minR)/(MAXL-1);
+
+    // rings outer -> inner
+    for (var L = MAXL; L >= 1; L--){
+      var r = minR + step*(L-1);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.lineWidth = (L === level) ? 2.4 : 1.2;
+      ctx.strokeStyle = (L === level && !inf) ? cRing : cLine;
+      ctx.stroke();
+      ctx.fillStyle = (L === level && !inf) ? cText : cMuted;
+      ctx.font = '11px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText('Ebene ' + L + '  (Zeit ' + L + ')', cx, cy - r - 5);
+    }
+
+    // coverage radius: level's ring (or full maxR if infinity)
+    var coverR = inf ? maxR : (minR + step*(level-1));
+
+    // uncovered outer band (annulus between coverR and maxR) + beyond
+    ctx.beginPath();
+    ctx.arc(cx, cy, maxR, 0, Math.PI*2);
+    ctx.arc(cx, cy, Math.max(1, coverR), 0, Math.PI*2, true);
+    ctx.fillStyle = hexA(cUncov, 0.10);
+    ctx.fill();
+
+    // covered inner disc
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(1, coverR), 0, Math.PI*2);
+    ctx.fillStyle = hexA(cCover, 0.13);
+    ctx.fill();
+
+    // boundary (sight limit)
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(1, coverR), 0, Math.PI*2);
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,4]);
+    ctx.strokeStyle = cUncov;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // "beyond" marker at top
+    ctx.fillStyle = cMuted;
+    ctx.font = 'italic 11px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('… und weiter, bis ins Unendliche (∞)', cx, cy - maxR - 16);
+
+    // boundary label
+    ctx.fillStyle = cUncov;
+    ctx.font = '11px ui-monospace, monospace';
+    ctx.fillText('Grenze des Blicks', cx, cy - coverR - 5);
+
+    // vantage dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI*2);
+    ctx.fillStyle = cVant;
+    ctx.fill();
+    ctx.fillStyle = cText;
+    ctx.font = 'bold 11px ui-monospace, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(inf ? '∞-Beobachter (Dunne)' : 'System S / dein Blick', cx + 10, cy + 4);
+
+    updateText(level, inf);
+  }
+
+  function hexA(hex, a){
+    // hex like #rrggbb -> rgba
+    if (hex && hex.charAt(0) === '#'){
+      var n = hex.length === 4 ?
+        parseInt(hex.slice(1).split('').map(function(c){return c+c;}).join(''),16) :
+        parseInt(hex.slice(1),16);
+      var r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+    return hex;
+  }
+
+  function updateText(level, inf){
+    if (inf){
+      resEl.className = 'result ok';
+      resEl.innerHTML = '<b>∞-Beobachter aktiv (Dunne).</b> Eine <em>höhere</em> Stufe übersieht ' +
+        'die gesamte Zeitlandschaft — Vergangenheit <em>und</em> Zukunft, alle Ebenen. Das ist ' +
+        'Gödels „stärkeres System“, das S <em>aussen</em> konsistenzbeweist. Gödels Einwand bleibt: ' +
+        'Betrachtet man <em>diese</em> Stufe nun selbst als System, ist sie von <em>innen</em> ' +
+        'wieder unvollständig — die Hierarchie endet nicht, sie steigt nur weiter.';
+    } else if (level >= MAXL){
+      resEl.className = 'result warn';
+      resEl.innerHTML = '<b>Maximale Ebene ' + MAXL + '.</b> Du bist auf der stärksten Stufe ' +
+        'hinaufgestiegen — und siehst trotzdem: die äußere Zone ist nicht leer. Gödel: Selbst das ' +
+        'stärkste System hat wahr-aber-unbeweisbare Sätze <em>eine Stufe darüber</em>. ' +
+        '„Schildkröten bis auf den Grund“ — keine letzte Begründung von innen.';
+    } else if (level <= 2){
+      resEl.className = 'result warn';
+      resEl.innerHTML = '<b>Ebene ' + level + ' (niedrige Stufe).</b> Ein weiser Großteil der ' +
+        'Landschaft ist dir verschlossen — genau wie dem „Beobachter 1“, der nur den Jetzt-Punkt ' +
+        'sieht. Dunne: Im Schlaf weitet sich die Aufmerksamkeit auf Zeit 2 und sieht, was hier ' +
+        'verborgen bleibt.';
+    } else {
+      resEl.className = 'result';
+      resEl.innerHTML = '<b>Ebene ' + level + '.</b> Das Sichtfeld wächst mit jeder Stufe — du ' +
+        'beweist/wahrnimmst mehr — doch die äußere rosa Zone (wahr aber unbeweisbar / die noch ' +
+        'unerkannte Zukunft) bleibt. Inkomplett-von-innen gilt auf <em>jeder</em> Ebene.';
+    }
+  }
+
+  lvlEl.addEventListener('input', function(){ lvlVal.textContent = lvlEl.value; draw(); });
+  infEl.addEventListener('change', draw);
+  themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  window.addEventListener('resize', draw);
+
+  lvlVal.textContent = lvlEl.value;
+  draw();
+})();
+</script>
+</body>
+</html>

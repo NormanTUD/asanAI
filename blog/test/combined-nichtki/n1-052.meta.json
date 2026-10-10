@@ -1,0 +1,16 @@
+{
+  "no": "052",
+  "a": "pz2.html",
+  "b": "narcissism.html",
+  "a_title": "🔢 Primzahl-Muster-Explorer",
+  "b_title": "🎭 Narzisstische Manipulationsstrategien",
+  "combined_theme": "pattern-drift-perception",
+  "one_line": "Beide Papiere codieren ein Muster, das hinter scheinbarer Zufälligkeit steckt — der Unterschied liegt im Drift (stabil vs. degradierend) und in der Integrität der Wahrnehmung (souveräner Beobachter vs. vergiftete Referenz).",
+  "contradictions": [
+    "Stationärer vs. degradierender Zyklus: A's Primzahlstruktur ist stabil/asymptotisch (1/ln n, keine Drift), B's narzisstischer Zyklus sinkt pro Wiederholung (selfWorth -= c*12, exponentieller Abbau des Selbstwerts).",
+    "Souveräner vs. manipulierter Beobachter: A setzt einen ungeschädigten Beobachter voraus, der frei die Projektion wählt; B's Opfer wird durch Gaslighting systematisch in der Wahrnehmung untergraben.",
+    "Neutrales vs. feindliches Muster: A's Muster belohnt Muster-Erkennung mit Mastery; B's Muster ist adversarial erzeugt und Erkennung dient dem Exit/der Erholung."
+  ],
+  "resolution": "Ein Muster = Trend(t) + Periode(t) + Bezug zu einer Referenz. Benign (A) = stabiles Trend + gegebene, unverletzte Referenz + souveräner Beobachter; Hostile (B) = negatives Trend + vergiftete Referenz + geschädigter Beobachter. Dasselbe Analyseverfahren (Projektion wählen, Drift messen, Wahrnehmung an objektive Referenz abgleichen) decodiert beides — nur B muss die Referenz (Selbstwert) zuerst über die Erholung wiederherstellen. Die entscheidende Unterscheidungsfrage ist der Erzeuger: ohne adversariale Absicht = Gesetz (Mastery), mit adversarialer Absicht = Manipulation (Exit).",
+  "viz": "Canvas-Overlay: (A) reale, stationäre Primzahldichte (lokal, Fenster 50) mit Oszillation um die asymptotisch stabile Gerade 1/ln n; (B) oszillierender Selbstwert mit einstellbarem negativem Drift; rote 'Wahrnehmungs'-Linie, die mit dem Gaslighting-Slider vom objektiven grünen Kurs abdriftet, verrauscht und verzerrt. Slider: Zyklen, Drift, Gaslighting. Theme-aware, inline Daten, keine externen Abfragen."
+}

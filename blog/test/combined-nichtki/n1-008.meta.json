@@ -1,0 +1,16 @@
+{
+  "no": "008",
+  "a": "pz.html",
+  "b": "garben_uebersicht.html",
+  "a_title": "Prime Pattern Explorer",
+  "b_title": "Garben: Intuition, Bilder und Abstrakter Formalismus",
+  "combined_theme": "lokal-global-verklebung",
+  "one_line": "Das Lokal-Global-Prinzip in zwei Registern: was die Garbe-Bedingung als Axiom ausspricht (kompatible lokale Daten verkleben zu genau einem globalen Objekt), zeigt der Primzahlexplorer als sichtbare Spiralgalaxie, die existiert genau dann, wenn der Winkelschritt sich schliesst (klein rational) und sonst armlos streut.",
+  "contradictions": [
+    "Kein direkter Faktenwiderspruch (verschiedene Gegenstaende). Spannung 1 (epistemisch): pz.html begruendet durch empirisches Sehen - ein beobachtetes, unbestaetigtes Muster ('Values near PI create massive galactic structures') -; garben_uebersicht begruendet nur durch das exakte Axiom, wobei Intuition/Bild nur Geruest sind. A vertraut dem Auge, B misstraut dem Bild, bis es Axiom ist.",
+    "Spannung 2 (Orientierung): pz.html ist global-first - der Sinn lebt nur im Ganzen (Galaxie), eine einzelne Primzahl ist Rauschen; garben_uebersicht ist lokal-first - Halm/Keim/Schnitt auf offenen Mengen sind primar, das globale Objekt wird daraus abgeleitet.",
+    "Spannung 3 (Parameter): pz.html erzeugt Struktur durch einen kontinuierlichen Regler (Winkelmultiplikator k, Schrittbreite 0.00001); garben_uebersicht hat keine Struktur durch Tuning, sondern ein binares Ja/Nein-Axiom ueber diskrete offene Mengen."
+  ],
+  "resolution": "Die drei Spannungen loesen sich auf, weil A und B dasselbe Objekt in zwei Registern lesen und B selbst schon die Bruecke benennt (Spalten Intuition/Bild neben Formalismus): (1) Bild = visueller Beweis, Axiom = Theorem (komplementaer); (2) global-first und lokal-first sind duale Lesearten desselben Objekts, denn per Equalizer-Diagramm IST der globale Schnitt die kompatible Familie lokaler Daten; (3) die Rationalitaet von k/pi ist eine diskrete Invariante, die ueber einen kontinuierlichen Regler abgefragt wird - das Tuning entdeckt eine diskrete Klassifikation, wie die Garbe-Bedingung durch Variation der Ueberdeckung geprobt wird.",
+  "viz": "Theme-reaktives Canvas-2D-Labor: Primzahlen (inline per Sieb) in Phyllotaxis/Polar/Ulam mit kontinuierlichem Winkel-Regler k; ein Kompass-Inset zeigt die 30 Winkelschritte (clustern = Regel schliesst sich = Arme = Garbe/Verklebung OK; streuen = fast irrational = kein globales Bild = keine Verklebung); ein Readout rechnet Kettenbruch-Konvergenten von k/pi und die beste kleine rationale Naehderung p/q als 'Kompatibilitaetsbedingung'. Presets (2pi/7, 2pi/5, 3pi/5, pi/2, pi, goldener Winkel). Null externe Abfragen, Null externe Bibliotheken, Null Konsolenfehler."
+}

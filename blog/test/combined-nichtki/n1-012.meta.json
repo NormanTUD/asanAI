@@ -1,0 +1,16 @@
+{
+  "no": "012",
+  "a": "task.html",
+  "b": "wisdom.html",
+  "a_title": "Boundary maps, one picture at a time",
+  "b_title": "What is Wisdom?",
+  "combined_theme": "boundary-of-wisdom",
+  "one_line": "The boundary operator ∂ is the formal picture of the wise pause: act on the invariant (the hole that survives), let the transient (the boundary, where ∂∘∘∂ = 0) cancel, and pause just long enough to reach the hole.",
+  "contradictions": [
+    "task.html treats the exact mechanical rule as the essence (run the delete-a-vertex ritual, compute ∂, count Betti numbers); wisdom.html demotes the bare rule/knowledge ('knowing fire is hot', 'collecting advice you never use') to a tier below wisdom.",
+    "task.html is total determinism and closure (∂∘∘∂ = 0, invariants, 'Nothing survives. A rim has no ends.'); wisdom.html's pillar 4 is comfort with uncertainty — 'the wise hold questions open longer than the anxious.'",
+    "task.html: insight (the hole / the cancellation) is the downstream output of faithfully executing the procedure; wisdom.html: the virtue is the upstream pause before action ('responding from clarity', 'the quiet voice that says wait when everything screams go')."
+  ],
+  "resolution": "They are the form and the praxis of one reflex, not rivals. The rule (∂, Betti) is the map — it computes what cancels; the 'when' is the foot that stops. Reconcile: close what is a boundary (let the transient cancel, since ∂∘∘∂ = 0 means a reaction has no content) and keep open what is a cycle that is not a boundary (the invariant / hole). The pause (B) is the moment you decide to apply ∂ (A); the hole (A) is what you pause (B) for. Certainty governs what cancels; the when governs where to stop; what survives is what is worth acting on.",
+  "viz": "A theme-aware canvas (no CDN, inline data only): a triangle whose boundary runs the ∂∘∘∂ = 0 cancellation loop ('reacting has no content') beside a glowing annulus = 'the hole' (the invariant that remains, Betti 1 > 0). A Pause↔Act slider (caution ↔ impulse, B's axis) moves an action 'fire' token — at the sweet spot it lands on the invariant, at the impulse end it lands on the (wasted) transient, at the caution end it never acts — with five faithful message bands. Colors read from CSS vars (:root light / html.dark dark default) and a manual light/dark toggle re-reads them, so the first paint is already theme-correct."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "023",
+  "a": "bordism.html",
+  "b": "buecher/schreber.html",
+  "a_title": "Interactive Bordism Explorer",
+  "b_title": "Denkwürdigkeiten eines Nervenkranken (Daniel Paul Schreber, 1903)",
+  "combined_theme": "identitaet-als-prozess",
+  "one_line": "Identität ist nicht Substanz, sondern Prozess: ein Rand (Manifold-Ende/Leib) ist der Schatten eines inneren Mediums (Bordismus W / Nervenfeld-Strahlen), und 'dasselbe' heißt 'von einem gemeinsamen W / denselben Strahlen verbunden'.",
+  "contradictions": [
+    "Rang der Ordnung — Freiheit vs. Zwang: A (Bordismus) beschreibt die Struktur (Äquivalenzrelation, abelsche Gruppe, Ring) als objektiv-exakt und frei von außen zu gestalten ('Drag, twist, and play', Designer-Perspektive); B (Schreber) erlebt die Weltordnung als auferlegten Zwang (Denkzwang, unaufhörliche Stimmen 'ohne Pause, Tag und Nacht'), das Subjekt als transformierter Gegenstand, nicht als Gestalter.",
+    "Gesetzlichkeit des Verschwindens — Zug vs. Mord: A hält das Verschwinden eines Randes (Kappe S¹→∅, Vernichtung 2·S¹→∅; S¹=0 in Ω₁^O) für einen legitimen, neutralen, erhaltenden Ringzug; B erlebt dieselbe Form — eine Seele wird zugeignet/vernichtet (Flechsig, 'Seelenmord') — als tiefste Verletzung und Wunde der Weltordnung.",
+    "Garantiert vs. wiederhergestellt: A's Ordnung ist axiomatisch geschlossen (Schließung durch Gruppen-/Ringaxome, keine Krise möglich); B's Weltordnung kann zerrissen werden und muss sich selbst heilen ('Die Weltordnung trägt die Heilmittel für die ihr geschlagenen Wunden in sich selbst', 'siegt am Ende')."
+  ],
+  "resolution": "Freiheit vs. Zwang ist nur Perspektivunterschied auf dieselbe Beziehung ∂W = M₁ ⊔ M₂ (Gestalter hält W von außen / Getriebenes erleidet W von innen). 'Rand→null' ist formal legitim, aber existenziell verheerend, wenn er einem Ich aufgezwungen statt von ihm vollzogen wird — der 'Seelenmord' ist exakt eine Kappe/Vernichtung, die um das Subjekt herum statt durch es geroutet ist. B's 'Selbstheilung der Weltordnung' ist exakt die Schließung/Konservierung der Bordismus-Gruppe; B ist die narrative Form von A's Invarianz.",
+  "viz": "2D-Canvas-Bordismus W mit fließenden Nerven-/Strahlen-Partikeln; vier Züge (Zylinder S¹→S¹ = Beständigkeit, Hosen S¹→S¹⊔S¹ = Neuschöpfung 1→2, Kappe S¹→∅ = Auflösung/Aufstieg/Seelenmord, Geburt ∅→S¹), Randkreuze M₁/M₂/∅, querender Querschnittsscan, themenreaktiv (CSS-Variablen, light/dark)."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "076",
+  "a": "buecher/kritik_der_reinen_vernunft.html",
+  "b": "paper/formal_proof.html",
+  "a_title": "Kants Kritik der reinen Vernunft - Interaktiv",
+  "b_title": "Formal Proof - Interactive Visual Explainer",
+  "combined_theme": "architektur-der-gewissheit",
+  "one_line": "Gewissheit ist architektonisch, nicht intuitiv: Kant (a priori-Formen und Kategorien) und Hales (Kernel, Inferenzregeln, p^n-Querverifizierung) ersetzen beide den passiven Spiegel durch Struktur — und beide stoßen auf ein Fundament, das sie mit den eigenen Werkzeugen nicht erreichen.",
+  "contradictions": [
+    "Status der Grenze: Kant hält die Grenze zum Ding an sich für absolut und konstitutiv (Überschreitung führt unweigerlich in Antinomien), Hales behandelt die Grenze des Gewissen-Könnens als praktisch und erweiterbar (QED-Vision, Verschiebung der Automationsgrenze).",
+    "Prüfbarkeit des Fundaments: Kant sagt, das a priori-Fundament (Formen/Kategorien) sei wesentlich unverifizierbar (nichts darüber, gegen das es sich prüfen ließe); Hales macht das Fundament (Kernel ~500 Zeilen) absichtlich verifizierbar via Finitheit und unabhängiger Querverifizierung (Restrisiko p^n).",
+    "Ort der Garantie: Kant macht das spontane Subjekt zum Garant der Notwendigkeit (sein Übergriff ist die Gefahr); Hales macht die prüfende Maschine zum Garant und den Menschen zur Fehlerquelle (~1 Bug/100 Zeilen)."
+  ],
+  "resolution": "Die zwei Grenzen sind dieselbe Architektur auf zwei Ebenen: eine Bereichsgrenze (Kant, was die Formen prinzipiell erreichen) und eine Kapazitätsgrenze (Hales, was das geprüfte System aktuell reduziert). p^n ist die praktische Asymptote von Kants absoluter Grenze: Querverifizierung treibt den Restfehler gegen Null, erreicht ihn nie — die letzte Rechtfertigung wechselt immer die Währung (Kant: konstitutive Rolle des Subjekts; Hales: Logiker-Inspektion + unabhängige Systeme). Der Garant ist nie der Einzelne, sondern die Grammatik (Kategorien / Kernel).",
+  "viz": "Canvas-gestützte 'Architektur der Gewissheit': vier gestapelte Schichten (Inhalt, Grammatik, Formen/Sprache, Fundament) mit Kant-/Hales-Beschriftung, einem Regler 'Tiefe der Prüfung', der eine Probe durch die Schichten führt, einem Restrisiko-p^n-Readout und einer markierten Grenze (Ding an sich / externe Kernel-Inspektion); Modus-Schalter Kant/Hales/Fusion und Theme-Toggle, themenreaktiv über CSS-Variablen, reine Canvas-Implementation ohne externe Libs."
+}

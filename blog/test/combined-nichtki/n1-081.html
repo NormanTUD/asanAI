@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 081 — Prozess erzeugt kohärente, kanonische Struktur</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --fg:#18202f; --muted:#5a6478; --card:#ffffff; --panel:#eef1f7;
+    --border:#d9dfea; --accent:#4f46e5; --accent2:#0e7490; --ok:#15803d; --bad:#b91c1c;
+    --grid:#e2e8f0; --traject:#b45309;
+    --att1:#db2777; --att2:#0284c7; --att3:#b45309;
+    --shadow:0 8px 30px rgba(20,30,60,.08);
+  }
+  html.dark{
+    --bg:#0b1020; --fg:#e6e9f2; --muted:#93a0b8; --card:#111a2c; --panel:#0f1626;
+    --border:#21304a; --accent:#8b96ff; --accent2:#38bdf8; --ok:#4ade80; --bad:#f87171;
+    --grid:#1c2942; --traject:#fbbf24;
+    --att1:#f472b6; --att2:#38bdf8; --att3:#fbbf24;
+    --shadow:0 16px 50px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif;
+    line-height:1.65;font-size:16px}
+  .wrap{max-width:820px;margin:0 auto;padding:34px 20px 80px}
+  header{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:8px}
+  .tag{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;margin-bottom:14px}
+  h1{font-size:2.05rem;line-height:1.2;margin:.1em 0 .35em;font-weight:800;letter-spacing:-.02em}
+  h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:.95rem;margin:0}
+  .themebtn{float:right;margin-top:-2px;background:var(--card);color:var(--fg);
+    border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85rem}
+  section{margin:30px 0;padding:26px 26px 24px;background:var(--card);
+    border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+  h2{font-size:1.4rem;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+  h2 .n{font-size:.8rem;font-weight:700;color:var(--accent2);border:1px solid var(--border);
+    border-radius:6px;padding:2px 8px}
+  h3{font-size:1.05rem;color:var(--accent);margin:22px 0 8px}
+  p{margin:12px 0}
+  .lead{font-size:1.02rem}
+  strong{color:var(--fg)}
+  a{color:var(--accent2)}
+  .eq{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:10px;padding:14px 16px;margin:16px 0;font-family:"JetBrains Mono",ui-monospace,monospace;
+    font-size:.92rem;overflow-x:auto}
+  .eq .lbl{display:block;font-family:inherit;font-size:.72rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .callout{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent2);
+    border-radius:10px;padding:14px 16px;margin:16px 0}
+  .callout.warn{border-left-color:var(--bad)}
+  .callout.good{border-left-color:var(--ok)}
+  .who{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .who.a{color:var(--accent)} .who.b{color:var(--accent2)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  @media(max-width:640px){.vs{grid-template-columns:1fr}}
+  .pane{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+  .pane .t{font-weight:700;margin-bottom:4px;font-size:.9rem}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem}
+  th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--accent);font-weight:700}
+  .synth{border:1px dashed var(--accent2);border-radius:12px;padding:16px;margin:18px 0;background:var(--panel)}
+  .synth .cap{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px}
+  canvas#basin{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--border);
+    background:var(--panel);cursor:crosshair}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:14px 0}
+  .ctrl{display:flex;flex-direction:column;gap:4px;min-width:140px;flex:1}
+  .ctrl label{font-size:.8rem;color:var(--muted)}
+  .ctrl input[type=range]{accent-color:var(--accent)}
+  .ctrl .val{font-size:.8rem;color:var(--accent2);font-family:ui-monospace,monospace}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.82rem;margin:10px 0;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+  #viz-readout{font-family:ui-monospace,monospace;font-size:.86rem;background:var(--panel);
+    border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:12px;min-height:44px}
+  #viz-readout .ok{color:var(--ok);font-weight:700} #viz-readout .bad{color:var(--bad);font-weight:700}
+  footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:.82rem}
+  .prov{display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--border)}
+  .prov:last-child{border-bottom:none}
+  .prov .id{font-family:ui-monospace,monospace;font-weight:700;min-width:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <button class="themebtn" id="theme-toggle" type="button">☀ / ☾</button>
+  <span class="tag">Knockout-Synthese · Runde 1 · nicht-AI-Track · id 081</span>
+  <h1>Von der Trajektorie zum <span class="grad">kanonischen Objekt</span></h1>
+  <p class="sub">Fusion aus: higher_algebra.html ✕ effortless_basins_of_attraction.html</p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span> Kernthese der Fusion</h2>
+  <p class="lead">Gute Struktur — ob algebraisch (A) oder dynamisch (B) — ist <strong>nie einfach vorgegeben und nie beliebig</strong>: Sie <em>entsteht aus einem lokalen Prozess</em> (bei B der Fluss/die Trajektorie, bei A die Axiome bzw. der Funktoral) und ist dabei <em>kanonisch</em> — der Raum aller gültigen Wege bzw. Modelle, die auf dieselbe Struktur führen, ist im Wesentlichen <strong>ein einziger (kontrahierbar)</strong>. Kurz: <em>Prozess erzeugt Invariante, Kohärenz macht sie eindeutig.</em></p>
+  <p>Bei B ist der <strong>Attraktor</strong> genau das Objekt, das <em>überlebt, wenn die Trajektorie vergessen wird</em> — also wenn der instabile Teil der Anfangsdaten weggespült ist. Das ist wörtlich die Bewegung, die A „Stabilisierung“ nennt: <em>„alle instabilen Phänomene werden weg-gewaschen, es bleibt nur die stabile Information“</em>. Das <strong>Einzugsgebiet</strong> eines Attraktors ist die Klasse aller Trajektorien mit demselben Limes — eine <em>Homotopieklasse von Wegen</em>. Die <strong>Endzustands-Map</strong> Φ(p) = der Attraktor, zu dem der Punkt p konvergiert, ist die dynamische Entsprechung des Stabilisierungs-Funktoral Σ<sup>∞</sup> (es vergisst den Weg und behält die Klasse).</p>
+  <p>Und A’s <strong>„Kohärenz“</strong> — „der Raum aller Wege ist kontrahierbar, es gibt im Wesentlichen nur eine Art“ — hat in B ein exaktes Gegenstück: die <strong>Deterministik</strong> des dynamischen Systems. Jeder Startpunkt hat genau <em>eines</em> Schicksal. Im Inneren eines Basins stimmt beides: viele Startpunkte, viele Trajektorien, aber alle in dieselbe Richtung deformierbar, ein einziges Ziel. Wo das <em>bricht</em> — am <strong>fraktalen Rand</strong>, <em>final state sensitivity</em> — ist der Raum der Wahl <em>nicht</em> kontrahierbar; da „lebt interessante Topologie“. Genau das ist der Ort, den A als das Problem benennt, das höher-algebraische Kohärenz löst.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span> Widersprüche zwischen A und B</h2>
+
+  <h3>(W1) Prozess wegwerfen vs. Prozess ausführen</h3>
+  <div class="vs">
+    <div class="pane"><div class="t"><span class="who a">A sagt</span></div>
+    Der Kernzug ist <strong>Stabilisierung = den Prozess vergessen</strong>: „Spectra … haben stabilisiert — alle instabilen Phänomene werden weg-waschen, es bleibt nur die stabile Homotopie-Information.“ Man hält die Invariante fest, indem man die konkrete Trajektorie/den konkreten Weg <em>mod-out</em> macht.</div>
+    <div class="pane"><div class="t"><span class="who b">B sagt</span></div>
+    Das Basin ist erst definiert, wenn man die Trajektorie <strong>Zeitschritt für Zeitschritt bis zu ihrem Limes integriert</strong> (FSM: „Integriere einen Zeitschritt Δt“). Die Invariante ist <em>nur</em> über die faithful Ausführung des Prozesses erreichbar — man kann ihn nicht überspringen.</div>
+  </div>
+
+  <h3>(W2) Struktur von oben vs. Struktur von unten</h3>
+  <div class="vs">
+    <div class="pane"><div class="t"><span class="who a">A sagt</span></div>
+    Deduktiv/axiomatisch: Struktur kommt von den <strong>defining laws</strong> (Monoid-Axiome + Kohärenz-Axiome wie Pentagon/Sechs-Ecken). Die Struktur ist kanonisch, <em>weil die Axiome sie erzwingen</em> — man konstruiert sie top-down aus einer Spezifikation.</div>
+    <div class="pane"><div class="t"><span class="who b">B sagt</span></div>
+    Induktiv/empirisch: Struktur ist <strong>nicht bekannt</strong> und wird <em>entdeckt</em> — der FSM-Algorithmus findet Attraktoren und Basins „ohne jegliches Vorwissen“ nur aus Fluss + Gitter + Poincaré-Wiederkehr. bottom-up aus dem Prozess.</div>
+  </div>
+
+  <h3>(W3) Viele äquivalente Modelle vs. eine einzige Partition</h3>
+  <div class="vs">
+    <div class="pane"><div class="t"><span class="who a">A sagt</span></div>
+    Pluralismus: es gibt <strong>mehrere nicht-kanonische, aber äquivalente Modelle</strong> desselben ∞-Kategorischen Objekts — „S-modules, symmetrische Spectren, orthogonale Spectra. All are Quillen equivalent!“ Kein Modell ist privilegiert.</div>
+    <div class="pane"><div class="t"><span class="who b">B sagt</span></div>
+    Monismus: die Basin-Partition ist <strong>die</strong> eindeutige, deterministische Antwort; es gibt keinen „Modell-Pluralismus“ — dieselbe Partition für jeden Beobachter.</div>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span> Auflösung</h2>
+
+  <h3>Zu (W1) — zwei Stufen derselben Pipeline</h3>
+  <p>B liefert die <em>„Prozess → Invariante“-Map</em>: Φ(p) = Limes der Trajektorie. A liefert das <em>„Invariante = Äquivalenzklasse“-Geriüst</em>: zwei Trajektorien im selben Basin sind „homotop“ (innerhalb des Basins ineinander deformierbar) und liefern denselben Φ. Man muss den Prozess also <strong>einmal</strong> ausführen (B), um die Invariante zu bekommen — und darf danach <strong>den spezifischen Weg vergessen</strong> (A), weil alle Wege zu demselben Attraktor äquivalent sind. Widerschein: Φ ist <em>invariant unter der Wahl der Trajektorie</em>, aber <em>definiert</em> über ihr.</p>
+
+  <h3>Zu (W2) — B ist die Konkretisierung, A die Rechtfertigung</h3>
+  <p>Beide Seiten sind <em>zwei Richtungen derselben Münze</em>. B’s Prozess <em>erzeugt</em> die Daten, auf denen A’s Axiome operieren: B’s Ausgabe (Attraktoren + Basin-Partition + „Basin = Modul über Attraktor“) ist genau die Art „Struktur up to equivalence“, die A studiert. Umgekehrt ist A’s Kohärenz-Satz die <em>Rechtfertigung, dass B’s Entdeckung wohl-posed ist</em>: weil das Schicksal deterministisch ist, ist der Raum aller gültigen Basin-Zuweisungen ein einzelner Punkt (kontrahierbar) — also ein kohärentes, kanonisches Objekt im A’schen Sinne. Der <strong>Self-Acceleration des FSM</strong> (Gitter als Gedächtnis, <code>bas_hit</code>-Shortcut, „der Algorithmus beschleunigt sich selbst“) ist die konkrete Rechenversion von „einmal bekannt = überall wiederverwendbar“ — dieselbe Idee wie bei A: „viele Türen führen zum selben Ziel; kenne eine, und du kennst sie alle“.</p>
+
+  <h3>Zu (W3) — Pluralität der Modelle, Eindeutigkeit der Invariante</h3>
+  <p>Gleiches Muster, beidseitig: A hat <em>viele Modelle, eine ∞-Kategorie</em> (symmetrisch/orthogonal/S-Module — Quillen-äquivalent, also „gleich“ im Wesentlichen). B hat <em>viele Algorithmen/Gitter/Δt, eine Basin-Partition</em> (unterschiedliche Auflösungen laufen gegen dieselbe Partition). <strong>Die Methode ist plural, das Invariante ist eindeutig</strong> — das ist keine Spannung mehr, sondern die gemeinsame Struktur.</p>
+
+  <div class="callout good">
+    <strong>Fusionierte Gesamtkonklusion.</strong> Ein Attraktor ist ein <em>stabiles Homotopie-Objekt</em>, das man durch <em>Ausführen der Dynamik</em> (B) findet und als <em>Äquivalenzklasse von Trajektorien</em> (A) auffasst. Das Ein-zugsgebiet ist diese Klasse. Der fraktale Basin-Rand ist genau der Ort, wo der <em>Raum der Wahl nicht kontrahierbar</em> ist — wo „interessante Topologie“ lebt — und damit der <em>Chaos-Schwellenwert</em> von Kohärenz. Die beiden Papiere sind zwei Seiten desselben Prinzips: <em>lokale Regeln → globale, kanonische Struktur.</em>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span> Fusionierter Inhalt</h2>
+
+  <h3>4.1 Aus B — die dynamische Maschine (getreu)</h3>
+  <p>Ein dynamisches System ist die Regel „wo bin ich einen Zeitschritt später“: diskret <code>x<sub>n+1</code> = f(x<sub>n</code>)</code>, kontinuierlich <code>ẋ = f(x)</code>. Ein <strong>Attraktor</strong> ist die Menge, auf die Trajektorien im Langzeitverhalten zulaufen — vier Grundtypen: <em>Fixpunkt</em> (dim 0), <em>periodischer Orbit</em> (dim 1), <em>Torus</em> (dim 2), <em>seltsam/chaotisch</em> (fraktal). Das <strong>Basin of Attraction</strong> ist die Menge aller Startpunkte, die zu einem gegebenen Attraktor führen; bei mehreren Attraktoren heißt das System <em>multistabil</em> und Parameteränderungen erzeugen <em>Kipp-Punkte</em>.</p>
+  <p>Der Schlüsselsatz ist die <strong>Poincaré-Wiederkehr</strong>: eine Trajektorie auf einem beschränkten Attraktor kehrt (fast) beliebig nahe an jeden besuchten Punkt unendlich oft zurück. Daraus baut Datseris &amp; Wagemakers (2021) eine <strong>Finite State Machine</strong> auf einem Gitter. Zellenlabels:</p>
+  <div class="eq"><span class="lbl">FSM-Zellenlabels</span>
+1 = unbekannt · v = besucht (transient) · 2k = Attraktor Nr. k · 2k+1 = Basin von k · −1 = divergent</div>
+  <p>Zustände: <code>att_search → att_found → att_hit / bas_hit / lost</code>. Wiederkehr in eigenen v-Zellen über einer Schwelle ⇒ <code>att_found</code>; Treffer einer bekannten Attraktor-/Basin-Zelle klassifiziert die Startzelle sofort. Das Gitter ist <em>Gedächtnis</em>: bekanntes wird wiederverwendet, der Algorithmus <strong>beschleunigt sich selbst</strong> und schlägt die naive Methode selbst dann, wenn diese die Attraktoren geschenkt bekommt. Beispiele: Hénon-Map, Duffing, Magnetpendel, Lorenz-84, Thomas, gekoppelte logistische Maps (≈26 Attraktoren).</p>
+  <div class="eq"><span class="lbl">Beispiel-Potential &amp; Kippunkt (getreu)</span>
+Doppelmulde V(x) = x⁴/4 − x²/2,  V′(x) = x³ − x
+geneigt  V_F(x) = x⁴/4 − x²/2 − F·x  →  Kippunkt, wenn x³ − x − F nur noch ein Minimum hat
+Hénon:  x<sub>n+1</sub> = 1 − a x<sub>n</sub>² + y<sub>n</sub>,   y<sub>n+1</sub> = b x<sub>n</sub></div>
+
+  <h3>4.2 Aus A — die abstrakte Maschine (getreu)</h3>
+  <p>Ordentliche Algebra hält Gleichungen <em>exakt</em> fest (a·b = b·a). <strong>Höhere Algebra</strong> hält sie nur <em>bis auf Homotopie</em>: „es existiert ein Weg von a·b zu b·a“ — und dieser Weg ist selbst Daten, die kohärent zusammenpassen. Zentrale Konzepte:</p>
+  <ul>
+    <li><strong>Monoid / Monoid in einer Kategorie:</strong> Objekt + assoziative Multiplikation + Einheit. „Ein Ring = Monoid in (Ab, ⊗)“; „E∞-Ring = kommutatives Monoid in (Spectra, ∧, 𝕊)“.</li>
+    <li><strong>Kohärenz:</strong> Pentagon-Identität (Assoziator α) — der Raum <em>aller</em> Re-Bracketings ist <strong>kontrahierbar</strong> ⇒ im Wesentlichen nur eine Art. „Viele Türen, ein Ziel, und der Raum der Türen schrumpft auf einen Punkt.“</li>
+    <li><strong>Spectra &amp; Stabilisierung:</strong> Folge (X₀, X₁, …) mit Struktur-Maps σₙ: S¹∧Xₙ → Xₙ₊₁; Stabilisierung wäscht die Instabilität weg. 𝕊 (Sphären-Spektrum) = „die Ganzen der Spectra“, π₀(𝕊) = ℤ, der initialer E∞-Ring.</li>
+    <li><strong>Smash-Produkt &amp; Day-Konvolution:</strong> die Multiplikation für Spectra.</li>
+    <li><strong>Modellkategorien:</strong> drei Klassen (W, Fib, Cof) + schwache Faktorisierungs-Systeme + Hebungs-Eigenschaften — das „Werkzeug“, Homotopie konkret zu rechnen; fibrant-kofibrante Ersatz-Objekte = „gute Vertreter“.</li>
+    <li><strong>E<sub>n</sub>-Operaden</strong> (little n-cubes): E₁=A∞ (assoziativ) ⊂ E₂ (geflochten) ⊂ … ⊂ E∞ (voll kommutativ).</li>
+  </ul>
+  <div class="eq"><span class="lbl">Day-Konvolution &amp; die große Analogie (getreu)</span>
+(X ⊗<sub>Day</sub> Y)(c) = ∫<sup>c₁,c₂</sup> 𝒞(c₁⊗c₂, c) ∧ X(c₁) ∧ Y(c₂)
+große Analogie:  ℤ ↔ 𝕊 · Ab. Gruppen ↔ Spectra · Ring = Mon(Ab,⊗) ↔ A∞-Ring = Mon(Sp,∧) · komm. Ring ↔ E∞-Ring</div>
+
+  <h3>4.3 Die fusionierte Brücke (Synthese dieser Arbeit)</h3>
+  <p>Setze die <strong>Endzustands-Map</strong> <code>Φ: Zustandsraum → {Attraktoren}</code> (Φ(p) = Limes der Trajektorie aus p). Sie ist <em>viel-eins</em>: viele Startpunkte, ein Schicksal. Im Vokabular von A ist Φ eine <strong>stabile Homotopie-Invariante</strong> — sie hängt nur von der <em>Basin-Homotopieklassse</em> der Trajektorie ab, nicht vom konkreten Weg. Damit wird B’s Dynamik zu einem konkreten Beispiel von A’s Programm: der <em>Prozess</em> (Trajektorie) wird ausgeführt und dann <em>vergessen</em>; die <em>Invariante</em> (Attraktor) bleibt. Kohärenz ↔ Deterministik: im Inneren eines Basins ist Φ lokal konstant und der Raum aller dorthin führenden Trajektorien kontrahierbar. Am fraktalen Rand ist Φ unstetig — der Raum der Wahl nicht kontrahierbar — <em>Chaos ist dort der Fehlschlag der Kohärenz</em>.</p>
+
+  <div class="synth">
+    <div class="cap">Erweiterte große Analogie — fusioniert (Synthese)</div>
+    <table>
+      <tr><th>Bei B (dynamisch)</th><th>Bei A (stabil/abstrakt)</th><th>Bemerkung</th></tr>
+      <tr><td>Attraktor (Fixpunkt/Zyklus/Torus/seltsam)</td><td>Spektrum / stabiles Homotopie-Objekt</td><td>„was überlebt“, wenn der Prozess vergessen wird</td></tr>
+      <tr><td>Einzugsgebiet (Basin)</td><td>Homotopieklassen von Trajektorien (Modul)</td><td>Menge aller Wege mit demselben Limes</td></tr>
+      <tr><td>Endzustands-Map Φ</td><td>Stabilisierungs-Funktoral Σ<sup>∞</sup></td><td>vergisst die Trajektorie, behält die Klasse</td></tr>
+      <tr><td>Kohärenz: ein Schicksal pro Startpunkt</td><td>kontrahierbarer Raum der Wahl</td><td>„im Wesentlichen eine Art“</td></tr>
+      <tr><td>Fraktaler Basin-Rand / final state sensitivity</td><td>nicht-kontrahierbarer Raum = echte Topologie</td><td>da bricht Kohärenz = Chaos</td></tr>
+      <tr><td>Multistabilität (mehrere Attraktoren)</td><td>mehrere Objekte in der stabilen ∞-Kategorie</td><td>—</td></tr>
+      <tr><td>Kipp-Punkt (Attraktor entsteht/verschwindet)</td><td>Objekt in der Kategorie wird erzeugt/zerstört</td><td>—</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span> Interaktive Visualisierung: Kohärenter Kern, inkohärenter Rand</h2>
+  <p>Ein <strong>Magnetpendel</strong> (3 Magneten) — die Basin-Karte wird durch echtes ODE-Integrieren berechnet (Methode von B). <strong>Klicke</strong> ins Bild: die goldene Linie ist die Trajektorie, die kleine Punktwolke ist der <em>Raum der Wahl</em> — benachbarte Startpunkte. Konvergiert die Wolke zu <em>einem</em> Magneten, ist der Raum der Wahl <strong>kontrahierbar = kohärent</strong> (grün, A). Zerfällt sie in <em>verschiedene</em> Magneten, ist er <strong>nicht kontrahierbar = inkohärent/fraktal</strong> (rot) — der Ort, an dem B’s final-state-sensitivity und A’s „interessante Topologie“ zusammentreffen. Regler ändern die Größe dieses Wahlraums.</p>
+
+  <canvas id="basin" width="620" height="620"></canvas>
+
+  <div class="controls">
+    <div class="ctrl"><label>Wolkenradius (Wahlraum)</label>
+      <input type="range" id="cloud-r" min="0.05" max="0.5" step="0.01" value="0.16">
+      <span class="val" id="cloud-r-val">0.16</span></div>
+    <div class="ctrl"><label>Anzahl Startpunkte</label>
+      <input type="range" id="cloud-n" min="20" max="120" step="5" value="60">
+      <span class="val" id="cloud-n-val">60</span></div>
+  </div>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--att1)"></span>Magnet 1</span>
+    <span><span class="sw" style="background:var(--att2)"></span>Magnet 2</span>
+    <span><span class="sw" style="background:var(--att3)"></span>Magnet 3</span>
+    <span><span class="sw" style="background:var(--traject)"></span>Trajektorie</span>
+  </div>
+  <div id="viz-readout">Klicke ins Bild, um den Wahlraum (Trajektorie + Wolke benachbarter Startpunkte) zu analysieren.</div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span> Provenienz</h2>
+  <div class="prov"><span class="id a">A</span>
+    <div><a href="../higher_algebra.html">higher_algebra.html</a> — „Higher Algebra: A Visual Guide“. Visuelle Einführung in Monoiden in Kategorien, Spectra, Smash-Produkt, E∞-Ringen, Modellkategorien und Kohärenz (Pentagon, kontrahierbarer Raum der Wahl, 𝕊 als „Ganze der Spectra“).</div></div>
+  <div class="prov"><span class="id b">B</span>
+    <div><a href="../effortless_basins_of_attraction.html">effortless_basins_of_attraction.html</a> — „Basins of Attraction“. Interaktive Demo zum Paper von Datseris &amp; Wagemakers (2021): dynamische Systeme, Attraktoren, Poincaré-Wiederkehr und der FSM-Algorithmus, der Attraktoren &amp; Basins ohne Vorwissen findet.</div></div>
+</section>
+
+<footer>Knockout-Synthese · Runde 1 · id 081 · nicht-AI-Track. Selbst-generierte Fusion; alle mathematischen Behauptungen zu A/B stammen aus den beiden Original-HTMLs, die erweiterte Analogie-Tabelle ist die hier erzeugte Synthese.</footer>
+
+</div>
+
+<script>
+(function(){
+  var canvas = document.getElementById('basin');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var G = 100;
+  var alpha = 0.2, d = 0.3, dt = 0.05;
+  var magnets = [
+    [Math.cos(Math.PI/2), Math.sin(Math.PI/2)],
+    [Math.cos(Math.PI/2 + 2*Math.PI/3), Math.sin(Math.PI/2 + 2*Math.PI/3)],
+    [Math.cos(Math.PI/2 + 4*Math.PI/3), Math.sin(Math.PI/2 + 4*Math.PI/3)]
+  ];
+  var GOLD = 2.39996322972865332;
+
+  function cssVar(name){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    if(v.charAt(0) === '#'){
+      var h = v.slice(1);
+      if(h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      var n = parseInt(h,16);
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    return [180,180,180];
+  }
+  var attCols=[null,null,null], bgSolid, gridCol, trajCol, fgCol, okCol, badCol;
+  function readTheme(){
+    attCols[0]=cssVar('--att1'); attCols[1]=cssVar('--att2'); attCols[2]=cssVar('--att3');
+    bgSolid=cssVar('--bg'); gridCol=cssVar('--grid'); trajCol=cssVar('--traject');
+    fgCol=cssVar('--fg'); okCol=cssVar('--ok'); badCol=cssVar('--bad');
+  }
+
+  function integrate(x0,y0,steps){
+    var x=x0,y=y0,vx=0,vy=0;
+    for(var i=0;i<steps;i++){
+      var ax=-alpha*vx - x, ay=-alpha*vy - y;
+      for(var k=0;k<3;k++){
+        var dx=x-magnets[k][0], dy=y-magnets[k][1];
+        var r=Math.pow(dx*dx+dy*dy+d*d,1.5);
+        ax-=dx/r; ay-=dy/r;
+      }
+      vx+=dt*ax; vy+=dt*ay; x+=dt*vx; y+=dt*vy;
+      if(vx*vx+vy*vy<0.001) break;
+    }
+    return nearestMagnet(x,y);
+  }
+  function nearestMagnet(x,y){
+    var best=0,bd=1e9;
+    for(var k=0;k<3;k++){
+      var dd=Math.hypot(x-magnets[k][0],y-magnets[k][1]);
+      if(dd<bd){bd=dd;best=k;}
+    }
+    return best;
+  }
+  function trajectory(x0,y0){
+    var x=x0,y=y0,vx=0,vy=0,path=[[x,y]];
+    for(var i=0;i<800;i++){
+      var ax=-alpha*vx - x, ay=-alpha*vy - y;
+      for(var k=0;k<3;k++){
+        var dx=x-magnets[k][0], dy=y-magnets[k][1];
+        var r=Math.pow(dx*dx+dy*dy+d*d,1.5);
+        ax-=dx/r; ay-=dy/r;
+      }
+      vx+=dt*ax; vy+=dt*ay; x+=dt*vx; y+=dt*vy;
+      if(i%2===0) path.push([x,y]);
+      if(vx*vx+vy*vy<0.001) break;
+    }
+    return {path:path, end:nearestMagnet(x,y)};
+  }
+  var basinIdx = new Int8Array(G*G);
+  function computeBasins(){
+    for(var iy=0;iy<G;iy++){
+      for(var ix=0;ix<G;ix++){
+        var xv=(ix+0.5)/G*4-2, yv=(iy+0.5)/G*4-2;
+        basinIdx[iy*G+ix]=integrate(xv,yv,700);
+      }
+    }
+  }
+
+  function toPx(x,y){ return [(x+2)/4*W, H-(y+2)/4*H]; }
+  function toXy(px,py){ return [px/W*4-2, (H-py)/H*4-2]; }
+
+  function drawBasinLayer(){
+    var img=ctx.createImageData(W,H);
+    var bg=bgSolid, data=img.data;
+    for(var iy=0;iy<G;iy++){
+      for(var ix=0;ix<G;ix++){
+        var idx=basinIdx[iy*G+ix];
+        var a = idx>=0 ? attCols[idx] : bg;
+        var cr=a[0]*0.55+bg[0]*0.45, cg=a[1]*0.55+bg[1]*0.45, cb=a[2]*0.55+bg[2]*0.45;
+        var x0=ix*W/G, y0=(G-1-iy)*H/G;
+        for(var py=Math.floor(y0);py<Math.floor((G-iy)*H/G);py++){
+          for(var px=Math.floor(x0);px<Math.floor((ix+1)*W/G);px++){
+            if(px<0||px>=W||py<0||py>=H) continue;
+            var j=(py*W+px)*4;
+            data[j]=cr; data[j+1]=cg; data[j+2]=cb; data[j+3]=255;
+          }
+        }
+      }
+    }
+    ctx.putImageData(img,0,0);
+    // grid
+    ctx.strokeStyle='rgba('+gridCol[0]+','+gridCol[1]+','+gridCol[2]+',0.5)';
+    ctx.lineWidth=0.5;
+    for(var i=1;i<10;i++){
+      ctx.beginPath(); ctx.moveTo(i*W/10,0); ctx.lineTo(i*W/10,H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i*H/10); ctx.lineTo(W,i*H/10); ctx.stroke();
+    }
+  }
+  function drawMagnets(){
+    for(var k=0;k<3;k++){
+      var p=toPx(magnets[k][0],magnets[k][1]);
+      var c=attCols[k];
+      ctx.save();
+      ctx.shadowBlur=18; ctx.shadowColor='rgb('+c[0]+','+c[1]+','+c[2]+')';
+      ctx.fillStyle='rgb('+c[0]+','+c[1]+','+c[2]+')';
+      ctx.beginPath(); ctx.arc(p[0],p[1],9,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle='rgba('+fgCol[0]+','+fgCol[1]+','+fgCol[2]+',0.9)';
+      ctx.lineWidth=2; ctx.beginPath(); ctx.arc(p[0],p[1],9,0,Math.PI*2); ctx.stroke();
+    }
+  }
+
+  var interaction=null;
+  function computeInteraction(x0,y0,R,N){
+    var tr=trajectory(x0,y0);
+    var pts=[], ends={};
+    for(var i=0;i<N;i++){
+      var rr=R*Math.sqrt((i+1)/(N+1));
+      var th=i*GOLD;
+      var cx=x0+rr*Math.cos(th), cy=y0+rr*Math.sin(th);
+      var e=integrate(cx,cy,700);
+      pts.push({x:cx,y:cy,end:e});
+      ends[e]=1;
+    }
+    var distinct=Object.keys(ends).length;
+    var match=0;
+    for(var m=0;m<N;m++){ if(pts[m].end===tr.end) match++; }
+    var coherence=(match+1)/(N+1);
+    return {tr:tr, pts:pts, distinct:distinct, coherence:coherence};
+  }
+
+  function drawInteraction(){
+    if(!interaction) return;
+    var it=interaction;
+    // trajectory
+    var c=trajCol;
+    ctx.strokeStyle='rgba('+c[0]+','+c[1]+','+c[2]+',0.95)';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    for(var i=0;i<it.tr.path.length;i++){
+      var p=toPx(it.tr.path[i][0],it.tr.path[i][1]);
+      if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);
+    }
+    ctx.stroke();
+    // cloud dots at start positions
+    for(var q=0;q<it.pts.length;q++){
+      var pt=it.pts[q], pp=toPx(pt.x,pt.y), cc=attCols[pt.end];
+      ctx.fillStyle='rgba('+cc[0]+','+cc[1]+','+cc[2]+',0.95)';
+      ctx.beginPath(); ctx.arc(pp[0],pp[1],3.2,0,Math.PI*2); ctx.fill();
+    }
+    // center marker
+    var c0=toPx(it.tr.path[0][0],it.tr.path[0][1]);
+    ctx.strokeStyle='rgba('+fgCol[0]+','+fgCol[1]+','+fgCol[2]+',0.95)';
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(c0[0],c0[1],7,0,Math.PI*2); ctx.stroke();
+  }
+
+  function render(){
+    ctx.clearRect(0,0,W,H);
+    drawBasinLayer();
+    drawMagnets();
+    drawInteraction();
+  }
+  window.vizRedraw=function(){ readTheme(); render(); };
+
+  function updateReadout(it){
+    var el=document.getElementById('viz-readout');
+    var coh=Math.round(it.coherence*100);
+    if(it.coherence>=0.985){
+      el.innerHTML='<span class="ok">KOHÄRENT</span> — Wolke konvergiert zu <strong>einem</strong> Magneten. Raum der Wahl kontrahierbar ⇒ ein Schicksal. Kohärenz gilt (A) / deterministisches Basin (B). Kohärenz: <strong>'+coh+'%</strong>.';
+    } else {
+      el.innerHTML='<span class="bad">INKOHÄRENT</span> — Wolke zerfällt in <strong>'+it.distinct+'</strong> verschiedene Magneten (Kohärenz: '+coh+'%). Fraktaler Rand: Raum der Wahl nicht kontrahierbar ⇒ final state sensitivity. Genau hier „lebt interessante Topologie“.';
+    }
+  }
+
+  canvas.addEventListener('click', function(e){
+    var rect=canvas.getBoundingClientRect();
+    var px=(e.clientX-rect.left)*(W/rect.width);
+    var py=(e.clientY-rect.top)*(H/rect.height);
+    var xy=toXy(px,py);
+    var R=parseFloat(document.getElementById('cloud-r').value);
+    var N=parseInt(document.getElementById('cloud-n').value,10);
+    interaction=computeInteraction(xy[0],xy[1],R,N);
+    render();
+    updateReadout(interaction);
+  });
+  document.getElementById('cloud-r').addEventListener('input', function(e){
+    document.getElementById('cloud-r-val').textContent=(+e.target.value).toFixed(2);
+    recomputeClick();
+  });
+  document.getElementById('cloud-n').addEventListener('input', function(e){
+    document.getElementById('cloud-n-val').textContent=e.target.value;
+    recomputeClick();
+  });
+  function recomputeClick(){
+    if(!interaction) return;
+    var R=parseFloat(document.getElementById('cloud-r').value);
+    var N=parseInt(document.getElementById('cloud-n').value,10);
+    var xy=toXy.apply(null,toPx(interaction.tr.path[0][0],interaction.tr.path[0][1]));
+    interaction=computeInteraction(xy[0],xy[1],R,N);
+    render();
+    updateReadout(interaction);
+  }
+
+  document.getElementById('theme-toggle').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    window.vizRedraw();
+  });
+
+  // init
+  readTheme();
+  computeBasins();
+  render();
+})();
+</script>
+</body>
+</html>

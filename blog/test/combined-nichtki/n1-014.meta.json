@@ -1,0 +1,15 @@
+{
+  "no": "014",
+  "a": "philosophy.html",
+  "b": "zug_idee.html",
+  "a_title": "Philosophy Made Simple — What is Philosophy?",
+  "b_title": "Raum, Zug und kohärente Verschiedenheit",
+  "combined_theme": "koharente-verschiedenheit",
+  "one_line": "Einheit ist kein verborgenes Zentrum, sondern das kohärente Zusammenspiel verschiedener Perspektiven — A liefert die Fächer als Perspektiven, B das Klebeprinzip ohne Zentrum.",
+  "contradictions": [
+    "Fundament: A setzt das klassische Ding hinter den Erscheinungen als Ausgang (Metaphysik 'Was ist Wirklichkeit?', Platons Formen 'hinter' der Wirklichkeit, Descartes' Cogito als eine Sicherheit, Kant); B sagt explizit 'Das Zentrum verschwindet' — Einheit ist kein zusätzliches Ding, sondern das Netz der Kohärenzen.",
+    "Sinn/Verstehen: A stellt Maschinen-Denken als Substrat-Problem dar (Searles Chinesischer Raum, Chalmers' hartes Problem — Verstehen als intrinsische Eigenschaft, die ein System hat oder fehlt); B leugnet intrinsischen Sinn (Bedeutung ist nur die Position im Relationsnetz, es gibt kein weiteres 'Was-es-ist' dahinter)."
+  ],
+  "resolution": "A liefert den Raum der Perspektiven (die Fächer), B das Klebeprinzip: der gemeinsame Gegenstand ist nicht Substanz, sondern der Limes/Garbe der Perspektiven-Familie (Kohärenz auf Überlappungen, ohne Zentrum). Platons Ideen/Cogito werden zu Kohärenz-Polen statt Substanzen. Das 'harte Problem' (intrinsisches Verstehen) verschwindet nicht, wird aber zur Gewichtung der Kohärenzen — Searle/Chalmers bleiben als Kohärenz-Gegenposition im Netz, kein Knoten ist das Zentrum.",
+  "viz": "SVG-Interaktives Kohärenznetz: die fünf Fächer als Perspektiven; Umschalter 'Klassisch' (zentrales Ding mit Strahlen) vs. 'Kohärent' (Zentrum wird zum ≃-Geist, Kohärenz-Kanten leuchten); Klick auf eine Perspektive zeigt ihre Kohärenz-Verbindungen."
+}
