@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entropisches Optimum &amp; lineare Separierbarkeit — Fusion r1-046</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-cls0:#0d8f80; --viz-cls1:#c93a86; --viz-dec:#b57e00; --viz-w:#6451d8;
+  --viz-grid:rgba(20,28,45,0.07); --viz-txt:#1c2333; --viz-canvas-bg:#f1eee3;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-cls0:#5ee0d0; --viz-cls1:#ff7ac0; --viz-dec:#ffc860; --viz-w:#8a7cff;
+  --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6; --viz-canvas-bg:#0c1120;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:72ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.grid2{grid-template-columns:1fr}}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note e, .note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.who{display:flex;gap:10px;align-items:flex-start;margin:12px 0}
+.who .t{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 10px;border-radius:9px;flex:none;height:fit-content}
+.who .t.a{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 40%,transparent)}
+.who .t.b{background:color-mix(in srgb,var(--acc2) 16%,transparent);color:var(--acc2);border:1px solid color-mix(in srgb,var(--acc2) 40%,transparent)}
+.who p{margin:0}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14.5px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt)}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}
+ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap;text-decoration:none}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke-hi);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+input[type=range].t2::-webkit-slider-thumb{background:var(--acc3)}
+input[type=range].t2::-moz-range-thumb{background:var(--acc3)}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-046</span>
+    <nav>
+      <a href="#these">These</a>
+      <a href="#widersprueche">Widerspr.</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☾ dunkel</button>
+  </div>
+</div>
+
+<article>
+  <div class="sub">Runde 1 · K.-o.-Synthese · Paar 046</div>
+  <h1>Das entropische Optimum <em>baut</em> die Separierbarkeit</h1>
+  <p class="sub" style="font-size:14px;margin-bottom:4px">Fusion aus: attn_as_optimal_transport_simple.html ✕ linear_seperability.html</p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <p>Zwei Papiere, eine gemeinsame Geste: Beide nehmen ein Phänomen, das in der Praxis wie eine <em>willkürliche Designentscheidung</em> aussieht, und zeigen, dass es in Wahrheit der <strong>erzwungene, geometrische Ausgang eines sauberen Ziels</strong> ist. Paper&nbsp;A (Litman, Stanford 2025, arXiv:2508.08369) argumentiert, dass die Softmax-Attention <b>nicht gewählt</b>, sondern die <em>eindeutige Lösung</em> des Problems „Ähnlichkeit maximieren, maximal entschlossen bleiben, Wahrscheinlichkeit sein" ist — einseitiger entropischer Optimaler Transport auf dem Simplex. Paper&nbsp;B (Zhang et al. 2023, arXiv:2307.13962) argumentiert, dass die „Entwirrung" verschlungener Klassen durch die Schichten kein Zufall ist, sondern eine messbare Größe — die <em>lineare Separierbarkeit</em> — die von Schicht zu Schicht und mit der Accuracy <b>synchron</b> steigt.</p>
+    <p>Der <strong>fusionierte Standpunkt</strong> ist, dass diese beiden „Geometrien erzwungen" auf <em>unterschiedlichen Ebenen desselben Prozesses</em> sitzen. A beschreibt den <strong>lokalen</strong> Schritt — wie eine einzelne Attention-Operation als konvexes/entropisches Optimum sauber auf eine verteilte Antwort konvergiert und sich dabei über die Fisher-Matrix selbst dämpft. B beschreibt den <strong>globalen</strong> Fluss — wie nicht-lineare Aktivierungen die Repräsentation von Schicht zu Schicht so verbiegen, dass die lineare Separierbarkeit (und damit die Generalisierung) monoton ansteigt. Zusammen: <em>Ein neuronales Netz ist ein Stapel lokaler entropischer Optima (A), die von nicht-linearen Bogen (B) gespeist werden; jeder lokale Schritt konvergiert sauber, weil er sich selbst dämpft, und genau deshalb kann der globale Separierbarkeits-Anstieg akkumulieren, ohne frühere Gewinne zu zerstören.</em></p>
+    <p>Kurz: A erklärt, <em>warum ein einzelner Baustein die Form hat, die er hat</em> (Softmax = entropisches Optimum); B, <em>warum das Zusammensetzen vieler Bausteine funktioniert</em> (Trennung wächst mit Tiefe und Breite). Die Fusion liest A als <strong>Mikro-Form</strong> und B als den daraus komponierten <strong>Makro-Effekt</strong>.</p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <p>Die Papiere behandeln unterschiedliche Objekte (eine Attention-Operation vs. die Hidden-Layer-Repräsentation), also widersprechen sie nicht <em>direkt</em>. Sie stehen aber an zwei Stellen in einem echten Spannungsverhältnis, weil sie auf die Frage „<em>was trägt die Arbeit?</em>" jeweils die gegenteilige Antwort geben:</p>
+
+    <div class="card">
+      <h3>Widerspruch 1 — Was der Motor ist: konvexes Optimum vs. nicht-lineares Biegen</h3>
+      <div class="who"><span class="t a">A</span><p><strong>Thm 3.3 + Kor. 7.5.</strong> Der zentrale Mechanismus ist die <em>einheitliche</em> Lösung von „minimize −⟨p,s⟩ + τ·Σ p<sub>j</sub> log p<sub>j</sub> über dem Simplex" — linear + streng konvex. Die Antwort ist also <em>gezwungen</em>, glatt, entropisch. Und der Update-Mechanismus <strong>dämpft sich selbst</strong>: Die Fisher-Matrix F = (1/τ)(diag(p) − ppᵀ) wird klein, wo p konzentriert ist. Im Wortlaut: „Ein Netz, das schon sicher ist, wird <em>nicht mehr grob herumgeschubst</em>." Der Motor A's ist also <em>glattes konvexes Optimieren mit Selbst-Dämpfung</em>.</p></div>
+      <div class="who"><span class="t b">B</span><p><strong>Thm 9.</strong> B formuliert fast das Gegenteil als Kernthese: „Eine <em>lineare</em> Transformation kann die Trennbarkeit <b>nicht</b> ändern. <em>Erst</em> durch nicht-lineare Aktivierungen kann das Netz Punkte neu anordnen." Der Motor B's ist ausdrücklich das <strong>Nicht-Lineare</strong> — das <em>Biegen/Krümmen</em>, das erst Trennung erzeugt. Linear gilt explizit als <b>ahnungslos machtlos</b>.</p></div>
+      <p class="sub" style="margin-top:10px"><strong>Die Spannung:</strong> A feiert den <em>glatten konvexen/entropischen</em> Kern und betont, dass das System sich dort <em>zurückhält</em>, wo es schon entschieden hat. B verlangt genau das Gegenteil als Voraussetzung — ohne nicht-lineares Biegen passiert <em>nichts</em>. Sie verorten „was die Arbeit macht" auf entgegengesetzten Seiten der Linie „konvex/glatt/dämpfend" ↔ „nicht-linear/krümmend/aktivierend".</p>
+    </div>
+
+    <div class="card">
+      <h3>Widerspruch 2 — Tragweite: form-deskriptiv &amp; wirkungsneutral vs. erklärend &amp; empirisch</h3>
+      <div class="who"><span class="t a">A</span><p><strong>„Grenzen"-Kapitel.</strong> A verweigert jede kausale/empirische Tragweite: „<em>Kein neuer Mechanismus</em> — SDPA bleibt bit-für-bit identisch", „<em>Keine Experimente</em> — eine rein theoretische Arbeit", „Die Max-Entropie/Gibbs-Verbindung ist <em>klassisch</em> (Jaynes 1957)." A erklärt nur die <em>Form</em> einer festen Operation und ist <strong>explizit wirkungsneutral</strong> — es beansprucht weder Generalisierung noch Verbesserung.</p></div>
+      <div class="who"><span class="t b">B</span><p><strong>Thm 12 / Kor. 13 + „Antwort"-Kapitel.</strong> B macht genau die umgekehrte Behauptung: Breite &amp; Tiefe <em>erhöhen die Wahrscheinlichkeit</em>, dass die Separierbarkeit steigt; das „erklärt, warum größere Netze <em>nicht</em> überfitten müssen — sie erhöhen strukturell die Trennbarkeit"; und „[a]lles <em>empirisch</em> auf MLP, CNN, ResNet, ViT etc. validiert". B ist also <strong>kausal, architekturabhängig, generalisierungs-erklärend und empirisch</strong>.</p></div>
+      <p class="sub" style="margin-top:10px"><strong>Die Spannung:</strong> A ist bewusst <em>form-deskriptiv und wirkungsneutral</em> (warum sieht Attention so aus — und nur das). B ist <em>effekt-erklärend und empirisch</em> (warum generalisieren große Netze — und Architektur ändert es messbar). Opposite epistemische Ambitionen: A verweigert genau die Behauptung, die B sein ganzes Programm ist.</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+
+    <div class="card">
+      <h3>Auflösung 1 — Mikro-Optimum vs. Makro-Fluss: keine konkurrierenden Motoren</h3>
+      <p>Die beiden „Motoren" arbeiten auf <strong>unterschiedlichen Skalen</strong> und schließen sich zu einem Prozess zusammen statt sich auszuschließen. A's „konvex/entropisch" ist die <em>innerhalb-einer-einzelnen-Attention-Operation</em> gültige Struktur: die Antwort-Verteilung über die Schlüssel ist das konvexe Optimum, und die Fisher-Selbst-Dämpfung ist das, was diesen <em>lokalen</em> Schritt sauber und stabil konvergieren lässt. B's „nicht-linear" ist der <em>zwischen-den-Schichten</em> gültige Fluss: Aktivierungen verbiegen die Repräsentation so, dass die lineare Separierbarkeit <em>global</em> steigt.</p>
+      <p>Der Trick ist, dass B's geforderte Nicht-Linearität <strong>nicht die Attention-Operation selbst widerspricht, sondern sie <em>umgibt</em></strong>: Die nicht-lineare Biegung (Aktivierung ∘ Attention-Komposition) ist der Kontext, in dem A's konvexes Optimum <em>wohnt</em>. Und A's Selbst-Dämpfung ist genau die Bedingung, unter der B's globaler Anstieg <em>sicher akkumulieren</em> kann — ein Schritt, der sich dort zurückhält, wo schon entschieden ist, verhindert, dass spätere Schichten frühe, gut getrennte Strukturen wieder verwischen. <strong>Fusionierter Schluss:</strong> Jede Schicht = <em>nicht-lineares Biegen (B, erhöht LS)</em> zusammengesetzt mit <em>konnexen/entropischen Attention-Optima (A, sauber selbst-dämpfende Konvergenz)</em>.</p>
+    </div>
+
+    <div class="card">
+      <h3>Auflösung 2 — Mikro-Form als Baustein des Makro-Effekts</h3>
+      <p>Die beiden machen auf <em>verschiedenen Fragen</em> gültige Aussagen, die sich verschachteln. A beantwortet die <strong>Form-Frage</strong> („Warum <em>sieht</em> Attention aus wie Softmax?") — bewusst wirkungsneutral und ohne Experimente. B beantwortet die <strong>Effekt-Frage</strong> („Warum <em>generalisieren</em> große Netze, und was passiert Schicht für Schicht?") — kausal, architekturabhängig, empirisch. Sie konkurrieren nicht; A ist die <em>lokale Beschreibung</em>, B die <em>globale Konsequenz</em>.</p>
+      <p><strong>Fusionierter Schluss:</strong> „Softmax als entropisches Optimum" (A) ist der <em>Baustein</em>; „Separierbarkeit steigt mit Tiefe/Breite" (B) ist die <em>Konsequenz aus vielen Bausteinen</em>. Zusammengesetzt: Ein Netz ist ein Stapel lokaler entropisch-OT-Optima (A), gespeist von nicht-linearen Aktivierungen (B), die die lineare Separierbarkeit und damit die Generalisierung schrittweise erhöhen. A liefert das <em>Wie eines Schritts</em>, B das <em>Warum des Gesamtergebnisses</em>.</p>
+    </div>
+
+    <div class="note t"><span class="h">Der fusionierte Satz</span>
+    <b>Eine Schicht</b> ist ein lokales konvexes/entropisches Optimum (A) in einem nicht-linearen Bogen (B), der die lineare Separierbarkeit erhöht; <b>Training</b> ist viele solcher Schritte, bei denen A's Fisher-Selbst-Dämpfung jeden Schritt stabilisiert, während B's Separierbarkeit — synchron mit der Accuracy — monoton steigt; <b>Breite &amp; Tiefe</b> (B, Thm 12) erhöhen die Wahrscheinlichkeit, dass dieser Anstieg hält.
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <p>Die tragenden Ideen und (nützlichen) Formeln beider Papiere, kohärent verschmolzen — von der lokalen Operation zum globalen Fluss.</p>
+
+    <h3>4.1 Die lokale Ebene (A): Attention als einseitiger entropischer OT</h3>
+    <p>Ein Attention-Query legt auf die m Schlüssel eine Verteilung <code>p</code> im Simplex <code>Δ<sup>m−1</sup></code> (p<sub>j</sub> ≥ 0, Σp<sub>j</sub> = 1). A zeigt, dass p genau das Argument ist, das</p>
+    <div class="eq">minimize&nbsp; J(p) = −⟨p, s⟩ + τ·Σ<sub>j</sub> p<sub>j</sub> log p<sub>j</sub> &nbsp;&nbsp;über&nbsp; Δ<sup>m−1</sup><br><span class="c">Erster Term: „dorthin, wo ähnlich" (−Score). Zweiter: „breit bleiben" (Entropie).</span></div>
+    <p><strong>Thm 3.3 (existiert · eindeutig · Form).</strong> (A) Simplex nicht-leer/konvex/kompakt + J stetig → Extremwertsatz. (B) ⟨p,s⟩ linear + τ·Σp·log·p streng konvex → J streng konvex → genau ein Minimum. (C) KKT-Stationarität → <code>p<sub>j</sub> ∝ exp(s<sub>j</sub>/τ)</code> → nach Normierung: <em>Softmax</em>. Die Antwort ist also nicht Design, sondern erzwungene eindeutige Lösung. Das „τ = √d<sub>k</sub>" normalisiert die Score-Varianz von d<sub>k</sub> zurück auf 1 (sonst sattu­riert Softmax zu One-Hot und die Gradienten verschwinden).</p>
+    <p><strong>Einseitige Degeneration.</strong> Klassischer OT (Monge 1781, Kantorovich 1942) fixiert <em>beide</em> Ränder → Sinkhorn. A fixiert nur <em>einen</em> (eine Quelle = ein Dirac, freies Ziel) → die Plan-Matrix kollabiert auf einen Zeilenvektor → der zulässige Bereich <em>ist genau der Simplex</em> → <strong>geschlossene Lösung, kein Iterieren</strong>.</p>
+    <p><strong>Die Regularisierer-Familie.</strong> <code>argmin<sub>p</sub> −⟨p,s⟩ + Ω(p)</code> über dem Simplex; Ω austauschen = anderer Mechanismus:</p>
+    <table>
+      <tr><th>Mechanismus</th><th>Ω(p)</th><th>Charakter</th></tr>
+      <tr><td>Softmax</td><td class="n">−τ·H(p)</td><td>dicht, glatt (Entropie-Max)</td></tr>
+      <tr><td>Sparsemax</td><td class="n">½·Σ p<sub>j</sub>²</td><td>dünn, exakte Nullen (L2-Projektion)</td></tr>
+      <tr><td>α-entmax</td><td class="n">Tsallis(α)</td><td>Dünnegrad stufenlos</td></tr>
+      <tr><td>ALiBi</td><td class="n">−τH + γΣp<sub>j</sub>|i−j|</td><td>lokaler Distanz-Bias</td></tr>
+    </table>
+    <p><strong>Thm 5.2 (Backprop = REINFORCE).</strong> Mit Kontext c(p)=Σp<sub>j</sub>v<sub>j</sub>, Nutzen u<sub>j</sub>=−∂ℒ/∂p<sub>j</sub>, Vorteil A<sub>j</sub>=u<sub>j</sub>−E<sub>p</sub>[u]:</p>
+    <div class="eq">∂ℒ/∂s<sub>j</sub> = −(p<sub>j</sub>/τ)·(u<sub>j</sub> − E<sub>p</sub>[u]) = −(p<sub>j</sub>/τ)·A<sub>j</sub><br><span class="c">= REINFORCE mit Erwartungs-Baseline. Die Baseline kommt „geschenkt": die Softmax-Jakobi hat Spaltensumme 0.</span></div>
+    <p><strong>Thm 6.3 + Kor. 7.5 (Ringschluss).</strong> Das duale Potential ist Log-Sum-Exp: <code>φ★(s) = τ·log(Σ exp(s<sub>j</sub>/τ))</code>, mit ∇φ★ = p★ und ∇²φ★ = τ·F. Die <strong>Fisher-Matrix</strong> <code>F = (1/τ)(diag(p) − ppᵀ)</code> vereint die drei Perspektiven — Optimaler Transport, Informationsgeometrie, RL — auf einem Objekt. Sie <em>dämpft</em> das Lern-Signal dort, wo die Strategie sich schon entschieden hat (am Rand des Simplex).</p>
+
+    <h3>4.2 Die globale Ebene (B): lineare Separierbarkeit der Hidden-Layer</h3>
+    <p>B misst pro Schicht, wie gut die (zwei) Klassen <em>linear</em> trennbar sind. Der zentrale Trick ist die <strong>Minkowski-Differenz</strong>:</p>
+    <div class="eq">MD(A,B) = { a<sub>i</sub> − b<sub>j</sub> }<br><span class="c">Thm 3: A, B linear separierbar ⟺ ∃ ω : ωᵀ m &gt; 0 für alle m ∈ MD(A,B)</span></div>
+    <p>Damit reduziert sich „zwei Mengen + beliebige Hyperebene" auf „eine Menge + Hyperebene <em>durch den Ursprung</em>". Davon gibt es vier Maße:</p>
+    <table>
+      <tr><th>Maß</th><th>Kernformel</th><th>Bereich</th><th>Eigenschaft</th></tr>
+      <tr><td>LS*</td><td class="n">Anteil MD auf Major-Seite</td><td>(0.5, 1]</td><td>intuitiv, NP-schwer</td></tr>
+      <tr><td>LS₁</td><td class="n">|Σ ωᵀm| / Σ|ωᵀm|</td><td>(0, 1]</td><td>= 1 gdw. separierbar</td></tr>
+      <tr><td class="hi">LS₂</td><td class="n">(Σ ωᵀm)² / Σ(ωᵀm)²</td><td>(0, +∞)</td><td>geschl. Lösung (Eigenwerte); in der Viz genutzt</td></tr>
+    </table>
+    <p>In der Praxis wird <code>MMᵀ ≈ I</code> angesetzt, dann ist <code>ω̂ = m̃/‖m̃‖</code> mit <code>m̃ = Σ m<sub>ij</sub></code> — <em>nur eine Summe</em>, keine Eigenwertzerlegung, pro Epoche billig. <strong>Thm 7:</strong> beste lineare Accuracy ≥ LS*.</p>
+    <p><strong>Thm 1 (Synchronizität).</strong> Steigt in einer Epoche die Trainings-Accuracy, steigt die lineare Separierbarkeit der (versteckten) Schicht <em>synchron</em> — und umgekehrt. Höhere Schichten (näher am Output) haben höhere LS-Werte.</p>
+    <p><strong>Thm 9 + Thm 11 (Aktivierungen).</strong> Lineare Transformationen ändern LS <em>nicht</em>; nur nicht-lineare σ können. Wenn <code>F<sub>σ</sub>(x,y) &gt; 2</code> verschiebt σ die MD-Punkte von der Minor- auf die Major-Seite — d.h. es <em>verbessert</em> LS. Sigmoid, Tanh, Arctan, Softsign erfüllen dies.</p>
+    <p><strong>Thm 12 / Kor. 13 (Breite &amp; Tiefe).</strong> Die Wahrscheinlichkeits-Schranke <code>H·e^{−LS₂²/8σ²}</code> steigt linear mit der Breite H, wird aber vom exponentiellen Term dominiert, wenn LS₂ bereits hoch ist. Interpretation: Bei <em>schon</em> gut trennbaren Daten hilft mehr Breite kaum; bei schlecht trennbaren <em>erhöhen</em> Breite und Tiefe die Chance, dass LS steigt — ein möglicher Grund, warum tiefe/breite Netze empirisch gut generalisieren, obwohl die klassische VC-Theorie das Gegenteil vorhersagt.</p>
+
+    <h3>4.3 Die Verschmelzung</h3>
+    <p>Setzt man die Ebenen ineinander: In Schicht ℓ erzeugt die <em>nicht-lineare</em> Komposition (Aktivierung, ggf. Attention-Op) aus Repräsentation z<sub>ℓ−1</sub> eine neue z<sub>ℓ</sub>, deren lineare Separierbarkeit LS(z<sub>ℓ</sub>) ≥ LS(z<sub>ℓ−1</sub>) ist (B, Thm 11). Innerhalb dieser Schicht ist jede <em>Attention-Op</em> ein lokales entropisches Optimum (A, Thm 3.3), das per Fisher-Selbst-Dämpfung (A, Kor. 7.5) sauber konvergiert, <strong>ohne</strong> die schon aufgebauten Trennungen zu zerstören. Über viele Schichten/Epochen hinweg steigt LS synchron mit der Accuracy (B, Thm 1), und Breite/Tiefe erhöhen die Wahrscheinlichkeit dieses Anstiegs (B, Thm 12). <strong>Der Viz im nächsten Abschnitt visualisiert genau diese Verschmelzung</strong>: der Tiefen-/Aktivierungs-Regler (B) entwirrt die Klassen und lässt LS₁ steigen, während der <em>selbe</em> geometrische Zustand ein Softmax-„Attention"-Optimum (A) schärft und dessen Fisher-Dämpfung sinken lässt.</p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung" class="viz">
+    <div class="eyebrow">5 · Visualisierung</div>
+    <div class="head">
+      <span class="dot"></span>
+      <h3>Entwirrung (B) schärft das entropische Optimum (A)</h3>
+      <span class="tg">Fusion</span>
+    </div>
+    <p>Zwei verschlungene Klassen. Der Regler <strong>„Tiefe / Aktivierung"</strong> wendet einen <em>nicht-linearen</em> Bogen an (B): Je tiefer, desto mehr entwirren sich die Klassen und die <em>lineare Separierbarkeit LS₁</em> steigt. Die <strong>selbe</strong> Geometrie treibt gleichzeitig ein <em>Softmax-„Attention"</em>-Optimum über die beiden Klassen-Schwerpunkte (A): je besser getrennt, desto <em>schärfer</em> wird p (Entropie ↓) und desto <em>stärker</em> dämpft sich der Update über den Fisher-Term p(1−p) (↓). Der Temperatur-Regler τ steuert, wie „entschlossen" das Optimum ist.</p>
+
+    <div class="cwrap"><canvas id="viz" style="height:380px"></canvas></div>
+    <div class="leg">
+      <span><i style="background:var(--viz-cls0)"></i>Klasse 0</span>
+      <span><i style="background:var(--viz-cls1)"></i>Klasse 1</span>
+      <span><i style="background:var(--viz-dec)"></i>Trennlinie (linear)</span>
+      <span><i style="background:var(--viz-w)"></i>ω̂ (Minkowski-Richtung)</span>
+      <span>Halo-Größe = Attention-Gewicht p</span>
+    </div>
+
+    <div class="ro">
+      <div class="b"><div class="k">LS₁ (B)</div><div class="v" id="rLS1">—</div><div class="u">Minkowski-Separierbarkeit → 1</div></div>
+      <div class="b"><div class="k">Lineare Acc (B)</div><div class="v g" id="rAcc">—</div><div class="u">Probe mit ω̂</div></div>
+      <div class="b"><div class="k">Entropie H(p) (A)</div><div class="v m" id="rEnt">—</div><div class="u">sinkt bei Trennung</div></div>
+      <div class="b"><div class="k">Fisher p(1−p) (A)</div><div class="v e" id="rFish">—</div><div class="u">Selbst-Dämpfung</div></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div class="ctl"><div class="ctl-lab"><span>Tiefe / Aktivierung (nicht-lineares Biegen, B)</span><b id="dV">0.30</b></div><input type="range" id="depth" min="0" max="100" value="30"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Temperatur τ des Attention-Optimums (A)</span><b id="tV">1.00</b></div><input type="range" id="tau" min="10" max="300" value="100" class="t2"></div>
+    </div>
+    <div id="viewCap">Lies es so: Der <strong>linke</strong> Effekt (Punkte entwirren sich, LS₁↑, Acc↑) ist B — „nicht-lineare Aktivierungen erhöhen die lineare Separierbarkeit". Der <strong>rechte</strong> Effekt (p wird schärfer, Entropie↓, Fisher-Dämpfung↓) ist A — „das entropische Optimum konvergiert und dämpft sich dort, wo schon entschieden ist". Beide laufen aus <em>einem</em> Regler an: mehr Tiefe → bessere Trennung → schärferes, selbst-dämpfenderes lokales Optimum.</div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <div class="card">
+      <p style="margin-bottom:6px"><a href="../attn_as_optimal_transport_simple.html">attn_as_optimal_transport_simple.html</a></p>
+      <p style="margin:0"><strong>A.</strong> Litman (Stanford, 2025) — <em>Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport</em> (arXiv:2508.08369). Softmax = eindeutige Lösung eines einseitigen entropischen OT auf dem Simplex (Thm 3.3); τ=√d<sub>k</sub>; Backprop = REINFORCE mit Baseline „geschenkt" (Thm 5.2); Log-Sum-Exp als duales Potential (Thm 6.3); Fisher-Ringschluss OT ⇄ Info-Geometrie ⇄ RL (Kor. 7.5); explizit kein neuer Mechanismus, keine Experimente.</p>
+    </div>
+    <div class="card">
+      <p style="margin-bottom:6px"><a href="../linear_seperability.html">linear_seperability.html</a></p>
+      <p style="margin:0"><strong>B.</strong> Zhang et al. (2023) — <em>Understanding Deep Neural Networks via Linear Separability of Hidden Layers</em> (arXiv:2307.13962). Lineare Separierbarkeit der Hidden-Layer via Minkowski-Differenz (Thm 3); Maße LS*/LS₁/LS₂ (LS₂ mit geschlossener Lösung); beste Accuracy ≥ LS* (Thm 7); Synchronizität LS ⇄ Accuracy (Thm 1); nur nicht-lineare Aktivierungen ändern LS, F<sub>σ</sub>&gt;2 verbessert (Thm 9/11); Breite/Tiefe erhöhen die Wahrscheinlichkeit steigender LS (Thm 12/Kor. 13); empirisch auf MLP/CNN/ResNet/ViT validiert.</p>
+    </div>
+  </section>
+
+  <footer>Runde 1 · K.-o.-Synthese · Paar 046 — Selbstständige, theme-reactive Fusion. Alle Simulationen laufen live im Browser, ohne externe Datenabrufe.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  var cv=$('viz');
+  var ctx=null;
+  var N=42;
+  var base=[];
+  (function gen(){
+    var seed=987654321;
+    function rnd(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
+    for(var c=0;c<2;c++){
+      for(var i=0;i<N;i++){
+        var u=i/(N-1);
+        base.push({c:c,u:u,jx:(rnd()-0.5)*0.28,jy:(rnd()-0.5)*0.28,jr:(rnd()-0.5)*0.18});
+      }
+    }
+  })();
+
+  function hexA(hex,a){
+    hex=(hex||'').replace('#','').trim();
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var n=parseInt(hex,16);
+    if(isNaN(n))return 'rgba(120,120,120,'+a+')';
+    var r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+  function pts(d){
+    var a=Math.PI - d*(Math.PI - 0.52);
+    var out=[];
+    for(var k=0;k<base.length;k++){
+      var b=base[k];
+      var center=b.c? Math.PI:0;
+      var ang=center + (b.u-0.5)*2*a + b.jx*0.5;
+      var rad=1 + b.u*2.2 + b.jr;
+      var x=Math.cos(ang)*rad + b.jx;
+      var y=Math.sin(ang)*rad + b.jy;
+      out.push({x:x,y:y,c:b.c});
+    }
+    return out;
+  }
+
+  function compute(d){
+    var P=pts(d);
+    var c0=[],c1=[];
+    for(var i=0;i<P.length;i++){ if(P[i].c===0)c0.push(P[i]); else c1.push(P[i]); }
+    function mean(arr){var x=0,y=0;for(var j=0;j<arr.length;j++){x+=arr[j].x;y+=arr[j].y;}return{x:x/arr.length,y:y/arr.length};}
+    var m0=mean(c0), m1=mean(c1);
+    var sx=0,sy=0,n=0;
+    var mds=[];
+    for(var a=0;a<c0.length;a++){
+      for(var b=0;b<c1.length;b++){
+        var dx=c0[a].x-c1[b].x, dy=c0[a].y-c1[b].y;
+        mds.push({x:dx,y:dy}); sx+=dx; sy+=dy; n++;
+      }
+    }
+    var norm=Math.sqrt(sx*sx+sy*sy)||1e-9;
+    var wx=sx/norm, wy=sy/norm;
+    var sSigned=0,sAbs=0;
+    for(var m=0;m<mds.length;m++){var pr=mds[m].x*wx+mds[m].y*wy; sSigned+=pr; sAbs+=Math.abs(pr);}
+    var LS1 = sAbs>1e-9 ? Math.abs(sSigned)/sAbs : 0.5;
+    var p0m=m0.x*wx+m0.y*wy, p1m=m1.x*wx+m1.y*wy;
+    var b0=(p0m+p1m)/2;
+    var correct=0;
+    for(var q=0;q<P.length;q++){
+      var proj=P[q].x*wx+P[q].y*wy-b0;
+      var pred=proj>0?0:1;
+      if(pred===P[q].c)correct++;
+    }
+    var acc=correct/P.length;
+    var tau=+$('tau').value/100;
+    var e0=Math.exp(p0m/tau), e1=Math.exp(p1m/tau);
+    var p0=e0/(e0+e1), p1=e1/(e0+e1);
+    var ent=-(p0*Math.log(p0+1e-12)+p1*Math.log(p1+1e-12));
+    var fisherDamp=p0*p1;
+    return {P:P,m0:m0,m1:m1,wx:wx,wy:wy,b0:b0,LS1:LS1,acc:acc,p0:p0,p1:p1,ent:ent,fisherDamp:fisherDamp};
+  }
+
+  function draw(){
+    var d=+$('depth').value/100;
+    var st=compute(d);
+    var cCls0=cssVar('--viz-cls0'), cCls1=cssVar('--viz-cls1'), cDec=cssVar('--viz-dec'), cW=cssVar('--viz-w');
+    var cGrid=cssVar('--viz-grid'), cTxt=cssVar('--viz-txt'), cStroke=cssVar('--stroke');
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    var w=cv.clientWidth||640, h=380;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+    cv.style.height=h+'px';
+    var c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+    c.clearRect(0,0,w,h);
+    var scale=Math.min(w,h)/7.4;
+    function X(x){return w/2 + x*scale;}
+    function Y(y){return h/2 - y*scale;}
+    // grid
+    c.strokeStyle=cGrid; c.lineWidth=1;
+    for(var gx=-4;gx<=4;gx++){c.beginPath();c.moveTo(X(gx),0);c.lineTo(X(gx),h);c.stroke();}
+    for(var gy=-4;gy<=4;gy++){c.beginPath();c.moveTo(0,Y(gy));c.lineTo(w,Y(gy));c.stroke();}
+    // decision line: (wx,wy).(x,y)-b0=0 ; point on line = b0*(wx,wy); direction = (-wy,wx)
+    var dirx=-st.wy, diry=st.wx;
+    var ox=st.b0*st.wx, oy=st.b0*st.wy, L=20;
+    c.strokeStyle=cDec; c.lineWidth=2; c.setLineDash([6,5]);
+    c.beginPath(); c.moveTo(X(ox-dirx*L),Y(oy-diry*L)); c.lineTo(X(ox+dirx*L),Y(oy+diry*L)); c.stroke();
+    c.setLineDash([]);
+    // omega arrow
+    c.strokeStyle=cW; c.lineWidth=3;
+    c.beginPath(); c.moveTo(X(0),Y(0)); c.lineTo(X(st.wx*1.5),Y(st.wy*1.5)); c.stroke();
+    var ah=8, aa=Math.atan2(-st.wy,st.wx);
+    var tipX=X(st.wx*1.5), tipY=Y(st.wy*1.5);
+    c.fillStyle=cW; c.beginPath();
+    c.moveTo(tipX,tipY);
+    c.lineTo(tipX-ah*Math.cos(aa-0.4),tipY-ah*Math.sin(aa-0.4));
+    c.lineTo(tipX-ah*Math.cos(aa+0.4),tipY-ah*Math.sin(aa+0.4));
+    c.closePath(); c.fill();
+    // points
+    for(var i=0;i<st.P.length;i++){
+      var p=st.P[i];
+      c.fillStyle = p.c? cCls1 : cCls0;
+      c.globalAlpha=0.85;
+      c.beginPath(); c.arc(X(p.x),Y(p.y),3.2,0,Math.PI*2); c.fill();
+    }
+    c.globalAlpha=1;
+    // centroid halos (attention weight)
+    function halo(m,pv,col){
+      var r=8+pv*48;
+      c.beginPath(); c.arc(X(m.x),Y(m.y),r,0,Math.PI*2); c.fillStyle=hexA(col,0.10+pv*0.32); c.fill();
+      c.beginPath(); c.arc(X(m.x),Y(m.y),6,0,Math.PI*2); c.fillStyle=col; c.fill();
+    }
+    halo(st.m0,st.p0,cCls0);
+    halo(st.m1,st.p1,cCls1);
+    // attention distribution bar
+    var bw2=Math.min(360,w-40), bx=w/2-bw2/2, by=h-34, bh=16;
+    c.fillStyle=cTxt; c.font='10px ui-monospace,monospace'; c.textAlign='left'; c.globalAlpha=0.8;
+    c.fillText('Softmax-Attention über Klassen-Schwerpunkte (A):  p₀='+st.p0.toFixed(2)+'   p₁='+st.p1.toFixed(2), bx, by-6);
+    c.globalAlpha=1;
+    c.fillStyle=hexA(cCls0,0.9); c.fillRect(bx,by,bw2*st.p0,bh);
+    c.fillStyle=hexA(cCls1,0.9); c.fillRect(bx+bw2*st.p0,by,bw2*st.p1,bh);
+    c.strokeStyle=cStroke; c.lineWidth=1; c.strokeRect(bx,by,bw2,bh);
+    // readouts
+    $('dV').textContent=d.toFixed(2);
+    $('tV').textContent=(+$('tau').value/100).toFixed(2);
+    $('rLS1').textContent=st.LS1.toFixed(3);
+    $('rAcc').textContent=Math.round(st.acc*100)+'%';
+    $('rEnt').textContent=st.ent.toFixed(3);
+    $('rFish').textContent=st.fisherDamp.toFixed(3);
+  }
+
+  $('depth').addEventListener('input',draw);
+  $('tau').addEventListener('input',draw);
+  window.addEventListener('resize',draw);
+  var tb=$('themeBtn');
+  tb.addEventListener('click',function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    tb.textContent=dark?'☾ dunkel':'☀ hell';
+    draw();
+  });
+  tb.textContent='☾ dunkel';
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "048",
+  "a": "botorch.html",
+  "b": "space_algorithm.html",
+  "a_title": "How BoTorch Optimizes (BoTorch/PyTorch Bayesian Optimization internals)",
+  "b_title": "Metric Space Explorer — How Space Morphing Works",
+  "combined_theme": "kernel-surrogate-from-sparse-data",
+  "one_line": "A GP is a probabilistic RBF interpolant: both papers turn a few samples into a kernel-weighted continuous model of an everywhere-quantity, one to pick the next expensive probe (acquisition), the other to render the whole deformed space.",
+  "contradictions": [
+    "Uncertainty as first-class (botorch: GP posterior with a mean + uncertainty band, 'where we don't have data, uncertainty is high') vs. a silent deterministic point-estimate field (space_algorithm: RBF interpolant deforms the grid with no band or error bars).",
+    "The model's job: adaptive next-step decision under a budget (botorch: 'find the optimum in as few tries as possible', sequential loop, output = one coordinate) vs. global one-shot description (space_algorithm: render the whole deformed grid + strain at once, no budget, no decision).",
+    "Kernel width learned from the data (botorch: lengthscale fit by maximizing marginal likelihood via fit_gpytorch_mll) vs. hand-set by the user (space_algorithm: sigma is a literal slider, 'sigma controls how far each token's influence reaches')."
+  ],
+  "resolution": "The RBF field IS the noiseless GP mean, so wrap it in a posterior (mean + variance) to make the 'surface' a probabilistic vector field; treat the morpher as the infinite-budget limit and BoTorch as the budget-constrained limit, with the acquisition function as the bridge that turns a description into a next-probe decision; and replace the sigma slider with a marginal-likelihood fit so the width is justified by the data.",
+  "viz": "Interactive 2D kernel surrogate (GP = RBF blend) of a hidden field from sparse, expensive observations: colored posterior-mean surface + dark uncertainty fog + EI-driven 'next probe' star; buttons to evaluate the star / auto-run the BO loop / fit lengthscale by marginal likelihood / reset; click to add an observation; theme-reactive, inline data, no network."
+}

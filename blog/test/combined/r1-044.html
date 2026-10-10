@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Grid-Walker-Weltmodell ✕ Fourier-Addition</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1f2328; --muted:#5b6068; --card:#ffffff;
+    --grid:#e7e1d7; --border:#e2ddd2; --link:#2b6cb0;
+    --accent:#2b6cb0; --red:#c0564b; --green:#2f855a; --gold:#b7791f;
+    --code-bg:#f1ede3;
+  }
+  html.dark{
+    --bg:#0a0e1a; --fg:#e8ecf5; --muted:#8b95a8; --card:#111827;
+    --grid:#1a2540; --border:#243049; --link:#58a6ff;
+    --accent:#7cc4ff; --red:#ff9ac1; --green:#a8ff9a; --gold:#ffd47a;
+    --code-bg:#0a1122;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:Georgia,'Times New Roman',serif;
+    line-height:1.7; padding:2.2rem 1rem 4rem;
+  }
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:2rem;line-height:1.25;margin-bottom:.35rem;letter-spacing:-.01em}
+  h2{font-family:system-ui,sans-serif;font-size:1.4rem;margin:2.4rem 0 .9rem;
+     padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h3{font-family:system-ui,sans-serif;font-size:1.08rem;margin:1.5rem 0 .6rem;color:var(--accent)}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;margin-bottom:1.6rem}
+  p{margin-bottom:.85rem}
+  ul{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.5rem}
+  a{color:var(--link)}
+  .lead{font-size:1.06rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+        padding:1.1rem 1.3rem;margin:1.1rem 0}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+           padding:.85rem 1.1rem;margin:.9rem 0;text-align:center;overflow-x:auto;font-size:1.2rem}
+  .tag{display:inline-block;font-family:system-ui,sans-serif;font-size:.72rem;font-weight:600;
+       padding:.15rem .55rem;border-radius:20px;border:1px solid var(--border);
+       color:var(--muted);background:var(--card);vertical-align:middle}
+  .vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+      padding:.15rem .5rem;border-radius:6px;display:inline-block;margin-right:.4rem}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--gold) 26%,transparent);color:var(--gold)}
+  .fused{background:color-mix(in srgb,var(--green) 14%,transparent);
+         border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:.7rem 1rem;margin:.9rem 0}
+  .fused b{color:var(--green)}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.55rem .65rem;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;background:var(--code-bg)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:var(--code-bg);
+       padding:.1em .35em;border-radius:4px}
+  .controls{font-family:system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:1rem 1.4rem;
+            align-items:center;background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+  .controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+  .controls input[type=range]{accent-color:var(--accent);width:140px}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:1.6em;display:inline-block}
+  #fusedCanvas{width:100%;height:560px;display:block;background:var(--card);
+               border:1px solid var(--border);border-radius:12px;margin:.6rem 0}
+  .readout{font-family:ui-monospace,monospace;font-size:.88rem;background:var(--code-bg);
+           border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;line-height:1.9}
+  .readout b{color:var(--gold)}
+  .anno{font-size:.85rem;color:var(--muted);font-style:italic}
+  #themeToggle{position:fixed;top:14px;right:14px;z-index:50;font-family:system-ui,sans-serif;
+    font-size:.8rem;background:var(--card);color:var(--fg);border:1px solid var(--border);
+    border-radius:20px;padding:.4rem .8rem;cursor:pointer}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+        border-radius:8px;margin-bottom:.7rem;background:var(--card)}
+  .prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+        text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--gold) 26%,transparent);color:var(--gold)}
+  .foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+        color:var(--muted);font-size:.85rem;font-style:italic}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Theme umschalten">◐ Theme</button>
+<article>
+
+  <h1>Zwei Basen, eine Projektion: Wie Netze Struktur „sehen" — einmal als Position, einmal als Phase</h1>
+  <p class="subtitle">Fusion aus: grid_walker.html ✕ fourier_addition.html</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere nehmen eine Aufgabe mit <b>exakt bekannter Struktur</b> — ein Random-Walker auf einem Gitter (A), die Addition modulo&nbsp;P auf einer „P-Uhr" (B) — und zeigen, dass ein trainiertes Netz <b>keine</b> Lookup-Tabelle auswendig lernt, sondern das <b>kompakte algebraische / geometrische Gerüst</b> der Aufgabe entdeckt und <i>mithilfe</i> davon rechnet.</p>
+    <p>A (Grid Walker) findet als Gerüst einen <b>Zustand</b>: die <i>Position-in-der-Zeit</i> des Walkers, $x_t/t$, eine lineare suffiziente Statistik, die für die <b>gesamte Zukunft</b> ausreicht. B (Fourier-Addition) findet als Gerüst eine <b>Phase</b>: jede Zahl wird als Rotation $e^{i2\pi kn/P}$ auf einem Kreis bei mehreren Frequenzen $k$ kodiert, sodass <i>Addition zu Rotation</i> wird. Die scheinbar grundverschiedenen Mechanismen — A's „uniforme Mittelung" und B's „konstruktive Interferenz" — sind dieselbe Operation: <b>eine Projektion (ein Innenprodukt)</b> eines kodierten Signals auf die Richtungen der möglichen Antworten.</p>
+    <p>Die integrierte Position lautet: <b>Beide Netze lernen eine Repräsentation derselben abelschen (Gruppen-)Struktur und lesen die Antwort per Projektion; der einzige Unterschied ist, welche duale Basis sie wählen — die additive <i>Positions-Basis</i> (A) oder die multiplikative <i>Fourier-/Phasen-Basis</i> (B) — und welche Operation die Struktur der Aufgabe verlangt: einen Zustand ablaufen (A) oder eine Gruppenoperation auswerten (B).</b></p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+
+    <div class="card">
+      <h3>W1 · Lineare Kernoperation (A) vs. nichtlineare Multiplikation (B)</h3>
+      <p><span class="vs a">A</span> A: Der erste Attention-Head tut „mit <b>einer Runde uniformer Mittelung</b>" genau $x_t/t$ — eine <b>lineare</b> (konvexe) Kombination der vergangenen Token-Codes. Die Auslese ist linear; der Zustand wird von einem linearen Probe gelesen.</p>
+      <p><span class="vs b">B</span> B: Der Kern-Trick ist ein <b>elementweises Produkt</b> — „(wave of a) × (wave of b) − (shifted wave of a) × (shifted wave of b) = wave of (a+b)", die Winkelsummenformel. Das ist eine <b>nichtlineare</b> (quadratische) Operation, die nötig ist, um zwei getrennte Operanden zu kombinieren.</p>
+      <p class="anno">A's ganze Rechnung ist ein einzelner linearer Schritt; B's zentrales Ergebnis verlangt eine nichtlineare Multiplikation. Auf den ersten Blick unvereinbar.</p>
+    </div>
+
+    <div class="card">
+      <h3>W2 · Externe „Welt" modellieren (A) vs. eigene Rechnung kodieren (B)</h3>
+      <p><span class="vs a">A</span> A: Titel und These sind <b>emergente Weltmodelle</b> — „Wie ein neuronales Netz eine Welt ‚sieht'". Die Repräsentation ist der <b>externe Zustand</b> (Position im Gitter über die Zeit), und er ist <i>universell und linear lesbar</i>: Cross-Variante-CKA liegt bei 0.95–0.97 <b>nach Attention</b> — derselbe Welt-Zustand in allen Varianten.</p>
+      <p><span class="vs b">B</span> B: Es gibt <b>keine</b> „Welt". Die Repräsentation ist die <b>richtung der Rechnung</b> (Phasen auf Kreisen bei mehreren Frequenzen). Die Auslese ist nicht „Zustand linear lesen", sondern <b>jeden Kandidaten $c$ per Interferenz scoren</b>: konstruktiv (Wellen stimmen überein) bei $c=a+b\!\!\!\pmod{P}$, destruktiv (auslöschend) sonst.</p>
+      <p class="anno">„Eine externe Welt modellieren und linear auslesen" (A) steht gegen „keine Welt — die Antwort wird durch Interferenz-Auswahl über alle Kandidaten diskriminiert" (B).</p>
+    </div>
+
+    <div class="card">
+      <h3>W3 · Ein geteilter Zustand (A) vs. viele redundante Frequenzen (B)</h3>
+      <p><span class="vs a">A</span> A: <b>ein</b> kompakter 3D-Zustand $[x_t/t,\, y_t/t,\, \log t]$ trägt die ganze Information und ist über alle Walkervarianten <b>gleich</b> (vor dem MLP geteilt; nach dem MLP spezialisiert).</p>
+      <p><span class="vs b">B</span> B: <b>viele</b> Frequenzen laufen parallel (Beispiel aus B: $k=14,35,41,42,52$ für $P=113$) — eine <b>redundante</b> Kodierung, bei der erst die <b>Summe</b> über die Frequenzen einen scharfen Peak erzeugt.</p>
+      <p class="anno">Minimaler, geteilter Zustand (A) steht gegen ein redundantes Multi-Frequenz-Bündel, das erst in seiner Superposition diskriminiert (B).</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="fused"><b>A1 · „linear" vs. „nichtlinear" ist dieselbe Gruppenoperation in dualen Basen.</b>
+    Positions-Basis (A) und Frequenz-Basis (B) sind <b>duale Basen derselben abelschen Gruppe</b> (der Gitterverschiebungen bzw. $\mathbb{Z}/P\mathbb{Z}$). A „addiert" in der Positions-Basis: Addition erscheint dort als sichtbare Verschiebung, und der uniforme Durchschnitt rechnet sie. B „addiert" in der Frequenz-Basis, wo die Exponential-Abbildung $n\mapsto e^{i2\pi kn/P}$ dieselbe Addition in <b>Multiplikation</b> übersetzt: $e^{i2\pi ka/P}\cdot e^{i2\pi kb/P}=e^{i2\pi k(a+b)/P}$. B's „nichtlineare" Multiplikation ist also die <i>Fourier-Seite</i> von A's „linearer" Addition — <b>dieselbe Gruppenoperation, andere Basis</b>. Die Nichtlinearität ist schlicht der Preis, in der Frequenzbasis zu rechnen; sie ist nötig, weil B zwei <i>separate, statische</i> Operanden kodiert statt eine <i>ablaufende</i> Sequenz.</p></div>
+
+    <div class="fused"><b>A2 · „Welt" vs. „Richtung" folgt dem Aufgabentyp: dynamisch vs. algebraisch.</b>
+    A ist <b>dynamisch/sequenziell</b> — ein Zustand wandert über die Zeit, also trackt man einen Zustand; dazu passt die <b>Positions-/State-Basis + lineare Auslese</b>, denn der Zustand ist suffizient für die Zukunft. B ist <b>algebraisch/funktional</b> — es ist eine feste Funktion $f(a,b)$ zweier Inputs, also wertet man eine Gruppenoperation aus; dazu passt die <b>Frequenz-/Phasenbasis + Interferenz-Auslese</b>, weil ein einzelner „Zustand" gar nicht existiert, nur die Kombination der beiden Operanden. Vereinheitlicht: <i>der kompakte Code = die State-Statistik (A) bzw. der Gruppencharakter (B); die Auslese = eine Projektion (Innenprodukt) auf die Kandidaten- bzw. Richtungs-Basis.</i></p></div>
+
+    <div class="fused"><b>A3 · „einer" vs. „viele" sind zwei verschiedene Kompressionsziele.</b>
+    A komprimiert die <b>Zukunft</b>: ein Zustand genügt, weil er suffizient ist — deshalb ist er minimal und über Varianten teilbar. B komprimiert die <b>Diskriminierung der Antwort</b>: es braucht so viele Frequenzen, wie nötig, um einen delta-artigen, scharfen Peak zu bauen, der genau $c=a+b$ markiert (mehr $K$ = schärfer). Beides ist „minimal für die eigene Aufgabe" — es gibt keinen Widerspruch, sondern <b>zwei unterschiedliche Optimierungsziele</b>: State-Kompaktheit (A) vs. Diskriminations-Schärfe (B).</p></div>
+
+    <div class="fused"><b>Kernsynthese.</b>
+    Die Basiswahl folgt der Struktur der Aufgabe: <b>additiv/dynamisch → Positions-Basis</b> (lineare Auslese, ein geteilter Zustand); <b>zyklisch/algebraisch → Frequenz-Basis</b> (Interferenz-Auslese, redundante Harmonische). Die gemeinsame Mechanik beider Netze ist <b>Superposition/Projektion</b>: A projektiert den Zustand auf die Codier-Richtung der Token ($x_t/t$), B projektiert die Summen-Phase auf die Kandidaten-Phasen ($S(c)$). „Durchschnitt" (A) und „Interferenz" (B) sind dasselbe Innenprodukt, in dualen Basen geschrieben.</p></div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Die gemeinsame Ausgangslage</h3>
+    <p>Beide Aufgaben haben eine <b>exakt berechenbare</b> Struktur und ein Netz, das sie nur durch Training lernen muss:</p>
+    <ul>
+      <li><b>A</b>: Random-Walker auf einem 2D-Gitter; von $(0,0)$ muss er nach <i>genau $T$</i> Schritten ein Ziel erreichen. Drei Varianten: <b>L</b> (Looper, Ziel = Start, muss zurückkehren), <b>D</b> (zwei Ziele — das Netz muss „glauben", welches gemeint ist), <b>O</b> (Hindernisse brechen die Symmetrie).</li>
+      <li><b>B</b>: Addition auf einer „P-Uhr": Werte $a,b\in\{0,\dots,P-1\}$, Antwort $a+b\!\!\!\pmod{P}$ (3+5=8→1 bei P=7).</li>
+    </ul>
+    <p>Beide Papiere fragen danach, <b>was im Netz intern steht</b> — und beide finden: eine kompakte, strukturfidele Kodierung, nicht eine Tabelle.</p>
+
+    <h3>A — Die Grid-Walker-Repräsentation (Positions-Basis)</h3>
+    <p>Die Next-Step-Verteilung des Walkers hat eine geschlossene Form über <b>Wegzählung</b> $H(\tau,z)$ (Anzahl gültiger Pfade der Länge $\tau$ von $z$ zum Ziel):</p>
+    <div class="formula" id="f-h">Pr(Δ|x,τ) = H(τ−1, x+Δ) / H(τ, x)</div>
+    <p>— das ist Bayes' Regel bzw. der <b>Doob-h-Transform</b>; Sackgassen erhalten automatisch Wahrscheinlichkeit 0. In <b>diagonalen Koordinaten</b> $u=x+y$, $v=x-y$ zerlegt sich der Log der Wahrscheinlichkeit in ein „effektives Feld" $q=(q_u,q_v,q_{uv})\in\mathbb{R}^3$:</p>
+    <div class="formula" id="f-q">log Pr(Δ|s_t) − l̄ = −q_u·Δu − q_v·Δv − q_uv·Δu·Δv</div>
+    <p>Bei L ist $q_{uv}=0$ (2D-Feld), bei D verrät $q_{uv}\neq0$ die Bayes'sche Unsicherheit über das Ziel, bei O leben alle drei Komponenten. Der zentrale Befund für den <b>Transformer</b>: der erste Attention-Head nutzt <b>uniforme Aufmerksamkeit</b> + <b>additive Value-Writes</b> (Token-Code + Positions-Code) und ordnet die Codes L/R/U/D so, dass ihr Durchschnitt die durchschnittliche Verschiebung ist:</p>
+    <div class="formula" id="f-code">⟨code⟩ = (1/t)·Σᵢ dᵢ = A·(x_t / t)</div>
+    <p>Ein einziger linearer Mittelungsschritt berechnet also $x_t/t$ plus einen Zeit-Code $\log t$ — „ein Koordinatensystem der Welt". Die Layer-Pipeline trennt dann zweistufig: <b>nach Attention</b> $\approx[x_t/t,y_t/t,\log t]$ (universell, CKA 0.95–0.97), <b>nach MLP→LN-final</b> $\approx q_t$ (spezialisiert, Cross-Variante-CKA fällt scharf ab, z.&nbsp;B. ~0.43). <b>RNNs</b> (LSTM/GRU) erreichen denselben Bayes-optimalen Loss, haben aber <b>keine</b> saubere Trennung — der Welt-Zustand ist vorhanden, aber vermischt. Fazit von A: Die Trennung „Welt vs. Aufgabe" ist eine <b>architektonische Wahl</b> (Rashomon-Effekt); Attention macht diese reiche Repräsentation billig.</p>
+
+    <h3>B — Die Fourier-Additions-Repräsentation (Phasen-Basis)</h3>
+    <p>Die Antwort lebt auf einem Kreis (P-Uhr). B kodiert jede Zahl $n$ bei einer Frequenz $k$ als <b>Punkt auf dem Einheitskreis</b> — horizontal = „Welle", vertikal = „verschobene Welle":</p>
+    <div class="formula" id="f-enc">n ↦ ( cos(2πkn/P), sin(2πkn/P) ) = e^(i·2πkn/P)</div>
+    <p>Der Clou: die zwei Wellenwerte zu multiplizieren addiert die Winkel (Winkelsummenformel), d.&nbsp;h. <b>Addition = Rotation</b> — „the network adds without actually adding — it rotates":</p>
+    <div class="formula" id="f-add">e^(i·2πka/P) · e^(i·2πkb/P) = e^(i·2πk(a+b)/P)</div>
+    <p>Um die Antwort zu lesen, scoren alle Kandidaten $c$ per <b>konstruktiver/destruktiver Interferenz</b> — mehrere Frequenzen schärfen den Peak:</p>
+    <div class="formula" id="f-score">S(c) = Σₖ₌₁..K cos( 2πk·(a+b−c) / P )&nbsp;&nbsp;(Peak bei c ≡ a+b mod P)</div>
+
+    <h3>Die Brücke — warum das dasselbe ist</h3>
+    <p>Beide Ausleseverfahren sind <b>Projektionen (Innenprodukte)</b>. B's Score ist das Realteil eines Innenprodukts zwischen der <i>Summen-Phase</i> und der <i>Kandidaten-Phase</i>:</p>
+    <div class="formula" id="f-proj">S(c) = Re[ e^(i·2πk(a+b)/P) · e^(−i·2πk c/P) ]&nbsp;&nbsp;=&nbsp; Projektion auf Kandidat c</div>
+    <p>A's $\langle\text{code}\rangle=(1/t)\sum_i d_i$ ist dieselbe Struktur: eine Projektion der Sequenz auf die Codier-Richtungen. Und die „nichtlineare" Multiplikation von B ist, per Fourier-Abbildung, exakt A's „lineare" Addition. Die zwei Papiere beschreiben also <b>die duale Basiswahl für dieselbe abelsche Struktur</b>:</p>
+    <table>
+      <thead><tr><th>Aspekt</th><th>A · Grid Walker</th><th>B · Fourier-Addition</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td>Basis</td><td>additive <b>Positions-Basis</b> ($\mathbb{R}^3$-Zustand)</td><td>multiplikative <b>Phasen-Basis</b> ($e^{i2\pi kn/P}$)</td><td>duale Basen derselben abelschen Gruppe</td></tr>
+        <tr><td>Kernoperation</td><td>lineares Mittelung/Tracking</td><td>Rotation per Phasen-Multiplikation</td><td>dieselbe Gruppenoperation, andere Basis</td></tr>
+        <tr><td>Was steht drin</td><td>externer <b>Zustand</b> (Welt-Modell)</td><td><b>Richtung der Rechnung</b> (kein Welt)</td><td>dynamisch → State, algebraisch → Charakter</td></tr>
+        <tr><td>Auslese</td><td>lineares Probe / CKA</td><td>Interferenz-Score über Kandidaten</td><td>beide = Projektion / Innenprodukt</td></tr>
+        <tr><td>Kompaktheit</td><td>1 geteilter Zustand</td><td>viele redundante Frequenzen</td><td>State-Kompaktheit vs. Diskriminations-Schärfe</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Ein konkretes Beispiel in beiden Basen (P=7, a=3, b=5)</h3>
+    <table>
+      <thead><tr><th>Basis</th><th>Ablauf</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Positions-Basis (A)</td>
+          <td>Start $3$; $b=5$ Einheiten-Schritte: $3\to4\to5\to6\to0\to1$. Netto-Verschiebung $=1-3=-2\equiv5\pmod7$; Ø pro Schritt $=5/5=1$.</td>
+          <td>landet auf <b>1</b></td>
+        </tr>
+        <tr>
+          <td>Frequenz-Basis (B)</td>
+          <td>$S(c)=\sum_k\cos(2\pi k(8-c)/7)$. Bei $c=1$: $\cos(2\pi k)=1$ für <i>jedes</i> $k$ → $S=K$ (Maximum). Bei $c\neq1$: die Kosinuse kürzen sich, $S&lt;K$.</td>
+          <td>Peak bei <b>1</b></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fused"><b>Beide Basen liefern denselben Wert: $3+5\equiv1\pmod7$.</b> Der Gold-Punkt, auf den der Walk (A) landet, ist exakt der Gold-Punkt, auf den die Phasensumme (B) zeigt — und exakt der Balken, dessen Interferenz-Score maximal wird.</p></div>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung: der Doppel-Basis-Interferometer</h2>
+    <p>Ein einziger Kreis trägt beide Basen gleichzeitig. <b>Links im Kreis</b> arbeitet die <b>Positions-Basis (A)</b>: der rote Punkt ist $a$, der gestrichelte Bogen zeigt $b$ Einheiten-Schritte, die goldene Sehne ist die <i>Netto-Verschiebung</i> — A's „Durchschnitt der Codes". <b>Auf demselben Kreis</b> liegt die <b>Phasen-Basis (B)</b> bei der Grundfrequenz $k=1$: der rote Phasor zeigt $a$, der grüne $b$, der goldene die Summe $a+b$. Weil $k=1$ die Grundwelle ist, <b>fallen Position und Phase exakt zusammen</b> — die Gold-Sehne (A) endet am selben Punkt wie der Gold-Phasor (B). <b>Unten rechts</b> liest B die Antwort per <b>Interferenz</b>: $S(c)=\sum_{k=1}^{K}\cos(2\pi k(a+b-c)/P)$ für alle Kandidaten $c$; der goldene Balken (Maximum) steht auf $a+b\!\!\!\pmod P$. Bewege $K$: mehr Frequenzen = schärferer Peak.</p>
+
+    <div class="controls">
+      <label>P (Uhr-Größe): <input type="range" id="vzP" min="3" max="15" value="7"> <span class="ctl-val" id="vzPVal">7</span></label>
+      <label>a: <input type="range" id="vzA" min="0" max="14" value="3"> <span class="ctl-val" id="vzAVal">3</span></label>
+      <label>b: <input type="range" id="vzB" min="0" max="14" value="5"> <span class="ctl-val" id="vzBVal">5</span></label>
+      <label>#Frequenzen K: <input type="range" id="vzK" min="1" max="8" value="3"> <span class="ctl-val" id="vzKVal">3</span></label>
+    </div>
+
+    <canvas id="fusedCanvas"></canvas>
+    <div class="readout" id="vzReadout"></div>
+    <p class="anno">Alle Werte werden live aus $a,b,P,K$ berechnet; keine Netzwerklade, keine externen Daten. Farb-/Hintergrundwerte stammen aus den CSS-Theme-Variablen (<code>:root</code> / <code>html.dark</code>).</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../grid_walker.html">grid_walker.html</a> — „Grid Walker: Wie ein neuronales Netz eine Welt ‚sieht'": der Random-Walker, Doob-h-Transform, effektives Feld $q$ in diagonalen Koordinaten, der erste Attention-Head als Berechner von $x_t/t$, zwei-Stufen-Pipeline (Attention→Zustand, MLP→Aufgabe), lineare Probes &amp; CKA, RNN-vs-Transformer (Rashomon-Effekt).</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../fourier_addition.html">fourier_addition.html</a> — „How a Neural Network Learns Modular Addition": die „Fourier Multiplication Algorithm" — Zahlen auf Kreisen/Phasen, Addition als Rotation (Winkelsummenformel), Auslesen per konstruktiver/destruktiver Interferenz über mehrere Frequenzen.</div></div>
+  </section>
+
+  <p class="foot">Fusion r1-044 · Round 1, Knockout-Synthese. Beide Quellpapiere sind interaktive Erklärungen (simulierte Werte, keine neuen Experimente); die Fusion übernimmt ihre Stellungen und Zahlen, erfindet keine. Die Behauptung „dieselbe Projektion in dualen Basen" ist die Brücke zwischen A's Mittelung und B's Interferenz.</p>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- math (Temml, guarded; plain fallback stays if it fails) ---------- */
+  function renderMath(){
+    if(!window.temml) return;
+    var pairs=[
+      ["f-h","\\Pr(\\Delta\\mid x,\\tau)=\\dfrac{H(\\tau-1,\\,x+\\Delta)}{H(\\tau,\\,x)}\\;\\;\\text{(Doob-h-Transform / Bayes)}"],
+      ["f-q","\\log\\Pr(\\Delta\\mid s_t)-\\bar\\ell \\;=\\; -q_u\\,\\Delta u \\;-\\; q_v\\,\\Delta v \\;-\\; q_{uv}\\,\\Delta u\\,\\Delta v"],
+      ["f-code","\\langle\\text{code}\\rangle=\\tfrac{1}{t}\\sum_{i=1}^{t} d_i \\;=\\; A\\,\\tfrac{x_t}{t}\\;\\;\\text{(Attention = Durchschnitt)}"],
+      ["f-enc","n\\;\\longmapsto\\;\\big(\\cos\\tfrac{2\\pi k n}{P},\\;\\sin\\tfrac{2\\pi k n}{P}\\big)=e^{\\,i\\,2\\pi k n/P}\\;\\;\\text{(Phasen-Kodierung)}"],
+      ["f-add","e^{\\,i2\\pi k a/P}\\;\\cdot\\;e^{\\,i2\\pi k b/P} \\;=\\; e^{\\,i2\\pi k(a+b)/P}\\;\\;\\text{(Addition}\\to\\text{Rotation)}"],
+      ["f-score","S(c)=\\sum_{k=1}^{K}\\cos\\!\\Big(\\tfrac{2\\pi k\\,(a+b-c)}{P}\\Big)\\;\\;\\text{(Interferenz; Peak bei }c\\equiv a+b\\text{)}"],
+      ["f-proj","S(c)=\\operatorname{Re}\\Big[\\,e^{\\,i2\\pi k(a+b)/P}\\,e^{-\\,i2\\pi k c/P}\\,\\Big]\\;\\;\\text{= Projektion auf Kandidat }c"]
+    ];
+    for(var i=0;i<pairs.length;i++){
+      var el=document.getElementById(pairs[i][0]);
+      if(el){ try{ temml.render(pairs[i][1], el); }catch(e){} }
+    }
+  }
+
+  /* ---------- theme-aware colors ---------- */
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function T(){
+    return {
+      card:cssVar("--card"), fg:cssVar("--fg"), muted:cssVar("--muted"), grid:cssVar("--grid"),
+      accent:cssVar("--accent"), red:cssVar("--red"), green:cssVar("--green"), gold:cssVar("--gold")
+    };
+  }
+  function mod(n,m){ return ((n % m) + m) % m; }
+  function clampInt(v,lo,hi){ v=Math.round(v); if(v<lo)v=lo; if(v>hi)v=hi; return v; }
+  function ang(i,P){ return -Math.PI/2 + 2*Math.PI*i/P; }
+
+  function arrowhead(ctx,x1,y1,angR,color){
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-9*Math.cos(angR-0.45), y1-9*Math.sin(angR-0.45));
+    ctx.lineTo(x1-9*Math.cos(angR+0.45), y1-9*Math.sin(angR+0.45));
+    ctx.closePath(); ctx.fill();
+  }
+  function drawArrow(ctx,x0,y0,x1,y1,color,w){
+    ctx.strokeStyle=color; ctx.lineWidth=w;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    arrowhead(ctx,x1,y1,Math.atan2(y1-y0,x1-x0),color);
+  }
+
+  var vc=document.getElementById("fusedCanvas");
+  function draw(){
+    if(!vc) return;
+    var rect=vc.getBoundingClientRect(); if(!rect.width) return;
+    var dpr=window.devicePixelRatio||1, W=rect.width, LH=rect.height;
+    vc.width=Math.round(W*dpr); vc.height=Math.round(LH*dpr);
+    var ctx=vc.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,LH);
+    var t=T();
+
+    var P=clampInt(+document.getElementById("vzP").value,3,15);
+    var K=clampInt(+document.getElementById("vzK").value,1,8);
+    var a=clampInt(+document.getElementById("vzA").value,0,P-1);
+    var b=clampInt(+document.getElementById("vzB").value,0,P-1);
+    var res=mod(a+b,P);
+
+    document.getElementById("vzPVal").textContent=P;
+    document.getElementById("vzAVal").textContent=a;
+    document.getElementById("vzBVal").textContent=b;
+    document.getElementById("vzKVal").textContent=K;
+
+    /* ---- left: shared clock, two bases on the same circle ---- */
+    var cx=W*0.30, cy=LH*0.45, R=Math.min(155, W*0.26, LH*0.33);
+
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="center";
+    ctx.fillText("Positions-Basis (A)  +  Phasen-Basis (B) auf einem Kreis", cx, 24);
+
+    // circle
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+
+    // ticks + labels
+    var i,angR;
+    for(i=0;i<P;i++){
+      angR=ang(i,P);
+      var tx=cx+R*Math.cos(angR), ty=cy+R*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.gold:(i===a)?t.red:t.muted;
+      ctx.beginPath(); ctx.arc(tx,ty,(i===res||i===a)?6:3,0,2*Math.PI); ctx.fill();
+      var lx=cx+(R+16)*Math.cos(angR), ly=cy+(R+16)*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.gold:(i===a)?t.red:t.muted;
+      ctx.font=(i===res||i===a)?"bold 13px ui-monospace,monospace":"11px ui-monospace,monospace";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(i,lx,ly);
+    }
+
+    // (A) walk: dashed arc a -> a+b (b steps) + net displacement chord
+    var angA=ang(a,P), sweep=2*Math.PI*b/P, angE=angA+sweep;
+    ctx.strokeStyle=t.accent; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.arc(cx,cy,R,angA,angE,false); ctx.stroke(); ctx.setLineDash([]);
+    var epx=cx+R*Math.cos(angE), epy=cy+R*Math.sin(angE);
+    arrowhead(ctx,epx,epy,angE+Math.PI/2,t.accent);
+    // start (a)
+    var spx=cx+R*Math.cos(angA), spy=cy+R*Math.sin(angA);
+    ctx.fillStyle=t.red; ctx.beginPath(); ctx.arc(spx,spy,7,0,2*Math.PI); ctx.fill();
+    // net displacement chord (A) a -> result
+    drawArrow(ctx,spx,spy,epx,epy,t.accent,2.5);
+    ctx.fillStyle=t.accent; ctx.font="italic 12px system-ui,sans-serif"; ctx.textAlign="center";
+    var midx=(spx+epx)/2, midy=(spy+epy)/2;
+    ctx.fillText("Netto = Ø der "+b+" Schritte", midx, midy-10);
+
+    // (B) phasors at k=1: red->a, green->b, gold->a+b (overlays the walk)
+    var angB=ang(b,P);
+    var gbx=cx+R*Math.cos(angB), gby=cy+R*Math.sin(angB);
+    drawArrow(ctx,cx,cy,gbx,gby,t.green,2);          // b
+    drawArrow(ctx,cx,cy,spx,spy,t.red,2);            // a
+    drawArrow(ctx,cx,cy,epx,epy,t.gold,3);           // a+b (coincides with result dot)
+    // result (gold)
+    ctx.fillStyle=t.gold; ctx.beginPath(); ctx.arc(epx,epy,8,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=t.fg; ctx.font="bold 13px system-ui,sans-serif";
+    ctx.fillText("a="+a, spx, spy-16);
+    ctx.fillStyle=t.gold; ctx.fillText("a+b ≡ "+res, epx, epy-18);
+
+    /* ---- right: interference score bar chart (B readout) ---- */
+    var bx0=W*0.55, bx1=W-14, by0=LH*0.22, by1=LH*0.70;
+    var bw=(bx1-bx0)/P, zeroY=(by0+by1)/2, half=(by1-by0)/2-8;
+
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="left";
+    ctx.fillText("Interferenz-Auslese (B):  S(c) = Σ cos(2πk(a+b−c)/P),  K="+K, bx0, 24);
+
+    var scores=[], maxS=1e-9, c;
+    for(c=0;c<P;c++){
+      var s=0, k;
+      for(k=1;k<=K;k++){ s+=Math.cos(2*Math.PI*k*mod(a+b-c,P)/P); }
+      scores.push(s); if(Math.abs(s)>maxS)maxS=Math.abs(s);
+    }
+    // zero line
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(bx0,zeroY); ctx.lineTo(bx1,zeroY); ctx.stroke();
+    // bars
+    for(c=0;c<P;c++){
+      var barH=(scores[c]/maxS)*half;
+      var x=bx0+c*bw, y=zeroY-barH;
+      var col=(c===res)?t.gold:(scores[c]>=0?t.accent:t.red);
+      ctx.fillStyle=col;
+      ctx.fillRect(x+1, Math.min(y,zeroY), bw-2, Math.abs(barH)||1);
+      if(c===res){ ctx.fillStyle=t.gold; ctx.font="bold 11px ui-monospace,monospace";
+        ctx.textAlign="center"; ctx.fillText("c="+c+" ✓", x+bw/2, Math.min(y,zeroY)-8); }
+    }
+    // x-axis label
+    ctx.fillStyle=t.muted; ctx.font="11px system-ui,sans-serif"; ctx.textAlign="center";
+    ctx.fillText("mögliche Antwort c  (0 … "+(P-1)+")", (bx0+bx1)/2, by1+18);
+
+    /* ---- readout ---- */
+    var net=mod(res-a,P);
+    var rd=document.getElementById("vzReadout");
+    rd.innerHTML="Positions-Basis (A):  b = "+b+" Einheiten-Schritte von a = "+a+
+      "  →  Netto-Verschiebung "+net+"  →  landet auf <b>"+res+"</b>.<br>"+
+      "Frequenz-Basis (B):  S(c) = Σₖ₌₁.."+K+" cos(2πk·("+(a+b)+"−c)/"+P+")  →  Peak bei c = <b>"+res+"</b>."+
+      "  (Peak-Höhe ≈ "+scores[res].toFixed(1)+".) <br>"+
+      "→ Beide Basen geben denselben Wert: <b>"+a+" + "+b+" ≡ "+res+" (mod "+P+")</b>.";
+  }
+
+  function wire(){
+    var ids=["vzP","vzA","vzB","vzK"];
+    ids.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener("input", function(){
+        // clamp a,b to new P
+        if(id==="vzP"){
+          var P=clampInt(+document.getElementById("vzP").value,3,15);
+          var as=document.getElementById("vzA"), bs=document.getElementById("vzB");
+          if(as){as.max=P-1; if(+as.value>P-1)as.value=P-1;}
+          if(bs){bs.max=P-1; if(+bs.value>P-1)bs.value=P-1;}
+        }
+        draw();
+      });
+    });
+    var btn=document.getElementById("themeToggle");
+    if(btn) btn.addEventListener("click",function(){
+      document.documentElement.classList.toggle("dark");
+      draw();
+    });
+    try{
+      var mo=new MutationObserver(function(){ draw(); });
+      mo.observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+    }catch(e){}
+    window.addEventListener("resize",function(){ draw(); });
+  }
+
+  function init(){
+    renderMath();
+    wire();
+    draw();
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

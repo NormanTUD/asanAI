@@ -1,0 +1,16 @@
+{
+  "no": "044",
+  "a": "grid_walker.html",
+  "b": "fourier_addition.html",
+  "a_title": "Grid Walker: Wie ein neuronales Netz eine Welt \"sieht\"",
+  "b_title": "How a Neural Network Learns Modular Addition (Fourier Multiplication Algorithm)",
+  "combined_theme": "dual-basis-projection",
+  "one_line": "Beide Netze entdecken die kompakte abelsche Struktur ihrer Aufgabe und lesen die Antwort per Projektion (Innenprodukt); A in der additiven Positions-Basis (ein geteilter Welt-Zustand x_t/t, lineare Auslese), B in der multiplikativen Phasen-Basis (Zahlen als e^(i2pi*kn/P), Interferenz-Auslese) - zwei duale Basen, dieselbe Projektion.",
+  "contradictions": [
+    "Kernoperation: A rechnet mit einer einzigen LINEAREN uniformen Mittelung (der erste Attention-Head berechnet x_t/t per konvexer Kombination; lineare Probes lesen den Zustand). B verlangt eine NICHTLINEARE elementweise Multiplikation - 'wave(a)*wave(b) - shifted(a)*shifted(b) = wave(a+b)' (Winkelsummenformel) -, um zwei getrennte Operanden zu kombinieren.",
+    "Objekt der Repraesentation: A modelliert eine EXTERNE WELT (Position des Walkers ueber die Zeit), universal und linear lesbar (Cross-Variante-CKA 0.95-0.97 nach Attention). B kodiert die EIGENE RECHNUNG (Phasen auf Kreisen, keine Welt) und liest die Antwort aus, indem JEDEN Kandidaten c per konstruktiver/destruktiver Interferenz gescort wird - kein linear lesbarer Welt-Zustand.",
+    "Kompaktheit: A braucht EINEN kompakten, ueber Varianten GETEILTEN 3D-Zustand [x_t/t, y_t/t, log t]. B braucht VIELE redundante Frequenzen parallel (z.B. k=14,35,41,42,52 fuer P=113), erst deren SUMME erzeugt den scharfen Auswahl-Peak."
+  ],
+  "resolution": "Positions-Basis (A) und Frequenz-Basis (B) sind duale Basen derselben abelschen Gruppe. A 'addiert' in der Positions-Basis (sichtbare Verschiebung, lineares Tracking); B 'addiert' in der Frequenz-Basis, wo die Exponential-/Fourier-Abbildung n->e^(i2pi*kn/P) dieselbe Addition in Multiplikation uebersetzt (e^(ika)*e^(ikb)=e^(ik(a+b))). B's nichtlineare Multiplikation ist also die Fourier-Seite von A's linearen Addition - dieselbe Gruppenoperation, andere Basis. 'Welt' vs. 'Rechnung' folgt dem Aufgabentyp: dynamisch/sequenziell -> Positions-Basis + lineare Auslese; algebraisch/funktional -> Phasen-Basis + Interferenz-Auslese. 'Einer' vs. 'viele' sind zwei Kompressionsziele (State-Kompaktheit vs. Diskriminations-Schaerfe). Beide Ausleseverfahren sind dieselbe Projektion/Innenprodukt: A projektiert den Zustand auf die Codier-Richtung (x_t/t), B die Summen-Phase auf die Kandidaten-Phasen (S(c)).",
+  "viz": "Interaktiver 'Doppel-Basis-Interferometer' auf einem gemeinsamen Kreis (reines Canvas, themenreaktiv ueber CSS-Variablen :root/html.dark + MutationObserver, alle Daten inline). Links: Positions-Basis (A) - roter Start a, gestricheltem Bogen b Einheiten-Schritte, goldene Netto-Sehne (=Durchschnitt der Codes). Auf demselben Kreis: Phasen-Basis (B) bei k=1 - Phasoren a (rot), b (gruen), a+b (gold), die mit den Walk-Punkten exakt zusammenfallen (Position = Phase bei Grundwelle). Rechts: Interferenz-Balkendiagramm S(c)=sum_k cos(2*pi*k*(a+b-c)/P) ueber alle Kandidaten, Gold-Balken auf a+b mod P. Slider P, a, b, K; mehr K = schaerferer Peak; Readout bestaetigt, dass beide Basen denselben Wert a+b mod P liefern."
+}

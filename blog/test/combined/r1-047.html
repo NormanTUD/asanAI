@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 047 — Lineares Gerüst, entscheidender Rest</title>
+<style>
+:root{
+  --bg:#f6f4ee; --panel:#ffffff; --panel2:#f0ebdf;
+  --stroke:rgba(20,28,44,.14); --stroke-hi:rgba(20,28,44,.30);
+  --txt:#1c2430; --txt-dim:#48525f; --txt-faint:#828b9c;
+  --acc:#0f9d8f; --acc2:#d63a86; --acc3:#c07f16; --acc4:#6b5be0; --acc5:#2f9e44;
+  --viz-bg:#ffffff; --viz-grid:rgba(20,28,44,.10); --viz-txt:#5a6472;
+  --viz-tok:#0f9d8f; --viz-res:#d63a86; --viz-full:#2f9e44; --viz-cap:#c07f16; --viz-use:#6b5be0;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0a0e18; --panel:#111a2c; --panel2:#0d1422;
+  --stroke:rgba(255,255,255,.10); --stroke-hi:rgba(255,255,255,.24);
+  --txt:#e8ecf6; --txt-dim:#a4afca; --txt-faint:#6b7794;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-bg:#0b1120; --viz-grid:rgba(255,255,255,.08); --viz-txt:#a4afca;
+  --viz-tok:#5ee0d0; --viz-res:#ff7ac0; --viz-full:#6ee88a; --viz-cap:#ffc860; --viz-use:#8a7cff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.68;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(720px 460px at 12% -4%,rgba(94,224,208,.06),transparent 60%),
+             radial-gradient(760px 520px at 90% 12%,rgba(138,124,255,.07),transparent 62%),var(--bg)}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.kicker .d{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 9px var(--acc)}
+h1{font-size:clamp(27px,4.6vw,44px);line-height:1.1;letter-spacing:-.02em;font-weight:760;margin-bottom:12px}
+h1 em{font-style:normal;color:var(--acc)}
+.subtitle{font-size:13px;color:var(--txt-faint);font-family:var(--mono);margin-bottom:6px;word-break:break-word}
+section{padding:34px 0;scroll-margin-top:20px}
+section+section{border-top:1px solid var(--stroke)}
+h2{font-size:clamp(20px,3vw,28px);line-height:1.18;letter-spacing:-.015em;font-weight:720;margin-bottom:16px}
+h2 .n{font-family:var(--mono);font-size:.62em;color:var(--acc);vertical-align:super;margin-right:8px;font-weight:700}
+h3{font-size:16px;font-weight:660;margin:22px 0 8px;color:var(--txt)}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+p.lead{font-size:15.5px;color:var(--txt)}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.86em;background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:5px;color:var(--acc)}
+.m{font-family:var(--mono);font-size:.9em;color:var(--txt);background:var(--panel2);border:1px solid var(--stroke);padding:1px 5px;border-radius:5px;white-space:nowrap}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:8px;max-width:74ch}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:13px 16px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 7%,transparent)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.t .h{color:var(--acc4)} .note.w .h{color:var(--acc3)}
+.claim{border:1px solid var(--stroke);background:var(--panel);border-radius:13px;padding:15px 17px;margin:14px 0}
+.claim .src{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:7px;display:inline-block;padding:3px 9px;border-radius:99px}
+.claim.a .src{color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,transparent)}
+.claim.b .src{color:var(--acc4);background:color-mix(in srgb,var(--acc4) 12%,transparent)}
+.claim p{margin-bottom:0;font-size:14px}
+.versus{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:14px 0}
+.versus .vs{font-family:var(--mono);color:var(--txt-faint);font-weight:700;font-size:15px}
+.aha{background:linear-gradient(150deg,color-mix(in srgb,var(--acc5) 10%,transparent),transparent);border:1px solid color-mix(in srgb,var(--acc5) 32%,transparent);border-radius:13px;padding:14px 17px;margin:16px 0}
+.aha .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc5);font-weight:660;margin-bottom:7px}
+.aha p{margin-bottom:8px;font-size:14px}
+.aha p:last-child{margin-bottom:0}
+.viz{background:var(--panel);border:1px solid var(--stroke-hi);border-radius:16px;padding:16px;margin:18px 0}
+.viz-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.viz-top h4{font-size:14px;font-weight:660;margin-right:auto}
+.viz-top .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--stroke-hi);color:var(--txt-faint)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:6px 12px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel2);color:var(--txt);transition:.15s}
+button:hover{transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+#viz{display:block;width:100%;border-radius:11px}
+.ctl{margin:12px 0 4px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--panel)}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:14px}
+.ro .box{background:var(--panel2);border:1px solid var(--stroke);border-radius:10px;padding:10px 12px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .box .v{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--acc)}
+.klbar{height:8px;border-radius:99px;background:var(--stroke);overflow:hidden;margin-top:7px}
+.klbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));width:0;transition:width .2s}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:10px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.prov{display:grid;gap:12px;margin:8px 0}
+.prov a{display:block;text-decoration:none;color:var(--txt);background:var(--panel);border:1px solid var(--stroke);border-radius:13px;padding:14px 16px;transition:.15s}
+.prov a:hover{border-color:var(--stroke-hi);transform:translateY(-1px)}
+.prov a .t{font-family:var(--mono);font-size:11px;color:var(--acc);margin-bottom:5px;word-break:break-all}
+.prov a .d{font-size:13.5px;color:var(--txt-dim)}
+footer{border-top:1px solid var(--stroke);padding:26px 0 0;color:var(--txt-faint);font-size:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<article>
+
+<header>
+  <p class="kicker"><span class="d"></span>Fusion · Runde 1 · Paar 047</p>
+  <h1>Lineares <em>Gerüst</em>, entscheidender Rest</h1>
+  <p class="subtitle">Fusion aus: theory_of_deep_learning_simple.html ✕ paper/geometric_structure_of_layer_updates.html</p>
+</header>
+
+<section id="these">
+  <h2><span class="n">01</span>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere stellen dieselbe Frage — <em>was macht ein tiefes Netz eigentlich?</em> — aber auf zwei Skalen. <strong>A</strong> (die Theorie) fragt, was ein ReLU-Netz als <em>globale Funktion</em> darstellen <em>kann</em> und warum Tiefe, Breite, Optimierung und Generalisierung funktionieren. <strong>B</strong> (Yoo 2026) <em>misst</em>, wie eine einzelne Schicht in trainierten Sprachmodellen (Pythia, Mamba, DistilGPT2) eine Token-Darstellung von <span class="m">h_ℓ</span> nach <span class="m">h_{ℓ+1}</span> bewegt — und zerlegt jeden Schicht-Update in einen <em>tokenweisen</em> (lokal-linearen) Anteil plus einen <em>Rest</em>.</p>
+  <p>Die eine integrierte Position lautet: <strong>Ein trainiertes tiefes Netz wird von einem linearen / lokal-linearen „Gerüst" dominiert — und der kleine, geometrisch sauber separierbare <em>Ausbruch</em> aus diesem Gerüst trägt den Sinn.</strong> In A ist das Gerüst die flachen <em>linearen Stücke</em> der stückweise-linearen Funktion; der Ausbruch ist der <em>Knick</em> (die ReLU-Beuge). In B ist das Gerüst der <em>tokenweise</em> (lokal-lineare) Anteil <span class="m">T(x)=A(x)·x</span>; der Ausbruch ist der <em>Rest</em> <span class="m">r</span>. Beide landen unabhängig auf derselben Feststellung — <strong>Nichtlinearität ist die Ausnahme im linearen Regime trainierter Netze</strong>: A über das Neural-Tangent-Kernel (breite Netze verhalten sich im Training fast linear; die Landschaft ist fast konvex — und <em>genau das</em> erklärt ihre Generalisierung), B über die gemessene Ausrichtung (vollständiger Update zeigt ≈ 0,97 parallel zum tokenweisen Anteil).</p>
+  <p>Und beide stellen danach dieselbe Folgefrage: <em>Wo steckt dann das Nicht-Triviale?</em> A antwortet: in den <em>Knikken</em>. B antwortet: im <em>Rest</em>. Damit lösen sich beide Schlagzeilen-Paradoxien gegenseitig auf: A's „Tiefe gibt exponentielle Kapazität" steht in Spannung zu A's eigener „ungemütlichen Wahrheit" (Zufalls-Init nutzt nur linear-in-Tiefe) — und B's „der Update ist niedrigdimensional" ist dieselbe Tatsache von der gemessenen Seite. <strong>Kapazität ≠ Nutzung:</strong> die exponentielle Stückzahl ist eine <em>Decke</em>; das trainierte Modell arbeitet weit darunter, in einem niedrigdimensionalen, lokal-linearen Regime, mit einem kleinen Rest, der die Arbeit verrichtet.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">02</span>Widersprüche zwischen A und B</h2>
+
+  <h3>Widerspruch 1 — Wo ist das Wesentliche: im linearen Kern oder im Rest?</h3>
+  <div class="versus"><div class="claim a"><span class="src">A · theory_of_deep_learning</span><p>„Ein ReLU-Netz ist deshalb <strong>im Kern eine stückweise lineare Funktion</strong> — eine Faltkarte aus vielen kleinen geraden Flächenstücken. <em>Diese Perspektive ist der Schlüssel zu fast allem</em>, was folgt." → Das <em>Lokal-Lineare</em> ist das Wesentliche; die Nichtlinearität taucht nur an den Knicken auf.</p></div>
+  <div class="vs">↔</div>
+  <div class="claim b"><span class="src">B · layer updates</span><p>„The full layer update is almost perfectly aligned with the tokenwise component. The residual … is <strong>where the functionally important computation lives</strong>." → Der lokal-lineare (tokenweise) Anteil ist der <em>triviale Hintergrund</em>; der <em>Rest</em> — gerade das, was das lokale lineare Modell <em>nicht</em> einfängt — ist das Wesentliche.</p></div></div>
+  <p>Inkompatible Verortung: Was A zum <em>Stern</em> erhebt (das Stückweise-Lineare „im Kern"), erklärt B zum <em>Baseline</em>, und verlagert den Stern auf den nicht-lokal-linearen Rest. Beide sprechen über „das Lokal-Lineare", meinen aber entgegengesetzte Dinge.</p>
+
+  <h3>Widerspruch 2 — Komplexität: exponentiell (A) vs. niedrigdimensional &amp; einfach (B)</h3>
+  <div class="versus"><div class="claim a"><span class="src">A · Tiefe &gt; Breite</span><p>Das Herzstück feiert die <strong>exponentielle Explosion</strong> durch Tiefe: <span class="m">h₁</span> n-mal verkettet → <span class="m">2ⁿ⁻¹</span> Knicke; Telgarsky: Tiefe L, Breite w → ≤ <span class="m">(2w)^L</span> Stücke; „30 Neuronen auf 10 Schichten à 3 → bis zu <strong>6¹⁰ ≈ 60 Millionen</strong> Stücke." <em>Komplexitäts-Explosion</em> ist A's Punkt.</p></div>
+  <div class="vs">↔</div>
+  <div class="claim b"><span class="src">B · Subspace</span><p>Der gemessene Schicht-Update ist <strong>niedrigdimensional und einfach</strong>: „the full update lives in a low-dimensional subspace … Even with just <strong>1–8 Singulärvektoren</strong> (aus hunderten Dimensionen) sind die vollen und tokenweisen Updates gut gefasst." <em>Einfachheit / Niedrigdimensionalität</em> ist B's Punkt.</p></div></div>
+  <p>Zwei entgegengesetzte Geschichten über Komplexität: A sagt, Tiefe <em>ermöglicht</em> exponentiell viele Stücke (Komplexität ist der Preis der Ausdruckskraft); B misst, dass der <em>tatsächliche</em> Update nur wenige Dimensionen belegt (Einfachheit ist der Befund).</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">03</span>Auflösung</h2>
+
+  <h3>Auflösung zu Widerspruch 1 — Form vs. Wirkung</h3>
+  <p>Man muss die zwei <em>Objekte</em> trennen, über die A und B sprechen:</p>
+  <ul>
+    <li><strong>A's Objekt = die globale Eingabe→Ausgabe-Funktion</strong> <span class="m">f: ℝⁿ→ℝ</span>. Sie ist <em>wirklich</em> stückweise linear — die Knick-Faltkarte <em>ist</em> die Form des Netzes. Hier ist „lokal-linear" das Wesentliche <em>der Gestalt</em>.</li>
+    <li><strong>B's Objekt = der Schicht-Update</strong> (der Delta-Schritt <span class="m">h_ℓ→h_{ℓ+1}</span>). Seine <em>Richtung</em> wird von einer lokal-linearen tokenweisen Karte dominiert, aber seine <em>funktionale Wirkung</em> (was den Modell-Ausgang ändert) konzentriert sich im <em>Rest</em>. Hier ist „lokal-linear" das <em>Baseline des Deltas</em>, und der <em>Rest</em> ist das Wesentliche <em>der Wirkung</em>.</li>
+  </ul>
+  <div class="aha"><div class="h">Fusionierter Schluss 1</div>
+  <p>Kein Widerspruch, sobald man <em>Gestalt</em> von <em>Wirkung</em> trennt. Die <em>Darstellung</em> des Netzes ist ein lokal-lineares Gerüst (A: flache Stücke + Knicke; B: tokenweise <span class="m">A(x)·x</span>); die <em>Berechnung</em> trägt der kleine strukturierte Ausbruch aus diesem Gerüst (A: die Knicke; B: der Rest). <strong>Master-Pattern in beiden: linearer Hintergrund + kleiner, funktionsbestimmender Ausbruch.</strong></p></div>
+
+  <h3>Auflösung zu Widerspruch 2 — Kapazität vs. Nutzung</h3>
+  <p>A's Exponentialzahlen (<span class="m">2ⁿ⁻¹</span>, <span class="m">(2w)^L</span>) sind <em>Obergrenzen dessen, was Tiefe darstellen kann</em> — und A räumt selbst ein („Die unangenehme Wahrheit"), dass zufällig initialisierte Netze sie praktisch nicht erreichen; der Erwartungswert der Stückzahl wächst nur <em>linear</em> in der Tiefe (Hanin &amp; Rolnick). B <em>misst trainierte</em> Netze und findet genau diesen niedrigdimensionalen Betriebszustand (top 1–8 Singulärvektoren) — <em>konsistent</em> mit A's eigener „ungemütlichen Wahrheit".</p>
+  <div class="aha"><div class="h">Fusionierter Schluss 2</div>
+  <p><strong>Tiefe <em>ermöglicht</em> exponentielle Komplexität (A), aber trainierte Modelle <em>nutzen</em> nur einen niedrigdimensionalen, lokal-linearen Kern plus kleinen Rest (B).</strong> Die exponentielle Stückzahl ist die <em>Decke</em>; die gemessene niedrigdimensionale Geometrie ist der <em>Betriebspunkt</em> weit darunter. Und der kleine strukturierte Anteil — A's Knicke, B's Rest — ist genau dort, wo die funktionell wichtige Arbeit stattfindet. Beide „Widersprüche" kollabieren zu einem Bild: <em>niedrigdimensionales lineares Regime + kleine entscheidende Nichtlinearität unter einer exponentiellen, ungenutzten Kapazitätsdecke.</em></p></div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">04</span>Fusionierter Inhalt</h2>
+
+  <h3>1 · Die Maschine: stückweise linear (A)</h3>
+  <p>Ein ReLU-Netz ist eine Kette von „Gewichte × Eingabe + Verschiebung" mit einem <em>Knick</em> (Aktivierung) dazwischen — also eine <strong>stückweise lineare Funktion</strong>, eine Faltkarte aus flachen Stücken. Jedes ReLU-Neuron = ein Knick. <em>Universalität</em> (Leshno–Lin–Pinkus–Schocken 1993): eine hinreichend breite versteckte Schicht approximiert jede stetige Funktion. Das Schlüsselbeispiel: „Hut" <span class="m">h₁(x)=max(0,2x)−max(0,4x−2)</span> (2 ReLUs, 2 Knicke); n-mal verkettet → <span class="m">2ⁿ⁻¹</span> Knicke bei nur <span class="m">O(n)</span> Parametern. Telgarsky: Tiefe L, Breite w → ≤ <span class="m">(2w)^L</span> stückweise-lineare Stücke. Bei fixem Budget N=30: 1 Schicht → ~31 Stücke; 10 Schichten à 3 → bis zu <span class="m">6¹⁰ ≈ 60 Mio.</span> Stücke. Yarotsky (2017): die Sägezähne bilden eine <em>Teleskopsumme</em>, die <span class="m">x²</span> mit Fehler <span class="m">2⁻²ⁿ</span> bei nur <span class="m">7n</span> Parametern annähert; per Polarisierung <span class="m">xy=((x+y)²−(x−y)²)/4</span> multipliziert das Netz dann — und damit jedes Polynom, jede glatte Funktion. <em>Kavenn:</em> Zufalls-Init erreicht die Exponentialzahlen nicht (Erwartungswert linear in der Tiefe); Yarotskys optimale Gewichte sind <em>unstetig</em> (ein stabiler Trainer kann sie nicht erreichen).</p>
+
+  <h3>2 · Fast linear im Training: NTK (A) ≈ Tokenwise-Ausrichtung (B)</h3>
+  <p>A: sehr <em>breite</em> Netze werden während des Trainings überraschend <em>linear</em> (Neural-Tangent-Kernel, Jacot et al. 2018) — die Landschaft verhält sich fast konvex, Gradientenabstieg findet zuverlässig ein gutes Minimum; und in der Überparametrisierung findet er systematisch die <em>einfachsten</em> Lösungen (die dann generalisieren). B: der <em>gemessene</em> Schicht-Update zeigt fast parallel zu einer lokal-linearen tokenweisen Karte (mittlere Ausrichtung full↔tokenwise 0,92–0,99, steigt mit Modellgröße). <strong>Beide finden unabhängig: „Nichtlinearität ist die Ausnahme im trainierten Netz."</strong> Die NTK-Linearisierung (A) und die tokenweise Karte <span class="m">T(x)=A(x)·x</span> (B) sind zwei Namen für dasselbe dominante lineare Regime.</p>
+
+  <h3>3 · Der Update: <span class="m">T + r</span> (B)</h3>
+  <p>Zerlegung <span class="m">h_{ℓ+1} = T(h_ℓ) + r(h_ℓ)</span>. <span class="m">T</span> ist eine <em>lokale, eingabebedingte</em> tokenweise Karte <span class="m">T(x_i)=A(x_i)·x_i</span> — lokal linear, global nichtlinear (weil <span class="m">A</span> von der Eingabe abhängt). <span class="m">r = h_{ℓ+1} − T(h_ℓ)</span> ist der Rest (cross-token). Gemessen: der volle Update weicht <strong>&lt; 10°</strong> vom tokenweisen ab, der Rest oft <strong>&gt; 60°</strong>. Metrik <span class="m">Align(v,u)=|vᵀu|/(‖v‖·‖u‖)</span>. Der volle Update und die tokenweise Komponente leben in einem <strong>niedrigdimensionalen Unterraum</em> (top-k Singulärvektoren; Projektionsanteil <span class="m">‖U_kᵀv‖²/‖v‖²</span>); der Rest ist über den Raum verstreut und braucht viele Dimensionen. Gilt <strong>architekturübergreifend</strong> (Pythia, DistilGPT2, Mamba) — es ist eine Eigenschaft der gelernten Repräsentationsdynamik, nicht der Attention.</p>
+
+  <h3>4 · Wo steckt die Funktion? (B's Befund ↔ A's Knicke)</h3>
+  <p>B's stärkster Befund: der <em>Rest</em> ist funktionell entscheidend — der Approximationsfehler <span class="m">‖r‖</span> sagt die Ausgandestörung (KL) stark voraus, Spearman <span class="m">ρ ≈ 0,8–0,9</span> über Pythia/Mamba (DistilGPT2 schwächer, <span class="m">ρ ≈ 0,32</span>); großer Rest → großer Auswärtseffekt. <strong>Fusion:</strong> Das ist exakt A's Punkt, dass der <em>nichtlineare Ausbruch</em> (der Knick, nicht das flache lineare Stück) das tut. Der flache/lineare Anteil ist „langweiliger Hintergrund"; der Knick/Rest ist die „Handlung". In A ist die Handlung <em>strukturiert</em> (erzeugt neue Stücke); in B ist sie <em>funktional</em> (verschiebt die Ausgabeverteilung).</p>
+
+  <h3>5 · Generalisierung &amp; Double Descent (A) — über das lineare Regime</h3>
+  <p>Klassische Statistik: mehr Parameter als Datenpunkte → Auswendiglernen. Aber Netze haben bis zu 1000× mehr Parameter als Bilder und generalisieren. <em>Double Descent</em>: der Test-Fehler steigt bis zum Interpolationpunkt und <em>sinkt rechts davon erneut</em>. Mechanismus: NTK-Linearität + GD findet <em>einfache</em> Lösungen → einfach = generalisiert. <strong>Fusions-Brücke:</strong> B's „dominantes lineares Gerüst" ist dasselbe NTK-Regime; die niedrigdimensionale Struktur erklärt, warum überparametrisierte Netze trotzdem einfache, generalisierende Lösungen finden.</p>
+
+  <h3>6 · Adversarial &amp; die Hochdimension — zusammengelesen</h3>
+  <p>A: <strong>Glatt klassifizierende Funktionen in hohen Dimensionen <em>müssen</em> feindliche Beispiele haben</strong> — die Entscheidungsgrenze ist eine dünne Wand; „unsichtbar" heißt in 300 000 Dimensionen nur „sehr kleine Länge". B zeigt, dass die <em>bedeutungsvolle</em> Variation in einem <em>niedrigdimensionalen</em> Unterraum / kleinen Rest liegt. <em>Zusammengelesen</em> (kein gemeinsamer Befund): die <em>Kapazität</em> des Netzes ist hochdimensional (A's Fluch der Dimensionalität, <span class="m">ε⁻ᵈ</span>), aber seine <em>genutzte</em> Geometrie niedrigdimensional (B) — genau diese Spannung macht winzige Adversarial-Stösse möglich, lässt das Modell aber sonst stabil.</p>
+
+  <h3>7 · Regime: Expressivität vs. Interpretierbarkeit (B ↔ A's Kavenn)</h3>
+  <p>B identifiziert Regime: <em>low-error</em> — lineare Karten funktionieren gut + starke Fehler↔Ausgabe-Korrelation; <em>high-error</em> — lineare Karten scheitern, MLPs erholen teilweise. Trade-off: eine ausdrucksstärkere Funktionsklasse (MLP) verkleinert den Rest, <em>schwächt</em> aber den interpretierbaren Rest↔Ausgabe-Zusammenhang. <strong>Fusions-Brücke mit A:</strong> A's eigenen Kavenn sind derselbe Trade-off von der Theorie-Seite — Yarotskys <em>optimale</em> (schnellste) Gewichte sind unstetig (unreachable), Zufalls-Init nutzt nur linear-in-Tiefe. Beide sagen: <strong>maximale Expressivität und Interpretierbarkeit/Stabilität stehen im Konflikt</strong>; der nutz- und interpretierbare Punkt ist das <em>niedrigfehlerhafte / niedrigkomplexe Regime</em>, nicht die Expressivitäts-Decke.</p>
+
+  <div class="note t"><span class="h">Fazit für die nächste Runde</span>
+  <b>Ein trainiertes tiefes Netz = niedrigdimensionales, lokal-lineares Gerüst + kleiner, geometrisch separierbarer, funktionsbestimmender Rest — unter einer exponentiellen, praktisch ungenutzten Kapazitätsdecke.</b> A liefert die Kapazitäts- und Generalisierungs-Theorie (Knicke, NTK, Double Descent, Adversarial); B liefert die gemessene Geometrie des Schritts (Tokenwise+Rest, Unterraum, funktionale Gewichtung des Rests).</div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">05</span>Interaktive Visualisierung</h2>
+  <p>Der fusionierte Kern, lebendig: <em>obere</em> Schicht zeigt den Schicht-Update eines Ringes von Token-Darstellungen zerlegt in <strong>tokenweisen (lokal-linearen, dominanten)</strong> Vektor + <strong>Rest (klein, quer, funktionsbestimmend)</strong> = voller Update. <em>Untere</em> Schicht zeigt die Auflösung von Widerspruch 2: <strong>exponentielle Kapazitäts-Decke (A)</strong> vs. <strong>flacher, niedrigdimensionaler Betriebspunkt (B)</strong>.</p>
+
+  <div class="viz">
+    <div class="viz-top">
+      <h4>Update = Tokenwise + Rest · Kapazität vs. Nutzung</h4>
+      <span class="tag">live · inline</span>
+      <button id="showF" class="on">Funktionale Wirkung</button>
+      <button id="reseed">Neue Stichprobe</button>
+      <button id="theme">☾/☀ Theme</button>
+    </div>
+    <canvas id="viz"></canvas>
+    <div class="leg">
+      <span><i style="background:var(--viz-tok)"></i>Tokenwise <span class="m">T(x)=A(x)·x</span> (lokal-linear)</span>
+      <span><i style="background:var(--viz-res)"></i>Rest <span class="m">r</span> (cross-token, klein)</span>
+      <span><i style="background:var(--viz-full)"></i>voller Update <span class="m">T+r</span></span>
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Rest-Anteil (‖r‖ relativ zur tokenweisen Länge)</span><b id="rRes">28 %</b></div>
+      <input type="range" id="resFrac" min="0" max="100" value="28">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Tiefe L (Kapazitäts-Decke <span class="m">(2w)^L</span>)</span><b id="rL">6</b></div>
+      <input type="range" id="depthL" min="1" max="12" value="6">
+    </div>
+    <div class="ro">
+      <div class="box"><div class="k">Ausrichtung Δ_full ↔ Δ_tok (B)</div><div class="v" id="rAlign">–</div></div>
+      <div class="box"><div class="k">Rest-Anteil ‖r‖/‖Δ‖</div><div class="v" id="rFrac" style="color:var(--acc2)">–</div></div>
+      <div class="box"><div class="k">Funktionale Wirkung (KL) ∝ Rest</div><div class="v" id="rKL" style="color:var(--acc)">–</div>
+        <div class="klbar"><i id="rKLbar"></i></div>
+      </div>
+    </div>
+    <p style="font-size:12px;margin-top:12px;color:var(--txt-faint)">Befund B: Der Rest ist ein <em>kleiner</em> Anteil der Update-Länge, sagt aber die Ausgabendifferenz (KL) stark voraus (ρ≈0,8) — „small in norm, large in function". Genau A's Punkt, dass der <em>nichtlineare Ausbruch</em> (Knick/Rest), nicht das flache lineare Stück, die Arbeit macht.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">06</span>Provenienz</h2>
+  <div class="prov">
+    <a href="../theory_of_deep_learning_simple.html">
+      <div class="t">A · theory_of_deep_learning_simple.html</div>
+      <div class="d">Interaktive, einfache deutsche Darstellung der Deep-Learning-Theorie (Approximation, Optimierung, Generalisierung): ReLU-Netz als stückweise lineare Funktion, Tiefe multipliziert Knicke (2ⁿ⁻¹, Telgarsky (2w)^L), Yarotsky, NTK, Double Descent, Adversarial.</div>
+    </a>
+    <a href="../paper/geometric_structure_of_layer_updates.html">
+      <div class="t">B · paper/geometric_structure_of_layer_updates.html</div>
+      <div class="d">Interaktiver Explainer zu Yoo (2026): Der Schicht-Update in trainierten LLMs zerfällt in tokenweisen (lokal-linearen) Anteil + Rest; voller Update fast parallel zum tokenweisen, Rest niedrig in Norm aber funktionsentscheidend (KL-Korrelation), in einem niedrigdimensionalen Unterraum — architekturübergreifend.</div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  Fusion 047 · Runde 1 · Alle Daten inline, keine Netz-Fetches. Visualisierung: reines Canvas, theme-aware (CSS-Variablen), keine Konsolenfehler.
+</footer>
+
+</article>
+
+<script>
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+function var_(n){return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim();}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+var cv=$('viz'); var ctx=cv.getContext('2d');
+var W=0,H=520,dpr=1,N=14,tokens=[];
+
+function reseed(){
+  tokens=[];
+  for(var i=0;i<N;i++){
+    tokens.push({sign:Math.random()<0.5?-1:1, scale:0.5+0.5*Math.random(), tw:Math.random()*0.3-0.15});
+  }
+}
+function sizeCanvas(){
+  var w=cv.parentElement.clientWidth;
+  if(w<10)w=320;
+  dpr=window.devicePixelRatio||1;
+  W=w; H=520;
+  cv.style.height=H+'px';
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function arrow(x1,y1,x2,y2,color,w,dash){
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w; ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.setLineDash([]);
+  var a=Math.atan2(y2-y1,x2-x1), hl=Math.max(7,w*2.6);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hl*Math.cos(a-0.4), y2-hl*Math.sin(a-0.4));
+  ctx.lineTo(x2-hl*Math.cos(a+0.4), y2-hl*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function draw(){
+  if(!W)sizeCanvas();
+  var resFrac=+$('resFrac').value/100;
+  var L=+$('depthL').value;
+  var showF=$('showF').classList.contains('on');
+  var cBg=var_('--viz-bg'),cGrid=var_('--viz-grid'),cTxt=var_('--viz-txt');
+  var cTok=var_('--viz-tok'),cRes=var_('--viz-res'),cFull=var_('--viz-full'),cCap=var_('--viz-cap'),cUse=var_('--viz-use');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=cBg; ctx.fillRect(0,0,W,H);
+
+  /* ---------- PANEL A: token ring ---------- */
+  var top=14, cy=top+150, cx=W/2, R=Math.min(W/2-30,118), Ltok=46;
+  ctx.fillStyle=cTxt; ctx.font='12px system-ui, sans-serif'; ctx.textAlign='left';
+  ctx.fillText('Schicht-Update = Tokenwise (lokal-linear, dominant) + Rest (klein, funktionsbestimmend)', 16, top+8);
+  var alignSum=0, rFracSum=0;
+  for(var i=0;i<N;i++){
+    var th=(i/N)*2*Math.PI - Math.PI/2;
+    var px=cx+R*Math.cos(th), py=cy+R*Math.sin(th);
+    var twist=-0.15+0.55*Math.sin(2*th+L*0.35)+tokens[i].tw;
+    var phi=th+twist;
+    var tx=Ltok*Math.cos(phi), ty=Ltok*Math.sin(phi);
+    var tipX=px+tx, tipY=py+ty;
+    var perpA=phi+(Math.PI/2)*tokens[i].sign;
+    var rmag=Ltok*resFrac*tokens[i].scale;
+    var rx=rmag*Math.cos(perpA), ry=rmag*Math.sin(perpA);
+    var fX=tipX+rx, fY=tipY+ry;
+    var fx=fX-px, fy=fY-py;
+    var nf=Math.sqrt(fx*fx+fy*fy)+1e-9;
+    var nt=Math.sqrt(tx*tx+ty*ty)+1e-9;
+    alignSum+=clamp(Math.abs(tx*fx+ty*fy)/(nt*nf),0,1);
+    rFracSum+=rmag/nf;
+    arrow(px,py,fX,fY,cFull, showF?1.6:1.1, [4,3]);
+    arrow(px,py,tipX,tipY,cTok, 2.4);
+    arrow(tipX,tipY,fX,fY,cRes, showF?3.2:2);
+    ctx.beginPath(); ctx.arc(px,py,3.4,0,Math.PI*2); ctx.fillStyle=cTxt; ctx.fill();
+  }
+  var align=alignSum/N, rFrac=rFracSum/N;
+  ctx.fillStyle=cTxt; ctx.textAlign='center'; ctx.font='11px system-ui, sans-serif';
+  ctx.fillText('Token h\u2113  (Ring)', cx, cy+3);
+
+  /* ---------- PANEL B: capacity vs utilization ---------- */
+  var bTop=330, bH=172, padL=46, padR=16, padTb=20;
+  var plotW=W-padL-padR, plotH=bH-padTb-20;
+  var bTopY=bTop+padTb, bBotY=bTop+bH-20;
+  ctx.fillStyle=cTxt; ctx.textAlign='left'; ctx.font='12px system-ui, sans-serif';
+  ctx.fillText('Kapazit\u00e4ts-Decke (A) vs. Betriebspunkt (B) \u2014 \u00fcber Tiefe L', padL, bTop+6);
+  ctx.textAlign='right'; ctx.font='10px system-ui, sans-serif';
+  for(var g=0; g<=10; g+=2){
+    var gy=bBotY-(g/10)*plotH;
+    ctx.strokeStyle=cGrid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,gy); ctx.lineTo(W-padR,gy); ctx.stroke();
+    var lab=Math.pow(10,g); var ll= lab>=1e6? (lab/1e6)+' Mio' : (lab>=1000? (lab/1000)+'k' : (''+lab));
+    ctx.fillStyle=cTxt; ctx.fillText(ll, padL-6, gy+3);
+  }
+  function xOf(Lv){return padL+(Lv-1)/11*plotW;}
+  function yLog(v){return bBotY-clamp(Math.log10(Math.max(1,v))/10,0,1)*plotH;}
+  ctx.strokeStyle=cCap; ctx.lineWidth=2.5; ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  for(var L2=1; L2<=12; L2++){ var x=xOf(L2), y=yLog(Math.pow(6,L2)); if(L2===1)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle=cUse; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(L2=1; L2<=12; L2++){ var xu=xOf(L2), yu=yLog(3+0.6*Math.sqrt(L2)); if(L2===1)ctx.moveTo(xu,yu); else ctx.lineTo(xu,yu); }
+  ctx.stroke();
+  var mx=xOf(L);
+  ctx.strokeStyle=cGrid; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(mx,bTopY); ctx.lineTo(mx,bBotY); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(mx,yLog(Math.pow(6,L)),5,0,Math.PI*2); ctx.fillStyle=cCap; ctx.fill();
+  ctx.beginPath(); ctx.arc(mx,yLog(3+0.6*Math.sqrt(L)),5,0,Math.PI*2); ctx.fillStyle=cUse; ctx.fill();
+  ctx.fillStyle=cTxt; ctx.textAlign='center'; ctx.font='10px system-ui, sans-serif';
+  ctx.fillText('Tiefe L  \u2192', padL+plotW/2, bTop+bH-4);
+  ctx.textAlign='right'; ctx.font='11px system-ui, sans-serif';
+  ctx.fillStyle=cCap; ctx.fillText('\u2014\u2014 Potentielle St\u00fccke (2w)^L  (A)', W-padR, bTop+6);
+  ctx.fillStyle=cUse; ctx.fillText('\u2014 Genutzte Dim. top-k  (B)', W-padR, bTop+20);
+
+  /* ---------- readouts ---------- */
+  var kl=clamp(rFrac*2.4,0,1);
+  $('rAlign').textContent=align.toFixed(3);
+  $('rFrac').textContent=Math.round(rFrac*100)+' %';
+  $('rKL').textContent=Math.round(kl*100)+' %';
+  $('rKLbar').style.width=(kl*100)+'%';
+  $('rL').textContent=L;
+  $('rRes').textContent=Math.round(resFrac*100)+' %';
+}
+function init(){ sizeCanvas(); if(!tokens.length)reseed(); draw(); }
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
+var rt; window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){sizeCanvas();draw();},150);});
+$('resFrac').addEventListener('input',draw);
+$('depthL').addEventListener('input',draw);
+$('reseed').addEventListener('click',function(){reseed();draw();});
+$('showF').addEventListener('click',function(){this.classList.toggle('on');draw();});
+$('theme').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+})();
+</script>
+</body>
+</html>

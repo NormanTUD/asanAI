@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 040 — Superpositions-Readout: Hologramm trifft Token-Reise</title>
+<script>if(!/[?&]light\b/.test(location.search))document.documentElement.classList.add('dark');</script>
+<style>
+:root{
+  --bg:#faf8f1;--fg:#1c1b18;--card:#ffffff;--border:#d8d3c8;--accent:#0a6ea8;
+  --muted:#6b665c;--grid:#e4dfd3;--c1:#c0392b;--c2:#1e7e34;--gold:#9a6b00;--heat:#d9822b;
+}
+html.dark{
+  --bg:#0f172a;--fg:#e6edf3;--card:#161b22;--border:#30363d;--accent:#58a6ff;
+  --muted:#8b949e;--grid:#1e2a3a;--c1:#f87171;--c2:#4ade80;--gold:#ffd700;--heat:#ffa657;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',Arial,system-ui,sans-serif;line-height:1.7;padding:32px 16px;}
+article{max-width:820px;margin:0 auto;}
+h1{font-size:1.7em;line-height:1.25;margin-bottom:6px;color:var(--accent);}
+.subtitle{color:var(--muted);font-size:.95em;margin-bottom:28px;font-style:italic;}
+h2{font-size:1.28em;margin:34px 0 12px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:6px;}
+p{margin-bottom:12px;}
+section{margin-bottom:10px;}
+.lead{font-size:1.05em;}
+.kbox{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0;}
+.kbox b{color:var(--accent);}
+ul{margin:0 0 12px 22px;}
+li{margin-bottom:8px;}
+.formula{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:12px 0;overflow-x:auto;font-family:'Cambria Math','STIX Two Math',Georgia,serif;font-size:1.05em;}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:1px 10px;font-size:.8em;color:var(--muted);margin-right:6px;}
+.c1{color:var(--c1);font-weight:600;}
+.c2{color:var(--c2);font-weight:600;}
+.viz-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;}
+#viz{display:block;width:100%;height:auto;max-width:900px;margin:0 auto;border:1px solid var(--border);border-radius:8px;}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin:6px 0 14px;font-size:.86em;}
+.controls label{color:var(--muted);}
+.controls input[type=range]{width:120px;accent-color:var(--accent);}
+.controls .val{color:var(--gold);font-weight:700;min-width:26px;text-align:center;}
+.controls button{padding:6px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;}
+.controls button:hover{background:var(--accent);color:var(--bg);}
+.hint{text-align:center;color:var(--muted);font-size:.85em;margin-top:10px;}
+.prov a{color:var(--accent);}
+.prov li{list-style:none;margin-bottom:10px;}
+</style>
+</head>
+<body>
+<article>
+<h1>Superpositions-Readout: wenn das Hologramm den Token liest</h1>
+<p class="subtitle">Fusion aus: decode_holo.html &#10005; youarellm.html</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p class="lead">Beide Papiere beschreiben <b>derselben Sache zwei Seiten</b>: Ein neuronales Netz speichert strukturiertes Wissen nicht als Bild oder Regel, sondern als <b>lineare Superposition</b> einer kleinen Menge von <i>Basis-Features</i> in einem Vektorraum. Bei <span class="c1">A</span> sind diese Features Fourier-Frequenzen (cos/sin bei mehreren &omega;<sub>k</sub>), bei <span class="c2">B</span> sind es das Embedding plus die Positional Encoding &mdash; die verwen&nbsp;den &#252;brigens <i>exakt dieselbe</i> sin/cos-Mehrfrequenz-Basis (PE(pos,2i)=sin(pos/10000^(2i/d)), PE(pos,2i+1)=cos(&middot;)).</p>
+<p>Der entscheidende gemeinsame Punkt ist das <b>Lesen</b>: In beiden F&auml;llen wird die Antwort durch einen <b>linearen Score &uuml;ber eine Menge von Kandidaten</b> plus <b>Argmax/Softmax</b> herausgeholt. <span class="c2">B</span> rechnet P(token)<sub>i</sub>=exp(score<sub>i</sub>)/&Sigma;exp(score<sub>j</sub>) &uuml;ber das Vokabular; <span class="c1">A</span> nimmt den h&ouml;chsten kosinus-Score &uuml;ber die Kandidaten c=0&hellip;P&minus;1. Das ist <i>operationell dasselbe</i>: ein linearer Score &uuml;ber einem Vokabular, normalisiert bzw. argmax-gelesen.</p>
+<p>Der einzige echte Unterschied ist die <b>Geometrie des Raums</b>. <span class="c2">B</span> zeigt den <b>ger&auml;umigen</b> Fall &mdash; viele Dimensionen, die Features stehen nahezu orthogonal, jedes Token bekommt &bdquo;seinen klaren Vektor&ldquo;, nichts &uuml;berlagert sich. <span class="c1">A</span> zeigt den <b>engen</b> Fall &mdash; nur d=3 Dimensionen f&uuml;r 10+ n&ouml;tige Richtungen, die Features &uuml;berlagern sich zu einem <b>Hologramm</b> und m&uuml;ssen &uuml;ber die Inverse der Gram-Matrix wieder entzerrt werden. Die Fusion: <i>Es gibt ein einziges lineares Superpositions-Ph&auml;nomen; &bdquo;Raum&ldquo; (B) und &bdquo;Enge&ldquo; (A) sind nur zwei Limes desselben, quantifiziert durch, wie sehr die Gram-Matrix von der Einheitsmatrix abweicht.</i></p>
+</section>
+
+<section id="widersprueche">
+<h2>Widerspr&uuml;che zwischen A und B</h2>
+<ul>
+<li><b>Geometrie des Embedding-Raums &mdash; ger&auml;umt vs. eng.</b>
+<span class="c2">B</span> stellt das Embedding als (hochdimensionalen) &bdquo;Vektorraum&ldquo; dar, in dem jedes Token bequem &bdquo;seinen K&ouml;rper&ldquo; bekommt; der Toy-Modus nutzt dim&nbsp;=&nbsp;8 f&uuml;r 5 Tokens, und Interferenz/Crosstalk wird <i>nie</i> erw&auml;hnt &mdash; implizit gilt &bdquo;genug Platz, jedes Feature klar trennbar&ldquo;.
+<span class="c1">A</span> beharrt dagegen, dass der <i>interessante</i> Fall genau das <b>Unterbestimmte</b> ist (d=3 f&uuml;r 10+ Richtungen): &bdquo;Zu wenig Platz&ldquo; zwingt zur Superposition, die Features st&ouml;ren sich gegenseitig und m&uuml;ssen per Gram&#8315; entzerrt werden. &rarr; Opposite Stances: B = &bdquo;der Naturzustand ist ger&auml;umt/orthogonal&ldquo;, A = &bdquo;der interessante Zustand ist &uuml;berladen/interferierend&ldquo;.</li>
+<li><b>Lesbarkeit des Inneren &mdash; dekodierbar vs. undurchsichtig.</b>
+<span class="c1">A</span> macht Interpretierbarkeit zum <i>Punkt</i>: Der Algorithmus (die Fourier-Rechnung von a+b mod P) sei per DFT + Gram&#8315; + Least-Squares &uuml;ber 512 Neuronen <b>transparent extrahierbar und belegbar</b> (&bdquo;wir holen ihn wieder raus&ldquo;).
+<span class="c2">B</span> pr&auml;sentiert das Innere dagegen als <b>schwarze-Box-Reise</b>, durch die das Token nur hindurchflie&szlig;t; die Attention-Gewichte sind heuristisch (<code>exp(&minus;dist&middot;0.3)+random</code>), das FFN ein blo&szlig;es &bdquo;Matrix-Mult, ReLU, noch eine Schicht&ldquo; &mdash; ohne jeden Anspruch, dass die Rechnung extrahierbar w&auml;re. &rarr; A = &bdquo;die Rechnung ist linear dekodierbar&ldquo;, B = &bdquo;es ist ein undurchsichtiger Prozess, dem man folgt&ldquo;.</li>
+</ul>
+<p><span class="tag">Faithfulness</span> Beide Spannungen stehen tats&auml;chlich in den Quellen (A: &bdquo;Zu wenig Platz&ldquo;, &bdquo;entzerrt&ldquo;, &bdquo;wir holen ihn wieder raus&ldquo;; B: &bdquo;Vektorraum / dein K&ouml;rper&ldquo;, dim=8, <code>Math.random()</code>-Attention, &bdquo;durchl&auml;uft neuronale Schichten&ldquo;). Es wird nichts erfunden &mdash; die zwei Punkte sind die realen, st&auml;rksten Stance-Unterschiede.</p>
+</section>
+
+<section id="aufloesung">
+<h2>Aufl&ouml;sung</h2>
+<p><b>1 &middot; Raum vs. Enge = zwei Limes desselben Ph&auml;nomens.</b> Die Feature-Superposition interpoliert sauber: Wenn #Features&nbsp;&ll;&nbsp;#Dimensionen (der Fall bei B, bzw. A&rsquo;s d=128), ist die Gram-Matrix G&nbsp;&asymp;&nbsp;I, das Crosstalk &asymp;&nbsp;0, die Features orthogonal &mdash; trivial trennbar, keine Entzerrung n&ouml;tig (genau B&rsquo;s &bdquo;jedes Token seinen klaren Vektor&ldquo;). Wenn #Features&nbsp;&gg;&nbsp;#Dimensionen (A&rsquo;s d=3), weicht G stark von I ab, Crosstalk gro&szlig;, Hologramm &mdash; Gram&#8315; erforderlich. <b>Fused:</b> B ist der Hochdimensional-Limes von A&rsquo;s Modell, A der Niedrigdimensional-Limes. Der &bdquo;Hologramm-Grad&ldquo; ist eine einzige Zahl &mdash; wie weit G von I entfernt ist &mdash; und der Slider im Visualisierer f&auml;hrt genau diese Achse von B (ger&auml;umt) nach A (eng).</p>
+<p><b>2 &middot; Reise vs. Dekodierung = zwei Perspektiven auf dasselbe Objekt.</b> B&rsquo;s &bdquo;Fluss&ldquo; (Token&nbsp;&rarr;&nbsp;Embedding+PE&nbsp;&rarr;&nbsp;Attention&nbsp;&rarr;&nbsp;FFN/ReLU&nbsp;&rarr;&nbsp;linearer Score+Softmax) ist <i>genau die Pipeline</i>, die A&rsquo;s Lineare Algebra r&uuml;ckw&auml;rts ingenieurt. Die konkreten Bausteine aus B &mdash; die <b>multi-frequente sin/cos-Positional-Encoding</b>, das <b>ReLU im FFN</b> und der <b>lineare Score + Softmax</b> am Output &mdash; sind die <i>exakten Zutaten</i>, die A&rsquo;s Fourier/Gram-Dekodierung &uuml;berhaupt erst erm&ouml;glichen: Weil jede Stufe linear (bzw. ReLU&nbsp;&rarr;&nbsp;st&uuml;ckweise linear) ist, ist die Gesamtabbildung <b>lokal linear</b> &mdash; und <i>daher</i> im Prinzip per Lineare Algebra dekodierbar, was A tut. <b>Fused:</b> B liefert die Ph&auml;nomenologie (wie sich der Fluss anf&uuml;hlt), A den Beweis (dass er dekodierbar ist). Zusammen: <i>die Reise des Tokens ist eine lokal-lineare Pipeline &mdash; und genau deshalb ist sie dekodierbar.</i></p>
+<div class="kbox"><b>Kurzformel der Aufl&ouml;sung:</b> G&nbsp;&asymp;&nbsp;I &rArr; B (klare Reise, keine Entzerrung) &middot; G&nbsp;weit&nbsp;von&nbsp;I &rArr; A (Hologramm, Gram&#8315; n&ouml;tig) &middot; <b>dekon = (G+&lambda;I)&#8315;&middot;G</b> entzerrt den engen Fall zur&uuml;ck in den ger&auml;umten.</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p><b>&#9312; Feature-Superposition (gemeinsam).</b> Eine Repr&auml;sentation ist eine lineare Kombination von Basis-Features. <span class="c1">A</span> schreibt die Gewichte als Fourier-Summe
+<div class="formula">W<sub>L</sub> = &Sigma;<sub>k</sub> cos(&omega;<sub>k</sub>&middot;c)&middot;u<sub>k</sub><sup>T</sup> + sin(&omega;<sub>k</sub>&middot;c)&middot;v<sub>k</sub><sup>T</sup></div>
+und <span class="c2">B</span> kodiert Position mit derselben trigonometrischen Basis
+<div class="formula">PE(pos,2i) = sin(pos / 10000^(2i/d)) ,&nbsp;&nbsp; PE(pos,2i+1) = cos(pos / 10000^(2i/d))</div>
+&rarr; Beide leben in einer <i>(trigonometrischen/Fourier-)Basis</i>. Ein gefittetes Netz spannt damit einen Unterraum auf, dessen &Uuml;berlappungsstruktur die Gram-Matrix tr&auml;gt.</p>
+<p><b>&#9313; Gram-Matrix &amp; Crosstalk (A, verallgemeinert auf B).</b>
+<div class="formula">G<sub>ij</sub> = &lang;u<sub>i</sub>, u<sub>j</sub>&rang; = Skalarprodukt der Feature-Richtungen i, j</div>
+Diagonaleintr&auml;ge = 1; Nicht-Diagonale = &bdquo;Crosstalk&ldquo; (wie viel von Feature j in i &bdquo;reinleckt&ldquo;). Ger&auml;umt (B): G&nbsp;&asymp;&nbsp;I, Off-Diag&nbsp;&asymp;&nbsp;0. Eng (A): Off-Diag gro&szlig;. Die <b>Entzerrung</b> (duale Basis) ist <b>x = G&#8315;&middot;(naive Projektionen)</b>. <span class="c1">A</span> liefert die quantitative Warnung: Starkes Crosstalk &rArr; G ill-konditioniert &rArr; G&#8315; verst&auml;rkt Fehler &rArr; &bdquo;Entzerrung schwierig&ldquo;. (Im Viz wird das mit Ridge &lambda; abgefangen.)</p>
+<p><b>&#9314; ReLU &rArr; lokale Linearit&auml;t (gemeinsam).</b> Beide nutzen ReLU. <span class="c1">A</span>: 512 ReLU-Neuronen zerschneiden den 3D-Inputraum in viele kleine Regionen; in jeder Region ist die Transformation <b>lokal linear</b> und damit invertierbar &mdash; deshalb l&auml;uft die Dekodierung Region f&uuml;r Region &uuml;ber Least-Squares. <span class="c2">B</span>: FFN(x)=max(0, xW&#8321;+b&#8321;)W&#8322;+b&#8322;. &rarr; ReLU macht das Netz zu einer <b>st&uuml;ckweise-linearen</b> Abbildung; jedes Muster aktiver Neuronen = eine lineare Region. Genau diese lokale Linearit&auml;t ist die <i>Voraussetzung</i> daf&uuml;r, dass &#9312;&ndash;&#9313; &uuml;berhaupt per Lineare Algebra lesbar sind.</p>
+<p><b>&#9315; Lineares Lesen + Argmax/Softmax &mdash; die zentrale Vereinigung (gemeinsam).</b>
+<div class="formula"><span class="c2">B</span>:&nbsp; score<sub>i</sub> = finaler Vektor &middot; VokabEmbedding<sub>i</sub><sup>T</sup> ,&nbsp; P(token<sub>i</sub>) = exp(score<sub>i</sub>) / &Sigma;<sub>j</sub> exp(score<sub>j</sub>) ,&nbsp; Argmax &rArr; n&auml;chstes Token</div>
+<div class="formula"><span class="c1">A</span>:&nbsp; Antwort = Argmax<sub>c</sub> [entzerrter kosinus-Score &uuml;ber c=0&hellip;P&minus;1] ,&nbsp; c* = (a+b) mod P</div>
+&rarr; <b>Dasselbe Objekt:</b> eine diskrete Antwort wird durch einen <i>linearen Score &uuml;ber einem Kandidaten-Vokabular</i> + Normalisierung/Argmax gelesen. &bdquo;Verstehen&ldquo; (A&rsquo;s a+b mod P) und &bdquo;vorhersagen&ldquo; (B&rsquo;s n&auml;chstes Token) sind dieselbe Operation.</p>
+<p><b>&#9316; Die Pipeline (B) ist das dekodierbare Objekt (A).</b>
+<div class="formula">Tokenisierung &rarr; Embedding(+PE) &rarr; Self-Attention (softmax(QK&#7488;/&radic;d)&middot;V) &rarr; FFN (ReLU) &rarr; linearer Readout + Softmax</div>
+Jede Stufe ist linear oder st&uuml;ckweise-linear &rArr; Gesamtabbildung lokal linear &rArr; <b>im Prinzip dekodierbar</b> durch A&rsquo;s DFT / Gram&#8315; / Least-Squares. B&rsquo;s Reise ist also kein Widerspruch zu A&rsquo;s Dekodierung, sondern ihr <i>Substrat</i>: Die Zutaten der Reise (sin/cos-PE, ReLU, linearer Score+Softmax) sind die Gr&uuml;nde, warum die Dekodierung funktioniert.</p>
+</section>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung: von Raum (B) zu Enge (A)</h2>
+<p>Der Slider <b>d</b> f&auml;hrt die Dimensionalit&auml;t der Feature-R&auml;ume von <span class="c2">ger&auml;umt</span> (d=6, G&nbsp;&asymp;&nbsp;I, B&rsquo;s Welt) bis <span class="c1">eng</span> (d=1, Hologramm, A&rsquo;s Welt). Links: schematische Feature-Richtungen (wie im Original: d gro&szlig; = gespreizt, d klein = gequetscht) und die <b>echte</b> d-dimensional Hadamard-Gram-Matrix als Crosstalk-Heatmap. Rechts: der gemeinsame <b>lineare Readout</b> &mdash; <span class="c1">naiv</span> (mit Crosstalk) vs. <span class="c2">entzerrt</span> ((G+&lambda;I)&#8315;G) &uuml;ber P=13 Kandidaten; die richtige Antwort c*=(a+b) mod P ist mit &#9733; markiert. Bei asymmetrischer Engung driftet die naive Antwort ab, die entzerrte bleibt stabil.</p>
+<div class="viz-wrap">
+<div class="controls">
+  <label>Dimensionen d</label><input type="range" id="dIn" min="1" max="6" value="3"><span class="val" id="dV">3</span>
+  <label>a</label><input type="range" id="aIn" min="0" max="12" value="4"><span class="val" id="aV">4</span>
+  <label>b</label><input type="range" id="bIn" min="0" max="12" value="7"><span class="val" id="bV">7</span>
+  <span class="val" id="pv" style="min-width:auto;">P=13</span>
+  <button id="themeBtn">Theme</button>
+</div>
+<canvas id="viz" width="900" height="620"></canvas>
+<p class="hint">&#8593; Rot = naive Projektion (verzerrt) &middot; Gr&uuml;n = nach G&#8315;-Entzerrung &middot; &#9733; = richtige Antwort c* = (a+b) mod 13 &middot; Heatmap-Diagonale = 1.0, Orange = Crosstalk</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul class="prov">
+<li><a href="../decode_holo.html">decode_holo.html</a> &mdash; &bdquo;Holografische Entzerrung bei d=3 Grokking&ldquo;: Wie ein a+b-mod-P-Netz seinen Fourier-Algorithmus in d=3 quetscht und man ihn &uuml;ber Gram-Matrix + G&#8315; + ReLU-Regionen + Least-Squares wieder entzerrt.</li>
+<li><a href="../youarellm.html">youarellm.html</a> &mdash; &bdquo;Ich bin ein Token &ndash; Eine Reise durch das LLM&ldquo;: Die Token-Perspektive durch Tokenisierung &rarr; Embedding &rarr; Positional Encoding &rarr; Self-Attention &rarr; FFN/ReLU &rarr; Softmax-Output.</li>
+</ul>
+</section>
+</article>
+
+<script>
+var K=6,P=13,LAMBDA=0.15;
+var H=[
+[1,1,1,1,1,1,1,1],
+[1,-1,1,-1,1,-1,1,-1],
+[1,1,-1,-1,1,1,-1,-1],
+[1,-1,-1,1,1,-1,-1,1],
+[1,1,1,-1,-1,-1,1,-1],
+[1,-1,1,1,-1,1,-1,-1],
+[1,1,-1,1,-1,1,1,-1],
+[1,-1,-1,-1,1,1,-1,1]
+];
+var V=[1,0.85,1,0.7,0.9,0.8];
+var d=3,a=4,b=7;
+
+function cv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function C(n,fb){var v=cv(n);return (v===null||v===''?fb:v);}
+
+function buildGram(dd){
+  var G=[],i,j,r,s;
+  for(i=0;i<K;i++){G[i]=[];for(j=0;j<K;j++){s=0;for(r=0;r<dd;r++)s+=H[r][i]*H[r][j];G[i][j]=s/dd;}}
+  return G;
+}
+function matAddI(G,la){var M=[],i;for(i=0;i<K;i++){M[i]=G[i].slice();M[i][i]+=la;}return M;}
+function matInv(M){
+  var n=M.length,A=[],r,c,i,k;
+  for(i=0;i<n;i++){A[i]=M[i].slice();for(c=0;c<n;c++)A[i].push(i===c?1:0);}
+  for(c=0;c<n;c++){
+    var p=c;for(r=c+1;r<n;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;
+    if(Math.abs(A[p][c])<1e-12)return null;
+    var t=A[c];A[c]=A[p];A[p]=t;
+    var dv=A[c][c];for(k=0;k<2*n;k++)A[c][k]/=dv;
+    for(r=0;r<n;r++){if(r===c)continue;var f=A[r][c];for(k=0;k<2*n;k++)A[r][k]-=f*A[c][k];}
+  }
+  var out=[];for(i=0;i<n;i++)out.push(A[i].slice(n));return out;
+}
+function matMul(A,B){var n=A.length,res=[],i,j,k,s;for(i=0;i<n;i++){res[i]=[];for(j=0;j<n;j++){s=0;for(k=0;k<n;k++)s+=A[i][k]*B[k][j];res[i][j]=s;}}return res;}
+
+function scores(dd,aa,bb){
+  var cstar=(aa+bb)%P;
+  var G=buildGram(dd);
+  var M=matInv(matAddI(G,LAMBDA));
+  var M2=M?matMul(M,G):null;
+  var naiveCoef=[],deconCoef=[],j,k,nc,dc;
+  for(j=0;j<K;j++){nc=0;dc=0;for(k=0;k<K;k++){nc+=G[k][j]*V[k];dc+=(M2?M2[k][j]:0)*V[k];}naiveCoef[j]=nc;deconCoef[j]=dc;}
+  var out=[],c,off,ns,ds,rr;
+  for(c=0;c<P;c++){
+    off=(c-cstar+P)%P;ns=0;ds=0;
+    for(j=0;j<K;j++){rr=Math.cos(2*Math.PI*(j+1)*off/P);ns+=naiveCoef[j]*rr;ds+=deconCoef[j]*rr;}
+    out.push({c:c,naive:ns,decon:ds});
+  }
+  return {cstar:cstar,out:out,G:G};
+}
+
+function draw(){
+  var canvas=document.getElementById('viz');
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,Hh=canvas.height;
+  ctx.clearRect(0,0,W,Hh);
+  ctx.fillStyle=C('--card','#161b22');ctx.fillRect(0,0,W,Hh);
+  var text=C('--vz-text','#e6edf3'),muted=C('--muted','#8b949e'),grid=C('--grid','#1e2a3a'),
+      c1=C('--c1','#f87171'),c2=C('--c2','#4ade80'),gold=C('--gold','#ffd700'),
+      heat=C('--heat','#ffa657'),accent=C('--accent','#58a6ff');
+  var sres=scores(d,a,b);
+  var cs=sres.cstar,G=sres.G;
+
+  ctx.fillStyle=text;ctx.font='bold 16px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText(a+' + '+b+'  mod  '+P+'  =  '+cs, W/2, 26);
+  ctx.font='12px Segoe UI,Arial';ctx.fillStyle=muted;
+  ctx.fillText('Feature-Superposition · Gram-Crosstalk · linearer Readout (naiv vs. G\u207b\u00b9)', W/2, 44);
+
+  var offSum=0,offCnt=0,i,j;
+  for(i=0;i<K;i++)for(j=0;j<K;j++)if(i!==j){offSum+=Math.abs(G[i][j]);offCnt++;}
+  var offAvg=offSum/offCnt;
+
+  var vx=185,vy=205,rad=118;
+  ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.beginPath();ctx.arc(vx,vy,rad,0,2*Math.PI);ctx.stroke();
+  ctx.fillStyle=accent;ctx.font='bold 12px Segoe UI,Arial';ctx.textAlign='center';
+  ctx.fillText('Feature-Richtungen (schematisch)',vx,vy-rad-14);
+  ctx.fillStyle=muted;ctx.font='11px Segoe UI,Arial';
+  ctx.fillText('d='+d+(d>=5?'  ·  geräumt (B)':(d<=1?'  ·  eng (A)':'  ·  Übergang')),vx,vy-rad+1);
+
+  var s=(d-1)/(K-1);
+  for(i=0;i<K;i++){
+    var ang=-Math.PI/2+(i+0.5)/K*2*Math.PI*s;
+    var ex=vx+rad*Math.cos(ang),ey=vy+rad*Math.sin(ang);
+    ctx.strokeStyle=accent;ctx.lineWidth=2.5;ctx.globalAlpha=0.85;
+    ctx.beginPath();ctx.moveTo(vx,vy);ctx.lineTo(ex,ey);ctx.stroke();ctx.globalAlpha=1;
+    ctx.fillStyle=accent;ctx.beginPath();ctx.arc(ex,ey,4.5,0,2*Math.PI);ctx.fill();
+    ctx.font='10px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('k'+(i+1),vx+(rad+16)*Math.cos(ang),vy+(rad+16)*Math.sin(ang));
+  }
+
+  var hx=25,hy=352,cell=40;
+  ctx.fillStyle=accent;ctx.font='bold 12px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('Gram-Matrix G (Crosstalk)',hx,hy-10);
+  for(i=0;i<K;i++){
+    for(j=0;j<K;j++){
+      var val=G[i][j];
+      if(i===j){ctx.fillStyle=c2;}
+      else{var m=Math.min(1,Math.abs(val)/0.8);ctx.fillStyle=heat;ctx.globalAlpha=0.25+0.75*m;}
+      ctx.fillRect(hx+j*cell,hy+i*cell,cell-2,cell-2);ctx.globalAlpha=1;
+      if(cell>=25){
+        ctx.fillStyle=(i===j)?'#08210f':'#2a1a05';
+        ctx.font='10px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(val.toFixed(2),hx+j*cell+(cell-2)/2,hy+i*cell+(cell-2)/2);
+      }
+    }
+  }
+  ctx.fillStyle=muted;ctx.font='11px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('Crosstalk (Ø |off-diag|): '+offAvg.toFixed(2),hx,hy+K*cell+18);
+  ctx.fillStyle=offAvg>0.4?c1:(offAvg>0.15?heat:c2);ctx.font='bold 11px Segoe UI,Arial';
+  ctx.fillText(offAvg>0.4?'⚠ stark verzerrt — Entzerrung nötig':(offAvg>0.15?'⚡ moderat':'✓ kaum Crosstalk'),hx,hy+K*cell+34);
+
+  var bx=300,by=90,bw=580,bh=470;
+  ctx.fillStyle=accent;ctx.font='bold 12px Segoe UI,Arial';ctx.textAlign='center';
+  ctx.fillText('Lineares Lesen über P=13 Kandidaten (c)',bx+bw/2,by-6);
+  var maxVal=0,x;
+  for(x=0;x<sres.out.length;x++){maxVal=Math.max(maxVal,Math.abs(sres.out[x].naive),Math.abs(sres.out[x].decon));}
+  if(maxVal<1e-9)maxVal=1;
+  var midY=by+bh/2;
+  ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,midY);ctx.lineTo(bx+bw,midY);ctx.stroke();
+  var grp=bw/P,barW=Math.max(4,grp*0.28);
+  for(c=0;c<P;c++){
+    var nx=bx+c*grp+grp*0.12,dx=bx+c*grp+grp*0.5;
+    var nH=sres.out[c].naive/maxVal*(bh/2-24);
+    var dH=sres.out[c].decon/maxVal*(bh/2-24);
+    ctx.fillStyle=c1;ctx.globalAlpha=0.85;ctx.fillRect(nx,midY-nH,barW,nH);ctx.globalAlpha=1;
+    ctx.fillStyle=c2;ctx.globalAlpha=0.85;ctx.fillRect(dx,midY-dH,barW,dH);ctx.globalAlpha=1;
+    if(c===cs){
+      ctx.strokeStyle=gold;ctx.lineWidth=2;
+      ctx.strokeRect(nx-2,midY-Math.max(nH,dH)-2,grp-4,Math.max(nH,dH)+2);
+      ctx.fillStyle=gold;ctx.font='14px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+      ctx.fillText('★',bx+c*grp+grp/2,midY-Math.max(nH,dH)-8);
+    }
+    ctx.fillStyle=muted;ctx.font='9px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText(c,bx+c*grp+grp/2,midY+14);
+  }
+  ctx.fillStyle=muted;ctx.font='10px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=c1;ctx.fillRect(bx,by+bh+8,12,12);ctx.fillStyle=muted;ctx.fillText('naiv (verzerrt)',bx+18,by+bh+18);
+  ctx.fillStyle=c2;ctx.fillRect(bx+120,by+bh+8,12,12);ctx.fillStyle=muted;ctx.fillText('entzerrt (G\u207b\u00b9)',bx+138,by+bh+18);
+
+  var naiveBest=sres.out[0],deconBest=sres.out[0],x2;
+  for(x2=0;x2<sres.out.length;x2++){
+    if(sres.out[x2].naive>naiveBest.naive)naiveBest=sres.out[x2];
+    if(sres.out[x2].decon>deconBest.decon)deconBest=sres.out[x2];
+  }
+  var nA=naiveBest.c,dA=deconBest.c;
+  ctx.font='bold 13px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  var msg='Richtig c*='+cs+'  ·  naive → '+nA+(nA===cs?' ✓':'  ✗ (falsch!)')+'  ·  entzerrt → '+dA+(dA===cs?' ✓':'  ✗');
+  ctx.fillStyle=(nA===cs&&dA===cs)?c2:(dA===cs?heat:c1);
+  ctx.fillText(msg,W/2,Hh-12);
+}
+
+function bind(id,varname,label){
+  var el=document.getElementById(id);
+  el.addEventListener('input',function(){
+    var v=parseInt(el.value,10);
+    if(varname==='d')d=v;else if(varname==='a')a=v;else if(varname==='b')b=v;
+    document.getElementById(label).textContent=v;
+    draw();
+  });
+}
+function toggleTheme(){
+  document.documentElement.classList.toggle('dark');
+  draw();
+}
+document.getElementById('dIn').value=d;
+document.getElementById('aIn').value=a;
+document.getElementById('bIn').value=b;
+document.getElementById('dV').textContent=d;
+document.getElementById('aV').textContent=a;
+document.getElementById('bV').textContent=b;
+bind('dIn','d','dV');bind('aIn','a','aV');bind('bIn','b','bV');
+document.getElementById('themeBtn').addEventListener('click',toggleTheme);
+draw();
+</script>
+</body>
+</html>
