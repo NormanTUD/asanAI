@@ -209,12 +209,11 @@ function draw(){
   for(i=0;i<K;i++){
     for(j=0;j<K;j++){
       var val=G[i][j];
-      if(i===j){ctx.fillStyle=c2;}
-      else{var m=Math.min(1,Math.abs(val)/0.8);ctx.fillStyle=heat;ctx.globalAlpha=0.25+0.75*m;}
+      if(i===j){ctx.fillStyle=c2;ctx.globalAlpha=0.35;}
+      else{var m=Math.min(1,Math.abs(val)/0.8);ctx.fillStyle=heat;ctx.globalAlpha=0.2+0.6*m;}
       ctx.fillRect(hx+j*cell,hy+i*cell,cell-2,cell-2);ctx.globalAlpha=1;
       if(cell>=25){
-        ctx.fillStyle=(i===j)?'#08210f':'#2a1a05';
-        ctx.font='10px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillStyle=text;ctx.font='10px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
         ctx.fillText(val.toFixed(2),hx+j*cell+(cell-2)/2,hy+i*cell+(cell-2)/2);
       }
     }
