@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktur über Substanz — Fusion: Analytischer Idealismus ✕ Topologie biologischer Systeme</title>
+<style>
+  :root {
+    --bg: #f5f2ea;
+    --bg2: #ece7db;
+    --panel: #fbfaf6;
+    --ink: #23201a;
+    --ink-dim: #5c5646;
+    --accent: #8b6cb8;
+    --accent2: #c07a4a;
+    --accent3: #2f7d86;
+    --danger: #b8524f;
+    --ok: #3f8f5f;
+    --line: rgba(40,32,16,.16);
+    --grid: rgba(40,32,16,.07);
+    --shadow: 0 8px 30px rgba(40,32,16,.08);
+  }
+  html.dark {
+    --bg: #0a0a14;
+    --bg2: #10101e;
+    --panel: #14142a;
+    --ink: #e8e8f5;
+    --ink-dim: #a2a0c0;
+    --accent: #d4a574;
+    --accent2: #8b6cb8;
+    --accent3: #5eb8c4;
+    --danger: #d47474;
+    --ok: #5fbf8a;
+    --line: rgba(212,165,116,.22);
+    --grid: rgba(255,255,255,.06);
+    --shadow: 0 10px 40px rgba(0,0,0,.5);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', 'Palatino', serif;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+  .theme-toggle {
+    position: fixed; top: 14px; right: 16px; z-index: 50;
+    background: var(--panel); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 20px;
+    padding: .4rem .85rem; font: 600 .78rem/1 system-ui, sans-serif;
+    cursor: pointer; box-shadow: var(--shadow);
+  }
+  article {
+    max-width: 820px; margin: 0 auto; padding: 4.5rem 1.3rem 5rem;
+  }
+  header.masthead { margin-bottom: 2.4rem; }
+  .kicker {
+    font: 700 .72rem/1 system-ui, sans-serif; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: .8rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.12; font-weight: 700;
+    letter-spacing: -.02em; margin-bottom: .7rem;
+  }
+  .subtitle {
+    font-size: .98rem; color: var(--ink-dim); font-style: italic;
+    border-left: 3px solid var(--accent); padding-left: .8rem; margin-top: 1rem;
+  }
+  .subtitle code { font: 600 .82rem/1 ui-monospace, monospace; color: var(--accent3); }
+  section { margin-top: 3rem; }
+  section > h2 {
+    font-size: clamp(1.4rem, 3.2vw, 2rem); font-weight: 700; letter-spacing: -.01em;
+    margin-bottom: .2rem; color: var(--accent);
+  }
+  section > .lead { color: var(--ink-dim); font-size: .98rem; margin-bottom: 1.2rem; }
+  p { margin-bottom: 1rem; font-size: 1.03rem; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); }
+  em { color: var(--accent); font-style: italic; }
+  .tag {
+    display: inline-block; font: 700 .68rem/1 system-ui, sans-serif;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: .22rem .55rem; border-radius: 12px; border: 1px solid var(--line);
+    color: var(--accent3); background: var(--bg2); vertical-align: middle;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.3rem 1.4rem; margin: 1.3rem 0; box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: 1.12rem; margin-bottom: .5rem; color: var(--ink); font-weight: 700; }
+  .card .who { font: 700 .7rem/1 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); display: block; margin-bottom: .35rem; }
+  ul { margin: .4rem 0 1rem 1.2rem; }
+  li { margin-bottom: .55rem; font-size: 1.01rem; }
+  li::marker { color: var(--accent3); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  @media (max-width: 680px) { .grid2 { grid-template-columns: 1fr; } }
+  blockquote.fuse {
+    border-left: 3px solid var(--accent); background: var(--bg2);
+    padding: 1rem 1.2rem; border-radius: 0 10px 10px 0; margin: 1.3rem 0;
+    font-style: italic; color: var(--ink); font-size: 1.02rem;
+  }
+  .eq {
+    font-family: ui-monospace, 'JetBrains Mono', monospace; font-size: .9rem;
+    background: var(--bg2); border: 1px solid var(--line); border-radius: 8px;
+    padding: .6rem .8rem; margin: .7rem 0; display: block; overflow-x: auto;
+    color: var(--accent3); white-space: pre;
+  }
+  .viz-wrap {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    padding: 1.1rem; box-shadow: var(--shadow);
+  }
+  #viz-canvas { width: 100%; height: 470px; display: block; border-radius: 10px; background: var(--bg2); }
+  .controls { display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; margin-top: 1rem; align-items: flex-end; }
+  .ctrl { display: flex; flex-direction: column; gap: .35rem; }
+  .ctrl label { font: 700 .68rem/1 system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); }
+  .ctrl .val { font: 600 .78rem/1 ui-monospace, monospace; color: var(--accent3); }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none; width: 150px; height: 4px;
+    background: var(--line); border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; box-shadow: 0 0 10px var(--accent);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px; border: none; border-radius: 50%;
+    background: var(--accent); cursor: pointer;
+  }
+  .btn-group { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .fb {
+    font: 700 .8rem/1 system-ui, sans-serif; padding: .4rem .7rem; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--bg2); color: var(--ink); cursor: pointer;
+    transition: all .15s;
+  }
+  .fb:hover { border-color: var(--accent); }
+  .fb.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .readout {
+    display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-top: 1rem;
+    font: 600 .82rem/1.4 ui-monospace, monospace;
+  }
+  .readout .chip { background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .7rem; }
+  .readout .chip b { color: var(--accent); }
+  .viz-note { font-size: .9rem; color: var(--ink-dim); margin-top: 1rem; }
+  .provenance li { font-size: .98rem; }
+  .provenance a { color: var(--accent3); text-decoration: none; border-bottom: 1px dotted var(--accent3); word-break: break-all; }
+  .provenance a:hover { color: var(--accent); }
+  footer.colophon { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: .82rem; color: var(--ink-dim); text-align: center; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">◐ Thema</button>
+
+<article>
+  <header class="masthead">
+    <div class="kicker">Fusion · Runde 1 · Nicht-KI-Track · Paar 101</div>
+    <h1>Struktur über Substanz</h1>
+    <p class="subtitle">Fusion aus: <code>analytischer_idealismus.html</code> ✕ <code>topologie_biologischer_systeme.html</code></p>
+  </header>
+
+  <!-- ══════════════════════════ 1. THESE ══════════════════════════ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere, auf den Grund gebracht, verteidigen eine und dieselbe These: <strong>Die Essenz eines Systems liegt in seiner Struktur, nicht in seiner Substanz.</strong> Was ein Wesen oder einen Organismus ausmacht, ist nicht der träge Stoff, aus dem er besteht, sondern das stabile <em>relationale und dynamische Muster</em>, das er instantiiert — die Art, wie seine Teile einander beeinflussen, in welchen Schleifen sie gekoppelt sind und wie ein Fehler sich durch diese Beziehungengeometrie ausbreitet.</p>
+    <p>Papier&nbsp;A (Kastrups <em>analytischer Idealismus</em>) radikalisiert diesen Strukturalismus zur Metaphysik: Es gibt ein einziges universelles Bewusstsein; Körper, Gegenstände und andere Lebewesen sind bloße <em>Erscheinungen</em> — Strudel, dissoziierte „Alters", Schwingungsmuster — dieses einen Feldes. Die „Materie" ist das Icon auf einem Dashboard, nie das Ding selbst. Papier&nbsp;B (Osis &amp; Beghi, <em>Topologische Modellierung biologischer Systeme</em>) hält denselben Strukturalismus bei, aber als substanzneutralen Formalismus: Ein Organismus ist ein topologischer Raum / gerichteter Graph funktionaler Relationen; Funktion, Fehlerausbreitung und Diagnose werden aus der Beziehungengeometrie (Schleifen, Erreichbarkeit, Stetigkeit) abgelesen — nie aus dem Stoff.</p>
+    <blockquote class="fuse">Fusioniert: <strong>Ein einzelnes Feld organisiert sich in zusammenhängende, schleifenförmige, selbstregulierende Strukturen.</strong> Diese Strukturen — und nur sie — sind das Reale und Erkennbare. Sie <em>maskieren</em> zudem ihren wahren Zustand; deshalb muss man die Struktur lesen, nicht die Oberflächenanzeige.</blockquote>
+  </section>
+
+  <!-- ══════════════════════ 2. WIDERSPRÜCHE ══════════════════════ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="lead">Die beiden Papiere sind nicht bloß komplementär — sie stehen an mindestens drei Stellen im echten Konflikt über <em>was</em> Struktur ist und <em>ob</em> hinter ihr ein Substrat liegt.</p>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="who">Konflikt 1 · Ontologie vs. Neutralität</span>
+        <h3>„Materie ist nur Erscheinung" vs. „keine Aussage über die Materie"</h3>
+        <p>A macht einen starken <em>ontologischen</em> Anspruch: Bewusstsein ist die einzige Substanz, Materie ist davon abgeleitet. B trifft <em>keine</em> solche Aussage — die Topologie ist ein bewusst substanzneutrales Modell, das materielle Systeme beschreibt und damit mit Materialismus kompatibel bleibt.</p>
+      </div>
+      <div class="card">
+        <span class="who">Konflikt 2 · Einheits-Holismus vs. Teilbarkeit</span>
+        <h3>„Es ist nur Eines" vs. „wirklich trennbare Teile"</h3>
+        <p>A verneint wirkliche Trennung: Alles ist eines, jede Scheidung ist bloße Dissoziation, ein Traumbild. B setzt im Gegenteil <em>wirklich unterscheidbare, lokal isolierbare Teilknoten</em> voraus, die unabhängig fehlen können — Aussage 1 verlangt sogar, dass ein System <em>zusammenhängend</em> sein muss, d.h. aus Teilen besteht, die man einzeln herausbrechen kann.</p>
+      </div>
+      <div class="card">
+        <span class="who">Konflikt 3 · Karte vs. Territorium</span>
+        <h3>„Es gibt kein Territorium" vs. „die Karte entspricht dem realen System"</h3>
+        <p>A sagt, es existiert kein zugängliches „Territorium" hinter der Darstellung — auch die Physik ist nur ein tieferes Icon. B setzt dagegen voraus, dass die Karte (Topologie, Adjazenzmatrix) einem <em>realen materiellen System</em> entspricht und durch dessen Symptome validiert wird: Die Diagnose muss zum tatsächlichen Patienten passen.</p>
+      </div>
+      <div class="card">
+        <span class="who">Konflikt 4 · Richtung der Erklärung</span>
+        <h3>„Umkehrung (Eins → Viele)" vs. „Komposition (Viele → Eins)"</h3>
+        <p>A lehnt explizit die Kompositionsstrategie ab (das „Kombinationsproblem") und schlägt die <em>Umkehrung</em> vor: eins dissoziiert in viele. B ist fundamental <em>kompositorisch</em>: aus vielen Knoten und lokalen Relationen entsteht ein zusammenhängendes Ganzes mit Schleifen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 3. AUFLÖSUNG ══════════════════════ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p class="lead">Die Widersprüche lösen sich auf, wenn man erkennt, dass A und B auf <em>verschiedenen Ebenen</em> reden. B liefert die Strukturgrammatik des Erscheinungsbilds; A benennt das, wovon dieses Erscheinungsbild die einzige zugängliche Realität ist.</p>
+
+    <div class="card">
+      <h3>1 · Ontologie vs. Neutralität → B wird zur Strukturgrammatik des Traums</h3>
+      <p>Lesen wir die Topologie von B als die <em>Strukturgrammatik des Erscheinungsbilds</em>, das A als das Einzige Zugängliche kennt, verschwindet der Konflikt. B sagt nichts über die Materie — und muss nichts sagen. Es modelliert die <em>funktionale Logik der Erscheinung</em>. Unter A ist diese funktionale Logik genau das, was real ist: die Selbstorganisation des einen Feldes. B ist also nicht mit A inkonsistent, sondern <em>der Teil von A, der innerhalb des Traums formalisiert werden kann</em>.</p>
+    </div>
+    <div class="card">
+      <h3>2 · Holismus vs. Teilbarkeit → Trennbarkeit ist der Schatten der Dissoziation</h3>
+      <p>A ist ontologisch holistisch (alles ist eines), aber <em>funktional</em> nutzt er genau den Mechanismus, den B braucht: Dissoziation. A verweist auf die dissoziative Identitätsstörung als empirische Analogie — in <em>einem</em> Bewusstsein entstehen stabil getrennte, lokal isolierte „Alters", die voneinander abgeschottet sind. Die „wirklich trennbaren Knoten" von B sind somit keine metaphysische Trennung, sondern <em>funktionale/kognitive Dissoziation</em>. Ein „isolierte" Knoten bei B ist ein dissoziiertes Alter, das die Verbindung verloren hat (A). Die funktionale Teilbarkeit ist der <em>Schatten</em> der Dissoziation auf Erscheinungsebene.</p>
+    </div>
+    <div class="card">
+      <h3>3 · Karte vs. Territorium → es gibt kein materielles, aber ein funktionales Territorium</h3>
+      <p>A sagt: kein materielles Territorium. B braucht aber gar keines. Es gibt ein <em>funktionales Territorium</em> — die Erscheinung ist wirklich strukturiert, gesetzmäßig und kartierbar. Die Topologie ist das <em>Modell des Funktionsablaufs</em> des Traums, validiert durch die innere Kohärenz des Traums (Symptome sind Merkmale der Erscheinung). B „liest" die Karte des Traums, nicht die Karte der Materie.</p>
+    </div>
+    <div class="card">
+      <h3>4 · Umkehrung vs. Komposition → beide auf ihrer Ebene</h3>
+      <p>Die Komposition (B: Knoten → System) und die Umkehrung (A: eins → Dissoziation) schließen sich nicht aus, sondern <em>verschachteln</em> sich. Auf Erscheinungsebene komponiert man: viele funktionale Knoten bilden ein zusammenhängendes Organ. Ontologisch wird umgekehrt: dieses komponierte Ganze ist <em>selbst</em> ein Dissoziationmuster des einen Feldes. B beschreibt, <em>wie</em> die Teile innerhalb eines Alters zusammenhängen; A erklärt, <em>warum</em> es scheinbar viele Alters gibt.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 4. INHALT ══════════════════════ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="lead">Der konsolidierte, eigenständig lesbare Inhalt beider Papiere — integriert, nicht aneinandergereiht. Eine spätere Runde kann von hier allein weiterarbeiten.</p>
+
+    <div class="grid2">
+      <div class="card">
+        <span class="who">A · Das Feld und seine Strudel</span>
+        <h3>Ein Bewusstsein, viele Dissoziationen</h3>
+        <ul>
+          <li>Es gibt <strong>ein universelles Bewusstsein</strong>; Lebewesen sind dissoziierte „Alters" desselben.</li>
+          <li><strong>Strudel-Metapher:</strong> du bist ein Vortex im Ozean — eine lokale Bewegungsstruktur, kein separates Ding. Auflösung des Strudels = Tod, das „Wasser" bleibt.</li>
+          <li><strong>Umkehrung:</strong> Materie aus Bewusstsein erklären statt umgekehrt — löst das harte Problem.</li>
+          <li><strong>Membran/Schwingung:</strong> das Feld als unendlich-dimensionale Membran; Erfahrungen sind Chladni-artige Schwingungsmuster. Mathematik gleich, nur Ontologie geändert.</li>
+          <li><strong>Empirisch (DIS):</strong> EEG-Studie Strasburger &amp; Waldvogel 2015 — „blinde" Alters hatten inaktive Sehrinde; Dissoziation schaltet Wahrnehmung ab.</li>
+          <li><strong>Empirisch (Filter):</strong> Psilocybin/LSD/DMT/Nahtod — Gehirnaktivität <em>sinkt</em>, Erfahrung <em>steigt</em> → Gehirn filtert, statt zu erzeugen.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="who">B · Das topologische Modell</span>
+        <h3>Vom Digraph zur Diagnose</h3>
+        <ul>
+          <li><strong>System = topologischer Raum (X, θ)</strong>, repräsentiert als gerichteter Graph G(X,V): Knoten = Funktionen, Kanten = Ursache-Wirkung.</li>
+          <li><strong>Umgebung U(a)</strong> = a + direkte Nachfolger; <strong>Abschluss [Y]</strong> = Menge aller Berührungs-/Adhärenzpunkte.</li>
+          <li><strong>Erreichbarkeit D(a)</strong> (BFS); <strong>S(a) = X \ D(a)</strong> (asyntaktischer Rest).</li>
+          <li><strong>Aussage 1:</strong> Das System muss <em>zusammenhängend</em> sein; isolierst du einen Knoten, bricht es zusammen.</li>
+          <li><strong>Leben = geschlossene Schleifen;</strong> ein Fehler auf der <em>Hauptschleife</em> ist gefährlicher.</li>
+          <li><strong>Stetige Verfeinerung t: T → T*:</strong> Knoten in Untereigenschaften aufteilen, Richtung &amp; Zusammenhang bleiben erhalten; Ergebnis <em>invariant</em> unter Verfeinerung.</li>
+          <li><strong>Syndrom/Asyndrom:</strong> aus einem Fehler wächst die Menge der betroffenen Funktionen; Diagnose = Strukturvergleich statt Symptomvergleich (Homöostase maskiert).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="who">Brücke · Die eigentliche Fusion</span>
+      <h3>Der Organismus als dissoziiertes Alter; die Topologie als Grammatik der Erscheinung</h3>
+      <p>Setze die zwei zusammen: <em>Ein Organismus (B) ist ein dissoziiertes Alter (A).</em> Sein materieller Körper ist das „Icon"/„Dashboard" — eine komprimierte, stabilitätsoptimierte Repräsentation (Hoffman/Friston bei A). Die topologische Struktur (B) ist die <em>funktionale Grammatik</em> dieser Erscheinung: der stabile Zusammenhang, in dem sich das Alter organisiert. Ein „Fehler/Syndrom" (B) ist ein lokales Zerreißen des Dissoziationsmusters (A). Ein „Knoten" (B) ist eine funktionale Rolle innerhalb der Selbstorganisation des Alters, nicht ein metaphysisch getrenntes Ding.</p>
+      <p>Und hier wird die Fusion am schönsten, weil sie <em>beide</em> auf einen gemeinsamen Kern reduziert: <strong>Selbstregulierende Systeme maskieren ihren wahren Zustand.</strong></p>
+      <ul>
+        <li><strong>Bei A:</strong> Das Gehirn <em>filtert</em> das kosmische Bewusstsein. Reduzierst du den Filter (Psilocybin, Nahtod), taucht <em>mehr</em> Erfahrung auf — die Oberfläche (weniger Gehirnaktivität) zeigt das Gegenteil der Wahrheit (reicheres Erleben).</li>
+        <li><strong>Bei B:</strong> Homöostase <em>kompensiert</em> eine Krankheit. Je stärker die Kompensation, desto „normaler" sehen die Messwerte aus — die Oberfläche (RVP, Blutdruck, Diurese) zeigt fast Norm, während der strukturelle Fehler aktiv ist.</li>
+        <li><strong>Fusioniert:</strong> In beiden Fällen sagt die Oberflächenanzeige das Gegenteil der Wahrheit. Die Wahrheit ist nur über die <em>tieferliegende Struktur</em> lesbar: über das Schwingungsmuster des Feldes (A) bzw. über die Schleifen-/Erreichbarkeitsgeometrie (B). Diagnose = Strukturlesen gegen die Maske.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Nützliche Mathematik (aus beiden)</h3>
+      <span class="eq">B · Digraph &amp; Topologie
+G = (X, V)        V ⊆ X×X (gerichtete Kanten / „beeinflusst")
+U(a) = {a} ∪ { b : (a,b) ∈ V }
+[Y]  = { a : U(a) ∩ Y ≠ ∅ }          (Abschluss / Berührungspunkte)
+D(a) = { b : es existiert Weg a ⇝ b }   (Erreichbarkeit, BFS)
+S(a) = X \ D(a)
+stetig t: T→T*  ⇔  ∀ offen W⊆T*:  t⁻¹(W) offen in T</span>
+      <span class="eq">A · Membran-Schwingung (Chladni, rechteckig)
+ψ(x,y; n,m) = sin(nπx)·sin(mπy) − sin(mπx)·sin(nπy)
+Qualia = Schwingungssignatur des einen Feldes</span>
+      <span class="eq">A · Quanten-Korrelation (Bell, als Evidenz gegen klassischen Realismus)
+P(gleich) = cos²(Δθ/2)   → verletzt die CHSH-Grenze
+B · Homöostase-Maske
+Anzeige_i = lerp(wahr_i, normal, k)   k = Kompensationsgrad ∈ [0,1]
+k → 1  ⇒  Anzeige_i → normal  (obwohl wahr_i ≠ normal)</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 5. VISUALISIERUNG ══════════════════════ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <p class="lead">Ein <em>einziges Teilchenfeld</em> (die kleinen Punkte) bildet stabile <em>Strudel</em> um die Funktionknoten eines zusammenhängenden, schleifenförmigen Systems. Wähle einen Fehlerknoten, breite das Syndrom entlang der Erreichbarkeit aus — und drehe den <strong>Homöostase</strong>-Regler, um die Selbstmaskierung zu sehen: Die <em>Oberflächen-Anzeige</em> (Balken) gleitet zum Normalwert, während die <em>Struktur</em> (Knotenfarben, Ticks) den wahren Zustand verrät.</p>
+
+    <div class="viz-wrap">
+      <canvas id="viz-canvas"></canvas>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Fehlerknoten</label>
+          <div class="btn-group" id="faultBtns"></div>
+        </div>
+        <div class="ctrl">
+          <label>Ausbreitung <span class="val" id="spreadVal">100</span></label>
+          <input type="range" id="spread" min="0" max="100" value="100">
+        </div>
+        <div class="ctrl">
+          <label>Homöostase (Maske) <span class="val" id="maskVal">0</span></label>
+          <input type="range" id="mask" min="0" max="100" value="0">
+        </div>
+        <div class="ctrl">
+          <label>&nbsp;</label>
+          <button class="fb" id="resetBtn" type="button">Zurücksetzen</button>
+        </div>
+      </div>
+      <div class="readout" id="readout"></div>
+      <p class="viz-note"><strong>Lesart:</strong> „Fehlerknoten" = der Knoten, dessen Dissoziation reißt (A) bzw. dessen Funktion fällt aus (B). „Ausbreitung" = wie weit das Syndrom sich über die Schleifen fortpflanzt. „Homöostase" = die Selbstregulation, die die Oberfläche nach Normal schiebt, ohne die Struktur zu heilen. Nur die Struktur verrät, ob das System gesund ist.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 6. PROVENIENZ ══════════════════════ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="provenance">
+      <li><span class="tag">A</span> <a href="../analytischer_idealismus.html">analytischer_idealismus.html</a> — Kastrups analytischer Idealismus als interaktive Szene-Reihe: ein universelles Bewusstsein, dissoziierte Alters, Wahrnehmung als Dashboard, Quantenevidenz, Filter- statt Erzeugungs-Modell des Gehirns und die Konsequenzen für Tod, Einheit und Ethik.</li>
+      <li><span class="tag">B</span> <a href="../topologie_biologischer_systeme.html">topologie_biologischer_systeme.html</a> — Osis &amp; Beghi (IFAC 1997): Biologische Systeme als topologischer Raum / gerichteter Graph; Umgebungen, Abschluss, Erreichbarkeit, Zusammenhang, geschlossene Schleifen, stetige Verfeinerung, Syndrome/Asyndromes und automatische Diagnose trotz homöostatischer Maskierung.</li>
+    </ul>
+  </section>
+
+  <footer class="colophon">
+    Fusion · Runde 1 · Nicht-KI-Track · Paar 101 — Struktur über Substanz.
+  </footer>
+</article>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── Theme toggle ─────────────────────────────────────────── */
+  var root = document.documentElement;
+  var tbtn = document.getElementById('themeToggle');
+  if (tbtn) {
+    tbtn.addEventListener('click', function () {
+      root.classList.toggle('dark');
+    });
+  }
+
+  /* ── Canvas setup ─────────────────────────────────────────── */
+  var canvas = document.getElementById('viz-canvas');
+  if (!canvas || !canvas.getContext) { return; }
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.max(1, window.devicePixelRatio || 1);
+  var W = 0, H = 0;
+
+  function resize() {
+    var r = canvas.getBoundingClientRect();
+    canvas.width = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    W = r.width; H = r.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  /* ── Theme-reactive palette ───────────────────────────────── */
+  var P = {};
+  function hexA(hex, a) {
+    try {
+      var h = hex.replace('#', '').trim();
+      if (h.length === 3) { h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+      var r = parseInt(h.substr(0, 2), 16),
+          g = parseInt(h.substr(2, 2), 16),
+          b = parseInt(h.substr(4, 2), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    } catch (e) { return hex; }
+  }
+  function readTheme() {
+    var s = getComputedStyle(root);
+    P.ink    = (s.getPropertyValue('--ink') || '#e8e8f5').trim();
+    P.inkDim = (s.getPropertyValue('--ink-dim') || '#a2a0c0').trim();
+    P.accent  = (s.getPropertyValue('--accent') || '#d4a574').trim();
+    P.accent2 = (s.getPropertyValue('--accent2') || '#8b6cb8').trim();
+    P.accent3 = (s.getPropertyValue('--accent3') || '#5eb8c4').trim();
+    P.danger  = (s.getPropertyValue('--danger') || '#d47474').trim();
+    P.ok      = (s.getPropertyValue('--ok') || '#5fbf8a').trim();
+    P.line    = (s.getPropertyValue('--line') || 'rgba(128,128,128,.2)').trim();
+    P.grid    = (s.getPropertyValue('--grid') || 'rgba(128,128,128,.06)').trim();
+  }
+  readTheme();
+  if (window.MutationObserver) {
+    new MutationObserver(readTheme).observe(root, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  /* ── Graph (from B's digestive system) ────────────────────── */
+  var nodes = [
+    { id: 'a', label: 'Nahrungskontakt', x: 0.15, y: 0.40 },
+    { id: 'b', label: 'Schlucken',       x: 0.34, y: 0.18 },
+    { id: 'c', label: 'Verdauen',        x: 0.55, y: 0.15 },
+    { id: 'd', label: 'Absorption',      x: 0.78, y: 0.24 },
+    { id: 'e', label: 'Ausscheidung',    x: 0.89, y: 0.50 },
+    { id: 'f', label: 'Energie',         x: 0.66, y: 0.62 },
+    { id: 'g', label: 'Nahrungssuche',   x: 0.38, y: 0.66 },
+    { id: 'h', label: 'Nahrung (Umw.)',  x: 0.14, y: 0.66 }
+  ];
+  var edges = [[0,1],[1,2],[2,3],[3,5],[5,6],[6,0],[7,0],[3,4],[4,1]];
+  var mainLoop = [[0,1],[1,2],[2,3],[3,5],[5,6],[6,0]];
+
+  /* Vortex particles: one field orbiting each node (the alters) */
+  var field = [];
+  var FIELD_N = 210;
+  for (var i = 0; i < FIELD_N; i++) {
+    field.push({
+      home: Math.floor(Math.random() * nodes.length),
+      ang: Math.random() * Math.PI * 2,
+      rad: 16 + Math.random() * 24,
+      spd: (0.4 + Math.random() * 0.9) * (Math.random() < 0.5 ? -1 : 1),
+      size: 0.8 + Math.random() * 1.5
+    });
+  }
+
+  /* ── State ────────────────────────────────────────────────── */
+  var fault = -1;
+  var spread = 100;
+  var mask = 0;
+  var distMap = {};
+  var maxDist = 1;
+
+  function computeReach(start) {
+    var dist = {};
+    dist[start] = 0;
+    var q = [[start, 0]];
+    while (q.length) {
+      var cur = q.shift(), n = cur[0], d = cur[1];
+      for (var e = 0; e < edges.length; e++) {
+        var ed = edges[e];
+        if (ed[0] === n && dist[ed[1]] === undefined) {
+          dist[ed[1]] = d + 1;
+          q.push([ed[1], d + 1]);
+        }
+      }
+    }
+    return dist;
+  }
+  function updateSyndrome() {
+    distMap = fault >= 0 ? computeReach(fault) : {};
+    var m = 0;
+    for (var k in distMap) { if (distMap[k] > m) { m = distMap[k]; } }
+    maxDist = Math.max(1, m);
+    renderReadout();
+  }
+  function thresholdLevels() { return (spread / 100) * maxDist; }
+  function isAffected(idx) {
+    if (fault < 0) return false;
+    if (distMap[idx] === undefined) return false;
+    return distMap[idx] <= thresholdLevels() + 1e-9;
+  }
+  function isMainEdge(i, j) {
+    for (var m = 0; m < mainLoop.length; m++) {
+      if (mainLoop[m][0] === i && mainLoop[m][1] === j) return true;
+    }
+    return false;
+  }
+  function nodeXY(i) { return { x: nodes[i].x * W, y: nodes[i].y * H }; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  /* ── Draw helpers ─────────────────────────────────────────── */
+  function drawArrow(x1, y1, x2, y2, color, width) {
+    var dx = x2 - x1, dy = y2 - y1;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 1) return;
+    var ux = dx / len, uy = dy / len, hs = 9;
+    var sx = x2 - ux * hs * 0.85, sy = y2 - uy * hs * 0.85;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(sx, sy);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - ux * hs - uy * hs * 0.4, y2 - uy * hs + ux * hs * 0.4);
+    ctx.lineTo(x2 - ux * hs + uy * hs * 0.4, y2 - uy * hs - ux * hs * 0.4);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  /* ── Readout chips ────────────────────────────────────────── */
+  function renderReadout() {
+    var el = document.getElementById('readout');
+    if (!el) return;
+    if (fault < 0) {
+      el.innerHTML = '<span class="chip">Wähle einen <b>Fehlerknoten</b>, um das Syndrom zu sehen.</span>';
+      return;
+    }
+    var syn = [], asy = [];
+    for (var i = 0; i < nodes.length; i++) {
+      (isAffected(i) ? syn : asy).push(nodes[i].id);
+    }
+    var hitsMain = false;
+    for (var m = 0; m < mainLoop.length; m++) {
+      if (isAffected(mainLoop[m][0])) { hitsMain = true; break; }
+    }
+    el.innerHTML =
+      '<span class="chip">Fehler: <b>' + nodes[fault].id + ' · ' + nodes[fault].label + '</b></span>' +
+      '<span class="chip">Syndrom: <b>{' + syn.join(',') + '}</b></span>' +
+      '<span class="chip">Asyndrom: <b>{' + (asy.join(',') || '∅') + '}</b></span>' +
+      '<span class="chip">Trifft Hauptschleife? <b>' + (hitsMain ? 'JA ⚠' : 'Nein') + '</b></span>';
+  }
+
+  /* ── Main frame ───────────────────────────────────────────── */
+  var t0 = Date.now();
+  var gaugeTop = 0, gaugeH = 0, gaugeBottom = 0;
+
+  function frame() {
+    var now = Date.now();
+    var t = (now - t0) * 0.0006;
+    var pulse = 0.6 + 0.4 * Math.sin(t * 3);
+    ctx.clearRect(0, 0, W, H);
+
+    /* layout bands: graph on top, gauges on bottom */
+    var graphH = H * 0.66;
+    gaugeTop = H * 0.74;
+    gaugeBottom = H * 0.95;
+    gaugeH = gaugeBottom - gaugeTop;
+
+    /* grid hint */
+    ctx.strokeStyle = P.grid;
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 8); ctx.lineTo(gx, graphH - 8); ctx.stroke();
+    }
+
+    /* 1) field vortices (the single consciousness) */
+    for (var i = 0; i < field.length; i++) {
+      var p = field[i];
+      var c = nodeXY(p.home);
+      p.ang += p.spd * 0.02;
+      var px = c.x + Math.cos(p.ang) * p.rad;
+      var py = c.y + Math.sin(p.ang) * p.rad * 0.82;
+      var homeAffected = isAffected(p.home);
+      ctx.fillStyle = homeAffected ? hexA(P.danger, 0.5) : hexA(P.accent2, 0.32);
+      ctx.beginPath();
+      ctx.arc(px, py, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* 2) edges */
+    for (var e = 0; e < edges.length; e++) {
+      var ed = edges[e];
+      var A = nodeXY(ed[0]), B = nodeXY(ed[1]);
+      var affectedEdge = isAffected(ed[0]) && isAffected(ed[1]);
+      var main = isMainEdge(ed[0], ed[1]);
+      var col = affectedEdge ? P.danger : (main ? P.accent : P.line);
+      var w = affectedEdge ? 2.6 : (main ? 2.2 : 1.4);
+      /* shorten to node radius */
+      var ddx = B.x - A.x, ddy = B.y - A.y;
+      var dl = Math.sqrt(ddx * ddx + ddy * ddy) || 1;
+      var ux = ddx / dl, uy = ddy / dl, R = 26;
+      drawArrow(A.x + ux * R, A.y + uy * R, B.x - ux * R, B.y - uy * R, col, w);
+    }
+
+    /* 3) nodes */
+    for (var n = 0; n < nodes.length; n++) {
+      var pos = nodeXY(n);
+      var isFault = (n === fault);
+      var aff = isAffected(n);
+      var r = 22;
+      var fill, ring, txt;
+      if (isFault) {
+        fill = P.danger; ring = P.danger; txt = P.ink;
+      } else if (aff) {
+        fill = hexA(P.danger, 0.35); ring = P.danger; txt = P.ink;
+      } else {
+        fill = P.accent3; ring = P.accent3; txt = P.ink;
+      }
+      if (isFault) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, r + 6 * pulse, 0, Math.PI * 2);
+        ctx.strokeStyle = hexA(P.danger, 0.6);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = ring;
+      ctx.stroke();
+      /* id */
+      ctx.fillStyle = txt;
+      ctx.font = "700 15px system-ui, sans-serif";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(nodes[n].id, pos.x, pos.y);
+      /* label */
+      ctx.fillStyle = P.inkDim;
+      ctx.font = "500 10px system-ui, sans-serif";
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(nodes[n].label, pos.x, pos.y + r + 13);
+      ctx.textBaseline = 'alphabetic';
+    }
+
+    /* 4) gauges (surface readout vs true value) */
+    var gw = W / nodes.length;
+    for (var g = 0; g < nodes.length; g++) {
+      var cxp = gw * g + gw / 2;
+      var aff = isAffected(g);
+      var trueVal = aff ? 22 : 50;              /* true structural state */
+      var shown = lerp(trueVal, 50, mask / 100); /* masked surface readout */
+      var barH = (shown / 100) * gaugeH;
+      var barY = gaugeBottom - barH;
+      var barW = Math.min(30, gw * 0.5);
+
+      /* track */
+      ctx.fillStyle = P.grid;
+      ctx.fillRect(cxp - barW / 2, gaugeTop, barW, gaugeH);
+      /* surface bar */
+      var surfColor = Math.abs(shown - 50) > 8 ? P.danger : P.ok;
+      ctx.fillStyle = hexA(surfColor, 0.9);
+      ctx.fillRect(cxp - barW / 2, barY, barW, barH);
+      /* normal line */
+      var ny = gaugeBottom - (50 / 100) * gaugeH;
+      ctx.strokeStyle = hexA(P.accent3, 0.7);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(cxp - barW / 2 - 4, ny); ctx.lineTo(cxp + barW / 2 + 4, ny); ctx.stroke();
+      ctx.setLineDash([]);
+      /* true-value tick */
+      var ty = gaugeBottom - (trueVal / 100) * gaugeH;
+      ctx.strokeStyle = aff ? P.danger : P.accent3;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(cxp - barW / 2 - 5, ty); ctx.lineTo(cxp + barW / 2 + 5, ty); ctx.stroke();
+      /* label */
+      ctx.fillStyle = P.inkDim;
+      ctx.font = "600 10px system-ui, sans-serif";
+      ctx.textAlign = 'center';
+      ctx.fillText(nodes[g].id, cxp, gaugeBottom + 14);
+    }
+
+    /* caption strip */
+    ctx.fillStyle = P.inkDim;
+    ctx.font = "italic 11px system-ui, sans-serif";
+    ctx.textAlign = 'left';
+    var maskTxt = mask > 55 ? '— Maske hoch: Oberfläche sieht fast normal, Struktur verrät den Fehler.'
+      : (mask > 0 ? '— Maske teilweise aktiv.' : '— Keine Kompensation: Oberfläche zeigt den wahren Zustand.');
+    ctx.fillText('Oberflächen-Anzeige (Balken) vs. wahre Struktur (Ticks) ' + maskTxt, 8, H * 0.70);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ── Controls ─────────────────────────────────────────────── */
+  var faultWrap = document.getElementById('faultBtns');
+  if (faultWrap) {
+    for (var f = 0; f <= 6; f++) {  /* a..g are system functions; h is environment */
+      (function (idx) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'fb';
+        b.textContent = nodes[idx].id;
+        b.addEventListener('click', function () {
+          fault = (fault === idx) ? -1 : idx;
+          syncFaultBtns();
+          updateSyndrome();
+        });
+        faultWrap.appendChild(b);
+      })(f);
+    }
+  }
+  function syncFaultBtns() {
+    var btns = faultWrap ? faultWrap.querySelectorAll('.fb') : [];
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', i === fault);
+    }
+  }
+  var spreadEl = document.getElementById('spread');
+  var maskEl = document.getElementById('mask');
+  var spreadVal = document.getElementById('spreadVal');
+  var maskVal = document.getElementById('maskVal');
+  if (spreadEl) spreadEl.addEventListener('input', function () {
+    spread = +spreadEl.value;
+    if (spreadVal) spreadVal.textContent = spreadEl.value;
+    updateSyndrome();
+  });
+  if (maskEl) maskEl.addEventListener('input', function () {
+    mask = +maskEl.value;
+    if (maskVal) maskVal.textContent = maskEl.value;
+  });
+  var resetBtn = document.getElementById('resetBtn');
+  if (resetBtn) resetBtn.addEventListener('click', function () {
+    fault = -1; spread = 100; mask = 0;
+    if (spreadEl) { spreadEl.value = 100; }
+    if (maskEl) { maskEl.value = 0; }
+    if (spreadVal) spreadVal.textContent = '100';
+    if (maskVal) maskVal.textContent = '0';
+    syncFaultBtns();
+    updateSyndrome();
+  });
+
+  updateSyndrome();
+})();
+</script>
+</body>
+</html>

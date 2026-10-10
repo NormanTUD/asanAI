@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktur transparent, Inhalt opak — Fusion aus homologer Topologie und sicherer HPC-Isolation</title>
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --panel: #ffffff;
+    --text: #1a1a2e;
+    --dim: #55556b;
+    --border: rgba(0,0,0,0.14);
+    --cyan: #0891b2;
+    --magenta: #c026d3;
+    --gold: #b45309;
+    --green: #059669;
+    --red: #dc2626;
+    --blue: #2563eb;
+    --shadow: 0 6px 24px rgba(0,0,0,0.08);
+  }
+  html.dark {
+    --bg: #0b0b14;
+    --panel: #14141f;
+    --text: #e8e8f0;
+    --dim: #9898b0;
+    --border: rgba(255,255,255,0.12);
+    --cyan: #00e5ff;
+    --magenta: #e040fb;
+    --gold: #ffd740;
+    --green: #69f0ae;
+    --red: #ff5252;
+    --blue: #448aff;
+    --shadow: 0 8px 30px rgba(0,0,0,0.45);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  header { text-align: center; margin-bottom: 2.5rem; }
+  h1 {
+    font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+  .subtitle {
+    color: var(--dim);
+    font-size: 0.95rem;
+    font-style: italic;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0.5rem 0.9rem;
+    border: 1px dashed var(--border);
+    border-radius: 100px;
+  }
+  .theme-toggle {
+    position: fixed; top: 14px; right: 14px; z-index: 50;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); border-radius: 100px;
+    padding: 0.4rem 0.9rem; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; box-shadow: var(--shadow);
+  }
+  section { margin: 2.5rem 0; }
+  h2 {
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    font-weight: 750; letter-spacing: -0.01em;
+    margin-bottom: 1rem; padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--border);
+  }
+  h2 .k { color: var(--cyan); }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 1.4rem 0 0.5rem; color: var(--text); }
+  p { margin: 0.8rem 0; }
+  .lead { font-size: 1.06rem; }
+  a { color: var(--blue); text-decoration: none; border-bottom: 1px solid var(--border); }
+  a:hover { border-bottom-color: var(--blue); }
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.1rem 1.25rem; margin: 1rem 0;
+    box-shadow: var(--shadow);
+  }
+  .card .tag {
+    display: inline-block; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.15rem 0.55rem; border-radius: 100px; margin-bottom: 0.4rem;
+  }
+  .tag.a { color: var(--cyan); background: color-mix(in srgb, var(--cyan) 15%, transparent); }
+  .tag.b { color: var(--magenta); background: color-mix(in srgb, var(--magenta) 15%, transparent); }
+  .tag.x { color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, transparent); }
+  .tag.r { color: var(--green); background: color-mix(in srgb, var(--green) 15%, transparent); }
+  .m {
+    font-family: "Cambria Math", Cambria, "Times New Roman", serif;
+    font-style: italic; white-space: nowrap;
+  }
+  .math {
+    background: color-mix(in srgb, var(--cyan) 8%, transparent);
+    border-left: 3px solid var(--cyan);
+    padding: 0.7rem 1rem; margin: 0.9rem 0; border-radius: 0 10px 10px 0;
+    overflow-x: auto; font-size: 0.98rem;
+  }
+  ul { margin: 0.6rem 0 0.6rem 1.4rem; }
+  li { margin: 0.35rem 0; }
+  .prov { display: flex; gap: 1rem; align-items: flex-start; }
+  .prov .num {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--bg);
+  }
+  .prov.a .num { background: var(--cyan); }
+  .prov.b .num { background: var(--magenta); }
+  .prov .body { flex: 1; }
+  .prov h3 { margin: 0 0 0.2rem; }
+  .prov p { margin: 0.2rem 0; color: var(--dim); font-size: 0.92rem; }
+
+  /* viz */
+  .viz-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.1rem; margin: 1.2rem 0;
+    box-shadow: var(--shadow);
+  }
+  #vizCanvas { width: 100%; height: 460px; display: block; }
+  @media (max-width: 700px) { #vizCanvas { height: 400px; } }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 0.9rem 1.4rem; align-items: center;
+    margin-top: 1rem;
+  }
+  .ctrl { display: flex; flex-direction: column; gap: 0.35rem; }
+  .ctrl label { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--dim); }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; width: 220px; height: 6px;
+    border-radius: 3px; background: var(--border); outline: none; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--cyan); cursor: pointer;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px; height: 18px; border: none; border-radius: 50%;
+    background: var(--cyan); cursor: pointer;
+  }
+  .val { font-variant-numeric: tabular-nums; color: var(--cyan); font-weight: 700; }
+  .btn {
+    background: var(--panel); color: var(--text); border: 1px solid var(--border);
+    padding: 0.5rem 1rem; border-radius: 100px; font-weight: 600; font-size: 0.85rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn.active { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; margin-top: 1rem; font-size: 0.82rem; color: var(--dim); }
+  .legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  footer { text-align: center; color: var(--dim); font-size: 0.82rem; margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">🌗 Theme</button>
+<div class="wrap">
+
+  <header>
+    <h1>Struktur transparent, Inhalt opak</h1>
+    <p class="subtitle">Fusion aus: homological_scaffolding_psilocybin.html ✕ secure_hpc_workflow.html</p>
+  </header>
+
+  <section id="these">
+    <h2><span class="k">01</span> Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere beantworten dieselbe Frage, nur an zwei verschiedenen Systemen:
+    <em>Wie versteht und kontrolliert man ein komplexes System — indem man seine
+    <strong>Struktur</strong> analysiert, nicht seine Bestandteile?</em></p>
+    <p><strong>A</strong> (Petri et&nbsp;al., 2014) beweist es am <em>biologischen</em> System. Der
+    psychedelische Zustand des Gehirns ist mit klassischen Netzwerkmetriken (Knotengrad,
+    Kantenanzahl) <em>unsichtbar</em> — aber seine <em>Topologie</em>, also die persistenten
+    „Löcher" und die homologen Gerüste, macht ihn messbar. Was den Zustand auszeichnet, ist nicht
+    <em>welche</em> Regionen verbunden sind, sondern <em>in welcher Form</em> sie verbunden sind:
+    ein Gerüst besonders stabiler, modulübergreifender Brücken umschlossen von Löchern.</p>
+    <p><strong>B</strong> (IEEE/ACM CCGrid 2022) baut es für ein <em>technisches</em> System. Es hält den
+    <em>Inhalt</em> (Daten) vollständig <em>opak</em> — verschlüsselt, so dass selbst ein Root-Admin
+    „nur Chiffretext" sieht — doch es bewahrt und <em>verifiziert</em> die <em>Struktur</em> des
+    Workflows: signierte Skripte, isolierte Knoten, die Topologie der erlaubten Verbindungen.
+    Korrektheit und Integrität bleiben damit prüfbar, <em>ohne</em> den Inhalt zu zeigen.</p>
+    <p>Die <strong>einheitliche Position</strong>: Trenne <em>Form</em> von <em>Substanz</em>.
+    Die Form (Topologie) kann und muss — um sie zu verstehen und zu prüfen — <strong>vollständig
+    transparent</strong> und über <em>alle</em> Gewichtsskalen invariant gemessen werden (A).
+    Die Substanz (Inhalt) kann und muss — um sie zu schützen — <strong>vollständig opak</strong>
+    gehalten werden (B). Die beiden Papiere sind damit <em>Dualen</em>: A maximiert die Transparenz
+    der Struktur, B die Opazität des Inhalts. Zusammen ergeben sie
+    <strong>verifizierbare Privatsphäre</strong> — man auditert die <em>Form</em> (welche Knoten,
+    welche Kanten, dass das Skript signiert war), während die <em>Substanz</em> (die Datenbytes)
+    privat bleibt. Das ist dieselbe Idee, die in der Kryptologie als <em>verifiable / oblivious
+    computation</em> bekannt ist.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="k">02</span> Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere stehen auf den ersten Blick in einem echten methodischen und
+    philosophischen Spannungsverhältnis. Zwei konkrete Punkte:</p>
+
+    <div class="card">
+      <span class="tag x">Widerspruch 1</span>
+      <h3>Kontinuität (alle Skalen) vs. harte Grenze (binärer Cut)</h3>
+      <p><span class="tag a">A</span> &nbsp;verwirft harte Schwellenwerte. Ein fester
+      <em>Schwellenwert</em> auf ein gewichtetes Netz zerstört genau die <em>schwachen</em>
+      Verbindungen, die die „Löcher" aufspannen und das Signal tragen. Die korrekte Methode —
+      persistente Homologie — ist <em>schwellenwertfrei</em>: sie scannt <strong>alle</strong>
+      Gewichtsskalen auf einmal (Filtration „wie ein steigender Wasserspiegel").</p>
+      <p><span class="tag b">B</span> &nbsp;erzeugt Sicherheit <em>gerade durch</em> eine harte,
+      binäre Grenze. Die <em>Firewall</em> kuppelt den isolierten Knoten vollständig <em>ab</em>
+      (auf null); alle Kanten außer der einen zum Secure-Partition-Server sind durchgeschnitten.
+      Die harte Trennung <em>ist</em> der Schutz.</p>
+      <p><strong>Die Spannung:</strong> A warnt, dass harte Schwellen die Struktur <em>zerstören</em>,
+      die man braucht; B sagt, die harte Grenze (Firewall) ist genau das, was das System sichert.
+      Der eine will Kontinuität über alle Skalen, der andere eine binäre Mauer.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag x">Widerspruch 2</span>
+      <h3>Transparenz (Struktur offenlegen) vs. Opazität (Inhalt verbergen)</h3>
+      <p><span class="tag a">A</span> &nbsp;ist eine <em>Transparenz-</em>Methode: Ihr Ziel ist es,
+      verborgene mesoskopische Struktur <em>sichtbar</em> zu machen, die Knoten-/Kanten-Metriken
+      „verbergen" würden. Mehr Sichtbarkeit auf die Struktur ist der Wert.</p>
+      <p><span class="tag b">B</span> &nbsp;ist eine <em>Opazitäts-</em>Methode: Ihr Ziel ist es, den
+      Inhalt so zu <em>verbergen</em>, dass selbst der mächtigste Nutzer nichts sieht. Weniger
+      Sichtbarkeit auf den Inhalt ist der Wert.</p>
+      <p><strong>Die Spannung:</strong> A macht <em>Offenlegen</em> zur Tugend, B macht <em>Verbergen</em>
+      zur Tugend. Sie ziehen in entgegengesetzte Richtungen darüber, was man zeigen darf.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="k">03</span> Auflösung</h2>
+    <p>Beide Widersprüche lösen sich, sobald man zwei Dinge trennt, die die Papiere implizit
+    vermischen: <em>den Gegenstand der Analyse</em> und <em>den Gegenstand der Abwehr</em>.</p>
+
+    <div class="card">
+      <span class="tag r">Auflösung 1</span>
+      <h3>Bei der Messung kontinuierlich — bei der Abwehr binär</h3>
+      <p>Der richtige Gegenstand für <em>Kontinuität / alle Skalen</em> ist die <strong>Struktur,
+      die man analysiert</strong>: Das Signal (die topologische Information) darf niemals an einem
+      willkürlichen Schwellenwert binarisiert werden. Der richtige Gegenstand für die
+      <em>harte, binäre Grenze</em> ist die <strong>Zugriffs-/Vertrauungsgrenze</strong>: Sicherheit
+      ist eine ja/nein-Eigenschaft — „dieser Knoten darf sich mit diesem verbinden" ist binär,
+      und genau deshalb gehört sie <em>härtestens</em> durchgesetzt.</p>
+      <p><strong>Fused Regel:</strong> <em>Struktur wird über alle Skalen kontinuierlich gemessen
+      (A); Zugriffs- und Vertrauungsgrenzen werden als harte, diskrete Mauern errichtet (B).</em>
+      Kein Widerspruch mehr — zwei verschiedene Gegenstände, zwei verschiedene Werkzeuge.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag r">Auflösung 2</span>
+      <h3>Struktur transparent, Inhalt opak</h3>
+      <p>A's „Struktur" (das homologue Gerüst, die Topologie) und B's „Inhalt" (die Daten) sind
+      <em>zwei verschiedene Dinge</em>. Man kann sie deshalb in entgegengesetzte Richtungen
+      behandeln: Die <strong>Struktur</strong> wird <em>offengelegt</em> (auditierbare Topologie,
+      verifizierte Signatur, der nachvollziehbare Workflow), der <strong>Inhalt</strong> wird
+      <em>verdeckt</em> (verschlüsselte Datenbytes).</p>
+      <p><strong>Fused Schlussfolgerung:</strong> Ein vertrauenswürdiges komplexes System ist eines,
+      dessen <em>Topologie</em> transparent und invariant messbar ist <em>und</em> dessen
+      <em>Inhalt</em> opak bleibt — zugleich. Das ist verifizierbare Privatsphäre: Die Form wird
+      geprüft, die Substanz bleibt privat.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="k">04</span> Fusionierter Inhalt</h2>
+    <p>Der gemeinsame Nenner ist ein Modell, das sich auf beide Papiere anwenden lässt.</p>
+
+    <h3>Das gemeinsame Modell: ein gewichtetes System G = (V, E, ω)</h3>
+    <p>Repräsentiere das System als gewichteten Graphen (bzw. Simplizialkomplex): Knoten =
+    Einheiten (Gehirnregionen / Workflow-Komponenten), Kanten = Beziehungen (Korrelationen /
+    erlaubte Daten- und Steuerflüsse), Gewicht ω: E → ℝ. Die gesamte Analyse trennt dann zwei
+    Fragen: <em>(i)</em> Wie ist die <strong>Form</strong> (Struktur/Topologie)? <em>(ii)</em> Was
+    ist die <strong>Substanz</strong> (Inhalt, der über die Kanten fließt)?</p>
+
+    <h3>Seite A — Topologie des Gehirns (die Form messen)</h3>
+    <div class="math">
+      Clique → Simplex: eine k-Clique wird zu einem (k−1)-Simplex → Simplizialkomplex K.<br>
+      Filtration: K<sub>ε₁</sub> ⊆ K<sub>ε₂</sub> ⊆ ⋯ ⊆ K<sub>εₙ</sub> (ε sinkt von stark → schwach).<br>
+      Persistente Homologie: jedes H₁-Loch hat Geburt b und Tod d, Persistenz <span class="m">p = b − d</span>.<br>
+      Gerüste: Persistenz <span class="m">w<sup>p</sup><sub>e</sub> = Σ<sub>gᵢ,&thinsp;e∈gᵢ</sub> p<sub>gᵢ</sub></span> &nbsp;·&nbsp;
+      Frequenz <span class="m">w<sup>f</sup><sub>e</sub> = Σ<sub>gᵢ</sub> 𝟙<sub>e∈gᵢ</sub></span>.
+    </div>
+    <ul>
+      <li>Das Signal liegt in der <em>Form</em>: Placebo vs. Psilocybin unterscheiden sich hochsignifikant in der Persistenzverteilung (Kolmogorov–Smirnov: Stat.&nbsp;=&nbsp;0.22, p&nbsp;&lt;&nbsp;10⁻¹⁰), nicht in den Roh-Korrelationen.</li>
+      <li>Placebo: R²&nbsp;=&nbsp;0.95, Steigung&nbsp;=&nbsp;0.23 (Frequenz ≈ Persistenz, eng). Psilocybin: R²&nbsp;=&nbsp;0.9, Steigung&nbsp;=&nbsp;0.30 (größerer Streuung, extreme Ausreißer).</li>
+      <li>Im Persistenz-Gerüst: Placebo 165 schwere Kanten (meist <em>intra</em>-Community); Psilocybin 374 (davon 217 <em>inter</em>-Community). Im Frequenz-Gerüst: kein signifikanter Unterschied (p&nbsp;=&nbsp;0.72) — <em>gleich viele Zyklen, aber unter Psilocybin einzelne viel langlebiger.</em></li>
+      <li>Interpretation: weniger modulare Trennung, mehr globale Integration, getragen von einem Gerüst besonders stabiler, modulübergreifender Brücken.</li>
+    </ul>
+
+    <h3>Seite B — Topologie der Isolation (die Substanz schützen)</h3>
+    <p>B behandelt dasselbe gewichtete System, aber die Frage dreht sich um die <em>Zugriffs-</em>
+    statt die <em>Formen-</em>Topologie:</p>
+    <ul>
+      <li><strong>Hybride Verschlüsselung</strong>: AES-256 für den Inhalt (2²⁵⁶ Schlüssel), RSA nur, um den AES-Schlüssel zu transportieren. Die Substanz bleibt opak.</li>
+      <li><strong>Signatur</strong> (SHA-256-Hash + RSA): Die <em>Form</em> des Skripts wird verifizierbar, ohne die Daten zu zeigen — Integrität &amp; Authentizität.</li>
+      <li><strong>Container (Singularity)</strong>: läuft ohne Root, verschlüsselt als einzelne SIF-Datei — die Rechen-<em>Struktur</em> ist portabel, der Inhalt opak.</li>
+      <li><strong>Isolation</strong>: 8-stufiger Workflow; in Schritt 5 wird der Knoten per Firewall vom Cluster getrennt — die Zugriffs-Topologie wird <em>härtestens</em> binär (nur SP-Server erlaubt). In Schritt 8 Ergebnis verschlüsselt zurück, Tempordaten gelöscht.</li>
+      <li><strong>Overhead</strong>: Verschlüsselung/Entschlüsselung ≈ 2.5&nbsp;s/GB; für Jobs von Stunden bis Tagen vernachlässigbar — die Opazität der Substanz kostet fast nichts an Rechen-Form.</li>
+    </ul>
+
+    <h3>Die Verschmelzung — Struktur und Substanz eines Systems</h3>
+    <p>Wende A's invariantes, alle-Skalen-Tool auf die <em>Zugriffs-Topologie</em> an, während B
+    den <em>Inhalt</em> auf den Kanten opak hält:</p>
+    <ul>
+      <li><strong>Robustheit als Topologie.</strong> In A ist ein H₁-„Loch" ein Ring starker Kanten um ein schwaches Innere. Übertragen auf einen HPC-Zugriffsgraphen: ein <em>Zyklus</em> = redundanter, robuster Pfad; ein <em>Gelenkpunkt</em> (Artikulationsknoten) = der „dual" eines Lochs = eine <em>einzige Fehlerquelle</em>. Der Secure-Partition-Server in B ist genau so eine kritische Struktur. Die Zugriffs-Topologie schwellenwertfrei zu messen zeigt, wo das System redundant (Zyklen) und wo es brüchig (Gelenkpunkte) ist.</li>
+      <li><strong>Zwei Zustände vergleichen.</strong> A vergleicht <em>Placebo vs. Psilocybin</em>; B vergleicht <em>isoliert vs. nicht-isoliert</em>. Fused: Vergleiche ein System in <em>zwei Strukturzuständen</em> (z.&nbsp;B. „offen/normal" vs. „geschützt/isoliert", oder „vertraut" vs. „kompromittiert") und lies den <em>Unterschied der Topologie</em> als Signal — exakt wie A den Placebo/Psilocybin-Unterschied liest.</li>
+      <li><strong>Auditierbare Form, privater Inhalt.</strong> Die <em>Form</em> (welche Komponenten, welche Kanten, dass das Skript signiert war, dass der Knoten isoliert ist) wird vollständig offengelegt und invariant über alle Skalen gemessen; die <em>Substanz</em> (die Datenbytes auf den Kanten) bleibt verschlüsselt. Man verifiziert die Struktur, ohne den Inhalt zu sehen — verifizierbare Privatsphäre.</li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="k">05</span> Interaktive Visualisierung</h2>
+    <p>Ein gewichtetes Netzwerk mit 12 Knoten in 3 Communities. Der Slider steuert den
+    Filtrations-Schwellenwert ε (von 1.0 = nur stärkste Kanten bis 0.0 = alle). Links siehst du
+    die Filtration: Kanten erscheinen, Dreiecke werden gefüllt, das große H₁-„Loch" wird
+    hervorgehoben. Rechts das Live-Persistenzdiagramm: jede langlebige Struktur (weit von der
+    Diagonalen) ist eine „stabile Brücke" — genau das, was A an Psilocybin findet. Der Umschalter
+    <em>Struktur / Inhalt</em> demonstriert die Kernthese: dieselbe Topologie wird entweder als
+    transparente, wichte-messbare Struktur gezeichnet (A) oder als opak verschlüsselter Inhalt
+    hinter einer harten Firewall mit einem einzigen erlaubten Ausgang zum SP-Server (B).</p>
+
+    <div class="viz-card">
+      <canvas id="vizCanvas"></canvas>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Filtration ε <span class="val" id="epsVal">0.50</span></label>
+          <input type="range" id="epsSlider" min="0" max="100" value="50">
+        </div>
+        <button class="btn" id="animBtn">▶ Animation</button>
+        <div class="ctrl">
+          <label>Ansicht</label>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn active" id="modeStruktur">Struktur (A)</button>
+            <button class="btn" id="modeInhalt">Inhalt (B)</button>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--cyan)"></i> Kante nach Gewicht</span>
+        <span><i class="sw" style="background:var(--magenta)"></i> H₁-Loch</span>
+        <span><i class="sw" style="background:var(--gold)"></i> Diagonale</span>
+        <span><i class="sw" style="background:var(--green)"></i> Persistenz</span>
+        <span><i class="sw" style="background:var(--red)"></i> Firewall / tot</span>
+      </div>
+    </div>
+    <p style="color:var(--dim); font-size:0.9rem;">
+      <strong>Struktur-Modus</strong> = Transparenz: ε, aktive Kanten, Löcher und das
+      Persistenzdiagramm sind sichtbar — invariant über alle Skalen.
+      <strong>Inhalt-Modus</strong> = Opazität: die Kanten werden zu uniformem Chiffretext, ein
+      harte Firewall-Grenze kuppelt alles ab, nur ein Ausgang zum SP-Server bleibt (✓ erlaubt).
+      Die Form bleibt dabei verifizierbar, der Inhalt privat.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="k">06</span> Provenienz</h2>
+    <div class="card prov a">
+      <div class="num">A</div>
+      <div class="body">
+        <h3><a href="../homological_scaffolding_psilocybin.html">Homologische Gerüste funktioneller Gehirnnetzwerke</a></h3>
+        <p>Basierend auf Petri, Expert, Turkheimer, Carhart-Harris, Nutt, Hellyer &amp; Vaccarino (2014),
+        <em>J. R. Soc. Interface</em> 11: 20140873. Interaktive Erkundung der persistenten Homologie und
+        homologen Gerüste: Placebo vs. Psilocybin an 15 Probanden, 169 Gehirnregionen.</p>
+      </div>
+    </div>
+    <div class="card prov b">
+      <div class="num">B</div>
+      <div class="body">
+        <h3><a href="../secure_hpc_workflow.html">Secure Workflow für Shared HPC</a></h3>
+        <p>Basierend auf „A Secure Workflow for Shared HPC Systems" (IEEE/ACM CCGrid 2022).
+        Interaktive Erkundung: hybrid verschlüsselter, signierter, knotenisolierter Workflow für
+        sensible Daten auf geteilten Supercomputern ohne spezielle Hardware.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion (Runde 1, Paar 105) — homologische Topologie ✕ sichere HPC-Isolation.<br>
+    Selbstständige, themenreaktive Darstellung; alle Daten inline, keine externen Abrufe.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var TAU = Math.PI * 2;
+  var canvas = document.getElementById('vizCanvas');
+  var ctx = canvas.getContext('2d');
+  var epsSlider = document.getElementById('epsSlider');
+  var epsVal = document.getElementById('epsVal');
+  var animBtn = document.getElementById('animBtn');
+  var modeS = document.getElementById('modeStruktur');
+  var modeI = document.getElementById('modeInhalt');
+  var themeBtn = document.getElementById('themeBtn');
+  var W = 0, H = 0, mode = 'struktur', animating = false, rafId = null;
+
+  var nodes = [
+    [0.14,0.18],[0.34,0.12],[0.54,0.14],[0.74,0.12],
+    [0.88,0.30],[0.86,0.50],[0.66,0.62],[0.40,0.60],
+    [0.16,0.55],[0.10,0.78],[0.34,0.88],[0.62,0.86]
+  ];
+  var edges = [
+    [0,1,0.95],[1,2,0.90],[2,3,0.88],[3,4,0.85],[4,5,0.80],[5,6,0.78],
+    [6,7,0.75],[7,8,0.72],[8,9,0.70],[9,10,0.68],[10,11,0.65],[11,0,0.60],
+    [0,2,0.55],[1,3,0.50],[3,5,0.45],[5,7,0.40],[7,9,0.35],[9,11,0.30],
+    [11,1,0.25],[2,6,0.20],[6,10,0.15],[0,6,0.10]
+  ];
+  var cycles = [
+    {birth:0.60, death:0.10},
+    {birth:0.55, death:0.50},
+    {birth:0.45, death:0.30},
+    {birth:0.40, death:0.26},
+    {birth:0.35, death:0.29},
+    {birth:0.30, death:0.27},
+    {birth:0.25, death:0.12},
+    {birth:0.20, death:0.05}
+  ];
+  var tris = [];
+  (function () {
+    function has(a,b){ for (var i=0;i<edges.length;i++){ var e=edges[i]; if((e[0]===a&&e[1]===b)||(e[0]===b&&e[1]===a)) return true; } return false; }
+    for (var i=0;i<12;i++) for (var j=i+1;j<12;j++) for (var k=j+1;k<12;k++)
+      if (has(i,j)&&has(j,k)&&has(i,k)) tris.push([i,j,k]);
+  })();
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function colors(){
+    return {
+      bg: cssVar('--bg'), panel: cssVar('--panel'), text: cssVar('--text'),
+      dim: cssVar('--dim'), border: cssVar('--border'),
+      cyan: cssVar('--cyan'), magenta: cssVar('--magenta'), gold: cssVar('--gold'),
+      green: cssVar('--green'), red: cssVar('--red'), blue: cssVar('--blue')
+    };
+  }
+  function hexToRgba(hex, a){
+    hex = hex.replace('#','').trim();
+    if (hex.length === 3) hex = hex.charAt(0)+hex.charAt(0)+hex.charAt(1)+hex.charAt(1)+hex.charAt(2)+hex.charAt(2);
+    var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function edgeW(a,b){ for (var i=0;i<edges.length;i++){ var e=edges[i]; if((e[0]===a&&e[1]===b)||(e[0]===b&&e[1]===a)) return e[2]; } return -1; }
+  function currentEps(){ return 1 - (+epsSlider.value)/100; }
+
+  function setup(){
+    var dpr = window.devicePixelRatio || 1;
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = Math.max(1, Math.round(W*dpr));
+    canvas.height = Math.max(1, Math.round(H*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function layoutAreas(){
+    var pad = 10;
+    var net = { x: pad, y: pad, w: W*0.52 - pad, h: H - 2*pad };
+    var pd  = { x: W*0.56, y: pad, w: W*0.44 - pad, h: H - 2*pad };
+    var N = nodes.map(function(n){
+      return { x: net.x + 34 + n[0]*(net.w-68), y: net.y + 44 + n[1]*(net.h-84) };
+    });
+    return { net: net, pd: pd, N: N };
+  }
+
+  function drawNetworkStruktur(area, N, active, eps, C){
+    var i,j,e,t;
+    for (i=0;i<tris.length;i++){
+      t = tris[i];
+      if (edgeW(t[0],t[1])>=eps && edgeW(t[1],t[2])>=eps && edgeW(t[0],t[2])>=eps){
+        ctx.beginPath(); ctx.moveTo(N[t[0]].x,N[t[0]].y); ctx.lineTo(N[t[1]].x,N[t[1]].y); ctx.lineTo(N[t[2]].x,N[t[2]].y); ctx.closePath();
+        ctx.fillStyle = hexToRgba(C.cyan,0.10); ctx.fill();
+      }
+    }
+    var ring = [0,1,2,3,4,5,6,7,8,9,10,11];
+    var ringActive = true;
+    for (i=0;i<12;i++){ if (edgeW(ring[i],ring[(i+1)%12])<eps){ ringActive=false; break; } }
+    if (ringActive){
+      ctx.beginPath(); ctx.moveTo(N[0].x,N[0].y);
+      for (i=1;i<12;i++) ctx.lineTo(N[ring[i]].x,N[ring[i]].y);
+      ctx.closePath();
+      ctx.fillStyle = hexToRgba(C.magenta,0.06); ctx.fill();
+      ctx.setLineDash([6,4]); ctx.strokeStyle = hexToRgba(C.magenta,0.65); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+      var cx=0,cy=0; for (i=0;i<N.length;i++){ cx+=N[i].x; cy+=N[i].y; } cx/=N.length; cy/=N.length;
+      ctx.fillStyle = C.magenta; ctx.font = '600 11px Inter, system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('H1-Loch', cx, cy);
+    }
+    for (i=0;i<active.length;i++){
+      e = active[i];
+      var w = e[2];
+      ctx.beginPath(); ctx.moveTo(N[e[0]].x,N[e[0]].y); ctx.lineTo(N[e[1]].x,N[e[1]].y);
+      ctx.strokeStyle = w>=0.7 ? hexToRgba(C.cyan,0.35+0.55*(w-0.7)/0.3)
+                    : w>=0.4 ? hexToRgba(C.gold,0.35+0.55*(w-0.4)/0.3)
+                    : hexToRgba(C.red,0.35+0.55*(w)/0.4);
+      ctx.lineWidth = 1 + w*2.5; ctx.stroke();
+    }
+    for (i=0;i<12;i++){
+      var deg=0; for (j=0;j<active.length;j++){ if (active[j][0]===i||active[j][1]===i) deg++; }
+      ctx.beginPath(); ctx.arc(N[i].x,N[i].y, 8+deg*0.7, 0, TAU);
+      ctx.fillStyle = deg>0 ? hexToRgba(C.cyan,0.92) : hexToRgba(C.dim,0.4);
+      ctx.fill();
+      ctx.fillStyle = C.text; ctx.font='600 9px Inter, system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(String(i), N[i].x, N[i].y);
+    }
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle = C.dim; ctx.font='11px Inter, system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('eps = ' + eps.toFixed(2) + '  |  aktive Kanten ' + active.length + '/' + edges.length, area.x+12, area.y+area.h-12);
+    ctx.textAlign='right'; ctx.fillStyle = C.gold;
+    ctx.fillText('wp(Hauptloch) = 0.50  |  wf = 12', area.x+area.w-12, area.y+area.h-12);
+  }
+
+  function drawNetworkInhalt(area, N, active, eps, C){
+    var cx=0,cy=0,i;
+    for (i=0;i<N.length;i++){ cx+=N[i].x; cy+=N[i].y; } cx/=N.length; cy/=N.length;
+    var R = Math.min(area.w, area.h)*0.47;
+    for (i=0;i<active.length;i++){
+      ctx.beginPath(); ctx.moveTo(N[active[i][0]].x,N[active[i][0]].y); ctx.lineTo(N[active[i][1]].x,N[active[i][1]].y);
+      ctx.strokeStyle = hexToRgba(C.dim,0.5); ctx.lineWidth = 1; ctx.setLineDash([3,4]); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    for (i=0;i<12;i++){ ctx.beginPath(); ctx.arc(N[i].x,N[i].y,7,0,TAU); ctx.fillStyle = hexToRgba(C.dim,0.85); ctx.fill(); }
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU);
+    ctx.setLineDash([10,5]); ctx.strokeStyle = hexToRgba(C.red,0.9); ctx.lineWidth = 2.5; ctx.stroke(); ctx.setLineDash([]);
+    for (i=0;i<6;i++){
+      var a = (TAU/6)*i - Math.PI/2;
+      var x1=cx+Math.cos(a)*R, y1=cy+Math.sin(a)*R;
+      var x2=cx+Math.cos(a)*(R+20), y2=cy+Math.sin(a)*(R+20);
+      ctx.strokeStyle = hexToRgba(C.red,0.4); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.fillStyle = C.red; ctx.font='700 11px Inter, system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('x', x2, y2);
+    }
+    var sp = { x: area.x + area.w - 30, y: area.y + 34 };
+    ctx.beginPath(); ctx.arc(sp.x,sp.y,13,0,TAU); ctx.fillStyle = hexToRgba(C.green,0.18); ctx.fill();
+    ctx.strokeStyle = C.green; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = C.green; ctx.font='700 9px Inter, system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('SP', sp.x, sp.y);
+    var na = N[2];
+    ctx.beginPath(); ctx.moveTo(na.x,na.y); ctx.lineTo(sp.x,sp.y); ctx.strokeStyle = hexToRgba(C.green,0.7); ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle = C.green; ctx.font='600 9px Inter, system-ui, sans-serif';
+    ctx.fillText('erlaubt', (na.x+sp.x)/2, (na.y+sp.y)/2 - 7);
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle = C.dim; ctx.font='11px Inter, system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Inhalt = Chiffretext (opak)  |  Kanten binar: 0 / 1', area.x+12, area.y+area.h-34);
+    ctx.fillStyle = C.green;
+    ctx.fillText('Skript signiert (OK)  |  Knoten isoliert (Firewall)', area.x+12, area.y+area.h-16);
+  }
+
+  function drawPersistence(area, eps, C, alpha){
+    ctx.save(); ctx.globalAlpha = alpha;
+    var m = 34;
+    var px=area.x+m, py=area.y+m+8, pw=area.w-2*m, ph=area.h-2*m-24;
+    ctx.fillStyle = hexToRgba(C.panel,0.6); ctx.fillRect(px,py,pw,ph);
+    ctx.beginPath(); ctx.moveTo(px,py+ph); ctx.lineTo(px+pw,py);
+    ctx.strokeStyle = hexToRgba(C.gold,0.5); ctx.setLineDash([4,4]); ctx.lineWidth=1; ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = C.border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,py+ph); ctx.lineTo(px+pw,py+ph); ctx.moveTo(px,py); ctx.lineTo(px,py+ph); ctx.stroke();
+    ctx.fillStyle = C.dim; ctx.font='9px Inter, system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    for (var v=0; v<=1.0001; v+=0.25){
+      ctx.fillText(v.toFixed(2), px+v*pw, py+ph+13);
+      ctx.textAlign='right'; ctx.fillText(v.toFixed(2), px-5, py+ph-v*ph+3); ctx.textAlign='center';
+    }
+    ctx.fillText('Geburt eps', px+pw/2, area.y+area.h-2);
+    ctx.save(); ctx.translate(px-20, py+ph/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('Tod eps', 0, 0); ctx.restore();
+    ctx.fillStyle = C.dim; ctx.font='600 11px Inter, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Persistenzdiagramm (H1)', area.x+area.w/2, area.y+15);
+    var ex = px + eps*pw;
+    ctx.beginPath(); ctx.moveTo(ex,py); ctx.lineTo(ex,py+ph);
+    ctx.strokeStyle = hexToRgba(C.gold,0.5); ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+    for (var i=0;i<cycles.length;i++){
+      var c = cycles[i];
+      var born = eps <= c.birth;
+      if (!born) continue;
+      var dead = eps <= c.death;
+      var alive = born && !dead;
+      var bx = px + c.birth*pw, by = py + ph - c.death*ph;
+      var diagY = py + ph - c.birth*ph;
+      if (alive){ ctx.beginPath(); ctx.moveTo(bx,diagY); ctx.lineTo(bx,by); ctx.strokeStyle = hexToRgba(C.green,0.7); ctx.lineWidth=2; ctx.stroke(); }
+      ctx.beginPath(); ctx.arc(bx,by, alive?6:4, 0, TAU);
+      ctx.fillStyle = alive ? hexToRgba(C.cyan,0.95) : hexToRgba(C.red,0.85); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function draw(){
+    var C = colors();
+    var eps = currentEps();
+    ctx.clearRect(0,0,W,H);
+    var L = layoutAreas();
+    var active = edges.filter(function(e){ return e[2] >= eps; });
+    ctx.fillStyle = hexToRgba(C.panel,0.5); roundRect(L.net.x,L.net.y,L.net.w,L.net.h,10); ctx.fill();
+    ctx.strokeStyle = C.border; ctx.lineWidth=1; roundRect(L.net.x,L.net.y,L.net.w,L.net.h,10); ctx.stroke();
+    ctx.fillStyle = hexToRgba(C.panel,0.5); roundRect(L.pd.x,L.pd.y,L.pd.w,L.pd.h,10); ctx.fill();
+    ctx.strokeStyle = C.border; roundRect(L.pd.x,L.pd.y,L.pd.w,L.pd.h,10); ctx.stroke();
+    if (mode === 'struktur'){
+      drawNetworkStruktur(L.net, L.N, active, eps, C);
+      drawPersistence(L.pd, eps, C, 1.0);
+    } else {
+      drawNetworkInhalt(L.net, L.N, active, eps, C);
+      drawPersistence(L.pd, eps, C, 0.3);
+    }
+    epsVal.textContent = eps.toFixed(2);
+  }
+
+  function setActive(){
+    modeS.classList.toggle('active', mode==='struktur');
+    modeI.classList.toggle('active', mode==='inhalt');
+  }
+  function stopAnim(){ animating=false; animBtn.textContent='▶ Animation'; if (rafId) cancelAnimationFrame(rafId); }
+  function stepAnim(){
+    if (!animating) return;
+    epsSlider.value = +epsSlider.value + 1;
+    draw();
+    if (+epsSlider.value >= 100){ stopAnim(); }
+    else { rafId = requestAnimationFrame(stepAnim); }
+  }
+
+  epsSlider.addEventListener('input', draw);
+  modeS.addEventListener('click', function(){ mode='struktur'; setActive(); draw(); });
+  modeI.addEventListener('click', function(){ mode='inhalt'; setActive(); draw(); });
+  animBtn.addEventListener('click', function(){
+    if (animating){ stopAnim(); return; }
+    animating = true; animBtn.textContent='■ Stop'; epsSlider.value = 0;
+    rafId = requestAnimationFrame(stepAnim);
+  });
+  themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  window.addEventListener('resize', function(){ setup(); draw(); });
+  new MutationObserver(function(){ draw(); }).observe(document.documentElement, { attributes:true, attributeFilter:['class'] });
+
+  setActive();
+  setup();
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "no": "101",
+  "a": "analytischer_idealismus.html",
+  "b": "topologie_biologischer_systeme.html",
+  "a_title": "Analytischer Idealismus – Eine interaktive Reise durch Kastrups Metaphysik",
+  "b_title": "Topologische Modellierung Biologischer Systeme (Osis & Beghi, IFAC 1997)",
+  "combined_theme": "struktur-ueber-substanz",
+  "one_line": "Beide Papiere lehren, dass die Essenz eines Systems in seiner Struktur und nicht in seiner Substanz liegt: ein einziges Feld (A) organisiert sich in zusammenhängende, schleifenförmige, selbstregulierende Systemmuster (B), die ihren wahren Zustand nur durch die Selbstregulation maskieren und daher über die Struktur — nicht über die Oberfläche — lesbar sind.",
+  "contradictions": [
+    "Ontologie vs. Neutralität: A behauptet ontologisch, Bewusstsein sei die einzige Substanz und Materie bloße Erscheinung; B bleibt substanzneutraler Formalismus, der materielle Systeme beschreibt und mit Materialismus kompatibel bleibt.",
+    "Einheits-Holismus vs. Teilbarkeit: A verneint wirkliche Trennung (alles ist Eines, Trennung ist Dissoziation); B setzt wirklich unterscheidbare, lokal isolierbare Teilknoten voraus (Aussage 1: das System muss zusammenhängend sein und ist aus Teilen aufgebaut, die man herausbrechen kann).",
+    "Karte vs. Territorium: A sagt, es gibt kein zugängliches Territorium hinter der Darstellung (auch Physik sei nur ein Icon); B setzt voraus, dass die Topologie/Adjazenzmatrix einem realen System entspricht und durch dessen Symptome validiert wird.",
+    "Erklärungsrichtung: A lehnt die Komposition ab (Kombinationsproblem) und kehrt um (Eins dissoziiert in Viele); B ist fundamental kompositorisch (viele Knoten und lokale Relationen bilden ein zusammenhängendes Ganzes mit Schleifen)."
+  ],
+  "resolution": "Die Widersprüche lösen sich, weil A und B auf verschiedenen Ebenen reden: B liefert die Strukturgrammatik des Erscheinungsbilds, das A als die einzig zugängliche Realität kennt. Die funktionale Teilbarkeit B's ist der Schatten von A's Dissoziation (DIS-Mechanismus); die Topologie modelliert die Funktionslogik des Traums, nicht der Materie. Auf Erscheinungsebene komponiert man (Knoten -> System), ontologisch wird umgekehrt (Eins -> Dissoziation); beides verschachtelt sich, da die Komposition selbst ein Dissoziationmuster des einen Felds ist. Tiefster gemeinsamer Kern: selbstregulierende Systeme maskieren ihren wahren Zustand (A: das Gehirn filtert kosmisches Bewusstsein; B: Homöostase maskiert die Krankheit) — die Wahrheit ist nur über die tieferliegende Struktur lesbar.",
+  "viz": "Ein einzelnes Teilchenfeld bildet stabile Vortex-Strudel um die Funktionknoten eines zusammenhängenden, schleifenförmigen Digraphen (Verdauungssystem). Man injiziert einen Fehlerknoten, lässt das Syndrom entlang der Erreichbarkeit (Syndrom/Asyndrom, Hauptschleife) ausbreiten und regelt mit dem 'Homöostase'-Regler die Selbstmaskierung: die Oberflächen-Anzeige (Balken) gleitet zum Normalwert, während die Struktur (Knotenfarben, Ticks) den wahren Zustand verrät. Theme-aware, inline data, zero console errors."
+}

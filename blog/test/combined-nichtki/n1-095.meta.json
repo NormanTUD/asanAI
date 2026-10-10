@@ -1,0 +1,17 @@
+{
+  "no": "095",
+  "a": "chaos.html",
+  "b": "framespotting.html",
+  "a_title": "Chaos Theory & Attractors Explorer",
+  "b_title": "Framespotting — Eine interaktive Reise",
+  "combined_theme": "systemframes-zoom-geometrie",
+  "one_line": "Beide Papiere beschreiben denselben Fehler — lokale, lineare, auf einer einzelnen Bahn bzw. einem Symptom gerichtete Intuition scheitert an nichtlinearen Systemen — und dasselbe Gegenmittel: den 'Frame' (das Zoomen heraus) auf die Gesamtstruktur (Attraktor / Bestand / Bifurkation) ändern; Chaos-Theorie ist die formale Mathematik dieses Zoom-outs.",
+  "contradictions": [
+    "Vorhersagbarkeit: chaos.html hält die Detail-Vorhersage fundamental begrenzt (positiver Lyapunov-Exponent, Schmetterlingseffekt, Unvorhersagbarkeit als Eigenschaft der Natur); framespotting.html macht das System über den 'richtigen Frame' (Badewanne, Zoom-out) verständlich und steuerbar (Unvorhersagbarkeit als Fehler des Betrachters).",
+    "Kipppunkt-Kenntnis: framespotting.html sagt, der Kipppunkt liege 'im Nebel' (Niemand weiß, wo der Kamm ist); chaos.html kann den Bifurkationspunkt exakt berechnen (Feigenbaum-Punkt r≈3,5699, subkritische Hopf-Bifurkation bei Lorenz ρ≈24,74; λ kreuzt Null).",
+    "Nichtlinearität: framespotting.html behandelt sie als Metapher (flache vs. runde Erde, Winkelsumme); chaos.html als messbares Objekt mit universellen Konstanten (Feigenbaum δ≈4,6692, fraktale Dimension 2,06).",
+    "Valenz des chaotischen Regimes: framespotting.html will in den schlechten Attraktor (Heißhaus) NICHT kippen ('Erwachsenwerden' = dem Wachstum entwachsen); chaos.html wertet die Route ins Chaos als neutral-universal und die Edge-of-Chaos (λ≈0) als reichste, anpassungsfähigste Struktur."
+  ],
+  "resolution": "Zwei Ebenen trennen: Detail (eine Bahn) ist durch den Lyapunov-Exponenten begrenzt, Struktur (Attraktor, Bestand, Bifurkationspunkt) ist berechenbar. Der 'Nebel' um den Kipppunkt löst sich auf, sobald man misst statt zu zoomen — der Kipppunkt wird ein messbarer Parameterwert. Die 'runde Erde' ist die pädagogische Schattenprojektion der eigentlichen fraktalen Geometrie. 'Erwachsenwerden' heißt chaos-theoretisch: auf einem nachhaltigen Attraktor bleiben und die Parameter (den 'upstream-Hahn') so wählen, dass man am Edge of Chaos operiert — adaptiv, aber ohne die kritische Grenze in Richtung des schlechten Kipppunkts zu überschreiten.",
+  "viz": "Logistische-Karte-Explorer: oben 'zoomed-in' eine einzelne Trajektorie x_n (bei großem r chaotisch), unten 'zoomed-out' der 1D-Attraktor plus Bifurkationsdiagramm mit Feigenbaum-Punkt (≈3,5699) und Live-Lyapunov-Exponent, der beim Überschreiten von r≈3,5699 durch 0 kippt — der framespotting-'Frame'-Zoom wird zur chaos-theoretischen Strukturprojektion; themenreaktiv (Light/Dark), rein inline berechnet, kein Netzwerk."
+}

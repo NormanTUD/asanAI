@@ -1,0 +1,16 @@
+{
+  "no": "096",
+  "a": "hott_book.html",
+  "b": "coherent_worldview.html",
+  "a_title": "Interactive HoTT Explorer",
+  "b_title": "COHERENT — a wordless visual essay",
+  "combined_theme": "local-gluing-univalence",
+  "one_line": "A coherent whole is not imposed but glues together from local pieces that agree on their overlaps — and 'equality' is itself a structured path/equivalence, so (by univalence) equivalence of a worldview to the world IS its identity with the world.",
+  "contradictions": [
+    "Equivalence vs equality: A (HoTT) makes equivalence literally equality in the universe via univalence, (A=B) is equivalent to (A~B), while B keeps a sameness ladder with '=' above '~' and REFUSES to promote a weaker relation (approx) up to identity.",
+    "Guaranteed vs fragile coherence: A guarantees gluing by construction (a family B(x) characterizes a type iff its total space is contractible — a unique path), while B treats coherence as a fragile achievement with five failure modes (factbook, fantasy, liar, calibrated, out-of-cover).",
+    "External world: B requires correspondence to an external world W (coherence without contact = 'fantasy'; blind-spot ring c_acc subset of W), while A has no external world — everything is internal to the universe U and 'coherent' is correct by construction."
+  ],
+  "resolution": "Read them at different truncation levels: A's truncation hierarchy (set/groupoid/.../infinity-type) IS B's sameness ladder, so 'equivalence = equality' holds at the level of the universe while 'approx cannot reach =' holds at the level of sets; A's contractible-fiber condition is the exact check that B's five pathologies are the failure modes of; and B's external world W is either A's universe U (internal reading) or a meta-anchor (applied reading), making truth = a coherent type equivalent to the world's type, which univalence upgrades to identity in the universe.",
+  "viz": "Interactive canvas: a cover of 8 overlapping local readings R_i on the circle S^1 with a closing seam, the universal-cover helix R->S^1 (a global section / coherent whole G exists iff the total winding W+delta is an integer), a glowing coherent-whole G node, and a sameness ladder (=, isomorphism, equivalence, approx, incoherent) that a twist slider delta drives down from '=' to 'approx'; a univalence checkbox promotes '~' up to '=' when the seam is closed. Theme-aware (CSS vars, dark default), inline data only, zero network."
+}

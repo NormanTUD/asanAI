@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Invariante Form &mdash; Post-Quantum-Krypto &times; Grothendiecks Raum</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --accent2:#2f6fd0; --accent3:#c0457f; --accent4:#b07d18;
+  --grid:#1e2530; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e; --border:#233450;
+  --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --accent2:#7aa2ff; --accent3:#ff8fd0; --accent4:#ffcc6a;
+  --grid:#93a0b6; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{ max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+header{margin-bottom:28px;}
+h1{ font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; }
+.subtitle{ color:var(--muted); font-size:1.02rem; margin:0; font-style:italic; }
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{ font-size:1.04rem; margin:20px 0 8px; color:var(--accent); }
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{
+  border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);
+}
+.note b{color:var(--fg);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:480px; touch-action:none;}
+.legend{display:flex; flex-wrap:wrap; gap:14px; padding:8px 14px 2px; font-size:.76rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:120px;}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted);}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Die Form, die die Transformation &uuml;bersteht</h1>
+  <p class="subtitle">Fusion aus: <code>quantum_cryptography.html</code> &times; <code>grothendiek_raum.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Das eine Papier ist ein angewandtes, defensives Handbuch
+  (<strong>A &mdash; quantum_cryptography</strong>): wie RSA auf Faktorisierung steht, wie Shors Algorithmus es in
+  polynomialer Zeit bricht und warum Gitterprobleme die Form sind, die der Quantencomputer <em>nicht</em> bricht.
+  Das andere ist ein vierzigj&auml;hrig-philosophisch-mathematischer Essay
+  (<strong>B &mdash; grothendiek_raum</strong>): die Frage <em>Was ist ein Raum?</em>, deren Antwort f&uuml;nfmal
+  h&auml;utet und schlie&szlig;t mit: <em>Ein Raum ist kein Beh&auml;lter aus Punkten, sondern dasjenige, worauf
+  Lokalisierung Sinn ergibt &mdash; und weil es viele Arten gibt, &bdquo;lokal&bdquo; zu sagen, gibt es viele Arten
+  von Raum. Der Raumbegriff ist proteisch.</em> Beide Papiere kreisen, ungeachtet ihrer Skala, um dieselbe Frage:
+  <strong>Was bleibt, wenn sich die Beschreibung &auml;ndert?</strong></p>
+  <p>Die Fusion lautet: <strong>Verschl&uuml;sselung <em>ist</em> Lokalisierung; ein sicherer Kanal <em>ist</em> ein
+  Raum.</strong> Ein Krypto-Verfahren ist eine Struktur (in B&rsquo;s Sinne ein Raum). Verschl&uuml;sseln zeigt nur
+  <em>lokale</em> Daten &mdash; die einfachen, &ouml;ffentlichen, verrauschten Gesichter (Ciphertext, der
+  &ouml;ffentliche Wert <code>b = A&middot;s + e</code>, die Frequenzspitzen nach der QFT) &mdash; w&auml;hrend die
+  <em>globale</em> Invariante (der geheime Vektor <code>s</code>, die Periode <code>r</code>, die
+  Primfaktorzerlegung) als Form verborgen bleibt. Entschl&uuml;sseln ist die <em>Garbenbedingung</em>: die lokalen
+  Daten zu einem globalen Schnitt verkleben. Sicherheit ist das <em>absichtlich gebrochene</em> Verkleben &mdash; das
+  Rauschen <code>e</code>, die grobe &bdquo;wilde&bdquo; Beschreibung, macht die globale Form aus den lokalen Daten
+  unerreichbar.</p>
+  <p>Der Quantencomputer wechselt die Beschreibung (Superposition, QFT &mdash; ein &bdquo;Wechsel des
+  Sichtfelds&bdquo;), kann die Form aber nicht billiger rekonstruieren, weil sie in der Wildheit der gew&auml;hlten
+  (fehlenden) Beschreibung steckt &mdash; exakt B&rsquo;s &bdquo;falsche Probleme&bdquo; und Monster, die die falsche
+  Topologie erzeugt. Und die tiefste gemeinsame Geste ist die Umkehrung des &bdquo;Reellen&bdquo;: B sagt, das
+  Kontinuum sei eine Fiktion, die das <em>sehr gro&szlig;e Endliche</em> ann&auml;hert; A&rsquo;s asymptotische
+  Sicherheit (beliebig gro&szlig;e Schl&uuml;ssel) ist genau eine solche Fiktion &uuml;ber endlichen Schl&uuml;sseln.
+  <strong>Beide sagen: Das Echte, das Gesch&uuml;tzte, das Wahre ist nicht die Oberfl&auml;che (Punkte,
+  Ciphertext-Bits, asymptotischer Grenzwert), sondern die Form &mdash; die Invariante, die die Oberfl&auml;che
+  ann&auml;hert.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden widersprechen sich in <em>keinem</em> einzelnen Rechnen &mdash; sie arbeiten auf verschiedenen
+  Skalen (defensives Ingenieurshandbuch vs. begrifflicher Essay). Aber sie nehmen drei unvereinbar wirkende
+  Staturen ein, die im Detail kollidieren:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Kontinuum als Ziel</h3>
+      <div class="src">A &mdash; quantum_cryptography</div>
+      <p>Security ist <strong>asymptotisch/limitend</strong> formuliert: &bdquo;for arbitrarily large N&bdquo;,
+      Key-Gr&ouml;&szlig;e in Bits, Skalierungsplots Bits&nbsp;&rarr;&nbsp;Zeit. Der sichere Bereich ist der
+      <em>gr&ouml;&szlig;tm&ouml;gliche</em> Limes; das (asymptotische) Kontinuum wird als das eigentliche Ziel der
+      Sicherheit ernst genommen.</p>
+    </div>
+    <div class="col">
+      <h3>1. Kontinuum als Fiktion</h3>
+      <div class="src">B &mdash; grothendiek_raum</div>
+      <p>&bdquo;&hellip;das Kontinuum ist der Begriff, der das schwer fassbare endliche &mdash; aber sehr gro&szlig;e
+      &mdash; Aggregat ann&auml;hert.&bdquo; Die Richtung der Approximation ist <strong>umgekehrt</strong>: das
+      Endliche (wenn auch sehr gro&szlig;e) ist prim&auml;r, das Kontinuum die bequeme Fiktion &uuml;ber ihm.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Eine feste Struktur</h3>
+      <div class="src">A &mdash; quantum_cryptography</div>
+      <p>Das Harte Problem hat eine <strong>eindeutige, objektive</strong> Antwort: <code>N = p&middot;q</code>
+      (eindeutige Primfaktorzerlegung), das Gitter hat <em>den</em> bestimmten k&uuml;rzesten Vektor / die bestimmte
+      LWE-Instanz. Sicherheit ist ein betrachterunabh&auml;ngiges Faktum &uuml;ber ein festes Objekt &mdash;
+      stillschweigend &bdquo;das eine&bdquo; Modell.</p>
+    </div>
+    <div class="col">
+      <h3>2. Proteischer Raum</h3>
+      <div class="src">B &mdash; grothendiek_raum</div>
+      <p>&bdquo;Der Raumbegriff ist proteisch&bdquo;; Axiom&nbsp;1 (&bdquo;Es gibt <em>das eine</em> mathematische
+      Modell&bdquo;) ist ein &bdquo;fossiles &Uuml;berbleibsel&bdquo; zu brechen; &bdquo;kein einziges rigoroses Modell
+      f&uuml;r alle Ph&auml;nomene &mdash; sondern eine Familie sich &uuml;berlappender Modelle&bdquo;. Dasselbe Objekt
+      sieht &uuml;ber <code>&RBB; </code> und <code>&F;_p</code> anders aus.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. H&auml;rte als Ressourcen-Barriere</h3>
+      <div class="src">A &mdash; quantum_cryptography</div>
+      <p>H&auml;rte ist ein <strong>rechnerischer Kostenaufwand</strong>: SVP in <code>2^0,298&middot;n</code>,
+      Quanten in <code>2^0,268&middot;n</code> &mdash; nur ~11&nbsp;% schneller. Sicherheit = &bdquo;die Rechnung
+      leisten wir nicht&bdquo;. Die Barriere ist physisch und extern zum Objekt.</p>
+    </div>
+    <div class="col">
+      <h3>3. H&auml;rte als Beschreibungslimit</h3>
+      <div class="src">B &mdash; grothendiek_raum</div>
+      <p>&bdquo;Falsche Probleme&bdquo; und Monster (Topologensinus, Cantor, Koch, Hawaiische Ohrringe) entstehen aus
+      der <strong>falschen</strong> Beschreibung &mdash; &bdquo;die allgemeine Topologie wurde von Analytikern f&uuml;r
+      die Analysis gemacht, nicht f&uuml;r das Studium von Gestalten&bdquo;. Die richtige Topologie (&eacute;tale,
+      zahm/semianalytisch) <em>l&ouml;st</em> die scheinbare H&auml;rte auf: sie war ein Artefakt der Linse.</p>
+    </div>
+  </div>
+  <div class="note">Nicht in der Arithmetik, aber in der <em>Ontologie</em>: Kontinuum als Ziel vs. Fiktion,
+  eine feste Antwort vs. proteische Familie, H&auml;rte als physische Barriere vs. Artefakt der Beschreibung.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p><strong>1. Kontinuum: beides gilt auf verschiedenen Ebenen.</strong> Die asymptotische/fortlaufende Linse ist
+  das <em>Werkzeug</em>, die <strong>Form</strong> der Komplexit&auml;t abzulesen (exponentiell vs. polynomial &mdash;
+  die &bdquo;Gestalt&bdquo; der Kurve); das konkrete Artefakt ist endlich (ein bestimmter Schl&uuml;ssel, ein
+  bestimmter Fehlervektor). <em>Fusionsschluss:</em> Kryptographische Sicherheit ist eine Eigenschaft der
+  <em>Form</em> (Komplexit&auml;tsklasse), die &uuml;ber die asymptotische Linse gelesen und in endlichen, sehr
+  gro&szlig;en Objekten instantiiert wird. Das Kontinuum ist B&rsquo;s &bdquo;bequeme Fiktion&bdquo;, die A sauber
+  rechnen l&auml;sst; das endliche Objekt ist, wo die Sicherheit tats&auml;chlich lebt. Weder Limes noch Instanz
+  allein sind &bdquo;das Reale&bdquo; &mdash; die Form &uuml;berbr&uuml;ckt beide, genau wie B&rsquo;s Form den
+  Punkte&harr;Figuren-Wechsel &uuml;bersteht.</p>
+  <p><strong>2. Eine Invariante = ein proteischer Raum.</strong> A&rsquo;s &bdquo;eine feste Struktur&bdquo; und
+  B&rsquo;s &bdquo;proteischer Raum&bdquo; sind <em>derselbe</em> Gegenstand von zwei Seiten: ein Verfahren ist
+  <em>ein</em> Objekt (das Gitter &uuml;ber <code>&Z;_q^k</code>, das Schema <code>Spec &Z;[x,y]/(f)</code>), das in
+  verschiedenen Beschreibungen <em>viele Gesichter</em> zeigt (das &ouml;ffentliche <code>(A,b)</code> vs. das
+  geheime <code>s</code>; verschiedene K&ouml;rper <code>&RBB; </code>/<code>&F;_p</code>; verschiedene Basen).
+  A&rsquo;s &bdquo;eine Struktur&bdquo; ist B&rsquo;s &bdquo;das, worauf Lokalisierung Sinn ergibt&bdquo;; die
+  vielen Gesichter sind B&rsquo;s &bdquo;proteisch&bdquo; / die &uuml;berlappenden Modelle. Die Sicherheit ist die
+  <em>L&uuml;cke</em> zwischen dem einfachen lokalen Gesicht und der harten globalen Invariante.
+  <em>Fusionsschluss:</em> es <em>gibt</em> eine Form, aber sie zeigt sich als viele Gesichter &mdash; und es ist
+  <em>die</em> Form (nicht ein Gesicht), die echt ist.</p>
+  <p><strong>3. H&auml;rte hat beide Komponenten.</strong> Das Rauschen <code>e</code> bei LWE ist exakt B&rsquo;s
+  <em>Wildheit</em>, die die grobe/falsche Beschreibung erzeugt; der geheime Schl&uuml;ssel <code>s</code> ist
+  B&rsquo;s <em>z&auml;hes/semianalytisches Modell</em>, das die Struktur einfach und entschl&uuml;sselbar macht. Der
+  Angreifer ist in der wilden Beschreibung gefangen (B&rsquo;s &bdquo;falsches Problem&bdquo;); der
+  Schl&uuml;sselhalter hat die z&auml;he. Der Quantencomputer ist ein besserer <em>Leser</em> der wilden
+  Beschreibung (Grover = quadratisch, Shor = exponentiell f&uuml;r Faktorisierung), aber er kann <em>ohne den
+  Schl&uuml;ssel nicht</em> zur z&auml;hen Beschreibung &uuml;berwechseln. <em>Fusionsschluss:</em> ein
+  kryptographisches Harte-Problem ist eine <em>bewusst gew&auml;hlte</em> grobe/falsche Beschreibung einer Struktur,
+  die f&uuml;r den Schl&uuml;sselhalter eine einfache Beschreibung hat &mdash; Sicherheit ist die
+  Asymmetrie im Zugang zum z&auml;hen Modell.</p>
+  <div class="note"><b>Ein Satz, der beides fasst:</b> Sicherheit und Raum sind dieselbe Idee &mdash; die
+  invariante Form, die einer Beschreibungsurwandlung &uuml;bersteht; und das &bdquo;Schwierige&bdquo; ist nichts als
+  der Widerstand dieser Form, aus einer gr&ouml;beren, lokalen, verrauschten Sicht rekonstruiert zu werden.</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Gemeinsame Leitfrage</span>
+    <p>Beide Texte antworten auf <em>Was bleibt unter der Transformation?</em> A fragt es als
+    <em>Was bleibt sicher, wenn der Angreifer die Beschreibung wechselt (Superposition, QFT)?</em>; B fragt es als
+    <em>Was ist ein Raum, wenn man Punkte, K&ouml;rper und Kontinuum austauscht?</em> Die gemeinsame Antwort: die
+    <strong>Form</strong> &mdash; die Invariante, die der Beschreibungsurwandlung &uuml;bersteht &mdash; und die
+    <strong>Lokalisierung</strong> &mdash; die Operation, die aus lokalen St&uuml;cken das Ganze macht und die
+    Verschl&uuml;sselung absichtlich unterbricht.</p>
+  </div>
+
+  <h3>A &mdash; RSA, Shor und der harte Kern</h3>
+  <p>A st&uuml;tzt RSA auf dem asymmetrischen Faktum: <em>Multiplizieren ist trivial, Faktorisieren
+  astronomisch schwer</em> f&uuml;r klassische Computer. Shor wandelt Faktorisieren in ein
+  <em>Periodensuchproblem</em>: w&auml;hle <code>a</code>, berechne <code>a<sup>x</sup> mod N</code> &mdash; die Folge
+  ist <em>periodisch</em>; die Periode <code>r</code> gibt <code>gcd(a<sup>r/2</sup>&plusmn;1, N)</code> = die
+  Faktoren. Quantenmechanisch: Superposition &uuml;ber alle <code>x</code>, modulare Exponentiation, dann die
+  <em>Quanten-Fourier-Transformation (QFT)</em>, die das periodische Signal in Frequenzspitzen &uuml;berf&uuml;hrt.
+  Komplexit&auml;t <code>O((log N)<sup>3</sup>)</code> vs. klassisch subexponentiell
+  <code>exp((64/9)<sup>1/3</sup>(ln n)<sup>1/3</sup>(ln ln n)<sup>2/3</sup>)</code>. <em>Fusionssprache:</em> Die
+  Periode <code>r</code> ist die <strong>invariante Form</strong>, die ein Wechsel der Beschreibung (Zeit&nbsp;&rarr;
+  Frequenz, d.&nbsp;h. die QFT) <em>offenbart</em>; die &bdquo;Gestalt der Kurve&bdquo; (<code>a<sup>x</sup> mod N</code>
+  ist periodisch) ist genau das, was der Transformation &uuml;bersteht.</p>
+
+  <h3>A + B &mdash; Warum Gitter die Form sind, die der Quantencomputer &uuml;bersteht</h3>
+  <p>Die Probleme, die Shor <em>nicht</em> bricht, sind Gitterprobleme (LWE / SVP). LWE: gegeben
+  <code>b = A&middot;s + e</code> mit kleinem Fehler <code>e</code>, finde <code>s</code>. SVP (k&uuml;rzester
+  Vektor): klassisch <code>2<sup>0,298&middot;n</sup></code>, quanten <code>2<sup>0,268&middot;n</sup></code> &mdash;
+  nur ~11&nbsp;% schneller. NIST-Standardisierung 2024: <strong>ML-KEM</strong> (Kyber, FIPS&nbsp;203),
+  <strong>ML-DSA</strong> (Dilithium, FIPS&nbsp;204), <strong>SLH-DSA</strong> (SPHINCS+, FIPS&nbsp;205).
+  <em>Fusionssprache:</em> Das Gitter ist eine <strong>geometrische Form</strong> (B). LWE versteckt den geheimen
+  Vektor <code>s</code>, indem es das Bild <em>verrauscht</em> &mdash; B&rsquo;s <em>Wildheit</em>, die Monster aus
+  der falschen Beschreibung erzeugt. Die H&auml;rte ist der <strong>Widerstand der Form</strong>, aus den
+  verrauschten lokalen Daten rekonstruiert zu werden. Der Quantencomputer ist ein besserer Leser, aber die Form
+  bleibt in der Wildheit vergraben.</p>
+
+  <h3>B &mdash; Lokalisierung und die Garbenbedingung</h3>
+  <p>Deligne: <em>Ein Raum ist etwas, worauf Lokalisierung Sinn ergibt.</em> Verkleben (Gluing): um eine
+  Funktion <code>f : X &rarr; &RBB;</code> zu definieren, gen&uuml;gt es, sie auf offenen
+  <code>U<sub>i</sub></code> zu definieren, die <code>X</code> &uuml;berdecken, und zu pr&uuml;fen, dass sie auf den
+  &Uuml;berschneidungen &uuml;bereinstimmen. Eine <strong>Garbe</strong> = Pr&auml;garbe + zwei Axiome
+  (Eindeutigkeit, Verklebung); der Halm <code>&F;_x</code> ist der <em>lokale</em> Schnitt (bei Schemata: ein
+  lokaler Ring). <em>Fusionssprache:</em> Das ist die Struktur, die Verschl&uuml;sselung ausnutzt: zeige nur die
+  <em>lokalen</em> Daten (die &ouml;ffentlichen/verrauschten Gesichter <code>U<sub>i</sub></code>), verberge den
+  <em>globalen</em> Schnitt (das geheime <code>s</code>). Entschl&uuml;sseln = Verkleben &mdash; und dazu braucht man
+  den geheimen Schl&uuml;ssel (das z&auml;he Modell), der die Wildheit r&uuml;ckg&auml;ngig macht.</p>
+
+  <h3>B &mdash; Spec und der arithmetische Raum</h3>
+  <p>Der radikale Schritt: <em>Jeder kommutative Ring ist ein Raum.</em>
+  <code>Spec(A)</code> = Menge <em>aller</em> Primideale von <code>A</code>; der Raum wird <em>aus der Algebra
+  erzeugt</em>, nicht umgekehrt. Punkte = Primideale (inkl. des generischen Punkts <code>(0)</code>, dessen
+  Abschluss <em>alles</em> ist); Topologie = die distinguierten Offenen
+  <code>D(f) = { &frak;p; : f &notin; &frak;p; }</code>. <em>Fusionssprache:</em> Die Arithmetik
+  (<code>&Z;</code>, Primzahlen, <code>a<sup>x</sup> mod N</code>) ist selbst eine Geometrie &mdash; B&rsquo;s
+  <strong>Raum-Zahl</strong>. Das Gitter &uuml;ber <code>&Z;_q^k</code> (A) ist eine arithmetisch-geometrische Form;
+  <code>Spec &Z;</code> hat einen Punkt pro Primzahl <em>plus</em> einen generischen Punkt, und dieselbe
+  Gleichung sieht &uuml;ber <code>&RBB; </code> und <code>&F;_p</code> anders aus &mdash; die proteischen
+  Gesichter einer Form.</p>
+
+  <h3>B &mdash; Topoi: &Uuml;berdeckungen ohne Punkte</h3>
+  <p>Ersetze &bdquo;offene Teilmenge&bdquo; durch ein <strong>Sieb</strong>: <em>jeder</em> Morphismus nach
+  <code>X</code> (z.&nbsp;B. eine &eacute;tale &Uuml;berlagerung <code>z &rarr; z<sup>n</sup></code>, nicht
+  injektiv) z&auml;lt; als &bdquo;St&uuml;ck&bdquo;. Das gibt <em>viel mehr</em> &Uuml;berdeckungen
+  &rarr; &eacute;tale Kohomologie &rarr; Beweis der Weil-Vermutungen. Ein <strong>Topos</strong> = Kategorie aller
+  Garben auf einem Situs &mdash; ein Raum, der <em>von seiner Beschreibung unabh&auml;ngig</em> ist und keine Punkte
+  braucht. <em>Fusionssprache:</em> Das &Uuml;berdeckungssieb ist die lokale Datenmenge; ein
+  <em>&ouml;ffentlicher Krypto-Parameter</em> ist wie ein Sieb &mdash; er &bdquo;deckt&bdquo; das Geheime durch viele
+  nicht-injektive Gesichter. Der Topos (&bdquo;Form unabh&auml;ngig vom Ciphertext&bdquo;) ist ein sicherer Kanal:
+  die Form &auml;ndert sich nicht, welches Gesicht du auch schaust.</p>
+
+  <h3>B &mdash; Zahme Topologie und der Schl&uuml;ssel als z&auml;hes Modell</h3>
+  <p>Grothendieck verwirft wilde R&aume (Topologensinus, Cantor, Koch-Kurve, Hawaiische Ohrringe): &bdquo;die
+  allgemeine Topologie wurde von Analytikern f&uuml;r die Analysis gemacht, nicht f&uuml;r das Studium von
+  Gestalten&bdquo;. Sein lokales Modell: <strong>semianalytische Mengen</strong> (endliche
+  <code>{f&gt;0}</code>-Operationen &rarr; endlich viele Zusammenhangskomponenten, endliche Stratifizierung, keine
+  Monster). <strong>D&eacute;vissage</strong> = kanonische Schichtung. <em>Fusionssprache:</em> Das Rauschen
+  <code>e</code> (A) = B&rsquo;s Monster, erzeugt von der falschen Beschreibung; der geheime Schl&uuml;ssel
+  <code>s</code> (A) = B&rsquo;s <strong>z&auml;hes/semianalytisches Modell</strong>, das die Struktur
+  entschl&uuml;sselbar macht. Sicherheit = der Angreifer ist in der wilden Beschreibung gefangen; der
+  Schl&uuml;sselhalter hat die z&auml;he.</p>
+
+  <h3>A + B &mdash; Kontinuum als Fiktion und asymptotische Sicherheit</h3>
+  <p>B: &bdquo;Das Kontinuum ist der Begriff, der das schwer fassbare endliche &mdash; aber sehr gro&szlig;e
+  &mdash; Aggregat ann&auml;hert&bdquo; (10<sup>100</sup> Punkte auf der Kugel: niemand au&szlig;er Gott
+  unterscheidet sie vom Kontinuum). Drei Optionen &mdash; diskret / kontinuierlich / gemischt &mdash; und
+  &bdquo;unscharfe Differentialrechnung&bdquo;: die Ableitung <em>bis auf ein vorgeschriebenes &epsilon;</em>, ein
+  endlicher Prozess mit vorgeschriebener Schrittweite und Fehlermarge. <em>Fusionssprache:</em> A&rsquo;s
+  asymptotische Sicherheit (Bits&nbsp;&rarr;&nbsp;&infin;) ist exakt diese Fiktion; echtes Krypto l&auml;uft auf
+  endlichen (gro&szlig;en) Schl&uuml;sseln. Sicherheit gilt <em>bis auf &epsilon;</em> &mdash; das LWE-Fehler
+  <code>e</code> / die Decodier-Schwelle <em>ist</em> diese Fehlermarge. B&rsquo;s &bdquo;optimales
+  <code>h</code>&bdquo;-Ph&auml;nomen (mit Rauschen ist kleineres <code>h</code> <em>schlechter</em>) ist die
+  endliche Realit&auml;t, die der Kontinuum-Limes <code>h&rarr;0</code> verfehlt &mdash; und das, was ein
+  &ouml;ffentlich verrauschtes System real ist.</p>
+
+  <h3>B &mdash; Die Triade Zahl&middot;Gr&ouml;&szlig;e&middot;Form als Schlussstein</h3>
+  <p>Grothendieck kennt drei Gebiete mathematischer Reflexion: <strong>Zahl</strong> (Arithmetik, diskret),
+  <strong>Gr&ouml;&szlig;e</strong> (Analysis, kontinuierlich), <strong>Form</strong> (Geometrie). B&rsquo;s These:
+  <em>Zahl und Gr&ouml;&szlig;e sind selbst Formen</em>; das <strong>Raum-Zahl</strong>
+  (<em>espacio-n&uacute;mero</em>) verschmilzt Arithmetik und Geometrie zu einer Entit&auml;t, analog zur
+  Raumzeit. <em>Fusionssprache:</em> Ein Krypto-Verfahren vereint genau dies &mdash; Arithmetik
+  (<code>&Z;_q</code>, Primzahlen, <code>mod N</code> = A&rsquo;s Welt) und Geometrie (das Gitter als
+  geometrisches Objekt, die Kurve <code>a<sup>x</sup> mod N</code> = B&rsquo;s Form). Das <strong>Raum-Zahl der
+  Kryptographie</strong> ist das Gitter/das Schema, in dem Zahl und Gestalt eines sind. Die Triade ist der
+  Schlussstein: was A als &bdquo;harte Zahl&bdquo; und B als &bdquo;Form&bdquo; sieht, ist ein und dasselbe
+  arithmetisch-geometrische Objekt, dessen Invarianz unter Beschreibungsurwandlung &mdash; und deren Widerstand,
+  aus der groben Sicht rekonstruiert zu werden &mdash; das, was wir <em>Sicherheit</em> nennen.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p>Ein 2D-Canvas (2D-Analogie, wie A selbst h&ouml;here Dimensionen projiziert), das die fusionierte Idee
+  lebt: das <strong>Gitter</strong> ist die invariante <em>Form</em>; der geheime Punkt
+  <strong>s</strong> ist der <em>globale Schnitt</em>; der verrauschte &ouml;ffentliche Punkt
+  <strong>p = A&middot;s + e</strong> ist die <em>lokale, wilde Sicht</em> (Ciphertext), erzeugt von der
+  Wildheit <strong>e</strong>. Schiebe <em>Rauschen</em>: solange die n&auml;chste Gittern&auml;he den
+  richtigen Punkt liefert, ist die Form rekonstruierbar (Garbenbedingung erf&uuml;llt); &uuml;ber der
+  Schwelle bricht sie &mdash; genau das ist Verschl&uuml;sselung. <em>Dimension</em> zeigt die echte
+  H&auml;rte (A: SVP/LWE), die selbst Quanten nicht bricht.</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>s &middot; Form / geheimer Schnitt (global)</span>
+      <span><span class="sw" style="background:var(--accent3)"></span>p = A&middot;s + e &middot; lokale, verrauschte Sicht</span>
+      <span><span class="sw" style="background:var(--accent4)"></span>e &middot; Wildheit / Rauschen</span>
+      <span><span class="sw" style="background:var(--accent2)"></span>rekonstruierter Punkt (Garbenbedingung)</span>
+      <span><span class="sw" style="background:var(--grid)"></span>Gitter = invariante Form</span>
+    </div>
+    <div class="viz-controls">
+      <div class="grp">Rauschen e (Wildheit) <b id="noiseVal">26</b>
+        <input type="range" id="noiseRange" min="0" max="90" step="1" value="26"></div>
+      <div class="grp">Dimension d <b id="dimVal">8</b>
+        <input type="range" id="dimRange" min="2" max="40" step="1" value="8"></div>
+      <div class="grp">Neue Instanz
+        <button class="ctl" id="newBtn">Neues Rauschen</button></div>
+      <div class="hint">2D-Analogie &middot; Quanten bricht RSA, aber nicht Gitter</div>
+    </div>
+  </div>
+  <button class="ctl" id="themeBtn" style="margin-top:10px">Theme wechseln (hell/dunkel)</button>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../quantum_cryptography.html"><strong>quantum_cryptography.html &mdash; Shor&rsquo;s
+  Algorithm &amp; Post-Quantum Cryptography</strong></a>
+  &mdash; Interaktives Handbuch (Englisch): wie RSA auf Faktorisierung steht, wie Shors Algorithmus Faktorisieren
+  in ein Periodensuchproblem &uuml;berf&uuml;hrt (Superposition, QFT, O((log&nbsp;N)&sup3;)), warum
+  Gitterprobleme (LWE/SVP, nur ~11&nbsp;% quanten-beschleunigt) der Quantencomputer &uuml;bersteht, und wie
+  ML-KEM/ML-DSA/SLH-DSA (FIPS 203/204/205) &bdquo;harvest now, decrypt later&bdquo; beantworten. (Quelle A &mdash;
+  das defensive Handbuch.)</p>
+  <p class="src"><a href="../grothendiek_raum.html"><strong>grothendiek_raum.html &mdash; Der Raumbegriff bei
+  Grothendieck</strong></a>
+  &mdash; Interaktiver Begleiter zu J.&nbsp;A. Cruz Morales, &bdquo;The notion of space in Grothendieck&bdquo;
+  (arXiv:2105.08799), Deutsch: f&uuml;nf Metamorphosen der Frage &bdquo;Was ist ein Raum?&bdquo; &mdash;
+  Lokalisierung/Garben, Ringe/Primideale/Spec, Topoi, zahme Topologie, Geometrie der Formen &mdash; schlie&szlig;t
+  mit &bdquo;das Kontinuum ann&auml;hert das sehr gro&szlig;e Endliche&bdquo; und &bdquo;der Raumbegriff ist
+  proteisch&bdquo;. (Quelle B &mdash; der begriffliche Essay.)</p>
+</section>
+
+<footer>
+  Fusion (Round&nbsp;1, nicht-AI-Track, Paar&nbsp;106). Selbstenthalten, ohne Netzwerk-Datenzugriffe; alle Daten
+  (Gitter, Basisvektoren, Fehlervektoren, Schwierigkeitskurven) werden im Browser berechnet.
+</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2;
+  var B1 = {x:92, y:40}, B2 = {x:-34, y:92};
+  var SI = 1, SJ = 0;
+  var state = { noise:26, dim:8, eAngle:0.8, t:0 };
+  var pal = {};
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg:   toRgb(cssVar('--bg')),
+      grid: toRgb(cssVar('--grid')),
+      s:    toRgb(cssVar('--accent')),
+      guess:toRgb(cssVar('--accent2')),
+      p:    toRgb(cssVar('--accent3')),
+      e:    toRgb(cssVar('--accent4')),
+      fg:   toRgb(cssVar('--fg')),
+      muted:toRgb(cssVar('--muted'))
+    };
+  }
+
+  function evec(){ return { x:Math.cos(state.eAngle)*state.noise, y:Math.sin(state.eAngle)*state.noise }; }
+  function sv(){ return { x:SI*B1.x+SJ*B2.x, y:SI*B1.y+SJ*B2.y }; }
+  function nearestLattice(vx, vy){
+    var det = B1.x*B2.y - B2.x*B1.y;
+    var fi = (vx*B2.y - vy*B2.x)/det;
+    var fj = (B1.x*vy - B1.y*vx)/det;
+    var bi=Math.round(fi), bj=Math.round(fj), best={i:SI,j:SJ,d:1e9};
+    for(var di=-1;di<=1;di++){ for(var dj=-1;dj<=1;dj++){
+      var ii=bi+di, jj=bj+dj;
+      var lx=ii*B1.x+jj*B2.x, ly=ii*B1.y+jj*B2.y;
+      var d=(lx-vx)*(lx-vx)+(ly-vy)*(ly-vy);
+      if(d<best.d){ best.d=d; best.i=ii; best.j=jj; }
+    } }
+    return best;
+  }
+  function arrow(x1,y1,x2,y2,col,lw){
+    ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a=Math.atan2(y2-y1,x2-x1), hs=5;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.4), y2-hs*Math.sin(a-0.4));
+    ctx.lineTo(x2-hs*Math.cos(a+0.4), y2-hs*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(t){
+    var w=wrap.clientWidth, H=480, dpr=Math.min(window.devicePixelRatio||1,2);
+    if(w<2){ w=2; }
+    var pw=Math.round(w*dpr), ph=Math.round(H*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,H);
+
+    var CX=w*0.46, CY=205;
+    var s=sv(), ev=evec();
+    var pv={ x:s.x+ev.x, y:s.y+ev.y };
+    var rec=nearestLattice(pv.x,pv.y);
+    var recOK=(rec.i===SI && rec.j===SJ);
+
+    ctx.fillStyle=rgba(pal.grid,0.28);
+    for(var i=-4;i<=4;i++){ for(var j=-4;j<=4;j++){
+      if(i===0&&j===0) continue;
+      var lx=CX+i*B1.x+j*B2.x, ly=CY+i*B1.y+j*B2.y;
+      if(lx<-6||lx>w+6||ly<-6||ly>H+6) continue;
+      ctx.beginPath(); ctx.arc(lx,ly,1.7,0,TAU); ctx.fill();
+    } }
+    arrow(CX,CY, CX+B1.x, CY+B1.y, rgba(pal.guess,0.9), 1.4);
+    arrow(CX,CY, CX+B2.x, CY+B2.y, rgba(pal.p,0.8), 1.4);
+    ctx.font='11px monospace'; ctx.fillStyle=rgba(pal.guess,0.9);
+    ctx.fillText('b\u2081', CX+B1.x+5, CY+B1.y+3);
+    ctx.fillStyle=rgba(pal.p,0.8); ctx.fillText('b\u2082', CX+B2.x-18, CY+B2.y+3);
+
+    ctx.strokeStyle=rgba(pal.e,0.95); ctx.lineWidth=2;
+    ctx.setLineDash([5,4]); ctx.lineDashOffset=(-t*20)%9;
+    ctx.beginPath(); ctx.moveTo(CX+s.x, CY+s.y); ctx.lineTo(CX+pv.x, CY+pv.y); ctx.stroke();
+    ctx.setLineDash([]); ctx.lineDashOffset=0;
+
+    ctx.fillStyle=rgba(pal.p,0.95);
+    ctx.beginPath(); ctx.arc(CX+pv.x, CY+pv.y, 6, 0, TAU); ctx.fill();
+    ctx.font='12px sans-serif'; ctx.fillStyle=rgba(pal.p,0.95);
+    ctx.fillText('p = A\u00b7s + e  (lokale Sicht)', CX+pv.x+9, CY+pv.y+4);
+
+    var gx=CX+rec.i*B1.x+rec.j*B2.x, gy=CY+rec.i*B1.y+rec.j*B2.y;
+    ctx.strokeStyle=rgba(pal.guess,0.95); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(gx,gy,11,0,TAU); ctx.stroke();
+    if(!recOK){ ctx.fillStyle=rgba(pal.guess,0.95); ctx.beginPath(); ctx.arc(gx,gy,3,0,TAU); ctx.fill(); }
+
+    var pulse=0.5+0.5*Math.sin(t*2.6);
+    ctx.strokeStyle=rgba(pal.s,0.4+0.5*pulse); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(CX+s.x, CY+s.y, 8+3*pulse, 0, TAU); ctx.stroke();
+    ctx.fillStyle=rgba(pal.s,0.95);
+    ctx.beginPath(); ctx.arc(CX+s.x, CY+s.y, 6, 0, TAU); ctx.fill();
+    ctx.font='bold 12px sans-serif'; ctx.fillStyle=rgba(pal.s,0.95);
+    ctx.fillText('s  (Form / geheimer Schnitt)', CX+s.x-100, CY+s.y-14);
+
+    ctx.font='bold 15px sans-serif';
+    ctx.fillStyle = recOK ? rgba(pal.s,0.95) : rgba(pal.p,0.95);
+    ctx.fillText(recOK ? 'Form wiederhergestellt  \u2713' : 'Form VERLOREN  \u2717', 16, 26);
+    ctx.font='12px sans-serif'; ctx.fillStyle=rgba(pal.muted,0.9);
+    ctx.fillText('Gitter = invariante Form \u00b7 e = Wildheit (Rauschen)', 16, 46);
+
+    var d=state.dim, clsExp=0.298*d, qExp=0.268*d;
+    var bx=16, by=H-44, bw=w-32, bh=12;
+    ctx.fillStyle=rgba(pal.muted,0.25); ctx.fillRect(bx,by,bw,bh);
+    var frac=Math.min(1,d/40);
+    var barCol = d<10? pal.s : (d<25? pal.e : pal.p);
+    ctx.fillStyle=rgba(barCol,0.9); ctx.fillRect(bx,by,bw*frac,bh);
+    ctx.font='11px monospace'; ctx.fillStyle=rgba(pal.fg,0.9);
+    ctx.fillText('Dimension d='+d+'  \u00b7  klassisch 2^'+clsExp.toFixed(1)+'  \u00b7  Quanten 2^'+qExp.toFixed(1)+'  \u00b7  nur ~11% schneller', 16, by-8);
+  }
+
+  function setReadout(){
+    var d=state.dim, s=sv(), ev=evec();
+    var rec=nearestLattice(s.x+ev.x, s.y+ev.y);
+    var ok=(rec.i===SI && rec.j===SJ);
+    readout.innerHTML =
+      'Das <b>Gitter</b> ist die invariante Form; der Angreifer sieht nur die lokale, verrauschte Sicht '+
+      '<b>p = A&middot;s + e</b> (rot) &mdash; ein &bdquo;Monster&bdquo; in B&rsquo;s Sinne, erzeugt von der groben '+
+      'Beschreibung. Um die globale Form <b>s</b> (gr&uuml;n) zu rekonstruieren, m&uuml;sste er die '+
+      '<b>Garbenbedingung</b> erf&uuml;llen (lokal &rarr; global verkleben). '+
+      (ok
+        ? 'Bei Rauschen e < \u00bd&middot;(k&uuml;rzester Gittervektor) klappt es noch &mdash; die Form ist aus der lokalen Sicht wiederherstellbar. '
+        : 'Ab e \u2273 \u00bd&middot;(min. Vektor) bricht es &mdash; die n&auml;chste Gittern&auml;he liefert den <em>falschen</em> Punkt, die Form ist verborgen. ') +
+      'In der echten d-dimensionalen Version (A: SVP/LWE) kostet das 2^'+(0.298*d).toFixed(1)+
+      ' Operationen klassisch, 2^'+(0.268*d).toFixed(1)+' quanten &mdash; nur ~11% schneller. Genau deshalb '+
+      '&uuml;bersteht die Form den Quantencomputer.';
+  }
+
+  document.getElementById('noiseRange').addEventListener('input',function(){
+    state.noise=+this.value; document.getElementById('noiseVal').textContent=state.noise; setReadout();
+  });
+  document.getElementById('dimRange').addEventListener('input',function(){
+    state.dim=+this.value; document.getElementById('dimVal').textContent=state.dim; setReadout();
+  });
+  document.getElementById('newBtn').addEventListener('click',function(){
+    state.eAngle=Math.random()*TAU; setReadout();
+  });
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('f106theme', dark?'dark':'light'); }catch(e){}
+    readPal();
+  });
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+  }
+  try{ if(localStorage.getItem('f106theme')==='light'){ document.documentElement.classList.remove('dark'); } }catch(e){}
+
+  readPal();
+  setReadout();
+  (function loop(now){ state.t=(now||0)/1000; draw(state.t); requestAnimationFrame(loop); })();
+})();
+</script>

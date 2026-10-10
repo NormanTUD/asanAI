@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bialgebra-Garten — Fusion: game2.html ✕ sorting_with_bialgebras.html</title>
+<style>
+  :root{
+    --mn-bg:#FAF8F1; --mn-surface:#ffffff; --mn-text:#1c1a17; --mn-muted:#6b6558;
+    --mn-border:#e4ddcd; --mn-accent:#4f63d6; --mn-accent2:#1f9e94;
+    --mn-warm:#d64545; --mn-gold:#b8860b; --mn-code:#f4efe4;
+  }
+  html.dark{
+    --mn-bg:#0f172a; --mn-surface:#141f38; --mn-text:#e6edf3; --mn-muted:#9fb0c9;
+    --mn-border:#24345a; --mn-accent:#8b9bff; --mn-accent2:#5fe0d6;
+    --mn-warm:#ff8585; --mn-gold:#ffd93d; --mn-code:#101a30;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--mn-bg); color:var(--mn-text);
+    font-family:Georgia,'Times New Roman',serif; line-height:1.7;
+    transition:background .3s ease,color .3s ease;
+  }
+  .wrap{ max-width:820px; margin:0 auto; padding:40px 22px 80px; }
+  h1{ font-size:2em; line-height:1.25; margin:.2em 0 .1em; }
+  .subtitle{ color:var(--mn-muted); font-style:italic; margin:0 0 1.5em; font-size:.98em; }
+  section{ margin:2.2em 0; }
+  h2{ font-size:1.35em; border-bottom:2px solid var(--mn-border); padding-bottom:.25em; margin-top:1.4em; }
+  h3{ font-size:1.08em; margin:1.2em 0 .4em; color:var(--mn-accent); }
+  p{ margin:.7em 0; }
+  code{ font-family:'SFMono-Regular',Consolas,Menlo,monospace; font-size:.86em;
+        background:var(--mn-code); border:1px solid var(--mn-border);
+        border-radius:5px; padding:.1em .4em; }
+  pre{ background:var(--mn-code); border:1px solid var(--mn-border); border-radius:10px;
+       padding:14px 16px; overflow-x:auto; line-height:1.5; }
+  pre code{ background:none; border:none; padding:0; }
+  .callout{ background:var(--mn-surface); border:1px solid var(--mn-border);
+            border-left:4px solid var(--mn-accent); border-radius:10px; padding:12px 18px; margin:1em 0; }
+  .callout.accent2{ border-left-color:var(--mn-accent2); }
+  .callout.warm{ border-left-color:var(--mn-warm); }
+  .callout.gold{ border-left-color:var(--mn-gold); }
+  ul,ol{ margin:.5em 0 .5em 0; padding-left:1.3em; }
+  li{ margin:.35em 0; }
+  table{ border-collapse:collapse; width:100%; margin:1em 0; font-size:.93em;
+         background:var(--mn-surface); }
+  th,td{ border:1px solid var(--mn-border); padding:8px 10px; text-align:left; vertical-align:top; }
+  th{ background:var(--mn-code); }
+  .tag{ display:inline-block; font-size:.78em; font-weight:bold; padding:1px 9px;
+        border-radius:12px; border:1px solid var(--mn-border); color:var(--mn-muted); }
+  .tag.a{ color:var(--mn-accent2); border-color:var(--mn-accent2); }
+  .tag.b{ color:var(--mn-warm); border-color:var(--mn-warm); }
+  .tag.f{ color:var(--mn-gold); border-color:var(--mn-gold); }
+  .viz-box{ background:var(--mn-surface); border:1px solid var(--mn-border);
+            border-radius:14px; padding:16px; margin:1em 0; }
+  canvas{ display:block; width:100%; height:auto; border-radius:10px; }
+  .controls{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
+  button{ background:var(--mn-accent); color:#fff; border:none; border-radius:8px;
+          padding:8px 16px; font-size:.9em; cursor:pointer; font-family:inherit; }
+  button:hover{ filter:brightness(1.1); }
+  button.ghost{ background:transparent; color:var(--mn-text); border:1px solid var(--mn-border); }
+  input[type=range]{ -webkit-appearance:none; width:180px; height:6px;
+          background:var(--mn-border); border-radius:3px; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px;
+          background:var(--mn-accent); border-radius:50%; cursor:pointer; }
+  .status{ color:var(--mn-muted); font-size:.9em; min-height:1.4em; margin-top:6px; }
+  .prov a{ color:var(--mn-accent); }
+  .kicker{ font-size:.8em; letter-spacing:.08em; text-transform:uppercase; color:var(--mn-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Fusion · Runde 1 · id 094 · Nicht-KI-Spur</div>
+  <h1>Bialgebra-Garten</h1>
+  <p class="subtitle">Fusion aus: game2.html ✕ sorting_with_bialgebras.html</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Die zwei Quellen stammen aus scheinbar verschiedenen Welten. <span class="tag a">A · game2.html</span>
+    ist <em>Bloom Garden</em> — ein gemütlicher, stochastischer Idle-Clicker, in dem man tappt, Blumen pflanzt,
+    Tools freischaltet und ein Ökosystem wachsen sieht. <span class="tag b">B · sorting_with_bialgebras.html</span>
+    ist eine formale, beweisgestützte Erklärung zur <em>Dualität der Sortieralgorithmen</em>
+    (Hinze, James, Harper, Wu &amp; Magalhães, WGP'12). Trotz dieser Entfernung teilen beide eine einzige tiefe These:</p>
+    <div class="callout gold">
+      <strong>Komplexes, elegantes Verhalten entsteht, wenn man eine kleine Zahl an einfachen,
+      komponierbaren „Essenzen" (Ein-Schritt-Operationen) mit den zwei <em>dualen</em> Rekursionsschemata kombiniert.</strong>
+    </div>
+    <p>In <span class="tag b">B</span> ist jede Essenz eine <em>naturale Transformation</em> — der Ein-Schritt-Kern
+    eines Algorithmus (<code>swap</code>, <code>swop</code>, <code>sprout</code>, <code>pile</code>). Aus ihr folgen
+    über <em>Fold</em> (verbraucht Struktur) und <em>Unfold</em> (erzeugt Struktur) zwei <em>duale</em> Algorithmen, die
+    laut Eindeutigkeitstheorem der Bialgebra <em>identisch</em> sind: Bubble Sort = naives Insertion Sort,
+    Insertion = Selection, Quicksort = Treesort, Heapsort = Minglesort. Man benennt die Essenz einmal — die
+    ganze Familie fällt „for free" heraus.</p>
+    <p>In <span class="tag a">A</span> ist jede Essenz ein <em>Tool</em> (<code>plant</code>, <code>water</code>,
+    <code>sun</code>, <code>magic</code>, <code>paint</code>, <code>music</code>, <code>wish</code>, <code>love</code>) —
+    eine einfache Ein-Schritt-Operation mit räumlichem Seiteneffekt. Daraus <em>emergiert</em> die Komplexität des
+    Gartens (Blüten, Seltenheit, Schmetterlinge, Bäume, Themenumschaltung) über Feedback-Schleifen
+    (Samen ↔ Blüten ↔ XP ↔ Level). Auch hier gilt: wenige Primitiven + Komposition = reiches Verhalten.
+    <span class="tag f">Fusion</span> Die zwei Seiten sind dasselbe: <em>B</em> sagt das als Theorem,
+    <em>A</em> zeigt es als Erlebnis.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden widersprechen sich <strong>nicht direkt</strong> — sie leben in verschiedenen Domänen
+    (Spiele-Design vs. Kategorien-/Funktionaltheorie). Es gibt aber vier echte, benennbare Spannungen:</p>
+    <ul>
+      <li><strong>(1) Determinismus &amp; Verifizierbarkeit vs. Zufall &amp; Emergenz.</strong>
+        <span class="tag b">B</span> feiert <em>exakte Gleichheit</em>: „<code>bubbleSort = naïveInsertSort</code> —
+        the unique arrow from the initial to the final swap-bialgebra. Two descriptions of the <em>same</em>
+        computation." Der Anspruch ist Eindeutigkeit, Beweis, dass zwei Wege dasselbe sind.
+        <span class="tag a">A</span> ist durchweg <em>nicht-deterministisch</em>: <code>Math.random()</code> steuert
+        Seltenheit, Schmetterlinge, Evolution, Wetter, Combos. Kein Garten gleicht dem anderen, und es gibt dort
+        keinen Begriff „derselbe System zwei Wegen" — im Gegenteil: Verschiedenheit <em>ist</em> der Punkt.</li>
+      <li><strong>(2) Minimalismus (eine Essenz) vs. Maximalismus (viele Systeme).</strong>
+        <span class="tag b">B</span> destilliert <em>jeden</em> Algorithmus auf <em>eine</em> natürliche
+        Transformation und beweist, dass der Rest daraus folgt. <span class="tag a">A</span> <em>häuft</em>:
+        8 Tools + Seltenheitstabelle + Combo-System + passive Samen-Generierung + Achievements + Discovery-Log —
+        ein „Zoo" ohne Reduktion auf einen Kern.</li>
+      <li><strong>(3) Unterschiedliche Erfolgsmessung.</strong>
+        <span class="tag b">B</span> misst Erfolg an <em>Korrektheit und Effizienz</em> (Komplexität
+        n² → n&nbsp;log&nbsp;n, „guaranteed"). <span class="tag a">A</span> misst Erfolg an
+        <em>Freude, Flow und Retention</em>: „zen gardening", 10-Minuten-Sitzungen, Achievements als Belohnung
+        für Verweilen.</li>
+      <li><strong>(4) Einmalige, rein-stateless Berechnung vs. persistenter, wachsender Zustand.</strong>
+        <span class="tag b">B</span> sortiert durch <em>pure</em> Funktionen (Input → sortierter Output, kein
+        Speicher, endlich). <span class="tag a">A</span> hat <code>localStorage</code>-Save/Load, <code>autoGrow</code>
+        und passive Generierung: das System wächst <em>über die Zeit</em>, hat Gedächtnis und hört nie auf.</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Die vier Spannungen lösen sich auf, sobald man <em>beide</em> Seiten als (Ko-)Algebra liest:</p>
+    <ul>
+      <li><strong>(1)</strong> Zufall ist einfach ein <em>Unfold/Coalgebra</em>: ein stochastischer Prozess ist ein
+        Unfold <em>von einem Seed</em> (<code>Math.random()</code> = Seed). Die Determinismus-Seite von
+        <span class="tag b">B</span> und die Emergenz-Seite von <span class="tag a">A</span> sind dieselben zwei
+        Primitiven (Fold/Unfold) auf verschiedenen Carriern. „Gleichheit" (B) und „Variation" (A) sind zwei
+        Parameter <em>eines</em> Unfold — bei Seed 0 reproduzierbar, bei Seed ≠0 emergent.</li>
+      <li><strong>(2)</strong> Der Garten ist buchstäblich ein <em>Zoo</em> — und <span class="tag b">B</span>
+        heißt „The Sorting Zoo". Der Insight von <span class="tag b">B</span>: der Zoo ist nach
+        <em>(Essenz, Schema)</em> geordnet. Die 8 Tools von <span class="tag a">A</span> liest man über dieselben
+        zwei Achsen: die Ein-Schritt-Essenz (was das Tool tut) × das Feedback-Schema — passive Generierung =
+        „sieht mehr" ≈ <em>Paramorphismus</em>; Combos/Evolution = „kann stoppen / multiplizieren" ≈
+        <em>Apomorphismus</em>. Katalogisieren offenbart die verborgene Struktur des Gartens.</li>
+      <li><strong>(3)</strong> Dieselbe Ästhetik, von außen (Beweis) und von innen (Gefühl) gesehen.
+        „Algorithms for free" ≈ „Blüten, die sich von selbst ausbreiten". Beides belohnt <em>die Essenz zu finden,
+        aus der viel „for free" folgt</em>. Eleganz = <em>wenig Essenz, viel Output</em>.</li>
+      <li><strong>(4)</strong> Ein persistenter, wachsender Garten ist ein <em>Unfold, das nie stoppt</em> (νF),
+        das einen <em>Fold</em> (XP/Level) speist, der das Unfold <em>erneut seedet</em> (Level-Up schaltet neue
+        Tools frei). Das ist exakt das <code>fold∘unfold</code> / <code>unfold∘fold</code>-Feedback, mit dem
+        <span class="tag b">B</span> sortiert. <em>Ein Game-Loop ist ein sortierförmiger Feedback-Loop.</em></li>
+    </ul>
+    <div class="callout gold">
+      <strong>Gefusionierte Schlussfolgerung.</strong> Beide Werke studieren, wie wenige Ein-Schritt-Essenzen,
+      kombiniert über die dualen Schemata (Fold = konsumieren / Unfold = erzeugen), einen „Zoo" an Verhalten
+      erzeugen. Der Unterschied Theorem vs. Spiel ist <em>nur</em>, dass das Spiel (i) stochastische Essenzen hat
+      und (ii) seinen Feedback-Loop persistent hält — ein nie-stoppender Unfold, neu ge-seedet durch einen
+      Level-Up-Fold. Das gefusionierte Objekt ist ein <strong>Bialgebra-Garten</strong>: dessen <em>Wachstum</em>
+      ein Unfold, dessen <em>Pflege</em> ein Fold ist und dessen Level/Tools die (Ko-)Algebra-Maschinerie, die aus
+      wenigen Samen „for free" ein Ökosystem wachsen lässt.
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die gemeinsame Sprache ist (Ko-)Algebra. <span class="tag b">B</span> liefert die Typen;
+    <span class="tag a">A</span> liefert die lebende Instanz. Beide werden hier zusammengeführt, nicht
+    nacheinander aufgezählt.</p>
+
+    <h3>Die zwei dualen Rekursionsschemata</h3>
+    <pre><code>Fold    (Catamorphismus):  fold   : (F a → a) → μF → a      -- verbraucht Struktur (Input → Wert)
+Unfold  (Anamorphismus):   unfold : (a → F a) → a → νF      -- erzeugt Struktur (Seed → Ausgabe)
+Para    (verstärkter Fold): para   : (F (μF × a) → a) → μF → a   -- Algebra sieht auch den Rest
+Apo     (verstärkter Unfold): apo : (a → F (νF + a)) → a → νF   -- Coalgebra darf STOPPen</code></pre>
+    <p><span class="tag b">B</span>: Laufzeit eines Folds ∝ Größe des <em>Inputs</em>, eines Unfolds ∝ Größe des
+    <em>Outputs</em>; verschachtelt (fold∘unfold / unfold∘fold) ergibt sich n².
+    <span class="tag a">A</span>: dasselbe Muster, nur lebendig — „consume" = XP/Samen verbrennen,
+    „produce" = Blumen/Bäume/Schmetterlinge erzeugen.</p>
+
+    <h3>Die natürlichen Transformationen (= die „Essenzen")</h3>
+    <pre><code>swap  : List (List x) → List (List x)     -- vergleich + tausch zweier Nachbarn
+swop  = swap + STOPP                       -- early-termination
+sprout/wither : Baum einfügen / extrahieren   -- Baum-Essenz
+pile/sift   : Heap einfügen / deleteMin        -- Heap-Essenz</code></pre>
+    <p>Die Bialgebra-These von <span class="tag b">B</span>: ein Bialgebra = Algebra + Coalgebra auf demselben
+    Carrier, verknüpft durch die distributive Law. Aus ihr folgt
+    <code>initial bialgebra → unfold(fold)</code> und <code>final bialgebra → fold(unfold)</code>, und diese
+    zwei Pfade sind <em>gleich</em>. Das ist der formale Kern, den <span class="tag a">A</span> als
+    „die Blume blüht und verbreitet sich von selbst" <em>erlebt</em>.</p>
+
+    <h3>Der „Zoo" — B's Sortier-Algorithmen &amp; A's Tools in einer Tabelle</h3>
+    <table>
+      <thead>
+        <tr><th>Ebene / Struktur</th><th>Nat. Transformation (B)</th><th>duales Paar (B)</th><th>Komplexität (B)</th><th>Garten-Analog (A)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Liste</td><td><code>swap</code></td><td>Naïve Insert ⇄ Bubble</td><td>O(n²)</td><td><code>plant</code> + <code>water</code>: Samen → Blume</td></tr>
+        <tr><td>Liste (early-stop)</td><td><code>swop</code></td><td>Insertion ⇄ Selection</td><td>O(n) best / O(n²) worst</td><td><code>sun</code>: Evolution, „genug ist genug"</td></tr>
+        <tr><td>Suchbaum</td><td><code>sprout</code>/<code>wither</code></td><td>Treesort ⇄ Quicksort</td><td>O(n log n) avg</td><td>Baum 🌳 wächst aus einer Blume; Schatten/Wurzelnetz</td></tr>
+        <tr><td>Heap (Braun-Baum)</td><td><code>pile</code>/<code>sift</code></td><td>Heapsort ⇄ Minglesort</td><td>O(n log n) guaranteed</td><td>Teich 🪷 + Ökosystem: geordnete „Menge" mit Top-Essenz</td></tr>
+      </tbody>
+    </table>
+    <p>Die <em>Struktur-Aufstiege</em> von <span class="tag b">B</span> (Liste → Baum → Heap, zunehmend bessere
+    Garantien) spiegeln die <em>Progression</em> von <span class="tag a">A</span> (Blume → Baum → Teich →
+    Ökosystem, zunehmend reicheres Verhalten) — jeweils ein „Zwischen-Struktur"-Schritt, der die Komplexität
+    senkt bzw. die Tiefe erhöht.</p>
+
+    <h3>Der Garten <em>als</em> Bialgebra</h3>
+    <p>Liest man den Zustand <code>S</code> des Gartens (Blumen, Bäume, Teiche, Level, Samen) als Carrier,
+    entsteht eine Bialgebra: die <em>Wachstums-Coalgebra</em> (Unfold: aus Zustand entstehen neue Elemente —
+    <code>autoGrow</code>, <code>passiveSeedGen</code>, Blumen, die sich „ausbreiten durch Bewässern") und die
+    <em>Pflege-Algebra</em> (Fold: aus Ereignissen wird ein Zustand/Score — XP ansammeln, Level aufsteigen).
+    Ihre Verknüpfung <em>ist</em> der Game-Loop:
+    <code>grow (Unfold) → care (Fold) → re-seed (Level-Up) → grow …</code>.
+    Genau das ist, in der Terminologie von <span class="tag b">B</span>, ein <code>fold∘unfold</code> über einem
+    Fixpunkt — also ein Sortier-Feedback-Loop, nur dass das „Sortieren" hier das <em>Aufblühen</em> des Gartens
+    ist.</p>
+    <div class="callout accent2">
+      <strong>Wofür <code>para</code>/<code>apo</code> im Garten stehen.</strong>
+      <em>Paramorphismus</em> (sieht den <em>Rest</em>) ≈ die <code>autoGrow</code>-Schleife, die den <em>ganzen</em>
+      Garten betrachtet, um Bäume/Blüten hinzuzufügen. <em>Apomorphismus</em> (darf <em>STOPP</em>en) ≈
+      Bewässern, das erst aufhört, wenn „genug" — oder die Evolution, die eine Blume „fertig" macht.
+      Die „Effizienz-Tricks" von <span class="tag b">B</span> (early termination → O(n) best case für Insertion)
+      sind in <span class="tag a">A</span> die selben Tricks als <em>Feel</em>: „die Pflanze braucht nicht mehr".
+    </div>
+    <p><em>Kurzfassung für die nächste Runde:</em> Das Fusionsergebnis ist ein <strong>Bialgebra-Garten</strong> —
+    ein (Ko-)Algebra-System mit (i) wenigen Ein-Schritt-Essenzen, (ii) den dualen Schemata Fold/Unfold,
+    (iii) einem stochastischen Seed (Zufall als Unfold) und (iv) einem persistenten, nie-stoppenden
+    Feedback-Loop (Unfold, neu ge-seedet durch einen Level-Up-Fold).</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung: der duale Garten-Loop</h2>
+    <p>Ein interaktives Canvas, das die Fusion <em>verkörpert</em>: dieselbe Eingabeliste, zwei duale Ansichten.
+    Oben <strong>UNFOLD</strong> — die Liste <em>erzeugt</em> einen Garten (Seite <span class="tag a">A</span>,
+    stochastisch, mit Seltenheit). Unten <strong>FOLD</strong> — dieselbe Liste wird von rechts <em>konsument</em>
+    in einen XP-/Level-Stapel (Seite <span class="tag b">B</span>, deterministisch). Der Regler
+    „Determinismus ↔ Zufall" blendet zwischen <span class="tag b">B</span>'s Beweis-Gleichheit (0) und
+    <span class="tag a">A</span>'s Emergenz (1). Beide Seiten sind dieselbe Essenz, zwei Dualen —
+    <code>fold(unfold)</code> / <code>unfold(fold)</code>.</p>
+    <div class="viz-box">
+      <canvas id="vizCanvas" width="900" height="470"></canvas>
+      <div class="controls">
+        <button id="stepBtn">Step →</button>
+        <button id="autoBtn" class="ghost">▶ Auto</button>
+        <button id="resetBtn" class="ghost">↺ Reset</button>
+        <span class="tag">Determinismus</span>
+        <input type="range" id="randSlider" min="0" max="1" step="0.01" value="0.5">
+        <span class="tag">Zufall</span>
+        <span class="tag" id="randLabel" style="margin-left:4px;">mix 50%</span>
+        <button id="themeBtn" class="ghost" style="margin-left:auto;">🌙 / ☀️</button>
+      </div>
+      <p class="status" id="vizStatus"></p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../game2.html"><code>game2.html</code></a> — <em>„Bloom Garden"</em>: ein stochastischer,
+        persistenter Idle-Clicker; wenige Tools (plant/water/sun/magic/paint/music/wish/love) + Feedback-Schleifen
+        (Samen↔Blüten↔XP↔Level) + Seltenheit + prozedurale WebAudio-Musik. Die „A"-Seite dieser Fusion: Emergenz,
+        Zufall, Freude.</li>
+      <li><a href="../paper/sorting_with_bialgebras.html"><code>paper/sorting_with_bialgebras.html</code></a> —
+        <em>„Sorting with Bialgebras &amp; Distributive Laws"</em> (interaktiver Guide zu Hinze et al., WGP'12):
+        Folds/Unfolds, natürliche Transformationen (swap/swop/sprout/pile), Dualität (Bubble=Insert,
+        Insertion=Selection, Quick=Tree, Heap=Mingle) und Komplexitäts-Aufstieg. Die „B"-Seite: Beweis, Gleichheit,
+        Effizienz.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var INPUT = [5,3,8,1,4,7,2,6];
+  var TOOLS = ['🌱 Plant','💧 Water','☀️ Sun','✨ Magic','🎨 Paint','🎵 Music','🌟 Wish','💕 Love'];
+  var RKEYS = ['common','uncommon','rare','legendary'];
+  var RARITY = {
+    common:    {e:'🌸', m:1.00, w:50},
+    uncommon:  {e:'🌼', m:1.15, w:25},
+    rare:      {e:'🌻', m:1.30, w:10},
+    legendary: {e:'🌟', m:1.50, w:3}
+  };
+  var pal = {};
+  var randSlider = document.getElementById('randSlider');
+  var randLabel  = document.getElementById('randLabel');
+  var statusEl   = document.getElementById('vizStatus');
+  var state = {};
+  var running = false, timer = null;
+
+  function resetState(){
+    state = { produced:0, consumed:0, xp:0, level:1, xpNext:10, flowers:[], flash:null };
+    statusEl.textContent = 'Klick auf „Step →" oder „▶ Auto". Oben wächst der Garten (A), unten sammelt sich XP (B).';
+  }
+  function cachePal(){
+    var cs = getComputedStyle(document.documentElement);
+    var g = function(n){ return cs.getPropertyValue(n).trim(); };
+    pal = { bg:g('--mn-bg'), surface:g('--mn-surface'), text:g('--mn-text'), muted:g('--mn-muted'),
+            border:g('--mn-border'), accent:g('--mn-accent'), accent2:g('--mn-accent2'),
+            warm:g('--mn-warm'), gold:g('--mn-gold') };
+  }
+  function hexToRgba(hex, a){
+    if(!hex) return 'rgba(0,0,0,'+a+')';
+    var h = hex.replace('#','').trim();
+    if(h.length===3) h = h.split('').map(function(c){return c+c;}).join('');
+    var n = parseInt(h,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function detRarity(v){ return RKEYS[v % 4]; }
+  function rndRarity(){
+    var tot = RKEYS.reduce(function(a,k){ return a+RARITY[k].w; },0);
+    var r = Math.random()*tot;
+    for(var i=0;i<RKEYS.length;i++){ r -= RARITY[RKEYS[i]].w; if(r<=0) return RKEYS[i]; }
+    return 'common';
+  }
+  function pickRarity(v, randomness){
+    return Math.random() < randomness ? rndRarity() : detRarity(v);
+  }
+  function stop(){ running=false; if(timer){ clearInterval(timer); timer=null; } }
+  function step(){
+    if(state.produced >= INPUT.length) return;
+    var v = INPUT[state.produced];
+    var randomness = parseFloat(randSlider.value);
+    var rar = pickRarity(v, randomness);
+    state.flowers.push({ v:v, rar:rar, born:performance.now(), size:(16 + v*3) * RARITY[rar].m });
+    state.produced++;
+    state.consumed++;
+    state.xp += v;
+    var leveled = false;
+    while(state.xp >= state.xpNext){ state.xp -= state.xpNext; state.level++; state.xpNext = Math.floor(state.xpNext*1.5); leveled = true; }
+    if(leveled){
+      var ti = Math.min(state.level-2, TOOLS.length-1); if(ti<0) ti=0;
+      state.flash = { text:'⭐ Level '+state.level+' · Tool frei: '+TOOLS[ti], until: performance.now()+1700 };
+    }
+  }
+  function reset(){ stop(); resetState(); }
+  function play(){
+    if(running){ stop(); return; }
+    running = true;
+    timer = setInterval(function(){
+      if(state.produced >= INPUT.length){ stop(); return; }
+      step();
+    }, 720);
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function smooth(t){ return t*t*(3-2*t); }
+
+  function draw(){
+    var now = performance.now();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = pal.surface; roundRect(0,0,W,H,14); ctx.fill();
+    ctx.strokeStyle = pal.border; ctx.lineWidth=1; ctx.stroke();
+    var midY = H/2;
+    var n = INPUT.length;
+
+    // ---- TOP: UNFOLD (garden grows), left to right ----
+    ctx.fillStyle = pal.accent2; ctx.font='bold 14px system-ui, sans-serif'; ctx.textAlign='left';
+    var modeTxt = parseFloat(randSlider.value) < 0.05 ? 'deterministisch (B)' :
+                   (parseFloat(randSlider.value) > 0.95 ? 'stochastisch (A)' : 'mix');
+    ctx.fillText('UNFOLD — der Garten wächst  (Seite A · erzeugt · '+modeTxt+')', 16, 24);
+    var cellW = 46, startX = 24, topY = 96;
+    for(var i=0;i<n;i++){
+      var cx = startX + i*cellW + cellW/2;
+      // soil slot
+      ctx.fillStyle = hexToRgba(pal.muted,0.25);
+      roundRect(startX + i*cellW + 4, topY+34, cellW-8, 8, 4); ctx.fill();
+      if(i < state.produced){
+        var f = state.flowers[i];
+        var t = Math.min(1,(now - f.born)/650);
+        var s = smooth(t);
+        var meta = RARITY[f.rar];
+        var glow = f.rar==='legendary' ? pal.gold : (f.rar==='rare' ? pal.accent : pal.accent2);
+        // glow
+        ctx.fillStyle = hexToRgba(glow, 0.25*s);
+        ctx.beginPath(); ctx.arc(cx, topY, f.size*0.75*s, 0, Math.PI*2); ctx.fill();
+        // stem
+        ctx.strokeStyle = hexToRgba(pal.accent2,0.7*s); ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(cx, topY+18); ctx.lineTo(cx, topY+34); ctx.stroke();
+        // emoji
+        ctx.font = Math.round(f.size*s) + 'px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.globalAlpha = s;
+        ctx.fillText(meta.e, cx, topY-2);
+        ctx.globalAlpha = 1;
+        ctx.textBaseline='alphabetic';
+        ctx.fillStyle = pal.text; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='center';
+        ctx.fillText(f.v, cx, topY+52);
+      } else {
+        ctx.fillStyle = hexToRgba(pal.muted,0.6); ctx.font='12px system-ui, sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('?', cx, topY);
+        ctx.textBaseline='alphabetic';
+      }
+    }
+
+    // ---- divider + duality label ----
+    ctx.strokeStyle = hexToRgba(pal.border,1); ctx.setLineDash([5,5]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(14, midY); ctx.lineTo(W-14, midY); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = pal.gold; ctx.font='italic 12px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('=  (via Bialgebra: eine Essenz, zwei Dualen)  =', W/2, midY-8);
+
+    // ---- BOTTOM: FOLD (consume into XP), right to left ----
+    var botY = midY + 24;
+    ctx.fillStyle = pal.warm; ctx.font='bold 14px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('FOLD — die Liste wird zu XP  (Seite B · konsumiert · deterministisch)', 16, botY+8);
+    var barMax = 150, barBase = botY + 150;
+    var maxVal = Math.max.apply(null, INPUT);
+    for(var j=0;j<n;j++){
+      var bx = startX + j*cellW + 2;
+      var bw = cellW - 8;
+      var bh = (INPUT[j]/maxVal)*barMax;
+      var consumed = (n - 1 - j) < state.consumed;  // consume from the right
+      var isNext = (n - 1 - j) === state.consumed - 1 && state.consumed>0 && state.produced<n;
+      var col = consumed ? hexToRgba(pal.muted,0.35) : (isNext ? pal.gold : pal.warm);
+      ctx.fillStyle = col;
+      roundRect(bx, barBase - bh, bw, bh, 4); ctx.fill();
+      ctx.fillStyle = pal.text; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='center';
+      ctx.fillText(INPUT[j], bx+bw/2, barBase - bh - 5);
+      if(consumed){
+        ctx.strokeStyle = hexToRgba(pal.muted,0.8); ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(bx+3, barBase-bh+3); ctx.lineTo(bx+bw-3, barBase-6); ctx.stroke();
+      }
+    }
+    // accumulator / level box (right side)
+    var ax = W-150, ay = botY+18, aw = 132, ah = 118;
+    ctx.fillStyle = hexToRgba(pal.accent,0.10); roundRect(ax,ay,aw,ah,10); ctx.fill();
+    ctx.strokeStyle = pal.accent; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle = pal.accent; ctx.font='bold 12px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('ACCUMULATOR (Fold)', ax+12, ay+22);
+    ctx.fillStyle = pal.text; ctx.font='bold 30px system-ui, sans-serif';
+    ctx.fillText(String(state.xp), ax+12, ay+58);
+    ctx.fillStyle = pal.muted; ctx.font='11px system-ui, sans-serif';
+    ctx.fillText('XP  ·  Level '+state.level, ax+12, ay+76);
+    // xp progress
+    var p = Math.min(1, state.xp/state.xpNext);
+    ctx.fillStyle = hexToRgba(pal.border,1); roundRect(ax+12, ay+88, aw-24, 8, 4); ctx.fill();
+    ctx.fillStyle = pal.gold; roundRect(ax+12, ay+88, Math.max(6,(aw-24)*p), 8, 4); ctx.fill();
+    ctx.fillStyle = pal.muted; ctx.font='10px system-ui, sans-serif';
+    ctx.fillText('nächstes Level: '+(state.xpNext-state.xp), ax+12, ay+110);
+    // tools row under accumulator
+    var ti2 = Math.min(state.level-2, TOOLS.length-1); if(ti2<0) ti2=0;
+    ctx.fillStyle = pal.muted; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='right';
+    ctx.fillText('frei: '+TOOLS[ti2], W-20, botY+172);
+
+    // ---- flash (level up) ----
+    if(state.flash && now < state.flash.until){
+      var a = Math.min(1,(state.flash.until - now)/400);
+      ctx.fillStyle = hexToRgba(pal.gold, 0.95*a);
+      ctx.font='bold 26px system-ui, sans-serif'; ctx.textAlign='center';
+      ctx.fillText(state.flash.text, W/2, midY-24);
+    }
+  }
+  function loop(){ draw(); requestAnimationFrame(loop); }
+
+  document.getElementById('stepBtn').addEventListener('click', function(){ stop(); step(); });
+  document.getElementById('resetBtn').addEventListener('click', reset);
+  document.getElementById('autoBtn').addEventListener('click', play);
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); cachePal();
+  });
+  randSlider.addEventListener('input', function(){
+    var v = Math.round(parseFloat(randSlider.value)*100);
+    randLabel.textContent = v<=5 ? '100% det. (B)' : (v>=95 ? '100% zufall (A)' : 'mix '+v+'%');
+  });
+
+  cachePal();
+  resetState();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

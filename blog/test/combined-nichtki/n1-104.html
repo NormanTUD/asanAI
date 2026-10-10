@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: The Examined Life × A Formally Verified Good Life</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --c1:#0d9488; --c2:#2f6fd0; --c3:#c0457f; --c4:#b07d18; --c5:#6b4fb0; --c6:#2f8f5b;
+  --domS:#0d9488; --domO:#2f6fd0; --domC:#b07d18;
+  --glue:#2f8f5b; --tear:#c0392b; --global:#b07d18;
+  --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e; --border:#233450;
+  --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --c1:#64ffda; --c2:#7aa2ff; --c3:#ff8fd0; --c4:#ffcc6a; --c5:#b8a2ff; --c6:#6fe39a;
+  --domS:#64ffda; --domO:#7aa2ff; --domC:#ffcc6a;
+  --glue:#6fe39a; --tear:#ff8577; --global:#ffcc6a;
+  --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:40px 24px 90px;}
+header{margin-bottom:28px;}
+h1{font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{font-size:1.02rem; margin:18px 0 8px; color:var(--accent);}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.84rem; line-height:1.55;
+}
+pre code{background:none; padding:0; color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+table.map{width:100%; border-collapse:collapse; font-size:.86rem; margin:8px 0 16px;}
+table.map th, table.map td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+table.map th{background:var(--panel); color:var(--fg);}
+table.map td b{color:var(--accent);}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);}
+.note b{color:var(--fg);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:460px; touch-action:none; cursor:pointer;}
+.legend{display:flex; flex-wrap:wrap; gap:10px 16px; padding:10px 14px 2px; font-size:.76rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted);}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+#readout{margin:0 0 12px; color:var(--muted); font-size:.9rem; min-height:1.2em;}
+#readout b{color:var(--fg);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>The Examined Life, Proved Coherent</h1>
+  <p class="subtitle">Fusion aus: <code>philosophy2.html</code> &times; <code>good.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Both papers are answers to the same 2,600-year-old question &mdash; <em>how should one live?</em>
+  <strong>philosophy2 (A)</strong> opens with Socrates&rsquo; &ldquo;The unexamined life is not worth living&rdquo;
+  and treats philosophy as &ldquo;the operating system for your mind&rdquo;: a plural, first-person toolkit in which
+  you discover <em>your own</em> orientation across moods, dilemmas, and a dozen traditions (Stoic, existentialist,
+  Kantian, virtue, utilitarian, Taoist&hellip;). <strong>good.html (B)</strong> answers the identical question as an
+  engineer: &ldquo;Nine principles that fit together into one coherent whole,&rdquo; cast as an axiomatic system (8
+  axioms, 14 theorems) whose ethical principles form a <em>sheaf</em> over the domains of life &mdash; Self, Other,
+  Community &mdash; and are proven, in Coq, to glue into a single global section they call <code>good_life</code>.</p>
+  <p>The single integrated position: <strong>the good life is not one rule but a set of local commitments that must
+  hold consistently across every domain of a life.</strong> A lives this as <em>experience</em> &mdash; many feelings,
+  many situations, many traditions, each a local &ldquo;what to do,&rdquo; and the examined life is the habit of checking
+  that they fit. B lives this as <em>proof</em> &mdash; the sheaf-condition that local sections agree on their overlaps,
+  so they glue into one global section. Fused: <strong>authenticity (A) is what makes the sheaf&rsquo;s sections honest
+  and specifically yours; consistency/verification (B) is what makes that authenticity coherent rather than arbitrary.</strong>
+  You do not so much <em>find</em> a philosophy as you find the set of commitments that both <em>resonate</em> with you
+  (A) <em>and glue without tearing</em> (B). A good life is a global section: locally chosen by the agent, globally
+  non-contradictory.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>The two papers genuinely part on three stances (not on any shared fact):</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. One system &mdash; B</h3>
+      <div class="src">B &mdash; good.html</div>
+      <p>&ldquo;Nine principles that fit together into <strong>one coherent whole</strong>.&rdquo; The final step&rsquo;s
+      one-liner is &ldquo;The global section exists: all parts glue into one coherent whole.&rdquo; There is a single,
+      sufficient system, and it is complete in the covering sense.</p>
+    </div>
+    <div class="col">
+      <h3>1. Many systems &mdash; A</h3>
+      <div class="src">A &mdash; philosophy2</div>
+      <p>The Life Simulator states it flatly: &ldquo;There&rsquo;s no &lsquo;wrong&rsquo; answer. Each response
+      reflects a <strong>legitimate</strong> philosophical tradition&hellip; the goal isn&rsquo;t to pick the
+      &lsquo;right&rsquo; philosophy.&rdquo; A denies there is one right philosophy; the Builder exists to
+      <em>find yours</em>, not to impose one.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Meaning is verified &amp; determinate &mdash; B</h3>
+      <div class="src">B &mdash; good.html</div>
+      <p>The good life is a <strong>determinate, provable object</strong>:
+      <code>good_life a := nonharming a &and; mindful a &and; &hellip; &and; growing a</code>, with a
+      machine-checkable <code>consistency</code> theorem (&ldquo;no internal contradiction&rdquo;). The structure
+      exists <em>out there</em> and can be checked.</p>
+    </div>
+    <div class="col">
+      <h3>2. Meaning is created, not pre-given &mdash; A</h3>
+      <div class="src">A &mdash; philosophy2</div>
+      <p>A&rsquo;s dominant strand is existentialist: &ldquo;You believe life has <strong>no pre-given meaning</strong>
+      &mdash; and that&rsquo;s liberating&rdquo;; &ldquo;Man is condemned to be free&rdquo; (Sartre); Camus&rsquo;
+      Absurd: &ldquo;life has no inherent meaning&hellip; rebel&hellip; by living fully anyway.&rdquo; You author the
+      values; there is no fixed essence to discover.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. You know it is right because it type-checks &mdash; B</h3>
+      <div class="src">B &mdash; good.html</div>
+      <p>Correctness is <strong>machine-checkable proof</strong>: a &ldquo;Verify&rdquo; button runs every theorem, a
+      console logs proofs, the claim is &ldquo;machine-verifiable.&rdquo; The test is <em>does it glue / does it
+      type-check</em>.</p>
+    </div>
+    <div class="col">
+      <h3>3. You know it is right because it resonates &mdash; A</h3>
+      <div class="src">A &mdash; philosophy2</div>
+      <p>Correctness is <strong>first-person resonance</strong>: the simulator &ldquo;reveals which tradition guides
+      your <em>instincts</em>,&rdquo; Mood&nbsp;Rx answers &ldquo;how you feel right now,&rdquo; the Builder finds what
+      &ldquo;matches your worldview.&rdquo; There is no external correctness condition &mdash; only fit with yourself.</p>
+    </div>
+  </div>
+  <div class="note">Closest real tension, not a hard contradiction: <b>the status of rigor.</b> A&rsquo;s whole mode is
+  narrative, mood, story and quote &mdash; formal verification is simply not on its map. B makes rigor <em>the</em>
+  point (&ldquo;backed by formal proof, open to critique&rdquo;). Whether rigor can touch &ldquo;the good life&rdquo; at
+  all is where they truly part.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>1. Many vs. one &mdash; different levels, so they compose.</strong> A&rsquo;s &ldquo;no single right
+  philosophy&rdquo; is about <em>which master tradition you identify with</em> (a menu: Stoic, Existentialist,
+  Kantian&hellip;). B&rsquo;s &ldquo;one coherent whole&rdquo; is about the <em>small set of local principles that hold in
+  every life regardless of tradition</em> (do no harm, be aware, see the other&hellip;). Look at A&rsquo;s own data: its
+  six &ldquo;dominant philosophies&rdquo; (Existentialist, Virtue, Utilitarian, Taoist, Deontologist, Hedonist) all
+  <em>converge</em> on the same concrete steps &mdash; and B documents exactly this as &ldquo;cross-cultural
+  convergence&rdquo; (the Golden Rule, non-harm, moderation appear in every tradition). <em>Fused conclusion:</em> many
+  legitimate ways to be human (A) all sit on top of one small set of locally-holding, mutually-gluing principles
+  (B). <em>Choose your tradition for the soul (A); live the nine for the hands (B).</em></p>
+  <p><strong>2. Created vs. verified meaning &mdash; structure is proved, content is lived.</strong> B&rsquo;s sheaf is
+  <em>extensional</em>: the shape any good life must have, and the theorems guarantee that shape is non-contradictory.
+  A&rsquo;s authenticity is <em>intensional</em>: <em>which</em> sections you actually fill in is yours to author &mdash;
+  B even concedes this at Step&nbsp;7: &ldquo;Know YOUR limits, not some abstract ideal.&rdquo; The theorems prove the
+  <em>map</em> is consistent; the agent&rsquo;s authentic choices decide where to walk it. No contradiction once you see
+  B proves a consistent structure <em>exists</em> while A insists the <em>walking</em> of it is uncoerced.</p>
+  <p><strong>3. Resonance vs. proof &mdash; the examined life <em>is</em> the consistency check.</strong> A&rsquo;s journal
+  prompts (&ldquo;What belief do I hold that I&rsquo;ve never questioned?&rdquo;), the Socratic Method, and the weekly
+  &ldquo;Existential Audit&rdquo; are exactly B&rsquo;s gluing/locality test run by hand: check that your local beliefs
+  agree on their overlaps. B&rsquo;s Step&nbsp;3 &ldquo;Tell the Truth&rdquo; is <em>defined</em> as the locality
+  condition (&ldquo;a section is well-defined only if it is locally consistent&rdquo;) &mdash; which is literally
+  A&rsquo;s Socratic examination. <em>Fused conclusion:</em> A&rsquo;s introspection is the human, unformalized version of
+  B&rsquo;s gluing proof. <em>Examination = informal proof; a good life is whatever survives the cross-examination of
+  your own moods.</em></p>
+  <p><strong>4. Rigor&rsquo;s status &mdash; B answers A&rsquo;s Absurd.</strong> A&rsquo;s &ldquo;Absurd&rdquo; (no
+  inherent meaning) is met by B&rsquo;s <code>consistency</code> theorem: there <em>is</em> a non-contradictory way to
+  be; the open question is only whether you live it. A describes the felt absence of meaning; B describes the provable
+  presence of a consistent structure. They are complementary descriptions of the same gap, not rivals.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Shared question</span>
+    <p>Both are &ldquo;how to live well&rdquo; books. A frames it as <em>examination</em> (Socrates) and <em>eudaimonia</em>
+    (flourishing); B frames it as a <em>verified ethical system</em>. Both agree the point is a life that is
+    <em>whole</em> &mdash; A&rsquo;s &ldquo;operating system for your mind,&rdquo; B&rsquo;s &ldquo;one coherent whole.&rdquo;
+    Both insist the local (a mood, a domain, a dilemma) and the global (a life, a good life) must be made to
+    fit.</p>
+  </div>
+
+  <h3>A &mdash; the plural, felt toolkit</h3>
+  <ul>
+    <li><strong>Five branches</strong>: Metaphysics, Epistemology, Ethics, Logic, Aesthetics &mdash; each a
+    &ldquo;superpower,&rdquo; each with a core-wisdom quote and &ldquo;use it today&rdquo; moves.</li>
+    <li><strong>Thought experiments</strong>: Trolley, Experience Machine (Nozick), Ship of Theseus, What&nbsp;Is&nbsp;It&nbsp;Like&nbsp;to&nbsp;Be&nbsp;a&nbsp;Bat (Nagel), Schr&ouml;dinger&rsquo;s Ethics, Veil of Ignorance (Rawls) &mdash; each choice reveals a tradition.</li>
+    <li><strong>Paradoxes</strong>: Zeno, the Liar (G&ouml;del), Tolerance (Popper), Grandfather, Fermi, the Hard Problem of Consciousness (Chalmers).</li>
+    <li><strong>Life Simulator + Personal Philosophy Builder</strong>: dilemmas and 7 questions tally your instinct into a dominant tradition; &ldquo;there&rsquo;s no wrong answer.&rdquo;</li>
+    <li><strong>Mental models &amp; moods</strong>: Socratic Method, Occam&rsquo;s Razor, Amor&nbsp;Fati, Impermanence, Categorical Imperative, Eudaimonia, Eternal Recurrence, The Absurd; and 8 mood prescriptions (anxious/sad/angry/numb/confused/content/motivated/exhausted) each with a quote + a practice.</li>
+    <li><strong>Daily practices &amp; journal</strong>: Stoic morning, Seneca evening review, the Socratic pause, the Kantian test, Taoist non-action; 8 journal prompts (localStorage).</li>
+  </ul>
+
+  <h3>B &mdash; the axiomatic, verified system</h3>
+  <ul>
+    <li><strong>8 axioms</strong> (Agents Exist; Awareness Possible; Others Exist; Actions Have Effects; Harm
+    Recognizable; Improvement Possible; Symmetry of Agents; Measure Bounds Length), each with a &ldquo;how this could
+    be wrong&rdquo; + historical test.</li>
+    <li><strong>9 steps</strong>, each with everyday practice, an integrated critique, philosophical sources, a
+    sheaf-theoretic role, and a Coq proof:
+    <code>0 Do No Harm</code> (zero section) &middot; <code>1 Be Aware</code> (section on Self) &middot;
+    <code>2 See the Other</code> (functor Self&rarr;Other) &middot; <code>3 Tell the Truth</code> (locality condition) &middot;
+    <code>4 Own It</code> (covariant functor) &middot; <code>5 Be Fair</code> (natural transformation) &middot;
+    <code>6 Help</code> (non-trivial section) &middot; <code>7 Know Your Measure</code> (compactness) &middot;
+    <code>8 Grow</code> (path in HoTT) &middot; <code>9 That Is All</code> (the global section).</li>
+    <li><strong>Sheaf reading</strong>: open sets = domains of life <em>Self, Other, Community</em>; sections = ethical
+    principles; the <strong>gluing theorem</strong> says local sections that agree on all overlaps glue into the global
+    section <code>good_life</code>. A compatibility matrix marks pairs that share an open set (green) vs. bridge-only
+    (amber). A dependency <em>tower</em>: Logic &rarr; Math (type theory/ZFC) &rarr; Physics &rarr; Biology &rarr;
+    Sociology &rarr; Ethics.</li>
+  </ul>
+<pre><code>good_life a := nonharming a &and; mindful a &and; empathic a &and; truthful a &and;
+              responsible a &and; fair a &and; helpful a &and; moderate a &and; growing a
+
+gluing_theorem :  section_self a &rarr; section_other a &rarr; section_community a &rarr; good_life a
+consistency    :  good_life a &rarr; ~ False        (* no internal contradiction *)
+compactness    :  measure acts &le; bound &rarr; length acts &le; bound</code></pre>
+
+  <h3>The mapping &mdash; where A and B are the same move at different altitudes</h3>
+  <table class="map">
+    <tr><th>A (philosophy2)</th><th>&#8596;</th><th>B (good.html)</th></tr>
+    <tr><td>The 5 branches</td><th>&#8596;</th><td>The dependency tower + 8 axioms (Ethics on Logic/Math/Physics/Bio/Sociology)</td></tr>
+    <tr><td>The 8 moods (felt local situations)</td><th>&#8596;</th><td>The open sets Self&nbsp;/&nbsp;Other&nbsp;/&nbsp;Community &mdash; the domains a section must hold in</td></tr>
+    <tr><td>&ldquo;Each tradition is legitimate&rdquo; (pluralism)</td><th>&#8596;</th><td>&ldquo;Cross-cultural convergence&rdquo; &mdash; every tradition lands on the same steps</td></tr>
+    <tr><td>The journal / Socratic Method / Existential Audit</td><th>&#8596;</th><td>The gluing + consistency proof (informal vs. formal check that local beliefs agree on overlaps)</td></tr>
+    <tr><td>Aristotle&rsquo;s Golden Mean, wu-wei, &ldquo;just right&rdquo;</td><th>&#8596;</th><td>Step 7 <b>Know Your Measure</b> = the compactness condition</td></tr>
+    <tr><td>Amor Fati / Eternal Recurrence (&ldquo;live so you&rsquo;d choose it again&rdquo;)</td><th>&#8596;</th><td>Step 8 <b>Grow</b> = a path in HoTT, Is&nbsp;&rarr;&nbsp;Ought</td></tr>
+    <tr><td>Rawls&rsquo; Veil, &ldquo;would I accept this if I were worst off&rdquo;</td><th>&#8596;</th><td>Step 5 <b>Be Fair</b> = the natural-transformation / Golden-Rule condition</td></tr>
+    <tr><td>No fixed essence; you create meaning (existentialism)</td><th>&#8596;</th><td>The <em>content</em> of the sections is the agent&rsquo;s; the theorems fix only the <em>shape</em></td></tr>
+  </table>
+  <div class="note">The fused claim, in one line: <b>the good life is a global section of a sheaf whose open sets are
+  your moods and whose local sections are the principles you authentically endorse &mdash; and it exists exactly when
+  your local choices agree on every overlap.</b></div>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p><b>&ldquo;Coherence of the Examined Life.&rdquo;</b> Six moods &mdash; A&rsquo;s felt, first-person local
+  situations &mdash; sit on a hexagon. Each mood holds one of B&rsquo;s ethical principles, tagged with the
+  life-domain(s) it covers (Self / Other / Community, taken straight from B&rsquo;s compatibility matrix). Adjacent
+  moods <em>overlap</em>; an overlap <b>glues (green)</b> iff the two chosen principles share a life-domain, else it
+  <b>tears (red)</b>. The central node lights gold &mdash; B&rsquo;s <em>global section exists</em> &mdash; only when all
+  six overlaps glue. You are running B&rsquo;s gluing theorem on A&rsquo;s data: <em>click a mood</em> to change which
+  principle you authentically apply there and watch the life tear and re-glue.</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--c1)"></span>Be Aware &middot; Self</span>
+      <span><span class="sw" style="background:var(--c2)"></span>Tell the Truth &middot; Self+Other</span>
+      <span><span class="sw" style="background:var(--c3)"></span>See the Other &middot; Self+Other</span>
+      <span><span class="sw" style="background:var(--c4)"></span>Do No Harm &middot; Other+Community</span>
+      <span><span class="sw" style="background:var(--c5)"></span>Be Fair &middot; Other+Community</span>
+      <span><span class="sw" style="background:var(--c6)"></span>Know Your Measure &middot; Self+Community</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl" id="btnCoherent">Auto-coherent</button>
+      <button class="ctl" id="btnRandom">Randomize</button>
+      <button class="ctl" id="btnReset">Reset</button>
+      <button class="ctl" id="themeBtn">Theme: light/dark</button>
+      <div class="hint">Click a mood to cycle its principle &middot; gold center = good life glues</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2;
+
+  // B's ethical steps (subset), domains taken verbatim from good.html's compatibility matrix.
+  var PRINCIPLES = [
+    {step:1, label:'Be Aware',        key:'c1', domains:['S'],       trad:'Buddhist/Zen + Stoic (prosoche)'},
+    {step:3, label:'Tell the Truth',  key:'c2', domains:['S','O'],   trad:'Kant + the Socratic method'},
+    {step:2, label:'See the Other',   key:'c3', domains:['S','O'],   trad:'Levinas / Ubuntu'},
+    {step:0, label:'Do No Harm',      key:'c4', domains:['O','C'],   trad:'Virtue/care ethics; Mill'},
+    {step:5, label:'Be Fair',         key:'c5', domains:['O','C'],   trad:"Rawls' veil of ignorance"},
+    {step:7, label:'Know Your Measure',key:'c6', domains:['S','C'],  trad:"Aristotle's Golden Mean; wu-wei"}
+  ];
+  var DOM = {S:'Self', O:'Other', C:'Community'};
+  var MOODS = [
+    {e:'\u{1F630}', label:'Anxious'},
+    {e:'\u{1F624}', label:'Angry'},
+    {e:'\u{1F622}', label:'Sad'},
+    {e:'\u{1F914}', label:'Confused'},
+    {e:'\u{1F60A}', label:'Content'},
+    {e:'\u{1F525}', label:'Motivated'}
+  ];
+  // Initial per-position principle index, chosen so every overlap glues on load.
+  var initAssign = [2,4,3,5,0,1];
+  var assign = initAssign.slice();
+
+  var pal = {};
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [+m[0], +m[1], +m[2]]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    var g=function(n){ return cssVar(n); };
+    pal = {
+      bg:toRgb(g('--bg')), fg:toRgb(g('--fg')), muted:toRgb(g('--muted')), panel:toRgb(g('--panel')),
+      glue:toRgb(g('--glue')), tear:toRgb(g('--tear')), global:toRgb(g('--global')),
+      c1:toRgb(g('--c1')), c2:toRgb(g('--c2')), c3:toRgb(g('--c3')),
+      c4:toRgb(g('--c4')), c5:toRgb(g('--c5')), c6:toRgb(g('--c6')),
+      domS:toRgb(g('--domS')), domO:toRgb(g('--domO')), domC:toRgb(g('--domC'))
+    };
+  }
+
+  function geom(){
+    var w = wrap.clientWidth; if(w<10){ w=10; }
+    var R = Math.min(w, 460) * 0.33;
+    return { w:w, cx:w/2, cy:230, R:R };
+  }
+  function nodePos(i,g){
+    var a = (-90 + i*60) * Math.PI/180;
+    return { x:g.cx + g.R*Math.cos(a), y:g.cy + g.R*Math.sin(a) };
+  }
+  function sharedDom(i,j){
+    var a=PRINCIPLES[i].domains, b=PRINCIPLES[j].domains, out=[];
+    for(var k=0;k<a.length;k++){ if(b.indexOf(a[k])>=0){ out.push(a[k]); } }
+    return out;
+  }
+  function glueCount(){
+    var c=0;
+    for(var i=0;i<6;i++){ if(sharedDom(assign[i],assign[(i+1)%6]).length){ c++; } }
+    return c;
+  }
+
+  function draw(t){
+    var g = geom(), w=g.w, h=460, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var i, A, B, shared, ok, midx, midy;
+    // overlaps (edges between adjacent moods)
+    for(i=0;i<6;i++){
+      A=nodePos(i,g); B=nodePos((i+1)%6,g);
+      shared=sharedDom(assign[i],assign[(i+1)%6]); ok=shared.length>0;
+      midx=(A.x+B.x)/2; midy=(A.y+B.y)/2;
+      ctx.strokeStyle=rgba(ok?pal.glue:pal.tear, ok?0.85:0.9);
+      ctx.lineWidth= ok?3.2:2.4;
+      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+      ctx.fillStyle=rgba(ok?pal.glue:pal.tear,0.95);
+      ctx.font='700 11px Inter,system-ui,sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      var lab = ok ? ('+ ' + shared.map(function(d){return DOM[d];}).join('+')) : 'tear';
+      // little chip behind label for legibility
+      var tw = ctx.measureText(lab).width + 10;
+      ctx.fillStyle=rgba(pal.panel,0.85);
+      ctx.fillRect(midx - tw/2, midy - 9, tw, 18);
+      ctx.fillStyle=rgba(ok?pal.glue:pal.tear,0.98);
+      ctx.fillText(lab, midx, midy);
+    }
+
+    // central "good life" node
+    var all = glueCount()===6;
+    var pulse = 0.5 + 0.5*Math.sin(t*3);
+    if(all){
+      ctx.strokeStyle=rgba(pal.global, 0.35+0.5*pulse); ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(g.cx,g.cy, 26 + 12*pulse, 0, TAU); ctx.stroke();
+    }
+    ctx.fillStyle = rgba(all?pal.global:pal.muted, all?0.98:0.55);
+    ctx.beginPath(); ctx.arc(g.cx,g.cy, 24, 0, TAU); ctx.fill();
+    ctx.fillStyle = rgba(all?pal.bg:pal.fg, 0.95);
+    ctx.font='800 12px Inter,system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(all?'GOOD':'good', g.cx, g.cy-4);
+    ctx.fillText(all?'LIFE':'life?', g.cx, g.cy+9);
+
+    // mood nodes
+    var domKeys=['S','O','C'];
+    for(i=0;i<6;i++){
+      var P=nodePos(i,g); var pr=PRINCIPLES[assign[i]];
+      var ring=pal[pr.key]||pal.fg;
+      ctx.lineWidth=4; ctx.strokeStyle=rgba(ring,0.9);
+      ctx.beginPath(); ctx.arc(P.x,P.y,30,0,TAU); ctx.stroke();
+      ctx.fillStyle=rgba(pal.panel,0.96); ctx.beginPath(); ctx.arc(P.x,P.y,28,0,TAU); ctx.fill();
+      // domain dots around the ring
+      for(var d=0;d<3;d++){
+        var key=domKeys[d]; var on=pr.domains.indexOf(key)>=0;
+        var da=(-90 + d*120)*Math.PI/180;
+        var dx=P.x+30*Math.cos(da); var dy=P.y+30*Math.sin(da);
+        ctx.fillStyle=rgba(on?pal['dom'+key]:pal.muted, on?0.95:0.35);
+        ctx.beginPath(); ctx.arc(dx,dy,4,0,TAU); ctx.fill();
+      }
+      // mood emoji
+      ctx.font='26px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(MOODS[i].e, P.x, P.y-3);
+      // principle step badge
+      ctx.fillStyle=rgba(ring,0.98);
+      ctx.font='700 10px Inter,system-ui,sans-serif';
+      ctx.fillText('step '+pr.step, P.x, P.y+13);
+      // mood label
+      ctx.fillStyle=rgba(pal.fg,0.9);
+      ctx.font='600 12px Inter,system-ui,sans-serif';
+      ctx.fillText(MOODS[i].label, P.x, P.y+46);
+    }
+  }
+
+  function updateReadout(){
+    var glue=glueCount(), tears=[], i;
+    for(i=0;i<6;i++){
+      if(!sharedDom(assign[i],assign[(i+1)%6]).length){
+        tears.push(MOODS[i].label+' &harr; '+MOODS[(i+1)%6].label);
+      }
+    }
+    var ok = glue===6;
+    var head = '<b>'+glue+'/6</b> overlaps glue. ';
+    var body = ok
+      ? 'Every local principle agrees on every overlap &rarr; the <b>global section exists: a good life</b>. This is B&rsquo;s gluing theorem run on A&rsquo;s first-person moods &mdash; the examined life, consistent.'
+      : 'Tears (no shared life-domain): <b>'+tears.join(', ')+'</b>. On these overlaps your local principles disagree, so B&rsquo;s <code>consistency</code> check fails and the global section does <b>not</b> exist yet. Re-examine (click moods) until every overlap glues.';
+    readout.innerHTML = head + body;
+  }
+
+  canvas.addEventListener('click', function(e){
+    var r=canvas.getBoundingClientRect();
+    var mx=e.clientX-r.left, my=e.clientY-r.top;
+    var g=geom();
+    for(var i=0;i<6;i++){
+      var P=nodePos(i,g); var dx=mx-P.x, dy=my-P.y;
+      if(dx*dx+dy*dy <= 36*36){ assign[i]=(assign[i]+1)%6; updateReadout(); break; }
+    }
+  });
+
+  document.getElementById('btnCoherent').addEventListener('click', function(){ assign=initAssign.slice(); updateReadout(); });
+  document.getElementById('btnRandom').addEventListener('click', function(){
+    for(var i=0;i<6;i++){ assign[i]=Math.floor(Math.random()*6); } updateReadout();
+  });
+  document.getElementById('btnReset').addEventListener('click', function(){ assign=initAssign.slice(); updateReadout(); });
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); readPal();
+  });
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change', onScheme); }
+  }
+
+  readPal();
+  updateReadout();
+  var last=performance.now();
+  function loop(now){
+    var t=(now-last)/1000; if(t>0.1){ t=0.1; }
+    draw(now/1000);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../philosophy2.html"><strong>philosophy2.html &mdash; Philosophy: The Deep Dive</strong></a>
+  &mdash; A first-person, plural &ldquo;interactive philosophy experience&rdquo; (hero: &ldquo;The unexamined life is not
+  worth living&rdquo;). Five branches, thought experiments, paradoxes, a life simulator, mood prescriptions, mental
+  models, debates, daily practices, a personal-philosophy builder, and a journal. Its stance: philosophy is the
+  operating system of the mind, and there is no single right philosophy &mdash; you discover/create yours. (Quelle A
+  &mdash; the plural, felt toolkit.)</p>
+  <p class="src"><a href="../good.html"><strong>good.html &mdash; How to Live Well: A Formally Verified Guide</strong></a>
+  &mdash; A &ldquo;formally verified&rdquo; ethics: 8 axioms, 9 steps (Do No Harm &hellip; Grow &hellip; That Is All),
+  14 theorems, each with everyday practice, critique, philosophical sources and a Coq proof; a sheaf-theoretic
+  consistency/gluing argument, a compatibility matrix, a D3 dependency graph, and a &ldquo;Verify&rdquo; engine. Its
+  stance: the good life is one coherent, machine-checkable whole. (Quelle B &mdash; the axiomatic, verified system.)</p>
+</section>
+
+<footer>
+  Fusion (Round 1, non-AI track, pair 104). Self-contained, no network data fetches; the visualization is a pure
+  canvas built from inline data (B&rsquo;s principle&rarr;domain map and A&rsquo;s moods), theme-reactive.
+</footer>
+</article>
+</body>
+</html>

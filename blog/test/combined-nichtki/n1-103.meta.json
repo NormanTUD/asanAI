@@ -1,0 +1,16 @@
+{
+  "no": "103",
+  "a": "koerper.html",
+  "b": "relativity.html",
+  "a_title": "Deinen Körper verstehen – 10 Schlüsselkonzepte",
+  "b_title": "Interactive Relativity Explorer",
+  "combined_theme": "invariants-held-by-transformations",
+  "one_line": "Beide Texte laufen auf dasselbe Muster zusammen: Ein paar wenige Invarianten bleiben stabil, während alles Lokale sich ändert — der Körper hält Sollwerte (37°C, Blutzucker, pH) über Rückkopplung in der Zeit, die Raumzeit hält c und das Intervall s² über die Lorentz-Transformation über Perspektiven; in beiden steigt die Dynamik eine Geometrie hinab (Körper rollt ins Tal des Sollwerts = Attraktor, Materie folgt Geodäten im Krümmungstal), Kraft ist der Schatten der Geometrie, und A ist der γ≈1-Newton-Limes von B.",
+  "contradictions": [
+    "Zeit: A plant den Körper auf eine gemeinsame, feste 24-h-Tagesuhr (zirkadianer Rhythmus, SCN-Masteruhr, Cortisol-Peak 7:00 — ein absolutes 'Jetzt'); B verneint dies per Relativität der Gleichzeitigkeit ('events simultaneous in one frame are NOT simultaneous in another', Δt=γΔt₀) — ein universelles Jetzt existiert nicht.",
+    "Perspektive: B's Relativitätsprinzip (Postulat 1) — keine privilegierten Inertialsysteme, Wahrheit liegt nur in den Invarianten; A ist radikal egozentrisch, der privilegierte Rahmen ist 'dein eigener Körper' (Ruhe, 37°C, SCN) — das Selbst ist per Definition der ausgezeichnete Bezugspunkt.",
+    "Ursache: B's GR-Kernthese 'Gravity is not a force. It's the curvature of spacetime' — Kraft löst sich in Geometrie (Geodäten); A bleibt durchweg kraft-/agenten-basiert (Immunsystem='Armee', 'Fight or Flight', Hormone als 'Botenstoffe', Entzündung als berechenbares 'Risiko') und vollzieht den geometrisierenden Schritt nirgends."
+  ],
+  "resolution": "A ist der Niedriggeschwindigkeits-Limes von B (γ≈1, v≪c): (1) die zirkadiane Uhr ist kein Anspruch über absolute Zeit, sondern ein lokaler Eigenzeit-Oszillator (SCN=physischer Mechanismus; Eigenzeit τ ist B's Invariante entlang einer Weltlinie); (2) B verweigert privilegierte Rahmen in den fundamentalen Gesetzen, A's 'Selbst-Rahmen' ist nur eine funktionale Beschreibungskonvention (wie die Wahl S vs. S' im Minkowski-Diagramm) — beide sind Invarianz unter Perspektivwechsel; (3) Homöostase IST Geometrie: der Körper-Zustandsraum ist eine Landschaft, der Körper folgt dem Gradienten ins Tal des Sollwerts (Attraktor) — exakt B's Geodäten-Abstieg, die Armee-/Kraft-Sprache ist die niedrige Näherung.",
+  "viz": "Themenreaktiver Plotly (hell/dunkel, reine Inline-Daten, displayModeBar aus): ein Regler 'Veränderung/Störung β' (0–99.9%) steuert beide Welten zugleich. Links (A): Körpertemperatur wird umso weiter aus dem Sollwert 37°C herausgedrängt (Störung ∝ β), die Rückkopplung (≈0.85) zieht sie aber immer zur gelben Invariante zurück. Rechts (B): γ(β) schießt an (Marker bei β), während c/Intervall fix bleiben. 4 Readout-Boxen (β, γ, Invariante A=37°C fix, Invariante B=c·s² fix). Theme-Button + Resize-Handling; Plotly.react."
+}

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die TQFT als strukturgetreuer Funktor — Fusion</title>
+<style>
+:root{
+  --bg:#f7f5ef; --bg2:#efece3; --panel:#ffffff; --panel-border:#e4dfd2;
+  --text:#26261f; --muted:#6d6a60; --accent:#0e7490; --accent2:#be185d;
+  --accent3:#7c3aed; --good:#15803d; --warn:#b45309; --danger:#b91c1c;
+  --grid:rgba(0,0,0,0.05);
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111827; --panel:#161d33; --panel-border:rgba(125,211,252,0.16);
+  --text:#e5e7eb; --muted:#94a3b8; --accent:#7dd3fc; --accent2:#f472b6;
+  --accent3:#a78bfa; --good:#4ade80; --warn:#fbbf24; --danger:#f87171;
+  --grid:rgba(125,211,252,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,-apple-system,'Segoe UI',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:3rem 1.25rem 5rem}
+#themeToggle{position:fixed;top:14px;right:14px;background:var(--panel);color:var(--text);border:1px solid var(--panel-border);border-radius:20px;padding:.45rem .85rem;font:500 .8rem/1 inherit;cursor:pointer;z-index:50}
+#themeToggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.9rem,4.6vw,3rem);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin:.4rem 0 .5rem}
+.fusion-sub{color:var(--muted);font-size:.95rem;margin-bottom:.4rem}
+.kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:700}
+section{margin-top:2.8rem}
+h2{font-size:1.5rem;font-weight:750;margin-bottom:.7rem;color:var(--accent);letter-spacing:-.01em}
+h3{font-size:1.08rem;font-weight:650;margin:1.2rem 0 .4rem;color:var(--text)}
+p{margin:.7rem 0;color:var(--text)}
+p.lede{color:var(--muted);font-size:1.02rem}
+strong{color:var(--text)}
+em{color:var(--accent2)}
+.panel{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:1.1rem 1.2rem;margin:1.1rem 0}
+.panel .pt{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:var(--accent);font-weight:700;margin-bottom:.55rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.callout{border-left:3px solid var(--accent);background:var(--panel);border-radius:0 12px 12px 0;padding:.85rem 1rem;margin:1rem 0}
+.callout.bad{border-left-color:var(--danger)}
+.callout.good{border-left-color:var(--good)}
+.callout .cl{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:.35rem}
+.callout.bad .cl{color:var(--danger)} .callout.good .cl{color:var(--good)}
+.formula{background:var(--bg2);border:1px solid var(--panel-border);border-radius:10px;padding:.8rem 1rem;margin:.8rem 0;text-align:center;font-size:1.02rem;overflow-x:auto;color:var(--text)}
+.formula .cap{display:block;font-size:.82rem;color:var(--muted);margin-top:.45rem}
+ul,ol{margin:.5rem 0 .5rem 1.3rem}
+li{margin:.42rem 0}
+.viz-wrap{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:1rem;margin:1rem 0}
+#vizCanvas{width:100%;height:520px;display:block;border-radius:10px;background:var(--bg2)}
+.controls{display:flex;flex-wrap:wrap;gap:.55rem;margin:1rem 0 .5rem}
+.viz-btn{background:var(--bg2);color:var(--text);border:1px solid var(--panel-border);border-radius:9px;padding:.5rem .7rem;font:500 .82rem/1 inherit;cursor:pointer}
+.viz-btn:hover{border-color:var(--accent);color:var(--accent)}
+.viz-btn:active{transform:translateY(1px)}
+.slider-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin:.6rem 0;font-size:.9rem;color:var(--muted)}
+.slider-row input[type=range]{-webkit-appearance:none;appearance:none;width:190px;height:6px;background:var(--grid);border-radius:3px;outline:none;accent-color:var(--accent)}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px var(--accent)}
+.slider-row input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+.slider-row b{color:var(--accent);font-family:ui-monospace,monospace}
+.readout{display:flex;flex-wrap:wrap;gap:.6rem;margin:.7rem 0}
+.chip{background:var(--bg2);border:1px solid var(--panel-border);border-radius:10px;padding:.45rem .7rem;font-size:.85rem}
+.chip b{color:var(--accent);font-family:ui-monospace,monospace}
+#vizStatus{margin-top:.6rem;font-size:.9rem;color:var(--muted)}
+#vizStatus b{color:var(--text)}
+.legend{display:flex;flex-wrap:wrap;gap:.7rem 1.1rem;font-size:.8rem;color:var(--muted);margin-top:.7rem}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:.35rem;vertical-align:-1px}
+.src{display:block;padding:.7rem .9rem;border:1px solid var(--panel-border);border-radius:10px;margin:.6rem 0;background:var(--panel)}
+.src a{color:var(--accent);font-weight:600;text-decoration:none;word-break:break-all}
+.src a:hover{text-decoration:underline}
+.src span{display:block;color:var(--muted);font-size:.88rem;margin-top:.25rem}
+footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--panel-border);color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<button id="themeToggle">☾ Theme</button>
+<article>
+  <div class="kicker">Fusion · Runde 1 · nicht-k-i-Track</div>
+  <h1>Die TQFT als strukturgetreuer Funktor<br>Cobordismen, Vektorräume und Zahlen</h1>
+  <p class="fusion-sub">Fusion aus: kategorientheorie.html ✕ topologische_quantenfeldtheorie.html</p>
+
+  <section id="these">
+    <h2>1 · Kernthese der Fusion</h2>
+    <p class="lede">A (Kategorientheorie) liefert das <em>Werkzeug</em>, B (topologische Quantenfeldtheorie) das <em>Beispiel</em>: Beide drehen sich um dieselbe Struktur — eine Abbildung zwischen Kategorien, die die Struktur <strong>erhält</strong>. A definiert sie abstrakt, B setzt sie für Formen und Zahlen ein.</p>
+    <p>A: Eine Kategorie besteht aus Objekten, Morphismen und assoziativer Komposition; ein Funktor <strong>F : C → D</strong> ist eine strukturerhaltende Abbildung mit <em>F(g ∘ f) = F(g) ∘ F(f)</em> und <em>F(id) = id</em>. Ihr Markenzeichen sind die <strong>universellen Eigenschaften</strong> (Produkte, Pullbacks, Adjunktionen) und das Yoneda-Lemma: „Ein Objekt wird vollständig durch seine Beziehungen zu allen anderen Objekten bestimmt".</p>
+    <p>B: Eine TQFT ist — wortwörtlich — <em>formal ein Funktor</em> <strong>Z : Cob → Vect</strong>, der geschlossenen (n−1)-Mannigfaltigkeiten Vektorräume und Cobordismen lineare Abbildungen zuordnet; auf geschlossenen Mannigfaltigkeiten liefert Z eine <strong>Zahl</strong> (z. B. Z = 2<sup>genus</sup>, und „the Jones polynomial comes from a TQFT").</p>
+    <div class="callout good">
+      <span class="cl">Fusionierte These</span>
+      <p><strong>Eine topologische QFT ist ein strukturgetreuer, stark monoidaler Funktor — und „eine Form auf eine Zahl abbilden" ist genau der Skalar, den dieser Funktor auf einer geschlossenen Mannigfaltigkeit (einer Cobordismus-Komposition von ℂ nach ℂ) auswertet.</strong> A erklärt, <em>warum</em> das konsistent ist (Struktur- und Kompositionserhaltung); B zeigt, <em>was herauskommt</em> (Invarianten, Zahlen, Knotenpolynome). B's drei Axiome sind dabei wörtliche Instanzen von A's Kategorien-Begriffen — die zwei Papiere sind dieselbe Idee auf zwei Ebenen.</p>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2 · Widersprüche zwischen A und B</h2>
+    <p class="lede">Auf dem Kern (TQFT = Funktor) widersprechen sich die beiden <em>nicht</em> — sie sind komplementär. Die echten Spannungen liegen in drei konkreten Punkten, an denen A etwas als Norm beschreibt, was B auf eine andere Weise verwendet.</p>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 1 · Zweck des Funktors: Zahl vs. Objekt</span>
+      <p><strong>A:</strong> „Ein Funktor F : C → D ist eine <em>strukturerhaltende</em> Abbildung zwischen Kategorien" — er bildet Objekte auf Objekte ab (A ↦ F(A), f ↦ F(f)) und erhält Komposition und Identität. Ein Funktor „produziert" in A nie eine Zahl aus einem Objekt.</p>
+      <p><strong>B:</strong> „A TQFT is a bridge between shapes (topology) and <em>numbers</em> (quantum physics). It assigns numbers to spaces" — konkret Z = 2<sup>genus</sup> und „The Jones polynomial comes from a TQFT!". Der Funktor Z wird gerade <em>zum Zahlen-Liefern</em> definiert.</p>
+      <p><strong>Spannung:</strong> A's Funktor bleibt im Objekt-Register und erhält Struktur; B's Funktor Z hat das <em>Liefern eines Skalars</em> (einer Zahl) zum eigentlichen Zweck.</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 2 · Status von Vect: Demokratie vs. Privileg</span>
+      <p><strong>A:</strong> Listet Set, Grp, Top und Vect<sub>K</sub> als <em>vier gleichberechtigte</em> Beispielkategorien nebeneinander — eine „Demokratie" der Kategorien, in der keine ausgezeichnet ist.</p>
+      <p><strong>B:</strong> Macht Vect zum <em>einzigen, privilegierten</em> Zielraum: „Closed (n−1)-manifolds → Vector spaces; Cobordisms → Linear maps; Gluing → Composition" — alles fließt in Vect, um Zahlen zu extrahieren.</p>
+      <p><strong>Spannung:</strong> Vect als austauschbares Beispiel (A) vs. Vect als Sonderziel, das Zahlen überhaupt erst ermöglicht (B).</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 3 · Rolle des Formalismus: Axiome vs. Spiel</span>
+      <p><strong>A:</strong> Rein axiomatisch und diagrammatisch — Yoneda-Lemma, universelle Eigenschaften, kommutative Diagramme; der Formalismus <em>ist</em> der Inhalt.</p>
+      <p><strong>B:</strong> Wirbt explizit mit „No equations needed — just play, drag, and discover!" und gamifiziert (Score, Achievements); der Formalismus wird zugunsten des Erlebens zurückgedrängt.</p>
+      <p><strong>Spannung:</strong> Axiome als Substanz (A) vs. „keine Gleichungen nötig" (B).</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3 · Auflösung</h2>
+    <p class="lede">Keine echten Kontradiktionen, sondern Abstraktionsebenen. A liefert die <em>allgemeine</em> Definition, B eine <em>Spezialisierung</em>. Die drei Punkte klären sich, sobald man die Ebenen ordnet.</p>
+
+    <h3>1 → Die Zahl ist eine Konsequenz der Strukturerhaltung</h3>
+    <p>Der Funktor von A ist die <em>allgemeine</em> Definition (Erhalt von Komposition & Identität). B's Z ist ein <em>spezieller</em> Funktor: stark monoidal, mit Ziel in einen Vect, der mit einer (kommutativen) Frobenius-Algebra ausgestattet ist. Eine „Zahl" widerspricht der Strukturerhaltung nicht — sie ist der Skalar <em>ℂ → ℂ</em>, den die <strong>ganze</strong> geschlossene Cobordismus-Komposition darstellt. B's Funktorialität <strong>Z(M₁ ∘ M₂) = Z(M₁) ∘ Z(M₂)</strong> ist wörtlich A's <strong>F(g ∘ f) = F(g) ∘ F(f)</strong> mit F = Z. Fused: Die Zahl ist eine <em>Folge</em> davon, dass Z die Struktur erhält <em>und</em> der Zielraum Skalare kennt.</p>
+
+    <h3>2 → Vect wird im TQFT-Kontext privilegiert — aus A's eigener Logik</h3>
+    <p>A's „Demokratie" ist eine <em>allgemeine</em> Aussage. B spezialisiert auf den Zielraum, der Zahlen ermöglicht: Vect hat Vektorräume mit Dimension und Skalaren (einen Körper) — Set/Grp/Top nicht. Nach A's eigenem Kriterium ist ein (stark monoidaler) Funktor <em>Cob → Vect</em> <strong>per Definition</strong> eine TQFT. Vect ist also genau dann das <em>richtige</em> Ziel, weil es der Kategorie mit der nötigen algebraischen Struktur ist. „Privileg" entsteht durch Auswahl, nicht durch Widerspruch.</p>
+
+    <h3>3 → Spiel ist die Oberfläche, Axiome der Motor</h3>
+    <p>B's „No equations" ist <em>Pädagogik</em>, keine Ablehnung von A's Formalismus: Ohne A's Funktorialität gäbe es keine wohldefinierte Invariante und kein Jones-Polynom (B). B's Knoten-Invarianten <em>bestehen</em> aus A's Struktur. Fusion: „Play is the surface, axioms are the engine." Das Gamification-Interface (B) macht sichtbar, was A's Axiome (A) garantieren.</p>
+
+    <div class="callout good">
+      <span class="cl">Fused</span>
+      <p>A liefert die <strong>Definition und die Garantie</strong> (Struktur- & Kompositionserhaltung → wohldefinierte Invarianten); B liefert die <strong>Instanz und das Produkt</strong> (Cob → Vect, Frobenius-Algebra, Zahlen, Knotenpolynome). Die „Zahl" ist der Skalar, den der strukturerhaltende Funktor auf geschlossenen Mannigfaltigkeiten liefert; Vect ist der Spezialzielraum, der das erlaubt; Spiel ist die Oberfläche über dem Axiom-Motor.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4 · Fusionierter Inhalt</h2>
+    <p class="lede">Der fusionierte Kern, zusammenhängend (nicht nebeneinander):</p>
+
+    <h3>Das Werkzeug (A): Kategorien, Funktoren, universelle Eigenschaften</h3>
+    <ul>
+      <li><strong>Kategorie C:</strong> Objekte Ob(C); zu A, B die Menge Hom(A, B); assoziative Komposition; Identität id<sub>A</sub>. Bekannte Kategorien: Set (Funktionen), Grp (Homomorphismen), Top (stetige Abbildungen), Vect<sub>K</sub> (lineare Abbildungen) — in A gleichberechtigt.</li>
+      <li><strong>Funktor F : C → D:</strong> A ↦ F(A), f ↦ F(f), F(g∘f)=F(g)∘F(f), F(id<sub>A</sub>)=id<sub>F(A)</sub>; kovariant/kontravariant, Vergiss- und Freier Funktor.</li>
+      <li><strong>Natürliche Transformation η : F ⇒ G:</strong> Komponenten η<sub>A</sub> : F(A) → G(A) mit Kommutativität <em>G(f) ∘ η<sub>A</sub> = η<sub>B</sub> ∘ F(f)</em>.</li>
+      <li><strong>Universelle Eigenschaften:</strong> Produkt A×B (Projektionen π₁, π₂), Pullback, Pushout; <strong>Adjunktion F ⊣ G</strong> mit <em>Hom<sub>D</sub>(F(A), B) ≅ Hom<sub>C</sub>(A, G(B))</em> (Currying).</li>
+      <li><strong>Yoneda-Lemma:</strong> <em>Nat(Hom(—, A), F) ≅ F(A)</em> — „Ein Objekt ist vollständig durch die Morphismen bestimmt, die in es hineinführen."</li>
+      <li><strong>Monade (T, η, μ)</strong> auf C: Endofunktor + Einheit + Multiplikation (Assoziativität, Einheitsgesetze) — „ein Monoid in der Kategorie der Endofunktoren."</li>
+    </ul>
+
+    <h3>Der Gegenstand (B): TQFT = Funktor Cob → Vect</h3>
+    <ul>
+      <li><strong>Kategorie Cob:</strong> Objekte = geschlossene (n−1)-Mannigfaltigkeiten (disjunkte Kreise); Morphismen = Cobordismen (n-Mannigfaltigkeiten mit Rand = „Prozesse", die eine Menge Kreise in eine andere verwandeln).</li>
+      <li><strong>TQFT = (stark monoidaler) Funktor Z : Cob → Vect:</strong> geschlossene (n−1)-Mannigfaltigkeit → Vektorraum; Cobordismus → lineare Abbildung; Kleben → Komposition.</li>
+      <li><strong>Drei Axiome:</strong> <strong>Functorialität</strong> Z(M₁∘M₂) = Z(M₁)∘Z(M₂) · <strong>Monoidalität</strong> Z(Σ₁⊔Σ₂) = Z(Σ₁)⊗Z(Σ₂) · <strong>Normalisierung</strong> Z(∅) = ℂ.</li>
+      <li><strong>Invarianten:</strong> gleiche Form (Genus) → gleiche Zahl (Kaffeebecher = Donut; Kugel ≠ Torus); Knoten → Jones-Polynom „from a TQFT".</li>
+    </ul>
+
+    <h3>Die Brücke: Cobordismus-Generatoren = Algebra (Frobenius)</h3>
+    <p>Die Bausteine von Cob <em>tragen</em> die algebraische Struktur — sie sind die Operationen der Quantenalgebra in V:</p>
+    <div class="grid2">
+      <div class="panel"><div class="pt">Cap (0 → 1)</div><p>Einheit <strong>η : ℂ → V</strong> („erstellt einen Zustand")</p></div>
+      <div class="panel"><div class="pt">Cup (1 → 0)</div><p>Korenheit <strong>ε : V → ℂ</strong> („evaluiert")</p></div>
+      <div class="panel"><div class="pt">Pants (1 → 2)</div><p>Multiplikation <strong>m : V⊗V → V</strong></p></div>
+      <div class="panel"><div class="pt">Copants (2 → 1)</div><p>Comultiplikation <strong>Δ : V → V⊗V</strong> · Zylinder = Identität</p></div>
+    </div>
+    <p>Zusammen bilden η, ε, m, Δ eine (kommutative) <strong>Frobenius-Algebra</strong> — genau die Struktur, die einen 2D-TQFT in Vect ermöglicht und geschlossene Cobordismen auf Skalare auswerten lässt.</p>
+
+    <div class="formula">
+      <strong>A (Funktor):</strong>&nbsp; F : C → D &nbsp;⟺&nbsp; F(g ∘ f) = F(g) ∘ F(f) &nbsp;∧&nbsp; F(id<sub>A</sub>) = id<sub>F(A)</sub>
+      <span class="cap">B (TQFT): Z : Cob → Vect, &nbsp; Z(M₁ ∘ M₂) = Z(M₁) ∘ Z(M₂) · Z(Σ₁ ⊔ Σ₂) = Z(Σ₁) ⊗ Z(Σ₂) · Z(∅) = ℂ</span>
+      <span class="cap">Brücke: Cap/Cup/Pants/Copants = η (Einheit) / ε (Korenheit) / m (Multiplikation) / Δ (Comultiplikation) einer Frobenius-Algebra in V — ein geschlossener Cobordismus wertet aus auf den Skalar Z(Σ).</span>
+    </div>
+
+    <h3>Warum das zusammenpasst (Integration, keine Aneinanderreihung)</h3>
+    <ul>
+      <li>B's drei Axiome <em>sind</em> A's Konzepte: Funktorialität = A's Kompositionserhaltung (mit F = Z); Monoidalität = A's (stark) monoidaler Funktor (Produkt ⊔ im Quellraum → Tensorprodukt ⊗ im Zielraum); Normalisierung = das Einheitsobjekt ∅ ↦ ℂ.</li>
+      <li>A's Yoneda-Prinzip („Objekt = seine Beziehungen") wird in B <em>realisiert</em>: Der Wert Z(Σ) ist durch die Zerlegung in Bausteine (Cap/Cup/Pants/Copants) bestimmt — also durch die „Beziehungen"/Prozesse, nicht durch die Geometrie. B's Invariants-Spiel (gleiche Form → gleiche Zahl) ist die topologische Instanz von Yoneda.</li>
+      <li>Knoten: A liefert den Rahmen (Morphismen/Struktur), B das Ergebnis (Jones-Polynom) — Knoten werden durch ihre „Beziehungen" (Kreuzungen) unterschieden, die Yoneda-Logik angewendet auf die Struktur der Kette.</li>
+    </ul>
+
+    <div class="callout">
+      <span class="cl">Ehrliche Anmerkung</span>
+      <p>B beschreibt die Pants-Kobordismus einmal als „1 circle → 2 circles" (Cobordismus-Sektion) und im Funktor-Abschnitt als „μ : V⊗V → V" — eine Orientierungs-Konvention. Die Fusion folgt B's formellerer Funktor-Sektion und behandelt Pants als die Multiplikations-/Comultiplikations-Operation der Quantenalgebra.</p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5 · Interaktive Visualisierung: Der Funktor Z : Cob → Vect</h2>
+    <p class="lede">Links: der Cobordismus als Strangdiagramm (Prozess „nach oben"). Rechts: sein Bild unter Z in Vect — eine Folge linearer Abbildungen. Die Mitte ist der Funktor Z. Teile werden <em>nur</em> gestapelt, wenn die Randkreise passen (das Kompositionsaxiom aus A). Schließt das Diagramm (oben &amp; unten 0 Kreise), wertet es aus auf die Zahl Z(Σ) = q<sup>k</sup> — Topologie, nicht Geometrie.</p>
+    <div class="viz-wrap">
+      <canvas id="vizCanvas"></canvas>
+      <div class="controls">
+        <button class="viz-btn" data-act="cap">+ Kappe (η)</button>
+        <button class="viz-btn" data-act="cup">+ Becher (ε)</button>
+        <button class="viz-btn" data-act="pants">+ Hose (m)</button>
+        <button class="viz-btn" data-act="copants">+ Copants (Δ)</button>
+        <button class="viz-btn" data-act="cyl">+ Zylinder (id)</button>
+        <button class="viz-btn" data-act="pop">⤓ Pop</button>
+        <button class="viz-btn" data-act="reset">↺ Reset</button>
+        <button class="viz-btn" data-act="closed">Beispiel: geschlossen</button>
+        <button class="viz-btn" data-act="open">Beispiel: offen</button>
+      </div>
+      <div class="slider-row">
+        <span>Quantum Dimension q:</span>
+        <input type="range" id="qSlider" min="1" max="5" value="2" step="1">
+        <b id="qVal">2</b>
+      </div>
+      <div class="readout">
+        <span class="chip">Z(Σ) = q<sup>k</sup>, wenn geschlossen</span>
+        <span class="chip">Teile: <b id="countVal">0</b> / 8</span>
+        <span class="chip">Klebe nur passende Ränder (A's Komposition)</span>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i> Strang / Cobordismus (Cob)</span>
+        <span><i style="background:var(--accent2)"></i> Funktor Z</span>
+        <span><i style="background:var(--accent3)"></i> lineare Abbildung (Vect)</span>
+        <span><i style="background:var(--good)"></i> geschlossen → Zahl</span>
+      </div>
+      <p id="vizStatus">Baue über die Buttons eine Cobordismus-Komposition — oben auf den Stapel.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>6 · Provenienz</h2>
+    <a class="src" href="../kategorientheorie.html">A · Interaktive Kategorientheorie<span>Abstraktes, interaktives Lehrwerkzeug zu Kategorien, Morphismen, Funktoren, natürlichen Transformationen, Produkten/Limiten, Adjunktionen, dem Yoneda-Lemma und Monaden — der theoretische Rahmen, aus dem der TQFT-Funktor seine Definition (Struktur- und Kompositionserhaltung) bezieht.</span></a>
+    <a class="src" href="../topologische_quantenfeldtheorie.html">B · Topological Quantum Field Theory — Visual Explorer<span>Interaktive Erkundung, in der eine TQFT als Funktor Z : Cob → Vect Formen Vektorräume und Cobordismen lineare Abbildungen zuordnet — die konkrete Instanz, die auf geschlossenen Formen Zahlen (Genus, Jones-Polynom) liefert.</span></a>
+  </section>
+
+  <footer>Fusion · Runde 1 · Pair 097 — erzeugt aus kategorientheorie.html ✕ topologische_quantenfeldtheorie.html. Selbstbeinhaltendes Standalone-HTML, keine Netzwerk-Daten.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  var ctx = canvas.getContext('2d');
+  var qSlider = document.getElementById('qSlider');
+  var qVal = document.getElementById('qVal');
+  var countVal = document.getElementById('countVal');
+  var statusEl = document.getElementById('vizStatus');
+
+  var W = 0, H = 0, dpr = 1;
+
+  var PIECES = {
+    cap:     {in:0, out:1, op:'η (Einheit)'},
+    cup:     {in:1, out:0, op:'ε (Korenheit)'},
+    pants:   {in:1, out:2, op:'m (Multipl.)'},
+    copants: {in:2, out:1, op:'Δ (Comultipl.)'},
+    cyl:     {in:1, out:1, op:'id (Ident.)'}
+  };
+  var stack = [];
+  var q = 2;
+
+  function cssVar(n, fb){ try{ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }catch(e){ return fb; } }
+  function rgba(hex, a){ var h=(hex||'').replace('#',''); if(h.length===3) h=h.split('').map(function(c){return c+c;}).join(''); var n=parseInt(h,16); if(isNaN(n)) return 'rgba(125,211,252,'+a+')'; var r=(n>>16)&255,g=(n>>8)&255,b=n&255; return 'rgba('+r+','+g+','+b+','+a+')'; }
+
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    var w = canvas.offsetWidth || 800, h = canvas.offsetHeight || 520;
+    W = w; H = h;
+    canvas.width = Math.max(1, Math.floor(w*dpr));
+    canvas.height = Math.max(1, Math.floor(h*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function frontiers(){
+    var f=0, fr=[0], valid=true, i, p;
+    for(i=0;i<stack.length;i++){ p=PIECES[stack[i]]; if(f!==p.in) valid=false; f=p.out; fr.push(f); }
+    var cups=0; for(i=0;i<stack.length;i++){ if(stack[i]==='cup') cups++; }
+    return {fr:fr, valid:valid, top:f, cups:cups};
+  }
+  function circLabel(n){ if(n===0) return '∅'; if(n===1) return 'S¹'; if(n===2) return 'S¹⊔S¹'; return 'S¹×'+n; }
+  function vLabel(n){ if(n===0) return 'ℂ'; if(n===1) return 'V'; if(n===2) return 'V⊗V'; if(n===3) return 'V⊗V⊗V'; return 'V^{'+n+'}'; }
+
+  function cpos(n, cx, y, gap){ var arr=[]; if(n<=0) return arr; for(var j=0;j<n;j++){ arr.push({x:cx+(j-(n-1)/2)*gap, y:y}); } return arr; }
+  function curve(sx,sy,tx,ty){ ctx.beginPath(); ctx.moveTo(sx,sy); ctx.quadraticCurveTo((sx+tx)/2,(sy+ty)/2,tx,ty); ctx.stroke(); }
+  function strand(inP,outP,cx,yb,yt){
+    var i;
+    if(inP.length===0 && outP.length===1){ curve(cx,yb,outP[0].x,outP[0].y); }
+    else if(inP.length===1 && outP.length===0){ curve(inP[0].x,inP[0].y,cx,yt); }
+    else if(inP.length===1 && outP.length===2){ curve(inP[0].x,inP[0].y,outP[0].x,outP[0].y); curve(inP[0].x,inP[0].y,outP[1].x,outP[1].y); }
+    else if(inP.length===2 && outP.length===1){ curve(inP[0].x,inP[0].y,outP[0].x,outP[0].y); curve(inP[1].x,inP[1].y,outP[0].x,outP[0].y); }
+    else {
+      var n=Math.min(inP.length,outP.length);
+      for(i=0;i<n;i++) curve(inP[i].x,inP[i].y,outP[i].x,outP[i].y);
+      for(i=outP.length;i<inP.length;i++) curve(inP[i].x,inP[i].y,cx,yt);
+      for(i=inP.length;i<outP.length;i++) curve(cx,yb,outP[i].x,outP[i].y);
+    }
+  }
+  function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function vbox(cx,y,lbl,hl){
+    var w=Math.max(92,lbl.length*13+34), h=30;
+    rr(cx-w/2,y-h/2,w,h,9);
+    ctx.fillStyle=cssVar('--panel','#161d33'); ctx.fill();
+    ctx.strokeStyle= hl? cssVar('--accent3','#a78bfa') : cssVar('--panel-border','rgba(125,211,252,0.16)');
+    ctx.lineWidth= hl?2:1.5; ctx.stroke();
+    ctx.fillStyle=cssVar('--text','#e5e7eb'); ctx.font='600 15px ui-monospace,monospace';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(lbl,cx,y+1); ctx.textBaseline='alphabetic';
+  }
+  function oparrow(cxr,yb,yt,op){
+    var y1=yb-18, y2=yt+18, c=cssVar('--accent3','#a78bfa');
+    if(Math.abs(y2-y1)<8){ ctx.fillStyle=c; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left'; ctx.fillText(op,cxr+62,(yb+yt)/2+4); return; }
+    ctx.strokeStyle=c; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cxr,y1); ctx.lineTo(cxr,y2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cxr,y2); ctx.lineTo(cxr-5,y2+9); ctx.lineTo(cxr+5,y2+9); ctx.closePath(); ctx.fillStyle=c; ctx.fill();
+    ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left'; ctx.fillText(op,cxr+10,(y1+y2)/2+4);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var textC=cssVar('--text','#e5e7eb');
+    var muted=cssVar('--muted','#94a3b8');
+    var accent=cssVar('--accent','#7dd3fc');
+    var accent2=cssVar('--accent2','#f472b6');
+    var accent3=cssVar('--accent3','#a78bfa');
+    var good=cssVar('--good','#4ade80');
+    var warn=cssVar('--warn','#fbbf24');
+    var gridC=cssVar('--grid','rgba(125,211,252,0.07)');
+    var panel=cssVar('--panel','#161d33');
+
+    ctx.lineWidth=1; ctx.strokeStyle=gridC;
+    var gx, gy;
+    for(gx=0;gx<=W;gx+=40){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+    for(gy=0;gy<=H;gy+=40){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+    var info=frontiers();
+    var L=stack.length;
+    var cxl=W*0.24, cxr=W*0.76, c50=W*0.5;
+    var yTop=86, yBot=H-98;
+    function yFor(i){ return L===0? yBot : (yBot - i*(yBot-yTop)/L); }
+    var gap=Math.min(46, W*0.058);
+    var i, k, s, pos, n;
+
+    ctx.textBaseline='alphabetic';
+    ctx.font='600 14px Inter,system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.fillStyle=accent; ctx.fillText('Cob (Topologie)', W*0.05, 30);
+    ctx.textAlign='center'; ctx.fillStyle=accent2; ctx.font='700 20px Inter,system-ui,sans-serif'; ctx.fillText('Z', c50, 34);
+    ctx.textAlign='right'; ctx.fillStyle=accent3; ctx.font='600 14px Inter,system-ui,sans-serif'; ctx.fillText('Vect (Algebra)', W*0.95, 30);
+    var sig=info.fr.map(circLabel).join(' → ');
+    ctx.textAlign='center'; ctx.fillStyle=textC; ctx.font='13px ui-monospace,monospace';
+    ctx.fillText('Randsignatur:  '+sig, c50, 54);
+
+    for(s=0;s<L;s++){
+      var yb=yFor(s), yt=yFor(s+1);
+      ctx.fillStyle='rgba(125,211,252,0.05)';
+      ctx.fillRect(W*0.05, yt, W*0.39, yb-yt);
+    }
+    for(i=0;i<=L;i++){
+      var y=yFor(i); n=info.fr[i]; pos=cpos(n,cxl,y,gap);
+      if(n===0){
+        ctx.beginPath(); ctx.arc(cxl,y,9,0,Math.PI*2); ctx.setLineDash([4,3]); ctx.strokeStyle=muted; ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=muted; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center'; ctx.fillText('∅',cxl,y-13);
+      } else {
+        for(k=0;k<pos.length;k++){ ctx.beginPath(); ctx.arc(pos[k].x,pos[k].y,9,0,Math.PI*2); ctx.fillStyle=panel; ctx.fill(); ctx.strokeStyle=accent; ctx.lineWidth=2; ctx.stroke(); }
+      }
+    }
+    ctx.strokeStyle=accent; ctx.lineWidth=2.5;
+    for(s=0;s<L;s++){
+      var inP=cpos(info.fr[s],cxl,yFor(s),gap);
+      var outP=cpos(info.fr[s+1],cxl,yFor(s+1),gap);
+      strand(inP,outP,cxl,yFor(s),yFor(s+1));
+    }
+
+    for(i=0;i<=L;i++){ vbox(cxr, yFor(i), vLabel(info.fr[i]), i===0||i===L); }
+    for(s=0;s<L;s++){ oparrow(cxr, yFor(s), yFor(s+1), PIECES[stack[s]].op); }
+
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle=accent2; ctx.font='700 34px Inter,system-ui,sans-serif'; ctx.fillText('Z', c50, (yTop+yBot)/2);
+    ctx.font='400 11px Inter,system-ui,sans-serif'; ctx.fillStyle=muted; ctx.fillText('der Funktor', c50, (yTop+yBot)/2+24);
+    ctx.textBaseline='alphabetic';
+    ctx.strokeStyle=rgba(accent2,0.6); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(c50-46,(yTop+yBot)/2); ctx.lineTo(c50-14,(yTop+yBot)/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(c50+14,(yTop+yBot)/2); ctx.lineTo(c50+46,(yTop+yBot)/2); ctx.stroke();
+
+    var ry=H-56;
+    ctx.textAlign='center';
+    if(L===0){
+      ctx.fillStyle=muted; ctx.font='400 13px Inter,system-ui,sans-serif';
+      ctx.fillText('Füge links Cobordismus-Teile hinzu (Kappe, Becher, Hose, Copants, Zylinder) — oben auf den Stapel.', c50, ry);
+      ctx.font='400 12px Inter,system-ui,sans-serif';
+      ctx.fillText('Leeres Diagramm = Identität (Z = 1).', c50, ry+20);
+      statusEl.innerHTML = '<b>Start:</b> leeres Diagramm (Identität). Baue unten über die Buttons eine Cobordismus-Komposition.';
+    } else if(!info.valid){
+      ctx.fillStyle=warn; ctx.font='600 15px Inter,system-ui,sans-serif';
+      ctx.fillText('⚠ Inkompatible Ränder — Komposition unmöglich', c50, ry);
+      ctx.fillStyle=muted; ctx.font='400 12px Inter,system-ui,sans-serif';
+      ctx.fillText('Ein Teil erwartet einen anderen Rand-Übergang als der untere liefert (Ziel ≠ Quelle).', c50, ry+20);
+      statusEl.innerHTML = '<b>Inkompatibel:</b> Komposition nur, wenn das Ziel der einen Cobordismus der Quelle der nächsten ist — genau das Kompositionsaxiom einer Kategorie (A).';
+    } else if(info.top===0){
+      var val=Math.pow(q, info.cups);
+      ctx.fillStyle=good; ctx.font='600 17px Inter,system-ui,sans-serif';
+      ctx.fillText('Geschlossene Mannigfaltigkeit → Zahl:   Z(Σ) = q^k = '+val, c50, ry);
+      ctx.fillStyle=muted; ctx.font='400 12px Inter,system-ui,sans-serif';
+      ctx.fillText('k = '+info.cups+' geschlossene Schleifen (Becher) · q = '+q+' (quant. Dimension) · Topologie, nicht Geometrie', c50, ry+20);
+      statusEl.innerHTML = '<b>Geschlossen:</b> Z(Σ) = q^'+info.cups+' = <b>'+val+'</b>. Die Zahl hängt nur von der Topologie (Anzahl geschlossener Schleifen) ab — eine Form = eine Zahl (B), erzeugt vom strukturerhaltenden Funktor (A).';
+    } else {
+      ctx.fillStyle=accent; ctx.font='600 15px Inter,system-ui,sans-serif';
+      ctx.fillText('Offener Cobordismus:   ℂ → V^'+info.top+'  (lineare Abbildung, keine Zahl)', c50, ry);
+      ctx.fillStyle=muted; ctx.font='400 12px Inter,system-ui,sans-serif';
+      ctx.fillText('Offene Cobordismen bilden Vektorräume/lineare Abbildungen ab; nur geschlossene liefern einen Skalar.', c50, ry+20);
+      statusEl.innerHTML = '<b>Offen:</b> ℂ → V^'+info.top+' — ein Quantenzustand (lineare Abbildung). Für einen Skalar muss oben (und unten) 0 Kreise herauskommen.';
+    }
+    requestAnimationFrame(draw);
+  }
+
+  function syncCount(){ if(countVal) countVal.textContent = stack.length; }
+  function addP(key){ if(stack.length>=8) return; stack.push(key); syncCount(); }
+  function popP(){ if(stack.length) stack.pop(); syncCount(); }
+  function resetP(){ stack=[]; syncCount(); }
+  function demoClosed(){ stack=['cap','pants','copants','cup']; syncCount(); }
+  function demoOpen(){ stack=['cap','cyl']; syncCount(); }
+
+  var btns=document.querySelectorAll('.viz-btn');
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var a=b.getAttribute('data-act');
+      if(a==='cap') addP('cap');
+      else if(a==='cup') addP('cup');
+      else if(a==='pants') addP('pants');
+      else if(a==='copants') addP('copants');
+      else if(a==='cyl') addP('cyl');
+      else if(a==='pop') popP();
+      else if(a==='reset') resetP();
+      else if(a==='closed') demoClosed();
+      else if(a==='open') demoOpen();
+    });
+  });
+
+  qSlider.addEventListener('input', function(){ q=parseInt(qSlider.value,10)||2; qVal.textContent=q; });
+
+  window.addEventListener('resize', resize);
+  document.getElementById('themeToggle').addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); });
+  resize();
+  syncCount();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

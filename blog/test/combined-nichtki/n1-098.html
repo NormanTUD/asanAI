@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometrie des Geistes &amp; ihre Manipulation — Fusion</title>
+<style>
+:root{
+  --bg:#f7f5ef; --bg2:#efece3; --panel:#ffffff; --panel-border:#e4dfd2;
+  --text:#26261f; --muted:#6d6a60; --accent:#0e7490; --accent2:#be185d;
+  --accent3:#7c3aed; --good:#15803d; --warn:#b45309; --danger:#b91c1c;
+  --grid:rgba(0,0,0,0.05);
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111827; --panel:#161d33; --panel-border:rgba(125,211,252,0.16);
+  --text:#e5e7eb; --muted:#94a3b8; --accent:#7dd3fc; --accent2:#f472b6;
+  --accent3:#a78bfa; --good:#4ade80; --warn:#fbbf24; --danger:#f87171;
+  --grid:rgba(125,211,252,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,-apple-system,'Segoe UI',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:3rem 1.25rem 5rem}
+#themeToggle{position:fixed;top:14px;right:14px;background:var(--panel);color:var(--text);border:1px solid var(--panel-border);border-radius:20px;padding:.45rem .85rem;font:500 .8rem/1 inherit;cursor:pointer;z-index:50}
+#themeToggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.9rem,4.6vw,3rem);line-height:1.1;letter-spacing:-.02em;font-weight:800;margin:.4rem 0 .5rem}
+.fusion-sub{color:var(--muted);font-size:.95rem;margin-bottom:.4rem}
+.kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:700}
+section{margin-top:2.8rem}
+h2{font-size:1.5rem;font-weight:750;margin-bottom:.7rem;color:var(--accent);letter-spacing:-.01em}
+h3{font-size:1.08rem;font-weight:650;margin:1.1rem 0 .4rem;color:var(--text)}
+p{margin:.7rem 0;color:var(--text)}
+p.lede{color:var(--muted);font-size:1.02rem}
+strong{color:var(--text)}
+em{color:var(--accent2)}
+.panel{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:1.1rem 1.2rem;margin:1.1rem 0}
+.panel .pt{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:var(--accent);font-weight:700;margin-bottom:.55rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.callout{border-left:3px solid var(--accent);background:var(--panel);border-radius:0 12px 12px 0;padding:.85rem 1rem;margin:1rem 0}
+.callout.bad{border-left-color:var(--danger)}
+.callout.good{border-left-color:var(--good)}
+.callout .cl{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:.3rem}
+.callout.bad .cl{color:var(--danger)} .callout.good .cl{color:var(--good)}
+.formula{background:var(--bg2);border:1px solid var(--panel-border);border-radius:10px;padding:.8rem 1rem;margin:.8rem 0;text-align:center;font-size:1.02rem;overflow-x:auto;color:var(--text)}
+.formula .cap{display:block;font-size:.78rem;color:var(--muted);margin-top:.35rem}
+ul,ol{margin:.5rem 0 .5rem 1.3rem}
+li{margin:.4rem 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--panel-border);vertical-align:top}
+th{color:var(--accent);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+td:first-child{color:var(--accent2);font-weight:600;white-space:nowrap}
+.viz-wrap{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:1rem;margin:1rem 0}
+#vizCanvas{width:100%;height:520px;display:block;border-radius:10px;background:var(--bg2)}
+.controls{display:flex;flex-wrap:wrap;gap:1.1rem;margin:1rem 0 .5rem}
+.ctrl{flex:1 1 220px;display:flex;flex-direction:column;gap:.35rem}
+.ctrl label{font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between}
+.ctrl label span{color:var(--accent);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--grid);border-radius:3px;outline:none;accent-color:var(--accent)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px var(--accent)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+.readout{display:flex;flex-wrap:wrap;gap:.6rem;margin:.7rem 0}
+.chip{background:var(--bg2);border:1px solid var(--panel-border);border-radius:10px;padding:.45rem .7rem;font-size:.85rem}
+.chip b{color:var(--accent);font-family:ui-monospace,monospace}
+#vizStatus{margin-top:.6rem;font-size:.9rem;color:var(--muted)}
+#vizStatus b{color:var(--text)}
+.legend{display:flex;flex-wrap:wrap;gap:.9rem 1.2rem;font-size:.8rem;color:var(--muted);margin-top:.7rem}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:.35rem;vertical-align:-1px}
+.src{display:block;padding:.7rem .9rem;border:1px solid var(--panel-border);border-radius:10px;margin:.6rem 0;background:var(--panel)}
+.src a{color:var(--accent);font-weight:600;text-decoration:none;word-break:break-all}
+.src a:hover{text-decoration:underline}
+.src span{display:block;color:var(--muted);font-size:.88rem;margin-top:.25rem}
+footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--panel-border);color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<button id="themeToggle">☾ Theme</button>
+<article>
+  <div class="kicker">Fusion · Runde 1 · nicht-k-i-Track</div>
+  <h1>Geometrie des Geistes — und ihre Manipulation</h1>
+  <p class="fusion-sub">Fusion aus: conceptual_spaces.html ✕ narc_group2.html</p>
+
+  <section id="these">
+    <h2>1 · Kernthese der Fusion</h2>
+    <p class="lede">Beide Papiere machen, auf sehr verschiedenen Themen, dieselbe Geste: <strong>das Unsichtbare wird sichtbar, indem es in den Raum projiziert wird.</strong> Gärdenfors (A) projiziert <em>Bedeutung</em> in konzeptuelle Räume aus Qualitätsdimensionen, in denen Ähnlichkeit Distanz ist und Konzepte konvexe Regionen bilden — „der Geist ist ein Geometer". Die Manipulations-Visualisierung (B) projiziert <em>Macht und Missbrauch</em> in denselben Register: Energiefelder, ein Gravitationsfeld, Erosion, einen Herzschlag-Zyklus, eine gespaltene Realität, ein Hub-Graph.</p>
+    <p>Die integrierte Position: <strong>Das gleiche geometrische Substrat, das der Geist nutzt, um Bedeutung darzustellen, ist genau die Oberfläche, auf der Manipulation wirkt.</strong> A liefert die Ontologie — wie Regionen, Prototypen, Metriken und Ähnlichkeit entstehen und warum Konvexität eine <em>Tugend</em> ist (Kriterium P). B beschreibt eine Pathologie: ein zweiter Agent <em>wirkt auf</em> eben diese Geometrie — er zieht deinen Prototyp an, verkleinert deine konvexe Region, invertiert deine Metrik und monopolisiert den geteilten Raum.</p>
+    <p>Daraus folgt der fusionierte Kern: <strong>Manipulation ist die Pathologie des konzeptuellen Raums.</strong> Der Verführer erfindet keine neue mentale Maschine; er <em>kapert</em> Nähe, Prototyp, Region und Metrik. Und die Heilung (Recovery in B) ist wörtlich die Re-lokalisierung des Selbst in <em>seine eigene</em> stabile konvexe Region, mit seiner eigenen Metrik und seiner eigenen Voronoi-Zelle — also die Rückkehr zum dezentralen, peer-zu-peer Kommunikationsmuster, das A als gesund beschreibt.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2 · Widersprüche zwischen A und B</h2>
+    <p class="lede">Die beiden Papiere stehen in denselben drei Punkten in einer echten Spannung — nicht im Zufall, sondern an genau der Stelle, an der A eine Struktur als <em>Tugend</em> beschreibt, die B als <em>Austrittspunkt des Missbrauchs</em> zeigt.</p>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 1 · Konvexität: Tugend vs. Angriffsfläche</span>
+      <p><strong>A (Kriterium P):</strong> „Eine natürliche Eigenschaft entspricht einer <em>konvexen Region</em>." Diese Stabilität ist die Tugend, die Lernen ökonomisch und Kommunikation zuverlässig macht; die Räume des Geists gelten als natürlich und stabil.</p>
+      <p><strong>B:</strong> Genau diese Regionen, die ein Mensch trägt (Selbstbild, „was wirklich passiert ist"), sind die <em>Angriffsfläche</em>. Gaslighting treibt die <em>wahrgenommene</em> Region in einen driftenden, gar invertierten (nicht-konvexen) Zustand; Erosion löst deren Substanz auf. Die stabile Region ist hier das, was <em>verloren</em> geht.</p>
+      <p><strong>Spannung:</strong> A behandelt stabile konvexe Regionen als gesunde Norm; B behandelt den <em>Verlust</em> einer solchen Region als Kernpathologie — und zeigt, dass ein zweiter Agent sie gewaltsam verformen kann.</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 2 · Ähnlichkeit/Nähe: neutrales Gesetz vs. Waffe</span>
+      <p><strong>A:</strong> Ähnlichkeit = Distanz ist ein neutrales, förderliches Gesetz (Shepards „universelles Gesetz der Generalisierung", s(i,j)=e<sup>−c·d</sup>). Nähe ist das, was Generalisierung und Verstehen überhaupt erst möglich macht.</p>
+      <p><strong>B:</strong> Nähe/Anziehung ist der <em>Mechanismus der Kontrolle</em>: Das Feld des Narzissten zieht die Partikel des Opfers an; das Gravitationsfeld der Gruppe reduziert Autonomie, indem es die Orbitierenden zum Zentrum hinzieht. Erzwungene Nähe = Falle.</p>
+      <p><strong>Spannung:</strong> Nähe als Gut (A) vs. erzwungene Nähe als Falle (B).</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 3 · Verteilte Selbstorganisation vs. zentraler Hub</span>
+      <p><strong>A:</strong> Der Geist <em>selbstorganisiert</em> sich — Kohonen-Karten bilden ihre Dimensionen „ohne dass jemand ihr sagt wie"; die gesunde Architektur ist mehrschichtig und verteilt.</p>
+      <p><strong>B:</strong> Die manipulative Gruppe ist eine <em>zentralisierte</em> Hub-Topologie: ein einziger Anführer-Knoten, durch den alle (gefilterte) Informationen fließen; direkte Peer-Kommunikation wird blockiert.</p>
+      <p><strong>Spannung:</strong> dezentrale Selbstorganisation (A) vs. Einzel-Hub-Kontrolle (B).</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3 · Auflösung</h2>
+    <p class="lede">Die drei Punkte sind keine echten Kontradiktionen, sondern zwei Hälben eines Bildes. A beschreibt die <em>normale, selbstorganisierende</em> Geometrie; B beschreibt, was passiert, wenn <em>ein zweiter Agent</em> auf diese Geometrie einwirkt.</p>
+
+    <h3>1 → Attraktor statt Norm</h3>
+    <p>Die konvexe Region ist der <strong>stabile Attraktor</strong> des Systems — der gesunde Ruhzustand. Manipulation ist eine <em>äußere Kraft (Forcing)</em>, die das System vorübergehend von diesem Attraktor wegdrängt; Recovery ist die Rückkehr zu ihm. Konvexität ist also nicht einfach „wie es ist", sondern <em>wohin das System zurückfallen will</em> — und umso wertvoller, je stärker sie angegriffen wird.</p>
+
+    <h3>2 → Ähnlichkeit als Doppelklinge</h3>
+    <p>Dasselbe Nähe-Gesetz, mit dem der Geist lernt und kommuniziert, <em>fälscht</em> der Verführer: durch Idealisierung und Triangulation erzeugt er <strong>gefälschte Ähnlichkeit</strong> („sie versteht mich"), um dich in seine Zelle zu ziehen. Ähnlichkeit ist eine Ressource, die der Geist nutzt <em>und</em> der Verführer waffnet. Die Verteidigung ist das Erkennen der Fälschung — B nennt sie das Aufdecken der Maske (😊 → 🎭).</p>
+
+    <h3>3 → Der gesunde Geist ist der Anti-Hub</h3>
+    <p>Der Hub der Gruppe ist die <em>Vernegung</em> der verteilten Architektur des eigenen Geistes. Heilung heißt daher, die <strong>verteilte Topologie wiederherzustellen</strong>: Peers neu verbinden, den Hub durchschneiden, den geteilten Raum wiederherstellen — wörtlich die Re-lokalisierung in den eigenen konzeptuellen Raum.</p>
+
+    <div class="callout good">
+      <span class="cl">Fusionierter Schluss</span>
+      <p>Manipulation ist keine fremde Kraft, sondern <strong>die äußere Verformung der eigenen Repräsentationsgeometrie</strong>. Wer versteht, wie Bedeutung als Raum, Region und Metrik aufgebaut ist, versteht zugleich, an welchen Stellen sie kapertbar ist — und wie man sie zurückverhandelt.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4 · Fusionierter Inhalt</h2>
+    <p class="lede">Die zwei Halbsätze, ineinander gefaltet. A liefert das Vokabular der Geometrie; B liefert die Fallstudien, in denen diese Geometrie unter Druck steht.</p>
+
+    <h3>A — Das geometrische Vokabular (Gärdenfors)</h3>
+    <ul>
+      <li><strong>Drei Ebenen:</strong> subkonzeptuell (Neuronen) → <em>konzeptuell</em> (Geometrie) → symbolisch (Sprache). Die konzeptuelle Ebene ist die Brücke; „meanings are in the head", aber nicht willkürlich.</li>
+      <li><strong>Qualitätsdimensionen:</strong> Farbe hat drei <em>integrale</em> Dimensionen (Farbton = kreisförmig, Sättigung, Helligkeit = linear); Größe &amp; Farbe sind <em>separabel</em>.</li>
+      <li><strong>Metrik:</strong> Minkowski; die Wahl von r hängt an der Struktur — r=2 (euklidisch) für integrale, r=1 (City-Block) für separable Dimensionen.</li>
+      <li><strong>Kriterium P:</strong> natürliche Eigenschaften = konvexe Regionen.</li>
+      <li><strong>Voronoi aus Prototypen:</strong> Prototypen + Metrik erzeugen automatisch konvexe Regionen (Lemma 3.1) — kognitive Ökonomie.</li>
+      <li><strong>Lernen:</strong> Mittelwert der Beispiele → Prototyp → neue Voronoi-Zerlegung; Übergeneralisierung erklärt sich selbst.</li>
+      <li><strong>Kombination &amp; Kontrast:</strong> „steinerner Löwe" = Modifikator überschreibt Domänen des Kopfnomens; „heißes Wasser" vs. „kalt" hängt an der Kontrastklasse.</li>
+      <li><strong>Metapher &amp; Grue:</strong> Metaphern sind strukturerhaltende Domänen-Mappings; Goodmans „grue" scheitert, weil es eine Unstetigkeit (nicht-konvex) hat — „grün"/„blau" sind konvex und daher natürlich.</li>
+      <li><strong>Entstehung:</strong> Kohonen-Karten (SOM) organisieren Dimensionen selbstorganisiert.</li>
+    </ul>
+
+    <h3>B — Die Fallstudien unter Druck</h3>
+    <ul>
+      <li><strong>Zwei Energiefelder:</strong> das Feld des Narzissten expandiert, das des Opfers schrumpft.</li>
+      <li><strong>Erosion:</strong> Aspekte des Selbst (Selbstvertrauen, Grenzen, Freude, …) werden Partikel-für-Partikel in ein „Void" absorbiert.</li>
+      <li><strong>Der Zyklus:</strong> Idealisierung → Abwertung → Verwerfen → Hoovering; die Hochs werden niedriger, die Tiefs tiefer.</li>
+      <li><strong>Gaslighting:</strong> objektive Realität und wahrgenommene Realität driften auseinander, bis die eigene Wahrnehmung invertiert ist.</li>
+      <li><strong>Gravitationsfeld der Gruppe:</strong> alle kreisen um den Anführer; Rollen (Flying Monkey, Golden Child, Sündenbock, Mitläufer, Zweifler); der Sündenbock wird angegriffen.</li>
+      <li><strong>Double Bind:</strong> jeder Pfad endet in Schuld; die einzige Gewinnstrategie: nicht mitspielen.</li>
+      <li><strong>Informations-Asymmetrie:</strong> der Anführer ist der einzige Knoten; jede „Wahrheit" wird gefiltert und anders erzählt.</li>
+      <li><strong>Heilung:</strong> nicht-linear, mit Rückschlägen; das Licht kehrt zurück, bis zu post-traumatischem Wachstum.</li>
+    </ul>
+
+    <h3>Die Geometrie, die beide verbindet</h3>
+    <div class="formula">
+      d<sub>r</sub>(x,y) = ( Σ<sub>i</sub> w<sub>i</sub>·|x<sub>i</sub>−y<sub>i</sub>|<sup>r</sup> )<sup>1/r</sup>
+      <span class="cap">Minkowski-Metrik — die „Regel", mit der Nähe gemessen wird. A: neutral. B: die Regel, die der Verführer verzieht.</span>
+    </div>
+    <div class="formula">
+      s(i,j) = e<sup>−c·d(i,j)</sup>
+      <span class="cap">Shepard: Ähnlichkeit als abklingende Funktion der Distanz — die Brücke, die B kapert.</span>
+    </div>
+    <div class="formula">
+      ∀x,y∈C, ∀λ∈[0,1]:&nbsp; λx + (1−λ)y ∈ C
+      <span class="cap">Konvexität — der Attraktor, um den Recovery kreist.</span>
+    </div>
+
+    <h3>Korrespondenz: jeder B-Mechanismus ist ein A-Geometrie-Zustand</h3>
+    <table>
+      <thead><tr><th>B-Mechanismus</th><th>A-Geometrie</th><th>Was im Raum passiert</th></tr></thead>
+      <tbody>
+        <tr><td>Idealisierung / Love-Bombing</td><td>Prototyp-Capture</td><td>Das Prototyp „Ich" wird zum Prototyp des Anführers hin gezogen; die Zelle des Anführers wächst auf Kosten der Zelle des Opfers.</td></tr>
+        <tr><td>Gaslighting</td><td>Metrik-/Realitäts-Verzerrung</td><td>Die Distanz zu „was war" wird invertiert; objektive und wahrgenommene Region driften auseinander (Realitätsspaltung).</td></tr>
+        <tr><td>Abwertung</td><td>Verkleinerung der Region</td><td>Der Radius (Sättigung/Helligkeit) des Selbst-Raums sinkt; die konvexe Region schrumpft.</td></tr>
+        <tr><td>Gruppendruck / Flying Monkeys</td><td>Gravitationsfeld (anziehende Metrik)</td><td>Alle Orbiten um einen Punkt; Autonomie = Abstand, der sich verengt.</td></tr>
+        <tr><td>Double Bind</td><td>Nicht-konvexe, sich selbst widersprechende Region</td><td>Wie „grue": beide Pfade führen in dieselbe „Schuld"-Region — keine natürliche (konvexe) Kategorie.</td></tr>
+        <tr><td>Identitäts-Erosion</td><td>Substanzverlust in der Region</td><td>Partikel (Aspekte des Selbst) werden absorbiert; die Region verliert Füllung.</td></tr>
+        <tr><td>Informations-Asymmetrie</td><td>Privatmonopol des geteilten Raums</td><td>A: Kommunikation braucht <em>geteilte</em> Räume. B: der Anführer macht den Raum privat → kein geteilter Raum → keine Zuverlässigkeit.</td></tr>
+        <tr><td>Recovery / Heilung</td><td>Re-lokalisierung + Distanzierung</td><td>Eigene konvexe Region, eigene Metrik, eigene Voronoi-Zelle; dezentrale Peer-Kommunikation (Anti-Hub).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5 · Visualisierung — Das Selbst im Konzeptuellen Raum</h2>
+    <p class="lede">Ein 2-D-Konzeptraum: <strong>dein Selbst</strong> ist eine konvexe Region um einen Prototyp (Stern), <strong>der Anführer</strong> eine gravitierende Masse. Erhöhe „Kontrolle" und sieh, wie der Prototyp angezogen, die Region verkleinert und (Gaslighting) die <em>wahrgenommene</em> Region (rot) von der <em>objektiven</em> (grün) wegdriftet. „Heilung" zieht alles zurück in den konvexen Attraktor. Die gestrichelte Senkrechte ist die Voronoi-Grenze zwischen den beiden Zellen.</p>
+
+    <div class="viz-wrap">
+      <div class="controls">
+        <div class="ctrl">
+          <label>Kontrolle / Manipulation <span id="mVal">55</span></label>
+          <input type="range" id="mSlider" min="0" max="100" value="55">
+        </div>
+        <div class="ctrl">
+          <label>Heilung / Recovery <span id="rVal">10</span></label>
+          <input type="range" id="rSlider" min="0" max="100" value="10">
+        </div>
+      </div>
+      <canvas id="vizCanvas"></canvas>
+      <div class="readout">
+        <div class="chip">Effektive Kontrolle: <b id="vizNet">45</b>/100</div>
+        <div class="chip">Region: <b id="vizRegion">—</b></div>
+      </div>
+      <p id="vizStatus">…</p>
+      <div class="legend">
+        <span><i style="background:var(--good)"></i>objektive Region (sollte)</span>
+        <span><i style="background:var(--danger)"></i>wahrgenommene Region (gaslighting)</span>
+        <span><i style="background:var(--accent3)"></i>Prototyp „Ich"</span>
+        <span><i style="background:var(--accent2)"></i>Anführer-Masse</span>
+        <span><i style="background:var(--accent);border-radius:0;height:2px"></i>Voronoi-Grenze</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>6 · Provenienz</h2>
+    <a class="src" href="../conceptual_spaces.html">
+      A · conceptual_spaces.html
+      <span>Interaktive Adaption von Peter Gärdenfors' <em>Conceptual Spaces: The Geometry of Thought</em> (2000) — Bedeutung als Geometrie: Qualitätsdimensionen, Kriterium P (Konvexität), Voronoi aus Prototypen, Metrik, Kohonen, Grue.</span>
+    </a>
+    <a class="src" href="../narc_group2.html">
+      B · narc_group2.html
+      <span>„Die Architektur der Manipulation" — abstrakte Visualisierung verdeckter Narzissmus &amp; manipulativer Gruppen: Energiefelder, Erosion, Zyklus, Gaslighting, Gravitationsfeld, Double Bind, Informations-Hub, Heilung.</span>
+    </a>
+    <footer>Fusion #098 · Runde 1 · Alle Inhalte stammen aus den beiden Quellpapieren; die Visualisierung ist eine selbstgeschriebene, themenreaktive Canvas-Darstellung der fusionierten These.</footer>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  var ctx = canvas.getContext('2d');
+  var mSlider = document.getElementById('mSlider');
+  var rSlider = document.getElementById('rSlider');
+  var mVal = document.getElementById('mVal');
+  var rVal = document.getElementById('rVal');
+  var netEl = document.getElementById('vizNet');
+  var regionEl = document.getElementById('vizRegion');
+  var statusEl = document.getElementById('vizStatus');
+
+  var W = 0, H = 0, dpr = 1, t = 0;
+
+  function cssVar(n, fb){
+    try{ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+    catch(e){ return fb; }
+  }
+  function rgba(hex, a){
+    var h = (hex||'').replace('#','');
+    if(h.length === 3) h = h.split('').map(function(c){return c+c;}).join('');
+    var n = parseInt(h, 16);
+    if(isNaN(n)) return 'rgba(125,211,252,'+a+')';
+    var r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    var w = canvas.offsetWidth || 800;
+    var h = canvas.offsetHeight || 520;
+    W = w; H = h;
+    canvas.width = Math.max(1, Math.floor(w*dpr));
+    canvas.height = Math.max(1, Math.floor(h*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function star(cx, cy, spikes, outer, inner, color){
+    ctx.beginPath();
+    for(var i=0;i<spikes*2;i++){
+      var rad = (i%2===0)?outer:inner;
+      var a = (Math.PI/spikes)*i - Math.PI/2;
+      var x = cx+Math.cos(a)*rad, y = cy+Math.sin(a)*rad;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = cssVar('--text','#fff'); ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  function draw(){
+    t += 0.012;
+    ctx.clearRect(0,0,W,H);
+
+    var textC  = cssVar('--text','#e5e7eb');
+    var muted  = cssVar('--muted','#94a3b8');
+    var accent = cssVar('--accent','#7dd3fc');
+    var accent2= cssVar('--accent2','#f472b6');
+    var accent3= cssVar('--accent3','#a78bfa');
+    var good   = cssVar('--good','#4ade80');
+    var danger = cssVar('--danger','#f87171');
+    var gridC  = cssVar('--grid','rgba(125,211,252,0.08)');
+
+    var m = mSlider.value/100;
+    var r = rSlider.value/100;
+    var net = Math.max(0, Math.min(1, m - r));
+    mVal.textContent = Math.round(mSlider.value);
+    rVal.textContent = Math.round(rSlider.value);
+    netEl.textContent = Math.round(net*100);
+
+    var step = 34;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = gridC;
+    var x, y;
+    for(x=0;x<=W;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(y=0;y<=H;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    var abuserX = W*0.74, abuserY = H*0.5;
+    var baseSelfX = W*0.26, baseSelfY = H*0.5;
+    var selfX = baseSelfX + (abuserX-baseSelfX)*net*0.55;
+    var selfY = baseSelfY;
+    var R0 = Math.min(W,H)*0.17;
+    var selfR = R0*(1-net*0.55);
+    var wellR = Math.min(W,H)*(0.05 + net*0.18);
+    var noiseAmp = net*selfR*0.42;
+
+    // Abuser well (glow + core)
+    var wg = ctx.createRadialGradient(abuserX,abuserY,0,abuserX,abuserY,wellR*3);
+    wg.addColorStop(0,'rgba(0,0,0,0.55)');
+    wg.addColorStop(0.45, rgba(accent2, 0.10 + net*0.12));
+    wg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = wg; ctx.fillRect(0,0,W,H);
+    var cg = ctx.createRadialGradient(abuserX,abuserY,0,abuserX,abuserY,Math.max(1,wellR));
+    cg.addColorStop(0,'rgba(0,0,0,0.7)');
+    cg.addColorStop(0.7, rgba(accent2, 0.25 + net*0.2));
+    cg.addColorStop(1, rgba(accent2, 0.08));
+    ctx.beginPath(); ctx.arc(abuserX,abuserY,Math.max(1,wellR),0,Math.PI*2);
+    ctx.fillStyle = cg; ctx.fill();
+    ctx.fillStyle = rgba(accent2, 0.55 + net*0.4);
+    ctx.font = '600 12px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ANFÜHRER', abuserX, abuserY + Math.max(1,wellR) + 20);
+
+    // Voronoi edge (perpendicular bisector on the shared line)
+    var bisX = (selfX+abuserX)/2;
+    ctx.setLineDash([6,6]);
+    ctx.strokeStyle = rgba(accent, 0.45);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(bisX,0); ctx.lineTo(bisX,H); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = rgba(accent, 0.6);
+    ctx.font = '400 11px Inter, system-ui, sans-serif';
+    ctx.fillText('Voronoi-Grenze', bisX, 18);
+
+    // Self region: objective (smooth) + perceived (distorted)
+    var N = 72, i, a, rad, nx, ny;
+    // perceived blob
+    ctx.beginPath();
+    for(i=0;i<N;i++){
+      a = (i/N)*Math.PI*2;
+      var noise = Math.sin(a*3 + t*1.5) * Math.cos(a*2 - t);
+      rad = Math.max(4, selfR + noise*noiseAmp);
+      nx = selfX + Math.cos(a)*rad;
+      ny = selfY + Math.sin(a)*rad;
+      if(i===0) ctx.moveTo(nx,ny); else ctx.lineTo(nx,ny);
+    }
+    ctx.closePath();
+    ctx.fillStyle = rgba(accent, 0.16);
+    ctx.fill();
+    ctx.strokeStyle = rgba(danger, 0.75);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // objective outline
+    ctx.beginPath(); ctx.arc(selfX,selfY,Math.max(4,selfR),0,Math.PI*2);
+    ctx.strokeStyle = rgba(good, 0.85);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // prototype star
+    star(selfX, selfY, 5, 15, 7, accent3);
+    ctx.fillStyle = textC;
+    ctx.font = '400 11px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Prototyp „Ich"', selfX, selfY + Math.max(4,selfR) + 20);
+
+    // caption top-left
+    ctx.textAlign = 'left';
+    ctx.fillStyle = muted;
+    ctx.font = '400 11px Inter, system-ui, sans-serif';
+    ctx.fillText('Konzeptraum: Ähnlichkeit = Distanz · Selbst = konvexe Region', 14, 20);
+
+    // verdict bottom
+    var stable = net < 0.18;
+    ctx.textAlign = 'center';
+    ctx.font = '600 13px Inter, system-ui, sans-serif';
+    ctx.fillStyle = stable ? good : danger;
+    if(stable){
+      regionEl.textContent = 'konvex & stabil';
+      statusEl.innerHTML = 'Stabil: dein <b>eigener</b> konvexer Raum, deine <b>eigene</b> Metrik — Prototyp im Zentrum, Zelle intakt.';
+      ctx.fillText('Region konvex & stabil — Identität intakt', W/2, H-14);
+    } else {
+      regionEl.textContent = 'deformiert';
+      var msg = net < 0.4
+        ? 'Erosion beginnt: Prototyp wird angezogen, Region schrumpft.'
+        : (net < 0.7
+          ? 'Gaslighting: wahrgenommene Region ≠ objektive — Metrik verzerrt.'
+          : 'Schwere Deformation: Raum des Anführers dominiert deine Zelle.');
+      statusEl.innerHTML = msg;
+      ctx.fillText('Region deformiert / nicht-konvex — Identität unter Erosion', W/2, H-14);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  resize();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "097",
+  "a": "kategorientheorie.html",
+  "b": "topologische_quantenfeldtheorie.html",
+  "a_title": "Interaktive Kategorientheorie",
+  "b_title": "Topological Quantum Field Theory - Visual Explorer",
+  "combined_theme": "tqft-als-strukturgetreuer-funktor",
+  "one_line": "Eine TQFT ist ein strukturgetreuer, stark monoidaler Funktor Z: Cob → Vect; 'eine Form auf eine Zahl abbilden' (B) ist genau der Skalar, den dieser Funktor auf einer geschlossenen Mannigfaltigkeit auswertet — B's drei Axiome (Functorialität, Monoidalität, Normalisierung) sind wörtliche Instanzen von A's Funktor- und Monoidalitäts-Begriffen, und die Cap/Cup/Pants/Copants-Bausteine bilden die Frobenius-Algebra, die das Zahlen-Liefern ermöglicht.",
+  "contradictions": [
+    "Zweck des Funktors: A definiert den Funktor als strukturerhaltende Abbildung Objekt→Objekt (F(g∘f)=F(g)∘F(f)), die nie eine Zahl aus einem Objekt 'produziert'; B definiert Z gerade zum Zahlen-Liefern (geschlossene Mannigfaltigkeit → Skalar, Z=2^genus, Jones-Polynom).",
+    "Status von Vect: A listet Vect_K als eine von vier gleichberechtigten Beispielkategorien (Set, Grp, Top, Vect); B macht Vect zum einzigen, privilegierten Zielraum des TQFT-Funktors, in den alles fließt, um Zahlen zu extrahieren.",
+    "Rolle des Formalismus: A ist axiom- und diagrammgetrieben (Yoneda-Lemma, universelle Eigenschaften, kommutative Diagramme) und der Formalismus ist der Inhalt; B wirbt explizit mit 'No equations needed — just play, drag, and discover!' und gamifiziert (Score/Achievements)."
+  ],
+  "resolution": "Keine echten Kontradiktionen, sondern Abstraktionsebenen: A = allgemeine Definition (Funktor = Erhalt von Komposition & Identität), B = Spezialisierung (stark monoidaler Funktor in einen mit einer Frobenius-Algebra ausgestatteten Vect). Die 'Zahl' widerspricht der Strukturerhaltung nicht — sie ist der Skalar ℂ→ℂ der ganzen geschlossenen Cobordismus-Komposition, und B's Funktorialität Z(M₁∘M₂)=Z(M₁)∘Z(M₂) ist wörtlich A's F(g∘f)=F(g)∘F(f) mit F=Z. Vect wird im TQFT-Kontext privilegiert, weil es der einzige Zielraum ist, der Skalare/Dimensionen besitzt — nach A's eigenem Kriterium (stark monoidaler Funktor Cob→Vect = TQFT) ist es das richtige Ziel. B's Spiel ist die Oberfläche, A's Axiome der Motor: ohne Funktorialität (A) gäbe es keine wohldefinierten Invarianten/Jones-Polynom (B). Yoneda (A: Objekt = seine Beziehungen) wird in B realisiert: Z(Σ) ist durch die Zerlegung in Bausteine bestimmt, nicht durch die Geometrie.",
+  "viz": "Interaktives String-Diagramm-Canvas (820×520, theme-aware via CSS-Variablen, alle Daten inline): links der Cobordismus als Strangdiagramm (Prozess nach oben), rechts sein Bild unter Z in Vect als Folge linearer Abbildungen, in der Mitte der Funktor Z. Man stapelt Bausteine (Kappe=η, Becher=ε, Hose=m, Copants=Δ, Zylinder=id) — Komposition ist nur mit kompatiblen Randkreisen möglich (das Kompositionsaxiom aus A, inkompatible Stapelung wird als Fehler markiert). Geschlossene Diagramme (oben & unten 0 Kreise) werten aus auf die Zahl Z(Σ)=q^k (k = Anzahl geschlossener Schleifen, q = einstellbare Quantendimension); offene geben ℂ→V^n (lineare Abbildung, keine Zahl). Zeigt die fusionierte These: strukturerhaltender Funktor, der auf geschlossenen Formen Zahlen liefert."
+}

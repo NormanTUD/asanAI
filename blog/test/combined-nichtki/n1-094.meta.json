@@ -1,0 +1,17 @@
+{
+  "no": "094",
+  "a": "game2.html",
+  "b": "paper/sorting_with_bialgebras.html",
+  "a_title": "Bloom Garden",
+  "b_title": "Sorting with Bialgebras & Distributive Laws",
+  "combined_theme": "bialgebraic-garden-duality",
+  "one_line": "Wenige Ein-Schritt-Essenzen (natuerliche Transformationen bzw. Tools), kompositioniert ueber die dualen Rekursionsschemata Fold (konsumieren) und Unfold (erzeugen), erzeugen einen ganzen 'Zoo' an Verhalten — der stochastisch-persistente Garten (A) ist der lebensnahe Fall des Bialgebra-Dualitaetstheorems der Sortieralgorithmen (B).",
+  "contradictions": [
+    "Determinismus/Verifizierbarkeit (B: bubbleSort = naives Insertion 'by theorem', zwei Wege derselben Rechnung) vs. Zufall/Emergenz (A: Math.random() steuert Seltenheit, Schmetterlinge, Wetter; kein Garten gleicht dem anderen).",
+    "Minimalismus 'eine Essenz pro Algorithmus' (B destilliert auf eine natuerliche Transformation und beweist den Rest) vs. Maximalismus (A haufelt 8 Tools + Seltenheit + Combos + passive Generierung + Achievements ohne Reduktion auf einen Kern).",
+    "Erfolgsmessung: Korrektheit & Effizienz (B: Komplexitaet n^2 -> n log n, 'guaranteed') vs. Freude/Flow/Retention (A: 'zen gardening', 10-Minuten-Sitzungen, Achievements).",
+    "Einmalige, rein-stateless, endliche Berechnung (B: pure Funktionen) vs. persistenter, wachsender Zustand (A: localStorage-Save, autoGrow, passive Generierung — wachst ueber die Zeit, hat Gedaechnis)."
+  ],
+  "resolution": "Zufall ist nur ein Unfold/Coalgebra von einem Seed (Math.random() = Seed); B's Gleichheit und A's Variation sind zwei Parameter desselben Unfold. Der Garten ist buchstaebe ein 'Zoo', der nach (Essenz, Schema) katalogisiert A's 8 Tools auf die gleichen zwei Achsen abbildet wie B. Eleganz = wenig Essenz, viel Output ('algorithms for free' ≈ 'Blumen, die sich von selbst ausbreiten'). Ein persistenter Garten ist ein nie-stoppender Unfold, der einen Level-Up-Fold speist, der das Unfold neu seedet — exakt das fold∘unfold-Feedback, mit dem B sortiert. Fusion: ein Bialgebra-Garten, dessen Wachstum Unfold, dessen Pflege Fold ist.",
+  "viz": "Duales Canvas: dieselbe Eingabeliste, zwei duale Ansichten — oben UNFOLD (Seite A, erzeugt einen Garten mit Seltenheit, stochastisch), unten FOLD (Seite B, konsumiert die Liste von rechts in XP/Level, deterministisch); Regler 'Determinismus<->Zufall' blendet zwischen B's Gleichheit und A's Emergenz; theme-aware, inline Daten, null Konsolenfehler."
+}

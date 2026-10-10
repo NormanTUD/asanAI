@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Die Hopf-Faserung S&sup3;&rarr;S&sup2;: gesehen von A, bewiesen von B &middot; Hopf &#10005; Faserb&uuml;ndel</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#fbfaf4; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0; --acc2:#7a5cd6; --acc3:#d64f8f; --acc4:#b5831b;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff; --acc2:#b597ff; --acc3:#ff7fb0; --acc4:#ffcf5c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(181,151,255,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;position:relative}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.94em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.eq{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.95em;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+td:nth-child(2){color:var(--sky)}
+td:nth-child(3){color:var(--warn)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%;height:auto}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 200px;min-width:160px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+button.on{background:var(--acc);color:var(--bg);font-weight:650}
+.stat{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:.9rem;margin-top:12px;align-items:baseline}
+.stat .big{font-family:ui-monospace,monospace;font-size:1.5rem;font-weight:700}
+.stat .lab{color:var(--dim)}
+.legend{display:flex;gap:14px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px}
+ul{margin:.6em 0;padding-left:1.2em}
+li{margin:.35em 0}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.prov a{text-decoration:none;border-bottom:1px solid var(--line);font-weight:600}
+.prov a:hover{border-bottom-color:var(--acc)}
+.prov .d{display:block;color:var(--dim);font-size:.88rem;margin-top:8px}
+.prov .k{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+@media(max-width:560px){.prov{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Theme wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Round 1 &middot; Nicht-KI-Track &middot; Pair 109</div>
+  <h1>Die Hopf-Faserung S&sup3; &rarr; S&sup2;</h1>
+  <p class="sub">Gesehen von A, bewiesen von B &middot; Fusion aus: <span class="mono">hopf_faserung.html</span> &#10005; <span class="mono">faserbuendel_und_fibrationen.html</span></p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <div class="tag">01 &middot; Kernthese der Fusion</div>
+    <h2>Ein Objekt, zwei Sprachen: Geometrie von unten, Algebra von oben</h2>
+    <p>
+      Beide Texte behandeln <b>dasselbe Ph&auml;nomen</b> &mdash; die <b>Hopf-Faserung</b> &mdash; aber aus
+      entgegengesetzten Richtungen. <b>A</b> (Treisman, <i>A Young Person&rsquo;s Guide to the Hopf Fibration</i>)
+      baut sie <b>geometrisch von unten</b>: Die Einheits-Quaternionen bilden eine Gruppe, die genau die
+      3-Sph&auml;re <span class="mono">S&sup3;</span> ist; die Abbildung
+      <span class="mono">(z&#8321;,z&#8322;) &rarr; z&#8322;/z&#8321;</span> wirft <span class="mono">S&sup3;</span> auf die
+      Riemannsche Sph&auml;re <span class="mono">S&sup2;</span>; die Fasern sind <b>paarweise verkettete Kreise</b>,
+      und aus dem Ganzen lassen sich Anwendungen ablesen (Qubit/Bloch-Kugel, Quaternionen-slerp,
+      <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>).
+    </p>
+    <p>
+      <b>B</b> (Sorensen, <i>An Introduction to Fiber Bundles and Fibrations</i>) geht <b>axiomatisch von
+      oben</b>: <span class="mono">S&sup3;&rarr;S&sup2;</span> mit Faser <span class="mono">S&sup1;</span> ist ein
+      <b>Faserb&uuml;ndel</b> (Basis <span class="mono">S&sup2;</span>, Faser <span class="mono">S&sup1;</span>), und
+      jedes Faserb&uuml;ndel besitzt die <b>Homotopie-Hochhebungseigenschaft</b> und ist damit eine
+      <b>Fibration</b>. Die <b>lange exakte Sequenz</b> plus <span class="mono">&pi;&#7522;(S&sup1;)=0</span>
+      (<span class="mono">i&ne;1</span>) liefert <span class="mono">&pi;&#7522;(S&sup2;) &cong; &pi;&#7522;(S&sup3;)</span>
+      f&uuml;r <span class="mono">i&gt;2</span> und damit <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>.
+    </p>
+    <p>
+      Die fusionierte Position: <b>Die Hopf-Faserung ist ein und dasselbe Ding in zwei Sprachen.</b>
+      A liefert das <i>Sehen</i> (Konstruktion, Verkettung, H&auml;ndigkeit, Anwendungen), B liefert das
+      <i>Beweisen &amp; Rechnen</i> (B&uuml;ndel-Axiome, Kozykel, Homotopie-Hochhebung, exakte Sequenz).
+      Der Ber&uuml;hrungspunkt ist exakt: <b>die Verkettung der Fasern (A) <i>ist</i> die Hopf-Invariante
+      (B)</b>; die Hopf-Faserung ist der <b>Erzeuger von</b> <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>.
+      Beide erkl&auml;ren damit ein einziges Prinzip &mdash; <b>&bdquo;lokal Produkt, global verdreht&ldquo;</b>
+      &mdash; das die Geometrie (Kreise, die sich nicht trennen lassen) und die Algebra (eine nicht-triviale
+      Homotopiegruppe) verbindet.
+    </p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <div class="tag">02 &middot; Widerspr&uuml;che zwischen A und B</div>
+    <h2>Kein echter Widerspruch &mdash; aber drei reale Spannungen</h2>
+    <p>
+      Die beiden Texte <b>widersprechen sich nicht mathematisch</b>: beide kommen auf
+      <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>, beide sagen, die Hopf-Faserung sei nicht-trivial.
+      Es gibt aber drei <b>konkret benennbare Spannungen</b> &mdash; in der Notation, im Z&auml;hlen und in der
+      Methode.
+    </p>
+
+    <div class="card">
+      <h3 style="margin-top:0">(a) Dieselbe Abbildung, zwei Notationen</h3>
+      <p><b>A:</b> Die Hopf-Abbildung ist das <b>Verh&auml;ltnis</b>
+        <span class="mono">f(z&#8321;,z&#8322;) = z&#8322;/z&#8321; &isin; &P1;(&Cup;) &cong; S&sup2;</span>,
+        reell: <span class="mono">f(x&#8321;,x&#8322;,x&#8323;,x&#8324;)=
+        (2(x&#8321;x&#8323;+x&#8322;x&#8324;), 2(x&#8322;x&#8323;&minus;x&#8321;x&#8324;),
+        x&#8321;&sup2;+x&#8322;&sup2;&minus;x&#8323;&sup2;&minus;x&#8324;&sup2;)</span>.</p>
+      <p><b>B:</b> Die Hopf-Fibration ist
+        <span class="mono">p(z&#8320;,z&#8321;) = (2 z&#8320; z&#8321;*, |z&#8320;|&sup2; &minus; |z&#8321;|&sup2;)</span>,
+        mit <span class="mono">S&sup2; = {(z,x)&isin;&Cup;&times;&Ropf; : |z|&sup2;+x&sup2;=1}</span>.</p>
+      <p class="note"><b>Spannung:</b> Auf den ersten Blick zwei <i>verschiedene</i> Formeln und zwei
+        <i>verschiedene</i> Beschreibungen von <span class="mono">S&sup2;</span>
+        (A: <span class="mono">&P1;(&Cup;)</span>; B: <span class="mono">&Cup;&times;&Ropf;</span>).
+        Tats&auml;chlich dieselbe Abbildung bis auf eine Drehung des Ziels &mdash; die &bdquo;Widerspr&uuml;che&ldquo;
+        sind rein konventionell.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(b) Zwei Hopf-Faserungen (A) vs. eine Hopf-Fibration (B)</h3>
+      <p><b>A:</b> Weil Quaternionen <b>nicht kommutativ</b> sind
+        (<span class="mono">ij=k</span> aber <span class="mono">ji=&minus;k</span>), gibt es
+        <b>zwei</b> Hopf-Faserungen: <span class="mono">R&#113;(p)=q&minus;&sup1;pq</span> (rechts) und
+        <span class="mono">L&#113;(p)=qpq&minus;&sup1;</span> (links). Auf dem Torus haben die Fasern Steigung
+        <b>+1</b> vs. <b>&minus;1</b>; zwei Fasern gleicher H&auml;ndigkeit schneiden sich nie,
+        verschiedener H&auml;ndigkeit schon.</p>
+      <p><b>B:</b> Die Hopf-Fibration wird als <b>ein</b> Beispiel (0.8) vorgestellt
+        (<span class="mono">S&sup1;&rarr;S&sup3;&rarr;S&sup2;</span>); die H&auml;ndigkeit wird <b>nicht</b>
+        unterschieden &mdash; ein einziger Standardfall.</p>
+      <p class="note"><b>Spannung:</b> A z&auml;hlt <i>zwei</i> (orientierte) Faserungen desselben Totalraums,
+        B behandelt <i>eine</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(c) Konstruktiv-geometrisch (A) vs. axiomatisch-homotopietheoretisch (B)</h3>
+      <p><b>A:</b> Beweisweg <i>von unten</i>: Komplexe Zahlen &rarr; Sph&auml;ren &rarr; stereographische
+        Projektion &rarr; Riemannsche Sph&auml;re &rarr; Torus &rarr; Quaternionen; Nicht-Trivialit&auml;t wird
+        <b>geometrisch</b> argumentiert (verkettete Kreise, Treismans &Auml;quator-Argument), und es folgen
+        <b>Anwendungen</b> (Spin&nbsp;&frac12;, slerp, Robotik).</p>
+      <p><b>B:</b> Beweisweg <i>von oben</i>: Definitionen (Vektorb&uuml;ndel &rarr; Faserb&uuml;ndel &rarr;
+        Fibration), Kozykelbedingung, Homotopie-Hochhebung; Nicht-Trivialit&auml;t wird
+        <b>algebraisch</b> gefasst (B&uuml;ndel &ne; triviales B&uuml;ndel), und die <b>lange exakte
+        Sequenz</b> rechnet die <span class="mono">&pi;</span>-Gruppen heraus.</p>
+      <p class="note"><b>Spannung:</b> A belegt Nicht-Trivialit&auml;t <i>mit Geometrie</i> und endet bei
+        <i>Anwendungen</i>; B belegt sie <i>mit Axiomen/Algebra</i> und endet bei <i>Homotopiegruppen</i>.</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <div class="tag">03 &middot; Aufl&ouml;sung</div>
+    <h2>Wie die drei Spannungen zusammenpassen</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0">Zu (a): Eine kanonische Abbildung, zwei Ziel-Identifikationen</h3>
+      <p>Setzt man in B&rsquo;s Formel <span class="mono">z&#8320;:=z&#8321;,&nbsp;z&#8321;:=z&#8322;</span>,
+        wird <span class="mono">2z&#8320;z&#8321;* = 2z&#8321;z&#8322;*</span> &mdash; die komplexe Koordinate
+        von A&rsquo;s erstem Paar, nur mit <span class="mono">S&sup2;&cong;&Cup;&times;&Ropf;</span> anstatt von
+        A&rsquo;s <span class="mono">S&sup2;&cong;&P1;(&Cup;)</span>. Beide Identifikationen sind durch eine
+        (starke) <b>Drehung des Zielsph&auml;re</b> verbunden. &rarr; <b>Fusion:</b> es gibt <i>eine</i>
+        Hopf-Abbildung; sie wird kanonisch als Quotient <b>nach der globalen Phase</b> geschrieben:
+        <span class="mono">(z&#8321;,z&#8322;)/&sim;</span> mit <span class="mono">(z&#8321;,z&#8322;)&sim;(e^{i&lambda;}z&#8321;,
+        e^{i&lambda;}z&#8322;)</span>. A&rsquo;s <span class="mono">z&#8322;/z&#8321;</span> und B&rsquo;s
+        <span class="mono">(2z&#8320;z&#8321;*, |z&#8320;|&sup2;&minus;|z&#8321;|&sup2;)</span> sind dieselbe
+        Orbits-Abbildung. Die scheinbare Diskrepanz ist Null.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Zu (b): H&auml;ndigkeit = Vorzeichen der Strukturgruppe / Hopf-Invariante</h3>
+      <p>In B&rsquo;s Sprache tr&auml;gt ein Faserb&uuml;ndel &uuml;ber der Faser <span class="mono">S&sup1;</span>
+        eine <b>Strukturgruppe</b> (hier <span class="mono">Aut(S&sup1;)</span>, lokal das Drehen der Fasern).
+        Ob die Faser <b>links oder rechts</b> multipliziert wird, ist genau die Wahl des
+        <b>Orientierungsvorzeichens</b> dieses Kreisb&uuml;ndels. A&rsquo;s <span class="mono">ij=k</span> vs.
+        <span class="mono">ji=&minus;k</span> ist nichts anderes als die Frage, <i>von welcher Seite</i> die
+        <span class="mono">S&sup1;</span>-Faser auf <span class="mono">S&sup3;</span> wirkt. &rarr;
+        <b>Fusion:</b> Ein Totalraum <span class="mono">S&sup3;</span>, aber <b>zwei orientierte Haupt-
+        <span class="mono">S&sup1;</span>-B&uuml;ndel</b> &uuml;ber <span class="mono">S&sup2;</span> &mdash;
+        rechtsh&auml;ndig (Hopf-Invariante <b>+1</b>) und linksh&auml;ndig (<b>&minus;1</b>). B&rsquo;s
+        Standard-Hopf-Fibration ist A&rsquo;s rechtsh&auml;ndige. Die &bdquo;zwei Faserungen&ldquo; sind also
+        dieselbe Geometrie mit zwei <i>Orientierungen</i>; das Vorzeichen ist die Hopf-Invariante.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Zu (c): Geometrie und Algebra beschreiben dieselbe Nicht-Trivialit&auml;t</h3>
+      <p>A&rsquo;s <b>Verkettungszahl</b> zweier Fasern (=1) ist exakt B&rsquo;s <b>Hopf-Invariante</b>;
+        B&rsquo;s lange exakte Sequenz ist die <i>Maschine</i>, die aus &bdquo;die Fasern sind verkettet&ldquo;
+        die berechenbare Aussage <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span> macht. &rarr;
+        <b>Fusion:</b> <span class="mono">S&sup1;&rarr;S&sup3;&rarr;S&sup2;</span> ist ein
+        (Haupt-)Kreisb&uuml;ndel und damit eine Fibration. A gibt <i>Intuition + Anwendungen + die zwei
+        Orientierungen</i>, B gibt <i>Definition + Berechnung</i>. Zusammen ergeben sie das ganze Bild:
+        die Geometrie (verkettete Kreise) <b>misst</b> die Algebra (nicht-triviale
+        <span class="mono">&pi;&#8323;</span>), und die Algebra <b>best&auml;tigt &amp; quantifiziert</b> die
+        Geometrie. Kein Widerspruch &mdash; komplement&auml;re Beschreibungen eines Objekts.</p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <div class="tag">04 &middot; Fusionierter Inhalt</div>
+    <h2>Das gemeinsame Fundament, nach der Kernthese geordnet</h2>
+    <p>Wo beide Seiten liefern, ist die &Uuml;bersetzung angegeben. Alles ist so, dass eine sp&auml;tere
+      Runde allein von hier arbeiten kann.</p>
+
+    <h3>1. Das Objekt: <span class="mono">S&sup3;&rarr;S&sup2;</span>, Faser <span class="mono">S&sup1;</span> &mdash; in beiden Notationen</h3>
+    <p>
+      <b>A:</b> <span class="mono">S&sup3; = {(z&#8321;,z&#8322;)&isin;&Cup;&sup2; : |z&#8321;|&sup2;+|z&#8322;|&sup2;=1}</span>;
+      die Einheits-Quaternionen <span class="mono">a&sup2;+b&sup2;+c&sup2;+d&sup2;=1</span> bilden eine
+      <b>Gruppe</b> (also S&sup3; ist eine Gruppe), und <span class="mono">S&sup3;/{&plusmn;1} &cong; SO(3)</span>.
+      Ziel <span class="mono">S&sup2;=&P1;(&Cup;)=&Cup;&cup;{&infin;}</span>. Abbildung
+      <span class="mono">f(z&#8321;,z&#8322;)=z&#8322;/z&#8321;</span>.
+    </p>
+    <div class="eq">A:  f(z&#8321;,z&#8322;) = z&#8322;/z&#8321; &isin; &P1;(&Cup;) &cong; S&sup2;
+     &nbsp;&nbsp;|&nbsp;&nbsp; reell: (2(x&#8321;x&#8323;+x&#8322;x&#8324;), 2(x&#8322;x&#8323;&minus;x&#8321;x&#8324;), x&#8321;&sup2;+x&#8322;&sup2;&minus;x&#8323;&sup2;&minus;x&#8324;&sup2;)</div>
+    <p>
+      <b>B:</b> <span class="mono">S&sup3;={ (z&#8320;,z&#8321;) : |z&#8320;|&sup2;+|z&#8321;|&sup2;=1 }</span>;
+      <span class="mono">S&sup2;={ (z,x)&isin;&Cup;&times;&Ropf; : |z|&sup2;+x&sup2;=1 }</span>;
+      Abbildung <span class="mono">p(z&#8320;,z&#8321;)=(2z&#8320;z&#8321;*, |z&#8320;|&sup2;&minus;|z&#8321;|&sup2;)</span>.
+    </p>
+    <div class="eq">B:  p(z&#8320;,z&#8321;) = ( 2 z&#8320; z&#8321;* ,  |z&#8320;|&sup2; &minus; |z&#8321;|&sup2; )  :  S&sup3; &rarr; S&sup2;</div>
+    <p>
+      <b>Fusion:</b> Dieselbe Abbildung. Die <b>Faser &uuml;ber einem Basispunkt</b> ist ein Kreis
+      <span class="mono">S&sup1;</span>: multipliziert man <span class="mono">(z&#8321;,z&#8322;)</span> mit einer
+      <b>gemeinsamen Phase</b> <span class="mono">e^{i&lambda;}</span>, &auml;ndert sich das Bild nicht
+      (A: <span class="mono">z&#8322;/z&#8321;</span> invariant; B:
+      <span class="mono">(e^{i&lambda;}z&#8320;)(e^{i&lambda;}z&#8321;)*=z&#8320;z&#8321;*</span>).
+      <b>Das</b> ist die Faser.
+    </p>
+
+    <h3>2. Die Rahmen-Theorie (B): B&uuml;ndel &rarr; Faserb&uuml;ndel &rarr; Fibration</h3>
+    <p>
+      <b>B</b> liefert den formalen Apparat, in dem A&rsquo;s Konstrukt lebt:
+      <b>Vektorb&uuml;ndel</b> (4 Bedingungen: alle Fasern <span class="mono">&Ropf;&sup91;k</span>, lokale
+      Trivialisierung, &Uuml;bergangsfunktionen <span class="mono">g&#945;&beta;&isin;GL(k)</span>,
+      Kozykel); <b>Faserb&uuml;ndel</b> (Faser = beliebiger topologischer Raum <span class="mono">F</span>,
+      <span class="mono">GL(k)&rarr;Aut(F)</span>); <b>Fibration</b> = Surjektion mit
+      Homotopie-Hochhebungseigenschaft f&uuml;r <i>jeden</i> Raum <span class="mono">X</span>.
+      Jedes Faserb&uuml;ndel ist eine Fibration; nicht jede Fibration ist ein B&uuml;ndel
+      (Homotopiefaserung 0.9 baut aus jeder Abbildung eine Fibration).
+    </p>
+    <div class="eq">Kozykelbedingung:  g&#945;&#945; = I ,   g&#945;&beta;(x) g&#946;&gamma;(x) g&#947;&#945;(x) = I</div>
+    <p>
+      <b>Fusion:</b> Die Hopf-Faserung ist ein <b>Haupt-<span class="mono">S&sup1;</span>-B&uuml;ndel</b>
+      &uuml;ber <span class="mono">S&sup2;</span> (Faser = Strukturgruppe = <span class="mono">S&sup1;</span>)
+      und damit automatisch eine Fibration. Der Kozykel (W&auml;hrungstausch-Analogie in B) ist die
+      algebraische Fassung der <b>Verdrehung</b>, die A geometrisch als Verkettung zeigt.
+    </p>
+
+    <h3>3. Nicht-Trivialit&auml;t &mdash; zwei Beweise desselben Satzes</h3>
+    <p>
+      <b>A (geometrisch, Treismans Argument):</b> Betrachte den &Auml;quator <span class="mono">E</span> von
+      S&sup3; (eine 2-Sph&auml;re); sein &Auml;quator ist selbst eine Faser <span class="mono">F</span> (der
+      Einheitskreis in der xy-Ebene). <i>Jede</i> andere Faser trifft <span class="mono">E</span> in zwei
+      antipodalen Punkten; zwischen ihnen verl&auml;uft ein Bogen in der Kugel und einer au&szlig;erhalb. Ein
+      Kreis, der die Einheitskugel genau zweimal antipodal durchst&ouml;st, ist <b>zwangsl&auml;ufig mit
+      <span class="mono">F</span> verkettet</b>. Durch Drehen von S&sup3;: <b>je zwei Fasern sind verkettet</b>
+      (Verkettungszahl = 1). W&auml;re S&sup3; einfach <span class="mono">S&sup2;&times;S&sup1;</span>, l&auml;gen
+      alle Kreise unverschlungen nebeneinander &mdash; tun sie nicht.
+    </p>
+    <p>
+      <b>B (analytisch, als Template):</b> Das M&ouml;biusb&uuml;ndel &uuml;ber <span class="mono">S&sup1;</span>
+      ist <i>nicht</i> trivial, weil <b>jeder Schnitt eine Nullstelle hat</b>: ein Schnitt, der einmal um
+      den Kreis l&auml;uft, wird mit <span class="mono">&minus;1</span> multipliziert
+      (<span class="mono">(0,x)&sim;(1,&minus;x)</span>), also von <span class="mono">v</span> nach
+      <span class="mono">&minus;v</span>; per <b>Zwischenwertsatz</b> muss er <span class="mono">0</span>
+      annehmen. Das tautologische B&uuml;ndel &uuml;ber <span class="mono">G&#8321;(&Ropf;&sup2;)&cong;S&sup1;</span>
+      <i>ist</i> genau das M&ouml;biusb&uuml;ndel. Prinzip: <b>lokal Produkt, global verdreht</b>.
+    </p>
+    <p>
+      <b>Fusion:</b> A zeigt die Nicht-Trivialit&auml;t <b>direkt am Objekt</b> (verkettete Kreise), B gibt
+      das <b>allgemeine Kriterium</b> (kein Schnitt ohne Nullstelle / B&uuml;ndel &ne; Produkt). Beide
+      sagen dasselbe: Die Hopf-Faserung ist <b>kein triviales B&uuml;ndel</b>.
+    </p>
+
+    <h3>4. Die Rechnung (B) &amp; ihre geometrische Bedeutung (A): <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span></h3>
+    <p>
+      <b>B (lange exakte Sequenz f&uuml;r eine Fibration):</b>
+      <span class="mono">&hellip;&rarr;&pi;&#8345;(F)&rarr;&pi;&#8345;(E)&rarr;&pi;&#8345;(B)&rarr;&pi;&#8345;&minus;&#8321;(F)&rarr;&hellip;</span>
+      mit &bdquo;Goldener Regel&ldquo;: <span class="mono">0&rarr;G&rarr;H&rarr;0 &rArr; G&cong;H</span>.
+      F&uuml;r <span class="mono">i&gt;2</span> sind beide Randterme <span class="mono">&pi;&#7522;(S&sup1;)</span>
+      Null (aus B&rsquo;s Ergebnis <span class="mono">&pi;&#7522;(S&sup1;)=0, i&ne;1</span>):
+    </p>
+    <div class="eq">0 &rarr; &pi;&#7522;(S&sup3;) &rarr; &pi;&#7522;(S&sup2;) &rarr; 0   &rArr;   &pi;&#7522;(S&sup2;) &cong; &pi;&#7522;(S&sup3;) (i&gt;2)
+     &nbsp;&rArr;&nbsp; &pi;&#8323;(S&sup2;) &cong; &pi;&#8323;(S&sup3;) = &Zopf;</div>
+    <p>
+      <b>A (Bedeutung der Zahl):</b> Die ganze Zahl, die die Abbildungen <span class="mono">S&sup3;&rarr;S&sup2;</span>
+      bis auf Homotopie indiziert, ist die <b>Hopf-Invariante</b> &mdash; und das ist <b>genau die
+      Verkettungszahl zweier Fasern</b>. Die Hopf-Abbildung ist der Erzeuger;
+      <span class="mono">(z&#8321;,z&#8322;) &rarr; z&#8322;&supn;/z&#8321;&supn;</span> hat Invariante
+      <span class="mono">n&sup2;</span>. Die naive Erwartung war <span class="mono">0</span> (eine
+      h&ouml;herdimensionale Sph&auml;re in eine niederdimensionale &bdquo;reine&ldquo;) &mdash; falsch,
+      begr&uuml;ndet von Hopf 1931, der damit die Homotopietheorie startete.
+    </p>
+    <p>
+      <b>Fusion (der Kern):</b> <b>Verkettung (A) = Hopf-Invariante (B)</b>. Die Geometrie der
+      ineinandergehakten Kreise ist das, was die Algebra z&auml;hlt. Das ist der Punkt, an dem die zwei
+      Papiere exakt eins werden.
+    </p>
+
+    <h3>5. Zwei H&auml;ndigkeiten (A) &harr; Strukturgruppe / Orientierung (B)</h3>
+    <p>
+      <b>A:</b> <span class="mono">R&#113;(p)=q&minus;&sup1;pq</span> (rechts, Steigung +1) vs.
+      <span class="mono">L&#113;(p)=qpq&minus;&sup1;</span> (links, Steigung &minus;1). Gleiche Tori,
+      entgegengesetzt gewickelte Fasern. <span class="mono">S&sup3;</span> als Gruppe,
+      <span class="mono">S&sup3;/{&plusmn;1}&cong;SO(3)</span> (daher Spin&nbsp;&frac12;).
+    </p>
+    <p>
+      <b>Fusion (in B&rsquo;s Sprache):</b> Die Wahl rechts vs. links ist die Wahl des
+      <b>Orientierungsvorzeichens der Strukturgruppe</b> des Haupt-<span class="mono">S&sup1;</span>-B&uuml;ndels.
+      Dieselbe Geometrie, zwei Orientierungen; das Vorzeichen ist die Hopf-Invariante (&plusmn;1).
+    </p>
+
+    <h3>6. Anwendungen (A) &harr; Verallgemeinerungen (B)</h3>
+    <p>
+      <b>A:</b> Quantenmechanik (Zustand eines Qubits = Punkt in S&sup3;, physikalisch ununterscheidbar
+      bis auf globale Phase = <b>eine Hopf-Faser</b>, sichtbarer Zustandsraum = Basis
+      <span class="mono">S&sup2;</span> = <b>Bloch-Kugel</b>); Grafik/Robotik (Rotationen als
+      Einheitsquaternionen, slerp = Bewegung auf einem Gro&szlig;kreis von S&sup3;); algebraische
+      Topologie (<span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>).
+    </p>
+    <p>
+      <b>B:</b> Faserb&uuml;ndel sind zentral in <b>Eichtheorien</b>, <b>charakteristischen
+      Klassen</b> und <b>tautologischen Ringen</b>; sie <b>verallgemeinern &Uuml;berlagerungsr&auml;ume</b>
+      (Faser diskret), h&auml;ngen mit <b>Garben</b> zusammen (lokal frei), und in glatter Form gibt es das
+      <b>vertikale Tangentialb&uuml;ndel</b> <span class="mono">T_f = ker Df</span> und
+      <b>Prinzipal-<span class="mono">G</span>-B&uuml;ndel</b>.
+    </p>
+    <p>
+      <b>Fusion:</b> Die Hopf-Faserung ist das <i>kanonische Beispiel</i>, an dem sich jede Verallgemeinerung
+      von B ablesen l&auml;sst (Haupt-S&sup1;-B&uuml;ndel, Fibration, nicht-trivial) &mdash; und sie ist
+      zugleich das Objekt, an dem A die physikalischen/graphischen Anwendungen h&auml;ngt.
+    </p>
+
+    <table>
+      <thead><tr><th>A &mdash; geometrisch (Treisman)</th><th>B &mdash; algebraisch (Sorensen)</th><th>Geteilt</th></tr></thead>
+      <tbody>
+        <tr><td>Hopf-Abbildung <span class="mono">z&#8322;/z&#8321;</span>, reelle Formel</td><td>Hopf-Fibration <span class="mono">(2z&#8320;z&#8321;*, |z&#8320;&sup2;&minus;z&#8321;&sup2;|)</span></td><td>die eine Abbildung <span class="mono">S&sup3;&rarr;S&sup2;</span></td></tr>
+        <tr><td>Faser = gemeinsame Phase <span class="mono">e^{i&lambda;}</span></td><td>Faser = <span class="mono">S&sup1;</span>, Faserb&uuml;ndel</td><td><span class="mono">S&sup1;</span> &uuml;ber <span class="mono">S&sup2;</span></td></tr>
+        <tr><td>Nicht-trivial: verkettete Kreise (Treisman-Argument)</td><td>Nicht-trivial: B&uuml;ndel &ne; Produkt (Schnitt-Nullstelle)</td><td>kein triviales B&uuml;ndel</td></tr>
+        <tr><td>zwei H&auml;ndigkeiten, Steigung &plusmn;1</td><td>Orientierung der Strukturgruppe / Kozykel</td><td>Vorzeichen der Hopf-Invariante</td></tr>
+        <tr><td>Verkettungszahl = Hopf-Invariante</td><td>lange exakte Sequenz &rarr; <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span></td><td>Geometrie misst die Algebra</td></tr>
+        <tr><td>Qubit/Bloch-Kugel, slerp, Spin&nbsp;&frac12;</td><td>Eichtheorie, char. Klassen, Garben, <span class="mono">ker Df</span></td><td>das kanonische Beispiel</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <div class="tag">05 &middot; Interaktive Visualisierung</div>
+    <h2>Die Faserung: Basis, Fasern, Verkettung, H&auml;ndigkeit</h2>
+    <p>
+      Links die <b>Basis <span class="mono">S&sup2;</span></b> (jeder Punkt = eine Faser, Farbe = Lage auf
+      der Kugel). Rechts der <b>Totalraum <span class="mono">S&sup3;</span></b>, stereographisch nach
+      <span class="mono">&Ropf;&sup3;</span> projiziert: die farbigen Kreise sind die <b>Fasern</b>. Die
+      Farbe eines Kreises zeigt, &uuml;ber welchem Punkt der Basis er liegt &mdash; <i>das ist das B&uuml;ndel</i>
+      (B). &bdquo;2 verkettete Fasern&bdquo; hebt ein Paar hervor und animiert L&auml;ufer, die die
+      <b>Verkettung</b> zeigen &mdash; die Hopf-Invariante (A). Der H&auml;ndigkeits-Button dreht die
+      Wicklung um (Steigung +1/&minus;1) und wechselt damit das Vorzeichen der Hopf-Invariante (A&nbsp;&harr;&nbsp;B).
+    </p>
+
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c">
+          <label>Anzahl Fasern <b id="n-val">10</b></label>
+          <input type="range" id="nFibers" min="2" max="26" step="1" value="10"/>
+        </div>
+        <div class="c">
+          <label>Drehgeschwindigkeit <b id="spin-val">1.0</b></label>
+          <input type="range" id="spinSpeed" min="0" max="3" step="0.1" value="1"/>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="btnRight" class="on">Rechtsh&auml;ndig (+1)</button>
+        <button id="btnLeft">Linksh&auml;ndig (&minus;1)</button>
+        <button id="btnLink">2 verkettete Fasern</button>
+      </div>
+      <canvas id="viz" width="760" height="470"></canvas>
+      <div class="legend">
+        <span><i style="background:#5fd08a"></i><i style="background:#4fa3e0"></i><i style="background:#e07a3f"></i> Fasern S&sup1; (Farbe = Punkt auf S&sup2; = B&uuml;ndel)</span>
+        <span><i style="background:#ffcf5c"></i> hervorgehobene Fasern (Verkettung)</span>
+      </div>
+      <div class="stat">
+        <span class="big" id="inv-val">+1</span>
+        <span class="lab" id="inv-label">Hopf-Invariante (rechts) &mdash; Verkettungszahl zweier Fasern = 1</span>
+        <span class="lab" id="pi-label">&pi;&#8323;(S&sup2;) = &Zopf; &mdash; Erzeuger: diese Faserung</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <div class="tag">06 &middot; Provenienz</div>
+    <h2>Quellen</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A</span>
+        <p><a href="../hopf_faserung.html">hopf_faserung.html</a></p>
+        <span class="d">&bdquo;Die Hopf-Faserung &ndash; Eine interaktive Reise&ldquo; (nach Treisman,
+          arXiv:0908.1205): komplexe Zahlen, Sph&auml;ren, Stereographie, Riemannsche Sph&auml;re, Torus,
+          Quaternionen (S&sup3; als Gruppe, SO(3)), Faserung; Hopf-Abbildung <span class="mono">z&#8322;/z&#8321;</span>,
+          paarweise verkettete Kreise, geschachtelte Tori, zwei H&auml;ndigkeiten; Anwendungen Bloch-Kugel,
+          slerp, <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>.</span>
+      </div>
+      <div class="box">
+        <span class="k">B</span>
+        <p><a href="../faserbuendel_und_fibrationen.html">faserbuendel_und_fibrationen.html</a></p>
+        <span class="d">&bdquo;Faserb&uuml;ndel &amp; Fibrationen &ndash; Eine interaktive Reise&ldquo; (nach
+          Sorensen): topologischer Raum, Faser/Urbild, Quotient, <span class="mono">GL(k)</span>,
+          offene &Uuml;berdeckung, Homotopie; Vektorb&uuml;ndel (4 Bedingungen), Kozykel, Beispiele
+          (trivial, M&ouml;bius, tautologisch, Garben), Faserb&uuml;ndel, Homotopie-Hochhebung, Hopf-Fibration
+          <span class="mono">p=(2z&#8320;z&#8321;*,|z&#8320;&sup2;&minus;z&#8321;&sup2;|)</span>, Homotopiefaserung,
+          vertikales Tangentialb&uuml;ndel, lange exakte Sequenz, <span class="mono">&pi;&#8321;(S&sup1;)=&Zopf;</span>,
+          <span class="mono">&pi;&#7522;(S&sup2;)&cong;&pi;&#7522;(S&sup3;)</span> f&uuml;r <span class="mono">i&gt;2</span>.</span>
+      </div>
+    </div>
+  </section>
+</article>
+
+<script>
+(function(){
+  var TAU = Math.PI*2;
+  var canvas = document.getElementById('viz');
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var W = 760, H = 470;
+
+  var hand = 1;        // +1 rechts, -1 links
+  var linkMode = false;
+  var ang = 0;         // rotat
+  var tAnim = 0;        // tracer
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function C(n, f){ var v = cssVar(n); return (v && v.trim()) ? v.trim() : f; }
+
+  /* ---------- komplexe / Hopf-Mathematik ---------- */
+  function cmul(a,b){ return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]]; }
+  function cscale(a,s){ return [a[0]*s, a[1]*s]; }
+  function cconj(a){ return [a[0], -a[1]]; }
+  function stereo4(x){ var d = 1-x[3]; var k = Math.abs(d)<1e-6 ? 1e5 : 1/d; return [x[0]*k, x[1]*k, x[2]*k]; }
+  function hopf(z, t, h){
+    var m = 1/Math.sqrt(1+z[0]*z[0]+z[1]*z[1]);
+    var l = [Math.cos(t), Math.sin(t)];
+    var z1 = cscale(l, m);
+    if(h>0){ var z2 = cmul(z, z1); return [z1[0], z1[1], z2[0], z2[1]]; }
+    var z2b = cmul(cconj(z), z1); return [z1[0], z1[1], z2b[0], -z2b[1]];
+  }
+  function baseP(lat, lon){ return [Math.sin(lat)*Math.cos(lon), Math.sin(lat)*Math.sin(lon), Math.cos(lat)]; }
+  function stereo3(P){ var d = 1-P[2]; if(Math.abs(d)<1e-9) return [1e5,0]; return [P[0]/d, P[1]/d]; }
+  function baseCol(lat, lon){
+    var h = ((lon/TAU)*360+360)%360;
+    var l = Math.max(30, Math.min(72, 52 - (lat/(Math.PI/2))*16));
+    return 'hsl('+h.toFixed(0)+',80%,'+l.toFixed(0)+'%)';
+  }
+  function proj(p, cx, cy, s, ry, rx){
+    var x=p[0], y=p[1], z=p[2];
+    var x1 = x*Math.cos(ry) - z*Math.sin(ry);
+    var z1 = x*Math.sin(ry) + z*Math.cos(ry);
+    var y1 = y*Math.cos(rx) - z1*Math.sin(rx);
+    var z2 = y*Math.sin(rx) + z1*Math.cos(rx);
+    var d = 1/(1 + z2*0.05);
+    return {x:cx + x1*s*d, y:cy - y1*s*d, z:z2};
+  }
+
+  /* Basispunkte: Fibonacci-Spirale auf S^2 */
+  function makeBases(n){
+    var out = [], GA = Math.PI*(3-Math.sqrt(5));
+    for(var i=0;i<n;i++){
+      var y = 1 - (i+0.5)*2/n;
+      var r = Math.sqrt(Math.max(0,1-y*y));
+      var th = GA*i;
+      out.push({x:r*Math.cos(th), y:y, z:r*Math.sin(th),
+                lat:Math.asin(Math.max(-1,Math.min(1,y))), lon:Math.atan2(r*Math.sin(th), r*Math.cos(th))});
+    }
+    return out;
+  }
+
+  function draw(){
+    if(!canvas || !ctx) return;
+    var col = {
+      bg:   C('--card','#f6f5f0'),
+      line: C('--line','#cccccc'),
+      grid: C('--grid','#e5e5e5'),
+      ink:  C('--ink','#222222'),
+      dim:  C('--dim','#888888'),
+      acc:  C('--acc','#0f9d7a')
+    };
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = col.bg;
+    ctx.fillRect(0,0,W,H);
+
+    var n = parseInt((document.getElementById('nFibers')||{}).value||'10',10);
+    var bases = makeBases(n);
+
+    /* ---------- LINKS: Basis S^2 ---------- */
+    var bcx = W*0.23, bcy = H*0.5, Rb = Math.min(W*0.15, H*0.34);
+    ctx.strokeStyle = col.line; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(bcx, bcy, Rb, 0, TAU); ctx.stroke();
+    // Breitenkreise (Latitude rings)
+    for(var li=0; li<4; li++){
+      var lat = (li/3)*Math.PI - Math.PI/2; // -90..+90 in steps
+      ctx.beginPath();
+      var started=false;
+      for(var a=0; a<=TAU+0.001; a+=TAU/64){
+        var P = baseP(lat, a);
+        var bx = bcx + Rb*P[0], by = bcy - Rb*P[2];
+        if(!started){ ctx.moveTo(bx,by); started=true; } else { ctx.lineTo(bx,by); }
+      }
+      ctx.strokeStyle = col.grid; ctx.lineWidth = 1; ctx.stroke();
+    }
+    // Meridian (lon=0)
+    ctx.beginPath();
+    for(var lat2=-Math.PI/2; lat2<=Math.PI/2+0.001; lat2+=Math.PI/64){
+      var Pv = baseP(lat2, 0);
+      var vx = bcx + Rb*Pv[0], vy = bcy - Rb*Pv[2];
+      if(lat2===-Math.PI/2){ ctx.moveTo(vx,vy); } else { ctx.lineTo(vx,vy); }
+    }
+    ctx.strokeStyle = col.grid; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = col.dim; ctx.font = '12px ui-sans-serif,system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Basis  S\u00B2', bcx, bcy - Rb - 12);
+    ctx.textAlign = 'left';
+
+    // Basispunkte (Fasern) als Punkte
+    var dotPts = [];
+    for(var i=0;i<bases.length;i++){
+      var B = bases[i];
+      var bx2 = bcx + Rb*B.x, by2 = bcy - Rb*B.z;
+      var front = B.y >= -0.05;
+      dotPts.push({x:bx2, y:by2, front:front, col:baseCol(B.lat, B.lon), B:B});
+    }
+    dotPts.sort(function(p,q){ return (p.front?1:0)-(q.front?1:0); });
+    dotPts.forEach(function(p){
+      ctx.fillStyle = p.col;
+      ctx.globalAlpha = p.front?0.95:0.35;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.front?5:3.5, 0, TAU); ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    /* ---------- RECHTS: Totalraum S^3 (stereographisch) ---------- */
+    var tcx = W*0.67, tcy = H*0.50, ts = Math.min(W*0.026, H*0.085);
+    var ry = ang, rx = 0.5 + 0.15*Math.sin(ang*0.3);
+    ctx.fillStyle = col.dim; ctx.font = '12px ui-sans-serif,system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Totalraum  S\u00B3  (Fasern S\u00B9)', tcx, tcy - H*0.40);
+    ctx.textAlign = 'left';
+
+    // Fasern zeichnen (nicht hervorgehoben zuerst)
+    for(var f=0; f<bases.length; f++){
+      var BB = bases[f];
+      var z = stereo3(baseP(BB.lat, BB.lon));
+      var colr = baseCol(BB.lat, BB.lon);
+      drawFiber(z, colr, 1.4, ry, rx, tcx, tcy, ts, false);
+    }
+
+    // Hervorgehobene verkettete Fasern
+    if(linkMode){
+      drawLinkPair(ry, rx, tcx, tcy, ts, col);
+    }
+
+    // Readout
+    var invEl = document.getElementById('inv-val');
+    var labEl = document.getElementById('inv-label');
+    if(invEl) invEl.textContent = (hand>0?'+1':'\u22121');
+    if(labEl) labEl.textContent = 'Hopf-Invariante ('+(hand>0?'rechts':'links')+
+      ') \u2014 Verkettungszahl zweier Fasern = 1' + (linkMode?' \u00B7 2 Fasern aktiv':'');
+  }
+
+  function drawFiber(z, colr, lw, ry, rx, cx, cy, s, bright){
+    var SEG = 140;
+    ctx.beginPath();
+    var started = false, prev = null;
+    for(var k=0;k<=SEG;k++){
+      var t = k/SEG*TAU;
+      var p4 = hopf(z, t, hand);
+      var p3 = stereo4(p4);
+      if(!isFinite(p3[0])||!isFinite(p3[1])||!isFinite(p3[2]) ||
+         (p3[0]*p3[0]+p3[1]*p3[1]+p3[2]*p3[2]) > 2.2e4){ started=false; continue; }
+      var q = proj(p3, cx, cy, s, ry, rx);
+      if(!isFinite(q.x)||!isFinite(q.y)){ started=false; continue; }
+      if(!started){ ctx.moveTo(q.x,q.y); started=true; } else { ctx.lineTo(q.x,q.y); }
+    }
+    ctx.strokeStyle = colr;
+    ctx.lineWidth = bright ? lw+1.2 : lw;
+    ctx.globalAlpha = bright ? 1 : 0.62;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawLinkPair(ry, rx, cx, cy, s, col){
+    // Faser A: Basis = Suedpol (z=0) -> Einheitskreis in xy-Ebene
+    var zA = [0,0];
+    // Faser B: Basis bei lat=+55deg, lon=0
+    var PB = baseP(55*Math.PI/180, 0);
+    var zB = stereo3(PB);
+    drawFiber(zA, C('--acc4','#ffcf5c'), 2.2, ry, rx, cx, cy, s, true);
+    drawFiber(zB, C('--bad','#ff6f6f'), 2.2, ry, rx, cx, cy, s, true);
+    // Lauefer
+    var tA = tAnim, tB = tAnim*1.35 + 0.7;
+    var pA = hopf(zA, tA, hand), pB = hopf(zB, tB, hand);
+    var qA = proj(stereo4(pA), cx, cy, s, ry, rx);
+    var qB = proj(stereo4(pB), cx, cy, s, ry, rx);
+    if(isFinite(qA.x)){ ctx.fillStyle = C('--acc4','#ffcf5c'); ctx.beginPath(); ctx.arc(qA.x,qA.y,5,0,TAU); ctx.fill(); }
+    if(isFinite(qB.x)){ ctx.fillStyle = C('--bad','#ff6f6f'); ctx.beginPath(); ctx.arc(qB.x,qB.y,5,0,TAU); ctx.fill(); }
+  }
+
+  function loop(){
+    var spd = parseFloat((document.getElementById('spinSpeed')||{}).value||'1');
+    ang += 0.004 * spd;
+    tAnim += 0.03 * (spd===0 ? 1 : spd);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function setHand(h){
+    hand = h;
+    var br = document.getElementById('btnRight');
+    var bl = document.getElementById('btnLeft');
+    if(br) br.classList.toggle('on', h>0);
+    if(bl) bl.classList.toggle('on', h<0);
+  }
+
+  function init(){
+    var nf = document.getElementById('nFibers');
+    if(nf) nf.addEventListener('input', function(){ var v=document.getElementById('n-val'); if(v) v.textContent=nf.value; });
+    var ss = document.getElementById('spinSpeed');
+    if(ss) ss.addEventListener('input', function(){ var v=document.getElementById('spin-val'); if(v) v.textContent=parseFloat(ss.value).toFixed(1); });
+    var br = document.getElementById('btnRight');
+    var bl = document.getElementById('btnLeft');
+    if(br) br.addEventListener('click', function(){ setHand(1); });
+    if(bl) bl.addEventListener('click', function(){ setHand(-1); });
+    var bl2 = document.getElementById('btnLink');
+    if(bl2) bl2.addEventListener('click', function(){ linkMode = !linkMode; bl2.classList.toggle('on', linkMode); });
+    var tt = document.getElementById('themeToggle');
+    if(tt) tt.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); });
+    requestAnimationFrame(loop);
+  }
+
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

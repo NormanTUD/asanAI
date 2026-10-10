@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Bedeutung als Geometrie &middot; Fusion &middot; Geometrie der Bedeutung &#10005; Grothendiecks Universum</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0;
+  --viz-c0:#2f6fb0; --viz-c1:#2f9e4f; --viz-c2:#7a4fb0; --viz-c3:#c04a5b;
+  --viz-noise:#9aa0ad; --viz-motive:#b8860b; --viz-edge:#8a93a3; --viz-alive:#d1495b;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff;
+  --viz-c0:#7aa2ff; --viz-c1:#64d68a; --viz-c2:#b98cff; --viz-c3:#ff8b9e;
+  --viz-noise:#5a6478; --viz-motive:#ffd166; --viz-edge:#4a5468; --viz-alive:#ff6f6f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(255,110,199,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;position:relative}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.94em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.eq{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.95em;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%;height:auto;border-radius:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 190px;min-width:150px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.9rem;margin-top:12px;align-items:baseline}
+.stat .big{font-family:ui-monospace,monospace;font-size:1.5rem;font-weight:700}
+.stat .lab{color:var(--dim)}
+.legend{display:flex;gap:14px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px}
+ul{margin:.6em 0;padding-left:1.2em}
+li{margin:.35em 0}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:560px){.prov{grid-template-columns:1fr}}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.prov a{text-decoration:none;border-bottom:1px solid var(--line);font-weight:600}
+.prov a:hover{border-bottom-color:var(--acc)}
+.prov .d{display:block;color:var(--dim);font-size:.88rem;margin-top:8px}
+.prov .k{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Theme wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Round 1 &middot; Nicht-KI-Track &middot; Pair 100</div>
+  <h1>Bedeutung als Geometrie</h1>
+  <p class="sub">Das semantische Universum im Stil Grothendiecks &middot; Fusion aus: <span class="mono">geometry_of_meaning_test.html</span> &#10005; <span class="mono">grothendiek2.html</span></p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <div class="tag">01 &middot; Kernthese der Fusion</div>
+    <h2>Bedeutung ist Geometrie &mdash; und die Geometrie ist die von Grothendieck</h2>
+    <p>
+      Die zwei Texte kommen aus entgegengesetzten Richtungen auf dieselbe Aussage zu.
+      <b>A</b> (Geometrie bedeutungsvoller Sprache) sagt: bedeutungsvolle Sprache ist eine
+      <b>winzige, strukturierte Teilmenge</b> des riesigen kombinatorischen Raums aller S&auml;tze
+      <span class="mono">X&#8345; = &bigcup;&#8321;&#8323;&#8345; V&#7511;</span> &mdash; ein hierarchisches
+      Netz aus Clustern, Filamenten und Voids (das &bdquo;kosmische Netz&ldquo;), projiziert durch ein
+      <b>Faserb&uuml;ndel</b> <span class="mono">&pi;: X &rarr; S</span> auf Bedeutungen und an die Welt
+      <span class="mono">W</span> gekoppelt: <span class="mono">X &rarr; S &harr; W</span>.
+      <b>B</b> (Grothendiecks Universum) sagt: Mathematik ist &bdquo;die Wissenschaft der Formen&ldquo;, ein
+      lebendes Gewebe, in dem <b>lokale Daten (Garben) zu globalem zusammenkleben</b>, Ringe zu R&auml;umen
+      werden (<span class="mono">Spec</span>), und <b>universelle Objekte (Motive)</b> das Herz sind, aus dem
+      alle Realisierungen/Kohomologien entspringen.
+    </p>
+    <p>
+      Der fusionierte Kern in einem Satz: <b>Die Bedeutung eines Satzes ist sein Motiv.</b>
+      Bedeutung ist keine Etikette und kein Ja/Nein, sondern eine <b>stabile, grobk&ouml;rnungs-invariante,
+      darstellungsunabh&auml;ngige Struktur</b>; jeder konkrete Satz ist nur eine <b>Realisierung</b>
+      (ein Faser-Element <span class="mono">&pi;&#8315;&#185;(s)</span>) dieser einen Bedeutung; und A&rsquo;s
+      Kette <span class="mono">Form &rarr; Bedeutung &rarr; Welt</span> <b>ist</b> &mdash; im Sinne von B &mdash;
+      ein <b>kommutierendes Diagramm von Topoi</b> (Basiswechsel: &bdquo;erst umformen, dann interpretieren&rdquo;
+      = &bdquo;erst interpretieren, dann Bedeutung umformen&rdquo;).
+    </p>
+    <p>
+      Kurz: <b>Bedeutung ist die Geometrie lokaler Daten, die sich zu einem globalen, unter
+      Grobk&ouml;rnung invaranten Ganzen verkleben</b> &mdash; und genau das ist die grothendieksche
+      Maschinerie (Garben, Faserb&uuml;ndel, Motive, kommutierende Diagramme, Topoi) auf den
+      Bedeutungsw&auml;lder <span class="mono">X</span> angewandt.
+    </p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <div class="tag">02 &middot; Widerspr&uuml;che zwischen A und B</div>
+    <h2>Wo die zwei unvereinbare Stellungen einnehmen</h2>
+    <p>Die P&auml;re widersprechen sich nicht inhaltlich-gegen&uuml;ber, aber sie nehmen an vier
+      konkreten Stellen <b>inkompatible Stellungen</b> ein &mdash; zu Koh&auml;renz-Grad, zu epistischem
+      Status, zum System-Abgeschlossenheitsgrad und zur Reduktionsrichtung.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">(a) Graduiertes Koh&auml;renz-Feld (A) vs. exakte kategoriale Struktur (B)</h3>
+      <p><b>A</b> (§2): &bdquo;Man k&ouml;nnte glauben, jeder Satz ist entweder &lsquo;bedeutungsvoll&rsquo; oder
+        nicht. Doch die Realit&auml;t ist gradueller.&ldquo; Bedeutung sei ein <b>vierdimensionales Feld</b>
+        <span class="mono">C,S,G,E &isin; [0,1]</span> (Syntax/Semantik/Grounding/Episteme); Metapher und
+        Poesie lebten &bdquo;in interessanten Zwischenregionen&ldquo;, und Koh&auml;renz kollabiere an einer
+        <b>kritischen Schwelle</b> <span class="mono">t&#8341;</span> (&bdquo;Phasen&uuml;bergang&ldquo;, Sigmoid).
+        &rarr; Struktur ist <i>weich, kontinuierlich, mehrwertig</i>.</p>
+      <p><b>B</b>: exakt und bin&auml;r durchgehend &mdash; ein Diagramm <b>kommutiert oder nicht</b>
+        (<span class="mono">&pi;&prime;&circ;f = g&circ;&pi;</span>), eine Garbe <b>erf&uuml;llt die
+        Verklebungsbedingung oder nicht</b>, <bdquo;die Fundamentalgruppe IST die Geometrie&ldquo;,
+        &bdquo;Ringe SIND R&auml;ume&ldquo;. &rarr; Struktur ist <i>krisp, diskret, 2-wertig</i>. Kein gradiertes
+        &bdquo;bedeutungsvoll&rdquo;, sondern exakte Objekte/Morphismen.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(b) Konjunktur / Forschungsprogramm (A) vs. bewiesene Theoreme (B)</h3>
+      <p><b>A</b> (Fu&szlig;zeile + §13): &bdquo;Alle Visualisierungen sind konzeptionelle Illustrationen der
+        im Dokument beschriebenen <b>Hypothesen und Spekulationen, keine empirischen Messungen</b>.&ldquo;
+        Durchzogen von &bdquo;Vermutung&ldquo;, &bdquo;Forschungsprogramm&ldquo;, &bdquo;Offene Forschungsfragen&ldquo;.</p>
+      <p><b>B</b>: pr&auml;sentiert das Gef&uuml;ge als <b>etablierte Mathematik</b> &mdash; Weil-Vermutungen /
+        Riemann-Hypothese f&uuml;r Variet&auml;ten <b>bewiesen von Deligne (1974)</b>, anabelsche Resultate
+        (Faltings, Mochizuki) als Fakt. &rarr; Epistemischer Status: <i>Spekulation</i> (A) gegen
+        <i>Theorem</i> (B).</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(c) Offenes System mit Welt W (A) vs. geschlossenes Universum (B)</h3>
+      <p><b>A</b> (§10, §13): die <b>vollst&auml;ndige</b> Kette ist <span class="mono">X &rarr; S &harr; W</span>
+        mit Tarski-Wahrheit <span class="mono">&#10072;s&#10073; = { w &in; W }</span>; Bedeutung sei erst mit
+        Welt-Kopplung vollst&auml;ndig &mdash; &bdquo;Wie wird ein strukturierter symbolischer Raum
+        <b>&uuml;ber etwas</b>?&ldquo; &rarr; ein <i>offenes, externalistisches</i> System, das an die
+        realit&auml;t geerdet sein muss.</p>
+      <p><b>B</b>: ein <b>selbstreferenzielles, geschlossenes</b> Universum der Formen; &bdquo;die Mathematik
+        &hellip; eine Naturwissenschaft&hellip; die Wissenschaft der Formen&ldquo; &mdash; ganz ohne externe Welt,
+        ohne Grounding, ohne empirischen Anker. &rarr; <i>internistisches</i> System.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(d) Bottom-up von Strings (A) vs. Top-down von Invarianten (B)</h3>
+      <p><b>A</b> (§13): Level&nbsp;I = <span class="mono">X&#8345;</span> (konkrete Zeichenketten);
+        <b>aufw&auml;rts</b> per Grobk&ouml;rnung/Renormierung; Zipf &amp; Heaps als <b>empirischer
+        Anker</b>. &rarr; Geometrie <i>wird aus Daten konstruiert</i>.</p>
+      <p><b>B</b>: Ringe / Motive / die absolute Galoisgruppe <span class="mono">Gal(&Qbar;/&Q;)</span> sind
+        fundamental; die Geometrie wird <b>aus ihnen zur&uuml;ckgewonnen</b> (&bdquo;Anabelsche
+        Rekonstruktion: <span class="mono">&pi;&#8321;&#777;(&#8492;)</span> bestimmt
+        <span class="mono">&#8492;</span>&ldquo;, Motive, aus denen alle Kohomologien
+        &bdquo;entspringen&ldquo;). &rarr; Geometrie <i>wird aus universellen Invarianten rekonstruiert</i>.</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <div class="tag">03 &middot; Aufl&ouml;sung</div>
+    <h2>Wie sich die Spannungen aufl&ouml;sen &mdash; und die fusionierte Schlussfolgerung</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0">(a) Weich vs. exakt &rarr; reicher Unterobjektklassifizierer &Omega; + Reinheit</h3>
+      <p><b>Aufl&ouml;sung:</b> B bietet selbst den Platz f&uuml;r Mehrwertigkeit: der <b>Unterobjektklassifizierer
+        &Omega;</b> eines Topos &bdquo;kann viel reicher sein&ldquo; als <span class="mono">{0,1}</span> (offene
+        Mengen als Wahrheitswerte, unendlich viele). A&rsquo;s 4-D-Feld <span class="mono">[0,1]&sup4;</span>
+        <b>ist</b> genau ein solcher reicher, nicht-2-wertiger <span class="mono">&Omega;</span> des
+        <i>semantischen Topos</i>; das Exakte ist der <i>Reinheits-Limes</i> (Gemischtes wird per Gewichtsfiltrierung
+        in reine St&uuml;cke zerlegt). A&rsquo;s kritische Schwelle <span class="mono">t&#8341;</span> (Phasen&uuml;bergang)
+        ist der Rand zwischen <i>gemischt</i> und <i>rein</i>.</p>
+      <p><b>Fusion:</b> Bedeutung ist <b>graduiert bei endlicher Aufl&ouml;sung, exakt im ideellen
+        Limes</b> &mdash; exakt wie eine gemischte Hodge-Struktur eine Filtrierung reiner St&uuml;cke ist.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(b) Konjunktur vs. Theorem &rarr; bewiesene Maschinerie + testbare Anwendung</h3>
+      <p><b>Aufl&ouml;sung:</b> die <b>Maschinerie</b> (Garben, Faserb&uuml;ndel, Motive, kommutierende
+        Diagramme, Topoi) ist Theorem-Grad (B); ihre <b>Anwendung</b> auf nat&uuml;rliche Sprache ist die
+        Konjunktur (A). Die Fusion h&auml;lt beides getrennt und ehrlich: B liefert das <i>bewiesene
+        strukturelle Vokabular</i>, A&rsquo;s Programm wird zur <b>testbaren Pr&auml;diktion</b>, dass
+        nat&uuml;rliche Sprache, auf ihren bedeutungsvollen Teil restringiert, genau diese Maschinerie
+        instanziert (messbar an Zipf/Heaps + Persistenz).</p>
+      <p><b>Fusion:</b> &bdquo;Bedeutung als Geometrie&ldquo; ist <b>kein neues Theorem, sondern ein
+        W&ouml;rterbuch</b>: wir <i>definieren</i> &bdquo;bedeutungsvoll&ldquo; mit B&rsquo;s bewiesenen Objekten
+        und <i>messen</i> (A), ob echte Sprache es einh&auml;lt.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(c) Offen vs. geschlossen &rarr; die Welt ist nur ein weiterer Topos</h3>
+      <p><b>Aufl&ouml;sung:</b> In B&rsquo;s Rahmen ist die Welt <span class="mono">W</span> nichts Fremdes &mdash;
+        sie ist schlicht <b>ein weiterer Topos</b> (z.&nbsp;B. &aacute;taler/Zariskischer Topos der
+        Weltzust&auml;nde). Das Grounding <span class="mono">S &harr; W</span> ist dann ein
+        <b>geometrischer Morphismus</b> (Adjungtenpaar) zwischen dem semantischen Topos und dem
+        Welt-Topos. A&rsquo;s offenes System wird dadurch zu einem <b>kommutierenden Diagramm von
+        Topoi</b> &mdash; ein gr&ouml;&szlig;eres, beim Hinauszoomen wieder geschlossenes System.</p>
+      <p><b>Fusion:</b> Bedeutung ist ein Diagramm <span class="mono">X &rarr; S &harr; W</span>,
+        in dem <b>jeder Knoten ein Topos</b> ist und Grounding ein Morphismus zwischen Topoi &mdash;
+        kein Bruch in der mathematischen Welt.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(d) Bottom-up vs. Top-down &rarr; Begegnung am Fixpunkt / am Motiv</h3>
+      <p><b>Aufl&ouml;sung:</b> Beide Richtungen laufen im <b>Fixpunkt der Grobk&ouml;rnung</b> zusammen:
+        A&rsquo;s Renormierungs-<b>Fixpunkte</b> <span class="mono">R(S)&asymp;S</span> (was das
+        Herauszoomen &uuml;berlebt &mdash; Agent&ndash;Aktion, Kausalit&auml;t, Teil&ndash;Ganzes) sind
+        <b>genau B&rsquo;s Motive</b>: universelle, darstellungsunabh&auml;ngige Objekte, die aus
+        <i>allen</i> ihren Realisierungen zur&uuml;ckgewonnen werden (anabelisch/Galois-invariant).</p>
+      <p><b>Fusion:</b> die Bedeutung eines Satzes ist <b>seine Invariante unter Grobk&ouml;rnung</b> &mdash;
+        eine <b>anabelische Rekonstruktion</b> der Bedeutung aus ihren stabilen Invarianten. Bottom-up
+        (Daten&rarr;Fixpunkt) und Top-down (Motiv&rarr;Realisierungen) sind dieselbe Abbildung,
+        in zwei Richtungen gelesen.</p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <div class="tag">04 &middot; Fusionierter Inhalt</div>
+    <h2>Der gemeinsame Grundstock, nach der Kernthese geordnet</h2>
+    <p>Wo beide Seiten liefern, ist die &Uuml;bersetzung angegeben. Die Sechs-Punkte-Lesart ist
+      selbst die fusionierte Architektur von <span class="mono">X &rarr; S &harr; W</span>.</p>
+
+    <h3>1. Der Raum: <span class="mono">X&#8345;</span> als Schema (A) &harr; <span class="mono">Spec</span> (B)</h3>
+    <p><b>A:</b> <span class="mono">X&#8345; = &bigcup;&#8321;&#8323;&#8345; V&#7511;</span> ist das
+      <b>M&ouml;glichkeits-Universum</b> (w&auml;chst exponentiell, bei GPT-Vokabular &gt; Atome des
+      Universums); die bedeutungsvolle Teilmenge ist winzig. <b>B:</b> <span class="mono">Spec(R)</span>
+      macht einen Ring zu einem Raum; <span class="mono">Spec(&Q;)</span> = generischer Punkt +
+      Primzahl-Punkte &mdash; der generische Punkt &bdquo;schwebt &uuml;ber allen&ldquo; und tr&auml;gt die
+      universelle Information.</p>
+    <p><b>Fusion:</b> der kombinatorische Raum ist das <b>Spec des kombinatorischen Rings</b>; die
+      bedeutungsvolle Teilmenge <span class="mono">M &sub; X&#8345;</span> ist ein strukturiertes
+      <b>Unterschema</b>. Wie in <span class="mono">Spec(&Q;)</span> ist der <b>generische Punkt</b>
+      das Universelle (die volle Bedeutung), die abgeschlossenen Punkte (Primzahlen / Tokens) ihre
+      konkreten Realisierungen mod&nbsp;p.</p>
+
+    <h3>2. Garben &amp; Fasern: lokale S&auml;tze &rarr; globale Bedeutung</h3>
+    <p><b>B (Garbe):</b> ordnet jeder offenen Menge <span class="mono">U</span> die Schnitte
+      <span class="mono">F(U)</span> zu; lokale Schnitte, die auf &Uuml;berlappungen
+      &uuml;bereinstimmen, kleben zu genau einem globalen Schnitt (<b>Verklebungsaxiom</b>):
+      <span class="mono">s&#7522;|&#8344;&#8348;&#8745;&#8348;&#8330; = s&#8330;|&#8344;&#8348;&#8745;&#8348;&#8330;
+      &rArr; &exist;! s</span>. <b>A (Faserb&uuml;ndel):</b> <span class="mono">&pi;: X &rarr; S</span>,
+      Faser <span class="mono">&pi;&#8315;&#185;(s)</span> = alle sprachlichen Realisierungen von
+      <span class="mono">s</span> (&bdquo;Der Hund jagt die Katze&rdquo; &asymp;
+      &bdquo;Die Katze wird vom Hund gejagt&rdquo; &asymp; &bdquo;A dog chases a cat&rdquo;).</p>
+    <p><b>Fusion:</b> A&rsquo;s Faserb&uuml;ndel <b>ist</b> eine Garbe &uuml;ber der semantischen Basis
+      <span class="mono">S</span>. Das Verklebungsaxiom ist die Bedingung, dass <b>lokale
+      Satzteile/Cluster zu einer globalen Bedeutung zusammenpassen</b>; die Faser
+      <span class="mono">&pi;&#8315;&#185;(s)</span> ist der Schnitte-Baum einer Bedeutung.
+      &bdquo;Semantik ist keine Etikette, sondern die &Auml;quivalenzstruktur&rdquo; (A) = die Garbe
+      definiert &Auml;quivalenzklassen (B).</p>
+
+    <h3>3. Vier Koh&auml;renz-Felder (A) als Realisierungen eines Motivs (B)</h3>
+    <p><b>A:</b> vier Felder <span class="mono">C,S,G,E &isin; [0,1]</span> + Void-Vektor
+      <span class="mono">V(x) = (1&minus;C, 1&minus;S, 1&minus;G, 1&minus;E)</span>. <b>B (Motive):</b>
+      ein Motiv <span class="mono">h(X)</span> ist der universelle Grund, aus dem
+      <b>verschiedene Kohomologien</b> (<span class="mono">H&#7502;&#7503;, H&#7502;&#233;t, H&#7502;Betti,
+      H&#7502;kris&hellip;</span>) alle &bdquo;dasselbe messen&ldquo;; Zerlegung
+      <span class="mono">h(&#8499;&#185;) = &#8499; &oplus; &#8499; &oplus; &hellip;</span>.</p>
+    <p><b>Fusion:</b> <span class="mono">C,S,G,E</span> sind vier <b>Kohomologie-Realisierungen eines
+      einzigen Bedeutungs-Motivs</span>; das Void ist der gemischte, <i>nicht</i> von keiner Realisierung
+      erfasste Anteil (das &bdquo;Abstand zur kritischen Geraden&rdquo;). Ein &bdquo;ideal&rdquo; geerdeter
+      Satz f&uuml;llt alle Realisierungen; ein semantischer Void ist ein Motiv mit leerer
+      semantischer Realisierung &mdash; die f&uuml;nf Void-Arten (A) sind f&uuml;nf Muster,
+      welche Realisierung ausf&auml;llt.</p>
+
+    <h3>4. Persistente Homologie (A) als berechenbares Motiv &amp; Grobk&ouml;rnung (B)</h3>
+    <p><b>A:</b> <b>Vietoris&ndash;Rips-Filtration</b> <span class="mono">VR(P,&epsilon;)</span> verbindet
+      Punkte bei Distanz <span class="mono">&le;&epsilon;</span>; <b>Persistente Homologie</b>
+      <span class="mono">H&#8320;, H&#8321;, H&#8322;</span> &mdash; lange Balken (persistente Features) =
+      echte, skalen&uuml;berlebbende Struktur, kurze = Rauschen. <b>B:</b> Motive sind
+      <b>skalen-/darstellungsunabh&auml;ngig</b>; <b>Yoga der Gewichte</b>: Gewichtsfiltrierung
+      <span class="mono">W&#8320;&sub;W&#8321;&sub;&hellip;</span> zerlegt Gemischtes in Reines;
+      Reinheit &bdquo;f&uuml;r glatte projektive X&ldquo;.</p>
+    <p><b>Fusion:</b> Persistente Homologie ist das <b>konkrete, endliche, berechenbare Motiv</b>;
+      die VR-Filtration ist eine <b>konkrete Gewichtsfiltrierung</span>. Was bei wachsendem
+      <span class="mono">&epsilon;</span> &uuml;berlebt (lange Balken), ist das stabile
+      <b>Bedeutungs-Motiv</b>; die Grobk&ouml;rnung <span class="mono">R</span> ist die
+      Renormierung, deren Fixpunkte die Motive sind.</p>
+
+    <h3>5. Kommutierende Diagramme (A) = Basiswechsel (B)</h3>
+    <p><b>A:</b> &bdquo;Erst umformen, dann interpretieren&rdquo; muss dasselbe ergeben wie
+      &bdquo;erst interpretieren, dann Bedeutung umformen&rdquo;:
+      <span class="mono">&pi;&prime;&circ;f = g&circ;&pi;</span> (f = Passivierung, &pi; =
+      Interpretation). <b>B:</b> <b>Basiswechsel</b> <span class="mono">g&#7502; f&#7742; &cong;
+      f&#7742;&#8315; g&#7502;&#8315;</span>, Verdier-Dualit&auml;t
+      <span class="mono">&#8483;&circ;f&#7742; &cong; f&#7502;&circ;&#8483;</span>, Adjunktionen
+      <span class="mono">(f&#7502; &shortmid; f&#7502;)</span> und
+      <span class="mono">(f&#7742; &shortmid; f&#8315;)</span>.</p>
+    <p><b>Fusion:</b> A&rsquo;s kommutierendes Quadrat <span class="mono">X &rarr; X&#8315;</span> /
+      <span class="mono">S &rarr; S&#8315;</span> <b>ist</b> B&rsquo;s Basiswechsel-Diagramm:
+      syntaktische Umformung (f) und semantische Umformung (g) stehen in <b>kanonischer
+      Kompatibilit&auml;t</b>. &bdquo;Bedeutung ist invariant unter syntaktischer Umformung&rdquo;
+      ist die sprachliche Fassung von <span class="mono">g&#7502; f&#7742; &cong; f&#7742;&#8315;
+      g&#7502;&#8315;</span>.</p>
+
+    <h3>6. Topoi, innere Logik &amp; anabelsche Rekonstruktion</h3>
+    <p><b>B (Topos):</b> ein Topos ist &bdquo;gleichzeitig Raum und Welt von Mengen&ldquo; mit eigener
+      <b>innerer Logik</b> und <b>Unterobjektklassifizierer &Omega;</b> (in Set:
+      <span class="mono">{0,1}</span>; in anderen Topoi: reicher, z.&nbsp;B. offene Mengen).
+      <b>B (anabelisch):</b> <span class="mono">X &rarr; &pi;&#8321;&#777;(&#8492;)</span> ist
+      (im Wesentlichen) volltreu; exakte Sequenz
+      <span class="mono">1 &rarr; &pi;&#8321;&#777;(&#8492;&#8345;&#772;) &rarr; &pi;&#8321;&#777;(&#8492;)
+      &rarr; Gal(&Qbar;/&Q;) &rarr; 1</span>; <b>Rekonstruktion</b> der Geometrie aus der Gruppe.
+      <b>A (Tarski):</b> <span class="mono">&#10072;s&#10073; = { w &in; W }</span> koppelt Bedeutung an
+      Weltzust&auml;nde.</p>
+    <p><b>Fusion:</b> der <b>semantische Raum S ist ein Topos</b> mit reicher innerer Logik
+      (= A&rsquo;s graduiertes Koh&auml;renz-Feld als &Omega;); <span class="mono">W</span> ist ein
+      zweiter Topos, Grounding ein geometrischer Morphismus. &bdquo;Bedeutung aus ihren Invarianten
+      rekonstruieren&rdquo; ist A&rsquo;s Programm in B&rsquo;s anabelischer Sprache: die <b>stabilen
+      persistenten Relationen</b> sind die &bdquo;Fundamentalgruppe&rdquo; der Bedeutung, und sie
+      bestimmen die Bedeutung (Rekonstruktion).</p>
+    <div class="eq">Bedeutung(s) = Fixpunkt von R = Motiv = Invariante &nbsp;&middot;&nbsp; S&auml;tze = Realisierungen/Faser &nbsp;&middot;&nbsp; X &rarr; S &harr; W = kommutierendes Diagramm von Topoi</div>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <div class="tag">05 &middot; Interaktive Visualisierung</div>
+    <h2>Bedeutung als Motiv &mdash; was der Grobk&ouml;rnung &uuml;berlebt</h2>
+    <p>Eine Punktwolke von S&auml;tzen im semantischen Raum (4 Bedeutungs-Cluster + Void-Rauschen).
+      Der Regler <span class="mono">&epsilon;</span> ist die <b>Grobk&ouml;rnung</b> (Vietoris&ndash;Rips):
+      w&auml;chst <span class="mono">&epsilon;</span>, verschmelzen Punkte zu Komponenten. Die
+      <b>persistenten H&#8320;-Komponenten</b> mit &ge;8 S&auml;tzen leuchten gold &mdash; sie sind die
+      <b>Motive</b> (skaleninvariante, stabile Bedeutungen). Die kurzen, farbig-blassen Balken rechts sind
+      deren <b>Realisierungen</b> in der Faser; graue Balken = Void-Rauschen.</p>
+
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c">
+          <label>Grobk&ouml;rnung &epsilon; <b id="eps-val">0.180</b></label>
+          <input type="range" id="eps" min="0.06" max="0.30" step="0.001" value="0.18">
+        </div>
+      </div>
+      <div class="grid2">
+        <canvas id="cloud" width="700" height="440"></canvas>
+        <canvas id="bar" width="420" height="440"></canvas>
+      </div>
+      <div class="btnrow">
+        <button id="play">&#9654; Animation</button>
+        <button id="reset">Zur&uuml;cksetzen</button>
+      </div>
+      <div class="stat">
+        <span class="big" id="ncomp">&mdash;</span>
+        <span class="lab" id="ncomp-lab">&middot; Komponenten</span>
+      </div>
+      <div class="note" id="readout">&mdash;</div>
+      <div class="legend">
+        <span><i style="background:var(--viz-c0)"></i>AGENT&ndash;AKTION</span>
+        <span><i style="background:var(--viz-c1)"></i>KAUSALIT&Auml;T</span>
+        <span><i style="background:var(--viz-c2)"></i>TEIL&ndash;GANZES</span>
+        <span><i style="background:var(--viz-c3)"></i>OBJEKT&ndash;EIGEN.</span>
+        <span><i style="background:var(--viz-motive)"></i>Motiv (stabil)</span>
+        <span><i style="background:var(--viz-noise)"></i>Void-Rauschen</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <div class="tag">06 &middot; Provenienz</div>
+    <h2>Quellen</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A</span>
+        <p><a href="../geometry_of_meaning_test.html">geometry_of_meaning_test.html</a></p>
+        <span class="d">&bdquo;Die Geometrie bedeutungsvoller Sprache&ldquo;: das kombinatorische
+          Universum <span class="mono">X&#8345;</span>, vier Koh&auml;renz-Felder &amp; Void-Vektor,
+          kosmisches Netz, hierarchische Selbst&auml;hnlichkeit, vier Void-Arten, Phasen&uuml;berg&auml;nge,
+          Metapher als Filament, persistente Homologie (Vietoris&ndash;Rips), Faserb&uuml;ndel
+          <span class="mono">&pi;: X &rarr; S</span>, kommutierende Diagramme &amp; Tarski-Welt
+          <span class="mono">X &rarr; S &harr; W</span>, Zipf/Heaps/Multifraktal, Grobk&ouml;rnung &amp;
+          Renormierung, Grand Synthesis.</span>
+      </div>
+      <div class="box">
+        <span class="k">B</span>
+        <p><a href="../grothendiek2.html">grothendiek2.html</a></p>
+        <span class="d">&bdquo;Grothendiecks Universum&ldquo;: Garben (Verklebungsaxiom), Schemata
+          (<span class="mono">Spec</span>), Topoi (Unterobjektklassifizierer &Omega;, innere Logik),
+          Motive (universelle Kohomologie, Lefschetz-Zerlegung), &aacute;tale Kohomologie
+          (Frobenius, Weil/Deligne), Dessins d&rsquo;Enfants (Belyi, Galois), Yoga der Gewichte
+          (Hodge/Filtrierung/Reinheit), Sechs Operationen (Adjunktionen, Verdier, Basiswechsel),
+          anabelsche Geometrie (Rekonstruktion aus &pi;&#8321;).</span>
+      </div>
+    </div>
+    <p class="note" style="margin-top:18px">Konzeptionelle Fusion (Round 1, Nicht-KI-Track, Pair 100).
+      Alle Aussagen sind Paraphrasen der beiden Quelltexte; die Visualisierung ist eine
+      konzeptionelle Illustration der fusionierten These, keine empirische Messung.</p>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cloudCv = document.getElementById('cloud');
+  var barCv   = document.getElementById('bar');
+  var cctx = cloudCv.getContext('2d');
+  var bctx = barCv.getContext('2d');
+  var CW = cloudCv.width, CH = cloudCv.height;
+  var BW = barCv.width,  BH = barCv.height;
+
+  var epsEl = document.getElementById('eps');
+  var epsVal = document.getElementById('eps-val');
+  var ncompEl = document.getElementById('ncomp');
+  var readoutEl = document.getElementById('readout');
+  var playBtn = document.getElementById('play');
+  var resetBtn = document.getElementById('reset');
+  var themeBtn = document.getElementById('themeToggle');
+
+  var CWARN = 0.30;      // death threshold for "motive" (intra-cluster <0.16, inter >0.70)
+  var SIZEMIN = 8;       // min size for "motive"
+  var MAXEPS = 0.30;     // barcode x-axis max (clusters stay separate here)
+
+  function col(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || fb;
+  }
+  function rng(s){
+    return function(){
+      s|=0; s = s + 0x6D2B79F5 | 0;
+      var t = Math.imul(s ^ s >>> 15, 1 | s);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  var CLUSTERS = [
+    { cx:0.15, cy:0.15, r:0.08, label:'AGENT\u2013AKTION' },
+    { cx:0.85, cy:0.15, r:0.08, label:'KAUSALIT\u00c4T' },
+    { cx:0.15, cy:0.85, r:0.08, label:'TEIL\u2013GANZES' },
+    { cx:0.85, cy:0.85, r:0.08, label:'OBJEKT\u2013EIGEN.' }
+  ];
+  var NPER = 14, VOIDN = 6, VOIRAD = 0.09;
+  var pts = [];
+  (function build(){
+    var r = rng(20240607);
+    for (var c=0; c<CLUSTERS.length; c++){
+      var C = CLUSTERS[c];
+      for (var i=0; i<NPER; i++){
+        var a = r()*Math.PI*2, rr = C.r*Math.sqrt(r());
+        pts.push({ x:C.cx + Math.cos(a)*rr, y:C.cy + Math.sin(a)*rr, cluster:c, kind:'s' });
+      }
+    }
+    // central void puff: stays isolated from all clusters within MAXEPS
+    var rv = rng(555);
+    for (var n=0; n<VOIDN; n++){
+      var va = rv()*Math.PI*2, vr = VOIRAD*Math.sqrt(rv());
+      pts.push({ x:0.5 + Math.cos(va)*vr, y:0.5 + Math.sin(va)*vr, cluster:-1, kind:'noise' });
+    }
+  })();
+  var N = pts.length;
+
+  // all pairwise edges, sorted by distance
+  var edges = [];
+  for (var i=0; i<N; i++){
+    for (var j=i+1; j<N; j++){
+      var d = Math.hypot(pts[i].x-pts[j].x, pts[i].y-pts[j].y);
+      edges.push({ d:d, i:i, j:j });
+    }
+  }
+  edges.sort(function(a,b){ return a.d-b.d; });
+
+  // Persistent H0 barcode via union-find (union by size); record death + sizeAtDeath
+  var parent = [], csize = [], death = [], sizeAtDeath = [], k;
+  for (k=0; k<N; k++){ parent[k]=k; csize[k]=1; death[k]=Infinity; sizeAtDeath[k]=1; }
+  function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+  function uni(a,b){
+    a=find(a); b=find(b); if(a===b) return;
+    if(csize[a]<csize[b]){ var t=a; a=b; b=t; }
+    parent[b]=a; csize[a]+=csize[b];
+  }
+  (function compute(){
+    for (var k=0; k<N; k++){ parent[k]=k; csize[k]=1; death[k]=Infinity; sizeAtDeath[k]=1; }
+    for (var e=0; e<edges.length; e++){
+      var ed = edges[e];
+      var ri = find(ed.i), rj = find(ed.j);
+      if (ri!==rj){
+        var dead, alive;
+        if (csize[ri] < csize[rj]){ dead=ri; alive=rj; } else { dead=rj; alive=ri; }
+        death[dead] = ed.d;
+        sizeAtDeath[dead] = csize[dead];
+        parent[dead] = alive;
+        csize[alive] += csize[dead];
+      }
+    }
+  })();
+
+  var bars = [];
+  for (k=0; k<N; k++){ bars.push({ d:death[k], size:sizeAtDeath[k], pt:k }); }
+  bars.sort(function(a,b){ return b.d - a.d; }); // long-lived (motives) on top
+
+  function componentsAt(ep){
+    var par = [], sz = [], kk;
+    for (kk=0; kk<N; kk++){ par[kk]=kk; sz[kk]=1; }
+    function f(x){ while(par[x]!==x){ par[x]=par[par[x]]; x=par[x]; } return x; }
+    function u(a,b){ a=f(a); b=f(b); if(a===b) return; if(sz[a]<sz[b]){ var t=a; a=b; b=t; } par[b]=a; sz[a]+=sz[b]; }
+    for (var e=0; e<edges.length; e++){ if (edges[e].d > ep) break; u(edges[e].i, edges[e].j); }
+    var map = {};
+    for (kk=0; kk<N; kk++){
+      var r = f(kk);
+      if (!map[r]) map[r] = { size:0, sx:0, sy:0, clusters:[], has:true };
+      var c = map[r]; c.size++; c.sx+=pts[kk].x; c.sy+=pts[kk].y;
+      if (pts[kk].cluster>=0 && c.clusters.indexOf(pts[kk].cluster)<0) c.clusters.push(pts[kk].cluster);
+    }
+    var out = [];
+    for (var key in map){
+      var cc = map[key];
+      out.push({ size:cc.size, cx:cc.sx/cc.size, cy:cc.sy/cc.size, clusters:cc.clusters });
+    }
+    return out;
+  }
+
+  function isMotive(size, d){ return size >= SIZEMIN && d > CWARN; }
+
+  var eps = 0.18;
+
+  function renderCloud(ep, comps){
+    var bg = col('--card','#ffffff');
+    var ink = col('--ink','#222');
+    var dim = col('--dim','#888');
+    var grid = col('--grid','#e5e5e5');
+    var edgeC = col('--viz-edge','#8a93a3');
+    var mot = col('--viz-motive','#b8860b');
+    cctx.clearRect(0,0,CW,CH);
+    cctx.fillStyle = bg; cctx.fillRect(0,0,CW,CH);
+    var padL=34, padR=22, padT=28, padB=30;
+    var plotL=padL, plotR=CW-padR, plotT=padT, plotB=CH-padB;
+    function X(x){ return plotL + x*(plotR-plotL); }
+    function Y(y){ return plotT + y*(plotB-plotT); }
+    // grid
+    cctx.strokeStyle = grid; cctx.lineWidth = 1;
+    var g;
+    for (g=0; g<=4; g++){
+      var gx = plotL + g/4*(plotR-plotL);
+      cctx.beginPath(); cctx.moveTo(gx,plotT); cctx.lineTo(gx,plotB); cctx.stroke();
+      var gy = plotT + g/4*(plotB-plotT);
+      cctx.beginPath(); cctx.moveTo(plotL,gy); cctx.lineTo(plotR,gy); cctx.stroke();
+    }
+    // VR edges at current eps
+    cctx.lineWidth = 1;
+    for (var e=0; e<edges.length; e++){
+      var ed = edges[e];
+      if (ed.d > ep) break;
+      var A = pts[ed.i], B = pts[ed.j];
+      var same = (A.cluster>=0 && A.cluster===B.cluster);
+      cctx.strokeStyle = same ? (col('--viz-c'+A.cluster,'#888')) : edgeC;
+      cctx.globalAlpha = same ? 0.45 : 0.25;
+      cctx.beginPath(); cctx.moveTo(X(A.x),Y(A.y)); cctx.lineTo(X(B.x),Y(B.y)); cctx.stroke();
+    }
+    cctx.globalAlpha = 1;
+    // motive glows
+    for (var m=0; m<comps.length; m++){
+      var comp = comps[m];
+      if (comp.size >= SIZEMIN){
+        var gx2 = X(comp.cx), gy2 = Y(comp.cy);
+        var grad = cctx.createRadialGradient(gx2,gy2,0,gx2,gy2,46);
+        grad.addColorStop(0, mot); grad.addColorStop(1, 'rgba(0,0,0,0)');
+        cctx.globalAlpha = 0.28; cctx.fillStyle = grad;
+        cctx.beginPath(); cctx.arc(gx2,gy2,46,0,Math.PI*2); cctx.fill();
+        cctx.globalAlpha = 1;
+        cctx.strokeStyle = mot; cctx.lineWidth = 2;
+        cctx.beginPath(); cctx.arc(gx2,gy2,26,0,Math.PI*2); cctx.stroke();
+        cctx.fillStyle = ink; cctx.font = 'bold 12px ui-monospace,monospace';
+        cctx.textAlign='center';
+        var lab = (comp.clusters.length>0 ? CLUSTERS[comp.clusters[0]].label : '');
+        cctx.fillText(lab, gx2, gy2-34);
+      }
+    }
+    // points
+    for (var p=0; p<N; p++){
+      var P = pts[p];
+      var ccol = P.cluster>=0 ? col('--viz-c'+P.cluster,'#888') : col('--viz-noise','#aaa');
+      cctx.fillStyle = ccol;
+      cctx.beginPath(); cctx.arc(X(P.x),Y(P.y), 3.4, 0, Math.PI*2); cctx.fill();
+    }
+    // title + axis
+    cctx.fillStyle = dim; cctx.font = '11px ui-sans-serif,system-ui'; cctx.textAlign='left';
+    cctx.fillText('semantischer Raum X  (Punkte = S\u00e4tze, &epsilon; = Grobk\u00f6rnung)', plotL, 16);
+    cctx.fillText('Skala &epsilon; (R\u2192) \u2192', plotL, CH-8);
+  }
+
+  function renderBar(ep){
+    var bg = col('--card','#ffffff');
+    var ink = col('--ink','#222');
+    var dim = col('--dim','#888');
+    var grid = col('--grid','#e5e5e5');
+    var mot = col('--viz-motive','#b8860b');
+    var aliveC = col('--viz-alive','#d1495b');
+    bctx.clearRect(0,0,BW,BH);
+    bctx.fillStyle = bg; bctx.fillRect(0,0,BW,BH);
+    var padL=16, padR=18, padT=24, padB=36;
+    var plotL=padL, plotR=BW-padR, plotT=padT, plotB=BH-padB;
+    function xOf(e){ return plotL + (e/MAXEPS)*(plotR-plotL); }
+    // gridlines
+    bctx.strokeStyle = grid; bctx.lineWidth=1;
+    for (var g=0; g<=3; g++){
+      var gx = xOf(g/3*MAXEPS);
+      bctx.beginPath(); bctx.moveTo(gx,plotT); bctx.lineTo(gx,plotB); bctx.stroke();
+    }
+    var n = bars.length;
+    var rowH = (plotB-plotT)/n;
+    for (var i=0; i<n; i++){
+      var b = bars[i];
+      var y = plotT + i*rowH;
+      var h = Math.max(1, rowH-1);
+      var alive = b.d > MAXEPS;
+      var x0 = xOf(0);
+      var x1 = alive ? plotR : xOf(b.d);
+      var m = isMotive(b.size, b.d);
+      var ccol, alpha;
+      if (m){ ccol = mot; alpha = 0.95; }
+      else {
+        var ci = pts[b.pt].cluster;
+        ccol = ci>=0 ? col('--viz-c'+ci,'#888') : col('--viz-noise','#aaa');
+        alpha = ci>=0 ? 0.5 : 0.32;
+      }
+      bctx.globalAlpha = alpha; bctx.fillStyle = ccol;
+      bctx.fillRect(x0, y, Math.max(1, x1-x0), h);
+      bctx.globalAlpha = 1;
+      if (alive && m){ bctx.fillStyle = aliveC; bctx.fillRect(plotR-3, y, 3, h); }
+    }
+    // current eps line
+    var cx = xOf(ep);
+    bctx.strokeStyle = ink; bctx.lineWidth = 1.6;
+    bctx.beginPath(); bctx.moveTo(cx,plotT); bctx.lineTo(cx,plotB); bctx.stroke();
+    bctx.fillStyle = ink; bctx.font='11px ui-monospace,monospace'; bctx.textAlign='center';
+    bctx.fillText('\u03b5', cx, plotT-6);
+    // axis labels
+    bctx.fillStyle = dim; bctx.font='11px ui-sans-serif,system-ui'; bctx.textAlign='left';
+    bctx.fillText('H\u2080 \u2014 persistente Komponenten (Grobk\u00f6rnung \u03b5 \u2192)', plotL, 15);
+    bctx.textAlign='right';
+    bctx.fillText('Skala \u03b5', plotR, BH-8);
+  }
+
+  function render(){
+    var comps = componentsAt(eps);
+    var mot = comps.filter(function(c){ return c.size >= SIZEMIN; });
+    renderCloud(eps, comps);
+    renderBar(eps);
+    if (epsVal) epsVal.textContent = eps.toFixed(3);
+    if (ncompEl) ncompEl.textContent = String(comps.length);
+    if (readoutEl){
+      readoutEl.textContent =
+        '\u03b5=' + eps.toFixed(3) + '  \u2192  ' + comps.length + ' Komponenten, ' + mot.length +
+        ' stabil (Motive, \u2265' + SIZEMIN + ' S\u00e4tze). Die Motive sind die skaleninvarianten ' +
+        'Bedeutungen; alle kurzen, farbigen Balken sind deren Realisierungen in der Faser \u03c0\u207b\u00b9(s); ' +
+        'graue Balken = Void-Rauschen (verdorrt bei jeder Grobk\u00f6rnung).';
+    }
+  }
+
+  var playing = false, dir = 1, raf = null;
+  function tick(){
+    if (!playing) return;
+    eps += 0.0035*dir;
+    if (eps >= MAXEPS){ eps = MAXEPS; dir = -1; }
+    if (eps <= 0.02){ eps = 0.02; dir = 1; }
+    if (epsEl) epsEl.value = String(eps);
+    render();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function init(){
+    if (epsEl){
+      epsEl.addEventListener('input', function(){
+        playing = false; if (raf) cancelAnimationFrame(raf);
+        if (playBtn) playBtn.innerHTML = '\u25b6 Animation';
+        eps = parseFloat(epsEl.value);
+        render();
+      });
+    }
+    if (playBtn){
+      playBtn.addEventListener('click', function(){
+        playing = !playing;
+        if (playing){ playBtn.innerHTML = '\u23f9 Pause'; raf = requestAnimationFrame(tick); }
+        else { if (raf) cancelAnimationFrame(raf); playBtn.innerHTML = '\u25b6 Animation'; }
+      });
+    }
+    if (resetBtn){
+      resetBtn.addEventListener('click', function(){
+        playing = false; if (raf) cancelAnimationFrame(raf);
+        if (playBtn) playBtn.innerHTML = '\u25b6 Animation';
+        eps = 0.18; if (epsEl) epsEl.value = '0.18';
+        render();
+      });
+    }
+    if (themeBtn){
+      themeBtn.addEventListener('click', function(){
+        document.documentElement.classList.toggle('dark');
+        render();
+      });
+    }
+    if (window.MutationObserver){
+      new MutationObserver(function(){ render(); }).observe(document.documentElement,
+        { attributes:true, attributeFilter:['class'] });
+    }
+    render();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

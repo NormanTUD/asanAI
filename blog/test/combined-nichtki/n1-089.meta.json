@@ -1,0 +1,17 @@
+{
+  "no": "089",
+  "a": "kokettenkomplex.html",
+  "b": "was_heisst_denken.html",
+  "a_title": "Chain Complexes — From Zero to Homology (Interactive Visual Guide)",
+  "b_title": "Heidegger: Was heißt Denken? — Interactive Explorer",
+  "combined_theme": "zykel-ohne-rand",
+  "one_line": "Grenze (∂) und Geheiß sind derselbe Gestus: Homologie misst, was kein Rand ist — der mathematische Schatten des ontologischen Abstands zwischen Sein und Seiendem (der Zykel, der kein Rand ist, ist das Sein, das kein Seiendes ist).",
+  "contradictions": [
+    "Höchster Geist-Produkt: A setzt das berechenbare formale Invariante (Euler-Charakteristik, Homologiegruppen) an die Spitze des Verstehens; B hält das Formale für das Gegenteil des Denkens („Die Wissenschaft denkt nicht“).",
+    "Brücke vs. Sprung: A lebt von chain maps und commuting squares (Brücken, die auf Hₙ Abbildungen induzieren); B nennt die entscheidenden Übergänge „unbridgeable … no bridge, only a leap“.",
+    "Status des Leeren/Null: A behandelt den exakten Fall H₁=0 („no holes“) als trivial/nichts zu sagen; B macht aus dem Zurückgezogenen („noch nicht“) die positivste Quelle, die Denken überhaupt ruft.",
+    "Agentur: A baut der Denker aktiv das Komplex von unten („no prerequisites“); B ist Denken Antwort auf das Geheiß — „we are like migratory birds pulled toward what recedes“ (Empfang, nicht Initiative)."
+  ],
+  "resolution": "Beide stimmen über die zentrale Rolle des Leeren überein, stehen aber auf entgegengesetzten Seiten; die Auflösung trennt Ebenen. Innerhalb einer Domäne (gleiches Grenz-Gesetz ∂∘∂=0) existieren Brücken; wo sich das Gesetz selbst ändert (formal → Essenz), bleibt nur der Sprung. Der exakte Fall (H=0) ist nicht Abwesenheit, sondern das generierende Gesetz (maximale Kontrolle); das Nicht-Randische (H≅ℤ, das Loch) entspricht dem Sein, das kein Seiendes ist — der ontologische Abstand, der alles möglich macht. Konstruktion ist immer Antwort auf ein zurückgezogenes Gesetz (∂∘∂=0 ↔ das Geheiß).",
+  "viz": "Interaktives Canvas-2D: ein Dreieck-Komplex, bei dem man die Fläche (2-Simplex) an/aus schaltet und die Stufen ∂ → ∂∘∂=0 → Homologie H₁ durchsteigt. Mit Fläche ist der Zykel c ein Rand → H₁=0 (alles „Seiendes“); ohne Fläche ist c kein Rand → H₁≅ℤ, das „Loch“ erscheint. Visualisiert: das Nicht-Randische (Sein) entsteht genau dort, wo der Rand verschwindet. Theme-aware via CSS-Variablen, Daten inline."
+}

@@ -1,0 +1,15 @@
+{
+  "no": "105",
+  "a": "homological_scaffolding_psilocybin.html",
+  "b": "secure_hpc_workflow.html",
+  "a_title": "Homologische Gerüste funktioneller Gehirnnetzwerke (Petri et al. 2014)",
+  "b_title": "Secure Workflow für Shared HPC (IEEE/ACM CCGrid 2022)",
+  "combined_theme": "verifizierbare-privatsphaere",
+  "one_line": "Struktur transparent, Inhalt opak: persistente Homologie macht die Topologie über alle Skalen invariant messbar (A), Verschlüsselung + Knoten-Isolation halten den Inhalt privat bei verifizierbarer Struktur (B) — zusammen verifizierbare Privatsphäre.",
+  "contradictions": [
+    "Kontinuität vs. harte Grenze: A verwirft harte Schwellenwerte (sie zerstören die 'Löcher', die das Signal tragen) und scannt alle Gewichtsskalen schwellenwertfrei; B erzeugt Sicherheit gerade durch eine harte binäre Firewall-Grenze, die die Kanten des isolierten Knotens auf null kuppelt.",
+    "Transparenz vs. Opazität: A ist eine Transparenz-Methode (verborgene Struktur sichtbar machen, die Metriken verbergen) und macht Offenlegen zur Tugend; B ist eine Opazitäts-Methode (Inhalt verschlüsselt verbergen, der Admin sieht nur Chiffretext) und macht Verbergen zur Tugend."
+  ],
+  "resolution": "Form von Substanz trennen: die zu analysierende Struktur wird kontinuierlich / über alle Skalen transparent gemessen (A), die Zugriffs- und Vertrauungsgrenze wird als harte, diskrete Mauer binär errichtet (B); die Struktur (Topologie, Signatur, Workflow) wird auditierbar offengelegt, der Inhalt (Daten) opak verschlüsselt — verifizierbare Privatsphäre (verifiable/oblivious computation).",
+  "viz": "Canvas: gewichtetes 12-Knoten-Netzwerk mit Filtrations-Slider (eps) und Live-Persistenzdiagramm (H1-Locher, Persistenz) plus Umschalter Struktur-transparent / Inhalt-opak (inkl. Firewall + SP-Server); themenreaktiv (light/dark), alle Daten inline, keine externen Abhängigkeiten."
+}

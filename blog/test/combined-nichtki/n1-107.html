@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HoTT-Fusion: Formalbeweis-System ✕ Konstruktionsmotor (n1-107)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+:root{
+  --bg:#f4f1e7; --panel:#fbfaf5; --ink:#1c1b2b; --muted:#5b5a72; --line:#ddd6c6;
+  --accent:#6c63ff; --accent2:#0a86a6; --accent3:#cf3d67; --accent4:#0f8a63; --dot:#e07d1e;
+  --card-border:#e6e0d0; --code-bg:rgba(28,27,43,0.06); --on-accent:#ffffff;
+}
+html.dark{
+  --bg:#0a0a14; --panel:#10101e; --ink:#e6e6f2; --muted:#9a9ab8; --line:#2a2a44;
+  --accent:#7b68ee; --accent2:#29c3e0; --accent3:#ff6ec7; --accent4:#35d9a6; --dot:#ffd166;
+  --card-border:#23233c; --code-bg:rgba(230,230,242,0.07); --on-accent:#ffffff;
+}
+body{ background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,'Segoe UI',sans-serif; line-height:1.72; -webkit-font-smoothing:antialiased; }
+.wrap{ max-width:820px; margin:0 auto; padding:34px 20px 90px; }
+.theme-toggle{ position:fixed; top:14px; right:14px; z-index:50; background:var(--panel); color:var(--ink); border:1px solid var(--card-border); border-radius:20px; padding:8px 15px; cursor:pointer; font-size:0.85rem; }
+.theme-toggle:hover{ border-color:var(--accent); }
+h1{ font-size:2rem; line-height:1.25; letter-spacing:-0.01em; }
+.subtitle{ color:var(--muted); font-style:italic; margin-top:8px; font-size:0.98rem; }
+section{ background:var(--panel); border:1px solid var(--card-border); border-radius:14px; padding:22px 26px; margin-top:22px; }
+section > h2{ font-size:1.4rem; border-left:4px solid var(--accent); padding-left:11px; margin-bottom:16px; }
+h3{ font-size:1.06rem; margin:18px 0 6px; color:var(--accent2); }
+p{ margin:10px 0; }
+ul,ol{ margin:10px 0 10px 22px; }
+li{ margin:5px 0; }
+code{ font-family:'Courier New',ui-monospace,monospace; background:var(--code-bg); padding:1px 6px; border-radius:5px; font-size:0.9em; }
+.eq{ display:block; background:var(--code-bg); border-left:3px solid var(--accent2); padding:11px 15px; border-radius:8px; font-family:'Courier New',ui-monospace,monospace; margin:13px 0; white-space:pre-wrap; overflow-x:auto; font-size:0.92em; line-height:1.55; }
+.tag{ display:inline-block; font-size:0.72rem; font-weight:600; padding:2px 9px; border-radius:10px; border:1px solid var(--card-border); color:var(--muted); }
+.tag.A{ color:var(--accent); border-color:var(--accent); }
+.tag.B{ color:var(--accent3); border-color:var(--accent3); }
+.viz-wrap{ position:relative; margin:14px 0 6px; }
+#viz{ width:100%; height:auto; display:block; border-radius:10px; border:1px solid var(--card-border); background:var(--panel); }
+.controls{ display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin:14px 0 4px; }
+.controls label{ font-size:0.92rem; color:var(--muted); display:flex; align-items:center; gap:8px; }
+input[type=range]{ accent-color:var(--accent); width:130px; }
+button.ctl{ background:var(--accent); color:var(--on-accent); border:none; border-radius:8px; padding:8px 16px; cursor:pointer; font-size:0.9rem; font-weight:600; }
+button.ctl:hover{ filter:brightness(1.08); }
+button.ctl.secondary{ background:transparent; color:var(--ink); border:1px solid var(--card-border); }
+.readout{ font-family:'Courier New',ui-monospace,monospace; background:var(--code-bg); border-radius:8px; padding:11px 15px; margin:12px 0 4px; }
+.legend{ display:flex; flex-wrap:wrap; gap:16px; margin-top:12px; font-size:0.85rem; color:var(--muted); }
+.legend .sw{ display:inline-block; width:14px; height:14px; border-radius:3px; margin-right:6px; vertical-align:-2px; }
+.prov li{ margin:12px 0; }
+a{ color:var(--accent2); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+.hint{ font-size:0.88rem; color:var(--muted); font-style:italic; margin-top:6px; }
+@media (max-width:560px){ h1{font-size:1.6rem;} section{padding:18px 18px;} }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">☾ Dunkel / ☀ Hell</button>
+<div class="wrap">
+  <header>
+    <h1>HoTT: das Formalbeweis-System und der Konstruktionsmotor</h1>
+    <div class="subtitle">Fusion aus: hott5.html ✕ hott_practical.html</div>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere gründen auf <strong>derselben Interpretation</strong>: <em>Typen sind Räume, Terme sind Punkte, ein Gleichheitsbeweis p&nbsp;:&nbsp;a&nbsp;=&nbsp;b ist ein Pfad</em>, und ein Beweis, dass zwei Pfade gleich sind (eine <em>Homotopie</em>), ist ein Pfad zwischen Pfaden. So entsteht auf jeder Stufe ein ∞-Gruppoid. Davon ausgehen, ist die Fusion nicht „zwei Texte über dasselbe“, sondern <strong>ein Objekt in drei Lesarten</strong>: Raum (Topologie/Geometrie), Beweis-Sprache (Logik/Informatik) und Bausatz (Analysis).</p>
+    <p>Die beiden Quellen lesen diesen einen Apparat aber unterschiedlich. <span class="tag A">A · hott5</span> liest ihn als <strong>Formal- und Beweissystem</strong> zu beherrschen: Typen &amp; Terme, Pfade &amp; Gleichheit, Homotopien, Trunkierungs-Level (h-Level), das Univalenz-Axiom, höhere induktive Typen, ein <em>schrittweise</em> nachvollziehbarer Beweis von π₁(S¹)&nbsp;≅&nbsp;ℤ, dazu Term-Spielplatz und Quiz. <span class="tag B">B · hott_practical</span> liest denselben Apparat als <strong>Konstruktions-Engine</strong>: man baut daraus den Zahlenturm 0,1,2&nbsp;→&nbsp;<b>N</b>&nbsp;→&nbsp;<b>ℤ</b>&nbsp;→&nbsp;<b>ℚ</b>&nbsp;→&nbsp;<b>ℝ</b>, definiert Arithmetik durch Rekursion/Induktion, und jede Operation muss die Äquivalenzrelation ihres Quotienten bzw. seiner Vervollständigung respektieren.</p>
+    <p>Die fusionierte Position: <strong>Mathematik ist ein kohärentes Objekt, das zugleich Raum, Beweis-Sprache und Bausatz ist — und das Univalenz-Axiom ist der Klebstoff, der „gleich bis auf Äquivalenz“ zu buchstäblicher Gleichheit macht.</strong> Emblematisch ist der Kreis: Dass π₁(S¹)&nbsp;≅&nbsp;ℤ in A ein <em>Beweis</em> und in B eine <em>Konstruktion</em> (Zahlen als Windungszahlen, ℤ&nbsp;≃&nbsp;Ω(S¹)) ist, ist <em>dasselbe</em> Ergebnis — und in konstruktiver Mathematik sind Beweis, Algorithmus und geometrisches Objekt einerlei.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Im Kern <strong>widersprechen sich die beiden Papiere nicht</strong>: Typen&nbsp;=&nbsp;Räume, Terme&nbsp;=&nbsp;Punkte, Gleichheit&nbsp;=&nbsp;Pfade, Homotopien&nbsp;=&nbsp;2-Pfade, Univalenz und der Kreissatz π₁(S¹)&nbsp;≅&nbsp;ℤ — all das stimmen sie. Die realen Spannungen sind komplementäre Emphases; hier die konkretesten, wörtlich benannt:</p>
+    <h3>1. Zweck &amp; Fokus</h3>
+    <p><span class="tag A">A</span> zielt darauf, den <strong>Formalismus</strong> zu beherrschen („Lerne den Formalismus von HoTT und berechne echte mathematische Ergebnisse“); der Sektionsrücken ist Typen &amp; Terme → Pfade → Homotopien → h-Level → Univalenz → Spielplatz → Quiz. <span class="tag B">B</span> zielt darauf, <strong>die Mathematik zu bauen</strong> („…constructs numbers from fundamental types, defines arithmetic operations…“); der Rücken ist Foundations → Naturals → Integers → Rationals → Reals → Arithmetic → Geometry → Live-Calculator. A fragt „was ist ein <em>korrekter</em> Beweis?“, B fragt „wie <em>baue ich Analysis</em> aus nichts?“. Gleiche Maschine, unterschiedliche Fragestellung.</p>
+    <h3>2. Der Kreissatz — dasselbe Ergebnis, entgegengesetzte Haltung</h3>
+    <p><span class="tag A">A</span> macht aus π₁(S¹)&nbsp;≅&nbsp;ℤ den <strong>Beweis-Höhepunkt</strong>: eine universelle Überdeckung <code>cover</code> mit <code>cover(base) ≡ ℤ</code> und <code>ap(cover, loop) = ua(succ-equiv)</code>, dann <code>encode(p) = transport(cover, p, 0)</code> und <code>decode(n) = loopⁿ</code>, und es werden <code>encode∘decode = id</code> sowie <code>decode∘encode = id</code> gezeigt. <span class="tag B</span> macht aus demselben Satz (ℤ&nbsp;≃&nbsp;Ω(S¹)) die <strong>Motivation/Grundlage</strong>, das „most beautiful result“: jede ganze Zahl n <em>ist</em> die n-fache Windung um den Kreis — das gibt ℤ eine <em>geometrische</em> Bedeutung. Achievement vs. Fundament.</p>
+    <h3>3. Der konstruktive Preis (Beweise sind Daten)</h3>
+    <p><span class="tag B">B</span> macht daraus eine <strong>operationelle Pflicht</strong>: Division ist nur mit einem expliziten Zeugen für <code>b ≠ 0</code> definiert — ein Term vom Typ <code>(b = 0) → Empty</code>; bei den Realen unterscheidet es sogar „apart from 0 (constructive non-zero)“ von bloßer Ungleichheit; bei ℚ/ℤ muss man <em>beweisen</em>, dass add/mul/div die Äquivalenzrelation respektieren. <span class="tag A</span> hält den konstruktiven Punkt dagegen auf <strong>Metasprachebene</strong> („Jeder Beweis ist gleichzeitig ein Algorithmus“), verlangt aber nie diesen operationellen Aufwand — A hat keine Division und keine Wohldefiniertheits-Beweise.</p>
+    <h3>4. Dimension der Gleichheit (scheinbarer Widerspruch)</h3>
+    <p><span class="tag B">B</span> führt mit dem emphatischen Satz ein: „equality is <strong>not</strong> a proposition but a type that can have <strong>multiple</strong> inhabitants.“ <span class="tag A</span> sagt auf seiner h-Level-0-Karte für <strong>Mengen</strong>: „Gleichheit zwischen Termen ist eine Proposition (höchstens ein Pfad).“ Nebeneinander wirkt das widersprüchlich — in Wahrheit halten beide die volle HoTT-Ansicht. A’s konkrete Zahl-Beispiele (<code>Nat</code>, <code>Bool</code>) sind <em>Mengen</em>, deren Pfadraum einkollabiert. Die Spannung ist eine der <em>Default-Emphase</em>: B spielt die höhere Dimensionalität, A’s Beispiele leben still in der mengen-trunkierten Welt.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>(1) Grammatik vs. Programm.</strong> A ist die Beweis-Theorie, B das Programmieren in ihr. Man braucht beide: A’s h-Level <em>klassifizieren</em> genau die Typen, die B baut (<code>Nat</code>/<code>Bool</code> = h-Level 0, <code>Ω(S¹)</code> = h-Level 1, <code>S²</code> = h-Level 2), und B’s Turm liefert A konkrete Typen auf jeder Stufe. <em>Fusion:</em> Ein Formalismus ohne Konstruktion bleibt abstrakt, eine Konstruktion ohne Formalismus nicht verifizierbar.</p>
+    <p><strong>(2) Beweis = Konstruktion.</strong> Der Kreissatz ist <em>beides zugleich</em>: als Beweis (A) zeigt er, dass der Apparat Zähne hat; als Konstruktion (B) zeigt er, dass er echte Struktur erzeugt. Entscheidend: <code>encode</code>/<code>decode</code> sind <em>selbst</em> die geometrischen Windungsabbildungen — der formale Beweis trägt die Konstruktion als Inhalt. <em>Fusion:</em> „Beweis = Algorithmus = geometrisches Objekt.“</p>
+    <p><strong>(3) Der Zeugen-Druck ist ein Feature, kein Bug.</strong> B’s „Operationen brauchen Zeugen“ ist exakt A’s „jeder Beweis ist ein Algorithmus“, <em>angewandt</em>: der Wohldefiniertheits-Beweis <em>ist</em> der Algorithmus, der Nicht-Null prüft. Und Univalenz + Transport (aus A) machen B’s „Arithmetic Transfer“ möglich — Operationen werden einmal definiert und entlang <code>ua(e)</code> in jede äquivalente Darstellung verschoben: <code>add_2 = transport(ua(e), add_1)</code>.</p>
+    <p><strong>(4) Trunkierung erklärt das Phänomen.</strong> A’s h-Level-Hierarchie ist die <em>Erklärung</em> für B’s „mehrere Pfade“: auf h-Level 0 (Mengen wie <code>Nat</code>/<code>Bool</code>) ist Gleichheit eine Proposition, auf höheren Leveln (<code>Ω(S¹)</code>, der Pfadraum des Kreises) nicht. <em>Fusion:</em> A’s Klassifikator erklärt B’s höhere Pfadstruktur — Teil- und Ganzes statt Widerspruch.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>1. Die einheitliche Interpretation</h3>
+    <p>Die gemeinsame Grundtabelle — ein ∞-Gruppoid, in dem auf jeder Stufe Pfade vorkommen:</p>
+    <span class="eq">Typ A                → Raum
+Term a : A           → Punkt
+p : Id_A(a, b)       → Pfad a → b        (Gleichheitsbeweis)
+α : p =_{a=b} q      → Homotopie          (Pfad zwischen Pfaden)
+∞-Gruppoid:         → Pfade, 2-Pfade, 3-Pfade, … auf jeder Stufe</span>
+    <p><strong>Pfad-Algebra</strong> <span class="tag A">A</span><span class="tag B">B</span>: <code>refl</code> (reflexiv), <code>p⁻¹ = inv(p)</code> (symmetrisch), <code>p · q = trans(p,q)</code> (transitiv). Die Gruppoide-Gesetze — Einheiten, Inverse, Assoziativität — gelten <em>nur bis auf Homotopie</em>, nicht streng: <code>refl · p = p</code>, <code>p⁻¹ · p = refl</code>, <code>(p·q)·r = p·(q·r)</code> jeweils up-to-path. B betont, dass z.&nbsp;B. Kommutativität <code>a+b = b+a</code> <em>ein Pfad ist</em> — ein manipulierbares Beweis-Objekt, das durch Induktion konstruiert wird.</p>
+
+    <h3>2. Der Grundtyp-Turm, gestuft nach h-Level</h3>
+    <p>Der Turm <span class="tag B">B</span>, mit A’s Trunkierungs-Klassifikation <span class="tag A">A</span> verknüpft:</p>
+    <ul>
+      <li><code>0</code> (Empty) — kein Punkt — h-Level −2 (kontrahierbar); <code>1</code> (Unit, <code>tt</code>) — h-Level −2.</li>
+      <li><code>2</code> (Bool, <code>true</code>/<code>false</code>) — h-Level 0 (Menge): Gleichheit ist Proposition.</li>
+      <li><code>N</code> — Erzeuger <code>0</code>, <code>S : N → N</code> + Rekursionsprinzip; <code>add m 0 = m</code>, <code>add m (S n) = S(add m n)</code>; h-Level 0.</li>
+      <li><code>ℤ</code> — drei äquivalente Konstruktionsarten: Coproduct <code>N + 1 + N</code>, Quotient <code>(N×N)/~</code> mit <code>(a,b)~(c,d) ⟺ a+d = b+c</code>, und als <strong>Loop Space <code>ℤ ≃ Ω(S¹)</code></strong>. ℤ als Menge h-Level 0; <code>Ω(S¹)</code> selbst h-Level 1.</li>
+      <li><code>ℚ</code> — Set-Quotient <code>(ℤ × ℤ⁺)/~</code> mit <code>(a,b)~(c,d) ⟺ a·d = c·b</code>; Wohldefiniertheit der Operationen muss bewiesen werden.</li>
+      <li><code>ℝ</code> — Cauchy-Reale (Cauchy-Folgen), Dedekind-Reale (Schnitte), oder HIT-Vervollständigung; der „Tower of Construction“.</li>
+    </ul>
+
+    <h3>3. Abhängige Typen &amp; Transport</h3>
+    <p>Abhängige Produkt-/Summentypen <code>Π(x:A). B(x)</code> / <code>Σ(x:A). B(x)</code> sind Faserungen — über jedem Basispunkt x liegt ein Raum B(x). <strong>Transport</strong> (beide): <span class="eq">transport : (p : a =_A b) → B(a) → B(b)</span> „schiebt“ ein Element <code>x : B(a)</code> entlang des Basis-Pfades <code>p</code> in die Faser über b. A zeigt es an der Faserung; B nutzt es für die Überdeckung des Kreises und für den „Arithmetic Transfer“.</p>
+
+    <h3>4. Pfadinduktion (J-Eliminator)</h3>
+    <p>Derselbe Mechanismus in beiden Papiern — A nutzt ihn, um <code>plus-zero-right : Π(n:N). n + 0 = n</code> durch Pfad-Induktion zu beweisen (Basisfall <code>refl</code>, Induktionsschritt <code>ap(succ, IH)</code>); B schreibt ihn als <code>J</code>-Eliminator nieder: <span class="eq">J : (A : Type) → (C : (x y : A) → x = y → Type)
+    → ((x : A) → C x x refl) → (x y : A) → (p : x = y) → C x y p</span> Er ist der Grund, aus dem <em>alle</em> arithmetischen Gleichheits-Beweise (Right-Zero, Kommutativität, Assoziativität) erwachsen.</p>
+
+    <h3>5. Univalenz — der Klebstoff</h3>
+    <p><span class="tag A">A</span> definiert das Axiom und seine Konsequenzen; <span class="tag B">B</span> wendet es auf Arithmetik an.</p>
+    <span class="eq">ua : (A ≃ B) → (A =_U B)      isEquiv(ua)
+⟹ (A ≃ B) ≃ (A =_U B)</span>
+    <p><strong>Konsequenzen (A):</strong> isomorphe Gruppen sind gleich, äquivalente Kategorien sind gleich, homöomorphe Räume sind gleich — das <em>Struktur-Invarianz-Prinzip</em>: was in HoTT formulierbar ist, respektiert automatisch Äquivalenzen. <strong>Berechnung (A):</strong> Transport entlang <code>ua(e)</code> <em>ist</em> <code>e</code>: <code>transport(λX. X, ua(not-equiv), true) ≡ not(true) ≡ false</code>. <strong>Anwendung (B):</strong> „Arithmetic Transfer“ — weil die Darstellungen von ℤ äquivalent (also via Univalenz <em>gleich</em>) sind, wandert <code>add</code> zwischen ihnen ohne neuen Beweis.</p>
+
+    <h3>6. Der Kreis S¹ (HIT) &amp; der Brückensatz</h3>
+    <p>Der Kreis ist ein <em>höherer induktiver Typ</em> — ein Punkt- und ein Pfad-Erzeuger:</p>
+    <span class="eq">data S¹ : Type where
+  base : S¹
+  loop : base =_{S¹} base</span>
+    <p>Und der Brückensatz, der beide Papiere verbindet: <strong>π₁(S¹) ≅ ℤ</strong> bzw. <strong>ℤ ≃ Ω(S¹)</strong>. A beweist ihn (Überdeckung + encode/decode); B liest ihn als Geometrie (Windungszahl = Zahl). Konsequenzen, die Arithmetik zu Pfad-Algebra machen: <code>loop^m · loop^n = loop^(m+n)</code> (Addition = Komposition), <code>loop^0 = refl</code> (Null = konstanter Pfad), negative Zahlen = umgekehrte Windung. Trunkierung: <code>S¹</code> ist 1-Typ (Pfade zwischen Schleifen eindeutig, π₂(S¹)=0); <code>S²</code> ist 2-Typ (π₂(S²)≅ℤ).</p>
+
+    <h3>7. Arithmetik durch Rekursion &amp; der konstruktive Preis</h3>
+    <p>add/mul entstehen durch Rekursion über <code>S</code>; B betont: „the path from the input to the output is the computation itself, witnessed by definitional equalities (refl)“. <code>m + 0 = m</code> ist <em>definitorisch</em> (refl); <code>0 + n = n</code> und <code>a + b = b + a</code> sind dagegen echte <em>Beweise</em>. Der konstruktive Preis <span class="tag B">B</span>: Division <code>div</code> braucht einen Zeugen <code>b ≠ 0 : (b = 0) → Empty</code>; bei ℝ verlangt es <em>Apartness</em> (konstruktives Nicht-Null), nicht bloße Ungleichheit. A’s Spielplatz-Evaluator wertet dagegen <code>succ</code>, <code>n + m</code>, <code>not</code>, <code>refl</code>, <code>transport</code> aus — derselbe Apparat, unterschiedlicher Fokus (Beweis-Typkorrektur vs. Reduktionsschritte).</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <p>Das Diagramm macht die Fusion sichtbar: Auf dem Kreis <code>S¹</code> ist die <strong>Komposition von Pfaden</strong> (A) exakt die <strong>Addition ganzer Zahlen</strong> (B). Zwei Windungszahlen <code>n</code> und <code>m</code> werden komponiert — <code>loop^n · loop^m = loop^(n+m)</code> — und die animierte Windung ist der Pfad, der sich „beweist“. Verschiebe die Slider, starte die Animation, und schalte das Thema um.</p>
+    <div class="viz-wrap"><canvas id="viz" width="760" height="440"></canvas></div>
+    <div class="controls">
+      <label>loop<sup>n</sup> = <b id="nVal">3</b>
+        <input type="range" id="nSlide" min="-5" max="5" value="3"></label>
+      <label>loop<sup>m</sup> = <b id="mVal">2</b>
+        <input type="range" id="mSlide" min="-5" max="5" value="2"></label>
+      <button class="ctl" id="animBtn" type="button">▶ Animieren</button>
+      <button class="ctl secondary" id="resetBtn" type="button">Zurücksetzen</button>
+    </div>
+    <div class="readout" id="readout"></div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>positive Windung (n+m &gt; 0)</span>
+      <span><span class="sw" style="background:var(--accent3)"></span>negative Windung (n+m &lt; 0)</span>
+      <span><span class="sw" style="background:var(--accent2)"></span>refl / 0 (konstanter Pfad)</span>
+      <span><span class="sw" style="background:var(--dot)"></span>laufender Pfad (Punkt)</span>
+    </div>
+    <p class="hint">π₁(S¹) ≅ ℤ · Komposition von Pfaden = Addition in ℤ · Beweis = Algorithmus = geometrische Windung.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../hott5.html"><strong>hott5.html</strong></a> — „Homotopietypentheorie Interaktiv“ (A). Interaktiver HoTT-<em>Formalismus</em>: Typen &amp; Terme, Pfade &amp; Gleichheit, Homotopien, h-Level, Univalenz, der Kreis S¹, schrittweise π₁(S¹)-Beweise, Term-Spielplatz und Quiz. Deutsch.</li>
+      <li><a href="../hott_practical.html"><strong>hott_practical.html</strong></a> — „Homotopy Type Theory Visual Explorer“ (B). Konstruktiver <em>Bau der Zahlentürme</em> N→ℤ→ℚ→ℝ, Arithmetik durch Rekursion, Kreis/Loop-Space, Geometrie der Pfade und Live-Rechner. Englisch.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var W = 760, H = 440;
+
+  var nSlide = document.getElementById('nSlide');
+  var mSlide = document.getElementById('mSlide');
+  var nVal = document.getElementById('nVal');
+  var mVal = document.getElementById('mVal');
+  var animBtn = document.getElementById('animBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var readout = document.getElementById('readout');
+  var themeBtn = document.getElementById('themeToggle');
+
+  var animId = null, animT = 0;
+
+  function colors(){
+    var s = getComputedStyle(document.documentElement);
+    function g(n){ return s.getPropertyValue(n).trim(); }
+    return {
+      panel:g('--panel'), ink:g('--ink'), muted:g('--muted'), line:g('--line'),
+      accent:g('--accent'), accent2:g('--accent2'), accent3:g('--accent3'),
+      accent4:g('--accent4'), dot:g('--dot')
+    };
+  }
+  function curN(){ return parseInt(nSlide.value,10); }
+  function curM(){ return parseInt(mSlide.value,10); }
+  function curK(){ return curN() + curM(); }
+
+  function fit(){
+    var cssW = cv.parentElement ? cv.parentElement.clientWidth : 760;
+    if(cssW < 200) cssW = 200;
+    if(cssW > 760) cssW = 760;
+    var cssH = cssW * (440/760);
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(cssW * dpr);
+    cv.height = Math.round(cssH * dpr);
+    cv.style.width = cssW + 'px';
+    cv.style.height = cssH + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = cssW; H = cssH;
+    draw(false);
+  }
+
+  function sup(n){
+    var s = String(Math.abs(n));
+    var map = {'0':'\u2070','1':'\u00B9','2':'\u00B2','3':'\u00B3','4':'\u2074','5':'\u2075','6':'\u2076','7':'\u2077','8':'\u2078','9':'\u2079'};
+    var out = '';
+    for(var i=0;i<s.length;i++){ out += map[s[i]] || s[i]; }
+    return n < 0 ? '\u207B' + out : out;
+  }
+
+  function dirArrow(cx, cy, r, ang, dir, col){
+    var tx = cx + r*Math.cos(ang), ty = cy + r*Math.sin(ang);
+    var d;
+    if(dir < 0){ d = [Math.sin(ang), -Math.cos(ang)]; } else { d = [-Math.sin(ang), Math.cos(ang)]; }
+    var L = 9, px = -d[1], py = d[0];
+    ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(tx - d[0]*L, ty - d[1]*L); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(tx + d[0]*L, ty + d[1]*L);
+    ctx.lineTo(tx - d[0]*3 + px*4, ty - d[1]*3 + py*4);
+    ctx.lineTo(tx - d[0]*3 - px*4, ty - d[1]*3 - py*4);
+    ctx.closePath(); ctx.fill();
+  }
+
+  function dotTrail(cx, cy, r, a, dir, col){
+    ctx.beginPath();
+    var steps = 26, span = 0.7;
+    for(var i=0;i<=steps;i++){
+      var tt = i/steps;
+      var aa = a - dir*tt*span;
+      var x = cx + r*Math.cos(aa), y = cy + r*Math.sin(aa);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.globalAlpha = 0.35; ctx.strokeStyle = col; ctx.lineWidth = 4; ctx.stroke(); ctx.globalAlpha = 1;
+  }
+
+  function draw(animating){
+    var c = colors();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = c.panel; ctx.fillRect(0,0,W,H);
+
+    var k = curK();
+    var cx = W/2, cy = H/2 + 6;
+    var R = Math.min(W*0.28, H*0.30);
+    var gap = Math.max(3, R*0.055);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = c.ink;
+    ctx.font = '600 ' + Math.round(14) + 'px system-ui, sans-serif';
+    ctx.fillText('S\u00B9 :  Komposition von Pfaden  =  Addition in \u2124', cx, 24);
+    ctx.fillStyle = c.muted;
+    ctx.font = '12px system-ui, sans-serif';
+    ctx.fillText('loop^n \u00B7 loop^m = loop^(n+m)   \u21D2   n + m = ' + k, cx, 42);
+
+    // base circle
+    ctx.beginPath();
+    ctx.strokeStyle = c.line; ctx.lineWidth = 2;
+    ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+
+    // base point
+    ctx.beginPath();
+    ctx.arc(cx + R, cy, 6, 0, Math.PI*2);
+    ctx.fillStyle = c.accent2; ctx.fill();
+    ctx.fillStyle = c.muted;
+    ctx.font = '11px system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('base', cx + R + 10, cy + 4);
+    ctx.textAlign = 'center';
+
+    var shown = Math.min(Math.abs(k), 6);
+    if(k === 0){
+      var bx = cx + R, by = cy - 14;
+      ctx.strokeStyle = c.accent2; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle = c.accent2; ctx.font = '12px system-ui, sans-serif';
+      ctx.fillText('refl (loop^0)', cx, cy - R - 14);
+    } else {
+      var col = k > 0 ? c.accent : c.accent3;
+      for(var i=1;i<=shown;i++){
+        var r = R + i*gap;
+        ctx.beginPath();
+        ctx.globalAlpha = 0.55 + 0.45*(1 - i/Math.max(shown,1));
+        ctx.strokeStyle = col; ctx.lineWidth = 2.2;
+        if(k < 0) ctx.arc(cx, cy, r, 0, -Math.PI*2, true);
+        else ctx.arc(cx, cy, r, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      var rOut = R + shown*gap;
+      dirArrow(cx, cy, rOut, -Math.PI*0.75, k > 0 ? -1 : 1, col);
+      ctx.fillStyle = col; ctx.font = '600 13px system-ui, sans-serif';
+      ctx.fillText('loop' + sup(k) + '  (Zahl ' + k + ')', cx, cy - R - 14);
+
+      if(animating){
+        var dR = rOut;
+        var turns = animT * Math.abs(k);
+        var dir = k > 0 ? -1 : 1;
+        var a = dir * turns * Math.PI*2;
+        dotTrail(cx, cy, dR, a, dir, c.dot);
+        var dx = cx + dR*Math.cos(a), dy = cy + dR*Math.sin(a);
+        ctx.beginPath(); ctx.arc(dx, dy, 6, 0, Math.PI*2);
+        ctx.fillStyle = c.dot; ctx.shadowColor = c.dot; ctx.shadowBlur = 12;
+        ctx.fill(); ctx.shadowBlur = 0;
+      }
+    }
+
+    if(readout){
+      readout.innerHTML = 'loop' + sup(curN()) + ' \u00B7 loop' + sup(curM()) +
+        ' = loop' + sup(k) + '    \u21D2    ' + curN() + ' + ' + curM() + ' = <b>' + k + '</b>  \u2208 \u2124';
+    }
+  }
+
+  function stopAnim(){ if(animId){ cancelAnimationFrame(animId); animId = null; } draw(false); }
+  function startAnim(){
+    stopAnim();
+    if(curK() === 0){ draw(false); return; }
+    animT = 0;
+    var dur = 2800, last = performance.now();
+    function step(now){
+      var dt = now - last; last = now;
+      animT += dt/dur;
+      if(animT >= 1) animT -= 1;
+      draw(true);
+      animId = requestAnimationFrame(step);
+    }
+    animId = requestAnimationFrame(step);
+  }
+  function toggleAnim(){
+    if(animId){ stopAnim(); if(animBtn) animBtn.textContent = '\u25B6 Animieren'; }
+    else { startAnim(); if(animBtn) animBtn.textContent = '\u25A0 Stop'; }
+  }
+
+  if(nSlide){ nSlide.addEventListener('input', function(){ nVal.textContent = curN(); stopAnim(); }); }
+  if(mSlide){ mSlide.addEventListener('input', function(){ mVal.textContent = curM(); stopAnim(); }); }
+  if(animBtn){ animBtn.addEventListener('click', toggleAnim); }
+  if(resetBtn){ resetBtn.addEventListener('click', function(){ nSlide.value = 3; mSlide.value = 2; nVal.textContent = '3'; mVal.textContent = '2'; stopAnim(); }); }
+  if(themeBtn){ themeBtn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(!!animId); }); }
+  window.addEventListener('resize', fit);
+
+  document.addEventListener('DOMContentLoaded', function(){ fit(); });
+  if(document.readyState === 'complete' || document.readyState === 'interactive'){ fit(); }
+})();
+</script>
+</body>
+</html>

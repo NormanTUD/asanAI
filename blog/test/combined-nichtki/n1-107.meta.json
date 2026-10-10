@@ -1,0 +1,17 @@
+{
+  "no": "107",
+  "a": "hott5.html",
+  "b": "hott_practical.html",
+  "a_title": "Homotopietypentheorie Interaktiv",
+  "b_title": "Homotopy Type Theory Visual Explorer",
+  "combined_theme": "hott-proof-construction-circle",
+  "one_line": "HoTT als ein Objekt in drei Lesarten: A liest es als Formal-/Beweissystem (h-Level, Univalenz, HITs, schrittweiser pi1(S1)-Beweis), B als Konstruktionsmotor (Zahlenturm N, Z, Q, R + Arithmetik); der Kreis (pi1(S1) = Z, Z = Omega(S1)) ist der Brueckensatz, wo Beweis, Konstruktion und Geometrie eins sind.",
+  "contradictions": [
+    "Zweck/Fokus: A behandelt HoTT als zu beherrschendes Formal-/Beweissystem (Typen, Pfade, h-Level, Univalenz, Spielplatz, Quiz); B als konstruktiven Motor, um den Zahlenturm N, Z, Q, R zu bauen und Arithmetik auszufuehren (Turm, Rekursion, Rechner).",
+    "Der Kreissatz pi1(S1) = Z / Z = Omega(S1): A praesentiert ihn als Theorem zu beweisen (universelle Ueberdeckung, encode/decode, ua(succ-equiv)); B als Konstruktion, die den ganzen Zahlen eine geometrische Bedeutung (Windungszahl) gibt.",
+    "Der konstruktive Preis: B verlangt fuer Division einen expliziten Zeugen (b = 0) -> Empty bzw. 'Apartness' und Wohldefiniertheits-Beweise; A nennt den konstruktiven Grundsatz nur auf Metasprachebene ('jeder Beweis ist ein Algorithmus') und laedt ihn nie mit diesem operationellen Aufwand.",
+    "Dimension der Gleichheit: B betont 'Gleichheit ist KEINE Proposition, kann mehrere Beweise haben'; A's konkrete Zahl-Beispiele (Nat/Bool) sind Mengen, in denen Gleichheit eine Proposition ist."
+  ],
+  "resolution": "Zwei Seiten einer Praxis: A liefert die Beweis-Theorie (Grammatik), B das Programmieren in ihr. Die h-Level von A klassifizieren genau die Typen, die B baut; der Kreissatz ist in A der formale Beweis und in B die geometrische Konstruktion, identisch weil in konstruktiver Mathematik Beweis = Algorithmus = geometrisches Objekt (encode/decode sind selbst die Windungsabbildungen); B's Zeugen-Druck ist A's 'Beweis ist Algorithmus' angewandt, und Univalenz+Transport lassen Operationen zwischen aequivalenten Darstellungen wandern.",
+  "viz": "Interaktives Canvas: Kreis S1 mit Windungen = ganze Zahlen; zwei Slider n, m; Komposition loop^n * loop^m = loop^(n+m) realisiert ganzzahlige Addition; animierter Punkt windet |n+m|-mal; theme-aware (Dark-Default + Light-Toggle), alle Daten inline, null Console-Errors."
+}

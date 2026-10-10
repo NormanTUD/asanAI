@@ -1,0 +1,16 @@
+{
+  "no": "093",
+  "a": "cohomology.html",
+  "b": "hott2.html",
+  "a_title": "Advanced TDA — Persistent Cohomology & Multiparameter Persistence",
+  "b_title": "Homotopy Type Theory — Why It Should Be the Foundation of Math",
+  "combined_theme": "topology-as-structure",
+  "one_line": "Form ist die Struktur: Cohomologie (A) und HoTT (B) sind derselbe Zug aus entgegengesetzten Richtungen — die grobe Invariante (Betti-Zahl, Barcode, ein schlicht 'wahrer' Satz) ist nur der Schatten einer lebendigen Struktur (Co­chain-Ring, Pfadraum), und der Kreis S¹ ist der Ort, wo sich das Daten-Werkzeug (θ:X→S¹) und das Fundament (Ω(S¹,base)≅ℤ) berühren.",
+  "contradictions": [
+    "Was ist fundamental: A hält die diskrete Invariante für Ausgangspunkt und die Struktur für nachgerüstetes ADD-ON (Homologie sagt 'what holes exist, but not much about functions on them'); B hält die Form/Pfadstruktur für das Gegebene und die diskrete Aussage für den verlustbehafteten Schatten ('2+2=4 is just TRUE … we lose information'). Inkompatibel, welche Seite die Baseline ist.",
+    "Exaktheit vs. Unvollständigkeit: A bekennt 'no complete barcode decomposition for multiparameter persistence modules' und baut Näherungen (Fibered Barcodes, Landscapes, Rank-Invariant, 'approximate Betti numbers'); B behauptet Exaktheit und Vollständigkeit (Pfadraum des Kreises ist EXAKT ℤ, Univalence gibt exakte Gleichheiten A≃B⇒A=B, 'it's just correct').",
+    "Rolle der Topologie: A degradiert Topologie zum reinen Daten-Werkzeug (circula­re Koordinaten für Phasen­wiederherstellung/Periodizität/Robotik, Betti-Zahlen fürs Clustering); B promoviert Topologie zum Fundament aller Mathematik ('the shape of the space IS the mathematics', 'Topology + Logic + Computer Science, unified'). Sie ziehen Topologie in entgegengesetzte Richtungen (Werkzeug unten / Fundament oben)."
+  ],
+  "resolution": "Kein faktischer Konflikt (unterschiedliche Domänen), sondern Haltung, in drei Zügen aufgelöst: (1) 'Invariante vs. Struktur' ist dasselbe Phänomen in zwei Höhen — A's Cup-Produkt und B's Homotopie sind beide zwei­te-Ordnungs-Struktur, die die erste-Ordnungs-Invariante (Betti-Zahl/Wahrheitswert) nicht sieht; A's Cohomologie ist der Moment, in dem der invarianten­first-Workflow merkt, dass er aufsteigen muss — genau dort, wo B startet. Fusion: Struktur ist primär, Invariante ist abgeleitet. (2) Exaktheit gilt für einen FESTEN Raum/Typ (B), Unvollständigkeit für das MODUL über einem Parameterspace (ε,ρ) (A): eine Faser ist exakt (B), die Familie aller Fasern hat keine Dekomposition (A). (3) Dasselbe Objekt, zwei Gebrauchsebenen: dieselben topologischen Fakten (Kreis, ℤ, Cup-Produkt, H¹) sind, worauf B ein Fundament baut (aufwärts) und worauf A auf Daten rechnet (abwärts).",
+  "viz": "Ein Kreis S¹ trägt beide Papiere zugleich: ein Ring aus Datenpunkten, deren Farbton der circula­ren Koordinate θ entspricht (A: θ:X→S¹), plus eine Spirale, die |n|-mal um die Basis windet, deren Windungszahl n∈ℤ der Pfadraum Ω(S¹,base)≅ℤ ist (B). Regler: Windung n∈{-3..3} (n=0 = refl-Einheit, Vor­/Nach­zeichen dreht die Richtung), Lesart-Umschalter 'A · Daten→θ' / 'B · Schleife→ℤ', Play/Pause für den wandernden Punkt, Theme-Toggle (Dunkel default). Canvas, Theme-reaktiv per CSS-Variablen (gelesen pro Frame), inline-Daten, keine externen Calls."
+}

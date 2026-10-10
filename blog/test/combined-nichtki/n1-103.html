@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invarianz: Das eine Muster hinter Körper & Raumzeit</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#faf8f1; --bg-soft:#f1eee3; --card:#ffffff; --ink:#1a1a2e; --ink-soft:#4a4a5e;
+  --dim:#8a8a9c; --line:rgba(0,0,0,.10); --teal:#0e8f86; --coral:#d64545; --violet:#6b2fd6;
+  --amber:#b8860b; --sky:#2b7fc0; --card-br:rgba(0,0,0,.10); --shadow:0 10px 30px rgba(0,0,0,.06);
+}
+html.dark{
+  --bg:#0a0a12; --bg-soft:#101019; --card:#14141f; --ink:#e8e8f0; --ink-soft:#b6b6c9;
+  --dim:#7c7c92; --line:rgba(255,255,255,.09); --teal:#4ecdc4; --coral:#ff6b6b; --violet:#a970ff;
+  --amber:#feca57; --sky:#54a0ff; --card-br:rgba(255,255,255,.08); --shadow:0 12px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:64px 20px 28px;text-align:center}
+.kicker{display:inline-block;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--teal);border:1px solid var(--line);border-radius:100px;padding:6px 14px;margin-bottom:20px;
+  background:var(--bg-soft)}
+h1{font-size:clamp(2rem,5.4vw,3.15rem);line-height:1.12;font-weight:800;letter-spacing:-.02em}
+.subtitle{color:var(--dim);font-size:1.02rem;margin-top:14px}
+.subtitle b{color:var(--ink-soft);font-weight:600}
+.theme-btn{margin-top:20px;background:var(--card);border:1px solid var(--card-br);color:var(--ink-soft);
+  border-radius:10px;padding:8px 16px;font-size:.86rem;cursor:pointer;box-shadow:var(--shadow);transition:.2s}
+.theme-btn:hover{color:var(--ink);transform:translateY(-1px)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:26px auto 8px}
+nav.toc a{font-size:.82rem;color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);
+  border-radius:8px;padding:6px 12px;background:var(--card);transition:.2s}
+nav.toc a:hover{border-color:var(--teal);color:var(--teal)}
+section{margin-top:52px;scroll-margin-top:20px}
+h2{font-size:1.5rem;font-weight:750;letter-spacing:-.01em;display:flex;align-items:center;gap:12px;margin-bottom:6px}
+h2 .n{font-family:"JetBrains Mono",monospace;font-size:.9rem;color:var(--bg);background:var(--teal);
+  border-radius:7px;padding:2px 9px;font-weight:700}
+h3{font-size:1.08rem;font-weight:700;margin:26px 0 8px;color:var(--ink)}
+p{margin:12px 0;color:var(--ink-soft)}
+p b,li b{color:var(--ink);font-weight:650}
+.lead{font-size:1.08rem;color:var(--ink)}
+ul{margin:12px 0 12px 4px;padding-left:22px;color:var(--ink-soft)}
+li{margin:9px 0}
+.card{background:var(--card);border:1px solid var(--card-br);border-radius:14px;padding:20px 22px;
+  box-shadow:var(--shadow);margin:16px 0}
+.card .tag{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+.card.a{border-left:4px solid var(--coral)}
+.card.b{border-left:4px solid var(--sky)}
+.card.fuse{border-left:4px solid var(--teal);background:linear-gradient(180deg,var(--card),var(--bg-soft))}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+.eq{font-family:"JetBrains Mono",ui-monospace,monospace;background:var(--bg-soft);
+  border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;overflow-x:auto;
+  color:var(--ink);font-size:.98rem}
+.eq .lbl{display:block;font-family:Inter,sans-serif;font-size:.76rem;color:var(--dim);margin-top:6px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--ink);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+td{color:var(--ink-soft)}
+td .k{color:var(--teal);font-weight:650}
+.note{font-size:.88rem;color:var(--dim);font-style:italic;margin-top:8px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:var(--card);
+  border:1px solid var(--card-br);border-radius:12px;padding:14px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.controls label{font-size:.9rem;font-weight:600;color:var(--ink-soft);min-width:150px}
+.controls input[type=range]{flex:1;min-width:160px;accent-color:var(--teal);height:6px}
+.controls .val{font-family:"JetBrains Mono",monospace;color:var(--teal);font-weight:700;font-size:1.1rem;min-width:70px;text-align:right}
+#viz{width:100%;height:440px;background:var(--card);border:1px solid var(--card-br);border-radius:14px;
+  padding:8px;box-shadow:var(--shadow)}
+.ro{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+@media(max-width:640px){.ro{grid-template-columns:1fr 1fr}}
+.ro .box{background:var(--card);border:1px solid var(--card-br);border-radius:11px;padding:13px 14px;text-align:center}
+.ro .box .l{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.ro .box .v{font-family:"JetBrains Mono",monospace;font-size:1.25rem;font-weight:700;color:var(--teal);margin-top:4px}
+.prov{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--card-br);
+  border-radius:12px;padding:16px 18px;margin:12px 0;box-shadow:var(--shadow)}
+.prov .dot{font-size:1.3rem;line-height:1.3}
+.prov a{color:var(--teal);text-decoration:none;font-weight:650}
+.prov a:hover{text-decoration:underline}
+.prov .d{color:var(--ink-soft);font-size:.94rem;margin-top:4px}
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:.85rem;text-align:center}
+.katex{color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <span class="kicker">Fusion · Runde 1 · nicht-KI-Track · Pair 103</span>
+  <h1>Invarianz: das eine Muster hinter Körper&nbsp;=&nbsp;Raumzeit</h1>
+  <div class="subtitle">Fusion aus: <b>koerper.html</b> ✕ <b>relativity.html</b></div>
+  <button class="theme-btn" id="themeToggle">◐ Thema wechseln</button>
+  <nav class="toc">
+    <a href="#these">These</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+<section id="these">
+  <h2><span class="n">1</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Texte beschreiben, auf den ersten Blick grundverschiedene, Realitäten — doch sie laufen auf <b>ein einziges Muster</b> zusammen: <b>Ein paar wenige Invarianten bleiben stabil, während alles Lokale sich verändert; und die Regel, die zwischen den Perspektiven wechselt, ist ein Transformations-/Rückkopplungsgesetz, das den Zustand zu einer fixen Geometrie hinzieht.</b></p>
+  <p><b>koerper.html</b> sagt: Der Körper hält <b>Sollwerte</b> (Körpertemperatur 37&nbsp;°C, Blutzucker 70–100&nbsp;mg/dL, pH 7,35–7,45, Blutdruck) gegen jede Störung konstant — Homöostase. Das ist eine <i>Invariante</i>, die durch <i>Rückkopplung</i> geschützt wird, und zwar in <b>Zeit</b>: Bei jeder Abweichung steuert der Körper gegenzusteuern, bis die Störung (das „Umgebungsraster", das Äquivalent zum Bezugssystem) überwunden ist.</p>
+  <p><b>relativity.html</b> sagt: Die Raumzeit hält <b>das Lichtkonstante&nbsp;$c$</b> und <b>das Raumzeitintervall</b> $s^2=-(c\,\Delta t)^2+\Delta x^2+\Delta y^2+\Delta z^2$ gegenüber jedem träge bewegten Beobachter konstant — die Invarianten, die durch die <i>Lorentz-Transformation</i> geschützt werden, und zwar in <b>Perspektive</b>: $\Delta t$ und $\Delta x$ ändern sich mit dem Bezugssystem, das Intervall nicht.</p>
+  <p>Der entscheidende Schritt der Fusion ist die gemeinsame Geometrie: In beiden Fällen bewegt sich der Zustand <b>den Gradienten hinab zu einem Minimum</b>. Der Körper rollt auf seiner Zustandslandschaft hinab ins Tal des Sollwerts (ein Attraktor); in der Allgemeinen Relativitätstheorie folgt Materie Geodäten in der gekrümmten Raumzeit („Spacetime tells matter how to move"). <b>Kraft und scheinbare Veränderung sind die lokale, niedriggeschwindige Projektion einer fixen Struktur.</b> „Der Körper" und „das Universum" sind beides Muster, die ihre Invarianten bewahren, während alles um sie herum fließt.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span> Widersprüche zwischen A und B</h2>
+  <p>Die beiden Texte stehen sich an drei Punkten tatsächlich unvereinbar gegenüber — jeweils ein konkreter Anspruch des einen gegen den des anderen:</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · koerper.html</span>
+      <p>Die gesamte <b>Zeit-Architektur</b> des Körpers ruht auf einer gemeinsamen, festen Uhr: dem <b>zirkadianen Rhythmus</b> mit der Masteruhr SCN („~20.000 Neuronen"), die „primär durch Licht über die Retina synchronisiert" wird. Der Abschnitt „Dein Körper über 24 Stunden" plant Cortisol-Peak (7:00), Kognitions-Peak (10:00) und Melatonin-Peak (2:00) auf <b>eine universelle 24-h-Tagesuhr</b> — also auf ein gemeinsames, absolutes „Jetzt".</p>
+    </div>
+    <div class="card b"><span class="tag">B · relativity.html</span>
+      <p>Die <b>Relativität der Gleichzeitigkeit</b> (Abschnitt 5): „events that are simultaneous in one frame are NOT simultaneous in another". Es gibt <b>kein universelles Jetzt</b>; Zeit ist bezugssystemabhängig und bewegte Uhren ticken langsamer (Zeitdilatation $\Delta t=\gamma\,\Delta t_0$). Ein gemeinsames „Jetzt" existiert fundamental nicht.</p>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="card b"><span class="tag">B · relativity.html</span>
+      <p><b>Relativitätsprinzip</b> (Postulat 1): „The laws of physics are the same in all inertial reference frames." <b>Kein Bezugssystem ist privilegiert</b> — alle Inertialsysteme sind gleichberechtigt, die „Wahrheit" lebt allein in den Invarianten. Jede Bevorzugung eines Rahmens wäre falsch.</p>
+    </div>
+    <div class="card a"><span class="tag">A · koerper.html</span>
+      <p>Radikal <b>egozentrisch</b>: Der privilegierte, spezielle Rahmen ist <b>dein eigener Körper</b> („dein Körper", „du"). Es gibt eine zentrale Masteruhr (SCN) und einen bevorzugten Referenz-Zustand (Ruhe, 37&nbsp;°C). Der Organismus ist <i>der</i> Bezugspunkt, von dem aus beschrieben wird — das Selbst ist per Definition der natürliche, ausgezeichnete Rahmen.</p>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="card b"><span class="tag">B · relativity.html</span>
+      <p>Die Kernthese der GR: <b>„Gravity is not a force. It's the curvature of spacetime." </b> Die Kraft <i>dissolvieren</i> in Geometrie — Objekte folgen Geodäten (den „straightest possible paths"), nicht einer unsichtbaren Anziehungskraft. Das Trampolin-Bowlingball-Bild: Die Kugel wird nicht „gezogen", das Blatt ist gekrümmt.</p>
+    </div>
+    <div class="card a"><span class="tag">A · koerper.html</span>
+      <p>Die ganze Erklärungs-Idiomatik ist <b>Kraft- und Agenten-basiert</b>: das Immunsystem ist „deine Armee", das autonome Nervensystem „Fight or Flight", Hormone sind „chemische Botenstoffe", die etwas antreiben, und Entzündung ist ein berechenbares „Risiko", das bekämpft wird. Der Text vollzieht <b>nirgends</b> den geometrisierenden Schritt; er bleibt in der Sprache von Kräften, Armeen und Kampf.</p>
+    </div>
+  </div>
+  <p class="note">Kein Widerspruch ist ein Fehlschluss: Jeder Anspruch ist in seinem Kontext korrekt. Die Spannung ist real — sie liegt im <b>Grundverständnis von Zeit, Perspektive und Ursache</b>.</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span> Auflösung</h2>
+  <p>Alle drei Konflikte lösen sich, sobald man A als den <b>Niedriggeschwindigkeits-Limes von B</b> liest: Der Körper ist ein gebundenes, lokales, langsam bewegtes System, für das $\gamma\approx 1$ gilt. A ist damit exakt der Newtonsche/Grenzfall, in dem sich B auf Alltagserfahrung reduziert. Konkret:</p>
+
+  <div class="card fuse"><span class="tag">Zeit · Auflösung 1</span>
+    <p>Die zirkadiane Uhr ist keine Behauptung über <i>absolute</i> Zeit, sondern ein <b>lokaler Eigenzeit-Oszillator</b> — die SCN ist ein physisches Mechanismus aus ~20.000 Neuronen, das einen Rhythmus <i>erzeugt</i>. In der Sprache von B ist Eigenzeit ($\tau$) gerade <b>die Invariante entlang einer Weltlinie</b>. A's „Tagesuhr" ist also ein Eigenzeit-Prozess — perfekt kompatibel mit B, nur eben <i>lokal</i>. Und weil $\gamma\approx1$, sind Relativitäts-Korrekturen für den Körper vernachlässigbar: Die 24-h-Uhr ist der Grenzfall, in dem sich B in die Alltagszeit zurückbildet.</p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Perspektive · Auflösung 2</span>
+    <p>B verweigert privilegierte Rahmen in den <b>fundamentalen Gesetzen</b>; A's „Selbst-Rahmen" ist eine <b>funktionale, nicht fundamentale</b> Bevorzugung — der Körper ist der <i>nützliche</i> Bezugspunkt, um das System zu beschreiben (wie die Wahl von $S$ vs. $S'$ in einem Minkowski-Diagramm eine Beschreibungskonvention ist, kein Gesetz). Die tiefere Übereinstimmung: Beides ist <b>Invarianz unter Perspektivwechsel</b>. A hält <i>seine</i> Invarianten (Sollwerte), B hält <i>seine</i> (Intervall, $c$). „Das Selbst" ist schlicht der Rahmen, <i>von dem aus</i> man beschreibt — nicht mehr und nicht weniger.</p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Kraft → Geometrie · Auflösung 3</span>
+    <p>Die tiefste Auflösung: <b>Homöostase IST ein geometrischer Prozess.</b> Der Körper-Zustandsraum ist eine Landschaft mit einem Minimum im Sollwert. Der Körper bewegt sich entlang des Gradienten zu diesem Minimum — exakt der Geodäten-Abstieg in das Krümmungstal, das B beschreibt. Der „Sollwert" ist ein Tal; die scheinbare „Kraft" der Rückkopplung ist die lokale Projektion des Gradienten. A's Armee-/Kampf-Bild ist damit die niedrigstufige Näherung; die tiefere Wahrheit: <b>Der Körper bewegt sich auf einer gekrümmten Zustandsmannigfaltigkeit zu einem Attraktor — Kraft ist der Schatten der Geometrie.</b></p>
+  </div>
+
+  <div class="card fuse" style="margin-top:20px">
+    <span class="tag">Fusionierte Schlussposition</span>
+    <p class="lead">Invarianz ist die Tiefenstruktur jeder Skala: ein paar Invarianten (Sollwerte $\leftrightarrow$ $c$ &amp; Intervall), ein Transformations-/Rückkopplungsgesetz (Gegensteuerung $\leftrightarrow$ Lorentz-Transformation) und eine Dynamik, die zu einer Geometrie hinabsteigt (Tal $\leftrightarrow$ Geodäte). Was wir „Körper" und „Universum" nennen, sind Muster, die ihre Invarianten halten, während alles Lokale fließt.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span> Fusionierter Inhalt</h2>
+  <p>Der konsolidierte Stoff beider Quellen — die wichtigsten Ideen, Ansprüche und Formeln, integriert statt hintereinander gestellt. Spätere Runden können allein von hier arbeiten.</p>
+
+  <h3>4.1 Die Invariante (was stabil bleibt)</h3>
+  <ul>
+    <li><b>A:</b> Sollwerte der Homöostase — Körpertemperatur $37$&nbsp;°C, Blutzucker $70$–$100$&nbsp;mg/dL, pH $7{,}35$–$7{,}45$, Blutdruck. Fieber = <i>bewusste Sollwert-Erhöhung</i>; Diabetes = gestörte Blutzucker-Regulation. „Fast jede Krankheit lässt sich als gestörte Homöostase verstehen."</li>
+    <li><b>B:</b> Das Lichtkonstante $c\approx299\,792\,458$&nbsp;m/s und das Raumzeitintervall $s^2=-(c\,\Delta t)^2+\Delta x^2+\Delta y^2+\Delta z^2$ — „invariant, same for all observers". Ruhemasse $m_0$ ist invariant; die volle Relation $E^2=(pc)^2+(m_0 c^2)^2$.</li>
+  </ul>
+  <div class="eq">Invariante (A):&nbsp; $T \xrightarrow{\text{Störung}} T' \neq T \;\Rightarrow\; \text{Gegensteuerung} \;\Rightarrow\; T$ &nbsp;|&nbsp; Invariante (B):&nbsp; $s^2$ ändert sich <u>nicht</u> unter Lorentz-Transformation<span class="lbl">Gemeinsam: eine Größe bleibt fix, alles andere um sie herum variiert.</span></div>
+
+  <h3>4.2 Das Transformations- / Rückkopplungsgesetz (wie gewechselt wird)</h3>
+  <ul>
+    <li><b>A:</b> Rückkopplung mit Regelstärke (im Quellcode: <code>regulationStrength ≈ 0.85</code>): $\text{Körpertemp} \to 37 + (\text{Temp}-37)\,(1-k)$, plus Ausnahmeregel bei extremer Umgebung ($>42$&nbsp;°C, $<-5$&nbsp;°C) — die Regulation wird dann überwältigt. Das ist ein lineares Regelgesetz um den Sollwert.</li>
+    <li><b>B:</b> Die Lorentz-Transformation: $x'=\gamma(x-vt)$, $t'=\gamma\!\left(t-\dfrac{vx}{c^2}\right)$, mit $\gamma=\dfrac{1}{\sqrt{1-v^2/c^2}}$. Für $v\ll c$ fällt sie auf die Galilei-Transformation $x'=x-vt,\;t'=t$ zurück.</li>
+  </ul>
+  <div class="eq">$\gamma=\frac{1}{\sqrt{1-\beta^2}} \quad\Rightarrow\quad \Delta t=\gamma\,\Delta t_0 \;\;\cdot\;\; L=\frac{L_0}{\gamma} \;\;\cdot\;\; E=\gamma m_0 c^2 \;\;\cdot\;\; p=\gamma m_0 v$<span class="lbl">B's Transformationsgesetz; A's Regelgesetz ist der $k$-Limes davon bei „kleiner Abweichung".</span></div>
+
+  <h3>4.3 Tal &amp; Geodäte (die gemeinsame Geometrie)</h3>
+  <ul>
+    <li><b>A (Landschaft):</b> Der Körper wird durch Rückkopplung <i>hinab</i> in das Tal des Sollwerts gezogen; bei zu starker Störung (Hitzschlag $>40$&nbsp;°C, Hypothermie) „verloren" — das Tal wird überflutet, Homöostase versagt.</li>
+    <li><b>B (Krümmung):</b> Masse krümmt die Raumzeit; Materie folgt Geodäten (geradeste Wege) durch das gekrümmte Blatt. Das Trampolin-Beispiel: Tiefe $\propto$ Masse; bei der Schwarzschild-Radius $r_s=\frac{2GM}{c^2}$ wird das Tal „unendlich tief" — ein Schwarzes Loch.</li>
+    <li><b>Gemeinsam:</b> Dynamik = Abstieg. Der Körper steuert zum Attraktor; das Teilchen zur Geodäte. In beiden ist „Bewegung" nicht von außen angetrieben, sondern <i>die Geometrie des Systems</i>.</li>
+  </ul>
+
+  <h3>4.4 Wichtige Kennzahlen &amp; Phänomene (beide Seiten)</h3>
+  <div class="two">
+    <div class="card a"><span class="tag">Körper (A)</span>
+      <ul style="margin:6px 0 0">
+        <li>Grundumsatz (Mifflin-St Jeor) = 60–75 % des Verbrauchs; Gehirn ~20 % davon bei 2 % Masse.</li>
+        <li>ATP: 40–70 kg pro Tag umgesetzte Energiewährung.</li>
+        <li>Mikrobiom: ~39 Billionen Bakterien; ~95 % des Serotonins im Darm; 30 Pflanzen/Woche für Diversität.</li>
+        <li>Neuroplastizität: ~86 Mrd. Neuronen, ~100 Billionen Synapsen; „neurons that fire together, wire together"; BDNF durch Sport.</li>
+      </ul>
+    </div>
+    <div class="card b"><span class="tag">Raumzeit (B)</span>
+      <ul style="margin:6px 0 0">
+        <li>Zeitdilatation: $\Delta t=\gamma\,\Delta t_0$; Zwillingsparadoxon (Reise-Zwilling altert langsamer).</li>
+        <li>Masse-Energie: $E_0=m_0 c^2$ (Ruheenergie 1 kg ≈ 21,5 Mt TNT); kinetisch $K=(\gamma-1)m_0c^2$.</li>
+        <li>Gravitative Zeitdilatation: $\Delta t_{\rm far}=\frac{\Delta t_{\rm near}}{\sqrt{1-r_s/r}}$; GPS-Uhr: +45 µs/Tag (sonst ~10 km/Tag Drift).</li>
+        <li>Schwarzes Loch: $r_s=\frac{2GM}{c^2}$; Photonensphäre 1,5 $r_s$; ISCO 3 $r_s$; Gravitationsrotverschiebung $z=\frac{1}{\sqrt{1-r_s/r}}-1$.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4.5 Die Übereinstimmungstabelle (A ↔ B)</h3>
+  <table>
+    <thead><tr><th>Konzept</th><th>Körper (A)</th><th>Raumzeit (B)</th></tr></thead>
+    <tbody>
+      <tr><td>Invariante</td><td>Sollwert (37 °C, Blutzucker…)</td><td>$c$, Raumzeitintervall $s^2$, Ruhemasse $m_0$</td></tr>
+      <tr><td>Transformationsgesetz</td><td>Rückkopplung / Gegensteuerung</td><td>Lorentz-Transformation</td></tr>
+      <td>Geometrie</td><td>Tal der Zustandslandschaft (Attraktor)</td><td>Krümmungswell (Geodäte)</td></tr>
+      <td>Dynamik</td><td>Homöostase (Regulation)</td><td>Freie Fällung / Geodäte</td></tr>
+      <td>„Uhr"</td><td>zirkadianer Rhythmus (SCN)</td><td>Eigenzeit $\tau$ entlang Weltlinie</td></tr>
+      <td>Verlust der Invariante</td><td>Hitzschlag / Hypothermie (Systemversagen)</td><td>Eventhorizont / Singularität</td></tr>
+      <td>Grenzfall</td><td>Alltag, $v\ll c$</td><td>Galilei-/Newton-Limes, $\gamma\to1$</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Die Tabelle ist die operative Klammer der Fusion: Jede Zeile ist ein Paar, das dieselbe Struktur in zwei Realitäten trägt.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span> Visualisierung: ein Regler, zwei Welten</h2>
+  <p>Ein einziger Regler — die <b>Stärke der Veränderung/Störung</b> $\beta$ — steuert beide Welten zugleich. Links (Körper): Die Körpertemperatur wird umso weiter aus dem Sollwert 37&nbsp;°C herausgedrängt, je größer $\beta$ ist — doch die Rückkopplung zieht sie <b>immer zurück</b> zur gelben Invariante. Rechts (Raumzeit): Der Lorentz-Faktor $\gamma(\beta)$ schießt an, während die Invariante $c$ (bzw. das Intervall) fix bleibt. <b>Je mehr sich das Lokale ändert, desto sichtbar hält jedes System seine Invariante.</b></p>
+
+  <div class="controls">
+    <label>Veränderung / Störung&nbsp; $\beta$: </label>
+    <input type="range" id="betaSlider" min="0" max="99.9" value="50" step="0.1">
+    <span class="val" id="betaVal">0.50</span>
+  </div>
+
+  <div id="viz"></div>
+
+  <div class="ro">
+    <div class="box"><div class="l">β = v/c</div><div class="v" id="roBeta">0.500</div></div>
+    <div class="box"><div class="l">γ (Raumzeit)</div><div class="v" id="roGamma">1.155</div></div>
+    <div class="box"><div class="l">Invariante A (fix)</div><div class="v" id="roSet">37.0 °C</div></div>
+    <div class="box"><div class="l">Invariante B (fix)</div><div class="v" id="roInv">c · s²</div></div>
+  </div>
+  <p class="note">Reine Inline-Daten, themenreaktiv (hell/dunkel). Links: Rückkopplung hält den Sollwert (A). Rechts: $\gamma$ wächst, $c$/Intervall bleiben invariant (B). Dieselbe Geste — Invarianz unter Veränderung.</p>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span> Provenienz</h2>
+  <div class="prov"><span class="dot">🫀</span><div>
+    <a href="../koerper.html">koerper.html — „Versteh deinen Körper" (A)</a>
+    <div class="d">Interaktiver 10-Konzept-Guide (Biologie/ Medizin): Homöostase &amp; Sollwerte, Energiebilanz, autonomes Nervensystem, Hormone, Immunsystem, Mikrobiom, zirkadianer Rhythmus, Entzündung, Epigenetik, Neuroplastizität. Träger der <i>Invariante als fixer Sollwert, gehalten durch Rückkopflung in Zeit</i>.</div>
+  </div></div>
+  <div class="prov"><span class="dot">🌌</span><div>
+    <a href="../relativity.html">relativity.html — „Interactive Relativity Explorer" (B)</a>
+    <div class="d">Interaktive Reise durch Spezielle &amp; Allgemeine Relativitätstheorie (Abiturniveau): Postulate, Lorentz-Faktor, Zeitdilatation, Längenkontraktion, Lorentz-Transformation, Raumzeit/ Minkowski, $E=mc^2$, GR-Krümmung, Äquivalenzprinzip, Schwarze Löcher. Träger der <i>Invariante als fixes Intervall/Lichtkonstante, gehalten durch die Lorentz-Transformation über Perspektiven</i>.</div>
+  </div></div>
+</section>
+
+<footer>
+  Fusion-Paper 103 · Runde 1 · nicht-KI-Track · koerper.html ✕ relativity.html · Alle Daten inline, themenreaktiv, kein Netzwerk-Datenabruf.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+  function palette(){
+    if(isDark()) return { paper:'rgba(0,0,0,0)', plot:'rgba(255,255,255,0.02)', text:'#e8e8f0', sub:'#a0a0b8', grid:'rgba(255,255,255,0.07)', teal:'#4ecdc4', coral:'#ff6b6b', violet:'#a970ff', amber:'#feca57' };
+    return { paper:'rgba(0,0,0,0)', plot:'rgba(0,0,0,0.015)', text:'#1a1a2e', sub:'#55556a', grid:'rgba(0,0,0,0.09)', teal:'#0e8f86', coral:'#d64545', violet:'#6b2fd6', amber:'#b8860b' };
+  }
+  function gamma(b){ return b>=1?Infinity:1/Math.sqrt(1-b*b); }
+
+  function renderViz(){
+    if(typeof Plotly==='undefined') return;
+    var P = palette();
+    var beta = (+document.getElementById('betaSlider').value)/100;
+
+    var N=60, times=[], temps=[], setpt=[];
+    var t=37;
+    for(var i=0;i<N;i++){
+      times.push(i);
+      var d=0;
+      if(i>=8 && i<=15) d = beta*6;
+      t += d*0.15 + (37-t)*0.2 + Math.sin(i*0.7)*0.02;
+      temps.push(t); setpt.push(37);
+    }
+    var bs=[], gs=[];
+    for(var b=0;b<0.999;b+=0.002){ bs.push(b); gs.push(gamma(b)); }
+    var g = gamma(beta);
+
+    var tr = [
+      {x:times, y:temps, type:'scatter', mode:'lines', name:'Körpertemp (A)', line:{color:P.teal, width:3}, xaxis:'x', yaxis:'y'},
+      {x:times, y:setpt, type:'scatter', mode:'lines', name:'Sollwert 37°C (invariant)', line:{color:P.amber, width:2, dash:'dash'}, xaxis:'x', yaxis:'y'},
+      {x:bs, y:gs, type:'scatter', mode:'lines', name:'γ(β) (B)', line:{color:P.violet, width:3}, xaxis:'x2', yaxis:'y2'},
+      {x:[beta], y:[g], type:'scatter', mode:'markers', name:'jetzt', marker:{color:P.coral, size:14, symbol:'circle'}, xaxis:'x2', yaxis:'y2'}
+    ];
+    var layout = {
+      grid:{rows:1, columns:2, pattern:'independent', rowgap:0.12, columnwidth:[0.48,0.48]},
+      paper_bgcolor:P.paper, plot_bgcolor:P.plot,
+      font:{color:P.text, family:'Inter, sans-serif', size:12},
+      margin:{t:52, b:46, l:56, r:26},
+      showlegend:true, legend:{font:{size:10}, x:0.02, y:1.14},
+      xaxis:{title:'Zeit (Minuten)', gridcolor:P.grid, zerolinecolor:P.grid, domain:[0,0.46]},
+      yaxis:{title:'°C', range:[34,43], gridcolor:P.grid, zerolinecolor:P.grid, domain:[0,1]},
+      xaxis2:{title:'β = v/c', range:[0,1], gridcolor:P.grid, zerolinecolor:P.grid, domain:[0.54,1]},
+      yaxis2:{title:'γ', range:[0,40], gridcolor:P.grid, zerolinecolor:P.grid, domain:[0,1]},
+      title:{text:'Invarianz unter Veränderung — ein Regler, zwei Welten', font:{size:15, color:P.text}}
+    };
+    Plotly.react('viz', tr, layout, {responsive:true, displayModeBar:false});
+
+    document.getElementById('betaVal').textContent = beta.toFixed(2);
+    document.getElementById('roBeta').textContent = beta.toFixed(3);
+    document.getElementById('roGamma').textContent = (g>=Infinity)?'∞':g.toFixed(3);
+    document.getElementById('roSet').textContent = '37.0 °C';
+    document.getElementById('roInv').textContent = 'c · s²';
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('betaSlider').addEventListener('input', renderViz);
+    document.getElementById('themeToggle').addEventListener('click', function(){
+      var h=document.documentElement;
+      var now = h.classList.toggle('dark');
+      try{ localStorage.setItem('f103theme', now?'dark':'light'); }catch(e){}
+      renderViz();
+    });
+    if(typeof renderMathInElement!=='undefined'){
+      renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false});
+    }
+  });
+  window.addEventListener('load', function(){ renderViz(); });
+  window.addEventListener('resize', function(){ renderViz(); });
+})();
+</script>
+</body>
+</html>

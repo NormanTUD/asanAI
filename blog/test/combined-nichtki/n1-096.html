@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 096 — HoTT × COHERENT: coherence as local gluing</title>
+<style>
+:root{
+  --bg:#f4f1e8; --card:#ffffff; --ink:#1b1b24; --muted:#5b5b66;
+  --line:#d9d3c4; --accent:#0f766e; --gold:#b45309; --clay:#b91c1c;
+  --soft:#efece2;
+  --viz-base:#94a3b8; --viz-gold:#b45309; --viz-clay:#b91c1c;
+  --viz-accent:#0f766e; --viz-ink:#1b1b24; --viz-mute:#64748b;
+}
+html.dark{
+  --bg:#0f172a; --card:#111827; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --accent:#5eead4; --gold:#fbbf24; --clay:#f87171;
+  --soft:#0b1220;
+  --viz-base:#64748b; --viz-gold:#fbbf24; --viz-clay:#f87171;
+  --viz-accent:#5eead4; --viz-ink:#e2e8f0; --viz-mute:#94a3b8;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Georgia,'Times New Roman',serif; line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:2.5rem 1.25rem 5rem;}
+header{border-bottom:1px solid var(--line); padding-bottom:1.2rem; margin-bottom:2rem;}
+h1{font-size:2.05rem; line-height:1.2; margin:0 0 .5rem;}
+.sub{color:var(--muted); font-style:italic; font-size:1rem; margin:0;}
+.kicker{color:var(--accent); letter-spacing:.12em; text-transform:uppercase; font-size:.72rem; margin:0 0 .35rem; font-family:system-ui,sans-serif;}
+section{margin:2.4rem 0;}
+h2{font-size:1.45rem; border-left:4px solid var(--accent); padding-left:.7rem; margin:0 0 1rem; line-height:1.3;}
+h3{font-size:1.08rem; margin:1.4rem 0 .5rem; color:var(--accent);}
+p{margin:.7rem 0;}
+strong{color:var(--ink);}
+.card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1rem 1.15rem; margin:1rem 0;}
+.card .lbl{font-family:system-ui,sans-serif; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:.35rem;}
+A{color:var(--accent);} B{color:var(--gold);}
+.tag{font-family:system-ui,sans-serif; font-size:.7rem; padding:.1rem .45rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); white-space:nowrap;}
+ul{margin:.5rem 0 .5rem 1.1rem;} li{margin:.4rem 0;}
+table{width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem;}
+th,td{border:1px solid var(--line); padding:.5rem .6rem; text-align:left; vertical-align:top;}
+th{background:var(--soft); font-family:system-ui,sans-serif; font-size:.8rem; letter-spacing:.03em;}
+code{font-family:'Fira Code',ui-monospace,monospace; font-size:.88em; background:var(--soft); padding:.05em .35em; border-radius:4px;}
+.viz-controls{display:flex; flex-wrap:wrap; gap:.8rem 1.4rem; align-items:center; margin:.8rem 0; font-family:system-ui,sans-serif; font-size:.9rem;}
+.viz-controls label{display:flex; align-items:center; gap:.45rem;}
+.viz-controls input[type=range]{width:170px; accent-color:var(--accent);}
+.viz-controls select{background:var(--soft); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:.25rem .4rem;}
+canvas#viz{width:100%; height:480px; display:block; background:var(--card); border:1px solid var(--line); border-radius:12px;}
+.vizcap{font-family:system-ui,sans-serif; font-size:.85rem; color:var(--muted); margin:.5rem 0;}
+#vizreadout{font-family:ui-monospace,monospace; font-size:.86rem; background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:.55rem .7rem; margin-top:.6rem;}
+.prov a{color:var(--accent); text-decoration:none;} .prov a:hover{text-decoration:underline;}
+.prov .item{border:1px solid var(--line); border-radius:10px; padding:.8rem 1rem; margin:.7rem 0; background:var(--card);}
+#themeToggle{position:fixed; top:14px; right:14px; z-index:50; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:.35rem .8rem; font-family:system-ui,sans-serif; font-size:.8rem; cursor:pointer;}
+#themeToggle:hover{border-color:var(--accent);}
+</style>
+</head>
+<body>
+<button id="themeToggle" type="button">☾ dark</button>
+<div class="wrap">
+<header>
+  <p class="kicker">Knockout Synthesis · Round 1 · Non-AI · Pair 096</p>
+  <h1>Coherence Is Local Gluing</h1>
+  <p class="sub">Fusion aus: hott_book.html ✕ coherent_worldview.html</p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Both papers, in different idioms, defend a single thesis: <strong>a coherent whole is not imposed from outside — it emerges when local pieces agree on their overlaps — and the "sameness" that lets them agree is itself a structured, higher-dimensional object, not a primitive.</strong> One paper states it as a foundation of mathematics; the other states it as an epistemology of how a mind assembles a worldview.</p>
+  <p><span class="tag">A · HoTT</span> <strong><span class="A">HoTT</span></strong> says it mathematically: types are spaces, elements are points, and <em>identifications</em> are paths between points — and paths between paths, ad&nbsp;infinitum (an ∞-groupoid). The right notion of sameness between types is <em>equivalence</em>, and the <em>univalence axiom</em> makes equivalence literally equality: <code>(A = B) ≃ (A ≃ B)</code>. Structure is local (fibres over points, transport along paths) and glues to the whole <em>uniquely</em>, by the fundamental theorem of identity types: a family <code>B(x)</code> characterizes the identity type of <code>A</code> iff its total space <code>Σ(x:A) B(x)</code> is <em>contractible</em>.</p>
+  <p><span class="tag">B · COHERENT</span> <strong><span class="B">COHERENT</span></strong> says it epistemically: a worldview <code>G</code> is a <em>coherent global whole</em> obtained from local readings <code>R_i</code> of the world <code>W</code> that agree on their overlaps (a cover / sheaf glued into a section). Its nine-rung chain runs <em>Distinction → Relation → Transformation → Locality → Compatibility → Coherence → Gluing → Globality → Invariance</em>, and its coda holds that <em>the whole holds because of the fitting, not sameness</em>. Truth is a 2×2 of <em>coherence</em> (internal consistency) × <em>correspondence</em> (contact with <code>W</code>), and five pathologies — fantasy, factbook, liar, calibrated, out-of-cover — are the ways the local pieces fail to glue.</p>
+  <p><strong>Fused:</strong> HoTT is the <em>mathematics</em> of the gluing (transport, contractibility, univalence); COHERENT is the <em>epistemology</em> (world → readings → whole, truth as coherence × correspondence, the failure modes). Taken together: <em>a coherent worldview is a type in a universe, and it is true exactly when it is equivalent — hence, by univalence, equal — to the structure of the world it reads.</em></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <h3>C1 · Where does "equivalence" sit relative to "equality"?</h3>
+  <p><span class="tag">A</span> <strong>HoTT promotes equivalence to the top.</strong> Univalence asserts <code>(A = B) ≃ (A ≃ B)</code>: for types in the universe <code>𝒰</code>, "equivalent" <em>is</em> "equal" — the identity type of types <em>is</em> the equivalence type. HoTT also separates judgmental/definitional equality <code>≡</code> from identity types <code>=</code> (paths), and notes that <code>has-inverse(f)</code> is "homotopically complex" while <code>is-equiv(f)</code> is "always a proposition (has at most one proof)."</p>
+  <p><span class="tag">B</span> <strong>COHERENT keeps a sameness ladder with equality strictly above equivalence.</strong> Its ladder is <code>=</code> (identity) at the very top, then <code>≅</code> (isomorphism), <code>≃</code> (equivalence), <code>≈</code> (approximation), statistical, model-theoretic — and its animation <em>refuses</em> a weaker relation (<code>≈</code>) when it tries to drag up to <code>=</code>. Here <code>=</code> is strictly stronger than <code>≃</code>.</p>
+  <p><strong>Conflict:</strong> A <em>identifies</em> the top two rungs (equivalence = equality in the universe); B <em>keeps them apart</em> and forbids promoting a weak sameness to identity.</p>
+
+  <h3>C2 · Is coherence guaranteed, or fragile?</h3>
+  <p><span class="tag">A</span> <strong>HoTT: coherence is guaranteed by construction.</strong> By the fundamental theorem of identity types / encode–decode, a family <code>B(x)</code> characterizes <code>A</code>'s identity type iff <code>Σ(x:A) B(x)</code> is <em>contractible</em>; contractibility makes the gluing <em>unique</em> (at most one path). Give the local data and the global is forced — "coherence by definition."</p>
+  <p><span class="tag">B</span> <strong>COHERENT: coherence is a fragile achievement that can and does fail.</strong> The whole <code>G</code> is a separate target the local readings must <em>successfully</em> glue to produce; the five pathologies are exactly the failure modes (factbook = no global section; fantasy = coherent but untethered; liar = source untethered; calibrated = small bias; out-of-cover).</p>
+  <p><strong>Conflict:</strong> A's glue is automatic once the condition holds; B's glue is a risk you must verify. "Guaranteed" vs. "can fail."</p>
+
+  <h3>C3 · Is there an external world the whole must correspond to?</h3>
+  <p><span class="tag">B</span> <strong>COHERENT: yes, strongly.</strong> Truth = coherence × <em>correspondence</em>. Coherence <em>without</em> contact with the world <code>W</code> is "fantasy" (a self-consistent but untethered whole). And <code>W</code> is only <em>partially</em> accessible — the "blind-spot ring" (accessible cover <code>c_acc ⊂ W</code>). A true worldview must be self-consistent <em>and</em> touch the outside, with bounded access.</p>
+  <p><span class="tag">A</span> <strong>HoTT: no external world.</strong> Everything is internal to the universe <code>𝒰</code>; correctness is internal coherence (a proof is a path in a type; univalence is a principle <em>about</em> <code>𝒰</code>). There is no independent <code>W</code> the theory must "contact" — <code>𝒰</code> is its own world, and "correspondence" is internalized as equivalence.</p>
+  <p><strong>Conflict:</strong> B demands an external correspondence term and a bounded-access caveat that A has no counterpart for; in A a coherent structure is correct <em>by construction</em>, with no "fantasy" failure mode.</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>R1 (for C1) · Stratify: truncation levels <em>are</em> the sameness ladder</h3>
+  <p>HoTT's truncation hierarchy — level −2 contractible, −1 proposition, 0 set, 1 groupoid, …, ∞-type — is a precise ladder of <em>how much higher-path structure a type carries</em>. COHERENT's epistemic ladder (<code>=</code>, <code>≅</code>, <code>≃</code>, <code>≈</code>) is the same idea from the reader's side. Fused: <strong>the truncation level of a structure determines the highest rung of sameness it can honestly support.</strong> A <em>set</em> (level 0) is "discrete": its identity type is a proposition, so for a set <code>≃</code> and <code>=</code> <em>coincide</em> and there is no room to climb — which is exactly B's <em>refusal</em> (≈ cannot reach =). The <em>universe 𝒰 is a high ∞-type</em>, so on 𝒰's own rung the top two rungs collapse — which is exactly A's univalence. No contradiction: the same statement read at different truncation levels.</p>
+
+  <h3>R2 (for C2) · The condition and its failure modes are one phenomenon</h3>
+  <p>A supplies the <em>condition</em> for gluing (B(x) has contractible total space ⟺ the local readings agree on overlaps, unique transport); B enumerates the <em>ways that condition fails</em>. The five pathologies are the non-compatibility failures in HoTT clothing: <strong>factbook</strong> (true local dots, no global section) = a cover with no global section; <strong>fantasy</strong> (coherent, no W-contact) = a family contractible over the <em>wrong</em> base; <strong>liar</strong> (untethered source) = local readings that do not descend from W, so their "paths" carry no real transport; <strong>calibrated</strong> (small bias) = transport that is only <em>approximately</em> coherent (small holonomy); <strong>out-of-cover</strong> = querying a point outside the base space, where transport is undefined. Fused: <strong>coherence is guaranteed <em>given</em> the compatibility condition (A), and the pathologies are <em>the check for that condition</em> (B).</strong> Encode–decode is the algorithm; the five pathologies are the error messages. "By construction" vs. "can fail" reconcile as <em>sufficiency</em> vs. <em>verification</em>.</p>
+
+  <h3>R3 (for C3) · Internalize the world, or keep it as a meta-anchor</h3>
+  <p>Two readings, both valid. <strong>Internal:</strong> B's "world <code>W</code>" <em>is</em> A's universe <code>𝒰</code>; a "reading <code>R_i</code>" is a structure inside <code>𝒰</code>; "contact with the world" = <em>equivalence to the corresponding structure in 𝒰</em>, which by univalence is <em>equality</em>. "Fantasy" (coherent but untethered) = a self-consistent structure that is <em>not equivalent</em> to any real structure in 𝒰 — the wrong shape. <strong>Applied / external:</strong> for B's LLM (corpus-as-cover), history, and embodiment ladder there <em>is</em> a genuinely external empirical <code>W</code> no self-contained theory reaches; then A supplies the internal logic and B supplies the external anchor. Fused truth criterion: <strong>a worldview is a coherent type in <code>𝒰</code>, true iff it is <em>equivalent</em> to the world's own type; univalence says that equivalence <em>is</em> equality in the universe.</strong> So B's 2×2 (coherence × correspondence) <em>is</em> A's univalence — coherence = being a well-formed, self-consistent ∞-groupoid; correspondence = equivalence to <code>W</code>'s type; univalence = the move that makes "corresponds to the world" the same as "is the world (structurally)." The blind-spot ring = you may assert equivalence only on the part of <code>W</code> you can see; outside your accessible cover, transport is undefined (out-of-cover).</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>The two papers share a vocabulary once you read HoTT's machinery as the formal engine under COHERENT's epistemes. The fused content is the union of the two, with a mapping between them.</p>
+
+  <h3>From A (HoTT) — the mathematics of gluing</h3>
+  <ul>
+    <li><strong>Types, elements, judgments.</strong> A type is a space; <code>Γ ⊢ a : A</code> is a judgment. A type family <code>B : A → 𝒰</code> is a <em>fibre bundle</em> (a fibre <code>B(x)</code> over each point <code>x</code>).</li>
+    <li><strong>Π-types as sections.</strong> A dependent function <code>f : Π(x:A) B(x)</code> is a <em>section</em> of the bundle — one point per fibre; with formation / introduction (λ) / elimination (eval) / computation (β+η).</li>
+    <li><strong>Inductive types.</strong> <code>ℕ</code> = 0, succ. The trap: <code>0 + n = n</code> needs a <em>proof</em> (an identification), not definitional equality.</li>
+    <li><strong>Identity types = paths.</strong> <code>a =_A x</code> is the space of paths; an ∞-groupoid (refl, inverse, concatenation, associativity, unit/inverse laws); <strong>transport</strong> <code>tr_B(p) : B(x) → B(y)</code> moves fibres along paths.</li>
+    <li><strong>Equivalences &amp; fibres.</strong> A bi-invertible map; <code>fib_f(b) = Σ(a:A) f(a)=b</code>; <strong>f is an equivalence ⟺ all its fibres are contractible.</strong></li>
+    <li><strong>Contractibility &amp; the fundamental fact.</strong> <code>Σ(x:A) a = x</code> is contractible at <code>(a, refl)</code> — the basis for characterizing an identity type via a contractible total space (encode–decode).</li>
+    <li><strong>Truncation levels.</strong> −2 contractible, −1 proposition, 0 set, 1 groupoid, k-type, ∞. (∅,𝟏 props; ℕ,ℤ,Bool sets; <code>𝒰</code> not a set; S¹ a 1-groupoid with loop space ℤ.)</li>
+    <li><strong>Univalence.</strong> <code>idtoeqv : (A = B) → (A ≃ B)</code> is an equivalence; <code>ua : (A ≃ B) → (A = B)</code>; <code>transport(ua(f), x) = f(x)</code>. Consequences: structure-identity principle, function extensionality, <code>𝒰</code> not a set.</li>
+    <li><strong>Higher inductive types.</strong> S¹ = base, loop (loop ≠ refl); <code>π₁(S¹) ≅ ℤ</code>; universal cover = the helix <code>ℝ → S¹</code>; encode–decode; suspensions, pushouts, truncations, quotients.</li>
+  </ul>
+
+  <h3>From B (COHERENT) — the epistemology of a coherent whole</h3>
+  <ul>
+    <li><strong>The nine-rung chain:</strong> Distinction, Relation, Transformation, Locality, Compatibility, Coherence, Gluing, Globality, Invariance.</li>
+    <li><strong>Locality → Sheaf.</strong> Local readings (nested open sets / a panorama of overlapping frames) must <em>agree on every overlap</em>; a global section exists iff they do. Misalign one frame and the glue breaks.</li>
+    <li><strong>Master diagram <code>W → R_i → G</code></strong> with a <em>blind-spot ring</em> (<code>c_acc ⊂ W</code>): the world, its readings, the coherent global whole.</li>
+    <li><strong>Three kinds of difference:</strong> World (W), Instrument (I), Interpretation (J) — two disagreeing reports traced to different sources of difference.</li>
+    <li><strong>Sameness ladder:</strong> <code>=</code> &gt; <code>≅</code> &gt; <code>≃</code> &gt; <code>≈</code> &gt; statistical &gt; model-theoretic; a weaker rung cannot be promoted to identity.</li>
+    <li><strong>Admissible transitions (licence pool T):</strong> widen T and spurious fits appear — a model-selection / Occam principle.</li>
+    <li><strong>Truth 2×2 (coherence × correspondence):</strong> good (coherent ∧ contact), factbook (incoherent ∧ contact), fantasy (coherent ∧ no contact), wrong (incoherent ∧ no contact).</li>
+    <li><strong>Five pathologies:</strong> fantasy, factbook, liar, calibrated, out-of-cover.</li>
+    <li><strong>LLM as corpus-as-cover:</strong> the corpus is an open cover of the world; training glues the local documents into a global model <code>G</code>; compounding feeds <code>G</code> on its own output; there is <em>no direct</em> <code>W → G</code> arrow.</li>
+    <li><strong>Embodiment ladder:</strong> grammar → topos → manifold → <code>ℝᵈ</code> → floats → silicon (each descent loses generality, gains causality). <strong>History constellation:</strong> Parmenides → … → Grothendieck. <strong>Coda:</strong> the seams stay visible — the whole holds because of the fitting, not sameness.</li>
+  </ul>
+
+  <h3>The fused dictionary (A ↔ B)</h3>
+  <table>
+    <tr><th>HoTT (A)</th><th>COHERENT (B)</th></tr>
+    <tr><td>type / space</td><td>coherent whole / worldview <code>G</code></td></tr>
+    <tr><td>point / element</td><td>local reading <code>R_i</code></td></tr>
+    <tr><td>path / identification</td><td>agreement / compatibility on an overlap</td></tr>
+    <tr><td>fibre bundle <code>B : A → 𝒰</code></td><td>open cover of the world <code>W</code></td></tr>
+    <tr><td>transport <code>tr_B(p)</code></td><td>frame transition / the gluing map</td></tr>
+    <tr><td>contractible fibre (unique path)</td><td>compatible overlap (a unique, forced glue)</td></tr>
+    <tr><td>global section exists ⟺ fibres contractible</td><td>coherent whole <code>G</code> exists ⟺ readings agree on overlaps</td></tr>
+    <tr><td>no global section</td><td>factbook pathology</td></tr>
+    <tr><td>truncation level (set / groupoid / ∞)</td><td>sameness rung (<code>=</code> … <code>≈</code>)</td></tr>
+    <tr><td>univalence <code>(A=B) ≃ (A≃B)</code></td><td>coherence × correspondence = truth</td></tr>
+    <tr><td>S¹ / helix / <code>π₁(S¹)≅ℤ</code></td><td>the twist (monodromy) that makes or breaks the glue</td></tr>
+    <tr><td>querying outside the base space <code>A</code></td><td>out-of-cover pathology</td></tr>
+  </table>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung</h2>
+  <p class="vizcap">A cover of eight overlapping local readings <code>R_i</code> on the circle S¹ (the base space). The <strong>universal-cover helix ℝ→S¹</strong> lifts the circle into sheets: a <em>global section</em> (the coherent whole <code>G</code>) exists iff the total winding <code>W + δ</code> is an integer. Drag <strong>twist δ</strong>: at δ = 0 the closing seam glues gold and <code>G</code> ignites; off integer, the seam fractures (clay) — the "factbook" pathology. The <strong>sameness ladder</strong> falls from <code>=</code> to <code>≈</code> as the twist grows; the <strong>univalence</strong> toggle promotes <code>≃</code> up to <code>=</code> when the seam is closed.</p>
+  <div class="viz-controls">
+    <label>Twist δ (monodromy)
+      <input id="viz-delta" type="range" min="-0.5" max="0.5" step="0.01" value="0">
+    </label>
+    <label>Winding W
+      <select id="viz-wind">
+        <option value="0">0</option>
+        <option value="1" selected>1</option>
+        <option value="2">2</option>
+      </select>
+    </label>
+    <label><input id="viz-univ" type="checkbox" checked> Univalence (A = B iff A ≃ B)</label>
+  </div>
+  <canvas id="viz"></canvas>
+  <div id="vizreadout"></div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <div class="item">
+      <span class="tag">A</span>
+      <p><a href="../hott_book.html">hott_book.html</a> — "Interactive HoTT Explorer" (after the HoTT Book, Univalent Foundations Program). Types as spaces, identifications as paths, the ∞-groupoid structure, transport, equivalences, contractibility, the truncation hierarchy, the univalence axiom, and higher inductive types (the circle S¹ with loop space ℤ and its helix universal cover).</p>
+    </div>
+    <div class="item">
+      <span class="tag">B</span>
+      <p><a href="../coherent_worldview.html">coherent_worldview.html</a> — "COHERENT", a wordless visual essay: the nine-rung chain (Distinction → … → Invariance), locality and the sheaf, the master diagram W → R_i → G with its blind-spot ring, the sameness ladder, the truth 2×2 (coherence × correspondence), the five pathologies, the LLM-as-corpus-as-cover, the embodiment ladder, and the coda — the whole holds because of the fitting, not sameness.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---- theme toggle (dark is the default) ----
+  var btn = document.getElementById('themeToggle');
+  if (btn) {
+    function label(){ document.documentElement.classList.contains('dark') ? btn.textContent='☾ dark' : btn.textContent='☀ light'; }
+    btn.addEventListener('click', function(){
+      document.documentElement.classList.toggle('dark');
+      label();
+    });
+    label();
+  }
+
+  var canvas = document.getElementById('viz');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var deltaEl = document.getElementById('viz-delta');
+  var windEl  = document.getElementById('viz-wind');
+  var univEl  = document.getElementById('viz-univ');
+  var readoutEl = document.getElementById('vizreadout');
+
+  var COLORS = {};
+  function readTheme(){
+    var s = getComputedStyle(document.documentElement);
+    COLORS.base   = s.getPropertyValue('--viz-base').trim()   || '#888';
+    COLORS.gold   = s.getPropertyValue('--viz-gold').trim()   || '#b45309';
+    COLORS.clay   = s.getPropertyValue('--viz-clay').trim()   || '#b91c1c';
+    COLORS.accent = s.getPropertyValue('--viz-accent').trim() || '#0f766e';
+    COLORS.ink    = s.getPropertyValue('--viz-ink').trim()    || '#1b1b24';
+    COLORS.mute   = s.getPropertyValue('--viz-mute').trim()   || '#666';
+  }
+  readTheme();
+  if (window.MutationObserver) {
+    new MutationObserver(readTheme).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  var PATCH = ['#0ea5e9','#22c55e','#eab308','#ef4444','#a855f7','#14b8a6','#f97316','#6366f1'];
+  var N = 8;
+  var TAU = Math.PI*2;
+
+  function resize(){
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth || 800;
+    var h = canvas.clientHeight || 480;
+    canvas.width = Math.round(w*dpr);
+    canvas.height = Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  if (window.ResizeObserver) { new ResizeObserver(resize).observe(canvas); }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function state(){
+    var delta = (deltaEl && deltaEl.value!==undefined) ? (parseFloat(deltaEl.value)||0) : 0;
+    var W = (windEl && windEl.value!==undefined) ? (parseInt(windEl.value,10)||0) : 1;
+    var univ = univEl ? univEl.checked : true;
+    return { delta:delta, W:W, univ:univ };
+  }
+
+  function draw(){
+    var w = canvas.clientWidth || 800;
+    var h = canvas.clientHeight || 480;
+    ctx.clearRect(0,0,w,h);
+    var st = state();
+    var closed = Math.abs(st.delta) < 0.05;
+    var score = 1 - Math.min(1, Math.abs(st.delta)/0.5);
+
+    // ===== LEFT: circle S^1 with overlapping local readings =====
+    var cx = w*0.27, cy = h*0.40, R = Math.min(w*0.20, h*0.32);
+    ctx.lineCap='round';
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
+    ctx.strokeStyle = COLORS.base; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx+R, cy, 4, 0, TAU);
+    ctx.fillStyle = COLORS.accent; ctx.fill();
+
+    var step = TAU/N, ov = step*0.55;
+    for (var i=0;i<N;i++){
+      var a0 = i*step - ov/2, a1 = (i+1)*step + ov/2;
+      ctx.beginPath(); ctx.arc(cx, cy, R+10, a0, a1);
+      ctx.strokeStyle = PATCH[i%PATCH.length]; ctx.lineWidth = 10;
+      ctx.globalAlpha = 0.85; ctx.stroke(); ctx.globalAlpha = 1;
+      var am = (a0+a1)/2;
+      ctx.fillStyle = COLORS.ink; ctx.font='11px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('R'+(i+1), cx+(R+30)*Math.cos(am), cy+(R+30)*Math.sin(am));
+    }
+
+    // closing seam at the base point (angle 0)
+    var sx = cx+R, sy = cy;
+    if (closed) {
+      ctx.beginPath(); ctx.arc(sx, sy, 8, 0, TAU); ctx.fillStyle = COLORS.gold; ctx.fill();
+      ctx.beginPath(); ctx.arc(sx, sy, 13, 0, TAU); ctx.strokeStyle = COLORS.gold; ctx.lineWidth=2; ctx.stroke();
+    } else {
+      var gap = 6 + (Math.abs(st.delta)/0.5)*11;
+      ctx.strokeStyle = COLORS.clay; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(sx, sy-gap); ctx.lineTo(sx, sy-gap*0.35); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx, sy+gap); ctx.lineTo(sx, sy+gap*0.35); ctx.stroke();
+    }
+    ctx.fillStyle = COLORS.mute; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(closed ? 'seam closed' : 'seam open (twist)', sx, sy + (closed?22:24));
+
+    // coherent whole G node
+    var gy = cy + R + 46;
+    ctx.save();
+    if (closed){ ctx.shadowColor = COLORS.gold; ctx.shadowBlur = 16; }
+    ctx.beginPath(); ctx.arc(cx, gy, 16, 0, TAU);
+    ctx.fillStyle = closed ? COLORS.gold : COLORS.mute; ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = closed ? '#1b1b24' : COLORS.ink;
+    ctx.font='italic 15px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('G', cx, gy);
+    ctx.fillStyle = COLORS.mute; ctx.font='11px sans-serif';
+    ctx.fillText('coherent whole', cx, gy+28);
+
+    // ===== RIGHT TOP: universal cover helix R -> S^1 =====
+    var hx0 = w*0.52, hy0 = h*0.09, hw = w*0.43, hh = h*0.40;
+    ctx.fillStyle = COLORS.mute; ctx.font='11px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Universal cover  ℝ → S¹  (the lift)', hx0+6, hy0-4);
+
+    var sheets = st.W + st.delta;
+    var botSheet = -0.5;
+    var topSheet = Math.max(1, Math.ceil(sheets+0.4));
+    var span = topSheet - botSheet;
+    var sheetGap = hh/Math.max(1, span);
+
+    ctx.strokeStyle = COLORS.mute; ctx.lineWidth = 1; ctx.setLineDash([3,4]);
+    for (var lv=Math.ceil(botSheet); lv<=topSheet; lv++){
+      var yy = (hy0+hh) - (lv-botSheet)*sheetGap;
+      ctx.beginPath(); ctx.moveTo(hx0+12, yy); ctx.lineTo(hx0+hw-12, yy); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    var cxh = hx0 + hw*0.5, rxh = hw*0.30;
+    function helixPt(th){
+      return { x: cxh + rxh*Math.cos(th), y: (hy0+hh) - (th/TAU)*sheets*sheetGap };
+    }
+    ctx.beginPath();
+    var M = 90;
+    for (var k=0;k<=M;k++){
+      var p = helixPt((k/M)*TAU);
+      if (k===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y);
+    }
+    ctx.strokeStyle = COLORS.accent; ctx.lineWidth = 2.2; ctx.stroke();
+    var p0 = helixPt(0), p1 = helixPt(TAU);
+    ctx.beginPath(); ctx.arc(p0.x,p0.y,4,0,TAU); ctx.fillStyle=COLORS.accent; ctx.fill();
+    ctx.beginPath(); ctx.arc(p1.x,p1.y,5,0,TAU); ctx.fillStyle = closed?COLORS.gold:COLORS.clay; ctx.fill();
+    if (closed){
+      ctx.beginPath(); ctx.arc(p1.x,p1.y,9,0,TAU); ctx.strokeStyle=COLORS.gold; ctx.lineWidth=2; ctx.stroke();
+    }
+    ctx.fillStyle = COLORS.mute; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(closed ? 'integer winding → section locks ✓' : 'twist δ → section never closes ✕', cxh, hy0+hh+16);
+
+    // ===== RIGHT BOTTOM: sameness ladder =====
+    var lx = w*0.55, ly0 = h*0.56, lw = w*0.38, lh = h*0.38;
+    ctx.fillStyle = COLORS.mute; ctx.font='11px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Sameness ladder (current rung)', lx+2, ly0-6);
+    var rungs = ['identity  =','isomorphism  ≅','equivalence  ≃','approximation  ≈','incoherent  ×'];
+    var rgap = lh/(rungs.length-1);
+    var rungF = closed ? (st.univ ? 0 : 2) : (2 + (1-score)*2);
+    rungF = Math.max(0, Math.min(4, rungF));
+    ctx.strokeStyle = COLORS.mute; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(lx+2, ly0); ctx.lineTo(lx+2, ly0+lh); ctx.stroke();
+    for (var r=0;r<rungs.length;r++){
+      var yy2 = ly0 + r*rgap;
+      var active = Math.abs(r - rungF) < 0.5;
+      ctx.beginPath(); ctx.moveTo(lx+2, yy2); ctx.lineTo(lx+2+(active?12:6), yy2);
+      ctx.strokeStyle = active ? (r===0?COLORS.gold:COLORS.accent) : COLORS.mute;
+      ctx.lineWidth = active?3:1; ctx.stroke();
+      ctx.font = (active?'bold 13px':'12px')+' sans-serif';
+      ctx.textBaseline='middle';
+      ctx.fillStyle = active ? (r===0?COLORS.gold:COLORS.accent) : COLORS.mute;
+      ctx.fillText(rungs[r], lx+22, yy2);
+      if (active){ ctx.beginPath(); ctx.arc(lx+2, yy2, 3.5, 0, TAU); ctx.fillStyle = r===0?COLORS.gold:COLORS.accent; ctx.fill(); }
+    }
+
+    // readout
+    if (readoutEl){
+      var mon = st.W + st.delta;
+      var sam = closed ? (st.univ ? '=  (univalence: ≃ promoted to =)' : '≃  (equivalent, not yet =)')
+                       : rungs[Math.round(rungF)];
+      readoutEl.textContent =
+        'monodromy around S¹ = W + δ = '+mon.toFixed(2)+
+        '   ·   global section: '+(closed?'✓ closed (G coherent)':'✕ broken (factbook)')+
+        '   ·   sameness: '+sam;
+    }
+  }
+
+  (function loop(){ draw(); requestAnimationFrame(loop); })();
+})();
+</script>
+</body>
+</html>

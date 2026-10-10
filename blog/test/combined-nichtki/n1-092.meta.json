@@ -1,0 +1,16 @@
+{
+  "no": "092",
+  "a": "s_theory.html",
+  "b": "hott3.html",
+  "a_title": "S – Iterative Mengenlehre (Boolos)",
+  "b_title": "Homotopy Type Theory - Interactive Visual Explanation",
+  "combined_theme": "stratifizierte-grundlagen-ohne-all",
+  "one_line": "S (Boolos) und HoTT lösen die Klassiker-Paradoxien (Russell/Cantor/Burali-Forti) mit demselben Mechanismus: Ebenen-Strukturierung, in der das 'Alles' immer eine Ebene über dem höchsten liegt und nie selbst ein Objekt ist — zwei Sprachen für dieselbe Grundlagenidee.",
+  "contradictions": [
+    "Identität: A (S) ist intensional — 'Zwei Mengen mit denselben Elementen sind in S nicht automatisch identisch', Extensionalität nur als Zusatz S+Ext; B (HoTT) ist univalent/extensional — das Univalence-Axiom macht (A≃B)≃(A=𝒰B), also äquivalent ⇒ gleich. Gegenläufige Identifikation nach Inhalt vs. nach Struktur.",
+    "Ebenen: A (S) hat eine absolute, lineare, kumulative Stufenhierarchie, in der jede Menge genau eine Heimatebene hat (All+When); B (HoTT) hat relative Ebenen (h-levels bis auf Äquivalenz), und das Universum 𝒰 selbst ist ein höherer, flexibel/homotopischer Typ — keine starre kumulative Kette.",
+    "Logik & Ontologie: A ist eine klassische axiomatische Mengenlehre über Element-Mengen; B ist ausdrücklich konstruktiv/intuitionistisch über Räume/Homotopietypen ('Everything is constructive', S¹=Raum, nicht Punkt)."
+  ],
+  "resolution": "Identität ist eben-indiziert: extensional/univalent auf der Menge-/Typ-Ebene (h0, UIP ≈ S+Ext), intensional auf der Token-/höheren-Ebene (≈ rohes S) — beide Theorien haben beide Schichten, nur jeweils eine im Vordergrund. Derselbe Motor (Stratifizierung ohne oberstes Glied) verbietet das Universelle; HoTT fügt homotopische Mobilität (Unvalenz/Transport) innerhalb der fixen Universums-Kette hinzu, S hält die Stufen starr. Logik (klassisch/konstruktiv) und Ontologie (Menge/Raum) sind unabhängige Achsen über dem gemeinsamen, logik- und ontologie-neutralen Mechanismus.",
+  "viz": "Interaktiver Canvas mit zwei Ebenen-Türmen: S (Stufen V₀⊆V₁⊆… mit Beispiel-Mengen) links, HoTT (Universen 𝒰₀⊆𝒰₁⊆… mit h-levels) rechts; Slider für die Tiefe (1–7), 'Aufbauen'-Animation, 'Universal-Test' zeigt das verbotene 'Alles' (Menge aller Mengen/Typ aller Typen), das immer eine Ebene über dem höchsten schwebt und nie ein Objekt ist. Theme-reaktiv per CSS-Variablen (Dunkel default, Toggle + MutationObserver), rein canvas2d, keine externen Bibliotheken, inline Daten."
+}

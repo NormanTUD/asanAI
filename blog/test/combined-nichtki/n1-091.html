@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form wird Algebra — Fusion: homotopie_kurz.html ✕ morse_theory.html</title>
+<style>
+  :root{
+    --mn-bg:#FAF8F1; --mn-surface:#ffffff; --mn-text:#1c1a17; --mn-muted:#6b6558;
+    --mn-border:#e4ddcd; --mn-accent:#2f6db0; --mn-accent2:#c0306a; --mn-accent3:#6a4fd0; --mn-accent4:#1f8a4c;
+    --mn-warm:#a9700f; --mn-code:#f4efe4;
+    --mn-viz-bg:#eef0f7; --mn-viz-line:#c9ccda; --mn-crit-min:#1f8a4c; --mn-crit-sad:#c8761a; --mn-crit-max:#c62f3e;
+    --mn-shadow:0 14px 40px rgba(20,24,60,.10);
+  }
+  html.dark{
+    --mn-bg:#080a14; --mn-surface:#12162a; --mn-text:#e6ebff; --mn-muted:#9aa6cc;
+    --mn-border:#243154; --mn-accent:#5ee7ff; --mn-accent2:#ff5ea8; --mn-accent3:#a98bff; --mn-accent4:#7dffb0;
+    --mn-warn:#ffd166; --mn-code:#101a30;
+    --mn-viz-bg:#0b0e1a; --mn-viz-line:#2a3358; --mn-crit-min:#7dffb0; --mn-crit-sad:#ffb066; --mn-crit-max:#ff8080;
+    --mn-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--mn-bg); color:var(--mn-text);
+    font-family:Georgia,'Times New Roman',serif; line-height:1.7;
+    transition:background .3s ease,color .3s ease;
+  }
+  .wrap{ max-width:820px; margin:0 auto; padding:46px 22px 90px; }
+  h1{ font-size:2.05em; line-height:1.22; margin:.1em 0 .15em; letter-spacing:-.01em; }
+  .subtitle{ color:var(--mn-muted); font-style:italic; margin:0 0 1.6em; font-size:1.02em; }
+  .subtitle .x{ color:var(--mn-accent2); font-style:normal; font-weight:700; }
+  section{ margin:2.3em 0; scroll-margin-top:20px; }
+  h2{ font-size:1.4em; border-bottom:2px solid var(--mn-border); padding-bottom:.28em; margin-top:1.2em; }
+  h2 .n{ font-size:.62em; color:var(--mn-accent); border:1px solid var(--mn-border); border-radius:7px;
+         padding:2px 9px; margin-right:.5em; vertical-align:middle; font-family:monospace; }
+  h3{ font-size:1.1em; margin:1.3em 0 .4em; color:var(--mn-accent); }
+  p{ margin:.75em 0; }
+  ul,ol{ margin:.6em 0; padding-left:1.35em; }
+  li{ margin:.42em 0; }
+  code{ font-family:'SFMono-Regular',Consolas,Menlo,monospace; font-size:.86em;
+        background:var(--mn-code); border:1px solid var(--mn-border); border-radius:5px; padding:.08em .38em; }
+  sub,sup{ font-size:.72em; }
+  .callout{ background:var(--mn-surface); border:1px solid var(--mn-border); border-left:4px solid var(--mn-accent);
+            border-radius:10px; padding:12px 18px; margin:1.1em 0; box-shadow:var(--mn-shadow); }
+  .callout.a2{ border-left-color:var(--mn-accent2); }
+  .callout.a3{ border-left-color:var(--mn-accent3); }
+  .callout.a4{ border-left-color:var(--mn-accent4); }
+  .callout .t{ display:block; font-size:.72em; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+               color:var(--mn-accent); margin-bottom:.35em; }
+  .callout.a2 .t{ color:var(--mn-accent2); }
+  .callout.a3 .t{ color:var(--mn-accent3); }
+  .callout.a4 .t{ color:var(--mn-accent4); }
+  .ab{ color:var(--mn-accent4); font-weight:700; }
+  .nab{ color:var(--mn-accent2); font-weight:700; }
+  table{ width:100%; border-collapse:collapse; margin:1.1em 0; font-size:.92em; }
+  th,td{ padding:9px 11px; text-align:left; border-bottom:1px solid var(--mn-border); vertical-align:top; }
+  th{ color:var(--mn-accent); font-size:.74em; letter-spacing:.1em; text-transform:uppercase; }
+  tr.hl td{ background:rgba(120,140,220,.08); }
+  .mono{ font-family:'SFMono-Regular',Consolas,Menlo,monospace; font-size:.9em; }
+
+  /* viz */
+  .themebtn{ position:fixed; top:14px; right:14px; z-index:50; background:var(--mn-surface); color:var(--mn-text);
+             border:1px solid var(--mn-border); border-radius:20px; padding:6px 13px; cursor:pointer; font-size:12.5px;
+             font-family:inherit; box-shadow:var(--mn-shadow); }
+  .themebtn:hover{ border-color:var(--mn-accent); color:var(--mn-accent); }
+  .fz-card{ background:var(--mn-surface); border:1px solid var(--mn-border); border-radius:14px; padding:18px;
+            margin:1.1em 0; box-shadow:var(--mn-shadow); }
+  .fz-ctrl{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; margin-bottom:14px; }
+  .fz-ctrl label{ font-size:.85em; color:var(--mn-muted); display:flex; align-items:center; gap:10px; }
+  .fz-ctrl .v{ color:var(--mn-accent); font-family:monospace; font-weight:700; }
+  input[type=range]{ -webkit-appearance:none; appearance:none; width:220px; height:4px; border-radius:99px;
+                     background:linear-gradient(90deg,var(--mn-accent),var(--mn-accent3)); outline:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+                     background:var(--mn-text); box-shadow:0 0 0 4px rgba(120,140,220,.25); cursor:grab; }
+  input[type=range]::-moz-range-thumb{ width:16px; height:16px; border:none; border-radius:50%; background:var(--mn-text); cursor:grab; }
+  .btn,.btn2{ background:transparent; border:1px solid var(--mn-border); color:var(--mn-text); padding:7px 14px;
+              border-radius:9px; cursor:pointer; font-size:.85em; font-family:inherit; }
+  .btn:hover{ border-color:var(--mn-accent); color:var(--mn-accent); }
+  .btn2:hover{ border-color:var(--mn-accent3); color:var(--mn-accent3); }
+  .fz-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-bottom:10px; font-size:.82em; color:var(--mn-muted); }
+  .fz-legend .lg i{ display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+  #fz-cv{ width:100%; display:block; border-radius:11px; background:var(--mn-viz-bg); border:1px solid var(--mn-border); touch-action:none; }
+  .fz-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
+  @media(max-width:560px){ .fz-stats{ grid-template-columns:repeat(2,1fr); } }
+  .stat{ background:var(--mn-bg); border:1px solid var(--mn-border); border-radius:10px; padding:9px 12px; }
+  .stat .lab{ font-size:.7em; letter-spacing:.05em; text-transform:uppercase; color:var(--mn-muted); }
+  .stat .val{ font-family:monospace; font-size:1.25rem; font-weight:700; margin-top:2px; color:var(--mn-accent); }
+  .fzpi{ font-weight:700; }
+  .fzpi.ab{ color:var(--mn-accent4); }
+  .fzpi.nab{ color:var(--mn-accent2); }
+  .fz-fuse{ margin-top:12px; font-size:.95em; border-left:3px solid var(--mn-accent2); padding:6px 0 6px 14px; color:var(--mn-text); }
+  .fz-compare{ margin-top:12px; font-size:.92em; background:var(--mn-bg); border:1px dashed var(--mn-border);
+               border-radius:10px; padding:11px 14px; }
+  .prov{ display:flex; flex-direction:column; gap:12px; margin-top:.8em; }
+  .prov .item{ background:var(--mn-surface); border:1px solid var(--mn-border); border-radius:11px; padding:13px 16px; box-shadow:var(--mn-shadow); }
+  .prov .item .tag{ font-size:.7em; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mn-accent); }
+  .prov .item b a{ color:var(--mn-accent); text-decoration:none; border-bottom:1px dotted var(--mn-accent); }
+  .prov .item b a:hover{ color:var(--mn-accent2); border-color:var(--mn-accent2); }
+  footer{ margin-top:2.4em; padding-top:1em; border-top:1px solid var(--mn-border); color:var(--mn-muted); font-size:.82em; }
+</style>
+</head>
+<body>
+<button id="fz-theme" class="themebtn">🌙 Dunkel</button>
+<div class="wrap">
+
+  <h1>Form wird Algebra: Homotopie trifft Morse-Theorie</h1>
+  <p class="subtitle">Fusion aus: <span class="x">homotopie_kurz.html</span> ✕ <span class="x">morse_theory.html</span>
+  &nbsp;·&nbsp; ROUND 1 · Pair 091 (nicht-KI-Track)</p>
+
+  <section id="these">
+    <h2><span class="n">1</span>Kernthese der Fusion</h2>
+    <p>Beide Papiere machen dieselbe Grundbehauptung über Topologie: <b>Die Form eines Raumes lässt sich in eine
+    Algebra übersetzen, die unter stetigem Verbiegen unverändert bleibt.</b> Erst mit so einer <i>Invariante</i> kann man
+    die banale Frage „sind diese zwei Räume ineinander verformbar?“ <i>beweisen</i>, statt jede (unendlich viele)
+    Verformung einzeln durchzuprobieren. Die Fusionsposition: dafür existieren <b>zwei komplementäre Wege, die am
+    selben Ort — der Homologie — aufeinandertreffen.</b></p>
+    <ul>
+      <li><b>Weg A (Homotopie)</b> definiert die Äquivalenz „stetig ineinander verformbar“ und liefert die
+      Invarianten, die zwei Räume <i>unterscheiden</i> — die Homotopiegruppen π<sub>n</sub>. Ihre Stärke: sie sind
+      fein (π<sub>1</sub> ist im Allgemeinen <i>nicht</i> abelsch) und sagen „X und Y sind NICHT dasselbe“.</li>
+      <li><b>Weg B (Morse)</b> liefert ein <i>konstruktives</i> Verfahren — eine einzige glatte Funktion
+      f, deren kritische Punkte (Minimum / Sattel / Maximum, nach <i>Index</i>) den Raum Zell um Zell
+      <i>aufbauen</i> und deren Anzahl die Betti-Zahlen (Homologie) nach unten abschließt. Seine Stärke: er
+      <i>baut</i> den Raum aus einer Funktion und liefert so die Betti-Zahlen b<sub>k</sub>.</li>
+    </ul>
+    <div class="callout a3">
+      <span class="t">Kernthese in einem Satz</span>
+      <b>Form = Algebra, die unter stetigem Wandel überlebt.</b> A sagt, womit man Räume voneinander
+      <i>unterscheidet</i> (feine, teils nicht-abelsche π<sub>n</sub>); B sagt, wie man einen Raum aus einer einzigen
+      Funktion <i>aufbaut</i> (kritische Punkte → Zellen → Betti-Zahlen). Die Betti-Zahlen H<sub>k</sub> sind der
+      Ort, an dem sich die beiden berühren: <b>A steigt über den Hurewicz-Homomorphismus von π<sub>n</sub> nach
+      H<sub>k</sub> ab, B steigt über Zell-Anhängung + Morse-Ungleichungen von den kritischen Punkten nach
+      b<sub>k</sub> hoch.</b>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+    <div class="callout">
+      <span class="t">Vorab — keine formalen Widersprüche</span>
+      Das sind <b>keine mathematischen Widersprüche</b>: beide Seiten sind korrekt und ergänzen sich sogar
+      (Morse-Theorie <i>nutzt</i> genau A’s Homotopie-Äquivalenz — zwischen zwei kritischen Werten ist die
+      Unterpegel-Menge homotopieäquivalent, also in A’s Invarianten unverändert). Aber die beiden nehmen
+      <b>unterschiedliche, teils inkompatible methodische Stände</b> ein. Die schärfsten echten Spannungen:
+    </div>
+    <ol>
+      <li><b>Nicht-abelsche π<sub>1</sub> (A) vs. abelsche Betti-Zahlen (B) — die schärfste reale Spannung.</b>
+        A macht die <i>nicht-abelsche</i> Fundamentalgruppe π<sub>1</sub> zur zentralen Invariante und betont
+        ausdrücklich „Nicht alles ist abelsch“: Acht (Kleeblatt) → π<sub>1</sub> = F<sub>2</sub> (freie Gruppe,
+        Kommutator <code>aba⁻¹b⁻¹ ≠ 1</code>, also <code>ab ≠ ba</code>), Torus → π<sub>1</sub> = ℤ² (abelsch).
+        A <i>unterscheidet</i> damit Acht von Torus. B feiert dagegen die <i>Betti-Zahlen</i> b<sub>k</sub> und die
+        Euler-Charakteristik χ — beides <i>abelsche, homologie-Level</i>-Invarianten, gelesen aus der Anzahl der
+        kritischen Punkte (c<sub>k</sub> ≥ b<sub>k</sub>). Acht und Torus haben <b>beide b<sub>1</sub> = 2</b> →
+        B (über b<sub>1</sub>) <i>unterscheidet</i> sie nicht. <b>B’s Methode ist blind für genau die nicht-abelsche
+        Struktur, die A zu erfassen gebaut ist.</b></li>
+      <li><b>Konstruktiv (B) vs. unterscheidend (A) — die Richtung des Versprechens.</b> B’s Kernaussage ist ein
+        <i>Konstruktions</i>-Theorem: „The topology of a smooth manifold is completely determined by the critical
+        points (and their indices) of any generic smooth function on it“ — man kann den Raum aus <i>einer</i> Funktion
+        <i>neu aufbauen</i>, Zell um Zell. A’s Invariante ist ein <i>Unterscheidungs</i>-Werkzeug: „π<sub>1</sub>(X) ≠
+        π<sub>1</sub>(Y) ⟹ X und Y sind nicht verformbar. Fertig.“ A baut nie einen Raum aus Funktionsdaten; er trennt
+        nur Äquivalenzklassen. <b>B macht ein positives/erzeugendes Versprechen (bauen), A ein negatives/relatives
+        (trennen) — die beiden versprechen buchstäblich das Gegenteil.</b></li>
+      <li><b>Was ist das Fundament: Verformung &amp; Vergleich (A) vs. eine Funktion auf einem festen Raum (B).</b>
+        A organisiert alles um die <i>Äquivalenzrelation</i> „stetig ineinander verformbar“ und den
+        <i>Vergleich zweier</i> Räume; sein Primitiv ist „Verformung + Vergleich“. B organisiert alles um <i>eine</i>
+        Funktion auf <i>einem festen</i> Raum; der Raum wird nie verformt — nur der Wasserstand wandert; sein Primitiv
+        ist „Höhenfunktion + ihre Levelsets“. (Wo sie sich berühren, <i>stimmen</i> sie überein: B’s „ändert sich nur
+        an kritischen Punkten“ ist exakt A’s „Untrepegel-Mengen sind zwischen kritischen Werten
+        homotopieäquivalent“ — als Grundannahme aber stehen sie auf verschiedenen Beinen.)</li>
+    </ol>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="n">3</span>Auflösung</h2>
+    <p>Jede Spannung löst sich auf, weil die beiden auf <b>verschiedenen Etagen derselben Hierarchie</b> arbeiten —
+    und zusammen einen Workflow bilden.</p>
+    <ol>
+      <li><b>zu (1): Homotopie liegt über Homologie.</b> Die Betti-Zahl b<sub>1</sub> ist im Wesentlichen der Rang von
+        H<sub>1</sub>, und H<sub>1</sub> ist die <i>Abelschierung</i> von π<sub>1</sub>. B’s „Blindheit“ für F<sub>2</sub>
+        vs. ℤ² ist also <i>by design</i>: B arbeitet eine Etage tiefer, wo diese Information genuinely weg ist.
+        <b>Fusion: Benutze B, um die Homologie schnell aus den kritischen Punkten zu bekommen — dann A, um den feineren
+        nicht-abelschen π<sub>1</sub>-Datensatz wiederherzustellen, den B’s Etage ausblendet.</b> Derselbe Raum, zwei
+        Auflösungen: B liefert den groben Knochen, A das volle Verhakten der Schleifen.</li>
+      <li><b>zu (2): „Unterscheiden“ und „bauen“ sind die zwei Hälften eines Workflows.</b> B’s Zell-Anhängung
+        <i>produziert</i> eine CW-/Handle-Zerlegung; A’s Invarianten (π<sub>1</sub> via Van Kampen, π<sub>n</sub>)
+        werden <i>aus genau dieser Zerlegung berechnet</i>. <b>Fusion: B baut den Bauplan (Zellen), A liest die
+        Invarianten vom Bauplan ab.</b> A’s Van-Kampen-Satz (π<sub>1</sub> aus offenen Stücken rechnen) ist der
+        algebraische <i>Payoff</i> von B’s Zellzerlegung — B ist der <i>Input</i> für A’s Rechnungen.</li>
+      <li><b>zu (3): Dieselbe Theorie von zwei Enden.</b> B’s Wasserstand ist eine <i>kontrollierte Verformung</i> im
+        Sinn von A: Jeder Durchbruch eines kritischen Punkts ist genau <i>eine</i> elementare Verformung (einen
+        k-Handle / eine k-Zelle anhängen), und <i>zwischen</i> den Durchbrüchen ist der Raum homotopieäquivalent
+        (A’s Invarianten bleiben fest). <b>Fusion: der Wasserstand (B) ist A’s Verformung; jede kritische Stufe ist
+        ein einzel Homotopie-Äquivalenz-Ereignis.</b></li>
+    </ol>
+    <div class="callout a4">
+      <span class="t">Fusioniertes Gesamtbild</span>
+      Ein kohärentes Programm: <b>Wähle eine Morse-Funktion → lies ihre kritischen Punkte (B) → baue den Raum Zell um
+      Zell (B) → berechne die Homologie aus den Zellen / Morse-Ungleichungen (B) → hebe auf Homotopie für die feineren
+      Invarianten (A: Van Kampen, Hurewicz) → unterscheide diesen Raum von jedem nicht-äquivalenten (A).</b>
+      Die Betti-Zahlen sind die gemeinsame Währung; π<sub>1</sub> ist A’s Bonus, den B’s Etage ausblendet.
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+    <h3>Das gemeinsame Ziel: Invarianten unter stetigem Wandel</h3>
+    <p>„Zwei Formen sind gleich, wenn man die eine stetig in die andere verbiegen kann, ohne zu zerreißen und ohne zu
+    kleben“ (A). Ein Beweis müsste unendlich viele Verformungen durchprobieren — unmöglich direkt. Man braucht einen
+    <i>Indikator</i>: eine Zahl/Gruppe, die beim Verbiegen <i>nicht</i> ändert und bei zwei Räumen <i>verschieden</i>
+    ist. A und B liefern zwei Fabrikate solcher Indikatoren — und beide hängen an derselben Brücke, der Homologie.</p>
+
+    <h3>A — die Homotopie-Maschinerie (unterscheidend)</h3>
+    <ul>
+      <li><b>Homotopie = der Film.</b> Eine Homotopie von f nach g ist eine stetige Familie H(s,·), s∈[0,1], mit
+      H(0,·)=f, H(1,·)=g. „Stetig verformen“ bekommt damit exakte Bedeutung.</li>
+      <li><b>π<sub>1</sub> = Fundamentalgruppe.</b> Schleifen bei einem Basispunkt, modulo Homotopie (Basispunkt bleibt
+      fest). π<sub>1</sub>(X) ist eine <i>Gruppe</i>; jede Raabbildung induziert einen Homomorphismus.
+      <b>π<sub>1</sub>(X) ≠ π<sub>1</sub>(Y) ⟹ X, Y nicht verformbar.</b></li>
+      <li><b>π<sub>1</sub>(S<sup>1</sup>) ≅ ℤ</b> (Windungszahl), bewiesen durch <i>eindeutige Wegehochhebung</i> auf
+      die Wendeltreppe ℝ → S<sup>1</sup> (p(x)=e<sup>2πix</sup>): eine geschlossene Schleife unten endet oben genau um
+      n gestiegen — n ändert sich unter Homotopie nicht.</li>
+      <li><b>Van Kampen.</b> Zerlege X in offene U,V mit Schnitt: π<sub>1</sub>(X) ≅ (π<sub>1</sub>(U) ∗
+      π<sub>1</sub>(V)) / N, N aus dem Schnitt. Rechnet π<sub>1</sub> für alle Flächen: Geschlecht g → 2g Erzeuger, eine
+      Relation ∏[a<sub>i</sub>, b<sub>i</sub>] = 1.</li>
+      <li><b>π<sub>n</sub> = n-dimensionale Sonden</b> (S<sup>n</sup> statt S<sup>1</sup>) für höhere Löcher
+      (S<sup>2</sup> hat π<sub>1</sub>=1, ist aber nicht zusammenziehbar). <b>Eckmann–Hilton: π<sub>n</sub> ist abelsch
+      für alle n ≥ 2</b> (zwei verträgliche Verknüpfungen → gleich → kommutativ).</li>
+      <li><b>π<sub>n</sub>(S<sup>n</sup>) ≅ ℤ</b> (Abbildungsgrad); daraus folgt <b>Brouwer’s Fixpunktsatz</b>.
+      <b>Hurewicz:</b> ist X (n−1)-zusammenhängend, dann h : π<sub>n</sub>(X) ≅ H<sub>n</sub>(X) — die Brücke von
+      Homotopie nach Homologie.</li>
+    </ul>
+
+    <h3>B — die Morse-Maschinerie (konstruktiv)</h3>
+    <ul>
+      <li><b>Kritische Punkte &amp; Index.</b> Kritisch, wenn ∇f = 0. Nicht-degeneriert (Morse), wenn die Hesse-Matrix
+      keine Null-Eigenwerte hat. In 2D: Minimum (Index 0), Sattel (Index 1), Maximum (Index 2).</li>
+      <li><b>Kernaussage:</b> Die Topologie der Unterpegel-Menge {f ≤ t} ändert sich <b>nur</b>, wenn t einen kritischen
+      Wert passiert; dazwischen ist sie homotopieäquivalent (nichts topologisch Neues).</li>
+      <li><b>Zell-Anhängung:</b> Ein kritischer Punkt vom Index k ≅ Anhängen einer k-Zelle. 0-Zelle = Punkt/Scheibe
+      (neue Komponente), 1-Zelle = Bogen (verbindet → Loop), 2-Zelle = Scheibe (verschließt Rand).</li>
+      <li><b>Torus-Beispiel</b> (aufrecht, 4 kritische Punkte): ∅ → Scheibe (min) → Zylinder (Sattel₁, b<sub>1</sub>=1)
+      → Torus−Scheibe (Sattel₂, b<sub>1</sub>=2) → Torus (max). χ = 1 − 2 + 1 = 0.</li>
+      <li><b>Morse-Ungleichungen:</b> c<sub>k</sub> ≥ b<sub>k</sub> (Anzahl kritischer Punkte vom Index k ≥ k-te
+      Betti-Zahl). Euler: χ = Σ(−1)<sup>k</sup> c<sub>k</sub> = Σ(−1)<sup>k</sup> b<sub>k</sub>.</li>
+      <li><b>Morse vs. degeneriert:</b> f(x)=x⁴ hat an x=0 einen degenerierten kritischen Punkt (f″(0)=0); eine winzige
+      Störung (−εx²) splittet ihn in 3 nicht-degenerierte Punkte → Morse-Funktionen sind <i>generisch</i>.</li>
+    </ul>
+
+    <h3>Die Brücke: Homologie als Treffpunkt</h3>
+    <p><b>A steigt ab, B steigt auf — beide landen auf den Betti-Zahlen.</b> A: π<sub>n</sub> →(Hurewicz)→ H<sub>k</sub>.
+    B: kritische Punkte →(Zellen, Morse)→ b<sub>k</sub>. Und der Feinschliff: b<sub>1</sub> = rank H<sub>1</sub> = rank
+    der Abelschierung von π<sub>1</sub>. Die Abelschierung <i>löscht</i> die Nicht-Abelschheit: F<sub>2</sub> und ℤ²
+    haben dieselbe Abelschierung (b<sub>1</sub>=2), aber π<sub>1</sub> selbst ist F<sub>2</sub> (nicht abelsch) bzw.
+    ℤ² (abelsch). <b>Das ist exakt der Punkt, an dem A mehr sieht als B</b> — und zugleich der Workflow-Andockpunkt:
+    bauen (B) → unterscheiden (A).</p>
+
+    <table>
+      <thead><tr><th>Raum</th><th>b<sub>0</sub></th><th>b<sub>1</sub></th><th>b<sub>2</sub></th><th>χ</th><th>π<sub>1</sub> (A)</th><th>Bezug zur Spannung</th></tr></thead>
+      <tbody>
+        <tr><td>S<sup>2</sup> (Kugel)</td><td>1</td><td>0</td><td>1</td><td>2</td><td>1</td><td>—</td></tr>
+        <tr><td>S<sup>1</sup> (Kreis)</td><td>1</td><td>1</td><td>0</td><td>0</td><td>ℤ (abelsch)</td><td>—</td></tr>
+        <tr class="hl"><td><b>Acht</b> (Kleeblatt, 2 Kreise)</td><td>1</td><td><b>2</b></td><td>0</td><td>−1</td><td class="nab">F<sub>2</sub> (nicht abelsch)</td><td>gleiche b<sub>1</sub> wie Torus —</td></tr>
+        <tr class="hl"><td><b>Torus</b> T<sup>2</sup></td><td>1</td><td><b>2</b></td><td>1</td><td>0</td><td class="ab">ℤ² (abelsch)</td><td>… aber π<sub>1</sub> unterscheidet</td></tr>
+        <tr><td>Σ<sub>2</sub> (Geschlecht 2)</td><td>1</td><td>4</td><td>1</td><td>−2</td><td>⟨a<sub>1</sub>,b<sub>1</sub>,a<sub>2</sub>,b<sub>2</sub> | ∏[a<sub>i</sub>,b<sub>i</sub>]⟩</td><td>Van Kampen</td></tr>
+      </tbody>
+    </table>
+    <div class="callout a2">
+      <span class="t">Lesart der Tabelle</span>
+      <b>Acht und Torus teilen b<sub>1</sub> = 2</b> — über diese eine Betti-Zahl kann B sie nicht trennen. A’s
+      π<sub>1</sub> aber sieht: F<sub>2</sub> (Schleifen verhakten sich frei, <code>ab ≠ ba</code>) vs. ℤ² (Schleifen
+      kommutieren). Betti-Zahlen sind der <i>Schatten</i> der Fundamentalgruppe — der Schatten, den A’s Etage
+      wiederauflöst.
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="n">5</span>Fusionierte Visualisierung</h2>
+    <p>Ein aufrechter Torus, durchflutet von einer steigenden Wasserlinie (B’s Mechanik). Links das Schema mit den
+    vier kritischen Punkten; rechts, Stufe für Stufe, die Zell-Zerlegung der Unterpegel-Menge. Die Statistiken zeigen
+    <b>beide</b> Etagen gleichzeitig: B’s Betti-Zahlen b<sub>0</sub>,b<sub>1</sub>,b<sub>2</sub>,χ <i>und</i> A’s
+    Fundamentalgruppe π<sub>1</sub>. Ziehe den Wasserstand oder starte die Animation und beobachte, wie bei
+    <b>gleicher</b> Betti-Zahl b<sub>1</sub>=2 die Fundamentalgruppe von F<sub>2</sub> (nicht abelsch) auf ℤ²
+    (abelsch) wechselt — der A/B-Konflikt, den man sehen kann.</p>
+
+    <div class="fz-card">
+      <div class="fz-ctrl">
+        <label>Wasserstand t <span class="v" id="fz-lvl">0.80</span></label>
+        <input type="range" id="fz-water" min="0" max="100" value="80" step="1" aria-label="Wasserstand">
+        <button class="btn" id="fz-play">▶ Animate</button>
+        <button class="btn2" id="fz-reset">↺ Reset</button>
+      </div>
+      <div class="fz-legend">
+        <span class="lg"><i style="background:var(--mn-crit-min)"></i>min (Index 0)</span>
+        <span class="lg"><i style="background:var(--mn-crit-sad)"></i>Sattel (Index 1) × 2</span>
+        <span class="lg"><i style="background:var(--mn-crit-max)"></i>max (Index 2)</span>
+      </div>
+      <canvas id="fz-cv" height="380"></canvas>
+
+      <div class="fz-stats">
+        <div class="stat"><div class="lab">angehängte Zellen</div><div class="val" id="fz-cells" style="font-size:.95rem">…</div></div>
+        <div class="stat"><div class="lab">b₀ (Komponenten)</div><div class="val" id="fz-b0">…</div></div>
+        <div class="stat"><div class="lab">b₁ (Loops)</div><div class="val" id="fz-b1">…</div></div>
+        <div class="stat"><div class="lab">b₂ (Höhlen)</div><div class="val" id="fz-b2">…</div></div>
+        <div class="stat"><div class="lab">χ (Euler)</div><div class="val" id="fz-chi">…</div></div>
+        <div class="stat"><div class="lab">π₁ (A)</div><div class="val fzpi" id="fz-pi">…</div></div>
+      </div>
+
+      <div class="fz-fuse" id="fz-fuse">…</div>
+      <div class="fz-compare">⚡ <b>Der Knackpunkt A↔B:</b> <b>Acht</b> (Kleeblatt) und <b>Torus</b> haben beide
+        <b>b<sub>1</sub> = 2</b> — aber π<sub>1</sub>(Acht) = <span class="nab">F<sub>2</sub></span> (freie,
+        <i>nicht</i> abelsche Gruppe, <code>ab ≠ ba</code>) vs. π<sub>1</sub>(Torus) = <span class="ab">ℤ²</span>
+        (abelsch). Betti-Zahlen (B) sehen das nicht; die Fundamentalgruppe (A) schon.</div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="n">6</span>Provenienz</h2>
+    <div class="prov">
+      <div class="item">
+        <span class="tag">A · Quelle</span>
+        <p style="margin:.4em 0 0"><b><a href="../homotopie_kurz.html">homotopie_kurz.html</a></b> —
+        „Homotopie — die Kurzversion (interaktiv)“, nach Ulrich Bunkes <i>Introduction to Homotopy Theory</i>
+        (Regensburg). Verbiegen/Äquivalenz, Fundamentalgruppe π<sub>1</sub>, π<sub>1</sub>(S<sup>1</sup>)=ℤ via
+        Wendeltreppe, Van Kampen, π<sub>n</sub> abelsch (Eckmann–Hilton), π<sub>n</sub>(S<sup>n</sup>)=ℤ, Brouwer,
+        Hurewicz. Der <i>unterscheidende</i> (feine, teils nicht-abelsche) Weg.</p>
+      </div>
+      <div class="item">
+        <span class="tag" style="color:var(--mn-accent2)">B · Quelle</span>
+        <p style="margin:.4em 0 0"><b><a href="../morse_theory.html">morse_theory.html</a></b> —
+        „Morse Theory — Interactive Explorer“, nach Milnors <i>Morse Theory</i> (1963). Kritische Punkte einer
+        Funktion (Min/Sattel/Max + Index), Unterpegel-Mengen, Zell-Anhängung (Torus ∅→Scheibe→Zylinder→Torus),
+        Morse-Ungleichungen c<sub>k</sub> ≥ b<sub>k</sub>, degenerierte vs. Morse-Funktionen. Der
+        <i>konstruktive</i> Weg.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>ROUND 1 · Pair 091 · nicht-KI-Track · Fusion: Homotopie (A) ✕ Morse-Theorie (B). Selbstanfälliges HTML,
+  keine externen Daten, theme-reaktiv (dunkel als Default).</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var b=document.getElementById('fz-theme');
+  if(!b) return;
+  function lab(){ b.textContent=document.documentElement.classList.contains('dark') ? '☀  Hell' : '🌙  Dunkel'; }
+  b.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); lab(); });
+  lab();
+})();
+</script>
+
+<script>
+(function(){
+  'use strict';
+  var TAU=Math.PI*2, H=380;
+  var cv=document.getElementById('fz-cv');
+  var slider=document.getElementById('fz-water');
+  var lvl=document.getElementById('fz-lvl');
+  if(!cv||!slider) return;
+  var ctx=cv.getContext('2d');
+  var T=0.80, raf=null;
+  var el=function(id){ return document.getElementById(id); };
+  function cssVar(n){ try{ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }catch(e){ return ''; } }
+  function pal(){ return {
+    a:cssVar('--mn-accent')||'#5ee7ff', b:cssVar('--mn-accent2')||'#ff5ea8',
+    c:cssVar('--mn-accent3')||'#a98bff', d:cssVar('--mn-accent4')||'#7dffb0',
+    text:cssVar('--mn-text')||'#e6ebff', dim:cssVar('--mn-muted')||'#9aa6cc',
+    bg:cssVar('--mn-viz-bg')||'#0b0e1a',
+    min:cssVar('--mn-crit-min')||'#7dffb0', sad:cssVar('--mn-crit-sad')||'#ffb066', max:cssVar('--mn-crit-max')||'#ff8080'
+  }; }
+  function hexA(hex,a){
+    if(!hex||hex.charAt(0)!=='#') return hex;
+    if(hex.length===4){ hex='#'+hex.charAt(1)+hex.charAt(1)+hex.charAt(2)+hex.charAt(2)+hex.charAt(3)+hex.charAt(3); }
+    var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),bl=parseInt(hex.slice(5,7),16);
+    return 'rgba('+r+','+g+','+bl+','+a+')';
+  }
+  function txt(s,x,y,col,size,align,bold){
+    ctx.fillStyle=col; ctx.font=(bold?'700 ':'')+(size||12)+'px Georgia, serif';
+    ctx.textAlign=align||'left'; ctx.textBaseline='middle'; ctx.fillText(s,x,y);
+  }
+  var STAGE=[
+    {cells:'—', b0:0,b1:0,b2:0,chi:0, pi:'1', ab:true,  shape:'leer',
+     fuse:'Wasser unter dem Minimum — die Unterpegel-Menge {f≤t} ist leer. Noch keine Zelle angehängt.'},
+    {cells:'1 × 0-Zelle (Min)', b0:1,b1:0,b2:0,chi:1, pi:'1', ab:true, shape:'Scheibe (zusammenziehbar)',
+     fuse:'MINIMUM (Index 0) passiert: eine 0-Zelle (Scheibe) entsteht. b₀=1, b₁=0, π₁=1 — keine Schleifen.'},
+    {cells:'+ 1-Zelle (Sattel₁)', b0:1,b1:1,b2:0,chi:0, pi:'ℤ', ab:true, shape:'Zylinder / Ring (≈ S¹)',
+     fuse:'Sattel₁ (Index 1): eine 1-Zelle wird angehängt → ein Loch, eine nichttriviale Schleife. b₁=1, π₁=ℤ (abelsch).'},
+    {cells:'+ 1-Zelle (Sattel₂)', b0:1,b1:2,b2:0,chi:-1, pi:'F₂', ab:false, shape:'Torus − Scheibe (genus 1, 1 Rand)',
+     fuse:'Sattel₂ (Index 1): zweite 1-Zelle → zweites Loch. b₁=2, ABER π₁=F₂ = freie Gruppe — NICHT abelsch (ab≠ba). Die zwei Schleifen verhakten sich frei.'},
+    {cells:'+ 2-Zelle (Max)', b0:1,b1:2,b2:1,chi:0, pi:'ℤ²', ab:true, shape:'Torus (geschlossen, genus 1)',
+     fuse:'MAXIMUM (Index 2): eine 2-Zelle verschließt den Rand → geschlossener Torus. b₁ bleibt 2, π₁=ℤ² (ABELSCH). ⚠ Gleiche Betti-Zahl b₁=2 wie vorher — aber π₁ unterscheidet: F₂ (nicht abelsch) vs ℤ² (abelsch).'}
+  ];
+  function stageOf(t){ if(t<0.03)return 0; if(t<0.25)return 1; if(t<0.75)return 2; if(t<0.97)return 3; return 4; }
+
+  function drawLeft(P,w){
+    var cx=w*0.24, cy=H*0.5, Rout=Math.min(H*0.30,w*0.15), Rin=Rout*0.5;
+    var yw=cy+Rout - T*(2*Rout);
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(cx,cy,Rout,Rout,0,0,TAU); ctx.clip();
+    ctx.fillStyle=hexA(P.a,0.08); ctx.fillRect(cx-Rout,cy-Rout,Rout*2,Rout*2);
+    ctx.fillStyle=hexA(P.a,0.30); ctx.fillRect(cx-Rout,yw,Rout*2,(cy+Rout)-yw+0.01);
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(cx,cy,Rin,0,TAU); ctx.fillStyle=P.bg; ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle=P.a; ctx.beginPath(); ctx.ellipse(cx,cy,Rout,Rout,0,0,TAU); ctx.stroke();
+    ctx.lineWidth=1.5; ctx.strokeStyle=P.c; ctx.beginPath(); ctx.arc(cx,cy,Rin,0,TAU); ctx.stroke();
+    ctx.save(); ctx.strokeStyle=P.b; ctx.setLineDash([6,5]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(cx-Rout-14,yw); ctx.lineTo(cx+Rout+14,yw); ctx.stroke(); ctx.restore();
+    txt('Wasserstand',cx,yw-9,P.b,10.5,'center',true);
+    var cps=[{y:cy+Rout,c:P.min,l:'min'},{y:cy+Rin,c:P.sad,l:'S₁'},{y:cy-Rin,c:P.sad,l:'S₂'},{y:cy-Rout,c:P.max,l:'max'}];
+    var th=[0.00,0.25,0.75,1.00];
+    for(var i=0;i<4;i++){
+      var cp=cps[i], passed=T>=th[i]-0.001;
+      ctx.beginPath(); ctx.arc(cx,cp.y,passed?11:6,0,TAU); ctx.fillStyle=hexA(cp.c,passed?0.22:0.07); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx,cp.y,passed?6.5:4.5,0,TAU); ctx.fillStyle=passed?cp.c:hexA(cp.c,0.5); ctx.fill();
+      ctx.lineWidth=1.3; ctx.strokeStyle=P.text; ctx.stroke();
+      txt(cp.l,cx-Rout-8,cp.y,passed?cp.c:P.dim,10,'right',passed);
+    }
+    txt('Aufrechter Torus (Schema)',cx,cy-Rout-16,P.dim,11,'center');
+  }
+  function drawRight(P,w,st){
+    var cx=w*0.75, cy=H*0.44, s=Math.min(H*0.155,w*0.105);
+    txt('Unterpegel-Menge  { f ≤ t }',w*0.74,20,P.dim,11,'center');
+    if(st===0){ txt('∅  (leer)',cx,cy,P.dim,18,'center',true); return; }
+    ctx.beginPath(); ctx.ellipse(cx,cy,s,s*0.72,0,0,TAU); ctx.fillStyle=hexA(P.d,0.26); ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle=P.d; ctx.stroke();
+    function loop(ox,oy){
+      ctx.save(); ctx.lineWidth=2.6; ctx.strokeStyle=P.sad; ctx.shadowColor=P.sad; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.ellipse(cx+ox,cy+oy,s*0.74,s*0.40,0.15,0,TAU); ctx.stroke(); ctx.restore();
+    }
+    if(st>=2) loop(0,0);
+    if(st>=3) loop(s*0.55,-s*0.18);
+    if(st>=4){ ctx.beginPath(); ctx.ellipse(cx,cy-s*0.5,s*0.56,s*0.30,0,0,TAU);
+      ctx.fillStyle=hexA(P.max,0.30); ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=P.max; ctx.stroke(); }
+    var cap=['','Scheibe (0-Zelle)','Zylinder — 1 Loop','Torus − disk — 2 Loops','Torus (geschlossen)'][st];
+    txt(cap,cx,cy+s*1.02,P.text,12,'center',true);
+    txt('b₁ = '+STAGE[st].b1+'   ·   π₁ = '+STAGE[st].pi, cx, cy+s*1.02+17, STAGE[st].ab?P.d:P.b, 11.5,'center',true);
+  }
+  function draw(){
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var w=cv.clientWidth||760; if(!w) w=760;
+    var pw=Math.round(w*dpr), ph=Math.round(H*dpr);
+    if(cv.width!==pw||cv.height!==ph){ cv.width=pw; cv.height=ph; cv.style.height=H+'px'; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,H);
+    var P=pal();
+    ctx.strokeStyle=P.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(w*0.49,12); ctx.lineTo(w*0.49,H-12); ctx.stroke();
+    drawLeft(P,w);
+    drawRight(P,w,stageOf(T));
+  }
+  function set(id,val){ var e=el(id); if(e) e.textContent=val; }
+  function update(){
+    T=(parseFloat(slider.value)||0)/100;
+    var st=stageOf(T), d=STAGE[st];
+    if(lvl) lvl.textContent=T.toFixed(2);
+    set('fz-cells',d.cells); set('fz-b0',d.b0); set('fz-b1',d.b1); set('fz-b2',d.b2); set('fz-chi',d.chi);
+    var pi=el('fz-pi'); if(pi){ pi.textContent=d.pi; pi.className='val fzpi '+(d.ab?'ab':'nab'); }
+    set('fz-fuse',d.fuse);
+    draw();
+  }
+  slider.addEventListener('input',update);
+  var animBtn=el('fz-play'), resetBtn=el('fz-reset');
+  function stop(){ if(raf){ cancelAnimationFrame(raf); raf=null; } if(animBtn) animBtn.textContent='▶ Animate'; }
+  function step(){
+    var v=parseFloat(slider.value)+0.5;
+    if(v>=100){ v=100; slider.value=v; update(); stop(); return; }
+    slider.value=v; update(); raf=requestAnimationFrame(step);
+  }
+  if(animBtn) animBtn.addEventListener('click',function(){
+    if(raf){ stop(); return; }
+    if(parseFloat(slider.value)>=100) slider.value=0;
+    if(animBtn) animBtn.textContent='⏸ Pause';
+    raf=requestAnimationFrame(step);
+  });
+  if(resetBtn) resetBtn.addEventListener('click',function(){ stop(); slider.value=0; update(); });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+  var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+  update();
+})();
+</script>
+</body>
+</html>

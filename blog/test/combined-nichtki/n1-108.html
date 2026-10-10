@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Tor ist nicht das Ding — Geheimwissen ✕ Signifikanz</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#faf8f1; --bg-soft:#f1eee3; --card:#ffffff; --ink:#1a1a2e; --ink-soft:#4a4a5e;
+  --dim:#8a8a9c; --line:rgba(0,0,0,.10); --teal:#0e8f86; --coral:#d64545; --violet:#6b2fd6;
+  --amber:#b8860b; --sky:#2b7fc0; --card-br:rgba(0,0,0,.10); --shadow:0 10px 30px rgba(0,0,0,.06);
+  --viz-paper:#ffffff; --viz-signal:#2e9e5b; --viz-empty:#d1495b; --viz-reject:#c0861f;
+  --viz-noise:#8a93a0; --viz-gate:#b3862f; --viz-oomph:#2b7fc0;
+}
+html.dark{
+  --bg:#0a0a12; --bg-soft:#101019; --card:#14141f; --ink:#e8e8f0; --ink-soft:#b6b6c9;
+  --dim:#7c7c92; --line:rgba(255,255,255,.09); --teal:#4ecdc4; --coral:#ff6b6b; --violet:#a970ff;
+  --amber:#feca57; --sky:#54a0ff; --card-br:rgba(255,255,255,.08); --shadow:0 12px 34px rgba(0,0,0,.5);
+  --viz-paper:#0d1420; --viz-signal:#5fd08a; --viz-empty:#ff6b6b; --viz-reject:#e0b04a;
+  --viz-noise:#6b7686; --viz-gate:#e9c46a; --viz-oomph:#54a0ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:60px 20px 26px;text-align:center}
+.kicker{display:inline-block;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--teal);border:1px solid var(--line);border-radius:100px;padding:6px 14px;margin-bottom:20px;background:var(--bg-soft)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.14;font-weight:800;letter-spacing:-.02em}
+.subtitle{color:var(--dim);font-size:1.02rem;margin-top:14px}
+.subtitle b{color:var(--ink-soft);font-weight:600}
+.theme-btn{margin-top:20px;background:var(--card);border:1px solid var(--card-br);color:var(--ink-soft);
+  border-radius:10px;padding:8px 16px;font-size:.86rem;cursor:pointer;box-shadow:var(--shadow);transition:.2s}
+.theme-btn:hover{color:var(--ink);transform:translateY(-1px)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px auto 8px}
+nav.toc a{font-size:.82rem;color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);
+  border-radius:8px;padding:6px 12px;background:var(--card);transition:.2s}
+nav.toc a:hover{border-color:var(--teal);color:var(--teal)}
+section{margin-top:52px;scroll-margin-top:20px}
+h2{font-size:1.48rem;font-weight:750;letter-spacing:-.01em;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+h2 .n{font-family:"JetBrains Mono",monospace;font-size:.9rem;color:var(--bg);background:var(--teal);
+  border-radius:7px;padding:2px 9px;font-weight:700}
+h3{font-size:1.08rem;font-weight:700;margin:24px 0 8px;color:var(--ink)}
+p{margin:12px 0;color:var(--ink-soft)}
+p b,li b{color:var(--ink);font-weight:650}
+.lead{font-size:1.08rem;color:var(--ink)}
+ul,ol{margin:12px 0 12px 4px;padding-left:22px;color:var(--ink-soft)}
+li{margin:9px 0}
+.card{background:var(--card);border:1px solid var(--card-br);border-radius:14px;padding:18px 20px;
+  box-shadow:var(--shadow);margin:16px 0}
+.card .tag{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+.card.a{border-left:4px solid var(--coral)}
+.card.b{border-left:4px solid var(--sky)}
+.card.fuse{border-left:4px solid var(--teal);background:linear-gradient(180deg,var(--card),var(--bg-soft))}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+.eq{font-family:"JetBrains Mono",ui-monospace,monospace;background:var(--bg-soft);
+  border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;overflow-x:auto;
+  color:var(--ink);font-size:.98rem;text-align:center}
+.eq .lbl{display:block;font-family:Inter,sans-serif;font-size:.76rem;color:var(--dim);margin-top:8px;text-align:left}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--ink);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+td{color:var(--ink-soft)}
+td .k{color:var(--teal);font-weight:650}
+.note{font-size:.88rem;color:var(--dim);font-style:italic;margin-top:8px}
+.chip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;padding:2px 9px;border-radius:100px;margin-right:5px;vertical-align:middle}
+.chip.f{background:rgba(46,158,91,.15);color:var(--viz-signal)}
+.chip.m{background:rgba(208,73,91,.15);color:var(--viz-empty)}
+.chip.u{background:rgba(192,134,31,.18);color:var(--viz-reject)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:var(--card);
+  border:1px solid var(--card-br);border-radius:12px;padding:14px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.controls label{font-size:.86rem;font-weight:600;color:var(--ink-soft);min-width:150px}
+.controls input[type=range]{flex:1;min-width:150px;accent-color:var(--teal);height:6px}
+.controls .val{font-family:"JetBrains Mono",monospace;color:var(--teal);font-weight:700;font-size:1.05rem;min-width:46px;text-align:right}
+.controls .presets{display:flex;gap:8px;flex-basis:100%;margin-top:4px}
+.controls .presets button{background:var(--bg-soft);border:1px solid var(--line);color:var(--ink-soft);
+  border-radius:8px;padding:5px 12px;font-size:.8rem;cursor:pointer}
+.controls .presets button:hover{border-color:var(--teal);color:var(--teal)}
+.chk{font-size:.86rem;color:var(--ink-soft);margin-left:10px;user-select:none}
+#viz{width:100%;height:460px;background:var(--card);border:1px solid var(--card-br);border-radius:14px;
+  padding:8px;box-shadow:var(--shadow)}
+.ro{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+@media(max-width:640px){.ro{grid-template-columns:1fr 1fr}}
+.ro .box{background:var(--card);border:1px solid var(--card-br);border-radius:11px;padding:12px 13px;text-align:center}
+.ro .box .l{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+.ro .box .v{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:700;margin-top:4px}
+#v-sig{color:var(--viz-signal)} #v-emp{color:var(--viz-empty)} #v-rej{color:var(--viz-reject)} #v-noi{color:var(--viz-noise)}
+.six{counter-reset:s;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.six{grid-template-columns:1fr}}
+.six .s{background:var(--card);border:1px solid var(--card-br);border-left:3px solid var(--teal);
+  border-radius:10px;padding:12px 14px;font-size:.92rem;color:var(--ink-soft)}
+.six .s::before{counter-increment:s;content:counter(s);display:inline-block;font-family:"JetBrains Mono",monospace;
+  font-weight:700;color:var(--teal);margin-right:8px}
+.prov{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--card-br);
+  border-radius:12px;padding:16px 18px;margin:12px 0;box-shadow:var(--shadow)}
+.prov .dot{font-size:1.3rem;line-height:1.3}
+.prov a{color:var(--teal);text-decoration:none;font-weight:650}
+.prov a:hover{text-decoration:underline}
+.prov .d{color:var(--ink-soft);font-size:.94rem;margin-top:4px}
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:.85rem;text-align:center}
+.katex{color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <span class="kicker">Fusion · Runde 1 · nicht-KI-Track · Pair 108</span>
+  <h1>Das Tor ist nicht das&nbsp;Ding</h1>
+  <div class="subtitle">Fusion aus: <b>geheimwissen.html</b> ✕ <b>kult_der_statistischen_signifikanz.html</b></div>
+  <button class="theme-btn" id="themeToggle">◐ Thema wechseln</button>
+  <nav class="toc">
+    <a href="#these">These</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+<section id="these">
+  <h2><span class="n">1</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Texte behandeln auf den ersten Blick völlig verschiedene Dinge — der eine die Kultur des <b>„Geheimwissens"</b> (esoterische Traditionen, Geheimgesellschaften, Okkultismus), der andere den <b>Kult der statistischen Signifikanz</b>. Doch sie greifen exakt dieselbe Bewegung an: <b>die Vertauschung eines festen, willkürlichen Tores mit dem Ding selbst.</b></p>
+  <p>Bei <b>geheimwissen.html</b> ist das Tor die <b>Geheimhaltung / Initiation</b>: Die Behauptung „Das ist geheimes Wissen, man muss eingeweiht sein / es darf <em>nicht</em> geprüft werden" wird zum Kriterium dafür, ob etwas wahr ist. Die zentrale Regel des Dokuments lautet: <b>„Geheim" muss etwas sein, das man <em>prüfbar</em> war — nicht etwas, das <em>nicht prüfbar sein darf</em></b> (Kap. 20, „Die eine Regel"). Ein Geheimnis, das sich jeder Prüfung aktiv entzieht, ist Glauben oder Business, nicht Wissen.</p>
+  <p>Bei <b>kult_der_statistischen_signifikanz.html</b> ist das Tor der <b>p-Wert unter 0,05</b>: Die Behauptung „Das ist signifikant" wird zum Kriterium dafür, ob etwas wichtig ist. Und die 5%-Linie ist, wie Ziliak &amp; McCloskey an Fishers eigenen Worten zeigen, bloß „bequem", „persönlich" gewählt — ein Befund „signifikant" ist „<em>für sich genommen nahezu wertlos</em>, ein bedeutungsloses Gesellschaftsspiel". Das eigentliche Kriterium wäre die <b>Größe des Effekts (Oomph)</b> plus eine <b>Verlustfunktion</b> — was ein Fehler in beide Richtungen kostet.</p>
+  <p><b>Die fusionierte These:</b> Wissen wird weder durch Geheimnis noch durch eine Signifikanzschwelle definiert, sondern durch (a) <b>Prüfbarkeit / Falsifizierbarkeit</b> (A) und (b) <b>Größe des Effekts plus Kostenbewusstsein</b> (B). Das <b>Tor</b> — ob Schweigegelübde oder 5-Prozent-Linie — ist immer nur ein <em>Proxy</em>, den die Kultur mit dem Ding verwechselt. Die eigentliche Arbeit liegt <em>hinter</em> dem Tor: bei der dokumentierten, überprüfbaren Substanz (A) bzw. bei der Effektgröße und Verlustfunktion (B). Ein gemeinsames Bild, das beide teilen: <b>Signal gegen Rauschen des Rituals</b> — wer nur die helle, „signifikante" bzw. „geheime" Stelle ansieht, übersieht die horizontale Achse der tatsächlichen Substanz (B nennt es den „sizeless stare", A den Blick, der nur die Aura der Initiation sieht).</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span> Widersprüche zwischen A und B</h2>
+  <p>Wichtig vorab: Die beiden Texte behandeln <b>unterschiedliche Domänen</b> (A: Geschichte/Epistemologie der Esoterik &amp; Geheimgesellschaften, B: Kritik einer Statistik-Kultur). Keiner behandelt das Gegenüber des anderen, daher gibt es <b>keinen direkten faktischen Widerspruch</b> auf einer gemeinsamen Aussage. Die <em>tatsächlichen</em>, textbegründeten Spannungen liegen in ihrer <b>epistemischen Grundhaltung</b>:</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · geheimwissen.html</span>
+      <p><b>Der nicht‑Quantifizierbare Kern ist Tiefe.</b> „Das ‚Geheimnis' der Mysterien war fast nie Information, sondern <b>Erfahrung</b> (Schau, Trank, Initiationsritus, seelische Umdeutung)" (Kap. 2). A nimmt die erfahrungs‑ und <b>sinnstiftende</b> Dimension ernst (Sinn in der „entzauberten" Welt nach Weber) und grenzt sie nur als „Kultur — interessant, aber nicht Wissen" ab. Die Erfahrungsschicht wird <em>respektiert</em> und als echte „Tiefe" anerkannt.</p>
+    </div>
+    <div class="card b"><span class="tag">B · kult_der_statistischen_signifikanz.html</span>
+      <p><b>Das Verweigern der Quantifizierung ist der Fehler.</b> Fisher lehnt Kostenfunktionen ab („in <em>keiner</em> Währung bewertbar"), erwähnt den Fehler des Verpassens (β) „<em>überhaupt nicht</em>" — „die Kosten des Verpassens wurden stillschweigend auf null gesetzt" (Kap. 6, 10). B verlangt: Was für die Entscheidung zählt, <em>muss</em> quantifiziert und in die Verlustfunktion eingeht. Das Nicht‑Quantifizierbare ist hier die <em>Wurzel</em> der Katastrophe, keine Tiefe.</p>
+    </div>
+  </div>
+  <p class="note">→ <b>Spannung 1:</b> Ist der nicht‑quantifizierbare, erfahrungsbasierte Kern eine <em>zu respektierende Tiefe</em> (A) oder ein <em>zu korrigierendes Versagen</em> (B)?</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · geheimwissen.html</span>
+      <p><b>Geheimhaltung kann legitim sein.</b> A akzeptiert <em>echte</em> Geheimhaltung, wenn sie prüfbar ist oder von einer realen, beobachtbaren Gemeinschaft gehütet wird: deklassifizierte Akten (VENONA, Vault&nbsp;7), lebende Religionen (Drusen <em>ʿUqqāl</em>, Mt.&nbsp;Athos, das Vatikan, bei dem <em>secretum</em> = „privat" heißt). A hat eine <em>differenzierte, teils respektierende</em> Haltung gegenüber echter Geheimhaltung.</p>
+    </div>
+    <div class="card b"><span class="tag">B · kult_der_statistischen_signifikanz.html</span>
+      <p><b>Das Tor ist grundsätzlich abzuschaffen.</b> Jede fixe Schwelle (p&lt;0,05) ist „ein bedeutungsloses Gesellschaftsspiel", das durch <em>kontextabhängiges</em> Urteil (Verlustfunktion) ersetzt werden soll. B ist radikal <em>anti-Schwelle</em>: Die Zahl 0,05 taucht in Gossets Brauer-Rechnung „nirgendwo" auf.</p>
+    </div>
+  </div>
+  <p class="note">→ <b>Spannung 2:</b> Ist das „Tor" (Geheimnis / Signifikanzniveau) <em>je legitim</em>, oder ist es prinzipiell verderblich und aufzulösen?</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · geheimwissen.html</span>
+      <p><b>Falsifizierbarkeit ist das Kriterium von Wissen.</b> Teststein 2 (Kap. 13): Lässt sich die zentrale Behauptung <em>prinzipiell</em> widerlegen? Nicht‑falsifizierbare Behauptungen („die Regierung versteckt alles") sind <em>Glaube, kein Wissen</em>. A hält Falsifizierbarkeit für das <em>Merkmal</em>, das Wissen von Mythen trennt.</p>
+    </div>
+    <div class="card b"><span class="tag">B · kult_der_statistischen_signifikanz.html</span>
+      <p><b>Falsifizierbarkeit allein genügt nicht.</b> Der Signifikanztest ist formal <em>falsifizierbar</em> — und <em>doch</em> systematisch irreleitend, weil er die <em>falsche</em> Größe prüft: die Nullhypothese „überhaupt keine Wirkung" und die Präzision statt der Oomph. „Nicht signifikant" wird zu „es existiert kein Effekt" — Vioxx: ein 5:1‑Verhältnis beim Herztod wird als „kein Unterschied" gelesen. Falsche Falsifikation wird selbst zum <em>Rauschen</em>.</p>
+    </div>
+  </div>
+  <p class="note">→ <b>Spannung 3 (feiner):</b> A hält Falsifizierbarkeit für hinreichend; B zeigt, dass man die <em>richtige Größe</em> falsifizieren muss — sonst ist auch ein „scharfer" Test nur ein Ritual.</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span> Auflösung</h2>
+  <p>Alle drei Spannungen lösen sich, sobald man zwischen <b>Wissen/Entscheidung</b> und <b>Sinn/Erfahrung</b> sowie zwischen <b>Substanz tragendem</b> und <b>Substanz ersetzendem</b> Tor unterscheidet:</p>
+
+  <div class="card fuse"><span class="tag">Auflösung 1 · Tiefe vs. Versagen</span>
+    <p>A grenzt selbst ab: Schicht 2/3 (Mythos, Verschwörung) ist „<em>Kultur — interessant, aber nicht Wissen</em>". A behauptet also nicht, dass <em>Erfahrung Wissen</em> ist — dass sie ein reales, <em>zu beschreibendes Phänomen</em> ist (und „Ehrlichkeit über Unsicherheit ist eine Eigenschaft"). B gilt für <em>Entscheidungen und Behauptungen</em>, wo Kosten/Effekt quantifiziert werden <em>müssen</em>. <b>Fusion:</b> Das Nicht‑Quantifizierbare wird <em>beschrieben</em> (A's Methode), das Konsequente wird <em>quantifiziert</em> (B's Verlustfunktion). Erfahrung/Sinn ist ein legitimes Objekt der Beschreibung — aber keine Entscheidungsgrundlage.</p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Auflösung 2 · Legitimität des Tores</span>
+    <p>Beide zeichnen <em>dieselbe</em> Trennlinie, nur anders formuliert. A (Kap. 20): ein Tor ist legitim <em>genau dann</em>, wenn es auf überprüfbare Substanz verweist — (a) einen dokumentierten Weg zu verifizieren (FOIA, Museen, Peer-Review) oder (b) eine reale Gemeinschaft, die es aktiv hütet und man beobachten kann. B: eine Schwelle ist legitim <em>genau dann</em>, wenn sie aus einer realen Verlustfunktion abgeleitet ist (Gossets Brauer-Rechner) — nicht, wenn sie eine „bequeme" Zahl ist (Fisher). <b>Fusion:</b> <b>Ein Tor ist legitim, wenn es auf Substanz verweist — nicht, wenn es die Substanz ersetzt.</b> Legitime Geheimhaltung schützt/rahmt echte, checkbare Substanz (A); eine legitime Schwelle folgt aus echten Kosten (B). Beides scheitert dort, wo das Tor zum <em>Stellvertreter</em> ohne Substanz wird (A: NWO/„die es wissen"; B: 5% ohne Verlustfunktion).</p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Auflösung 3 · Die richtige Größe</span>
+    <p>A liefert die <em>nötige</em>, B die <em>fehlende</em> Hälfte. Falsifizierbarkeit (A) ist notwendig, aber nicht hinreichend: B zeigt, dass ein formal scharfer Test auf die <em>falsche</em> Größe (Punkt‑Null, Präzision statt Oomph) <em>induziertes Rauschen</em> produziert. <b>Fusion:</b> Prüfe (1), ob es prüfbar ist — und (2) ob die <em>richtige, entscheidungsrelevante Größe</em> geprüft wird. Die fusionierte Epistemik-Formel: <b>Prüfbar war sein (A) <b>und</b> Size matters no matter where you draw the line (B).</b></p>
+  </div>
+
+  <div class="card fuse" style="margin-top:18px">
+    <span class="tag">Fusionierte Schlussposition</span>
+    <p class="lead">Das Kriterium ist nie die Schwelle, sondern die <b>Substanz hinter der Schwelle</b>: ob etwas <em>überprüfbar real</em> ist (A) und ob es <em>groß genug ist, um zu zählen</em> (B). Geheimnis ohne Prüfbare, Signifikanz ohne Oomph — beides ist Rauschen des Rituals, verkleidet als Erkenntnis.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span> Fusionierter Inhalt</h2>
+  <p>Der konsolidierte Stoff beider Quellen — Ideen, Ansprüche und (gebrauchsfähige) Mathematik, integriert statt hintergestellt. Spätere Runden können allein von hier arbeiten.</p>
+
+  <h3>4.1 Die gemeinsame Architektur: Tor vs. Substanz</h3>
+  <p>Beide Modelle haben dieselbe Form — eine <b>Schwelle</b> (das Tor) und eine <b>orthogonale Größe</b> (die Substanz), die das Tor <em>nicht</em> erfasst:</p>
+  <ul>
+    <li><b>A (Geheimwissen)</b> schichtet „Geheimwissen" in drei Ebenen: <span class="chip f">dokumentiert</span> reale, überlieferbare Traditionen (Existenz + Struktur prüfbar — das „Geheimnis" selbst per Definition nicht); <span class="chip m">Mythos/Selbststilisierung</span> (Rosenkreuzer-Bruderschaft, Priory of Sion, Baphomet — <em>Narrative</em>, keine Fakten); <span class="chip u">Verschwörungsdeutung</span> (NWO, Bilderberg-Weltherrschaft, QAnon — wissenschaftlicher Konsens: keine Belege). Dazu drei <b>Prüfsteine</b>: <em>Dokumentation</em> (unabhängige Belege), <em>Falsifizierbarkeit</em>, <em>Konsistenz</em> (Abweichung von überprüfbaren Quellen → Erfindung). Plus die <b>psychologische Funktion</b> (Exklusivität/Status, Gemeinschaft, Sinngebung, Macht).</li>
+    <li><b>B (Signifikanz)</b> trennt zwei orthogonale Achsen: <b>Präzision</b> (wie scharf messe ich? — SE = σ/√n) und <b>Oomph</b> (wie viel wirkt es? — Effektgröße). Dieselbe Signifikanz kann aus winzigen und riesigen Effekten entstehen. Der <b>„sizeless stare"</b> = nur die Farbe (t) sehen, die horizontale Achse (Größe) ignorieren.</li>
+  </ul>
+
+  <h3>4.2 Die Mathematik des Tores (B) — generalisiert</h3>
+  <ul>
+    <li>Signal/Rausch: $t = \dfrac{\bar{x}-\mu_0}{\mathrm{SE}}$ mit $\mathrm{SE}=\dfrac{\sigma}{\sqrt{n}}$. <b>Standardabweichung</b> σ (Eigenschaft der Welt, wächst <em>nicht</em> mit n) ≠ <b>Standardfehler</b> SE (Eigenschaft des Experiments, schrumpft mit √n).</li>
+    <li>Der <b>p‑Wert</b> ist nur eine Umrechnung von t — und die vier klassischen Irrtümer: p ≠ P(H₀ wahr), p ≠ P(Zufall), 1−p ≠ Reproduzierbarkeit (Melton 1962, falsch), p sagt nichts über die Größe.</li>
+    <li>Die <b>5%</b>: Fishers Begründung ist „bequem / persönlich / wenn wir wollen" (1926/35) — keine Ableitung, keine Kostenrechnung. Vier Wettfragen (Rennbahn 19:1, Brauer, Parlament, Grundsatz).</li>
+    <li><b>DeGroots 20 000</b> ($n\to 20{,}000$): Ein winziger wahrer Effekt (0,1 Pfund) kippt von „nicht signifikant" auf „hochsignifikant (p&lt;0,001)" — nur die Stichprobe wuchs. <b>Signifikanz misst dein Budget, nicht die Natur.</b> Umgekehrt: Merck hielt Vioxx klein genug für „Insignifikanz".</li>
+    <li><b>Power / β</b>: Fishers Test schaut nur „könnte Zufall das erklären?"; Gossets Frage „wenn ein Effekt da wäre, wüsste ich ihn?" (Power = 1−β) wurde von Fisher stillschweigend auf null gesetzt. Johnstons Autobahn: „signifikant auf 5%, nicht auf 1%" → kein Handeln → ~100 000 Tote (UK 1947–57) werden nicht gezählt.</li>
+    <li><b>Verlustfunktion → optimale Schwelle α\*</b>: Die Quote hängt vom <em>geldwerten Vorteil</em>, den <em>Mehrkosten</em> und den <em>Kosten je Versuch</em> ab (Gosset an Pearson, 1905). Sie liegt fast nie bei 5%. Minimax: den schlimmsten Fall jeder Option wählen — Oomph dominiert Precision in <em>allen</em> Zuständen der Welt.</li>
+    <li><b>Vioxx</b> (Merck 2003): 5 statt 8 Infarkte berichtet, „keine Signifikanz" — drei Beobachtungen (inkl. Verstorbene) gelöscht. Mit 8 wäre es nach <em>Fishers eigener</em> 5% signifikant gewesen. Die Fälschung lohnte sich nur, weil die Kultur „nicht signifikant" = „kein Effekt" liest. <b>Sterling 1959</b>: 362 Artikel, 286 (79%) mit Test, 0 Replikationen — der File-Drawer bläht die Literatur systematisch auf (zu große Schätzungen).</li>
+  </ul>
+  <div class="eq">$\mathrm{SE}=\frac{\sigma}{\sqrt{n}}\;\;\Rightarrow\;\;t=\frac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}$ &nbsp;·&nbsp; $n\uparrow \Rightarrow \mathrm{SE}\downarrow \Rightarrow$ jeder Effekt $>0$ wird „signifikant"<span class="lbl">Der √n-Hebel zerlegt das 5%-Ritual: die Schwelle reagiert auf das <b>Budget</b> (n), nicht auf die Größe (Oomph).</span></div>
+
+  <h3>4.3 Die Etikettierung des Tores (A) — als Pendant</h3>
+  <ul>
+    <li>Die Verschiebung „<em>Erleben</em> des Geheimen" → „<em>Besitz</em> des Geheimen" (Initiation → Lektüre) ist der <em>Ursprung</em> des modernen „Geheimwissen"-Diskurses (Kap. 2): Aus Erfahrung wird Buchwissen — genau wie aus Gossets „real error" Fishers starres 5% wurde.</li>
+    <li><b>Dokumentiertes „Geheimwissen"</b> (Kap. 16–19): deklassifizierte Akten (MKUltra, VENONA, Vault 7, ECHELON/PRISM, Glomar), lebende Religionen mit echtem, gehütetem Geheimnis (Drusen, Mandäer, Jesiden, Mt. Athos, Samariter), ungelöste Codes (Voynich, Linear A, Phaistos, Indus, Beale‑2) und erhabene Archive (Vatikan, 1 Henoch, Ginza Rba, Didache). Das „Geheim" ist hier <em>objektiv</em>: es fehlt die Lösung, oder eine Gemeinschaft hält es aktiv.</li>
+    <li><b>Die eine Regel</b> (Kap. 20) als Pendant zu B's Verlustfunktion: „Geheim" muss <em>prüfbar war</em> sein — ein dokumentierter Weg zur Verifikation ODER eine beobachtbare hütende Gemeinschaft. Alles, was nur auf „zu gut um wahr zu sein" setzt und sich jeder Prüfung entzieht, ist Glauben oder Business.</li>
+  </ul>
+
+  <h3>4.4 Die Übereinstimmungstabelle (A ↔ B)</h3>
+  <table>
+    <thead><tr><th>Dimension</th><th>Geheimwissen (A)</th><th>Signifikanz (B)</th></tr></thead>
+    <tbody>
+      <tr><td>Das Tor / die Schwelle</td><td>Geheimhaltung, Initiation, Schweigegelübde</td><td>p &lt; 0,05 (die „Zweier-Regel" 1,96)</td></tr>
+      <tr><td>Die Substanz (orthogonal)</td><td>dokumentierte, überprüfbare Geschichte / Erfahrung</td><td>Oomph = Effektgröße (wie viel wirkt es?)</td></tr>
+      <tr><td>Falsch-akzeptiert</td><td>Mythos/Verschwörung: „geheim" &amp; konsistent, aber <em>ohne</em> unabhängige Substanz</td><td>„signifikant" aber winzig (t=3,0, bedeutungslos)</td></tr>
+      <tr><td>Falsch-verworfen</td><td>dokumentiert aber „umstritten"/„rekonstruiert" (unscharf)</td><td>nicht signifikant, aber riesig (t=1,5) — <em>Vioxx 5:1</em></td></tr>
+      <tr><td>Die willkürliche Begründung</td><td>„die es wissen, wissen es"</td><td>„bequem / persönlich" (Fisher)</td></tr>
+      <tr><td>Die Heilung</td><td>Prüfbarkeit · Falsifizierbarkeit · Konsistenz</td><td>Effektgröße + Verlustfunktion + echte Replikation</td></tr>
+      <tr><td>Der Blickfehler</td><td>nur die Aura des Geheimnisses sehen</td><td>„sizeless stare" (nur t, nicht die Größe)</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Jede Zeile ist ein Paar, das dieselbe Struktur in zwei Realitäten trägt: ein Tor, das mit der orthogonalen Substanz verwechselt wird.</p>
+
+  <h3>4.5 Die fusionierte Entscheidungslogik (fünf Schritte)</h3>
+  <ol>
+    <li><b>Ist es dokumentiert?</b> — unabhängige Belege, die nicht von der Gruppe/Quelle selbst stammen (A·Teststein 1).</li>
+    <li><b>Lässt es sich falsifizieren?</b> — gibt es einen möglichen Gegenbeweis? (A·Teststein 2)</li>
+    <li><b>Ist es konsistent?</b> — stimmt es mit unabhängigen, überprüfbaren Quellen überein? (A·Teststein 3)</li>
+    <li><b>Wie groß ist die Substanz / der Effekt?</b> — die Oomph, die für die Entscheidung zählt (B). „Size matters no matter where you draw the line."</li>
+    <li><b>Was kostet ein Fehler in beide Richtungen?</b> — Verlustfunktion → optimale Schwelle α\* statt fixer Grenze; Minimax über die Zustände der Welt (B).</li>
+  </ol>
+
+  <div class="six">
+    <div class="s">Das Tor (Geheimnis <b>oder</b> Signifikanz) ist nicht das Ding.</div>
+    <div class="s">Präzision / Geheimnis ist nicht dasselbe wie Bedeutung / überprüfbare Substanz.</div>
+    <div class="s">Eine willkürliche Schwelle — „unprüfbar sein dürfen" wie 5% — ist weder notwendig noch hinreichend.</div>
+    <div class="s">Wie die Grenze gesetzt werden soll, hängt davon ab, was zählt und was ein Fehler kostet.</div>
+    <div class="s">Ein Befund „geheim" <b>oder</b> „signifikant" ist für sich wertlos — entscheidend ist die Substanz hinter der Grenze.</div>
+    <div class="s">Der „sizeless stare" und der schwellenblinde Blick kosten: Wissen, Gerechtigkeit, Gewinn — und Leben.</div>
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span> Visualisierung: Das Tor und die Substanz</h2>
+  <p>Jeder Punkt ist eine Behauptung/Erkenntnis aus <em>beiden</em> Papiern, abgetragen auf zwei gemeinsamen Achsen: <b>Substanz/Oomph</b> (x — wie viel überprüfbare Substanz · wie groß der Effekt) und <b>Präzision/Lautstärke des Rituals</b> (y — wie scharf gemessen · wie laut „signifikant/geheim" behauptet). Die <b>goldene vertikale Linie</b> ist das <em>Tor</em> (Mindest-Substanz), die <b>blaue horizontale Linie</b> die <em>Schwelle</em> (Präzision/Ritual). Vier Quadranten — zwei davon Katastrophen: <b>leer aber „geheim/signifikant"</b> (fälschlich akzeptiert) und <b>substantiell aber „unscharf/in-signifikant"</b> (fälschlich verworfen, Vioxx).</p>
+
+  <div class="controls">
+    <label>Schwelle (G): </label>
+    <input type="range" id="g-gate" min="10" max="95" step="1" value="55">
+    <span class="val" id="v-gate">55</span>
+  </div>
+  <div class="controls">
+    <label>Mindest-Substanz (M): </label>
+    <input type="range" id="g-oomph" min="5" max="95" step="1" value="45">
+    <span class="val" id="v-oomph">45</span>
+  </div>
+  <div class="controls">
+    <label>Stichprobe / Daten (n): </label>
+    <input type="range" id="g-n" min="4" max="100" step="1" value="30">
+    <span class="val" id="v-n">30</span>
+    <label class="chk"><input type="checkbox" id="g-names"> Namen anzeigen</label>
+    <div class="presets">
+      <button data-n="4">Wenig Daten</button>
+      <button data-n="30">Normal</button>
+      <button data-n="100">Massendaten (DeGroot)</button>
+      <button id="g-names-btn">Namen: aus</button>
+    </div>
+  </div>
+
+  <div id="viz"></div>
+
+  <div class="ro">
+    <div class="box"><div class="l">Echt &amp; bedeutend</div><div class="v" id="v-sig">0</div></div>
+    <div class="box"><div class="l">Leer, aber „geheim/signifikant"</div><div class="v" id="v-emp">0</div></div>
+    <div class="box"><div class="l">Substanz, aber „unscharf"</div><div class="v" id="v-rej">0</div></div>
+    <div class="box"><div class="l">Rauschen</div><div class="v" id="v-noi">0</div></div>
+  </div>
+  <p class="note" id="viz-verdict"></p>
+  <p class="note">Reine Inline-Daten, themenreaktiv (hell/dunkel), kein Netzwerk-Datenabruf. Schiebe G &amp; M, wohin du willst — die beiden Katastrophen-Quadranten leeren sich nie. Dreh n hoch: Mehr Daten schieben die Präzision (y) für <em>alle</em> nach oben, aber <b>nie die Substanz (x)</b> — leere Claims bleiben in der leeren Spalte, echte Substanz rückt nach oben. Genau DeGroot: <em>Signifikanz misst dein Budget, nicht die Natur.</em></p>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span> Provenienz</h2>
+  <div class="prov"><span class="dot">🗝️</span><div>
+    <a href="../geheimwissen.html">geheimwissen.html — „Geheimwissen der Welt" (A)</a>
+    <div class="d">Vertiefte Übersicht über esoterische Traditionen, Geheimgesellschaften und die „Geheimwissen"-Kultur (Antike bis heute): dreifache Schichtung (dokumentiert / Mythos / Verschwörung), drei Prüfsteine (Dokumentation, Falsifizierbarkeit, Konsistenz) und die Regel, dass „Geheim" prüfbar sein muss. Träger der <i>Substanz hinter dem Tor der Geheimhaltung</i>.</div>
+  </div></div>
+  <div class="prov"><span class="dot">⚖️</span><div>
+    <a href="../kult_der_statistischen_signifikanz.html">kult_der_statistischen_signifikanz.html — „Der Kult der statistischen Signifikanz" (B)</a>
+    <div class="d">Interaktive Rekonstruktion von Ziliak &amp; McCloskey (JSM 2009): Gosset vs. Fisher; Präzision ≠ Bedeutung (Oomph); t, SE=σ/√n, p-Wert, DeGroots 20 000, Vioxx, Publikations-Bias (Sterling), Power/β und die Verlustfunktion. Träger der <i>Substanz hinter dem Tor der Signifikanzschwelle</i>.</div>
+  </div></div>
+</section>
+
+<footer>
+  Fusion-Paper 108 · Runde 1 · nicht-KI-Track · geheimwissen.html ✕ kult_der_statistischen_signifikanz.html · Alle Daten inline, themenreaktiv, kein Netzwerk-Datenabruf.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+  function cv(name, fb){
+    try{ var v=getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v||fb; }catch(e){ return fb; }
+  }
+  function pal(){
+    return {
+      paper:'rgba(0,0,0,0)',
+      plot: cv('--viz-paper', isDark()?'#0d1420':'#ffffff'),
+      text: cv('--ink', isDark()?'#e8e8f0':'#1a1a2e'),
+      sub: cv('--ink-soft', isDark()?'#b6b6c9':'#4a4a5e'),
+      dim: cv('--dim', isDark()?'#7c7c92':'#8a8a9c'),
+      grid: cv('--line', 'rgba(128,128,128,0.15)'),
+      signal: cv('--viz-signal', isDark()?'#5fd08a':'#2e9e5b'),
+      empty: cv('--viz-empty', isDark()?'#ff6b6b':'#d1495b'),
+      reject: cv('--viz-reject', isDark()?'#e0b04a':'#c0861f'),
+      noise: cv('--viz-noise', isDark()?'#6b7686':'#8a93a0'),
+      gate: cv('--viz-gate', isDark()?'#e9c46a':'#b3862f'),
+      oomph: cv('--viz-oomph', isDark()?'#54a0ff':'#2b7fc0')
+    };
+  }
+  var PTS=[
+    {n:'Nag Hammadi (A)', x:85, y:80},
+    {n:'VENONA (A)', x:78, y:82},
+    {n:'P2-Skandal (A)', x:70, y:78},
+    {n:'Großer sign. Effekt (B)', x:80, y:75},
+    {n:'Samariter-Pentateuch (A)', x:74, y:70},
+    {n:"QAnon 'Plan' (A)", x:6, y:92},
+    {n:'Bilderberg=Weltherrschaft (A)', x:10, y:85},
+    {n:'Rosenkreuzer-Bruderschaft (A)', x:12, y:78},
+    {n:"'Ancient Aliens' (A)", x:5, y:88},
+    {n:'Precision-Pille 5±0,5 (B)', x:10, y:95},
+    {n:"'signifikant' CDC-Grid (B)", x:14, y:88},
+    {n:'Vioxx 5:1 (B)', x:68, y:38},
+    {n:'Stargate (A)', x:55, y:42},
+    {n:"Eleusis 'Schau' (A)", x:60, y:45},
+    {n:'Oomph-Pille 20±10 (B)', x:72, y:48},
+    {n:'Mithras 7 Grade (A)', x:58, y:44},
+    {n:'Kupferrolle Qumran (A)', x:50, y:40},
+    {n:'Baghdad-Batterie (A)', x:28, y:26},
+    {n:"'winzig & unscharf' (B)", x:18, y:24},
+    {n:"Phaistos 'Schrift?' (A)", x:30, y:30},
+    {n:'Baphomet-Symbol (A)', x:8, y:40},
+    {n:'Linear A (A)', x:34, y:32}
+  ];
+  var state={ gate:55, oomph:45, n:30, names:false };
+  function dispY(p){ return Math.max(2, Math.min(100, p.y + (state.n-30)*0.6)); }
+  function quad(x, dy){ if(x>=state.oomph && dy>=state.gate) return 0; if(x<state.oomph && dy>=state.gate) return 1; if(x>=state.oomph && dy<state.gate) return 2; return 3; }
+  function set(id, txt){ var e=document.getElementById(id); if(e) e.textContent=txt; }
+  function render(){
+    var vv=document.getElementById('viz');
+    if(typeof Plotly==='undefined'){ if(vv && vv.children.length===0){ vv.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--dim);font-size:.9rem;padding:20px">Plotly (CDN) nicht verfügbar — Visualisierung deaktiviert. Alle Daten sind inline vorhanden.</div>'; } return; }
+    var P=pal(), q=[P.signal,P.empty,P.reject,P.noise];
+    var x=[], y=[], txt=[], mk=[], c=[0,0,0,0];
+    PTS.forEach(function(p){
+      var dy=dispY(p), qd=quad(p.x,dy); c[qd]++;
+      x.push(p.x); y.push(dy); txt.push(p.n);
+      mk.push({size:12, color:q[qd], line:{width:1, color:P.plot}});
+    });
+    var data=[{ type:'scatter', mode: state.names?'markers+text':'markers', x:x, y:y, text:txt,
+      textposition:'top center', hovertemplate:'%{text}<br>Substanz %{x} · Präzision %{y}<extra></extra>', marker:mk }];
+    var shapes=[
+      {type:'rect', x0:0, x1:state.oomph, y0:state.gate, y1:100, fillcolor:P.empty, opacity:0.06, line:{width:0}, layer:'below'},
+      {type:'rect', x0:state.oomph, x1:100, y0:0, y1:state.gate, fillcolor:P.reject, opacity:0.06, line:{width:0}, layer:'below'},
+      {type:'line', x0:state.oomph, x1:state.oomph, y0:0, y1:100, line:{color:P.gate, width:2, dash:'dash'}},
+      {type:'line', x0:0, x1:100, y0:state.gate, y1:state.gate, line:{color:P.oomph, width:2, dash:'dot'}}
+    ];
+    var layout={
+      paper_bgcolor:P.paper, plot_bgcolor:P.plot,
+      font:{color:P.text, family:'Inter, sans-serif', size:12},
+      margin:{l:58, r:26, t:34, b:56},
+      showlegend:false, shapes:shapes,
+      xaxis:{title:{text:'Substanz / Oomph  →  (überprüfbare Substanz · Effektgröße)', font:{color:P.sub, size:12}}, range:[0,100], gridcolor:P.grid, zerolinecolor:P.grid, linecolor:P.grid, tickfont:{color:P.dim}},
+      yaxis:{title:{text:'Präzision / Lautstärke des Rituals  →  (Messschärfe · wie laut „signifikant/geheim")', font:{color:P.sub, size:12}}, range:[0,100], gridcolor:P.grid, zerolinecolor:P.grid, linecolor:P.grid, tickfont:{color:P.dim}},
+      annotations:[
+        {x:0.5, y:1.0, xref:'paper', yref:'paper', showarrow:false, text:'Echt & bedeutend (Signal)', font:{color:q[0], size:12}, xanchor:'center', yanchor:'bottom'},
+        {x:0.5, y:0.0, xref:'paper', yref:'paper', showarrow:false, text:'Rauschen → verwerfen', font:{color:q[3], size:12}, xanchor:'center', yanchor:'top'},
+        {x:0.015, y:0.5, xref:'paper', yref:'paper', showarrow:false, text:'<b>fälschlich akzeptiert</b><br>leer, aber „geheim / signifikant“', font:{color:q[1], size:11}, xanchor:'left', yanchor:'middle', align:'left'},
+        {x:0.985, y:0.5, xref:'paper', yref:'paper', showarrow:false, text:'<b>fälschlich verworfen</b><br>substantiell, aber „unscharf / in-signifikant“', font:{color:q[2], size:11}, xanchor:'right', yanchor:'middle', align:'right'}
+      ]
+    };
+    Plotly.react('viz', data, layout, {responsive:true, displayModeBar:false});
+    set('v-sig', c[0]); set('v-emp', c[1]); set('v-rej', c[2]); set('v-noi', c[3]);
+    set('v-gate', state.gate); set('v-oomph', state.oomph); set('v-n', state.n);
+    var v=document.getElementById('viz-verdict');
+    if(v){ v.innerHTML='<b>'+c[1]+'</b> Behauptungen sind <b>leer, aber „geheim/signifikant“</b> (fälschlich akzeptiert) und <b>'+c[2]+'</b> sind <b>substantiell, aber „unscharf“</b> (fälschlich verworfen). Schiebe Schwelle (G) & Mindest-Substanz (M) wohin du willst — diese beiden Katastrophen-Quadranten leeren sich nie.'; }
+  }
+  function init(){
+    var g=document.getElementById('g-gate'), m=document.getElementById('g-oomph'), n=document.getElementById('g-n'), nm=document.getElementById('g-names');
+    if(g) g.addEventListener('input', function(){ state.gate=+this.value; render(); });
+    if(m) m.addEventListener('input', function(){ state.oomph=+this.value; render(); });
+    if(n) n.addEventListener('input', function(){ state.n=+this.value; render(); });
+    if(nm) nm.addEventListener('change', function(){ state.names=this.checked; syncNames(); render(); });
+    var pb=document.getElementById('g-names-btn');
+    if(pb) pb.addEventListener('click', function(){ if(nm){ nm.checked=!nm.checked; state.names=nm.checked; } syncNames(); render(); });
+    var pres=document.querySelectorAll('.presets button[data-n]');
+    pres.forEach(function(b){ b.addEventListener('click', function(){ var nv=+b.getAttribute('data-n'); if(n){ n.value=nv; } state.n=nv; render(); }); });
+    var tt=document.getElementById('themeToggle');
+    if(tt) tt.addEventListener('click', function(){
+      var h=document.documentElement, now=h.classList.toggle('dark');
+      try{ localStorage.setItem('f108theme', now?'dark':'light'); }catch(e){}
+      render();
+    });
+    if(typeof renderMathInElement!=='undefined'){
+      renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false});
+    }
+    render();
+  }
+  function syncNames(){ var pb=document.getElementById('g-names-btn'); if(pb) pb.textContent='Namen: '+(state.names?'an':'aus'); }
+  document.addEventListener('DOMContentLoaded', init);
+  window.addEventListener('load', function(){ render(); });
+  window.addEventListener('resize', function(){ render(); });
+})();
+</script>
+</body>
+</html>

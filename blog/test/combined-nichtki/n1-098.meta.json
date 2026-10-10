@@ -1,0 +1,16 @@
+{
+  "no": "098",
+  "a": "conceptual_spaces.html",
+  "b": "narc_group2.html",
+  "a_title": "Conceptual Spaces – Die Geometrie des Denkens (Interaktiv)",
+  "b_title": "Die Architektur der Manipulation – Abstrakte Visualisierung",
+  "combined_theme": "geometrie-des-manipulierten-geistes",
+  "one_line": "Der gleiche konzeptuelle Raum, mit dem der Geist Bedeutung darstellt (Ähnlichkeit=Distanz, Konzepte=konvexe Regionen), ist genau die Geometrie, auf der Manipulation wirkt: Prototyp-Capture, Metrik-Inversion (Gaslighting), Region-Erosion und Hub-Kontrolle sind die Pathologien von Gärdenfors' Kriterium P — und Heilung ist die Re-lokalisierung in die eigene konvexe Region.",
+  "contradictions": [
+    "Konvexität: A behandelt stabile konvexe Regionen als gesunde Tugend (Kriterium P), B zeigt, dass genau diese Regionen (Selbstbild, 'was war') die Angriffsfläche sind, die Gaslighting/Erosion deformieren oder auflösen.",
+    "Nähe/Ähnlichkeit: A hält Ähnlichkeit=Distanz für ein neutrales, förderliches Gesetz (Shepard), B zeigt, dass erzwungene Nähe der Kontroll-Mechanismus ist (Feld zieht Partikel an, Gravitationsfeld verengt Autonomie).",
+    "Architektur: A beschreibt dezentrale, selbstorganisierende Räume (Kohonen, 'ohne dass jemand es ihr sagt'), B beschreibt eine zentralisierte Hub-Topologie, in der ein einziger Anführer alle (gefilterte) Informationen kontrolliert."
+  ],
+  "resolution": "Keine echten Kontradiktionen, sondern zwei Hälben eines Bildes: A = normale selbstorganisierende Geometrie, B = Wirkung eines zweiten Agents auf dieselbe. Die konvexe Region ist der stabile Attraktor; Manipulation ist äußeres Forcing, das ihn verformt (gefälschte Ähnlichkeit, Metrik-Inversion, Substanzverlust, Hub-Monopol). Recovery = Rückkehr zum Attraktor: eigene Region, eigene Metrik, eigene Voronoi-Zelle und wieder verteilte Peer-Kommunikation (Anti-Hub).",
+  "viz": "2-D-Konzeptraum-Canvas: das Selbst als konvexe Region um einen Prototyp (Stern), der Anführer als gravitierende Masse; Slider 'Kontrolle' zieht Prototyp an, verkleinert die Region, verdriftet die wahrgenommene (rot) von der objektiven (grün) Region (Gaslighting) und verschiebt die Voronoi-Grenze; 'Heilung' zieht alles zurück zum konvexen Attraktor. Themenreaktiv über CSS-Variablen, alle Daten inline."
+}

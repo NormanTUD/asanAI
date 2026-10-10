@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lokale Daten, globale Form: Die Garbe als Modell des Gehirns &middot; Grothendieck &#10005; Gehirn</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(255,110,199,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;position:relative}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.94em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.eq{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.95em;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+td:nth-child(2){color:var(--sky)}
+td:nth-child(3){color:var(--warn)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%;height:auto}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 190px;min-width:150px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.9rem;margin-top:12px;align-items:baseline}
+.stat .big{font-family:ui-monospace,monospace;font-size:1.5rem;font-weight:700}
+.stat .lab{color:var(--dim)}
+.legend{display:flex;gap:14px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.legend .dash{width:16px;height:0;border-top:2px dashed var(--ink);border-radius:0}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px}
+ul{margin:.6em 0;padding-left:1.2em}
+li{margin:.35em 0}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.prov a{text-decoration:none;border-bottom:1px solid var(--line);font-weight:600}
+.prov a:hover{border-bottom-color:var(--acc)}
+.prov .d{display:block;color:var(--dim);font-size:.88rem;margin-top:8px}
+.prov .k{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Theme wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Round 1 &middot; Nicht-KI-Track &middot; Pair 099</div>
+  <h1>Lokale Daten, globale Form</h1>
+  <p class="sub">Die Garbe als Modell des Gehirns &middot; Fusion aus: <span class="mono">grothendiek.html</span> &#10005; <span class="mono">brain.html</span></p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <div class="tag">01 &middot; Kernthese der Fusion</div>
+    <h2>Kognition ist ein Prozess auf einem Garben-Raum &mdash; und seine Kohomologie ist die Emergenz</h2>
+    <p>
+      Die zwei Texte sprechen andere Sprachen &mdash; der eine <b>Geometrische Algebra / Kategorientheorie</b>
+      (Grothendiecks Universum: Garben, Schemata, Topoi, Kohomologie, Motive), der andere
+      <b>Neurowissenschaft</b> (Gehirnregionen, Signale, Chaos, Netzwerke) &mdash; und machen doch
+      <b>dieselbe strukturelle Aussage</b>: reiche, globale Form ist nicht prim&auml;r. Sie wird aus
+      <b>lokalen Daten zusammengesetzt, die dort, wo sie sich &uuml;berlappen, zueinander in Relation stehen
+      m&uuml;ssen</b>. Grothendiecks <b>Verklebungsaxiom der Garbe</b> macht das zu einem exakten Satz; das
+      Gehirn tut es <b>fortlaufend</b> (hierarchische Merkmalsextraktion, Integration verteilter Repr&auml;sentationen
+      in ein Perzept).
+    </p>
+    <p>
+      Beide sagen au&szlig;erdem, dass ein Ding sich an seinen <b>Beziehungen zu seinem Umfeld</b> abliest:
+      das <b>Yoneda-Lemma</b> (ein Objekt ist vollst&auml;ndig durch seine Morphismen zu allen anderen bestimmt,
+      &bdquo;ein Objekt ist, was es tut&ldquo;) ist der exakte Zwilling von der <b>Konnektik</b> (eine
+      Gehirnregion / Funktion ist durch ihre Verbindungen definiert).
+    </p>
+    <p>
+      Der Punkt, an dem sie sich am engsten ber&uuml;hren, ist <b>Kohomologie</b> &mdash; der Anteil des Ganzen,
+      der sich <b>nicht</b> aus den lokalen St&uuml;cken rekonstruieren l&auml;sst. Das ist buchst&auml;blich die
+      mathematische Fassung dessen, was die Neurowissenschaft <b>Emergenz</b> bzw. <b>integrierte
+      Information&nbsp;&Phi;</b> nennt. Die fusionierte Position in einem Satz:
+      <b>Kognition ist ein nichtlineares (nahe-chaotisches) System, das auf einem relationellen,
+      garben&auml;hnlichen Raum l&auml;uft; sein stabiles Skelett ist mathematisch (kanonisch, topologisch),
+      seine Bewegung physikalisch &mdash; und sein genuin neues, globales Inhalt ist seine Kohomologie = &Phi;.</b>
+    </p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <div class="tag">02 &middot; Widerspr&uuml;che zwischen A und B</div>
+    <h2>Drei echte Spannungen &mdash; jeweils benannt, was welches Papier behauptet</h2>
+    <p>
+      A ist ein <b>Interaktives Lehrst&uuml;ck &uuml;ber Grothendieks Mathematik</b>, B ein
+      <b>Interaktiver Gehirn-Explorer</b>. Sie widersprechen sich nicht &bdquo;nachweislich&ldquo;, wohl aber
+      in drei <b>konkurrierenden Grundannahmen</b> &uuml;ber das, was ein System aus seinen Teilen ist.
+    </p>
+
+    <div class="card">
+      <h3 style="margin-top:0">(a) Exakte, kanonische Bestimmtheit (A) vs. chaotische Unvorhersagbarkeit (B)</h3>
+      <p><b>A (Grothendieck):</b> Strukturen sind <b>einzig und kanonisch</b> bestimmt. Das Yoneda-Lemma
+        besagt, ein Objekt sei <i>vollst&auml;ndig</i> durch seine Beziehungen zu allen anderen festgelegt; ein
+        Schema sei <i>exakt</i> das Spektrum <span class="mono">Spec&nbsp;R</span> seines Ringes. Kein Zufall,
+        keine Abh&auml;ngigkeit von Anfangsbedingungen.</p>
+      <p><b>B (Gehirn):</b> Das Gehirn sei ein nichtlineares System, das <i>&bdquo;deterministisch aber
+        unvorhersagbar&ldquo;</i> sei (seltsamer Attraktor, fraktale Struktur); der Lyapunov-Exponent sei
+        <b>positiv</b>; es operiere am <i>edge of chaos</i> (Beggs&nbsp;&amp;&nbsp;Plenz 2003, neuronale
+        Lawinen mit Potenzgesetzen). Das globale Verhalten wird <i>nicht</i> stabil vom lokalen Zustand
+        bestimmt.</p>
+      <p class="note"><b>Spannung:</b> A sagt, die globale Form sei <i>eindeutig festgelegt</i>; B sagt, dieselbe
+        Art System sei <i>prinzipiell nicht vorherbestimmt</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(b) Genaue Lokal&rarr;Global-Rekonstruktion (A) vs. irreduzible Emergenz (B)</h3>
+      <p><b>A (Grothendieck):</b> Das <b>Verklebungsaxiom</b>: lokale Schnitte, die auf ihren
+        &Uuml;berlappungen &uuml;bereinstimmen, kleben <i>eindeutig</i> zu genau einem globalen Schnitt.
+        Das Global ist eine <i>exakte</i> Zusammenf&uuml;gung des Lokal &mdash; kein Informationsverlust.</p>
+      <p><b>B (Gehirn):</b> Globale Zust&auml;nde seien <i>verteilt</i> und <i>emergent</i>: keine lokale Region
+        enthalte das Ganze (H.&nbsp;M.: Ged&auml;chtnis nicht lokalisierbar); Bewusstsein als <b>integrierte
+        Information &Phi;</b>, das <i>mehr sei als die Summe seiner Teile</i>; lokale Messung (EEG/fMRI) sei
+        aufl&ouml;sungsgrenzt und verlustbehaftet. Das Global sei <i>nicht exakt</i> aus dem Lokal
+        rekonstruierbar.</p>
+      <p class="note"><b>Spannung:</b> A: Global ist <i>exakt</i> aus Lokal rekonstruierbar. B: Global sei
+        <i>irreduzibel &gt; Lokal</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">(c) Relationismus &bdquo;Ding&nbsp;=&nbsp;Relationen&ldquo; (A) vs. intrinsische
+      Region-Funktion / Lokalismus (B)</h3>
+      <p><b>A (Grothendieck):</b> Yoneda: &bdquo;Ein Objekt ist, was es tut&ldquo; / &bdquo;ein Objekt IST seine
+        Beziehungen&ldquo; &mdash; ein Objekt habe <i>keine</i> Identit&auml;t oder Eigenschaft jenseits seiner
+        Morphismen zu anderen. Radikaler <b>Relationismus</b>, kein intrinsisches Wesen.</p>
+      <p><b>B (Gehirn):</b> L&auml;sionsstudien und <b>doppelte Dissoziation</b> schreiben Regionen
+        <i>intrinsische, lokalisierbare Funktionen</i> zu (Sch&auml;digung &rarr; spezifischer
+        Funktionsverlust; jeder Lappen hat eine eigene Funktionsliste). Das ist <b>Lokalismus</b>:
+        Region&nbsp;=&nbsp;Substanz mit eigener Funktion.</p>
+      <p class="note"><b>Spannung:</b> A: nichts Intrinsisches, alles relationell. B: Regionen h&auml;tten
+        eigene, lokale Eigenschaften/Funktionen.</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <div class="tag">03 &middot; Aufl&ouml;sung</div>
+    <h2>Drei Ebenen, auf denen sich die Spannung aufl&ouml;st</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0">Zu (a): Struktur vs. Prozess &mdash; zwei Ebenen</h3>
+      <p>Grothendiecks Objekte sind <b>kategorisch/topologisch</b>: sie beschreiben das
+        <b>invariante Skelett</b> &mdash; den Raum, die Konnektivit&auml;t, die Attraktor-Landschaft, die
+        Einbuchtungen der Basins. Das <b>Chaos des Gehirns ist die Trajektorie, die durch dieses Skelett
+        l&auml;uft</b>. Der <i>edge of chaos</i> ist genau der Punkt, an dem das <b>topologische Invariante</b>
+        (die Attraktor-Form, die Basins) <i>wohldefiniert und stabil</i> bleibt, w&auml;hrend der einzelne Pfad
+        chaotisch ist. &rarr; <b>Fusion:</b> Kognition = dynamisches System auf einem relationellen Raum;
+        die <i>Invariante</i> ist mathematisch/topologisch (A), die <i>Bewegung</i> ist nichtlinear/chaotisch (B).
+        Beide sind wahr &mdash; auf verschiedenen Ebenen. &bdquo;Eindeutig bestimmt&ldquo; gilt f&uuml;r die
+        Struktur, &bdquo;unvorhersagbar&ldquo; f&uuml;r den Lauf.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Zu (b): Kohomologie als Br&uuml;cke zwischen exakt und emergent</h3>
+      <p>Das Verklebungsaxiom ist der <b>ideale Grenzfall</b> (Emergenz&nbsp;=&nbsp;0). Das Gehirn realisiere
+        <b>approximative, verlustbehaftete Verklebung</b>. Der entscheidende Gedanke:
+        <b>Kohomologie misst genau den Anteil des Ganzen, der sich <i>nicht</i> aus lokalen St&uuml;cken
+        rekonstruieren l&auml;sst</b> &mdash; die Obstruktion, die &uuml;brig bleibt, wenn lokale Daten global
+        nicht zusammenpassen. Das ist <i>per Definition</i> mathematische Emergenz / integrierte Information.
+        &rarr; <b>Fusion:</b> die totale Struktur = exakte lokale Zusammenf&uuml;gung (nullte Ordnung, A)
+        <b>+</b> irreduzible globale Obstruktion (h&ouml;here Kohomologie&nbsp;=&nbsp;&Phi;, B). Kein Widerspruch:
+        A liefert die Basis, B liefert die Kohomologie <i>darauf</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Zu (c): Region-Funktion als Schatten der relationellen Rolle</h3>
+      <p>Eine Regions&bdquo;Funktionsliste&ldquo; sei selbst <b>relationell kodiert</b> &mdash; durch ihr
+        Konnektom und ihre Ein-/Ausgabe-Transformation. Der <b>L&auml;sionseffekt <i>ist</i> der
+        Morphismus/Funktor, den die Region vermittelt</b>; die doppelte Dissoziation sei empirischer
+        Beleg, dass die Funktion einem spezifischen Morphismus entspricht. &rarr; <b>Fusion:</b> die
+        &bdquo;intrinsische&ldquo; Funktion ist der <i>Schatten</i> der relationellen Rolle; das <b>Konnektom
+        <i>ist</i> die funktionelle Karte</b>; &bdquo;intrinsisch&ldquo; entstehe aus dem relationellen Ort,
+        sei nicht fundamental. A und B treffen auf dieselbe Aussage: eine Region ist, was sie tut.</p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <div class="tag">04 &middot; Fusionierter Inhalt</div>
+    <h2>Der gemeinsame Grammatik-Grundstock</h2>
+    <p>
+      Der fusionierte Inhalt, nach der Kernthese geordnet. Wo beide Seiten liefern, ist die
+      &Uuml;bersetzung angegeben.
+    </p>
+
+    <h3>1. Lokale Daten &rarr; globale Form &nbsp;(&Garben; &harr; hierarchische Integration)</h3>
+    <p>
+      <b>A:</b> Eine <b>Garbe</b> ordnet jeder offenen Menge Daten (Schnitte) zu, so dass sich lokale
+      Schnitte konsistent zu globalen zusammenkleben lassen &mdash; das <b>Verklebungsaxiom</b>.
+      Leitgedanke: &bdquo;Die Garbe ist wichtiger als der Raum selbst.&ldquo;
+    </p>
+    <p>
+      <b>B:</b> Der visuelle Kortex arbeite <b>hierarchisch</b>: <span class="mono">V1&rarr;V2&rarr;V4</span>
+      (Farbe/Form) und <span class="mono">V1&rarr;V3&rarr;MT</span> (Bewegung); einfache Zellen (orientierte
+      Kanten) &rarr; komplexe Zellen (bewegte Kanten); &bdquo;hierarchische Verarbeitung extrahiert
+      zunehmend abstrakte Merkmale aus dem Rohbild.&ldquo; Der parietale Kortex transformiere sensorische
+      Koordinaten in handlungsrelevante Referenzrahmen.
+    </p>
+    <p>
+      <b>Fusion:</b> Das Garben-Modell ist die <i>pr&auml;zise Form</i> dessen, was das Gehirn tut: lokale,
+      einfache Repr&auml;sentationen (Kanten-, Orts-, Grid-Zellen) werden zu einem globalen Perzept/Modell
+      zusammengesetzt &mdash; aber nur, wo sie einander konsistent sind. Die Garbe &bdquo;auf dem Raum&ldquo;
+      ist das Modell der kortikalen Karte.
+    </p>
+
+    <h3>2. Ein Ding ist seine Beziehungen &nbsp;(&Yoneda; &harr; Konnektom)</h3>
+    <p>
+      <b>A:</b> Das <b>Yoneda-Lemma</b> &nbsp;
+      <span class="mono">Nat(h_A, F) &cong; F(A)</span> &nbsp; mit
+      <span class="mono">h_A(B)=Hom(A,B)</span>: ein Objekt sei vollst&auml;ndig durch seine Beziehung zu allen
+      anderen bestimmt. <b>Funktoren</b> seien die strukturerhaltenden Abbildungen zwischen Kategorien.
+    </p>
+    <p>
+      <b>B:</b> Regionen/Funktionen seien durch ihre <b>Konnektivit&auml;t</b> definiert: Human Connectome
+      Project 2011 zeige eine <b>Small-World-Topologie</b>
+      <span class="mono">&sigma;=(C/C_rand)/(L/L_rand)&gt;1</span> &mdash; hohe lokale Clusterung
+      <i>und</i> kurze Pfadl&auml;ngen, also &bdquo;effiziente lokale Verarbeitung und schnelle globale
+      Integration.&ldquo; DMN und Salience-Netzwerk seien prim&auml;r <i>durch ihre Verbindungen</i>
+      charakterisiert.
+    </p>
+    <p>
+      <b>Fusion:</b> Das <b>Konnektom <i>ist</i> die funktionelle Karte</b>. Eine Region
+      &bdquo;ist, was sie tut&ldquo; = der Morphismus/Funktor, den sie zwischen ihren Ein- und Ausg&auml;ngen
+      vermittelt. Yoneda liefert die Logik, das Konnektom die Daten.
+    </p>
+
+    <h3>3. Kohomologie als Emergenz &nbsp;(&der tiefste Punkt;)</h3>
+    <p>
+      <b>A:</b> <b>Kohomologie</b> misse &bdquo;L&ouml;cher&ldquo; algebraisch; Betti-Zahlen
+      <span class="mono">&beta;_0,&beta;_1,&beta;_2</span> z&auml;hlen Zusammenhangskomponenten, Schleifen,
+      Hohlr&auml;ume; <span class="mono">&chi;=V&minus;E+F</span>. Grothendiecks
+      <b>&eacute;tale Kohomologie</b> funktioniere auch in Charakteristik&nbsp;p. Methode: die
+      <i>Garben + ihre Kohomologie</i> studieren statt den Raum direkt.
+    </p>
+    <p>
+      <b>B:</b> Globale Zust&auml;nde seien <i>verteilt &amp; emergent</i>; H.&nbsp;M. zeige, dass
+      Ged&auml;chtnis <i>nicht</i> in einer Region lokalisiert ist; die <b>Integrated Information Theory</b>
+      (IIT 3.0, 2017) quantifiziere Bewusstsein als <b>integrierte Information &Phi;</b> &mdash; die
+      Information, die <i>mehr sei als die Summe ihrer Teile</i>.
+    </p>
+    <p>
+      <b>Fusion (der Kern):</b> Kohomologie misse <i>genau</i> den Teil des Ganzen, der sich <b>nicht</b> aus
+      lokalen St&uuml;cken rekonstruieren l&auml;sst &mdash; die <i>globale Obstruktion</i>, die &uuml;brig
+      bleibt, wenn lokale Daten nicht global zusammenpassen (z.&nbsp;B. das &bdquo;Loch&ldquo; eines
+      Perzepts, das kein einziger Kortexbereich tr&auml;gt). Das ist die w&ouml;rtliche mathematische Fassung
+      von Emergenz/&Phi;.
+    </p>
+    <div class="eq">totale Struktur &nbsp;=&nbsp; (lokale Verklebung, &bdquo;exakt&ldquo;) &nbsp;+&nbsp; (h&ouml;here Kohomologie, &bdquo;irreduzibles Global&ldquo; = &Phi;)</div>
+
+    <h3>4. Exakte Struktur vs. chaotischer Prozess &nbsp;(&Schemata; &harr; edge of chaos)</h3>
+    <p>
+      <b>A:</b> Ein <b>Schema</b> = <span class="mono">Spec R</span> (Primideale) + Strukturgarbe; kanonisch,
+      eindeutig. Die <b> dualen Zahlen</b> <span class="mono">R[&epsilon;]/(&epsilon;&sup2;)</span> seien ein
+      &bdquo;fetter Punkt&ldquo;: ein Punkt mit nilpotentem Element, der <i>Tangentialinformation</i> tr&auml;gt
+      &mdash; ein Morphismus <span class="mono">Spec R[&epsilon;]/(&epsilon;&sup2;) &rarr; X</span> sei ein
+      <b>Tangentialvektor</b>; h&ouml;here Potenzen merkten Kr&uuml;mmung.
+    </p>
+    <p>
+      <b>B:</b> Das Gehirn sei ein <b>nichtlineares dynamisches System</b>; Attraktoren seien stabile
+      Aktivit&auml;tsmuster (Erinnerungen, Wahrnehmungen, Motor-Programme); ein <b>seltsamer Attraktor</b>
+      sei &bdquo;deterministisch aber unvorhersagbar&ldquo;; <b>Lyapunov&gt;0</b> = Chaos; am
+      <b>edge of chaos</b> (Beggs&nbsp;&amp;&nbsp;Plenz 2003, neuronale Lawinen, Potenzgesetze) sei
+      Informationsverarbeitung &amp; Korrelationsl&auml;nge maximal.
+    </p>
+    <p>
+      <b>Fusion:</b> zwei Ebenen &mdash; (i) die <b>Struktur</b> (Attraktor-Basins, Konnektivit&auml;t,
+      &bdquo;Schemata&ldquo;) ist kanonisch/topologisch/invariant (das mathematische Objekt); (ii) der
+      <b>Prozess</b> (Trajektorie durch die Basins) ist nichtlinear/chaotisch (der physikalische Lauf). Der
+      &bdquo;fette Punkt&ldquo; (duale Zahlen) sei das Modell daf&uuml;r, dass selbst ein <i>einzelner
+      Zustand</i> infinitesimale/Tangential-Information tr&auml;gt &mdash; der Keim, an dem sich stabile
+      Muster (Attraktoren) ablesen lassen.
+    </p>
+
+    <h3>5. Mehrwertige Logik der Wahrnehmung &nbsp;(&Topoi; &harr; graduelle Aktivierung)</h3>
+    <p>
+      <b>A:</b> Ein <b>Topos</b> sei ein verallgemeinerter Raum mit <i>interner Logik</i>, die nicht
+      klassisch zu sein braucht. Wahrheitswerte <span class="mono">&Omega;</span>:
+      <span class="mono">Set</span> &rarr; <span class="mono">{0,1}</span>;
+      <span class="mono">Sh(R)</span> &rarr; offene Mengen als Wahrheitswerte (unendlich viele);
+      Heyting-Implikation <span class="mono">U&Rightarrow;V=int(U&supc;&cup;V)</span>,
+      <span class="mono">&lnot;U=int(U&supc;)</span>, und <b>&lnot;&lnot;U &ne; U</b>
+      (z.&nbsp;B. <span class="mono">U=R\{0} &rarr; &lnot;U=&empty; &rarr; &lnot;&lnot;U=R&ne;U</span>).
+    </p>
+    <p>
+      <b>B:</b> Neuronale &bdquo;Wahrheit&ldquo; sei <b>graduell</b> (Aktivierungsgrad, Konfidenz,
+      Probabilistik); synaptische Summation (EPSP/IPSP) &uuml;ber einen Schwellenwert; die Amygdala bewerte
+      Reize emotional in <b>~120&nbsp;ms</b> &mdash; schneller als bewusste Wahrnehmung.
+    </p>
+    <p>
+      <b>Fusion:</b> Das Gehirn entscheide nicht bin&auml;r, sondern in Abstufungen &mdash; genau wie ein
+      <b>nicht-klassischer Topos</b> mit vielen Wahrheitswerten. Die &bdquo;Wahrheit eines Perzepts&ldquo;
+      sei ein Element von <span class="mono">&Omega;</span>, kein 0/1; &bdquo;wahr&ldquo; habe dort Abstufungen
+      wie ein Aktivierungs-/Konfidenzgrad.
+    </p>
+
+    <h3>6. Plastizit&auml;t = Ver&auml;nderung der Morphismen; niedrige Invariante im Zustandsraum</h3>
+    <p>
+      <b>B:</b> Hebb&bdquo;sche Regel <span class="mono">&Delta;w_ij = &eta;&middot;x_i&middot;x_j</span>
+      (&bdquo;Neurons that fire together, wire together&ldquo;); <b>STDP</b> (pr&auml;-vor-post &rarr; LTP,
+      sonst LTD); LTP = Basis des deklarativen Ged&auml;chtnisses; <b>Neuropixels 2020</b>:
+      niedrigdimensionale Mannigfaltigkeiten in hochdimensionalen neuronalen Zust&auml;nderaumen.
+    </p>
+    <p>
+      <b>Fusion:</b> Lernen <b>ver&auml;ndere die &bdquo;Morphismen&ldquo; (Gewichte)</b> der Kategorie &mdash;
+      die Struktur des Garben-/Konnektom-Raums selbst. Das Gehirn &bdquo;lebe&ldquo; auf einer
+      <b>niedrigdimensionalen invarianten Untermannigfaltigkeit</b> (einem &bdquo;Schema&ldquo;) im
+      hochdimensionalen Raum aller m&ouml;glichen Aktivit&auml;tszust&auml;nde &mdash; so wie ein Schema die
+      glatte <i>und</i> infinitesimale Struktur aus einem einzigen Ring tr&auml;gt: viel Information,
+      komprimiert in wenigen, stabilen Freiheitsgraden.
+    </p>
+
+    <table>
+      <thead><tr><th>Begriff (A, Mathematik)</th><th>Entspricht in (B, Gehirn)</th><th>Geteilt durch</th></tr></thead>
+      <tbody>
+        <tr><td>Garbe + Verklebungsaxiom</td><td>hierarchische Integration lokal&rarr;global</td><td>lokale Daten, globale Form</td></tr>
+        <tr><td>Yoneda-Lemma (Objekt = Relationen)</td><td>Konnektom / Small-World-Topologie</td><td>Ding durch Beziehungen</td></tr>
+        <tr><td>Kohomologie (L&ouml;cher / &beta;_k)</td><td>Emergenz / integrierte Information &Phi;</td><td>das Global, das kein Lokal enth&auml;lt</td></tr>
+        <tr><td>Schema / duale Zahlen (infinitesimal)</td><td>Attraktor-Basins / edge of chaos</td><td>stabiles Skelett + infinitesimale Info</td></tr>
+        <tr><td>Topos / mehrwertige Logik (&Omega;)</td><td>graduelle Aktivierung / Konfidenz</td><td>Wahrheit als Abstufung</td></tr>
+        <tr><td>Funktoren (strukturell-erhaltend)</td><td>Hebb/STDP (Gewicht &amp; Morphismus-Ver&auml;nderung)</td><td>Struktur &auml;ndern = lernen</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <div class="tag">05 &middot; Interaktive Visualisierung</div>
+    <h2>Lokale Verklebung &rarr; Kohomologie &rarr; Emergenz</h2>
+    <p>
+      &Uuml;ber einer Basislinie laufen <b>lokale Schnitte</b> (die farbigen Kurven, &asymp; lokale
+      Zellen/Repr&auml;sentationen), jeder auf seiner St&uuml;tze. Die <b>gestrichelte</b> Linie ist der
+      konsensuelle <b>globale</b> Schnitt. Das <b>rote Band</b> markiert die <b>Kohomologie</b> &mdash;
+      den vertikalen Abstand, mit dem sich die lokalen Schnitte auf ihren &Uuml;berlappungen
+      <i>nicht</i> &uuml;berlappen. Dieser Abstand ist die globale Form, die sich aus <i>keinem</i> einzelnen
+      lokalen St&uuml;ck ableiten l&auml;sst.
+    </p>
+    <p>
+      Ziehe am <b>&Uuml;bereinstimmungs-Regler</b>: bei <span class="mono">c&rarr;1</span> stimmen alle
+      lokalen Schnitte auf ihren &Uuml;berlappungen &uuml;berein &mdash; das Band schwindet, die Kohomologie
+      ist <b>0</b>, das Global ist exakt aus dem Lokal rekonstruierbar (A, klassisch). Bei
+      <span class="mono">c&rarr;0</span> weichen sie ab &mdash; das Band wird zu einer irreduziblen
+      globalen Form, die kein Lokal-St&uuml;ck tr&auml;gt (B, Emergenz/&Phi;).
+    </p>
+
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c">
+          <label>Übereinstimmung im Überlapp (Gluing-Konsistenz) c <b id="cons-val">0.70</b></label>
+          <input type="range" id="consistency" min="0" max="1" step="0.01" value="0.70"/>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="btnClassical">Klassisch (c&rarr;1)</button>
+        <button id="btnEmergent">Emergent (c&rarr;0.15)</button>
+        <button id="btnNew">Neue lokale Muster</button>
+      </div>
+      <canvas id="viz" width="760" height="440"></canvas>
+      <div class="legend">
+        <span><i style="background:#e07a3f"></i><i style="background:#4fa3e0"></i><i style="background:#5fd08a"></i><i style="background:#c77fd6"></i> lokale Schnitte &#8203;&#8499;(U<sub>i</sub>) (lokale Zellen/Repr&auml;sentationen)</span>
+        <span><span class="dash"></span> konsensualer globaler Schnitt (klassische Rekonstruktion)</span>
+        <span><i style="background:rgba(209,73,91,.5)"></i> Kohomologie-Band = globale Form, die kein lokales St&uuml;ck enth&auml;lt (Emergenz / &Phi;)</span>
+      </div>
+      <div class="stat">
+        <span class="big" id="e-value">0.00</span>
+        <span class="lab" id="e-label">&mdash;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <div class="tag">06 &middot; Provenienz</div>
+    <h2>Quellen</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A</span>
+        <p><a href="../grothendiek.html">grothendiek.html</a></p>
+        <span class="d">&bdquo;Grothendiecks Universum &ndash; Interaktiv Erleben&ldquo;: Garben, Schemata,
+          Funktoren &amp; Yoneda, Topoi, Kohomologie, Dessins d&rsquo;Enfants, Motive &mdash; lokale Daten,
+          globale Zusammenklebung, Relationismus, kanonische Bestimmung.</span>
+      </div>
+      <div class="box">
+        <span class="k">B</span>
+        <p><a href="../brain.html">brain.html</a></p>
+        <span class="d">&bdquo;Interaktiver Gehirn-Explorer&ldquo;: Regionen, Messmethoden, neuronale
+          Signale, Chaos &amp; Attraktoren, Netzwerk-Dynamik, Meilensteine &mdash; hierarchische
+          Integration, Verteilung/Emergenz, edge of chaos, &Phi;, Plastizit&auml;t.</span>
+      </div>
+    </div>
+  </section>
+</article>
+
+<script>
+(function(){
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var biases = [0.55, -0.6, 0.5, -0.45];
+  function newPattern(){
+    biases = [0,0,0,0].map(function(){ return (Math.random()*2-1); });
+    if(Math.abs(biases[0]-biases[1]) < 0.3){ biases[1] = -biases[0]; }
+    if(Math.abs(biases[2]-biases[3]) < 0.3){ biases[3] = -biases[2]; }
+  }
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+
+  function baseWave(t){ return 0.5 + 0.26*Math.sin(2*Math.PI*1.35*t + 0.35); }
+
+  var patches = [
+    {a:0.00, b:0.50},
+    {a:0.20, b:0.70},
+    {a:0.40, b:0.90},
+    {a:0.60, b:1.00}
+  ];
+  var PCOL = ['#e07a3f','#4fa3e0','#5fd08a','#c77fd6'];
+  var bandL = 0.20, bandR = 0.90;
+
+  var padL=48, padR=18, padT=26, padB=44;
+  var plotL=padL, plotR=W-padR, plotW=plotR-plotL;
+  var topY=padT, botY=H-padB, plotH=botY-topY;
+  function xFor(t){ return plotL + t*plotW; }
+  function yFor(v){
+    var c = Math.max(0, Math.min(1, v));
+    return topY + (1-c)*plotH;
+  }
+  function offsetOf(i, c){ return (1-c)*biases[i]*0.3; }
+
+  function computeE(c){
+    var N=480, sum=0, count=0;
+    for(var k=0;k<N;k++){
+      var t=(k+0.5)/N;
+      if(t<bandL || t>bandR) continue;
+      var mn=Infinity, mx=-Infinity, n=0;
+      for(var i=0;i<patches.length;i++){
+        if(t>=patches[i].a && t<=patches[i].b){
+          var v=baseWave(t)+offsetOf(i,c);
+          if(v<mn)mn=v; if(v>mx)mx=v; n++;
+        }
+      }
+      if(n>=2){ sum+=(mx-mn); count++; }
+    }
+    var raw = count ? (sum/count) : 0;
+    return Math.max(0, Math.min(1, raw/0.30));
+  }
+
+  function draw(){
+    if(!canvas || !ctx) return;
+    var col = {
+      bg:   cssVar('--card')  || '#ffffff',
+      line: cssVar('--line')  || '#cccccc',
+      grid: cssVar('--grid')  || '#e5e5e5',
+      ink:  cssVar('--ink')   || '#222222',
+      dim:  cssVar('--dim')   || '#888888',
+      acc:  cssVar('--acc')   || '#0f9d7a',
+      sky:  cssVar('--sky')   || '#2f6fb0',
+      bad:  cssVar('--bad')   || '#d1495b'
+    };
+    var cs = document.getElementById('consistency');
+    var c = parseFloat(cs ? cs.value : 0.7);
+    var cv = document.getElementById('cons-val');
+    if(cv) cv.textContent = c.toFixed(2);
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = col.bg;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = col.grid;
+    var g;
+    for(g=0; g<=10; g++){
+      var x = xFor(g/10);
+      ctx.beginPath(); ctx.moveTo(x, topY); ctx.lineTo(x, botY); ctx.stroke();
+    }
+    ctx.fillStyle = col.dim;
+    ctx.font = '11px ui-monospace,monospace';
+    ctx.textAlign = 'right';
+    for(g=0; g<=4; g++){
+      var y = yFor(g/4);
+      ctx.strokeStyle = col.grid;
+      ctx.beginPath(); ctx.moveTo(plotL, y); ctx.lineTo(plotR, y); ctx.stroke();
+      ctx.fillText((g/4).toFixed(1), plotL-8, y+4);
+    }
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = col.dim;
+    ctx.font = '12px ui-sans-serif,system-ui';
+    ctx.fillText('lokale Stütze t  →', plotL, H-12);
+    ctx.save();
+    ctx.translate(14, botY);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('Wahrheits-/Aktivierungsgrad', -46, 0);
+    ctx.restore();
+
+    var N=300, k, t, x, y;
+    // Kohomologie-Band (max oben, min unten)
+    ctx.beginPath();
+    var started=false;
+    for(k=0;k<=N;k++){
+      t=bandL + (k/N)*(bandR-bandL);
+      var mx=-Infinity, any=false;
+      for(var i=0;i<patches.length;i++){
+        if(t>=patches[i].a && t<=patches[i].b){
+          var vv=baseWave(t)+offsetOf(i,c);
+          if(vv>mx)mx=vv; any=true;
+        }
+      }
+      if(!any) continue;
+      x=xFor(t); y=yFor(mx);
+      if(started){ ctx.lineTo(x,y); } else { ctx.moveTo(x,y); started=true; }
+    }
+    for(k=N;k>=0;k--){
+      t=bandL + (k/N)*(bandR-bandL);
+      var mn=Infinity;
+      for(var j=0;j<patches.length;j++){
+        if(t>=patches[j].a && t<=patches[j].b){
+          var wv=baseWave(t)+offsetOf(j,c);
+          if(wv<mn)mn=wv;
+        }
+      }
+      x=xFor(t); y=yFor(mn);
+      ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(209,73,91,0.20)';
+    ctx.fill();
+
+    // globaler Konsens (gestrichelt)
+    ctx.beginPath();
+    for(k=0;k<=N;k++){
+      t=k/N; x=xFor(t); y=yFor(baseWave(t));
+      if(k===0){ ctx.moveTo(x,y); } else { ctx.lineTo(x,y); }
+    }
+    ctx.setLineDash([5,4]); ctx.strokeStyle = col.ink; ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
+
+    // lokale Schnitte
+    for(var p=0;p<patches.length;p++){
+      var P=patches[p];
+      ctx.beginPath();
+      var first=true, px;
+      for(px=xFor(P.a); px<=xFor(P.b); px+=1){
+        var tt=(px-plotL)/plotW;
+        var val=baseWave(tt)+offsetOf(p,c);
+        var yy=yFor(val);
+        if(first){ ctx.moveTo(px,yy); first=false; } else { ctx.lineTo(px,yy); }
+      }
+      ctx.strokeStyle = PCOL[p]; ctx.lineWidth = 2.4; ctx.stroke();
+      // Stützlinie unten
+      ctx.fillStyle = PCOL[p];
+      ctx.fillRect(xFor(P.a), botY+8, Math.max(2, xFor(P.b)-xFor(P.a)-1), 4);
+    }
+
+    // Kohomologie-Index
+    var E = computeE(c);
+    var eEl=document.getElementById('e-value');
+    var lEl=document.getElementById('e-label');
+    if(eEl) eEl.textContent = E.toFixed(2);
+    if(lEl){
+      if(E<0.06){ lEl.textContent='Klassisch: global exakt aus lokal rekonstruierbar (A · Verklebungsaxiom)'; lEl.style.color=col.acc; }
+      else if(E<0.40){ lEl.textContent='Mittlere Kohomologie: ein Anteil Global bleibt über dem Lokal'; lEl.style.color=col.sky; }
+      else { lEl.textContent='Starke Emergenz: globale Form > Summe der lokalen Teile (B · Φ)'; lEl.style.color=col.bad; }
+    }
+  }
+
+  function init(){
+    newPattern();
+    var cs=document.getElementById('consistency');
+    if(cs) cs.addEventListener('input', draw);
+    var bn=document.getElementById('btnNew');
+    if(bn) bn.addEventListener('click', function(){ newPattern(); draw(); });
+    var bc=document.getElementById('btnClassical');
+    if(bc) bc.addEventListener('click', function(){ if(cs) cs.value='1'; draw(); });
+    var be=document.getElementById('btnEmergent');
+    if(be) be.addEventListener('click', function(){ if(cs) cs.value='0.15'; draw(); });
+    var tt=document.getElementById('themeToggle');
+    if(tt) tt.addEventListener('click', function(){
+      document.documentElement.classList.toggle('dark');
+      draw();
+    });
+    if(window.MutationObserver){
+      new MutationObserver(function(){ draw(); }).observe(document.documentElement,
+        {attributes:true, attributeFilter:['class']});
+    }
+    draw();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

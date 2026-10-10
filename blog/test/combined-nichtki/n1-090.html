@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Katastrophe als algebraische Varietät — Fusion: Katastrophentheorie × algebraische Topologie</title>
+<style>
+:root{
+  --bg:#f6f7fb; --fg:#1a1f2b; --muted:#5b6472; --card:#ffffff; --border:#e2e6ee;
+  --accent:#5b6ee1; --accent2:#7a4fb0; --good:#1f9d55; --warn:#c7720a; --bad:#dc2626;
+  --code:#f0f2f8; --viz-bg:#eef1f8; --shadow:0 10px 30px rgba(20,30,60,.08);
+  --stable:#1f9d55; --unstable:#dc2626; --variety:#5b6ee1; --sing:#dc2626;
+}
+html.dark{
+  --bg:#0b1020; --fg:#e6e9f2; --muted:#98a2b8; --card:#131a2e; --border:#243052;
+  --accent:#8496ff; --accent2:#b07fd6; --good:#34d399; --warn:#f5a524; --bad:#f87171;
+  --code:#0f1626; --viz-bg:#0a0f1e; --shadow:0 10px 30px rgba(0,0,0,.35);
+  --stable:#34d399; --unstable:#f87171; --variety:#8496ff; --sing:#f87171;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--fg); line-height:1.65; overflow-x:hidden;
+}
+.wrap{max-width:820px;margin:0 auto;padding:34px 20px 70px;}
+h1{font-size:1.85rem;line-height:1.25;margin-bottom:6px;}
+.subtitle{color:var(--accent);font-size:.95rem;margin-bottom:14px;font-weight:600;letter-spacing:.2px;}
+.lead{color:var(--muted);margin-bottom:24px;font-size:.98rem;}
+section{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:22px 24px;margin-bottom:20px;box-shadow:var(--shadow);
+}
+section>h2{font-size:1.28rem;margin-bottom:12px;color:var(--accent);}
+html.dark section>h2{color:var(--accent2);}
+h3{font-size:1.05rem;margin:16px 0 8px;color:var(--fg);}
+p{margin-bottom:12px;}
+p:last-child{margin-bottom:0;}
+strong{color:var(--fg);}
+.hl{color:var(--accent);font-weight:600;}
+.slogan{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.98rem;color:var(--accent);letter-spacing:.3px;}
+table{width:100%;border-collapse:collapse;margin:8px 0 6px;font-size:.88rem;}
+th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top;}
+th{background:var(--code);font-weight:600;}
+code{background:var(--code);padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;}
+.badge{display:inline-block;padding:2px 9px;border-radius:11px;font-size:.78rem;font-weight:600;
+  background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);margin-left:6px;}
+.note{border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);
+  padding:10px 14px;border-radius:0 9px 9px 0;font-size:.92rem;margin:12px 0;}
+.note.good{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent);}
+.note.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent);}
+.note.warn{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,transparent);}
+.tag{display:inline-block;font-weight:600;font-size:.82rem;padding:1px 8px;border-radius:9px;
+  background:var(--code);color:var(--muted);margin-right:6px;}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px;}
+.viz-panel .vtitle{font-size:.86rem;color:var(--muted);margin-bottom:6px;font-weight:600;}
+canvas.viz{width:100%;height:330px;display:block;border:1px solid var(--border);border-radius:12px;background:var(--viz-bg);}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:center;margin:16px 0 10px;font-size:.9rem;}
+.viz-controls label{color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.viz-controls .vval{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:170px;height:6px;border-radius:3px;background:var(--border);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--accent);cursor:pointer;}
+#theme-toggle{margin-left:auto;padding:7px 13px;border:1px solid var(--border);border-radius:9px;background:var(--code);color:var(--fg);cursor:pointer;font-size:.86rem;font-family:inherit;}
+.viz-readout{border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.92rem;margin-top:4px;background:var(--code);}
+.viz-cap{font-size:.86rem;color:var(--muted);margin-top:12px;}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--muted);margin-top:10px;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+.prov{display:flex;gap:12px;align-items:flex-start;margin:10px 0;}
+.prov a{color:var(--accent);font-weight:600;text-decoration:none;font-family:ui-monospace,monospace;font-size:.9rem;flex:0 0 auto;}
+.prov a:hover{text-decoration:underline;}
+.prov .pd{color:var(--muted);font-size:.9rem;}
+@media(max-width:620px){.viz-grid{grid-template-columns:1fr;}.prov{flex-direction:column;gap:6px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Die Katastrophe als algebraische Varietät</h1>
+  <div class="subtitle">Fusion aus: catastrophe_theory.html ✕ algebraische_topologie.html</div>
+  <p class="lead">Wie man einen <em>plötzlichen Sprung</em> (A) mit dem <em>Satz, dass sich lokale Daten nicht global verkleben lassen</em> (B) zu einer einzigen Aussage über die Wand verbindet, an der „lokal" aufhört, „global" zu ergeben.</p>
+
+  <!-- ============ 1. KERNthese ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere sind — auf den ersten Blick in völlig verschiedenen Domänen — dieselbe
+    <span class="hl">lokal-zu-global-Theorie</span>. A (Katastrophentheorie, René Thom) fragt: Ein System
+    mit Potential <code>V(x; a, b, …)</code> sitzt in seinen Minima (stabile Gleichgewichte,
+    <code>dV/dx = 0</code> und <code>d²V/dx² &gt; 0</code>). Verändert man die Steuergrößen <em>a, b</em>
+    stetig, kann ein Minimum <em>verschwinden</em> — das System springt. Die <em>Wand</em>, an der das
+    passiert (die Bifurkationsmenge), wird aus rein <strong>lokalen</strong> Ableitungen berechnet
+    (gleichzeitig <code>dV/dx = 0</code> und <code>d²V/dx² = 0</code>), und Thom klassifiziert sie
+    „up to smooth equivalence" — also auf <strong>Germ-Ebene</strong>.</p>
+    <p>B (algebraische Topologie/Geometrie) fragt den Spiegelbild-Aspekt: <em>Lokale</em> Daten
+    (Schnitte auf offenen Mengen, Halme an Punkten) lassen sich <strong>nicht immer</strong> zu globalen Daten
+    verkleben; genau dieses <em>Fehlschlagen</em> misst die Garbenkohomologie —
+    <span class="slogan">H¹ = Obstruktion, lokal → global</span>. B geht also vom
+    <strong>Gegenteilspostulat</strong> aus: lokale Daten <em>reichen prinzipiell nicht aus</em>.</p>
+    <p>Die integrierte Position: <span class="hl">Der plötzliche Sprung und das globale
+    Nicht-Zusammenfügbare sind ein und dasselbe Phänomen — die Wand, an der die lokale Struktur
+    singular wird.</span> Konkret: Die Bifurkationsmenge des Cusps,
+    <span class="slogan">8a³ + 27b² = 0</span>, ist eine <strong>algebraische Varietät</strong> in der
+    (a,b)-Parameter-Ebene — ein Objekt aus B's Werkzeugkasten (Nullstellenmenge eines Polynoms). Ihr einziger
+    <strong>Singularpunkt (0,0)</strong> ist zugleich der Cusp-Punkt, an dem A's „Katastrophe" lebt: dort sind
+    die beiden stabilen Äste zusammengebrochen, und der Zustand lässt sich durch die lokale Umgebung in den
+    Parametern <em>nicht</em> eindeutig fortsetzen. A liefert also den <em>lokalen Motor</em> (er findet die Wand
+    und ihren Typ aus Germ-Daten), B das <em>globale Buchhaltungssystem</em> (es misst, wie viel globale
+    Information an der Wand verloren geht).</p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere widersprechen sich nicht logisch (sie betrachten andere Objekte), aber sie nehmen
+    <strong>inkompatible Standpunkte</strong> zur Beziehung „lokal ↔ global" ein. Drei echte, benennbare Spannungen:</p>
+
+    <h3>(1) Genügt lokale Analyse? — entgegengesetzte Postulate</h3>
+    <p><span class="tag">A</span> A baut seine <strong>ganze</strong> Theorie darauf auf, dass <em>lokale</em>
+    Daten ausreichen: Thom's Klassifikation gilt „up to smooth equivalence", also auf
+    <strong>Germ-Ebene</strong> nahe dem kritischen Punkt; der Sprung ist vollständig durch die lokalen
+    Taylor-Daten bestimmt (<code>dV/dx=0 ∧ d²V/dx²=0</code>). Zwei Potentiale mit gleicher Germ erzeugen
+    dieselbe Katastrophe — <strong>lokal ⇒ global</strong> für das Ereignis.</p>
+    <p><span class="tag">B</span> B beginnt vom <em>gegenteiligen</em> Postulat: lokale Daten sind
+    <strong>strukturell unzureichend</strong>. „Kohomologie misst, was global fehlschlägt, obwohl es lokal
+    klappt"; <code>H¹</code> ist die Obstruktion, lokale Schnitte global zu verkleben. Das Beispiel aus §8
+    (exp: 𝒪 → 𝒪* auf ℂ*) ist der Punkt: ein Schnitt existiert auf <em>jedem</em> Halm, aber <em>nicht</em>
+    global (<code>z ∈ 𝒪*(X)</code> ist global nicht <code>exp(f)</code> wegen des Umlaufintegrals).
+    <strong>lokal ⇏ global</strong> — genau das ist der Gegenstand von B.</p>
+    <div class="note bad"><strong>Inkompatibilität:</strong> A setzt <em>lokal ⇒ global</em> für sein Objekt
+    voraus; B setzt <em>lokal ⇏ global</em> als Grundannahme voraus. Der Pfeil lokal↔global zeigt in den beiden
+    Papieren in entgegengesetzte Richtungen.</div>
+
+    <h3>(2) Diskontinuität vs. Stetigkeit/Invariantie — das Objekt ist das, was das andere ignoriert</h3>
+    <p><span class="tag">A</span> Das Untersuchungsobjekt von A <em>ist</em> die Diskontinuität:
+    „sudden, discontinuous jumps", die scharfe Bifurkationsmenge als Wand, „hysteresis (path-dependent
+    jumping)" und „divergence (small changes in b cause huge differences)". A feiert den <em>Bruch</em>.</p>
+    <p><span class="tag">B</span> B studiert <strong>verformungsinvariante</strong> Invarianten — Kohomologie­gruppen,
+    Chernklassen, die Picard-Gruppe, <code>χ(L) = deg(L) + 1 − g</code> — die sich unter stetiger Deformation
+    <em>nicht</em> ändern („Die Kohomologie einer Garbe kann aus rein topologischen Invarianten berechnet
+    werden"). B studiert das, was <em>unter stetiger Bewegung gleich bleibt</em>.</p>
+    <div class="note bad"><strong>Inkompatibilität:</strong> A's Kernobjekt (der Sprung) ist genau das, worunter
+    B's Invarianten per Definition stabil sein müssen — und umgekehrt. Das eine macht aus dem Bruch das Subjekt,
+    das andere aus der Stetigkeit unter Deformation das Subjekt.</div>
+
+    <h3>(3) Familien vs. Einzelobjekte — unterschiedliche Gegenstände</h3>
+    <p><span class="tag">A</span> A ist intrinsisch über <strong>Parameter-Familien</strong>
+    <code>V(x; a, b, …)</code> definiert, in denen die <em>Anzahl und der Typ</em> der Gleichgewichte
+    <strong>wandert</strong> (Bifurkation, Unfolding, Codimension 1–4). Das „Statische" ist der Zustand, das
+    „Wirkliche" ist die Bewegung durch den Parameterraum.</p>
+    <p><span class="tag">B</span> B berechnet Invarianten <strong>einzelner, fester</strong> Objekte:
+    <code>Hⁱ(X, G)</code> für eine gegebene Garbe, <code>Pic(X)</code>, <code>cᵢ(E)</code> für ein gegebenes
+    Bündel, <code>χ(L)</code> für eine gegebene Kurve. Die „Familie" ist dort nur <em>latent</em> (Verformungs­invarianz);
+    die studierten Objekte sind Stück für Stück fix.</p>
+    <div class="note warn"><strong>Spannung (milder):</strong> A lebt <em>auf</em> der Familie, B berechnet <em>an</em>
+    einem Punkt der Familie. Die Verformungsinvarianz, die B voraussetzt, ist in A erst die <em>Frage</em>
+    („wandert der Invariant oder nicht?").</div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <h3>(1) → Beide Aussagen sind wahr, für <em>unterschiedliche Objekte</em>; sie treffen an der Wand aufeinander</h3>
+    <p>A's „lokale Daten genügen" ist wahr <strong>für das Ereignis</strong>: ein Fold/Cusp ist ein
+    Germ-Phänomen, also sagen lokale Ableitungen, <em>wo</em> die Wand steht und <em>welcher</em> Typ es ist.
+    Aber die Frage „<em>welchen</em> stabilen Zweig besetzt das System" bzw. „gibt es eine <em>kontinuierliche</em>
+    globale Wahl des Zustands über dem Parameterraum" ist eine <strong>globale</strong> Frage, die lokale Daten
+    nicht beantworten — und das ist exakt B's H¹-/Monodromie-Territorium. <span class="hl">A gibt den
+    <em>Ort</em> der Wand (lokal), B die <em>globale Bilanz</em> dessen, was an der Wand verloren geht.</span>
+    Weder falsch — sie sind Motor und Buchhaltung desselben Vorgangs.</p>
+
+    <h3>(2) → Diskontinuität und Invariante sind zwei Seiten einer Münze</h3>
+    <p>Die <strong>Anzahl der stabilen Minima</strong> von V ist selbst eine (stückweise konstante)
+    <em>topologische Invariante</em> — B's Sorte von Objekt. Sie ist außerhalb der Wand stetig/konstant und
+    <strong>sprungs um ±1 genau <em>auf</em> A's Wand</strong>. B's „Invariante" ist damit die <em>Größe, die A's
+    Katastrophe ändert</strong>; A's „Diskontinuität" ist der <em>Ort, an dem B's Invariante nicht lokal
+    konstant</em> ist. Dieselbe Tatsache, von innen (Ereignis) und von außen (Bilanz) beschrieben. Der
+    Cusp-Punkt (0,0) ist der Ort, an dem diese Zählungsfunktion nicht einmal differenzierbar ist — die
+    <em>Singularität</em> der Wand.</p>
+
+    <h3>(3) → B's Einzelobjekt-Invarianten werden <em>entlang</em> A's Familie zum Fühler</h3>
+    <p>Ein Invariant, das auf jeder Seite der Wand konstant ist und sich <em>bei</em> Überschreiten ändert,
+    <em>markiert</em> die Wand. B's „fixe" Invarianten werden also in A's Familien-Kontext zu einem
+    Detektor: man zieht sie entlang des Parameters und liest ab, wo sie springen. So wird B's
+    Verformungsinvarianz in A zur <em>Wand-Suche</em>.</p>
+
+    <div class="note good"><strong>Verbindende Schlussfolgerung (Fusionslesart):</strong> Die lokale
+    Singularität und die globale Nicht-Zusammenfügbarkeit sind ein Phänomen. A beschreibt es von innen (ein
+    glattes Potential, dessen Minimum verschwindet), B von außen (lokale Daten, die sich global nicht
+    fortsetzen lassen). Am Cusp-Punkt (0,0) — dem Singularpunkt der Varietät <code>8a³+27b²=0</code> — fallen
+    beide Beschreibungen in eine Aussage zusammen: Dort ist der Zustand <em>nicht</em> durch seine lokale
+    Umgebung in den Parametern fortsetzbar, und die <strong>Hysterese</strong> (pfadabhängiges Springen) wird als
+    <em>Monodromie</em> der lokalen stabilen Zweige um diesen Punkt gelesen — dieselbe Spezies, die B's
+    nichttriviale <code>H¹</code> als „lokal existiert, global nicht" kennzeichnet. (Diese Monodromie-/H¹-Lesart
+    ist die Fusion, nicht eine Aussage eines der beiden Papiere.)</div>
+  </section>
+
+  <!-- ============ 4. FUSIONIERTER INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>A: Das lokale Potential und seine Gleichgewichte</h3>
+    <p>Ein System mit Potential <code>V(x; a, b, …)</code> (Zustand <em>x</em>, Steuergrößen <em>a, b, …</em>).
+    Gleichgewichte: <code>dV/dx = 0</code>; stabil, wenn <code>d²V/dx² &gt; 0</code> (Minimum). Bei stetiger
+    Änderung der Parameter kann ein Minimum verschwinden → Sprung. Die <strong>Cuspoid-Familie</strong>
+    (1 Zustandsvariable):</p>
+    <table>
+      <tr><th>Katastrophe</th><th>Potential V(x)</th><th>Steuergrößen</th><th>Codim</th><th>Max. stabile Zustände</th></tr>
+      <tr><td>Fold (A₂)</td><td><code>x³ + ax</code></td><td>1 (a)</td><td>1</td><td>1</td></tr>
+      <tr><td>Cusp (A₃)</td><td><code>x⁴ + ax² + bx</code></td><td>2 (a, b)</td><td>2</td><td>2</td></tr>
+      <tr><td>Swallowtail (A₄)</td><td><code>x⁵ + ax³ + bx² + cx</code></td><td>3 (a, b, c)</td><td>3</td><td>3</td></tr>
+      <tr><td>Butterfly (A₅)</td><td><code>x⁶ + ax⁴ + bx³ + cx² + dx</code></td><td>4 (a, b, c, d)</td><td>4</td><td>3</td></tr>
+    </table>
+    <p>Thom: genau <strong>7 elementare Katastrophen</strong> für ≤2 Zustandsvariablen und ≤4 Steuergrößen,
+    „up to smooth equivalence" (Germ-Äquivalenz). Der <strong>Fold</strong>: <code>dV/dx = 3x² + a = 0</code>
+    → Gleichgewichte existieren nur für <em>a ≤ 0</em> bei <code>x = ±√(−a/3)</code>; bei <em>a = 0</em> kollidieren
+    und annihilieren sie. Der <strong>Cusp</strong>: Bifurkationsmenge in (a,b), wo <code>dV/dx = 4x³+2ax+b = 0</code>
+    und <code>d²V/dx² = 12x²+2a = 0</code> gleichzeitig gelten, ergibt
+    <span class="slogan">8a³ + 27b² = 0</span>; innen bistabil (2 Minima + 1 Maximum), <strong>Hysterese</strong>
+    und <strong>Divergenz</strong> (kleine Δb → große Δx). Die <strong>Katastrophe-Mannigfaltigkeit</strong> ist
+    die Fläche <code>dV/dx = 0</code> im (x, a, b)-Raum.</p>
+
+    <h3>B: Lokale Daten, die global (nicht) zusammenpassen</h3>
+    <p><strong>Topologischer Raum:</strong> Menge + offene/abgeschlossene Teilmengen — minimale Struktur für
+    Nähe und Stetigkeit. <strong>Garbe:</strong> Prägarbe + Verklebungsaxiome (G1 Trennung: lokal null ⇒ null;
+    G2 Verklebung: lokal übereinstimmende Schnitte ⇒ globaler Schnitt). <strong>Halm</strong>
+    <code>F_x = colim_{U∋x} F(U)</code>: infinitesimales Verhalten an <em>x</em> (für holomorphe Funktionen:
+    die Taylorreihe). <strong>Exakte Sequenz</strong> <code>A→B→C</code>: <code>Bild(f) = Kern(g)</code>.
+    <strong>Kohomologie:</strong> <code>H⁰(X,G) = G(X)</code> (globale Schnitte);
+    <span class="hl"><code>H¹</code> misst die Obstruktion, lokale Lösungen global zu verkleben</span>; höhere
+    <code>Hⁱ</code> messen tiefere Verklebe-Hindernisse. <strong>Spec(R)</strong>: ein Ring wird zum Raum,
+    dessen Punkte die <em>Primideale</em> sind (Funktore <code>Ring^op → Top</code>). <strong>Zariski-Topologie:</strong>
+    abgeschlossen = Nullmengen <code>Z(I)</code> — sehr grob, jede nichtleere offene Menge ist riesig.
+    <strong>Schema:</strong> lokal geringter Raum, lokal ≅ <code>Spec(Rᵢ)</code>. <strong>Linienbündel / Picard /
+    Chernklassen</strong>: „wie sehr ein Bündel verdreht ist". <strong>Riemann-Roch (Kurven):</strong>
+    <span class="slogan">χ(L) = deg(L) + 1 − g</span> — bezieht lokale/Chern-Daten auf die globalen
+    Kohomologie-Dimensionen.</p>
+
+    <h3>Die Brücken (das eigentliche fusionierte Material)</h3>
+    <p><strong>Brücke 1 — Die Wand ist eine Varietät.</strong> A's Cusp-Bifurkationsmenge
+    <code>8a³ + 27b² = 0</code> ist die <em>Nullstellenmenge</em> des Polynoms
+    <code>F(a,b) = 8a³ + 27b²</code> — also exakt ein <strong>Zariski-abgeschlossenes</strong> Objekt in B's
+    Sinne (<code>Z((F))</code>). Die „Wand", an der A springt, ist die „abgeschlossene Menge", die B studiert.
+    Dieselbe Menge, zwei Sprachen.</p>
+    <p><strong>Brücke 2 — Der Cusp-Punkt ist der Singularpunkt.</strong> Der Cusp-Punkt (0,0) ist der
+    <em>einige</em> Punkt, an dem beide partiellen Ableitungen von F verschwinden:
+    <code>∂F/∂a = 24a² = 0 ∧ ∂F/∂b = 54b = 0 ⇒ a = b = 0</code>. Das ist die Standard-Definition eines
+    <strong>Singularpunkts</strong> einer algebraischen Kurve — und er fällt genau mit dem Ort zusammen, an dem
+    A's zwei stabile Äste kollidieren. Die Stelle, an der die Wand „scharf" wird, ist die Stelle, an der A
+    „katastrophal" wird.</p>
+    <p><strong>Brücke 3 — Der Sprung ändert einen topologischen Invarianten.</strong> Die Anzahl der stabilen
+    Minima von V ist ein topologischer Invariant (Euler-Charakteristik der Unterstufenmengen
+    <code>{V ≤ c}</code>; Morse-Theorie: ein Fold ändert ihn um ±1, indem ein kritisches Punkt entsteht/verschwindet).
+    A's „Sprung" ist also ein <strong>Sprung dieses Invariants</strong> — eine Größe aus B's Welt.</p>
+    <p><strong>Brücke 4 — Hysterese als Monodromie.</strong> Weil der Zustand um den Cusp-Punkt herum pfadabhängig
+    springt, ist die „Wahl des stabilen Zweigs" um eine Schleife in (a,b) <em>nicht eindeutig</em> — eine
+    <strong>Monodromie</strong> der lokalen stabilen Zweige. Das ist dieselbe Spezies wie B's nichttriviale
+    <code>H¹</code> (lokale Daten, die sich global nicht zu einem einzigen Zweig zusammenfügen lassen).
+    <em>Fusionslesart</em>: Der Hysteresis-Schleifenfläche entspricht ein Kohomologie-Klass — die „Wand" ist die
+    Stelle, an der diese Klasse nichttrivial wird.</p>
+    <p><strong>Brücke 5 — Riemann-Roch als die allgemeine Formel.</strong>
+    <code>χ(L) = deg(L) + 1 − g</code> ist das <em>strukturierte Analogon</em> dazu, was A tut: aus
+    <strong>lokalen</strong> Daten (der Chern-/Charakter-Seite, „deg") plus einer <strong>globalen</strong>
+    Korrektur („− g", dem Geschlecht = dem globalen Hindernis) ergibt sich die <strong>globale</strong>
+    Kohomologie-Bilanz <code>χ</code>. A: lokale Ableitungen → globaler Zähl-Sprung. B: lokale Chern-Daten →
+    globale Kohomologie. Zwei Instanzen einer und derselben Formel <em>„lokal + globales Hindernis = global"</em>.</p>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung: Die Wand als Varietät</h2>
+    <p>Zwei verknüpfte Panels. <strong>Links</strong> die (a,b)-Parameter-Ebene: die Cusp-Varietät
+    <code>8a³+27b²=0</code> als <em>gefüllte</em> bistabile Region, ihr <em>Singularpunkt (0,0)</em> (rot) und
+    der aktuelle Punkt <code>(a,b)</code> (lila). <strong>Rechts</strong> das Potential
+    <code>V(x)=x⁴+ax²+bx</code> bei diesem Punkt, mit seinen stabilen (grün) / instabilen (rot) Gleichgewichten.
+    <span class="hl">Schiebe (a,b) über die lila Wand und beobachte, wie die Anzahl der stabilen Minima
+    springt</span> — genau dort, wo die Varietät geschnitten wird.</p>
+    <div class="viz-grid">
+      <div class="viz-panel">
+        <div class="vtitle">Parameter-Ebene (a, b) — die Bifurkationsmenge als algebraische Varietät</div>
+        <canvas id="viz-plane" class="viz"></canvas>
+      </div>
+      <div class="viz-panel">
+        <div class="vtitle">Potential V(x) = x⁴ + a x² + b x bei (a, b)</div>
+        <canvas id="viz-pot" class="viz"></canvas>
+      </div>
+    </div>
+    <div class="viz-controls">
+      <label>Splitting a: <span class="vval" id="val-a">–1.50</span>
+        <input type="range" id="slider-a" min="-2.2" max="0.3" step="0.01" value="-1.5"></label>
+      <label>Normal b: <span class="vval" id="val-b">0.30</span>
+        <input type="range" id="slider-b" min="-2.5" max="2.5" step="0.01" value="0.3"></label>
+      <button id="theme-toggle">🌓 Thema wechseln</button>
+    </div>
+    <div id="viz-readout" class="viz-readout"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--variety)"></i> Varietät 8a³+27b²=0 (Wand)</span>
+      <span><i class="dot" style="background:var(--sing)"></i> Singularpunkt (0,0) = Cusp</span>
+      <span><i class="dot" style="background:var(--accent)"></i> aktueller Punkt (a,b)</span>
+      <span><i class="dot" style="background:var(--stable)"></i> stabil (Minimum)</span>
+      <span><i class="dot" style="background:var(--unstable)"></i> instabil (Maximum)</span>
+    </div>
+    <p class="viz-cap">Gefüllte Region = <em>bistabil</em> (2 Minima). Außerhalb = <em>monostabil</em> (1 Minimum).
+    Der Sprung passiert exakt beim Überschreiten der lila Wand — die Stelle, an der A „lokal" nicht mehr „global"
+    ergibt und B's <code>H¹</code> nichttrivial wird.</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <a href="../catastrophe_theory.html">catastrophe_theory.html</a>
+      <span class="pd">Interaktiver Explorer zu René Thoms Katastrophentheorie: Potentialfunktionen
+      <code>V(x;a,b,…)</code>, Gleichgewichte &amp; Stabilität, die vier Cuspoid-Katastrophen (Fold, Cusp,
+      Swallowtail, Butterfly) mit Codimension 1–4, die Bifurkationsmenge <code>8a³+27b²=0</code>, Ball-on-Surface-
+      Simulation und Hysterese.</span>
+    </div>
+    <div class="prov">
+      <a href="../algebraische_topologie.html">algebraische_topologie.html</a>
+      <span class="pd">Visueller Kurs (trotz des Titels „Algebraische Geometrie") durch 20 Konzepte der
+      algebraischen Topologie/Geometrie: topologische Räume, Garben &amp; Verklebung, Halme, exakte Sequenzen,
+      Kohomologie (H¹ = Verklebe-Obstruktion), Spec(R), Zariski-Topologie, Schemata, Linienbündel, Chernklassen
+      und der Satz von Riemann-Roch <code>χ(L)=deg(L)+1−g</code>.</span>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var plane = document.getElementById('viz-plane');
+  var pot   = document.getElementById('viz-pot');
+  var sA = document.getElementById('slider-a');
+  var sB = document.getElementById('slider-b');
+  var vA = document.getElementById('val-a');
+  var vB = document.getElementById('val-b');
+  var readout = document.getElementById('viz-readout');
+  var toggle = document.getElementById('theme-toggle');
+
+  function cssVar(name, fallback){
+    try{
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+      if (v && v.replace(/\s/g,'') !== '') return v.trim();
+    }catch(e){}
+    return fallback;
+  }
+  function colors(){
+    return {
+      ink:    cssVar('--fg','#1a1f2b'),
+      muted:  cssVar('--muted','#5b6472'),
+      panel:  cssVar('--viz-bg','#0a0f1e'),
+      grid:   cssVar('--border','#243052'),
+      accent: cssVar('--accent','#8496ff'),
+      stable: cssVar('--stable','#34d399'),
+      unstable:cssVar('--unstable','#f87171'),
+      variety:cssVar('--variety','#8496ff'),
+      sing:   cssVar('--sing','#f87171')
+    };
+  }
+  function setupCanvas(cv){
+    var dpr = window.devicePixelRatio || 1;
+    var w = Math.max(50, cv.clientWidth);
+    var h = Math.max(50, cv.clientHeight);
+    cv.width = Math.round(w*dpr);
+    cv.height = Math.round(h*dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx, w:w, h:h};
+  }
+  function cubicRoots(p, q){
+    var R=8, N=14000, roots=[];
+    function f(x){ return (x*x+p)*x+q; }
+    var x0=-R, f0=f(x0);
+    for(var i=1;i<=N;i++){
+      var x1=-R+2*R*i/N, f1=f(x1);
+      if(f0*f1<0){
+        var lo=x0, hi=x1, flo=f0;
+        for(var j=0;j<64;j++){ var m=(lo+hi)/2, fm=f(m); if(flo*fm<=0){hi=m;}else{lo=m;flo=fm;} }
+        roots.push((lo+hi)/2);
+      }
+      x0=x1; f0=f1;
+    }
+    roots.sort(function(a,b){return a-b;});
+    var out=[];
+    for(var k=0;k<roots.length;k++){
+      if(out.length===0 || Math.abs(roots[k]-out[out.length-1])>1e-3) out.push(roots[k]);
+    }
+    return out;
+  }
+
+  function drawPlane(col, a, b){
+    var s = setupCanvas(plane), ctx=s.ctx, w=s.w, h=s.h;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = col.panel; ctx.fillRect(0,0,w,h);
+    var aMin=-2.2, aMax=0.4, bMin=-3.4, bMax=3.4, pad=10;
+    function X(a){ return pad + (a-aMin)/(aMax-aMin)*(w-2*pad); }
+    function Y(b){ return h-pad - (b-bMin)/(bMax-bMin)*(h-2*pad); }
+    // grid + ticks
+    ctx.lineWidth=1; ctx.font='10px system-ui, sans-serif';
+    var gi, t;
+    for(gi=Math.ceil(aMin); gi<=aMax; gi++){
+      ctx.strokeStyle=col.grid; ctx.beginPath(); ctx.moveTo(X(gi),pad); ctx.lineTo(X(gi),h-pad); ctx.stroke();
+      ctx.fillStyle=col.muted; ctx.fillText(String(gi), X(gi)-4, h-pad-3);
+    }
+    for(gi=Math.ceil(bMin); gi<=bMax; gi++){
+      ctx.strokeStyle=col.grid; ctx.beginPath(); ctx.moveTo(pad,Y(gi)); ctx.lineTo(w-pad,Y(gi)); ctx.stroke();
+      ctx.fillStyle=col.muted; ctx.fillText(String(gi), 2, Y(gi)-3);
+    }
+    // axes
+    ctx.strokeStyle=col.muted; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(X(0),pad); ctx.lineTo(X(0),h-pad); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad,Y(0)); ctx.lineTo(w-pad,Y(0)); ctx.stroke();
+    ctx.fillStyle=col.ink; ctx.font='11px system-ui, sans-serif';
+    ctx.fillText('a →', X(0)+4, h-pad-3);
+    ctx.fillText('b ↑', w-pad-20, Y(0)-6);
+    // bistable region 27 b^2 < -8 a^3 (a<0)  =>  b^2 < -8 a^3/27
+    var steps=220, i, aa, bmax, px, py, started;
+    ctx.beginPath(); started=false;
+    for(i=0;i<=steps;i++){
+      aa = aMin + (0-aMin)*i/steps;
+      bmax = Math.sqrt(Math.max(0, -8*aa*aa*aa/27));
+      px=X(aa); py=Y(bmax);
+      if(!started){ctx.moveTo(px,py); started=true;} else ctx.lineTo(px,py);
+    }
+    for(i=steps;i>=0;i--){
+      aa = aMin + (0-aMin)*i/steps;
+      bmax = Math.sqrt(Math.max(0, -8*aa*aa*aa/27));
+      ctx.lineTo(X(aa), Y(-bmax));
+    }
+    ctx.closePath();
+    ctx.globalAlpha=0.18; ctx.fillStyle=col.variety; ctx.fill(); ctx.globalAlpha=1;
+    // variety branches
+    ctx.strokeStyle=col.variety; ctx.lineWidth=2.5;
+    ctx.beginPath(); started=false;
+    for(i=0;i<=steps;i++){
+      aa = aMin + (0-aMin)*i/steps;
+      bmax = Math.sqrt(Math.max(0, -8*aa*aa*aa/27));
+      px=X(aa); py=Y(bmax);
+      if(!started){ctx.moveTo(px,py); started=true;} else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.beginPath(); started=false;
+    for(i=0;i<=steps;i++){
+      aa = aMin + (0-aMin)*i/steps;
+      bmax = Math.sqrt(Math.max(0, -8*aa*aa*aa/27));
+      px=X(aa); py=Y(-bmax);
+      if(!started){ctx.moveTo(px,py); started=true;} else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // singular point (0,0)
+    var sx=X(0), sy=Y(0);
+    ctx.fillStyle=col.sing; ctx.beginPath(); ctx.arc(sx,sy,7,0,2*Math.PI); ctx.fill();
+    ctx.strokeStyle=col.panel; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=col.ink; ctx.font='bold 11px system-ui, sans-serif';
+    ctx.fillText('Singularpunkt (0,0) = Cusp', sx+11, sy-9);
+    ctx.font='10px ui-monospace, monospace'; ctx.fillStyle=col.muted;
+    ctx.fillText('Variate: 8a³ + 27b² = 0', 8, 15);
+    // current point
+    var cx=X(a), cy=Y(b);
+    ctx.fillStyle=col.accent; ctx.beginPath(); ctx.arc(cx,cy,6,0,2*Math.PI); ctx.fill();
+    ctx.strokeStyle=col.panel; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=col.ink; ctx.font='bold 11px system-ui, sans-serif';
+    ctx.fillText('(a,b)', cx+8, cy+15);
+  }
+
+  function drawPot(col, a, b){
+    var s = setupCanvas(pot), ctx=s.ctx, w=s.w, h=s.h;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = col.panel; ctx.fillRect(0,0,w,h);
+    var xMin=-3, xMax=3, pad=26, N=420;
+    function V(x){ return x*x*x*x + a*x*x + b*x; }
+    var xs=[], vs=[], vMin=Infinity, vMax=-Infinity, i, x, v;
+    for(i=0;i<=N;i++){
+      x = xMin + (xMax-xMin)*i/N; v = V(x);
+      xs.push(x); vs.push(v);
+      if(v<vMin) vMin=v; if(v>vMax) vMax=v;
+    }
+    var vpad=(vMax-vMin)*0.12; if(vpad<1) vpad=1; vMin-=vpad; vMax+=vpad;
+    function X(x){ return pad + (x-xMin)/(xMax-xMin)*(w-2*pad); }
+    function Y(v){ return h-pad - (v-vMin)/(vMax-vMin)*(h-2*pad); }
+    ctx.lineWidth=1; ctx.font='9px system-ui, sans-serif';
+    for(var gv=Math.ceil(vMin); gv<=Math.floor(vMax); gv++){
+      ctx.strokeStyle=col.grid; ctx.beginPath(); ctx.moveTo(pad,Y(gv)); ctx.lineTo(w-pad,Y(gv)); ctx.stroke();
+      ctx.fillStyle=col.muted; ctx.fillText(String(gv), 3, Y(gv)-2);
+    }
+    for(var gx=Math.ceil(xMin); gx<=xMax; gx++){
+      ctx.strokeStyle=col.grid; ctx.beginPath(); ctx.moveTo(X(gx),pad); ctx.lineTo(X(gx),h-pad); ctx.stroke();
+      ctx.fillStyle=col.muted; ctx.fillText(String(gx), X(gx)-3, h-pad+13);
+    }
+    // zero line
+    ctx.strokeStyle=col.muted; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(pad,Y(0)); ctx.lineTo(w-pad,Y(0)); ctx.stroke();
+    // curve
+    ctx.strokeStyle=col.accent; ctx.lineWidth=2.5; ctx.beginPath();
+    for(i=0;i<=N;i++){ var cpx=X(xs[i]), cpy=Y(vs[i]); if(i===0) ctx.moveTo(cpx,cpy); else ctx.lineTo(cpx,cpy); }
+    ctx.stroke();
+    // equilibria: roots of 4x^3+2a x+b=0  =>  x^3 + (a/2)x + b/4 = 0
+    var roots = cubicRoots(a/2, b/4), nStable=0, ri;
+    for(ri=0;ri<roots.length;ri++){
+      var r=roots[ri], d2=12*r*r+2*a, stable=d2>0;
+      if(stable) nStable++;
+      var ex=X(r), ey=Y(V(r));
+      ctx.beginPath(); ctx.arc(ex,ey,6,0,2*Math.PI);
+      ctx.fillStyle = stable?col.stable:col.unstable; ctx.fill();
+      ctx.strokeStyle=col.panel; ctx.lineWidth=2; ctx.stroke();
+    }
+    ctx.fillStyle=col.ink; ctx.font='bold 11px ui-monospace, monospace';
+    ctx.fillText('V(x)  a='+a.toFixed(2)+'  b='+b.toFixed(2), 6, 14);
+    return {roots:roots, nStable:nStable};
+  }
+
+  function draw(){
+    var col = colors();
+    var a = parseFloat(sA.value), b = parseFloat(sB.value);
+    vA.textContent = a.toFixed(2);
+    vB.textContent = b.toFixed(2);
+    drawPlane(col, a, b);
+    var info = drawPot(col, a, b);
+    var bistable = info.nStable >= 2;
+    var nUnstable = info.roots.length - info.nStable;
+    readout.innerHTML = bistable
+      ? 'Region: <b style="color:var(--stable)">BISTABIL</b> — ' + info.roots.length +
+        ' Gleichgewichte (' + info.nStable + ' stabil, ' + nUnstable + ' instabil). ' +
+        'Der Zustand ist <i>pfadabhängig</i> (Hysterese): um (0,0) herum gibt es keine eindeutige globale Fortsetzung des stabilen Zweigs.'
+      : 'Region: <b style="color:var(--warn)">MONOSTABIL</b> — ' + info.roots.length +
+        ' Gleichgewicht (1 stabil, ' + nUnstable + ' instabil). Keine Wand hier: die Varietät wird nicht geschnitten, kein Sprung möglich.';
+  }
+
+  sA.addEventListener('input', draw);
+  sB.addEventListener('input', draw);
+  toggle.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+
+  draw();
+  requestAnimationFrame(draw);
+  window.addEventListener('load', function(){ setTimeout(draw, 60); });
+})();
+</script>
+</body>
+</html>

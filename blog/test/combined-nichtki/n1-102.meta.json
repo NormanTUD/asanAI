@@ -1,0 +1,16 @@
+{
+  "no": "102",
+  "a": "floats.html",
+  "b": "narc_group.html",
+  "a_title": "How Floating Point Numbers Work / The Full Picture (IEEE-754)",
+  "b_title": "Covert Narcissism & Manipulative Gruppen – Die unsichtbare Manipulation",
+  "combined_theme": "maske-als-rundungsfehler",
+  "one_line": "Beide beschreiben dieselbe Lücke zwischen dem, was gezeigt wird, und dem, was tatsächlich gespeichert ist — beim Gleitkomma ein akzeptiertes verlustbehaftetes Format, beim verdeckten Narzissten eine ausgenutzte Waffe.",
+  "contradictions": [
+    "Unvermeidbarer Verlust (A: 0.1 ist binär nie exakt, der gespeicherte Wert IST der Wert) gegen rückholbare Wahrheit (B: 'Maske entfernen' offenbart ein voll rekonstruierbares wahres Selbst).",
+    "Struktureller, deterministischer, unpersönlicher Fehler IM FORMAT (A: 'der Gap verdoppelt sich bei jeder Potenz von 2') gegen adversariale, kontextabhängige Verzerrung IM AGENTEN (B: der Anführer 'erzählt jedem eine andere Version der Realität' aktiv zur Kontrolle).",
+    "Operationalismus: die Float-Darstellung IST der operative Wert, dahinter liegt nichts Echteres (A) gegen Realismus: die Maske ist NICHT die Person, dahinter liegt das 'wahre Gesicht' als eigentliche Realität (B)."
+  ],
+  "resolution": "Die Ebene der Darstellung (endliche Bits / gezeigte Maske) von der Ebene der Wahrheit (reelles Ideal / wacher Kern) trennen: Auf Darstellungsebene ist der Fehler unvermeidlich und, wenn ein Agent ihn ausweitet, adversarial; auf Metaebene bleibt die Wahrheit zugänglich und der Abstand messbar. A akzeptiert die Lücke als neutrales Format, B weaponisiert dieselbe endliche Darstellung als Kontrolle — gleiche Struktur, unterschiedliche Absicht.",
+  "viz": "Canvas: echte 32-bit-Float-Zahlengerade mit Bit-Walk (dicht→lückenhaft), Zoom-Fenster mit ULP und Maske-Fehler |t−s| an t=2^e·φ, zwei Slider (Skala/Exponent e; Maske entfernen) plus Masken-Crossfade (öffentliche Fassade→wahres Kern); theme-aware über CSS-Variablen, keine externen Abhängigkeiten, alle Daten inline."
+}

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Zykel ohne Rand — Homologie &amp; das Wesen des Denkens</title>
+<style>
+  :root{
+    --bg:#f6f4ec; --surface:#fffdf8; --surface2:#efece2; --text:#211f1b; --muted:#6b665a;
+    --border:#ddd7c8; --accent:#6c63ff; --accent2:#0f9d7f; --accent3:#d9504f; --accent4:#b98517;
+    --hole:#5566c9; --pos:#0f9d7f; --neg:#d9504f; --face:#6c63ff; --shadow:rgba(0,0,0,.08);
+  }
+  html.dark{
+    --bg:#0f1117; --surface:#171a24; --surface2:#12141c; --text:#e6e6ea; --muted:#8f8fa6;
+    --border:#2a2d3a; --accent:#7a72ff; --accent2:#00c9a7; --accent3:#ff6b6b; --accent4:#ffd93d;
+    --hole:#7b8cde; --pos:#00c9a7; --neg:#ff6b6b; --face:#6c63ff; --shadow:rgba(0,0,0,.4);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.75;
+    -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 60px;}
+  header.top{padding:56px 0 26px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+  header.top h1{
+    font-size:2.15rem;line-height:1.2;font-weight:800;letter-spacing:-.02em;margin-bottom:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .subtitle{color:var(--muted);font-size:.95rem;font-family:'Courier New',monospace;}
+  .subtitle b{color:var(--accent4);font-weight:700;}
+  .themebtn{
+    margin-top:16px;padding:7px 15px;border:1.5px solid var(--border);background:transparent;
+    color:var(--muted);border-radius:9px;cursor:pointer;font-size:.82rem;transition:all .25s;
+  }
+  .themebtn:hover{border-color:var(--accent);color:var(--accent);}
+  section{padding:34px 0;border-bottom:1px solid var(--border);}
+  section:last-of-type{border-bottom:none;}
+  section h2{font-size:1.5rem;margin-bottom:4px;color:var(--accent2);letter-spacing:-.01em;}
+  section .sub{color:var(--muted);margin-bottom:20px;font-size:.94rem;}
+  p{margin:0 0 14px;}
+  strong{color:var(--text);}
+  em{color:var(--accent2);font-style:italic;}
+  .box{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px 22px;margin:16px 0;box-shadow:0 2px 10px var(--shadow);}
+  .box.key{border-left:4px solid var(--accent);}
+  .box .lead{color:var(--accent);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .math{background:var(--surface2);border-radius:9px;padding:11px 15px;margin:11px 0;
+    font-family:'Courier New',monospace;font-size:.96rem;color:var(--accent2);overflow-x:auto;text-align:center;}
+  .math.big{font-size:1.12rem;}
+  ul,ol{margin:6px 0 14px 22px;}
+  li{margin-bottom:8px;}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+  @media(max-width:640px){.vs{grid-template-columns:1fr;}}
+  .side{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;}
+  .side h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+  .side.a h4{color:var(--accent);} .side.b h4{color:var(--accent4);}
+  .side p{font-size:.9rem;color:var(--muted);margin:0;}
+  .conflict{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 18px;margin:13px 0;}
+  .conflict h3{font-size:1.02rem;color:var(--accent3);margin-bottom:8px;}
+  .conflict .line{font-size:.9rem;color:var(--muted);margin:5px 0;}
+  .conflict .line b{color:var(--text);}
+  .resolve{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:12px;padding:14px 18px;margin:13px 0;}
+  .resolve .tag{color:var(--accent2);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;}
+  .resolve p{font-size:.92rem;color:var(--muted);margin:6px 0 0;}
+  table.map{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+  table.map th{background:var(--surface2);color:var(--accent);text-align:left;padding:9px 11px;border:1px solid var(--border);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;}
+  table.map td{padding:9px 11px;border:1px solid var(--border);color:var(--muted);vertical-align:top;}
+  table.map td:first-child{color:var(--text);font-weight:600;white-space:nowrap;}
+  table.map td:nth-child(2){color:var(--text);}
+  .viz{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:20px;margin:16px 0;}
+  .viz h3{color:var(--accent4);font-size:1.05rem;margin-bottom:6px;}
+  .viz .cap{color:var(--muted);font-size:.88rem;margin-bottom:14px;}
+  .vcontrols{display:flex;flex-wrap:wrap;gap:10px 16px;margin-bottom:12px;}
+  .vgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .vgroup .lbl{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .vbtn{padding:7px 13px;border:1.5px solid var(--border);background:transparent;color:var(--muted);
+    border-radius:8px;cursor:pointer;font-size:.82rem;transition:all .2s;}
+  .vbtn:hover{border-color:var(--accent);color:var(--accent);}
+  .vbtn.active{border-color:var(--accent);background:var(--face);color:#fff;}
+  .vbtn.active.filled-on{border-color:var(--accent2);background:var(--accent2);}
+  .canvas-wrap{position:relative;width:100%;min-height:380px;border-radius:12px;background:var(--surface2);overflow:hidden;border:1px solid var(--border);}
+  canvas{display:block;}
+  .readout{margin-top:14px;padding:13px 17px;background:var(--surface2);border-radius:10px;font-size:.9rem;color:var(--muted);min-height:54px;}
+  .readout b{color:var(--accent2);}
+  .prov{display:flex;flex-direction:column;gap:12px;}
+  .prov a{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+    border-radius:12px;padding:14px 18px;text-decoration:none;color:var(--text);transition:all .25s;}
+  .prov a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .prov .tag{font-family:'Courier New',monospace;font-weight:700;color:var(--accent);font-size:.9rem;min-width:26px;}
+  .prov a .t{font-weight:700;font-size:.98rem;margin-bottom:3px;}
+  .prov a .d{font-size:.86rem;color:var(--muted);}
+  footer{padding:30px 0 10px;color:var(--muted);font-size:.82rem;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Der Zykel ohne Rand</h1>
+    <p class="subtitle">Fusion aus: <b>kokettenkomplex.html</b> &nbsp;&#10005;&nbsp; <b>was_heisst_denken.html</b></p>
+    <button class="themebtn" id="themeBtn" onclick="toggleTheme()">🌙 / ☀ &nbsp;Theme wechseln</button>
+  </header>
+
+  <!-- ============ 1. KERNTHESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="sub">Die eine Position, die beide Papiere unter ein Dach bringt.</p>
+    <div class="box key">
+      <p class="lead">Einheit auf einen Blick</p>
+      <p>
+        Auf den ersten Blick trifft hier <em>Mathematik</em> auf <em>Philosophie</em>: A baut die Kalkül der
+        homologischen Algebra (Grenze-Operatoren, Homologie, Euler-Charakteristik), B fragt nach dem Wesen des
+        Denkens bei Heidegger (das <em>Geheiß</em>, die <em>Zwiefalt</em> von Sein und Seiendem). Die Fusion
+        behauptet eine tiefere Einheit: <strong>beides studiert denselben Gestus — dass das, was am meisten ist,
+        genau das ist, was nicht direkt vorliegt.</strong>
+      </p>
+    </div>
+    <p>
+      A ist der <em>formale Schatten</em> dieses Gestus. In einem Kettenkomplex ist das wahre Invariante
+      nicht das Rohteil — nicht die einzelnen Ketten —, sondern der <strong>Rest</strong>: die Zykel, die
+      <em>keine Ränder sind</em> ($H_n = Z_n / B_n$). Die ganze Theorie steht auf dem einzigen Gesetz
+      <strong>∂∘∂ = 0</strong>, dem Satz, dass die <em>Grenze einer Grenze leer ist</em>. Man dividiert also
+      das Rohe durch das, was von Etwas anderem herkommt — und übrig bleibt das Nicht-Randische.
+    </p>
+    <p>
+      B ist der <em>philosophische Schatten</em>. Auch für Heidegger ist das Entscheidende nicht das viele
+      „Seiende" (das Objekt, die <em>Vorstellung</em>, auf die alles „heruntergeblinkt" ist), sondern das,
+      was auf <em>kein</em> Seiendes zurückgeführt wird: der <strong>ontologische Abstand</strong> zwischen
+      Sein und Seiendem, das <em>Geheiß</em>, das „am meisten sich zu denken gibt", während es sich gerade
+      zurückzieht („noch nicht"). Auch hier bleibt nach dem Subtrahieren aller Objekte etwas Übrig — und genau
+      dieses Übrigsein ruft.
+    </p>
+    <div class="box key">
+      <p class="lead">Die gemeinsame These</p>
+      <p>
+        <strong>Homologie ist die Mathematik des ontologischen Abstands.</strong>
+        Der Zykel, der kein Rand ist, ist die exakte Formel dafür, dass <em>Sein kein Seiendes ist</em>.
+        ∂∘∂ = 0 und die ontologische Differenz sind ein und dieselbe Aussage, nur in zwei Sprachen:
+        <em>Es gibt eine Stufe zwischen den Stufen — und die Leere dieser Stufe ist nicht das Nichts,
+        sondern die Bedingung dafür, dass überhaupt Stufen sein können.</em>
+      </p>
+      <div class="math big">∂∘∂ = 0 &nbsp;&nbsp;⟺&nbsp;&nbsp; „Sein ist kein Seiendes" (Zwiefalt)</div>
+    </div>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="sub">
+      Die beiden Papiere machen keine widersprüchlichen <em> faktischen</em> Aussagen (sie leben in
+      verschiedenen Domänen). Aber sie nehmen auf dieselben <strong>Meta-Fragen</strong> inkompatible
+      Stellungen ein. Vier konkrete Kanten:
+    </p>
+
+    <div class="conflict">
+      <h3>1 · Was ist das höchste Produkt des Geistes?</h3>
+      <div class="vs">
+        <div class="side a"><h4>A · kokettenkomplex</h4>
+          <p>Die Krone des Intellekts ist ein <strong>berechenbares, formales Invariante</strong>: die
+          Euler-Charakteristik ist „one number to rule them all", die Homologiegruppen (H₁ ≅ ℤ, H₁ ≅ ℤ/2ℤ)
+          sind rigoros, überprüfbar, ausrechenbar. Verstehen heißt: die korrekte Invariante <em>konstruieren</em>.</p>
+        </div>
+        <div class="side b"><h4>B · was_heisst_denken</h4>
+          <p><strong>„Die Wissenschaft denkt nicht."</strong> Das formale Apparate ist gerade das <em>Gegenteil</em>
+          des Denkens: „It leads to no knowledge like the sciences… It directly grants no powers for action.
+          Thinking is the most preliminary of all preliminary human activities."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict">
+      <h3>2 · Gibt es eine Brücke (Übergang) zwischen den Ebenen?</h3>
+      <div class="vs">
+        <div class="side a"><h4>A · kokettenkomplex</h4>
+          <p>Die ganze Methode lebt von <strong>chain maps und commuting squares</strong> (d_B∘fₙ = fₙ₋₁∘d_A):
+          Brücken zwischen zwei Komplexen, die sogar auf Invariante-Ebene Abbildungen induzieren
+          (f*: Hₙ(A) → Hₙ(B)). Brücken <em>ist</em> die Methode.</p>
+        </div>
+        <div class="side b"><h4>B · was_heisst_denken</h4>
+          <p>Zwischen Denken und den Wissenschaften gibt es „an <strong>unbridgeable gap</strong>…
+          No bridge, only a leap." Der Übergang (Übergang) vom letzten Menschen zum Übermenschen ist keine
+          technische Brücke, sondern eine <em>Verwandlung</em> (Erlösung von der Rache).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict">
+      <h3>3 · Was ist der Status des Leeren / Null / Zurückgezogenen?</h3>
+      <div class="vs">
+        <div class="side a"><h4>A · kokettenkomplex</h4>
+          <p>Der exakte Fall (H₁ = 0) kann das <strong>degenerierte/triviale</strong> Ergebnis sein:
+          „every cycle is a boundary, so H₁ = 0. The complex has no holes." Null = nichts Interessantes.</p>
+        </div>
+        <div class="side b"><h4>B · was_heisst_denken</h4>
+          <p>Das Zurückgezogene ist die <strong>positivste Quelle</strong>: „Das Bedenklichste in unserer
+          bedenklichen Zeit ist, daß wir noch nicht denken." Das „noch nicht" enthält „a hidden promise" —
+          es ist, was Denken überhaupt <em>ruft</em>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict">
+      <h3>4 · Baut der Geist — oder wird er gerufen?</h3>
+      <div class="vs">
+        <div class="side a"><h4>A · kokettenkomplex</h4>
+          <p>Der Denker <strong>konstruiert</strong> aktiv: „From Zero to Homology", „No prerequisites assumed".
+          Wir zerlegen den Raum, definieren ∂, extrahieren die Invariante. Der Mensch ist der aktive Agent.</p>
+        </div>
+        <div class="side b"><h4>B · was_heisst_denken</h4>
+          <p>Denken ist <strong>Antwort</strong>, nicht Initiative. Die beherrschende Frage ist Q4: „What calls
+          us into thinking?" — <em>heißen</em> heißt „to bid, to command, to entrust". Wir sind dem Geheiß
+          <em>überantwortet</em>; „we are like migratory birds pulled toward what recedes."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p class="sub">Wie sich jede Kante zuspitzen lässt — und die fusionierte Schlussfolgerung.</p>
+
+    <div class="resolve">
+      <span class="tag">zu (1) — Invariante vs. Nicht-Denken</span>
+      <p>Die Ebenen trennen. Die Euler-Charakteristik ist eine <em>korrekte</em> Invariante — aber in Bs Sprache
+      ist sie genau eine <em>Vorstellung</em>: ein Oberflächen-Objekt, das „blinzelt". Das <em>Denken</em> (im
+      Sinne von B) ist der Schritt <em>über</em> die Invariante hinaus („warum gibt es diese Struktur?"), den die
+      Invariante selbst nicht beantwortet (das Geheiß). <strong>Fusion:</strong> A liefert den Gegenstand (das
+      Holz); B die Frage, die kein Gegenstand beantwortet. Der Tischler „corresponds to the hidden forms sleeping
+      in the wood" — man denkt <em>mit</em> der Invariante, ohne sie mit dem Denken zu verwechseln.</p>
+    </div>
+
+    <div class="resolve">
+      <span class="tag">zu (2) — Brücke vs. Sprung</span>
+      <p><em>Innerhalb</em> einer Domäne vs. <em>zwischen</em> Domänen. Chain maps sind Brücken <em>innerhalb</em>
+      des Komplex-Domäne — sie funktionieren, weil beide Komplexen demselben Grenz-Gesetz gehorchen (∂∘∂ = 0).
+      Der Übergang <em>zwischen</em> formalem Domäne und dem Wesen des Denkens ist genau der, für den <em>kein</em>
+      commuting square existiert — die zweite „Domäne" ist kein Komplex mit demselben Gesetz. <strong>Fusion:</strong>
+      Eine Brücke existiert genau dort, wo dasselbe Grenz-Gesetz beide Enden beherrscht; wo sich das Gesetz selbst
+      ändert (formal → Essenz), bleibt nur der Sprung.</p>
+    </div>
+
+    <div class="resolve">
+      <span class="tag">zu (3) — Null = trivial vs. Null = Quelle</span>
+      <p>Beide stimmen zu, dass das Leere <em>strukturell zentral</em> ist — sie stehen nur auf entgegengesetzten
+      Seiten. Und A enthält Bs Einsicht verdeckt: Die <em>Exaktheit</em> (∂∘∂ = 0) ist gerade nicht „nichts" —
+      sie ist das <em>generierende Gesetz</em>, aus dem alles folgt. Der exakte Fall (H=0, „no holes") ist nicht
+      Abwesenheit, sondern die <em>am stärksten strukturierte</em> Situation: jeder Zykel ein Rand, totale Kontrolle.
+      <strong>Fusion:</strong> Exaktheit (Null) = das beherrschende Gesetz; Nicht-Exaktheit (das Loch / das
+      Zurückgezogene) = das, was über das Gesetz hinausgeht und neues Denken ruft. Dieselbe Leere — A ihr Resultat,
+      B ihr Ursprung.</p>
+    </div>
+
+    <div class="resolve">
+      <span class="tag">zu (4) — Konstrukteur vs. Gerufener</span>
+      <p>Selbst in A, wo wir das Komplex „bauen", ist das Gesetz ∂∘∂ = 0 <em>nicht</em> frei gewählt — es ist
+      <em>erzwungen</em> durch die Struktur des Raums (die Grenze einer Grenze ist leer). Der Denker entspricht
+      einem Gesetz, das gegeben ist, nicht auferlegt. <strong>Fusion:</strong> Konstruktion ist real, aber immer
+      <em>Antwort</em> auf ein zurückgezogenes Gesetz/einen Grund (∂∘∂ = 0 / das Geheiß) — weder reine Erfindung
+      (As Oberfläche) noch reine Passivität (Bs Oberfläche).</p>
+    </div>
+
+    <div class="box key">
+      <p class="lead">Fusionierte Schlussfolgerung</p>
+      <p>
+        Die vier Kanten fallen zusammen: <strong>Grenze (∂) und Geheiß sind derselbe Gestus</strong> — A zeigt
+        ihn als Kalkül, B als Existenz. Homologie misst, was <em>kein Rand ist</em>; Heidegger das, was
+        <em>kein Seiendes ist</em>. Das Leere ist in beiden mal Resultat, mal Quelle — und beides dieselbe
+        Leere: die, die <em>möglich macht</em>. Wer die Invariante beherrscht, hat das Holz; wer das Geheiß
+        hört, weiß, was der Tischler mit dem Holz zu tun hat.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 4. FUSIONIERTER INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="sub">Der zusammengeführte Kernstoff beider Papiere — so, dass eine spätere Runde allein von ihm arbeitet.</p>
+
+    <h3 style="color:var(--accent);margin:18px 0 6px;">1 · Die gemeinsame Grundstruktur: Komplex + Grenz-Gesetz</h3>
+    <p>
+      A beginnt bei dem Einfachsten und baut nach oben: eine <em>abelsche Gruppe</em> („a bag of coins" — man
+      addiert und subtrahiert, die Reihenfolge ist egal), dann <em>Module</em> (Vektorräume verallgemeinert;
+      ein ℤ-Modul ist <em>genau</em> eine abelsche Gruppe), dann die <em>Grenze</em> (∂). Ein Kettenkomplex
+      ist eine Folge von Modulen, verbunden durch Grenz-Operatoren, unter der einzigen Bedingung:
+    </p>
+    <div class="math">⋯ → C₃ →<sup>∂₃</sup> C₂ →<sup>∂₂</sup> C₁ →<sup>∂₁</sup> C₀ → 0 &nbsp;&nbsp; mit &nbsp; ∂ₙ ∘ ∂ₙ₊₁ = 0</div>
+    <p>
+      Daraus entstehen die vier Schlüsselobjekte: <strong>Zykeln</strong> (Zₙ = ker ∂ₙ, „closed", ohne Grenze),
+      <strong>Ränder</strong> (Bₙ = im ∂ₙ₊₁, kommen von etwas höherdimensionalem her) und die
+      <strong>Homologie</strong> Hₙ = Zₙ / Bₙ — die Zykeln, die <em>keine</em> Ränder sind. Weil ∂∘∂ = 0
+      gilt, ist stets Bₙ ⊆ Zₙ, und die Quotientenklasse ist wohldefiniert. Homologie „misst Löcher":
+      „things that look closed but aren't filled in".
+    </p>
+    <p>
+      <em>B liest dieselbe Struktur als Existenz:</em> Das „Seiende" (Objekt, Vorstellung) entspricht der
+      Kette; das „Sein" (Anwesen) dem, was <em>nicht</em> von einem Seienden herkommt — der <strong>Zwiefalt</strong>.
+      Die ontologische Differenz (Sein ≠ Seiendes) ist das philosophische Pendant zu „Zykel ≠ Rand".
+      Parmenides' <em>ἐόν</em> — „the participle of all participles" — benennt beides in einem Wort, genau wie
+      Hₙ einen Zykel benennt, <em>ohne</em> ihn auf einen Rand zu reduzieren.
+    </p>
+
+    <h3 style="color:var(--accent);margin:20px 0 6px;">2 · Drei Homologie-Fälle ↔ drei Grund-Zustände</h3>
+    <div class="vs">
+      <div class="side"><h4 style="color:var(--accent2)">H₁ = 0 (exakt)</h4>
+        <p>Jeder Zykel ist ein Rand. „No holes." → <b>B:</b> reine <em>Vorstellung</em>; der letzte Mensch
+        „blinzelt" — alles ist auf Oberfläche reduziert, das Bedenkliche ist nicht gedacht.</p>
+      </div>
+      <div class="side"><h4 style="color:var(--accent2)">H₁ ≅ ℤ (ein Loch)</h4>
+        <p>Ein Zykel, der kein Rand ist (wie S¹). → <b>B:</b> das <em>Bedenklichste</em> taucht auf —
+        das Zurückgezogene, das Denken ruft (das „noch nicht" mit seiner „hidden promise").</p>
+      </div>
+      <div class="side"><h4 style="color:var(--accent2)">H₁ ≅ ℤ/2ℤ (Torsion)</h4>
+        <p>Gerade Zykeln sind Ränder, ungerade nicht (wie in ℝP²). → <b>B:</b> das <em>Halb-Gedachte</em>:
+        eine Differenz, die sich nicht auflöst — die Zwiefalt, die „used but never thought" bleibt.</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--accent);margin:20px 0 6px;">3 · Die „Eine Zahl" ↔ Die „Eine Frage"</h3>
+    <p>
+      A kollabiert den ganzen Komplex zu <em>einer</em> Invariante, <strong>unabhängig von der Zerlegung</strong>:
+    </p>
+    <div class="math">χ = Σ (−1)ⁱ dim Cⁱ = dim C⁰ − dim C¹ + dim C² − dim C³ + ⋯ &nbsp;&nbsp; (Würfel 8−12+6 = 2, Torus = 0)</div>
+    <p>
+      B kollabiert die ganze Geschichte des Abendlandes zu <em>einer</em> Frage, die unter allen Gedanken
+      liegt: <strong>„Was heißt Denken?"</strong> Beides ist ein Invariante, das vom <em>lokalen</em> Blick
+      verschwindet: χ sieht man aus jeder Triangulation, nicht aus einem einzelnen Dreieck; das Geheiß hört
+      man in jedem Gedanken, nicht in einem einzelnen Satz.
+    </p>
+
+    <h3 style="color:var(--accent);margin:20px 0 6px;">4 · Brücken (chain maps) ↔ der Übergang</h3>
+    <p>
+      A verbindet zwei Komplexen durch fₙ, die die <em>commuting square</em> erfüllen:
+      <strong>d_B ∘ fₙ = fₙ₋₁ ∘ d_A</strong> — „go right then down" = „go down then right". Zykeln gehen in
+      Zykeln und Ränder in Ränder über; f induziert wohldefinierte Abbildungen auf Homologie, f*: Hₙ(A) → Hₙ(B).
+      Ein <em>Doppelkomplex</em> (2D-Gitter) wird zur <em>Total-Komplex</em> aufgesammelt:
+      Tot(D)ₙ = ⊕₍ₚ₊q₌ₙ₎ Dₚ,q. B hat exakt diesen Gestus im <strong>Übergang</strong> (Übermensch): ein
+      <em>Corresponding</em> zwischen zwei Seiten (letzter Mensch ↔ Übermensch) über der Brücke „Erlösung von
+      der Rache". Der entscheidende Unterschied: A's Brücke funktioniert, weil beide Seiten demselben
+      Grenz-Gesetz gehorchen; B's Übergang zwischen Denken und Wissenschaft ist, wo das Gesetz sich <em>bricht</em>.
+    </p>
+
+    <h3 style="color:var(--accent);margin:20px 0 6px;">5 · Der eine Spruch ↔ das eine Gesetz</h3>
+    <p>
+      In A ist <strong>∂∘∂ = 0</strong> „the single most important equation in all of homological algebra" —
+      der eine Satz, aus dem alles folgt (Zykeln, Ränder, Quotienten, Euler). In B ist es der <strong>eine
+      Spruch</strong> des Parmenides — <em>χρή τό λέγειν τε νοεῖν τ' ἐόν ἔμμεναι</em> — aus dem die ganze
+      abendländische Metaphysik „unfolds". Beides: ein <em>generierendes Gesetz</em>, das sich dem direkten
+      Zugriff entzieht. Heideggers Übersetzung — „It is needful: the letting-lie-before… the taking-to-heart…
+      beings in being" — macht aus dem „Sein" ein <em>Geschehen</em> (Anwesen), genau wie ∂ ein <em>Geschehen</em>
+      ist, das das Rohe in den Rest verwandelt.
+    </p>
+
+    <h3 style="color:var(--accent);margin:20px 0 6px;">6 · Glossar der Entsprechungen</h3>
+    <table class="map">
+      <tr><th>A · Homologie</th><th>Gestus</th><th>B · Heidegger</th></tr>
+      <tr><td>Grenze ∂</td><td>der verwandelnde Gestus</td><td>das Geheiß / der Abstand</td></tr>
+      <tr><td>Rand Bₙ = im ∂</td><td>das von-etwas-anderm-herkommende</td><td>das bloße Seiende / die Vorstellung</td></tr>
+      <tr><td>Zykel, der kein Rand ist (Hₙ)</td><td>das Nicht-Randische</td><td>Sein / der ontologische Abstand</td></tr>
+      <tr><td>∂∘∂ = 0</td><td>das eine Gesetz / die Stufe zwischen den Stufen</td><td>die Zwiefalt (Zwiefalt, ontologische Differenz)</td></tr>
+      <tr><td>exakte Folge, H = 0</td><td>alles wird reduziert</td><td>„Die Wissenschaft denkt nicht" · der letzte Mensch blinzelt</td></tr>
+      <tr><td>H ≅ ℤ, das Loch</td><td>das, was übrig bleibt</td><td>das Bedenklichste · das Zurückgezogene, das ruft</td></tr>
+      <tr><td>Euler-Charakteristik χ</td><td>die eine, zerlegungsunabhängige Zahl</td><td>die eine Frage „Was heißt Denken?"</td></tr>
+      <tr><td>chain map / commuting square</td><td>Brücke innerhalb eines Gesetzes</td><td>der Übergang — und „no bridge, only a leap"</td></tr>
+      <tr><td>von unten bauen, ohne Voraussetzungen</td><td>Konstruktion</td><td>Gedächtnis / Dank / Andenken — Denken als Hand-Werk (Empfang)</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung</h2>
+    <p class="sub">
+      Das Dreieck-Komplex, interaktiv: Schalte die Fläche (2-Simplex) im Komplex an/aus und steige die
+      Stufen ∂ → ∂∘∂ = 0 → Homologie H₁ durch. Schau, wie das „Loch" (das Nicht-Randische) <em>genau dort
+      entsteht, wo der Rand verschwindet</em>.
+    </p>
+    <div class="viz">
+      <h3>Der Zykel ohne Rand</h3>
+      <p class="cap">
+        Der Zykel <em>c</em> = [v₀v₁] + [v₁v₂] + [v₂v₀] ist immer ein Zykel (∂c = 0). Ist die Fläche im
+        Komplex, so ist c = ∂(Fläche) ein <em>Rand</em> → H₁ = 0. Fehlt die Fläche, so ist c <em>kein</em>
+        Rand → H₁ ≅ ℤ — ein Loch erscheint.
+      </p>
+      <div class="vcontrols">
+        <div class="vgroup">
+          <span class="lbl">Fläche (C₂) im Komplex?</span>
+          <button class="vbtn filled-on active" id="fOn" onclick="setFilled(true)">Mit Fläche</button>
+          <button class="vbtn" id="fOff" onclick="setFilled(false)">Ohne Fläche</button>
+        </div>
+        <div class="vgroup">
+          <span class="lbl">Stufe:</span>
+          <button class="vbtn active" id="s0" onclick="setStep(0)">0 · Komplex</button>
+          <button class="vbtn" id="s1" onclick="setStep(1)">1 · ∂(Fläche)</button>
+          <button class="vbtn" id="s2" onclick="setStep(2)">2 · ∂∘∂ = 0</button>
+          <button class="vbtn" id="s3" onclick="setStep(3)">3 · Homologie H₁</button>
+        </div>
+      </div>
+      <div class="canvas-wrap"><canvas id="viz"></canvas></div>
+      <div class="readout" id="readout"></div>
+    </div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p class="sub">Die beiden Original-Papiere dieser Fusion.</p>
+    <div class="prov">
+      <a href="../kokettenkomplex.html">
+        <span class="tag">A</span>
+        <div>
+          <div class="t">Chain Complexes — From Zero to Homology</div>
+          <div class="d">Interaktive Anleitung zur homologischen Algebra: von der abelschen Gruppe über
+          Grenze-Operatoren (∂∘∂ = 0), Homologie, chain maps und Doppelkomplexen bis zum
+          Euler-Charakteristik — als der eine, berechenbare Invariante eines Komplex.</div>
+        </div>
+      </a>
+      <a href="../was_heisst_denken.html">
+        <span class="tag">B</span>
+        <div>
+          <div class="t">Heidegger: Was heißt Denken?</div>
+          <div class="d">Interaktiver Explorer zu Heideggers Freiburger Vorlesungen (1951/52): die
+          vierfache Frage, das Geheiß, „Die Wissenschaft denkt nicht", Nietzsches „wachsende Wüste",
+          der Spruch des Parmenides und die Zwiefalt von Sein und Seiendem.</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    Fusion · Runde 1 · Paare 089 · Homologie als Mathematik des ontologischen Abstands.<br>
+    Selbstständiges Dokument — alle Daten inline, keine Netzwerk-Abrufe.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var readout = document.getElementById('readout');
+  var W = 0, H = 0, dpr = 1;
+  var filled = true;   // Fläche (2-Simplex) im Komplex?
+  var step = 0;        // 0..3
+  function css(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function tri(cx, cy, r){
+    return [
+      {x: cx, y: cy - r},
+      {x: cx - r*0.96, y: cy + r*0.72},
+      {x: cx + r*0.96, y: cy + r*0.72}
+    ];
+  }
+  function hexA(hex, a){
+    var h = hex.replace('#','');
+    if (h.length === 3){ h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    var r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function arrowHead(x, y, ang, size, color){
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - size*Math.cos(ang - 0.42), y - size*Math.sin(ang - 0.42));
+    ctx.lineTo(x - size*Math.cos(ang + 0.42), y - size*Math.sin(ang + 0.42));
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+  function edge(s, t, r_v, color, width){
+    var dx = t.x - s.x, dy = t.y - s.y;
+    var len = Math.sqrt(dx*dx + dy*dy) || 1;
+    var ux = dx/len, uy = dy/len;
+    var sx = s.x + ux*r_v, sy = s.y + uy*r_v;
+    var tx = t.x - ux*(r_v+2), ty = t.y - uy*(r_v+2);
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(tx, ty);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    arrowHead(tx, ty, Math.atan2(uy, ux), 9, color);
+  }
+  function draw(){
+    var wrap = canvas.parentElement;
+    var rect = wrap.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    W = rect.width;
+    H = Math.max(340, rect.height);
+    canvas.width = Math.floor(W*dpr);
+    canvas.height = Math.floor(H*dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    var c = {
+      text: css('--text'), muted: css('--muted'),
+      accent: css('--accent'), accent2: css('--accent2'), accent4: css('--accent4'),
+      face: css('--face'), hole: css('--hole'), pos: css('--pos'), neg: css('--neg')
+    };
+    var cx = W/2, cy = H*0.52, r = Math.min(W, H*0.95)*0.30;
+    var P = tri(cx, cy, r);
+    var r_v = 13;
+    var e0 = [P[0], P[1]], e1 = [P[1], P[2]], e2 = [P[2], P[0]];
+    var vLabel = ['v\u2080','v\u2081','v\u2082'];
+    var faceAlpha = filled ? (step === 1 ? 0.30 : 0.16) : 0;
+    if (faceAlpha > 0){
+      ctx.beginPath();
+      ctx.moveTo(P[0].x, P[0].y);
+      ctx.lineTo(P[1].x, P[1].y);
+      ctx.lineTo(P[2].x, P[2].y);
+      ctx.closePath();
+      ctx.fillStyle = hexA(c.face, faceAlpha);
+      ctx.fill();
+      ctx.strokeStyle = hexA(c.face, step === 1 ? 0.9 : 0.5);
+      ctx.lineWidth = step === 1 ? 2.4 : 1.4;
+      ctx.stroke();
+      var fcx = (P[0].x+P[1].x+P[2].x)/3, fcy = (P[0].y+P[1].y+P[2].y)/3;
+      ctx.fillStyle = hexA(c.face, 0.9);
+      ctx.font = '600 12px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('C\u2082 (Fl\u00e4che)', fcx, fcy + (step===1?0:6));
+    }
+    if (step === 3 && !filled){
+      var fcx2 = (P[0].x+P[1].x+P[2].x)/3, fcy2 = (P[0].y+P[1].y+P[2].y)/3 + 4;
+      var grd = ctx.createRadialGradient(fcx2, fcy2, 2, fcx2, fcy2, r*0.72);
+      grd.addColorStop(0, hexA(c.hole, 0.5));
+      grd.addColorStop(1, hexA(c.hole, 0));
+      ctx.beginPath();
+      ctx.moveTo(P[0].x, P[0].y);
+      ctx.lineTo(P[1].x, P[1].y);
+      ctx.lineTo(P[2].x, P[2].y);
+      ctx.closePath();
+      ctx.fillStyle = grd;
+      ctx.fill();
+      ctx.fillStyle = c.hole;
+      ctx.font = '700 14px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('das Loch', fcx2, fcy2 - 8);
+      ctx.font = '600 12px "Segoe UI", sans-serif';
+      ctx.fillText('H\u2081 \u2245 \u2115', fcx2, fcy2 + 10);
+    }
+    var edgeCol = (step === 1 || step === 3) ? c.accent2 : c.accent;
+    var edgeW = (step === 1 || step === 3) ? 3.2 : 2.4;
+    edge(e0[0], e0[1], r_v, hexA(edgeCol, 0.95), edgeW);
+    edge(e1[0], e1[1], r_v, hexA(edgeCol, 0.95), edgeW);
+    edge(e2[0], e2[1], r_v, hexA(edgeCol, 0.95), edgeW);
+    if (step >= 1){
+      ctx.font = '600 11px "Segoe UI", sans-serif';
+      ctx.fillStyle = c.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      var mid = function(a,b){ return {x:(a.x+b.x)/2, y:(a.y+b.y)/2}; };
+      var m0 = mid(e0[0],e0[1]), m1 = mid(e1[0],e1[1]), m2 = mid(e2[0],e2[1]);
+      ctx.fillText('[v\u2080v\u2081]', m0.x - 20, m0.y + 2);
+      ctx.fillText('[v\u2081v\u2082]', m1.x, m1.y + 15);
+      ctx.fillText('[v\u2082v\u2080]', m2.x + 20, m2.y + 2);
+    }
+    if (step === 2){
+      for (var i=0;i<3;i++){
+        var p = P[i];
+        var ox = (p.x - cx) * 0.28, oy = (p.y - cy) * 0.28;
+        ctx.fillStyle = c.pos;
+        ctx.font = '800 18px "Segoe UI", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('+', p.x + ox - 11, p.y + oy);
+        ctx.fillStyle = c.neg;
+        ctx.fillText('\u2212', p.x + ox + 11, p.y + oy);
+        ctx.fillStyle = c.accent4;
+        ctx.font = '700 11px "Segoe UI", sans-serif';
+        ctx.fillText('= 0', p.x + ox, p.y + oy + 20);
+      }
+      ctx.fillStyle = c.accent4;
+      ctx.font = '700 15px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('\u2202 \u2218 \u2202 = 0  (Grenze der Grenze ist leer)', cx, H - 18);
+    }
+    for (var v=0; v<3; v++){
+      var pt = P[v];
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r_v, 0, Math.PI*2);
+      ctx.fillStyle = hexA(c.accent4, 0.18);
+      ctx.fill();
+      ctx.strokeStyle = c.accent4;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = c.text;
+      ctx.font = '700 12px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(vLabel[v], pt.x, pt.y);
+    }
+    ctx.fillStyle = c.muted;
+    ctx.font = '600 11px "Segoe UI", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('C\u2081 = 3 Kanten (Zykel c)', 14, 20);
+    ctx.fillText('C\u2080 = 3 Ecken', 14, 38);
+    if (filled){ ctx.fillStyle = hexA(c.face,0.9); ctx.fillText('C\u2082 = 1 Fl\u00e4che', 14, 56); }
+    if (step === 3){
+      var res = filled ? 'H\u2081 = 0  (exakt \u2014 alles ein Rand)' : 'H\u2081 \u2245 \u2115  (ein Loch \u2014 c kein Rand)';
+      ctx.fillStyle = c.text;
+      ctx.font = '800 14px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(res, cx, 22);
+    }
+    if (step === 1){
+      ctx.fillStyle = c.accent2;
+      ctx.font = '700 13px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(filled ? '\u2202(Fl\u00e4che) = Zykel c' : 'Kein 2-Objekt \u2192 nichts, wovon c der Rand w\u00e4re', cx, 22);
+    }
+  }
+  function readoutText(){
+    if (step === 0){
+      return 'Das Komplex: <b>C\u2082</b> = ' + (filled ? 'eine Fläche' : '(leer)') +
+        ', <b>C\u2081</b> = 3 Kanten, <b>C\u2080</b> = 3 Ecken. Die Pfeile zeigen die Orientierung des ' +
+        'Zyklus <b>c</b> = [v\u2080v\u2081] + [v\u2081v\u2082] + [v\u2082v\u2080]. c ist immer ein Zykel, denn \u2202c = 0.';
+    }
+    if (step === 1){
+      if (filled){
+        return '<b>\u2202(Fl\u00e4che) = c.</b> Der Zykel ist also ein <b>Rand</b>: c \u2208 B\u2081 = im \u2202. ' +
+          'In Bs Sprache: die Fläche ist das „Seiende", das die Kanten „erklärt" — c wird auf Etwas zurückgeführt.';
+      }
+      return '<b>Keine Fläche \u2192 kein 2-Objekt.</b> Es gibt nichts, wovon der Zykel c der Rand wäre. ' +
+        'c bleibt ein Zykel <em>ohne Ursprung</em> — er lässt sich nicht auf Etwas Höheres zurückführen.';
+    }
+    if (step === 2){
+      return '<b>\u2202 \u2218 \u2202 = 0.</b> Die Grenze jeder Kante ist Endpunkt \u2212 Startpunkt. Im Zykel ' +
+        'erscheint jede Ecke einmal mit + (Endpunkt) und einmal mit \u2212 (Startpunkt) — sie heben sich ' +
+        '<em>paarweise auf</em>. Die Grenze der Grenze ist <b>leer</b>: das eine Gesetz, das die ganze Theorie trägt.';
+    }
+    if (filled){
+      return '<b>H\u2081 = Zykel / Rand = c / \u27e8c\u27e9 = 0.</b> Der Zykel ist ein Rand — exakt, kein Loch. ' +
+        '<em>B:</em> Alles wird auf „Seiendes" / Vorstellung zurückgeführt; das Bedenkliche ist <em>nicht</em> gedacht ' +
+        '(der letzte Mensch „blinzelt").';
+    }
+    return '<b>H\u2081 = Zykel / Rand = c / 0 \u2245 \u2115.</b> Der Zykel ist <em>kein</em> Rand — ein echtes <b>Loch</b>. ' +
+      '<em>B:</em> Das, was nicht Rand ist, bleibt — der <em>ontologische Abstand</em>, der „Sein" von „Seiendem" trennt. ' +
+      'Das Loch erscheint genau dort, wo der Rand (die Fläche) verschwindet: das Nicht-Randische ist das Sein.';
+  }
+  function syncUI(){
+    document.getElementById('fOn').classList.toggle('active', filled);
+    document.getElementById('fOn').classList.toggle('filled-on', filled);
+    document.getElementById('fOff').classList.toggle('active', !filled);
+    document.getElementById('fOff').classList.toggle('filled-on', !filled);
+    for (var i=0;i<4;i++){ document.getElementById('s'+i).classList.toggle('active', i===step); }
+  }
+  window.setFilled = function(f){ filled = f; syncUI(); draw(); updateReadout(); };
+  window.setStep = function(s){ step = s; syncUI(); draw(); updateReadout(); };
+  function updateReadout(){ readout.innerHTML = readoutText(); }
+  window.toggleTheme = function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  };
+  window.addEventListener('resize', draw);
+  syncUI();
+  updateReadout();
+  draw();
+  if (window.requestAnimationFrame){ requestAnimationFrame(draw); }
+})();
+</script>
+</body>
+</html>

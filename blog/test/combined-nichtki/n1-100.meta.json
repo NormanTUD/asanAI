@@ -1,0 +1,17 @@
+{
+  "no": "100",
+  "a": "geometry_of_meaning_test.html",
+  "b": "grothendiek2.html",
+  "a_title": "Die Geometrie bedeutungsvoller Sprache",
+  "b_title": "Grothendiecks Universum",
+  "combined_theme": "bedeutung-als-geometrie",
+  "one_line": "Bedeutung ist Geometrie: die stabile, grobkörnungs-invariante Struktur eines Satzes ist sein Motiv, seine Form→Bedeutung→Welt-Kette ist ein kommutierendes Diagramm von Topoi, und jeder Satz ist nur eine Realisierung (Faser) dieser einen Bedeutung.",
+  "contradictions": [
+    "A: Bedeutung ist ein graduiertes 4-D-Feld C,S,G,E in [0,1] mit kritischer Schwelle t_c (Phasenübergang, Metapher in Zwischenregionen); B: exakte, binäre kategoriale Struktur (Diagramm kommutiert oder nicht, Garbe klebt oder nicht, 'die Gruppe IST die Geometrie').",
+    "A: spekulatives Forschungsprogramm / Hypothesen ('keine empirischen Messungen', offene Fragen); B: bewiesene Theoreme (Weil/RH von Deligne 1974, anabelische Ergebnisse).",
+    "A: offenes System, Bedeutung braucht externe Welt W (Grounding/Tarski-Wahrheit, 'über etwas'); B: geschlossenes, selbstreferenzielles Universum der Formen ohne externe Welt (internalistisch).",
+    "A: bottom-up von konkreten Strings X_N aufwärts per Grobkörnigung (empirischer Anker Zipf/Heaps); B: top-down, Geometrie aus universellen Invarianten rekonstruiert (anabelisch, Motive, Gal(Ḡ/Q))."
+  ],
+  "resolution": "B liefert die bewiesene Struktur-Maschinerie (Garben, Faserbündel, Motive, kommutierende Diagramme, Topoi); A ist deren Anwendung auf Sprache. Das graduierte Kohärenzfeld ist der reiche Unterobjektklassifizierer Ω des semantischen Topos (exakt im Reinheits-Limes); die Welt W ist ein weiterer Topos, Grounding ein geometrischer Morphismus (offenes = kommutierendes Diagramm von Topoi); der Grobkörnigungs-Fixpunkt IST das Motiv (universell, darstellungsunabhängig) — bottom-up und top-down begegnen sich am Fixpunkt, Bedeutung wird anabelisch aus ihren stabilen Invarianten rekonstruiert.",
+  "viz": "Canvas-Simulation: Sätze als Punktwolke im semantischen Raum (4 Bedeutungs-Cluster + Void-Rauschen); der Vietoris–Rips-Regler ε steuert die Grobkörnigung; persistente H0-Komponenten mit ≥8 Sätzen leuchten gold als 'Motive' (skaleninvariante Bedeutungen), kurzlebige farbig-blass als Realisierungen in der Faser π⁻¹(s), graue Balken als Void-Rauschen — live + Animation, theme-aware."
+}
