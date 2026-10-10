@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kompressionsmaschine: Homotopie ✕ Intro-Preview</title>
+<style>
+:root{
+  --bg:#faf8f1;
+  --bg2:#f2efe6;
+  --panel:#ffffff;
+  --panel-solid:#ffffff;
+  --line:rgba(40,45,70,.16);
+  --text:#20242f;
+  --dim:#5c6377;
+  --accent:#0f8fb0;
+  --accent2:#c2336f;
+  --accent3:#6a4fc0;
+  --accent4:#1f9d5b;
+  --warn:#a86a00;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+html.dark{
+  --bg:#080a12;
+  --bg2:#0d1020;
+  --panel:rgba(20,24,44,.72);
+  --panel-solid:#141828;
+  --line:rgba(120,140,220,.20);
+  --text:#e6ebff;
+  --dim:#9aa6cc;
+  --accent:#5ee7ff;
+  --accent2:#ff5ea8;
+  --accent3:#a98bff;
+  --accent4:#7dffb0;
+  --warn:#ffd166;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 700px at 12% -10%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%),
+    radial-gradient(1000px 700px at 92% 0%, color-mix(in srgb, var(--accent3) 16%, transparent), transparent 52%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:16px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+h1{font-size:clamp(1.7rem,4.4vw,2.6rem);line-height:1.08;margin:.2em 0 .3em;font-weight:800;letter-spacing:-.02em}
+.subtitle{font-family:var(--mono);font-size:.82rem;color:var(--dim);letter-spacing:.02em;margin:0 0 8px}
+.eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 4px}
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:44px 0}
+section{margin:0 0 10px;scroll-margin-top:20px}
+h2{font-size:clamp(1.25rem,2.8vw,1.7rem);margin:.2em 0 .5em;font-weight:800;letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:.55em;color:var(--accent);border:1px solid var(--line);padding:3px 9px;border-radius:7px;margin-right:10px;vertical-align:middle;background:color-mix(in srgb,var(--accent) 8%, transparent)}
+h3{font-size:1.08rem;margin:26px 0 8px;color:var(--text);font-weight:700}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:6px 0}
+b,strong{font-weight:650;color:var(--text)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+code{font-family:var(--mono);font-size:.88em;background:color-mix(in srgb,var(--accent) 12%, transparent);padding:2px 6px;border-radius:5px;color:var(--accent)}
+.note{border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%, transparent);padding:13px 17px;border-radius:0 12px 12px 0;margin:18px 0;font-size:.95rem}
+.note.pink{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 7%, transparent)}
+.note.violet{border-color:var(--accent3);background:color-mix(in srgb,var(--accent3) 7%, transparent)}
+.note .tag{display:inline-block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:5px;color:var(--accent)}
+.note.pink .tag{color:var(--accent2)}
+.note.violet .tag{color:var(--accent3)}
+.tagA{color:var(--accent);font-weight:700;font-size:.86em;letter-spacing:.03em}
+.tagB{color:var(--accent2);font-weight:700;font-size:.86em;letter-spacing:.03em}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.eq{font-family:var(--mono);background:color-mix(in srgb,var(--panel) 60%, transparent);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:14px 0;font-size:.9rem;overflow-x:auto}
+/* ---- viz ---- */
+.viz-stage{position:relative;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 16px 44px rgba(0,0,0,.18)}
+.viz-stage canvas{width:100%;height:520px;display:block;border-radius:11px}
+.ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;margin:14px 2px 6px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:180px;flex:1}
+.ctrl label{font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:10px}
+.ctrl label .v{color:var(--accent);font-family:var(--mono);font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent3));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--text);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%, transparent);cursor:grab}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--text);cursor:grab}
+.btnrow{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 4px}
+button.btn{background:color-mix(in srgb,var(--accent) 12%, transparent);border:1px solid color-mix(in srgb,var(--accent) 40%, transparent);color:var(--accent);padding:8px 15px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .17s}
+button.btn:hover{background:color-mix(in srgb,var(--accent) 22%, transparent);transform:translateY(-1px)}
+button.btn.p3{background:color-mix(in srgb,var(--accent3) 12%, transparent);border-color:color-mix(in srgb,var(--accent3) 40%, transparent);color:var(--accent3)}
+button.btn.p3:hover{background:color-mix(in srgb,var(--accent3) 22%, transparent)}
+button.btn.on{background:var(--accent);color:var(--bg)}
+.readout{font-family:var(--mono);font-size:12.5px;color:var(--accent4);background:color-mix(in srgb,var(--panel) 55%, transparent);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin:12px 0 0;white-space:pre-wrap;line-height:1.55}
+.prov{display:grid;gap:12px;margin:14px 0}
+.prov .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 18px}
+.prov .who{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--dim);margin-bottom:4px}
+.themeToggle{position:fixed;top:14px;right:14px;z-index:10;background:var(--panel);border:1px solid var(--line);color:var(--accent);width:40px;height:38px;border-radius:10px;cursor:pointer;font-size:17px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--dim);margin:10px 2px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<button id="themeToggle" class="themeToggle" title="Hell/Dunkel">◐</button>
+<article>
+  <p class="eyebrow">Fusion · Runde 1 · nicht-KI-Track · Paar 002</p>
+  <h1>Eine Kompressionsmaschine, die man erst lädt, dann lesen kann</h1>
+  <p class="subtitle">Fusion aus: homotopie.html ✕ intro_preview_light.html</p>
+
+  <!-- ═════════ 1 · KERNTHESE ═════════ -->
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>
+      Beide Papiere erzählen dieselbe Geschichte, nur auf zwei Skalen.
+      <span class="tagA">A (Homotopie)</span> ist eine einzige, geschlossene
+      Vorlesung: eine einzige Leitfrage („Wann kann man Raum A <i>nicht</i> in B
+      verbiegen?“) wird von einem einzigen primitiven Baustein — „ein Weg ist eine
+      stetige Abbildung [0,1] → Y“ — bottom-up zu immer stärkeren,
+      <b>homotopieinvarianten</b> Invarianten aufgezogen (π₀, π₁, πₙ, Kohomologie,
+      Spektren) und schließlich in Rechenmaschinen verpackt (exakte Sequenzen,
+      Spektralsequenzen). Das tiefere Rezept, das sich in A dreimal wiederholt, ist:
+      <b>eine naive Konstruktion ist nicht invariant → man ersetzt sie durch eine
+      „aufgeblasene“ Version (Kegel statt Quotient, Homotopiefaser statt Faser,
+      Spektrum statt einzelner Raum) → plötzlich wird alles berechenbar.</b> Geometrie
+      wird dabei vollständig in Algebra übersetzt — „nichts geht verloren“.
+    </p>
+    <p>
+      <span class="tagB">B (Intro-Preview)</span> ist fast leise, sagt aber etwas
+      Strukturelles: Das Buch wird nicht als Klumpen, sondern als
+      <b>acht Module</b> serviert — <i>Cosmos, Numbers, Geometry, Calculus, Logic,
+      Signal, Language, Convergence</i> — und zwar als <b>gestaffelter Lader</b>: eine
+      Liste, deren Reihen nacheinander von <code>pending → loading → done</code>
+      wechseln („Loading sections…“). Ein „Light“-Preview, der die <i>Gestalt</i> und
+      den <i>Umfang</i> des Kurses zeigt, <i>bevor</i> das Gewicht kommt.
+    </p>
+    <p>
+      <b>Die eine integrierte Position:</b> <i>Verstehen heißt Komprimieren — eine
+      kontinuierliche, anfassbare Welt auf eine endliche, diskrete, kombinatorische
+      Invariantenmenge abbilden — und der ehrliche Weg dorthin ist ein progressiver,
+      vom Abhängigkeitsgraph gesteueter Lernpfad, bei dem jede Stufe erst
+      freigeschaltet wird, wenn ihre Voraussetzung steht.</i>
+      A liefert die <b>Mathematik</b> dieser Maschine (die Invarianten-Kette + der
+      Abhängigkeits-DAG, dessen Pfeile „was worauf aufbaut“). B liefert die
+      <b>Darreichung</b> derselben Maschine (ein gestaffelter Lader, dessen
+      Lade-Reihenfolge genau die topologische Ordnung dieses DAGs ist). A ist das
+      <b>Inne</b> (ein Fach, bis zum Schlussbild durchkomprimiert), B ist das
+      <b>Außerhalb</b> (acht Fächer, nacheinander „eingelesen“).
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- ═════════ 2 · WIDERSPRÜCHE ═════════ -->
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widersprüche zwischen A und B</h2>
+    <p>
+      Inhaltlich-faktisch widersprechen sich die beiden <b>nicht</b> (A ist
+      algebraische Topologie nach Bunke, B ist ein Lader ohne Sachbehauptung).
+      Aber sie treffen zu <b>Struktur und Darreichung des Kurses</b>
+      <b>inkompatible Stellungen</b>. Drei konkrete, belegbare Punkte:
+    </p>
+    <ul>
+      <li>
+        <b>Geschlossene, lineare „eine einzige Geschichte“ (A) ↔ offene, modulare
+        Checkliste (B).</b> A erklärt sich im Hero zu „einer einzigen durchgehenden
+        Geschichte“ und schließt in Sektion 29 mit „<i>Das ist das ganze Skript</i>“:
+        ein <b>abgeschlossenes</b> System, ein Fach, vollständig in sich, dessen
+        „Landkarte“ ein fixer DAG ist, der an einem Schlussbild endet. B dagegen
+        zeigt <b>acht getrennte Module</b> auf einer Checkliste, jede mit
+        <b>eigenen</b> Zuständen <code>pending/loading/done</code>, und trägt den
+        Status „Loading sections…“ — ein <b>offenes</b>, modulares System, das sich
+        ausdrücklich als <i>Preview</i> eines viel größeren Buches versteht.
+        <span class="tagA">A</span>: „fertig &amp; abgeschlossen“;
+        <span class="tagB">B</span>: „noch im Laden, offengelegt in Einheiten“.
+      </li>
+      <li>
+        <b>Alles auf einmal auf einer langen Scroll-Seite (A) ↔ gestaffelte,
+        prozessuale Freischaltung (B).</b> A serviert die gesamte 125-seitige
+        Vorlesung auf <b>einer</b> langen Seite („Scrolle, um zu beginnen“) — der
+        ganze Inhalt ist von Anfang an da. B <b>stafft</b> die Zustellung: Spinner +
+        Reihen, die nacheinander abhaken; Sektionen „kommen“, während sie laden.
+        <span class="tagA">A</span>: „das ganze Buch, durchgelesen“;
+        <span class="tagB">B</span>: „Sektionen erreichen dich einzeln, sobald bereit“.
+      </li>
+      <li>
+        <b>Skala des „Ganzen”: ein Fach (A) ↔ acht Disziplinen (B).</b>
+        <span class="tagA">A</span>s „Die ganze Landkarte“ deckt genau
+        <b>ein</b> Fach (algebraische Topologie) ab und ruf es für vollständig aus.
+        <span class="tagB">B</span>s Map spannt <b>acht</b> Felder (Physik → Zahlen →
+        Geometrie → Analysis → Logik → Signal → Sprache → KI) und ist per Design
+        <b>nicht</b> abgeschlossen (es ist ein Lader, nicht ein Ende).
+        <span class="tagA">A</span>: „Vollständigkeit innerhalb eines Faches“;
+        <span class="tagB">B</span>: „Fragment eines offenen, größeren Ganzen“.
+      </li>
+    </ul>
+  </section>
+
+  <hr class="sep">
+
+  <!-- ═════════ 3 · AUFLOESUNG ═════════ -->
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Auflösung</h2>
+    <p>
+      <b>Punkt 1 &amp; 3 (geschlossenes Fach ↔ offenes Buch) verschmelzen, wenn man
+      beide als dasselbe Objekt erkennt: einen Abhängigkeits-DAG.</b> A „Landkarte“
+      <i>ist</i> ein DAG. „Eine durchgehende Geschichte“ ist nichts anderes als das
+      <b>Lesen dieses DAGs in topologischer Ordnung</b> — und eine topologisch
+      geordnete Abarbeitung sieht aus wie „eine einzige Geschichte“. B „checklist“
+      mit <code>pending/loading/done</code> ist dieselbe topologische Ordnung, als
+      <b>UI-Zustände</b> gerendert. „Das ist das ganze Skript“ (A) gilt also
+      <i>pro Modul</i>: jede Disziplin erreicht ihr eigenes „Schlussbild / die ganze
+      Landkarte“; das Buch bleibt <i>global</i> offen (B). A ist damit <b>ein
+      Knoten-Cluster</b> (Geometrie + Logik + Analysis + Konvergenz ≈ der
+      Mathematik-Rücken) des größeren DAGs von B, und B ist A von <b>einem</b> Fach
+      auf das <b>ganze Buch generalisiert</b>. Vollständigkeit-in-einem-Fach und
+      Fragment-eines-offenen-Ganzen sind dieselbe Aussage auf zwei Zoomstufen.
+    </p>
+    <p>
+      <b>Punkt 2 (alles auf einmal ↔ gestaffelt) ist kein Widerspruch, sondern
+      <i>Content</i> vs. <i>Delivery</i>.</b> A beschreibt, <b>was</b> gebaut wird
+      (die Maschine, bottom-up, jede Invariante aus der vorherigen). B beschreibt,
+      <b>wie</b> es serviert wird (gestaffelt, Fortschritt sichtbar, „Light“ vor dem
+      „Heavy“). Die fusionierte Schlussfolgerung:
+    </p>
+    <div class="note violet">
+      <span class="tag">Fusionierter Konsens</span>
+      Ein Kurs ist ein Abhängigkeits-DAG. Sein <b>Inhalt</b> ist die durchgehende
+      Invarianten-Kompressions-Erzählung (A); seine <b>Darreichung</b> ist ein
+      gestaffelter Lader, der die topologische Ordnung dieses DAGs respektiert (B).
+      Der <b>Lader <i>ist</i> die Roadmap</b>: Die Abhängigkeitspfeile von A definieren
+      die Lade-Reihenfolge von B. Man lädt erst die Geometrie, wenn die Zahlen stehen;
+      erst die Konvergenz, wenn Logik + Signal da sind — genau wie man erst π₁ baut,
+      wenn Wege stehen, erst πₙ, wenn Σ⊣Ω steht, erst Hurewicz, wenn die ganze Kette
+      gebaut ist.
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- ═════════ 4 · INHALT ═════════ -->
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <h3>4.1 Die Kompressions-Kette (A, wörtlich)</h3>
+    <p>
+      A ist die Fabrik für <b>Invarianten</b>: eine Zahl/Gruppe, die man aus einem
+      Raum berechnet, die beim Verbiegen <i>nicht</i> ändert, und die bei A und B
+      verschieden ist — das ist der einzige Weg, eine Negativaussage über unendlich
+      viele Verformungen zu beweisen. Die Kette, die A aufbaut:
+    </p>
+    <div class="eq">
+      Weg γ:[0,1]→Y  →  Homotopie (Film)  →  π₀ (Wegkomponenten)  →  Π(X) (Fundamentalgruppoid)
+      →  π₁(X,x) (Schleifen, erste echte Invariante)  →  Weg-Hochhebung  →  Überlagerungen
+      →  Cov(Y) ≃ π₁-Set  →  universelle Überlagerung  →  Galois-Analogie  →  Van Kampen
+      →  flache Bündel/Holonomie  →  Σ ⊣ Ω  →  πₙ  →  Eckmann–Hilton  →  Abbildungskegel
+      →  Puppe-Sequenz  →  Homotopiefaser / lange exakte Sequenz  →  CW-Komplexe  →  Grad / Brouwer
+      →  Spektren / Kohomologie  →  AHSS  →  Blakers–Massey  →  Freudenthal (Stabilität)
+      →  πₙ(Sⁿ)=ℤ  →  Hurewicz (π ≅ H)
+    </div>
+    <p>Die zentralen, tragenden Resultate (aus A):</p>
+    <ul>
+      <li><b>Funktionaler Kern:</b> die Adjunktion
+        <code>[ΣX, Y] ≅ [X, ΩY]</code>, daraus
+        <code>πₙ(X) = [Sⁿ, X] ≅ [S⁰, ΩⁿX] = π₀(ΩⁿX)</code> — „Abbildungen von
+        Sphären“ ≅ „Punkte in iterierten Schleifenräumen“.</li>
+      <li><b>Erste Invarianten, konkret:</b> π₁(S¹)≅ℤ (per Hochheben auf die
+        Wendeltreppe ℝ→S¹, Windungszahl = Höhenunterschied); π₁(S²)=1; π₁(T²)≅ℤ²
+        (abelsch, <code>ab=ba</code>); π₁(S¹∨S¹)≅F₂ (frei, <i>nicht</i> abelsch);
+        π₁(ℝP²)≅ℤ/2. Der <b>Wörterbuch-Satz</b> <code>Cov(Y) ≃ π₁-Set</code>:
+        Überlagerungen von Y ↔ Mengen mit einer Wirkung von π₁ — Geometrie wird
+        vollständig zu Algebra.</li>
+      <li><b>Warum πₙ abelsch (n≥2):</b> Eckmann–Hilton — zwei verträgliche
+        Verknüpfungen (horizontal/vertikal) sind gleich <i>und</i> kommutativ.</li>
+      <li><b>Das dreifache Rezept</b> (der eigentliche Motor): naive Konstruktion →
+        nicht invariant → „aufblasen“ → exakte Sequenz. Beispiele: Quotient Y/X ist
+        <i>nicht</i> homotopieinvariant, der <b>Abbildungskegel C(f)</b> schon; Faser
+        f⁻¹(y) nicht, die <b>Homotopiefaser Fib(f)</b> schon; daraus Puppe- und
+        Faser-Sequenz → lange exakte Sequenzen als Rechenmaschinen.</li>
+      <li><b>Der Gipfel:</b> <code>πₙ(Sⁿ)≅ℤ</code> via <b>Abbildungsgrad</b>
+        (Blakers–Massey ⇒ Freudenthal reicht ℤ Stufe für Stufe weiter);
+        <code>π₃(S²)=ℤ</code> ist die Hopf-Faserung; im <b>stabilen Bereich</b> wird
+        aus Chaos eine Homologietheorie (Sphärenspektrum 𝕊; stabile Gruppen nur bis
+        n≈55 bekannt). <b>Hurewicz</b> schließt: in der ersten nichttrivialen
+        Dimension sind πₙ und Hₙ gleich — die Brücke von Homotopie zu Homologie.</li>
+    </ul>
+
+    <h3>4.2 Die acht Module (B, wörtlich)</h3>
+    <p>
+      B ist ein <b>Light-Preview/Lader</b> für das Buch „Big Bang → ChatGPT“: acht
+      Module, nacheinander eingelesen, jede mit Zustand
+      <code>pending → loading → done</code>. Es macht <b>keine</b> mathematischen
+      Behauptungen; es definiert nur die <b>Gestalt</b> des Kurses:
+    </p>
+    <table>
+      <tr><th>#</th><th>Modul (B)</th><th>Was B zeigt</th></tr>
+      <tr><td>1</td><td>Cosmos</td><td rowspan="8">Ein Checklist-Item, das von
+        <code>pending</code> über <code>loading</code> nach <code>done</code>
+        läuft — die <i>Reihenfolge</i> der acht Module ist die
+        Lade-Reihenfolge des Kurses. Kein Inhalt, nur die Struktur des Lernpfads.</td></tr>
+      <tr><td>2</td><td>Numbers</td></tr>
+      <tr><td>3</td><td>Geometry</td></tr>
+      <tr><td>4</td><td>Calculus</td></tr>
+      <tr><td>5</td><td>Logic</td></tr>
+      <tr><td>6</td><td>Signal</td></tr>
+      <tr><td>7</td><td>Language</td></tr>
+      <tr><td>8</td><td>Convergence</td></tr>
+    </table>
+
+    <h3>4.3 Die Verschmelzung (Synthese dieser Fusion — <i>keine</i> Behauptung von A oder B)</h3>
+    <p>
+      Gelesen wird A als <b>ein</b> Beispiel der Maschine, die B auf Kurs-Ebene
+      darstellt. Die acht Module von B sind <i>Instanzen desselben Kompressionszugs</i> —
+      von einem kontinuierlichen/anfassbaren Feld zu diskret/kombinatorisch/
+      berechenbar:
+    </p>
+    <ul>
+      <li><b>Cosmos</b>: kontinuierliche Raumzeit → Symmetrien/Invarianten.</li>
+      <li><b>Numbers</b>: das Kontinuum → diskrete Arithmetik.</li>
+      <li><b>Geometry</b>: Formen → Homotopie-Invarianten — <b>das ist buchstäblich A</b>
+        (π₁ der Acht = F₂, π₁ des Torus = ℤ²).</li>
+      <li><b>Calculus</b>: Wandel → Grenzwert/Leitung (Lokalisierung des Globalen).</li>
+      <li><b>Logic</b>: Sätze → Beweise/Berechenbarkeit.</li>
+      <li><b>Signal</b>: Wellenformen → Spektrum (echo-t A „Spektren“).</li>
+      <li><b>Language</b>: Token → Repräsentation/Rechnung.</li>
+      <li><b>Convergence</b>: die Teile → ein System (KI).</li>
+    </ul>
+    <div class="note pink">
+      <span class="tag">Ehrlichkeit</span>
+      A erwähnt weder KI noch die acht Module; B erwähnt weder Homotopie noch Bunke.
+      Die Zuordnung „Modul ↔ Invariante“ ist die <b>Lesart dieser Fusion</b>, keine
+      Aussage einer der beiden Quellen. Der einzige feste Punkt: A ist das
+      <b>volle, bewiesene Inne</b> eines Moduls (Geometrie), B ist die <b>leere,
+      gestaffelte Hülle</b> des ganzen Pfads.
+    </div>
+    <p>
+      Und das <b>dreifache Rezept von A</b> generalisiert zu dem einen
+      pädagogischen Muster hinter beiden: <i>rohes Feld → noch nicht invariant/
+      berechenbar → verfeinern/aufblasen → berechenbar.</i> In A: Quotient→Kegel,
+      Faser→Homotopiefaser, Raum→Spektrum. Auf Kurs-Ebene: ein Feld (z. B. „Cosmos“)
+      ist erst dann „geladen/done“, wenn seine Invariante steht — genau der Moment,
+      in dem der Lader von <code>loading</code> auf <code>done</code> klickt.
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- ═════════ 5 · VISUALISIERUNG ═════════ -->
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung: die Maschine, die sich lädt</h2>
+    <p>
+      Links ein <b>kontinuierlicher Raum</b> (ein Blob mit <i>g</i> Löchern), der sich
+      stetig <b>verformt</b> — aber dessen <b>Invariante</b> (die Zahl der Löcher, bzw.
+      die 2<i>g</i> Erzeuger von π₁) <b>fest bleibt</b> (A: Verbiegen ändert die
+      Invariante nie). Rechts B „8-Modul-Lader“: die acht Module laden nacheinander
+      ab, und <b>pro fertigem Modul</b> wird eine Stufe der Invarianten-Kette von A
+      <b>freigeschaltet</b> — die Lade-Reihenfolge <i>ist</i> die Abhängigkeits-Reihenfolge.
+    </p>
+
+    <div class="viz-stage">
+      <canvas id="viz" height="520"></canvas>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>Kontinuierlicher Raum (A)</span>
+      <span><i style="background:var(--accent2)"></i>Löcher / Invariante</span>
+      <span><i style="background:var(--accent4)"></i>Modul geladen → Invariante freigeschaltet</span>
+      <span><i style="background:var(--dim)"></i>Modul noch pending</span>
+    </div>
+
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Verformung <span class="v" id="vT">0.00</span></label>
+        <input type="range" id="sT" min="0" max="1" step="0.01" value="0.35">
+      </div>
+      <div class="ctrl">
+        <label>Geschlecht g (Löcher) <span class="v" id="vG">1</span></label>
+        <input type="range" id="sG" min="0" max="3" step="1" value="1">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="bLoad">▶ 8 Module laden (B) → Kette schaltet frei (A)</button>
+      <button class="btn p3" id="bReset">↺ Zurücksetzen</button>
+    </div>
+    <div class="readout" id="ro">—</div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- ═════════ 6 · PROVENIENZ ═════════ -->
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <div class="who">Quelle A</div>
+        <a href="../homotopie.html">homotopie.html</a> — „Homotopietheorie — Eine
+        interaktive Reise nach U. Bunke“: eine geschlossene, lineare Vorlesung mit 61
+        interaktiven Spielen; die Kompressions-Kette von Wegen bis Hurewicz und das
+        „dreifache Rezept“ (naiv → aufblasen → exakte Sequenz).
+      </div>
+      <div class="card">
+        <div class="who">Quelle B</div>
+        <a href="../intro_preview_light.html">intro_preview_light.html</a> — ein
+        „Light“-Preview/Lader, der den Kurs als acht Module (Cosmos … Convergence) als
+        gestaffelte <code>pending → loading → done</code>-Checkliste „einliest“.
+      </div>
+    </div>
+  </section>
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var TAU = Math.PI*2;
+  var cv = document.getElementById('viz');
+  var ro = document.getElementById('ro');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var W=0,H=520;
+
+  var MODULES = [
+    {n:'Cosmos',      inv:'π₀ · Wegkomponenten'},
+    {n:'Numbers',     inv:'π₁ · Fundamentalgruppe'},
+    {n:'Geometry',    inv:'Π(X) · Fundamentalgruppoid'},
+    {n:'Calculus',    inv:'Σ ⊣ Ω · Adjunktion'},
+    {n:'Logic',       inv:'πₙ · höhere Homotopiegruppen'},
+    {n:'Signal',      inv:'Spektrum · Kohomologie H*'},
+    {n:'Language',    inv:'Stabile Welt · Freudenthal'},
+    {n:'Convergence', inv:'Hurewicz · π ≅ H'}
+  ];
+
+  var T = 0.35, G = 1, loadStart = null;
+
+  function readTheme(){
+    var cs = getComputedStyle(document.documentElement);
+    return {
+      accent:  cs.getPropertyValue('--accent').trim()  || '#5ee7ff',
+      accent2: cs.getPropertyValue('--accent2').trim() || '#ff5ea8',
+      accent3: cs.getPropertyValue('--accent3').trim() || '#a98bff',
+      accent4: cs.getPropertyValue('--accent4').trim() || '#7dffb0',
+      text:    cs.getPropertyValue('--text').trim()    || '#e6ebff',
+      dim:     cs.getPropertyValue('--dim').trim()     || '#9aa6cc'
+    };
+  }
+  var TH = readTheme();
+  if(typeof MutationObserver !== 'undefined'){
+    new MutationObserver(function(){ TH = readTheme(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  function resize(){
+    var dpr = window.devicePixelRatio||1;
+    var host = cv.parentElement;
+    var w = (host && host.clientWidth) ? host.clientWidth-16 : 640;
+    W = Math.max(320, w); H = 520;
+    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+    cv.style.width = W+'px'; cv.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+
+  function alpha(v){ ctx.globalAlpha = Math.max(0,Math.min(1,v)); }
+
+  function modState(i, now){
+    if(loadStart===null) return 'pending';
+    var e = (now - loadStart)/1000;
+    var start = i*0.9, dur = 0.9;
+    if(e < start) return 'pending';
+    if(e < start+dur) return 'loading';
+    return 'done';
+  }
+
+  function drawBlob(now){
+    var cx = W*0.26, cy = H*0.44, R0 = Math.min(W*0.20, H*0.30);
+    var amp = 0.03 + 0.11*T;
+    var phase = now*0.0011 + T*2.2;
+    var N = 170, pts = [];
+    for(var i=0;i<=N;i++){
+      var u = i/N*TAU;
+      var r = R0*(1 + amp*Math.sin(3*u + phase) + 0.04*Math.sin(5*u - phase*1.3));
+      pts.push([cx + Math.cos(u)*r, cy + Math.sin(u)*r*0.82]);
+    }
+    ctx.save();
+    alpha(0.16); ctx.fillStyle = TH.accent;
+    ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+    for(var j=1;j<pts.length;j++) ctx.lineTo(pts[j][0],pts[j][1]);
+    ctx.closePath(); ctx.fill();
+    alpha(1); ctx.strokeStyle = TH.accent; ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+    for(var k=1;k<pts.length;k++) ctx.lineTo(pts[k][0],pts[k][1]);
+    ctx.closePath(); ctx.stroke();
+    ctx.restore();
+
+    var hr = R0*0.26;
+    var spacing = R0*0.82;
+    for(var h=0; h<G; h++){
+      var hx = cx + (h - (G-1)/2)*spacing;
+      ctx.save();
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#080a12';
+      alpha(1); ctx.beginPath(); ctx.arc(hx, cy, hr, 0, TAU); ctx.fill();
+      ctx.strokeStyle = TH.accent2; ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.arc(hx, cy, hr, 0, TAU); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.fillStyle = TH.text; ctx.font='700 13px Inter, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Kontinuierlicher Raum  (g = '+G+' Löcher)', cx, cy - R0*0.9 - 8);
+    ctx.fillStyle = TH.accent2; ctx.font='600 12px Inter, system-ui, sans-serif';
+    ctx.fillText('Invariante: '+ (2*G) +' Erzeuger — bleibt beim Verbiegen fest', cx, cy + R0*0.9 + 20);
+    ctx.restore();
+  }
+
+  function drawArrow(x1,y1,x2,y2,col){
+    ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2; ctx.setLineDash([6,5]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.setLineDash([]);
+    var a=Math.atan2(y2-y1,x2-x1), hd=8;
+    ctx.fillStyle=col; ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hd*Math.cos(a-0.4), y2-hd*Math.sin(a-0.4));
+    ctx.lineTo(x2-hd*Math.cos(a+0.4), y2-hd*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+
+  function drawRight(now){
+    var x0 = W*0.565, yTop = H*0.13, dy = H*0.085;
+    ctx.save();
+    ctx.fillStyle = TH.dim; ctx.font='700 12px Inter, system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('8-Modul-Lader (B)  →  Invarianten-Kette (A)', x0, yTop-16);
+    for(var i=0;i<MODULES.length;i++){
+      var st = modState(i, now);
+      var y = yTop + i*dy;
+      var dotX = x0+7, tx = x0+26;
+      var r = 6;
+      if(st==='loading') r = 6 + 2.4*(0.5+0.5*Math.sin(now*0.008));
+      ctx.save();
+      if(st==='done'){ alpha(1); ctx.fillStyle = TH.accent4; }
+      else if(st==='loading'){ alpha(1); ctx.fillStyle = TH.accent; }
+      else { alpha(0.4); ctx.fillStyle = TH.dim; }
+      ctx.beginPath(); ctx.arc(dotX, y, r, 0, TAU); ctx.fill();
+      if(st==='loading'){ alpha(0.35); ctx.strokeStyle=TH.accent; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(dotX,y,r+4,0,TAU); ctx.stroke(); alpha(1); }
+      ctx.restore();
+
+      var col = st==='done' ? TH.text : (st==='loading' ? TH.accent : TH.dim);
+      ctx.save(); ctx.fillStyle = col;
+      ctx.font=(st==='done'?'700 ':'600 ')+'12.5px Inter, system-ui, sans-serif';
+      ctx.textAlign='left';
+      ctx.fillText(MODULES[i].n, tx, y);
+      ctx.fillStyle = st==='done' ? TH.accent : TH.dim;
+      ctx.font='600 11.5px ui-monospace, monospace';
+      ctx.fillText('→ ' + MODULES[i].inv, tx + 108, y);
+      if(st==='done'){
+        ctx.strokeStyle = TH.accent4; ctx.globalAlpha=0.5; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(tx, y+6); ctx.lineTo(tx+Math.min(300, W*0.36), y+6); ctx.stroke();
+      }
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function frame(now){
+    ctx.clearRect(0,0,W,H);
+    drawBlob(now);
+    drawArrow(W*0.44, H*0.44, W*0.53, H*0.44, TH.accent3);
+    ctx.save();
+    ctx.fillStyle=TH.accent3; ctx.font='600 12px Inter, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('komprimieren', W*0.485, H*0.44-14);
+    ctx.restore();
+    drawRight(now);
+
+    var done = 0, revealed = [];
+    for(var i=0;i<MODULES.length;i++){
+      if(modState(i, now)==='done'){ done++; revealed.push(MODULES[i].inv.split('·')[0].trim()); }
+    }
+    if(ro){
+      ro.textContent =
+        'Verformung t = '+T.toFixed(2)+'  ·  g = '+G+' Löcher  →  Invariante 2g = '+(2*G)+
+        ' Erzeuger (bleibt bei jeder Verformung fest).\n'+
+        (loadStart===null
+          ? 'Lade-Reihenfolge bereit. „▶ 8 Module laden“ drücken, um die Kette aufzubauen.'
+          : 'Module geladen: '+done+' / 8  →  freigeschaltete Invarianten: '+
+            (revealed.length? revealed.join(', ') : 'noch keine'));
+    }
+    requestAnimationFrame(frame);
+  }
+
+  var sT = document.getElementById('sT'), sG = document.getElementById('sG');
+  var vT = document.getElementById('vT'), vG = document.getElementById('vG');
+  if(sT){ sT.addEventListener('input', function(){ T=parseFloat(sT.value); if(vT)vT.textContent=T.toFixed(2); }); }
+  if(sG){ sG.addEventListener('input', function(){ G=parseInt(sG.value,10)||0; if(vG)vG.textContent=G; }); }
+  var bLoad = document.getElementById('bLoad'), bReset = document.getElementById('bReset');
+  if(bLoad){ bLoad.addEventListener('click', function(){
+    loadStart = performance.now(); bLoad.classList.add('on');
+    var clear = setTimeout(function(){ bLoad.classList.remove('on'); }, 8*0.9*1000+900);
+    bLoad._clear = clear;
+  }); }
+  if(bReset){ bReset.addEventListener('click', function(){
+    if(bLoad && bLoad._clear) clearTimeout(bLoad._clear);
+    loadStart = null;
+    if(bLoad) bLoad.classList.remove('on');
+  }); }
+
+  var tt = document.getElementById('themeToggle');
+  if(tt){ tt.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    TH = readTheme();
+  }); }
+
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

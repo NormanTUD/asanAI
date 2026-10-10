@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Leib als Prozess des Erlebens — Schmitz × Whitehead</title>
+<style>
+:root{
+  --mn-bg:#f3f1ea;
+  --mn-fg:#1c1a16;
+  --mn-card:#fbfaf5;
+  --mn-border:#d9d3c4;
+  --mn-accent:#e8563f;
+  --mn-secondary:#0f9d70;
+  --mn-dim:#7c766a;
+  --mn-viz-bg:#f7f5ef;
+  --mn-viz-blob:#e8563f;
+  --mn-viz-aim:#d63a22;
+  --mn-viz-sat:#e07b2e;
+  --mn-viz-past:#0f9d70;
+  --mn-viz-fg:#1c1a16;
+  --mn-viz-dim:#7c766a;
+}
+html.dark{
+  --mn-bg:#0a0a18;
+  --mn-fg:#eceaf2;
+  --mn-card:#12122a;
+  --mn-border:#26264a;
+  --mn-accent:#ff7a6a;
+  --mn-secondary:#34d39b;
+  --mn-dim:#8b8aa0;
+  --mn-viz-bg:#0b0b1e;
+  --mn-viz-blob:#ff7a6a;
+  --mn-viz-aim:#ff5a3d;
+  --mn-viz-sat:#ffb14d;
+  --mn-viz-past:#34d39b;
+  --mn-viz-fg:#eceaf2;
+  --mn-viz-dim:#8b8aa0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--mn-bg);
+  color:var(--mn-fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;
+  font-size:16px;
+  transition:background .3s,color .3s;
+}
+article{max-width:820px;margin:0 auto;padding:32px 20px 80px;}
+h1{font-size:1.9em;line-height:1.2;margin-bottom:6px;letter-spacing:-.01em;}
+.subtitle{color:var(--mn-dim);font-size:.95em;margin-bottom:8px;}
+.subtitle code{font-size:.85em;background:var(--mn-card);border:1px solid var(--mn-border);padding:1px 5px;border-radius:5px;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;}
+.toc a{font-size:.8em;color:var(--mn-secondary);text-decoration:none;border:1px solid var(--mn-border);padding:4px 10px;border-radius:20px;background:var(--mn-card);}
+.toc a:hover{border-color:var(--mn-secondary);}
+section{background:var(--mn-card);border:1px solid var(--mn-border);border-radius:14px;padding:22px 24px;margin:20px 0;transition:background .3s,border-color .3s;}
+h2{font-size:1.25em;margin-bottom:12px;color:var(--mn-accent);line-height:1.25;}
+h3{font-size:1.02em;margin:18px 0 6px;color:var(--mn-fg);}
+p{margin:10px 0;}
+strong{color:var(--mn-fg);}
+.hl{color:var(--mn-accent);font-weight:600;}
+.hl2{color:var(--mn-secondary);font-weight:600;}
+ul,ol{margin:10px 0 10px 22px;}
+li{margin:6px 0;}
+blockquote{border-left:3px solid var(--mn-secondary);margin:14px 0;padding:6px 16px;color:var(--mn-dim);font-style:italic;background:transparent;}
+.tag{display:inline-block;font-size:.72em;padding:2px 9px;border-radius:12px;margin:2px 2px 2px 0;border:1px solid var(--mn-border);color:var(--mn-dim);background:var(--mn-bg);}
+.callout{border:1px solid var(--mn-border);border-left:3px solid var(--mn-accent);border-radius:10px;padding:12px 16px;margin:14px 0;background:var(--mn-bg);}
+.callout b{color:var(--mn-accent);}
+.formal{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.82em;line-height:1.6;background:var(--mn-bg);border:1px solid var(--mn-border);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:pre;color:var(--mn-fg);}
+.prov{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--mn-border);}
+.prov:last-child{border-bottom:none;}
+.prov .badge{flex:0 0 auto;font-weight:700;font-size:.85em;color:#fff;background:var(--mn-accent);border-radius:8px;padding:4px 9px;}
+.prov.b .badge{background:var(--mn-secondary);}
+.prov a{color:var(--mn-secondary);text-decoration:none;font-weight:600;word-break:break-all;}
+.prov a:hover{text-decoration:underline;}
+.prov p{margin-top:4px;color:var(--mn-dim);font-size:.92em;}
+
+/* viz */
+#vizwrap{position:relative;margin-top:14px;}
+#viz{width:100%;display:block;border-radius:12px;border:1px solid var(--mn-border);background:var(--mn-viz-bg);}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px;}
+.controls button{cursor:pointer;font-size:.85em;padding:7px 14px;border-radius:9px;border:1px solid var(--mn-border);background:var(--mn-bg);color:var(--mn-fg);transition:all .2s;}
+.controls button:hover{border-color:var(--mn-secondary);}
+.controls .sliderbox{display:flex;flex-direction:column;font-size:.75em;color:var(--mn-dim);flex:1 1 200px;min-width:180px;}
+.controls .sliderbox input{width:100%;margin-top:3px;accent-color:var(--mn-accent);}
+.pastbadge{font-size:.78em;color:var(--mn-dim);margin-left:auto;}
+.pastbadge b{color:var(--mn-secondary);}
+
+/* diagram */
+.diagram{width:100%;height:auto;display:block;margin:16px 0;}
+.dp-dots circle{fill:var(--mn-accent);opacity:.75;}
+.dp-forms rect,.dp-forms circle,.dp-forms path{fill:none;stroke:var(--mn-secondary);stroke-width:2;}
+.dp-flow{stroke:var(--mn-dim);stroke-width:2;fill:none;}
+.dp-sat{fill:var(--mn-secondary);}
+.dp-aim{stroke:var(--mn-accent);stroke-width:2.5;fill:none;}
+.dp-perish{stroke:var(--mn-dim);stroke-width:1.5;fill:none;stroke-dasharray:4 4;}
+.dp-txt{fill:var(--mn-fg);font:600 13px system-ui,sans-serif;text-anchor:middle;}
+.dp-txt2{fill:var(--mn-dim);font:12px system-ui,sans-serif;text-anchor:middle;}
+footer{color:var(--mn-dim);font-size:.82em;text-align:center;margin-top:24px;}
+</style>
+</head>
+<body>
+<article>
+  <h1>Der Leib als Prozess des Erlebens</h1>
+  <p class="subtitle">Fusion aus: <code>hermann_schmitz3.html</code> ✕ <code>whitehead.html</code></p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere lehnen das Bild einer Wirklichkeit aus toten, ausgedehnten, statischen <em>Dingen</em> ab — und setzen an deren Stelle das <span class="hl2">Erleben</span> als Grund. Schmitz macht den <span class="hl">Leib</span> (das fühlende, vor-reflexive, lebendige Körper-Subjekt) zum Grund der Erfahrung; Whitehead macht die <span class="hl2">aktuelle Occasion</span> („actual entity", einen augenblicklichen <em>Tropfen von Erfahrung</em>) zum Grund der Realität. Beide sind Prozess-Ontologien: Nichts <em>ist</em> einfach so — alles <em>wird</em>.</p>
+    <p>Die <strong>einheitliche, fusionierte Position</strong> lautet: Wirklichkeit ist kein Haufen von Dingen, sondern ein Feld selbst-organisierender Erlebnisse. Ihre Grundelemente sind weder tote Teilchen noch durchgehende Substanzen, sondern <em>Momente des Erlebens</em> („Leib-Gegebenheiten" / „actual occasions"). Jeder solche Moment entsteht aus der <em>Erfassung</em> (Prehension / Einleibung) dessen, was zuvor war, <em>verdichtet sich</em> (Konkreszenz) zu <em>einer</em> bestimmten Einheit (Satisfaction), <em>vergeht</em> und <em>besteht</em> zugleich fort als objektive Daten, die alles Folgende mitbestimmen.</p>
+    <p>Jeder Moment ist dabei <strong>zweifach</strong>: eine <em>protopathische</em>, dumpfe, vor-ziellose <span class="hl">vitale Spannung</span> (Schmitz: Engung ↔ Weitung) und ein <em>epikritisch</em> geschärftes, selbst-gerichtetes <span class="hl2">Ziel</span> (Whitehead: <em>subjective aim</em>). Die Vielen werden eins, und es wird um eins vermehrt — dies ist der gemeinsame Antrieb, den Schmitz <em>vitaler Antrieb</em> und Whitehead <em>Creativity</em> nennt.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere sind in den großen Zügen <em>verwandt</em> (Prozess statt Substanz, Erleben statt Materie, radikale Vernetzung). Doch sie nehmen an drei konkreten Punkten <strong>incompatible Stellungen</strong> ein:</p>
+
+    <h3>W1 — Dauer vs. Augenblick (kontinuierlicher Leib vs. vergehende Occasion)</h3>
+    <p><strong>A (Schmitz):</strong> Der Leib ist ein <em>anhaltendes, kontinuierliches</em> Spannungsfeld — ein „Gewoge verschwommener Inseln", das fortwährend besteht. Inseln „bilden sich und schwinden", doch der Leib selbst wird als <em>andauerndes Ganzes</em> vorgegeben (seiner Grundspannung nach).</p>
+    <p><strong>B (Whitehead):</strong> Das Grundelement ist eine <em>aktuelle Occasion</em>, die <em>augenblicklich und selbst-auflösend</em> ist: sie verdichtet sich und <em>vergeht</em> („perpetual perishing"). „Du bist nicht dieselbe Person wie vor 5 Minuten … du wirst ständig neu erschaffen." Nichts <em>besteht</em> als Substanz.</p>
+    <p class="callout"><b>Spannung:</b> ein <em>andauerndes, durchgehendes</em> Leib-Subjekt (A) vs. <em>diskrete, selbst-vergehende, augenblickliche</em> Tropfen (B). Ist der Grund der Wirklichkeit <em>kontinuierlich</em> oder <em>atomar-discret</em>?</p>
+
+    <h3>W2 — spannungsgetrieben vs. zweckgetrieben (vor-intentionale Spannung vs. intrinsisches Subjective Aim)</h3>
+    <p><strong>A (Schmitz):</strong> Die Grundkraft des Leibes ist der <em>vitaler Antrieb</em> — „Spannung gegen Schwellung". Er ist <em>vor-kognitiv, dumpf</em> (protopathisch, „dumpf-verschwimmend") und <em>nicht</em> auf ein bewusst gesetztes Ziel hin gerichtet; er ist vor-intentional.</p>
+    <p><strong>B (Whitehead):</strong> Jede Occasion besitzt ein <em>subjective aim</em> — eine <em>innere Teleologie</em> (finale Kausalität neben effizienter Kausalität). „Selbst auf der einfachsten Ebene ‚strebt' die Natur nach Intensität der Erfahrung. Kreativität … hat Richtung." Erleben ist wesentlich <em>zweckgerichtet</em>.</p>
+    <p class="callout"><b>Spannung:</b> Ist der Grund des Lebens eine <em>ziellose, vor-intentionale</em> vitale Spannung (A) oder ein <em>intrinsisch zielgerichtetes</em> Werden (B)?</p>
+
+    <h3>W3 — Randlosigkeit vs. Bestimmtheit (randlose Inseln vs. bestimmte Occasion)</h3>
+    <p><strong>A (Schmitz):</strong> Die Leibesinseln bestehen „ohne Flächen und Ränder" — sie sind <em>randlos und nicht lokalisierbar</em>; man kann auf den Rand des fühlenden Leibes nicht zeigen. Er ist ein nahtloses Gewoge.</p>
+    <p><strong>B (Whitehead):</strong> Eine Occasion erreicht eine bestimmte <em>Satisfaction</em> — eine <em>bestimmte, individuell abgeschlossene</em> Einheit („✓ SATISFACTION — Einheit erreicht!"). Sie ist <em>individuell determiniert</em>.</p>
+    <p class="callout"><b>Spannung:</b> Sind die Grundelemente <em>randlos, nicht-lokalisiert, an den Rändern unbestimmt</em> (A) oder <em>bestimmt und individuell begrenzt</em> (B)?</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <h3>A1 — W1: Kontinuität aus Diskontinuität</h3>
+    <p>Der <em>andauernde</em> Leib <em>ist</em> die Kette <em>vergehender</em> Occasions. Whiteheads <span class="hl2">objektive Unsterblichkeit</span> / <em>perpetual perishing</em> ist genau der Mechanismus, durch den <em>diskrete</em> Momente ein <em>bestehendes</em> gefühltes Leib-Bewusstsein konstituieren: Jede Leib-Occasion vergeht und übergibt ihren bestimmten Inhalt als <em>objektive Daten</em> an die nächste. <strong>Die fusionierte Schlussfolgerung:</strong> Schmitz' fortwährender Leib = Whiteheads <em>actual world</em> (die geordnete Reihe aktueller Occasions); die „Insel" ist die Konkreszenz <em>eines</em> Moments; die „anhaltende Spannung" ist der objektiv-unsterbliche Faden <em>durch</em> die vergehenden Momente. <em>Kontinuität besteht aus Diskontinuität — der Leib dauert an, indem er beständig vergeht und neu erfasst wird.</em></p>
+
+    <h3>A2 — W2: Teleologie als epikritische Schärfung der protopathischen Spannung</h3>
+    <p>Die beiden Pole sind <em>dasselbe Geschehen in zwei Stadien</em>. Schmitz' <em>protopathisch</em> (dumpf, ziellos) ist der <em>gegebene / physikalische</em> Pol; sein <em>epikritisch</em> (spitz, gerichtet) ist der <em>zielhafte / konzeptionelle</em> Pol. Die <span class="hl2">Konkreszenz</span> ist genau der <em>protopathisch→epikritisch</em>-Übergang: Die ziellose vitale Spannung differenziert sich, indem sie sich zur Satisfaction verdichtet, <em>selbst</em> zu einem <em>subjective aim</em>. Teleologie steht also nicht <em>vor</em> dem Affekt, sondern <em>emergiert aus</em> ihm. Whiteheads „primordialer" Aim (das dargebotene bestmögliche Ziel) entspricht Schmitz' Feld möglicher <em>leiblicher Richtungen</em>; der selbst-formed Aim entspricht der epikritischen <em>Wahl einer</em> Richtung. <strong>Die fusionierte Schlussfolgerung:</strong> <em>Eine vor-ziellose vitale Spannung ist der Grund, dessen geschärftes, selbst-organisiertes Form der subjective Aim ist.</em></p>
+
+    <h3>A3 — W3: Bestimmtheit innerhalb, Randlosigkeit zwischen</h3>
+    <p>Ein Moment ist <em>innerlich bestimmt</em> (es erreicht eine Satisfaction — eine koälierte Insel mit Zentrum und Richtung) und zugleich <em>äußerlich randlos</em> (es erfasst seine Nachbarschaft und fließt in das umgebende Gewoge). Whiteheads Satisfaction ist <em>relativ</em> und nicht isoliert (Prinzip der Relativität); Schmitz' „kein Rand" gilt für das <em>gefühlte Kontinuierliche zwischen</em> den Occasions. <strong>Die fusionierte Schlussfolgerung:</strong> <em>relative Bestimmtheit</em> — bestimmt in sich, unbestimmt in seinen Verbindungen; die Insel hat einen Kern (Satisfaction) und keinen harten Saum (das Gewoge).</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>1. Ontologie: Prozess statt Substanz, Erleben statt Materie</h3>
+    <p>Beide Papiere sind anti-materialistisch und anti-substantialistisch. Die Grundelemente der Wirklichkeit sind <em>„Tropfen von Erfahrung"</em> (Leib-Gegebenheiten / actual occasions). Selbst das einfachste Element <em>erlebt</em> in einem minimalen Sinn: es reagiert, nimmt auf, wird beeinflusst (Whitehead: „selbst ein Elektron ‚fühlt' seine Umgebung — nicht bewusst"). Der Leitgedanke ist der <em>Prozess</em>: „Wie etwas wird, bestimmt, was es ist." Es gibt kein statisches Sein, nur Werden (Concrescence).</p>
+
+    <h3>2. Der zweifache Aufbau eines Moments (das Kern-Modell der Fusion)</h3>
+    <p>Das zentrale Ergebnis der Verschmelzung: Ein Erlebnis-Moment hat <strong>zwei Pole</strong>, und die Schmitz'sche protopathisch/epikritisch-Achse absorbiert dabei die Whitehead'sche Teleologie:</p>
+    <ul>
+      <li><span class="hl">Physikalischer / protopathischer Pol (das Gegebene):</span> die Menge der <em>erfassten Vergangenheits-Momente</em> (objektiv-unsterbliche Vergangenheit = objektive Daten) zusammen mit den <em>ewigen Objekten</em> (Formen, Richtungen), die in dieses Moment <em>ingressieren</em>. Dumpf, diffus, vor-ziellos. — Schmitz: das Gegebene der leiblichen Enge, protopathisch.</li>
+      <li><span class="hl2">Konzeptioneller / epikritischer Pol (das Selbst-bestimmte):</span> der <em>subjective aim</em>, die Neuheit, die <em>Wahl einer leiblichen Richtung</em>. Spitz, gepeakt, selbst-organisiert. — Schmitz: das Gewählte, epikritisch.</li>
+      <li><strong>Konkreszenz</strong> ist der Prozess, durch den sich beide Pole zu einer <em>Satisfaction</em> vereinigen. In Schmitz' Sprache: Das Gewoge der Inseln koäliert zu einem <em>einen</em> fühlenden, gerichteten Moment (Engung löst sich in eine gerichtete Weitung auf).</li>
+    </ul>
+    <svg class="diagram" viewBox="0 0 760 180" role="img" aria-label="Zweipoliges Moment: Konkreszenz">
+      <text class="dp-txt2" x="65" y="16">physikalische Pole (Gegebenes)</text>
+      <g class="dp-dots">
+        <circle cx="40" cy="55" r="7"/><circle cx="72" cy="80" r="6"/><circle cx="55" cy="105" r="7"/>
+        <circle cx="96" cy="65" r="6"/><circle cx="92" cy="98" r="5"/>
+      </g>
+      <g class="dp-forms">
+        <rect x="30" y="128" width="18" height="18" rx="3"/>
+        <circle cx="75" cy="137" r="9"/>
+        <path d="M100 128 l14 18 l-28 0 z"/>
+      </g>
+      <path class="dp-flow" d="M130 85 L 300 85"/>
+      <path class="dp-flow" d="M300 85 l-12 -6 M300 85 l-12 6"/>
+      <text class="dp-txt" x="215" y="66">Konkreszenz</text>
+      <text class="dp-txt2" x="215" y="106">die Vielen → eins</text>
+      <circle class="dp-sat" cx="360" cy="85" r="16"/>
+      <path class="dp-aim" d="M378 85 L 432 85"/>
+      <path class="dp-aim" d="M432 85 l-11 -5 M432 85 l-11 5"/>
+      <text class="dp-txt" x="360" y="52">Satisfaction</text>
+      <text class="dp-txt2" x="400" y="118">konzeptionelle Pole (Aim)</text>
+      <path class="dp-perish" d="M360 101 C 360 152, 210 152, 60 122"/>
+      <text class="dp-txt2" x="210" y="172">vergeht → objektiv unsterblich (Daten)</text>
+    </svg>
+
+    <h3>3. Vitaler Antrieb = Kreativität / Subjective Aim</h3>
+    <p>Der <em>Antrieb</em> ist in beiden die treibende Kraft. Schmitz: Der Leib lebt <em>in</em> der Spannung zwischen <span class="hl">Engung und Weitung</span> — der vitale Antrieb ist „Spannung gegen Schwellung". Whitehead: <em>Creativity</em> ist das universellste Prinzip — „The many become one, and are increased by one" — und der <em>subjective aim</em> steuert auf Intensität der Erfahrung hin. <strong>Fusioniert:</strong> Die vitale Spannung <em>ist</em> der kreative Prozess; ihr epikritischer Pol ist der Aim. Die <span class="hl">leibliche Richtung</span> („unumkehrbare Richtungen aus der Enge in die Weite") <em>ist</em> der Vektor des Occasion-Ziels: Enge → gerichtete Weitung.</p>
+
+    <h3>4. Zusammenhang: Einleibung ↔ Prehension / Relativität</h3>
+    <p>Beide leugnen Isolation. Schmitz: <em>Einleibung</em> — zwei Leiber <em>verleiben</em> sich durch <em>gemeinsamen vitalen Antrieb</em> (antagonistische Einleibung: zwei Spannungen werden zu einem gemeinsamen Feld). Whitehead: <em>Prehension</em> — jede Occasion erfasst jede andere; „Solidarität des Universums"; „jede Entität ist Potential für jedes Werden". <strong>Fusioniert:</strong> Verbindung / Kommunikation wird nicht <em>hinzugefügt</em>, sondern ist <em>konstitutiv</em>; der eigene Leib <em>enthält</em> (erfasst) bereits die Welt.</p>
+
+    <h3>5. Vergehen &amp; objektive Unsterblichkeit = Fortdauer des Leibes</h3>
+    <p>Whitehead: <em>perpetual perishing</em> und <em>objective immortality</em> — die Vergangenheit <em>wird</em> zu objektiven Daten für alle zukünftigen Erfahrungen; „Du bist die Summe aller vergangenen Momente." Schmitz: der Leib als <em>Kontinuität</em>, als das fortwährend sich selbst aufnehmende Feld (der Leib als Gedächtnis seiner selbst). <strong>Fusioniert:</strong> Die Vergangenheit „lebt weiter" als <em>gegebener Untergrund</em> (physikalischer Pol) jedes neuen Moments; die objektiv-unsterbliche Kette <em>ist</em> der anhaltende Leib.</p>
+
+    <h3>6. Ewige Objekte &amp; leibliche Richtungen</h3>
+    <p>Whitehead: <em>Eternal Objects</em> — zeitlose Potentiale (Farben, Formen, mathematische Strukturen), die in konkreten Erfahrungen <em>realisiert</em> (ingressierend) werden („Rot" existiert als Möglichkeit, auch wenn gerade nichts rot ist). Schmitz: <em>leibliche Richtungen</em> (Blick, Ausatmen) — Richtungen, die der Leib annehmen kann. <strong>Fusioniert:</strong> Die „Formen der Möglichkeit" sind im <em>leibhaftigen Körper</em> als seine Richtungen realisiert; das Ewige ist keine gesonderte Welt, sondern der <em>Möglichkeitsraum</em>, aus dem der Aim eines Moments auswählt.</p>
+
+    <h3>7. Gott (Whitehead-eigen, mit einer Schmitz'schen Lesart)</h3>
+    <p>Whiteheads dipolare Theologie: eine <em>primordiale Natur</em> (die Ordnung aller Möglichkeiten; „lure for feeling" — bietet jedem Moment sein bestmögliches Ziel an, <em>lockt</em>, zwingt nicht) und eine <em>consequente Natur</em> (er nimmt die Welt in sich auf). Er ist „Poet der Welt", kein Herrscher; Freiheit ist real (die Entität entscheidet). <em>Schmitz'sche Lesart:</em> die primordiale Natur = das Feld aller möglichen <em>vitalen Richtungen</em>; die konsekutive Natur = der Leib/die Welt, der alles Geschehene in sich aufgenommen hat.</p>
+
+    <h3>8. Formale Skizze (nützliche Struktur beider)</h3>
+    <div class="formal">Moment M  (actual occasion / Leib-Gegebenheit)
+
+  physikalische Pole   P  =  { vorgefundene Vergangenheits-Momente }
+                       ∪  { eingressierende ewige Objekte (Formen, Richtungen) }
+  konzeptionelle Pole  C  =  subjective Aim · Neuheit · gewählte leibliche Richtung
+  Konkreszenz          (P, C)  →  S      (Satisfaction: eine bestimmte Einheit)
+
+Kreativität (der Antrieb):   die Vielen → eins,  und es wird um eins vermehrt
+                             (Schmitz: Spannung  Engung ↔ Weitung)
+
+Epikritische Schärfung:       σ_protopathisch  (diffus,  σ groß,  ziellos)
+                              ↓  Konkreszenz
+                              σ_epikritisch    (spitz,   σ klein, gerichtet = Aim)</div>
+    <p>„Bestimmtheit" eines Moments ist dabei <em>relativ</em>: <em>determiniert in seiner Satisfaction, indeterminate in seinen prehensiven Verbindungen</em> (Auflösung W3).</p>
+    <p>
+      <span class="tag">Prozess</span><span class="tag">Actual Occasion</span><span class="tag">Leib</span><span class="tag">Konkreszenz</span><span class="tag">Satisfaction</span><span class="tag">Protopathisch</span><span class="tag">Epikritisch</span><span class="tag">Subjective Aim</span><span class="tag">Prehension</span><span class="tag">Einleibung</span><span class="tag">Objektive Unsterblichkeit</span><span class="tag">Kreativität</span>
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — Konkreszenz &amp; objektive Unsterblichkeit</h2>
+    <p>Viele <span class="hl">protopathische</span>, diffuse „Inseln" (das Gegebene) schweifen — bis sich <em>ein</em> Moment verdichtet (Konkreszenz) und zu einer bestimmten, <span class="hl2">gerichteten</span> <em>Satisfaction</em> wird. Dann <em>vergeht</em> sie und bleibt als <span class="hl2">objektiv-unsterblicher</span> Datenpunkt, der die <em>nächsten</em> Momente (den physikalischen Pol) mitbestimmt. Der Regler steuert den <em>protopathisch ↔ epikritisch</em>-Übergang (dumpf/randlos → spitz/gerichtet).</p>
+    <div id="vizwrap">
+      <canvas id="viz"></canvas>
+      <div class="controls">
+        <button id="btnMoment" type="button">◉ Moment jetzt</button>
+        <button id="btnAuto" type="button">⏸ Auto</button>
+        <button id="btnReset" type="button">↺ Zurücksetzen</button>
+        <button id="btnTheme" type="button">☀ Licht</button>
+        <div class="sliderbox">
+          <span>Protopathisch (dumpf, diffus) &nbsp;↔&nbsp; Epikritisch (spitz, gerichtet)</span>
+          <input id="epi" type="range" min="0" max="100" value="55">
+        </div>
+        <div class="pastbadge">objektiv unsterblich: <b id="pastCount">0</b> Momente</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov a">
+      <span class="badge">A</span>
+      <div>
+        <a href="../buecher/hermann_schmitz3.html">buecher/hermann_schmitz3.html</a>
+        <p>Hermann Schmitz, <em>Der Leib</em> (interaktiv): Engung &amp; Weitung, Leibesinseln, leibliche Richtung, (antagonistische) Einleibung, protopathisch ↔ epikritisch.</p>
+      </div>
+    </div>
+    <div class="prov b">
+      <span class="badge">B</span>
+      <div>
+        <a href="../buecher/whitehead.html">buecher/whitehead.html</a>
+        <p>A. N. Whitehead, <em>Process and Reality</em> (interaktiv): actual occasions, Concrescence/Satisfaction, subjective aim, eternal objects, Kreativität, dipolarer Gott, objektive Unsterblichkeit.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion (Runde 1, Paar 010) — nicht-KI-Track. Standalone, themenreaktiv, ohne externe Datenabrufe.</footer>
+</article>
+
+<script>
+(function(){
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var slider = document.getElementById('epi');
+  var btnMoment = document.getElementById('btnMoment');
+  var btnAuto = document.getElementById('btnAuto');
+  var btnReset = document.getElementById('btnReset');
+  var btnTheme = document.getElementById('btnTheme');
+  var pastCount = document.getElementById('pastCount');
+  if(!canvas){ return; }
+  var ctx = canvas.getContext('2d');
+  var DPR = Math.max(1, window.devicePixelRatio || 1);
+  var W = 0, H = 0;
+  var COLORS = { bg:'#0b0b1e', blob:'#ff7a6a', aim:'#ff5a3d', sat:'#ffb14d', past:'#34d39b', fg:'#eceaf2', dim:'#8b8aa0' };
+
+  function hexToRgb(hex){
+    hex = (hex || '').replace('#','').trim();
+    if(hex.length === 3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var num = parseInt(hex, 16);
+    if(isNaN(num)){ return [255,120,106]; }
+    return [(num>>16)&255, (num>>8)&255, num&255];
+  }
+  function rgba(hex, a){
+    var c = hexToRgb(hex);
+    return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
+  }
+  function readColors(){
+    try{
+      var cs = getComputedStyle(document.documentElement);
+      var g = function(n, fb){ var v = cs.getPropertyValue(n).trim(); return v || fb; };
+      COLORS.bg = g('--mn-viz-bg', COLORS.bg);
+      COLORS.blob = g('--mn-viz-blob', COLORS.blob);
+      COLORS.aim = g('--mn-viz-aim', COLORS.aim);
+      COLORS.sat = g('--mn-viz-sat', COLORS.sat);
+      COLORS.past = g('--mn-viz-past', COLORS.past);
+      COLORS.fg = g('--mn-viz-fg', COLORS.fg);
+      COLORS.dim = g('--mn-viz-dim', COLORS.dim);
+    }catch(e){}
+  }
+
+  var field = [], past = [];
+  var E = 0.55;
+  var auto = true;
+  var phase = 'scatter', phaseStart = performance.now();
+  var cx = 0, cy = 0, aimAngle = 0, momentCount = 0;
+
+  function resize(){
+    var w = wrap.clientWidth || 600;
+    var h = Math.max(320, Math.min(460, Math.round(w * 0.56)));
+    W = w; H = h;
+    canvas.width = Math.round(w * DPR);
+    canvas.height = Math.round(h * DPR);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  function seedField(){
+    field = [];
+    var n = 24;
+    for(var i=0;i<n;i++){
+      field.push({
+        x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5,
+        r: 6 + Math.random()*10
+      });
+    }
+  }
+  function pickCenter(){
+    cx = W*0.5 + (Math.random()-0.5)*W*0.2;
+    cy = H*0.5 + (Math.random()-0.5)*H*0.2;
+    aimAngle = Math.random()*Math.PI*2;
+  }
+  function startMoment(){ pickCenter(); phase = 'concresce'; phaseStart = performance.now(); }
+  function converged(){
+    if(!field.length){ return false; }
+    var sum = 0;
+    for(var i=0;i<field.length;i++){ var dx=field[i].x-cx, dy=field[i].y-cy; sum += Math.sqrt(dx*dx+dy*dy); }
+    return (sum/field.length) < 22;
+  }
+  function spawnPast(){
+    past.push({ x: cx, y: cy, w: 1, ang: aimAngle });
+    momentCount++;
+    if(past.length > 14){ past.shift(); }
+    if(pastCount){ pastCount.textContent = String(momentCount); }
+  }
+  function step(now){
+    var inPhase = now - phaseStart;
+    var strength = 0.5 + E*1.3;
+    if(phase === 'scatter'){
+      for(var i=0;i<field.length;i++){
+        var p = field[i];
+        for(var k=0;k<past.length;k++){
+          var pd = past[k];
+          var dxp = pd.x - p.x, dyp = pd.y - p.y;
+          p.vx += dxp * 0.000045 * pd.w;
+          p.vy += dyp * 0.000045 * pd.w;
+        }
+        p.vx *= 0.995; p.vy *= 0.995;
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0)p.x+=W; else if(p.x>W)p.x-=W;
+        if(p.y<0)p.y+=H; else if(p.y>H)p.y-=H;
+      }
+      if(auto && inPhase > 1500){ startMoment(); }
+    } else if(phase === 'concresce'){
+      for(var j=0;j<field.length;j++){
+        var q = field[j];
+        var dx = cx - q.x, dy = cy - q.y;
+        q.vx += dx*0.0045*strength; q.vy += dy*0.0045*strength;
+        q.vx *= 0.90; q.vy *= 0.90;
+        q.x += q.vx; q.y += q.vy;
+      }
+      if(converged() || inPhase > 2600){ phase = 'satisfaction'; phaseStart = now; }
+    } else if(phase === 'satisfaction'){
+      if(inPhase > 1000){ phase = 'perish'; phaseStart = now; }
+    } else if(phase === 'perish'){
+      if(inPhase > 700){ spawnPast(); seedField(); phase = 'scatter'; phaseStart = now; }
+    }
+    for(var m=0;m<past.length;m++){ if(past[m].w > 0.35){ past[m].w *= 0.9992; } }
+  }
+  function arrow(x, y, ang, len, color, width){
+    var ex = x + Math.cos(ang)*len, ey = y + Math.sin(ang)*len;
+    ctx.strokeStyle = color; ctx.lineWidth = width;
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(ex,ey); ctx.stroke();
+    var hs = 6 + width;
+    ctx.beginPath();
+    ctx.moveTo(ex,ey); ctx.lineTo(ex - Math.cos(ang-0.4)*hs, ey - Math.sin(ang-0.4)*hs);
+    ctx.moveTo(ex,ey); ctx.lineTo(ex - Math.cos(ang+0.4)*hs, ey - Math.sin(ang+0.4)*hs);
+    ctx.stroke();
+  }
+  function draw(now){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = COLORS.bg; ctx.fillRect(0,0,W,H);
+    var n = field.length, mean = 0;
+    if(n){ for(var i=0;i<n;i++){ var dx=field[i].x-cx, dy=field[i].y-cy; mean += Math.sqrt(dx*dx+dy*dy); } mean /= n; }
+    var conv = Math.max(0, Math.min(1, 1 - mean/(Math.max(W,1)*0.5)));
+    var inPhase = now - phaseStart;
+
+    for(var k=past.length-1;k>=0;k--){
+      var pd = past[k];
+      ctx.globalAlpha = 0.5*pd.w;
+      ctx.fillStyle = COLORS.past;
+      ctx.beginPath(); ctx.arc(pd.x,pd.y,5,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 0.25*pd.w;
+      ctx.strokeStyle = COLORS.past; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(pd.x,pd.y,9,0,Math.PI*2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    var a0 = 0.16 + (1-E)*0.16 + conv*0.14;
+    for(var f=0;f<n;f++){
+      var p = field[f];
+      var R = p.r * (1.7 - E*0.7);
+      var g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,R);
+      g.addColorStop(0, rgba(COLORS.blob, Math.min(0.9, a0 + 0.12)));
+      g.addColorStop(1, rgba(COLORS.blob, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x,p.y,R,0,Math.PI*2); ctx.fill();
+      if(E > 0.55){
+        ctx.globalAlpha = ((E - 0.55)/0.45) * 0.85;
+        ctx.fillStyle = rgba(COLORS.blob, 1);
+        ctx.beginPath(); ctx.arc(p.x,p.y,1.4,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    if(phase === 'concresce'){
+      ctx.globalAlpha = 0.25; ctx.strokeStyle = COLORS.aim; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx,cy,20,0,Math.PI*2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    if(phase === 'concresce' || phase === 'satisfaction' || phase === 'perish'){
+      var aimLen = (18 + E*46);
+      if(phase === 'concresce'){ aimLen *= (0.3 + 0.7*conv); }
+      arrow(cx, cy, aimAngle, aimLen, rgba(COLORS.aim, 0.9), 2.5);
+    }
+
+    if(phase === 'satisfaction'){
+      var nr = 12 + E*12;
+      ctx.save();
+      ctx.shadowColor = COLORS.sat; ctx.shadowBlur = 24;
+      ctx.fillStyle = rgba(COLORS.sat, 0.95);
+      ctx.beginPath(); ctx.arc(cx,cy,nr,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = COLORS.fg; ctx.font = '600 13px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('SATISFACTION', cx, cy - nr - 14);
+    } else if(phase === 'perish'){
+      var prog = Math.min(1, inPhase/700);
+      var nr2 = (12 + E*12) + prog*22;
+      ctx.globalAlpha = 1 - prog;
+      ctx.fillStyle = rgba(COLORS.sat, 0.9);
+      ctx.beginPath(); ctx.arc(cx,cy,nr2,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.fillStyle = COLORS.dim; ctx.font = '12px system-ui, sans-serif'; ctx.textAlign = 'left';
+    var msg = '';
+    if(phase === 'scatter'){ msg = 'Das Gegebene: die vielen Momente schweifen (protopathisch).'; }
+    else if(phase === 'concresce'){ msg = 'Konkreszenz: die Vielen werden eins — der Aim schärft sich.'; }
+    else if(phase === 'satisfaction'){ msg = 'SATISFACTION: ein bestimmtes, gerichtetes Moment ist entstanden.'; }
+    else if(phase === 'perish'){ msg = 'Vergehen: das Moment wird zu objektiven Daten (objektiv unsterblich).'; }
+    ctx.fillText(msg, 12, H - 12);
+  }
+  function loop(now){
+    step(now);
+    draw(now);
+    requestAnimationFrame(loop);
+  }
+
+  readColors();
+  resize();
+  seedField();
+
+  btnTheme.addEventListener('click', function(){
+    var el = document.documentElement;
+    el.classList.toggle('dark');
+    readColors();
+    btnTheme.textContent = el.classList.contains('dark') ? '☀ Licht' : '☾ Dunkel';
+  });
+  slider.addEventListener('input', function(){ E = slider.value / 100; });
+  btnMoment.addEventListener('click', function(){ if(phase === 'scatter'){ startMoment(); } });
+  btnAuto.addEventListener('click', function(){ auto = !auto; btnAuto.textContent = auto ? '⏸ Auto' : '▶ Auto'; });
+  btnReset.addEventListener('click', function(){
+    past = []; momentCount = 0;
+    if(pastCount){ pastCount.textContent = '0'; }
+    seedField(); phase = 'scatter'; phaseStart = performance.now();
+  });
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

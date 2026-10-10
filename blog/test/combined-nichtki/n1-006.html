@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der primale Raum: Homotopie × Origami</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff;
+  --border:#d8d3c4; --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --prime:#0d9488; --comp:#7a8494; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e;
+  --border:#233450; --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --prime:#64ffda; --comp:#5b6b86; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{
+  max-width:820px; margin:0 auto; padding:40px 24px 90px;
+}
+header{margin-bottom:28px;}
+h1{
+  font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;
+}
+.subtitle{
+  color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;
+}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+.note{
+  border-left:3px solid var(--accent); padding:6px 0 6px 14px; margin:12px 0; color:var(--muted);
+}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:520px; cursor:grab; touch-action:none;}
+#viz:active{cursor:grabbing;}
+#hud{
+  position:absolute; padding:9px 12px; background:var(--panel); border:1px solid var(--accent);
+  color:var(--fg); font-size:.82rem; display:none; width:210px; pointer-events:none;
+  border-radius:8px; z-index:20; box-shadow:var(--shadow); line-height:1.4;
+}
+#hud .pv{color:var(--accent); font-weight:bold; font-size:1.05rem;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:18px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:130px;}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted);}
+#themeBtn{
+  margin-top:10px; background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+#themeBtn:hover{border-color:var(--accent); color:var(--accent);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Der primale Raum: Homotopie &times; Origami</h1>
+  <p class="subtitle">Fusion aus: <code>pz9.html</code> &times; <code>pz8.html</code></p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere nehmen dasselbe Fundament &mdash; die <em>eindeutige Primfaktorzerlegung</em> &mdash; und
+  bauen darauf einen dreidimensionalen Raum auf, in dem jede Zahl&nbsp;&ge;&nbsp;2 eine Stelle einnimmt.
+  Sie beschreiben aber dieselbe Struktur von zwei unvereinbar wirkenden Seiten.
+  <strong>HoTT Prime Topology (A)</strong> sieht jede Zahl als <em>Punkt</em>: ihre Lage ist eine reine Funktion ihrer
+  eigenen Primfaktoren, ordnungsunabhängig und &ldquo;univalent&rdquo;. <strong>3D Prime Origami (B)</strong> sieht jede Zahl
+  als <em>Knick</em> auf einer durchgehenden Bahn: ihre Lage ergibt sich aus dem kumulativen Wandel aller vorangegangenen
+  Zahlen, also aus der Reihenfolge.</p>
+  <p>Die Fusion löst das auf, indem sie beide Seiten als zwei Beschreibungsstufen <em>eines einzigen Objekts</em> liest:
+  <em>eine Zahl ist ein Pfad</em> (ein 1-Morphismus) in einem topologischen Zahlensystem. Ihre <strong>Primfaktor-Zerlegung
+  ist ihre kanonische Wort- bzw. Schleifendekomposition</strong> &mdash; Primzahlen sind die irreduziblen Erzeuger
+  (die &ldquo;fundamentalen Schleifen&rdquo;), zusammengesetzte Zahlen sind Produkte dieser Erzeuger. Aus dieser Zerlegung
+  folgt eine <strong>lokale, ordnungsunabhängige Wendung</strong> (was A sieht: der Typ / die Homotopieklasse), und der
+  geordnete Durchlauf &ldquo;2, 3, &hellip;, N&rdquo; ist ein <strong>kumulativer Wandel</strong>, der diese lokalen Wendungen
+  zur globalen Bahn aufsummiert (was B sieht: der konkrete Lift). Die eine Zahl trägt also zwei Adressen zugleich:
+  eine intrinsische (ihre Signatur) und eine extrinsische (ihren Platz auf dem Weg).</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht in der Mathematik der Faktorisierung, wohl aber in der
+  <em>Art, wie eine Zahl ihre Position erhält</em>. Drei konkrete Punkte:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Ursprung der Position</h3>
+      <div class="src">A &mdash; HoTT Prime Topology</div>
+      <p>Die Lage von <code>n</code> wird nur aus <strong>eigenen</strong> Primfaktoren berechnet
+      (<code>phase = p &middot; k</code>, Summe über die eigenen Faktoren). Die Reihenfolge der Folge spielt keine Rolle;
+      es gilt <em>Univalenz</em>: gleiche Faktoren &rArr; identische Position.</p>
+    </div>
+    <div class="col">
+      <h3>1. Ursprung der Position</h3>
+      <div class="src">B &mdash; 3D Prime Origami</div>
+      <p>Die Lage von <code>n</code> ist die <strong>Laufsumme aller vorherigen Schritte</strong>
+      (<code>rx,ry,rz</code> akkumulieren). Dieselbe Zahl an anderer Stelle in der Folge landet an einem anderen Punkt
+      &mdash; die Position ist <em>ordnungsabhängig</em>.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Geometrische Gestalt</h3>
+      <div class="src">A &mdash; HoTT Prime Topology</div>
+      <p>Zeichnet eine <strong>diskrete Punktmenge</strong>: einen 0-dimensionalen Raum von Signaturen, keine Kanten
+      zwischen den Zahlen. Es ist ein <em>Raum</em>.</p>
+    </div>
+    <div class="col">
+      <h3>2. Geometrische Gestalt</h3>
+      <div class="src">B &mdash; 3D Prime Origami</div>
+      <p>Zeichnet <strong>eine einzige zusammenhängende Polylinie</strong>: eine 1-dimensionale Bahn, deren Glieder die
+      geordneten Zahlen sind. Es ist ein <em>Pfad</em>.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. Verhalten des Faktormappings</h3>
+      <div class="src">A &mdash; HoTT Prime Topology</div>
+      <p>Das Faktormapping ist <strong>beschränkt/otoroidal</strong> (sin/cos, Gewichte <code>1/(idx+1)</code>):
+      die Wolke bleibt kompakt.</p>
+    </div>
+    <div class="col">
+      <h3>3. Verhalten des Faktormappings</h3>
+      <div class="src">B &mdash; 3D Prime Origami</div>
+      <p>B akkumuliert <strong>unbegrenzte Laufsummen</strong> als Laufwinkel &mdash; die Bahn <em>driftet</em> und
+      wird instabil für große N.</p>
+    </div>
+  </div>
+  <div class="note">Kein Widerspruch in der Arithmetik (beide nutzen dieselbe Faktorisierung), aber drei
+  unvereinbar wirkende Gesten: Zustand vs. Prozess, Wolke vs. Linie, beschränkt vs. driftend.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>1. Zustand vs. Prozess &mdash; zwei Stufen derselben Homotopie.</strong> In der Homotopietheorie ist die
+  Identität eines Punkts <em>sein Pfad ab einem Basispunkt</em>. A liest die <em>Homotopieklasse</em> dieses Pfads &mdash;
+  sein Typ, bestimmt durch die Primfaktor-Signatur, ordnungsunabhängig. B liest den <em>konkreten Lift</em> &mdash; die
+  gewählte Realisierung dieses Pfads im Umgebungsraum, ordnungsabhängig. Die beiden stimmen, sobald man sie auf ihre
+  Ebenen projiziert: A ist der Typ, B der Repräsentant. <em>Fusionsschluss:</em> eine Zahl ist ein 1-Morphismus; ihre
+  Zerlegung in Primfaktoren ist die kanonische Wortdarstellung (Erzeuger = Primzahlen), ihre 3D-Position ein gewählter
+  Repräsentant dieses Worts.</p>
+  <p><strong>2. Wolke vs. Linie &mdash; Skelett und Weg.</strong> A liefert das <em>Skelett</em>: die Menge aller
+  Homotopieklassen (die Punkte). B liefert den <em>Weg durch dieses Skelett</em>: die geordnete Bahn, die sie besucht.
+  Man braucht beide &mdash; die fusionierte Figur zeichnet die <em>zusammenhängende Bahn</em> (B), färbt aber jeden Punkt
+  <em>nach seiner Signatur</em> (A), sodass die beiden Lesarten im selben Bild koexistieren.</p>
+  <p><strong>3. Beschränkt vs. driftend &mdash; Dämpfung.</strong> Man behält B's kumulativen Wandel, dämpft die
+  Laufwinkel aber mit A's beschränkten toroidalen Mapping und einem Rückkopplungsfaktor <code>&lambda;&lt;1</code>.
+  So bleibt die Bahn stabil (kompakt, wie A) statt ins Unendliche zu driften (wie B).</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Gemeinsames Fundament</span>
+    <p>Beide Papiere beginnen mit demselben Satz: <strong>jede ganze Zahl <code>n &ge; 2</code> zerfällt eindeutig in
+    Primfaktoren</strong>, <code>n = p<sub>1</sub><sup>a&thinsp;1</sup> &middot; p<sub>2</sub><sup>a&thinsp;2</sup> &middot;
+    &hellip;</code> (eindeutige Primfaktorzerlegung). Aus dieser Menge <em>distinkter</em> Primfaktoren
+    <code>f(n) = {p<sub>1</sub>, p<sub>2</sub>, &hellip;}</code> wird die Geometrie erzeugt. Die Arithmetik ist
+    identisch; die Kartenprojektion ist es nicht.</p>
+  </div>
+
+  <h3 style="margin:18px 0 8px;">A als &ldquo;lokale Wendung&rdquo; (intrinsisch)</h3>
+  <p>A definiert je Zahl einen beschränkten Vektor aus ihren Faktoren. Für die distinkten Faktoren <code>f</code> und
+  einen Krümmungsparameter <code>k</code>:</p>
+  <pre><code>L(n) = &Sigma;_i  [ sin(p_i&middot;k)/(i+1) ,  cos(p_i&middot;k)/(i+1) ,  sin(0.5&middot;p_i&middot;k)/(i+1) ]</code></pre>
+  <p>Da <code>L</code> nur von der Signatur abhängt, gilt die &ldquo;Univalenz&rdquo;: <code>L(m) = L(n)</code>
+  genau dann, wenn <code>m</code> und <code>n</code> dieselben distinkten Primfaktoren tragen. Primzahlen
+  (<code>f(n)={n}</code>) sind die <strong>fundamentalen Schleifen</strong> &mdash; die Erzeuger, aus denen alle
+  übrigen Pfade zusammengesetzt sind. A stellt daraus eine <em>Punktmenge</em> (den &ldquo;Typenraum&rdquo;) dar.</p>
+
+  <h3 style="margin:18px 0 8px;">B als &ldquo;kumulativer Wandel&rdquo; (extrinsisch)</h3>
+  <p>B legt die Zahl <code>n</code> auf einer Bahn an: von <code>p(2)=0</code> aus wird ein Schritt
+  <code>step</code> in einer Laufrichtung gemacht, die aus den Faktoren der jeweiligen Stufe gebildet wird. Die Position
+  <code>p(n) = p(n-1) + step &middot; heading(n)</code> hängt damit von der ganzen Vorgeschichte ab &mdash; dieselbe Zahl
+  an anderer Stelle steht anders. B stellt daraus eine <em>Polylinie</em> (das &ldquo;Origami&rdquo;) dar, wobei Primzahlen
+  als helle Knotenpunkte &ldquo;ruhen&rdquo;.</p>
+
+  <h3 style="margin:18px 0 8px;">Die fusionierte Regel</h3>
+  <p>Man verbindet beide, indem man die <strong>lokale Wendung</strong> (A) zur <strong>Steuerung des globalen
+  Wandels</strong> (B) macht und diesen mit <code>&lambda; = 0.92</code> dämpft, damit er nicht driftet:</p>
+  <pre><code>L(n)      = &Sigma;_i  [ sin(p_i&middot;k) ,  cos(p_i&middot;k) ,  sin(0.5&middot;p_i&middot;k) ] / (i+1)   // A, beschränkt
+h_x, h_y, h_z  &lt;-  &lambda;&middot;h + (1-&lambda;)&middot;L(n)                 // dämpfende Laufrichtung (A's Stabilität)
+dir(n)     = [ cos(h_y)cos(h_z) ,  sin(h_x)cos(h_z) ,  sin(h_z) ]       // B's Schritt
+p(n)       = p(n-1) + step &middot; dir(n)                                   // B's kumulativer Wandel</code></pre>
+  <p>Das ist genau die Auflösung: <code>L(n)</code> ist die <em>intrinsische</em>, ordnungsunabhängige Wendung (A);
+  <code>p(n)</code> ist die <em>extrinsische</em>, ordnungsabhängige Position (B); der Dämpfungsfaktor überträgt A's
+  Kompaktheit auf B's Bahn. Primzahlen bleiben die leuchtenden Erzeuger; zusammengesetzte Zahlen werden nach der
+  Anzahl ihrer distinkten Faktoren (der <em>Omega-Zahl</em> <code>&omega;(n)</code>) farbig abgestuft &mdash; je mehr
+  Erzeuger ein Wort enthält, desto weiter rückt seine Färbung.</p>
+
+  <h3 style="margin:18px 0 8px;">Warum das die richtige Fusion ist</h3>
+  <ul>
+    <li><strong>Eindeutige Faktorisierung &harr; freie Monoidstruktur.</strong> Die Menge der Primzahlen erzeugt ein freies
+      Monoid: jede Zahl ist ein eindeutiges Wort über den Primzahlen. In der Topologie entspricht das dem fundamentalen
+      / freien Gruppengenerator-Bild: Primzahlen = primitive Zyklen (Erzeuger), zusammengesetzte Zahlen = Konkatenationen
+      dieser Zyklen. A's &ldquo;fundamentale Schleifen&rdquo; und B's &ldquo;Pfad&rdquo; sind dieselbe Struktur,
+      einmal als Menge der Klassen, einmal als konkretes Wort.</li>
+    <li><strong>Typ vs. Lift.</strong> A liefert die Typen/Homotopieklassen (Skelett, diskret); B liefert einen Lift
+      dieser Typen in einen Raum (Bahn, zusammenhängend). Die fusionierte Figur ist der Lift <em>durch</em> das Skelett,
+      dessen Knoten die Typen tragen.</li>
+    <li><strong>Stabilität als Eigenschaft, nicht als Einschränkung.</strong> Die Dämpfung macht die Bahn kompakt,
+      ohne die ordnungsabhängige Natur des Pfads zu verlieren &mdash; ein Gewinn, den B allein nicht hat.</li>
+  </ul>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p>Ein 3D-Canvas, das die fusionierte Regel live zeichnet: eine <em>zusammenhängende Bahn</em> (B), deren
+  <em>lokale Krümmung</em> an jeder Stufe das <em>beschränkte toroidale Mapping</em> der Primfaktoren (A) ist,
+  kumulativ als dämpfender Laufpfad. Primzahlen leuchten als <em>Erzeuger</em>, zusammengesetzte Zahlen werden
+  nach ihrer Omega-Zahl farbig abgestuft. Ziehen = drehen, Scrollen/Rad = zoomen, über einen Punkt = Detail-HUD.</p>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div id="hud"></div>
+    <div class="viz-controls">
+      <div class="grp">Zahlen bis <b id="nVal">1200</b>
+        <input type="range" id="nRange" min="100" max="3000" step="100" value="1200"></div>
+      <div class="grp">Krümmung k <b id="kVal">1.00</b>
+        <input type="range" id="kRange" min="0.1" max="2" step="0.05" value="1"></div>
+      <div class="grp">Schrittweite <b id="sVal">10</b>
+        <input type="range" id="sRange" min="2" max="30" value="10"></div>
+      <div class="hint">Ziehen: drehen &middot; Rad: zoomen &middot; Hover: Detail</div>
+    </div>
+  </div>
+  <button id="themeBtn">Theme wechseln (hell/dunkel)</button>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var hud = document.getElementById('hud');
+  var wrap = document.getElementById('vizwrap');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+
+  var nodes = [];
+  var angleX = 0.5, angleY = 0.4, zoom = 1.0;
+  var LAM = 0.92;
+
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+  function palette(){
+    if(isDark()){
+      return { bg:'#0b1220', path:'rgba(100,255,218,0.16)',
+               prime:'#64ffda', comp:[ [70,90,120],[90,120,150],[120,150,180],[150,180,205],[180,210,230] ],
+               hudBg:'#111a2e' };
+    }
+    return { bg:'#ffffff', path:'rgba(13,148,136,0.22)',
+             prime:'#0d9488', comp:[ [150,160,175],[120,140,160],[90,120,150],[60,110,140],[20,120,120] ],
+             hudBg:'#ffffff' };
+  }
+  function compColor(P, omega){
+    var idx = Math.max(0, Math.min(P.comp.length-1, omega-2));
+    var c = P.comp[idx];
+    return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+  }
+
+  function primeFactors(n){
+    var f=[], d=2, t=n;
+    while(t>1){
+      if(t%d===0){ f.push(d); while(t%d===0){ t/=d; } }
+      d++;
+      if(d*d>t){ if(t>1){ f.push(t); } break; }
+    }
+    return f;
+  }
+
+  function generate(){
+    var N = parseInt(document.getElementById('nRange').value,10);
+    var k = parseFloat(document.getElementById('kRange').value);
+    var step = parseInt(document.getElementById('sRange').value,10);
+    nodes = [];
+    var px=0, py=0, pz=0, hx=0, hy=0, hz=0;
+    for(var i=2;i<=N;i++){
+      var f = primeFactors(i);
+      var isP = (f.length===1 && f[0]===i);
+      var tx=0, ty=0, tz=0;
+      for(var j=0;j<f.length;j++){
+        var p=f[j], ph=p*k, w=1/(j+1);
+        tx += Math.sin(ph)*w;
+        ty += Math.cos(ph)*w;
+        tz += Math.sin(ph*0.5)*w;
+      }
+      hx = LAM*hx + (1-LAM)*tx*2.0;
+      hy = LAM*hy + (1-LAM)*ty*2.0;
+      hz = LAM*hz + (1-LAM)*tz*2.0;
+      var cx=Math.cos(hy), cz=Math.cos(hz);
+      var dx = cx*cz, dy = Math.sin(hx)*cz, dz = Math.sin(hz);
+      px += dx*step; py += dy*step; pz += dz*step;
+      nodes.push({ val:i, x:px, y:py, z:pz, isPrime:isP, factors:f, omega:f.length });
+    }
+  }
+
+  function project(n, cx, cy){
+    var x=n.x, y=n.y, z=n.z;
+    var cY=Math.cos(angleY), sY=Math.sin(angleY);
+    var x1 = x*cY - z*sY, z1 = x*sY + z*cY;
+    var cX=Math.cos(angleX), sX=Math.sin(angleX);
+    var y2 = y*cX - z1*sX, z2 = y*sX + z1*cX;
+    var depth=1000, per=depth/(depth+z2);
+    if(!(per>0) || per!==per){ return null; }
+    return { sx:x1*per*zoom+cx, sy:y2*per*zoom+cy, per:per*zoom, z2:z2 };
+  }
+
+  function render(){
+    var w = wrap.clientWidth, h = 520;
+    if(canvas.width!==w){ canvas.width=w; }
+    if(canvas.height!==h){ canvas.height=h; }
+    var P = palette();
+    ctx.fillStyle=P.bg; ctx.fillRect(0,0,w,h);
+    var cx=w/2, cy=h/2, i, n, pr;
+
+    ctx.beginPath();
+    ctx.strokeStyle=P.path; ctx.lineWidth=1.2;
+    var started=false;
+    for(i=0;i<nodes.length;i++){
+      pr = project(nodes[i], cx, cy);
+      if(pr){
+        if(!started){ ctx.moveTo(pr.sx,pr.sy); started=true; }
+        else { ctx.lineTo(pr.sx,pr.sy); }
+        nodes[i]._sx=pr.sx; nodes[i]._sy=pr.sy; nodes[i]._per=pr.per;
+      } else { nodes[i]._per=0; }
+    }
+    ctx.stroke();
+
+    for(i=0;i<nodes.length;i++){
+      n=nodes[i];
+      if(!n._per || n._per<=0){ continue; }
+      if(n.isPrime){
+        ctx.globalAlpha=Math.min(1,0.5+n._per);
+        ctx.shadowBlur=14*n._per; ctx.shadowColor=P.prime; ctx.fillStyle=P.prime;
+        ctx.beginPath(); ctx.arc(n._sx,n._sy,Math.max(0.5,3.4*n._per),0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0;
+      } else {
+        ctx.globalAlpha=Math.min(1,0.35+n._per);
+        ctx.fillStyle=compColor(P,n.omega);
+        ctx.beginPath(); ctx.arc(n._sx,n._sy,Math.max(0.4,1.8*n._per),0,Math.PI*2); ctx.fill();
+      }
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(render);
+  }
+
+  var dragging=false, lx=0, ly=0;
+  canvas.addEventListener('mousedown',function(e){ dragging=true; lx=e.clientX; ly=e.clientY; });
+  window.addEventListener('mouseup',function(){ dragging=false; });
+  window.addEventListener('mousemove',function(e){
+    if(dragging){
+      angleY += (e.clientX-lx)*0.006;
+      angleX += (e.clientY-ly)*0.006;
+      lx=e.clientX; ly=e.clientY;
+    }
+    var rect=canvas.getBoundingClientRect();
+    var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    var found=null;
+    for(var i=0;i<nodes.length;i++){
+      var n=nodes[i];
+      if(n._per && n._per>0 && Math.abs(n._sx-mx)<10 && Math.abs(n._sy-my)<10){ found=n; break; }
+    }
+    if(found){
+      hud.style.display='block';
+      hud.style.left=(e.clientX-rect.left+15)+'px';
+      hud.style.top=(e.clientY-rect.top-15)+'px';
+      var cls=found.isPrime?'fundamentale Schleife (Erzeuger)':'Wort aus '+found.omega+' Erzeuger';
+      hud.innerHTML='<span class="pv">'+found.val+'</span><br>Faktoren: '+found.factors.join(' &times; ')+'<br>'+cls;
+    } else { hud.style.display='none'; }
+  });
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    zoom *= (e.deltaY>0?0.9:1.1);
+    if(zoom<0.1) zoom=0.1; if(zoom>10) zoom=10;
+  },{passive:false});
+
+  function syncLabels(){
+    document.getElementById('nVal').textContent=document.getElementById('nRange').value;
+    document.getElementById('kVal').textContent=parseFloat(document.getElementById('kRange').value).toFixed(2);
+    document.getElementById('sVal').textContent=document.getElementById('sRange').value;
+  }
+  ['nRange','kRange','sRange'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',function(){ syncLabels(); generate(); });
+  });
+
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  var mq = window.matchMedia('(prefers-color-scheme: light)');
+  function onScheme(e){ if(!e.matches){ /* keep user choice */ } }
+  if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+
+  window.addEventListener('resize',function(){ /* canvas resized in render */ });
+
+  syncLabels();
+  generate();
+  requestAnimationFrame(render);
+})();
+</script>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../pz9.html"><strong>pz9.html &mdash; HoTT Prime Topology</strong></a> &mdash;
+  Zahl als Punkt in einem topologischen Raum; Position als Funktion der eigenen Primfaktoren,
+  &ldquo;Univalenz&rdquo;, Primzahlen als fundamentale Schleifen (Quelle A / intrinsische Seite).</p>
+  <p class="src"><a href="../pz8.html"><strong>pz8.html &mdash; 3D Prime Origami Explorer</strong></a> &mdash;
+  Zahl als Knick auf einer durchgehenden Bahn; Position als kumulativer Wandel, Primzahlen als helle
+  Ruheknoten (Quelle B / extrinsische Seite).</p>
+</section>
+
+<footer>
+  Fusion (Round 1, nicht-AI-Track, Paar 006). Selbstenthalten, ohne Netzwerk-Datenzugriffe; alle Daten
+  (Primfaktorzerlegung der Zahlen 2&hellip;N) werden im Browser berechnet.
+</footer>
+</article>
+</body>
+</html>

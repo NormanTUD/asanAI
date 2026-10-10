@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dimension-Reduktion — Spivak ✕ Projektion (Fusion R1·003)</title>
+<script>
+(function(){try{var t=localStorage.getItem('n1_003_theme');if(!t){t='dark';}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f6f5f1; --bg2:#efece5;
+  --panel:#ffffff; --panel2:#fbfaf7;
+  --stroke:rgba(24,30,64,.14); --stroke2:rgba(24,30,64,.30);
+  --txt:#1b2033; --txt-dim:#3b4257; --txt-faint:#6a7188;
+  --acc:#0b7fb0; --acc2:#c13584; --acc3:#6d4ad1; --acc4:#0f9d6b; --acc5:#b45309; --warn:#c2410c;
+  --shadow:rgba(24,30,64,.10); --glow:rgba(11,127,176,.35);
+  --grid:rgba(24,30,64,.06); --wall:rgba(24,30,64,.45);
+}
+html.dark{
+  --bg:#070810; --bg2:#0c0e1a;
+  --panel:rgba(18,21,38,.72); --panel2:#12152a;
+  --stroke:rgba(140,160,255,.14); --stroke2:rgba(150,175,255,.32);
+  --txt:#e8ecff; --txt-dim:#a4abd0; --txt-faint:#6d7498;
+  --acc:#6ae3ff; --acc2:#ff7ad9; --acc3:#9d7bff; --acc4:#6dffb0; --acc5:#ffd166; --warn:#ff8e6e;
+  --shadow:rgba(0,0,0,.45); --glow:rgba(106,227,255,.4);
+  --grid:rgba(140,160,255,.075); --wall:rgba(150,175,255,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg);color:var(--txt);line-height:1.66;font-size:15.5px;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 80% 40% at 15% -8%,var(--glow),transparent 60%),
+             radial-gradient(ellipse 70% 45% at 90% 108%,color-mix(in srgb,var(--acc3) 16%,transparent),transparent 60%);}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.tagline{font-family:ui-monospace,"JetBrains Mono",Consolas,monospace;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--acc);font-weight:700}
+#themebtn{font-family:inherit;font-size:12px;font-weight:650;padding:6px 12px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--stroke2);background:var(--panel);color:var(--txt)}
+#themebtn:hover{border-color:var(--acc)}
+h1{font-size:clamp(1.9rem,4.6vw,2.9rem);font-weight:840;letter-spacing:-.03em;line-height:1.06;margin:6px 0 8px;
+  background:linear-gradient(100deg,var(--acc) 5%,var(--acc3) 55%,var(--acc2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--txt-faint);font-size:13.5px;font-family:ui-monospace,monospace;margin-bottom:26px}
+.sub b{color:var(--txt-dim);font-weight:600}
+section{margin:38px 0;scroll-margin-top:20px}
+h2{font-size:1.42rem;font-weight:800;letter-spacing:-.02em;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--stroke)}
+h3{font-size:1.04rem;font-weight:750;margin:22px 0 9px;color:var(--txt)}
+h3 .n{font-family:ui-monospace,monospace;font-size:.82em;color:var(--acc);margin-right:7px}
+p{color:var(--txt-dim);margin-bottom:12px;max-width:72ch}
+strong{color:var(--txt);font-weight:700}
+em{color:var(--acc5);font-style:normal;font-weight:620}
+a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--stroke2)}
+a:hover{border-bottom-color:var(--acc)}
+code{font-family:ui-monospace,monospace;font-size:.86em;background:var(--panel2);border:1px solid var(--stroke);
+  padding:1px 6px;border-radius:5px;color:var(--acc)}
+ul,ol{margin:8px 0 14px 22px;color:var(--txt-dim);max-width:70ch}
+li{margin-bottom:7px}
+.eq{display:block;text-align:center;font-size:1.28rem;margin:16px 0;padding:12px;border-radius:12px;
+  background:var(--panel2);border:1px solid var(--stroke);color:var(--txt);font-family:"Cambria Math","STIX Two Math",serif;overflow-x:auto}
+.eq small{display:block;font-family:inherit;font-size:.72rem;color:var(--txt-faint);margin-top:4px}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:0 10px 30px var(--shadow)}
+.card h3{margin-top:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.two{grid-template-columns:1fr}}
+.who{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:inline-block;
+  padding:2px 9px;border-radius:999px;margin-bottom:7px}
+.who.a{color:var(--acc3);background:color-mix(in srgb,var(--acc3) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc3) 40%,transparent)}
+.who.b{color:var(--acc2);background:color-mix(in srgb,var(--acc2) 14%,transparent);border:1px solid color-mix(in srgb,var(--acc2) 40%,transparent)}
+.who.f{color:var(--acc4);background:color-mix(in srgb,var(--acc4) 14%,transparent);border:1px solid color-mix(in srgb,var(--acc4) 40%,transparent)}
+.claim{font-size:13.6px;color:var(--txt-dim)}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);
+  padding:12px 15px;border-radius:0 11px 11px 0;margin:15px 0;font-size:13.7px;color:var(--txt-dim)}
+.note.key{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note .t{font-weight:760;color:var(--txt);display:block;margin-bottom:4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--stroke)}
+th{color:var(--acc);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+td{color:var(--txt-dim)} td.m{font-family:ui-monospace,monospace;color:var(--txt)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--txt-dim);margin:8px 0 2px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* ---- VIZ ---- */
+.vizwrap{background:var(--panel2);border:1px solid var(--stroke2);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 16px 46px var(--shadow)}
+.vizwrap .vtitle{font-weight:760;font-size:1.02rem;margin-bottom:2px}
+.vizwrap .vsub{font-size:12.4px;color:var(--txt-faint);margin-bottom:12px}
+#cViz{display:block;width:100%;height:auto;border-radius:11px;border:1px solid var(--stroke);cursor:grab;touch-action:none}
+#cViz:active{cursor:grabbing}
+.vgrid{display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:start}
+@media(max-width:680px){.vgrid{grid-template-columns:1fr}}
+.readout{font-family:ui-monospace,monospace;font-size:12.2px;background:var(--panel);border:1px solid var(--stroke);
+  border-radius:11px;padding:12px 13px;line-height:1.85;color:var(--txt-dim);overflow-x:auto}
+.readout .k{color:var(--acc5)} .readout .v{color:var(--txt)} .readout .g{color:var(--acc4)} .readout .r{color:var(--warn)}
+.ctl{margin:9px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:12px;color:var(--txt-dim);margin-bottom:4px;font-weight:600}
+.ctl label b{font-family:ui-monospace,monospace;color:var(--acc);font-weight:700}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc),var(--acc3));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#fff;border:2.5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2.5px solid var(--acc);cursor:grab}
+.btnrow{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.btnrow button{font-family:inherit;font-size:12px;font-weight:640;padding:6px 11px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--stroke2);background:var(--panel);color:var(--txt)}
+.btnrow button:hover{border-color:var(--acc)}
+.btnrow button.on{background:linear-gradient(92deg,var(--acc),var(--acc3));color:#06101e;border-color:transparent}
+.prov{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--stroke)}
+.prov:last-child{border-bottom:0}
+.prov .badge{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;flex:0 0 auto;width:22px;height:22px;border-radius:6px;
+  display:grid;place-items:center;color:#06101e;background:var(--acc)}
+.prov .badge.b{background:var(--acc2)}
+.prov .desc{font-size:13.4px;color:var(--txt-dim)}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--stroke);color:var(--txt-faint);font-size:12px;font-family:ui-monospace,monospace;text-align:center}
+</style>
+</head>
+<body>
+<article>
+  <div class="top">
+    <span class="tagline">Knockout-Synthese · Runde 1 · Pair 003 · Nicht-KI-Track</span>
+    <button id="themebtn" type="button">☾ / ☀ Thema</button>
+  </div>
+  <h1>Dimension-Reduktion: der gemeinsame Kern</h1>
+  <p class="sub">Fusion aus: <b>calculus_on_manifolds.html</b> ✕ <b>projection.html</b></p>
+
+  <!-- ============ 1 THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere untersuchen <strong>exakt dieselbe Operation</strong>: ein Objekt mit <strong>k Dimensionen</strong>
+      wird auf etwas mit <strong>der (k−1) Dimension</strong> abgebildet, und die eigentliche Frage ist immer dieselbe —
+      <em>was bleibt dabei erhalten, was geht verloren, und mit welcher „Buchführung“ (Farbe, Vorzeichen) trägt man das
+      Verlorene weiter?</em></p>
+    <p>Papier A (Spivak) macht das präzise für <em>Integrale</em>: Der generalisierte Satz von Stokes sagt, dass das
+      Integral über einen k-dimensionalen Körper gleich dem Integral über seinen (k−1)-dimensionalen <strong>Rand</strong> ist.
+      Die oberste Dimension wird auf ihren Rand reduziert — und dieser Rand ist ein niedriger-dimensionales Objekt, das
+      (für diese eine Größe) <em>alles</em> enthält:</p>
+    <div class="eq">∫<sub>M</sub> dω &nbsp;=&nbsp; ∫<sub>∂M</sub> ω
+      <small>A (Satz 5-5) · k-dimensionales Inneres ↔ (k−1)-dimensionaler Rand</small>
+    </div>
+    <p>Papier B macht dasselbe für <em>Punkte</em> sichtbar: Eine Lichtquelle stößt eine 2D-Szene auf eine 1D-Wand. Das ist
+      eine explizite <strong>2&nbsp;→&nbsp;1-Reduktion</strong>; die 1D-Wand ist das <em>Bild</em> (das „Rand-ähnliche“ Ziel),
+      und die verlorene Dimension ist genau das, was man mit <em>Farbe</em> zurückgewinnen muss.</p>
+    <p><strong>Die fusionierte Position:</strong> Eine <em>glatte dimensionen-reduzierende Abbildung</em>
+      <code>f : M → N</code> mit <code>dim N &lt; dim M</code> ist der gemeinsame Gegenstand. In A ist „Rand nehmen“ diese
+      Abbildung; in B ist „auf die Wand projizieren“ dieselbe. Die <strong>Ableitung ist in beiden Fällen eine lineare
+      Abbildung</strong> — und eine echte Dimensionsreduktion ist per Definition genau eine Abbildung, deren Differential
+      den <strong>Range verliert</strong> (denkmal <code>rank Df ≤ dim N &lt; dim M</code>). Das ist das <em>exakte Spiegelbild
+      einer Karte</em> (eines Diffeomorphismus). Papier B ist also ein konkretes, elementares Beispiel für einen
+      <em>Range-abbauenden</em> glatten Kartenwechsel; Papier A ist die allgemeine Theorie solcher Abbildungen, ihrer
+      linearen Modelle, ihrer Ränder und der Buchführung (Orientierung) darüber. <em>Farbe (B) = Orientierung/Vorzeichen (A)</em>
+      ist dieselbe Erinnerung an das, was die Reduktion wegnahm.</p>
+  </section>
+
+  <!-- ============ 2 WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die Papiere widersprechen sich nicht logisch, aber sie nehmen <strong>gegenübergestellte Standpunkte</strong> zum selben
+      Gegenstand (der dimensionen-reduzierenden Abbildung) ein. Drei konkrete Punkte:</p>
+
+    <div class="card"><span class="who">Punkt 1</span>
+      <h3>Linearität vs. Nichtlinearität der Reduktions-Abbildung</h3>
+      <p class="claim"><span class="who a">A sagt</span> „Die Ableitung ist <em>keine Zahl</em> — sie ist eine <strong>lineare
+      Abbildung</strong>“ (Kap. 2). Das universelle lokale Modell ist <em>affin/linear</em>:
+      <code>f(a+h) ≈ f(a)+Df(a)(h)</code>; alles (Jacobi, Determinante, Orientierung) ist lineare Algebra.</p>
+      <p class="claim" style="margin-bottom:0"><span class="who b">B sagt</span> Die Projektion
+      <code>p ↦ Schatten</code> ist eine <strong>zentrale / perspektivische</strong> Abbildung mit dem
+      linear-bruchteiligen Faktor <code>t = (Wand − Licht.x)/(p.x − Licht.x)</code>. Sie ist <em>nicht linear</em> — ihre
+      Steigung hängt vom Ort ab.</p>
+    </div>
+
+    <div class="card"><span class="who">Punkt 2</span>
+      <h3>Umkehrbarkeit vs. Viele-zu-Eins (Informationsverlust)</h3>
+      <p class="claim"><span class="who a">A sagt</span> Der <em>Umkehrsatz</em> ist eine Tugend:
+      <code>det f′(a) ≠ 0 ⇒</code> lokal <strong>umkehrbar</strong>; Karten sind Diffeomorphismen — lokal nichts geht verloren.</p>
+      <p class="claim" style="margin-bottom:0"><span class="who b">B sagt</span> Die Projektion ist <strong>absichtlich
+      viele-zu-eins</strong>: Ein ganzer Strahl (alle Punkte auf einer Linie durch das Licht) kollabiert zu <em>einem</em>
+      Schattenpunkt. Man <em>kann</em> sie nicht umkehren — B räumt das offen ein und kompensiert mit <strong>Farbe</strong>.</p>
+    </div>
+
+    <div class="card"><span class="who">Punkt 3</span>
+      <h3>Treuer Rand vs. verlustbehaftetes Bild (die engste echte Spannung)</h3>
+      <p class="claim"><span class="who a">A sagt</span> <code>∫<sub>∂M</sub>ω = ∫<sub>M</sub>dω</code> — der Rand ist ein
+      <strong>exakter, wertgleicher</strong> Stellvertreter des Inneren (verlustfrei, für diese Größe).</p>
+      <p class="claim" style="margin-bottom:0"><span class="who b">B sagt</span> Die 1D-Wand ist ein <strong>verlustbehafteter</strong>
+      Stellvertreter der 2D-Szene (viele Szenen geben dieselbe Wand).</p>
+    </div>
+  </section>
+
+  <!-- ============ 3 AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <h3><span class="n">1</span> Linearität vs. Nichtlinearität</h3>
+    <p class="claim">B ist (soweit <code>p.x ≠ Licht.x</code>) eine <strong>glatte</strong> Abbildung. Genau deshalb besitzt sie nach A's
+      eigener Theorie an jedem regulären Punkt ein <em>lineares</em> Differential <code>Dπ</code> (eine 1×2-Matrix, eine 1-Form).
+      B's nichtlineare Abbildung ist also <em>genau die Art</em> von Abbildung, die A analysiert; die lineare Abbildung ist ihre
+      <em>Stützgerade/Stützhyperebene</em>. Wo B „explodiert“ (<code>p.x → Licht.x</code>), sagt A's Umkehrsatz vorher:
+      <em>Rank/Determinante bricht → nicht umkehrbar</em>.</p>
+    <div class="note key"><span class="t">Fusion</span>
+      <strong>Die lineare Abbildung ist das universelle lokale Schattbild jeder glatten dimensionen-reduzierenden Abbildung.</strong>
+      Nichtlinearität ist das, was die lineare Approximation <em>annähert</em>; Singularitäten sind die Orte, an denen die
+      lineare Approximation weniger Range hat als die Quelle.</div>
+
+    <h3><span class="n">2</span> Umkehrbarkeit vs. Viele-zu-Eins</h3>
+    <p class="claim">Beide liegen auf <em>einem</em> Spektrum — dem <strong>Range des Differentials</strong>. A's Karten sind das
+      range-volle (umkehrbare, <code>det≠0</code>) Extrem: kein lokaler Verlust. B's 2→1-Projektion ist das range-abgebaute
+      (Rank ≤ 1) Extrem: maximaler lokaler Verlust. Was verloren geht, ist <em>genau der Kern</em> des Differentials.</p>
+    <div class="note key"><span class="t">Fusion</span>
+      <strong>Der Informationsverlust einer dimensionen-reduzierenden Abbildung ist exakt <code>ker Df</code>;</strong>
+      die Menge ist durch den Abstand des Ranks von der Quell-Dimension gemessen. Ein <em>diskretes Etikett</em> (B: Farbe,
+      A: Orientierung/Vorzeichen) gewinnt einen Querschnitt des Verlorenen zurück.</div>
+
+    <h3><span class="n">3</span> Treuer Rand vs. verlustbehaftetes Bild</h3>
+    <p class="claim">Der Unterschied ist, <em>welche Größe</em> man verfolgt. A verfolgt ein <em>globales Integral einer
+      top-Form</em> — dafür reicht der Rand exakt (Stokes). B verfolgt <em>lokale Punkt-Koordinaten</em> — dafür reicht die Wand
+      nicht. Beide haben recht, weil sie verschiedene Ziele haben.</p>
+    <div class="note key"><span class="t">Fusion</span>
+      <strong>Eine dimensionen-reduzierende Abbildung ist verlustfrei für globale/invariante Größen</strong> (Integrale,
+      Gesamtfluss — der Rand genügt, per Stokes/Fubini) <strong>und verlustbehaftet für lokale Punktdaten</strong> (exakte
+      Positionen — die Wand allein reicht nicht, man braucht ein Etikett).</div>
+  </section>
+
+  <!-- ============ 4 INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3><span class="n">a</span> Die Abbildung als gemeinsamer Gegenstand</h3>
+    <p>B's Projektion ist eine Funktion <code>π : ℝ² → ℝ</code>. In der Geometrie der Demo (Kanal-Koordinaten) lautet sie:
+      <code>π(x,y) = L.y + (y − L.y) · (W − L.x)/(x − L.x)</code> mit Lichtquelle <code>L</code> und Wand bei <code>x = W</code>.
+      Ihre Ableitung ist der Gradient — eine <strong>1×2-Matrix</strong>:
+    </p>
+    <div class="eq">Dπ(x,y) = ( π<sub>x</sub> , π<sub>y</sub> )
+      &nbsp;=&nbsp; ( −(y−L.y)(W−L.x)/(x−L.x)² , &nbsp; (W−L.x)/(x−L.x) )
+      <small>Range ≤ 1 &lt; 2 ⇒ immer dimensions-reduzierend, nie eine Karte</small>
+    </div>
+    <p>Damit ist B ein konkretes Modell für eine <em>Range-abbauende</em> glatte Abbildung — und A liefert sofort die Sprache
+      (Differential, Rang, Kern, lineare Approximation), um sie zu beschreiben.</p>
+
+    <h3><span class="n">b</span> Der Jacobi-Faktor als Kollaps-Faktor</h3>
+    <p>In A misst die Determinante der Jacobi-Matrix, wie eine Abbildung <em>lokale Volumen</em> verzerrt
+      (<code>∫_{g(A)} = ∫_A (f∘g)|det g′|</code>, Satz 3-13). Übertragen auf die 2→1-Reduktion wird aus der Determinante der
+      <strong>Kollaps-Faktor</strong> <code>‖Dπ‖</code>: wie sehr ein 2D-Flächenstück <em>zusammengepresst</em> wird, um ein 1D-Längenstück
+      auf der Wand zu ergeben. Große <code>‖Dπ‖</code> ⇒ starke Vergrößerung (Punkt nahe am Licht); kleiner ⇒ Verkleinerung.</p>
+
+    <h3><span class="n">c</span> Die Singularität: „det = 0”</h3>
+    <p>A's Umkehrsatz (Satz 2-11): <code>det f′(a) ≠ 0</code> ⇒ lokal umkehrbar. Für B ist die Entsprechung der
+      <strong>Pol</strong> bei <code>x → L.x</code>: dort wird <code>π</code> (und <code>π_x</code>) unendlich, die Karte bricht
+      zusammen. <em>Dasselbe Phänomen, zwei Sprachen:</em> A sagt „Determinante/Rang = 0”, B sagt „der Schatten fliegt auf die
+      Wand hinaus”.</p>
+
+    <h3><span class="n">d</span> Farbe = Orientierung (die Buchführung)</h3>
+    <p>B taggt jeden Punkt mit einer <strong>Farbe</strong>, um die weggeworfene Dimension zu retten — „Klarheit durch
+      Farb-Projektion”. A führt dieselbe Rolle <em>stetig</em> aus: die <strong>Orientierung</strong>, das Vorzeichen der
+      Determinante, die Regel <code>dx∧dy = −dy∧dx</code>, <code>ω(v₁,v₂) = −ω(v₂,v₁)</code>. Beide sind <em>Buchführung, die eine
+      dimensionen-reduzierende Abbildung überlebt</em> und festhält, <em>welcher Zweig / welche Handigkeit</em> entstand.</p>
+
+    <h3><span class="n">e</span> Die Wand ist der Rand</h3>
+    <p>In B ist die <strong>Wand</strong> der Ort, an dem die untere Dimension lebt — das Bild der Projektion. In A ist der
+      <strong>Rand ∂M</strong> derselbe Ort für Mannigfaltigkeiten. Beide sind „die niedrigere Dimension”. Für ein Integral
+      <em>top-Formen</em> genügt dieser Ort: A: Stokes; B: „der Schatten trägt die Gesamtmenge”.</p>
+
+    <h3><span class="n">f</span> Fubini ist Projektion als Fibration (der eigentliche Treffpunkt)</h3>
+    <p>A's einziger analytischer Inhalt im Stokes-Beweis ist <strong>Fubini</strong> (Integral in <em>Scheiben</em> schneiden:
+      <code>∫_{A×B} = ∫_A(∫_B …)</code>). B's Projektion tut exakt das geometrisch: <em>jeder Punkt auf der Wand ist eine
+      Faser</em> (ein Strahl) der Szene. Die Szene integrieren = über die Wand die Faser-Integrale summieren. <strong>Das Licht
+      verschieben</strong> = eine <em>andere</em> Fibration wählen. <em>Perspektivisches Schneiden (B) ist geometrisches Fubini (A)</em>.</p>
+
+    <h3><span class="n">g</span> Die vereinheitlichte Gleichung</h3>
+    <div class="eq">∫<sub>M</sub> dω &nbsp;=&nbsp; ∫<sub>∂M</sub> ω
+      <small>„Eine dimensionen-reduzierende Abbildung (Rand nehmen) ist für Integrale verlustfrei —
+         nötig ist nur Fubini + der 1D-Hauptsatz.”</small>
+    </div>
+    <p>Und die vier Klassiker sind derselbe Satz mit unterschiedlichem <code>k</code> und <code>ω</code> — die Unterschiede
+      (Normalen, Kreuzprodukte) sind reine Buchhaltung von <code>ℝ³</code>:</p>
+    <table>
+      <tr><th>Grad ω</th><th>dω entspricht</th><th>Integration über</th><th>Reduktion auf</th><th>Klassisch</th></tr>
+      <tr><td class="m">0</td><td class="m">grad f</td><td>Kurve</td><td>Punkte (0D)</td><td>Hauptsatz</td></tr>
+      <tr><td class="m">1</td><td class="m">rot F</td><td>Fläche</td><td>Kurve</td><td>Stokes</td></tr>
+      <tr><td class="m">2</td><td class="m">div F</td><td>Volumen</td><td>Fläche</td><td>Divergenz</td></tr>
+    </table>
+    <div class="note"><span class="t">Kern des fusionierten Inhalts</span>
+      Reduziere die Dimension (Rand <em>oder</em> Projektion) · verfolge, was überlebt (Orientierung/Fluss vs. Farbe) ·
+      der einzige analytische Aufwand ist <strong>Fubini + der 1D-Hauptsatz</strong> — alles andere ist Range-Buchführung
+      (Determinante, ∧, Vorzeichen).</div>
+  </section>
+
+  <!-- ============ 5 VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <div class="vizwrap">
+      <div class="vtitle">Dimension-reduzierende Abbildung: Projektion + lineares Differential + Farbe als Orientierung</div>
+      <div class="vsub">
+        Ziehe die <b>gelbe Lichtquelle</b> (B) oder wähle einen <b>Punkt</b> als Fokus. Rechts siehst du A's Sicht:
+        das lineare Differential <b>Dπ</b>, den Range-Abbau, den Kollaps-Faktor und die Singularität bei <code>x = Licht.x</code>.
+      </div>
+      <div class="vgrid">
+        <div>
+          <canvas id="cViz" width="780" height="470"></canvas>
+          <div class="legend">
+            <span><i style="background:#ff5470"></i>A</span>
+            <span><i style="background:#43e08b"></i>B</span>
+            <span><i style="background:#5b8cff"></i>C</span>
+            <span><i style="background:#e85bff"></i>D</span>
+            <span><i style="background:var(--acc5)"></i>Licht (projektion Zentrum)</span>
+            <span><i style="background:var(--wall)"></i>Wand (Bild / 1D = „Rand”)</span>
+          </div>
+          <div class="btnrow">
+            <button data-r="near" type="button">Licht → nah (explodiert)</button>
+            <button data-r="far" type="button">Licht → fern (flach)</button>
+            <button data-r="reset" type="button">Zurücksetzen</button>
+          </div>
+          <div class="ctl"><label>Wand-Distanz (Perspektiv-Stärke) <b id="vWall">610</b></label>
+            <input type="range" id="sWall" min="420" max="760" step="1" value="610"></div>
+        </div>
+        <div>
+          <div class="readout" id="ro"></div>
+          <div class="note" style="font-size:12.5px;margin-top:12px"><span class="t">Farbe = Orientierung</span>
+            Zwei Punkte mit gleichem Schatten sind auf der Wand <b>ununterscheidbar</b> — nur die <em>Farbe</em> (A: das
+            <em>Vorzeichen</em> der Determinante) merkt sich, welcher war. Das ist die gesamte Buchführung, die die Reduktion
+            überlebt.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="card">
+      <div class="prov">
+        <span class="badge">A</span>
+        <div>
+          <a href="../calculus_on_manifolds.html">calculus_on_manifolds.html</a>
+          <div class="desc">Interaktive deutsche Begleitung zu M. Spivak, <em>Calculus on Manifolds</em> (1965):
+            die vier Klassiker als <em>einer</em> Satz (∫<sub>M</sub>dω = ∫<sub>∂M</sub>ω), Ableitung als lineare Abbildung,
+            Differentialformen, Ketten, Orientierung und der 3-Zeilen-Beweis (Fubini + Hauptsatz).</div>
+        </div>
+      </div>
+      <div class="prov">
+        <span class="badge b">B</span>
+        <div>
+          <a href="../projection.html">projection.html</a>
+          <div class="desc">„Klarheit durch Farb-Projektion”: eine bewegliche Lichtquelle projiziert vier farbige 2D-Punkte
+            per Strahl (ähnliche Dreiecke) auf eine 1D-Wand — eine elementare, verlustbehaftete 2→1-dimensionen-reduzierende
+            Abbildung, bei der die Farbe die weggeworfene Dimension zurückgewinnt.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Fusion R1·003 · nicht-KI-Track · selbst-enthalten, alle Daten inline, themen-reaktiv</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('cViz');
+  if(!cv || !cv.getContext){ return; }
+  var ctx = cv.getContext('2d');
+  var LW = 780, LH = 470;            // logische Größe
+  var dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
+  cv.width = LW*dpr; cv.height = LH*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var WALL = 610;                     // Wand-x
+  var light = {x:80, y:235};
+  var focusIdx = 0;
+  var SQ = 26;                        // Fokus-Quadrat (logische px)
+
+  var PTS = [
+    {x:300, y:150, c:'#ff5470', t:'A'},
+    {x:470, y:210, c:'#43e08b', t:'B'},
+    {x:330, y:340, c:'#5b8cff', t:'C'},
+    {x:520, y:380, c:'#e85bff', t:'D'}
+  ];
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  var TH = {};
+  function readTheme(){
+    TH.grid = cssVar('--grid'); TH.wall = cssVar('--wall');
+    TH.txt = cssVar('--txt'); TH.dim = cssVar('--txt-dim'); TH.faint = cssVar('--txt-faint');
+    TH.acc = cssVar('--acc'); TH.acc5 = cssVar('--acc5'); TH.panel = cssVar('--panel2');
+  }
+
+  // π: Schatten-Koordinate (y auf der Wand) für Punkt (x,y) in Kanal-Koordinaten
+  function pi(x,y){
+    var dx = x - light.x;
+    if(Math.abs(dx) < 1e-4) return Infinity;
+    return light.y + (y - light.y) * (WALL - light.x) / dx;
+  }
+  // Dπ = (πx, πy)
+  function dpi(x,y){
+    var dx = x - light.x;
+    if(Math.abs(dx) < 1e-4) return {px:Infinity, py:Infinity};
+    var f = (WALL - light.x) / dx;
+    return { px: -(y - light.y) * f / dx, py: f };
+  }
+
+  function line(a,b,c,d,col,w,dash){
+    ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+    ctx.beginPath(); ctx.moveTo(a,b); ctx.lineTo(c,d); ctx.stroke(); ctx.setLineDash([]);
+  }
+  function dot(x,y,r,fill,ring){
+    ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=fill; ctx.fill();
+    if(ring){ ctx.lineWidth=2; ctx.strokeStyle=ring; ctx.stroke(); }
+  }
+  function label(s,x,y,col,f){ ctx.fillStyle=col||TH.dim; ctx.font=f||'11px ui-monospace,monospace'; ctx.fillText(s,x,y); }
+
+  function draw(){
+    readTheme();
+    ctx.clearRect(0,0,LW,LH);
+    // Gitter (Szene)
+    var g=44;
+    for(var gx=0; gx<=LW; gx+=g) line(gx,0,gx,LH,TH.grid,1);
+    for(var gy=0; gy<=LH; gy+=g) line(0,gy,LW,gy,TH.grid,1);
+
+    // Wand (Bild / 1D)
+    line(WALL,0,WALL,LH,TH.wall,3);
+    label('Wand  (1D-Bild = „Rand”)', WALL-168, 18, TH.faint, '11px ui-monospace,monospace');
+
+    // Licht-Schiene
+    line(light.x,0,light.x,LH,'rgba(255,209,102,.22)',1,[5,5]);
+
+    var f = PTS[focusIdx];
+
+    // Punkte + Strahlen
+    for(var i=0;i<PTS.length;i++){
+      var p=PTS[i];
+      var s=pi(p.x,p.y);
+      var sing=(s===Infinity);
+      if(!sing){
+        line(light.x,light.y,WALL,s,p.c,1.2);          // Strahl (Farbe, dezent)
+        ctx.globalAlpha=0.32;
+        line(light.x,light.y,WALL,s,p.c,2.2);
+        ctx.globalAlpha=1;
+        dot(WALL,s,7,p.c,'#0008');                        // Bildpunkt auf der Wand
+        label(p.t+"'", WALL+11, s+4, p.c, 'bold 11px ui-monospace,monospace');
+      }
+      dot(p.x,p.y, (i===focusIdx?9:8), p.c, '#fff');      // Originalpunkt
+      label(p.t, p.x-5, p.y-13, TH.txt, 'bold 13px ui-monospace,monospace');
+      if(sing){ label('→ ∞', p.x+12, p.y, cssVar('--warn')||'#ff8e6e', 'bold 12px ui-monospace,monospace'); }
+    }
+
+    // Fokus: Quadrat + Bild als 1D-Balken auf der Wand
+    if(f){
+      var cx=f.x, cy=f.y;
+      // Quadrat
+      ctx.setLineDash([4,3]); line(cx-SQ,cy-SQ,cx+SQ,cy-SQ,f.c,1.4); line(cx+SQ,cy-SQ,cx+SQ,cy+SQ,f.c,1.4);
+      line(cx+SQ,cy+SQ,cx-SQ,cy+SQ,f.c,1.4); line(cx-SQ,cy+SQ,cx-SQ,cy-SQ,f.c,1.4); ctx.setLineDash([]);
+      // Ecken → Wand (Strahlen dezent + Bildpunkte)
+      var corners=[[cx-SQ,cy-SQ],[cx+SQ,cy-SQ],[cx+SQ,cy+SQ],[cx-SQ,cy+SQ]];
+      var smin=Infinity,smax=-Infinity;
+      corners.forEach(function(c){
+        var s=pi(c[0],c[1]);
+        if(isFinite(s)){ smin=Math.min(smin,s); smax=Math.max(smax,s);
+          line(light.x,light.y,WALL,s,f.c,0.8);
+          ctx.globalAlpha=0.25; line(light.x,light.y,WALL,s,f.c,2); ctx.globalAlpha=1; }
+      });
+      // Bild-Intervall auf der Wand als dicker Balken
+      if(isFinite(smin)&&isFinite(smax)){
+        var a=Math.min(smin,smax), b=Math.max(smin,smax);
+        ctx.globalAlpha=0.85; line(WALL,a,WALL,b,f.c,9); ctx.globalAlpha=1;
+        label('Bild des Quadrats → 1D-Strecke', WALL-190, (a+b)/2+4, f.c, '11px ui-monospace,monospace');
+      }
+      dot(f.x,f.y,9,f.c,'#fff');
+    }
+
+    // Lichtquelle (Zentrum)
+    ctx.save(); ctx.shadowBlur=16; ctx.shadowColor=TH.acc5;
+    dot(light.x,light.y,12,TH.acc5,'#fff'); ctx.restore();
+    label('Licht', light.x-14, light.y-18, TH.acc5, 'bold 11px ui-monospace,monospace');
+
+    updateReadout(f);
+  }
+
+  function fmt(v){
+    if(!isFinite(v)) return '∞';
+    var a=Math.abs(v);
+    return (a>=100? v.toFixed(0) : a>=1? v.toFixed(2) : v.toFixed(3));
+  }
+  function updateReadout(f){
+    if(!f) return;
+    var s=pi(f.x,f.y);
+    var d=dpi(f.x,f.y);
+    var norm=Math.sqrt(d.px*d.px+d.py*d.py);
+    var sing=(s===Infinity);
+    var ro=document.getElementById('ro'); if(!ro) return;
+    ro.innerHTML =
+      '<span class="k">Fokus</span> '+f.t+'  =  <span class="v">('+f.x+', '+f.y+')</span><br>'+
+      '<span class="k">π(P)  [Wand]</span> = <span class="'+(sing?'r':'v')+'">'+fmt(s)+'</span><br>'+
+      '<span class="k">Dπ (1×2)</span> = ( <span class="v">'+fmt(d.px)+'</span> , <span class="v">'+fmt(d.py)+'</span> )<br>'+
+      '<span class="k">Range</span> = <span class="g">1 &lt; 2</span>  →  1 Dimension weg<br>'+
+      '<span class="k">Kollaps ‖Dπ‖</span> = <span class="v">'+fmt(norm)+'</span><br>'+
+      '<span class="k">Status</span> <span class="'+(sing?'r':'g')+'">'+(sing?'SINGULAR (x→Licht.x, det≈0)':'regulär, lokal glatt')+'</span>';
+  }
+
+  // ---- Interaktion ----
+  var dragging=false, moved=false;
+  function pos(e){
+    var r=cv.getBoundingClientRect();
+    var t=(e.touches? e.touches[0]:e);
+    return { x:(t.clientX-r.left)/r.width*LW, y:(t.clientY-r.top)/r.height*LH };
+  }
+  function down(e){
+    var p=pos(e); moved=false;
+    if(Math.hypot(p.x-light.x,p.y-light.y) < 22){ dragging=true; e.preventDefault(); return; }
+    for(var i=0;i<PTS.length;i++){
+      if(Math.hypot(p.x-PTS[i].x,p.y-PTS[i].y) < 18){ focusIdx=i; draw(); return; }
+    }
+  }
+  function move(e){
+    if(!dragging) return;
+    var p=pos(e);
+    light.x=Math.max(40,Math.min(290,p.x));
+    light.y=Math.max(40,Math.min(430,p.y));
+    moved=true; e.preventDefault(); draw();
+  }
+  function up(){ dragging=false; }
+
+  cv.addEventListener('mousedown',down);
+  window.addEventListener('mousemove',move);
+  window.addEventListener('mouseup',up);
+  cv.addEventListener('touchstart',down,{passive:false});
+  cv.addEventListener('touchmove',move,{passive:false});
+  window.addEventListener('touchend',up);
+
+  // Schalter / Presets
+  var sw=document.getElementById('sWall');
+  if(sw) sw.addEventListener('input',function(){ WALL=+this.value; var v=document.getElementById('vWall'); if(v)v.textContent=WALL; draw(); });
+  Array.prototype.forEach.call(document.querySelectorAll('.btnrow button[data-r]'),function(b){
+    b.addEventListener('click',function(){
+      var r=b.getAttribute('data-r');
+      if(r==='near'){ light.x=250; light.y=300; }
+      else if(r==='far'){ light.x=60; light.y=120; }
+      else { light.x=80; light.y=235; WALL=610; if(sw){sw.value=610;} var v=document.getElementById('vWall'); if(v)v.textContent=610; }
+      draw();
+    });
+  });
+
+  // Theme
+  var tb=document.getElementById('themebtn');
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement;
+    d.classList.toggle('dark');
+    try{ localStorage.setItem('n1_003_theme', d.classList.contains('dark')?'dark':'light'); }catch(e){}
+    draw();
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>

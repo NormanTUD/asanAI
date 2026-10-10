@@ -1,0 +1,17 @@
+{
+  "no": "005",
+  "a": "pz3.html",
+  "b": "pz5.html",
+  "a_title": "Prime Latent Manifold",
+  "b_title": "Prime Phase-Portrait Explorer",
+  "combined_theme": "prime-dual-coordinate-geometry",
+  "one_line": "Primes seen through two complementary coordinate systems at once — a modular residue cylinder and a log-gap manifold — where the 'ghost structures' are exactly the residual correlations that neither single-axis projection explains.",
+  "contradictions": [
+    "pz3 (A) takes randomness as the null hypothesis and hunts for 'ghost structures' that should not exist if primes were random (structure = suspicious/illusory); pz5 (B) asserts primes carry genuine, deterministic arithmetic structure (ribbons/attractors) that the right coordinates merely reveal.",
+    "pz3 plots the sequential gap-rhythm (the 4-tuple of consecutive gaps in log-space) — scale-invariant and value-agnostic; pz5 plots the absolute residue of each prime (p mod m) on a modular cylinder — value-dependent and modulus-dependent. Different fundamental coordinates on the same data.",
+    "pz5 explains its clusters by number theory (primes are coprime to the modulus, occupying only phi(m) residue classes -> ribbons), while pz3 leaves its clusters unexplained as open 'ghosts' — tension over whether a visible cluster is a law or a projection artifact.",
+    "pz3 frames primes as a breathing, warped geometric manifold ('local geometry of randomness', warp lambda + dimensional rotation); pz5 frames them as a dynamical flow on a cylinder with 'gap velocity' and 'attractors' — two different physical metaphors for the same sequence."
+  ],
+  "resolution": "The two papers are two near-orthogonal projections of one object: a prime is located by (residue on the modular cylinder, gap-rhythm in the log-manifold). B's ribbons are the arithmetic sieve constraint made visible (real and explained); A's near-randomness is the Cramér-model baseline that holds conditioned on that sieve. The 'ghost structures' are the residual higher-order correlations (twin primes, constellations, Chebyshev bias) that neither the residue law nor an independent gap law predicts — i.e. the open core of prime number theory. So B is right that structure is real and mostly the sieve, A is right that after conditioning on the sieve gaps are locally near-random, and the science is the deviation from the product (residue law x independent gap law).",
+  "viz": "Interactive canvas dual-coordinate explorer: a blend slider lambda morphs each prime's position from A's log-gap manifold (lambda=0) through a fused dual coordinate (lambda=0.5) to B's modular-cylinder residue plot (lambda=1), with a primorial modulus selector (6/30/210/2310), dots coloured by the next gap g4 (A's 'colour the future'), and a live density heat-field surfacing the residual 'ghost structures'. Theme-aware via CSS variables, in-page sieve data, zero external dependencies, zero console errors."
+}

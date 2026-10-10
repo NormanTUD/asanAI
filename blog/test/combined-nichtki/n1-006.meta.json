@@ -1,0 +1,16 @@
+{
+  "no": "006",
+  "a": "pz9.html",
+  "b": "pz8.html",
+  "a_title": "HoTT Prime Topology",
+  "b_title": "3D Prime Origami Explorer",
+  "combined_theme": "primes-as-homotopy-origami",
+  "one_line": "Eine Zahl ist ein Pfad (1-Morphismus) in einem topologischen Zahlensystem: ihre Primfaktor-Zerlegung ist die kanonische Schleifen-/Wortdekomposition (Primzahlen = fundamentale Erzeuger), aus der eine ordnungsunabhängige lokale Wendung (A, der Typ) und ein dämpfender kumulativer Wandel (B, der Lift) die globale Bahn ergibt.",
+  "contradictions": [
+    "Ursprung der Position: A berechnet die Lage einer Zahl nur aus ihren eigenen Primfaktoren (ordnungsunabhängig, 'Univalenz': gleiche Faktoren => gleiche Position); B erhält die Lage durch kumulativen Pfaddurchlauf, sodass dieselbe Zahl an anderer Stelle in der Folge anders liegt (ordnungsabhängig).",
+    "Geometrische Gestalt: A zeichnet eine diskrete Punktmenge (0-dimensionaler Typen-/Signaturen-Raum, keine Kanten); B zeichnet eine einzige zusammenhängende Polylinie (1-dimensionale Bahn, Zahlen als geordnete Glieder).",
+    "Verhalten des Faktormappings: A ist beschränkt/otoroidal (sin/cos, Gewichte 1/(idx+1)), kompakt; B akkumuliert unbegrenzte Laufsummen als Laufwinkel und driftt für große N."
+  ],
+  "resolution": "Beide Seiten sind zwei Beschreibungsstufen derselben Homotopie, kein Widerspruch: A sieht die Homotopieklasse (lokal, ordnungsunabhängig, bestimmt von der Primfaktor-Signatur = der Typ), B den konkreten Lift (geordneter, ordnungsabhängiger Wandel). Eine Zahl ist ein 1-Morphismus: ihre Zerlegung in Primfaktoren ist die kanonische Wort-/Schleifendekomposition (Erzeuger = Primzahlen), ihre 3D-Position ein gewählter Repräsentant dieses Worts. Die Fusion zeichnet B's zusammenhängende Bahn, steuert ihre lokale Krümmung mit A's beschränkten toroidalen Mapping und dämpft die Laufwinkel (lambda<1), damit die Bahn kompakt statt driftend bleibt; Primzahlen leuchten als Erzeuger, Verbundene farbig nach Omega-Zahl.",
+  "viz": "3D-Canvas-Bahn (Origami) über 2..N: lokale Krümmung an jeder Stufe = beschränkte toroidale Primfaktor-Signatur (A), kumulativ als dämpfender Laufpfad (B); Primzahlen leuchten als fundamentale Erzeuger, zusammengesetzte Zahlen farbig nach Anzahl ihrer distinkten Faktoren; drehbar/zoombar/hover-HUD, themenreaktiv (hell/dunkel), reine Inline-Daten, kein Netzwerk."
+}

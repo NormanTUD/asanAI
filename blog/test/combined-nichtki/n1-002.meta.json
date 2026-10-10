@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "homotopie.html",
+  "b": "intro_preview_light.html",
+  "a_title": "Homotopietheorie — Eine interaktive Reise (nach Ulrich Bunke)",
+  "b_title": "Intro-Preview (Light) — gestaffelter Lader mit 8 Kurs-Modulen (Cosmos … Convergence)",
+  "combined_theme": "compression-machine-staged-course",
+  "one_line": "Beide Papiere sind dieselbe Abwärts-Kompressionsmaschine (kontinuierliche Welt → diskrete, berechenbare Invarianten) auf zwei Skalen: A als bewiesenes Inne eines Faches, B als offene, gestaffelt geladene Hülle des ganzen Pfads — der Lader ist die topologische Ordnung des Abhängigkeits-DAGs.",
+  "contradictions": [
+    "A präsentiert sich als geschlossene, lineare 'eine einzige durchgehende Geschichte', die in 'Das ist das ganze Skript' endet (ein abgeschlossenes Fach mit fixem, endendem Landkarten-DAG), während B acht getrennte Module als offene, modulare Checkliste mit eigenen pending/loading/done-Zuständen und Status 'Loading sections…' darstellt.",
+    "A serviert die gesamte Vorlesung auf einmal auf einer langen Scroll-Seite ('Scrolle, um zu beginnen'), während B die Zustellung staffelt: Sektionen 'kommen' einzeln, während sie laden (prozessuale, progressiv-disclosure-freischaltende Darreichung).",
+    "A definiert das 'Ganze' als genau ein Fach (algebraische Topologie) und erklärt es für vollständig, während B das Ganze als acht Disziplinen (Physik→Zahlen→Geometrie→Analysis→Logik→Signal→Sprache→KI) darstellt, die per Design unvollständig sind (es ist ein Preview/Lader, kein Ende)."
+  ],
+  "resolution": "Beide sind dieselbe Struktur: ein Abhängigkeits-DAG. A 'Landkarte' ist ein DAG, dessen topologisch geordnetes Lesen wie 'eine durchgehende Geschichte' wirkt; B 'checklist' ist dieselbe topologische Ordnung als UI-Zustände (pending/loading/done). 'Das ist das ganze Skript' gilt pro Modul (jede Disziplin erreicht ihr eigenes Schlussbild), global bleibt das Buch offen — A ist ein Knoten-Cluster des größeren DAGs von B. 'Alles auf einmal' (A) vs 'gestaffelt' (B) ist Content vs Delivery: A beschreibt, WAS gebaut wird (bottom-up, jede Invariante aus der vorherigen), B beschreibt, WIE es serviert wird (gestaffelter Lader). Fusionierter Konsens: ein Kurs ist ein Abhängigkeits-DAG; sein Inhalt ist die durchgehende Invarianten-Kompressions-Erzählung, seine Darreichung ein gestaffelter Lader in topologischer Ordnung — der Lader ist die Roadmap, die Abhängigkeitspfeile definieren die Lade-Reihenfolge.",
+  "viz": "Ein Canvas: links ein kontinuierlicher Raum (Blob mit g Löchern), der sich über Zeit t stetig verformt, während seine Invariante (2g Erzeuger von π₁) fest bleibt (A: Verbiegen ändert die Invariante nie). Rechts B '8-Modul-Lader', der Cosmos…Convergence nacheinander pending→loading→done lädt; pro fertigem Modul wird eine Stufe der Invarianten-Kette von A (π₀→π₁→Π→Σ⊣Ω→πₙ→Spektrum/H*→stabil→Hurewicz) freigeschaltet — die Lade-Reihenfolge ist die Abhängigkeits-Reihenfolge. Theme-aware (liest --accent/--text/CSS-Variablen, MutationObserver auf html.dark), inline Daten, kein Netzwerk."
+}
