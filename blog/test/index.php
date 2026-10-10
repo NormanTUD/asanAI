@@ -362,6 +362,9 @@ select:focus{outline:none;border-color:var(--acc1)}
 .empty .sugg span:hover{border-color:var(--acc1);color:var(--tx)}
 
 footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut2);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.combined-toggle{background:none;border:1px solid var(--line);color:var(--mut2);font-size:11.5px;padding:3px 10px;border-radius:999px;cursor:pointer;transition:all .13s;font-family:inherit;letter-spacing:.02em;display:inline-flex;align-items:center;gap:5px;flex:0 0 auto}
+.combined-toggle:hover{color:var(--mut);border-color:var(--line2);background:var(--card)}
+.combined-toggle.active{color:var(--acc2);border-color:var(--acc2);background:rgba(177,140,255,.1)}
 
 @media(max-width:760px){
   .stats{grid-template-columns:repeat(2,1fr)}
@@ -438,7 +441,9 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 
   <footer>
-    <span><span id="ftotal"></span> Dateien · ohne Datenbank, ohne Bau­schritt — jeder Aufruf scannt neu, neue Dateien erscheinen automatisch.</span>
+    <span style="display:inline-flex;align-items:center;gap:12px">
+      <button id="combined-toggle" class="combined-toggle" type="button">🔒 combined</button>
+      <span><span id="ftotal"></span> Dateien · ohne Datenbank, ohne Bau­schritt — jeder Aufruf scannt neu, neue Dateien erscheinen automatisch.</span>
     <span><kbd>/</kbd> suchen · <kbd>Esc</kbd> leeren · <kbd>↻</kbd> neu scannen · Klick = öffnen · ⓘ = Details</span>
   </footer>
 </div>
@@ -464,6 +469,10 @@ const state = { q:'', cat:'all', dir:'all', sort:'newest', view:'tiles' };
 let deepResults = null, searchToken = 0, firstRender = true, openSet = new Set();
 
 function topDir(p){ const i = p.indexOf('/'); return i === -1 ? '' : p.slice(0, i); }
+const HIDDEN_DIR = 'combined';
+function isHidden(it){ return topDir(it.path) === HIDDEN_DIR; }
+let showHidden = false;
+function visibleData(){ return showHidden ? DATA : DATA.filter(it => !isHidden(it)); }
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function hsize(b){ if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(b<104857?0:1)+' KB'; if(b<1073741824) return (b/1048576).toFixed(1)+' MB'; return (b/1073741824).toFixed(2)+' GB'; }
 function relTime(ts){ const s=Date.now()/1000-ts; if(s<45) return 'gerade eben'; const m=s/60; if(m<60) return 'vor '+Math.floor(m)+' Min.'; const h=m/60; if(h<24) return 'vor '+Math.floor(h)+' Std.'; const d=h/24; if(d<7) return 'vor '+Math.floor(d)+' T.'; const w=d/7; if(w<5) return 'vor '+Math.floor(w)+' Wo.'; const mo=d/30.4; if(mo<12) return 'vor '+Math.floor(mo)+' Mon.'; return 'vor '+(d/365).toFixed(1)+' J.'; }
@@ -487,7 +496,8 @@ function matchesQ(it, q){
 
 function currentItems(){
   const deep = state.q.length >= 2 && deepResults !== null;
-  let base = deep ? deepResults : DATA;
+  let base = deep ? deepResults : visibleData();
+  if(!showHidden) base = base.filter(it => !isHidden(it));
   if(!deep && state.q) base = base.filter(it => matchesQ(it, state.q));
   if(state.cat !== 'all') base = base.filter(it => it.cat === state.cat);
   if(state.dir !== 'all') base = base.filter(it => topDir(it.path) === state.dir);
@@ -571,12 +581,13 @@ function rowHTML(it){
 }
 
 function renderStats(){
-  const total = DATA.length;
-  const size = DATA.reduce((a,b)=>a+b.size,0);
-  const dirs = new Set(DATA.map(it=>topDir(it.path))).size;
-  const cats = new Set(DATA.map(it=>it.cat)).size;
-  const newest = DATA[0];
-  const cc = {}; DATA.forEach(it=>{ cc[it.cat]=(cc[it.cat]||0)+1; });
+  const data = visibleData();
+  const total = data.length;
+  const size = data.reduce((a,b)=>a+b.size,0);
+  const dirs = new Set(data.map(it=>topDir(it.path))).size;
+  const cats = new Set(data.map(it=>it.cat)).size;
+  const newest = data[0];
+  const cc = {}; data.forEach(it=>{ cc[it.cat]=(cc[it.cat]||0)+1; });
   const topCat = Object.keys(cc).sort((a,b)=>cc[b]-cc[a])[0];
   const card = (i,k,v,s)=>'<div class="stat"><div class="k">'+i+' '+k+'</div><div class="v">'+v+'</div><div class="s" title="'+esc(s)+'">'+esc(s)+'</div></div>';
   $('#stats').innerHTML =
@@ -588,29 +599,31 @@ function renderStats(){
 }
 
 function renderRecent(){
-  const top = DATA.slice(0,6);
+  const top = visibleData().slice(0,6);
   $('#recent').innerHTML = '<span class="lbl">🔥 Vor kurzem</span>'
     + top.map(it=>'<a class="rl" href="'+esc(it.path)+'" target="_blank" rel="noopener" title="'+esc(fullTime(it.mtime))+'">'+it.icon+' <b>'+esc(displayTitle(it))+'</b> <span class="rt">'+relTime(it.mtime)+'</span></a>').join('');
 }
 
 function renderTypebar(){
-  const counts = {}; DATA.forEach(it=>{ counts[it.cat]=(counts[it.cat]||0)+1; });
-  const total = DATA.length || 1;
+  const data = visibleData();
+  const counts = {}; data.forEach(it=>{ counts[it.cat]=(counts[it.cat]||0)+1; });
+  const total = data.length || 1;
   $('#typebar').innerHTML = CAT_ORDER.filter(c=>counts[c]).map(c=>
     '<div class="seg'+(state.cat===c?' active':'')+'" data-cat="'+c+'" title="'+LABELS[c]+': '+counts[c]+'" style="flex:'+(counts[c]/total)+';background:'+COLORS[c]+'"></div>'
   ).join('');
 }
 function renderChips(){
-  const counts = {}; DATA.forEach(it=>{ counts[it.cat]=(counts[it.cat]||0)+1; });
+  const data = visibleData();
+  const counts = {}; data.forEach(it=>{ counts[it.cat]=(counts[it.cat]||0)+1; });
   $('#chips').innerHTML =
-    '<span class="chip-f'+(state.cat==='all'?' active':'')+'" data-cat="all" style="'+(state.cat==='all'?'background:var(--tx);border-color:var(--tx);':'')+'">✦ Alle <span class="n">'+DATA.length+'</span></span>'
+    '<span class="chip-f'+(state.cat==='all'?' active':'')+'" data-cat="all" style="'+(state.cat==='all'?'background:var(--tx);border-color:var(--tx);':'')+'">✦ Alle <span class="n">'+data.length+'</span></span>'
     + CAT_ORDER.filter(c=>counts[c]).map(c=>{
       const act = state.cat===c;
       return '<span class="chip-f'+(act?' active':'')+'" data-cat="'+c+'" style="'+(act?'background:'+COLORS[c]+';border-color:'+COLORS[c]+';':'')+'">'+ICONS[c]+' '+LABELS[c]+' <span class="n">'+counts[c]+'</span></span>';
     }).join('');
 }
 function renderDirs(){
-  const dirs = [...new Set(DATA.map(it=>topDir(it.path)))].filter(d=>d).sort((a,b)=>a.localeCompare(b,'de'));
+  const dirs = [...new Set(visibleData().map(it=>topDir(it.path)))].filter(d=>d).sort((a,b)=>a.localeCompare(b,'de'));
   $('#dir').innerHTML = '<option value="all">📁 Alle Ordner</option>' + dirs.map(d=>'<option value="'+esc(d)+'"'+(d===state.dir?' selected':'')+'>'+esc(d)+'</option>').join('');
 }
 
@@ -637,14 +650,23 @@ function renderView(arr){
     el.innerHTML = '<div class="wall">' + arr.map((it,i)=>tileHTML(it,i,firstRender)).join('') + '</div>';
   }
   const deep = state.q.length>=2 && deepResults!==null;
-  let c = 'Zeige <b>'+arr.length+'</b> von <b>'+DATA.length+'</b>';
+  let c = 'Zeige <b>'+arr.length+'</b> von <b>'+visibleData().length+'</b>';
   if(deep){ const m = deepResults.reduce((a,b)=>a+(b.matches||0),0); c += ' · <span class="deep">Volltext: <b>'+deepResults.length+'</b> Dateien · <b>'+m+'</b> Treffer</span>'; }
   $('#count').innerHTML = c;
 }
 
+function updateCombinedToggle(){
+  const btn = $('#combined-toggle');
+  if(!btn) return;
+  const n = DATA.filter(isHidden).length;
+  btn.classList.toggle('active', showHidden);
+  btn.textContent = (showHidden ? '🔓 ' : '🔒 ') + 'combined' + (n ? ' ('+n+')' : '');
+  btn.title = showHidden ? 'combined/ einblenden/ausblenden' : 'combined/ ist verborgen — klicken zum Einblenden';
+}
 function render(){
   renderStats(); renderRecent(); renderTypebar(); renderChips(); renderDirs();
   renderView(currentItems());
+  updateCombinedToggle();
   firstRender = false;
   $('#q').value = state.q;
   $('#clear').style.display = state.q ? 'block' : 'none';
@@ -653,7 +675,8 @@ function render(){
 }
 
 function persist(){
-  const h = '#cat='+state.cat+'&dir='+state.dir+'&sort='+state.sort+'&view='+state.view;
+  let h = '#cat='+state.cat+'&dir='+state.dir+'&sort='+state.sort+'&view='+state.view;
+  if(showHidden) h += '&hidden=1';
   const s = state.q ? '?q='+encodeURIComponent(state.q) : '';
   try{ history.replaceState(null,'', s + h); }catch(e){}
 }
@@ -699,6 +722,7 @@ function loadState(){
   state.dir = hash.dir || 'all';
   state.sort = hash.sort || 'newest';
   state.view = hash.view || 'tiles';
+  showHidden = hash.hidden === '1';
 }
 
 function wire(){
@@ -709,6 +733,8 @@ function wire(){
   $('#views').addEventListener('click', e=>{ const b=e.target.closest('.vbtn'); if(!b) return; state.view=b.dataset.v; persist(); render(); });
   $('#export').addEventListener('click', ()=>exportCSV(currentItems()));
   $('#rescan').addEventListener('click', ()=>location.reload());
+  const ct = $('#combined-toggle');
+  if(ct) ct.addEventListener('click', ()=>{ showHidden = !showHidden; updateCombinedToggle(); persist(); render(); });
 
   document.addEventListener('click', e=>{
     const seg = e.target.closest('.typebar .seg, .chip-f');
