@@ -2076,7 +2076,7 @@ const L = (o={}) => JSON.parse(JSON.stringify({...PLOT_LAYOUT, ...o}));
 /* HiDPI-Canvas-Setup */
 function setupCanvas(cv, hCss){
   const dpr = window.devicePixelRatio || 1;
-  const w = cv.parentElement.clientWidth - 24;
+  const w = Math.max(0, cv.parentElement.clientWidth - 24);
   const h = hCss || cv.height;
   cv.style.width = w + 'px';
   cv.style.height = h + 'px';
