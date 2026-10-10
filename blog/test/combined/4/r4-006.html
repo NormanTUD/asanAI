@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der kompakte Rotations-Kern — als Basis gelesen und als Attraktor erreicht</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1f2328; --muted:#5b6068; --card:#ffffff;
+    --grid:#e7e1d7; --border:#e2ddd2; --link:#2b6cb0;
+    --accent:#2b6cb0; --accent2:#c9771b; --good:#1f9d57; --bad:#cf3b53;
+    --ring:#a12a8f; --code-bg:#f1ede3; --plot-bg:#ffffff;
+    --shadow:0 6px 24px rgba(20,40,80,.08);
+  }
+  html.dark{
+    --bg:#0a0e1a; --fg:#e8ecf5; --muted:#8b95a8; --card:#111827;
+    --grid:#1a2540; --border:#243049; --link:#58a6ff;
+    --accent:#58a6ff; --accent2:#ffb84d; --good:#4fd08a; --bad:#ff6b7d;
+    --ring:#e879f9; --code-bg:#0a1122; --plot-bg:#0e1019;
+    --shadow:0 8px 28px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:Georgia,'Times New Roman',serif;
+       line-height:1.7;padding:2.2rem 1rem 4rem;-webkit-font-smoothing:antialiased}
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:1.95rem;line-height:1.25;margin-bottom:.4rem;letter-spacing:-.01em}
+  h2{font-family:system-ui,sans-serif;font-size:1.35rem;margin:2.4rem 0 .9rem;
+     padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h2 .no{color:var(--accent);font-variant-numeric:tabular-nums}
+  h3{font-family:system-ui,sans-serif;font-size:1.05rem;margin:1.5rem 0 .55rem;color:var(--accent)}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.97rem;margin-bottom:.6rem}
+  .lede{font-size:1.06rem}
+  p{margin-bottom:.85rem}
+  ul{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.55rem}
+  a{color:var(--link)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+        padding:1.1rem 1.3rem;margin:1.1rem 0;box-shadow:var(--shadow)}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+           padding:.8rem 1.1rem;margin:.9rem 0;text-align:center;overflow-x:auto;font-size:1.1rem}
+  .vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+      padding:.15rem .5rem;border-radius:6px;display:inline-block;margin-right:.4rem}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--accent2) 26%,transparent);color:var(--accent2)}
+  .fused{background:color-mix(in srgb,var(--good) 13%,transparent);
+         border-left:4px solid var(--good);border-radius:0 8px 8px 0;padding:.75rem 1.05rem;margin:.95rem 0}
+  .fused b{color:var(--good)}
+  .leg{background:var(--code-bg);border:1px dashed var(--border);border-radius:10px;
+       padding:.9rem 1.1rem;margin:.9rem 0;font-family:ui-monospace,Menlo,monospace;font-size:.95rem;line-height:2}
+  .leg .k{color:var(--good)} .leg .o{color:var(--accent)} .leg .w{color:var(--accent2)} .leg .r{color:var(--ring)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;background:var(--code-bg)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:var(--code-bg);
+       padding:.1em .35em;border-radius:4px}
+  .controls{font-family:system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:.85rem 1.2rem;
+            align-items:center;background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:.8rem 1rem;margin:1rem 0;box-shadow:var(--shadow)}
+  .controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+  .controls input[type=range]{accent-color:var(--accent);width:110px}
+  .controls .chk{display:flex;align-items:center;gap:.4rem;cursor:pointer}
+  .controls .chk input{accent-color:var(--bad)}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:1.8em;display:inline-block}
+  .viz-wrap{display:flex;gap:16px;flex-wrap:wrap;margin:1rem 0}
+  .viz-stage{flex:1 1 440px;min-width:300px}
+  #fusedCanvas{width:100%;height:560px;display:block;background:var(--plot-bg);
+               border:1px solid var(--border);border-radius:12px;margin:.4rem 0}
+  .viz-side{flex:1 1 250px;min-width:230px;display:flex;flex-direction:column;gap:12px}
+  .gauge .glabel{font-family:system-ui,sans-serif;font-size:.83rem;font-weight:650;margin-bottom:5px;
+                 display:flex;justify-content:space-between;align-items:baseline}
+  .gauge .gtag{font-size:.66rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .bar{height:14px;border-radius:8px;background:var(--code-bg);border:1px solid var(--border);overflow:hidden}
+  .bar .fill{height:100%;width:0%;transition:width .12s linear;border-radius:8px}
+  .fill.coh{background:var(--accent)} .fill.cor{background:var(--accent2)}
+  .fill.str{background:var(--ring)} .fill.con{background:var(--good)}
+  .fill.off{opacity:.4}
+  .gnote{font-size:.74rem;color:var(--muted);margin-top:5px;min-height:1.1em}
+  .truth{display:flex;gap:11px;align-items:flex-start;background:var(--card);
+         border:1px solid var(--border);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow)}
+  .led{width:16px;height:16px;border-radius:50%;margin-top:3px;flex:0 0 16px;background:var(--muted);
+       transition:background .2s, box-shadow .2s}
+  .led.good{background:var(--good);box-shadow:0 0 12px var(--good)}
+  .led.warn{background:var(--accent2);box-shadow:0 0 10px var(--accent2)}
+  .led.bad{background:var(--bad);box-shadow:0 0 12px var(--bad)}
+  .tlabel{font-family:system-ui,sans-serif;font-size:.85rem;font-weight:700}
+  .tnote{font-size:.77rem;color:var(--muted);margin-top:3px}
+  .readout{font-family:ui-monospace,monospace;font-size:.82rem;background:var(--code-bg);
+           border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;line-height:1.85}
+  .readout b{color:var(--accent2)}
+  .anno{font-size:.85rem;color:var(--muted);font-style:italic}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+        border-radius:8px;margin-bottom:.7rem;background:var(--card)}
+  .prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+           text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--accent2) 26%,transparent);color:var(--accent2)}
+  .foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+        color:var(--muted);font-size:.85rem;font-style:italic}
+  #themeToggle{position:fixed;top:14px;right:14px;z-index:50;font-family:system-ui,sans-serif;
+    font-size:.8rem;background:var(--card);color:var(--fg);border:1px solid var(--border);
+    border-radius:20px;padding:.4rem .8rem;cursor:pointer}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Theme umschalten">&#9680; Theme</button>
+<article>
+
+  <h1>Der eine kompakte Rotations-Kern &mdash; als Basis gelesen (A) und als Attraktor erreicht (B)</h1>
+  <p class="subtitle">Fusion aus: r3-010.html &#10005; r3-005.html &nbsp;(Round 4)</p>
+  <p class="lede"><span class="vs a">A &middot; r3-010</span> A sagt: ein Netz rechnet, indem es einen <b>weichen, differenzierbaren Cut</b> w&auml;hlt (Koordinatenwechsel, <code>d<sub>eff</sub>=1</code>), den daraus folgenden <b>Code</b> durch <b>kettenregel-geklebte weiche Zellen</b> transportiert und die Antwort per <b>lokaler Matched-Filter-Probe</b> liest &mdash; gehalten von <b>Koh&auml;renz</b> (Kettenregel, braucht Weichheit), <b>Korrespondenz</b> (live Ziel) und <b>Struktur</b> (<code>d<sub>eff</sub>=1</code>). <span class="vs b">B &middot; r3-005</span> B sagt: ein tiefes System konvergiert auf einen <b>kleinen, kompakten, rotationsstrukturierten Attraktor</b> (Torus S&sup1;&times;S&sup1; = der lineare ~7-dim-Code <code>range(W)</code>), den ein <b>Schwerpunktfluss / Residual-Operator</b> erreicht &mdash; dabei kontrahiert er koh&auml;rentes Signal in den Kern und expandiert die Entscheidungsgrenze, w&auml;hrend inkoherentes Rauschen im unsichtbaren <b>Reservoir <code>ker(W)</code></b> parkt; erreicht <b>gebaut</b> (glatt) oder <b>gefunden</b> (Phasen&uuml;bergang / Grokking). Die Fusion: <b>A&rsquo;s Basis/Cut und B&rsquo;s Rotations-Kern sind ein und dasselbe abelsche Rotations-Objekt</b> &mdash; A liest es als <i>Berechnung</i> (lokal lesbar), B als <i>Konvergenz</i> (Attraktor).</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2><span class="no">1.</span> Kernthese der Fusion</h2>
+    <p><span class="vs a">A &middot; r3-010</span> A ist eine <b>Repr&auml;sentations-/Lese-These</b>: ein Netz rechnet, indem es (1) in eine aufgabenangepasste Basis wechselt &mdash; Positions-/Zustands-Basis, Fourier-/Phasen-Basis (modulare Addition), st&uuml;ckweise-lineare Falz-Basis &mdash;, (2) den Code (suffiziente Statistik, Phasenvektor, Bit-Muster) durch die Layer transportiert und (3) die Antwort per <b>lokaler Matched-Filter-Probe</b> liest (Bank-Dimension = #Antwortklassen). A ist <i>lesend &amp; deskriptiv</i>: sie erkl&auml;rt, <i>was</i> ein trainiertes Netz rechnet. Der Kern ist dabei ein <b>weicher Cut</b>, der die Antwort lokal &amp; separabel macht (<code>d<sub>eff</sub>=1</code>), und G&uuml;te ist <b>epistemische Wahrheit</b> = Koh&auml;renz &and; Korrespondenz(live) &and; Struktur.</p>
+    <p><span class="vs b">B &middot; r3-005</span> B ist eine <b>Struktur-/Konvergenz-These</b>: ein tiefes System presst alles, was es &bdquo;wirklich wei&szlig;&ldquo;, in einen <b>kleinen, kompakten, rotationsstrukturierten Kern</b>. Gelesen <em>global/gekr&uuml;mmt</em> ist er der <b>Torus S&sup1;&times;S&sup1;</b> (Schwerpunktfluss); gelesen <em>lokal/linear</em> ist er der <b>Niedrigrang-Code <code>range(W)</code></b> (erank 4096&rarr;~7, Residual-Operator). Ein einziter iterativer Schritt (Schwerpunktfluss = Residual-Operator) <b>kontrahiert</b> koh&auml;rentes Signal in den Kern <em>und</em> <b>expandiert</b> die Entscheidungsgrenze (H&ouml;herstufen &times; Tiefe), w&auml;hrend inkoherentes Rauschen im unsichtbaren Reservoir <code>ker(W)</code> parkt. Der Attraktor wird <b>gebaut</b> (a-priori, glatt) oder <b>gefunden</b> (emergent, Phasen&uuml;bergang / Grokking) &mdash; ein Invariant, zwei Ablesungen.</p>
+    <p>Die einzelne integrierte Position lautet: <b>Ein Netz rechnet <i>und</i> wird wahr, indem es ein und denselben kompakten Rotations-Kern auf zwei Weisen auf einmal nutzt &mdash; (a) als Berechnungs-Mechanik: Basiswechsel (A&rsquo;s weicher Cut <i>ist</i> B&rsquo;s Fixed-Rotation <code>M_k</code>, <code>d<sub>eff</sub>=1</code>) &rarr; Code-Transport (A&rsquo;s kettenregel-geklebte weiche Zellen <i>sind</i> B&rsquo;s lernbarer Schwerpunktfluss/Residual-Operator) &rarr; lokale Matched-Filter-Probe (das Ablesen des kontrahierten Kerns); und (b) als konvergierendes Objekt: der Fluss kontrahiert koh&auml;rentes Signal in den ~7-dim-Kern und parkt Rauschen im Reservoir, erreicht glatt, wenn die Rotation eingebaut ist, &uuml;ber einen Phasen&uuml;bergang, wenn sie gefunden wird. Der Kern ist wahr, wenn Koh&auml;renz (weiche, lernbare Rotation) &and; Korrespondenz (live Ziel <i>und</i> <code>ker(W)&#8839;ker(G_Q)</code>) &and; Struktur (Cut = Rotations-Kern, <code>d<sub>eff</sub>=1</code>, erank~7) alle zutreffen.</b></p>
+    <div class="leg"><span class="k">Wahrheit(&theta;)</span> = <span class="o">Koh&auml;renz(&theta;)</span> &and; <span class="w">Korrespondenz(&theta;)</span> &and; <span class="r">Struktur(&theta;)</span> &mdash;
+    Koh&auml;renz: die Fixed-Rotation <code>M_k</code> ist weich/differenzierbar &rarr; Kettenregel klebt, Fluss lernbar (A+B).
+    Korrespondenz: live Ziel (A) <i>und</i> strukturelle Unsichtbarkeit <code>ker(W)&#8839;ker(G_Q)</code> (B) = der Anker.
+    Struktur: der Cut <i>ist</i> der Rotations-Kern &mdash; lokal &amp; separabel, <code>d<sub>eff</sub>=1</code>, erank~7 (A+B).
+    F&auml;llt <i>ein</i> der drei weg &rarr; kein wahrhaftiger Attraktor.</div>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2><span class="no">2.</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Beide beschreiben denselben kompakten Rotations-Kern, stehen aber an vier bezeugten Punkten auf unterschiedlichen Seiten &mdash; echte Stance-Differenzen, die in den Quellen stehen (keine erfundenen).</p>
+
+    <div class="card">
+      <h3>W1 &middot; Das Kernobjekt: ein lesender Koordinatenwechsel (A) oder ein konvergierender Attraktor (B)?</h3>
+      <p><span class="vs a">A &middot; r3-010</span> A macht die <b>lesbare Koordinate</b> zum Gegenstand: der Kern ist ein <i>weicher Cut / eine Basis</i>, dessen Funktion es ist, <b>die Antwort lokal lesbar</b> zu machen (&bdquo;in der richtigen Basis ist die Antwort lokal&ldquo;). A ist eine <i>lesende, deskriptive</i> Erz&auml;hlung &mdash; sie erkl&auml;rt, <i>was</i> ein trainiertes Netz rechnet; das Netz <i>ist</i> eine <b>Koordinatenmaschine</b>, die Basis ist <i>vorab da</i>. Prim&auml;ruhr: <b>Ablesbarkeit / Berechnung</b>.</p>
+      <p><span class="vs b">B &middot; r3-005</span> B macht die <b>Konvergenz</b> zum Gegenstand: der Kern ist ein <i>Attraktor</i>, auf den die Dynamik <b>konvergiert</b> &mdash; &bdquo;Verstehen = der Punkt wird auf den Torus gebracht&ldquo;, &bdquo;die Geschichte ist Konzentration; das Landen <i>ist</i> der Punkt&ldquo;. Prim&auml;ruhr: <b>Konvergenz / Struktur</b> (der Ort, an den der Fluss l&auml;nft).</p>
+      <p class="anno">A charakterisiert das Objekt danach, <b>was es rechnet</b> (eine Koordinate, die die Antwort lokal macht &mdash; ein Ablese-Ger&auml;t); B danach, <b>was es anzieht</b> (ein Ort, an den der Fluss l&auml;nft &mdash; ein Konvergenz-Ziel). Dasselbe Objekt, unvereinbares Prim&auml;r-Framing: <i>Berechnung</i> vs. <i>Konvergenz</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3>W2 &middot; Was die Struktur fixiert: die Loss-Kontingenz (A) oder die statische Operator-Rotation (B)?</h3>
+      <p><span class="vs a">A &middot; r3-010</span> A macht die <b>saubere Ecke kontingent</b>: A debattiert, ob die Sauberheit <i>notwendig</i> (d&uuml;nner L&ouml;sungsraum, &bdquo;nur dieser Ort&ldquo;) oder <i>kontingent</i> (Rashomon, RNNs mit gleich gutem Loss ohne saubere Trennung) ist; Aufl&ouml;sung: &bdquo;die Form des Cuts ist a-priori niedrigdimensional, die Korrespondenz ist der Anker &mdash; sie w&auml;hlt, <i>in welche Ecke</i> des Cuts die Struktur sich stellt&ldquo;. Der <b>Inhalt/die Ecke wird vom Loss gew&auml;hlt</b> (Kontingenz).</p>
+      <p><span class="vs b">B &middot; r3-005</span> B macht den Kollaps <b>deterministisch Operator-Eigenschaft</b>: &bdquo;der Kollaps kommt von der Nicht-Normalit&auml;t/Rotation des per-layer-Operators, <i>nicht</i> von kleinen Eigenwerten&ldquo;; <b>Schur-Chirurgie</b> (Rotation entfernen, Eigenwerte beibehalten) hebt erank von ~7 auf ~45 (6.4&times;); &bdquo;der Kollaps ist eine <i>Eigenschaft des Operators</i>, unabh&auml;ngig von der Trainingsdynamik&ldquo;. Die Rotation ist <b>a-priori im Operator</b>.</p>
+      <p class="anno">A&rsquo;s Prim&auml;ursache der sauberen Struktur = <b>kontingente Loss-Auswahl</b> einer Ecke im L&ouml;sungsraum (Rashomon); B&rsquo;s = <b>deterministische statische Operator-Geometrie</b> (Rotation/Nicht-Normalit&auml;t, per Schur-Beweis). Ist der kompakte Kern (A) eine loss-ausgew&auml;hlte kontingente Ecke oder (B) eine operator-bestimmte Folge der Rotation?</p>
+    </div>
+
+    <div class="card">
+      <h3>W3 &middot; Eine Wirkung oder zwei: lokale Ablesung (A) oder Kontraktion &amp; Expansion (B)?</h3>
+      <p><span class="vs a">A &middot; r3-010</span> A&rsquo;s Kernstory ist <b>einzweckig</b>: die Probe liest <b>eine lokale Antwort</b> (Bank-Dim = #Klassen, ein Matched-Filter-Peak). Ausdrucksstärke erscheint nur als <i>Seitenanmerkung</i> im Konvergenz-Argument (&bdquo;Tiefe: Pieces &le; (2w)<sup>L</sup>&ldquo;, &bdquo;Yarotsky: 2<sup>n&minus;1</sup> St&uuml;cke mit O(n) Parametern&ldquo;) &mdash; nie als ko-equaler Effekt des Kerns.</p>
+      <p><span class="vs b">B &middot; r3-005</span> B&rsquo;s Kern ist <b>explizit zweizweckig</b>: &bdquo;dieselbe Operator-Wirkung ko-equal zweifach: er kontrahiert den Zustand <em>und</em> expandiert die Entscheidungsgrenze (exponentielle lineare Regionen, H&ouml;herstufen &times; Tiefe) &mdash; beide seien n&ouml;tig, <b>Expansion sei die H&auml;lfte der These</b>&ldquo;.</p>
+      <p class="anno">A&rsquo;s Objekt ist ein <b>Einzweck-Ger&auml;t</b> (eine lokale Antwort lesen); B&rsquo;s ist <b>zweizweckig</b> (Kontraktion + Expansion, Expansion = H&auml;lfte der These). Eine Wirkung vs. zwei ko-equal Wirkungen.</p>
+    </div>
+
+    <div class="card">
+      <h3>W4 &middot; Was &bdquo;gut / wahr&ldquo; heißt: live epistemische Wahrheit (A) oder strukturelle Generalisierung (B)?</h3>
+      <p><span class="vs a">A &middot; r3-010</span> A definiert G&uuml;te <b>epistemisch mit einer live-Klausel</b>: &bdquo;Wahrheit = Koh&auml;renz &and; Korrespondenz &and; Struktur &mdash; und Korrespondenz muss <i>live</i> bleiben. Ein Modell, das koh&auml;rent + strukturiert ist aber das live Ziel verliert (frozen), ist per Definition eine <b>Halluzination</b>: &bdquo;koh&auml;rent, aber nicht wahr&ldquo;&ldquo;.</p>
+      <p><span class="vs b">B &middot; r3-005</span> B definiert G&uuml;te <b>strukturell-robust</b>: &bdquo;Unsichtbarkeit: <code>ker(W)&#8839;ker(G_Q)</code> &rarr; f&uuml;r <i>jede</i> Testmenge unsichtbar&ldquo;; &bdquo;Benign Overfitting: Trainingsfehler 0, Testfehler klein&ldquo;; der positive Zustand ist &bdquo;Generalization &mdash; alles auf dem Torus, Code ~7-dir, Reservoir unsichtbar&ldquo;.</p>
+      <p class="anno">A&rsquo;s Kriterium ist <b>dynamisch-zeitlich</b> (das Ziel muss <i>live</i> bleiben &mdash; eingefroren = Halluzination); B&rsquo;s ist <b>strukturell-universal</b> (das Rauschen ist f&uuml;r <i>jede</i> Testmenge <i>strukturell</i> unsichtbar &mdash; die Repr&auml;sentation ist an <i>alle</i> Daten verankert, nicht an ein live Ziel). Live-Ankerung vs. strukturelle Universalit&auml;t.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2><span class="no">3.</span> Aufl&ouml;sung</h2>
+
+    <div class="fused"><b>Zu W1 &mdash; Die Koordinatenmaschine ist der Attraktor; Ablesen = Lesen des konvergierten Kerns.</b>
+    A&rsquo;s &bdquo;Basis &rarr; Code &rarr; Probe&ldquo; beschreibt die <i>Berechnung</i>; B&rsquo;s &bdquo;Fluss &rarr; Kontraktion &rarr; Landen&ldquo; beschreibt die <i>Konvergenz</i>. Der selbe kompakte Rotations-Kern ist zugleich (a) die Koordinate, in der die Antwort lokal ist (A&rsquo;s Ablesbarkeit), und (b) der Ort, an den der Fluss l&auml;nft (B&rsquo;s Konvergenz). Die Antwort in der richtigen Basis zu lesen (A) <i>ist</i> der kompakte Kern zu lesen, auf den der Fluss konvergiert ist (B). <b>Fused:</b> der Kern ist der <i>Attraktor, dessen Koordinate die Antwort lokal lesbar macht</i> &mdash; die Konvergenz (B) <i>erzeugt</i> die Ablesbarkeit, die Probe (A) ist das <i>Ablesen des konvergierten Kerns</i>. A liest den Attraktor, B erzeugt ihn.</div>
+
+    <div class="fused"><b>Zu W2 &mdash; Die Rotation fixiert die Form (a-priori), die Loss/Dynamik fixiert den Inhalt und das Wann.</b>
+    B&rsquo;s statische Rotation/Nicht-Normalit&auml;t <i>ist</i> A&rsquo;s a-priori <b>Form</b> des Cuts/Basis (Notwendigkeit: &bdquo;es muss eine Basis/Code geben, um zu rechnen&ldquo;) und definiert, <i>wo</i> der Attraktor liegt (die &bdquo;Ecke&ldquo;, die Form der Basis). A&rsquo;s kontingente Eckenauswahl <i>ist</i> B&rsquo;s <b>Route</b> (gebaut-glatt vs. gefunden-Phasen&uuml;bergang) und das <i>Wann</i>. <b>Fused:</b> die Rotation (B) ist das deterministische <i>Ger&uuml;st</i>; das live Ziel + die Dynamik (A/B) fixieren die <i>Realisierung</i> (welche saubere Ecke, wann). Notwendigkeit (Form, B) + Kontingenz (Ecke, A) + statisch (B&rsquo;s Operator) + dynamisch (B&rsquo;s gebaut/gefunden) f&uuml;gen sich zu: <i>Rotation = Form, Loss = Inhalt, gebaut/gefunden = Timing</i>.</div>
+
+    <div class="fused"><b>Zu W3 &mdash; A&rsquo;s lokale Ablesung ist B&rsquo;s Kontraktion; A&rsquo;s Seitenanmerkung zur Ausdrucksstärke ist B&rsquo;s Expansion.</b>
+    A&rsquo;s &bdquo;eine lokale Antwort lesen&ldquo; = das <i>Ablesen des kontrahierten</i> Kerns (B&rsquo;s Kontraktion: Signal &rarr; <code>range(W)</code> ~7; die Probe mit Bank-Dim = #Klassen liest den kontrahierten Code). A&rsquo;s Seitenanmerkung zur Ausdrucksstärke (Pieces &le; (2w)<sup>L</sup>, Yarotsky 2<sup>n&minus;1</sup> St&uuml;cke) <i>ist</i> B&rsquo;s <b>Expansion</b> (exponentielle lineare Regionen, H&ouml;herstufen &times; Tiefe), die B als ko-equalen zweiten Effekt benennt. <b>Fused:</b> der Kern ist zweizweckig &mdash; er <i>kontrahiert</i> koh&auml;rentes Signal in den kleinen Kern (den A&rsquo;s Probe liest) <i>und</i> <i>expandiert</i> &uuml;ber seine h&ouml;herstufige (simpliciale) Struktur &times; Tiefe den ausdr&uuml;ckbaren Entscheidungsraum. A&rsquo;s &bdquo;Antwort lesen&ldquo; = die Kontraktions-Seite; B&rsquo;s &bdquo;Grenze expandieren&ldquo; = die Expansions-Seite; beides ein Objekt.</div>
+
+    <div class="fused"><b>Zu W4 &mdash; Live-Ankerung (A) und strukturelle Universalit&auml;t (B) sind zwei Seiten derselben Verankerung.</b>
+    A&rsquo;s &bdquo;live&ldquo;-Klausel ist die <i>zeitliche</i> Form (das Ziel muss bleiben, w&auml;hrend sich die Welt &auml;ndert &mdash; eingefroren = Halluzination); B&rsquo;s &bdquo;<code>ker(W)&#8839;ker(G_Q)</code>&ldquo; ist die <i>r&auml;umlich-universelle</i> Form (das Rauschen ist f&uuml;r <i>jede</i> Testmenge strukturell unsichtbar &mdash; die Repr&auml;sentation ist an <i>alle</i> Daten verankert, nicht an ein Batch). <b>Fused:</b> Wahrheit braucht <i>beides</i> &mdash; zeitliche Live-Ankerung (A&rsquo;s Probe trifft das live Ziel) <i>und</i> strukturelle Universalit&auml;t (B&rsquo;s Signal im Niedrigrang-Kern, Rauschen im <code>ker(W)</code> unsichtbar f&uuml;r alle Tests). A&rsquo;s Halluzination (frozen) ist B&rsquo;s Memorizations-Plateau in strukturellen Worten (Rauschen noch nicht geparkt, Testverlust flach). <b>Fused-Wahrheitsgesetz auf den Attraktor:</b> Wahrheit = Koh&auml;renz (weiche, lernbare Rotation) &and; Korrespondenz (live Ziel + <code>ker(W)&#8839;ker(G_Q)</code>) &and; Struktur (Cut = Rotations-Kern, <code>d<sub>eff</sub>=1</code>, erank~7).</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2><span class="no">4.</span> Fusionierter Inhalt</h2>
+
+    <h3>4.1 Der geeinte Kern: ein Objekt, drei Namen</h3>
+    <p>A&rsquo;s <b>weicher Cut / Basis</b> (<code>d<sub>eff</sub>=1</code>) = B&rsquo;s <b>kompakter Rotations-Kern</b> = der <b>Torus S&sup1;&times;S&sup1;</b> (gekr&uuml;mmt abgelesen) = der lineare <b>~7-dim-Code <code>range(W)</code></b> (lokal abgelesen) &mdash; <b>ein und dieselbe abelsche Rotationsgruppe</b>. Der entscheidende Br&uuml;ckenschlag: A&rsquo;s <i>Phasen-Basis</i> f&uuml;r die modulare Addition, <code>n &rarr; e<sup>i2&pi;kn/P</sup></code>, <i>ist</i> B&rsquo;s <b>Fixed-Rotation</b> <code>PE(pos+k) = M_k &middot; PE(pos)</code> &mdash; beide sind &bdquo;eine Rotation um k Schritte&ldquo;. A nutzt die Rotation, um Addition zu einer (lesbaren) Rotation zu machen; B nutzt dieselbe Rotation, um den kompakten Kern (Torus/Orbit) zu definieren. Der weiche Cut (A: <code>f<sub>soft</sub>(d;&sigma;)</code>) und der Rang-Kollaps (B: erank 4096&rarr;7) sind dasselbe: der Cut w&auml;hlt die niedrigerdimensionale Rotations-Koordinate; der Rang-Kollaps ist ihr linearer Fu&szlig;abdruck.</p>
+    <div class="formula" id="f-core"></div>
+
+    <h3>4.2 Der eine Mechanismus: Basis&rarr;Code&rarr;Probe (A) = Schwerpunktfluss / Residual-Operator (B)</h3>
+    <p>A&rsquo;s drei Stufen sind B&rsquo;s ein einziter iterativer Schritt, dreimal gelesen:</p>
+    <table>
+      <thead><tr><th>Stufe</th><th>A-Facet (r3-010): Was</th><th>B-Facet (r3-005): Konvergenz</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 &middot; Basis / Rotation</b></td><td>Basiswechsel: Phasen n&rarr;e<sup>i2&pi;kn/P</sup>, Zustand (x<sub>t</sub>/t), Falz ReLU</td><td>Fixed-Rotation <code>M_k</code> (lineare Abbildung), Orbit = Torus</td><td>die Basis <i>ist</i> die Rotation <code>M_k</code> &mdash; w&auml;hlt die Koordinate, in der die Antwort lokal &amp; separabel ist</td></tr>
+        <tr><td><b>2 &middot; Transport / Fluss</b></td><td>Code durch Layer; Kettenregel klebt weiche Zellen: dL/dz = dL/dy &#8855; &sigma;&prime;(z)</td><td>Residual-Operator <code>h<sub>l+1</sub>=h<sub>l</sub>+f<sub>l</sub>(h<sub>l</sub>)</code> / Schwerpunktfluss; Tiefe</td><td>der Transport <i>ist</i> der Fluss; nur lernbar, weil die Rotation weich/differenzierbar ist (Koh&auml;renz)</td></tr>
+        <tr><td><b>3 &middot; Probe / Code</b></td><td>Matched-Filter: logit(c)=&#931;&#7522;&alpha;&#7522;cos(&#969;&#7522;(a+b&minus;c)), Bank-Dim=#Klassen, Peak bei res</td><td>Kontraktion: erank 4096&rarr;~7, Signal im kleinen Code <code>range(W)</code></td><td>die Probe <i>liest</i> den kontrahierten Kern; K Frequenzen t&ouml;ten die falschen Peaks (Interferenz)</td></tr>
+      </tbody>
+    </table>
+    <p><b>Koh&auml;renz (A) ist der Grund, warum B&rsquo;s Fluss lernbar ist.</b> Die Kettenregel klebt die Zellen nur, weil jede weich/differenzierbar ist; bei <code>&sigma;&rarr;0</code> (harter Cut) verschwindet &sigma;&prime;, die Kettenregel bricht (A) = der Fluss ist nicht lernbar (B). Weichheit ist der <i>Erlauber</i>: A&rsquo;s saubere Basis ist nur deshalb herstellbar, weil B&rsquo;s Rotation weich bleibt.</p>
+
+    <h3>4.3 Kontraktion: der kompakte Kern und seine Ablesung</h3>
+    <p>B&rsquo;s Kern kollabiert im effektiven Rang <code>4096&rarr;~7</code>: koh&auml;rentes Signal (<b>Drift &prop; T</b>) bleibt im kleinen Code, inkoherentes Rauschen (<b>Diffusion &prop; &radic;T</b>) wandert in das unsichtbare Reservoir <code>ker(W)&#8839;ker(G_Q)</code> &mdash; f&uuml;r jede Testmenge unsichtbar (das SNR-Gate blockiert Updates, wo Rauschen dominiert). A liest genau diesen kontrahierten Kern lokal: die Probe <code>logit(c)=&#931;&#7522;&alpha;&#7522;cos(&#969;&#7522;(a+b&minus;c))</code> peakt bei der Antwort; an falschen Stellen k&uuml;rzen sich die Cosinus destruktiv weg. <b>Fused:</b> die Kontraktion (B) <i>erzeugt</i> den kompakten lokalen Code, den A&rsquo;s Probe <i>liest</i> &mdash; &bdquo;K Frequenzen t&ouml;ten die falschen Peaks&ldquo; (A) ist genau die Struktur der Rotationsgruppe, die die Antwort separabel macht. Eine Frequenz reicht nicht; K t&ouml;ten die falschen Peaks.</p>
+
+    <h3>4.4 Expansion: H&ouml;herstufen &times; Tiefe (die zweite H&auml;lfte des Kerns)</h3>
+    <p>A tr&auml;gt sie (Seitenanmerkung) in <b>Tiefe</b> (Pieces &le; (2w)<sup>L</sup>) und <b>Yarotsky</b> (2<sup>n&minus;1</sup> St&uuml;cke mit O(n) Parametern); B tr&auml;gt sie (ko-equal) in <b>Tiefe + ReLU-Komposition</b> (exponentielle lineare Regionen ~2<sup>L</sup>), <b>H&ouml;herstufen</b> (2-/3-Simplexe, die sich nicht in Paare zerlegen lassen) und sp&auml;te Layer als <b>aktive Filter</b> (Self-Alignment &asymp;0.04&rarr;0.70). <b>Fused:</b> die h&ouml;herstufige (simpliciale) Struktur des Kerns (A&rsquo;s &bdquo;Komplex&ldquo;) &times; Tiefe (B) expandiert den ausdr&uuml;ckbaren Entscheidungsraum. A&rsquo;s Probe liest die <i>Kontraktion</i>; die <i>Expansion</i> ist, was der Kern ausdr&uuml;cken <i>kann</i>.</p>
+
+    <h3>4.5 Konvergenz: gebaut (glatt) vs. gefunden (Phasen&uuml;bergang / Grokking)</h3>
+    <p><b>Gebaut (a-priori, statisch):</b> die Rotation liegt schon im Operator (PE-Helix) &mdash; das ist A&rsquo;s &bdquo;a-priori Form&ldquo;; das Modell liest die Position sofort und glatt, <i>kein</i> Plateau, <i>kein</i> Grok. <b>Gefunden (emergent, dynamisch):</b> der Kern ist der Attraktor; SGD wandert rauschig durch das <b>Memorizations-Plateau</b> (Trainingsverlust runter, Testverlust flach), bis ein <b>kritisches Seed</b> die Mannigfaltigkeit findet &mdash; dann &bdquo;clickt&ldquo; die Struktur, die Kaskade breitet sich aus: der Moment, in dem Drift &prop; T die Diffusion &prop; &radic;T &uuml;berholt (A&rsquo;s loss-gesteuerte Eckenauswahl = B&rsquo;s Phasen&uuml;bergang). <b>Fused:</b> Gradientenabstieg/Schwerpunktfluss von &bdquo;Rauschen&ldquo; nach &bdquo;WAHR&ldquo; &mdash; glatt, wenn die Rotation eingebaut ist, sprunghaft, wenn sie gefunden wird.</p>
+
+    <h3>4.6 Das Wahrheitsgesetz auf den Attraktor angewendet</h3>
+    <div class="leg">
+      koh&auml;rent (weiche, lernbare Rotation) + korrespondierend (live Ziel + <code>ker(W)&#8839;ker(G_Q)</code>) + strukturiert (erank~7, <code>d<sub>eff</sub>=1</code>) &rarr; <span class="k">WAHR / invariant (&nabla;L&asymp;0)</span><br>
+      koh&auml;rent + strukturiert, aber <i>nicht</i> live (frozen) / Rauschen noch nicht geparkt (Plateau) &rarr; <span class="w">HALLUZINATION / noch nicht generalisiert</span><br>
+      strukturiert + korrespondierend, aber <i>inkoh&auml;rent</i> (&sigma;&rarr;0, harter Cut, Rotation nicht differenzierbar) &rarr; <span class="r">NICHT LERNBAR</span><br>
+      korrespondierend, aber <i>unstrukturiert</i> (kein kompakter Kern, hohes d) &rarr; <span class="w">FLUCH</span> (N<sup>d/k</sup>, langsam) &mdash; kein Torus, kein Niedrigrang-Code<br>
+      koh&auml;rent + korrespondierend, aber inkoh&auml;rent im Detail (Daten ohne Struktur) &rarr; Faktbuch &nbsp;|&nbsp; inkoh&auml;rent + nicht korrespondierend &rarr; falsch / Rauschen
+    </div>
+    <p>Die <b>vier Mysterien</b> fallen auf den einen Attraktor zusammen: <b>Benign Overfitting</b> (Rauschen sitzt physisch im Reservoir <code>ker(W)</code> und wird von den sp&auml;ten Filtern nicht verst&auml;rkt &rarr; Trainingsfehler 0, Testfehler klein); <b>Double Descent</b> (neue Kapazit&auml;t lohnt nur, wenn neue h&ouml;herstufige Kandidaten-Richtungen mehr koh&auml;rentes Signal als Rauschen bringen); <b>Implicit Bias</b> (fr&uuml;he nicht-normale Mixer entknoten, sp&auml;te Filter verfeinern); <b>Grokking</b> (der koh&auml;rente Anteil der H&ouml;herstufen &uuml;berholt den Rauschen-Anteil im Signalkanal &mdash; der Phasen&uuml;bergang, bei dem der Attraktor &bdquo;clickt&ldquo;).</p>
+
+    <h3>4.7 Konkretes Beispiel in allen Facetten (P=7, a=3, b=5)</h3>
+    <table>
+      <thead><tr><th>Facet</th><th>Ablauf</th><th>Ergebnis</th><th>Truth-Check</th></tr></thead>
+      <tbody>
+        <tr><td>Rotation (A=B)</td><td>modulare Addition 3+5 als Fixed-Rotation M<sub>8</sub> auf dem P=7-Kreis; Phasen n&rarr;e<sup>i2&pi;kn/7</sup></td><td><b>1</b> (mod 7)</td><td rowspan="3">Koh&auml;renz: weiche Rotation klebt (lernbar). Korrespondenz: live Ziel = Probe-Peak; Reservoir f&uuml;r alle Tests unsichtbar. Struktur: erank~7, d<sub>eff</sub>=1. &rarr; <b>WAHR</b>.</td></tr>
+        <tr><td>Kontraktion (B)</td><td>erank 4096&rarr;~7; koh&auml;rentes Signal (Drift &prop; T) im kleinen Code, Rauschen (Diffusion &prop; &radic;T) in <code>ker(W)</code></td><td>Code auf <b>1</b></td></tr>
+        <tr><td>Probe (A)</td><td>S(c)=&#931;<sub>k=1..K</sub>cos(2&pi;k(1&minus;c)/7); bei c=1: cos(2&pi;k)=1 f&uuml;r jedes k &rarr; S=K (Max); sonst k&uuml;rzen sich</td><td>Peak bei <b>1</b></td></tr>
+      </tbody>
+    </table>
+    <div class="fused"><b>Alle Facetten liefern denselben Wert: 3 + 5 &#8773; 1 (mod 7)</b> &mdash; und der Wahrheits-Check ist gr&uuml;n, weil (A) Koh&auml;renz (weiche Zellen), Korrespondenz (live: Peak = Ziel 1) und Struktur (d<sub>eff</sub>=1) <i>und</i> (B) Kontraktion (erank~7), Reservoir-Universit&auml;t (<code>ker(W)&#8839;ker(G_Q)</code>) und Rotation (M<sub>8</sub>) <i>alle</i> zutreffen. W&auml;re das Ziel <i>eingefroren</i> bzw. das Rauschen <i>noch nicht geparkt</i>, w&auml;re die Rechnung zwar koh&auml;rent + strukturiert, aber un-verankert &#8594; Halluzination / Plateau &mdash; auch wenn A &bdquo;die richtige lokale Antwort&ldquo; liest.</div>
+
+    <h3>4.8 Grenzen (Ehrlichkeits-Ecke)</h3>
+    <ul>
+      <li>Beide Quellen sind R3-Fusionspapiere (simulierte/&uuml;bernommene Werte, keine neuen Experimente); diese Runde &uuml;bernimmt ihre Stellungen und Zahlen, erfindet keine.</li>
+      <li>B&rsquo;s Torus-Grokking ist eine <em>stilisierte</em> 3D-Metapher/Animation (SGD-Rauschen, Seed-Kaskade); der Torus steht symbolisch f&uuml;r die optimale topologische Repr&auml;sentation.</li>
+      <li>B&rsquo;s Zahlen (4096&rarr;7, Self-Alignment 0.04&rarr;0.70, Schur 6.4&times;) gelten f&uuml;r den untersuchten Transformer; A&rsquo;s Werte (FVE, CKA, Peak-Margins) f&uuml;r die jeweiligen Demo-Aufgaben.</li>
+      <li>Dimensionen: die Fusion ist <em>topologisch</em> konsistent (beide = abelsche, flach-rotierende Rotationsgruppe), aber nicht literal identisch dimensioniert &mdash; A&rsquo;s Objekt ist ein 2D-Torus / der Cut, B&rsquo;s Code ein ~7-dim linearer Unterraum. Sie treffen sich auf der <em>Rotationsgruppe</em>, nicht auf gleicher Dimension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2><span class="no">5.</span> Interaktive Visualisierung: ein kompakter Rotations-Kern &mdash; kontrahiert (B), weich &amp; lesbar (A), gehalten vom live Ziel (A+B)</h2>
+    <p>Oben: <b>der kompakte Rotations-Kern</b> &mdash; A&rsquo;s Phasen-Basis / B&rsquo;s Fixed-Rotation <code>M_k</code> als Kreis mit den P Positionen. Der <b>goldene Bogen</b> ist die Fixed-Rotation M<sub>a+b</sub> (a&rarr;res; &bdquo;Addition als Rotation&ldquo; &mdash; A=B). Die <b>weiche Glow-Scheibe</b> um res ist A&rsquo;s <b>weicher Cut</b> (Breite &#8773; &sigma;): &sigma;&rarr;0 scharf (lernbar, <code>d<sub>eff</sub>=1</code>), &sigma; gro&szlig; diffus. Die <b>Punkte</b> sind B&rsquo;s <b>Kontraktion</b>: bei t=0 eine Wolke (Memorization), bei t=1 kontrahiert auf den Kern (erank 4096&rarr;~7); das <b>blaue Reservoir-Ring</b> f&auml;ngt das Rauschen (Diffusion &prop; &radic;T, f&uuml;r Tests unsichtbar). Unten: A&rsquo;s <b>lokale Probe</b> S(c)=&#931;<sub>k</sub>cos(2&pi;k(res&minus;c)/P) &mdash; der Peak steht auf res. Der <b>gr&uuml;ne Diamant</b> ist das Korrespondenz-Ziel: <i>live</i> auf dem Peak (wahr), <i>frozen</i> driftet er weg (Halluzination / Plateau). Bewege <b>t</b> (Konvergenz/Kontraktion, B), <b>K</b> (Frequenzen = sch&auml;rfere Interferenz, A), <b>&#963;</b> (Weichheit, A+B) und klicke <b>frozen</b> (live Ziel kappen, A/B).</p>
+
+    <div class="controls">
+      <label>P (Uhr): <input type="range" id="vzP" min="3" max="15" value="7"> <span class="ctl-val" id="vzPVal">7</span></label>
+      <label>a: <input type="range" id="vzA" min="0" max="14" value="3"> <span class="ctl-val" id="vzAVal">3</span></label>
+      <label>b: <input type="range" id="vzB" min="0" max="14" value="5"> <span class="ctl-val" id="vzBVal">5</span></label>
+      <label>Frequenzen K: <input type="range" id="vzK" min="1" max="8" value="3"> <span class="ctl-val" id="vzKVal">3</span></label>
+      <label>Weichheit &#963;: <input type="range" id="vzSig" min="0.03" max="1" step="0.01" value="0.35"> <span class="ctl-val" id="vzSigVal">0.35</span></label>
+      <label>Konvergenz t: <input type="range" id="vzT" min="0" max="100" value="70"> <span class="ctl-val" id="vzTVal">70</span></label>
+      <label class="chk"><input type="checkbox" id="vzFreeze"> Ziel kappen (frozen) &rarr; Halluzination / Plateau</label>
+    </div>
+
+    <div class="viz-wrap">
+      <div class="viz-stage"><canvas id="fusedCanvas"></canvas></div>
+      <div class="viz-side">
+        <div class="gauge">
+          <div class="glabel">Koh&auml;renz <span class="gtag">weiche Rotation / &#963; (A+B)</span></div>
+          <div class="bar"><div class="fill coh" id="cohBar"></div></div>
+          <div class="gnote" id="cohNote">weiche Zellen &rarr; Kettenregel klebt</div>
+        </div>
+        <div class="gauge">
+          <div class="glabel">Korrespondenz <span class="gtag">live Ziel + Reservoir (A+B)</span></div>
+          <div class="bar"><div class="fill cor" id="corBar"></div></div>
+          <div class="gnote" id="corNote">Probe-Peak trifft das live Ziel</div>
+        </div>
+        <div class="gauge">
+          <div class="glabel">Struktur <span class="gtag">d<sub>eff</sub>=1, erank~7 (A+B)</span></div>
+          <div class="bar"><div class="fill str" id="strBar"></div></div>
+          <div class="gnote" id="strNote">lokale Basis + scharfer Cut</div>
+        </div>
+        <div class="gauge">
+          <div class="glabel">Kontraktion <span class="gtag">erank 4096&rarr;7 (B)</span></div>
+          <div class="bar"><div class="fill con" id="conBar"></div></div>
+          <div class="gnote" id="conNote">Signal im Kern, Rauschen geparkt</div>
+        </div>
+        <div class="truth">
+          <span class="led warn" id="led"></span>
+          <div>
+            <div class="tlabel">Wahrheit = Koh&auml;renz &and; Korrespondenz &and; Struktur</div>
+            <div class="tnote" id="truthNote">ann&auml;hert sich dem strukturierten Kern&hellip;</div>
+          </div>
+        </div>
+        <div class="readout" id="vzReadout" style="font-size:.78rem;line-height:1.7"></div>
+      </div>
+    </div>
+    <p class="anno">Alle Werte werden live aus a, b, P, K, &#963;, t berechnet &mdash; keine Netzwerklade, keine externen Daten (alle Punkte deterministisch inline erzeugt). Farb-/Hintergrundwerte stammen aus den CSS-Theme-Variablen (<code>:root</code> / <code>html.dark</code>). Die realen Key-Frequenzen des trainierten Netzes (A) sind k&#8712;{14,35,41,42,52} bei P=113; hier wird f&uuml;r den kleinen Kreis k=1..K verwendet.</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2><span class="no">6.</span> Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../3/r3-010.html">r3-010.html</a> &mdash; &bdquo;Koordinatenwechsel als weicher Schnitt &mdash; Basis, Code und Probe, gehalten durch Koh&auml;renz, Korrespondenz und Struktur&ldquo; (R3-Fusion aus r2-015 &times; r2-018): ein Netz rechnet per Basiswechsel (Zustand/Phase/Falz) &rarr; Code-Transport &rarr; lokaler Matched-Filter-Probe (Bank-Dim = #Klassen); Fourier-Dualit&auml;t als abelscher Spezialfall; weiche Zellen, Kettenregel-Koh&auml;renz, live Korrespondenz, <code>d<sub>eff</sub>=1</code>; Legesatz Wahrheit = Koh&auml;renz &and; Korrespondenz(live) &and; Struktur (sonst Halluzination); sechs Zust&auml;nde; P=7, a=3, b=5. Liefert hier: die Berechnungs-/Lese-Seite &mdash; die weiche Cut-Basis, die Matched-Filter-Probe, die live-Wahrheit, die Koh&auml;renz als Erlauber.</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../3/r3-005.html">r3-005.html</a> &mdash; &bdquo;Rotation-invarianter Attraktor &mdash; der kompakte Kern, linear und als Torus gelesen&ldquo; (R3-Fusion aus r2-010 &times; r2-011): ein System konvergiert auf einen kompakten, rotationsstrukturierten Kern (Torus S&sup1;&times;S&sup1; = der lineare ~7-dim-Code <code>range(W)</code>), erreicht per Schwerpunktfluss/Residual-Operator; Kontraktion (erank 4096&rarr;~7, Schur 6.4&times;) + Expansion (H&ouml;herstufen &times; Tiefe), Rauschen im unsichtbaren Reservoir <code>ker(W)&#8839;ker(G_Q)</code> (Drift &prop; T vs. Diffusion &prop; &radic;T), gebaut (glatt) vs. gefunden (Phasen&uuml;bergang/Grokking), vier Mysterien. Liefert hier: die Konvergenz-/Struktur-Seite &mdash; den Attraktor, die Fixed-Rotation, die Kontraktion/Expansion, das Parken, die statisch-dynamische Dualit&auml;t.</div></div>
+  </section>
+
+  <p class="foot">Fusion r4-006 &middot; Round 4, Knockout-Synthese. Beide Quellen sind R3-Fusionspapiere und damit bereits Erkl&auml;r-Synthesen (simulierte/&uuml;bernommene Werte, keine neuen Experimente); diese Runde &uuml;bernimmt ihre Stellungen und Zahlen, erfindet keine. Die Br&uuml;cke dieser Runde: A&rsquo;s &bdquo;Basis &rarr; Code &rarr; Probe&ldquo; (das <i>Was</i>, lesend) und B&rsquo;s &bdquo;kompakter Rotations-Kern, kontrahiert + expandiert, gebaut/gefunden&ldquo; (das <i>Wie-erreicht + Warum-wahr</i>, konvergierend) werden zu einem Objekt: A&rsquo;s weiche Cut-Basis <i>ist</i> B&rsquo;s Fixed-Rotation <code>M_k</code>; A&rsquo;s Koh&auml;renz ist der Erlauber f&uuml;r B&rsquo;s lernbaren Fluss; A&rsquo;s live Korrespondenz und B&rsquo;s Reservoir-Universalit&auml;t sind zwei Seiten desselben Ankers; die Koordinatenmaschine (A) ist der Attraktor (B), den A liest und B erzeugt.</p>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function g(id){ return document.getElementById(id); }
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function T(){
+    return {
+      fg:cssVar("--fg"), muted:cssVar("--muted"), grid:cssVar("--grid"),
+      accent:cssVar("--accent"), accent2:cssVar("--accent2"),
+      good:cssVar("--good"), bad:cssVar("--bad"), ring:cssVar("--ring")
+    };
+  }
+  function mod(n,m){ return ((n % m) + m) % m; }
+  function clampInt(v,lo,hi){ v=Math.round(v); if(v<lo)v=lo; if(v>hi)v=hi; return v; }
+  function ang(i,P){ return -Math.PI/2 + 2*Math.PI*i/P; }
+  function sigm(x){ return 1/(1+Math.exp(-x)); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  var NSIG=14, NOISE=6;
+  var sig=[], noise=[];
+  (function(){
+    var rnd=mulberry32(0x5a17);
+    for(var i=0;i<NSIG;i++){
+      sig.push({ rScat:0.3+rnd()*1.05, angScat:rnd()*Math.PI*2,
+                 angT:-Math.PI/2 + 2*Math.PI*(i/NSIG), th:0.05+0.72*rnd() });
+    }
+    var rnd2=mulberry32(0xbeef);
+    for(var j=0;j<NOISE;j++){ noise.push({ ang:rnd2()*Math.PI*2, rr:0.4+rnd2()*0.6 }); }
+  })();
+  function snapOf(i,conv){ return sigm((conv - sig[i].th)/0.06); }
+
+  function renderMath(){
+    if(!window.temml) return;
+    try{ temml.render("\\text{A: } n\\longmapsto e^{\\,i2\\pi k n/P}\\;\\;=\\;\\;\\text{B: }\\text{PE}(n+k)=M_k\\,\\text{PE}(n)\\quad(\\text{Rotationsgruppe})\\;\\;\\mid\\;\\;f_{\\text{soft}}(d;\\sigma)=\\exp\\!\\big(-\\tfrac{(d-r)^2}{2\\sigma^2}\\big),\\; f_{\\text{hard}}=\\lim_{\\sigma\\to0}f_{\\text{soft}}", g("f-core")); }catch(e){}
+  }
+
+  function arrowhead(ctx,x1,y1,angR,color,s){
+    ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-s*Math.cos(angR-0.45), y1-s*Math.sin(angR-0.45));
+    ctx.lineTo(x1-s*Math.cos(angR+0.45), y1-s*Math.sin(angR+0.45));
+    ctx.closePath(); ctx.fill();
+  }
+  function diamond(ctx,x,y,r,color){
+    ctx.fillStyle=color; ctx.beginPath();
+    ctx.moveTo(x,y-r); ctx.lineTo(x+r,y); ctx.lineTo(x,y+r); ctx.lineTo(x-r,y);
+    ctx.closePath(); ctx.fill();
+  }
+
+  var vc=g("fusedCanvas");
+
+  function metrics(P,a,b,K,sigv,live,conv){
+    var res=mod(a+b,P), second=-1e9, c,k,s,i;
+    var scores=[];
+    for(c=0;c<P;c++){ s=0; for(k=1;k<=K;k++){ s+=Math.cos(2*Math.PI*k*mod(res-c,P)/P); } scores.push(s); }
+    for(c=0;c<P;c++){ if(c!==res && scores[c]>second) second=scores[c]; }
+    var peakMargin=Math.max(0,(scores[res]-second)/K);
+    var cutSharp=1/(1+3*sigv);
+    var coh=sigv/(sigv+0.12);
+    var stru=0.6*peakMargin+0.4*cutSharp;
+    var cor=live ? (0.4+0.6*peakMargin) : 0.05;
+    var erank=Math.round(7 + (4096-7)*Math.exp(-conv*9));
+    var on=0; for(i=0;i<NSIG;i++){ if(snapOf(i,conv)>0.85)on++; }
+    var T_=conv*500, drift=0.10*T_, diff=sigv*Math.sqrt(T_);
+    var snr=diff>0?drift/diff:Infinity;
+    return {res:res, scores:scores, second:second, peakMargin:peakMargin, cutSharp:cutSharp,
+            coh:coh, stru:stru, cor:cor, erank:erank, on:on, snr:snr};
+  }
+
+  function draw(){
+    if(!vc) return;
+    var rect=vc.getBoundingClientRect(); if(!rect.width) return;
+    var dpr=window.devicePixelRatio||1, W=rect.width, LH=rect.height;
+    vc.width=Math.round(W*dpr); vc.height=Math.round(LH*dpr);
+    var ctx=vc.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,LH);
+    var t=T();
+
+    var P=clampInt(+g("vzP").value,3,15);
+    var K=clampInt(+g("vzK").value,1,8);
+    var a=clampInt(+g("vzA").value,0,P-1);
+    var b=clampInt(+g("vzB").value,0,P-1);
+    var sigv=parseFloat(g("vzSig").value); if(isNaN(sigv))sigv=0.35; sigv=Math.max(0.03,Math.min(1,sigv));
+    var conv=parseFloat(g("vzT").value)/100; if(isNaN(conv))conv=0.7; conv=Math.max(0,Math.min(1,conv));
+    var live=!g("vzFreeze").checked;
+    var m=metrics(P,a,b,K,sigv,live,conv);
+    var res=m.res, c_drift=mod(res+Math.floor(P/2),P);
+    var i,angR;
+
+    g("vzPVal").textContent=P; g("vzAVal").textContent=a; g("vzBVal").textContent=b;
+    g("vzKVal").textContent=K; g("vzSigVal").textContent=sigv.toFixed(2);
+    g("vzTVal").textContent=Math.round(conv*100);
+
+    /* ============ TOP: der kompakte Rotations-Kern ============ */
+    var cy=172, R=Math.min(84, W*0.15, 90), cx=W*0.5;
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Kompakter Rotations-Kern: A-Basis = B-Rotation M_k  (kontrahiert, t="+Math.round(conv*100)+"%)", cx, 22);
+
+    // Reservoir ring (B) - noise parked, invisible to tests
+    ctx.save();
+    ctx.setLineDash([4,5]); ctx.lineWidth=1; ctx.strokeStyle=t.muted; ctx.globalAlpha=0.45;
+    ctx.beginPath(); ctx.arc(cx,cy,R*1.5,0,2*Math.PI); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha=1;
+    ctx.fillStyle=t.muted; ctx.font="10px ui-monospace,monospace";
+    ctx.fillText("Reservoir ker(W) - unsichtbar (B)", cx, cy - R*1.5 - 8);
+    ctx.restore();
+
+    // soft-cut glow band (A+B) centered on res, half-width ~ sig
+    var hw=0.06+0.5*sigv;
+    ctx.save();
+    for(var rad=3;rad>=1;rad--){
+      var gs=Math.exp(-0.15*rad);
+      ctx.strokeStyle=t.ring; ctx.globalAlpha=gs*0.5*(0.5+0.5*(1-sigv));
+      ctx.lineWidth=7+rad*4; ctx.beginPath();
+      ctx.arc(cx,cy,R,ang(res,P)-hw*1.35,ang(res,P)+hw*1.35); ctx.stroke();
+    }
+    ctx.globalAlpha=0.85; ctx.lineWidth=3; ctx.strokeStyle=t.ring;
+    ctx.beginPath(); ctx.arc(cx,cy,R,ang(res,P)-hw,ang(res,P)+hw); ctx.stroke();
+    ctx.restore();
+
+    // main circle
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+
+    // P position dots
+    for(i=0;i<P;i++){
+      angR=ang(i,P);
+      var tx=cx+R*Math.cos(angR), ty=cy+R*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.accent2:(i===a)?t.bad:t.muted;
+      ctx.beginPath(); ctx.arc(tx,ty,(i===res||i===a)?5.5:3,0,2*Math.PI); ctx.fill();
+      var lx=cx+(R+15)*Math.cos(angR), ly=cy+(R+15)*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.accent2:(i===a)?t.bad:t.muted;
+      ctx.font=(i===res||i===a)?"bold 12px ui-monospace,monospace":"10px ui-monospace,monospace";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(i,lx,ly);
+    }
+
+    // Fixed-Rotation arc M_{a+b}: from a, b steps -> res  (A=B: addition as rotation)
+    var angA=ang(a,P), angE=angA+2*Math.PI*b/P;
+    ctx.strokeStyle=t.accent; ctx.lineWidth=2.4; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.arc(cx,cy,R-9,angA,angE,false); ctx.stroke(); ctx.setLineDash([]);
+    var spx=cx+(R-9)*Math.cos(angA), spy=cy+(R-9)*Math.sin(angA);
+    var epx=cx+(R-9)*Math.cos(angE), epy=cy+(R-9)*Math.sin(angE);
+    ctx.strokeStyle=t.accent; ctx.lineWidth=2; ctx.beginPath();
+    ctx.moveTo(spx,spy); ctx.lineTo(epx,epy); ctx.stroke();
+    arrowhead(ctx,epx,epy,Math.atan2(epy-spy,epx-spx),t.accent,8);
+    ctx.fillStyle=t.fg; ctx.font="11px ui-monospace,monospace"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText("M_{a+b}: Addition als Rotation", cx, cy + R*0.5 + 18);
+
+    // contraction points (B): scatter cloud (t=0) -> orbit (t=1)
+    for(i=0;i<NSIG;i++){
+      var sn=snapOf(i,conv);
+      var sx=cx+sig[i].rScat*R*Math.cos(sig[i].angScat), sy=cy+sig[i].rScat*R*Math.sin(sig[i].angScat);
+      var gx=cx+R*Math.cos(sig[i].angT), gy=cy+R*Math.sin(sig[i].angT);
+      var x=lerp(sx,gx,sn), y=lerp(sy,gy,sn);
+      var col; if(sn<0.18)col=t.bad; else if(sn<0.45)col=t.accent2; else if(sn<0.85)col=t.ring; else col=t.good;
+      if(sn>0.15 && sn<0.9){
+        ctx.strokeStyle=col; ctx.globalAlpha=0.14*sn; ctx.lineWidth=0.7; ctx.setLineDash([2,4]);
+        ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(gx,gy); ctx.stroke();
+        ctx.setLineDash([]); ctx.globalAlpha=1;
+      }
+      if(sn>=0.85){ ctx.shadowColor=col; ctx.shadowBlur=6; }
+      ctx.fillStyle=col; ctx.globalAlpha=0.92;
+      ctx.beginPath(); ctx.arc(x,y,sn<0.2?2.4:3.6,0,2*Math.PI); ctx.fill();
+      ctx.shadowBlur=0; ctx.globalAlpha=1;
+    }
+
+    // noise points (B): drift outward into reservoir (Diffusion ~ sqrt(T))
+    for(i=0;i<NOISE;i++){
+      var nr=R*(1 + conv*0.6*noise[i].rr);
+      var nx=cx+nr*Math.cos(noise[i].ang), ny=cy+nr*Math.sin(noise[i].ang);
+      ctx.fillStyle=t.muted; ctx.globalAlpha=0.35;
+      ctx.beginPath(); ctx.arc(nx,ny,2.6,0,2*Math.PI); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+
+    // live-target diamond on the circle (correspondence anchor, A+B)
+    var gtAng=ang(live?res:c_drift,P);
+    var gtx=cx+(R+26)*Math.cos(gtAng), gty=cy+(R+26)*Math.sin(gtAng);
+    diamond(ctx,gtx,gty,7,live?t.good:t.bad);
+    ctx.fillStyle=live?t.good:t.bad; ctx.font="bold 10px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(live?"live":"frozen",gtx,gty-15);
+
+    /* ============ BOTTOM: A's matched-filter probe S(c) ============ */
+    var by0=345, by1=520, bx0=W*0.06, bx1=W*0.94;
+    var bw=(bx1-bx0)/P, zeroY=by1-8, topY=by0+20, half=(zeroY-topY);
+    ctx.fillStyle=t.fg; ctx.font="600 13px system-ui,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Lokale Probe (A):  S(c) = \u03A3\u2096\u208C\u2081.." + K + " cos(2\u03C0k(res\u2212c)/P)  \u2192  liest den kontrahierten Kern (B)", bx0, by0-2);
+
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(bx0,zeroY); ctx.lineTo(bx1,zeroY); ctx.stroke();
+    for(i=0;i<P;i++){
+      var sc=m.scores[i];
+      var barH=(sc/K)*half;
+      var x=bx0+i*bw, ytop=zeroY-Math.abs(barH);
+      var col=(i===res)?t.accent2:(sc>=0?t.accent:t.bad);
+      ctx.fillStyle=col;
+      ctx.fillRect(x+1, ytop, Math.max(1,bw-2), Math.max(1,Math.abs(barH)));
+      ctx.fillStyle=t.muted; ctx.font="10px ui-monospace,monospace"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+      ctx.fillText(i, bx0+i*bw+bw/2, by1+14);
+    }
+    ctx.fillStyle=t.muted; ctx.textAlign="center";
+    ctx.fillText("m\u00F6gliche Antwort c  (0 \u2026 "+(P-1)+")", (bx0+bx1)/2, by1+28);
+
+    // GT diamond: on res if live, at c_drift if frozen
+    var gtc = live? res : c_drift;
+    var gtx2 = bx0+gtc*bw+bw/2;
+    diamond(ctx, gtx2, by0+8, 7, live?t.good:t.bad);
+    ctx.strokeStyle=live? t.good : t.bad; ctx.lineWidth=1.4; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(gtx2,by0+16); ctx.lineTo(gtx2,zeroY-2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=live?t.good:t.bad; ctx.font="bold 11px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText((live?"live Ziel":"frozen Ziel")+" c="+(gtc), gtx2, by0-12);
+
+    /* gauges + truth */
+    var elc=g("cohBar"), elr=g("corBar"), els=g("strBar"), elk=g("conBar");
+    if(elc){ elc.style.width=(m.coh*100).toFixed(1)+"%"; elc.classList.toggle("off",m.coh<0.45); }
+    if(elr){ elr.style.width=(m.cor*100).toFixed(1)+"%"; elr.classList.toggle("off",!live||m.cor<0.45); }
+    if(els){ els.style.width=(m.stru*100).toFixed(1)+"%"; els.classList.toggle("off",m.stru<0.45); }
+    if(elk){ elk.style.width=(conv*100).toFixed(1)+"%"; elk.classList.toggle("off",conv<0.4); }
+
+    var cn=g("cohNote"), rn=g("corNote"), sn=g("strNote"), kn=g("conNote");
+    if(cn) cn.textContent = m.coh<0.45 ? "harter Cut (\u03C3\u21920) \u2014 Rotation nicht differenzierbar" : "weiche Rotation \u2192 Kettenregel klebt";
+    if(rn) rn.textContent = !live ? "kein live Ziel (frozen) \u2014 un-verankert"
+        : (m.peakMargin>0.6 ? "Peak trifft live Ziel; Reservoir f\u00Fcr alle Tests unsichtbar" : "Probe schwach \u2014 eine Frequenz nicht genug");
+    if(sn) sn.textContent = (m.stru>0.6 ? "lokale Basis + scharfer Cut (d_eff=1, erank~7)" : "Cut diffus / Peak breit \u2014 Struktur schwach");
+    if(kn) kn.textContent = conv<0.4 ? "Wolke (Memorization) \u2014 noch kein kompakter Code" : "Signal im Kern, Rauschen geparkt (erank "+m.erank+")";
+
+    var led=g("led"), tn=g("truthNote");
+    function setLed(cls){ if(led) led.className="led "+cls; }
+    if(led){
+      if(!live){ setLed("bad"); if(tn) tn.textContent="HALLUZINATION / Plateau: koh\u00E4rent + strukturiert, aber live Ziel gekappt / Rauschen nicht geparkt \u2014 nicht wahr"; }
+      else if(m.coh<0.45){ setLed("bad"); if(tn) tn.textContent="NICHT LERNBAR: harter Cut bricht die Kettenregel \u2014 Rotation nicht weich (Koh\u00E4renz fehlt)"; }
+      else if(m.cor>0.7 && m.stru>0.6 && m.coh>0.6){ setLed("good"); if(tn) tn.textContent="WAHR / invariant: koh\u00E4rent \u2227 korrespondierend(live) \u2227 strukturiert (\u2207L\u22480, d_eff=1, erank~7)"; }
+      else { setLed("warn"); if(tn) tn.textContent="ann\u00E4hert sich \u2014 Kontraktion (t) + K (Interferenz) + \u03C3 (Weichheit) erh\u00F6hen"; }
+    }
+
+    var ro=g("vzReadout");
+    if(ro){
+      var net=mod(res-a,P);
+      ro.innerHTML="Kern (A=B):  "+a+" + "+b+" \u2261 <b>"+res+"</b> (mod "+P+")  =  Fixed-Rotation M<sub>"+mod(a+b,P)+"</sub>.<br>"+
+        "Kontraktion (B):  erank 4096&rarr;<b>"+m.erank+"</b> &middot; auf dem Kern "+m.on+"/"+NSIG+" &middot; t="+Math.round(conv*100)+"% &middot; SNR="+(m.snr===Infinity?"&infin;":Math.round(m.snr))+"<br>"+
+        "Cut (A+B):  \u03C3="+sigv.toFixed(2)+" \u2192 Koh\u00E4renz "+(m.coh*100).toFixed(0)+"% &middot; Struktur d_eff=1 "+(m.stru*100).toFixed(0)+"%.<br>"+
+        "Probe (A):  S(c)=\u03A3\u2096\u208C\u2081.." + K + "cos(2\u03C0k(" + res + "\u2212c)/" + P + ") &rarr; Peak bei <b>"+res+"</b> (H\u00F6he "+K+").<br>"+
+        (live ? (m.peakMargin<=0.6 ? "&rarr; mehr K (destruktive Interferenz, A), um falsche Peaks zu t\u00F6ten. " : "") : "&rarr; un-verankert = HALLUZINATION / Plateau (B). ") +
+        "Fused:  <b>"+a+" + "+b+" \u2261 "+res+" (mod "+P+")</b> " + (m.coh>0.6 && m.cor>0.7 && m.stru>0.6 && live ? "\u2713 WAHR" : (live? "\u2026 (noch nicht voll wahr)" : "\u2717")) + ".";
+    }
+  }
+
+  function wire(){
+    var ids=["vzP","vzA","vzB","vzK","vzSig","vzT"];
+    ids.forEach(function(id){
+      var el=g(id);
+      if(el) el.addEventListener("input", function(){
+        if(id==="vzP"){
+          var P=clampInt(+g("vzP").value,3,15);
+          var as=g("vzA"), bs=g("vzB");
+          if(as){as.max=P-1; if(+as.value>P-1)as.value=P-1;}
+          if(bs){bs.max=P-1; if(+bs.value>P-1)bs.value=P-1;}
+        }
+        draw();
+      });
+    });
+    var fr=g("vzFreeze"); if(fr) fr.addEventListener("change", draw);
+    var btn=g("themeToggle");
+    if(btn) btn.addEventListener("click",function(){
+      document.documentElement.classList.toggle("dark"); draw();
+    });
+    try{
+      var mo=new MutationObserver(function(){ draw(); });
+      mo.observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+    }catch(e){}
+    window.addEventListener("resize",function(){ draw(); });
+  }
+
+  function init(){ renderMath(); wire(); draw(); }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

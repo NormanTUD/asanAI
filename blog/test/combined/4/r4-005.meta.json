@@ -1,0 +1,16 @@
+{
+  "no": "005",
+  "a": "combined/3/r3-009.html",
+  "b": "combined/3/r3-008.html",
+  "a_title": "Bedeutung als dünne, gekrümmte Mannigfaltigkeit — Richtung, Klumpen, Dimension",
+  "b_title": "Scharfe Faltung, konservatives Budget, geerdeter Wert",
+  "combined_theme": "scharfe-kapazitaet-als-geerdete-mannigfaltigkeit",
+  "one_line": "Ein Netz faltet ein konservatives Budget scharfer Faltungen (Kapazität ≈ k^L, B) in eine dünne, gekrümmte Mannigfaltigkeit (Richtung/Klumpen/Dimension, A), an glatten linearen Adressen gehalten — echt genau dann, wenn das Gate Kohärenz & Korrespondenz (A: Rissfreiheit + richtige Richtung θ; B: Wert an W) hält.",
+  "contradictions": [
+    "Scharfe Mitte: A (r3-009) = gesundes, garantiertes Simplizial-Skelett (Klumpen sind der Träger der Bedeutung, wird kombinatorisch gelesen) vs. B (r3-008) = Kapazität/Regionen ≈ k^L, ein Mittel, das per konservatives Budget allokiert werden muss und dessen Fehlallokation auf hochfrequentes Ornament der Überfitt-Bruch ist.",
+    "Maß über die Tiefe: A (r3-009) = intrinsische Dimension bildet einen Buckel (steigt, Gipfel 20–40 %, fällt monoton auf ≈ log₂) — das Netz dünnt sich zur Entscheidung; B (r3-008) = Kapazität wächst monoton mit der Tiefe (Regionen ≈ k^L, Tiefe > Breite, „flach sei schwach“).",
+    "Erdung: A (r3-009) = Bedeutung ist in garantiert-innere Struktur + eine gelernte Richtung θ verankert (Fehler = innerer Riss / falsches Bassin / falsche Richtung) vs. B (r3-008) = Erdung ist externe Korrespondenz an eine Welt W (Gate = Kohärenz & Korrespondenz; kohärente Fiktion = kohärent, aber der Wert berührt nie W)."
+  ],
+  "resolution": "Die scharfe Mitte ist B's Kapazität (Regionen ≈ k^L); A's Skelett ist derselbe Ort, wenn B's konservatives Budget ihn auf den Essence füllt (A's Riss = B's Fehlallokation / Naht bricht). Angebot (B: Regionen ≈ k^L, wächst mit der Tiefe) und Nachfrage (A: intrinsische Dimension, Buckel → log₂) sind zwei Seiten derselben Schicht-Achse. A's innere Kohärenz (kein Riss) ist die notwendige, B's Korrespondenz an W die hinreichende Bedingung — W kalibriert A's Richtung θ; A's Riss/falsche Richtung = B's kohärente Fiktion. Wahrheit = Kohärenz & Korrespondenz = Rissfreiheit & richtige Richtung an W.",
+  "viz": "Canvas (kein CDN, inline): oben die Schicht-Achse — B's Angebot/Regionen ≈ k^L (wächst monoton, Tiefe > Breite) vs. A's Nachfrage/intrinsische-Dimension-Buckel (Gipfel in der Mitte → Kompression auf ≈ log₂) mit A's Kristallisationsticks L18/19/24/27; unten die dünne, gekrümmte Mannigfaltigkeit mit 3 Klumpen/Adressen, ziehbares h, Richtung θ (A) + externe Welt W (B) + Wert (B), der um einen Fehlerwinkel abweicht (= Korrespondenz), Skelett-Kanten (A) brechen bei Fehlallokation, Riss im Klumpen bei Überfitt; Sliders K (Budget) & g (Erdung) & ℓ (Schicht) + 4 Presets (Sweet-Spot / Überfitt / Kohärente Fiktion / Flach & schwach); Readout Kohärenz & Korrespondenz → Wahrheit = min."
+}

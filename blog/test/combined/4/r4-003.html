@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 003 (R4) — Die eine zweite-Moment-Matrix: exakte Whitening als Brücke zur weichen Homotopie-Klasse</title>
+<script>if(!/[?&]light\b/.test(location.search))document.documentElement.classList.add('dark');</script>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b18; --card:#fdfcf9; --border:#d8d3c8; --accent:#0a6ea8;
+  --muted:#6b665c; --grid:#e4dfd3; --c1:#c0392b; --c2:#1e7e34;
+  --gold:#9a6b00; --heat:#c96a1b; --data:#8a8f9c; --viz-bg:#fbfaf4;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6edf3; --card:#161b22; --border:#30363d; --accent:#58a6ff;
+  --muted:#8b949e; --grid:#1e2a3a; --c1:#f87171; --c2:#4ade80;
+  --gold:#ffd700; --heat:#ffa657; --data:#3a4a6a; --viz-bg:#0b1120;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',Arial,system-ui,sans-serif;line-height:1.7;padding:34px 16px;}
+article{max-width:820px;margin:0 auto;}
+h1{font-size:1.6em;line-height:1.26;margin-bottom:6px;color:var(--accent);}
+.subtitle{color:var(--muted);font-size:.92em;margin-bottom:24px;font-style:italic;}
+h2{font-size:1.24em;margin:34px 0 12px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:6px;}
+h3{font-size:1.02em;font-weight:650;margin:18px 0 8px;}
+p{margin-bottom:12px;}
+section{margin-bottom:6px;}
+.lead{font-size:1.05em;}
+.kbox{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0;}
+.kbox b{color:var(--accent);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin:14px 0;}
+.card h3{margin-top:0;}
+ul{margin:0 0 12px 22px;}
+li{margin-bottom:10px;}
+.formula{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:12px 0;overflow-x:auto;font-family:'Cambria Math','STIX Two Math',Georgia,serif;font-size:1.02em;white-space:pre;}
+code{font:500 .9em ui-monospace,Menlo,Consolas,monospace;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:1px 5px;}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:1px 10px;font-size:.78em;color:var(--muted);margin-right:6px;vertical-align:middle;}
+.tA{color:var(--c1);font-weight:600;}
+.tB{color:var(--c2);font-weight:600;}
+.tension{color:var(--heat);font-size:.92em;}
+.viz-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;}
+#viz{display:block;width:100%;height:560px;border:1px solid var(--border);border-radius:8px;background:var(--viz-bg);touch-action:none;cursor:crosshair;}
+.controls{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:center;justify-content:center;margin:6px 0 14px;font-size:.86em;}
+.controls label{color:var(--muted);}
+.controls input[type=range]{width:130px;accent-color:var(--accent);vertical-align:middle;}
+.controls .val{color:var(--gold);font-weight:700;min-width:24px;text-align:center;}
+.controls .chk{display:inline-flex;align-items:center;gap:6px;color:var(--fg);cursor:pointer;}
+.controls .chk input{accent-color:var(--accent);width:15px;height:15px;}
+.controls button{padding:6px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;font:inherit;font-size:.86em;}
+.controls button:hover{background:var(--accent);color:var(--bg);}
+.hint{text-align:center;color:var(--muted);font-size:.85em;margin-top:10px;line-height:1.5;}
+.prov a{color:var(--accent);}
+.prov li{list-style:none;margin-bottom:12px;}
+.prov .d{color:var(--muted);font-size:.92em;margin-top:3px;line-height:1.55;}
+</style>
+</head>
+<body>
+<article>
+<h1>Die eine zweite-Moment-Matrix: exakte Whitening als Br&uuml;cke zur weichen Homotopie-Klasse</h1>
+<p class="subtitle">Fusion aus: r3-002.html &#10005; r3-012.html &nbsp;(Round 4)</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p class="lead">Beide R3-Papiere beschreiben <b>ein</b> trainiertes Objekt &mdash; einen linearen Assoziativspeicher, also einen Transformer &mdash; von <b>zwei Enden</b> aus, und in <b>beiden</b> F&auml;llen wird das Gegen&uuml;ber durch <b>ein einziges invarianzes Objekt</b> zur&uuml;ckgebunden, das zugleich <b>Br&uuml;cke und Ma&szlig;</b> ist. <span class="tA">A (r3-002)</span> verbindet die <b>Schreibseite</b> (Rang-1-Edits, SOM-Selbstorganisation) und die <b>Leseseite</b> (lineares Functional + Argmax) durch das Inverse <code>M&#8315;</code> der zweiten-Moment-Matrix <code>M</code> &mdash; <b>exakte Lineare Algebra</b> (Whitening = duale Basis) &mdash; und mi&szlig;t die Weite mit der <b>einen</b> Zahl <code>&#8214;M&minus;I&#8214;</code> (Belegung = Hologramm-Grad). <span class="tB">B (r3-012)</span> verbindet den <b>konkreten Mechanismus</b> (Energie-Scheibe, Lese-Schreib-Operatoren, Boltzmann-<code>T</code>) und die <b>abstrakte Garantie</b> (&infin;-Garbe von &infin;-Gruppoiden, Verkleben &rarr; eindeutiger globaler Schnitt) durch die Aussage <i>&bdquo;die Scheibe ist eine Homotopie-Klasse&ldquo;</i> &mdash; die <b>weiche</b> Relation <code>&#8773;</code>, gemessen durch <code>T</code>.</p>
+<p><b>Fusionierte Position:</b> <b>Die eine zweite-Moment-Matrix <code>M</code> (A) <i>ist</i> genau die Metrik/Pr&auml;zision, die in B's Bild die Energie der N&uuml;tzlichkeitsscheibe und die Breite ihrer Homotopie-Klasse definiert.</b> <code>M</code> ist eine Kovarianz &mdash; sie definiert eine Gau&szlig;-Dichte, deren <b>niedrigenergetische Menge</b> die Scheibe ist; deren Inverse <code>M&#8315;</code> (Pr&auml;zision = Whitening) ist die <b>eine exakte Operation</b>, die (i) beim <em>Schreiben</em> den Rang-1-Zug in leere Richtungen lenkt (Spezifitat) und (ii) beim <em>Lesen</em> die Superposition entzerrt (Dekodierbarkeit) &mdash; und <em>dieselbe</em> <code>M&#8315;</code> <b>definiert</b> die weiche Klasse: die Zust&auml;nde, die sie auf dieselbe dekoderte Koordinate abbildet, bilden <b>eine</b> Homotopie-Klasse = die Scheibe = der eindeutige globale Schnitt. <b>Die eine Steuergr&ouml;&szlig;e <code>&#8214;M&minus;I&#8214;</code> (Belegung = Hologramm-Grad, A) ist dieselbe Zahl wie B's <code>T</code> = Homotopie-Weiche</b>: der Regler von <i>exakt/orthogonal (=)</i> (<code>M&thinsp;&asymp;&thinsp;I</code>, ger&auml;umt) zu <i>weich/superponiert (&#8773;)</i> (<code>M</code> weit von <code>I</code>, eng). So sind A's exakte Algebra und B's weiche Topologie <b>ein und dieselbe Relation auf zwei Skalen</b> &mdash; <code>M&#8315;</code> exakt <em>innerhalb</em> jedes linearen St&uuml;cks, <code>&#8773;</code> <em>zwischen</em> den St&uuml;cken. Halluzination = danebenfallen in ein fremdes Tal = Verlassen der Klasse (kein OOD-Alarm).</p>
+<div class="kbox"><b>Die eine fused Idee:</b> <b><code>M&#8315;</code> ist exakt <i>lokal</i>, die Homotopie-Klasse ist ihr <i>globaler Schatten</i>.</b> Ein trainiertes Netz ist ein linearer Assoziativspeicher, der in einer zweiten-Moment-Geometrie <code>M</code> superponiert; <code>M&#8315;</code> (Whitening = duale Basis) ist die <em>eine</em> exakte Operation, die <em>beides</em> leistet &mdash; beim Schreiben in leere Richtungen lenken (Spezifitat, A) und beim Lesen die Superposition entzerren (Dekodierbarkeit, B) &mdash; und zugleich die <em>weiche</em> Klasse definiert, auf die sich die lokalen, verträglichen Lese-Schreib-Operationen verkleben (B). <b><code>&#8214;M&minus;I&#8214;</code> = Belegung = Hologramm-Grad (A) ist dasselbe wie <code>T</code> = Homotopie-Weiche (B)</b>: <code>M&thinsp;&asymp;&thinsp;I</code> &rarr; exakt (=, ger&auml;umt), <code>M</code> weit von <code>I</code> &rarr; weich (&#8773;, eng). Die Scheibe = der eindeutige globale Schnitt = eine Homotopie-Klasse; der Attraktor (A) besetzt sie metastabil, und danebenfallen ist das Verlassen der Klasse.</div>
+</section>
+
+<section id="widersprueche">
+<h2>Widerspr&uuml;che zwischen A und B</h2>
+<p>Kein Fakt-Disput &mdash; aber drei <b>echte, teils entgegengesetzte Stellungen</b> auf der Achse <i>wie zwei Seiten desselben Netzes zueinanderstehen</i>.</p>
+<div class="card">
+<h3><span class="tag">1 &middot; Die Natur der Br&uuml;cke</span> exakte Algebra (A) vs. bewusste Inexaktheit / Homotopie (B)</h3>
+<p><span class="tA">A (r3-002)</span>: Die Br&uuml;cke zwischen Schreiben und Lesen ist <b>exakte Lineare Algebra</b> &mdash; <code>M&#8315;</code> ist ein wohldefinierter, deterministischer inverser Operator (Whitening, duale Basis), die Repr&auml;sentation ist &bdquo;lokal-linear (ReLU &rarr; st&uuml;ckweise linear, Region f&uuml;r Region invertierbar)&ldquo;. A <b>feiert</b> die exakte algebraische Struktur: der Vorgang ist eine konkrete Matrix, das Ergebnis eine konkrete Vektorkoordinate.</p>
+<p><span class="tB">B (r3-012)</span>: Die ehrliche Relation ist <b>bewusst <i>nicht</i> exakt</b> &mdash; es ist <b>Homotopie</b> (<code>&#8773;</code>): Zust&auml;nde sind &bdquo;nicht exakt gleich, sondern ineinander verformbar&ldquo;. Die ganze Disziplin besteht darin, <code>=</code> zugunsten von <code>&#8773;</code> zu <em>verwerfen</em>; das Objekt ist formal/strukturell, nicht ein exakter Operator.</p>
+<p class="tension">&rarr; <b>Eine Br&uuml;cke, zwei Stellungen:</b> A l&auml;&szlig;t die zwei Seiten in <em>exakter</em> Algebra zusammenlaufen; B sagt, das ehrliche Zusammenlaufen ist <em>inexakt / weich</em>. A: &bdquo;das Inverse ist die exakte Br&uuml;cke&ldquo;; B: &bdquo;exakte Gleichheit ist die <em>falsche</em> Relation&ldquo;.</p>
+</div>
+<div class="card">
+<h3><span class="tag">2 &middot; Herkunft des globalen Objekts</span> emergent/dynamisch (A) vs. axiomatisch/strukturell (B)</h3>
+<p><span class="tA">A (r3-002)</span>: Die Geometrie <code>M</code> <em>entsteht emergent</em> aus der Selbstorganisation (SOM: konkurrentiell, annealend, topologietreu; plus Rang-1-Edits) &mdash; ein <b>bottom-up, datengesteuerter Proze&szlig;</b>; <code>C</code> ist das &bdquo;gemessene, eingefrorene Snapshot&ldquo;. Es gibt <b>keine Garantie</b> &mdash; es ist einfach, was der Proze&szlig; hervorgebracht hat.</p>
+<p><span class="tB">B (r3-012)</span>: Der globale Schnitt wird <b>axiomatisch / strukturell garantiert</b> (Garben-Verklebungsaxiom: lokal verträglich &rarr; global eindeutig) &mdash; eine <b>top-down Existenz-Zusicherung</b> (beding an Breite/Verträglichkeit); die Dynamik <em>besetzt</em> ihn nur <b>metastabil</b>. Es geht prim&auml;r um <em>Existenz/Struktur</em>, nicht um den erzeugenden Proze&szlig;.</p>
+<p class="tension">&rarr; <b>Entgegengesetzte Genese:</b> A's globale Struktur wird <em>von einem Proze&szlig; erzeugt</em> (Emergenz, bottom-up); B's wird <em>von einem Axiom garantiert</em> (Existenz, top-down) und nur metastabil von einem Flow besetzt.</p>
+</div>
+<div class="card">
+<h3><span class="tag">3 &middot; Die ermöglichende Tugend der ReLU</span> lokale Invertierbarkeit (A) vs. Verlust/Non-Injektivit&auml;t (B)</h3>
+<p><span class="tA">A (r3-002)</span>: Der ganze Mechanismus funktioniert, <b>weil</b> die Abbildung <em>lokal linear / invertierbar</em> ist (ReLU &rarr; st&uuml;ckweise linear, Region f&uuml;r Region invertierbar; <code>M&#8315;</code> wohldefiniert). <b>Die lokale Invertierbarkeit ist die ermöglichende Tugend</b> &mdash; ohne sie w&auml;re <code>M&#8315;</code> keine duale Basis und Schreiben/Lesen br&auml;che zusammen.</p>
+<p><span class="tB">B (r3-012)</span>: ReLU ist eine <b>verlustvolle</b> Restriktion (negative H&auml;lft weg, einweg) &mdash; &bdquo;der Verlust <em>erm&ouml;glicht</em> Verkleben&ldquo;; das &infin;-Gruppoid ist <b>nicht-injektiv, polysemantisch</b>. <b>Der Verlust ist hier die ermöglichende Tugend</b>: gerade weil verschiedene lokale St&uuml;cke <em>weggeworfen</em> werden, k&ouml;nnen sie verklebt werden, ohne beide denselben Ausgang zu beanspruchen.</p>
+<p class="tension">&rarr; <b>Dieselbe Nichtlinearit&auml;t, entgegengesetzte Bewertung:</b> A sieht in ReLU vor allem die <em>lokal invertierbare</em> Seite (exakt); B sieht in ReLU vor allem die <em>verlustvolle / nicht-injektive</em> Seite (exakt das Gegenteil der Tugend, die A feiert).</p>
+</div>
+<p><span class="tag">Faithfulness</span> Alle drei Stellungen stehen w&ouml;rtlich in den Quellen. A (r3-002): &bdquo;lokal linear (ReLU &rarr; st&uuml;ckweise linear, Region f&uuml;r Region invertierbar)&ldquo;, &bdquo;<code>M&#8315;</code> (Whitening) = duale Basis&ldquo;, &bdquo;<code>C</code> = gemessenes, eingefrorenes Snapshot der selbstorganisierten Geometrie&ldquo;, &bdquo;organisiert sich selbst aus den Daten&ldquo;. B (r3-012): &bdquo;die ehrliche Relation ist <em>Homotopie</em> (&#8773;, nicht =) &mdash; Zust&auml;nde sind nicht exakt gleich, sondern ineinander verformbar&ldquo;, &bdquo;eindeutiger globaler Schnitt als Struktur-Theorem &hellip; garantiert&ldquo;, &bdquo;metastabil besetzt vom Lese-Schreib-Flow&ldquo;, &bdquo;ReLU als verlustvolle Restriktion: negative H&auml;lft weg (einweg) &mdash; der Verlust erm&ouml;glicht Verkleben&ldquo;, &bdquo;Nicht-injektiv, polysemantisch&ldquo;. Nichts wird erfunden &mdash; es sind die realen, st&auml;rksten Stance-Unterschiede der beiden R3-Papiere.</p>
+</section>
+
+<section id="aufloesung">
+<h2>Aufl&ouml;sung</h2>
+<p>Alle drei Spannungen l&ouml;sen sich, weil sie <i>zwei Skalen</i> von <b>einem</b> linearen Assoziativspeicher sind, der &uuml;ber <b>einer</b> zweiten-Moment-Matrix <code>M</code> mit <b>einer</b> Inversions-Operation <code>M&#8315;</code> liest und schreibt &mdash; und dessen <b>eine</b> Steuergr&ouml;&szlig;e <code>&#8214;M&minus;I&#8214;</code> exakt (A) und weich (B) zugleich ist.</p>
+<div class="card">
+<h3><span class="tag">1</span> <code>M&#8315;</code> ist exakt <i>lokal</i> &mdash; die Homotopie-Klasse ist ihr <i>globaler Schatten</i></h3>
+<p><code>M&#8315;</code> ist als <em>lokaler</em> Operator <b>exakt</b>: innerhalb eines linearen St&uuml;cks ist das Entzerren des Lesens ein pr&auml;zises Matrixprodukt, das Whitening eine wohldefinierte Abbildung. Aber das Netz ist eine <em>st&uuml;ckweise</em> (ReLU-)Abbildung, also ist die <em>globale</em> Relation zwischen Zust&auml;nden <b>nicht</b> exakte Gleichheit, sondern <b>Homotopie</b>: Zwei Zust&auml;nde sind &bdquo;gleich&ldquo; genau dann, wenn <code>M&#8315;</code> sie auf dieselbe dekoderte Koordinate (dasselbe lineare St&uuml;ck, denselben Kandidaten) abbildet. <code>M&#8315;</code> <b>partitioniert</b> also den Zustandsraum in Homotopie-Klassen; die Klasse ist der <em>globale Schatten</em> des exakten lokalen Operators. <b>Fused:</b> Exaktheit (A) lebt auf der Ebene des <em>lokalen</em> Lese-Schreib-Operators, <code>&#8773;</code> (B) auf der Ebene des <em>komposierten / globalen</em> Objekts. &bdquo;Die Scheibe = die Menge der Zust&auml;nde, die <code>M&#8315;</code> auf kompatible Koordinaten abbildet&ldquo; &mdash; das <em>Verkleben</em> (B) <b>ist</b> die konsistente Anwendung von <code>M&#8315;</code> (A) &uuml;ber die Tiefe: jede lokale Entzerrung mu&szlig; &uuml;bereinstimmen, sonst gibt es keinen globalen Schnitt.</p>
+</div>
+<div class="card">
+<h3><span class="tag">2</span> Der Proze&szlig; (A) ist der Zeuge, da&szlig; die Garantie (B) realisierbar ist</h3>
+<p>A's Selbstorganisation (SOM, Rang-1-Edits, Annealing, topologietreu innerhalb / torsierbar zwischen) ist der <em>dynamische Mechanismus</em>, der <code>M</code> aufbaut und die Zust&auml;nde auf die Scheibe treibt &mdash; er <em>konvergiert</em> (grob&rarr;fein). B's Verklebungsaxiom <em>garantiert</em> Existenz, <em>falls</em> lokal verträglich. <b>Fused:</b> die Selbstorganisation (A) <em>f&uuml;hrt das Verkleben (B) aus</em> &mdash; Schicht f&uuml;r Schicht, annealend, konvergent &mdash; und zeigt damit, da&szlig; die axiomatische Garantie (B) <em>real</em> und <em>reichbar</em> ist. &bdquo;Von einem Axiom garantiert&ldquo; (B) und &bdquo;von einem Proze&szlig; erzeugt&ldquo; (A) sind dasselbe: das Axiom sagt, <em>es mu&szlig; existieren, wenn lokal verträglich</em>; der Proze&szlig; zeigt, <em>da&szlig; es existiert und wie man es erreicht</em>. Das eingefrorene Snapshot <code>M</code> (A) <b>ist</b> der realisierte, besetzte globale Schnitt (B). B's &bdquo;metastabile Besetzung&ldquo; ist genau A's &bdquo;einer zur Zeit&ldquo;-Dynamik: die Garantie steht auf Struktur-Ebene, die Fragilit&auml;t (danebenfallen) auf Dynamik-Ebene.</p>
+</div>
+<div class="card">
+<h3><span class="tag">3</span> Invertierbarkeit (A) und Verlust (B) sind dieselbe ReLU &mdash; innerhalb vs. zwischen den St&uuml;cken</h3>
+<p>Die Verlusthaftigkeit von ReLU hat <b>zwei</b> Seiten. <em>Innerhalb</em> eines linearen St&uuml;cks ist ReLU <b>exakt linear und invertierbar</b> &mdash; das ist A's Seite: <code>M&#8315;</code> existiert, Schreiben ist spezifisch, Lesen exakt (die <em>Mikro</em>-Seite). <em>Zwischen</em> den St&uuml;cken ist die Abbildung <b>st&uuml;ckweise / nicht-injektiv</b>; die negative H&auml;lft wird verworfen; verschiedene Eing&auml;nge kollidieren &mdash; das ist B's Seite: <em>verlustvoll, nicht-injektiv, polysemantisch</em> (die <em>Makro</em>-Seite). <b>Fused:</b> ReLU's st&uuml;ckweise Linearit&auml;t (invertierbar <em>innerhalb</em> eines St&uuml;cks) ist die <em>lokale</em> ermöglichende Tugend (A); ReLU's Verlust / Non-Injektivit&auml;t (das <em>weiggeworfene</em> St&uuml;ck) ist die <em>globale</em> ermöglichende Tugend (B). Dieselbe Nichtlinearit&auml;t, zwei Skalen. Und der &bdquo;Interferenzpreis&ldquo; (B), den die Non-Injektivit&auml;t zahlt, <b>ist exakt der Spillover</b> (A), den <code>M&#8315;</code> beim Schreiben steuert: fallen zwei Fakten in &uuml;berlappende St&uuml;cke, erzeugt der verlustvolle Verklebe Crosstalk = <code>&#8214;M&minus;I&#8214;</code> (der Hologramm-Grad).</p>
+</div>
+<div class="kbox"><b>Kurzformel der Aufl&ouml;sung:</b> ein linearer Assoziativspeicher <b>superponiert</b> Fakten in einer zweiten-Moment-Geometrie <code>M</code> (selbstorganisiert, lokal-linear per ReLU) &middot; <code>M&#8315;</code> (Whitening = duale Basis) ist die <em>eine exakte</em> Operation, die (i) beim <b>Schreiben</b> in leere Richtungen lenkt (Spezifitat, A) und (ii) beim <b>Lesen</b> entzerrt (Dekodierbarkeit, B) &mdash; und <em>zugleich</em> die <em>weiche</em> Klasse definiert, auf die sich die lokalen Operationen verkleben (B) &middot; <b>die eine Steuergr&ouml;&szlig;e</b> <code>&#8214;M&minus;I&#8214;</code> = Belegung = Hologramm-Grad (A) = <code>T</code> = Homotopie-Weiche (B): <code>M&thinsp;&asymp;&thinsp;I</code> exakt/ger&auml;umt (=) &rarr; <code>M</code> weit von <code>I</code> weich/eng (&#8773;) &middot; Scheibe = eindeutiger globaler Schnitt = eine Homotopie-Klasse, metastabil besetzt; danebenfallen = Verlassen der Klasse = Halluzination.</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p><b>&#9312; Das gemeinsame Objekt.</b> Ein trainiertes Transformer = ein <b>linearer Assoziativspeicher</b>, dessen Inhalt eine <i>lineare Superposition</i> ist, lokal-linear (ReLU &rarr; st&uuml;ckweise linear, invertierbar Region f&uuml;r Region) und von einem <i>linearen Functional</i> gelesen. <span class="tA">A</span> beschreibt ihn von der Schreib- und Leseseite; <span class="tB">B</span> beschreibt denselben als konkreten Mechanismus (Energie-Scheibe) und abstrakte Typisierung (&infin;-Garbe). Beide teilen die <b>sin/cos-Fourier-Basis</b> (A's Features = <code>cos/sin(&omega;&#7522;)</code>; B's Lift/PE <code>PE(p,2i)=sin(p/10000^(2i/d))</code>, <code>PE(p,2i+1)=cos(&middot;)</code> &mdash; dieselbe Multi-Frequenz-Basis). &Uuml;ber die <em>Tiefe</em> komplementieren die lokalen Lese-Schreib-Operatoren zu einem <b>Jacobian-Flow</b> (B: <code>J=I+J_&Delta;</code>, Residual-Stream <code>h[l+1]=h[l]+&Delta;[l]</code>; innere Layer = schwere Warps, letzter dreht zur&uuml;ck).</p>
+<div class="formula">Repr&auml;sentation:  Fakt = lineare Superposition in M &middot; lokal linear (ReLU) &middot; gelesen via linearem Functional
+zweite-Moment-Matrix:  M&#7522;&#7523; = E[k&#7522;k&#7523;]  (A: C)  =  &lang;u&#7522;,u&#7523;&rang;  (Gram)  &mdash; belegt vs. leer  &rarr;  Metrik/Pr&auml;zision
+eine exakte Operation:  M&#8315; = Whitening = duale Basis
+SCHREIBEN (A):  &#362;&#772; = W + &Lambda;(M&#8315;k*)&#7488; ,  &Lambda; = (v* &minus; W k*)/((M&#8315;k*)&#7488;k*)      [Rang-1, one-shot]
+SVD-Kanal (A/B):  OV = U&middot;S&middot;V&#7488; = &Sigma; s&#7522;(U&#7522;&otimes;V&#7522;)  = Rang-1-Kanäle (Position, nicht Inhalt; IOI)
+LESEN&nbsp;&nbsp;&nbsp; (A):  s = w&#7488;&#934; + b &rarr; Argmax/Softmax ;  entzerrt:  x = M&#8315;&middot;(naive Projektionen)
+OT-Lesen (B):  min &minus;&lang;p,s&rang; + &epsilon;&Sigma;p log p &rarr; Softmax (hergeleitet, &tau;=&radic;d&#996;)
+Fisher/RL (B):  F = (1/&tau;&#178;)(diag(p) &minus; p p&#7488;)  = OT-Krümmung = Rao-Metrik = Policy-Gradient
+Energie/Klasse (B):  P &prop; e^(&minus;E/T) ;  Scheibe = niedrige-Energie-Menge = globale Schnitt = Homotopie-Klasse
+eine Steuergr&ouml;&szlig;e:  &#8214;M&minus;I&#8214;  = Belegung = Hologramm-Grad (A)  =  T = Homotopie-Weiche (B)</div>
+<p><b>&#9313; Die zweite-Moment-Matrix &mdash; ein Tensor, zwei Namen, <i>und</i> eine Metrik.</b> A's Kovarianz <code>C</code> (&uuml;ber &asymp;100 000 Wikipedia-Schl&uuml;ssel) und die Gram-Matrix <code>G</code> (<code>G&#7522;&#7523;=&lang;u&#7522;,u&#7523;&rang;</code>) sind dieselbe Art Objekt: ein <b>Korrelations-/Streu-Tensor der belegten Richtungen</b>. Diagonale = Normalisierung (&asymp;1); Off-Diagonale = <b>Crosstalk / &Uuml;berlagerung</b>. Fusion: <code>M</code> ist zugleich die <b>Metrik/Pr&auml;zision</b>, die B's Energie definiert &mdash; eine Kovarianz bestimmt eine Gau&szlig;-Dichte, deren niedrigenergetische Menge <b>ist die Scheibe</b>; <code>M&#8315;</code> (Pr&auml;zision = Whitening) ist die eine Operation, die (i) beim Schreiben den neuen Fakt in die leeren (niedrig-belegten) Eigenrichtungen dr&auml;ngt (Spezifitat) und (ii) beim Lesen die &uuml;berlagerten Fakten wieder frei macht (Dekodierbarkeit) &mdash; als &bdquo;virtuelle orthogonale Koordinate im selben Raum&ldquo;.</p>
+<p><b>&#9314; Die Schreibseite (im Detail).</b> <span class="tA">Rang-1-Edit + SVD-Kanäle.</span> <code>k*</code> = Mittel &uuml;ber &asymp;20 zufällige Vorspanne (Subjekt nach der Schwelle &sigma;); <code>v*</code> per Gradientenabstieg (Zielwort maximieren, &bdquo;Essenz-Drift&ldquo; per KL unterbinden). <code>M&#8315;k*</code> ist der <em>Schreibvektor</em>; er wird so skaliert (&Lambda;), da&szlig; <code>&#362;&#772;k*=v*</code> gilt und der Rest der Matrix möglichst unangetastet bleibt. Dieselbe Struktur als <b>SVD-Kanäle</b>: <code>OV=U&middot;S&middot;V&#7488;=&Sigma;s&#7522;(U&#7522;&otimes;V&#7522;)</code> &mdash; die Kanäle tragen <b>Position, nicht Inhalt</b> (Zeiger / Variablen-Bindung, IOI-Schaltkreis); gezieltes Steuern = <b>+22&nbsp;%</b> Listenkapazit&auml;t ohne Training. Der <b>Spillover</b> (Anteil des Schreibzugs in die am stärksten belegte Richtung) ist das Maß f&uuml;r <em>verlorene Spezifitat</em>: klein = alte Fakten &uuml;berleben. Kausal-Tracing (Korrelation &ne; Kausalit&auml;t; Totaleffekt &minus; AIE) hatte lokalisiert, <em>wo</em> der Fakt lebt: mittlere MLPs am letzten Subjekt-Token + späte Attention; die MLP-Matrix als <em>lineares Assoziativgedächtnis</em> (Kohonen/Anderson 1972; die <em>ganze</em> Matrix gemeinsam, nicht &bdquo;ein Neuron = ein Paar&ldquo;). One-shot, &asymp;2 s, explizit <em>kein</em> Training.</p>
+<p><b>&#9315; Die Leseseite (im Detail).</b> <span class="tB">OT-Softmax + Lift + Readout.</span> Jede Attention-Zeile ist ein <b>einseitiges entropisches OT-Problem</b> <code>min &minus;&lang;p,s&rang;+&epsilon;&Sigma;p log p</code> &rarr; <b>Softmax hergeleitet, nicht gew&auml;hlt</b> (<code>&tau;=&radic;d&#996;</code>; Regularisierer-Familie Sparsemax, &alpha;-entmax, ALiBi; Dual <code>&nabla;&#178;&phi;=&tau;F</code>). Der <b>Lift</b> legt eine strukturierte Koordinate an: <code>&#934;(a)=[Basis(a)] &#8853; [g(Attribut(a))]</code> (z.&nbsp;B. <code>PE(p)</code> oder <code>r&#178;=x&#178;+y&#178;</code>), so da&szlig; das Ziel <em>linear</em> wird. Der <b>Readout</b> ist <code>s=w&#7488;&#934;+b</code>; die Entscheidung ist Argmax/Softmax &uuml;ber Kandidaten bzw. <code>sign(s)</code> (B's P=2-Limes). Wo Superposition entsteht (<code>M</code> ill-konditioniert), kl&auml;rt <code>M&#8315;</code> die Koordinaten. Lernen: <b>Backprop-Gradient = REINFORCE-Policy-Gradient</b> mit Simplex-Baseline; <code>F=(1/&tau;&#178;)(diag(p)&minus;pp&#7488;)=Fisher=OT-Krümmung=Rao-Metrik=RL</code>. <b>Lift</b> (hinein) und <b>Readout</b> (heraus) treffen sich an <em>lokaler Linearit&auml;t + linearem Functional</em>.</p>
+<p><b>&#9316; Die Selbstorganisation (Makroseite) = der Proze&szlig;, der das Verkleben ausf&uuml;hrt.</b> Die <em>Faser</em> organisiert sich datengesteuert, konkurrentiell, topologietreu, annealend (SOM; Gau&szlig;-Nachbarschaft <code>K(d)=e^(&minus;d&#178;/2&sigma;&#178;)</code>, grob&rarr;fein, konvergent). Der <em>Bündel</em>-Stapel (Totalraum <code>E</code>, Projektion <code>&#960;:E&rarr;B</code>) ist <em>zwischen</em> den Fasern torsierbar, <em>innerhalb</em> topologietreu; <b>ein Gau&szlig;-Kern, zwei Rollen</b> (Nachbarschaft &amp; Deformation). Fusion: diese Selbstorganisation ist der Proze&szlig;, der (i) <code>M</code> seine Form gibt (Bottom-up) und (ii) <b>B's Verklebungsaxiom realisiert</b> &mdash; die lokale Verträglichkeit wird annealend konvergent zum eindeutigen globalen Schnitt. B's Block-Mechanik als Garben-Operationen: Attention = Kontraktion auf der Positionsachse (bewiesener Kollaps <code>d&ge;3</code>), FFN = Key-Value-Speicher auf der Featureachse, Residual-Stream dominiert. B's Effizienz-Kalkül: Falten &rarr; <code>N^L</code> lineare Regionen (exponentiell), Shear &rarr; polynomial/sehr tief; 12/24/96 Schichten reichen f&uuml;r Phase 1 (schnelle nützliche Cluster), nicht f&uuml;r Phase 2 (&bdquo;alles verschmilzt = Tod&ldquo;).</p>
+<p><b>&#9317; Die Scheibe = der globale Schnitt = eine Homotopie-Klasse.</b> Die <b>Setze der niedrigenergetischen, korrekt dekodbaren Zust&auml;nde</b> ist zugleich (i) A's <em>N&uuml;tzlichkeitsscheibe</em> (Boltzmann <code>P&prop;e^(&minus;E/T)</code>, kalt=pr&auml;zise, heiß=kreativ), (ii) B's <em>eindeutiger globaler Schnitt</em> (Verkleben &rarr; Existenz-Garantie) und (iii) <em>eine Homotopie-Klasse</em> (<code>&#8773;</code>). <b>Metastabilit&auml;t</b> (B) und <b>kein OOD-Alarm</b> (A) sind dieselbe Eigenschaft: eine selbstbewusste, niedrig-entropische Vorwärtskarte flaggt sich nicht selbst; das Netz bleibt in einer Klasse, bis es (durch <code>T</code>/Fehltraining) danebenf&auml;llt. <b>Halluzination (fused):</b> dichtes Lesen (B) + d&uuml;nnes Schreiben (Rang-1, A) + <code>T</code> tragen den Zustand neben die Scheibe ins <em>falsche Tal</em> (A) = exakt das <em>Verlassen der Homotopie-Klasse</em> in ein fremdes metastabiles Regime (B).</p>
+<p><b>&#9318; Die eine Steuergr&ouml;&szlig;e: <code>&#8214;M&minus;I&#8214;</code> = Belegung = Hologramm-Grad = <code>T</code> = Homotopie-Weiche.</b> Eine einzige Zahl, vier Namen. Sie steuert zugleich: (a) die <em>Schreibspezifitat</em> &mdash; je anisotroper <code>M</code>, desto st&auml;rker mu&szlig; <code>M&#8315;</code> lenken, sonst l&auml;uft der Fakt &uuml;ber (Spillover w&auml;chst); (b) die <em>Lesedekodierbarkeit</em> &mdash; je weiter <code>M</code> von <code>I</code>, desto st&auml;rker driftet das <em>naive</em> Lesen ab, w&auml;hrend das <code>M&#8315;</code>-entzerrte stabil bleibt; (c) B's <b>Temperatur/Homotopie-Weiche</b> &mdash; je gr&ouml;&szlig;er, desto <em>breiter</em> die Klasse (mehr &bdquo;zwischenliegende&ldquo; Zust&auml;nde gelten als gleich, &#8773;), desto <em>stabiler</em> der globale Schnitt. <code>M&thinsp;&asymp;&thinsp;I</code> = ger&auml;umt/exakt (=), naiv sauber; <code>M</code> weit von <code>I</code> = eng/weich (&#8773;, holographisch), <em>nur</em> via <code>M&#8315;</code>. <b>Der Hologramm-Grad ist die eine Zahl, an der Spezifitat, Dekodierbarkeit und Homotopie-Weiche messen.</b></p>
+<p><b>&#9319; Grenzen (fusioniert, beider Ehrlichkeit).</b> <em>Einer zur Zeit:</em> ein Fakt pro one-shot-Zug; viele nacheinander st&ouml;ren sich (A &rarr; MEMIT = viele lokale Deformationen) &mdash; und die Klasse wird entsprechend holographischer. <em>Gerichtet:</em> A&rarr;B und B&rarr;A sind zwei Schreibzüge. <em>Nur faktische Tripel</em> <code>(s,r,o)</code>; logisches/r&auml;umliches/numerisches Wissen ununtersucht. <em>Das Modell r&auml;t weiter</em> (fl&uuml;ssig, ohne Grund) &mdash; kein Einsatz als maßgebliche Faktenquelle. <em>Missbrauch:</em> dieselbe Formel, die einen Fehler korrigiert, pflanzt unauff&auml;llig eine generalisierende L&uuml;ge. <em>Modell-Honesty:</em> A's SOM/Bündel ist ein <em>Modell</em> der Geometrie (keine Behauptung, das echte <code>W_proj</code> sei w&ouml;rtlich ein 2-D-Gitter); B's Ehrlichkeits-Disziplin: <em>typisiere die Konstruktion (Garbe/&infin;-Gruppoid), kennezeichne die Behauptung (Belegstatus / Homotopie-Fehler)</em>. <em>Ill-Konditioniertheit:</em> B's <code>M&#8315;</code>-Entzerrung wird ill-konditioniert, wenn <code>M</code> zu eng wird (&bdquo;Entzerrung schwierig&ldquo;). <em>Whitening-Verst&auml;rkung:</em> bei starkem Hologramm-Grad verst&auml;rkt <code>M&#8315;</code> Rauschen &mdash; die Spezifitat hat ein echtes Deckenniveau. <em>Preis:</em> der Interferenzpreis (B) = der Spillover (A) = <code>&#8214;M&minus;I&#8214;</code>; ReLU's Verlust = Distanz zwischen &bdquo;exakt&ldquo; und &bdquo;bis auf Homotopie&ldquo;.</p>
+</section>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung: eine Matrix, eine Klasse &mdash; <code>M&#8315;</code> als exakte Br&uuml;cke zur weichen Scheibe</h2>
+<p>Ein <b>einziger Regler &bdquo;Weiche &#8773; = &#8214;M&minus;I&#8214; = Hologramm-Grad = Belegung = T&ldquo;</b> (0 = exakt/ger&auml;umt <code>M&thinsp;&asymp;&thinsp;I</code> &hellip; 100 = weich/eng <code>M</code> weit von <code>I</code>) f&auml;hrt dieselbe Gr&ouml;&szlig;e, an der beide Papiere messen. <b>Links</b>: die Geometrie <code>M</code> (anisotrope Ellipse), die <b>duale Basis <code>M&#8315;</code></b> (gold gestrichelt &mdash; die <em>exakte</em> Br&uuml;cke), die <b>Scheibe = Homotopie-Klasse</b> (blaue Ellipse, Breite = Weiche), das <b>falsche Tal</b> (rot = andere Klasse = Halluzination) und der <b>dragbare Query-Punkt</b> (Klassen-Mitgliedschaft im <code>M&#8315;</code>-Whitening-Raum: gleiche Klasse &#10003; / zwischen &#8773; / Halluzination &#10007;) sowie der Spillover-Schreibzug. <b>Rechts oben</b>: Gram/Crosstalk-Heatmap <code>M</code> + die <b>eine-Steuergr&ouml;&szlig;e</b>-Leiste; <b>rechts unten</b>: lineares Readout &uuml;ber 13 Kandidaten, <span class="tB">naiv</span> vs. <span class="tA"><code>M&#8315;</code>-entzerrt</span>; &#9733; = <code>c*=(a+b) mod 13</code>. Fahre die Weiche <b>auf 100</b> (naives Lesen bricht, Klasse wird weich &mdash; die <code>M&#8315;</code>-Seite h&auml;lt) und <b>ziehe</b> den Query-Punkt ins falsche Tal (Halluzination = Verlassen der Klasse).</p>
+<div class="viz-wrap">
+<div class="controls">
+  <label>Weiche &#8773; = &#8214;M&minus;I&#8214; = T</label><input type="range" id="wIn" min="0" max="100" value="50"><span class="val" id="wV">50</span>
+  <label>Schreib-&#220;ber k* (&#180;)</label><input type="range" id="phiIn" min="0" max="179" value="55"><span class="val" id="phiV">55</span>
+  <label>a</label><input type="range" id="aIn" min="0" max="12" value="4"><span class="val" id="aV">4</span>
+  <label>b</label><input type="range" id="bIn" min="0" max="12" value="7"><span class="val" id="bV">7</span>
+  <label class="chk"><input type="checkbox" id="useM" checked> M&#8315;-Steuerung</label>
+  <button id="themeBtn">Theme</button>
+</div>
+<canvas id="viz"></canvas>
+<p class="hint">&#9664; blau = Klasse/Scheibe = M&#8315;-entzerrt &middot; gold gestrichelt = M&#8315;-duale Basis (Whitening, exakte Br&uuml;cke) &middot; rot gestrichelt = falsches Tal (andere Klasse) &middot;
+<b>links:</b> Spillover (Spezifitat, A) + Klassen-Mitgliedschaft (B) &middot; <b>rechts:</b> Hologramm-Grad + naiv vs. M&#8315; (Dekodierbarkeit, B) &middot; &#9733; = c* &middot; Query-Punkt ziehen &rarr;</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul class="prov">
+<li><span class="tag">A</span> <a href="../3/r3-002.html">r3-002.html</a> &mdash; &bdquo;Der lineare Assoziativspeicher: eine zweite-Moment-Matrix, zwei Seiten&ldquo; (R3 &middot; 002; aus r2-001 &#10005; r2-002). Die <b>Schreib-/Leseseiten</b>: ein lineares Assoziativgedächtnis &uuml;ber <b>einer</b> zweiten-Moment-Matrix <code>M</code> (=C=E[kk&#7488;]=Gram); <b><code>M&#8315;</code> (Whitening = duale Basis) ist die eine exakte Operation</b>, die beim Schreiben in leere Richtungen lenkt (Spezifitat, Rang-1-Edit <code>&#362;&#772;=W+&Lambda;(M&#8315;k*)&#7488;</code>, SOM-Selbstorganisation) und beim Lesen entzerrt (Dekodierbarkeit, lineares Functional + Argmax); <b>die eine Steuergr&ouml;&szlig;e <code>&#8214;M&minus;I&#8214;</code> = Belegung = Hologramm-Grad</b>; Spillover = Spezifitats-Maß, Kausal-Tracing, Kohonen/Anderson 1972. (A)</li>
+<li><span class="tag">B</span> <a href="../3/r3-012.html">r3-012.html</a> &mdash; &bdquo;Die homotopische Lese-Schreib-Scheibe: Scheibe &#8773; Schnitt&ldquo; (R3 &middot; 012; aus r2-022 &#10005; r2-012). Die <b>konkrete + abstrakte Seite</b>: konkret = Space-Morphing/Jacobian-Flow, Energie-Scheibe, Boltzmann <code>T</code>, entropisches-OT-Softmax (hergeleitet), SVD-Rang-1-Kanäle (Position), IOI, +22&nbsp;%, Backprop=Policy-Gradient/Fisher, Halluzination=danebenfallen (kein OOD-Alarm); abstrakt = <b>&infin;-Garbe von &infin;-Gruppoiden</b> (Homotopie &#8773; statt =, Verklebungsaxiom &rarr; eindeutiger globaler Schnitt, ReLU als verlustvolle Restriktion, metastabil Phase 1/2). <b>Fusion: die Scheibe ist eine Homotopie-Klasse</b> &mdash; Energie und Homotopie zwei Lesarten derselben weichen Relation, Attraktor realisiert die Garantie metastabil. (B)</li>
+</ul>
+</section>
+</article>
+
+<script>
+(function(){
+"use strict";
+var K=6, P=13;
+var H=[
+[1,1,1,1,1,1],
+[1,-1,1,-1,1,-1],
+[1,1,-1,-1,1,1],
+[1,-1,-1,1,1,-1],
+[1,1,1,-1,-1,-1],
+[1,-1,1,1,-1,1]
+];
+var weich=0.5, phi=55, a=4, b=7, useM=true;
+var q={x:0.05,y:0.12};
+var dragging=false;
+var L={lcX:0,lcY:0,R:80};
+
+var cv=document.getElementById('viz');
+if(!cv||!cv.getContext) return;
+var ctx=cv.getContext('2d');
+var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+var W=0,Hh=0;
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|a)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gaussPair(rng){var u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return[Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v),Math.sqrt(-2*Math.log(u))*Math.sin(2*Math.PI*v)];}
+function cvv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function C(n,fb){var v=cvv(n);return(v===null||v===''?fb:v);}
+
+function secondMoment(w){
+  var lam1=1, lam2=0.1+0.9*(1-w);
+  return {lam1:lam1,lam2:lam2,aniso:(lam1-lam2)/(lam1+lam2)};
+}
+function buildGram(w){
+  var G=[],i,j,d,base,sign;
+  for(i=0;i<K;i++){G[i]=[];for(j=0;j<K;j++){
+    if(i===j){G[i][j]=1;continue;}
+    d=Math.abs(i-j);if(d>K/2)d=K-d;
+    base=1-d/K;
+    sign=(H[i][j]===undefined)?1:H[i][j];
+    G[i][j]=w*0.85*base*sign;
+  }}
+  return G;
+}
+function offAvgOf(G){var o=0,oc=0,i,j;for(i=0;i<K;i++)for(j=0;j<K;j++)if(i!==j){o+=Math.abs(G[i][j]);oc++;}return o/oc;}
+function scores(w,aa,bb){
+  var cstar=(aa+bb)%P;
+  var G=buildGram(w);
+  var S=offAvgOf(G);
+  var RESID=0.1;
+  var PH=[0.6,1.2,1.8,2.4,3.0,3.6];
+  var out=[],c,off,base,leak,nv,dv,j,wv;
+  for(c=0;c<P;c++){
+    off=(c-cstar+P)%P;base=0;leak=0;
+    for(j=0;j<K;j++){
+      wv=2*Math.PI*(j+1)*off/P;
+      base+=Math.cos(wv);
+      leak+=Math.cos(wv+PH[j]);
+    }
+    nv=base+S*leak;
+    dv=base+RESID*S*leak;
+    out.push({c:c,naive:nv,decon:dv});
+  }
+  return {cstar:cstar,out:out,G:G,S:S};
+}
+function writeSpill(phiDeg,ms){
+  var p=phiDeg*Math.PI/180;
+  var kx=Math.cos(p),ky=Math.sin(p);
+  var naive=kx*kx;
+  var wx=kx/ms.lam1, wy=ky/ms.lam2;
+  var wn=wx*wx+wy*wy;
+  var steered=wn>0?(wx*wx)/wn:0;
+  return {naive:naive,steered:steered};
+}
+var FAKE={x:0.72,y:-0.82};
+function classOf(qq,w){
+  var ms=secondMoment(w);
+  var qx=qq.x/ms.lam1, qy=qq.y/ms.lam2;
+  var r=0.5+0.6*w;
+  var rf=0.45;
+  var fx=FAKE.x/ms.lam1, fy=FAKE.y/ms.lam2;
+  var d0=Math.hypot(qx,qy);
+  var df=Math.hypot(qx-fx,qy-fy);
+  if(df<rf && df<d0) return 'hallu';
+  if(d0<r) return 'on';
+  return 'between';
+}
+
+function readTheme(){
+  return {card:C('--card','#161b22'),bg:C('--viz-bg','#0b1120'),fg:C('--fg','#e6edf3'),muted:C('--muted','#8b949e'),grid:C('--grid','#1e2a3a'),
+    c1:C('--c1','#f87171'),c2:C('--c2','#4ade80'),gold:C('--gold','#ffd700'),heat:C('--heat','#ffa657'),
+    accent:C('--accent','#58a6ff'),data:C('--data','#3a4a6a'),border:C('--border','#30363d')};
+}
+var theme=readTheme();
+
+function resize(){
+  var r=cv.getBoundingClientRect();
+  W=Math.max(360,r.width); Hh=Math.max(440,r.height);
+  cv.width=Math.round(W*DPR); cv.height=Math.round(Hh*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+function toWorld(e){
+  var r=cv.getBoundingClientRect();
+  var sx=(e.clientX-r.left)*(W/r.width);
+  var sy=(e.clientY-r.top)*(Hh/r.height);
+  var ms=secondMoment(weich);
+  var u=(sx-L.lcX)/(L.R*Math.sqrt(ms.lam1));
+  var v=(L.lcY-sy)/(L.R*Math.sqrt(ms.lam2));
+  function cl(x){return x<-1.6?-1.6:(x>1.6?1.6:x);}
+  return {x:cl(u),y:cl(v)};
+}
+function arrow(x1,y1,x2,y2){
+  var ang=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-9*Math.cos(ang-0.42),y2-9*Math.sin(ang-0.42));
+  ctx.lineTo(x2-9*Math.cos(ang+0.42),y2-9*Math.sin(ang+0.42));ctx.closePath();
+  ctx.fillStyle=ctx.strokeStyle;ctx.fill();
+}
+
+function draw(){
+  try{
+  ctx.clearRect(0,0,W,Hh);
+  ctx.fillStyle=theme.bg;ctx.fillRect(0,0,W,Hh);
+  var w=weich;
+  var sres=scores(w,a,b);
+  var cs=sres.cstar, G=sres.G;
+  var ms=secondMoment(w);
+  var sp=writeSpill(phi,ms);
+  var i,j,c;
+
+  ctx.fillStyle=theme.fg;ctx.font='bold 17px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Eine zweite-Moment-Matrix: exakte Whitening (A) \u224d weiche Homotopie-Klasse (B)',W/2,22);
+  ctx.font='12px Segoe UI,Arial';ctx.fillStyle=theme.muted;
+  ctx.fillText('Weiche \u2243 = \u2016M\u2212I\u2016 = Hologramm-Grad = Belegung = T  \u00b7  c* = (a+b) mod 13 = '+cs,W/2,40);
+
+  // --- gemeinsame Fourier-Basis (dünne Streifen oben) ---
+  (function(){
+    var x0=40,x1=W-40,yMid=66,amp=11,N=240,t,k,x,y,s;
+    ctx.fillStyle=theme.accent;ctx.font='bold 11px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillText('Gemeinsame sin/cos-Fourier-Basis \u2014 A\'s Features = B\'s Lift',x0,50);
+    ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,yMid);ctx.lineTo(x1,yMid);ctx.stroke();
+    for(k=1;k<=K;k++){
+      ctx.strokeStyle=theme.accent;ctx.globalAlpha=0.13;ctx.lineWidth=1.1;ctx.beginPath();
+      for(t=0;t<=N;t++){var q2=t/N;x=x0+(x1-x0)*q2;y=yMid-amp*(k/K)*Math.cos(2*Math.PI*k*0.5*q2);t?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=theme.heat;ctx.lineWidth=2.2;ctx.beginPath();
+    for(t=0;t<=N;t++){var q3=t/N;x=x0+(x1-x0)*q3;s=0;for(k=1;k<=K;k++)s+=Math.cos(2*Math.PI*k*0.5*q3);y=yMid-(s/K)*amp;t?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.stroke();
+  })();
+
+  var topY=92;
+
+  // ===== LINKS: Geometrie M + Klasse + M\u207b\u00b9-Brücke =====
+  var lcX=W*0.235, lcY=topY+178, R=Math.min(96,W*0.15);
+  L.lcX=lcX;L.lcY=lcY;L.R=R;
+  var s1=Math.sqrt(ms.lam1), s2=Math.sqrt(ms.lam2);
+  ctx.fillStyle=theme.accent;ctx.font='bold 12px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Geometrie M  +  Klasse = Scheibe  (A+B)',lcX,topY-6);
+  ctx.fillStyle=theme.muted;ctx.font='11px Segoe UI,Arial';
+  ctx.fillText(w<0.34?'exakt / ger\u00e4umt (M \u2248 I, =)':(w>0.66?'weich / eng (M weit von I, \u2243)':'\u00dcbergang'),lcX,topY+12);
+
+  // Ellipse M (belegte Geometrie / Wolke)
+  ctx.strokeStyle=theme.grid;ctx.lineWidth=1.3;ctx.beginPath();
+  ctx.ellipse(lcX,lcY,R*s1,R*s2,0,0,2*Math.PI);ctx.stroke();
+  ctx.strokeStyle=theme.muted;ctx.globalAlpha=0.35;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(lcX-R*s1-8,lcY);ctx.lineTo(lcX+R*s1+8,lcY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lcX,lcY-R*s2-8);ctx.lineTo(lcX,lcY+R*s2+8);ctx.stroke();
+  ctx.globalAlpha=1;
+  ctx.fillStyle=theme.muted;ctx.font='10px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('belegt (e1)',lcX+R*s1+4,lcY);
+  ctx.fillText('leer (e2)',lcX,lcY-R*s2-14);
+
+  // Klasse = Scheibe = Homotopie-Klasse (Ball im M\u207b\u00b9-Raum \u2192 Ellipse im Daten-Raum)
+  var rcls=0.5+0.6*w;
+  ctx.strokeStyle=theme.accent;ctx.globalAlpha=0.9;ctx.lineWidth=2.4;ctx.beginPath();
+  ctx.ellipse(lcX,lcY,rcls*R*s1,rcls*R*s2,0,0,2*Math.PI);ctx.stroke();
+  ctx.fillStyle=theme.accent;ctx.globalAlpha=0.10;ctx.beginPath();
+  ctx.ellipse(lcX,lcY,rcls*R*s1,rcls*R*s2,0,0,2*Math.PI);ctx.fill();
+  ctx.globalAlpha=1;
+
+  // duale Basis M\u207b\u00b9 (Whitening, exakte Brücke) - gestrichelt gold
+  var e1len=R*0.95*Math.min(1,1/Math.sqrt(ms.lam1));
+  var e2len=R*0.95*Math.min(1,1/Math.sqrt(ms.lam2));
+  ctx.strokeStyle=theme.gold;ctx.globalAlpha=0.85;ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(lcX,lcY);ctx.lineTo(lcX+e1len,lcY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lcX,lcY);ctx.lineTo(lcX,lcY-e2len);ctx.stroke();
+  ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=theme.gold;ctx.font='10px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillText('M\u207b\u00b9 (duale Basis / Whitening)',lcX+e1len+4,lcY-2);
+
+  // alte Schlüssel (aus M gesampelt)
+  var rng=mulberry32(20261010);
+  ctx.fillStyle=theme.data;ctx.globalAlpha=0.55;
+  for(var ki=0;ki<120;ki++){
+    var gp=gaussPair(rng);
+    var px=lcX+gp[0]*R*s1*0.92;
+    var py=lcY-gp[1]*R*s2*0.92;
+    ctx.beginPath();ctx.arc(px,py,1.4,0,6.283);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+
+  // falsches Tal = andere Homotopie-Klasse
+  var fx=lcX+FAKE.x*R*s1, fy=lcY-FAKE.y*R*s2;
+  var rfR=0.45;
+  ctx.strokeStyle=theme.c1;ctx.globalAlpha=0.9;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.beginPath();
+  ctx.ellipse(fx,fy,rfR*R*s1,rfR*R*s2,0,0,2*Math.PI);ctx.stroke();
+  ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=theme.c1;ctx.font='10px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('FALSCHES TAL',fx,fy+rfR*R*s2+3);
+  ctx.fillText('= andere Klasse (Halluzination)',fx,fy+rfR*R*s2+14);
+
+  // neuer Schlüssel k* + Schreibzüge
+  var p=phi*Math.PI/180, kx=Math.cos(p),ky=Math.sin(p);
+  var wv=useM?{x:kx/ms.lam1,y:ky/ms.lam2}:{x:kx,y:ky};
+  var wm=Math.hypot(wv.x,wv.y)||1; wv.x/=wm;wv.y/=wm;
+  var len=R*1.05;
+  ctx.strokeStyle=theme.muted;ctx.globalAlpha=0.7;ctx.lineWidth=1.6;ctx.setLineDash([5,4]);
+  arrow(lcX,lcY,lcX+kx*R*s1*1.0,lcY-ky*R*s2*1.0);
+  ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.strokeStyle=theme.c2;ctx.globalAlpha=0.95;ctx.lineWidth=2.6;
+  arrow(lcX,lcY,lcX+wv.x*R*s1*1.15,lcY-wv.y*R*s2*1.15);
+  ctx.globalAlpha=1;
+  ctx.fillStyle=theme.gold;ctx.shadowBlur=10;ctx.shadowColor=theme.gold;
+  ctx.beginPath();ctx.arc(lcX+kx*R*0.55*s1,lcY-ky*R*0.55*s2,4,0,6.283);ctx.fill();ctx.shadowBlur=0;
+  ctx.font='600 10px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillText('k*',lcX+kx*R*0.55*s1+5,lcY-ky*R*0.55*s2-3);
+
+  // Spillover-Readout (A)
+  var shownSp=useM?sp.steered:sp.naive;
+  var aniso=ms.aniso;
+  var verdict,cls;
+  if(aniso<0.28){verdict='ger\u00e4umt / isotrop \u2014 jede Richtung fast gleich frei';cls=theme.c2;}
+  else if(shownSp<0.08){verdict='sehr spezifisch \u2014 M\u207b\u00b9 lenkt in leere Richtung';cls=theme.c2;}
+  else if(shownSp<0.4){verdict='m\u00e4\u00dfig \u2014 Teil l\u00e4uft in belegte Richtung \u00fcber';cls=theme.heat;}
+  else {verdict='unspezifisch \u2014 hoher Kollateralschaden';cls=theme.c1;}
+  var rxY=lcY+R*s1+40;
+  ctx.fillStyle=theme.fg;ctx.font='bold 11px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Spillover in belegteste Richtung (A)',lcX,rxY);
+  ctx.font='12px Segoe UI,Arial';ctx.fillStyle=theme.fg;
+  ctx.fillText((useM?('naiv '+(sp.naive*100).toFixed(0)+'%  \u2192  M\u207b\u00b9 '+(sp.steered*100).toFixed(0)+'%'):('M\u207b\u00b9 AUS \u2192 naiv '+(sp.naive*100).toFixed(0)+'%')),lcX,rxY+15);
+  ctx.font='10px Segoe UI,Arial';ctx.fillStyle=cls;
+  ctx.fillText(verdict,lcX,rxY+30);
+  var bW=Math.min(150,R*1.6),bX=lcX-bW/2,bY=rxY+40;
+  ctx.fillStyle=theme.grid;ctx.fillRect(bX,bY,bW,6);
+  ctx.fillStyle=cls;ctx.fillRect(bX,bY,bW*Math.min(1,shownSp),6);
+
+  // Query-Punkt (dragbar) + Klassen-Mitgliedschaft
+  var qc=classOf(q,w);
+  var qpx=lcX+q.x*R*s1, qpy=lcY-q.y*R*s2;
+  var qcen=(qc==='hallu')?{x:fx,y:fy}:{x:lcX,y:lcY};
+  ctx.setLineDash([4,4]);ctx.strokeStyle=theme.fg;ctx.globalAlpha=0.5;ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(qpx,qpy);ctx.lineTo(qcen.x,qcen.y);ctx.stroke();
+  ctx.setLineDash([]);ctx.globalAlpha=1;
+  var qcol=qc==='on'?theme.c2:qc==='hallu'?theme.c1:theme.heat;
+  ctx.fillStyle=qcol;ctx.beginPath();ctx.arc(qpx,qpy,8,0,6.283);ctx.fill();
+  ctx.strokeStyle=theme.fg;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(qpx,qpy,8,0,6.283);ctx.stroke();ctx.lineWidth=1;
+  ctx.fillStyle=qcol;ctx.font='bold 11px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='bottom';
+  var qlab=qc==='on'?'Query: gleiche Klasse \u2713 (AUF DER SCHEIBE)':(qc==='hallu'?'Query: ANDERE KLASSE \u2717 (HALLUZINATION)':'Query: zwischen (\u2243)');
+  ctx.fillText(qlab,lcX,lcY+R*s1+72);
+
+  // ===== RECHTS OBN: Gram-Heatmap M + Steuergröße =====
+  var cell=Math.min(28,Math.max(18,(W*0.20)/K));
+  var hx=Math.max(320,W*0.46), hy=topY+18;
+  ctx.fillStyle=theme.accent;ctx.font='bold 12px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('Gram / Belegung M (Crosstalk)',hx,hy-8);
+  for(i=0;i<K;i++){
+    for(j=0;j<K;j++){
+      var val=G[i][j];
+      if(i===j){ctx.fillStyle=theme.c2;ctx.globalAlpha=0.32;}
+      else{var mm=Math.min(1,Math.abs(val)/0.9);ctx.fillStyle=theme.heat;ctx.globalAlpha=0.16+0.74*mm;}
+      ctx.fillRect(hx+j*cell,hy+i*cell,cell-2,cell-2);ctx.globalAlpha=1;
+      ctx.fillStyle=theme.fg;ctx.font='9px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(val.toFixed(2),hx+j*cell+(cell-2)/2,hy+i*cell+(cell-2)/2);
+    }
+  }
+  var oa=offAvgOf(G);
+  ctx.fillStyle=theme.muted;ctx.font='11px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('Crosstalk (\u00d8|off|) = S: '+oa.toFixed(2),hx,hy+K*cell+16);
+  // die eine Steuergröße
+  var bx0=hx,bx1=hx+K*cell,by=hy+K*cell+40;
+  ctx.font='10px Segoe UI,Arial';
+  ctx.fillStyle=theme.c2;ctx.textAlign='left';ctx.fillText('exakt (=, ger\u00e4umt)',bx0,by-6);
+  ctx.fillStyle=theme.c1;ctx.textAlign='right';ctx.fillText('weich (\u2243, eng)',bx1,by-6);
+  var grad=ctx.createLinearGradient(bx0,0,bx1,0);grad.addColorStop(0,theme.c2);grad.addColorStop(1,theme.c1);
+  ctx.fillStyle=grad;ctx.globalAlpha=0.5;ctx.fillRect(bx0,by,bx1-bx0,8);ctx.globalAlpha=1;
+  var pos=Math.max(0,Math.min(1,w));
+  var mx=bx0+(bx1-bx0)*pos;
+  ctx.fillStyle=theme.gold;ctx.beginPath();ctx.moveTo(mx,by-2);ctx.lineTo(mx+5,by-9);ctx.lineTo(mx-5,by-9);ctx.closePath();ctx.fill();
+  ctx.fillStyle=theme.muted;ctx.font='10px Segoe UI,Arial';ctx.textAlign='left';
+  ctx.fillText('\u2016M\u2212I\u2016 = Belegung = Hologramm-Grad = T = Weiche \u2243',bx0,by+20);
+
+  // ===== RECHTS UNTEN: lineares Readout (B) =====
+  var rw0=Math.max(hx+K*cell+24,W*0.62), rw=W-rw0-22, ry0=topY+8, rh=170;
+  if(rw<120){rw0=W*0.50;rw=W-rw0-22;}
+  ctx.fillStyle=theme.accent;ctx.font='bold 12px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Leseseite (B) \u2014 lineares Readout \u00fcber P=13',rw0+rw/2,ry0-6);
+  var maxVal=0;
+  for(i=0;i<sres.out.length;i++){maxVal=Math.max(maxVal,Math.abs(sres.out[i].naive),Math.abs(sres.out[i].decon));}
+  if(maxVal<1e-9)maxVal=1;
+  var midY=ry0+rh/2;
+  ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(rw0,midY);ctx.lineTo(rw0+rw,midY);ctx.stroke();
+  var grp=rw/P,barW=Math.max(4,grp*0.30);
+  for(c=0;c<P;c++){
+    var nx=rw0+c*grp+grp*0.12,dxx=rw0+c*grp+grp*0.52;
+    var nH=sres.out[c].naive/maxVal*(rh/2-22);
+    var dH=sres.out[c].decon/maxVal*(rh/2-22);
+    ctx.fillStyle=theme.c1;ctx.globalAlpha=0.85;ctx.fillRect(nx,midY-Math.max(0,nH),barW,Math.max(0,nH));ctx.globalAlpha=1;
+    ctx.fillStyle=theme.c2;ctx.globalAlpha=0.85;ctx.fillRect(dxx,midY-Math.max(0,dH),barW,Math.max(0,dH));ctx.globalAlpha=1;
+    if(c===cs){
+      ctx.strokeStyle=theme.gold;ctx.lineWidth=2;
+      ctx.strokeRect(nx-2,midY-Math.max(nH,dH)-3,grp-4,Math.max(nH,dH)+4);
+      ctx.fillStyle=theme.gold;ctx.font='13px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+      ctx.fillText('\u2605',rw0+c*grp+grp/2,midY-Math.max(nH,dH)-9);
+    }
+    ctx.fillStyle=theme.muted;ctx.font='9px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText(c,rw0+c*grp+grp/2,midY+14);
+  }
+  ctx.font='10px Segoe UI,Arial';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=theme.c1;ctx.fillRect(rw0,ry0+rh+12,11,11);
+  ctx.fillStyle=theme.muted;ctx.fillText('naiv (mit Crosstalk)',rw0+16,ry0+rh+21);
+  ctx.fillStyle=theme.c2;ctx.fillRect(rw0+Math.min(170,rw*0.5),ry0+rh+12,11,11);
+  ctx.fillStyle=theme.muted;ctx.fillText('M\u207b\u00b9-entzerrt (duale Basis)',rw0+Math.min(170,rw*0.5)+16,ry0+rh+21);
+
+  // ===== Bottom Status (beide Seiten) =====
+  var naiveBest=sres.out[0],deconBest=sres.out[0];
+  for(j=0;j<sres.out.length;j++){
+    if(sres.out[j].naive>naiveBest.naive)naiveBest=sres.out[j];
+    if(sres.out[j].decon>deconBest.decon)deconBest=sres.out[j];
+  }
+  var nA=naiveBest.c,dA=deconBest.c;
+  var readOk=(nA===cs&&dA===cs)?theme.c2:(dA===cs?theme.heat:theme.c1);
+  ctx.font='bold 13px Segoe UI,Arial';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=readOk;
+  ctx.fillText('Lesen (B):  richtig c*='+cs+'   \u00b7   naiv \u2192 '+nA+(nA===cs?' \u2713':'  \u2717')+'   \u00b7   M\u207b\u00b9-entzerrt \u2192 '+dA+(dA===cs?' \u2713':'  \u2717'),W/2,Hh-24);
+  ctx.font='12px Segoe UI,Arial';ctx.fillStyle=theme.muted;
+  ctx.fillText('Schreiben (A): Spillover '+(useM?(sp.steered*100).toFixed(0):'(M\u207b\u00b9 aus) '+(sp.naive*100).toFixed(0))+'%   \u00b7   Hologramm-Grad '+oa.toFixed(2)+'   \u00b7   Query-Klasse: '+(qc==='on'?'GLEICHE \u2713':qc==='hallu'?'ANDERE \u2717 (HALLUZINATION)':'ZWISCHEN \u2243'),W/2,Hh-8);
+  }catch(e){}
+}
+
+function bind(id,fn){var el=document.getElementById(id);if(el)el.addEventListener('input',fn);}
+bind('wIn',function(e){weich=parseInt(e.target.value,10)/100;document.getElementById('wV').textContent=e.target.value;draw();});
+bind('phiIn',function(e){phi=parseInt(e.target.value,10);document.getElementById('phiV').textContent=phi;draw();});
+bind('aIn',function(e){a=parseInt(e.target.value,10);document.getElementById('aV').textContent=a;draw();});
+bind('bIn',function(e){b=parseInt(e.target.value,10);document.getElementById('bV').textContent=b;draw();});
+var um=document.getElementById('useM');if(um)um.addEventListener('change',function(e){useM=e.target.checked;draw();});
+var tb=document.getElementById('themeBtn');if(tb)tb.onclick=function(){document.documentElement.classList.toggle('dark');theme=readTheme();draw();};
+window.addEventListener('resize',function(){resize();draw();});
+new MutationObserver(function(){theme=readTheme();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+// drag
+function down(e){dragging=true;var wpt=e.touches?e.touches[0]:e;var ww=toWorld(wpt);q.x=ww.x;q.y=ww.y;draw();if(e.touches)e.preventDefault();}
+function move(e){if(!dragging)return;var wpt=e.touches?e.touches[0]:e;var ww=toWorld(wpt);q.x=ww.x;q.y=ww.y;draw();if(e.touches)e.preventDefault();}
+function up(){dragging=false;}
+cv.addEventListener('mousedown',down);
+window.addEventListener('mousemove',move);
+window.addEventListener('mouseup',up);
+cv.addEventListener('touchstart',down,{passive:false});
+cv.addEventListener('touchmove',move,{passive:false});
+cv.addEventListener('touchend',up);
+
+document.getElementById('wIn').value=50;document.getElementById('wV').textContent='50';
+document.getElementById('phiIn').value=phi;document.getElementById('phiV').textContent=phi;
+document.getElementById('aIn').value=a;document.getElementById('aV').textContent=a;
+document.getElementById('bIn').value=b;document.getElementById('bV').textContent=b;
+
+resize();draw();
+})();
+</script>
+</body>
+</html>

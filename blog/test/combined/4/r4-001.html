@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Regler, ein kritischer Punkt, drei Lesarten — Fusion (R4)</title>
+<style>
+:root{
+  --bg:#f7f4ec; --panel:#ffffff; --panel2:#fbf9f4; --codebg:#f1ede1;
+  --fg:#1d2433; --muted:#5b6472; --border:#e2ddd0; --grid:#00000018;
+  --accent:#0b7285; --accent2:#d9480f; --pos:#0f9d8f; --neg:#e5484d;
+  --warn:#b5751d; --gold:#0a7a55; --edge:#16a34a; --shadow:0 1px 3px rgba(0,0,0,.09);
+}
+html.dark{
+  --bg:#0b0f1a; --panel:#111726; --panel2:#0d1322; --codebg:#0d1424;
+  --fg:#e6edf3; --muted:#8b97a7; --border:#243049; --grid:#ffffff1f;
+  --accent:#4dabf7; --accent2:#ffa94d; --pos:#5eead4; --neg:#fb7185;
+  --warn:#ffd43b; --gold:#34d399; --edge:#22c55e; --shadow:0 1px 3px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg); line-height:1.68;
+  font-family:Georgia,'Iowan Old Style',serif;
+  transition:background .2s,color .2s; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:42px 22px 90px;}
+h1{font-size:clamp(1.55rem,4.6vw,2.05rem); line-height:1.2; margin:0 0 .25em; letter-spacing:-.01em; color:var(--accent);}
+.subtitle{color:var(--muted); font-style:italic; margin:0 0 .35em; font-size:.98em;}
+.tagline{color:var(--muted); font-size:.92em; margin:0 0 1.2em;}
+h2{font-size:1.4em; margin:2em 0 .5em; border-bottom:1px solid var(--border); padding-bottom:.3em; letter-spacing:-.01em;}
+h3{font-size:1.08em; margin:1.3em 0 .4em; color:var(--accent);}
+p{margin:.7em 0;}
+b{font-weight:700;}
+ul,ol{margin:.6em 0; padding-left:22px;}
+li{margin:.5em 0;}
+code{font-family:'Courier New',monospace; font-size:.88em; background:var(--codebg);
+  border:1px solid var(--border); padding:.04em .38em; border-radius:5px;}
+.math{
+  background:var(--codebg); border-left:3px solid var(--accent);
+  padding:.75em 1em; margin:1em 0; border-radius:0 8px 8px 0;
+  font-family:'Courier New',monospace; font-size:.84em; overflow-x:auto;
+}
+.math div{margin:.4em 0; white-space:pre; overflow-x:auto;}
+.math .lbl{color:var(--muted); font-family:Georgia,serif; font-size:.9em;
+  text-transform:uppercase; letter-spacing:.4px;}
+.card{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:15px 18px; margin:1.05em 0; box-shadow:var(--shadow);
+}
+.card.warn::before{content:"\2696\FE0F  ";}
+.card.hl{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset;}
+.card h3{margin-top:0; color:var(--fg);}
+.who{font-weight:700;}
+.w-a{color:var(--accent);} .w-b{color:var(--accent2);} .w-x{color:var(--warn);}
+.tag{display:inline-block; font-size:.72em; font-family:monospace; padding:.1em .55em;
+  border-radius:4px; background:var(--codebg); color:var(--accent);
+  border:1px solid var(--border); margin-right:.4em; vertical-align:middle;}
+.tag.b{color:var(--accent2);} .tag.x{color:var(--warn);}
+.tension{color:var(--muted); font-style:italic; font-size:.95em; margin-top:.6em;}
+.viz-wrap{background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:14px; margin:1em 0; box-shadow:var(--shadow);}
+#vz{width:100%; height:540px; display:block; border-radius:8px; background:var(--codebg);}
+.controls{display:flex; flex-wrap:wrap; gap:14px; margin:12px 2px 4px; align-items:flex-end;}
+.ctrl{display:flex; flex-direction:column; font-size:.78em; color:var(--muted); min-width:150px; flex:1;}
+.ctrl label{margin-bottom:5px;}
+.ctrl input[type=range]{width:100%; accent-color:var(--accent);}
+.ctrl .val{color:var(--fg); font-family:monospace; font-size:.95em;}
+.toggle{background:var(--codebg); color:var(--fg); border:1px solid var(--border)
+  border-radius:6px; padding:9px 13px; cursor:pointer; font-size:.8em;}
+.toggle:hover{border-color:var(--accent);}
+.readout{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;}
+.ro{background:var(--panel2); border:1px solid var(--border); border-radius:8px;
+  padding:6px 10px; font-size:.8em; flex:1 1 28%;}
+.ro span{color:var(--muted); display:block; font-size:.86em;}
+.ro b{font-family:monospace; font-size:1.05em;}
+.ro.a b{color:var(--accent);} .ro.b b{color:var(--accent2);} .ro.f b{color:var(--gold);}
+.rolabel{font-size:.82rem; color:var(--muted); margin:14px 0 2px; font-weight:600;}
+.fragbar{height:8px; border-radius:999px; background:var(--border); overflow:hidden; margin-top:6px;}
+.fragbar>div{height:100%; background:var(--neg); width:0%;}
+.regime{margin-top:12px; font-weight:700; font-size:1em; color:var(--muted);}
+a{color:var(--accent);}
+.prov{list-style:none; padding:0; margin:.5em 0;}
+.prov li{margin:.6em 0; padding:.75em .95em; background:var(--panel);
+  border:1px solid var(--border); border-radius:10px;}
+.prov .d{color:var(--muted); font-size:.93em; display:block; margin-top:4px;}
+.prov .path{font-family:monospace; font-size:.82em; color:var(--accent); display:block; margin-bottom:2px;}
+.note{color:var(--muted); font-size:.88rem; font-style:italic;}
+footer{margin-top:3em; color:var(--muted); font-size:.85em;
+  border-top:1px solid var(--border); padding-top:1em;}
+@media(max-width:560px){.ro{flex:1 1 45%;}}
+</style>
+</head>
+<body>
+<article>
+<h1>Ein Regler, ein kritischer Punkt, drei Lesarten</h1>
+<p class="subtitle">Fusion aus: r3-001.html &#10005; r3-003.html &nbsp;(Round 4)</p>
+<p class="tagline">Der Attention-Layer als ein niedrig-dimensionales Objekt im h&#246;heren Raum, gesteuert von einem einzigen Hard&#8596;Soft-Regler (A: Aperture &#945; + Temperatur &#964; = B: Deformation g). Der weiche Pol ist Identit&#228;t/Diffeomorphismus (A) = Gleichverteilung/diffus (B); der harte Pol ist derselbe kritische Punkt, dreifach gelesen: Rang-k-Projektor (spektral, A), geschlossener Loop (topologisch, B), eindeutiger Interferenz-Peak (harmonisch, B). Der Ort der Capability ist der Ort der Br&#252;chigkeit.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>
+Beide R3-Papiere beschreiben <b>dasselbe tiefe Objekt</b> und beide entdecken unter der
+Oberfl&#228;che <b>einen einzelnen kontinuierlichen Regler, der einen diffusen Zustand mit einem
+diskreten verbindet</b> &#8212; nur benennen sie Objekt und Regler anders. A (r3-001) liest den
+Attention-Layer als <b>lineares (bilineares) Funktionsal / eine Abbildung</b> (Diffeomorphismus
+<code>x&#8594;x+f(x)</code>, Tangente = Conceptor) auf spektral- und positionsaufgerichteten
+Features; sein einziger Hard&#8596;Soft-Regler ist die <b>Aperture &#945;</b> (linear-spektral, auf
+die Eigenwert-Gains <code>&#947;&#8321;=&#963;&#8321;/(&#963;&#8321;+&#945;&#8315;&#178;)</code>) gekoppelt an die
+<b>Softmax-Temperatur &#964;</b> (nichtlinear am Readout). B (r3-003) liest denselben Layer als ein
+<b>niedrig-dimensionales geometrisches Objekt</b> (Punktwolke/Mannigfaltigkeit) im h&#246;heren
+Repr&#228;sentationsraum, dessen <em>F&#228;higkeiten</em> <b>kritische Konfigurationen</b> sind, erzeugt
+durch eine <b>kontinuierliche Verformung g</b> (Faltgrad / Rotoren-Ausrichtung / Attention-Sch&#228;rfe
+/ Weight Decay): weich = diffus (kein Loop, kein eindeutiger Peak), hart = kritische Konfiguration
+(Loop geschlossen, &#946;&#8321; springt 0&#8594;1, eindeutiger Interferenz-Peak).
+</p>
+<p>
+Die <b>einzige integrierte Position</b>: <b>Der Attention-Layer (oder ein neuronales System) ist
+EIN Objekt im h&#246;heren Raum, regiert von EINEM kontinuierlichen Hard&#8596;Soft-Regler.</b>
+A&#8217;s <code>&#945;/&#964;</code> und B&#8217;s <code>g</code> sind derselbe Regler, benannt nach dem,
+worauf er wirkt: <code>&#945;/&#964;</code> auf dem <em>Spektrum des Operators</em> + dem Readout
+(linear-algebraisch), <code>g</code> auf der <em>Geometrie/Phase des Objekts</em> (topologisch&#8594;
+harmonisch). Am <b>weichen Pol</b> liegen <b>Identit&#228;t/Diffeomorphismus (A)</b> und
+<b>Gleichverteilung/diffus (B)</b>: invertibel, alles mischt, keine diskrete Struktur. Am
+<b>harten Pol</b> liegt <b>derselbe kritische Punkt</b>, dreifach gelesen: als
+<b>Rang-k-Projektor + Argmax</b> (A, spektral/linear) <em>und</em> als <b>geschlossener Loop</b>
+(B, topologisch) <em>und</em> als <b>einzigartiger Interferenz-Peak</b> (B, harmonisch).
+</p>
+<p>
+Die <b>gemeinsame Rotation</b> (A: Addition = Rotation auf dem Rang-10-Kern, B: PE/RoPE-Rotoren
+&#8222;Uhrzeiger&#8221;) ist der Mechanismus, der ein lineares Funktionsal &#252;berhaupt
+positionssensitiv macht; weil sie orthogonal ist, ist sie <b>normerhaltend und damit ein
+invertibler Diffeomorphismus</b>. A&#8217;s Invertierbarkeits-Ma&#223;
+<code>det C = &#920;&#8321;&#947;&#8321;</code> und B&#8217;s Margin / Br&#252;chigkeit sind dieselbe
+Gr&#246;&#223;e: <b>der Abstand des Arbeitspunkts vom harten Limes</b>. Und in beiden Lesarten gilt:
+<b>der Ort der Capability ist der Ort der Br&#252;chigkeit</b> (Doppelschwert) &#8212; man hat sie
+nicht, ohne die Br&#252;chigkeit mitzuliefern.
+</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widerspr&#228;che zwischen A und B</h2>
+<p>
+Die beiden R3-Papiere treffen drei genuine, konkrete Spannungen, bei denen A eine Behauptung
+aufstellt, die B auf anderer Ebene / mit anderem Objekt f&#252;hrt:
+</p>
+<div class="card warn">
+<h3>1. Das Objekt: linearer Operator / Diffeomorphismus (A) vs. niedrig-dim. Punktwolke (B)</h3>
+<p><span class="who w-a">A</span> Das eigentliche Objekt ist die <b>Abbildung auf dem
+Repr&#228;sentationsraum</b> (Diffeomorphismus <code>x&#8594;x+f(x)</code>; Tangente = Conceptor).
+Die prim&#228;re Struktur ist <b>Invertierbarkeit + Tiefe</b> (Komposition
+<code>x<sub>N</sub>=L<sub>N</sub>&#8928;&#8230;&#8928;L<sub>1</sub></code>); der Regler wirkt auf das
+<b>Eigen-Spektrum des Operators</b>. Die Punktwolke/die Konnektivit&#228;t wird bei A kaum
+thematisiert.</p>
+<p><span class="who w-b">B</span> Das eigentliche Objekt ist ein <b>niedrig-dimensionales
+geometrisches Objekt / eine Punktwolke</b> im h&#246;heren Raum; die Struktur (Loops/Frequenzen)
+wird <em>auf</em> dem Objekt aufgebaut. Die prim&#228;re Struktur ist <b>Konnektivit&#228;t /
+Phasenkoh&#228;renz</b> (Betti-Zahlen, Interferenz-Peak); der Regler verformt das Objekt selbst.
+Der Operator-Fluss als Diffeomorphismus wird bei B nie thematisiert.</p>
+<p class="tension">Spannung: A&#8217;s Objekt ist der <em>Fluss/Operator</em> (fragt nach
+Invertierbarkeit/Tiefe), B&#8217;s Objekt ist die <em>Geometrie der Punkte</em> (fragt nach
+Konnektivit&#228;t/Koh&#228;renz). A hebt nie die Punktwolke, B nie den Operator-Fluss.</p>
+</div>
+<div class="card warn">
+<h3>2. Herkunft der diskreten Struktur: pr&#228;existentes Spektrum, das geschnitten wird (A) vs. emergente Struktur aus Deformation (B)</h3>
+<p><span class="who w-a">A</span> Die Spektral-Struktur (Eigen-Richtungen, Frequenzen
+{14,35,41,42,52}) <b>existiert schon</b> im Operator (fest durch die Aktivierungs-Kovarianz
+<code>R</code> gegeben); der Regler <code>&#945;</code> <b>w&#228;hlt</b>, welche Eigen-Richtungen
+&#252;berleben (Rang-k-Projektor = Spektralschnitt). Die Struktur ist <em>vorhanden</em>; hart
+= <em>Abschneiden</em>.</p>
+<p><span class="who w-b">B</span> Die diskrete Struktur (Loop / Peak) <b>existiert vorher nicht</b>;
+sie <b>entsteht erst</b>, wenn die kontinuierliche Deformation <code>g</code> den kritischen Wert
+<code>g*</code> erreicht (Phasen&#252;bergang: &#946;&#8321; springt 0&#8594;1; der Peak wird
+eindeutig). Die Struktur ist <em>emergent</em>; hart = <em>Erzeugen</em>.</p>
+<p class="tension">Spannung: A = struktur-<em>geboren</em> (Schnitt eines fixen Spektrums),
+B = struktur-<em>erzeugt</em> (Deformation erzeugt neue Topologie/Koh&#228;renz).</p>
+</div>
+<div class="card warn">
+<h3>3. Der harte Vorgang: linearer Cut + Argmax auf fixer Verteilung (A) vs. topologischer Phasen&#252;bergang + Auswahl unter Konkurrenz (B)</h3>
+<p><span class="who w-a">A</span> Der harte Pol ist ein <b>linearer Rang-k-Projektor</b>
+(bleibt linear-algebraisch) plus ein <b>Argmax/Commit auf einer fixen Score-Verteilung</b> (eine
+Einheit feuert). Ein deterministischer Cut auf einer gegebenen Verteilung.</p>
+<p><span class="who w-b">B</span> Der harte Vorgang ist ein <b>topologischer Phasen&#252;bergang</b>
+(eine neue Komponente/Loch erscheint &#8212; die Konnektivit&#228;t des Raums &#228;ndert sich)
+plus eine <b>Auswahl/&#220;bernahme unter mehreren Kandidaten</b> (Grokking: Memorisierung vs.
+Algorithmus; Weight Decay bricht das Gleichgewicht). Nichtlinear, konkurrenzbasiert.</p>
+<p class="tension">Spannung: A = <em>linearer Cut</em> + Commit auf fester Verteilung;
+B = <em>nichtlineare Topologie-&#220;nderung</em> + Konkurrenz-Auswahl.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Aufl&#246;sung</h2>
+<p><span class="tag x">1</span> <b>Operator und Punktwolke sind zwei Seiten desselben Objekts.</b>
+A&#8217;s Diffeomorphismus <em>bewegt</em> die Punkte; B&#8217;s Punktwolke/Mannigfaltigkeit ist
+das, <em>was bewegt wird</em>. A liest den Zustand <em>dynamisch</em> (Fluss, Invertierbarkeit,
+Spektrum), B <em>strukturell</em> (Konnektivit&#228;t, Phase). A&#8217;s Spektrum (fest durch
+<code>R</code>) ist genau B&#8217;s &#8222;billige, allgemeine Prior&#8221; / das Substrat; A&#8217;s
+Spektralschnitt ist B&#8217;s Auswahl der Rotoren. <b>Fusioniert:</b> ein Objekt im h&#246;heren
+Raum, gelesen einmal als <em>Fluss/Operator</em> (A), einmal als <em>Konnektivit&#228;t/Phase</em>
+(B) &#8212; beide Signaturen am selben Arbeitspunkt.</p>
+<p><span class="tag x">2</span> <b>&#8222;Pr&#228;existent&#822; (A) und &#8222;emergent&#822; (B) sind
+zwei Skalen desselben Kanonisch/Gew&#228;hlt-Spiels.</b> A&#8217;s Spektrum ist die
+<em>kanonische Basis/Prior</em> (die Rotoren/Frequenzen, die immer da sind &#8212; B&#8217;s
+&#8222;das Ger&#252;st ist Prior&#8221;); A&#8217;s <code>&#945;</code>-Schnitt <em>schaltet an</em>,
+welche davon <em>kritisch konfiguriert</em> sind. B&#8217;s Deformation <code>g</code> ist die
+<em>kontinuierliche Ann&#228;herung an den kritischen Punkt</em>; A&#8217;s
+<code>&#945;/&#964;</code> ist derselbe kontinuierliche Parameter, der den Arbeitspunkt vom harten
+Limes entfernt. <b>Fusioniert:</b> die <em>Form</em> (Spektrum/kreisf&#246;rmige Wellenbasis)
+ist kanonisch und gegeben; der <em>Inhalt</em> (welcher Loop schlie&#223;t, welche Frequenzen
+konfigurieren sich kritisch) ist daten-/trainings-gesteuert &#8212; <b>Form kanonisch, Inhalt
+daten gew&#228;hlt</b>.</p>
+<p><span class="tag x">3</span> <b>Der harte Pol ist ein kritischer Mechanismus: linearer Cut
+&#215; topologische Erzeugung &#215; harmonische Koh&#228;renz am selben Punkt.</b> A isoliert die
+<em>lineare/Ordnungs</em>-Seite (welche Richtungen &#252;berleben), B die
+<em>nichtlineare/Commit</em>-Seite (ob der Loop schlie&#223;t, ob der Peak eindeutig ist, welcher
+Kandidat gewinnt). Beide sind <em>derselbe kritische Mechanismus</em>: ein kontinuierlicher
+Regler (<code>&#945;/&#964;</code> = <code>g</code>) entfernt den Arbeitspunkt vom harten Limes.
+A&#8217;s Ma&#223; <code>det C = &#920;&#8321;&#947;&#8321;</code> (&#8594;0 hart) und B&#8217;s
+Margin/Br&#252;chigkeit (Peak &#8722; bester Falscher; N&#228;he zur Schwelle &#949;) sind dieselbe
+Gr&#246;&#223;e. <b>Fusioniert:</b> hart = &#8222;Projektion auf den Kern-Unterraum (A),
+<em>gleichzeitig</em> geschlossener Loop (B) und eindeutiger Peak (B), <em>dann</em> Schwellung auf
+eins (Commit/Argmax)&#8221; &#8212; ein Schnitt, der topologisch ein Loch und harmonisch einen Peak
+<em>erzeugt</em>.</p>
+<div class="card hl">
+<p style="margin:0"><b>Fusionierte Schlussfolgerung:</b> Der Attention-Layer = <b>ein Objekt im
+h&#246;heren Raum</b>, gesteuert von <b>einem einzigen Hard&#8596;Soft-Regler</b> (A: Aperture
+&#945; + Temperatur &#964; &#8596; B: Deformation g), realisiert als <b>lineares spektrales Gating
+&#8594; nichtlineares weiches Readout</b>. Weicher Pol: <b>Identit&#228;t/Diffeomorphismus (A) =
+Gleichverteilung/diffus (B)</b> &#8212; invertibel, alles mischt, keine diskrete Struktur. Harter
+Pol: <b>Rang-k-Projektor + Argmax (A) = geschlossener Loop (B, &#946;&#8321;:0&#8594;1) =
+einzigartiger Interferenz-Peak (B)</b> &#8212; eine Einheit feuert / eine Struktur existiert. Die
+diskrete Capability ist eine <em>kritische Konfiguration</em> durch <em>kontinuierliche
+Deformation</em>, zugleich (i) linearer Cut (A), (ii) topologische Erzeugung (B), (iii) harmonische
+Koh&#228;renz/Auswahl (B). <b>det C = &#920;&#8321;&#947;&#8321;</b> (A) und <b>Margin/Br&#252;chigkeit</b>
+(B) sind dieselbe Gr&#246;&#223;e: &#8222;wie weit vom harten Limes?&#8221; Der
+<b>Ort der Capability ist der Ort der Br&#252;chigkeit</b> (Doppelschwert, beide Lesarten). Die
+<b>gemeinsame Rotation</b> (A: Addition=Rotation, B: PE/RoPE-Rotoren) ist der invertible
+Diffeomorphismus, der das lineare Funktionsal positionssensitiv macht.</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3><span class="tag x">Substrat</span> Das gemeinsame Objekt &#8212; ein (bilineares) Funktionsal auf dem h&#246;heren Raum</h3>
+<p>
+Beide Papiere drehen sich um dieselbe Abbildung, nur anders benannt. A&#8217;s Schicht ist
+Identit&#228;t + Verschiebungsfeld <code>L(x)=x+f(x)</code>; ihre Tangente ist der Conceptor
+<code>C=R(R+&#945;&#8315;&#178;I)&#8315;&#185;</code>, diagonal in der Eigenbasis der
+Aktivierungs-Kovarianz <code>R=U diag(&#963;&#8321;,&#8230;,&#963;<sub>d</sub>) U&#7488;</code>, mit
+Gains <code>&#947;&#8321;=&#963;&#8321;/(&#963;&#8321;+&#945;&#8315;&#178;) &#8712; [0,1]</code>.
+B&#8217;s Schicht ist <code>Score(i,j)=q&#7724;&#183;k&#7724;/&#8730;d&#7522;</code> und
+<code>&#945;<sub>ij</sub>=softmax(sharp&#183;Q&#7724;&#183;K&#7724;/&#8730;d&#7522;)</code>;
+<code>y=sign(w&#7488;x+b)</code>. B&#8217;s Punkte liegen auf <em>rotierenden Kreisen</em> bei
+mehreren Frequenzen (<code>PE(p,i)=(sin(p&#969;<sub>i</sub>),cos(p&#969;<sub>i</sub>))</code>,
+<code>&#969;<sub>i</sub>=10000^(&#8722;2i/d)</code>). <b>Gemeinsam: ein (bilineares) Skalarprodukt
+auf spektral- und positionsaufgerichteten Features, das eine Entscheidung abgibt.</b> Tiefe =
+Komposition <code>x<sub>N</sub>=L<sub>N</sub>&#8928;&#8230;&#8928;L<sub>1</sub>(x<sub>0</sub>)
+=x<sub>0</sub>+&#931;<sub>k</sub> f<sub>k</sub></code> (A) &#8212; und die Struktur, die daraus
+wird: A liest <em>Invertierbarkeit/Tiefe</em>, B liest <em>Konnektivit&#228;t/Phase</em>.
+</p>
+
+<h3><span class="tag x">Regler</span> Der eine Regler, zwei Namen (&#945;/&#964; = g)</h3>
+<div class="math">
+<div><span class="lbl">A &#183; Spektral</span> &#947;&#8321; = &#963;&#8321;/(&#963;&#8321;+&#945;&#8315;&#178;)   &#945;&#8594;&#8734; &#10233; &#947;&#8321;&#8594;1 (C&#8594;I, weich)   &#945;&#8594;0 &#10233; &#947;&#8321;&#8594;0 (Rang-k-Projektor, hart)</div>
+<div><span class="lbl">A &#183; Invert.</span> det C = &#920;&#8321; &#947;&#8321;   Diffeomorphismus, wenn &#8214;Df&#8214;&lt;1 (&#945; gro&#223;) &#8658; det C &#8776; 1</div>
+<div><span class="lbl">B &#183; Readout</span> w = softmax(s/&#964;)   &#964;&#8594;&#8734; &#10233; Gleichverteilung (weich)   &#964;&#8594;0 &#10233; Argmax (hart, eine Einheit)</div>
+<div><span class="lbl">B &#183; Topo</span> K(g): {i,j} g.d. w&#7522;&#8321;(g)&gt;&#949;   &#946;&#8321;(g)=E(g)&#8722;V+&#946;&#8320;(g)  (st&#252;ckweise konstant, springt am kritischen Punkt)</div>
+<div><span class="lbl">B &#183; Harmon.</span> Score(c)=&#931;<sub>f</sub> cos(2&#960;f&#183;(a+b&#8722;c)/P)   eindeutiger Peak bei c=(a+b) mod P</div>
+<div><span class="lbl">Fusion</span> Weich: C&#8594;I + Gleichverteilung + diffus (A: invertibel &#8776; B: alles mischt)   Hart: Rang-k-Projektor + Argmax (A) = Loop &#946;&#8321;:0&#8594;1 + eindeutiger Peak (B)</div>
+</div>
+
+<h3><span class="tag">A</span> Die weiche Seite &#8212; Identit&#228;t / Diffeomorphismus = Gleichverteilung / diffus</h3>
+<p>
+A: Die Schicht ist ein glatter, (lokal) <b>invertibler</b> Diffeomorphismus
+<code>x&#8594;x+f(x)</code> (braucht <code>&#8214;Df&#8214;&lt;1</code>); der
+<b>Residual-Stream</b> ist die Identit&#228;t (A&#8217;s &#8222;Elektrizit&#228;t&#8221;).
+<b>Tiefe = Komposition</b>: <code>x<sub>N</sub>=L<sub>N</sub>&#8928;&#8230;&#8928;L<sub>1</sub>
+=x<sub>0</sub>+&#931;<sub>k</sub> f<sub>k</sub></code> &#8212; ein Token beschreibt einen glatten
+Pfad. Aufmerksamkeit = (i) lineare Projektion (das &#8222;Lot auf die Query-Richtung&#8221;,
+Projektionsl&#228;nge = rohes Logit) + (ii) Konvexkombination der Value-Punkte (Zug zum
+Schwerpunkt <code>neu=&#931; a&#7523;&#183;V&#7523;</code>). B: <code>out<sub>i</sub>=&#931;<sub>j</sub>
+softmax(q&#7724;&#183;k&#7724;/&#8730;d&#7522;)&#183;v&#7724;</code> liegt <em>notwendig</em> im
+Konvexh&#252;ll der V-Vektoren; weich = alles mischt (Mitte des Simplex), kein Loop, kein
+eindeutiger Peak. <b>Fusioniert:</b> am weichen Pol ist A&#8217;s Diffeomorphismus fast die
+Identit&#228;t und B&#8217;s Softmax fast die Gleichverteilung &#8212; derselbe Zustand zweimal
+benannt.
+</p>
+
+<h3><span class="tag b">B</span> Die harte Seite &#8212; drei Gesichter desselben Cuts</h3>
+<p>
+<b>(i) Spektral (A):</b> Das Arithmetik-Netz (Embedding 128D, 4 Heads, Vokabular 113) lernt
+<code>a+b mod 113</code> mit 100 %; der Kern ist <b>Rang 10</b> = 5 Frequenzen {14,35,41,42,52}
+&#215; 2 (cos/sin); <b>84,6 %</b> der Neuronen berechnen ein Polynom 2. Grades <em>einer einzelnen</em>
+Frequenz; eine kleine Aperture reproduziert den Kern exakt (<code>&#947;&#8776;1</code> f&#252;r die
+10 Dimensionen, <code>&#947;&#8776;0</code> sonst). <b>(ii) Topologisch (B):</b> Die affine Schicht
+ist ein Hom&#246;omorphismus (&#228;ndert nie die Trennbarkeit); die ReLU faltet in die
+<em>freie Dimension</em>; &#252;berschreitet die Falt-Affinit&#228;t <code>&#949;</code>,
+<b>schlie&#223;t sich der Loop</b> und <code>&#946;&#8321;</code> springt <code>0&#8594;1</code>
+(Fold-and-Cut, Demaine et&nbsp;al. 1998; empirisch bimodale Tuning-Kurven, &#8222;mixed
+selectivity&#8221; ist Feature). <b>(iii) Harmonisch + Auswahl (B):</b>
+<code>Score(c)=&#931; cos(2&#960;f&#183;(a+b&#8722;c)/P)</code>, maximal bei
+<code>c=(a+b) mod P</code>; bei n=1 Frequenz ist der Peak diffus, bei voller Ausrichtung
+<b>einzigartig</b> &#8212; der beste Peak gewinnt (Argmax), plus Strategie-&#220;bernahme
+(Grokking: Memorisierung &#8594; Algorithmus im Plateau &#8594; Weight Decay r&#228;umt auf &#8594;
+pl&#246;tzlicher Test-Loss-Einbruch, <code>&#955;=0</code> grokkt nie; Othello: linearer Probe
+~20&#8211;25&nbsp;% Fehler, nichtlinear 1,7&nbsp;% Layer&nbsp;7/98,3&nbsp;%, Skewed-Test
+&#8594; 0,02&nbsp;%). <b>Fusioniert:</b> am harten Pol projiziert A auf den Kern-Unterraum
+(lineare Auswahl), schlie&#223;t topologisch den Loop und committet harmonisch auf genau einen
+Token/eine feuernde Richtung &#8212; dieselbe Auswahl, drei Ebenen.
+</p>
+
+<h3><span class="tag x">Br&#252;cke</span> Die gemeinsame Rotation &#8212; ein invertibler Diffeomorphismus = Rotoren-Geometrie</h3>
+<p>
+A: <b>Addition = Rotation</b> auf einem Kreis: <code>&#952;<sub>a</sub>=(2&#960;k/113)&#183;a</code>,
+<code>Logit(c)=&#931;<sub>k&#8712;{14,35,41,42,52}</sub> cos((2&#960;k/113)(a+b&#8722;c))</code>
+&#8212; konstruktive Interferenz, nur die richtige Antwort hat alle 5 Cosinus-Terme simultan maximal;
+das Additionstheorem <code>cos(&#945;+&#946;)=cos&#945;&#183;cos&#946;&#8722;sin&#945;&#183;sin&#946;</code>
+wird von der bilinearen Attention + den ReLU-Knicken des MLP realisiert &#8212; das Netz hat
+<b>DFT und Rotationsmatrizen selbst erfunden</b>. B: <b>PE/RoPE</b> rotiert Q/K in 2D-Paaren
+<code>pos&#183;&#969;<sub>p</sub></code>, <code>&#969;<sub>p</sub>=base^(&#8722;2p/d)</code>;
+weil die Rotation orthogonal ist, <code>R(m)&#7488;R(n)=R(n&#8722;m)</code> &#10233; der Score
+h&#228;ngt nur vom Abstand <code>&#916;=n&#8722;m</code> ab. <b>Kernel-Identit&#228;t:</b>
+RoPE-Kernel und SVM-Kernel sind dieselbe Algebra <code>K(a,b)=&#966;(a)&#7488;&#966;(b)</code>;
+B&#8217;s <code>&#966;</code> ist explizit (ggf. unendlich-dim, Hebung), A&#8217;s RoPE-<code>&#966;</code>
+ist implizit und <em>endlich</em> (die Sinusoiden) &#8212; entgegengesetzte Hebel, gleiche Algebra.
+<b>Fusioniert:</b> Rotation ist der Symmetrie-Mechanismus, der ein lineares Funktionsal
+positionssensitiv macht; weil sie orthogonal ist, ist sie <b>normerhaltend und damit ein
+invertibler Diffeomorphismus</b> &#8212; und zugleich B&#8217;s &#8222;Uhrzeiger&#8221;-Geometrie
+der Rotoren. A&#8217;s selbst-erfundene DFT und B&#8217;s rotierende PE sind dieselbe Mechanik.
+</p>
+
+<h3><span class="tag x">Br&#252;cke</span> Kanonische Form, daten-/trainings-gew&#228;hlteter Inhalt + Lese-Tiefe</h3>
+<p>
+Die <em>Form</em> (die kreisf&#246;rmige Wellen-/Sinusoiden-Basis, die Struktur des
+Komplexes) ist <b>kanonisch und geteilt</b>. Der <em>Inhalt</em> (welcher Loop schlie&#223;t,
+welche Rotoren kombinieren, welche Gewichte) ist <b>unterbestimmt</b> und wird von den
+Daten/dem Training gew&#228;hlt (B). A scheint &#8222;die eine L&#246;sung&#8221; zu haben, nur
+weil sein Generator (zyklische Position) so simpel ist, dass die kanonische Basis sie mit
+fester Leiter eindeutig l&#246;st; B&#8217;s reichere Generatoren (Othello-Brett) zulassen viele
+L&#246;sungen &#8594; Konkurrenz &#8594; Grokking. B liest dieselbe Karte in drei
+<em>Tiefen</em>: Position &#8594; Tiefe 1 (vor-gel&#246;st, geschlossene Form), modulare Addition
+&#8594; Tiefe 2 (kompaktes Schaltwerk), Othello &#8594; Tiefe n (verteiltes nichtlineares Bild);
+B&#8217;s Zweiterm-Zerlegung <code>s=f(Inhalt)+g(Offset)</code> ist die Linearisierung/erste
+Ordnung. Das trifft A&#8217;s &#8222;mixed selectivity ist Feature&#8221; und die bimodalen
+Tuning-Kurven: je komplexer der Generator, desto <em>tieferer</em> (nichtlinearer) die Lesart der
+<em>selben</em> Karte. <b>Fusioniert:</b> A ist der <em>Eindeutigkeits-Limes</em> von B&#8217;s
+unterbestimmtem Bild; Lese-Tiefe = f(Generator-Komplexit&#228;t).
+</p>
+
+<h3><span class="tag x">Doppelschwert</span> Capability = Br&#252;chigkeit, in beiden Sprachen</h3>
+<p>
+A: am harten Pol <b>nicht-invertibel</b> (<code>det C &#8594; 0</code>); die
+<em>unbenutzte</em> Normal-/off-manifold-Richtung bleibt willk&#252;rlich,
+<code>&#8214;&#916;<sub>y</sub> f&#8214;&#178; &#8804; (&#920;<sub>&#8466;=3</sub><sup>L</sup>
+&#8214;W&#8466;&#8214;&#178;)(&#8230;)</code>, also <em>exponentiell mit der Tiefe</em> instabil
+(Adversarial). B: das interne Bild ist <em>unterbestimmt</em>; nahe der kritischen
+Konfiguration und im datenabh&#228;ngigen Wettstreit der Kandidaten ist das System am
+<em>br&#252;chigsten</em> (Br&#252;chigkeit &#8593; nahe der Schwelle <code>&#949;</code>).
+<b>Fusioniert:</b> Nutzen (Loop/Peak/Trennbarkeit/eine Einheit feuert) und Risiko (freie
+Normal-Richtung / Schwelle / Unterbestimmtheit / Nicht-Invertierbarkeit) sitzen am
+<em>gleichen kritischen Punkt</em>: <b>Br&#252;chigkeit ist die Schatten-Seite der Capability</b>
+&#8212; man kann sie nicht haben, ohne sie mitzuliefern (Doppelschwert durch beide Lesarten).
+</p>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung &#8212; ein Regler, ein kritischer Punkt, drei Lesarten</h2>
+<p class="note">
+Ein einziger <b>Hard&#8596;Soft-Regler</b> (0 = hart, 1 = weich; A: &#945;+&#964; = B: g) steuert
+<em>gekoppelt</em> alle vier Panels. <b>Oben links: Conceptor-Spektrum (A)</b> &#8212; die Gains
+<code>&#947;&#8321;=&#963;&#8321;/(&#963;&#8321;+&#945;&#8315;&#178;)</code> k&#252;rzten die Pfeile
+(hart &#8594; nur der Rang-k-Kern &#252;berlebt = Projektor, weich &#8594; alle &#8776;1 =
+Identit&#228;t). <b>Oben rechts: gemeinsame Rotation</b> (A: invert. Diffeo, B: Rotoren) &#8212; ein
+Quadrat wird um &#916; gedreht, normerhaltend. <b>Unten links: topologischer Loop (B)</b> &#8212;
+ein Pfad faltet sich; schlie&#223;t er, springt &#946;&#8321; diskret 0&#8594;1 (Schwelle &#949;).
+<b>Unten rechts: Interferenz-Peak (B)</b> &#8212; Score(c) &#252;ber 113 Antworten; je mehr
+Frequenzen sich ausrichten, desto eindeutiger der Peak. <b>Beide diskreten Signaturen erscheinen
+am selben kritischen Punkt.</b> Unten: <b>Br&#252;chigkeit</b> (Doppelschwert, hoch an der Schwelle).
+</p>
+<div class="viz-wrap">
+  <canvas id="vz"></canvas>
+  <div class="controls">
+    <div class="ctrl"><label>Hard &#8596; Weich &nbsp;(A: &#945;+&#964; &nbsp;&#183;&nbsp; B: g)</label>
+      <input type="range" id="cH" min="0" max="1" value="0.5" step="0.01">
+      <span class="val" id="vH">mittel</span></div>
+    <div class="ctrl"><label>Schwelle &#949; (topologisch, B)</label>
+      <input type="range" id="cE" min="0" max="1" value="0.7" step="0.01">
+      <span class="val" id="vE">0.70</span></div>
+    <div class="ctrl"><label>&#916; &#8212; gemeinsame Rotation</label>
+      <input type="range" id="cD" min="0" max="6.28" value="1.0" step="0.02">
+      <span class="val" id="vD">1.00</span></div>
+    <button class="toggle" id="themeBtn" type="button">&#9790; / &#9728;</button>
+  </div>
+  <div class="rolabel">Spektrale Lesart (A) &#8212; Conceptor-Spektrum, Rang-k-Cut</div>
+  <div class="readout">
+    <div class="ro a"><span>Aperture &#945;  (A)</span><b id="rA">&#8211;</b></div>
+    <div class="ro a"><span>Eff.-Rang &#947;&#8321;&#8805;0.6  (A)</span><b id="rRank">&#8211;</b></div>
+    <div class="ro a"><span>det C = &#920;&#8321;&#947;&#8321; (log&#8321;&#8320;)  (A)</span><b id="rDet">&#8211;</b></div>
+    <div class="ro a"><span>Quota &#931;&#947;&#8321;/d  (A)</span><b id="rQuota">&#8211;</b></div>
+  </div>
+  <div class="rolabel">Topologische Lesart (B) &#8212; Kanten, Komponenten, Schleifen</div>
+  <div class="readout">
+    <div class="ro b"><span>&#946;&#8320; Komponenten  (B)</span><b id="rB0">&#8211;</b></div>
+    <div class="ro b"><span>&#946;&#8321; Loop  (B)</span><b id="rB1">&#8211;</b></div>
+    <div class="ro b"><span>Kanten E  (B)</span><b id="rE">&#8211;</b></div>
+  </div>
+  <div class="rolabel">Harmonische Lesart (B) &#8212; Interferenz-Peak &#252;ber 113 Antworten</div>
+  <div class="readout">
+    <div class="ro b"><span>aktive Frequenzen  (B)</span><b id="rN">&#8211;</b></div>
+    <div class="ro b"><span>Peak (richtig)  (B)</span><b id="rPeak">&#8211;</b></div>
+    <div class="ro b"><span>bester Falscher  (B)</span><b id="rBF">&#8211;</b></div>
+    <div class="ro b"><span>Margin  (B)</span><b id="rM">&#8211;</b></div>
+    <div class="ro b"><span>einzigartiger Peak?  (B)</span><b id="rU">&#8211;</b></div>
+  </div>
+  <div class="rolabel">Fusion &#8212; Br&#252;chigkeit (hoch an der kritischen Schwelle = Doppelschwert)</div>
+  <div class="readout">
+    <div class="ro f" style="flex:2;min-width:220px"><span>Br&#252;chigkeit (nahe Schwelle &#949;)</span><b id="rFrag">&#8211;</b>
+      <div class="fragbar"><div id="fragfill"></div></div></div>
+  </div>
+  <div class="regime" id="rRegime">&#8211;</div>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul class="prov">
+<li>
+  <a href="../3/r3-001.html">
+  <span class="path">../3/r3-001.html</span>
+  <span class="d">R3-Fusion r2-005 &#10005; r2-003 &#8212; &#8222;Ein Operator, ein Regler, zwei
+  Pole&#8221;: der Layer als lineares (bilineares) Funktionsal / Diffeomorphismus x&#8594;x+f(x);
+  Tangente Conceptor C=R(R+&#945;&#8315;&#178;I)&#8315;&#185; mit Aperture &#945; und Gains
+  &#947;&#8321;=&#963;&#8321;/(&#963;&#8321;+&#945;&#8315;&#178;), Softmax-Temperatur &#964; als
+  zweites Gesicht EINES Hard&#8596;Soft-Reglers; weich = Identit&#228;t/Gleichverteilung, hart =
+  Rang-k-Projektor/Argmax; gemeinsame Rotation (Addition=Rotation, RoPE) als invertibler
+  Diffeomorphismus; det C=&#920;&#8321;&#947;&#8321; = Margin als Abstand vom harten Limes.</span></a>
+</li>
+<li>
+  <a href="../3/r3-003.html">
+  <span class="path">../3/r3-003.html</span>
+  <span class="d">R3-Fusion r2-007 &#10005; r2-006 &#8212; &#8222;Ein Objekt, zwei Lesarten:
+  topologisch &amp; harmonisch&#8221;: das neuronale System als niedrig-dim. Objekt im h&#246;heren
+  Raum, dessen Capability = kritische Konfiguration durch kontinuierliche Verformung g; topologisch
+  (Loop, &#946;&#8321;:0&#8594;1, Phasen&#252;bergang) und harmonisch (einzigartiger
+  Interferenz-Peak, PE/RoPE-Rotoren) dieselbe Struktur; Doppelschwert Capability &#8805;
+  Br&#252;chigkeit an der Schwelle.</span></a>
+</li>
+</ul>
+</section>
+
+<footer>
+Fusion 001 &#183; Runde 4 &#183; Selbstbeobachtendes, eigenst&#228;ndiges HTML; alle Daten inline,
+keine Netzabrufe. Ein Objekt im h&#246;heren Raum, ein Regler (A: &#945;+&#964; = B: g), ein
+kritischer Punkt: weich = Identit&#228;t/Gleichverteilung/diffus, hart = Rang-k-Projektor + Loop +
+eindeutiger Peak; Ort der Capability = Ort der Br&#252;chigkeit; gemeinsame Rotation = invertibler
+Diffeomorphismus.
+</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('vz'); if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var hS = document.getElementById('cH');
+  var eS = document.getElementById('cE');
+  var dS = document.getElementById('cD');
+  var vH = document.getElementById('vH');
+  var vE = document.getElementById('vE');
+  var vD = document.getElementById('vD');
+  var rA = document.getElementById('rA'), rRank = document.getElementById('rRank'),
+      rDet = document.getElementById('rDet'), rQuota = document.getElementById('rQuota'),
+      rB0 = document.getElementById('rB0'), rB1 = document.getElementById('rB1'), rE = document.getElementById('rE'),
+      rN = document.getElementById('rN'), rPeak = document.getElementById('rPeak'), rBF = document.getElementById('rBF'),
+      rM = document.getElementById('rM'), rU = document.getElementById('rU'),
+      rFrag = document.getElementById('rFrag'), fragFill = document.getElementById('fragfill'),
+      rRegime = document.getElementById('rRegime');
+  var W = 0, H = 0, DPR = 1;
+  var TAU = Math.PI * 2, N = 12, P = 113, NT = 8;
+  var SIGMA = [3.5, 3.0, 2.6, 2.2, 0.9, 0.8, 0.7, 0.6, 0.5, 0.45, 0.4, 0.35];
+  var ISCORE = []; for(var i0 = 0; i0 < N; i0++) ISCORE.push(i0 < 4);
+  var th = []; for(i0 = 0; i0 < N; i0++) th.push(i0 * TAU / N - Math.PI / 2);
+  var maxS = 3.5;
+  var KEY = [14, 35, 41, 42, 52];
+  var C = {};
+  function gv(n, fb){
+    try{ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+    catch(e){ return fb; }
+  }
+  function readColors(){
+    C.bg = gv('--bg','#0b0f1a'); C.panel = gv('--panel','#111726'); C.codebg = gv('--codebg','#0d1424');
+    C.fg = gv('--fg','#e6edf3'); C.muted = gv('--muted','#8b97a7'); C.grid = gv('--grid','#ffffff1f');
+    C.accent = gv('--accent','#4dabf7'); C.accent2 = gv('--accent2','#ffa94d'); C.pos = gv('--pos','#5eead4');
+    C.neg = gv('--neg','#fb7185'); C.warn = gv('--warn','#ffd43b'); C.gold = gv('--gold','#34d399');
+    C.edge = gv('--edge','#22c55e');
+  }
+  function rz(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  function gains(alpha){
+    var inv2 = 1 / (alpha * alpha), g = [];
+    for(var i = 0; i < N; i++) g.push(SIGMA[i] / (SIGMA[i] + inv2));
+    return g;
+  }
+  function topo(gAlign, eps){
+    var wC = 0.5 + 0.5 * gAlign;
+    var cand = [], i;
+    for(i = 0; i < NT - 1; i++) cand.push([i, i + 1, 0.90]);
+    cand.push([0, NT - 1, wC]);
+    var edges = [];
+    for(i = 0; i < cand.length; i++) if(cand[i][2] > eps) edges.push([cand[i][0], cand[i][1]]);
+    var parent = []; for(i = 0; i < NT; i++) parent[i] = i;
+    function find(x){ while(parent[x] !== x){ parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+    edges.forEach(function(e){ parent[find(e[0])] = find(e[1]); });
+    var roots = {}; for(i = 0; i < NT; i++) roots[find(i)] = 1;
+    var b0 = Object.keys(roots).length;
+    var b1 = Math.max(0, edges.length - NT + b0);
+    var Lx = W * 0.26, Ly = H * 0.66, R = Math.min(W * 0.13, H * 0.14);
+    var span = TAU * (0.55 + 0.45 * gAlign);
+    var pos = []; for(i = 0; i < NT; i++){ var a = (i / (NT - 1)) * span - TAU / 4; pos.push({x: Lx + R * Math.cos(a), y: Ly + R * Math.sin(a)}); }
+    return { b0: b0, b1: b1, E: edges.length, wC: wC, pos: pos, closed: wC > eps, cx: Lx, cy: Ly, R: R };
+  }
+  function harm(gAlign){
+    var n = Math.min(5, Math.max(1, 1 + Math.floor(5 * gAlign)));
+    var act = KEY.slice(0, n);
+    var a = 37, b = 58, target = (a + b) % P;
+    var peak = 0, bf = -Infinity, c, s, i;
+    var scores = [];
+    for(c = 0; c < P; c++){
+      s = 0; for(i = 0; i < act.length; i++) s += Math.cos(TAU * act[i] * (target - c) / P);
+      scores.push(s); if(c === target) peak = s; else if(s > bf) bf = s;
+    }
+    return { n: n, target: target, peak: peak, bf: bf, margin: peak - bf, unique: (peak - bf) > 0.5, scores: scores };
+  }
+  function frag(wC, eps){ return Math.max(0, 1 - Math.abs(wC - eps) / 0.2); }
+  function arrow(x1, y1, x2, y2, col, lw, head){
+    ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    if(head){
+      var a = Math.atan2(y2 - y1, x2 - x1), hs = 7 + lw;
+      ctx.beginPath(); ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - hs * Math.cos(a - 0.42), y2 - hs * Math.sin(a - 0.42));
+      ctx.lineTo(x2 - hs * Math.cos(a + 0.42), y2 - hs * Math.sin(a + 0.42));
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function rotPt(cx, cy, r, ang){ return { x: cx + r * Math.cos(ang), y: cy - r * Math.sin(ang) }; }
+  function poly(cx, cy, r, ang, col, lw, dash){
+    var p = [], j;
+    for(j = 0; j < 4; j++) p.push(rotPt(cx, cy, r, ang + j * Math.PI / 2));
+    ctx.save();
+    if(dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = col; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y);
+    for(j = 1; j < 4; j++) ctx.lineTo(p[j].x, p[j].y);
+    ctx.closePath(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw(){
+    if(W <= 0 || H <= 0) return;
+    var h = hS ? (parseFloat(hS.value) || 0.5) : 0.5;
+    var eps = eS ? (parseFloat(eS.value) || 0.7) : 0.7;
+    var dlt = dS ? (parseFloat(dS.value) || 1.0) : 1.0;
+    var alpha = 0.4 + h * 2.6;
+    var gAlign = 1 - h;  // 1 = hart (voll ausgerichtet/gefaltet), 0 = weich (diffus)
+    readColors();
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = C.codebg; ctx.fillRect(0, 0, W, H);
+
+    var g = gains(alpha);
+    var s = topo(gAlign, eps);
+    var h2 = harm(gAlign);
+    var f = frag(s.wC, eps);
+    var effrank = 0, quota = 0, det = 1, i;
+    for(i = 0; i < N; i++){ if(g[i] >= 0.6) effrank++; quota += g[i]; det *= g[i]; }
+    quota = quota / N;
+
+    /* ---- top-left: Conceptor spectrum (A) ---- */
+    var specCX = W * 0.28, specCY = H * 0.24;
+    var gs = Math.min(W * 0.15, H * 0.13) / maxS;
+    ctx.fillStyle = C.muted; ctx.font = '11px monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Conceptor-Spektrum (A) \u00b7 \u03b3\u1d62=\u03c3\u1d62/(\u03c3\u1d62+\u03b1\u207b\u00b2)', 10, 16);
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(specCX - 6, specCY); ctx.lineTo(specCX + 6, specCY);
+    ctx.moveTo(specCX, specCY - 6); ctx.lineTo(specCX, specCY + 6); ctx.stroke();
+    for(i = 0; i < N; i++){
+      var ux = Math.cos(th[i]), uy = Math.sin(th[i]);
+      var rawL = SIGMA[i] * gs, effL = g[i] * SIGMA[i] * gs;
+      var coreCol = ISCORE[i] ? C.accent2 : C.accent;
+      ctx.globalAlpha = 0.25; ctx.strokeStyle = ISCORE[i] ? C.accent2 : C.muted; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(specCX, specCY); ctx.lineTo(specCX + ux * rawL, specCY - uy * rawL); ctx.stroke();
+      ctx.globalAlpha = 1;
+      arrow(specCX, specCY, specCX + ux * effL, specCY - uy * effL, coreCol, ISCORE[i] ? 3 : 2.2, effL > 12);
+      ctx.fillStyle = C.muted; ctx.font = '9px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(i + 1), specCX + ux * (rawL + 10), specCY - uy * (rawL + 10));
+    }
+    ctx.textBaseline = 'alphabetic';
+
+    /* ---- top-right: shared rotation (invertible diffeo = rotors) ---- */
+    var ir = Math.min(W * 0.085, H * 0.11);
+    var icx = W * 0.88, icy = H * 0.20;
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(icx, icy, ir * 0.95, 0, TAU); ctx.stroke();
+    poly(icx, icy, ir * 0.7, 0, C.muted, 1, [3, 3]);
+    poly(icx, icy, ir * 0.7, dlt, C.accent, 2, null);
+    var tip = rotPt(icx, icy, ir * 0.7, dlt);
+    arrow(icx, icy, tip.x, tip.y, C.accent2, 2.4, true);
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 1.4;
+    for(var ri = 0; ri < 3; ri++){ var ra = dlt * (1 + ri * 0.5); var rp = rotPt(icx, icy, ir * 0.5, ra);
+      ctx.beginPath(); ctx.moveTo(icx, icy); ctx.lineTo(rp.x, rp.y); ctx.stroke(); }
+    ctx.fillStyle = C.muted; ctx.font = '9px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Rotation = invert. Diffeo (A)', icx, icy + ir * 0.95 + 12);
+    ctx.fillText('= Rotoren (B)', icx, icy + ir * 0.95 + 24);
+
+    /* ---- bottom-left: topological loop (B) ---- */
+    (function(){
+      var Lx = s.cx, Ly = s.cy, R = s.R, pos = s.pos;
+      ctx.save(); ctx.globalAlpha = 0.4; ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+      for(var gx = Math.floor((Lx - R) / 30) * 30; gx <= Lx + R; gx += 30){ ctx.beginPath(); ctx.moveTo(gx, Ly - R); ctx.lineTo(gx, Ly + R); ctx.stroke(); }
+      for(var gy = Math.floor((Ly - R) / 30) * 30; gy <= Ly + R; gy += 30){ ctx.beginPath(); ctx.moveTo(Lx - R, gy); ctx.lineTo(Lx + R, gy); ctx.stroke(); }
+      ctx.restore();
+      if(s.b1 > 0){ ctx.fillStyle = C.accent; ctx.globalAlpha = 0.12; ctx.beginPath(); ctx.moveTo(pos[0].x, pos[0].y);
+        for(var q = 1; q < NT; q++) ctx.lineTo(pos[q].x, pos[q].y); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.strokeStyle = C.edge; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+      ctx.beginPath(); ctx.moveTo(pos[0].x, pos[0].y);
+      for(q = 1; q < NT; q++) ctx.lineTo(pos[q].x, pos[q].y); ctx.stroke();
+      ctx.setLineDash(s.closed ? [] : [4, 5]); ctx.strokeStyle = C.accent; ctx.lineWidth = s.closed ? 4 : 1.5; ctx.globalAlpha = s.closed ? 1 : 0.4;
+      ctx.beginPath(); ctx.moveTo(pos[0].x, pos[0].y); ctx.lineTo(pos[NT - 1].x, pos[NT - 1].y); ctx.stroke();
+      ctx.globalAlpha = 1; ctx.setLineDash([]);
+      for(q = 0; q < NT; q++){ ctx.fillStyle = C.fg; ctx.beginPath(); ctx.arc(pos[q].x, pos[q].y, 4, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = C.muted; ctx.font = '12px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText('Mannigfaltigkeit im Ambient-Raum (topologisch \u2014 B)', Lx, Ly - R - 14);
+      ctx.fillText('Falten schlie\u00dft Loop \u21d2 \u03b2\u2081: 0\u21921', Lx, Ly + R + 18);
+    })();
+
+    /* ---- bottom-right: harmonic interference peak (B) ---- */
+    (function(){
+      var bx0 = W * 0.50, bx1 = W * 0.985, by0 = H * 0.52, by1 = H * 0.90;
+      if(bx1 - bx0 < 60) return;
+      var pw = bx1 - bx0, ph = by1 - by0, bw = pw / P;
+      var sc = h2.scores, mx = -Infinity, mn = Infinity, c;
+      for(c = 0; c < sc.length; c++){ if(sc[c] > mx) mx = sc[c]; if(sc[c] < mn) mn = sc[c]; }
+      var rng = (mx - mn) || 1;
+      ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(bx0, by0); ctx.lineTo(bx0, by1); ctx.lineTo(bx1, by1); ctx.stroke();
+      for(c = 0; c < P; c++){
+        var hh = ((sc[c] - mn) / rng) * ph, x = bx0 + c * bw, y = by1 - hh;
+        if(c === h2.target){ ctx.fillStyle = C.gold; ctx.globalAlpha = 1; }
+        else { ctx.fillStyle = C.accent2; ctx.globalAlpha = 0.35; }
+        ctx.fillRect(x, y, Math.max(1, bw - 0.5), hh);
+        ctx.globalAlpha = 1;
+      }
+      ctx.fillStyle = C.muted; ctx.font = '12px system-ui, sans-serif'; ctx.textBaseline = 'alphabetic';
+      ctx.textAlign = 'left'; ctx.fillText('Interferenz-Peak Score(c)  (harmonisch \u2014 B)', bx0, by0 - 8);
+      ctx.textAlign = 'right'; ctx.fillStyle = C.gold; ctx.font = 'bold 12px system-ui, sans-serif';
+      ctx.fillText('c = ' + h2.target + ' (richtig)', bx1, by0 - 8);
+      ctx.textAlign = 'center'; ctx.fillStyle = C.muted; ctx.font = '10px system-ui, sans-serif';
+      ctx.fillText('Antwort c  (0 \u2026 ' + (P - 1) + ')', bx0 + pw / 2, by1 + 16);
+    })();
+
+    /* ---- readouts ---- */
+    rA.textContent = alpha.toFixed(2);
+    rRank.textContent = effrank + ' / ' + N;
+    rDet.textContent = Math.log10(Math.max(det, 1e-12)).toFixed(2);
+    rQuota.textContent = quota.toFixed(2);
+    rB0.textContent = s.b0; rB1.textContent = s.b1; rE.textContent = s.E;
+    rN.textContent = h2.n; rPeak.textContent = h2.peak.toFixed(2);
+    rBF.textContent = h2.bf.toFixed(2); rM.textContent = h2.margin.toFixed(2);
+    rU.textContent = h2.unique ? 'JA' : 'nein';
+    rU.style.color = h2.unique ? 'var(--gold)' : 'var(--muted)';
+    rFrag.textContent = (f * 100).toFixed(0) + '%';
+    fragFill.style.width = (f * 100).toFixed(0) + '%';
+    if(vH) vH.textContent = (h < 0.22 ? 'hart' : (h > 0.78 ? 'weich' : 'mittel'));
+    if(vE) vE.textContent = eps.toFixed(2);
+    if(vD) vD.textContent = dlt.toFixed(2);
+
+    var regime, rc;
+    if(h < 0.22){ regime = 'Hart \u00b7 Rang-k-Projektor + Argmax (A) = geschlossener Loop + eindeutiger Peak (B) \u2014 Capability an der Schwelle, nicht invertibel, eine Einheit feuert / eine Struktur existiert'; rc = C.neg; }
+    else if(h < 0.78){ regime = 'Weicher Spektral-Filter (A) + weiche Konvexkombination (B) \u2014 \u00dcbergang, Loop/Peak noch diffus'; rc = C.warn; }
+    else { regime = 'Weich \u00b7 Identit\u00e4t/Diffeomorphismus (A) + Gleichverteilung/diffus (B) \u2014 invertibel, alles mischt, keine diskrete Struktur'; rc = C.pos; }
+    rRegime.textContent = regime; rRegime.style.color = rc;
+  }
+
+  function onInput(){ draw(); }
+  if(hS) hS.addEventListener('input', onInput);
+  if(eS) eS.addEventListener('input', onInput);
+  if(dS) dS.addEventListener('input', onInput);
+  var tb = document.getElementById('themeBtn');
+  if(tb) tb.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(); });
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(function(){ rz(); draw(); }, 150); });
+  var mo = new MutationObserver(function(){ readColors(); draw(); });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  function init(){ readColors(); rz(); draw(); }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

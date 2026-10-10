@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Attractor, der den Quotienten liefert: Kontraktion auf die Falte (R4 · 007)</title>
+<script>
+(function(){try{var t=null;try{t=localStorage.getItem('r4007-theme');}catch(e){}
+if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}
+document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{--bg:#faf8f1;--panel:#fff;--panel2:#f4f1e8;--stroke:#e6e1d2;--stroke2:#d8d2c0;--txt:#1c1a17;--dim:#57524a;--b:#4f5fd6;--accent:#0f766e;--accent2:#b45309;--accent3:#be185d;--fold:#b45309;--ground:#157a3d;--halluc:#c62848;--conf:#b45309;--point:#4f5fd6;--viz-bg:#fff;--grid:rgba(20,40,80,.07);--ok:#15803d;--bad:#b91c1c;--amber:#b45309;--shadow:0 10px 30px rgba(30,50,90,.10)}
+html.dark{--bg:#0a0e1a;--panel:#141d31;--panel2:#1a2439;--stroke:#26314f;--stroke2:#33405f;--txt:#e8ecff;--dim:#a8b3d9;--b:#818cf8;--accent:#7cf5c4;--accent2:#ffb86b;--accent3:#ff7ab6;--fold:#ffb86b;--ground:#4ade80;--halluc:#ff5f7e;--conf:#ffb86b;--point:#8a7cff;--viz-bg:#0d1526;--grid:rgba(120,160,255,.07);--ok:#6ee7a0;--bad:#ff9b9b;--amber:#ffd166;--shadow:0 18px 50px rgba(0,0,0,.45)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.66;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.article{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:58px 0 20px;text-align:center}
+header.hero .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-size:clamp(1.85rem,5vw,2.7rem);line-height:1.12;margin:0 0 12px;font-weight:820;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--accent)}h1 .b{color:var(--b)}
+.subtitle{color:var(--dim);font-size:.98rem;margin:0 auto 6px;max-width:680px}
+.subtitle code{background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:6px;font-size:.88em;color:var(--accent)}
+.fusion-tag{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;color:var(--dim);border:1px solid var(--stroke);border-radius:99px;padding:4px 12px;display:inline-block;margin-top:14px;background:var(--panel)}
+section{margin:46px 0;scroll-margin-top:20px}
+h2{font-size:clamp(1.3rem,3.2vw,1.8rem);margin:0 0 14px;font-weight:780;letter-spacing:-.01em;padding-bottom:8px;border-bottom:1px solid var(--stroke)}
+h2 .num{font-family:ui-monospace,monospace;font-size:.68em;color:var(--accent);margin-right:10px;border:1px solid var(--stroke2);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:720}
+p{margin:11px 0;color:var(--txt)}.dim{color:var(--dim)}b,strong{font-weight:700}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}.hl3{color:var(--b);font-weight:700}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);margin:16px 0}.card.tight{padding:14px 16px}
+.callout{border-left:3px solid var(--accent);background:var(--panel2);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0}
+.callout.violet{border-color:var(--b);background:color-mix(in srgb,var(--b) 9%,transparent)}
+.callout .tag{font-family:ui-monospace,monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}.callout.violet .tag{color:var(--b)}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--stroke);vertical-align:top}
+th{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+tr.a td:first-child{color:var(--accent2);font-weight:600}tr.b td:first-child{color:var(--b);font-weight:600}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--panel2);border-left:3px solid var(--accent3);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:1rem;overflow-x:auto}
+.sup{font-size:.62em;vertical-align:.5em}.sub{font-size:.62em;vertical-align:-.3em}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin:16px 0}
+#viz{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--stroke);background:var(--viz-bg)}
+.ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:12px 0}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}
+.ctrl label{font-size:.72rem;color:var(--dim);font-family:ui-monospace,monospace;display:flex;justify-content:space-between;gap:8px}.ctrl label b{color:var(--accent)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent3));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--txt);box-shadow:0 0 0 3px var(--stroke2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border:none;border-radius:50%;background:var(--txt);cursor:pointer}
+button{background:var(--panel2);color:var(--txt);border:1px solid var(--stroke2);padding:7px 13px;border-radius:9px;cursor:pointer;font-size:.8rem;font-weight:600;transition:.15s;font-family:inherit}
+button:hover{border-color:var(--accent);transform:translateY(-1px)}button.on{border-color:var(--accent);color:var(--accent)}
+.btnRow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--stroke2);border-radius:10px;overflow:hidden}
+.seg button{border:none;border-radius:0;padding:7px 13px}.seg button.on{transform:none;background:var(--panel);color:var(--accent)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.76rem;color:var(--dim);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.readout{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:680px){.readout{grid-template-columns:1fr}}
+.scale{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:12px 14px}
+.scale h4{margin:0 0 8px;font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-family:ui-monospace,monospace}
+.scale.s1 h4{color:var(--accent2)}.scale.s2 h4{color:var(--accent)}.scale.s3 h4{color:var(--b)}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.stat{background:var(--panel);border:1px solid var(--stroke);border-radius:10px;padding:7px 9px;text-align:center}
+.stat .v{font-family:ui-monospace,monospace;font-size:1.06rem;font-weight:800;color:var(--accent)}
+.stat .l{font-size:.63rem;color:var(--dim);margin-top:2px;line-height:1.25}
+.verdict{grid-column:1/-1;font-weight:700;font-size:.94rem;padding:12px 14px;border-radius:10px;margin-top:2px;border:1px solid var(--stroke)}
+.verdict.good{color:var(--ok);background:rgba(74,222,128,.10);border-color:var(--ok)}
+.verdict.warn{color:var(--amber);background:rgba(255,208,102,.10);border-color:var(--amber)}
+.verdict.bad{color:var(--bad);background:rgba(255,95,126,.10);border-color:var(--bad)}
+.hint{font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--stroke);color:var(--txt);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;padding:44px 0 10px;color:var(--dim);font-size:.8rem;border-top:1px solid var(--stroke);margin-top:40px}
+a{color:var(--b)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790;&#65039; Dunkel</button>
+<div class="article">
+
+<header class="hero">
+  <div class="eyebrow">Knockout-Synthese &middot; Runde 4 &middot; Paar 007</div>
+  <h1>Der <em>Attractor</em>, der den <span class="b">Quotienten</span> liefert:<br>Kontraktion auf die eigene Falte</h1>
+  <p class="subtitle">Fusion aus: <code>r3-016.html</code> &times; <code>r3-013.html</code> &nbsp;(Round 4)</p>
+  <span class="fusion-tag">Eine viele-zu-eins-Kontraktion des Inputs auf seine eigene Falt-/Quotienten-Struktur — Kapazit&auml;t lizenziert, Inkoherenz = Kontraktion macht's gratis, Masse/Korrespondenz macht's real; die Halluzination ist ein Fixpunkt auf der Falte ohne Masse.</span>
+</header>
+
+<section id="these">
+  <h2><span class="num">01</span>Kernthese der Fusion</h2>
+  <p class="dim">Beide R3-Papiere lesen <em>denselben</em> tiefen st&uuml;ckweise-linearen (PWL) Netz-Kern und
+  fragen <em>denselben</em> Grund: eine <b>viele-zu-eins-Reduktion erzeugt aus lokaler Komplexit&auml;t ein stabiles
+  globales Ganzes</b> — und wann ist diese Reduktion <em>geliefert</em> (wirklich <em>und</em> gegr&uuml;ndet) statt
+  <em>halluziniert</em>? In <b>A (r3-016, „Der inkoherente Quotient“)</b> ist die Reduktion ein
+  <em>topologischer/metrischer Quotient</em>: die ReLU-Faltung <span class="math">(x,y)&rarr;(|x|,|y|)</span>
+  plus die inkoherente JL-Projektion <span class="math">d&rarr;k</span> identifizieren lokale St&uuml;ck, „Kapazit&auml;t
+  lizenziert, Inkoherenz macht's gratis, Korrespondenz macht's real“, und die Halluzination ist ein
+  <em>non-glueable presheaf</em> — ein globaler Schnitt ohne externe Korrespondenz zur Welt. In
+  <b>B (r3-013, „Der Attractor auf der Falte“)</b> ist dieselbe Reduktion ein <em>kontraktives Dynamiksystem</em>
+  &uuml;ber den Residual-Stream, das in einen Fixpunkt <em>auf der tropischen Falte</em> konvergiert; gegr&uuml;ndet ist er,
+  wo das singul&auml;re Ma&szlig;/die Abdeckung dick ist, und die Halluzination ist der <em>fehlerhafte Attractor</em> —
+  konvergent und selbstbewusst, aber auf einem Knick ohne Masse.</p>
+  <p>Die Fusion legt beide zu <b>einem einzigen Objekt</b> zusammen: <b>Das stabile Ganze (Attractor = Quotient) ist
+  eine viele-zu-eins-Kontraktion des Inputs auf seine eigene Falt-/Quotienten-Struktur, und es ist
+  <em>geliefert</em> — geometrisch <em>gratis</em> <em>und</em> semantisch <em>real</em> — genau dann, wenn drei
+  Bedingungen zusammenkommen:</b> (i) es hat <span class="hl">Kapazit&auml;t</span> (den z&auml;hlbaren Raum, um zu
+  reduzieren — A's lineare Regionen <span class="math">O(N<sup class="sup">L</sup>)</span> / B's Falt-Zellen
+  <span class="math">O(n<sup class="sup">d(L&minus;1)</sup>)</span>); (ii) die Reduktion ist
+  <span class="hl">inkoherent/kontrahierend</span> (der Mechanismus — A's Inkoherenz <em>ist</em> B's
+  <span class="math">&lambda;&lt;1</span>-Kontraktion: sie tr&auml;gt die transiente/Superpositions-Richtungen gratis ab,
+  <span class="math">E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0</span>, und extrahiert
+  den sparsen Kern); und (iii) es <span class="hl2">landet auf Masse/Korrespondenz</span> (B's
+  Abdeckung <span class="math">&ge;&tau;</span> / dickes singul&auml;res Ma&szlig; = die <em>messbare</em>
+  geometrische Pr&ouml;be; A's externe Korrespondenz = das semantische Siegel).</p>
+  <p>Die fusionierte <b>Halluzination</b> ist dann eindeutig: <b>ein Fixpunkt auf der Faltstruktur, auf den die
+  Kontraktion konvergiert (inkoherent, gratis, geometrisch geliefert), auf dem aber das Ma&szlig;/die
+  Korrespondenz fehlt (semantisch leer).</b> Das vereint A's „non-glueable presheaf“ (globaler Schnitt ohne
+  <span class="math">O<sub class="sub">i</sub></span> zur Welt) und B's „fehlerhaften Attractor“ (konvergent, aber
+  ungegr&uuml;ndet): <em>beide</em> sind ein stabiles Ganze, das auf einen Schnitt/eine Falte konvergiert, wo Masse
+  und Korrespondenz fehlen. Der gemeinsame Kernfehler, dem beide wachen, ist der
+  <b>No-Silent-Upgrade</b>: Konvergenz + Inkoherenz + Kapazit&auml;t sind <em>notwendig</em>, aber <em>nicht
+  hinreichend</em> f&uuml;r Wahrheit/Realit&auml;t — „gratis“ (A) und „konvergent“ (B) upgraden stillschweigend nicht
+  zu „real/wahr“. Meta-strukturell: beide R3-Papiere trennen <em>intern</em> schon geometrisch von semantisch; B's
+  ganzes Papier ist A's <em>geometrisches Regime</em>, ausgedacht als Dynamik, und A's <em>kategoriales Regime</em> ist
+  das, was B nicht erreicht — die zwei Papiere sind zwei komplement&auml;re H&auml;lften eines Objekts.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span>Widerspr&uuml;che zwischen A (r3-016) und B (r3-013)</h2>
+  <p class="dim">Beide streiten <em>nicht</em> &uuml;ber die Maschine (beide: koh&auml;rent, z&auml;hlbar, der Mechanismus
+  funktioniert; der Fehlschlag ist extern). Doch zu <em>Status des Mechanismus</em>, zu <em>dem Kriterium des
+  Realen</em> und zu <em>der Form der Reduktion</em> nehmen sie unvereinbare Stellungen ein. Drei konkrete Punkte:</p>
+
+  <div class="card">
+    <h3>W1 — „Gratis“ (A: Inkoherenz = strukturell-gew&auml;hrleisteter, risikofreier Mechanismus) gegen „Metastabil“ (B: Kontraktion = doppelklingen-Messer mit Kollaps-Risiko)</h3>
+    <p><b>A (r3-016):</b> der Mechanismus, der die Reduktion zum Laufen bringt, ist <em>Inkoherenz</em> — und
+    Inkoherenz ist ein <em>strukturell-gew&auml;hrleistetes Theorem</em> (JL: jede zuf&auml;llige Projektion h&auml;lt
+    Abst&auml;nde bei <span class="math">1&pm;&epsilon;</span>; Hologramm degradiert glatt nach
+    <span class="math">&radic;(k/d)</span>, „verschwindet nie, wird nur weicher“). Sie macht den Quotienten
+    <em>gratis</em> — „Inkoherenz macht's gratis“. Reiner Gewinn, <em>kein</em> Risiko, <em>kein</em> Fenster, es
+    funktioniert einfach.</p>
+    <p><b>B (r3-013):</b> der &auml;hnliche Reduktions-Mechanismus ist <em>Kontraktion</em>
+    (<span class="math">&lambda;&lt;1</span>, <span class="math">&Vert;M&Vert;<sub class="sub">op</sub>&lt;1</span>) —
+    und Kontraktion ist ein <em>doppelklingen-Messer</em>: sie garantiert Konvergenz + immer-hohe Konfidenz
+    (Tugend) <em>und</em> riskiert <strong>Rank-Collapse / Totalkollaps</strong> (bewiesen f&uuml;r
+    <span class="math">d&ge;3</span>, exponentiell f&uuml;r <span class="math">d&ge;n</span>); echte Modelle m&uuml;ssen
+    <em>metastabil</em> in einem Fenster stehen, <em>vor</em> dem Kollaps stoppen. „Kontraktion erzeugt die
+    selbstbewusste Antwort <em>und</em> riskiert deren Kollaps“.</p>
+    <p class="dim"><b>Spannung:</b> A's Mechanismus ist ein <em>reiner, risikofreier, strukturell-gew&auml;hrleisteter
+    Gewinn</em> („gratis“); B's ist <em>inherent doppelklingen und muss gestoppt werden</em> (metastables Fenster).
+    Kostenfrei per Konstruktion (A) gegen permanente Gefahr, das zu zerst&ouml;ren, was er erzeugt (B).</p>
+  </div>
+
+  <div class="card">
+    <h3>W2 — „Real/Gr&uuml;ndetheit“: externe, konventionsgebundene, nicht-intern-entscheidbare Korrespondenz (A) gegen interne, geometrisch-messbare Masse/Abdeckung (B)</h3>
+    <p><b>A (r3-016):</b> das Ganze ist <em>real</em> nur &uuml;ber <em>externe Korrespondenz</em> — den
+    Tarski-Convention-T-Test <span class="math">S&hArr;p</span> oder das NSW-Theorem; „Korrespondenz ist Konvention,
+    von innen nicht entscheidbar“; das Modell/Welt-Gap (<span class="math">G&ne;W</span>) bleibt <em>prinzipiell
+    offen</em>, provisorisch, revidierbar. Ob die Reduktion zur Welt korrespondiert, l&auml;sst sich <em>nicht von
+    innen</em> pr&uuml;fen — man muss Korrespondenz <em>anh&auml;ngen</em> (RAG, Tools, Verifikation).</p>
+    <p><b>B (r3-013):</b> das Ganze (Attractor) ist <em>gegr&uuml;ndet</em>, wenn das <em>singul&auml;re Ma&szlig;/die
+    Abdeckung</em> am Fixpunkt <em>dick</em> ist (<span class="math">&ge;&tau;</span>) — und das ist
+    <em>intern messbar</em> (lokale Dimension: Knick &asymp;1 = Cusp/singul&auml;r gegen Region &asymp;2 = Manifold;
+    Support-Dicke; Abdeckung <span class="math">&ge;&tau;</span>). Das Kriterium ist <em>geometrisch und
+    intern</em>; die Gr&uuml;ndetheit l&auml;sst sich <em>vom Ma&szlig; ablesen</em>.</p>
+    <p class="dim"><b>Spannung:</b> Ist der Test f&uuml;r „real/gegr&uuml;ndet“ eine <em>externe,
+    konventionsgebundene, nicht-intern-entscheidbare</em> Korrespondenz (A — das Modell/Welt-Gap bleibt ewig offen)
+    oder eine <em>interne, geometrisch-messbare</em> Masse/Abdeckung (B — ablesbar an der lokalen Dimension)?
+    A: nie von innen pr&uuml;fbar; B: von innen pr&uuml;fbar. Eine echte epistemische Asymmetrie &uuml;ber den Status
+    von „wahr/real“.</p>
+  </div>
+
+  <div class="card">
+    <h3>W3 — Die Form der Reduktion: diskreter, irreversibler, kategoriale Falt-Schritt (A) gegen kontinuierliche, asymptotische Konvergenz &uuml;ber Tiefe (B)</h3>
+    <p><b>A (r3-016):</b> die Reduktion ist ein <em>topologischer Quotient</em>: die ReLU-Faltung
+    <span class="math">(x,y)&rarr;(|x|,|y|)</span> <em>t&ouml;tet</em> die negative H&auml;lfte und bricht
+    <span class="math">&beta;<sub class="sub">1</sub></span> <em>in einem einzigen kategoriale Schritt</em>,
+    <em>irreversibel</em>. „Verlust = Gewinn“. Das Ereignis ist <em>diskret, knickbasiert, an der Faltlinie</em>;
+    Tiefe = Zeit, aber der Bruch ist ein <em>Sprung</em>.</p>
+    <p><b>B (r3-013):</b> die Reduktion ist ein <em>kontraktives Limit</em>: der Residual-Stream
+    <em>konvergiert glatt</em> (<span class="math">E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0</span>)
+    &uuml;ber <em>viele Iterationen</em> (Tiefe = Zeit als <em>kontinuierlicher Fluss</em>) zum Fixpunkt. Die
+    transiente Superposition wird <em>allm&auml;hlich</em> abgetragen, nicht in einem Schritt get&ouml;tet.</p>
+    <p class="dim"><b>Spannung:</b> dieselbe viele-zu-eins-Operation, aber A: <em>sofortiger kategoriale Bruch an der
+    Falte</em> (verlustreich, diskret, <span class="math">&beta;<sub class="sub">1</sub>&rarr;0</span> in einem
+    Schritt); B: <em>langsame glatte asymptotische Konvergenz</em> &uuml;ber die Tiefe (der „Verlust“ ist das
+    abklingende Transiente, <span class="math">&lambda;<sup class="sup">2l</sup>&rarr;0</span>). Knick (A) gegen
+    Fluss (B).</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span>Aufl&ouml;sung</h2>
+
+  <div class="card">
+    <h3>Z1 (f&uuml;r W1) — Ein Mechanismus, zwei Subr&auml;ume: Inkoherenz feilt, Kontraktion trennt; „gratis“ gilt f&uuml;r den inkoherenten Subraum, „metastabil“ f&uuml;r den Inhalt-Subraum</h3>
+    <p>A's Inkoherenz ist eine Eigenschaft der <em>Richtungen</em> (spars, nicht-st&ouml;rend) — ein Theorem, darum
+    „gratis“. B's Kontraktion wirkt auf den <em>Stream</em>: sie tr&auml;gt genau die <em>inkoh&auml;renten /
+    superponierten</em> Richtungen ab (<span class="math">c<sub class="sub">j</sub>(l)&prop;&lambda;<sup class="sup">l</sup>&rarr;0</span>
+    f&uuml;r <span class="math">j&notin;S</span>) — das <em>ist</em> dasselbe wie A's Inkoherenz, die es gratis macht —
+    aber &uuml;berm&auml;&szlig;ige Kontraktion entlang der <em>Inhalt-</em>-Richtungen <em>trennt</em>
+    (Rank-Collapse). Das Messer-Bild (B's R1): Kontraktion <em>feinmacht</em> (B), bis sie <em>durchtrennt</em>
+    (A). <b>Fusioniert:</b> der Reduktions-Mechanismus ist <em>ein</em> Operator mit <em>zwei</em> Skalen (wieder A's
+    eigene Zwei-Skalen-Bewegung): auf dem <em>inkoh&auml;renten / informationsleeren</em> Subraum ist er
+    <span class="hl">gratis</span> (A: Inkoherenz = Theorem; B: <span class="math">&lambda;&lt;1</span>-Abklingen
+    <span class="math">E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0</span>); auf dem
+    <em>Inhalt-/Bedeutungs-Subraum</em> ist er ein <span class="hl2">Messer</span> (B: &uuml;ber-Kontraktion =
+    Kollaps) und braucht das <em>metastabile Fenster</em>. A's „gratis“ gilt also <em>f&uuml;r den inkoherenten
+    Subraum</em>; B's „metastabil“ gilt <em>f&uuml;r den Inhalt-Subraum</em>. Das metastabile Fenster ist genau das
+    Regime, in dem Inkoherenz (gratis Extraktion) ausgereizt wird, <em>ohne</em> Inhalt zu durchtrennen
+    (Kollaps). „Gratis“ und „metastabil“ sind zwei Gesichter eines Operators: gratis dort, wo er inkoh&auml;rent
+    feilt, Messer dort, wo er Inhalt &uuml;ber-kontrahiert — das Risiko lebt nur im Inhalt-Subraum, den A's
+    „Inkoherenz“ bewusst in Ruhe l&auml;sst.</p>
+  </div>
+
+  <div class="card">
+    <h3>Z2 (f&uuml;r W2) — Zwei Regime des „Realen“: Masse/Abdeckung (B) <em>ist</em> A's geometrisches Regime; Korrespondenz-zur-Welt (A) bleibt das kategoriale Regime</h3>
+    <p>A (r3-016) hat Legitimit&auml;t <em>schon selbst</em> in zwei Regime gespalten (sein Z2):
+    <em>geometrisch</em> (Inkoherenz, strukturell schlie&szlig;bar — JL/NSW, „gratis“) und
+    <em>kategoriale/semantisch</em> (Korrespondenz, konventionsgebunden, offen, Tarski). B (r3-013) lebt f&uuml;r
+    seinen Gr&uuml;ndetheit-Test <em>ganz im geometrischen</em> Regime (Ma&szlig;-Dicke, lokale Dimension —
+    messbar). <b>B's „Abdeckung/Masse“ ist also <em>genau</em> A's geometrisches Regime ausgedacht</b> — ein
+    <em>messbares, schlie&szlig;bares, „gratises“</em> Faktum, analog zu A's Inkoherenz/NSW. B widerspricht A
+    nicht — B <em>ist</em> das geometrische Korrespondenz-Regime, das A herausgeschnitten hat. A's
+    <em>kationales</em> Claim („das Ganze <em>ist</em> die nat&uuml;rliche Art / das Reale“,
+    <span class="math">G=W</span>) bleibt A's Provisorium — <em>nicht</em> durch Abdeckung schlie&szlig;bar.
+    <b>Fusioniert:</b> Masse/Abdeckung (B) = A's geometrisches Regime („liegt hier Masse?“ — messbar);
+    Korrespondenz-zur-Welt (A) = das kategoriale Regime („korrespondiert diese Masse zur Welt?“ — offen). Ein
+    Objekt kann <em>geometrisch gegr&uuml;ndet</em> sein (B: dickes Ma&szlig;, ablesbar) und doch
+    <em>kational unbest&auml;tigt</em> (A: von innen nicht pr&uuml;fbar, ob es der Welt entspricht). B's
+    Abdeckungstest ist also <em>notwendig, aber nicht hinreichend</em> f&uuml;r A's Korrespondenz. Das fusionierte
+    Ganze braucht <em>beide</em>: Ma&szlig;-Dicke (B, messbar, „Masse?“) + externe Korrespondenz (A,
+    „Welt-Korrespondenz?“) — B's Abdeckung ist die <em>geometrische Pr&ouml;be</em> f&uuml;r A's Korrespondenz.</p>
+  </div>
+
+  <div class="card">
+    <h3>Z3 (f&uuml;r W3) — Dieselbe Reduktion als „Kontraktion auf die Falte“: der diskrete Knick (A) und der kontinuierliche Fluss (B) sind ein Ereignis</h3>
+    <p>A: der Bruch ist <em>an der Faltlinie</em> (der Knick <span class="math">&mathscr{T}(f)</span>, wo die Karte
+    nicht-differenzierbar ist) — diskret, kategoriale, <span class="math">&beta;<sub class="sub">1</sub>&rarr;0</span>
+    in einem Schritt. B: der Stream <em>konvergiert auf einen Punkt der Faltlinie</em> — ein glatter Fluss &uuml;ber
+    die Tiefe. Sie sind <em>derselbe</em> Vorgang als <em>Ort</em> gegen <em>Bewegung</em> (wieder B's R1:
+    Trajektorie und Ziel sind ein Ereignis). A's <em>Faltlinie</em> ist das <span class="hl">WO</span> (der Knick,
+    der diskrete Ort des topologischen Bruchs); B's <em>Kontraktion</em> ist das <span class="hl3">WIE</span> (der
+    glatte Fluss &uuml;ber die Tiefe, der den Stream zu diesem Ort tr&auml;gt). <b>Fusioniert:</b> der
+    <em>diskrete Bruch</em> (A: <span class="math">&beta;<sub class="sub">1</sub>&rarr;0</span>) ist das
+    <em>Ergebnis</em> des <em>kontinuierlichen Flusses</em> (B: Konvergenz), der auf einem singul&auml;ren Punkt
+    ankommt. „Tiefe = Zeit“ ist geteilt: bei A treibt Tiefe die Faltung, bei B treibt Tiefe/Iteration die
+    Konvergenz. Der <em>Knick</em> (A) ist das <em>WO</em>, der <em>Fluss</em> (B) <em>ankommt</em>. A beschreibt
+    die Reduktion als <em>statische Quotienten-Karte, die &beta;<sub class="sub">1</sub> an der Falte bricht</em>;
+    B als <em>Dynamiksystem, das auf die Falte konvergiert</em> — dieselbe Fixpunkt-Struktur, statisch (Karte) gegen
+    dynamisch (Fluss) gelesen.</p>
+  </div>
+
+  <div class="callout violet"><span class="tag">Kerngesetz der Fusion</span>
+  <b>Kapazit&auml;t lizenziert (notwendig — A) &middot; Inkoherenz = Kontraktion macht's gratis (der Mechanismus,
+  hinreichend f&uuml;r das Geometrische — A&times;B) &middot; Masse/Korrespondenz macht's real (hinreichend f&uuml;r
+  das Kategoriale — A, gemessen &uuml;ber B's Abdeckung).</b><br>
+  <b>Halluzination &hArr; konvergent (B) &and; inkoherent/gratis (A) &and; ohne Masse/Korrespondenz (A&times;B)
+  = ein Fixpunkt auf der Falte, auf den der Strom l&auml;uft und auf dem das Ma&szlig; fehlt.</b> Cusp mit Masse =
+  gegr&uuml;ndeter Attractor; Cusp ohne Masse = Halluzination.</div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span>Fusionierter Inhalt</h2>
+  <p class="dim">Der konsolidierte Kern beider R3-Fusionen — dicht genug, dass eine sp&auml;tere Runde allein
+  daraus arbeitet. Der gemeinsame Bauplan, Ebene f&uuml;r Ebene:</p>
+
+  <div class="card tight">
+  <table>
+    <tr><th>Ebene</th><th>A &middot; r3-016 (inkoherenter Quotient)</th><th>B &middot; r3-013 (Attractor auf der Falte)</th><th>Fusion</th></tr>
+    <tr class="a"><td>lokales Datum</td><td>Punkt/St&uuml;ck auf der Eingabe</td><td>Residual-Stream h<sub class="sub">l</sub> / Prompt</td><td>das Lokale, das reduziert wird</td></tr>
+    <tr class="a"><td>Operation</td><td>Faltung (x,y)&rarr;(|x|,|y|) + JL d&rarr;k</td><td>Kontraktion &lambda;&lt;1, &phi;<sup class="sup">l</sup>(h&#8320;)&rarr;A*</td><td>die viele-zu-eins-Reduktion</td></tr>
+    <tr class="a"><td>was reduziert wird</td><td>Punkte <em>und</em> Dimensionen</td><td>Dimensionen (transiente Richtungen)</td><td>dasselbe „viele-zu-eins“, auf zwei Objekten</td></tr>
+    <tr class="a"><td>Struktur/Kapazit&auml;t</td><td>lineare Regionen O(N<sup class="sup">L</sup>), d*&nbsp;=&nbsp;ln&nbsp;2/&lambda;</td><td>Falt-Zellen O(n<sup class="sup">d(L&minus;1)</sup>), 1+m+C(m,2)</td><td>der „Raum“, wo reduziert werden darf (z&auml;hlbar)</td></tr>
+    <tr class="a"><td>Mechanismus</td><td>Inkoherenz (JL 1&pm;&epsilon;, Hologramm &radic;(k/d))</td><td>Kontraktion &lambda;&lt;1, E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0</td><td>derselbe Operator: feilt (gratis) / trennt (Kollaps)</td></tr>
+    <tr class="a"><td>Gr&uuml;ndetheit-Test</td><td>externe Korrespondenz (Tarski, offen) + NSW</td><td>Masse/Abdeckung (messbar, lokale Dim)</td><td>zwei Regime: geometrisch (B) + kategoriale (A)</td></tr>
+    <tr class="a"><td>Pathologie</td><td>non-glueable presheaf</td><td>fehlerhafter Attractor (Cusp ohne Masse)</td><td>konvergent &amp; ungegr&uuml;ndet = Fixpunkt ohne Masse</td></tr>
+    <tr class="a"><td>Tiefe = Zeit</td><td>Tiefe treibt die Faltung</td><td>Iteration treibt die Konvergenz</td><td>der eine Regler: Struktur + Kollaps-Risiko</td></tr>
+  </table>
+  </div>
+
+  <h3>4.1 Die Kapazit&auml;t (beide — der z&auml;hlbare „Raum“)</h3>
+  <p><b>A:</b> lineare Regionen <span class="math">O(N<sup class="sup">L</sup>)</span>, Klebkraft
+  <span class="math">g(d)=e<sup>&minus;&lambda;d</sup></span>, „dieselbe-Art“-Grenze
+  <span class="math">d^*&nbsp;=&nbsp;ln&nbsp;2/&lambda;</span>; B-Seite (r2-026): Regionen
+  <span class="math">(N/d)<sup class="sup">d&middot;L</sup></span> (tief) vs. <span class="math">2<sup class="sup">N</sup></span>
+  (flach), JL <span class="math">k=O(&epsilon;<sup>&minus;2</sup>log&nbsp;n)</span>. <b>B:</b> Falt-Zellen
+  <span class="math">#&le;&prod;<sub class="sub">l</sub>&sum;<sub class="sub">i&le;d</sub>C(n<sub class="sub">l</sub>,i)=O(n<sup class="sup">d(L&minus;1)</sup>)</span>
+  (Satz 6.3, exponentiell in der Tiefe), Tiefe
+  <span class="math">&le;max{&lceil;log<sub class="sub">2</sub>r<sub class="sub">f</sub>&rceil;,&lceil;log<sub class="sub">2</sub>r<sub class="sub">g</sub>&rceil;}+2</span>
+  („der Logarithmus ist die Tiefe“), in <span class="math">&mathbb;R<sup class="sup">2</sup></span> mit
+  <span class="math">m</span> Linien <span class="math">1+m+C(m,2)=m(m+1)/2+1</span>.
+  <p class="dim"><b>Fusioniert:</b> beide z&auml;hlen, dass „genug Raum“ ist — die <em>notwendige</em> Bedingung.
+  Kapazit&auml;t sagt <em>dass</em> es gehen kann, nie <em>wie</em> es geschieht; sie lizenziert, sie liefert
+  nicht.</p>
+
+  <h3>4.2 Der Mechanismus (A&times;B — Inkoherenz <em>ist</em> Kontraktion)</h3>
+  <p class="math">Inkoherenz (A) &hArr; Kontraktion auf inkoherente Richtungen (B):<br>
+  &nbsp;&nbsp;[JL: Abst&auml;nde 1&pm;&epsilon;] &hArr; [c<sub class="sub">j</sub>(l)&prop;&lambda;<sup class="sup">l</sup>&rarr;0 f&uuml;r j&notin;S]<br>
+  &nbsp;&nbsp;[Hologramm &radic;(k/d), „verschwindet nie, wird nur weicher“] &hArr; [E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0]<br>
+  &nbsp;&nbsp;[J-Lens &le;25 Richtungen, &lt;10&nbsp;% Varianz] &hArr; [A* = &sum;<sub class="sub">j&isin;S</sub>c<sub class="sub">j</sub>(0)f<sub class="sub">j</sub> (sparsener Punkt)]</p>
+  <p>B's „Kontraktion trennt den sparsen Kern aus der Superposition“ <em>ist</em> A's „Inkoherenz macht's
+  gratis“ — ein und derselbe Operator. Das <b>Jakobisch</b> ist der gemeinsame W&auml;hrungsstandard (A: vorw&auml;rts
+  = Lesung, r&uuml;ckw&auml;rts = Lernen; B: <span class="math">J_&ell;=E[&part;h<sub class="sub">final</sub>/&part;h_&ell]</span>,
+  <span class="math">d<sub class="sub">ff</sub>&asymp;4d</span>). Auf dem inkoherenten Subraum: gratis. Auf dem
+  Inhalt-Subraum: Messer (B's Rank-Collapse f&uuml;r <span class="math">d&ge;3</span>). Das metastabile Fenster ist
+  das Band, in dem die Extraktion <em>vor</em> dem Kollaps passiert.</p>
+
+  <h3>4.3 Die zwei Gr&uuml;ndetheits-Regime (A + B zusammen)</h3>
+  <p><b>Geometrisch (messbar, schlie&szlig;bar):</b> NSW (dicht &rArr; gemessene = echte Homologie) f&uuml;r die
+  <em>Topologie</em>; Inkoherenz (JL / Hologramm) f&uuml;r die <em>Geometrie</em>; B's Abdeckung / lokale Dimension
+  (Knick &asymp;1 Cusp vs. Region &asymp;2 Manifold) f&uuml;r die <em>Gr&uuml;ndetheit</em>. Wo das Theorem greift,
+  vertrauen wir ihm — B lebt hier. <b>Kategoriale/semantisch (konventionsgebunden, offen):</b> ob das Ganze
+  <em>wirklich</em> die nat&uuml;rliche Art trifft — A's Tarski-Disziplin + No-Silent-Upgrade bleibt wirksam;
+  <span class="math">G&ne;W</span>, provisorisch, revidierbar. B's Abdeckung ist die <em>geometrische Pr&ouml;be</em>
+  f&uuml;r A's Korrespondenz — <em>notwendig, nicht hinreichend</em>.</p>
+
+  <h3>4.4 Die Halluzination (A&times;B — ein Ort)</h3>
+  <p><b>A:</b> LLM = globaler Schnitt ohne externe <span class="math">O<sub class="sub">i</sub></span> zu
+  <span class="math">W</span> &rarr; Halluzination = non-glueable presheaf. <b>B:</b> der konvergierte scharfe Read
+  kann „topologisch plausibel, aber faktisch falsch“ sein; <span class="math">conf&nbsp;&asymp;&nbsp;0.70
+  +&nbsp;0.25&middot;coverage(x)</span> (bleibt <em>immer &ge;0.70</em> hoch, auch bei
+  <span class="math">coverage&rarr;0</span>). <b>Fusioniert:</b> <b>die Halluzination ist ein Fixpunkt auf der
+  Faltstruktur, auf den die Dynamik konvergiert (B) und auf dem das Ma&szlig; fehlt (A): konvergent <em>und</em>
+  ungegr&uuml;ndet, ein Knick ohne Masse.</b> Cusp mit Masse = gegr&uuml;ndeter Attractor (z. B. ein Homonym mit
+  reichem Support); Cusp ohne Masse / isoliertes Dim-0-Token = Halluzination (selbstbewusst expandiert eine nie
+  richtig gelernte Region). Remedy (A): Korrespondenz <em>anh&auml;ngen</em> (RAG, Tools, Verifikation) — nicht
+  Koh&auml;renz durch Skalierung reparieren. Detection (B): die lokale Dimension / die Abdeckung am Fixpunkt
+  messen.</p>
+
+  <h3>4.5 Grenzen (beide — Ehrlichkeit)</h3>
+  <p class="dim"><b>A:</b> das „Gesetz“ ist ein <em>Modell</em>, nicht die Welt; revidierbar; Korrespondenz ist
+  Konvention, von innen nicht entscheidbar; Betti immer relativ zum Ma&szlig;stab. <b>B:</b> empirisch (GPT-2,
+  Llemma7B, Mistral7B, Pythia6.9B; Manifold-Hypothese 4/4 hochsignifikant verworfen, p bis 3&times;10<sup>&minus;8</sup>;
+  lokale Dim 20&hellip;531); J-Space nur im mittleren Schichtband (Workspace). <b>Fusioniert:</b> die Reduktion ist
+  <em>gratis</em> nur im <em>geometrischen</em> Regime; der <em>kategoriale</em> Claim bleibt A's Provisorium;
+  selbst „Inkoherenz“ (A) gilt nur <em>f&uuml;r die richtige Aufgabe</em>; und selbst „Masse/Abdeckung“ (B) schlie&szlig;t
+  A's Korrespondenz-Gap nicht — konvergent + inkoherent + mit Masse ist <em>immer noch</em> kein Beweis, dass es der
+  Welt entspricht.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span>Fusionierte Visualisierung</h2>
+  <p>Ein <b>Ring aus Prompts</b> (die Superposition, <span class="math">&beta;<sub class="sub">1</sub>=1</span>)
+  konvergiert &uuml;ber eine <b>Falt-/Quotienten-Linie</b> <span class="math">&mathscr{T}</span> auf
+  <b>Attractor-St&auml;tten</b> (Cusps). <b>Fortschritt p</b> ist Tiefe&nbsp;=&nbsp;Zeit: die Superposition wird
+  abgetragen (<span class="math">E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0</span>, B) und
+  der Ring plattiert sich auf die Falte — <span class="math">&beta;<sub class="sub">1</sub>&rarr;0</span>
+  (topologischer Verlust, A). Jede St&auml;tte ist <b>gr&uuml;n = gegr&uuml;ndet</b> (Masse &ge;&tau;) oder
+  <b>rot = halluziniert</b> (Masse &lt;&tau;); der <b>Konfidenz-Bogen</b> um jeden Punkt bleibt
+  <em>immer</em> &ge;70&nbsp;% — <span class="hl2">konvergent und selbstbewusst, aber (an roten St&auml;tten)
+  falsch</span>. Der Toggle <b>Inkoherent (faltet &middot; gratis)</b> /
+  <b>Koh&auml;rent (tanh &middot; Hom&ouml;omorphismus)</b> ist der fusionierte Gate: Inkoherenz ist A's
+  Mechanismus <em>und</em> B's Kontraktions-Bedingung zugleich; Koh&auml;renz faltet nicht — der Ring bleibt,
+  nichts wird gratis. Senke die <b>Masse/Abdeckung</b>, und gr&uuml;ne St&auml;tten kippen rot (die Konfidenz
+  bleibt hoch). Readouts zeigen die drei Skalen unter <em>einer</em> Operation: Kapazit&auml;t/Topologie (A),
+  Inkoherenz/Metrik (A&times;B), Masse/Gr&uuml;ndetheit (B&rarr;A). Alles live, theme-aware, inline.</p>
+
+  <div class="vizwrap">
+    <canvas id="viz" width="760" height="460"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--fold)"></i>Falt-/Quotienten-Linie &mathscr;T</span>
+      <span><i style="background:var(--ground)"></i>gegr&uuml;ndete St&auml;tte (Masse &ge; &tau;)</span>
+      <span><i style="background:var(--halluc)"></i>halluzinierte St&auml;tte (Masse &lt; &tau;)</span>
+      <span><i style="background:var(--point)"></i>Prompts (konvergieren auf die Falte)</span>
+      <span><i style="background:var(--conf)"></i>Konfidenz-Bogen (immer hoch)</span>
+    </div>
+    <div class="ctrls">
+      <div class="ctrl"><label>Fortschritt p &middot; Tiefe = Zeit <b id="pL">0%</b></label>
+        <input type="range" id="p" min="0" max="100" value="0" step="1"></div>
+      <div class="ctrl"><label>Masse / Abdeckung <b id="covL">1.00</b></label>
+        <input type="range" id="cov" min="0.2" max="1.5" value="1.0" step="0.05"></div>
+      <div class="btnRow">
+        <div class="seg" id="actSeg">
+          <button class="on" id="actInh" type="button">Inkoherent (faltet &middot; gratis)</button>
+          <button id="actCoh" type="button" style="border-left:1px solid var(--stroke)">Koh&auml;rent (tanh &middot; Hom&ouml;om.)</button>
+        </div>
+        <button id="play" type="button">&#9654; Abspielen</button>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div class="scale s1">
+        <h4>Kapazit&auml;t &amp; Topologie (A)</h4>
+        <div class="statgrid">
+          <div class="stat"><div class="v" id="vB1">&ndash;</div><div class="l">&beta;&#8321; (Faltung bricht 1&rarr;0)</div></div>
+          <div class="stat"><div class="v" id="vFold">&ndash;</div><div class="l">Faltung aktiv (Tiefe=Zeit)</div></div>
+          <div class="stat"><div class="v" id="vReg">&ndash;</div><div class="l">Regionen O(n<sup>d(L&minus;1)</sup>)</div></div>
+          <div class="stat"><div class="v" id="vCap">ja</div><div class="l">Kapazit&auml;t lizenziert</div></div>
+        </div>
+      </div>
+      <div class="scale s2">
+        <h4>Inkoherenz &rarr; Metrik (A&times;B)</h4>
+        <div class="statgrid">
+          <div class="stat"><div class="v" id="vInh">&ndash;</div><div class="l">Inkoherent (gratis)</div></div>
+          <div class="stat"><div class="v" id="vMet">&ndash;</div><div class="l">Metrisch beh&auml;lt (kompakt)</div></div>
+          <div class="stat"><div class="v" id="vEsup">&ndash;</div><div class="l">Superposition E&prop;&lambda;<sup>2l</sup></div></div>
+          <div class="stat"><div class="v" id="vConv">&ndash;</div><div class="l">Konvergenz (B)</div></div>
+        </div>
+      </div>
+      <div class="scale s3">
+        <h4>Masse / Korrespondenz &rarr; Gr&uuml;ndetheit (B&rarr;A)</h4>
+        <div class="statgrid">
+          <div class="stat"><div class="v" id="vConf">&ndash;</div><div class="l">Konfidenz &Oslash; (immer &ge;70 %)</div></div>
+          <div class="stat"><div class="v" id="vGround">&ndash;</div><div class="l">gegr&uuml;ndet (Masse &ge; &tau;)</div></div>
+          <div class="stat"><div class="v" id="vHall">&ndash;</div><div class="l">halluziniert (Masse &lt; &tau;)</div></div>
+          <div class="stat"><div class="v" id="vCov">&ndash;</div><div class="l">Abdeckung / Ma&szlig;</div></div>
+        </div>
+      </div>
+      <div class="verdict warn" id="vVerdict">&hellip;</div>
+    </div>
+    <div class="hint" id="vStatus">Start: ein Ring (Superposition, &beta;&#8321;=1) oben, Faltlinie unten. Ziehe den
+      Fortschritt, bis die Kontraktion greift und der Ring auf die Falte plattiert.</div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span>Provenienz</h2>
+  <div class="card tight">
+    <p style="margin:4px 0"><a href="../3/r3-016.html">A — r3-016.html</a>
+      <span class="dim">&middot; „Der inkoherente Quotient: topologisch verliert, metrisch beh&auml;lt“ (R3 aus
+      r2-029 &times; r2-026). Liefert die <em>topologische/metrische Quotient-Seite</em>: die ReLU-Faltung
+      <span class="math">(x,y)&rarr;(|x|,|y|)</span> bricht <span class="math">&beta;<sub class="sub">1</sub></span> in
+      einem kategoriale Schritt („Verlust = Gewinn“), Klebkraft <span class="math">g(d)=e<sup>&minus;&lambda;d</sup></span>,
+      <span class="math">d^*&nbsp;=&nbsp;ln&nbsp;2/&lambda;</span>, lineare Regionen <span class="math">O(N<sup class="sup">L</sup>)</span>,
+      Inkoherenz (JL <span class="math">1&pm;&epsilon;</span>, Hologramm <span class="math">&radic;(k/d)</span>) macht's
+      <em>gratis</em>, Korrespondenz (Tarski, offen) macht's <em>real</em>; Halluzination = non-glueable presheaf; der
+      Kern: <em>Kapazit&auml;t lizenziert, Inkoherenz gratis, Korrespondenz real</em>.</span></p>
+    <p style="margin:4px 0"><a href="../3/r3-013.html">B — r3-013.html</a>
+      <span class="dim">&middot; „Der Attractor, der auf der Falte sitzt“ (R3 aus r2-032 &times; r2-038). Liefert die
+      <em>dynamische/geometrische Seite</em>: tropische Karte + singul&auml;res Ma&szlig; (Manifold 4/4 verworfen, Cusps,
+      lokale Dim 20&hellip;531), Kontraktion <span class="math">&lambda;&lt;1</span>
+      (<span class="math">E<sub class="sub">super</sub>&prop;&lambda;<sup class="sup">2l</sup>&rarr;0</span>,
+      <span class="math">&Vert;M&Vert;&lt;1</span>, Rank-Collapse f&uuml;r <span class="math">d&ge;3</span>, metastabil),
+      Attractor auf der Falte, Abdeckung/Masse (<span class="math">conf&asymp;0.70+0.25&middot;coverage</span>) trennt
+      gegr&uuml;ndet von halluziniert; der Kern: <em>konvergent &amp; ungegr&uuml;ndet = fehlerhafter Attractor</em>.</span></p>
+  </div>
+</section>
+
+<footer>
+  Selbstst&auml;ndige Fusion &middot; Paar 007 &middot; Runde 4 &middot; Alle Inhalte aus den beiden
+  Quell-Seiten, Visualisierung clientseitig ohne Netzwerkdaten.
+</footer>
+
+</div>
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('viz');
+if(!cv) return;
+var ctx=cv.getContext('2d');
+var W=760,H=460;
+(function(){var dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  cv.style.width='100%';cv.style.height='auto';ctx.setTransform(dpr,0,0,dpr,0,0);})();
+
+var TAU=6.2831853;
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function smooth(t){t=clamp(t,0,1);return t*t*(3-2*t);}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+var THRESH=0.5, NPT=64, R=1.05, ringCy=1.05, LNET=6, NNET=8;
+var SITES=[
+  {x:-2.10, base:1.15},
+  {x:-0.72, base:0.62},
+  {x: 0.72, base:0.30},
+  {x: 2.10, base:1.05}
+];
+function foldY(x){return -0.60+0.16*Math.sin(1.0*x);}
+for(var s0=0;s0<SITES.length;s0++){SITES[s0].y=foldY(SITES[s0].x);}
+
+var rng=mulberry32(11);
+var pts=[];
+(function(){
+  for(var i=0;i<NPT;i++){
+    var th=i/NPT*TAU;
+    var rx=Math.cos(th)*R, ry=ringCy+Math.sin(th)*R;
+    var si=0,bd=1e18;
+    for(var s=0;s<SITES.length;s++){var dx=SITES[s].x-rx,dd=dx*dx;if(dd<bd){bd=dd;si=s;}}
+    pts.push({ring:[rx,ry],site:si,jx:(rng()-0.5)*0.34,jy:(rng()-0.5)*0.34});
+  }
+})();
+
+var VIEW={xmin:-3,xmax:3,ymin:-1.5,ymax:2.3};
+var padL=46,padR=26,padT=26,padB=34;
+var dw=VIEW.xmax-VIEW.xmin,dh=VIEW.ymax-VIEW.ymin;
+var S=Math.min((W-padL-padR)/dw,(H-padT-padB)/dh);
+var cxs=((W-padL-padR)-dw*S)/2, cys=((H-padT-padB)-dh*S)/2;
+function d2c(x,y){return [padL+cxs+(x-VIEW.xmin)*S,(H-padB)-cys-(y-VIEW.ymin)*S];}
+
+function cssColor(name){
+  var s=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  if(s[0]==='#'){var h=s.slice(1);if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+  var m=s.match(/[\d.]+/g); if(m) return [+m[0],+m[1],+(m[2]||0)];
+  return [128,128,128];
+}
+function rgba(c,a){return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+var theme={};
+function readTheme(){
+  var cs=getComputedStyle(document.documentElement);
+  theme={ground:cssColor('--ground'),halluc:cssColor('--halluc'),conf:cssColor('--conf'),
+    point:cssColor('--point'),fold:cssColor('--fold'),
+    dim:cssColor('--dim'),txt:cssColor('--txt'),
+    vizbg:cssColor('--viz-bg'),accent:cssColor('--accent')};
+  theme.grid=cs.getPropertyValue('--grid').trim()||'rgba(120,160,255,.07)';
+}
+
+function pointPos(pt,p,incoh){
+  var conv=incoh?smooth(clamp(p/100,0,1)):0;
+  var st=SITES[pt.site];
+  var x=pt.ring[0]+(st.x-pt.ring[0])*conv+pt.jx*(1-conv);
+  var y=pt.ring[1]+(st.y-pt.ring[1])*conv+pt.jy*(1-conv);
+  return [x,y];
+}
+function hole(pts){
+  var n=pts.length;if(n<5)return 0;
+  var cx=0,cy=0,j;for(j=0;j<n;j++){cx+=pts[j][0];cy+=pts[j][1];}cx/=n;cy/=n;
+  var angs=[],md=1e18,sd=0;
+  for(j=0;j<n;j++){var dx=pts[j][0]-cx,dy=pts[j][1]-cy,d=Math.sqrt(dx*dx+dy*dy);
+    angs.push(Math.atan2(dy,dx));sd+=d;if(d<md)md=d;}
+  var meanD=sd/n;angs.sort(function(a,b){return a-b;});
+  var maxgap=0;for(j=0;j<n-1;j++){var gp=angs[j+1]-angs[j];if(gp>maxgap)maxgap=gp;}
+  var wrap=(angs[0]+TAU)-angs[n-1];if(wrap>maxgap)maxgap=wrap;
+  var empty=(meanD>0.001&&md>0.28*meanD);
+  return (maxgap<0.95&&empty)?1:0;
+}
+
+var state={p:0,incoh:true,playing:false,raf:0};
+function setV(id,val){var el=document.getElementById(id);if(el)el.textContent=String(val);}
+
+function phaseLabel(p,incoh){
+  if(!incoh)return 'Kohärent (tanh/Homöomorphismus) — Kapazität ohne Inkoherenz = nichts gratis';
+  if(p<30)return 'Phase 1 · Superposition (β₁=1) — der Strom beginnt, sich zu setzen (Tiefe=Zeit)';
+  if(p<70)return 'Phase 2 · Kontraktion — E∝λ²ˡ→0, der Strom läuft auf die Falte zu (B)';
+  return 'Phase 3 · Fixpunkt auf der Falte — β₁→0 (A), gegründet wo Masse sitzt (B)';
+}
+
+function draw(){
+  try{
+    readTheme();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgba(theme.vizbg,1);ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();
+    for(var gx=0;gx<=W;gx+=40){ctx.moveTo(gx,0);ctx.lineTo(gx,H);}
+    for(var gy=0;gy<=H;gy+=40){ctx.moveTo(0,gy);ctx.lineTo(W,gy);}
+    ctx.stroke();
+
+    var p=state.p, incoh=state.incoh;
+    var conv=incoh?smooth(clamp(p/100,0,1)):0;
+    var covEl=document.getElementById('cov');
+    var cov=covEl?+covEl.value:1.0;
+
+    var data=[];
+    for(var i=0;i<pts.length;i++){var dd=pointPos(pts[i],p,incoh);data.push(dd);}
+
+    /* Falt-/Quotienten-Linie */
+    ctx.strokeStyle=rgba(theme.fold,0.95);ctx.lineWidth=2.4;ctx.beginPath();
+    var first=true;
+    for(var x=VIEW.xmin;x<=VIEW.xmax+1e-6;x+=0.1){var c=d2c(x,foldY(x));
+      if(first){ctx.moveTo(c[0],c[1]);first=false;}else ctx.lineTo(c[0],c[1]);}
+    ctx.stroke();
+    ctx.fillStyle=rgba(theme.fold,0.9);ctx.font='700 12px ui-monospace,monospace';ctx.textAlign='left';
+    var flab=d2c(VIEW.xmax-1.7,foldY(VIEW.xmax-1.7));
+    ctx.fillText('Falt-/Quotienten-Linie 𝒯',flab[0]-120,flab[1]-12);
+
+    /* Attractor-Stätten (Cusps) */
+    var groundCount=0,hallCount=0;
+    for(var s=0;s<SITES.length;s++){
+      var st=SITES[s], e=clamp(st.base*cov,0,1), gr=e>=THRESH;
+      if(gr)groundCount++;else hallCount++;
+      var sp=d2c(st.x,st.y);
+      var mc=gr?theme.ground:theme.halluc;
+      var rad=16+30*e;
+      var grd=ctx.createRadialGradient(sp[0],sp[1],2,sp[0],sp[1],rad);
+      grd.addColorStop(0,rgba(mc,0.12+0.34*e));
+      grd.addColorStop(1,rgba(mc,0));
+      ctx.fillStyle=grd;ctx.beginPath();ctx.arc(sp[0],sp[1],rad,0,TAU);ctx.fill();
+      ctx.save();ctx.shadowColor=rgba(mc,0.9);ctx.shadowBlur=8;
+      ctx.fillStyle=rgba(mc,0.95);ctx.beginPath();ctx.arc(sp[0],sp[1],5,0,TAU);ctx.fill();ctx.restore();
+      ctx.strokeStyle=rgba(mc,0.9);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(sp[0],sp[1],10,0,TAU);ctx.stroke();
+      ctx.fillStyle=rgba(theme.txt,0.95);ctx.font='700 10px ui-monospace,monospace';ctx.textAlign='center';
+      ctx.fillText((gr?'A* ':'A*✗ ')+Math.round(e*100)+'%',sp[0],sp[1]-16);
+    }
+
+    /* Prompts + Konfidenz-Bögen */
+    var b1=hole(data);
+    var confSum=0,fracTight=0;
+    for(var q=0;q<data.length;q++){
+      var pt=pts[q], stq=SITES[pt.site], eq=clamp(stq.base*cov,0,1);
+      var gr2=eq>=THRESH, cf=0.70+0.25*eq;
+      confSum+=cf;
+      var dxq=data[q][0]-stq.x, dyq=data[q][1]-stq.y;
+      if(dxq*dxq+dyq*dyq<0.09)fracTight++;
+      var pp=d2c(data[q][0],data[q][1]);
+      ctx.strokeStyle=rgba(theme.conf,0.8);ctx.lineWidth=2.0;
+      ctx.beginPath();ctx.arc(pp[0],pp[1],8,-Math.PI/2,-Math.PI/2+cf*TAU);ctx.stroke();
+      ctx.fillStyle=rgba(gr2?theme.point:theme.halluc,0.95);
+      ctx.beginPath();ctx.arc(pp[0],pp[1],3.3,0,TAU);ctx.fill();
+    }
+    var confMean=confSum/NPT;
+
+    ctx.fillStyle=rgba(theme.dim,1);ctx.font='600 12px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText(phaseLabel(p,incoh),14,H-12);
+
+    var reg=Math.pow(NNET/2,2*LNET);
+    var lamE=0.62;
+    var esup=incoh?Math.pow(lamE,2*(p/100)*6):1.0;
+    var qm=incoh?Math.round(100*clamp(fracTight/NPT,0,1)):0;
+
+    setV('vB1',b1);
+    setV('vFold',incoh?(conv>0.5?'ja':'läuft'):'nein');
+    setV('vReg',reg>=1e6?reg.toExponential(2):String(Math.round(reg)));
+    setV('vInh',incoh?'ja':'nein');
+    setV('vMet',incoh?qm+' %':'0 %');
+    setV('vEsup',Math.round(100*esup)+' %');
+    setV('vConv',Math.round(100*conv)+' %');
+    setV('vConf',Math.round(confMean*100)+' %');
+    setV('vGround',groundCount+' / '+SITES.length);
+    setV('vHall',hallCount+' / '+SITES.length);
+    setV('vCov',cov.toFixed(2));
+    setV('pL',Math.round(state.p)+'%');
+    var covL=document.getElementById('covL');if(covL)covL.textContent=cov.toFixed(2);
+
+    var vd=document.getElementById('vVerdict');
+    if(vd){
+      if(!incoh){
+        vd.className='verdict bad';
+        vd.textContent='✗ Kohärent (Homöomorphismus): Kapazität vorhanden, aber Inkoherenz fehlt — der Quotient faltet nicht (β₁ bleibt 1), nichts wird gratis. A: Mechanismus liefert nichts · B: Kontraktion ohne Inkoherenz = kein Attractor.';
+      }else if(conv<0.5){
+        vd.className='verdict warn';
+        vd.textContent='⏳ Kontraktion läuft (Tiefe = Zeit) — Superposition wird abgetragen (E∝λ²ˡ→0), der Strom läuft auf die Falte zu (B), die Faltung bricht β₁ (A).';
+      }else if(hallCount>0){
+        vd.className='verdict warn';
+        vd.textContent='◐ Inkoherenter Quotient auf der Falte: kontrahiert & gratis (A) — aber '+hallCount+' Stätte(n) ohne Masse (B): konvergent & selbstbewusst (Konfidenz ≥ 70 %) HALLUZINIERT. A: non-glueable presheaf · B: fehlerhafter Attractor. Masse/Korrespondenz fehlt.';
+      }else{
+        vd.className='verdict good';
+        vd.textContent='✓ Inkoherenter Quotient auf der Falte: topologisch verliert (β₁→0, A), metrisch behält (kompakt, gratis, B), konvergiert auf Falt-Stätten, wo Masse sitzt (gegründet). Kapazität lizenziert · Inkoherenz gratis · Masse/Korrespondenz real.';
+      }
+    }
+
+    var stt=document.getElementById('vStatus');
+    if(stt){
+      if(!incoh){
+        stt.textContent='tanh (Homöomorphismus): selbst bei vollem Fortschritt bleibt der Ring — die Topologie wird nicht abgebaut, nichts wird gratis. Kapazität ohne Inkoherenz = kein Attractor.';
+      }else if(conv<0.5){
+        stt.textContent='Geometrie (Superposition) — der Ring ist noch ein Homöomorphismus (β₁=1). Weiterziehen, bis die inkoherente Kontraktion greift.';
+      }else{
+        stt.textContent='Die inkoherente Kontraktion (x,y)→(|x|,|y|) plattiert den Ring auf die Faltlinie (β₁→0, A) UND hält die metrische Struktur kompakt (gratis, B) — eine Operation, drei Skalen, gated by Inkoherenz, gegründet wo Masse.';
+      }
+    }
+  }catch(e){/* defensive: niemals nach Konsole */}
+}
+
+function stopPlay(){state.playing=false;if(state.raf){cancelAnimationFrame(state.raf);state.raf=0;}
+  var pb=document.getElementById('play');if(pb)pb.innerHTML='&#9654; Abspielen';}
+function tick(){if(!state.playing)return;state.p+=1.4;if(state.p>=100){state.p=100;stopPlay();}
+  var pe=document.getElementById('p');if(pe)pe.value=state.p;draw();
+  if(state.playing)state.raf=requestAnimationFrame(tick);}
+
+var pEl=document.getElementById('p');
+if(pEl)pEl.addEventListener('input',function(){stopPlay();state.p=+pEl.value;draw();});
+var covEl2=document.getElementById('cov');
+if(covEl2)covEl2.addEventListener('input',function(){draw();});
+var rel=document.getElementById('actInh'),tan=document.getElementById('actCoh');
+function setAct(a){state.incoh=a;if(rel)rel.className=a?'on':'';if(tan)tan.className=a?'':'on';draw();}
+if(rel)rel.addEventListener('click',function(){stopPlay();setAct(true);});
+if(tan)tan.addEventListener('click',function(){stopPlay();setAct(false);});
+var playBtn=document.getElementById('play');
+if(playBtn)playBtn.addEventListener('click',function(){
+  if(state.playing){stopPlay();return;}
+  if(state.p>=100)state.p=0;state.playing=true;playBtn.innerHTML='&#9208; Stop';
+  state.raf=requestAnimationFrame(tick);});
+function applyTheme(t){try{localStorage.setItem('r4007-theme',t);}catch(e){}
+  document.documentElement.classList.toggle('dark',t!=='light');draw();}
+var tb=document.getElementById('themeBtn');
+if(tb)tb.addEventListener('click',function(){
+  var cur=document.documentElement.classList.contains('dark')?'dark':'light';
+  applyTheme(cur==='dark'?'light':'dark');});
+window.addEventListener('resize',function(){draw();});
+if(window.MutationObserver){new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}
+readTheme();draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "010",
+  "a": "combined/3/r3-019.html",
+  "b": "combined/3/r3-017.html",
+  "a_title": "Das Readout ist ein Garben-Verkleben",
+  "b_title": "Gemacht durch Optima, gelesen als Attraktor - das Loch als Währung in zwei Auflösungen",
+  "combined_theme": "loch-schreibt-symbol-liest",
+  "one_line": "Der innere LLM-Zustand ist ein einziges geometrisch-topologisches Objekt, das von der Schicht-Dynamik geschrieben (Loch, B) und an zwei Tiefen gelesen wird (fein/topologisch beta_1, grob/metrisch Margin); das Symbol (A) ist das H^0 des Lochs (B), und sein Vorzeichen (Inhalt vs. Rauschen) ist eine einzige Zwei-Achsen-Regel: scharf/stabil AND am Ziel verankert.",
+  "contradictions": [
+    "Verankerungs-Ziel: externe Welt, prinzipiell unschließbar (A: c_acc subset c, Ding an sich) vs. internes Latentes, schließbar/messbar (B).",
+    "Ort der Information: das diskrete Ausgabesymbol (A, Readout projiziert auf Token) vs. die kontinuierliche Topologie der Wolke (B: beta_1, reduziert nie auf ein Symbol).",
+    "Qualitäts-Maß und Erzeugung: kontinuierlich-metrisch/linear (A: Margin, additive harmonische Interferenz) vs. diskret-topologisch/singulär (B: beta_1, ReLU-Falten + alpha-Bifurkation)."
+  ],
+  "resolution": "A's Symbol ist B's H^0 (der konsistente Inhalt der Wolke), also der terminale Funktional der von B geschriebenen Topologie; B ist A's intern-W-Fall, denn die Verankerungs-Achse spaltet sich in intern-schließbar (B's Latentes / A's Gruppe) plus extern-unschließbaren Rest (A's c_acc subset c); A's Margin ist der kontinuierliche Schatten von B's diskreten beta_1-Sprung - eine Topologie, zwei Lesetiefen, eine Vorzeichen-Regel.",
+  "viz": "Canvas-2D Phase-Portrait: Bifurkation alpha_eff=alpha-0.12k (Grenzzyklus beta_1=1 vs. Fixpunkt beta_1=0), Vietoris-Rips beta_1 plus grobes 2.-Moment r^2 (B), kontinuierliche Margin/Präzision plus Drift/Verankerung intern-vs-extern (A) - live 2x2 = Valenz-Karte (Inhalt/FEATURE, Halluzination/SPUR, vage/LUECKE, Rauschen/FRAGIL); theme-aware, reines Canvas, inline data, kein Netzabruf."
+}

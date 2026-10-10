@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 005 · Scharfe Kapazität als dünne, geerdete Mannigfaltigkeit (Round 4)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --card:#fffdf8; --ink:#22201b; --dim:#6f6a60; --faint:#9a9488;
+    --line:#d8d2c4; --grid:#e7e1d2;
+    --acc:#c2410c; --acc2:#2a4bd7; --gold:#0a7a55;
+    --theta:#0a7a55; --W:#7c3aed; --true:#0f7a5f; --false:#b0256b;
+    --soft-acc:#f6e9df; --soft-acc2:#e7ecfb; --soft-gold:#e4f3ee; --soft-W:#efe9fb;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  }
+  html.dark{
+    --bg:#070A12; --card:#0f1626; --ink:#EAF0FF; --dim:#8b97b8; --faint:#6b7694;
+    --line:#1c2740; --grid:#141d33;
+    --acc:#ff9a6b; --acc2:#7c9cff; --gold:#34d399;
+    --theta:#8fb0ff; --W:#c4a7ff; --true:#34d399; --false:#f472b6;
+    --soft-acc:#2a1810; --soft-acc2:#141c3a; --soft-gold:#0e2a22; --soft-W:#1d1633;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.66;
+    -webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+  .wrap{max-width:820px;margin:0 auto;padding:46px 20px 90px}
+  .badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+    background:var(--soft-gold);color:var(--gold);border:1px solid var(--line);
+    padding:4px 12px;border-radius:99px;margin-bottom:18px}
+  h1{font-size:clamp(26px,5vw,39px);line-height:1.13;letter-spacing:-.02em;font-weight:800;margin-bottom:12px}
+  h1 em{font-style:normal;color:var(--acc)}
+  h1 em.b{color:var(--acc2)}
+  h1 em.g{color:var(--gold)}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.02em;margin-bottom:6px}
+  .sub .x{color:var(--false)}
+  .meta{color:var(--faint);font-size:12.5px;margin-bottom:8px;line-height:1.55}
+  h2{font-size:clamp(19px,3.4vw,25px);font-weight:760;letter-spacing:-.015em;margin:46px 0 12px;padding-top:14px;border-top:1px solid var(--line)}
+  h2 .n{font-family:var(--mono);font-size:.55em;color:var(--gold);vertical-align:middle;margin-right:10px;
+    border:1px solid var(--line);background:var(--soft-gold);border-radius:99px;padding:3px 9px}
+  h3{font-size:15.5px;font-weight:720;margin:22px 0 8px;color:var(--ink)}
+  p{color:var(--dim);margin-bottom:14px;font-size:15px}
+  p b,li b,p strong,li strong{color:var(--ink)}
+  em{color:var(--ink)}
+  ul,ol{margin:0 0 16px 22px;color:var(--dim);font-size:14.5px}
+  li{margin-bottom:11px}
+  code{font:500 13px/1.4 var(--mono);background:var(--card);border:1px solid var(--line);padding:1px 5px;border-radius:5px}
+  .lead{font-size:17px;color:var(--ink)}
+  .roleA{color:var(--acc);font-weight:700}
+  .roleB{color:var(--acc2);font-weight:700}
+  .roleF{color:var(--gold);font-weight:700}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;vertical-align:middle;white-space:nowrap}
+  .tag.A{background:var(--soft-acc);color:var(--acc)}
+  .tag.B{background:var(--soft-acc2);color:var(--acc2)}
+  .tag.F{background:var(--soft-gold);color:var(--gold)}
+  .tension{border-left:4px solid var(--acc2);background:var(--card);border-radius:0 10px 10px 0;padding:13px 16px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .tension .who{font-size:.82em;color:var(--faint);display:block;margin-bottom:8px}
+  .tension .q{color:var(--ink);font-weight:720;display:block;margin-bottom:8px}
+  .tension p{margin-bottom:8px;font-size:14px}
+  .tension .span{color:var(--ink);font-size:13.5px}
+  .res{border-left:4px solid var(--gold);background:var(--card);border-radius:0 10px 10px 0;padding:13px 16px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .res p{font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .card p{font-size:14px}
+  .formula{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:14px 0;
+    font-family:var(--mono);font-size:12.5px;text-align:left;overflow-x:auto;white-space:pre;line-height:1.85;color:var(--ink)}
+  .formula .cmt{color:var(--faint)}
+  .formula .op{color:var(--acc2);font-weight:700}
+  .formula .opa{color:var(--acc);font-weight:700}
+  .formula .opg{color:var(--gold);font-weight:700}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  th,td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:var(--card);color:var(--ink)}
+  td{color:var(--dim)}
+  td b,th b{color:var(--ink)}
+  .viz-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+  canvas#cv{width:100%;height:600px;display:block;background:var(--card);border-radius:10px;border:1px solid var(--line);touch-action:none;cursor:crosshair}
+  .hud{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  .ctl{flex:1 1 210px}
+  .ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);margin-bottom:6px}
+  .ctl-lab b{font-family:var(--mono);color:var(--gold);font-size:12.5px}
+  input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--acc2);cursor:pointer;border:3px solid var(--card)}
+  input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:var(--acc2);cursor:pointer;border:3px solid var(--card)}
+  input[type=range].a::-webkit-slider-thumb{background:var(--acc)}
+  input[type=range].a::-moz-range-thumb{background:var(--acc)}
+  .presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  button{font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+  button:hover{transform:translateY(-1px);border-color:var(--gold)}
+  .ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .ro .box{flex:1;min-width:104px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+  .ro .box .k{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink)}
+  .ro .box.a{background:var(--soft-acc)}.ro .box.a .v{color:var(--acc)}
+  .ro .box.b{background:var(--soft-acc2)}.ro .box.b .v{color:var(--acc2)}
+  .ro .box.g{background:var(--soft-gold)}.ro .box.g .v{color:var(--gold)}
+  .badge-out{font-family:var(--mono);font-size:13px;font-weight:600;line-height:1.5;padding:12px 14px;border-radius:10px;display:block;margin-top:12px;border:1px solid var(--line);background:var(--card);color:var(--dim)}
+  .badge-out.ok{background:var(--soft-gold);color:var(--gold);border-color:var(--gold)}
+  .badge-out.warn{background:var(--soft-acc2);color:var(--acc2);border-color:var(--acc2)}
+  .badge-out.bad{background:var(--soft-acc);color:var(--false);border-color:var(--false)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--dim)}
+  .legend .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  .note{color:var(--dim);font-size:13.5px;margin:12px 0;line-height:1.6}
+  .note b{color:var(--ink)}
+  .prov{display:grid;gap:12px}
+  .prov a{color:var(--acc2);text-decoration:none;font-weight:700}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:4px;line-height:1.55}
+  .themebtn{position:fixed;top:16px;right:16px;z-index:9}
+  @media(max-width:560px){.ro{flex-direction:column}}
+</style>
+<script>(function(){try{var t=null;try{t=localStorage.getItem('r4005theme');}catch(e){}document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body>
+<button class="themebtn" id="themeBtn" type="button">Theme</button>
+<div class="wrap">
+
+  <div class="badge">Round 4 &middot; Fusion &middot; Pair 005 &middot; dünne, gekrümmte Mannigfaltigkeit &times; scharfe Kapazität am Anker</div>
+  <h1>Scharfe <em class="b">Kapazität</em> als <em>dünne, geerdete</em> <em class="g">Mannigfaltigkeit</em></h1>
+  <div class="sub">Fusion aus: r3-009.html <span class="x">&#10005;</span> r3-008.html &nbsp;(Round 4)</div>
+  <div class="meta">A = „Bedeutung als dünne, gekrümmte Mannigfaltigkeit — Richtung, Klumpen, Dimension“ (Round 3) &middot; B = „Scharfe Faltung, konservatives Budget, geerdeter Wert“ (Round 3)</div>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2><span class="n">1</span>Kernthese der Fusion</h2>
+    <p class="lead">Beide R3-Papiere lesen <em>dasselbe</em> Objekt — den internen Zustand eines trainierten Netzes, das Residual-Stream-Feld <code>h_{i,&#8467;}</code> (Token <code>i</code>, Schicht <code>&#8467;</code>) — und beide bestehen auf <em>dieselben</em> tiefen Form: <b>ein komplexes Ganzes wird aus vielen simplen lokalen Stücken unter einer erhaltenden Struktur zusammengebaut, mit einem <i>scharfen</i> kombinatorischen Mittel und <i>glatten linearen</i> Enden, und ein <i>Gate</i> trennt ein echtes Ganzes von einer Fiktion.</b> Sie nennen demselben Ganzen zwei Worte.</p>
+    <p><span class="roleA">A (r3-009)</span> sagt es <em>geometrisch</em>: das Ganze ist eine <b>dünne, gekrümmte Mannigfaltigkeit</b> im lokal-linearen, global-FFN-gekrümmten Residual-Stream; die lokalen Stücke sind <b>lineare Tangenten-Richtungen <code>&theta;</code> an Attraktor-Orten</b> (Klumpen); die scharfe Mitte ist das <b>Simplizial-Skelett / die Kristallisation</b>, die den Fluss zu Klumpen faltet; die Größe, wie viel aktiv ist, misst die <b>intrinsische Dimension</b> (ein Buckel über die Schichten); Lesen ist lineare Projektion <code>&sigma;(&theta;&middot;h)</code> + kombinatorische Nachbarschaft, Schreiben ist Intervention <code>h&#8592;h+&alpha;&theta;</code> / Steern <code>h&#8592;h+&lambda;(A<sub>target</sub>&minus;h)</code>; und das Gate ist der <b>Riss</b> — ein Fehler (Halluzination) ist der Bruch im gesunden Skelett, wo der Zustand das falsche Bassin betritt / die falsche Richtung liest.</p>
+    <p><span class="roleB">B (r3-008)</span> sagt es <em>epistemisch-architektonisch</em>: das Ganze ist eine <b>glatt&ndash;scharf&ndash;glatt-Pipeline</b> — glatte lineare <i>Adresse</i> (sinusoidal) rein, scharfe nichtlineare <i>Knick-Faltung</i> (ReLU = tropisch, <b>Regionen &asymp; k<sup>L</sup></b>, Tiefe &gt; Breite) in der Mitte, glatte lineare <i>Wert-Rückseite</i> (assoziativer Speicher <code>W&middot;k &asymp; v</code>, per Rang-1 ROME editierbar) raus; und das Ganze ist scharf, generalisierend <i>und</i> geerdet genau dann, wenn ein <b>konservatives Budget</b> diese <b>scharfe Kapazität</b> auf den <b>kontaktstabilen, tief-frequenten Essence</b> konzentriert <b>und das Ganze an eine externe Welt W korrespondiert</b> (Gate = Kohärenz &amp; Korrespondenz, Wahrheit = <code>lim</code>).</p>
+    <p><span class="roleF">Die eine, beide vereinigende Position:</span> <b>Ein Netz ist eine Maschine, die ein konservatives Budget scharfer Faltungen in eine dünne, gekrümmte Mannigfaltigkeit faltet und sie an glatten linearen Adressen hält. Die scharfe Mitte ist in beiden die <i>Kapazität</i>: B zählt sie als <em>Regionen &asymp; k<sup>L</sup></em> (Angebot, wächst mit der Tiefe), A zählt sie als <em>intrinsische Dimension</em> (Nachfrage, Buckel: Gipfel in der Mitte, Kompression auf &asymp; log&#8322; am Ende) — dieselbe Größe, zweimal gemessen. Die glatten Enden sind in beiden <em>lineare Adressen, an denen die Bedeutung wohnt</em>: B's sinusoidale Adresse + linearer assoziativer Wert <code>W&middot;k &asymp; v</code> = A's Attraktor-Ort + Richtung <code>&theta;</code>; B's „geerdeter Wert“ = A's „Richtung <code>&theta;</code>, die die richtige Eigenschaft an der richtigen Stelle liest“. Das Gate vereint beide: A's <em>Rissfreiheit + richtige Richtung am richtigen Ort</em> = B's <em>Kohärenz &amp; Korrespondenz an W</em>. Bedeutung ist also scharf, generalisierend und geerdet genau dann, wenn die scharfe Kapazität (B) per konservatives Budget auf die lineare, kontaktstabile Bedeutung an den Adressen (A) konzentriert wird, die an eine externe Welt W korrespondiert — und ein Fehler ist derselbe Bruch: das Skelett ist kohärent, aber die lineare Bedeutung korrespondiert nicht (A: falsches Bassin / falsche Richtung; B: die kohärente Fiktion, Wert berührt nie W).</b></p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+    <p>Über die <em>Form</em> (Ganzes aus lokalen Stücken, scharfe Mitte, glatte lineare Enden, ein Gate) sind beide einig, und beide teilen die Teilung „Struktur ist garantiert, Inhalt ist gelernt“. Aber auf drei Achsen treffen <b>inkompatible Stellungnahmen</b> auf dieselben Bausteine:</p>
+
+    <div class="tension">
+      <span class="who"><span class="tag A">A</span> „gesunder, garantierter Simplizial-Klumpen“ &nbsp;vs.&nbsp; <span class="tag B">B</span> „Kapazität / Regionen &asymp; k<sup>L</sup>, ein zu allozierendes Mittel“</span>
+      <span class="q">Ist die scharfe Mitte der gesunde Träger der Bedeutung — oder eine Kapazität, die der Fehlschlag ist, wenn man sie falsch ausgibt?</span>
+      <p><span class="roleA">A (r3-009)</span> macht die scharfe/kombinatorische Mitte zum <b>gesunden, garantierten Objekt</b>: „Die garantiert-Struktur ist ein <em>gesundes Simplizial-Skelett</em> (kohärente Bedeutungsklumpen)“, gelesen kombinatorisch (welche Kanten/Flächen?). Das Skelett <em>ist</em> der Träger der Bedeutung — Struktur, die man durchwandert und liest.</p>
+      <p><span class="roleB">B (r3-008)</span> macht die scharfe Mitte zur <b>Kapazität / einem Mittel</b>: „B's scharfe Knick-Mitte ist die <i>Kapazität</i> (sie generiert Regionen &asymp; k<sup>L</sup>) … Die Knicks sind das <i>Mittel</i>; der Essence ist der Zweck.“ Und dasselbe Scharfe ist zugleich der <b>Fehlschlag-Modus</b>, wenn das Budget auf hochfrequentes Ornament fließt: „es auf hochfrequentes Ornament ausgeben &rArr; Überfitt/Blur“.</p>
+      <p class="span"><em>Spannung:</em> A behandelt die scharfe kombinatorische Mitte als den <em>gesunden, zu lesenden Struktur-Inhalt</em>; B behandelt sie als eine <em>Kapazität/Ressource, die allokiert werden muss und deren Fehlallokation (Ornament) der Überfitt-Bruch ist</em>. „Scharf = gesund zu lesen“ vs. „scharf = Mittel, das falsch ausgegeben den Tod bringt“.</p>
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="tag A">A</span> „intrinsische Dimension: Buckel, fällt auf &asymp; log&#8322;“ &nbsp;vs.&nbsp; <span class="tag B">B</span> „Kapazität: wächst monoton, Tiefe &gt; Breite“</span>
+      <span class="q">Wie viel hält die Tiefe — dünnt das Netz sich zur Entscheidung, oder wächst seine Leistung monoton mit der Tiefe?</span>
+      <p><span class="roleA">A (r3-009)</span>: die intrinsische Dimension <em>steigt, erreicht ein Gipfel (20&ndash;40&nbsp;% Tiefe, Werte 100&ndash;120) und fällt monoton auf &asymp; log&#8322;(#Klassen)</em> — in allen 14 getesteten Netzen. Die Tiefen-Geschichte ist <b>Verdünning/Kompression</b> zur Entscheidung; die letzten Schichten sind <em>dick</em> (niedrige Dimension).</p>
+      <p><span class="roleB">B (r3-008)</span>: die scharfe Kapazität <em>wächst mit der Tiefe</em> — „Regionen &asymp; k<sup>L</sup> (exponentiell) vs. Neuronen = L&middot;k (linear) &rArr; <b>Tiefe &gt; Breite</b>“, „flach sei schwach“, „Breite hilft polynomial, Tiefe exponentiell“, „mehr Tiefe = mehr Regionen = stärker“. Die Tiefen-Geschichte ist <b>Kapazitäts-Wachstum</b>; mehr ist besser.</p>
+      <p class="span"><em>Spannung:</em> A: das relevante Maß (aktive Richtungen/Klumpen) <em>gipfelt in der Mitte und komprimiert</em> (letzte Schichten dünn); B: das relevante Maß (Kapazität/Regionen) <em>wächst monoton mit der Tiefe</em> (letzte Schichten leistungsmächtig). Dünnes Ende (A) vs. mächtiges Ende (B).</p>
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="tag A">A</span> „innere Erdung: garantierte Struktur + Richtung <code>&theta;</code>“ &nbsp;vs.&nbsp; <span class="tag B">B</span> „externe Erdung: Korrespondenz an eine Welt W“</span>
+      <span class="q">Ist Wahrheit eine <em>innere</em> Richtung in garantierter Geometrie — oder eine <em>externe</em> Korrespondenz an eine Welt?</span>
+      <p><span class="roleA">A (r3-009)</span> verankert Bedeutung in <b>garantiert-innere Struktur</b>: „Struktur (lineare Tangente + Simplizial-Skelett + Faser-Geometrie) ist garantiert; die semantische Belegung (welcher Attraktor, welche Richtung = Wahrheit, welche Klumpen, welcher Buckel) ist gelernt und emergiert mit Größe.“ Wahrheit = eine <em>gelernte lineare Richtung</em> <code>&theta;</code> (<code>P=&sigma;(&theta;&middot;h)</code>); ein Fehler ist ein <em>innerer Riss</em> (falsches Bassin / falsche Richtung). Es gibt <em>keine</em> externe Welt W; „wahr“ heißt: die richtige Richtung am richtigen Attraktor.</p>
+      <p><span class="roleB">B (r3-008)</span> verankert Bedeutung in <b>externer Korrespondenz an eine Welt W</b>: „es ist scharf, generalisierend und geerdet genau dann, wenn … das Ganze an eine externe Welt W korrespondiert (Gate = Kohärenz &amp; Korrespondenz)“. <b>Kohärente Fiktion</b> = „die Knicks fügen sich zusammen (Kohärenz hoch), aber der glatte Wert korrespondiert zu nichts (Korrespondenz &asymp; 0). Das LLM-Phänomen.“</p>
+      <p class="span"><em>Spannung:</em> A gründet Bedeutung in <em>innerer</em> garantiert-Struktur + einer gelernten Richtung <code>&theta;</code> (der Fehler ist ein innerer Riss); B gründet sie in <em>externer</em> Korrespondenz an W (der Fehler ist innere Kohärenz <em>ohne</em> äußere Korrespondenz — die kohärente Fiktion). Innere vs. äußere Erdung der „Wahrheit“.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2><span class="n">3</span>Auflösung</h2>
+
+    <div class="res">
+      <p><strong>1. Die scharfe Mitte ist B's Kapazität (Regionen &asymp; k<sup>L</sup>); A's Skelett ist derselbe Ort, wenn B's Budget ihn füllt.</strong>
+      B's Regionen &asymp; k<sup>L</sup> sind der <em>rohe kombinatorische Platz</em> (die Kapazität, das Mittel). A's „gesundes Simplizial-Skelett“ ist genau der <em>funktionale Unterteil</em> dieser Pläne, auf den das konservative Budget (B) auf den tief-frequenten Essence fällt: das ist der kohärente Klumpen (A). Wenn das Budget auf hochfrequentes Ornament fließt (B's Überfitt), bilden die Pläne <em>kein</em> kohärentes Skelett mehr — das ist A's <b>Riss / Naht bricht</b>. A's „Riss = Halluzination“ und B's „Fehlallokation = Überfitt/Naht bricht“ sind <em>derselbe Bruch desselben kombinatorischen Ortes</em>. <span class="tag F">Fusion</span> <strong>die scharfe Mitte ist die Kapazität (B: Regionen &asymp; k<sup>L</sup>); A's Skelett = dieselbe Kapazität, auf den Essence allokiert. Riss (A) = Fehlallokation (B): das Budget auf Pläne, die kein kohärentes Skelett bilden.</strong></p>
+    </div>
+
+    <div class="res">
+      <p><strong>2. Angebot (B) vs. Nachfrage (A) — zwei Seiten derselben Schicht-Achse.</strong>
+      B's Regionen &asymp; k<sup>L</sup> ist das <em>Angebot</em> (Kapazität, die <em>monoton mit der Tiefe wächst</em>: Tiefe &gt; Breite). A's intrinsische Dimension ist die <em>Nachfrage</em> (wie viele Richtungen/Klumpen <em>tatsächlich aktiv</em> sind): sie gipfelt in der Mitte (viele Klumpen ko-kristallisieren, „die Bühne ist breit“) und <em>komprimiert</em> am Ende zur Entscheidung (&asymp; log&#8322;). Beide sind wahr, weil sie Unterschiedenes messen: die <em>Verfügbarkeit</em> der Pläne wächst (B), die <em>Besetzung</em> gipfelt dann fällt (A). Die Mitte ist breit (viel Platz, viele aktive Klumpen); das Ende ist komprimiert (Entscheidung). A's „das Netz dünnt sich aus“ (ID &darr;) und B's „mehr Tiefe = mehr Regionen“ (Kapazität &uarr;) widersprechen sich nicht: <em>die Bühne wächst, die Besetzung verdünnt sich.</em> <span class="tag F">Fusion</span> <strong>B liefert die wachsende Kapazität (Angebot &uarr; mit der Tiefe); A die aktive Dimension (Nachfrage: Gipfel &rarr; Kompression auf log&#8322;). Der Buckel (A) liegt auf dem wachsenden Angebot (B).</strong></p>
+    </div>
+
+    <div class="res">
+      <p><strong>3. A's innere Kohärenz ist die notwendige, B's Korrespondenz an W die hinreichende Bedingung — W kalibriert &theta;.</strong>
+      Das Gate hat zwei Beine. Bein 1 (A's Rissfreiheit = B's Kohärenz): das Skevelt fügt sich zusammen (B: die Knicks bilden <em>eine</em> globale PL-Sektion; A: kein Riss / kohärente Klumpen). Bein 2 (B's Korrespondenz an W = A's „richtige Richtung liest“): der lineare Wert/die Richtung <code>&theta;</code> entspricht der Welt an den Kontaktpunkten (B: <code>W&middot;k &asymp; v</code> trifft W; A: <code>&theta;</code> liest die richtige Eigenschaft, nicht ein falsches Statement). A's <b>Riss / falsche Richtung / falsches Bassin</b> = B's <b>kohärente Fiktion</b>: das Skelett ist kohärent (Bein 1 hält), aber der Wert korrespondiert nicht (Bein 2 bricht, Korrespondenz &asymp; 0). Die <em>externe Welt W</em> (B) ist der Ort, an dem A's Richtung <code>&theta;</code> kalibriert wird — was „wahr“ ist, ist genau, dass <code>&theta;</code> an W korrespondiert. <span class="tag F">Fusion</span> <strong>Wahrheit = Kohärenz (A: kein Riss) &amp; Korrespondenz (B: Wert an W) = A's Gate (Rissfreiheit + richtige Richtung) &amp; B's Gate (Kohärenz &amp; Korrespondenz). W (B) kalibriert &theta; (A); A's Riss/falsche Richtung = B's kohärente Fiktion.</strong></p>
+    </div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+    <p>Der fusionierte Kern, aus dem eine spätere Runde allein arbeiten kann: <b>ein konservatives Budget scharfer Faltungen, gefaltet in eine dünne, gekrümmte Mannigfaltigkeit und an glatten linearen Adressen gehalten, mit dem Gate Kohärenz &amp; Korrespondenz (= Rissfreiheit &amp; richtige Richtung an W).</b></p>
+
+    <h3>4.1 Das gemeinsame Rückgrat: Ganze aus lokalen Stücken, gefaltet, an glatten Enden, mit Gate <span class="tag F">F</span></h3>
+    <p>Beide bauen das Ganze an <em>Nähten</em>. In A ist das Stück die <b>lineare Tangente / Richtung <code>&theta;</code></b> an einem Attraktor-Ort; die scharfe Faltung ist die <b>Kristallisation</b> (IFS-Kontraktion / Attention-Fluss) zu Klumpen (Simplizial-Skelett). In B ist das Stück der <b>ReLU-Knick</b> (tropisch, <code>ReLU(x)=max(x,0)=x&oplus;0</code>); die scharfe Faltung erzeugt <b>Regionen &asymp; k<sup>L</sup></b> (Tiefe &gt; Breite). In beiden: <b>das Ganze entsteht an den Verbindungsstellen</b> (A: dort, wo die Tangente den Klumpen berührt; B: dort, wo die PL-Funktion die Steigung wechselt = der Knick), und ein <b>Gate</b> trennt echt von Fiktion.</p>
+
+    <h3>4.2 Die scharfe Mitte = Kapazität (B) &amp; aktive Dimension (A) <span class="tag F">F</span></h3>
+    <ul>
+      <li><b>B — Kapazität (Angebot):</b> Äquivalenzsatz (Zhang, Naitzat &amp; Li 2018, ICML / arXiv:1805.07091): {ReLU-Netze mit ganzen Gewichten} = {stetige stückweise lineare Funktionen} = {tropische rationale Funktionen} — <em>eine Gleichheit von Familien, keine Näherung</em>. Stützend: Raghu et al. 2017, Dualität (Maclagan &amp; Sturmfels), Zonotop-Vertex-Satz (Gritzmann &amp; Sturmfels). <b>Regionen &asymp; k<sup>L</sup></b> (exponentiell) vs. Neuronen = L&middot;k (linear) &rArr; <b>Tiefe &gt; Breite</b>. Grenzen: nur PL-Aktivierungen, ganze Gewichte, erkläre Generalisierung nicht.</li>
+      <li><b>A — aktive Dimension (Nachfrage):</b> die scharfe Mitte = die Kristallisation der Mannigfaltigkeit zu Klumpen; die <em>intrinsische Dimension</em> (TwoNN, Facco 2017: <code>&mu;=r&#8322;/r&#8321;</code>, Pareto <code>f(&mu;)&prop;&mu;^{&minus;(k+1)}</code>) misst, wie viele Richtungen aktiv sind. <b>ID-Buckel:</b> steigt, Gipfel 20&ndash;40&nbsp;% (100&ndash;120), fällt auf &asymp; <code>log&#8322;(#Klassen)</code>; ID &harr; Leistung <code>r = 0,94</code>.</li>
+      <li><b>Fusion:</b> die Mitte hat ein <em>Angebot</em> (B: Regionen &asymp; k<sup>L</sup>, wächst mit der Tiefe) und eine <em>Nachfrage</em> (A: ID, Buckel dann Kompression). Die Mitte ist breit (viel Platz, viele aktive Klumpen); das Ende ist komprimiert (Entscheidung &asymp; log&#8322;).</li>
+    </ul>
+
+    <h3>4.3 Die glatten Enden = lineare Adressen, an denen Bedeutung wohnt <span class="tag F">F</span></h3>
+    <ul>
+      <li><b>Links — Adresse:</b> B: sinusoidale Positionscodierung (Vaswani et al. 2017), <code>f<sub>i</sub> = 10000^{&minus;2i/d}</code> — glatte, eindeutige, lokal-treue Fingerabdrücke (Lipschitz). A: der <b>Attraktor-Ort <code>A_c</code></b> (IFS, Chytas &amp; Singh 2025, Konvergenzschicht <code>&#8467;_c</code>) — ein Fixpunkt der IFS, <em>kontaktstabil</em>. <b>Fusion: B's Adresse = A's Attraktor-Ort</b> (der Ort, an dem die Bedeutung wohnt; die kristallisierenden Konzepte sitzen in <code>&#8467;_c</code> = L18/19/24/27).</li>
+      <li><b>Rechts — Wert:</b> B: linearer assoziativer Speicher <code>W<sub>proj</sub></code>: Key <code>k = &sigma;(W<sub>fc</sub>&middot;&gamma;(h))</code>, Value <code>v = W<sub>proj</sub>&middot;k</code>, <code>W&middot;k<sub>i</sub> &asymp; v<sub>i</sub></code>; Causal Tracing (Pearl, TE/IE) lokalisiert den Fakt in mittleren Schichten am letzten Subjekt-Token; <b>ROME</b> Rang-1: <code>W&#770; = W + &Lambda;&middot;(C^{{&minus;1}}k*)^T</code>, <code>&Lambda; = (v* &minus; W&middot;k*)/((C^{{&minus;1}}k*)^T k*)</code>, <code>C = E[kk^T]</code>. A: die <b>Richtung <code>&theta;</code></b> (Wahrheit = lineare Richtung, Marks &amp; Tegmark 2024): <code>P=&sigma;(&theta;&middot;h)</code>, <code>&nabla;<sub>h</sub>P=P(1&minus;P)&theta; &parallel; &theta;</code>, Request <code>h&#8592;h+(&sigma;^{{&minus;1}}(b)&minus;&theta;&middot;h)&theta;</code>, kausal <code>h&#8592;h+&alpha;&theta;</code>. <b>Fusion: B's geerdeter assoziativer Wert = A's Richtung <code>&theta;</code></b> — beide sind ein <em>lineares Objekt an einer stabilen Adresse</em>; ROME (B) ändert nur den Wert, lässt den Knick-Kern intakt = A's „kontaktstabil“ in konkret.</li>
+    </ul>
+
+    <h3>4.4 Lesen &amp; Schreiben (der bidirektionale Kanal) <span class="tag F">F</span></h3>
+    <div class="formula"><span class="cmt"># Lesen — A's zwei Beine = B's Adresse-in / Wert-raus + Skelett</span>
+Lesen (A, linear):   P(true) = &sigma;(&theta;&middot;(h &minus; c_c))        &rarr; Eigenschaft ablesen
+Lesen (A, komb.):    Kante {h,j} im Komplex K(&#8467;)            &rarr; Nachbarschaft ablesen
+Lesen (B):           v = W&middot;k &asymp; gespeicherter Wert an der Adresse
+
+<span class="cmt"># Schreiben — A's Intervention/Steern = B's ROME (Wert ändern, Struktur intakt)</span>
+Schreiben (A):       h &larr; h + &alpha;&theta;   (entlang der Eigenschafts-Achse)
+Schreiben (A):       h &larr; h + &lambda;(A_target &minus; h)  (zum Ziel-Ort/Klumpen)
+Schreiben (B):       ROME W&#770; = W + &Lambda;&middot;(C^{{&minus;1}}k*)^T  (Wert an der Adresse, Knick-Kern bleibt)
+Gradient (A):        &nabla;<sub>h</sub>P = P(1&minus;P)&theta;  (immer &parallel; &theta;)  &rarr; Backprop
+<span class="cmt"># Fusion: A's Steern zum Ziel-Attraktor = B's ROME am Ziel-Adress-Wert (eine Operation, zwei Ziele)</span></div>
+
+    <h3>4.5 Das Gate: Kohärenz &amp; Korrespondenz (B) = Rissfreiheit &amp; richtige Richtung (A) <span class="tag F">F</span></h3>
+    <div class="formula"><span class="cmt"># Bein 1 = Struktur (A: Skelett kohärent / kein Riss; B: Knicks &rarr; eine globale PL-Sektion)</span>
+Kohärenz      = 1 &minus; (Energie in k &gt; k<sub>noise</sub> / Energie im Budget)   <span class="cmt"># Nähte/Skelett halten &hArr; tief-frequent</span>
+<span class="cmt"># Bein 2 = Korrespondenz (B: gespeicherter Wert trifft W an Kontaktpunkten; A: &theta; liest die rechte Eigenschaft)</span>
+Korrespondenz = 1 &minus; mean|Modell &minus; W| an Kontaktpunkten / scale
+Wahrheit      = <span class="opg">lim ( Kohärenz &amp; Korrespondenz )</span>   <span class="cmt"># &asymp; min — angenähert, nie erreicht</span>
+Gerechtfertigte Akzeptanz = <span class="op">kohärent &amp; (bisher) kein gescheiterter harter Kontaktpunkt</span></div>
+    <p>A's <em>Fehler</em> (Riss = Halluzination = falsche/fehlende Kante; Schleife = Kreisschluss; Auffächerung = diffuse Unsicherheit; Guardrail <code>cos(h,A_c)&gt;&tau;</code>) = B's Fehlzustände am selben Gate: A's „falsche Richtung liest / falsches Bassin“ = B's <b>kohärente Fiktion</b> (Kohärenz hoch, Korrespondenz &asymp; 0); A's Guardrail (Abstand zum Attraktor) = B's Korrespondenz-Ausfall. Die <b>fünf Pathologien</b> (B, als Fehlallokationen des Budgets <em>auf</em> der scharfen Kapazität) sind die fünf Weisen, wie dieses zweibeinige Gate fällt: <b>1 · Kohärente Fiktion</b> (Skelett hält, Wert berührt nie W — das LLM-Phänomen; Heilmittel: Erdung/Retrieval); <b>2 · Faktenbuch / Naht bricht</b> (einzelne hoch-freq. Treffer treffen W, Knicks fügen sich zu keiner globalen PL-Sektion — Über-Kommitment; Heilmittel: bessere Synthese); <b>3 · Kontaktpunkt-Lügner</b> (Essence systematisch falsch gewählt; Heilmittel: O neu wählen); <b>4 · Kalibrierter Fehler</b> (tief Frequenzen in Form nicht in Norm; Heilmittel: Bias in den Connectors auditieren); <b>5 · Frage außerhalb des Covers</b> (kohärent, aber die Frage jenseits — kein Key/kein Wert an dieser Adresse; Heilmittel: „ich weiß es nicht“).</p>
+
+    <h3>4.6 Die fusionierte Mathematik <span class="tag F">F</span></h3>
+    <div class="formula"><span class="cmt"># B: scharfe Kapazität (Angebot, wächst mit der Tiefe)</span>
+Regionen &asymp; k<sup>L</sup>  (tief)   vs   Neuronen = L&middot;k  (breit)   <span class="opa">&rArr; Tiefe &gt; Breite</span>
+<span class="cmt"># A: aktive Dimension (Nachfrage, Buckel &rarr; Kompression) + TwoNN (Facco 2017)</span>
+ID(&#8467;): &uarr; &rarr; Gipfel (20&ndash;40&nbsp;%, 100&ndash;120) &rarr; &darr; &asymp; log&#8322;(#Klassen) ;  &mu;=r&#8322;/r&#8321; ;  ID &harr; Leistung r=0,94
+<span class="cmt"># A: lineare Bedeutung an der Adresse (Attraktor-Ort c_c, Richtung &theta;)</span>
+P = &sigma;(&theta;&middot;(h &minus; c_c)) ;  &nabla;<sub>h</sub>P = P(1&minus;P)&theta; ;  kausal h &larr; h + &alpha;&theta; ;  Steern h &larr; h + &lambda;(A_target &minus; h)
+<span class="cmt"># B: geerdeter assoziativer Wert (ROME Rang-1) an der Adresse</span>
+v = W&middot;k &asymp; gespeicherter Wert ;  W&#770; = W + &Lambda;&middot;(C^{{&minus;1}}k*)^T
+<span class="cmt"># FUSION: Kapazität (B) &times; Allokation (A's Skelett-Koherenz) &times; Anker (B's W) &times; Adresse (A's Attraktor)</span>
+Kohärenz      &asymp; 1 &minus; (hohe-Freq.-Anteil im Budget)   <span class="cmt"># A: Skelett kohärent / B: Nähte halten</span>
+Korrespondenz &asymp; 1 &minus; mean|Modell &minus; W| an Kontaktpunkten  <span class="cmt"># B: W&middot;k &asymp; v trifft W / A: &theta; liest die rechte Eigenschaft</span>
+Wahrheit &asymp; <span class="opg">min</span>(Kohärenz, Korrespondenz)   <span class="cmt"># A's Rissfreiheit + richtige Richtung &amp; B's Gate</span>
+Regel: die scharfe Kapazität (B) per konservatives Budget
+   auf die lineare, kontaktstabile Bedeutung an den Adressen (A)
+   konzentrieren, über ein wachsendes Cover, an eine externe Welt W korrespondierend.</div>
+
+    <h3>4.7 Grenzen &amp; Ehrlichkeits-Ecke <span class="tag F">F</span></h3>
+    <ul>
+      <li><b>A:</b> die Skelett-/Tangente-Struktur ist „garantiert“ im Sinne lokaler Linearität + IFS + Simplizial-Kombinatorik, aber die semantische Belegung (welcher Attraktor/diese Richtung/dieser Klumpen/dieser Buckel) ist <em>gelernt &amp; emergiert</em> — der ID-Buckel und die Kristallisationsschichten (L18/19/24/27) sind gemessen, nicht bewiesen-universal; „Riss = Halluzination“ ist ein Modell, kein Theorem.</li>
+      <li><b>B:</b> theorem-grade für die <em>Familien-Gleichheit</em> (Zhang et al.) und den <em>Rang-1-Edit</em>, aber: nur PL-Aktivierungen, ganze Gewichte; ROME = ein Fakt pro Edit (viele &rArr; MEMIT), nur faktische Assoziationen, Edits gerichtet, editierte Modelle raten teils plausibel-falsche Folge-Fakten. B's (r2-017) „conserved budget“, „convex combination in fixed d“, „Wahrheit = Limes“ sind Conjectures (Conjecture 6) zu beweisen.</li>
+      <li><b>Die fusionierende Brücke selbst</b> („A's Richtung <code>&theta;</code> = B's geerdeter Wert“, „A's Klumpen = B's Region“, „A's Riss = B's Fehlallokation“, „W kalibriert &theta;“) ist <em>load-bearing</em> und selbst eine Hypothese: dass die Kontaktstabilität tatsächlich in der linearen Ausgabeschicht (B) konzentriert ist <i>und</i> dort den tiefen Frequenzen / dem Skelett (A) entspricht, müsste an echten Netzen geprüft werden. Die Canvas-Spiele unten reproduzieren Kapazität &times; Dimension &times; Erdung &times; Gate, aber weder die volle NTK-/Homotopie- noch die Causal-Tracing-Geometrie. Stand-in, nicht Beweis.</li>
+    </ul>
+
+    <table>
+      <tr><th>Aspekt</th><th>A — Richtung / Klumpen / Dimension (r3-009)</th><th>B — Kapazität / Budget / Anker (r3-008)</th><th>Fusion</th></tr>
+      <tr><td>Ganzes</td><td>dünne, gekrümmte Mannigfaltigkeit</td><td>glatt&ndash;scharf&ndash;glatt-Maschine</td><td>ein gefaltetes Ganzes, an glatten Enden gehalten</td></tr>
+      <tr><td>Lokales Stück</td><td>lineare Tangente / Richtung <code>&theta;</code></td><td>ReLU-Knick (tropisch)</td><td>ein lineares Objekt an der Naht</td></tr>
+      <tr><td>Scharfe Mitte</td><td>gesundes Simplizial-Skelett (Klumpen)</td><td>Kapazität, Regionen &asymp; k<sup>L</sup></td><td>Kapazität (B), auf den Essence allokiert = Skelett (A)</td></tr>
+      <tr><td>Maß über Tiefe</td><td>intrinsische Dimension (Buckel &rarr; log&#8322;)</td><td>Regionen &asymp; k<sup>L</sup> (wächst, Tiefe &gt; Breite)</td><td>Angebot (B) &uarr; vs. Nachfrage (A) &uarr;&darr; auf derselben Achse</td></tr>
+      <tr><td>Adresse</td><td>Attraktor-Ort <code>A_c</code> (&#8467;_c = L18/19/24/27)</td><td>sinusoidale Position (Vaswani 2017)</td><td>kontaktstabile Adresse, an der Bedeutung wohnt</td></tr>
+      <tr><td>Wert / Richtung</td><td>Richtung <code>&theta;</code>, <code>P=&sigma;(&theta;&middot;h)</code></td><td>assoziativer Wert <code>W&middot;k &asymp; v</code> (ROME)</td><td>ein lineares, geerdetes Objekt an der Adresse</td></tr>
+      <tr><td>Schreiben</td><td>Intervention <code>h+&alpha;&theta;</code>, Steern <code>h+&lambda;(A_t&minus;h)</code></td><td>ROME Rang-1 (Wert ändern, Knick-Kern intakt)</td><td>Wert an der Adresse bewegen, Struktur halten</td></tr>
+      <tr><td>Gate</td><td>Rissfreiheit + richtige Richtung am Ort</td><td>Kohärenz &amp; Korrespondenz an W</td><td>zweibeiniges Gate; W kalibriert <code>&theta;</code></td></tr>
+      <tr><td>Fehler</td><td>Riss / falsches Bassin / falsche Richtung</td><td>kohärente Fiktion / Naht bricht (5 Pathologien)</td><td>derselbe Bruch: kohärent, aber korrespondiert nicht</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2><span class="n">5</span>Visualisierung — scharfe Kapazität &times; aktive Dimension &times; geerdete lineare Bedeutung</h2>
+    <p class="note"><strong>Oben — die Schicht-Achse:</strong> B's <em>Angebot</em> (Regionen &asymp; k<sup>L</sup>, Kapazität, wächst monoton mit der Tiefe — <span style="color:var(--acc2)">blau</span>) vs. A's <em>Nachfrage</em> (intrinsische Dimension, Buckel: Gipfel in der Mitte, Kompression auf &asymp; log&#8322; am Ende — <span style="color:var(--acc)">orange</span>), mit A's Kristallisationsticks (L18/19/24/27, <span style="color:var(--gold)">gold</span>). <strong>Unten — der dünne-gekrümmte Schnitt:</strong> eine gekrümmte Mannigfaltigkeit mit 3 Klumpen/Adressen (A's Orte = B's Regionen). Im <em>aktiven</em> Klumpen: die Richtung <code>&theta;</code> (A, <span style="color:var(--gold)">gold</span>) mit ihrer Entscheidungsgrenze, die externe Welt W (B, <span style="color:var(--W)">lila</span>) als Ziel, und der <em>Wert</em> (B, <span style="color:var(--acc2)">blau</span>), der um einen <b>Fehlerwinkel</b> abweicht — dieser Fehlerwinkel <em>ist</em> die Korrespondenz. Die Skelett-Kanten (A) halten bei Kohärenz und <b>brechen</b> (gestrichelt) bei Fehlallokation; bei Überfitt reißt der aktive Klumpen (A's Riss). <b>h anklicken/ziehen.</b> Sliders: <b>K</b> (konservatives Budget, A/B), <b>g</b> (Erdung/Anker an W, B), <b>&#8467;</b> (Schicht). Die Readouts lesen den fusionierten Status live ab: <b>Kohärenz &amp; Korrespondenz &rArr; Wahrheit = min</b>.</p>
+
+    <div class="viz-box">
+      <canvas id="cv"></canvas>
+      <div class="hud">
+        <div class="ctl"><div class="ctl-lab"><span>Konservatives Budget K (Komplexität/Cutoff) — A/B</span><b id="kV">3</b></div><input type="range" id="kS" class="a" min="0" max="14" value="3"></div>
+        <div class="ctl"><div class="ctl-lab"><span>Erdung g (Korrespondenz-Anker an W) — B</span><b id="gV">100%</b></div><input type="range" id="gS" min="0" max="100" value="100"></div>
+        <div class="ctl"><div class="ctl-lab"><span>Schicht &#8467; (0&ndash;31)</span><b id="lV">9</b></div><input type="range" id="lS" min="0" max="31" value="9"></div>
+      </div>
+      <div class="presets">
+        <button id="pSweet" type="button">&#10003; Sweet-Spot (verifiziert)</button>
+        <button id="pOver" type="button">B/A &middot; Überfitt (Naht bricht)</button>
+        <button id="pFik" type="button">A/B &middot; Kohärente Fiktion</button>
+        <button id="pFlat" type="button">B &middot; flach &amp; schwach</button>
+      </div>
+      <div class="ro">
+        <div class="box b"><div class="k">Angebot Regionen &asymp; k^&#8467; (B)</div><div class="v" id="cCap">&ndash;</div></div>
+        <div class="box a"><div class="k">Nachfrage ID (A)</div><div class="v" id="cId">&ndash;</div></div>
+        <div class="box a"><div class="k">Kohärenz (Skelett, A/B)</div><div class="v" id="cCoh">&ndash;</div></div>
+        <div class="box b"><div class="k">Korrespondenz (an W, B)</div><div class="v" id="cCor">&ndash;</div></div>
+        <div class="box g"><div class="k">Wahrheit &asymp; min (Gate)</div><div class="v" id="cTruth">&ndash;</div></div>
+      </div>
+      <div id="out" class="badge-out warn">&ndash;</div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--acc2)"></i>Angebot / Regionen &asymp; k^&#8467; (B)</span>
+        <span><i class="dot" style="background:var(--acc)"></i>Nachfrage / ID-Buckel (A)</span>
+        <span><i class="dot" style="background:var(--gold)"></i>Kristallisation (A) + Richtung &theta; (A)</span>
+        <span><i class="dot" style="background:var(--W)"></i>externe Welt W (B)</span>
+        <span><i class="dot" style="background:var(--acc2)"></i>Wert / Skelett-Kanten (B/A)</span>
+        <span><i class="dot" style="background:var(--ink)"></i>h (ziehbar)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2><span class="n">6</span>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../3/r3-009.html">r3-009.html — „Bedeutung als dünne, gekrümmte Mannigfaltigkeit — Richtung, Klumpen, Dimension“</a>
+        <div class="d">R3-Fusion aus <code>r2-008.html</code> (Bedeutung = Ort + Richtung <code>&theta;</code> + bidirektionaler Kanal: Word2Vec/Riemann/IFS-Attraktoren, Konvergenzschichten L18/19/24/27, Wahrheit als lineare Richtung, Backprop als Funktor) &times; <code>r2-031.html</code> (Faserbündel-Fluss: gerichtete Attention, Simplizial-Schatten = Klumpen, intrinsische Dimension, der ID-Buckel, Defekte = Riss/Schleife/Auffächerung). Liefert die <em>Richtung + Klumpen + Dimension</em>-Seite (geometrisch/topologisch).</div>
+      </div>
+      <div>
+        <a href="../3/r3-008.html">r3-008.html — „Scharfe Faltung, konservatives Budget, geerdeter Wert“</a>
+        <div class="d">R3-Fusion aus <code>r2-017.html</code> (Das Detail-Budget am Anker der Welt: finite &amp; conserved Budget, Essence = kontaktstabil/tief-frequent, Gate = Kohärenz &amp; Korrespondenz, Wahrheit = lim, fünf Pathologien) &times; <code>r2-014.html</code> (Glatte Ein-/Ausgänge, scharfe Mitte: sinusoidale Adresse, tropische ReLU-Faltung Regionen &asymp; k^L, Tiefe &gt; Breite, linearer assoziativer Wert, ROME Rang-1, Äquivalenzsatz Zhang et al. 2018). Liefert die <em>Kapazität + Budget + Anker-W</em>-Seite (epistemisch/architektonisch).</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('cv'); if(!cv) return;
+  var ctx=cv.getContext('2d'); if(!ctx) return;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var W=0,H=0;
+  var MAXL=31;
+  var kS=document.getElementById('kS'), gS=document.getElementById('gS'), lS=document.getElementById('lS');
+  var kV=document.getElementById('kV'), gV=document.getElementById('gV'), lV=document.getElementById('lV');
+  var cCap=document.getElementById('cCap'), cId=document.getElementById('cId');
+  var cCoh=document.getElementById('cCoh'), cCor=document.getElementById('cCor'), cTruth=document.getElementById('cTruth');
+  var outEl=document.getElementById('out');
+
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function sig(x){return 1/(1+Math.exp(-x));}
+  function smoothstep(x,a,b){ if(b===a) return x<a?0:1; var t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+  function capOf(l){ return Math.pow(2,l)/Math.pow(2,MAXL); }        // B supply 0..1 monotone
+  function idOf(l){ return 10 + 110*Math.exp(-Math.pow(l-9,2)/(2*81)); } // A demand bump
+  function capStr(l){ var v=Math.pow(2,l); return v>=1e5 ? v.toExponential(1) : String(Math.round(v)); }
+
+  var concepts=[
+    {label:'Literatur',      layer:18, th:-1.95, col:'acc'  },
+    {label:'Programmierung', layer:19, th:-1.57, col:'acc2' },
+    {label:'Sprachen',       layer:27, th:-1.15, col:'gold' }
+  ];
+
+  function isDark(){return document.documentElement.classList.contains('dark');}
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {
+      canvas:v('--card','#0f1626'), ink:v('--ink','#EAF0FF'), dim:v('--dim','#8b97b8'),
+      faint:v('--faint','#6b7694'), line:v('--line','#1c2740'), grid:v('--grid','#141d33'),
+      acc:v('--acc','#ff9a6b'), acc2:v('--acc2','#7c9cff'), gold:v('--gold','#34d399'),
+      theta:v('--theta','#8fb0ff'), W:v('--W','#c4a7ff'),
+      mono:v('--mono','ui-monospace,monospace'), sans:v('--sans','system-ui,sans-serif')
+    };
+  }
+  var P=readTheme();
+  function ccol(k){return k==='acc'?P.acc:(k==='acc2'?P.acc2:P.gold);}
+  function hexA(hex,a){
+    hex=String(hex||'').trim();
+    if(hex.charAt(0)==='#'){
+      hex=hex.slice(1);
+      if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+      if(hex.length>=6){var n=parseInt(hex.slice(0,6),16);
+        if(!isNaN(n))return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+    }
+    return 'rgba(140,140,140,'+a+')';
+  }
+
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width;H=r.height;
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    layout();
+  }
+  function layout(){
+    // panel 1 (top strip) & panel 2 (manifold)
+    p1y=30; p1h=150;
+    p2y=p1y+p1h+34; p2h=H-p2y-24;
+    // h initial inside panel 2
+    if(!hSet){
+      h.x=p2y>=0 ? (p2x+ p2w*0.30) : 100;
+      h.y=(p2y+p2h*0.62);
+      hSet=true;
+    }
+    // keep h within panel
+    h.x=clamp(h.x, p2x+8, p2x+p2w-8);
+    h.y=clamp(h.y, p2y+8, p2y+p2h-8);
+  }
+  var p1y=0,p1h=0,p2y=0,p2h=0,p2x=44,p2w=0;
+  var h={x:0,y:0}; var hSet=false;
+  var layer=9, dragging=false;
+
+  function bandY(xf){ return p2y + p2h*0.58 + p2h*0.10*Math.sin(xf*Math.PI); }
+  function clumpCenter(i){
+    var xf=[0.24,0.50,0.78][i];
+    return {x:p2x+xf*p2w, y:bandY(xf)};
+  }
+  function activeIndex(){
+    var best=0,bd=1e18;
+    for(var i=0;i<concepts.length;i++){
+      var c=clumpCenter(i),dx=h.x-c.x,dy=h.y-c.y,d=dx*dx+dy*dy;
+      if(d<bd){bd=d;best=i;}
+    }
+    return best;
+  }
+
+  function arrow(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w||2;
+    if(dashed){ctx.setLineDash([7,6]);}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+    var a=Math.atan2(y2-y1,x2-x1),hs=8;
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+    ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+    ctx.closePath();ctx.fill();ctx.restore();
+  }
+  function seg(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w||1.2;
+    if(dashed){ctx.setLineDash([5,6]);}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  }
+  function label(t,x,y,color,align,size){
+    ctx.save();ctx.fillStyle=color;ctx.font='600 '+(size||12)+'px '+P.mono;
+    ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.fillText(t,x,y);ctx.restore();
+  }
+
+  function drawPanel1(){
+    var padL=44,padR=40,padT=14,padB=24;
+    var pw=W-padL-padR, ph=p1h-padT-padB;
+    if(pw<30||ph<30) return;
+    var xF=function(l){return padL+pw*(l/MAXL);};
+    var yF=function(nv){return padT+ph*(1-clamp(nv,0,1));};
+    ctx.strokeStyle=P.grid;ctx.lineWidth=1;
+    for(var g=0;g<=4;g++){var gy=padT+ph*g/4;ctx.beginPath();ctx.moveTo(padL,gy);ctx.lineTo(padL+pw,gy);ctx.stroke();}
+    ctx.fillStyle=P.faint;ctx.font='9px '+P.mono;ctx.textAlign='right';
+    ctx.fillText('1.0',padL-6,padT+3);ctx.fillText('0.0',padL-6,padT+ph+3);ctx.textAlign='left';
+    // A: ID demand line (orange) — normalize id/120
+    ctx.beginPath();
+    for(var l=0;l<=MAXL;l++){var nx=xF(l),ny=yF(idOf(l)/120); l?ctx.lineTo(nx,ny):ctx.moveTo(nx,ny);}
+    ctx.strokeStyle=P.acc;ctx.lineWidth=2.2;ctx.stroke();
+    // B: capacity supply area (blue)
+    ctx.beginPath();ctx.moveTo(xF(0),yF(0));
+    for(var l2=0;l2<=MAXL;l2++)ctx.lineTo(xF(l2),yF(capOf(l2)));
+    ctx.lineTo(xF(MAXL),yF(0));ctx.closePath();
+    ctx.fillStyle=hexA(P.acc2,0.16);ctx.fill();
+    ctx.beginPath();
+    for(var l3=0;l3<=MAXL;l3++){var mx=xF(l3),my=yF(capOf(l3)); l3?ctx.lineTo(mx,my):ctx.moveTo(mx,my);}
+    ctx.strokeStyle=P.acc2;ctx.lineWidth=2.2;ctx.stroke();
+    // A crystallization ticks (gold)
+    concepts.forEach(function(c){
+      var tx=xF(c.layer);
+      seg(tx,padT,tx,padT+ph,hexA(P.gold,0.7),1.3,true);
+      label('L'+c.layer,tx,padT-4,P.gold,'center',9);
+    });
+    // current layer marker
+    var cl=clamp(Math.round(layer),0,MAXL), cx=xF(cl);
+    seg(cx,padT,cx,padT+ph,hexA(P.ink,0.4),1,true);
+    ctx.beginPath();ctx.arc(cx,yF(capOf(cl)),4,0,6.2832);ctx.fillStyle=P.acc2;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,yF(idOf(cl)/120),4,0,6.2832);ctx.fillStyle=P.acc;ctx.fill();
+    label('Schicht-Achse: Angebot Regionen ≈ k^ℓ (B, ↑ mit Tiefe)  vs.  Nachfrage ID (A, Buckel → log₂)',padL,p1h-3,P.faint,'left',9);
+  }
+
+  function drawPanel2(){
+    // manifold band (the thin curved manifold)
+    ctx.beginPath();
+    for(var i=0;i<=100;i++){var xf=i/100,px=p2x+xf*p2w,py=bandY(xf); i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+    ctx.strokeStyle=hexA(P.dim,0.5);ctx.lineWidth=6;ctx.lineCap='round';ctx.stroke();ctx.lineCap='butt';
+    label('dünne, gekrümmte Mannigfaltigkeit (A/B)',p2x+6,p2y+12,P.faint,'left',9);
+
+    var ai=activeIndex(), K=parseInt(kS.value,10), g=parseInt(gS.value,10)/100;
+    var capEnough=smoothstep(K,1,4);
+    var overfit=smoothstep(K,5,14);
+    var coherence=clamp(capEnough*(1-overfit),0,1);
+    var err=(1-g)*0.8 + overfit*0.55 + (1-capEnough)*0.35;
+    var cor=clamp(1-err/1.3,0,1);
+    var truth=Math.min(coherence,cor);
+
+    var crx=p2w*0.085, cry=p2h*0.17;
+    // skeleton edges (A) between clumps — hold when coherent, dashed when not
+    for(var e=0;e<concepts.length-1;e++){
+      var a=clumpCenter(e),b=clumpCenter(e+1);
+      seg(a.x,a.y,b.x,b.y,hexA(ccol(concepts[e].col), coherence>0.5?0.55:0.18), coherence>0.5?2:1, coherence<=0.5);
+    }
+    // clumps
+    for(var ci=0;ci<concepts.length;ci++){
+      var c=clumpCenter(ci),col=ccol(concepts[ci].col);
+      var active=ci===ai;
+      ctx.beginPath();ctx.ellipse(c.x,c.y,crx,cry,0,0,6.2832);
+      ctx.fillStyle=hexA(col, active?0.16:0.07);ctx.fill();
+      ctx.strokeStyle=hexA(col, active?0.85:0.4);ctx.lineWidth=active?2:1.3;ctx.stroke();
+      // crack when overfit & active
+      if(active&&overfit>0.4){
+        ctx.save();ctx.strokeStyle=hexA(P.false,0.8);ctx.lineWidth=1.6;ctx.setLineDash([]);
+        ctx.beginPath();ctx.moveTo(c.x-crx*0.7,c.y-cry*0.8);
+        ctx.lineTo(c.x-crx*0.1,c.y-cry*0.2);ctx.lineTo(c.x+crx*0.2,c.y+cry*0.1);
+        ctx.lineTo(c.x+crx*0.7,c.y+cry*0.8);ctx.stroke();ctx.restore();
+      }
+      label(concepts[ci].label, c.x, c.y-cry-10, col,'center',12);
+      label('L'+concepts[ci].layer, c.x, c.y+cry+11, P.faint,'center',9);
+    }
+    // active clump: theta (A), decision boundary, world W (B), value (B), h relation
+    var ac=clumpCenter(ai), ang=concepts[ai].th;
+    var tux=Math.cos(ang), tuy=Math.sin(ang);
+    var pxp=Math.cos(ang+Math.PI/2), pyp=Math.sin(ang+Math.PI/2);
+    // decision boundary (perp to theta through center)
+    seg(ac.x-1.15*crx*pxp,ac.y-1.15*crx*pyp,ac.x+1.15*crx*pxp,ac.y+1.15*crx*pyp,hexA(P.dim,0.35),1,true);
+    // theta arrow (A) — the "should" direction
+    var thL=crx*1.5;
+    arrow(ac.x,ac.y,ac.x+tux*thL,ac.y+tuy*thL,P.theta,2.4,false);
+    label('θ (A)',ac.x+tux*(thL+12),ac.y+tuy*(thL+12),P.theta,'center',13);
+    // world W target (B) at tip of theta
+    var wx=ac.x+tux*(thL+26), wy=ac.y+tuy*(thL+26);
+    ctx.save();ctx.strokeStyle=P.W;ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.arc(wx,wy,10,0,6.2832);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(wx-13,wy);ctx.lineTo(wx+13,wy);ctx.moveTo(wx,wy-13);ctx.lineTo(wx,wy+13);ctx.stroke();ctx.restore();
+    label('W (B)',wx,wy-16,P.W,'center',12);
+    // value direction (B) — deviates by err
+    var valAng=ang+err, vl=crx*1.5;
+    arrow(ac.x,ac.y,ac.x+Math.cos(valAng)*vl,ac.y+Math.sin(valAng)*vl,P.acc2,2.4,false);
+    label('Wert (B)',ac.x+Math.cos(valAng)*(vl+14),ac.y+Math.sin(valAng)*(vl+14),P.acc2,'center',11);
+    // h dot
+    ctx.save();ctx.shadowBlur=12;ctx.shadowColor=P.ink;ctx.fillStyle=P.ink;
+    ctx.beginPath();ctx.arc(h.x,h.y,6,0,6.2832);ctx.fill();ctx.restore();
+    label('h',h.x+11,h.y-11,P.ink,'left',13);
+    // basin distance / guardrail ring around active center
+    var bdist=Math.sqrt((h.x-ac.x)*(h.x-ac.x)+(h.y-ac.y)*(h.y-ac.y));
+    var tauPx=Math.sqrt(crx*crx+cry*cry);
+    ctx.save();ctx.strokeStyle=hexA(bdist>tauPx?P.false:P.gold,0.55);ctx.lineWidth=1.3;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.arc(ac.x,ac.y,tauPx,0,6.2832);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    // P = sigma(theta . (h - c))
+    var sdot=((h.x-ac.x)*tux+(h.y-ac.y)*tuy);
+    var Pp=sig(sdot/40);
+    return {K:K,g:g,coherence:coherence,cor:cor,truth:truth,overfit:overfit,capEnough:capEnough,bdist:bdist,Pp:Pp};
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=P.canvas;ctx.fillRect(0,0,W,H);
+    drawPanel1();
+    drawPanel2();
+  }
+
+  function updateReadout(){
+    if(!kS||!gS||!lS) return;
+    var K=parseInt(kS.value,10), g=parseInt(gS.value,10)/100, l=clamp(Math.round(layer),0,MAXL);
+    var capEnough=smoothstep(K,1,4), overfit=smoothstep(K,5,14);
+    var coherence=clamp(capEnough*(1-overfit),0,1);
+    var err=(1-g)*0.8 + overfit*0.55 + (1-capEnough)*0.35;
+    var cor=clamp(1-err/1.3,0,1), truth=Math.min(coherence,cor);
+    kV.textContent=K; gV.textContent=Math.round(g*100)+'%'; lV.textContent=l;
+    cCap.textContent='≈'+capStr(l); cId.textContent=idOf(l).toFixed(0);
+    cCoh.textContent=Math.round(coherence*100)+'%';
+    cCor.textContent=Math.round(cor*100)+'%';
+    cTruth.textContent=Math.round(truth*100)+'%';
+    var cls,msg;
+    if(coherence<0.5 && capEnough<0.6){
+      cls='warn';
+      msg='Flach & schwach (B: „flach sei schwach“ — zu wenige Regionen k^ℓ) — die scharfe Kapazität reicht nicht, den tief-frequenten Essence darzustellen; A\'s „Weite“ wird zu weich (Blur/Unterfitt). Mehr Tiefe (B) / mehr Budget (A) für Regionen.';
+    } else if(coherence<0.5){
+      cls='bad';
+      msg='Überfitt / Naht bricht (B: Budget auf hoch-freq. Ornament; A: Riss im Skelett) — das konservative Budget (K='+K+') verbrennt auf Detail: die Nähte/Skelett-Kanten tragen keinen kohärenten Connector (B), A\'s Klumpen reißt. Kohärenz '+Math.round(coherence*100)+'%.';
+    } else if(cor<0.45){
+      cls='bad';
+      msg='Kohärente Fiktion (B: Wert berührt nie W; A: falsche Richtung / falsches Bassin) — das Skelett ist kohärent (Kohärenz '+Math.round(coherence*100)+'%), aber der lineare Wert/Richtung korrespondiert nicht an die Welt (Korrespondenz '+Math.round(cor*100)+'%, Erdung g='+Math.round(g*100)+'%). Das LLM-Phänomen. Heilmittel: Erdung (Retrieval/Werkzeuge).';
+    } else if(truth>=0.62){
+      cls='ok';
+      msg='Verifiziert — Gate: Kohärenz '+Math.round(coherence*100)+'% (Skelett hält, A) & Korrespondenz '+Math.round(cor*100)+'% (Wert an W, B). Scharf genug (Angebot ≈ k^ℓ, B) + geerdet (B) + Budget auf den Essence (A). Wahrheit ≈ min bleibt ein Limes.';
+    } else {
+      cls='warn';
+      msg='Gerechtfertigt (vorläufig) — kohärent ('+Math.round(coherence*100)+'%) & ansatzweise geerdet ('+Math.round(cor*100)+'%), aber Evidenz dünn; neue Kontaktpunkte / mehr Erdung g könnten das brechen.';
+    }
+    outEl.className='badge-out '+cls; outEl.innerHTML=msg;
+  }
+
+  function render(){ draw(); updateReadout(); }
+
+  // pointer dragging of h (only panel 2)
+  function worldAt(e){
+    var r=cv.getBoundingClientRect();
+    var mx=e.clientX-r.left, my=e.clientY-r.top;
+    return {x:clamp(mx,p2x+8,p2x+p2w-8), y:clamp(my,p2y+8,p2y+p2h-8)};
+  }
+  cv.addEventListener('pointerdown',function(e){
+    var r=cv.getBoundingClientRect();
+    if(e.clientY-r.top<p2y-6){return;} // ignore strip
+    dragging=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    var w=worldAt(e);h.x=w.x;h.y=w.y;render();
+  });
+  cv.addEventListener('pointermove',function(e){if(!dragging)return;var w=worldAt(e);h.x=w.x;h.y=w.y;render();});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  cv.addEventListener('pointerleave',function(){dragging=false;});
+
+  function bind(id,fn){var el=document.getElementById(id);if(el)el.addEventListener('input',fn);}
+  bind('kS',render);bind('gS',render);
+  bind('lS',function(){layer=parseInt(this.value,10)||0;render();});
+  function setP(K,g,l){if(kS)kS.value=K;if(gS)gS.value=g;if(lS)lS.value=l;layer=l;render();}
+  var pS=document.getElementById('pSweet');if(pS)pS.addEventListener('click',function(){setP(3,100,9);});
+  var pO=document.getElementById('pOver');if(pO)pO.addEventListener('click',function(){setP(14,100,9);});
+  var pF=document.getElementById('pFik');if(pF)pF.addEventListener('click',function(){setP(3,0,9);});
+  var pFl=document.getElementById('pFlat');if(pFl)pFl.addEventListener('click',function(){setP(1,100,9);});
+
+  function toggleTheme(){
+    document.documentElement.classList.toggle('dark');
+    var d=document.documentElement.classList.contains('dark');
+    try{localStorage.setItem('r4005theme', d?'dark':'light');}catch(e){}
+    P=readTheme();render();
+  }
+  var tb=document.getElementById('themeBtn');if(tb)tb.addEventListener('click',toggleTheme);
+
+  window.addEventListener('resize',function(){resize();render();});
+  new MutationObserver(function(){P=readTheme();render();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  P=readTheme();resize();
+  if(lS)lS.value=9;
+  render();
+})();
+</script>
+</body>
+</html>

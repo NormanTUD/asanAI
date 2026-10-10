@@ -1,0 +1,17 @@
+{
+  "no": "009",
+  "a": "combined/3/r3-018.html",
+  "b": "combined/3/r3-014.html",
+  "a_title": "Der Attraktor als niedrig-belegtes Register — zwei Gates, ein Budget (R3-018)",
+  "b_title": "Das dünne Kernel-Feld: Gerüst, Zyklus und fragiler Übergang (R3-014)",
+  "combined_theme": "dunner-attraktor-register-uebergang-budget",
+  "one_line": "Ein trainiertes Netz ist EIN dünner, niedrig-belegter Attraktor/Kernel-Feld-Zustand im festen Budget, zweifach gelesen (weiche Belegung ID/C × scharfe Topologie β1/τ); einfach/robust genau dann, wenn es weit unter dem Budget belegt ist — und der fragile Übergang (B) ist die Grenze dieses Regimes, an der Belegung (A) und Persistenz (B) als zwei Gesichter einer Robustheits-Achse zusammenbrechen.",
+  "contradictions": [
+    "C1 — Das topologische Objekt β1: ein stabiles, verifiziert-rechnendes Register (A: 5-Frequenz-Torus, Ablation −70 %) vs. ein fragiler, Unsicherheit tragender, proberbar-reparierbarer Übergang (B: Persistenz τ degradiert, Evaluate ★ repariert den Loop).",
+    "C2 — Die Grenze: ein festes, harte Budget C + ein binäres ja/nein-Gate (A: Symmetrie + Konvergenz; man handelt nicht darauf) vs. ein irreduzierbarer Boden + eine proberbare, kontinuierlich reparierbare Degradation (B: ein aktiver Probe-Loop bis an den Boden).",
+    "C3 — Die zwei Lesarten: identisch/dieselbe Größe in zwei Projektionen (A: ID = β1) vs. ineinander genestet bei verschiedener Auflösung (B: der Rest-Peak ist nur ein 1-dimensionaler Schnitt des Persistenzdiagramms).",
+    "C4 — Die lokale lineare Karte/Jacobi: aktives dynamisches Gate, gelesen für Stabilität (A: Eigenwert-Lücke = Konvergenz) vs. passiver glatter Hintergrund/Scaffold, von dem der Rest weicht (B: der Rest r ist der funktional entscheidende Inhalt)."
+  ],
+  "resolution": "Beides ist dasselbe Objekt an zwei Stellen derselben Achse: der β1-Zyklus ist stabil im Inneren des niedrig-belegten Regimes (A's Torus) und fragil an dessen Grenze (B's Token); das Gate (A) und das Probing (B) sind zwei Größenordnungen desselben Abwärts-Reglers, der die Belegung zum irreduzierbaren Boden (B) hin senkt, der das feste Budget (A) von unten begrenzt; die zwei Lesarten identifizieren sich im Inneren des Regimes und nisten sich als Projektion an der Grenze; die Jacobi wird von A für Stabilität (Gate), von B für Rest (Inhalt) gelesen — der Residual Δ=J−I / r=h−T ist das gemeinsame Objekt. Fusion: Ein dünner Attraktor im festen Budget, zweifach gelesen, ist einfach & robust genau dann, wenn er weit unter dem Budget belegt ist (ID/C << 1 ≈ aktives β1 << volle Inventur ≈ hohe Persistenz τ & kleiner Rest); der fragile Übergang ist die Grenze dieses Regimes, und Belegung (A) + Persistenz (B) sind zwei Gesichter einer Robustheits-Achse.",
+  "viz": "Ein interaktives Canvas: ein Attraktor im festen Budget an einer Robustheits-Achse (Stress/Rauschen) gelesen. Drei Regler — Konvergenz der Tangente (A·Gate 2), Aufgabe-Symmetrie (A·Gate 1), Stress/Rauschen (B·Achse). Die weiche Belegung ID/C (A, Teal) steigt gegen das fixe Budget C (gold), während die scharfe Persistenz τ (B, Violett) gleichzeitig fällt; die zwei Gates steuern, wie tief die Belegung fällt und wo die Fragilität beginnt. Die amber-Zone markiert den fragilen Übergang, der rosa ★ den fragilsten Punkt (t*), der grüne Boden die irreduzierbare Grenze. Readouts: Belegung ID/C, Persistenz τ, β1 aktiv/max, Gap, Symmetrie, t* + Status (GENERALISIERT / FRAGIL / MEMORISIERT). Theme-aware (CSS-Variablen + MutationObserver), alle Daten inline, kein Network-Fetch."
+}

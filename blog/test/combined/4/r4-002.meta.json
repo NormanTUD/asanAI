@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "combined/3/r3-006.html",
+  "b": "combined/3/r3-015.html",
+  "a_title": "Die selbst-ähnliche Maschine: σ-Geometrie-Zelle × RG-Low-Rank-Fluss",
+  "b_title": "Das niedrig-rangige Skelett und der Komplexitäts-Regler",
+  "combined_theme": "tiefe-regelt-die-komplexitaet-des-niedrig-rangigen-kerns",
+  "one_line": "Die Tiefe (r3-006's RG-Low-Rank-Fluss) ist genau die Achse, auf der der Komplexitäts-Knopf θ (r3-015) des niedrig-rangigen σ-Geometrie-Kerns von scrambled/gekrümmt (θ≈1, früh) zu flach/linear/direkt-lesbar (θ→0, spät) gefahren wird — während der σ-Kern als holographischer, skalengefester Überlebender bleibt, den der finale Readout in einen Token decodiert.",
+  "contradictions": [
+    "Essenz des Kerns: r3-006 sagt, die Maschine ist ihre nichtlineare σ-Geometrie (ReLU/sincos/Softmax falten Polyeder/Torus/Becken), lineare Probe/Jacobian/Readout sind nur Schatten; r3-015 sagt, das gute Objekt ist das lineare/affine niedrig-rangige Skelett (d-affiner Unterraum) und Krümmung/Scrambling (θ>0) ist nur die Komplikation, die entfernt werden muss.",
+    "Steuerachse: r3-006 steuert über die Tiefe / den RG-Fluss / die Nicht-Normalitäts-Dosis c (dynamisch, die Tiefe hinab, ein Prozess); r3-015 steuert über den statischen Knopf θ (Scrambling+Krümmung) einer fixen Realisierung (Eigenschaft, keine Dynamik) — c vs. θ.",
+    "Rolle des hochdimensionalen Umfelds: r3-006 behandelt es als verworfenes Detail, das der RG-Fluss integriert heraus (Flaschenhals im Kanal); r3-015 behandelt es als aktive Boundary, die den Bulk exakt/redundant kodiert (Fortschritt im Inhalt) — wegwerfen vs. tragen."
+  ],
+  "resolution": "Ein und derselbe niedrig-rangige geometrische Kern: r3-006's σ-Geometrie und r3-015's Skelett sind dieselbe Struktur, gelesen als Form (Krümmung/σ-Faltung = θ) und als Stützraum (Rang r). Die Tiefe (r3-006) ist die dynamische Realisierung des Knopfs θ (r3-015): der RG-Fluss mit Dosis c treibt θ von ≈1 (früh, scrambled/gekrümmt, braucht MERA/RT-Decode) zu →0 (spät, flach/linear/direkt-lesbar, Readout = lineare Projektion auf den dünnen Hebel); c setzt die Rate dieses Abflachens. Das hochdimensionale Umfeld ist zugleich verworfenes Detail im Kanal (r3-006) und Code-Träger im Inhalt (r3-015). Der 'gute' Punkt = Ecke niedrig-rangig + θ→0, wo r3-006's holographischer Überlebender und r3-015's flaches affine Skelett koinzidieren: linear, flach, direkt lesbar, Task exakt kodiert.",
+  "viz": "Canvas-Doppel-Panel: oben das Tiefenprofil mit σ-Geometrie-Regimeband (EARLY/MID/LATE/OUT), kollabierendem Kanal erank(Pℓ) (blau, r3-006), erhaltenem holographischem Überlebender ≈d (violett, r3-006) und der durch die Tiefe getriebenen Komplexität θ_eff(ℓ)=(1−ℓ/L)^c (grün, r3-015, fällt von 1→0); unten links eine Disk-Kernquerschnitts-Scheibe mit r geladenen Skelett-Achsen (lila), der Code-Richtung w(θ_eff) (türkis) und dem Reservoir; unten rechts die Read-out-Balken (A-Hebel lineares Readout vs. B Voll-Decode). Slider: Rang r, Dosis c, Tiefen-Probe, β; Play = Tiefen-Sweep. Alle Daten inline, deterministisch, theme-aware über CSS-Variablen + MutationObserver, keine externen Skripte."
+}

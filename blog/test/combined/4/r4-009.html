@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der dünne Attraktor: Register, fragiler Übergang, ein Budget (R4-009)</title>
+<style>
+:root{
+  --bg:#f6f3ec; --bg2:#fffdf8; --plot-bg:#f4f0e7;
+  --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0;
+  --accent2:#6d28d9; --accent2-soft:#f1ecfb;
+  --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#b8860b; --green:#2f8f4b; --rose:#be185d;
+  --panel:rgba(255,253,248,.95);
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --bg2:#141b24; --plot-bg:#0c1120;
+  --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a;
+  --accent2:#a78bfa; --accent2-soft:#1e1830;
+  --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4c43a; --green:#6ee88a; --rose:#f472b6;
+  --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:60px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(27px,5.2vw,42px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)} h1 em.b{color:var(--amber)} h1 em.v{color:var(--accent2)}
+.sub{font-size:15.5px;color:var(--muted);max-width:72ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:52px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:24px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+em{color:var(--accent2);font-style:normal;font-weight:560}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--accent2);background:var(--accent2-soft)}
+.note.rose{border-color:var(--rose);background:var(--amber-soft)}
+.note.ok{border-color:var(--green);background:var(--accent-soft)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--amber-soft);color:var(--amber)}
+.eq{font-family:var(--mono);font-size:12.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.95;white-space:pre}
+.eq sup,.eq sub{font-size:.72em} .eq .op{color:var(--accent);font-weight:700} .eq .op2{color:var(--amber);font-weight:700} .eq .opv{color:var(--accent2);font-weight:700} .eq .c{color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700} .tbl td.k{color:var(--accent2);font-weight:600}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px} li{margin-bottom:9px}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0} .viz .dsub{font-size:13px;color:var(--muted);margin-bottom:12px}
+#fuz{display:block;width:100%;height:440px;border-radius:12px;border:1px solid var(--line);background:var(--plot-bg)}
+.ctl{margin:12px 0} .ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap} .ctl-lab b.v{color:var(--accent2)} .ctl-lab b.a2{color:var(--amber)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].v::-webkit-slider-thumb{background:var(--accent2)} input[type=range].v::-moz-range-thumb{background:var(--accent2)}
+input[type=range].a2::-webkit-slider-thumb{background:var(--amber)} input[type=range].a2::-moz-range-thumb{background:var(--amber)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:104px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)}
+.ro .box.violet{background:var(--accent2-soft)} .ro .box.violet .v{color:var(--accent2)}
+.ro .box.amber{background:var(--amber-soft)} .ro .box.amber .v{color:var(--amber)}
+.ro .box.gold{background:var(--card)} .ro .box.gold .v{color:var(--gold)}
+.ro .box.green{background:var(--accent-soft)} .ro .box.green .v{color:var(--green)}
+.ro .box.rose{background:var(--amber-soft)} .ro .box.rose .v{color:var(--rose)}
+.stat{font-size:13.5px;color:var(--muted);margin-top:12px} .stat b{color:var(--amber)}
+.legend{display:flex;gap:8px 18px;flex-wrap:wrap;margin:14px 0 4px;font-size:12.5px;color:var(--muted)}
+.lg{display:inline-flex;align-items:center;gap:7px} .lg i{width:22px;height:0;border-top:3px solid;display:inline-block}
+.viz-note{font-size:12.5px;color:var(--muted);margin-top:12px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;display:block;margin-bottom:4px}
+.prov .item .lbl.b{color:var(--amber)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">&#9728;&#65038; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 4 &middot; Paar 009 &middot; Attraktor &times; Kernel-Feld</div>
+  <h1>Der <em>d&uuml;nne Attraktor</em>: <em class="b">Register</em>, <em class="v">fragiler &Uuml;bergang</em>, ein Budget</h1>
+  <p class="sub">Zwei R3-Fusionen, <b>ein Objekt</b>: das <b>trainierte Netz</b> als <b>d&uuml;nne, niedrig-belegte Attraktor-/Feld-Struktur im festen Budget</b>, gelesen in <b>zwei komplement&auml;ren Modi</b>. <b>A (r3-018)</b> liest es <b>niedrigzyklisch &amp; niedrig-belegt</b> (metrische Belegung <b>ID/C</b> &times; topologische <b>&beta;&#8321;-Register</b>) und sagt: es generalisiert, wenn <b>zwei Gates offen</b> (Aufgabe-Symmetrie + Konvergenz der lokalen Tangente) und die <b>Belegung weit unter dem Budget C</b> bleibt. <b>B (r3-014)</b> liest es als <b>d&uuml;nnes, kernel-gewichtetes, lokal-glattes Feld</b> (weich/punktweise &times; scharf/topologisch) und verlegt das Wesentliche an <b>den fragilen &Uuml;bergang</b>, der Bedeutung &amp; Unsicherheit tr&auml;gt und an einer <b>Robustheits-Achse</b> (Signal gegen Rauschen) h&auml;ngt. Die Fusion: <b>der fragile &Uuml;bergang ist die Grenze des niedrig-belegten Regimes</b>; Belegung (A) und Persistenz (B) sind <b>zwei Gesichter einer Achse</b>.</p>
+  <p class="fuse-line">Fusion aus: <b>r3-018.html</b> &#10005; <b>r3-014.html</b>&nbsp;&nbsp;(Round 4)</p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide R3-Papiere sind <em>Meta-Positionen</em> zur selben tiefen Frage: <i>Was ist ein trainiertes Netz, und was macht es &bdquo;einfach&ldquo; (generalisierend, robust)?</i> <b>A (r3-018)</b> liest es als <b>niedrigzyklischen, niedrig-belegten Attraktor im festen Budget</b> &mdash; zweifach: <em>metrisch-statistisch</em> (die Belegung der Datenwolke als intrinsische Dimension ID gegen ein kombinatorisches Budget C = #E&#8728;&minus;#V&rarr; &rarr; das Ma&szlig; ID/C) und <em>topologisch-kombinatorisch</em> (Betti-Zyklen &beta;&#8321; als Register, die rechnen, z.&nbsp;B. der verifizierte 5-Frequenz-Torus mod&nbsp;113). Es generalisiert genau dann, wenn <b>Gate&nbsp;1 (strukturell, Aufgabe-Symmetrie) einen niedrigzyklischen Attraktor erlaubt, Gate&nbsp;2 (dynamisch, Konvergenz der lokalen Tangente / Eigenwert-L&uuml;cke) den Fluss dorthin zieht</b>, und die <b>aktive Belegung weit unter dem Budget</b> bleibt (ID/C&nbsp;&lt;&lt;&nbsp;1 &asymp; aktives &beta;&#8321;&nbsp;&lt;&lt;&nbsp;volle &beta;-Inventur). <b>B (r3-014)</b> liest dasselbe Objekt als <b>d&uuml;nnes, kernel-gewichtetes, lokal-glattes Feld</b> &mdash; zweifach: <em>weich/punktweise</em> (Scaffold T=A(x)&middot;x + Surrogat &mu;&plusmn;Varianz) und <em>scharf/topologisch</em> (Rest/Knick lokal + persistenter 1-Zyklus &beta;&#8321;&plusmn;&tau;). Das Wesentliche liegt an <b>dem fragilen &Uuml;bergang</b>; die Robustheits-Achse (Rest/Varianz/Persistenz) ist ein <em>Signal-gegen-Rauschen-Regler</em>, der die fragilen Regionen markiert.</p>
+<p>Die <b>einheitliche Position</b>: Ein trainiertes Netz ist <b>ein</b> Objekt &mdash; eine <b>d&uuml;nne, niedrig-dimensionale, kernel-/smooth-Attraktor-Struktur im festen Budget</b> &mdash; und es ist <b>genau dann &bdquo;einfach&ldquo;/robust/generalisierend, wenn es weit weniger belegt, als es k&ouml;nnte</b>. In A ist das <b>ID/C&nbsp;&lt;&lt;&nbsp;1</b>; in B <b>hohe Persistenz &tau; &amp; kleiner Rest</b>. Der <b>fragile &Uuml;bergang (B)</b> ist die <b>Grenze dieses Regimes</b>: dort steigt die Belegung gegen das Budget (A: ID/C&rarr;1 = memorisiert), die Persistenz bricht ein (B: &tau;&rarr;0), und <em>dort</em> konzentrieren sich Bedeutung und Unsicherheit. Die <b>Robustheits-Achse (B: &sigma;&#8345;/&epsilon;)</b> und die <b>zwei Gates (A: Symmetrie + Konvergenz)</b> sind <b>zwei Gesichter derselben Kontrolle</b>.</p>
+<p>Die entscheidende <b>fusionierte Identifikation</b>: <b>A&rsquo;s Belegung (ID/C) und B&rsquo;s Persistenz (&tau;) sind zwei Gesichter einer Robustheits-Achse.</b> A misst, wie <em>weit unter dem Budget</em> das Netz sitzt (niedrig = gut); B misst, wie <em>stabil der Zyklus / wie klein der Rest</em> ist (hoch = gut). Beide fallen zusammen, wenn Stress &uuml;bernimmt: die Belegung steigt gegen C <em>und</em> die Persistenz sinkt &mdash; <em>gleichzeitig</em>. A&rsquo;s <em>stabiler, verifizierter Torus</em> (mod&nbsp;113, Ablation &minus;70&nbsp;%) ist B&rsquo;s <em>robustes, hoch-persistentes Regime</em>; B&rsquo;s <em>fragiles Token</em> ist A&rsquo;s <em>Regime nahe der Budget-Grenze</em> (ID/C&rarr;1). Der &bdquo;d&uuml;nne Attraktor&ldquo; ist also <em>niedrigzyklisch <em>und</em> niedrig-belegt <em>und</em> lokal-glatt zugleich</em> &mdash; drei W&ouml;rter, ein Zustand.</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+<p class="note violet"><b>Vorab:</b> A und B widersprechen sich in keinem <em>gemeinsamen Faktum</em> (keines negiert das andere); beide sagen &bdquo;ein d&uuml;nnes Objekt, zweimal gelesen, einfach wenn niedrig belegt&ldquo;. Aber sie nehmen zu <b>vier Stellen inkompatible Stellungen</b> zum selben Objekt ein. Die sch&auml;rfsten: C1 (ist der Zyklus stabil-rechend oder fragil-tragend?) und C2 (ist die Grenze ein festes harte Budget + bin&auml;res Gate oder eine proberbare, reparierbare Degradation?).</p>
+
+<h3>C1 &mdash; Das topologische Objekt: ein <em>stabiles, rechnendes</em> Register (A) vs. ein <em>fragiler, Unsicherheit tragender</em> &Uuml;bergang (B)</h3>
+<p><span class="tag">A &middot; r3-018</span> Der &beta;&#8321;-Zyklus ist ein <b>Register, das rechnet</b>: der verifizierte 5-Frequenz-Torus (mod&nbsp;113) <em>f&uuml;hrt die Addition aus</em>; Ablation der Nichte-Schl&uuml;ssfrequenzen <em>verbessert</em> (Loss &minus;70&nbsp;%). Der Zyklus ist <b>stabil, funktional, verifiziert</b> &mdash; ein <em>satter</em> Teil des Attraktors, nicht etwas Zerbrechliches.</p>
+<p><span class="tag b">B &middot; r3-014</span> Der 1-Zyklus ist <b>fragil</b>: seine Persistenz &tau; <em>degradiert kontinuierlich</em>, wenn &epsilon;/Rauschen steigen; Bedeutung &amp; Unsicherheit konzentrieren sich am <em>am-wenigsten-persistenten</em> Zyklus, und man kann den fragilsten Punkt <em>proben</em> (&#9733;), was den Fog schrumpft und den Loop <em>repariert</em>. Der Zyklus ist ein <em>Informations-/Fragilit&auml;ts-Tr&auml;ger</em>, kein satter Rechner.</p>
+<p class="note rose"><b>Die Spannung:</b> A beschreibt den Zyklus als <b>robust &amp; funktionierend</b> (er rechnet, er ist verifiziert, Ablation t&ouml;tet ihn); B beschreibt denselben als <b>fragil &amp; proberbar</b> (er degradiert, er tr&auml;gt Unsicherheit, eine Probe repariert ihn). Ist &beta;&#8321; ein <em>stabiles Register</em> (A) oder ein <em>fragiler, handhabbarer &Uuml;bergang</em> (B)?</p>
+
+<h3>C2 &mdash; Die Grenze: <em>feste, harte Budget &amp; bin&auml;res Gate</em> (A) vs. <em>irreduzierbarer Boden + proberbare, reparierbare Degradation</em> (B)</h3>
+<p><span class="tag">A &middot; r3-018</span> Das Budget C = #E&#8728;&minus;#V&rarr; ist <b>fix, architekturfixiert, datenunabh&auml;ngig</b>. Der Zustand ist <b>bin&auml;r-dynamisch</b>: konvergiert die Tangente (Gate&nbsp;2) <em>und</em> erlaubt die Task den Attraktor (Gate&nbsp;1) &rarr; ID bricht ein (generalisiert); ist die Tangente zyklisch &rarr; ID <em>darf nicht</em> fallen (memorisiert, ID/C&rarr;1). Man <em>handelt nicht</em> darauf &mdash; das Gate ist eine Bedingung der Dynamik.</p>
+<p><span class="tag b">B &middot; r3-014</span> Die Grenze hat <b>zwei Schichten</b>: einen <b>irreduzierbaren Boden</b> (Quantisierung, Fehler &prop; (1/N)^0.1 &mdash; &bdquo;da geht nichts mehr&ldquo;) <em>und</em> eine <b>proberbare Schicht</b> (Persistenz degradiert <em>stetig</em>, und <em>Evaluate &#9733;</em> am fragilsten Token <em>repariert</em> den Loop). Unsicherheit ist etwas, das man <em>handelnd</em> bearbeitet &mdash; ein aktiver Erkundungs-Loop.</p>
+<p class="note rose"><b>Die Spannung:</b> A: die einfache/robuste Lage wird durch <b>zwei ja/nein-Gates</b> (Symmetrie, Konvergenz) in einem <b>festen harten Container</b> erreicht &mdash; man dr&uuml;ckt nicht drauf. B: dieselbe Lage wird durch <b>Probing</b> <em>erreicht/repariert</em> (ein kontinuierlicher, handhabbarer Prozess bis an einen festen Boden). Ist der niedrig-belegte Zustand ein <em>struktur-/dynamik-abh&auml;ngiges Ergebnis von Gates</em> (A) oder ein <em>aktives, probebares Optimieren</em> (B)?</p>
+
+<h3>C3 &mdash; Die zwei Lesarten: <em>dieselbe Gr&ouml;&szlig;e, zwei Projektionen</em> (A) vs. <em>ineinander genestet, verschiedene Aufl&ouml;sung</em> (B)</h3>
+<p><span class="tag">A &middot; r3-018</span> Die zwei Lesarten werden <b>identifiziert</b>: A&rsquo;s <em>ID</em> (Belegung) und B&rsquo;s <em>&beta;&#8321;</em> (Register) sind <b>dieselbe Gr&ouml;&szlig;e in zwei Lesarten</b> &mdash; zwei Projektionen einer aktiven Struktur, <em>isomorph</em> zueinander (ID/C&nbsp;&lt;&lt;&nbsp;1 &hArr; aktives &beta;&#8321;&nbsp;&lt;&lt;&nbsp;volle Inventur).</p>
+<p><span class="tag b">B &middot; r3-014</span> Die zwei Lesarten sind <b>nicht identisch, sondern genestet</b>: A&rsquo;s Rest/Rest-Peak ist <em>&bdquo;ein 1-dimensionaler Schnitt&ldquo;</em> von B&rsquo;s Persistenzdiagramm; <em>&bdquo;A meldet den Peak (eine Windung, ein Wert), B das ganze Persistenzdiagramm&ldquo;</em>. Die Lesarten sind <em>verschiedene Aufl&ouml;sungen desselben Feldes</em>, nicht die eine Gr&ouml;&szlig;e.</p>
+<p class="note rose"><b>Die Spannung:</b> A <b>kollabiert</b> die zwei Lesarten zu einem Ma&szlig; (identisch, zwei Projektionen); B h&auml;lt sie <b>bei verschiedenen Aufl&ouml;sungen</b> (eine ist ein grober Schnitt der anderen). Sind die zwei Lesarten <em>die selbe Gr&ouml;&szlig;e, zweimal gemessen</em> (A) oder <em>verschiedene Aufl&ouml;sungen, ineinander geschachtelt</em> (B)?</p>
+
+<h3>C4 &mdash; Die lokale lineare Karte: <em>aktives dynamisches Gate</em> (A) vs. <em>passiver glatter Hintergrund, von dem der Rest weicht</em> (B)</h3>
+<p><span class="tag">A &middot; r3-018</span> Die lokale lineare Karte (Jacobi J, Stretch+Rotate) ist das <b>dynamische Gate&nbsp;2</b>: ihre <b>Eigenwert-L&uuml;cke</b> (reelle, getrennte Eigenwerte) entscheidet, ob der nicht-autonome Schicht-Fluss den Attraktor <em>erreicht</em>. Die Linearisierung ist der <em>Mechanismus</em>.</p>
+<p><span class="tag b">B &middot; r3-014</span> Die lokale lineare Karte (das Scaffold T=A(x)&middot;x) ist der <b>glatte, langweilige Hintergrund</b>; der <em>Rest</em> r=h&minus;T (die Abweichung davon) ist, was <em>funktional entscheidet</em> (sagt KL, &rho;&asymp;0,8&ndash;0,9; &bdquo;small in norm, large in function&ldquo;). Die Linearisierung ist der <em>Hintergrund, nicht der Inhalt</em>.</p>
+<p class="note rose"><b>Die Spannung:</b> A liest die lokale lineare Karte f&uuml;r ihre <b>dynamische Stabilit&auml;t</b> (konvergiert sie? = das Gate); B liest dieselbe f&uuml;r ihre <b>Abweichung</b> (wie gro&szlig; ist der Rest? = der Inhalt). Dieselbe Jacobi/Scaffold, zwei entgegengesetzte Rollen: <em>der Mechanismus, der erreicht</em> (A) vs. <em>der glatte Hintergrund, von dem das Wesentliche weicht</em> (B).</p>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+
+<div class="card">
+<h3 style="margin-top:0">R1 &rarr; C1: Der Zyklus ist stabil im Inneren des Regimes, fragil an dessen Grenze &mdash; Robustheit ist eine Achse, kein Zustand</h3>
+<p>A&rsquo;s stabiler Torus und B&rsquo;s fragiles Token sind <em>derselbe &beta;&#8321; an zwei Stellen derselben Robustheits-Achse</em>. Der Torus ist stabil &amp; rechnet <em>genau dann</em>, wenn die zwei Gates (A) voll offen sind <em>und</em> die Belegung weit unter dem Budget liegt &mdash; dann ist der Zyklus <em>hoch-persistent</em> (B: gro&szlig;es &tau;). B&rsquo;s fragiles Token ist derselbe Zyklus, wenn die Achse gestresst wird (Rauschen/&epsilon;/Belegung &uarr;): die Persistenz <em>degradiert</em> (B) &mdash; in A&rsquo;s Sprache der Punkt, an dem <b>ID/C&rarr;1</b> (memorisiert, Register kollabieren). <b>Fusion:</b> <em>Der fragile &Uuml;bergang (B) ist die Nachbarschaft von A&rsquo;s Budget-Grenze.</em> Der Zyklus ist nicht prinzipiell stabil <em>oder</em> fragil &mdash; stabil im <em>Inneren</em> des Regimes, fragil an der <em>Grenze</em>; &bdquo;rechnen&ldquo; (A) und &bdquo;Unsicherheit tragen&ldquo; (B) sind die <em>zwei Seiten</em> des gleichen &tau; (hoch vs. niedrig).</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">R2 &rarr; C2: Das feste Budget ist der Container; das Gate (A) und das Probing (B) sind zwei Wegen, die Belegung zum Boden hin zu senken</h3>
+<p>Die beiden Grenzen sitzen auf <em>verschiedenen Ebenen</em> und koexistieren (analog B&rsquo;s eigener R2). A&rsquo;s <b>feste Budget C</b> ist die <em>kapazitive Grenze</em> (was <em>m&ouml;glich</em> ist &mdash; der Container, fix &amp; hart). B&rsquo;s <b>irreduzierbarer Boden</b> (Fehler &prop; (1/N)^0.1) ist derselbe Container von unten: er ist genau die untere Grenze, unter die A&rsquo;s ID <em>nicht</em> fallen kann (A: ID bricht auf &asymp;log&#8322;N<sub>c</sub> ein &mdash; das <em>ist</em> der Boden). Dazwischen liegt die <em>proberbare Schicht</em> (B): A&rsquo;s <b>Gate</b> (Symmetrie + Konvergenz) und B&rsquo;s <b>Evaluate&nbsp;&#9733;</b> sind <em>zwei Gesichter desselben Abw&auml;rtspush</em> &mdash; das Gate zieht den <em>ganzen</em> Attraktor in den niedrig-belegten Zustand (A: makroskopisch, ja/nein); das Probing senkt die Belegung/Persistenz <em>punktweise</em> dort, wo die Fragilit&auml;t am h&ouml;chsten ist (B: mikroskopisch, kontinuierlich). <b>Fusion:</b> <em>Das harte Budget (A) grenzt ein; das Gate (A) + Probing (B) sind zwei Gr&ouml;&szlig;enordnungen desselben Abw&auml;rts-Reglers, der die Belegung zum irreduzierbaren Boden (B) hin f&uuml;hrt.</em> A&rsquo;s &bdquo;man dr&uuml;ckt nicht aufs Gate&ldquo; wird verfeinert zu &bdquo;das Gate ist die <em>Bedingung</em>, unter der Probing den Attraktor <em>einmal</em> einbringt&ldquo;; B&rsquo;s &bdquo;Probing repariert&ldquo; wird zu &bdquo;Probing ist der <em>lokale</em> Akt des Gate-Effekts, Punkt f&uuml;r Punkt&ldquo;.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">R3 &rarr; C3: Identifikation im Inneren, Nestung an der Grenze &mdash; die zwei Lesarten sind projektive Projektionen zweier Aufl&ouml;sungen</h3>
+<p>A&rsquo;s Identifikation (ID&nbsp;=&nbsp;&beta;&#8321;) und B&rsquo;s Nestung (Peak&nbsp;=&nbsp;1D-Schnitt des Diagramms) sind <em>zwei Stufen derselben Beziehung</em>. A&rsquo;s <em>statistische</em> Identifikation (die kontinuierliche Belegung ID &equals; die diskrete Registerzahl &beta;&#8321;, <em>im relevanten Regime</em>) gilt dort, wo der Zyklus <em>stabil</em> ist &mdash; im <em>Inneren</em> des niedrig-belegten Regimes, wo Belegung und Persistenz synchron niedrig/hoch sind. B&rsquo;s <em>strukturelle</em> Nestung (der scharfe Rest-Peak ist ein grober Schnitt des vollen Persistenzdiagramms) gilt <em>an der Grenze</em>, wo die scharfe Lesung degeneriert: dort ist die punktuelle Lesung <em>nicht mehr</em> das ganze Objekt, nur ein Schnitt davon. <b>Fusion:</b> <em>Identifikation im Inneren des Regimes, Nestung (Projektion) an seiner Grenze.</em> Die zwei Lesarten (weich&harr;scharf, metrisch&harr;topologisch) sind dasselbe <em>Dual-Paar</em>; sie fallen zu einem Ma&szlig; zusammen, solange der Zustand robust ist, und scheiden in Aufl&ouml;sung, sobald er fragil wird. A&rsquo;s &bdquo;dieselbe Gr&ouml;&szlig;e&ldquo; ist also eine <em>regime-abh&auml;ngige</em> Identifikation &mdash; nicht absolut.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">R4 &rarr; C4: Dieselbe Jacobi, gelesen f&uuml;r Stabilit&auml;t (A) und f&uuml;r Rest (B) &mdash; der Residual ist das gemeinsame Objekt</h3>
+<p>A liest die lokale lineare Karte f&uuml;r ihre <em>dynamische Stabilit&auml;t</em> (Eigenwert-L&uuml;cke &rarr; Gate&nbsp;2), B liest dieselbe f&uuml;r ihre <em>Abweichung</em> (Rest r). Beide h&auml;ngen am <em>selben Objekt</em>, dem <b>Residual</b> &Delta;=J&minus;I (A) bzw. r=h&minus;T (B): A fragt <em>&bdquo;ist der Fluss stabil?&ldquo;</em> (L&uuml;cke), B fragt <em>&bdquo;wie gro&szlig; ist die Abweichung?&ldquo;</em> (Rest). Und sie sind gekoppelt: ein <em>stabiles, klein-restiges</em> Regime ist <em>genau</em> das niedrig-belegte generalisierende Regime. Zu gro&szlig;es &omega; (Rotation) macht die Eigenwerte komplex (A: Gate zu, keine Konvergenz) <em>und</em> vergr&ouml;&szlig;ert die Abweichung vom linearen Regime (B: gro&szlig;er Rest, fragil). <b>Fusion:</b> <em>Der Residual ist das gemeinsame Objekt: A liest ihn als Stabilit&auml;tssignal (das Gate), B als Inhalts-/Fragilit&auml;ts-Signal (der Rest).</em> Lokale lineare Karte = glatter Scaffold/Fluss (B); Abweichung davon = Inhalt (B) <em>und</em> Stabilit&auml;tstest (A). &bdquo;Generator &rarr; Dynamik &rarr; Lesart&ldquo; (A) erweitere sich zu &bdquo;Generator (Residual) &rarr; Stabilit&auml;t (Gate) &rarr; Rest (Inhalt) &rarr; Lesart (Persistenz)&ldquo;.</p>
+</div>
+
+<div class="note ok"><b>Die fusionierte Schlussfolgerung:</b> Ein trainiertes Netz ist <b>ein d&uuml;nner Attraktor/im Feld im festen Budget</b>, zweifach gelesen (weiche Belegung ID/C &times; scharfe Topologie &beta;&#8321;/&tau;). Es ist einfach/robust/generalisierend genau dann, wenn es <b>weit unter dem Budget belegt</b> ist (ID/C&nbsp;&lt;&lt;&nbsp;1 &asymp; aktives &beta;&#8321;&nbsp;&lt;&lt;&nbsp;volle Inventur &asymp; hohe Persistenz &tau; &amp; kleiner Rest). Das passiert, wenn <b>(i)</b> die Aufgabe-Symmetrie einen niedrigzyklischen Attraktor erlaubt (A/B), <b>(ii)</b> die lokale Tangente konvergiert (A: Eigenwert-L&uuml;cke) <em>oder</em> lokal geprobt wird (B: Evaluate &#9733;), und <b>(iii)</b> die Belegung zum irreduzierbaren Boden h&auml;lt. <b>Der fragile &Uuml;bergang (B) ist die Grenze dieses Regimes</b> (Belegung&rarr;C, Persistenz&rarr;0): dort konzentrieren sich Bedeutung &amp; Unsicherheit. Die <b>Robustheits-Achse (B: &sigma;&#8345;/&epsilon;)</b> und die <b>zwei Gates (A: Symmetrie+Konvergenz)</b> sind zwei Gesichter derselben Kontrolle; Belegung (A) und Persistenz (B) sind zwei Gesichter derselben Achse.</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>Das eine Objekt &mdash; ein d&uuml;nner, niedrig-belegter Attraktor-Feld-Zustand im festen Budget</h3>
+<div class="eq"><span class="c">// A-Seite (r3-018 &larr; r2-033 &times; r2-035): Belegung &times; Register im festen Budget</span>
+J = J<sub>sym</sub> + J<sub>antisym</sub>  <span class="op">(Stretch=Eigenwert-L&uuml;cke &rarr; Attraktor; Rotate kr&uuml;mmtd nur)</span>
+Power-Iteration:  v<sub>k+1</sub> = normalize(J&middot;v<sub>k</sub>) &rarr; dominanten Eigenvektor  <span class="c">(Gate&nbsp;2 = Konvergenz)</span>
+ID (TwoNN):  &mu;<sub>i</sub>=r<sub>i,2</sub>/r<sub>i,1</sub> ,  d&#770;=N/&Sigma;ln&mu;<sub>i</sub>  <span class="c">(Belegung der Datenwolke)</span>
+C (Moduli):  <span class="op">dim d&#8321;( ) = #E&#8728;&minus;#V&rarr;</span>  <span class="c">(festes Budget, Thm&nbsp;7.16, architekturfixiert)</span>
+Generalisierung:  <span class="op2">ID/C &lt;&lt; 1</span>  &hArr;  <span class="opv">aktives &beta;&#8321; &lt;&lt; volle &beta;-Inventur</span>  <span class="c">(das Ma&szlig; der Fusion)</span>
+Torus:  &beta;&#8320;=1 ,  &beta;&#8321;=5 (5 Frequenz-Register) ,  Ablation &minus;70&nbsp;%  <span class="c">(mod&nbsp;113 verifiziert)</span>
+
+<span class="c">// B-Seite (r3-014 &larr; r2-023 &times; r2-021): d&uuml;nnes kernel-gewichtetes Feld, zweimal gelesen</span>
+k(x,x&#7522;) = exp(&minus;&mdash;x&minus;x&#7522;&mdash;&sup2;/2&sigma;&sup2;)  <span class="c">(Gaussian/RBF-Blend; A&rsquo;s Scaffold = B&rsquo;s Surrogat)</span>
+Weich:  T(x)=A(x)&middot;x (Scaffold) + &mu;*(x)&plusmn;var*(x)  <span class="c">(punktweise, Spearman&asymp;&minus;0.94)</span>
+Scharf: h = T + r ,  <span class="op2">r = h&minus;T</span> (Rest, sagt KL, &rho;&asymp;0.8&ndash;0.9)  <span class="c">(lokal; &ldquo;small in norm, large in function&rdquo;)</span>
+Zyklus: &beta;&#8321;(&epsilon;)=E&minus;V+C ,  <span class="opv">&tau;=&epsilon;<sub>death</sub>&minus;&epsilon;<sub>birth</sub></span>  <span class="c">(global; fragiler &Uuml;bergang)</span>
+Robustheits-Achse:  <span class="op2">&sigma;&#8345;</span> (A: Rauschen)  &amp;  <span class="opv">&epsilon;</span> (B: Schwelle)  <span class="c">(ein Signal-gegen-Rauschen-Regler)</span>
+</div>
+<ul>
+  <li><b>Ein Objekt, zwei Modi:</b> A (Belegung ID/C &times; Register &beta;&#8321;) und B (weich/punktweise &times; scharf/topologisch) sind <em>zwei Dual-Paare derselben Struktur</em>; die <em>scharfe/topologische</em> Lesung ist in beiden der &beta;&#8321;-Zyklus.</li>
+  <li><b>Niedrig belegt = einfach:</b> A: ID/C&nbsp;&lt;&lt;&nbsp;1 (Belegung weit unter dem festen Budget C); B: kleiner Rest + hohe Persistenz (das Feld bleibt glatt, der Zyklus stabil). Drei W&ouml;rter, ein Zustand: <em>niedrigzyklisch, niedrig-belegt, lokal-glatt</em>.</li>
+  <li><b>Der fragile &Uuml;bergang (Gemeinsamkeits-Kern):</b> A: die Grenze ID/C&rarr;1 (memorisiert) + das offene/geschlossene Gate; B: der Rest/Knick (lokal) + der am-wenigsten-persistente 1-Zyklus (global). Bedeutung <em>und</em> Unsicherheit konzentrieren sich <em>dort</em>.</li>
+  <li><b>Robustheits-Achse = zwei Gesichter einer Kontrolle:</b> B: &sigma;&#8345;/&epsilon; (Signal gegen Rauschen); A: die zwei Gates (Symmetrie erlaubt den Attraktor, Konvergenz erreicht ihn). Beide steuern, <em>wie tief</em> die Belegung unter das Budget f&auml;llt.</li>
+  <li><b>Budget &amp; Boden:</b> A: festes harte Budget C (Container) + ID bricht auf &asymp;log&#8322;N<sub>c</sub> ein (Boden von unten); B: irreduzierbarer Quantisierungs-Boden (Fehler &prop; (1/N)^0.1). Beides = die untere/obere Grenze des Containers.</li>
+  <li><b>Probing = lokales Gate:</b> B&rsquo;s Evaluate &#9733; (am fragilsten Token, Fog schrumpft, Loop repariert) ist der <em>punktweise</em> Akt dessen, was A&rsquo;s Gate <em>makroskopisch</em> tut (den Attraktor einbrechen lassen). SAA/QMC: 64 Samples &asymp; 4096 MC.</li>
+</ul>
+
+<h3>Die Br&uuml;cke &mdash; A &harr; B, dieselbe Struktur in zwei Lesarten</h3>
+<table class="tbl">
+  <tr><th>Gr&ouml;&szlig;e / Ebene</th><th>A (r3-018)</th><th>B (r3-014)</th><th>Rolle in der Fusion</th></tr>
+  <tr><td class="k">Das Objekt</td><td>niedrigzyklischer, niedrig-belegter Attraktor im Budget</td><td>d&uuml;nnes, kernel-gewichtetes, lokal-glattes Feld</td><td><b>eins</b>: ein d&uuml;nner Attraktor-Feld-Zustand im Budget</td></tr>
+  <tr><td class="k">Zwei Modi</td><td>Belegung (ID/C) &times; Register (&beta;&#8321;)</td><td>weich/punktweise &times; scharf/topologisch (&beta;&#8321;&plusmn;&tau;)</td><td>zwei Dual-Paare; scharfe Lesung = &beta;&#8321; in beiden</td></tr>
+  <tr><td class="k">Einfach/robust</td><td>ID/C &lt;&lt; 1 (Belegung &lt; Budget)</td><td>kleiner Rest + hohe Persistenz &tau;</td><td><b>dieselbe Bedingung</b> (niedrig belegt)</td></tr>
+  <tr><td class="k">Fragiler &Uuml;bergang</td><td>Grenze ID/C&rarr;1 (memorisiert); Gate offen/zu</td><td>Rest/Knick (lokal) + 1-Zyklus (global), am-wenigsten-persistent</td><td>die <b>Grenze des Regimes</b>; Bedeutung+Unsicherheit dort</td></tr>
+  <tr><td class="k">Robustheits-Achse</td><td>zwei Gates (Symmetrie + Konvergenz)</td><td>&sigma;&#8345;/&epsilon; (Signal gegen Rauschen)</td><td><b>zwei Gesichter einer Kontrolle</b></td></tr>
+  <tr><td class="k">Grenze/Boden</td><td>feste C (Container); ID&asymp;log&#8322;N<sub>c</sub> (Boden)</td><td>irreduzierbarer Boden (1/N)^0.1 + proberbare Schicht</td><td>Container (A) + Boden (B) = Container; dazwischen probebar</td></tr>
+  <tr><td class="k">Handlung</td><td>Gate (ja/nein, makroskopisch)</td><td>Evaluate &#9733; (punktweise, kontinuierlich)</td><td>Gate = makroskopisches Probing; Probing = lokales Gate</td></tr>
+</table>
+<div class="note ok"><b>Der fusionierte Kernsatz:</b> <span class="op">Ein d&uuml;nner Attraktor im festen Budget, zweifach gelesen (Belegung ID/C &times; Topologie &beta;&#8321;/&tau;), ist einfach &amp; robust genau dann, wenn er weit unter dem Budget belegt ist &mdash; und der fragile &Uuml;bergang ist die Grenze dieses Regimes, an der Belegung (A) und Persistenz (B) als zwei Gesichter einer Achse zusammenbrechen.</span></div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Fusion: eine Achse, zwei Gesichter &mdash; Belegung (A) &amp; Persistenz (B) am Budget</h2>
+<div class="viz">
+  <h3>Ein Attraktor im festen Budget, an einer Robustheits-Achse (Stress) gelesen</h3>
+  <p class="dsub">Eine Achse, zwei Gesichter. <b>Stress</b> (die Robustheits-Achse: &sigma;&#8345;/&epsilon; von B, &auml;quivalent zum &bdquo;wie nahe der Budget-Grenze&ldquo; von A) treibt <em>gleichzeitig</em> die <b>weiche Belegung ID/C (A, Teal)</b> nach oben gegen das <b>fixe Budget C</b> (gold, gestrichelt) <em>und</em> die <b>scharfe Persistenz &tau; (B, Violett)</b> nach unten. Die <b>zwei Gates (A)</b> &mdash; <b>Konvergenz der Tangente</b> (Gate&nbsp;2, Eigenwert-L&uuml;cke) und <b>Aufgabe-Symmetrie</b> (Gate&nbsp;1) &mdash; steuern, <em>wie tief</em> die Belegung fallen darf und <em>wo</em> die Fragilit&auml;t beginnt: Gate zu (zyklisch) &rarr; Belegung bleibt hoch (memorisiert), Symmetrie niedrig &rarr; Belegung f&auml;llt nur teilwei&szlig;, Register nicht harmonisch. Der <b>rosa &#9733;</b> markiert den <em>fragilsten Punkt</em> (B: am-wenigsten-persistent, A: ID/C am Rande) &mdash; dort konzentrieren sich Bedeutung &amp; Unsicherheit; die <b>amber Zone</b> ist der fragile &Uuml;bergang. Der <b>gr&uuml;ne Boden</b> (B: (1/N)^0.1, A: &asymp;log&#8322;N<sub>c</sub>) ist die Grenze, unter die Belegung nicht f&auml;llt.</p>
+  <canvas id="fuz"></canvas>
+  <div class="legend">
+    <span class="lg"><i style="border-color:var(--accent)"></i>Belegung ID/C (A, weich)</span>
+    <span class="lg"><i style="border-color:var(--accent2)"></i>Persistenz &tau; (B, scharf)</span>
+    <span class="lg"><i style="border-color:var(--gold);border-top-style:dashed"></i>Budget C (fix, A/B)</span>
+    <span class="lg"><i style="border-color:var(--green);border-top-style:dashed"></i>Boden (irreduzierbar, A/B)</span>
+    <span class="lg"><i style="border-color:var(--amber)"></i>fragiler &Uuml;bergang (Zone)</span>
+    <span class="lg"><i style="border-color:var(--rose)"></i>&#9733; fragilster Punkt (B/A)</span>
+  </div>
+
+  <div class="ctl">
+    <div class="ctl-lab"><span>Konvergenz der Tangente (A &middot; Gate&nbsp;2: Eigenwert-L&uuml;cke; &lt;0.30 &rarr; zyklisch)</span><b id="vG">0.85</b></div>
+    <input type="range" id="slG" min="0" max="1" step="0.02" value="0.85">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Aufgabe-Symmetrie (A &middot; Gate&nbsp;1: niedrig = generisch, hoch = Z/113-Ring)</span><b class="v" id="vS">0.80</b></div>
+    <input type="range" class="v" id="slS" min="0" max="1" step="0.05" value="0.80">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Stress / Rauschen &sigma;&#8345;,&epsilon; (B &middot; Robustheits-Achse: 0 = robust, 1 = fragil)</span><b class="a2" id="vT">0.35</b></div>
+    <input type="range" class="a2" id="slT" min="0" max="1" step="0.01" value="0.35">
+  </div>
+
+  <div class="ro">
+    <div class="box"><div class="k">Belegung ID/C (A)</div><div class="v" id="roOcc">&ndash;</div></div>
+    <div class="box violet"><div class="k">Persistenz &tau; (B)</div><div class="v" id="roTau">&ndash;</div></div>
+    <div class="box green"><div class="k">&beta;&#8321; aktiv / max</div><div class="v" id="roBeta">&ndash;</div></div>
+    <div class="box amber"><div class="k">Gap (A Gate&nbsp;2)</div><div class="v" id="roGap">&ndash;</div></div>
+    <div class="box violet"><div class="k">Gate&nbsp;1 (Symmetrie)</div><div class="v" id="roSym">&ndash;</div></div>
+    <div class="box rose"><div class="k">&#9733; fragil bei Stress t*</div><div class="v" id="roFrag">&ndash;</div></div>
+  </div>
+  <p class="stat" id="stat"></p>
+  <p class="viz-note">Alle Daten inline; keine Netzwerk-Calls. Theme-aware &uuml;ber CSS-Variablen (<code>html.dark</code>) + MutationObserver. Belegung = ID/C (A), Persistenz = &tau; (B), &beta;&#8321; max=24 / harmonisch=5 (A); die Kurvenformen sind dem Paper <em>angelehnt</em> (schematisch). Die zwei Gates (A) und die Robustheits-Achse (B) steuern gemeinsam, wie tief die Belegung unter das Budget C f&auml;llt und wo die Persistenz bricht &mdash; die Fusion: <em>Belegung und Persistenz sind zwei Gesichter derselben Achse.</em></p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <div class="item"><span class="lbl">A &middot; <a href="../3/r3-018.html">r3-018.html</a></span>
+  <b>&bdquo;Der Attraktor als niedrig-belegtes Register &mdash; zwei Gates, ein Budget&ldquo;</b> (R3-Fusion aus r2-033 &times; r2-035): das trainierte Netz als niedrigzyklischer, niedrig-belegter Attraktor im festen Budget, zweifach gelesen (metrische Belegung ID/C &times; topologische &beta;&#8321;-Register); generalisiert, wenn zwei Gates offen sind (Aufgabe-Symmetrie erlaubt den Attraktor, Konvergenz der lokalen Tangente zieht den Fluss dorthin) und die Belegung weit unter dem Budget C bleibt &mdash; die <b>Belegungs-/Gate-Seite</b> der Fusion.</div>
+  <div class="item"><span class="lbl b">B &middot; <a href="../3/r3-014.html">r3-014.html</a></span>
+  <b>&bdquo;Das d&uuml;nne Kernel-Feld: Ger&uuml;st, Zyklus und fragiler &Uuml;bergang&ldquo;</b> (R3-Fusion aus r2-023 &times; r2-021): ein trainiertes Modell als d&uuml;nnes, kernel-gewichtetes, lokal-glattes Feld, zweifach gelesen (weich/punktweise &times; scharf/topologisch); der fragile &Uuml;bergang (Rest/Knick lokal + 1-Zyklus global) tr&auml;gt Bedeutung &amp; Unsicherheit; die Robustheits-Achse (&sigma;&#8345;/&epsilon;) ist ein Signal-gegen-Rauschen-Regler &mdash; die <b>Feld-/&Uuml;bergangs-Seite</b> der Fusion.</div>
+</div>
+</section>
+
+<footer>
+  Fusion 009 &middot; r3-018.html &times; r3-014.html &middot; Runde 4 &middot; alles l&auml;uft lokal im Browser, keine Daten verlassen diese Seite.
+</footer>
+
+</main>
+<script>
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+var cv=$('fuz'); if(!cv) return;
+var ctx=cv.getContext('2d');
+var slG=$('slG'),slS=$('slS'),slT=$('slT'),vG=$('vG'),vS=$('vS'),vT=$('vT');
+var roOcc=$('roOcc'),roTau=$('roTau'),roBeta=$('roBeta'),roGap=$('roGap'),roSym=$('roSym'),roFrag=$('roFrag'),stat=$('stat');
+var html=document.documentElement;
+
+function C(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function smooth(u){u=clamp(u,0,1);return u*u*(3-2*u);}
+function h2r(h){h=(h||'').replace('#','').trim();if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var n=parseInt(h,16);if(isNaN(n))return[120,140,160];return[(n>>16)&255,(n>>8)&255,n&255];}
+function rgba(c,a){return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+
+var BETA_TOTAL=24, BETA_HARM=5;
+
+function compute(g,s,t){
+  var conv=clamp((g-0.30)/0.30,0,1);
+  var lowOcc=lerp(0.05,0.55,1-s);
+  function baseAt(x){return lerp(lowOcc,1.0,smooth(x));}
+  function occAt(x){return clamp(lerp(0.82,baseAt(x),conv),0,1);}
+  var locked=clamp(conv*0.5+s*0.5,0,1);
+  var fragStart=lerp(0.18,0.78,locked);
+  function tauAt(x){var u=clamp((x-fragStart)/(1-fragStart+1e-6),0,1);return 1-smooth(u);}
+  var occ=occAt(t), tau=tauAt(t);
+  var fragT=t, fragV=-1, m=64, x, dtau, v;
+  for(var i=1;i<m;i++){x=i/m;var xm=x-0.5/m,xp=x+0.5/m;dtau=(tauAt(xp)-tauAt(xm))/(1/m);v=Math.abs(dtau);if(v>fragV){fragV=v;fragT=x;}}
+  var betaMax=lerp(BETA_TOTAL,BETA_HARM,s);
+  var beta=Math.max(0,Math.round(betaMax*(0.1+0.9*tau)));
+  var status;
+  if(conv<0.40) status='mem-conv';
+  else if(occ<0.50 && tau>0.45) status='gen';
+  else if(occ>0.72) status='mem-occ';
+  else status='fragil';
+  return {conv:conv,lowOcc:lowOcc,occ:occ,tau:tau,fragStart:fragStart,fragT:fragT,beta:beta,betaMax:Math.round(betaMax),locked:locked,status:status,occAt:occAt,tauAt:tauAt};
+}
+
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function star(x,y,color,r){ctx.fillStyle=color;ctx.beginPath();for(var i=0;i<10;i++){var rad=(i%2===0)?r:r*0.45;var a=-Math.PI/2+i*Math.PI/5;var px=x+Math.cos(a)*rad,py=y+Math.sin(a)*rad;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.closePath();ctx.fill();}
+function curve(fn,cx,cy,w,h,color,lw,dash){ctx.globalAlpha=1;ctx.setLineDash(dash||[]);ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();var N=72;for(var i=0;i<=N;i++){var x=i/N;var px=cx+x*w,py=cy-h*fn(x);if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();ctx.setLineDash([]);}
+
+function draw(){
+  try{
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    var w=cv.clientWidth||760,H=cv.clientHeight||440;
+    cv.width=Math.round(w*dpr);cv.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,H);
+
+    var line=C('--line'),fg=C('--fg'),muted=C('--muted'),
+        accent=h2r(C('--accent')),accent2=h2r(C('--accent2')),amber=h2r(C('--amber')),
+        gold=h2r(C('--gold')),green=h2r(C('--green')),rose=h2r(C('--rose')),plotbg=h2r(C('--plot-bg'));
+
+    ctx.fillStyle=rgba(plotbg,1);rr(ctx,0,0,w,H,12);ctx.fill();
+
+    var g=+slG.value,s=+slS.value,t=+slT.value;
+    var r=compute(g,s,t);
+    var pmL=48,pmR=w-24,pmT=24,pmB=H-46;
+    function X(x){return pmL+x*(pmR-pmL);}
+    function Y(v){return pmB-clamp(v,0,1.08)*(pmB-pmT);}
+
+    // fragile transition band
+    ctx.fillStyle=rgba(amber,0.13);
+    ctx.fillRect(X(clamp(r.fragT-0.09,0,1)),pmT,X(clamp(r.fragT+0.09,0,1))-X(clamp(r.fragT-0.09,0,1)),pmB-pmT);
+
+    // grid
+    ctx.strokeStyle=line;ctx.lineWidth=1;ctx.font='10.5px ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='middle';
+    for(var gv=0;gv<=4;gv++){var val=gv/4;var y=Y(val);ctx.globalAlpha=.6;ctx.beginPath();ctx.moveTo(pmL,y);ctx.lineTo(pmR,y);ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=muted;ctx.fillText(val.toFixed(1),pmL-7,y);}
+    ctx.textAlign='center';ctx.textBaseline='top';
+    for(var gx=0;gx<=5;gx++){var dd=gx/5;var x=X(dd);ctx.globalAlpha=.4;ctx.beginPath();ctx.moveTo(x,pmT);ctx.lineTo(x,pmB);ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=muted;ctx.fillText(dd.toFixed(1),x,pmB+7);}
+    ctx.fillStyle=muted;ctx.fillText('Stress / Rauschen (&sigma;&#8345;,&epsilon;)',X(0.5),pmB+20);
+    ctx.save();ctx.translate(14,(pmT+pmB)/2);ctx.rotate(-Math.PI/2);ctx.fillText('Anteil (0 = glatt/niedrig, 1 = voll/fragil)',0,0);ctx.restore();
+
+    // budget (top) and floor (bottom)
+    var yB=Y(1.0);
+    ctx.setLineDash([8,5]);ctx.strokeStyle=rgba(gold,1);ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(pmL,yB);ctx.lineTo(pmR,yB);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=rgba(gold,1);ctx.font='700 11px ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='bottom';
+    ctx.fillText('Budget C (fix) = 1.0',pmR-2,yB-3);
+    var yF=Y(r.lowOcc);
+    ctx.setLineDash([3,4]);ctx.strokeStyle=rgba(green,1);ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(pmL,yF);ctx.lineTo(pmR,yF);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=rgba(green,1);ctx.textBaseline='top';
+    ctx.fillText('Boden (irreduzierbar)',pmR-2,yF+3);
+
+    // curves
+    curve(r.tauAt,pmL,pmB,pmR-pmL,pmB-pmT,rgba(accent2,1),2.6);
+    curve(r.occAt,pmL,pmB,pmR-pmL,pmB-pmT,rgba(accent,1),3.0);
+
+    // operating point
+    var opX=X(t);
+    ctx.strokeStyle=rgba(h2r(fg),0.35);ctx.setLineDash([2,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(opX,pmT);ctx.lineTo(opX,pmB);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(opX,Y(r.occ),5,0,Math.PI*2);ctx.fillStyle=rgba(accent,1);ctx.fill();ctx.strokeStyle=rgba(h2r(fg),0.5);ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(opX,Y(r.tau),5,0,Math.PI*2);ctx.fillStyle=rgba(accent2,1);ctx.fill();ctx.stroke();
+
+    // fragilest star (on persistence curve at fragT)
+    var sX=X(r.fragT),sY=Y(r.tauAt(r.fragT));
+    star(sX,sY,rgba(rose,1),9);
+    ctx.fillStyle=rgba(rose,1);ctx.font='700 10.5px ui-monospace,monospace';ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.fillText('\u2605 t*='+r.fragT.toFixed(2),Math.min(sX+8,pmR-52),sY-4);
+
+    // curve end labels
+    ctx.font='700 11px ui-monospace,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillStyle=rgba(accent,1);ctx.fillText('\u2014 Belegung ID/C (A)',X(0.62),Y(r.occAt(0.62))-8);
+    ctx.fillStyle=rgba(accent2,1);ctx.fillText('\u2014 Persistenz \u03c4 (B)',X(0.02),Y(r.tauAt(0.10))+16);
+
+    // readouts
+    vG.textContent=g.toFixed(2);vS.textContent=s.toFixed(2);vT.textContent=t.toFixed(2);
+    roOcc.textContent=r.occ.toFixed(2);
+    roTau.textContent=r.tau.toFixed(2);
+    roBeta.textContent=r.beta+' / '+r.betaMax;
+    roGap.textContent=r.conv.toFixed(2)+(r.conv<1?' \u2193':'');
+    roSym.textContent=s.toFixed(2);
+    roFrag.textContent=r.fragT.toFixed(2);
+
+    var smsg;
+    if(r.status==='mem-conv'){
+      smsg='<b>MEMORISIERT \u2014 Tangente zyklisch (Gate 2 zu, Gap='+r.conv.toFixed(2)+'): der lokale Fluss trifft keine Entscheidung, die Belegung bleibt hoch (ID/C='+r.occ.toFixed(2)+'), auch bei hoher Symmetrie. Das Gate (A) ist der Engpass \u2014 Probing (B) kann nicht helfen, was die Dynamik nicht erlaubt.</b>';
+    }else if(r.status==='gen'){
+      smsg='<b>GENERALISIERT / ROBST \u2014 beide Gates offen, niedrig belegt:</b> Belegung ID/C='+r.occ.toFixed(2)+' weit unter dem Budget, Persistenz \u03c4='+r.tau.toFixed(2)+' hoch, \u03b2\u2081='+r.beta+'/'+r.betaMax+' Register stabil (A&rsquo;s Torus). <b>Belegung (A) und Persistenz (B) sind zwei Gesichter derselben Achse \u2014 beide im sicheren Regime.</b>';
+    }else if(r.status==='mem-occ'){
+      smsg='<b>MEMORISIERT \u2014 Belegung &rarr; Budget (ID/C='+r.occ.toFixed(2)+', Stress='+t.toFixed(2)+') \u2014 Persistenz \u03c4&rarr;'+r.tau.toFixed(2)+', Register kollabieren (\u03b2\u2081='+r.beta+'/'+r.betaMax+'). <b>Der fragile &Uuml;bergang (B) ist erreicht \u2014 A&rsquo;s Budget-Grenze, B&rsquo;s br&uuml;chiger Zyklus.</b>';
+    }else{
+      smsg='<b>FRAGIL \u2014 &Uuml;bergang:</b> Belegung ID/C='+r.occ.toFixed(2)+', Persistenz \u03c4='+r.tau.toFixed(2)+'. Bedeutung &amp; Unsicherheit konzentrieren sich am <b>\u2605 (t*='+r.fragT.toFixed(2)+')</b> \u2014 B&rsquo;s fragilstes Token, A&rsquo;s Belegung am Rande des Budgets. <b>Deskriptiv</b> gelesen: das Modell ist hier am unsichersten; <b>instrumental</b> gelesen: hier hin die n&auml;chste teure Probe (Evaluate).</b>';
+    }
+    stat.innerHTML=smsg;
+  }catch(e){}
+}
+
+if(slG)slG.addEventListener('input',draw);
+if(slS)slS.addEventListener('input',draw);
+if(slT)slT.addEventListener('input',draw);
+window.addEventListener('resize',draw);
+var btn=$('themeBtn');
+if(btn)btn.addEventListener('click',function(){html.classList.toggle('dark');draw();});
+if(window.MutationObserver){try{new MutationObserver(function(){draw();}).observe(html,{attributes:true,attributeFilter:['class']});}catch(e){}}
+draw();
+})();
+</script>
+</body>
+</html>

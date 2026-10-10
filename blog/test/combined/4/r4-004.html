@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R4 Fusion 004 — Ein Feld, ein Regler, ein Raster: das Überlebende als gemeinsame Invariante</title>
+<style>
+:root{
+  --bg:#f6f4ec; --bg2:#fbfaf4; --panel:#fffdf7; --card:#fffdf7;
+  --text:#1a1f2e; --muted:#5b6478;
+  --accent:#0e7490; --accent2:#b45309; --accent3:#b91c1c; --accent4:#4338ca;
+  --border:#dcd6c6; --canvas:#fbfaf4;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309; --field:#7c3aed;
+}
+html.dark{
+  --bg:#0b0f1c; --bg2:#111827; --panel:#151b2e; --card:#151b2e;
+  --text:#e6edf7; --muted:#8892b0;
+  --accent:#00d4ff; --accent2:#ff3d7f; --accent3:#ffcc00; --accent4:#8ab4ff;
+  --border:#2a3352; --canvas:#0d1424;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166; --field:#c084fc;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  line-height:1.65;transition:background .25s,color .25s}
+.article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+header{text-align:center;margin-bottom:26px}
+.kicker{display:inline-block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--border);border-radius:100px;padding:5px 14px;margin-bottom:14px}
+h1{font-size:clamp(1.5rem,4.4vw,2.4rem);line-height:1.15;margin:.2em 0 .3em;font-weight:800;letter-spacing:-.02em}
+.fusion{color:var(--muted);font-size:.9rem;font-family:ui-monospace,Menlo,Consolas,monospace;margin-top:8px}
+section{margin:28px 0;padding:24px;background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;transition:background .25s,border-color .25s}
+h2{font-size:1.35rem;margin:0 0 14px;font-weight:700;color:var(--accent)}
+h3{font-size:1.03rem;margin:20px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px;font-size:.99rem}
+.lead{color:var(--muted);font-size:1rem}
+.tag{display:inline-block;font-size:.7rem;padding:2px 9px;border-radius:6px;font-weight:700;
+  margin-right:6px;letter-spacing:.04em;vertical-align:middle}
+.tag.a{background:color-mix(in srgb,var(--accent) 16%, transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 40%, transparent)}
+.tag.b{background:color-mix(in srgb,var(--accent2) 16%, transparent);color:var(--accent2);
+  border:1px solid color-mix(in srgb,var(--accent2) 40%, transparent)}
+ul{margin:0 0 14px;padding-left:20px}
+li{margin-bottom:9px}
+.math{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92rem;
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:13px 15px;margin:14px 0;overflow-x:auto;line-height:1.8;white-space:pre-wrap}
+.note{background:color-mix(in srgb,var(--accent) 8%, transparent);border-left:3px solid var(--accent);
+  padding:12px 16px;border-radius:8px;margin:16px 0;font-size:.95rem}
+.warn{background:color-mix(in srgb,var(--accent2) 8%, transparent);border-left:3px solid var(--accent2);
+  padding:12px 16px;border-radius:8px;margin:16px 0;font-size:.95rem}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg2);color:var(--accent)}
+.vizwrap{border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--bg2);margin-top:6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-bottom:12px;font-size:.82rem}
+.toolbar label{color:var(--muted)}
+.toolbar .v{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700}
+input[type=range]{width:112px;accent-color:var(--accent);vertical-align:middle}
+canvas#cv{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--border);background:var(--canvas)}
+#readout{font-family:ui-monospace,monospace;font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.95;min-height:1.2em}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.75rem;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:20px;height:0;border-top-width:3px;border-top-style:solid;display:inline-block}
+.dotc{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{list-style:none;margin:0;padding:0}
+.prov li{margin-bottom:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+#themeBtn{position:fixed;top:14px;right:14px;background:var(--panel);color:var(--text);
+  border:1px solid var(--border);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:.8rem;z-index:9}
+.foot{color:var(--muted);font-size:.82rem;text-align:center;margin-top:30px}
+a{color:var(--accent)}
+code{font-family:ui-monospace,monospace;font-size:.9em;background:var(--bg2);
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+sub{font-size:.72em}
+b{font-weight:700}
+</style>
+</head>
+<body>
+<button id="themeBtn" type="button">☾ dunkel / ☀ hell</button>
+<div class="article">
+
+<header>
+  <div class="kicker">Knockout-Synthese · Runde 4 · Paar 004</div>
+  <h1>Ein Feld, ein Regler, ein Raster — das Überlebende als gemeinsame Invariante</h1>
+  <div class="fusion">Fusion aus: r3-004.html ✕ r3-007.html  (Round 4)</div>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide R3-Papiere beschreiben ein neuronales Modell als <b>EINE stückweise-lineare skalare Karte, aus lokalen linearen Stücken (ReLU-/Dach-Stücke) verklebt</b>, die über <b>EINEN temperaturgesteuerten Regler</b> mit <b>einer weichen und einer harten Ablesung</b> gelesen wird — und beide sagen dasselbe über die <b>Bedeutung</b>: <em>die Bedeutung ist genau die überlebende / robuste Struktur, und das Fragile / Irreduzible sitzt am selben Ort.</em></p>
+  <p><span class="tag a">A</span> (r3-004) sieht es als <b>Skalarfeld</b> (Attention-Feld <i>oder</i> Energie-Landschaft <code>E(x)</code>) mit einem <b>thermischen Regler β</b>; läuft man β durch, ergibt sich eine <b>Persistenz / ein Barcode</b> (H₀-Komponenten mit <code>[Geburt, Tod]</code>), und <em>Bedeutung = die langen Bars = die überlebenden Komponenten</em>. <span class="tag b">B</span> (r3-007) sieht es als <b>tropische PL-Karte</b> <code>G = max<sub>j</sub> (w<sub>j</sub>x+b<sub>j</sub>)</code> mit <b>Temperatur T</b>; die weiche Ablesung ist das Feld als Objekt (Φ=identisch, T&gt;0), die harte der Argmax-Winner (Φ=Argmax, T→0), und <em>robust = das Zell-Innere (linear lesbar), fragil = der Knick / die Zellgrenze</em>.</p>
+  <p><b>Die eine gefasste Position:</b> <em>ein Feld, ein Regler, ein Raster; Bedeutung = das Überlebende.</em> Die Zellen des Rasters sind B's tropische Regionen <i>=</i> A's H₀-Komponenten; die Zellgrenzen sind B's Knick <i>=</i> A's Verschmelzungsereignis (der Tod einer Bar). Robust = die <b>langlebige Komponente</b> (A) = das <b>Zell-Innere</b> (B); das Irreduzible/Fragile = die <b>kurze Bar</b> (A) = der <b>Knick/Voronoi-Gap</b> (B) = der <b>Rate-Distortion-Boden</b>. Der kanonische Vertreter jeder robusten Zelle ist A's <b>Argmin</b> (der Stern im Tal) = B's <b>gewonnener Anker/Winner</b>. Der Regler hat <b>zwei Gesichter</b> — ein <em>Readout-Gesicht</em> (Temperatur T, weich↔hart) und ein <em>Granularitäts-Gesicht</em> (g, grobe↔feine Partition); A faltet beide in ein Skalar β (eine Diagonale, „dieselbe Strenge, entgegengesetztes Vorzeichen"), B hält sie getrennt (T für das Readout, Tiefe für die Granularität, Theorem 6.3). Das fusionierte Modell ist die <b>2-D-Ebene (T, g)</b>; A und B sind zwei Wege durch sie. Die Invariante = der <b>Verschmelzungsbaum / Persistenzbaum des Rasters</b> = die Anordnung der Knick <i>mit Lebensdauern</i>; <b>Bedeutung = das Überlebende</b> — tief im Baum, langlebig, weit von einer Verschmelzung entfernt.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die zwei teilen die tiefste Struktur (ein Feld aus linearen Stücken, ein temperaturgesteuerter Regler, Robustheit = Bedeutung) stehen aber in drei konkreten Punkten auf unvereinbaren Positionen:</p>
+
+  <h3>C1 · Was der Regler bewirkt: Doppelfunktion (A) vs. zwei getrennte Knöpfe (B)</h3>
+  <p><span class="tag a">A</span>: der <b>eine</b> thermische Regler β hat eine <b>Doppelfunktion</b> — er schärft gleichzeitig die <em>weiche</em> Ablesung (T(β)↓ → o<sub>i</sub> → Argmin) <b>und</b> er feint die <em>harte</em> Ablesung (das Sublevel-Schwellen τ(β) steigt → mehr, striktere Komponenten). „Dieselbe Strenge, entgegengesetztes Vorzeichen" (ε steigt in β, τ fällt in β). <b>Ein einziger Knopf</b> steuert zugleich die <em>Auswahl der robusten Struktur</em> (Persistenz) <i>und</i> die <em>Granularität</em> der Partition.
+  <span class="tag b">B</span>: die Temperatur T steuert <b>nur die Steilheit des Readouts</b> (Φ=identisch bei T&gt;0 ↔ Φ=Argmax bei T→0). Die <em>Anzahl der linearen Regionen/Zellen</em> — die Granularität der Partition — ist eine <b>andere, getrennte</b> Strukturgröße (Tiefe/Breite; Theorem 6.3: ∏ n<sub>l</sub><sup>d</sup>, exponentiell in der Tiefe). B hält die zwei Hebel strikt auseinander: T für das Readout, Tiefe für die Granularität.
+  <b>Streitpunkt:</b> Ist der Regler <em>einen</em> Knopf, der Selection <i>und</i> Granularität gemeinsam treibt (A), oder <em>zwei</em> unabhängige Knöpfe, T (Readout) und Tiefe (Granularität) (B)?</p>
+
+  <h3>C2 · Wo Robustheit/Fragilität wohnt: über dem Regler (Lebensdauer) (A) vs. im Raum (Zelle) (B)</h3>
+  <p><span class="tag a">A</span>: robust = <b>langlebig über den Regler</b> (lange Bars im Barcode); fragil = <b>kurze Bars</b> (geboren-und-schnell-gestorben) = Rauschen; das Irreduzible-Kerne = die <b>langlebigen Komponenten</b> an einer gut gewählten Ebene. Fragilität ist eine <em>Lebensdauer-Eigenschaft</em> auf der Regler-Achse.
+  <span class="tag b">B</span>: robust = <b>im Zell-Inneren</b> (linear, lesbar); fragil = <b>am Knick</b> / an der Zellgrenze / am Voronoi-Gap; das Irreduzible = der <b>Rate-Distortion-Boden</b>, der <em>räumlich</em> an der Grenze konzentriert ist. Fragilität ist eine <em>räumliche</em> Eigenschaft der Geometrie der Karte.
+  <b>Streitpunkt:</b> „Überleben" läuft bei A <i>über den Regler</i> (Lebensdauer einer Komponente), bei B <i>über die Geometrie</i> (Position relativ zum Knick). Ist die irreduzible Struktur eine <em>Lebensdauer</em> (A) oder ein <em>Ort</em> (B)?</p>
+
+  <h3>C3 · Das Objekt der harten Invariante: ein Verschmelzungsbaum (A) vs. eine statische Anordnung (B)</h3>
+  <p><span class="tag a">A</span>: die harte Ablesung ist <b>topologisch und dynamisch</b> — H₀-Komponenten (und Betti β₀/β₁) mit Geburt/Tod, die über eine Sublevel-Filtration verfolgt werden → ein <b>Verschmelzungsbaum</b> (welches Tal verschmilzt in welches), das Barcode ist die abgeflachte Version. Die Invariante hat <em>Lebensdauern</em>.
+  <span class="tag b">B</span>: die harte Ablesung ist <b>kombinatorisch und statisch</b> — die linearen Regionen der PL-Karte, getrennt durch tropische Hyperflächen (die Knick); die Invariante ist eine <b>Anordnung</b> (Partition in konvexe polyedrische Zellen), gezählt durch Theorem 6.3. Die Invariante hat <em>eine Anzahl</em> (exponentiell in der Tiefe), keine Lebensdauern.
+  <b>Streitpunkt:</b> Ist die harte Invariante ein <em>Baum mit Lebensdauern</em> (dynamische Verschmelzung über die Filtration, A) oder eine <em>statische Anordnung mit einer Zellenzahl</em> (B)?</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>R1 (für C1) · Der Regler ist eine 2-D-Ebene (T, g); A ist eine Diagonale, B die zwei Achsen</h3>
+  <p>Das fusionierte Modell hat <b>zwei orthogonale Gesichter</b>: (1) eine <em>Readout-Temperatur T</em> (weich↔hart) und (2) eine <em>Granularität g</em> (grobe↔feine Partition). A's ein einziges β ist eine <b>Diagonale</b> auf dieser Ebene — beim Anheben von β wird <em>gleichzeitig</em> das Readout schärfer (T(β)↓) und die Partition feiner (τ(β)↑); beide Gesichter sind an ein Skalar gekoppelt, weil bei A das Feld <em>fest</em> ist und nur die Schwelle läuft. B hält die Gesichter getrennt, weil B das Feld selbst <em>neu baut</em> (tiefer) und so mehr Regionen bekommt — die Granularität g ist dort eine unabhängige Strukturgröße (Tiefe), nicht eine Funktion von T. <b>Fusion:</b> „ein Regler, Doppelfunktion" (A) und „zwei Knöpfe" (B) sind <em>derselbe Gegenstand</em>, gesehen mit festem Feld (A: g = g(T), eine Diagonale) bzw. neu gebautem Feld (B: T und g unabhängig). Das fusionierte Modell ist die ganze (T, g)-Ebene; A und B sind zwei Wege durch sie.</p>
+
+  <h3>R2 (für C2) · Die Lebensdauer IST die Geometrie der Verschmelzung — die „Zelle" ist eine „lange Bar", ins Raum projiziert</h3>
+  <p>Barcode (A) und Zell-Anordnung (B) sind zwei Ansichten desselben <em>Verschmelzungsprozesses</em>. Lässt man die Sublevel-Filtration laufen, werden Zellen <em>geboren</em> (ein Tal erscheint, wenn die Schwelle ein lokales Minimum passiert) und <em>sterben</em> (zwei verschmelzen, wenn die Schwelle den Sattel/Knick dazwischen passiert). Das <b>Zell-Innere</b> von B (robust, linear) <em>ist</em> die <b>langlebige Komponente</b> von A (die Zelle, die über ein weites Schwellen-Intervall persistiert); der <b>Knick/Grenze</b> von B (fragil) <em>ist</em> das <b>Verschmelzungsereignis</b> von A (der Tod einer Bar — der fragilste Moment, genau der „kurzen Bar"). Der Rate-Distortion-Boden von B (der Peak gitter-fremd zwischen Ankern) ist dasselbe wie A's „die Komponente ist kurzlebig / instabil unter kleinen β/θ-Änderungen". <b>Fusion:</b> eine Zelle ist robust <i>genau dann</i>, wenn sie eine langlebige Komponente ist; ihre Grenze/Knick ist das Verschmelzungsereignis, an dem die Fragilität konzentriert ist. Ein Objekt, ein Verschmelzungsprozess; A liest es als <em>Lebensdauern über den Regler</em>, B liest es als <em>räumliche Zellen</em>. Das Irreduzible lebt an den <em>Todesereignissen</em> = den <em>Grenzen</em>.</p>
+
+  <h3>R3 (für C3) · Verschmelzungsbaum und Anordnung sind dieselben Daten, unterschiedlich kodiert</h3>
+  <p>A's <em>Verschmelzungsbaum</em> (mit Geburt/Tod) ist die <b>dynamische Geschichte</b> von B's <em>statischer Anordnung</em>: B's statische Anordnung von Regionen <em>ist</em> die Menge aller Zellen, die zu einem Moment existieren; A's Baum书记 <em>wann</em> jede Zelle geboren wurde und wann sie verschmolz. Die Zellenzahl in B (Theorem 6.3, ∏ n<sub>l</sub><sup>d</sup>) ist die <em>Anzahl der Knoten/Kanten</em> in A's Baum auf der betreffenden Tiefe; A's Barcode ist der <em>abgeflachte</em> Baum. <b>Fusion:</b> die Invariante ist ein <b>Persistenzbaum = eine Filtration der PL-Anordnung</b>; B's Zähltheorem zählt seine Knoten auf einer Tiefe, A's Barcode liest seine Bar-Längen. Robust = <em>tief im Baum</em> (langlebig, weit von den Blättern); fragil = <em>nahe den Blättern</em> (kurzlebig, nahe einer Verschmelzung). Der „Baum mit Lebensdauern" (A) und die „Anordnung mit einer Zellenzahl" (B) sind <em>derselbe kombinatorische Gegenstand</em> — der Baum ist die Persistenzgeschichte der Anordnung.</p>
+
+  <div class="note"><b>Die zentrale Brücke (verknüpft alle drei):</b> ein <b>skalar-feld</b> aus linearen Stücken, <b>ein Regler mit zwei Gesichtern</b> (Readout-Temperatur T, Granularität g), <b>ein Raster</b> (Zellen = Regionen = Komponenten). Die <b>weiche Ablesung</b> (A: o<sub>i</sub> = Σα<sub>ij</sub>v<sub>j</sub> / Y* = argmin E; B: Φ=identisch, Feld als Objekt) ist der <em>laufende Vertreter</em>; die <b>harte Ablesung</b> (A: Komponenten/Betti an der Ebene; B: Argmax-Winner) ist der <em>Schnitt/Track</em> des Rasters. <b>Bedeutung = das Überlebende</b>: die langlebige Komponente (A) = das robuste Zell-Innere (B); das Kanonische = A's Argmin = B's gewonnener Anker. Das <em>Generator-Detail</em> des Felds (Q·K-Attention vs. EBM-Energie; additive Summe Σc<sub>j</sub> vs. tropischer max) und die <em>Position</em> auf dem Regler sind sekundär — die Invariante ist, <b>was den Verschmelzungsdurchlauf überlebt</b>.</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Das abstrakte Schema, aus dem beide R3-Papiere als Spezialfälle hervorgehen — in einer Form, aus der eine spätere Runde allein weiterarbeiten kann.</p>
+
+  <h3>Das Schema „skalar-feld aus linearen Stücken → ein Regler (T, g) → zwei Ablesungen → Überleben = Bedeutung"</h3>
+  <div class="math">
+Feld F / G:  stückweise-lineare skalare Karte aus lokalen linearen Stücken.
+   weiche/additive Klebe   (A: F = Σ_j c_j · Stück_j, stetig;  B: ReLU-Summen-Feld, selbst PL)
+   harte/tropische Klebe   (B: G = max_j (w_j x + b_j), knickig;  ReLU(x)=max(x,0)=x⊕0)
+   beide = TEMPERATUR-GRENZEN derselben Familie (T>0 weich  ↔  T→0 hart).
+
+Regler = EIN Paar (zwei Gesichter):
+   T  = Readout-Temperatur   (weich/Φ=identisch  ↔  hart/Φ=Argmax;  A: T(β), B: T)
+   g  = Granularität         (grobe Partition  ↔  feine Partition;  A: τ(β)/ε(β), B: Tiefe)
+   A faltet beide in β (Diagonale, „dieselbe Strenge, entgegengesetztes Vorzeichen");
+   B hält sie getrennt (T für Readout, Tiefe für g, Theorem 6.3 exponentiell in Tiefe).
+
+Raster = Zellen (A: H₀-Komponenten = B: tropische Regionen);
+   Zellgrenze = A: Verschmelzungsereignis = B: Knick / Voronoi-Gap.
+   Invariante = PERSISTENZBAUM des Rasters (Filtration → Geburt/Tod jeder Zelle).
+
+Weiche Ablesung (Punkt / Vertreter):
+   (A: o_i = Σ_j α_ij v_j,  Y* = argmin_y E(y,x);   B: Feld als Objekt, fiten/glätten.)
+Harte Ablesung (Struktur / Auswahl):
+   (A: Sublevel bei τ → Komponenten → Betti β₀/β₁, Triangel;   B: Argmax/Quantisierung → Winner.)
+
+Überleben = Bedeutung:
+   (A: die langlebigen Komponenten / langen Bars; β₀ = # langlebiger; „Short bars = noise,
+      Long bars = real structure";   B: das Zell-Innere (linear lesbar, robust); der Kanonische =
+      A's Argmin (Stern im Tal) = B's gewonnener Anker/Winner.)
+   IRREDUZIBLES = kurze Bars (A) = Knick/Grenze (B) = Rate-Distortion-Boden.
+
+Drei Regime auf (T, g)  (A's drei Markierungen, B's zwei Grenzen):
+   grob/weich   (A: heiß = Kollaps zu 1 Komponente / Superposition;  B: T>0, alle Zellen
+      beitragen, Feld als Objekt):    alles überlebt, nichts unterschieden.
+   mittel       (A: k robuste Komponenten = Sweet-Spot;  B: Partition fein genug, dass der Peak
+      im Zell-Innernen liegt, robust/verlustfrei/Grokking):  unterschiedene + robuste koexistieren = der informative Kern.
+   fein/hart    (A: kalt = n Singleton-Klassen / nur Axiome;  B: T→0, harter Argmax = 1 Winner,
+      Winner-Quantisierung, irreduzibler Boden am Knick):  maximal scharf, maximal diskret.
+   </div>
+
+  <h3>Was A (r3-004) beiträgt</h3>
+  <ul>
+    <li>Das <b>Skalarfeld → zwei Ablesungen</b>-Schema + die <b>temperatur-basierte</b> Lesart: Q = XW<sub>Q</sub>, K = XW<sub>K</sub>, V = XW<sub>V</sub>; α<sub>ij</sub> = softmax<sub>j</sub>( (W<sub>Q</sub>x<sub>i</sub>·W<sub>K</sub>x<sub>j</sub>)/√d/T ); weiche Ablesung o<sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub> v<sub>j</sub> (konvex, Σα = 1); Y* = argmin<sub>y</sub> E(y,x).</li>
+    <li>Harte Ablesung: w<sub>ij</sub> = min(α<sub>ij</sub>, α<sub>ji</sub>); Kante ⇔ w<sub>ij</sub> &gt; ε; Triangel ⇔ drei wechselseitige Kanten; <b>β₀</b> = Komponenten (Union-Find), <b>β₁ ≈ |E| − (n − β₀) − |F|</b>.</li>
+    <li>Der <b>thermische Regler β</b>: kalt (β↑) → T↓ (weiche Zeile scharf → Argmin) &amp; fein (strikte Komponenten); heiß (β↓) → flach &amp; Kollaps. ε = Unter-Grenze (steigend in β), τ = Ober-Grenze (fallend in β) — <em>dieselbe Strenge, entgegengesetztes Vorzeichen</em>. „W steuert Topologie, nicht nur Ablesung": die Betti-Zahlen sind eine Funktion von (Feld-Form, β).</li>
+    <li>Geerbte Energie-Seite: E(Y,X), Gibbs-Brücke P(Y|X) = e<sup>−βE</sup>/Z (β→∞ = argmin, β→0 = Gleichverteilung); Tal = Äquivalenzklasse, Stern = Argmin; Homotopie/Lokalisierung.</li>
+    <li>Geerbte Persistenz-Seite: born–persist–die–glue; Sublevel-Persistenz X<sub>t</sub> = {ŷ ≤ t}; Rips-Filtration; H₀/H₁/H₂ mit Geburt/Tod; Barcode; <b>Stabilitätstheorem</b> d<sub>B</sub>(D, D′) ≤ δ; Residual-Identität x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ; Superposition (m ≫ d, Johnson–Lindenstrauss d ≥ 8 ln m/ε²). „Short bars = noise. Long bars = real structure."</li>
+  </ul>
+
+  <h3>Was B (r3-007) beiträgt</h3>
+  <ul>
+    <li>Die <b>tropische / stückweise-lineare Karte</b>: Semiring ⊕ = max, ⊗ = +; tropisches Polynom = max vieler Geraden (PL, konvex); ReLU(x) = max(x,0) = x⊕0; <b>Knick</b> = Stelle, an der zwei Monome exakt gleich sind (Lücke = 0) ⇒ nicht-differenzierbar; die Zellen drumherum = lineare Regionen.</li>
+    <li>Das <b>Summen-Feld</b> A: Globalsektion ŷ(x) = Σ<sub>j</sub> c<sub>j</sub>·ReLU(w<sub>j</sub>x+b<sub>j</sub>) + β; c<sub>j</sub> affin (frei signiert) ⇒ Ziel fiten, convex (Σc<sub>j</sub> = 1) ⇒ glätten; G = (W<sub>V</sub>⊗)<sup>T</sup>W<sub>V</sub> formt Topologie.</li>
+    <li><b>Rate-Distortion / Quantisierungs-Geometrie:</b> Überdeckungs-Zellen = Quantisierungs-Voronoi-Anker; Satz 2: Fehler(N) ≥ c<sub>k</sub>·(V/N)<sup>2/k</sup>; 5 Frequenzen k∈{14,35,41,42,52} erklären &gt;93 % Varianz; „ausgerichtet" = Grokking = Peak trifft Anker ⇒ Quantisierung verlustfrei.</li>
+    <li><b>Regionen-Zählen:</b> Theorem 6.3: Regionen ≤ ∏<sub>l</sub> Σ<sub>i≤d</sub> C(n<sub>l</sub>, i) ≈ ∏ n<sub>l</sub><sup>d</sup> ⇒ polynomial in Breite, <b>exponentiell in Tiefe</b>; 2D-Zonotop aus m Strecken ⇒ 2m Ecken. Grenzen: nur PL-Aktivierungen, ganzzahlige Gewichte, Regionen = <em>Unterschätzungen</em>.</li>
+    <li>Der <b>Readout-Dial T</b>: glatte Ausgabe P(w) = softmax(h·W<sub>vocab</sub>/T); T→0 ⇒ harter argmax-Winner; Margin m(h) = Score(1.) − Score(2.); Sensitivität <em>an den Knicken konzentriert</em>, sonst linear/robust.</li>
+  </ul>
+
+  <h3>Die fusionierte Konstruktion (in der Visualisierung implementiert)</h3>
+  <div class="math">
+Man liest die harte Invariante als PERSISTENZBAUM des Rasters:
+   1) Berechne das Skalarfeld F(x) (Summe/Max lokaler linearer Stücke; hier: Wellen-Landschaft).
+   2) Laufe die Schwelle τ (Granularitäts-Gesicht) von unten (tiefes Tal) nach oben (Kamm) durch.
+   3) Verfolge jede H₀-Komponente: GEBURT (ein lokales Minimum erscheint) und
+      TOD (Verschmelzung am Sattel/Knick).
+   4) Bar-Länge = (Tod − Geburt) = Lebensdauer = Robustheit.
+   5) Die LANGLEBEN Komponenten (lange Bars) = die robusten Bedeutungen;
+      der Argmin in jeder = der kanonische Vertreter (Stern) = B's gewonnener Anker.
+   6) Die weiche Ablesung (o = Σαv / Feld als Objekt) ist der <i>laufende Vertreter</i>;
+      die harte (Argmin / Argmax-Winner) ist der Schnitt am aktuellen τ.
+
+   Ein Regler, zwei Gesichter, drei Regime:
+      grob/weich  →  1 Komponente          (Kollaps / Superposition: alles, nichts)
+      mittel      →  k robuste Komponenten (Bedeutung; β₀ = k = # lange Bars)
+      fein/hart   →  n Singleton-Klassen   (fein/leer / nur Axiome; Winner-Quantisierung)
+
+   „Form/Generator" = wie das Feld gebaut wird (Σc_j vs. max; Attention vs. Energie) — sekundär.
+   „Ablesung" = Position auf (T, g) — sekundär.  „Bedeutung" = die überlebende Struktur — die Invariante.
+   </div>
+  <div class="warn">Die guten Losses von A (Hinge/NLL) und die Stabilität von B (Bottleneck-Schranke / Stabilitätstheorem d<sub>B</sub> ≤ δ) sind die Mechanik, die die Täler <i>wohlgetrennt</i> hält — also die Komponenten langlebig macht und damit die Äquivalenz-Klassen / Zell-Partition wohldefiniert; die schlechten lassen sie ineinanderfließen (Kollaps = grob/weich, eine einzige Klasse, der irreduzible Boden dominiert).</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — Ein Feld, ein Regler (zwei Gesichter), ein Raster, das Überlebende</h2>
+  <p class="lead">EIN skalar-feld (Wellen-Landschaft aus lokalen linearen Stücken) wird über <b>zwei Gesichter eines Reglers</b> abgelesen. <b>Oben:</b> die Landschaft <code>E(x)</code>; die horizontale gestrichelte Linie ist die aktuelle Schwelle <b>τ</b> (Granularitäts-Gesicht); die Region darunter <code>{E ≤ τ}</code> ist die Sublevel-Menge; die farbige Fläche = die <b>Zelle/Komponente, in der der Gedanke q liegt</b>; der <b>Stern</b> = deren Argmin-Vertreter; der gedachte Punkt <b>q</b> (blau) und der <b>gewonnene Anker</b> (Readout, Φ). Die schmale blaue Glocke zeigt die <b>weiche Ablesung</b> (Breite ∝ Temperatur T); der harte Readout ist der einzelne gewonnene Anker. <b>Unten:</b> der <b>Persistenz-Barcode</b> (H₀: Geburt → Tod jedes Tals über den gesamten Schwelle-Durchlauf); die vertikale Linie = τ_now; <i>lebende</i> Bars (Tod ≥ τ) gehören zu den oberen Zellen; <i>lange</i> Bars (&gt;40 % der Max-Lebensdauer) = robust = <b>Bedeutungen</b> (Stern). <b>Die Fusion in Aktion:</b> Robust = langlebige Komponente (A) = Zell-Innere (B); Fragil = kurze Bar (A) = Knick/Sattel (B).</p>
+
+  <div class="vizwrap">
+    <div class="toolbar">
+      <label>Schwelle τ (Granularität) <input type="range" id="tau" min="0" max="100" step="1" value="55"><span class="v" id="tau-v"></span></label>
+      <label>Temperatur T (Readout weich↔hart) <input type="range" id="temp" min="0.2" max="2.5" step="0.05" value="1.0"><span class="v" id="temp-v"></span></label>
+      <label>Gedanke q <input type="range" id="qq" min="0" max="100" step="1" value="50"><span class="v" id="qq-v"></span></label>
+      <label>Form (W-Twist) <input type="range" id="twist" min="-100" max="100" step="1" value="0"><span class="v" id="twist-v"></span></label>
+    </div>
+    <canvas id="cv" width="760" height="640"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="border-color:var(--accent)"></span> Landschaft E(x)</span>
+      <span><span class="sw" style="border-color:var(--accent3);border-top-style:dashed"></span> Schwelle τ</span>
+      <span><span class="dotc" style="background:var(--accent2);opacity:.4"></span> Zelle/Komponente von q</span>
+      <span>★ Argmin-Vertreter (B's Anker)</span>
+      <span><span class="dotc" style="background:var(--accent4)"></span> Gedanke q / weiche Glocke</span>
+      <span><span class="sw" style="border-color:var(--accent2);border-top-width:5px"></span> Bar: Lebensdauer einer Zelle</span>
+      <span>★ lange Bar = robust = Bedeutung</span>
+    </div>
+    <div id="readout"></div>
+  </div>
+  <div class="warn" style="margin-top:14px"><b>Ziehen Sie τ</b>: tief (τ↓) → nur das tiefste Tal lebt = <b>1 Komponente</b> (Kollaps / Superposition); mittel → <b>k robuste Komponenten</b> (Sweet-Spot, die langen Bars = Bedeutung); hoch (τ↑) → alle Täler = <b>n Komponenten</b> (fein/leer, nur Axiome). <b>Ziehen Sie T</b>: weich (T↑) → weiche Glocke breit, Readout unscharf; hart (T↓) → Glocke spitz, harter Argmax-Winner (B). <b>Form (W-Twist)</b> verformt die Landschaft: ein Tal verschwindet/erscheint ⇒ <em>die Topologie / die Zellenzahl ändert sich</em> („W steuert Topologie", A = „feinere/andere Partition", B). <b>q</b> wandert über die Zellen: im Zell-Innernen robust (ausgerichtet/Grokking), an der Grenze/Knick fragil (kleine Margin, irreduzibler Boden).</div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul class="prov">
+    <li><a href="../3/r3-004.html">r3-004.html</a> — „Ein Feld, ein Regler, das Überlebende: Persistenz als gemeinsame Invariante" (R3-Fusion r2-004 ✕ r2-019): ein Skalarfeld (Attention-Feld <i>oder</i> Energie-Landschaft E(y,x)) mit zwei Ablesungen — weicher konvexer Vertreter o = Σαv / Argmin (weich) und ε/τ-geschwelltes Simplizial-Skelett mit Betti β₀/β₁ (hart); ein thermischer Regler β (ε und τ mit entgegengesetztem Vorzeichen); der Persistenz-Barcode (H₀-Geburt/Tod) über den Regler; „W steuert Topologie"; „Bedeutung = die überlebende Struktur = die langen Bars".</li>
+    <li><a href="../3/r3-007.html">r3-007.html</a> — „Stückweise-linear verklebt: Das Feld und seine Knick" (R3-Fusion r2-028 ✕ r2-013): ein neuronales Modell als stückweise-lineare (tropische) Karte f, verklebt als Summe Σc<sub>j</sub> (stetiges Feld) <i>oder</i> max (knickige PL-Karte); Readout-Φ ∈ {identisch (weich, T&gt;0), Argmax (hart, T→0)}; Überdeckungs-/Voronoi-Zellen = tropische Regionen, deren Grenze = Raster-Gap = Knick; Rate-Distortion-Boden c<sub>k</sub>(V/N)<sup>2/k</sup> (irreduzibel, außer „ausgerichtet"=Grokking); Regionen ≤ ∏ n<sub>l</sub><sup>d</sup> (exponentiell in Tiefe, Theorem 6.3); Sensitivität an den Knicken konzentriert.</li>
+  </ul>
+</section>
+
+<div class="foot">Runde 4, Paar 004 — Fusion: <code>r3-004.html</code> ✕ <code>r3-007.html</code></div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv');
+if(!cv||!cv.getContext)return;
+var ctx=cv.getContext('2d');
+var W=760,H=640;
+var N=5, M=401, BASE=0.9, SIG=0.06;
+var amp=[0.7,0.5,0.85,0.35,0.6];
+var shift=[-0.15,0.0,0.3,-0.3,0.15];
+var centers=[];
+(function(){for(var i=0;i<N;i++)centers.push(i/(N-1));})();
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function amps(form){
+  var a=[],i;
+  for(i=0;i<N;i++){a.push(clamp(amp[i]+form*shift[i],0.08,1.0));}
+  return a;
+}
+function Efun(x,am){
+  var e=BASE,i;
+  for(i=0;i<N;i++){var d=x-centers[i];e-=am[i]*Math.exp(-d*d/(2*SIG*SIG));}
+  return e;
+}
+function sample(am){
+  var E=[],i;
+  for(i=0;i<M;i++){E.push(Efun(i/(M-1),am));}
+  return E;
+}
+function argminIdx(E,a,b){
+  var best=a,bv=E[a],i;
+  for(i=a+1;i<b;i++){if(E[i]<bv){bv=E[i];best=i;}}
+  return best;
+}
+function computeBars(E){
+  var M=E.length,edges=[],i;
+  for(i=0;i<M-1;i++){edges.push({v:Math.max(E[i],E[i+1]),i:i,j:i+1});}
+  edges.sort(function(a,b){return a.v-b.v;});
+  var parent=[],minVal=[],size=[],arg=[],x;
+  for(x=0;x<M;x++){parent[x]=x;minVal[x]=E[x];size[x]=1;arg[x]=x;}
+  function find(p){while(parent[p]!==p){parent[p]=parent[parent[p]];p=parent[p];}return p;}
+  var bars=[];
+  for(var e=0;e<edges.length;e++){
+    var ed=edges[e],ra=find(ed.i),rb=find(ed.j);
+    if(ra===rb)continue;
+    var die,surv;
+    if(minVal[ra]>minVal[rb]){die=ra;surv=rb;}else{die=rb;surv=ra;}
+    bars.push({b:minVal[die],d:ed.v,rep:arg[die]});
+    parent[die]=surv;size[surv]+=size[die];
+    if(minVal[surv]>minVal[die])minVal[surv]=minVal[die];
+    if(E[arg[die]]<E[arg[surv]])arg[surv]=arg[die];
+  }
+  var root=find(0);
+  bars.push({b:minVal[root],d:Infinity,rep:arg[root],inf:true});
+  bars.sort(function(a,b){return a.b-b.b;});
+  return bars;
+}
+function cellOf(qi,E,tau){
+  var seen=[],stack=[qi],comp=[],i;
+  for(i=0;i<M;i++)seen[i]=false;
+  if(E[qi]>tau)return {rep:argminIdx(E,Math.max(0,qi-40),Math.min(M,qi+40)),size:0,empty:true};
+  while(stack.length){
+    var p=stack.pop();
+    if(p<0||p>=M||seen[p])continue;
+    if(E[p]>tau)continue;
+    seen[p]=true;comp.push(p);
+    stack.push(p-1);stack.push(p+1);
+  }
+  return {rep:argminIdx(E,comp[0],comp[comp.length-1]),size:comp.length,empty:false};
+}
+function softmaxLogit(logit,T){
+  var mx=-Infinity,i;for(i=0;i<logit.length;i++)if(logit[i]>mx)mx=logit[i];
+  var ex=[],s=0;for(i=0;i<logit.length;i++){ex.push(Math.exp((logit[i]-mx)/T));s+=ex[i];}
+  if(!s||!isFinite(s)){var u=[];for(i=0;i<logit.length;i++)u.push(1/logit.length);return u;}
+  var p=[];for(i=0;i<ex.length;i++)p.push(ex[i]/s);return p;
+}
+function star(cx,cy,r,fill){
+  ctx.beginPath();
+  for(var i=0;i<10;i++){var ang=-Math.PI/2+i*Math.PI/5;var rr=(i%2===0)?r:r*0.45;
+    var px=cx+rr*Math.cos(ang),py=cy+rr*Math.sin(ang);
+    if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+  ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+}
+function hexToRgb(h){h=(h||"").replace("#","").trim();if(!/^[0-9a-fA-F]{6}$/.test(h))return[128,128,128];var v=parseInt(h,16);return[(v>>16)&255,(v>>8)&255,v&255];}
+function hexA(hex,a){var c=hexToRgb(hex);return "rgba("+c[0]+","+c[1]+","+c[2]+","+a+")";}
+
+var tc={};
+function readTheme(){
+  var cs=getComputedStyle(document.documentElement);
+  var g=function(nm){return cs.getPropertyValue(nm).trim();};
+  tc={
+    text:g("--text")||"#1a1f2e",muted:g("--muted")||"#5b6478",
+    accent:g("--accent")||"#0e7490",accent2:g("--accent2")||"#b45309",
+    accent3:g("--accent3")||"#b91c1c",accent4:g("--accent4")||"#4338ca",
+    border:g("--border")||"#dcd6c6",canvas:g("--canvas")||"#fbfaf4",
+    good:g("--good")||"#15803d",bad:g("--bad")||"#b91c1c",warn:g("--warn")||"#b45309",
+    field:g("--field")||"#7c3aed"
+  };
+}
+function $(id){return document.getElementById(id);}
+
+function render(){
+  try{
+    var form=parseFloat($('twist').value)/100;
+    var tauPct=parseFloat($('tau').value);
+    var T=parseFloat($('temp').value);
+    var qPct=parseFloat($('qq').value);
+    $('twist-v').textContent=(form*100).toFixed(0)+"%";
+    $('tau-v').textContent=tauPct.toFixed(0);
+    $('temp-v').textContent=T.toFixed(2);
+    $('qq-v').textContent=qPct.toFixed(0);
+
+    var am=amps(form);
+    var E=sample(am);
+    var Emin=E[0],Emax=E[0];
+    for(var i=1;i<M;i++){if(E[i]<Emin)Emin=E[i];if(E[i]>Emax)Emax=E[i];}
+    var span=(Emax-Emin)||1e-6;
+    var tau=Emin+span*(tauPct/100);
+    var bars=computeBars(E);
+    var maxP=0,k;
+    for(k=0;k<bars.length;k++){if(!bars[k].inf){var p=bars[k].d-bars[k].b;if(p>maxP)maxP=p;}}
+    if(maxP<=1e-6)maxP=1e-6;
+    var floor=0.4*maxP;
+    var q=qPct/100;
+    var qi=Math.round(q*(M-1));
+    var cell=cellOf(qi,E,tau);
+    var logit=[],s=0.10;
+    for(var w=0;w<N;w++){logit.push(-Math.pow(q-centers[w],2)/(2*s*s));}
+    var P=softmaxLogit(logit,T),win=0,secc=-1,wi=0;
+    for(w=0;w<N;w++){if(P[w]>P[wi]){wi=w;}}
+    win=wi;
+    for(w=0;w<N;w++){if(w!==win&&P[w]>secc)secc=P[w];}
+    var margin=P[win]-secc;
+    var living=[],longc=0;
+    for(k=0;k<bars.length;k++){var alive=bars[k].b<tau&&tau<=bars[k].d;
+      if(alive){living.push(k);if((bars[k].d-bars[k].b)>=floor)longc++;}}
+
+    // geometry
+    var padL=48,padR=18,padT=18;
+    var topBot=330,botTop=372,botBot=612;
+    var plotW=W-padL-padR;
+    function X(x){return padL+x*plotW;}
+    var eTop=padT, eBot=topBot;
+    function YY(e){return eBot-((e-Emin)/span)*(eBot-eTop-8);}
+
+    // draw bg
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=tc.canvas;ctx.fillRect(0,0,W,H);
+
+    // --- top: landscape ---
+    // sublevel shading
+    ctx.beginPath();
+    var started=false,fx;
+    for(i=0;i<M;i++){fx=E[i];if(fx<=tau){var px=X(i/(M-1)),py=YY(fx);if(!started){ctx.moveTo(px,py);started=true;}else ctx.lineTo(px,py);}}
+    // close shading to baseline
+    ctx.lineTo(X(1),YY(Math.min(tau+span,Emax)));
+    ctx.lineTo(X(0),YY(Math.min(tau+span,Emax)));
+    ctx.closePath();
+    ctx.fillStyle=hexA(tc.accent,0.10);ctx.fill();
+
+    // cell of q (highlight the connected sublevel region around q)
+    if(!cell.empty){
+      // mark the horizontal extent of q's component by scanning
+      var lo=qi,hi=qi;
+      while(lo>0&&E[lo-1]<=tau)lo--;
+      while(hi<M-1&&E[hi+1]<=tau)hi++;
+      ctx.fillStyle=hexA(tc.accent2,0.16);
+      ctx.fillRect(X(lo/(M-1)),eTop,X(hi/(M-1))-X(lo/(M-1)),eBot-eTop-8);
+    }
+
+    // threshold line
+    var ty=YY(tau);
+    ctx.strokeStyle=tc.accent3;ctx.lineWidth=1.4;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(padL,ty);ctx.lineTo(W-padR,ty);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=tc.accent3;ctx.font="bold 11px ui-monospace,monospace";ctx.textAlign="left";
+    ctx.fillText("τ = "+tau.toFixed(2),padL+4,ty-5);
+
+    // landscape curve
+    ctx.strokeStyle=tc.accent;ctx.lineWidth=2.4;ctx.beginPath();
+    for(i=0;i<M;i++){fx=E[i];var px2=X(i/(M-1)),py2=YY(fx);if(i===0)ctx.moveTo(px2,py2);else ctx.lineTo(px2,py2);}
+    ctx.stroke();
+
+    // saddles (local maxima = merge points = knick)
+    ctx.fillStyle=tc.warn;
+    for(i=1;i<M-1;i++){
+      if(E[i]>E[i-1]&&E[i]>=E[i+1]&&E[i]<Emax-1e-4&&E[i]>Emin+1e-4){
+        ctx.beginPath();ctx.arc(X(i/(M-1)),YY(E[i]),3,0,Math.PI*2);ctx.fill();
+      }
+    }
+
+    // soft readout gaussian over q (width ~ T)
+    var sigT=0.03+T*0.05;
+    ctx.fillStyle=hexA(tc.accent4,0.16);ctx.strokeStyle=hexA(tc.accent4,0.7);ctx.lineWidth=1.4;
+    ctx.beginPath();var st2=false;
+    for(i=0;i<M;i++){var xx=i/(M-1);var g=Math.exp(-Math.pow(xx-q,2)/(2*sigT*sigT));
+      var gx=X(xx),gy=eBot-g*(eBot-eTop-8)*0.9;
+      if(!st2){ctx.moveTo(gx,gy);st2=true;}else ctx.lineTo(gx,gy);}
+    ctx.lineTo(X(1),eBot);ctx.lineTo(X(0),eBot);ctx.closePath();ctx.fill();
+
+    // q marker
+    var qx=X(q);
+    ctx.fillStyle=tc.accent4;ctx.beginPath();ctx.arc(qx,YY(Math.min(E[qi],tau+0.001)),6,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=tc.text;ctx.lineWidth=1.4;ctx.stroke();
+    ctx.fillStyle=tc.text;ctx.font="bold 11px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("q",qx,YY(E[qi])-10);
+
+    // argmin rep star of q's cell
+    var repX=X(cell.rep/(M-1));
+    star(repX,YY(E[cell.rep]),12,tc.accent3);
+    ctx.fillStyle=tc.accent3;ctx.font="10px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("Argmin",repX,YY(E[cell.rep])+20);
+
+    // winner anchor (readout) marker on baseline
+    var wxX=X(centers[win]);
+    ctx.fillStyle=(margin>0.35?tc.good:tc.warn);
+    ctx.beginPath();ctx.moveTo(wxX,eBot);ctx.lineTo(wxX-6,eBot-10);ctx.lineTo(wxX+6,eBot-10);ctx.closePath();ctx.fill();
+    ctx.font="10px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("Winner",wxX,eBot-14);
+
+    // panel label
+    ctx.fillStyle=tc.muted;ctx.font="bold 12px system-ui, sans-serif";ctx.textAlign="left";
+    ctx.fillText("Feld E(x) · Zelle von q (rosa) · Schwelle τ · weiche Glocke (breit ∝ T) · Argmin-Stern = Vertreter",padL,padT+2);
+
+    // --- divider ---
+    ctx.strokeStyle=tc.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,352);ctx.lineTo(W-padR,352);ctx.stroke();
+    ctx.fillStyle=tc.muted;ctx.font="bold 12px system-ui, sans-serif";
+    ctx.fillText("Persistenz-Barcode (H₀: Geburt → Tod) über den τ-Durchlauf  —  lange Bars = robust = Bedeutung",padL,368);
+
+    // --- bottom: barcode ---
+    var byTop=botTop,byBot=botBot;
+    // axis
+    ctx.strokeStyle=tc.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,byBot);ctx.lineTo(W-padR,byBot);ctx.stroke();
+    ctx.fillStyle=tc.muted;ctx.font="10px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("Emin="+Emin.toFixed(2),padL,byBot+16);
+    ctx.fillText("Energie →", (padL+W-padR)/2,byBot+16);
+    ctx.fillText("Emax="+Emax.toFixed(2),W-padR,byBot+16);
+    // tau vertical line
+    var txX=padL+clamp((tau-Emin)/span,0,1)*plotW;
+    ctx.strokeStyle=tc.accent3;ctx.lineWidth=1.4;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(txX,byTop-4);ctx.lineTo(txX,byBot);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=tc.accent3;ctx.font="bold 10px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("τ_now",txX,byTop-6);
+
+    var nB=bars.length,rowH=(byBot-byTop)/nB,bh=Math.max(3,rowH*0.5);
+    var ccols=[tc.accent,tc.accent2,tc.accent4,tc.field,tc.good];
+    for(var bi=0;bi<nB;bi++){
+      var bar=bars[bi];
+      var isAlive=(bar.b<tau&&tau<=bar.d);
+      var x1=padL+clamp((bar.b-Emin)/span,0,1)*plotW;
+      var x2=padL+clamp((bar.d-Emin)/span,0,1)*plotW;
+      var yT=byTop+bi*rowH+(rowH-bh)/2;
+      var isLong=(bar.d-bar.b)>=floor;
+      ctx.globalAlpha=isAlive?1:0.22;
+      ctx.fillStyle=isAlive?ccols[bi%ccols.length]:tc.muted;
+      ctx.fillRect(x1,yT,Math.max(x2-x1,2),bh);
+      ctx.globalAlpha=1;
+      if(isAlive&&isLong){star(x2-2,yT+bh/2,8,tc.accent3);}
+    }
+
+    // readout
+    var regime = living.length<=1 ? "grob/weich = 1 Komponente (Kollaps/Superposition)"
+               : living.length>=N ? "fein/hart = alle Komponenten (Singleton/Axiome)"
+               : "mittel = "+living.length+" robuste Komponenten (Sweet-Spot)";
+    var html="τ="+tau.toFixed(2)+"  ·  T="+T.toFixed(2)+"  ·  q="+q.toFixed(2)+"  ·  ";
+    html+="Kandidaten β₀(τ)="+living.length+"  ·  <b>lange Bars/Bedeutung="+longc+"</b>  ·  ";
+    html+="Zelle von q: Größe="+cell.size+"  ·  Argmin-Vertreter bei x="+(cell.rep/(M-1)).toFixed(2)+"  ·  ";
+    html+="Winner=Anker "+win+"  ·  P(winner)="+(P[win]*100).toFixed(1)+"%  ·  Margin="+margin.toFixed(3)+"  ·  ";
+    html+=regime;
+    $('readout').innerHTML=html;
+  }catch(err){
+    /* keep console silent */
+  }
+}
+
+function sizeCanvas(){
+  var dpr=window.devicePixelRatio||1;
+  var w=cv.clientWidth||760;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(H*dpr);
+  cv.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  W=w;
+}
+
+['tau','temp','qq','twist'].forEach(function(id){
+  var el=$(id);if(el)el.addEventListener('input',render);
+});
+$('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');readTheme();render();});
+var rt;
+window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){sizeCanvas();render();},120);});
+if(window.MutationObserver){
+  new MutationObserver(function(){readTheme();render();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+}
+readTheme();
+sizeCanvas();
+render();
+})();
+</script>
+</body>
+</html>

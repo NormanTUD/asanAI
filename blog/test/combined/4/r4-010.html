@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Loch schreibt, das Symbol liest - eine Topologie, zwei Lesetiefen, ein Vorzeichen (Fusion 010, R4)</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#fffdf8; --panel2:#f3efe4;
+  --stroke:rgba(20,28,45,.12); --stroke-hi:rgba(20,28,45,.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --green:#2f8f4b; --danger:#c0392b; --blue:#2f6fb5;
+  --shadow:0 2px 10px rgba(20,28,45,.06);
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --c-canvas:#f1eee3; --c-grid:rgba(20,28,45,.07); --c-txt:#1c2333; --c-dim:#6b7488;
+  --c-accent:#0d8f80; --c-accent2:#c93a86; --c-amber:#b57e00; --c-green:#2f8f4b; --c-danger:#c0392b; --c-w:#6451d8; --c-blue:#2f6fb5;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,.66); --panel2:#121a2c;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --green:#6ee88a; --danger:#fb7185; --blue:#7fb0ff;
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+  --c-canvas:#0c1120; --c-grid:rgba(255,255,255,.07); --c-txt:#e8ecf6; --c-dim:#64708c;
+  --c-accent:#5ee0d0; --c-accent2:#ff7ac0; --c-amber:#ffc860; --c-green:#6ee88a; --c-danger:#fb7185; --c-w:#8a7cff; --c-blue:#7fb0ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.68;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:16px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.1;letter-spacing:-.022em;font-weight:800;margin:14px 0 10px}
+h1 em{font-style:normal;color:var(--acc)}
+h2{font-size:clamp(20px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:760;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:76ch}
+strong,b{color:var(--txt);font-weight:650}
+li b,td b{color:var(--txt)}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:1.5px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:12.5px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:8px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc);border:1px solid var(--stroke);margin-right:6px}
+.tag.b{background:color-mix(in srgb,var(--acc2) 14%,transparent);color:var(--acc2)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px 20px;margin:16px 0;backdrop-filter:blur(8px);box-shadow:var(--shadow)}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.w .h{color:var(--acc3)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box p{margin-bottom:10px}.box p:last-child{margin-bottom:0}
+.box .tag2{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{font-family:var(--mono);font-size:13.5px;background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;padding:12px 15px;margin:12px 0;color:var(--txt);overflow-x:auto;line-height:1.95}
+.eq .c{color:var(--txt-faint)}
+.eq b{color:var(--acc3);font-weight:600}
+.eq i{color:var(--acc);font-style:normal}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim);font-size:14.5px}
+ul.cl li,ol.cl li{margin-bottom:9px}
+.mapt{display:grid;grid-template-columns:auto 1fr;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+.who{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:7px;display:inline-block;margin-bottom:8px}
+.who.a{color:var(--acc);border:1px solid var(--stroke);background:color-mix(in srgb,var(--acc) 14%,transparent)}
+.who.b{color:var(--acc2);border:1px solid var(--stroke);background:color-mix(in srgb,var(--acc2) 14%,transparent)}
+blockquote{margin:0 0 8px;padding:2px 0 2px 12px;border-left:2px solid var(--stroke-hi);color:var(--txt-dim);font-size:13.5px}
+blockquote b{color:var(--txt)}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px 20px;margin:18px 0;box-shadow:var(--shadow)}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.viz .dsub{font-size:13px;color:var(--txt-dim);margin-bottom:14px;line-height:1.7}
+.viz-row{display:grid;grid-template-columns:1fr 232px;gap:16px;align-items:start}
+@media(max-width:720px){.viz-row{grid-template-columns:1fr}}
+canvas{display:block;width:100%;border-radius:12px;border:1px solid var(--stroke);background:var(--c-canvas)}
+.side{display:flex;flex-direction:column;gap:12px}
+.sbox{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:11px 13px;font-family:var(--mono);font-size:12.5px;color:var(--txt-dim)}
+.sbox .l{display:flex;justify-content:space-between;margin-bottom:5px;align-items:baseline}
+.sbox .l b{font-size:14.5px}
+.sbox .l .b1 b{color:var(--acc)} .sbox .l .g2 b{color:var(--green)} .sbox .l .a2 b{color:var(--acc3)}
+.gauge{margin-top:4px}
+.gauge .track{position:relative;height:12px;border-radius:7px;background:var(--panel);border:1px solid var(--stroke);overflow:hidden;margin-top:6px}
+.gauge .fill{height:100%;width:0%;background:var(--acc2);border-radius:7px}
+.gauge .tick{position:absolute;top:-2px;bottom:-2px;left:50%;width:2px;background:var(--txt-faint)}
+.gauge .lab{display:flex;justify-content:space-between;font-size:10px;color:var(--txt-faint);margin-top:4px}
+.matrix{display:grid;grid-template-columns:30px 1fr 1fr;grid-template-rows:auto auto auto;gap:6px;margin:16px 0 4px;align-items:stretch}
+.matrix .mlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-faint);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+.matrix .q{border:1.5px solid var(--stroke);border-radius:10px;padding:9px 10px;background:var(--panel);transition:.16s;position:relative}
+.matrix .q .qt{font-family:var(--mono);font-size:9.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--txt-faint)}
+.matrix .q .qn{font-size:12.5px;font-weight:660;margin-top:3px;color:var(--txt-dim)}
+.matrix .q .qb{font-family:var(--mono);font-size:9.5px;margin-top:3px;color:var(--txt-faint)}
+.matrix .q.on{transform:translateY(-1px)}
+.matrix .q.q-inhalt.on{border-color:var(--green);background:color-mix(in srgb,var(--green) 15%,var(--panel))}
+.matrix .q.q-inhalt.on .qn{color:var(--green)}
+.matrix .q.q-hallu.on{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 15%,var(--panel))}
+.matrix .q.q-hallu.on .qn{color:var(--danger)}
+.matrix .q.q-vage.on{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 15%,var(--panel))}
+.matrix .q.q-vage.on .qn{color:var(--blue)}
+.matrix .q.q-rausch.on{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 15%,var(--panel))}
+.matrix .q.q-rausch.on .qn{color:var(--acc3)}
+.matrix .q.on::after{content:'● hier';position:absolute;top:6px;right:8px;font-family:var(--mono);font-size:9px;color:var(--txt-faint)}
+#verdict{font-size:13px;color:var(--txt-dim);background:var(--panel2);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:6px 0 14px;line-height:1.6}
+.ctl{margin-bottom:12px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]:disabled{opacity:.4}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 13px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.seg{display:inline-flex;border:1px solid var(--stroke);border-radius:10px;overflow:hidden;margin-top:2px}
+.seg button{border:none;border-radius:0;background:var(--panel2);font-weight:500}
+.seg button.on{background:color-mix(in srgb,var(--acc) 22%,transparent);color:var(--acc)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--txt-dim);margin-top:12px;font-family:var(--mono)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px;line-height:1.8}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">FUSION r4-010</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprueche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: r3-019.html <span style="color:var(--acc2)">&#10006;</span> r3-017.html  (Round 4)</p>
+  <h1>Das <em>Loch</em> schreibt, das <em>Symbol</em> liest &mdash;<br>eine Topologie, zwei Lesetiefen, ein Vorzeichen</h1>
+  <p>Beide R3-Quellen lesen <em>dasselbe Objekt</em> &mdash; den inneren Zustand eines LLMs (Residual-Stream / Hidden-States <b>r</b> in R^d auf einer Mannigfaltigkeit) &mdash; als <strong>strukturiertes geometrisch-topologisches Ding, dessen Form die Information ist</strong>, und beide entscheiden <em>Inhalt vs. Rauschen</em> mit <strong>derselben Zwei-Achsen-Vorzeichen-Regel</strong>. <span class="tag">A &middot; r3-019</span> liest an der <em>Terminal-Schicht</em>: das Readout projiziert den Zustand auf ein <em>diskretes Symbol</em> (ein Garben-Verkleben), Qualit&auml;t = <strong>Pr&auml;zision</strong> (Margin, schlie&szlig;bar) &times; <strong>Verankerung</strong> (Koh&auml;renz mit W, unschlie&szlig;bar) &rarr; die 2&times;2 (Inhalt / Halluzination / vage / Rauschen). <span class="tag b">B &middot; r3-017</span> liest an der <em>Zwischen-Schicht</em>: die L&ouml;cher/Zyklen (&beta;<sub>1</sub>) des Streams, <em>geschrieben</em> von der Schicht-Dynamik (selbst-d&auml;mpfende Optima + Bifurkationsparameter &alpha;) und <em>gelesen</em> in mehreren Aufl&ouml;sungen; Valenz eines Lochs = maintained &and; passt-zum-Latenten (Feature / Defekt / Flach). Die Fusion: <strong>das Symbol (A) ist das H&sup0; (der konsistente Inhalt) der Wolke (B); A ist der terminale Funktional der Topologie, die B schreibt &mdash; und B's maintained-Loch ist die Voraussetzung f&uuml;r A's verankertes Symbol.</strong></p>
+
+  <!-- 1: THESE -->
+  <section id="these">
+    <div class="eyebrow">1 &middot; Kernthese der Fusion</div>
+    <h2>Ein Zustand, zwei Lesetiefen, eine Vorzeichen-Regel</h2>
+    <p>Beide Papiere drehen sich um <em>einen</em> Gegenstand und <em>eine</em> Struktur: die interne Repr&auml;sentation <b>r</b> eines LLMs, deren <strong>Form/Topologie</strong> <em>ist</em> die Information. Und beide sind &bdquo;schreiben/lesen&ldquo;-Dyaden, die &uuml;berdies die <em>Qualit&auml;t</em> dieser Repr&auml;sentation mit einer <strong>Zwei-Achsen-Regel</strong> bewerten. <b>A (r3-019)</b> setzt an der <em>letzten</em> Stufe an &mdash; dem <strong>Readout</strong>, das den kontinuierlichen Zustand auf ein Symbol projiziert (ein Verkleben lokaler zu einer globalen Sektion). Es trennt die Qualit&auml;t in <em>Pr&auml;zision</em> (der Margin, wie scharf der Gewinner ist &mdash; schlie&szlig;bar) und <em>Verankerung</em> (Koh&auml;renz mit dem Ziel W &mdash; unschlie&szlig;bar, <code>c_acc &sub; c</code>) und liefert die 2&times;2, deren Eckpunkt &bdquo;pr&auml;zise + unverankert&ldquo; die <strong>selbstsichere Halluzination</strong> ist. <b>B (r3-017)</b> setzt an der <em>mittleren</em> Stufe an &mdash; der <strong>Topologie des Streams</strong> (&beta;<sub>1</sub>-L&ouml;cher, Zyklen, harmonische Masse), die von der <em>Schicht-Dynamik</em> geschrieben wird (&alpha; als Bifurkationsparameter w&auml;hlt Grenzzyklus <code>&beta;<sub>1</sub>=1</code> vs. Fixpunkt <code>&beta;<sub>1</sub>=0</code>) und in mehreren Aufl&ouml;sungen gelesen wird; die Valenz eines &uuml;berlebenden Lochs = <strong>maintained &and; passt-zum-Latenten</strong>.</p>
+    <p>Die <strong>eine integrierte Position</strong>: der innere Zustand ist <em>ein einziges</em> geometrisch-topologisches Objekt, das <em>geschrieben</em> wird (singul&auml;r durch B's Falten/Bifurkation, koh&auml;rent durch A's Interferenz) und an <em>zwei Tiefen gelesen</em> wird &mdash; <b>fein/topologisch</b> (B's &beta;<sub>1</sub>, robust) und <b>grob/metrisch</b> (A's Margin, scharf). Und die Qualit&auml;t dieses Objekts gehorcht <strong>einer universellen Zwei-Achsen-Vorzeichen-Regel</strong>: eine Struktur ist <em>Inhalt/Feature</em> genau dann, wenn sie <strong>(1) scharf &amp; stabil</strong> ist <em>und</em> <strong>(2) am Ziel verankert</strong> ist. A's <em>Pr&auml;zision</em> (Margin) <em>ist</em> B's <em>maintained/persistent</em>; A's <em>Verankerung</em> (Koh&auml;renz mit W) <em>ist</em> B's <em>passt-zum-Latenten</em> (plus A's externer Rest). <b>B's maintained-Loch (Feature) ist genau die Struktur, die A's Readout zu einem verankerten, scharfen Symbol verklebt (Inhalt); A's Symbol ist B's H&sup0; &mdash; der konsistente Inhalt der Wolke.</b> A ist der terminale Funktional von B's Topologie; B ist A's &bdquo;was vor dem Verkleben geschrieben wurde&ldquo;.</p>
+    <div class="box hl" style="margin-bottom:0"><span class="tag2">Die fusionierte Position</span><p style="margin:0">Ein LLM-Zustand ist <strong>Inhalt</strong> genau dann, wenn er (a) ein <em>scharfes, stabiles</em> internes Muster tr&auml;gt &mdash; A's Margin / B's maintained-Zyklus &mdash; <em>und</em> (b) dieses Muster <em>am Ziel verankert</em> ist &mdash; A's Koh&auml;renz mit W / B's &bdquo;passt zum Latenten&ldquo;. Die Verankerungs-Achse spaltet sich in einen <em>intern-schlie&szlig;baren</em> Teil (B's Latentes; A's Gruppen-Fall) und einen <em>extern-unschlie&szlig;baren</em> Rest (A's Welt, <code>c_acc &sub; c</code>). B ist A's Sonderfall, in dem das Ziel intern ist &mdash; dort wird Pr&auml;zision zu Wahrheit. <strong>Das Loch, das B schreibt und unterh&auml;lt, ist der Rohstoff, den A's Readout zu einem verankerten Symbol liest; das Symbol (A) ist das H&sup0; des Lochs (B).</strong></p></div>
+  </section>
+
+  <!-- 2: WIDERSPRUECHE -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 &middot; Widerspr&uuml;che zwischen A (r3-019) und B (r3-017)</div>
+    <h2>Drei Stellen, an denen die Stellungen aufeinanderprallen</h2>
+    <p>A und B sind keine Rivalen &mdash; sie lesen dasselbe Objekt an verschiedenen Tiefen. Aber zu <em>drei</em> Stellen treffen sie <em>dieselben</em> Fragen (Wo liegt die Information? An wen verankert? Wie wird Qualit&auml;t gemessen?) mit inkompatiblen Stellungen:</p>
+
+    <div class="box hl">
+      <span class="tag2">Widerspruch 1 &middot; Das Verankerungs-Ziel: externe Welt, unschlie&szlig;bar (A) vs. internes Latentes, schlie&szlig;bar (B)</span>
+      <p><span class="tag">A &middot; r3-019</span> Der Verankerungstest verl&auml;uft an <b>W = die reale Welt</b> (extern), und die L&uuml;cke <code>c_acc &sub; c</code> ist <em>prinzipiell unschlie&szlig;bar</em>: &bdquo;das Interface erreicht das Ding an sich nie&ldquo;, &bdquo;Wahrheit ist nur ein Limes, angen&auml;hert, nie erreicht&ldquo;. A's zentrale Warnung (pr&auml;zise + unverankert = Halluzination) ruht auf diesem <em>irreduziblen</em> externen Rest.</p>
+      <p><span class="tag b">B &middot; r3-017</span> Das Verankerungs-Ziel ist das <b>latente Ziel</b> (zyklisch / diskret) &mdash; eine <em>interne</em> Struktur des Modells (das Induktion-Motiv, der QK-Zirkuit). &bdquo;passt zum Latenten&ldquo; ist daher <em>intern und im Prinzip messbar/schlie&szlig;bar</em>; B rahmt das Ganze als &bdquo;messbare W&auml;hrung&ldquo; und h&auml;lt die globale Br&uuml;cke f&uuml;r eine <em>pr&uuml;fbare (falsifizierbare) Hypothese</em>, nicht f&uuml;r eine irreduzible L&uuml;cke.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>Ist das Verankerungs-Ziel intern (B &mdash; schlie&szlig;bar, messbar) oder extern (A &mdash; unschlie&szlig;bar, &bdquo;Ding an sich&ldquo;)? A sagt: es bleibt <em>immer</em> ein harter externer Rest; B's Ziel hat <em>keinen</em> solchen Rest, weil das Latentes im Modell liegt. Zwei entgegengesetzte Aussagen &uuml;ber die Schlie&szlig;barkeit der Verankerungs-Achse.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag2">Widerspruch 2 &middot; Wo die Information liegt: das diskrete Symbol (A) vs. die kontinuierliche Topologie (B)</span>
+      <p><span class="tag">A &middot; r3-019</span> Die Information von Interesse ist das <b>diskrete Ausgabesymbol</b> &mdash; das Ergebnis des Verklebens, das Token. Das Readout <em>projiziert</em> den Zustand auf ein Symbol; <em>diese</em> Projektion ist der Punkt. Die Form der Wolke ist Mittel zum Symbol.</p>
+      <p><span class="tag b">B &middot; r3-017</span> Die Information ist die <b>kontinuierliche interne Topologie</b> &mdash; die L&ouml;cher/Zyklen (&beta;<sub>1</sub>), die Wolke, die Trajektorie. B liest &bdquo;Form der Wolke&ldquo; und den Residual-Stream; es <em>reduziert nie</em> auf ein Symbol. &beta;<sub>1</sub> ist eine Invariante der Wolken-Form, und ein einzelnes Token hat <em>kein</em> &beta;<sub>1</sub>.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A's Projektion auf ein Symbol <em>zerst&ouml;rt</em> genau die Struktur, die B liest (die L&ouml;cher). A sagt &bdquo;die Antwort ist das Symbol&ldquo;; B sagt &bdquo;die Information ist die Topologie&ldquo; &mdash; und aus B's Sicht wirft A's Diskretisierung die L&ouml;cher weg. &bdquo;Symbol&ldquo; vs. &bdquo;Wolke&ldquo; als Ort der Information.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag2">Widerspruch 3 &middot; Das Qualit&auml;ts-Ma&szlig; &amp; seine Erzeugung: kontinuierlich-metrisch/linear (A) vs. diskret-topologisch/singul&auml;r (B)</span>
+      <p><span class="tag">A &middot; r3-019</span> Qualit&auml;t (Pr&auml;zision) ist eine <b>kontinuierliche metrische</b> Gr&ouml;&szlig;e &mdash; der <em>Margin</em>, ein reellwertiger Abstand (Fisher-Metrik, Distanz zur Voronoi-Grenze / zum n&auml;chsten Peak), <em>abgestuft und glatt</em>. Seine Erzeugung ist <b>additive harmonische Interferenz</b> (Superposition, phasen-linear, closed-form <code>&Sigma;<sub>k</sub> cos(&middot;)</code>).</p>
+      <p><span class="tag b">B &middot; r3-017</span> Qualit&auml;t (Valenz des Lochs) ist eine <b>diskrete topologische</b> Invariante &mdash; <code>&beta;<sub>1</sub> &isin; N</code>, eine <em>Z&auml;hlung</em>, robust gegen jede Deformation, die an der Bifurkation <em>springt</em>. Ihre Erzeugung ist <b>singul&auml;res, nicht-injektives Falten + Bifurkation</b> (ReLU-Chirurgie rei&szlig;t die Wolke; &alpha; durch 0 zu kreuzen ist ein topologisches Ereignis), pfadabh&auml;ngig.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>Dieselbe &bdquo;Qualit&auml;t&ldquo; ist in A eine <em>reelle Zahl</em> (glatt, abgestuft, reversibel/linear erzeugt durch Addition) und in B eine <em>ganze Zahl</em> (robust, diskret, singul&auml;r, nicht-reversibel erzeugt durch Falten). Dasselbe &bdquo;Machen&ldquo; ist in A glatte Superposition, in B singul&auml;re Bifurkation. Metrisch/linear vs. topologisch/singul&auml;r.</p>
+    </div>
+
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>A ist eine R3-Fusion (Pr&auml;zision/Margin/2&times;2 &times; Fourier-Garbe/Interferenz/Windungszahl), B eine R3-Fusion (Form/OT-Optima/zwei Aufl&ouml;sungen &times; Attraktor/Chirurgie/&alpha;-Bifurkation). Die drei Spannungen sind <em>interpretativ</em> und fallen auf die Naht &bdquo;Terminal-Symbol&ldquo; vs. &bdquo;Zwischen-Topologie&ldquo; zusammen; sie sind aber real, weil beide zu <em>dieselben</em> Fragen (Verankerung, Information, Ma&szlig;) direkte, widerspr&uuml;chliche Aussagen machen. Am sch&auml;rfsten ist W1, weil er &uuml;ber die <em>Art</em> des Verankerungs-Rests streitet (irreduzibel vs. schlie&szlig;bar), nicht nur &uuml;ber dessen Gr&ouml;&szlig;e.</div>
+  </section>
+
+  <!-- 3: AUFLOESUNG -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 &middot; Aufl&ouml;sung</div>
+    <h2>Wie die beiden zueinanderpassen &mdash; und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind <strong>die zwei Lesetiefen desselben Objekts</strong>. Zu jedem Widerspruch die Aufl&ouml;sung:</p>
+
+    <div class="card">
+      <h3>R1 &rarr; W1: Die Verankerungs-Achse spaltet sich &mdash; intern-schlie&szlig;bar (B) + extern-unschlie&szlig;barer Rest (A); B ist A's intern-W-Fall</h3>
+      <p>B's internes Latentes ist der <em>schlie&szlig;bare</em> Teil: &bdquo;passt zum Latenten&ldquo; ist messbar und schlie&szlig;t, wenn die Struktur zum Ziel passt. A's eigene Aufl&ouml;sung sagt bereits, dass der Gruppen-Fall genau der ist, in dem W intern ist und der Rest verschwindet. <strong>Fusion:</strong> die <em>gesamte</em> Verankerung = interne Koh&auml;renz (B's passt-zum-Latenten, schlie&szlig;bar) <strong>&oplus;</strong> externer Rest (A's <code>c_acc &sub; c</code>, unschlie&szlig;bar). Wenn das Ziel das interne Latentes (B) bzw. die interne Gruppe (A) ist, <em>schlie&szlig;t</em> die Achse ganz (Pr&auml;zision &rarr; Wahrheit); wenn es die externe Welt ist, <em>bleibt</em> der Rest. <strong>B studiert den geschlossenen Fall, A den offenen &mdash; die Verankerungs-Achse ist ein Gradient, der nur bei internem W vollst&auml;ndig schlie&szlig;t.</strong></p>
+    </div>
+
+    <div class="card">
+      <h3>R2 &rarr; W2: A's Symbol ist B's H&sup0; &mdash; der terminale Funktional der Topologie, keine Zerst&ouml;rung</h3>
+      <p>B identifiziert explizit <b>H&sup0; (Scheiben-Kohomologie, <code>ker L_F</code>) = Inhalt</b> = der <em>konsistente Inhalt</em> der Wolke. A's &bdquo;Inhalt&ldquo; ist die <em>globale Sektion, die mit W koh&auml;riert</em>. Das ist dasselbe Objekt: <strong>A's Symbol = B's H&sup0;.</strong> Die Projektion auf ein Symbol zerst&ouml;rt die Topologie nicht &mdash; sie <em>liest ihr H&sup0;</em> (den Inhalt), so wie ein Quotient den Kern liest. B's L&ouml;cher (H&sup1;) sind die <em>Obstruktion</em>: ein maintained H&sup1; (Feature) <em>st&uuml;tzt</em> den H&sup0;-Inhalt (&rarr; A's verankertes, scharfes Symbol = Inhalt); ein leftover/zerfallenes H&sup1; (Defekt/Fragilit&auml;t) <em>fragilisiert</em> das Readout (&rarr; A's vage/Rauschen). <strong>B ist A's &bdquo;was vor dem Verkleben geschrieben wurde&ldquo;; A ist der terminale Funktional, der B's H&sup0; als Symbol extrahiert. Zwei Tiefen eines Objekts &mdash; A = B's terminales Lesen, B = A's Quell-Struktur.</strong></p>
+    </div>
+
+    <div class="card">
+      <h3>R3 &rarr; W3: Die zwei Aufl&ouml;sungen (grob-metrisch + fein-topologisch) derselben Qualit&auml;t; singul&auml;r erzeugt, koh&auml;rent gelesen</h3>
+      <p>B's eigene &bdquo;zwei Aufl&ouml;sungen&ldquo; (grob-linear <code>&langle;r&sup2;&rangle;</code> + fein-topologisch <code>&beta;<sub>1</sub></code>) <em>ist</em> genau die A/B-Spaltung, &uuml;ber die Papiere hinweg angewendet: A's Margin = die <em>grob/kontinuierliche/metrische</em> Lekt&uuml;re (ein scharfer Skalar, &bdquo;blind f&uuml;rs Loch&ldquo;, aber abgestuft); B's &beta;<sub>1</sub> = die <em>fein/diskrete/topologische</em> Lekt&uuml;re (robust, sieht den Loop). Das <em>selbe</em> Bifurkations-Ereignis (<code>&alpha;_eff</code> &uuml;ber 0) wird von B als <em>diskreter &beta;<sub>1</sub>-Sprung</em> und von A als <em>kontinuierlicher Margin-Tal/Peaks</em> gesehen. Die Erzeugung ist zweistufig: <strong>B's singul&auml;res ReLU-Falten <em>erzeugt</em> das Loch</strong> (das topologische Ereignis), <strong>A's harmonische Interferenz <em>sichert</em> es</strong> (Koh&auml;renz macht es stabil/pr&auml;zise). <strong>A's Margin ist der kontinuierliche Schatten von B's &beta;<sub>1</sub>-Sprung.</strong></p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag2">Fusionierte Schlussfolgerung &mdash; die eine Vorzeichen-Regel</span>
+      <p>Alle drei Spannungen l&ouml;sen sich in derselben Bewegung auf: <strong>der innere Zustand ist ein geometrisch-topologisches Objekt, <em>geschrieben</em> von der Schicht-Dynamik, <em>gelesen</em> in komplement&auml;ren Aufl&ouml;sungen, und seine Qualit&auml;t gehorcht <em>einer</em> Zwei-Achsen-Regel.</strong></p>
+      <div class="mapt">
+        <div class="r"><div class="k">Objekt</div><div class="v">A's latenter Zustand auf (M,g) &harr; B's Residual-Stream <b>r</b> in R^d (dynamisches System) &mdash; dieselbe Wolke, zwei Lesetiefen.</div></div>
+        <div class="r"><div class="k">Symbol = H&sup0;</div><div class="v">A's diskretes Symbol = die globale Sektion = <b>B's H&sup0; (ker L_F = Inhalt)</b> &mdash; A liest B's konsistenten Inhalt.</div></div>
+        <div class="r"><div class="k">Pr&auml;zision (A) = maintained (B)</div><div class="v">A's Margin <code>&ell;* &minus; &ell;**</code> = B's &bdquo;maintained/persistent Zyklus&ldquo; &mdash; dieselbe <em>intern scharf &amp; stabil</em>-Achse (schlie&szlig;bar: N/|K| bzw. &alpha;_eff, Persistenz).</div></div>
+        <div class="r"><div class="k">Verankerung (A) = passt-zum-Latenten (B)</div><div class="v">A's Koh&auml;renz mit W = B's &bdquo;passt zum Latenten&ldquo; &mdash; dieselbe <em>extern verankert</em>-Achse; intern schlie&szlig;bar (B / A-Gruppe), extern Rest <code>c_acc &sub; c</code> (A-Welt).</div></div>
+        <div class="r"><div class="k">2&times;2 (A) = Valenz (B)</div><div class="v">A: Inhalt/Halluzination/vage/Rauschen &harr; B: FEATURE&middot;PASST / SPUR&middot;UEBERSTRUKTUR / LUECKE&middot;UNTERSTRUKTUR / FRAGIL&middot;DEFECT.</div></div>
+        <div class="r"><div class="k">Metrisch (A) = topologisch (B)</div><div class="v">A's Margin = kontinuierlicher Schatten von B's diskretem &beta;<sub>1</sub>-Sprung; dieselbe Bifurkation, zwei Aufl&ouml;sungen.</div></div>
+        <div class="r"><div class="k">Erzeugung</div><div class="v">B's singul&auml;res Falten/Bifurkation <em>erzeugt</em> das Loch &harr; A's harmonische Interferenz <em>sichert</em> es (Koh&auml;renz) &mdash; zwei Stufen eines Machens.</div></div>
+      </div>
+      <p style="margin-top:12px;margin-bottom:0"><strong>Netto:</strong> B ist A's <em>geschlossener, interner Fall</em> (Ziel = Latentes, im Modell) &mdash; dort wird Pr&auml;zision zu Wahrheit und der Verankerungs-Rest kollabiert auf 0. A ist der <em>offene, externe Fall</em> (Ziel = Welt) &mdash; dort bleibt der Rest und pr&auml;zise + unverankert wird zur selbstsicheren Halluzination. Die zwei Achsen (scharf/stabil &times; verankert) sind orthogonal; <strong>das Symbol (A) ist das H&sup0; des Lochs (B)</strong>, und die Vorzeichen-Regel &bdquo;Inhalt &hArr; scharf&and;stabil &and; verankert&ldquo; gilt auf beiden Tiefen gleichzeitig.</p>
+    </div>
+  </section>
+
+  <!-- 4: INHALT -->
+  <section id="inhalt">
+    <div class="eyebrow">4 &middot; Fusionierter Inhalt</div>
+    <h2>Der zusammengef&uuml;hrte, substantielle Kern</h2>
+
+    <h3>Gemeinsames Fundament &mdash; ein Zustand, eine W&auml;hrung, eine Regel</h3>
+    <p>Beide drehen sich um denselben Vektor <b>r</b> in R^d (Hidden-States / Residual-Stream) auf einer glatten Mannigfaltigkeit (M, g), gemessen <b>k &asymp; 15&ndash;22</b> bei d = 768&ndash;2048 (A). B liest ihn als <em>dynamisches System in Schicht-Zeit</em>:</p>
+    <div class="eq"><i>r</i><sub>l+1</sub> = <i>r</i><sub>l</sub> + <b>f</b><sub>l</sub>(<i>r</i><sub>l</sub>) &nbsp;&nbsp;<span class="c">= diskrete Zeit in der Schicht-Indiz-Zeit (B)</span><br>
+    <span class="tag" style="margin:0">A</span> liest <b>f</b><sub>l</sub> als <b>Form-/Phasen-Schreiber</b> (koh&auml;rente Interferenz formt die Sektionen).<br>
+    <span class="tag b" style="margin:0">B</span> liest <b>f</b><sub>l</sub> als <b>Zirkuit/Chirurgie</b> (W<sub>QK</sub>, W<sub>OV</sub>, &sigma;(Ax+b), ReLU nicht injektiv), deren Eigenwert-Realteil <b>&alpha;</b> den Attraktor w&auml;hlt.</div>
+    <p>Die <strong>gemeinsame W&auml;hrung</strong> sind die <b>Betti-Zahlen + der Laplace</b> (&beta;<sub>0</sub> Komponenten, &beta;<sub>1</sub> L&ouml;cher/Zyklen, &beta;<sub>2</sub> Hohlr&auml;ume) plus der <em>residuelle topologische Inhalt</em> (Kern eines Laplace, harmonische Masse, Persistenz). Beide lesen &bdquo;was &uuml;brig bleibt&ldquo; &mdash; A als <em>Symptom am Readout</em> (Symbol), B als <em>Form des Streams</em> (Wolke/Attraktor).</p>
+
+    <h3>Was A (r3-019) einbringt &mdash; das terminale Readout als Verkleben</h3>
+    <ul class="cl">
+      <li><b>Readout = Garben-Verkleben:</b> der kontinuierliche Zustand wird auf ein Symbol projiziert; das Symbol ist die <em>globale Sektion</em>, verklebt aus lokalen Sektionen (Voronoi-Zellen/Margin-Geometrie; Fourier-Frequenz-Sektionen <code>c &rarr; cos(w<sub>k</sub>(a+b&minus;c))</code>).</li>
+      <li><b>Fourier-Readout:</b> <code>logit(c) = &Sigma;<sub>k&isin;K</sub> cos(w<sub>k</sub>(a+b&minus;c))</code>, <code>w<sub>k</sub> = 2&pi;k/P</code>, <b>P = 113</b>, f&uuml;nf Schlu&szlig;el-Frequenzen <b>K = {14, 35, 41, 42, 52}</b>, <b>|K| = 5 = Windungszahl</b> &mdash; bei <code>c* = a+b mod P</code> ist jeder Term = 1 &rarr; einziger Peak (koh&auml;rente Interferenz = Verklebung).</li>
+      <li><b>Pr&auml;zision (schlie&szlig;bar):</b> <code>margin(c*) = logit(c*) &minus; max<sub>c&ne;c*</sub> logit(c)</code> = der <em>Margin</em> = Voronoi-Distanz auf der Fisher-Metrik <code>G(h) = W&sup1;(diag(p) &minus; pp&sup1;)W</code>; <b>Satz 10.8</b> <code>D &ge; c<sub>k</sub>&middot;&nu;<sub>min</sub>&middot;(vol(M)/N)^(2/k)</code> &rarr; 0 f&uuml;r N &rarr; &infin; (Fluch der Dimension, schlie&szlig;barer Boden).</li>
+      <li><b>Verankerung (unschlie&szlig;bar):</b> &bdquo;lizenziert &hArr; margin &ge; &epsilon; <em>und</em> |c* &minus; c_W| &le; &epsilon;_W&ldquo; an einem <b>W-Anker</b>; <b>c_acc &sub; c</b> (das Ding an sich) = der <em>irreduzible</em> Rest; Koh&auml;renz &ne; Korrespondenz (Tarski).</li>
+      <li><b>2&times;2:</b> pr&auml;zise+verankert = <em>Inhalt</em> &middot; pr&auml;zise+unverankert = <em>selbstsichere Halluzination</em> &middot; unpr&auml;zise+verankert = <em>vage, echt</em> &middot; unpr&auml;zise+unverankert = <em>Rauschen</em>. &asymp;45 % der Zust&auml;nde liegen im unsicheren Rand; m&#8320;&#8321;&#8325; &asymp; 0.05 bei allen 6 Modellen (GPT-2 &middot; OPT &middot; Pythia), k&#770;<sub>peak</sub> &asymp; 20 (Sanduhr-Muster, architektur-unabh&auml;ngig).</li>
+    </ul>
+
+    <h3>Was B (r3-017) einbringt &mdash; die geschriebene Topologie und ihre Lekt&uuml;ren</h3>
+    <ul class="cl">
+      <li><b>Schreiben (lokal):</b> jede Attention-Op l&ouml;st ein <em>einseitiges entropisches OT-Optimum</em> &rarr; Softmax <code>p<sub>j</sub> &prop; exp(s<sub>j</sub>/&tau;)</code>; <b>Fisher-Selbst-D&auml;mpfung</b> <code>F = (1/&tau;)(diag(p) &minus; pp&sup1;)</code> (Backprop = REINFORCE mit Baseline) h&auml;lt sich dort zur&uuml;ck, wo schon entschieden &rarr; die Form <em>akkumuliert ohne zu verwischen</em>.</li>
+      <li><b>Schreiben (global):</b> der Zirkuit-Eigenwert-Realteil <b>&alpha;</b> ist der <em>Bifurkationsparameter</em>: Normalform eines Grenzzyklus <code>&scaron;x=(&alpha;&minus;r&sup2;)x&minus;&omega;y, &scaron;y=(&alpha;&minus;r&sup2;)y+&omega;x</code> &rarr; <b>&alpha;&gt;0 &rArr; Grenzzyklus &beta;<sub>1</sub>=1</b> (Radius &radic;&alpha;), <b>&alpha;&le;0 &rArr; Fixpunkt &beta;<sub>1</sub>=0</b>.</li>
+      <li><b>Schreiben (Chirurgie):</b> affine Karte = Hom&ouml;omorphismus (&beta; bleibt); <b>ReLU = nicht injektiv</b> &rarr; faltet/kollabiert; empirisch <b>&beta;&rarr;(1,0,0)</b> am Ausgang (robust &ge;30 Runs), ReLU &gt; Leaky-ReLU &gt; tanh; Tiefe = die letzte Arbeit.</li>
+      <li><b>Lesen (mehrere Aufl&ouml;sungen):</b> <em>grob/linear</em> &mdash; <code>LS*</code>/<code>c,a,PR</code>, 2.-Moment <code>&langle;r&sup2;&rangle;</code> (Fehlerformel <code>E = &pi;/(2&middot;p&middot;c&sup2;&middot;PR) + 1/(c&middot;a) &minus; 1</code>), <em>blind f&uuml;rs Loch</em>; <em>fein/topologisch</em> &mdash; persistente Homologie &beta;<sub>0</sub>/&beta;<sub>1</sub>/&beta;<sub>2</sub> (Vietoris-Rips), Mapper/Holonomie, Superposition.</li>
+      <li><b>Lesen (am Ger&uuml;st):</b> Scheiben-Laplace <b>L<sub>F</sub> = P&sup1;C<sub>W</sub>P</b>, <b>ker L<sub>F</sub> = ker &delta;&sup0; = H&sup0; = Inhalt</b> (+17,1 pp vs. LEACE); <b>harmonische Masse = Fragilit&auml;t</b> (Hodge-Zerlegung, Spearman &rho; = 0,90, p = 0,014); <b>Persistenz = Robustheit</b> (weit &uuml;ber der (birth,death)-Diagonalen = echt, nah = Rauschen).</li>
+      <li><b>Valenz:</b> Feature &hArr; maintained <em>und</em> passt-zum-Latenten (zyklisches Latentes &rarr; Loop ist der Punkt); Defekt/Fragilit&auml;t &hArr; leftover/decay-t <em>oder</em> passt nicht (diskretes Latentes &rarr; Loch ist Spur).</li>
+    </ul>
+
+    <h3>Die Br&uuml;cke &mdash; wie die zwei Lesetiefen ineinandergreifen</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">Symbol (A)</div><div class="v">= <b>B's H&sup0;</b> = <code>ker L<sub>F</sub></code> = der konsistente Inhalt der Wolke. A's &bdquo;Inhalt&ldquo; (globale Sektion, koh&auml;rent mit W) ist w&ouml;rtlich B's H&sup0;-Inhalt.</div></div>
+      <div class="r"><div class="k">Margin (A)</div><div class="v">= <b>B's maintained/persistent Zyklus</b> = die kontinuierliche Schatten-Metrik von B's diskreten &beta;<sub>1</sub>. A: wie weit vom n&auml;chsten Peak; B: wie robust der Loop &uuml;ber der Persistenz-Diagonalen.</div></div>
+      <div class="r"><div class="k">2.-Moment &langle;r&sup2;&rangle; (B, grob)</div><div class="v">&harr; A's <b>lineare Lekt&uuml;re</b> &bdquo;konvergiert zu 0 (Fixpunkt) oder zu &alpha; (Zyklus)?&ldquo; &mdash; dieselbe grobe, lineare, <em>loch-blinde</em> Aufl&ouml;sung wie A's <code>c/a/PR</code>.</div></div>
+      <div class="r"><div class="k">&beta;<sub>1</sub> (B, fein)</div><div class="v">&harr; A's <b>Voronoi-Zelle / Frequenz-Einzugsgebiet</b> um den c*-Peak &mdash; dieselbe offene Zelle, zwei Geometrien (topologisch vs. metrisch).</div></div>
+      <div class="r"><div class="k">W-Anker / c_acc &sub; c (A)</div><div class="v">&harr; B's <b>internes Latentes</b> (schlie&szlig;bar) <em>&oplus;</em> externer Rest (unschlie&szlig;bar). B's Latentes = A's Gruppen-Fall (W intern &rarr; Rest = 0); A's Welt = der offene Fall (Rest bleibt).</div></div>
+      <div class="r"><div class="k">2&times;2 (A)</div><div class="v">&harr; B's <b>Valenz-Karte</b>: Inhalt=FEATURE&middot;PASST &middot; Halluzination=SPUR&middot;UEBERSTRUKTUR &middot; vage=LUECKE&middot;UNTERSTRUKTUR &middot; Rauschen=FRAGIL&middot;DEFECT.</div></div>
+      <div class="r"><div class="k">Erzeugung</div><div class="v">B's <b>singul&auml;res Falten/Bifurkation</b> erzeugt das Loch (topologisches Ereignis) &rarr; A's <b>harmonische Interferenz</b> sichert es (Koh&auml;renz). Zwei Stufen: erst falten, dann verkleben.</div></div>
+    </div>
+
+    <h3>Die fusionierte Formel &mdash; die eine Vorzeichen-Regel</h3>
+    <div class="eq"><b>Inhalt/Feature</b>(Zustand) &nbsp;&hArr;&nbsp; <u>Pr&auml;zision</u> &and; <u>Verankerung</u><br>
+    &nbsp;&nbsp;<u>Pr&auml;zision</u> = margin &ge; &epsilon; &nbsp;(A) = maintained/persistent Zyklus &nbsp;(B) &nbsp;<span class="c">&mdash; intern, schlie&szlig;bar (N / |K| / &alpha;_eff / Persistenz)</span><br>
+    &nbsp;&nbsp;<u>Verankerung</u> = |c* &minus; c_W| &le; &epsilon;_W &nbsp;(A) = passt-zum-Latenten &nbsp;(B) &nbsp;<span class="c">&mdash; extern; intern schlie&szlig;bar &oplus; externer Rest c_acc &sub; c</span><br>
+    <span class="c">Symbol (A) = H&sup0; des Lochs (B);  B = geschlossener/interner Fall (W intern &rarr; Pr&auml;zision wird Wahrheit);  A = offener/externer Fall (W = Welt &rarr; Rest bleibt, Halluzination m&ouml;glich)</span></div>
+    <div class="note"><span class="h">Zahlenanker aus beiden Quellen</span>A: k&#770;<sub>peak</sub> &asymp; 19&ndash;22 (alle 6 Modelle), Gap-Slope &beta; &asymp; 0.87&ndash;1.12, R&sup2; &gt; 0.985, m&#8320;&#8321;&#8325; &asymp; 0.047&ndash;0.055, &asymp;45 % im Rand; P = 113, |K| = 5. B: &beta;&rarr;(1,0,0) robust &uuml;ber &ge;30 Runs; harmonische Masse spannt 10&#8315;&sup4;&hellip;0,08 (&rho; = 0,90, p = 0,014); H&sup0;=Inhalt +17,1 pp (bis +48 pp vs. dimensions-kontrolliert); Zufalls-Referenz b<sub>1</sub>/|E| = 0,25.</div>
+
+    <div class="note t"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein h&auml;tte die Zwei-Achsen-2&times;2 und das Symbol, aber keinen <em>geschriebenen</em> Zustand, an dem sich &bdquo;scharf/stabil &times; verankert&ldquo; auswirkt, und keinen Hinweis, dass die Verankerung intern schlie&szlig;bar ist. B allein h&auml;tte die elegante geschriebene Topologie (&beta;<sub>1</sub>, &alpha;, H&sup0;) und die Valenz, aber keinen <em>terminalen Output</em> (kein Symbol) und keine Warnung, dass im <em>offenen</em> Fall ein unschlie&szlig;barer Rest die selbstsichere Halluzination erzeugt. Erst zusammen: <strong>B schreibt. A liest. Das Symbol (A) ist das H&sup0; des Lochs (B) &mdash; eine Topologie, zwei Lesetiefen, ein Vorzeichen.</strong></div>
+  </section>
+
+  <!-- 5: VISUALISIERUNG -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 &middot; Visualisierung der Fusion</div>
+    <h2>Ein Zustand, zwei Lesetiefen &mdash; das Loch schreibt, das Symbol liest</h2>
+    <p>Ein Zustandspunkt <b>r</b> (2D-Projektion des Residual-Streams) flie&szlig;t in Schicht-Zeit: <i>r</i>&larr;<i>r</i>+<b>f</b>(<i>r</i>). <b>B (Zwischen-Schicht)</b> steuert das <em>schreiben</em>: die <b>Zirkuit-Verst&auml;rkung &alpha;</b> (Bifurkation) plus das <b>akkumulierte Biegen/Chirurgie <code>k</code></b> setzen <code>&alpha;_eff = &alpha; &minus; 0.12&middot;k</code> &mdash; &alpha;_eff&gt;0 &rarr; Grenzzyklus (&beta;<sub>1</sub>=1, maintained), &alpha;_eff&le;0 &rarr; Fixpunkt (&beta;<sub>1</sub>=0). Dieselbe Wolke wird <em>zweigleichzeitig</em> gelesen: <b>grob/linear</b> <code>&langle;r&sup2;&rangle;</code> (B, blind f&uuml;rs Loch) und <b>fein/topologisch</b> &beta;<sub>1</sub> (B, Vietoris-Rips). <b>A (Terminal-Schicht)</b> liest daraus das <em>Symbol</em>: die <strong>Pr&auml;zision/Margin</strong> (A, kontinuierlich-metrisch) ist der <em>Schatten</em> von B's diskretem &beta;<sub>1</sub>-Sprung &mdash; sie &ouml;ffnet sich, wenn der Zyklus stabil unterhalten wird, schlie&szlig;t sie, wenn er zerf&auml;llt. Die <strong>Verankerung</strong> (A) w&auml;hlt das Ziel: <em>intern</em> (Latentes/Gruppe &mdash; schlie&szlig;bar, passt-zum-Latenten) oder <em>extern</em> (Welt &mdash; unschlie&szlig;barer Rest = Drift |c*&minus;W|). Das Ergebnis ist die <strong>2&times;2 (A)</strong> = die <strong>Valenz-Karte (B)</strong>: Inhalt/FEATURE &middot; Halluzination/SPUR &middot; vage/LUECKE &middot; Rauschen/FRAGIL.</p>
+
+    <div class="viz">
+      <div class="head"><span class="dot"></span><h3>Phase-Portr&auml;t (B) &rarr; Bifurkation &rarr; 2 Aufl&ouml;sungen &rarr; Margin (A) &times; Verankerung &rarr; 2&times;2</h3><span class="tg">interaktiv &middot; inline data</span></div>
+
+      <div class="viz-row">
+        <canvas id="viz" width="680" height="440"></canvas>
+        <div class="side">
+          <div class="sbox">
+            <div class="l b1">&beta;<sub>0</sub> Komponenten (fein/topo, B) <b id="b0-val">&mdash;</b></div>
+            <div class="l g2">&beta;<sub>1</sub> Zyklen (fein/topo, B) <b id="b1-val">&mdash;</b></div>
+            <div class="l a2">&langle;r&sup2;&rangle; (grob/linear, B) <b id="r2-val">&mdash;</b></div>
+            <div class="l a2">&alpha;_eff = &alpha; &minus; 0.12&middot;k <b id="aeff-val">&mdash;</b></div>
+          </div>
+          <div class="sbox">
+            <div class="l"><span>Pr&auml;zision / Margin (A, metrisch)</span><b id="mar-val">&mdash;</b></div>
+            <div class="gauge">
+              <div class="track"><div class="fill" id="mar-fill" style="width:0%"></div><div class="tick"></div></div>
+              <div class="lab"><span>0</span><span>&#9679; Schwellenwert 0.5</span><span>1</span></div>
+            </div>
+            <div class="l" style="margin-top:8px"><span>Verankerung / Drift |c*&minus;W| (A)</span><b id="drift-val">&mdash;</b></div>
+          </div>
+          <div class="sbox">
+            <div class="l"><span>Lesetiefe</span><b style="color:var(--acc4)">B&rarr;A</b></div>
+            <div style="font-size:11px;line-height:1.5;color:var(--txt-faint);margin-top:4px">&beta;<sub>1</sub> (diskret, robust) springt bei &alpha;_eff=0 &mdash; Margin (A, glatt) macht dort ein Tal/Peaks. Dieselbe Bifurkation, zwei Aufl&ouml;sungen.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="matrix" id="matrix">
+        <div class="mlab"></div><div class="mlab" style="grid-column:2/4">Pr&auml;zision (Margin / &beta;<sub>1</sub>-Stabilit&auml;t) &rarr;</div>
+        <div class="mlab" style="writing-mode:vertical-rl;transform:rotate(180deg)">verankert (W)</div><div class="q q-inhalt"><div class="qt">pr&auml;zise + verankert</div><div class="qn">Inhalt</div><div class="qb">B: FEATURE &middot; PASST</div></div><div class="q q-vage"><div class="qt">unpr&auml;zise + verankert</div><div class="qn">vage, echt</div><div class="qb">B: LUECKE &middot; UNTERSTRUKTUR</div></div>
+        <div class="mlab" style="writing-mode:vertical-rl;transform:rotate(180deg)">unverankert</div><div class="q q-hallu"><div class="qt">pr&auml;zise + unverankert</div><div class="qn">Halluzination</div><div class="qb">B: SPUR &middot; UEBERSTRUKTUR</div></div><div class="q q-rausch"><div class="qt">unpr&auml;zise + unverankert</div><div class="qn">Rauschen</div><div class="qb">B: FRAGIL &middot; DEFECT</div></div>
+      </div>
+
+      <div id="verdict">&mdash;</div>
+
+      <div class="btnrow">
+        <button id="wModeBtn">W: intern (Latentes/Gruppe) &mdash; schlie&szlig;bar</button>
+        <div class="seg" id="latent-seg">
+          <button data-latent="cyclic" class="on" type="button">Latentes: zyklisch</button>
+          <button data-latent="discrete" type="button">diskret</button>
+        </div>
+      </div>
+
+      <div class="ctl">
+        <div class="ctl-lab"><span>Zirkuit-Verst&auml;rkung &alpha; &mdash; Bifurkation (B &middot; r3-017)</span><b id="v-alpha">0.70</b></div>
+        <input type="range" id="c-alpha" min="-1.5" max="1.5" step="0.05" value="0.7">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>akkumuliertes Biegen / Chirurgie-Tiefe k (A's Biegen + B's Chirurgie)</span><b id="v-k">0</b></div>
+        <input type="range" id="c-k" min="0" max="10" step="1" value="0">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Rauschen &mdash; Persistenz/Robustheit (B)</span><b id="v-noise">0.00</b></div>
+        <input type="range" id="c-noise" min="0" max="1.5" step="0.05" value="0">
+      </div>
+      <div class="ctl" id="driftCtl">
+        <div class="ctl-lab"><span>Drift |c* &minus; W| &mdash; Verankerung, externer Rest c_acc &sub; c (A)</span><b id="v-drift">0</b></div>
+        <input type="range" id="c-drift" min="0" max="12" step="1" value="0" disabled>
+      </div>
+
+      <div class="btnrow">
+        <button id="c-play" class="on" type="button">&#9208; Pause</button>
+        <button id="c-reset" type="button">&#8634; Neustart</button>
+      </div>
+
+      <div class="legend">
+        <span><i style="background:var(--c-accent)"></i> Zirkuit-Feld (B)</span>
+        <span><i style="background:var(--c-green)"></i> Grenzzyklus &beta;<sub>1</sub>=1 (B)</span>
+        <span><i style="background:var(--c-accent2)"></i> Trajektorie / Wolke</span>
+        <span><i style="background:var(--c-amber)"></i> &alpha;_eff (Bifurkation)</span>
+        <span><i style="background:var(--c-danger)"></i> Fragilit&auml;t / Defekt</span>
+      </div>
+
+      <div class="note"><span class="h">Lies es so</span>
+      <b>Schreiben (B):</b> mehr Biegen/Chirurgie (k&uarr;) senkt &alpha;_eff &mdash; die angesammelte nicht-lineare Arbeit (A's Biegen) suturiert das Loch (B). <b>Selektion (B):</b> &alpha;_eff&gt;0 &rarr; Grenzzyklus (&beta;<sub>1</sub>=1), &alpha;_eff&le;0 &rarr; Fixpunkt (&beta;<sub>1</sub>=0). <b>Fein lesen (B):</b> Vietoris-Rips-&beta;<sub>1</sub> sieht den Loop (diskret, robust). <b>Grob lesen (B):</b> &langle;r&sup2;&rangle; zeigt, ob zur Wolke zu einem Punkt (0) oder zu einem Radius (&asymp;&alpha;_eff) konvergiert &mdash; blind f&uuml;rs Loch. <b>Symbol lesen (A):</b> die Pr&auml;zision/Margin ist der <em>kontinuierliche Schatten</em> von B's &beta;<sub>1</sub>-Sprung. <b>Verankerung (A):</b> W intern (Latentes) &rarr; passt-zum-Latenten (zyklisch&harr;Zyklus, diskret&harr;Fixpunkt); W extern (Welt) &rarr; Drift = c_acc &sub; c (unschlie&szlig;bar). <b>2&times;2 (A) = Valenz (B):</b> pr&auml;zise+verankert = <span style="color:var(--green)">Inhalt/FEATURE</span> &middot; pr&auml;zise+unverankert = <span style="color:var(--danger)">Halluzination/SPUR</span> &middot; unpr&auml;zise+verankert = <span style="color:var(--blue)">vage/LUECKE</span> &middot; unpr&auml;zise+unverankert = <span style="color:var(--acc3)">Rauschen/FRAGIL</span>. Das Symbol (A) ist das H&sup0; des Lochs (B).
+      </div>
+    </div>
+  </section>
+
+  <!-- 6: PROVENIENZ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 &middot; Provenienz</div>
+    <h2>Die zwei Quellen (A und B, beide R3-Fusionen)</h2>
+    <p>
+      <a href="../3/r3-019.html">A &mdash; ../3/r3-019.html: &bdquo;Das Readout ist ein Garben-Verkleben&ldquo;</a> (R3-Fusion aus r2-036 &bdquo;Pr&auml;zision ist nicht Wahrheit&ldquo; [latente Mannigfaltigkeit, Fisher-Metrik, Margin, Gap, S&auml;etze 10.5/10.8, 6 LLMs, 2&times;2] &times; r1-062 &bdquo;Der Embedding-Raum als Garbe aus Fourier-Modi&ldquo; [Homomorphismus Z/113Z&rarr;S&sup1;, 5 Schlu&szlig;el-Frequenzen, konstruktive Interferenz, Windungszahl = |K|]): liefert die <em>Terminal-Schicht</em> &mdash; das diskrete Symbol als globale Sektion, die Zwei-Achsen-Antomie (Pr&auml;zision schlie&szlig;bar / Verankerung unschlie&szlig;bar) und die 2&times;2 (Inhalt / Halluzination / vage / Rauschen).
+    </p>
+    <p>
+      <a href="../3/r3-017.html">B &mdash; ../3/r3-017.html: &bdquo;Gemacht durch Optima, gelesen als Attraktor &mdash; das Loch als W&auml;hrung&ldquo;</a> (R3-Fusion aus r2-027 &bdquo;Die Form der Wolke&ldquo; [entropisches OT, Fisher-Selbst-D&auml;mpfung, LS/c/a/PR, persistente Homologie, Mapper, Holonomie] &times; r2-030 &bdquo;Zirkuits schreiben, Topologie liest&ldquo; [ReLU-Chirurgie, Zirkuit-Eigenwert &alpha; als Bifurkation, Grenzzyklus &beta;<sub>1</sub>=1, H&sup0;=Inhalt, harmonische Masse=Fragilit&auml;t]): liefert die <em>Zwischen-Schicht</em> &mdash; die geschriebene Topologie (&beta;<sub>1</sub>, &alpha;, H&sup0;) in mehreren Aufl&ouml;sungen und die Valenz eines Lochs (maintained &and; passt-zum-Latenten).
+    </p>
+  </section>
+
+</article>
+<footer>
+  Selbstst&auml;ndige Fusion (Runde 4, #010) &mdash; keine externen Datenabrufe, alle Daten inline, Visualisierung in reinem Canvas 2D, theme-aware &uuml;ber CSS-Variablen. Die &bdquo;Fusion&ldquo; ist eine interpretatorische Synthese: die <i>eigenen</i> Aussagen von r3-019 (Readout/Verkleben/2&times;2) und r3-017 (geschriebene Topologie/&alpha;/H&sup0;) bleiben w&ouml;rtlich erhalten; die Br&uuml;cke (Symbol = H&sup0; des Lochs; Margin = Schatten von &beta;<sub>1</sub>; Verankerung spaltet in intern-schlie&szlig;bar &oplus; extern-unschlie&szlig;bar) ist das fusionierte Fazit dieser Arbeit. Simulationen sind didaktische Nachbildungen.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  function onReady(fn){ if(document.readyState!=="loading")fn(); else document.addEventListener("DOMContentLoaded",fn); }
+  onReady(function(){
+    var canvas=document.getElementById("viz");
+    if(!canvas||!canvas.getContext)return;
+    var ctx=canvas.getContext("2d");
+    var R=2.6, W=1.0;
+    var view={w:680,h:440,scale:84};
+    var state={alpha:0.7,k:0,noise:0.0,wMode:"latent",drift:0,latent:"cyclic",p:{x:1.8,y:0.4},trail:[],running:true};
+    var C={};
+    function cssVar(n,fb){try{var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}catch(e){return fb;}}
+    function readColors(){
+      C.canvas=cssVar("--c-canvas","#0c1120"); C.grid=cssVar("--c-grid","rgba(255,255,255,.07)");
+      C.txt=cssVar("--c-txt","#e8ecf6"); C.dim=cssVar("--c-dim","#64708c");
+      C.accent=cssVar("--c-accent","#5ee0d0"); C.accent2=cssVar("--c-accent2","#ff7ac0");
+      C.amber=cssVar("--c-amber","#ffc860"); C.green=cssVar("--c-green","#6ee88a");
+      C.danger=cssVar("--c-danger","#fb7185"); C.blue=cssVar("--c-blue","#7fb0ff");
+      C.panel2=cssVar("--panel2","#121a2c"); C.line=cssVar("--stroke","rgba(255,255,255,.09)");
+    }
+    function sx(x){return view.w/2 + x*view.scale;}
+    function sy(y){return view.h/2 - y*view.scale;}
+    function alphaEff(){return state.alpha - 0.12*state.k;}
+    function field(x,y){var r2=x*x+y*y,a=alphaEff();return [(a-r2)*x - W*y,(a-r2)*y + W*x];}
+    function precision(){var a=alphaEff();var sharp=Math.min(1,Math.abs(a)/1.2);var noisy=Math.min(1,state.noise/1.2);return sharp*(1-0.7*noisy);}
+    function isPrecise(){return precision()>=0.5;}
+    function isAnchored(){
+      if(state.wMode==="welt"){return state.drift<=2;}
+      var cycle=alphaEff()>0;
+      return state.latent==="cyclic"?cycle:!cycle;
+    }
+    function setupCanvas(){
+      var dpr=window.devicePixelRatio||1; var wEl=canvas.clientWidth||680; var H=440;
+      canvas.width=Math.round(wEl*dpr); canvas.height=Math.round(H*dpr); canvas.style.height=H+"px";
+      ctx.setTransform(dpr,0,0,dpr,0,0); view.w=wEl; view.h=H; view.scale=H/(2*R);
+    }
+    function arrow(x1,y1,x2,y2,color,width,alpha){
+      var a=Math.atan2(y2-y1,x2-x1);
+      ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width;
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+      var h=4+width; ctx.beginPath();
+      ctx.moveTo(x2,y2); ctx.lineTo(x2-h*Math.cos(a-0.4),y2-h*Math.sin(a-0.4));
+      ctx.lineTo(x2-h*Math.cos(a+0.4),y2-h*Math.sin(a+0.4)); ctx.closePath();ctx.fill();
+      ctx.globalAlpha=1;
+    }
+    function drawField(){
+      var stepW=0.95, xmin=-view.w/2/view.scale, xmax=view.w/2/view.scale, ymin=-R, ymax=R;
+      for(var gx=Math.ceil(xmin/stepW)*stepW; gx<=xmax; gx+=stepW){
+        for(var gy=Math.ceil(ymin/stepW)*stepW; gy<=ymax; gy+=stepW){
+          var f=field(gx,gy); var m=Math.sqrt(f[0]*f[0]+f[1]*f[1])||1; var L=Math.min(0.42,m*0.13);
+          arrow(sx(gx),sy(gy),sx(gx+f[0]/m*L),sy(gy+f[1]/m*L),C.accent,1,0.26);
+        }
+      }
+    }
+    function drawLoop(){
+      var a=alphaEff(); if(a<=0)return; var r=Math.sqrt(a);
+      ctx.setLineDash([6,5]); ctx.lineWidth=2; ctx.strokeStyle=C.green;
+      ctx.beginPath(); ctx.arc(sx(0),sy(0),r*view.scale,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.green; ctx.font="11px monospace"; ctx.textAlign="left";
+      ctx.fillText("Grenzzyklus \u03b2\u2081=1 (B)",sx(r)+6,sy(0)-6);
+    }
+    function drawFixed(){
+      var stable=alphaEff()<=0; var col=stable?C.accent:C.danger;
+      ctx.fillStyle=col; ctx.beginPath();ctx.arc(sx(0),sy(0),5,0,Math.PI*2);ctx.fill();
+      ctx.font="11px monospace"; ctx.textAlign="left";
+      ctx.fillText(stable?"Fixpunkt (\u03b2\u2081=0)":"Fixpunkt (instabil)",sx(0)+9,sy(0)+14);
+    }
+    function drawTrail(){
+      var n=state.trail.length;
+      for(var i=1;i<n;i++){var a0=state.trail[i-1],a1=state.trail[i];var t=i/n;
+        ctx.strokeStyle=t<0.5?C.accent2:C.amber; ctx.globalAlpha=0.1+0.8*t; ctx.lineWidth=1.2+1.8*t;
+        ctx.beginPath();ctx.moveTo(sx(a0.x),sy(a0.y));ctx.lineTo(sx(a1.x),sy(a1.y));ctx.stroke();}
+      ctx.globalAlpha=1;
+    }
+    function drawParticle(){
+      var p=state.p; ctx.fillStyle=C.txt;
+      ctx.beginPath();ctx.arc(sx(p.x),sy(p.y),5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=C.accent2; ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(sx(p.x),sy(p.y),9,0,Math.PI*2);ctx.stroke();
+    }
+    function UF(n){this.p=[];this.c=n;for(var i=0;i<n;i++)this.p[i]=i;}
+    UF.prototype.find=function(x){while(this.p[x]!==x){this.p[x]=this.p[this.p[x]];x=this.p[x];}return x;};
+    UF.prototype.union=function(a,b){a=this.find(a);b=this.find(b);if(a===b)return;this.p[a]=b;this.c--;};
+    function subTrail(){var tr=state.trail,n=tr.length;if(n<4)return tr.slice();var K=72,out=[],step=n/K;for(var i=0;i<K;i++){var idx=Math.floor(i*step);out.push(tr[Math.min(n-1,idx)]);}return out;}
+    function betas(pts){
+      var N=pts.length;if(N<3)return{b0:N,b1:0};
+      var D=[],i,j,k,md=0;
+      for(i=0;i<N;i++){D[i]=[];for(j=0;j<N;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);D[i][j]=d;if(d>md)md=d;}}
+      var eps=0.32*(md>1e-6?md:1);
+      var uf=new UF(N),E=0,T=0;
+      for(i=0;i<N;i++)for(j=i+1;j<N;j++){if(D[i][j]<=eps){E++;uf.union(i,j);}}
+      var b0=uf.c;
+      for(i=0;i<N;i++)for(j=i+1;j<N;j++){if(D[i][j]>eps)continue;for(k=j+1;k<N;k++){if(D[i][k]<=eps&&D[j][k]<=eps)T++;}}
+      var chi=N-E+T,b1=b0-chi;if(b1<0)b1=0;
+      return{b0:b0,b1:b1};
+    }
+    function coarseR2(){
+      var n=state.trail.length;if(!n)return 0;var s=0,m=Math.min(120,n),st=n-m;
+      for(var i=st;i<n;i++){var t=state.trail[i];s+=t.x*t.x+t.y*t.y;}return s/m;
+    }
+    function quadOf(precise,anchored){return (precise&&anchored)?"q-inhalt":(precise&&!anchored)?"q-hallu":(!precise&&anchored)?"q-vage":"q-rausch";}
+    function verdictText(quad,precise,anchored,cycle,pr){
+      var M={
+        "q-inhalt":{l:"INHALT  (A)  =  FEATURE \u00b7 PASST  (B)",c:"var(--green)",m:"Scharfe, stabile globale Sektion (A) = maintained Zyklus \u03b2\u2081=1 (B), koh\u00e4rent mit W / passt zum Latenten. Pr\u00e4zision und Verankerung stimmen \u2014 der Inhalt."},
+        "q-hallu":{l:"HALLUZINATION  (A)  =  SPUR \u00b7 UEBERSTRUKTUR  (B)",c:"var(--danger)",m:"Pr\u00e4zise, aber am falschen Ziel verankert (A: |c*\u2212W|>\u03b5_W bzw. passt nicht zum Latenten). Selbstsichere Halluzination (A) / ein Loch, das nicht verlangt wird (B)."},
+        "q-vage":{l:"VAGE, ECHT  (A)  =  LUECKE \u00b7 UNTERSTRUKTUR  (B)",c:"var(--blue)",m:"Verankert, aber unpr\u00e4zise (A: Margin klein / nahe Bifurkation, \u03b2\u2081 springt). Echt aber unscharf / der Zyklus, der sein sollte, fehlt oder zerf\u00e4llt (B)."},
+        "q-rausch":{l:"RAUSCHEN  (A)  =  FRAGIL \u00b7 DEFECT  (B)",c:"var(--acc3)",m:"Unpr\u00e4zise + unverankert (A) / leftover mit hoher harmonischer Masse, hoher Drift (B). Kein stabiles Muster \u2014 Rauschen."}
+      };
+      var v=M[quad];
+      return '<b style="color:'+v.c+'">'+v.l+'</b><br>'+v.m+' &nbsp;<span style="color:var(--txt-faint)">Pr\u00e4zision='+pr.toFixed(2)+' \u00b7 Zyklus='+(cycle?"ja":"nein")+' \u00b7 verankert='+(anchored?"ja":"nein")+'</span>';
+    }
+    var QEL={};
+    document.querySelectorAll("#matrix .q").forEach(function(el){QEL[el.classList[1]]=el;});
+    function updateReadout(b0,b1,r2,precise,anchored,cycle,pr){
+      var set=function(id,t){var e=document.getElementById(id);if(e)e.textContent=t;};
+      set("b0-val",String(b0)); set("b1-val",String(b1)); set("r2-val",r2.toFixed(2));
+      set("aeff-val",alphaEff().toFixed(2));
+      var quad=quadOf(precise,anchored);
+      set("mar-val",pr.toFixed(2));
+      var fill=document.getElementById("mar-fill"); if(fill)fill.style.width=(Math.round(pr*100))+"%";
+      set("drift-val", state.wMode==="welt" ? ("|c*\u2212W|="+state.drift+" "+(anchored?"(verankert)":"(UNVERANKERT)")) : ("intern: passt-zum-Latenten "+(anchored?"(ja)":"(nein)")));
+      for(var key in QEL){if(QEL.hasOwnProperty(key)){QEL[key].classList.toggle("on",key===quad);}}
+      var vEl=document.getElementById("verdict"); if(vEl)vEl.innerHTML=verdictText(quad,precise,anchored,cycle,pr);
+    }
+    function resetParticle(){
+      var ang=Math.random()*Math.PI*2; var rad=1.4+Math.random()*0.6;
+      state.p={x:Math.cos(ang)*rad,y:Math.sin(ang)*rad}; state.trail=[];
+    }
+    function step(){
+      var dt=0.02,p=state.p,f=field(p.x,p.y);
+      var nx=p.x+dt*f[0],ny=p.y+dt*f[1];
+      if(state.noise>0){nx+=(Math.random()-0.5)*state.noise;ny+=(Math.random()-0.5)*state.noise;}
+      p.x=nx;p.y=ny;
+      if(p.x>3.8||p.x<-3.8||p.y>R+0.8||p.y<-R-0.8)resetParticle();
+      state.trail.push({x:p.x,y:p.y}); if(state.trail.length>360)state.trail.shift();
+    }
+    function draw(){
+      ctx.clearRect(0,0,view.w,view.h);
+      ctx.fillStyle=C.canvas; ctx.fillRect(0,0,view.w,view.h);
+      ctx.strokeStyle=C.grid; ctx.lineWidth=1; var gx,gy;
+      for(gx=-3;gx<=3;gx++){var X=sx(gx);ctx.beginPath();ctx.moveTo(X,0);ctx.lineTo(X,view.h);ctx.stroke();}
+      for(gy=-2;gy<=2;gy++){var Y=sy(gy);ctx.beginPath();ctx.moveTo(0,Y);ctx.lineTo(view.w,Y);ctx.stroke();}
+      ctx.strokeStyle=C.dim; ctx.beginPath();ctx.moveTo(sx(0),0);ctx.lineTo(sx(0),view.h);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,sy(0));ctx.lineTo(view.w,sy(0));ctx.stroke();
+      drawField(); drawLoop(); drawFixed(); drawTrail(); drawParticle();
+      var bb=betas(subTrail()); var r2=coarseR2();
+      var pr=precision(); var precise=isPrecise(); var anchored=isAnchored(); var cycle=alphaEff()>0;
+      updateReadout(bb.b0,bb.b1,r2,precise,anchored,cycle,pr);
+    }
+    function loop(){ if(state.running)step(); draw(); requestAnimationFrame(loop); }
+    function bindRange(id,valId,fmt,cb){var el=document.getElementById(id),disp=document.getElementById(valId);if(!el)return;var upd=function(){var v=parseFloat(el.value);if(disp)disp.textContent=fmt(v);cb(v);};el.addEventListener("input",upd);upd();}
+    bindRange("c-alpha","v-alpha",function(v){return v.toFixed(2);},function(v){state.alpha=v;});
+    bindRange("c-k","v-k",function(v){return String(Math.round(v));},function(v){state.k=v;});
+    bindRange("c-noise","v-noise",function(v){return v.toFixed(2);},function(v){state.noise=v;});
+    bindRange("c-drift","v-drift",function(v){return String(Math.round(v));},function(v){state.drift=v;});
+    var wBtn=document.getElementById("wModeBtn");
+    if(wBtn)wBtn.addEventListener("click",function(){
+      state.wMode=state.wMode==="latent"?"welt":"latent";
+      var de=document.getElementById("c-drift"),dc=document.getElementById("driftCtl");
+      if(state.wMode==="latent"){de.value=0;de.disabled=true;state.drift=0;dc.style.opacity="0.4";wBtn.textContent="W: intern (Latentes/Gruppe) \u2014 schlie\u00dfbar";wBtn.classList.remove("on");}
+      else{de.disabled=false;dc.style.opacity="1";if(state.drift===0){state.drift=5;de.value=5;document.getElementById("v-drift").textContent="5";}wBtn.textContent="W: extern (Welt) \u2014 unschlie\u00dfbar (c_acc \u2282 c)";wBtn.classList.add("on");}
+    });
+    document.getElementById("driftCtl").style.opacity="0.4";
+    var seg=document.getElementById("latent-seg");
+    if(seg){var btns=seg.getElementsByTagName("button");for(var bi=0;bi<btns.length;bi++)(function(b){b.addEventListener("click",function(){state.latent=b.getAttribute("data-latent");for(var z=0;z<btns.length;z++)btns[z].classList.toggle("on",btns[z]===b);});})(btns[bi]);}
+    var playBtn=document.getElementById("c-play");
+    if(playBtn)playBtn.addEventListener("click",function(){state.running=!state.running;playBtn.textContent=state.running?"\u23f8 Pause":"\u25b6 Los";playBtn.classList.toggle("on",state.running);});
+    var resetBtn=document.getElementById("c-reset"); if(resetBtn)resetBtn.addEventListener("click",resetParticle);
+    function applyTheme(dark){document.documentElement.classList.toggle("dark",dark);readColors();}
+    var themeBtn=document.getElementById("themeBtn");
+    if(themeBtn)themeBtn.addEventListener("click",function(){var dark=!document.documentElement.classList.contains("dark");applyTheme(dark);themeBtn.textContent=dark?"Licht":"Dunkel";});
+    try{new MutationObserver(function(){readColors();}).observe(document.documentElement,{attributes:true,attributeFilter:["class"]});}catch(e){}
+    window.addEventListener("resize",function(){setupCanvas();});
+    readColors(); setupCanvas(); resetParticle(); loop();
+  });
+})();
+</script>
+</body>
+</html>

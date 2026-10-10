@@ -1,0 +1,16 @@
+{
+  "no": "008",
+  "a": "combined/3/r3-011.html",
+  "b": "combined/3/r3-020.html",
+  "a_title": "Der Kohärenz-Regler τ — dünn, fließend, ehrlich",
+  "b_title": "Symmetrie und Krümmung sind dieselbe Kante — Form fixiert, Auflösung kippt",
+  "combined_theme": "koharenz-kante-ein-regler",
+  "one_line": "Ein Netz ist ein niedrigdimensionales, krümmungstragendes, symmetriestructuriertes Objekt; ein einziger Regler (τ aus A = Softmax-Temp/NNGP-Band/Fisher-Offenheit, R aus B = Auflösung P/Pc / GD++ γ) ist die Stellung relativ zu einer Commit-/Kippen-Kante — darunter offen ('weiß es nicht', verwaschener Kreis, divergenter Schritt), darüber committed (scharfes Ablesen, scharfer Kreis, konvergenter Schritt) — und Ehrlichkeit heißt auf beiden Achsen (Magnitude τ & Form/Krümmung) dem Objekt treu zu bleiben.",
+  "contradictions": [
+    "Regler τ (A: lokaler epistemischer Vertrauens-Meter, NNGP-Band/Softmax-Temp, den man 'melden' muss) vs. Regler R (B: globaler Phasen-Übergangs-Hebel P/Pc, T,η,γ, der den Kipp 'entscheidet')",
+    "Die Form (A: intrinsische Fisher-Krümmung der dünnen Zustands-Mannigfaltigkeit, auf der man 'schreitet') vs. die Form (B: Symmetrie-adaptierte Fourier-Basis/Zirkulant-Kreis + gemessene Cusp des Potentials, deren Spektrum man 'liest')",
+    "Dynamik (A: konstitutiver, kontrahierender Fluss, der auf die dünne kohärente Form als Attraktor zusammenläuft — Lernen IST die Zeitentwicklung) vs. (B: einseitiger Phasen-Kipp in einem eingefrorenen Durchlauf, eine Schicht = 1 GD-Schritt, Hintergrund-Terrain ist gegeben/gemessen)"
+  ],
+  "resolution": "τ (A) und R (B) sind ein und derselbe Knopf auf zwei Ebenen — lokal (A: Vertrauens-Streuung um einen Punkt, 'melden') und global (B: Position gegenüber der Kante, 'kippen'); die eine Kante ist 'Form-Stärke > anwendbares Rauschen/Limit' (Commit A = Kippen B). Die Form hat einen Generator (Symmetrie B), einen spektralen Schatten (zirkulant→Fourier B) und eine Krümmungs-Realisierung in zwei Räumen (Fisher auf dem Simplex A / Cusp in Φ B); der Kreis (Mode 1, B) = die glatteste Eigenrichtung = kleinste-Krümmung-Richtung (A). Lernen = der Fluss, der die dünne gekrümmte Form baut (A's Attraktor = B's gegebenes Terrain); Inferenz = der Durchlauf, der an der von der Form gesetzten Kante kippt (B's Phasenübergang); τ/R sitzt auf beiden Zeitskalen.",
+  "viz": "Einzelnes Canvas mit drei Bereichen: links Potential Φ (Wissens-Tal wahr, Void-Tal falsch, Cusp=fixierte Form) mit GD-Pfad + η-Gauge und Kante 2/λmax; rechts ℤ/12ℤ-Kreis (Fourier der Symmetrie) der mit R scharfer wird; unten Eigenspektrum (Mode 0–1 = Kreis) + Rauschenboden. Ein Regler R (A: P/Pc + Commit-τ-Achse · B: GD++ γ rundet Cusp) + η; Checkboxen Halluzinieren (A) & Über-Linearisieren (B); Kipp = aEdge (Fingerprint>Boden, Grokking) & GD-stabil (η<2/λmax)."
+}

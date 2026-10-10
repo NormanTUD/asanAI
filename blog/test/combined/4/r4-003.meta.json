@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "combined/3/r3-002.html",
+  "b": "combined/3/r3-012.html",
+  "a_title": "Der lineare Assoziativspeicher: eine zweite-Moment-Matrix, zwei Seiten (R3 · 002)",
+  "b_title": "Die homotopische Lese-Schreib-Scheibe: Scheibe ≃ Schnitt (R3 · 012)",
+  "combined_theme": "second-moment-matrix-as-homotopy-bridge",
+  "one_line": "Die eine zweite-Moment-Matrix M ist zugleich exakte Metrik (Whitening M⁻¹ = duale Basis, die beim Schreiben lenkt und beim Lesen entzerrt) und die Geometrie, deren niedrigenergetische Menge die Nützlichkeitsscheibe = eindeutiger globaler Schnitt = eine Homotopie-Klasse ist; ‖M−I‖ (Belegung/Hologramm-Grad, A) ist dieselbe Zahl wie T/Homotopie-Weiche (B) — exakt lokal (A), weich ≃ global (B).",
+  "contradictions": [
+    "A brückt Schreiben und Lesen mit exakter Lineare Algebra (M⁻¹ = Whitening, ein wohldefinierter, deterministischer inverser Operator, 'Region für Region invertierbar'); B verwirft exakte Gleichheit bewusst und hält Homotopie (≃, 'nicht exakt gleich, sondern ineinander verformbar') für die ehrliche Relation.",
+    "A: die Geometrie M entsteht emergent/dynamisch aus Selbstorganisation (SOM, Rang-1-Edits, annealend, bottom-up) — ein 'eingefrorenes Snapshot' ohne Garantie; B: der globale Schnitt wird axiomatisch/strukturell garantiert (Garben-Verklebungsaxiom ⇒ eindeutig) und nur metastabil von einem Flow besetzt.",
+    "A feiert als ermöglichende Tugend die lokale Invertierbarkeit der ReLU (stückweise linear, M⁻¹ wohldefiniert); B feiert als ermöglichende Tugend den Verlust/die Non-Injektivität (ReLU wirft die negative Hälfte weg, 'der Verlust ermöglicht Verkleben', ∞-Gruppoid nicht-injektiv/polysemantisch)."
+  ],
+  "resolution": "M⁻¹ ist exakt *lokal*, die Homotopie-Klasse ist ihr *globaler Schatten* (M⁻¹ partitioniert den Zustandsraum in die Klassen, auf die sich die lokalen Operationen verkleben); der Prozeß der Selbstorganisation (A) *führt* das Verkleben (B) aus und belegt damit die axiomatische Garantie (das eingefrorene M ist der realisierte globale Schnitt); lokale Invertierbarkeit (A) und globaler Verlust/Non-Injektivität (B) sind dieselbe ReLU innerhalb vs. zwischen den linearen Stücken — der Interferenzpreis (B) ist exakt der Spillover (A) = ‖M−I‖. Die Scheibe = eindeutiger globaler Schnitt = eine Homotopie-Klasse, metastabil besetzt; danebenfallen = Verlassen der Klasse = Halluzination.",
+  "viz": "Ein Canvas, das den fused Gedanken zeigt: die zweite-Moment-Geometrie M (anisotrope Ellipse, wird enger mit der Weiche), ihre inverse M⁻¹ (Whitening = duale Basis, gold gestrichelt — die exakte Brücke), die Nützlichkeitsscheibe als Homotopie-Klasse (blaue Ellipse, Breite = Weiche), ein falsches Tal (andere Klasse = Halluzination), ein dragbarer Query-Punkt (Klassen-Mitgliedschaft im M⁻¹-Whitening-Raum: gleiche Klasse ✓ / zwischen ≃ / Halluzination ✗), der Spillover-Schreibzug (Spezifität), die Gram-/Crosstalk-Heatmap M, der einzige Regler ‖M−I‖ = Belegung = Hologramm-Grad = T = Weiche ≃, und die lineare Readout-Seite (naiv vs. M⁻¹-entzerrt, ★=c*=(a+b) mod 13). Theme-aware, nur Inline-Daten, keine Netzabrufe."
+}

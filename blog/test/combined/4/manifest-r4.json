@@ -1,0 +1,128 @@
+{
+  "round": 4,
+  "seed": 20261010,
+  "big_threshold_kb": 100.0,
+  "method": "seeded-random, size-balanced (big>=threshold always paired with smallest available partner); bye advances unchanged",
+  "pool_size": 21,
+  "num_pairs": 10,
+  "num_byes": 1,
+  "max_pair_total_kb": 115.7,
+  "pairs": [
+    {
+      "id": 1,
+      "no": "001",
+      "out": "combined/4/r4-001.html",
+      "meta": "combined/4/r4-001.meta.json",
+      "a": "combined/3/r3-001.html",
+      "b": "combined/3/r3-003.html",
+      "size_a": 34.8,
+      "size_b": 36.0,
+      "total_kb": 70.8
+    },
+    {
+      "id": 2,
+      "no": "002",
+      "out": "combined/4/r4-002.html",
+      "meta": "combined/4/r4-002.meta.json",
+      "a": "combined/3/r3-006.html",
+      "b": "combined/3/r3-015.html",
+      "size_a": 37.0,
+      "size_b": 39.8,
+      "total_kb": 76.8
+    },
+    {
+      "id": 3,
+      "no": "003",
+      "out": "combined/4/r4-003.html",
+      "meta": "combined/4/r4-003.meta.json",
+      "a": "combined/3/r3-002.html",
+      "b": "combined/3/r3-012.html",
+      "size_a": 40.4,
+      "size_b": 40.7,
+      "total_kb": 81.1
+    },
+    {
+      "id": 4,
+      "no": "004",
+      "out": "combined/4/r4-004.html",
+      "meta": "combined/4/r4-004.meta.json",
+      "a": "combined/3/r3-004.html",
+      "b": "combined/3/r3-007.html",
+      "size_a": 42.3,
+      "size_b": 43.2,
+      "total_kb": 85.5
+    },
+    {
+      "id": 5,
+      "no": "005",
+      "out": "combined/4/r4-005.html",
+      "meta": "combined/4/r4-005.meta.json",
+      "a": "combined/3/r3-009.html",
+      "b": "combined/3/r3-008.html",
+      "size_a": 45.7,
+      "size_b": 46.3,
+      "total_kb": 92.0
+    },
+    {
+      "id": 6,
+      "no": "006",
+      "out": "combined/4/r4-006.html",
+      "meta": "combined/4/r4-006.meta.json",
+      "a": "combined/3/r3-010.html",
+      "b": "combined/3/r3-005.html",
+      "size_a": 46.8,
+      "size_b": 47.8,
+      "total_kb": 94.6
+    },
+    {
+      "id": 7,
+      "no": "007",
+      "out": "combined/4/r4-007.html",
+      "meta": "combined/4/r4-007.meta.json",
+      "a": "combined/3/r3-016.html",
+      "b": "combined/3/r3-013.html",
+      "size_a": 49.4,
+      "size_b": 51.2,
+      "total_kb": 100.6
+    },
+    {
+      "id": 8,
+      "no": "008",
+      "out": "combined/4/r4-008.html",
+      "meta": "combined/4/r4-008.meta.json",
+      "a": "combined/3/r3-011.html",
+      "b": "combined/3/r3-020.html",
+      "size_a": 51.4,
+      "size_b": 52.1,
+      "total_kb": 103.5
+    },
+    {
+      "id": 9,
+      "no": "009",
+      "out": "combined/4/r4-009.html",
+      "meta": "combined/4/r4-009.meta.json",
+      "a": "combined/3/r3-018.html",
+      "b": "combined/3/r3-014.html",
+      "size_a": 53.1,
+      "size_b": 53.2,
+      "total_kb": 106.3
+    },
+    {
+      "id": 10,
+      "no": "010",
+      "out": "combined/4/r4-010.html",
+      "meta": "combined/4/r4-010.meta.json",
+      "a": "combined/3/r3-019.html",
+      "b": "combined/3/r3-017.html",
+      "size_a": 55.3,
+      "size_b": 60.4,
+      "total_kb": 115.7
+    }
+  ],
+  "byes": [
+    {
+      "path": "combined/2/r2-040.html",
+      "size_kb": 66.1
+    }
+  ]
+}
