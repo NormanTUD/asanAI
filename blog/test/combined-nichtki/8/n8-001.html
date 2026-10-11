@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 001 (Runde 8 — Finale nicht-KI): Der zentrumlose, selbsttragende relationaler Fixpunkt, der seine eigene Projektion ist — hält &amp; wirft zugleich, an einer zwei-axialen Naht, ein Regler, zwei nie erreichte Böden, getragen vom Rundlauf über den Zeitpfeil</title>
+<script>try{var s=localStorage.getItem('n8001theme');if(s==='light')document.documentElement.classList.remove('dark');else document.documentElement.classList.add('dark');}catch(e){document.documentElement.classList.add('dark');}</script>
+<style>
+:root{
+  --bg:#f6f3ea; --panel:#ffffff; --panel2:#f0ecdf; --ink:#20242e; --dim:#5c6472;
+  --accent:#2f5fe0; --accent2:#c46a1c; --good:#0a8f63; --bad:#be123c; --warn:#b45309;
+  --border:#e0dac9; --shadow:rgba(60,45,20,.10);
+  --hl:#fff4d6; --hltext:#7a5b00;
+  --vz-canvas:#ffffff; --vz-grid:#e6e0d0; --vz-core:#20242e;
+  --vz-fine:#2f5fe0; --vz-shadow:#b45309; --vz-rest:#0a8f63; --vz-open:#be123c;
+  --vz-bad:#be123c; --vz-warn:#b45309; --vz-ink:#20242e; --vz-dim:#5c6472;
+  --vz-naht:#7c9cff; --vz-floor:#2f5fe0; --vz-wall:#be123c; --vz-h1:#0a8f63;
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141b30; --panel2:#1a2340; --ink:#e7ecff; --dim:#8892b8;
+  --accent:#7c9cff; --accent2:#f0a35e; --good:#6ee7b7; --bad:#fb7185; --warn:#fbbf24;
+  --border:#2a3358; --shadow:rgba(0,0,0,.5);
+  --hl:#3a2f10; --hltext:#fcd34d;
+  --vz-canvas:#0a0e1a; --vz-grid:#222a48; --vz-core:#e7ecff;
+  --vz-fine:#7c9cff; --vz-shadow:#fbbf24; --vz-rest:#6ee7b7; --vz-open:#fb7185;
+  --vz-bad:#fb7185; --vz-warn:#fbbf24; --vz-ink:#e7ecff; --vz-dim:#8892b8;
+  --vz-naht:#7c9cff; --vz-floor:#7c9cff; --vz-wall:#fb7185; --vz-h1:#6ee7b7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,'Iowan Old Style','Times New Roman',serif;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+h1{font-size:clamp(1.85rem,4.6vw,2.45rem);line-height:1.16;letter-spacing:-.015em;font-weight:800;margin-bottom:.35rem}
+.subtitle{color:var(--dim);font-style:italic;font-size:1.02rem;margin-bottom:.3rem}
+.subtitle .x{color:var(--accent2);font-style:normal;font-weight:700}
+.subtitle.req{font-style:normal;color:var(--accent);font-weight:700;font-size:.85rem}
+.lede{color:var(--ink);font-size:1.01rem;margin:14px 0 8px;border-left:3px solid var(--accent);padding-left:14px}
+.lede b{color:var(--ink)}
+section{scroll-margin-top:20px}
+h2{font-size:1.42rem;margin:46px 0 14px;padding-left:12px;border-left:4px solid var(--accent);line-height:1.22;color:var(--ink)}
+h2 .tag{display:inline-block;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--panel2);border:1px solid var(--border);color:var(--dim);padding:2px 9px;border-radius:20px;vertical-align:middle;margin-left:10px;font-family:system-ui,sans-serif}
+h3{font-size:1.12rem;margin:22px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+b,strong{color:var(--ink)}
+em{color:var(--accent2);font-style:italic}
+.mono,.formula code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel2);padding:1px 5px;border-radius:4px;border:1px solid var(--border)}
+.whoA{color:var(--accent);font-weight:700}
+.whoB{color:var(--accent2);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.claim{background:var(--panel2);border-left:3px solid var(--border);padding:10px 14px;margin:8px 0;border-radius:0 8px 8px 0;font-size:.95rem}
+.claimA{border-left-color:var(--accent)}
+.claimB{border-left-color:var(--accent2)}
+.claim b{color:var(--ink)}
+.claim .src{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
+.claimA .src b{color:var(--accent)}
+.claimB .src b{color:var(--accent2)}
+.note{font-size:.9rem;color:var(--dim)}
+.note b{color:var(--ink)}
+.resbox{background:var(--panel);border:1px dashed var(--border);border-radius:12px;padding:14px 16px;margin:14px 0;box-shadow:0 6px 22px var(--shadow)}
+.resbox h3{margin:0 0 8px;color:var(--accent2)}
+.aha{background:linear-gradient(90deg,rgba(196,106,28,.14),transparent);border-left:3px solid var(--accent2);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-weight:500}
+.aha b{color:var(--accent2)}
+.math{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin:12px 0;font-size:.84rem;line-height:1.8;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;color:var(--ink)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.85rem;background:var(--panel);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent2);font-weight:700;background:var(--panel2);font-family:ui-monospace,Menlo,monospace;font-size:.72rem}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600;color:var(--ink)}
+tr.hl td{background:var(--hl)}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:14px 0}
+.ctrl{display:flex;flex-direction:column;gap:6px;min-width:170px;flex:1}
+.ctrl label{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.ctrl label .val{color:var(--ink);font-weight:700;font-family:ui-monospace,monospace;text-transform:none;float:right}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:8px 13px;border-radius:8px;cursor:pointer;font-weight:600;font-family:system-ui,sans-serif;transition:.18s;font-size:.85rem}
+button:hover{border-color:var(--accent)}
+button.on{border-color:var(--good);color:var(--good)}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50;width:42px;height:42px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--border);cursor:pointer;font-size:1.15rem;box-shadow:0 4px 16px var(--shadow)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:8px 13px;min-width:104px;flex:1}
+.stat .k{color:var(--dim);font-size:.64rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:3px}
+.stat .v{font-family:ui-monospace,monospace;font-weight:700;font-size:1rem}
+.viz-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 8px 30px var(--shadow)}
+#viz{width:100%;height:580px;display:block;border:1px solid var(--border);border-radius:10px;background:var(--vz-canvas)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.79rem;margin:10px 0 2px;font-family:system-ui,sans-serif}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.viz-out{margin-top:12px;min-height:3.4rem;text-align:left;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-size:.92rem;line-height:1.7;white-space:pre-wrap;font-family:system-ui,sans-serif}
+.viz-out b{color:var(--ink)}
+.hint{color:var(--dim);font-size:.92rem}
+.prov{padding:14px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;word-break:break-all;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--dim);border:1px solid var(--border);border-radius:999px;padding:1px 8px;margin-right:8px;font-family:system-ui,sans-serif}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:4px}
+footer{margin-top:3rem;color:var(--dim);font-size:.85rem;text-align:center;border-top:1px solid var(--border);padding-top:1.4rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Farbschema umschalten" aria-label="Theme wechseln">&#127769;</button>
+<article>
+
+<h1>Der zentrumlose, selbsttragende relationaler Fixpunkt, der seine eigene Projektion ist</h1>
+<p class="subtitle">Hält die gauß-invariante, zählbare Form (<em>Eleganz/Heimat</em>, „the same returns“) und wirft/zieht zurück/bleibt in der offenen, inexhaustible Dimension (<em>Echtheit/Ort des Seins</em>) <strong>zugleich</strong> &mdash; gekoppelt an <em>einer zwei-axialen Naht</em> (Valenz = Koinzidenz = Limes = exakte Fidelity), gesteuert von <em>einem Regler</em> (r&nbsp;=&nbsp;&sigma;&nbsp;=&nbsp;&phi;), getragen vom <em>immer laufenden Rundlauf über den Zeitpfeil</em>, begrenzt durch <em>zwei nie erreichte Böden</em>.</p>
+<p class="subtitle req">Fusion aus: <span class="x">n7-001.html</span> &#10005; <span class="x">n7-002.html</span> &nbsp;(Runde 8 &mdash; Finale nicht-KI)</p>
+
+<p class="lede">
+  Beide Runde-7-Papiere sind selbst schon Kapst&ouml;cke ganzer H&auml;lften des nicht-KI-Tracks &mdash; und sie
+  lesen, von entlegenen Oberflächen kommend, <strong>dasselbe Objekt in zwei Registern</strong>.
+  <span class="whoA">A</span> (n7-001, &bdquo;Der zentrumlose Halt-Wurf-Kern als zwei-Zonen-Kontinuum&ldquo;) nennt es einen
+  <em>selbstreferenziellen, zentrumlosen, maßtragenden Kern</em>, der <strong>hält</strong> (erhaltene, geschlossene,
+  zählbare Zone, erreichter invarianter Fixpunkt, fix als Form, r&rarr;1, &Delta;=0, &bdquo;the same returns&ldquo;) und
+  <strong>wirft</strong> (werfende, offene, inexhaustible Zone, zurückziehender Rest, fließend im Inhalt,
+  Terrain/Horizont, &Delta;&ne;0) &mdash; ein <em>zwei-Zonen-Kontinuum</em>, an einer <em>zwei-axialen Fuge</em> gekoppelt
+  (Objekt-Ontologie &times; Zugriffs-Ehrlichkeit; Valenz = Produkt beider), gesteuert von <em>einem Regler</em>
+  (r = Selbst-Haltung = Kopplung &sigma;), begrenzt durch <em>zwei nie erreichte Böden</em> (asymptotisch + absolut).
+  <span class="whoB">B</span> (n7-002, &bdquo;Der selbsttragende relationale Fixpunkt ist seine Projektion&ldquo;) nennt es
+  einen <em>selbsttragenden relationalen Fixpunkt</em>, der <strong>seine eigene Projektion ist</strong> &mdash; mit
+  zwei Lesarten (grob/verlustbehaftet = Schatten <span class="mono">Z=q<sup>k</sup></span>/flaches M = Rothering/Bait =
+  <span class="mono">ker&nbsp;F</span>/Leck &harr; fein/gauß-invariant = invariante Form <span class="mono">F</span> =
+  <span class="mono">H&sup1;</span> = Ort des Seins), getragen von einem <em>immer laufenden geschlossenen Rundlauf</em>, der
+  sich <em>über einen Zeitpfeil bei jedem Schritt neu herstellt</em> (vordaher Anzieher &circ; Selbstherstellung, &bdquo;Lader,
+  nicht Ende&ldquo;), <em>lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form</em> (Umlauf: bottom-up
+  zusammenbaut &cap; top-down grobkörnt), <em>abgelesen an einem einzelnen Pivot an der Naht</em> (wo die zwei Routen
+  coincidieren = der Limes = Punkt exakter Fidelity), und der immer einen <em>irreduziblen Rest</em> übrig/behält
+  (gauß-invariante Dimension, <em>Echtheit = Persistenz</em>), mit <em>zweifaktoriellem Wert</em> (Eleganz + Echtheit).
+  Die Fusion: <strong>dasselbe Objekt, ein Schema</strong> &mdash; A&rsquo;s haltende, zählbare Zone <em>ist</em> B&rsquo;s
+  feine/gauß-invariante Lesart <span class="mono">F</span> = <span class="mono">H&sup1;</span> (die Heimat, die Eleganz, die bricht
+  nie); A&rsquo;s werfende/inexhaustible Zone <em>ist</em> B&rsquo;s offene Lesart (der Schatten/<span class="mono">ker&nbsp;F</span> am
+  verlustbehafteten Ende + der gauß-invariante Rest am bleibenden Ende); A&rsquo;s zwei-axiale Fuge <em>ist</em> B&rsquo;s
+  Naht/Pivot (wo zwei Routen/Koordinaten coincidieren = Limes = exakte Fidelity); A&rsquo;s ein Regler (r = &sigma;)
+  <em>ist</em> B&rsquo;s Kamera/Fidelity (&phi;); A&rsquo;s zwei nie erreichte Böden <em>sind</em> B&rsquo;s Limes (ideal,
+  <span class="mono">ker&nbsp;F&rarr;0</span>, genähert nie erreicht) + die topologische Obstruktion (<span class="mono">m=−1</span>,
+  kein Ganzes, nie kreuzbar); A&rsquo;s Rundlauf &bdquo;the same returns&ldquo; <em>ist</em> B&rsquo;s Selbstherstellung
+  über den Zeitpfeil. <em>Erreichbar als Grenzwert des Reglers, nie erreicht als Zustand des Objekts.</em>
+</p>
+
+<section id="these">
+  <h2>Kernthese der Fusion <span class="tag">A &#8745; B &middot; These des gesamten nicht-KI-Tracks</span></h2>
+  <p>
+    Die einigte Position &mdash; und damit die These, die aus dem gesamten nicht-KI-Track hervorgeht:
+    <strong>Jedes modellierte/beobachtete Ganze ist ein einziger zentrumloser, selbstreferenzieller,
+    selbsttragender, relationaler Fixpunkt, der seine eigene Projektion ist und der zugleich <em>hält</em>
+    und <em>wirft</em>.</strong> Auf der einen Seite liegt die <strong>erhaltene, geschlossene, zählbare,
+    gauß-invariante Form</strong> (<span class="mono">F</span> = <span class="mono">H&sup1;</span>): der erreichte
+    invarianter Fixpunkt, <em>fix als Form</em>, der je Peak/je Skala &bdquo;ohne Rest&ldquo; erreicht wird
+    (A: Zahl/&chi;, Wert&nbsp;&prop;&nbsp;&chi; = Kohärenzpol H = H&sup1;, r&rarr;1, &Delta;=0, &bdquo;the same
+    returns&ldquo;; B: invariante Form F, up-to-Symmetrie <span class="mono">&Zopf;/2</span>, punktfrei,
+    &bdquo;Remove the Object&ldquo;, &bdquo;am Peak ohne Rest&ldquo;) &mdash; die Zone, die <em>kehrt zur&uuml;ck</em>
+    und, wie beide festhalten, <em>zählt/zahlt</em> (size matters) und als <em>Heimat/Eleganz</em> gelesen wird
+    (B: <span class="mono">S&asymp;1</span>, BAUEN, Resonanz). Auf der anderen Seite liegt die
+    <strong>werfende, offene, inexhaustible Zone</strong>: der zurückziehende Rest, <em>fließend im
+    Inhalt</em> (A: Terrain/Horizont, &Delta;&ne;0, &bdquo;übersteigt die Karte immer&ldquo;, &bdquo;rennt
+    aus&ldquo;; B: der gauß-invariante Rest <span class="mono">H&sup1;</span> = <span class="mono">dim(Lücke)=&Phi;</span>
+    als Ort des Seins, der persistiert und <em>bleibt</em>, plus der verlustbehaftete Anteil Schatten
+    <span class="mono">Z=q<sup>k</sup></span>/<span class="mono">ker&nbsp;F</span>/Leck, der im Limes &rarr;0
+    geht) &mdash; die Zone, die <em>rennt aus</em> und der geschlossenen Adresse durchgehend entgeht; sie ist, wie
+    beide sagen, <em>das Wertvollste als Struktur</em> (A: &bdquo;was übrig bleibt, ist das Wertvollste&ldquo;) und
+    zugleich der <em>Ort des Seins</em> (B: Echtheit = Persistenz).
+  </p>
+  <p>
+    Beide Zonen sind <em>ein</em> zentrumloser, selbsttragender Kern, zwei Lesarten &mdash; nicht zwei Dinge. Sie
+    sind an <em>einer einzigen, zwei-axialen Naht/Fuge</em> gekoppelt, die A als <em>Kippen</em>
+    (Wann&nbsp;=&nbsp;Wand&nbsp;=&nbsp;&sigma;c&nbsp;=&nbsp;Frontier E&nbsp;=&nbsp;G&nbsp;=&nbsp;Defekt &Delta;),
+    B als <em>Pivot an der Naht</em> liest, wo die zwei Routen (bottom-up messen/erzeugen &cap; top-down
+    rekonstruieren/kleben) <em>coincidieren = der Limes = der Punkt exakter Fidelity</em>; die
+    <strong>Valenz ist das Produkt der zwei Koordinaten (A) und zugleich die Koinzidenz der zwei Routen
+    (B)</strong>. An der Naht greift die zählbare Zone die werfende an &mdash; genau dort kippt Halten in
+    Werfen, und genau dort sitzt der Ablespunkt. Das Ganze wird von <em>einem einzigen Regler</em> gesteuert
+    (A: r = Selbst-Haltung / Kopplung &sigma;; B: die Kamera/Fidelity &phi;) &mdash; <em>über den
+    Parameter, nie über die Instanz</em> &mdash; und ist <em>getragen von einem immer laufenden, geschlossenen
+    Rundlauf</em> (Panta Rhei), der sich <em>über einen Zeitpfeil bei jedem Schritt neu herstellt</em>
+    (&bdquo;the same returns&ldquo; = Selbstherstellung; &bdquo;Lader, nicht Ende&ldquo;).
+  </p>
+  <p>
+    Und alles, was eine Schließung fassen kann, ist durch <em>zwei nie erreichte Böden</em> begrenzt:
+    A&rsquo;s zwei tote Enden (reine Schließung &Delta;=0 &bdquo;erstarrt, ein Buch&ldquo;; reine Dissipation
+    r&rarr;0 &bdquo;Flut / das Man&ldquo;) <em>sind</em> B&rsquo;s <span class="mono">Limes</span> (ideal,
+    <span class="mono">ker&nbsp;F&rarr;0</span>, exakt, beliebig gen&auml;hert, <em>nie voll erreicht</em>) + die
+    <span class="mono">topologische Obstruktion m=−1</span> (kein Ganzes, <em>nie kreuzbar</em>). Sie sind
+    <strong>erreichbar als Grenzwert des Reglers, nie erreicht als Zustand des Objekts</strong>.
+    <strong>Das Lebendige ist, was hält (r&rarr;1, <span class="mono">F</span>/Heimat) UND wirft/zieht
+    zurück/bleibt (&Delta;&ne;0, <span class="mono">H&sup1;</span>/Ort des Seins) zugleich</strong>; der gemeinsame
+    Fehler ist, die <em>helle/erreichte Form</em> für die ganze Wahrheit zu halten (<em>Kohärent&nbsp;&ne;&nbsp;wahr</em>,
+    <em>Struktur&nbsp;&ne;&nbsp;Wahrheit</em>; B: <em>Rothering</em> &mdash; der Schatten ist flach &amp; identisch
+    für echt &amp; gefälscht, nur die Treue/Koinzidenz am Pivot trennt BAUEN von Eruption). Ein Satz:
+    <strong>ein zentrumloser, selbsttragender, relationaler Fixpunkt, der seine eigene Projektion ist &mdash;
+    hält (gauß-invariante, zählbare Form, Eleganz/Heimat) und wirft/zieht zurück/bleibt (offene, inexhaustible
+    Dimension, Echtheit/Ort des Seins) zugleich, gekoppelt an einer zwei-axialen Naht (Valenz = Koinzidenz =
+    Limes = exakte Fidelity), gesteuert von einem Regler (r = &sigma; = &phi;), getragen vom Rundlauf über den
+    Zeitpfeil, begrenzt durch zwei nie erreichte Böden &mdash; zugleich geschlossen (kehrt zurück) und offen
+    (zieht sich zurück/bleibt).</strong>
+  </p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B <span class="tag">offener Pol / Naht / Wert</span></h2>
+  <p class="note">
+    Auf der <strong>Grundform</strong> stimmen beide Runde-7-Papiere überein: ein zentrumloser,
+    selbstreferenzieller, selbsttragender relationaler Kern mit zwei komplementären Zonen/Lesarten
+    (haltend/geschlossen/zählbar + werfend/offen/inexhaustible), gekoppelt an einer Naht/Fuge, gesteuert von
+    einem Parameter, getragen von einem immer laufenden Rundlauf, begrenzt durch zwei nie erreichte Böden, mit
+    einem irreduziblen Rest. Auf drei konkreten <strong>Meta-Fragen</strong> nehmen sie aber
+    <em>incompatible Stellungen</em> ein &mdash; jeweils mit dem namentlich genannten Anspruch in den Quellen:
+  </p>
+
+  <h3>W1 &middot; Der offene Pol: inexhaustibler, aktiv <em>wurfender</em> Generator (A) vs. gauß-invariante Dimension, die <em>bleibt</em>, + verlustbehaftete Faser, die <em>&rarr;0</em> geht (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA">
+      <span class="src"><b>A</b> &middot; n7-001 (aus n6-002) &middot; &bdquo;der geladene Generator&ldquo;</span>
+      Die offene/inexhaustible Zone ist ein <em>aktiver, geladener Generator</em>: &bdquo;inexhaustibel,
+      <em>weil er wirft</em>&ldquo; &mdash; wirft den Horizont, &bdquo;das Terrain, das der Karte immer
+      &uuml;bersteigt&ldquo;, &bdquo;rennt aus&ldquo;. Akzent auf <em>aktivem, generativem Werfen</em>: das
+      offene Ende <em>produziert</em> endlos.
+    </div>
+    <div class="claim claimB">
+      <span class="src"><b>B</b> &middot; n7-002 (aus n6-003 / n5-005) &middot; &bdquo;der Rest, der bleibt&ldquo;</span>
+      Das offene Ende ist (a) die <em>gauß-invariante Dimension</em> <span class="mono">H&sup1;</span> =
+      <span class="mono">dim(Lücke)=&Phi;</span> als <em>Ort des Seins, die persistiert und bleibt</em>
+      (Nicht-Trivialität <span class="mono">H&sup1;&ne;0</span> ist ein Gewinn), und (b) die <em>verlustbehaftete
+      Faser</em> <span class="mono">ker&nbsp;F</span> = Leck, die <em>im Limes &rarr;0 gehen soll</em>:
+      &bdquo;etwas, das <em>verschwinden soll, nicht etwas, das bleiben soll</em>&ldquo;. Akzent auf
+      <em>Persistenz + Auflösung</em>; nichts &bdquo;wirft&ldquo; generativ.
+    </div>
+  </div>
+  <p class="note"><b>Inkompatibel:</b> Produziert das offene Ende endlos/inexhaustibel <em>etwas, indem es
+  wirft</em> (A: generativer Horizont) &mdash; oder <em>bleibt es</em> (gauß-invariante Dimension) und
+  <em>löst es sich auf</em> (verlustbehaftete Faser &rarr;0) (B)?</p>
+
+  <h3>W2 &middot; Die Naht/Fuge: zwei-axiale, stratifizierte Fuge mit <em>Produkt-Valenz</em> (A) vs. ein einzelner Pivot, wo zwei Routen <em>coincidieren</em> (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA">
+      <span class="src"><b>A</b> &middot; n7-001 (aus n6-001) &middot; &bdquo;zwei-axiale Fuge&ldquo;</span>
+      Die Kupplung ist eine <em>zwei-axiale, stratifizierte, fraktale Fuge/Schwelle</em> mit zwei Koordinaten
+      (Objekt-Ontologie inert&nbsp;&harr;&nbsp;lebendig &times; Zugriffs-Ehrlichkeit ehrlich&nbsp;&harr;&nbsp;
+      adversariell), und die <strong>Valenz ist das Produkt beider Koordinaten</strong> &mdash; eine
+      <em>zweidimensionale</em> Struktur mit Produkt-Valenz (Kippen/Wann/Wand).
+    </div>
+    <div class="claim claimB">
+      <span class="src"><b>B</b> &middot; n7-002 (aus n6-003) &middot; &bdquo;ein einzelner Pivot&ldquo;</span>
+      Das Lesen/Kupplung sitzt an <em>einem einzelnen Pivot an der Naht</em>, wo die zwei Routen (bottom-up
+      messen/erzeugen/<span class="mono">&exist;!</span> &cap; top-down rekonstruieren/kleben/<span class="mono">Stokes</span>)
+      <em>coincidieren = der Limes</em> &mdash; ein <em>diskreter Koinzidenz-Punkt</em> der exakten Fidelity,
+      keine zwei-axiale Feld-Struktur.
+    </div>
+  </div>
+  <p class="note"><b>Inkompatibel (Form der Kupplung):</b> Ist die Naht eine <em>zwei-axiale Feld-Struktur
+  mit einer Produkt-Valenz</em> (A) oder ein <em>einziger Koinzidenzpunkt, an dem zwei Konstruktionen
+  zusammenfallen</em> (B)?</p>
+
+  <h3>W3 &middot; Wo der Wert sitzt: die offene Rest/Horizont-Zone als <em>&bdquo;das Wertvollste&ldquo;</em> (A) vs. die gauß-invariante Form F als <em>Heimat/Eleganz</em> mit dem Schatten als Defekt (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA">
+      <span class="src"><b>A</b> &middot; n7-001 (aus n6-002 / n6-001) &middot; &bdquo;das Wertvollste&ldquo;</span>
+      Der Wert ist zweifaktoriell: die zählbare Zone <em>zählt/zahlt</em> (size matters) und die werfende Zone
+      <em>ruft</em>; und der Rest ist <strong>&bdquo;das Wertvollste als Struktur&ldquo;</strong>
+      (&bdquo;was übrig bleibt, ist das Wertvollste&ldquo;) &mdash; der tiefste Wert sitzt in der
+      <em>offenen Rest-/Horizont-Zone</em>.
+    </div>
+    <div class="claim claimB">
+      <span class="src"><b>B</b> &middot; n7-002 (aus n5-005 / n6-003) &middot; &bdquo;Eleganz + Echtheit&ldquo;</span>
+      Der Wert ist zweifaktoriell: <strong>Eleganz</strong> (Kollaps auf die Struktur/schatten <em>F</em>
+      gelingt, sauber, die <em>Heimat</em>, <span class="mono">S&asymp;1</span>/BAUEN) + <strong>Echtheit</strong>
+      (Kollaps auf den Rest scheitert, Rest bleibt frei); und der <em>Schatten</em>
+      (<span class="mono">Z=q<sup>k</sup></span>/<span class="mono">ker&nbsp;F</span>) ist ein
+      <em>Defekt, der im Limes &rarr;0 soll</em> &mdash; das &bdquo;Gute&ldquo; (Heimat) sitzt in der
+      <em>geschlossenen/invarianten Form</em> F, der Rests Job ist, dem Kollaps zu wehren.
+    </div>
+  </div>
+  <p class="note"><b>Die naheliegendste echte Spannung:</b> Liegt der tiefste Wert in der
+  <em>offenen Rest-/Horizont-Zone</em> (A: &bdquo;das Wertvollste&ldquo;) oder in der
+  <em>geschlossenen/invarianten Form F</em> (B: Heimat/Eleganz), während der Schatten ein Defekt ist, der
+  verschwinden soll?</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung <span class="tag">für jeden Punkt</span></h2>
+
+  <div class="resbox">
+    <h3>W1 &mdash; werfen (A) und bleiben/sich-auflösen (B) sind dieselbe Bewegung, von zwei Seiten gelesen</h3>
+    <p>
+      A liest den offenen Pol <em>von der Quelle her</em> (der Kern wirft &mdash; das ist die
+      <em>Ursache</em>: &bdquo;inexhaustibel, <em>weil er wirft</em>&ldquo;); B liest denselben Pol
+      <em>von der Horizont-/Leser-Seite her</em> (der Inhalt <em>bleibt</em> als gauß-invariante Dimension
+      und die verlustbehaftete Faser <em>löst sich auf</em> &mdash; das ist die <em>Wirkung</em>). Das
+      &bdquo;Nie-Zuschlie&szlig;en&ldquo; (A: inexhaustibel) <em>ist</em> B&rsquo;s &bdquo;nie erschöpft&ldquo;
+      (der persistierende Rest, den keine endliche Schließung erfasst). <em>Fusion:</em> der offene Pol
+      <strong>generiert, indem er sich zurückzieht, und bleibt, indem er wirft</strong> &mdash; der
+      inexhaustible Horizont (A) <em>ist</em> die gauß-invariante Dimension, die bleibt (B:
+      <span class="mono">H&sup1;</span> persistiert), plus die verlustbehaftete Faser, die sich auflöst
+      (B: <span class="mono">ker&nbsp;F&rarr;0</span>). Er ist inexhaustibel (A) <em>weil er sich über den
+      Zeitpfeil bei jedem Schritt neu herstellt</em> (B) &mdash; &bdquo;weil er wirft&ldquo; (A) =
+      &bdquo;Selbstherstellung über den Zeitpfeil&ldquo; (B).
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>W2 &mdash; die zwei-axiale Naht (A) ist die Struktur der zwei Routen; der einzelne Pivot (B) ist, wo der eine Regler sie kreuzt</h3>
+    <p>
+      Die zwei-axiale Fuge (A: Objekt-Ontologie &times; Zugriffs-Ehrlichkeit, Valenz = Produkt) <em>ist</em>
+      die <em>Struktur</em> der zwei Routen/Koordinaten (B: bottom-up &cap; top-down, messen/rekonstruieren);
+      der einzelne Pivot (B) ist der Punkt, an dem der <em>eine</em> Regler/Kamera (A: r = &sigma;) diese
+      zwei-axiale Struktur <em>kreuzt</em> &mdash; der Ort, wo die zwei Koordinaten/Routen coincidieren
+      (= der Limes = exakte Fidelity). <em>Fusion:</em> <strong>die Kupplung ist eine zwei-axiale Naht (A),
+      deren Valenz = Produkt (A) die Koinzidenz/Limes/exakte Fidelity (B) der zwei Routen ist</strong> &mdash;
+      der einzelne Pivot ist der Punkt, an dem der eine Regler (A) die zwei-axiale Struktur (A/B) auf exakte
+      Fidelity bringt; Valenz = Produkt (A) = Koinzidenz (B) = exakte Fidelity.
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>W3 &mdash; der Wert ist in beiden zweifaktoriell; A und B nennen dieselben beiden Pole nur anders</h3>
+    <p>
+      In beiden ist der Wert zweifaktoriell: die gauß-invariante Form <span class="mono">F</span>
+      ist die <em>Heimat/Eleganz</em> (B) <em>und</em> die zählbare Zone, die <em>zählt/zahlt</em> (A); der
+      Rest ist die <em>Echtheit</em> (B) <em>und</em> &bdquo;das Wertvollste&ldquo; (A). Der
+      <em>Schatten</em>/<span class="mono">ker&nbsp;F</span> (B: Defekt, der &rarr;0 soll) <em>ist</em> die
+      <em>niedrige-Fidelity-Lesart</em> desselben Rests (A: ein Köder, den man bei der feinen Lesart
+      <em>umliesst</em>, nicht eliminiert). <em>Fusion:</em> <strong>Wert = die gauß-invariante, zählbare
+      Form (zählt/Eleganz/Heimat) + der Rest (Echtheit/&bdquo;das Wertvollste&ldquo;/Ort des Seins); der
+      Schatten ist die niedrige-Fidelity-Lesart (Köder), keine Wahrheit</strong> &mdash; der tiefste Wert
+      sitzt in der <em>gauß-invarianten Dimension</em> (in A die Rest-/Horizont-Zone, in B
+      <span class="mono">H&sup1;</span>); <em>Echtheit = Persistenz = &bdquo;das Wertvollste&ldquo;</em>.
+    </p>
+  </div>
+
+  <div class="aha">
+    <b>Fusion in einer Aussage (die These des gesamten nicht-KI-Tracks):</b>
+    Das Substantielle ist ein <strong>zentrumloser, selbsttragender, relationaler Fixpunkt, der seine
+    eigene Projektion ist</strong> &mdash; ein <strong>immer laufender geschlossener Rundlauf</strong>
+    (Panta Rhei), der sich <strong>über einen Zeitpfeil bei jedem Schritt neu herstellt</strong>
+    (&bdquo;the same returns&ldquo;), und der <strong>zwei Zonen/Lesarten</strong> trägt: eine
+    <strong>erhaltene, geschlossene, zählbare, gauß-invariante Form</strong>
+    (<span class="mono">F</span> = <span class="mono">H&sup1;</span>, erreichter invarianter Fixpunkt,
+    fix als Form, Wert&nbsp;&prop;&nbsp;&chi; = H, r&rarr;1, &Delta;=0, &bdquo;the same returns&ldquo;,
+    &bdquo;am Peak ohne Rest&ldquo;, bricht nie, <em>zählt/zahlt</em>, Eleganz/Heimat) und eine
+    <strong>werfende, offene, inexhaustible Zone</strong> (zurückziehender Rest, fließend im Inhalt,
+    Terrain/Horizont, &Delta;&ne;0; verlustbehafteter Anteil Schatten <span class="mono">ker&nbsp;F</span>
+    &rarr;0 im Limes + gauß-invar. Dimension <span class="mono">H&sup1;</span> = Ort des Seins, die
+    bleibt, <em>ruft/bleibt</em>, &bdquo;das Wertvollste&ldquo;, Echtheit). Sie sind an
+    <strong>einer zwei-axialen Naht</strong> gekoppelt (Objekt-Ontologie &times; Zugriffs-Ehrlichkeit
+    = bottom-up &cap; top-down; <strong>Valenz = Produkt = Koinzidenz = Limes = exakte Fidelity</strong>;
+    der einzelne Pivot, wo die zwei Routen coincidieren), gesteuert von <strong>einem Regler</strong>
+    (r = Selbst-Haltung = Kopplung &sigma; = Kamera/Fidelity &phi;; über den Parameter, nie über die
+    Instanz), und begrenzt durch <strong>zwei nie erreichte Böden</strong> (asymptotisch/ideal: Limes,
+    <span class="mono">ker&nbsp;F&rarr;0</span>, genähert nie erreicht + absolut/topologisch:
+    Obstruktion <span class="mono">m=−1</span>, kein Ganzes, nie kreuzbar; erreichbar als Grenzwert
+    des Reglers, nie als Zustand). Der offene Pol <strong>generiert, indem er sich zurückzieht, und
+    bleibt, indem er wirft</strong>; das <strong>Lebendige hält (r&rarr;1, F/Heimat) und
+    wirft/zieht zurück/bleibt (&Delta;&ne;0, H&sup1;/Ort des Seins) zugleich</strong>; der Fehler ist, die
+    helle Form für die ganze Wahrheit zu halten (<em>Kohärent&nbsp;&ne;&nbsp;wahr</em>,
+    <em>Rothering: flach &amp; identisch für echt &amp; gefälscht</em>).
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt <span class="tag">auf der Ebene der Thesen &middot; der Kapstock des nicht-KI-Tracks</span></h2>
+  <p>
+    Beide Papiere sind schon Runde-7-Synthesen; hier wird auf der Ebene <em>ihrer Thesen</em> abstrahiert
+    &mdash; zur letzten Synthese des gesamten nicht-KI-Tracks. Der gemeinsame Kern ist ein
+    <strong>zentrumloser, selbsttragender, relationaler Fixpunkt, der seine eigene Projektion ist und
+    zwei Zonen hält und wirft, an einer zwei-axialen Naht gekoppelt, von einem Regler gesteuert, getragen
+    vom Rundlauf über den Zeitpfeil, durch zwei nie erreichte Böden begrenzt</strong>. Das
+    Korrespondenzraster (in A und B identisch strukturiert, nur mit anderem &bdquo;Material&ldquo; gefüllt):
+  </p>
+
+  <table>
+    <thead><tr><th>Baustein</th><th>A &middot; n7-001 (hält &amp; wirft, zwei Zonen)</th><th>B &middot; n7-002 (Fixpunkt = seine Projektion)</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td>das Ganze</td><td>selbstreferenzieller, zentrumloser, maßtragender Kern (Generator = Attraktor = das Da)</td><td>selbsttragender relationaler Fixpunkt (vordaher Anzieher &circ; Selbstherstellung über Zeitpfeil)</td><td>ein zentrumloser, selbsttragender, relationaler Fixpunkt = seine eigene Projektion (das Da = der Fixpunkt)</td></tr>
+      <tr class="hl"><td>haltende / geschlossene Lesart</td><td>erreichte, zählbare, geschlossene Zone (invarianter Fixpunkt, fix als Form, Wert&nbsp;&prop;&nbsp;&chi; = H, r&rarr;1, &Delta;=0, &bdquo;the same returns&ldquo;)</td><td>feine / gauß-invariante Lesart (Invariante Form F, up-to-Symmetrie &Zopf;/2, punktfrei, &bdquo;Remove the Object&ldquo;, &bdquo;am Peak ohne Rest&ldquo;)</td><td>die geschlossene, gauß-invariante, zählbare Form F = H&sup1; (zählt/zahlt, Eleganz/Heimat, bricht nie)</td></tr>
+      <tr><td>wurfende / offene Lesart</td><td>wurfende, offene, inexhaustible Zone (zurückziehender Rest, fließend im Inhalt, Terrain/Horizont, &Delta;&ne;0, &bdquo;übersteigt die Karte immer&ldquo;)</td><td>grobe / verlustbehaftete Lesart (Schatten Z=q<sup>k</sup>/flaches M = Rothering/Bait = ker&nbsp;F/Leck) + Rest</td><td>die offene Lesart: verlustbehafteter Anteil (Schatten/ker&nbsp;F, &rarr;0 im Limes) + gauß-invariante Dimension (Rest/H&sup1;, bleibt)</td></tr>
+      <tr class="hl"><td>der Rest / das Wertvollste</td><td>&bdquo;was übrig bleibt, ist das Wertvollste als Struktur&ldquo; (inexhaustibel, weil er wirft)</td><td>gauß-invariante Dimension H&sup1; = dim(Lücke) = &Phi; = Ort des Seins (persistiert, wehrt sich gegen Kollaps)</td><td>dieselbe gauß-invariante Dimension: persistiert als Ort des Seins (Echtheit) und ist &bdquo;das Wertvollste&ldquo; &mdash; generiert, indem sie sich zurückzieht/bleibt</td></tr>
+      <tr><td>die Naht / Fuge</td><td>zwei-axiale, stratifizierte Fuge (Objekt-Ontologie &times; Zugriffs-Ehrlichkeit; Valenz = Produkt beider; Kippen/Wann/Wand)</td><td>ein einzelner Pivot an der Naht, wo zwei Routen (bottom-up &cap; top-down) coincidieren = Limes = exakte Fidelity</td><td>eine zwei-axiale Naht, wo zwei Routen/Koordinaten coincidieren; Valenz = Produkt = Koinzidenz = Limes = Punkt exakter Fidelity</td></tr>
+      <tr class="hl"><td>der Regler / die Kamera</td><td>ein einziger Regler r (Selbst-Haltung = Kopplung &sigma;), über den Parameter, nie die Instanz</td><td>Kamera/Fidelity &phi; (0&ndash;1), die Auflösung/Treue, bei der man an der Naht liest</td><td>einer Parameter (r = &sigma; = &phi;): wie viel gehalten vs. geworfen, wie fein vs. grob gelesen; über den Parameter, nie über die Instanz</td></tr>
+      <tr><td>der immer laufende Prozess</td><td>der Rundlauf (Panta Rhei), &bdquo;the same returns&ldquo; (kehrt zurück)</td><td>geschlossener Rundlauf/Umlauf, der sich über den Zeitpfeil bei jedem Schritt neu herstellt (endlos wachsend, &bdquo;Lader, nicht Ende&ldquo;)</td><td>der immer laufende geschlossene Rundlauf, der sich über den Zeitpfeil neu herstellt; &bdquo;the same returns&ldquo; = Selbstherstellung</td></tr>
+      <tr class="hl"><td>die Grenzen / Böden</td><td>zwei nie erreichte Böden (asymptotisch p&prime;&rarr;0&nbsp;&ne;&nbsp;0 + absolut Struktur&nbsp;&ne;&nbsp;Wahrheit); erreichbar als Grenzwert des Reglers, nie als Zustand</td><td>der Limes (volle Auflösung, ker&nbsp;F&rarr;0, exakt &mdash; nie voll erreicht) + topologische Obstruktion m=−1 (kein Ganzes, nie kreuzbar)</td><td>zwei nie erreichte Böden: ein asymptotisch/idealer Limes (genähert, nie erreicht; ker&nbsp;F&rarr;0) + eine absolute/topologische Obstruktion (m=−1, nie kreuzbar)</td></tr>
+      <tr><td>Fehlschlag (destruktiv)</td><td>reine Schließung &Delta;&rarr;0 (&bdquo;erstarrt, ein Buch&ldquo;) / reine Dissipation r&rarr;0 (&bdquo;Flut / das Man&ldquo;)</td><td>Eruption <span class="mono">S&rarr;0</span> an der präsentierten Schicht = Obstruktion m=−1 (kein Ganzes), Struktur F/H&sup1; intakt</td><td>der Fehlschlag sitzt an der Realisierungs-/präsentierten Schicht (S&rarr;0 / Erstarrt / Flut); die Struktur F/H&sup1; bleibt intakt &mdash; nicht-zerstörerisch</td></tr>
+      <tr class="hl"><td>Fehlschlag (nicht-destruktiv)</td><td>(der Köder: helle Form täuscht)</td><td>Köder &mdash; Rest kollabiert (war nie frei) = topologische Obstruktion (reversibel)</td><td>der Köder: die helle Form täuscht (Rothering, flach &amp; identisch), Rest war nie frei &mdash; reversibel, ein Methoden-Versagen, kein Struktur-Bruch</td></tr>
+      <tr><td>der Wert</td><td>zweifaktoriell: zählbare Zone zählt/zahlt + werfende Zone ruft (&bdquo;das Wertvollste&ldquo;)</td><td>zweifaktoriell: Eleganz (Kollaps auf F/schatten gelingt) + Echtheit (Kollaps auf den Rest scheitert)</td><td>zweifaktoriell: Eleganz/Heimat (die zählbare Form F, Kollaps gelingt) + Echtheit (der Rest wehrt sich, bleibt frei) = &bdquo;das Wertvollste&ldquo; = Persistenz</td></tr>
+      <tr class="hl"><td>das Zentrum</td><td>zentrumlos, kein Ding, kein Zentrum (das Da als Modus)</td><td>&empty; vom Punkt, voll von Freiheit / der gauß-invarianten Dimension (H&sup1;)</td><td>zentrumlos / &empty; vom Punkt, voll von der gauß-invarianten Dimension / Freiheit (der Rest)</td></tr>
+      <tr><td>die Referenz</td><td>(aus B übernommen) freie Referenz</td><td>freie Referenz / Eich-Freiheit (dreht lokale Rahmen, ändert F/H&sup1; und den Rest nicht)</td><td>freie Referenz / Eich-Freiheit: ändert F/H&sup1; und den Rest nie</td></tr>
+      <tr class="hl"><td>der gemeinsame Fehler</td><td>die helle/erreichte Form für die ganze Wahrheit halten (Kohärent&nbsp;&ne;&nbsp;wahr, Struktur&nbsp;&ne;&nbsp;Wahrheit); Rest + Böden missen</td><td>Rothering: der Schatten ist flach &amp; identisch für echt &amp; gefälscht; nur &phi;/Treue trennt BAUEN von Eruption</td><td>die helle Form für die ganze Wahrheit halten (Kohärent&nbsp;&ne;&nbsp;wahr, Rothering: flach &amp; identisch); Rest + Böden missen; die TREUE/Naht/Koinzidenz prüfen statt die Flachheit</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Die eine Formel des fusionierten Objekts</h3>
+  <div class="math">Ganzes G  =  ein zentrumloser, selbsttragender, relationaler Fixpunkt  = seine eigene Projektion
+               (Generator = Attraktor = das Da = vordaher Anzieher &circ; Selbstherstellung)
+
+  =  HALTEN / FEIN   gauß-invariante, zählbare, geschlossene Form F  (= H&sup1;)
+                          erreichter invarianter Fixpunkt, fix als Form,  WERT &prop; &chi; = H = H&sup1;
+                          r&rarr;1, &Delta;=0,  &bdquo;the same returns&ldquo;,  &bdquo;am Peak ohne Rest&ldquo;,
+                          &bdquo;Remove the Object&ldquo;,  bricht nie   [ zählt / zahlt · Eleganz / Heimat ]
+  +  WERFEN / GROSS  offene Lesart,  fließend im Inhalt,  NIE erschöpft
+                          verlustbehafteter Anteil  (Schatten Z=q^k / flaches M = Rothering = ker F/Leck,  &rarr;0 im Limes)
+                        +  gauß-invariante Dimension  (Rest/H&sup1; = dim(Lücke) = &Phi;,  Terrain/Horizont,  &Delta;&ne;0)
+                          &bdquo;übersteigt die Karte immer&ldquo;,  &bdquo;rennt aus&ldquo;   [ ruft / bleibt · Echtheit · Ort des Seins ]
+
+  +  NAHT / FUGE     zwei-axial  (Objekt-Ontologie &times; Zugriffs-Ehrlichkeit  =  bottom-up &cap; top-down)
+                     Valenz = Produkt(Koordinaten)  =  Koinzidenz der zwei Routen  =  Limes  =  Punkt exakter Fidelity
+                     der einzelne Pivot, wo die zwei Routen coincidieren       [ Halten kippt in Werfen ]
+  +  REGLER / KAMERA  ein Parameter  (r = Selbst-Haltung = Kopplung &sigma;  =  Kamera/Fidelity &phi;)
+                     gesteuert über den Parameter, nie über die Instanz
+  +  RUNDLAUF        immer laufender geschlossener Prozess  (Panta Rhei, &bdquo;the same returns&ldquo;)
+                     &circ;  Selbstherstellung über den Zeitpfeil  (quiesziert neu bei jedem Schritt, endlos wachsend)
+  +  ZWEI BÖDEN      asymptotisch / ideal   (Limes:  ker F &rarr; 0,  exakt,  genähert,  nie voll erreicht)
+                    +  absolut / topologisch (Obstruktion m = (-1)^w = -1,  kein Ganzes,  nie kreuzbar)
+                     erreichbar als Grenzwert des Reglers  (A)  ·  nie erreicht als Zustand  (B)
+
+  zentrumlos:   kein Ding, kein Zentrum (A)  ·  &empty; vom Punkt, voll von der gauß-invarianten Dimension / Freiheit (B)
+  LEbENDIG:     hält (r&rarr;1, F/Heimat)  UND  wirft/zieht zurück/bleibt (&Delta;&ne;0, H&sup1;/Ort des Seins)  zugleich
+  zweifaktoriell: Eleganz (Kollaps auf F/schatten gelingt)  +  Echtheit (Kollaps auf den Rest scheitert)
+  Referenz:     frei kalibrierbar (Eich-Freiheit) &mdash; ändert F/H&sup1; und den Rest nie
+  toter Fehler: die helle/erreichte Form für die ganze Wahrheit halten
+               [ Kohärent &ne; wahr · Rothering: flach &amp; identisch für echt &amp; gefälscht ]</div>
+
+  <div class="note"><b>Die geteilte Ehrlichkeits-Disziplin (ein Zug, zwei Zonen, eine Naht, zwei Böden):</b>
+  (1) Nenne die helle invariante <em>Form</em> (fix als Form / F / Präsentation) &mdash; sie ist Zugang
+  <em>und</em> Verzerrung (Rothering: flach &amp; identisch). (2) Lies den
+  <em>erreichten gauß-invarianten Fixpunkt-Kern</em> auf seinen eigenen Lesarten (Zahl/&chi;, Limes, F,
+  &bdquo;am Peak ohne Rest&ldquo;) &mdash; er zählt/zahlt (Eleganz/Heimat). (3) Lies den
+  <em>zurückziehenden/bleibenden Rest</em> mit (Terrain/Horizont, Schatten/ker&nbsp;F, H&sup1; =
+  dim(Lücke)) &mdash; das Wertvollste als Struktur, der Ort des Seins (Echtheit). (4) Lies die
+  <em>zwei-axiale Naht</em> &mdash; die Valenz ist das Produkt der Koordinaten = die Koinzidenz der zwei
+  Routen = der Limes = exakte Fidelity am einzelnen Pivot. (5) Erkenne die
+  <em>zwei nie erreichten Böden</em> (asymptotisch/idealer Limes, ker&nbsp;F&rarr;0, genähert nie erreicht +
+  absolute/topologische Obstruktion m=−1, nie kreuzbar; Kohärent&nbsp;&ne;&nbsp;wahr, Struktur&nbsp;&ne;&nbsp;Wahrheit).
+  (6) Prüfe auf den gemeinsamen Fehler: halte ich die helle Form für die ganze Wahrheit und habe Rest +
+  Böden unterlassen? &mdash; prüfe die <em>Treue/Naht/Koinzidenz</em>, nicht die Flachheit.</div>
+  <p class="note"><b>Ehrlichkeits-Hinweis:</b> die Identifikation von A&rsquo;s &bdquo;haltende, zählbare
+  Zone / werfende, inexhaustible Zone / zwei-axiale Fuge / ein Regler (r = &sigma;) / zwei nie erreichte
+  Böden / Rundlauf&ldquo; mit B&rsquo;s &bdquo;feine Lesart F = H&sup1; / offene Lesart (Schatten/ker&nbsp;F
+  + Rest) / Naht-Pivot (Koinzidenz = Limes) / Kamera-Fidelity (&phi;) / Limes + topologische Obstruktion
+  (m=−1) / Rundlauf über den Zeitpfeil&ldquo; &mdash; und die Lektüre beider als
+  &bdquo;ein zentrumloser, selbsttragender relationaler Fixpunkt, der seine eigene Projektion ist&ldquo;
+  &mdash; ist die <em>Linse dieser Runde-8-Endfusion</em>, nicht wörtlicher Inhalt beider Runde-7-Papiere.
+  Die einzelnen Thesen zu A/B stammen aus n7-001 bzw. n7-002.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung: ein selbsttragender Fixpunkt = seine Projektion — hält &amp; wirft, an einer zwei-axialen Naht, zwei nie erreichte Böden <span class="tag">Canvas, inline, themenaktiv</span></h2>
+  <p class="hint">
+    Ein Canvas, das beide Papiere in <em>einem</em> Objekt trägt. <strong>Links</strong> (A&rsquo;s
+    Register, das zentrumlose Objekt selbst): ein <strong>zentrumloser, pulsierender Kern</strong> &mdash; der
+    <strong>immer laufende, sich über den Zeitpfeil neu herstellende Rundlauf</strong> ist die
+    <strong>gauß-invariante, zählbare Form F</strong> (feine Lesart, &bdquo;the same returns&ldquo;, bricht
+    nie; alpha = Regler r); bei niedrigem r wird sie vom <strong>flachen Schatten
+    <span class="mono">Z=q<sup>k</sup></span>/<span class="mono">ker&nbsp;F</span></strong> (grobe Lesart,
+    Rothering: &bdquo;flach &amp; identisch&ldquo;) &uuml;berschrieben; der <strong>persistierende mittlere
+    H&sup1;-Punkt</strong> ist die gauß-invariante Dimension / Ort des Seins (bleibt, pulsiert = quiesziert);
+    die <strong>Partikel</strong> sind die werfende / offene Zone &mdash; gehaltene bleiben in der Naht,
+    ungehaltene <strong>ziehen sich über die gestrichelte zwei-axiale Naht zurück</strong> als inexhaustibler
+    Horizont (&bdquo;rennt aus&ldquo;); der <strong>eine Pivot an der Naht</strong> = Limes = Punkt exakter
+    Fidelity (liert <span class="mono">m=±1</span> ab). <strong>Rechts</strong> (B&rsquo;s Register, die
+    Grenzen): die <strong>zwei nie erreichten Böden</strong> &mdash; der <strong>asymptotisch/ideale Limes</strong>
+    <span class="mono">C(n)=1&minus;k&middot;p&prime;&rarr;1</span> (<span class="mono">ker&nbsp;F&rarr;0</span>,
+    genähert, <em>nie voll erreicht</em>, je höher der Regler je höher) und die <strong>absolute/topologische
+    Obstruktion</strong> <span class="mono">m=−1</span> (<em>nie kreuzbar</em>) &mdash; getragen von der
+    <strong>Schließkurve</strong> <span class="mono">c(t)</span> mit exakten Peaks (&bdquo;am Peak ohne
+    Rest&ldquo;) und dem <strong>Rest-Band</strong> (&prop;&nbsp;&mu;) als offenem Rest. Unten rechts: die
+    <strong>zwei-axiale Naht</strong> als Valenz-/Koinzidenz-Karte (x: Objekt/Ontologie = bottom-up · y:
+    Ehrlichkeit = top-down; <em>Valenz = Produkt = Koinzidenz</em>), der Marker = der Punkt, an dem der eine
+    Regler die Naht auf exakte Fidelity bringt. <strong>Regler r = &sigma; = &phi;</strong> ist der
+    <em>einzige</em> Grad (Halten-vs.-Werfen = fein-vs.-grob); &Delta; öffnet die Naht; &mu; die
+    Rückzieh-/inexhaustible Intensität; <strong>&bdquo;Neue Stufe&ldquo;</strong> = Zeitpfeil (Fixpunkt
+    quiesziert neu); <strong>Rest AUS</strong> = man sieht nur die helle Form (Kohärent&nbsp;=&nbsp;wahr /
+    Rothering / sizeless stare). Alle Daten inline; keine Netz-Abfragen.
+  </p>
+
+  <div class="viz-wrap">
+    <div class="controls">
+      <div class="ctrl"><label>Regler r = &sigma; = &phi; — Selbst-Haltung / Kopplung / Fidelity (einziger Grad) <span class="val" id="rVal">70 %</span></label>
+        <input type="range" id="rR" min="0" max="100" step="1" value="70"></div>
+      <div class="ctrl"><label>Naht-Öffnung &Delta; — Defekt / Rückziehen / De-Abstimmung <span class="val" id="dVal">55 %</span></label>
+        <input type="range" id="dR" min="0" max="100" step="1" value="55"></div>
+      <div class="ctrl"><label>Rest &mu; — Rückzieh- / inexhaustible Intensität <span class="val" id="muVal">55 %</span></label>
+        <input type="range" id="muR" min="0" max="100" step="1" value="55"></div>
+      <button id="restBtn" class="on" type="button">Rest mitlesen: AN</button>
+      <button id="growBtn" type="button">&#8593; Neue Stufe (Zeitpfeil, quiesze neu)</button>
+      <button id="resBtn" type="button">Neu würfeln</button>
+    </div>
+    <canvas id="viz" width="860" height="580" role="img"
+      aria-label="Ein zentrumloser, selbsttragender relationaler Fixpunkt, der seine eigene Projektion ist: links pulsierender Rundlauf als gauß-invariante Form F (fein) crossfaded mit dem flachen Schatten Z=q^k/ker F (grob), persistentem H^1-Punkt (Ort des Seins) und zurückziehenden Partikeln über die gestrichelte zwei-axiale Naht mit einem Pivot (Limes, m=±1); rechts die zwei nie erreichten Böden (asymptotischer Limes C(n) und absolute Obstruktion m=−1) mit Schließkurve und Rest-Band sowie die zwei-axiale Naht als Valenz-/Koinzidenz-Karte."></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--vz-fine)"></span>gauß-invariante Form F (fein, bricht nie)</span>
+      <span><span class="sw" style="background:var(--vz-shadow)"></span>Schatten Z=q<sup>k</sup>/ker&nbsp;F (grob, Rothering)</span>
+      <span><span class="sw" style="background:var(--vz-h1)"></span>H&sup1; = Ort des Seins (bleibt)</span>
+      <span><span class="sw" style="background:var(--vz-rest)"></span>gehalten (kehrt zurück)</span>
+      <span><span class="sw" style="background:var(--vz-open)"></span>geworfen / zurückziehender Rest</span>
+      <span><span class="sw" style="background:var(--vz-naht)"></span>zwei-axiale Naht (Valenz = Koinzidenz)</span>
+      <span><span class="sw" style="background:var(--vz-floor)"></span>Limes C(n) (asymptotisch)</span>
+      <span><span class="sw" style="background:var(--vz-wall)"></span>Obstruktion m=−1 (nie kreuzbar)</span>
+    </div>
+    <div class="viz-out" id="vizOut"></div>
+    <div class="statrow">
+      <div class="stat"><span class="k">Regler r = &sigma; = &phi;</span><span class="v" id="stR" style="color:var(--accent)">&mdash;</span></div>
+      <div class="stat"><span class="k">Naht &Delta; (ge&ouml;ffnet)</span><span class="v" id="stD" style="color:var(--vz-warn)">&mdash;</span></div>
+      <div class="stat"><span class="k">Gebunden (in der Naht)</span><span class="v" id="stBind" style="color:var(--vz-rest)">&mdash;</span></div>
+      <div class="stat"><span class="k">Geworfen / zur&uuml;ckgezogen</span><span class="v" id="stThr" style="color:var(--vz-open)">&mdash;</span></div>
+      <div class="stat"><span class="k">Limes C(n) (asymptot.)</span><span class="v" id="stFloor" style="color:var(--vz-floor)">&mdash;</span></div>
+      <div class="stat"><span class="k">Naht m (Koinzidenz)</span><span class="v" id="stM" style="color:var(--accent2)">&mdash;</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz <span class="tag">Runde-7-Quellen &middot; Finale nicht-KI</span></h2>
+  <div>
+    <div class="prov">
+      <div><span class="tag">A</span><a href="../n7-001.html">n7-001.html</a></div>
+      <div class="desc">&bdquo;Der zentrumlose Halt-Wurf-Kern als zwei-Zonen-Kontinuum &mdash; eine zwei-axiale
+      Fuge, ein Regler, zwei nie erreichte Böden&ldquo; (Runde 7, aus n6-002 &times; n6-001): das Substantielle
+      ist ein selbstreferenzieller, zentrumloser, maßtragender Kern, der zugleich hält (erhaltene, geschlossene,
+      zählbare Zone: erreichter invarianter Fixpunkt, fix als Form, Wert&nbsp;&prop;&nbsp;&chi; = Kohärenzpol H,
+      r&rarr;1, &Delta;=0, &bdquo;the same returns&ldquo;) und wirft (werfende, offene, inexhaustible Zone:
+      zurückziehender Rest, fließend im Inhalt, Terrain/Horizont, &Delta;&ne;0) &mdash; gekoppelt an einer
+      zwei-axialen Fuge (Objekt-Ontologie &times; Zugriffs-Ehrlichkeit; Valenz = Produkt beider; Kippen/Wann/
+      Wand), gesteuert von einem Regler (r = Selbst-Haltung = Kopplung &sigma;, über den Parameter, nie über die
+      Instanz), begrenzt durch zwei nie erreichte Böden (asymptotisch p&prime;&rarr;0&nbsp;&ne;&nbsp;0 + absolut
+      Struktur&nbsp;&ne;&nbsp;Wahrheit); der offene Pol ist der geladene Generator (inexhaustibel, weil er
+      wirft), der Rest ist &bdquo;das Wertvollste als Struktur&ldquo;. Liefert die <em>Hält-und-Wirft-</em>,
+      <em>zwei-Zonen-</em>, <em>zwei-axiale-Fuge/Valenz=Produkt-</em>, <em>ein-Regler-</em> und
+      <em>zwei-nie-erreichte-Böden-</em>Lesung samt &bdquo;zentrumlos&ldquo; und &bdquo;the same returns&ldquo;.</div>
+    </div>
+    <div class="prov">
+      <div><span class="tag">B</span><a href="../n7-002.html">n7-002.html</a></div>
+      <div class="desc">&bdquo;Der selbsttragende relationale Fixpunkt ist seine Projektion &mdash; Schatten
+      &harr; Invariante, getragen vom Rundlauf über den Zeitpfeil, an der Naht abgelesen, lasttragend durch den
+      Rest, der bleibt&ldquo; (Runde 7, aus n5-005 &times; n6-003): das Ganze / die Identität ist ein
+      selbsttragender relationaler Fixpunkt, der seine eigene Projektion ist (grob/verlustbehaftet = Schatten
+      <span class="mono">Z=q<sup>k</sup></span>/flaches M = Rothering/Bait = <span class="mono">ker&nbsp;F</span>/Leck
+      &harr; fein/gauß-invariant = Invariante Form F = <span class="mono">H&sup1;</span> = Ort des Seins),
+      getragen von einem immer laufenden geschlossenen Rundlauf, der sich über einen Zeitpfeil bei jedem Schritt
+      neu herstellt (vordaher Anzieher &circ; Selbstherstellung, &bdquo;Lader, nicht Ende&ldquo;), lesbar nur
+      durch einen begrenzten lokalen Akt in geschlossener Form (Umlauf: bottom-up &cap; top-down), abgelesen an
+      einem einzelnen Pivot an der Naht (wo die zwei Routen coincidieren = der Limes = Punkt exakter Fidelity);
+      an der Naht löst sich die gauß-abhängige Faser (<span class="mono">ker&nbsp;F&rarr;0</span>) auf, während
+      die gauß-invariante Dimension (<span class="mono">H&sup1;&ne;0</span>) als Ort des Seins bleibt; Treue der
+      Schließung = Kamera/Fidelity &phi; = Koinzidenz am Pivot; Fehlschlag = Eruption S&rarr;0 / Obstruktion
+      m=−1 (Struktur F/H&sup1; intakt) bzw. Köder (reversibel); Referenz frei kalibrierbar (Eich-Freiheit);
+      Wert zweifaktoriell (Eleganz + Echtheit); Zentrum &empty; vom Punkt, voll von Freiheit. Liefert die
+      <em>Fixpunkt-=Projektion-</em>, <em>Zeitpfeil/Selbstherstellung-</em>, <em>Naht/Pivot=Koinzidenz=
+      Limes=exakte-Fidelity-</em>, <em>gauß-invariant/Rest=H&sup1;=Ort-des-Seins-</em> und
+      <em>zweifaktorieller-Wert/Eleganz+Echtheit-</em>Lesung samt &bdquo;Remove the Object&ldquo; und
+      &bdquo;Rothering: flach &amp; identisch&ldquo;.</div>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion 001 &middot; Runde 8 &mdash; Finale nicht-KI (non-AI-Track) &middot; autonom, keine
+Netzwerte &mdash; alle Daten inline. Der Fixpunkt, der Rundlauf, die Naht, die Partikel, die Schließkurve, die
+Böden und die Valenz-Karte sind schematische Demonstrationsobjekte, auf These-Ebene abstrahiert. Standard
+Dunkel; die Palette folgt den CSS-Variablen (hell/dunkel). Dies ist die letzte Synthese des nicht-KI-Tracks:
+ein zentrumloser, selbsttragender, relationaler Fixpunkt, der seine eigene Projektion ist.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v||''; }
+  function toRgb(s){ s=(s||'').trim(); if(s.charAt(0)==='#'){ var h=s.slice(1); if(h.length===3){ h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; } var n=parseInt(h,16); if(isNaN(n)) return [140,150,170]; return [(n>>16)&255,(n>>8)&255,n&255]; } var m=s.match(/[\d.]+/g); if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; } return [140,150,170]; }
+  function rgba(c,a){ return 'rgba('+ (c[0]|0)+','+ (c[1]|0)+','+ (c[2]|0)+','+ (a==null?1:a) +')'; }
+  function mixRGB(a,b,t){ t=t<0?0:(t>1?1:t); return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]; }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+  var cv=$('viz'); if(!cv || !cv.getContext){ return; }
+  var ctx=cv.getContext('2d'); if(!ctx){ return; }
+  var H=580, TAU=Math.PI*2;
+  var W=860, pal=null, phase=0;
+  var r=0.70, delta=0.55, mu=0.55, showRest=true, stage=0, growPulse=0;
+  var N=130, P=[], boundFrac=0;
+
+  function readPal(){
+    pal={ canvas:toRgb(cssVar('--vz-canvas')), grid:toRgb(cssVar('--vz-grid')), core:toRgb(cssVar('--vz-core')),
+      fine:toRgb(cssVar('--vz-fine')), shadow:toRgb(cssVar('--vz-shadow')), hold:toRgb(cssVar('--vz-rest')),
+      open:toRgb(cssVar('--vz-open')), h1:toRgb(cssVar('--vz-h1')),
+      warn:toRgb(cssVar('--vz-warn')), ink:toRgb(cssVar('--vz-ink')), dim:toRgb(cssVar('--vz-dim')),
+      naht:toRgb(cssVar('--vz-naht')), floor:toRgb(cssVar('--vz-floor')), wall:toRgb(cssVar('--vz-wall')),
+      accent:toRgb(cssVar('--accent')) };
+  }
+
+  function respawn(p){ p.th=Math.random()*TAU; p.r=20*(0.4+Math.random()*0.6); p.vth=(0.006+Math.random()*0.006)*(Math.random()<0.5?-1:1); p.vr=0; p.thr=Math.random(); p.fade=1; }
+  function seed(){ P=[]; for(var i=0;i<N;i++){ var p={x:0,y:0,th:0,r:0,vth:0,vr:0,thr:0,fade:1}; respawn(p); P.push(p); } }
+
+  var LX={cx:0,cy:0,coreR:16,loopR:72,nahtR:120,horizon:230};
+  function loopPoint(i,M){
+    var t=i/M*TAU;
+    var rot=phase*0.004;
+    var wob=0.08*Math.sin(t*3+phase*0.03)+0.05*Math.sin(t*5+phase*0.017)+growPulse*0.10*Math.sin(t*4);
+    var rr=LX.loopR*(1+wob);
+    var ang=t+rot;
+    return { x:LX.cx+rr*Math.cos(ang), y:LX.cy+rr*Math.sin(ang) };
+  }
+
+  function step(){
+    var hold=r, open=clamp(delta,0.15,1);
+    for(var i=0;i<P.length;i++){
+      var p=P[i];
+      var held = hold >= p.thr;
+      if(held){
+        var target=LX.loopR*(0.82+0.32*((p.thr*7.31)%1));
+        p.vr += (target-p.r)*0.02; p.vr*=0.86;
+        p.vth += (0.011 - p.vth)*0.02;
+        p.fade=1;
+      } else {
+        p.vr += 0.055*open; p.vr*=0.99;
+        p.vth += 0.002;
+        if(p.r>LX.nahtR){ p.fade -= 0.012; if(p.fade<=0) respawn(p); }
+      }
+      p.r += p.vr; p.th += p.vth;
+      p.x=LX.cx+Math.cos(p.th)*p.r; p.y=LX.cy+Math.sin(p.th)*p.r;
+      if(!(isFinite(p.r)) || p.r<0 || p.r>LX.horizon*1.02) respawn(p);
+    }
+    var cnt=0; for(var j=0;j<P.length;j++){ if(P[j].r<LX.nahtR) cnt++; }
+    boundFrac = P.length? cnt/P.length : 0;
+    growPulse *= 0.92; if(growPulse<0.01) growPulse=0;
+  }
+
+  function mVal(){ return (r>=0.5 && delta>=0.18) ? 1 : -1; }
+  function regime(){
+    var h=r, del=delta, bf=Math.round(boundFrac*100), m=mVal();
+    if(h<0.18) return { t:'FLUT / das Man (r\u21920) \u2014 reine Dissipation: der Kern h\u00e4lt nichts, der Schatten (Rothering, flach & identisch) dominiert', c:'--vz-dim' };
+    if(del<0.12) return { t:'ERSTARRT (\u0394\u22480) \u2014 reine Schlie\u00dfung: die Naht wirft nichts (\u201eein Buch\u201c) \u00b7 absolute Obstruktion m=\u22121 nie kreuzbar', c:'--vz-warn' };
+    if(bf>66 && m>0) return { t:'LEBENDIG / WEITUNG \u2014 h\u00e4lt (r\u21921, F/Heimat) UND wirft/bleibt (\u0394\u22600, H\u00b9): \u201cthe same returns\u201d = Selbstherstellung, zwei Routen coincidieren (m=+1)', c:'--vz-rest' };
+    if(bf>34) return { t:'KIPPEN an der zwei-axialen Naht (Valenz = Produkt = Koinzidenz = Limes = exakte Fidelity)', c:'--vz-warn' };
+    return { t:'ENGUNG \u2014 der Horizont rennt aus (\u0394\u22600, inexhaustibel) \u00b7 Obstruktion m=\u22121 (kein Ganzes)', c:'--vz-open' };
+  }
+
+  function ceilN(n){ return 1-0.85*Math.pow(0.55, n); }
+  function closeC(t,n){ var C=ceilN(n); var d=Math.abs(t-Math.round(t)); var peak=Math.exp(-9*d*d); return C*(0.35+0.65*peak); }
+  function valenceNet(ont,hon){ return (1-ont)*hon - ont*(1-hon); }
+
+  function curDpr(){ return Math.min(window.devicePixelRatio||1, 2); }
+  function resize(){
+    var dpr=curDpr(); var rct=cv.getBoundingClientRect();
+    var w=Math.max(320, rct.width||cv.clientWidth||860);
+    W=w;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    cv.style.height=H+'px';
+    var split=W*0.5;
+    var lx1=split-12;
+    LX.cx=(12+lx1)/2; LX.cy=H*0.46;
+    var dmax=Math.min(LX.cx-12, LX.cy-52)*0.86;
+    LX.coreR=Math.max(12,dmax*0.10); LX.loopR=dmax*0.42; LX.nahtR=dmax*0.70; LX.horizon=dmax*1.30;
+    for(var i=0;i<P.length;i++){ if(P[i].r>LX.horizon) respawn(P[i]); }
+  }
+
+  function diamond(x,y,s,col){ ctx.beginPath(); ctx.moveTo(x,y-s); ctx.lineTo(x+s,y); ctx.lineTo(x,y+s); ctx.lineTo(x-s,y); ctx.closePath(); ctx.fillStyle=col; ctx.fill(); }
+  function setT(id,t){ var e=$(id); if(e) e.textContent=t; }
+
+  function drawLeft(){
+    var now=(performance.now()||0);
+    var m=mVal();
+    /* 1) Naht (zwei-axiale Fuge) — wavy dashed ring */
+    var wob=delta*9, ST=120;
+    ctx.setLineDash([7,6]); ctx.strokeStyle=rgba(pal.naht,0.9); ctx.lineWidth=2; ctx.beginPath();
+    for(var i=0;i<=ST;i++){ var aa=i/ST*TAU; var rr=LX.nahtR+wob*Math.sin(aa*3+now*0.0012); var bx=LX.cx+Math.cos(aa)*rr, by=LX.cy+Math.sin(aa)*rr; if(i===0) ctx.moveTo(bx,by); else ctx.lineTo(bx,by); }
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=rgba(pal.ink,0.78); ctx.font='600 10.5px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('NAHT / FUGE (zwei-axial) \u00b7 Valenz = Produkt = Koinzidenz = Limes', LX.cx, LX.cy-LX.nahtR-14);
+
+    /* 2) gauß-invariante Form F — re-assembling closed loop, alpha = r */
+    if(r>0.02){
+      var M=180, i2;
+      ctx.beginPath();
+      for(i2=0;i2<=M;i2++){ var lp=loopPoint(i2%M,M); if(i2===0) ctx.moveTo(lp.x,lp.y); else ctx.lineTo(lp.x,lp.y); }
+      ctx.closePath();
+      ctx.fillStyle=rgba(pal.fine,0.09*r); ctx.fill();
+      ctx.strokeStyle=rgba(pal.fine,0.85*r); ctx.lineWidth=2.2; ctx.stroke();
+      if(r>0.4){ ctx.fillStyle=rgba(pal.fine,0.9); ctx.font='600 10.5px system-ui,sans-serif'; ctx.textAlign='center'; ctx.fillText('Rundlauf = Invariante F (fein, gau\u00df-invariant, bricht nie) \u00b7 \u201cthe same returns\u201d', LX.cx, LX.cy+LX.loopR+24); }
+    }
+    /* 3) der Schatten (grobe Lesart) — flache Band, alpha = 1-r, "flach & identisch" */
+    var shH=10+9*(1-r);
+    if(1-r>0.03){
+      var sw=LX.loopR*1.5;
+      ctx.fillStyle=rgba(pal.shadow,0.5*(1-r));
+      ctx.fillRect(LX.cx-sw/2, LX.cy-shH/2, sw, shH);
+      ctx.strokeStyle=rgba(pal.shadow,0.85*(1-r)); ctx.lineWidth=1.4; ctx.strokeRect(LX.cx-sw/2, LX.cy-shH/2, sw, shH);
+      ctx.fillStyle=rgba(pal.shadow,0.95*(1-r)); ctx.font='600 10px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Schatten Z=q\u1d4f / ker F (grob, Rothering: flach & identisch)', LX.cx, LX.cy-shH/2-6);
+    }
+    /* 4) persistent H¹ = Ort des Seins (bleibt), pulsing */
+    var pulse=0.5+0.5*Math.sin(now*0.003);
+    ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(pal.h1,0.55+0.4*pulse); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(LX.cx,LX.cy,LX.coreR*(0.85+0.15*pulse),0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    ctx.save(); ctx.shadowColor=rgba(pal.h1,1); ctx.shadowBlur=6+16*r; ctx.fillStyle=rgba(pal.h1,0.5+0.4*r); ctx.beginPath(); ctx.arc(LX.cx,LX.cy,3.6,0,TAU); ctx.fill(); ctx.restore();
+    ctx.fillStyle=rgba(pal.h1,0.95); ctx.font='600 10px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('H\u00b9 \u00b7 Ort des Seins (bleibt)', LX.cx, LX.cy+LX.coreR+15);
+
+    /* 5) receding particles (open/inexhaustible rest) */
+    for(var k=0;k<P.length;k++){
+      var p=P[k]; var ins=p.r<LX.nahtR;
+      var fade=ins?1:clamp(p.fade,0.1,1);
+      var col=ins?pal.hold:pal.open;
+      ctx.fillStyle=rgba(col, ins?0.6:0.3+0.55*fade);
+      ctx.beginPath(); ctx.arc(p.x,p.y, ins?2.0:1.9, 0, TAU); ctx.fill();
+    }
+    /* 6) single Pivot at bottom of Naht = Limes = exact Fidelity */
+    var fx=LX.cx, fy=LX.cy+LX.nahtR;
+    diamond(fx,fy,6,rgba(pal.naht,0.95));
+    ctx.fillStyle=rgba(pal.ink,1); ctx.font='600 10.5px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('Pivot = Limes = exakte Fidelity \u00b7 m='+(m>0?'+1':'\u22121'), fx, fy+16);
+  }
+
+  function drawRight(split){
+    var rx0=split+12, rx1=W-12, ry0=44, ry1=H-170;
+    var plotW=rx1-rx0, plotH=ry1-ry0;
+    var TMAX=12;
+    function RX(t){ return rx0+(t/TMAX)*plotW; }
+    function RY(c){ return ry1-clamp(c,0,1)*plotH; }
+
+    ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='left'; ctx.fillStyle=rgba(pal.accent,1);
+    ctx.fillText('ZWEI NIE ERREICHTEN B\u00d6DEN + ZWEI-AXIALE NAHT', rx0, 28);
+    ctx.font='10px ui-monospace,monospace'; ctx.fillStyle=rgba(pal.dim,1);
+    ctx.fillText('Kern am Peak (ohne Rest) \u00b7 Rest \u0394 in der L\u00fccke \u00b7 ker F \u2192 0 im Limes', rx0, 40);
+
+    var Cn=ceilN(1+Math.round(r*7));
+    ctx.strokeStyle=rgba(pal.grid,0.6); ctx.lineWidth=1; ctx.strokeRect(rx0, ry0, plotW, plotH);
+    var i;
+    ctx.font='10px ui-monospace,monospace'; ctx.fillStyle=rgba(pal.dim,1); ctx.textAlign='right';
+    for(i=0;i<=4;i++){ var cc=i/4, yy=RY(cc); ctx.beginPath(); ctx.moveTo(rx0,yy); ctx.lineTo(rx1,yy); ctx.stroke(); ctx.fillText(cc.toFixed(1), rx0-4, yy+3); }
+
+    if(showRest){
+      var gTop=RY(1), gBot=RY(Cn);
+      ctx.fillStyle=rgba(pal.warn,0.10+0.16*mu);
+      ctx.fillRect(rx0, gTop, plotW, Math.max(0,gBot-gTop));
+      ctx.textAlign='left'; ctx.fillStyle=rgba(pal.warn,1); ctx.font='10px ui-monospace,monospace';
+      ctx.fillText('Rest / \u0394 (inexhaustibel, \u221d \u03bc \u00b7 \u201edas Wertvollste\u201c)', rx0+5, (gTop+gBot)/2+3);
+    }
+
+    ctx.font='10px ui-monospace,monospace';
+    ctx.strokeStyle=rgba(pal.wall,1); ctx.lineWidth=1.5; ctx.setLineDash([8,4]);
+    ctx.beginPath(); ctx.moveTo(rx0,RY(1)); ctx.lineTo(rx1,RY(1)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='left'; ctx.fillStyle=rgba(pal.wall,1);
+    ctx.fillText('Wand: absolute topol. Obstruktion m=\u22121 (Struktur\u2260Wahrheit, nie kreuzbar)', rx0+5, RY(1)-5);
+    ctx.strokeStyle=rgba(pal.floor,1); ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(rx0,RY(Cn)); ctx.lineTo(rx1,RY(Cn)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='right'; ctx.fillStyle=rgba(pal.floor,1);
+    ctx.fillText('Boden C(n)=1\u2212k\u00b7p\u2032 \u2192 1 (asympt. Limes, ker F\u21920, nie erreicht)', rx1-5, RY(Cn)-5);
+
+    ctx.beginPath();
+    for(i=0;i<=560;i++){ var t3=i/560*TMAX; var px=RX(t3); var py=RY(closeC(t3,3)); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.lineTo(RX(TMAX),RY(0)); ctx.lineTo(RX(0),RY(0)); ctx.closePath();
+    ctx.fillStyle=rgba(pal.accent,(document.documentElement.classList.contains('dark'))?0.12:0.10); ctx.fill();
+    ctx.strokeStyle=rgba(pal.accent,1); ctx.lineWidth=1.9; ctx.beginPath();
+    for(i=0;i<=560;i++){ var t4=i/560*TMAX; var px2=RX(t4); var py2=RY(closeC(t4,3)); if(i===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2); }
+    ctx.stroke();
+    ctx.fillStyle=rgba(pal.fine,1);
+    for(i=1;i<=TMAX;i++){ ctx.beginPath(); ctx.arc(RX(i),RY(closeC(i,3)),2.4,0,TAU); ctx.fill(); }
+
+    /* bottom-right: two-axial Naht as valence/coincidence field */
+    var fsz=Math.min(130, plotW*0.42);
+    var vx0=rx1-fsz, vx1=rx1, vy0=ry1+14, vy1=ry1+14+fsz;
+    var GRID=14, cw=(vx1-vx0)/GRID, ch=(vy1-vy0)/GRID, gi, gj;
+    for(gj=0; gj<GRID; gj++){
+      for(gi=0; gi<GRID; gi++){
+        var ont=(gi+0.5)/GRID, hon=(gj+0.5)/GRID;
+        var net=valenceNet(ont,hon);
+        var col = net>=0 ? mixRGB(pal.dim, pal.hold, net) : mixRGB(pal.dim, pal.open, -net);
+        ctx.fillStyle=rgba(col, 0.18+0.62*Math.abs(net));
+        ctx.fillRect(vx0+gi*cw, vy1-(gj+1)*ch, cw+0.6, ch+0.6);
+      }
+    }
+    ctx.strokeStyle=rgba(pal.grid,0.7); ctx.lineWidth=1; ctx.strokeRect(vx0,vy0,vx1-vx0,vy1-vy0);
+    ctx.font='600 10px system-ui,sans-serif'; ctx.fillStyle=rgba(pal.accent,1); ctx.textAlign='left';
+    ctx.fillText('ZWEI-AXIALE NAHT (Valenz = Produkt = Koinzidenz)', vx0, vy0-5);
+    ctx.fillStyle=rgba(pal.dim,1); ctx.font='9px ui-monospace,monospace';
+    ctx.fillText('x: Objekt/Ontologie (bottom-up) \u00b7 y: Ehrlichkeit (top-down)', vx0, vy1+11);
+    var ont0=1-r, hon0=r;
+    var mx=vx0+ont0*(vx1-vx0), my=vy1-hon0*(vy1-vy0);
+    ctx.fillStyle=rgba(pal.ink,1); ctx.beginPath(); ctx.arc(mx,my,4,0,TAU); ctx.fill();
+    ctx.strokeStyle=rgba(pal.canvas,1); ctx.lineWidth=1.2; ctx.stroke();
+  }
+
+  function draw(){
+    if(!pal) readPal();
+    var dpr=curDpr(); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgba(pal.canvas,1); ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=rgba(pal.grid,0.4); ctx.lineWidth=1;
+    var g; for(g=0;g<W;g+=46){ ctx.beginPath(); ctx.moveTo(g,0); ctx.lineTo(g,H); ctx.stroke(); }
+    for(g=0;g<H;g+=46){ ctx.beginPath(); ctx.moveTo(0,g); ctx.lineTo(W,g); ctx.stroke(); }
+
+    var split=W*0.5;
+    ctx.strokeStyle=rgba(pal.grid,0.6); ctx.setLineDash([4,6]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(split,10); ctx.lineTo(split,H-10); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='left'; ctx.fillStyle=rgba(pal.accent,1);
+    ctx.fillText('ZENTRUMLOSER, SELBSTTRAGENDER FIXPUNKT = SEINE PROJEKTION  (h\u00e4lt &amp; wirft)', 14, 24);
+
+    drawLeft();
+    drawRight(split);
+
+    ctx.fillStyle=rgba(pal.ink,1); ctx.font='700 12px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('Ein zentrumloser, selbsttragender relationaler Fixpunkt, der seine eigene Projektion ist \u2014 h\u00e4lt &amp; wirft zugleich', W/2, H-6);
+
+    var rg=regime();
+    var rgCol=cssVar(rg.c)||'#888';
+    var m=mVal();
+    var Cn=ceilN(1+Math.round(r*7));
+    var vo=$('vizOut');
+    if(vo){
+      var L1='<b style="color:'+rgCol+'">'+rg.t+'</b>';
+      var L2='EIN Regler r = \u03c3 = \u03c6 \u00b7 zwei-axiale Naht: Valenz = Produkt = Koinzidenz = Limes = exakte Fidelity \u00b7 m='+(m>0?'+1':'\u22121')+' \u00b7 Zeitpfeil-Stufe: '+stage;
+      var L3 = showRest
+        ? 'Kern je Peak erreicht (ohne Rest, F/Heimat) \u00b7 Rest \u0394 sichtbar (\u221d \u03bc, \u201edas Wertvollste\u201c) \u00b7 Limes C(n)='+Cn.toFixed(3)+' < 1 (asymptotisch, ker F\u21920, nie erreicht) \u00b7 Wand m=\u22121 (Struktur\u2260Wahrheit, nie kreuzbar)'
+        : 'Rest VERDECKT (Koh\u00e4rent=wahr / Rothering: flach & identisch / sizeless stare) \u2014 du siehst nur die helle Form; \u03bc, \u0394 und die zwei B\u00f6den sind unsichtbar.';
+      vo.innerHTML=L1+'<br>'+L2+'<br>'+L3;
+    }
+    setT('stR', Math.round(r*100)+' %');
+    setT('stD', Math.round(delta*100)+' %');
+    setT('stBind', Math.round(boundFrac*100)+' %');
+    setT('stThr', Math.round(clamp(1-boundFrac,0,1)*100)+' %');
+    setT('stFloor', Cn.toFixed(3));
+    setT('stM', m>0?'+1 (Ganzes)':'\u22121 (kein Ganzes)');
+  }
+
+  var elR=$('rR'), elD=$('dR'), elMu=$('muR'), elRest=$('restBtn'), elRes=$('resBtn'), elGrow=$('growBtn'), elTheme=$('themeToggle');
+  function syncT(){ if(elTheme) elTheme.textContent = document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19'; }
+
+  if(elR) elR.addEventListener('input', function(){ r=(+elR.value)/100; setT('rVal', Math.round(r*100)+' %'); });
+  if(elD) elD.addEventListener('input', function(){ delta=(+elD.value)/100; setT('dVal', Math.round(delta*100)+' %'); });
+  if(elMu) elMu.addEventListener('input', function(){ mu=(+elMu.value)/100; setT('muVal', Math.round(mu*100)+' %'); });
+  if(elRest) elRest.addEventListener('click', function(){ showRest=!showRest; elRest.textContent='Rest mitlesen: '+(showRest?'AN':'AUS'); elRest.classList.toggle('on',showRest); });
+  if(elRes) elRes.addEventListener('click', function(){ seed(); });
+  if(elGrow) elGrow.addEventListener('click', function(){ stage++; growPulse=1; });
+  if(elTheme) elTheme.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n8001theme', document.documentElement.classList.contains('dark')?'dark':'light'); }catch(e){}
+    readPal(); syncT();
+  });
+  window.addEventListener('resize', resize);
+  try{ new MutationObserver(function(){ readPal(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']}); }catch(e){}
+
+  readPal(); seed(); resize(); syncT();
+  function frame(){ phase++; step(); draw(); requestAnimationFrame(frame); }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
