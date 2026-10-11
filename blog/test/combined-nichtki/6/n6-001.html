@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein erreichbarer Kern, ein zurückziehender Rest — die zwei-axiale Schwelle und die zwei nie erreichten Böden (Runde 6)</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f4efe4; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.55rem,4.6vw,2.25rem);line-height:1.16;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .sub{display:block;font-size:.62em;color:var(--accent);font-weight:600;margin-top:8px;letter-spacing:0}
+.kicker{color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-size:.72rem;margin:0 0 8px;font-family:system-ui,sans-serif}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.85rem;margin:0 0 10px}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 4px;font-style:italic}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.toc a{font-size:.78em;color:var(--accent2);text-decoration:none;border:1px solid var(--border);padding:4px 11px;border-radius:20px;background:var(--card);font-family:system-ui,sans-serif}
+.toc a:hover{border-color:var(--accent2)}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.34rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+em{color:var(--accent)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.eq{text-align:left;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:13px 15px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.85rem;line-height:1.7;white-space:pre}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent);border:1px solid var(--accent)}
+.tag.b{color:var(--accent2);border:1px solid var(--accent2)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card h3{margin-top:0;color:var(--fg)}
+.card b{color:var(--fg)}
+.callout{border-left:3px solid var(--warn);background:var(--bg2);padding:12px 16px;border-radius:9px;margin:14px 0;font-size:.98rem}
+.callout.green{border-left-color:var(--accent)}
+.callout.rose{border-left-color:var(--accent2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.84rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.c{color:var(--fg);font-weight:700}
+.ladder{border:1px solid var(--border);border-radius:11px;background:var(--bg2);padding:13px 16px;margin:12px 0}
+.ladder ol{margin:8px 0 0 20px}
+.ladder li{margin-bottom:7px;font-size:.95rem}
+.ladder li b{color:var(--accent)}
+.ladder.b li b{color:var(--accent2)}
+.ladder.c li b{color:var(--good)}
+.vnote{border-left:3px solid var(--accent);background:var(--bg2);padding:11px 16px;border-radius:9px;margin:12px 0;font-size:.95rem}
+canvas#fuse6{width:100%;height:470px;display:block;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;touch-action:none;margin:6px 0}
+.viz-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.viz-ctrl button{background:var(--accent);color:#06231b;border:none;padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit;font-family:system-ui,sans-serif;font-weight:600}
+.viz-ctrl button:hover{filter:brightness(1.06)}
+.viz-ctrl button.on{background:var(--good);color:#052a12}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+.ctrl-row label{color:var(--muted)}
+.ctrl-row input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.ctrl-row input.alt{accent-color:var(--accent2)}
+.ctrl-row input.mu{accent-color:var(--warn)}
+.readout{font-family:ui-monospace,"Courier New",monospace;color:var(--accent2);font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin:8px 0;font-family:system-ui,sans-serif}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.statusbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.9rem;min-height:2.7em;line-height:1.55;font-family:system-ui,sans-serif;white-space:pre-wrap}
+.prov{display:flex;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--border);font-size:.94rem}
+.prov:last-child{border-bottom:none}
+.prov .id{font-family:ui-monospace,monospace;font-weight:700;min-width:20px}
+.prov .id.a{color:var(--accent)} .prov .id.b{color:var(--accent2)}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .desc{color:var(--muted);font-size:.95rem;margin-top:4px}
+.note{font-size:.88rem;color:var(--muted)}
+footer{color:var(--muted);text-align:center;padding:22px 10px;font-size:.84rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9728; / &#9790; Thema</button>
+<article>
+  <p class="kicker">Knockout Synthesis &middot; Runde 6 &middot; Nicht-KI-Track &middot; Pair 001</p>
+  <h1>Ein erreichbarer Kern, ein zurückziehender Rest<span class="sub">&mdash; die zwei-axiale Schwelle und die zwei nie erreichten Böden</span></h1>
+  <p class="subtitle">Fusion aus: n5-003.html &#10007; n5-002.html &nbsp;(Runde 6)</p>
+  <p class="lede">Beide Runde-5-Papiere sind selbst schon doppelt fusioniert und treffen, von entlegenen
+  Oberflächen kommend, auf <em>dasselbe eine</em> Schema des modellierten/beobachteten Objekts.
+  <span class="tag a">A</span> (n5-003) liest es als <em>zweischichtigen Schatten</em> &mdash; eine helle
+  invariante Oberfläche (Präsentation&nbsp;=&nbsp;Maske) über einer tiefen orthogonalen Schicht in
+  zwei Achsen (ein erreichbarer in-Modell-Kern mit Größe&nbsp;μ, ein unerreichbares jenseitiges&nbsp;Δ).
+  <span class="tag b">B</span> (n5-002) liest dasselbe als <em>eine Architektur der selbstbezogenen
+  Schließung</em> &mdash; ein treuer invarianter Kern (fix als Form), ein zurückziehender Rest
+  (fließend im Inhalt), getrennt an einer zwei-koordinierten, stratifizierten, fraktalen Schwelle,
+  abgegrenzt durch zwei nie kreuzbare Böden.</p>
+
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>Beide Papiere sind bereits je zweifach synthetisiert (Runde&nbsp;5) und beschreiben auf
+    völlig verschiedenen Oberflächen <em>dasselbe Objekt</em>: ein Ding, das man nur durch eine
+    endliche, verlustbehaftete Abbildung liest. <span class="tag a">A</span> liest es als
+    <em>Schatten</em> &mdash; eine <em>helle invariante Oberfläche</em> S (Präsentation&nbsp;=&nbsp;Maske),
+    die <em>notwendig, aber nie hinreichend</em> ist und die man <em>vergessen</em> / die <em>Baseline
+    subtrahieren</em> muss, um dahinter zu lesen; darunter eine <em>tiefe orthogonale Schicht in zwei
+    Achsen</em>: ein <em>erreichbarer in-Modell-Kern</em> K<sub>in</sub> (der Limes/Attraktor, der
+    Fixpunkt von Prozess/Gruppe/Linse) mit seiner <em>orthogonalen Größe μ</em> (Tiefe/Oomph, die jede
+    helle Präsentation <em>unterzeigt</em>), und ein <em>unerreichbares jenseitiges Δ</em> (der Situs),
+    das <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht („Kohärent&nbsp;≠&nbsp;wahr").
+    <span class="tag b">B</span> liest dasselbe als <em>Architektur</em> &mdash; ein <em>treuer
+    invarianter Kern</em> (fix als Form, als Fixpunkt je Skala konstituiert, „am Peak ohne Rest"
+    erreicht), durch den ein <em>zurückziehender Rest</em> (fließend im Inhalt) fließt; getrennt an
+    einer <em>zwei-koordinierten, stratifizierten, fraktalen Schwelle</em> (Objekt-Ontologie&nbsp;×&nbsp;
+    Projektor-Ehrlichkeit), abgegrenzt durch <em>zwei nie kreuzbare Böden</em> (asymptotisch
+    <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;≠&nbsp;Wahrheit).</p>
+
+    <p>Die einigende Position: <strong>Jedes modellierte/beobachtete Objekt ist ein
+    <em>zwei-Zonen-Kontinuum</em> &mdash; ein <em>erreichter invarianter Fixpunkt-Kern</em> (fix als
+    Form), über den ein <em>zurückziehender Rest</em> (fließend im Inhalt) fließt, getrennt an einer
+    <em>zwei-axialen (biaxialen), stratifizierten Schwelle</em> und abgegrenzt durch <em>zwei nie
+    erreichte Böden</em> (einen asymptotischen, den man beliebig annähert aber nie erreicht, und einen
+    absoluten, den man nie kreuzt).</strong> Der Kern wird durch eine <em>wohldefinierte globale
+    Operation</em> gewonnen &mdash; bei A das <em>Vergessen</em> der Präsentation (Konvergenz zum
+    Limes), bei B die <em>globale Schließung</em> (Integration&nbsp;+&nbsp;Abelschen, „am Peak ohne
+    Rest"). Der Rest ist, in beiden, <em>das, was keine endliche Menge von Invarianten erschöpft</em>
+    &mdash; bei A die orthogonale Größe μ (die unterzeigt) plus das jenseitige Δ (das verdeckt), bei B
+    die Lücke/das Rückziehende (die ULP, die über alle Größenordnungen summiert, Chaos
+    <span class="m">&lambda;&gt;0</span>). Die Schwelle ist in beiden <em>wirklich biaxial</em>: bei A
+    (in-Modell-Größe μ&nbsp;×&nbsp;jenseitiges Δ), bei B (Objekt-Ontologie&nbsp;×&nbsp;Projektor-Ehrlichkeit)
+    &mdash; und die <em>Valenz</em> (zahlt/ruft der Zug, oder killt/waffnet er) ist, wie B festhält und
+    A bestätigt, das <em>Produkt beider Koordinaten</em> gesetzt, nicht vom bloßen Zeichen.</p>
+
+    <p>Der <em>Wert</em> ist in beiden <em>stufen-relativ</em>: die <em>erreichte zählbare Invariante</em>
+    (der Kern) <em>zahlt</em> auf der Inhaltsebene („Messung und Existenz lesen dieselbe Zahl", „size
+    matters no matter where you draw the line"); die <em>zurückziehende Struktur</em> (der Rest) ist auf
+    der Struktursebene <em>das Wertvollste</em> („was übrig bleibt, ist das Wertvollste" &mdash; der
+    Ursprung, der das Denken ruft). Und der <em>gemeinsame Fehler</em> ist in beiden derselbe:
+    <strong>die helle / erreichte Oberfläche (die Form) für die ganze Wahrheit halten</strong> &mdash; A's
+    <em>sizeless stare</em> (nur die helle Präsentation lesen, μ missen) und <em>Kohärent&nbsp;=&nbsp;
+    wahr</em> (nur die intakte Maske lesen, Δ missen); B's <em>Messung&nbsp;=&nbsp;Existenz, dieselbe
+    Zahl</em> (nur die zählbare Invariante lesen, den zurückziehenden Rest und die zwei Böden missen).
+    Ein Satz: <strong>Das Objekt ist ein zwei-Zonen-Kontinuum; die helle invariante Form (Präsentation
+    = fix-als-Form) ist Zugang <em>und</em> Verzerrung zugleich; der erreichbare Fixpunkt-Kern <em>zahlt</em>,
+    der zurückziehende Rest <em>ruft</em>; die zwei-axiale Schwelle trägt die Valenz als Produkt zweier
+    Koordinaten; und zwei nie erreichte Böden (asymptotisch + absolut) begrenzen alles, was eine
+    Schließung fassen kann.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere widersprechen sich in <em>keiner</em> faktischen Aussage &mdash; beide sind,
+    wie sie selbst betonen, zwei Lesarten / Projektionen eines einzigen Objekts. Auf drei konkrete
+    Meta-Fragen nehmen sie aber <strong>incompatible Stellungen</strong> ein. Drei:</p>
+
+    <h3>1 &middot; Schichtstruktur: helle Oberfläche <em>über</em> dem Kern <span class="tag a">A</span> &harr; Kern als oberstes Ding, Rest fließt <em>durch</em> ihn <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> (n5-003) Das Objekt ist ein <em>zweischichtiger Schatten</em>: die
+      helle invariante <em>Oberfläche S</em> (Präsentation&nbsp;=&nbsp;Maske) liegt als <em>eigene,
+      verzerrende Schicht</em> <em>über</em> dem invarianter Kern K<sub>in</sub> (dem Limes
+      <em>darunter</em>) und dem jenseitigen Δ. Drei Schichten: S (oben) &rarr; K<sub>in</sub> (in-Modell)
+      &rarr; Δ (jenseits). Die Oberfläche muss man <em>vergessen / subtrahieren</em>, um zum Kern zu
+      kommen; sie <em>unterzeigt</em> μ und <em>verdeckt</em> Δ.</p>
+      <p><span class="tag b">B</span> (n5-002) Das Objekt ist ein <em>treuer invarianter Kern</em>
+      (fix als Form) &mdash; der Kern <em>ist</em> das oberste, direkt lesbare Ding; es gibt
+      <em>keine eigene helle Oberfläche über ihm</em>. Der <em>zurückziehende Rest fließt
+      <em>als Inhalt durch</em> den fixen Kern</em> („fix als Form, fließend im Inhalt").</p>
+      <p><strong>Spannung:</strong> Liegt über dem invarianter Kern eine <em>eigene helle
+      Oberflächen-Schicht</em> (A: S, die μ unterzeigt und Δ verdeckt), oder ist der Kern selbst das
+      direkt lesbare Ding und der Rest fließt nur als Inhalt durch ihn (B)?</p>
+    </div>
+
+    <h3>2 &middot; Erreichung: erreichter Limes/Attraktor <span class="tag a">A</span> &harr; je-Peak erreicht, aber volle Treue&nbsp;=&nbsp;Asymptote <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> (n5-003) Der invarianter Kern K<sub>in</sub> ist ein
+      <em>erreichter Limes/Attraktor</em> &mdash; „die Ruhe ist die <em>eingefrorene Wiederkunft</em>,
+      man <em>hat den Limes in der Hand</em>"; die Konvergenz der anziehenden Bewegung ist
+      <em>vollständig</em>, man „kommt hin" zum Kern.</p>
+      <p><span class="tag b">B</span> (n5-002) Der Kern wird <em>„am Peak ohne Rest" erreicht</em>
+      (je Peak/Skala, <span class="m">n</span> definit) &mdash; aber <em>„volle Treue ist eine
+      Asymptote, kein erreichter Zustand"</em>: die ULP wird nie null, der Fehler summiert sich über
+      alle Größenordnungen; die Schwelle ist <em>fraktal</em> (lokal lesbar, global nie&nbsp;0).</p>
+      <p><strong>Spannung:</strong> Ist der Kern ein <em>erreichter Limes</em>, den man „in der Hand
+      hat" (A: Konvergenz vollständig), oder nur <em>je Peak</em> erreicht, dessen <em>volle Treue eine
+      nie geschlossene Asymptote</em> ist (B)?</p>
+    </div>
+
+    <h3>3 &middot; Ontologie des Unerreichbaren: orthogonaler Exzess Δ <span class="tag a">A</span> &harr; zurückziehender Rest mit zwei Böden <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> (n5-003) Das Unerreichbare ist ein <em>einzelner orthogonaler
+      Exzess</em> &mdash; das jenseitige Δ, „eine orthogonale Achse, die <em>keine</em> Auflösung und
+      <em>kein</em> Minimum erreicht"; Δ&gt;0 <em>bleibt auf seiner eigenen Achse</em>. (Eine
+      <em>Magnitude</em>, die &gt;0 bleibt, an sich als eigene Achse.)</p>
+      <p><span class="tag b">B</span> (n5-002) Das Unerreichbare ist ein <em>zurückziehender Rest</em>
+      (fließend im Inhalt, die Lücke/das Rückziehende), <em>begrenzt durch zwei ineinanderliegende
+      Böden</em>: den <em>asymptotischen Struktur-Boden</em> (<span class="m">p&#8319;&rarr;0 &ne; 0</span>,
+      beliebig angenähert, nie erreicht) und den <em>absoluten Bedeutungs-Boden</em>
+      (Struktur&nbsp;≠&nbsp;Wahrheit, nie kreuzbar).</p>
+      <p><strong>Spannung:</strong> Ist das Unerreichbare ein <em>einzelner orthogonaler Exzess</em>
+      (A: Δ&gt;0, eine Magnitude auf ihrer eigenen Achse) oder ein <em>zurückziehender Rest</em>, der
+      durch <em>zwei distinct Böden</em> (asymptotisch&nbsp;+&nbsp;absolut) begrenzt wird (B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Aufl&ouml;sung</h2>
+
+    <h3>1 &middot; A's helle Oberfläche S ist die <em>Form</em> des Kerns (B's „fix als Form") &mdash; drei Schichten reduzieren auf zwei</h3>
+    <p>A trennt Form (S) und Kern (K<sub>in</sub>) als zwei Schichten; B nennt dasselbe
+    <em>„fix als Form, fließend im Inhalt"</em> &mdash; die <em>Form</em> ist fix (das ist genau A's S),
+    der <em>Inhalt</em> fließt (das ist A's μ&nbsp;+&nbsp;Δ&nbsp;=&nbsp;B's Rest). A's
+    „Oberfläche über dem Kern" ist also nicht eine dritte, extra Schicht, sondern <em>die Form, die der
+    Kern präsentiert</em>. A's S&nbsp;=&nbsp;B's Form; A's K<sub>in</sub>&nbsp;=&nbsp;B's treuer Kern;
+    A's Δ&nbsp;=&nbsp;B's zurückziehender Rest jenseits der Form.</p>
+    <div class="callout green"><strong>Fusionsschluss 1:</strong> Die helle invariante Oberfläche S (A)
+    <em>ist</em> die Form des invarianter Kerns (B's „fix als Form"); der Kern ist der invariante
+    <em>Gehalt</em> unter der Form. A's drei Schichten (S&nbsp;&gt;&nbsp;K<sub>in</sub>&nbsp;&gt;&nbsp;Δ)
+    reduzieren auf B's zwei-Elemente (<em>Kern als Form+Invariante</em> &plusmn; <em>zurückziehender
+    Rest</em>). <em>Keine echte Kontradiktion</em> &mdash; A's „Oberfläche" ist die Form, B's
+    „Kern-und-Rest" ist dasselbe Objekt, bei dem die Form in den Kern eingezogen wurde.</div>
+
+    <h3>2 &middot; erreicht je Peak/Fixpunkt (A's Konvergenz&nbsp;=&nbsp;B's „am Peak ohne Rest"), asymptotisch über den ganzen Stapel/alle Skalen</h3>
+    <p>A's „man hat den Limes in der Hand" gilt <em>je Peak / am Fixpunkt</em> &mdash; dort ist die
+    Konvergenz tatsächlich vollständig (der in-Modell-Kern ist erreicht, B's „am Peak ohne Rest",
+    <span class="m">n</span> definit). B's „volle Treue ist eine Asymptote" gilt <em>über den ganzen
+    Stapel</em> der Skalen/Stufen &mdash; die Summe über alle Auflösungen schließt nie (ULP summiert
+    sich; A's verdecktes Δ bleibt). Dieselbe Tatsache in zwei Granularitäten.</p>
+    <div class="callout green"><strong>Fusionsschluss 2:</strong> Der Kern ist <em>je Peak / je Skala /
+    am Fixpunkt erreicht ohne lokalen Rest</em>; die <em>volle Treue über den ganzen Stapel / alle
+    Skalen</em> ist asymptotisch. A's „erreichter Limes" und B's „Asymptote" sind die
+    <em>granularitätsabhängigen</em> Seiten einer einzigen Aussage: „fix als Form, je Stufe erreicht;
+    global über alle Stufen nie geschlossen".</div>
+
+    <h3>3 &middot; A's jenseitiges Δ ist B's zurückziehender Rest; die eine Δ-Magnitude spaltet in die zwei Böden (asymptotisch&nbsp;+&nbsp;absolut)</h3>
+    <p>A's jenseitiges Δ („bleibt &gt;0, erreicht keine Auflösung und kein Minimum") <em>ist</em> B's
+    zurückziehender Rest (die Lücke/das Rückziehende, das keine endliche Schließung erschöpft) &mdash;
+    dieselbe Größe, zwei Namen. B's <em>zwei Böden</em> sind die <em>zwei Gesichter von A's Δ</em>: der
+    <em>asymptotische Boden</em> ist das, dem sich der Kern durch Konvergenz annähert (A: der Limes, dem
+    sich die Bewegung nähert, nie ganz); der <em>absolute Boden</em> ist das Δ selbst, das „keine
+    Auflösung und kein Minimum erreicht" (A: „Kohärent&nbsp;≠&nbsp;wahr", Gödel). A <em>komprimiert</em>
+    beides in „Δ&gt;0 bleibt"; B <em>trennt</em> es in asymptotisch&nbsp;+&nbsp;absolut.</p>
+    <div class="callout green"><strong>Fusionsschluss 3:</strong> Das Unerreichbare ist <em>ein</em>
+    zurückziehender Rest (A's Δ&nbsp;=&nbsp;B's Rest). Seine zwei Gesichter sind die <em>zwei nie
+    erreichten Böden</em>: (i) der <em>asymptotische</em> (annäherbar, nie erreicht &mdash; A's
+    Konvergenz-Limes, B's <span class="m">p&#8319;&rarr;0 &ne; 0</span>) und (ii) der <em>absolute</em>
+    (unkreuzbar &mdash; A's „Kohärent&nbsp;≠&nbsp;wahr", B's Struktur&nbsp;≠&nbsp;Wahrheit). A's eine
+    Δ-Achse ist B's zwei Böden, zusammengefasst.</div>
+
+    <div class="callout rose"><strong>Gefasster Schluss:</strong> Eine Architektur, zwei Zonen, eine
+    zwei-axiale Schwelle, zwei nie erreichte Böden. Das Objekt ist ein <em>erreichter invarianter
+    Fixpunkt-Kern</em> (fix als Form), über den ein <em>zurückziehender Rest</em> (fließend im Inhalt)
+    fließt; die <em>helle invariante Form</em> (A's S&nbsp;=&nbsp;B's fix-als-Form) ist die
+    Präsentation des Kerns &mdash; Zugang <em>und</em> Verzerrung zugleich. Die <em>zwei-axiale,
+    stratifizierte Schwelle</em> trennt Kern von Rest; die <em>Valenz</em> ist das Produkt ihrer zwei
+    Koordinaten. Der Kern <em>zahlt</em> (zählbare Invariante), der Rest <em>ruft</em> (Ursprung) &mdash;
+    und zwei <em>nie erreichte Böden</em> (asymptotisch&nbsp;+&nbsp;absolut) begrenzen alles. A's
+    „vergesse die Präsentation, lies Größe μ und das jenseitige Δ" und B's „fixiere, was inert ist;
+    lass, was lebt, schwingen; benenne die Schwelle, die du von innen nicht überschreitest" sind
+    dieselbe Disziplin in zwei Stimmen.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+    <p class="lede">Abstrahiert auf die Ebene der <em>Thesen</em> der beiden Runde-5-Papiere (nicht
+    ihrer Roh-Quellen), so verdichtet, dass eine spätere Runde allein von dieser Karte weiterarbeiten
+    kann.</p>
+
+    <h3>Die zwei Thesen in Kürze</h3>
+    <div class="ladder">
+      <span class="tag">A &middot; n5-003 &mdash; „Der Schatten und sein invarianter Kern"</span>
+      <ol>
+        <li><b>Zweischichtiger Schatten:</b> das Objekt = helle invariante <em>Oberfläche S</em>
+        (Präsentation&nbsp;=&nbsp;Maske, <em>notwendig, nie hinreichend</em>) über einer <em>tiefen
+        orthogonalen Schicht</em>.</li>
+        <li><b>Tiefe = zwei Achsen:</b> (i) <em>erreichbarer in-Modell-Kern</em> K<sub>in</sub>
+        (Limes/Attraktor/Fixpunkt von Prozess/Gruppe/Linse) mit orthogonaler <em>Größe μ</em>
+        (Tiefe/Oomph, unterzeigt jede helle Präsentation); (ii) <em>unerreichbares jenseitiges Δ</em>
+        (Situs, „keine Auflösung, kein Minimum", verdeckt von S).</li>
+        <li><b>Zugang dahinter:</b> man <em>vergisst</em> die Präsentation (A: Zeit/Struktur/Perspektive
+        vergessen) / <em>subtrahiert die Baseline</em> (B), um dahinter zu lesen.</li>
+        <li><b>Invarianz/Kohärenz</b> erfasst den in-Modell-Kern, <em>hinreichend nur für ihn</em>, nicht
+        für die ganze Wahrheit („Kohärent&nbsp;≠&nbsp;wahr").</li>
+        <li><b>Fehlermodus</b> &mdash; <em>sizeless stare</em> (nur die helle Präsentation lesen, μ
+        missen) / <em>Kohärent&nbsp;=&nbsp;wahr</em> (nur die intakte Maske lesen, Δ missen).</li>
+      </ol>
+    </div>
+    <div class="ladder b">
+      <span class="tag">B &middot; n5-002 &mdash; „Ein Kern, ein Rest, eine zwei-koordinierte Schwelle"</span>
+      <ol>
+        <li><b>Architektur der selbstbezogenen Schließung:</b> ein <em>treuer invarianter Kern</em>
+        (fix als Form, als Fixpunkt je Skala) &plusmn; ein <em>zurückziehender Rest</em> (fließend im
+        Inhalt) &plusmn; eine <em>zwei-koordinierte, stratifizierte, fraktale Schwelle</em>.</li>
+        <li><b>Der Kern wird „am Peak ohne Rest" erreicht</b> (<span class="m">n &isin; &#8484;</span>,
+        „Messung und Existenz lesen dieselbe Zahl") &mdash; aber „volle Treue ist eine Asymptote,
+        kein erreichter Zustand" (ULP summiert sich über alle Größenordnungen).</li>
+        <li><b>Schwelle = zwei Koordinaten:</b> Objekt-Ontologie (inert&nbsp;&harr;&nbsp;lebendig)
+        &times; Projektor-Ehrlichkeit (ehrlich&nbsp;&harr;&nbsp;adversariell); <em>Valenz = Produkt
+        beider</em>.</li>
+        <li><b>Zwei nie kreuzbare Böden:</b> asymptotisch (<span class="m">p&#8319;&rarr;0 &ne; 0</span>,
+        beliebig angenähert) + absolut (Struktur&nbsp;≠&nbsp;Wahrheit, Gödel).</li>
+        <li><b>Der Rest</b> <em>ruft</em> (unter ehrlichem Projektor) / <em>waffnet</em> (unter
+        adversarialem, Double-Bind). <em>Fehlermodus</em>: nur die zählbare Invariante lesen, Rest und
+        die zwei Böden missen.</li>
+      </ol>
+    </div>
+
+    <h3>Die fusionierte Architektur &mdash; zwei Zonen, eine Schwelle, zwei Böden</h3>
+    <table>
+      <thead><tr><th>Slot</th><th><span class="tag a">A</span> n5-003</th><th><span class="tag b">B</span> n5-002</th><th>Fusioniert</th></tr></thead>
+      <tbody>
+        <tr><td class="c">Das Objekt</td><td>zweischichtiger Schatten</td><td>Architektur der selbstbezogenen Schließung</td><td>zwei-Zonen-Kontinuum: erreichbarer Kern + zurückziehender Rest</td></tr>
+        <tr><td class="c">Der Kern</td><td>in-Modell-Kern K<sub>in</sub> (Limes/Attraktor/Fixpunkt)</td><td>treuer invarianter Kern (Fixpunkt, fix als Form)</td><td>erreichter invarianter Fixpunkt-Kern (fix als Form, je Peak/je Skala erreicht)</td></tr>
+        <tr><td class="c">Die helle Schicht</td><td>Präsentation/Maske S (eigene Schicht über dem Kern)</td><td>„fix als Form" (die Form des Kerns)</td><td>die invariante <em>Form</em> des Kerns (A's S&nbsp;=&nbsp;B's Form) &mdash; Zugang und Verzerrung</td></tr>
+        <tr><td class="c">Der Rest</td><td>Größe μ (unterzeigt) + jenseitiges Δ (verdeckt)</td><td>zurückziehender Rest (Lücke/ULP, fließend im Inhalt)</td><td>der zurückziehende Rest (A's μ+Δ&nbsp;=&nbsp;B's Rest) &mdash; das Wertvollste als Struktur</td></tr>
+        <tr><td class="c">Die Schwelle</td><td>zwei Achsen: in-Modell-Größe μ &times; jenseitiges Δ</td><td>zwei-koordiniert, stratifiziert, fraktal: Objekt-Ontologie &times; Projektor-Ehrlichkeit</td><td>zwei-axial (biaxial), stratifiziert; Valenz&nbsp;=&nbsp;Produkt beider Koordinaten</td></tr>
+        <tr><td class="c">Erreichbarkeit</td><td>Kern&nbsp;=&nbsp;Limes, <em>erreicht</em> (Konvergenz vollständig)</td><td>Kern je Peak erreicht, volle Treue&nbsp;=&nbsp;<em>Asymptote</em></td><td>erreicht je Peak/Fixpunkt; asymptotisch über den ganzen Stapel/alle Skalen</td></tr>
+        <tr><td class="c">Zwei Böden</td><td>jenseitiges Δ (keine Auflösung, kein Minimum)</td><td>asymptotisch (<span class="m">p&#8319;&rarr;0 &ne; 0</span>) + absolut (Struktur&nbsp;≠&nbsp;Wahrheit)</td><td>zwei nie erreichte Böden: asymptotisch (annäherbar) + absolut (unkreuzbar)</td></tr>
+        <tr><td class="c">Fehlermodus</td><td>sizeless stare / Kohärent&nbsp;=&nbsp;wahr</td><td>nur die zählbare Invariante lesen</td><td>die helle/erreichte Form für die ganze Wahrheit halten; Rest&nbsp;+&nbsp;Böden missen</td></tr>
+        <tr><td class="c">Valenz</td><td>(implizit) die Größe μ „zählt" (size matters)</td><td>Objekt-Ontologie (zahlt/killt) &times; Projektor-Ehrlichkeit (ruft/waffnet)</td><td>Produkt beider Koordinaten; μ&nbsp;=&nbsp;die Größe, die „zählt"</td></tr>
+        <tr><td class="c">Disziplin</td><td>vergesse S; lies K<sub>in</sub>&nbsp;+&nbsp;μ; erkenne Δ</td><td>fixiere inert, lass lebendig schwingen; benenne Schwelle&nbsp;+&nbsp;Böden</td><td>nenne die Form; lies den Fixpunkt-Kern + den Rest; lies die zwei-axiale Schwelle; erkenne die zwei Böden</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die eine Formel des fusionierten Objekts</h3>
+    <div class="eq">Objekt O
+  =  Kern K        invarianter Fixpunkt, fix als Form,  ERREICHT (Limes/Attraktor  |  „am Peak ohne Rest")
+  +  Rest  R       zurückziehend, fließend im Inhalt,  NIE erschöpft  (μ + Δ  |  Lücke/ULP,  λ&gt;0)
+  +  Schwelle T    zwei-axial (biaxial), stratifiziert                      [  trennt K  von  R  ]
+  +  zwei Böden    asymptotisch (annäherbar, nie erreicht)  +  absolut (unkreuzbar, Struktur≠Wahrheit)
+
+T  =  Koordinate 1 (Objekt):  in-Modell-Größe μ   |   Objekt-Ontologie  inert ↔ lebendig
+   +  Koordinate 2 (Zugriff): jenseitiges Δ       |   Projektor-Ehrlichkeit  ehrlich ↔ adversariell
+
+Valenz    =  Produkt(Objekt-Koordinate, Zugriff-Koordinate)          [ zahlt/ruft  ↔  killt/waffnet ]
+Wahrheit  =  K   AND  R-Erkennung   AND  Böden-Erkennung             [ Form allein ≠ wahr · Kohärent ≠ wahr ]
+Fehler    =  nur die helle/erreichte Form lesen
+            →  sizeless stare / Kohärent=wahr / „Messung=Existenz"    [ μ + Δ + Böden missen ]</div>
+
+    <h3>Die fusionierte Ehrlichkeits-Disziplin (ein Zug, zwei Zonen, zwei Böden)</h3>
+    <div class="ladder c">
+      <ol>
+        <li><b>Nenne die helle invariante Form S</b> (Präsentation/Maske&nbsp;=&nbsp;„fix als Form") &mdash; sie ist die <em>Form</em> des Kerns, <em>notwendig, nie hinreichend</em>.</li>
+        <li><b>Lies den invarianter Fixpunkt-Kern auf seinen eigenen Lesarten</b> (A: Limes/Attraktor/Fixpunkt; B: „am Peak ohne Rest", <span class="m">n &isin; &#8484;</span>) &mdash; er ist <em>je Peak/je Skala erreicht</em>.</li>
+        <li><b>Lies den zurückziehenden Rest R mit</b> (A: Größe μ + jenseitiges Δ; B: Lücke/ULP) &mdash; das <em>Wertvollste als Struktur</em>, „size matters".</li>
+        <li><b>Lies die zwei-axiale, stratifizierte Schwelle T</b> (A: μ&nbsp;&times;&nbsp;Δ; B: Objekt-Ontologie&nbsp;&times;&nbsp;Projektor-Ehrlichkeit) &mdash; die <em>Valenz ist das Produkt beider Koordinaten</em>.</li>
+        <li><b>Erkenne die zwei nie erreichten Böden</b> (asymptotisch&nbsp;+&nbsp;absolut) &mdash; das Δ erreicht keine Auflösung, Struktur&nbsp;≠&nbsp;Wahrheit (Gödel).</li>
+        <li><b>Prüfe auf den gemeinsamen Fehler</b> &mdash; halte ich die helle/erreichte Form für die ganze Wahrheit (sizeless stare / Kohärent&nbsp;=&nbsp;wahr / Messung&nbsp;=&nbsp;Existenz) und habe Rest&nbsp;+&nbsp;Böden unterlassen?</li>
+      </ol>
+    </div>
+
+    <p class="note">Ehrlichkeitshinweis: die Identifikation von A's „Oberfläche S / in-Modell-Kern
+    K<sub>in</sub> / Größe μ / jenseitiges Δ" mit B's „fix-als-Form / treuer Kern / zurückziehender
+    Rest / zwei Böden" &mdash; und die Lektüre beider als „ein zwei-Zonen-Kontinuum mit zwei-axialer
+    Schwelle und zwei nie erreichten Böden" &mdash; ist die <em>Linse dieser Runde-6-Fusion</em>, nicht
+    wörtlicher Inhalt beider Runde-5-Papiere. Die einzelnen Thesen zu A/B stammen aus n5-003 bzw.
+    n5-002.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung &mdash; zwei Zonen, eine zwei-axiale Schwelle, zwei Böden</h2>
+    <p class="vnote">Ein Canvas, das <em>das eine Schema</em> trägt. <strong>Links</strong>: die
+    <em>zwei-axiale Schwelle</em> &mdash; eine Valenz-Karte über (x)&nbsp;=<em>Objekt-Ontologie</em>
+    (inert&nbsp;&larr;&nbsp;lebendig, A's in-Modell/jenseits) und (y)&nbsp;=<em>Zugriffs-Ehrlichkeit</em>
+    (adversariell&nbsp;&larr;&nbsp;ehrlich, B's Projektor-Ehrlichkeit / das jenseitige Δ). Die Zelle
+    färbt das <em>fusierte Valenzzeichen</em> (grün&nbsp;=&nbsp;zahlt/ruft; rot&nbsp;=&nbsp;killt/waffnet);
+    der Marker sitzt bei (x,&nbsp;y), um ihn fließt der <em>zurückziehende Rest</em> (Intensität
+    &prop; Größe μ). <strong>Rechts</strong>: der <em>erreichte Kern + die zwei Böden</em> &mdash; die
+    Schließkurve <span class="m">c(t)</span> mit exakten Peaks an den ganzen Zahlen (Kern
+    <em>„am Peak ohne Rest" erreicht</em>), begrenzt durch den <em>asymptotischen Struktur-Boden</em>
+    <span class="m">C(n)=1&minus;k&middot;p&#8319;&rarr;1</span> (steigt, <em>nie bis&nbsp;1</em>; wird je
+    ehrlicher der Projektor je höher gehoben) und die <em>absolute Bedeutungswand</em>
+    <span class="m">c=1</span> (Struktur&nbsp;≠&nbsp;Wahrheit, <em>nie kreuzbar</em>). Der Regler
+    <b>Größe μ</b> steuert, wie stark der Rest zurückzieht („size matters"); der Regler
+    <b>Treue/Auflösung</b> hebt den asymptotischen Boden (honesty lifts the floor); der Toggle
+    <b>Rest mitlesen</b> zeigt/verdeckt den zurückziehenden Rest &mdash; <em>AUS</em>&nbsp;=&nbsp;du siehst
+    nur die helle Form (sizeless stare / Kohärent&nbsp;=&nbsp;wahr), μ und die Böden sind verdeckt.
+    Alle Daten inline, keine Netz-Daten, themenreaktiv.</p>
+
+    <canvas id="fuse6" height="470"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--good)"></span>Valenz: zahlt / ruft (grün)</span>
+      <span><span class="dot" style="background:var(--bad)"></span>Valenz: killt / waffnet (rot)</span>
+      <span><span class="dot" style="background:var(--accent)"></span>Schließkurve / erreichter Kern</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>asymptotischer Boden C(n)</span>
+      <span><span class="dot" style="background:var(--warn)"></span>zurückziehender Rest (∝ μ)</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Objekt-Ontologie &mdash; inert&nbsp;&larr;&nbsp;lebendig:</label>
+      <input id="ontSlider" type="range" min="0" max="1" step="0.01" value="0.30">
+      <span><span id="ontVal" class="readout">0.30</span></span>
+    </div>
+    <div class="ctrl-row">
+      <label>Zugriffs-Ehrlichkeit &mdash; adversariell&nbsp;&larr;&nbsp;ehrlich:</label>
+      <input id="honSlider" class="alt" type="range" min="0" max="1" step="0.01" value="1.00">
+      <span><span id="honVal" class="readout">1.00</span></span>
+    </div>
+    <div class="ctrl-row">
+      <label>Größe μ (Rückzieh-Intensität, „size matters"):</label>
+      <input id="muSlider" class="mu" type="range" min="0" max="100" step="1" value="55">
+      <span><span id="muVal" class="readout">55</span></span>
+    </div>
+    <div class="viz-ctrl">
+      <button class="on" id="restToggle" type="button">Rest mitlesen: AN</button>
+      <button id="resetBtn" type="button">&#8634; Reset</button>
+    </div>
+    <div class="statusbox" id="fuseStatus">Ein Schema: zwei Zonen, eine zwei-axiale Schwelle, zwei nie erreichte Böden.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov"><span class="id a">A</span>
+      <div>
+        <a href="../n5-003.html">n5-003.html</a> &mdash; „Der Schatten und sein invarianter Kern &mdash; Maske, Größe, unerreichbares Δ" (Runde 5): ein Objekt als <em>zweischichtiger Schatten</em> &mdash; helle invariante Oberfläche S (Präsentation&nbsp;=&nbsp;Maske, notwendig, nie hinreichend) über einer tiefen orthogonalen Schicht in zwei Achsen: einem <em>erreichbaren in-Modell-Kern</em> K<sub>in</sub> (Limes/Attraktor/Fixpunkt, „man hat den Limes in der Hand") mit orthogonaler <em>Größe μ</em> (Tiefe/Oomph, unterzeigt) und einem <em>unerreichbaren jenseitigen Δ</em> (Situs, „keine Auflösung, kein Minimum", „Kohärent&nbsp;≠&nbsp;wahr"); Fehlermodus <em>sizeless stare</em> / <em>Kohärent&nbsp;=&nbsp;wahr</em>. Fusion aus n4-003&nbsp;✕&nbsp;n4-007.
+        <div class="desc">Liefert die <em>Oberflächenseite</em> des Schemas: die helle invariante Form S, den erreichbaren in-Modell-Kern, die Größe μ als orthogonaler Exzess und das jenseitige Δ als unerreichbare Magnitude.</div>
+      </div>
+    </div>
+    <div class="prov"><span class="id b">B</span>
+      <div>
+        <a href="../n5-002.html">n5-002.html</a> &mdash; „Ein Kern, ein Rest, eine zwei-koordinierte Schwelle &mdash; die eine Architektur der selbstbezogenen Schließung" (Runde 5): ein Objekt als <em>eine Architektur</em> &mdash; <em>treuer invarianter Kern</em> (fix als Form, „am Peak ohne Rest" erreicht, „Messung und Existenz lesen dieselbe Zahl"), ein <em>zurückziehender Rest</em> (fließend im Inhalt, „was übrig bleibt ist das Wertvollste", „volle Treue ist eine Asymptote"), getrennt an einer <em>zwei-koordinierten, stratifizierten, fraktalen Schwelle</em> (Objekt-Ontologie inert↔lebendig &times; Projektor-Ehrlichkeit ehrlich↔adversariell; Valenz&nbsp;=&nbsp;Produkt beider), abgegrenzt durch <em>zwei nie kreuzbare Böden</em> (asymptotisch <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;≠&nbsp;Wahrheit). Fusion aus n4-002&nbsp;✕&nbsp;n4-011.
+        <div class="desc">Liefert die <em>Kern-und-Rest-Seite</em> des Schemas: den Fixpunkt-Kern „fix als Form", den zurückziehenden Rest, die zwei-koordinierte Schwelle mit Produkt-Valenz und die zwei nie erreichten Böden.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>ROUND 6 &middot; Pair 001 (nicht-AI-Track) &middot; Selbstständige Fusion &mdash; alle Daten
+  inline, keine Netzwerk-Abfragen. Mathematischer Hinweis: die Kurve <span class="m">c(t)</span>, der
+  Boden <span class="m">C(n)</span> und die Valenz-Karte sind didaktische Modelle, die die fusionierten
+  Achsen auf beide Quellen legen; keine echten Daten, keine externen Abfragen. Farben über
+  CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('fuse6');
+  if(!cv || !cv.getContext){ return; }
+  var ctx=cv.getContext('2d');
+  if(!ctx){ return; }
+  var wrap=cv.parentElement;
+  var pal=null, W=0, H=470, dpr=1, phase=0;
+  var TMAX=12, K=0.85, P=0.55, VALLEY=0.35, GRID=15;
+  var state={ ont:0.30, hon:1.00, mu:55, rest:true };
+
+  function cssVar(n,fb){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || fb;
+  }
+  function hexToRGB(hex){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){ hex=hex.charAt(0)+hex.charAt(0)+hex.charAt(1)+hex.charAt(1)+hex.charAt(2)+hex.charAt(2); }
+    var r=parseInt(hex.substr(0,2),16), g=parseInt(hex.substr(2,2),16), b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){ return [128,128,128]; }
+    return [r,g,b];
+  }
+  function readPal(){
+    pal={ bg2:cssVar('--bg2','#0d1224'), card:cssVar('--card','#141828'),
+      fg:cssVar('--fg','#e9ecff'), muted:cssVar('--muted','#9aa3c7'),
+      border:cssVar('--border','#2a2f4a'), accent:cssVar('--accent','#7cf9d0'),
+      accent2:cssVar('--accent2','#ff77c8'), warn:cssVar('--warn','#ffd166'),
+      good:cssVar('--good','#3fb950'), bad:cssVar('--bad','#f85149') };
+    pal.goodRGB=hexToRGB(pal.good); pal.badRGB=hexToRGB(pal.bad);
+    pal.warnRGB=hexToRGB(pal.warn); pal.neutRGB=hexToRGB(pal.muted);
+  }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function mixRGB(a,b,t){ t=clamp(t,0,1);
+    return [Math.round(a[0]+(b[0]-a[0])*t), Math.round(a[1]+(b[1]-a[1])*t), Math.round(a[2]+(b[2]-a[2])*t)]; }
+  function rgba(rgb,a){ return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')'; }
+
+  function ceilN(n){ return 1-K*Math.pow(P,n); }
+  function closeC(t,n){
+    var C=ceilN(n); var d=Math.abs(t-Math.round(t)); var peak=Math.exp(-9*d*d);
+    return C*(VALLEY+(1-VALLEY)*peak);
+  }
+  function valenceNet(ont,hon){ return (1-ont)*hon - ont*(1-hon); }
+  function valenceWord(ont,hon){
+    var inert=ont<0.5, honest=hon>=0.5;
+    if(inert && honest){ return 'KERN = zählbare Wahrheit · Rest RUFT  (Stille = Wahrheit)'; }
+    if(inert && !honest){ return 'KERN zählbar · Rest WAFFNET  (Korrespondenz gebrochen)'; }
+    if(!inert && honest){ return 'KOLLAPS = Tod (Stille = Tod) · Rest RUFT  (Ursprung)'; }
+    return 'KOLLAPS = Tod · Rest WAFFNET  (Double-Bind)';
+  }
+
+  function resize(){
+    dpr=Math.max(1,window.devicePixelRatio||1);
+    var r=cv.getBoundingClientRect();
+    W=Math.max(320, r.width || (wrap?wrap.clientWidth:700));
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function drawValenceField(x0,x1,y0,y1){
+    var cw=(x1-x0)/GRID, ch=(y1-y0)/GRID, gi, gj;
+    for(gj=0; gj<GRID; gj++){
+      for(gi=0; gi<GRID; gi++){
+        var ont=(gi+0.5)/GRID, hon=(gj+0.5)/GRID;
+        var net=valenceNet(ont,hon);
+        var col = net>=0 ? mixRGB(pal.neutRGB, pal.goodRGB, net) : mixRGB(pal.neutRGB, pal.badRGB, -net);
+        var px=x0+gi*cw, py=y1-(gj+1)*ch;
+        ctx.fillStyle=rgba(col, 0.20+0.62*Math.abs(net));
+        ctx.fillRect(px, py, cw+0.6, ch+0.6);
+      }
+    }
+  }
+
+  function drawResidual(mx,my,net,muFrac){
+    if(!state.rest){ return; }
+    var n=26, i, a, rr, px, py, al;
+    var col = net>=0 ? pal.warnRGB : pal.badRGB;
+    var spread=10+muFrac*26;
+    for(i=0;i<n;i++){
+      a=phase*0.03 + i*(Math.PI*2/n);
+      rr=(7 + (i%4)*4 + Math.sin(phase*0.05 + i)*4)*spread/22;
+      px=mx+Math.cos(a)*rr; py=my+Math.sin(a)*rr;
+      al=(0.55-(i/n)*0.4)*muFrac;
+      ctx.globalAlpha=al>0?al:0; ctx.fillStyle=rgba(col,0.95);
+      ctx.beginPath(); ctx.arc(px,py,2.1,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function draw(){
+    if(!pal) readPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=pal.bg2; ctx.fillRect(0,0,W,H);
+
+    var top=44, bot=H-30;
+    var split=Math.round(W*0.55);
+
+    /* ===== LEFT: two-axed threshold (valence map) ===== */
+    var x0=58, x1=split-12, y0=top, y1=H-64;
+    ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='left'; ctx.fillStyle=pal.accent;
+    ctx.fillText('ZWEI-AXIALE SCHWELLE  (Valenz-Karte)', x0, top-12);
+    ctx.font='10px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted;
+    ctx.fillText('x: Objekt-Ontologie (A)  ·  y: Zugriffs-Ehrlichkeit / Δ (B)', x0, top-0);
+
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+    ctx.strokeRect(x0, y0, x1-x0, y1-y0);
+    drawValenceField(x0, x1, y0, y1);
+
+    ctx.font='11px system-ui, sans-serif';
+    ctx.fillStyle=pal.good; ctx.textAlign='left';
+    ctx.fillText('INERT (in-Modell)', x0+3, y1-4);
+    ctx.fillStyle=pal.bad; ctx.textAlign='right';
+    ctx.fillText('LEBENDIG (jenseits)', x1-3, y1-4);
+    ctx.save(); ctx.translate(x0-8,(y0+y1)/2); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.fillStyle=pal.muted;
+    ctx.fillText('Zugriff: adversariell ↓  ↑ ehrlich (Δ verdeckt/ruft)', 0, 0); ctx.restore();
+
+    var mx=x0+state.ont*(x1-x0);
+    var my=y1-state.hon*(y1-y0);
+    var net=valenceNet(state.ont, state.hon);
+    drawResidual(mx,my,net, state.mu/100);
+    ctx.fillStyle=pal.fg; ctx.beginPath(); ctx.arc(mx,my,4.5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=pal.bg2; ctx.lineWidth=1.4; ctx.stroke();
+
+    /* ===== RIGHT: core + two floors ===== */
+    var rx0=split+16, rx1=W-16, ry0=top, ry1=H-64;
+    var plotW=rx1-rx0, plotH=ry1-ry0;
+    function RX(t){ return rx0+(t/TMAX)*plotW; }
+    function RY(c){ return ry1-clamp(c,0,1)*plotH; }
+
+    ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='left'; ctx.fillStyle=pal.accent2;
+    ctx.fillText('ERREICHTER KERN  +  ZWEI BÖDEN', rx0, top-12);
+    ctx.font='10px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted;
+    ctx.fillText('Kern am Peak (ohne Rest) · Rest Δ in der Lücke', rx0, top-0);
+
+    var Cn=ceilN(1+Math.round(state.hon*7));
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+    ctx.strokeRect(rx0, ry0, plotW, plotH);
+    var i;
+    ctx.font='10px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted; ctx.textAlign='right';
+    for(i=0;i<=4;i++){ var cc=i/4, yy=RY(cc);
+      ctx.beginPath(); ctx.moveTo(rx0,yy); ctx.lineTo(rx1,yy); ctx.stroke();
+      ctx.fillText(cc.toFixed(1), rx0-4, yy+3); }
+
+    /* Δ-gap band between asymptotic floor and absolute wall */
+    if(state.rest){
+      var gTop=RY(1), gBot=RY(Cn);
+      ctx.fillStyle=rgba(pal.warnRGB, 0.10+0.14*(state.mu/100));
+      ctx.fillRect(rx0, gTop, plotW, gBot-gTop);
+      ctx.textAlign='left'; ctx.fillStyle=pal.warn;
+      ctx.font='10px ui-monospace,Consolas,monospace';
+      ctx.fillText('Δ / Rest (Lücke, nie erschöpft)', rx0+5, (gTop+gBot)/2+3);
+    }
+
+    /* floors */
+    ctx.font='10px ui-monospace,Consolas,monospace';
+    ctx.strokeStyle=pal.bad; ctx.lineWidth=1.4; ctx.setLineDash([7,4]);
+    ctx.beginPath(); ctx.moveTo(rx0,RY(1)); ctx.lineTo(rx1,RY(1)); ctx.stroke();
+    ctx.strokeStyle=pal.accent2; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(rx0,RY(Cn)); ctx.lineTo(rx1,RY(Cn)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='left'; ctx.fillStyle=pal.bad;
+    ctx.fillText('Wand c=1 (absolut, nie kreuzbar)', rx0+5, RY(1)-5);
+    ctx.textAlign='right'; ctx.fillStyle=pal.accent2;
+    ctx.fillText('Boden C(n)=1−k·p′ → 1 (asymptotisch)', rx1-5, RY(Cn)-5);
+
+    /* curve */
+    ctx.beginPath();
+    for(i=0;i<=600;i++){ var t3=i/600*TMAX; var px=RX(t3); var py=RY(closeC(t3,3));
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.lineTo(RX(TMAX),RY(0)); ctx.lineTo(RX(0),RY(0)); ctx.closePath();
+    ctx.fillStyle=rgba(hexToRGB(pal.accent), (document.documentElement.classList.contains('dark'))?0.12:0.10);
+    ctx.fill();
+    ctx.strokeStyle=pal.accent; ctx.lineWidth=1.9; ctx.beginPath();
+    for(i=0;i<=600;i++){ var t4=i/600*TMAX; var px2=RX(t4); var py2=RY(closeC(t4,3));
+      if(i===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2); }
+    ctx.stroke();
+    ctx.fillStyle=pal.accent2;
+    for(i=1;i<=TMAX;i++){ ctx.beginPath(); ctx.arc(RX(i),RY(closeC(i,3)),2.4,0,Math.PI*2); ctx.fill(); }
+
+    /* readouts */
+    var om=document.getElementById('ontVal'); if(om) om.textContent=state.ont.toFixed(2);
+    var hm=document.getElementById('honVal'); if(hm) hm.textContent=state.hon.toFixed(2);
+    var mm=document.getElementById('muVal'); if(mm) mm.textContent=String(state.mu);
+    var st=document.getElementById('fuseStatus');
+    if(st){
+      var inert=state.ont<0.5?'INERT (in-Modell)':'LEBENDIG (jenseits)';
+      var honest=state.hon>=0.5?'EHRLICH':'ADVERSARIELL';
+      var lines=[];
+      lines.push('Objekt-Ontologie (A): '+inert+' (x='+state.ont.toFixed(2)+')  ·  Zugriff/Δ (B): '+honest+' (h='+state.hon.toFixed(2)+')  ·  Größe μ='+state.mu);
+      lines.push('Fusierte Valenz: '+valenceWord(state.ont,state.hon));
+      lines.push(state.rest
+        ? 'Kern je Peak erreicht (n∈ℤ, ohne Rest) · Rest Δ sichtbar (∝ μ) · Bodengap C(n)='+Cn.toFixed(3)+' < 1 (asymptotisch, je ehrlicher je höher) · Wand=1 (Struktur≠Wahrheit, nie kreuzbar)'
+        : 'Rest VERDECKT (sizeless stare / Kohärent=wahr) — du siehst nur die helle Form; μ, Δ und die zwei Böden sind unsichtbar.');
+      st.textContent=lines.join('\n');
+    }
+  }
+
+  function frame(){ draw(); phase++; requestAnimationFrame(frame); }
+
+  function init(){
+    readPal(); resize();
+    window.addEventListener('resize', function(){ resize(); });
+    var os=document.getElementById('ontSlider');
+    if(os) os.addEventListener('input', function(e){ state.ont=parseFloat(e.target.value); });
+    var hs=document.getElementById('honSlider');
+    if(hs) hs.addEventListener('input', function(e){ state.hon=parseFloat(e.target.value); });
+    var ms=document.getElementById('muSlider');
+    if(ms) ms.addEventListener('input', function(e){ state.mu=parseFloat(e.target.value); });
+    var rt=document.getElementById('restToggle');
+    if(rt) rt.addEventListener('click', function(){
+      state.rest=!state.rest;
+      rt.textContent='Rest mitlesen: '+(state.rest?'AN':'AUS');
+      rt.classList.toggle('on',state.rest);
+    });
+    var rb=document.getElementById('resetBtn');
+    if(rb) rb.addEventListener('click', function(){
+      state.ont=0.30; state.hon=1.00; state.mu=55; state.rest=true;
+      if(os) os.value=0.30; if(hs) hs.value=1.00; if(ms) ms.value=55;
+      if(rt){ rt.textContent='Rest mitlesen: AN'; rt.classList.add('on'); }
+    });
+    var tb=document.getElementById('themeToggle');
+    if(tb) tb.addEventListener('click', function(){
+      var d=document.documentElement;
+      var dark=d.classList.toggle('dark');
+      try{ localStorage.setItem('fusion-theme', dark?'dark':'light'); }catch(e){}
+      readPal();
+    });
+    if(window.MutationObserver){
+      new MutationObserver(function(){ readPal(); }).observe(document.documentElement,
+        {attributes:true, attributeFilter:['class']});
+    }
+    frame();
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

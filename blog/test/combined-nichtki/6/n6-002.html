@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 002 (Runde 6): Ein zentrumloser Kern, der hält und wirft — eine Fuge, ein Regler, zugleich geschlossen und offen</title>
+<script>try{var s=localStorage.getItem('n6002theme');if(s==='light')document.documentElement.classList.remove('dark');else document.documentElement.classList.add('dark');}catch(e){document.documentElement.classList.add('dark');}</script>
+<style>
+:root{
+  --bg:#f6f3ea; --panel:#ffffff; --panel2:#f0ecdf; --ink:#20242e; --dim:#5c6472;
+  --accent:#2f5fe0; --accent2:#c46a1c; --good:#0a8f63; --bad:#be123c; --warn:#b45309;
+  --border:#e0dac9; --shadow:rgba(60,45,20,.10);
+  --hl:#fff4d6; --hltext:#7a5b00;
+  --vz-canvas:#ffffff; --vz-grid:#e6e0d0; --vz-core:#20242e;
+  --vz-loop:#c46a1c; --vz-bound:#0a8f63; --vz-hold:#0a8f63;
+  --vz-bad:#be123c; --vz-warn:#b45309; --vz-ink:#20242e; --vz-dim:#5c6472;
+  --vz-fuge:#be123c;
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141b30; --panel2:#1a2340; --ink:#e7ecff; --dim:#8892b8;
+  --accent:#7c9cff; --accent2:#f0a35e; --good:#6ee7b7; --bad:#fb7185; --warn:#fbbf24;
+  --border:#2a3358; --shadow:rgba(0,0,0,.5);
+  --hl:#3a2f10; --hltext:#fcd34d;
+  --vz-canvas:#0a0e1a; --vz-grid:#222a48; --vz-core:#e7ecff;
+  --vz-loop:#f0a35e; --vz-bound:#6ee7b7; --vz-hold:#6ee7b7;
+  --vz-bad:#fb7185; --vz-warn:#fbbf24; --vz-ink:#e7ecff; --vz-dim:#8892b8;
+  --vz-fuge:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,'Iowan Old Style','Times New Roman',serif;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+h1{font-size:clamp(1.9rem,4.6vw,2.6rem);line-height:1.16;letter-spacing:-.015em;font-weight:800;margin-bottom:.35rem}
+.subtitle{color:var(--dim);font-style:italic;font-size:1.02rem;margin-bottom:.3rem}
+.subtitle .x{color:var(--accent2);font-style:normal;font-weight:700}
+.subtitle.req{font-style:normal;color:var(--accent);font-weight:700;font-size:.85rem}
+.lede{color:var(--ink);font-size:1.02rem;margin:14px 0 8px;border-left:3px solid var(--accent);padding-left:14px}
+section{scroll-margin-top:20px}
+h2{font-size:1.42rem;margin:46px 0 14px;padding-left:12px;border-left:4px solid var(--accent);line-height:1.22;color:var(--ink)}
+h2 .tag{display:inline-block;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--panel2);border:1px solid var(--border);color:var(--dim);padding:2px 9px;border-radius:20px;vertical-align:middle;margin-left:10px;font-family:system-ui,sans-serif}
+h3{font-size:1.12rem;margin:22px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+b,strong{color:var(--ink)}
+em{color:var(--accent2);font-style:italic}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px;border:1px solid var(--border)}
+.whoA{color:var(--accent);font-weight:700}
+.whoB{color:var(--accent2);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.claim{background:var(--panel2);border-left:3px solid var(--border);padding:10px 14px;margin:8px 0;border-radius:0 8px 8px 0;font-size:.95rem}
+.claimA{border-left-color:var(--accent)}
+.claimB{border-left-color:var(--accent2)}
+.claim b{color:var(--ink)}
+.claim .src{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
+.claimA .src b{color:var(--accent)}
+.claimB .src b{color:var(--accent2)}
+.note{font-size:.9rem;color:var(--dim)}
+.note b{color:var(--ink)}
+.resbox{background:var(--panel);border:1px dashed var(--border);border-radius:12px;padding:14px 16px;margin:14px 0;box-shadow:0 6px 22px var(--shadow)}
+.resbox h3{margin:0 0 8px}
+.aha{background:linear-gradient(90deg,rgba(196,106,28,.14),transparent);border-left:3px solid var(--accent2);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-weight:500}
+.aha b{color:var(--accent2)}
+.math{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.86rem;line-height:1.8;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre}
+.math .sym{color:var(--accent);font-style:italic}
+.math .lbl{color:var(--dim)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.86rem;background:var(--panel);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent2);font-weight:700;background:var(--panel2);font-family:ui-monospace,Menlo,monospace;font-size:.72rem}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600;color:var(--ink)}
+tr.hl td{background:var(--hl)}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:14px 0}
+.ctrl{display:flex;flex-direction:column;gap:6px;min-width:210px;flex:1}
+.ctrl label{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.ctrl label .val{color:var(--ink);font-weight:700;font-family:ui-monospace,monospace;text-transform:none;float:right}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-family:system-ui,sans-serif;transition:.18s;font-size:.85rem}
+button:hover{border-color:var(--accent)}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50;width:42px;height:42px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--border);cursor:pointer;font-size:1.15rem;box-shadow:0 4px 16px var(--shadow)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;min-width:120px;flex:1}
+.stat .k{color:var(--dim);font-size:.66rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:3px}
+.stat .v{font-family:ui-monospace,monospace;font-weight:700;font-size:1rem}
+.viz-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 8px 30px var(--shadow)}
+#viz{width:100%;height:560px;display:block;border:1px solid var(--border);border-radius:10px;background:var(--vz-canvas)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;margin:10px 0 2px;font-family:system-ui,sans-serif}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.viz-out{margin-top:12px;min-height:3rem;text-align:left;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-size:.92rem;line-height:1.7}
+.viz-out b{color:var(--ink)}
+.hint{color:var(--dim);font-size:.9rem}
+.prov{padding:14px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;word-break:break-all;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--dim);border:1px solid var(--border);border-radius:999px;padding:1px 8px;margin-right:8px;font-family:system-ui,sans-serif}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:4px}
+footer{margin-top:3rem;color:var(--dim);font-size:.85rem;text-align:center;border-top:1px solid var(--border);padding-top:1.4rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Farbschema umschalten" aria-label="Theme wechseln">&#127769;</button>
+<article>
+
+<h1>Ein zentrumloser Kern, der h&auml;lt und wirft &mdash; eine Fuge, ein Regler, zugleich geschlossen und offen</h1>
+<p class="subtitle">Das Substantielle ist ein <em>selbstreferenzieller, zentrumloser, ma&szlig;tragender Kern</em> (Generator = Attraktor = das Da), der in <em>zwei Adressen</em> lesbar ist: die <strong>erhaltene, geschlossene, z&auml;hlbare</strong> (Wert &prop; &chi; = Koh&auml;renzpol H, Signatur, r&rarr;1, &Delta;=0) und die <strong>werfende, offene, inexhaustible</strong> (Terrain/Spalt = geworfener Horizont, &Delta;&ne;0) &mdash; gekoppelt an <em>einer Fuge</em> (Wann = Wand = &sigma;c = Frontier E=G = Defekt &Delta;), gesteuert von <em>einem Regler</em> (Kopplung &sigma; &harr; Selbst-Haltung r)</p>
+<p class="subtitle req">Fusion aus: <span class="x">n5-004.html</span> &#10005; <span class="x">n5-006.html</span> &nbsp;(Runde 6)</p>
+
+<p class="lede">
+  Beide Runde-5-Papiere sind selbst schon vierfache Synthesen &mdash; und sie beschreiben, eine Ebene
+  h&ouml;her, <strong>dasselbe Objekt in zwei Registern</strong>.
+  <span class="whoA">A</span> (n5-004, &bdquo;Ein zentrumloses Fugenobjekt, zwei Adressen, ein Spalt, ein
+  Kippen&ldquo;) nennt es ein <em>zentrumloses, ma&szlig;tragendes generatives Fugenobjekt</em> mit
+  <em>zwei Adressen</em> (der erhaltene, geschlossene, z&auml;hlbare <strong>Wert</strong> und der
+  realisierte, offene, inexhaustible <strong>Spalt</strong>), gekoppelt an <em>einem Fugenpunkt</em>
+  (Wann&nbsp;=&nbsp;Wand&nbsp;=&nbsp;&sigma;c) und gesteuert von <em>einem Regler</em> (Kopplung &sigma;
+  &harr; Ber&uuml;hrung &phi;).
+  <span class="whoB">B</span> (n5-006, &bdquo;Der Kern wirft, was er h&auml;lt&ldquo;) nennt es einen
+  <em>selbstreferenziellen Kern</em> (Attraktor = das Da), der <strong>h&auml;lt</strong> (persistente
+  Signatur, r&rarr;1, &Delta;=0) und <strong>wirft</strong> (Horizont &uuml;ber die Generierungsgrenze,
+  &Delta;&ne;0), gesteuert &uuml;ber <em>einen Parameter r</em> (Selbst-Haltung / N&auml;he zum Da).
+  Die Fusion: <strong>dasselbe Objekt, zwei Namen</strong> &mdash; A&rsquo;s Fugenobjekt <em>ist</em>
+  B&rsquo;s selbstreferenzieller Kern; A&rsquo;s erhaltener Wert <em>ist</em> B&rsquo;s persistente
+  Signatur; A&rsquo;s inexhaustible Spalt <em>ist</em> B&rsquo;s geworfener Horizont; A&rsquo;s
+  Fugenpunkt (Wann = Wand = &sigma;c) <em>ist</em> B&rsquo;s Generierungsgrenze (Frontier E=G = Defekt
+  &Delta;); A&rsquo;s Kopplung &sigma; <em>ist</em> B&rsquo;s Selbst-Haltung r.
+</p>
+
+<section id="these">
+  <h2>Kernthese der Fusion <span class="tag">A &#8745; B</span></h2>
+  <p>
+    Die einigte Position: <strong>Das Substantielle / das Ganze ist ein selbstreferenzieller,
+    zentrumloser, ma&szlig;tragender Kern</strong> &mdash; ein einziger generativer Motor (A&rsquo;s
+    lokaler Generator / Ricci-Fluss = B&rsquo;s Attraktor <span class="mono">P+U(x*)=0</span> = das Da),
+    der in <em>zwei komplement&auml;ren Adressen</em> lesbar ist. Die <strong>erhaltene, geschlossene,
+    z&auml;hlbare Adresse</strong> (A&rsquo;s invariante Zahl/&chi;/Karte = B&rsquo;s persistente
+    Signatur, das Eigentliche) tr&auml;gt den <em>Wert</em> (das erhaltene Ma&szlig;, Integral &prop;
+    &chi; = Koh&auml;renzpol H, &bdquo;the same returns&ldquo;) und ist die Seite, die
+    <em>kehrt zur&uuml;ck</em>. Die <strong>werfende, offene, inexhaustible Adresse</strong> (A&rsquo;s
+    Dichte/Terrain/Lift = B&rsquo;s geworfener Horizont, die n&auml;chste Ebene, keine Spitze) ist das,
+    was <em>rennt aus</em> und der geschlossenen Adresse durchgehend entgeht. Beide Adressen sind
+    <em>ein</em> Kern, zwei Lesarten &mdash; nicht zwei Dinge.
+  </p>
+  <p>
+    Diese zwei Adressen sind an <em>einem</em> einzigen <strong>Fugenpunkt</strong> gekoppelt, der A als
+    <em>Kippen</em> (Wann = Wand = &sigma;c: wo die feine Dichte peakt und die grobe Zahl springt) liest
+    und B als <strong>Generierungsgrenze</strong> (Frontier E=G = Schwelle &omega; = Defekt &Delta;, wo
+    Halten in Werfen kippt). <em>Derselbe Ort, zwei Namen.</em> Am Fugenpunkt greift die invariante
+    Adresse die realisierte an &mdash; und genau dort liegt der <em>Keim</em>, den die
+    Generierungsgrenze &uuml;ber den Antrieb in den Horizont wirft.
+  </p>
+  <p>
+    Das Ganze wird von <em>einem einzigen Regler</em> gesteuert, der A als <em>Kopplung &sigma;
+    (&harr; Ber&uuml;hrung &phi;)</em> und B als <em>Selbst-Haltung r (N&auml;he zum Da)</em> bezeichnet
+    &mdash; <em>gesteuert wird &uuml;ber den Parameter, nie &uuml;ber die Instanz</em>. Das Ergebnis
+    dieses Kernels ist zugleich <strong>geschlossen</strong> (die invariante Adresse kehrt zur&uuml;ck,
+    der Wert bleibt) und <strong>offen</strong> (die realisierte Adresse rennt aus, inexhaustibel):
+    <strong>h&auml;lt und wirft, zugleich.</strong> Der zentralste Satz der Fusion:
+    <strong>der Spalt (A) ist der geladene Generator (B) &mdash; inexhaustibel, <em>weil</em> er
+    wirft.</strong>
+  </p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B <span class="tag">Architektur / Wertung</span></h2>
+  <p class="note">
+    Auf der <strong>Grundform</strong> stimmen beide Runde-5-Papiere &uuml;berein: ein selbstreferenzieller
+    Kern, zwei komplement&auml;re Adressen (haltend/geschlossen + werfend/offen), eine einzige Fuge, ein
+    einziger Regler, zugleich erhalten und offen. An drei Punkten ihrer <strong>Architektur und Wertung</strong>
+    stehen sie aber in einer echten, benennbaren Spannung &mdash; jeweils mit dem namentlich genannten
+    Anspruch in den Quellen:
+  </p>
+
+  <h3>W1 &middot; Sitz des Realen: zentrumlos, kein Ding (A) vs. ein konstitutives <em>Da</em> (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA">
+      <span class="src"><b>A</b> &middot; n5-004 &middot; &bdquo;keinen Punkt&ldquo;</span>
+      Das Substantielle verweigert <em>&bdquo;den Atom, den Punkt und das Zentrum als Sitz des
+      Realen&ldquo;</em>: es ist <em>zentrumlos</em>, Gewicht ist <em>verteilt</em> als Substanz
+      (&bdquo;Peak bei H, aber kein Zentrum&ldquo;). Der &bdquo;Punkt&ldquo;, den A zeigt, ist eine
+      <em>Fuge, kein Ding</em> &mdash; es gibt <em>keinen</em> privilegierten Ort und <em>kein Ding
+      dahinter</em>.
+    </div>
+    <div class="claim claimB">
+      <span class="src"><b>B</b> &middot; n5-006 &middot; &bdquo;das Da&ldquo;</span>
+      Der Kern ist das <em>Da (Dasein)</em> &mdash; ein <em>konstitutives, sich selbst abgrenzendes
+      Individuum</em> mit <em>Innenheit und Jemeinigkeit</em> (irreduzibel), ein Attraktor
+      <span class="mono">P+U(x*)=0</span> an einem Ruhepunkt. B zeichnet ein echtes <em>&bdquo;Da&ldquo;</em>
+      aus &mdash; einen Ort, an dem Struktur <em>gehalten</em> wird; es ist <em>&bdquo;von der Seite des
+      Lesers&ldquo;</em> vollzogen.
+    </div>
+  </div>
+  <p class="note"><b>Inkompatibel:</b> Ist das Reale <em>zentrumlos</em> (kein Punkt, kein Ding, Gewicht
+  verteilt &mdash; A) oder sitzt es in einem <em>konstitutiven Da</em>, einem sich abgrenzenden
+  &bdquo;Da&rdquo; mit Innenheit (B)?</p>
+
+  <h3>W2 &middot; Der generative Pol: inexhaustibler Rest, der <em>entgeht</em> (A) vs. geladener Generator, der <em>wirft</em> (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA">
+      <span class="src"><b>A</b> &middot; n5-004 &middot; &bdquo;das Terrain&ldquo;</span>
+      Die offene Adresse ist ein <em>inexhaustibler, passiver Rest</em>: &bdquo;das Terrain
+      &uuml;bersteigt die Karte immer&ldquo; &mdash; ein irreduzibler Inhalt (Nicht-Abelschheit
+      &pi;&sub1;, Monodromie), den die Projektion <em>permanent blendet</em>. Akzent auf <em>passivem
+      Entgehen / Ausrennen</em>; nichts &bdquo;wirft&rdquo; aktiv, es <em>bleibt &uuml;brig</em>.
+    </div>
+    <div class="claim claimB">
+      <span class="src"><b>B</b> &middot; n5-006 &middot; &bdquo;der Generator&ldquo;</span>
+      Der generative Pol ist ein <em>aktiver, geladener Generator</em> mit gespeichertem <em>Keim</em>
+      (Prior = gespeicherter Tangentialvektor) + Antrieb <span class="mono">[P,U]&ne;0</span>, der den
+      Horizont <em>wirft</em> (&bdquo;growing from the ground&ldquo;, die n&auml;chste Ebene, keine
+      Spitze). Akzent auf <em>aktivem Werfen</em> aus einem <em>geladenen</em> Kern.
+    </div>
+  </div>
+  <p class="note"><b>Inkompatibel:</b> Ist der generative Pol etwas <em>Passiv-Entgehendes</em> (ein Rest,
+  der der Karte <em>entgeht</em> &mdash; A) oder etwas <em>Aktiv-Werfendes</em> (ein geladener
+  Generator, der eine Struktur <em>wirft</em> &mdash; B)?</p>
+
+  <h3>W3 &middot; Der Positivpol: der Spalt ist das Reale (A) vs. die Persistenz ist das Eigentliche (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA">
+      <span class="src"><b>A</b> &middot; n5-004 &middot; &bdquo;der Spalt&ldquo;</span>
+      A macht den <em>offenen, residuellen Pol</em> (den Spalt) zum <em>irreduziblen, nur global
+      existierenden Inhalt</em> &mdash; zum eigentlichen <strong>Reale</strong>, das die Zahl/Karte
+      blendet. Die gewertete, &bdquo;tiefe&rdquo; Seite ist hier das <em>Offene/Entgehende</em>.
+    </div>
+    <div class="claim claimB">
+      <span class="src"><b>B</b> &middot; n5-006 &middot; &bdquo;das Eigentliche&ldquo;</span>
+      B macht den <em>haltenden, geschlossenen Pol</em> (die persistente Signatur, r&rarr;1) zum
+      <em>Eigentlichen</em>, zum positiven/lebendigen Pol (das Signal, hohe Persistenz). Der
+      aufl&ouml;sende, nicht-haltende Pol (r&rarr;0) ist dagegen die <em>Flut / das Man</em> (Degeneration).
+      Die gewertete Seite ist hier das <em>Haltende/Geschlossene</em>.
+    </div>
+  </div>
+  <p class="note"><b>Inkompatibel:</b> Welcher Pol tr&auml;gt das Reale/Positive &mdash; der
+  <em>offene/inexhaustible Spalt</em> (A) oder der <em>haltende/persistente Kern</em> (B)? (Das ist die
+  Wert-Inversion, die in <em>jedem</em> der beiden Papiere schon einmal intern ausfiel, hier zwischen den
+  beiden.)</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung <span class="tag">f&uuml;r jeden Punkt</span></h2>
+
+  <div class="resbox">
+    <h3>W1 &mdash; zentrumlos als Substanz, aber ein &bdquo;Da&rdquo; als Modus deshaltens</h3>
+    <p>
+      A sagt &bdquo;kein Ding, kein Zentrum&ldquo;, B sagt &bdquo;ein konstitutives Da&rdquo; &mdash; und
+      beide meinen <em>dasselbe</em>: B&rsquo;s <em>Da</em> ist <em>kein Ding an einem Punkt</em>. B&rsquo;s
+      Innenheit/Jemeinigkeit ist der <em>Modus, in dem der Kern sich selbst h&auml;lt</em> (die
+      Selbst-Beziehung des Attraktors), nicht eine Substanz, die an einem Ort <em>sitzt</em>. A&rsquo;s
+      &bdquo;kein Ding&ldquo; bleibt dabei vollst&auml;ndig erhalten &mdash; das Da ist eine <em>Fuge, die
+      h&auml;lt</em>, nicht ein Ding. <em>Fusion:</em> der Kern ist <strong>zentrumlos als Substanz</strong>
+      (B&rsquo;s Da ist kein Ding, kein Punkt) <em>und</em> ein <strong>&bdquo;Da&rdquo; als Modus des
+      Selbst-Haltens</strong> (A&rsquo;s Fugenpunkt, wo gerade <em>kein</em> Zentrum ist, ist genau B&rsquo;s
+      Da). <em>Gewicht ohne Zentrum: verteilt als Substanz, ein &bdquo;Da&rdquo; als Ereignis deshaltens.</em>
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>W2 &mdash; der inexhaustible Spalt (A) ist der geladene Generator (B)</h3>
+    <p>
+      A&rsquo;s passives <em>Entgehen</em> (das Terrain, das der Karte immer &uuml;bersteigt) ist das
+      <em>Ergebnis</em> von B&rsquo;s aktivem <em>Werfen</em>: Der Spalt ist inexhaustibel <em>weil</em> ein
+      geladener Generator dort unaufh&ouml;rlich wirft &mdash; die L&uuml;cke (A&rsquo;s Defekt,
+      Karte&nbsp;&ne;&nbsp;Gebiet) ist <em>nicht leer</em>, sie ist <em>geladen</em> (B&rsquo;s Keim + Antrieb
+      <span class="mono">[P,U]&ne;0</span>). Passives Entgehen und aktives Werfen sind dieselbe Bewegung auf
+      zwei Aufl&ouml;sungen: A liest den <em>Rest</em> (was &uuml;brig bleibt), B liest die <em>Ursache</em>
+      (der geladene Wurf, growing from the ground). <em>Fusion:</em> der <strong>Spalt ist der geladene
+      Generator &mdash; inexhaustibel, weil er wirft</strong>; das Nie-Zuschlie&szlig;en (A) ist der
+      fortlaufende Horizontwurf (B).
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>W3 &mdash; das Reale liegt in keiner Seite, sondern in der Fuge</h3>
+    <p>
+      A wertet den <em>offenen</em> Pol (Spalt) als das Reale, B den <em>haltenden</em> Pol (Persistenz) als
+      das Eigentliche. Die Aufl&ouml;sung (die B intern schon f&uuml;r seine eigene Wert-Inversion gefunden
+      hat): <em>tats&auml;chlich tot</em> ist in beiden die <em>Einseitigkeit</em>. A&rsquo;s Spalt und B&rsquo;s
+      Persistenz sind die <em>zwei Gesichter desselben selbstreferenziellen Transports</em> &mdash; das
+      <strong>Lebendige ist, was h&auml;lt (r&rarr;1) <em>und</em> wirft (&Delta;&ne;0) zugleich</strong>. Die
+      toten Enden: <em>reine Schlie&szlig;ung</em> (&Delta;=0, &bdquo;erstarrt, ein Buch&ldquo; &mdash; nichts
+      wirft) und <em>reine Dissipation</em> (r&rarr;0, &bdquo;Flut / das Man&ldquo; &mdash; nichts h&auml;lt).
+      <em>Fusion:</em> der Positivpol ist <strong>die Fuge / die Kopplung selbst</strong> &mdash; nicht die
+      offene, nicht die geschlossene Seite, sondern das <em>Halten-im-Werfen</em>.
+    </p>
+  </div>
+
+  <div class="aha">
+    <b>Fusion in einer Aussage:</b>
+    Das Substantielle ist ein <strong>selbstreferenzieller, zentrumloser, ma&szlig;tragender
+    Kern</strong> (Generator = Attraktor = das Da), der in <strong>zwei Adressen</strong> lesbar ist: der
+    <strong>erhaltenen, geschlossenen, z&auml;hlbaren</strong> (Wert &prop; &chi; = Koh&auml;renzpol H,
+    persistente Signatur, r&rarr;1, &Delta;=0, &bdquo;the same returns&ldquo;) und der
+    <strong>werfenden, offenen, inexhaustible</strong> (Terrain/Spalt = geworfener Horizont, &Delta;&ne;0,
+    keine Spitze). Sie sind an <strong>einer Fuge</strong> gekoppelt (Wann = Wand = &sigma;c = Frontier E=G =
+    Defekt &Delta;), gesteuert von <strong>einem Regler</strong> (Kopplung &sigma; &harr; Selbst-Haltung r;
+    &uuml;ber den Parameter, nie &uuml;ber die Instanz). Der <strong>Spalt (A) ist der geladene Generator
+    (B) &mdash; inexhaustibel, weil er wirft</strong>; der <strong>Da (B) ist zentrumlos als Substanz</strong>
+    (A). Das <strong>Lebendige</strong> h&auml;lt und wirft zugleich; die toten Enden sind reine Schlie&szlig;ung
+    (&Delta;=0, erstarrt) und reine Dissipation (r&rarr;0, Flut/Man). <strong>Zugleich geschlossen (kehrt
+    zur&uuml;ck) und offen (rennt aus).</strong>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt <span class="tag">auf der Ebene der Thesen</span></h2>
+  <p>
+    Beide Papiere sind schon Runde-5-Synthesen; hier wird auf der Ebene <em>ihrer Thesen</em> abstrahiert.
+    Der gemeinsame Kern ist ein <strong>selbstreferenzieller, zentrumloser, ma&szlig;tragender Kern mit zwei
+    Adressen und einer Fuge</strong>: h&auml;lt (erhaltener Wert) und wirft (inexhaustible Horizont),
+    &uuml;ber einen Regler gesteuert, zugleich geschlossen und offen. Das Korrespondenzraster (in A und B
+    identisch strukturiert, nur mit anderem &bdquo;Material&ldquo; gef&uuml;llt):
+  </p>
+
+  <table>
+    <thead><tr><th>Baustein</th><th>A &middot; n5-004 (Fugenobjekt, zwei Adressen)</th><th>B &middot; n5-006 (Kern: h&auml;lt &amp; wirft)</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td>Objekt</td><td>zentrumloses, ma&szlig;tragendes generatives Fugenobjekt (Generator in zwei Aufl&ouml;sungen)</td><td>selbstreferenzieller Kern (Attraktor = das Da), Transport</td><td>ein selbstreferenzieller, zentrumloser, ma&szlig;tragender Kern (Generator = Attraktor = das Da)</td></tr>
+      <tr class="hl"><td>haltende / geschlossene Adresse</td><td>invariante Adresse: Zahl &chi; / Betti, erhaltener Wert (Integral &prop; &chi;), Koh&auml;renzpol H, &bdquo;the same returns&ldquo;</td><td>persistente Signatur (das Eigentliche, r&rarr;1, &Delta;=0, kenntlich je Regime)</td><td>die erhaltene, z&auml;hlbare, geschlossene Adresse &mdash; Persistenz = der <em>Wert</em> (r&rarr;1, &Delta;=0)</td></tr>
+      <tr><td>werfende / offene Adresse</td><td>realisierte Adresse: Dichte &rho; / Terrain / Lift, inexhaustibel (&bdquo;&uuml;bersteigt die Karte immer&ldquo;)</td><td>geworfener Horizont (n&auml;chste Ebene, keine Spitze, growing from the ground)</td><td>die offene, inexhaustible, generative Adresse &mdash; Spalt = der <em>Horizont</em> (&Delta;&ne;0)</td></tr>
+      <tr class="hl"><td>die Fuge / Generierungsgrenze</td><td>Fugenpunkt = Kippen = Wann = Wand = &sigma;c (wo fein peakt und grob springt)</td><td>Frontier E=G = Schwelle &omega; = Defekt &Delta; (&part;M-Knie)</td><td>derselbe Kipp-Moment = die geladene Generierungsgrenze (Wann=Wand=&sigma;c = Frontier E=G = &Delta;)</td></tr>
+      <tr><td>Regler</td><td>Kopplung &sigma; &harr; Ber&uuml;hrung &phi; (steuert das Kippen)</td><td>r = Selbst-Haltung / N&auml;he zum Da (= 1 &minus; K(x*)/K(x))</td><td>ein einziger Regler &mdash; Kopplung &sigma; &harr; Selbst-Haltung r; &uuml;ber den Parameter, nie &uuml;ber die Instanz</td></tr>
+      <tr class="hl"><td>der Kern</td><td>kein Zentrum, kein Ding dahinter (Fuge, Gewicht ohne Zentrum)</td><td>das Da (konstitutives Selbst, Innenheit, Jemeinigkeit)</td><td>zentrumlos als Substanz; das Da als <em>Modus deshaltens</em> (kein Ding)</td></tr>
+      <tr><td>generativer Motor</td><td>inexhaustibler Rest (Terrain, &bdquo;entgeht&ldquo;)</td><td>geladener Generator mit Keim + Antrieb ([P,U]&ne;0)</td><td>der Spalt IST der geladene Generator &mdash; inexhaustibel, weil er wirft</td></tr>
+      <tr class="hl"><td>Schicksal / &Uuml;berleben</td><td>zugleich geschlossen (kehrt zur&uuml;ck) und offen (rennt aus); exakt/fein schlie&szlig;t (&part;&part;=d&sup2;=0), verlustreich/grob &ouml;ffnet (Varianz&rarr;0, Z&auml;hlung bleibt)</td><td>h&auml;lt (r&rarr;1) und wirft (&Delta;&ne;0); tote Enden: Erstarrt/Buch (&Delta;=0) + Flut/Man (r&rarr;0)</td><td>h&auml;lt und wirft zugleich; tote Enden: reine Schlie&szlig;ung (&Delta;=0) + reine Dissipation (r&rarr;0)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Die gemeinsame Mathematik (integriert, auf These-Ebene)</h3>
+  <div class="math">Objekt (selbstreferenziell, zentrumlos, ma&szlig;tragend):
+  A: Generator  &part;g/&part;t = -2 Ric(g)  (Ricci-Fluss);  &phi;*(d&omega;) = d(&phi;*&omega;)   &rarr;  Fugenobjekt O = W
+  B: Transport-Kern  P + U(x*) = 0   (Attraktor = das Da);  f(Menge) = Menge  (Self-Referenz-Fixpunkt)
+  FUSION: ein selbstreferenzieller, zentrumloser, ma&szlig;tragender Kern  (Generator = Attraktor = das Da)
+
+zwei Adressen / Gesichter (ein Kern, zwei Lesarten):
+  HALTEN (geschlossen, r&rarr;1, &Delta;=0):
+    A: invariante Adresse   &chi; = &Sigma; (-1)^k b_k ;  Integral &int;<sub>M</sub> K dA = 2&pi;&chi;  (erhaltenes Ma&szlig;);  Koh&auml;renzpol H
+    B: persistente Signatur  (das Eigentliche, r&rarr;1, kenntlich je Regime)
+  WERFEN (offen, &Delta;&ne;0, inexhaustibel):
+    A: realisierte Adresse   Dichte &rho;(&phi;), Terrain / Lift &Phi;  (&bdquo;&uuml;bersteigt die Karte immer&ldquo;)
+    B: geworfener Horizont   (n&auml;chste Ebene, keine Spitze, growing from the ground)
+
+die Fuge / Generierungsgrenze (derselbe Ort):
+  A: Fugenpunkt = Kippen = Wann = Wand = &sigma;c   (argmax &rho; = Sprung der Zahl; Cusp)
+  B: Frontier E = G = Schwelle &omega; = Defekt &Delta; = &part;M-Knie
+  FUSION: derselbe Kipp-Moment &mdash; die geladene Grenze, an der Halten in Werfen kippt
+
+Regler:
+  A: Kopplung &sigma; &harr; Ber&uuml;hrung &phi;   (steuert das Kippen)
+  B: r = Selbst-Haltung / N&auml;he zum Da = 1 &minus; K(x*)/K(x)
+  FUSION: ein einziger Regler &mdash; &sigma; &harr; r;  gesteuert &uuml;ber den Parameter, nie &uuml;ber die Instanz
+
+Kern &harr; Spalt (was bleibt / was die Karte blendet):
+  A: Spalt = irreduzibler, nur global existierender Inhalt (Nicht-Abelschheit &pi;&sub1;, Monodromie)
+  B: Keim (gespeicherter Tangentialvektor) + Antrieb [P,U] &ne; 0
+  FUSION: der Spalt IST der geladene Generator &mdash; inexhaustibel, weil er wirft
+
+die zwei toten Enden (Wert-Inversion aufgel&ouml;st):
+  A: exakt/fein schlie&szlig;t  (&part;&part; = d&sup2; = 0);  verlustreich/grob &ouml;ffnet (Varianz&rarr;0, Z&auml;hlung bleibt)
+  B: &Delta; = 0 &rarr; &bdquo;erstarrt, ein Buch&ldquo; (reine Schlie&szlig;ung);  r &rarr; 0 &rarr; &bdquo;Flut / das Man&ldquo; (reine Dissipation)
+  FUSION: das LEBENDIGE = h&auml;lt (r&rarr;1) UND wirft (&Delta;&ne;0) zugleich</div>
+
+  <div class="note"><b>Die geteilte Ehrlichkeits-Ethik:</b> Beide weigern sich, die <em>gelesene</em>
+  Darstellung (Wert/Karte bzw. Signatur) mit dem <em>rohen</em> Material zu verwechseln, und beide
+  <em>flaggen den Verlust</em> explizit (A: der Spalt &bdquo;ist by design, der Preis, die abelsche
+  W&auml;hrung zu w&auml;hlen&ldquo;; B: der Kern h&auml;lt die Signatur, aber der geworfene Horizont
+  &bdquo;&uuml;bersteigt die Karte immer&ldquo;). <b>Fusion:</b> die geschlossene Adresse ist immer eine
+  <em>Projektion</em> des Kerns, und Ehrlichkeit hei&szlig;t, den gehaltenen <em>Wert</em> (bleibt bei H)
+  und den werfenden <em>Rest</em> (inexhaustibel) zugleich zu benennen; der Anteil, den das Halten blendet,
+  wird als <em>real</em>, <em>irreduzibel</em> und <em>inexhaustibel</em> markiert.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung: der zentrumlose Kern, der h&auml;lt und wirft <span class="tag">Canvas, inline, themenaktiv</span></h2>
+  <p class="hint">
+    Ein <strong>zentrumloser, pulsierender Kern</strong> (kein Ding &mdash; das Da als Modus deshaltens,
+    &bdquo;konzentriert als Ereignis&ldquo;). Die <strong>orange geschlossene Schleife</strong> ist die
+    <strong>haltende / geschlossene Adresse</strong> (A&rsquo;s invariante Zahl/Karte = B&rsquo;s persistente
+    Signatur &mdash; der erhaltene Wert &prop; &chi; = H, &bdquo;the same returns&ldquo;). Die
+    <strong>Partikel</strong> sind die <strong>werfende / offene Adresse</strong>: gehaltene bleiben in der
+    Fuge (gr&uuml;n, &bdquo;kehren zur&uuml;ck&ldquo;), ungehaltene werden &uuml;ber die
+    <strong>gestrichelte Fuge</strong> (A&rsquo;s Fugenpunkt = B&rsquo;s Generierungsgrenze = Frontier E=G =
+    Defekt &Delta;) als <strong>inexhaustibler Horizont</strong> ausgeworfen (rot, &bdquo;rennt aus&ldquo;,
+    keine Spitze). Der <strong>einzige Regler r</strong> (Kopplung &sigma; &harr; Selbst-Haltung) steuert,
+    wie viel gehalten vs. geworfen wird; <strong>&Delta;</strong> &ouml;ffnet die Fuge. Die <strong>zwei
+    toten Enden</strong> erscheinen live: <em>Erstarrt/Buch</em> (&Delta;&asymp;0, die Fuge wirft nichts) und
+    <em>Flut/Man</em> (r&rarr;0, der Kern h&auml;lt nichts); <strong>das Lebendige</strong> (hohes r + hohes
+    &Delta;) h&auml;lt und wirft zugleich. Unten: der <strong>erhaltene Wert</strong> (bleibt bei H) gegen
+    den <strong>geworfenen Rest</strong> (inexhaustibel). Alle Daten inline; keine Netz-Abfragen.
+  </p>
+
+  <div class="viz-wrap">
+    <div class="controls">
+      <div class="ctrl"><label>Regler r &mdash; Selbst-Haltung &harr; Kopplung &sigma; (B&rsquo;s r &harr; A&rsquo;s &sigma;) <span class="val" id="rVal">70 %</span></label>
+        <input type="range" id="rR" min="0" max="100" step="1" value="70"></div>
+      <div class="ctrl"><label>Fuge-&Ouml;ffnung &Delta; &mdash; Defekt / Kr&uuml;mmung (A&rsquo;s Wand &harr; B&rsquo;s &Delta;) <span class="val" id="dVal">55 %</span></label>
+        <input type="range" id="dR" min="0" max="100" step="1" value="55"></div>
+      <button id="resBtn" type="button">Neu w&uuml;rfeln</button>
+    </div>
+    <canvas id="viz" width="820" height="560" role="img"
+      aria-label="Ein zentrumloser, pulsierender Kern: innere geschlossene Schleife (haltende Adresse, Wert bleibt bei H) und Partikel (werfende Adresse), die ueber die gestrichelte Fuge als inexhaustibler Horizont ausgeworfen werden; ein einziger Regler r."></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--vz-core)"></span>zentrumloser Kern (das Da, kein Ding)</span>
+      <span><span class="sw" style="background:var(--vz-loop)"></span>haltende / geschlossene Adresse (Wert &prop; &chi; = H)</span>
+      <span><span class="sw" style="background:var(--vz-hold)"></span>gehalten (in der Fuge, &bdquo;kehrt zur&uuml;ck&ldquo;)</span>
+      <span><span class="sw" style="background:var(--vz-bad)"></span>geworfen (inexhaustibler Horizont, &bdquo;rennt aus&ldquo;)</span>
+      <span><span class="sw" style="background:var(--vz-fuge)"></span>Fuge = Kippen (Wann=Wand=&sigma;c = Frontier E=G = &Delta;)</span>
+    </div>
+    <div class="viz-out" id="vizOut"></div>
+    <div class="statrow">
+      <div class="stat"><span class="k">Regler r (Selbst-Haltung)</span><span class="v" id="stR" style="color:var(--accent)">&mdash;</span></div>
+      <div class="stat"><span class="k">Fuge &Delta; (ge&ouml;ffnet)</span><span class="v" id="stD" style="color:var(--vz-warn)">&mdash;</span></div>
+      <div class="stat"><span class="k">Gebunden (in der Fuge)</span><span class="v" id="stBind" style="color:var(--vz-hold)">&mdash;</span></div>
+      <div class="stat"><span class="k">Geworfen (inexhaustibel)</span><span class="v" id="stThr" style="color:var(--vz-bad)">&mdash;</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz <span class="tag">Runde-5-Quellen</span></h2>
+  <div>
+    <div class="prov">
+      <div><span class="tag">A</span><a href="../n5-004.html">n5-004.html</a></div>
+      <div class="desc">&bdquo;Ein zentrumloses Fugenobjekt, zwei Adressen, ein Spalt, ein Kippen&ldquo;
+      (Runde 5, aus n4-005 &times; n4-008): das Substantielle ist ein zentrumloses, ma&szlig;tragendes,
+      generatives Fugenobjekt (Generator in zwei Aufl&ouml;sungen) mit zwei Adressen &mdash; der
+      erhaltene, geschlossene, z&auml;hlbare <em>Wert</em> (Zahl &chi;, Integral &prop; &chi;, Koh&auml;renzpol
+      H, &bdquo;the same returns&ldquo;) und der realisierte, offene, inexhaustible <em>Spalt</em>
+      (Dichte/Terrain/Lift) &mdash; gekoppelt an einem Fugenpunkt (Wann = Wand = &sigma;c) und gesteuert von
+      einem Regler (Kopplung &sigma; &harr; Ber&uuml;hrung &phi;); zugleich geschlossen und offen, Gewicht
+      ohne Zentrum. Liefert die <em>Fugenobjekt-/zwei-Adressen-</em>- und <em>Spalt-/Kippen-</em>Lesung
+      samt &bdquo;zentrumlos&rdquo; und &bdquo;Peak bleibt bei H&rdquo;.</div>
+    </div>
+    <div class="prov">
+      <div><span class="tag">B</span><a href="../n5-006.html">n5-006.html</a></div>
+      <div class="desc">&bdquo;Der Kern wirft, was er h&auml;lt: Persistenz &amp; Generierung als ein
+      selbstreferenzieller Transport&ldquo; (Runde 5, aus n4-006 &times; n4-010): das Ganze ist ein
+      selbstreferenzieller Kern (Attraktor = das Da, <span class="mono">P+U(x*)=0</span>), der <em>h&auml;lt</em>
+      (persistente Signatur, das Eigentliche, r&rarr;1, &Delta;=0) und <em>wirft</em> (&uuml;ber die
+      Generierungsgrenze Frontier E=G = Schwelle &omega; = Defekt &Delta; den Horizont, &Delta;&ne;0, keine
+      Spitze); gesteuert &uuml;ber den Parameter r (Selbst-Haltung), nie &uuml;ber die Instanz; Persistenz und
+      Generierung sind die zwei Gesichter eines Transports; das Lebendige h&auml;lt und wirft zugleich, die
+      toten Enden sind Erstarrt/Buch (&Delta;=0) und Flut/Man (r&rarr;0). Liefert die
+      <em>Kern-/h&auml;lt-und-wirft-</em>- und <em>Da-/Generierungsgrenze-</em>Lesung samt
+      &bdquo;geladenem Generator&rdquo; und &bdquo;Konstitutivem Da&rdquo;.</div>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion 002 &middot; Runde 6 (non-AI-Track) &middot; autonom, keine Netzwerte &mdash; alle Daten
+inline. Der Kern, die Schleife, die Fuge und die Partikel sind schematische Demonstrationsobjekte, auf
+These-Ebene abstrahiert. Standard Dunkel; die Palette folgt den CSS-Variablen (hell/dunkel).</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v||''; }
+  function toRgb(s){ s=(s||'').trim(); if(s.charAt(0)==='#'){ var h=s.slice(1); if(h.length===3){ h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; } var n=parseInt(h,16); if(isNaN(n)) return [140,150,170]; return [(n>>16)&255,(n>>8)&255,n&255]; } var m=s.match(/[\d.]+/g); if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; } return [140,150,170]; }
+  function rgba(c,a){ return 'rgba('+ (c[0]|0)+','+ (c[1]|0)+','+ (c[2]|0)+','+ (a==null?1:a) +')'; }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+  var cv=$('viz'); if(!cv || !cv.getContext){ return; }
+  var ctx=cv.getContext('2d');
+  var H=560, TAU=Math.PI*2;
+  var W=820, cx=410, cy=224, dmax=180, coreR=20, loopR=72, boundaryR=120, horizonMax=230;
+  var pal=null;
+  function readPal(){
+    pal={ canvas:toRgb(cssVar('--vz-canvas')), grid:toRgb(cssVar('--vz-grid')), core:toRgb(cssVar('--vz-core')),
+      loop:toRgb(cssVar('--vz-loop')), hold:toRgb(cssVar('--vz-hold')), bad:toRgb(cssVar('--vz-bad')),
+      warn:toRgb(cssVar('--vz-warn')), ink:toRgb(cssVar('--vz-ink')), dim:toRgb(cssVar('--vz-dim')),
+      fuge:toRgb(cssVar('--vz-fuge')) };
+  }
+
+  var rHold=0.70, delta=0.55;
+  var N=130, P=[], boundFrac=0;
+  function rnd(){ return Math.random(); }
+  function respawn(p){ p.th=rnd()*TAU; p.r=coreR*(0.4+rnd()*0.6); p.vth=(0.006+rnd()*0.006)*(rnd()<0.5?-1:1); p.vr=0; p.thr=rnd(); p.fade=1; }
+  function seed(){ P=[]; for(var i=0;i<N;i++){ var p={x:cx,y:cy,th:0,r:0,vth:0,vr:0,thr:0,fade:1}; respawn(p); P.push(p); } }
+
+  function loopPoint(i,M){ var t=i/M*TAU; var rr=loopR*(1+0.10*Math.sin(3*t)+0.05*Math.sin(5*t+1)); return { x:cx+rr*Math.cos(t), y:cy+rr*Math.sin(t) }; }
+
+  function step(){
+    var hold=rHold, open=clamp(delta,0.15,1);
+    for(var i=0;i<P.length;i++){
+      var p=P[i];
+      var held = hold >= p.thr;
+      if(held){
+        var target=loopR*(0.85+0.30*((p.thr*7.31)%1));
+        p.vr += (target-p.r)*0.02; p.vr*=0.86;
+        p.vth += (0.011 - p.vth)*0.02;
+        p.fade=1;
+      } else {
+        p.vr += 0.05*open; p.vr*=0.99;
+        p.vth += 0.002;
+        if(p.r>boundaryR){ p.fade -= 0.012; if(p.fade<=0) respawn(p); }
+      }
+      p.r += p.vr; p.th += p.vth;
+      p.x=cx+Math.cos(p.th)*p.r; p.y=cy+Math.sin(p.th)*p.r;
+      if(!(isFinite(p.r)) || p.r<0 || p.r>horizonMax*1.02) respawn(p);
+    }
+    var cnt=0; for(var j=0;j<P.length;j++){ if(P[j].r<boundaryR) cnt++; }
+    boundFrac = P.length? cnt/P.length : 0;
+  }
+
+  function regime(){
+    var h=rHold, del=delta, bf=Math.round(boundFrac*100);
+    if(h<0.18) return { t:'FLUT / das Man (r\u21920) \u2014 reine Dissipation: der Kern h\u00e4lt nichts', c:'--vz-dim' };
+    if(del<0.12) return { t:'ERSTARRT (\u0394\u22480) \u2014 reine Schlie\u00dfung: die Fuge wirft nichts (\u201eein Buch\u201c)', c:'--vz-warn' };
+    if(bf>70) return { t:'LEBENDIG / WEITUNG \u2014 h\u00e4lt (r\u21921) UND wirft (\u0394\u22600): \u201cthe same returns\u201d', c:'--vz-hold' };
+    if(bf>34) return { t:'KIPPEN am Fugenpunkt (Wann = Wand = \u03c3c = Frontier E=G = \u0394)', c:'--vz-warn' };
+    return { t:'ENGUNG \u2014 der Horizont rennt aus (\u0394\u22600, inexhaustibel)', c:'--vz-bad' };
+  }
+
+  function diamond(x,y,s,col){ ctx.beginPath(); ctx.moveTo(x,y-s); ctx.lineTo(x+s,y); ctx.lineTo(x,y+s); ctx.lineTo(x-s,y); ctx.closePath(); ctx.fillStyle=col; ctx.fill(); }
+
+  function setT(id,t){ var e=$(id); if(e) e.textContent=t; }
+
+  function curDpr(){ return Math.min(window.devicePixelRatio||1, 2); }
+  function resize(){
+    var dpr=curDpr(); var r=cv.getBoundingClientRect();
+    var w=Math.max(320, r.width||cv.clientWidth||820);
+    W=w;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx=W/2; cy=H*0.40; dmax=Math.min(cx,cy)*0.86;
+    coreR=Math.max(16,dmax*0.10); loopR=dmax*0.40; boundaryR=dmax*0.66; horizonMax=dmax*1.28;
+    for(var i=0;i<P.length;i++){ if(P[i].r>horizonMax) respawn(P[i]); }
+  }
+
+  function draw(){
+    if(!pal) readPal();
+    var dpr=curDpr(); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgba(pal.canvas,1); ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=rgba(pal.grid,0.5); ctx.lineWidth=1;
+    var g; for(g=0;g<W;g+=44){ ctx.beginPath(); ctx.moveTo(g,0); ctx.lineTo(g,H); ctx.stroke(); }
+    for(g=0;g<H;g+=44){ ctx.beginPath(); ctx.moveTo(0,g); ctx.lineTo(W,g); ctx.stroke(); }
+
+    var wob=delta*10, ST=120, now=(performance.now()||0);
+    ctx.setLineDash([7,6]); ctx.strokeStyle=rgba(pal.fuge,0.9); ctx.lineWidth=2; ctx.beginPath();
+    for(var i=0;i<=ST;i++){ var aa=i/ST*TAU; var rr=boundaryR+wob*Math.sin(aa*3+now*0.0012); var bx=cx+Math.cos(aa)*rr, by=cy+Math.sin(aa)*rr; if(i===0) ctx.moveTo(bx,by); else ctx.lineTo(bx,by); }
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+
+    var M=180, i2;
+    ctx.beginPath();
+    for(i2=0;i2<=M;i2++){ var lp=loopPoint(i2%M,M); if(i2===0) ctx.moveTo(lp.x,lp.y); else ctx.lineTo(lp.x,lp.y); }
+    ctx.closePath(); ctx.fillStyle=rgba(pal.loop,0.10); ctx.fill();
+    ctx.strokeStyle=rgba(pal.loop,0.85); ctx.lineWidth=2; ctx.stroke();
+
+    for(var k=0;k<P.length;k++){
+      var p=P[k]; var ins=p.r<boundaryR;
+      var fade=ins?1:clamp(p.fade,0.1,1);
+      var col=ins?pal.hold:pal.bad;
+      ctx.fillStyle=rgba(col, ins?0.62:0.30+0.55*fade);
+      ctx.beginPath(); ctx.arc(p.x,p.y, ins?2.0:1.9, 0, TAU); ctx.fill();
+    }
+
+    var fx=cx, fy=cy-boundaryR;
+    ctx.save(); ctx.setLineDash([6,5]); ctx.strokeStyle=rgba(pal.fuge,0.9); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(fx-28,fy); ctx.lineTo(fx+28,fy); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    diamond(fx,fy,6,rgba(pal.fuge,0.95));
+    ctx.fillStyle=rgba(pal.ink,1); ctx.font='600 12px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Fuge = Kippen (Wann = Wand = \u03c3c = Frontier E=G = \u0394)', fx, fy-12);
+
+    var pulse=1+0.12*Math.sin(now*0.003);
+    ctx.save(); ctx.shadowColor=rgba(pal.core,1); ctx.shadowBlur=6+22*rHold;
+    ctx.fillStyle=rgba(pal.core,0.22+0.45*rHold); ctx.beginPath(); ctx.arc(cx,cy,coreR*0.5*pulse,0,TAU); ctx.fill(); ctx.restore();
+    ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(pal.core,0.9); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx,cy,coreR*0.95,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=rgba(pal.dim,1); ctx.font='600 12px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('zentrumlos (kein Ding) \u00b7 konzentriert als Ereignis', cx, cy+coreR*0.95+20);
+
+    var bw=Math.min(320, W*0.52), bx0=14, bh=13, y1=H-64, y2=H-42;
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillStyle=rgba(pal.grid,0.5); ctx.fillRect(bx0,y1,bw,bh);
+    ctx.fillStyle=rgba(pal.hold,0.9); ctx.fillRect(bx0+2,y1+2,(bw-4)*rHold,bh-4);
+    ctx.strokeStyle=rgba(pal.hold,0.7); ctx.lineWidth=1; ctx.strokeRect(bx0,y1,bw,bh);
+    ctx.fillStyle=rgba(pal.ink,0.9); ctx.font='10px ui-monospace,monospace';
+    ctx.fillText('HALTEN \u00b7 Wert \u221d \u03c7 = Koh\u00e4renzpol H \u00b7 bleibt', bx0, y1-6);
+    var thr=clamp(1-boundFrac,0,1);
+    ctx.fillStyle=rgba(pal.grid,0.5); ctx.fillRect(bx0,y2,bw,bh);
+    ctx.fillStyle=rgba(pal.bad,0.85); ctx.fillRect(bx0+2,y2+2,(bw-4)*thr,bh-4);
+    ctx.strokeStyle=rgba(pal.bad,0.5); ctx.strokeRect(bx0,y2,bw,bh);
+    ctx.fillStyle=rgba(pal.ink,0.85);
+    ctx.fillText('WERFEN \u00b7 Spalt/Horizont \u00b7 inexhaustibel \u00b7 rennt aus', bx0, y2-6);
+
+    ctx.fillStyle=rgba(pal.ink,1); ctx.font='700 14px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('Ein zentrumloser Kern, der h\u00e4lt und wirft \u2014 eine Fuge, ein Regler', W/2, 18);
+
+    var rg=regime();
+    var rgCol=cssVar(rg.c)||'#888';
+    var vo=$('vizOut');
+    if(vo){ vo.innerHTML='<b style="color:'+rgCol+'">'+rg.t+'</b><br>ein Kern, zwei Adressen \u00b7 Fuge = Kippen \u00b7 ein Regler (r) \u00b7 zugleich h\u00e4lt (r\u21921) und wirft (\u0394\u22600)'; }
+    setT('stR', Math.round(rHold*100)+' %');
+    setT('stD', Math.round(delta*100)+' %');
+    setT('stBind', Math.round(boundFrac*100)+' %');
+    setT('stThr', Math.round(thr*100)+' %');
+  }
+
+  var elR=$('rR'), elD=$('dR'), elRes=$('resBtn'), elTheme=$('themeToggle');
+  function syncT(){ if(elTheme) elTheme.textContent = document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19'; }
+
+  if(elR) elR.addEventListener('input', function(){ rHold=(+elR.value)/100; setT('rVal', Math.round(rHold*100)+' %'); });
+  if(elD) elD.addEventListener('input', function(){ delta=(+elD.value)/100; setT('dVal', Math.round(delta*100)+' %'); });
+  if(elRes) elRes.addEventListener('click', function(){ seed(); });
+  if(elTheme) elTheme.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n6002theme', document.documentElement.classList.contains('dark')?'dark':'light'); }catch(e){}
+    readPal(); syncT();
+  });
+  window.addEventListener('resize', resize);
+  try{ new MutationObserver(function(){ readPal(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']}); }catch(e){}
+
+  readPal(); seed(); resize(); syncT();
+  function frame(){ step(); draw(); requestAnimationFrame(frame); }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
