@@ -183,4 +183,54 @@ const TAU=Math.PI*2;
  const ux=c[0]-W*.17,vx=c[0]+W*.17,ok=md===0;
  const rr=(xx,yy,w,h,rd)=>{x.beginPath();x.moveTo(xx+rd,yy);x.lineTo(xx+w-rd,yy);
   x.quadraticCurveTo(xx+w,yy,xx+w,yy+rd);x.lineTo(xx+w,yy+h-rd);
-  x.quadraticCurveTo(xx+w,yy+h,xx+w-rd,yy+h);x.lineTo(xx+rd
+  x.quadraticCurveTo(xx+w,yy+h,xx+w-rd,yy+h);x.lineTo(xx+rd,yy+h);
+  x.quadraticCurveTo(xx,yy+h,xx,yy+h-rd);x.lineTo(xx,yy+rd);x.quadraticCurveTo(xx,yy,xx+rd,yy);x.closePath()};
+  x.strokeStyle='rgba(125,211,252,.2)';x.lineWidth=1.5;
+  x.beginPath();x.moveTo(W*.1,gY);x.lineTo(W*.9,gY);x.stroke();
+  const box=(px,hue,label)=>{const bw=W*.13,bh=H*.15;
+   const g=x.createLinearGradient(0,gY-bh,0,gY);
+   g.addColorStop(0,`hsla(${hue},80%,66%,.04)`);g.addColorStop(1,`hsla(${hue},80%,66%,.2)`);
+   x.fillStyle=g;rr(px-bw/2,gY-bh,bw,bh,14);x.fill();
+   x.strokeStyle=`hsla(${hue},85%,72%,.6)`;x.lineWidth=2;rr(px-bw/2,gY-bh,bw,bh,14);x.stroke();
+   x.font='15px "JetBrains Mono",monospace';x.fillStyle=`hsla(${hue},92%,84%,.95)`;x.textAlign='center';
+   x.fillText(label,px,gY-bh/2+5);x.textAlign='start'};
+  box(ux,48,'U');box(vx,280,'V');
+  const y=gY-H*.15-18,mid=(ux+vx)/2,gap=ok?0:46;
+  x.strokeStyle=ok?'rgba(52,211,153,.9)':'rgba(251,113,133,.85)';x.lineWidth=3;
+  x.setLineDash([8,6]);x.lineDashOffset=-T*24;
+  x.beginPath();x.moveTo(ux,y);
+  x.bezierCurveTo(ux+W*.05,y-H*.14,mid-gap*.4,y-H*.15,mid-gap,y-H*.14);x.stroke();
+  x.beginPath();x.moveTo(vx,y);
+  x.bezierCurveTo(vx-W*.05,y-H*.14,mid+gap*.4,y-H*.15,mid+gap,y-H*.14);x.stroke();
+  x.setLineDash([]);
+  x.textAlign='center';
+  if(ok){x.font='16px "JetBrains Mono",monospace';x.fillStyle='rgba(52,211,153,.95)';
+   x.fillText('U ∪ V',mid,y-H*.165)}
+  else{x.font='24px "JetBrains Mono",monospace';x.fillStyle='rgba(251,113,133,.9)';
+   x.fillText('∅',mid,y-H*.15)}
+  x.textAlign='start'}});
+
+const stage=document.getElementById('stage'),bar=document.getElementById('bar');
+let cur=0,draw=null;
+const tf=()=>performance.now()/1000;
+S.forEach((s,i)=>{const d=document.createElement('div');d.className='s';
+ d.innerHTML=`<canvas></canvas><div class="tag">${s.t}</div><div class="cap"><h2>${s.c}</h2></div>`;
+ stage.appendChild(d);s.el=d;s.cv=d.querySelector('canvas')});
+function show(i){cur=((i%S.length)+S.length)%S.length;
+ S.forEach((s,j)=>s.el.classList.toggle('on',j===cur));
+ bar.style.width=((cur+1)/S.length*100)+'%';
+ const dpr=Math.min(devicePixelRatio||1,2),cv=S[cur].cv;
+ cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+ const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+ if(!S[cur].draw)S[cur].draw=S[cur].f(x,innerWidth,innerHeight,tf);
+ draw=S[cur].draw}
+addEventListener('resize',()=>{S.forEach(s=>s.draw=null);show(cur)});
+addEventListener('keydown',e=>{
+ if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')show(cur+1);
+ else if(e.key==='ArrowLeft'||e.key==='PageUp')show(cur-1);
+ else if(e.key==='Home')show(0);else if(e.key==='End')show(S.length-1)});
+(function loop(){if(draw)draw();requestAnimationFrame(loop)})();
+show(0);
+</script>
+</body>
+</html>
