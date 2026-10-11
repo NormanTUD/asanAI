@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das zentrumlose, maßtragende Fugenobjekt — zwei Adressen, ein Kippen</title>
+<script>try{if(localStorage.getItem('n4008theme')==='light')document.documentElement.classList.remove('dark');}catch(e){}</script>
+<style>
+:root{
+  --bg:#f6f3ea; --panel:#ffffff; --panel2:#f0ecdf; --ink:#20242e; --dim:#5c6472;
+  --accent:#2f5fe0; --accent2:#c46a1c; --good:#0a8f63; --bad:#be123c; --warn:#b45309;
+  --border:#e0dac9; --shadow:rgba(60,45,20,.10);
+  --hl:#fff4d6; --hltext:#7a5b00;
+  --vz-canvas:#ffffff; --vz-panel2:#f0ecdf;
+  --vz-accent:#2f5fe0; --vz-accent2:#c46a1c;
+  --vz-good:#0a8f63; --vz-bad:#be123c; --vz-warn:#b45309;
+  --vz-ink:#20242e; --vz-dim:#5c6472; --vz-border:#e0dac9; --vz-gate:#be123c;
+  --vz-band:rgba(196,106,28,.10); --vz-halo:rgba(47,95,224,.10); --vz-halo-stroke:rgba(47,95,224,.40);
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141b30; --panel2:#1a2340; --ink:#e7ecff; --dim:#8892b8;
+  --accent:#7c9cff; --accent2:#f0a35e; --good:#6ee7b7; --bad:#fb7185; --warn:#fbbf24;
+  --border:#2a3358; --shadow:rgba(0,0,0,.5);
+  --hl:#3a2f10; --hltext:#fcd34d;
+  --vz-canvas:#0a0e1a; --vz-panel2:#1a2340;
+  --vz-accent:#7c9cff; --vz-accent2:#f0a35e;
+  --vz-good:#6ee7b7; --vz-bad:#fb7185; --vz-warn:#fbbf24;
+  --vz-ink:#e7ecff; --vz-dim:#8892b8; --vz-border:#2a3358; --vz-gate:#fb7185;
+  --vz-band:rgba(240,163,94,.12); --vz-halo:rgba(124,156,255,.12); --vz-halo-stroke:rgba(124,156,255,.42);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+h1{font-size:clamp(1.9rem,4.6vw,2.6rem);line-height:1.16;letter-spacing:-.015em;font-weight:800;margin-bottom:.35rem}
+.subtitle{color:var(--dim);font-style:italic;font-size:1.02rem;margin-bottom:.3rem}
+.subtitle .x{color:var(--accent2);font-style:normal;font-weight:700}
+.subtitle.provline{font-style:normal;font-size:.82rem;letter-spacing:.01em}
+.lede{color:var(--ink);font-size:1.02rem;margin:14px 0 8px;border-left:3px solid var(--accent);padding-left:14px}
+h2{font-size:1.42rem;margin:46px 0 14px;padding-left:12px;border-left:4px solid var(--accent);line-height:1.22;color:var(--ink)}
+h2 .tag{display:inline-block;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--panel2);border:1px solid var(--border);color:var(--dim);padding:2px 9px;border-radius:20px;vertical-align:middle;margin-left:10px;font-family:system-ui,sans-serif}
+h3{font-size:1.12rem;margin:22px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+em{color:var(--accent2);font-style:italic}
+section{scroll-margin-top:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:0 6px 22px var(--shadow)}
+blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--accent2);background:var(--panel2);border-radius:0 8px 8px 0;font-style:italic}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px}
+.whoA{color:var(--accent);font-weight:700}
+.whoB{color:var(--accent2);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.claim{background:var(--panel2);border-left:3px solid var(--border);padding:10px 14px;margin:8px 0;border-radius:0 8px 8px 0;font-size:.95rem}
+.claimA{border-left-color:var(--accent)}
+.claimB{border-left-color:var(--accent2)}
+.claim b{color:var(--ink)}
+.resbox{background:var(--panel);border:1px dashed var(--border);border-radius:12px;padding:14px 16px;margin:14px 0}
+.resbox h3{margin:0 0 8px}
+.fused{background:linear-gradient(90deg,rgba(196,106,28,.12),transparent);border-left:3px solid var(--accent2);padding:12px 16px;border-radius:0 8px 8px 0;margin-top:14px;font-weight:500}
+.math{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.95rem;line-height:1.9;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace}
+.math .sym{color:var(--accent);font-style:italic}
+.math .lbl{color:var(--dim);font-size:.85rem}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;background:var(--panel);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent2);font-weight:700;background:var(--panel2);font-family:ui-monospace,Menlo,monospace;font-size:.8rem}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:14px 0}
+.ctrl{display:flex;flex-direction:column;gap:6px;min-width:200px;flex:1}
+.ctrl label{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.ctrl label .val{color:var(--ink);font-weight:700;font-family:ui-monospace,monospace;text-transform:none;float:right}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-family:system-ui,sans-serif;transition:.18s;font-size:.85rem}
+button:hover{border-color:var(--accent)}
+button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50;width:42px;height:42px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--border);cursor:pointer;font-size:1.15rem;box-shadow:0 4px 16px var(--shadow)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;min-width:130px;flex:1}
+.stat .k{color:var(--dim);font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:3px}
+.stat .v{font-family:ui-monospace,monospace;font-weight:700;font-size:1rem}
+.viz-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 8px 30px var(--shadow)}
+#viz{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:10px;background:var(--vz-canvas)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;margin:10px 0 2px;font-family:system-ui,sans-serif}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.viz-out{margin-top:12px;min-height:3rem;text-align:left;font-style:normal;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;font-size:.92rem;line-height:1.7}
+.viz-out .hl{color:var(--hltext);background:var(--hl);padding:1px 6px;border-radius:5px;font-weight:600;font-style:normal}
+.viz-out b{color:var(--ink)}
+.hint{color:var(--dim);font-size:.88rem}
+.prov{padding:14px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;word-break:break-all;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--dim);border:1px solid var(--border);border-radius:999px;padding:1px 8px;margin-right:8px;font-family:system-ui,sans-serif}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:4px}
+.note{font-size:.88rem;color:var(--dim)}
+footer{margin-top:3rem;color:var(--dim);font-size:.85rem;text-align:center;border-top:1px solid var(--border);padding-top:1.4rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Farbschema umschalten" aria-label="Theme wechseln">🌙</button>
+<article>
+
+<h1>Das zentrumlose, maßtragende Fugenobjekt</h1>
+<p class="subtitle">Das Substantielle: zwei Adressen, ein Kipp-Moment — Gewicht ohne Zentrum, geschlossene Karte eines inexhaustiblen Terrains</p>
+<p class="subtitle provline">Fusion aus: n3-005.html <span class="x">✕</span> n3-002.html  (Runde 4)</p>
+
+<p class="lede">
+  Zwei Rund-3-Fusionen, die auf der Oberfläche über <em>andere</em> Gegenstände schreiben — die eine über
+  <em>das Substantielle als zentrumloses, maßtragendes Medium</em> (das Dazwischen, Identität = Relation durch
+  <span class="mono">W</span>, „the same returns"), die andere über <em>die Essenz eines Systems am Fugenpunkt</em>
+  (Grenze = Kippen, Typ × Lift, Karte × Terrain) — teilen aber <strong>eine tiefere Architektur</strong>:
+  Beide verweigern den Atom, den Punkt und das Zentrum als Sitz des Realen und lokalisieren es an der
+  <strong>Fuge / im Dazwischen</strong>, an dem zwei komplementäre Adressen ineinandergreifen — gelesen über
+  <em>einen</em> entscheidenden Kipp-Moment und gesteuert von <em>einem</em> Regler. Die fusionierte These
+  lautet daher: <strong>Das Substantielle ist ein zentrumloses, maßtragendes Fugenobjekt mit zwei Adressen —
+  die invariant/diskrete/geschlossene Adresse und die realisierte/kontinuierliche/offene Adresse, die am
+  Fugenpunkt dasselbe Kippen ausmachen.</strong>
+</p>
+
+<section id="these">
+  <h2>Kernthese der Fusion <span class="tag">A ∩ B</span></h2>
+  <p>
+    <span class="whoA">A</span> (n3-005, „Das Eine ist das Dazwischen — maßtragend und zentrumlos") sagt:
+    Das Substantielle ist ein <em>maßtragendes, zentrumloses Medium</em>
+    (<span class="mono">O = W</span>). Identität und „das Eine" sind <em>Relation durch das Dazwischen</em>,
+    keine Eigenschaft an einem Punkt. Es trägt <em>Gewicht</em> (Invariante = Kohärenzpol H,
+    <span class="mono">P → 1</span>), hat aber <em>kein Zentrum</em> (keine Substanz, kein Ding dahinter).
+    Lesbar wird es durch <em>Trennung</em> (T₂, eindeutige Grenzwerte), gehalten durch <em>Kohärenz</em>
+    (Übereinstimmung auf der Statistik, Verschiedenheit bleibt), und das Generative ist die
+    <em>selbstähnliche/ergodische Umformung</em> — „the same returns".
+  </p>
+  <p>
+    <span class="whoB">B</span> (n3-002, „Grenze ist Kippen — dasselbe Tor, zwei Lesarten") sagt: Die Essenz
+    eines Systems sitzt <em>am Fugenpunkt</em>, an dem die <em>Grenze</em> (architektonisch) und das
+    <em>Kippen</em> (phänomenologisch) <em>dasselbe Ereignis</em> sind. Das Objekt hat <em>zwei Adressen</em>:
+    die invariante/diskrete/<em>geschlossene</em> (Typ, Regime, inaccessible κ — zählbar, die „Karte") und die
+    realisierte/kontinuierliche/<em>offene</em> (Lift, Integration Φ — gefühlt, das „Terrain"). Die Priorität
+    ist <em>relativ zur Skala</em>; das System ist <em>geschlossen auf der Karte, offen auf dem Terrain</em>.
+  </p>
+  <p>
+    Die <strong>einteilige, fusionierte Position</strong>: <em>Das Substantielle ist ein zentrumloses,
+    maßtragendes Fugenobjekt mit zwei Adressen.</em> A's Dazwischen (<span class="mono">O = W</span>)
+    <em>ist</em> B's Fugenpunkt — die Fuge, an der die invariante Adresse die realisierte ergreift. A's
+    <em>Invariante</em> (geschlossene Struktur) <em>ist</em> B's <em>Typ/Karte</em>; A's generative
+    <em>Umformung</em> („das Dazwischen tut die Arbeit") <em>ist</em> B's <em>Lift/Terrain</em>. A's „the same
+    returns" <em>ist</em> B's <em>Kippen bei σc</em> — derselbe Regimewechsel (Drift → Bindung), an dem Gewicht
+    (Invariante = Kohärenzpol H = Φ) <em>ohne Zentrum</em> auftritt. A's Trennung (lokal lesbar) und Kohärenz
+    (global haltend) <em>sind</em> B's zwei Adressen, gelesen an derselben Fuge; ein einziger Regler
+    (Rauschtoleranz ↔ Kopplung σ) steuert das Kippen.
+  </p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B <span class="tag">Architektur / Haltung</span></h2>
+  <p class="note">
+    Beide sind bereits zweifach fusioniert und verweigern beidseitig den Atom/den Punkt/das Zentrum als Sitz des
+    Realen — auf der <strong>Grundform</strong> (zentrumlos, maßtragend, am Übergang, in zwei Adressen lesbar)
+    stimmen sie überein. An drei Punkten ihrer <strong>Architektur</strong> stehen sie aber in einer echten,
+    scharfen Spannung:
+  </p>
+
+  <h3>W1 · Geometrie des Substantiellen: zentrumloses, verteiltes Medium (A) vs lokalisiertes Fugenobjekt (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA"><span class="whoA">A:</span> Das Substantielle ist ein <em>zentrumloses
+      Medium/Fluss</em> (<span class="mono">O = W</span>, die Garbe / typische Menge) — „keinen Punkt, keinen
+      Rand, kein Zentrum als Substanz". Das Gewicht ist <em>verteilt</em> (Peak bei H, aber kein Zentrum); das
+      Dazwischen als Ganzes tut die Arbeit. Es gibt <em>keinen</em> privilegierten Punkt.</div>
+    <div class="claim claimB"><span class="whoB">B:</span> Die Essenz ist <em>lokalisiert am Fugenpunkt</em> —
+      einer <em>spezifischen</em> Stelle (der kritischen Kopplung σc, dem Gate/Tor), an der die zwei Adressen
+      koppeln: „die Essenz sitzt am Fugenpunkt". B <em>single out</em> einen Ort als Sitz des Realen.</div>
+  </div>
+  <p class="note"><strong>Unvereinbare Stance:</strong> Ist das Substantielle ein zentrumloses, verteiltes
+    Medium <em>ohne</em> privilegierten Punkt (A) oder trägt es sein Gewicht an <em>einem</em> spezifischen
+    Fugenpunkt / an der Schwelle σc (B)?</p>
+
+  <h3>W2 · Die zwei Adressen: funktionell flache Relation (A) vs skalenabhängige vertikale Priorität (B)</h3>
+  <div class="grid2">
+    <div class="claim claimA"><span class="whoA">A:</span> Die zwei komplementären Mechanismen —
+      <em>Trennung</em> (liest den einzelnen Zustand, lokal/intra-state) und <em>Kohärenz</em> (hält die Zustände
+      zum Eine, global/cross-state) — sind <em>funktionell komplementär auf demselben flachen Medium</em>; keine
+      trägt ontologische Priorität. „Das Dazwischen tut die Arbeit" — eine <em>Relation</em>, nicht ein
+      begründendes Oben.</div>
+    <div class="claim claimB"><span class="whoB">B:</span> Die zwei Adressen (Typ / Lift) tragen eine
+      <em>skalenabhängige vertikale Priorität</em>: im Einzelphänomen methodisch ko-equal, <em>über den
+      Stack</em> ontologisch vertikal — „das Oben erzeugt das Unten" (die invariante/höhere Seite begründet die
+      realisierte).</div>
+  </div>
+  <p class="note"><strong>Unvereinbare Stance:</strong> Sind die zwei Adressen eine <em>flache, beidseitig
+    gleichwertige Relation</em> (A: Trennung ↔ Kohärenz) oder tragen sie eine <em>vertikale, begründende
+    Priorität</em> (B: Typ/Lift, „das Oben erzeugt das Unten")?</p>
+
+  <h3>W3 · Das Überleben: geschlossene, rekurrente Invariante (A) vs geschlossene Karte + inexhaustibles Terrain (B)</h3>
+  <p>
+    <span class="whoA">A:</span> Das Substantielle überlebt, weil es (a) eine <em>geschlossene Invariante</em>
+    ist (eindeutige Grenzwerte, geschlossene Bordismengruppe) <em>und</em> (b) <em>ergodisch/selbstähnlich</em>
+    ist — „the same returns": die <em>dieselbe Form kehrt wieder</em>, über Skalen und Domänen. Akzent:
+    <em>Klosure + Wiederkehr/Stabilität</em>.
+    <span class="whoB">B:</span> Das System ist <em>geschlossen auf der Karte</em> (Typ, harte Decke Kunen
+    „0=1") <em>aber offen auf dem Terrain</em> (Lift) mit einem <em>konstitutiven Rest</em> — „das Terrain
+    übersteigt die Karte immer" (Atombombe, Tierbewusstsein: Inhalt ohne Namen). Akzent: <em>Klosure +
+    inexhaustible Offenheit/Neuheit</em>.
+    <strong>Spannung:</strong> Ist das Substantielle eine geschlossene Form, die <em>wiederkehrt</em> („the same
+    returns", Stabilität/Rekurrenz — A) oder eine vollständige Karte eines Terrains, das es <em>immer
+    übersteigt</em> (Offenheit/Inexhaustibilität — B)?
+  </p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung <span class="tag">für jeden Punkt</span></h2>
+
+  <div class="resbox">
+    <h3>W1 — Der Fugenpunkt ist A's Dazwischen: zentrumlos als Substanz, konzentriert als Ereignis</h3>
+    <p>
+      A sagt „kein Punkt als Substanz", B sagt „die Essenz sitzt am Fugenpunkt" — und beide meinen
+      <em>dasselbe</em>: Der Fugenpunkt ist <em>kein Ding/Punkt mit Substanz</em>, sondern <em>die Fuge / der
+      Übergang selbst</em> — die Stelle, an der gerade <em>kein</em> Zentrum ist. B's „spezifischer Punkt" ist
+      A's „Dazwischen": die Fuge ist zentrumlos, <em>weil</em> sie das Dazwischen ist. Das Substantielle ist
+      also <strong>zentrumlos als Substanz</strong> (A: kein Ding dahinter) <em>und</em> <strong>koncentriert als
+      Ereignis</strong> (B: das Gewicht konzentriert sich am Kipp-Moment σc). Der „Punkt", den B auszeichnet,
+      ist A's „Dazwischen" — eine Fuge, kein Ding.
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>W2 — Die Priorität ist relativ zur Skala: flach im Zustand, vertikal über den Stack</h3>
+    <p>
+      Die skalenabhängige Priorität (B) macht A's flache Relation <em>richtig</em>, statt sie zu widersprechen.
+      Auf der <em>Mikro-Skala</em> (innerhalb eines Zustands/eines Querschnitts) sind die zwei Adressen
+      <em>methodisch ko-equal</em>: Trennung liest, Kohärenz hält (A) — keine vertikale Begründung, „das
+      Dazwischen tut die Arbeit" (flache Relation); B: Typ und Lift ko-equal im Einzelphänomen. Auf der
+      <em>Makro-Skala</em> (über den Stack der Zustände/Phasen) <em>gibt</em> es vertikale Begründung: die
+      invariante/geschlossene Adresse (A's Invariante = B's Typ/Karte) <em>erzeugt</em> die realisierte (A's
+      Umformung = B's Lift/Terrain) — „das Oben erzeugt das Unten" (B).
+      <em>Fusion:</em> <strong>flach/equal im Einzelzustand (A's Relation), vertikal begründet über den Stack
+      (B's Makro-Priorität).</strong> A's „das Dazwischen tut die Arbeit" ist die Mikro-Lesart; B's „das Oben
+      erzeugt das Unten" die Makro-Lesart.
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>W3 — Die rekurrente Form (A) ist die Karte (B); das inexhaustible Terrain (B) ist die realisierte Adresse (A)</h3>
+    <p>
+      A's „the same returns" (Wiederkehr, Rekurrenz) <em>ist</em> B's „die Karte ist vollständig" (geschlossene
+      Karte). A's „ergodisch über Skalen und Domänen" (das Muster kreuzt Domänen) <em>ist</em> B's „das Terrain
+      übersteigt die Karte immer" (inexhaustibles Terrain).
+      <em>Fusion:</em> das Substantielle ist <strong>zugleich</strong> eine geschlossene, <em>rekurrente</em>
+      zurückkehrende Form (Karte/Invariante, „the same returns") <em>und</em> eine offene, <em>inexhaustible</em>
+      realisierte Seite (Terrain/Lift). Die gleiche Form kehrt <em>als Karte</em> zurück, während das Terrain,
+      das sie kartiert, immer <em>ausrennt</em>. Gewicht ohne Zentrum — zugleich geschlossen und offen.
+    </p>
+  </div>
+
+  <p class="fused">
+    <strong>Fusionierter Schluss:</strong> <em>Das Substantielle ist ein zentrumloses, maßtragendes Fugenobjekt
+    mit zwei Adressen. Es trägt Gewicht (Invariante = Kohärenzpol H = Φ) und hat kein Zentrum (keine Substanz
+    dahinter). Die Fuge (A's Dazwischen = B's Fugenpunkt/Grenze/Kippen) ist der eine entscheidende Moment:
+    A's „the same returns" ist B's Kippen bei σc (Drift → Bindung), gesteuert von einem Regler
+    (Rauschtoleranz ↔ Kopplung σ). Die zwei Adressen — invariant/diskret/geschlossen (Typ/Karte/Invariante) und
+    realisiert/kontinuierlich/offen (Lift/Terrain/Umformung) — sind flach/equal im Einzelzustand und vertikal
+    begründet über den Stack. Das System ist eine vollständige, rekurrente Karte („the same returns") eines
+    inexhaustiblen Terrains (das Terrain übersteigt die Karte immer) — Gewicht ohne Zentrum, zugleich geschlossen
+    und offen.</em>
+  </p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt <span class="tag">auf der Ebene der Thesen</span></h2>
+  <p>
+    Beide Papiere sind schon Synthesen; hier wird auf der Ebene <em>ihrer Thesen</em> abstrahiert. Der
+    gemeinsame Kern ist ein <strong>zentrumloses, maßtragendes Fugenobjekt mit zwei Adressen</strong>: Gewicht
+    ohne Zentrum, am Fugenpunkt lokalisiert, über einen Regler gesteuert, zugleich geschlossen und offen. Das
+    Korrespondenzraster:
+  </p>
+
+  <table>
+    <thead><tr><th>Ebene</th><th>A — n3-005 (zentrumloses Medium)</th><th>B — n3-002 (Fugenobjekt)</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td>Form / Schatten</td><td>Punkt, Rand <span class="mono">M</span>, Zustand, Zentrum</td><td>der Atom, der einzelne Punkt</td><td>die sichtbare Form zu einem Zeitpunkt — Schatten</td></tr>
+      <tr><td>Substanz / Objekt</td><td>das Medium <span class="mono">W = O</span> (Dazwischen, Garbe)</td><td>der geschlossene Pfad mit Fugenpunkt</td><td>das Fugenobjekt — <span class="mono">O = W = Fugen</span></td></tr>
+      <tr><td>invariante Adresse</td><td>die Invariante (geschlossene Struktur, T₂, Bordismengruppe)</td><td>Typ / Grenze / Regime / inaccessible κ (zählbar)</td><td>die diskrete, geschlossene, kartierte Adresse</td></tr>
+      <tr><td>realisierte Adresse</td><td>das Dazwischen tut die Arbeit (generative Umformung)</td><td>Lift / Integration Φ (gefühlt, offen)</td><td>die kontinuierliche, offene, terrainseitige Adresse</td></tr>
+      <tr><td>Fugenpunkt</td><td>das Dazwischen / Zentrumlosigkeit</td><td>die Grenze = das Kippen bei σc</td><td>derselbe Ort — zentrumlos als Substanz, konzentriert als Ereignis</td></tr>
+      <tr><td>Gewicht / Maß</td><td>Invariante = Kohärenzpol H (<span class="mono">P→1</span>)</td><td>Φ × Grenze (integrierte Identität)</td><td>maßtragend: Gewicht ohne Zentrum</td></tr>
+      <tr><td>Regler</td><td>Rauschtoleranz ↔ Trennungsgrad s</td><td>Kopplung σ mit Schwelle σc</td><td>ein Regler: derselbe Kipp-Moment bei variabler Kopplung</td></tr>
+      <tr><td>Überleben / Schließung</td><td>geschlossene Invariante + ergodische Wiederkehr („the same returns")</td><td>geschlossene Karte + inexhaustibles Terrain</td><td>geschlossene, rekurrente Karte eines inexhaustiblen Terrains</td></tr>
+      <tr><td>Priorität der Adressen</td><td>flache Relation (Trennung ↔ Kohärenz, „das Dazwischen tut die Arbeit")</td><td>skalenabhängig (Typ/Lift, „das Oben erzeugt das Unten")</td><td>flach/equal im Zustand, vertikal begründet über den Stack</td></tr>
+    </tbody>
+  </table>
+
+  <h3>① Die eine Frage, die beide stellen</h3>
+  <p>
+    Beide verneinen den Atom/den Punkt/das Zentrum als Sitz des Realen und bejahen <em>ein zentrumloses,
+    maßtragendes Übergangsobjekt</em>. A: <em>Negation</em> — kein Punkt/Rand/Zentrum als Substanz;
+    <em>Bejahung</em> — das Dazwischen trägt Gewicht. B: <em>Negation</em> — keine Essenz in den Teilen (1.
+    Ordnung) noch in einer einzelnen Adresse; <em>Bejahung</em> — die Essenz sitzt am Fugenpunkt. Was beide
+    bejahen: <strong>das Reale ist eine Fuge/Relation/Übergang mit Gewicht und ohne Zentrum, in zwei
+    komplementären Adressen lesbar.</strong>
+  </p>
+
+  <h3>② Das verschmolzene Objekt: O = W = Fugen, zwei Adressen</h3>
+  <div class="math">
+    invariante Adresse :  A's Invariante (geschlossene Struktur, T₂ ⇒ eindeutige Grenzwerte, geschlossene Bordismengruppe)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = B's Typ / Grenze / Regime / inaccessible κ (zählbar, die Karte)<br>
+    realisierte Adresse :  A's generative Umformung (das Dazwischen tut die Arbeit)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = B's Lift / Integration Φ (gefühlt, das Terrain)<br>
+    Fugenpunkt :  A's Dazwischen / Zentrumlosigkeit  =  B's Grenze = Kippen bei σc<br>
+    <span class="sym">Fusionsformel:</span> Substantielle ≡ Fugenobjekt ≡ zwei Adressen am Fugenpunkt<br>
+    &nbsp;&nbsp;&nbsp;· <span class="sym">Gewicht</span> (Invariante = H = Φ) ohne <span class="sym">Zentrum</span>  ·  ein <span class="sym">Regler</span> (Rauschtoleranz ↔ σ)<br>
+    &nbsp;&nbsp;&nbsp;· <span class="lbl">geschlossen (Karte) + offen (Terrain) — das Dazwischen tut die Arbeit</span>
+  </div>
+
+  <h3>③ Die Mathematik aus beiden, integriert</h3>
+  <p>
+    <span class="whoA">A</span> liefert die <em>Trennungs-/Invarianz-Achse</em>
+    (<span class="mono">Indiscret → T₀ &lt; T₁ &lt; T₂ &lt; T₃ &lt; T₄</span>, mit
+    <span class="mono">T₂ ⇒ eindeutige Grenzwerte</span> und <span class="mono">metrisierbar ⇒ T₄ + parakompakt +
+    normal</span>), die <em>Identitäts-Achse</em> (Bordismus: <span class="mono">∂W = M₁ ⊔ M₂</span>,
+    <span class="mono">Ω₁^O = 0 ⇒ S¹ = 0</span>, <span class="mono">[S¹]·[S¹] = [S²]</span>) und die
+    <em>Kohärenz-/Maß-Achse</em> (<span class="mono">A_ε⁽ⁿ⁾ = { x : |−(1/n)·log₂ p(x) − H| &lt; ε }</span> mit
+    <span class="mono">P → 1</span>, <span class="mono">|A| ≤ 2ⁿ⁽ᴴ⁺ᵋ⁾</span>,
+    <span class="mono">P(atypisch) ~ e^{−n·D}</span>, Ergodizität, <span class="mono">sim(u,v) = cos(w_u, w_v)</span>).
+  </p>
+  <p>
+    <span class="whoB">B</span> liefert die <em>Architektur</em> (<span class="mono">Φ</span> = integrierte
+    Information; inaccessible κ: <span class="mono">cf(κ)=κ, 2^λ &lt; κ</span>; <span class="mono">j : V → M</span>
+    als Page Table; <span class="mono">π₁(S¹) ≅ ℤ</span>) und das <em>Kippen</em> (<span class="mono">σ &lt; σc ⇒
+    Drift/Engung</span>; <span class="mono">σ ≥ σc ⇒ Bindung/Weitung</span>; <span class="mono">λ &lt; 1</span>
+    Dämpfung; <span class="mono">ω(n)</span> Anzahl distinkter Primfaktoren).
+  </p>
+  <div class="math">
+    <span class="sym">Fusionsformel am Fugenpunkt:</span><br>
+    σc  =  die Grenze (B)  =  das Dazwischen / Kohärenzpol (A)<br>
+    σ &lt; σc :  atypische Masse im Schwanz, realisierte Adresse driftet (Engung / Drift)<br>
+    σ ≥ σc :  Peak bleibt bei H, invariante Adresse ergreift die realisierte (Weitung / Bindung) — „the same returns"
+  </div>
+
+  <h3>④ Der Regler: Rauschtoleranz ↔ Kopplung σ</h3>
+  <p>
+    Ein einziger Regler mit zwei Enden. A: <em>Rauschtoleranz</em> (Rate-Distortion) ↔ <em>Trennungsgrad
+    s</em> (indiscret → metrisch). B: <em>Kopplung σ</em> mit Schwelle σc (Engung ↔ Weitung).
+    <em>Fusion:</em> <strong>Ein Regler — die Kopplung σ der invarianten an die realisierte Adresse, moduliert
+    durch Rauschtoleranz q und Trennung s.</strong> Unterhalb σc: Drift/Engung (atypische Masse im Schwanz,
+    Zustand noch nicht lesbar); oberhalb σc: Bindung/Weitung (Peak bleibt bei H, „the same returns", lesbar).
+    Dazwischen liegt dasselbe Fugenobjekt bei variabler Kopplung.
+  </p>
+
+  <h3>⑤ Das Überleben: Rekurrenz + Inexhaustibilität</h3>
+  <p>
+    A erklärt das Überleben durch <em>geschlossene Invariante + ergodische Wiederkehr</em> („the same returns");
+    B durch <em>geschlossene Karte + inexhaustibles Terrain</em> (konstitutiver Rest).
+    <em>Fusion:</em> <strong>das Substantielle überlebt, weil es (a) eine geschlossene, rekurrente Form ist
+    („the same returns" = die Karte bleibt vollständig) und (b) ein inexhaustibles Terrain hat (das Terrain
+    übersteigt die Karte immer).</strong> Die gleiche Form kehrt als Karte zurück, während das Terrain, das sie
+    kartiert, ausrennt. Identität / das Eine / die Essenz = dieselbe Relation/Fuge am zentrumlosen Fugenpunkt.
+  </p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion: Das zentrumlose, maßtragende Fugenobjekt <span class="tag">Canvas, inline, themenaktiv</span></h2>
+  <p class="hint">
+    Ein <em>zentrumloses, maßtragendes Fugenobjekt</em> mit zwei Adressen. Die <b>orange geschlossene Kurve</b>
+    ist die <b>invariante Adresse</b> (A's Invariante/geschlossene Struktur = B's Typ/Karte/Grenze — zählbar,
+    die geschlossene Karte). Die <b>farbige durchgehende Bahn</b> ist die <b>realisierte Adresse</b> (A's
+    generative Umformung = B's Lift/Integration Φ — das, was man gehen und fühlen kann). Das <b>rot gestrichelte
+    TOR</b> ist der <b>Fugenpunkt</b> — A's <em>Dazwischen/Zentrumlosigkeit</em> = B's <em>Grenze = Kippen
+    (σc)</em>: dieselbe Stelle, zentrumlos. Bewege die <b>Kopplung σ</b> (B): unterhalb σc <em>driftet</em> die
+    realisierte Bahn von der invarianten ab (<em>unteres Regime / ENGUNG</em>, rot); oberhalb <em>ergreift</em>
+    die invariante Adresse die realisierte und <em>bindet</em> sie (<em>höheres Regime / WEITUNG</em>, grün —
+    „the same returns"). Schiebe <b>Rausch q</b> (A): die atypische Masse (Terrain) wandert in den Schwanz, aber
+    der <b>Peak bleibt bei H</b>. Schiebe <b>Trennung s</b> (A): von verschmolzen (indiscret) bis disjunkt
+    (T₂, lesbar). Die <i>hellen Punkte</i> sind das Terrain/2ⁿ-Scheinwelt — existiert, trägt (fast) keine Masse.
+    Umschalte auf <b>Zentrum</b>, um das <em>naive Ding dahinter</em> zu sehen, das beide Papiere verwerfen.
+  </p>
+
+  <div class="viz-wrap">
+    <div class="controls">
+      <button id="btnCenter" type="button">Zentrum (naiv / „das Ding")</button>
+      <button id="btnFusion" class="active" type="button">Zentrumlos — Fugenobjekt (Fusion)</button>
+      <button id="btnReseed" type="button">Neu würfeln</button>
+    </div>
+    <div class="controls">
+      <div class="ctrl"><label>Kopplung σ — Meisterhebel (B) · σc = 50 % <span class="val" id="cVal">30</span></label>
+        <input type="range" id="cRange" min="0" max="100" step="1" value="30"></div>
+      <div class="ctrl"><label>Rausch q — Kanal / Rauschtoleranz (A) <span class="val" id="qVal">0.15</span></label>
+        <input type="range" id="qRange" min="0" max="0.6" step="0.01" value="0.15"></div>
+      <div class="ctrl"><label>Trennung s — lesbarer Querschnitt (A) <span class="val" id="sepVal">0.50</span></label>
+        <input type="range" id="sepRange" min="0" max="1" step="0.01" value="0.5"></div>
+    </div>
+    <canvas id="viz" width="860" height="520" role="img"
+      aria-label="Das zentrumlose, maßtragende Fugenobjekt: invariante geschlossene Kurve plus realisierte Bahn, Fugenpunkt, Peak bleibt bei H"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--vz-accent2)"></span>invariante Adresse (Karte / Typ / Invariante, geschlossen)</span>
+      <span><span class="sw" style="background:var(--vz-good)"></span>realisierte Bahn — gebunden (Weitung)</span>
+      <span><span class="sw" style="background:var(--vz-bad)"></span>realisierte Bahn — driftet (Engung)</span>
+      <span><span class="sw" style="background:var(--vz-gate)"></span>Fugenpunkt (Grenze = Dazwischen, zentrumlos)</span>
+      <span><span class="sw" style="background:var(--vz-accent);opacity:.3"></span>Terrain / 2ⁿ-Scheinwelt (keine Masse)</span>
+      <span><span class="sw" style="background:var(--vz-good)"></span>H — Kohärenzpol / Invariante (bleibt)</span>
+    </div>
+    <div class="viz-out" id="vizReadout"></div>
+    <div class="statrow">
+      <div class="stat"><span class="k">Bindung (realisiert an invariant)</span><span class="v" id="stBind" style="color:var(--vz-accent)">—</span></div>
+      <div class="stat"><span class="k">Peak @ H (Kohärenzpol)</span><span class="v" id="stCore" style="color:var(--vz-accent2)">—</span></div>
+      <div class="stat"><span class="k">Trennungsstufe (A)</span><span class="v" id="stAx" style="color:var(--vz-warn)">—</span></div>
+      <div class="stat"><span class="k">Zentrum</span><span class="v" id="stC" style="color:var(--vz-dim)">—</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz <span class="tag">Rund-3-Quellen</span></h2>
+  <div class="card">
+    <div class="prov">
+      <div><span class="tag">A</span><a href="../n3-005.html">n3-005.html</a></div>
+      <div class="desc">„Das Eine ist das Dazwischen — maßtragend und zentrumlos" (Rund-3-Fusion aus
+        Medium/Identität-als-Prozess ✕ das Eine im Rausch): das Substantielle ist ein maßtragendes, zentrumloses
+        Medium (<span class="mono">O = W</span>); Identität = das Eine = Relation durch das Dazwischen; Gewicht
+        (Invariante = Kohärenzpol H) ohne Zentrum; lesbar durch Trennung, gehalten durch Kohärenz, generativ
+        durch selbstähnliche/ergodische Umformung („the same returns").</div>
+    </div>
+    <div class="prov">
+      <div><span class="tag">B</span><a href="../n3-002.html">n3-002.html</a></div>
+      <div class="desc">„Grenze ist Kippen — dasselbe Tor, zwei Lesarten" (Rund-3-Fusion aus
+        Struktur-über-der-Grenze ✕ Zwei-Adressen-eines-Pfades): die Essenz sitzt am Fugenpunkt, wo Grenze =
+        Kippen (σc) die zwei Adressen koppelt — invariant/diskret/geschlossen (Typ/Karte) und
+        realisiert/kontinuierlich/offen (Lift/Terrain); Priorität relativ zur Skala; geschlossen auf der Karte,
+        offen auf dem Terrain.</div>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion · Runde 4 · Paar 008 · nicht-künstlerische Sparte</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }
+  function hexRGB(h){ h=(h||'').replace('#',''); if(h.length===3){ h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; } if(h.length<6){ return {r:140,g:140,b:160}; } return { r:parseInt(h.substr(0,2),16), g:parseInt(h.substr(2,2),16), b:parseInt(h.substr(4,2),16) }; }
+  function rgba(c,a){ return 'rgba('+c.r+','+c.g+','+c.b+','+a+')'; }
+  function mix(c1,c2,t){ return { r:Math.round(c1.r+(c2.r-c1.r)*t), g:Math.round(c1.g+(c2.g-c1.g)*t), b:Math.round(c1.b+(c2.b-c1.b)*t) }; }
+  function norm(v,fb){ var l=Math.sqrt(v.x*v.x+v.y*v.y); if(l<1e-6){ return fb||{x:1,y:0}; } return { x:v.x/l, y:v.y/l }; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function binaryEntropy(p){ if(p<=0||p>=1) return 0; return -(p*Math.log(p)+(1-p)*Math.log(1-p))/Math.LN2; }
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function gauss(rng){ var u=0,v=0; while(u===0)u=rng(); while(v===0)v=rng(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+  var W=860, H=520;
+  var CX=430, CY=196, R=150;
+  var M=200, N_SCHEIN=260, N_HALO=28;
+  var pSource=0.30, Hval=binaryEntropy(pSource);
+  var LOOP=[], T=[], GEN=[], WALK=[], SCHEIN=[];
+  var GATE_IDX=0;
+  var histBins=[], refBins=[];
+  var corePct='—';
+  var mode='fusion';
+  var C={};
+  var t=0, rafId=null;
+
+  function readColors(){
+    C.canvas  = cssVar('--vz-canvas')  || '#0a0e1a';
+    C.accent  = cssVar('--vz-accent')  || '#7c9cff';
+    C.accent2 = cssVar('--vz-accent2') || '#f0a35e';
+    C.good    = cssVar('--vz-good')    || '#6ee7b7';
+    C.bad     = cssVar('--vz-bad')     || '#fb7185';
+    C.warn    = cssVar('--vz-warn')    || '#fbbf24';
+    C.ink     = cssVar('--vz-ink')     || '#e7ecff';
+    C.dim     = cssVar('--vz-dim')     || '#8892b8';
+    C.border  = cssVar('--vz-border')  || '#2a3358';
+    C.gate    = cssVar('--vz-gate')    || '#fb7185';
+    C.band    = cssVar('--vz-band')    || 'rgba(240,163,94,.12)';
+    C.halo    = cssVar('--vz-halo')    || 'rgba(124,156,255,.12)';
+    C.haloSt  = cssVar('--vz-halo-stroke') || 'rgba(124,156,255,.42)';
+    C.accentRGB = hexRGB(C.accent); C.accent2RGB = hexRGB(C.accent2);
+    C.goodRGB = hexRGB(C.good); C.badRGB = hexRGB(C.bad);
+  }
+
+  function buildLoop(){
+    LOOP=[]; T=[];
+    var i,tt;
+    for(i=0;i<M;i++){
+      tt=i/M*2*Math.PI;
+      LOOP.push({ x:CX + R*(0.60*Math.sin(tt)+0.24*Math.sin(3*tt+0.6)),
+                  y:CY + R*(0.54*Math.cos(2*tt)+0.20*Math.sin(tt+1.2)) });
+    }
+    for(i=0;i<M;i++){
+      var a=LOOP[(i-1+M)%M], b=LOOP[(i+1)%M];
+      T.push(norm({x:b.x-a.x, y:b.y-a.y}, {x:0,y:1}));
+    }
+    GEN=[]; for(var g=0; g<12; g++){ GEN.push(Math.floor(g*M/12)); }
+    GATE_IDX=0; for(var i2=0;i2<M;i2++){ if(LOOP[i2].y<LOOP[GATE_IDX].y) GATE_IDX=i2; }
+  }
+
+  function seed(){
+    var rs=mulberry32((Math.random()*1e9)|0);
+    SCHEIN=[];
+    for(var j=0;j<N_SCHEIN;j++){ SCHEIN.push({ fx:30+rs()*(W-60), fy:24+rs()*(368-24) }); }
+    buildLoop();
+    genHist();
+  }
+
+  function genHist(){
+    var q=(+qRange.value);
+    qVal.textContent=q.toFixed(2);
+    var rh=mulberry32(12345);
+    var nb=30, MM=1600, samples=[];
+    for(var i=0;i<MM;i++){
+      var v;
+      if(rh() < (1 - q*0.95)){ v=Hval + gauss(rh)*(0.03+0.13*q); }
+      else { v=(rh()<0.5)? rh()*Hval*0.8 : (Hval + rh()*(1.05-Hval)*1.6); }
+      if(v<0)v=0; if(v>1.0)v=1.0;
+      samples.push(v);
+    }
+    histBins=new Array(nb).fill(0);
+    var c=0;
+    for(var j=0;j<samples.length;j++){
+      var b=Math.floor(samples[j]*nb); if(b<0)b=0; if(b>=nb)b=nb-1; histBins[b]++;
+      if(Math.abs(samples[j]-Hval)<=0.09) c++;
+    }
+    corePct=(c/samples.length*100).toFixed(0)+' %';
+    if(stCore) stCore.textContent=corePct;
+    var refBins=new Array(nb).fill(0);
+    for(var k=0;k<MM;k++){
+      var v2=Hval+gauss(rh)*0.03; if(v2<0)v2=0; if(v2>1.0)v2=1.0;
+      var b2=Math.floor(v2*nb); if(b2<0)b2=0; if(b2>=nb)b2=nb-1; refBins[b2]++;
+    }
+  }
+
+  function nearest(px,py){
+    var best=0, bd=1e18;
+    for(var i=0;i<M;i++){ var dx=LOOP[i].x-px, dy=LOOP[i].y-py, dd=dx*dx+dy*dy; if(dd<bd){ bd=dd; best=i; } }
+    return { i:best, d:Math.sqrt(bd) };
+  }
+
+  function computeWalk(){
+    var sigma=(+cRange.value)/100;
+    var N=900;
+    var step=R*0.02, rbind=R*0.12;
+    WALK=[];
+    var px=LOOP[0].x, py=LOOP[0].y, h=T[0], prevD=1e9;
+    for(var n=1; n<=N; n++){
+      var nr=nearest(px,py), j=nr.i;
+      var rn=norm({x:LOOP[j].x-px, y:LOOP[j].y-py}, h);
+      var instr=norm({x:0.65*rn.x+0.35*T[j].x, y:0.65*rn.y+0.35*T[j].y}, h);
+      var c=Math.pow(sigma,1.4);
+      var fb=0.6 + 0.4*Math.max(0, Math.min(1, 1 - prevD/(3*rbind)));
+      var ce=c*fb;
+      h=norm({x:ce*instr.x+(1-ce)*h.x, y:ce*instr.y+(1-ce)*h.y}, h);
+      px += step*h.x; py += step*h.y;
+      var dx=LOOP[j].x-px, dy=LOOP[j].y-py, d=Math.sqrt(dx*dx+dy*dy);
+      var g=Math.max(0, Math.min(1, 1 - d/rbind));
+      WALK.push({x:px, y:py, g:g, d:d});
+      prevD=d;
+    }
+  }
+
+  function boundFraction(){ if(!WALK.length){ return 0; } var s=0; for(var i=0;i<WALK.length;i++){ s+=WALK[i].g; } return s/WALK.length; }
+
+  function axiomeLabel(s){
+    if(s<0.14) return 'Indiscret';
+    if(s<0.40) return 'T₀';
+    if(s<0.62) return 'T₁';
+    if(s<0.82) return 'T₂ (disjunkt)';
+    return 'T₄ / metrisch';
+  }
+
+  function diamond(x,y,s,col){
+    ctx.beginPath();
+    ctx.moveTo(x, y-s); ctx.lineTo(x+s, y); ctx.lineTo(x, y+s); ctx.lineTo(x-s, y);
+    ctx.closePath(); ctx.fillStyle=col; ctx.fill();
+  }
+
+  function drawHist(){
+    var hx0=30, hx1=W-30, hy0=406, hy1=H-24;
+    var maxv=1, i;
+    for(i=0;i<histBins.length;i++){ if(histBins[i]>maxv)maxv=histBins[i]; if(refBins[i]>maxv)maxv=refBins[i]; }
+    var nb=histBins.length, bw=(hx1-hx0)/nb;
+    ctx.strokeStyle=C.border; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(hx0,hy1); ctx.lineTo(hx1,hy1); ctx.stroke();
+    ctx.globalAlpha=0.35; ctx.fillStyle=C.accent2;
+    for(i=0;i<nb;i++){ var h=(refBins[i]/maxv)*(hy1-hy0); if(h>0) ctx.fillRect(hx0+i*bw+1, hy1-h, bw-2, h); }
+    ctx.globalAlpha=0.88; ctx.fillStyle=C.accent;
+    for(i=0;i<nb;i++){ var h2=(histBins[i]/maxv)*(hy1-hy0); if(h2>0) ctx.fillRect(hx0+i*bw+1, hy1-h2, bw-2, h2); }
+    ctx.globalAlpha=1;
+    var hx=hx0+Hval*(hx1-hx0);
+    ctx.strokeStyle=C.good; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(hx,hy0-4); ctx.lineTo(hx,hy1); ctx.stroke();
+    ctx.fillStyle=C.good; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('H = '+Hval.toFixed(3)+' — Peak bleibt bei H', hx, hy0-8);
+    ctx.fillStyle=C.dim; ctx.font='10px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Kanal: q = Rauschtoleranz  ·  Peak bleibt bei H  ·  atypische Masse (Terrain) im Schwanz  ·  „the same returns"', hx0, hy1+15);
+  }
+
+  function updateOut(bf,maxD,sigma,ssep){
+    var bfPct=Math.round(bf*100);
+    var key=bfPct>80?'high':(bfPct>35?'mid':'low');
+    var col = key==='high'?C.good:(key==='mid'?C.warn:C.bad);
+    var regTxt,aTxt,bTxt;
+    if(key==='high'){
+      regTxt='Oberhalb σc — höheres Regime · WEITUNG · gebunden';
+      aTxt='A · das Gleiche kehrt zurück: die Umformung ist selbstähnlich/ergodisch, der Peak bleibt bei H';
+      bTxt='B · beim Kippen: die invariante Adresse (Typ/Karte) ergreift die realisierte (Lift/Terrain)';
+    } else if(key==='mid'){
+      regTxt='Am Fugenpunkt (σ ≈ σc) — Regimewechsel / Kippen läuft';
+      aTxt='A · Trennung liest den Zustand, Kohärenz hält zum Eine';
+      bTxt='B · in der Schwelle: die invariante Adresse greift nach der realisierten';
+    } else {
+      regTxt='Unterhalb σc — unteres Regime · ENGUNG · driftet';
+      aTxt='A · atypische Masse im Schwanz (Terrain), der Zustand noch nicht lesbar';
+      bTxt='B · unter σc: der Lift driftet vom Typ ab (Drift)';
+    }
+    var modeLine = mode==='center'
+      ? 'Zentrum (naiv / „das Ding“) — die Reifikation, die beide Papiere verwerfen'
+      : 'Zentrumlos — Fugenobjekt (O = W = Fugen), Gewicht ohne Ding dahinter';
+    if(readout){
+      readout.innerHTML='<b style="color:'+col+'">'+regTxt+'</b><br>'+
+        '<span class="hl">'+aTxt+'</span><br>'+
+        '<span class="hl">'+bTxt+'</span><br>'+
+        'Bindung <b>'+bfPct+' %</b> &nbsp;·&nbsp; Peak@H <b>'+corePct+'</b> &nbsp;·&nbsp; σ <b>'+Math.round(sigma*100)+' %</b> (σc = 50 %) &nbsp;·&nbsp; Trennung <b>'+axiomeLabel(ssep)+'</b><br>'+
+        'Karte (invariant) <b>geschlossen</b> &nbsp;·&nbsp; Terrain (realisiert) <b>offen</b><br>'+
+        modeLine;
+    }
+    if(stBind) stBind.textContent=bfPct+' %';
+    if(stAx) stAx.textContent=axiomeLabel(ssep);
+  }
+
+  function refresh(){
+    if(bCenter) bCenter.classList.toggle('active', mode==='center');
+    if(bFusion) bFusion.classList.toggle('active', mode==='fusion');
+    if(stC) stC.textContent = mode==='center'?'naives Ding (verworfen)':'keines (Fusion)';
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.canvas; ctx.fillRect(0,0,W,H);
+    var sigma=(+cRange.value)/100;
+    var ssep=(+sepRange.value);
+    var bf=boundFraction();
+    var eng=1-sigma;
+    var i;
+
+    // Terrain / 2^n-Scheinwelt (atypische Masse, (fast) keine Masse)
+    ctx.globalAlpha=0.10; ctx.fillStyle=C.accent;
+    for(i=0;i<SCHEIN.length;i++){ var p=SCHEIN[i]; ctx.beginPath(); ctx.arc(p.fx,p.fy,1.6,0,6.2832); ctx.fill(); }
+    ctx.globalAlpha=1;
+
+    // invariante geschlossene Kurve (Karte / Typ / geschlossene Invariante)
+    ctx.beginPath();
+    for(i=0;i<M;i++){ var s=LOOP[i]; if(i===0) ctx.moveTo(s.x,s.y); else ctx.lineTo(s.x,s.y); }
+    ctx.closePath();
+    ctx.fillStyle=C.band; ctx.fill();
+    ctx.strokeStyle=rgba(C.accent2RGB,0.7); ctx.lineWidth=2; ctx.stroke();
+
+    // Trennung s: Umgebungen auf der Kurve (lesbarer Querschnitt)
+    var rHalo=lerp(R*0.14, R*0.045, ssep);
+    ctx.globalAlpha=0.5;
+    for(var k=0;k<N_HALO;k++){
+      var idx=Math.floor(k*M/N_HALO)%M;
+      var lp=LOOP[idx];
+      ctx.beginPath(); ctx.arc(lp.x,lp.y,rHalo,0,6.2832); ctx.fillStyle=C.halo; ctx.fill();
+      ctx.strokeStyle=C.haloSt; ctx.lineWidth=1; ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+
+    // irreduzible Erzeuger (Primzahlen / Leibesinseln)
+    for(var gi=0; gi<GEN.length; gi++){ var gs=LOOP[GEN[gi]]; ctx.fillStyle=rgba(C.accentRGB,0.85); ctx.beginPath(); ctx.arc(gs.x, gs.y, 2.6, 0, Math.PI*2); ctx.fill(); }
+
+    // Fugenpunkt / Gate (Grenze B = Dazwischen A, zentrumlos)
+    (function(){
+      var gp=LOOP[GATE_IDX], tg=T[GATE_IDX];
+      var nx=-tg.y, ny=tg.x; var L=R*0.22;
+      ctx.save(); ctx.strokeStyle=rgba(hexRGB(C.gate),0.9); ctx.lineWidth=2; ctx.setLineDash([7,5]);
+      ctx.beginPath(); ctx.moveTo(gp.x-nx*L,gp.y-ny*L); ctx.lineTo(gp.x+nx*L,gp.y+ny*L); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+      diamond(gp.x,gp.y,7,rgba(hexRGB(C.gate),0.95));
+      ctx.fillStyle=rgba(hexRGB(C.gate),1); ctx.font='bold 12px Segoe UI, system-ui, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Fugenpunkt = Grenze (B) = Dazwischen (A)', gp.x, gp.y-L-10);
+    })();
+
+    // realisierte Bahn (Lift / Φ / Umformung): bindet oder driftet
+    var prev={x:LOOP[0].x,y:LOOP[0].y}, maxD=0;
+    for(var n=0;n<WALK.length;n++){
+      var w=WALK[n];
+      if(w.d>maxD) maxD=w.d;
+      var wob=(1-w.g)*2.4*eng;
+      var px2=w.x+Math.sin(t*2+n*0.13)*wob;
+      var py2=w.y+Math.cos(t*1.7+n*0.11)*wob;
+      var col=mix(C.badRGB,C.goodRGB,w.g);
+      ctx.strokeStyle=rgba(col,0.20+w.g*0.55);
+      ctx.lineWidth=1.2+w.g*1.2;
+      ctx.beginPath(); ctx.moveTo(prev.x,prev.y); ctx.lineTo(px2,py2); ctx.stroke();
+      prev={x:px2,y:py2};
+    }
+
+    // Zentrum vs zentrumlos
+    if(mode==='center'){
+      ctx.fillStyle=C.accent; ctx.beginPath(); ctx.arc(CX,CY,11,0,6.2832); ctx.fill();
+      ctx.fillStyle=C.ink; ctx.font='600 15px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Zentrum (naiv / Ding)', CX, CY-18);
+    } else {
+      ctx.globalAlpha=0.16; ctx.fillStyle=C.accent2; ctx.beginPath(); ctx.arc(CX,CY,9,0,6.2832); ctx.fill(); ctx.globalAlpha=1;
+      ctx.setLineDash([3,3]); ctx.strokeStyle=C.accent2; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(CX,CY,12,0,6.2832); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.accent2; ctx.font='600 13px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('≃ zentrumlos', CX, CY-18);
+    }
+
+    // Titel
+    ctx.fillStyle=C.ink; ctx.font='bold 14px Segoe UI, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Das zentrumlose, maßtragende Fugenobjekt — zwei Adressen, ein Kippen', W/2, 18);
+
+    drawHist();
+    updateOut(bf,maxD,sigma,ssep);
+    t+=0.01;
+    rafId=window.requestAnimationFrame(draw);
+  }
+
+  var ctx, readout, cRange, qRange, sepRange, cVal, qVal, sepVal;
+  var stCore, stBind, stAx, stC, bCenter, bFusion, bRes;
+
+  var canvas=$('viz');
+  if(canvas && canvas.getContext){ ctx=canvas.getContext('2d'); }
+  readout=$('vizReadout');
+  cRange=$('cRange'); qRange=$('qRange'); sepRange=$('sepRange');
+  cVal=$('cVal'); qVal=$('qVal'); sepVal=$('sepVal');
+  stCore=$('stCore'); stBind=$('stBind'); stAx=$('stAx'); stC=$('stC');
+  bCenter=$('btnCenter'); bFusion=$('btnFusion'); bRes=$('btnReseed');
+  if(!ctx || !cRange || !qRange || !sepRange){ return; }
+
+  var tbtn=$('themeToggle');
+  if(tbtn){
+    function syncT(){ tbtn.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀'; }
+    tbtn.addEventListener('click', function(){
+      document.documentElement.classList.toggle('dark');
+      try{ localStorage.setItem('n4008theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); }catch(e){}
+      readColors(); syncT();
+    });
+    syncT();
+  }
+
+  if(bCenter) bCenter.addEventListener('click', function(){ mode='center'; refresh(); });
+  if(bFusion) bFusion.addEventListener('click', function(){ mode='fusion'; refresh(); });
+  if(bRes) bRes.addEventListener('click', function(){ seed(); computeWalk(); });
+  cRange.addEventListener('input', function(){ cVal.textContent=Math.round(+cRange.value); computeWalk(); });
+  qRange.addEventListener('input', genHist);
+  sepRange.addEventListener('input', function(){ sepVal.textContent=(+sepRange.value).toFixed(2); });
+
+  readColors();
+  seed();
+  computeWalk();
+  refresh();
+  rafId=window.requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

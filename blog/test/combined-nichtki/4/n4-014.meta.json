@@ -1,0 +1,16 @@
+{
+  "no": "014",
+  "a": "n3-012.html",
+  "b": "n3-025.html",
+  "a_title": "Der Knoten ist ein Durchgang: lokal geschlossen, global offen, selbsttragend",
+  "b_title": "Karte und Motiv fallen zusammen: der Fixpunkt als Kohärenzgesetz",
+  "combined_theme": "fixpunkt-als-koahaerenz-lokal-komprimiert-global-offen",
+  "one_line": "Die Identität eines strukturierten Systems ist der Fixpunkt seiner eigenen Grobkörnung: lokal quiesziert jede Einheit zu ihrer komprimierten Normform (irreversibler, sich selbst tragender Kern), global bleibt das Ganze offen und wachsend (reversible, konfluente Hülle), und die zwei Routen (messen/rekonstruieren) treffen am nur-global-lesbaren Kohärenzgesetz, während der lokale Knoten ein komprimierter Durchgang bleibt.",
+  "contradictions": [
+    "Essenz des Ganzen: A (n3-012) sieht sie als irreversiblen, offenen, zeitpfeiltragenden Vorgang (Beständigkeit, Überdauern, Drift, kein Rückweg); B (n3-025) als geschlossenen, invarianten Fixpunkt / Kohärenz-Symmetrie (reversibel, order-unabhängig, 'das Scharfe ist der reine Limes des Graduierten').",
+    "Das überlebende Invariante: A (n3-012) eine irreversible Kompression/Einfrierung ('einmal komprimiert = eingefroren, m:1, keine Re-Expansion'); B (n3-025) ein rekonstruierbarer, graduierter Fixpunkt-Limes, den die reduzierte Route durch Summierung über die Fasern treu wiederherstellt (1-Bit/scharf ↔ volle Sektion/weich).",
+    "Abgeschlossenheit: A (n3-012) — das Ganze global offen, nie abgeschlossen, endlos wachsend ('Lader, nicht Ende', der DAG wächst); B (n3-025) — das Schema geschlossen, in sich vollständig, bewiesener Klassiker (Hopf), nur die Instanzen offen ('Schema = Theorem, Instanz = Konjunktur')."
+  ],
+  "resolution": "Der Fixpunkt ist eine lebendige Quieszenz: lokal reversibel/konfluent (kanonischer Zustand, B), global irreversibel/wachsend (Zeitpfeil, A); das Invariante ist als Identität irreversibel fixiert (Kern, A) und als Lesart ein graduierter Limes (Hülle, B); das Gesetz ist ein geschlossener, bewiesener Klassifizierer (B), seine Realisierung ein offener, wachsender Prozess (A). A's irreversibler Kern / reversible Hülle und B's Motiv / zwei Routen fallen zu derselben zweischichtigen Maschine zusammen.",
+  "viz": "Canvas: viel-zu-eins-Karte als Faserbündel (lokale Einheiten/Realisierungen → Basis), goldene Fixpunkt-/Motiv-Leiste (Vollroute Σ, bei jeder Auflösung gleich), reduzierte Route-Leiste + Verlust-Lücke (ker F) gesteuert vom Auflösungs-Regler (1-Bit/scharf ↔ volle Sektion/weich), Kohärenzgesetz-Toggle (zwei Routen treffen am Fixpunkt = Gratis-Ableitung), Händigkeit (Vorzeichen), 'Kern entfernen' + Feedback R0 (Beständigkeit: über Schwelle trägt sich die Struktur selbst, unter Schwelle Zusammenbruch) und 'Neue Stufe anhängen' (globale Offenheit/Wachstum). Themen-reaktiv, alle Daten inline."
+}

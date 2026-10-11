@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Fixpunkt, zwei gekoppelte Achsen, ein Defekt: die graduierte Garbe als Attraktor</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion4-theme');}catch(e){}if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f6f3ec; --panel:#ffffff; --panel2:#efe9dd; --text:#1c2530; --muted:#5f6b78; --line:#d9d2c4;
+  --accent:#0369a1; --accent2:#a21caf; --accent3:#b45309;
+  --good:#15803d; --warn:#a16207; --bad:#b91c1c;
+  --viz-bg:#ffffff; --grid:#e7e1d4; --soft:#fbfaf6;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141b30; --panel2:#0e1424; --text:#e2e8f0; --muted:#94a3b8; --line:#2a3556;
+  --accent:#7dd3fc; --accent2:#f0abfc; --accent3:#fde047;
+  --good:#4ade80; --warn:#fbbf24; --bad:#ff6b6b;
+  --viz-bg:#0a0e1a; --grid:#1a2340; --soft:#111829;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font:16px/1.72 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;overflow-x:hidden;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(26px,4.3vw,38px);line-height:1.14;margin:0 0 10px;font-weight:800;letter-spacing:-.01em;}
+h1 .acc{color:var(--accent);}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 8px;font-style:italic;}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 26px;}
+.lede{color:var(--muted);font-size:1.03em;margin:0 0 26px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0;}
+section{margin:8px 0;scroll-margin-top:20px;}
+h2{font-size:22px;margin:0 0 14px;color:var(--accent);font-weight:750;padding-bottom:6px;border-bottom:1px solid var(--line);}
+h3{font-size:16.5px;margin:22px 0 8px;color:var(--text);font-weight:700;}
+p{margin:0 0 14px;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:9px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.8px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 16px;overflow:auto;margin:14px 0;white-space:pre;line-height:1.7;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;box-shadow:var(--shadow);}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:var(--shadow);}
+.card h3{margin-top:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;vertical-align:middle;}
+.tag.a{background:rgba(3,105,161,.14);color:var(--accent);}
+.tag.b{background:rgba(162,28,175,.14);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.8px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);color:var(--accent);}
+td.a{color:var(--accent);} td.b{color:var(--accent2);}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0;box-shadow:var(--shadow);}
+#fusionCanvas{display:block;width:100%;height:480px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;margin:14px 0;}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);}
+input[type=range]{width:180px;accent-color:var(--accent);cursor:pointer;}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);}
+button.action.active{border-color:var(--accent);color:var(--accent);}
+.readout-row{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;font-size:14px;margin:6px 0;}
+.readout-row b{font-weight:700;}
+.ra{color:var(--accent);} .rb{color:var(--accent2);} .rf{color:var(--accent3);}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:10px 0;font-size:12.5px;color:var(--muted);}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+#verdict{font-size:14px;margin:10px 0 4px;line-height:1.6;}
+.hint{color:var(--muted);font-size:13.5px;}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.prov.a{border-left-color:var(--accent);}
+.prov.b{border-left-color:var(--accent2);}
+.prov a{color:var(--accent2);text-decoration:none;font-weight:700;}
+.prov a:hover{text-decoration:underline;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit;box-shadow:var(--shadow);}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+@media (max-width:560px){article{padding:30px 15px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema wechseln">&#9681;</button>
+<article>
+
+<h1>Ein Fixpunkt, zwei gekoppelte Achsen, ein Defekt:<br>die graduierte Garbe <span class="acc">als Attraktor</span></h1>
+<p class="subtitle">Fusion aus: n3-006.html &#10005; n3-010.html &nbsp;(Runde 4)</p>
+<p class="meta">Runde 4 &middot; Nicht-KI-Track &middot; Paar 006 &middot; <span class="tagA">A</span> die graduierte Garbe mit offenem Turm &amp; gekr&uuml;mmtem Kleben &nbsp;&times;&nbsp; <span class="tagB">B</span> der Attraktor als Fixpunkt der Self-Referenz</p>
+<p class="lede">Beide Papiere sind selbst schon Runde-3-Fusionen &mdash; und sie m&uuml;nden, eine Ebene h&ouml;her, in dieselbe Grammatik. <span class="tagA">A</span> (n3-006, <em>&bdquo;Die graduierte Garbe mit offenem Turm und gekr&uuml;mmtem Kleben&bdquo;</em>) und <span class="tagB">B</span> (n3-010, <em>&bdquo;Der Attraktor als Fixpunkt der Self-Referenz&bdquo;</em>) beantworten unabh&auml;ngig voneinander dieselbe Grundfrage &mdash; <em>Was ist ein koh&auml;rentes &bdquo;Ganzes&bdquo;?</em> &mdash; und beide beschreiben es als einen <strong>Fixpunkt der Self-Referenz</strong>, der von <strong>zwei orthogonalen Achsen</strong> getragen wird, wobei die <strong>geschlossene/exakte Beschreibung ein verlustbehafteter Schatten</strong> ist und der <strong>irreduzible Rest (Defekt / Offenheit) der generative Motor</strong>. Die Fusion zeigt: A&rsquo;s &bdquo;graduierte Garbe&bdquo; und B&rsquo;s &bdquo;Attraktor&bdquo; sind ein und dasselbe Objekt in zwei Registern.</p>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> sagt: ein koh&auml;rentes Ganzes ist eine <em>globale Sektion einer graduierten Garbe</em> mit <strong>zwei orthogonalen Achsen</strong> &mdash; der <em>Tiefe</em> (der gestufte, <em>offene</em> Faser-Turm am Keim, der durch Selbstreferenz die n&auml;chste Ebene erzeugt und <em>keine Spitze</em> hat) und der <em>Breite</em> (das <em>gekr&uuml;mmte</em> Klebungs-/Koh&auml;renzgesetz, das die lokalen T&uuml;rme zu einer globalen Sektion zusammenf&uuml;gt). Jede Achse tr&auml;gt einen <em>Defekt</em>: die Tiefe bleibt offen, das Kleben ist gekr&uuml;mmt (messbarer Defekt &Delta;). Die exakte, flache, geschlossene Beschreibung (die <em>Invariante</em>, das flache Modell &Delta;=0) ist der verlustbehaftete Idealfall; der Defekt / die Offenheit / die Kr&uuml;mmung ist <em>kein Fehler, sondern der generative Inhalt</em> &mdash; die L&uuml;cke zwischen Karte (fixe Beschreibung) und Gebiet (offene Struktur).</p>
+<p><span class="tagB">B</span> sagt: ein koh&auml;rentes Objekt ist der <em>Attraktor als Fixpunkt der Self-Referenz</em> &mdash; die Menge, die das System seine Karte <code>f</code> auf sich selbst abbildet (<code>f(Menge) = Menge</code>), gelesen auf zwei Achsen: <em>Zeit / Wiederkunft</em> (die Bahn kehrt zur&uuml;ck, das Rad dreht sich) und <em>Menge / Aggregation</em> (die einzelne Probe wird zur invarianten Struktur). Das Entscheidende: <em>Wiederkunft (Zeit) und Aggregation (Menge) sind dieselbe Operation auf zwei Achsen</em>. Die invariante Menge ist <em>als Menge kenntlich</em> (&bdquo;wer die Gruppe kennt, kennt alles&bdquo;), aber <em>irreduzibel auf eine Regel und auf eine Probe</em>; ein <em>Kipppunkt</em> (Bifurkation, Lyapunov &lambda; kreuzt 0) <em>tauscht die invariante Menge aus</em>, und man steuert <em>nie die Instanz, sondern den Parameter</em>.</p>
+<p>Die Fusion identifiziert die Objekte Punkt f&uuml;r Punkt: <strong>B&rsquo;s Attraktor (der Fixpunkt <code>f(M)=M</code>) ist genau A&rsquo;s geschlossener Kern</strong> &mdash; die <em>Invariante / der Schatten</em>, die exakte Ebene. <strong>A&rsquo;s offener Faser-Turm (Tiefe) ist B&rsquo;s Zeit-/Wiederkunft-Achse</strong> (die Selbstreferenz, die erzeugt/kehrt zur&uuml;ck); <strong>A&rsquo;s Kleben (Breite) ist B&rsquo;s Menge-/Aggregations-Achse</strong> (lokale Form &rarr; ganzes). Und der zentrale fusionierende Zug: <strong>die zwei Achsen sind am flachen Idealfall (Delta&nbsp;=&nbsp;0) eine einzige Operation (B&rsquo;s &bdquo;Wiederkunft ist Aggregation&bdquo;) und spalten sich exakt um den Betrag des Defekts in zwei gekoppelte Faktoren (A&rsquo;s Kr&uuml;mmung + Offenheit).</strong> A ist der gekr&uuml;mmte/offene Regime (Delta&nbsp;&ne;&nbsp;0); B ist der flache/geschlossene Grenzfall (Delta&nbsp;=&nbsp;0).</p>
+<div class="aha"><b>Ein koh&auml;rentes, &bdquo;h&ouml;her strukturiertes&bdquo; Ganzes ist ein <em>Fixpunkt der Self-Referenz</em> (der Attraktor / die Invariante), der von <em>zwei Achsen</em> getragen wird &mdash; der <em>generativen, selbstreferenziellen, offenen</em> (Tiefe / Wiederkunft) und der <em>zusammenf&uuml;genden, klebenden</em> (Breite / Aggregation). Diese zwei Achsen bilden am <em>flachen Ideal (Delta&nbsp;=&nbsp;0)</em> eine einzige, vollst&auml;ndig kenntliche Operation (B: <em>Wiederkunft&nbsp;&equiv;&nbsp;Aggregation</em>); der <em>Defekt (Delta&nbsp;&ne;&nbsp;0)</em> &mdash; f&uuml;r A Kr&uuml;mmung und Offenheit, f&uuml;r B der irreduzible Rest &mdash; ist exakt das, was sie in zwei <em>gekoppelte Faktoren</em> spaltet. <em>Kenntlich je Regime, offen &uuml;ber der Familie; geschlossen in Form, offen in Realisierung.</em></b></div>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widerspr&uuml;che zwischen A und B</h2>
+<p>Die zwei Runde-3-Papiere negieren einander nicht in einer Rechnung &mdash; sie meinen sogar (wie die Fusion zeigt) denselben Fixpunkt. Aber auf der Ebene ihrer Positionen stehen drei echte, benennbare, inkompatible Grundhaltungen gegen&uuml;ber; jeweils ein namentlich benannter Anspruch in den Quellen.</p>
+
+<div class="card">
+<h3>1. Ist das Ganze geschlossen &amp; vollst&auml;ndig kenntlich (B) oder ein offener Turm ohne Spitze (A)?</h3>
+<p><span class="tag b">B &middot; n3-010</span> Die invariante Struktur (Gruppe/Attraktor) ist <strong>exakt und vollst&auml;ndig kenntlich</strong>: &bdquo;wer die Gruppe kennt, kennt alles&bdquo;, &bdquo;immer die Struktur lesen&bdquo;, &bdquo;man liest die 8&bdquo;. Das Objekt ist <em>als Menge ein abgeschlossener, bestimmter Gegenstand</em> &mdash; der Rest ist <em>nur</em> irreduzibel auf eine <em>Regel</em> oder eine <em>Probe</em>, <em>nicht</em> auf die Menge selbst. Das Ganze ist letztlich <em>fassbar</em>.</p>
+<p><span class="tag a">A &middot; n3-006</span> Das Ganze ist <strong>nie vollendet</strong>: der Turm hat <em>keine letzte Ebene</em> (&bdquo;offenes, endloses Abenteuer&bdquo;, Kreativit&auml;t unersch&ouml;pflich); es gibt <em>keinen</em> letzten, abgeschlossenen Gegenstand. Die L&uuml;cke (Karte&nbsp;&ne;&nbsp;Gebiet) ist <em>irreduzibel und dauerhaft</em> &mdash; eine <em>ewige, ontologische</em> Eigenschaft des Seins, &bdquo;nie aufl&ouml;sbare, nicht einmal im Prinzip&bdquo;. &Uuml;ber der Familie der Ebenen/Basen bleibt das Ganze <em>offen und generativ</em>.</p>
+<p><span class="tag x">Spannung</span> B: das Ganze ist <em>als Menge geschlossen und vollst&auml;ndig kenntlich</em> (der Rest betrifft nur Regel/Probe). A: das Ganze ist <em>ontologisch offen, nie zu Ende, ohne Spitze</em> (der Rest ist ewig und nicht fassbar). <em>Kenntlich-geschlossen gegen offen-unersch&ouml;pflich.</em></p>
+</div>
+
+<div class="card">
+<h3>2. Was ist der generative Motor &mdash; die geschlossene Self-Referenz (B) oder der Defekt / die L&uuml;cke (A)?</h3>
+<p><span class="tag b">B &middot; n3-010</span> Der Motor ist der <strong>geschlossene Selbst-Loop / die Self-Referenz</strong>: &bdquo;die Form <em>entsteht</em> durch Self-Referenz &mdash; der geschlossene Kreislauf (Output&nbsp;=&nbsp;Eingabe) ist &bdquo;der Motor der Wiederkunft&bdquo;&bdquo;; &bdquo;die Self-Referenz erzeugt den Attraktor&bdquo;. Das Objekt ist ein <em>geschlossener</em> Fixpunkt <code>f(M)=M</em> &mdash; es erzeugt sich dadurch, dass es auf sich <em>zur&uuml;ckkehrt</em>.</p>
+<p><span class="tag a">A &middot; n3-006</span> Der Motor ist die <strong>L&uuml;cke / der Defekt / die Kr&uuml;mmung</strong> (Karte&nbsp;&ne;&nbsp;Gebiet): &bdquo;der Defekt / die Offenheit / die Kr&uuml;mmung ist <em>kein Fehler, sondern der generative Inhalt</em>&bdquo;; der generative Motor ist &bdquo;genau die L&uuml;cke zwischen Karte (fixe Beschreibung) und Gebiet (offene Struktur)&bdquo;. Erzeugt wird also durch die <em>Nicht-Exaktheit</em>, durch das <em>Nicht-Flache</em>, durch das <em>Nie-Geschlossene</em> &mdash; nicht durch einen geschlossenen Loop.</p>
+<p><span class="tag x">Spannung</span> B: das Erzeugende ist die <em>geschlossene Self-Referenz</em> (der Fixpunkt, der auf sich zur&uuml;ckkehrt). A: das Erzeugende ist der <em>Defekt</em> (die Abweichung vom exakten/flachen, die nie zu&shy;schlie&szlig;t). <em>Erzeugen durch geschlossenen Loop gegen Erzeugen durch offene L&uuml;cke.</em></p>
+</div>
+
+<div class="card">
+<h3>3. Sind die zwei Achsen zwei Faktoren eines Produkts (A) oder eine einzige Operation (B)?</h3>
+<p><span class="tag a">A &middot; n3-006</span> &bdquo;Tiefe und Breite sind <strong>zwei orthogonale Achsen EINES Objekts</strong> &mdash; keine tr&auml;gt es allein&bdquo;; &bdquo;das Objekt ist das <strong>Produkt (Tiefe&nbsp;&times;&nbsp;Breite)</strong>&bdquo;; und die zwei Achsen sind &bdquo;nicht unabh&auml;ngig, sondern <em>gekoppelt</em>&bdquo; (Tiefe steuert Breite). Sie sind also <em>zwei echte, distinkte Faktoren</em>, von denen jeder seinen eigenen Defekt tr&auml;gt (Offenheit auf der Tiefe, Kr&uuml;mmung auf der Breite).</p>
+<p><span class="tag b">B &middot; n3-010</span> &bdquo;Wiederkunft (A, Zeit) und Aggregation (B, Menge) sind <strong>dieselbe Operation auf zwei Achsen</strong>&bdquo;; &bdquo;gleiche Menge, zwei Richtungen desselben Pfeils&bdquo;; &bdquo;Wiederkunft ist Aggregation&bdquo;. Es ist also <em>keine Multiplikation zweier Faktoren, sondern eine einzige Operation</em>, die man von ihren beiden Enden aus liest (erzeugt-durch-Recurrence&nbsp;=&nbsp;gelesen-durch-Aggregation).</p>
+<p><span class="tag x">Spannung</span> A: h&ouml;here Struktur = <em>Produkt von zwei (gekoppelten) Achsen</em>. B: h&ouml;here Struktur = <em>eine Operation auf zwei Achsen</em> (ein Pfeil, zwei Richtungen). <em>Zwei distinkte Faktoren gegen eine einzige Operation.</em></p>
+</div>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Aufl&ouml;sung</h2>
+
+<p><b>(1) Kenntlich je Regime, offen &uuml;ber der Familie.</b> B&rsquo;s &bdquo;wer die Gruppe kennt, kennt alles&bdquo; ist eine Aussage <em>innerhalb eines fixen invarianten Satzes / eines fixen Regimes</em> &mdash; dort ist die Struktur tats&auml;chlich vollst&auml;ndig fassbar. A&rsquo;s &bdquo;keine Spitze&bdquo; ist eine Aussage <em>&uuml;ber die Familie</em> aller Regime/Ebenen/Basen. Der Sch&l&uuml;ssel: B <em>sagt selbst</em>, dass der Fixpunkt am Kipppunkt <em>austauscht</em> (&bdquo;&lambda; kreuzt 0 &hellip; die invariante Menge wird ausgetauscht&bdquo;). Die <em>Familie der Regime</em>, die sich beim Durchlaufen des Kipppunkts hintereinander abl&ouml;st, ist genau A&rsquo;s <em>offener Turm ohne Spitze</em> &mdash; jeder Knoten dieses Turms ist ein geschlossener, vollst&auml;ndig kenntlicher Attraktor (B), aber die Kette der Knoten hat kein Ende (A). <b>Fusioniert:</b> das Ganze ist ein <em>abgeschlossener, kenntlicher Fixpunkt je Regime</em> (B) <em>und</em> ein <em>offener, nie fertiger Turm &uuml;ber den Regimen</em> (A) &mdash; <strong>kenntlich je Regime, offen &uuml;ber der Familie</strong>, ein Prozess aus geschlossenen Gegenst&auml;nden, die sich jeweils am Kipppunkt in den n&auml;chsten &uuml;bergeben. Das l&ouml;st Spannung&nbsp;1: B ist wahr <em>je Knoten</em>, A ist wahr <em>der Kette nach</em>.</p>
+
+<p><b>(2) Geschlossen in Form, offen in Realisierung.</b> Die zwei &bdquo;Motoren&bdquo; sind komplement&auml;r, nicht widerspr&uuml;chlich: sie sind die <em>Form</em> und die <em>Kraft</em> desselben Vorgangs. B&rsquo;s geschlossener Selbst-Loop ist die <em>Form</em> der Erzeugung &mdash; das System erzeugt, indem es die Menge auf sich selbst abbildet und zur&uuml;ckkehrt (<code>f(M)=M</code>). A&rsquo;s Defekt/L&uuml;cke ist die <em>Kraft</em> &mdash; der Grund, warum dieser Loop nicht einfach &bdquo;fertig&bdquo; ist, sondern <em>generiert</em>: <em>keine einzelne Probe / Bahn f&auml;lt exakt mit der Menge zusammen</em> (B&rsquo;s sensitive Abh&auml;ngigkeit, die &bdquo;f&uuml;r immer halb verdeckte&bdquo; Instanz; A&rsquo;s Karte&nbsp;&ne;&nbsp;Gebiet). Die geschlossene Form (B) gibt das <em>Wie</em> der Erzeugung (Zur&uuml;ckkehr); die offene Realisierung (A) gibt das <em>Warum es nie abschlie&szlig;t</em> (die L&uuml;cke, die nie zu&shy;schlie&szlig;t). <b>Fusioniert:</b> der generative Motor ist <em>der geschlossene Selbst-Loop (B), den keine einzelne Probe exakt realisiert (A: der Defekt als Kraft)</em> &mdash; <strong>geschlossen in Form, offen in Realisierung</strong>. Das l&ouml;st Spannung&nbsp;2: Erzeugen-durch-Loop (Form) und Erzeugen-durch-L&uuml;cke (Kraft) sind dasselbe, aufgeteilt in Wie und Warum.</p>
+
+<p><b>(3) Eine Operation bei Delta&nbsp;=&nbsp;0, zwei gekoppelte Faktoren bei Delta&nbsp;&ne;&nbsp;0.</b> Die zwei Achsen sind <em>eine Operation, solange der Defekt null ist</em> (B&rsquo;s flaches/geschlossenes Ideal, Delta&nbsp;=&nbsp;0): dort fallen Wiederkunft und Aggregation zur&uuml;ck auf einen Pfeil &mdash; &bdquo;Wiederkunft ist Aggregation&bdquo; &mdash; und die invariante Menge ist vollst&auml;ndig kenntlich. Sobald der Defekt ungleich null wird (A&rsquo;s gekr&uuml;mmtes/offenes Regime, Delta&nbsp;&ne;&nbsp;0), sind <em>zwei verschiedene Defekte</em> im Spiel &mdash; die <em>Offenheit</em> auf der generativen Achse (keine Spitze) und die <em>Kr&uuml;mmung</em> auf der klebenden Achse (Abweichung vom flachen Ideal) &mdash; die sich <em>nicht</em> aufeinander zur&uuml;ckf&uuml;hren lassen. Genau dieser Betrag an Defekt <em>koppelt die eine Operation in zwei distinkte, aber gekoppelte Faktoren</em>. <b>Fusioniert:</b> die zwei Achsen sind <em>eine Operation am flachen Ideal (Delta&nbsp;=&nbsp;0, B)</em> und <em>spalten sich exakt um den Betrag des Defekts in zwei gekoppelte Faktoren (Delta&nbsp;&ne;&nbsp;0, A)</em>. A ist der Delta&nbsp;&ne;&nbsp;0-Regime, B der Delta&nbsp;=&nbsp;0-Grenzfall. Das l&ouml;st Spannung&nbsp;3: <em>Produkt und Operation sind derselbe Pfeil &mdash; ungeteilt bei Delta&nbsp;=&nbsp;0, um den Defekt-Betrag geteilt bei Delta&nbsp;&ne;&nbsp;0.</em></p>
+
+<div class="aha"><b>Fusion in einer Aussage:</b> Das koh&auml;rente Ganze ist ein <em>Fixpunkt der Self-Referenz</em> (der Attraktor / die Invariante, <code>f(M)=M</code>), getragen von <em>zwei Achsen</em> &mdash; der offenen, selbstreferenziellen (Tiefe / Wiederkunft, A) und der zusammenf&uuml;genden, klebenden (Breite / Aggregation, B). Diese zwei Achsen bilden am <em>flachen Ideal (Delta&nbsp;=&nbsp;0)</em> eine einzige, vollst&auml;ndig kenntliche Operation (B: <em>Wiederkunft&nbsp;&equiv;&nbsp;Aggregation</em>) und spalten sich exakt um den Betrag des <em>Defekts (Delta&nbsp;&ne;&nbsp;0)</em> in zwei gekoppelte Faktoren (A: Kr&uuml;mmung &amp; Offenheit). &Uuml;ber der <em>Familie der Regime</em> &mdash; wo der Fixpunkt am Kipppunkt ausgetauscht wird &mdash; bleibt der Turm <em>offen, ohne Spitze</em> (A). Der generative Motor ist <em>der geschlossene Selbst-Loop (B), den keine einzelne Probe exakt realisiert (A: der Defekt als Kraft)</em>. <em>Kenntlich je Regime, offen &uuml;ber der Familie; geschlossen in Form, offen in Realisierung.</em></div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine gemeinsame Objekt (beide Papiere sind Facetten davon), abstrahiert auf die Ebene ihrer Thesen:</b></p>
+<div class="mathblock">Ganzes  =  FIXPUNKT DER SELF-REFERENZ  :  f(Menge) = Menge          (B: Attraktor  /  A: Invariante je Ebene)
+         getragen von zwei orthogonalen Achsen :
+            TiefE  (generativ, selbstreferenziell, OFFEN, keine Spitze)   |A: Faser-Turm   | B: Zeit / Wiederkunft
+            BreitE (zusammenf&uuml;gend, klebend, gekr&uuml;mmt)                  |A: Kleben       | B: Menge / Aggregation
+
+         eine Operation, zwei Lesarten :  Wiederkunft (Zeit)  \equiv  Aggregation (Menge)   (B)
+         bei Delta = 0 (flach/exakt)    :  die Achsen fallen zusammen, Menge vollst&auml;ndig kenntlich  (B)
+         bei Delta != 0 (gekr&uuml;mmt/offen):  die Achsen koppeln; Rest = generativer Motor          (A)
+         &uuml;ber der Familie der Regime   :  der Turm erzeugt die n&auml;chste Ebene, keine Spitze    (A)
+         Schwelle = Kipppunkt (lambda -> 0) :  die invariante Menge wird ausgetauscht (B) = der Turm erzeugt die n&auml;chste Ebene (A)
+         Steuerung                        :  &uuml;ber den Parameter / die Struktur  --  nie &uuml;ber die Instanz
+Das Wiederkommende (B) ist der offene Schatten (A) der invariante Menge, die die Probe zu ihr zur&uuml;ckf&uuml;hrt.</div>
+<p>Links die <em>generative, offene</em> Achse (A&rsquo;s Faser-Turm = B&rsquo;s Wiederkunft in der Zeit), rechts die <em>zusammenf&uuml;gende</em> Achse (A&rsquo;s Kleben = B&rsquo;s Aggregation zur Menge), in der Mitte der Fixpunkt &mdash; der Attraktor, der je Regime die Invariante ist. Der <em>Defekt &Delta;</em> ist der gemeinsame Inhalt: A liest ihn als <em>Offenheit + Kr&uuml;mmung</em> (Karte&nbsp;&ne;&nbsp;Gebiet, keine Spitze), B liest ihn als <em>irreduziblen Rest</em> (weder Regel noch Probe, aber als Menge kenntlich).</p>
+
+<h3>Die vier fusionierten S&auml;tze</h3>
+<ul>
+<li><strong>Der Fixpunkt ist der geschlossene Kern je Regime.</strong> B&rsquo;s Attraktor <code>f(M)=M</code> ist A&rsquo;s <em>Invariante / Schatten</em> &mdash; die exakte, je-Ebene-ablesbare Struktur (A&rsquo;s <code>&Omega;(S&sup1;,base)&cong;&#8484;</code>, B&rsquo;s Symmetriegruppe/Periode). In jeder Ebene/jedem Regime ist die grobe, geschlossene Beschreibung ein <em>verlustbehafteter, aber exakt r&uuml;ckgewinnbarer</em> Schatten der reicheren Struktur (A/B); <em>&uuml;ber</em> der Familie bleibt er offen (A) bzw. wird er am Kipppunkt ausgetauscht (B).</li>
+<li><strong>Die zwei Achsen sind eine Operation, geteilt um den Defekt-Betrag.</strong> Am flachen Ideal (Delta&nbsp;=&nbsp;0) sind Wiederkunft und Aggregation <em>derselbe Pfeil</em> (B: &bdquo;Wiederkunft ist Aggregation&bdquo;) &mdash; die Probe f&uuml;llt die Menge, das Lesen der Menge macht die Wiederkunft sichtbar. Der Defekt (Delta&nbsp;&ne;&nbsp;0) ist genau das, was diese eine Operation in zwei <em>gekoppelte, aber distinkte</em> Faktoren spaltet (A: offene Tiefe &times; gekr&uuml;mmte Breite). Die Kopplung (A&rsquo;s &bdquo;Tiefe steuert Breite&bdquo;, B&rsquo;s &bdquo;Parameter statt Instanz&bdquo;) sagt, wie die eine Operation sich <em>verformt</em>, wenn der Defekt ungleich null wird.</li>
+<li><strong>Der Defekt ist doppelt: als Menge kenntlich (B), als L&uuml;cke generativ (A).</strong> Der irreduzible Rest ist <em>ein einziger</em>: er l&auml;sst sich weder auf die lokale erzeugende Regel (A&rsquo;s Entzug) noch auf die einzelne Probe/Bahn (B&rsquo;s verdecktes Detail) zur&uuml;ckf&uuml;hren. B sagt: er ist <em>als Menge kenntlich</em> (&bdquo;wer die Gruppe kennt, kennt alles&bdquo;); A sagt: <em>als Menge &uuml;ber der Familie nie geschlossen</em> (keine Spitze). Fusioniert: <em>je Regime kenntlich, &uuml;ber der Familie offen</em> &mdash; der Rest ist messbar (B&rsquo;s Kr&uuml;mmung &Delta;) <em>und</em> generativ (A&rsquo;s ewige Offenheit).</li>
+<li><strong>Steuerung l&auml;uft &uuml;ber den Parameter / die Struktur, nie &uuml;ber die Instanz.</strong> Beide Papiere enden hier: A &mdash; man arbeitet mit der Wiederkunft / der Tiefe, nicht mit den einzelnen Zellen; B &mdash; &bdquo;man steuert ein System &uuml;ber seinen Parameter / durch seine Struktur &mdash; niemals &uuml;ber seine einzelnen Instanzen&bdquo;. Fusioniert: der <em>Parameter w&auml;hlt die invariante Menge</em> (B&rsquo;s Kipppunkt), und <em>die Tiefe (wie viele Ebenen man abliest) steuert, wie eng die Breite</em> (die Menge kompatibler globaler Sektionen) wird (A&rsquo;s geschichtete Bestimmung). Der Hebel ist der Fixpunkt-Wechsler, nicht die Probe.</li>
+</ul>
+
+<h3>Die Faltung &mdash; jede Struktur von A bekommt den Gegenpart von B</h3>
+<table>
+<tr><th>Register</th><th><span class="tag a">A</span> &middot; graduierte Garbe</th><th><span class="tag b">B</span> &middot; Attraktor</th><th>Fusioniert</th></tr>
+<tr><td>Das Objekt</td><td>globale Sektion einer graduierten Garbe</td><td>Attraktor = Fixpunkt der Self-Referenz (<code>f(M)=M</code>)</td><td>dieselbe Menge: ein Fixpunkt, der zwei Achsen tr&auml;gt</td></tr>
+<tr><td>Geschlossener Kern</td><td>Invariante / Schatten je Ebene (exakt, <code>&Omega;&cong;&#8484;</code>)</td><td>Attraktor <code>f(M)=M</code> (kenntlich: &bdquo;wer die Gruppe kennt, kennt alles&bdquo;)</td><td>derselbe geschlossene Kern &mdash; je Regime / je Ebene</td></tr>
+<tr><td>Generative Achse</td><td>offener Faser-Turm, keine Spitze, Selbstreferenz erzeugt n&auml;chste Ebene</td><td>Zeit / Wiederkunft: die Bahn kehrt zur&uuml;ck, f&uuml;llt die Menge</td><td>die offene, selbstreferenzielle Achse (erzeugt durch Zur&uuml;ckkehr)</td></tr>
+<tr><td>Zusammenf&uuml;gende Achse</td><td>Kleben / Koh&auml;renz &rarr; globale Sektion</td><td>Menge / Aggregation: Probe &rarr; invariante Struktur</td><td>die zusammenf&uuml;gende Achse (lokale Form &rarr; ganzes)</td></tr>
+<tr><td>Defekt / Rest</td><td>Kr&uuml;mmung &Delta; + Offenheit (Karte&nbsp;&ne;&nbsp;Gebiet); messbar je Faser, irreduzibel &uuml;ber dem Turm</td><td>irreduzierbarer Rest (weder Regel noch Probe), aber als Menge kenntlich</td><td>ein Rest: messbar (B) <em>und</em> generativ (A); Delta=0 flach/kenntlich, Delta&ne;0 gekr&uuml;mmt/offen</td></tr>
+<tr><td>Bestimmung / Steuerung</td><td>geschichtet: Tiefe steuert Breite (endlich&rarr;viele, voll&rarr;eindeutig)</td><td>Parameter statt Instanz (nie die Probe steuern)</td><td>der Parameter w&auml;hlt die invariante Menge; die Tiefe w&auml;hlt, wie eng die Breite wird</td></tr>
+<tr><td>Schwelle</td><td>die L&uuml;cke erzeugt die n&auml;chste Ebene (keine Spitze &uuml;ber der Familie)</td><td>Kipppunkt / Bifurkation (&lambda; kreuzt 0, Feigenbaum <code>r&asymp;3,5699</code>): Menge wird ausgetauscht</td><td>derselbe Ort, an dem die invariante Menge gewechselt wird = der Turm erzeugt die n&auml;chste Ebene</td></tr>
+<tr><td>Die zwei Achsen</td><td>Tiefe &times; Breite (Produkt, gekoppelt)</td><td>Wiederkunft &equiv; Aggregation (eine Operation, zwei Richtungen)</td><td>eine Operation bei Delta=0; zwei gekoppelte Faktoren bei Delta&ne;0</td></tr>
+</table>
+
+<div class="aha"><b>Der fusionierte Schluss:</b> Ein &bdquo;Ganzes&bdquo; ist ein <em>Fixpunkt der Self-Referenz</em> (der Attraktor / die Invariante), der von <em>zwei Achsen</em> getragen wird. Diese zwei Achsen sind am <em>flachen Ideal (Delta&nbsp;=&nbsp;0)</em> eine einzige, vollst&auml;ndig kenntliche Operation (B: <em>Wiederkunft&nbsp;&equiv;&nbsp;Aggregation</em>) und spalten sich exakt um den Betrag des <em>Defekts (Delta&nbsp;&ne;&nbsp;0)</em> in zwei gekoppelte Faktoren (A: offene Tiefe &times; gekr&uuml;mmte Breite). &Uuml;ber der <em>Familie der Regime</em> &mdash; wo der Fixpunkt am Kipppunkt ausgetauscht wird &mdash; bleibt der Turm <em>offen und ohne Spitze</em> (A). Der generative Motor ist <em>der geschlossene Selbst-Loop (B), den keine einzelne Probe exakt realisiert (A: der Defekt / die L&uuml;cke als Kraft)</em>. <strong>Die L&uuml;cke zwischen dem flachen, geschlossenen, kenntlichen Fixpunkt und dem offenen, gekr&uuml;mmten, sich &uuml;berschreitenden Regime ist kein Defekt, sondern der eine generative Motor &mdash; von A als ewige Offenheit, von B als irreduzierbarer, aber als Menge kenntlicher Rest abgelesen. Man steuert ihn &uuml;ber den Parameter, nie &uuml;ber die Instanz.</strong></div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Fixpunkt, der zwei Achsen tr&auml;gt</h2>
+<p class="hint">Eine einzige logistische Karte <code>x<sub>n+1</sub> = r&middot;x<sub>n</sub>(1&minus;x<sub>n</sub>)</code> treibt beide H&auml;lften zugleich, und <em>ein</em> Defekt-Slider verbindet sie. <strong>Links (A &middot; Tiefe):</strong> der offene Faser-Turm &mdash; der <em>Tiefen-Slider</em> trunciert (Tiefe&nbsp;0&nbsp;=&nbsp;Silhouette &hellip; Tiefe&nbsp;5&nbsp;=&nbsp;volle Momente); die Spitze bleibt <em>offen</em> (gestrichelt, pulsend, Pfeil nach oben &mdash; Selbstreferenz erzeugt Ebene&nbsp;+1, keine Spitze) oder wird <em>erstarrt</em> (feste Kappe, &bdquo;Buch&bdquo;) per <em>Offenheits-Slider</em>. <strong>Rechts (B &middot; Breite):</strong> die invariante Menge &mdash; die live laufende <em>Bahn</em> kehrt auf den Attraktor zur&uuml;ck (Wiederkunft/Zeit), und die <em>Proben</em> formen die invariante Dichte (Aggregation/Menge). Der <em>Kipppunkt-Slider r</em> l&auml;uft Fixpunkt&nbsp;&rarr;&nbsp;Periode&nbsp;2&nbsp;&rarr;&nbsp;Periode&nbsp;4&nbsp;&rarr;&nbsp;Chaos; dort kreuzt der Lyapunov-Exponent &lambda; die 0 und <em>die invariante Menge wird ausgetauscht</em> (= der Turm erzeugt die n&auml;chste Ebene). <strong>Oben (die Fusion):</strong> das <em>Kleben</em> &mdash; die <em>gestrichelte Linie</em> ist das flache Ideal (Delta&nbsp;=&nbsp;0, <em>eine</em> Operation: Wiederkunft&nbsp;=&nbsp;Aggregation); der <em>Defekt-Slider Delta</em> biegt sie zur <em>gekr&uuml;mmten</em> Linie mit roten Markern an den N&auml;hten, die <em>die zwei Achsen koppeln</em> (Delta&nbsp;&ne;&nbsp;0). Alle Daten inline; keine Netz-Daten.</p>
+
+<div class="viz-panel">
+  <canvas id="fusionCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Tiefe / Faser-Turm (A) <b id="depthVal">Tiefe 2 &middot; + Varianz</b>
+      <input type="range" id="depthR" min="0" max="5" step="1" value="2">
+    </label>
+    <label>Offenheit / Selbstreferenz (A) <b id="openVal">70%</b>
+      <input type="range" id="openR" min="0" max="100" step="1" value="70">
+    </label>
+    <label>Defekt &Delta; / Kr&uuml;mmung (Fusion) <b id="defVal">&Delta; = 35%</b>
+      <input type="range" id="defR" min="0" max="100" step="1" value="35">
+    </label>
+    <label>Kipppunkt (Parameter r, B) <b id="rVal">3.20</b>
+      <input type="range" id="rR" min="2.50" max="3.99" step="0.01" value="3.20">
+    </label>
+    <label>Aggregation (Proben, B) <b id="probenVal">50%</b>
+      <input type="range" id="probenR" min="0" max="100" step="1" value="50">
+    </label>
+    <button class="action" id="playBtn">&#10074;&#10074; Pause</button>
+    <button class="action" id="resetBtn">&#8634; Reset</button>
+  </div>
+  <div class="readout-row">
+    <span class="ra">A &middot; Tiefe: <b id="depthRead">2</b></span>
+    <span class="ra">A &middot; Offenheit: <b id="openRead">offen (keine Spitze)</b></span>
+    <span class="rf">Fusion &middot; Defekt &Delta;: <b id="defRead">35% (gekr&uuml;mmmt)</b></span>
+    <span class="rb">B &middot; Regime: <b id="regimeRead">Periode 2</b></span>
+    <span class="rb">B &middot; Periode: <b id="perRead">2</b></span>
+    <span class="rb">B &middot; Uml&auml;ufe: <b id="revRead">0</b></span>
+    <span class="rb">B &middot; Proben: <b id="smpRead">1240</b></span>
+    <span class="rb">B &middot; Lyapunov &lambda;: <b id="lamRead">0</b></span>
+  </div>
+  <div class="legend">
+    <span><span class="sw" style="background:#7eb4ff"></span>Ebene 0 &middot; Silhouette/Masse</span>
+    <span><span class="sw" style="background:#f472b6"></span>Ebene 1 &middot; Mittel</span>
+    <span><span class="sw" style="background:#facc15"></span>Ebene 2 &middot; Varianz</span>
+    <span><span class="sw" style="background:#34d399"></span>Ebene 3 &middot; Schiefe</span>
+    <span><span class="sw" style="background:#c084fc"></span>Ebene 4 &middot; volle Momente</span>
+    <span><span class="sw" style="background:#fb923c"></span>Ebene 5 &middot; + Kurtose</span>
+    <span><span class="sw" style="background:var(--accent2)"></span>flach &Delta;=0 (eine Operation, B)</span>
+    <span><span class="sw" style="background:var(--accent3)"></span>Kleben / Defekt &Delta; (gekoppelt, A)</span>
+    <span><span class="sw" style="background:var(--bad)"></span>Defekt-Marker an den N&auml;hten</span>
+  </div>
+  <p id="verdict">&mdash;</p>
+  <p class="hint">Didaktisches Modell der fusionierten These. <em>Tiefe</em> = A&rsquo;s offener Faser-Turm (generativ, keine Spitze) = B&rsquo;s Wiederkunft; <em>Breite</em> = A&rsquo;s Kleben = B&rsquo;s Aggregation; der <em>Defekt &Delta;</em> ist, um wie viel sich die eine Operation (B, Delta=0) in zwei gekoppelte Faktoren (A, Delta&ne;0) spaltet; der <em>Kipppunkt</em> (r, &lambda;&rarr;0) ist, wo die invariante Menge ausgetauscht wird (&#8776; der Turm erzeugt die n&auml;chste Ebene). Alle Daten inline; keine externen Abfragen.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov a">
+  <a href="../n3-006.html">A &middot; n3-006.html</a> &mdash; <em>&bdquo;Die graduierte Garbe mit offenem Turm und gekr&uuml;mmtem Kleben&bdquo;</em> (Runde 3, n2-026.html &times; n2-022.html): ein koh&auml;rentes Ganzes ist eine <em>graduierte Garbe</em> mit <em>zwei orthogonalen Achsen</em> &mdash; der <em>Tiefe</em> (offener Faser-/Ebenen-Turm, Selbstreferenz, keine Spitze; Emblem S&sup1;, <code>&Omega;&cong;&#8484;</code>, <code>&#8750;d&theta;=2&pi;n</code>) und der <em>Breite</em> (gekr&uuml;mmtes Kleben zur globalen Sektion) + ein messbarer <em>Koh&auml;renz-Defekt</em> &Delta;. Geschlossen je Faser/Ebene, offen &uuml;ber dem Turm; exakt im Kleben, gekr&uuml;mmt in der Familie; Bestimmung geschichtet (Tiefe steuert Breite).
+</div>
+<div class="prov b">
+  <a href="../n3-010.html">B &middot; n3-010.html</a> &mdash; <em>&bdquo;Der Attraktor als Fixpunkt der Self-Referenz: Wiederkunft ist Aggregation&bdquo;</em> (Runde 3, n2-049.html &times; n2-032.html): ein koh&auml;rentes Objekt ist der <em>Attraktor</em> &mdash; die Menge, die das System seine Karte auf sich selbst abbildet (<code>f(M)=M</code>), gelesen auf zwei Achsen <em>Zeit / Wiederkunft</em> und <em>Menge / Aggregation</em> (&bdquo;dieselbe Operation auf zwei Achsen&bdquo;). Die invariante Menge ist <em>als Menge kenntlich</em>, aber irreduzibel auf eine Regel und eine Probe; ein <em>Kipppunkt</em> (Bifurkation, &lambda; kreuzt 0, Feigenbaum <code>r&asymp;3,5699</code>) tauscht sie aus; man steuert &uuml;ber den Parameter, nie &uuml;ber die Instanz.
+</div>
+</section>
+
+<div class="foot">Fusion (Runde 4) der zwei Runde-3-Papiere n3-006 und n3-010. Alle Daten inline; keine externen Abfragen. Die Visualisierung ist ein didaktisches Modell der fusionierten These &mdash; <em>ein Fixpunkt der Self-Referenz, der zwei gekoppelte Achsen tr&auml;gt</em>: eine Operation am flachen Ideal (Delta&nbsp;=&nbsp;0, B), zwei gekoppelte Faktoren am gekr&uuml;mmten Defekt (Delta&nbsp;&ne;&nbsp;0, A); kenntlich je Regime, offen &uuml;ber der Familie; geschlossen in Form, offen in Realisierung.</div>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function toggleTheme(){
+    var d=document.documentElement;
+    var dark=d.classList.toggle('dark');
+    try{ localStorage.setItem('fusion4-theme', dark?'dark':'light'); }catch(e){}
+    if(window.__n4006_readPal) window.__n4006_readPal();
+    if(window.__n4006_draw) window.__n4006_draw();
+  }
+  window.toggleTheme=toggleTheme;
+
+  (function(){
+    var cv=document.getElementById('fusionCanvas');
+    if(!cv || !cv.getContext) return;
+    var ctx=cv.getContext('2d');
+    var H=480, TAU=Math.PI*2;
+    var LEVEL_COLORS=['#7eb4ff','#f472b6','#facc15','#34d399','#c084fc','#fb923c'];
+    var DEPTH_NAMES=['Tiefe 0 \u00b7 Silhouette','Tiefe 1 \u00b7 + Mittel','Tiefe 2 \u00b7 + Varianz','Tiefe 3 \u00b7 + Schiefe','Tiefe 4 \u00b7 volle Momente','Tiefe 5 \u00b7 + Kurtose'];
+    var K=6;
+    var BASE=[0.62,0.46,0.34,0.26,0.40,0.50];
+    var BASE_SUM=0, ii; for(ii=0;ii<K;ii++) BASE_SUM+=BASE[ii];
+
+    var state={depth:2, open:70, defect:35, r:3.20, proben:50, playing:true, clock:0, idx:0, revs:0, pulseT:-99};
+    var lastT=0;
+
+    function logi(x,r){ return r*x*(1-x); }
+    function computeLyap(r){
+      var N=4000, burn=800, x=0.5, s=0, i, d;
+      for(i=0;i<burn;i++){ x=logi(x,r); if(!(x>0&&x<1)) x=0.5; }
+      for(i=0;i<N;i++){ x=logi(x,r); d=Math.abs(r*(1-2*x)); if(d<1e-12) d=1e-12; s+=Math.log(d); }
+      return s/N;
+    }
+    function detectPeriod(r){
+      var x=0.5, i, win=[], wlen=300, p;
+      for(i=0;i<1500;i++) x=logi(x,r);
+      for(i=0;i<wlen;i++){ x=logi(x,r); win.push(x); }
+      for(p=1;p<=16;p++){ var ok=true; for(i=wlen-p-1;i<wlen;i++){ if(Math.abs(win[i+p]-win[i])>6e-3){ ok=false; break; } } if(ok) return p; }
+      return Infinity;
+    }
+    var orbitBuf=[], lyap=0, period=1;
+    function rebuild(r){
+      var x=0.5, i; orbitBuf.length=0;
+      for(i=0;i<1200;i++){ x=logi(x,r); if(!(x>0&&x<1)) x=0.5; orbitBuf.push(x); }
+      lyap=computeLyap(r); period=detectPeriod(r); state.idx=0;
+    }
+    function computeDensity(r,S){
+      var BINS=44, counts=new Array(BINS), k; for(k=0;k<BINS;k++) counts[k]=0;
+      var x=0.5, i, b; for(i=0;i<800;i++) x=logi(x,r);
+      for(i=0;i<S;i++){ x=logi(x,r); b=Math.floor(x*BINS); if(b<0)b=0; if(b>=BINS)b=BINS-1; counts[b]++; }
+      return counts;
+    }
+    function sampleCount(){ return 40+Math.round((state.proben/100)*(2400-40)); }
+    function regimeName(r){
+      if(r<2.999) return 'Fixpunkt';
+      if(r<3.449) return 'Periode 2';
+      if(r<3.544) return 'Periode 4';
+      if(r<3.5699) return 'Kaskade (Periode 8+)';
+      return 'Chaos';
+    }
+
+    var pal={};
+    function cssVar(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v||''; }
+    function toRgb(s){
+      s=(s||'').trim();
+      if(s.charAt(0)==='#'){ var h=s.slice(1); if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); } var n=parseInt(h,16); if(isNaN(n)) return [128,140,170]; return [(n>>16)&255,(n>>8)&255,n&255]; }
+      var m=s.match(/[\d.]+/g); if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; } return [128,140,170];
+    }
+    function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+    function readPal(){
+      pal={ bg:toRgb(cssVar('--viz-bg')), grid:toRgb(cssVar('--grid')), text:toRgb(cssVar('--text')),
+        muted:toRgb(cssVar('--muted')), a:toRgb(cssVar('--accent')), b:toRgb(cssVar('--accent2')),
+        c:toRgb(cssVar('--accent3')), good:toRgb(cssVar('--good')), warn:toRgb(cssVar('--warn')), bad:toRgb(cssVar('--bad')) };
+    }
+    window.__n4006_readPal=readPal;
+
+    function prof(i){ var t=i/(K-1); return Math.exp(-((t-0.5)*(t-0.5))/0.12); }
+
+    function curDpr(){ return Math.min(window.devicePixelRatio||1, 2); }
+    function resize(){
+      var dpr=curDpr();
+      var r=cv.getBoundingClientRect();
+      var w=Math.max(320, r.width||cv.clientWidth||820);
+      cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+      cv.style.height=H+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      draw();
+    }
+    function set(id,t){ var e=document.getElementById(id); if(e) e.textContent=t; }
+
+    function draw(){
+      var dpr=curDpr();
+      var w=cv.width/dpr; if(!isFinite(w)||w<100) w=cv.clientWidth||820;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,w,H);
+      ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,H);
+
+      var midX=Math.round(w*0.5);
+      var yTop=72, yBot=H-60;
+
+      ctx.strokeStyle=rgba(pal.grid,0.6); ctx.lineWidth=1; ctx.setLineDash([4,5]);
+      ctx.beginPath(); ctx.moveTo(midX,24); ctx.lineTo(midX,H-24); ctx.stroke(); ctx.setLineDash([]);
+
+      // ===== TOP: the gluing line (defect Delta) =====
+      var amp=(state.defect/100)*22;
+      var xL0=44, xR1=w-44;
+      var gy=yTop-26;
+      ctx.strokeStyle=rgba(pal.b,0.6); ctx.setLineDash([6,5]); ctx.lineWidth=1.5; ctx.globalAlpha=0.85;
+      ctx.beginPath(); ctx.moveTo(xL0,gy); ctx.lineTo(xR1,gy); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+      ctx.fillStyle=rgba(pal.b,0.9); ctx.font='10.5px system-ui,sans-serif'; ctx.textAlign='right'; ctx.textBaseline='bottom';
+      ctx.fillText('flach \u00b7 \u0394=0 \u00b7 eine Operation (Wiederkunft = Aggregation, B)', xR1, gy-4);
+      if(amp>0.5){
+        ctx.strokeStyle=rgba(pal.c,0.95); ctx.lineWidth=3; ctx.beginPath();
+        var STEPS=80, s2, t2, rx2, ry2;
+        for(s2=0;s2<=STEPS;s2++){ t2=s2/STEPS; rx2=xL0+t2*(xR1-xL0); ry2=gy+amp*Math.sin(t2*Math.PI*3 + state.clock/900); if(s2===0)ctx.moveTo(rx2,ry2); else ctx.lineTo(rx2,ry2); }
+        ctx.stroke();
+        ctx.fillStyle=rgba(pal.bad,1); ctx.strokeStyle=rgba(pal.bad,1); ctx.lineWidth=1.5;
+        for(var m=1;m<K;m++){
+          var tj=m/K, jx=xL0+tj*(xR1-xL0), jy=gy+amp*Math.sin(tj*Math.PI*3 + state.clock/900);
+          ctx.globalAlpha=0.7; ctx.beginPath(); ctx.moveTo(jx,gy); ctx.lineTo(jx,jy); ctx.stroke(); ctx.globalAlpha=1;
+          var ty=Math.min(gy,jy)-5;
+          ctx.beginPath(); ctx.moveTo(jx,ty); ctx.lineTo(jx-4,ty+7); ctx.lineTo(jx+4,ty+7); ctx.closePath(); ctx.fill();
+        }
+        ctx.fillStyle=rgba(pal.bad,1); ctx.font='bold 10.5px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+        ctx.fillText('\u0394 (Kr\u00fcmmung / Defekt) \u2014 die zwei Achsen koppeln', xL0+2, gy+4);
+      }
+
+      // ===== LEFT: A \u00b7 open tower (Tiefe) =====
+      var xL1=midX-44, gapL=(xL1-xL0)/(K-1);
+      var baseY=yBot, maxTowerPx=(yBot-yTop)*0.80;
+      var segW=Math.min(gapL*0.34,20);
+      ctx.strokeStyle=rgba(pal.muted,0.8); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(xL0,baseY); ctx.lineTo(xL1,baseY); ctx.stroke();
+
+      var i, L, x, yCur, hv;
+      for(i=0;i<K;i++){
+        x=xL0+i*gapL; yCur=baseY;
+        for(L=0;L<=state.depth;L++){
+          hv=prof(i)*BASE[L]*(maxTowerPx/BASE_SUM);
+          if(hv<0.5) hv=0.5;
+          ctx.fillStyle=LEVEL_COLORS[L%LEVEL_COLORS.length];
+          ctx.globalAlpha=0.9;
+          ctx.fillRect(x-segW/2, yCur-hv, segW, hv-1);
+          yCur-=hv;
+        }
+        ctx.globalAlpha=1;
+        ctx.fillStyle=rgba(pal.a,1); ctx.beginPath(); ctx.arc(x,baseY,3.5,0,TAU); ctx.fill();
+        var selfPct=state.open/100;
+        if(selfPct>0.02){
+          var pulse=0.45+0.35*Math.sin(state.clock/450 + i*0.9);
+          ctx.save(); ctx.globalAlpha=Math.max(0.2,pulse);
+          ctx.strokeStyle=rgba(pal.a,1); ctx.setLineDash([4,4]); ctx.lineWidth=2;
+          ctx.beginPath(); ctx.moveTo(x-segW*0.7,yCur); ctx.lineTo(x+segW*0.7,yCur); ctx.stroke(); ctx.setLineDash([]);
+          var ay=yCur-6; ctx.beginPath(); ctx.moveTo(x,ay-7); ctx.lineTo(x-5,ay); ctx.lineTo(x+5,ay); ctx.closePath();
+          ctx.fillStyle=rgba(pal.a,1); ctx.fill();
+          ctx.restore();
+        } else {
+          ctx.strokeStyle=rgba(pal.muted,1); ctx.lineWidth=3;
+          ctx.beginPath(); ctx.moveTo(x-segW*0.75,yCur); ctx.lineTo(x+segW*0.75,yCur); ctx.stroke();
+        }
+      }
+      ctx.fillStyle=rgba(pal.muted,0.92); ctx.font='600 13px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+      ctx.fillText('A \u00b7 Tiefe \u2014 der offene Faser-Turm (keine Spitze)', 14, 16);
+      ctx.fillStyle=rgba(pal.muted,0.72); ctx.font='italic 11.5px system-ui,sans-serif'; ctx.textBaseline='alphabetic';
+      ctx.fillText('generative Achse: jede Ebene erzeugt die n\u00e4chste (= B: Wiederkunft)', 14, H-14);
+
+      // ===== RIGHT: B \u00b7 attractor (Breite / Menge) =====
+      var xR0=midX+44;
+      ctx.strokeStyle=rgba(pal.grid,0.5); ctx.lineWidth=1; ctx.beginPath();
+      var gv; for(gv=0;gv<=3;gv++){ var gx=gv/3; ctx.moveTo(xR0+gx*(xR1-xR0),yTop); ctx.lineTo(xR0+gx*(xR1-xR0),yBot); ctx.moveTo(xR0,yTop+gx*(yBot-yTop)); ctx.lineTo(xR1,yTop+gx*(yBot-yTop)); }
+      ctx.stroke();
+      function pxR(xx){ return xR0+xx*(xR1-xR0); }
+      function py(v){ return yBot-v*(yBot-yTop); }
+      var r=state.r;
+      ctx.strokeStyle=rgba(pal.b,0.85); ctx.lineWidth=1.6; ctx.beginPath();
+      for(i=0;i<=120;i++){ var xx=i/120, yy=r*xx*(1-xx); if(i===0)ctx.moveTo(pxR(xx),py(yy)); else ctx.lineTo(pxR(xx),py(yy)); }
+      ctx.stroke();
+      var n=orbitBuf.length;
+      if(n>0){
+        ctx.fillStyle=rgba(pal.b,0.42);
+        for(i=0;i<n;i+=3){ var ax=orbitBuf[i], ay=r*ax*(1-ax); ctx.beginPath(); ctx.arc(pxR(ax),py(ay),1.5,0,TAU); ctx.fill(); }
+        var winLen=48, startI=state.idx-winLen, k;
+        for(k=0;k<winLen;k++){
+          var ii2=((startI+k)%n+n)%n;
+          var bx=orbitBuf[ii2], by=r*bx*(1-bx);
+          var aa=(k+1)/winLen;
+          ctx.strokeStyle=rgba(pal.b,0.10+0.60*aa); ctx.lineWidth=0.8+1.4*aa;
+          if(k>0){ var ii3=((startI+k-1)%n+n)%n; var qx=orbitBuf[ii3], qy=r*qx*(1-qx); ctx.beginPath(); ctx.moveTo(pxR(qx),py(qy)); ctx.lineTo(pxR(bx),py(by)); ctx.stroke(); }
+        }
+        var li=state.idx%n, lx=orbitBuf[li], lyv=r*lx*(1-lx);
+        ctx.fillStyle=rgba(pal.c,1); ctx.beginPath(); ctx.arc(pxR(lx),py(lyv),4.5,0,TAU); ctx.fill();
+        var age=(lastT/1000)-state.pulseT;
+        if(age>=0 && age<1.0){ var pr=age/1.0; ctx.strokeStyle=rgba(pal.c,(1-pr)*0.7); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(pxR(lx),py(lyv),6+pr*30,0,TAU); ctx.stroke(); }
+      }
+      var S=sampleCount();
+      var counts=computeDensity(r,S), BINS=counts.length, maxc=1, k2;
+      for(k2=0;k2<BINS;k2++) if(counts[k2]>maxc) maxc=counts[k2];
+      var bw=(xR1-xR0)/BINS;
+      for(k2=0;k2<BINS;k2++){
+        var bh=(counts[k2]/maxc)*(yBot-yTop)*0.90;
+        ctx.fillStyle=rgba(pal.c,0.26);
+        ctx.fillRect(xR0+k2*bw+0.5, yBot-bh, Math.max(1,bw-1), bh);
+      }
+      ctx.fillStyle=rgba(pal.muted,0.92); ctx.font='600 13px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+      ctx.fillText('B \u00b7 Breite \u2014 die invariante Menge (Attraktor, f(M)=M)', midX+14, 16);
+      ctx.fillStyle=rgba(pal.muted,0.72); ctx.font='italic 11.5px system-ui,sans-serif'; ctx.textBaseline='alphabetic';
+      ctx.fillText('zusammenf\u00fcgende Achse: Probe \u2192 invariante Dichte (= A: Kleben)', midX+14, H-14);
+
+      updateReadouts();
+    }
+    window.__n4006_draw=draw;
+
+    function updateReadouts(){
+      set('depthVal', DEPTH_NAMES[state.depth]);
+      set('openVal', state.open+'%');
+      set('defVal', '\u0394 = '+state.defect+'%');
+      set('rVal', state.r.toFixed(2));
+      set('probenVal', state.proben+'%');
+      set('depthRead', String(state.depth));
+      set('openRead', state.open>2 ? 'offen (keine Spitze)' : 'geschlossen (Buch)');
+      set('defRead', state.defect<2 ? '\u2248 0% (flach/exakt)' : state.defect+'% (gekr\u00fcmmmt)');
+      set('regimeRead', regimeName(state.r));
+      set('perRead', (period===Infinity ? '\u221e' : String(period)));
+      set('revRead', String(state.revs));
+      set('smpRead', String(sampleCount()));
+      var lam=document.getElementById('lamRead');
+      if(lam){ lam.textContent=(lyap>0?'+':'')+lyap.toFixed(3); lam.style.color=lyap>0?'var(--bad)':'var(--good)'; }
+      var verdict=document.getElementById('verdict');
+      if(verdict){
+        var flat=state.defect<2, open=state.open>2, v;
+        if(flat){
+          v='<b>Flach (\u0394=0, B):</b> die zwei Achsen fallen zusammen &mdash; <b>Wiederkunft = Aggregation</b>, eine invariante Menge, vollst\u00e4ndig kenntlich. Der Turm ist erstarrt (ein \u00bbBuch\u00ab).';
+        } else if(open){
+          v='<b>Gekr\u00fcmmmt + offen (\u0394\u22600, A):</b> die zwei Achsen koppeln (Tiefe \u00d7 Breite). Die L\u00fccke (Karte \u2260 Gebiet) ist der generative Motor; \u00fcber der Familie der Regime bleibt der Turm offen (keine Spitze).';
+        } else {
+          v='<b>Gekr\u00fcmmmt, geschlossene Spitze (\u0394\u22600):</b> gekoppelte Achsen, aber der Turm erstarrt &mdash; Kr\u00fcmmung ohne Offenheit (ein gebogtes, abgeschlossenes Modell).';
+        }
+        var det=(period===Infinity)
+          ? 'Regime: <b>'+regimeName(state.r)+'</b> &mdash; die invariante Menge wird am Kipppunkt ausgetauscht (\u03bb kreuzt 0; B = A: der Turm erzeugt die n\u00e4chste Ebene).'
+          : 'Regime: <b>'+regimeName(state.r)+'</b> (Periode '+(period===Infinity?'\u221e':period)+').';
+        verdict.innerHTML=v+' '+det;
+      }
+    }
+
+    function frame(ts){
+      var dt=Math.min(60,(ts-lastT)||0); lastT=ts;
+      if(state.playing && orbitBuf.length>0){
+        state.clock+=dt;
+        state.idx+=2;
+        if(state.idx>=orbitBuf.length){ state.idx=state.idx%orbitBuf.length; state.revs++; state.pulseT=ts/1000; }
+      }
+      draw();
+      requestAnimationFrame(frame);
+    }
+
+    var depthR=document.getElementById('depthR');
+    if(depthR) depthR.addEventListener('input',function(){ state.depth=parseInt(depthR.value,10)||0; });
+    var openR=document.getElementById('openR');
+    if(openR) openR.addEventListener('input',function(){ state.open=parseInt(openR.value,10)||0; });
+    var defR=document.getElementById('defR');
+    if(defR) defR.addEventListener('input',function(){ state.defect=parseInt(defR.value,10)||0; });
+    var rR=document.getElementById('rR');
+    if(rR) rR.addEventListener('input',function(){ state.r=parseFloat(rR.value); if(isFinite(state.r)) rebuild(state.r); });
+    var probenR=document.getElementById('probenR');
+    if(probenR) probenR.addEventListener('input',function(){ state.proben=parseInt(probenR.value,10)||0; });
+    var playBtn=document.getElementById('playBtn');
+    if(playBtn) playBtn.addEventListener('click',function(){ state.playing=!state.playing; playBtn.innerHTML=state.playing?'\u275a\u275a Pause':'\u25b6 Lauf'; });
+    var resetBtn=document.getElementById('resetBtn');
+    if(resetBtn) resetBtn.addEventListener('click',function(){
+      state.depth=2; state.open=70; state.defect=35; state.r=3.20; state.proben=50; state.revs=0; state.pulseT=-99;
+      if(depthR) depthR.value=2; if(openR) openR.value=70; if(defR) defR.value=35; if(rR) rR.value=3.20; if(probenR) probenR.value=50;
+      rebuild(state.r);
+    });
+    var themeBtn=document.getElementById('themeBtn');
+    if(themeBtn) themeBtn.addEventListener('click',toggleTheme);
+    window.addEventListener('resize',resize);
+    try{
+      new MutationObserver(function(){ readPal(); draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    }catch(e){}
+    if(window.matchMedia){ var mq=window.matchMedia('(prefers-color-scheme: light)'); if(mq && mq.addEventListener){ mq.addEventListener('change',readPal); } }
+    window.addEventListener('load',resize);
+
+    readPal();
+    rebuild(state.r);
+    resize();
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>

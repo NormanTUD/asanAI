@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "n3-018.html",
+  "b": "n3-009.html",
+  "a_title": "Ein Hebel, zwei Regime — die Valenz des Kollapses setzt das Objekt",
+  "b_title": "Gewissheit als geprüfte Schließung: der erreichbare Kern und die benannte Grenze",
+  "combined_theme": "globale-schliessung-valenz-und-grenze",
+  "one_line": "Eine globale Schließung — lokale, blinde/oszillierende Schicht wird durch eine wohldefinierte globale Operation (Integration+Abelschung / Schließ-Test+globaler Vergleich) zum stabilen invarianten Kern (n∈ℤ / μ, Holonomie); ihre Valenz (zahlt sie?) setzt die Ontologie des Objekts (inert→zahlbare Wahrheit, lebendig→Tod/Verklammung), ihre Reichweite (wie weit?) das epistemische Register (konstituiert/entdeckt) und zwei Böden (asymptotisch pⁿ→0≠0, absolut Struktur≠Wahrheit).",
+  "contradictions": [
+    "A erreicht im inerten Regime den Kern definitiv (n∈ℤ, 'Messung und Existenz lesen dieselbe Zahl'); B lässt bei jeder Schließung einen Boden, den sie nie erreicht (pⁿ→0≠0, Ding an sich).",
+    "A: das '0' (fehlender Schnitt, Igel-Satz) ist die tatsächliche, treu gelesene Wahrheit eines inerten Objekts (Endzustand); B: der Rest 1−c ist nur gemessener Inhalt (Krümmung) über einem unerreichbaren Fundament-Boden.",
+    "A: die Lektüre ist treu-passiv (die Invariante ist bereits geworfener Schatten, Messung=Existenz, das Zeichen kann nicht falsch sein); B: der Kern ist durch den Test konstituiert ('real iff the test passes'), ohne Test kein Objekt."
+  ],
+  "resolution": "Valenz (A: zahlt die Schließung?) und Reichweite (B: wie weit reicht sie?) sind zwei unabhängige Achsen derselben Schließung, die beide allein vom Gegenstand/Register, nicht vom Zeichen gesetzt werden. (1) Erreichung vs. permanenter Boden: der Boden ist regime-bedingt — die Schließung erreicht ihr Objekt soweit es inert ist (definite zählbare Wahrheit, A) und bleibt soweit es lebt asymptotisch (B: pⁿ→0≠0); A's inert/living ist B's asymptotisch/absolut von zwei Seiten. (2) Objekt-Wahrheit vs. Rest-Proxy: A's eigenes 'Regime entscheidet' (0=Objekt-Eigenschaft vs. Darstellungsfehler) angewendet auf B's Rest — Endantwort im Inerten, Proxy über einem nie geschlossenen Boden im Lebendigen; die asymptotische Annäherung (B) läuft bis zur irreduziblen Wand (A), nie durch sie. (3) Passiv vs. konstitutiv: A's 'treu-passiv' ist der inerte Grenzwert von B's konstitutiver Prüfung ('konstituiert im Zugriff, objektiv im Inhalt' ist die allgemeine Form, A's Lektüre der inente degenerate Fall). Ehrliche Schließung: gewinnt den inerten Kern als zählbare Wahrheit, verweigert die Fixierung des Lebendigen, benennt die zwei Böden.",
+  "viz": "Ein Canvas mit der gemeinsamen Schließkurve c(t) (Peaks an den ganzen Zahlen = 'kein Rest'), zwei Böden (asymptotischer Struktur-Boden C(n)=1−k·pⁿ, der gegen 1 steigt; absolute Bedeutungswand c=1, Struktur≠Wahrheit) und einem Regime-Schalter (INERT/LEBENDIG) plus Oszillationsleiste, die A's Valenz-Achse zeigt: inert→Kollaps in die zählbare Invariante n∈ℤ (Stille=Wahrheit, grün), lebendig→bleibt oszillierend (Stille=Tod, lass es schwingen, rot); Slider für n (B's äußere Systeme) und t (Prüftiefe)."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "n3-008.html",
+  "b": "n3-001.html",
+  "a_title": "Das Unfaßbare liest man, man hält es nicht — Projektion, Anker, Loslassen",
+  "b_title": "Die Invariante der geschlossenen Zusammensetzung — additiv und zyklisch, mit einer gemeinsamen Faser",
+  "combined_theme": "relationale-invariante-geschlossener-akt",
+  "one_line": "Das Ganze ist eine relationale Invariante: erkannt durch einen begrenzten lokalen Akt in geschlossener Zusammensetzung, und gehalten (relationell statt substanzhaft) dadurch, dass dieselbe Faser konstitutiv vom Akt verworfen und postural vom Leser losgelassen wird (÷ Selbsthaft).",
+  "contradictions": [
+    "Status des Ganzen: n3-008 sagt, das Ganze ist 'schon da', vollständig und selbsttragend (man erreicht es durch Loslassen); n3-001 sagt, die Invariante entsteht erst durch den geschlossenen lokalen Akt (der Schnitt erzeugt Form, das Ungeteilte ist 'formal ohne Struktur').",
+    "Kosten des Lesens: n3-008 sagt, Lesen ist Haltungskorrektur des Lesers (÷ Selbsthaft), reversibel, das Ganze bleibt unversehrt; n3-001 sagt, der Eintritt in die Form ist einweg und konstitutiv verlustbehaftet (Quality wird verworfen, 'nie zurückkommt', Homotopietyp ändert sich in eine Richtung).",
+    "Schicksal der Faser/Referenz: n3-008 sagt, der Anker/die Referenz wird behalten und kalibriert (man pflegt ihn, 'deins zu pflegen'); n3-001 sagt, die Faser/Quality wird vom Invariante-Akt verworfen (erzeugt und verworfen, 'stumm über Quality')."
+  ],
+  "resolution": "Zwei Ebenen desselben Akts: (1) das Ganze ist ontologisch komplett und vor-daher (n3-008), seine Invariante liest man sich aber erst durch die geschlossene Zusammensetzung zusammen (n3-001); (2) zwei verschiedene Verluste — der konstitutive (der Akt wirft die Faser/Quality einweg weg, irreversibel, n3-001) und der posturale (der Leser lässt den eigenen Griff/Selbsthaft los, reversibel, n3-008); (3) die Faser hat zwei komplementäre Rollen — die Referenz/der Anker bleibt frei wählbar (freie Kalibrierung = Eich-Äquivalenz), während der willkürliche Rest (Quality/Selbsthaft) losgelassen wird; die von n3-001 verworfene Faser ist genau die, auf die n3-008 den Griff loslassen sagt. Erkennen des Ganzen = geschlossener lokaler Akt × freie Referenz ÷ Faser/Selbsthaft.",
+  "viz": "Interaktiver Ring aus 12 lokalen Patches (canvas, theme-reaktiv, nur inline-Daten): jeder Patch trägt den lokalen Akt (Projektion/Schnitt); die geschlossene Zusammensetzung um den Ring erzeugt die Invariante (additive Form w + zyklischer Rest/Holonomie, mod 360°); der Anker/Referenz (Eich-Freiheit) dreht alle lokalen Pfeile, ändert aber nicht die Netto-Invariante; bei hohem Selbsthaft erstarrt die losgelöste Faser zum Total-Objekt (n3-008 A: Ergreifen = Fehlschlag), bei gelassenem Griff bleibt der Ring eine offene relationale Zusammensetzung; die Faser/Quality-Säule leert sich mit wachsendem w (100·e^(−0.45·w))."
+}

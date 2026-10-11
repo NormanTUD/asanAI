@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der invariante Kern — Prozess ✕ Gruppe ✕ Linse (Runde 4)</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#2563a8;
+  --mn-accent2:#a843a0; --mn-accent3:#1f9d55; --mn-accent4:#c2410c;
+  --mn-border:#d8d2c4; --mn-panel:#fffdf9; --mn-panel2:#f1ece0;
+  --mn-ok:#16a34a; --mn-grid:rgba(0,0,0,0.10); --mn-abyss:rgba(76,29,149,0.28);
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#60a5fa;
+  --mn-accent2:#ce93d8; --mn-accent3:#34d399; --mn-accent4:#ff8a65;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-ok:#4ade80; --mn-grid:rgba(255,255,255,0.08); --mn-abyss:rgba(2,6,23,0.62);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--mn-bg);color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.66;
+  -webkit-font-smoothing:antialiased;}
+.wrap{max-width:820px;margin:0 auto;padding:24px 20px 80px;}
+header.hero{padding:26px 22px;border:1px solid var(--mn-border);border-radius:14px;
+  background:var(--mn-panel);margin-bottom:26px;}
+header.hero h1{font-size:1.65em;line-height:1.25;margin-bottom:10px;color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2);font-weight:600;font-size:.98em;}
+.meta-line{color:var(--mn-dim);font-size:.93em;margin-top:12px;line-height:1.62;}
+.meta-line b{color:var(--mn-accent2);}
+.toggle{margin-top:16px;padding:8px 16px;border:1px solid var(--mn-border);
+  background:var(--mn-panel2);color:var(--mn-fg);border-radius:22px;cursor:pointer;
+  font-size:.9em;transition:.2s;}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 26px;}
+section h2{font-size:1.35em;margin-bottom:12px;color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border);padding-bottom:6px;}
+section h3{font-size:1.06em;margin:18px 0 8px;color:var(--mn-accent2);}
+p{margin-bottom:12px;}
+.lede{font-size:1.05em;}
+.card{border:1px solid var(--mn-border);border-radius:10px;background:var(--mn-panel);
+  padding:14px 16px;margin:14px 0;}
+.card h3{font-size:1.03em;margin:0 0 8px;color:var(--mn-fg);}
+.card p{font-size:.96em;margin-bottom:8px;}
+.card:last-child p{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;padding:2px 8px;border-radius:6px;margin-bottom:8px;
+  background:transparent;color:var(--mn-accent);border:1px solid var(--mn-border);}
+.wc{border-left:4px solid var(--mn-accent4);}
+.wc .tag{color:var(--mn-accent4);border-color:var(--mn-accent4);}
+.res{border-left:4px solid var(--mn-ok);}
+.res .tag{color:var(--mn-ok);border-color:var(--mn-ok);}
+.hlA{color:var(--mn-accent);font-weight:700;}
+.hlB{color:var(--mn-accent2);font-weight:700;}
+.ladder{border:1px solid var(--mn-border);border-radius:10px;background:var(--mn-panel);
+  padding:14px 16px;margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:7px;font-size:.96em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+.ladder.c li b{color:var(--mn-accent3);}
+table.map{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em;}
+table.map th,table.map td{border:1px solid var(--mn-border);padding:8px 10px;
+  text-align:left;vertical-align:top;}
+table.map th{background:var(--mn-panel2);color:var(--mn-accent);}
+table.map td:first-child{color:var(--mn-accent2);font-weight:600;}
+.mapbox{background:var(--mn-panel2);border:1px dashed var(--mn-border);border-radius:10px;
+  padding:14px 16px;margin:14px 0;font-size:.96em;border-left:4px solid var(--mn-accent);}
+.formula{font-family:'Courier New',ui-monospace,monospace;background:var(--mn-panel2);
+  border:1px solid var(--mn-border);border-left:4px solid var(--mn-accent);border-radius:8px;
+  padding:12px 14px;margin:10px 0;overflow-x:auto;white-space:pre;font-size:.78em;
+  line-height:1.5;color:var(--mn-fg);}
+.viz{border:1px solid var(--mn-border);border-radius:14px;background:var(--mn-panel);
+  padding:16px;margin-top:6px;}
+.viz canvas{width:100%;height:470px;display:block;border-radius:10px;
+  background:var(--mn-panel2);border:1px solid var(--mn-border);}
+.viz .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1;min-width:110px;accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700;white-space:nowrap;font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{padding:8px 14px;border:1px solid var(--mn-border);background:var(--mn-panel);
+  color:var(--mn-fg);border-radius:8px;cursor:pointer;font-weight:700;font-size:.88em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.on{background:var(--mn-accent);color:var(--mn-bg);border-color:var(--mn-accent);}
+.viz .btn.on2{background:var(--mn-accent2);color:var(--mn-bg);border-color:var(--mn-accent2);}
+.viz .status{margin-top:10px;font-size:.92em;color:var(--mn-dim);font-style:italic;min-height:1.4em;}
+.viz .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.85em;color:var(--mn-dim);}
+.viz .legend span{display:inline-flex;align-items:center;gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.prov{display:flex;gap:12px;align-items:baseline;padding:10px 0;
+  border-bottom:1px solid var(--mn-border);font-size:.94em;}
+.prov:last-child{border-bottom:none;}
+.prov .id{font-family:ui-monospace,monospace;font-weight:700;min-width:22px;}
+.prov .id.a{color:var(--mn-accent);} .prov .id.b{color:var(--mn-accent2);}
+a{color:var(--mn-accent2);text-decoration:none;font-weight:600;}
+a:hover{text-decoration:underline;}
+.note{font-size:.9em;color:var(--mn-dim);font-style:italic;}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--mn-border);
+  color:var(--mn-dim);font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Der invariante Kern — Prozess ✕ Gruppe ✕ Linse</h1>
+  <div class="subtitle">Fusion aus: n3-015.html ✕ n3-003.html  (Runde 4)</div>
+  <div class="meta-line"><b>Kernidee:</b> Beide Runde-3-Papiere sind bereits dreifach fusioniert und landen — über völlig anderes Rohmaterial — auf <em>dieselben</em> Meta-Struktur. <b>A</b> (n3-015) ruft einen <em>kanonischen Fixkern</em> aus, der zugleich der <em>Limes einer anziehenden Bewegung</em> (Prozess/Zeit) und der <em>Fixpunkt unter einer Transformationsgruppe</em> (Struktur) ist: „Invarianz ist der Fixpunkt der Bewegung". <b>B</b> (n3-003) ruft das <em>Ding</em> aus, die <em>linsen-invariante, minimal-komplexe relationale Struktur</em> plus ihre <em>Größe</em> (Oomph): das, was den <em>Wechsel der Linse</em> (Fenster/Maske/Zeichen) überlebt. Die Einheit: <strong>Der invariante Kern ist das Objekt, das unter <em>Prozess</em> (Zeit), <em>Gruppe</em> (Struktur) und <em>Linse</em> (Perspektive) gleich bleibt — erreicht, indem man jeweils die <em>Präsentation</em> vergisst, und er trägt eine <em>orthogonale Größe</em> (Tiefe/Oomph), die jede helle Präsentation unterzeigt.</strong></div>
+  <button class="toggle" id="themeToggle" type="button">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Zwei Papiere, die auf den ersten Blick anderes tun: <b>A</b> vereint Materialdynamik (Ball im Morse-Minimum, Typentheorie auf Normalform) mit Ontologie des Denkens und liest den Stabilen <em>als Bewegung zu einem Fixpunkt</em>; <b>B</b> vereint die Signal-/Zahlenraum-Kern-Lektüre mit der „Zeichen ist nicht das Ding"-These und liest das Wesentliche <em>als das, was hinter der Linse invariant bleibt</em>. Aber auf der Ebene ihrer <em>Thesen</em> beschreiben sie <em>ein und dasselbe Objekt</em> aus zwei orthogonalen Richtungen heraus: einen <em>Kern</em>, der sich dadurch definiert, dass er unter einer <em>Familie von Transformationen, die man vergessen kann, gleich bleibt</em> — und der eine <em>reale Größe</em> hat, die diese Transformationen nicht vollständig anzeigen.</p>
+  <p>Die einigende Position: <strong>Der invariante Kern (= „das Ding") ist die Struktur, die unter drei Lesarten derselben Operation — <em>Prozess</em> (die Bewegung relaxiert bis zum Limes), <em>Gruppe</em> (die Symmetrie wirkt, der Fixpunkt bleibt), <em>Linse</em> (die Perspektive wechselt, das Ding bleibt) — invariant bleibt.</strong> Jede dieser drei Richtungen ist eine „Transformation, die man vergessen kann": A vergisst die <em>Zeit</em> (der Attraktor ist der Limes) und die <em>Struktur</em> (der Fixkern unter der Gruppe); B vergisst die <em>Perspektive</em> (das Ding ist die linsen-invariante Struktur). Und jede der drei Präsentationen — Bewegung, Rotation, Linse — ist zugleich der <em>einzige Zugang</em> zum Kern (sie zeigt <em>auf</em> ihn, er ist ihr Limes/ihre Invariante) <em>und</em> eine <em>Verzerrung</em> davon (sie verdeckt/injiziert, sie unterzeigt die Größe). Der Kern ist nie die Präsentation; er ist der <em>invariante Rest</em> der Präsentation.</p>
+  <p>Und beide stecken das <em>Nichttriviale</em> in dieselbe orthogonale Größe: bei <b>A</b> die <em>Tiefe</em> der Grube/Abgrund, die <em>zieht</em> (der Anzieher ist zugleich der Inhalt), bei <b>B</b> das <em>Oomph</em> / die Komplexität — die <em>orthogonale Achse</em>, die die helle Präsentation <em>unterzeigt</em> und die man <em>mitlesen</em> muss, sonst verfehlt man den Kern (der „sizeless stare" bei B, das Einfrieren der Bewegung ohne die Tiefe bei A, sind derselbe Fehler). Ein Satz: <strong>Der invariante Kern ist der gemeinsame Fixpunkt von Prozess, Gruppe und Linse; die Präsentation ist der Zugang und die Verzerrung zugleich; und die Größe, die die Präsentation unterzeigt, ist die Tiefe, die anzieht.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Beide Papiere sind selbst schon dreifach fusioniert und reden auf der <em>Thesen-Ebene</em> — sie widersprechen sich an keiner Stelle in Fakten. Die echten Spannungen liegen in ihren <em>fundamentalen Stellungen</em> zum selben Objekt. Drei:</p>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Status der Präsentation: Ursprung/Generator vs. epistemisches Hindernis</span>
+    <h3><span class="hlA">A</span> liest den Prozess als <em>konstitutiven Ursprung</em> des Kerns · <span class="hlB">B</span> liest die Linse als <em>Verzerrung, die man korrigieren muss</em></h3>
+    <p><b>A</b>: „Stabilität <em>ist</em> eine Bewegung" — die anziehende Bewegung <em>erzeugt</em> den Fixpunkt; „Ruhe ist die eingefrorene Wiederkunft". Ohne die Bewegung gäbe es keinen Fixpunkt; der Kern ist das <em>Resultat</em> der Anziehung. Die Präsentation (Bewegung/Prozess) ist also der <em>legitime, konstitutive Zugang</em>, aus dem der Kern <em>hervorgeht</em>.</p>
+    <p><b>B</b>: Die Linse <em>erzeugt</em> nichts — sie <em>verdeckt</em> (Homöostase zieht die Anzeige zu „Normal", kaputt sieht gesund aus) und <em>injiziert</em> (ein Prior fügt Außerband-„Halluzinationen" hinzu). Das Ding liegt <em>hinter</em> der Linse, <em>vorbestehend</em>; die Linse ist eine <em>Verzerrung, die man korrigieren muss</em> (Read-through / De-inject / konventionelle Masken ersetzen). Die Präsentation ist also ein <em>epistemisches Hindernis</em>, nicht die Quelle.</p>
+    <p><em>Spannung:</em> A: die Präsentation ist <strong>Ursprung/Generator</strong> des Kerns (Bewegung → Fixpunkt; der Kern ist die eingefrorene Bewegung). B: die Präsentation ist <strong>Verzerrung/Obstrukt</strong> (das Ding ist hinter ihr; man subtrahiert sie). Ist das Medium der Herkunft oder das Hindernis des Kerns?</p>
+  </div>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 2 · Ontologie des Kerns: intrinsischer, absoluter Ort vs. relationelles Residuum</span>
+    <h3><span class="hlA">A</span> behauptet einen <em>absoluten, objekt-internen</em> Fixpunkt/Attraktor · <span class="hlB">B</span> definiert den Kern <em>relationell</em> und verweigert die Substanz</h3>
+    <p><b>A</b>: Der Fixkern ist ein <em>echter Ort im Raum des Objekts</em> — der Grund der Grube, der Attraktor, auf den alle Pfade konvergieren; er existiert als <em>determinierter, beobachterunabhängiger Punkt</em> (Struktur-Realismus über den <em>Ort/Form</em> des Kerns: „der kanonische Punkt + Pfadraum, eindeutig bis auf kontrahierbaren Typ").</p>
+    <p><b>B</b>: Das Ding ist <em>nicht</em> ein Punkt, sondern ein <em>relationelles, kontrafaktisches Residuum</em> — „das, was den <em>Linsenwechsel überlebt</em>" (die linsen-invariante, minimal-komplexe relationale Struktur). B <em>weigert sich grundsätzlich</em>, zu sagen, <em>was</em> die Substanz <em>ist</em>; nur die <em>Trennung</em> Zeichen ≠ Ding ist real, die <em>Substanz</em> bleibt offen (ontologischer Agnostik: Materialismus/Idealismus/Dualismus alle erlaubt).</p>
+    <p><em>Spannung:</em> A: der Kern ist ein <strong>substantiver, intrinsischer, absoluter Ort</strong> (er ist <em>hier</em>, am Attraktor, unabhängig davon, wie man hinsieht). B: der Kern ist ein <strong>relationelles Residuum</strong>, definiert <em>nur</em> im Kontrast zu den Präsentationen, und seine <strong>Substanz ist nicht unser Geschäft</strong>. A sagt „der Kern ist hier"; B sagt „nur dass er über jede Linse invariant ist, ist real — woraus er besteht, ist offen".</p>
+  </div>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 3 · Die Größe: aktiver Anzieher in der Mitte vs. versteckte orthogonale Achse</span>
+    <h3><span class="hlA">A</span> macht die Größe zum <em>Zentrum der Anziehung</em> · <span class="hlB">B</span> macht sie zur <em>versteckten, marginalen Achse, die man missen kann</em></h3>
+    <p><b>A</b>: Die Größe (= die <em>Tiefe</em> der Grube) ist <em>aktiv</em> und <em>zentral</em> — sie <em>zieht</em>, der Inhalt <em>lebt in der Mitte/Tiefe</em> (Pfadraum/Brücke); die Größe ist der <em>Motor der Konvergenz</em>, der Anzieher, an dem sich alles sammelt. Das Nichttriviale lebt <em>in</em> der anziehenden Tiefe.</p>
+    <p><b>B</b>: Die Größe (= <em>Oomph</em>/Komplexität) ist die <em>orthogonale Achse</em> — sie ist von der hellen Präsentation <em>getrennt</em> und von ihr <em>unterzeigt</em>; sie liegt <em>am Rand des sichtbaren</em> und ist <em>leicht zu übersehen</em>. Der Fehlermodus (<em>sizeless stare</em>) besteht gerade darin, nur die helle Präsentation zu lesen und die Größe <em>nicht</em> mitzulesen. Die Größe ist <em>passiv, marginal zur Anzeige</em>, muss <em>deliberat</em> mitgelesen werden.</p>
+    <p><em>Spannung:</em> A: Größe = <strong>der Fokus, der aktive Anzieher, wo der Inhalt ist</strong>. B: Größe = <strong>die vernachlässigte orthogonale Achse, die die Präsentation unterzeigt</strong>. Der eine macht die Größe zum Zentrum, der andere zum leicht übersehbaren Rand.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag">Auflösung 1 · Die Präsentation ist Zugang und Verzerrung zugleich — der Kern ist ihr invarianter Rest</span>
+    <p>A und B streiten, ob die Präsentation der <em>Ursprung</em> (A) oder das <em>Hindernis</em> (B) des Kerns ist. Beide haben recht, weil sie auf <em>verschiedene Seiten derselben Präsentation</em> zeigen: Die Präsentation ist der <strong>einzige Zugang</strong> zum Kern (A — ohne Bewegung/Linse gäbe es keinen Weg <em>zu</em> ihm; er ist ihr Limes), <em>und</em> sie ist <strong>nicht der Kern selbst</strong> (B — sie verdeckt/injiziert; das Ding liegt hinter ihr). Der Kern ist das, was man erhält, wenn man die Präsentation <em>zu ihrem invarianten Limes führt</em> <em>und</em> ihre <em>verzerrenden Anteile abzieht</em>: A's „eingefrorene Wiederkunft" (der Limes der Bewegung) und B's „Read-through / De-inject" (die Linse invertieren, das Injizierte subtrahieren) sind <em>derselbe Zug</em>. <strong>Fusioniert: die Präsentation erzeugt den Weg zum Kern (A) und verzerrt die Sicht auf ihn (B); der Kern ist der <em>invariante Rest / der Limes</em> der Präsentation — Zugang und Gegenstand sind nicht identisch, aber derselbe Operation.</strong></p>
+  </div>
+
+  <div class="card res">
+    <span class="tag">Auflösung 2 · Form ist absolut, Substanz ist agnostisch — A liefert die Form, B die Ontologie-Grenze</span>
+    <p>A's „absoluter, objekt-interner Fixpunkt/Attraktor" ist eine Aussage über die <em>Form/den Ort</em> des Kerns (epistemisch: er ist der <em>stabilste, determinierteste</em> Punkt — der, auf den alles konvergiert). B's Agnostik betrifft nur die <em>Substanz</em> (woraus besteht diese Struktur?). Das kollidiert nicht, wenn man <em>Form von Substanz trennt</em> — und das tut B intern selbst (die substanz-neutrale Topologie, der Idealismus nur als <em>optionale</em> Interpretation). A's Struktur-Realismus gilt also <em>nur der Form</em>: der Attraktor/der linsen-invariante Kanal <em>ist</em> die Form, und dass sie „absolut/beobachterunabhängig" ist, ist eine Aussage über ihre <em>Determiniertheit</em> (sie überlebt jede Transformation), nicht über ihre Substanz. <strong>Fusioniert: die <em>Form</em> des Kerns (der Fixpunkt, der linsen-invariante Kanal) ist absolut und vom Objekt determiniert (A); seine <em>Substanz</em> ist keine Frage der Methode und bleibt offen (B). A's „Ort" und B's „Relation" sind dieselbe Form, einmal als Attraktor, einmal als Invarianz über Linsenwechsel gelesen.</strong></p>
+  </div>
+
+  <div class="card res">
+    <span class="tag">Auflösung 3 · Die Größe ist beides: der Anzieher in der Mitte (A) und die von der Präsentation untergezeigte orthogonale Achse (B)</span>
+    <p>A's „Tiefe, die anzieht" und B's „orthogonales Oomph, das die Präsentation unterzeigt" sind <em>ein und dieselbe Größe</em>. Die Präsentation (der eingefrorene Ruhepunkt bei A, die helle Anzeige bei B) zeigt den <em>Effekt</em> der Größe (Ruhe/Symmetrie/„Normal"), aber nicht die <em>Größe selbst</em>, die den Prozess <em>getrieben</em> hat. Die Größe ist <em>orthogonal</em> zu dem, was die Präsentation zeigt (B: die versteckte Achse), gerade <em>deshalb</em>, weil sie das ist, was <em>zieht</em> (A: der Anzieher). „Size matters no matter where you draw the line": die Größe ist die Achse, die <em>mitzulesen</em> ist. Und die beiden Fehlermoden fallen zusammen: B's <em>sizeless stare</em> (nur die helle Anzeige lesen) und A's <em>Einfrieren der Bewegung zum statischen Punkt ohne die Tiefe</em> (nur den Endzustand sehen, die Wiederkunft/die Anziehung missen) sind <em>dieselbe Verfehlung</em>: den präsentierten Effekt für den Kern halten und die invariante Größe darunter nicht mitlesen. <strong>Fusioniert: die Größe ist zugleich der <em>Motor der Konvergenz</em> in der Mitte (A) und die <em>orthogonale, von jeder Präsentation untergezeigte Achse</em> (B); sie ist der gemeinsame Gegenstand, den die Ehrlichkeits-Disziplin <em>mitlesen</em> muss.</strong></p>
+  </div>
+
+  <div class="mapbox">
+    <strong>Gefasste Schlussposition:</strong> Ein <em>invariante Kern</em> (= das Ding) ist die Struktur, die unter <strong>drei</strong> vergessbaren Transformationen gleich bleibt — unter dem <em>Prozess</em> (Zeit: die Bewegung relaxiert bis zum Limes, A), unter der <em>Gruppe</em> (Struktur: die Symmetrie wirkt, der Fixpunkt bleibt, A) und unter der <em>Linse</em> (Perspektive: die Fenster-/Maske-Lektüre wechselt, das Ding bleibt, B). Er wird durch <em>denselben Zug</em> erreicht: die Präsentation zu ihrem invarianten Limes führen und ihre verzerrenden Anteile abziehen (eingefrorene Wiederkunft = Read-through/De-inject). Die Präsentation ist <em>Zugang und Verzerrung zugleich</em>. Die Form des Kerns ist absolut (A), seine Substanz agnostisch (B); und seine <em>Größe</em> (Tiefe/Oomph) ist die orthogonale Achse, die jede helle Präsentation unterzeigt und die man mitlesen muss — das ist der Gegenstand, den A als <em>anziehende Mitte</em> und B als <em>versteckte Größe</em> lesen.
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Abstrahiert auf die Ebene der <em>Thesen</em> (nicht der Roh-Quellen) teilen beide Papiere ein gemeinsames Skelett — das <em>Objekt</em>, seine <em>Präsentationen</em>, der <em>Zugang vs. der Gegenstand</em>, die <em>orthogonale Größe</em> und der <em>gemeinsame Fehlermodus</em> — das hier auf drei invarianzerzeugende Richtungen erweitert wird.</p>
+
+  <h3>Die zwei Thesen in Kürze</h3>
+  <div class="ladder">
+    <span class="tag">A · n3-015 — „Invarianz ist der Fixpunkt der Bewegung"</span>
+    <ol>
+      <li><b>Fixkern = zwei Limes:</b> zugleich der Limes einer anziehenden Bewegung (Prozess/Zeit, Attraktor) <em>und</em> der Fixpunkt unter einer Transformationsgruppe (Struktur, |D<sub>n</sub>| = 2n); eindeutig bis auf einen kontrahierbaren Raum der Wege.</li>
+      <li><b>Bewegung erzeugt Invarianz:</b> „Stabilität ist eine Bewegung"; Ruhe = eingefrorene Wiederkunft (zwei Tempi: eingefroren / laufend).</li>
+      <li><b>Die Tiefe zieht:</b> Grube/Abgrund — der Anzieher ist zugleich der Inhalt (Pfadraum/Brücke); die Größe (Tiefe) ist der Motor der Konvergenz.</li>
+      <li><b>Das Nichttriviale an der Grenzfläche:</b> im anziehenden Kern (Konvergenz) und an seinem Kohärenz-Rand (Bruch); der kanonische Kanal verbindet zwei scheinbar getrennte Invarianten (Φ ↔ Σ<sup>∞</sup>, Monster ↔ j-Funktion, 196884 = 196883 + 1).</li>
+      <li><b>Zwei Lesarten desselben:</b> als Bewegung (zeitlich) und als Invarianz (zeitlos).</li>
+    </ol>
+  </div>
+  <div class="ladder b">
+    <span class="tag">B · n3-003 — „Das Ding ist die linsen-invariante Struktur + Größe"</span>
+    <ol>
+      <li><b>Das Ding überlebt die Linse:</b> linsen-invariante, minimal-komplexe relationale Struktur; jede Lektüre läuft durch eine Linse (Fenster/Maske/Zeichen).</li>
+      <li><b>Die Linse verdeckt und injiziert:</b> natürliche Maske zieht die Anzeige zu „Normal" (kaputt zeigt gesund); das Fenster/Prior fügt Außerband-Anteil („Halluzination") hinzu.</li>
+      <li><b>Form absolut, Substanz agnostisch:</b> nur die Form (der invariante, determinierteste Teil) ist eine epistemische Aussage; die Substanz ist der Methode gleichgültig.</li>
+      <li><b>Die Größe ist orthogonal:</b> Oomph/Komplexität/D(a) ist die Achse, die die helle Präsentation unterzeigt; <em>size matters</em>.</li>
+      <li><b>Zwei Linse-Arten nach Herkunft:</b> intrinsisch/funktional → messen/minimieren/Read-through (nie abschaffen); konventionell/gewählt → abschaffen und durch das minimal-verpflichtende Default ersetzen.</li>
+      <li><b>Fehlermodus:</b> der <em>sizeless stare</em> — nur die helle Präsentation lesen, die orthogonale Größe missen.</li>
+    </ol>
+  </div>
+
+  <h3>Die gemeinsame Meta-Struktur — ein Objekt, drei Invarianz-Richtungen, eine Größe</h3>
+  <table class="map">
+    <tr><th>Slot</th><th>A · n3-015</th><th>B · n3-003</th><th>Fusioniert</th></tr>
+    <tr><td>Das Objekt</td><td>kanonischer Fixkern (Limes + Fixpunkt)</td><td>das Ding (linsen-invariante Struktur)</td><td>der invariante Kern, das gemeinsame Fixpunkt-Residuum</td></tr>
+    <tr><td>Präsentation 1</td><td>Bewegung/Prozess (Zeit, Relaxation)</td><td>—</td><td>Invarianz <em>unter Prozess</em> (vergessene Zeit)</td></tr>
+    <tr><td>Präsentation 2</td><td>Gruppe (Struktur, Symmetrie D<sub>n</sub>)</td><td>—</td><td>Invarianz <em>unter Gruppe</em> (vergessene Struktur)</td></tr>
+    <tr><td>Präsentation 3</td><td>—</td><td>Linse (Fenster/Maske/Zeichen, Perspektive)</td><td>Invarianz <em>unter Linse</em> (vergessene Perspektive)</td></tr>
+    <tr><td>Zugang vs. Gegenstand</td><td>Bewegung erzeugt den Fixpunkt (Zugang)</td><td>Linse verdeckt/injiziert (Verzerrung)</td><td>Präsentation = einziger Zugang <em>und</em> Verzerrung; Kern = invarianter Rest</td></tr>
+    <tr><td>Die Größe</td><td>Tiefe der Grube (anziehend, zentral)</td><td>Oomph/Komplexität (orthogonal, versteckt)</td><td>die orthogonale Größe, die jede Präsentation unterzeigt (Tiefe = Oomph)</td></tr>
+    <tr><td>Das Nichttriviale</td><td>anziehende Mitte / Kohärenz-Rand</td><td>die untergezeigte Größe / der Bruch der Maske</td><td>die Grenzfläche, an der Konvergenz bricht <em>und</em> die Größe mitzulesen ist</td></tr>
+    <tr><td>Fehlermodus</td><td>Bewegung einfrieren ohne die Tiefe (Endzustand ≠ Anziehung)</td><td>sizeless stare (nur die helle Anzeige)</td><td>den präsentierten Effekt für den Kern halten, die Größe darunter missen</td></tr>
+  </table>
+
+  <h3>Die eine Formel des invariante Kerns</h3>
+  <p>Beide Papiere fassen ihren Kern in Formeln zusammen, die auf <em>derselben</em> Struktur aufbauen — hier zu drei invarianzerzeugenden Richtungen vereinigt:</p>
+  <div class="formula">Kern  K  =  { x : f(x) = x }                     (Limes der Bewegung / Attraktor · A · Prozess)
+         =  { x : g(x) = x  für alle g in G }     (Fixkern unter der Gruppe · A · Struktur)
+         =  { x : L(x) = x  für alle Linsen L }    (das Ding, überlebt den Linsenwechsel · B · Perspektive)
+
+ Prozess  (Zeit)     :  x_0 --[Relaxation, konvergierend]-->  K        (Ruhe = eingefrorene Wiederkunft)
+ Gruppe   (Struktur) :  G   --[Symmetrie, zeitlos]----------->  K     (|D_n| = 2n)
+ Linse    (Perspekt.):  x --[Linsenwechsel, Read-through]----->  K     (Anzeige → Ding)
+
+ Größe  μ  =  Tiefe (A)  =  Oomph / Komplexität / D(a) (B)        [orthogonal zur Präsentation]
+ Fehler   =  Präsentations-Effekt lesen statt (K, μ) mitlesen      [sizeless stare / eingefroren ohne Tiefe]</div>
+
+  <h3>Die fusionierte Ehrlichkeits-Disziplin (ein Zug, drei Richtungen)</h3>
+  <div class="ladder c">
+    <ol>
+      <li><b>Was ist die Präsentation, was der Kern, was die Größe?</b> Trenne die helle Präsentation (Bewegung/Rotation/Linse), den invariante Kern K und die orthogonale Größe μ — verwechsle sie nicht.</li>
+      <li><b>Führe jede Präsentation zu ihrem invarianten Limes:</b> Prozess → Attraktor (A); Gruppe → Fixpunkt (A); Linse → Read-through/De-inject (B). Derselbe Zug in drei Richtungen.</li>
+      <li><b>Ziehe die verzerrenden Anteile ab:</b> injiziert (A: eingefrorene Wiederkunft hält die Wiederkunft fest; B: De-inject subtrahiert das Außerband) und verdeckt (B: Read-through invertiert die Maske).</li>
+      <li><b>Lese die Größe μ mit:</b> die Tiefe/Oomph, die die Präsentation unterzeigt — <em>size matters no matter where you draw the line</em>.</li>
+      <li><b>Prüfe auf den sizeless stare:</b> Halte ich nur den präsentierten Effekt (Ruhe/Symmetrie/„Normal") fest, und habe die Größe μ <em>und</em> die anziehende Tiefe unterlassen?</li>
+    </ol>
+  </div>
+
+  <div class="mapbox">
+    <strong>Die eine fusionierte Meta-These (in einem Satz):</strong> „Der invariante Kern (= das Ding) ist der gemeinsame Fixpunkt von <em>Prozess</em> (Zeit), <em>Gruppe</em> (Struktur) und <em>Linse</em> (Perspektive) — erreicht, indem man die jeweilige <em>Präsentation</em> zu ihrem invarianten Limes führt und ihre verzerrenden Anteile abzieht; die Präsentation ist der <em>Zugang</em> und die <em>Verzerrung</em> zugleich, die Form des Kerns ist absolut, seine Substanz agnostisch, und seine <em>Größe</em> (Tiefe = Oomph) ist die orthogonale Achse, die jede helle Präsentation unterzeigt und die man mitlesen muss."
+  </div>
+  <p class="note">Ehrlichkeitshinweis: die Identifikation von A's „anziehender Tiefe / eingefrorener Wiederkunft" mit B's „orthogonalem Oomph / Read-through" und die Lektüre beider Kerne als „den selben invarianter Kern unter drei vergessbaren Transformationen" ist die <em>Linse dieser Fusion</em>, nicht wörtlicher Inhalt beider Runde-3-Papiere. Die einzelnen Thesen zu A/B stammen aus n3-015 bzw. n3-003.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion: ein Kern, drei vergessbare Transformationen</h2>
+  <p>Ein <em>zentraler invarianter Kern</em>, auf den <em>drei</em> Transformationen wirken — und der unter allen dreien <em>gleich bleibt</em>. <b>Modus Prozess (Zeit):</b> n-fach symmetrische Arme (der Pfadraum) relaxieren <em>einwärts</em> zum Kern und <em>frieren ein</em> — „Bewegung → Ruhe; der Kern ist der Limes". <b>Modus Gruppe (Struktur):</b> das Muster rotiert <em>unter der Gruppe</em>; bei k·(360/n)° sieht es <em>identisch</em> aus (grün) — der Kern bleibt, während die Arme sich drehen. <b>Modus Linse (Perspektive):</b> dieselbe Struktur wird durch eine <em>Linse</em> gezeigt, die <em>verdeckt</em> (zieht die Arme zur „Normal"-Linie, Regler <em>Maske k</em>) und <em>injiziert</em> (Geisterpunkte). Rechts die <strong>orthogonale Größe</strong> (Tiefe/Oomph): obene „wahr", daneben „gezeigt" — ohne <em>Ko-Lesung</em> siehst du nur das Untergezeigte (der sizeless stare). Der Regler <b>Größe/Tiefe</b> steuert die Tiefe, die anzieht. Der Kern bleibt in allen drei Modi fix — <em>das ist</em> die Invarianz.</p>
+
+  <div class="viz">
+    <canvas id="fxCanvas" height="470"></canvas>
+    <div class="controls">
+      <label for="nSlider" class="cl">Symmetrie n: <b id="nLab">6</b></label>
+      <input type="range" id="nSlider" min="3" max="12" step="1" value="6">
+      <label for="depthSlider" class="cl">Größe / Tiefe: <b id="dLab">3.0</b></label>
+      <input type="range" id="depthSlider" min="1" max="6" step="0.1" value="3">
+    </div>
+    <div class="controls">
+      <label for="kSlider" class="cl">Maske k: <b id="kLab">40</b></label>
+      <input type="range" id="kSlider" min="0" max="100" step="1" value="40">
+      <button class="btn on" id="coreread" type="button">Ko-Lesung Größe: AN</button>
+    </div>
+    <div class="controls">
+      <button class="btn on" id="modeZeit" type="button">Prozess (Zeit)</button>
+      <button class="btn" id="modeGruppe" type="button">Gruppe (Struktur)</button>
+      <button class="btn" id="modeLinse" type="button">Linse (Perspektive)</button>
+      <button class="btn" id="resetBtn" type="button">↺ Reset</button>
+    </div>
+    <div class="status" id="fxStatus">Prozess (Zeit) — Arme relaxieren zum invarianter Kern und frieren ein.</div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent)"></i> Arme / Pfade (Pfadraum)</span>
+      <span><i class="dot" style="background:var(--mn-accent2)"></i> Linse / Geister (verdeckt + injiziert)</span>
+      <span><i class="dot" style="background:var(--mn-ok)"></i> Invarianter Kern (Fixpunkt aller drei)</span>
+      <span><i class="dot" style="background:var(--mn-abyss)"></i> Tiefe (anziehende Größe μ)</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov"><span class="id a">A</span>
+    <div><a href="../n3-015.html">n3-015.html</a> — „Der Fixkern — Bewegung (A) × Invarianz (B)" (Runde 3): ein kanonischer Fixkern, zugleich der <em>Limes einer anziehenden Bewegung</em> (Prozess/Zeit, Attraktor) und der <em>Fixpunkt unter einer Transformationsgruppe</em> (Struktur, |D<sub>n</sub>| = 2n); „Invarianz ist der Fixpunkt der Bewegung", Ruhe = eingefrorene Wiederkunft; die Tiefe/Grube zieht und ist zugleich Inhalt; das Nichttriviale an der Grenzfläche anziehende Mitte ↔ Kohärenz-Rand; kanonischer Kanal verbindet zwei Invarianten (Φ ↔ Σ<sup>∞</sup>, Moonshine).</div></div>
+  <div class="prov"><span class="id b">B</span>
+    <div><a href="../n3-003.html">n3-003.html</a> — „Das Ding hinter dem Zeichen — Kern × Fenster × Maske" (Runde 3): das Ding ist die <em>linsen-invariante, minimal-komplexe relationale Struktur</em> + ihre <em>Größe</em> (Oomph); jede Lektüre läuft durch eine Linse (Fenster/Maske/Zeichen), die zugleich <em>verdeckt</em> (Anzeige → „Normal") und <em>injiziert</em> (Außerband/Halluzination); Form absolut, Substanz agnostisch; zwei Linse-Arten (intrinsisch → Read-through, konventionell → ersetzen); Fehlermodus der <em>sizeless stare</em>.</div></div>
+</section>
+
+<footer>Fusion N4-003 · Runde 4 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard). Alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('fxCanvas');
+  if(!canvas||!canvas.getContext){return;}
+  var ctx=canvas.getContext('2d');
+  var root=document.documentElement;
+
+  var nS=document.getElementById('nSlider');
+  var dS=document.getElementById('depthSlider');
+  var kS=document.getElementById('kSlider');
+  var mZ=document.getElementById('modeZeit');
+  var mG=document.getElementById('modeGruppe');
+  var mL=document.getElementById('modeLinse');
+  var coreBtn=document.getElementById('coreread');
+  var resetBtn=document.getElementById('resetBtn');
+  var nLab=document.getElementById('nLab');
+  var dLab=document.getElementById('dLab');
+  var kLab=document.getElementById('kLab');
+  var statEl=document.getElementById('fxStatus');
+  var themeBtn=document.getElementById('themeToggle');
+  if(!nS||!dS||!mZ||!mG||!mL||!resetBtn){return;}
+
+  var TAU=Math.PI*2, H=470;
+  var W=0, cx, cy, maxR;
+  var themeC=null;
+  var state={mode:'zeit', n:6, depth:3.0, k:40, spin:true, prog:0, hold:0, rot:0, time:0, sym:false, coreread:true};
+
+  function cssVar(n){return (getComputedStyle(root).getPropertyValue(n)||'').trim()||'';}
+  function readTheme(){
+    themeC={accent:cssVar('--mn-accent')||'#2563a8',
+      accent2:cssVar('--mn-accent2')||'#a843a0',
+      accent4:cssVar('--mn-accent4')||'#c2410c',
+      ok:cssVar('--mn-ok')||'#16a34a',
+      fg:cssVar('--mn-fg')||'#1a1a2a', dim:cssVar('--mn-dim')||'#5a5648',
+      border:cssVar('--mn-border')||'#888',
+      grid:cssVar('--mn-grid')||'rgba(128,128,128,0.12)',
+      panel2:cssVar('--mn-panel2')||'#f1ece0',
+      abyss:cssVar('--mn-abyss')||'rgba(76,29,149,0.28)'};
+  }
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function label(t,x,y,color,font,align){
+    ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align||'center';ctx.textBaseline='middle';
+    ctx.fillText(t,x,y);
+  }
+
+  function setMode(m){
+    state.mode=m;
+    if(m==='zeit'){state.prog=0;state.hold=0;}
+    if(m==='gruppe'){state.rot=0;}
+    if(mZ){mZ.classList.toggle('on',m==='zeit');}
+    if(mG){mG.classList.toggle('on',m==='gruppe');}
+    if(mL){mL.classList.toggle('on',m==='linse');}
+    render();
+  }
+
+  function updateStatus(){
+    if(!statEl){return;}
+    var t;
+    if(state.mode==='zeit'){
+      t = state.prog>=1
+        ? 'Prozess (Zeit) — eingefroren: alle Arme enden im invarianter Kern (Limes = Ruhe).'
+        : 'Prozess (Zeit) — Arme relaxieren zum invarianter Kern und frieren ein.';
+    } else if(state.mode==='gruppe'){
+      t = state.sym
+        ? 'Gruppe (Struktur) — bei k·360/n°: das Muster ist identisch (grün). Der Kern bleibt.'
+        : 'Gruppe (Struktur) — rotiert unter der Gruppe; der invarianter Kern bewegt sich nie.';
+    } else {
+      t = state.coreread
+        ? 'Linse (Perspektive) — die Linse verdeckt (k) und injiziert; Ko-Lesung zeigt die wahre Größe μ.'
+        : 'Linse (Perspektive) — OHNE Ko-Lesung siehst du nur die untergezeigte Größe (sizeless stare).';
+    }
+    statEl.textContent=t;
+  }
+
+  function render(){
+    if(!ctx){return;}
+    if(!themeC){readTheme();}
+    var C=themeC;
+    var dpr=Math.max(1,Math.min(window.devicePixelRatio||1,2));
+    W=canvas.clientWidth||720;
+    canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx=W*0.40; cy=H/2-4; maxR=Math.min(W*0.40,H)/2-46;
+    var gx=W-58, gw=22, gy0=H-30, gy1=44;
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.panel2; ctx.fillRect(0,0,W,H);
+    label('Ein invarianter Kern — unter Prozess (Zeit), Gruppe (Struktur) und Linse (Perspektive)', W/2, 15, C.dim, '11px Segoe UI, sans-serif');
+
+    var depthFrac=(state.depth-1)/5;
+    var wellR=maxR*(0.28+depthFrac*0.55);
+    var dg=ctx.createRadialGradient(cx,cy,3,cx,cy,Math.max(4,wellR));
+    dg.addColorStop(0,C.abyss); dg.addColorStop(0.6,C.abyss); dg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.6; ctx.fillStyle=dg; ctx.beginPath(); ctx.arc(cx,cy,wellR,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    for(var m=1;m<=4;m++){ ctx.beginPath(); ctx.arc(cx,cy,maxR*m/4,0,TAU); ctx.stroke(); }
+
+    var twist=1.5;
+    var rotRad=(state.mode==='gruppe') ? (state.rot*Math.PI/180) : 0;
+    var armCol=(state.mode==='gruppe'&&state.sym) ? C.ok : C.accent;
+    var STEPS=42;
+    var k01=state.k/100;
+    var dispFactor=0.5+(1-0.5)*(1-k01);
+
+    for(var i=0;i<state.n;i++){
+      var base=(i/state.n)*TAU - Math.PI/2 + rotRad;
+      var fullReach=(state.mode==='linse') ? maxR : maxR;
+
+      if(state.mode==='linse'){
+        ctx.strokeStyle=hexToRgba(C.accent,0.16); ctx.lineWidth=1.2; ctx.setLineDash([3,4]);
+        ctx.beginPath();
+        for(var s0=0;s0<=STEPS;s0++){
+          var t0=s0/STEPS, r0=fullReach*(1-t0), a0=base+(1-t0)*twist;
+          var x0=cx+Math.cos(a0)*r0, y0=cy+Math.sin(a0)*r0;
+          if(s0===0){ctx.moveTo(x0,y0);}else{ctx.lineTo(x0,y0);}
+        }
+        ctx.stroke(); ctx.setLineDash([]);
+      }
+
+      ctx.strokeStyle=hexToRgba(armCol,0.5); ctx.lineWidth=2;
+      ctx.beginPath();
+      for(var s1=0;s1<=STEPS;s1++){
+        var t1=s1/STEPS, r1=fullReach*(1-t1)*dispFactor, a1=base+(1-t1)*twist;
+        var x1=cx+Math.cos(a1)*r1, y1=cy+Math.sin(a1)*r1;
+        if(s1===0){ctx.moveTo(x1,y1);}else{ctx.lineTo(x1,y1);}
+      }
+      ctx.stroke();
+
+      if(state.mode==='zeit'){
+        var sH=state.prog;
+        ctx.strokeStyle=hexToRgba(C.accent,0.9); ctx.lineWidth=2;
+        ctx.beginPath();
+        for(var t2=0;t2<=12;t2++){
+          var ss=Math.max(0,sH-0.14)+0.14*(t2/12);
+          var aa=base+(1-ss)*twist, rr=fullReach*(1-ss);
+          var xx=cx+Math.cos(aa)*rr, yy=cy+Math.sin(aa)*rr;
+          if(t2===0){ctx.moveTo(xx,yy);}else{ctx.lineTo(xx,yy);}
+        }
+        ctx.stroke();
+        var angH=base+(1-sH)*twist, rH=fullReach*(1-sH);
+        var hx=cx+Math.cos(angH)*rH, hy=cy+Math.sin(angH)*rH;
+        ctx.fillStyle=C.accent; ctx.beginPath(); ctx.arc(hx,hy,4.5,0,TAU); ctx.fill();
+        ctx.strokeStyle=hexToRgba(C.fg,0.4); ctx.lineWidth=1; ctx.stroke();
+      }
+
+      if(state.mode==='linse'){
+        for(var g=0;g<2;g++){
+          var gb=(g? 0.62:0.34)+0.05*Math.sin(state.time*1.6+i+g*1.7);
+          var ga=base+(1-gb)*twist + (g?0.22:-0.18);
+          var gr=maxR*gb;
+          ctx.fillStyle=hexToRgba(C.accent2,0.5+0.4*Math.sin(state.time*2+i+g));
+          ctx.beginPath(); ctx.arc(cx+Math.cos(ga)*gr, cy+Math.sin(ga)*gr, 3,0,TAU); ctx.fill();
+        }
+      }
+    }
+
+    if(state.mode==='gruppe'){
+      ctx.fillStyle=C.accent4;
+      ctx.beginPath(); ctx.moveTo(cx,cy-maxR-8); ctx.lineTo(cx-6,cy-maxR-18); ctx.lineTo(cx+6,cy-maxR-18); ctx.closePath(); ctx.fill();
+      label('Referenz (fix)', cx, cy-maxR-26, C.accent4, '10px Segoe UI, sans-serif');
+      if(state.sym){
+        ctx.save(); ctx.shadowColor=C.ok; ctx.shadowBlur=18;
+        ctx.strokeStyle=C.ok; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(cx,cy,maxR,0,TAU); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    if(state.mode==='linse'){
+      var normalY=gy0-0.5*(gy0-gy1);
+      ctx.strokeStyle=hexToRgba(C.accent4,0.7); ctx.setLineDash([4,4]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cx-maxR, cy); ctx.lineTo(cx+maxR, cy); ctx.stroke(); ctx.setLineDash([]);
+      label('Normal (Linse)', cx+maxR*0.72, cy-10, hexToRgba(C.accent4,0.9), '10px Segoe UI, sans-serif','left');
+    }
+
+    var pulse=13+Math.sin(state.time*2)*3;
+    var zg=ctx.createRadialGradient(cx,cy,2,cx,cy,60);
+    zg.addColorStop(0,hexToRgba(C.accent2,0.35)); zg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.5; ctx.fillStyle=zg; ctx.beginPath(); ctx.arc(cx,cy,60,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=C.ok; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,pulse,0,TAU); ctx.stroke();
+    ctx.fillStyle=C.ok; ctx.beginPath(); ctx.arc(cx,cy,5,0,TAU); ctx.fill();
+    label('invarianter Kern', cx, cy+pulse+15, C.ok, 'bold 12px Segoe UI, sans-serif');
+    label('(Limes Prozess · Fixpunkt Gruppe · Ding der Linse)', cx, cy+pulse+29, C.dim, '9.5px Segoe UI, sans-serif');
+
+    ctx.strokeStyle=C.border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(gx,gy1); ctx.lineTo(gx,gy0); ctx.stroke();
+    ctx.setLineDash([4,4]); ctx.strokeStyle=hexToRgba(C.accent4,0.7);
+    ctx.beginPath(); ctx.moveTo(gx-gw/2-4,normalY); ctx.lineTo(gx+gw/2+4,normalY); ctx.stroke(); ctx.setLineDash([]);
+
+    var trueFrac=depthFrac, trueY=gy0-trueFrac*(gy0-gy1);
+    var dispFrac=0.5+(trueFrac-0.5)*(1-k01), dispY=gy0-dispFrac*(gy0-gy1);
+
+    if(state.coreread){
+      ctx.strokeStyle=C.accent; ctx.lineWidth=5; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(gx,gy0); ctx.lineTo(gx,trueY); ctx.stroke(); ctx.lineCap='butt';
+      ctx.fillStyle=C.accent; ctx.beginPath(); ctx.arc(gx,trueY,4,0,TAU); ctx.fill();
+      label('wahr', gx, trueY-14, C.accent, 'bold 10px Segoe UI, sans-serif');
+    }
+    ctx.strokeStyle=C.accent2; ctx.lineWidth=4; ctx.lineCap='round';
+    ctx.globalAlpha=state.coreread?0.75:1;
+    ctx.beginPath(); ctx.moveTo(gx+(state.coreread?8:-8),gy0); ctx.lineTo(gx+(state.coreread?8:-8),dispY); ctx.stroke();
+    ctx.lineCap='butt'; ctx.globalAlpha=1;
+    ctx.fillStyle=C.accent2; ctx.beginPath(); ctx.arc(gx+(state.coreread?8:-8),dispY,4,0,TAU); ctx.fill();
+    label('gezeigt', gx+(state.coreread?8:-8), dispY-14, C.accent2, 'bold 10px Segoe UI, sans-serif');
+
+    ctx.save(); ctx.translate(gx+ (state.coreread?24:4), (gy1+gy0)/2); ctx.rotate(-Math.PI/2);
+    label('Größe μ  =  Tiefe (A) = Oomph (B)  —  orthogonale Achse', 0, 0, C.dim, '10px Segoe UI, sans-serif');
+    ctx.restore();
+
+    updateStatus();
+  }
+
+  function tick(){
+    state.time+=0.016;
+    if(state.mode==='zeit'){
+      if(state.prog<1){
+        state.prog+=0.006*(1+state.depth*0.12);
+        if(state.prog>1){state.prog=1;}
+      } else {
+        state.hold++;
+        if(state.hold>150){state.prog=0;state.hold=0;}
+      }
+    } else if(state.mode==='gruppe'){
+      state.rot=(state.rot+0.7)%360;
+      var step=360/state.n, rr=((state.rot%step)+step)%step;
+      state.sym=rr<2||(step-rr)<2;
+    }
+    render();
+    requestAnimationFrame(tick);
+  }
+
+  mZ.addEventListener('click',function(){setMode('zeit');});
+  mG.addEventListener('click',function(){setMode('gruppe');});
+  mL.addEventListener('click',function(){setMode('linse');});
+  if(coreBtn){
+    coreBtn.addEventListener('click',function(){
+      state.coreread=!state.coreread;
+      coreBtn.textContent='Ko-Lesung Größe: '+(state.coreread?'AN':'AUS');
+      coreBtn.classList.toggle('on',state.coreread);
+      render();
+    });
+  }
+  resetBtn.addEventListener('click',function(){
+    state.n=6;state.depth=3.0;state.k=40;state.prog=0;state.hold=0;state.rot=0;state.sym=false;state.coreread=true;
+    if(nS){nS.value=6;} if(dS){dS.value=3;} if(kS){kS.value=40;}
+    if(nLab){nLab.textContent='6';} if(dLab){dLab.textContent='3.0';} if(kLab){kLab.textContent='40';}
+    if(coreBtn){coreBtn.textContent='Ko-Lesung Größe: AN'; coreBtn.classList.add('on');}
+    setMode('zeit');
+  });
+  nS.addEventListener('input',function(){
+    state.n=parseInt(nS.value,10)||6;
+    if(nLab){nLab.textContent=state.n;}
+  });
+  dS.addEventListener('input',function(){
+    state.depth=parseFloat(dS.value)||3;
+    if(dLab){dLab.textContent=state.depth.toFixed(1);}
+  });
+  if(kS){
+    kS.addEventListener('input',function(){
+      state.k=parseInt(kS.value,10)||0;
+      if(kLab){kLab.textContent=state.k;}
+    });
+  }
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){root.classList.toggle('dark');readTheme();render();});
+  }
+  window.addEventListener('resize',function(){render();});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+
+  readTheme();
+  if(nLab){nLab.textContent=state.n;}
+  if(dLab){dLab.textContent=state.depth.toFixed(1);}
+  if(kLab){kLab.textContent=state.k;}
+  render();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

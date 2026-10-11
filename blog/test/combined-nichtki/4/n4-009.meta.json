@@ -1,0 +1,16 @@
+{
+  "no": "009",
+  "a": "n3-011.html",
+  "b": "n3-013.html",
+  "a_title": "Closure trifft Gluing — das Ganze als Fixpunkt",
+  "b_title": "Das Echte liest sich am Rand — ein invariantes Feld, ein stabiles Loch, ein Gesetz",
+  "combined_theme": "fixpunkt-rand-invarianz",
+  "one_line": "Das Echte/Ganze ist ein Invariantes, das sich durch eine einzige Gleichung seiner inneren und äußeren Lesart ausweist (A: ∃!-Kleben, B: Stokes) — und genau diese Gleichung ist die Invarianz, die jede Transformation überlebt.",
+  "contradictions": [
+    "Konstitutiv vs. revelatorisch: A's ∃! erzeugt das Ganze (es kommt durch das Gesetz in den Dasein), B's Stokes liest ein schon da-seiendes Echte nur ab (das Gesetz kommt durch das Objekt in den Dasein).",
+    "Diskrete Zusammensetzung vs. kontinuierliches Feld: A baut das Ganze bottom-up aus endlich vielen diskreten lokalen Stücken über diskrete Überlappungen, B hält das Echte für ein kontinuierliches Feld, von dem das Diskrete (β₁) nur die persistente Lesart ist (top-down).",
+    "Existenz-Eindeutigkeit vs. Messungs-Gleichheit: A's Invarianz ist ∃! ('es existiert genau ein Ganzes' — qualitativ/Zählung), B's ist Stokes ∫_M dω = ∮_∂M ω ('diese zwei Messungen sind gleich' — quantitativ/Messung)."
+  ],
+  "resolution": "Alle drei Spannungen lösen sich auf einer Meta-Achse auf: dieselbe Gleichung 'innere Lesart = äußere Lesart' ist je nach Löse-Richtung konstitutiv (A: für das globale Objekt gelöst → ∃!) oder revelatorisch (B: für die Rand-Lesart gelöst → Stokes); das diskrete robuste Skelett (A's Stücke / B's β₁) ist die persistente Lesart des kontinuierlichen Feldes; und ∃! ist die Zähl-Version (Zählung) von Stokes (Messung) derselben Invarianz, die jede Transformation überlebt. Der Fixpunkt (A) ist der Schnittpunkt beider Löse-Richtungen.",
+  "viz": "Interaktives Canvas: ein wabbelnder Ring (stabile Einheit M, Loch β₁=1) aus diskreten Stücken (A) — innere Lesart (∫_M / erzeugt) = äußere Lesart (∮_∂M / geklebt), die Invarianz hält unter jeder Verformung ε; Randöffnung erzeugt ein Leck (Interface/Betti-Signatur); Twist erzeugt die topologische Obstruktion (∏_i s_i=−1, kein Ganzes); unten das persistente Feld λ₁(t), dessen robustes Loch jede Schwelle überlebt (Zählung ∃! = Messung Stokes)."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "007",
+  "a": "n3-007.html",
+  "b": "n3-022.html",
+  "a_title": "Form ist die Maske — der Attraktor als Basisschicht, das Residual-Minimum als Entscheidung",
+  "b_title": "Das Ganze als Quotient und seine zwei Lücken — Auflösung (A) × Wahrheitsschicht (B)",
+  "combined_theme": "schatten-zweigeschichtig-maske-minimum-situs",
+  "one_line": "Ein System ist ein zweischichtiger Schatten: die erste Schicht (Form/Attraktor = Quotient/1-Trunkierung) ist eine Maske — notwendig, nie hinreichend — und die Wahrheit/Entscheidung sitzt tiefer, mit zwei Gesichten: das in-Modell-Rest (sein Minimum ist der Ausschlag, seine Quelle wählt die Reparatur) und das jenseitige Δ (orthogonale Achse, die keine Auflösung und kein Minimum erreicht).",
+  "contradictions": [
+    "Irreduzibel = lokalisiert und in-Modell studierbar (A, der endogene offene Kern ist beschränkt, lokalisiert, Gegenstand der Untersuchung) vs. irreduzibel = prinzipiell unerreichbar (B, der Situs Δ>0 ist jenseits des Modells, keine Verfeinerung erreicht ihn).",
+    "Ein extremaler Ausschlag entscheidet (A, global = min über alle lokalen Overlaps, ein Punkt bricht das Ganze) vs. zwei orthogonale, nicht-reduzible Achsen (B, Verlustraum = Präsentation × Typ, kein einzelnes Minimum entscheidet das Ganze).",
+    "Die Tiefe ist ein internes Objekt der eigenen Geometrie (A, das Residual durch Subtraktion der Maske im Modell gewonnen) vs. eine Grenz-Lücke zwischen Modell und Ding (B, der Situs ist eine Eigenschaft der Abbildung, nicht der Koordinaten)."
+  ],
+  "resolution": "Alle drei Spannungen lösen sich, indem man 'irreduzibel', 'Entscheidung' und 'Tiefe' höhenabhängig liest: A spricht über die tiefe Schicht innerhalb des Modells, B über dieselbe Architektur an der Grenze zum Ding. 'Irreduzibel' ist höhenabhängig — in-Modell ein studierbarer Kern (A), jenseits-Modell ein unerreichter Horizont (B). A's Minimum ist der Extremwert-Projektion der in-Modell-Achse (der Ausschlag für die in-Modell-Frage) und damit der Schatten einer Achse, nicht das Ganze; die orthogonale jenseits-Achse (Δ) berührt kein Minimum und keine Auflösung. A's Residual und B's Situs sind die zwei Gesichter derselben tieferen Schicht: das innere (Subtraktion im Modell) und das Grenz-Gesicht (Abbildung an der Modell↔Ding-Grenze).",
+  "viz": "Canvas: links das in-Modell-Rest-Feld mit flacher Maske (nie hinreichend) und gestricheltem in-Modell-Minimum als Ausschlag, Quelle (Gleichgewicht/Endogen/Exogen/Selbstvergiftend) + Auflösungs-Regler; rechts die orthogonale jenseits-Achse mit einer unerreichbaren Situs-Bande Δ>0, die der Auflösung-zeiger nie erreicht (Kohärent ≠ wahr). Themenreaktiv via CSS-Variablen, alle Daten inline."
+}

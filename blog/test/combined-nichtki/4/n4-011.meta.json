@@ -1,0 +1,16 @@
+{
+  "no": "011",
+  "a": "n3-021.html",
+  "b": "n3-026.html",
+  "a_title": "Die stratifizierte Invariante: stabile Struktur als Fixpunkt des Verklebens",
+  "b_title": "Schatten und Lücke — die eine Abbildung, der Rest und die Schwelle",
+  "combined_theme": "treuer-kern-zurueckziehender-rest-schwelle",
+  "one_line": "Das Objekt ist ein treuer, fester Kern (Invariante, als Fixpunkt je Skala konstituiert), den ein endlicher Träger nur an einer stratifizierten, zweikoordinierten, fraktalen Schwelle liest, während ein zurückziehender Rest durchfließt — entbehrlich als Inhalt, das Wertvollste als Struktur — der unter ehrlicher Abbildung ruft und unter adversarischer waffnet.",
+  "contradictions": [
+    "A (n3-021) hält den Rest (fließender Inhalt/das Partikuläre) für entbehrlichen Wegwerfteil, nur die Form bleibt — B (n3-026) nennt denselben Rest (das Rückziehende) das Wertvollste, der Ursprung, der ruft",
+    "A liest die Schwelle als erreichten, all-oder-nichts-Fixpunkt (das Ganze existiert gdw. kompatibel, eine abgeschlossene Treppe) — B als fraktale Asymptote (lokal lesbar, global nie geschlossen, volle Treue nie ein erreichter Zustand)",
+    "A gründet das Reale in objektiver, zählbarer Struktur ohne Subjekt (Kohärenz × Korrespondenz, kein Missbrauch/Begriff von Waffe) — B lässt die Schwelle von der Ehrlichkeit/Intention des Projektors wandern (relationale/normative Koordinate, Ruf vs. Waffe, Double-Bind)"
+  ],
+  "resolution": "Alle drei Spannungen sind Projektionen eines Gegenstands auf verschiedene Ebenen/Koordinaten: (1) der Rest hat je Stufe zwei Gesichter — das einzelne Teil ist beide Male Wegwerfteil, aber die Struktur des Rückziehens (Lücke/Invariante des Flusses) ist das Wertvollste (B) = A's stabile Form; (2) A's Fixpunkt ist B's Schwelle an einer Skala (lokal erreicht, eindeutig), B's Fraktal ist A's Treppe über alle Stufen (global nie erschöpft) — 'fix als Form, fließend im Inhalt' = 'lokal lesbar, global nie 0'; (3) objektive Struktur (A) und Projektoren-Ehrlichkeit (B) sind die zwei Koordinaten derselben Schwelle — A's Korrespondenz ist B's ehrlicher Projektor, und A's 'Fantasy' (kohärent, ohne Kontakt zu W) wird unter Subjekt zu B's Waffe (Double-Bind).",
+  "viz": "Canvas, theme-reaktiv, inline Daten: links treuer Kern + zurückziehender Rest (Logistik-Orbit mit vergehendem Nachhall + invariante Verteilung, λ via f'(x)=r(1−2x)), rechts stratifizierte fraktale Schwelle (Lesbarkeits-Kurve mit Knie d_min, Rungs fein→grob/Kollaps, gestrichelte globale Lücke-Linie nie 0), unten Valenz-Balken RUF↔WAFFE (Ehrlichkeit h); drei Regler: Komplexität r, Auflösungs-Stufe, Ehrlichkeit h."
+}

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Pivot — ein lokales Datum, eine relationale Invariante, zwei Währungen</title>
+<script>(function(){try{var t=localStorage.getItem('n4-theme');if(!t){t='dark';}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --ink:#1a1a2a; --dim:#5a5648;
+  --line:#d8d2c4; --grid:#e6e0d2;
+  --acc:#6d28d9; --acc2:#0e7490; --ok:#16a34a; --bad:#dc2626;
+  --warn:#b45309; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0f172a; --card:#111c33; --ink:#e2e8f0; --dim:#94a3b8;
+  --line:#2b3a55; --grid:#1c2740;
+  --acc:#a78bfa; --acc2:#22d3ee; --ok:#4ade80; --bad:#f87171;
+  --warn:#fbbf24; --sky:#7aa2ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s;}
+article{max-width:820px;margin:0 auto;padding:28px 20px 90px;}
+a{color:var(--acc2);}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 9%,transparent);}
+h1{font-size:clamp(1.7rem,5vw,2.55rem);line-height:1.14;letter-spacing:-.02em;font-weight:800;margin:.15em 0 .1em;}
+.sub{color:var(--dim);font-size:.96rem;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:10px;}
+.sub .mono{font-family:ui-monospace,Menlo,Consolas,monospace;}
+section{padding:28px 0;border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:0;}
+h2{font-size:1.32em;color:var(--acc);margin-bottom:12px;letter-spacing:-.01em;}
+h3{font-size:1.04em;font-weight:650;color:var(--ink);margin:1em 0 .35em;}
+p{margin-bottom:12px;}
+.lede{font-size:1.05em;}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;}
+.card.wc{border-left:4px solid var(--bad);}
+.card.res{border-left:4px solid var(--ok);}
+.card.final{border-left:4px solid var(--acc);}
+.card.wc b{color:var(--bad);} .card.res b{color:var(--ok);}
+.note{font-size:.87rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:10px 0;}
+.lane{background:color-mix(in srgb,var(--acc) 7%,transparent);border-left:3px solid var(--acc);padding:13px 16px;border-radius:0 10px 10px 0;margin:16px 0;}
+.lane b{color:var(--acc);}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;background:color-mix(in srgb,var(--acc) 7%,transparent);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;white-space:pre;font-size:.82em;color:var(--ink);line-height:1.55;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:14px 0;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{color:var(--acc);font-weight:700;font-size:.72em;letter-spacing:.04em;text-transform:uppercase;}
+td:first-child{color:var(--ink);font-weight:650;}
+ol,ul{margin:.5em 0 .5em 1.2em;} li{margin:.35em 0;font-size:.95em;}
+li b{color:var(--acc);}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px;}
+canvas{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:var(--bg);}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 8px;}
+.ctrl .c{flex:1 1 200px;min-width:160px;}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:5px;}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab;}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card);}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent);}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent);}
+button.alt{background:transparent;color:var(--dim);border-color:var(--line);}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.stat{flex:1 1 100px;background:color-mix(in srgb,var(--card) 60%,transparent);border:1px solid var(--line);border-radius:10px;padding:8px 12px;}
+.stat .n{font-family:ui-monospace,monospace;font-size:1.3rem;font-weight:700;color:var(--acc);line-height:1.1;}
+.stat.e .n{color:var(--ok);}
+.stat .l{color:var(--dim);font-size:.72rem;letter-spacing:.02em;margin-top:2px;}
+.readout{border-left:4px solid var(--acc);background:color-mix(in srgb,var(--card) 60%,transparent);border-radius:0 10px 10px 0;padding:10px 14px;font-size:.9rem;margin-top:12px;min-height:3em;color:var(--ink);}
+.legend{display:flex;gap:12px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px;}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.9rem;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:560px){.prov{grid-template-columns:1fr;}}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+.prov .k{font-size:.7em;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;}
+.prov a{text-decoration:none;font-weight:650;border-bottom:1px solid var(--line);}
+.prov a:hover{border-bottom-color:var(--acc);}
+.prov .d{display:block;color:var(--dim);font-size:.87rem;margin-top:8px;}
+footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-size:.82em;}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeBtn" class="themetoggle" type="button" title="Thema wechseln">&#9788;</button>
+  <div class="tag">Runde 4 &middot; Nicht-KI-Track &middot; Pair 004</div>
+  <h1>Der Pivot &mdash; ein lokales Datum, eine relationale Invariante, zwei W&auml;hrungen</h1>
+  <p class="sub">Fusion aus: <span class="mono">n3-017.html</span> &#10005; <span class="mono">n3-004.html</span> &nbsp;(Runde 4)</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lede">Beide Runde-3-Papiere sind selbst schon Doppel-Synthesen und kreisen um dieselbe tiefere Struktur. <b>A</b> (n3-017, &bdquo;Der Fixpunkt &mdash; Sein als Relation&ldquo;) sagt: das Definite ist ein <em>relationaler Fixpunkt</em> &mdash; Sein ist Relation, keine Wesenheit; es wird <em>an der L&uuml;cke</em> durch einen Konsistenz-/Lese-Prozess konstituiert (asymptotische Auswahl), w&auml;hrend es zugleich ein verstandsunabh&auml;ngiger, invarianter Wert ist. <b>B</b> (n3-004, &bdquo;Ein lokales Merkmal, zwei Medien&ldquo;) sagt: es gibt ein <em>lasttragendes globales Objekt</em> (stabile Form / Kollimit / globale Section), das durch lokale Daten bestimmt wird, die sich unter einer Koh&auml;renzregel verkleben; ein <em>einzelnes lokales, nicht-lasttragendes Merkmal</em> (der Invariant-Flip / der Halm an der Naht) ist der Pivot, der die L&uuml;cke misst, und ein <em>benannter Parameter</em> (die Frage / der Invariant-Wert w) schaltet die Lesart.</p>
+    <p>Die eine integrierte Position: <strong>A's relationaler Fixpunkt und B's lasttragendes globales Objekt sind <em>derselbe Gegenstand</em> &mdash; die <em>Koh&auml;renz-Invariante</em>, die den Konsistenz-/Koh&auml;renzprozess &uuml;ber lokale Daten &uuml;berlebt.</strong> Sie ist zugleich <em>Sein</em> (A: relational, an der L&uuml;cke konstituiert) und <em>lasttragend</em> (B: als Invariante tragend), denn <em>lasttragend = invariant unter dem Koh&auml;renzprozess = &uuml;berlebt den Konsistenztest</em>. Ein <em>einzelnes lokales Datum</em> (A: die L&uuml;cke / Obstruktion / &Phi;; B: der Invariant-Flip / der Halm an der Naht) ist der <b>Pivot</b> &mdash; er ist die <em>L&ouml;kus-Position</em>, an der die Invariante fixiert ist (A: Sein an der L&uuml;cke, deren <em>Dimension das Objekt ist</em>), und zugleich das <em>lokal nicht-lasttragende Datum</em>, das die L&uuml;cke zwischen lokalen Daten und dem Ganzen misst (B: der entscheidende, zu nicht-&uuml;ber-attribuierende Keim). Die Lesart dieses Pivots (real-bezahlt vs. wert-geschaltet, Defekt vs. Zertifikat, erzeugt vs. gegeben, Blockade vs. Kurzschluss) wird durch einen <em>benannten Parameter</em> umgeschaltet (A: dim(L&uuml;cke) / Konsistenz c / Seltenheit r; B: die Frage im Leser / der Invariant-Wert w im Objekt). Die ehrliche Epistemik ist in beiden dieselbe: <strong>Parameter benennen, Anspruch an die Invariante kalibrieren, den Pivot nicht &uuml;ber-attribuieren</strong> &mdash; der Pivot ist der <em>Weg zu</em> der Invariante (ihre Dimension, ihr Score, seine Obstruktion), nie die Invariante selbst.</p>
+    <p>Der verbindende Zug beider Papiere lautet damit: <em>definieren &uuml;ber Relationen/Koh&auml;renz statt &uuml;ber Wesen</em>, und <em>das Ganze wird von einem einzigen lokalen Datum an der Grenze fixiert</em>. A formuliert es als &bdquo;Sein ist eine Relation&ldquo;, B als &bdquo;ein Merkmal, zwei Medien, ein Schalter&ldquo; &mdash; beides ist dieselbe Bewegung: <strong>Sein ist die relationale Invariante, die lasttragend ist.</strong></p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere widerlegen einander nicht; sie teilen sogar den Kern &bdquo;ein Ganzes wird von einem lokalen Datum an der Grenze fixiert&ldquo;. Aber sie treffen auf <b>drei grundlegenden Annahmen</b> &uuml;ber das, was real / lasttragend ist &mdash; und da sind sie inkompatibel.</p>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(1) Der Pivot: realer konstitutiver Surplus (A) vs. nicht-lasttragender Schatten (B)</h3>
+      <p><b>A (n3-017):</b> die L&uuml;cke / Obstruktion / &Phi; ist <b>ontologisch echt</b> &mdash; &bdquo;irreduzibles Global&ldquo;, &bdquo;Kohomologie = &Phi;&ldquo;, &bdquo;das Ganze ist mehr als die Summe der lokalen Teile&ldquo;. Das Sein ist <em>an der L&uuml;cke</em>; die Dimension der L&uuml;cke <em>ist</em> die Dimension des Objekts (dim 0 = Punkt, dim &gt; 0 = &Phi;). A reifiziert die L&uuml;cke als den <em>positiven Ort des Seins</em>.</p>
+      <p><b>B (n3-004):</b> das lokale Merkmal / der Pivot ist <b>nicht-lasttragend</b> &mdash; er ist Peripherie; <em>&Uuml;ber-Attribuierung ist die Pathologie</em> (&bdquo;Die Illusion (A) und der Defekt (B) sind dasselbe Merkmal, &uuml;ber-attribuiert&ldquo;). Das <em>Ganze</em> tr&auml;gt, der Pivot misst nur die L&uuml;cke. B demotiert den Pivot zum <em>Ma&szlig;, das man nicht f&uuml;r das Ganze halten darf</em>.</p>
+      <p class="note"><b>Spannung:</b> die L&uuml;cke ist <em>konstitutiv real</em>, dort, wo das Sein entsteht (A) &mdash; vs. der Pivot ist <em>nicht-lasttragend</em>, und ihn zu reifizieren ist genau der Fehler (B).</p>
+    </div>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(2) Das Ganze: relational konstituiert, keine Wesenheit (A) vs. prim&auml;res lasttragendes Objekt (B)</h3>
+      <p><b>A (n3-017):</b> <em>&bdquo;Sein ist eine Relation, keine Wesenheit.&ldquo;</em> Das Definite wird relational/asymptotisch <em>konstituiert</em> (Genese); es gibt keinen vorausgesetzten, unabh&auml;ngigen Kern &mdash; das &bdquo;Sein&ldquo; ist die Position in einem System von Relationen/Bedingungen (Yoneda &times; Hume &times; Kolmogorov &times; Score-Rolle).</p>
+      <p><b>B (n3-004):</b> es <em>GIBT</em> ein <b>lasttragendes globales Objekt</b> (die stabile topologische Form / das Kollimit / die globale Section), das prim&auml;r und tr&auml;gt; die ganze Aufgabe ist, es zu finden und vom Fragilen zu trennen (&bdquo;lasttragend vs. fragil&ldquo;). B <em>postuliert</em> einen lasttragenden Kern.</p>
+      <p class="note"><b>Spannung:</b> A leugnet einen lasttragenden Kern (Sein = reine Relation/Prozess); B postuliert ein lasttragendes, prim&auml;res Ganzes.</p>
+    </div>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(3) Der Prozess: Erzeuger (A) vs. Kalibrierer / Enth&uuml;ller (B)</h3>
+      <p><b>A (n3-017):</b> die Bestimmtheit wird vom Konsistenzprozess <b>erzeugt</b> &mdash; &bdquo;dynamisches, asymptotisches Residuum&ldquo;, &bdquo;Vervollst&auml;ndigung = Auswahl an der Obstruktion&ldquo;, am Rand r&rarr;&infin;, &epsilon;&rarr;0. Der Prozess <em>macht</em> das Definite (Genese).</p>
+      <p><b>B (n3-004):</b> der Prozess <b>kalibriert / enth&uuml;llt</b> ein schon lasttragendes, stabiles Ganzes &mdash; &bdquo;die Form ist stabil&ldquo;, &bdquo;ein Halm fixiert das Kollimit&ldquo;, &bdquo;das lasttragende Objekt ist durch die Messung der L&uuml;cke umschlossen bzw. enth&uuml;llt&ldquo;. Der Prozess <em>zeigt</em> das Ganze, er erzeugt es nicht.</p>
+      <p class="note"><b>Spannung:</b> der Prozess ist <em>produktiv</em> (A: Genesis) vs. <em>epistemisch-enth&uuml;llend</em> (B: Kalibrierung eines Vorhandenen).</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (1): Der Pivot hat zwei Rollen &mdash; L&ouml;kus (konstitutiv, A) und lokales Datum (indikativ, B)</h3>
+      <p>Es sind zwei Ebenen desselben Pivots, keine zwei Dinge. Die <em>L&uuml;cke</em> (A) ist die <b>L&ouml;kus-Position</b>, an der die Invariante fixiert ist: konstitutiv, das Sein ist dort, und ihre Dimension <em>ist</em> das Objekt (dim 0 = Punkt, dim &gt; 0 = &Phi;). Der <em>lokale Keim</em> (B) ist das <b>lokal nicht-lasttragende Datum</b>, das diese L&uuml;cke signalisiert/misst und nicht mit dem Ganzen verwechselt werden darf. <strong>Fusion:</strong> das Sein ist <em>an der L&uuml;cke</em> (A); der Keim <em>zeigt</em> auf die L&uuml;cke, ist aber nicht die L&uuml;cke und erst recht nicht das Ganze (B). &Uuml;ber-Attribuierung heißt: den Keim zum Ganzen erheben <em>oder</em> die L&uuml;cken-Magnitude &uuml;ber ihre Koh&auml;renz hinaus strecken. Der Pivot ist der Weg zur Invariante (Dimension, Score, Obstruktion), nie die Invariante selbst.</p>
+    </div>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (2): A's relationaler Fixpunkt = B's lasttragendes globales Objekt</h3>
+      <p>&bdquo;Lasttragend&ldquo; heißt hier: <em>invariant unter dem Koh&auml;renzprozess = &uuml;berlebt den Konsistenztest = die stabile Form / das Kollimit</em>. Dieses &bdquo;Kern&ldquo; ist selbst relational/invariant (nicht ein unabh&auml;ngiges Substrat), damit sind A's Anti-Essentialismus und B's Lasttragendes <em>dieselbe Sache</em>: das Ganze ist beides &mdash; konstituiert (A: Genese) <em>und</em> schon-tragend/invariant (B: Zustand). A's &bdquo;fester Kern (Sein)&ldquo; <em>ist</em> B's &bdquo;lasttragendes Objekt&ldquo;. A leugnet nur das <em>unabh&auml;ngige Wesen</em>; B's Lasttragendes ist eine <em>relationale</em> Lasttragende (es tr&auml;gt <em>weil</em> es koh&auml;rent ist, nicht trotz).</p>
+    </div>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (3): ein Prozess, zwei Funktionen &mdash; ontologisch konstituierend + epistemisch kalibrierend</h3>
+      <p>Der eine Konsistenz-/Koh&auml;renzprozess ist auf der <em>ontologischen</em> Ebene der <b>Erzeuger</b> der Invariante an der L&uuml;cke (A: asymptotische Auswahl, Genese) und auf der <em>epistemischen</em> Ebene der <b>Kalibrierer</b>, der dem Leser die Invariante lehrt und vor &Uuml;ber-Attribuierung h&uuml;tet (B: &bdquo;Parameter benennen, Anspruch kalibrieren&ldquo;). Genese und Kalibrierung sind dieselbe Bewegung auf zwei Ebenen.</p>
+    </div>
+
+    <div class="card res final">
+      <h3 style="margin-top:0">Gefasste Schlussposition + die Br&uuml;cke (das Herzst&uuml;ck)</h3>
+      <p><strong>Das Definite ist die relationale Invariante, die lasttragend ist</strong> &mdash; konstituiert an der L&uuml;cke durch den Konsistenz-/Koh&auml;renzprozess (A) und tragend als Invariante (B), gemessen von einem einzelnen Pivot (L&uuml;cke / Keim), umgeschaltet durch einen benannten Parameter. Die Br&uuml;cke, die die beiden Runde-3-Papiere erst verbindet: <b>dim(L&uuml;cke) = 0 &hArr; H&sup1;(X,&#8497;) = 0 &hArr; m = (&minus;1)<sup>w</sup> = +1 (w gerade) &rArr; Fixpunkt = EIN PUNKT / invarianter p / stabile Form; &nbsp;dim(L&uuml;cke) &gt; 0 &hArr; H&sup1;(X,&#8497;) &ne; 0 &hArr; m = (&minus;1)<sup>w</sup> = &minus;1 (w ungerade) &rArr; Fixpunkt = irreduzibles Global / &Phi; / Emergenz.</b> A's 0-dim vs. &gt;0-dim und B's w-gerade vs. w-ungerade sind derselbe diskrete Invariant; die L&uuml;cke tr&auml;gt zwei W&auml;hrungen: A (I = &minus;log&#8322;p = r, C = 2r) und B (H&sup1;-Energie, Durchsatz / Existenz). Ein Pivot, zwei Medien, eine L&uuml;cke, ein Schalter.</p>
+    </div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="lede">Abstrahiert auf die Ebene der Thesen/Positionen beider Runde-3-Papiere &mdash; genug Substanz, damit eine sp&auml;tere Runde allein davon arbeitet.</p>
+
+    <h3>4.1 Gemeinsames Meta-Schema &mdash; &bdquo;ein Ganzes, ein Pivot, ein Schalter, zwei Medien&ldquo;</h3>
+    <p>Beide Papiere sind Instanzen eines einzigen Schemas mit sieben F&auml;chern: (i) das <em>lasttragende globale Objekt / der relationale Fixpunkt</em>, (ii) die <em>lokalen Daten / das Substrat</em>, (iii) die <em>Koh&auml;renz-/Konsistenzregel</em>, (iv) der <em>Pivot</em> (L&uuml;cke / Keim an der Grenze), (v) die <em>zwei Lesarten</em> (scheinbar entgegengesetzte Valenzen), (vi) der <em>Schalter</em> (ein benannter Parameter) und (vii) die <em>L&uuml;cke / Kalibrierung</em> plus die <em>Pathologie</em> (&Uuml;ber-Attribuierung des Pivots).</p>
+
+    <h3>4.2 A &mdash; der relationale Fixpunkt (Sein als Relation)</h3>
+    <ul>
+      <li><b>Anti-Essentialismus:</b> Objekt = Position in einem System von Relationen/Bedingungen (Yoneda &bdquo;Objekt = was es tut&ldquo;; Dedekind-Schnitt &radic;2 = die L&uuml;cke; die 3 = &Uuml;berlebende in der Dimensionslinie; Humesches Prinzip; Kolmogorov; Score-Rolle). &bdquo;Sein ist eine Relation, keine Wesenheit.&ldquo;</li>
+      <li><b>Substrat = fester Kern (Sein) + offene L&uuml;cke (Obstruktion):</b> der Konsistenz-/Lese-Prozess fixiert die L&uuml;cke und vergr&ouml;&szlig;ert den Kern. Zwei Gesichter = zwei Momente: statisch/invariant (der Kern, Zustand, B-H&auml;lfte) + dynamisch/asymptotisch (der Prozess, Genese, A-H&auml;lfte).</li>
+      <li><b>Der Rest / die L&uuml;cke:</b> ontologisch echt (Kohomologie = &Phi;, Emergenz, &bdquo;globale Form &gt; Summe der lokalen Teile&ldquo;) <em>und</em> tr&auml;gt eine agentenbezogene Gr&ouml;&szlig;e (Information = Commitment = &minus;log&#8322;p = Seltenheit = der Score). <b>dim(L&uuml;cke) = 0</b> &rarr; eindeutiger Punkt; <b>dim(L&uuml;cke) &gt; 0</b> &rarr; Kohomologie / &Phi;.</li>
+      <li><b>Objektivit&auml;t</b> = die Konsistenz-/Trennbedingung, die den Kern unter allen Lekt&uuml;ren fix h&auml;lt <em>und</em> den &Uuml;berlebenden an der L&uuml;cke ausw&auml;hlt.</li>
+    </ul>
+
+    <h3>4.3 B &mdash; das lasttragende globale Objekt (ein Merkmal, zwei Medien)</h3>
+    <ul>
+      <li><b>Das Schema:</b> ein lokales, <em>nicht-lasttragendes</em> Merkmal wird in zwei Medien gelesen und durch einen benannten Parameter umgeschaltet; die Pathologie ist in beiden dieselbe &mdash; die Peripherie &uuml;ber-attribuiert.</li>
+      <li><b>Medium A (energetisch/analytisch):</b> Daten = Funktion auf &Omega;; H&sup1;-Energie <span class="mono">&norm;&thinsp;f&thinsp;&rsquo;&thinsp;&norm;~&omega;</span>; Stabilit&auml;tssatz <span class="mono">&norm;f&minus;g&norm;<sub>L&infin;</sub> &ge; d<sub>bottleneck</sub>(Pers(f), Pers(g))</span>; Persistenz &beta;&#8320;,&beta;&#8321;. W&auml;hrung der L&uuml;cke = Energie + Konfidenz (geglaubt &minus; wirklich). Schalter = die Frage (im Leser). Pathologie = Illusion / &Uuml;berkonfidenz.</li>
+      <li><b>Medium B (algebraisch/strukturell):</b> Faserb&uuml;ndel / Garbe; Monodromie <span class="mono">m=(&minus;1)<sup>w</sup></span>; Section <span class="mono">v(&theta;)=h&middot;cos((w/2)&theta;)</span>, periodisch &hArr; w gerade; <span class="mono">H&sup1;(X,&#8497;)&ne;0</span> = Obstruktion / Blockade; ein Halm fixiert das Kollimit (XDP &asymp; 24M pps vs. iptables &asymp; 3,5M pps). W&auml;hrung der L&uuml;cke = Invariant-Wert + Existenz/Durchsatz. Schalter = der Invariant-Wert (im Objekt). Pathologie = Nicht-Existenz behaupten / vorzeitige Fixierung.</li>
+    </ul>
+
+    <h3>4.4 Die Entsprechung (das Herzst&uuml;ck der Fusion)</h3>
+    <table>
+      <thead><tr><th>Fach</th><th>A &mdash; relationale Fixpunktperspektive</th><th>B &mdash; lasttragende Objekt-Perspektive</th></tr></thead>
+      <tbody>
+        <tr><td>Das Ganze</td><td>der relationale Fixpunkt / invarianter p (Sein)</td><td>das lasttragende globale Objekt (stabile Form / Kollimit / globale Section)</td></tr>
+        <tr><td>Die lokalen Daten</td><td>das l&ouml;chrige Substrat + der feste Kern</td><td>Funktion auf &Omega; / Halm-Daten &ell;<sub>x</sub></td></tr>
+        <tr><td>Die Koh&auml;renzregel</td><td>Konsistenz-/Vervollst&auml;ndigungsbedingung (Cauchy, Dedekind, Verklebung, Rand r&rarr;&infin;)</td><td>Koh&auml;renzregel / Sheaf-Axiome (Verkleben, Garbifizierung)</td></tr>
+        <tr><td>Der Pivot</td><td>die L&uuml;cke / Obstruktion / &Phi; (konstitutiver L&ouml;kus, deren Dimension das Objekt ist)</td><td>der Invariant-Flip / der Halm an der Naht (nicht-lasttragendes lokales Datum)</td></tr>
+        <tr><td>Die zwei Lesarten</td><td>erzeugt (Genese) vs. gegeben (Zustand); statisch/invariant vs. dynamisch/asymptotisch; dim 0 (Punkt) vs. dim &gt; 0 (&Phi;)</td><td>real-bezahlt vs. wert-geschaltet; Defekt/Blockade vs. Zertifikat/Kurzschluss; Blockade vs. Bestimmung</td></tr>
+        <tr><td>Der Schalter</td><td>dim(L&uuml;cke) / Konsistenz c / Seltenheit r</td><td>die Frage (im Leser) / Invariant-Wert w + Darstellung (im Objekt)</td></tr>
+        <tr><td>L&uuml;cke / W&auml;hrung</td><td>Dimension + agentenbezogene Gr&ouml;&szlig;e: I=&minus;log&#8322;p=r, C=2r</td><td>Energy/Obstruktion H&sup1; + Existenz/Durchsatz (24M vs. 3,5M pps)</td></tr>
+        <tr><td>Pathologie</td><td>&Uuml;ber-Attribuierung der L&uuml;cke &uuml;ber ihre Koh&auml;renz hinaus</td><td>&Uuml;ber-Attribuierung des Pivots (Illusion / Defekt)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.5 Die Br&uuml;cke &mdash; die neue Synthese (Runde 4)</h3>
+    <p>Das Entscheidende, was Runde 4 hinzuf&uuml;gt: A's <em>Dimension der L&uuml;cke</em> und B's <em>Parit&auml;t des Invariants</em> sind <b>derselbe diskrete Invariant</b>, der entscheidet, ob die lokalen Daten verkleben (Ganzes = Punkt/Invariante) oder blockieren (Ganzes = irreduzibles Global/&Phi;). Und die <em>Gr&ouml;&szlig;e</em> der L&uuml;cke wird in zwei Medien zwei W&auml;hrungen abgelesen &mdash; was genau B's eigene Metathese (&bdquo;zwei Medien, zwei W&auml;hrungen&ldquo;) f&uuml;r die L&uuml;cke selbst ist.</p>
+    <div class="formula">A (n3-017)  &middot;  p = 2^(-r)   I = -log_2 p = r   C = 2r
+   dim(L&uuml;cke)=0 &rArr; EIN Punkt (&radic;2 / die 3 / invarianter p)
+   dim(L&uuml;cke)&gt;0 &rArr; irreduzibles Global (Kohomologie = &Phi;, Emergenz)
+   Dedekind-Schnitt:  L &lt; R,  L &cup; R = &Qopf;,  L maxlos;   &radic;2:  L={q:q^2 &lt; 2},  R={q:q^2 &ge; 2}
+   Yoneda:  Nat(h_A,F) &cong; F(A)      &beta;_k,  &chi;=V-E+F      (&epsilon;&rarr;0,  r&rarr;&infin;)
+
+B (n3-004)  &middot;  m=(-1)^w   v(&theta;)=h&middot;cos((w/2)&theta;)   periodisch &hArr; w gerade
+   H^1(X,&#8497;)&ne;0  &rArr; keine globale Section (Obstruktion / Blockade)
+   &norm;f-g&norm;_{L&infin;} &ge; d_bottleneck(Pers(f), Pers(g))   (Stabilit&auml;t, bezahlt in H^1)
+   ein Halm fixiert das Kollimit:  XDP &asymp; 24M pps  vs  iptables &asymp; 3,5M pps
+
+Fusion (R4)  &middot;  dim(L&uuml;cke)=0  &hArr;  H^1(X,&#8497;)=0  &hArr;  m=+1 (w gerade)   &rArr;  Fixpunkt = PUNKT (invarianter p / stabile Form)
+   dim(L&uuml;cke)&gt;0 &hArr;  H^1(X,&#8497;)&ne;0 &hArr;  m=-1 (w ungerade)  &rArr;  Fixpunkt = Global (&Phi; / Emergenz)
+   L&uuml;cke = zwei W&auml;hrungen:   A: I=-log_2 p = r,  C = 2r      B: H^1-Energie,  Durchsatz/Existenz
+   Schalter:   A: dim(L&uuml;cke) + Konsistenz c + Seltenheit r     B: Frage (im Leser) / Invariant w (im Objekt)
+   Regel:  Parameter benennen &middot; Anspruch an die Invariante kalibrieren &middot; den Pivot nicht &uuml;ber-attribuieren</div>
+
+    <h3>4.6 Das wiederverwendbare Schema (Fusion, final)</h3>
+    <p>Gegeben ein l&ouml;chriges Substrat mit <b>festem Kern</b> (Sein) und <b>offener L&uuml;cke</b> (Obstruktion): ein <b>Konsistenz-/Koh&auml;renzprozess</b> wirkt auf der L&uuml;cke. Das <b>Ganze = die Koh&auml;renz-Invariante</b> = der relationale Fixpunkt (A) = das lasttragende Objekt (B). Ein <b>einzelner Pivot</b> (L&uuml;cke / Keim) ist die L&ouml;kus-Position <em>und</em> das nicht-lasttragende Datum; <b>dim(Pivot)</b> entscheidet: = 0 &rArr; invarianter Punkt (verklebt, H&sup1;=0, w gerade, stabile Form); &gt; 0 &rArr; irreduzibles Global (blockiert, H&sup1;&ne;0, w ungerade, &Phi;/Emergenz). Die <b>Gr&ouml;&szlig;e der L&uuml;cke</b> wird in der W&auml;hrung des Mediums abgelesen (A: I/C/Score, B: H&sup1;/Durchsatz). Die <b>Lesart</b> wird durch einen <b>benannten Parameter</b> umgeschaltet (dim(L&uuml;cke)/c/r bzw. Frage/w). <em>Sein ist die relationale Invariante, die lasttragend ist &mdash; konstituiert an der L&uuml;cke, gemessen vom Pivot, geschaltet durch den Parameter.</em></p>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung &mdash; der Pivot, der ein Ganzes in zwei W&auml;hrungen fixiert</h2>
+    <p>Links der <b>Pivot</b>: die verdrillte Section <span class="mono">v(&theta;)=h&middot;cos((w/2)&theta;)</span> &uuml;ber S&#185; mit Naht &mdash; der <em>einzelne lokale Keim</em>. Der <b>Regler w</b> (Halbwindungen) ist der geteilte Schalter: seine <em>Parit&auml;t</em> ist zugleich A's <b>dim(L&uuml;cke)</b> (gerade &rArr; 0, ungerade &rArr; &gt;0) und B's <b>Invariant</b> m=(&minus;1)<sup>w</sup>. Mitte <b>das Ganze = der Fixpunkt</b>: w gerade (verklebt, H&sup1;=0) &rArr; <b>dim 0 = EIN PUNKT</b> (invarianter p / stabile Form); w ungerade (blockiert, H&sup1;&ne;0) &rArr; <b>dim &gt; 0 = irreduzibles Global</b> (&Phi; / Emergenz). Rechts die <b>zwei W&auml;hrungen derselben L&uuml;cke</b>: A (I=&minus;log&#8322;p, C=2r, gesteuert von Seltenheit r) und B (H&sup1;-Energie + Durchsatz, gesteuert von w). Ziehe an den Reglern: derselbe Pivot wird einmal als <em>Dimension des Fixpunkts</em> und einmal als <em>Ma&szlig; in zwei Medien</em> abgelesen.</p>
+
+    <div class="viz">
+      <div class="ctrl">
+        <div class="c">
+          <label>Invariant w &middot; Halbwindungen (Parit&auml;t = Schalter) <b id="v-w">2</b></label>
+          <input type="range" id="s-w" min="0" max="6" step="1" value="2"/>
+        </div>
+        <div class="c">
+          <label>Seltenheit r (A-W&auml;hrung, p=2&#8315;&#8322;r) <b id="v-r">3</b></label>
+          <input type="range" id="s-r" min="1" max="6" step="1" value="3"/>
+        </div>
+        <div class="c">
+          <label>Amplitude h (B-Energie) <b id="v-h">0.70</b></label>
+          <input type="range" id="s-h" min="0.2" max="1" step="0.05" value="0.7"/>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="b-even" type="button">w gerade &middot; Punkt (dim 0)</button>
+        <button id="b-odd" type="button">w ungerade &middot; Global (dim &gt; 0)</button>
+        <button id="b-play" type="button">Global rotieren</button>
+        <button id="b-rst" type="button" class="alt">Zur&uuml;cksetzen</button>
+      </div>
+      <canvas id="cv" width="820" height="480"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--acc)"></i>Section v(&theta;) / der Pivot</span>
+        <span><i style="background:var(--sky)"></i>Nahtstart &theta;=0</span>
+        <span><i style="background:var(--ok)"></i>Fixpunkt dim 0 (Punkt / invariant)</span>
+        <span><i style="background:var(--bad)"></i>Fixpunkt dim &gt; 0 (Global / &Phi;) + Naht-DROP</span>
+        <span><i style="background:var(--acc2)"></i>W&auml;hrung A (I / C)</span>
+        <span><i style="background:var(--warn)"></i>W&auml;hrung B (H&sup1; / Durchsatz)</span>
+      </div>
+      <div class="statrow">
+        <div class="stat"><div class="n" id="ro-dim">0</div><div class="l">dim(L&uuml;cke)</div></div>
+        <div class="stat"><div class="n" id="ro-m">+1</div><div class="l">m=(&minus;1)^w (Schalter)</div></div>
+        <div class="stat"><div class="n" id="ro-obstr">H&sup1;=0</div><div class="l">Obstruktion H&sup1;(X,&#8497;)</div></div>
+        <div class="stat"><div class="n" id="ro-p">0.125</div><div class="l">p=2&#8315;&#8322;r (invariant)</div></div>
+        <div class="stat e"><div class="n" id="ro-I">3.0</div><div class="l">I=&minus;log&#8322;p (A)</div></div>
+        <div class="stat e"><div class="n" id="ro-C">6</div><div class="l">C=2r (A)</div></div>
+      </div>
+      <div class="readout" id="ro-state"></div>
+    </div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A &middot; n3-017.html</span>
+        <p><a href="../n3-017.html">n3-017.html</a></p>
+        <span class="d">&bdquo;Der Fixpunkt &mdash; Sein als Relation zwischen Substrat, Konsistenz und Lekt&uuml;re&ldquo; (Runde 3): das Definite ist der relationale Fixpunkt eines Konsistenz-/Lese-Prozesses zwischen festem Kern (Sein) und offener L&uuml;cke (Obstruktion); zugleich erzeugt (asymptotische Auswahl, Genese) und gegeben (invarianter Wert, Zustand). Die L&uuml;cke/&Phi; ist ontologisch echt (Emergenz) und tr&auml;gt eine agentenbezogene Gr&ouml;&szlig;e (I=&minus;log&#8322;p, C=2r). &bdquo;Sein ist eine Relation, keine Wesenheit.&ldquo;</span>
+      </div>
+      <div class="box">
+        <span class="k">B &middot; n3-004.html</span>
+        <p><a href="../n3-004.html">n3-004.html</a></p>
+        <span class="d">&bdquo;Ein lokales Merkmal, zwei Medien &mdash; bezahlt oder geschaltet, lasttragend oder fragil&ldquo; (Runde 3): ein lasttragendes globales Objekt (stabile Form / Kollimit) wird durch lokale Daten bestimmt; ein einzelnes nicht-lasttragendes Merkmal (Invariant-Flip m=(&minus;1)^w / Halm an der Naht) ist der Pivot, der die L&uuml;cke misst, umgeschaltet durch einen benannten Parameter (Frage / Invariant-Wert); zwei Medien mit zwei W&auml;hrungen (Energie+Konfidenz vs. Wert+Existenz). Pathologie: die Peripherie &uuml;ber-attribuiert.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion N4-004 &middot; nicht-KI-Track &middot; Runde 4 &middot; selbst&auml;ndige, offline-f&auml;hige Seite (keine Netz-Daten, alle Daten inline, reine Canvas). Farben &uuml;ber CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var cv = document.getElementById('cv');
+  var S = { w:2, r:3, h:0.7, theta:0, playing:true };
+  function $(id){ return document.getElementById(id); }
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function parseColor(c){
+    c=(c||'').trim();
+    if(c.charAt(0)==='#'){
+      var h=c.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    var m=c.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(','); return [parseFloat(p[0]), parseFloat(p[1]), parseFloat(p[2])]; }
+    return [120,120,120];
+  }
+  function rgba(c,a){ var p=parseColor(c); return 'rgba('+(p[0]|0)+','+(p[1]|0)+','+(p[2]|0)+','+a+')'; }
+
+  function fit(H){
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var cw = Math.max(1, Math.floor((r.width||820)*dpr));
+    var ch = Math.max(1, Math.floor(H*dpr));
+    if(cv.width!==cw || cv.height!==ch){ cv.width=cw; cv.height=ch; cv.style.height=H+'px'; }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w:(r.width||820), h:H, ctx:ctx };
+  }
+
+  var NSEC = 6;
+  function draw(){
+    var o=fit(480), ctx=o.ctx, w=o.w, h=o.h;
+    if(w<10) return;
+    var INK=cssv('--ink','#1a1a2a'), DIM=cssv('--dim','#5a5648'), GRID=cssv('--grid','#e6e0d2'),
+        LINE=cssv('--line','#d8d2c4'), ACC=cssv('--acc','#6d28d9'), ACC2=cssv('--acc2','#0e7490'),
+        BAD=cssv('--bad','#dc2626'), OK=cssv('--ok','#16a34a'), WARN=cssv('--warn','#b45309'),
+        SKY=cssv('--sky','#2f6fb0'), BG=cssv('--bg','#faf8f1');
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=BG; ctx.fillRect(0,0,w,h);
+    var flip=(S.w%2===1);
+    var c1L=16, c1R=w*0.33, c2L=w*0.36, c2R=w*0.67, c3L=w*0.70, c3R=w-16;
+    var topT=46, gh=150;
+
+    // ---------- PANEL 1: pivot / Naht ----------
+    ctx.fillStyle=ACC2; ctx.font='700 11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('1 \u00B7 PIVOT  (L\u00FCcke / Naht-Keim)', c1L, 20);
+    var pL=c1L+6, pR=c1R-6, pw=pR-pL, pY=topT, ph=gh;
+    ctx.strokeStyle=GRID; ctx.lineWidth=1; ctx.strokeRect(pL,pY,pw,ph);
+    var vMax=Math.max(S.h,0.25)*1.35;
+    function X(t){ return pL+(t/TAU)*pw; }
+    function Y(v){ return pY+ph/2-(v/vMax)*(ph/2); }
+    ctx.setLineDash([4,4]); ctx.strokeStyle=rgba(DIM,0.6); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pL,Y(0)); ctx.lineTo(pL+pw,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=ACC; ctx.lineWidth=2.5; ctx.beginPath();
+    var M=200, i;
+    for(i=0;i<=M;i++){ var t=i/M*TAU; var x=X(t), y=Y(S.h*Math.cos((S.w/2)*t)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke();
+    var v0=S.h*Math.cos(0), vE=S.h*Math.cos((S.w/2)*TAU);
+    ctx.fillStyle=SKY; ctx.beginPath(); ctx.arc(X(0),Y(v0),5,0,TAU); ctx.fill();
+    ctx.fillStyle=flip?BAD:ACC; ctx.beginPath(); ctx.arc(X(TAU),Y(vE),5,0,TAU); ctx.fill();
+    ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('\u03B8=0', X(0), pY+ph+14); ctx.fillText('\u03B8=2\u03C0', X(TAU), pY+ph+14);
+    ctx.textAlign=flip?'right':'left'; ctx.fillStyle=flip?BAD:ACC;
+    ctx.fillText('v(2\u03C0)='+(flip?'\u2212':'+')+S.h.toFixed(1), flip?X(TAU)-7:X(TAU)+7, Y(vE)-8);
+    // discrete strip: NSEC regions + 1 seam
+    var stripY=pY+ph+28, stripH=30, cellW=pw/(NSEC+1), s;
+    ctx.textAlign='left'; ctx.fillStyle=DIM; ctx.font='9px ui-monospace,monospace';
+    ctx.fillText(NSEC+' Halm-Regionen + 1 Naht', pL, stripY-5);
+    for(s=0;s<=NSEC;s++){
+      var isSeam=(s===NSEC); var pass=isSeam?!flip:true;
+      var x0=pL+s*cellW+1, ww=cellW-2;
+      ctx.fillStyle=pass?rgba(ACC,0.20):rgba(BAD,0.26); ctx.strokeStyle=pass?ACC:BAD; ctx.lineWidth=1.3;
+      ctx.beginPath(); ctx.rect(x0,stripY,ww,stripH); ctx.fill(); ctx.stroke();
+      var cx=x0+ww/2; ctx.textAlign='center';
+      ctx.fillStyle=pass?ACC:BAD; ctx.font='bold 11px ui-monospace,monospace';
+      ctx.fillText(isSeam?(pass?'PASS':'DROP'):(pass?'\u2713':'\u2717'), cx, stripY+stripH/2+4);
+      if(isSeam){ ctx.fillStyle=WARN; ctx.font='9px ui-monospace,monospace'; ctx.fillText('Naht', cx, stripY-5); }
+    }
+
+    // ---------- PANEL 2: the whole (fixed point) ----------
+    ctx.fillStyle=ACC; ctx.font='700 11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('2 \u00B7 DAS GANZE  (Fixpunkt / Invariante)', c2L, 20);
+    var cx2=(c2L+c2R)/2, cy2=topT+gh*0.55, R2=Math.min(c2R-c2L, gh)*0.30;
+    if(!flip){
+      ctx.strokeStyle=rgba(OK,0.5); ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.arc(cx2,cy2,R2,0,TAU); ctx.stroke();
+      ctx.strokeStyle=rgba(OK,0.25);
+      ctx.beginPath(); ctx.arc(cx2,cy2,R2*1.35,0,TAU); ctx.stroke();
+      var g=ctx.createRadialGradient(cx2,cy2,1,cx2,cy2,24);
+      g.addColorStop(0,OK); g.addColorStop(1,rgba(OK,0));
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx2,cy2,24,0,TAU); ctx.fill();
+      ctx.fillStyle=OK; ctx.beginPath(); ctx.arc(cx2,cy2,7,0,TAU); ctx.fill();
+      ctx.fillStyle=INK; ctx.font='700 12px ui-sans-serif,system-ui'; ctx.textAlign='center';
+      ctx.fillText('dim 0 \u00B7 EIN PUNKT', cx2, cy2+R2*1.35+22);
+      ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace';
+      ctx.fillText('(A: \u221A2 / die 3 / invariant p)', cx2, cy2+R2*1.35+38);
+      ctx.fillText('= (B: stabile Form / Kollimit)', cx2, cy2+R2*1.35+52);
+    } else {
+      ctx.strokeStyle=rgba(BAD,0.28); ctx.lineWidth=1;
+      for(var k=0;k<4;k++){ var a0=k/4*TAU; ctx.beginPath(); ctx.arc(cx2,cy2,R2*1.15,a0,a0+TAU/4); ctx.stroke(); }
+      ctx.strokeStyle=BAD; ctx.lineWidth=2.4; ctx.beginPath();
+      for(i=0;i<=M;i++){ var tt=i/M*TAU; var x2=cx2+R2*1.15*Math.cos(tt); var y2=cy2+R2*0.95*Math.sin(2*tt+S.theta); i?ctx.lineTo(x2,y2):ctx.moveTo(x2,y2); }
+      ctx.closePath(); ctx.stroke();
+      ctx.fillStyle=INK; ctx.font='700 12px ui-sans-serif,system-ui'; ctx.textAlign='center';
+      ctx.fillText('dim > 0 \u00B7 irreduzibles Global', cx2, cy2+R2*1.35+22);
+      ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace';
+      ctx.fillText('(A: Kohomologie = \u03A6 / Emergenz)', cx2, cy2+R2*1.35+38);
+      ctx.fillText('= (B: globale Section, H\u00B9\u22600)', cx2, cy2+R2*1.35+52);
+    }
+
+    // ---------- PANEL 3: two currencies ----------
+    ctx.fillStyle=WARN; ctx.font='700 11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('3 \u00B7 ZWEI W\u00C4HRUNGEN  (derselbe Pivot)', c3L, 20);
+    var baseY=topT+gh+46, maxBarH=gh*0.72, grpW=(c3R-c3L-10)/2, slotW=grpW/2-4;
+    function bar(x,frac,color){ var bh=Math.max(2,maxBarH*Math.min(1,frac)); ctx.fillStyle=color; ctx.fillRect(x,baseY-bh,slotW-6,bh); }
+    var I=S.r, C=2*S.r, H1=S.h*S.h*S.w*S.w/4, tp=flip?3.5:24;
+    bar(c3L+2, I/6, ACC); bar(c3L+2+slotW, C/12, ACC2);
+    bar(c3L+grpW+6, H1/12, WARN); bar(c3L+grpW+6+slotW, tp/24, SKY);
+    ctx.strokeStyle=LINE; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(c3L,baseY); ctx.lineTo(c3R,baseY); ctx.stroke();
+    ctx.fillStyle=INK; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('I='+I.toFixed(0), c3L+2+(slotW-6)/2, baseY+14);
+    ctx.fillText('C='+C, c3L+2+slotW+(slotW-6)/2, baseY+14);
+    ctx.fillText('H\u00B9='+H1.toFixed(1), c3L+grpW+6+(slotW-6)/2, baseY+14);
+    ctx.fillText(tp+'M', c3L+grpW+6+slotW+(slotW-6)/2, baseY+14);
+    ctx.fillStyle=DIM; ctx.font='9px ui-monospace,monospace';
+    ctx.fillText('A \u00B7 Score', c3L+grpW/2, baseY+28);
+    ctx.fillText('B \u00B7 Energie/Existenz', c3L+grpW+grpW/2, baseY+28);
+    ctx.textAlign='left';
+  }
+
+  function readout(){
+    var flip=(S.w%2===1);
+    var p=Math.pow(2,-S.r), I=S.r, C=2*S.r, H1=S.h*S.h*S.w*S.w/4;
+    $('ro-dim').textContent = flip?'>0':'0';
+    $('ro-m').textContent = flip?'\u22121':'+1';
+    $('ro-obstr').textContent = flip?'H\u00B9\u22600':'H\u00B9=0';
+    $('ro-p').textContent = p.toFixed(3);
+    $('ro-I').textContent = I.toFixed(1);
+    $('ro-C').textContent = String(C);
+    var ro=$('ro-state');
+    if(flip){
+      ro.style.borderColor=BAD;
+      ro.textContent='w ungerade (m=\u22121): die Naht flippt, eine globale Section blockiert (H\u00B9(X,\u2133)\u22600). dim(L\u00FCcke)>0 \u21D2 der Fixpunkt ist ein irreduzibles Global (A: Kohomologie=\u03A6, Emergenz); B: Naht=Defekt=Zertifikat, Short-Circuit fixiert das Kollimit. Dieselbe L\u00FCcke, zwei W\u00E4hrungen: A (I='+I.toFixed(0)+', C='+C+') und B (H\u00B9='+H1.toFixed(1)+', Durchsatz gesenkt).';
+    } else {
+      ro.style.borderColor=OK;
+      ro.textContent='w gerade (m=+1): die lokalen Daten verkleben. dim(L\u00FCcke)=0, H\u00B9(X,\u2133)=0 \u21D2 der Fixpunkt ist 0-dimensional = EIN PUNKT (A: \u221A2 / die 3; invarianter p); das Ganze ist lasttragend & stabil (B: stabile Form / fixiertes Kollimit). Die L\u00FCcke tr\u00E4gt die A-W\u00E4hrung: I=\u2212log\u2082p='+I.toFixed(0)+', C=2r='+C+'.';
+    }
+  }
+
+  function setW(v){ S.w=Math.max(0,Math.min(6,parseInt(v,10)||0)); if($('s-w')) $('s-w').value=String(S.w); if($('v-w')) $('v-w').textContent=String(S.w); readout(); }
+  function setR(v){ S.r=Math.max(1,Math.min(6,parseInt(v,10)||3)); if($('s-r')) $('s-r').value=String(S.r); if($('v-r')) $('v-r').textContent=String(S.r); readout(); }
+  function setH(v){ S.h=Math.max(0.2,Math.min(1,parseFloat(v)||0.7)); if($('s-h')) $('s-h').value=S.h.toFixed(2); if($('v-h')) $('v-h').textContent=S.h.toFixed(2); readout(); }
+  function toggleTheme(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n4-theme', d?'dark':'light'); }catch(e){}
+    if($('themeBtn')) $('themeBtn').innerHTML = d ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    draw();
+  }
+
+  function init(){
+    if($('s-w')) $('s-w').addEventListener('input', function(e){ setW(e.target.value); });
+    if($('s-r')) $('s-r').addEventListener('input', function(e){ setR(e.target.value); });
+    if($('s-h')) $('s-h').addEventListener('input', function(e){ setH(e.target.value); });
+    if($('b-even')) $('b-even').addEventListener('click', function(){ setW(2); });
+    if($('b-odd')) $('b-odd').addEventListener('click', function(){ setW(3); });
+    if($('b-play')) $('b-play').addEventListener('click', function(){ S.playing=!S.playing; this.textContent=S.playing?'Global rotieren (aus)':'Global rotieren'; });
+    if($('b-rst')) $('b-rst').addEventListener('click', function(){ setW(2); setR(3); setH(0.7); S.theta=0; });
+    if($('themeBtn')) $('themeBtn').addEventListener('click', toggleTheme);
+    if($('themeBtn')) $('themeBtn').innerHTML = document.documentElement.classList.contains('dark') ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+    readout(); draw();
+    (function loop(){ if(S.playing){ S.theta+=0.012; } draw(); requestAnimationFrame(loop); })();
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+})();
+</script>
+</body>
+</html>

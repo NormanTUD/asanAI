@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Da als Kern — persistente Signatur und Generierungsgrenze (Fusion R4)</title>
+<script>
+(function(){
+  var d=document.documentElement;
+  var saved=null; try{saved=localStorage.getItem('n4_010_theme');}catch(e){}
+  if(saved==='light'){ d.classList.remove('dark'); }
+  else { d.classList.add('dark'); }
+})();
+</script>
+<style>
+  :root{
+    --bg:#f7f5ef; --bg-soft:#efeadf; --text:#20242e; --muted:#5c6470;
+    --accent:#2f6fb0; --accent2:#b98800; --good:#0a7a4a; --bad:#c0392b;
+    --card-bg:rgba(20,25,35,.035); --card-border:rgba(20,25,35,.14); --line:rgba(20,25,35,.16);
+    --code-bg:rgba(20,25,35,.05); --code-fg:#20242e;
+    --viz-canvas-bg:#fbf9f3; --viz-grid:#e8e2d4;
+    --viz-core:#a50d1e; --viz-bound:#2f6fb0; --viz-persist:#0a7a4a;
+    --viz-person:#b98800; --viz-trail:#8a93a3; --viz-need:#7a4fb0;
+    --viz-noise:#9aa3b2; --viz-fg:#20242e; --viz-muted:#6b7280;
+  }
+  html.dark{
+    --bg:#0b0e15; --bg-soft:#12161f; --text:#e7e2d6; --muted:#98a0ad;
+    --accent:#6cc0ff; --accent2:#ffd766; --good:#4fe0a0; --bad:#ff7a8a;
+    --card-bg:rgba(255,255,255,.04); --card-border:rgba(255,255,255,.13); --line:rgba(255,255,255,.15);
+    --code-bg:rgba(255,255,255,.05); --code-fg:#d8e0ee;
+    --viz-canvas-bg:#0b0e15; --viz-grid:#191f2b;
+    --viz-core:#ff5a6a; --viz-bound:#6cc0ff; --viz-persist:#4fe0a0;
+    --viz-person:#ffd766; --viz-trail:#8890a0; --viz-need:#c084fc;
+    --viz-noise:#8890a0; --viz-fg:#e7e2d6; --viz-muted:#98a0ad;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:Georgia,'Iowan Old Style',serif;
+    line-height:1.72;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+    transition:background .3s,color .3s;
+  }
+  #article{max-width:820px;margin:0 auto;padding:3rem 1.4rem 5rem;}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:1.4rem;margin-bottom:2.2rem;}
+  h1{font-size:clamp(1.8rem,4.6vw,2.5rem);line-height:1.15;letter-spacing:.01em;margin:0 0 .55rem;padding-right:66px;}
+  h1 .star{color:var(--accent);}
+  .subtitle{color:var(--muted);font-style:italic;font-size:1rem;margin:0 0 .3rem;}
+  .subtitle b{color:var(--accent2);font-style:normal;}
+  .tagline{margin-top:14px;font-size:.97em;color:var(--muted);line-height:1.62;}
+  .tagline b{color:var(--text);}
+  .tagline .a{color:var(--accent);}
+  .tagline .b{color:var(--accent2);}
+  .theme-toggle{
+    position:fixed;top:1rem;right:1rem;z-index:50;
+    background:var(--card-bg);border:1px solid var(--card-border);color:var(--text);
+    border-radius:20px;padding:.4rem .8rem;cursor:pointer;font-size:.78rem;font-family:inherit;
+    backdrop-filter:blur(4px);
+  }
+  section{margin:0 0 2.4rem;}
+  h2{font-size:1.5rem;margin:2.3rem 0 .8rem;border-left:3px solid var(--accent);padding-left:.7rem;line-height:1.25;color:var(--text);}
+  h3{font-size:1.12rem;margin:1.5rem 0 .4rem;color:var(--accent2);}
+  p{margin:.75rem 0;}
+  .lead{color:var(--muted);font-size:1.02rem;}
+  .a{color:var(--accent);font-weight:700;}
+  .b{color:var(--accent2);font-weight:700;}
+  em{color:var(--accent);}
+  code{background:var(--code-bg);border:1px solid var(--card-border);border-radius:4px;padding:.05rem .35rem;font-size:.86em;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--code-fg);}
+  .formula{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem;line-height:1.85;
+    background:var(--card-bg);border:1px solid var(--card-border);border-left:3px solid var(--accent);
+    border-radius:8px;padding:.9rem 1.1rem;margin:.9rem 0;overflow-x:auto;white-space:pre;
+  }
+  .card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:1rem 1.15rem;margin:1rem 0;}
+  .card h4{margin:0 0 .4rem;font-size:.99rem;color:var(--text);}
+  .card p{margin:.45rem 0;font-size:.95rem;}
+  .card .tag{display:inline-block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--card-border);border-radius:4px;padding:.1rem .45rem;margin-bottom:.5rem;}
+  .card.w1{border-top:3px solid var(--accent);}
+  .card.w2{border-top:3px solid var(--accent2);}
+  .card.w3{border-top:3px solid var(--good);}
+  .card.final{border:1px solid var(--accent);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr;}}
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9em;}
+  th,td{border:1px solid var(--card-border);padding:9px 11px;text-align:left;vertical-align:top;}
+  th{background:var(--card-bg);color:var(--text);}
+  td.kv{color:var(--accent);font-weight:700;}
+  td.kv2{color:var(--accent2);font-weight:700;}
+  .note{border-left:3px solid var(--accent);padding:.4rem 0 .4rem 1rem;margin:.9rem 0;color:var(--muted);font-size:.94rem;}
+  .loop{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin:1.1rem 0;}
+  @media(max-width:680px){.loop{grid-template-columns:repeat(2,1fr);}}
+  .loop .step{background:var(--card-bg);border:1px solid var(--card-border);border-top:3px solid var(--accent);border-radius:6px;padding:.65rem .7rem;}
+  .loop .step .n{font-family:ui-monospace,monospace;color:var(--accent2);font-size:.8rem;}
+  .loop .step h4{margin:.15rem 0;font-size:.9rem;color:var(--text);}
+  .loop .step p{margin:0;font-size:.79rem;color:var(--muted);line-height:1.45;}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);}
+  a:hover{border-bottom-style:solid;}
+  .vizwrap{background:var(--bg-soft);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.1rem;margin:1.2rem 0;}
+  #coreCanvas{display:block;width:100%;height:460px;border-radius:10px;background:var(--viz-canvas-bg);border:1px solid var(--card-border);}
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;margin:.9rem 0;align-items:flex-end;}
+  .control{display:flex;flex-direction:column;min-width:150px;flex:1;}
+  .control label{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);margin-bottom:.35rem;}
+  .control input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:var(--line);border-radius:3px;outline:none;width:100%;}
+  .control input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;}
+  .control input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;}
+  .control .val{font-size:.82rem;color:var(--text);margin-top:.3rem;font-family:ui-monospace,monospace;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end;}
+  button.ctl{font:inherit;font-size:.85rem;color:var(--text);background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:.5rem .8rem;cursor:pointer;}
+  button.ctl:hover{border-color:var(--accent);}
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.9rem;}
+  .chip{background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:.4rem .7rem;font-size:.84rem;}
+  .chip b{font-family:ui-monospace,monospace;color:var(--accent);}
+  .chip.rg b{color:var(--accent2);}
+  .legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.7rem;font-size:.79rem;color:var(--muted);}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:.35rem;vertical-align:middle;}
+  .prov{display:flex;gap:1rem;flex-wrap:wrap;}
+  .prov .card{flex:1;min-width:250px;}
+  .prov .card h4 a{color:var(--accent2);}
+  .prov p{font-size:.92em;color:var(--muted);margin:.6rem 0 0;}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;font-style:italic;text-align:center;}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9790; / &#9728; Thema</button>
+<article id="article">
+  <header class="top">
+    <h1>Das <span class="star">Da</span> als Kern — persistente Signatur und Generierungsgrenze</h1>
+    <p class="subtitle">Fusion aus: <b>n2-050.html</b> &#10005; <b>n3-023.html</b> &nbsp;(Runde 4)</p>
+    <p class="tagline">
+      <span class="a">A (n2-050)</span> hält das Eine für ein <b>sich-erschließendes phänomenales Grundfeld</b>, das eine
+      <b>persistente topologische Signatur</b> hat (β₀, β₁, Persistenz = Tod − Geburt), gelesen über die <b>Schwelle ω</b>;
+      das <b>„Da“ (Dasein)</b> ist die sich-abgrenzende Schwelle, an der das Feld beständig oder zerfällt, und das
+      <b>Eigentliche</b> (hohe Persistenz / Signal) steht dem <b>Man / Rauschen</b> gegenüber.
+      <span class="b">B (n3-023)</span> hält dasselbe Eine für einen <b>Transport</b> (Pullback = Fluss) mit einem
+      <b>stabilen Kern</b> (Attraktor <code>P+U(x*)=0</code>, dort wird Struktur erhalten, <code>r→1</code>, der Keim wird
+      gespeichert) und einer <b>Generierungsgrenze</b> (Frontier <code>E=G</code>), jenseits derer ein <b>Generator</b> den
+      Horizont wirft (<code>r→0</code> = Flut / Brei). Die Fusion: <b>das sich-erschließende Feld IST der Transport</b> —
+      der <b>Da ist der Kern/Attraktor</b>, in dem die persistente Signatur (das Eigentliche) erhalten wird, und die
+      <b>Schwelle ω ist die Generierungsgrenze</b> (Frontier <code>E=G</code> = <code>∂M</code>-Knie), jenseits derer der
+      Generator den Horizont wirft.
+    </p>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere reduzieren ihr Phänomen auf <em>einen</em> selbstorganisierenden Prozess — nicht auf einen Zustand, den
+      man besitzt. <span class="a">A (n2-050)</span> nennt das eine ein <b>sich-erschließendes phänomenales Grundfeld</b>
+      (Sein = Bewusstsein), dessen Identität eine <b>persistente, skaleninvariante topologische Signatur</b> ist — β₀
+      (Cluster), β₁ (beständige Schleifen), Persistenz (Tod − Geburt) — und die man über die <b>Schwelle ω</b> (die
+      Zeit-/Skala-Achse der drei gleichursprünglichen Ekstasen) <em>liest</em>; das <b>Da</b> ist die sich-abgrenzende
+      Schwelle, an der das Feld beständig oder zerfällt, und das <b>Eigentliche</b> ist, was überlebt (hohe Persistenz, fern
+      der Diagonale = Signal), das <b>Man</b> das, was nicht überlebt (nahe der Diagonale = Rauschen).
+      <span class="b">B (n3-023)</span> nennt dasselbe eine ein <b>Transport</b> (Pullback = Fluss <code>ẋ = P + U(x)</code>)
+      mit einem <b>stabilen Kern</b> (der Attraktor <code>P+U(x*)=0</code>, an dem der Fluss ruht, <code>r→1</code>, und dort
+      seinen <em>Keim</em> — den gespeicherten Tangentialvektor — parkt) und einer <b>Generierungsgrenze</b> (das Frontier
+      <code>E=G</code> = der Beckenrand des Attraktors), jenseits derer ein <b>Generator</b> (Prior = gespeicherter
+      Tangentialvektor + Antrieb) neue Struktur wirft.</p>
+    <p>Die integrierte Position ist eine einzige, von zwei Seiten gesehene: <strong>Das sich-erschließende phänomenale Feld
+      (A) IST der Transport (B).</strong> Das Feld hat nicht bloß <em>nebenbei</em> eine persistente Topologie — es
+      <em>ist</em> ein Transport, dessen <b>stabiler Kern das Da ist</b> (A's konstitutives Dasein <em>ist</em> B's
+      Attraktor <code>P+U(x*)=0</code>, der Ort, an dem die Signatur erhalten wird und der Keim geparkt wird, <code>r→1</code>)
+      und dessen <b>Generierungsgrenze die Schwelle ω ist</b> (A's Dissoziations-Schwelle <em>ist</em> B's Frontier
+      <code>E=G</code> <em>ist</em> der <code>∂M</code>-Knie, die Skala des steilsten topologischen Übergangs). Innerhalb der
+      Grenze <b>erhält</b> der Kern die <b>persistente topologische Signatur</b> (A's β₀/β₁, das Eigentliche, hohe
+      Persistenz, fern der Diagonale); jenseits der Grenze wirft der <b>Generator</b> den <b>Horizont</b> (neue Struktur,
+      growing from the ground).</p>
+    <p>Und die beiden Pole fallen zusammen: A's <b>Eigentliches</b> (vorlaufend zum Tode, sich ergreifend, hohe Persistenz,
+      Signal) ist B's <b>Kern-erhaltener, hoch-<code>r</code>, strukturiert-regenerierender</b> Pol; A's <b>Man / Rauschen</b>
+      (uneigentlich, kurzlebig, nahe der Diagonale) ist B's <b>Flut / Brei</b> (<code>|P|→0 ⇒ r→0</code>, dissipativ); und
+      A's <b>Lockern der Dissoziationsgrenze</b> (NDE / Psychedelika / Hypoxie → reichere Erfahrung, Cluster verschmelzen,
+      die größere Makro-Form erscheint) ist B's <b>Regeneration</b> (<code>[P,U]≠0</code> — der Fluss wird über die Grenze
+      hinausgeschleudert, growing from the ground). In einem Satz: <em>das sich-erschließende Feld ist der Transport,
+      dessen stabiler Kern (das Da / Attraktor) die persistente topologische Signatur erhält (das Eigentliche, r→1) und
+      dessen Grenze (die Schwelle ω / Frontier / ∂M-Knie) den Horizont generiert — die persistente Form zu lesen (A) heißt,
+      den Transport (B) am Ruhepunkt einzufrieren; den Transport zu folgen (B) heißt, die Selbst-Erschließung des Feldes
+      (A) als die Bewegung zu sehen, die zugleich den Kern erhält und den Horizont wirft.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die zwei Quellen widersprechen sich in keiner einzelnen Tatsache, aber an drei Stellen nehmen sie
+      <em>genuin unterschiedliche, teils entgegengesetzte</em> Stellungen ein (je Behauptung der Quelle zugeordnet,
+      Paraphrase, keine Erfindung).</p>
+    <div class="grid2">
+      <div class="card w1">
+        <span class="tag">Widerspruch 1 — Persistenz/Lesen vs. Generierung/Transport</span>
+        <h4>Das Eine ist eine stabile Signatur, die man <em>liest</em> <span class="a">(A)</span></h4>
+        <p><span class="a">n2-050</span>: Das Eine ist eine strukturierte Punktmenge / ein phänomenales Feld, dessen Identität
+          eine <em>persistente, skaleninvariante</em> topologische Signatur ist (β₀/β₁, Persistenz = Tod − Geburt). Die Methode
+          ist, die <em>bereits gegebene</em> Struktur über ω <em>zu filtern/lesen</em>. Der <em>beständige</em> Pol (hohe
+          Persistenz, fern der Diagonale = das Eigentliche / Signal) ist das, was real ist: „das Beständige“ überlebt. (Geerbt
+          von n1-041: formale, observatorfreie Invariante, Messung &amp; Falsifizierbarkeit an physischen Systemen.)</p>
+        <h4>Das Eine ist ein Transport, der Struktur <em>generiert</em> <span class="b">(B)</span></h4>
+        <p><span class="b">n3-023</span>: Das Eine ist ein <em>Transport</em> (Pullback/Fluss), der Struktur <em>jenseits einer
+          Grenze neu generiert</em>. Nichts ist bloß vorgegeben und stabil — der Kern <em>speichert einen Keim und regeneriert</em>
+          Struktur (growing from the ground), wenn <code>[P,U]≠0</code> den Ruhepunkt bricht. Das Wertvolle ist das
+          <em>Generierte</em>, nicht bloß das <em>Persistente</em>. Die Form wird <em>vom Fluss konstituiert</em>, sie ist keine
+          stabile Invariante.</p>
+        <p style="font-size:.88rem;color:var(--muted);margin-top:.6rem;"><b>Spannung:</b> Hält das Eine primell
+          <em>beständig</em> (eine stabile Signatur, die man über ω liest) oder <em>generiert</em> es primär (ein Transport, der
+          das Neue jenseits einer Grenze produziert)? A: Persistenz/Lesen primär; B: Generierung/Transport primär.</p>
+      </div>
+      <div class="card w2">
+        <span class="tag">Widerspruch 2 — konstitutives Da vs. featureloser Attraktor</span>
+        <h4>Das Innere ist ein konstitutives, sich abgrenzendes <em>Da</em> <span class="a">(A)</span></h4>
+        <p><span class="a">n2-050</span>: Das stabile Innere, an dem sich das Feld als Welt zeigt, ist das <em>Da</em> (Dasein) —
+          ein <em>konstitutives, sich selbst abgrenzendes Individuum</em> (Jemeinigkeit, irreduzibel). Ohne es gibt keine
+          Erschließung, keinen Sinn. Es hat <em>Innenheit</em> (es ist „von der Seite des Lesers“ vollzogen; Jemeinigkeit =
+          unverlierbare Grenze).</p>
+        <h4>Das Innere ist ein featureloser <em>Ruhepunkt</em> <span class="b">(B)</span></h4>
+        <p><span class="b">n3-023</span>: Das stabile Innere, an dem der Fluss ruht, ist der <em>Kern/Attraktor</em>
+          <code>P+U(x*)=0</code> — ein <em>geometrisch-dynamischer Fixpunkt</em> eines Vektorfelds im Zustandsraum. Er ist kein
+          Subjekt, grenzt sich nicht selbst ab, hat keine Jemeinigkeit; er „speichert“ bloß einen Tangentialvektor (den Keim)
+          und ist ein <em>objektiver</em> Gegenstand.</p>
+        <p style="font-size:.88rem;color:var(--muted);margin-top:.6rem;"><b>Spannung:</b> Ist das stabile Innere (wo Struktur
+          gehalten wird) ein <em>irreduzibles Selbst/Individuum</em> (A's Da, sich abgrenzend, konstitutiv) oder ein
+          <em>featureloser Fixpunkt eines Flusses</em> (B's Attraktor, ohne Subjektivität)?</p>
+      </div>
+      <div class="card w3">
+        <span class="tag">Widerspruch 3 — ambientes Uneigentliches vs. dissipative Flut</span>
+        <h4>Der Degenerationspol ist ein ambients, richtungsloser Modus <span class="a">(A)</span></h4>
+        <p><span class="a">n2-050</span>: Der Degenerationspol ist <em>das Man / Verfallen</em> — ein <em>ambientes,
+          qualitatives</em> uneigentlicher Modus (Verlorensein im They). Die Zeitlichkeit ist <em>gleichursprünglich</em>
+          (drei Ekstasen ohne bevorzugte Richtung); es gibt <em>keinen</em> Zeitpfeil. Degeneration ist ein
+          <em>Modus/Befindlichkeit</em>, keine gerichtete Katastrophe.</p>
+        <h4>Der Degenerationspol ist eine gerichtete, dissipative Katastrophe <span class="b">(B)</span></h4>
+        <p><span class="b">n3-023</span>: Der Degenerationspol ist die <em>Flut</em> (<code>|P|→0 ⇒ r→0</code>) — die
+          Generierung <em>dissipiert</em> in Rauschen. Es gibt einen expliziten <em>Pfeil der Zeit und Erschöpfung</em>.
+          Degeneration ist eine <em>dynamische, gerichtete</em> Katastrophe (der Antrieb läuft aus).</p>
+        <p style="font-size:.88rem;color:var(--muted);margin-top:.6rem;"><b>Spannung:</b> Ist der Degenerations-/Rauschen-Pol
+          ein <em>ambientes, richtungsloses</em> uneigentliches Modus (A's Man, gleichursprünglich, kein Zeitpfeil) oder eine
+          <em>gerichtete, dissipative</em> Katastrophe (B's Flut, mit Zeitpfeil und Erschöpfung)?</p>
+      </div>
+      <div class="card">
+        <span class="tag">Zusammengefasst</span>
+        <h4>Die drei echten Spannungen</h4>
+        <p style="font-size:.88rem;margin:.3rem 0;"><b>1.</b> Ist das Eine primär eine <em>persistente Signatur zum Lesen</em>
+          (A) oder ein <em>generierender Transport</em> (B)? — <b>2.</b> Ist das stabile Innere ein <em>konstitutives
+          Selbst</em> (A's Da) oder ein <em>featureloser Attraktor</em> (B)? — <b>3.</b> Ist der Degenerationspol ein
+          <em>ambientes, richtungsloses Uneigentliches</em> (A's Man, kein Zeitpfeil) oder eine <em>gerichtete, dissipative
+          Flut</em> (B, Zeitpfeil + Erschöpfung)?</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Keiner der drei Widersprüche ist ein echter Logikbruch — jeder ist derselbe Transport auf einer anderen Lesart. So
+      fassen sie sich.</p>
+
+    <div class="card">
+      <h4>① Persistenz &amp; Generierung = die zwei Gesichter eines Transports</h4>
+      <p>A's <em>persistente</em> Topologie (die Form, die über ω überlebt) ist <strong>die Struktur, die der Kern ERHÄLT</strong>;
+        B's <em>Generierung</em> (neue Struktur jenseits der Grenze) ist <strong>der Horizont, den die Grenze WIRFT</strong>.
+        Fusion: Der Kern/Da hält die <b>persistente Signatur</b> (das Eigentliche, hohe Persistenz, β₀/β₁, die überlebt,
+        <code>r→1</code>) — A's Privileg; jenseits der Grenze/Schwelle ω wirft der <b>Generator</b> <b>neue Struktur</b> — B's
+        Privileg. Die <b>persistente Form zu lesen (A) ist das Transport (B) am Ruhepunkt einzufrieren</b> (der
+        Querschnitt, in dem die Signatur stabil ist); die <b>Generierung (B) ist die Bewegung, deren eingefrorener
+        Querschnitt A's persistente Form ist</b>. Damit ist: <strong>Persistenz ist der stabile Rückstand der Generierung;
+        Generierung ist die Bewegung, deren eingefrorenes Stillbild die Persistenz ist.</strong> Das Eine ist ein Transport,
+        dessen Kern die Signatur erhält und dessen Grenze den Horizont generiert.</p>
+    </div>
+
+    <div class="card">
+      <h4>② Das Da ist der Attraktor — konstituiert durch Selbst-Abgrenzung</h4>
+      <p>A's konstitutives Da und B's featureloser Attraktor sind <em>dasselbe Innere von zwei Seiten</em>: Das Da ist
+        <strong>das Selbst, das sich selbst in einen stabilen Ruhepunkt abgegrenzt hat</strong>. Von innen (A): es ist ein
+        Subjekt, irreduzibel, sich abgrenzend — <b>Jemeinigkeit ist das Selbsteinrichten seiner eigenen Grenze</b>. Von außen
+        (B): Wie diese Selbst-Abgrenzung im Zustandsraum <em>aussieht</em>, ist exakt ein <b>Attraktor/Ruhepunkt</b>
+        <code>P+U(x*)=0</code> — der Ort, an dem der Fluss zur Ruhe kommt und seinen Keim speichert. Also:
+        <strong>Jemeinigkeit (Selbst-Abgrenzung) IST der Mechanismus, durch den ein Fluss zu einem Attraktor wird</strong> —
+        das Da grenzt sich <em>als</em> seinen eigenen Kern ab, was B's Kern zu mehr macht als einen featurelosen Punkt: Er
+        ist ein <em>konstituierter</em> Ruhepunkt (von einem Selbst gesetzt, nicht bloß von außen auferlegt). Der gespeicherte
+        <b>Keim</b> (B's Tangentialvektor) ist die <b>Selbst-Beziehung des Da</b> (die Art, wie das Da sich vorweg auf seine
+        eigenen Möglichkeiten bezogen hält, A).</p>
+    </div>
+
+    <div class="card">
+      <h4>③ Das Man und die Flut = ein Degenerationsspektrum; der Zeitpfeil ist die degenerative Lesart der gleichursprünglichen Zeit</h4>
+      <p>A's Man (ambientes, gleichursprünglich, kein Pfeil) und B's Flut (dissipativ, Zeitpfeil, Erschöpfung) sind
+        <em>dieselbe Pol bei zwei Zeitauflosungen</em>: A liest die Degeneration <em>als Modus</em> (man ist einfach <em>in</em>
+        dem They — ambientes, richtungslos, gleichursprünglich mit der Eigentlichkeit); B liest dieselbe Degeneration
+        <em>als Prozess</em> (der Antrieb <code>|P|</code> verfällt auf 0, <code>r→0</code>, Dissipation — der Zeitpfeil
+        <em>ist</em> der Verfall des Antriebs). Fusion: Der Degenerationspol ist ein
+        <strong>Spektrum vom ambientes Modus (das Man) zur dissipativen Katastrophe (die Flut)</strong>, und der
+        <strong>Zeitpfeil (B) ist die degenerative Lesart von A's gleichursprünglicher Zeitlichkeit</strong>: Hält der Kern
+        (<code>r</code> hoch), ist die Zeit gleichursprünglich / nicht-gerichtet (A); zerfällt der Kern (<code>r→0</code>),
+        kollabiert diese Gleichursprünglichkeit <em>in einen Pfeil der Erschöpfung</em> (B). Der Zeitpfeil ist also kein
+        Zusatz; er ist das, was die richtungslose (gleichursprüngliche) Zeit <em>unter Degeneration</em> wird.</p>
+    </div>
+
+    <div class="card final">
+      <h4>Der fusionierte Schluss — „das Da als Kern: persistente Signatur und Generierungsgrenze“</h4>
+      <p>Ein <b>sich-erschließendes Feld</b> transportiert sich selbst: Es bringt seine Struktur in einen
+        <b>sich selbst abgrenzenden Kern (das Da / Attraktor)</b>, wo die <b>persistente topologische Signatur</b> erhalten
+        wird (das Eigentliche, <code>r→1</code>, der Keim geparkt), und über eine <b>Grenze (die Schwelle ω / Frontier
+        <code>E=G</code> / <code>∂M</code>-Knie)</b>, an der der <b>Generator</b> den <b>Horizont</b> wirft (neue Struktur,
+        growing from the ground). <b>Persistent</b> und <b>generiert</b> sind die zwei Gesichter eines Transports; das
+        <b>Selbst</b> (Da) und der <b>Fixpunkt</b> (Attraktor) die zwei Seiten eines selbst-gegrenzten Kerns; der
+        <b>uneigentliche Modus</b> (das Man) und die <b>Flut</b> die zwei Enden eines Degenerationsspektrums, in dem der
+        <b>Zeitpfeil</b> der degenerative Schatten der gleichursprünglichen Zeitlichkeit ist. Alles, was in den beiden
+        Papieren als <em>Feld, Signatur, Da, Schwelle, Eigentliches, Man</em> (A) bzw. als <em>Transport, Kern, Frontier,
+        Generator, <code>r</code>, Flut</em> (B) auftritt, ist ein <em>Modus</em> dieses einen Vorgangs:
+        <strong>das sich-erschließende Feld, das sich in und als ein selbst-gegrenzter Kern transportiert, der dort seine
+        Signatur erhält und an der Grenze den Horizont wirft.</strong></p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Das zusammengeführte Modell auf der Ebene der <em>Thesen</em> beider Quellen — aus dem eine spätere Runde allein
+      weiterarbeiten kann. Der Name: <strong>das Da als Kern — persistente Signatur und Generierungsgrenze</strong>.</p>
+
+    <table>
+      <thead><tr><th style="width:30%">A — phänomenal/topologisch (n2-050)</th><th style="width:30%">B — formal/dynamisch (n3-023)</th><th style="width:40%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Sich-erschließendes phänomenales Grundfeld mit persistenter topologischer Signatur</td><td class="kv2">Transport (Pullback/Fluss) mit Kern &amp; Generierungsgrenze</td><td>Das Eine IST ein sich-erschließender Transport: Kern = Da, Grenze = Schwelle ω.</td></tr>
+        <tr><td class="kv">Selbst-Erschließung / Sorge (Prozess = Sein)</td><td class="kv2">Der Transport selbst (Rekonstruktion = Verstehen = der Fluss/Pullback, kein Zustand)</td><td>Man IST der Transport; Bedeutung/Rekonstruktion = der Transport.</td></tr>
+        <tr><td class="kv">Das Da (Dasein), sich abgrenzend, Jemeinigkeit, konstitutiv</td><td class="kv2">Attraktor <code>P+U(x*)=0</code>, Ruhepunkt, Keim gespeichert, <code>r→1</code></td><td>Das Da IST der Attraktor, konstituiert durch Selbst-Abgrenzung; dort wird die Signatur erhalten, der Keim geparkt.</td></tr>
+        <tr><td class="kv">Die Schwelle ω / das <code>∂M</code>-Knie (Skala des steilsten topologischen Übergangs)</td><td class="kv2">Frontier <code>E=G</code> = Beckenrand des Attraktors (Ruhe ↔ Regeneration)</td><td>Die Generierungsgrenze; dieselbe Menge — A liest sie als Skala-Knie (Snapshot), B als dynamische Schwelle (Trajektorie).</td></tr>
+        <tr><td class="kv">Persistente Signatur: β₀ (Cluster) + β₁ (beständige Schleifen); hohe Persistenz (fern der Diagonale) = Signal = das Eigentliche</td><td class="kv2">Der Erhaltungs-Kern, <code>r→1</code>, Kompression, gespeicherter Keim</td><td>Die Signatur ist das, was der Kern erhält; hohe Persistenz = das Eigentliche = der hoch-<code>r</code>-Zustand.</td></tr>
+        <tr><td class="kv">ω vergrößern → Cluster verschmelzen, größere Makro-Form (NDE / Psychedelika / Hypoxie)</td><td class="kv2">Jenseits der Grenze: Generator (Prior = gespeicherter Tangentialvektor + Antrieb), growing from the ground</td><td>Jenseits der Grenze wirft der Generator den Horizont; neue Struktur = Komplexität des Generators.</td></tr>
+        <tr><td class="kv">Drei gleichursprüngliche Ekstasen (Zukunft / Gewesenheit / Gegenwart) = Geburt – Beständigkeit – Tod über ω</td><td class="kv2">Der Zyklus Kompression → Ruhe → Regeneration (die Spirale, die die Grenze unendlich oft überschreitet)</td><td>Dieselbe Achse: A liest sie als gleichursprüngliche Zeit (Snapshot), B als wiederkehrenden Zyklus (Film); das eingefrorene Spiral ist die statische Schwelle.</td></tr>
+        <tr><td class="kv">Das Eigentliche (Eigentlichkeit: vorlaufend zum Tode, sich ergreifend), hohe Persistenz, Signal</td><td class="kv2">Strukturierte Regeneration (Formkonstanten, scharfer Keim), hohes <code>r</code></td><td>Der stabile Pol: was überlebt / erhalten / regeneriert wird.</td></tr>
+        <tr><td class="kv">Das Man / Verfallen (uneigentlich), Rauschen (nahe der Diagonale, kurzlebig)</td><td class="kv2">Die Flut (<code>|P|→0 ⇒ r→0</code>), Brei (flacher Prior), Dissipation, Zeitpfeil/Erschöpfung</td><td>Der Degenerationspol: ein Spektrum (das Man ↔ Flut); der Zeitpfeil ist die degenerative Lesart der gleichursprünglichen Zeit.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h4>Die Strukturkarte (das fusionierte Gerüst)</h4>
+      <div class="loop">
+        <div class="step"><div class="n">0</div><h4>Phänomenales Feld</h4><p>= der Transport (Selbst-Erschließung = Fluss/Pullback)</p></div>
+        <div class="step"><div class="n">1</div><h4>Das Da = Kern</h4><p>= Attraktor <code>P+U(x*)=0</code>; Signatur wird erhalten, Keim geparkt, <code>r→1</code></p></div>
+        <div class="step"><div class="n">2</div><h4>Schwelle ω</h4><p>= Generierungsgrenze = Frontier <code>E=G</code> = <code>∂M</code>-Knie</p></div>
+        <div class="step"><div class="n">3</div><h4>Generator</h4><p>= Prior = gespeicherter Tangentialvektor + Antrieb; growing from the ground</p></div>
+        <div class="step"><div class="n">4</div><h4>Horizont / Signatur</h4><p>das Eigentliche (persistiert, <code>r→1</code>) ↔ das Man/Flut (zerfällt, <code>r→0</code>)</p></div>
+      </div>
+    </div>
+
+    <h3>Das fusionierte Modell in vier Stufen</h3>
+    <p><b>(1) Das Eine:</b> ein sich-erschließendes phänomenales Feld (A) <em>ist</em> ein Transport (B); Struktur/Signatur
+      geht dem einzelnen Punkt vor (kein Combination-Problem / homologische Invarianz ↔ der Transport konstituiert die Form).
+      <b>(2) Der Kern als Da:</b> das sich-abgrenzende Dasein (A) <em>ist</em> der Attraktor <code>P+U(x*)=0</code> (B) — dort
+      wird die persistente topologische Signatur (β₀/β₁) <em>erhalten</em> und der Keim geparkt (<code>r→1</code>); Jemeinigkeit
+      (A) ist der Mechanismus der Selbst-Abgrenzung, die den Fluss zu einem konstituierten Attraktor macht (B).
+      <b>(3) Die Grenze als Schwelle:</b> die Schwelle ω (A) <em>ist</em> das Frontier <code>E=G</code> = der <code>∂M</code>-Knie
+      (B) — der Ort, an dem die Erhaltung endet und die Generierung beginnt; A liest sie als Skala-Knie, B als dynamische
+      Schwelle. <b>(4) Die Signaturen:</b> β₀/β₁ mit hoher Persistenz (fern der Diagonale) = das Eigentliche = strukturierte
+      Regeneration (hohes <code>r</code>); nahe der Diagonale = das Man = Brei/Flut (<code>r→0</code>); das Lockern der
+      Dissoziationsgrenze (A) = die Regeneration <code>[P,U]≠0</code> (B), die die größere Makro-Form / den Horizont wirft.</p>
+
+    <div class="card">
+      <h4>Die vereinte Mathematik</h4>
+      <div class="formula">Kern = das Da (Erhaltungs-Domäne):
+  A:  { x : E(x) ≥ G(x) }   →  Signatur persistiert, β₀/β₁, hohe Persistenz = Signal
+  B:  P + U(x*) = 0         →  Attraktor/Keim, r→1 (komprimiert, gespeichert)
+  r  = 1 − K(x*)/K(x)       [A's E/G-Abdeckung ↔ B's r; „Nähe zum Da“ = Selbst-Haltung]
+
+Grenze = die Schwelle ω (Generierungs-Schwelle):
+  A:  ∂{ E ≥ G } = ∂M-Knie   (Skala des steilsten topologischen Übergangs)
+  B:  Frontier E = G = Beckenrand  (Ruhe ↔ Regeneration)
+  → dieselbe Menge; A = Skala-Knie (Snapshot), B = dynamische Schwelle (Trajektorie)
+
+Generierung (jenseits der Grenze = der Horizont):
+  A:  ω vergrößern → größere Makro-Form (NDE)        B:  Generator (Prior = Tangentialvektor + Antrieb), [P,U]≠0
+  Neue Struktur = Komplexität des Generators [A] = Schärfe der characteristic Richtung [B]
+    flach / P→0    →  Brei / Flut   (r → 0, Signatur zerfällt, keine neue Struktur)
+    scharf / [P,U]≠0 + scharfer Keim  →  Formkonstanten / growing from the ground
+
+Spektrum der (De-)Generation:
+  Flut (B)  ←———  das Man (A)  ———→  das Eigentliche / strukturierte Regeneration (B)
+  (r→0, Prior flach, Signatur zerfällt, Zeitpfeil/Erschöpfung)      (r→1, Signatur persistiert, Keim scharf)
+
+Zeit:  A gleichursprünglich (drei Ekstasen, kein Pfeil)  ↔  B: Zeitpfeil = degenerative Lesart (r→0)
+  hoch r  →  gleichursprünglich, nicht-gerichtet (A);   r→0  →  Pfeil der Erschöpfung (B)</div>
+      <p class="note" style="font-size:.86rem;margin-top:.8rem;">Faithfulness-Check: A (n2-050) liefert das sich-erschließende
+        phänomenale Feld mit persistenter topologischer Signatur (β₀/β₁, Persistenz = Tod−Geburt, <code>∂M</code>-Knie,
+        Schwelle ω, das Eigentliche = hohe Persistenz/Signal, das Man = Rauschen, Jemeinigkeit, drei Ekstasen, Lockern der
+        Dissoziationsgrenze ↔ ω vergrößern). B (n3-023) liefert den Transport (Pullback/Fluss <code>P+U(x)</code>, Attraktor
+        <code>P+U(x*)=0</code>, Keystone = gespeicherter Tangentialvektor, <code>r=1−K(x*)/K(x)</code>, Frontier
+        <code>E=G</code>, Generator = Prior, Spektrum Flut ← Brei ← strukturierte Regeneration, Zeitpfeil/Erschöpfung).
+        „Das Da als Kern — persistente Signatur und Generierungsgrenze“ ist die gemeinsame Abstraktion auf Thesen-Ebene,
+        keine neue Behauptung über die Quellen.</p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — der Da als Kern: Signatur erhält, Grenze wirft</h2>
+    <p class="lead">Ein Partikel (der Transport/Fluss) spiralt in den pulsierenden <strong>Da-Kern</strong> (den Attraktor)
+      hinein (<em>Kompression</em>, <code>r</code> steigt, die <strong>persistente Signatur</strong> wird erhalten: β₀-Cluster
+      + die beständige Schleife = das Eigentliche), ruht dort (der <strong>Keim</strong> ist geladen) und wird über die
+      gestrichelte <strong>Generierungsgrenze</strong> (Schwelle ω = Frontier <code>E=G</code> = <code>∂M</code>-Knie) in die
+      <em>generierende Zone</em> hinausgeschleudert (<em>Regeneration</em> = growing from the ground). Die Textur der
+      Generierungszone und die Schärfe der persistenten Signatur sind von der <strong>Prior-Komplexität</strong> gesteuert
+      (flach → Brei/das Man, scharf → Formkonstanten/das Eigentliche). Hebt die <strong>Flut/Rauschen</strong> den Antrieb
+      <code>ω</code> auf, so verliert der Kern seinen Halt (<code>r→0</code>), die Signatur <strong>zerfällt in Rauschen</strong>
+      (die beständige Schleife bricht) und die Generierungszone wird zur <strong>Flut</strong>. Das ist das fusionierte
+      Spektrum — Flut/das Man ↔ Brei ↔ strukturierte Regeneration/das Eigentliche.</p>
+    <div class="vizwrap">
+      <canvas id="coreCanvas"></canvas>
+      <div class="controls">
+        <div class="control"><label>ω / Antrieb (B) — Kompression, hält den Kern</label><input type="range" id="slOmega" min="0" max="100" value="62"><span class="val" id="vO">62%</span></div>
+        <div class="control"><label>Prior-Komplexität (A: Schärfe der Signatur / Generator)</label><input type="range" id="slP" min="0" max="100" value="70"><span class="val" id="vP">70%</span></div>
+        <div class="control"><label>Generierung [P,U] (A: Grenze lockern, B: Keim-Spannung)</label><input type="range" id="slR" min="0" max="100" value="55"><span class="val" id="vR">55%</span></div>
+        <div class="control"><label>Flut / Rauschen (das Man / Fehlzustand)</label><input type="range" id="slF" min="0" max="100" value="8"><span class="val" id="vF">8%</span></div>
+        <div class="btnrow">
+          <button class="ctl" id="btnReset" type="button">&#8634; Neustart</button>
+          <button class="ctl" id="btnTheme" type="button">&#9790; / &#9728; Thema</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="chip">Selbst-Haltung r (Nähe zum Da) <b id="roR">0%</b></div>
+        <div class="chip">β₀ Komponenten <b id="roB0">0</b></div>
+        <div class="chip">β₁ beständige Schleife <b id="roB1">0</b></div>
+        <div class="chip rg">Phase: <b id="roPhase">&mdash;</b></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--viz-core)"></span>Da = Kern / Attraktor (erhält die Signatur)</span>
+        <span><span class="dot" style="background:var(--viz-persist)"></span>persistente Signatur (das Eigentliche: Cluster + beständige Schleife)</span>
+        <span><span class="dot" style="background:var(--viz-bound)"></span>Generierungsgrenze (Schwelle ω = Frontier = <code>∂M</code>-Knie)</span>
+        <span><span class="dot" style="background:var(--viz-person)"></span>Transport / Fluss (Partikel)</span>
+        <span><span class="dot" style="background:var(--viz-need)"></span>Generierung = Horizont = Prior-Komplexität</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <span class="tag">Quelle A (R2-Beförderung / Bye)</span>
+        <h4><a href="../../n2-050.html">n2-050.html</a></h4>
+        <p><em>„Das sich-erschließende Feld und seine persistente Topologie“</em> (R2-Fusion: n1-032 ✕ n1-041). Das Eine als
+          <em>sich-erschließendes phänomenales Grundfeld</em> (Sein = Bewusstsein) mit persistenter topologischer Signatur —
+          β₀/β₁, Persistenz (Tod − Geburt), <code>∂M</code>-Knie, Schwelle ω; das Da (Dasein) als sich-abgrenzende konstitutive
+          Schwelle; Jemeinigkeit; das Eigentliche (hohe Persistenz/Signal) gegen das Man/Rauschen; Lockern der
+          Dissoziationsgrenze (NDE / Psychedelika / Hypoxie) ↔ ω vergrößern. <em>A</em> liefert das <b>phänomenale Feld</b>,
+          die <b>persistente Signatur</b> und das <b>konstitutive Da</b>.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Quelle B</span>
+        <h4><a href="../n3-023.html">n3-023.html</a></h4>
+        <p><em>„Der Kern und seine Grenze — Pullback und Fluss als ein Transport“</em> (R3-Fusion: n2-017 ✕ n2-036). Das Eine
+          als <em>Transport</em> mit stabilem Kern und Generierungsgrenze — der Erhaltungs-Kern (Exaktheits-Domäne
+          <code>{E≥G}</code> = Attraktor <code>P+U(x*)=0</code>, <code>r→1</code>, gespeicherter Keim), die Generierungsgrenze
+          (Frontier <code>E=G</code> = Beckenrand), der Generator (Prior = gespeicherter Tangentialvektor + Antrieb), das
+          Spektrum Flut ← Brei ← strukturierte Regeneration, Zeitpfeil/Erschöpfung. <em>B</em> liefert den
+          <b>Transport</b>, den <b>Kern/Attraktor</b>, die <b>Generierungsgrenze</b> und den <b>Generator</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion 010 · Runde 4 · nicht-AI-Spur — n2-050.html ✕ n3-023.html (A ist ein R2-Beförderung aus combined-nichtki/2/)<br>
+    Selbstbezügliche, themenreaktive HTML-Datei; alle Daten inline, keine Netzabrufe. Das Da als Kern: persistente Signatur und Generierungsgrenze.
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('coreCanvas');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var H = 460;
+  var W = 0, cx = 0, cy = 0, dmax = 1, coreR = 64, boundaryR = 200;
+
+  function cssVar(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n);
+    v = v ? v.trim() : '';
+    return v || fb;
+  }
+  function hex2rgb(h){ h=(h||'').trim(); if(h[0]==='#') h=h.slice(1);
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function parseCol(s, fb){
+    s=(s||'').trim();
+    if(!s) return fb;
+    if(s[0]==='#') return hex2rgb(s);
+    var m=s.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2]]; }
+    return fb;
+  }
+  var pal = null;
+  function refreshPal(){
+    pal = {
+      bg: cssVar('--viz-canvas-bg','#0b0e15'),
+      grid: parseCol(cssVar('--viz-grid'),[25,31,43]),
+      core: parseCol(cssVar('--viz-core'),[255,90,106]),
+      bound: parseCol(cssVar('--viz-bound'),[108,192,255]),
+      persist: parseCol(cssVar('--viz-persist'),[79,224,160]),
+      person: parseCol(cssVar('--viz-person'),[255,215,102]),
+      trail: parseCol(cssVar('--viz-trail'),[136,144,160]),
+      need: parseCol(cssVar('--viz-need'),[192,132,252]),
+      noise: parseCol(cssVar('--viz-noise'),[136,144,160]),
+      fg: parseCol(cssVar('--viz-fg'),[231,226,214]),
+      muted: parseCol(cssVar('--viz-muted'),[152,160,173])
+    };
+  }
+  function mix(a,b,t){ t=t<0?0:(t>1?1:t);
+    return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+(a==null?1:a)+')'; }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+  function size(){
+    var rect = cv.getBoundingClientRect();
+    W = Math.max(320, rect.width);
+    var dpr = window.devicePixelRatio || 1;
+    var nw = Math.round(W*dpr), nh = Math.round(H*dpr);
+    if(cv.width !== nw) cv.width = nw;
+    if(cv.height !== nh) cv.height = nh;
+    cv.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx = W/2; cy = H/2; dmax = Math.min(W,H)*0.47;
+    coreR = 64; boundaryR = dmax*0.52;
+  }
+
+  // generative-zone pattern (flat prior -> mush, structured -> form constants)
+  var PS = 160;
+  var patCv = document.createElement('canvas');
+  patCv.width = PS; patCv.height = PS;
+  var pctx = patCv.getContext('2d');
+  function mush(nx,ny){ return 0.5 + 0.11*Math.sin(nx*Math.PI*2*1.2)*Math.cos(ny*Math.PI*2*1.0); }
+  function turingVal(nx,ny,q){
+    var X = nx*Math.PI*2*(q/3), Y = ny*Math.PI*2*(q/3);
+    var rolls = Math.cos(Y);
+    var squares = (Math.cos(X)+Math.cos(Y))/2;
+    var hex = (Math.cos(X)+Math.cos(-0.5*X+0.866*Y)+Math.cos(-0.5*X-0.866*Y))/3;
+    return (rolls+squares+hex)/3;
+  }
+  function buildPattern(k){
+    if(!pal) refreshPal();
+    var img = pctx.createImageData(PS,PS);
+    var d = img.data;
+    var q = 3 + Math.round(k*9);
+    for (var y=0;y<PS;y++){
+      for (var x=0;x<PS;x++){
+        var nx=(x+0.5)/PS, ny=(y+0.5)/PS;
+        var m = mush(nx,ny);
+        var t = turingVal(nx,ny,q)*0.5+0.5;
+        var v = (1-k)*m + k*t;
+        var col = mix(pal.grid, pal.need, 0.35 + 0.65*v);
+        var idx=(y*PS+x)*4;
+        d[idx]=col[0]; d[idx+1]=col[1]; d[idx+2]=col[2]; d[idx+3]=255;
+      }
+    }
+    pctx.putImageData(img,0,0);
+  }
+
+  // stable persistent signature inside the core (das Eigentliche): clusters (beta0) + one persistent loop (beta1)
+  var SIG = { clusters: [ [-0.36, 0.20], [0.12, -0.32], [0.34, 0.24] ], loopR: 0.52 };
+  var P0 = {x:0.9, y:-0.7};
+  var state = {
+    x:0, y:0, vx:0, vy:0,
+    trail:[], r:0.2, cycles:0, flash:0,
+    omega:0.62, prior:0.70, reg:0.55, flut:0.08
+  };
+  function spawn(){
+    state.x = cx - dmax*0.82;
+    state.y = cy + dmax*0.20;
+    state.vx = 0; state.vy = 0;
+    state.trail = [];
+    state.r = 0.15; state.cycles = 0; state.flash = 0;
+  }
+
+  var slO=document.getElementById('slOmega'), slP=document.getElementById('slP'),
+      slR=document.getElementById('slR'), slF=document.getElementById('slF');
+  var vO=document.getElementById('vO'), vP=document.getElementById('vP'),
+      vR=document.getElementById('vR'), vF=document.getElementById('vF');
+  var roR=document.getElementById('roR'), roB0=document.getElementById('roB0'),
+      roB1=document.getElementById('roB1'), roPhase=document.getElementById('roPhase');
+  var patDirty = true;
+
+  function readSliders(){
+    if(slO) state.omega = (+slO.value)/100;
+    if(slP) state.prior = (+slP.value)/100;
+    if(slR) state.reg = (+slR.value)/100;
+    if(slF) state.flut = (+slF.value)/100;
+    if(vO) vO.textContent = Math.round(state.omega*100)+'%';
+    if(vP) vP.textContent = Math.round(state.prior*100)+'%';
+    if(vR) vR.textContent = Math.round(state.reg*100)+'%';
+    if(vF) vF.textContent = Math.round(state.flut*100)+'%';
+  }
+  function kEff(){ return clamp(state.prior*(1 - state.flut*0.92), 0, 1); }
+  function surv(){ return clamp((state.r - 0.35)/0.40, 0, 1); }
+
+  function step(){
+    var drive=state.omega, reg=state.reg, flut=state.flut;
+    var d = Math.hypot(state.x-cx, state.y-cy); if(d<1) d=1;
+    var ux=(state.x-cx)/d, uy=(state.y-cy)/d;
+    var tx=-uy, ty=ux;
+    var aR = -drive*3.6/(0.3 + d/dmax);   // nach innen (Kompression)
+    var aT = 0.7 + drive*2.0;             // Wirbel (Spirale)
+    var Ux = aR*ux + aT*tx + P0.x;
+    var Uy = aR*uy + aT*ty + P0.y;
+    var drag = 1 - flut*0.06;             // Flut bremst den Antrieb aus
+    state.vx = (state.vx + Ux*0.02) * drag;
+    state.vy = (state.vy + Uy*0.02) * drag;
+    state.x += state.vx;
+    state.y += state.vy;
+    if(!(isFinite(state.x)) || !(isFinite(state.y)) ||
+       state.x<4 || state.x>W-4 || state.y<4 || state.y>H-4){ spawn(); }
+    var d2 = Math.hypot(state.x-cx, state.y-cy);
+    var ux2=(state.x-cx)/(d2||1), uy2=(state.y-cy)/(d2||1);
+    var tx2=-uy2, ty2=ux2;
+    if(d2 < coreR && state.flash<=0){
+      state.cycles++; state.flash = 26;
+      if(reg > 0.04){
+        var kick = 1.2 + reg*4.2 + drive*1.2;   // Regeneration: herausgeschleudert
+        state.vx = ux2*kick + tx2*(0.8+reg*1.8);
+        state.vy = uy2*kick + ty2*(0.8+reg*1.8);
+      } else {
+        state.vx *= 0.15; state.vy *= 0.15;       // Ruhepunkt: nur geladen
+      }
+    }
+    if(state.flash>0) state.flash--;
+    var dnow = Math.hypot(state.x-cx, state.y-cy);
+    state.r = clamp((1 - dnow/dmax)*(1 - flut*0.9), 0, 1);
+    state.trail.push([state.x,state.y]);
+    if(state.trail.length>360) state.trail.shift();
+    return {Ux:Ux, Uy:Uy, ux:ux2, uy:uy2, d:d2};
+  }
+
+  function drawArrow(x1,y1,x2,y2,color,w){
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w||1.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var ang=Math.atan2(y2-y1,x2-x1), h=6+(w||1.5);
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(ang-0.42), y2-h*Math.sin(ang-0.42));
+    ctx.lineTo(x2-h*Math.cos(ang+0.42), y2-h*Math.sin(ang+0.42));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function regime(){
+    var d = Math.hypot(state.x-cx, state.y-cy);
+    var dot = state.vx*(state.x-cx)/(d||1) + state.vy*(state.y-cy)/(d||1);
+    if(state.flut>0.62 && state.r<0.2) return 'FLUT / das Man  (r→0, Signatur zerfällt)';
+    if(state.flash>0) return 'REGENERATION · growing from the ground (Horizont wird geworfen)';
+    if(d < coreR*1.5) return 'DA-KERN (Attraktor) · Keim geladen · Signatur persistiert';
+    if(d > boundaryR) return 'GENERIERUNG · neuer Horizont = Prior-Komplexität';
+    if(dot < 0) return 'KOMPRESSION · Verfall (r steigt)';
+    if(dot > 0) return 'AUFWIND · Regeneration';
+    return 'Transport · auf der Spirale';
+  }
+
+  function draw(info){
+    if(!pal) refreshPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = rgba(pal.bg,1); ctx.fillRect(0,0,W,H);
+
+    // grid
+    ctx.strokeStyle = rgba(pal.grid,1); ctx.lineWidth = 1;
+    var g;
+    for(g=0; g<W; g+=44){ ctx.beginPath(); ctx.moveTo(g,0); ctx.lineTo(g,H); ctx.stroke(); }
+    for(g=0; g<H; g+=44){ ctx.beginPath(); ctx.moveTo(0,g); ctx.lineTo(W,g); ctx.stroke(); }
+
+    // generative zone (outside boundary) filled with the prior pattern, slowly rotating
+    if(patDirty){ buildPattern(kEff()); patDirty=false; }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0,0,W,H);
+    ctx.arc(cx,cy,boundaryR,0,Math.PI*2,true);
+    ctx.clip('evenodd');
+    ctx.translate(cx,cy);
+    ctx.rotate((performance.now()||0)*0.00006 + state.cycles*0.5);
+    var s = Math.max(W,H)*1.45;
+    ctx.globalAlpha = 0.55;
+    ctx.drawImage(patCv, -s/2, -s/2, s, s);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+
+    // faithful zone (inside boundary): calm radial gradient = preserved structure
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,boundaryR,0,Math.PI*2); ctx.clip();
+    var grad = ctx.createRadialGradient(cx,cy,coreR*0.3, cx,cy,boundaryR);
+    grad.addColorStop(0, rgba(mix(pal.core,pal.bg,0.55),0.5));
+    grad.addColorStop(1, rgba(mix(pal.grid,pal.bg,0.3),0.15));
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    ctx.restore();
+
+    // boundary circle (the threshold ω / frontier / ∂M-knee)
+    ctx.setLineDash([7,6]);
+    ctx.strokeStyle = rgba(pal.bound,0.9); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx,cy,boundaryR,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // persistent signature inside the core (das Eigentliche): clusters (beta0) + persistent loop (beta1)
+    var sv = surv();
+    for(var c=0;c<SIG.clusters.length;c++){
+      var cc = SIG.clusters[c];
+      var ccx = cx + cc[0]*coreR, ccy = cy + cc[1]*coreR;
+      ctx.fillStyle = rgba(pal.persist, 0.30 + 0.60*sv);
+      for(var k=0;k<4;k++){
+        var aa = k*Math.PI/2 + c;
+        ctx.beginPath();
+        ctx.arc(ccx + Math.cos(aa)*6, ccy + Math.sin(aa)*6, 2.6, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    var lr = coreR*SIG.loopR;
+    ctx.strokeStyle = rgba(pal.persist, 0.22 + 0.72*sv);
+    ctx.lineWidth = 1.5 + sv*1.6;
+    if(sv < 0.5) ctx.setLineDash([4,5]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(cx,cy,lr,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // core (the Da / attractor) — pulsating star
+    var pulse = 1 + 0.16*Math.sin((performance.now()||0)*0.003) + (state.flash/26)*0.55;
+    ctx.save();
+    ctx.shadowColor = rgba(pal.core,1); ctx.shadowBlur = 22*(0.5 + state.flash/26);
+    ctx.fillStyle = rgba(pal.core,0.9);
+    ctx.beginPath();
+    for(var ss=0; ss<12; ss++){
+      var aa2=(ss/12)*Math.PI*2 - Math.PI/2;
+      var rr=coreR*0.34*(ss%2===0?1:0.44)*pulse;
+      var px=cx+Math.cos(aa2)*rr, py=cy+Math.sin(aa2)*rr;
+      if(ss===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // labels
+    ctx.font = '600 12px ui-monospace, monospace';
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.fillStyle = rgba(pal.core,0.95);
+    ctx.fillText('DA = KERN (Attraktor) · Signatur persistiert (r→1)', 12, 12);
+    ctx.fillStyle = rgba(pal.bound,0.9);
+    ctx.fillText('GENERIERUNGSGRENZE = Schwelle ω = Frontier E=G = ∂M-Knie', 12, 30);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = rgba(pal.need,0.9);
+    ctx.fillText('GENERIERUNG = Horizont = Prior-Komplexität', W-12, 12);
+    ctx.textAlign = 'left';
+
+    // trajectory (spiral)
+    if(state.trail.length>1){
+      ctx.beginPath(); ctx.moveTo(state.trail[0][0], state.trail[0][1]);
+      for(var t=1;t<state.trail.length;t++){ ctx.lineTo(state.trail[t][0], state.trail[t][1]); }
+      ctx.strokeStyle = rgba(pal.trail,0.55); ctx.lineWidth = 1.8; ctx.stroke();
+    }
+
+    // particle + vectors
+    var pxp=state.x, pyp=state.y;
+    var disp = 7.5;
+    drawArrow(pxp,pyp, pxp+P0.x*disp, pyp+P0.y*disp, rgba(pal.need,0.9), 2);    // P (Antrieb, konstant)
+    drawArrow(pxp,pyp, pxp+info.Ux*disp, pyp+info.Uy*disp, rgba(pal.bound,0.9), 2); // V (Fluss)
+    ctx.beginPath(); ctx.arc(pxp,pyp,9,0,Math.PI*2);
+    ctx.fillStyle = rgba(pal.person, 1 - state.flut*0.45);
+    ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle = rgba(pal.bg,1); ctx.stroke();
+
+    // inset: r-bar + spectrum (persistent signature vs noise)
+    var bw=Math.min(196, W*0.42), bx=12, by=52, bh=13;
+    ctx.fillStyle = rgba(mix(pal.grid,pal.bg,0.4),0.6); ctx.fillRect(bx,by,bw,bh);
+    ctx.strokeStyle = rgba(pal.bound,0.7); ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle = rgba(pal.core,0.9); ctx.fillRect(bx+2,by+2,(bw-4)*state.r,bh-4);
+    ctx.fillStyle = rgba(pal.fg,0.9); ctx.font='11px ui-monospace, monospace';
+    ctx.fillText('r = Selbst-Haltung / Nähe zum Da = '+state.r.toFixed(2), bx, by+bh+6);
+
+    var sy = by+bh+26, sx = bx;
+    ctx.fillStyle = rgba(pal.muted,0.9); ctx.font='10px ui-monospace, monospace';
+    ctx.fillText('Persistenz:  lang = Eigentliches/Signal · kurz = Man/Rauschen', sx, sy-2);
+    var longLen = bw*0.92;
+    ctx.fillStyle = rgba(pal.persist, 0.20 + 0.75*sv);
+    ctx.fillRect(sx, sy+8, longLen, 5);
+    ctx.fillStyle = rgba(pal.noise, 0.6);
+    for(var nb=0; nb<4; nb++){
+      var nl = 8 + (nb*13 % 26);
+      ctx.fillRect(sx + nb*30, sy+18, nl, 3);
+    }
+    ctx.fillStyle = rgba(pal.fg,0.8);
+    ctx.fillText('β₁ Schleife:  ' + (sv>0.5?'beständig (Signal)':'zerfallen (Rauschen)'), sx, sy+30);
+
+    if(roR) roR.textContent = Math.round(state.r*100)+'%';
+    if(roB0) roB0.textContent = String(SIG.clusters.length);
+    if(roB1) roB1.textContent = String(sv>0.5?1:0);
+    if(roPhase) roPhase.textContent = regime();
+  }
+
+  function frame(){
+    readSliders();
+    var info = step();
+    draw(info);
+    requestAnimationFrame(frame);
+  }
+
+  function onTheme(){ refreshPal(); patDirty = true; }
+  if(slO) slO.addEventListener('input', readSliders);
+  if(slP) slP.addEventListener('input', function(){ patDirty=true; readSliders(); });
+  if(slR) slR.addEventListener('input', readSliders);
+  if(slF) slF.addEventListener('input', readSliders);
+  var btnReset = document.getElementById('btnReset');
+  if(btnReset) btnReset.addEventListener('click', function(){ spawn(); });
+  function toggleTheme(){
+    document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n4_010_theme',
+      document.documentElement.classList.contains('dark')?'dark':'light'); }catch(_){}
+    onTheme();
+  }
+  var tg = document.getElementById('themeToggle');
+  if(tg) tg.addEventListener('click', toggleTheme);
+  var bt = document.getElementById('btnTheme');
+  if(bt) bt.addEventListener('click', toggleTheme);
+  window.addEventListener('resize', function(){ size(); onTheme(); });
+
+  size();
+  refreshPal();
+  readSliders();
+  buildPattern(kEff());
+  spawn();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

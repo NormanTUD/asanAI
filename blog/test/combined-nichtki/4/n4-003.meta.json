@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "n3-015.html",
+  "b": "n3-003.html",
+  "a_title": "Der Fixkern — Bewegung (A) × Invarianz (B)",
+  "b_title": "Das Ding hinter dem Zeichen — Kern × Fenster × Maske (Runde 3)",
+  "combined_theme": "invarianter-kern-drei-lesarten",
+  "one_line": "Der invariante Kern (das Ding) ist die Struktur, die unter Prozess (Zeit), Gruppe (Struktur) und Linse (Perspektive) invariant bleibt — erreicht, indem man die jeweilige Präsentation zu ihrem Limes führt und ihre Verzerrung abzieht, und er trägt eine orthogonale Größe (Tiefe = Oomph), die jede helle Präsentation unterzeigt.",
+  "contradictions": [
+    "Status der Präsentation: A (n3-015) liest den Prozess als konstitutiven URSPRUNG/Generator des Kerns ('Stabilität ist eine Bewegung'; der Fixpunkt ist die eingefrorene Wiederkunft), B (n3-003) liest die Linse als epistemisches HINDERNIS, das verdeckt und injiziert (das Ding liegt hinter der Linse, vorbestehend).",
+    "Ontologie des Kerns: A behauptet einen intrinsischen, ABSOLUTEN Fixpunkt/Attraktor im Raum des Objekts (Struktur-Realismus über Ort/Form), B definiert den Kern relationell als Residuum über den Linsenwechsel und verweigert, die Substanz zu benennen (ontologischer Agnostizismus).",
+    "Die Größe: A macht die Tiefe zum aktiven ANZIEHER in der Mitte (der Anzieher ist zugleich der Inhalt), B macht die Größe zur versteckten orthogonalen Achse (Oomph), die die helle Präsentation unterzeigt und man mitlesen muss (sizeless stare)."
+  ],
+  "resolution": "Die Präsentation ist Zugang (sie zeigt auf den Kern, A) und Verzerrung (sie ist nicht der Kern, B) zugleich: der Kern ist der invariante Rest/die der Limes der Präsentation — A's 'eingefrorene Wiederkunft' und B's 'Read-through/De-inject' sind derselbe Zug. Die Form des Kerns ist absolut (A liefert den Fixpunkt/Attraktor), seine Substanz ist agnostisch (B). Die Größe ist beides: der Anzieher in der Mitte (A) und die von der Präsentation untergezeigte orthogonale Achse (B); der sizeless stare und das Einfrieren der Bewegung ohne die Tiefe sind derselbe Fehler.",
+  "viz": "Canvas: ein zentraler invarianter Kern, auf den drei vergessbare Transformationen wirken — Prozess/Zeit (Arme relaxieren einwärts und frieren ein), Gruppe/Struktur (Rotation, bei k·360/n° identisch → grün), Linse/Perspektive (verdeckt Arme zur Normal-Linie + injiziert Geister). Rechts die orthogonale Größe μ (Tiefe/Oomph): 'wahr' vs. 'gezeigt', Ko-Lesung regelt, ob die untergezeigte Größe sichtbar ist (sonst sizeless stare). Regler für Symmetrie n, Größe/Tiefe, Maske k; themenreaktiv, rein inline, keine Netz-Daten."
+}

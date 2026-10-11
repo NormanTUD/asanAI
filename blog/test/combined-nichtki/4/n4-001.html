@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 001 (R4): Das Ganze als relationale Invariante — der geschlossene Akt, die Faser, das Loslassen</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}var d=s?s==='dark':true;var el=document.documentElement;if(d){el.classList.add('dark');}else{el.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#a92c86; --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --viz-bg:#ffffff; --soft:#f0ece1; --grid:#e7e2d6;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#ff7cc4; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e;
+  --viz-bg:#0a1220; --soft:#0f172a; --grid:#1a2540;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font:16px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.14;margin:0 0 8px;letter-spacing:-.01em;}
+.subtitle{color:var(--accent);font-size:14.5px;margin:0 0 6px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 24px;}
+.lede{color:var(--muted);font-size:1.02em;margin:0 0 24px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+section{margin:16px 0;scroll-margin-top:20px;}
+h2{font-size:22px;margin:0 0 14px;color:var(--accent);}
+h2 .num{color:var(--text);font-variant-numeric:tabular-nums;}
+h3{font-size:16.5px;margin:22px 0 8px;color:var(--text);}
+p{margin:0 0 14px;} p:last-child{margin-bottom:0;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:9px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0;text-align:center;color:var(--accent);font-weight:700;overflow:auto;line-height:1.6;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;}
+.card h3{margin-top:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.4px;padding:1px 8px;border-radius:20px;vertical-align:middle;margin-right:4px;}
+.tag.a{background:rgba(79,70,229,.16);color:var(--accent);}
+.tag.b{background:rgba(169,44,134,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.18);color:var(--muted);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);}
+th.ca{color:var(--accent);} th.cb{color:var(--accent2);}
+td.ca{color:var(--accent);font-weight:600;} td.cb{color:var(--accent2);font-weight:600;}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;}
+#ringCanvas{display:block;width:100%;height:380px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;margin:14px 0;}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);}
+.viz-controls b{color:var(--text);font-variant-numeric:tabular-nums;}
+input[type=range]{width:200px;accent-color:var(--accent);}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);}
+.readout-row{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;font-size:14px;margin:6px 0;}
+.readout-row b{font-weight:700;}
+.ra{color:var(--accent);} .rb{color:var(--accent2);}
+.meter{height:10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:8px 0;}
+.meter>div{height:100%;width:0;background:var(--good);transition:width .12s linear;}
+#verdict{font-size:14px;margin:8px 0 0;}
+.hint{color:var(--muted);font-size:13px;line-height:1.6;}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.prov a:hover{text-decoration:underline;}
+.prov .hint{margin-top:5px;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+@media (max-width:560px){article{padding:30px 15px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema wechseln">&#9681;</button>
+<article>
+
+<h1>Das Ganze ist eine relationale Invariante<br>erkannt durch den geschlossenen Akt, gehalten durch das Loslassen der Faser</h1>
+<p class="subtitle">Fusion aus: n3-008.html &#10005; n3-001.html &nbsp;(Runde 4)</p>
+<p class="meta">Runde 4 &middot; Nicht-KI-Track &middot; Paar 001 &middot; Ph&auml;nomenologie des Lesens trifft Topologie der geschlossenen Zusammensetzung</p>
+<p class="lede">Zwei Runde-3-Fusionen, eine h&ouml;here Ebene. <b>n3-008</b> sagt: das Unfa&szlig;bare liest man, man h&auml;lt es nicht &mdash; es ist eine <em>Relation, die man durchl&auml;uft</em>, und der eine Fehler ist, es zu ergreifen; die Heilung ist das Loslassen (&divide; Selbsthaft). <b>n3-001</b> sagt: das Ganze ist nicht die Summe seiner St&uuml;cke, sondern die <em>Invariante ihrer geschlossenen Zusammensetzung</em> &mdash; nicht lokal ablesbar, nur im Umlauf &mdash; und derselbe Akt erzeugt die Invariante, indem er eine <em>Faser</em> verwirft. Die Fusion hebt auf die Ebene ihrer <b>Theorien</b>: beide sind Aussagen dar&uuml;ber, wie ein begrenzter lokaler Akt auf ein nicht-in-die-Hand-zu-nehmendes Ganzes bezogen ist.</p>
+
+<section id="these">
+<h2><span class="num">1.</span> Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> (n3-008, <em>&bdquo;Das Unfa&szlig;bare liest man, man h&auml;lt es nicht&ldquo;</em>) liest das Ganze als <strong>Relation, nicht als Substanz</strong>: Es ist nie ein Objekt in der Hand, sondern wird nur lesbar, wenn der Wahrnehmende einen <em>begrenzten, relationalen Akt</em> auf es wirft &mdash; eine <strong>Projektion auf einen Anker</strong>. Der Wahrnehmende ist dabei ein <em>Knoten der Relation</em> (kein externes Subjekt, &bdquo;du bist ES&ldquo;). Was tr&auml;gt, ist die Relation (der Akt + der Bezugspunkt), nie das Ganze als Substanz. Der eine Fehler ist <em>Ergreifen/Totalisierung</em>, die eine Heilung <em>Loslassen (&divide; Selbsthaft)</em>. Formel: <code>Sehen = Projektion &times; Anker &divide; Selbsthaft</code>.</p>
+<p><span class="tagB">B</span> (n3-001, <em>&bdquo;Die Invariante der geschlossenen Zusammensetzung&ldquo;</em>) liest das Ganze als <strong>Invariante, nicht als Summe</strong>: ein globales Objekt ist nicht die Addition seiner lokalen St&uuml;cke, sondern die <em>Invariante ihrer geschlossenen Zusammensetzung</em> &mdash; der nicht-triviale Inhalt (die Holonomie, der Twist nach einem Umlauf) wohnt in <em>keinem</em> St&uuml;ck, sondern nur in der geschlossenen Komposition. Der lokale Zug (der Schnitt / die &Uuml;bergangsfunktion <code>g_ij</code>) tr&auml;gt allein keine Invariante; die Invariante ist Funktion <em>nur</em> des Umlaufs. Und derselbe Akt, der die Invariante erzeugt, wirft dabei eine <em>Faser</em> weg (&bdquo;Quality = die verworfene Faser&ldquo;, &bdquo;dieselbe Faser, erzeugt und verworfen&ldquo;). Formel: <code>Invariante = geschlossene Zusammensetzung; Faser erzeugt &amp; verworfen</code>.</p>
+<div class="aha"><b>Die eine integrierte Position:</b> <em>Das Ganze ist eine relationale Invariante.</em> Es ist weder ein Objekt, das man h&auml;lt (A), noch die Summe seiner St&uuml;cke (B) &mdash; es wird <strong>nur</strong> durch einen <em>begrenzten lokalen Akt, der in <u>geschlossener</u> (relationeller) Form ausgef&uuml;hrt wird</em>, lesbar: A liest diesen Akt als <em>Projektion auf einen Anker, die man durchl&auml;uft</em>, B als <em>lokalen Zug, der um das Ganze gef&uuml;hrt wird</em>. Was tr&auml;gt, ist in beiden F&auml;llen <strong>die Relation / die geschlossene Zusammensetzung</strong>, nie eine Substanz. Und das Entscheidende, das beide Papiere in ihrem Kern ber&uuml;hren: <strong>das Ganze bleibt relationell statt substanzhaft genau dadurch, da&szlig; eine Faser losgel&ouml;st wird</strong> &mdash; <em>konstitutiv</em> (der Akt wirft die Faser weg, um die Invariante zu erzeugen &mdash; B) <em>und postural</em> (der Leser l&auml;&szlig;t seinen eigenen Griff los, um nicht zu totalisieren &mdash; A). Die Faser, die B verwirft (Quality), ist genau die, auf die A den Griff loslassen sagt (Selbsthaft): der substanzhafte Rest, der die Relation erstarrt, wenn man ihn h&auml;lt.</div>
+<p class="formula">Erkennen des Ganzen &nbsp;=&nbsp; (lokaler Akt in geschlossenem Umlauf) &nbsp;&times;&nbsp; (freie, kalibrierbare Referenz/Anker) &nbsp;&divide;&nbsp; (Faser/Selbsthaft)</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="num">2.</span> Widerspr&uuml;che zwischen A und B</h2>
+<p>Keiner der Widerspr&uuml;che ist erfunden; sie liegen in den <em>Theorien</em> der beiden Runde-3-Papiere, die inkompatible Stellungen beziehen. Drei echte Spannungen:</p>
+
+<div class="card">
+<h3><span class="tag a">1</span> Status des Ganzen: <em>schon da</em> (A) vs. <em>durch den Akt erzeugt</em> (B)</h3>
+<p><span class="tagA">A &middot; n3-008</span> Das Ganze ist <strong>&bdquo;schon da&ldquo;</strong>, <strong>&bdquo;vollst&auml;ndig da&ldquo;</strong>, stabil und selbsttragend. Es wird nicht erzeugt; man erreicht es, indem man den Griff <em>lockert</em> (&bdquo;du bist ES&ldquo;). Die relationale Struktur ist komplett &mdash; es fehlt ihr nichts.</p>
+<p><span class="tagB">B &middot; n3-001</span> Die Invariante des Ganzen <strong>entsteht erst</strong> durch die geschlossene Zusammensetzung: &bdquo;die Invariante entsteht erst, wenn die lokalen Z&uuml;ge um ein Ganzes gef&uuml;hrt werden&ldquo;. Der Schnitt <em>erzeugt</em> Form (<code>Form&uarr;</code>); das Ungeteilte ist &bdquo;formal ohne Struktur&ldquo; (<code>&beta;&#8320;=1, &chi;=1</code>) und hat die Struktur <em>noch nicht</em>.</p>
+<p><span class="tag x">Spannung</span> A: das Ganze ist ontologisch <em>komplett und vor-daher</em> (die Aufgabe ist, es nicht zu ergreifen). B: die Invariante ist <em>Produkt des geschlossenen Akts</em> (die Aufgabe ist, die Zusammensetzung auszuf&uuml;hren). Inkompatible Stellungen dazu, ob das Ganze <em>ist</em> oder <em>wird</em>.</p>
+</div>
+
+<div class="card">
+<h3><span class="tag b">2</span> Kosten des Lesens: <em>verlustfrei / nicht-destruktiv</em> (A) vs. <em>konstitutiv verlustbehaftet / irreversibel</em> (B)</h3>
+<p><span class="tagA">A &middot; n3-008</span> Lesen ist eine <strong>Haltungskorrektur des Lesers</strong> (&divide; Selbsthaft): der Fehler ist <em>intern</em> (der eigene Griff) und <em>reversibel</em> &mdash; man korrigiert ihn, und das Ganze bleibt dabei <em>unversehrt</em>. Der Akt des Lesens selbst <em>kostet nichts</em> vom Ganzen.</p>
+<p><span class="tagB">B &middot; n3-001</span> Der Akt, der das Ganze lesbar macht (der Eintritt in die Form), ist <strong>einweg und konstitutiv verlustbehaftet</strong>: &bdquo;der eine, irreversiblere Urakt&ldquo;; &bdquo;Quality wird verworfen und &lsquo;nie zur&uuml;ckkommt&rsquo;&ldquo;; der Homotopietyp &bdquo;&auml;ndert sich in eine Richtung&ldquo;. Das Lesen <em>bezahlt</em> einen Preis &mdash; die Faser/Quality geht f&uuml;r immer verloren.</p>
+<p><span class="tag x">Spannung</span> A: der relationale Akt kostet nichts vom Ganzen (man korrigiert nur seinen Griff). B: der compositionelle Akt <em>kostet konstitutiv</em> die Faser (Quality) f&uuml;r immer. Inkompatibel dar&uuml;ber, ob das Erkennen des Ganzen <em>kostenlos</em> oder <em>konstitutiv teuer</em> ist.</p>
+</div>
+
+<div class="card">
+<h3><span class="tag a">3</span> Schicksal der Faser/Referenz: <em>behalten &amp; kalibrieren</em> (A) vs. <em>verworfen &amp; losgelassen</em> (B)</h3>
+<p><span class="tagA">A &middot; n3-008</span> Der <strong>Anker/die Referenz wird behalten und kalibriert</strong>: &bdquo;man kalibriert seinen Anker auf ihr&ldquo;, &bdquo;Wiederherstellen/Rekalibrieren des Ankers&ldquo; ist die Heilung; der Anker ist &bdquo;deins zu pflegen&ldquo;. Man h&auml;lt die Referenz fest und h&auml;lt sie frisch.</p>
+<p><span class="tagB">B &middot; n3-001</span> Die <strong>Faser/Quality wird vom Invariante-Akt verworfen</strong>: &bdquo;Quality = die verworfene Faser&ldquo;, &bdquo;vollst&auml;ndig &amp; entscheidbar &uuml;ber die Form, stumm &uuml;ber Quality&ldquo;; &bdquo;dieselbe Faser, erzeugt und verworfen&ldquo;. Das, was die Invariante tr&auml;gt, wird <em>aus ihr geworfen</em>.</p>
+<p><span class="tag x">Spannung</span> A: die relationale Referenz ist deine <em>Baseline, die du pflegst</em> (behalten + kalibrieren). B: die Faser ist das, was der Akt <em>notwendigerweise wegwirft</em> (verworfen, nie zur&uuml;ck). Inkompatibel dar&uuml;ber, ob der relationale Bezugspunkt <em>gehalten</em> oder <em>losgelassen</em> wird.</p>
+</div>
+</section>
+<section id="aufloesung">
+<h2><span class="num">3.</span> Aufl&ouml;sung</h2>
+<p>Drei Aufl&ouml;sungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussfolgerung. Der Schl&uuml;sselzug in allen drei: A und B lesen <em>denselben Akt auf zwei Ebenen</em> &mdash; genau wie jedes der beiden Papiere intern zwei Ebenen unterscheidet.</p>
+
+<div class="card">
+<h3>Aufl&ouml;sung 1 &mdash; das Ganze ist ontologisch komplett (A) und epistemisch akt-erzeugt (B); zwei Ebenen desselben Tr&auml;gers</h3>
+<p>Trenne <em>das Ganze selbst</em> (die Relation/Topologie als Tr&auml;ger) von <em>der Invariante, die man davon liest</em>. Die <strong>Struktur/Topologie</strong> ist &bdquo;schon da&ldquo; und selbsttragend (A) &mdash; das ist die <em>Tr&auml;ger-Ebene</em>. Die <strong>Invariante</strong> (Form/Holonomie) als ablesbarer Inhalt entsteht erst durch den geschlossenen Akt (B) &mdash; das ist die <em>Les-Ebene</em>. <b>Fusion:</b> der Tr&auml;ger (die Relation) ist vor-daher und komplett (A); seine <em>Invariante liest man sich erst durch die geschlossene Zusammensetzung zusammen</em> (B). &bdquo;Das Ganze ist schon da, aber seine Invariante liest man sich erst zusammen.&ldquo; Kein Widerspruch: <em>ontologisch</em> komplett (A), <em>epistemisch</em> akt-erzeugt (B) &mdash; zwei Ebenen desselben Gegenstands.</p>
+</div>
+
+<div class="card">
+<h3>Aufl&ouml;sung 2 &mdash; zwei verschiedene Verluste: der konstitutive (B) und der posturale (A); derselbe Akt auf zwei Ebenen</h3>
+<p>Es gibt <em>zwei</em> &bdquo;Verluste&ldquo;, und sie arbeiten auf <em>verschiedenen</em> Ebenen. (1) Der <strong>konstitutive Verlust</strong> (B): der Akt, der die Form erzeugt, wirft die Faser/Quality einweg weg &mdash; das ist der Preis <em>der Invariante selbst</em>; was weggeworfen wird, ist genau der <em>nicht-invariante, willk&uuml;rliche</em> Rest. (2) Der <strong>posturale Verlust</strong> (A): der Leser l&auml;&szlig;t seinen <em>eigenen</em> Griff/Selbsthaft los &mdash; das ist reversibel, eine Haltung, kein Objektverlust. <b>Fusion:</b> <em>reversibel in der Haltung (A), verlustbehaftet in der Konstitution (B)</em>. Der eine geschlossene Akt liest das Ganze und <em>bezahlt dabei die Faser</em> (B, konstitutiv); zus&auml;tzlich muss der <em>Leser</em> seinen Griff loslassen (A, postural). A's &bdquo;Loslassen&ldquo; und B's &bdquo;Quality wird verworfen&ldquo; sind dieselbe Geste auf zwei Ebenen: <em>die Faser losl&ouml;sen, die die Relation erstarrt.</em></p>
+</div>
+
+<div class="card">
+<h3>Aufl&ouml;sung 3 &mdash; die Faser hat zwei komplement&auml;re Rollen: die Referenz bleibt frei (Eich-Freiheit), der Rest wird losgelassen</h3>
+<p>Unterscheide <em>die Referenz, die man frei w&auml;hlt</em>, von <em>dem Rest, den man l&auml;&szlig;t</em>. Der <strong>Anker/die Referenz</strong> (A) ist die <em>Baseline, an die man das Gelesene anlegt</em> &mdash; und sie ist <em>frei kalibrierbar</em>. B hat genau denselben Freiheitsgrad als <strong>Eich-&Auml;quivalenz</strong>: lokale Rahmen/Trivialisierungen d&uuml;rfen beliebig gewechselt werden, <em>ohne</em> das B&uuml;ndel/die Invariante zu&auml;ndern. <em>Die freie Kalibrierung des Ankers (A) <u>ist</u> die Eich-&Auml;quivalenz (B).</em> Der <strong>willk&uuml;rliche Rest</strong> &mdash; die Faser/Quality (B), die A als &bdquo;Selbsthaft&ldquo; benennt &mdash; ist das, was <em>nicht</em> von der gew&auml;hlten Referenz abh&auml;ngt und vom Akt weggeworfen wird. <b>Fusion:</b> man <em>w&auml;hlt und kalibriert die Referenz frei</em> (A = B: Eich-Freiheit), w&auml;hrend die Invariante <em>unabh&auml;ngig davon</em> bleibt (geschlossene Zusammensetzung) und der <em>willk&uuml;rliche Rest losgelassen wird</em>. Behalten &amp; kalibrieren (A) und verworfen &amp; losgelassen (B) gelten f&uuml;r <em>zwei verschiedene Teile</em> der Faser &mdash; und sind damit komplement&auml;r, nicht gegens&auml;tzlich.</p>
+</div>
+
+<p class="formula">Invariante des Ganzen &nbsp;=&nbsp; geschlossener lokaler Akt &nbsp;&times;&nbsp; freie Referenz (Eich-Freiheit) &nbsp;&divide;&nbsp; Faser/Selbsthaft</p>
+<p><b>Fusionierte Schlussfolgerung:</b> Das Ganze ist eine <strong>relationale Invariante</strong>. Es ist weder Objekt-in-der-Hand (A) noch Summe-der-St&uuml;cke (B); es wird <em>nur</em> durch einen <strong>begrenzten lokalen Akt in geschlossener Form</strong> erkannt (A: die durchlaufene Projektion auf den Anker; B: der lokale Zug im Umlauf). Die <strong>Referenz</strong> ist frei w&auml;hlbar/kalibrierbar &mdash; das ist zugleich A's Anker-Pflege und B's Eich-&Auml;quivalenz. Und das Ganze bleibt <strong>relationell statt substanzhaft</strong> dadurch, dass eine <strong>Faser losgel&ouml;st</strong> wird: <em>konstitutiv</em> vom Akt (B: Quality wird verworfen, Form&uarr;), <em>postural</em> vom Leser (A: &divide; Selbsthaft). Die Faser, die B verwirft, ist genau die, die A loslassen soll. Erkennen des Ganzen = geschlossener lokaler Akt &times; freie Referenz &divide; Faser/Selbsthaft.</p>
+</section>
+
+<section id="inhalt">
+<h2><span class="num">4.</span> Fusionierter Inhalt</h2>
+<p>Beide Runde-3-Papiere gie&szlig;en sich auf die Ebene ihrer Thesen in ein gemeinsames Modell: <strong>ein Ganzes, das man nicht in der Hand hat, wird nur durch einen begrenzten lokalen Akt in geschlossener Form erkannt, und dieser Akt h&auml;lt es relationell, indem er eine Faser l&ouml;st.</strong> Die Tabelle ist das Herz der Fusion &mdash; jede Zeile eine Gr&ouml;&szlig;e, bei A, bei B und fusioniert:</p>
+<table>
+<thead><tr><th>Gr&ouml;&szlig;e</th><th class="ca">A &middot; n3-008 (Projektion/Anker/Loslassen)</th><th class="cb">B &middot; n3-001 (geschlossene Zusammensetzung)</th><th>Fusion</th></tr></thead>
+<tbody>
+<tr><td>Das Ganze</td><td class="ca">das Unfa&szlig;bare &mdash; nie Objekt, nur Relation/Durchlaufen, &bdquo;schon da&ldquo;</td><td class="cb">das globale Objekt &mdash; nie Summe, nur Invariante der geschlossenen Zusammensetzung</td><td>die relationale Invariante</td></tr>
+<tr><td>Wie wird es lesbar</td><td class="ca">begrenzter Projektions-Akt auf einen Anker, den man durchl&auml;uft</td><td class="cb">lokaler Zug, der um das Ganze gef&uuml;hrt wird (geschlossene Komposition)</td><td>ein begrenzter lokaler Akt in <em>geschlossener</em> Form</td></tr>
+<tr><td>Der lokale Akt</td><td class="ca">die gew&auml;hlte Linse/Projektion</td><td class="cb">der Schnitt / die &Uuml;bergangsfunktion <code>g_ij</code></td><td>derselbe lokale Zug (Linse = Karte)</td></tr>
+<tr><td>Die Referenz</td><td class="ca">der Anker &mdash; behalten &amp; kalibriert (Baseline)</td><td class="cb">die Faser + Eich-Freiheit (lokal trivial, Rahmen frei w&auml;hlbar)</td><td>freie, kalibrierbare Referenz = Eich-&Auml;quivalenz</td></tr>
+<tr><td>Was tr&auml;gt</td><td class="ca">die Relation (Akt + Bezugspunkt), nie Substanz</td><td class="cb">die geschlossene Zusammensetzung, nie ein St&uuml;ck</td><td>die geschlossene Relation, nie eine Substanz</td></tr>
+<tr><td>Die Faser</td><td class="ca">der Griff/Selbsthaft &mdash; den man l&auml;&szlig;t (&divide; Selbsthaft)</td><td class="cb">Quality = die verworfene Faser (Form&uarr;, Q&darr;, &bdquo;nie zur&uuml;ck&ldquo;)</td><td>derselbe Rest: konstitutiv verworfen (B) + postural losgelassen (A)</td></tr>
+<tr><td>Art der Invariante</td><td class="ca">&mdash; (A z&auml;hlte nicht) &mdash;</td><td class="cb">additive Zahl (<code>w</code>, &beta;&#8321;-artig) + zyklischer Rest (Holonomie, mod 360&deg;)</td><td>&pi;&#8321;/Holonomie, zwei Lesarten (abelsch / zyklisch)</td></tr>
+<tr><td>Richtung des Akts</td><td class="ca">reversibel (Haltungskorrektur, das Ganze bleibt)</td><td class="cb">einweg beim Eintritt (Homotopietyp &auml;ndert sich), reversibel in der Form</td><td>reversibel in Haltung &amp; Form, verlustbehaftet beim Eintritt in die Form</td></tr>
+<tr><td>Fehler / Pathologie</td><td class="ca">Totalisierung / Ergreifen (Selbsthaft bleibt)</td><td class="cb">die Faser als Substanz halten (&bdquo;Abfall vom Echten&ldquo;)</td><td>die Faser/Selbsthaft festhalten &rarr; Relation erstarrt zu Substanz</td></tr>
+<tr><td>Heilung</td><td class="ca">Loslassen (&divide; Selbsthaft) + Anker kalibrieren</td><td class="cb">die Faser konstitutiv verworfen lassen; Rahmen frei wechseln</td><td>Faser l&ouml;sen (Akt + Leser), Referenz frei kalibrieren</td></tr>
+</tbody>
+</table>
+
+<h3>Was A tr&auml;gt &mdash; die These auf der Ebene des Lesens (n3-008)</h3>
+<p>Das Unfa&szlig;bare ist nie ein Objekt in der Hand; es wird nur <em>gelesen</em>, wenn ein begrenzter, relationaler Akt auf es wirft. Zwei Fluchten aus der Totalisierung, dieselbe topologische Tatsache (<em>kein abgeschlossener Grenzknoten</em>): <strong>offen nach oben</strong> (Stratifizierung, kein Typ aller Typen &mdash; das Ganze ist immer eine Ebene h&ouml;her) und <strong>geschlossen nach innen</strong> (M&ouml;biusband ohne Kante, &bdquo;du bist ES&ldquo;). Ebenen tragen <em>als Beziehung</em>, nicht als Substanz. Der Wahrnehmende ist ein <strong>Knoten</strong> der Relation (nicht-dual auf der Ganzen-Ebene, Projektierer auf der Level-Ebene). Der eine Fehler: <em>Ergreifen/Totalisierung</em>. Die eine Heilung: <em>Loslassen (&divide; Selbsthaft)</em> &mdash; die Struktur loslassen (sie ist ganz), den Anker kalibrieren (er ist deins). Formel: <code>Sehen = Projektion &times; Anker &divide; Selbsthaft</code>.</p>
+
+<h3>Was B tr&auml;gt &mdash; die These auf der Ebene der Zusammensetzung (n3-001)</h3>
+<p>Ein globales Objekt ist die <strong>Invariante seiner geschlossenen lokalen Zusammensetzung</strong>, nicht die Summe der St&uuml;cke. Der lokale Zug (Schnitt / &Uuml;bergangsfunktion <code>g_ij</code>) tr&auml;gt allein keine Invariante; die Invariante ist Funktion <em>nur</em> des Umlaufs. Sie hat zwei Lesarten: <strong>additiv</strong> (Form als Zahl <code>w</code>, &beta;&#8321;-artig, w&auml;chst mit jedem Zug) und <strong>zyklisch</strong> (Holonomie als Twist <code>exp(i&Int;A)</code>, mod 360&deg;, lokal trivial, nicht-trivial erst im Umlauf, Aharonov&ndash;Bohm bei <code>F=0</code>). Die <strong>Faser</strong> (Quality) ist dieselbe Faser, die der Akt erzeugt (als lokales St&uuml;ck) und verwirft (als Invariante). <strong>Reversibel in der Form, verlustbehaftet beim Eintritt in die Form.</strong> Formel: <code>Invariante = geschlossene Zusammensetzung; N&middot;step = 360&deg;&middot;w + (N&middot;step mod 360&deg;)</code>.</p>
+
+<div class="aha">
+<b>Das fusionierte Modell (f&uuml;nf Komponenten).</b> Ein Ganzes wird erkannt, indem der Wahrnehmende <em>f&uuml;nf</em> Dinge h&auml;lt: (1) das Ganze ist eine <strong>relationale Invariante</strong> &mdash; weder Objekt (A) noch Summe (B); (2) er vollzieht einen <strong>begrenzten lokalen Akt</strong> (A: Projektion/Linse; B: Schnitt/&Uuml;bergang <code>g_ij</code>); (3) er f&uuml;hrt diesen Akt <strong>in geschlossener Form</strong> aus (A: das Durchlaufen der Relation; B: der Umlauf/geschlossene Komposition) und liest die Invariante <em>nur</em> darin; (4) er h&auml;lt die <strong>Referenz frei kalibrierbar</strong> &mdash; den Anker (A) = die Eich-Freiheit (B) &mdash; und die Invariante <em>unabh&auml;ngig</em> davon; (5) er <strong>l&ouml;st die Faser</strong>: konstitutiv vom Akt (B: Quality verworfen, Form&uarr;) und postural vom Leser (A: &divide; Selbsthaft). Die Faser, die B verwirft, ist die, die A loslassen sagt. <code>Erkennen = geschlossener lokaler Akt &times; freie Referenz &divide; Faser/Selbsthaft</code>.
+</div>
+</section>
+<section id="visualisierung">
+<h2><span class="num">5.</span> Visualisierung: der geschlossene Akt &mdash; lokale Projektion &rarr; Invariante, mit Faser, die man l&ouml;st</h2>
+<p class="hint">Der Ring aus 12 lokalen Patches ist <em>beides zugleich</em>: der <b>lokale Akt</b> pro Patch (n3-008 B: die Projektion/Linse &middot; n3-001 B: der Schnitt/&Uuml;bergang <code>g_ij</code>) und die <b>geschlossene Zusammensetzung</b>, deren Umlauf die <strong>Invariante</strong> erzeugt (n3-001: additive Form <code>w</code> + zyklischer Rest/Holonomie). Der <strong>Anker/Referenz (Eich-Freiheit)</strong> dreht <em>alle lokalen Pfeile</em>, &auml;ndert aber <em>nicht</em> die Netto-Invariante (w, Rest) &mdash; das ist zugleich n3-008's freie <em>Kalibrierung des Ankers</em> und n3-001's <em>Eich-&Auml;quivalenz</em>. <strong>Selbsthaft</strong> (n3-008 A): bei hohem Wert erstarrt die losgel&ouml;ste Faser zum <em>Total-Objekt</em> (Ergreifen = Fehlschlag); bei gelassenem Griff bleibt der Ring eine offene, relationale Zusammensetzung. Die <strong>Faser/Quality</strong>-S&auml;ule leert sich, je mehr Invariante (<code>w</code>) erzeugt wird &mdash; dieselbe Faser, erzeugt und verworfen. Drehe &bdquo;Lokaler Akt&ldquo; bis der Ring koh&auml;rent schlie&szlig;t (Rest = 0&deg;/360&deg;): genau dann &bdquo;abschlie&szlig;t&ldquo; A eine ganze Invariante und B schlie&szlig;t nahtlos. F&uuml;hre &bdquo;Selbsthaft&ldquo; hoch: das Ganze wird zum Objekt in der Hand (Fehlschlag).</p>
+
+<div class="viz-panel">
+  <canvas id="ringCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Lokaler Akt / Projektion pro Patch <b id="stepVal">30&deg;</b>
+      <input type="range" id="stepR" min="0" max="180" step="1" value="30">
+    </label>
+    <label>Anker / Referenz (Eich-Freiheit) <b id="refVal">0&deg;</b>
+      <input type="range" id="refR" min="0" max="360" step="1" value="0">
+    </label>
+    <label>Selbsthaft / Griff (n3-008 A) <b id="egoVal">25%</b>
+      <input type="range" id="egoR" min="0" max="100" step="1" value="25">
+    </label>
+    <button class="action" id="playBtn">&#9654; Umlauf</button>
+    <button class="action" id="resetBtn">&#8634; 0&deg;</button>
+  </div>
+  <div class="readout-row">
+    <span class="ra">A &middot; Form (additiv, <code>w</code>): <b id="wRead">0</b></span>
+    <span class="rb">B &middot; Holonomie (zyklisch, Rest): <b id="holoRead">0&deg;</b></span>
+    <span>Faser/Quality (B, A-Q): <b id="qRead">100%</b></span>
+    <span>Selbsthaft (A): <b id="egoRead">25%</b></span>
+  </div>
+  <div class="meter"><div id="qMeter"></div></div>
+  <p id="verdict">&mdash;</p>
+  <p class="hint">Mathematischer Hinweis: didaktisches Modell. <code>&Sigma; = N&middot;step</code>; <code>w = &lfloor;&Sigma;/360&deg;&rfloor;</code> (A's additive Form-Z&auml;hlung), <code>Rest = &Sigma; mod 360&deg;</code> (B's zyklische Holonomie), <code>Faser/Quality = 100&middot;e^(&minus;0.45&middot;w)%</code> (A's Q&darr; / B's verworfene Faser). &bdquo;Koh&auml;rent&ldquo; hei&szlig;t Rest &asymp; 0&deg;/360&deg; &mdash; der Umlauf schlie&szlig;t nahtlos (B) und A &bdquo;abschlie&szlig;t&ldquo; eine ganze Invariante. Der Anker/Ref dreht nur die <em>lokalen</em> Pfeile (Eich-Freiheit = freie Kalibrierung des Ankers), nie die Netto-Invariante. Alle Daten inline; keine externen Abfragen.</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="num">6.</span> Provenienz</h2>
+<div class="prov">
+  <a href="../n3-008.html">A &middot; n3-008.html &mdash; &bdquo;Das Unfa&szlig;bare liest man, man h&auml;lt es nicht &mdash; Projektion, Anker, Loslassen&ldquo;</a><br>
+  <span class="hint">Runde-3-Fusion (n2-024 &#10005; n2-007): das Unfa&szlig;bare ist nie Objekt in der Hand, sondern eine Relation, die man durchl&auml;uft; lesbar nur durch die Projektion auf einen Anker; der Wahrnehmende ist ein Knoten (nicht-dual &bdquo;du bist ES&ldquo;); der Fehler ist Ergreifen/Totalisierung, die Heilung Loslassen (&divide; Selbsthaft); der Anker wird behalten &amp; kalibriert. Die Quelle f&uuml;r &bdquo;das Unfa&szlig;bare, den relationalen Akt, die freie Referenz/Anker und das posturale Loslassen&ldquo;.</span>
+</div>
+<div class="prov">
+  <a href="../n3-001.html">B &middot; n3-001.html &mdash; &bdquo;Die Invariante der geschlossenen Zusammensetzung &mdash; additiv und zyklisch, mit einer gemeinsamen Faser&ldquo;</a><br>
+  <span class="hint">Runde-3-Fusion (n2-001 &#10005; n2-002): ein globales Objekt ist nicht die Summe seiner St&uuml;cke, sondern die Invariante ihrer geschlossenen Zusammensetzung; der lokale Zug tr&auml;gt allein keine Invariante (Schnitt / &Uuml;bergang <code>g_ij</code>); die Invariante hat zwei Lesarten (additive Form <code>w</code> + zyklische Holonomie); dieselbe Faser (Quality) wird erzeugt und verworfen; reversibel in der Form, verlustbehaftet beim Eintritt; Eich-&Auml;quivalenz. Die Quelle f&uuml;r &bdquo;die geschlossene Zusammensetzung, die Invariante im Umlauf, die konstitutiv verworfene Faser und die Eich-Freiheit&ldquo;.</span>
+</div>
+<p class="foot">Fusion 001 &middot; Runde 4 (Nicht-KI-Track) &middot; selbstbeziegliches HTML, keine externen Datenquellen &mdash; alle Daten inline. Theme-reaktiv per CSS-Variablen (Dunkel default). Die Visualisierung ist ein didaktisches Modell der fusionierten These &mdash; &bdquo;lokaler Akt in geschlossener Form&ldquo;, &bdquo;freie Referenz (Eich-Freiheit = Anker-Kalibrierung)&ldquo; und &bdquo;Faser losgel&ouml;st (konstitutiv + postural)&ldquo; sind die drei S&auml;ulen.</p>
+</section>
+
+</article>
+<script>
+(function(){
+  "use strict";
+  function toggleTheme(){
+    var d=document.documentElement;
+    var dark=d.classList.toggle('dark');
+    try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+  }
+  window.toggleTheme=toggleTheme;
+
+  (function(){
+    var cv=document.getElementById('ringCanvas');
+    if(!cv) return;
+    var ctx=cv.getContext('2d');
+    var cw=0, ch=380, dpr=1;
+    var N=12;
+    var step=30;      // lokaler Akt / Projektion pro Patch (Grad)
+    var ref=0;        // Anker / Referenz (Eich-Freiheit, Grad)
+    var ego=0.25;     // Selbsthaft / Griff (0..1)
+    var playing=false;
+    var markerA=-Math.PI/2;
+    var lastT=0;
+
+    function cssVar(n){
+      var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      return v||'#888';
+    }
+    function chx(c){var h=c.slice(1);if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];var n=parseInt(h,16);return [(n>>16)&255,(n>>8)&255,n&255];}
+    function mixCol(c1,c2,t){var a=chx(c1),b=chx(c2);t=Math.max(0,Math.min(1,t));return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')';}
+
+    function resize(){
+      dpr=window.devicePixelRatio||1;
+      var r=cv.getBoundingClientRect();
+      cw=Math.max(300,r.width); ch=380;
+      cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr);
+      cv.style.height=ch+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function total(){ return N*step; }
+    function wind(){ return Math.floor(total()/360+1e-9); }
+    function residue(){ return ((total()%360)+360)%360; }
+    function quality(){ return 100*Math.exp(-0.45*wind()); }
+
+    function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+    function draw(){
+      ctx.clearRect(0,0,cw,ch);
+      var bg=cssVar('--viz-bg'), line=cssVar('--line'), muted=cssVar('--muted');
+      var accent=cssVar('--accent'), accent2=cssVar('--accent2');
+      var panel=cssVar('--panel'), good=cssVar('--good'), warn=cssVar('--warn'), bad=cssVar('--bad');
+      ctx.fillStyle=bg; ctx.fillRect(0,0,cw,ch);
+
+      var cx=cw*0.5, cy=ch*0.5, R=Math.min(cw,ch)*0.33;
+      var stepAng=Math.PI*2/N;
+      var w=wind(), res=residue(), q=quality();
+      var coherent=(Math.min(res,360-res)<2);
+
+      if(ego>0.4){
+        var al=(ego-0.4)/0.6;
+        ctx.save();
+        ctx.globalAlpha=al;
+        ctx.strokeStyle=bad; ctx.lineWidth=2; ctx.setLineDash([7,5]);
+        var bx=cx-R-22, by=cy-R-22, bw=2*R+44, bh=2*R+44;
+        rr(bx,by,bw,bh,14); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=bad; ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+        ctx.fillText('Total-Objekt (A: Ergreifen = Fehlschlag)', cx, by+16);
+        ctx.restore();
+      }
+
+      ctx.lineWidth=2; ctx.strokeStyle=line;
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+
+      var nodes=[],i,a;
+      for(i=0;i<N;i++){ a=(i/N)*Math.PI*2-Math.PI/2; nodes.push([cx+R*Math.cos(a),cy+R*Math.sin(a),a]); }
+      for(i=0;i<N;i++){
+        var isSeam=(i===N-1);
+        ctx.lineWidth=isSeam?5:2.5;
+        ctx.strokeStyle=isSeam?(coherent?good:warn):line;
+        ctx.beginPath(); ctx.arc(cx,cy,R,nodes[i][2],nodes[i][2]+stepAng,false); ctx.stroke();
+      }
+
+      for(i=0;i<N;i++){
+        var x=nodes[i][0], y=nodes[i][1];
+        var fa=((i*step)+ref)*Math.PI/180, alen=18;
+        var ex=x+alen*Math.cos(fa), ey=y+alen*Math.sin(fa);
+        ctx.fillStyle=panel; ctx.strokeStyle=muted; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.arc(x,y,7,0,Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle=accent; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(ex,ey); ctx.stroke();
+        var ah=5; ctx.fillStyle=accent; ctx.beginPath();
+        ctx.moveTo(ex,ey);
+        ctx.lineTo(ex-ah*Math.cos(fa-0.4),ey-ah*Math.sin(fa-0.4));
+        ctx.lineTo(ex-ah*Math.cos(fa+0.4),ey-ah*Math.sin(fa+0.4));
+        ctx.closePath(); ctx.fill();
+      }
+
+      var cr=30;
+      ctx.fillStyle=panel; ctx.strokeStyle=accent2; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(cx,cy,cr,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      var hr=res*Math.PI/180;
+      ctx.strokeStyle=accent2; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+(cr-5)*Math.cos(hr),cy+(cr-5)*Math.sin(hr)); ctx.stroke();
+      var nodeR=6+ego*8;
+      ctx.fillStyle=mixCol(accent,bad,ego);
+      ctx.beginPath(); ctx.arc(cx,cy,nodeR,0,Math.PI*2); ctx.fill();
+      if(ego>0.12){
+        ctx.save(); ctx.globalAlpha=ego; ctx.strokeStyle=bad; ctx.setLineDash([4,4]); ctx.lineWidth=1.4;
+        ctx.beginPath(); ctx.arc(cx,cy,14+ego*12,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+      }
+      ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('Invariante (geschlossene Zusammensetzung)',cx,cy+cr+13);
+
+      if(playing){
+        var mx=cx+R*Math.cos(markerA), my=cy+R*Math.sin(markerA);
+        ctx.fillStyle=good; ctx.shadowColor=good; ctx.shadowBlur=12;
+        ctx.beginPath(); ctx.arc(mx,my,7,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+      }
+    }
+
+    function updateReadouts(){
+      var w=wind(), res=residue(), q=quality();
+      function set(id,t){ var e=document.getElementById(id); if(e) e.textContent=t; }
+      set('wRead', w);
+      set('holoRead', res.toFixed(0)+'\u00b0');
+      set('qRead', q.toFixed(0)+'%');
+      set('egoRead', (ego*100).toFixed(0)+'%');
+      set('stepVal', step.toFixed(0)+'\u00b0');
+      set('refVal', ref.toFixed(0)+'\u00b0');
+      set('egoVal', (ego*100).toFixed(0)+'%');
+      var meter=document.getElementById('qMeter'); if(meter) meter.style.width=q.toFixed(0)+'%';
+      var verdict=document.getElementById('verdict');
+      if(verdict){
+        var coherent=(Math.min(res,360-res)<2);
+        if(ego>0.66){
+          verdict.textContent='Selbsthaft hoch (n3-008 A) \u2014 die losgel\u00f6ste Faser erstarrt wieder zum Total-Objekt (Ergreifen = Fehlschlag). Die geschlossene Zusammensetzung wird zu Substanz. Heilung: \u00f7 Selbsthaft (Griff loslassen).';
+          verdict.style.color=cssVar('--bad');
+        } else if(ego>0.33){
+          verdict.textContent='\u00dcbergang \u2014 der lokale Akt l\u00e4uft um (B) und der Leser h\u00e4lt noch zu fest (A): die Faser ist halbe Substanz. Das Ganze wackelt zwischen Relation und Objekt.';
+          verdict.style.color=cssVar('--warn');
+        } else {
+          verdict.textContent=coherent
+            ? 'Beziehung, nicht Substanz \u2014 koh\u00e4rent (B): Rest = 0\u00b0/360\u00b0, der Umlauf schlie\u00dft nahtlos, A \u201eabschlie\u00dft\u201c eine ganze Invariante. Die Faser ist losgel\u00f6st (B: Q\u2193), der Leser h\u00e4lt nicht fest (A: \u00f7 Selbsthaft), und die Referenz bleibt frei kalibrierbar = Eich-\u00c4quivalenz: die Invariante ist unabh\u00e4ngig von der gew\u00e4hlten Referenz. Erkennen = geschlossener Akt \u00f7 Faser.'
+            : 'Beziehung, nicht Substanz \u2014 nicht-trivial (B): Rest \u2260 0\u00b0, der Umlauf tr\u00e4gt Ged\u00e4chtnis. A liest denselben Gesamtzwist als w Windungen + Rest. Die Faser ist losgel\u00f6st (B), der Leser h\u00e4lt nicht fest (A), und die Referenz bleibt frei kalibrierbar = Eich-\u00c4quivalenz: die Invariante ist unabh\u00e4ngig von der gew\u00e4hlten Referenz. Erkennen = geschlossener Akt \u00f7 Faser.';
+          verdict.style.color=cssVar('--good');
+        }
+      }
+    }
+
+    function frame(ts){
+      var dt=Math.min(0.05,(ts-lastT)/1000)||0; lastT=ts;
+      if(playing){ markerA+=dt*0.9; if(markerA>=Math.PI*2-Math.PI/2) markerA-=Math.PI*2; }
+      draw(); updateReadouts();
+      requestAnimationFrame(frame);
+    }
+
+    var stepR=document.getElementById('stepR');
+    if(stepR) stepR.addEventListener('input',function(){ step=parseFloat(stepR.value)||0; });
+    var refR=document.getElementById('refR');
+    if(refR) refR.addEventListener('input',function(){ ref=parseFloat(refR.value)||0; });
+    var egoR=document.getElementById('egoR');
+    if(egoR) egoR.addEventListener('input',function(){ ego=parseFloat(egoR.value)/100; });
+    var playBtn=document.getElementById('playBtn');
+    if(playBtn) playBtn.addEventListener('click',function(){ playing=!playing; playBtn.textContent=playing?'\u23f8 Pause':'\u25b6 Umlauf'; });
+    var resetBtn=document.getElementById('resetBtn');
+    if(resetBtn) resetBtn.addEventListener('click',function(){ step=0; if(stepR) stepR.value=0; });
+    var themeBtn=document.getElementById('themeBtn');
+    if(themeBtn) themeBtn.addEventListener('click',toggleTheme);
+    window.addEventListener('resize',function(){ resize(); draw(); });
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    resize();
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>

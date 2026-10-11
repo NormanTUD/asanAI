@@ -1,0 +1,16 @@
+{
+  "no": "012",
+  "a": "n3-024.html",
+  "b": "n3-020.html",
+  "a_title": "Der Schatten trägt sie nicht — die Invariante als globale Signatur im höheren Objekt",
+  "b_title": "Der Schatten des Ganzen — Invariante × Residual (Runde 3)",
+  "combined_theme": "invariante-schatten-freiheit-projektion",
+  "one_line": "Ein Objekt, zwei Enden, ein Rest: die Invariante (minimale Struktur = globale Signatur) kollabiert bei grober Auflösung zum Schatten (Peak/Zahl), während der irreduzible Rest (Freiheit) sich dem Kollaps verweigert — gelesen durch eine Kamera/Fidelity, deren Zentrum leer vom Punkt, voll von Freiheit ist.",
+  "contradictions": [
+    "Richtung der Pipeline: A liest den Schatten als NIEDRIGE Rohdatenlage und liftet HOCH zur globalen Signatur (Schatten→Invariante); B kollabiert die Struktur NIEDRIG auf den Schatten (Invariante→Zahl/Trace) — der Schatten sitzt in A am unteren Eingang, in B am unteren Ausgang.",
+    "Wertung des Restes: A behandelt den Rest (Substanz) neutral als Zweckwahl (schützen / Rauschen / verwerfen), neben der Extraktion — der Wert ist (im Wesentlichen) die Invariante; B wertet den Rest (Residual) positiv als irreduzible FREIHEIT, deren Widerstand ECHTHEIT ist — der Wert ist zweifaktoriell (Eleganz + Echtheit).",
+    "Die Invariante: A feiert sie als positives, persistierendes, auditierbares FORM (der Zyklus, das überlebende H1, das Signal liegt in der Form); B entwertet die zentrale Position zu ∅ (leeres Zentrum) und warnt, jede zentrale Form/Substanz sei ein KÖDER — nur die Struktur-up-to-Symmetrie sei real."
+  ],
+  "resolution": "Eine Projektion mit zwei Enden: der Schatten ist die GROBE/verlustbehaftete Lesart (A: Rohdaten, B: abgefallene Zahl) und die Invariante die FEINE Lesart (minimale Struktur = globale Signatur); A und B traversieren dieselbe Korrespondenz in entgegengesetzter Richtung — die Richtung ist eine Betonsung. Der Rest ist in beiden irreduzible Freiheit; A's neutrale Zweckwahl (schützen/Rauschen/verwerfen) verallgemeinert B's zweifaktoriellen Wert, B zählt die Freiheit einfach als co-equalen Wert (Echtheit). A's 'Form' ist die echte, persistente, verteilte Struktur; B's 'leeres Zentrum' sagt nur, dass sie up-to-Symmetrie ist und keinen zentralen Punkt hat — der Köder, vor dem B warnt, ist der naive Mittelpunkt, nicht A's Form.",
+  "viz": "Themenreaktives Canvas: die Kamera/Fidelity (0–100) morphisiert links die Invariante zwischen grober Schatten-Lesart (einzelner Peak/Zahl) und feiner Struktur (Ring mit innerer ℤ/2-Symmetrie um ein leeres Zentrum); rechts der Rest als (xₙ,xₙ₊₁)-Wolke, die im Köder-Modus ein Diagonalgitter bildet (Fold scheitert NICHT → Halluzination) und im Genuin-Modus frei ist (Fold scheitert → Echtheit); bei niedriger Kamera sind Köder und Freiheit nicht unterscheidbar. Ein 'Fold/Trace'-Button führt die exakte 3-Ausgaben-LCG-Inversion (BigInt) durch. Alle Daten inline, keine externen Abrufe."
+}

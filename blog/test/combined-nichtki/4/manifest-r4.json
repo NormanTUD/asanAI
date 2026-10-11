@@ -1,0 +1,167 @@
+{
+  "round": 4,
+  "seed": 20261010,
+  "big_threshold_kb": 100.0,
+  "method": "seeded-random, size-balanced (big>=threshold always paired with smallest available partner); bye advances unchanged",
+  "pool_size": 28,
+  "num_pairs": 14,
+  "num_byes": 0,
+  "max_pair_total_kb": 92.9,
+  "pairs": [
+    {
+      "id": 1,
+      "no": "001",
+      "out": "combined-nichtki/4/n4-001.html",
+      "meta": "combined-nichtki/4/n4-001.meta.json",
+      "a": "combined-nichtki/3/n3-008.html",
+      "b": "combined-nichtki/3/n3-001.html",
+      "size_a": 32.4,
+      "size_b": 33.3,
+      "total_kb": 65.7
+    },
+    {
+      "id": 2,
+      "no": "002",
+      "out": "combined-nichtki/4/n4-002.html",
+      "meta": "combined-nichtki/4/n4-002.meta.json",
+      "a": "combined-nichtki/3/n3-018.html",
+      "b": "combined-nichtki/3/n3-009.html",
+      "size_a": 35.0,
+      "size_b": 35.2,
+      "total_kb": 70.2
+    },
+    {
+      "id": 3,
+      "no": "003",
+      "out": "combined-nichtki/4/n4-003.html",
+      "meta": "combined-nichtki/4/n4-003.meta.json",
+      "a": "combined-nichtki/3/n3-015.html",
+      "b": "combined-nichtki/3/n3-003.html",
+      "size_a": 35.3,
+      "size_b": 37.6,
+      "total_kb": 72.9
+    },
+    {
+      "id": 4,
+      "no": "004",
+      "out": "combined-nichtki/4/n4-004.html",
+      "meta": "combined-nichtki/4/n4-004.meta.json",
+      "a": "combined-nichtki/3/n3-017.html",
+      "b": "combined-nichtki/3/n3-004.html",
+      "size_a": 38.0,
+      "size_b": 38.2,
+      "total_kb": 76.2
+    },
+    {
+      "id": 5,
+      "no": "005",
+      "out": "combined-nichtki/4/n4-005.html",
+      "meta": "combined-nichtki/4/n4-005.meta.json",
+      "a": "combined-nichtki/3/n3-016.html",
+      "b": "combined-nichtki/3/n3-019.html",
+      "size_a": 38.8,
+      "size_b": 39.2,
+      "total_kb": 78.0
+    },
+    {
+      "id": 6,
+      "no": "006",
+      "out": "combined-nichtki/4/n4-006.html",
+      "meta": "combined-nichtki/4/n4-006.meta.json",
+      "a": "combined-nichtki/3/n3-006.html",
+      "b": "combined-nichtki/3/n3-010.html",
+      "size_a": 39.4,
+      "size_b": 39.6,
+      "total_kb": 79.0
+    },
+    {
+      "id": 7,
+      "no": "007",
+      "out": "combined-nichtki/4/n4-007.html",
+      "meta": "combined-nichtki/4/n4-007.meta.json",
+      "a": "combined-nichtki/3/n3-007.html",
+      "b": "combined-nichtki/3/n3-022.html",
+      "size_a": 40.6,
+      "size_b": 40.9,
+      "total_kb": 81.5
+    },
+    {
+      "id": 8,
+      "no": "008",
+      "out": "combined-nichtki/4/n4-008.html",
+      "meta": "combined-nichtki/4/n4-008.meta.json",
+      "a": "combined-nichtki/3/n3-005.html",
+      "b": "combined-nichtki/3/n3-002.html",
+      "size_a": 41.7,
+      "size_b": 41.7,
+      "total_kb": 83.4
+    },
+    {
+      "id": 9,
+      "no": "009",
+      "out": "combined-nichtki/4/n4-009.html",
+      "meta": "combined-nichtki/4/n4-009.meta.json",
+      "a": "combined-nichtki/3/n3-011.html",
+      "b": "combined-nichtki/3/n3-013.html",
+      "size_a": 41.9,
+      "size_b": 42.3,
+      "total_kb": 84.2
+    },
+    {
+      "id": 10,
+      "no": "010",
+      "out": "combined-nichtki/4/n4-010.html",
+      "meta": "combined-nichtki/4/n4-010.meta.json",
+      "a": "combined-nichtki/2/n2-050.html",
+      "b": "combined-nichtki/3/n3-023.html",
+      "size_a": 42.7,
+      "size_b": 43.3,
+      "total_kb": 86.0
+    },
+    {
+      "id": 11,
+      "no": "011",
+      "out": "combined-nichtki/4/n4-011.html",
+      "meta": "combined-nichtki/4/n4-011.meta.json",
+      "a": "combined-nichtki/3/n3-021.html",
+      "b": "combined-nichtki/3/n3-026.html",
+      "size_a": 44.3,
+      "size_b": 44.8,
+      "total_kb": 89.1
+    },
+    {
+      "id": 12,
+      "no": "012",
+      "out": "combined-nichtki/4/n4-012.html",
+      "meta": "combined-nichtki/4/n4-012.meta.json",
+      "a": "combined-nichtki/3/n3-024.html",
+      "b": "combined-nichtki/3/n3-020.html",
+      "size_a": 45.1,
+      "size_b": 45.1,
+      "total_kb": 90.2
+    },
+    {
+      "id": 13,
+      "no": "013",
+      "out": "combined-nichtki/4/n4-013.html",
+      "meta": "combined-nichtki/4/n4-013.meta.json",
+      "a": "combined-nichtki/3/n3-027.html",
+      "b": "combined-nichtki/3/n3-014.html",
+      "size_a": 45.2,
+      "size_b": 46.1,
+      "total_kb": 91.3
+    },
+    {
+      "id": 14,
+      "no": "014",
+      "out": "combined-nichtki/4/n4-014.html",
+      "meta": "combined-nichtki/4/n4-014.meta.json",
+      "a": "combined-nichtki/3/n3-012.html",
+      "b": "combined-nichtki/3/n3-025.html",
+      "size_a": 46.4,
+      "size_b": 46.5,
+      "total_kb": 92.9
+    }
+  ],
+  "byes": []
+}

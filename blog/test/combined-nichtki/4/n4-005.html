@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 005 (Runde 4): Ein Generator, zwei Lesarten, ein Spalt</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#0d9488; --accent2:#2f6fd0; --accent3:#c0457f; --accent4:#b07d18;
+  --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --inv-lo:#eef1f6; --inv-hi:#b45309; --dot:#e07d1e;
+  --code-bg:rgba(30,34,48,.06); --grid:rgba(20,20,40,0.10); --viz-bg:#ffffff; --viz-line:#d9d5cc;
+  --accent-soft:rgba(13,148,136,.12); --shadow:0 1px 2px rgba(20,20,20,.06),0 8px 26px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0f1c; --panel:#101a2e; --panel2:#0c1426; --text:#e8edf7; --muted:#93a0b6; --line:#233450;
+  --accent:#64ffda; --accent2:#7aa2ff; --accent3:#ff8fd0; --accent4:#ffcc6a;
+  --good:#86efac; --warn:#ffcc6a; --bad:#ff6b5e;
+  --inv-lo:#0f1626; --inv-hi:#f59e0b; --dot:#ffd166;
+  --code-bg:rgba(230,236,245,.07); --grid:rgba(255,255,255,0.10); --viz-bg:#0b0e1a; --viz-line:#2a3358;
+  --accent-soft:rgba(100,255,218,.12); --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:16px/1.62 Georgia,'Iowan Old Style','Times New Roman',serif;
+  -webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,38px);line-height:1.12;margin:0 0 8px;letter-spacing:-.01em}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 4px;font-style:italic}
+.subtitle .x{color:var(--accent3);font-style:normal;font-weight:700}
+.subtitle.req{color:var(--accent);font-style:normal;font-weight:700;font-size:14px}
+section{margin:0 0 30px;scroll-margin-top:20px}
+section>h2{font-size:21px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);color:var(--accent)}
+h2 .n{font-size:.58em;color:var(--accent);border:1px solid var(--line);border-radius:7px;padding:2px 9px;
+  margin-right:.5em;vertical-align:middle;font-family:ui-monospace,monospace}
+h3{font-size:16.5px;margin:24px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 8px}
+b,strong{color:var(--text)}
+em{color:var(--muted)}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;
+  background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);
+  border:1px solid var(--line);border-left:3px solid var(--accent2);border-radius:10px;padding:12px 14px;
+  overflow:auto;margin:12px 0;white-space:pre;line-height:1.7}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0;box-shadow:var(--shadow)}
+.card h3{margin-top:0}
+.card .tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:20px;margin-bottom:8px}
+.tagA{color:var(--accent);font-weight:700}
+.tagB{color:var(--accent2);font-weight:700}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media (max-width:640px){.vs{grid-template-columns:1fr}}
+.vs .col{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel)}
+.vs .col h3{margin:0 0 6px;font-size:1rem;color:var(--text)}
+.vs .col .src{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.vs .col .src b{color:var(--accent)}
+.vs .col .src b.b{color:var(--accent2)}
+.aha{background:var(--panel2);border-left:4px solid var(--accent3);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.aha b{color:var(--accent3)}
+.note{border-left:3px solid var(--accent);padding:8px 0 8px 14px;margin:14px 0;color:var(--muted)}
+.note b{color:var(--text)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+tr.hl td{background:var(--accent-soft)}
+canvas#viz{display:block;width:100%;background:var(--viz-bg);border:1px solid var(--viz-line);
+  border-radius:12px;margin:6px 0;touch-action:none}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=range]{padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:14px;width:200px;accent-color:var(--accent)}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;
+  padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+button.action.active{border-color:var(--accent);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+button.action:hover{border-color:var(--accent)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:16px 0;font-size:13px}
+.ro{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.ro .k{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.ro .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;color:var(--accent2);font-variant-numeric:tabular-nums}
+.ro .v.ev{color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700}
+.prov a:hover{text-decoration:underline}
+.hint{color:var(--muted);font-size:13.5px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);
+  color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728; / &#9790;</button>
+<article>
+<h1>Ein Generator, zwei Lesarten, ein Spalt</h1>
+<p class="subtitle">das &Uuml;brigbleibende ist ein lokaler, kontinuierlicher Generator, den man fein (Dichte&nbsp;&rarr;&nbsp;Wann) und grob (Z&auml;hlung&nbsp;&rarr;&nbsp;Wand) liest; die Zahl ist eine verlustbehaftete Projektion, deren Wert erhalten bleibt und deren Kern der Spalt ist</p>
+<p class="subtitle req">Fusion aus: <span class="x">n3-016.html</span> &#10005; <span class="x">n3-019.html</span> &nbsp;(Runde 4)</p>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Runde-3-Papiere sind selbst bereits dreifach synthetisiert, und beide landen &mdash; von je
+verschiedenem Material her &mdash; auf <b>ein und derselben Meta-Konstruktion</b>, nur in anderem
+Wortschatz. <span class="tagA">A</span> (n3-016, &bdquo;Der eine Operator, der das &Uuml;brigbleibende bestimmt&ldquo;)
+sagt: es gibt <b>einen beherrschenden Operator &mdash; &part; = d</b> &mdash; der jede Struktur in
+<b>Rand</b> (hebt sich auf, &part;&part; = d&sup2; = 0), <b>Ererbes</b> (Pullback, Pseudo-Gegebenes) und
+<b>Invariante</b> (geschlossen-nicht-exakt) sortiert; die Invariante ist <b>eines</b> Objekts mit
+<b>zwei Gesichtern</b> &mdash; einer <b>globalen, diskreten Z&auml;hlung</b> (&chi;/Betti) und einer
+<b>lokalen, kontinuierlichen Dichte</b> (Kr&uuml;mmung &Gamma;), verbunden durch <b>Gauss&ndash;Bonnet</b>
+(&int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;); und es gibt <b>zwei Achsen</b> (exakt/umkehrbar, schlie&szlig;t;
+verlustreich/projektisch, &ouml;ffnet), die das &bdquo;Wann&ldquo; als <b>argmax der Invariante-Dichte</b>
+lokalisiert. <span class="tagB">B</span> (n3-019, &bdquo;Pfad erzeugt, Zahl z&auml;hlt, Spalt bleibt&ldquo;)
+sagt: <b>Identit&auml;t ist ein kontinuierlicher lokaler Generator</b>, dessen Ausgabe eine
+<b>diskrete globale Zahl</b> ist (st&uuml;ckweise konstant, springt nur an der Wand); man liest denselben
+Generator in <b>zwei Aufl&ouml;sungen</b> (fein = glatte Trajektorie, grob = Stufenfunktion); die Zahl ist
+eine <b>verlustbehaftete Projektion</b>, und deren <b>Kern &mdash; der Spalt</b> (Nicht-Abelschheit &pi;&sub1;,
+Monodromie, Pfadabh&auml;ngigkeit) &mdash; ist der <em>eigentliche</em>, nur global existierende Inhalt;
+Ber&uuml;hren = berechnen + die Wand finden.</p>
+
+<p><b style="color:var(--accent)">Die eine integrierte Position.</b> Es gibt <b>einen</b> lokalen,
+kontinuierlichen <b>Generator/Motor</b> (A&rsquo;s &part; = d; B&rsquo;s Pfad / Schleifenraum
+&Omega;(S&sup1;) / lokaler Kern). Die beiden Runde-3-Papiere lesen denselben Generator in
+<b>zwei Lesarten</b>, aus zwei Blickrichtungen: <span class="tagA">A</span> als <b>zwei Achsen eines
+Operators</b> (exakt/umkehrbar &harr; fein/kontinuierlich; verlustreich/irreversibel &harr; grob/diskret),
+<span class="tagB">B</span> als <b>zwei Aufl&ouml;sungen</b> (fein/glatt vs. grob/gestuft). Die
+<b>feine Lesung</b> liest den Generator als <em>kontinuierliche Dichte</em>, deren Maximum &mdash; das
+<b>&bdquo;Wann&ldquo;</b> (A) &mdash; den Ort der Konzentration angibt; die <b>grobe Lesung</b> als
+<em>diskrete, st&uuml;ckweise konstante Zahl</em>, die nur an der <b>Wand</b> (B) springt. <b>Das diskrete
+Ablesen ist zwingend verlustbehaftet</b>: eine <b>Projektion</b>, deren <b>Wert</b> (Z&auml;hlung /
+Integral &prop; &chi;, die konservative W&auml;hrung) <b>erhalten</b> bleibt und deren <b>Kern</b>
+(das, was die Zahl blendet: Dichte-Verteilung bei A, Nicht-Abelschheit / Monodromie bei B) der
+<b>irreduzible, nur global existierende Inhalt</b> ist &mdash; A&rsquo;s &bdquo;das Loch, das &uuml;brig
+bleibt&ldquo; und B&rsquo;s &bdquo;der Spalt&ldquo; sind ein und dasselbe. <b>Das Ereignis</b> ist
+<b>derselbe Ort in zwei Aufl&ouml;sungen</b>: wo die <em>feine</em> Lesung <em>peakt</em> (Wann = argmax
+der Dichte), da <em>springt</em> die <em>grobe</em> (Wand = Phasen&uuml;bergang der Zahl).
+<b>Ber&uuml;hren = den Generator lesen = berechnen (den Wert) + das Ereignis finden (Wann&nbsp;=&nbsp;Wand).</b></p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+<p class="hint">In <em>keiner</em> faktischen Behauptung widersprechen sich die beiden Runde-3-Papiere &mdash;
+sie sind komplement&auml;re Lesarten <em>desselben</em> Generators (ein Operator, zwei Lesarten, ein
+Spalt). Auf der Ebene ihrer <b>Thesen/Stellungen</b> nehmen sie zu drei tragenden Punkten jedoch
+<b>genuin inkompatible, teils entgegengesetzte Charakterisierungen</b> ein. W&ouml;rtlich benannt,
+wer was sagt:</p>
+
+<div class="vs">
+  <div class="col">
+    <h3>Ereignis: kontinuierliches Lokalmaximum</h3>
+    <div class="src"><b class="tagA">A</b> &middot; n3-016 &middot; das &bdquo;Wann&ldquo;</div>
+    <p>&bdquo;das &bdquo;Wann&ldquo; = argmax der Invariante-Dichte&ldquo;, &bdquo;handele genau dort, wo ihre
+    Dichte peakte (B&rsquo;s maximale Steigung)&ldquo;. A lokalisiert das Ereignis als ein
+    <strong>stetiges, lokalisierbares Maximum</strong> einer <em>kontinuierlichen Dichte</em> &mdash; einen
+    glatten Peak, an dem der Gradient |&part;g| maximal ist. Es <em>springt nichts</em>; die Dichte ist
+    &uuml;berall glatt.</p>
+  </div>
+  <div class="col">
+    <h3>Ereignis: diskreter Sprung an der Wand</h3>
+    <div class="src"><b class="tagB">B</b> &middot; n3-019 &middot; die &bdquo;Wand&ldquo;</div>
+    <p>&bdquo;die Zahl ist st&uuml;ckweise konstant und springt nur an der Wand&ldquo;; &bdquo;die Wand ist
+    genau der Ort, an dem die feine Lesung glatt bleibt, w&auml;hrend die grobe Lesung springt&ldquo; (Cusp
+    8a&sup3;+27b&sup2;=0, jede volle Windung). B lokalisiert das Ereignis als einen
+    <strong>diskreten, globalen Sprung der Z&auml;hlung</strong> &mdash; eine Singularit&auml;t /
+    Phasen&uuml;bergang, an dem die Zahl <em>inkrementiert</em>.</p>
+  </div>
+</div>
+<p><b>Inkompatibel:</b> A macht das Ereignis aus einem <em>stetigen Peak einer lokalen Dichte</em> (man
+<em>zeigt</em> auf einen Punkt); B macht es aus einem <em>diskreten Sprung der globalen Z&auml;hlung</em>
+(man <em>findet</em> eine Wand). Zwei unvereinbare Charakterisierungen desselben &bdquo;Orts, an dem sich zu
+handeln lohnt&ldquo;.</p>
+
+<div class="vs">
+  <div class="col">
+    <h3>Die Zahl: erhaltene Invariante (Wert)</h3>
+    <div class="src"><b class="tagA">A</b> &middot; n3-016 &middot; Z&auml;hlung = &int; Dichte</div>
+    <p>&bdquo;A&rsquo;s Z&auml;hlung (&chi;) ist das Integral von B&rsquo;s Dichte&hellip; ihre Varianz &rarr; 0,
+    aber ihr Integral (die Z&auml;hlung) bleibt erhalten &mdash; das ist exakt A&rsquo;s Anspruch, dass die
+    topologische Invariante den Fluss &uuml;bersteht&ldquo;. A <strong>erh&ouml;ht</strong> die Zahl zur
+    <em>erhaltenen, konservativen Invariante</em> &mdash; sie ist das &Uuml;brigbleibende, ein gleichwertiges
+    <em>Gesicht</em> der Dichte (Zwei-Gesichter-Symmetrie).</p>
+  </div>
+  <div class="col">
+    <h3>Die Zahl: verlustbehaftete Projektion (Blinder)</h3>
+    <div class="src"><b class="tagB">B</b> &middot; n3-019 &middot; Zahl = W&auml;hrung, Spalt = Inhalt</div>
+    <p>&bdquo;die diskrete Zahl ist eine verlustbehaftete Projektion des kontinuierlichen
+    Generators&hellip; die Invariante [ist] nur ein Detektor, um die Wand zu finden&ldquo;; &bdquo;der Spalt
+    ist by design, der Preis, die abelsche W&auml;hrung zu w&auml;hlen&ldquo;. B <strong>dem&uuml;tiert</strong>
+    die Zahl zum <em>verlustbehafteten Schatten / Blinder</em>: der <em>eigentliche</em> Inhalt sitzt im
+    <em>Kern</em> (dem Spalt), den die Zahl <em>ausblendet</em>.</p>
+  </div>
+</div>
+<p><b>Inkompatibel:</b> A bewertet die diskrete Zahl als <em>das &Uuml;brigbleibende / die erhaltene
+Invariante</em> (eine Eigenschaft, ein Gewinn); B bewertet sie als <em>eine verlustbehaftete Projektion,
+die den Inhalt blendet</em> (ein Defizit, ein Preis). <em>Wert</em> der Zahl vs. <em>Kern</em> der Zahl &mdash;
+zwei entgegengesetzte Akzente auf derselben Gr&ouml;&szlig;e.</p>
+
+<div class="vs">
+  <div class="col">
+    <h3>Fundamentale Spalte: zwei Achsen (Maschine)</h3>
+    <div class="src"><b class="tagA">A</b> &middot; n3-016 &middot; exakt vs. verlustreich</div>
+    <p>&bdquo;Es gibt zwei Achsen: eine exakte/umkehrbare (Raum; &part;&part; = 0; Univalence &mdash; nichts
+    geht verloren) und eine verlustreiche/projektische (Zeit/Fluss &mdash; offen, Detail stirbt)&ldquo;.
+    A&rsquo;s Dichotomie ist eine <strong>Reversibilit&auml;ts-/Dynamik-Spalte</strong> der
+    <em>Machine</em>: eine Richtung, die sich schlie&szlig;t (keine Verluste), eine, die sich &ouml;ffnet
+    (Verluste).</p>
+  </div>
+  <div class="col">
+    <h3>Fundamentale Spalte: zwei Aufl&ouml;sungen (Lesen)</h3>
+    <div class="src"><b class="tagB">B</b> &middot; n3-019 &middot; fein vs. grob</div>
+    <p>&bdquo;die feine liest den Generator als kontinuierlich laufenden Prozess; die grobe liest denselben
+    Generator als diskrete, st&uuml;ckweise konstante Zahl&ldquo;. B&rsquo;s Dichotomie ist eine
+    <strong>Aufl&ouml;sungs-/Epistemik-Spalte</strong> des <em>Lesens</em>: derselbe Generator,
+    <em>fein</em> (glatt) oder <em>grob</em> (gestuft) abgelesen &mdash; eine Frage des Instruments, nicht
+    der Maschine.</p>
+  </div>
+</div>
+<p><b>Inkompatibel:</b> A rahmt die Zweigeteiltheit als <em>zwei Achsen eines Operators</em> (eine Eigenschaft
+des <em>Motors</em>: schlie&szlig;t vs. &ouml;ffnet); B rahmt sie als <em>zwei Aufl&ouml;sungen eines
+Generators</em> (eine Eigenschaft des <em>Lesers</em>: glatt vs. gestuft). Die <em>natur</em> der Spalte
+(dynamisch-reversibel vs. instrumental-aufgel&ouml;st) ist verschieden.</p>
+
+<div class="note"><b>Zusammen:</b> kein logischer Widerspruch (komplement&auml;re Lesarten desselben
+Generators), aber drei inkompatible Staturen zu (1) der <em>Natur des Ereignisses</em> (kontinuierliches
+Dichte-Maximum vs. diskreter Z&auml;hlungs-Sprung), (2) dem <em>Werturteil &uuml;ber die Zahl</em> (erhaltene
+Invariante vs. verlustbehaftete Projektion), (3) der <em>Natur der Spalte</em> (zwei Achsen vs. zwei
+Aufl&ouml;sungen).</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+<p>Alle drei Spannungen l&ouml;sen sich auf, weil A und B <em>denselben Generator</em> aus zwei
+Blickrichtungen lesen &mdash; von der <em>Machine</em> her (A) und vom <em>Leser</em> her (B) &mdash; und
+zusammen ein vollst&auml;ndiges Konto bilden: <b>Generator &rarr; zwei Lesarten &rarr; erhaltener Wert &rarr;
+Kern (Spalt) &rarr; Ereignis (Wann&nbsp;=&nbsp;Wand).</b></p>
+
+<p><b>(1) Wann (Dichte-Peak) vs. Wand (Zahl-Sprung) &rarr; dasselbe Ereignis in zwei Aufl&ouml;sungen.</b>
+A&rsquo;s &bdquo;Wann&ldquo; (argmax der Dichte, fein) und B&rsquo;s &bdquo;Wand&ldquo; (Sprung der Zahl, grob)
+sind <em>derselbe Ort</em>, gelesen in feiner bzw. grober Aufl&ouml;sung. Die lokale Konzentration der
+Invariante (ein Dichte-Peak / ein kritischer Punkt von Index k) ist die <em>Quelle</em>, an der die globale
+Z&auml;hlung um genau eins <em>springt</em>: Gauss&ndash;Bonnet (A, &int; K&thinsp;dA = 2&pi;&chi;) und
+Morse/Cusp (B, c<sub>k</sub>&nbsp;&ge;&nbsp;b<sub>k</sub>, &chi; = &Sigma;(&minus;1)&sup2;&sup1;c<sub>k</sub>)
+sagen dasselbe &mdash; <em>lokale Konzentration erzeugt den globalen diskreten Sprung</em>.
+<b>Fusion:</b> das Ereignis hat ein <em>feines Gesicht</em> (Dichte peakte &mdash; wo handeln) und ein
+<em>grobes</em> (Zahl sprang &mdash; was z&auml;hlbar &auml;nderte); Wann&nbsp;=&nbsp;Wand.</p>
+
+<p><b>(2) Erhaltene Invariante vs. verlustbehaftete Projektion &rarr; ein Quotient, der stabil ist, weil er
+seinen Kern verliert.</b> A und B sprechen &uuml;bereinander: A hat recht, dass der <em>Wert</em> der Zahl
+(der Z&auml;hlung, des Integrals &prop; &chi;) <em>erhalten</em> ist und als praktische W&auml;hrung fungiert
+(der Fluss gl&auml;ttert die Varianz, aber das Integral bleibt &mdash; die konservative Invariante). B hat
+recht, dass dieselbe Zahl <em>verlustbehaftet</em> ist und den <em>Kern</em> blendet (der Spalt: die
+Nicht-Abelschheit &pi;&sub1; / die Monodromie / die Dichte-Verteilung, die die abelsche Zahl nicht
+tr&auml;gt). <b>Fusion:</b> die Zahl ist <em>zugleich</em> das &Uuml;brigbleibende <em>und</em> der Blinder &mdash;
+denn ein <b>Quotient/abelscher Ablesung ist stabil (invariant) gerade <em>weil</em> er den Kern (die
+Koset-Struktur, die Pfadabh&auml;ngigkeit) wegrationalisiert</em>. Gauss&ndash;Bonnet (A) ist der
+<em>Wert-Erhalt</em> (&int; K&thinsp;dA = 2&pi;&chi;); der Spalt (B, H&sub1; &cong; &pi;&sub1;/[&pi;&sub1;,&pi;&sub1;])
+ist der <em>Kern</em>. <b>Die Zahl ist der stabile Schatten: sie bewahrt die Z&auml;hlung (A) und blendet
+die Verteilung (B).</b></p>
+
+<p><b>(3) Zwei Achsen vs. zwei Aufl&ouml;sungen &rarr; dieselbe Zweigeteiltheit, zwei Vantage Points.</b>
+A&rsquo;s <em>exakte Achse</em> (umkehrbar, schlie&szlig;t, nichts verloren) <em>ist</em> B&rsquo;s
+<em>feine Aufl&ouml;sung</em> (glatt, kontinuierlich, volle Information); A&rsquo;s <em>verlustreiche Achse</em>
+(irreversibel, &ouml;ffnet, Detail stirbt) <em>ist</em> B&rsquo;s <em>grobe Aufl&ouml;sung</em> (gestuft,
+diskret, quantisiert). Dieselbe Zweigeteiltheit: einmal als <em>Eigenschaft des Motors</em> (A), einmal als
+<em>Eigenschaft des Lesens</em> (B). <b>Fusion:</b> exakt&nbsp;=&nbsp;fein (nichts verloren, glatt,
+Identit&auml;t der &Auml;quivalenten / Univalence / &part;&part; = 0); verlustreich&nbsp;=&nbsp;grob (Detail
+stirbt, gestuft, offen / Abstieg / Sprung an der Wand). Die Spalte ist <em>maschinell doppelt</em>: sie steckt
+im Operator <em>und</em> in der Art, wie man ihn abliest.</p>
+
+<div class="aha">
+<b>Fusion in einer Aussage:</b>
+Ein lokaler, kontinuierlicher <b>Generator</b> (&part; = d / Pfad / lokaler Kern) wird in <b>zwei
+Lesarten</b> abgelesen &mdash; <b>fein</b> (Invariante-Dichte, Maximum = <b>&bdquo;Wann&ldquo;</b>) und
+<b>grob</b> (st&uuml;ckweise konstante <b>Zahl</b>, springt nur an der <b>Wand</b>). Das grobe Ablesen ist
+eine <b>verlustbehaftete Projektion</b>: ihr <b>Wert</b> (Z&auml;hlung / Integral &prop; &chi;, Betti;
+&int; K&thinsp;dA = 2&pi;&chi;) ist die <b>erhaltene Invariante</b>, ihr <b>Kern</b> (Verteilung /
+Nicht-Abelschheit / Monodromie) der <b>irreduzible, nur global existierende Inhalt</b> (das &bdquo;Loch&ldquo;
+= &bdquo;der Spalt&ldquo;). Auf der <b>exakten/feinen</b> Seite schlie&szlig;t sich das System
+(Identit&auml;t der &Auml;quivalenten); auf der <b>verlustreichen/groben</b> stirbt das Detail
+(Varianz &rarr; 0), aber die Z&auml;hlung bleibt. <b>Das Ereignis (Wann&nbsp;=&nbsp;Wand) ist, wo fein
+peakt und grob springt; Ber&uuml;hren = berechnen + das Ereignis finden.</b>
+</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+<p>Abstrahiert man die beiden Runde-3-Papiere auf die Ebene ihrer Thesen, bleibt ein einziger
+<em>Meta-Mechanismus</em> &uuml;brig, den beide in anderem Material durchspielen: <b>ein lokaler Generator
+wird in zwei Lesarten abgelesen; die grobe Lesung ist eine verlustbehaftete Projektion, deren Wert erhalten
+bleibt und deren Kern der Spalt ist; das Ereignis, auf das beide hinweisen, ist derselbe Ort in zwei
+Aufl&ouml;sungen.</b> Sechs Bausteine, in A und B identisch strukturiert, nur mit anderem &bdquo;Material&ldquo;
+gefullt:</p>
+
+<table>
+<tr><th>Baustein</th><th><span class="tagA">A</span> &middot; n3-016 (Operator &part;=d)</th>
+<th><span class="tagB">B</span> &middot; n3-019 (Generator &rarr; Zahl)</th><th>Fusionierte Lesart</th></tr>
+<tr><td><b>Generator</b> (lokal, kontinuierlich)</td><td>der Operator &part; = d (exakte Seite Transport/Verklebung, verlustreiche Seite Fluss)</td>
+<td>der Pfad <code>P(t)</code> / Schleifenraum <code>&Omega;(S&sup1;)</code> / lokaler Kern (kritischer Punkt)</td><td>ein lokaler, kontinuierlicher Motor</td></tr>
+<tr><td><b>feine Lesung</b> (kontinuierlich)</td><td>die Invariante-Dichte |&Gamma;| / Kr&uuml;mmung K am Punkt</td><td>die glatte Trajektorie <code>P(t)</code> / der Punkt auf dem Kreis</td><td>glatt, wandert; Maximum = <b>Wann</b></td></tr>
+<tr class="hl"><td><b>grobe Lesung</b> (diskret)</td><td>die globale Z&auml;hlung &chi; / &pi;&sub1;(S&sup1;) &cong; &Zopf; (st&uuml;ckweise konstant)</td><td>die Zahl n / Betti <code>b<sub>k</sub></code> / Anzahl stabiler Minima <code>n<sub>stable</sub></code> (st&uuml;ckweise konstant)</td><td>st&uuml;ckweise konstant, springt nur an der Wand</td></tr>
+<tr><td><b>Ereignis</b> (lokaliert)</td><td>das &bdquo;Wann&ldquo; = argmax der Dichte (maximale Steigung)</td><td>die &bdquo;Wand&ldquo; = Phasen&uuml;bergang (Cusp 8a&sup3;+27b&sup2;=0, volle Windung)</td><td>derselbe Ort: fein peakt = grob springt</td></tr>
+<tr class="hl"><td><b>erhaltener Wert</b> (der Projektion)</td><td>das Integral &int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;(M) (Gauss&ndash;Bonnet, &uuml;bersteht den Fluss)</td><td>die Z&auml;hlung <code>n</code> / <code>b<sub>k</sub></code> (konservative W&auml;hrung zwischen den W&auml;nden)</td><td>der Wert der Invariante &mdash; konservativ</td></tr>
+<tr><td><b>Kern / Spalt</b> (was die Zahl blendet)</td><td>die Dichte-Verteilung / das &bdquo;Loch, das &uuml;brig bleibt&ldquo; (nicht-flacher Pullback, &Gamma;&ne;0)</td><td>die Nicht-Abelschheit &pi;&sub1; (H&sub1;=&pi;&sub1;/[&pi;&sub1;,&pi;&sub1;]), H&sup1;-Monodromie, Pfadabh&auml;ngigkeit</td><td>der irreduzible, nur global existierende Inhalt</td></tr>
+<tr><td><b>Ber&uuml;hren</b></td><td>die Pause an maximaler Steigung verbringen (die Invariante lokalisiert)</td><td>den Parameter wandern lassen (den Wert berechnen, die Wand finden)</td><td>einen Messf&uuml;hler: Wert berechnen + Ereignis finden</td></tr>
+</table>
+
+<div class="card">
+<span class="tag">Der fusionierte Meta-Satz</span>
+<p style="margin:0">Generator (lokal, kontinuierlich) &rarr; <b>feine Lesung</b> (Dichte; Maximum = Wann)
+&harr; <b>grobe Lesung</b> (Zahl; st&uuml;ckweise konstant, springt an der Wand). Die grobe Lesung ist eine
+<b>verlustbehaftete Projektion</b>: ihr <b>Wert</b> (Z&auml;hlung / Integral &prop; &chi;, Betti) ist die
+<b>erhaltene Invariante</b>; ihr <b>Kern</b> (Spalt = Verteilung / Nicht-Abelschheit / Monodromie) der
+<b>irreduzible, nur global existierende Inhalt</b>. A liest vom <em>Operator</em> her (zwei Achsen, zwei
+Gesichter via Gauss&ndash;Bonnet); B vom <em>Generator</em> her (zwei Aufl&ouml;sungen, Zahl + Spalt via
+Projektionskern). <b>Wann&nbsp;=&nbsp;Wand; Ber&uuml;hren = berechnen + das Ereignis finden.</b></p>
+</div>
+
+<h3>Die drei Schicksale (A) &harr; Generator-Zahl-Spalt (B), auf These-Ebene</h3>
+<div class="mathblock">A (n3-016): der Operator &part; = d sortiert in drei Schicksale
+  TRANSIENT (Rand / Bild von d):    im &part;          &mdash; hebt sich auf, weil &part;&part; = d&sup2; = 0
+                                                            (A: lokales Detail, verklebt/kompensiert)
+                                                            (B: flacher Pullback-Anteil, g &approx; &delta;, &Gamma; = 0)
+  ERERBT / ABGELEITET (Pullback):  g = &iota;*g_E       &mdash; sieht &bdquo;gegeben&ldquo; aus, ist abgeleitet
+                                                            (A: umkehrbar transportierte Daten)
+                                                            (B: die schematische/erzeugte Kurve, als erzeugt geflaggt)
+  INVARIANT (geschlossen-nicht-exakt):  ker &part; \ im &part;   &mdash; &uuml;berlebt den Operator
+                                                            (A: &pi;&sub1;(S&sup1;) &cong; &Zopf;, &chi;, &int; K dA = 2&pi;&chi;)
+                                                            (B: ein Loch (b_k&gt;0) / echte Kr&uuml;mmung (&Gamma; &ne; 0))
+
+B (n3-019): derselbe Generator &rarr; Zahl &rarr; Spalt
+  GENERATOR (kontinuierlich, lokal):  P(t), &Omega;(S&sup1;), kritischer Punkt/Germ
+  ZAHl   (diskret, st&uuml;ckweise konstant):  n(φ)=⌊φ/2π⌋, b_k, n_stable(a)  (springt nur an der Wand)
+  SPALT  (Kern der Projektion):       Nicht-Abelschheit &pi;&sub1;, H&sup1;-Monodromie, Pfadabh&auml;ngigkeit
+
+FUSION: A&rsquo;s eine &bdquo;Invariante&ldquo; = B&rsquo;s  ZAHl (erhaltener Wert)  +  SPALT (Kern);
+  A&rsquo;s &bdquo;Wann = argmax Dichte&ldquo;  &harr;  B&rsquo;s &bdquo;Wand = Sprung der Zahl&ldquo;</div>
+
+<h3>Die gemeinsame Mathematik (integriert, auf These-Ebene)</h3>
+<div class="mathblock">Generator (kontinuierlich, lokal):
+  A:  &part;g/&part;t = -2 Ric(g)   (Ricci-Fluss);  &phi;*(d&omega;) = d(&phi;*&omega;)  (Ererbes ist abgeleitet)
+  B:  f(x) mit &nabla;f=0, Morse-Index k   (kritischer Punkt)
+
+fein (kontinuierlich):   |&Gamma;| / K am Punkt;  &pi;&sub1;(S&sup1;) &cong; &Zopf; &sime; &Omega;(S&sup1;)
+grob (diskret):          n(φ)=⌊φ/2π⌋;  b_k = dim H_k;  c_k &ge; b_k (Morse)
+                         n_stable(a) = 2 (a&lt;0), 1 (a&gt;0);  Cusp 8a&sup3;+27b&sup2;=0 bei (0,0)
+erhaltener Wert:         &int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;(M)  (Gauss&ndash;Bonnet; &chi;=&Sigma;(&minus;1)^k b_k)
+Kern / Spalt:            H&sub1; &cong; &pi;&sub1;/[&pi;&sub1;,&pi;&sub1;]  (Abelschierung; Kern=Nicht-Abelschheit)
+                         Riemann&ndash;Roch:  &chi;(L) = deg(L) + 1 - g
+FUSION:  exakt/fein: &part;&part; = d&sup2; = 0, (A=B)&cong;(A&cong;B) (Univalence) &mdash; schlie&szlig;t;
+         verlustreich/grob: Varianz&rarr;0, offen &mdash; Detail stirbt, Z&auml;hlung bleibt;
+         Wann = argmax(Dichte) = Wand = Sprung(Zahl);  Ber&uuml;hren = berechnen + Ereignis finden</div>
+
+<div class="note"><b>Die geteilte Ehrlichkeits-Ethik:</b> Beide weigern sich, die <em>gelesene</em>
+Darstellung (Dichte / Zahl / Kurve) mit dem <em>rohen</em> Material zu verwechseln, und beide <em>flaggen den
+Verlust</em> explizit (A: die Invariante &uuml;bersteht den Fluss, weil sie der <em>einzige</em> Teil der
+Dichte ist; B: &bdquo;die Kurve ist schematisch&ldquo;, &bdquo;der Spalt ist by design, der Preis, die abelsche
+W&auml;hrung zu w&auml;hlen&ldquo;). <b>Fusion:</b> die Zahl ist immer eine Projektion des Generators, und
+<em>Ehrlichkeit hei&szlig;t, den Wert (gehalten) und den Kern (blendet) zu benennen</em>; der Anteil, den das
+Ablesen blendet, wird als <em>real</em> und <em>irreduzibel</em> markiert.</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Visualisierung: ein Generator, zwei Lesarten, ein Spalt</h2>
+<p class="hint">Ein <b>Regler &phi;</b> (die Ber&uuml;hrung) treibt <b>zwei Lesarten desselben
+Generators</b> zugleich. <b>Links (fein, A):</b> die glatte <em>Invariante-Dichte</em> &rho;(&phi;) &mdash;
+der Marker wandert gl&auml;tt, der <b>Peak (&#9733; = Wann = argmax)</b> ist der Ort der Konzentration.
+<b>Rechts (grob, B):</b> die <em>Zahl</em> n(&phi;) = &lfloor;&phi;/2&pi;&rfloor; &mdash; st&uuml;ckweise
+konstant, sie <b>springt nur an der Wand</b> (2&pi;, 4&pi;). <b>&#9654; Fluss</b> (A&rsquo;s verlustreiche
+Achse) gl&auml;ttert die Dichte: die <b>Varianz</b> (Detail) klingt aus, das <b>Integral (&prop; &chi;, Betti)</b>
+und die <b>Peak-Z&auml;hlung</b> bleiben erhalten. Peak (Wann, bei 2&pi;) und Sprung (Wand, bei 2&pi;) sind
+<b>derselbe Ort</b> &mdash; <em>fein peakt, grob springt</em>. Schiebe den Regler oder dr&uuml;cke
+<em>Abspielen</em>: <em>ber&uuml;hren = berechnen + das Ereignis finden.</em></p>
+
+<canvas id="viz" height="440"></canvas>
+<div class="viz-controls">
+  <label>Parameter &phi; (die Ber&uuml;hrung) <span class="hint" id="phiVal">0.00</span> rad
+    <input type="range" id="phiSlider" min="0" max="12.566" step="0.01" value="0">
+  </label>
+  <button class="action" id="playBtn" type="button">&#9654; Abspielen</button>
+  <button class="action" id="flowBtn" type="button">&#9654; Fluss (verlustreich)</button>
+  <button class="action" id="resetBtn" type="button">&#8634; Reset</button>
+</div>
+<div class="readout">
+  <div class="ro"><span class="k">Generator (die Ber&uuml;hrung) &mdash; &phi;</span><span class="v" id="rPhi">&ndash;</span></div>
+  <div class="ro"><span class="k">fein &middot; Invariante-Dichte &rho;(&phi;) (wandert glatt)</span><span class="v" id="rFine">&ndash;</span></div>
+  <div class="ro"><span class="k">fein &middot; Wann (argmax Dichte) bei &phi;*</span><span class="v" id="rWann">&ndash;</span></div>
+  <div class="ro"><span class="k">grob &middot; Zahl n(&phi;)=&lfloor;&phi;/2&pi;&rfloor; (st&uuml;ckweise konstant)</span><span class="v" id="rCoarse">&ndash;</span></div>
+  <div class="ro"><span class="k">erhaltener Wert &middot; Integral &prop; &chi; (Gauss&ndash;Bonnet)</span><span class="v" id="rInt">&ndash;</span></div>
+  <div class="ro"><span class="k">erhaltene Peak-Z&auml;hlung (Betti, topologisch)</span><span class="v" id="rPeaks">&ndash;</span></div>
+  <div class="ro"><span class="k">Varianz (Detail, &rarr;0 unter Fluss)</span><span class="v" id="rVar">&ndash;</span></div>
+  <div class="ro"><span class="k">Spalt (Kern, {&phi;/2&pi;} &mdash; blendet die Zahl)</span><span class="v" id="rSpalt">&ndash;</span></div>
+  <div class="ro" style="grid-column:1/-1"><span class="k">Ereignis (Wann = Wand: fein peakt, grob springt)</span><span class="v ev" id="rEvent">&ndash;</span></div>
+</div>
+<div class="legend">
+  <span><i class="dot" style="background:var(--accent)"></i> fein &middot; Dichte &rho; (A, kontinuierlich)</span>
+  <span><i class="dot" style="background:var(--accent2)"></i> grob &middot; Zahl n(&phi;) (B, gestuft)</span>
+  <span><i class="dot" style="background:var(--dot)"></i> Marker &phi; (die Ber&uuml;hrung)</span>
+  <span><i class="dot" style="background:var(--warn)"></i> &#9733; Wann (Peak) / Wand (Sprung) &mdash; dasselbe Ereignis</span>
+</div>
+<p class="viz-cap">Links die feine Lesung (Dichte &rho; mit Peak = Wann), rechts die grobe Lesung
+(Zahl n(&phi;) = Stufenfunktion, springt an der Wand). Der Fluss gl&auml;ttert die feine Dichte
+(Varianz &rarr; 0), w&auml;hrend der erhaltene Wert (Integral &prop; &chi;) und die Peak-Z&auml;hlung (Betti)
+bleiben. Wann (fein-Peak bei 2&pi;) = Wand (grob-Sprung bei 2&pi;) &mdash; dasselbe Ereignis.
+Alle Daten inline, themebewusst, ohne Netzwerk.</p>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov"><a href="../n3-016.html">A &middot; n3-016.html &mdash; &bdquo;Der eine Operator, der das &Uuml;brigbleibende bestimmt&ldquo;</a>
+<br><span class="hint">Runde 3 (n2-009 &times; n2-006): der Operator &part; = d sortiert in Rand / Ererbes
+(Pullback) / Invariante; die Invariante als globale Z&auml;hlung (&chi;/Betti) und lokale Dichte (K/&Gamma;),
+verbunden durch Gauss&ndash;Bonnet (&int; K&thinsp;dA = 2&pi;&chi;); zwei Achsen (exakt schlie&szlig;t,
+verlustreich &ouml;ffnet); das &bdquo;Wann&ldquo; = argmax der Invariante-Dichte. Liefert die
+<em>Operator-/Achsen-</em> und <em>Zwei-Gesichter-</em>Lesung samt &bdquo;Wann = Lokalisierung&ldquo;.</span></div>
+<div class="prov"><a href="../n3-019.html">B &middot; n3-019.html &mdash; &bdquo;Pfad erzeugt, Zahl z&auml;hlt, Spalt bleibt&ldquo;</a>
+<br><span class="hint">Runde 3 (n2-016 &times; n2-044): Identit&auml;t = ein kontinuierlicher lokaler
+Generator, dessen Ausgabe eine diskrete, st&uuml;ckweise konstante Zahl ist (n, Betti b<sub>k</sub>, stabile
+Minima); dieselbe Gr&ouml;&szlig;e in zwei Aufl&ouml;sungen (fein glatt, grob gestuft); die Zahl ist eine
+verlustbehaftete Projektion, deren Kern (Nicht-Abelschheit &pi;&sub1;, Monodromie H&sup1;) der irreduzible,
+nur global existierende Inhalt ist. Liefert die <em>Generator-/Aufl&ouml;sung-</em> und
+<em>Zahl-+-Spalt-</em>Lesung samt &bdquo;Wand = Phasen&uuml;bergang&ldquo;.</span></div>
+<p class="foot">Fusion 005 &middot; Runde 4 (non-AI-Track) &middot; autonom, keine Netzwerte &mdash; alle Daten
+inline. Der Fluss ist ein diskreter, summen-erhaltender Gl&auml;ttungsschritt (Standbild-Modell f&uuml;r
+A&rsquo;s verlustreiche Achse): er reduziert die Dichte-Varianz bei konstantem Integral, w&auml;hrend die
+topologische Peak-Z&auml;hlung (Betti) bleibt. Peaks/Windungszahl/Cusp sind schematische Demonstrationsobjekte,
+auf These-Ebene abstrahiert. Standard Dunkel; die Palette folgt den CSS-Variablen (hell/dunkel).</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  if(!canvas || !canvas.getContext) return;
+  var ctx=canvas.getContext('2d');
+  var phiSlider=document.getElementById('phiSlider');
+  var phiVal=document.getElementById('phiVal');
+  var playBtn=document.getElementById('playBtn');
+  var flowBtn=document.getElementById('flowBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var themeBtn=document.getElementById('themeBtn');
+
+  var PHI0=0, PHI1=Math.PI*4;
+  var WALLS=[Math.PI*2, Math.PI*4];
+  var NX=220, DPHI=PHI1/NX;
+  var W=760, H=440;
+  var baseField=[], field=[], rhoMax=1, integral0=0, topPeaks=0, wannPhi=Math.PI*2;
+  var playing=false, flowing=false;
+
+  function cssVar(n,fb){ try{ var v=getComputedStyle(document.documentElement).getPropertyValue(n); if(v && v.replace(/\s/g,'')!=='') return v.trim(); }catch(e){} return fb; }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function phiNow(){ return (phiSlider && phiSlider.value!=null) ? (parseFloat(phiSlider.value)||0) : 0; }
+  function nOf(p){ return Math.floor(p/(2*Math.PI)+1e-9); }
+  function fracOf(p){ return (p - nOf(p)*2*Math.PI)/(2*Math.PI); }
+
+  function rhoBase(phi){
+    var s1=Math.exp(-Math.pow(phi-Math.PI*2,2)/(2*0.55*0.55));
+    var s2=Math.exp(-Math.pow(phi-Math.PI*3,2)/(2*0.55*0.55));
+    return 1.0*s1 + 0.5*s2 + 0.02;
+  }
+  function initFields(){
+    baseField=[]; field=[]; var mx=0, s=0;
+    for(var i=0;i<NX;i++){
+      var phi=PHI0+(i+0.5)*DPHI;
+      var v=rhoBase(phi); baseField.push(v); field.push(v);
+      if(v>mx) mx=v; s+=v;
+    }
+    rhoMax=mx; integral0=s*DPHI;
+    // argmax = Wann
+    var bi=0; for(var k=0;k<NX;k++){ if(baseField[k]>baseField[bi]) bi=k; }
+    wannPhi=PHI0+(bi+0.5)*DPHI;
+    topPeaks=countPeaks(baseField, 0.25);
+  }
+  function integral(){ var s=0; for(var i=0;i<NX;i++){ s+=field[i]; } return s*DPHI; }
+  function variance(){
+    var m=0,i; for(i=0;i<NX;i++){ m+=field[i]; } m/=NX;
+    var v=0; for(i=0;i<NX;i++){ var d=field[i]-m; v+=d*d; } return v/NX;
+  }
+  function countPeaks(f,thr){
+    var cnt=0, inPeak=false;
+    for(var i=0;i<f.length;i++){
+      if(f[i]>thr){ if(!inPeak){ cnt++; inPeak=true; } } else { inPeak=false; }
+    }
+    return cnt;
+  }
+  function flowStep(dt){
+    var nf=[];
+    for(var i=0;i<NX;i++){
+      var im=(i-1+NX)%NX, ip=(i+1)%NX;
+      var avg=(field[im]+field[ip])/2;
+      nf.push(field[i] + dt*(avg-field[i]));
+    }
+    field=nf;
+    // exakte Integral-Erhaltung (topologische Invariante, Gauss-Bonnet)
+    var cur=0; for(var i=0;i<NX;i++){ cur+=field[i]; }
+    if(cur>1e-9){ var f=integral0/cur; for(var j=0;j<NX;j++){ field[j]*=f; } }
+  }
+  function phiValAt(phi){
+    var t=phi/DPHI-0.5; var i=Math.floor(t); var fr=t-i;
+    var a=field[clamp(i,0,NX-1)], b=field[clamp(i+1,0,NX-1)];
+    return a+(b-a)*clamp(fr,0,1);
+  }
+  function nearWand(p){ for(var i=0;i<WALLS.length;i++){ if(Math.abs(p-WALLS[i])<0.18) return true; } return false; }
+  function nearWann(p){ return Math.abs(p-wannPhi)<0.18; }
+
+  var x0L=46, x1L=356, x0R=432, x1R=722, yTop=54, yBot=352;
+  function pxL(p){ return x0L+(p/PHI1)*(x1L-x0L); }
+  function pxR(p){ return x0R+(p/PHI1)*(x1R-x0R); }
+  function pyL(r){ return yBot-(r/rhoMax)*(yBot-yTop); }
+  function pyR(n){ return yBot-(n/2.0)*(yBot-yTop); }
+
+  function star(x,y,r,color){
+    ctx.fillStyle=color; ctx.beginPath();
+    for(var k=0;k<10;k++){
+      var ang=-Math.PI/2 + k*Math.PI/5;
+      var rr=(k%2===0)?r:r*0.45;
+      var px=x+rr*Math.cos(ang), py=y+rr*Math.sin(ang);
+      if(k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(){
+    if(!baseField.length) initFields();
+    var ink=cssVar('--text','#e8edf7'), muted=cssVar('--muted','#93a0b6');
+    var line=cssVar('--line','#233450'), grid=cssVar('--grid','rgba(255,255,255,0.10)');
+    var accent=cssVar('--accent','#64ffda'), accent2=cssVar('--accent2','#7aa2ff');
+    var warn=cssVar('--warn','#ffcc6a'), dot=cssVar('--dot','#ffd166');
+    var invlo=cssVar('--inv-lo','#0f1626'), invhi=cssVar('--inv-hi','#f59e0b');
+    var vbg=cssVar('--viz-bg','#0b0e1a');
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=vbg; ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(394,20); ctx.lineTo(394,H-16); ctx.stroke();
+
+    // ---- LEFT: fine (density) ----
+    ctx.textAlign='center';
+    ctx.fillStyle=ink; ctx.font='600 14px system-ui, sans-serif';
+    ctx.fillText('fein \u00b7 die Dichte \u03c1 (Generator, A)', (x0L+x1L)/2, 30);
+    ctx.fillStyle=muted; ctx.font='11px system-ui, sans-serif';
+    ctx.fillText('glatt; Peak = Wann = argmax \u2014 wo die Invariante konzentriert ist', (x0L+x1L)/2, 45);
+
+    // grid
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var g=0;g<=4;g++){ var gy=yTop+(g/4)*(yBot-yTop); ctx.beginPath(); ctx.moveTo(x0L,gy); ctx.lineTo(x1L,gy); ctx.stroke(); }
+
+    // density area (filled, vertical gradient low->high)
+    var grad=ctx.createLinearGradient(0,yBot,0,yTop);
+    grad.addColorStop(0,invlo); grad.addColorStop(1,invhi);
+    ctx.beginPath();
+    ctx.moveTo(pxL(0),yBot);
+    for(var i=0;i<NX;i++){ var phi=PHI0+(i+0.5)*DPHI; ctx.lineTo(pxL(phi),pyL(field[i])); }
+    ctx.lineTo(pxL(PHI1),yBot);
+    ctx.closePath();
+    ctx.fillStyle=grad; ctx.globalAlpha=0.55; ctx.fill(); ctx.globalAlpha=1;
+    // density top stroke
+    ctx.beginPath();
+    for(var i=0;i<NX;i++){ var phi=PHI0+(i+0.5)*DPHI; var y=pyL(field[i]); if(i===0) ctx.moveTo(pxL(phi),y); else ctx.lineTo(pxL(phi),y); }
+    ctx.strokeStyle=accent; ctx.lineWidth=2.2; ctx.lineJoin='round'; ctx.stroke();
+
+    // walls (dashed) in left panel
+    for(var w=0;w<WALLS.length;w++){
+      var wx=pxL(WALLS[w]);
+      ctx.save(); ctx.strokeStyle=warn; ctx.lineWidth=1.2; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(wx,yTop); ctx.lineTo(wx,yBot); ctx.stroke(); ctx.restore();
+    }
+
+    // Wann star (argmax)
+    var wy=pyL(phiValAt(wannPhi));
+    star(pxL(wannPhi), wy, 9, warn);
+    ctx.fillStyle=warn; ctx.font='bold 10px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Wann', pxL(wannPhi)+11, wy-6);
+
+    // marker
+    var phi=phiNow();
+    var mxx=pxL(phi), myy=pyL(phiValAt(phi));
+    ctx.fillStyle=dot; ctx.shadowColor=dot; ctx.shadowBlur=9;
+    ctx.beginPath(); ctx.arc(mxx,myy,6,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+
+    // axis label
+    ctx.fillStyle=muted; ctx.font='10px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('0', x0L, yBot+16); ctx.textAlign='right'; ctx.fillText('4\u03c0', x1L, yBot+16);
+
+    // ---- RIGHT: coarse (step) ----
+    ctx.textAlign='center';
+    ctx.fillStyle=ink; ctx.font='600 14px system-ui, sans-serif';
+    ctx.fillText('grob \u00b7 die Zahl n(\u03c6) (B)', (x0R+x1R)/2, 30);
+    ctx.fillStyle=muted; ctx.font='11px system-ui, sans-serif';
+    ctx.fillText('n(\u03c6)=\u230a\u03c6/2\u03c0\u230b \u2014 st\u00fcckweise konstant, springt an der Wand', (x0R+x1R)/2, 45);
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var vv=0;vv<=2;vv++){ var vy=pyR(vv); ctx.beginPath(); ctx.moveTo(x0R,vy); ctx.lineTo(x1R,vy); ctx.stroke();
+      ctx.fillStyle=muted; ctx.font='10px system-ui, sans-serif'; ctx.textAlign='right'; ctx.textBaseline='middle';
+      ctx.fillText(String(vv), x0R-8, vy); }
+    ctx.textBaseline='alphabetic';
+    ctx.textAlign='center';
+    ctx.fillStyle=muted;
+    ctx.fillText('0', pxR(0), yBot+16); ctx.fillText('2\u03c0', pxR(Math.PI*2), yBot+16); ctx.fillText('4\u03c0', pxR(PHI1), yBot+16);
+
+    // step function
+    var w2=Math.PI*2, w4=Math.PI*4;
+    ctx.strokeStyle=accent2; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(pxR(0),pyR(0)); ctx.lineTo(pxR(w2),pyR(0));
+    ctx.lineTo(pxR(w2),pyR(1)); ctx.lineTo(pxR(w4),pyR(1));
+    ctx.lineTo(pxR(w4),pyR(2));
+    ctx.stroke();
+
+    // walls in right panel
+    for(var w=0;w<WALLS.length;w++){
+      var wx2=pxR(WALLS[w]);
+      ctx.save(); ctx.strokeStyle=warn; ctx.lineWidth=1.2; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(wx2,yTop); ctx.lineTo(wx2,yBot); ctx.stroke(); ctx.restore();
+      ctx.fillStyle=warn; ctx.font='bold 10px system-ui, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Wand', wx2, yTop-4);
+    }
+
+    // marker line + dot
+    var n=nOf(phi);
+    var sxR=pxR(phi), syR=pyR(n);
+    ctx.strokeStyle=dot; ctx.lineWidth=1.4; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(sxR,yTop); ctx.lineTo(sxR,yBot); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(sxR,syR,6,0,Math.PI*2); ctx.fillStyle=dot; ctx.fill();
+    ctx.strokeStyle=vbg; ctx.lineWidth=2; ctx.stroke();
+
+    // fusion annotation (Wann = Wand at 2*pi)
+    ctx.fillStyle=warn; ctx.font='bold 11px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Wann = Wand (bei 2\u03c0): fein peakt, grob springt', 394, 66);
+    ctx.font='10px system-ui, sans-serif'; ctx.fillStyle=muted;
+    ctx.fillText('\u2014 dasselbe Ereignis in zwei Aufl\u00f6sungen \u2014', 394, 80);
+
+    updateReadout(phi,n);
+  }
+
+  function updateReadout(phi,n){
+    var fine=phiValAt(phi);
+    var integ=integral0>0? integral()/integral0:0;
+    var v=variance();
+    var f=fracOf(phi);
+    var atWand=nearWand(phi), atWann=nearWann(phi);
+    var ev;
+    if(atWand && atWann){ ev='&#9888; an der Wand 2\u03c0: Wann (fein peakt) = Wand (grob springt)'; }
+    else if(atWand){ ev='an der Wand: grob springt (Zahl inkrementiert)'; }
+    else if(atWann){ ev='am Wann: fein peakt (Invariante konzentriert)'; }
+    else { ev='zwischen den W\u00e4nden (fein glatt, grob konstant)'; }
+    set('rPhi', phi.toFixed(2)+' rad');
+    set('rFine', fine.toFixed(3));
+    set('rWann', wannPhi.toFixed(2)+' \u2248 '+(wannPhi/Math.PI).toFixed(2)+'\u03c0');
+    set('rCoarse', String(n)+' Windungen');
+    set('rInt', integ.toFixed(3)+'  (erhalten)');
+    set('rPeaks', String(topPeaks)+' Inseln (erhalten)');
+    set('rVar', v.toFixed(4));
+    set('rSpalt', f.toFixed(3));
+    var el=document.getElementById('rEvent'); if(el) el.innerHTML=ev;
+  }
+  function set(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+  function fit(){
+    var parent=canvas.parentElement;
+    var cssW=parent?parent.clientWidth:W;
+    if(cssW<320) cssW=320; if(cssW>760) cssW=760;
+    var cssH=cssW*(H/W);
+    var dpr=window.devicePixelRatio||1;
+    var scale=cssW/W;
+    canvas.width=Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr);
+    canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
+    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+  }
+
+  function frame(){
+    if(playing){
+      var ny=phiNow()+PHI1*0.0016;
+      if(ny>=PHI1) ny=PHI1;
+      if(phiSlider) phiSlider.value=ny.toFixed(3);
+      if(phiVal) phiVal.textContent=phiNow().toFixed(2);
+      if(phiNow()>=PHI1) setPlaying(false);
+    }
+    if(flowing){ flowStep(0.12); flowStep(0.12); }
+    draw();
+    requestAnimationFrame(frame);
+  }
+  function setPlaying(on){
+    playing=on;
+    if(playBtn){ playBtn.classList.toggle('active',on); playBtn.textContent=on?'\u23F8 Pause':'\u25B6 Abspielen'; }
+  }
+  function setFlowing(on){
+    flowing=on;
+    if(flowBtn){ flowBtn.classList.toggle('active',on); flowBtn.textContent=on?'\u23F8 Fluss l\u00e4uft':'\u25B6 Fluss (verlustreich)'; }
+  }
+
+  if(phiSlider) phiSlider.addEventListener('input',function(){ if(phiVal) phiVal.textContent=phiNow().toFixed(2); });
+  if(playBtn) playBtn.addEventListener('click',function(){
+    if(playing){ setPlaying(false); return; }
+    if(phiNow()>=PHI1) phiSlider.value=PHI0;
+    setPlaying(true);
+  });
+  if(flowBtn) flowBtn.addEventListener('click',function(){ setFlowing(!flowing); });
+  if(resetBtn) resetBtn.addEventListener('click',function(){
+    setPlaying(false); setFlowing(false);
+    if(phiSlider) phiSlider.value=PHI0; if(phiVal) phiVal.textContent='0.00';
+    for(var i=0;i<NX;i++){ field[i]=baseField[i]; }
+  });
+  if(themeBtn) themeBtn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+  var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(fit,150); });
+
+  if(phiVal) phiVal.textContent=phiNow().toFixed(2);
+  initFields();
+  fit();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

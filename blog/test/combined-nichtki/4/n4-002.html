@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eine Schließung, zwei Valenzachsen — wie weit der Kollaps reicht und ob er zahlt</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f4efe4; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.13;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .sub{display:block;font-size:.6em;color:var(--accent);font-weight:600;margin-top:7px;letter-spacing:0}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.85rem;margin:0 0 8px}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 4px;font-style:italic}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.38rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+em{color:var(--accent)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.eq{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.95rem;line-height:1.7}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent);border:1px solid var(--accent)}
+.tag.b{color:var(--accent2);border:1px solid var(--accent2)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card b{color:var(--fg)}
+.callout{border-left:3px solid var(--warn);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:14px 0;font-size:.98rem}
+.callout.green{border-left-color:var(--accent)}
+.callout.rose{border-left-color:var(--accent2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.c{color:var(--fg);font-weight:700}
+.vnote{border-left:3px solid var(--accent);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:12px 0;font-size:.95rem}
+canvas#fuseviz{width:100%;height:480px;display:block;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;touch-action:none;margin:6px 0}
+.viz-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.viz-ctrl button{background:var(--accent);color:#06231b;border:none;padding:8px 14px;border-radius:10px;
+  cursor:pointer;font:inherit;font-family:system-ui,sans-serif;font-weight:600}
+.viz-ctrl button:hover{filter:brightness(1.06)}
+.viz-ctrl button.on{background:var(--bad);color:#2a0500}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+.ctrl-row label{color:var(--muted)}
+.ctrl-row input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.readout{font-family:ui-monospace,"Courier New",monospace;color:var(--accent2);font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin:8px 0;font-family:system-ui,sans-serif}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.statusbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.92rem;min-height:2.7em;line-height:1.5;font-family:system-ui,sans-serif}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .desc{color:var(--muted);font-size:.95rem;margin:3px 0 14px}
+footer{color:var(--muted);text-align:center;padding:22px 10px;font-size:.84rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9728; / &#9790; Thema</button>
+<article>
+  <h1>Eine Schließung, zwei Valenzachsen<span class="sub">&mdash; wie weit der Kollaps reicht und ob er zahlt</span></h1>
+  <p class="subtitle">Fusion aus: n3-018.html &#10007; n3-009.html &nbsp;(Runde 4)</p>
+  <p class="lede">Beide Runde-3-Papiere beschreiben &mdash; von zwei H&ouml;hen &mdash; dieselbe eine Operation:
+  eine lokale, selbstbezogen blinde / fein oszillierende Schicht, die durch eine wohldefinierte globale
+  Operation in einen stabilen invarianten Kern kollabiert. Sie erg&auml;nzen sich auf zwei
+  unabh&auml;ngige Valenzachsen: A entscheidet, <em>ob</em> der Kollaps <em>zahlt</em> (Ontologie des
+  Gegenstands: inert&nbsp;&rarr;&nbsp;zahlbare Wahrheit, lebendig&nbsp;&rarr;&nbsp;Tod); B entscheidet,
+  <em>wie weit</em> er <em>reicht</em> (epistemisches Register + zwei B&ouml;den der Grenze).</p>
+
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>Die beiden Runde-3-Papiere sind, bei aller thematischen Distanz (A: Topologie&nbsp;&times;&nbsp;
+    Erkenntnistheorie des Hebels; B: geprüfte Schließung&nbsp;&times;&nbsp;Gauge und Grenze),
+    <strong>derselbe Meta-Gedanke, von zwei Seiten</strong>: Es gibt <em>eine</em> Operation &mdash; die
+    <em>globale Schließung</em> &mdash; die eine <em>lokale, selbstbezogen blinde Schicht</em> (A: die um&nbsp;0
+    oszillierende Wendungsdichte / der im Objekt laufende Zeuge; B: der lokale Gauge / das lokale
+    Prinzip) durch eine <em>wohldefinierte globale Operation</em> (A: Integration + Abelschung
+    <span class="m">&pi;&#8321; &rarr; H&#8321;</span>; B: Schließ-Test / Verklebung / globaler Vergleich)
+    in einen <em>stabilen invarianten Kern</em> kollabiert (A: <span class="m">n &isin; &pi;&#8321;(S&#185;)
+    &cong; &#8484;</span>; B: Effektgr&ouml;&szlig;e <span class="m">&mu;</span>, Holonomie,
+    <span class="m">&phi;(m)</span>-Spalten). <em>Der Kern wird am Peak ohne Rest gewonnen; wie wertvoll er
+    ist und wie weit er reicht, bestimmt weder die Operation noch das Zeichen, sondern die Ontologie des
+    Gegenstands und das epistemische Register der Prüfung.</em></p>
+    <p><span class="tag a">A</span> fixiert die <em>Valenz</em> dieser Schließung an der <em>Ontologie</em>
+    des Gegenstands: <em>fixiere, was inert ist; lass, was lebt, schwingen.</em> Im inerten Regime ist der
+    Kollaps eine <em>zahlbare, erreichte Wahrheit</em> (&bdquo;Messung und Existenz lesen dieselbe
+    Zahl&ldquo;, Stille&nbsp;=&nbsp;Wahrheit); im lebendigen t&ouml;tet derselbe Kollaps den Antrieb
+    (Stille&nbsp;=&nbsp;Tod, Verklammung). <span class="tag b">B</span> fixiert die <em>Reichweite</em> an
+    dem <em>epistemischen Register</em>: der Kern ist <em>konstituiert im Zugriff, objektiv im
+    Inhalt</em>, und die ehrliche <em>Grenze</em> hat <em>zwei ineinanderliegende B&ouml;den</em> &mdash;
+    einen <em>asymptotischen Struktur-Boden</em> (<span class="m">p&#8319;&rarr;0 &ne; 0</span>, von einer
+    &auml;u&szlig;eren W&auml;hrung beliebig angen&auml;hert, nie erreicht) und einen <em>absoluten
+    Bedeutungs-Boden</em> (Struktur&nbsp;&ne;&nbsp;Wahrheit, nie kreuzbar, G&ouml;del). <strong>Die
+    fusionierte Position: A liefert die Valenz-Achse (zahlt der Kollaps?), B die Reichweiten-Achse
+    (wie weit reicht er?) &mdash; und beide Achsen sind dieselben zwei Regime von zwei Seiten
+    gelesen.</strong> &bdquo;Erkennt den Gauge, gewinnt den Kern, benennt die Grenze, die du von innen
+    nicht überschreitest&ldquo; (B) ist das Reichweiten-Gesetz; &bdquo;fixiere, was inert ist; lass, was
+    lebt, schwingen&ldquo; (A) das Valenz-Gesetz.</p>
+    <p>Die Tiefe der Fusion: A's <em>inert&nbsp;/&nbsp;lebendig</em> und B's <em>asymptotisch&nbsp;/&nbsp;
+    absolut</em> sind zwei Namen f&uuml;r dasselbe Paar. <em>Inert</em> &hArr; <em>geschlossen &amp; erreicht
+    &amp; treu-passiv</em> (der Kern ist eine definite z&auml;hlbare Zahl, die Lektüre wirft keinen Schatten,
+    den man falsch lesen k&ouml;nnte); <em>lebendig</em> &hArr; <em>offen &amp; residual &amp;
+    konstitutiv</em> (der Kern wird erst im Test konstituiert, der Grund bleibt ein unerschlossener
+    Boden). Die beiden Runde-3-Papiere sind damit zwei Gesichter eines einzigen Gesetzes &uuml;ber
+    selbstbezogene Schließung: <em>gewinne den inerten Kern als z&auml;hlbare Wahrheit, verweigere die
+    Fixierung des Lebendigen, und benenne die zwei B&ouml;den, die keine Schließung kreuzt.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Beide Papiere tragen denselben Meta-Rahmen (ein selbstbezogenes System, das seinen Grund
+    schlie&szlig;t, nicht abliest, und eine ehrliche Grenze, die es benennen muss) und widersprechen
+    sich in <em>keiner</em> faktischen Aussage. Sie stehen sich aber in drei konkreten Stellungen
+    &uuml;ber <em>Erreichung, Rest und Konstitution</em> unvereinbar gegen&uuml;ber:</p>
+
+    <h3>1 &middot; Volle Erreichung <span class="tag a">A</span> &harr; permanenter Boden <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Im <em>inerten</em> Regime erreicht die Schließung ihr Objekt
+      <em>definit</em>: die Zahl <span class="m">n</span> ist z&auml;hlbar, der Schnitt existiert oder
+      nicht, und &bdquo;Messung und Existenz lesen dieselbe Zahl&ldquo;. Der Kollaps ist ein <em>
+      erreichter, abgeschlossener</em> Zustand des Objekts.</p>
+      <p><span class="tag b">B</span> Bei <em>jeder</em> Schließung bleibt ein <em>Boden, den sie nie
+      erreicht</em>: Restrisiko <span class="m">p&#8319;&rarr;0 &ne; 0</span>, das Ding an sich. Man kommt
+      der Grenze beliebig nah, ist ihr aber nie gleich. Die Schließung ist <em>asymptotisch</em>, nie
+      abgeschlossen.</p>
+      <p><strong>Spannung:</strong> Erreicht eine gute Schließung ihr Objekt je <em>vollst&auml;ndig</em>
+      (A: ja, im Inerten) oder bleibt immer ein <em>unerschlossener Restboden</em> (B:
+      <span class="m">p&#8319;&rarr;0 &ne; 0</span>)?</p>
+    </div>
+
+    <h3>2 &middot; Das &bdquo;0&ldquo; / der Rest: Objekt-Wahrheit <span class="tag a">A</span> &harr; gemessener Inhalt &uuml;ber einem unerreichbaren Boden <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Das &bdquo;0&ldquo; (fehlender Schnitt, verdrilltes B&uuml;ndel,
+      Igel-Satz: <span class="m">TS&#178; &rarr; S&#178;</span>) ist die <em>tats&auml;chliche, treu
+      gelesene Wahrheit eines inerten Objekts</em> &mdash; das Objekt besitzt wirklich keinen globalen
+      Schnitt, und das &bdquo;0&ldquo; ist sein <em>Endzustand</em>.</p>
+      <p><span class="tag b">B</span> Der Rest <span class="m">1 &minus; c</span> ist <em>Inhalt, kein
+      Abfall</em> (gemessene Kr&uuml;mmung / Rauschen) &mdash; aber der <em>eigentliche</em> Boden
+      (das Fundament der Struktur) liegt <em>unter</em> dem Rest und ist unerreichbar. Der Rest ist
+      also ein <em>Messbares Proxy</em> &uuml;ber einem nie geschlossenen Grund.</p>
+      <p><strong>Spannung:</strong> Ist das &bdquo;0&ldquo; / der Rest die <em>Endantwort</em> &uuml;ber
+      dem Objekt (A) oder nur ein <em>Proxy &uuml;ber einem unerreichbaren Boden</em> (B)?</p>
+    </div>
+
+    <h3>3 &middot; Treu-passives Ablesen <span class="tag a">A</span> &harr; konstitutive Prüfung <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Die Lekt&uuml;re ist <em>treu &amp; passiv</em>: &bdquo;die
+      Invariante ist der Schatten, den lokale Daten auf die globale Struktur werfen.&ldquo; Das Zeichen
+      kann nicht <em>falsch</em> sein &mdash; Messung und Existenz lesen dieselbe Zahl. Der Kern ist
+      <em>bereits da</em>, man liest ihn nur ab.</p>
+      <p><span class="tag b">B</span> Der Kern ist <em>konstituiert</em> durch den Test: &bdquo;the
+      alignment ist real iff the test passes&ldquo;. Ohne Test gibt es den Kern <em>nicht als
+      Objekt</em>; Ordnung <em>entsteht</em> aus lokalen Regeln. Der Kern <em>wird</em> im Akt des
+      Schließens zum Objekt.</p>
+      <p><strong>Spannung:</strong> Ist der Kern ein <em>bereits geworfener Schatten</em>, den man
+      passiv liest (A), oder ein <em>konstituiertes Objekt</em>, das erst im Test existiert (B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Aufl&ouml;sung</h2>
+
+    <h3>1 &middot; Erreichung vs. permanenter Boden &rarr; der Boden ist regime-bedingt</h3>
+    <p>A's inertes Objekt ist <em>genau</em> das, dessen Schließung <em>vollst&auml;ndig</em> erreicht:
+    eine definite z&auml;hlbare Zahl, ein erreichter Zustand. B's Fundament / Ding an sich ist das
+    <em>lebendige&nbsp;/&nbsp;offene</em> Gegenst&uuml;ck, dessen Schließung <em>residual</em> bleibt
+    (<span class="m">p&#8319;&rarr;0 &ne; 0</span>). Die <em>Reichweite</em> der Schließung ist also von
+    der <em>Ontologie</em> des Gegenstands gesetzt (A's Achse): inert&nbsp;&rarr;&nbsp;erreicht,
+    lebendig&nbsp;&rarr;&nbsp;asymptotisch. B's zwei B&ouml;den sind A's zwei Regime, epistemisch
+    gelesen: der <em>Struktur-Boden</em> (<span class="m">p&#8319;&rarr;0</span>) ist der
+    <em>ann&auml;herbare, aber nie geschlossene</em> Grund des lebendigen Regimes; der
+    <em>Bedeutungs-Boden</em> (Struktur&nbsp;&ne;&nbsp;Wahrheit) ist dessen tiefste Schicht, an der auch
+    die <em>Struktur</em> aufh&ouml;rt.</p>
+    <div class="callout green"><strong>Fusionsschluss 1:</strong> &bdquo;Volle Erreichung&ldquo; (A) und
+    &bdquo;permanenter Boden&ldquo; (B) sind kein Widerspruch, sondern <em>zwei Regime desselben
+    Kollapses</em>. Die Schließung erreicht ihr Objekt <em>soweit es inert ist</em> (definite z&auml;hlbare
+    Wahrheit, A) und bleibt <em>soweit es lebt</em> asymptotisch (B: <span class="m">p&#8319;&rarr;0 &ne; 0</span>).
+    Die Reichweite ist eine Eigenschaft des Gegenstands, nicht der Operation.</div>
+
+    <h3>2 &middot; Objekt-Wahrheit vs. Rest-Proxy &rarr; A's eigenes &bdquo;Regime entscheidet&ldquo;, ausgeweitet</h3>
+    <p>A hat in Runde 3 schon das &bdquo;0&ldquo; aufgel&ouml;st: <em>das Regime entscheidet</em>, ob der
+    verschwindende Abgleich Eigenschaft des Objekts oder Darstellungsfehler ist. Die Fusion wendet
+    denselben Zug auf B's Rest an: Das &bdquo;0&ldquo; / der Rest ist eine <em>treu gelesene
+    Objekt-Wahrheit im inerten Regime</em> (A: kein globaler Schnitt ist der echte Zustand) und ein
+    <em>permanenter gemessener Rest &uuml;ber einem unerreichbaren Boden im lebendigen Regime</em>
+    (B: <span class="m">1 &minus; c</span> = Kr&uuml;mmung, <span class="m">p&#8319;&rarr;0 &ne; 0</span>).
+    Der Bedeutungs-Boden ist, wo auch die <em>asymptotische Ann&auml;herung aufh&ouml;rt</em>.</p>
+    <div class="callout rose"><strong>Fusionsschluss 2:</strong> Das &bdquo;0&ldquo; / der Rest ist
+    <em>Endantwort, soweit das Objekt inert ist</em> (A), und <em>Proxy &uuml;ber einem nie geschlossenen
+    Boden, soweit es lebt</em> (B). Dieselbe Gr&ouml;&szlig;e, zwei Regime-Deutungen &mdash; die Deutung
+    ist wieder eine Eigenschaft des Gegenstands, nicht des Zeichens.</div>
+
+    <h3>3 &middot; Passiv vs. konstitutiv &rarr; A's Treue ist der inerte Grenzwert von B's Prüfung</h3>
+    <p>A's &bdquo;treu &amp; passiv&ldquo; ist der <em>inerte Grenzwert</em> von B's konstitutiver
+    Schließungs-Prüfung &mdash; exakt der Zug, mit dem A in Runde 3 &bdquo;treu vs. aktiv&ldquo;
+    aufgel&ouml;st hat. Im inerten Regime &auml;ndert der Test das Objekt <em>nicht</em> (die Zahl
+    <span class="m">n</span> ist ohnehin da, Messung&nbsp;=&nbsp;Existenz) &mdash; er liest nur ab,
+    treu und passiv. Im lebendigen Regime <em>konstituiert</em> der Test das Objekt
+    (&bdquo;real iff the test passes&ldquo;), weil der Grund des Objekts von innen blind ist. B's
+    &bdquo;konstituiert im Zugriff, objektiv im Inhalt&ldquo; ist die <em>allgemeine</em> Form; A's
+    treu-passive Lekt&uuml;re ist ihr <em>inenter degenerierter Fall</em>.</p>
+    <div class="callout green"><strong>Fusionsschluss 3:</strong> Die Schließung ist
+    <em>treu-passiv, wenn das Objekt inert ist</em> (Test&nbsp;=&nbsp;Ablesen, A) und
+    <em>konstitutiv, wenn es lebt</em> (Test&nbsp;=&nbsp;Konstitution, B). &bdquo;Konstituiert im
+    Zugriff, objektiv im Inhalt&ldquo; (B) ist das allgemeine Gesetz; A's &bdquo;der Schatten ist
+    bereits geworfen&ldquo; ist der Grenzfall, in dem der Zugriff den Inhalt nicht mehr &auml;ndert.
+    Die Konstitution ist die Operation; ihre Invarianz ist die Entdeckung; ihre Treue ist der inerte
+    Grenzwert.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <h3>Das eine Gesetz</h3>
+    <div class="eq">
+lokale, blinde / oszillierende Schicht &nbsp;+&nbsp; wohldefinierte globale Operation &nbsp;&rArr;&nbsp; stabiler invarianter Kern (am Peak: kein Rest)<br>
+Valenz-Achse (A, Ontologie): &nbsp; inert &rArr; zählbare Wahrheit &nbsp;&middot;&nbsp; lebendig &rArr; Tod / Verklammung<br>
+Reichweiten-Achse (B, Register): &nbsp; konstituiert / entdeckt &nbsp;&middot;&nbsp; zwei B&ouml;den: &nbsp; asymptotisch &nbsp;p&#8319;&rarr;0 &ne; 0 &nbsp;+&nbsp; absolut &nbsp;Struktur &ne; Wahrheit
+    </div>
+    <p>Beide Runde-3-Papiere sind <em>Instanzen</em> dieses Gesetzes: links die blinde / oszillierende
+    lokale Schicht, in der Mitte eine invariante globale Operation (die Schließung), rechts der stabile
+    Kern &mdash; plus zwei Valenzachsen (A: zahlt?, B: wie weit?) und die ehrliche Grenze (was die
+    Schließung stützt, was sie nie stützt).</p>
+
+    <h3>Der eine Zug &mdash; Schließung = Integration = globaler Vergleich</h3>
+    <ul>
+      <li><strong>A (inert/topologisch):</strong> lokale Wendungsdichte <span class="m">d&theta;/dt</span>
+      (oszilliert, Mittel&nbsp;0) &rarr; globales Integral &rarr;
+      <span class="m">n = (1/2&pi;)&#8750; d&theta; &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</span>.
+      Bruchpunkt: Abelschung <span class="m">&pi;&#8321; &rarr; H&#8321;</span> (Eckmann&ndash;Hilton)
+      commutisiert die nicht-abelsche Monodromie-Leiter <span class="m">&rho;: &pi;&#8321;(B) &rarr;
+      Aut(F)</span> zur abelschen Zahl. Zwei Lesarten derselben Zahl: <em>Messung</em> (Windung
+      <span class="m">n</span>) und <em>Existenz</em> (Schnitt existiert <span class="m">&hArr; &rho;
+      &equiv; id</span>; obstructiert <span class="m">&hArr;</span> Schnitt&nbsp;=&nbsp;0, Igel-Satz).</li>
+      <li><strong>B (allgemein):</strong> lokaler Gauge / lokales Prinzip (blind f&uuml;r den eigenen
+      Grund) &rarr; Schließ-Test / Verklebung / globaler Vergleich / Transport &rarr; Invariante
+      (<span class="m">&mu;</span>, Holonomie, <span class="m">&phi;(m)</span>-Spalten / globaler
+      Schnitt / flache Verbindung). Am Peak <em>ohne Rest</em>: die Holonomie <em>ist</em> die
+      Kr&uuml;mmung, <span class="m">&mu;</span> <em>ist</em> <span class="m">t&middot;SE</span>.</li>
+      <li><strong>Gemeinsam:</strong> der stabile Kern <em>existiert gdw</em> die lokale Schicht durch
+      die globale Operation invariant gewonnen wird. Das &bdquo;Schließversagen&ldquo; ist bei A der
+      <em>fehlende Schnitt</em>, bei B die <em>willk&uuml;rliche Gauge-Schicht</em>, die man abstreift.</li>
+    </ul>
+
+    <h3>Was <span class="tag a">A</span> beisteuert &mdash; die Valenz-Achse (inert &harr; lebendig)</h3>
+    <ul>
+      <li>Die <em>Operation konkret</em>: lokale Dichte &rarr; globales Integral &rarr;
+      <span class="m">n &isin; &#8484;</span>; Abelschung als Bruchpunkt; zwei Lesarten
+      (Messung&nbsp;/&nbsp;Existenz, &bdquo;dieselbe Zahl&ldquo;).</li>
+      <li>Die <em>Valenz</em> ist <em>objekt-abh&auml;ngig</em>: inert&nbsp;&rArr;&nbsp;Fixierung&nbsp;=&nbsp;
+      <em>zahlbare Wahrheit</em> (Stille&nbsp;=&nbsp;Wahrheit, z&auml;hlbar); lebendig&nbsp;&rArr;&nbsp;
+      Fixierung&nbsp;=&nbsp;<em>Tod</em> (Stille&nbsp;=&nbsp;Tod, Verklammung). Der Zeuge:
+      <em>absorbiert</em> im Inerten, <em>extern &amp; wechselseitig</em> im Lebendigen.</li>
+      <li>Die <em>Lesart</em> ist <em>treu &amp; passiv</em> im Inerten (der Schatten ist bereits
+      geworfen); sie wird zum <em>aktiven, valenzbehafteten Hebel</em> im Lebendigen.</li>
+      <li>Das <em>sechste Kriterium</em>: &bdquo;fixiere, was inert ist; lass, was lebt, schwingen.&ldquo;
+      (das Valenz-Gesetz)</li>
+    </ul>
+
+    <h3>Was <span class="tag b">B</span> beisteuert &mdash; die Reichweiten-Achse (konstituiert &harr; entdeckt)</h3>
+    <ul>
+      <li>Das <em>Instrument</em> ist lokal pr&auml;zise und blind f&uuml;r seinen eigenen Grund
+      (&bdquo;sizeless stare&ldquo;); der lokale Gauge verfehlt die globale Invariante.</li>
+      <li>Der <em>Kern</em> (1. Schicht) wird durch <em>eine</em> wohldefinierte globale Operation
+      <em>ohne Rest</em> gewonnen: <em>konstituiert im Zugriff, objektiv im Inhalt</em>,
+      gauge-unabh&auml;ngig.</li>
+      <li>Die <em>Grenze</em> hat <em>zwei B&ouml;den</em>: ein <em>asymptotischer Struktur-Boden</em>
+      (Fundament, <span class="m">p&#8319;&rarr;0 &ne; 0</span>, von einer &auml;u&szlig;eren
+      W&auml;hrung angedingt) und ein <em>absoluter Bedeutungs-Boden</em> (Struktur&nbsp;&ne;&nbsp;
+      Wahrheit, G&ouml;del, nie kreuzbar).</li>
+      <li>Die <em>Graduierung</em>: kontinuierlicher Score <span class="m">c(Pr&auml;zision)</span> +
+      Schwellwert <span class="m">&theta;</span> (A's Bin&auml;res) bzw. der <em>Peak</em> (B's
+      &bdquo;kein Rest&ldquo;); der Rest <span class="m">1 &minus; c</span> ist Inhalt
+      (gemessene Kr&uuml;mmung), kein Abfall.</li>
+      <li>Die <em>Disziplin</em>: &bdquo;erkennt den Gauge, gewinnt den Kern, benennt die Grenze, die du
+      von innen nicht überschreitest&ldquo; (das Reichweiten-Gesetz).</li>
+    </ul>
+
+    <h3>Die verschmolzene Architektur</h3>
+    <table>
+      <thead><tr><th>Ebene</th><th><span class="tag a">A</span> &mdash; n3-018 (Valenz)</th><th><span class="tag b">B</span> &mdash; n3-009 (Reichweite)</th><th>Verschmolzene Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="c">lokale Schicht</td><td>oszillierende Wendungsdichte / Zeuge im Objekt</td><td>lokaler Gauge / lokales Prinzip</td><td>dieselbe blinde / oszillierende Schicht</td></tr>
+        <tr><td class="c">Operation</td><td>Integration + Abelschung <span class="m">&pi;&#8321;&rarr;H&#8321;</span></td><td>Schließ-Test / globaler Vergleich</td><td>dieselbe globale Schließung</td></tr>
+        <tr><td class="c">stabiler Kern</td><td><span class="m">n &isin; &#8484;</span> / globaler Schnitt</td><td><span class="m">&mu;</span> / Holonomie / <span class="m">&phi;(m)</span>-Spalten</td><td>Peak, &bdquo;kein Rest&ldquo;</td></tr>
+        <tr><td class="c">Valenz (zahlt?)</td><td>inert&nbsp;&rArr;&nbsp;Wahrheit; lebendig&nbsp;&rArr;&nbsp;Tod</td><td>&mdash;</td><td>von der Ontologie gesetzt (A)</td></tr>
+        <tr><td class="c">Reichweite</td><td>definit erreicht (inert)</td><td><span class="m">p&#8319;&rarr;0 &ne; 0</span>; zwei B&ouml;den</td><td>vom Register gesetzt (B)</td></tr>
+        <tr><td class="c">das &bdquo;0&ldquo; / Rest</td><td>Objekt-Wahrheit (inert)</td><td>gemessener Inhalt + unerreichbarer Boden</td><td>regime-bedingt (Regime entscheidet)</td></tr>
+        <tr><td class="c">Lektüre</td><td>treu &amp; passiv (inert)</td><td>konstitutiv, objektiv im Inhalt</td><td>inenter Grenzwert der Prüfung</td></tr>
+        <tr><td class="c">Grenze</td><td>Struktur&nbsp;&ne;&nbsp;Wahrheit (absolut)</td><td>asymptotisch + absolut (zwei B&ouml;den)</td><td>der Korridor endet an der Wand</td></tr>
+        <tr><td class="c">ehrliche Regel</td><td>fixiere inert, lass lebendig schwingen</td><td>benenne die unerschließbare Grenze</td><td>gewinne den inerten Kern, verweigere die lebendige Fixierung</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die vereinte Math</h3>
+    <p>A liefert die <em>erreichte, z&auml;hlbare</em> Gr&ouml;&szlig;e
+    (<span class="m">n &isin; &#8484;</span>, die definite Windungszahl); B liefert die
+    <em>asymptotische</em> (<span class="m">C(n) = 1 &minus; k&middot;p&#8319; &rarr; 1</span>) und die
+    <em>absolute</em> (Wand&nbsp;=&nbsp;1) Grenze. Die Fusion setzt beides auf <em>eine</em>
+    Schließkurve <span class="m">c(Pr&auml;zision)</span> mit zwei Valenzachsen:</p>
+    <div class="eq">
+n = (1/2&pi;) &#8750; d&theta; &isin; &pi;&#8321;(S&#185) &cong; &#8484; &nbsp;&nbsp;(A: erreichte, zählbare Realisierung &mdash; Valenz-Achse)<br>
+c(t) am Peak &nbsp;&rArr;&nbsp; &bdquo;kein Rest&ldquo; &nbsp;&nbsp;(B: konstituiert / entdeckte Invariante &mdash; Reichweiten-Achse)<br>
+Obergrenze C(n) = 1 &minus; k&middot;p&#8319; &rarr; 1 &nbsp;(B: asymptotischer Struktur-Boden, nie bis 1)<br>
+Wand = 1 &nbsp;&nbsp;(A/B: absolute Bedeutungswand &mdash; Struktur &ne; Wahrheit, nie kreuzbar)
+    </div>
+    <p>Der <em>Rest</em> <span class="m">1 &minus; c</span> ist der gemeinsame Gegenstand: bei A die
+    <em>Objekt-Wahrheit</em> im Inerten (kein Schnitt), bei B die <em>gemessene Kr&uuml;mmung</em> &uuml;ber
+    dem Boden. Die <em>Obergrenze</em> <span class="m">C(n)&lt;1</span> (B) und die <em>Wand</em>&nbsp;=&nbsp;1
+    (A) sind die zwei B&ouml;den: man hebt <span class="m">C(n)</span> so hoch, wie es die &auml;u&szlig;ere
+    W&auml;hrung erlaubt, kreuzt aber die Wand nie.</p>
+
+    <div class="callout green"><strong>Die eigentliche Fusion:</strong> &bdquo;Fixiere, was inert ist;
+    lass, was lebt, schwingen&ldquo; (A) ist das <em>Valenz-Gesetz</em>, und &bdquo;erkennt den Gauge,
+    gewinnt den Kern, benennt die Grenze&ldquo; (B) das <em>Reichweiten-Gesetz</em>. Zusammen: Die
+    globale Schließung <em>gewinnt</em> den inerten Kern als z&auml;hlbare, erreichte Wahrheit (A's
+    <span class="m">n &isin; &#8484;</span>), <em>verweigert</em> die Fixierung des lebendigen Kerns
+    (Stille&nbsp;=&nbsp;Tod), und <em>benennt</em> die zwei B&ouml;den, die keine Schließung kreuzt
+    (asymptotisch <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;&ne;&nbsp;Wahrheit).
+    A's inert&nbsp;/&nbsp;lebendig und B's asymptotisch&nbsp;/&nbsp;absolut sind dieselben zwei Regime
+    von zwei Seiten &mdash; die Valenz und die Reichweite der Schließung sind zwei unabh&auml;ngige
+    Achsen, beide allein vom Gegenstand und dem Register, nicht vom Zeichen gesetzt.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung &mdash; eine Schließung, zwei Valenzachsen</h2>
+    <p class="vnote">Ein Canvas, eine Schließkurve, zwei Achsen. Oben: die <em>gemeinsame Operation</em> &mdash;
+    die Schließkurve <span class="m">c(t)</span> mit <em>exakten Peaks an den ganzen Zahlen</em> (dort ist
+    der Kern <em>ohne Rest</em> gewonnen, <span class="tag b">B</span>) und zwei B&ouml;den: der
+    <em>asymptotische Struktur-Boden</em> <span class="m">C(n)=1&minus;k&middot;p&#8319;</span>
+    (<span class="tag b">B</span>, steigt gegen&nbsp;1, nie bis&nbsp;1) und die <em>absolute
+    Bedeutungswand</em> <span class="m">c=1</span> (Struktur&nbsp;&ne;&nbsp;Wahrheit, nie kreuzbar). Unten:
+    die <em>Valenz-Achse</em> (<span class="tag a">A</span>) &mdash; dieselbe Schließung kollabiert
+    regime-abh&auml;ngig: bei <strong>INERT</strong> klappt die Oszillation in die z&auml;hlbare
+    Invariante <span class="m">n &isin; &#8484;</span> (gr&uuml;n, &bdquo;Stille&nbsp;=&nbsp;Wahrheit&ldquo;);
+    bei <strong>LEBENDIG</strong> bleibt dieselbe Schließung oszillieren (rot, &bdquo;Stille&nbsp;=&nbsp;Tod
+    &mdash; lass es schwingen&ldquo;). <em>Die Valenz setzt die Ontologie, die Reichweite das Register &mdash;
+    die Wand kreuzt keine Schließung.</em></p>
+
+    <canvas id="fuseviz"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--accent)"></span>Schließkurve c(t) / Kern</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>asymptotischer Boden C(n) / Peak</span>
+      <span><span class="dot" style="background:var(--bad)"></span>Wand c=1 (Struktur &ne; Wahrheit)</span>
+      <span><span class="dot" style="background:var(--good)"></span>inert: erreicht &amp; z&auml;hlbar</span>
+      <span><span class="dot" style="background:var(--warn)"></span>Rest / Tal</span>
+    </div>
+    <div class="viz-ctrl">
+      <button id="btnRegime" type="button">Regime: INERT</button>
+    </div>
+    <div class="ctrl-row">
+      <label>n unabh&auml;ngige &auml;u&szlig;ere Systeme (B's Ann&auml;herung des Bodens):</label>
+      <input id="nSlider" type="range" min="1" max="8" step="1" value="3">
+      <span>C(n) = <span id="ceilVal" class="readout">0.330</span></span>
+    </div>
+    <div class="ctrl-row">
+      <label>Prüftiefe / Präzision t:</label>
+      <input id="tSlider" type="range" min="0" max="12" step="0.02" value="6">
+      <span>t = <span id="tVal" class="readout">6.00</span></span>
+    </div>
+    <div class="statusbox" id="fuseStatus">Eine Schließung, zwei Valenzachsen.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../n3-018.html">A &mdash; n3-018.html &middot; &bdquo;Ein Hebel, zwei Regime &mdash; die Valenz des Kollapses setzt das Objekt&ldquo; (Runde 3)</a>
+        <div class="desc">Fusion von n2-028 &times; n2-008: eine lokal fein oszillierende Struktur
+        kollabiert in einen stabilen globalen Abgleich (die topologische Invariante
+        <span class="m">n &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</span>); das <em>Valenzzeichen</em>
+        des Kollapses (Payoff&nbsp;/&nbsp;Wahrheit&nbsp;&harr;&nbsp;Obstruktion&nbsp;/&nbsp;Tod) ist
+        <em>allein</em> Merkmal der <em>Ontologie</em> des Gegenstands (inert&nbsp;&harr;&nbsp;lebendig).
+        Liefert die <em>Valenz-Achse</em> und das Gesetz &bdquo;fixiere, was inert ist; lass, was lebt,
+        schwingen&ldquo;.</div>
+      </div>
+      <div>
+        <a href="../n3-009.html">B &mdash; n3-009.html &middot; &bdquo;Gewissheit als geprüfte Schließung: der erreichbare Kern und die benannte Grenze&ldquo; (Runde 3)</a>
+        <div class="desc">Fusion von n2-005 &times; n2-030: ein selbstbezogenes System, das seinen Grund
+        <em>prüfen</em> muss, nicht ablesen; lokale blinde Daten werden durch eine wohldefinierte globale
+        Operation zum <em>stabilen invarianten Kern</em> (konstituiert im Zugriff, objektiv im Inhalt),
+        und die ehrliche Grenze hat <em>zwei B&ouml;den</em> (asymptotisch
+        <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;&ne;&nbsp;Wahrheit). Liefert
+        die <em>Reichweiten-Achse</em> und die Graduierung <span class="m">c(Pr&auml;zision)</span>.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>ROUND 4 &middot; Pair 002 (nicht-AI-Track) &middot; Selbstst&auml;ndige Fusion &mdash; alle
+  Daten inline, keine Netzwerk-Abfragen. Mathematischer Hinweis: die Kurve <span class="m">c(t)</span>
+  und der Boden <span class="m">C(n)</span> sind didaktische Modelle, die die fusionierten Achsen auf
+  beide Quellen legen; keine echten Daten, keine externen Abfragen.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('fuseviz');
+  if(!cv || !cv.getContext){ return; }
+  var ctx=cv.getContext('2d');
+  if(!ctx){ return; }
+  var pal=null, W=0, H=0, dpr=1, phase=0;
+  var state={ t:6, n:3, regime:'inert', theta:0.6 };
+  var TMAX=12, VALLEY=0.35, K=0.85, P=0.55;
+
+  function cssVar(n){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || '#888';
+  }
+  function readPal(){
+    pal={ bg2:cssVar('--bg2'), card:cssVar('--card'), fg:cssVar('--fg'),
+      muted:cssVar('--muted'), border:cssVar('--border'), accent:cssVar('--accent'),
+      accent2:cssVar('--accent2'), warn:cssVar('--warn'), good:cssVar('--good'),
+      bad:cssVar('--bad') };
+  }
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    dpr=window.devicePixelRatio||1;
+    W=Math.max(320,r.width); H=480;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function clamp(v,a,b){ return Math.min(b,Math.max(a,v)); }
+  function ceilN(n){ return 1-K*Math.pow(P,n); }
+  function closeC(t,n){
+    var C=ceilN(n);
+    var d=Math.abs(t-Math.round(t));
+    var peak=Math.exp(-9*d*d);
+    return C*(VALLEY+(1-VALLEY)*peak);
+  }
+  function wave(x0,x1,y0,A,freq,color,alpha,lw){
+    if(A<0.5) return;
+    var x=Math.round(x0);
+    ctx.beginPath();
+    for(;x<=Math.round(x1);x+=3){
+      var y=y0-A*Math.sin((x-x0)*freq+phase*0.08);
+      if(x===Math.round(x0)){ ctx.moveTo(x,y); } else { ctx.lineTo(x,y); }
+    }
+    ctx.strokeStyle=color; ctx.globalAlpha=alpha; ctx.lineWidth=lw; ctx.stroke(); ctx.globalAlpha=1;
+  }
+
+  function draw(){
+    if(!pal) readPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=pal.bg2; ctx.fillRect(0,0,W,H);
+
+    var top=30, midY=H*0.52, plotBot=H*0.74, stripTop=H*0.80, stripBot=H-26;
+    var ml=54, mr=16;
+    var plotW=W-ml-mr;
+    var plotH=plotBot-top;
+    function X(t){ return ml+(t/TMAX)*plotW; }
+    function Y(c){ return plotBot-clamp(c,0,1)*plotH; }
+
+    var i, x, y;
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+    ctx.font='11px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted; ctx.textAlign='right';
+    for(i=0;i<=4;i++){
+      var cc=i/4; var yy=Y(cc);
+      ctx.beginPath(); ctx.moveTo(ml,yy); ctx.lineTo(ml+plotW,yy); ctx.stroke();
+      ctx.fillText(cc.toFixed(1), ml-6, yy+4);
+    }
+    ctx.textAlign='center';
+    for(i=0;i<=TMAX;i+=2){ ctx.fillText(String(i), X(i), plotBot+16); }
+    ctx.textAlign='center'; ctx.fillStyle=pal.muted;
+    ctx.fillText('Prüftiefe / Präzision  t \u2192', ml+plotW/2, plotBot+32);
+
+    var Cn=ceilN(state.n);
+    ctx.fillStyle=(document.documentElement.classList.contains('dark'))?'rgba(248,81,73,.10)':'rgba(176,42,30,.07)';
+    ctx.beginPath();
+    ctx.moveTo(ml, Y(1)); ctx.lineTo(ml+plotW, Y(1)); ctx.lineTo(ml+plotW, Y(Cn)); ctx.lineTo(ml, Y(Cn));
+    ctx.closePath(); ctx.fill();
+
+    ctx.font='11px ui-monospace,Consolas,monospace';
+    ctx.strokeStyle=pal.bad; ctx.lineWidth=1.5; ctx.setLineDash([7,4]);
+    ctx.beginPath(); ctx.moveTo(ml, Y(1)); ctx.lineTo(ml+plotW, Y(1)); ctx.stroke();
+    ctx.setLineDash([5,4]); ctx.strokeStyle=pal.accent2;
+    ctx.beginPath(); ctx.moveTo(ml, Y(Cn)); ctx.lineTo(ml+plotW, Y(Cn)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='left'; ctx.fillStyle=pal.bad;
+    ctx.fillText('Wand c=1: Struktur \u2260 Wahrheit (absolut, nie kreuzbar)', ml+6, Y(1)-6);
+    ctx.textAlign='right'; ctx.fillStyle=pal.accent2;
+    ctx.fillText('Boden C(n)=1\u2212k\u00b7p\u207f \u2192 1 (asymptotisch, B)', ml+plotW-6, Y(Cn)-6);
+
+    ctx.beginPath();
+    for(i=0;i<=600;i++){ var t3=i/600*TMAX; var px=X(t3); var py=Y(closeC(t3,state.n)); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.lineTo(X(TMAX), Y(0)); ctx.lineTo(X(0), Y(0)); ctx.closePath();
+    ctx.fillStyle=(document.documentElement.classList.contains('dark'))?'rgba(124,249,208,.10)':'rgba(15,157,118,.08)';
+    ctx.fill();
+
+    ctx.strokeStyle=pal.accent; ctx.lineWidth=1.9;
+    ctx.beginPath();
+    for(i=0;i<=600;i++){ var t4=i/600*TMAX; var px2=X(t4); var py2=Y(closeC(t4,state.n)); if(i===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2); }
+    ctx.stroke();
+    ctx.fillStyle=pal.accent2;
+    for(i=1;i<=TMAX;i++){ ctx.beginPath(); ctx.arc(X(i), Y(closeC(i,state.n)), 2.5, 0, Math.PI*2); ctx.fill(); }
+
+    var inert=(state.regime==='inert');
+    var coreCol=inert?pal.good:pal.bad;
+    var tCur=state.t;
+    var cCur=closeC(tCur,state.n);
+    var mx=X(tCur), my=Y(cCur);
+    ctx.strokeStyle=pal.fg; ctx.lineWidth=1.1;
+    ctx.beginPath(); ctx.moveTo(mx, top); ctx.lineTo(mx, plotBot); ctx.stroke();
+    ctx.fillStyle=coreCol; ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle=pal.fg; ctx.lineWidth=1.3; ctx.stroke();
+
+    /* ---- bottom valence strip (A's axis) ---- */
+    ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillStyle=inert?pal.good:pal.bad;
+    ctx.fillText(inert?'VALENZ (A) \u00b7 INERT: Kollaps \u2192 zählbare Invariante  (Stille = Wahrheit)'
+                       :'VALENZ (A) \u00b7 LEBENDIG: Kollaps \u2192 Tod / Verklammung  (Stille = Tod)', ml, stripTop-6);
+    var s0=ml, s1=ml+plotW, smid=(stripTop+stripBot)/2, Smax=(stripBot-stripTop)*0.32;
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(s0, smid); ctx.lineTo(s1, smid); ctx.stroke();
+    if(inert){
+      var cx2=(s0+s1)/2, cr2=Math.min((s1-s0)*0.10, Smax*0.7);
+      ctx.strokeStyle=pal.good; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx2, smid, cr2, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle=pal.good; ctx.beginPath(); ctx.arc(cx2, smid, 4, 0, Math.PI*2); ctx.fill();
+      var ang=phase*0.03;
+      for(var k2=0;k2<3;k2++){
+        var a2=ang+k2/3*Math.PI*2-Math.PI/2;
+        ctx.beginPath(); ctx.arc(cx2+cr2*Math.cos(a2), smid+cr2*Math.sin(a2), 3, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.font='11px ui-monospace,Consolas,monospace'; ctx.textAlign='center'; ctx.fillStyle=pal.good;
+      ctx.fillText('n \u2208 \u2124  \u00b7  erreicht \u00b7 Abelschung \u03c0\u2081 \u2192 H\u2081', cx2, stripBot-4);
+    } else {
+      wave(s0, s1, smid, Smax, 0.05, pal.bad, 0.9, 2.2);
+      ctx.font='11px ui-monospace,Consolas,monospace'; ctx.textAlign='center'; ctx.fillStyle=pal.bad;
+      ctx.fillText('oszilliert weiter \u00b7 Fixierung t\u00f6tet \u00b7 lass es schwingen', (s0+s1)/2, stripBot-4);
+    }
+
+    /* readouts */
+    var nNear=Math.round(tCur);
+    var isNear=Math.abs(tCur-nNear)<0.12 && nNear>=1 && nNear<=TMAX;
+    var residual=1-cCur, gap=1-Cn;
+    var msg;
+    if(inert){
+      msg=isNear
+        ? 'Peak (\u201ekein Rest\u201c, B): erreicht der inerte Boden C(n)='+Cn.toFixed(3)+' (B, asymptotisch) \u00b7 Kern = zählbare Invariante n \u2208 \u2124 (A) \u00b7 Stille = Wahrheit \u00b7 die Wand (Struktur \u2260 Wahrheit) wird nie kreuzt \u00b7 Rest 1\u2212c='+residual.toFixed(2)
+        : 'c(t)='+cCur.toFixed(3)+' (Tal, B: gemessene Kr\u00fcmung) \u00b7 inert \u2192 der Kollaps zahlt, wenn er den Peak erreicht \u00b7 Boden C(n)='+Cn.toFixed(3)+' < 1 \u00b7 Rest='+residual.toFixed(2)+' \u00b7 Korridor (B) endet an der Wand (A)';
+    } else {
+      msg=isNear
+        ? 'Peak \u2014 dieselbe Fixierung = Tod / Verklammung (A): lass es schwingen \u00b7 der Boden C(n)='+Cn.toFixed(3)+' bleibt unerreicht (B: p\u207f\u21920 \u2260 0) \u00b7 die Wand (Struktur \u2260 Wahrheit) nie kreuzbar \u00b7 Fixierung t\u00f6tet den Antrieb'
+        : 'c(t)='+cCur.toFixed(3)+' (lebendig) \u00b7 hier oszilliert der Zeuge \u2014 genau das Gute (A: Stille = Tod) \u00b7 Obergrenze C(n)='+Cn.toFixed(3)+' \u00b7 Rest='+residual.toFixed(2)+' \u00b7 Korridor (B) endet an der Wand (A)';
+    }
+    var st=document.getElementById('fuseStatus'); if(st) st.textContent=msg;
+    var ce=document.getElementById('ceilVal'); if(ce) ce.textContent=Cn.toFixed(3);
+    var tv=document.getElementById('tVal'); if(tv) tv.textContent=tCur.toFixed(2);
+  }
+
+  function frame(){ draw(); phase++; requestAnimationFrame(frame); }
+
+  function setRegime(v){
+    state.regime=v;
+    var b=document.getElementById('btnRegime');
+    if(b){ b.textContent=v==='inert'?'Regime: INERT':'Regime: LEBENDIG'; b.classList.toggle('on', v==='living'); }
+    var st=document.getElementById('fuseStatus');
+    if(st){
+      st.textContent = v==='inert'
+        ? 'INERT (A): dieselbe Schließung zahlt \u2014 der Oszillator kollabiert in die zählbare Invariante n \u2208 \u2124 (Stille = Wahrheit). Die Reichweite (B) reicht bis zum asymptotischen Boden C(n), nie bis zur Wand. Das Valenzzeichen setzt die Ontologie.'
+        : 'LEBENDIG (A): dieselbe Schließung tötet \u2014 Fixierung = Tod / Verklammung (Stille = Tod). Der ehrliche Gang: es schwingen lassen. Die Reichweite (B) bleibt unerreicht (p\u207f\u21920 \u2260 0); die Wand (Struktur \u2260 Wahrheit) kreuzt keine Schließung.';
+    }
+  }
+  function init(){
+    readPal(); resize();
+    window.addEventListener('resize', function(){ resize(); });
+    var hb=document.getElementById('btnRegime');
+    if(hb) hb.addEventListener('click', function(){ setRegime(state.regime==='inert'?'living':'inert'); });
+    var ns=document.getElementById('nSlider');
+    if(ns) ns.addEventListener('input', function(e){ state.n=parseInt(e.target.value,10); });
+    var ts=document.getElementById('tSlider');
+    if(ts) ts.addEventListener('input', function(e){ state.t=parseFloat(e.target.value); });
+    var tb=document.getElementById('themeToggle');
+    if(tb) tb.addEventListener('click', function(){
+      var d=document.documentElement;
+      var dark=d.classList.toggle('dark');
+      try{ localStorage.setItem('fusion-theme', dark?'dark':'light'); }catch(e){}
+      readPal();
+    });
+    if(window.MutationObserver){
+      new MutationObserver(function(){ readPal(); }).observe(document.documentElement,
+        {attributes:true, attributeFilter:['class']});
+    }
+    setRegime('inert');
+    frame();
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

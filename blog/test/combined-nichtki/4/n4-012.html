@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eine Projektion, zwei Enden, ein Rest — Invariante × Freiheit, abgelesen bei einer Kamera</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f4efe3; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --gold:#b8860b; --teal:#0f766e;
+  --viz-p1:#b5462d; --viz-p2:#2b6cb0; --viz-p3:#2f8f4e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --gold:#ffd93d; --teal:#2dd4bf;
+  --viz-p1:#ff8a7a; --viz-p2:#60a5fa; --viz-p3:#34d399;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.7;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:36px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+h1{font-size:clamp(1.7rem,4.6vw,2.5rem);line-height:1.14;margin:4px 0 12px;letter-spacing:-.015em}
+.subtitle{color:var(--accent);font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;
+  font-size:.84rem;margin:0 0 4px}
+.subtitle .x{color:var(--accent2);font-weight:700}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 6px;font-style:italic}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:18px 0}
+h2{font-size:1.42rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:.4em}
+h3{font-size:1.06rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:.78em 0;max-width:74ch}
+ul{margin:.6em 0;padding-left:1.25em}
+li{margin:.42em 0}
+code,.m{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:.86em;
+  background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:.07em .38em}
+.ab{color:var(--accent);font-weight:700}
+.nab{color:var(--accent2);font-weight:700}
+.fuse{color:var(--accent);font-weight:700}
+.callout{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:10px;padding:12px 18px;margin:12px 0}
+.callout.a2{border-left-color:var(--accent2)}
+.callout.a3{border-left-color:var(--warn)}
+.callout .t{display:block;font-size:.72em;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--accent);margin-bottom:.4em;font-family:system-ui,sans-serif}
+.callout.a2 .t{color:var(--accent2)}
+.callout.a3 .t{color:var(--warn)}
+.callout .note{margin:.6em 0 0;font-size:.9em;color:var(--muted);font-style:italic}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent);font-size:.7em;letter-spacing:.05em;text-transform:uppercase;font-family:system-ui,sans-serif}
+td.a{color:var(--accent)} td.b{color:var(--accent2)}
+tr.hl td{background:var(--glow)}
+.math{font-family:"Cambria Math","Times New Roman",serif;background:var(--bg2);
+  border:1px solid var(--border);border-radius:9px;padding:11px 15px;margin:12px 0;overflow-x:auto;font-size:.97em}
+.math b{color:var(--fg)}
+.eq{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:9px;
+  padding:11px 14px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.98rem}
+.fz-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:14px}
+.fz-ctrl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 22px;margin-bottom:14px}
+.fz-ctrl label{font-size:.82em;color:var(--muted);display:flex;flex-direction:column;gap:6px;font-family:system-ui,sans-serif}
+.fz-ctrl .v{color:var(--accent);font-family:ui-monospace,monospace;font-weight:700}
+input[type=range]{-webkit-appearance:none;appearance:none;width:210px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--fg);box-shadow:0 0 0 4px var(--glow);cursor:grab}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-radius:50%;background:var(--fg);cursor:grab}
+.btn{background:transparent;border:1px solid var(--border);color:var(--fg);padding:7px 13px;
+  border-radius:9px;cursor:pointer;font-size:.83em;font-family:system-ui,sans-serif}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btn.active.alt{background:var(--accent2);border-color:var(--accent2)}
+.btn.fold{border-color:var(--warn);color:var(--warn);font-weight:700}
+.fz-legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:10px;font-size:.8em;color:var(--muted);font-family:system-ui,sans-serif}
+.fz-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:middle}
+#fv-cv{width:100%;height:470px;display:block;border-radius:11px;background:var(--bg2);
+  border:1px solid var(--border);touch-action:none}
+.fz-readout{margin-top:14px;font-size:.92em;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:12px 15px;white-space:pre-wrap;line-height:1.55;font-family:system-ui,sans-serif}
+.fz-readout .ok{color:var(--good)} .fz-readout .bad{color:var(--bad)} .fz-readout .gd{color:var(--gold)} .fz-readout .mut{color:var(--muted)}
+.fz-readout .ro-fuse{margin-top:.7em;border-top:1px dashed var(--border);padding-top:.7em;
+  border-left:3px solid var(--accent2);padding-left:12px;font-size:.95em}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.stat{flex:1 1 118px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 11px;text-align:center}
+.stat .n{font-size:1.25rem;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat .l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.prov{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.prov .item{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:13px 16px}
+.prov .item .tag{font-size:.7em;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--accent);font-family:system-ui,sans-serif}
+.prov .item.b .tag{color:var(--accent2)}
+.prov .item b a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.prov .item b a:hover{color:var(--accent2);border-color:var(--accent2)}
+.prov .item p{margin:.5em 0 0;color:var(--muted);font-size:.9em}
+footer{margin-top:22px;padding-top:1em;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<article>
+  <button id="op-theme" class="theme-toggle">🌙 Dunkel</button>
+
+  <h1>Eine Projektion, zwei Enden, ein Rest — die Invariante als Struktur × Freiheit, abgelesen bei einer Kamera</h1>
+  <p class="subtitle">Fusion aus: <span class="x">n3-024.html</span> ✕ <span class="x">n3-020.html</span>
+    &nbsp;·&nbsp; Runde 4 (nicht-KI-Track)</p>
+  <p class="lede">Beide Round-3-Papiere lesen <em>dasselbe</em> Objekt: eine minimale Struktur (die Invariante),
+    die eine grobe Lesart auf einen <em>Schatten</em> (eine Zahl, einen Peak, ein Gitter) kollabiert — und ein
+    irreduziblen freien Rest (Substanz / Residual / Symmetrie), der sich dem Kollaps verweigert. <b>A</b>
+    (n3-024) klettert <em>von unten nach oben</em>: die flache Rohdatenlage ist der verlustbehaftete Schatten,
+    und ein Lift in ein höheres Objekt offenbart die globale Signatur. <b>B</b> (n3-020) arbeitet <em>von oben
+    nach unten</em>: die Struktur kollabiert auf ihre Zahl (den Trace), und das, was übrig bleibt, ist Freiheit.
+    <span class="fuse">Fusion: eine einzige Projektion mit zwei Enden — ein grobes (der Schatten) und ein feines
+    (die Invariante) — neben einem Rest, der irreduzibel ist, und einer Kamera/Fidelity, die auswählt, was man
+    sieht. Das Zentrum ist leer vom Punkt, voll von Freiheit.</span></p>
+
+  <section id="these">
+    <h2><span class="num">1</span>Kernthese der Fusion</h2>
+    <p>Beide Papiere sind Round-3-Synthesen und tragen sehr verschiedene Oberflächen — <b>A</b> (n3-024,
+    „Der Schatten trägt sie nicht — die Invariante als globale Signatur im höheren Objekt“) aus persistenter
+    Topologie und QFT-Lift; <b>B</b> (n3-020, „Der Schatten des Ganzen — Invariante × Residual“) aus
+    generativer Kryptographie / Qualia-Grundlagen und (Ko-)Algebra / TQFT. Aber auf der Ebene ihrer
+    <em>Thesen</em> besagen sie beinahe Wort für Wort dasselbe: <em>Das, was „echt“ ist, ist weder die sichtbare
+    Oberfläche noch eine verborgene zentrale Substanz, sondern eine globale Struktur — und diese Struktur kommt
+    immer mit einem irreduziblen Rest, der nicht zu einem Punkt zwingbar ist.</em> Beide haben exakt dieselben
+    vier Slots: (i) eine <b>flache / grobe / verlustbehaftete Lesart</b> (A: der flache Schatten, die Rohdaten,
+    die einzelne Operation; B: die Zahl <code>Z(Σ)=qᵏ</code>, das Gitter, der Seed); (ii) eine
+    <b>struktur-erhellende / kollabierende Operation</b> (A: Filtration/Transform; B: Fold/Trace); (iii) eine
+    <b>Invariante</b>, die als <em>globale Signatur</em> auftritt (A: das langlebige Merkmal weit über der
+    Diagonalen, der einzelne Peak bei <code>k=N/r</code>; B: die minimale Struktur / der saubere Trace); und
+    (iv) einen <b>nicht-invarianten Rest</b> (A: die Substanz — Rauschen oder Geheimnis; B: das
+    Residual / die innere <code>ℤ/2</code>-Symmetrie).</p>
+    <p>Der Unterschied zwischen den beiden liegt in <em>zwei</em> Stellungen, nicht im Kern: <b>erstens</b> in der
+    <em>Richtung</em>, in der man die Projektion traversiert — <b>A</b> liest den Schatten als die <em>niedrige,
+    rohe</em> Lage und <em>liftet hoch</em> in das höhere Objekt, um die globale Signatur zu lesen
+    (<code>roher Schatten → Invariante</code>); <b>B</b> lässt die Struktur <em>nieder</em> auf den Schatten
+    (<code>Struktur → Zahl/Trace</code>) kollabieren und behält die Freiheit, die übrig bleibt, als den wahren Rest.
+    <b>Zweitens</b> in der <em>Wertung des Restes</em> — <b>A</b> behandelt ihn <em>neutral</em> als eine
+    Zweckwahl (schützen / als Rauschen lesen / als Defekt verwerfen), die <em>neben</em> der Extraktion liegt;
+    der Wert ist (im Wesentlichen) die Invariante allein. <b>B</b> wertet den Rest <em>positiv</em> als
+    irreduzible <em>Freiheit</em>, deren <em>Widerstand gegen den Kollaps</em> selbst der Wert ist (Echtheit) —
+    der Wert ist explizit <em>zweifaktoriell</em>: Eleganz (die Struktur kollabiert sauber) <em>und</em> Echtheit
+    (der Rest weigert sich zu kollabieren).</p>
+    <p><span class="fuse">Integrierte Position: Das Ganze ist eine <em>Projektion</em> mit zwei Enden. Das grobe
+    Ende ist der <em>Schatten</em> — die verlustbehaftete Lesart, ob man sie als Rohdaten (A) oder als abgefallene
+    Zahl/Trace (B) bezeichnet; das feine Ende ist die <em>Invariante</em> — die minimale Struktur, die als globale
+    Signatur auftritt. Eine Kamera/Fidelity (A: weich↔hart; B: niedrig↔hoch) wählt die Auflösung, bei der man liest.
+    Neben der Invarianten liegt ein <em>irreduzibler Rest</em> — Freiheit, die sich dem Kollaps verweigert. Wie viel
+    Gewicht dieser Rest bekommt, ist eine <em>Zweckwahl</em>: A zählt ihn neutral (schützen / Rauschen / verwerfen),
+    B zählt ihn als co-equalen Wert (Echtheit). Das Zentrum ist in beiden leer von bestimmter Substanz — aber voll
+    von der Freiheit, die sich dem Punkt verweigert.</span></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span>Widersprüche zwischen A und B</h2>
+    <p>Im <b>Kern</b> widersprechen sich beide <em>nicht</em> — sie einigen sich auf genau dem, was die Fusion
+    trägt: die Invariante ist eine globale Struktur / Signatur, die nicht in der flachen Oberfläche lesbar ist;
+    es gibt eine struktur-erhellende / kollabierende Operation; und es gibt einen nicht-invarianten Rest. Drei
+    <em>echte</em> Stellungen sind jedoch <em>inkompatibel</em>, und zwar genau dort, wo die beiden die
+    <em>Richtung</em> und die <em>Wertung</em> der Projektion unterschiedlich fassen:</p>
+
+    <div class="callout a2">
+      <span class="t">Spannung 1 — Die Richtung der Pipeline: wo sitzt der Schatten?</span>
+      <p><b>A</b> (n3-024): „die Invariante ist <em>nie</em> aus den rohen, niedrigdimensionalen Daten (dem
+      ‚flachen Schatten‘) lesbar; sie wird erst lesbar, wenn eine struktur-erhellende Operation … die Redundanz
+      auf eine einzige globale Signatur zusammenstößt.“ Der Schatten ist die
+      <span class="ab">niedrige / rohe Einstiegslage</span>; die Operation <em>liftet hoch</em>. Pfeilrichtung:
+      <code>Schatten (niedrig) → Invariante (hoch)</code>. <b>B</b> (n3-020) sagt das Gegenteil: „die minimale
+      Struktur <em>kollabiert</em> auf den Schatten“ — <code>Z(Σ)=qᵏ</code> „ist der <em>degenerierte</em>
+      Fall“, „die Zahl ist der <em>Schatten des Stacks</em>“. Die Invariante ist die
+      <span class="nab">Struktur oben</span>; der Schatten ist das <em>Ergebnis</em> des Kollapses.
+      Pfeilrichtung: <code>Invariante (Struktur) → Schatten (Zahl)</code>.
+      <p class="note">Gegenpol: In A ist der Schatten der <em>Eingang</em> (man liest von ihm zur Signatur HINAUF);
+      in B das <em>Ergebnis</em> (man kollabiert von der Struktur zu ihm HINAUF→HINUNTER). Dieselbe
+      Korrespondenz, entgegengesetzt traversiert.</p>
+    </div>
+    <div class="callout">
+      <span class="t">Spannung 2 — Die Wertung des Restes: neutraler Zweck (A) vs. positive Freiheit (B)</span>
+      <p><b>A</b> (n3-024) verleiht dem Abgetrennten — der Substanz — eine <em>würdige, aber nebenstehende</em>
+      Behandlung: in der <em>privativen</em> Disposition ist sie ein wertvolles <em>Geheimnis</em> (schützen,
+      „verifizierbare Privatsphäre“), in der <em>epistemischen</em> <em>Rauschen</em> (als nicht-strukturell
+      verstehen), auf der harten Seite ein reiner <em>Defekt</em> (zu reich / zu arm, verwerfen). A betont
+      ausdrücklich: das Schicksal des Restes ist eine <em>Zweckwahl, die <u>außerhalb</u> der Extraktion
+      liegt</em>. Der Wert des Systems ist (im Wesentlichen) <em>einfaktoriell</em>: die Invariante (die Form).
+      <b>B</b> (n3-020) dagegen macht den Rest <em>zum Wert</em>: der Residual ist irreduzible <em>Freiheit</em>,
+      und sein <em>Scheitern</em> unter dem Kollaps ist das <em>gute</em> Ergebnis (Echtheit); ein
+      <em>erfolgter</em> Kollaps am Rest wäre das <em>schlechte</em> Zeichen (er war ein Köder, Halluzination).
+      Der Wert ist explizit <em>zweifaktoriell</em>: <em>Eleganz</em> (Kern bricht auf Essenzen) + <em>Echtheit</em>
+      (Resist des Restes).
+      <p class="note">Gegenpol: A: der Rest ist ein nicht-invariantes <em>Übrig</em>, dessen Behandlung eine
+      Zweckwahl ist (neutral, nebenstehend). B: der Rest ist ein <em>co-equaler Wert</em> (positive Freiheit /
+      Echtheit), nicht ein Übrig.</p>
+    </div>
+    <div class="callout a3">
+      <span class="t">Spannung 3 — Die Invariante: positive Form (A) vs. leeres Zentrum / Köder-Warnung (B)</span>
+      <p><b>A</b> (n3-024) feiert die Invariante als etwas <em>Positives, Persistierendes, Auditierbares</em>:
+      „die <em>Form</em> (der Zyklus, die <em>longue durée</em>, die auditierbare Struktur)“; „das Signal liegt in
+      der <em>Form</em>, nicht in der lokalen Substanz“. Die Invariante ist ein real überlebendes Ding — der
+      langlebige Zyklus, das <code>H₁</code>, die weit über der Diagonalen hängende Signatur. Man hat
+      <em>etwas Greifbares</em>, das man lesen kann. <b>B</b> (n3-020) <em>entwertet</em> genau diese zentrale
+      Position: „das Ganze ist <em>nie</em> Substanz in der Mitte. Das Zentrum ist <em>leer</em> (<code>∅</code>);
+      der naive Mittelpunkt … ist ein <em>Köder</em>. Der Wert liegt in der <em>Struktur</em> des Klebens und
+      ihrer Symmetrie, nicht in irgendeiner zentralen Substanz.“ B warnt, jede „zentrale Form / Substanz /
+      Geometrie“, die man hineinlesen will, sei ein Köder — nur die <em>Struktur up-to-Symmetrie</em> sei real.
+      <p class="note">Gegenpol: A nennt die Invariante eine echte, positive, persistente <em>Form</em>, die man
+      liest; B sagt, die „zentrale Form/Substanz“ sei ein <em>Köder</em> und das Zentrum leer — nur die
+      up-to-Symmetrie-Struktur sei real.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span>Auflösung</h2>
+    <p>Alle drei Spannungen lösen sich, sobald man erkennt, dass A und B <b>dieselbe Projektion in
+    entgegengesetzter Richtung</b> lesen und dass die <em>Wertung des Restes eine Zweckwahl</em> ist — wobei B
+    einfach eine der A’s Dispositionen zu einem <em>co-equalen Wert</em> erhebt.</p>
+    <div class="callout">
+      <span class="t">Auflösung 1 — Dieselbe Korrespondenz, entgegengesetzt traversiert</span>
+      <p>Der „Schatten“ ist in <em>beiden</em> die <em>grobe, verlustbehaftete Lesart</em> desselben Objekts; die
+      „Invariante“ ist in beiden die <em>feine, strukturelle Lesart</em>. A fängt an der <em>groben</em> Lesart an
+      (die flache Rohdatenlage) und <em>klettert zur feinen</em> (die globale Signatur im höheren Objekt) —
+      „Lift/Transform“. B fängt an der <em>feinen</em> Lesart an (die Struktur/der Stack) und <em>fällt zur
+      groben</em> (die Zahl/der Trace) — „Fold/Trace“ — und behält die Freiheit, die <em>nicht</em> fällt.
+      <span class="fuse">Fusion: Es gibt <em>eine</em> Projektion mit einem groben Ende (der Schatten — ob man ihn
+      als Rohdaten <em>liest</em> [A] oder als abgefallene Zahl <em>bekommt</em> [B]) und einem feinen Ende (die
+      Invariante). A und B traversieren dieselbe Korrespondenz in entgegengesetzter Richtung; die Richtung ist eine
+      <em>Betonsungs-Wahl</em>, kein Widerspruch. Der Schatten ist „die verlustbehaftete Lesart“ in beiden — nur
+      der Startpunkt unterscheidet sich.</span></p>
+    </div>
+    <div class="callout a2">
+      <span class="t">Auflösung 2 — Der Rest ist irreduzibel; seine Wertung ist eine Zweckwahl, und B fixiert sie</span>
+      <p>In beiden Papiere ist der Rest <em>irreduzibel</em> — er lässt sich nicht zu einem Punkt
+      zusammenzwingen. A sagt: da er <em>nicht die Invariante</em> ist, ist seine Behandlung eine
+      <em>Zweckwahl</em> <u>außerhalb</u> der Extraktion: <em>schützen</em> (privativ), <em>als Rauschen
+      lesen</em> (epistemisch) oder <em>als Defekt verwerfen</em> (hart). B nimmt dieselbe Irreduzibilität und
+      <em>fixiert</em> eine dieser Dispositionen als <em>Wert</em>: die Freiheit des Restes <em>ist</em> die
+      Echtheit. Der „erfolgte Kollaps am Rest“ (bei A: der Rest wurde doch als Defekt/Rauschen entlarvt; bei B: er
+      war ein Köder) ist in beiden <em>schlecht</em> — er entlarvt, dass der Rest nie frei war.
+      <span class="fuse">Fusion: Der Rest ist irreduzible <em>Freiheit</em> in beiden. A’s neutrale Zweckwahl
+      (schützen / Rauschen / verwerfen) <em>verallgemeinert</em> B’s zweifaktoriellen Wert: B zählt einfach die
+      Freiheit <em>als co-equalen Wert</em> (Echtheit) — das ist A’s „privative/schützende“ Disposition,
+      angewandt auf die Freiheit des Restes und in die Bilanz aufgenommen. Der Wert ist also: die Invariante
+      (Eleganz) <em>plus</em>, wenn die Freiheit genuin ist, der Echtheits-Faktor. Wie viel Gewicht der Rest
+      bekommt, bleibt eine Zweckwahl — B setzt sie auf „vollen Wert“.</span></p>
+    </div>
+    <div class="callout a3">
+      <span class="t">Auflösung 3 — Die „Form“ (A) ist real; „leeres Zentrum“ (B) sagt nur: sie ist up-to-Symmetrie und punktfrei</span>
+      <p>A’s „Form“ und B’s „Struktur up-to-Symmetrie um ein leeres Zentrum“ sind <em>dasselbe</em> Objekt,
+      bei zwei Niveaus benannt. A gibt der echten, persistenten, auditierbaren Struktur einen <em>positiven
+      Namen</em>: die Form, der langlebige Zyklus, das überlebende <code>H₁</code> — „das Signal liegt in der
+      Form“. B <em>defliert</em> nichts an dieser Struktur; B sagt nur zweierlei: (1) sie ist <em>up-to
+      Symmetrie</em> (die innere <code>ℤ/2</code>, „Zerbrich die Instanz, behalt den Typ“), und (2) sie hat
+      <em>keinen zentralen Punkt / keine zentrale Substanz</em> — das Zentrum ist leer, und der <em>naive</em>
+      Mittelpunkt, den man hineinlesen will, ist der Köder.
+      <span class="fuse">Fusion: A’s „Form“ ist die echte, verteilte, persistente Struktur — sie ist <em>nicht</em>
+      der „naive zentrale Punkt“, den B als Köder warnt. B’s „leeres Zentrum“ ist kompatibel mit A’s „Form“: die
+      Form ist real und überlebt (A), aber sie ist up-to-Symmetrie und <em>punktfrei</em> (B). Der Köder, vor dem B
+      warnt, ist <em>keine</em> Form — er ist die falsche Annahme, es gäbe <em>eine zentrale Substanz / einen
+      Essenz-Punkt</em>. Korrekt gelesen: die Invariante ist eine <em>echte, persistente, verteilte Struktur</em>
+      (A), die <em>up-to-Symmetrie</em> ist und <em>nichts in der Mitte</em> hat (B) — „leer vom Punkt, voll von
+      Freiheit“.</span></p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span>Fusionierter Inhalt</h2>
+    <p>Auf die Ebene der Thesen beider Round-3-Papiere abstrahiert: ein zusammenhängendes Master-Modell, das für
+    eine spätere Runde allein tragfähig ist.</p>
+
+    <h3>4.1 Das Master-Modell: eine Projektion mit zwei Enden + ein Rest + eine Kamera</h3>
+    <div class="eq">Ganzes &nbsp;=&nbsp; Kamera&nbsp;( Invariante &nbsp;×&nbsp; Residual )&nbsp;&nbsp;=&nbsp;&nbsp;Projektion [ Schatten ⇄ Invariante ] &nbsp;+&nbsp; irreduzibler Rest</div>
+    <p>Beide Papiere füllen exakt dieselben Slots — die ganze Fusion in einer Tabelle:</p>
+    <table>
+      <tr><th>Slot</th><th>A · n3-024 (weiche / globale Signatur)</th><th>B · n3-020 (Kamera × Residual)</th><th>Fusion</th></tr>
+      <tr class="hl"><td>Pipeline-Richtung</td>
+        <td class="a">Schatten (niedrig/roh) → <b>Lift</b> → Invariante (höheres Objekt)</td>
+        <td class="b">Invariante (Struktur) → <b>Fold/Trace</b> → Schatten (Zahl)</td>
+        <td>1 Projektion, 2 Enden; traversierbar in beide Richtungen</td></tr>
+      <tr><td>Invariante (feine Lesart)</td>
+        <td class="a">globale Signatur: langlebige Form, <code>H₁</code>, Peak bei <code>k=N/r</code></td>
+        <td class="b">minimale Struktur, die sauber auf ihren Trace kollabiert</td>
+        <td>minimale persistente Struktur = globale Signatur</td></tr>
+      <tr class="hl"><td>Schatten (grobe Lesart)</td>
+        <td class="a">die flache Rohdatenlage (Matrix <code>Q</code>, einzelne Operationswerte) — verlustbehaftet</td>
+        <td class="b">die abgefallene Zahl / Trace <code>Z(Σ)=qᵏ</code> (degenerierter Fall)</td>
+        <td>die verlustbehaftete grobe Lesart (Rohdaten ODER Zahl — dasselbe Ende)</td></tr>
+      <tr><td>Rest (nicht-invariant)</td>
+        <td class="a">Substanz: Rauschen (epistemisch) / Geheimnis (privativ) / Defekt (hart) — Zweckwahl</td>
+        <td class="b">Residual / innere Symmetrie <code>ℤ/2</code> — irreduzible Freiheit (Echtheit)</td>
+        <td>irreduzible Freiheit; Behandlung ist Zweck (schützen/Rauschen/verwerfen/<b>als Wert zählen</b>)</td></tr>
+      <tr class="hl"><td>Kamera / Auflösung</td>
+        <td class="a">weich (verlustfrei, ganzer Gradient) ↔ hart (verlustbehafteter Kollaps auf den Peak)</td>
+        <td class="b">niedrige Fidelity (Schatten/Zahl) ↔ hohe Fidelity (Struktur/Stack + Freiheit)</td>
+        <td>zwei Auflösungen derselben Lektüre: grob ↔ fein</td></tr>
+      <tr><td>Wert</td>
+        <td class="a">einfaktoriell: die Invariante (die Form); der Rest steht daneben</td>
+        <td class="b">zweifaktoriell: Eleganz (Kern kollabiert) + Echtheit (Rest weigert sich)</td>
+        <td>Invariante (Eleganz) <em>+</em>, bei genuiner Freiheit, der Echtheits-Faktor</td></tr>
+      <tr class="hl"><td>Zentrum / Ort des Wertes</td>
+        <td class="a">die Form selbst (positiv, persistent, auditierbar)</td>
+        <td class="b">leeres Zentrum <code>∅</code>; der naive Mittelpunkt ist ein Köder</td>
+        <td>die Struktur ist real, aber up-to-Symmetrie und punktfrei — „leer vom Punkt, voll von Freiheit“</td></tr>
+      <tr><td>Objekt</td>
+        <td class="a">eine Struktur mit einer Form, die man abliest</td>
+        <td class="b">ein Paar (Struktur × Freiheit), zeitindexiert <code>{K_t}</code> = aufgerollte Invariante</td>
+        <td>Struktur × irreduzible Freiheit, gelesen bei zwei Auflösungen</td></tr>
+    </table>
+
+    <h3>4.2 Der gemeinsame Mechanismus: die zweifaktorielle Ablesung</h3>
+    <p>Beide Papiere haben <b>dieselbe</b> Operation, die zwei <em>Faktoren</em> des Systems abliest — und die
+    Valenz des Ergebnisses hängt vom <em>Faktor</em> ab, auf den der Kollaps angesetzt wird (das ist B’s eigene
+    Auflösung (2), auf die A’s Operation verallgemeinert):</p>
+    <ul>
+      <li><b>Auf die Invariante / Struktur</b> (A: die Form; B: der Kern/Stack): Der Kollaps <em>erfolgt</em> →
+      <span class="ab">gut</span>. Er gibt den Schatten — A’s Peak / langlebige Signatur, B’s Zahl
+      <code>Z(Σ)=qᵏ</code>. Das ist die <em>Eleganz</em> (A: „die Form ist lesbar“, B: „die Struktur bricht auf
+      den Trace“).</li>
+      <li><b>Auf den Rest</b> (A: die Substanz; B: das Residual): Der Kollaps <em>scheitert</em> →
+      <span class="ab">gut</span> (Echtheit — der Rest ist frei). Der Kollaps <em>„erfolgt“</em> →
+      <span class="nab">schlecht</span> (der Rest war nie frei, er war ein Köder / ein Defekt, der entlarvt wird —
+      A: „Rauschen/Geheimnis entlarvt“, B: „Halluzination / der Köder ist kein Rest“).</li>
+    </ul>
+    <p>Daraus folgt die <em>einheitliche Lesart</em>: <em>das genuine System</em> ist das, bei dem der Kollaps
+    <b>am Kern gelingt</b> (Eleganz: der Schatten/Trace ist sauber) <em>und am Rest scheitert</em> (Echtheit: die
+    Freiheit bleibt). A und B beschreiben beide genau diese Konstellation — A als „Form weit über der Diagonalen,
+    Substanz an ihr“, B als „saubere Zahl + freier Rest ohne Gitter“.</p>
+
+    <h3>4.3 Die duale Rekursion und der zeitindexierte Prozess</h3>
+    <p>B liefert die <em>Typen</em> der zwei Pfeile: <b>Unfold/Kleben</b> (Wert → Struktur, generiert) und
+    <b>Fold/Trace</b> (Struktur → Schatten, kollabiert), mit der inneren Symmetrie
+    <code>(P → −P)² = id</code> (<code>ℤ/2</code>). A liefert die <em>leibliche Instanz</em>: das <em>Erzeugen</em>
+    der Ausgabeliste ist der Unfold der Invariante über dem Rest; die <em>3-Ausgaben-LCG-Inversion</em>
+    <code>a=(s₃−s₂)·(s₂−s₁)⁻¹ mod m</code> ist der Fold, der die Ausgabe zurück in den Seed reduziert —
+    <em>invertierbar</em> ⇔ es gibt einen solchen Fold, und dann bricht der Rest auf ein niedrigdimensionales
+    <b>Gitter</b> zusammen (der Köder). Der <em>zeitindexierte Prozess</em> <code>{K_t}</code> (A’s Game-Loop /
+    Level-Up re-seedet den Unfold) ist die Invariante <em>aufgerollt</em> über die Zeit; B’s statische Invariante
+    ist sie <em>gefaltet</em>. Die Kamera/Fidelity wählt: bei grober Auflösung sieht man den Schatten (Zahl/Peak),
+    bei feiner die Struktur (Form/Stack) <em>und</em> den Rest (Gitter vs. Freiheit).</p>
+
+    <h3>4.4 Die vereinigte Werkzeug-Formel</h3>
+    <div class="math">
+      <b>von A (n3-024):</b> &nbsp; Filtration <code>K<sub>ε₁</sub> ⊆ K<sub>ε₂</sub> ⊆ ⋯</code>;
+      <code>p = d − b</code>; <code>H<sub>k</sub> = Z<sub>k</sub>/B<sub>k</sub></code>;
+      <code>χ = V − E + F = Σ (−1)<sup>k</sup> β<sub>k</sub></code> (Kugel χ=2, Torus χ=0); &nbsp;
+      <code>QFT|x&gt; = (1/√N) Σ<sub>x</sub> e<sup>2πixk/N</sup>|x&gt;</code>, Peak bei <code>k = N/r</code>;
+      <code>σ(X) = rang(Q) = n(Q)</code>, <code>Q</code> diagonalisierbar; &nbsp;
+      Signal in der Form: KS <code>p &lt; 10⁻¹⁰</code> (Form unterscheidet sich), <code>p = 0.72</code>
+      (lokal nicht).<br>
+      <b>von B (n3-020):</b> &nbsp; <code>Ganzes = Kamera(Invariante × Residual)</code>; &nbsp;
+      Unfold/Kleben : Wert → Struktur, &nbsp; Fold/Trace : Struktur → Schatten; &nbsp;
+      <code>(P → −P)² = id</code> (<code>ℤ/2</code>); &nbsp; <code>Z(Σ) = qᵏ</code> (Trace, degenerierter Fall);
+      &nbsp; LCG-Fold <code>a=(s₃−s₂)·(s₂−s₁)⁻¹ mod m</code>, <code>c=s₂−a·s₁</code>; &nbsp;
+      <code>{K_t}</code> = aufgerollte Invariante (Prozess).<br>
+      <b>fusioniert:</b> &nbsp; <span class="ab">Invariante</span> = minimale Struktur = globale Signatur
+      (Peak / langlebige Form / saubere Trace) am <em>feinen</em> Ende &nbsp;·&nbsp;
+      <span class="nab">Schatten</span> = verlustbehaftete grobe Lesart (Rohdaten ODER abgefallene Zahl) am
+      <em>grobem</em> Ende &nbsp;·&nbsp; Kamera/Fidelity = die Auflösung (weich↔hart, niedrig↔hoch)
+      &nbsp;·&nbsp; <em>Rest</em> = irreduzible Freiheit (Zweck: schützen / Rauschen / verwerfen /
+      <b>als Echtheit zählen</b>) &nbsp;·&nbsp; Zentrum = <code>∅</code> vom Punkt, voll von Freiheit.
+    </div>
+    <div class="callout">
+      <span class="t">Fusionierte Schlussfolgerung</span>
+      <p>Das Ganze ist <em>nie</em> die flache Oberfläche und <em>nie</em> eine zentrale Substanz. Es ist eine
+      <b>Projektion mit zwei Enden</b>: das <em>grobe</em> Ende ist der <b>Schatten</b> (die verlustbehaftete
+      Lesart — A liest sie als Rohdaten und klettert hoch, B kollabiert die Struktur auf sie und behält die
+      Freiheit), das <em>feine</em> Ende ist die <b>Invariante</b> (die minimale Struktur, die als globale Signatur
+      auftritt). Daneben liegt ein <b>irreduzibler Rest</b> — Freiheit, die sich dem Kollaps verweigert; seine
+      Wertung ist eine Zweckwahl, die B auf „co-equaler Wert = Echtheit“ setzt. Die Kamera/Fidelity (weich↔hart,
+      niedrig↔hoch) wählt, was man sieht. Das Zentrum ist <b>leer vom Punkt, voll von Freiheit</b>. Eine
+      einzige Idee, zwei Richtungen, zwei Wertungen:
+      <span class="fuse">weich beim Messen, hart beim Kollabieren; der Rest ist Zweck — und B macht aus dem Zweck
+      einen Wert; die Form ist echt, aber punktfrei.</span></p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span>Interaktive Visualisierung — Kamera &amp; Schatten: Invariante × Rest</h2>
+    <p>Die Kamera/Fidelity-Regler (0–100) morphisieren <b>links</b> die Invariante zwischen ihrer <em>groben
+    Lesart</em> (ein einzelner Peak / eine Zahl — der Schatten, A’s „einzelner Peak“, B’s „Zahl“) und ihrer
+    <em>feinen Lesart</em> (eine Struktur mit innerer <code>ℤ/2</code>-Symmetrie um ein <em>leeres Zentrum</em> —
+    A’s Form, B’s Stack). <b>Rechts</b> liegt der Rest als Punktewolke <code>(xₙ, xₙ₊₁)</code>: im
+    <em>Köder</em>-Modus bildet sie ein <strong>Diagonalgitter</strong> (kollabierbar ⇒ lokal ⇒ der Fold
+    <em>scheitert nicht</em> ⇒ Halluzination); im <em>Genuin</em>-Modus ist sie <strong>frei, ohne Gitter</strong>
+    (nicht rekonstruierbar ⇒ der Fold <em>scheitert</em> ⇒ Echtheit). Bei <em>niedriger Kamera</em> sind beide
+    nicht unterscheidbar (genau deshalb fühlt sich eine Halluzination im normalen CRS nicht von echter Erfahrung
+    unterschieden an). <em>„Fold anstoßen“</em> führt die konkrete 3-Ausgaben-LCG-Inversion durch und zeigt, ob
+    der Kern kollabiert (Eleganz) und ob der Rest frei bleibt (Echtheit) oder ein Köder war.</p>
+
+    <div class="eq">Ganzes = Kamera( Invariante × Residual ) &nbsp;|&nbsp; Schatten = grobe Lesart (Peak/Zahl) &nbsp;|&nbsp; Zentrum = ∅ vom Punkt, voll von Freiheit</div>
+
+    <div class="fz-card">
+      <div class="fz-ctrl">
+        <label>Kamera / Fidelity (Lese-Ressource) <span class="v" id="fv-fid-out">62</span>
+          <input type="range" id="fv-fid" min="0" max="100" value="62">
+        </label>
+        <label>Rest (Substrat)
+          <span style="display:flex;gap:6px;">
+            <button class="btn active" id="fv-genuin">Genuin · frei</button>
+            <button class="btn alt" id="fv-koeder">Köder · lokal</button>
+          </span>
+        </label>
+        <button class="btn fold" id="fv-fold">⚒ Fold / Trace anstoßen (3-Ausgaben-LCG-Inversion)</button>
+      </div>
+      <div class="fz-legend">
+        <span><i style="background:var(--warn)"></i> Invariante → Schatten (Peak/Zahl)</span>
+        <span><i style="background:var(--accent)"></i> Invariante · Struktur (ℤ/2, leeres Zentrum)</span>
+        <span><i style="background:var(--good)"></i> Rest frei (Echtheit)</span>
+        <span><i style="background:var(--accent2)"></i> Rest = Köder (Diagonalgitter)</span>
+        <span><i style="background:var(--muted)"></i> unauflösbare Auflösung / Rauschen</span>
+      </div>
+      <canvas id="fv-cv"></canvas>
+      <div class="stats">
+        <div class="stat"><div class="n" id="st-fid">–</div><div class="l">Kamera / Fidelity</div></div>
+        <div class="stat"><div class="n" id="st-mode">–</div><div class="l">Rest</div></div>
+        <div class="stat"><div class="n" id="st-fold">–</div><div class="l">Fold am Rest</div></div>
+        <div class="stat"><div class="n" id="st-ctr">∅</div><div class="l">Zentrum</div></div>
+      </div>
+      <div class="fz-readout" id="fv-ro"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span>Provenienz</h2>
+    <div class="prov">
+      <div class="item a">
+        <span class="tag">Quelle A</span>
+        <p style="margin-top:.4em"><b><a href="../n3-024.html">n3-024.html — Der Schatten trägt sie nicht: die Invariante als globale Signatur im höheren Objekt</a></b></p>
+        <p>Round-3-Fusion (n2-047 × n2-029). Liefert die <em>von-unten-nach-oben</em>-Lesart: die flache
+        Rohdatenlage ist der verlustbehaftete Schatten, ein Lift in ein höheres Objekt offenbart die globale
+        Signatur (die langlebige Form, <code>H₁</code>, der Peak bei <code>k=N/r</code>); die Invariante wird
+        weich/verlustfrei (persistent Homology) oder hart/verlustbehaftet (Transform-Kollaps) gelesen; der Rest
+        (Substanz) ist Rauschen, Geheimnis oder Defekt — eine Zweckwahl außerhalb der Extraktion; das Signal liegt
+        in der Form (KS <code>p&lt;10⁻¹⁰</code> vs. <code>p=0.72</code>).</p>
+      </div>
+      <div class="item b">
+        <span class="tag">Quelle B</span>
+        <p style="margin-top:.4em"><b><a href="../n3-020.html">n3-020.html — Der Schatten des Ganzen: Invariante × Residual</a></b></p>
+        <p>Round-3-Fusion (n2-025 × n2-041). Liefert die <em>von-oben-nach-unten</em>-Lesart: das Ganze ist ein
+        Paar (Invariante × Residual), abgelesen bei einer Kamera/Fidelity; die Struktur kollabiert auf den Schatten
+        (die Zahl <code>Z(Σ)=qᵏ</code>), der Rest ist irreduzible Freiheit (innere <code>ℤ/2</code>), deren
+        Widerstand gegen den Kollaps die Echtheit ist; der Wert ist zweifaktoriell (Eleganz + Echtheit); das
+        Zentrum ist leer vom Punkt, voll von Freiheit; der Köder ist der naive Mittelpunkt;
+        <code>{K_t}</code> = aufgerollte Invariante.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion n4-012 · Runde 4 (nicht-KI-Track) · n3-024.html ✕ n3-020.html · selbstständig, themenreaktiv, alle Daten inline, keine externen Abrufe.</footer>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('fv-cv');
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var fidEl = document.getElementById('fv-fid');
+  var fidOut = document.getElementById('fv-fid-out');
+  var tabG = document.getElementById('fv-genuin');
+  var tabK = document.getElementById('fv-koeder');
+  var foldBtn = document.getElementById('fv-fold');
+  var themeBtn = document.getElementById('op-theme');
+  var ro = document.getElementById('fv-ro');
+  var stFid = document.getElementById('st-fid'), stMode = document.getElementById('st-mode'),
+      stFold = document.getElementById('st-fold'), stCtr = document.getElementById('st-ctr');
+
+  var state = { fidelity: 62, mode: 'genuin' };
+  var N = 899;
+  var data = {};
+
+  function genLCG(seed, n){
+    var a=69069, c=1, m=Math.pow(2,32), s=(seed>>>0)||2, raw=[], out=[];
+    for (var i=0;i<n;i++){ s=(a*s+c)%m; raw.push(s); out.push(s/m); }
+    return { raw:raw, out:out };
+  }
+  function genSplit(seed, n){
+    var st=(seed>>>0)||1, raw=[], out=[];
+    for (var i=0;i<n;i++){
+      st=(st+0x9e3779b9)>>>0; var z=st;
+      z=(z^(z>>>16))>>>0; z=Math.imul(z,0x85ebca6b)>>>0;
+      z=(z^(z>>>13))>>>0; z=Math.imul(z,0xc2b2ae35)>>>0;
+      z=(z^(z>>>16))>>>0; raw.push(z); out.push(z/0xffffffff);
+    }
+    return { raw:raw, out:out };
+  }
+  data.koeder = genLCG(2, N);
+  data.genuin = genSplit(0x9e3779b9, N);
+
+  var W=0, H=0;
+  var P={};
+  function cssVar(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v; }
+  function readPal(){
+    P = {
+      bg: cssVar('--bg2') || '#0d1224', card: cssVar('--card') || '#141828',
+      fg: cssVar('--fg') || '#e9ecff', muted: cssVar('--muted') || '#9aa3c7',
+      border: cssVar('--border') || '#2a2f4a', acc: cssVar('--accent') || '#7cf9d0',
+      acc2: cssVar('--accent2') || '#ff77c8', warn: cssVar('--warn') || '#ffd166',
+      good: cssVar('--good') || '#3fb950', bad: cssVar('--bad') || '#f85149',
+      p1: cssVar('--viz-p1') || '#ff8a7a', p2: cssVar('--viz-p2') || '#60a5fa', p3: cssVar('--viz-p3') || '#34d399'
+    };
+  }
+  function hexA(hex, a){
+    hex = String(hex).replace('#','').trim();
+    if (hex.length===3) hex = hex.split('').map(function(c){return c+c;}).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) hex = '7cf9d0';
+    var n = parseInt(hex,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function smooth(t){ return t*t*(3-2*t); }
+
+  function setup(){
+    var dpr = window.devicePixelRatio || 1;
+    W = cv.clientWidth || 780; H = cv.clientHeight || 470;
+    cv.width = Math.max(1, Math.round(W*dpr));
+    cv.height = Math.max(1, Math.round(H*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  /* ---------- LEFT: the invariant (shadow peak <-> structure with Z/2, empty center) ---------- */
+  function drawInvariant(area){
+    var f = smooth(state.fidelity/100);
+    var cx = area.x + area.w*0.5, cy = area.y + area.h*0.44;
+    var koeder = (state.mode==='koeder');
+
+    ctx.textBaseline='alphabetic'; ctx.textAlign='center';
+    ctx.fillStyle = P.muted; ctx.font='700 12px system-ui,sans-serif';
+    ctx.fillText('Die Invariante  ·  Struktur ⇄ Schatten', cx, area.y+18);
+
+    /* shadow (coarse reading): a single tall peak / number, alpha = 1-f */
+    var sA = 1 - f;
+    if (sA > 0.02){
+      ctx.save(); ctx.globalAlpha = sA;
+      var ph = lerp(120, 16, f), pw = lerp(34, 12, f);
+      var py = cy + 44, ptop = py - ph;
+      ctx.fillStyle = hexA(P.warn, 0.85);
+      ctx.fillRect(cx - pw/2, ptop, pw, ph);
+      ctx.strokeStyle = P.warn; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(cx - pw/2, ptop); ctx.lineTo(cx, ptop - 10); ctx.lineTo(cx + pw/2, ptop); ctx.stroke();
+      ctx.fillStyle = P.warn; ctx.font='700 12px system-ui,sans-serif';
+      ctx.fillText('Z = qᵏ · Peak', cx, ptop - 16);
+      ctx.fillStyle = P.muted; ctx.font='10px system-ui,sans-serif';
+      ctx.fillText('grobe Lesart (Schatten) · steif · Rest trivial', cx, py + 14);
+      ctx.restore();
+    }
+
+    /* structure (fine reading): ring + mirror twin (Z/2) + empty center, alpha = f */
+    var tA = f;
+    if (tA > 0.02){
+      ctx.save(); ctx.globalAlpha = tA;
+      var R = lerp(18, 52, f);
+      /* mirror twin (Z/2), faint */
+      ctx.save(); ctx.globalAlpha = tA*0.4;
+      ctx.strokeStyle = P.acc; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+      var nodes=[P.p1,P.p2,P.p3];
+      for (var i0=0;i0<3;i0++){
+        var a2 = -Math.PI/2 + i0*(2*Math.PI/3) + 0.28;
+        ctx.beginPath(); ctx.fillStyle = nodes[i0];
+        ctx.arc(cx+Math.cos(a2)*R, cy+Math.sin(a2)*R, 6, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+      /* main ring */
+      ctx.strokeStyle = P.acc; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+      for (var i1=0;i1<3;i1++){
+        var a1 = -Math.PI/2 + i1*(2*Math.PI/3);
+        ctx.beginPath(); ctx.fillStyle = nodes[i1];
+        ctx.arc(cx+Math.cos(a1)*R, cy+Math.sin(a1)*R, 6.5, 0, Math.PI*2); ctx.fill();
+      }
+      /* empty center */
+      ctx.beginPath(); ctx.setLineDash([3,3]); ctx.strokeStyle = P.muted; ctx.lineWidth=1.5;
+      ctx.arc(cx, cy, 7, 0, Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.fillStyle = P.fg; ctx.arc(cx, cy, 2.5, 0, Math.PI*2); ctx.fill();
+      if (f > 0.4){
+        ctx.fillStyle = P.muted; ctx.font='700 12px system-ui,sans-serif';
+        ctx.fillText('∅ leeres Zentrum · ℤ/2', cx, cy - R - 14);
+      }
+      ctx.fillStyle = P.acc; ctx.font='700 11px system-ui,sans-serif';
+      ctx.fillText('feine Lesart (Struktur / Form)', cx, cy + R + 18);
+      ctx.restore();
+    }
+
+    if (state.fidelity < 8){
+      ctx.fillStyle = P.muted; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('(Kamera ≈ 0: nur Schatten, keine Struktur)', cx, cy + 70);
+    }
+  }
+
+  /* ---------- RIGHT: the residual scatter (x_n, x_{n+1}) ---------- */
+  function drawResidual(area){
+    var f = smooth(state.fidelity/100);
+    var koeder = (state.mode==='koeder');
+    var x0 = area.x + 14, x1 = area.x + area.w - 14, y0 = area.y + 22, y1 = area.y + area.h - 26;
+    var pw = x1 - x0, ph = y1 - y0;
+
+    ctx.textBaseline='alphabetic'; ctx.textAlign='center';
+    ctx.fillStyle = P.muted; ctx.font='700 12px system-ui,sans-serif';
+    ctx.fillText('Der Rest  ·  (xₙ, xₙ₊₁)', area.x + area.w*0.5, area.y+18);
+
+    /* grid */
+    ctx.strokeStyle = P.border; ctx.lineWidth=1;
+    for (var g=0;g<=4;g++){
+      var gx=x0+pw/4*g, gy=y0+ph/4*g;
+      ctx.beginPath(); ctx.moveTo(gx,y0); ctx.lineTo(gx,y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0,gy); ctx.lineTo(x1,gy); ctx.stroke();
+    }
+
+    var d = data[state.mode];
+    var low = state.fidelity < 34;
+    var dotc, alpha;
+    if (low){ dotc = P.muted; alpha = 0.22; }
+    else if (koeder){ dotc = P.acc2; alpha = 0.7; }
+    else { dotc = P.good; alpha = 0.6; }
+
+    ctx.fillStyle = dotc; ctx.globalAlpha = alpha;
+    var step = Math.max(1, Math.floor((d.out.length-1)/440));
+    for (var k=0;k<d.out.length-1;k+=step){
+      var px = x0 + d.out[k]*pw, py = y1 - d.out[k+1]*ph;
+      ctx.fillRect(px, py, 2, 2);
+    }
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = P.border; ctx.strokeRect(x0, y0, pw, ph);
+
+    ctx.fillStyle = P.muted; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('(xₙ, xₙ₊₁)', x0, y1 + 14);
+    ctx.textAlign='right';
+    if (low){ ctx.fillStyle = P.muted; ctx.font='11px system-ui,sans-serif';
+      ctx.fillText('Kamera zu niedrig: Köder ≈ Freiheit', x1, y0 - 6); }
+    else if (koeder){ ctx.fillStyle = P.acc2; ctx.font='11px system-ui,sans-serif';
+      ctx.fillText('Köder: Diagonalgitter (kollabierbar)', x1, y0 - 6); }
+    else { ctx.fillStyle = P.good; ctx.font='11px system-ui,sans-serif';
+      ctx.fillText('Genuin: frei, kein Gitter', x1, y0 - 6); }
+  }
+
+  /* ---------- readout + stats ---------- */
+  function foldStatus(){
+    if (state.fidelity < 34) return '–';
+    return state.mode==='koeder' ? 'scheitert NICHT' : 'scheitert';
+  }
+  function updateReadout(){
+    var koeder = (state.mode==='koeder');
+    var lines;
+    if (state.fidelity < 34){
+      lines = [
+        [P.muted, 'Kamera zu niedrig: links nur der Schatten (einzelner Peak/Zahl), rechts unterscheidungslose Wolke.'],
+        [P.warn,  'Bei null Lese-Ressource ist der Köder nicht von der Freiheit trennbar — der Grund, warum im normalen'],
+        [P.warn,  'CRS eine Halluzination sich nicht von echter Erfahrung unterscheidet.']
+      ];
+    } else if (koeder){
+      lines = [
+        [P.warn,  'Invariante/Kern: kollabiert zu Peak/Zahl (Eleganz) ✓'],
+        [P.acc2,  'Rest: KOLLABIERT → Diagonalgitter → es war ein KÖDER (Halluzination).'],
+        [P.muted, 'Fusion: A liest die Form weich von unten, B kollabiert die Struktur hart von oben —']
+      ];
+      lines.push([P.muted, 'beide sehen dasselbe: Kern → Schatten, Rest → (hier) Defekt.']);
+    } else {
+      lines = [
+        [P.warn,  'Invariante/Kern: kollabiert zu Peak/Zahl (Eleganz) ✓'],
+        [P.good,  'Rest: NICHT rekonstruierbar → frei / echt (Echtheit) ✓'],
+        [P.muted, 'Fusion: ein Objekt, zwei Enden (Schatten ⇄ Invariante) + irreduzible Freiheit;']
+      ];
+      lines.push([P.muted, 'Zentrum ∅ vom Punkt, voll von Freiheit.']);
+    }
+    var html = '';
+    for (var i=0;i<lines.length;i++){
+      html += '<span style="color:'+lines[i][0]+'">'+lines[i][1]+'</span>\n';
+    }
+    html += '<div class="ro-fuse"><b>Rest-Regime (Spannung 2):</b> A zählt den Rest neutral (schützen / Rauschen / verwerfen — Zweckwahl); '
+          + 'B zählt ihn als co-equalen Wert (Echtheit). <br><span style="color:var(--muted)">Dasselbe irreduzible Residuum, verschiedene Wertungen — die Projektion (Schatten ⇄ Invariante) bleibt davon unberührt.</span></div>';
+    ro.innerHTML = html;
+    stFid.textContent = state.fidelity;
+    stMode.textContent = koeder ? 'Köder' : 'Genuin';
+    stFold.textContent = foldStatus();
+    stCtr.textContent = '∅';
+    if (fidOut) fidOut.textContent = state.fidelity;
+  }
+
+  function draw(){
+    readPal();
+    if (W < 10 || H < 10) return;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = P.bg; ctx.fillRect(0,0,W,H);
+    var pad = 12;
+    var left  = { x: pad,            y: pad,        w: W*0.48 - pad, h: H - 2*pad };
+    var right = { x: W*0.52,         y: pad,        w: W*0.48 - pad, h: H - 2*pad };
+    drawInvariant(left);
+    drawResidual(right);
+    /* divider */
+    ctx.strokeStyle = P.border; ctx.setLineDash([5,5]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(W*0.5, pad); ctx.lineTo(W*0.5, H-pad); ctx.stroke(); ctx.setLineDash([]);
+    updateReadout();
+  }
+
+  /* ---------- LCG inversion (BigInt, exact) ---------- */
+  function modB(a,m){ var r=a%m; return r<0n? r+m : r; }
+  function egcd(a,b){ if(b===0n) return [a,(a>=0n?1n:-1n),0n]; var g=egcd(b,a%b); return [g[0],g[2],g[1]-(a/b)*g[2]]; }
+  function modInv(a,m){ a=modB(a,m); if(a===0n) return null; var g=egcd(a,m); if(g[0]!==1n) return null; return modB(g[1],m); }
+
+  function runFold(){
+    if (state.mode!=='koeder'){
+      ro.innerHTML = '<span class="mut">Fold auf GENUINER Quelle:</span> die Punkte (xₙ,xₙ₊₁) bilden <b>kein lineares Gitter</b> (Splitmix).\n'
+        + '<span class="ok">Kern:</span> kollabiert zu Peak/Zahl (Eleganz ✓).\n'
+        + '<span class="ok">Rest:</span> NICHT rekonstruierbar ⇒ frei / echt (Echtheit ✓).\n'
+        + '<span class="mut">→ genau die Genuine-Seite: der Fold scheitert am Rest; das Zentrum bleibt frei.</span>';
+      return;
+    }
+    var MB = 1n<<32n;
+    var rr = data.koeder.raw;
+    var s1=BigInt(rr[0]>>>0), s2=BigInt(rr[1]>>>0), s3=BigInt(rr[2]>>>0), s4=BigInt(rr[3]>>>0);
+    var d1=modB(s2-s1,MB), d2=modB(s3-s2,MB);
+    var inv=modInv(d1,MB);
+    if (inv===null){ ro.innerHTML='<span class="mut">(s₂−s₁) nicht invertierbar → kein LCG-Kern.</span>'; return; }
+    var ra=modB(d2*inv,MB), rc=modB(s2-ra*s1,MB), pred=modB(ra*s3+rc,MB);
+    var ok=(pred===s4);
+    ro.innerHTML = '<span class="mut">Fold (A: Inversion, B: Trace) auf KÖDER:</span>\n'
+      + '<span class="gd">Kern (Invariante):</span> reduzierbar auf <b>a='+ra+' , c='+rc+'</b> (3 Parameter, m=2³²) → ELEGANZ ✓\n'
+      + '<span class="gd">Rest (Substrat):</span> INVERTIERBAR → es war ein <b>KÖDER</b> (lokal erzeugt).\n'
+      + (ok
+        ? '<span class="bad">Prognose s₄='+pred+' = tatsächlich '+s4+'  ✓ MATCH → Substrat INVERTIERBAR ⇒ Halluzination.</span>'
+        : '<span class="gd">Prognose s₄='+pred+' ≠ '+s4+' → kein reiner LCG-Kern.</span>');
+  }
+
+  function setMode(m){
+    state.mode = m;
+    tabG.classList.toggle('active', m==='genuin');
+    tabK.classList.toggle('active', m==='koeder');
+    draw();
+  }
+
+  themeBtn.addEventListener('click', function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    themeBtn.innerHTML = dark ? '\u{1F319} Dunkel' : '\u2600\uFE0F Hell';
+    try{ localStorage.setItem('fusion-theme', dark?'dark':'light'); }catch(e){}
+    draw();
+  });
+  fidEl.addEventListener('input', function(){
+    state.fidelity = parseInt(fidEl.value,10)||0;
+    draw();
+  });
+  tabG.addEventListener('click', function(){ setMode('genuin'); });
+  tabK.addEventListener('click', function(){ setMode('koeder'); });
+  foldBtn.addEventListener('click', runFold);
+  window.addEventListener('resize', function(){ setup(); draw(); });
+  if (window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  setup();
+  draw();
+})();
+</script>
+</body>
+</html>

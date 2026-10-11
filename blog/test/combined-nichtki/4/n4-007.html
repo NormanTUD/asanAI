@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Schatten und seine zwei Gesichter — die Maske, das Minimum, das unerreichbare Δ (Runde 4)</title>
+<style>
+:root{
+  --bg:#f4f2ec; --panel:#ffffff; --panel-border:#e3ddd0;
+  --text:#20242e; --muted:#5b6472;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#6d28d9; --delta:#c2410c;
+  --good:#15803d; --danger:#b91c1c;
+  --grid:rgba(20,20,40,0.07); --code-bg:rgba(15,118,110,0.08); --chip:#efece2;
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141a2c; --panel-border:rgba(255,255,255,0.14);
+  --text:#e8eefc; --muted:#8b9bb8;
+  --accent:#6fd6c4; --accent2:#f59e0b; --accent3:#a78bfa; --delta:#fb923c;
+  --good:#4ade80; --danger:#f87171;
+  --grid:rgba(125,211,252,0.08); --code-bg:rgba(111,214,196,0.10); --chip:#161d33;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:3rem 1.25rem 5rem}
+#themeToggle{position:fixed;top:14px;right:14px;background:var(--panel);color:var(--text);border:1px solid var(--panel-border);border-radius:20px;padding:.45rem .85rem;font:500 .8rem/1 inherit;cursor:pointer;z-index:50}
+#themeToggle:hover{border-color:var(--accent)}
+.kicker{font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:clamp(1.7rem,4.4vw,2.55rem);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin:.5rem 0 .6rem}
+.fusion-sub{color:var(--accent2);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;margin-bottom:.4rem}
+section{margin-top:2.8rem}
+h2{font-size:1.5rem;font-weight:750;margin-bottom:.8rem;color:var(--accent);letter-spacing:-.01em;padding-left:12px;border-left:4px solid var(--accent)}
+h3{font-size:1.08rem;font-weight:650;margin:1.2rem 0 .45rem;color:var(--text)}
+p{margin:.72rem 0;color:var(--text)}
+p.lede{color:var(--muted);font-size:1.02rem}
+strong{color:var(--text)}
+em{color:var(--accent2);font-style:normal}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:var(--code-bg);padding:.08em .4em;border-radius:5px}
+.callout{border-left:3px solid var(--accent);background:var(--panel);border-radius:0 12px 12px 0;padding:.85rem 1rem;margin:1rem 0}
+.callout.bad{border-left-color:var(--danger)}
+.callout.good{border-left-color:var(--good)}
+.callout .cl{font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:.35rem}
+.callout.bad .cl{color:var(--danger)} .callout.good .cl{color:var(--good)}
+.formula{background:var(--code-bg);border:1px solid var(--panel-border);border-radius:10px;padding:.85rem 1rem;margin:.85rem 0;text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1rem;overflow-x:auto;color:var(--text)}
+.formula sub{font-size:.72em}
+.formula .cap{display:block;font-size:.76rem;color:var(--muted);margin-top:.4rem;text-align:left;font-family:-apple-system,Segoe UI,system-ui,sans-serif}
+.ab{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:1rem 0}
+.ab>div{background:var(--panel);border:1px solid var(--panel-border);border-radius:11px;padding:.9rem 1rem}
+.ab .tagA{border-top:3px solid var(--accent2)} .ab .tagB{border-top:3px solid var(--accent3)}
+.ab .who{font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.ab .tagA .who{color:var(--accent2)} .ab .tagB .who{color:var(--accent3)}
+.tagA{color:var(--accent2);font-weight:700} .tagB{color:var(--accent3);font-weight:700}
+ul,ol{margin:.5rem 0 .5rem 1.3rem}
+li{margin:.4rem 0}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:1rem 0}
+th,td{text-align:left;padding:.55rem .6rem;border:1px solid var(--panel-border);vertical-align:top}
+th{background:var(--code-bg);color:var(--text);font-size:.74rem;text-transform:uppercase;letter-spacing:.05em}
+td.kv{color:var(--accent);font-weight:700;white-space:nowrap}
+.card{background:var(--panel);border:1px solid var(--panel-border);border-radius:13px;padding:1rem 1.15rem;margin:1rem 0}
+.card h3{margin-top:0}
+.viz-wrap{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:1rem;margin:1rem 0}
+#viz{width:100%;height:470px;display:block}
+.controls{display:flex;flex-wrap:wrap;gap:.9rem 1.1rem;margin:0 0 1rem;align-items:flex-end}
+.grp{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.grp .gl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;width:100%;margin-bottom:.15rem}
+.controls button{background:var(--panel);color:var(--text);border:1px solid var(--panel-border);padding:.5rem .8rem;border-radius:9px;cursor:pointer;font-size:.84rem;transition:.15s}
+.controls button:hover:not(:disabled){border-color:var(--accent)}
+.controls button.on{background:var(--accent);color:#08110f;border-color:var(--accent);font-weight:700}
+.grp.rng{display:flex;flex-direction:column;gap:.35rem;flex:1 1 190px}
+.grp.rng label{font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between}
+.grp.rng label b{color:var(--accent2);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--grid);border-radius:3px;outline:none;accent-color:var(--accent2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent2);cursor:pointer;border:none}
+.check{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--muted);flex:1 1 240px}
+.check input{accent-color:var(--delta)}
+.readout{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 .4rem}
+.chip{background:var(--chip);border:1px solid var(--panel-border);border-radius:10px;padding:.45rem .7rem;font-size:.83rem}
+.chip b{color:var(--accent);font-family:ui-monospace,monospace}
+#verdict{margin-top:.4rem;font-weight:700;text-align:center;padding:.7rem .9rem;border-radius:10px;background:var(--code-bg);font-size:.92rem}
+.legend{display:flex;flex-wrap:wrap;gap:.7rem 1.1rem;font-size:.78rem;color:var(--muted);margin-top:.8rem}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:.35rem;vertical-align:-1px}
+.src{display:block;padding:.8rem 1rem;border:1px solid var(--panel-border);border-radius:11px;margin:.6rem 0;background:var(--panel);text-decoration:none;color:var(--text);transition:.2s}
+.src:hover{border-color:var(--accent)}
+.src .k{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:.3rem}
+.src .t{font-weight:700;margin-bottom:.3rem}
+.src .d{font-size:.88rem;color:var(--muted)}
+footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--panel-border);color:var(--muted);font-size:.85rem;text-align:center}
+@media(max-width:640px){.ab{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){try{var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.classList.remove('dark');}}catch(e){}})();
+</script>
+</head>
+<body>
+<button id="themeToggle">☾ Theme</button>
+<article>
+  <div class="kicker">Fusion · Runde 4 · nicht-k-i-Track · Paar 007</div>
+  <h1>Der Schatten und seine zwei Gesichter — die Maske, das Minimum, das unerreichbare Δ</h1>
+  <p class="fusion-sub">Fusion aus: n3-007.html ✕ n3-022.html&nbsp; (Runde 4)</p>
+
+  <section id="these">
+    <h2>1 · Kernthese der Fusion</h2>
+    <p class="lede">Beide Runde-3-Papiere sind, auf völlig verschiedenen Oberflächen, <strong>derselbe Satz über einen behandelten Schatten</strong>: Das, was man als „das Ganze" / „das System" behandelt, ist eine <em>verlustbehaftete, zweischichtige Reduktion</em> — und die erste Schicht ist eine <strong>Maske</strong>, die klassifiziert, verbindet und kohärent erscheint, aber <em>nie hinreichend</em> ist. Die eigentliche Wahrheit/Entscheidung sitzt in einer <em>tieferen, orthogonalen Schicht</em>, die man auf ihren eigenen Lesarten ablesen muss.</p>
+    <p><span class="tagA">A (n3-007)</span> liefert die <em>Entscheidungssseite</em>: Schicht&nbsp;1 = Form/Attraktor (die Baseline, die Maske); Schicht&nbsp;2 = das Residual (Feld lokaler Abweichungen), dessen <strong>Minimum</strong> die in-Modell-Entscheidung trägt („ein Punkt bricht das Ganze"). Die <em>Quelle</em> der Abweichung (endogen/exogen/selbstvergiftend) wählt die Reparatur: <strong>studieren / verkleben / restriktieren</strong>. <span class="tagB">B (n3-022)</span> liefert die <em>ontologische Seite</em>: Schicht&nbsp;1 = die grobe Invariante als <strong>Quotient/1-Trunkierung, die eine kategoriale Schicht vergisst</strong>; der Verlust ist <em>kategoriale Information auf zwei orthogonalen Achsen</em> (Präsentation × Typ), und „das Ganze" hat <strong>zwei Gesichter</strong> — das feinste Objekt <em>innerhalb</em> des Modells (vollständig, erreichbar) und das Ding <em>jenseits</em> des Modells (der <strong>Situs</strong>, Δ&gt;0, unerreichbar; „Kohärent ≠ wahr").</p>
+    <p>Die <strong>eine integrierte Position</strong>: <em>Ein System ist ein zweischichtiger Schatten.</em> Die erste Schicht (Form/Attraktor bei A = Quotient/1-Trunkierung bei B) ist eine <strong>Maske</strong> — notwendig, nie hinreichend; sie lässt Falle <em>und</em> Exzess passieren. Die tiefere Schicht hat <strong>zwei Höhen/Gesichter</strong>: <strong>(i)</strong> das <em>in-Modell-Rest</em> — lesbar, lokalisiert, sein <strong>Minimum</strong> entscheidet die in-Modell-Frage, seine Quelle wählt die Reparatur (A); und <strong>(ii)</strong> das <em>jenseitige Δ</em> — eine <strong>orthogonale Achse</strong>, die <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht (B, der Situs). Die Maske vergisst beides; nur die tiefere Schicht, auf beiden Höhen gelesen, offenbart die Wahrheit.</p>
+    <div class="formula">gesund / voll / kohärent &nbsp;⟺&nbsp; [ Maske / Form / Quotient intakt (≠ hinreichend) ] ∧ [ min<sub>i</sub>( in-Modell-Rest )<sub>i</sub> ≥ C* ]<br>
+    &nbsp;&nbsp;&nbsp;·&nbsp; orthogonal dazu: Δ(jenseits / Situs) &gt; 0 bleibt bei jeder Auflösung und jedem Minimum
+      <span class="cap">Diese Formel verschmilzt A's „Form ≥ F* ∧ min(Rest) ≥ C*" mit B's „das Feinste ist noch nicht das Ganze — Kohärent ≠ wahr". Das Minimum (A) ist der Extremwert der in-Modell-Achse; das Δ (B) ist die zweite, senkrechte Achse, die kein Minimum und keine Auflösung berührt. C* = 50.</span>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2 · Widersprüche zwischen A und B</h2>
+    <p class="lede">A und B arbeiten in unterschiedlichen Domänen (Attraktor/Residual, Primzahlen &amp; Olog/Garben bei A; Gruppenquotienten/Orbifolds × Topoi/Situs bei B) und treffen <em>keine</em> direkt widersprüchlichen Tatsachenaussagen — einen faktischen Konflikt würde ich nicht erfinden. Aber an der <strong>Stellung zur tiefen Schicht</strong> — was „irreduzibel" heißt, wie die Entscheidung aussieht und wo die Tiefe <em>sitzt</em> — stehen drei echte, nicht konstruierte Spannungen:</p>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 1 · Irreduzibel = lokalisiert und studierbar (A) vs. irreduzibel = unerreichbar (B)</span>
+      <div class="ab">
+        <div class="tagA">
+          <div class="who">A · n3-007</div>
+          <p>Das tiefste — der <em>endogene offene Kern</em> — ist „genuin offen, irreduzibel" und wird vom Framework „nicht (und sollte nicht) wegrationalisiert". Aber er ist zugleich <strong>beschränkt und lokalisiert</strong> (das Minimum lokalisiert ihn exakt) und <em>der Gegenstand selbst</em>: man <strong>studiert ihn an Ort</strong>. Irreduzibel heißt hier <em>intrinsisch unerklärbar durch die Oberfläche, aber gegenwärtig und berührbar</em> — ein lösbares Objekt der Untersuchung.</p>
+        </div>
+        <div class="tagB">
+          <div class="who">B · n3-022</div>
+          <p>Das tiefste — der <em>Situs</em> (Δ&gt;0) — ist „strukturell, irreduzibel teilhaftig" mit „prinzipiell<strong>er</strong> Unerreichbarkeit des Ganzen von der eigenen Ebene aus". Irreduzibel heißt hier <em>prinzipiell unerreichbar</em>: „der Situs <em>jenseits</em> des Modells, unerreichbar", keine Auflösung schließt die Lücke; Gödel/Turing/Heisenberg markieren, wo Schicht&nbsp;3 den Schichten 1–2 <em>entkommt</em>.</p>
+        </div>
+      </div>
+      <p><strong>Spannung:</strong> Beide nennen die tiefste Schicht „irreduzibel" — A meint damit einen <em>lokalisierten, in-Modell studierbaren Kern</em> (unerklärbar, aber erreichbar), B meint einen <em>jenseits-Modell liegenden Exzess, den keine Verfeinerung erreicht</em> (unerreichbar). Inkompatibel darüber, was „irreduzibel" epistemisch leistet.</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 2 · Ein extremaler Ausschlag entscheidet (A) vs. zwei orthogonal nicht-reduzible Achsen (B)</span>
+      <div class="ab">
+        <div class="tagA">
+          <div class="who">A · n3-007</div>
+          <p>Die Entscheidung kollabiert auf <strong>einen</strong> Extremwert: <strong>global = min<sub>i</sub>(Inhalt<sub>i</sub>)</strong>; „ein einziger kollidierender Overlap senkt das Minimum auf ≈ 0 und bricht das Ganze, selbst wenn fast alle Punkte gesund sind". Das Minimum ist <em>der</em> Ausschlag — eine skalare, extremale Entscheidung, modifiziert nur durch das Quellen-Label.</p>
+        </div>
+        <div class="tagB">
+          <div class="who">B · n3-022</div>
+          <p>Der Verlust zum Ganzen ist <strong>essenziell biaxial</strong>: ein <strong>Produkt zweier senkrechter Achsen</strong> (Präsentation × Typ) / zwei orthogonal<strong>er</strong> Lückentypen (Domäne/Fovea lokal × Wahrheit/Situs global), „keiner zum anderen reduzierbar" — Δ „bleibt auf seiner eigenen Achse". Es gibt <em>kein</em> einzelnes Minimum, das das Ganze entscheidet.</p>
+        </div>
+      </div>
+      <p><strong>Spannung:</strong> Reduziert sich die tief entscheidende Struktur auf <em>einen Extremwert (ein Minimum, das alles entscheidet)</em> (A) oder ist sie <em>irreduzibel zweidimensional (zwei orthogonale Achsen, die separat benannt werden müssen)</em> (B)? A ist monovalent-extremal, B ist biaxial.</p>
+    </div>
+
+    <div class="callout bad">
+      <span class="cl">Widerspruch 3 · Die Tiefe ist ein internes Objekt der Geometrie (A) vs. eine Grenz-Lücke Modell↔Ding (B)</span>
+      <div class="ab">
+        <div class="tagA">
+          <div class="who">A · n3-007</div>
+          <p>Das Residual ist <strong>endogen — dem Gegenstand innewohnend</strong>, ein Objekt der <em>eigenen nativen Koordinatengeometrie</em> (Residuum × Lücke; Qualitätsdimensionen × Ähnlichkeit). Methode: „Attraktor/Nullmodell festlegen → subtrahieren → das Übrige studieren". Die Tiefe ist <em>im</em> Modell, innerhalb der eigenen Koordinaten, gewonnen durch Subtraktion der Baseline.</p>
+        </div>
+        <div class="tagB">
+          <div class="who">B · n3-022</div>
+          <p>Das wirklich irreduzible tiefe ist die <strong>Korrespondenz-Lücke zwischen Modell und Ding</strong> — „die Lücke <em>zwischen</em> <em>jedem</em> Modell (noch so fein) und der Wirklichkeit", die Achse „vom Modell zum Ding". Es ist <em>keine</em> Eigenschaft der Systemkoordinaten, sondern eine Eigenschaft der <em>Abbildung</em> an der Grenze Modell↔Wirklichkeit.</p>
+        </div>
+      </div>
+      <p><strong>Spannung:</strong> Ist die entscheidende tiefe Schicht ein <em>internes Objekt der Systemgeometrie</em> (A — das Residual, durch Subtraktion im Modell gewonnen) oder eine <em>Grenz-Eigenschaft der Modell↔Ding-Abbildung</em> (B — der Situs, außerhalb jeglicher interner Beschreibung)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3 · Auflösung</h2>
+    <p class="lede">Alle drei Spannungen lösen sich, sobald man „irreduzibel", „Entscheidung" und „Tiefe" als <strong>höhenabhängig</strong> liest: A spricht über die tiefe Schicht <em>innerhalb des Modells</em>, B über dieselbe Architektur <em>an der Grenze zum Ding</em>. B's eigener Brückenschlag („zwei Höhen von Ganz") wird hier zu A's Minimum überhöht.</p>
+
+    <h3>1 → „Irreduzibel" ist höhenabhängig: der beschränkte Kern (A) und der unerreichte Situs (B) sind dieselbe Tiefe auf zwei Höhen</h3>
+    <p>A's offener Kern und B's Situs sind <em>dasselbe</em> „irreduzibel", gelesen auf zwei Höhen. <strong>Innhalb des Modells</strong> ist die irreduzible Tiefe ein <em>beschränkter, lokalisierter Kern</em> — das Minimum markiert ihn exakt, und man studiert ihn an Ort (A: „beschränkt und lokalisiert — aber möglicherweise irreduzibel"). <strong>An der Grenze zum Ding</strong> ist dieselbe Tiefe der <em>jenseitige Exzess</em> Δ&gt;0, den keine Verfeinerung erreicht (B: „jenseits des Modells, unerreichbar"). Fusioniert: „irreduzibel" ist <em>nicht</em> eine absolute Eigenschaft, sondern eine <em>relativ zur Höhe</em> — in-Modell ist sie ein studierbarer Kern (unerklärbar durch die Maske, aber berührbar); jenseits-Modell ist sie ein unerreichter Horizont. A's Ehrlichkeit („der Kern kann intrinsisch unerklärbar sein") und B's Grenze („Kohärent ≠ wahr") sind <em>dieselbe Ehrlichkeit auf zwei Höhen</em>.</p>
+
+    <h3>2 → Das Minimum ist der Schatten der in-Modell-Achse — und nicht das Ganze (B)</h3>
+    <p>A's „min entscheidet" und B's „zwei Achsen" sind <em>nicht</em> konkurrierend — das Minimum ist der <strong>Extremwert-Projektion entlang der in-Modell-Achse</strong>. Es ist echt und entscheidet die <em>in-Modell-Frage</em> (ist die Kohärenz intakt? wo sitzt der Kern?). Aber es ist der <em>Schatten</em> einer Achse, nicht das Ganze: die <strong>orthogonale jenseits-Achse</strong> (B's Δ) wird von <em>keinem</em> Minimum und <em>keiner</em> Auflösung berührt — Δ&gt;0 bleibt auf seiner eigenen Achse. Fusioniert: <strong>das Minimum entscheidet die in-Modell-Frage; die zweite Achse ist genau das, was kein Minimum erreicht.</strong> „Ein Minimum, das alles entscheidet" (A) wird zu „das Minimum entscheidet die in-Modell-Frage; die ganze Wahrheit braucht die zweite, senkrechte Achse" (B). Das ist B's Brückenschlag, auf A's Minimum angewandt: A's Hierarchie lebt <em>im</em> Modell, B's Δ lebt <em>außerhalb</em>.</p>
+
+    <h3>3 → Zwei Gesichter der Tiefe: das interne Residual (A) und die Grenz-Lücke (B)</h3>
+    <p>A's endogenes Residual und B's Situs sind die <em>zwei Gesichter</em> der tiefen Schicht. <strong>Das innere Gesicht</strong> (A): ein Objekt der eigenen Geometrie, durch Subtraktion der Maske im Modell gewonnen — das Residual als „Physik" des Systems, lesbar in seinen eigenen Koordinaten. <strong>Das Grenz-Gesicht</strong> (B): die Lücke zwischen <em>jeder</em> Beschreibung und dem Ding selbst, eine Eigenschaft der Abbildung, nicht der Koordinaten — sie wächst nicht, wenn man feiner subtrahiert. Fusioniert: Jedes behandelte System trägt <em>beide</em>. Die Methode wird zweistufig: <strong>erst</strong> die Maske subtrahieren, um das <em>interne Residual</em> zu lesen (A); <strong>dann</strong> nach dem <em>Grenz-Δ</em> fragen, das <em>keine</em> Subtraktion erreicht (B). „Residual" (A) und „Situs" (B) sind nicht dieselbe Lücke, sondern zwei Gesichter derselben zweischichtigen Architektur — und die Maske/der Quotient (Schicht 1) vergisst <em>beide</em>.</p>
+
+    <div class="callout good">
+      <span class="cl">Fusionierter Schluss</span>
+      <p>Ein System ist ein <em>zweischichtiger Schatten</em>: Schicht 1 (Form/Attraktor = Quotient/1-Trunkierung) ist eine <strong>Maske</strong> — notwendig, nie hinreichend, lässt Falle <em>und</em> Exzess passieren. Die tiefere Schicht hat zwei Gesichter: <em>das in-Modell-Rest</em> (lesbar, lokalisiert, sein Minimum entscheidet die in-Modell-Frage, seine Quelle wählt die Reparatur: studieren/verkleben/restriktieren) und <em>das jenseitige Δ</em> (orthogonale Achse, „Kohärent ≠ wahr", die keine Auflösung und kein Minimum erreicht). „Irreduzibel" ist höhenabhängig — in-Modell ein studierbarer Kern, jenseits-Modell ein unerreichter Horizont. Die intakte Maske ist in allen eine <strong>Maske</strong>; nur die tiefere Schicht, auf <em>beiden</em> Höhen gelesen, offenbart die Wahrheit.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4 · Fusionierter Inhalt</h2>
+    <p class="lede">Abstrahiert auf die Ebene der Thesen der beiden Runde-3-Papiere, so verdichtet, dass eine spätere Runde allein von dieser Karte weiterarbeiten kann.</p>
+
+    <h3>0 · Das gemeinsame Tiefenmuster — ein zweischichtiger Schatten</h3>
+    <p>Beide Papiere lesen „das Behandelte / das Ganze" als <em>Reduktion, die etwas vergisst</em> — und beides ist <em>kategoriale/strukturelle</em>, nicht-metrische Information. <span class="tagA">A</span>: Schicht 1 = Form/Attraktor (die Baseline, „Maske ablegen" = Null-Subtraktion), nötig aber nie hinreichend; Schicht 2 = das Residual (orthogonale Abweichung), die allein entscheidet. <span class="tagB">B</span>: Schicht 1 = grobe Invariante als Quotient/1-Trunkierung („das Behandelte = ein Schatten, der eine kategoriale Schicht vergisst"), klassifiziert aber erinnert nicht; Schicht 2 = die kategoriale Feinstruktur + der Situs. In beiden: die erste Schicht <em>klassifiziert/verbindet/scheint kohärent</em>, ist aber <em>nie hinreichend</em>; die Entscheidung/Wahrheit sitzt tiefer und muss auf ihren eigenen Lesarten abgelesen werden.</p>
+
+    <table>
+      <thead><tr><th>Ebene</th><th>In A (n3-007)</th><th>In B (n3-022)</th><th>Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Schicht 1 · Maske</td><td>Form / Attraktor (Baseline, intakt, nie hinreichend, „die Maske")</td><td>grobe Invariante = Quotient/1-Trunkierung des Feinen (klassifiziert, vergisst)</td><td>die 1-Trunkierung / Schatten — klassifiziert, verbindet, erscheint kohärent, ist nie hinreichend; lässt Falle <em>und</em> Δ passieren.</td></tr>
+        <tr><td class="kv">Tiefe · in-Modell</td><td>das Residual (Feld lokaler Abweichungen; endogen/exogen)</td><td>die kategoriale Feinstruktur (diskret, nicht-wegzudeformierend, „Regler → Klasse")</td><td>das in-Modell-Rest — lesbar, lokalisiert, <em>innerhalb</em> der eigenen Geometrie (durch Subtraktion der Maske gewonnen).</td></tr>
+        <tr><td class="kv">Entscheidung</td><td>global = min<sub>i</sub>(Inhalt<sub>i</sub>); „ein Punkt bricht das Ganze"</td><td>— (kein Minimum; zwei orthogonale Achsen)</td><td>das Minimum = der Extremwert der in-Modell-Achse (der Ausschlag für die in-Modell-Frage).</td></tr>
+        <tr><td class="kv">Tiefe · jenseits</td><td>(offener Kern — aber <em>innerhalb</em> studierbar)</td><td>der Situs (Δ&gt;0, global, unerreichbar, „Kohärent ≠ wahr")</td><td>das jenseitige Δ — orthogonale Achse, die <em>kein</em> Minimum und <em>keine</em> Auflösung erreicht.</td></tr>
+        <tr><td class="kv">Quelle / Typ</td><td>endogen / exogen / selbstvergiftend</td><td>zwei Lückentypen (Domäne/Fovea lokal × Wahrheit/Situs global)</td><td>wählt die Reparatur (studieren/verkleben/restriktieren) <em>und</em> benennt die Achse (Präsentation × Typ).</td></tr>
+        <tr><td class="kv">Gesichter des Ganzen</td><td>(eine Schicht: der Kern <em>ist</em> das Objekt)</td><td>(i) feinster Punkt innerhalb des Modells (vollständig) (ii) Situs jenseits (unerreichbar)</td><td>das Ganze = (i) in-Modell-Rest (Minimum + Kern) × (ii) jenseitiges Δ — zwei senkrechte Achsen des Verlusts.</td></tr>
+        <tr><td class="kv">Haltung / Regel</td><td>„Maske ablegen, Residual studieren"</td><td>„benenne deine Auflösung <em>und</em> deine Wahrheitsschicht"</td><td>die erweiterte epistemische Regel (s. u.).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Beitrag von A (n3-007) — die Entscheidungssseite</h3>
+      <p>Zwei Schichten: Form/Attraktor (Maske) + Residual (orthogonal). Die Entscheidung ist <em>extremal</em>: global = Minimum über alle lokalen Overlaps; ein kollidierender Punkt bricht das Ganze. Die <em>Quelle</em> der Abweichung wählt die <strong>dreiteilige</strong> Reparatur: <strong>imponiert/exogen → verkleben/heilen</strong> (Rückkehr zum Attraktor); <strong>selbstvergiftend/irreduzibel → restriktieren/austreten</strong> (kohärentes Teilsystem); <strong>intrinsisch/endogen → studieren an Ort</strong> (keine Pathologie, die Abweichung <em>ist</em> der Gegenstand). Drei Zustände: <em>Gleichgewicht/Garbe</em> (Maske intakt, min hoch), <em>offener Kern</em> (endogen, Min lokalisiert den Kern), <em>Falle/Prägarbe</em> (exogen/selbstvergiftend, min ≈ 0).</p>
+      <div class="formula">gesund ⟺ [ Form/Attraktor intakt ≥ F* ] ∧ [ min<sub>i</sub>(Residual<sub>i</sub>) ≥ C* ] &nbsp;·&nbsp; Reparatur = f( Quelle: endogen / exogen / selbstvergiftend )
+        <span class="cap">Das Minimum ist der Ausschlag (C* = 50). Das volle Residual-Feld ist das Objekt, das Minimum das Kriterium. Quelle → studieren / verkleben / restriktieren.</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Beitrag von B (n3-022) — die ontologische Seite</h3>
+      <p>Ein behandeltes Objekt ist eine <em>verlustbehaftete Reduktion des Ganzen</em>; der Verlust ist <strong>kategoriale Information</strong>, keine bloße Unvollständigkeit auf einer groben Skala. „Grob ist der Quotient, der das Feine vergisst — und das Feinste ist noch nicht das Ganze, sondern nur kohärent, nicht wahr." <strong>„Regler → Klasse"</strong>: kontinuierliche Knöpfe steuern diskrete kategoriale Zustände. <strong>Zwei orthogonale Achsen des Verlusts</strong>: <em>Präsentation</em> (lokal/Kegel-Punkt ↔ global/Twist — <em>wo</em> sichtbar) × <em>Typ/Wahrheitsschicht</em> (Domäne/Fovea ↔ Korrespondenz/Situs — <em>was</em> für eine Lücke). <strong>Drei Wahrheitsschichten</strong>: Kohärenz/Verklebung → interne logische Konsistenz (Ω/Heyting) → Korrespondenz mit dem Situs (Δ&gt;0, Schicht 3 entkommt 1–2). <strong>Zwei Gesichter des Ganzen</strong>: (i) das feinste Objekt <em>innerhalb</em> des Modells (vollständig, durch Verfeinerung erreichbar) und (ii) das Ding <em>jenseits</em> (Situs, unerreichbar). A's strikte Eindeutigkeit (1-Garbe) ist der <strong>1-trunkierte Schatten</strong> von B's kohärenter Äquivalenz.</p>
+      <div class="formula">Verlustraum = Präsentation (A) × Typ (B) &nbsp;·&nbsp; Kohärent ≠ wahr &nbsp;·&nbsp; Δ&gt;0 bleibt bei jeder Auflösung<br>
+      &nbsp;&nbsp;&nbsp;Ganz = ( feinster Punkt innerhalb des Modells, erreichbar ) ⊕ ( Situs jenseits, unerreichbar )
+        <span class="cap">Die Auflösungenhierarchie (A) liegt <em>über</em> den Schichten: jede grobere Ebene ist eine Trunkierung. Der Situs (Schicht 3) ist die einzige Schicht, die die Auflösungsachse prinzipiell nicht erreicht.</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Die fusionierte Architektur — zwei Schichten, zwei Gesichter, zwei Achsen</h3>
+      <p>Das fusionierte System trägt vier Markierungen zugleich: die <strong>Maske</strong> (Schicht 1, nie hinreichend), das <strong>in-Modell-Rest</strong> (Minimum = Ausschlag), die <strong>Quelle</strong> (wählt die Reparatur) und das <strong>jenseitige Δ</strong> (orthogonale Achse). Die Regime, fusioniert aus A's drei Zuständen und B's „zwei Gesichern":</p>
+      <ol>
+        <li><strong>Gleichgewicht / Garbe:</strong> Maske intakt, in-Modell-Minimum hoch, Δ&gt;0 vorhanden → kohärent <em>innerhalb</em>; das jenseitige Δ bleibt. (Beide.)</li>
+        <li><strong>Offener Kern (endogen):</strong> Maske intakt (≠ hinreichend), intrinsischer Kern — in-Modell <em>beschränkt &amp; lokalisiert</em> (Minimum markiert ihn), jenseits <em>unerreichbar</em> (Δ). Kein Defekt: <em>studieren an Ort</em>. Urteil: „entscheidbare Hülle, offene, höhenabhängig-irreduzible Mitte".</li>
+        <li><strong>Falle (exogen):</strong> Maske intakt (≠ hinreichend), Manipulations-Overlaps → in-Modell-Minimum ≈ 0. <em>Verkleben/heilen</em> (imponierte Störung entfernen).</li>
+        <li><strong>Falle, selbstvergiftend:</strong> Maske intakt (≠ hinreichend), Verklebung unmöglich → <em>restriktieren/austreten</em> (einziger kohärenter Zug). Δ&gt;0 bleibt auf seiner Achse — <em>der</em> Hinweis, dass nicht nur in-Modell etwas kaputt ist, sondern auch jenseits.</li>
+      </ol>
+      <p class="lede" style="margin-top:.6rem"><strong>Der Konvergenzpunkt — die Maske:</strong> A's „Maske ablegen" (Null-Subtraktion) und B's „Form/Quotient reicht nicht" sind dieselbe Warnung. Die <em>erfüllte</em> erste Schicht ist eine Maske, die sowohl die in-Modell-Falle (min ≈ 0) <em>als auch</em> den jenseitigen Exzess (Δ&gt;0) passieren lässt. Genau deshalb ist sie <em>notwendig, aber nie hinreichend</em>.</p>
+    </div>
+
+    <div class="callout good">
+      <span class="cl">Fusionierte epistemische Regel</span>
+      <p>Benenne <strong>drei</strong> Dinge, nicht zwei: <em>(1) deine Maske / deinen Attraktor / deinen Quotienten</em> (die Schicht, die klassifiziert, aber nie hinreichend ist) — <em>(2) dein in-Modell-Minimum / dein Residual</em> (der Ausschlag für die in-Modell-Frage + seine Quelle, die die Reparatur wählt) — <em>und (3) dein jenseitiges Δ / deine Wahrheitsschicht</em> (die orthogonale Achse, die kein Minimum und keine Auflösung erreicht). Genau am Schnittpunkt dieser Markierungen — Maske / Minimum / Δ — liegt die Antwort auf die eigene Frage. A's „nenne deine Auflösung und dein offenes Problem" und B's „benenne deine Auflösung <em>und</em> deine Wahrheitsschicht" werden zu: <em>benenne Maske, Minimum und Δ.</em></p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5 · Visualisierung — die Maske, das in-Modell-Minimum, das unerreichbare Δ</h2>
+    <p class="lede">Ein einziger Mechanismus trägt die fusionierte These. <strong>Links</strong> (A): die <strong>flache Linie (Maske/Attraktor/Quotient)</strong> ist in <em>allen</em> Regimen intakt — sie ist die <strong>Maske</strong>, „nie hinreichend". Das <strong>zackige Feld (in-Modell-Rest/Residual)</strong> ist der Gegenstand; die <strong>gestrichelte Linie ist das in-Modell-Minimum</strong> (der Ausschlag). Wähle die <strong>Quelle</strong> (Gleichgewicht / Endogen / Exogen / Selbstvergiftung): endogen = breiter, verteilter Kern; exogen = scharfe Kollisions-Overlaps; selbstvergiftend = Verklebung unmöglich. Der <strong>Auflösungs-Regler</strong> (B) steuert, wie viel <em>feine</em> In-Struktur sichtbar wird (grob → fein). <strong>Rechts</strong> (B): die <strong>orthogonale Achse</strong> — die <strong>Situs-Bande Δ&gt;0</strong> ganz oben ist <em>unerreichbar</em>: der „Erreichungs"-Zeiger klettert mit der Auflösung, erreicht aber die Δ-Bande <em>nie</em> („Kohärent ≠ wahr", Δ bleibt bei jeder Auflösung). Alle Daten inline, kein Netzwerk.</p>
+    <div class="viz-wrap">
+      <div class="controls">
+        <div class="grp"><span class="gl">Quelle der Abweichung (A)</span>
+          <button id="s_gleichgewicht" class="on">Gleichgewicht</button>
+          <button id="s_endogen">Endogen (offener Kern)</button>
+          <button id="s_exogen">Exogen (Falle)</button>
+          <button id="s_selbstvergiftung">Selbstvergiftend</button>
+        </div>
+        <div class="grp rng"><label>Auflösung grob→fein (B) <b id="resVal">70</b></label>
+          <input id="res" type="range" min="0" max="100" value="70"></div>
+        <div class="grp rng"><label>Tiefe der Abweichung <b id="depthVal">60</b></label>
+          <input id="depth" type="range" min="0" max="100" value="60"></div>
+        <label class="check"><input type="checkbox" id="situs" checked> jenseitiges Δ / Situs zeigen (B, global)</label>
+      </div>
+      <canvas id="viz"></canvas>
+      <div class="readout">
+        <div class="chip">Maske / Form / Quotient: <b>85</b> (nie hinreichend)</div>
+        <div class="chip">in-Modell-Minimum (Ausschlag): <b id="sMin">–</b></div>
+        <div class="chip">jenseitiges Δ (B): <b id="sDelta">–</b></div>
+      </div>
+      <div id="verdict"></div>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Maske / Form / Quotient (Schicht 1, intakt, nie hinreichend)</span>
+        <span><i style="background:var(--accent2)"></i>in-Modell-Rest / Residual (Feld)</span>
+        <span><i style="background:var(--accent3)"></i>in-Modell-Minimum (Ausschlag)</span>
+        <span><i style="background:var(--delta)"></i>jenseitiges Δ / Situs (orthogonal, unerreichbar)</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>6 · Provenienz</h2>
+    <a class="src" href="../n3-007.html">
+      <div class="k">A · n3-007.html</div>
+      <div class="t">Form ist die Maske — der Attraktor als Basisschicht, das Residual-Minimum als Entscheidung (Runde 3)</div>
+      <div class="d">Ein System ist gesund/kohärent genau dann, wenn (i) Form/Attraktor (die Baseline, die Maske) intakt ist — notwendig, nie hinreichend — und (ii) das Minimum über alle lokalen Abweichungen die Schwelle überschreitet. Das Residual (endogen/exogen) ist der Gegenstand; die Quelle wählt die dreiteilige Reparatur (studieren/verkleben/restriktieren). Fusion aus n2-015 (Attraktor/Residual) × n2-011 (Form/Inhalt, min, Garben).</div>
+    </a>
+    <a class="src" href="../n3-022.html">
+      <div class="k">B · n3-022.html</div>
+      <div class="t">Das Ganze als Quotient und seine zwei Lücken — Auflösung (A) × Wahrheitsschicht (B) (Runde 3)</div>
+      <div class="d">Ein behandeltes Objekt ist eine verlustbehaftete Reduktion des Ganzen; der Verlust ist kategoriale Information auf zwei orthogonalen Achsen (Präsentation × Typ). „Grob ist der Quotient, der das Feine vergisst; das Feinste ist noch nicht das Ganze, sondern nur kohärent, nicht wahr." Zwei Gesichter des Ganzen: feinster Punkt innerhalb des Modells (erreichbar) × Situs jenseits (Δ&gt;0, unerreichbar). Fusion aus n2-023 (Auflösungsachse) × n2-027 (Wahrheitsschicht/Situs).</div>
+    </a>
+    <footer>Fusion #007 · Runde 4 · Alle Inhalte stammen aus den beiden Quellpapieren (n3-007, n3-022); die Visualisierung ist eine selbstgeschriebene, themenreaktive Canvas-Darstellung der fusionierten These (Maske als Schicht 1, in-Modell-Rest mit Minimum als Ausschlag, jenseitiges Δ als orthogonale unerreichbare Achse).</footer>
+  </section>
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var root = document.documentElement;
+  var cv = document.getElementById('viz');
+  var N = 64, FORM = 85, CSTAR = 50;
+  var state = { source:'gleichgewicht', res:70, depth:60, situs:true };
+
+  var DELTA = (function(){
+    var s=0, n=0;
+    for(var i=0;i<240;i++){
+      var th=i/240*2*Math.PI;
+      var v=0.52+0.16*Math.cos(2*th)+0.09*Math.cos(3*th);
+      s+=v*v; n++;
+    }
+    return Math.sqrt(s/n);
+  })();
+
+  function varc(n){ try{ return getComputedStyle(root).getPropertyValue(n).trim(); }catch(e){ return ''; } }
+  function isDark(){ return root.classList.contains('dark'); }
+  function clamp01(v){ return v<0?0:(v>1?1:v); }
+  function rgba(hex,a){
+    hex=(hex||'').trim();
+    if(hex.charAt(0)==='#'){
+      var c=hex.slice(1);
+      if(c.length===3){ c=c.charAt(0)+c.charAt(0)+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2); }
+      var nn=parseInt(c,16);
+      if(isNaN(nn)) return 'rgba(120,120,120,'+a+')';
+      return 'rgba('+((nn>>16)&255)+','+((nn>>8)&255)+','+(nn&255)+','+a+')';
+    }
+    return hex;
+  }
+
+  function residual(){
+    var f=new Array(N), i;
+    var fine=state.res/100;
+    for(i=0;i<N;i++){ f[i]=70 + 4*fine*Math.sin(i*0.5) + 2*fine*Math.sin(i*1.7+1); }
+    var d=state.depth/100;
+    if(state.source==='endogen'){
+      var c=40, w=9;
+      for(i=0;i<N;i++){ var x=(i-c)/w; f[i]-=d*45*Math.exp(-x*x); }
+    } else if(state.source==='exogen' || state.source==='selbstvergiftung'){
+      var cs=[30,48];
+      for(var k=0;k<cs.length;k++){ var cc=cs[k], w2=1.6;
+        for(i=0;i<N;i++){ var x2=(i-cc)/w2; f[i]-=d*82*Math.exp(-x2*x2); } }
+    }
+    return f;
+  }
+  function fieldMin(f){ var m=Infinity; for(var i=0;i<N;i++){ if(f[i]<m)m=f[i]; } return m; }
+
+  function repair(){
+    if(state.source==='gleichgewicht') return {t:'Gleichgewicht / Garbe: Maske intakt (≠ hinreichend) ∧ in-Modell-Minimum hoch → kohärent innerhalb. Das jenseitige Δ>0 bleibt auf seiner Achse.', col:'good'};
+    if(state.source==='endogen') return {t:'Offener Kern (endogen): Maske intakt (≠ hinreichend!), intrinsischer Kern → studieren an Ort. in-Modell-Minimum lokalisiert den Kern; Δ>0 = die jenseitige, unerreichbare Achse.', col:'accent3'};
+    if(state.source==='exogen') return {t:'Falle (exogen): Maske intakt (≠ hinreichend!), Manipulations-Overlaps → in-Modell-Minimum ≈ 0. Heilung: verkleben/heilen (imponierte Störung entfernen).', col:'danger'};
+    if(state.source==='selbstvergiftung') return {t:'Falle, selbstvergiftend: Verklebung unmöglich → restriktieren/austreten (einziger kohärenter Zug). Δ>0 bleibt auf seiner Achse — das jenseitige ist nicht nur in-Modell kaputt.', col:'danger'};
+    return {t:'—', col:'good'};
+  }
+
+  function draw(){
+    if(!cv || !cv.getContext) return null;
+    var W=cv.clientWidth||720, H=470;
+    var dpr=window.devicePixelRatio||1;
+    cv.width=Math.max(1,Math.floor(W*dpr)); cv.height=Math.max(1,Math.floor(H*dpr));
+    var ctx=cv.getContext('2d'); if(!ctx) return null;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+
+    var cText=varc('--text')||'#e8eefc', cDim=varc('--muted')||'#8b9bb8',
+        cGrid=varc('--grid')||'rgba(125,211,252,0.08)',
+        cMask=varc('--accent')||'#6fd6c4', cRes=varc('--accent2')||'#f59e0b',
+        cMin=varc('--accent3')||'#a78bfa', cDelta=varc('--delta')||'#fb923c';
+    var font='12px -apple-system,Segoe UI,system-ui,sans-serif';
+    var fontB='700 12px -apple-system,Segoe UI,system-ui,sans-serif';
+
+    var gaugeW=Math.min(170,Math.round(W*0.26));
+    var gap=18, pl=50, pr=12, pt=36, pb=48;
+    var fx0=pl, fx1=W-gaugeW-gap-pr;
+    var fieldW=Math.max(60,fx1-fx0);
+    var ph=H-pt-pb;
+    var gy0=pt, gy1=H-pb;
+    function X(i){ return fx0 + (i)/(N-1)*fieldW; }
+    function Y(v){ return pt + (1-clamp01(v/100))*ph; }
+
+    ctx.font=font; ctx.textAlign='left'; ctx.strokeStyle=cGrid; ctx.lineWidth=1; ctx.fillStyle=cDim;
+    for(var v=0;v<=100;v+=25){ var yy=Y(v); ctx.beginPath(); ctx.moveTo(fx0,yy); ctx.lineTo(fx1,yy); ctx.stroke(); ctx.fillText(String(v),10,yy+4); }
+
+    var f=residual(), mn=fieldMin(f), fine=state.res/100;
+
+    // residual fill + line
+    ctx.beginPath();
+    for(var i=0;i<N;i++){ var qx=X(i), qy=Y(f[i]); if(i===0) ctx.moveTo(qx,qy); else ctx.lineTo(qx,qy); }
+    ctx.lineTo(X(N-1),Y(0)); ctx.lineTo(X(0),Y(0)); ctx.closePath();
+    ctx.fillStyle=rgba(cRes, isDark()?0.15:0.13); ctx.fill();
+    ctx.strokeStyle=cRes; ctx.lineWidth=2.6; ctx.beginPath();
+    for(var m=0;m<N;m++){ var rx=X(m), ry=Y(f[m]); if(m===0) ctx.moveTo(rx,ry); else ctx.lineTo(rx,ry); }
+    ctx.stroke();
+
+    // mask line (flat, always intact)
+    ctx.strokeStyle=cMask; ctx.lineWidth=3; ctx.beginPath();
+    ctx.moveTo(fx0,Y(FORM)); ctx.lineTo(fx1,Y(FORM)); ctx.stroke();
+    ctx.fillStyle=cMask; ctx.font=fontB; ctx.textAlign='left';
+    ctx.fillText('Maske / Form / Quotient (nie hinreichend)', fx0, Y(FORM)-8);
+
+    // threshold C*
+    ctx.strokeStyle=cDim; ctx.setLineDash([5,4]); ctx.lineWidth=1; ctx.beginPath();
+    ctx.moveTo(fx0,Y(CSTAR)); ctx.lineTo(fx1,Y(CSTAR)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=cDim; ctx.font=font; ctx.fillText('C*='+CSTAR, fx1-30, Y(CSTAR)-4);
+
+    // in-model minimum (decision)
+    ctx.strokeStyle=cMin; ctx.setLineDash([3,3]); ctx.lineWidth=1.6; ctx.beginPath();
+    ctx.moveTo(fx0,Y(mn)); ctx.lineTo(fx1,Y(mn)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=cMin; ctx.font=fontB; ctx.fillText('in-Modell-Minimum = '+Math.round(mn), fx0, Y(mn)+ (mn<20?16: (mn>CSTAR? -6:16)));
+    var minIdx=0; for(var q=1;q<N;q++){ if(f[q]<f[minIdx]) minIdx=q; }
+    ctx.strokeStyle=cMin; ctx.lineWidth=1.1; ctx.beginPath(); ctx.moveTo(X(minIdx),pt); ctx.lineTo(X(minIdx),pt+ph); ctx.stroke();
+    ctx.fillStyle=cMin; ctx.beginPath(); ctx.arc(X(minIdx),Y(f[minIdx]),4,0,Math.PI*2); ctx.fill();
+
+    // ---- right orthogonal gauge (B: two faces, unreachable Δ) ----
+    var gx0=W-gap, gw=gaugeW;
+    ctx.strokeStyle=cGrid; ctx.lineWidth=1;
+    ctx.strokeRect(gx0, gy0, gw, gy1-gy0);
+    var Hh=gy1-gy0;
+    var deltaH=Hh*0.20, deltaTop=gy0, deltaBot=gy0+deltaH;
+    if(state.situs){
+      ctx.fillStyle=rgba(cDelta,0.16); ctx.fillRect(gx0,deltaTop,gw,deltaH);
+      ctx.strokeStyle=cDelta; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+      ctx.strokeRect(gx0,deltaTop,gw,deltaH); ctx.setLineDash([]);
+      ctx.fillStyle=cDelta; ctx.font=fontB; ctx.textAlign='left';
+      ctx.fillText('Situs Δ>0', gx0+6, deltaTop+15);
+      ctx.font=font; ctx.fillText('(jenseits, unerreichbar)', gx0+6, deltaTop+29);
+    }
+    var reachFrac=0.10+0.68*fine;
+    var reachTop=gy1-Hh*reachFrac;
+    var capTop=deltaBot+4;
+    if(reachTop<capTop) reachTop=capTop;
+    ctx.fillStyle=rgba(cRes,0.30); ctx.fillRect(gx0+4, reachTop, gw-8, gy1-4-reachTop);
+    ctx.fillStyle=rgba(cMin,0.95); ctx.fillRect(gx0+4, reachTop-2, gw-8, 3);
+    ctx.fillStyle=cMin; ctx.font=font; ctx.textAlign='left';
+    ctx.fillText('Erreichung (in-Modell)', gx0+6, reachTop-6);
+    // base mask line at bottom of gauge
+    ctx.strokeStyle=cMask; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(gx0+4,gy1-10); ctx.lineTo(gx0+gw-4,gy1-10); ctx.stroke();
+    ctx.fillStyle=cMask; ctx.font=font; ctx.fillText('Maske (Basis)', gx0+6, gy1+16);
+    // unreachable gap indicator
+    if(state.situs){
+      ctx.strokeStyle=cDelta; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+      ctx.beginPath(); ctx.moveTo(gx0+gw-14, reachTop); ctx.lineTo(gx0+gw-14, deltaBot); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // axis labels
+    ctx.fillStyle=cDim; ctx.font=font; ctx.textAlign='left';
+    ctx.fillText('lokale Einheit i (Kopplung / Overlap)', fx0, H-10);
+    var resLabel=fine<0.34?'grob':(fine<0.7?'mittel':'fein');
+    ctx.fillText('Auflösung (B): '+resLabel, fx0, pt-16);
+
+    return { min:mn, idx:minIdx };
+  }
+
+  function updateStats(r){
+    var mEl=document.getElementById('sMin');
+    if(mEl){
+      var m=Math.round(r.min);
+      mEl.textContent=m+(m>=CSTAR?' (in-Modell-kohärent)':' (in-Modell-Falle)');
+      mEl.style.color = m>=CSTAR ? (varc('--good')||'#4ade80') : (varc('--danger')||'#f87171');
+    }
+    var dEl=document.getElementById('sDelta');
+    if(dEl){ dEl.textContent='Δ ≈ '+DELTA.toFixed(2)+' > 0 (bleibt)'; dEl.style.color=varc('--delta')||'#fb923c'; }
+    var vd=repair();
+    var v=document.getElementById('verdict');
+    if(v){
+      v.textContent=vd.t;
+      v.style.color = vd.col==='good' ? (varc('--good')||'#4ade80') : (vd.col==='danger' ? (varc('--danger')||'#f87171') : (varc('--accent3')||'#a78bfa'));
+    }
+  }
+
+  function refresh(){
+    var r=draw();
+    document.getElementById('resVal').textContent=state.res;
+    document.getElementById('depthVal').textContent=state.depth;
+    if(r) updateStats(r);
+  }
+
+  function setBtn(id,on){ var el=document.getElementById(id); if(el) el.classList.toggle('on',!!on); }
+  function syncControls(){
+    ['gleichgewicht','endogen','exogen','selbstvergiftung'].forEach(function(s){
+      var el=document.getElementById('s_'+s); if(el) el.classList.toggle('on', state.source===s);
+    });
+  }
+  function setSource(s){ state.source=s; syncControls(); refresh(); }
+
+  document.getElementById('s_gleichgewicht').onclick=function(){ setSource('gleichgewicht'); };
+  document.getElementById('s_endogen').onclick=function(){ setSource('endogen'); };
+  document.getElementById('s_exogen').onclick=function(){ setSource('exogen'); };
+  document.getElementById('s_selbstvergiftung').onclick=function(){ setSource('selbstvergiftung'); };
+  document.getElementById('res').oninput=function(e){ state.res=+e.target.value; refresh(); };
+  document.getElementById('depth').oninput=function(e){ state.depth=+e.target.value; refresh(); };
+  document.getElementById('situs').onchange=function(e){ state.situs=e.target.checked; refresh(); };
+  document.getElementById('themeToggle').onclick=function(){
+    root.classList.toggle('dark');
+    try{ localStorage.setItem('theme', root.classList.contains('dark')?'dark':'light'); }catch(e){}
+    refresh();
+  };
+  window.addEventListener('resize', function(){ refresh(); });
+
+  syncControls(); refresh();
+})();
+</script>
+</body>
+</html>

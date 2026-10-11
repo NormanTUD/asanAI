@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treuer Kern und zurückziehender Rest — die stratifizierte Schwelle (Runde 4)</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --mn-bg:#f6f4ee; --mn-fg:#1c1a16; --mn-dim:#6f6a5e;
+  --mn-accent:#c0452f; --mn-accent2:#0f766e; --mn-accent3:#b45309;
+  --mn-border:#d8d2c4; --mn-card:#fbfaf5; --mn-card2:#efece2;
+  --mn-ok:#16a34a; --mn-warn:#c0392b;
+  --mn-viz-bg:#f3f1ea; --mn-viz-fg:#1c1a16; --mn-viz-dim:#6f6a5e;
+  --mn-viz-struct:#0f766e; --mn-viz-dot:#c0452f; --mn-viz-past:#b45309; --mn-viz-border:#d8d2c4;
+}
+html.dark{
+  --mn-bg:#0a0a18; --mn-fg:#eceaf2; --mn-dim:#8b8aa0;
+  --mn-accent:#ff7a6a; --mn-accent2:#2dd4bf; --mn-accent3:#fbbf24;
+  --mn-border:#26264a; --mn-card:#12122a; --mn-card2:#0e0e24;
+  --mn-ok:#34d39b; --mn-warn:#f87171;
+  --mn-viz-bg:#0b0b1e; --mn-viz-fg:#eceaf2; --mn-viz-dim:#8b8aa0;
+  --mn-viz-struct:#2dd4bf; --mn-viz-dot:#ff7a6a; --mn-viz-past:#fbbf24; --mn-viz-border:#26264a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--mn-bg);color:var(--mn-fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.66;font-size:16px;transition:background .3s,color .3s;}
+article{max-width:820px;margin:0 auto;padding:30px 20px 80px;}
+h1{font-size:1.82em;line-height:1.2;margin-bottom:8px;letter-spacing:-.01em;}
+.subtitle{color:var(--mn-accent);font-weight:600;font-size:.95em;margin-bottom:10px;}
+.subtitle code{font-size:.82em;background:var(--mn-card);border:1px solid var(--mn-border);padding:1px 6px;border-radius:5px;color:var(--mn-fg);font-weight:600;}
+.kicker{color:var(--mn-dim);letter-spacing:.12em;text-transform:uppercase;font-size:.7rem;margin-bottom:12px;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px;}
+.toc a{font-size:.78em;color:var(--mn-accent2);text-decoration:none;border:1px solid var(--mn-border);padding:4px 11px;border-radius:20px;background:var(--mn-card);}
+.toc a:hover{border-color:var(--mn-accent2);}
+section{background:var(--mn-card);border:1px solid var(--mn-border);border-radius:14px;padding:22px 24px;margin:18px 0;transition:background .3s,border-color .3s;}
+h2{font-size:1.26em;margin-bottom:12px;color:var(--mn-accent);line-height:1.25;}
+h3{font-size:1.03em;margin:18px 0 6px;color:var(--mn-fg);}
+p{margin:10px 0;}
+strong{color:var(--mn-fg);}
+a{color:var(--mn-accent2);}
+.math{font-family:"Times New Roman",Times,serif;font-style:italic;font-weight:600;}
+.A{color:var(--mn-accent);font-weight:700;}
+.B{color:var(--mn-accent2);font-weight:700;}
+ul,ol{margin:10px 0 10px 22px;}
+li{margin:7px 0;}
+.tag{display:inline-block;font-size:.72em;padding:2px 9px;border-radius:12px;margin:2px 2px 2px 0;border:1px solid var(--mn-border);color:var(--mn-dim);background:var(--mn-bg);}
+.wc{border:1px solid var(--mn-border);border-left:4px solid var(--mn-warn);border-radius:10px;padding:13px 16px;margin:14px 0;background:var(--mn-card2);}
+.wc h3{margin-top:0;color:var(--mn-fg);}
+.res{border:1px solid var(--mn-border);border-left:4px solid var(--mn-ok);border-radius:10px;padding:13px 16px;margin:14px 0;background:var(--mn-card2);}
+.res h3{margin-top:0;}
+.callout{border:1px solid var(--mn-border);border-left:3px solid var(--mn-warn);border-radius:10px;padding:11px 15px;margin:12px 0;background:var(--mn-bg);}
+.callout b{color:var(--mn-warn);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem;background:var(--mn-card2);border:1px solid var(--mn-border);border-radius:8px;overflow:hidden;}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--mn-border);vertical-align:top;}
+th{background:var(--mn-card);font-weight:700;}
+tr:last-child td{border-bottom:none;}
+td.a{color:var(--mn-accent);font-weight:700;}
+td.b{color:var(--mn-accent2);font-weight:700;}
+.formal{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.8em;line-height:1.55;background:var(--mn-card2);border:1px solid var(--mn-border);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:pre;color:var(--mn-fg);}
+.note{font-size:.86rem;color:var(--mn-dim);}
+.prov{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--mn-border);}
+.prov:last-child{border-bottom:none;}
+.prov .badge{flex:0 0 auto;font-weight:700;font-size:.85em;color:#fff;background:var(--mn-accent);border-radius:8px;padding:4px 9px;}
+.prov.b .badge{background:var(--mn-accent2);}
+.prov a{color:var(--mn-accent2);text-decoration:none;font-weight:600;word-break:break-all;}
+.prov a:hover{text-decoration:underline;}
+.prov p{margin-top:4px;color:var(--mn-dim);font-size:.92em;}
+.themebtn{float:right;background:var(--mn-card2);color:var(--mn-fg);border:1px solid var(--mn-border);border-radius:20px;padding:5px 14px;font-size:.82rem;cursor:pointer;}
+#vizwrap{position:relative;margin-top:14px;}
+#viz{width:100%;display:block;border-radius:12px;border:1px solid var(--mn-border);background:var(--mn-viz-bg);}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:12px;}
+.controls .sliderbox{display:flex;flex-direction:column;font-size:.76em;color:var(--mn-dim);flex:1 1 210px;min-width:180px;}
+.controls .sliderbox input{width:100%;margin-top:4px;accent-color:var(--mn-accent);}
+.controls .sliderbox input.alt{accent-color:var(--mn-accent2);}
+.controls .sliderbox input.hon{accent-color:var(--mn-accent3);}
+.vizreadout{font-family:"SFMono-Regular",Consolas,monospace;font-size:.84em;line-height:1.6;background:var(--mn-card2);border:1px solid var(--mn-border);border-radius:10px;padding:12px 14px;margin-top:14px;white-space:pre-wrap;color:var(--mn-fg);}
+footer{color:var(--mn-dim);font-size:.82em;text-align:center;margin-top:22px;}
+</style>
+</head>
+<body>
+<article>
+  <button class="themebtn" id="themeBtn" type="button">☀ Licht</button>
+  <p class="kicker">Knockout Synthesis &middot; Runde 4 &middot; Nicht-KI-Track &middot; Pair 011</p>
+  <h1>Treuer Kern und zurückziehender Rest &mdash; die stratifizierte Schwelle</h1>
+  <p class="subtitle">Fusion aus: <code>n3-021.html</code> &times; <code>n3-026.html</code> &nbsp;(Runde 4)</p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Quellen sind selbst schon dreifach synthetisiert (Runde&nbsp;3) und sind, aus entlegenen Domänen kommend &ndash; <span class="A">A</span> aus Garben/HoTT/Logistik, <span class="B">B</span> aus Signal-Homologie/Gleitkomma/Eigenvektoren &ndash; auf <em>denselben</em> Gegenstand gestoßen: <strong>das Objekt ist ein <em>treuer, fester Kern</em> (eine Invariante, der Fixpunkt), den jeder endliche oder lokale Träger nur an einer <em>Schwelle</em> liest, während ein <em>zurückziehender Rest</em> durch ihn fließt.</strong></p>
+    <p><span class="A">A</span> (n3-021) sagt: Das Reale ist eine stabile globale Struktur &ndash; der <em>Fixpunkt</em> eines Verklebungs-/Konvergenzprozesses &ndash; von einer einzigen <em>stratifizierten Invariante</em> gekennzeichnet (eine Treppe mit zwei Lesarten: <em>Identitäts-Leiter</em> <span class="math">=&gt; &asymp; &rarr; &sim;</span> und <em>Auflösungs-Leiter</em> fein&harr;grob); <em>fix als Form, fließend im Inhalt</em>. <span class="B">B</span> (n3-026) sagt: Repräsentation ist eine <em>verlustbehaftete Abbildung</em> <span class="math">T</span> auf einen endlichen Träger; der Wirkraum spaltet in eine <em>treue Invariante</em> (der erfaßbare Schatten, wo gezeigt&nbsp;=&nbsp;gespeichert) &oplus; einen <em>Rest</em> (die Lücke, das Rückziehende, wo gezeigt&nbsp;&ne;&nbsp;gespeichert); die <em>Schwelle</em> (zweikoordiniert: <em>Objektkomplexität</em> &times; <em>Projektoren-Ehrlichkeit</em>) ist der Ort, wo sich Schatten und Rest trennen &ndash; <em>fraktal</em> (lokal lesbar, global nie&nbsp;0) &ndash; und derselbe Rest <em>ruft</em> (unter ehrlicher Abbildung) oder <em>waffnet</em> (unter adversarischer).</p>
+    <p>Die fusionierte Position: <strong>Das Objekt ist ein <em>treuer Kern</em> &ndash; eine Invariante, als Fixpunkt konstituiert, fix als Form &ndash; den ein endlicher Zugang nur an einer <em>stratifizierten, zweikoordinierten, fraktalen Schwelle</em> liest, während ein <em>zurückziehender Rest</em> durch ihn fließt. Das Objekt zu lesen heißt drei Dinge: (1) den <em>treuen Kern</em> (die Invariante) fassen, (2) die <em>Schwelle</em> finden, an der der lesbare Schatten sich vom zurückziehenden Rest trennt, und (3) erkennen, dass <em>dieselbe Rest-Struktur</em> unter ehrlicher Abbildung <em>ruft</em> (der Ursprung) und unter adversarischer <em>waffnet</em> (das Double-Bind). Der Rest ist als <em>Inhalt</em> entbehrlich (A) und als <em>Struktur des Rückziehens</em> das Wertvollste (B) &ndash; beides ist derselbe Rest, gelesen auf verschiedenen Stufen derselben Treppe.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere schließen sich nicht aus &ndash; sie sind, wie <span class="B">B</span> selbst sagt, „die zwei Projektionen einer einzigen Abbildung", und wie <span class="A">A</span> sagt, zwei Lesarten <em>einer</em> stratifizierten Invariante. Auf drei konkrete Meta-Fragen nehmen sie aber <strong>incompatible Stellungen</strong> ein:</p>
+
+    <div class="wc">
+      <span class="tag">W1 &middot; Der Status des Rests</span>
+      <h3>Ist der Rest <em>entbehrlicher Wegwerfteil</em> (A) oder <em>das Wertvollste</em> (B)?</h3>
+      <p><strong>A (n3-021):</strong> Der Rest &ndash; der <em>fließende Inhalt</em>, das Partikuläre (welche Primzahl, welche Occasion) &ndash; ist „der <em>Wegwerfteil</em>"; er „fließt bzw. wird verworfen", „ihre individuelle Identität wird verworfen, nur die Invariante bleibt". Der Rest ist das, was man hinter sich lässt; nur die <em>Form</em> bleibt.</p>
+      <p><strong>B (n3-026):</strong> Der Rest &ndash; das <em>Rückziehende</em>, das Loch, der Zykel-ohne-Rand &ndash; ist „<em>was übrig bleibt, ist das Wertvollste &ndash; nicht etwas, das man wegwünscht</em>". Der Rest ist „das Bedenklichste &ndash; das, was das Denken <em>ruft</em>", „generativ, der Ursprung, eine Einladung zum Denken". Der Rest ist das, was <em>gehalten</em> wird.</p>
+      <div class="callout"><b>Spannung:</b> A <em>verwirft</em> den Rest (entbehrlich, Wegwerfteil); B <em>erhebt</em> denselben Rest zum Wertvollsten (Ruf, Ursprung). Derselbe „Rest" (was keine endliche Invariante erschöpft), entgegengesetzte Bewertung.</div>
+    </div>
+
+    <div class="wc">
+      <span class="tag">W2 &middot; Die Schwelle: erreicht vs. asymptotisch</span>
+      <h3>Ist die Schwelle ein <em>erreichter, all-oder-nichts-Fixpunkt</em> (A) oder eine <em>fraktale Asymptote</em> (B)?</h3>
+      <p><strong>A (n3-021):</strong> „Das globale Ganze <em>existiert oder existiert nicht</em> &ndash; eine saubere Existenzschwelle"; das Ganze ist „ein <em>kristallisierter Gegenstand</em> (existiert gdw. kompatibel &ndash; ein statischer Fakt)". Die Treppe ist <em>abgeschlossen</em> &ndash; unten feinste Identität (Set), oben der Kollaps (Univalenz <span class="math">&#8773;&equiv;=</span>). Die Schwelle wird <em>erreicht</em>; der Fixpunkt <em>ist</em>.</p>
+      <p><strong>B (n3-026):</strong> „<em>Volle Treue ist eine Asymptote, kein erreichter Zustand</em>" (der ULP wird nie null, der Fehler summiert sich über alle Größenordnungen). Die Schwelle ist <em>fraktal</em> &ndash; „endlos wiederkehrend": an jeder Skala wird eine Lesbarkeits-Schwelle übersprungen, an jeder zieht sich ein feinerer Rest zurück. „A's 'vollständige' Lesbarkeit ist immer Lesbarkeit in <em>endlicher</em> Auflösung; B's 'nie vollständig' ist die <em>Summe über alle</em> Auflösungen."</p>
+      <div class="callout"><b>Spannung:</b> A's Schwelle ist <em>ein einziger harter Fixpunkt</em>, der erreicht wird (all-oder-nichts); B's Schwelle ist eine <em>fraktale Asymptote</em>, die lokal übersprungen, global nie geschlossen wird.</div>
+    </div>
+
+    <div class="wc">
+      <span class="tag">W3 &middot; Der Grund: objektiv vs. normativ</span>
+      <h3>Ist das Reale in <em>objektiver Struktur ohne Subjekt</em> begründet (A) oder wandert die Schwelle mit der <em>Ehrlichkeit/Intention des Projektors</em> (B)?</h3>
+      <p><strong>A (n3-021):</strong> „Das Ganze braucht keinen Erfahrenden &ndash; es ist <em>reines, objektives Verkleben</em>. Kein Subjekt, kein Fühlen." Wahrheit/Realität = <em>Koh&auml;renz &times; Korrespondenz</em> &ndash; objektive, zählbare Kriterien; die Invariante wird abgelesen, nicht gewählt. Kein Begriff von <em>Missbrauch</em> oder <em>Waffe</em>.</p>
+      <p><strong>B (n3-026):</strong> „Die Schwelle <em>verschiebt sich mit der Ehrlichkeit des Projektors</em> (ehrliches vs. adversariales P). Sie ist <em>relational/normativ</em>, nicht eine feste Zahl." „Die Lücke wird zur <em>Waffe</em>, wenn ein Agent sie füttert" (Gaslighting, Double-Bind &ndash; „eine Abbildung, die mit <em>keiner</em> ehrlichen Eingabe kommutiert"). Die Schwelle hängt von einer <em>Intention</em> ab.</p>
+      <div class="callout"><b>Spannung:</b> A gründet das Reale in <em>objektiver, zählbarer Struktur</em> (wertfrei, ohne Subjekt); B macht die Schwelle <em>relational/normativ</em> abhängig (Ehrlichkeit, Intention des Projektors) und führt eine <em>moralische Dimension</em> (Ruf vs. Waffe) ein, die A's Gerüst keinen Platz einräumt.</div>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <p>Alle drei Spannungen lösen sich auf, sobald man sieht, dass sie Projektionen <em>eines</em> Gegenstands auf verschiedene <em>Ebenen</em> (Stufen der Treppe) bzw. verschiedene <em>Koordinaten</em> der einen Schwelle sind &ndash; Ebenen und Koordinaten, die beide Papiere selbst benennen.</p>
+
+    <div class="res">
+      <h3>R1 (f&uuml;r W1) &mdash; Der Rest hat je nach Stufe zwei Gesichter: als Inhalt entbehrlich, als Struktur das Wertvollste.</h3>
+      <p><span class="A">A</span> liest den Rest auf der <em>Inhalt-Ebene</em> (das Individuelle/Partikuläre) und findet ihn entbehrlich &ndash; denn auf der Ebene der stabilen Form bleibt „nur die Invariante" (A's Spirale „vergisst, welche Primzahl welche ist, und behält nur die Arme"). <span class="B">B</span> liest denselben Rest auf der <em>Struktur-Ebene</em> (das Rückziehende = das <em>Muster des Flusses</em>, das nicht erschöpfte Loch) und findet ihn das Wertvollste &ndash; denn genau das ist es, was keine endliche Invariante erschöpft, der Ort, an dem das Objekt sich zeigt. <strong>Fusion:</strong> die Valenz des Rests = seine Stufe. Das <em>einzelne</em> Teil ist beide Male Wegwerfteil (damit stimmen beide überein); die <em>Struktur des Rests</em> (die Lücke, die Invariante des Flusses) ist das Wertvollste (B) = A's stabile Form. „Nur die Invariante bleibt" (A) <em>ist</em> „was übrig bleibt, ist das Wertvollste" (B) &ndash; der <em>Überschuss</em> ist die Form, und B lokalisiert den Wert genau in diesem Überschuss.</p>
+    </div>
+
+    <div class="res">
+      <h3>R2 (f&uuml;r W2) &mdash; A's Fixpunkt ist B's Schwelle <em>an einer Skala</em>; B's Fraktal ist A's Treppe <em>über alle Stufen</em>.</h3>
+      <p>A's „existiert gdw. kompatibel" <em>ist</em> B's „an <em>dieser</em> Skala wird die Lesbarkeits-Schwelle übersprungen" &ndash; lokal, an einer Skala, ist der Kern tatsächlich erreicht, wohldefiniert und <em>eindeutig</em> (B: „in diesem Band no false neighbors"). B's „nie vollständig" ist die <em>Summe über alle</em> Skalen: an jeder höheren Stufe zieht sich ein feinerer Rest zurück. <strong>Fusion:</strong> die Schwelle ist <em>als Fixpunkt je Skala</em> konstituiert (A: erreicht, eindeutig, statisch ablesbar) und <em>fraktal über alle Skalen</em> wiederkehrend (B: global nie erschöpft). „Fix als Form, fließend im Inhalt" (A) <em>ist</em> „lokal lesbar, global nie geschlossen" (B): die <em>Form</em> ist auf jeder Stufe fix (A's Fixpunkt), der <em>Inhalt/Tiefgang</em> fließt über die Stufen hinweg (B's Asymptote). A's all-oder-nichts-Existenz ist <em>je Stufe</em>; B's nie-vollständig ist <em>der ganze Stapel</em> der Stufen.</p>
+    </div>
+
+    <div class="res">
+      <h3>R3 (f&uuml;r W3) &mdash; Objektive Struktur (A) und Projektoren-Ehrlichkeit (B) sind die <em>zwei Koordinaten</em> derselben Schwelle.</h3>
+      <p><span class="B">B</span> selbst sagt: „die Schwelle hat <em>zwei Koordinaten</em>" &ndash; <em>Objektkomplexität</em> (A's <span class="math">m</span>) und <em>Projektoren-Ehrlichkeit</em> (B's <span class="math">h</span>). A hält den Projektor <em>implizit ehrlich</em> und liest die objektive Koordinate (die zählbare Invariante/den Dimensionswert); B hält das Objekt fest und variiert die normative Koordinate (Ehrlichkeit/Intention). <strong>Fusion:</strong> die wahre Schwelle ist das <em>Wechselwirken beider</em>. A's wertfreie „Koh&auml;renz &times; Korrespondenz" ist der <em>ehrliche Fall</em> (der Projektor kommutiert, das Quadrat schließt, der Rest <em>ruft</em>); B's adversarieller Fall ist, was passiert, wenn A's <em>Korrespondenz</em> von einem Subjekt <em>gebrochen</em> wird &ndash; das Double-Bind <em>ist</em> A's „Fantasy" (eine koh&auml;rente Struktur <em>ohne</em> Kontakt zum echten W), die von einem Agenten übernommen und <em>gewaffnet</em> wird. Die moralische Dimension (Waffe) ist also keine neue Struktur, sondern A's Rest <em>unter einem korruptierten Projektor</em>; B's Norm ist der <em>Schatten</em> von A's Korrespondenzprinzip, sobald ein Subjekt eingreift.</p>
+    </div>
+
+    <div class="res" style="border-left-color:var(--mn-accent);">
+      <h3>Gefasster Schluss</h3>
+      <p>Ein Gegenstand, eine Abbildung, eine Schwelle. <strong>Das Objekt ist ein treuer, fester Kern (eine Invariante, als Fixpunkt je Skala konstituiert), den ein endlicher Träger an einer stratifizierten, zweikoordinierten, fraktalen Schwelle liest, während ein zurückziehender Rest durch ihn fließt &ndash; entbehrlich als Inhalt, das Wertvollste als Struktur; die Schwelle steht, wie hoch die Objektkomplexität sie setzt (A), und ist erreichbar, wie ehrlich der Projektor ist (B); der Rest ruft, wenn die Abbildung ehrlich ist, und waffnet, wenn sie korrupt ist.</strong> „Fix als Form, fließend im Inhalt" (A) und „Schatten &oplus; Lücke an der fraktalen Schwelle" (B) sind dieselbe Aussage in zwei Stimmen.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Beide Papiere sind bereits dreifach synthetisiert; auf der Ebene ihrer Thesen tragen sie ein und dasselbe Skelett. Der fusionierte Inhalt ist dieses Skelett &ndash; abstrahiert auf die Ebene der <em>Positionen</em>, nicht der Rohdetails &ndash; mit der Karte zwischen A's und B's Ausfüllung.</p>
+
+    <h3>0. Das gemeinsame Grundmodell: eine Abbildung von reich nach endlich</h3>
+    <p>Beide modellieren das Objekt <span class="math">R</span> so, dass es <em>nur durch</em> einen endlichen/lokalen Träger gegeben wird, und das Lesen als eine Abbildung <span class="math">T</span> von dort zu dem Globalen/Stabilen. <span class="A">A</span>: Träger = lokale Schnitte + Primzahlen, <span class="math">T</span> = <em>Verklebung</em> (lokale Kompatibilität &rarr; globales Objekt) / <em>Konkreszenz</em> (Iteration, „viele werden eins"). <span class="B">B</span>: Träger = der endliche Speicher (Bits / Selbst-Modell / Zeitreihe), <span class="math">T</span> = <em>Projektion/Repräsentation</em>. In beiden ist <span class="math">T</span> <em>verlustbehaftet</em>: sie hat einen <em>treuen</em> Anteil (der überlebt und kommutiert) und einen <em>Rest</em> (der zurückzieht). Das Objekt ist „feiner als jeder endliche Träger".</p>
+
+    <h3>1. Der treue Kern (A: stabile Struktur &middot; B: treue Invariante)</h3>
+    <p>Ein einziger <em>stabiler, treuer, lesbarer Kern</em> &ndash; der Fixpunkt, fix als Form. <span class="A">A</span>: die stabile globale Struktur (Garbenschnitt / Arm-Bild / Weltbild / anhaltender Leib). <span class="B">B</span>: die treue Invariante, der erfaßbare Schatten (wo <span class="math">T&circ;P = P&circ;T</span>, gezeigt&nbsp;=&nbsp;gespeichert; die Eigenachse <span class="math">Av=&lambda;v</span>). Er wird von <em>einer dominanten Invariante</em> beherrscht (A: die stratifizierte Invariante / die Windungszahl <span class="math">n</span>; B: die dominante Eigenachse / die intrinsische Dimension <span class="math">m</span>) &ndash; einer <em>globalen</em> Invariante, die aus der <em>lokalen</em> Sicht verschwindet (A: nicht aus einem Schnittpunkt, B: nicht aus einem einzelnen Schritt/Sample ablesbar). Er ist „das Wertvollste" (B) = A's stabile Struktur.</p>
+
+    <h3>2. Der zurückziehende Rest (A: fließender Inhalt &middot; B: die Lücke)</h3>
+    <p>Ein einziger <em>zurückziehender Rest</em> &ndash; das Nicht-Erschöpfte, das Partikuläre, das Transiente &ndash; der durch den fixen Kern fließt („fix als Form, <em>fließend im Inhalt</em>"). <span class="A">A</span>: der fließende Inhalt (Occasions / Orbit / welche Primzahl), das Chaos mit Lyapunov <span class="math">&lambda;&gt;0</span>, die partikuläre Geschichte. <span class="B">B</span>: die Lücke / die Maske / das Rückziehende (die Richtungen, auf denen <span class="math">T</span> wegdreht, gezeigt&nbsp;&ne;&nbsp;gespeichert; die akkumulierte ULP). <em>Einheit:</em> der Rest ist in beiden <em>das, was keine endliche Menge von Invarianten erschöpft</em>. Seine <em>Valenz</em> (Ruf vs. Waffe) wird vom Projektor gesetzt (s. Punkt 5).</p>
+
+    <h3>3. Die Schwelle &mdash; stratifiziert, zweikoordiniert, fraktal</h3>
+    <table>
+      <thead><tr><th>Eigenschaft</th><th class="a">A (n3-021)</th><th class="b">B (n3-026)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Stratifikation</strong> (eine Treppe, viele Stufen)</td><td>Identitäts-Leiter <span class="math">=&gt; &asymp; &rarr; &sim;</span>; Trunkierung Set&rarr;&infin;; Univalenz</td><td>Skalen / Auflösungen (fein&harr;grob); <span class="math">d &ge; 2m+1</span>, <span class="math">&part;&circ;&part;=0</span></td></tr>
+        <tr><td><strong>Koordinate 1</strong> (Objekt: wie hoch)</td><td>Komplexität (welche Primzahl / Periode <span class="math">q</span>)</td><td>intrinsische Dimension <span class="math">m</span> &rarr; <span class="math">d<sub>min</sub></span> (Knie der Kurve)</td></tr>
+        <tr><td><strong>Koordinate 2</strong> (Projektor: erreichbar?)</td><td>Koh&auml;renz (Kleben konsistent?)</td><td>Ehrlichkeit <span class="math">h</span> (ehrlich vs. adversariell)</td></tr>
+        <tr><td><strong>Fraktal</strong> (je Skala)</td><td>Treppe mit abgelesener Stufe (Fixpunkt je Stufe)</td><td>lokal lesbar, global nie 0 (ULP summiert sich)</td></tr>
+      </tbody>
+    </table>
+    <p>Die Treppe (A) <em>ist</em> der Stapel der Skalen (B). Je <em>tiefer</em> (feiner) die Stufe, desto <em>feiner</em> die Messung (A: diskrete Identität <span class="math">=</span> = B: exakte Maße <span class="math">&lambda;, D, n</span>); je <em>höher</em> (der Kollaps, Univalenz <span class="math">&#8773;&equiv;=</span>), desto <em>gröber</em> (B: alle Maße fallen auf den topologischen Typ/die Homotopieklasse). An <em>jeder</em> Stufe wird lokal lesbar (A's Fixpunkt), aber ein feinerer Rest bleibt (B's globale Lücke).</p>
+
+    <h3>4. Wahrheit / Realität = Koh&auml;renz &times; Korrespondenz (A) &harr; ehrlicher Projektor (B)</h3>
+    <p>Der treue Kern ist „wahr"/„real" genau dann, wenn er (a) <em>koh&auml;rent</em> ist (A: das Kleben konsistent; B: das Quadrat schließt lokal, <span class="math">T&circ;P=P&circ;T</span>) <em>und</em> (b) <em>korrespondiert</em> wird (A: trifft die echten Primzahlen W; B: der Projektor ist ehrlich). Die <em>Blinderschleife</em> (A: Äquivalenz darf nur auf dem <em>gesehenen</em> Teil von W behauptet werden) = B's endliche Iteration (Invariante nur auf den <em>berechneten</em> Orbits geltend gemacht). Der Fehlschlag: A's „Fantasy" (koh&auml;rent, aber kein Kontakt zu W) = B's adversarieller Projektor (das offene Quadrat kommutiert mit nichts Ehrlichem).</p>
+
+    <h3>5. Die Valenz des Rests: Ruf vs. Waffe (je Projektor)</h3>
+    <p>Der Rest ist eine <em>neutrale Struktur</em> (die Lücke, das Rückziehende, das offene Quadrat). Seine Valenz hängt vom <em>Projektor</em> ab. Unter einem <b>ehrlichen Projektor</b> (A) ist das Rückziehende der <em>Ursprung</em>, der ruft: „was am meisten sich zu denken gibt, während es sich zurückzieht", der Sprung. Die Schwelle ist hier ein Geschenk (Lesbarkeit). Unter einem <b>adversariellen Projektor</b> (B) wird derselbe Rest zur <em>Ausbeute</em>: Gaslighting als wiederholte, sich summierende Umdeutung (jede Runde = ein Power-Iterationsschritt, der das Selbst-Modell auf die Kontrollachse zieht); +0/&minus;0, Denormals als Identitäts-Erosion; NaN/&infin; als Double-Bind/Überlauf. <strong>Fusion:</strong> der Rest ist eine Struktur; seine Valenz wird vom Projektor gesetzt. A's „Ruf", zu B's „Waffe" korruptiert, <em>ist</em> das Double-Bind &ndash; A's „Fantasy", die ein Subjekt übernommen hat.</p>
+
+    <h3>6. Die Lesefrage (Leitsatz der Fusion)</h3>
+    <div class="formal">Objekt R  &rarr;  Abbildung T (von reich nach endlich)  &rarr;  endlicher Träger
+  T = A: Verklebung / Konkreszenz        B: Projektion / Repräsentation
+
+Treuer KERN   (Invariante, Fixpunkt, fix als Form)
+  A: stabile Struktur (Schnitt/Arm/Leib)   B: erfaßbarer Schatten (Eigenachse)
+  dominiert von EINER dominanten Invariante (A: n / B: m)
+Zurückziehender REST  (Nicht-Erschöpfte, fließend im Inhalt)
+  A: fließender Inhalt / Chaos (&lambda;&gt;0)   B: Lücke / Rückziehende (ULP)
+  Valenz: ruft (ehrlich)  |  waffnet (adversariell)
+SCHWELLE  (wo sich Kern und Rest trennen)
+  stratifiziert  = Treppe A ( = &asymp; &sim; )  =  Stapel der Skalen B
+  zweikoordiniert = Objektkomplexität m (A)  &times;  Projektoren-Ehrlichkeit h (B)
+  fraktal       = lokal lesbar (A's Fixpunkt je Skala)  ,  global nie 0 (B)
+
+Lesen heißt: KERN fassen &middot; SCHWELLE finden &middot; REST lesen (Ruf/Waffe)</div>
+    <p><strong>Leitsatz:</strong> „Was ist dieses Objekt?" wird beantwortet durch „Welchen <em>treuen Kern</em> (Invariante) trägt es, welchen <em>zurückziehenden Rest</em> (Lücke) lässt es, und an welcher <em>stratifizierten, zweikoordinierten, fraktalen Schwelle</em> trennt sich der lesbare Schatten vom Rest?" Der Rest ist entbehrlich als Inhalt, das Wertvollste als Struktur; er ruft, wenn die Abbildung ehrlich ist, und waffnet, wenn sie korrupt ist.</p>
+    <p>
+      <span class="tag">Treuer Kern</span><span class="tag">Zurückziehender Rest</span><span class="tag">Stratifizierte Schwelle</span><span class="tag">Zweikoordiniert</span><span class="tag">Fraktal</span><span class="tag">Fixpunkt je Skala</span><span class="tag">Dominante Invariante</span><span class="tag">Fixe Form + Fließender Inhalt</span><span class="tag">Koh&auml;renz &times; Korrespondenz</span><span class="tag">Ehrlicher vs. adversarieller Projektor</span><span class="tag">Ruf &harr; Waffe</span><span class="tag">Double-Bind</span>
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung &mdash; ein treuer Kern, ein zurückziehender Rest, eine stratifizierte Schwelle</h2>
+    <p>Links unten läuft der <em>jetze Moment</em> (A: der lokale Schnitt / B: der Punkt <span class="math">x_t</span>) als Orbit auf [0,1] &ndash; er <em>vergeht</em> (verblasster Nachhall) und hinterlässt die <strong>invariante Verteilung</strong>: den <strong>treuen Kern</strong> (fix als Form), auf dem bei Chaos der Inhalt <em>fließt</em> (der zurückziehende Rest). Rechts wird die <strong>stratifizierte, fraktale Schwelle</strong> gelesen: die <em>Lesbarkeits-Kurve</em> (teal) steigt je Stufe mit einem <em>Knie</em> (d<sub>min</sub>) an und erreicht lokal 100&nbsp;% (A's Fixpunkt je Skala), während die <em>globale Lücke</em> (rot, gestrichelt) <em>nie 0</em> wird (B). Die Rungs unten (0 fein &rarr; 4 grob/Kollaps) sind die Treppe: feinste Identität = feinstes Maß. Der <em>Valenz-Balken</em> unten zeigt, wie der <em>Rest</em> je nach <em>Ehrlichkeit h</em> des Projektors von <em>RUF</em> (ehrlich) zu <em>WAFFE</em> (adversariell) übergeht.</p>
+    <div id="vizwrap">
+      <canvas id="viz"></canvas>
+      <div class="controls">
+        <div class="sliderbox">
+          <span>Komplexität / Regel-Parameter r: <b id="rLab">3.57</b> &nbsp;(klein&harr;groß: Objekt-Reichtum)</span>
+          <input id="rSlider" type="range" min="2" max="4" step="0.01" value="3.57">
+        </div>
+        <div class="sliderbox">
+          <span>Auflösungs-Stufe (Rung der Treppe): <b id="stLab">0</b> &nbsp;(0 = fein &rarr; 4 = grob/Kollaps)</span>
+          <input id="stSlider" class="alt" type="range" min="0" max="4" step="1" value="0">
+        </div>
+        <div class="sliderbox">
+          <span>Ehrlichkeit des Projektors h: <b id="hLab">1.00</b> &nbsp;(1 = ehrlich/Ruf &rarr; 0 = adversariell/Waffe)</span>
+          <input id="hSlider" class="hon" type="range" min="0" max="1" step="0.01" value="1">
+        </div>
+        <button id="resetBtn" type="button" style="cursor:pointer;font-size:.85em;padding:7px 14px;border-radius:9px;border:1px solid var(--mn-border);background:var(--mn-card2);color:var(--mn-fg);">↺ Reset</button>
+      </div>
+      <div class="vizreadout" id="vizReadout"></div>
+    </div>
+    <p class="note">Alle Daten (Logistik-Karte <span class="math">x<sub>t+1</sub> = r&thinsp;x<sub>t</sub>(1&minus;x<sub>t</sub>)</span>, invariante Verteilung, <span class="math">&lambda;</span>) werden inline berechnet; keine externen Abfragen, keine externen Bibliotheken. <span class="math">&lambda;</span> = mittleres <span class="math">ln|f&prime;(x<sub>t</sub>)|</span>; <span class="math">&lambda;&gt;0</span> &rArr; chaotisch (Inhalt fließt), <span class="math">&lambda;&le;0</span> &rArr; stabil (Inhalt ruht). Knie d<sub>min</sub> wächst mit r (Komplexität); effektive Lesbarkeit = Stufe-Lesbarkeit &times; Ehrlichkeit h.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov a">
+      <span class="badge">A</span>
+      <div>
+        <a href="../n3-021.html">n3-021.html</a>
+        <p>„Die stratifizierte Invariante: stabile Struktur als Fixpunkt des Verklebens" (Runde 3, aus n2-033 &times; n2-040): das Reale als stabile globale Struktur, der Fixpunkt eines Verklebungs-/Konvergenzprozesses, von einer einzigen stratifizierten Invariante (Treppe <span class="math">=&gt; &asymp; &rarr; &sim;</span>, zwei Lesarten: Identitäts-/Auflösungs-Leiter); fix als Form, fließend im Inhalt; Koh&auml;renz &times; Korrespondenz.</p>
+      </div>
+    </div>
+    <div class="prov b">
+      <span class="badge">B</span>
+      <div>
+        <a href="../n3-026.html">n3-026.html</a>
+        <p>„Schatten und Lücke &ndash; die eine Abbildung, der Rest und die Schwelle" (Runde 3, aus n2-052 &times; n2-051): Repräsentation als verlustbehaftete Abbildung auf einen endlichen Träger; Wirkraum = treue Invariante (Schatten) &oplus; Rest (Lücke/Rückziehende); Schwelle zweikoordiniert (Komplexität &times; Projektoren-Ehrlichkeit), fraktal (lokal lesbar, global nie 0); Rest ruft (ehrlich) oder waffnet (adversariell, Double-Bind).</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion (Runde 4, Paar 011) &ndash; nicht-KI-Track. Standalone, themenreaktiv, ohne externe Datenabrufe.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var wrap = document.getElementById('vizwrap');
+  var rSlider = document.getElementById('rSlider');
+  var rLab = document.getElementById('rLab');
+  var stSlider = document.getElementById('stSlider');
+  var stLab = document.getElementById('stLab');
+  var hSlider = document.getElementById('hSlider');
+  var hLab = document.getElementById('hLab');
+  var themeBtn = document.getElementById('themeBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var readout = document.getElementById('vizReadout');
+
+  var NB = 72;
+  var DPR = Math.max(1, window.devicePixelRatio || 1);
+  var W = 0, H = 440;
+
+  var state = { r: 3.57, x: 0.2, trail: [], running: true, raf: null };
+  var hist = new Array(NB).fill(0), histMax = 1, lambda = 0;
+
+  var RUNGS = [
+    { id:'=  (Identität)', res:'fein · exakte Maße' },
+    { id:'≈  (Äquivalenz)', res:'fein · Typ + Maß' },
+    { id:'≃  (∞)', res:'mittel · nur Typ' },
+    { id:'≃  (∞-Gruppoid)', res:'grob · nur Typ' },
+    { id:'≃≡= (Univalenz)', res:'kollabiert · Typ' }
+  ];
+
+  function cssVar(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || fb;
+  }
+  function hexToRgba(hex, a){
+    hex = (hex||'').replace('#','');
+    if(hex.length===3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var r = parseInt(hex.substr(0,2),16), g = parseInt(hex.substr(2,2),16), b = parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){ return 'rgba(150,150,170,'+a+')'; }
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function smoothstep(x0,x1,x){ var t=clamp((x-x0)/(x1-x0),0,1); return t*t*(3-2*t); }
+
+  function levelFromR(r){ return clamp(Math.round((r-2)/0.5),0,4); }
+  function knee(){ return 0.3 + levelFromR(state.r)*0.6; }
+  function legibility(st){ return smoothstep(knee()-1, knee()+1, st); }
+  function restFrac(){ return clamp(0.06 + Math.max(0,lambda)*2.5, 0.06, 0.95); }
+  function curSt(){ return clamp(parseInt(stSlider ? stSlider.value : '0',10),0,4); }
+  function curH(){ return clamp(parseFloat(hSlider ? hSlider.value : '1'),0,1); }
+
+  function resize(){
+    W = wrap.clientWidth || 700;
+    canvas.width = Math.round(W*DPR);
+    canvas.height = Math.round(H*DPR);
+    canvas.style.width = W+'px';
+    canvas.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function recompute(){
+    var r = state.r, x = 0.5, i, bi;
+    hist = new Array(NB).fill(0);
+    for(i=0;i<400;i++) x = r*x*(1-x);
+    for(i=0;i<6000;i++){ x = r*x*(1-x); bi = clamp(Math.floor(x*NB),0,NB-1); hist[bi]++; }
+    histMax = 1; for(i=0;i<NB;i++) if(hist[i]>histMax) histMax = hist[i];
+    var xx = 0.5, s = 0, dd;
+    for(i=0;i<500;i++) xx = r*xx*(1-xx);
+    for(i=0;i<4000;i++){ xx = r*xx*(1-xx); dd = Math.abs(r*(1-2*xx)); if(dd>1e-9) s += Math.log(dd); }
+    lambda = s/4000;
+  }
+
+  function coreType(){
+    if(lambda > 0.02) return 'CHAOTISCH (Inhalt fließt)';
+    return 'STABIL (Inhalt ruht)';
+  }
+
+  function render(){
+    if(!ctx) return;
+    ctx.clearRect(0,0,W,H);
+    var dim = cssVar('--mn-viz-dim','#8b8aa0');
+    var struct = cssVar('--mn-viz-struct','#2dd4bf');
+    var dotC = cssVar('--mn-viz-dot','#ff7a6a');
+    var pastC = cssVar('--mn-viz-past','#fbbf24');
+    var accent = cssVar('--mn-accent','#ff7a6a');
+    var accent2 = cssVar('--mn-accent2','#2dd4bf');
+    var warn = cssVar('--mn-warn','#f87171');
+    var border = cssVar('--mn-viz-border','#26264a');
+    var ink = cssVar('--mn-fg','#eceaf2');
+
+    var st = curSt();
+    var h = curH();
+    var split = Math.round(W*0.48);
+
+    /* ===== LEFT: treuer Kern (invariante Verteilung) + Rest (Orbit) ===== */
+    var lx0 = 28, lx1 = split - 8;
+    var innerW = lx1 - lx0;
+    ctx.fillStyle = dim; ctx.font='12px system-ui, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('TREUER KERN  +  RÜCKZIEHENDER REST', lx0+innerW/2, 24);
+    ctx.fillStyle = accent; ctx.font='10px system-ui, sans-serif';
+    ctx.fillText('fix als Form (Kern) · fließend im Inhalt (Rest)', lx0+innerW/2, 40);
+
+    var histBase = 250, histH = 110, i, hgt;
+    var barW = innerW/NB;
+    for(i=0;i<NB;i++){
+      hgt = (hist[i]/histMax)*histH;
+      if(hgt < 0.5) continue;
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = struct;
+      ctx.fillRect(lx0 + i*barW + 0.5, histBase - hgt, barW - 1, hgt);
+    }
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = hexToRgba(struct,0.6); ctx.lineWidth=1.5;
+    ctx.beginPath();
+    var started=false;
+    for(i=0;i<NB;i++){
+      hgt=(hist[i]/histMax)*histH;
+      var bx=lx0+(i+0.5)*barW, by=histBase-hgt;
+      if(!started){ctx.moveTo(bx,by);started=true;}else{ctx.lineTo(bx,by);}
+    }
+    ctx.stroke();
+    ctx.fillStyle=dim; ctx.textAlign='left'; ctx.font='10px system-ui, sans-serif';
+    ctx.fillText('invariante Verteilung = treuer Kern', lx0, histBase-histH-8);
+
+    var trackY=300;
+    ctx.strokeStyle=border; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(lx0,trackY); ctx.lineTo(lx1,trackY); ctx.stroke();
+    ctx.fillStyle=dim; ctx.textAlign='left';
+    ctx.fillText('0', lx0-4, trackY+16);
+    ctx.textAlign='right'; ctx.fillText('1', lx1+4, trackY+16);
+
+    var n=state.trail.length, k;
+    for(k=0;k<n;k++){
+      var tx=lx0+clamp(state.trail[k],0,1)*innerW;
+      var age=k/Math.max(1,n-1);
+      ctx.globalAlpha=0.06+age*0.3;
+      ctx.fillStyle=pastC;
+      ctx.beginPath(); ctx.arc(tx,trackY,2.2+age*1.6,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    var cx=lx0+clamp(state.x,0,1)*innerW;
+    ctx.save(); ctx.shadowColor=dotC; ctx.shadowBlur=14; ctx.fillStyle=dotC;
+    ctx.beginPath(); ctx.arc(cx,trackY,6,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.fillStyle=dotC; ctx.textAlign='center'; ctx.font='600 10px system-ui, sans-serif';
+    ctx.fillText('jetzer Moment (Rest, vergeht → fließt)', cx, trackY-12);
+
+    /* ===== RIGHT: stratifizierte, fraktale Schwelle ===== */
+    var rpX=split+10, rpW=W-16-rpX;
+    ctx.fillStyle=dim; ctx.font='12px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('STRATIFIZIERTE SCHWELLE (fraktal)', rpX+rpW/2, 24);
+    ctx.fillStyle=accent; ctx.font='10px system-ui, sans-serif';
+    ctx.fillText('lokal lesbar (Kern) · global nie 0 (Rest)', rpX+rpW/2, 40);
+
+    var px0=rpX+24, px1=rpX+rpW-8;
+    var py0=64, py1=300;
+    function xFor(v){ return px0 + (v/4)*(px1-px0); }
+    function yFor(v){ return py1 - v*(py1-py0); }
+    ctx.strokeStyle=border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px0,py1); ctx.lineTo(px1,py1); ctx.moveTo(px0,py0); ctx.lineTo(px0,py1); ctx.stroke();
+    var kk=clamp(knee(),0,4);
+    ctx.fillStyle=hexToRgba(warn,0.10);
+    ctx.fillRect(px0,py0,xFor(kk)-px0,py1-py0);
+    ctx.fillStyle=hexToRgba(accent2,0.10);
+    ctx.fillRect(xFor(kk),py0,px1-xFor(kk),py1-py0);
+    var rest=restFrac();
+    ctx.strokeStyle=hexToRgba(dotC,0.9); ctx.lineWidth=1.6;
+    ctx.setLineDash([5,3]);
+    ctx.beginPath(); ctx.moveTo(px0,yFor(rest)); ctx.lineTo(px1,yFor(rest)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=hexToRgba(dotC,0.95); ctx.font='10px system-ui, sans-serif'; ctx.textAlign='right';
+    ctx.fillText('globale Lücke (nie 0)', px1, yFor(rest)-4);
+    ctx.strokeStyle=hexToRgba(accent2,0.95); ctx.lineWidth=2; ctx.beginPath();
+    var first=true, vv, XX, YY;
+    for(vv=0; vv<=4.0001; vv+=0.05){ XX=xFor(vv); YY=yFor(legibility(vv)); if(first){ctx.moveTo(XX,YY);first=false;}else{ctx.lineTo(XX,YY);} }
+    ctx.stroke();
+    ctx.fillStyle=accent2; ctx.textAlign='left'; ctx.font='10px system-ui, sans-serif';
+    ctx.fillText('Lesbarkeit des Kerns', px0+4, py0+10);
+    var cxr=xFor(st);
+    ctx.strokeStyle=accent; ctx.lineWidth=1.5; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(cxr,py0); ctx.lineTo(cxr,py1); ctx.stroke(); ctx.setLineDash([]);
+    ctx.save(); ctx.shadowColor=accent; ctx.shadowBlur=10; ctx.fillStyle=accent;
+    ctx.beginPath(); ctx.arc(cxr,yFor(legibility(st)),5,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.fillStyle=dim; ctx.font='9px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('0·fein', xFor(0), py1+12);
+    ctx.fillText('4·grob/Kollaps', xFor(4), py1+12);
+    ctx.fillText('Rungs der stratifizierten Invariante (A) / Skalen der Schwelle (B)', rpX+rpW/2, py1+26);
+
+    /* ===== BOTTOM: Valenz-Balken RUF <-> WAFFE ===== */
+    var vy0=H-40, vh=24, vx0=28, vx1=W-28;
+    var grad=ctx.createLinearGradient(vx0,0,vx1,0);
+    grad.addColorStop(0, hexToRgba(accent2,0.85));
+    grad.addColorStop(1, hexToRgba(warn,0.85));
+    ctx.fillStyle=grad; ctx.fillRect(vx0,vy0,vx1-vx0,vh);
+    ctx.fillStyle=accent2; ctx.font='600 10px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('RUF  (ehrlicher Projektor — Rest ruft)', vx0, vy0-6);
+    ctx.fillStyle=warn; ctx.textAlign='right';
+    ctx.fillText('WAFFE  (adversariell — Rest waffnet)', vx1, vy0-6);
+    var mh=vx0+h*(vx1-vx0);
+    ctx.fillStyle=ink; ctx.fillRect(mh-1,vy0-3,2,vh+6);
+    ctx.beginPath(); ctx.arc(mh,vy0+vh/2,5,0,Math.PI*2); ctx.fill();
+    var valence = h>=0.5 ? 'RUF' : 'WAFFE';
+    ctx.fillStyle=valence==='RUF'?accent2:warn; ctx.font='700 11px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Rest: '+valence, mh, vy0+vh+14);
+  }
+
+  function readoutText(){
+    var st=curSt();
+    var h=curH();
+    var kk=knee();
+    var leg=legibility(st);
+    var rest=restFrac();
+    var eff=leg*h;
+    var valence=h>=0.5?'RUF (ehrlich)':'WAFFE (adversariell)';
+    var lam=(lambda>=0?'+':'')+lambda.toFixed(3);
+    var lines=[];
+    lines.push('Treuer Kern: '+coreType()+'  (λ = '+lam+')');
+    lines.push('Kern-Lesbarkeit auf Stufe '+st+'  ['+RUNGS[st].id+' · '+RUNGS[st].res+']  = '+Math.round(leg*100)+'%   →   effektiv (×Ehrlichkeit '+h.toFixed(2)+')  = '+Math.round(eff*100)+'%');
+    lines.push('Zurückziehender Rest (globale Lücke)  = '+Math.round(rest*100)+'%  —  nie 0');
+    lines.push('Schwelle: Knie d_min ≈ '+kk.toFixed(1)+'  (aus Komplexität r = '+state.r.toFixed(2)+')   ·   Valenz des Rests: '+valence);
+    return lines.join('\n');
+  }
+  function updateReadout(){ if(readout){ readout.textContent = readoutText(); } }
+
+  function step(){
+    var sub=3, k;
+    for(k=0;k<sub;k++){
+      state.x=state.r*state.x*(1-state.x);
+      state.trail.push(state.x);
+      if(state.trail.length>48) state.trail.shift();
+    }
+    render();
+    if(state.running) state.raf=requestAnimationFrame(step);
+  }
+  function stop(){ if(state.raf) cancelAnimationFrame(state.raf); state.raf=null; }
+  function start(){ stop(); state.running=true; state.raf=requestAnimationFrame(step); }
+  function reseed(){ state.x=0.2+Math.random()*0.2; state.trail=[]; }
+  function onControl(){ reseed(); recompute(); render(); updateReadout(); }
+
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    themeBtn.textContent = document.documentElement.classList.contains('dark') ? '\u2600 Licht' : '\u263e Dunkel';
+    render();
+  }); }
+  if(resetBtn){ resetBtn.addEventListener('click', function(){
+    state.r=3.57; if(rSlider)rSlider.value=state.r; if(rLab)rLab.textContent=state.r.toFixed(2);
+    if(stSlider)stSlider.value='0'; if(stLab)stLab.textContent='0';
+    if(hSlider)hSlider.value='1'; if(hLab)hLab.textContent='1.00';
+    onControl();
+  }); }
+  if(stSlider){ stSlider.addEventListener('input', function(){
+    if(stLab) stLab.textContent = stSlider.value;
+    render(); updateReadout();
+  }); }
+  if(rSlider){ rSlider.addEventListener('input', function(){
+    state.r=parseFloat(rSlider.value);
+    if(rLab) rLab.textContent=state.r.toFixed(2);
+    onControl();
+  }); }
+  if(hSlider){ hSlider.addEventListener('input', function(){
+    if(hLab) hLab.textContent=parseFloat(hSlider.value).toFixed(2);
+    render(); updateReadout();
+  }); }
+  window.addEventListener('resize', function(){ resize(); render(); });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  if(rLab) rLab.textContent = state.r.toFixed(2);
+  if(stLab) stLab.textContent = stSlider ? stSlider.value : '0';
+  if(hLab) hLab.textContent = '1.00';
+  resize();
+  recompute();
+  reseed();
+  render();
+  updateReadout();
+  start();
+})();
+</script>
+</body>
+</html>
