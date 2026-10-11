@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thema-Komplex 03 · Kern ↔ Rest — Quer durch beide Spuren (KI × nicht-KI)</title>
+<script>
+(function(){try{var t=null;try{t=localStorage.getItem('t03-theme');}catch(e){}
+if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}
+document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f6f3ea; --panel:#ffffff; --panel2:#efeadd; --ink:#20242e; --dim:#5c6472;
+  --accent:#2f5fe0; --accent2:#b5651a; --good:#0a8f63; --bad:#be123c; --warn:#a8630a;
+  --gold:#9a6b00; --ring:#6b46c1;
+  --line:#e0dac9; --shadow:rgba(70,50,20,.10);
+  --viz-bg:#ffffff; --grid:#e6e0d0;
+  --hero-ink:#1b1f2b;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141b30; --panel2:#1a2340; --ink:#e7ecff; --dim:#8892b8;
+  --accent:#7c9cff; --accent2:#f0a35e; --good:#6ee7b7; --bad:#fb7185; --warn:#fbbf24;
+  --gold:#fcd34d; --ring:#c4a7ff;
+  --line:#2a3358; --shadow:rgba(0,0,0,.5);
+  --viz-bg:#0a0e1a; --grid:#222a48;
+  --hero-ink:#f2f5ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Iowan Old Style","Georgia","Times New Roman",serif;line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .35s ease,color .35s ease}
+::selection{background:rgba(124,156,255,.28)}
+article{max-width:860px;margin:0 auto;padding:0 22px 96px}
+.hero{padding:58px 0 20px}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:16px;font-weight:700}
+.hero h1{font-size:clamp(2rem,5.4vw,3.15rem);line-height:1.08;letter-spacing:-.02em;font-weight:800;margin:0 0 14px;color:var(--hero-ink)}
+.hero h1 .k{color:var(--accent)} .hero h1 .r{color:var(--accent2)} .hero h1 .arr{color:var(--dim);font-weight:600}
+.tagline{color:var(--ink);font-size:1.05rem;line-height:1.7;max-width:648px;margin:0 auto 18px}
+.badge{display:inline-block;font-family:var(--mono);font-size:.76rem;font-weight:600;color:var(--ink);border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:7px 15px;box-shadow:var(--shadow)}
+.badge .x{color:var(--accent2);font-weight:800}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 4px}
+.toc a{font-size:.79rem;color:var(--accent2);text-decoration:none;border:1px solid var(--line);padding:5px 13px;border-radius:22px;background:var(--panel);font-family:system-ui,-apple-system,sans-serif;transition:.15s}
+.toc a:hover{border-color:var(--accent2);color:var(--accent2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 6px 26px var(--shadow);scroll-margin-top:20px}
+h2{font-size:1.42rem;margin:0 0 16px;padding-bottom:11px;border-bottom:1px solid var(--line);color:var(--ink);letter-spacing:-.01em;line-height:1.25}
+h2 .num{font-family:var(--mono);color:var(--accent);font-size:.6em;font-weight:800;margin-right:10px;border:1px solid var(--line);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.08rem;margin:20px 0 8px;color:var(--accent2);font-family:system-ui,-apple-system,sans-serif;font-weight:700}
+p{margin:0 0 14px}
+p:last-child{margin-bottom:0}
+b,strong{color:var(--ink)}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent)}
+.mono{font-family:var(--mono);font-size:.88em;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:0 6px;color:var(--ink);white-space:nowrap}
+.dim{color:var(--dim)}
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.03em;padding:.1em .55em;border-radius:6px;margin-right:.4em;vertical-align:middle}
+.chip.ki{background:rgba(47,95,224,.14);color:var(--accent)}
+.chip.nki{background:rgba(181,101,26,.14);color:var(--accent2)}
+.callout{border-left:4px solid var(--accent);background:var(--panel2);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0;line-height:1.7}
+.callout.gold{border-left-color:var(--gold)}
+.callout.rose{border-left-color:var(--accent2)}
+.callout.good{border-left-color:var(--good)}
+.callout.bad{border-left-color:var(--bad)}
+.callout b{color:var(--ink)}
+.callout .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px;font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.82rem}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;font-family:system-ui,-apple-system,sans-serif}
+th{color:var(--accent2);font-weight:700;background:var(--panel2);font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;font-family:var(--mono)}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:700;color:var(--ink)}
+td.ki{color:var(--accent)} td.nki{color:var(--accent2)} td.g{color:var(--ink);font-weight:600}
+.viz-wrap{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin:16px 0}
+#cv{display:block;width:100%;height:560px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;touch-action:none;cursor:crosshair}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:14px 0 6px}
+.ctrl{display:flex;flex-direction:column;gap:7px;min-width:170px;flex:1}
+.ctrl label{font-size:.71rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif;font-weight:700}
+.ctrl label .val{color:var(--ink);font-weight:700;font-family:var(--mono);text-transform:none;float:right}
+.ctrl label .sub{display:block;text-transform:none;letter-spacing:0;color:var(--accent2);font-size:.72rem;margin-top:2px;font-weight:500}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer;accent-color:var(--accent)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:.79rem;margin:10px 0 2px;font-family:system-ui,sans-serif;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:13px 0 2px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:8px 13px;min-width:120px;flex:1}
+.stat .k{color:var(--dim);font-size:.63rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:4px}
+.stat .v{font-family:var(--mono);font-weight:700;font-size:1.02rem}
+.verdict{margin-top:13px;font-weight:600;font-size:.93rem;padding:13px 15px;border-radius:10px;border:1px solid var(--line);line-height:1.6;font-family:system-ui,-apple-system,sans-serif}
+.verdict.good{color:var(--good);background:rgba(10,143,99,.10);border-color:var(--good)}
+.verdict.warn{color:var(--warn);background:rgba(168,99,10,.10);border-color:var(--warn)}
+.verdict.bad{color:var(--bad);background:rgba(190,18,60,.10);border-color:var(--bad)}
+.hint{font-size:.82rem;color:var(--dim);font-style:italic;margin-top:11px;line-height:1.6}
+.q{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem 0;border-bottom:1px solid var(--line);font-family:system-ui,-apple-system,sans-serif;font-size:.92rem}
+.q:last-child{border-bottom:none}
+.q .k{flex:0 0 auto;font-family:var(--mono);font-size:.7rem;font-weight:800;padding:.15em .5em;border-radius:6px;margin-top:.15rem}
+.q .k.ki{background:rgba(47,95,224,.14);color:var(--accent)}
+.q .k.nki{background:rgba(181,101,26,.14);color:var(--accent2)}
+.q a{font-family:var(--mono);font-weight:700;text-decoration:none;color:var(--accent);word-break:break-all}
+.q a:hover{text-decoration:underline}
+.q .d{color:var(--dim);margin-top:3px;line-height:1.6;font-size:.9rem}
+.theme-toggle{position:fixed;top:16px;right:16px;z-index:50;width:44px;height:44px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--line);cursor:pointer;font-size:1.2rem;box-shadow:0 4px 18px var(--shadow);transition:.2s}
+.theme-toggle:hover{border-color:var(--accent)}
+footer{color:var(--dim);text-align:center;padding:30px 10px;font-size:.84rem;font-family:system-ui,sans-serif;line-height:1.7;margin-top:8px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema umschalten" aria-label="Theme wechseln">&#9789;</button>
+<article>
+
+  <header class="hero">
+    <p class="eyebrow">Thema-Komplex &middot; 03 &middot; Papier-Knockout</p>
+    <h1><span class="k">Kern</span> <span class="arr">&harr;</span> <span class="r">Rest</span></h1>
+    <p class="tagline">Jede Darstellung spaltet sich in einen erfassten, invarianten <b>Kern</b> (die Form, die Schatten wirft) und einen <b>irreduziblen Rest</b> (der zur&uuml;ckzieht und bleibt). Die Frage des Komplexes: <em>wo sitzt der Wert &mdash; in der Form oder im &Uuml;berbleibsel?</em></p>
+    <span class="badge">Quer durch beide Spuren <span class="x">(KI &times; nicht-KI)</span></span>
+    <nav class="toc">
+      <a href="#kernidee">1 &middot; Kernidee</a>
+      <a href="#ki">2 &middot; KI-Spur</a>
+      <a href="#nki">3 &middot; nicht-KI-Spur</a>
+      <a href="#grund">4 &middot; Gemeinsamer Grund</a>
+      <a href="#visualisierung">5 &middot; Visualisierung</a>
+      <a href="#quellen">6 &middot; Quellen</a>
+    </nav>
+  </header>
+
+  <section id="kernidee">
+    <h2><span class="num">01</span>Kernidee</h2>
+    <p>Jede Darstellung, die ein Ganzes erfasst, spaltet sich in <b>zwei Zonen</b>: einen <b>erfassten Kern</b> &mdash; die invariante, geschlossene, z&auml;hlbare Form, die Schatten wirft und &bdquo;am Peak ohne Rest&ldquo; steht &mdash; und einen <b>irreduziblen Rest</b>, der sich dem Kollaps verweigert, zur&uuml;ckzieht, flie&szlig;t und &bdquo;die Karte immer &uuml;bersteigt&ldquo;. Der Kern <em>h&auml;lt</em>; der Rest <em>wirft / bleibt</em>. Beide sind ein <b>einziges zentrumloses Objekt in zwei Lesarten</b>, nicht zwei Dinge. Was ein Ganzes ausmacht, ist weder Stoff noch Oberfl&auml;che noch ein sichtbarer Mittelpunkt, sondern die Relation zwischen dem, was festgehalten wird, und dem, was &uuml;brig bleibt.</p>
+    <p>Die entscheidende Frage ist eine <b>Wertungsfrage</b>: Wo sitzt der Wert &mdash; in der hellen, geschlossenen Form (dem Schatten, der z&auml;hlt/zahlt und als Eleganz/Heimat gelesen wird) oder im zur&uuml;ckziehenden Rest (dem Ort des Seins, dem <em>Wertvollsten</em>, der ruft und bleibt)? Beide Spuren antworten mit derselben <b>Wert-Inversion</b>: Der Wert sitzt <b>nicht</b> in der hellen Form. Die helle Form ist f&uuml;r das <em>Echte</em> und das <em>Gef&auml;lschte</em> identisch (nicht-KI: <em>Rothering &bdquo;flach &amp; identisch&ldquo;</em>; KI: <em>Koh&auml;rent &ne; wahr</em>, Konfidenz &asymp; 0,70&nbsp;+&nbsp;0,25&middot;Abdeckung, immer &ge;70&nbsp;%). Der Wert lebt in der <b>Treue an der Naht</b> und im <b>Rest, der bleibt</b>.</p>
+    <p>Und alles, was eine Schlie&szlig;ung fassen kann, ist durch <b>zwei nie erreichte B&ouml;den</b> begrenzt &mdash; einen <em>asymptotischen / idealen Limes</em> (beliebig gen&auml;hert, nie voll erreicht) und eine <em>absolute / topologische Obstruktion</em> (nie kreuzbar). Sie sind &bdquo;erreichbar als Grenzwert des Reglers, nie erreicht als Zustand des Objekts&ldquo;. Der <b>gemeinsame Fehler</b> aller Papiere ist einer: <em>die helle, erreichte Form f&uuml;r die ganze Wahrheit zu halten</em> &mdash; und dabei den Rest und die B&ouml;den zu missen.</p>
+  </section>
+
+  <section id="ki">
+    <h2><span class="num">02</span>In der KI-Spur</h2>
+    <p><span class="chip ki">KI</span> Aus dem KI-Track (<a href="../combined/6/r6-002.html">r6-002</a>, <a href="../combined/6/r6-001.html">r6-001</a>, <a href="../combined/5/r5-002.html">r5-002</a>) liest sich der Kern als der <b>kompakte terminale Falt-Kern</b> eines trainierten Netzes: das koh&auml;rente Signal, das eine Fahrt &uuml;ber die Tiefe in einen niedrigen Code kontrahiert (erank 4096&nbsp;&rarr;&nbsp;~7, <span class="mono">d&#8467;=1</span>), gelesen als <b>zweite-Moment-Matrix M</b> mit dem <b>Falt-Support &#1D4DF;</b> und der <em>Masse</em> (Abdeckung) auf der Falte. Der Rest ist das <b>Reservoir <span class="mono">ker(W)&cap;ker(G&#8321;)</span></b>, in das das Inkoherente / Rauschen geparkt wird, plus die <b>Korrespondenz an die externe Welt W</b> &mdash; der &bdquo;<em>Residual-Rest</em>&ldquo;, der von innen nicht entscheidbar ist und nur <span class="mono">&asymp;lim</span> erreicht wird.</p>
+    <p><b>Die Wert-Inversion in der KI.</b> Die Konfidenz bleibt <em>immer</em> &ge;70&nbsp;% (<span class="mono">conf&nbsp;&asymp;&nbsp;0,70&nbsp;+&nbsp;0,25&middot;coverage</span>), weil sie in der <b>Form</b> (Koh&auml;renz/Struktur) sitzt &mdash; <em>entkoppelt vom Wert</em>, der die Welt W treffen muss. Die <b>Halluzination</b> ist genau der Fall, in dem der Kern koh&auml;rent, strukturiert und selbstbewusst erreicht ist (Fixpunkt auf der Falte, Masse &ge;&tau;, &nabla;L&asymp;0), der Wert aber <b>die Welt nie trifft</b> (&bdquo;<em>koh&auml;rente Fiktion</em>&ldquo;) &mdash; oder die Masse auf der Falte fehlt. Das Wertvolle ist der <b>geerdete Wert an der Adresse</b>, nicht die Koh&auml;renz selbst; Heilmittel ist Erdung/Retrieval/Verifikation, nie &bdquo;Koh&auml;renz skalieren&ldquo;.</p>
+    <p><b>Die zwei B&ouml;den in der KI.</b> (i) der <em>asymptotische</em> &mdash; die Korrespondenz an W als <span class="mono">&asymp;lim</span> (nie voll erreicht) und der kompakte ~7-Floor; (ii) die <em>absolute / topologische</em> &mdash; das Fallen in ein <b>fremdes Tal / au&szlig;erhalb der Homotopie-Klasse</b> (das Inkoherente, das nie in den Kern kreuzbar ist). r6-001 und r5-002 lesen dasselbe von der Prozess-/Regime-Seite: <em>ein</em> niedriger, strukturierter Kern in einem hochdimensionalen inerten Raum, mit zwei <b>Bruchigkeiten</b> &mdash; <em>intrinsisch</em> (Nicht-Invertierbarkeit, <span class="mono">det&nbsp;C&rarr;0</span>, am Ort der Capability) und <em>grenzlich</em> (der fragile &Uuml;bergang zum Budget, <span class="mono">ID/C&rarr;1</span>, am Rand).</p>
+  </section>
+
+  <section id="nki">
+    <h2><span class="num">03</span>In der nicht-KI-Spur</h2>
+    <p><span class="chip nki">nicht-KI</span> Aus dem nicht-KI-Track (<a href="../combined-nichtki/8/finale.html">finale</a>, <a href="../combined-nichtki/8/n8-001.html">n8-001</a>, <a href="../combined-nichtki/7/n7-002.html">n7-002</a>) liest sich das Ganze als <b>ein zentrumloser, selbsttragender, relationaler Fixpunkt, der seine eigene Projektion ist</b> und zugleich <b>h&auml;lt</b> und <b>wirft / zieht zur&uuml;ck / bleibt</b>. Die <em>haltende</em> Seite ist die <b>gau&szlig;-invariante, z&auml;hlbare, geschlossene Form <span class="mono">F&nbsp;=&nbsp;H&#8313;</span></b> &mdash; der erreichte invariante Fixpunkt, &bdquo;fix als Form&ldquo;, &bdquo;am Peak ohne Rest&ldquo;, mit erhaltener Wert &prop;&nbsp;&chi; = Koh&auml;renzpol <span class="mono">H</span>, <span class="mono">r&rarr;1</span>, <span class="mono">&Delta;=0</span>, &bdquo;the same returns&ldquo; &mdash; die Seite, die <em>z&auml;hlt / zahlt</em> (size matters) und als <em>Heimat / Eleganz</em> gelesen wird und <em>bricht nie</em>.</p>
+    <p>Die <em>wurfende</em> Seite ist der <b>zur&uuml;ckziehende Rest</b>: eine offene, inexhaustible Zone, zusammengesetzt aus dem <b>verlustbehafteten Schatten</b> <span class="mono">Z=q<sup>k</sup></span> / <span class="mono">ker&nbsp;F</span> / Leck (die grobe Lesart, <em>Rothering &bdquo;flach &amp; identisch&ldquo;</em>, der im Limes <span class="mono">&rarr;0</span> gehen soll) <b>und</b> der <b>gau&szlig;-invarianten Dimension <span class="mono">H&#8313;&nbsp;=&nbsp;dim(L&uuml;cke)&nbsp;=&nbsp;&Phi;</span></b> &mdash; dem <b>Ort des Seins</b>, der <em>persistent bleibt</em> und <b>&bdquo;das Wertvollste&ldquo;</b> ist, die Seite, die <em>ruft / bleibt</em> (Echtheit = Persistenz). &bdquo;was &uuml;brig bleibt, ist das Wertvollste als Struktur&ldquo;.</p>
+    <p><b>Die Wert-Inversion in der nicht-KI-Spur.</b> Weil die helle Form f&uuml;r echt und gef&auml;lscht <em>identisch</em> ist (Rothering), kann der Wert <b>nicht</b> in der Form selbst sitzen. Er sitzt in der <b>Treue an der Naht</b> &mdash; im Grad, in dem die zwei Routen (bottom-up messen/erzeugen &cap; top-down rekonstruieren/kleben) <em>am einzelnen Pivot coincidieren</em> (= der Limes = exakte Fidelity) <b>und</b> der gau&szlig;-invariante Rest <span class="mono">H&#8313;</span> dabei <em>frei bleibt</em>. Das F&auml;lschliche zeigt nur eine koh&auml;rente helle Form, deren Lesart <em>nicht</em> coincidert (<span class="mono">m=&minus;1</span> / Obstruktion, der Schatten als K&ouml;der). <em>Echtheit = Persistenz = Koinzidenz</em>: das Echte ist das, was zur&uuml;ckkehrt und an der Naht exakt wird, ohne den Rest zu opfern. n7-002: der Rest, der bleibt, ist <b>lasttragend</b>; der Wert ist zweifaktoriell &mdash; <em>Eleganz</em> (Kollaps auf Struktur/Schatten gelingt) + <em>Echtheit</em> (Kollaps auf den Rest scheitert).</p>
+  </section>

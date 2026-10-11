@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attraktor &amp; Fixpunkt — Quer durch beide Spuren (KI × nicht-KI)</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('them02-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}
+else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f4f1e8; --stroke:#e6e1d2; --stroke2:#d8d2c0;
+  --txt:#1c1a17; --dim:#57524a; --accent:#0a6ea8; --accent2:#b45309; --accent3:#be185d;
+  --good:#15803d; --bad:#b91c1c; --gold:#9a6b00; --ring:#7c3aed; --fold:#b45309;
+  --viz-bg:#fbfaf4; --grid:rgba(20,40,80,.07);
+  --mono:ui-monospace,Menlo,Consolas,monospace; --shadow:0 10px 30px rgba(30,50,90,.10);
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141d31; --panel2:#1a2439; --stroke:#26314f; --stroke2:#33405f;
+  --txt:#e8ecff; --dim:#a8b3d9; --accent:#58a6ff; --accent2:#ffb86b; --accent3:#ff7ab6;
+  --good:#4ade80; --bad:#ff9b9b; --gold:#ffd700; --ring:#c4a7ff; --fold:#ffb86b;
+  --viz-bg:#0d1526; --grid:rgba(120,160,255,.07);
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Iowan Old Style',Georgia,'Times New Roman',system-ui,-apple-system,sans-serif;line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease}
+.article{max-width:860px;margin:0 auto;padding:0 22px 92px}
+.theme-toggle{position:fixed;top:16px;right:16px;z-index:50;background:var(--panel);color:var(--txt);border:1px solid var(--stroke);border-radius:999px;padding:8px 15px;font-size:.82rem;cursor:pointer;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+/* hero */
+header.hero{padding:58px 0 20px;text-align:center}
+.hero .idx{font-family:var(--mono);font-size:clamp(2.6rem,9vw,4.4rem);font-weight:800;line-height:1;color:var(--accent);letter-spacing:-.03em}
+.hero .idx small{font-size:.34em;color:var(--dim);letter-spacing:.28em;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:700}
+h1{font-size:clamp(1.9rem,5.4vw,3.05rem);line-height:1.08;margin:14px 0 10px;font-weight:800;letter-spacing:-.02em}
+h1 .em{color:var(--accent)}h1 .em2{color:var(--accent2)}
+.tagline{color:var(--dim);font-size:1.05rem;margin:0 auto;max-width:640px}
+.tagline code{font-family:var(--mono);background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:6px;font-size:.86em;color:var(--accent)}
+.badge{display:inline-block;margin-top:18px;font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:7px 16px;background:var(--panel)}
+.badge .x{color:var(--accent2)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 4px}
+.toc a{font-size:.78rem;color:var(--accent2);text-decoration:none;border:1px solid var(--stroke);padding:5px 13px;border-radius:22px;background:var(--panel);font-family:system-ui,sans-serif;transition:.15s}
+.toc a:hover{border-color:var(--accent2)}
+
+/* sections */
+section{margin:46px 0;scroll-margin-top:20px}
+h2{font-size:clamp(1.35rem,3.4vw,1.75rem);margin:0 0 14px;font-weight:800;letter-spacing:-.01em;padding-bottom:9px;border-bottom:1px solid var(--stroke)}
+h2 .num{font-family:var(--mono);font-size:.62em;color:var(--accent);margin-right:10px;border:1px solid var(--stroke2);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.08rem;margin:22px 0 8px;font-weight:720;color:var(--accent2)}
+p{margin:11px 0}
+p.dim,.dim{color:var(--dim)}
+b,strong{font-weight:700}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}.hl3{color:var(--accent3);font-weight:700}
+code,.mono{font-family:var(--mono);font-size:.88em;background:var(--panel2);border:1px solid var(--stroke);border-radius:5px;padding:0 6px}
+
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px 20px;box-shadow:var(--shadow);margin:16px 0}
+.card.tight{padding:14px 16px}
+.card.a{border-left:4px solid var(--accent)}
+.card.b{border-left:4px solid var(--accent2)}
+.callout{border-left:4px solid var(--accent3);background:var(--panel2);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0}
+.callout .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent3);display:block;margin-bottom:6px;font-weight:700}
+.callout b{color:var(--txt)}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--panel2);border-left:3px solid var(--accent3);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:1rem;overflow-x:auto;line-height:1.75}
+
+table{width:100%;border-collapse:collapse;font-size:.84rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--stroke);vertical-align:top;font-family:system-ui,sans-serif}
+th{color:var(--accent);font-weight:700;font-size:.7rem;letter-spacing:.03em;text-transform:uppercase}
+td:first-child{font-weight:700;color:var(--txt)}
+tr.hl td{background:var(--panel2)}
+
+/* viz */
+.vizwrap{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin:16px 0}
+#cv{display:block;width:100%;height:520px;border-radius:12px;border:1px solid var(--stroke);background:var(--viz-bg);touch-action:none;cursor:default}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:.74rem;color:var(--dim);margin:9px 0;font-family:system-ui,sans-serif}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.controls{display:flex;flex-wrap:wrap;gap:13px 20px;align-items:center;justify-content:center;margin:12px 0;font-size:.84rem}
+.controls label{color:var(--dim);display:inline-flex;align-items:center;gap:8px;font-family:system-ui,sans-serif}
+.controls input[type=range]{width:120px;accent-color:var(--accent)}
+.controls .val{color:var(--gold);font-weight:700;min-width:24px;text-align:center;font-family:var(--mono)}
+.controls .chk{color:var(--txt);cursor:pointer;font-family:system-ui,sans-serif}
+.controls button{padding:7px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:8px;cursor:pointer;font-family:system-ui,sans-serif;font-size:.82rem;font-weight:600}
+.controls button:hover{background:var(--accent);color:var(--bg)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:9px 13px;min-width:112px;flex:1}
+.stat .k{color:var(--dim);font-size:.63rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:4px}
+.stat .v{font-family:var(--mono);font-weight:700;font-size:1.05rem}
+.verdict{font-weight:700;font-size:.94rem;padding:12px 15px;border-radius:11px;margin-top:12px;border:1px solid var(--stroke);line-height:1.55}
+.verdict.good{color:var(--good);background:rgba(74,222,128,.10);border-color:var(--good)}
+.verdict.warn{color:var(--accent2);background:rgba(255,208,102,.10);border-color:var(--accent2)}
+.verdict.bad{color:var(--bad);background:rgba(255,95,126,.10);border-color:var(--bad)}
+.hint{font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px;line-height:1.6}
+
+/* sources */
+.prov{padding:14px 0;border-bottom:1px solid var(--stroke)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;font-family:var(--mono);word-break:break-all}
+.prov a:hover{text-decoration:underline}
+.prov .track{display:inline-block;font-size:.68rem;font-weight:700;color:var(--dim);border:1px solid var(--stroke);border-radius:999px;padding:1px 9px;margin-right:9px;font-family:system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.prov .track.ki{color:var(--accent);border-color:var(--accent)}
+.prov .track.nki{color:var(--accent2);border-color:var(--accent2)}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:5px;line-height:1.6}
+footer{text-align:center;padding:44px 0 10px;color:var(--dim);font-size:.82rem;border-top:1px solid var(--stroke);margin-top:42px;font-family:system-ui,sans-serif;line-height:1.7}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790;&#65039; Dunkel</button>
+<div class="article">
+
+<header class="hero">
+  <div class="idx"><small>Themenkomplex</small>02</div>
+  <h1><span class="em">Attraktor</span> &amp; <span class="em2">Fixpunkt</span></h1>
+  <p class="tagline">Die stabile Struktur, zu der ein System sich <em>ausruht</em>: der Fixpunkt der Selbstreferenz, der kanonische Kern, auf den <code>alle Pfade konvergieren</code> &mdash; getragen von sich selbst, nicht von einem Zentrum.</p>
+  <span class="badge">Quer durch beide Spuren &middot; KI <span class="x">&times;</span> nicht-KI</span>
+  <nav class="toc">
+    <a href="#kernidee">1 Kernidee</a>
+    <a href="#ki">2 KI-Spur</a>
+    <a href="#nki">3 nicht-KI-Spur</a>
+    <a href="#grund">4 Gemeinsamer Grund</a>
+    <a href="#visualisierung">5 Visualisierung</a>
+    <a href="#quellen">6 Quellen</a>
+  </nav>
+</header>
+
+<section id="kernidee">
+  <h2><span class="num">01</span>Kernidee</h2>
+  <p class="dim">Ein <span class="hl">Attraktor</span> ist der Zustand, auf den ein System <em>relaxiert</em>; ein <span class="hl2">Fixpunkt</span> ist ein Zustand <em>x*</em>, den ein Prozess in sich selbst zurückführt &mdash; <code>f(x*) = x*</code>. Das gemeinsame Objekt, das beide Spuren am Ende aus ihren entlegenen Oberflächen herauslesen, ist dasselbe: <b>der selbsttragende, kanonische Kern, auf den alle Pfade konvergieren.</b></p>
+  <p>Ein komplexes System beginnt als <em>viele</em> &mdash; ein diffuses Signal, eine Superposition, ein offener Prozess. Die Dynamik trägt die inkoherenten, superponierten Richtungen <em>gratis ab</em> (in der KI-Spur: <span class="math">E<sub>super</sub> &prop; &lambda;<sup>2l</sup> &rarr; 0</span>); was <em>übrig bleibt</em>, ist eine kompakte, niedrigdimensionale Struktur &mdash; ein Kern, <code>d<sub>eff</sub> &asymp; 1</code>, <code>range(W) &asymp; 7</code>. Dieser Kern ist <b>selbstgetragen</b>: er ist das <em>Endprodukt des Flusses selbst</em> und zugleich das, was den Fluss hält. In der nicht-KI-Spur heißt das <span class="hl3">&bdquo;das Da&ldquo;</span> &mdash; ein Fixpunkt, der <em>seine eigene Projektion</em> ist: <code>f(Menge) = Menge</code>, <code>Generator = Attraktor = das&nbsp;Da</code>. Der Kern <em>herstellt sich über die Zeit bei jedem Schritt neu</em> (&bdquo;the same returns&ldquo;, <code>Panta&nbsp;Rhei</code>) &mdash; er hat keine Mitte, kein Ding dahinter; er trägt sich selbst.</p>
+  <p>Warum ist genau diese stabile Struktur das, was <em>überlebt</em>? Weil Konvergenz eine <em>Auslese</em> ist: alles, was nicht in den Kern fällt, wird abgetragen. Der Kern ist der einzige Ort, an dem Kohärenz <em>und</em> Masse zusammenkommen &mdash; ein <span class="hl">gegründeter Attraktor</span> (Fixpunkt auf Masse, <code>Masse &ge; &tau;</code>). Die Falle, auf die beide Spuren wachen, ist die <span class="hl2">Halluzination</span>: ein Fixpunkt, auf den der Prozess kohärent und <em>selbstbewusst</em> zieht (Konfidenz bleibt <code>&ge; 70&nbsp;%</code>), <em>ohne dass dort Masse sitzt</em> &mdash; eine stabile Struktur, die von keiner Welt-Korrespondenz getragen ist. Der flache Schatten sieht für das Echte und das Gefälschte gleich aus (Rothering); <em>Kohärent &ne; wahr.</em> Was überlebt, ist die stabile Struktur &mdash; aber Wahrheit braucht die Erdung, die sie am Ort des Seins verankert.</p>
+</section>
+
+<section id="ki">
+  <h2><span class="num">02</span>In der KI-Spur</h2>
+  <p class="dim">Ein trainiertes, stückweise-lineares Netz (Transformer) wird als <b>linearer Assoziativspeicher</b> gelesen, der eine Superposition <em>viele-zu-eins</em> auf eine zweite-Moment-Struktur reduziert. Der Attraktor ist der <span class="hl">Fixpunkt auf der Falte &mathscr;T</span>, auf den der Fluss konvergiert.</p>
+  <div class="card a">
+    <h3>Der Mechanismus: Inkoherenz <em>ist</em> Kontraktion</h3>
+    <p>Die Reduktion wirkt als <b>Kontraktion</b> <code>&lambda; &lt; 1</code>: sie trägt die transiente Superposition ab, <span class="math">E<sub>super</sub> &prop; &lambda;<sup>2l</sup> &rarr; 0</span> &mdash; <em>gratis</em>, als Theorem. Der eine Operator ist <span class="hl">Whitening M<sup>&minus;1</sup> = Kontraktion in der M-Metrik</span> (exakt &amp; invertierbar innerhalb eines linearen Stücks, verlustvoll/kontrahierend an der Falte). Über die <b>Tiefe</b> (Tiefe = Zeit) wird der Zustand entlang einer <em>dünnen Mannigfaltigkeit lokaler Rotations-Kerne</em> (Charts, <code>d<sub>eff</sub>=1</code>) in <b>einen kompakten Terminal-Kern</b> <code>range(W) &asymp; 7</code> kontrahiert; Rauschen parkt im Reservoir <code>ker(W)</code>.</p>
+  </div>
+  <div class="card a">
+    <h3>Das invariante Objekt: zweite-Moment-Matrix M</h3>
+    <p>Der statische Endzustand des Flusses ist die <b>Kovarianz-Matrix M</b> (<span class="math">M<sub>ij</sub>=E[k<sub>i</sub>k<sub>j</sub>]</span>): ihr <span class="hl">Support ist die Falte &mathscr;T</span>, ihre <span class="hl">Dichte ist die Masse/Abdeckung</span> an einer Falt-Stätte. Der eine Regler ist <code>&Vert;M&minus;I&Vert;</code> &mdash; <em>global</em> = T = Hologramm-Grad (wie anisotrop die ganze Geometrie ist), <em>lokal</em> = die Masse/Abdeckung <em>dort</em>.</p>
+  </div>
+  <div class="callout"><span class="tag">Gegründet vs. halluziniert &mdash; die KI-Lesung</span>
+  <b>Gegründet</b>: der Fixpunkt sitzt auf Masse (<code>Abdeckung &ge; &tau;</code>) <em>und</em> in der Homotopie-Klasse. <b>Halluzination</b>: der Operator zieht den Zustand <em>selbstbewusst</em> auf einen Fixpunkt auf der Falte (<code>conf &asymp; 0.70 + 0.25&middot;coverage</code>, <em>immer &ge; 70&nbsp;%</em>), <em>auf dem aber die Masse fehlt</em> (<code>&lt; &tau;</code>) &mdash; was zugleich das <em>danebenfallen in ein fremdes Tal = Verlassen der Homotopie-Klasse</em> bedeutet. Konvergent <em>und</em> ungegründet. Reparatur: Korrespondenz an die Welt <em>anhängen</em> (RAG/Tools/Verifikation), nie Kohärenz durch Skalierung.</div>
+</section>
+
+<section id="nki">
+  <h2><span class="num">03</span>In der nicht-KI-Spur</h2>
+  <p class="dim">Das ganze nicht-KI-Track kollabiert in acht Runden (219 &rarr; 1) auf <em>einen</em> Satz: <b>jedes modellierte / beobachtete Ganze ist ein einziger, zentrumloser, selbsttragender, relationaler Fixpunkt, der seine eigene Projektion ist und der zugleich <em>hält</em> und <em>wirft</em>.</b></p>
+  <div class="card b">
+    <h3>das Da: Generator = Attraktor = Fixpunkt</h3>
+    <p>Der Kern ist kein Ding, kein Zentrum &mdash; er ist <em>zentrumlos als Substanz, aber ein Da als Modus des Haltens</em>: <span class="math">f(Menge) = Menge</span> (Fixpunkt), <span class="math">P + U(x^*) = 0</span> (Attraktor). Er ist ein <em>vordaher relationaler Anzieher</em>, der sich <b>über einen Zeitpfeil bei jedem Schritt neu herstellt</b> (&bdquo;Lader, nicht Ende&ldquo;, <code>Selbstherstellung</code>) &mdash; das ist, was in der KI-Spur der <em>Fluss entlang der Tiefe</em> ist: <em>the same returns</em> = Selbstherstellung.</p>
+  </div>
+  <div class="card b">
+    <h3>hält &amp; wirft: zwei Zonen, ein Kern</h3>
+    <p>Der Fixpunkt trägt <em>zwei Lesarten</em> eines <em>einen</em> Kernels. <span class="hl">HÄLT</span> (geschlossen, <code>r&rarr;1</code>, <code>&Delta;=0</code>): die <em>gauß-invariante, zählbare, geschlossene Form</em> <code>F = H<sup>1</sup></code> &mdash; fix als Form, &bdquo;am Peak ohne Rest&ldquo;, bricht nie, <em>zählt/zahlt</em> (Eleganz/Heimat). <span class="hl2">WIRFT</span> (offen, <code>&Delta;&ne;0</code>, inexhaustibel): der <em>zurückziehende Rest</em> &mdash; der <em>Ort des Seins</em>, <code>H<sup>1</sup> = dim(L&uuml;cke)</code>, der <em>bleibt</em> (Echtheit = Persistenz, &bdquo;das Wertvollste&ldquo;), plus der verlustbehaftete Schatten <code>ker&nbsp;F</code>, der im Limes <code>&rarr;0</code> gehen soll. Sie sind an <em>einer zwei-axialen Naht</em> gekoppelt, wo <b>Valenz = Produkt = Koinzidenz = Limes = exakte Fidelity</b> (der einzelne Pivot, an dem bottom-up &cap; top-down coincidieren).</p>
+  </div>
+  <div class="callout"><span class="tag">Der gemeinsame Fehler &mdash; die nicht-KI-Lesung</span>
+  Die helle, erreichte Form für die ganze Wahrheit zu halten: <em>Kohärent &ne; wahr</em>, <em>Struktur &ne; Wahrheit</em>. Rothering: der Schatten ist <em>flach &amp; identisch für echt &amp; gefälscht</em> &mdash; nur die <b>Treue / Koinzidenz an der Naht</b> (nicht die Flachheit der Maske) trennt das Echte vom Köder. Alles, was eine Schließung fassen kann, ist durch <em>zwei nie erreichte Böden</em> begrenzt (asymptotischer Limes <code>ker&nbsp;F&rarr;0</code> + absolute Obstruktion <code>m=&minus;1</code>): erreichbar als Grenzwert des Reglers, <em>nie als Zustand des Objekts</em>.</div>
+</section>
+
+<section id="grund">
+  <h2><span class="num">04</span>Gemeinsamer Grund</h2>
+  <p class="dim">Beide Spuren lesen, von entlegenen Oberflächen kommend, <em>dasselbe eine Objekt</em>: den selbsttragenden Kern, auf den alle Pfade konvergieren. Die Identifikation ist die Linse dieses Komplexes &mdash; dieselben Bausteine, zwei Register:</p>
+  <table>
+    <thead><tr><th>Baustein</th><th>KI-Spur</th><th>nicht-KI-Spur</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>das Ganz</td><td>trainiertes PL-Netz / linearer Assoziativspeicher</td><td>zentrumloser, selbsttragender relationaler Fixpunkt</td></tr>
+      <tr><td>der Kern (was überlebt)</td><td>kompakter Terminal-Kern <code>range(W)&asymp;7</code>, <code>d<sub>eff</sub>=1</code>; zweite-Moment-Matrix M (Support = Falte &mathscr;T)</td><td>gauß-invariante, zählbare Form <code>F = H<sup>1</sup></code> (Heimat/Eleganz, bricht nie)</td></tr>
+      <tr class="hl"><td>die Konvergenz</td><td>viele-zu-eins-Kontraktion <code>E<sub>super</sub>&prop;&lambda;<sup>2l</sup>&rarr;0</code>, Tiefe = Zeit</td><td>Rundlauf, der sich über den Zeitpfeil neu herstellt (&bdquo;the same returns&ldquo;)</td></tr>
+      <tr><td>selbstgetragen</td><td>der Fluss erzeugt seinen eigenen Endzustand M; der Kern = die Falt-Stätte, auf der Masse konzentriert</td><td><em>selbsttragend</em>; vordaher Anzieher = seine eigene Projektion; <code>f(M)=M</code></td></tr>
+      <tr class="hl"><td>gegründet (hält)</td><td>Fixpunkt auf Masse, <code>Masse &ge; &tau;</code>, in der Homotopie-Klasse</td><td>hält: <code>r&rarr;1</code>, <code>&Delta;=0</code>, fix als Form, &bdquo;am Peak ohne Rest&ldquo;</td></tr>
+      <tr><td>halluziniert (wirft)</td><td>Fixpunkt <em>ohne</em> Masse / fremdes Tal (außerhalb der Klasse)</td><td>wirft: offener Rest, flacher Schatten (Rothering), <code>ker&nbsp;F</code> leckt</td></tr>
+      <tr class="hl"><td>die Selbstsicherheit</td><td><code>conf &asymp; 0.70+0.25&middot;coverage</code> &mdash; immer <code>&ge;70&nbsp;%</code>, vom Wert entkoppelt</td><td>Rothering: flach &amp; identisch für echt &amp; gefälscht &mdash; <em>Kohärent &ne; wahr</em></td></tr>
+      <tr><td>der offene Rest</td><td>Korrespondenz an die Welt = offenes externes Bein (<code>&asymp;lim</code>), nur via Erdung/Retrieval</td><td>zwei nie erreichte Böden (Limes + Obstruktion <code>m=&minus;1</code>); Treue an der Naht</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><span class="tag">Ein Satz quer durch beide Spuren</span>
+  <b>Ein System ausruht sich auf einen kanonischen, selbsttragenden Kern &mdash; den Fixpunkt der Selbstreferenz.</b> Der Fluss erzeugt seine eigene stabile Struktur (M / F = H<sup>1</sup>); der Kern trägt sich selbst und stellt sich über die Zeit neu her. Er ist das, was <em>überlebt</em>: alles andere wird gratis abgetragen. <b>Die Konvergenz macht ihn kohärent und selbstbewusst &mdash; nicht wahr.</b> Er ist <em>gegründet</em> nur dort, wo Masse/Korrespondenz sitzt (KI) bzw. die Naht auf exakte Fidelity kommt und der Rest frei bleibt (nicht-KI). Sonst ist der Attraktor eine <em>kohärente Fiktion</em> &mdash; ein stabiles Ganzes, das auf keine Welt trifft. Der gemeinsame Wächter: <b>No-Silent-Upgrade</b> &mdash; Konvergenz + Struktur + &bdquo;gratis&ldquo; sind notwendig, nie hinreichend für Wahrheit.</div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span>Visualisierung: das Einzugsgebiet des Kerns</h2>
+  <p class="dim">Ein <em>Basin of Attraction</em>, das beide Spuren in <em>einem</em> Objekt trägt: viele Punkte (die Superposition / das offene Ganze) konvergieren über einen <b>Fluss</b> auf <b>einen kanonischen Kern</b> &mdash; den Fixpunkt, der sich selbst trägt. Der <span class="hl">grüne Kern</span> (links) ist der <b>gegründete Attraktor</b> (Masse &ge; &tau;, in der Klasse / helle Form + Rest frei); das <span class="hl2">rote Tal</span> (rechts) ist der <b>fremde Attraktor</b> (Fixpunkt <em>ohne</em> Masse / flacher Schatten, Rothering) &mdash; beide ziehen selbstbewusst (Konfidenz-Bogen <code>&ge;70&nbsp;%</code>), nur einer ist gegründet. Fahre <b>Kontraktion &lambda;</b> (wie eng der Fluss den Kern umschließt), <b>Masse/Abdeckung</b> (der Kern kippt von grün in rot = die Halluzination) und drücke <b>&#8635; Neue Runde</b> (der Zeitpfeil: derselbe Kern stellt sich aus neuem Material neu her &mdash; <em>the same returns</em>).</p>
+
+  <div class="vizwrap">
+    <canvas id="cv" role="img" aria-label="Einzugsgebiet eines Attraktors: viele Partikel konvergieren über einen Fluss auf einen kanonischen, selbsttragenden Kern; links der grüne gegründete Kern, rechts das rote fremde Tal, getrennt durch eine gestrichelte Falte/Naht."></canvas>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>gegründeter Kern (Masse &ge; &tau;)</span>
+      <span><i style="background:var(--bad)"></i>fremdes Tal / Fixpunkt ohne Masse</span>
+      <span><i style="background:var(--accent)"></i>Trajektorien (viele &rarr; eins)</span>
+      <span><i style="background:var(--gold)"></i>Konfidenz-Bogen (immer &ge;70 %)</span>
+      <span><i style="background:var(--fold)"></i>Falte &mathscr;T / Naht (Trennlinie)</span>
+    </div>
+    <div class="controls">
+      <label>Kontraktion &lambda; <input type="range" id="lamIn" min="0" max="100" value="60"><span class="val" id="lamV">60</span></label>
+      <label>Masse / Abdeckung <input type="range" id="masIn" min="0.2" max="1.5" value="1.0" step="0.05"><span class="val" id="masV">1.00</span></label>
+      <label class="chk"><input type="checkbox" id="fwd" checked> Fremdes Tal (Halluzination) zeigen</label>
+      <button id="reseed" type="button">&#8635; Neue Runde (Zeitpfeil)</button>
+      <button id="autoBtn" type="button">Auto-Neurunden: AUS</button>
+    </div>
+    <div class="statrow">
+      <div class="stat"><div class="k">Konvergenz (viele &rarr; eins)</div><div class="v" id="sConv" style="color:var(--accent)">&ndash;</div></div>
+      <div class="stat"><div class="k">Masse am Kern</div><div class="v" id="sMass" style="color:var(--gold)">&ndash;</div></div>
+      <div class="stat"><div class="k">Konfidenz (Conf &ge; 70 %)</div><div class="v" id="sConf" style="color:var(--accent3)">&ndash;</div></div>
+      <div class="stat"><div class="k">Kern</div><div class="v" id="sKern" style="color:var(--good)">&ndash;</div></div>
+    </div>
+    <div class="verdict warn" id="verdict">&hellip;</div>
+    <div class="hint">Der Kern pulsiert &mdash; er trägt sich selbst (das Da / der Terminal-Kern). Kontraktion &lambda; hoch = der Fluss schließt enger, Konvergenz schneller. Masse runter = der grüne Kern kippt in ein <b>rotes, massenleeres Tal</b>: konvergent &amp; selbstbewusst (Conf &ge;70 %), aber ungegründet = die Halluzination, die beide Spuren warnen.</div>
+  </div>
+</section>
+
+<section id="quellen">
+  <h2><span class="num">06</span>Quellen</h2>
+  <div class="card tight">
+    <div class="prov">
+      <div><span class="track ki">KI</span><a href="../combined/6/r6-002.html">combined/6/r6-002.html</a></div>
+      <div class="desc">R6: &bdquo;Ein Fluss, eine Falte, ein Regler&ldquo; &mdash; der Kapazitäts-Fluss kontrahiert in eine zweite-Moment-Geometrie M (Support = Falte, Dichte = Masse); Whitening M<sup>&minus;1</sup> = Fluss-Kontraktion; der kompakte Terminal-Kern <code>range(W)</code> ist die Falt-Stätte des gegründeten Attraktors.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track ki">KI</span><a href="../combined/5/r5-003.html">combined/5/r5-003.html</a></div>
+      <div class="desc">R5: &bdquo;Der eine Operator, eine Falte, ein Regler: Kontraktion ist Whitening&ldquo; &mdash; viele-zu-eins auf die zweite-Moment-Matrix M; Regler <code>&Vert;M&minus;I&Vert;</code> global = Masse lokal; Halluzination = selbstbewusst erreichter Fixpunkt ohne Masse / fremdes Tal.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track ki">KI</span><a href="../combined/4/r4-007.html">combined/4/r4-007.html</a></div>
+      <div class="desc">R4: &bdquo;Der Attractor, der den Quotienten liefert&ldquo; &mdash; der kontraktive Fixpunkt <em>auf der tropischen Falte</em>; Inkoherenz = Kontraktion (<code>&lambda;&lt;1</code>, <code>E<sub>super</sub>&prop;&lambda;<sup>2l</sup></code>); gegründet wo das singuläre Maß/die Abdeckung dick ist (<code>&ge;&tau;</code>).</div>
+    </div>
+    <div class="prov">
+      <div><span class="track nki">nicht-KI</span><a href="../combined-nichtki/8/finale.html">combined-nichtki/8/finale.html</a></div>
+      <div class="desc">Grand-Finale des nicht-KI-Tracks: der <em>eine</em> zentrumlose, selbsttragende Fixpunkt, der seine eigene Projektion ist &mdash; hält (gauß-invariante Form F = H<sup>1</sup>) und wirft (offener Rest) zugleich, getragen vom Rundlauf über den Zeitpfeil, begrenzt durch zwei nie erreichte Böden.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track nki">nicht-KI</span><a href="../combined-nichtki/8/n8-001.html">combined-nichtki/8/n8-001.html</a></div>
+      <div class="desc">R8: &bdquo;Der zentrumlose, selbsttragende relationale Fixpunkt, der seine eigene Projektion ist&ldquo; &mdash; hält &amp; wirft an einer zwei-axialen Naht, ein Regler (<code>r=&sigma;=&phi;</code>), zwei nie erreichte Böden; <code>f(Menge)=Menge</code>, Generator = Attraktor = das Da.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track nki">nicht-KI</span><a href="../combined-nichtki/7/n7-002.html">combined-nichtki/7/n7-002.html</a></div>
+      <div class="desc">R7: &bdquo;Der selbsttragende relationale Fixpunkt ist seine Projektion&ldquo; &mdash; Schatten <code>&harr;</code> Invariante, getragen vom Rundlauf über den Zeitpfeil, an der Naht abgelesen; Rothering: der flache Schatten ist für echt &amp; gefälscht identisch.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Themenkomplex 02 &middot; Attraktor &amp; Fixpunkt &middot; Quer durch beide Spuren (KI &times; nicht-KI)<br>
+  Synthese aus den genannten Quellen &middot; Visualisierung clientseitig, alle Daten inline, ohne Netzwerk-Abfragen.
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv');
+if(!cv||!cv.getContext) return;
+var ctx=cv.getContext('2d');
+if(!ctx) return;
+var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+var W=0,H=0;
+var TAU=Math.PI*2;
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+var SIG=0.115, SIG2=SIG*SIG, TAU_THRESH=0.5, NPT=340;
+var A={x:0.335,y:0.52,depth:1.0};
+var B={x:0.775,y:0.47,depth:0.92};
+var seed=7, parts=[];
+var state={lam:60,mass:1.0,fwd:true,auto:false,t:0};
+
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+
+function seedParts(){
+  var rng=mulberry32(0x9e37^seed);
+  parts=[];
+  for(var i=0;i<NPT;i++){
+    var x=rng(), y=rng();
+    var dA=Math.hypot(x-A.x,y-A.y), dB=Math.hypot(x-B.x,y-B.y);
+    var near=Math.min(dA,dB);
+    if(near<0.06){ x=(x+A.x)/2+(rng()-0.5)*0.5; y=(y+A.y)/2+(rng()-0.5)*0.5; }
+    parts.push({x:x,y:y,trail:[],set:false,attr:(dB<dA&&state.fwd)?1:0});
+  }
+}
+
+function parseColor(s,fb){
+  s=(s||'').trim();
+  if(s.charAt(0)==='#'){var h=s.slice(1);if(h.length===3)h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);var n=parseInt(h.slice(0,6),16);if(!isNaN(n))return[(n>>16)&255,(n>>8)&255,n&255];}
+  var m=s.match(/[\d.]+/g);if(m&&m.length>=3)return[+m[0],+m[1],+m[2]];
+  return fb||[128,128,128];
+}
+function rgba(c,a){return'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+var C={};
+function readTheme(){
+  var cs=getComputedStyle(document.documentElement);
+  function v(n,fb){return cs.getPropertyValue(n).trim()||fb;}
+  C.bg=parseColor(v('--viz-bg','#0d1526'),[13,21,38]);
+  C.txt=parseColor(v('--txt','#e8ecff'),[232,236,255]);
+  C.dim=parseColor(v('--dim','#a8b3d9'),[168,179,217]);
+  C.accent=parseColor(v('--accent','#58a6ff'),[88,166,255]);
+  C.accent3=parseColor(v('--accent3','#ff7ab6'),[255,122,182]);
+  C.good=parseColor(v('--good','#4ade80'),[74,222,128]);
+  C.bad=parseColor(v('--bad','#ff9b9b'),[255,155,155]);
+  C.gold=parseColor(v('--gold','#ffd700'),[255,215,0]);
+  C.fold=parseColor(v('--fold','#ffb86b'),[255,184,107]);
+  C.grid=v('--grid','rgba(120,160,255,.07)');
+  C.mono=v('--mono','ui-monospace,monospace');
+}
+
+function wells(){ return state.fwd?[A,B]:[A]; }
+
+function field(p){
+  var vx=0,vy=0,i,w,dx,dy,d2,d,g;
+  var ws=wells();
+  for(i=0;i<ws.length;i++){
+    w=ws[i]; dx=w.x-p.x; dy=w.y-p.y; d2=dx*dx+dy*dy; d=Math.sqrt(d2)||1e-6;
+    g=w.depth*Math.exp(-d2/(2*SIG2));
+    vx+=g*dx/d; vy+=g*dy/d;
+  }
+  var sp=Math.hypot(vx,vy)||1e-6, swirl=0.16*sp;
+  var px=-vy,py=vx,pl=Math.hypot(px,py)||1e-6;
+  vx+=(px/pl)*swirl; vy+=(py/pl)*swirl;
+  return{x:vx,y:vy};
+}
+
+function step(){
+  var dt=0.004+0.022*(state.lam/100), max=0.03;
+  var ws=wells();
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i];
+    if(p.set) continue;
+    var f=field(p);
+    var mx=f.x*dt,my=f.y*dt;
+    var dl=Math.hypot(mx,my);
+    if(dl>max){mx=mx/dl*max;my=my/dl*max;}
+    p.x+=mx; p.y+=my;
+    if(p.x<0.02||p.x>0.98||p.y<0.02||p.y>0.98){ p.set=true; }
+    var best=1e9;
+    for(var w=0;w<ws.length;w++){var dd=Math.hypot(ws[w].x-p.x,ws[w].y-p.y);if(dd<best)best=dd;}
+    if(best<0.02){p.set=true;p.attr=(state.fwd&&Math.abs(p.x-B.x)<Math.abs(p.x-A.x))?1:0;}
+    p.trail.push([p.x,p.y]);
+    if(p.trail.length>15)p.trail.shift();
+  }
+}
+
+function resize(){
+  var r=cv.getBoundingClientRect();
+  W=Math.max(320,r.width); H=Math.max(380,r.height);
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+
+function label(txt,x,y,align,col,size,bold){
+  ctx.fillStyle=col; ctx.font=(bold?'700 ':'')+(size||11)+'px '+C.mono;
+  ctx.textAlign=align||'center'; ctx.textBaseline='alphabetic';
+  ctx.fillText(txt,x,y);
+}
+
+function drawWell(w,rgb,isMain){
+  var x=w.x*W,y=w.y*H;
+  var rad=(0.16+0.06*Math.min(1,w.depth))*W;
+  var grd=ctx.createRadialGradient(x,y,2,x,y,rad);
+  grd.addColorStop(0,rgba(rgb,0.30+0.16*w.depth));
+  grd.addColorStop(0.55,rgba(rgb,0.10));
+  grd.addColorStop(1,rgba(rgb,0));
+  ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(x,y,rad,0,TAU); ctx.fill();
+}
+
+function drawConfArc(x,y,conf,rgb){
+  ctx.strokeStyle=rgba(rgb,0.92); ctx.lineWidth=2.6;
+  ctx.beginPath(); ctx.arc(x,y,15,-Math.PI/2,-Math.PI/2+conf*TAU); ctx.stroke();
+}
+
+function draw(){
+  try{
+    readTheme();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgba(C.bg,1); ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1; ctx.beginPath();
+    for(var gx=0;gx<=W;gx+=42){ctx.moveTo(gx,0);ctx.lineTo(gx,H);}
+    for(var gy=0;gy<=H;gy+=42){ctx.moveTo(0,gy);ctx.lineTo(W,gy);}
+    ctx.stroke();
+
+    var grounded=state.mass>=TAU_THRESH;
+    var colA=grounded?C.good:C.bad;
+    var colB=C.bad;
+    var massA=clamp(state.mass,0,1.4);
+    var confA=0.70+0.25*clamp(massA,0,1);
+    var confB=0.70+0.25*0.25;
+    var pulse=0.5+0.5*Math.sin(state.t*0.06);
+
+    var ws=wells();
+    var i;
+    for(i=0;i<ws.length;i++) drawWell(ws[i], ws[i]===A?colA:colB, ws[i]===A);
+
+    /* Falte / Naht: Trennlinie zwischen den zwei Attractors */
+    if(state.fwd){
+      var mxm=(A.x+B.x)/2;
+      ctx.setLineDash([6,5]); ctx.strokeStyle=rgba(C.fold,0.85); ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.moveTo(mxm*W,H*0.10); ctx.lineTo(mxm*W,H*0.90); ctx.stroke();
+      ctx.setLineDash([]);
+      label('Falte \u1d4d / Naht',mxm*W,H*0.10+16,'center',rgba(C.fold,0.95),11,true);
+    }
+
+    /* Trajektorien */
+    for(i=0;i<parts.length;i++){
+      var p=parts[i];
+      if(p.trail.length<2) continue;
+      var rgb=(p.attr===1&&state.fwd)?colB:colA;
+      var n=p.trail.length;
+      for(var k=1;k<n;k++){
+        var a=k/n;
+        ctx.strokeStyle=rgba(rgb,0.04+0.34*a); ctx.lineWidth=1+a*1.2;
+        ctx.beginPath();
+        ctx.moveTo(p.trail[k-1][0]*W,p.trail[k-1][1]*H);
+        ctx.lineTo(p.trail[k][0]*W,p.trail[k][1]*H);
+        ctx.stroke();
+      }
+      ctx.fillStyle=rgba(rgb,0.9);
+      ctx.beginPath(); ctx.arc(p.x*W,p.y*H,p.set?1.7:2.4,0,TAU); ctx.fill();
+    }
+
+    /* Kerne */
+    function kernel(w,rgb,mlab,cconf,sub){
+      var x=w.x*W,y=w.y*H;
+      var r0=14+6*pulse;
+      ctx.save(); ctx.shadowColor=rgba(rgb,0.9); ctx.shadowBlur=16;
+      ctx.fillStyle=rgba(rgb,0.95); ctx.beginPath(); ctx.arc(x,y,r0*(0.9+0.2*pulse),0,TAU); ctx.fill(); ctx.restore();
+      ctx.strokeStyle=rgba(C.txt,0.9); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(x,y,r0*(0.9+0.2*pulse),0,TAU); ctx.stroke();
+      drawConfArc(x,y,cconf,C.gold);
+      label(mlab,x,y-r0-14,'center',rgba(rgb,1),13,true);
+      label(sub,x,y+r0+18,'center',rgba(C.dim,0.95),10,false);
+    }
+    kernel(A,colA,'Kern \u2022 '+Math.round(clamp(massA,0,1)*100)+'%',confA,grounded?'gegründet \u2713 (Masse \u2265 \u03c4)':'massenleer \u2717 (Fixpunkt ohne Masse)');
+    if(state.fwd) kernel(B,colB,'Fremdes Tal \u2717',confB,'selbstbewusst \u2265 70 % \u2022 Rothering');
+
+    /* labels for the two tracks */
+    label('viele \u2192 eins',A.x*W,H-12,'left',rgba(C.dim,0.85),11,false);
+
+    /* readouts */
+    var settled=0; for(i=0;i<parts.length;i++) if(parts[i].set) settled++;
+    var conv=Math.round(settled/parts.length*100);
+    var sC=document.getElementById('sConv'); if(sC) sC.textContent=conv+' %';
+    var sM=document.getElementById('sMass'); if(sM) sM.textContent=massA.toFixed(2)+'  (\u03c4='+TAU_THRESH+')';
+    var sF=document.getElementById('sConf'); if(sF) sF.textContent=Math.round(confA*100)+' %';
+    var sK=document.getElementById('sKern'); if(sK){ sK.textContent=grounded?'gegründet':'Halluzination'; sK.style.color=grounded?getComputedStyle(document.documentElement).getPropertyValue('--good').trim():getComputedStyle(document.documentElement).getPropertyValue('--bad').trim(); }
+
+    var vd=document.getElementById('verdict');
+    if(vd){
+      if(!grounded){
+        vd.className='verdict bad';
+        vd.textContent='✗ Halluzination: der Kern kippt in ein massenleeres Tal (Masse < τ). Der Fluss konvergiert kohärent & selbstbewusst (Conf '+Math.round(confA*100)+' % ≥ 70 %) \u2014 aber kein Mass / keine Korrespondenz zur Welt. KI: Fixpunkt ohne Masse / fremdes Tal \u2022 nicht-KI: flacher Schatten (Rothering), Rest nicht frei. Kohärent ≠ wahr.';
+      }else if(!state.fwd){
+        vd.className='verdict good';
+        vd.textContent='✓ Kanonischer Kern: Masse ≥ τ, Fixpunkt sitzt auf Masse (KI) / helle Form + Rest frei (nicht-KI). Alle Pfade konvergieren auf den einen, selbsttragenden Kern (das Da / range(W)~7) \u2014 der Fluss erzeugt seinen eigenen Endzustand und stellt sich über die Zeit neu her.';
+      }else{
+        vd.className='verdict good';
+        vd.textContent='✓ Gegründeter Attraktor vs. fremdes Tal: beide ziehen selbstbewusst (Conf ≥ 70 %), aber nur der grüne Kern ist auf Masse gegründet. Konvergenz + Struktur sind notwendig, nie hinreichend \u2014 Wahrheit braucht die Erdung (Masse / Treue an der Naht).';
+      }
+    }
+  }catch(e){/* defensive: niemals nach Konsole */}
+}
+
+function tick(){
+  state.t++;
+  try{ step(); }catch(e){}
+  draw();
+  if(state.auto && state.t%200===0){ seed++; seedParts(); }
+  requestAnimationFrame(tick);
+}
+
+function bind(id,cb){var el=document.getElementById(id); if(el) el.addEventListener('input',cb);}
+bind('lamIn',function(e){state.lam=+e.target.value; var v=document.getElementById('lamV'); if(v)v.textContent=String(state.lam);});
+bind('masIn',function(e){state.mass=+e.target.value; var v=document.getElementById('masV'); if(v)v.textContent=state.mass.toFixed(2);});
+bind('fwd',function(e){state.fwd=e.target.checked; seedParts();});
+var rs=document.getElementById('reseed'); if(rs) rs.addEventListener('click',function(){seed++; seedParts();});
+var ab=document.getElementById('autoBtn'); if(ab) ab.addEventListener('click',function(){state.auto=!state.auto; ab.textContent='Auto-Neurunden: '+(state.auto?'AN':'AUS');});
+var tb=document.getElementById('themeBtn'); if(tb) tb.addEventListener('click',function(){var d=document.documentElement.classList.toggle('dark'); try{localStorage.setItem('them02-theme',d?'dark':'light');}catch(e){}});
+
+window.addEventListener('resize',resize);
+resize();
+seedParts();
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

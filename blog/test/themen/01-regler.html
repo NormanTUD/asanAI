@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Complex 01 · Der eine Regler / das Dial — Quer-Synthese KI × nicht-KI</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('themen01-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b18; --muted:#5c574c; --card:#ffffff; --card2:#f2ede1;
+  --border:#e3dcc9; --border2:#d6cfbb; --grid:rgba(20,40,80,.08); --plotbg:#f6f1e6;
+  --accent:#2b6cb0; --accent2:#7c3aed; --accent3:#be185d;
+  --good:#15803d; --bad:#c0392b; --amber:#b45309; --teal:#0f766e; --gold:#9a6b00;
+  --ki:#0e7490; --nki:#c46a1c; --on-accent:#ffffff;
+  --shadow:0 10px 34px rgba(30,50,90,.10);
+}
+html.dark{
+  --bg:#0a0e1a; --fg:#e8ecf6; --muted:#9aa7c7; --card:#111726; --card2:#0d1424;
+  --border:#26314f; --border2:#33405f; --grid:rgba(120,160,255,.08); --plotbg:#0c1120;
+  --accent:#58a6ff; --accent2:#c4a7ff; --accent3:#ff7ac0;
+  --good:#4ade80; --bad:#fb7185; --amber:#ffd166; --teal:#2dd4bf; --gold:#ffd700;
+  --ki:#38bdf8; --nki:#f0a35e; --on-accent:#0a0e1a;
+  --shadow:0 18px 54px rgba(0,0,0,.45);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(1200px 620px at 50% -12%, color-mix(in srgb, var(--accent) 13%, var(--bg)) 0%, var(--bg) 55%);
+  color:var(--fg);line-height:1.72;font-family:Georgia,'Iowan Old Style','Times New Roman',serif;
+  -webkit-font-smoothing:antialiased;transition:background .35s,color .35s;min-height:100vh}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+article{max-width:860px;margin:0 auto;padding:22px 20px 100px}
+
+.topbar{position:fixed;top:14px;right:14px;z-index:60}
+#themeToggle{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:7px 15px;border-radius:999px;
+  cursor:pointer;font-size:.82rem;font-family:system-ui,sans-serif;box-shadow:var(--shadow);transition:.15s}
+#themeToggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* hero */
+header.hero{position:relative;overflow:hidden;text-align:center;padding:58px 14px 30px;border-radius:22px}
+.orb{position:absolute;border-radius:50%;filter:blur(48px);opacity:.42;pointer-events:none;z-index:0}
+.orb.o1{width:330px;height:330px;background:var(--accent);top:-96px;left:-72px;animation:drift1 19s ease-in-out infinite}
+.orb.o2{width:300px;height:300px;background:var(--nki);top:24px;right:-92px;animation:drift2 23s ease-in-out infinite}
+.orb.o3{width:250px;height:250px;background:var(--teal);bottom:-130px;left:42%;animation:drift1 27s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(42px,30px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-52px,24px)}}
+.hero .inner{position:relative;z-index:1;animation:rise .9s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:20px}
+.cno-row{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:14px}
+.cno{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:clamp(3.4rem,13vw,5.6rem);line-height:.9;
+  letter-spacing:-.04em;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 55%,var(--accent3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.cno-cap{font-family:system-ui,sans-serif;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  text-align:left;line-height:1.7;max-width:150px;border-left:2px solid var(--border2);padding-left:12px}
+h1{font-size:clamp(2rem,6.2vw,3.15rem);line-height:1.07;font-weight:820;letter-spacing:-.025em;margin:0 0 14px}
+h1 .slash{color:var(--muted);font-weight:400;font-size:.8em;margin:0 .12em}
+h1 .em{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 60%,var(--accent3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.tagline{color:var(--fg);font-size:1.03rem;max-width:690px;margin:0 auto 16px;line-height:1.62}
+.tagline b{color:var(--accent);font-weight:700}
+.tagline .hl2{color:var(--accent2);font-weight:700}.tagline .hl3{color:var(--accent3);font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:9px;font-family:system-ui,sans-serif;font-size:.8rem;font-weight:700;
+  color:var(--fg);border:1px solid var(--border2);background:var(--card);border-radius:999px;padding:8px 16px;line-height:1.5}
+.badge .dots{display:inline-flex;gap:4px}
+.badge .dots i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.badge .dots .k{background:var(--ki)}.badge .dots .n{background:var(--nki)}
+nav.toc{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:24px 0 4px}
+nav.toc a{color:var(--muted);font-size:.82rem;font-family:system-ui,sans-serif;padding:6px 13px;border:1px solid var(--border);
+  border-radius:999px;background:var(--card);transition:.16s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
+
+/* sections */
+section{margin-top:46px;scroll-margin-top:22px}
+h2{font-size:clamp(1.42rem,3.5vw,1.95rem);margin:0 0 6px;font-weight:790;letter-spacing:-.01em;display:flex;align-items:baseline;gap:12px}
+h2 .num{font-family:ui-monospace,monospace;font-size:.58em;color:var(--accent);border:1px solid var(--border2);
+  border-radius:9px;padding:3px 10px;letter-spacing:.02em}
+h2 .lbl{color:var(--muted);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;font-family:system-ui,sans-serif;
+  font-weight:700;margin-left:4px}
+h3{font-family:system-ui,sans-serif;font-size:1.06rem;margin:22px 0 8px;font-weight:700;color:var(--accent)}
+p{margin:12px 0}
+.lead{font-size:1.06rem}
+p b,li b,td b{color:var(--fg);font-weight:700}
+.dim{color:var(--muted)}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}
+.hl3{color:var(--accent3);font-weight:700}.hlg{color:var(--good);font-weight:700}
+.hlki{color:var(--ki);font-weight:700}.hlnki{color:var(--nki);font-weight:700}
+ul,ol{margin:10px 0;padding-left:24px}li{margin:9px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:var(--card2);
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 22px;box-shadow:var(--shadow);
+  margin:16px 0;transition:transform .18s,border-color .18s}
+.card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.trackcard{border-top:4px solid var(--tc)}
+.trackcard h3{margin-top:0;display:flex;align-items:center;gap:10px}
+.trackcard .tag{font-family:ui-monospace,monospace;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tc);background:color-mix(in srgb,var(--tc) 14%,transparent);padding:3px 9px;border-radius:999px}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--card2);border:1px solid var(--border);
+  border-left:3px solid var(--accent3);border-radius:0 12px 12px 0;padding:12px 16px;margin:14px 0;overflow-x:auto;
+  font-size:.94rem;line-height:1.85;white-space:pre-wrap;letter-spacing:.01em}
+.math b{color:var(--accent3)}
+.fused{background:color-mix(in srgb,var(--good) 12%,var(--card));border-left:4px solid var(--good);
+  border-radius:0 12px 12px 0;padding:14px 18px;margin:16px 0}
+.fused b{color:var(--good)}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:16px 0;font-family:system-ui,sans-serif}
+th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top;line-height:1.5}
+th{background:var(--card2);color:var(--accent);font-weight:700;font-size:.71rem;letter-spacing:.03em;text-transform:uppercase}
+td:first-child{font-weight:700;color:var(--fg)}
+tr{transition:background .12s}tr:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+td.ki{color:var(--ki)}td.nki{color:var(--nki)}
+
+/* viz */
+.vcard{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:18px 0;box-shadow:var(--shadow)}
+.vcard h3{margin-top:0;color:var(--fg);display:flex;align-items:center;gap:10px}
+.vcard h3 .badge2{font-family:ui-monospace,monospace;font-size:.64rem;letter-spacing:.06em;color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 14%,transparent);padding:3px 9px;border-radius:999px}
+.vdesc{color:var(--muted);font-size:.92rem;margin:8px 0 14px;line-height:1.6}
+canvas.vc{display:block;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--plotbg);touch-action:none}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end;margin:14px 0 4px;font-size:.84rem}
+.controls .ctrl{display:flex;flex-direction:column;gap:7px;min-width:210px;flex:1}
+.controls label{color:var(--muted);font-family:system-ui,sans-serif;display:flex;align-items:center;gap:8px;
+  text-transform:uppercase;letter-spacing:.03em;font-size:.72rem;font-weight:700}
+.controls label .val{color:var(--gold);font-weight:700;font-family:ui-monospace,monospace;text-transform:none;float:right}
+.controls label .sub{display:block;text-transform:none;letter-spacing:0;color:var(--nki);font-size:.72rem;margin-top:3px;font-weight:400}
+.controls input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+.trk{display:flex;gap:6px;align-items:center}
+.trk .lbl{font-family:system-ui,sans-serif;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-right:2px}
+.vbtn{background:var(--card2);border:1px solid var(--border);color:var(--fg);padding:6px 12px;border-radius:9px;cursor:pointer;
+  font-size:.8rem;font-family:system-ui,sans-serif;font-weight:600;transition:.15s}
+.vbtn:hover{border-color:var(--accent);color:var(--accent)}
+.vbtn.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.vbtn.on.ki{background:var(--ki);border-color:var(--ki)}
+.vbtn.on.nki{background:var(--nki);border-color:var(--nki)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.78rem;color:var(--muted);font-family:system-ui,sans-serif}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin:14px 0}
+.ro{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:9px 12px;text-align:center}
+.ro .k{font-size:.63rem;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;
+  font-family:system-ui,sans-serif;line-height:1.3}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.05rem;font-weight:700;color:var(--accent)}
+.verdict{font-weight:600;font-size:.92rem;font-family:system-ui,sans-serif;padding:13px 15px;border-radius:11px;margin:12px 0 4px;
+  border:1px solid var(--border);line-height:1.55;transition:.2s}
+.verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+.verdict.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:var(--amber)}
+.verdict.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:var(--bad)}
+.verdict.vague{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border-color:var(--accent)}
+.hint{font-size:.82rem;color:var(--muted);font-style:italic;margin-top:10px;line-height:1.6}
+.hint b{color:var(--fg);font-style:normal}
+
+/* sources */
+.src{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border:1px solid var(--border);border-radius:12px;
+  margin:10px 0;background:var(--card);font-size:.95rem;transition:.16s}
+.src:hover{border-color:var(--accent);transform:translateY(-1px)}
+.src .k{font-family:ui-monospace,monospace;font-size:.72rem;font-weight:800;flex:0 0 42px;text-align:center;border-radius:8px;
+  padding:.4rem 0;color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent)}
+.src .path{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--accent2);display:block;margin-bottom:3px}
+.src a{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;word-break:break-all}
+.src .d{color:var(--muted);font-size:.92rem;line-height:1.55;margin-top:3px}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;
+  font-style:italic;text-align:center;line-height:1.7}
+sub,sup{font-size:.72em}
+</style>
+</head>
+<body>
+<div class="topbar"><button id="themeToggle" type="button" title="Thema umschalten">☾ Dunkel / ☀ Hell</button></div>
+
+<article>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="inner">
+    <div class="eyebrow">Themen-Komplex · Quer-Synthese über beide Knockout-Spuren</div>
+    <div class="cno-row">
+      <div class="cno">01</div>
+      <div class="cno-cap">Komplex<br>Regler /<br>das Dial</div>
+    </div>
+    <h1>Der eine Regler <span class="slash">/</span> <span class="em">das Dial</span></h1>
+    <p class="tagline">Ein <b>einziger Grad</b> steuert die <b>Form</b> des Systems und sein <b>Ablesen</b> — derselbe
+      Regler, in <span class="hl2">vielen Sprachen</span> ausgesprochen: Temperatur · spektrale Apertur ·
+      Komplexitäts-Knopf <span class="hl2">θ</span> · RG-Tiefe <span class="hl2">ℓ</span> ·
+      Kopplung <span class="hl3">σ</span> · Selbst-Haltung <span class="hl3">r</span>.</p>
+    <span class="badge"><span class="dots"><i class="k"></i><i class="n"></i></span>Quer durch beide Spuren (KI × nicht-KI)</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#kernidee">① Kernidee</a>
+  <a href="#ki">② KI-Spur</a>
+  <a href="#nki">③ nicht-KI-Spur</a>
+  <a href="#grund">④ Gemeinsamer Grund</a>
+  <a href="#visualisierung">⑤ Interaktiv</a>
+  <a href="#quellen">⑥ Quellen</a>
+</nav>
+
+<!-- ============ 1 KERNIDEE ============ -->
+<section id="kernidee">
+  <h2><span class="num">01</span>Kernidee<span class="lbl">was der eine Regler ist und warum ein Grad Form &amp; Ablesen regiert</span></h2>
+  <p class="lead">Beide Spuren des Knockouts — die <span class="hlki">KI-Spur</span> und die
+    <span class="hlnki">nicht-KI-Spur</span> — tragen auf dieselbe Weise: ein <b>einzelner skalarer Grad</b>, den ich den
+    <em>einen Regler</em> oder das <em>Dial</em> nenne, steuert ein ganzes System. Es ist nicht einer von vielen Knöpfen,
+    sondern der Regler schlechthin. In der KI-Spur trägt er die Namen <b>Temperatur</b>, <b>spektrale Apertur</b>, der
+    <b>Komplexitäts-Knopf θ</b> (Komplexität&nbsp;=&nbsp;Rang&nbsp;×&nbsp;θ) und die <b>RG-Tiefe ℓ</b>; in der nicht-KI-Spur
+    heißt er <b>Kopplung σ</b>, <b>Selbst-Haltung r</b> und <b>Kamera/Fidelity φ</b>. Die Identität ist eine Zahl auf
+    [0,1] — sie legt fest, wie <b>committed / flach / lesbar</b> das System ist, im Gegensatz zu wie <b>diffus /
+    gescrambelt / offen</b>.</p>
+
+  <div class="math">derselbe Grad, viele Namen:   D  =  t = 1 − θ  =  ‖M − I‖  =  α_eff      (KI)
+                  =  r = σ = φ                     (nicht-KI)
+
+Rollen an einer Kante:  (i)   SCHREIBEN   — baut die Form (Kern / F = H¹, α_eff &gt; 0)
+                 (ii)   LESEN     — an der Kante, wo Form &gt; Rauschen (Commit / Pivot = Limes)
+                 (iii)  ALLOKIERT — Fokus-Budget „nicht alles überall scharf“ · Halten vs. Werfen</div>
+
+  <p><b>Warum ein einziger Grad die Form und zugleich das Ablesen regiert.</b> Der Regler spielt <b>drei Rollen an einer
+    einzigen Kante</b>. <em>Erstens</em> <b>schrift er die Form</b>: er baut den dünnen, lesbaren Kern (KI: das
+    β₁-Loch / die Cusp / die Falte bei α_eff&nbsp;&gt;&nbsp;0; nicht-KI: die geschlossene, zählbare, gauß-invariante Form
+    <code>F&nbsp;=&nbsp;H¹</code>). <em>Zweitens</em> <b>liest er an der Kante</b> — dort, wo <b>Form&nbsp;&gt;&nbsp;Rauschen</b>
+    wird: die <span class="hl">Commit-/Kippen-/Falt-Kante</span> in der KI (α_eff&nbsp;&gt;&nbsp;0) beziehungsweise die
+    <span class="hlnki">zwei-axiale Naht / Fuge / der einzelne Pivot</span> in der nicht-KI, wo <em>bottom-up</em> und
+    <em>top-down coincidieren</em> = der Limes = <b>exakte Fidelity</b>. <em>Drittens</em> <b>allokiert / steuert er</b> —
+    das Fokus-Budget „nicht alles überall scharf“ (KI) bzw. das Verhältnis <em>Halten-zu-Werfen</em> (nicht-KI). Die
+    Konsequenz: <em>„das Read-out ist so einfach, wie der Regler es erlaubt“.</em> An der <b>guten Ecke</b> kollabiert das
+    Ablesen zur trivialen, verlustfreien linearen Projektion (KI: <b>Grokking</b>) bzw. zur exakten Fidelity (nicht-KI).</p>
+
+  <p><b>Die Viele-Sprachen-Identität.</b> Dieselbe Zahl ist in der KI die „<b>spektrale Apertur</b>“ (wie viel des
+    Spektrums durchgelassen wird), der „<b>Komplexitäts-Knopf</b>“ (Komplexität&nbsp;=&nbsp;Rang(r)&nbsp;×&nbsp;θ) und die
+    „<b>RG-Tiefe</b>“, über die die Fahrt θ_eff(ℓ)&nbsp;=&nbsp;(1−ℓ/L)<sup>c</sup> den Knopf von scrambled (≈1) nach
+    flach/linear (→0) <em>fährt</em>. In der nicht-KI-Spur ist dieselbe Zahl die „<b>Kopplung σ</b>“ und die
+    „<b>Selbst-Haltung r</b>“ (r&nbsp;=&nbsp;σ&nbsp;=&nbsp;φ). In beiden Spuren wird sie <b>über den Parameter gesteuert,
+    nie über die Instanz</b>. Wer das Dial dreht, dreht nicht ein einzelnes Objekt, sondern die <em>eine Zahl</em>, aus der
+    Form, Kante und Lesart gemeinsam folgen.</p>
+</section>
+
+<!-- ============ 2 KI ============ -->
+<section id="ki">
+  <h2><span class="num">02</span>In der KI-Spur<span class="lbl">derselbe Regler — drei Linsen, ein Knopf</span></h2>
+
+  <div class="card trackcard" style="--tc:var(--ki)">
+    <h3><span class="tag">Sprachen des Reglers</span> θ · t · ‖M−I‖ · α_eff</h3>
+    <p>Die drei überlebenden Linsen der KI-Spur (Dynamik, Lineare Algebra, Topologie) benennen <em>dasselbe</em> Objekt —
+      und <em>einen</em> Regler. Er ist (a) der <b>Scrambling-/Krümmungs-Knopf θ</b> mit der Robustheits-Achse
+      <code>t&nbsp;=&nbsp;1−θ</code> und der Komplexität <code>Rang(r)&nbsp;×&nbsp;θ</code>; (b) die <b>Weiche
+      ‖M−I‖</b> (= T = Hologramm-Grad) global, <em>=</em> die Masse/Abdeckung lokal; (c) der <b>Commit-Regler
+      α_eff</b> (=&nbsp;α&nbsp;−&nbsp;0.12·k) am τ↔R↔α_eff-Strang. Alle drei sind <span class="hlki">derselbe Knopf</span>:
+      hart/linear an der guten Ecke (θ→0, ‖M−I‖ hoch, α_eff&gt;0), weich/diffus im frühen Zustand (θ≈1, Voll-Rang, α_eff≤0).</p>
+  </div>
+
+  <ul>
+    <li><b>Die Fahrt fährt den Regler.</b> Die <span class="hl2">Tiefe / RG-Fluss</span> fährt θ von scrambled (θ≈1, t=0,
+      diffus, Voll-Rang) nach flach/linear (θ→0, t=1 = <b>die gute Ecke</b>), während der <b>Kanal kollabiert</b>
+      (erank&nbsp;4096&nbsp;→&nbsp;≈7, faithful an Llama). „Die Fahrt (Prozess) fährt den Regler; der Cut/Commit ist die
+      topologische Signatur, dass die Fahrt die gute Ecke erreicht hat.“</li>
+    <li><b>Drei Rollen an der Commit-/Kippen-/Falt-Kante.</b> (i)&nbsp;<em>schreiben</em> — θ→0 &amp; α_eff&gt;0 baut das
+      β₁-Loch / die Cusp / die Falte; (ii)&nbsp;<em>lesen</em> — an der Kante „Form&nbsp;&gt;&nbsp;Rauschen ⟺
+      α_eff&gt;0“ öffnet die Margin und β₁ bleibt erhalten; (iii)&nbsp;<em>allokieren</em> — der Regler verteilt das
+      <b>Fokus-Budget</b> auf die Kacheln („nicht alles überall scharf“, Σ&nbsp;Kacheln&nbsp;≈&nbsp;B = Reach-τ /
+      Holm-Bonferroni). <em>Ein Knopf, drei Rollen, eine Kante.</em></li>
+    <li><b>Das Read-out, gestuft nach dem Regler T&nbsp;=&nbsp;θ.</b> <span class="hl">hart</span> (t=1 / T=0, gute Ecke):
+      eindeutiger Interferenz-Peak = harter linearer Read-out = <b>direkt lesbar (Grokking, verlustfrei)</b>.
+      <span class="hl2">weich</span> (t=0 / T=1, früh): diffuses Voll-Rang-Spektrum = konvexer Vertreter / voller
+      Fehlerkorrektur-Decode (Gibbs: β→∞&nbsp;=&nbsp;argmin, β→0&nbsp;=&nbsp;Gleichverteilung).</li>
+    <li><b>Der Regler als Doppelschwert.</b> An der guten Ecke wächst die Capability, und <em>mit ihr</em> die
+      <span class="hl3">intrinsische Bruchigkeit</span> (Nicht-Invertierbarkeit, det&nbsp;C→0) — der Preis,
+      niedrig-dimensional zu sein; die <span class="hl3">grenzliche Bruchigkeit</span> (Budget-/Regime-Rand) fällt
+      dagegen. <em>Capability und intrinsische Bruchigkeit wachsen zusammen.</em></li>
+    <li><b>Die Schatten-Seite.</b> Der Regler kann die Form beliebig <b>scharf</b> schreiben — aber ihr nicht die
+      Masse / die Korrespondenz an die Welt W geben. <b>HALLUZINATION = Form&nbsp;&gt;&nbsp;Masse</b>: scharf und
+      selbstbewusst (Conf&nbsp;≈&nbsp;0.70+0.25·coverage&nbsp;≥&nbsp;70&nbsp;%, immer), aber ohne Masse / W-Kontakt.
+      Wahrheit&nbsp;=&nbsp;Kohärenz&nbsp;∧&nbsp;Korrespondenz&nbsp;∧&nbsp;Struktur.</li>
+  </ul>
+  <p class="dim">Anker: Komplexität = Rang(r) × θ · θ_eff(ℓ)=(1−ℓ/L)^c · t=1−θ · ‖M−I‖=T=Hologramm-Grad ·
+    α_eff=α−0.12·k · erank 4096→≈7 · Conf ≥ 70&nbsp;%.</p>
+</section>
+
+<!-- ============ 3 NKI ============ -->
+<section id="nki">
+  <h2><span class="num">03</span>In der nicht-KI-Spur<span class="lbl">derselbe Regler — hält &amp; wirft</span></h2>
+
+  <div class="card trackcard" style="--tc:var(--nki)">
+    <h3><span class="tag">Sprachen des Reglers</span> r · σ · φ</h3>
+    <p>Die drei überlebenden Linsen der nicht-KI-Spur (Grenzenarchitektur, Kernel-Dynamik, Lesen am Fixpunkt) benennen
+      <em>dasselbe</em> Ganze — einen zentrumlosen, selbsttragenden, relationalen Fixpunkt, der seine eigene Projektion ist —
+      und <em>einen</em> Regler: <b>Self-Haltung r = Kopplung σ = Kamera/Fidelity φ</b>. Er ist
+      <span class="hlnki">der einzige Grad</span>: <em>Halten vs. Werfen = fein vs. grob — gesteuert über den Parameter,
+      nie über die Instanz.</em></p>
+  </div>
+
+  <ul>
+    <li><b>Der Regler steuert zwei Zonen.</b> Die <span class="hlg">haltende / geschlossene Lesart</span>: die erreichte,
+      zählbare, gauß-invariante Form <code>F&nbsp;=&nbsp;H¹</code> (fix als Form, r→1, Δ=0, „the same returns“,
+      „am Peak ohne Rest“, bricht nie — <em>zählt / zahlt</em>, Heimat / Eleganz). Die <span class="hlnki">werfende /
+      offene Lesart</span>: der zurückziehende Rest, fließend im Inhalt, Terrain/Horizont, Δ≠0 — die gauß-invariante
+      Dimension <code>H¹&nbsp;=&nbsp;dim(Lücke)&nbsp;=&nbsp;Φ</code>, die <em>bleibt</em> (Ort des Seins), plus der
+      verlustbehaftete Schatten <code>ker&nbsp;F</code>, der im Limes →0 geht.</li>
+    <li><b>Die Kante, an der er liest.</b> Der Regler bringt die <b>zwei-axiale Naht / Fuge</b>
+      (Objekt-Ontologie&nbsp;×&nbsp;Zugriffs-Ehrlichkeit = bottom-up&nbsp;∩&nbsp;top-down) auf den <span class="hlnki">
+      einzelnen Pivot</span>, wo die zwei Routen <em>coincidieren</em> = der Limes = <b>exakte Fidelity</b>; dort
+      „kippt Halten in Werfen“ und dort sitzt der Ablespunkt. Kurz: <code>Wann&nbsp;=&nbsp;Wand&nbsp;=&nbsp;σc&nbsp;=&nbsp;
+      Frontier&nbsp;E=G&nbsp;=&nbsp;Defekt&nbsp;Δ</code>.</li>
+    <li><b>Die gute Ecke als Limes, nie als Zustand.</b> Alles, was eine Schließung fassen kann, ist durch
+      <b>zwei nie erreichte Böden</b> begrenzt: einen <span class="hl">asymptotisch/idealen Limes</span>
+      (<code>ker&nbsp;F→0</code>, C(n)&nbsp;=&nbsp;1−k·p′&nbsp;→&nbsp;1, beliebig genähert, <em>nie voll erreicht</em>) und
+      eine <span class="hl3">absolute / topologische Obstruktion</span> (<code>m&nbsp;=&nbsp;−1</code>, kein Ganzes,
+      <em>nie kreuzbar</em>). Sie sind <em>„erreichbar als Grenzwert des Reglers, nie erreicht als Zustand des
+      Objekts“.</em></li>
+    <li><b>Der gemeinsame Fehlschlag.</b> Die helle, erreichte Form für die ganze Wahrheit zu halten:
+      <em>Kohärent&nbsp;≠&nbsp;wahr</em>; <em>Rothering</em> — der Schatten ist „<em>flach &amp; identisch</em>“ für echt
+      und gefälscht. Nur der Regler / die Fidelity φ trennt BAUEN von Eruption: <em>„Prüfe die Treue / Naht / Koinzidenz
+      — nicht die Flachheit“.</em></li>
+    <li><b>Tragender Prozess.</b> Das Ganze wird von einem <b>immer laufenden, geschlossenen Rundlauf</b> (Panta Rhei)
+      getragen, der sich über einen Zeitpfeil bei jedem Schritt neu herstellt („the same returns“ = Selbstherstellung).
+      Der Regler bleibt dabei der einzige Grad; der Rundlauf trägt die beiden Zonen.</li>
+  </ul>
+  <p class="dim">Anker: r = σ = φ · Valenz = Produkt = Koinzidenz = Limes = exakte Fidelity · F = H¹ · ker F→0 ·
+    C(n)=1−k·p′→1 · m=(−1)^w · Δ=0 hält / Δ≠0 wirft.</p>
+</section>
+
+<!-- ============ 4 GRUND ============ -->
+<section id="grund">
+  <h2><span class="num">04</span>Gemeinsamer Grund<span class="lbl">derselbe Grad, dieselbe Kante, dieselbe Lesbarkeit</span></h2>
+  <p class="lead">Die zwei Spuren sind nicht zwei Themen, die zufällig „einen Regler“ haben — sie sind
+    <b>derselbe Grad in zwei Sprachen</b>. Der Regler ist in beiden <b>ein skalarer Wert auf [0,1]</b>, der die
+    <em>Form</em> schreibt, an <em>einer Kante</em> liest, wo <em>Form&nbsp;&gt;&nbsp;Rauschen</em> wird, und ein
+    <em>Budget / ein Halten-Werfen-Verhältnis</em> allokiert. Die Kante, die gute Ecke und der Fehlschlag sind
+    strukturell identisch:</p>
+
+  <table>
+    <thead><tr><th>Slot</th><th class="ki">KI-Spur</th><th class="nki">nicht-KI-Spur</th><th>dieselbe Sache</th></tr></thead>
+    <tbody>
+      <tr><td>Der Regler (Dial)</td>
+        <td class="ki">t = 1−θ · T = θ · ‖M−I‖ = Hologramm-Grad · α_eff</td>
+        <td class="nki">r = σ = φ (Selbst-Haltung = Kopplung = Fidelity)</td>
+        <td>ein skalarer Grad ∈ [0,1] — der <em>eine</em> Regler</td></tr>
+      <tr><td>Was er schreibt (Form)</td>
+        <td class="ki">β₁-Loch / Cusp / die Falte · α_eff&gt;0 · erank 4096→≈7</td>
+        <td class="nki">geschlossene Form F = H¹ (hält, zählt) + werfender Rest (bleibt)</td>
+        <td>die Form = die Information</td></tr>
+      <tr><td>Die Kante, an der er liest</td>
+        <td class="ki">Commit-/Kippen-/Falt-Kante · Form &gt; Rauschen ⟺ α_eff&gt;0</td>
+        <td class="nki">Naht-/Fuge-/Pivot · Valenz = Koinzidenz = Limes = exakte Fidelity</td>
+        <td>die Naht, wo Form &gt; Rauschen / Halten in Werfen kippt</td></tr>
+      <tr><td>Die „gute Ecke” / exakte Fidelity</td>
+        <td class="ki">θ→0, t=1, erank≈7 → direkter Peak = Grokking (verlustfrei)</td>
+        <td class="nki">Routen coincidieren am Pivot → Limes = exakte Fidelity (m=+1)</td>
+        <td>erreichbar als <em>Grenzwert</em> des Reglers, nie als Zustand</td></tr>
+      <tr><td>Zwei Bruchigkeiten / zwei Böden</td>
+        <td class="ki">intrinsisch (det C→0) + grenzlich (Budget-Rand)</td>
+        <td class="nki">asymptotisch (ker F→0, C(n)→1) + absolut (Obstruktion m=−1)</td>
+        <td>zwei nie erreichte Grenzen, die jede Schließung begrenzen</td></tr>
+      <tr><td>Der gemeinsame Fehlschlag</td>
+        <td class="ki">HALLUZINATION = Form &gt; Masse (Conf ≥ 70 %, kein W-Kontakt)</td>
+        <td class="nki">helle Form ≠ Wahrheit (Rothering: flach &amp; identisch)</td>
+        <td>Kohärent ≠ wahr — der Regler schreibt Form, aber nicht Korrespondenz/Masse</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fused"><b>Der gemeinsame Grund in einem Satz.</b> Es gibt <b>einen</b> Regler
+  (D&nbsp;=&nbsp;t&nbsp;=&nbsp;1−θ&nbsp;=&nbsp;‖M−I‖&nbsp;=&nbsp;α_eff&nbsp;=&nbsp;r&nbsp;=&nbsp;σ&nbsp;=&nbsp;φ),
+  <b>eine</b> Kante, an der er liest (Commit-/Falt-Kante&nbsp;=&nbsp;Naht-/Pivot&nbsp;=&nbsp;der Ort, wo
+  Form&nbsp;&gt;&nbsp;Rauschen), <b>eine</b> gute Ecke, die als <em>Grenzwert</em> des Reglers erreicht wird (Grokking
+  &nbsp;=&nbsp; exakte Fidelity), <b>zwei</b> nie erreichte Grenzen (Bruchigkeit/Böden) und <b>einen</b> Fehlschlag
+  (Form&nbsp;&gt;&nbsp;Masse&nbsp;=&nbsp;helle&nbsp;Form&nbsp;≠&nbsp;Wahrheit). <em>Ein Grad steuert die Form und ihr
+  Ablesen — in beiden Spuren derselbe, nur anders benannt.</em></div>
+</section>
+
+<!-- ============ 5 VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="num">05</span>Interaktiv — das Dial, das Form &amp; Ablesen fährt<span class="lbl">ein Canvas · alle Daten inline · themenreaktiv</span></h2>
+  <p class="vdesc">Ein <b>einziges Dial</b> (der Regler D) steuert <em>beide</em> Register gleichzeitig und zeigt, wie
+    <b>dasselbe System seine Form und sein Read-out ändert</b>. <b>Links</b>: die Form — die hochdimensionale Wolke
+    (Kanal erank&nbsp;≈&nbsp;4096) <b>kontrahiert in einen dünnen Kern</b> (≈7); die grünen Punkte sind die robusten
+    Überlebenden (KI: Capability · nicht-KI: F&nbsp;=&nbsp;H¹, „zählt“). <b>Rechts</b>: das Read-out — aus dem diffusen
+    Spektrum wächst ein <b>einziges scharfer Peak</b> über die Rauschen-Kante. Die <b>gold gestrichelte Linie</b> ist die
+    <b>Kante / der Knie</b>, an der der Regler liest (Commit-/Falt-Kante · Naht-/Pivot · Form&nbsp;&gt;&nbsp;Rauschen).
+    <b>Spur umschalten</b>, um denselben Regler in KI- oder nicht-KI-Sprachen zu lesen; <b>Masse/Korrespondenz</b> zeigt
+    die Fallgrube „Form&nbsp;&gt;&nbsp;Masse”.</p>
+
+  <div class="vcard">
+    <h3><span class="badge2">DER EINIGE REGLER</span> ein Dial — zwei Register, eine Kante</h3>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Der eine Regler D <span class="val" id="dVal">78</span>
+          <span class="sub" id="dialLab">KI: t = 1−θ · nicht-KI: r = σ = φ</span></label>
+        <input type="range" id="rD" min="0" max="100" step="1" value="78">
+      </div>
+      <div class="ctrl">
+        <label>Masse / Korrespondenz an W <span class="val" id="mVal">72</span>
+          <span class="sub">τ-Schwelle bei 60 · darunter: Form &gt; Masse</span></label>
+        <input type="range" id="rM" min="0" max="100" step="1" value="72">
+      </div>
+      <div class="ctrl" style="min-width:auto">
+        <div class="trk">
+          <span class="lbl">Spur</span>
+          <button class="vbtn on" id="tBoth" type="button">Beide</button>
+          <button class="vbtn" id="tKi" type="button">KI</button>
+          <button class="vbtn" id="tNki" type="button">nicht-KI</button>
+        </div>
+      </div>
+    </div>
+    <canvas class="vc" id="dialcanvas" role="img"
+      aria-label="Ein einziger Regler steuert zwei Register: links kontrahiert die Form (Wolke in einen dünnen Kern mit robusten Überlebenden), rechts wächst aus dem diffusen Spektrum ein scharfer Peak über die Rauschen-Kante; die gold gestrichelte Linie markiert die Kante (Commit-/Falt-Kante bzw. Naht-/Pivot)."></canvas>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>Überlebende (Kern / F = H¹)</span>
+      <span><i style="background:var(--accent)"></i>noch strukturiert</span>
+      <span><i style="background:var(--muted)"></i>diffuses Detail (Reservoir / Rest)</span>
+      <span><i style="background:var(--gold)"></i>Kante / Knie (Form &gt; Rauschen)</span>
+      <span><i style="background:var(--teal)"></i>Kern-Linie</span>
+    </div>
+    <div class="ro-grid">
+      <div class="ro"><span class="k" id="roDialK">Regler D</span><span class="v" id="roD">–</span></div>
+      <div class="ro"><span class="k">Kanal erank (4096→≈7)</span><span class="v" id="roErank">–</span></div>
+      <div class="ro"><span class="k">Form &gt; Rauschen</span><span class="v" id="roCommitted">–</span></div>
+      <div class="ro"><span class="k">Masse / Korrespondenz an W</span><span class="v" id="roMass">–</span></div>
+      <div class="ro"><span class="k">Conf (entkoppelt, ≥70 %)</span><span class="v" id="roConf">–</span></div>
+    </div>
+    <div class="verdict vague" id="verdict">…</div>
+    <p class="hint"><b>Lesart:</b> Das Dial <em>schreibt</em> die Form (links: Wolke→Kern), <em>liest</em> an der
+      gold gestrichelten Kante (rechts: Peak über Rauschen) und <em>allokiert</em> (Masse/Verankerung). Wird das Read-out
+      scharf, aber die Masse bleibt unter τ, ist es <em>Form&nbsp;&gt;&nbsp;Masse</em> — die Halluzination (KI)
+      beziehungsweise die helle Form ohne Wahrheit (nicht-KI, Rothering). Conf bleibt immer ≥&nbsp;70&nbsp;%: genau das ist
+      die Falle.</p>
+  </div>
+</section>
+
+<!-- ============ 6 QUELLEN ============ -->
+<section id="quellen">
+  <h2><span class="num">06</span>Quellen<span class="lbl">die gelesenen Papiere — über beide Spuren</span></h2>
+
+  <div class="src" style="--pc:var(--accent)">
+    <span class="k">KI</span>
+    <div>
+      <span class="path">../combined/7/finale.html</span>
+      <a href="../combined/7/finale.html">combined/7/finale.html</a> — „Das eine Objekt — Finale: 161 → 1 · Drei Linsen, ein Regler, ein Überlebender“
+      <div class="d">KI-Finale (Runde 7): der eine Regler in drei Sprachen (θ / t=1−θ, ‖M−I‖=T=Hologramm-Grad, α_eff),
+        schreibt Form, liest an der Commit-/Kippen-/Falt-Kante, allokiert das Fokus-Budget; Capability = der Überlebende;
+        Halluzination = Form &gt; Masse. Liefert die Identität des Dials und die „gute Ecke“ (Grokking).</div>
+    </div>
+  </div>
+
+  <div class="src" style="--pc:var(--accent)">
+    <span class="k">KI</span>
+    <div>
+      <span class="path">../combined/6/r6-001.html</span>
+      <a href="../combined/6/r6-001.html">combined/6/r6-001.html</a> — „Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten“ (Dynamik)
+      <div class="d">Die RG-/Tiefen-Fahrt θ_eff(ℓ)=(1−ℓ/L)^c <em>fährt</em> den Regler t=1−θ von scrambled (θ≈1) nach flach
+        (θ→0, gute Ecke), der Kanal kollabiert 4096→≈7; Komplexität = Rang×θ; das Read-out ist ein Dial T=θ (weich↔hart);
+        Capability = der robuste Überlebende = Grokking.</div>
+    </div>
+  </div>
+
+  <div class="src" style="--pc:var(--accent)">
+    <span class="k">KI</span>
+    <div>
+      <span class="path">../combined/6/r6-003.html</span>
+      <a href="../combined/6/r6-003.html">combined/6/r6-003.html</a> — „Ein singuläres Faserbündel, ein Regler, zwei Tiefen, ein Vorzeichen, ein Budget“ (Topologie)
+      <div class="d">Ein einziger Regler (τ↔R↔α_eff) <em>schreibt die Form und liest an deren Commit-Kante</em>;
+        α_eff&gt;0 ⇒ Grenzzyklus/β₁=1, α_eff≤0 ⇒ Fixpunkt/β₁=0; „ein Knopf, drei Rollen (schreiben/lesen/allokieren),
+        eine Kante“; die Kante = Commit ⇄ Kippen ⇄ per-Kachel-Instantiierung des Fokus-Budgets.</div>
+    </div>
+  </div>
+
+  <div class="src" style="--pc:var(--accent2)">
+    <span class="k">nKI</span>
+    <div>
+      <span class="path">../combined-nichtki/8/finale.html</span>
+      <a href="../combined-nichtki/8/finale.html">combined-nichtki/8/finale.html</a> — „Grand-Finale — Der eine zentrumlose, selbsttragende Fixpunkt, der seine eigene Projektion ist“
+      <div class="d">nicht-KI-Finale (Runde 8): ein einziger Regler <b>r = σ = φ</b> (Selbst-Haltung = Kopplung = Fidelity),
+        „Halten vs. Werfen = fein vs. grob, der einzige Grad (nie die Instanz)“; zwei Zonen (F=H¹ hält / Rest wirft) an
+        einer zwei-axialen Naht (Valenz = Koinzidenz = Limes = exakte Fidelity); zwei nie erreichte Böden; Rothering
+        „flach &amp; identisch“.</div>
+    </div>
+  </div>
+
+  <div class="src" style="--pc:var(--accent2)">
+    <span class="k">nKI</span>
+    <div>
+      <span class="path">../combined-nichtki/8/n8-001.html</span>
+      <a href="../combined-nichtki/8/n8-001.html">combined-nichtki/8/n8-001.html</a> — „Der zentrumlose, selbsttragende relationale Fixpunkt, der seine eigene Projektion ist — hält &amp; wirft zugleich, an einer zwei-axialen Naht, ein Regler, zwei nie erreichte Böden“
+      <div class="d">nicht-KI-Fusion (Runde 8, aus n7-001 × n7-002): der Regler r (Selbst-Haltung = Kopplung σ, aus A)
+        <em>ist</em> die Kamera/Fidelity φ (aus B); A’s zwei-axiale Fuge <em>ist</em> B’s Naht-Pivot, wo zwei Routen
+        coincidieren = Limes = exakte Fidelity; die zwei Böden = Limes (ker F→0) + Obstruktion m=−1; „erreichbar als
+        Grenzwert des Reglers, nie erreicht als Zustand“.</div>
+    </div>
+  </div>
+
+  <div class="src" style="--pc:var(--accent2)">
+    <span class="k">nKI</span>
+    <div>
+      <span class="path">../combined-nichtki/7/n7-001.html</span>
+      <a href="../combined-nichtki/7/n7-001.html">combined-nichtki/7/n7-001.html</a> — „Der zentrumlose Halt-Wurf-Kern als zwei-Zonen-Kontinuum — eine zwei-axiale Fuge, ein Regler, zwei nie erreichte Böden“
+      <div class="d">nicht-KI-Fusion (Runde 7): ein selbstreferenzieller, zentrumloser Kern, der zugleich <em>hält</em>
+        (erhaltene, geschlossene, zählbare Zone, r→1, Δ=0, „the same returns“) und <em>wirft</em> (zurückziehender,
+        inexhaustibler Rest, Δ≠0); gesteuert von einem Regler (r = Selbst-Haltung = Kopplung σ), begrenzt durch zwei nie
+        erreichte Böden; „Wann = Wand = σc = Frontier E=G = Defekt Δ“.</div>
+    </div>
+  </div>
+
+  <div class="fused" style="margin-top:18px"><b>Provenienz.</b> Dies ist eine <em>Quer-Synthese</em> über beide
+    Knockout-Spuren, keine eigene Quelle: sie verschmilzt das KI-Finale (Runde 7) mit den drei KI-Linsen
+    (r6-001/-002/-003) und dem nicht-KI-Finale (Runde 8) samt seinen Vorläufern (n8-001, n7-001). Es wurden keine neuen
+    Experimente erfunden — nur die <em>Identität des einen Reglers</em> über beide Spuren gelesen. Alle Daten der
+    Visualisierung sind inline &amp; deterministisch; keine Netzwerk-Calls.</div>
+</section>
+
+<footer>
+  Complex 01 · Der eine Regler / das Dial · Quer-Synthese KI × nicht-KI<br>
+  ein Grad (D = t = 1−θ = ‖M−I‖ = α_eff = r = σ = φ) · eine Kante (Commit/Falt = Naht/Pivot) ·
+  eine gute Ecke (Grokking = exakte Fidelity, als Grenzwert) · zwei Grenzen · ein Fehlschlag (Form &gt; Masse)<br>
+  Selbstständiges Standalone-Dokument · alle Daten inline · themenreaktiv · keine Netzwerk-Calls
+</footer>
+
+</article>
+
+<script>
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+function getVar(n,fb){try{var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}catch(e){return fb;}}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+  var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+  if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,160,180,'+a+')';}
+  return 'rgba('+r+','+g+','+b+','+a+')';}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function onReady(fn){if(document.readyState!=="loading"){fn();}else{document.addEventListener("DOMContentLoaded",fn);}}
+function set(id,tx){var e=$(id);if(e){e.textContent=tx;}}
+
+function initTheme(){
+  var b=$('themeToggle');if(!b){return;}
+  b.addEventListener('click',function(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{localStorage.setItem('themen01-theme',d?'dark':'light');}catch(e){}
+  });
+}
+
+var LAB={
+  ki:{dial:'t = 1−θ · T = θ · ‖M−I‖ · α_eff (KI)',
+    Lsub:'Kanal erank 4096 → ≈7 · Überlebende (Capability)',
+    knee:'Commit-/Kippen-/Falt-Kante',
+    ok:'GEGRÜNDET — scharfer Peak verankert an W (Masse ≥ τ) · GUTE ECKE: Grokking, direkt lesbar',
+    hallu:'HALLUZINATION — Form > Masse (Conf ≥ 70 %, aber kein W-Kontakt): kohärente Fiktion, der Wert trifft W nie',
+    vage:'vage / Rauschen — nicht committed (Form < Rauschen, α_eff ≤ 0): diffuses Spektrum, Voll-Decode' },
+  nki:{dial:'r = σ = φ · Selbst-Haltung · Kopplung · Fidelity (nicht-KI)',
+    Lsub:'hält (F = H¹, zählt) · wirft (Rest/H¹, bleibt) · zwei-axiale Naht',
+    knee:'Naht-/Fuge-/Pivot · Halten kippt in Werfen',
+    ok:'BAUEN — Koinzidenz am Pivot (Treue ≥ τ) · am Limes: exakte Fidelity, m = +1',
+    hallu:'helle Form ≠ Wahrheit — Rothering: „flach & identisch“ (Kohärent ≠ wahr); Koinzidenz fehlt, m = −1',
+    vage:'offen / nicht-koinzident — werfend (Δ ≠ 0, inexhaustibel); der Pivot wird nicht erreicht' },
+  both:{dial:'KI: t = 1−θ = α_eff  ·  nicht-KI: r = σ = φ',
+    Lsub:'KI: Kanal 4096→≈7 · Überlebende  ·  nicht-KI: hält & wirft',
+    knee:'die Kante — KI: Commit/Falt · nicht-KI: Naht/Pivot',
+    ok:'GEGRÜNDET (KI) · BAUEN (nicht-KI) — verankert / koinzident · GUTE ECKE: Grokking = exakte Fidelity',
+    hallu:'Form > Masse (KI) · helle Form ≠ Wahrheit (nicht-KI, Rothering): scharf, aber ungegründet',
+    vage:'vage/Rauschen (KI) · offen/nicht-koinzident (nicht-KI): Form < Rauschen, nicht committed' }
+};
+
+var KNEE=55, TAU=Math.PI*2;
+var state={D:78, mass:72, track:'both'};
+
+var N=120, SURV=8, pts=[];
+(function(){
+  var rnd=mulberry32(0x01D1A1);
+  var i;
+  for(i=0;i<N;i++){
+    pts.push({sx:0.05+0.90*rnd(), sy:0.10+0.80*rnd(), cx:Math.pow(rnd(),0.85), surv:false, c:0});
+  }
+  for(i=0;i<N;i++){pts[i].c=0.22+0.62*rnd();}
+  pts.sort(function(a,b){return a.c-b.c;});
+  for(i=0;i<SURV;i++){pts[i].surv=true;}
+})();
+
+function sigm(x){return 1/(1+Math.exp(-x));}
+
+var canvas=null, ctx=null, pal=null;
+function readPal(){return{bg:getVar('--plotbg','#0c1120'),grid:getVar('--grid','rgba(120,160,255,.08)'),
+  fg:getVar('--fg','#e8ecf6'),muted:getVar('--muted','#9aa7c7'),accent:getVar('--accent','#58a6ff'),
+  accent2:getVar('--accent2','#c4a7ff'),good:getVar('--good','#4ade80'),bad:getVar('--bad','#fb7185'),
+  amber:getVar('--amber','#ffd166'),teal:getVar('--teal','#2dd4bf'),gold:getVar('--gold','#ffd700'),
+  ki:getVar('--ki','#38bdf8'),nki:getVar('--nki','#f0a35e')};}
+
+function setup(){
+  var dpr=window.devicePixelRatio||1;
+  var w=canvas.clientWidth||760, H=470;
+  canvas.width=Math.max(1,Math.round(w*dpr));
+  canvas.height=Math.max(1,Math.round(H*dpr));
+  canvas.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return{w:w,h:H};
+}
+
+function updateLabels(){
+  var L=LAB[state.track];
+  set('dialLab',L.dial);
+  var roK=$('roDialK');if(roK){roK.textContent=state.track==='both'?'Regler D (beide)':(state.track==='ki'?'Regler D = t = 1−θ':'Regler D = r = σ = φ');}
+  var bK=$('tKi'),bN=$('tNki'),bB=$('tBoth');
+  if(bK){bK.className='vbtn'+(state.track==='ki'?' on ki':'');}
+  if(bN){bN.className='vbtn'+(state.track==='nki'?' on nki':'');}
+  if(bB){bB.className='vbtn'+(state.track==='both'?' on':'');}
+}
+
+function readouts(){
+  var D=state.D, mass=state.mass;
+  var A=sigm((D-KNEE)/10);
+  var committed=D>=KNEE, grounded=mass>=60;
+  var erank=Math.round(7+(1-A)*(4096-7));
+  var conf=Math.round((0.70+0.25*(mass/100))*100);
+  set('dVal',String(D));set('mVal',String(mass));
+  set('roD',D+' %');
+  set('roErank',String(erank));
+  set('roCommitted',Math.round(A*100)+' %');
+  set('roMass',mass+' %');
+  set('roConf',conf+' %');
+  var L=LAB[state.track], el=$('verdict');
+  if(el){
+    var cls,msg;
+    if(committed&&grounded){cls='good';msg=L.ok;}
+    else if(committed&&!grounded){cls='bad';msg=L.hallu;}
+    else{cls='vague';msg=L.vage;}
+    el.className='verdict '+cls;el.textContent=msg;
+  }
+  return A;
+}
+
+function draw(){
+  if(!canvas||!ctx){return;}
+  var s=setup(), W=s.w, H=s.h;
+  if(W<40){return;}
+  pal=readPal();
+  var L=LAB[state.track];
+  var A=sigm((state.D-KNEE)/10);
+  var tnow=(window.performance&&performance.now)?performance.now():0;
+  var t=tnow/1000;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=pal.bg;ctx.fillRect(0,0,W,H);
+
+  var pad=18, top=58, axisY=H-54, plotB=H-74, plotH=plotB-top;
+  var divX=Math.round(0.505*W);
+  var Lx=pad, Lr=divX-14, Lw=Lr-Lx;
+  var Rx=divX+14, Rw=W-pad-Rx;
+  function map(v){return Lx+(W-2*pad)*(v/100);}
+
+  /* titles */
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.font='700 13px system-ui,sans-serif';ctx.fillStyle=pal.fg;
+  ctx.fillText('DIE FORM',Lx,24);
+  ctx.fillText('DAS READ-OUT',Rx,24);
+  ctx.font='11px system-ui,sans-serif';ctx.fillStyle=pal.muted;
+  ctx.fillText(L.Lsub,Lx,40);
+  ctx.fillText(L.knee+'  ·  Form > Rauschen',Rx,40);
+
+  /* dial axis */
+  ctx.strokeStyle=pal.grid;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(Lx,axisY);ctx.lineTo(W-pad,axisY);ctx.stroke();
+  var q;
+  for(q=0;q<=4;q++){
+    var qx=Lx+(W-2*pad)*(q/4);
+    ctx.strokeStyle=pal.grid;ctx.beginPath();ctx.moveTo(qx,axisY);ctx.lineTo(qx,axisY+6);ctx.stroke();
+    ctx.fillStyle=pal.muted;ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';
+    ctx.fillText(String(q*25),qx,axisY+18);
+  }
+  ctx.font='9px ui-monospace,monospace';ctx.textAlign='left';ctx.fillStyle=hexA(pal.muted,0.85);
+  ctx.fillText('diffus / gescrambelt / werfend',Lx+2,axisY-6);
+  ctx.textAlign='right';
+  ctx.fillText('gute Ecke · committed · exakte Fidelity',W-pad-2,axisY-6);
+
+  /* knee line (seam) */
+  var kx=map(KNEE);
+  ctx.setLineDash([6,5]);ctx.strokeStyle=hexA(pal.gold,0.9);ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(kx,top-6);ctx.lineTo(kx,axisY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=pal.gold;ctx.font='700 9px ui-monospace,monospace';ctx.textAlign='center';
+  ctx.fillText('KANTE / KINIE',kx,top-14);
+
+  /* current D marker */
+  var dx=map(state.D);
+  ctx.strokeStyle=hexA(pal.fg,0.55);ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(dx,top);ctx.lineTo(dx,axisY);ctx.stroke();
+  ctx.fillStyle=pal.fg;
+  ctx.beginPath();ctx.moveTo(dx,axisY-2);ctx.lineTo(dx-5,axisY-11);ctx.lineTo(dx+5,axisY-11);ctx.closePath();ctx.fill();
+
+  /* ---------- LEFT: the form ---------- */
+  var coreY=top+plotH*0.60;
+  ctx.strokeStyle=hexA(pal.teal,0.22+0.55*A);ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(Lx+4,coreY);ctx.lineTo(Lr-4,coreY);ctx.stroke();
+
+  var reveal=Math.round(A*(N-1));
+  var i;
+  for(i=0;i<N;i++){
+    var p=pts[i];
+    var px=Lx+p.sx*Lw, py=top+p.sy*plotH;
+    var cpx=Lx+8+p.cx*(Lw-16);
+    if(i<reveal){
+      ctx.strokeStyle=hexA(p.surv?pal.good:pal.accent,0.10+0.12*A);ctx.lineWidth=0.6;
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cpx,coreY);ctx.stroke();
+      var rad=p.surv?4.0:2.4;
+      var pulse=p.surv?(1+0.16*Math.sin(t*2.2+i)):1;
+      ctx.fillStyle=p.surv?hexA(pal.good,0.95):hexA(pal.accent,0.9);
+      ctx.beginPath();ctx.arc(cpx,coreY,rad*pulse,0,TAU);ctx.fill();
+      if(p.surv){
+        ctx.strokeStyle=hexA(pal.gold,0.55+0.35*Math.sin(t*2.2));ctx.lineWidth=1.1;
+        ctx.beginPath();ctx.arc(cpx,coreY,rad*pulse+3.2,0,TAU);ctx.stroke();
+      }
+    }else{
+      ctx.fillStyle=hexA(pal.muted,0.05+0.20*(1-A));
+      ctx.beginPath();ctx.arc(px,py,1.9,0,TAU);ctx.fill();
+    }
+  }
+  /* erank bar */
+  ctx.fillStyle=pal.muted;ctx.font='9px ui-monospace,monospace';ctx.textAlign='left';
+  ctx.fillText('Kanal erank',Lx+4,top+6);
+  var barW=Lw-66;
+  ctx.fillStyle=hexA(pal.muted,0.15);ctx.fillRect(Lx+4,top+12,barW,8);
+  ctx.fillStyle=hexA(pal.accent,0.85);ctx.fillRect(Lx+4,top+12,barW*(1-A),8);
+  ctx.fillStyle=pal.accent;ctx.font='700 10px ui-monospace,monospace';ctx.textAlign='right';
+  ctx.fillText(String(Math.round(7+(1-A)*(4096-7))),Lr-4,top+19);
+
+  /* ---------- RIGHT: the read-out ---------- */
+  var baseY=plotB, peakTop=top+20, h2=plotB-peakTop, x0=Rx, xw=Rw;
+  var noiseY=baseY-h2*0.20;
+  /* noise floor */
+  ctx.setLineDash([2,3]);ctx.strokeStyle=hexA(pal.muted,0.35);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(x0,noiseY);ctx.lineTo(x0+xw,noiseY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=pal.muted;ctx.font='8px ui-monospace,monospace';ctx.textAlign='left';
+  ctx.fillText('Rauschen-Limit (Kante)',x0+2,noiseY-4);
+
+  /* signal: diffuse -> sharp peak at the knee */
+  var sigma=0.205-0.145*A;
+  var amp=(noiseY-peakTop-4)*(0.14+0.86*A);
+  var xp=0.5, committed=(state.D>=KNEE);
+  var col=committed?pal.good:pal.accent;
+  var xi,xx,gauss,yv,X;
+  ctx.beginPath();
+  for(xi=0;xi<=170;xi++){
+    xx=xi/170;
+    gauss=Math.exp(-Math.pow((xx-xp)/sigma,2));
+    yv=noiseY-amp*gauss;
+    X=x0+xx*xw;
+    if(xi===0){ctx.moveTo(X,yv);}else{ctx.lineTo(X,yv);}
+  }
+  /* stroke then fill */
+  ctx.save();
+  ctx.strokeStyle=hexA(col,0.95);ctx.lineWidth=2;ctx.stroke();
+  ctx.lineTo(x0+xw,baseY);ctx.lineTo(x0,baseY);ctx.closePath();
+  ctx.fillStyle=hexA(col,0.12);ctx.fill();
+  ctx.restore();
+  /* peak marker */
+  var peakY=noiseY-amp, peakX=x0+xp*xw;
+  ctx.fillStyle=hexA(committed?pal.gold:pal.muted,committed?0.95:0.4);
+  ctx.beginPath();ctx.arc(peakX,peakY,3.3,0,TAU);ctx.fill();
+
+  /* mass / correspondence bar under the curve */
+  var mbY=baseY+0, mbH=7;
+  var tauFrac=0.60;
+  ctx.fillStyle=hexA(pal.muted,0.15);ctx.fillRect(x0,baseY-2,xw,mbH);
+  ctx.fillStyle=hexA(state.mass>=60?pal.good:pal.amber,0.85);ctx.fillRect(x0,baseY-2,xw*(state.mass/100),mbH);
+  var tX=x0+xw*tauFrac;
+  ctx.strokeStyle=hexA(pal.gold,0.8);ctx.setLineDash([3,3]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(tX,baseY-8);ctx.lineTo(tX,baseY-2+mbH+4);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=pal.muted;ctx.font='8px ui-monospace,monospace';ctx.textAlign='left';
+  ctx.fillText('Masse / Korrespondenz an W   ·   τ bei 60',x0,baseY+mbH+12);
+}
+
+function loop(){
+  draw();
+  readouts();
+  requestAnimationFrame(loop);
+}
+
+function initViz(){
+  canvas=$('dialcanvas');
+  if(!canvas||!canvas.getContext){return;}
+  ctx=canvas.getContext('2d');
+  if(!ctx){return;}
+  pal=readPal();
+  updateLabels();
+  var eD=$('rD');if(eD){eD.addEventListener('input',function(ev){state.D=+ev.target.value;readouts();});}
+  var eM=$('rM');if(eM){eM.addEventListener('input',function(ev){state.mass=+ev.target.value;readouts();});}
+  var bK=$('tKi'),bN=$('tNki'),bB=$('tBoth');
+  if(bK){bK.addEventListener('click',function(){state.track='ki';updateLabels();});}
+  if(bN){bN.addEventListener('click',function(){state.track='nki';updateLabels();});}
+  if(bB){bB.addEventListener('click',function(){state.track='both';updateLabels();});}
+  window.addEventListener('resize',draw);
+  try{new MutationObserver(function(){pal=readPal();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+  draw();
+  requestAnimationFrame(loop);
+}
+
+onReady(function(){
+  initTheme();
+  try{initViz();}catch(e){}
+});
+})();
+</script>
+</body>
+</html>
