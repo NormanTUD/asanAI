@@ -1,0 +1,16 @@
+{
+  "no": "008",
+  "a": "n1-026.html",
+  "b": "n1-016.html",
+  "a_title": "Evidenz als Oszillation — Fusion: Schmitz ✕ Miller–Rabin (Runde 1)",
+  "b_title": "Notation als Hebel des mathematischen Fortschritts — Fusion: Étale Raum ✕ Geschichte der Mathe-Symbole (Runde 1)",
+  "combined_theme": "hebel-der-darstellung",
+  "one_line": "Darstellung/Kodierung ist der eigentliche epistemische Hebel — aber sein Ende ist objekt-sensitiv: fürs Inerte fixiert er (Notation→Definition, zählbar, Stille=Wahrheit), fürs Lebendige muss er oszillieren (Evidenz als Limes k→∞, jede Fixierung tötet den Antrieb). B's fünf Kriterien (kurz/eindeutig/leicht/suggestiv/erweiterbar) bleiben gültig und werden um ein sechstes, dynamisches Kriterium ergänzt: 'lebend — friere den Gegenstand nicht ein'.",
+  "contradictions": [
+    "Fixierung als Ideal (B: 'eindeutig', die Site 'fixiert' Überdeckung/Kleben, '=' fixiert Gleichheit — Stabilität zahlt) vs. Fluktuation als Ideal (A: Fixierung/Kollaps = pathologische Verklammung, der gute Zustand ist 'stets fluktuierend').",
+    "Der Hebel liegt im Zeichen selbst (B: 'das Zeichen trägt die Struktur', ein selbst-containedes Glyph/Definition — eine Monade) vs. in der Bewegung/Beziehung des Zeugen im Objekt (A: Trajektorie, beim Lebendigen zweiseitig/wechselseitig — eine Dyade/Prozess).",
+    "Mehr Fixierung = Fortschritt (B: Abstraktionsspektrum nach oben, 'erweiterbar', 'die richtige Umkodierung öffnet das Gebiet') vs. mehr Fixierung = Verlust (A: das Valenzzeichen des Kollapses hängt vom Gegenstand ab — Zahl: Wahrheit, Leib: Tod). B formt den Hebel, aber nicht seine Valenz."
+  ],
+  "resolution": "Das Ende und die Valenz des Hebelns sind keine Eigenschaft des Zeichens, sondern des Gegenstands: inert ⇒ der Hebel stoppt auf einen stabilen, erweiterbaren Fixpunkt (definitiv, zählbar, Stille=Wahrheit); lebendig ⇒ er läuft als nicht-kollabierende Oszillation (Limes k→∞, nie ein Schritt, Stille=Tod). 'Definitiv zusammengesetzt' (B) und 'Verklammung' (A) sind derselbe Kollaps mit anderem Vorzeichen, weil das Objekt anders ist. Der Zeuge ist ein Spektrum von absorbiert bis external: B's 'suggestiv' misst, wie viel Struktur ein Zeichen selbst tragen kann, A's Lebendigkeit, wie viel als wechselseitige Oszillation erhalten bleiben muss — je inert der Gegenstand, desto vollständiger die Absorption. Fortschritt ist Regime-bedingt: fürs Inerte Richtung Stabilität erweitern, fürs Lebendige Richtung Offenheit. Die fünf Kriterien B's gelten in beiden Regimen; 'eindeutig' und 'erweiterbar' wechseln nur ihre Richtung/Bedeutung.",
+  "viz": "Canvas-2D 'Der Darstellungshandel': ein oszillierender Zeuge im Objekt, zwei Regime (inert/lebendig), den Hebel ans Ende setzen (Fixieren) oder laufen lassen (Schwingen lassen). Im Inerten ist Fixierung = Wahrheit/zählbar (grüner Fixpunkt + gezählte Punkte, Evidenz-Balken = 1, '1 Zeuge genügt'); im Lebendigen ist Fixierung = Tod/Verklammung (roter erloshener Antrieb, keine Evidenz), und frei schwingend zeigt der Evidenz-Balken den Limes Evidenz = 1 − (1/4)^k → 1 mit sichtbarem Rest (nie ein einzelner Schritt), k-Slider 1..12. Theme-aware via CSS-Variablen + MutationObserver, alle Daten inline, keine Netzwerk-Abfragen."
+}

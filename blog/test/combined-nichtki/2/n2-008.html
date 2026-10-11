@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Hebel der Darstellung — Runde 2: n1-026 ✕ n1-016</title>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f6f2e9; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.12;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .g{color:var(--accent)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  h1 .g{background:linear-gradient(90deg,var(--accent),var(--accent2),var(--warn));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.9rem;margin:0 0 6px}
+.lede{color:var(--muted);font-size:1rem;margin:0 0 4px}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.4rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.06rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.eq{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.98rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent2);border:1px solid var(--accent2)}
+.tag.b{color:var(--accent);border:1px solid var(--accent)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card.b{border-left-color:var(--accent)}
+.callout{border-left:3px solid var(--warn);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:14px 0;font-size:.98rem}
+.callout.green{border-left-color:var(--accent)}
+.callout.rose{border-left-color:var(--accent2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.c{color:var(--fg);font-weight:700}
+.vnote{border-left:3px solid var(--accent);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:12px 0;font-size:.95rem}
+canvas#hebel{width:100%;height:360px;display:block;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;touch-action:none;margin:6px 0}
+.viz-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.viz-ctrl button{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:10px;
+  cursor:pointer;font:inherit;font-family:system-ui,sans-serif;font-weight:600}
+.viz-ctrl button:hover{filter:brightness(1.08)}
+.viz-ctrl button.alt{background:var(--accent2)}
+.viz-ctrl button.sec{background:var(--card);color:var(--fg);border:1px solid var(--border)}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+.ctrl-row label{color:var(--muted)}
+.ctrl-row input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.readout{font-family:ui-monospace,"Courier New",monospace;color:var(--accent2);font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin:8px 0;font-family:system-ui,sans-serif}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.statusbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.92rem;min-height:2.7em;line-height:1.5;font-family:system-ui,sans-serif}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .desc{color:var(--muted);font-size:.95rem;margin:3px 0 12px}
+footer{color:var(--muted);text-align:center;padding:22px 10px;font-size:.84rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">☀ / 🌙 Thema</button>
+<article>
+  <h1><span class="g">Der Hebel der Darstellung</span><br>fixieren oder oszillieren</h1>
+  <p class="subtitle">Fusion aus: n1-026.html ✕ n1-016.html &nbsp;(Runde 2)</p>
+
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p class="lede">Die beiden Runden-1-Papiere kommen von entgegengesetzten Enden her und
+    konvergieren auf ein Gesetz, das tiefer ist, als eines allein es ausspricht:
+    <strong>Erkenntnis und Fortschritt sind keine Eigenschaften des Gegenstands, sondern des
+    <em>Darstellungshandels</em></strong> — der Art, wie ein Gegenstand in ein Zeichen gesetzt und in
+    Bewegung versetzt wird.</p>
+    <p><span class="tag b">B</span> <em>Notation als Hebel</em> formuliert es im <strong>statischen</strong>
+    Register: wie man einen Gegenstand <em>kodiert</em> (Glyph → Formel → Definition) entscheidet, welche
+    Fragen ask- und welche Gebiete zählbar werden; schlechte Notation verhindert, gute ermöglicht.
+    <span class="tag a">A</span> <em>Evidenz als Oszillation</em> formuliert es im <strong>dynamischen</strong>
+    Register: Evidenz ist nie ein Urteil von außen, sondern das Ergebnis eines <em>oszillierenden
+    Zeugen, der im Objekt läuft</em>; das „Definitive“ ist ein Kollaps dieser Oszillation — und je nach
+    Gegenstand ist dieser Kollaps entweder <em>Wahrheit</em> (die Zahl) oder <em>Tod</em> (der Leib).</p>
+    <p>Die Fusion: <strong>B's Hebel und A's Oszillation sind derselbe Vorgang auf zwei Ebenen.</strong>
+    Ein Zeichen, das „gut“ ist (B: kurz, eindeutig, leicht, suggestiv, erweiterbar), ist genau ein Zeichen,
+    das <em>genug Struktur selbst trägt</em> (B) — und ein Zeuge, der <em>im Objekt</em> läuft statt von
+    außen zu urteilen (A). Aber A ergänzt die halbe Geschichte, die B verschweigt: <strong>der Hebel hat
+    ein <em>Ende</em>, und dieses Ende ist <em>objekt-sensitiv</em>.</strong> Für das Inerte (Zahl, Struktur)
+    lautet das richtige Ende <em>Fixierung</em> — der Hebel läuft auf einen stabilen Punkt zu, der das
+    Gebiet zählbar macht (B's étale Site fixiert „Überdeckung/Kleben“, <span class="m">=</span> fixiert
+    Gleichheit, und erst dann zählen die Punkte). Für das Lebendige (Leib, Sein) lautet das richtige Ende
+    <em>keine</em> Fixierung — der Hebel darf nie landen, Evidenz ist der Limes <span class="m">k→∞</span>
+    einer unendlichen Zeugenschaft, und jede einzelne definitive Erfassung tötet genau den Antrieb, den sie
+    festhalten will. Eine „gute Notation“ im Sinne B's ist also <em>notwendig, aber nicht hinreichend</em>;
+    sie muss um A's sechstes, dynamisches Kriterium ergänzt werden: <strong>fixiere, was inert ist; lass,
+    was lebt, schwingen.</strong> Derselbe Hebel, zwei Regime, ein Gegenstandsprinzip.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widersprüche zwischen A und B</h2>
+    <p>Die beiden Runden-1-Papiere widersprechen sich <strong>nicht im Ergebnis</strong> — beide sagen,
+    dass <em>Darstellung</em> der eigentliche epistemische Flaschenhals ist (B: „Repräsentation ist der
+    Hebel“; A: „Evidenz entsteht durch die Bewegung des Zeugen im Objekt, nicht durch Urteil von außen“).
+    Sie widersprechen sich aber in <strong>drei konkreten Stellungen</strong> darüber, <em>wo</em> der
+    Hebel wirkt und <em>wohin</em> er laufen soll:</p>
+
+    <h3>1 · Fixierung als Ideal <span class="tag b">B</span> ↔ Fluktuation als Ideal <span class="tag a">A</span></h3>
+    <div class="card b">
+      <p><span class="tag b">B</span> Das höchste Gute einer Notation ist, dass sie <em>ein</em>en stabilen,
+      eindeutigen Sinn <strong>fixiert</strong>. Eines von Cajoris fünf Kriterien ist wörtlich
+      <em>eindeutig</em>; die Grothendieck-Topologie „fixiert exakt, was ‚Überdeckung‘ und ‚Kleben‘
+      heißt“; das Zeichen <span class="m">=</span> „fixiert“ Gleichheit. Der Hebel zahlt sich <strong>genau
+      dadurch</strong> aus, dass er <em>festlegt</em>.</p>
+      <p><span class="tag a">A</span> Das <strong>Festlegen</strong> (Kollaps / Fixierung / Verklammung) ist
+      das <em>Pathologische</em>. Der gute Zustand des Bewusstseins ist „stets fluktuierend, stets
+      wechselseitig“ — die Dominanz <em>schwingt</em>, sie wird nie auf einen Punkt fixiert; der
+      „definitiv erkannte“ Leib ist ein <em>toter</em> Leib.</p>
+      <p><strong>Spannung:</strong> Ist das Ideal einer erfolgreichen Darstellung ein
+      <em>Fixpunkt</em> (B) oder eine <em>stehende Welle</em>, die nie stillsteht (A)?</p>
+    </div>
+
+    <h3>2 · Der Hebel liegt im Zeichen selbst <span class="tag b">B</span> ↔ in der Bewegung/Beziehung des Zeugen im Objekt <span class="tag a">A</span></h3>
+    <div class="card b">
+      <p><span class="tag b">B</span> Die Kraft sitzt in der <em>statischen Struktur</em> des Zeichens —
+      „das Zeichen trägt die nötige Struktur“. <em>étale</em> kodiert „flach + unverzweigt = sieht lokal
+      wie die Basis aus“; die Position in der Stellenschrift kodiert „Potenz der Basis“. Ein
+      <strong>selbst-containedes</strong> Zeichen genügt — es ist eine <em>Monade</em>.</p>
+      <p><span class="tag a">A</span> Evidenz sitzt nie im statischen Mark, sondern in der
+      <em>Trajektorie eines Zeugen, der im Objekt läuft</em> — und beim lebendigen Objekt ist diese
+      Trajektorie <em>zweiseitig</em> (wechselseitige Einleibung, Dominanz fluktuiert zwischen Du und
+      Anderem). Der Hebel ist also keine Monade, sondern eine <em>Dyade / ein Prozess</em>, der das Objekt
+      mit einbeziehen <em>muss</em>.</p>
+      <p><strong>Spannung:</strong> Reicht ein <em>selbst-containedes</em> Zeichen, das die Struktur selbst
+      trägt (B), oder muss die Darstellung ein <em>lebendiger, zweiseitiger Prozess</em> bleiben, der das
+      Objekt fortwährend einbezieht (A)?</p>
+    </div>
+
+    <h3>3 · Mehr Fixierung = Fortschritt <span class="tag b">B</span> ↔ mehr Fixierung = Verlust <span class="tag a">A</span> (die Regime-Grenze)</h3>
+    <div class="card b">
+      <p><span class="tag b">B</span> Das treibende Gesetz läuft den
+      <em>Abstraktionsspektrum nach oben</em> (Glyph → Formel → Definition): je abstrakter, je weiter
+      <em>erweiterbar</em>, je fester fixiert, desto mehr Fortschritt. „Die richtige Umkodierung öffnet
+      das Gebiet.“</p>
+      <p><span class="tag a">A</span> Markiert exakt die <em>Grenze</em>, an der derselbe Zug das Vorzeichen
+      wendet: Für die <strong>Zahl</strong> ist mehr Fixierung = mehr Wahrheit (der Miller–Rabin-Kollaps
+      „definitiv zusammengesetzt“ ist „Stille = Wahrheit“); für den <strong>Leib</strong> ist mehr
+      Fixierung = Tod („Verklammung“, der erloshene Antrieb). Das <em>Valenzzeichen</em> des Kollapses
+      hängt vom <em>Gegenstand</em> ab, nicht vom Zeichen.</p>
+      <p><strong>Spannung:</strong> B's universelles „mehr / besser fixieren = Fortschritt“ ist nur im
+      <em>inerten</em> Regime gültig; A liefert die Grenze, an der derselbe Zug <em>destruktiv</em> wird.
+      B formt den Hebel, aber nicht seine <em>Valenz</em>.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Auflösung</h2>
+
+    <h3>1 · Fixpunkt vs. stehende Welle → das Ende ist objekt-sensitiv</h3>
+    <p>Die beiden Ideale widersprechen sich, weil sie <em>andere Gegenstände</em> haben. B's Gegenstand
+    (ein mathematisches Gebiet, eine Struktur) <em>kann</em> vollständig in einem stabilen Zeichen erfasst
+    werden — er ist <strong>inert</strong> — und die <em>Zählbarkeit</em>, der ganze Payoff, existiert
+    <em>erst</em> im fixierten Zustand. A's Gegenstand (ein Leib, ein Bewusstsein) <em>kann</em> nicht
+    durch Landen erfasst werden — er ist nur <em>in der Bewegung</em> real.
+    <div class="callout green"><strong>Fusionsschluss 1:</strong> Das <em>Ende des Hebelns</em> ist keine
+    Eigenschaft des Zeichens, sondern eine Eigenschaft des <em>Gegenstands</em>. Inert ⇒ der Hebel soll
+    <em>stoppen</em> (Fixpunkt, definitiv, zählbar). Lebendig ⇒ der Hebel soll <em>laufen bleiben</em>
+    (stehende Welle, Evidenz als Limes <span class="m">k→∞</span>, nie ein Schritt). „Definitiv
+    zusammengesetzt“ (B) und „Verklammung“ (A) sind <em>derselbe</em> Kollaps — nur mit
+    <em>anderem</em> Valenzzeichen, weil das Objekt anders ist.</div></p>
+
+    <h3>2 · Monade vs. Dyade → der Zeuge wird je nach Inertheitsgrad in das Zeichen absorbiert</h3>
+    <p>A's „Trajektorie im Objekt“ und B's „Zeichen trägt die Struktur“ sind dasselbe Phänomen in zwei
+    Grenzfällen. Bei einem <em>inert</em>en Gegenstand <em>kann</em> der Zeuge <em>vollständig in die
+    Struktur des Objekts selbst</em> gelaufen werden — die Quadrierungs-Sequenz läuft <em>auf</em> dem
+    Zahlenkreis, die étale Site <em>ist</em> der Zeuge, absorbiert in ein selbst-containedes Zeichen. Bei
+    einem <em>lebendig</em>en Gegenstand <em>kann</em> der Zeuge <em>nicht</em> absorbiert werden; er
+    <em>muss</em> external und wechselseitig bleiben.
+    <div class="callout"><strong>Fusionsschluss 2:</strong> Der „Zeuge“ der Darstellung ist ein
+    <em>Spektrum von absorbiert bis external</em>. B's „suggestiv“ misst, <em>wie viel</em> Struktur ein
+    Zeichen selbst <em>tragen kann</em> — A's „Lebendigkeit“ misst, <em>wie viel</em> dem Gegenstand als
+    lebendiger, zweiseitiger Oszillation <em>erhalten bleiben muss</em>. Gute Kodierung absorbiert so viel
+    Struktur ins Zeichen, wie der Gegenstand inert zulässt, und lässt <em>genau</em> den lebendigen Rest
+    als fortlaufende wechselseitige Oszillation stehen. (Das ist A's eigene Auflösung — „je lebendiger das
+    Objekt, desto wechselseitiger muss die Zeugenschaft werden“ — auf B's Ebene des „Zeichen trägt
+    Struktur“ generalisiert.)</div></p>
+
+    <h3>3 · Fortschrittsrichtung mit Regime-Bedingung → der Hebel bekommt ein Valenzzeichen</h3>
+    <p>B liefert den Hebel <em>ohne</em> Valenz: „die richtige Umkodierung öffnet das Gebiet“ sagt,
+    <em>dass</em> der Hebel wirkt, aber nicht, <em>wohin</em> er für <em>jeden</em> Gegenstand laufen
+    darf. A liefert die fehlende Hälfte: die <em>Valenz</em> des Hebels hängt vom <em>Objekt</em> ab.
+    <div class="callout rose"><strong>Fusionsschluss 3:</strong> Der Umkodierungs-Hebel ist <em>nur
+    dann</em> gut, wenn sein <em>Endpunkt</em> an die <em>Ontologie des Gegenstands</em> angepasst ist.
+    Für <em>zählbare / inerte</em> Objekte: den Hebel auf eine <em>stabile, erweiterbare Definition</em>
+    laufen lassen (B's Spektrum Glyph → Formel → Definition; „erweiterbar“ = Richtung <em>Stabilität</em>
+    erweitern). Für <em>lebendige / relationale</em> Objekte: den Hebel auf eine <em>nicht-kollabierende
+    Oszillation</em> laufen lassen und jede <em>einzelne</em> definitive Erfassung als <em>Fehlschlag</em>
+    markieren (A's Limes <span class="m">k→∞</span>, nie ein Schritt; „erweiterbar“ = Richtung
+    <em>Offenheit</em> erweitern). Die fünf Kriterien B's bleiben gültig und werden um ein
+    <em>sechstes, dynamisches</em> Kriterium ergänzt: <strong>lebend — die Darstellung darf den Gegenstand
+    nicht einfrieren.</strong> „Eindeutig“ heißt für das Inerte: <em>ein</em> fixer Sinn; für das
+    Lebendige: <em>ein</em> Sinn, der <em>fortwährend wechselt</em>. Derselbe Begriff, zwei Regime.</div></p>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <h3>Der gemeinsame Kern: der Darstellungshandel</h3>
+    <p>Beide Papiere sagen dasselbe Grundgesetz von zwei Seiten: <strong>Der Gegenstand wird nicht
+    <em>an sich</em> erkannt oder erschlossen, sondern <em>durch den Darstellungshandel</em>.</strong> Was
+    zählt, ist nie die rohe Sache, sondern <em>wie sie in ein Zeichen gesetzt und in Bewegung versetzt
+    wird</em>. B nennt diesen Handel <em>Notation / Kodierung</em> (Glyph → Formel → Definition), A nennt
+    ihn <em>Zeugenschaft</em> (der Zeuge, der im Objekt oszilliert). Beide sehen, dass <em>schlechte</em>
+    Darstellung blockiert (B: griechische Buchstaben „Hindernis statt Hilfe“; A: einseitiges „Befragen“
+    eines Bewusstseins) und <em>gute</em> Darstellung öffnet (B: die étale Site macht Punkte zählbar; A:
+    die wechselseitige Einleibung erzeugt Du-Evidenz).</p>
+
+    <h3>Was <span class="tag b">B</span> beisteuert — das statische Hebelgesetz</h3>
+    <ul>
+      <li><strong>Das Gesetz:</strong> Fortschritt wird durch Repräsentation gesteuert. Schlechte Notation
+      verhindert, gute ermöglicht.</li>
+      <li><strong>Das Spektrum:</strong> „Notation“ ist kein Schriftbild, sondern der <em>gesamte</em>
+      Vokabularbegriff von der <em>Glyph</em> (<span class="m">+</span>, <span class="m">=</span>,
+      <span class="m">0</span>) über die <em>Formel</em> (Stellenschrift, Viètes a,b,c) bis zur
+      <em>Grunddefinition</em> (Grothendieck-Topologie). Dasselbe Gesetz gilt auf allen Stufen.</li>
+      <li><strong>Der Beleg:</strong> Die <em>Neu-Kodierung</em> (étale Site: „offene Menge“ → „étaler
+      Morphismus“, „Punkt“ → „surjektive étale Familie“) verwandelte einen toten Ast (triviale
+      Kohomologie mit <span class="m">ℤ/ℓ</span>-Koeffizienten) in eine Maschine, die die
+      <em>Weil-Vermutungen</em> und (via Deligne) die Riemann-Hypothese über endlichen Körpern bewies. Der
+      <em>Payoff</em> (die Weil-Formel: <span class="m">#X(ℱ_{qⁿ})</span> wird als Spur des Frobenius auf
+      <span class="m">Hⁱ</span> gezählt) ist der <em>Katalysator</em>, der die gesellschaftliche
+      Durchsetzung von Jahrhunderten auf Jahre komprimiert.</li>
+      <li><strong>Die Kriterien (Cajori):</strong> kurz, eindeutig, leicht zu schreiben, <em>suggestiv</em>
+      (strukturtreu — nicht bildhaft), erweiterbar.</li>
+      <li><strong>Die zwei Phasen:</strong> <em>Erfindung</em> (individueller, top-down Sprung eines Genies)
+      vs. <em>Durchsetzung</em> (sozialer, bottom-up Standardisierungskampf). Ein demonstrativer
+      Durchbruch komprimiert die Durchsetzung.</li>
+    </ul>
+
+    <h3>Was <span class="tag a">A</span> beisteuert — die dynamische und normative Dimension</h3>
+    <ul>
+      <li><strong>Das Gesetz:</strong> Evidenz ist <em>nie</em> ein Urteil von außen, sondern das Ergebnis
+      eines <em>oszillierenden Zeugen im Objekt</em>. Der Zeuge bewegt sich <em>durch</em> die Struktur des
+      Gegenstands (B: die Quadrierung auf dem Zahlenkreis; A: die Dominanz-Fluktuation im gemeinsamen
+      vitalen Antrieb).</li>
+      <li><strong>Die Asymmetrie:</strong> <em>Kollaps</em> = definitives Urteil; <em>freie
+      Schwingung</em> = der positive, lebendige Fall. „Wahrscheinlich prim“ ↔ „Du-Evidenz“ (frei
+      schwingend, nie definit); „definitiv zusammengesetzt“ ↔ „Verklammung“ (Stille, Fixierung).</li>
+      <li><strong>Das Valenzzeichen:</strong> Der <em>gleiche</em> Kollaps ist für die <em>Zahl</em>
+      <em>Wahrheit</em> (gut), für den <em>Leib</em> <em>Tod</em> (schlecht). Das Valenzzeichen ist
+      <em>objekt-abhängig</em>.</li>
+      <li><strong>Der Limes:</strong> Gewissheit ist <em>kein Einzelakt</em>, sondern der <em>Limes</em>
+      der Zeugenschaft (B: Fehler ≤ <span class="m">(1/4)^k → 0</span> für <span class="m">k→∞</span>; A:
+      „unmittelbare Gewissheit“ = das Ergebnis <em>unzähliger</em> Zeugenschaften über ein ganzes Leben,
+      <span class="m">k→∞</span> über die Zeit).</li>
+      <li><strong>Das normative Kriterium:</strong> <em>Fixiere, was inert ist; lass, was lebt,
+      schwingen.</em> Ein Bewusstseinsinhaber ist <em>nie</em> „definitiv erkennbar“ — nur „wahrscheinlich,
+      stets wechselseitig, stets fluktuierend“.</li>
+    </ul>
+
+    <h3>Die verschmolzene Architektur</h3>
+    <table>
+      <thead><tr><th>Entität</th><th>B — Notation (statisch)</th><th>A — Evidenz (dynamisch)</th><th>Verschmolzene Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="c">der Hebel</td><td>das Zeichen (Glyph / Formel / Definition)</td><td>der Zeuge a / der wechselseitige Blick</td><td>das Mittel, das den Gegenstand öffnet</td></tr>
+        <tr><td class="c">der Gegenstand</td><td>Struktur / Gebiet (inert)</td><td>Leib / Bewusstsein (lebendig)</td><td>seine Ontologie bestimmt das Ende</td></tr>
+        <tr><td class="c">„gut“ heißt</td><td>Struktur <em>tragen</em> (suggestiv)</td><td>im Objekt <em>laufen</em> (Trajektorie)</td><td>Absorption vs. Externalität des Zeugen</td></tr>
+        <tr><td class="c">das Ende</td><td>Fixpunkt (definitiv, zählbar)</td><td>keine Landung (Limes k→∞)</td><td>objekt-sensitiver Endpunkt</td></tr>
+        <tr><td class="c">der Kollaps</td><td>„definitiv zusammengesetzt“ = Wahrheit</td><td>„Verklammung“ = Tod</td><td>derselbe Vorgang, zwei Vorzeichen</td></tr>
+        <tr><td class="c">Fortschritt</td><td>Spektrum nach oben, <em>erweiterbar</em></td><td>Zeugenschaft über die Zeit, k→∞</td><td>Richtung: Stabilität (inert) vs. Offenheit (lebendig)</td></tr>
+        <tr><td class="c">Kriterium</td><td>kurz / eindeutig / leicht / suggestiv / erweiterbar</td><td>+ lebend (friere nicht ein)</td><td>B's 5 + A's 6.</td></tr>
+      </tbody>
+    </table>
+
+    <p>Die <strong>Weil-Formel</strong> als Beleg, dass die fixierende Kodierung zählt — die Kohomologie
+    zählt die Punkte, die die alte Kodierung nicht erreichen konnte:</p>
+    <div class="eq">#X(ℱ<sub>qⁿ</sub>) &nbsp;=&nbsp; Σ<sub>i</sub> (−1)<sup>i</sup> · tr( Frob<sup>n</sup> ∣ H<sup>i</sup><sub>ét</sub> )</div>
+    <p>Die Eigenwerte des Frobenius auf <span class="m">Hⁱ</span> liegen auf Kreisen
+    <span class="m">|α| = √q</span> (Delignes Riemann-Hypothese über endlichen Körpern).</p>
+
+    <div class="callout green"><strong>Das sechste Kriterium (die eigentliche Fusion):</strong> B's fünf
+    Kriterien beschreiben, <em>wann ein Zeichen die Struktur gut trägt</em>. A ergänzt das
+    <em>sechste, dynamische</em> Kriterium: <strong>die Darstellung muss dem Gegenstand
+    <em>lebensfreundlich</em> sein — sie darf dessen Oszillation nicht einfrieren.</strong> Konkrete
+    Testregel: <em>Ist der Gegenstand inert?</em> → dann soll das Zeichen <em>fixieren</em> (B: ein
+    eindeutiger, erweiterbarer Sinn). <em>Ist der Gegenstand lebendig?</em> → dann soll das Zeichen
+    <em>oszillieren</em> (A: Evidenz als Limes, nie ein Schritt; jede einzelne definitive Erfassung ist
+    ein Fehlschlag). Dieselben fünf Kriterien gelten in beiden Regimen — nur die <em>Richtung</em> von
+    „erweiterbar“ und die <em>Bedeutung</em> von „eindeutig“ wechseln: Richtung <em>Stabilität</em> vs.
+    Richtung <em>Offenheit</em>; <em>ein fixer</em> Sinn vs. <em>ein wechselnder</em> Sinn.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung — der Darstellungshandel</h2>
+    <p class="vnote">Dasselbe Zeichen, derselbe Zeuge — aber das <em>Ende</em> des Hebelns wechselt mit
+    dem <em>Gegenstand</em>. Im <strong>Inert</strong>-Regime (Zahl / Struktur) ist das Gute
+    <em>Fixierung</em>: der Oszillator läuft auf einen stabilen Punkt zu und wird <em>zählbar</em>
+    (B: „Stille = Wahrheit“). Im <strong>Lebendig</strong>-Regime (Leib / Sein) ist das Gute
+    <em>Oszillation</em>: jede Fixierung <em>erlischt</em> den Antrieb (A: „Verklammung“).
+    „Fixieren“ setzt den Hebel ans Ende; „Schwingen lassen“ lässt ihn laufen. Der k-Slider zeigt den
+    Limes: Evidenz <span class="m">= 1 − (1/4)^k → 1</span> — Gewissheit als <em>Limes</em>, nie als
+    einzelner Schritt.</p>
+
+    <canvas id="hebel" width="780" height="360"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--accent)"></span>Oszillator / Antrieb</span>
+      <span><span class="dot" style="background:var(--warn)"></span>Zeuge (läuft im Objekt)</span>
+      <span><span class="dot" style="background:var(--good)"></span>inert: Fixierung = Wahrheit</span>
+      <span><span class="dot" style="background:var(--bad)"></span>lebendig: Fixierung = Tod</span>
+    </div>
+    <div class="viz-ctrl">
+      <button id="btnRegime" type="button">Gegenstand: Zahl / Struktur (inert)</button>
+      <button id="btnFix" class="alt" type="button">Fixieren (Hebel ans Ende)</button>
+      <button id="btnOsc" class="sec" type="button">Schwingen lassen</button>
+    </div>
+    <div class="ctrl-row">
+      <label>Zeugenschaften k:</label>
+      <input id="kSlider" type="range" min="1" max="12" value="6">
+      <span>Restfehler <span class="m">(1/4)<sup>k</sup></span> = <span id="errVal" class="readout">2.44e-4</span>
+      &nbsp;·&nbsp; k = <span id="kVal" class="readout">6</span></span>
+    </div>
+    <div class="statusbox" id="hebelStatus">Zwei Regime, ein Hebel.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../n1-026.html">A — n1-026.html · „Evidenz als Oszillation” (Runde 1)</a>
+        <div class="desc">Fusion von Schmitz' Leib-Philosophie mit dem Miller–Rabin-Test: Evidenz als
+        oszillierender Zeuge im Objekt, Kollaps = Fixierung = Wahrheit (Zahl) bzw. Tod (Leib), Gewissheit
+        als Limes k→∞. Liefert die <em>dynamische / normative</em> Dimension des Darstellungshandels.</div>
+      </div>
+      <div>
+        <a href="../n1-016.html">B — n1-016.html · „Notation als Hebel des mathematischen Fortschritts” (Runde 1)</a>
+        <div class="desc">Fusion von Étale-Kohomologie mit der Geschichte der Mathe-Symbole: Repräsentation
+        (Glyph → Formel → Definition) als epistemischer Hebel, Cajoris Kriterien, die étale Site als
+        moderner Beleg. Liefert das <em>statische</em> Hebelgesetz.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>ROUND 2 · Pair 008 · Selbstständige Fusion — alle Daten inline, keine Netzwerk-Abfragen.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var c=document.getElementById('hebel');
+  var ctx=c.getContext('2d');
+  var pal=null, W=0, H=0, dpr=1;
+  var regime='inert', fixed=false, k=6, t=0, amp=1, ampTarget=1;
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function readPal(){
+    pal={bg:cssVar('--bg'),card:cssVar('--card'),bg2:cssVar('--bg2'),fg:cssVar('--fg'),
+         muted:cssVar('--muted'),border:cssVar('--border'),accent:cssVar('--accent'),
+         accent2:cssVar('--accent2'),warn:cssVar('--warn'),good:cssVar('--good'),bad:cssVar('--bad')};
+  }
+  function resize(){
+    var r=c.getBoundingClientRect();
+    dpr=window.devicePixelRatio||1;
+    c.width=Math.max(1,Math.round(r.width*dpr));
+    c.height=Math.max(1,Math.round(r.height*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W=r.width;H=r.height;
+  }
+  function setStatus(s){document.getElementById('hebelStatus').textContent=s;}
+
+  function setRegime(r){
+    regime=r; fixed=false; ampTarget=1;
+    document.getElementById('btnRegime').textContent =
+      r==='inert' ? 'Gegenstand: Zahl / Struktur (inert)' : 'Gegenstand: Leib / Sein (lebendig)';
+    setStatus(r==='inert'
+      ? 'REGIME INERT: Der Gegenstand ist eine Zahl/Struktur. Das gute Ende der Darstellung ist FIXIERUNG — der Hebel läuft auf einen stabilen Punkt zu und das Gebiet wird zählbar (Stille = Wahrheit).'
+      : 'REGIME LEBENDIG: Der Gegenstand ist ein Leib/ein Bewusstsein. Das gute Ende ist KEINE Landung — der Hebel muss als Oszillation laufen bleiben (stets fluktuierend). Jede Fixierung tötet den Antrieb.');
+  }
+  function doFix(){
+    fixed=true; ampTarget=0;
+    setStatus(regime==='inert'
+      ? 'FIXIERT — der Oszillator läuft auf einen stabilen Punkt. Inert: Stille = Wahrheit, das Gebiet wird zählbar (B: "definitiv zusammengesetzt" — 1 Zeuge genügt).'
+      : 'FIXIERT — ABER der Antrieb ist erloschen. Die definitive Erfassung hat genau den Antrieb getötet, den sie festhalten wollte. Lebendig: Stille = Tod (A: "Verklammung").');
+  }
+  function doOsc(){
+    fixed=false; ampTarget=1;
+    setStatus(regime==='inert'
+      ? 'OSZILLIERT — der Zeuge läuft frei, aber ohne Landung bleibt das Gebiet noch nicht zählbar (zu wenig Fixierung = B: "verhindert").'
+      : 'OSZILLIERT — der Antrieb lebt (fallen + sicher hochkommen). Evidenz = Limes (k→∞), nie ein einzelner Schritt (A: "stets fluktuierend").');
+  }
+  function setK(v){
+    k=+v;
+    document.getElementById('kVal').textContent=k;
+    document.getElementById('errVal').textContent=Math.pow(0.25,k).toExponential(2);
+  }
+
+  function drawWave(y0,A,freq,phase,color,alpha,w){
+    if(A<0.6) return;
+    ctx.beginPath();
+    for(var x=0;x<=W;x+=4){
+      var y=y0-A*Math.sin(x*freq+phase+t*0.05);
+      if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=color;ctx.globalAlpha=alpha;ctx.lineWidth=w;ctx.stroke();ctx.globalAlpha=1;
+  }
+
+  function frame(){
+    if(!pal) readPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=pal.bg2;ctx.fillRect(0,0,W,H);
+    var mid=H*0.5;
+    var baseY=mid;
+    if(regime==='lebendig' && amp>0.02){ baseY = mid + Math.sin(t*0.012)*H*0.15*amp; }
+    amp += (ampTarget-amp)*0.08;
+    var A=H*0.30*amp;
+    var freq=0.016;
+    var fixedNow=(amp<0.04);
+
+    ctx.strokeStyle=pal.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
+
+    drawWave(baseY,A,freq,0,pal.accent,0.85,2.4);
+    drawWave(baseY,A*0.8,freq*1.15,Math.PI*0.5,pal.accent2,0.7,2);
+
+    var stateStr,valColor;
+    if(fixedNow && regime==='inert'){stateStr='FIXIERT · zählbar';valColor=pal.good;}
+    else if(fixedNow && regime==='lebendig'){stateStr='EINGEFROREN · Antrieb erloschen';valColor=pal.bad;}
+    else if(regime==='inert'){stateStr='OSZILLIERT · noch nicht zählbar';valColor=pal.warn;}
+    else {stateStr='OSZILLIERT · stets fluktuierend = lebendig';valColor=pal.accent2;}
+
+    ctx.font='600 13px system-ui, sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillStyle=pal.muted;
+    ctx.fillText(regime==='inert' ? 'REGIME INERT — Zahl / Struktur' : 'REGIME LEBENDIG — Leib / Sein', 12, 24);
+
+    ctx.font='700 14px system-ui, sans-serif';ctx.textAlign='right';
+    ctx.fillStyle=valColor;
+    ctx.fillText(stateStr, W-12, 24);
+
+    if(fixedNow){
+      ctx.beginPath();ctx.arc(W*0.5,mid,7,0,Math.PI*2);
+      ctx.fillStyle=valColor;ctx.fill();
+      ctx.strokeStyle=pal.fg;ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle=pal.fg;ctx.font='11px system-ui, sans-serif';ctx.textAlign='center';
+      ctx.fillText(regime==='inert'?'Fixpunkt (zählbar)':'erloschen', W*0.5, mid-14);
+      if(regime==='inert'){
+        ctx.fillStyle=pal.good;
+        for(var i=0;i<6;i++){
+          ctx.beginPath();ctx.arc(W*0.5-60+i*24, mid+34, 4, 0, Math.PI*2);ctx.fill();
+        }
+        ctx.font='10px ui-monospace, monospace';ctx.fillStyle=pal.good;ctx.textAlign='center';
+        ctx.fillText('6 Punkte zählbar (Kohomologie zählt)', W*0.5, mid+56);
+      }
+    } else {
+      var xz=(t*2.0)%W;
+      var yz=baseY-A*Math.sin(xz*freq+t*0.05);
+      ctx.beginPath();ctx.arc(xz,yz,6,0,Math.PI*2);
+      ctx.fillStyle=pal.warn;ctx.fill();
+      ctx.strokeStyle=pal.fg;ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle=pal.fg;ctx.font='11px system-ui, sans-serif';ctx.textAlign='center';
+      ctx.fillText('Zeuge', xz, yz-12);
+      if(regime==='lebendig'){
+        ctx.font='11px system-ui, sans-serif';
+        ctx.fillStyle=pal.accent;ctx.textAlign='left';ctx.fillText('Du (dominiert) ←', 12, mid+H*0.24);
+        ctx.fillStyle=pal.accent2;ctx.textAlign='right';ctx.fillText('→ Anderer (dominiert)', W-12, mid+H*0.24);
+      }
+    }
+
+    if(fixedNow){
+      ctx.font='700 15px system-ui, sans-serif';ctx.textAlign='center';
+      ctx.fillStyle=valColor;
+      ctx.fillText(regime==='inert'
+        ? 'DAS GUTE ENDE — FIXIERUNG: Stille = Wahrheit'
+        : 'DAS TÖDLICHE ENDE — FIXIERUNG: Stille = Tod', W/2, 44);
+    }
+
+    var barY=H-26, barX=16, barW=W-32, barH=10;
+    var value, barColor, barLabel;
+    if(fixedNow && regime==='inert'){value=1;barColor=pal.good;barLabel='EVIDENZ: definitiv — 1 Zeuge genügt (Stille = Wahrheit)';}
+    else if(fixedNow && regime==='lebendig'){value=0.5;barColor=pal.bad;barLabel='EVIDENZ: ✕ — erloshener Antrieb (Verklammung), keine Evidenz';}
+    else if(regime==='inert'){value=0.15;barColor=pal.warn;barLabel='EVIDENZ: zu wenig Fixierung — Gebiet noch nicht zählbar';}
+    else {value=1-Math.pow(0.25,k);barColor=pal.accent2;barLabel='EVIDENZ: Limes → 1 · Rest (1/4)^k = '+Math.pow(0.25,k).toExponential(2)+' · nie ein einzelner Schritt';}
+    ctx.fillStyle=pal.border;ctx.fillRect(barX,barY,barW,barH);
+    ctx.fillStyle=barColor;ctx.fillRect(barX,barY,barW*value,barH);
+    if(!fixedNow && regime==='lebendig'){
+      var residual=barW*(1-value);
+      if(residual<6){ ctx.fillStyle=pal.warn;ctx.fillRect(barX+barW-6,barY,6,barH); }
+    }
+    ctx.fillStyle=pal.fg;ctx.font='11px ui-monospace, monospace';ctx.textAlign='left';
+    ctx.fillText(barLabel,barX,barY-6);
+
+    t++;
+    requestAnimationFrame(frame);
+  }
+
+  function init(){
+    readPal();
+    resize();
+    window.addEventListener('resize',function(){resize();});
+    document.getElementById('btnRegime').addEventListener('click',function(){ setRegime(regime==='inert'?'lebendig':'inert'); });
+    document.getElementById('btnFix').addEventListener('click',doFix);
+    document.getElementById('btnOsc').addEventListener('click',doOsc);
+    document.getElementById('kSlider').addEventListener('input',function(e){ setK(+e.target.value); });
+    document.getElementById('themeToggle').addEventListener('click',function(){
+      document.documentElement.classList.toggle('dark'); readPal();
+    });
+    var mo=new MutationObserver(function(){ readPal(); });
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    setK(6);
+    setStatus('Zwei Regime, ein Hebel. Wechsle den Gegenstand, dann setze den Hebel ans Ende („Fixieren“) oder lass ihn laufen („Schwingen lassen“). Im Inerten ist Fixierung = Wahrheit/zählbar; im Lebendigen ist Fixierung = Tod. Der k-Slider zeigt den Limes: Evidenz → 1, aber nie in einem einzelnen Schritt.');
+    frame();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init);
+  } else { init(); }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>n2-038 — Wissen als reversible, konfluente Komposition</title>
+<style>
+:root {
+  --bg: #f6f4ee;
+  --card: #ffffff;
+  --border: #d9d3c5;
+  --text: #1f2430;
+  --muted: #5b6472;
+  --accent: #2563eb;
+  --accent2: #e11d48;
+  --accent3: #059669;
+  --accent4: #7c3aed;
+  --panel: #fbfaf6;
+}
+html.dark {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #f78166;
+  --accent3: #7ee787;
+  --accent4: #d2a8ff;
+  --panel: #12161d;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  padding: 24px 16px 60px;
+}
+article { max-width: 820px; margin: 0 auto; }
+h1 {
+  font-size: 1.9rem;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fusion-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-family: 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+}
+section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 18px 0;
+}
+section > h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+section > h2 .tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 2px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+p { margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+h3 { margin: 16px 0 6px; font-size: 1.02rem; }
+strong { color: var(--text); }
+code {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.86em;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: var(--accent4);
+}
+.mono {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.88em;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+.a { color: var(--accent); font-weight: 600; }
+.b { color: var(--accent3); font-weight: 600; }
+.warn { color: var(--accent2); }
+.ok { color: var(--accent3); }
+ul { margin: 6px 0 12px 22px; }
+li { margin-bottom: 6px; }
+.tension {
+  border-left: 3px solid var(--accent2);
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: var(--panel);
+  border-radius: 0 8px 8px 0;
+}
+.tension .who { font-weight: 700; }
+.resolve {
+  border-left: 3px solid var(--accent3);
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: var(--panel);
+  border-radius: 0 8px 8px 0;
+}
+.eq {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.92em;
+}
+.eq .lhs { color: var(--accent); font-weight: 700; }
+.eq .rhs { color: var(--accent3); font-weight: 700; }
+.eq .op { color: var(--accent4); font-size: 1.2em; }
+.viz-wrap { margin-top: 6px; }
+#vizCanvas {
+  width: 100%;
+  max-width: 720px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: opacity 0.2s, transform 0.1s;
+}
+button:hover { opacity: 0.88; }
+button:active { transform: translateY(1px); }
+button.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+button.warn { background: var(--accent2); }
+.viz-status {
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.viz-status b { color: var(--accent3); }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 4px 0 6px;
+}
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+#vizLog {
+  max-height: 190px;
+  overflow-y: auto;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-size: 0.82rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+#vizLog div { padding: 2px 0; border-bottom: 1px solid var(--border); }
+#vizLog .l-info { color: var(--accent); }
+#vizLog .l-warn { color: var(--accent2); }
+#vizLog .l-ok { color: var(--accent3); }
+#vizLog .l-conf { color: var(--accent4); }
+#vizLog .l-muted { color: var(--muted); }
+.prov {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  background: var(--panel);
+}
+.prov .badge {
+  flex-shrink: 0;
+  font-weight: 700;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.prov a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.prov a:hover { text-decoration: underline; }
+.foot { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 26px; }
+</style>
+</head>
+<body>
+<article>
+  <h1>Wissen als reversible, konfluente Komposition</h1>
+  <p class="fusion-sub">Fusion aus: n1-030.html &#10005; n1-002.html  (Runde 2)</p>
+
+  <section id="these">
+    <h2><span class="tag">1</span> Kernthese der Fusion</h2>
+    <p>Beide Runden-1-Papiere sind auf der Ebene ihrer <em>Thesen</em> dasselbe Statement, nur aus zwei Registern. <span class="a">A (Reversible Compositional Foundations)</span> sagt: ein Fundament ist eine <strong>reversible, typisierte, konfluente Zusammensetzung</strong> von Bausteinen — man baut bottom-up, reißt top-down ab, und die Montage quiesziert <em>order-unabhängig</em> (Konfluenz) auf denselben Zustand. <span class="b">B (die Kompressionsmaschine)</span> sagt: <strong>Verstehen heißt Komprimieren</strong> — eine kontinuierliche, anfassbare Welt auf eine endliche, diskrete, kombinatorische Invariantenmenge abbilden — und der ehrliche Weg dorthin ist ein <em>progressiver, vom Abhängigkeitsgraph gesteuerter</em> Pfad, bei dem jede Stufe erst freigeschaltet wird, wenn ihre Voraussetzung steht (der Lader <em>ist</em> die topologische Ordnung des DAGs).</p>
+    <p>Die eine integrierte Position: <strong>Ein Körper von Wissen ist ein Abhängigkeitsgraph, dessen Knoten <em>irreversibel komprimierte</em> Invarianten sind (B) und dessen <em>Zusammensetzung reversibel und konfluent</em> verläuft (A).</strong> Jeder Baustein ist erst dann „geladen/done“, wenn seine eigene Rohwelt in eine berechenbare Invariante komprimiert wurde (B); die Bausteine werden dann voraussetzungs-gesteuert zusammengeschaltet, quieszen order-unabhängig und sind top-down wieder auflösbar (A). „Komposition, die man aufbauen, abreißen und auf denselben Zustand konvergieren lassen kann“ (A) trifft auf „Verstehen = Komprimieren entlang eines progressiven, Abhängigkeit-gesteuerten Pfads“ (B): <em>Komprimieren erzeugt die Bausteine, reversible Konfluenz setzt sie zusammen.</em></p>
+    <p>In einer Zeile: Wissen ist ein reversibler, konfluenter Abhängigkeitsgraph aus komprimierten Invarianten — bottom-up nach Voraussetzungen aufgebaut, order-unabhängig quiesziert, top-down abbaubar, lokal abgeschlossen, global offen.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="tag">2</span> Widersprüche zwischen A und B</h2>
+    <p>Die beiden Runden-1-Papiere widersprechen sich inhaltlich-faktisch nicht (A ist eine These über Fundamente, B eine über das Komprimieren eines Kurses). Sie beziehen zu denselben Grundfragen <strong>inkompatible Stellungen</strong>. Drei konkrete, belegbare Punkte:</p>
+
+    <div class="tension">
+      <p><span class="who warn">T1 — Reversible, abbaubare Montage (A) vs. verlustbehaftete, nur-vorwärts Kompression + Einweg-Lader (B).</span></p>
+      <p><span class="a">A</span> hat die <em>Reversibilität</em> als Kern: „ein Effekt ist eine Funktion, die Kontext und Inverses zurückgibt“, „beim Entladen läuft der Akkumulator und macht alles perfekt rückgängig“ (Thm 16); „1+1=2“ wird zu einer 379-Schritt-<em>revertiblen</em> Konstruktion, die man bottom-up beweist <em>und</em> top-down abträgt. Der ganze Graph ist „at any moment fully retractable“.</p>
+      <p><span class="b">B</span> hat die <em>Kompression</em> als Kern: die kontinuierliche Welt wird auf eine diskrete Invariantenmenge abgebildet (Raum &rarr; π₁, viele Räume auf dieselbe Gruppe), und der Lader rattert einweg von <code>pending &rarr; loading &rarr; done</code>. B bietet <em>nirgends</em> eine Re-Expansion Invariante &rarr; Raum an und keinen „un-load“-Schritt; „nichts geht verloren“ ist das Programm, nicht eine Rückführung.</p>
+      <p class="warn">Inkompatibel: A kann alles rückgängig machen (auf- UND abbauen); B projiziert verlustbehaftet nach vorne und rattert nur vorwärts.</p>
+    </div>
+
+    <div class="tension">
+      <p><span class="who warn">T2 — Geschlossenes, konsistentes, ideal vollständiges Ganztum (A) vs. offener, nie-abgeschlossener gestaffelter Preview-Lader (B).</span></p>
+      <p><span class="a">A</span> zielt auf ein <em>geschlossenes, konsistentes, ideal vollständiges</em> System: „alle Mathematik reduzierbar auf Logik“, ein einzelnes selbstkonsistentes Monument (später durch Gödel beschränkt).</p>
+      <p><span class="b">B</span> ist per Design <em>offen</em>: „acht Module … per Design nicht abgeschlossen (es ist ein Lader, nicht ein Ende)“, ausdrücklich ein <em>Preview</em> eines viel größeren Buches, das Modul für Modul „erreicht”, das globale Ganze aber offenhält.</p>
+      <p class="warn">Inkompatibel: A will ein fertiges, beweisbar konsistentes Ganzes; B ist ein offenes, nie endendes Laden.</p>
+    </div>
+
+    <div class="tension">
+      <p><span class="who warn">T3 — Aktive, sich selbst organisierende Einheiten (A) vs. inerte Inhaltsblöcke mit externem Scheduler (B).</span></p>
+      <p><span class="a">A</span>s atomare Einheiten sind <em>aktive, zustandsbehaftete Komponenten</em>, die ihre Abhängigkeiten <em>selbst deklarieren</em> und auf die Umgebung reagieren („spring to life when their deps are ready, and gracefully deactivate“).</p>
+      <p><span class="b">B</span>s acht Module sind <em>inerte Inhaltsblöcke</em> — „kein Inhalt, nur die Struktur des Lernpfads“, jedes ein Checklist-Item mit Zustand; die Reihenfolge wird von einem <em>externen Lader</em> als Skript aufgezwungen, nicht von den Modulen deklariert.</p>
+      <p class="warn">Inkompatibel: A deklariert die Kanten selbst (Co-Effekte); B erzwingt sie ein externes Skript (die Lade-Reihenfolge).</p>
+    </div>
+
+    <p>Die schärfste reale Spannung, offen: A kann das Ganze <strong>abreißen und neu aufbauen</strong>; B <strong>komprimiert verlustbehaftet nach vorne</strong> und öffnet sich endlos.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="tag">3</span> Auflösung</h2>
+
+    <div class="resolve">
+      <p><span class="ok">R1 (Reversibilität vs. Kompression) — zwei Achsen, eine Maschine.</span> Trenne <em>Inhalt</em> von <em>Zusammensetzung</em>. Die Kompression (B) ist die <em>Inhalts-Map</em> (Rohfeld &rarr; Invariante) — sie ist irreversibel, man kann einen Raum nicht aus π₁ zurückbauen. Die Reversibilität (A) wirkt auf der <em>Assembly-Map</em>: die Montage <em>schon</em> komprimierter Bausteine ist ein LIFO-Stack von Inversen. <strong>Der LIFO-Inversus agiert auf der Zusammensetzung, nicht auf der Kompression.</strong> Verschmolzen: ein Knoten ist eine irreversibel eingefrorene Invariante (B); der Graph dieser Knoten ist reversible, konfluente Montage (A). Man <em>kann</em> eine Voraussetzung zurückziehen und die Abhängigen sehen top-down in einer Kaskade abfallen — und <em>kann nicht</em>, einen Raum aus seiner Gruppe rekonstruieren. Beides ist wahr, weil es zwei Achsen sind.</p>
+    </div>
+
+    <div class="resolve">
+      <p><span class="ok">R2 (geschlossenes Ganztum vs. offener Lader) — Schärfe/Zoom.</span> A „geschlossenes, konsistives Ganztum“ gilt <em>pro Modul/Domäne</em>: jedes Knoten-Cluster quiesziert auf seinen eigenen kanonischen Zustand (Konfluenz <em>innerhalb</em> des Moduls = A’s Konsistenz pro Fach). B „offener Lader“ gilt <em>global</em>: der DAG wächst weiter, neue Module werden angehängt. Gödel / B’s „kein Ende“ sind derselbe Satz: <strong>der Fixpunkt ist pro Modul, nicht absolut.</strong> Verschmolzen: lokal abgeschlossen (jedes Modul erreicht seinen eigenen kanonischen Zustand), global offen (der Graph wächst). Konsistenz = lokale Konfluenz; Offenheit/Unvollständigkeit = der DAG behält hinzu.</p>
+    </div>
+
+    <div class="resolve">
+      <p><span class="ok">R3 (selbst-deklariert vs. extern gesteuert) — Deklaration vs. Ausführung desselben Graphen.</span> Die <em>Kanten</em> (was worauf aufbaut) sind A’s Co-Effekte — <em>den Knoten inhärent, selbst deklariert</em>. B’s Lader ist die <em>prozedurale Ausführung</em> dieser Kanten: er liest die deklarierte topologische Ordnung und rendert sie als UI-Zustände <code>pending/loading/done</code>. Die gestaffelte Checkliste (B) ist der topologisch sortierte Co-Effekt-Graph (A) in <em>Ausführungsform</em>. <strong>Deklaration (A) und Ausführung (B) sind dasselbe Objekt in zwei Registern.</strong></p>
+    </div>
+
+    <div class="resolve">
+      <p><span class="ok">Verschmolzene Schlussfolgerung.</span> Ein Körper von Wissen ist ein Abhängigkeitsgraph, dessen Knoten irreversibel komprimierte Invarianten sind (B) und dessen Zusammensetzung reversibel, voraussetzungs-gesteuert und konfluent verläuft (A): bottom-up aufgebaut, order-unabhängig quiesziert, top-down abbaubar, lokal konfluent, global offen.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="tag">4</span> Fusionierter Inhalt</h2>
+    <p>Das verschmolzene Modell ist ein <strong>Abhängigkeitsgraph komprimierter Bausteine</strong>. Die gemeinsame Signatur, an der beide Papiere zusammenstoßen:</p>
+    <p class="mono">Kompression (B):      Rohfeld  -proj-&#62;  Invariante I      (irreversibel, viele:1)
+Knotenregel (Fusion): active(i) = present(i) &and; &forall;d &isin; deps(i) . active(d)
+Quieszenz (A):        active* = kleinster Fixpunkt von present  (konfluent, Thm 80)
+Inversus (A):         LIFO-Stack von Inversen  &#8617;  (reversible Montage)</p>
+
+    <h3><span class="a">Von A — die reversible, konfluente Montage</span></h3>
+    <ul>
+      <li><strong>Reversible, typisierte, konfluente Zusammensetzung.</strong> Der Typ-Hierarchie-Graph (Principia) <em>ist</em> der Abhängigkeitsgraph (Cordis); ein Deduktionsschritt <em>ist</em> ein invertierbarer Effekt; Konsistenz <em>ist</em> Konfluenz auf einen kanonischen Zustand; die Logik-Base <em>ist</em> der Root-Provider des Service-Graphen.</li>
+      <li><strong>Least fixed point / Quieszenz.</strong> Ein Knoten ist aktiv iff er präsent ist <em>und</em> alle Abhängigen aktiv; das System quiesziert auf dem kleinsten Fixpunkt des Präsenz-Satzes — eine Funktion des Präsenz-Satzes allein, hence order-unabhängig (Theorem 80: Confluence).</li>
+      <li><strong>Lifecycle + Guard.</strong> <code>INACTIVE &rarr; LOADING &rarr; ACTIVE &rarr; UNLOADING &rarr; INACTIVE</code>; <code>UNLOADING</code> ist getrennt von Entfernung, ein Provider zieht sich erst <em>nach</em> dem Teardown seiner Abhängigen zurück — das macht das graceful Abschalten möglich.</li>
+      <li><strong>Reversibilität als Eigenschaft.</strong> Inverse werden LIFO auf einen Akkumulator gelegt; Unloading re-runs sie umgekehrt und stellt den Kontext exakt wieder her (Theorem 16). Ein Theorem läuft den B-Lifecycle über A’s Inhalt: nicht ableitbar &rarr; wird abgeleitet (Inverse akkumulieren) &rarr; bewiesen &rarr; wird zurückgezogen &rarr; nicht ableitbar.</li>
+    </ul>
+
+    <h3><span class="b">Von B — das Komprimieren entlang eines gestuften Pfads</span></h3>
+    <ul>
+      <li><strong>Verstehen = Komprimieren.</strong> Die kontinuierliche Welt wird auf eine endliche, diskrete, kombinatorische Invariantenmenge abgebildet (Raum &rarr; π₀, π₁, πₙ, Kohomologie, Spektren); Geometrie wird vollständig in Algebra übersetzt.</li>
+      <li><strong>Das dreifache Rezept.</strong> Naive Konstruktion ist nicht invariant &rarr; man ersetzt sie durch eine „aufgeblasene“ Version (Kegel statt Quotient, Homotopiefaser statt Faser, Spektrum statt einzelner Raum) &rarr; plötzlich wird alles berechenbar. Auf Kurs-Ebene: ein Feld ist erst „done“, wenn seine Invariante steht — genau der Moment, in dem der Lader von <code>loading</code> auf <code>done</code> klickt.</li>
+      <li><strong>Der gestufte Lader.</strong> Acht Module (Cosmos … Convergence), jedes <code>pending &rarr; loading &rarr; done</code>; die Lade-Reihenfolge <em>ist</em> die topologische Ordnung des Abhängigkeits-DAGs. Der Lader <em>ist</em> die Roadmap: die Abhängigkeitspfeile definieren die Lade-Reihenfolge.</li>
+      <li><strong>Ehrlichkeit.</strong> Das Zuordnen „Modul &harr; Invariante“ ist die <em>Lesart dieser Fusion</em>, keine Aussage der Quellen. Der feste Punkt: A ist das volle, bewiesene <em>Inne</em> eines Moduls (Geometrie), B ist die leere, gestufte <em>Hülle</em> des ganzen Pfads.</li>
+    </ul>
+
+    <h3>Die Verschmelzung — fünf Identitäten</h3>
+    <div class="eq"><span class="lhs">ein komprimierter Baustein (B)</span><span class="op">=</span><span class="rhs">ein Knoten im Abhängigkeitsgraphen (A)</span></div>
+    <div class="eq"><span class="lhs">die Lade-Reihenfolge (B)</span><span class="op">=</span><span class="rhs">die topologische Ordnung der Co-Effekte (A)</span></div>
+    <div class="eq"><span class="lhs">„done“ = Invariante steht (B)</span><span class="op">=</span><span class="rhs">„active“ = Voraussetzung erfüllt (A)</span></div>
+    <div class="eq"><span class="lhs">der Lader (B)</span><span class="op">=</span><span class="rhs">der Laufzeit-Interpreter der Co-Effekte (A)</span></div>
+    <div class="eq"><span class="lhs">Konsistenz pro Fach (A)</span><span class="op">=</span><span class="rhs">lokale Konfluenz, global offen (B)</span></div>
+    <p>Ein Knoten ist also <strong>komprimiert</strong> (seine Rohwelt ist in eine berechenbare Invariante eingefroren, B) und <strong>zusammengesetzt</strong> (er aktiviert nur wenn seine Voraussetzungen stehen, quieszt order-unabhängig, und fällt top-down ab, wenn eine Voraussetzung wegfällt, A). Komprimieren erzeugt den Baustein; reversible Konfluenz setzt die Bausteine zusammen.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="tag">5</span> Interaktive Visualisierung</h2>
+    <p>Der verschmolzene Abhängigkeitsgraph aus <em>komprimierten Bausteinen</em>. <strong>Klick auf einen Block</strong> lädt/entlädt ihn (Präsenz). Abhängige reagieren in einer <em>LIFO-guardierten Kaskade</em>. Jeder aktive Block zeigt seine <em>Kompression</em>: das Rohfeld (welliger Blob) schrumpft zu einem kompakten Invariante-Punkt. <strong>Undo</strong> poppt den letzten Schritt in LIFO-Reihenfolge (reversible Montage, R1). <strong>Shuffle</strong> springt auf eine zufällige Konfiguration und zeigt, dass der quieszente Zustand nur vom Präsenz-Satz abhängt, nicht vom Pfad (Konfluenz, R2). Drei Zustände pro Knoten: <span class="ok">ACTIVE</span> (präsent, Voraussetzungen erfüllt), <span style="color:var(--accent4)">WAITING</span> (präsent, Voraussetzungen unvollständig), <span style="color:var(--muted)">ABSENT</span>.</p>
+
+    <div class="viz-wrap">
+      <canvas id="vizCanvas"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>ACTIVE — komprimiert &amp; zusammengefasst</span>
+        <span><i style="background:var(--accent4)"></i>WAITING — geladen, wartet auf Voraussetzung</span>
+        <span><i style="background:var(--border)"></i>ABSENT — nicht geladen</span>
+        <span><i style="background:var(--accent3)"></i>Fluss (Kante aktiv)</span>
+      </div>
+      <div class="viz-controls">
+        <button id="btnUndo">&#8617; Undo (LIFO-Invers)</button>
+        <button id="btnShuffle" class="ghost">&#127922; Shuffle (Konfluenz)</button>
+        <button id="btnReset" class="warn">&#128260; Reset</button>
+        <button id="btnTheme" class="ghost">&#127769; Theme</button>
+      </div>
+      <div class="viz-status" id="vizStatus"></div>
+      <div id="vizLog"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="tag">6</span> Provenienz</h2>
+    <div class="prov">
+      <span class="badge" style="background:var(--accent); color:#fff;">A</span>
+      <div>
+        <p><a href="../n1-030.html">n1-030.html — Reversible Compositional Foundations</a></p>
+        <p style="color:var(--muted); font-size:0.9rem;">Runde-1-Fusion (Principia &#10005; Spatiotemporal Composability): ein Fundament als reversible, typisierte, konfluente Zusammensetzung — der Typ-Hierarchie-Graph ist der Abhängigkeitsgraph, ein Deduktionsschritt ist ein invertierbarer Effekt (LIFO), Konsistenz ist Konfluenz auf einen kanonischen Zustand (Thm 80).</p>
+      </div>
+    </div>
+    <div class="prov">
+      <span class="badge" style="background:var(--accent3); color:#053;">B</span>
+      <div>
+        <p><a href="../n1-002.html">n1-002.html — Kompressionsmaschine (Homotopie &#10005; Intro-Preview)</a></p>
+        <p style="color:var(--muted); font-size:0.9rem;">Runde-1-Fusion (Homotopietheorie &#10005; Light-Preview): Verstehen heißt Komprimieren — kontinuierliche Welt auf diskrete Invarianten; der gestufte 8-Modul-Lader (pending&#8594;loading&#8594;done) respektiert die topologische Ordnung des Abhängigkeits-DAGs; das dreifache Rezept naiv &rarr; aufblasen &rarr; berechenbar.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Knockout synthesis · Runde 2 · nicht-KI-Track · Paar 038</p>
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var TAU = Math.PI * 2;
+
+  var NODES = [
+    { name: "Rohes Feld",           inv: "γ:[0,1]→Y (kontinuierlich)", deps: [],    col: 0, row: 3 },
+    { name: "Basis-Logik",          inv: "p⇒q ≡ ~p∨q",                 deps: [],    col: 2, row: 3 },
+    { name: "Weg → Schleifen",      inv: "π₁(S¹) ≅ ℤ",                 deps: [0],   col: 0, row: 2 },
+    { name: "Satz → Typ-0",         inv: "modus ponens",               deps: [1],   col: 2, row: 2 },
+    { name: "Fundamentalgruppe",    inv: "π₁(X) = F₂ / ℤ²",            deps: [2],   col: 0, row: 1 },
+    { name: "Klasse → Zahl",        inv: "1 + 1 = 2",                  deps: [3],   col: 2, row: 1 },
+    { name: "Komprimiertes System", inv: "quiescent · LIFO",           deps: [4,5], col: 1, row: 0 }
+  ];
+  var DEFAULT_PRESENT = [true, true, true, true, true, false, false];
+
+  var canvas = document.getElementById("vizCanvas");
+  var statusEl = document.getElementById("vizStatus");
+  var logEl = document.getElementById("vizLog");
+  var ctx = canvas ? canvas.getContext("2d") : null;
+  if (!canvas || !ctx) return;
+
+  var present = DEFAULT_PRESENT.slice();
+  var active = [];
+  var comp = [];
+  for (var c0 = 0; c0 < NODES.length; c0++) comp.push(0);
+  var undoStack = [];
+  var logLines = [];
+  var nodeRects = [];
+  var W = 0, H = 560;
+
+  function readTheme() {
+    var cs = getComputedStyle(document.documentElement);
+    var g = function (n) { return cs.getPropertyValue(n).trim(); };
+    return {
+      panel: g("--panel"), border: g("--border"),
+      text: g("--text"), muted: g("--muted"),
+      accent: g("--accent"), accent2: g("--accent2"),
+      accent3: g("--accent3"), accent4: g("--accent4")
+    };
+  }
+
+  function computeActive() {
+    var a = present.slice();
+    var changed = true, guard = 0;
+    while (changed && guard++ < 60) {
+      changed = false;
+      for (var i = 0; i < NODES.length; i++) {
+        var depOk = true;
+        for (var k = 0; k < NODES[i].deps.length; k++) {
+          if (!a[NODES[i].deps[k]]) { depOk = false; break; }
+        }
+        var val = present[i] && depOk;
+        if (val !== a[i]) { a[i] = val; changed = true; }
+      }
+    }
+    return a;
+  }
+
+  function log(msg, cls) {
+    logLines.unshift({ msg: msg, cls: cls || "l-info" });
+    if (logLines.length > 40) logLines.pop();
+    renderLog();
+  }
+  function renderLog() {
+    if (!logEl) return;
+    logEl.innerHTML = "";
+    for (var i = 0; i < logLines.length; i++) {
+      var d = document.createElement("div");
+      d.className = logLines[i].cls;
+      d.textContent = logLines[i].msg;
+      logEl.appendChild(d);
+    }
+  }
+
+  function logCascade(oldA, newA) {
+    var deact = [], actv = [];
+    for (var i = 0; i < NODES.length; i++) {
+      if (oldA[i] && !newA[i]) deact.push(i);
+      else if (!oldA[i] && newA[i]) actv.push(i);
+    }
+    deact.sort(function (a, b) { return NODES[a].row - NODES[b].row; });
+    actv.sort(function (a, b) { return NODES[b].row - NODES[a].row; });
+    for (var d = 0; d < deact.length; d++) log("\u25BD " + NODES[deact[d]].name + " deaktiviert (Voraussetzung weg)", "l-warn");
+    for (var a = 0; a < actv.length; a++) log("\u26A1 " + NODES[actv[a]].name + " aktiviert (Voraussetzung erfüllt)", "l-ok");
+    if (!deact.length && !actv.length) log("Zustand unverändert (neutrale Änderung).", "l-muted");
+  }
+
+  function activeCount() {
+    var n = 0;
+    for (var i = 0; i < active.length; i++) if (active[i]) n++;
+    return n;
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+  }
+
+  function hexA(hex, a) {
+    if (!hex || hex[0] !== "#" || (hex.length !== 7 && hex.length !== 4)) return "rgba(127,127,127,0.15)";
+    var r, g, b;
+    if (hex.length === 4) {
+      r = parseInt(hex[1] + hex[1], 16); g = parseInt(hex[2] + hex[2], 16); b = parseInt(hex[3] + hex[3], 16);
+    } else {
+      r = parseInt(hex.substring(1, 3), 16); g = parseInt(hex.substring(3, 5), 16); b = parseInt(hex.substring(5, 7), 16);
+    }
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
+
+  function drawRawBlob(c, cx, cy, r, now, col) {
+    var N = 44;
+    c.beginPath();
+    for (var i = 0; i <= N; i++) {
+      var u = i / N * TAU;
+      var rr = r * (1 + 0.20 * Math.sin(3 * u + now * 0.0016) + 0.09 * Math.sin(5 * u - now * 0.0011));
+      var x = cx + Math.cos(u) * rr, y = cy + Math.sin(u) * rr;
+      if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+    }
+    c.closePath();
+    c.strokeStyle = col;
+    c.lineWidth = 1.6;
+    c.stroke();
+  }
+
+  function resize() {
+    var host = canvas.parentElement;
+    var cw = (host && host.clientWidth) ? host.clientWidth - 4 : 680;
+    if (cw < 320) cw = 320;
+    W = cw; H = 560;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.style.width = cw + "px";
+    canvas.style.height = H + "px";
+    canvas.width = Math.round(cw * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function layout() {
+    var nodeW = Math.min((W / 2) - 26, 300);
+    var nodeH = 56;
+    var colX = [14, (W - nodeW) / 2, W - 14 - nodeW];
+    var topPad = 46;
+    var rowGap = (H - topPad - nodeH) / 3;
+    var pos = [];
+    for (var i = 0; i < NODES.length; i++) {
+      pos.push({ x: colX[NODES[i].col], y: topPad + NODES[i].row * rowGap });
+    }
+    return { nodeW: nodeW, nodeH: nodeH, pos: pos };
+  }
+
+  function frame(now) {
+    var th = readTheme();
+    var L = layout();
+    var nodeW = L.nodeW, nodeH = L.nodeH, pos = L.pos;
+
+    for (var i = 0; i < NODES.length; i++) {
+      var t = active[i] ? 1 : 0;
+      comp[i] += (t - comp[i]) * 0.12;
+      if (Math.abs(comp[i] - t) < 0.001) comp[i] = t;
+    }
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = th.panel;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = th.muted;
+    ctx.font = "600 12px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Abhängigkeitsgraph komprimierter Bausteine — reversibel, konfluent", 14, 12);
+
+    function cxOf(idx) { return pos[idx].x + nodeW / 2; }
+
+    ctx.lineWidth = 2;
+    for (var n = 0; n < NODES.length; n++) {
+      var deps = NODES[n].deps;
+      for (var k = 0; k < deps.length; k++) {
+        var d = deps[k];
+        var flow = active[n] && active[d];
+        var x1 = cxOf(d), y1 = pos[d].y;
+        var x2 = cxOf(n), y2 = pos[n].y + nodeH;
+        ctx.strokeStyle = flow ? th.accent3 : th.border;
+        ctx.globalAlpha = flow ? 0.9 : 0.5;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        ctx.fillStyle = flow ? th.accent3 : th.border;
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 5, y2 + 7);
+        ctx.lineTo(x2 + 5, y2 + 7);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    nodeRects = [];
+    for (var j = 0; j < NODES.length; j++) {
+      var x = pos[j].x, y = pos[j].y;
+      var isPresent = present[j], isActive = active[j];
+      var c = comp[j];
+      var border, fill, nameColor, badge, badgeBg;
+      if (isActive) { border = th.accent; fill = hexA(th.accent, 0.16); nameColor = th.text; badge = "ACTIVE"; badgeBg = th.accent; }
+      else if (isPresent) { border = th.accent4; fill = hexA(th.accent4, 0.12); nameColor = th.text; badge = "WAITING"; badgeBg = th.accent4; }
+      else { border = th.border; fill = th.panel; nameColor = th.muted; badge = "ABSENT"; badgeBg = th.border; }
+
+      ctx.fillStyle = fill;
+      roundRect(ctx, x, y, nodeW, nodeH, 10);
+      ctx.fill();
+      ctx.lineWidth = isActive ? 2.5 : 1.5;
+      ctx.strokeStyle = border;
+      if (!isActive && isPresent) ctx.setLineDash([5, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      var gx = x + 24, gy = y + nodeH / 2;
+      var rA = 13 * (1 - c) + 5 * c;
+      ctx.save();
+      ctx.globalAlpha = 0.55 * (1 - c) + 0.18;
+      drawRawBlob(ctx, gx, gy, rA, now, border);
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = c;
+      ctx.fillStyle = th.accent3;
+      ctx.beginPath(); ctx.arc(gx, gy, 4.5, 0, TAU); ctx.fill();
+      ctx.restore();
+
+      ctx.fillStyle = nameColor;
+      ctx.font = "600 13.5px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(NODES[j].name, x + 46, y + nodeH / 2 - 8);
+      ctx.fillStyle = th.muted;
+      ctx.font = "11.5px ui-monospace, 'Fira Code', monospace";
+      ctx.fillText(NODES[j].inv, x + 46, y + nodeH / 2 + 9);
+
+      ctx.font = "700 10px system-ui, sans-serif";
+      var bw = ctx.measureText(badge).width + 16;
+      var bx = x + nodeW - bw - 8;
+      roundRect(ctx, bx, y + nodeH / 2 - 9, bw, 18, 9);
+      ctx.fillStyle = badgeBg;
+      ctx.fill();
+      ctx.fillStyle = (isActive || isPresent) ? "#0b1020" : th.muted;
+      ctx.textAlign = "left";
+      ctx.fillText(badge, bx + 8, y + nodeH / 2);
+
+      nodeRects.push({ x: x, y: y, w: nodeW, h: nodeH, i: j });
+    }
+
+    if (statusEl) {
+      statusEl.innerHTML = "<b>" + activeCount() + " / " + NODES.length + "</b> Bausteine aktiv &nbsp;\u00b7&nbsp; " +
+        undoStack.length + " invertierbare Effekte auf dem Undo-Stack &nbsp;\u00b7&nbsp; " +
+        "Präsenz: " + (function () { var s = ""; for (var q = 0; q < present.length; q++) s += present[q] ? "#" : "."; return s; })();
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function toggle(i) {
+    var from = present[i];
+    var to = !from;
+    var oldA = active.slice();
+    present[i] = to;
+    active = computeActive();
+    undoStack.push({ i: i, from: from });
+    log((to ? "\u2795 Geladen" : "\u2796 Entladen") + ": " + NODES[i].name, to ? "l-info" : "l-warn");
+    logCascade(oldA, active);
+  }
+
+  function undo() {
+    var step = undoStack.pop();
+    if (!step) { log("Nichts zu undo \u2014 Stack leer.", "l-muted"); return; }
+    var oldA = active.slice();
+    present[step.i] = step.from;
+    active = computeActive();
+    log("\u21A9 Invers angewandt (LIFO): " + NODES[step.i].name + " \u2192 " + (step.from ? "präsent" : "abwesend"), "l-ok");
+    logCascade(oldA, active);
+  }
+
+  function reset() {
+    present = DEFAULT_PRESENT.slice();
+    active = computeActive();
+    undoStack = [];
+    logLines = [];
+    log("\uD83D\uDD04 System zurückgesetzt.", "l-muted");
+    logCascade([false, false, false, false, false, false, false], active);
+  }
+
+  function shuffle() {
+    var target = [];
+    for (var i = 0; i < NODES.length; i++) target.push(Math.random() < 0.5);
+    var oldA = active.slice();
+    present = target.slice();
+    active = computeActive();
+    undoStack = [];
+    var check = computeActive().join(",") === active.join(",");
+    log("\uD83C\uDFB2 Auf eine zufällige Konfiguration via anderer Handlungsreihenfolge gesprungen.", "l-conf");
+    logCascade(oldA, active);
+    log(check ? "\u2713 KONFLUENT \u2014 kanonischer Zustand hängt nur vom Präsenz-Satz ab, nicht von der Reihenfolge (Thm 80)." : "\u2717 Divergenz", check ? "l-conf" : "l-warn");
+  }
+
+  canvas.addEventListener("click", function (e) {
+    var r = canvas.getBoundingClientRect();
+    var mx = e.clientX - r.left, my = e.clientY - r.top;
+    for (var i = 0; i < nodeRects.length; i++) {
+      var rc = nodeRects[i];
+      if (mx >= rc.x && mx <= rc.x + rc.w && my >= rc.y && my <= rc.y + rc.h) { toggle(rc.i); return; }
+    }
+  });
+  document.getElementById("btnUndo").addEventListener("click", undo);
+  document.getElementById("btnReset").addEventListener("click", reset);
+  document.getElementById("btnShuffle").addEventListener("click", shuffle);
+  document.getElementById("btnTheme").addEventListener("click", function () {
+    document.documentElement.classList.toggle("dark");
+  });
+  window.addEventListener("resize", resize);
+
+  active = computeActive();
+  log("\uD83D\uDC4B Block anklicken, um ihn zu laden/entladen. Undo löst LIFO auf. Shuffle testet Konfluenz.", "l-muted");
+  logCascade([false, false, false, false, false, false, false], active);
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "035",
+  "a": "n1-080.html",
+  "b": "n1-084.html",
+  "a_title": "Lokal zu global: Faserbündel ✕ Sheaving",
+  "b_title": "Die Firewall als Garbe: das Paket als Exit-Pfad",
+  "combined_theme": "garbenmaschine-blockade-und-kurzschluss",
+  "one_line": "Eine Garben-/Verklebe-Maschine mit zwei Gesichtern: derselbe lokale Invariant (Monodromie/Tiefe) blockiert die globale Section (Möbius) und fixiert sie zugleich als kurzen Pfad (XDP-Kurzschluss) — zwei Lesarten einer einzigen Kohärenzregel.",
+  "contradictions": [
+    "A (n1-080) feiert Nicht-Existenz (der Möbiusband hat KEINE globale nicht-verschwindende Section, der Invariant blockiert das Globale) vs. B (n1-084) feiert Bestimmung (das Ganze = Kollimit der Halm-Entscheide, ein einzelner lokaler Drop fixiert es sofort).",
+    "A arbeitet mit kontinuierlichen lokalen Daten (Section v(θ)=h·cos((w/2)θ) als Kurve; Frage: ist sie periodisch?) vs. B mit diskreten lokalen Daten (PASS/DROP pro Schicht; Frage: an welcher Schicht wird das Kollimit zuerst fixiert?).",
+    "Das 'entscheidende lokale Datum' hat in A negatives Vorzeichen (der Flip an der Naht v(0)=−v(2π) zwingt die Section durch 0 — ein Defekt) vs. in B positives (der XDP-Drop kurzschließt und spart Durchsatz — ein Gewinn)."
+  ],
+  "resolution": "Beide Papiere teilen dasselbe Garben-Bein; die Spannungen sind zwei Gesichter desselben Lokal→Global-Prinzips, umgeschaltet durch den Invariant. Halm-Kriterium (Morphismus ist Iso ⇔ Iso auf jedem Halm) = Bestimmungs-Gesicht (B); fehlende globale Section / Kohomologie H¹ (Möbius) = Blockade-Gesicht (A). Invariant trivial (w gerade / kein Drop) → lokale Daten verkleben frei und das Lokale fixiert das Ganze; nicht-trivial (w ungerade / ein Drop) → er blockiert eine would-be globale Section oder fixiert das Urteil an einem einzigen lokalen Keim.",
+  "viz": "Ein verdrilltes Bündel über S¹: dieselbe 'konstante' Section v(θ)=h·cos((w/2)θ) wird als (1) kontinuierliche globale Section (existiert / blockiert je nach Parität von w) und (2) als Kette lokaler Halm-Entscheide (7 Regionen + 1 Naht; Kollimit verklebt oder an der Naht fixiert) gelesen. Ein einziger Naht-Flip ist zugleich Defekt (Blockade) und Short-Circuit (Bestimmung). Slider w/h, Animation, Theme-Wechsel; alles inline, theme-aware."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "n1-006.html",
+  "b": "n1-015.html",
+  "a_title": "Der primale Raum: Homotopie × Origami",
+  "b_title": "Verstehen ist ein leibliches Kippen",
+  "combined_theme": "zwei-adressen-eines-pfades",
+  "one_line": "Beide Runde-1-Papiere sind Instanzen derselben Grundform: ein Phänomen ist ein Pfad (kein Punkt), lesbar in zwei Adressen — die invariante, ordnungsunabhängige, zählbare Struktur (Typ: was es ist) und die realisierte, ordnungsabhängige, gefühlte Geschichte (Lift: wie es geschieht); es 'bindet/versteht' im nicht-linearen Moment, in dem der Typ den Lift ergreift (A's Beschränkung = B's Perkolation, Drift↔Bindung = Engung↔Weitung).",
+  "contradictions": [
+    "Welche Ebene ist fundamental: A (n1-006) hält die invariante Seite (Typ / Homotopieklasse) für die Identität — 'Die Identität eines Punkts ist sein Pfad', 'A ist der Typ, B der Repräsentant' (Struktur zuerst); B (n1-015) hält die gefühlte/leibliche Seite (Lift / Leib) für das Fundament und die Struktur nur für ihren Schatten — 'A ist B minus Leib' (Leib zuerst).",
+    "Volle Reduktion vs. irreduzibler Rest: A erreicht eine vollständige, restlose Zwei-Adressen-Reduktion ('das ist genau die Auflösung', nichts übrig); B bewahrt absichtlich einen konstitutiven Rest (gefühlte Erfahrung + Schmitz-Begriffe ohne Struktur-Gegenstück — Atombombe, Tiere als Bewussthaber — 'Schmitz bleibt im Erfahrenen').",
+    "Natur des irreduziblen Erzeugers: A ist er eine abstrakte Form (Primzahl / 'fundamentale Schleife', reine Invariante); B ist er eine bereits leiblich-affektive Präsenz ('flächenlose Leibesinsel', 'schon leiblich-affektiv')."
+  ],
+  "resolution": "Methodische statt ontologische Priorität: Typ = Invariante (antwortet 'was ist es', zählbar, bleibt über alle Realisierungen identisch), Lift = Realisierung (antwortet 'wie geschieht/fühlt es sich an'); A's 'Typ=Identität' und B's 'Leib=Boden' sind beide wahr für verschiedene Facetten. Der Rest ist konstitutiv, nicht residual: die Reduktion ist erschöpfend FÜR den Schatten (Strukturseite vollständig), das Terrain übersteigt die Karte IMMER FÜR das Fleisch — und das Mehr ist die Substanz, von der die Karte abstrahiert wurde (Schmitz' Rest = Lift-seitiger Inhalt, dem ein Typ noch fehlt). Und Form ohne Medium ist kein Erzeuger: die Primzahl (A) ist die Form, der Leib (B) das Medium, das sie trägt.",
+  "viz": "2D-Canvas 'Der Pfad mit zwei Adressen': die schwache geschlossene Kurve ist der invariante TYP (Typ/Topologie, still, zählbar), die farbige durchgehende Bahn ist der realisierte LIFT (konkreter Pfad / vitaler Antrieb), die violetten Punkte die irreduziblen Erzeuger (Primzahlen / Leibesinseln). Der Kopplungs-Regler σ steuert, wie stark der Typ den Lift lenkt (Rückführung an den nächstgelegenen Punkt des Typs + Trägheit, mit positiver Kopplung für eine scharfe Schwelle): unterhalb σc driftet der Lift ab (ENGUNG, rot, unbeschränkt), oberhalb bindet er sich an die Kurve (WEITUNG, grün, beschränkt). Readouts 'Bindung %' (größte zusammenhängende Komponente, springt über die Schwelle) und 'Drift %', Flash bei Kippen. Themenreaktiv (CSS-Vars), nur inline-Daten, null Konsole-Errors."
+}

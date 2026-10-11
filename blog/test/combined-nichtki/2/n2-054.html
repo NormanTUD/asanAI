@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion R2 — Der Rundlauf ist der Pr&#252;fstein (n1-020 &#10006; n1-017)</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --card:#fcfbf7; --fg:#1c1b24; --muted:#6a6a7a;
+    --line:#e4dfd2; --code:#efece2;
+    --accent:#6d4ae0; --accent2:#0d9488;
+    --v-real:#0f9d76; --v-fake:#d1432f; --v-tension:#b8860b;
+    --shadow:0 14px 40px rgba(20,15,40,.10);
+  }
+  html.dark{
+    --bg:#0b0f1a; --card:#111827; --fg:#e8ecf7; --muted:#9aa6bf;
+    --line:#262f45; --code:#0d1424;
+    --accent:#a48bff; --accent2:#2dd4bf;
+    --v-real:#35e0a0; --v-fake:#ff6b4a; --v-tension:#ffd166;
+    --shadow:0 16px 44px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:radial-gradient(1200px 700px at 15% -10%, var(--card) 0%, var(--bg) 55%) fixed;
+    color:var(--fg);
+    font-family:"Georgia","Iowan Old Style",serif;
+    line-height:1.64; -webkit-font-smoothing:antialiased; font-size:16px;
+  }
+  .bar{
+    position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+    gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line);
+    font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted);
+  }
+  .bar b{color:var(--fg)}
+  #themeToggle{
+    background:transparent;color:var(--fg);border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit;font-family:system-ui,sans-serif;
+  }
+  #themeToggle:hover{border-color:var(--accent)}
+  .wrap{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+  header{text-align:center;margin-bottom:24px}
+  header h1{
+    font-size:clamp(1.7rem,4.4vw,2.55rem);margin:0 0 12px;line-height:1.14;letter-spacing:-.01em;color:var(--fg);
+  }
+  header h1 .g{
+    background:linear-gradient(90deg,var(--accent2),var(--accent),var(--v-fake));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;margin:0}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:24px 26px;margin:22px 0;box-shadow:var(--shadow);
+  }
+  section h2{
+    margin:0 0 14px;font-size:1.36rem;color:var(--accent);
+    font-family:system-ui,sans-serif;letter-spacing:-.01em;
+  }
+  section h3{color:var(--accent2);margin:20px 0 8px;font-family:system-ui,sans-serif;font-size:1.08rem}
+  p{margin:10px 0}
+  .lead{font-size:1.06rem}
+  .tag{
+    display:inline-block;font-family:system-ui,sans-serif;font-size:.68rem;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--muted);border:1px solid var(--line);
+    border-radius:99px;padding:2px 10px;margin:0 6px 4px 0;
+  }
+  .tag.a{color:var(--accent);border-color:var(--accent)}
+  .tag.b{color:var(--accent2);border-color:var(--accent2)}
+  .tag.f{color:var(--v-tension);border-color:var(--v-tension)}
+  blockquote{
+    margin:16px 0;padding:12px 18px;border-left:3px solid var(--accent);
+    background:rgba(120,110,200,.08);border-radius:0 10px 10px 0;font-style:italic;
+  }
+  blockquote .attr{display:block;margin-top:6px;font-style:normal;font-size:.82rem;color:var(--muted)}
+  ul{margin:8px 0 14px;padding-left:22px}
+  li{margin:0 0 8px}
+  code,.math{
+    font-family:"SFMono-Regular",Consolas,"Fira Code",monospace;font-size:.9em;
+    background:var(--code);padding:1px 6px;border-radius:4px;color:var(--fg);
+  }
+  .math{background:transparent;color:var(--accent2);font-style:italic;padding:0}
+  .contrad{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  .contrad .h{font-family:system-ui,sans-serif;font-weight:700;margin:0 0 8px;color:var(--fg)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+  .vs > div{border-radius:10px;padding:10px 12px;font-size:.94rem}
+  .vs .a{background:rgba(109,74,224,.10)}
+  .vs .b{background:rgba(13,148,136,.10)}
+  .vs .who{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;opacity:.75;display:block;margin-bottom:4px}
+  .vs .a .who{color:var(--accent)} .vs .b .who{color:var(--accent2)}
+  .res{border-left:4px solid var(--v-tension);padding:10px 16px;margin:14px 0;background:rgba(184,134,11,.08);border-radius:0 10px 10px 0}
+  .res .h{font-family:system-ui,sans-serif;font-weight:700;margin:0 0 4px;color:var(--fg)}
+  .fused{
+    border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:14px 0;
+    background:rgba(109,74,224,.06);font-weight:600;
+  }
+  .prov{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:12px;margin:12px 0;background:var(--code)}
+  .prov .badge{font-family:system-ui,sans-serif;font-weight:800;font-size:1rem;min-width:20px}
+  .prov .badge.a{color:var(--accent)} .prov .badge.b{color:var(--accent2)}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:700;font-family:system-ui,sans-serif}
+  .prov a:hover{text-decoration:underline}
+  .prov .desc{color:var(--muted);font-size:.92rem;margin-top:4px}
+
+  .viz-box{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--code);margin-top:14px}
+  #rtCanvas{width:100%;height:470px;display:block}
+  @media (max-width:560px){ #rtCanvas{height:420px} }
+  .controls{padding:14px 16px 4px;font-family:system-ui,sans-serif}
+  .modes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .mode{
+    flex:1;min-width:160px;cursor:pointer;font:inherit;color:var(--fg);text-align:left;
+    background:transparent;border:1px solid var(--line);border-radius:10px;padding:9px 12px;
+  }
+  .mode .t{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;opacity:.6;display:block}
+  .mode.on{box-shadow:0 0 0 1px var(--accent) inset;background:rgba(109,74,224,.14)}
+  .mode.on.r{box-shadow:0 0 0 1px var(--v-real) inset;background:rgba(15,157,118,.12)}
+  .mode.on.f{box-shadow:0 0 0 1px var(--v-fake) inset;background:rgba(209,67,47,.12)}
+  .sliderrow{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .sliderrow label{font-size:.85rem;color:var(--muted);white-space:nowrap}
+  input[type=range]{flex:1;accent-color:var(--accent);height:6px}
+  .sliderrow .val{font-variant-numeric:tabular-nums;font-size:.85rem;min-width:44px;text-align:right;color:var(--fg)}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .btnrow button{
+    cursor:pointer;font:inherit;color:var(--fg);background:transparent;
+    border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-family:system-ui,sans-serif;
+  }
+  .btnrow button:hover{border-color:var(--accent)}
+  .meters{display:grid;grid-template-columns:1fr;gap:10px;padding:14px 16px 6px;font-family:system-ui,sans-serif}
+  .meter{display:flex;align-items:center;gap:10px}
+  .meter .lab{flex:0 0 188px;font-size:.8rem;color:var(--fg)}
+  .meter .lab small{display:block;color:var(--muted);font-size:.72rem}
+  .meter .track{flex:1;height:11px;border-radius:99px;background:rgba(120,120,140,.16);overflow:hidden}
+  .meter .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .08s linear}
+  .meter .num{flex:0 0 46px;text-align:right;font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
+  .verdict{
+    margin:8px 16px 16px;padding:12px 16px;border:1px solid var(--line);border-radius:10px;
+    font-family:system-ui,sans-serif;font-size:.92rem;background:var(--code);color:var(--fg);
+  }
+  .verdict.ok{border-color:var(--v-real);color:var(--v-real)}
+  .verdict.danger{border-color:var(--v-fake);color:var(--v-fake)}
+  .note{font-size:.85rem;color:var(--muted);margin:12px 0 0;font-family:system-ui,sans-serif}
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.85rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div><b>Runde 2 · 054</b> &nbsp;Koh&#228;renz &#10006; Bruch &#8212; der Rundlauf als Pr&#252;fstein</div>
+  <button id="themeToggle" type="button">&#9790; / &#9788; Theme</button>
+</div>
+
+<div class="wrap">
+<header>
+  <h1>Der <span class="g">Rundlauf</span> ist der Pr&#252;fstein einer stabilen Struktur</h1>
+  <p class="subtitle">Fusion aus: n1-020.html &#10006; n1-017.html  (Runde 2)</p>
+</header>
+
+<!-- ═══════════ 1. THESE ═══════════ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">
+    Beide Quellen beschreiben, auf der Ebene ihrer Thesen, <strong>dieselbe
+    Architektur</strong>: eine stabile Struktur, die eine sichtbare Form nur
+    dadurch beh&#228;lt, dass ein <em>neutrales Element</em> plus ein
+    <em>Koh&#228;renzgesetz</em> die Ver&#228;nderung organisiert bzw.
+    unterdr&#252;ckt; in deren Innerem sammelt sich eine <em>verborgene
+    Spannung</em>; und ein <em>Bruch</em> offenbart die Wahrheit der Struktur.
+  </p>
+  <p>
+    <span class="tag a">A</span> liefert die <strong>Form</strong> dieses
+    Aufbaus: Ein Monoid (Einheitselement <code>e</code> + Assoziativit&#228;t)
+    ist eine Kategorie mit einem Objekt; die adjungierten Funktoren
+    <span class="math">L &#8862; R</span> heben genau diese Ein-Objekt-Struktur
+    auf zwei interagierende Welten, wobei sich das neutrale Element in Unit
+    <span class="math">&#951;</span> und Counit
+    <span class="math">&#949;</span> aufspaltet und die Assoziativit&#228;t zu
+    den Dreiecksidentit&#228;ten (Rundlauf = Identit&#228;t) wird. Der freie
+    Monoid <span class="math">L(X)=X*</span> ist die konkrete Br&#252;cke: er
+    reorganisiert Buchstaben zu W&#246;rtern <em>verlustfrei</em> &#8212; die
+    Rundlauf-Treue garantiert, dass nichts verloren geht.
+  </p>
+  <p>
+    <span class="tag b">B</span> liefert die <strong>Diagnose</strong>: Ein
+    echtes Gitter (Wasser) h&#228;lt seine Form &#252;ber Koh&#228;sion; die
+    Temperatur bleibt am Schmelz-/Verdampfungspunkt <em>flach</em>, w&#228;hrend
+    latente W&#228;rme (verborgene Spannung) akkumuliert. Ein <em>falsches</em>
+    Gitter (die „Harmonie") h&#228;lt seine Form nur &#252;ber Unterdr&#252;ckung
+    &#8212; und bricht, wenn die Spannung zu gro&#223; wird, nicht um, sondern
+    <em>eruptiert</em>: nichts reorganisiert sich, es zerst&#246;rt.
+  </p>
+  <p class="fused">
+    Die fusionierte Position: <strong>Ein Bruch ist nur so gesund wie die
+    Struktur, die er bricht &#8212; und die Dreiecksidentit&#228;t
+    (Rundlauf = Identit&#228;t) aus A ist genau der Pr&#252;fstein, der A und B
+    verbindet.</strong> Eine Struktur ist <em>echt</em>, wenn ihr Rundlauf die
+    Substanz bewahrt (verlustfreie Reorganisation, neue gleichwertige Phase);
+    sie ist <em>falsch</em>, wenn ihr Rundlauf Substanz verliert (nur
+    Unterdr&#252;ckung gehalten, beim Bruch nichts Echtes da &#8594; Eruption).
+    Der Ma&#223;stab eines stabilen Zustandes ist also weder seine
+    <em>Flachheit</em> noch seine <em>Symmetrie</em>, sondern <strong>die
+    Richtung, in die seine verborgene Spannung flie&#223;t: bauen oder
+    begraben.</strong>
+  </p>
+</section>
+
+<!-- ═══════════ 2. WIDERSPRÜCHE ═══════════ -->
+<section id="widersprueche">
+  <h2>Widerspr&#252;che zwischen A und B</h2>
+  <p>
+    Die beiden R1-Papiere widersprechen sich nicht auf der Ebene des
+    <em>Mechanismus</em> (neutrales Element + Koh&#228;renzgesetz, flache
+    Me&#223;gr&#246;&#223;e, Schwellenwert, Bruch) &#8212; sie sind dort
+    einig. Sie widersprechen sich dort, wo sie &#252;ber die
+    <em>Echtheit</em> der Koh&#228;renz und das <em>Was/Ob</em> des Bruchs
+    sprechen. Drei echte Spannungen:
+  </p>
+
+  <div class="contrad">
+    <p class="h">1. Konstruktionsbedingt treu vs. kann gef&#228;lscht sein</p>
+    <div class="vs">
+      <div class="a"><span class="who">A · Monoid ✕ Adjungtion</span>
+        Jede Koh&#228;renz ist <strong>konstruktionsbedingt treu</strong>: der
+        freie Monoid erweitert jede Abbildung <em>einzigartig</em>, der Rundlauf
+        (Dreiecksidentit&#228;t) ist <em>immer</em> die Identit&#228;t. Jeder
+        Bruch ist daher eine <em>verlustfreie</em> Reorganisation &#8212;
+        „nichts geht verloren".</div>
+      <div class="b"><span class="who">B · Phasenübergang ✕ Mars im Exil</span>
+        Eine <strong>scheinbare</strong> Koh&#228;renz (die „Harmonie") kann
+        <em>gef&#228;lscht</em> sein: Sie h&#228;lt die Form nur, indem sie
+        Konflikte <em>verbietet</em>. Ihr Bruch ist daher nicht eine Umwandlung,
+        sondern eine <em>Zerst&#246;rung</em> (Krebs &#8594; Tod, 1976).</div>
+    </div>
+  </div>
+
+  <div class="contrad">
+    <p class="h">2. Passives, ehrliches Halten vs. aktive Unterdr&#252;ckung</p>
+    <div class="vs">
+      <div class="a"><span class="who">A · Monoid ✕ Adjungtion</span>
+        Das haltende Element <code>e</code> (die Identit&#228;t) ist
+        <strong>passiv und ehrlich</strong>: es tut wirklich nichts, w&#228;hrend
+        die Assoziativit&#228;t eine <em>harmlose</em> Flexibilit&#228;t ist
+        (Gruppierung dreier Elemente ist frei).</div>
+      <div class="b"><span class="who">B · Phasenübergang ✕ Mars im Exil</span>
+        Das „Halten" (Koh&#228;sion / Harmonie) ist eine <strong>aktive
+        Unterdr&#252;ckung</strong>: die Fl&#228;che ist eine <em>hergestellte
+        Stille</em> (Schwierig, Unvergleichbar, Oder), kein ehrliches Plateau.
+        Das „Neutrale" tut sehr wohl etwas &#8212; es begr&#228;bt Substanz.</div>
+    </div>
+  </div>
+
+  <div class="contrad">
+    <p class="h">3. Treues Grenz&#252;berschreiten vs. interne Eruption ohne Ziel</p>
+    <div class="vs">
+      <div class="a"><span class="who">A · Monoid ✕ Adjungtion</span>
+        Ein &#220;bergang <strong>&#252;berschreitet eine Grenze</strong> zwischen
+        zwei wohldefinierten Welten und ist <em>treu/umkehrbar</em>: es gibt
+        immer ein echtes Ziel, in das die Struktur sich verlustfrei ordnen kann.</div>
+      <div class="b"><span class="who">B · Phasenübergang ✕ Mars im Exil</span>
+        Der Bruch ist eine <strong>interne Eruption</strong>: Das System hat
+        <em>kein zweites, echtes Ziel</em>, in das es sich umordnen k&#246;nnte.
+        Die aufgestaute Energie hat nirgendwohin zu flie&#223;en &#8212; sie
+        bricht aus und zerst&#246;rt.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 3. AUFLÖSUNG ═══════════ -->
+<section id="aufloesung">
+  <h2>Aufl&#246;sung</h2>
+
+  <div class="res">
+    <p class="h">Zu (1) — A liefert die Form, B den Echtheitstest</p>
+    <p>
+      A beschreibt den Fall, in dem die Koh&#228;renz <em>echt</em> ist: dann
+      stimmt der Rundlauf und der Bruch reorganisiert verlustfrei. B f&#252;gt
+      den <em>degenerierten Fall</em> hinzu: eine Koh&#228;renz, die <em>aus
+      sieht</em> wie ein echtes Gitter, aber nur durch Unterdr&#252;ckung h&#228;lt.
+      Die Aufl&#246;sung: <strong>die Dreiecksidentit&#228;t (Rundlauf =
+      Identit&#228;t) ist genau der Pr&#252;fstein</strong> &#8212; konservativ
+      genau dann, wenn der Rundlauf Substanz bewahrt; zerst&#246;rerisch genau
+      dann, wenn er sie verliert.
+    </p>
+  </div>
+
+  <div class="res">
+    <p class="h">Zu (2) — Das neutrale Element ist ein Spektrum</p>
+    <p>
+      In einer <em>echten</em> Struktur ist das neutrale Element
+      passiv-ehrlich (es akkumuliert keine Schuld). In einer <em>falschen</em>
+      Struktur ist das, was als Neutral durchgeht, ein <em>aktiver
+      Unterdr&#252;cker</em>, der verborgene Spannung als <em>Schuld</em>
+      ansammelt. Die Aufl&#246;sung: <strong>passiv vs. aktiv ist keine
+      Zweiteilung, sondern ein Kontinuum</strong>, das am Verhalten unter
+      Last ablesbar ist &#8212; sammelt das haltende Element bei flacher
+      Me&#223;gr&#246;&#223;e verborgene Spannung (Schuld) an oder nicht?
+    </p>
+  </div>
+
+  <div class="res">
+    <p class="h">Zu (3) — Ein Bruch ist konservativ, genau wenn es ein treues Ziel gibt</p>
+    <p>
+      A's &#220;bergang hat ein treues Ziel (die andere, echte Welt, in die der
+      Rundlauf zur&#252;ckkehren kann). B's falsche Struktur hat <em>kein</em>
+      solches Ziel: Der Rundlauf f&#228;llt in eine Leere, in die nichts
+      Reorganisiertes hineinpassen k&#246;nnte. Die Aufl&#246;sung:
+      <strong>ein Bruch ist konservativ genau dann, wenn es ein echtes Ziel gibt,
+      in das sich die Substanz verlustfrei ordnen l&#228;sst;</strong> er ist
+      zerst&#246;rerisch, wenn das vermeintliche Ziel eine Leere ist.
+    </p>
+  </div>
+
+  <p class="fused">
+    Fusionierte Schlussfolgerung: <strong>Der Rundlauf (die Dreiecksidentit&#228;t)
+    ist der Lackschicht-Test</strong> zwischen verlustfreier Reorganisation (echte
+    Struktur &#8594; neue gleichwertige Phase) und destruktiver Eruption (gef&#228;lschte
+    Struktur &#8594; nichts Echtes da). Stabilit&#228;t ist damit nicht das Gegenteil
+    von Ver&#228;nderung, sondern ihr teuer bezahlter Vorschuss &#8212; und er ist nur
+    dann lebbar, wenn der Vorschuss in ein k&#252;nftiges <em>Werden</em> geht, nicht
+    in ein k&#252;nftiges <em>Zerfallen</em>.
+  </p>
+</section>
+
+<!-- ═══════════ 4. INHALT ═══════════ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>
+    Der gemeinsame Modellrahmen hat vier Stufen. Auf jeder Stufe stehen die
+    Form (A) und die Diagnose (B) nebeneinander &#8212; bis die vierte Stufe
+    die <em>Pr&#252;fung</em> ist, die beide erst zusammen lesbar macht.
+  </p>
+
+  <h3>I. Das stabile System und wie es gehalten wird</h3>
+  <p>
+    <span class="tag a">A</span> Ein Monoid ist ein Set <code>M</code> mit
+    assoziativer Operation <span class="math">a &#8728; b</span> und
+    Einheitselement <code>e</code> mit <span class="math">a&#8728;e = e&#8728;a = a</span>.
+    Als Ein-Objekt-Kategorie: die Morphismen <em>sind</em> die Elemente,
+    Komposition <em>ist</em> die Operation, <span class="math">id</span>
+    <em>ist</em> <code>e</code>. Das Gitter h&#228;lt, weil ein neutrales
+    Element + ein Koh&#228;renzgesetz die Ver&#228;nderung organisiert.
+  </p>
+  <p>
+    <span class="tag b">B</span> Das feste Gitter (Wasser) h&#228;lt, weil
+    Koh&#228;sion (Zusammenhalt) die Bewegung der Molek&#252;le b&#228;ndigt.
+    Die „heile" Familie h&#228;lt, weil Harmonie den Konflikt b&#228;ndigt.
+    In beiden: <em>Zusammenhalt &gt; Bewegung</em> &#8212; die sichtbare Form
+    ist nur so lang stabil, wie das haltende Element die Ver&#228;nderung
+    tr&#228;gt.
+  </p>
+
+  <h3>II. Das Plateau — flache Me&#223;gr&#246;&#223;e, steigende Spannung</h3>
+  <p>
+    <span class="tag a">A</span> Das neutrale Element sieht „do-nothing" aus,
+    ist aber der <em>Samen</em> von <span class="math">&#951;</span>/
+    <span class="math">&#949;</span>: Beim Grenz&#252;berschreiten
+    (Adjungtion) wird es <em>aktiv</em> &#8212; die besten Approximationen in
+    die Welt der Gegenfunktorin. Die Spannung sammelt sich als <em>treue
+    Reorganisation</em> &#252;ber die beiden Welten.
+  </p>
+  <p>
+    <span class="tag b">B</span> Die Me&#223;gr&#246;&#223;e (Temperatur /
+    sichtbare Ruhe) bleibt am Schwellenwert <em>flach</em>, w&#228;hrend im
+    Inneren latente W&#228;rme / unterdr&#252;ckte Gef&#252;hle akkumulieren.
+    Drei Werkzeuge halten das soziale Plateau: <strong>„Schwierig"</strong>
+    (totsagt unbequeme Themen), <strong>„Unvergleichbar"</strong> (kein
+    Urteil, damit nie gew&#228;hlt werden muss), <strong>„Oder"</strong>
+    (l&#246;st jede Aussage in eine „amorphe Masse von bedeutungslosen
+    Partikeln" auf).
+  </p>
+  <p>
+    <span class="tag f">Fusion</span> Beide Systeme zeigen dasselbe Signal:
+    <em>die Me&#223;gr&#246;&#223;e flacht, die verborgene Spannung steigt.</em>
+    Erst die Frage „wohin flie&#223;t die Spannung?" trennt echt von falsch &#8212;
+    nicht die Flachheit selbst.
+  </p>
+
+  <h3>III. Die Schwelle und der Bruch</h3>
+  <p>
+    <span class="tag a">A</span> Der Bruch ist das <em>Grenz&#252;berschreiten</em>:
+    Die Dreiecksidentit&#228;t <span class="math">&#949;<sub>L(c)</sub>
+    &#8728; L(&#951;<sub>c</sub>) = id<sub>L(c)</sub></span> erzwingt, dass der
+    Rundlauf <em>verlustfrei</em> zur&#252;ckkommt. Konkret: Ein Wort
+    <code>ab</code> &#8594; Boxen <span class="math">[a][b]</span> (Unit)
+    &#8594; Falten <span class="math">[a]&#8728;[b] = ab</span> (Counit)
+    &#8594; identisch &#10003;.
+  </p>
+  <p>
+    <span class="tag b">B</span> Der Bruch ist das <em>Ereignis</em>, bei dem
+    die Spannung zu gro&#223; wird: In der Physik ist das der Phasen&#252;bergang
+    (Wasser &#8594; Dampf, verlustfrei); in der Erz&#228;hlung der Krebs
+    (&#8220;das bei weitem Gescheiteste, was ich je in meinem Leben getan
+    habe&#8221;), der das Lebense, das nie sein durfte, ausbricht &#8212; und
+    t&#246;tet (Zorn &#8724; 1976, 32; Buch posthum 1977).
+  </p>
+
+  <h3>IV. Pr&#252;fung — der Rundlauf als Lackschicht-Test</h3>
+  <ul>
+    <li>
+      <strong>Echte Koh&#228;renz (A / Physik):</strong> Der Rundlauf
+      (Dreiecksidentit&#228;t) bewahrt Substanz. Die Spannung flie&#223;t in
+      <em>Strukturwandel</em> &#8212; verlustfreie Reorganisation in eine neue,
+      gleichwertige Phase. „Nichts wird hinzugef&#252;gt, nichts verschwindet."
+    </li>
+    <li>
+      <strong>Falsche Koh&#228;renz (B / Zorn):</strong> Der Rundlauf verliert
+      Substanz &#8212; es wurde nie etwas Echtes aufbewahrt, nur Leerraum.
+      Die Spannung flie&#223;t in <em>nichts</em>; sie wird nur gehalten und
+      zu Schuld. Beim Bruch gibt es kein echtes Ziel &#8212; nur den
+      Leerraum, der eruptiert.
+    </li>
+    <li>
+      <strong>Pr&#228;dikt</strong> f&#252;r jedes stabile System (Gewohnheit,
+      Organisation, Ich, Funktor): Wenn die Me&#223;gr&#246;&#223;e flach
+      bleibt, w&#228;hrend die verborgene Spannung steigt, frage nicht „wie
+      lange h&#228;lt das?", sondern <strong>„ist der Rundlauf treu?"</strong>
+      &#8212; das entscheidet zwischen <em>bauen</em> und <em>begraben</em>.
+    </li>
+  </ul>
+
+  <blockquote>
+    „Nicht in einer ungl&#252;cklichen Welt bin ich aufgewachsen, sondern in
+    einer verlogenen."
+    <span class="attr">&#8212; Fritz Zorn, <em>Mars im Exil</em> (Quelle B)</span>
+  </blockquote>
+  <blockquote>
+    „Beim &#220;bergang steigt die Temperatur <b>nicht</b>. Die Energie
+    zerrei&#223;t die Bindungen &#8212; statt zu heizen."
+    <span class="attr">&#8212; Phasen&#252;berg&#228;nge (Quelle B)</span>
+  </blockquote>
+</section>
+
+<!-- ═══════════ 5. VISUALISIERUNG ═══════════ -->
+<section id="visualisierung">
+  <h2>Visualisierung — der Rundlauf als Pr&#252;fstein</h2>
+  <p>
+    Ziehe an der <em>Energiezufuhr</em> (oder lasse „Zuf&#252;hren" laufen).
+    Oben: ein Partikelgitter, das von Koh&#228;sion gehalten wird, w&#228;hrend
+    die verborgene Spannung steigt. Unten: die Heizkurve &#8212; die
+    Me&#223;gr&#246;&#223;e bleibt am Plateau flach, die Spannung steigt
+    monoton, und die <strong>Rundlauf-Treue</strong> ist der Pr&#252;fstein:
+    <em>Echt</em> (treuer Rundlauf) reorganisiert verlustfrei in eine neue
+    Phase; <em>Falsch</em> (Rundlauf verliert Substanz) eruptiert
+    destruktiv.
+  </p>
+  <div class="viz-box"><canvas id="rtCanvas"></canvas></div>
+  <div class="controls">
+    <div class="modes">
+      <button id="modeReal" class="mode on r" type="button"><span class="t">Echt · treuer Rundlauf</span>verlustfrei &#8594; neue Phase</button>
+      <button id="modeFake" class="mode" type="button"><span class="t">Falsch · Rundlauf verliert Substanz</span>eruptiert &#8594; zerst&#246;rt</button>
+    </div>
+    <div class="sliderrow">
+      <label for="energySlider">Energiezufuhr</label>
+      <input type="range" id="energySlider" min="0" max="100" value="8">
+      <span class="val" id="energyVal">8%</span>
+    </div>
+    <div class="btnrow">
+      <button id="autoBtn" type="button">&#9654; Zuf&#252;hren</button>
+      <button id="resetBtn" type="button">&#8634; Reset</button>
+    </div>
+  </div>
+  <div class="meters">
+    <div class="meter"><div class="lab">Koh&#228;sion<small>(bindet, bis zur Schwelle)</small></div><div class="track"><i id="mCoh"></i></div><div class="num" id="oCoh">100%</div></div>
+    <div class="meter"><div class="lab">Verborgene Spannung<small>(A: latente W&#228;rme / aktive Unit-Counit · B: unterdr&#252;ckte Gef&#252;hle)</small></div><div class="track"><i id="mTension"></i></div><div class="num" id="oTension">0%</div></div>
+    <div class="meter"><div class="lab">Rundlauf-Treue<small>(= Dreiecksidentit&#228;t: bewahrt der Bruch Substanz?)</small></div><div class="track"><i id="mFid"></i></div><div class="num" id="oFid">100%</div></div>
+  </div>
+  <div id="rtVerdict" class="verdict"></div>
+  <p class="note">Alle Daten inline, keine Netzwerkaufrufe. Theme-aware &#252;ber CSS-Variablen; Partikel-, Chart- und Meter-Farben lesen <code>--v-real / --v-fake / --v-tension / --accent / --fg / --muted / --line</code> vom Theme.</p>
+</section>
+
+<!-- ═══════════ 6. PROVENIENZ ═══════════ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <div class="badge a">A</div>
+    <div>
+      <a href="../n1-020.html">n1-020.html</a>
+      <div class="desc">R1-Fusion „A Monoid Is an Adjunction Collapsed to One Object" (Monoid &#10006; adjungierte Funktoren): Ein Monoid ist eine Ein-Objekt-Kategorie; die Adjungtion hebt sie auf zwei Welten, in denen sich <code>e</code> in Unit/Counit aufspaltet und die Assoziativit&#228;t zu den Dreiecksidentit&#228;ten wird. Der freie Monoid <span class="math">L(X)=X*</span> ist die konkrete, treue Br&#252;cke.</div>
+    </div>
+  </div>
+  <div class="prov">
+    <div class="badge b">B</div>
+    <div>
+      <a href="../n1-017.html">n1-017.html</a>
+      <div class="desc">R1-Fusion „Stabile Zust&#228;nde zahlen verborgene Spannung" (Phasen&#252;berg&#228;nge &#10006; Fritz Zorns <em>Mars im Exil</em>): Ein stabiles System h&#228;lt seine Form, indem es verborgene Spannung akkumuliert; der Bruch ist nur so gesund wie die Struktur &#8212; echt (verlustfrei umgewandelt) oder gef&#228;lscht (eruptiert und zerst&#246;rt). Pr&#228;dikt: „wohin flie&#223;t das?"</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Runde 2 · 054 · Koh&#228;renz &#10006; Bruch &middot; Der Rundlauf (Dreiecksidentit&#228;t) ist der Pr&#252;fstein: bauen oder begraben.
+</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var cv = document.getElementById('rtCanvas');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  if(!ctx) return;
+  var DPR = 1, W = 0, H = 0;
+  var CHART_H = 96, EC = 0.5;
+
+  var theme = {
+    ink:'#e8ecf7', muted:'#9aa6bf', line:'#262f45',
+    real:'#35e0a0', fake:'#ff6b4a', tension:'#ffd166',
+    accent:'#a48bff', accent2:'#2dd4bf'
+  };
+  function readTheme(){
+    try{
+      var cs = getComputedStyle(document.documentElement);
+      function g(n,d){ var v = cs.getPropertyValue(n); v=(v==null?'':v.trim()); return v||d; }
+      theme.ink = g('--fg', theme.ink);
+      theme.muted = g('--muted', theme.muted);
+      theme.line = g('--line', theme.line);
+      theme.real = g('--v-real', theme.real);
+      theme.fake = g('--v-fake', theme.fake);
+      theme.tension = g('--v-tension', theme.tension);
+      theme.accent = g('--accent', theme.accent);
+      theme.accent2 = g('--accent2', theme.accent2);
+    }catch(e){}
+  }
+  function hexToArr(hex){
+    if(typeof hex!=='string' || hex.charAt(0)!=='#') return null;
+    var h = hex.slice(1);
+    if(h.length===3) h = h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+    var n = parseInt(h,16);
+    if(isNaN(n)) return null;
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function hexA(hex,a){
+    var c = hexToArr(hex);
+    if(!c) return hex;
+    return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';
+  }
+  function lerpHexArr(a,b,t){
+    var A = hexToArr(a)||[200,200,200], B = hexToArr(b)||[120,120,120];
+    return [
+      Math.round(A[0]+(B[0]-A[0])*t),
+      Math.round(A[1]+(B[1]-A[1])*t),
+      Math.round(A[2]+(B[2]-A[2])*t)
+    ];
+  }
+  function rgba(c,a){ return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  var clamp = function(v,a,b){ return v<a?a:(v>b?b:v); };
+  var lerp  = function(a,b,t){ return a+(b-a)*t; };
+  function smoothstep(a,b,x){ var t=clamp((x-a)/(b-a||1),0,1); return t*t*(3-2*t); }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  var VW=100, VH=58, COLS=14, ROWS=5, N=COLS*ROWS, P=[];
+  function initParticles(){
+    P=[];
+    var gx = VW/(COLS+1), gy = VH/(ROWS+1);
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var hx = (c+1)*gx + ((r%2)?gx*0.28:-gx*0.28);
+        var hy = (r+1)*gy;
+        P.push({x:hx,y:hy,hx:hx,hy:hy,vx:0,vy:0,ph:Math.random()*6.283,seed:Math.random()});
+      }
+    }
+  }
+  var state = { e:0.08, mode:'real', auto:false, broken:false, flash:0, prevE:0.08 };
+
+  function meltAt(e){ return smoothstep(EC-0.08, EC+0.08, e); }
+  function measuredT(e){
+    if(e < 0.42) return (e/0.42)*0.55;
+    if(e > 0.58) return 0.55 + ((e-0.58)/0.42)*0.45;
+    return 0.55;
+  }
+  function fidelity(e){
+    if(state.mode==='real') return 1.0;
+    return (e >= EC) ? 0.0 : 1.0;
+  }
+
+  var el = {
+    slider:  document.getElementById('energySlider'),
+    val:     document.getElementById('energyVal'),
+    autoBtn: document.getElementById('autoBtn'),
+    resetBtn:document.getElementById('resetBtn'),
+    modeReal:document.getElementById('modeReal'),
+    modeFake:document.getElementById('modeFake'),
+    mCoh:    document.getElementById('mCoh'),
+    mTension:document.getElementById('mTension'),
+    mFid:    document.getElementById('mFid'),
+    oCoh:    document.getElementById('oCoh'),
+    oTension:document.getElementById('oTension'),
+    oFid:    document.getElementById('oFid'),
+    verdict: document.getElementById('rtVerdict'),
+    toggle:  document.getElementById('themeToggle')
+  };
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    var rect = cv.getBoundingClientRect();
+    W = Math.max(240, rect.width);
+    H = Math.max(240, rect.height);
+    cv.width  = Math.floor(W*DPR);
+    cv.height = Math.floor(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function mapSim(x,y){
+    var top=18, bot=H-CHART_H-10, left=18, right=W-18;
+    var sw = right-left, sh = bot-top;
+    return [left + (x/VW)*sw, top + (y/VH)*sh];
+  }
+
+  function drawCrack(l,t,w,h,col){
+    ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.shadowColor = col; ctx.shadowBlur = 14;
+    var x0=l+w*0.16, y0=t+4, x1=l+w*0.5, y1=t+h*0.5, x2=l+w*0.84, y2=t+h-4;
+    ctx.beginPath(); ctx.moveTo(x0,y0);
+    var seg=6;
+    for(var i=1;i<=seg;i++){
+      var t2=i/seg;
+      var xx=lerp(x0,x1,t2) + (Math.sin(t2*7.3)*6)*(i%2?1:-1);
+      var yy=lerp(y0,y1,t2) + (Math.cos(t2*6.1)*5)*(i%2?1:-1);
+      ctx.lineTo(xx,yy);
+    }
+    for(var k=1;k<=seg;k++){
+      var t3=k/seg;
+      var xk=lerp(x1,x2,t3) + (Math.sin(t3*8.1)*6)*(k%2?1:-1);
+      var yk=lerp(y1,y2,t3) + (Math.cos(t3*5.7)*5)*(k%2?1:-1);
+      ctx.lineTo(xk,yk);
+    }
+    ctx.stroke(); ctx.shadowBlur = 0;
+  }
+
+  function step(){
+    var e = state.e, melt = meltAt(e), cohesion = 1 - melt;
+    var j = 0.35 + e*1.4;
+    var cx = VW/2, cy = VH/2;
+    for(var i=0;i<N;i++){
+      var p = P[i];
+      p.ph += 0.05 + e*0.25;
+      var intact = melt < 0.02;
+      if(intact){
+        var k = 0.06*cohesion;
+        p.vx += (p.hx-p.x)*k;
+        p.vy += (p.hy-p.y)*k;
+        p.vx += Math.cos(p.ph*1.7 + p.seed*9)*j*0.32;
+        p.vy += Math.sin(p.ph*1.3 + p.seed*5)*j*0.32;
+        p.vx *= 0.86; p.vy *= 0.86;
+      } else if(state.mode==='real'){
+        // fluid liquid: bounded, moderate, reorganizes
+        p.vx += (Math.random()-0.5)*0.5*melt;
+        p.vy += (Math.random()-0.5)*0.4*melt + 0.01;
+        p.vx *= 0.90; p.vy *= 0.90;
+        var m = Math.hypot(p.vx,p.vy), mx = 1.1;
+        if(m>mx){ p.vx *= mx/m; p.vy *= mx/m; }
+      } else {
+        // fake: violent scatter, no re-cohesion
+        p.vx += (Math.random()-0.5)*2.4*melt;
+        p.vy += (Math.random()-0.5)*2.4*melt;
+        p.vx *= 0.965; p.vy *= 0.965;
+        var m2 = Math.hypot(p.vx,p.vy), mx2 = 2.6;
+        if(m2>mx2){ p.vx *= mx2/m2; p.vy *= mx2/m2; }
+      }
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0){ p.x=0; p.vx=Math.abs(p.vx)*0.7; }
+      if(p.x>VW){ p.x=VW; p.vx=-Math.abs(p.vx)*0.7; }
+      if(p.y<0){ p.y=0; p.vy=Math.abs(p.vy)*0.7; }
+      if(p.y>VH){ p.y=VH; p.vy=-Math.abs(p.vy)*0.7; }
+    }
+    if(state.mode==='fake'){
+      if(state.prevE < EC && e >= EC && !state.broken){
+        state.broken = true; state.flash = 1;
+        for(var b=0;b<N;b++){
+          var q = P[b];
+          var dx = q.x - cx, dy = q.y - cy;
+          var dl = Math.hypot(dx,dy)||1;
+          q.vx += dx/dl*3.4; q.vy += dy/dl*3.4;
+        }
+      }
+      if(e < EC) state.broken = false;
+    } else {
+      state.broken = false;
+    }
+    state.flash *= 0.9;
+    if(state.flash < 0.01) state.flash = 0;
+    state.prevE = e;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var e = state.e, melt = meltAt(e), cohesion = 1 - melt;
+    var broken = (state.mode==='fake' && e >= EC);
+    var solidColor = (state.mode==='real') ? theme.accent2 : theme.tension;
+    var liquidColor= (state.mode==='real') ? theme.real      : theme.fake;
+    var bx=18, by=18, bw=W-36, bh=(H-CHART_H-10)-18;
+    var left=bx, top=by, right=bx+bw, bot=by+bh;
+
+    ctx.lineWidth = 2;
+    if(state.mode==='real'){
+      ctx.strokeStyle = (melt>0.5) ? theme.real : hexA(theme.ink, 0.25);
+      roundRect(left,top,bw,bh,12); ctx.stroke();
+    } else {
+      if(!broken){
+        ctx.strokeStyle = theme.tension; ctx.shadowColor = theme.tension; ctx.shadowBlur = 12;
+        roundRect(left,top,bw,bh,12); ctx.stroke(); ctx.shadowBlur = 0;
+      } else {
+        ctx.strokeStyle = theme.fake; ctx.setLineDash([6,5]);
+        roundRect(left,top,bw,bh,12); ctx.stroke(); ctx.setLineDash([]);
+        drawCrack(left,top,bw,bh,theme.fake);
+        if(state.flash>0){
+          ctx.fillStyle = hexA(theme.fake, state.flash*0.35);
+          ctx.fillRect(left,top,bw,bh);
+        }
+      }
+    }
+
+    // bonds
+    var bondD = (VW/(COLS+1))*1.55;
+    var bondOn = cohesion>0.03 && !(state.mode==='fake' && broken);
+    if(bondOn){
+      var bondCol = (state.mode==='real') ? theme.accent2 : theme.tension;
+      var baseA = 0.10 + cohesion*0.55;
+      ctx.lineWidth = 1.25;
+      for(var i=0;i<N;i++){
+        var a = P[i];
+        var maxJ = Math.min(N, i+16);
+        for(var jj=i+1;jj<maxJ;jj++){
+          var b2 = P[jj];
+          var dx = b2.x-a.x, dy = b2.y-a.y;
+          var dd = Math.sqrt(dx*dx+dy*dy);
+          if(dd < bondD){
+            var A1 = mapSim(a.x,a.y), B1 = mapSim(b2.x,b2.y);
+            ctx.strokeStyle = hexA(bondCol, baseA*(1-dd/bondD));
+            ctx.beginPath(); ctx.moveTo(A1[0],A1[1]); ctx.lineTo(B1[0],B1[1]); ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // particles
+    ctx.globalCompositeOperation = 'lighter';
+    var r = 4.4;
+    for(var gi=0;gi<N;gi++){
+      var p = P[gi];
+      var pt = mapSim(p.x,p.y);
+      var col = lerpHexArr(solidColor, liquidColor, melt);
+      var gr = ctx.createRadialGradient(pt[0],pt[1],0,pt[0],pt[1],r*2.6);
+      gr.addColorStop(0,  'rgba(255,255,255,' + (0.9 - melt*0.25) + ')');
+      gr.addColorStop(0.32, rgba(col, 0.85 - melt*0.2));
+      gr.addColorStop(1,  rgba(col, 0));
+      ctx.fillStyle = gr;
+      ctx.beginPath(); ctx.arc(pt[0],pt[1],r*2.6,0,6.283); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // caption
+    ctx.font = '600 12px system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = hexA(theme.ink, 0.85);
+    var cap;
+    if(state.mode==='real'){
+      cap = (melt>0.5)
+        ? 'Echte Struktur — neuer Zustand, dieselbe Substanz'
+        : 'Gitter — Koh\u00E4sion h\u00E4lt, der Rundlauf bleibt treu';
+    } else {
+      cap = broken
+        ? 'Falsche Struktur — Rundlauf verliert Substanz: Eruption'
+        : 'Harmonie — aktiver Unterdr\u00FCcker, Spannung w\u00E4chst';
+    }
+    ctx.fillText(cap, left+10, top+18);
+    ctx.font = '500 10px system-ui, sans-serif';
+    ctx.fillStyle = hexA(theme.muted, 0.9);
+    ctx.fillText('Schwelle e\u22480.5', left+10, top+32);
+  }
+
+  function drawChart(){
+    var e = state.e;
+    var top=H-CHART_H+8, bot=H-14, left=44, right=W-18;
+    var cw=right-left, ch=bot-top;
+    function X(v){ return left + v*cw; }
+    function Y(v){ return bot - v*ch; }
+
+    ctx.strokeStyle = hexA(theme.ink,0.2); ctx.lineWidth = 1;
+    ctx.strokeRect(left, top, cw, ch);
+
+    // plateau shading
+    var pL = left + (EC-0.08)*cw, pR = left + (EC+0.08)*cw;
+    var plateCol = (state.mode==='real') ? theme.accent2 : theme.tension;
+    ctx.fillStyle = hexA(plateCol, 0.12);
+    ctx.fillRect(pL, top, pR-pL, ch);
+    ctx.font = '500 9px system-ui, sans-serif';
+    ctx.fillStyle = hexA(plateCol, 0.95);
+    ctx.textAlign = 'center';
+    ctx.fillText('Plateau', left + EC*cw, top + 11);
+
+    // dashed flat line at measuredT=0.55
+    var flatY = Y(0.55);
+    ctx.strokeStyle = hexA(theme.ink, 0.25); ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(left,flatY); ctx.lineTo(right,flatY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // curve 1: Messgr\u00F6\u00DFe (flat at plateau)
+    ctx.strokeStyle = hexA(theme.ink, 0.85); ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(var s=0; s<=1.0001; s+=0.02){
+      var v = measuredT(s), x = X(s), y = Y(v);
+      if(s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // curve 2: versteckte Spannung (monotonic diagonal)
+    ctx.strokeStyle = theme.tension; ctx.lineWidth = 2; ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(var s2=0; s2<=1.0001; s2+=0.02){
+      var v2 = s2, x2 = X(s2), y2 = Y(v2);
+      if(s2===0) ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // curve 3: Rundlauf-Treue (the fused diagnostic)
+    var fidCol = (state.mode==='real') ? theme.real : theme.fake;
+    ctx.strokeStyle = fidCol; ctx.lineWidth = 2; ctx.setLineDash([2,3]);
+    ctx.beginPath();
+    var started = false;
+    for(var s3=0; s3<=1.0001; s3+=0.01){
+      var f = fidelity(s3), x3 = X(s3), y3 = Y(f);
+      if(!started){ ctx.moveTo(x3,y3); started=true; } else ctx.lineTo(x3,y3);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // cursor at current e
+    var cxp = X(e);
+    ctx.strokeStyle = theme.accent; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(cxp, top); ctx.lineTo(cxp, bot); ctx.stroke();
+    var my = Y(measuredT(e));
+    ctx.fillStyle = theme.accent; ctx.beginPath(); ctx.arc(cxp, my, 4, 0, 6.283); ctx.fill();
+    var fy = Y(fidelity(e));
+    ctx.fillStyle = fidCol; ctx.beginPath(); ctx.arc(cxp, fy, 4, 0, 6.283); ctx.fill();
+
+    // legend
+    ctx.font = '500 10px system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = hexA(theme.ink, 0.85);
+    ctx.fillText('Me\u00DFgr\u00F6\u00DFe', left+6, top+ch-6);
+    ctx.fillStyle = hexA(theme.tension, 0.95);
+    var leg2 = 'verborgene Spannung';
+    var tw2 = ctx.measureText(leg2).width;
+    ctx.fillText(leg2, left + cw*0.42, top+ch-6);
+    ctx.fillStyle = hexA(fidCol, 0.95);
+    var leg3 = 'Rundlauf-Treue';
+    var tw3 = ctx.measureText(leg3).width;
+    ctx.fillText(leg3, right - tw3 - 6, top+ch-6);
+
+    // x-axis label
+    ctx.fillStyle = hexA(theme.muted, 0.8);
+    ctx.textAlign = 'center';
+    ctx.font = '500 10px system-ui, sans-serif';
+    ctx.fillText('Energiezufuhr \u2192', left + cw/2, bot-2);
+  }
+
+  function updateMeters(){
+    var e = state.e, melt = meltAt(e), cohesion = 1 - melt;
+    var mt = measuredT(e), f = fidelity(e);
+    el.mCoh.style.width = (cohesion*100) + '%';
+    el.mTension.style.width = (e*100) + '%';
+    el.mFid.style.width = (f*100) + '%';
+    el.oCoh.textContent = Math.round(cohesion*100) + '%';
+    el.oTension.textContent = Math.round(e*100) + '%';
+    el.oFid.textContent = Math.round(f*100) + '%';
+
+    el.mCoh.style.background = (state.mode==='real') ? theme.accent2 : theme.tension;
+    el.mTension.style.background = theme.tension;
+    el.mFid.style.background = (state.mode==='real') ? theme.real : theme.fake;
+
+    var txt, cls = '';
+    var broken = (state.mode==='fake' && e >= EC);
+    if(melt < 0.05){
+      txt = 'Stabil — die Struktur h\u00E4lt. Verborgene Spannung sammelt sich, die Me\u00DFgr\u00F6\u00DFe bleibt ruhig.';
+    } else if(melt < 0.95){
+      txt = 'Am Plateau — die Me\u00DFgr\u00F6\u00DFe flacht, die Spannung steigt. Der Rundlauf wird der Pr\u00FCfstein sein.';
+    } else if(state.mode==='real'){
+      txt = 'Echte Struktur — der Rundlauf ist treu: verlustfreie Reorganisation in eine neue, gleichwertige Phase. Bauen.';
+      cls = 'ok';
+    } else {
+      txt = 'Falsche Struktur — der Rundlauf verliert Substanz: die Spannung eruptiert und zerst\u00F6rt. Begraben.';
+      cls = 'danger';
+    }
+    el.verdict.textContent = txt;
+    el.verdict.className = 'verdict' + (cls ? ' ' + cls : '');
+  }
+
+  function syncSlider(){
+    el.slider.value = Math.round(state.e*100);
+    el.val.textContent = Math.round(state.e*100) + '%';
+  }
+  function setMode(m){
+    state.mode = m;
+    state.broken = false;
+    state.flash = 0;
+    el.modeReal.classList.toggle('on', m==='real');
+    el.modeReal.classList.toggle('r',  m==='real');
+    el.modeReal.classList.toggle('f',  false);
+    el.modeFake.classList.toggle('on', m==='fake');
+    el.modeFake.classList.toggle('r',  false);
+    el.modeFake.classList.toggle('f',  m==='fake');
+  }
+
+  el.slider.addEventListener('input', function(){
+    state.e = +el.slider.value/100;
+    el.val.textContent = Math.round(state.e*100) + '%';
+    state.auto = false;
+    el.autoBtn.textContent = '\u25B6 Zuf\u00FChren';
+  });
+  el.modeReal.addEventListener('click', function(){ setMode('real'); });
+  el.modeFake.addEventListener('click', function(){ setMode('fake'); });
+  el.autoBtn.addEventListener('click', function(){
+    state.auto = !state.auto;
+    el.autoBtn.textContent = state.auto ? '\u23F8 Stop' : '\u25B6 Zuf\u00FChren';
+  });
+  el.resetBtn.addEventListener('click', function(){
+    state.e = 0.08; state.broken = false; state.flash = 0; state.prevE = 0.08;
+    state.auto = false; el.autoBtn.textContent = '\u25B6 Zuf\u00FChren';
+    for(var i=0;i<N;i++){ var p=P[i]; p.x=p.hx; p.y=p.hy; p.vx=0; p.vy=0; }
+    syncSlider();
+  });
+  el.toggle.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  window.addEventListener('resize', resize);
+
+  readTheme();
+  resize();
+  initParticles();
+  for(var i=0;i<60;i++) step();
+  syncSlider();
+  updateMeters();
+
+  var mo = new MutationObserver(function(){ readTheme(); });
+  mo.observe(document.documentElement, { attributes:true, attributeFilter:['class'] });
+  if(window.matchMedia){
+    var mm = window.matchMedia('(prefers-color-scheme: dark)');
+    if(mm && mm.addEventListener) mm.addEventListener('change', readTheme);
+  }
+
+  function loop(){
+    if(state.auto){
+      state.e = clamp(state.e + 0.0035, 0, 1);
+      if(state.e >= 1){ state.auto = false; el.autoBtn.textContent = '\u25B6 Zuf\u00FChren'; }
+      syncSlider();
+    }
+    step();
+    draw();
+    drawChart();
+    updateMeters();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "054",
+  "a": "n1-020.html",
+  "b": "n1-017.html",
+  "a_title": "A Monoid Is an Adjunction Collapsed to One Object",
+  "b_title": "Stabile Zustände zahlen verborgene Spannung",
+  "combined_theme": "coherence-break-roundtrip-fidelity",
+  "one_line": "Eine stabile Struktur ist neutrales Element + Kohärenzgesetz mit verborgener Spannung; der Rundlauf (Dreiecksidentität) ist der Prüfstein, der verlustfreie Reorganisation (echt) von destruktiver Eruption (gefälscht) trennt — Monoid/Adjungtion liefert die Form, Phasenübergang/Mars-im-Exil die Diagnose.",
+  "contradictions": [
+    "A (Monoid/Adjungtion): jede Kohärenz ist konstruktionsbedingt treu — der Rundlauf ist immer die Identität, jeder Bruch reorganisiert verlustfrei (nichts geht verloren). B (Mars im Exil): eine scheinbare Kohärenz (die 'Harmonie') kann gefälscht sein — dann bricht nicht um, sondern eruptiert und zerstört (Krebs → Tod).",
+    "A: das haltende Element (e, Identität) ist passiv und ehrlich, die Assoziativität eine harmlose Flexibilität. B: das 'Halten' (Kohäsion/Harmonie) ist eine aktive Unterdrückung, die Konflikte verbietet; die Flachheit ist eine hergestellte Stille, kein ehrliches Plateau.",
+    "A: ein Übergang überschreitet eine Grenze zwischen zwei echten, wohldefinierten Welten und ist treu/umkehrbar (es gibt immer ein echtes Ziel). B: der Bruch ist eine interne Eruption ohne zweites echtes Ziel — das System kann sich nirgendwohin verlustfrei umordnen, es zerstört."
+  ],
+  "resolution": "A liefert die FORM der Kohärenz (Monoid/Adjungtion, freier Monoid als treue Brücke, Dreiecksidentität als Treuegesetz); B liefert die DIAGNOSE (Plateau, latente Spannung, Echtheitstest, konservativer vs. destruktiver Bruch). Fusion: Die Dreiecksidentität (Rundlauf = Identität) ist der Lackschicht-Test — konservativ genau dann, wenn der Rundlauf Substanz bewahrt (echte Struktur → neue gleichwertige Phase), zerstörerisch, wenn er sie verliert (gefälschte Struktur → nichts Echtes da, Eruption). Das neutrale Element ist ein Spektrum passiv-ehrlich (echte Struktur, akkumuliert keine Schuld) bis aktiv-unterdrückend (falsche Struktur, akkumuliert Schuld). Ein Bruch ist konservativ genau dann, wenn es ein echtes Ziel gibt, in das sich Substanz verlustfrei ordnen lässt. Maßstab der Stabilität ist weder Flachheit noch Symmetrie, sondern die Richtung der verborgenen Spannung: bauen oder begraben.",
+  "viz": "Interaktives Canvas: ein von Kohäsion gehaltenes Partikelgitter, dem bei steigender Energiezufuhr verborgene Spannung akkumuliert (Messgröße bleibt am Plateau flach). Modus 'Echt' (treuer Rundlauf) reorganisiert beim Bruch verlustfrei in eine neue Phase; Modus 'Falsch' (Rundlauf verliert Substanz) eruptiert destruktiv. Meter: Kohäsion, verborgene Spannung, Rundlauf-Treue. Heizkurve unten zeigt flache Messgröße vs. monotone Spannung vs. Rundlauf-Treue, die beim Bruch im Falsch-Modus abfällt. Theme-aware über CSS-Variablen, Daten inline, keine Netzwerkaufrufe."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "038",
+  "a": "n1-030.html",
+  "b": "n1-002.html",
+  "a_title": "Reversible Compositional Foundations",
+  "b_title": "Eine Kompressionsmaschine, die man erst lädt, dann lesen kann",
+  "combined_theme": "reversible-compressed-composition",
+  "one_line": "Wissen ist ein Abhängigkeitsgraph, dessen Knoten irreversibel komprimierte Invarianten sind und dessen Zusammensetzung reversibel, voraussetzungs-gesteuert und order-unabhängig (konfluent) verläuft.",
+  "contradictions": [
+    "A: Zusammensetzung ist reversibel/abbaubar (jeder Effekt trägt sein Inverses, LIFO, Thm 16); B: Kompression + Lader laufen nur vorwärts (pending→loading→done, verlustbehaftete Projektion Raum→π₁, keine Rückführung).",
+    "A: geschlossenes, konsistentes, ideal vollständiges Ganztum (ein Fach, ein Monument); B: offener, nie-abgeschlossener gestaffelter Preview-Lader (acht Module, 'es ist ein Lader, nicht ein Ende').",
+    "A: Knoten sind aktive, sich selbst organisierende Komponenten mit deklarierten Co-Effekten; B: Module sind inerte Inhaltsblöcke ('kein Inhalt, nur die Struktur des Lernpfads'), deren Reihenfolge ein externer Lader erzwingt."
+  ],
+  "resolution": "Zwei Achsen, eine Maschine: Kompression (Inhalt, irreversibel) erzeugt die Bausteine; reversible, konfluente Zusammensetzung (Assembly) setzt sie vorwärts-gesteuert zusammen — lokal konfluent (pro Modul) aber global offen (der DAG wächst); die deklarierten Co-Effekte (A) sind genau die topologische Reihenfolge des Loaders (B), d. h. Deklaration vs. Ausführung desselben Graphen.",
+  "viz": "Interaktives Canvas: ein voraussetzungs-gesteuertes, reversibel abbaubares, konfluentes Abhängigkeits-DAG komprimierter Bausteine; Klick = laden/entladen, Kaskade in LIFO, Undo = Invers, Shuffle = Konfluenztest; jeder Block zeigt Rohfeld→Invariante (Blob schrumpft zu Punkt)."
+}

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktur über der Grenze — Ebenen, Tore und höhere Ordnung (Runde 2)</title>
+<style>
+  :root{
+    --mn-bg:#faf8f1; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+    --mn-text:#1f2933; --mn-muted:#52606d;
+    --mn-accent:#0f766e; --mn-accent2:#7c3aed;
+    --mn-border:#d8d2c4; --mn-canvas:#ffffff; --mn-node:#334155;
+    --mn-gate:#dc2626; --mn-ok:#16a34a;
+    --mn-hl:#fff4d6; --mn-hltext:#7a5b00;
+  }
+  html.dark{
+    --mn-bg:#0f172a; --mn-panel:#131a2b; --mn-panel2:#0e1524;
+    --mn-text:#e2e8f0; --mn-muted:#94a3b8;
+    --mn-accent:#2dd4bf; --mn-accent2:#c084fc;
+    --mn-border:#26324a; --mn-canvas:#0b1220; --mn-node:#cbd5e1;
+    --mn-gate:#f87171; --mn-ok:#4ade80;
+    --mn-hl:#3a2f10; --mn-hltext:#fcd34d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--mn-bg); color:var(--mn-text);
+    font-family:Georgia,"Times New Roman",system-ui,serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:40px 20px 80px;}
+  header.top{border-bottom:2px solid var(--mn-border); padding-bottom:18px; margin-bottom:8px;}
+  h1{font-size:2.05em; line-height:1.2; margin:0 0 6px; font-weight:700;}
+  .subtitle{color:var(--mn-muted); font-size:1em; margin:0; font-family:ui-monospace,Menlo,Consolas,monospace;}
+  section{margin:0 0 8px;}
+  h2{font-size:1.5em; margin:44px 0 14px; padding-bottom:6px; border-bottom:1px solid var(--mn-border);}
+  h2 .no{color:var(--mn-accent); font-variant-numeric:tabular-nums; margin-right:8px;}
+  h3{font-size:1.12em; margin:24px 0 8px; color:var(--mn-text);}
+  p{margin:0 0 14px;}
+  strong{color:var(--mn-text);}
+  em{color:var(--mn-accent2); font-style:italic;}
+  .lead{font-size:1.12em;}
+  .tag{display:inline-block; font-family:ui-monospace,Menlo,monospace; font-size:0.72em; padding:2px 8px; border-radius:999px; border:1px solid var(--mn-border); color:var(--mn-muted); vertical-align:middle; margin-right:4px;}
+  .tag.a{border-color:var(--mn-accent); color:var(--mn-accent);}
+  .tag.b{border-color:var(--mn-accent2); color:var(--mn-accent2);}
+  .callout{background:var(--mn-panel); border:1px solid var(--mn-border); border-left:4px solid var(--mn-accent); border-radius:0 10px 10px 0; padding:14px 18px; margin:18px 0;}
+  .callout.b{border-left-color:var(--mn-accent2);}
+  .callout p:last-child{margin-bottom:0;}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+  .pair .box{background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:14px 16px;}
+  .pair .box.a{border-top:3px solid var(--mn-accent);}
+  .pair .box.b{border-top:3px solid var(--mn-accent2);}
+  .box h4{margin:0 0 8px; font-size:0.98em;}
+  .box.a h4{color:var(--mn-accent);}
+  .box.b h4{color:var(--mn-accent2);}
+  .box p{margin:0; font-size:0.92em;}
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:0.9em; background:var(--mn-panel); border-radius:10px; overflow:hidden;}
+  th,td{border:1px solid var(--mn-border); padding:10px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--mn-panel2); font-family:ui-monospace,Menlo,monospace; font-size:0.82em;}
+  td:first-child{font-weight:600;}
+  .math{font-family:ui-monospace,Menlo,Consolas,monospace; background:var(--mn-panel2); border:1px solid var(--mn-border); border-radius:6px; padding:1px 6px; font-size:0.9em; white-space:nowrap;}
+  .viz-controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:14px 0; background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:12px 14px;}
+  .viz-controls label{font-size:0.9em; color:var(--mn-muted);}
+  .btn{font-family:system-ui,sans-serif; font-size:0.88em; cursor:pointer; border:1px solid var(--mn-border); background:var(--mn-panel2); color:var(--mn-text); border-radius:8px; padding:8px 14px; transition:all .2s;}
+  input[type=range]{flex:1; min-width:160px; accent-color:var(--mn-accent);}
+  #themeBtn{margin-left:auto;}
+  #viz{width:100%; height:460px; display:block; border-radius:12px; border:1px solid var(--mn-border); background:var(--mn-canvas);}
+  .viz-out{margin-top:12px; background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:12px 14px; font-size:0.92em; line-height:1.6;}
+  .viz-out .hl{color:var(--mn-hltext); background:var(--mn-hl); padding:1px 6px; border-radius:5px; font-weight:600;}
+  .viz-out b{color:var(--mn-text);}
+  .prov{background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:14px 16px; margin-bottom:12px;}
+  .prov a{color:var(--mn-accent); text-decoration:none; font-family:ui-monospace,Menlo,monospace; font-size:0.95em;}
+  .prov a:hover{text-decoration:underline;}
+  .prov p{margin:6px 0 0; font-size:0.92em; color:var(--mn-muted);}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-muted); font-size:0.85em;}
+  @media(max-width:600px){ .pair{grid-template-columns:1fr;} h1{font-size:1.6em;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Struktur über der Grenze</h1>
+  <p class="subtitle">Fusion aus: n1-067.html ✕ n1-053.html  (Runde 2)</p>
+</header>
+
+<section id="these">
+  <h2><span class="no">1</span>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere der Runde 1 beantworten, aus völlig unterschiedlichen Domänen kommend, dieselbe Strukturfrage — und sie landen auf derselben Seite. <span class="tag a">A</span> n1-067 (Bewusstsein × HoTT) sagt: die Essenz eines Systems liegt in der <strong>höheren, relationalen Struktur über den Teilen</strong> — Identität bis zur Äquivalenz, integrierte Information&nbsp;Φ, Selbstrepräsentation. <span class="tag b">B</span> n1-053 (große Kardinalzahlen × Betriebssystem) sagt: ein System ist eine <strong>gestufte Welt mit scharfer Zugriffs-Grenze</strong>, und das Entscheidende steht <em>über</em> dem frei zugänglichen Fundament. Zusammengefasst: Die Essenz eines Systems ist weder in seinen Teilen (Elemente, Hardware, Neuronen) noch in einer einzelnen Ebene — sie ist seine <strong>stufenförmige, höherstufige Struktur</strong>: ein gestufter Stack von Ebenen (B), dessen Identität von Relationen und Selbstreferenz über den Teilen getragen wird (A) und der an scharfen <strong>Grenzen/Toren</strong> in Regime gegliedert ist (B).</p>
+  <p>Der entscheidende gemeinsame Zug ist, dass beide Papiere die <em>erste Ordnung ablehnen</em>. A nennt es „nicht die erste Ordnung der Punkte, sondern die Struktur eine Ebene darüber“ (HoTT-Pfade, IIT-Φ, das HOT-Selbstmodell); B nennt es, dass das erreichbare Fundament (ZFC, ℵ₀, der User-Space) die ganze Struktur nie trägt — erst an der Grenze (dem inaccessible Kardinal, der User/Kernel-Linie) beginnt das, was das System <em>dieses</em> System macht. Die erste Ordnung ist bei beiden das <em>Material</em>, nicht die <em>Essenz</em>.</p>
+  <p>Die Fusion behauptet daher eine gemeinsame Form — das <strong>Grenz-Struktur-Ganze</strong>: (1) Ebenen, die untereinander stehen (B); (2) eine höhere relationale Struktur über den Teilen, die die Identität trägt (A); (3) scharfe Grenzen/Tore, an denen die Regeln des unteren Regimes enden (B); (4) eine Regel, wie (oder ob) man sie überschreitet — bei B System Call/Axiom, bei A „das Oben erzeugt das Unten“. Integration (A: das Ganze &gt; die Teile) und Grenze (B: das Regime wird an der Linie getrennt) sind nicht rivalisierend, sondern <em>zwei Gesichter desselben Ganzen</em>: die Relationen <em>zwischen</em> den Ebenen sind genau die Grenzen/Tore, und die Grenzen <em>konstituieren</em> die Ebenen.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="no">2</span>Widersprüche zwischen A und B</h2>
+  <p>Die zwei Runde-1-Papiere stehen sich auf drei Achsen gegenüber. Es sind echte, nicht konstruierte Spannungen — jede entsteht dort, wo A das <em>Zusammenhängende</em> und B das <em>Abgegrenzte</em> als tragend annimmt.</p>
+
+  <h3>W1 · Integration (A) vs. Separation (B)</h3>
+  <div class="pair">
+    <div class="box a"><h4><span class="tag a">A</span> Integration: das Ganze übersteigt die Teile</h4>
+      <p>Kennzeichen eines echten Systems ist <em>Verbindung</em>: Φ misst, wie viel <em>mehr</em> das Ganze erzeugt als seine <em>unabhängigen</em> Teile. Die höhere Struktur ist vernetzt, emergent, „das Ganze ist mehr als die Summe“.</p>
+    </div>
+    <div class="box b"><h4><span class="tag b">B</span> Separation: die Grenze schließt aus</h4>
+      <p>Das tragende Element ist eine <em>scharfe Trennung</em>: das inaccessible Kardinal ist definiert durch, was <em>nicht</em> erreichbar ist (cf(κ)=κ, 2^λ&lt;κ). Die Grenze <em>schließt aus</em>, trennt Regime, schränkt Zugriff ein — eine <em>abgegrenzte Leiter</em>, kein vernetztes Ganzes.</p>
+    </div>
+  </div>
+  <p>Unvereinbar: A idealisiert das <em>zusammenhängende Ganze</em> (Verbindung der Teile), B idealisiert die <em>klar abgegrenzte Stufe</em> (Trennung der Regime). Verbindung vs. Trennung — zwei entgegengesetzte Ideale für „was Struktur ausmacht“.</p>
+
+  <h3>W2 · Intrinsisch selbstorganisiert (A) vs. gestaltetes Protokoll (B)</h3>
+  <div class="pair">
+    <div class="box a"><h4><span class="tag a">A</span> Intrinsisch, emergent</h4>
+      <p>Die Struktur ist <em>intrinsisch</em>: Kohärenz entsteht <em>von innen</em> (IIT: intrinsische Kausalstruktur; HoTT: „Logik entsteht aus den Typregeln“); „das Oben erzeugt das Unten“. Die Grenze, wo überhaupt eine da ist, ist weich/emergent.</p>
+    </div>
+    <div class="box b"><h4><span class="tag b">B</span> Gestaltetes Protokoll</h4>
+      <p>Die Grenze ist ein <em>durchgängiges, konstruiertes Protokoll</em>: ein System Call, eine Page Table, ein postuliertes Axiom — ein <em>bewusster, erlaubter</em> Mechanismus. Die Grenze ist ein engineering-Maßnahme/gerät, keine Emergenz.</p>
+    </div>
+  </div>
+  <p>Unvereinbar: A <em>entdeckt/emergiert</em> die höhere Struktur (sie ist dem System eigen), B <em>konzertiert/postuliert</em> sie (es ist ein bewusster Regimewechsel). Entdeckte Emergenz vs. konstruiertes Protokoll.</p>
+
+  <h3>W3 · Kontinuierlich/homotopisch (A) vs. diskret/hart (B)</h3>
+  <div class="pair">
+    <div class="box a"><h4><span class="tag a">A</span> Kontinuierlich, ein Gradient</h4>
+      <p>Die höhere Struktur ist <em>kontinuierlich</em>: Φ ist eine <em>Skalare Größe</em> (0 / &gt;0 / ≫0), der Pfadraum Id(A,a,b) ist ein <em>Raum</em> (homotopisch, ∞-Gruppoid). Integration ist ein <em>Gradient</em>, kein Schalter.</p>
+    </div>
+    <div class="box b"><h4><span class="tag b">B</span> Diskret, ein Schalter</h4>
+      <p>Die Struktur ist eine <em>diskrete Leiter</em> mit <em>binärem</em> Regimewechsel (User/Kernel, unten/oben). Die Grenze ist eine <em>harte, diskrete Linie</em> an einer bestimmten Sprosse; das Tor ist ein <em>Binärschalter</em>.</p>
+    </div>
+  </div>
+  <p>Unvereinbar: A hat einen <em>gradienten, kontinuierlichen</em> höheren Rahmen; B eine <em>diskrete Leiter mit hartem Schwellwert</em>. Gradient vs. Schalter.</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="no">3</span>Auflösung</h2>
+
+  <h3>Zu W1 — Integration <em>ist</em> Abgrenzung</h3>
+  <p>Eine Ebenen-Struktur ist <em>zugleich</em> durch ihre innere Verbindung (das Ganze &gt; Teile, A) <em>und</em> durch die Grenzen definiert, die ihre Ebenen voneinander trennen (B). Die Grenze ist das Gegenstück zur Integration nicht — sie ist <em>das, wodurch eine Ebene eine Ebene ist</em>. Φ (A) misst die Verbindung; die inaccessible-Grenze (B) markiert, wo ein Regime <em>aufhört</em> und die höhere Struktur <em>beginnt</em>. <span class="math">Identität = Integration × Grenze</span>. Die Relation <em>zwischen</em> den Ebenen (A) und das Tor <em>an</em> der Grenze (B) sind dieselbe Struktur — einmal von innen (A), einmal am Fugenpunkt (B) gesehen.</p>
+
+  <h3>Zu W2 — Das Protokoll <em>ist</em> die intrinsische Übergangsregel</h3>
+  <p>B beschreibt die Grenze als <em>gestaltetes</em> Protokoll (System Call/Axiom/Page Table) — aber dieses Protokoll ist <em>dem System eigen</em>, kein äußerer Rahmen: es ist die <em>eigene</em> Übergangsregel, wie das System <em>von sich aus</em> ein Regime wechselt. A sagt genau das mit „das Oben erzeugt das Unten“ und „intrinsische Kausalstruktur“. Jedes Tor/Postulat ist <em>extern</em> als Protokoll beschreibbar (B) und <em>intern</em> die eigene, intrinsische Übergangsregel des Systems (A). B's „designed system call“ <em>ist</em> A's „intrinsische höhere Struktur“, ausgedrückt als Regel. Die Grenze ist kein fremdes Ding — sie ist die <em>eigene Selbstübergangsregel</em> des Grenz-Struktur-Ganzen.</p>
+
+  <h3>Zu W3 — Der Gradient erzeugt den Schalter</h3>
+  <p>Die kontinuierliche höhere Struktur (A) <em>trägt</em> die diskrete Grenze (B): Φ (ein Gradient) wird, an der Grenze überschritten, zum <em>diskreten</em> Regimewechsel („bewusst/nicht“, „erreichbar/postuliert“). Der Pfadraum (kontinuierlich, A) wird an der Schwelllinie (diskret, B) in Regime <em>geschnitten</em>. Die Grenze hat zwei Gesichter — ein <em>topologisches</em> (der Gradient, der Pfadraum, A) und ein <em>diskretes</em> (der Schalter, das Regime, B) — und der Schalter ist genau die <em>Schwellung</em> des Gradienten: <span class="math">kontinuierlicher Rahmen (A) + Schwellung an der Grenze (B) = Regimewechsel</span>.</p>
+
+  <div class="callout">
+    <p><strong>Gefasste Schlussposition:</strong> Die Essenz eines Systems ist seine <strong>Ebenen-Struktur</strong>: ein gestufter Stack (B), dessen Identität die <em>höhere relationale Struktur über den Teilen</em> trägt (A), gegliedert in <em>Grenzen/Toren</em> (B), die <em>intrinsische Übergangsregeln</em> sind (A) und an denen der <em>kontinuierliche</em> höhere Rahmen (A) zum <em>diskreten</em> Regimewechsel wird (B). Die erste Ordnung (Teile, Hardware, Elemente) trägt nie die Essenz; die Essenz ist das <em>Grenz-Struktur-Ganze</em> — verbunden <em>und</em> abgegrenzt, intrinsisch <em>und</em> als Protokoll beschreibbar, kontinuierlich <em>und</em> diskret geschwellig.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+  <p>Beide Papiere sind selbst schon Fusionspapiere; auf der Ebene <em>ihrer Thesen</em> teilen sie ein gemeinsames Skelett mit vier Teilen: <strong>Ebenen</strong> (geordnete Stufen), eine <strong>höhere relationale Struktur</strong> über den Teilen (die die Identität trägt), <strong>Grenzen/Toren</strong> (scharfe Linien, an denen ein Regime endet) und eine <strong>Überschreitungsregel</strong> (System Call/Axiom bzw. „das Oben erzeugt das Unten“).</p>
+
+  <p><strong>Beitrag A (abstrahiert):</strong> Identität ist zweitrangig/relational — in HoTT ist Gleichheit ein <em>Pfadraum</em> (verschiedene Arten, gleich zu sein), Univalence macht Äquivalenz zu Identität, und der Kreis S¹ (Punkt <span class="math">base</span> + Pfad <span class="math">loop : base = base</span>) ist ein sich selbst referenzierendes System, aus dem <span class="math">π₁(S¹) ≅ ℤ</span> <em>abgeleitet</em> (nicht axiomatisch) folgt. Auf der Bewusstseinsseite: HOT (Selbstrepräsentation), IIT (Φ = irreduzible integrierte Information), GWT (globaler Workspace als höherer Rahmen), PP/Re-Entry (lokal-rekursive Kohärenz). Grundspannung: <em>Inhalt</em> (Teile, formelle Struktur) ist zerleg- und berechenbar; <em>Identität/Essenz</em> (Φ, Selbstrepräsentation, Pfade-bis-zur-Äquivalenz) ist irreduzibel — „formell prüfbar“ vs. „physikalisch gemessen“.</p>
+
+  <p><strong>Beitrag B (abstrahiert):</strong> ein gestufter Stack mit scharfer Grenze. Das inaccessible Kardinal κ ist die <em>User/Kernel-Grenze der Mengenlehre</em>; die stärkeren großen Kardinals (measurable, supercompact, …) sind die „privilegierten System Calls“ — postulierte Regimewechsel. Die elementare Einbettung <span class="math">j : V → M</span> ist die <em>„Page Table“ des Universums</em>: sie übersetzt das echte Universum V ins Modell M und erhält dabei Struktur (Elementarität), wie eine Adressübersetzung die Programmausführung erhält. Zwei entgegengesetzte Achsen derselben Form: <em>Beweiskraft</em> (steigt nach oben) vs. <em>Privileg</em> (steigt nach unten); und zwei Darstellungen derselben Struktur: <em>statische Skala</em> (was gilt) vs. <em>Laufzeit-Stack</em> (wie es läuft). Ganz oben: Kunen (keine <span class="math">j:V→V</span>) / „0=1“ = die harte Decke, über die kein Regimewechsel mehr führt.</p>
+
+  <p><strong>Die Fusion:</strong> A's höhere relationale Struktur <em>ist</em> die Ebenen-Struktur; macht man die Ebenen explizit, <em>erscheinen</em> die Relationen zwischen den Ebenen als die Grenzen/Tore von B. Das fused Emblem: der Kreis S¹ (A) gelesen als <em>Ebene, die über ein Tor sich selbst referenziert</em>; Φ (A) als kontinuierliche Integration, die <em>an der Grenze</em> (B) das diskrete Regime umschaltet; das inaccessible Kardinal (B) als die <em>Ebene, an der die Regeln des unteren Regimes enden und die höhere relationale Struktur (A) beginnt</em> — genau dort, wo A's „höhere Struktur“ anfängt. Die erste Ordnung ist überall nur Material; die Essenz sitzt in der Fuge — an der Grenze.</p>
+
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>A · höhere Struktur</th><th>B · Grenze / Stack</th><th>Fusion</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Wo die Essenz sitzt</td><td>über den Teilen, in Relationen/Pfaden/Selbstreferenz</td><td>an den Fugen/Grenzen zwischen den Ebenen</td><td>im Grenz-Struktur-Ganzen (verknüpft <em>und</em> abgegrenzt)</td></tr>
+      <tr><td>Kernobjekt</td><td>Φ / Pfadraum / Kreis S¹</td><td>inaccessible κ / <span class="math">j:V→M</span> / Tor</td><td>das Tor <em>ist</em> die Relation; die höhere Relation <em>ist</em> die Grenze</td></tr>
+      <tr><td>Mechanismus</td><td>Selbstreferenz (HOT), Integration (IIT), Äquivalenz (HoTT)</td><td>Regimewechsel (Syscall/Axiom), Übersetzung (Page Table)</td><td>Selbstreferenz <em>über einem Tor</em> = höhere Struktur, die eine Ebene überschreitet</td></tr>
+      <tr><td>Richtung</td><td>oben erzeugt unten (intrinsisch)</td><td>Beweiskraft ↑ / Privileg ↓; Überschreitung = Regimewechsel</td><td>das Obere erzeugt das Untere <em>und</em> die Grenze ist der Ort des Regimewechsels</td></tr>
+      <tr><td>Formell vs. Essenz</td><td>formell berechenbar, Essenz irreduzibel</td><td>statische Skala vs. Laufzeit; Übersetzung erhält Struktur</td><td>berechenbare formelle Schicht + irreduzibel/übersetzte Essenz, <em>erhalten</em> über die Grenze</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="no">5</span>Visualisierung: derselbe Stack, zwei Gesichter der Grenze</h2>
+  <p>Ein einzelner Ebenen-Stack mit einer scharfen <strong>Grenze/Tor</strong> (rot gestrichelt). Bewege den Regler: der Cursor „Du“ steigt die Leiter. Die <em>kontinuierliche</em> Integration (Φ, A) füllt die Stufen von unten her — ein Gradient. Überschreitet der Cursor die Grenze, schaltet sich das <em>diskrete</em> Regime oberhalb der Linie um (privilegiert, B). Das ist der fused Zug in einem Bild: <span class="tag a">A</span> der kontinuierliche höhere Rahmen (Gradient, Φ) und <span class="tag b">B</span> das diskrete Tor (Schwellung) am selben Ort.</p>
+
+  <div class="viz-controls">
+    <label for="sld">Ebenen-Position / Integration</label>
+    <input type="range" id="sld" min="0" max="6" step="0.1" value="2.5">
+    <button class="btn" id="themeBtn" type="button">☀️ Hell</button>
+  </div>
+
+  <canvas id="viz" width="800" height="460"></canvas>
+  <div class="viz-out" id="vizOut"></div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="no">6</span>Provenienz</h2>
+  <div class="prov">
+    <a href="../n1-067.html">n1-067.html</a>
+    <p>„Höhere Struktur als Grundlage (Bewusstsein ✕ HoTT)“ — Runde 1: die Essenz liegt in der höheren relationalen Struktur über den Teilen (IIT-Φ, HOT, HoTT-Pfade/Univalence); Identität ist zweitrangig, relation und intrinsisch; Inhalt zerlegbar, Essenz irreduzibel.</p>
+  </div>
+  <div class="prov">
+    <a href="../n1-053.html">n1-053.html</a>
+    <p>„Die Architektur der Grenze — Leitern, Schichten und das Unzugängliche“ — Runde 1: ein gestufter Stack mit scharfer Zugriffs-Grenze; das inaccessible Kardinal als User/Kernel-Grenze, <span class="math">j:V→M</span> als Page Table, stärkere Kardinals als privilegierte System Calls; Beweis-Kraft- und Privilegachse, statische Skala vs. Laufzeit.</p>
+  </div>
+</section>
+
+<footer>Fusion N2-021 · nicht-KI-Track · Runde 2 · selbständige, offline-fähige Seite (keine Netz-Daten). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var ctx=canvas.getContext('2d');
+  var slider=document.getElementById('sld');
+  var out=document.getElementById('vizOut');
+  var themeBtn=document.getElementById('themeBtn');
+  var LEVELS=[
+    {n:'Teile (1. Ordnung)'},
+    {n:'Relationen'},
+    {n:'Integriertes Ganzes'},
+    {n:'Grenze / Tor'},
+    {n:'höhere Struktur'},
+    {n:'Selbstreferenz (HOT / loop)'},
+    {n:'Essenz / Regime'}
+  ];
+  var BOUND=3, N=LEVELS.length, HT=460;
+
+  function cssVar(n){return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim();}
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(140,140,160,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);return;}
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+
+  function render(){
+    if(!ctx)return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||700;
+    canvas.width=Math.round(W*dpr);
+    canvas.height=Math.round(HT*dpr);
+    canvas.style.height=HT+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,HT);
+    ctx.fillStyle=cssVar('--mn-canvas')||'#0b1220';
+    ctx.fillRect(0,0,W,HT);
+
+    var topPad=64, botPad=44;
+    var step=(HT-topPad-botPad)/(N-1);
+    var cx=W*0.5;
+    var boxW=Math.min(W*0.6,330), boxH=Math.min(52,step*0.82);
+    function yFor(i){return (HT-botPad)-i*step;}
+    var p=parseFloat(slider.value)||0;
+    var active=Math.round(p);
+    var fg=cssVar('--mn-text')||'#111';
+    var dim=cssVar('--mn-muted')||'#888';
+    var border=cssVar('--mn-border')||'#ccc';
+    var panel2=cssVar('--mn-panel2')||'#111c33';
+    var panel=cssVar('--mn-panel')||'#131a2b';
+    var acc=cssVar('--mn-accent')||'#2dd4bf';
+    var acc2=cssVar('--mn-accent2')||'#c084fc';
+    var gate=cssVar('--mn-gate')||'#f87171';
+
+    // continuous integration gradient (A) — fills from bottom up to cursor
+    ctx.lineWidth=4;
+    for(var i=0;i<N-1;i++){
+      var fill=clamp(p-i,0,1);
+      if(fill>0.02){
+        var yA=yFor(i), yB=yFor(i+1);
+        var yEnd=yA+(yB-yA)*fill;
+        ctx.strokeStyle=acc; ctx.globalAlpha=0.35+0.5*fill;
+        ctx.beginPath(); ctx.moveTo(cx,yA); ctx.lineTo(cx,yEnd); ctx.stroke();
+        ctx.globalAlpha=1;
+      }
+    }
+
+    // boundary band (B)
+    var by=yFor(BOUND);
+    ctx.fillStyle=hexToRgba(gate,0.15);
+    ctx.fillRect(cx-boxW/2,by-13,boxW,26);
+    ctx.strokeStyle=gate; ctx.setLineDash([6,4]); ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(cx-boxW/2,by); ctx.lineTo(cx+boxW/2,by); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // self-reference loop (A) above the gate
+    if(p>=4.4){
+      var aa=clamp((p-4.4)/1.2,0,1);
+      ctx.globalAlpha=aa*0.85;
+      ctx.strokeStyle=acc2; ctx.lineWidth=2.6; ctx.setLineDash([9,6]);
+      var topY=yFor(N-1);
+      ctx.beginPath();
+      ctx.moveTo(cx+boxW*0.30, topY+2);
+      ctx.bezierCurveTo(cx+boxW*0.72, topY-46, cx+boxW*0.72, topY+42, cx+boxW*0.30, topY+34);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha=1;
+      ctx.fillStyle=acc2; ctx.font='bold 12px Segoe UI, system-ui, sans-serif'; ctx.textAlign='left';
+      ctx.fillText('Selbstreferenz (HOT / loop : base = base)', cx+boxW*0.32, topY-30);
+    }
+
+    // level boxes
+    for(var j=0;j<N;j++){
+      var y=yFor(j);
+      var isCursor=(j===active);
+      var aboveGate=(j>BOUND);
+      var activeAbove=(aboveGate && p>BOUND+0.001);
+      var fill=panel2;
+      if(isCursor){fill=panel;}
+      else if(activeAbove){fill=hexToRgba(acc2,0.16);}
+      ctx.fillStyle=fill;
+      roundRect(cx-boxW/2,y-boxH/2,boxW,boxH,9); ctx.fill();
+      var strokeC=border;
+      if(isCursor){strokeC=acc;}
+      else if(aboveGate){strokeC=activeAbove?acc2:gate;}
+      else if(j>0 && j<=active){strokeC=acc;}
+      ctx.lineWidth=isCursor?2.6:1.2;
+      ctx.strokeStyle=strokeC;
+      roundRect(cx-boxW/2,y-boxH/2,boxW,boxH,9); ctx.stroke();
+      var txtColor=fg;
+      if(isCursor){txtColor=acc;}
+      else if(aboveGate){txtColor=acc2;}
+      ctx.fillStyle=txtColor;
+      ctx.font=(isCursor?'bold ':'')+'13px Segoe UI, system-ui, sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText(LEVELS[j].n, cx, y+4);
+    }
+
+    // boundary label
+    ctx.font='bold 11px Segoe UI, system-ui, sans-serif';
+    ctx.fillStyle=gate; ctx.textAlign='left';
+    ctx.fillText('Grenze / Tor (inaccessible κ = User/Kernel)', cx+boxW/2+6, by+4);
+
+    // cursor line (B) "Du"
+    var cy=yFor(p);
+    ctx.strokeStyle=acc; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx-boxW/2-14,cy); ctx.lineTo(cx+boxW/2+14,cy); ctx.stroke();
+    ctx.fillStyle=acc;
+    ctx.beginPath();
+    ctx.moveTo(cx+boxW/2+14,cy-6); ctx.lineTo(cx+boxW/2+24,cy); ctx.lineTo(cx+boxW/2+14,cy+6);
+    ctx.closePath(); ctx.fill();
+    ctx.font='bold 12px Segoe UI, system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Du', cx+boxW/2+28, cy+4);
+
+    // title + axis
+    ctx.fillStyle=fg; ctx.font='bold 15px Segoe UI, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Ebenen-Struktur: kontinuierliche Integration (A) × diskretes Tor (B)', W/2, 34);
+    ctx.save(); ctx.translate(16,HT/2); ctx.rotate(-Math.PI/2);
+    ctx.fillStyle=dim; ctx.font='12px Segoe UI, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('← 1. Ordnung   …   höhere Ordnung →',0,0);
+    ctx.restore();
+
+    // readout
+    var phi=(p/6*10).toFixed(1);
+    var reg, rc;
+    if(p<BOUND-0.001){ reg='unterhalb der Grenze — 1. Ordnung (erreichbar, dekomponierbar)'; rc='--mn-accent'; }
+    else if(p>BOUND+0.001){ reg='oberhalb der Grenze — höhere Struktur (privilegiert, irreduzibel)'; rc='--mn-accent2'; }
+    else { reg='am Tor — Regimewechsel (Grenze / System Call / Axiom)'; rc='--mn-gate'; }
+    out.innerHTML='Φ ≈ <b>'+phi+'</b> &nbsp;·&nbsp; <b style="color:var('+rc+')">'+reg+'</b><br>'+
+      '<span class="hl">A · kontinuierlich</span>: Gradient füllt die Stufen (Φ) &nbsp;→&nbsp; '+
+      '<span class="hl">B · diskret</span>: an der Grenze kippt das Regime (Tor)';
+    themeBtn.textContent=document.documentElement.classList.contains('dark')?'☀️ Hell':'🌙 Dunkel';
+  }
+
+  function refresh(){render();}
+  if(themeBtn){themeBtn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');refresh();});}
+  if(slider){slider.addEventListener('input',refresh);}
+  window.addEventListener('resize',refresh);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){refresh();});}
+  refresh();
+})();
+</script>
+</body>
+</html>

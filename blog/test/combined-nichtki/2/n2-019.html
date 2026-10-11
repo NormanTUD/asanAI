@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Dazwischen ist die Substanz — Struktur als Medium, Identität als Prozess</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --fg:#1c1b22; --muted:#5c5a63; --card:#ffffff; --card2:#faf8f2;
+    --border:#ddd6c8; --accent:#2563eb; --accent2:#b45309; --coral:#be123c;
+    --h1-grad-a:#2563eb; --h1-grad-b:#b45309;
+    --viz-bg:#f4f1e8; --viz-grid:#e2dccb; --viz-accent:#2563eb; --viz-accent2:#b45309;
+    --viz-coral:#e11d48; --viz-ray:#0284c7; --viz-txt:#1e293b; --viz-muted:#64748b;
+    --viz-nb:rgba(37,99,235,0.14); --viz-nb-stroke:rgba(37,99,235,0.55);
+    --viz-invariant:#b45309; --viz-point:#2563eb; --viz-point-fill:#ffffff;
+  }
+  html.dark{
+    --bg:#0f172a; --fg:#e6e9ef; --muted:#98a2b3; --card:#111c30; --card2:#0d1526;
+    --border:#26344d; --accent:#60a5fa; --accent2:#fbbf24; --coral:#fb7185;
+    --h1-grad-a:#60a5fa; --h1-grad-b:#fbbf24;
+    --viz-bg:#0b1322; --viz-grid:#1b2740; --viz-accent:#60a5fa; --viz-accent2:#fbbf24;
+    --viz-coral:#fb7185; --viz-ray:#38bdf8; --viz-txt:#e6e9ef; --viz-muted:#7d8aa3;
+    --viz-nb:rgba(96,165,250,0.16); --viz-nb-stroke:rgba(96,165,250,0.6);
+    --viz-invariant:#fbbf24; --viz-point:#60a5fa; --viz-point-fill:#0b1322;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  article{max-width:820px; margin:0 auto; padding:40px 20px 80px;}
+  h1{
+    font-size:2.0rem; line-height:1.2; margin:0 0 6px;
+    background:linear-gradient(90deg,var(--h1-grad-a),var(--h1-grad-b));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .subtitle{color:var(--muted); font-size:.95rem; margin:0 0 4px; font-family:ui-monospace,Menlo,monospace;}
+  .lede{color:var(--muted); font-size:1.02rem; margin:14px 0 30px; border-left:3px solid var(--accent); padding-left:14px;}
+  section{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:22px 24px; margin:20px 0;
+  }
+  section h2{font-size:1.32rem; margin:0 0 12px; color:var(--fg);}
+  section h2 .tag{
+    display:inline-block; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--card2); border:1px solid var(--border); color:var(--muted);
+    padding:2px 8px; border-radius:20px; vertical-align:middle; margin-left:8px;
+  }
+  h3{font-size:1.08rem; margin:18px 0 8px;}
+  p{margin:10px 0;}
+  .whoA{color:var(--accent); font-weight:600;}
+  .whoB{color:var(--accent2); font-weight:600;}
+  .claim{
+    background:var(--card2); border-left:3px solid var(--border);
+    padding:8px 14px; margin:8px 0; border-radius:0 8px 8px 0; font-size:.95rem;
+  }
+  .claimA{border-left-color:var(--accent);}
+  .claimB{border-left-color:var(--accent2);}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+  .resbox{background:var(--card2); border:1px dashed var(--border); border-radius:10px; padding:12px 14px; margin:10px 0;}
+  .resbox h3{margin:0 0 6px; font-size:1.02rem;}
+  .fused{background:linear-gradient(90deg,rgba(180,83,9,0.10),transparent); border-left:3px solid var(--accent2); padding:10px 14px; border-radius:0 8px 8px 0; margin-top:12px; font-weight:500;}
+  code{background:var(--card2); border:1px solid var(--border); padding:1px 6px; border-radius:5px; font-size:.9em; font-family:ui-monospace,Menlo,monospace;}
+  .math{font-family:ui-monospace,Menlo,monospace; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:10px 14px; display:block; margin:12px 0; overflow-x:auto; line-height:1.9;}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.9em;}
+  th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{color:var(--accent2); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  .viz-wrap{position:relative; margin-top:6px;}
+  canvas#vizCanvas{display:block; width:100%; height:auto; max-width:860px; margin:0 auto; border:1px solid var(--border); border-radius:12px; background:var(--viz-bg);}
+  .controls{display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:center; margin:14px 0 6px;}
+  .ctl{display:flex; flex-direction:column; gap:4px; min-width:280px;}
+  .ctl label{font-size:.85rem; color:var(--muted); display:flex; justify-content:space-between;}
+  .ctl input[type=range]{width:100%; accent-color:var(--accent);}
+  .readout{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:6px;}
+  .chip{background:var(--card2); border:1px solid var(--border); border-radius:20px; padding:5px 14px; font-size:.88rem;}
+  .chip b{color:var(--accent);}
+  .chip.gold b{color:var(--accent2);}
+  button.toggle{
+    background:var(--card2); color:var(--fg); border:1px solid var(--border);
+    padding:8px 16px; border-radius:20px; cursor:pointer; font-size:.88rem;
+  }
+  button.toggle:hover{border-color:var(--accent);}
+  .legend{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:10px; font-size:.82rem; color:var(--muted);}
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid var(--border);}
+  .prov li{margin:8px 0;}
+  .prov a{color:var(--accent); text-decoration:none; font-weight:600;}
+  .prov a:hover{text-decoration:underline;}
+  .prov small{color:var(--muted); display:block;}
+  .note{font-size:.85rem; color:var(--muted);}
+</style>
+</head>
+<body>
+<article>
+  <h1>Das Dazwischen ist die Substanz</h1>
+  <p class="subtitle">Fusion aus: n1-061.html ✕ n1-023.html  (Runde 2)</p>
+  <p class="lede">
+    Zwei Rund-1-Papiere, die auf den ersten Blick kaum zusammengehören — das eine über
+    <em>Topologie als Relationsstruktur und Trennungsaxiome als Constraints</em>, das andere über
+    <em>Identität als Prozess (Bordismus trifft Nervenfeld)</em> — laufen auf denselben tieferen Satz:
+    <strong>Die Form (Punkt, Rand, Zustand) ist der Schatten; das Dazwischen (die offene Relation,
+    das Medium <em>W</em>) ist die Substanz.</strong> „Gleichsein“ und „Wohldefiniertsein“ sind immer
+    eine <em>Relation durch dieses Medium</em>, nie eine Eigenschaft an sich.
+  </p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion <span class="tag">A ∩ B</span></h2>
+    <p>
+      <span class="whoA">A</span> (n1-061) sagt: Ein topologischer Raum ist eine <em>Relationsstruktur</em>
+      auf einer Menge — die Topologie τ (offene Mengen / Umgebungen) festlegt, wie Punkte zueinander stehen.
+      Die Trennungsaxiome (T₀ &lt; T₁ &lt; T₂ &lt; … &lt; T₄, dazu Abzählbarkeit, Metrisierbarkeit) sind eine
+      <em>Constraint-Familie</em> auf dieser Struktur; sie regeln, wie stark die Topologie zwei Punkte
+      <em>unterscheiden</em> darf, und machen an ihrem oberen Ende Grenzwerte eindeutig.
+      <span class="whoB">B</span> (n1-023) sagt: Eine Mannigfaltigkeit <em>M</em> ist keine Substanz — sie ist
+      <em>definiert als</em> der Rand <code>∂W</code> eines höheren Mediums <em>W</em>; zwei Ränder sind
+      „dasselbe“ (bordant), wenn ein gemeinsames Inneres <em>W</em> zwischen ihnen läuft. Der Rand ist der
+      Schatten, <em>W</em> die Substanz; „Das Dazwischen tut die Arbeit“.
+    </p>
+    <p>
+      Die <strong>einteilige, fusionierte Position</strong>: <em>Die Topologie (A) ist genau das Medium (B) —
+      lokal geschnitten.</em> Ein Punkt von A steht in seinen Umgebungen, so wie ein Rand von B im Medium
+      <em>W</em> steckt; in beiden Fällen ist die Identität / das Wohldefiniertsein einer Form keine
+      Eigenschaft der Form selbst, sondern eine <em>Relation durch das Dazwischen</em>. Und in beiden
+      Papiern ist das Interessante nicht an den starren Polen, sondern in der <em>Bewegung</em> des Mediums:
+      <span class="whoA">A</span> braucht die volle Trennung als <em>Bühne</em>, auf der die Dynamik
+      (Attraktoren, Bifurkation) eindeutig abläuft; <span class="whoB">B</span> braucht die Invariante
+      (Bordismengruppe / Weltordnung), die die Bewegung überlebt.
+    </p>
+    <p>
+      Ein Satz, der beide deckt: <em>Identität ist relativ zum Medium, Lesbarkeit relativ zur Trennung,
+      und Leben ist die Bewegung des Mediums auf seiner eigenen Schnittfläche.</em> A liefert die
+      <em>Lesbarkeit</em> (Trennung macht jeden Zustand wohldefiniert), B liefert die <em>Kohärenz</em>
+      (das Medium macht die Abfolge der Zustände zu einem Prozess), und die <em>Invariante</em> — bei A
+      eindeutige Grenzwerte, bei B die geschlossene Gruppe — ist das, was die Bewegung überlebt.
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B <span class="tag">Haltung / Struktur</span></h2>
+    <p class="note">
+      Die beiden sind selbst schon Fusionen sehr verschiedener Rohquellen (Topologie+Komplexität einerseits,
+      Bordismus+Schreber andererseits) und erheben <em>keine</em> widersprüchlichen faktischen Behauptungen
+      über eine gemeinsame Sache. Auf der Ebene von <strong>Haltung und Ontologie</strong> bestehen aber drei
+      scharfe, echte Spannungen, die dieselbe Struktur aus entgegengesetzten Positionen betrachten:
+    </p>
+
+    <h3>1. Wer ist primär — das gegebene Fundament (A) oder der Prozess (B)?</h3>
+    <div class="grid2">
+      <div class="claim claimA"><span class="whoA">A (Auflösung #3):</span> „A's statische Topologie IST B's
+        'Constraint' (das feste Regelwerk, 'Menge + Relationen'). B's Dynamik sind die Trajektorien, die
+        <em>diesem Constraint unterworfen</em> sind. Die Struktur (A) ist die <em>Bühne</em> … die der
+        Constraint beherbergt.“ → Das Fundament ist <em>gegeben und fix</em>; der Prozess ist darauf
+        nachgeordnet.</div>
+      <div class="claim claimB"><span class="whoB">B (Kernthese):</span> „Das Ding ist keine Substanz, sondern
+        ein <em>Prozess</em>. … Der Rand ist der Schatten; <em>W</em> ist die Substanz. … Das Dazwischen tut
+        die Arbeit — der Rand wandelt sich, das Medium bleibt und vollzieht die Wandlung.“ → Es gibt <em>kein</em>
+        gegebenes statisches Fundament; der Prozess/das Medium ist die Substanz, primär.</div>
+    </div>
+    <p class="note"><strong>Unvereinbare Stance:</strong> Struktur-first (A: die fixe Bühne trägt den Prozess)
+      vs. Prozess-first (B: das Medium ist die Substanz, die Form nur ihr Schatten).</p>
+
+    <h3>2. Was ist der Wert — Unterscheidbarkeit (A) oder Gleichheit-obwohl-verschieden (B)?</h3>
+    <div class="grid2">
+      <div class="claim claimA"><span class="whoA">A:</span> Die ganze Maschine ist die
+        <em>Trennungshierarchie</em> — sie „regeln, wie stark die Topologie zwei Punkte voneinander
+        <em>unterscheiden</em> darf“; der (Roh-)Nordstern war <em>volle</em> Trennung (Metrisierbarkeit,
+        eindeutige Grenzwerte); „T₂ Hausdorff (disjunkt)“ ist der Kern der Unterscheidbarkeit. Der Wert liegt
+        im <em>Distinguierbaren</em> — tellable apart.</div>
+      <div class="claim claimB"><span class="whoB">B:</span> „zwei Ränder M₁, M₂ sind <em>'dasselbe'</em>
+        (bordant) genau dann, wenn ein gemeinsames Inneres W zwischen ihnen läuft“; das Ich bleibt (Identität),
+        obgleich sich die Form wandelt; der „Sieg“ = die Invariante bleibt. Der Wert liegt im
+        <em>Gleichen-obwohl-verschieden</em> — der Verbindung durch das Medium.</div>
+    </div>
+    <p class="note"><strong>Unvereinbare Stance:</strong> A feiert <em>Distinktion</em> (max. Trennung); B feiert
+      <em>Identität</em> (Gleichheit trotz Unterschied). Die Bewertung der Relation zwischen zwei verschiedenen
+      Dingen ist entgegengesetzt.</p>
+
+    <h3>3. Wo sitzt das Wertvolle — die generative Mitte (A) oder die Invariante (B)?</h3>
+    <p>
+      <span class="whoA">A:</span> „Die beiden Enden sind 'starr' (Symmetrie bzw. Regularität), <em>die Mitte
+      ist generativ</em>“ — Bifurkation, Selbstorganisation und Attraktoren leben in der Mitte, nicht an den
+      Polen. Der Wert liegt in einer <em>dynamischen Zone</em> eines Ranges; das Fixe (Fundament) ist der
+      unwertvolle Grund. <span class="whoB">B:</span> Das Wertvolle ist die <em>Invariante</em> — „die Heilmittel
+      in sich selbst“, „siegt am Ende“ — die erhaltene Struktur (Bordismengruppe / Weltordnung), die die Krise
+      überlebt; „Schrebers 'Sieg' ist der Satz, dass die Invariante bleibt“. Der Wert liegt in dem
+      <em>Statisch-Behaltenden</em>. <strong>Spannung:</strong> A nennt die Mitte das Wertvolle und das Fundament
+      den Grund; B macht das Fixe (die Invariante) selbst zum Wertvollen.
+    </p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung <span class="tag">für jeden Punkt</span></h2>
+
+    <div class="resbox">
+      <h3>1. Struktur ist die Zeitschnitte des Prozesses — das Medium ist die Struktur in Bewegung</h3>
+      <p>Das Medium <em>W</em> (B) <em>ist</em> die Topologie (A) — lokal geschnitten. A's „gegebene Bühne“ ist
+        kein externes Fixum, sondern der <em>lokale Querschnitt</em> des Mediums zu einem Zeitpunkt: die offenen
+        Mengen τ sind die lokale Struktur von <em>W</em>. A's Constraint = die lokale Struktur des Mediums; B's
+        Medium = die Struktur über die Zeit. <em>Fusion:</em> Es gibt kein externes Fundament — die „Bühne“ (A)
+        ist der Querschnitt des Mediums (B) in einer Zeitschnitte; der Prozess (B) ist die Struktur (A) in der
+        Zeit. <strong>Struktur = Zeitschnitte des Prozesses; Prozess = Struktur in Bewegung.</strong> A's
+        „Bühne“ und B's „Substanz“ sind dasselbe Objekt, in einer Schnitte bzw. in der Abfolge betrachtet.</p>
+    </div>
+
+    <div class="resbox">
+      <h3>2. Trennung gilt innerhalb eines Zustands, Identität über Zustände hinweg</h3>
+      <p>Beides wird gebraucht, auf verschiedenen Ebenen. A's Trennung ist <em>lokal / intra-state</em>: innerhalb
+        eines gegebenen Querschnitts (Hausdorff-Raum) müssen Zustände/Grenzwerte unterscheidbar sein (T₂,
+        eindeutige Grenzwerte), damit der Prozess wohldefiniert ist. B's Identität ist <em>global / cross-state</em>:
+        die verschiedenen Ränder/Querschnitte sind „dasselbe“, weil dasselbe Medium durch sie läuft.
+        <em>Fusion:</em> <strong>Trennung (A) macht jeden Zustand des Mediums lesbar; Identität-durch-Medium (B)
+        macht die Abfolge der Zustände zu einem kohärenten Prozess.</strong> „Unterscheidbar“ (A) gilt
+        <em>innerhalb</em> eines Zustands; „dasselbe“ (B) gilt <em>über</em> Zustände hinweg. Ohne Trennung
+        verlaufen die Zustände des Mediums (keine eindeutigen Grenzwerte, kein lesbarer Querschnitt); ohne
+        Identität sind sie getrennte Schnappschüsse. Das Medium (B) liefert die Identität, die Trennung (A) die
+        Lesbarkeit.</p>
+    </div>
+
+    <div class="resbox">
+      <h3>3. Leben = Invariante + Bewegung</h3>
+      <p>Der Wert ist in <em>beidem</em>, ko-lokalisiert. A's generative Mitte ist der Bereich, wo das Medium sich
+        tatsächlich <em>umformt</em> (Bifurkation, der Rand wandelt) — genau wo B's Prozess seine Arbeit tut
+        („Das Dazwischen tut die Arbeit“). B's Invariante ist das, was durch die Bewegung konstant bleibt
+        (Bordismengruppe / Hausdorff-Wohlverhalten). <em>Fusion:</em>
+        <strong>Die Bewegung (A's Mitte = B's „Dazwischen“) ist generativ genau, weil sie von einer Invariante
+        begrenzt ist; die Invariante ist bedeutsam genau, weil sie durch generative Bewegung persistiert.</strong>
+        Die starren Pole (A's „starr“-Enden) sind, wo die Bewegung <em>stoppt</em> (keine Umformung) → tot; die
+        Invariante allein, ohne Bewegung, ist nur ein statisches Axiom → auch tot. Leben = Invariante + Bewegung.</p>
+    </div>
+    <p class="fused">
+      Fusionierter Schluss: <em>Das Dazwischen (Topologie = Relationsstruktur, Bordismus-Medium W) ist die
+      Substanz. Trennung (A) macht die Zustände lesbar, Identität-durch-Medium (B) macht die Abfolge zu einem
+      Prozess, und die Invariante (eindeutige Grenzwerte / geschlossene Bordismengruppe) ist das, was die
+      Bewegung überlebt. Die Form ist der Schatten; das Medium bleibt und vollzieht die Wandlung.</em>
+    </p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt <span class="tag">auf der Ebene der Thesen</span></h2>
+
+    <p>
+      Beide Papiere sind schon Synthesen; hier wird auf der Ebene <em>ihrer Positionen</em> abstrahiert. Der
+      gemeinsame Kern ist eine <strong>Medium-Ontologie</strong>: eine Form trägt keine Identität an sich,
+      sondern ist eine Schnitte eines Mediums; „Gleichsein“ ist das gemeinsame Medium, „Wohldefiniertsein“ die
+      lokale Trennung. Das Korrespondenzraster fasst beides zusammen:
+    </p>
+
+    <table>
+      <thead><tr><th>Ebene</th><th>A — n1-061 (Topologie + Komplexität)</th><th>B — n1-023 (Bordismus + Schreber)</th><th>Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td>Form / Schatten</td><td>der Punkt in X; der Zustand</td><td>der Rand <code>M</code> (M₁, M₂)</td><td>die sichtbare Form zu einem Zeitpunkt</td></tr>
+        <tr><td>Substanz / Medium</td><td>die Topologie τ (offene Mengen = Relationsstruktur)</td><td>das Medium <code>W</code> (<code>∂W = M₁ ⊔ M₂</code>; Nervenfeld)</td><td>das Dazwischen — was die Identität trägt</td></tr>
+        <tr><td>„Gleich“ / wohldefiniert</td><td>eindeutiger Grenzwert (T₂ / Hausdorff)</td><td>bordant = gemeinsam verbundenes <em>W</em></td><td>Identität ist Relation durch Medium, nie Eigenschaft an sich</td></tr>
+        <tr><td>Constraint</td><td>die Trennungsaxiome (T₀…T₄, Abzählbarkeit, Metrisierbarkeit)</td><td>die Bordismus-Gruppen-/Ringaxiome</td><td>die Gesetze, die das Medium einhalten muss</td></tr>
+        <tr><td>Invariante</td><td>Hausdorff-Wohlverhalten (eindeutige Grenzwerte)</td><td>die Bordismengruppe (Schließung, „Heilmittel in sich“)</td><td>das, was die Bewegung überlebt</td></tr>
+        <tr><td>Bewegung</td><td>die Dynamik darauf (Trajektorien, Attraktoren, Bifurkation)</td><td>das Medium über die Zeit (Zug: Zylinder / Hose / Kappe / Geburt)</td><td>„Das Dazwischen tut die Arbeit“</td></tr>
+        <tr><td>Generative Mitte</td><td>dazwischen den starr Polen (Bifurkation, Selbstorganisation)</td><td>die Bewegung, begrenzt von der Invariante</td><td>Leben = Invariante + Bewegung</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die Mathematik aus beiden, integriert</h3>
+    <p>
+      <span class="whoA">A</span> liefert die <em>Trennungsachse</em> (Constraint-Familie):
+      <code>Indiscret → T₀ &lt; T₁ &lt; T₂ &lt; T₂.₅ &lt; T₃ &lt; T₃.₅ &lt; T₄</code>, dazu die
+      Abzählbarkeitsachse (<em>1st</em>/<em>2nd countable</em>) und <code>Metrisierbar ⇒ Hausdorff + 1st
+      countable + parakompakt + normal</code>. Der T₂-Schritt (disjunkte offene Umgebungen) ist der
+      entscheidende: er macht Folgen-Grenzwerte <em>eindeutig</em> — das ist die Invariante, auf der A's Bühne
+      steht.
+    </p>
+    <p>
+      <span class="whoB">B</span> liefert die <em>Identitätsachse</em> (Bordismus):
+      <code>∂W = M₁ ⊔ M₂</code>, <code>bordant ⇔ ∃ W</code>, und die (unorientierten) Bordismengruppen
+      <code>Ω₀^O = ℤ</code>, <code>Ω₁^O = 0</code>, <code>Ω₂^O = ℤ/2</code>. Aus <code>Ω₁^O = 0</code> folgt
+      <code>S¹ = 0</code> (die Kappe ist der triviale Zug); die Hose <code>S¹ → S¹ ⊔ S¹</code> ist die
+      Multiplikation, <code>[S¹]·[S¹] = [S²]</code>. Die <em>Schließung</em> dieser Gruppe ist genau B's
+      „Invariante / Weltordnung, die die Heilmittel in sich trägt“.
+    </p>
+    <span class="math">
+      A: T₂ ⇒ eindeutige Grenzwerte  ·  Metrisierbar ⇒ T₄ + 1st-countable + parakompakt<br>
+      B: ∂W = M₁ ⊔ M₂  ·  Ω₁^O = 0 ⇒ S¹ = 0  ·  [S¹]·[S¹] = [S²]  ·  Schließung = Invariante<br>
+      Fusion: Identität ≡ Zustände, die ein gemeinsames Medium verbindet  ·  Lesbarkeit ≡ Trennung <em>innerhalb</em> eines Zustands (T₂)  ·  Veränderung ≡ Bewegung des Mediums  ·  Invariante ≡ das, was die Bewegung überlebt
+    </span>
+    <p class="note">
+      Kurzformel: <strong>Das Medium (B) liefert die Identität, die Trennung (A) die Lesbarkeit, die Invariante
+      (beide) das Überleben.</strong> A's „Bühne“ ist B's Medium in einer Zeitschnitte; B's „Prozess“ ist A's
+      Dynamik auf der Bühne; A's Mitte ist B's Bewegung, begrenzt durch die Invariante, die bei A eindeutige
+      Grenzwerte und bei B die geschlossene Gruppe ist.
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Fusion: Das Medium als Bühne <span class="tag">Canvas, inline, themenaktiv</span></h2>
+    <p class="note">
+      Ein Medium <em>W</em> läuft von links nach rechts (die fließenden Strahlen = B's Nervenfeld / das, was die
+      Identität trägt); die goldene Quader-Linie in der Mitte ist die <strong>Invariante</strong>, die durch alle
+      Querschnitte persistiert. Der vertikale <em>Scan</em> „durchschneidet“ das Medium (B's Querschnittsweep) und
+      zeigt den lokalen <strong>Rand</strong> — eine Reihe von Punkten mit Umgebungen. Der Regler
+      <em>Trennung s</em> (A) steuert, wie unterscheidbar die Punkte <em>innerhalb dieses Querschnitts</em> sind:
+      bei <code>s=0</code> (indiscret) verschmelzen sie zu einem indistinguierten Klumpen (max. Identität,
+      min. Trennung), bei <code>s=1</code> (metrisch/Hausdorff) sind alle Umgebungen disjunkt (max. Trennung,
+      eindeutige Grenzwerte). Der Rand umformt sich, das Medium + die Invariante bleiben — <em>das Dazwischen tut
+      die Arbeit</em>.
+    </p>
+
+    <div class="viz-wrap">
+      <canvas id="vizCanvas" width="860" height="440"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <label><span>Trennung s (Constraint auf den Querschnitt, A)</span><span id="sLabel">0.50</span></label>
+        <input type="range" id="sepSlider" min="0" max="1" step="0.001" value="0.5">
+      </div>
+      <button class="toggle" id="sweepBtn">Scan: läuft</button>
+      <button class="toggle" id="themeToggle">🌙/☀️ Theme</button>
+    </div>
+
+    <div class="readout">
+      <span class="chip">Axiom-Stufe: <b id="axLevel">—</b></span>
+      <span class="chip gold">Trennbare Paare (T₂): <b id="sepPct">—</b></span>
+      <span class="chip">Identität (B): <b id="ident">—</b></span>
+      <span class="chip gold">Invariante: <b>erhalten</b></span>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--viz-accent)"></i> Medium W (B)</span>
+      <span><i style="background:var(--viz-ray)"></i> Strahlen / Nerven (trägt Identität)</span>
+      <span><i style="background:var(--viz-invariant)"></i> Invariante (persistiert)</span>
+      <span><i style="background:var(--viz-nb);border-color:var(--viz-nb-stroke)"></i> Umgebung U(x) (A)</span>
+      <span><i style="background:var(--viz-accent2)"></i> Querschnitt-Scan / Rand</span>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz <span class="tag">Rund-1-Quellen</span></h2>
+    <ul class="prov">
+      <li>
+        <a href="../n1-061.html">A — n1-061.html (Topologie als Struktur — Trennungsaxiome als Constraints)</a>
+        <small>Rund-1-Fusion (hausdorff ✕ strukturwissenschaften): Der topologische Raum als Relationsstruktur;
+          die Trennungsaxiome als Constraint-Familie, die Unterscheidbarkeit reguliert; Nicht-Hausdorff als
+          Symmetrie-Zustand; die generative Mitte der Dynamik braucht das Hausdorff-Fundament als Bühne.</small>
+      </li>
+      <li>
+        <a href="../n1-023.html">B — n1-023.html (Identität als Prozess — Bordismus trifft Nervenfeld)</a>
+        <small>Rund-1-Fusion (bordism ✕ schreber): Identität ist keine Substanz, sondern ein Prozess; der Rand
+          ist der Schatten, das Medium W die Substanz; „dasselbe“ = gemeinsames Medium; dieselbe Zug (Kappe) ist
+          Freiheit von außen, Zwang von innen; die Invariante (Bordismengruppe) ist, was die Krise überlebt.</small>
+      </li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var slider = document.getElementById('sepSlider');
+  var sLabel = document.getElementById('sLabel');
+  var axLevel = document.getElementById('axLevel');
+  var sepPct = document.getElementById('sepPct');
+  var ident = document.getElementById('ident');
+  var sweepBtn = document.getElementById('sweepBtn');
+  var themeBtn = document.getElementById('themeToggle');
+
+  var W = canvas.width, H = canvas.height;
+  var xL = 90, xR = W - 90, cy = H/2;
+  var N = 5, NP = 70;
+  var t = 0, playing = true;
+
+  function cssVar(n, d){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || d;
+  }
+  function pal(){
+    return {
+      bg: cssVar('--viz-bg','#0b1322'),
+      grid: cssVar('--viz-grid','#1b2740'),
+      accent: cssVar('--viz-accent','#60a5fa'),
+      accent2: cssVar('--viz-accent2','#fbbf24'),
+      ray: cssVar('--viz-ray','#38bdf8'),
+      txt: cssVar('--viz-txt','#e6e9ef'),
+      muted: cssVar('--viz-muted','#7d8aa3'),
+      nb: cssVar('--viz-nb','rgba(96,165,250,0.16)'),
+      nbSt: cssVar('--viz-nb-stroke','rgba(96,165,250,0.6)'),
+      inv: cssVar('--viz-invariant','#fbbf24'),
+      point: cssVar('--viz-point','#60a5fa'),
+      pointFill: cssVar('--viz-point-fill','#0b1322')
+    };
+  }
+
+  // deterministic particles
+  var parts = [];
+  for(var i=0;i<NP;i++){
+    parts.push({ x: (i*0.6180339887) % 1.0, lane: (Math.sin(i*12.9898)*43758.5453 % 1) });
+    parts[i].lane = ((parts[i].lane - Math.floor(parts[i].lane)) * 2 - 1) * 0.66;
+  }
+
+  // medium half-height: pinched in the middle (the generative zone)
+  function hh(x){ return 70 + 40*Math.pow(2*x - 1, 2); }
+  function top(x){ return cy - hh(x); }
+  function bot(x){ return cy + hh(x); }
+
+  // neighborhood radius from separation s (local)
+  function spacingAt(x){ return (2*0.72*hh(x))/(N-1); }
+  function rAt(x, s){
+    var big = 0.78*hh(x), small = Math.max(0.5, spacingAt(x)/2 - 1);
+    return big + (small - big)*s;
+  }
+  function yPoint(x, i, n){ var h = 0.72*hh(x); return cy + ((2*i/(n-1)) - 1)*h; }
+
+  function axiomLabel(s){
+    if(s < 0.14) return 'Indiscret';
+    if(s < 0.40) return 'T₀ (eine Richtung)';
+    if(s < 0.62) return 'T₁ (beide, Überlapp ok)';
+    if(s < 0.82) return 'T₂ Hausdorff (disjunkt)';
+    return 'T₄ / metrisch';
+  }
+  function identLabel(s){
+    if(s < 0.20) return 'max. Identität — alles indistinguiert';
+    if(s > 0.80) return 'max. Trennung — distinct, aber 1 Medium';
+    return 'Identität durch Medium — lesbar & verbunden';
+  }
+
+  function sweepPos(){
+    if(!playing) return t === null ? 0.5 : _lastSweep;
+    return (Math.sin(t*0.22) + 1)/2;
+  }
+  var _lastSweep = 0.5;
+
+  function draw(){
+    var P = pal();
+    var s = slider ? parseFloat(slider.value) : 0.5;
+    var xs = sweepPos();
+    if(playing){ t += 1; _lastSweep = xs; }
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = P.bg; ctx.fillRect(0,0,W,H);
+
+    // medium envelope fill
+    var S = 80;
+    ctx.beginPath();
+    ctx.moveTo(xL, top(0));
+    for(var i=1;i<=S;i++){ var a=i/S; ctx.lineTo(xL + a*(xR-xL), top(a)); }
+    for(var j=S;j>=0;j--){ var b=j/S; ctx.lineTo(xL + b*(xR-xL), bot(b)); }
+    ctx.closePath();
+    ctx.fillStyle = P.nb; ctx.fill();
+    ctx.strokeStyle = P.nbSt; ctx.lineWidth = 1.2; ctx.stroke();
+
+    // invariant thread (persists through all cross-sections)
+    ctx.save();
+    ctx.shadowColor = P.inv; ctx.shadowBlur = 10;
+    ctx.strokeStyle = P.inv; ctx.lineWidth = 2.4;
+    ctx.setLineDash([9,6]);
+    ctx.beginPath(); ctx.moveTo(xL, cy); ctx.lineTo(xR, cy); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = P.inv; ctx.font = '12px ui-monospace, monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Invariante — bleibt (Bordismengruppe / eindeutige Grenzwerte)', xL, cy - 10);
+
+    // rays / nerves flowing through the medium (carry identity)
+    for(var p=0;p<parts.length;p++){
+      var pt = parts[p];
+      if(playing){ pt.x += 0.006; if(pt.x > 1) pt.x -= 1; }
+      var px = xL + pt.x*(xR-xL);
+      var py = cy + pt.lane*hh(pt.x);
+      var pxp = xL + Math.max(0, pt.x - 0.05)*(xR-xL);
+      var pyp = cy + pt.lane*hh(Math.max(0, pt.x - 0.05));
+      ctx.beginPath(); ctx.moveTo(pxp, pyp); ctx.lineTo(px, py);
+      ctx.strokeStyle = P.ray; ctx.globalAlpha = 0.30; ctx.lineWidth = 1.4; ctx.stroke();
+      ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.arc(px, py, 2.1, 0, Math.PI*2); ctx.fillStyle = P.ray; ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // cross-section scan + the local boundary (points + neighborhoods)
+    var pxs = xL + xs*(xR-xL);
+    ctx.strokeStyle = P.accent2; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pxs, top(xs)); ctx.lineTo(pxs, bot(xs)); ctx.stroke();
+    ctx.fillStyle = P.accent2; ctx.font = '12px ui-monospace, monospace'; ctx.textAlign = 'center';
+    ctx.fillText('t=' + xs.toFixed(2), pxs, top(xs) - 10);
+
+    var r = rAt(xs, s);
+    var ys = [];
+    for(var k=0;k<N;k++){ ys.push(yPoint(xs, k, N)); }
+    for(var q=0;q<N;q++){
+      ctx.beginPath(); ctx.arc(pxs, ys[q], r, 0, Math.PI*2);
+      ctx.fillStyle = P.nb; ctx.fill();
+      ctx.strokeStyle = P.nbSt; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(pxs, ys[q], 4.5, 0, Math.PI*2);
+      ctx.fillStyle = P.point; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = P.pointFill; ctx.stroke();
+    }
+    ctx.fillStyle = P.txt; ctx.font = '11px ui-monospace, monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Rand / Zustand (Schatten)', pxs + r + 8, cy);
+
+    // readouts
+    if(sLabel) sLabel.textContent = s.toFixed(2);
+    if(axLevel) axLevel.textContent = axiomLabel(s);
+    if(ident) ident.textContent = identLabel(s);
+    if(sepPct){
+      var sep = 0, total = 0;
+      for(var a2=0;a2<N;a2++){ for(var b2=a2+1;b2<N;b2++){
+        total++;
+        if(Math.abs(ys[a2]-ys[b2]) >= 2*r - 1e-9) sep++;
+      } }
+      sepPct.textContent = Math.round(100*sep/total) + '  (' + sep + '/' + total + ')';
+    }
+  }
+
+  if(slider) slider.addEventListener('input', function(){ if(!playing) draw(); });
+  if(sweepBtn) sweepBtn.addEventListener('click', function(){
+    playing = !playing;
+    sweepBtn.textContent = playing ? 'Scan: läuft' : 'Scan: pausiert';
+    if(!playing){ t = null; draw(); }
+  });
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    requestAnimationFrame(draw);
+  });
+  window.addEventListener('resize', function(){ requestAnimationFrame(draw); });
+
+  (function loop(){ draw(); requestAnimationFrame(loop); })();
+})();
+</script>
+</body>
+</html>

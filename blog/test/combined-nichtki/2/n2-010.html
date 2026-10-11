@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eine Skala, zwei Seiten — das Lasttragende und das Fragile</title>
+<style>
+:root{
+  --bg:#f4f2ea; --bg2:#ece9dd; --card:#fbfaf6; --ink:#20242f; --muted:#6b6f7d;
+  --accent:#0b7285; --accent2:#c2255c; --loop:#e8590c; --good:#2f7d3f; --bad:#b53030;
+  --grid:#dcd6c6; --line:#d9d4c6; --canvas:#fffdf8; --halo:#2f7d3f;
+  --fill:rgba(11,114,133,.10); --code:#b4451f; --shadow:rgba(0,0,0,.08);
+}
+html.dark{
+  --bg:#0d1117; --bg2:#0a0e14; --card:#161b22; --ink:#e6edf3; --muted:#8b949e;
+  --accent:#58a6ff; --accent2:#ff7eb6; --loop:#ffa657; --good:#4ade80; --bad:#f87171;
+  --grid:#30363d; --line:#30363d; --canvas:#0d1117; --halo:#4ade80;
+  --fill:rgba(88,166,255,.12); --code:#ffa657; --shadow:rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,Tahoma,sans-serif;
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 60%);
+  color:var(--ink); line-height:1.7; font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:34px 20px 80px;}
+header{margin-bottom:24px;}
+h1{font-size:2.05em;line-height:1.18;margin:0 0 8px;font-weight:800;letter-spacing:-.01em;}
+.subtitle{color:var(--muted);font-size:.98em;margin:0 0 4px;font-family:monospace;}
+section{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:22px 24px; margin:18px 0; box-shadow:0 1px 3px var(--shadow);
+}
+h2{font-size:1.4em;margin:0 0 12px;color:var(--accent);line-height:1.25;}
+h3{font-size:1.1em;margin:18px 0 6px;color:var(--ink);}
+p{margin:0 0 12px;}
+ul{margin:0 0 12px;padding-left:22px;}
+li{margin:6px 0;}
+code{font-family:'Courier New',ui-monospace,monospace;font-size:.86em;background:var(--fill);padding:1px 5px;border-radius:5px;color:var(--code);}
+.formula{
+  background:var(--fill); border-left:4px solid var(--accent);
+  padding:12px 16px; margin:14px 0; border-radius:0 10px 10px 0;
+  font-family:'Courier New',monospace; font-size:1.0em; overflow-x:auto; line-height:1.6;
+}
+.note{font-size:.94em;color:var(--muted);}
+.tag{display:inline-block;font-family:monospace;font-size:.8em;padding:1px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted);margin-right:6px;}
+.a{color:var(--accent);} .b{color:var(--accent2);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+.cell{border:1px solid var(--line);border-radius:10px;padding:13px 15px;background:var(--card);}
+.cell h4{margin:0 0 6px;font-size:1em;color:var(--accent);}
+table{width:100%;border-collapse:collapse;font-size:.92em;margin:12px 0;}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.74em;letter-spacing:.05em;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:6px 0 14px;}
+.viz-controls label{font-size:.92em;color:var(--muted);}
+.viz-controls input[type=range]{accent-color:var(--accent);width:180px;vertical-align:middle;}
+.viz-controls button{padding:8px 16px;border:0;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:9px;cursor:pointer;font-size:.9em;font-weight:600;}
+.viz-controls button:disabled{opacity:.5;cursor:default;}
+canvas{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--canvas);}
+.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 6px;}
+@media(max-width:640px){.readouts{grid-template-columns:repeat(2,1fr);}}
+.ro{border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center;}
+.ro .k{font-size:.8em;color:var(--muted);}
+.ro .v{font-size:1.3em;font-weight:700;font-family:monospace;margin-top:2px;}
+.bar{height:8px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px;}
+.bar > i{display:block;height:100%;background:var(--loop);transition:width .2s;}
+.stat{font-size:.95em;color:var(--ink);border-left:3px solid var(--loop);padding:10px 14px;margin:12px 0 2px;background:var(--fill);border-radius:0 9px 9px 0;}
+.stat b{color:var(--loop);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:.85em;}
+a{color:var(--accent);}
+footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px;}
+</style>
+<script>(function(){try{var t=localStorage.getItem('fuse2-theme');if(!t){t='dark';}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button" aria-label="Theme wechseln">🌗</button>
+<article>
+
+<header>
+  <h1>Eine Skala, zwei Seiten<br>Das Lasttragende und das Fragile</h1>
+  <p class="subtitle">Fusion aus: n1-069.html ✕ n1-057.html  (Runde 2)</p>
+  <p class="note">Beide Papiere lesen eine <em>Signatur über eine Skala</em> und trennen den <em>lasttragenden</em>
+  Teil vom <em>fragilen</em>. A (Regelmäßigkeit &amp; Form) tut es am <strong>Objekt</strong>;
+  B (IOED × Wein) tut es am <strong>Geist</strong>. Dieselbe Operation, zwei Seiten.</p>
+</header>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Runde-1-Papiere machen <em>derselben</em> Operation die Ehre: einer Struktur eine Signatur entlang einer
+  Skala ablesen und dabei den Teil, der <strong>lasttragend</strong> ist, vom Teil trennen, der
+  <strong>fragil</strong> ist. Papier&nbsp;A (Regelmäßigkeit &amp; Form) macht es <em>am Objekt</em>: Ein Datensatz
+  ist eine Funktion auf einem Gebiet; man liest zwei orthogonale Signaturen über eine Skala (Radius&nbsp;<span>ε</span>
+  bzw. Ableitungsordnung&nbsp;<span>k</span>) ab — die analytische Regelmäßigkeit (wie glatt) und die topologische
+  Form (wie verbunden). Der Stabilitätssatz (Cohen–Steiner/Edelsbrunner/Johnson 2007) macht die <em>grobe</em>
+  topologische Form zur lasttragenden: Sie übersteht feines analytisches Rauschen, und die analytische Distanz
+  <em>umschließt</em>, wie weit sie sich überhaupt bewegen darf. Die <em>feine</em> Schicht (hochfrequente
+  Wildheit) ist real — sie kostet H¹-Energie — ist aber <em>keine Bedeutungsträgerin</em>: Sie ändert die Form nicht.</p>
+  <p>Papier&nbsp;B (IOED × Wein) macht die <em>exakt gleiche</em> Operation am <strong>Geist</strong>: Wissen über ein
+  Handwerk ist ein Glaube, organisiert über eine Hierarchie von Ebenen (Prozedur → Funktion → Mechanismus → Tiefe).
+  Der IOED-Einbruch (Rozenblit &amp; Keil 2002, T1→T2) ist die <em>Geist-seitige</em> Version desselben Kalibrierungssatzes:
+  Die <em>grobe</em> prozedurale/funktionale Ebene ist lasttragend (ehrlich getragen, gut kalibriert), während die
+  <em>tiefe</em> mechanistische Ebene <em>gefühlt, aber abwesend</em> ist — man <em>glaubt</em>, sie zu tragen, trägt sie
+  aber nicht. Die „Lücke" (geglaubte Tiefe − wirklich getragene Tiefe) <em>ist</em> die Illusion erklärender Tiefe.</p>
+  <p><strong>Die fusionierte Position (eine einzige, beide vereinigende These):</strong> Es gibt <em>einen</em>
+  Betrieb — <em>eine Signatur über eine Skala lesen und den Anspruch an die Skala kalibrieren, die man tatsächlich
+  trägt</em> — und A und B sind seine <strong>Objekt-seitige</strong> und <strong>Geist-seitige</strong> Seite. A beweist ihn
+  für Daten: die lasttragende Skala ist die <em>grobe</em> (topologische), stabil unter feinem Rauschen; die feine
+  Schicht ist <em>real, aber bezahlt</em>, und der Readout ist <em>treu</em> (eine Projektion dessen, was die Daten
+  selbst tragen). B beweist ihn für den Glauben: die lasttragende Skala ist die <em>grobe</em> (prozedurale), ehrlich
+  getragen; die tiefe Schicht ist <em>gefühlt, aber abwesend</em>, und der Readout ist <em>täuschend</em> — genau dann,
+  wenn die Antwort <em>externalisiert</em> in ein Werkzeug gelegt wird. <strong>Die fragile Schicht ist dasselbe Ding,
+  von zwei Seiten gesehen:</strong> im Objekt <em>real, aber nicht lasttragend</em> (Rauschen, von einer Norm bezahlt);
+  im Geist <em>gefühlt, aber nicht getragen</em> (Illusion, von Überkonfidenz bezahlt). Der ehrliche Zug ist in beiden
+  identisch: <em>das Reale-und-Fragile bezahle/umschließe (A), das Gefühlte-und-Abwesende verweigere (B) — und verwechsle
+  niemals den groben Readout mit der tiefen Wahrheit.</em></p>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p class="note">Drei echte, nicht erfundene Spannungen — die beiden sind keine falschen Freunde, sondern treffen
+  an denselben drei Stellen aufeinander, von entgegengesetzten Seiten:</p>
+
+  <h3>W1 — Das Fragile: im Objekt vorhanden (A) vs. im Geist abwesend (B)</h3>
+  <p><span class="tag a">A</span> Die feine Schicht ist <strong>real und im Objekt vorhanden</strong>: Wildheit ist eine
+  echte H¹-Kosten­größe; <code>f=sin(ωπx)</code> ⇒ <code>‖f′‖<sub>L²</sub> ~ ω</code>; die Spitze <code>|x|^{1/2}</code>
+  fällt aus W<sup>1,2</sup>. Die Lücke, die A misst (analytische Distanz → topologische Distanz), ist
+  <strong>zwischen zwei realen Objekten</strong>. Die feine Textur <em>existiert</em> — man <em>bezahlt</em> sie.</p>
+  <p><span class="tag b">B</span> Die tiefe Schicht ist <strong>abwesend, nur gefühlt</strong>: man „kennt" die
+  Glykolyse-Kaskade im Gefühl, nicht im Kopf. Die Lücke, die B misst (T1→T2), ist
+  <strong>zwischen einem realen groben Glauben und einem Nichts</strong>. Die tiefe Textur <em>existiert im Kopf nicht</em>
+  — man <em>attribuiert</em> sie sich fälschlich. — <em>Gegensatz:</em> A's Lücke verbindet zwei Reales; B's Lücke
+  verbindet Eines und eine Illusion.</p>
+
+  <h3>W2 — Der Readout: treu (A) vs. täuschend (B)</h3>
+  <p><span class="tag a">A</span> Die grobe Signatur (Persistenz) abzulesen, ist <strong>epistemisch treu</strong>: die
+  Linse berechnet ein Invariante <em>aus</em> den Daten, die Daten tragen es weiterhin; nichts wird versteckt; kleine
+  analytische Störung ⇒ kleine topologische Änderung, der Readout <em>vertraut</em> dem Objekt.</p>
+  <p><span class="tag b">B</span> Einen Wert <strong>aus dem Tool</strong> abzulesen (das Lab zeigt SO₂/°Oe) ist
+  <strong>die Quelle der Täuschung</strong>: „Umwelt↔Kopf" — die Anzeige zeigt die Antwort, man verwechselt die Anzeige
+  mit dem eigenen Wissen; „der stärkste Prädiktor der Überkonfidenz ist das Sichtbar-Sein der Teile" (R²&nbsp;≈&nbsp;.47).
+  Der Readout <em>erzeugt</em> die Illusion. — <em>Gegensatz:</em> A's Readout ist eine treue Projektion;
+  B's Readout ein Täuschungs­generator (A hat gar kein externes Artefakt; B's Kern ist genau dieses).</p>
+
+  <h3>W3 — Das Grobe: letzte Wahrheit (A) vs. ehrliche Decke (B)</h3>
+  <p><span class="tag a">A</span> Die grobe topologische Struktur <strong>ist</strong> die bedeutende Invariante — sie
+  übersteht Störung; sie ist <em>die Antwort</em>, der Punkt der Methode (die Form selbst).</p>
+  <p><span class="tag b">B</span> Die grobe prozedurale/funktionale Ebene ist eine <strong>legitime, aber nicht tiefe
+  Decke</strong> — ehrlich, aber sie <em>endet</em> dort, wo Tiefe anfangen müsste: „A stoppt bei ‚Hefe macht Alkohol';
+  B sagt: Genau dort, wo A aufhört, beginnt die Illusion." Für den Macher genug, für den Forscher nur eine Grenze.
+  — <em>Gegensatz:</em> A's Grobes ist die lasttragende Wahrheit (der Punkt); B's Grobes ist eine ehrliche Decke (die Grenze).</p>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p>Jede der drei Spannungen löst sich, wenn man sie als <em>einen</em> Betrieb von zwei Seiten liest:</p>
+  <div class="grid2">
+    <div class="cell"><h4>A1 → vorhanden vs. abwesend</h4>
+      <p>Beide beschreiben <em>die selbe fragile Schicht</em> mit zwei ehrlichen Prädikaten: im Objekt ist sie
+      <em>vorhanden, aber geringwertig</em> (reale Energie, ändert die Form nicht — vom Stabilitätssatz umschlossen);
+      im Geist ist sie <em>gefühlt, aber abwesend</em> (keine Energie, falsche Zuversicht — vom T2-Einbruch umschlossen).
+      <strong>Fusion:</strong> die fragile Schicht ist in beiden Sinnen „nicht lasttragend". A bepreist ihre
+      <em>reale</em> Anwesenheit (H¹), B bepreist ihre <em>gefühlte</em> Abwesenheit (Überkonfidenz).
+      Einheits­regel: die fragile Schicht <em>nicht</em> über-attribuieren — im Objekt bezahlen, im Geist verweigern.</p></div>
+    <div class="cell"><h4>A2 → treu vs. täuschend</h4>
+      <p>Der Unterschied ist die <em>Stelle der Antwort</em>. A's Linse <em>projiziert</em> ein Invariante
+      <em>auf</em> die Daten — die Antwort lebt weiterhin im Objekt, der Readout ist treu. B's Lab
+      <em>externalisiert</em> die Antwort ins Tool — sobald die Antwort im Gerät lebt, ist die
+      „Umwelt↔Kopf"-Verwechslung <em>möglich</em>. <strong>Fusion:</strong> ein Readout ist treu genau dann, wenn
+      sein Inhalt weiterhin in dem Objekt/Selbst lebt, das er beschreibt; er wird täuschend, sobald der Inhalt
+      <em>in das Werkzeug verlegt</em> wird. B's „Umwelt↔Kopf" ist die Pathologie der Externalisierung;
+      A's Berechnung ist Internalisierung (das Invariante ist eine Eigenschaft der Daten, kein separates Gerät).</p></div>
+  </div>
+  <div class="grid2">
+    <div class="cell"><h4>A3 → letzte Wahrheit vs. ehrliche Decke</h4>
+      <p>A's Grobes <em>ist</em> die Antwort, weil A's Frage „<em>welche</em> Form?" ist — Topologie <em>ist</em> die Form.
+      B's Grobes ist eine Decke, weil B's Frage „<em>verstehst</em> du es?" ist — wobei „verstehen" still „Mechanismus"
+      meint. Dasselbe Grobe ist <em>die Antwort auf der prozeduralen Skala</em> und <em>die Decke auf der mechanistischen</em>.
+      <strong>Fusion:</strong> „lasttragend" ist nur <em>relativ zu einer Frage</em>; beide Papiere einigen sich darauf,
+      dass der ehrliche Zug ist, <em>die Frage zu benennen, bevor man die Schicht liest</em>. Der Winzer (Funktionsfrage)
+      darf am Groben stehen bleiben — es ist seine robuste Wahrheit; der Forscher (Mechanismusfrage) darf es nicht.</p></div>
+    <div class="cell"><h4>Die Brücke (ein Kalibrierungssatz)</h4>
+      <p>A: <code>‖f−g‖<sub>L∞</sub> ≥ d<sub>bottleneck</sub>(Pers(f), Pers(g))</code> — eine <em>analytische</em> Metrik
+      umschließt eine <em>topologische</em>. B: <code>Δ(T1→T2) = geglaubt − wirklich</code> — eine <em>psychologische</em>
+      Messung enthüllt, was <em>abwesend</em> ist. Beide sind <strong>Kalibrierungssätze für eine Skala</strong>:
+      die grobe, lasttragende Invariante ist durch die Messung der Lücke zur fragilen Schicht <em>umschlossen</em>
+      (bzw. <em>enthüllt</em>). Dieselbe Logik, zwei Medien.</p></div>
+  </div>
+  <p><strong>Fusioniertes Fazit:</strong> Der eine gemeinsame Betrieb lautet: <em>liest eine Signatur über eine Skala,
+  bestimme die lasttragende Skala für deine Frage, und kalibriere deinen Anspruch an sie.</em> Bezahle/umschließe das
+  Reale-und-Fragile (Objekt), verweigere das Gefühlte-und-Abwesende (Geist). <strong>Die Illusion (B) ist der
+  Geist-Schatten des Rauschens (A)</strong> — in beiden Fällen ist die fragile Schicht über-attribuiert. Und der Readout
+  ist dein Freund nur, solange er eine <em>Projektion dessen ist, was schon da ist</em> — und dein Feind, in dem Moment,
+  in dem er ein <em>Ersatz für das ist, was nicht da ist</em>.</p>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>4.1 Das gemeinsame Schema — „Signatur über eine Skala"</h3>
+  <p>Beide Modelle sind Instanzen eines einzigen Schemas mit sechs Fächern:
+  (i) der <em>Gegenstand</em> (Daten / Glaube), (ii) die <em>Skala</em>, (iii) die <em>grobe, lasttragende Invariante</em>,
+  (iv) die <em>feine, fragile Schicht</em>, (v) die <em>Kalibrierung</em> (Satz / Test), (vi) der <em>Readout</em>
+  (wie man abliest) und (vii) die <em>Pathologie</em> (wie man sich täuscht).</p>
+
+  <h3>4.2 A — die Objekt-Seite (Regelmäßigkeit &amp; Form)</h3>
+  <p><strong>Regelmäßigkeit als Norm.</strong>
+  <span class="formula">W<sup>k,p</sup>(Ω) = { u ∈ L<sup>p</sup> : D<sup>α</sup>u ∈ L<sup>p</sup>, ∀|α| ≤ k }
+   ·  ‖u‖<sub>H¹</sub> = (∫|u|² + ∫|u′|²)<sup>1/2</sup></span>
+  Der Preis für Oszillation: <code>f=sin(ωπx)</code> ⇒ <code>‖f′‖<sub>L²</sub> ~ ω</code>; die Schwelle
+  <code>kp vs. n</code> ist ein Phasenübergang (Sobolev <code>kp&lt;n</code> gewinnt Integrierbarkeit;
+  Morrey <code>kp&gt;n</code> erzwingt Stetigkeit, Exponent <code>α=k−n/p</code>).
+  <strong>Topologie als Invariante.</strong> Vietoris–Rips über ε: Geburten/Tode von Komponenten/Löchern ⇒
+  <code>β₀(ε), β₁(ε)</code>; Persistenz-Landschaften (Bubenik 2015) leben in <code>L² = H⁰</code>; Euler:
+  <code>χ=V−E+F</code>, <code>β₁=β₀−χ</code>. <strong>Der Objekt-Kalibrierungssatz</strong> (Stabilität):
+  <span class="formula">‖f−g‖<sub>L∞</sub> ≥ d<sub>bottleneck</sub>(Pers(f), Pers(g))
+   ⇒ kleine analytische Störung ⇒ kleine topologische Änderung</span>
+  Die <em>grobe</em> Form (β₁-Lücke) ist lasttragend; die <em>feine</em> Wildheit (H¹) ist real, aber bezahlt und
+  nicht formbestimmend.</p>
+
+  <h3>4.3 B — die Geist-Seite (IOED × Wein)</h3>
+  <p><strong>Wissen als Ebenen-Hierarchie.</strong> Prozedur („Wein machen") → Funktion („was Gärung tut") →
+  Mechanismus („wie: Glykolyse, Enzymkaskade") → Tiefe. <strong>Der Geist-Kalibrierungstest</strong> (T1–T5,
+  Rozenblit &amp; Keil 2002): Selbstrating (T1) → Schritt-für-Schritt-Erklärung (T2) → Rating fällt. Der Effekt ist
+  massiv (η²&nbsp;≈&nbsp;0,54; Δ&nbsp;≈&nbsp;−1,4) und <strong>ebenen-spezifisch</strong>: Prozeduren
+  <code>Δ≈+0,17</code> (ehrlich, kaum Illusion), Geräte/Naturphänomene <code>Δ≈−0,86…−0,92</code> (stark illudiert).
+  <strong>Der Killer-Prädiktor</strong>: Sichtbare:versteckte Teile erklären ~47&nbsp;% der Varianz (β&nbsp;≈&nbsp;.69).
+  <strong>Die drei Verwechslungen:</strong> Umwelt↔Kopf (das Tool zeigt den Wert → „ich kenne ihn");
+  Funktion≠Mechanismus; Label↔Mechanismus (Namen tragen nicht die Erklärung). Die <em>grobe</em> prozedurale Ebene
+  ist lasttragend (ehrlich getragen); die <em>tiefe</em> mechanistische ist gefühlt, aber abwesend.</p>
+
+  <h3>4.4 Die Fusion — die Entsprechung (das Herzstück)</h3>
+  <p>Die beiden Modelle stehen sich fach-für-fach gegenüber; die Fusion <em>ist</em> diese Entsprechung:</p>
+  <table>
+    <thead><tr><th>Fach</th><th>A — Objekt (Regelmäßigkeit &amp; Form)</th><th>B — Geist (IOED × Wein)</th></tr></thead>
+    <tbody>
+      <tr><td>Gegenstand</td><td>Datensatz = Funktion auf Ω</td><td>Wissen = Glaube über ein Handwerk</td></tr>
+      <tr><td>Skala</td><td>ε (Radius) / k (Ableitungsordnung)</td><td>d (Ebene: Prozedur→Funktion→Mechanismus→Tiefe)</td></tr>
+      <tr><td>Grob / lasttragend</td><td>Topologie (β₀, β₁) — stabil unter Rauschen</td><td>Prozedur/Funktion — ehrlich getragen</td></tr>
+      <tr><td>Fein / fragil</td><td>analytische Wildheit (H¹-Energie) — real, bezahlt</td><td>Mechanismus — gefühlt, abwesend</td></tr>
+      <tr><td>Kalibrierung</td><td>‖f−g‖<sub>L∞</sub> ≥ d<sub>bottleneck</sub>(Pers(f),Pers(g))</td><td>Δ(T1→T2) = geglaubt − wirklich</td></tr>
+      <tr><td>Prädiktor der Lückenlage</td><td>hohe Frequenz / großes ω</td><td>sichtbare:versteckte Teile (R²≈.47)</td></tr>
+      <tr><td>Readout</td><td>Projektion (treu — Daten tragen es weiter)</td><td>Anzeige im Tool (täuschend — externalisiert)</td></tr>
+      <tr><td>Kosten der fragilen Schicht</td><td>Energie ‖f′‖² (real)</td><td>Überkonfidenz (falsch)</td></tr>
+      <tr><td>Pathologie</td><td>reale Feinkosten ignorieren / Form überschätzen</td><td>abwesende Tiefe behaupten / Umwelt↔Kopf</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Die fusionierte Lesart:</strong> Beide sind <em>Kalibrierungssätze für eine Skala</em>. A's Satz
+  (analytisch→topologisch) und B's Test (geglaubt→getragen) sind zwei Instanzen einer einzigen Aussage:
+  <em>die grobe, lasttragende Invariante ist durch die Messung der Lücke zur fragilen Schicht umschlossen bzw.
+  enthüllt.</em> A bepreist die Lücke als <strong>reale Energie</strong> im Objekt; B bepreist dieselbe Lücke als
+  <strong>falsche Zuversicht</strong> im Geist. Was im Objekt <em>Rauschen</em> heißt, heißt im Geist <em>Illusion</em> —
+  und in beiden Fällen ist es <strong>die über-attribuierte fragile Schicht</strong>, deren Lücke man messen muss,
+  um ehrlich zu bleiben. Ein späterer Arbeitsgang kann allein von dieser Entsprechung ausgehen: Gegenstand, Skala,
+  Grobes, Feines, Kalibrierung, Readout, Pathologie — sechs Fächer, zwei gefüllte Instanzen, ein Schema.</p>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Interaktiv: Eine Skala, zwei Seiten</h2>
+  <p class="note">Ein <strong>gemeinsamer</strong> „Lese-Tiefe / Anspruch"-Regler steuert <em>beide</em> Seiten zugleich.
+  Links (Objekt, A) wird der Ring umso wilder, je tiefer/freier du liest — die <strong>Form (β₁-Lücke) bleibt lasttragend
+  und stabil</strong>, während die <strong>H¹-Kosten (fragil) steigen</strong>. Rechts (Geist, B) wächst die Menge der
+  Ebenen, die du <em>glaubst</em> zu tragen — „wirklich" getragen bist du nur bis zur groben Prozedur-Ebene.
+  <strong>„Kalibrieren"</strong> wendet den geteilten Test auf beide Seiten an: links bestätigt die Stabilität (treu),
+  rechts kollabiert der Anspruch auf das Tragende (IOED-Einbruch, Lücke&nbsp;=&nbsp;0).</p>
+
+  <div class="viz-controls">
+    <label>Lese-Tiefe / Anspruch: <b id="cLbl">3</b> / 5</label>
+    <input type="range" id="claimS" min="1" max="5" value="3" step="1">
+    <button id="calBtn" type="button">Kalibrieren (Stabilität + IOED)</button>
+    <button id="rstBtn" type="button" style="background:transparent;border:1px solid var(--line);color:var(--ink)">Zurücksetzen</button>
+  </div>
+
+  <canvas id="viz" width="820" height="440"></canvas>
+
+  <div class="readouts">
+    <div class="ro"><div class="k">ω — Fein-Schicht (Objekt)</div><div class="v" id="ro-w">–</div></div>
+    <div class="ro"><div class="k">H¹ — fragil, real</div><div class="v" id="ro-h1">–</div>
+      <div class="bar"><i id="ro-h1bar" style="width:0%"></i></div></div>
+    <div class="ro"><div class="k">β₁ — lasttragend</div><div class="v" id="ro-b1">1</div></div>
+    <div class="ro"><div class="k">Geist: geglaubt → wirklich</div><div class="v" id="ro-gap">–</div></div>
+  </div>
+  <p class="stat" id="stat"></p>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../n1-069.html">A — n1-069.html · „Regelmäßigkeit &amp; Form — Sobolev-Räume ✕ Topologische Datenanalyse"</a>
+      <span class="note">Objekt-Seite: zwei orthogonale Signaturen (analytische Regelmäßigkeit, topologische Form) über eine
+      Skala; der Stabilitätssatz macht das Grobe lasttragend, das Feine real-aber-bezahlt und den Readout treu.</span></li>
+    <li><a href="../n1-057.html">B — n1-057.html · „Verstehst du, wie Wein entsteht? — IOED trifft Weinherstellung"</a>
+      <span class="note">Geist-Seite: Wissen über eine Ebenen-Hierarchie; der IOED-Einbruch (T1→T2) macht die grobe
+      Prozedur lasttragend/ehrlich, die tiefe Mechanistik gefühlt-abwesend, und den Readout im Tool zum Täuschungs­generator.</span></li>
+  </ul>
+</section>
+
+<footer>Selbstständige Fusion (Runde 2, Paar 010, nicht-AI-Track) — keine externen Datenabrufe, alle Daten inline.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var state = { claim:3, revealed:false, baseR:86, amp:20, TRUE:2 };
+  var cv, ctx;
+
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || '#888'; }
+  function hexA(hex,a){
+    hex=hex.replace('#','');
+    if(hex.length===3) hex=hex.split('').map(function(c){return c+c;}).join('');
+    if(hex.length<6) return 'rgba(127,127,127,'+a+')';
+    var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  function omega(){ return 1 + 2*state.claim; }
+  function assumed(){ return state.revealed ? state.TRUE : state.claim; }
+
+  function draw(){
+    var rect=cv.getBoundingClientRect(), w=rect.width, H=440, dpr=window.devicePixelRatio||1;
+    if(w<10) return;
+    cv.width=w*dpr; cv.height=H*dpr; cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var ink=cssVar('--ink'), muted=cssVar('--muted'), line=cssVar('--line'),
+        accent=cssVar('--accent'), loop=cssVar('--loop'), good=cssVar('--good'),
+        bad=cssVar('--bad'), halo=cssVar('--halo'), bg=cssVar('--canvas');
+    ctx.clearRect(0,0,w,H); ctx.fillStyle=bg; ctx.fillRect(0,0,w,H);
+    var mid=w/2;
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mid,10); ctx.lineTo(mid,H-10); ctx.stroke();
+
+    var om=omega(), asum=assumed();
+
+    /* ---- LEFT: object (A) ---- */
+    ctx.fillStyle=ink; ctx.font='700 13px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('OBJEKT — A (Form & Wildheit)', 16, 24);
+    ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif';
+    ctx.fillText('Ring, ω = 1 + 2·Anspruch', 16, 40);
+
+    var cxL=mid/2, cyL=196, baseR=Math.min(mid*0.28, state.baseR), amp=state.amp;
+    ctx.strokeStyle=accent; ctx.lineWidth=3; ctx.beginPath();
+    var M=360, i, th, r, x, y;
+    for(i=0;i<=M;i++){ th=i/M*2*Math.PI; r=baseR+amp*Math.sin(om*th);
+      x=cxL+Math.cos(th)*r; y=cyL+Math.sin(th)*r;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+    ctx.stroke();
+    ctx.fillStyle=accent; ctx.beginPath(); ctx.arc(cxL,cyL,3,0,7); ctx.fill();
+
+    var h1=amp*om, h1max=amp*9, frac=Math.min(1,h1/h1max);
+    var bx=16, by=H-52, bw=mid-44, bh=12;
+    ctx.strokeStyle=line; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle=loop; ctx.fillRect(bx,by,bw*frac,bh);
+    ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('H¹ (fragil, real) = '+h1.toFixed(0), bx, by-7);
+    ctx.fillStyle=good; ctx.font='700 13px system-ui,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('β₁ = 1 — lasttragend, stabil', cxL, by+30);
+
+    /* ---- RIGHT: mind (B) ---- */
+    ctx.fillStyle=ink; ctx.font='700 13px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('GEIST — B (getragen vs. geglaubt)', mid+16, 24);
+    ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif';
+    ctx.fillText('Ebenen 1→5 · wirklich bis E'+state.TRUE, mid+16, 40);
+
+    var stackX=mid+26, stackW=Math.max(120,(w-mid)-54), top=54, cellH=(H-54-44)/5, L, yy;
+    for(L=5;L>=1;L--){
+      yy=top+(5-L)*cellH;
+      var known=L<=state.TRUE, assum=!known && L<=asum;
+      ctx.fillStyle= known?hexA(bad,.18) : (assum?hexA(halo,.22) : hexA(muted,.10));
+      ctx.fillRect(stackX,yy+2,stackW,cellH-6);
+      ctx.strokeStyle= known?bad : (assum?halo : line);
+      ctx.lineWidth= known?2.5:(assum?2:1);
+      if(assum) ctx.setLineDash([5,3]);
+      ctx.strokeRect(stackX,yy+2,stackW,cellH-6);
+      ctx.setLineDash([]);
+      ctx.fillStyle= known?bad : (assum?halo : muted);
+      ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='left';
+      ctx.fillText('E'+L+' · '+(known?'wirklich':(assum?'geglaubt':'unbekannt')), stackX+10, yy+cellH/2+4);
+    }
+    ctx.textAlign='left';
+  }
+
+  function updateReadouts(){
+    var om=omega(), h1=state.amp*om, h1max=state.amp*9, asum=assumed(),
+        trueL=state.TRUE, gap=Math.max(0,asum-trueL);
+    $('ro-w').textContent=om;
+    $('ro-h1').textContent=h1.toFixed(0);
+    $('ro-h1bar').style.width=Math.min(100,h1/h1max*100).toFixed(1)+'%';
+    $('ro-b1').textContent='1';
+    $('ro-gap').textContent='E'+asum+'→E'+trueL;
+    var el=$('stat');
+    if(!state.revealed){
+      el.innerHTML='Anspruch <b>c='+state.claim+'</b>: Objekt — Form bleibt <b>β₁=1</b>, H¹-Kosten=<b>'+h1.toFixed(0)+'</b> '
+        +'(fragil, real). Geist — du glaubst bis E'+asum+', wirklich bis E'+trueL+' → <b>Lücke='+gap+'</b> (Illusion). '
+        +'Klick <b>„Kalibrieren"</b>, um die geteilte Regel anzuwenden.';
+    }else{
+      el.innerHTML='Kalibriert (<b>Stabilität + IOED</b>): Objekt — H¹=<b>'+h1.toFixed(0)+'</b> (bezahlt), Form '
+        +'<b>β₁=1</b> (lasttragend, treu). Geist — Anspruch E'+state.claim+' → <b>E'+trueL+'</b> (verweigert), '
+        +'<b>Lücke=0</b>. Das Fragile: im Objekt <b>real-bezahlt</b>, im Geist <b>gefühlt-abwesend</b> — '
+        +'dieselbe Schicht, zwei Seiten. <b>Die Illusion ist der Schatten des Rauschens.</b>';
+    }
+  }
+
+  function refresh(){
+    $('cLbl').textContent=state.claim;
+    draw();
+    updateReadouts();
+  }
+
+  function toggleTheme(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('fuse2-theme', d?'dark':'light'); }catch(e){}
+    $('themeBtn').textContent = d ? '☀️' : '🌙';
+    draw();
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    cv=$('viz'); ctx=cv.getContext('2d');
+    $('claimS').addEventListener('input', function(){ state.claim=+this.value; refresh(); });
+    $('calBtn').addEventListener('click', function(){
+      state.revealed=true; this.textContent='Kalibriert ✓'; this.disabled=true; refresh();
+    });
+    $('rstBtn').addEventListener('click', function(){
+      state.revealed=false; state.claim=3; $('claimS').value=3;
+      var b=$('calBtn'); b.textContent='Kalibrieren (Stabilität + IOED)'; b.disabled=false; refresh();
+    });
+    $('themeBtn').addEventListener('click', toggleTheme);
+    $('themeBtn').textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙';
+    var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+    refresh();
+  });
+})();
+</script>
+</body>
+</html>

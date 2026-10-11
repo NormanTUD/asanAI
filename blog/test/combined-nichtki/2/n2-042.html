@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closure &amp; Invarianz — Die funktoriale Sprache der übertragbaren Struktur</title>
+<style>
+  :root {
+    --bg:#faf8f1; --fg:#1e293b; --muted:#64748b;
+    --card:#ffffff; --card-border:#e2e8f0;
+    --accent:#1e3a8a; --accent2:#0f766e;
+    --ok:#16a34a; --warn:#b45309; --bad:#dc2626;
+    --code-bg:#eef2f7; --shadow:0 2px 14px rgba(15,23,42,.08);
+    --viz-canvas-bg:#f7f8fc; --viz-x:#1e3a8a; --viz-y:#9d174d;
+    --viz-func:#b45309; --viz-gen:#64748b; --viz-comp:#16a34a;
+    --viz-text:#1e293b; --viz-muted:#64748b; --viz-grid:#cbd5e1;
+  }
+  html.dark {
+    --bg:#0f172a; --fg:#e2e8f0; --muted:#94a3b8;
+    --card:#1e293b; --card-border:#334155;
+    --accent:#93c5fd; --accent2:#5eead4;
+    --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    --code-bg:#0b1220; --shadow:0 2px 18px rgba(0,0,0,.45);
+    --viz-canvas-bg:#0a1120; --viz-x:#58a6ff; --viz-y:#ff7eb6;
+    --viz-func:#ffd24d; --viz-gen:#94a3b8; --viz-comp:#4ade80;
+    --viz-text:#e2e8f0; --viz-muted:#94a3b8; --viz-grid:#243449;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px; }
+  article { max-width:820px; margin:0 auto; padding:40px 22px 80px; }
+  header { border-bottom:2px solid var(--card-border); padding-bottom:18px; margin-bottom:8px; position:relative; }
+  h1 { font-size:2.0em; line-height:1.22; margin:0 0 8px; color:var(--fg); }
+  .fusion-line { color:var(--muted); font-size:.98em; margin:0; }
+  .fusion-line b { color:var(--accent2); font-weight:600; }
+  .lede { color:var(--muted); font-size:1em; margin:12px 0 0; }
+  .theme-toggle { position:absolute; top:0; right:0; background:var(--card); color:var(--fg);
+    border:1px solid var(--card-border); border-radius:20px; padding:6px 14px; cursor:pointer; font-size:.85em; }
+  section { margin-top:38px; }
+  h2 { font-size:1.45em; margin:0 0 14px; color:var(--accent); border-bottom:1px solid var(--card-border); padding-bottom:6px; }
+  section#inhalt h2, section#widersprueche h2 { color:var(--accent2); }
+  h3 { font-size:1.08em; color:var(--fg); margin:18px 0 8px; }
+  p { margin:0 0 12px; }
+  ul, ol { margin:0 0 12px; padding-left:22px; }
+  li { margin-bottom:6px; }
+  .card { background:var(--card); border:1px solid var(--card-border); border-radius:12px;
+    padding:16px 18px; margin:14px 0; box-shadow:var(--shadow); }
+  .card h3 { margin:0 0 8px; }
+  code, .math { font-family:"SFMono-Regular",Consolas,"Fira Code",monospace;
+    background:var(--code-bg); color:var(--fg); padding:1px 6px; border-radius:4px; font-size:.88em; }
+  .math { font-style:italic; background:transparent; color:var(--accent2); }
+  .mathblock { display:block; text-align:center; font-size:1.02em; background:var(--code-bg);
+    border-left:3px solid var(--accent2); padding:10px 14px; border-radius:0 8px 8px 0; margin:12px 0; overflow-x:auto; }
+  .tagA { color:var(--accent); font-weight:700; }
+  .tagB { color:var(--accent2); font-weight:700; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:.9em; }
+  th, td { border:1px solid var(--card-border); padding:9px 11px; text-align:left; vertical-align:top; }
+  th { background:var(--code-bg); color:var(--fg); }
+  .kv { font-weight:700; color:var(--accent); }
+  .viz-card { background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:18px; box-shadow:var(--shadow); }
+  .ctl-row { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:14px; align-items:center; }
+  .ctl-row label { font-size:.92em; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .ctl-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--accent); }
+  #viz { display:block; width:100%; max-width:720px; height:auto; margin:6px auto;
+    background:var(--viz-canvas-bg); border:1px solid var(--card-border); border-radius:12px; }
+  .viz-info { font-size:.92em; background:var(--code-bg); border:1px solid var(--card-border); border-radius:10px;
+    padding:12px 14px; margin-top:12px; line-height:1.7; }
+  .viz-info b { color:var(--accent2); }
+  .viz-note { color:var(--muted); font-size:.88em; margin-top:12px; }
+  .proven a { color:var(--accent2); text-decoration:none; font-weight:600; }
+  .proven a:hover { text-decoration:underline; }
+  footer { margin-top:46px; color:var(--muted); font-size:.85em; text-align:center;
+    border-top:1px solid var(--card-border); padding-top:16px; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" type="button">&#9790; / &#9788;</button>
+    <h1>Closure &amp; Invarianz — die funktoriale Sprache der übertragbaren Struktur</h1>
+    <p class="fusion-line">Fusion aus: <b>n1-027.html</b> &#10005; <b>n1-075.html</b> &nbsp;(Runde 2)</p>
+    <p class="lede">Zwei Runde-1-Fusionspapiere, eine gemeinsame Wette: Das Eigentliche ist nicht das einzelne Element (Aminosäure, Klang, Neuron, Box), sondern die <strong>Struktur der Beziehungen</strong> — und Struktur lässt sich in einer einzigen kategorialen Sprache aufschreiben, in der sie sowohl <em>entsteht</em> (closure weniger Erzeuger unter Komposition) als auch <em>transportiert</em> wird (ein struktur-erhaltender Funktor, dessen Invarianz die universelle Eigenschaft ist).</p>
+  </header>
+
+  <!-- 1. KERNTHESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p><span class="tagA">A</span> (n1-027, „Macht der Analogie in der Sprache von Produkt &amp; Koprodukt") hält fest: <strong>eine zuverlässige Analogie ist genau dann strukturell treu, wenn der sie tragende Funktor die universellen Konstruktionsformen — Produkt, Koprodukt und deren Dualität — bewahrt.</strong> Was von Domäne zu Domäne wandert, ist nicht der <em>Inhalt</em> (Aminosäuren &#8596; Klangwellen), sondern die <em>universelle Form der Kombination</em>. Die „Macht der Analogie" ist die <strong>funktoriale Invarianz</strong> dieser Form.</p>
+    <p><span class="tagB">B</span> (n1-075, „Struktur, die bleibt" — Raum/IIT &#10005; Ologs) hält fest: <strong>Struktur ist die Abgeschlossenheit einer kleinen Menge lokaler Erzeuger unter einer Kompositionsoperation</strong>; das Eigentliche ist die Struktur der Beziehungen, nicht das Element. „Treue" heißt strukturerhaltend (funktorial) — bijektiv <em>zwischen</em> den Ebenen und quotientiert <em>innerhalb</em> einer. Bewusster Raum (IIT) und kategoriales Wissen (Ologs) sind zwei Instanzen desselben Musters; die Kategorientheorie ist die gemeinsame Sprache.</p>
+    <p><strong>Die fusionierte Position (ein Satz):</strong> Was zwischen Domänen transportiert wird, ist nicht der Inhalt, sondern die <em>Struktur</em> — und „Struktur" ist beides zugleich: auf der <em>Generierungsseite</em> die closure weniger lokaler Erzeuger unter Komposition (B) und auf der <em>Invarianzseite</em> deren Fixpunkt, die universelle Eigenschaft (Produkt/Koprodukt, Limit/Kolimit; A). Ein treues Übertragen — <em>Analogie</em> (A) oder <em>Repräsentation</em> (B) — ist genau ein <strong>struktur-erhaltender Funktor</strong>: er erzeugt in keiner Domäne Struktur nach, sondern trägt die closure-Struktur von einer Domäne zur anderen und hält dabei den Fixpunkt fest. „Die Macht der Analogie" (A) und „die Struktur, die bleibt" (B) sind zwei Seiten derselben funktorialen Invarianz: A betont die <em>Transportseite</em> (der Funktor als Brücke), B die <em>Generierungs- und Treueseite</em> (closure + bijektiv/quotientiert + ontische Lesart).</p>
+  </section>
+
+  <!-- 2. WIDERSPRÜCHE -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Beide leben in derselben Sprache (Kategorientheorie), treffen aber auf drei Punkten auf <strong>unvereinbare Stellungen</strong> — jeweils benannt, welches Papier was behauptet:</p>
+    <div class="card">
+      <h3>&#9312; Invarianz (A) vs. Generierung (B) — was ist das tragende Objekt?</h3>
+      <p><span class="tagA">A</span> verortet die Kraft in der <strong>Invarianz</strong>: „Ein zuverlässiger Funktor ist genau dann strukturell treu, wenn er die universellen Konstruktionsformen — Produkt, Koprodukt, Dualität — <em>bewahrt</em>." Das tragende Objekt ist der <strong>limes-/kolimes-erhaltende Funktor</strong> (die Invarianzseite). <span class="tagB">B</span> verortet die Kraft in der <strong>Generierung</strong>: „Struktur ist die <em>Abgeschlossenheit</em> einer kleinen Menge lokaler Erzeuger unter einer Kompositionsoperation" — das tragende Objekt ist das <strong>generative System</strong> (wenige Regeln + closure &#8594; reiches Ganzes), während „Treue" eine <em>separate</em> Bedingung bleibt (bijektiv + quotientiert). Zwei unterschiedliche Antworten darauf, <em>wo</em> die Struktur sitzt: bei dem, was <em>erhalten</em> wird (A), oder bei dem, was <em>entsteht</em> (B).</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; Eindeutigkeit &exist;! (A) vs. Quotientierung (B) — Axiom vs. Engine</h3>
+      <p><span class="tagA">A</span> hält <strong>Eindeutigkeit <span class="math">&exist;!</span> für das Axiom</strong> und den Nicht-Determinismus für eine <em>Bedrohung</em>, die es wegzulösen gilt („gefährdet die Eindeutigkeit … im Olog"; Auflösung: „&exist;! gilt auf der Form-Ebene", verlustfrei). Eindeutigkeit ist das Invariante. <span class="tagB">B</span> macht gerade das Gegenteil zum Kern: Der Kernzug eines Ologs ist, zwei <em>verschiedene</em> Pfade als <strong>gleich</strong> zu erklären (kommutatives Diagramm = Quotient) — „die gesamte Präzision kommt vom <em>Zerkleinern</em> der Pfade auf Identitätsklassen". Mehrdeutigkeit (2 Pfade) ist hier die <em>Engine</em> der Bedeutung, keine Bedrohung. Inkompatibel ist die Haltung dazu, was mit einer mehrfachen Route geschieht: A will sie <em>eindeutig machen</em>, B will sie <em>quotientieren</em>.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Instrumentell (A) vs. ontisch-instrumentell (B) — Status des Tradierten</h3>
+      <p><span class="tagA">A</span> ist <strong>rein instrumentell</strong>: der Funktor / die Analogie ist eine Methode, eine <em>konkrete</em> Analogie (Seide&#8596;Musik) formell zu beweisen, um <strong>Materiomics</strong> als disziplin-übergreifende Wissenschaft zu gründen. Die formale Struktur ist ein Werkzeug zur Übertragung; es wird <em>nicht</em> behauptet, der Funktor <em>sei</em> die Realität. <span class="tagB">B</span> enthält einen <strong>ontischen</strong> Fall (IIT: „die Ursache&#8211;Wirkungs-Struktur <em>IST</em> das Bewusstsein — ontisch, was die Welt <em>ist</em>") neben dem instrumentellen (Ologs als Werkzeug) und baut die <em>Karte/Territorium</em>-Dialektik („die Karte ist wie das Territorium strukturiert, aber die Karte ist, was wir hantieren"). Inkompatibel ist die Haltung zum ontologischen Status: A kennt nur die instrumentelle Lesart, B hält dieselbe formale Struktur für <em>potentiell</em> ontologisch konstitutiv.</p>
+    </div>
+    <p><strong>Die schärfste reale Spannung</strong> ist &#9313;: <em>Ist eine mehrdeutige Route ein Defekt (einzulösen) oder die Quelle der Präzision (einzusetzen)?</em> — A: Defekt, Richtung &exist;!. B: Engine, Richtung Quotient. A kennt die Quotientierung nicht als Ziel; B kennt die Eindeutigkeit als Bedrohung nicht.</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card">
+      <h3>&#9312; Generierung erzeugt die Invarianz — der Funktor trägt sie</h3>
+      <p>Die universelle Eigenschaft (A) ist der <strong>Fixpunkt</strong> des closure-Operators (B). Ein Funktor bewahrt Produkt/Koprodukt (A) <em>genau deshalb</em>, weil die Strukturen beider Domänen durch dieselbe Abgeschlossenheit unter Komposition (B) erzeugt werden — die closure trifft in beiden auf denselben universellen Fixpunkt. Generierung <em>produziert</em> die Invarianz; der Funktor <em>transportiert</em> sie. <strong>Fusioniert:</strong> <span class="math">Struktur = closure(wenige Erzeuger, Komposition)</span>; die universelle Eigenschaft ist der Fixpunkt dieser Abgeschlossenheit; der Funktor ist die Abbildung, die zwei closure-Systeme aufeinander abbildet, indem sie den Fixpunkt erhält. Die Macht sitzt an <em>beiden</em> Stellen: die Generierung erzeugt sie, der Transport bewahrt sie.</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; &exist;! der Übertragung, Quotient der Struktur — zwei Granularitäten</h3>
+      <p>Das &exist;! bei A betrifft die <strong>ÜBERTRAGUNG</strong>: der Funktor ist eine Funktion, jeder Begriff in Domäne A geht auf <em>genau einen</em> in B (die Analogie ist nicht beliebig). Der Quotient bei B betrifft die <strong>STRUKTUR</strong> innerhalb einer Domäne: ein Olog erklärt zwei syntaktisch verschiedene Pfade als denselben Morphismus. Das setzt sich zusammen: ein <em>treuer</em> Funktor (A, zwischen den Ebenen &exist;!) zwischen zwei <em>quotientierten</em> Strukturen (B, innerhalb einer Ebene Pfad-Äquivalenz) ist das volle Bild. A's „Nicht-Determinismus-Bedrohung" (ein Protein faltet in mehrere Konformationen) und B's „Pfad-Äquivalenz" sind <em>dieselbe</em> Mehrdeutigkeit auf zwei Skalen: auf der Grobskala wird sie aufgelöst (&exist;! — A macht Kontext zum Teil der Objekte), auf der Feinskala wird sie zur Engine der Bedeutung (B: viele Wege &#8594; ein Morphismus). <strong>Fusioniert:</strong> Eindeutigkeit der <em>Übertragung</em> + Quotientierung der <em>Struktur</em>; beides zusammen ergibt eine treue, übersetzbare Repräsentation.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Die Karte ist wie das Territorium strukturiert — der Status ist eine Frage der Instanz</h3>
+      <p>A's Funktor ist die <em>Karte</em> (Instrument: ein Werkzeug, das Struktur zwischen Domänen trägt). B's IIT ist der Spezialfall, in dem <em>Karte = Territorium</em> (die kausale Struktur <em>ist</em> das Erleben). Die kategoriale Sprache (Olog/Funktor) ist in beiden Fällen <em>dieselbe Notation</em>; der ontologische Status des <em>Tradierten</em> ist eine Eigenschaft der <em>Instanz</em>, nicht der Sprache. <strong>Fusioniert:</strong> Im Allgemeinen trägt der Funktor eine Karte über ein Territorium (A: Analogie als Werkzeug); in B's IIT-Instanz klappt Karte und Territorium zusammen (die Struktur <em>ist</em> das Erleben). Dieselbe kategoriale Notation, unterschiedlicher ontologischer Status — entschieden von der Instanz, nicht von der Sprache.</p>
+    </div>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Der zusammengeführte, auf der Ebene der Thesen/Positionen abstrahierte Stoff — so, dass eine spätere Runde allein von hier weiterarbeiten kann.</p>
+
+    <h3>Das fusionierte Objekt: ein generatives System, das ein struktur-erhaltender Funktor transportiert</h3>
+    <p>Ein <strong>generatives System</strong> = wenige lokale Erzeuger (B: Boxen/Types + Pfeile/Aspects; A: die unterste Stufe der 5-Ebenen-Treppe) + ein Abgeschlossenheitsoperator (Komposition). Seine Struktur ist <em>Abgeschlossenheit unter Komposition</em>. Der <strong>universelle Fixpunkt</strong> dieser Struktur — Produkt/Koprodukt, Limit/Kolimit (B's Limits=Layouts/Kolimits=Groupings) — ist, was ein <strong>struktur-erhaltender Funktor</strong> (A's Analogie, B's Instanz/Übersetzung) erhalten muss, um „treu" zu sein.</p>
+
+    <h3>Die Generierungsseite (B) — wie Struktur entsteht</h3>
+    <ul>
+      <li><strong>Olog</strong> = beschriftete Kategorie = Graph + Pfad-Äquivalenzen: Boxen = <em>Types</em>, Pfeile = <em>Aspects</em> (Funktionen, keine Ambiguität), kommutative Diagramme = <em>Facts</em> (zwei Pfade = ein Morphismus). Die Struktur ist die closure unter Komposition — „weniges + Abgeschlossenheit = ganzes".</li>
+      <li>Als <em>Instanz</em>: ein Funktor $I:C\to\mathbf{Set}$ (Box&#8594;Menge, Pfeil&#8594;Funktion, Fakt&#8594;Gleichung). Das Schema ist inhaltlich unabhängig — es existiert auch ohne Instanzen.</li>
+      <li>Reichweite: Rekursion selbst ist closure — jede primitiv-rekursive Funktion ist ein Olog (demonstriert an $n!$); ein (pseudo-)metrischer Raum ist ein Olog (die drei Axiome $d(x,x)=0$, Symmetrie, Dreiecks-Ungleichung werden drei kommutative Diagramme).</li>
+      <li>Bei A's IIT-Substrat ist die „Operation" kausal statt algebraisch: ein 1D-Grid von 8 Einheiten (Selbst-Verbindung w=1, Nachbar-Verbindung w=&frac14;) erzeugt 133 kausale Unterscheidungen; <em>nur</em> das Grid ist ausgedehnt (117/133), ein gleiches Zufallsnetzwerk nicht. Ausgedehntheit (Schnitt/Vereinigung/Einschluss der „Spots") ist die Topologie eines (topos-ähnlichen) Objekts — kategoriale Struktur, die B als „(pseudo-)metrischer Raum als Olog" notieren kann.</li>
+    </ul>
+
+    <h3>Die Invarianzseite (A) — was der Funktor bewahrt</h3>
+    <ul>
+      <li><strong>Produkt</strong> $A\times B$ (Projektion $\pi_1,\pi_2$), <strong>Koprodukt</strong> $A+B$ (Injektion $\iota_1,\iota_2$), <strong>Dualität</strong> (alle Pfeile umdrehen, $C$ vs. $C^{op}$). In $\mathbf{Set}$: $|A\times B|=|A|\cdot|B|$, $|A+B|=|A|+|B|$.</li>
+      <li>Die 5 Ebenen (Aminosäure&#8594;Peptid&#8594;Polypeptid&#8594;Protein&#8594;Nanocomposite / Klangwelle&#8594;Stack&#8594;Ton&#8594;Akkord&#8594;Riff): jede kombiniert die darunter — <em>Kombination ist koproduktartig</em> (Herkunft bleibt, $\iota$), <em>Analysieren ist produktartig</em> (Komponente herausziehen, $\pi$). Distinguished-Members (Enzym &#8596; Dur-Akkord) = eine selektierte Strukturrolle, die der Funktor als solche erhält.</li>
+      <li><strong>Nicht-monotones Optimum:</strong> der H-Bindungs-Cluster $N\approx3\text{–}4$ (Scherfestigkeit überproportional, dann umschlagend) ist ein <em>echtes Limes</em> einer nicht-monotonen Stärke — der beste Kombinationspunkt existiert, ist aber kein „Menge-Maximum". Emergenz durch Bündelung.</li>
+      <li><strong>Scope-Grenze:</strong> der Transfer ist verlustfrei <em>auf dem Struktur-Skelett</em> und bewusst still an der <em>Bewertungs-Ebene</em> (objektiv MPa vs. subjektiv „schön" gehören gar nicht zur Kategorie).</li>
+    </ul>
+
+    <h3>Die Übersetzung: eine Brücke, zwei Granularitäten, ein Status</h3>
+    <table>
+      <thead><tr><th style="width:33%">A (027) — Invarianz</th><th style="width:33%">B (075) — Generierung/Treue</th><th style="width:34%">Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Produkt $A\times B$ / Koprodukt $A+B$, Dualität $C$ vs. $C^{op}$</td><td class="kv">Closure unter Komposition; Limits (Produkt, Pullback) = Layouts, Kolimits (Koprodukt, Pushout) = Groupings</td><td>Die universelle Eigenschaft ist der Fixpunkt der Closure — beide Seiten charakterisieren dieselbe Kombinationsform.</td></tr>
+        <tr><td class="kv">&exist;! (eindeutige universale Abbildung) als Axiom; Nicht-Determinismus = Bedrohung</td><td class="kv">Pfad-Äquivalenz / Quotient (2 Pfade = 1 Morphismus) als Engine der Präzision</td><td>&exist;! der <em>Übertragung</em> (zwischen Ebenen) + Quotient der <em>Struktur</em> (innerhalb einer Ebene).</td></tr>
+        <tr><td class="kv">Funktor = Analogie (Seide&#8596;Musik), bewahrt Produkt/Koprodukt; 4-Schritte (Bausteine, Einheiten, Struktur&#8211;Funktion, Funktor bauen)</td><td class="kv">Instanz = Funktor $I:C\to\mathbf{Set}$; treu = bijektiv zwischen Ebenen + quotientiert innerhalb</td><td>Ein struktur-erhaltender Funktor zwischen zwei closure-Systemen; analoge Übertragung = Instanz-Treue.</td></tr>
+        <tr><td class="kv">Verlustfrei auf dem Struktur-Skelett, still an der Bewertung</td><td class="kv">bijektiv zwischen Ebenen (1:1 „nichts mehr, nichts weniger"), quotientiert innerhalb</td><td>Scope-Grenze: verlustfrei am Skelett, still an der Bewertung, identisch an den Pfaden.</td></tr>
+        <tr><td class="kv">5 Ebenen; Kombination = koproduktartig, Analyse = produktartig; Distinguished-Members</td><td class="kv">Spots; Ausgedehntheit (Schnitt/Vereinigung/Einschluss) = Topologie</td><td>Jede Ebene kombiniert die darunter (Koprodukt); Analyse zieht Komponenten (Produkt); Ausgedehntheit = kategoriale Topologie.</td></tr>
+        <tr><td class="kv">Nicht-monotones Optimum (H-Bond $N\approx3\text{–}4$) = Limes</td><td class="kv">Pullback/Pushout; Rekursion $n!$ als Olog; metrischer Raum als Olog</td><td>Das Optimum ist ein echtes Limes einer nicht-monotonen Stärke; Rekursion &amp; metrische Räume sind selbst closure.</td></tr>
+        <tr><td class="kv">Instrumentell (Analogie beweisen, Materiomics)</td><td class="kv">ontisch (IIT: Struktur IST Erleben) + instrumentell (Ologs)</td><td>Dieselbe Notation; der ontologische Status = Eigenschaft der Instanz (Karte vs. Karte=Territorium).</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die Formeln (beide, fusioniert)</h3>
+    <span class="mathblock">Produkt: &nbsp;&forall; X, f:X&#8594;A, g:X&#8594;B &nbsp;&#8658;&nbsp; &exist;! &langle;f,g&rangle;:X&#8594;A&#215;B &nbsp; mit &nbsp; &pi;&#8321;&circ;&langle;f,g&rangle;=f, &nbsp; &pi;&#8322;&circ;&langle;f,g&rangle;=g</span>
+    <span class="mathblock">Koprodukt: &nbsp;&forall; X, f:A&#8594;X, g:B&#8594;X &nbsp;&#8658;&nbsp; &exist;! [f,g]:A+B&#8594;X &nbsp; mit &nbsp; [f,g]&circ;&iota;&#8321;=f, &nbsp; [f,g]&circ;&iota;&#8322;=g</span>
+    <span class="mathblock">Dualität: &nbsp;Produkt in C &nbsp;=&nbsp; Koprodukt in C<sup>op</sup> &nbsp; (alle Pfeile umdrehen)</span>
+    <span class="mathblock">In Set: &nbsp;|A&#215;B| = |A|&middot;|B| &nbsp;&nbsp;(kartesisches Produkt) &nbsp;&nbsp;|A+B| = |A|+|B| &nbsp;&nbsp;(disjunkte Vereinigung)</span>
+    <span class="mathblock">Closure (B): &nbsp;closure(Generatoren, Komposition) &nbsp;—&nbsp; wenige lokale Regeln &#8594; reiches Ganzes</span>
+    <span class="mathblock">Quotient (B): &nbsp;Pfad-Äquivalenz (kommutatives Diagramm): &nbsp;2 Pfade &#8658; 1 Morphismus</span>
+    <span class="mathblock">IIT-Grid (B): &nbsp;8 Einheiten &#8594; 133 kausale Unterscheidungen; &nbsp;nur Grid ausgedehnt (117/133)</span>
+    <span class="mathblock">Konsonanz (A): &nbsp;c&middot;log&#8322;(f&#8322;/f&#8321;) &isin; &Zopf;, &nbsp; c = 12 &nbsp;·&nbsp; C-Dur &#8776; ganzzahlige Frequenzmatrix &#8658; KONSONANT</span>
+
+    <h3>Das Neue / der Rahmen (Runde 2)</h3>
+    <ul>
+      <li><strong>A:</strong> Die Analogie als <em>formaler Beweis</em> (4-Schritte-Methode, Funktor bauen) und Materiomics als disziplin-übergreifende Wissenschaft — die Anwendung der Invarianz auf eine konkrete Domänenpaarung.</li>
+      <li><strong>B:</strong> Olog-Grid und IIT-Grid sind beide <em>generative Systeme</em> („Struktur = closure(lokal, Komposition)"); die Topologie des erlebten Raums ist kategoriale Struktur; Fusion (Kolimit) = Interoperabilität verteilter Ologs über Common Grounds.</li>
+      <li><strong>Fusion (R2):</strong> Der Funktor (A) ist die Abbildung zwischen zwei closure-Systemen (B); seine <em>Invarianz</em> (Produkt/Koprodukt) ist der Fixpunkt der Generierung (B); seine <em>Treue</em> ist &exist;! zwischen Ebenen + Quotient innerhalb (B); das <em>Tradierte</em> ist im Allgemeinen eine Karte (A, instrumentell) und kann in einer Instanz = Territorium sein (B, ontisch).</li>
+    </ul>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Visualisierung: die closure-Maschine und der treue Funktor</h2>
+    <p>Zwei closure-Systeme — <span class="tagA">Domäne X</span> (links, <span class="accent" style="color:var(--accent)">Blau</span>) und <span class="tagB">Domäne Y</span> (rechts, Rosé) — mit je drei Boxen A, B, C. <strong>Generierung:</strong> zwei Erzeugerpfeile (A&#8594;B, B&#8594;C); schalte „Closure" ein und der komponierte dritte Pfeil A&#8594;C entsteht (Struktur = Abgeschlossenheit unter Komposition, B). <strong>Quotient:</strong> „Pfad-Äquivalenz" markiert, dass der direkte und der komponierte Pfad <em>gleich</em> sind — 2 Pfade = 1 Morphismus (innerhalb einer Ebene, B). <strong>Transport:</strong> die gestrichelten &#8776;-Funktorpfeile übertragen das ganze System 1:1 (bijektiv, treu) von X nach Y; die universelle Eigenschaft bleibt invariant. <strong>Dualität:</strong> „Pfeile umdrehen" dreht <em>alle</em> Pfeile — Produkt &#8596; Koprodukt ($C$ vs. $C^{op}$, A).</p>
+
+    <div class="viz-card">
+      <div class="ctl-row">
+        <label><input type="checkbox" id="chkClosure" checked> Closure unter Komposition (generiere A&#8594;C)</label>
+        <label><input type="checkbox" id="chkQuotient" checked> Pfad-Äquivalenz / Quotient (2 Pfade = 1)</label>
+        <label><input type="checkbox" id="chkDual"> Dualität (alle Pfeile umdrehen)</label>
+      </div>
+
+      <canvas id="viz" width="720" height="560"></canvas>
+
+      <div id="vizInfo" class="viz-info">Wird geladen …</div>
+      <p class="viz-note">Konvention: fest = Erzeuger/komponierter Morphismus; gestrichelt &#8776; = Funktor/Analogie (A); &ldquo;&#61;&rdquo; = Pfad-Äquivalenz/Quotient (B). Alle Daten inline, keine externen Abfragen, themenreaktiv (Farben aus CSS-Variablen).</p>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../n1-027.html"><strong>A — n1-027.html:</strong> „Die Macht der Analogie in der Sprache von Produkt &amp; Koprodukt" (Runde 1).</a> — fusioniert <em>Power of Analogy</em> (Giesa/Spivak/Buehler 2011: Seide&#8596;Musik, hierarchische Ologs, Konsonanz-Formel, H-Bond-Clustering 3&#8211;4 optimal) mit <em>Products &amp; Coproducts</em> (universelle Eigenschaften &exist;!, Projektionen/Injektionen, Dualität $C$/$C^{op}$). Position: die Analogie trägt, weil die universelle Form der Kombination (Produkt/Koprodukt + Dualität) funktorial invariant ist.</li>
+      <li><a href="../n1-075.html"><strong>B — n1-075.html:</strong> „Struktur, die bleibt" (Runde 1).</a> — fusioniert <em>Raum/IIT</em> (Haun &amp; Tononi 2019: Spots, Ausgedehntheit, Grid-Substrat, 1:1 phänomenal&#8596;kausal, ontisch) mit <em>Ologs</em> (Spivak &amp; Kent 2012: Kategorien = Graphen + Pfad-Äquivalenzen, Instanzen als Funktoren, Limits/Kolimits, Rekursion, metrische Räume). Position: Struktur ist closure weniger Erzeuger unter Komposition; bewusster Raum und kategoriales Wissen sind zwei Instanzen desselben Musters.</li>
+    </ul>
+  </section>
+
+  <footer>Fusion (Runde 2, Paar 042) — n1-027 &#10005; n1-075 &middot; Closure &amp; Invarianz: was zwischen Domänen wandert, ist die Struktur — closure weniger Erzeuger unter Komposition, deren Fixpunkt die universelle Eigenschaft ist, getragen von einem strukturerhaltenden, zwischen den Ebenen bijektiven und innerhalb einer Ebene quotientierenden Funktor.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var W = 720, H = 560;
+  cv.width = W; cv.height = H;
+
+  var L  = { A:{x:110,y:150}, B:{x:110,y:300}, C:{x:110,y:450} };
+  var Rr = { A:{x:610,y:150}, B:{x:610,y:300}, C:{x:610,y:450} };
+  var R = 27;
+
+  var state = { closure:true, quotient:true, dual:false };
+
+  function cssVar(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || fb;
+  }
+  function C(){
+    return {
+      bg: cssVar('--viz-canvas-bg','#0a1120'),
+      x: cssVar('--viz-x','#58a6ff'),
+      y: cssVar('--viz-y','#ff7eb6'),
+      func: cssVar('--viz-func','#ffd24d'),
+      gen: cssVar('--viz-gen','#94a3b8'),
+      comp: cssVar('--viz-comp','#4ade80'),
+      text: cssVar('--viz-text','#e2e8f0'),
+      muted: cssVar('--viz-muted','#94a3b8')
+    };
+  }
+
+  function shrink(p, toward, d){
+    var dx=toward.x-p.x, dy=toward.y-p.y, len=Math.sqrt(dx*dx+dy*dy)||1;
+    return { x:p.x+dx/len*d, y:p.y+dy/len*d };
+  }
+
+  function arrow(x1,y1,x2,y2,col,w,dashed){
+    var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy); if(len<1) return;
+    var ux=dx/len, uy=dy/len, ah=10;
+    ctx.save();
+    if(dashed) ctx.setLineDash([6,4]); else ctx.setLineDash([]);
+    ctx.strokeStyle=col; ctx.lineWidth=w||2.5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*ah, y2-uy*ah); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=col; ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-ux*ah-uy*5.5, y2-uy*ah+ux*5.5);
+    ctx.lineTo(x2-ux*ah+uy*5.5, y2-uy*ah-ux*5.5);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function curveArrow(x1,y1,cx,cy,x2,y2,col,w,dashed){
+    ctx.save();
+    if(dashed) ctx.setLineDash([6,4]); else ctx.setLineDash([]);
+    ctx.strokeStyle=col; ctx.lineWidth=w||3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo(cx,cy,x2,y2); ctx.stroke();
+    ctx.setLineDash([]);
+    var dx=x2-cx, dy=y2-cy, len=Math.sqrt(dx*dx+dy*dy);
+    if(len>1){
+      var ux=dx/len, uy=dy/len, ah=10;
+      ctx.fillStyle=col; ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-ux*ah-uy*5.5, y2-uy*ah+ux*5.5);
+      ctx.lineTo(x2-ux*ah+uy*5.5, y2-uy*ah-ux*5.5);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function txt(t,x,y,col,size,align,bold){
+    ctx.fillStyle=col; ctx.font=(bold?'bold ':'')+(size||13)+'px system-ui, -apple-system, sans-serif';
+    ctx.textAlign=align||'center'; ctx.textBaseline='middle'; ctx.fillText(t,x,y);
+  }
+
+  function node(x,y,col,label){
+    ctx.globalAlpha=0.16; ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,R,0,2*Math.PI); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(x,y,R,0,2*Math.PI); ctx.stroke();
+    ctx.fillStyle=C().text; ctx.font='bold 15px system-ui, -apple-system, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label,x,y);
+  }
+
+  function drawDomain(P, col, ctrlX, isY){
+    var d = state.dual;
+    // generators A<->B, B<->C
+    var gens = [['A','B'],['B','C']];
+    for(var i=0;i<gens.length;i++){
+      var a=gens[i][0], b=gens[i][1];
+      var from = d ? b : a, to = d ? a : b;
+      var s = shrink(P[from], P[to], R+3);
+      var e = shrink(P[to], P[from], R+3);
+      arrow(s.x,s.y,e.x,e.y, C().gen, 2.5, false);
+    }
+    // composite A<->C (bowing outward)
+    var ca = d ? 'C' : 'A', cb = d ? 'A' : 'C';
+    var ctrl = { x: ctrlX, y: 300 };
+    var sc = shrink(P[ca], ctrl, R+3);
+    var ec = shrink(P[cb], ctrl, R+3);
+    curveArrow(sc.x, sc.y, ctrl.x, ctrl.y, ec.x, ec.y, C().comp, 3, !state.closure);
+    // quotient badge
+    if(state.quotient){
+      var mid = { x: sc.x*0.25 + ctrl.x*0.5 + ec.x*0.25, y: sc.y*0.25 + ctrl.y*0.5 + ec.y*0.25 };
+      txt(isY ? '=' : '=', mid.x + (isY?16:-16), mid.y, C().comp, 20, 'center', true);
+    }
+    // nodes
+    var labels = isY ? {A:"A\u2032",B:"B\u2032",C:"C\u2032"} : {A:'A',B:'B',C:'C'};
+    node(P.A.x,P.A.y,col,labels.A);
+    node(P.B.x,P.B.y,col,labels.B);
+    node(P.C.x,P.C.y,col,labels.C);
+  }
+
+  function draw(){
+    var c=C();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=c.bg; ctx.fillRect(0,0,W,H);
+
+    txt('Funktor \u2245 (treu \u00b7 strukturerhaltend)', 360, 30, c.func, 13, 'center', true);
+    txt('DOM\u00c4NE X', 110, 92, c.x, 15, 'center', true);
+    txt('DOM\u00c4NE Y', 610, 92, c.y, 15, 'center', true);
+
+    // functor arrows (behind)
+    var fa=[['A',L.A,Rr.A],['B',L.B,Rr.B],['C',L.C,Rr.C]];
+    for(var i=0;i<fa.length;i++){
+      var p1=fa[i][1], p2=fa[i][2];
+      var s=shrink(p1,p2,R+4), e=shrink(p2,p1,R+4);
+      arrow(s.x,s.y,e.x,e.y, c.func, 2, true);
+      txt('\u2245', (p1.x+p2.x)/2, (p1.y+p2.y)/2-13, c.func, 15, 'center', true);
+    }
+
+    drawDomain(L, c.x, 45, false);
+    drawDomain(Rr, c.y, 675, true);
+
+    var status = 'Closure: '+(state.closure?'ON':'OFF')+'  \u00b7  Quotient: '+(state.quotient?'ON':'OFF')+'  \u00b7  '+(state.dual?'DUALIT\u00c4T (Pfeile umgedreht)':'normal');
+    txt(status, 360, 522, c.muted, 12, 'center', false);
+  }
+
+  function updateInfo(){
+    var el=document.getElementById('vizInfo');
+    if(!el) return;
+    var parts=[];
+    parts.push('<b>Generierung (B):</b> 2 Erzeuger (A\u2192B, B\u2192C) erzeugen unter Closure den komponierten Morphismus '+(state.dual?'C\u2192A':'A\u2192C')+'. '+(state.closure?'<b>Struktur entsteht</b> \u2014 Abgeschlossenheit unter Komposition.':'<b>Leeres Ger\u00e4st</b> \u2014 ohne Abgeschlossenheit keine neuen Morphismen.'));
+    parts.push('<b>Quotient (B):</b> '+(state.quotient?'der direkte und der komponierte Pfad werden <b>gleich</b> erkl\u00e4rt \u2014 <b>2 Pfade = 1 Morphismus</b> (innerhalb einer Ebene).':'die beiden Pfade bleiben unterscheidbar \u2014 noch keine Identifikation.'));
+    parts.push('<b>Transport (A):</b> der treue Funktor (\u2245) \u00fcbertr\u00e4gt die closure-Struktur <b>1:1</b> (bijektiv zwischen den Ebenen); die <b>universelle Eigenschaft bleibt invariant</b> (Produkt in C = Koprodukt in C^op).');
+    parts.push('<b>Invarianz (A):</b> Produkt \u2192 \u2203!\u27e8f,g\u27e9:X\u2192A\u00d7B \u00b7 Koprodukt \u2192 \u2203![f,g]:A+B\u2192X \u00b7 Dualit\u00e4t '+ (state.dual?'<b>AKTIV</b> \u2014 alle Pfeile umgedreht.':'aus.'));
+    el.innerHTML=parts.join('<br>');
+  }
+
+  function bind(id, key){
+    var el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('change', function(){ state[key]=this.checked; draw(); updateInfo(); });
+  }
+  bind('chkClosure','closure');
+  bind('chkQuotient','quotient');
+  bind('chkDual','dual');
+
+  var tgl=document.getElementById('themeToggle');
+  if(tgl) tgl.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    requestAnimationFrame(function(){ draw(); updateInfo(); });
+  });
+
+  draw(); updateInfo();
+})();
+</script>
+</body>
+</html>

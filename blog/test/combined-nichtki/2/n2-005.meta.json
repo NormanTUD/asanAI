@@ -1,0 +1,16 @@
+{
+  "no": "005",
+  "a": "n1-004.html",
+  "b": "n1-056.html",
+  "a_title": "Verifizierte Resonanz: Ordnung, die geprüft werden muss",
+  "b_title": "Von Proportion zu Jet: Die Verfeinerung des Gleichen",
+  "combined_theme": "ordnung-als-geprufte-schliessung",
+  "one_line": "Ordnung und Gleichheit sind nicht gegeben, sondern stufig prüfbar: ein Schließ-/Verklebungstest auf lokalen bzw. endlichen Daten zertifiziert die Ordnung, und die Ehrlichkeit besteht darin, die Präzisionsstufe zu benennen (Schwellwert θ / Jet-Ordnung k), die zwei Grenzen zu trennen — die überbrückbare Präzisionsgrenze (Limes, B) und die irreduzible Bedeutungsgrenze (Struktur ≠ Wahrheit, A) — und den Rest, der nicht schließt, als gemessene Krümmung statt als Abfall zu lesen.",
+  "contradictions": [
+    "Form der Graduierung: A liest einen harten Schwellwert θ auf einer kontinuierlichen Schließkurve c(m) ab; B verfeinert über eine diskrete Turmleiter der Jet-Ordnung k gegen einen Limes (kein Schwellwert, nur Grenzprozess).",
+    "Das „Dahinter“: A hält die Lücke zwischen geprüfter Struktur und Wahrheit/Bedeutung für irreduzibel (Gödel); B brückt die Lücke zwischen endlicher Proportion und infinitesimaler Jet über einen wohldefinierten Limes (Eudoxos konstruiert den Grenzwert).",
+    "Der Rest: A behandelt das Nicht-Geschlossene als Rauschen, das auszufiltern ist (Ordnung = Signal/Peak); B behandelt das Nicht-Geschlossene (Krümmung = Schließversagen) als den eigentlichen Inhalt, den die Jet misst (Flach = Sonderfall)."
+  ],
+  "resolution": "Eine Schließfunktion c(Präzision) vereint beide Lesarten: A liest den Schwellwert (c≥θ ⇒ geschlossen), B liest den Limes (c→1 = volle Schließung); die ganzzahligen Peaks sind die exakten Stufen (φ(m) Spalten / Jet-Ordnung k). Es gibt zwei Grenzen, nicht eine: die Präzisionsgrenze (endlich↔infinitesimal) ist per Limes überbrückbar (B), die Bedeutungsgrenze (Struktur↔Wahrheit) irreduzibel (A) — man brückt die erste, überschreitet die zweite nie, und benennt, an welcher Grenze man steht. Der Rest 1−c wird zugleich als lokalisierter Kern (A) und als gemessene Krümmung (B) gelesen; der Schließ-Test tut beides: lokalisieren und die Abweichung messen.",
+  "viz": "Canvas-Schließ-Prüfstand auf A's Primzahlenfeld (inline Sieb, keine externen Daten): oben schließen die Primzahlen bei ganzzahligem m in φ(m) Spalten (das geschlossene Objekt, A); unten die Schließkurve c(m) mit A's Schwellwert θ (gestrichelt), B's ganzzahligen exakten Stufen (Peaks) und dem als gemessene Krümmung (B) schattierten Rest 1−c; das Ehrlichkeits-Overlay markiert die Grenze „Struktur ≠ Wahrheit“ (A) und den Rest als Inhalt (B). Themenreaktiv (CSS-Variablen, MutationObserver)."
+}

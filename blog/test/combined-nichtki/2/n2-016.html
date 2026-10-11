@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Ort als Funktion der Zeit × HoTT (n2-016)</title>
+<style>
+:root{
+  --bg:#f6f3e9; --panel:#fbfaf4; --ink:#1e2230; --muted:#5b6472; --line:#ddd6c6;
+  --accent:#0d9488; --accent2:#2f6fd0; --accent3:#c0457f; --accent4:#b07d18; --dot:#e07d1e;
+  --grid:rgba(0,0,0,.08); --zeroline:rgba(0,0,0,.22); --code-bg:rgba(30,34,48,.06);
+  --accent-soft:rgba(13,148,136,.12);
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 8px 26px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0f1c; --panel:#101a2e; --ink:#e6ecf5; --muted:#93a0b6; --line:#233450;
+  --accent:#64ffda; --accent2:#7aa2ff; --accent3:#ff8fd0; --accent4:#ffcc6a; --dot:#ffd166;
+  --grid:rgba(255,255,255,.09); --zeroline:rgba(255,255,255,.22); --code-bg:rgba(230,236,245,.07);
+  --accent-soft:rgba(100,255,218,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.68;-webkit-font-smoothing:antialiased;}
+article{max-width:820px;margin:0 auto;padding:38px 24px 90px;}
+header{margin-bottom:26px;}
+h1{font-size:2.05rem;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;}
+.subtitle{color:var(--muted);font-size:1.02rem;margin:0;font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section>h2{font-size:1.35rem;margin:0 0 12px;padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft);color:var(--ink);}
+h3{font-size:1.05rem;margin:20px 0 8px;color:var(--accent);}
+p{margin:0 0 14px;}
+em{color:var(--accent);font-style:italic;}
+strong{color:var(--ink);}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px;padding-left:22px;}
+li{margin:0 0 8px;}
+code,.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code-bg);color:var(--ink);padding:1px 6px;border-radius:5px;font-size:.9em;}
+.eq{display:block;background:var(--code-bg);border-left:3px solid var(--accent2);
+  padding:12px 16px;border-radius:8px;font-family:"SFMono-Regular",Consolas,monospace;
+  margin:13px 0;white-space:pre-wrap;overflow-x:auto;font-size:.9em;line-height:1.55;color:var(--ink);}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;margin:14px 0;box-shadow:var(--shadow);}
+.card .tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:20px;margin-bottom:8px;}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel);}
+.vs .col h3{margin:0 0 6px;font-size:1rem;color:var(--ink);}
+.vs .col .src{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.vs .col .src b{color:var(--accent);}
+.note{border-left:3px solid var(--accent);padding:8px 0 8px 14px;margin:14px 0;color:var(--muted);}
+.note b{color:var(--ink);}
+table.map{width:100%;border-collapse:collapse;font-size:.9rem;margin:8px 0 14px;}
+table.map th,table.map td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+table.map th{color:var(--accent);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;}
+table.map td b{color:var(--ink);}
+table.map td:nth-child(3){color:var(--accent2);}
+#vizwrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow);}
+#fusedViz{width:100%;height:auto;display:block;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);}
+.viz-controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.viz-controls b{color:var(--ink);font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent);width:150px;}
+button.ctl{background:var(--accent);color:#08131a;border:none;border-radius:8px;
+  padding:7px 14px;cursor:pointer;font:inherit;font-size:.84rem;font-weight:600;}
+button.ctl.secondary{background:transparent;color:var(--ink);border:1px solid var(--line);}
+button.ctl:hover{filter:brightness(1.06);}
+.readout{font-size:.92rem;line-height:1.65;margin:0;background:var(--code-bg);
+  border-radius:10px;padding:12px 16px;}
+.readout b{color:var(--accent);}
+.readout .dim{color:var(--muted);}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);color:var(--ink);
+  border:1px solid var(--line);border-radius:20px;padding:8px 15px;cursor:pointer;font-size:.85rem;}
+.theme-toggle:hover{border-color:var(--accent);}
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem;}
+.prov{margin:12px 0;}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">☾ Dunkel / ☀ Hell</button>
+<article>
+<header>
+  <h1>Ein Ding ist der Pfad, nicht der Punkt</h1>
+  <p class="subtitle">Fusion aus: <code>n1-038.html</code> ✕ <code>n1-107.html</code>  (Runde 2)</p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Quellpapiere sind <em>show, don&rsquo;t tell</em>-Ausstellungen, aber über jeweils eine
+  andere <em>Art</em> von Objekt &mdash; und beide kommen von entgegengesetzten Richtungen her zum
+  selben Meta-Satz. <strong>A (Ort als Funktion der Zeit)</strong> sagt: die Identität eines
+  <em>Ortes</em> ist nicht sein Katalog von Fakten, sondern seine <em>Trajektorie</em>
+  <code>P(t)</code> &mdash; die Funktion der Zeit, von der die Fakten (heute&nbsp;&asymp;&nbsp;80.000,
+  1127, 1870, 1945&hellip;) bloße <em>Stichproben</em> sind. <strong>B (HoTT: Formalbeweis-System &amp;
+  Konstruktionsmotor)</strong> sagt: die Identität eines <em>Typs</em> ist nicht seine Terme, sondern
+  sein <em>Pfadraum</em> <code>&Omega;(X)</code> &mdash; die Struktur der Pfade (Schleifen), von der die
+  Terme bloße <em>Punkte</em> sind.</p>
+  <p>Die eine integrierte Position: <strong>Die Identität eines Dings ist kein Zustand, kein Wert, kein
+  Punkt &mdash; sie ist ein <em>Pfad</em>.</strong> A&rsquo;s &bdquo;ein Ort ist eine Funktion der
+  Zeit&ldquo; ist ein Pfad durch die Zeit; B&rsquo;s &bdquo;die Identität eines Punkts ist sein
+  Pfadraum&ldquo; ist ein Pfad durch einen Raum. Beide verweigern sich dem Snapshot (der
+  Einwohnerzahl / dem bloßen Term) und erheben die <em>Regel / die Struktur, die die Stichproben
+  erzeugt</em>, zum Träger der Bedeutung. A&rsquo;s Kurve und B&rsquo;s Schleifenraum sind derselbe
+  Satz, gelesene auf zwei Domänen.</p>
+  <p>Und in beiden ist die <em>Manipulation des Lesers das Berechnen dieses Pfads</em>: A &mdash; die
+  Uhr schieben, berechnet <code>P(t)</code>; B &mdash; die Schleife komponieren, berechnet die
+  Windungszahl. So verallgemeinert sich B&rsquo;s &bdquo;Beweis&nbsp;=&nbsp;Algorithmus&nbsp;=&nbsp;
+  geometrisches Objekt&ldquo; zum fusionierten Gesetz: <strong>die Regel ist der Generator, der
+  Generator ist der Pfad, und den Pfad zu <em>berühren</em> heißt, ihn zu <em>berechnen</em>.</strong>
+  Der Unterschied zwischen den beiden Papieren ist nur die <em>Domäne</em> des Objekts (empirischer
+  Ort vs. formaler Typ) und damit der <em>epistemische Weg</em> zur Regel (anpassen vs. konstruieren)
+  &mdash; die <em>Struktur</em> der Aussage ist identisch.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich in <em>keinem</em> faktischen Anspruch &mdash; ein realer
+  Ort + Analysis vs. die Homotopietypentheorie berühren sich kaum. Aber sie nehmen zu drei
+  <em>tragenden</em> Punkten genuinely unterschiedliche Staturen ein. Wörtlich benannt:</p>
+
+  <div class="vs">
+    <div class="col">
+      <h3>Regel: gefittet (Modell)</h3>
+      <div class="src"><b>A</b> · Ort als Funktion der Zeit</div>
+      <p>Die Regel (die Wachstumskurve <code>P(t)</code>) ist ein <strong>schematisches parametrisches
+      Modell, das an reale Anker gefittet</strong> ist. A ist explizit: Nur die Jahresdaten und
+      &bdquo;&asymp;80.000 heute&ldquo; seien echte Anker; die genauen Zwischenwerte &bdquo;sind in beiden
+      Quellpapieren nicht enthalten und werden hier als <em>schematisches parametrisches Modell</em>
+      gezeichnet &mdash; nicht als Datenanspruch&ldquo;. Die Regel wird <em>angenommen</em>, um die Daten
+      zu treffen &mdash; ein <em>model-of</em>.</p>
+    </div>
+    <div class="col">
+      <h3>Regel: konstruiert (Beweis)</h3>
+      <div class="src"><b>B</b> · HoTT</div>
+      <p>Die Regel (die Arithmetik, die Pfadstruktur) wird <strong>aus Axiomen konstruiert und
+      bezeugt</strong>: Operationen entstehen durch Rekursion/Induktion und <em>müssen</em> wohldefiniert
+      <em>bewiesen</em> werden; Division braucht einen <em>Zeugen</em> <code>b&ne;0 : (b=0) &rarr;
+      Empty</code>; &bdquo;the path from the input to the output is the computation itself, witnessed by
+      definitional equalities (refl)&ldquo;. Die Regel wird <em>gebaut und bewiesen</em> &mdash; ein
+      <em>proof-of</em>.</p>
+    </div>
+  </div>
+
+  <div class="vs">
+    <div class="col">
+      <h3>Manipulation: offenbarend</h3>
+      <div class="src"><b>A</b> · Ort als Funktion der Zeit</div>
+      <p>Den Regler zu ziehen ist &bdquo;die Uhr bedienen&ldquo;, Historiker zu werden. Die Manipulation
+      <em>offenbart</em> den Wandel eines <strong>fixen</strong> Ortes; der Ort selbst ist gegeben. Der
+      Leser <em>variiert</em> den Parameter, um eine <em>gegebene</em> Trajektorie zu lesen &mdash; ein
+      interpretativer, explorativer Akt.</p>
+    </div>
+    <div class="col">
+      <h3>Manipulation: konstituierend</h3>
+      <div class="src"><b>B</b> · HoTT</div>
+      <p>Die Schleifen zu komponieren <em>ist</em> das Addieren: Pfade-Komposition
+      <code>loop^n &middot; loop^m = loop^(n+m)</code> ist <em>buchstäblich</em> die Addition in
+      <b>&Zopf;</b>. Die Manipulation <em>konstituiert</em> den Wert selbst &mdash; der Leser variiert
+      nichts an einem gegebenen Objekt, er <em>erzeugt</em> das Ergebnis (die Zahl) <em>mit dem
+      Zug</em>.</p>
+    </div>
+  </div>
+
+  <div class="vs">
+    <div class="col">
+      <h3>Invarianz: Kontinuität</h3>
+      <div class="src"><b>A</b> · Ort als Funktion der Zeit</div>
+      <p>&bdquo;Dasselbe&ldquo; durch Wandel = der <strong>selbe Ort</strong> persistiert 1127&rarr;2025
+      trotz totaler Transformation (Textil&nbsp;&rarr;&nbsp;Dienstleistung): &bdquo;Die Identität eines
+      Ortes ist eine Trajektorie&ldquo;. Invarianz ist <em>empirisch/narrativ</em> &mdash; dieselbe
+      Stadt durch die Jahrhunderte hindurch.</p>
+    </div>
+    <div class="col">
+      <h3>Invarianz: Univalenz</h3>
+      <div class="src"><b>B</b> · HoTT</div>
+      <p>&bdquo;Dasselbe&ldquo; durch Wandel = <strong>Univalenz</strong>: &bdquo;equal up to equivalence
+      is literally equal&ldquo;; homöomorphe Räume sind <em>gleich</em>. Invarianz ist
+      <em>axiomatisch/strukturell</em> &mdash; das Struktur-Invarianz-Prinzip: was in HoTT formulierbar
+      ist, respektiert automatisch Äquivalenzen.</p>
+    </div>
+  </div>
+
+  <div class="note"><b>Kein Widerspruch in der Sache</b> (sie berühren sich kaum), aber drei wirklich
+  unterschiedliche Staturen zu (1) dem <em>Ursprung der Regel</em> (fitted vs. constructed), (2) der
+  <em>Rolle der Manipulation</em> (offenbarend vs. konstituierend) und (3) der
+  <em>Invarianz</em> (Kontinuität vs. Univalenz).</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p><strong>1. Fitted vs. Constructed = zwei epistemische Wege zu derselben &bdquo;Regel trägt die
+  Identität&ldquo;.</strong> Die Regel (der Pfad/die Funktion) ist in beiden die Identität; nur der
+  <em>Zugang</em> ist domänenabhängig. Empirische Objekte (eine Stadt) kann man nicht <em>beweisen</em>,
+  also <em>fittet</em> man eine Kurve an echte Anker und bleibt ehrlich, dass sie schematisch ist.
+  Formale Objekte (ein Typ) kann man nicht <em>betrachten</em>, also <em>konstruiert</em> man sie und
+  <em>bezeugt</em> sie. <em>Fusionsschluss:</em> Welche Regel auch immer &mdash; man erhält sie, indem man
+  sie <em>an beobachtete Werte anpasst</em> (empirisch, A) <em>oder</em> <em>aus Axiomen konstruiert und
+  bezeugt</em> (formal, B); und in beiden ist die Ehrlichkeit dieselbe: A deklariert die Kurve
+  &bdquo;schematisch, nicht als Datenanspruch&ldquo;, B deklariert die Operation &bdquo;braucht einen
+  expliziten Zeugen&ldquo;. <em>Beide weigern sich, die erzeugte Regel mit der rohen Datenebene zu
+  verwechseln.</em></p>
+  <p><strong>2. Offenbarend vs. Konstituierend = ein einziger Gestus: den Identitäts-Pfad berechnen.</strong>
+  In beiden <em>ist</em> die Manipulation die Berechnung. A fixiert das Objekt (die Stadt) und variiert den
+  Parameter, um die Trajektorie zu <em>offenbaren</em>; B fixiert die Basis (den Typ) und komponiert, um die
+  Struktur zu <em>konstituieren</em>. Beide sind &bdquo;parametergesteuerte Erzeugung des
+  Identitäts-Pfads&ldquo;. <em>Fusionsschluss:</em> Der Zug des Lesers ist in beiden der Akt,
+  <em>denen Pfad zu berechnen, der die Identität des Objekts ist</em> &mdash; &bdquo;berühren heißt
+  berechnen&ldquo;. A und B sind derselbe Gestus, zweimal gelesen.</p>
+  <p><strong>3. Kontinuität vs. Univalenz = Äquivalenz ist formalisierte Kontinuität.</strong>
+  &bdquo;Derselbe Ort durch die Geschichte&ldquo; (A) ist der empirische Schatten von &bdquo;equal up to
+  equivalence is equal&ldquo; (B). Beide sagen: Was ein Ding <em>durch</em> seinen Wandel hindurch
+  <em>dasselbe Ding</em> macht, ist nicht sein Snapshot, sondern die <em>Struktur seines Wandels</em>
+  (seine Trajektorie / sein Pfadraum). <em>Fusionsschluss:</em> Univalenz ist die
+  <em>Formalisierung</em> von &bdquo;ein Ding bleibt dasselbe durch seine Transformationen&ldquo; &mdash; und
+  A&rsquo;s &bdquo;derselbe Ort durch die Geschichte&ldquo; ist die <em>empirische Instanz</em> dieses
+  Prinzips.</p>
+  <p><b>Gesamter Fusionsschluss:</b> Die Identität eines <em>jeden</em> Objekts &mdash; einer Stadt oder
+  eines Typs &mdash; ist ein <em>berechenbarer Pfad</em> (Trajektorie / Schleifenstruktur), kein Snapshot.
+  Man erhält ihn entweder, indem man eine <em>Regel an beobachtete Werte anpasst</em> (empirisch, A), oder
+  indem man ihn <em>aus Axiomen konstruiert und bezeugt</em> (formal, B). Und ihm <em>zu berühren</em>
+  (die Uhr bewegen / die Schleife komponieren) heißt in beiden, <em>diesen Pfad zu berechnen</em>.
+  B&rsquo;s &bdquo;Beweis&nbsp;=&nbsp;Algorithmus&nbsp;=&nbsp;Trajektorie&ldquo; verallgemeinert sich zu:
+  <strong>die Regel&nbsp;=&nbsp;der Generator&nbsp;=&nbsp;der Pfad, der die Identität ist &mdash; und ihn zu
+  berühren heißt, ihn zu berechnen.</strong></p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Das fusionierte Prinzip</span>
+    <p>Objekt&nbsp;&rarr;&nbsp;Snapshot (der Wert / der Punkt) vs. Regel (der Pfad / die Struktur, die die
+    Werte erzeugt). In beiden Papieren ist die <em>Regel der Pfad</em>, der die Stichproben erzeugt, und
+    die <em>Manipulation</em> (die Uhr / die Komposition) <em>berechnet</em> ihn. A liefert Subjekt +
+    reale Anker + die Analysis-Operatoren; B liefert den formalen Apparat (Pfade, &Omega;, Univalenz,
+    Transport), in dem &bdquo;Regel = Pfad = Beweis = Algorithmus&ldquo; wörtlich wird.</p>
+  </div>
+
+  <h3>1. Die gemeinsame Grundtabelle &mdash; der eine Satz, zwei Domänen</h3>
+  <table class="map">
+    <tr><th>Concept</th><th>A · Ort als Funktion der Zeit</th><th>B · HoTT / Pfadraum</th></tr>
+    <tr><td><b>Objekt</b></td><td>ein Ort (Neumünster)</td><td>ein Typ (S&sup1;)</td></tr>
+    <tr><td><b>Snapshot / Wert</b></td><td>Einwohnerzahl am Jahr (&asymp;80.000)</td><td>Term / Punkt (<code>loop</code>, <code>base</code>)</td></tr>
+    <tr><td><b>Identität / Regel</b></td><td>die Funktion <code>P(t)</code> &mdash; die Trajektorie</td><td>der Pfadraum <code>&Omega;(S&sup1;)</code> &mdash; die Schleifenstruktur</td></tr>
+    <tr><td><b>Wandel / Relation</b></td><td>Rate <code>P&prime;(t)</code> (Ableitung)</td><td>Pfad zwischen Punkten (Gleichheitsbeweis)</td></tr>
+    <tr><td><b>Bewegung</b></td><td><code>P(t)</code>, während <code>t</code> läuft</td><td>Schleife, komponiert mit sich selbst</td></tr>
+    <tr><td><b>Akkumulation</b></td><td><code>&int; P&prime; dt</code> = kumulierter Wandel</td><td><code>loop^n &middot; loop^m = loop^(n+m)</code> (Komposition = Addition)</td></tr>
+    <tr><td><b>Schnellste Stelle</b></td><td>Wendepunkt (<code>f&Prime;=0</code>)</td><td>die Windungszahl <code>n</code> (das &bdquo;most beautiful result&ldquo;)</td></tr>
+    <tr><td><b>Generator</b></td><td>logistisches / exponentielles Modell, an Anker <em>gefittet</em></td><td>Rekursion / Induktion, die Arithmetik <em>konstruiert</em></td></tr>
+    <tr><td><b>Anker / Basis</b></td><td>reale Jahresdaten (1127, 1870, 1901, 1945, heute)</td><td>Basispunkt <code>base</code>, <code>refl</code></td></tr>
+    <tr><td><b>Manipulation</b></td><td>die Uhr schieben</td><td>die Schleife komponieren</td></tr>
+    <tr><td><b>Was sie IST</b></td><td>die Uhr bedienen = <code>P(t)</code> berechnen</td><td>Addieren = Pfade komponieren</td></tr>
+    <tr><td><b>Ehrlichkeit / Preis</b></td><td>Kurve ist <em>schematisch</em> (angenommen, nicht Daten)</td><td>Operation braucht <em>Zeugen</em> (konstruiert, <code>refl</code>)</td></tr>
+    <tr><td><b>Invarianz</b></td><td>derselbe Ort 1127&rarr;2025 (Kontinuität)</td><td>Univalenz (<code>&#8769; &rarr; =</code>, Struktur)</td></tr>
+  </table>
+
+  <h3>2. Der gemeinsame Werkzeugkasten &mdash; Analysis als Pfad-Algebra</h3>
+  <ul>
+    <li><strong>Ableitung = Steigung (A) &harr; Pfad (B):</strong> Die Änderungsrate ist ein
+    <em>infinitesimaler Pfad</em> zwischen Zuständen; in B ist jede Gleichheit selbst ein Pfad. Der
+    Tangentenvektor an <code>P(t)</code> <em>ist</em> der lokale Pfad des Ortes.</li>
+    <li><strong>Integral = kumulierter Wandel (A) &harr; Pfad-Komposition (B):</strong> Die
+    Summation über ein Intervall <code>&int;_{t1}^{t2} P&prime; dt = P(t2)&minus;P(t1)</code> ist das,
+    was B als Komposition schreibt: die vielen kleinen Schritte <em>zusammengesetzt</em> ergeben den
+    Gesamtpfad <code>loop^n</code>.</li>
+    <li><strong>Wendepunkt (A) &harr; maximale Windung (B):</strong> Der Moment des <em>schnellsten</em>
+    Wandels (A) ist die Stelle, an der die Pfadstruktur &bdquo;am aktivsten&ldquo; ist &mdash; in B die
+    Windungszahl, der &bdquo;most beautiful result&ldquo;.</li>
+    <li><strong>e-Funktion / Logistik (A) &harr; Schleifenstruktur (B):</strong> Der glatte
+    Generator der Stichproben; die (ganze) Windungszahl <code>n</code> ist der <em>Wert</em>, den die
+    Schleife erzeugt. In beiden erzeugt die Regel die Werte &mdash; nur die Regel ist unterschiedlich
+    geerdet (gefitet vs. konstruiert).</li>
+    <li><strong>Stichproben / Anker (A) &harr; Terme / Punkte (B):</strong> Die gegebenen Fakten sind in
+    beiden <em>Stichproben</em> der Regel, nicht die Regel selbst. A&rsquo;s Jahresdaten sind B&rsquo;s
+    Basispunkte: Ausgangspunkte, um die herum der Pfad läuft.</li>
+  </ul>
+
+  <h3>3. Der geteilte Ehrlichkeits- / Zeugen-Druck</h3>
+  <p>Beide Papiere trennen &bdquo;gegebene Stichprobe&ldquo; von &bdquo;erzeugter Regel&ldquo; und weigern
+  sich, sie zu vermischen &mdash; und beide <em>flaggen</em> die erzeugte Regel:</p>
+  <ul>
+    <li><strong>A:</strong> &bdquo;Nur die Jahresdaten und &lsquo;&asymp;80.000 heute&rsquo; sind reale
+    Anker; die genauen Zwischenwerte werden als <em>schematisches parametrisches Modell</em> gezeichnet
+    &mdash; als Demonstrationsobjekt der fusionierten Idee, <em>nicht als Datenanspruch</em>.&ldquo;</li>
+    <li><strong>B:</strong> &bdquo;Division braucht einen Zeugen <code>b&ne;0 : (b=0) &rarr;
+    Empty</code>; Operationen müssen bewiesen werden, die Äquivalenzrelation zu respektieren;
+    &lsquo;the path from the input to the output is the computation itself, witnessed by definitional
+    equalities (refl)&rsquo;.&ldquo;</li>
+  </ul>
+  <p><b>Fusion:</b> Die <em>Treue zur Regel, nicht zum Snapshot</em>, ist die geteilte Ethik. Was erzeugt
+  (die Kurve / der Beweis) wird nie als gegeben (die Daten / die Terme) ausgegeben.</p>
+
+  <h3>4. Die gemeinsame Mathematik (integriert)</h3>
+  <span class="eq">A:   P(t)  = K / (1 + e^{-k(t-t0)})                (logistisch / S-förmig, schematisch)
+A:   P'(t)  = Änderungsrate pro Jahr                 (Ableitung = Steigung)
+A:   ∫_{t1}^{t2} P'(t) dt = P(t2) − P(t1)           (Hauptsatz der Analysis)
+
+B:   loop^n · loop^m = loop^(n+m)                    (Komposition = Addition)
+B:   loop^0 = refl                                   (Einheit = konstanter Pfad)
+B:   π₁(S¹) ≅ ℤ   (ℤ ≃ Ω(S¹))                        (Brückensatz)
+
+Fusion:  Wert (Stichprobe) vs. Regel (Pfad) — in beiden ist die Regel der Pfad,
+         der die Werte erzeugt; die Manipulation (Uhr / Komposition) berechnet ihn.</span>
+
+  <div class="note"><b>Feinere Korrespondenz (Stufe/Dimension):</b> A unterscheidet <em>diskret
+  kuratierte Szenen</em> (Wert/Stichprobe) von einem <em>kontinuierlichen Parameter-Raum</em>
+  (Regel); B unterscheidet <em>h-Level 0</em> (Mengen wie <code>Nat</code>/<code>Bool</code>, dort ist
+  Gleichheit eine Proposition &mdash; der Pfadraum kollabiert) von <em>höheren Leveln</em>
+  (<code>&Omega;(S&sup1;)</code>, dort mehrere Pfade). Beide trennen die <em>kollabierte,
+  mengen-trunkierte Stichprobe</em> von der <em>höherdimensionalen Pfadstruktur, die die eigentliche
+  Identität trägt</em>.</div>
+
+  <div class="note"><b>Ehrlichkeitshinweis:</b> Die realen Anker (Jahre 1127, 1332, 1529, ~1800, 1870,
+  1901, 1945 und &bdquo;&asymp;80.000 heute&ldquo;) stammen aus A. Alle <em>Zwischenwerte</em> der Kurve
+  und jede Windungszahl sind <em>schematische Demonstrationsobjekte</em> der fusionierten Idee &mdash;
+  keine Daten- oder Zahlenanspruch.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung</h2>
+  <p>Ein <em>einziger Takt</em> (das Jahr, 1127&nbsp;&rarr;&nbsp;2025) steuert <strong>gleichzeitig</strong>
+  zwei Lesarten desselben Pfads. Links <strong>A</strong>: die <em>Trajektorie</em>
+  <code>P(t)</code> &mdash; eine schematische S-Kurve mit A&rsquo;s realen Jahres-Ankern; der laufende
+  Punkt liest <code>P(t)</code>, die Tangente zeigt die Rate <code>P&prime;(t)</code> (Ableitung&nbsp;=
+  Steigung). Rechts <strong>B</strong>: der <em>Pfadraum</em> <code>&Omega;(S&sup1;)</code> &mdash; der
+  laufende Punkt windet sich <code>n</code>-mal um den Basispunkt; Komposition&nbsp;= Addition,
+  <code>loop^n</code> ist der erzeugte Wert. Der <em>zurückgelegte</em> Pfad (die ausgefüllte
+  Trajektorie links, die gezogenen Windungen rechts) ist die Identität &mdash; der Wert nur eine
+  Stichprobe. Schiebe den Takt oder drücke <em>Abspielen</em>: <em>berühren = berechnen</em>.</p>
+
+  <div class="card"><p class="readout" id="fusedReadout">Lade&hellip;</p></div>
+
+  <div id="vizwrap">
+    <canvas id="fusedViz" width="760" height="440"></canvas>
+    <div class="viz-controls">
+      <label>Takt &middot; Jahr <b id="yearVal">1900</b>
+        <input type="range" id="yearSlide" min="1127" max="2025" step="1" value="1900"></label>
+      <button class="ctl" id="playBtn" type="button">&#9654; Abspielen</button>
+      <button class="ctl secondary" id="resetBtn" type="button">Zur&uuml;cksetzen</button>
+      <span class="dim" style="font-size:.78rem;color:var(--muted);margin-left:auto;max-width:230px">
+        Schematisch: nur die Jahresdaten &amp; &bdquo;&asymp;80.000 heute&ldquo; sind reale Anker (aus A).</span>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+    var cv = document.getElementById('fusedViz');
+    if(!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d');
+
+    var yearSlide = document.getElementById('yearSlide');
+    var yearVal   = document.getElementById('yearVal');
+    var playBtn   = document.getElementById('playBtn');
+    var resetBtn  = document.getElementById('resetBtn');
+    var themeBtn  = document.getElementById('themeToggle');
+    var readout   = document.getElementById('fusedReadout');
+
+    var T0 = 1127, T1 = 2025, K = 80000, MAXWIND = 6;
+    var ANCHORS = [1127,1332,1529,1800,1870,1901,1945,2025];
+    var ALABEL  = {1127:'Gr\u00fcndung',1332:'Novum\nMonasterium',1529:'Reformation',
+                   1800:'Textil-\nstadt',1870:'Eisen-\nbahn',1901:'Stadt-\nrecht',
+                   1945:'Krieg',2025:'\u224880.000'};
+
+    var LK = 0.020, LT0 = 1880;
+    function sgm(t){ return 1/(1+Math.exp(-LK*(t-LT0))); }
+    var SCALE = K / sgm(T1);
+    function P(t){ return sgm(t)*SCALE; }
+    function dP(t){ var h=1; return (P(t+h)-P(t-h))/(2*h); }
+
+    function yearNow(){ return (yearSlide && yearSlide.value!=null) ? (parseInt(yearSlide.value,10)||1900) : 1900; }
+    function prog(){ return (yearNow()-T0)/(T1-T0); }
+
+    function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+    function colors(){
+      return { panel:cssVar('--panel'), ink:cssVar('--ink'), muted:cssVar('--muted'),
+        line:cssVar('--line'), accent:cssVar('--accent'), accent2:cssVar('--accent2'),
+        accent3:cssVar('--accent3'), accent4:cssVar('--accent4'), dot:cssVar('--dot'),
+        grid:cssVar('--grid'), zline:cssVar('--zeroline') };
+    }
+    function fmt(n){ try{ return Math.round(n).toLocaleString('de-DE'); }catch(e){ return String(Math.round(n)); } }
+    function sup(n){
+      var s=String(n), map={'0':'\u2070','1':'\u00B9','2':'\u00B2','3':'\u00B3','4':'\u2074',
+        '5':'\u2075','6':'\u2076','7':'\u2077','8':'\u2078','9':'\u2079','-':'\u207B'};
+      var out=''; for(var i=0;i<s.length;i++){ out += (map[s[i]]||s[i]); } return out;
+    }
+
+    var W=760, H=440, playing=false, rafId=null, lastTs=0;
+
+    function fit(){
+      var parent = cv.parentElement;
+      var cssW = parent ? parent.clientWidth : W;
+      if(cssW < 320) cssW = 320;
+      if(cssW > 760) cssW = 760;
+      var cssH = cssW * (H/W);
+      var dpr = window.devicePixelRatio || 1;
+      var scale = cssW / W;
+      cv.width  = Math.round(cssW*dpr);
+      cv.height = Math.round(cssH*dpr);
+      cv.style.width  = cssW+'px';
+      cv.style.height = cssH+'px';
+      ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+      draw();
+    }
+
+    function draw(){
+      var c = colors();
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = c.panel; ctx.fillRect(0,0,W,H);
+      var y = yearNow(), pr = prog();
+      var midX = 380;
+      ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(midX,30); ctx.lineTo(midX,420); ctx.stroke();
+      ctx.textAlign='center';
+      ctx.fillStyle = c.ink; ctx.font='600 15px system-ui, sans-serif';
+      ctx.fillText('A \u00b7 Ort als Funktion der Zeit', 190, 22);
+      ctx.fillText('B \u00b7 Punkt als Pfadraum (S\u00b9)', 570, 22);
+      ctx.fillStyle = c.muted; ctx.font='11px system-ui, sans-serif';
+      ctx.fillText('Trajektorie P(t)', 190, 38);
+      ctx.fillText('Schleifenstruktur \u03a9(S\u00b9)', 570, 38);
+      drawA(c, y, pr);
+      drawB(c, pr);
+      ctx.textAlign='center';
+      ctx.fillStyle = c.ink; ctx.font='600 14px system-ui, sans-serif';
+      ctx.fillText('Takt \u2014 Jahr ' + y, midX, 432);
+    }
+
+    function drawA(c, y, pr){
+      var x0=42, x1=360, ytop=80, ybot=344;
+      function X(t){ return x0 + (t-T0)/(T1-T0)*(x1-x0); }
+      function Y(p){ return ybot - (p/(K*1.15))*(ybot-ytop); }
+      ctx.strokeStyle = c.zline; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x0,ytop); ctx.lineTo(x0,ybot); ctx.lineTo(x1,ybot); ctx.stroke();
+      ctx.strokeStyle = c.grid; ctx.lineWidth=1;
+      for(var i=0;i<=4;i++){ var gy=ytop+(ybot-ytop)*i/4; ctx.beginPath(); ctx.moveTo(x0,gy); ctx.lineTo(x1,gy); ctx.stroke(); }
+      ctx.strokeStyle = c.accent; ctx.lineWidth=2.5; ctx.beginPath();
+      for(var t=T0;t<=T1;t+=2){ var px=X(t), py=Y(P(t)); if(t===T0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+      ctx.stroke();
+      ctx.fillStyle = c.accent; ctx.globalAlpha=0.13; ctx.beginPath();
+      ctx.moveTo(X(T0), Y(0));
+      for(var t2=T0;t2<=y;t2+=2){ ctx.lineTo(X(t2), Y(P(t2))); }
+      ctx.lineTo(X(y), Y(0)); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+      ctx.font='9px system-ui, sans-serif'; ctx.textAlign='center';
+      for(var i2=0;i2<ANCHORS.length;i2++){
+        var at=ANCHORS[i2];
+        ctx.fillStyle = c.accent4; ctx.beginPath(); ctx.arc(X(at), ybot, 3, 0, Math.PI*2); ctx.fill();
+        if(ALABEL[at]){
+          ctx.fillStyle = c.muted;
+          var parts = ALABEL[at].split('\n');
+          for(var p3=0;p3<parts.length;p3++){ ctx.fillText(parts[p3], X(at), ybot+12+p3*9); }
+        }
+      }
+      var mx=X(y), my=Y(P(y));
+      var dpx=(x1-x0)/(T1-T0), dpy=-(ybot-ytop)/(K*1.15);
+      var m=(dpy*dP(y))/dpx, inv=1/Math.sqrt(1+m*m), L=30, tx=L*inv, ty=L*inv*m;
+      ctx.strokeStyle = c.accent2; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(mx-tx,my-ty); ctx.lineTo(mx+tx,my+ty); ctx.stroke();
+      ctx.fillStyle = c.dot; ctx.shadowColor=c.dot; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(mx,my,6,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+      ctx.fillStyle = c.ink; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='left';
+      ctx.fillText('P('+y+') \u2248 '+fmt(P(y)), Math.min(mx+10,x1-96), my-8);
+      ctx.fillStyle = c.muted; ctx.font='9px system-ui, sans-serif';
+      ctx.fillText('schematisches Modell', x0+2, ytop-6);
+    }
+
+    function drawB(c, pr){
+      var cx=575, cy=214, R=58;
+      var gap = Math.max(4, R*0.11);
+      var tw = pr*MAXWIND;
+      var n = Math.floor(tw + 1e-9);
+      var frac = tw - n;
+      ctx.strokeStyle = c.line; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle = c.accent2;
+      ctx.beginPath(); ctx.arc(cx+R, cy, 6, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle=c.muted; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='left';
+      ctx.fillText('base', cx+R+9, cy+4);
+      if(n===0){
+        ctx.strokeStyle=c.accent2; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.arc(cx+R, cy-15, 7, 0, Math.PI*2); ctx.stroke();
+        ctx.fillStyle=c.accent2; ctx.textAlign='center'; ctx.font='12px system-ui, sans-serif';
+        ctx.fillText('refl (loop\u2070) \u2014 konstanter Pfad', cx, cy-R-12);
+      } else {
+        for(var i=1;i<=n;i++){
+          var r = R + i*gap;
+          ctx.globalAlpha = 0.5 + 0.5*(1 - i/(n+1));
+          ctx.strokeStyle = c.accent; ctx.lineWidth=2.2;
+          ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+        }
+        ctx.globalAlpha=1;
+        var rOut = R + n*gap;
+        if(frac>0.001){
+          ctx.strokeStyle = c.dot; ctx.lineWidth=3;
+          ctx.beginPath(); ctx.arc(cx,cy,rOut, 0, -frac*Math.PI*2, true); ctx.stroke();
+        }
+        var a = -frac*Math.PI*2;
+        var dx = cx + rOut*Math.cos(a), dy = cy + rOut*Math.sin(a);
+        ctx.fillStyle = c.dot; ctx.shadowColor=c.dot; ctx.shadowBlur=10;
+        ctx.beginPath(); ctx.arc(dx,dy,6,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+        ctx.fillStyle=c.accent; ctx.textAlign='center'; ctx.font='600 13px system-ui, sans-serif';
+        ctx.fillText('loop'+sup(n)+'  (Zahl '+n+')', cx, cy - rOut - 12);
+      }
+      ctx.fillStyle=c.muted; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('n = '+n+' Windungen \u2014 Komposition = Addition', cx, 400);
+    }
+
+    function updateReadout(){
+      if(!readout) return;
+      var y=yearNow(), pr=prog(), n=Math.floor(pr*MAXWIND+1e-9);
+      readout.innerHTML =
+        'Takt (ein Parameter): <b>Jahr '+y+'</b><br>'
+      + 'A \u00b7 Wert (Stichprobe): <b>P('+y+') \u2248 '+fmt(P(y))+'</b> <span class="dim">(schematische Stichprobe des Modells)</span><br>'
+      + 'B \u00b7 Pfad (Struktur): <b>loop'+sup(n)+'</b> &nbsp;\u2192&nbsp; n = <b>'+n+'</b> Windungen <span class="dim">(Komposition = Addition in \u2124)</span><br>'
+      + '<span class="dim">Identit\u00e4t = der <em>zur\u00fcckgelegte Pfad</em> \u2014 der Wert ist eine '
+      + 'Stichprobe, der Pfad (Trajektorie = Schleife) ist die Identit\u00e4t. '
+      + '<b>Ber\u00fchren = berechnen.</b></span>';
+    }
+
+    function stopPlay(){
+      if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+      if(playing){ playing=false; if(playBtn) playBtn.textContent='\u25B6 Abspielen'; }
+    }
+    function step(ts){
+      if(!playing) return;
+      if(!lastTs) lastTs = ts;
+      var dt = ts-lastTs; lastTs = ts;
+      var ny = yearNow() + dt*0.06;
+      if(ny>=T1) ny = T1;
+      yearSlide.value = Math.round(ny);
+      yearVal.textContent = yearNow();
+      draw(); updateReadout();
+      if(yearNow()>=T1){ stopPlay(); return; }
+      rafId = requestAnimationFrame(step);
+    }
+    function togglePlay(){
+      if(playing){ stopPlay(); return; }
+      if(yearNow()>=T1){ yearSlide.value = T0; yearVal.textContent = T0; }
+      playing = true; lastTs = 0;
+      if(playBtn) playBtn.textContent='\u23F8 Pause';
+      rafId = requestAnimationFrame(step);
+    }
+
+    if(yearSlide){ yearSlide.addEventListener('input', function(){ stopPlay(); yearVal.textContent=yearNow(); draw(); updateReadout(); }); }
+    if(playBtn){ playBtn.addEventListener('click', togglePlay); }
+    if(resetBtn){ resetBtn.addEventListener('click', function(){ stopPlay(); yearSlide.value=1900; yearVal.textContent='1900'; draw(); updateReadout(); }); }
+    if(themeBtn){ themeBtn.addEventListener('click', function(){
+      var d = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', d);
+      try{ localStorage.setItem('n2_016_theme', d?'dark':'light'); }catch(e){}
+      draw();
+    }); }
+    window.addEventListener('resize', fit);
+
+    (function initTheme(){
+      try{ if(localStorage.getItem('n2_016_theme')==='light'){ document.documentElement.classList.remove('dark'); } }catch(e){}
+    })();
+
+    yearVal.textContent = yearNow();
+    function boot(){ fit(); updateReadout(); }
+    document.addEventListener('DOMContentLoaded', boot);
+    if(document.readyState==='complete' || document.readyState==='interactive'){ boot(); }
+  })();
+  </script>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="prov"><a href="../n1-038.html"><strong>n1-038.html &mdash; Ein Ort als Funktion der Zeit</strong></a>
+  &mdash; Fusion von <em>Neum&uuml;nster</em> (fester, empirisch geerdeter Ort, 6 kuratierte Szenen,
+  reale Jahres-Anker 1127&hellip;heute&nbsp;&asymp;&nbsp;80.000) &times; <em>Abi-Mathe</em> (freie
+  Slider-Labore, Analysis-Werkzeugkasten): die These, dass die Identit&auml;t eines Ortes seine
+  <em>Trajektorie</em> <code>P(t)</code> ist und die Analysis (Ableitung/Integral/Wendepunkt/e-Funktion)
+  die Grammatik, die Fakten in ein ver&auml;nderbares Modell von Wandel umsetzt &mdash; &bdquo;die Uhr
+  bedienen&ldquo; = <code>P(t)</code> berechnen. (Quelle A &mdash; der empirische Pfad, Regel <em>gefitet</em>.)</p>
+  <p class="prov"><a href="../n1-107.html"><strong>n1-107.html &mdash; HoTT: das Formalbeweis-System und der Konstruktionsmotor</strong></a>
+  &mdash; Fusion von <em>hott5</em> (HoTT-Formalismus, h-Level, Univalenz, &pi;&sub1;(S&sup1;)&cong;&Zopf;
+  als Beweis) &times; <em>hott_practical</em> (konstruktiver Bau N&rarr;&Zopf;&rarr;&Qopf;&rarr;&Ropf;,
+  &Omega;(S&sup1), Operationen mit Zeugen): die These, dass ein Typ zugleich Raum,
+  Beweis-Sprache und Bausatz ist, dass die Identit&auml;t eines Punkts sein <em>Pfadraum</em> ist und
+  &bdquo;Beweis = Algorithmus = geometrisches Objekt&ldquo; &mdash; Schleifen komponieren = in
+  &Zopf; addieren. (Quelle B &mdash; der formale Pfad, Regel <em>konstruiert</em>.)</p>
+</section>
+
+<footer>
+  Fusion (Runde 2, nicht-AI-Track, Paar 016). Selbstenthalten; kein CDN, kein Daten-Fetch &mdash; die
+  Visualisierung ist reines Canvas 2D, alle Daten inline. Themereaktiv (hell/dunkel); Standard ist
+  Dunkel. Die Kurve und Windungszahl sind schematische Demonstrationsobjekte; nur die Jahresdaten und
+  &bdquo;&asymp;80.000 heute&ldquo; sind reale Anker (aus A).
+</footer>
+</article>
+</body>
+</html>

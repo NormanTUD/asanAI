@@ -1,0 +1,16 @@
+{
+  "no": "034",
+  "a": "n1-083.html",
+  "b": "n1-063.html",
+  "a_title": "Der Invariante Blick — Geometrie der Form und Größe des Effekts",
+  "b_title": "Persistenz gegen Digitalisierung (Persistent Landscapes × Hermann Schmitz)",
+  "combined_theme": "invariant-field-vs-gauge-point",
+  "one_line": "Das reale Objekt ist weder der konventionsgebundene Gauge-Punkt noch die harte Schwelle, sondern ein kontinuierliches invariantes Feld (Persistent-Spektrum echter Lücken); jeder Skalar (A's d, Wasserstein, Effektgröße) ist nur die führende Projektion dieses Feldes, und der Rest jeder Vereinfachung ist ein Parameter — kein Gesetz.",
+  "contradictions": [
+    "Methode: A (n1-083) erreicht das Reale reductiv — Quotientieren des puren Gauges + Minimierung (Infimum über alle Karten) kollabiert zur einzelnen optimierten Invariante d = ½ ln(min K); B (n1-063) erreicht das Reale preservativ/istisch — es weigert sich zum λ₁-Abschnitt, behält das ganze mehrschichtige Feld λₖ, das Ganze ist primär. Kollabieren-zu-einer-Zahl vs. Bewahren-des-Feldes.",
+    "Rest-Valenz: A wertet den Rest der Vereinfachung als reinen Gauge/Überschuss (trägt keine Entscheidungs-Information → wegwurfbar); B wertet den Rest (Kite / 'nicht digitalisierbarer Rest') als die Essenz → zu bewahren. Entgegengesetzte Bewertung desselben 'Übrigbleibenden'.",
+    "Fundament: A setzt eine metrische, kontinuierliche Geometrie voraus (d = arccosh(1+|Δτ|²/(2·Imτ₁·Imτ₂)) in ℍ, hyperbolische Geodäten); Bs realster Bereich (der Leib) lebt in einem ausdrücklich 'flächenlosen', nicht-metrischen Raum, der genau dieser metrischen Erfassung widersteht."
+  ],
+  "resolution": "Einheit auf der Meta-Achse 'konventioneller/atomisierter Primitiv vs. invariantes kontinuierliches Feld': (1) A's einzelne optimierte Skalar d = ½ ln(min K) ist der λ₁-Abschnitt — die führende Invariante — desselben Feldes, das B in allen Layern λₖ behält; Skalar = führende Projektion des Feldes, nicht Ersatz, damit sind Kollabieren und Bewahren derselbe Zug in zwei Auflösungen. (2) Die Valenz des Restes hängt von der erzeugenden Operation ab: Rest der Gauge-Eliminierung = Rauschen (weg), Rest der Threshold-/Neutralisierungs-Eliminierung = Essenz (behalten); Regel: konventionelles/Neutrales weg, invariantes/Entscheidungsrelevantes behalten (A's Gauge ≡ B's objektive Hülle, A's Invariante ≡ B's volles Feld inkl. Kite). (3) Die Metrik ist keine Basis, sondern eine gewählte Projektion auf einen flächenlosen Feld-Untergrund (Moduli-Raum / Landschaft λₖ); die Invariante lebt im Untergrund, der Skalar ist seine Projektion.",
+  "viz": "Canvas mit zwei Seiten: links das Persistenzdiagramm (atomisierte Punkte = Gauge-Punkte, farbcodiert robust/Kite, Trunkierungslinie), rechts das invariante Feld λₖ(t) als Persistent-Spektrum. Slider 'Projektionstiefe k' (k=1 → A's Skalar d als führende λ₁-Projektion ∫λ₁; k>1 → B's volles Feld) und Slider 'Trunkierung/Neutralisierung' (erzeugt den Rest — ein Parameter, kein Gesetz), Button '▶ Wellenreiten' (Emanzipation ⇄ Regression: der Rest atmet). Theme-aware via CSS-Vars, alle Daten inline."
+}

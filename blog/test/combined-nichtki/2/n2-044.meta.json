@@ -1,0 +1,16 @@
+{
+  "no": "044",
+  "a": "n1-091.html",
+  "b": "n1-090.html",
+  "a_title": "Form wird Algebra: Homotopie trifft Morse-Theorie",
+  "b_title": "Die Katastrophe als algebraische Varietät",
+  "combined_theme": "lokal-global-phase-uebergang",
+  "one_line": "Beide Round-1-Papiere sind dieselbe lokale-zu-globale Konstruktion: ein lokaler Kern erzeugt Struktur, ein Parameter wandert, eine abelsche Währung (Betti-Zahl / Zählung) bleibt stückweise konstant und springt an einer Wand/Singularität; der von der Währung ausgeblendete Spalt (Nicht-Abelschheit bei A, Monodromie/H¹ bei B) ist der irreduzible topologische Inhalt.",
+  "contradictions": [
+    "Genügt das Lokale? A (Morse) behauptet Vollbestimmung — die Topologie sei durch die kritischen Punkte 'completely determined' (lokal ⇒ global, man baut das Ganze aus dem Lokalen); B geht vom Gegenteilspostulat aus — lokale Daten sind strukturell unzureichend, H¹ ist die irreduzible Obstruktion (lokal ⇏ global).",
+    "Die Invariante/Währung: A liest sie als Bauwerk/Überschuss (Zellen anhängen, c_k ≥ b_k; Homologie via Abelschierung/Quotient — man teilt ab); B liest sie als Obstruktion/Defizit (H¹ misst das Nicht-Zusammenklebende, Riemann–Roch −g als globales Hindernis; Kohomologie als Cokern — man misst das Fehlbare). Duale Operationen, nicht dasselbe Objekt.",
+    "Primat: A stellt die Unveränderlichkeit in den Titel (das Invariante ist Subjekt, die Änderung nur kontrollierter Mechanismus zwischen invarianten Zuständen); B stellt den Bruch in den Titel (der Sprung/Katastrophe ist Subjekt, die Invariante nur Detektor). Gleiche Funktion, umgekehrtes Primat."
+  ],
+  "resolution": "A und B sind zwei Etagen derselben Konstruktion: A's Vollbestimmung gilt für die Etage, die er baut (Homologie/Betti — lokal ⇒ Homologie vollständig), B's Spalt für die Etage, die er misst (Monodromie/Nicht-Abelschheit — Homologie ⇏ feine Struktur); die Grenzen fallen aufeinander. Die Währung ist dieselbe (dim H_k = dim H^k über einem Körper), gelesen als Bauwerk (A) bzw. Audit (B); Invariante und Bruch sind ein stückweise konstanter Ordnungspartikel mit Phasen-Übergang an der Wand, und die Singularität (degenerierter kritischer Punkt / Cusp-Punkt (0,0) = Singularpunkt der Varietät) ist der Übergang höchster Ordnung, an dem beide Beschreibungen zusammenfallen.",
+  "viz": "Canvas-Landschaft mit zwei stückweise konstanten Ordnungspartikeln (A: b₁(t) des Morse-Torus, Sprünge an den kritischen Werten t=0.25/0.75; B: n_stable(a) des Cusps bei b=0, Sprung/Singularität an a=0) mit zwei Reglern (Wasserstand t, Steuergröße a), Sweep-Linien, Phasen-Readout und Phasen-Übergangs-/Singularitäts-Markierung; theme-reaktiv (CSS-Variablen, Dunkel-Default), nur Inline-Daten, keine externen Requests."
+}

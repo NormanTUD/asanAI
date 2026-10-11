@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Das Residuum der Reduktion · n1-077 ✕ n1-029 (Runde 2)</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --acc2:#4338ca;
+  --sky:#2f6fb0; --bad:#d1495b; --ok:#16a34a; --warn:#c98a1b;
+  --viz-c1:#0f9d7a; --viz-c2:#d6336c; --viz-c3:#2f6fb0; --viz-c4:#c98a1b;
+  --viz-curve:#7c3aed; --viz-exp:rgba(220,38,38,.55); --viz-target:rgba(22,163,74,.85);
+  --viz-dot:#7c3aed; --viz-gap:#dc2626;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --acc2:#a5b4fc;
+  --sky:#7aa2ff; --bad:#ff6f6f; --ok:#4ade80; --warn:#ffd166;
+  --viz-c1:#64ffda; --viz-c2:#ff6ec7; --viz-c3:#7aa2ff; --viz-c4:#ffd166;
+  --viz-curve:#c4b5fd; --viz-exp:rgba(248,113,113,.55); --viz-target:rgba(74,222,128,.8);
+  --viz-dot:#c4b5fd; --viz-gap:#f87171;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(165,180,252,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+a{color:var(--acc2)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.1em 0 .15em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.3em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+header{position:relative;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:6px}
+.sub{color:var(--dim);font-size:.98rem;letter-spacing:.01em;margin:0}
+.sub b{color:var(--acc2)}
+.tagline{color:var(--dim);font-size:.92rem;margin:10px 0 0;font-style:italic}
+.theme-toggle{position:absolute;top:0;right:0;background:var(--card);color:var(--ink);
+  border:1px solid var(--line);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:.85em}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;
+  background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{font-size:.88rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+.tagA{color:var(--acc);font-weight:700}
+.tagB{color:var(--acc2);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:14px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.76rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+.kv{font-weight:700;color:var(--acc2)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 10px}
+.ctrl .c{flex:1 1 130px;min-width:128px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;
+  background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);
+  border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.legend{display:flex;gap:12px 16px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.stat{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.86rem;margin-top:12px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+#r-status{font-size:.92rem;margin-top:12px;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--acc) 6%,transparent)}
+#r-status b{color:var(--ink);font-family:inherit}
+.ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <button class="theme-toggle" id="themeBtn" type="button">☾ / ☀</button>
+    <div class="tag">Runde 2 · Nicht-KI-Track · Pair 020</div>
+    <h1>Das Residuum der Reduktion</h1>
+    <p class="sub">Fusion aus: <b>n1-077.html</b> ✕ <b>n1-029.html</b> &nbsp;(Runde 2)</p>
+    <p class="tagline">Verzerrung (statisch) und Holonomie (dynamisch) sind dieselbe Krümmung — das gute Modell ist der Balance-Punkt, an dem Struktur erhalten und Residuum absorbiert zugleich gelten.</p>
+  </header>
+
+  <section id="these">
+    <div class="tag">01 · Kernthese der Fusion</div>
+    <h2>Beide Runde-1-Papiere tun denselben höheren Akt: reduzieren und das Übrigbleibende messen</h2>
+    <p>
+      Beide Quelltexte sind selbst schon Fusionen aus einer <b>formalen</b> und einer <b>praktischen</b>
+      Hälfte — und beide sind auf exakt denselben höheren Zug gelandet: <b>Ein Modell ist eine Reduktion,
+      die ein reiches Objekt in (a) das Absorbierte und (b) das Übrigbleibende zerlegt.</b>
+      <span class="tagA">n1-077</span> (Kompression ist Struktur: Johnson–Lindenstrauss ✕ Krautchan-Karte)
+      wirft <span class="mono">n</span> Punkte in <span class="mono">d</span> Dimensionen auf
+      <span class="mono">k</span> Achsen und misst, <i>wie viel Struktur überlebt</i>; das Übrigbleibende
+      nennt es <b>Verzerrung</b> — das Verhältnis ‖f(x)−f(y)‖/‖x−y‖, das es in ein
+      <span class="mono">1±ε</span>-Band zwingt. <span class="tagB">n1-029</span> (Krümmung ist der
+      sich nicht schließende Kreislauf: Ehresmann-Konnektor ✕ Rückkopplungsschleifen) errichtet über einem
+      Basisprozess einen Zustandsraum mit einer Regel (Konnektor/Schleife) und misst, <i>ob sich der
+      geliftete Umlauf schließt</i>; das Übrigbleibende nennt es <b>Holonomie</b> — die Netto-Verschiebung,
+      die ein Rundweg hinterlässt.
+    </p>
+    <p>
+      Der entscheidende Gedanke der Fusion: <b>Verzerrung und Holonomie sind dieselbe Größe in zwei
+      Registern.</b> Beide sind das <i>Nicht-Absorbierbare einer Reduktion</i> — der Anteil, den die wenigen
+      Achsen bzw. die Regel nicht in die Struktur bringen können. n1-077 liest es <b>statisch</b> (an einer
+      Karte, ein Snapshot: „wie weit drifft der projizierte Abstand?"), n1-029 liest es <b>dynamisch</b>
+      (an einem Kreislauf, ein Prozess: „wie weit driftet das System nach einem Umlauf?"). Die gemeinsame
+      Position lautet: <b>Der Wert eines Modells ist nicht das, was es abbildet, sondern das, was es übrig
+      lässt — und daran lässt sich ablesen, ob die Reduktion ihren Gegenstand wirklich fasst.</b>
+    </p>
+    <p>
+      Und die beiden leben auf dem <b>gleichen geometrischen Objekt</b>: Die JL-Projektion
+      <span class="mono">f:ℝ^d→ℝ^k</span> aus n1-077 <i>ist</i> die Bündelabbildung
+      <span class="mono">π:E→M</span> aus n1-029. Das „Wegwerfen" von <span class="mono">d−k</span>
+      Dimensionen (n1-077) <i>ist</i> die Faser <span class="mono">V_pE=ker(dπ_p)</span> (n1-029) — der
+      kanonische, wahllose vertikale Teil. Ein <b>Konnektor</b> (n1-029) ist genau die Wahl einer
+      <i>horizontalen Ergänzung</i> zu eben dieser Faser: die Entscheidung, welche Richtung als „flach /
+      ohne Drift" gilt. Die Projektion sagt, <b>was verloren geht</b>; der Konnektor sagt,
+      <b>wie man sich bewegt, ohne Verlust zuzufügen</b>. Zusammen sind sie die beiden komplementären
+      Hälben einer einzigen Struktur — und das Residuum ist, was über beide Hälben hinaus übrig bleibt.
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <div class="tag">02 · Widersprüche zwischen A und B</div>
+    <h2>Ein harter Widerspruch (Status des Residuums) — plus eine echte Art-Differenz, und eine Konvergenz</h2>
+    <p>
+      Die beiden widersprechen einander <b>nicht</b> in der geometrischen Identifikation (beide erkennen
+      an, dass Projektion und Konnektor auf demselben Bündel <span class="mono">π:E→M</span> leben), und
+      sie stimmen sogar in einem Punkt bemerkenswert überein (s. u.). Aber auf dem <b>Status des
+      Residuums</b> nehmen sie unvereinbare Stellungen ein:
+    </p>
+    <div class="card">
+      <h3>(a) Der harte Widerspruch — minimieren vs. als Substanz behaupten</h3>
+      <p>
+        <span class="tagA">n1-077</span> behandelt das Residuum (= <b>Verzerrung</b>) als <i>Kostenposten,
+        den man klein halten will</i>: „ihre Güte wird an der Verzerrung gemessen", und der Status einer
+        Karte wird <span class="mono">„Struktur erhalten"</span> (gut), wenn die Paare in das
+        <span class="mono">ε</span>-Band fallen, und <span class="mono">„zu grob"</span> (schlecht), wenn
+        <span class="mono">k</span> unter die Schwelle sinkt. Die Zielrichtung ist
+        <b>Residuum → 0</b>: kleines <span class="mono">ε</span>, genug Achsen.
+        <span class="tagB">n1-029</span> behandelt dasselbe Residuum (= <b>Holonomie/Krümmung</b>) als
+        <i>Substanz, die vorhanden sein will</i>: „Bei A liegt gerade im nicht-schließenden Verhalten
+        (Krümmung <span class="mono">κ≠0</span> → Holonomie) <b>die gesamte Substanz</b>; der flache Fall
+        (<span class="mono">κ=0</span>, Umläufe schließen, Transport trivial) ist der
+        <b>entartete/einfache Fall</b>." Die Zielrichtung ist <b>Residuum vorhanden und reich</b>.
+        <br><b>Unvereinbar:</b> n1-077 sagt „gutes Modell = kleines Residuum"; n1-029 sagt „reiches System =
+        vorhandenes Residuum". Ob das Residuum verschwinden soll — genau dort stehen sie sich gegenüber.
+      </p>
+    </div>
+    <div class="card">
+      <h3>(b) Echte Art-Differenz — statisches Residuum (Karte) vs. dynamisches Residuum (Kreislauf)</h3>
+      <p>
+        Das Residuum hat in den beiden Papiern einen anderen <i>Typ</i>. <span class="tagA">n1-077</span>
+        misst es an einer <b>Karte</b> — einer einmaligen Projektion, einem Snapshot: die Verzerrung ist eine
+        feste Zahl pro Punktmenge/Projektion, es gibt keine Zeit, keinen Prozess.
+        <span class="tagB">n1-029</span> misst es an einem <b>Prozess</b> — integriert über einen Umlauf
+        bzw. eine Trajektorie: die Holonomie <i>summiert sich</i> mit den Schritten. Das Residuum ist einmal
+        eine Eigenschaft einer <i>Abbildung</i>, einmal eine Eigenschaft einer <i>Entwicklung</i>.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Konvergenz (kein Widerspruch) — Wahl vs. Entdeckung</h3>
+      <p>
+        Auf einem Punkt nehmen beide <b>dasselbe</b> ein: die Achsen/die Regel sind <b>im Modell frei, in
+        der Instanz entdeckt</b>. <span class="tagA">n1-077</span>: „Zufall ist die Null-/Basislinie" (die
+        zufällige Projektion ist ein Existenzbeweis), während Kuratierung die <i>intrinsischen</i> Achsen
+        sucht. <span class="tagB">n1-029</span>: der Konnektor ist „<i>not canonical — there are many
+        possible choices</i>" (frei im Modell), aber die Schleifen werden im konkreten System
+        <i>gefunden</i> („Once you see them, you'll find them everywhere"). Hier stimmen sie überein —
+        es ist die Stelle, an der die beiden sich <b>nicht</b> widersprechen.
+      </p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <div class="tag">03 · Auflösung</div>
+    <h2>Das Residuum ist keine Größe, sondern eine Bilanz — und die beiden „Balance-Punkte" sind derselbe</h2>
+    <div class="card">
+      <h3>(a) Auflösung zu (a): das Residuum hat zwei gegenläufige Terme</h3>
+      <p>
+        Der Widerspruch löst sich, sobald das Residuum nicht als <i>eine</i> Größe, sondern als eine
+        <b>Bilanz mit mindestens zwei gegenläufigen Termen</b> gelesen wird. <span class="tagA">n1-077</span>
+        hat faktisch einen Term (die reine Verzerrung) und einen Absorptions-Mechanismus (genug Achsen,
+        damit die Paare ins <span class="mono">ε</span>-Band fallen).
+        <span class="tagB">n1-029</span> hat <b>zwei</b> gegenläufige Residuen — den <i>Trieb</i>
+        (Krümmung/positive Schleife, schiebt weg vom Ziel) und die <i>Korrektur</i> (ausgleichende
+        Schleife, zieht zum Ziel) — und der „gute" Zustand ist nicht, wo <b>beide</b> verschwinden, sondern
+        wo sie <b>die Waage halten</b> (Netto = 0).
+      </p>
+      <p>
+        <b>Fusioniert:</b> „<b>Struktur erhalten</b>" (n1-077) und „<b>S-Kurven-Plateau</b>" (n1-029) sind
+        <i>dieselbe</i> Aussage — das <b>Netto-Residuum ist null bzw. akzeptabel klein</b>. Man erreicht sie
+        auf zwei Wegen: n1-077 durch <i>Achsen hinzufügen</i> (Dimensionen „ausgeben", um die Verzerrung in
+        das Band zu drücken); n1-029 durch <i>Gegenkraft</i> (Korrektur „ausgeben", um den Trieb
+        auszugleichen). Die schärfste Identifikation: <b>das <span class="mono">ε</span>-Band in n1-077
+        <i>ist</i> das Tragfähigkeits-Band in n1-029</b> — beide sind der Bereich um die Identität
+        (Verhältnis&nbsp;= 1 / Niveau&nbsp;= K), in dem sich das Residuum hebt. Eine Projektion mit kleiner
+        Verzerrung ist „nahe flach"; ein System bei K ist „netto flach".
+      </p>
+      <p>
+        Und die Sorge von n1-029 („flach = Stagnation, also ist Residuum&nbsp;→&nbsp;0 schlecht") wird von
+        n1-077 aufgelöst: Der JL-Existenzsatz zeigt, dass <b>flach ≠ leer</b> — es <i>gibt</i> eine
+        niedrigdimensionale Darstellung, in der die Struktur (die <span class="mono">n</span> getrennten
+        Punkte bleiben getrennt) überlebt, während das Residuum nur Rauschen ist. Geringes Residuum heißt
+        also nicht „nichts übrig", sondern „die Struktur ist in den Achsen, das Residuum ist absorbiert".
+        n1-077 liefert die Existenzgarantie, die n1-029's Angst vor dem Flachen fehlt.
+      </p>
+    </div>
+    <div class="card">
+      <h3>(b) Auflösung zu (b): lokal vs. integral</h3>
+      <p>
+        Die Art-Differenz ist keine Gegensätzlichkeit, sondern eine Skalenfrage. Die <b>Verzerrung</b> einer
+        einzelnen Projektion ist die <i>lokale</i> Krümmung; die <b>Holonomie</b> ist die
+        <i>integralisierte</i> Krümmung über einen Umlauf (die echte Geometrie kennt genau diese Beziehung:
+        die Holonomie kleiner Schleifen wird von der Krümmung gesteuert).
+        <b>Fusioniert:</b> <span class="mono">Verzerrung = lokale Krümmung; Holonomie = integrale
+        Krümmung.</span> Das Snapshot von n1-077 ist <i>ein Schritt</i> des Kreislaufs von n1-029; das
+        <span class="mono">ε</span>-Band ist die Toleranz <i>pro Schritt</i>, die S-Kurve ist das
+        <i>aufsummierte</i> Ergebnis. Ein Transport, der bei jedem Schritt im <span class="mono">ε</span>-Band
+        bleibt, ist ein „genug flacher" Transport, dessen Holonomie beschränkt bleibt.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Konvergenz (Wahl vs. Entdeckung) — bestätigt</h3>
+      <p>
+        <b>Fusioniert:</b> Die Achsen/Regel sind <i>im Modell</i> eine freie Wahl (Koordinaten einer Familie
+        möglicher Reduktionen) und <i>in der Instanz</i> eine Konstante (gemessen). n1-077
+        <i>parametrisiert</i> die Familie (zufällige Projektion beweist Existenz; Kuratierung sucht die
+        intrinsischen Achsen), n1-029 <i>misst</i> ein Exemplar (welche Schleife dominiert). Modell = Wahl,
+        Instanz = Messung — eine Seite derselben Medaille.
+      </p>
+    </div>
+    <p class="note"><b>Gesamt-Ergebnis:</b> Ein Modell = eine Reduktion, die Realität in <i>Absorption</i> +
+    <i>Residuum</i> zerlegt. Das Residuum ist weder ein Fehler, den man tilgt, noch nur ein Motor, den man
+    loslässt — es ist eine <b>Bilanz</b>. Das gute Modell ist der <b>Balance-Punkt</b>: genug Absorption,
+    dass die Verzerrung akzeptabel ist (Struktur erhalten), und genug Trieb, dass es nicht degeneriert.
+    <span class="tagA">n1-077</span> sagt, wie <i>wenig Achsen</i> die Balance erlaubt
+    (<span class="mono">k ≈ log n</span> — die untere Schranke); <span class="tagB">n1-029</span> sagt, wie
+    der Balance-Punkt <i>im Zeitverlauf</i> erreicht wird (die S-Kurve). Die scharfe Schwelle
+    <span class="mono">k ≈ log n</span> (daran bricht die Karte „explodiert"/zu grob) ist das <b>statische
+    Zwilling</b> des Regimes der reinen positiven Schleife (daran verlässt der Kreislauf das Diagramm):
+    beides ist der Moment, in dem das Residuum nicht mehr absorbiert werden kann und das Modell
+    zusammenbricht.</p>
+  </section>
+
+  <section id="inhalt">
+    <div class="tag">04 · Fusionierter Inhalt</div>
+    <h2>Ein gemeinsames Vokabular: Absorption ↔ Ausgleich, Residuum ↔ Holonomie/Verzerrung</h2>
+    <p>Die Tabelle ist das Herz der Fusion — jede Zeile ein Begriff aus n1-077, sein Analogon in n1-029 und
+    die fusionierte Rolle. Abstrahiert auf das Niveau der beiden Thesen (nicht der rohen Quellen), so dass
+    eine spätere Runde allein von hier weiterarbeiten kann:</p>
+    <table>
+      <thead><tr><th>n1-077 (Kompression)</th><th>n1-029 (Krümmung)</th><th>Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td>JL-Projektion <span class="mono">f:ℝ^d→ℝ^k</span></td><td>Bündelabbildung <span class="mono">π:E→M</span> + Konnektor</td><td class="kv">Die Reduktion — wirft das Objekt auf wenige Achsen; dieselbe Abbildung.</td></tr>
+        <tr><td>die weggeworfenen <span class="mono">d−k</span> Dimensionen</td><td>die Faser <span class="mono">V_pE=ker(dπ)</span></td><td>Das Vergessene — kanonisch, ohne Wahl.</td></tr>
+        <tr><td>Verzerrung <span class="mono">‖f(x)−f(y)‖/‖x−y‖</span> in <span class="mono">1±ε</span></td><td>Holonomie (Netto-Verschiebung nach Umlauf)</td><td class="kv">Das Residuum — die Information, die nicht absorbiert wird (lokal vs. integral).</td></tr>
+        <tr><td><span class="mono">ε</span>-Band um 1</td><td>Tragfähigkeit K (Plateau der S-Kurve)</td><td class="kv">Das Gleichgewichts-Band um die Identität; dort hebt sich das Residuum auf.</td></tr>
+        <tr><td>Achsenzahl <span class="mono">k ≈ 8·ln n/ε²</span></td><td>die dominierende Schleife / die Regel</td><td>Die intrinsische Größe der Reduktion (Modell frei, Instanz entdeckt).</td></tr>
+        <tr><td>„Struktur erhalten" (<span class="mono">k ≥</span> Schwelle)</td><td>Plateau / Netto-Krümmung ≈ 0</td><td class="kv">Der Balance-Punkt — das gute Modell (ein und derselbe Zustand).</td></tr>
+        <tr><td><span class="mono">k &lt;</span> Schwelle → „zu grob" (Struktur verloren)</td><td>reine positive Schleife → Explosion (verlässt das Diagramm)</td><td>Das Brechen — wenn das Residuum nicht mehr absorbiert wird (statisch/dynamisch).</td></tr>
+        <tr><td><span class="mono">4^k</span>-Packing-Schranke <span class="mono">k ≥ log n/log 4</span></td><td>— (als Begriff nicht vorhanden)</td><td>Der universelle „ist es zu grob?"-Test; untere Schranke der Achsen.</td></tr>
+        <tr><td>Maßkonzentration / „fast ein Äquator"</td><td>Oszillation um Ziel / um Bernd</td><td>„Fast alles liegt nahe am Mittelbild" — die Konzentration um die Identität.</td></tr>
+        <tr><td>Konstruierte Persona Bernd (benanntes Residuum)</td><td>kanonische Konnektorwahl (benanntes Residuum)</td><td>Der ehrliche Ersatz, wo die Schranke nicht berechenbar ist: das Residuum explizit benennen.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Was n1-077 (Kompression) trägt — auf die These abstrahiert</h3>
+    <p>
+      <b>Kompression = Projektion,</b> und der Wert einer Darstellung ist ihre <b>Verzerrung</b>.
+      <b>Zufall ist der Existenzbeweis</b> (eine niedrigdimensionale Darstellung mit kontrollierter
+      Verzerrung existiert, bei <span class="mono">k ≈ log n</span>, <b>unabhängig von</b>
+      <span class="mono">d</span>); <b>Kuratierung ist die Suche</b> nach den intrinsischen Achsen; die
+      <span class="mono">4^k</span>-Packing-Schranke liefert den universellen „zu grob?"-Test. Und
+      entscheidend für die Fusion: <b>das „Erhaltene" ist frageabhängig</b> — Metrik für Geometrie,
+      ideeller Rahmen für ein soziales Feld; das <span class="mono">ε</span>-Band ist die Toleranz, die
+      „nah genug am Wesentlichen" definiert.
+    </p>
+
+    <h3>Was n1-029 (Krümmung) trägt — auf die These abstrahiert</h3>
+    <p>
+      <b>Ein System = Basisprozess + Zustandsraum + kanonische Referenz (Faser/Ziel) + freie Regel
+      (Konnektor/Schleife).</b> <b>Krümmung = positive Schleife = Nicht-Schließen;</b> Holonomie = die
+      überlebende Netto-Drift nach einem Umlauf; <b>flacher Konnektor = Ausgleich = Schließen</b>
+      (Stabilität — aber auch Stagnation); die <b>S-Kurve</b> ist der Übergang, wo Trieb und Korrektur sich
+      heben. Drei Regime: <i>rein negativ</i> (Konvergenz, stabil, null Netto-Wechsel), <i>rein positiv</i>
+      (Explosion, maximale Holonomie), <i>dazwischen</i> = S-Kurve. Das Meta-Insight: reale Systeme sind
+      wettbewerbfähige Schleifen; der Hebel ist „welche dominiert jetzt, und wann übernimmt die andere".
+    </p>
+
+    <div class="card">
+      <h3>Das fusionierte diskrete Modell (die Visualisierung berechnet es) — durch beide Brillen gelesen</h3>
+      <p class="mono">x<sub>n+1</sub> = x<sub>n</sub> + r·x<sub>n</sub>·(1 − x<sub>n</sub>/K)</p>
+      <ul>
+        <li><b>Verstärkender Term <span class="mono">r·x<sub>n</sub></span></b> = der <i>Trieb</i> = Holonomie/Krümmung (n1-029) = die <i>reine Verzerrung</i>, das Nicht-Absorbierbare (n1-077).</li>
+        <li><b>Korrigierender Term <span class="mono">−r·x<sub>n</sub>²/K</span></b> = die <i>Projektion auf die Tragfähigkeit</i> (n1-029) = die <i>Absorption</i>, der Anteil, der in die Achsen/das Ziel gebracht wird (n1-077).</li>
+        <li><b>Gleichgewicht bei <span class="mono">x=K</span></b>: <span class="mono">r·x = r·x²/K</span> → die beiden Terme heben sich → <b>Netto-Residuum 0</b> = Plateau = „Struktur erhalten".</li>
+        <li><b>Gelesen durch n1-077:</b> <span class="mono">r</span> ist die „Stärke der Reduktion" (wie viel Residuum pro Schritt entsteht), <span class="mono">K</span> ist die „Tragfähigkeit der Achsen" (wie viel Struktur die <span class="mono">k</span> Achsen fassen); der Balance-Punkt ist, wo Verzerrung pro Schritt (Trieb) von der Absorption (Korrektur) ausgeglichen wird.</li>
+      </ul>
+    </div>
+    <p class="note"><b>Brückensatz:</b> n1-077 sagt „jede Menge von <span class="mono">n</span> getrennten
+    Positionen lässt sich auf <span class="mono">~log n</span> Achsen werfen, ohne dass die Verzerrung den
+    Rahmen sprengt". n1-029 sagt „ein System mit Krümmung summiert Holonomie, bis die ausgleichende
+    Schleife sie bei K vollständig absorbiert". Beide beantworten dieselbe Frage — <i>lässt sich das
+    Residuum absorbieren, und ab wann nicht mehr?</i> — nur n1-077 statisch mit einer Schranke, n1-029
+    dynamisch mit einer Kurve.</p>
+  </section>
+
+  <section id="visualisierung">
+    <div class="tag">05 · Visualisierung</div>
+    <h2>Ein Residuum, zwei Register: die Karte (statisch) und der Kreislauf (dynamisch)</h2>
+    <p>
+      Eine Doppelsicht desselben fusionierten Gedankens. <b>Oben links</b> (n1-077): die <b>Karte</b> —
+      <span class="mono">n</span> Punkte nach zufälliger Projektion auf <span class="mono">k</span> Achsen
+      (4 Cluster). <b>Oben rechts</b>: die <b>Verzerrung aller Paare</b>
+      (<span class="mono">‖f(x)−f(y)‖/‖x−y‖</span>) mit dem <b><span class="mono">ε</span>-Band</b> — die
+      Masse <i>außerhalb</i> des Bands ist das <b>Verzerrungs-Residuum</b> (statisch). <b>Unten</b>
+      (n1-029): der <b>Kreislauf</b> — lila S-Kurve (Trieb + Korrektur), gestrichelt rote ungezähmte
+      Krümmung, grüne Tragfähigkeit <span class="mono">K</span>; der Laufpunkt zeigt den <b>Netto-Trieb</b>
+      (dynamisches Residuum), der gegen 0 fällt, wenn das Plateau erreicht ist, und die rote Lücke die
+      <b>absorbierte Holonomie</b>. <b>Geteilter Readout</b>: meldet er „Balance", gelten <i>Struktur
+      erhalten</i> (Karte) und <i>Trieb&nbsp;=&nbsp;Korrektur</i> (Plateau) zugleich — derselbe
+      Balance-Punkt, <b>das <span class="mono">ε</span>-Band ist die Tragfähigkeit</b>.
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c"><label>Punkte n <b id="v-n">60</b></label><input type="range" id="s-n" min="20" max="200" step="2" value="60"></div>
+        <div class="c"><label>Zieldim k <b id="v-k">6</b></label><input type="range" id="s-k" min="2" max="16" step="1" value="6"></div>
+        <div class="c"><label>Toleranz ε <b id="v-e">0.30</b></label><input type="range" id="s-e" min="0.10" max="0.50" step="0.05" value="0.30"></div>
+        <div class="c"><label>Ursprungsdim d <b id="v-d">64</b></label><input type="range" id="s-d" min="16" max="256" step="8" value="64"></div>
+        <div class="c"><label>Trieb r (Krümmung) <b id="v-r">8%</b></label><input type="range" id="s-r" min="1" max="30" step="1" value="8"></div>
+        <div class="c"><label>Tragfähigkeit K <b id="v-K">80</b></label><input type="range" id="s-K" min="20" max="100" step="5" value="80"></div>
+      </div>
+      <div class="btnrow">
+        <button id="b-roll" type="button">🎲 neu würfeln</button>
+        <button id="b-anim" type="button">▶ Kreislauf animieren</button>
+        <button id="b-theme" type="button">🌙/☀️ Theme</button>
+      </div>
+      <canvas id="viz"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--viz-c1)"></i>Cluster 1</span>
+        <span><i style="background:var(--viz-c2)"></i>Cluster 2</span>
+        <span><i style="background:var(--viz-c3)"></i>Cluster 3</span>
+        <span><i style="background:var(--viz-c4)"></i>Cluster 4</span>
+        <span><i style="background:var(--viz-curve)"></i>S-Kurve (Fusion)</span>
+        <span><i style="background:var(--viz-exp)"></i>ungezähmte Krümmung</span>
+        <span><i style="background:var(--viz-target)"></i>Tragfähigkeit K = ε-Band</span>
+      </div>
+      <div class="stat">
+        <span>Struktur erhalten (ε-Band): <b id="r-in">—</b></span>
+        <span>Verzerrungs-Residuum: <b id="r-out">—</b></span>
+        <span>k-Schwelle ≈ <b id="r-need">—</b></span>
+        <span>Netto-Trieb (Schritt): <b id="r-net">—</b></span>
+        <span>Phase: <b id="r-ph">—</b></span>
+      </div>
+      <div id="r-status">—</div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <div class="tag">06 · Provenienz</div>
+    <h2>Die beiden Runde-1-Papiere</h2>
+    <div class="card">
+      <b>A — <a href="../n1-077.html">n1-077.html</a></b>
+      <p>„Kompression ist Struktur" (Runde 1, Pair 077): Johnson–Lindenstrauss-Lemma ✕ Krautchan-Karte.
+      Eine Darstellung ist ein Projektionsoperator, deren Wert an der <b>Verzerrung</b> gemessen wird;
+      Zufall beweist Komprimierbarkeit (<span class="mono">k≈log n</span>), Kuratierung findet die
+      intrinsischen Achsen; die <span class="mono">4^k</span>-Packing-Schranke ist der „zu grob?"-Test.</p>
+    </div>
+    <div class="card">
+      <b>B — <a href="../n1-029.html">n1-029.html</a></b>
+      <p>„Krümmung ist der sich nicht schließende Kreislauf" (Runde 1, Pair 029): Ehresmann-Konnektor ✕
+      Rückkopplungsschleifen. <b>Krümmung = positive Schleife = Nicht-Schließen</b>; Holonomie = die
+      überlebende Netto-Drift; flacher Konnektor = Ausgleich = Schließen; das S-Kurven-Plateau ist der
+      Punkt, an dem Trieb und Korrektur sich heben.</p>
+    </div>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var H = 580, W = 0;
+
+  var sN=document.getElementById('s-n'), sK=document.getElementById('s-k'),
+      sE=document.getElementById('s-e'), sD=document.getElementById('s-d'),
+      sR=document.getElementById('s-r'), sCap=document.getElementById('s-K');
+  var vN=document.getElementById('v-n'), vK=document.getElementById('v-k'),
+      vE=document.getElementById('v-e'), vD=document.getElementById('v-d'),
+      vR=document.getElementById('v-r'), vCap=document.getElementById('v-K');
+  var bRoll=document.getElementById('b-roll'), bAnim=document.getElementById('b-anim'),
+      bTheme=document.getElementById('b-theme'), themeBtn=document.getElementById('themeBtn');
+  var rIn=document.getElementById('r-in'), rOut=document.getElementById('r-out'),
+      rNeed=document.getElementById('r-need'), rNet=document.getElementById('r-net'),
+      rPh=document.getElementById('r-ph'), rStatus=document.getElementById('r-status');
+
+  var seed = 20260220;
+  function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+  function gauss(){ var u=0,v=0; while(!u)u=rnd(); while(!v)v=rnd();
+    var m=Math.sqrt(-2*Math.log(u)); return m*Math.cos(TAU*v); }
+
+  var n=60, d=64, kdim=6, eps=0.30, rate=0.08, capK=80;
+  var X=[], P=[], projY=[], ratios=[];
+  var inBandFrac=0, kneed=0;
+  var N=140, x0=1, logV=[], expV=[], step=N-1;
+  var animId=null, animating=false;
+
+  function genData(){
+    var C=4, centers=[], c,i,j;
+    for(c=0;c<C;c++){ var v=[]; for(i=0;i<d;i++) v.push(gauss()*2.0); centers.push(v); }
+    X=[];
+    for(i=0;i<n;i++){ var cc=centers[i%C], v2=[]; for(j=0;j<d;j++) v2.push(cc[j]+gauss()); X.push(v2); }
+  }
+  function genProjection(){
+    P=[]; var a,b;
+    for(a=0;a<kdim;a++){ var row=[]; for(b=0;b<d;b++) row.push(gauss()); P.push(row); }
+  }
+  function project(){
+    var Y=[],i,a,b;
+    for(i=0;i<n;i++){ var v=X[i], o=new Array(kdim);
+      for(a=0;a<kdim;a++){ var s=0,row=P[a]; for(b=0;b<d;b++) s+=row[b]*v[b]; o[a]=s/Math.sqrt(kdim); }
+      Y.push(o); }
+    return Y;
+  }
+  function computeRatios(){
+    projY=project();
+    ratios=[];
+    for(var ii=0;ii<n;ii++) for(var jj=ii+1;jj<n;jj++){
+      var aa=X[ii],bb=X[jj],ya=projY[ii],yb=projY[jj],s0=0,s1=0,t;
+      for(t=0;t<d;t++){ var q=aa[t]-bb[t]; s0+=q*q; }
+      for(t=0;t<kdim;t++){ var q2=ya[t]-yb[t]; s1+=q2*q2; }
+      var d0=Math.sqrt(s0); if(d0>1e-6) ratios.push(Math.sqrt(s1)/d0);
+    }
+  }
+  function computeBand(){
+    var inb=0,i;
+    for(i=0;i<ratios.length;i++){ if(Math.abs(ratios[i]-1)<=eps) inb++; }
+    inBandFrac = ratios.length ? inb/ratios.length : 0;
+    kneed = Math.ceil(8*Math.log(n)/(eps*eps));
+  }
+  function computeDyn(){
+    logV=[x0]; expV=[x0];
+    for(var i=1;i<N;i++){
+      var x=logV[i-1];
+      logV.push(x + rate*x*(1-x/capK));
+      expV.push(expV[i-1]*(1+rate));
+    }
+  }
+
+  function cssv(nm,fb){ var v=getComputedStyle(document.documentElement).getPropertyValue(nm).trim(); return v||fb; }
+
+  function fit(){
+    var r=canvas.getBoundingClientRect();
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var cw=Math.max(1,Math.floor(r.width));
+    canvas.width=Math.max(1,Math.floor(cw*dpr));
+    canvas.height=Math.max(1,Math.floor(H*dpr));
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W=cw;
+  }
+
+  function draw(){
+    fit();
+    var INK=cssv('--ink','#e7ecf6'), DIM=cssv('--dim','#8b93a9'), GRID=cssv('--grid','#232a38');
+    var ACC=cssv('--acc','#64ffda'), ACC2=cssv('--acc2','#a5b4fc');
+    var C1=cssv('--viz-c1','#64ffda'), C2=cssv('--viz-c2','#ff6ec7'),
+        C3=cssv('--viz-c3','#7aa2ff'), C4=cssv('--viz-c4','#ffd166');
+    var CURVE=cssv('--viz-curve','#c4b5fd'), EXP=cssv('--viz-exp','rgba(248,113,113,.55)'),
+        TARGET=cssv('--viz-target','rgba(74,222,128,.8)'), DOT=cssv('--viz-dot','#c4b5fd'),
+        GAP=cssv('--viz-gap','#f87171');
+    var PAL=[C1,C2,C3,C4];
+    ctx.clearRect(0,0,W,H);
+
+    var padL=14, padR=14, padT=10, topH=246, gapX=18, gapY=24;
+    var midX=padL+(W-padL-padR)/2;
+    var leftW=midX-padL;
+    var rightX=midX+gapX, rightW=W-padR-rightX;
+    var botY=padT+topH+gapY, botH=H-8-botY;
+
+    /* ---------- Panel A: scatter (Karte) ---------- */
+    var sq=Math.min(leftW,topH);
+    var ox=padL+(leftW-sq)/2, oy=padT;
+    var mn0=Infinity,mx0=-Infinity,mn1=Infinity,mx1=-Infinity,i;
+    for(i=0;i<n;i++){ var a0=projY[i][0],a1=projY[i][1];
+      if(a0<mn0)mn0=a0; if(a0>mx0)mx0=a0; if(a1<mn1)mn1=a1; if(a1>mx1)mx1=a1; }
+    var p0=(mx0-mn0)*0.08+1e-6, p1=(mx1-mn1)*0.08+1e-6;
+    mn0-=p0;mx0+=p0;mn1-=p1;mx1+=p1;
+    function sx(v){ return ox+(v-mn0)/(mx0-mn0)*sq; }
+    function sy(v){ return oy+(1-(v-mn1)/(mx1-mn1))*sq; }
+    ctx.strokeStyle=GRID; ctx.lineWidth=1; ctx.strokeRect(ox,oy,sq,sq);
+    var pts=[];
+    for(i=0;i<n;i++) pts.push([sx(projY[i][0]),sy(projY[i][1]),i]);
+    var maxD2=Math.max(30,sq*0.24); ctx.lineWidth=0.7;
+    for(i=0;i<n;i++) for(var j=i+1;j<n;j++){
+      var dx=pts[i][0]-pts[j][0], dy=pts[i][1]-pts[j][1], dd=Math.sqrt(dx*dx+dy*dy);
+      if(dd<maxD2){ ctx.globalAlpha=(1-dd/maxD2)*0.10; ctx.strokeStyle=INK;
+        ctx.beginPath(); ctx.moveTo(pts[i][0],pts[i][1]); ctx.lineTo(pts[j][0],pts[j][1]); ctx.stroke(); }
+    }
+    ctx.globalAlpha=1;
+    for(i=0;i<n;i++){ ctx.fillStyle=PAL[pts[i][2]%4]; ctx.beginPath();
+      ctx.arc(pts[i][0],pts[i][1],3,0,TAU); ctx.fill(); }
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('Achse 1  (k='+kdim+')', ox+sq/2, oy+sq+16);
+    ctx.save(); ctx.translate(ox-8,oy+sq/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Achse 2', 0,0); ctx.restore(); ctx.textAlign='left';
+    ctx.fillStyle=DIM; ctx.font='11px ui-sans-serif,system-ui,sans-serif';
+    ctx.fillText('Karte — Projektion auf '+kdim+' Achsen (statisch)', ox, oy-2);
+
+    /* ---------- Panel B: distortion histogram (Residuum) ---------- */
+    var hL=rightX, hR=W-padR, hT=padT, hB=padT+topH;
+    var pW=hR-hL, pH=hB-hT, B=44, lo=0.4, hi=1.6, hist=new Array(B).fill(0);
+    var ii2;
+    for(ii2=0;ii2<ratios.length;ii2++){
+      var rv=ratios[ii2]; var bi=Math.floor((rv-lo)/(hi-lo)*B); if(bi>=0&&bi<B) hist[bi]++;
+    }
+    var mxh=Math.max.apply(null,hist.concat([1]));
+    var bandL=hL+((1-eps-lo)/(hi-lo))*pW, bandR=hL+((1+eps-lo)/(hi-lo))*pW;
+    ctx.globalAlpha=0.12; ctx.fillStyle=ACC; ctx.fillRect(bandL,hT,bandR-bandL,pH); ctx.globalAlpha=1;
+    for(i=0;i<B;i++){
+      var bw=pW/B, bh=hist[i]/mxh*pH, vc=lo+(i+0.5)/B*(hi-lo);
+      ctx.globalAlpha=0.9; ctx.fillStyle=Math.abs(vc-1)<=eps?ACC:cssv('--bad','#ff6f6f');
+      ctx.fillRect(hL+i*bw, hT+pH-bh, Math.max(1,bw-1), bh);
+    }
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=GRID; ctx.lineWidth=1; ctx.beginPath();
+    ctx.moveTo(hL,hT+pH); ctx.lineTo(hL+pW,hT+pH); ctx.stroke();
+    var oneX=hL+((1-lo)/(hi-lo))*pW;
+    ctx.setLineDash([4,4]); ctx.strokeStyle=INK; ctx.beginPath();
+    ctx.moveTo(oneX,hT); ctx.lineTo(oneX,hT+pH); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('1−ε', bandL, hT+pH+13); ctx.fillText('1', oneX, hT+pH+13);
+    ctx.fillText('1+ε', bandR, hT+pH+13);
+    ctx.fillText('Verzerrung ‖f(x)−f(y)‖/‖x−y‖', hL+pW/2, hT+pH+26);
+    ctx.fillStyle=DIM; ctx.font='11px ui-sans-serif,system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Residuum (Verzerrung) mit ε-Band', hL, hT-2);
+
+    /* ---------- Panel C: S-curve (Kreislauf) ---------- */
+    var cl=padL, cr=W-padR, ct=botY, cb=H-8;
+    var PW=cr-cl, PH=cb-ct, yMax=capK*1.12;
+    function XP(i){ return cl+(i/(N-1))*PW; }
+    function YP(v){ return cb-(Math.min(v,yMax)/yMax)*PH; }
+    ctx.lineWidth=1; ctx.strokeStyle=GRID;
+    for(var gx=cl;gx<=cr;gx+=52){ ctx.beginPath(); ctx.moveTo(gx,ct); ctx.lineTo(gx,cb); ctx.stroke(); }
+    for(var gy=cb;gy>=ct;gy-=44){ ctx.beginPath(); ctx.moveTo(cl,gy); ctx.lineTo(cr,gy); ctx.stroke(); }
+    ctx.lineWidth=1.5; ctx.strokeStyle=cssv('--line','#1c2331');
+    ctx.beginPath(); ctx.moveTo(cl,ct); ctx.lineTo(cl,cb); ctx.lineTo(cr,cb); ctx.stroke();
+    ctx.fillStyle=DIM; ctx.font='11px ui-sans-serif,system-ui,sans-serif';
+    ctx.fillText('x (Wachstum)  → Schritte', cl, ct-2);
+
+    var ty=YP(capK);
+    ctx.save(); ctx.setLineDash([7,5]); ctx.lineWidth=2; ctx.strokeStyle=TARGET;
+    ctx.beginPath(); ctx.moveTo(cl,ty); ctx.lineTo(cr,ty); ctx.stroke(); ctx.restore();
+    ctx.fillStyle=TARGET; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText('K = Tragfähigkeit = ε-Band', cr-188, ty-6);
+
+    ctx.save(); ctx.setLineDash([5,4]); ctx.lineWidth=2; ctx.strokeStyle=EXP; ctx.beginPath();
+    for(i=0;i<N;i++){ var ex=XP(i), ey=YP(expV[i]); if(i)ctx.lineTo(ex,ey); else ctx.moveTo(ex,ey); }
+    ctx.stroke(); ctx.restore();
+    ctx.fillStyle=EXP; ctx.font='10px ui-sans-serif,system-ui,sans-serif';
+    ctx.fillText('ungezähmte Krümmung (reine positive Schleife)', cl+6, ct+12);
+
+    ctx.save(); ctx.lineWidth=3; ctx.strokeStyle=CURVE; ctx.beginPath();
+    for(i=0;i<=step;i++){ var px=XP(i), py=YP(logV[i]); if(i)ctx.lineTo(px,py); else ctx.moveTo(px,py); }
+    ctx.stroke(); ctx.restore();
+
+    var cx=XP(step), cy=YP(logV[step]);
+    var expOnChart = expV[step]<=yMax*0.98;
+    if(expOnChart){
+      var ey2=YP(expV[step]);
+      ctx.save(); ctx.setLineDash([3,3]); ctx.lineWidth=1.5; ctx.strokeStyle=GAP;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,ey2); ctx.stroke(); ctx.restore();
+      ctx.fillStyle=GAP; ctx.font='10px ui-monospace,monospace';
+      ctx.fillText('absorbierte Holonomie ≈ '+(expV[step]-logV[step]).toFixed(1),
+        Math.min(cx+6,cr-150), (cy+ey2)/2+3);
+    }
+    ctx.save(); ctx.fillStyle=DOT; ctx.shadowColor=DOT; ctx.shadowBlur=12;
+    ctx.beginPath(); ctx.arc(cx,cy,6,0,TAU); ctx.fill(); ctx.restore();
+    ctx.fillStyle=DOT; ctx.font='bold 12px ui-monospace,monospace';
+    ctx.fillText(logV[step].toFixed(1), cx+10, cy-8);
+
+    /* ---------- readouts ---------- */
+    var projPct=inBandFrac*100;
+    if(rIn) rIn.textContent=projPct.toFixed(1)+'%';
+    if(rOut) rOut.textContent=(100-projPct).toFixed(1)+'%';
+    if(rNeed) rNeed.textContent='≈ '+kneed+'  (jetzt k='+kdim+')';
+    var netStep = step>=1 ? (logV[step]-logV[step-1]) : 0;
+    if(rNet) rNet.textContent=netStep.toFixed(2)+'  @ t='+step;
+    var ratioK=logV[step]/capK, ph;
+    if(ratioK<0.15) ph='Langsamer Start (Trieb summiert)';
+    else if(ratioK<0.5) ph='Explosiv (Trieb dominiert)';
+    else if(ratioK<0.85) ph='Abbremsen (Ausgleich gewinnt)';
+    else ph='Plateau (Netto-Trieb ≈ 0)';
+    if(rPh) rPh.textContent=ph;
+
+    var atPlateau=ratioK>=0.85;
+    var txt, cls;
+    if(projPct>=55 && atPlateau){
+      txt='✓ Balance — Struktur erhalten (ε-Band) UND Trieb = Korrektur (Plateau). Das Residuum ist absorbiert: ε-Band ist die Tragfähigkeit.';
+      cls='ok';
+    } else if(projPct<35){
+      txt='✗ Karte zu grob — k zu klein für n: viel Verzerrungs-Residuum. Statisches Brechen (Zwilling der Explosion der positiven Schleife).';
+      cls='bad';
+    } else if(!atPlateau){
+      txt='△ Übergang — Struktur teils erhalten, aber der Kreislauf triibt noch; Holonomie summiert sich bis zum Plateau.';
+      cls='warn';
+    } else {
+      txt='△ Teilverzerrung — der Ausgleich holt auf, Balance ist noch nicht vollständig (mehr Achsen k oder kleineres n senkt das Residuum).';
+      cls='warn';
+    }
+    if(rStatus){ rStatus.innerHTML='<b>'+txt+'</b>'; rStatus.className=cls; }
+  }
+
+  function stopAnim(){
+    if(animId){ cancelAnimationFrame(animId); animId=null; }
+    animating=false; step=N-1;
+    if(bAnim) bAnim.textContent='▶ Kreislauf animieren';
+  }
+  function tick(){
+    if(step>=N-1){ stopAnim(); draw(); return; }
+    step++; draw(); animId=requestAnimationFrame(tick);
+  }
+  function toggleAnim(){
+    if(animating){ stopAnim(); draw(); return; }
+    if(step>=N-1) step=0;
+    animating=true; if(bAnim) bAnim.textContent='⏸ anhalten'; tick();
+  }
+
+  function full(){ genData(); genProjection(); computeRatios(); computeBand(); computeDyn(); stopAnim(); draw(); }
+
+  function wire(id,set){ var el=document.getElementById(id);
+    if(el) el.addEventListener('input',function(){ set(el); stopAnim(); draw(); }); }
+
+  if(sN) sN.addEventListener('input',function(){ n=+sN.value; if(vN)vN.textContent=n; genData(); genProjection(); computeRatios(); computeBand(); stopAnim(); draw(); });
+  if(sD) sD.addEventListener('input',function(){ d=+sD.value; if(vD)vD.textContent=d; genData(); genProjection(); computeRatios(); computeBand(); stopAnim(); draw(); });
+  if(sK) sK.addEventListener('input',function(){ kdim=+sK.value; if(vK)vK.textContent=kdim; genProjection(); computeRatios(); computeBand(); stopAnim(); draw(); });
+  if(sE) sE.addEventListener('input',function(){ eps=+sE.value; if(vE)vE.textContent=(+sE.value).toFixed(2); computeBand(); stopAnim(); draw(); });
+  if(sR) sR.addEventListener('input',function(){ rate=+sR.value/100; if(vR)vR.textContent=sR.value+'%'; computeDyn(); stopAnim(); draw(); });
+  if(sCap) sCap.addEventListener('input',function(){ capK=+sCap.value; if(vCap)vCap.textContent=capK; computeDyn(); stopAnim(); draw(); });
+
+  if(bRoll) bRoll.addEventListener('click',function(){
+    seed=(Math.random()*0x7fffffff)|0; full();
+  });
+  if(bAnim) bAnim.addEventListener('click',toggleAnim);
+  function flipTheme(){ document.documentElement.classList.toggle('dark'); draw(); }
+  if(bTheme) bTheme.addEventListener('click',flipTheme);
+  if(themeBtn) themeBtn.addEventListener('click',flipTheme);
+  window.addEventListener('resize',function(){ stopAnim(); draw(); });
+
+  full();
+})();
+</script>
+</body>
+</html>

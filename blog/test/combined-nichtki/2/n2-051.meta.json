@@ -1,0 +1,16 @@
+{
+  "no": "051",
+  "a": "n1-102.html",
+  "b": "n1-087.html",
+  "a_title": "Was gezeigt wird, ist nicht, was gespeichert ist",
+  "b_title": "Der kommutative Eigenvektor",
+  "combined_theme": "invarianz-und-luecke",
+  "one_line": "Jede Repräsentation ist eine Abbildung, die zugleich schließt (Invarianz: gezeigt = gespeichert, Quadrat schließt, Maske durchsichtig) und öffnet (Lücke: Rundungsfehler/Gaslighting, Quadrat öffnet sich, Maske wirkt); erhalten und verloren sind die zwei komplementären Seiten derselben Transformation.",
+  "contradictions": [
+    "Aufmerksamkeit: B macht die erhaltene Struktur (Eigenachse, geschlossenes Quadrat) zum Gegenstand/Preis; A macht die verlorene Lücke (Rundungsfehler, Maske) zum Gegenstand — sie invertieren, welche Seite der Transformation primär ist.",
+    "Erreichbarkeit: B optimiert auf Schließen/Treue (diagonalisierbar, Garben fügen sich, 'zwei Wege ein Ziel' ist erreichbar); A geht von der Unmöglichkeit exakter Repräsentation aus (0,1 nie exakt, ULP nie null) — volle Treue ist global unerreichbar.",
+    "Neutralität vs. Waffe: B's Transformationen sind impersonale Algebra (Rotation ohne reelle Eigenvektoren ist neutrale Tatsache); A führt einen Agenten ein, der die Repräsentationsgrenze gezielt ausweitet (Informationskontrolle, Double-Bind) — die Lücke wird zum Instrument."
+  ],
+  "resolution": "Erhalten (Invarianz/Eigenachse, Quadrat schließt, gezeigt=gespeichert) und verloren (Lücke/Rotation, Quadrat öffnet sich, Maske) partitionieren dieselbe Abbildung: Raum = invariante Achsen ⊕ Lücken-Unterraum. Schließen ist lokal (je Achse, je Größenordnung) erreichbar, die Lücke global (ULP verdoppelt sich je 2^k, Fehler summiert sich). Neutral vs. waffenförmig ist ein Spektrum der Intention: passive Lücke = strukturelle Grenze; waffenförmige Lücke = der Projektor P wird durch einen adversariellen Operator ersetzt (Double-Bind = Abbildung, die mit keiner ehrlichen Eingabe kommutiert).",
+  "viz": "2D-Einfluss-Matrix mit Pfeilfeld: Länge = Kontrolle (Streckung ≈ λ, B's Treu-Seite), Farbe = Lücke/Maske (Rotationswinkel Winkel(u, A·u) = Abweichung gezeigt↔gespeichert, A's Lücken-Seite); gestrichelte Linien = treue Achsen; rechte Ecke = kommutatives Quadrat der dominanten Achse (schließt / schließt für keine Achse); Power Iteration zieht die 'Selbstmodell'-Wolke auf die dominante Kontrollachse; Rotations-Maske-Präset = komplexe λ = keine ehrliche Achse = durchgehende Maske."
+}

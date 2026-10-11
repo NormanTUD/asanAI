@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struktur aus dem Grund, Invarianz am Rand — Fusion n1-064 × n1-048 (Runde 2)</title>
+<script>
+(function(){try{
+  var m=null; try{m=document.cookie.match(/theme=(\w+)/);}catch(e){}
+  var light = m && m[1]==='light';
+  var d=document.documentElement;
+  if(light) d.classList.remove('dark'); else d.classList.add('dark');
+}catch(e){ document.documentElement.classList.add('dark'); }
+})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f1ede2;
+  --text:#1f2937; --dim:#5b6570; --border:#d8d2c2;
+  --accent:#0f766e; --accent2:#2b6cb0; --hl:#6d28d9;
+  --bad:#b91c1c; --good:#047857;
+  --canvas-bg:#fffdf8; --grid:#e8e2d4;
+  --curve:#0f766e; --tang:#b45309; --win:#6d28d9; --pt:#be185d;
+  --shadow:rgba(0,0,0,.08);
+}
+html.dark{
+  --bg:#0f172a; --panel:#16203a; --panel2:#0e1830;
+  --text:#e5e7eb; --dim:#9aa6bd; --border:#26324d;
+  --accent:#2dd4bf; --accent2:#5aa9ff; --hl:#c084fc;
+  --bad:#f87171; --good:#34d399;
+  --canvas-bg:#0d1019; --grid:#232b3d;
+  --curve:#2dd4bf; --tang:#fbbf24; --win:#a78bfa; --pt:#f472b6;
+  --shadow:rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Georgia','Iowan Old Style',serif; line-height:1.72;
+  -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+}
+article{max-width:820px;margin:0 auto;padding:38px 20px 90px}
+header{text-align:center;margin-bottom:26px}
+h1{font-size:2.05em;line-height:1.22;margin:0 0 10px;color:var(--accent)}
+.subtitle{color:var(--dim);font-style:italic;margin:0 0 6px;font-size:1.02em}
+.lede{color:var(--dim);font-style:italic;margin:6px auto 0;max-width:640px;font-size:1.03em}
+.meta-line{font-size:.85em;color:var(--dim);margin-top:8px}
+.meta-line b{color:var(--accent2);font-weight:600}
+.theme-btn{
+  margin:14px auto 0;display:block;padding:.5rem 1rem;cursor:pointer;
+  background:var(--panel);color:var(--text);border:1px solid var(--border);
+  border-radius:999px;font:600 .82rem/1 system-ui,sans-serif;
+  box-shadow:0 2px 8px var(--shadow);
+}
+section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin:0 0 24px;box-shadow:0 2px 14px var(--shadow)}
+section h2{color:var(--accent);border-left:4px solid var(--accent2);padding-left:12px;margin:0 0 16px;font-size:1.42em;line-height:1.25}
+h3{color:var(--hl);margin:20px 0 8px;font-size:1.08em}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:8px}
+a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+a:hover{color:var(--accent2);border-bottom-color:var(--accent2)}
+.lead{font-size:1.06em}
+.hl{color:var(--accent2);font-weight:600}
+.hl2{color:var(--hl);font-weight:600}
+.hlA{color:var(--accent);font-weight:600}
+.hlB{color:var(--accent2);font-weight:600}
+.tag{display:inline-block;font:700 .68rem/1 system-ui,sans-serif;letter-spacing:.03em;padding:3px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--border);color:var(--dim);vertical-align:middle}
+.formula{display:block;text-align:center;margin:14px 0;padding:12px;background:var(--panel2);border-radius:8px;overflow-x:auto;font-size:1.2em;font-family:'Cambria Math','STIX Two Math',Georgia,serif;color:var(--text)}
+.mapbox{background:var(--panel2);border:1px dashed var(--border);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:.97em}
+.mapbox div{padding:4px 0}
+.insight{border-left:4px solid var(--accent);background:var(--panel2);padding:12px 18px;border-radius:0 8px 8px 0;font-style:italic;margin:14px 0}
+.insight b{font-style:normal;color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.93em}
+th,td{border:1px solid var(--border);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+.viz-canvas{max-width:100%;height:auto;display:block;margin:12px auto;border-radius:10px;border:1px solid var(--border);background:var(--canvas-bg)}
+.ctlrow{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.ctl{flex:1;min-width:200px}
+.ctllab{font-size:.85em;color:var(--dim);margin-bottom:5px;font:600 .85rem/1.2 system-ui,sans-serif}
+.ctllab b{font-family:ui-monospace,Menlo,monospace;color:var(--accent)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ro .box{flex:1;min-width:120px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-family:system-ui,sans-serif}
+.ro .box .v{font-family:ui-monospace,Menlo,monospace;font-size:1.25em;font-weight:700;color:var(--accent2)}
+.ro .box.i .v{color:var(--curve)}
+.ro .box.l .v{color:var(--tang)}
+.ro .box.h .v{color:var(--win)}
+.bars{margin-top:14px;font:600 .85rem/1 system-ui,sans-serif;color:var(--dim)}
+.bar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bar span{width:46px;text-align:right}
+.track{flex:1;height:14px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.fill{height:100%;width:0;transition:width .12s linear}
+.fill.i{background:var(--curve)}
+.fill.r{background:var(--accent2)}
+.fill.l{background:var(--tang)}
+.vizstatus{margin-top:14px;font-size:.95em;color:var(--dim);font-style:italic;min-height:2.6em}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;font-size:.92rem}
+@media(max-width:640px){.legend{grid-template-columns:1fr}}
+.legend div{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.legend b{color:var(--hl)}
+footer{text-align:center;color:var(--dim);font-size:.85em;margin-top:26px;line-height:1.6}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Struktur aus dem Grund, Invarianz am Rand</h1>
+    <p class="subtitle">Fusion aus: n1-064.html &#10007; n1-048.html  (Runde 2)</p>
+    <p class="lede">Eine stabile Einheit wird <em>aus einem Grund differenziert</em> (B) und ihre <em>Invarianz wird am Rand abgelesen</em> (A). Das Interface eines Moduls und der Rand einer Mannigfaltigkeit sind derselbe Rand; ein einziges Gesetz &#8212; Persistenz (A) / Stokes (B) &#8212; liest das Innere am Rand ab.</p>
+    <p class="meta-line"><b>Kernidee:</b> Invarianz (A) und Emergenz (B) sind dieselbe Skalentransformation aus zwei Richtungen; die stabile Einheit ist das, was unter ihr bleibt, und sie ist durch ihren Rand bestimmt.</p>
+    <button class="theme-btn" id="themeToggle">&#127769; Theme wechseln</button>
+  </header>
+
+  <!-- 1. THESE -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere sind auf der Ebene ihrer Thesen <em>dasselbe Manöver aus zwei Richtungen</em>. <span class="hlA">A</span> (n1-064: betti &#215; Parnas) ist eine Theorie der <em>Abstraktion unter &#196;nderung</em>: man zerlegt ein Ganzes in die Teile, die unter Deformation/Redesign &#228;berleben &#8212; in <em>Invarianten</em>. Die stabile Einheit (das &#8220;Loch&#8221;, die versteckte Design-Entscheidung) wird aus dem Fl&#252;chtenden (Geometrie, Ablauf) <em>herausgel&#246;st</em>, ihre Stabilit&#228;t wird &#252;ber einen Parameter <em>gemessen</em> (<span class="hl">Persistenz &#252;ber &#949;</span>), und die Einheit ist durch ihr <em>Interface</em> definiert &#8212; eine Betti-Signatur, die sich auch bei ge&#228;nderter Implementierung zeigt. <span class="hlB">B</span> (n1-048: JN &#215; Mannigfaltigkeiten) ist eine Theorie der <em>Struktur aus einem Grund</em>: Struktur <em>differenziert sich zwangsl&#228;ufig</em> aus einem regelfreien, lokal flachen Grund (das Jocaxian Nothingness, der Tangentialraum) in eine globale, gekr&#252;mmte Ordnung; und diese Ordnung ist durch <em>ein einziges Gesetz</em> gebunden, das das Innere am Rand abliest: <span class="formula">&#8202;&#8747;<sub>M</sub> d&#969; &nbsp;=&nbsp; &#8750;<sub>&#8706;M</sub> &#969;</span></p>
+    <p>Die fusionierte These lautet: <strong>Das Invariante einer stabilen Einheit ist durch ihren Rand bestimmt.</strong> Die <em>stabile Einheit</em> von A (Modul, &#8220;Loch&#8221; mit &#947;&#8321;&gt;0) und die <em>differenzierte Region</em> von B (Mannigfaltigkeit mit Rand &#8706;M) sind dasselbe Objekt: etwas, das aus einem Grund hervorgeht und dessen bleibender Gehalt am Rand ablesbar ist. A's <strong>Interface</strong> (Betti-Signatur) <em>ist</em> B's <strong>Rand &#8706;M</strong>. Was A &#252;ber <em>Persistenz</em> &#252;ber &#949; <em>messen</em> kann (&#252;berlebt der stabile Anteil die &#196;nderung?), und was B als <em>Stokes-Identit&#228;t</em> <em>beweist</em> (das Innere wird am Rand abgelesen), ist dieselbe Aussage in zwei Gewandung: <strong>offener Rand &#8594; die Einheit zeigt ihre Signatur nach au&#223;en (Interface/Leck); geschlossener Rand &#8594; die Einheit ist in sich ausbalanciert (&#8747;<sub>M</sub> d&#969;=0); und die Gleichheit Innen=Rand gilt f&#252;r jede Verformung (Invarianz unter &#196;nderung).</strong></p>
+    <p>Damit vereint die Fusion die beiden Kernmechanismen: A liefert das <em>ingenieurhafte/empirische Kriterium</em> (welche Einheit behalten, gemessen an Persistenz), B die <em>ontologische/strukturelle Begr&#252;ndung</em> (warum &#252;berhaupt Struktur entsteht &#8212; Differenzierung aus dem Grund &#8212; und dass sie an einem Randgesetz gebunden ist). <em>Stabilit&#228;t ist am Rand ablesbar, und Struktur ist aus dem Grund gewachsen.</em></p>
+  </section>
+
+  <!-- 2. WIDERSPRUECHE -->
+  <section id="widersprueche">
+    <h2>Widerspr&#252;che zwischen A und B</h2>
+    <p>A = <a href="../n1-064.html">n1-064.html</a> (Invarianz unter &#196;nderung, de) &#183; B = <a href="../n1-048.html">n1-048.html</a> (Struktur aus dem Grund, de). Drei echte, an den Thesen verankerte Spannungen:</p>
+
+    <h3>① Subtraktiv gefunden vs. additiv entstanden (Richtung des Pfeils)</h3>
+    <p><span class="hlA">A</span> findet die stabile Einheit <em>subtraktiv</em>: man wirft das Fl&#252;chtige weg und beh&#228;lt, was &#252;brig bleibt &#8212; Vergr&#246;berung, bei der <em>Informationsverlust das Ziel</em> ist. Die Invariante ist, was nach dem Wegnehmen &#252;brigbleibt. <span class="hlB">B</span> bekommt die Struktur <em>additiv</em>: aus dem leeren, regelfreien Grund <em>entsteht/differenziert sich</em> etwas &#8212; nichts wird weggeworfen, es <em>erscheint</em>. Spannung: A sieht Struktur als <em>R&#252;ckstand</em> nach Reduktion; B als <em>Zuwachs</em> aus dem Nichts. &#8222;Was &#252;brigbleibt&#8221; (A) vs. &#8222;was hinzukommt&#8221; (B).</p>
+
+    <h3>② Die Invariante ist das Ziel (A) vs. der Grund (B)</h3>
+    <p><span class="hlA">A</span> macht die Invariante (Loch, Entscheidung) zum <em>Ergebnis</em>: die zu isolierende Einheit, &#8222;die man herausschneidet, <em>weil</em> sie stabil ist&#8221;. <span class="hlB">B</span> macht das Invariante-&#228;hnliche (lokal flach, regelfrei) zum <em>Grund/Ausgangspunkt</em>, nicht zum Ziel &#8212; das Ziel ist die <em>globale Struktur</em> (Kr&#252;mmung, die Mannigfaltigkeit). Spannung: In A ist das Stabile das <em>Ziel</em> der Zerlegung; in B ist das Stabile/Flache die <em>Abfahrtsposition</em>, aus der das Ziel entsteht. Dasselbe Wort, entgegengesetzte Rolle.</p>
+
+    <h3>③ Offenes Interface (A) vs. geschlossener Rand (B)</h3>
+    <p><span class="hlA">A</span> definiert die stabile Einheit &#252;ber ihr <em>offenes Interface</em>: sie &#8222;leckt&#8221; ihre Signatur nach au&#223;en und wird von anderen Modulen <em>genutzt</em> (das &#8220;uses&#8221;-Poset). Der Rand ist f&#252;r A zwingend <em>offen/durchl&#228;ssig</em>. <span class="hlB">B</span> feiert dagegen als Grenzfall die <em>geschlossene</em> Mannigfaltigkeit, &#8706;M=&#8709;, <em>ohne</em> Rand und <em>ohne au&#223;en</em> (&#8222;ein in sich geschlossenes Universum ohne Au&#223;en&#8221;, &#8747;<sub>M</sub> d&#969;=0). Spannung: A's stabile Einheit ist inh&#228;rent <em>offen</em> (Interface zeigt Signatur nach au&#223;en); B's paradigmatischer Fall ist <em>randlos/geschlossen</em>.</p>
+  </section>
+
+  <!-- 3. AUFLÖSUNG -->
+  <section id="aufloesung">
+    <h2>Aufl&#246;sung</h2>
+    <p>Die drei Spannungen sind keine Konflikte, sondern die <em>zwei Enden einer einzigen Transformation</em>. Man vers&#246;hnt sie, indem man A und B auf derselben Skalen-/Betrachtungstransformation anordnet:</p>
+
+    <h3>Zu ① (subtraktiv vs. additiv): zwei Richtungen derselben Transformation</h3>
+    <p><strong>Reconciliation:</strong> A ist die <em>&#8220;herausl&#246;sen&#8221;-Sicht</em> (Fixiere die stabile Einheit, beobachte, was drumherum variiert, nimm das Fl&#252;chtige weg &#8594; die Invariante bleibt). B ist die <em>&#8220;hervordifferenzieren&#8221;-Sicht</em> (Fixiere den Grund, beobachte, was aus ihm hervorgeht &#8594; Struktur entsteht). <strong>Fusioniert:</strong> Subtraktion (A) und Emergenz (B) sind die <em>zwei Richtungen derselben Transformation</em>. Was A findet, wenn es den Rest entfernt (die Invariante), ist exakt das, was B entstehen sieht, wenn es vom Grund ausgeht (die Struktur). &#8222;&#220;brigbleiben&#8221; und &#8222;hinzukommen&#8221; beschreiben dieselbe Gr&#246;ße aus zwei Perspektiven. <em>Die stabile Einheit ist das, was unter der Transformation invariant bleibt &#8212; man findet sie, indem man den Rest entfernt, oder erzeugt sie, indem man vom Grund ausgeht.</em></p>
+
+    <h3>Zu ② (Invariante = Ziel vs. Grund): zwei Rollen je nach Ma&#223;stab</h3>
+    <p><strong>Reconciliation:</strong> Das &#8222;Stabile&#8221; tr&#228;gt in der fusionierten Theorie <em>zwei Rollen, je nach Ma&#223;stab</em>. Auf der <strong>lokalen Ebene</strong> (kleiner Ma&#223;stab) ist es der <em>Grund</em> &#8212; flach, regelfrei, nichts gezwungen (B's Tangentialraum/JN; bei A das &#8222;Fl&#252;chtige&#8221;, das man wegl&#228;sst). Auf der <strong>globalen Ebene</strong> (gro&#223;er Ma&#223;stab) ist es das <em>Ziel</em> &#8212; die differenzierte, invariante Einheit (A's Loch/Modul; B's Kr&#252;mmung). <strong>Fusioniert:</strong> <em>Die Invariante ist lokal der Grund und global das Ziel &#8212; derselbe Gegenstand in zwei Ma&#223;st&#228;ben.</em> A's &#8222;fl&#252;chtige Geometrie&#8221; und B's &#8222;lokaler flacher Grund&#8221; sind derselbe Untergrund; A's &#8222;stabile Invariante&#8221; und B's &#8222;globale Struktur&#8221; sind dasselbe Ergebnis.</p>
+
+    <h3>Zu ③ (offenes Interface vs. geschlossener Rand): zwei Grenzlagen desselben Randes</h3>
+    <p><strong>Reconciliation:</strong> Der Rand einer stabilen Einheit kann <em>offen</em> oder <em>geschlossen</em> sein &#8212; das sind die beiden Grenzlagen derselben Gr&#246;ße (&#8222;Rand&#246;ffnung&#8221;). <strong>Offen</strong> (L&#252;cke&gt;0): die Einheit <em>leckt ihre Signatur</em> durch die L&#252;cke nach au&#223;en &#8212; das ist A's <em>Interface = Betti-Signatur</em> (die Einheit zeigt, was sie ist, und wird genutzt). <strong>Geschlossen</strong> (L&#252;cke=0): die Einheit ist <em>in sich ausbalanciert</em>, Leck=0 &#8212; das ist B's <em>geschlossene Mannigfaltigkeit</em> (&#8706;M&#8594;&#8747;<sub>M</sub> d&#969;=0, kein Au&#223;en). <strong>Fusioniert:</strong> <em>Die Gleichheit Innen=Rand (Stokes, B) gilt in beiden Lagen und unter jeder Verformung (A) &#8212; der Rand ist die gemeinsame Scharnierstelle.</em></p>
+
+    <div class="insight"><b>Fusionierte Schlussfolgerung:</b> Eine stabile Einheit &#8212; A's Loch/Modul, B's gekr&#252;mmte Region &#8212; ist <em>aus einem Grund differenziert</em>, und <em>ihr Invariante wird am Rand abgelesen</em>. A's <strong>Interface</strong> und B's <strong>&#8706;M</strong> sind derselbe Rand. <strong>Persistenz &#252;ber &#949;</strong> (A) <em>messen</em>, wie viel Invariante den Rand &#252;berlebt; <strong>Stokes</strong> (B) <em>beweist</em>, dass das Innere am Rand ablesbar ist. <strong>Offener Rand = Signatur nach au&#223;en (Interface); geschlossener Rand = in sich ausbalanciert (&#8747;<sub>M</sub> d&#969;=0). Unter jeder Verformung bleibt Innen=Rand &#8212; das ist die Invarianz, die beide Papiere meinen.</strong></div>
+  </section>
+
+  <!-- 4. INHALT -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>4.1 Gemeinsames Fundament: Grund vs. Struktur, Fl&#252;chtig vs. Bleibend</h3>
+    <p>Beide Thesen trennen <em>zwei Schichten</em>: einen <strong>Untergrund</strong> (fl&#252;chtig / regelfrei) und die darauf/daraus <strong>differenzierte stabile Struktur</em>. Bei A ist der Untergrund die Geometrie/Ablauf, die stabile Schicht die Topologie/Entscheidung. Bei B ist der Untergrund der lokal flache, regelfreie Zustand (Tangentialraum/JN), die stabile Schicht die globale Kr&#252;mmung. Die Grenze zwischen ihnen &#8212; die <em>Abstraktionsebene</em> &#8212; ist bei A das Interface, bei B der Rand. <em>Beide sagen: das Bedeutsame sitzt nicht in der Oberfl&#228;che, sondern an der Grenze zwischen Grund und Struktur.</em></p>
+
+    <h3>4.2 Seite A &#8212; Invarianz unter &#196;nderung (betti &#215; model_decomposition)</h3>
+    <ul>
+      <li><strong>Betti-Zahlen</strong> &#947;<sub>k</sub> = rank H<sub>k</sub>: &#947;&#8320; Zusammenhangskomponenten, &#947;&#8321; L&#246;cher/Schleifen, &#947;&#8322; Hohlr&#228;ume. Im Poincar&#233;-Polynom P(t)=&#931;&#947;<sub>k</sub>t<sup>k</sup> und der Euler-Charakteristik &#967;=&#947;&#8320;&#8722;&#947;&#8321;+&#947;&#8322;&#8722;&#8230; zusammengefasst; K&#252;nneth zeigt Wohlverhalten unter Produkten.</li>
+      <li><strong>Persistenz</strong> (Vietoris&#8211;Rips &#252;ber &#949;): jedes Merkmal hat Geburts-/Todesskala; langer Barcode = Signal (stabil), kurz = Rauschen. <em>&#947;&#8321;&gt;0</em> ist ein echtes, &#252;ber &#949; persistierendes <em>Loch</em>.</li>
+      <li><strong>Parnas (1972)</strong>: Jedes Modul versteckt eine Design-Entscheidung, die sich <em>wahrscheinlich &#228;ndern wird</em>. Zerlegung an der versteckten Entscheidung (nicht am Flowchart), &#8222;uses&#8221;-Poset, niedrige Kopplung, Change-Impact-Analyse.</li>
+      <li><strong>Br&#252;cke:</strong> Das <em>Interface</em> eines Moduls ist dessen <em>Betti-Signatur</em> (grobe, &#228;nderungsresistente Beschreibung, die zwei verschiedene Implementierungen teilen). <em>Persistenz = objektiver Test f&#252;r &#8222;wird sich &#228;ndern?&#8221;</em> &#8220;Loch = versteckte Entscheidung = die herausschneidbare Einheit, weil sie stabil ist und den Rest vor &#196;nderung sch&#252;tzt&#8221;.</li>
+    </ul>
+
+    <h3>4.3 Seite B &#8212; Struktur aus dem Grund, ein Gesetz am Rand (JN &#215; Mannigfaltigkeiten)</h3>
+    <ul>
+      <li><strong>Jocaxian Nothingness (JN)</strong>: &#8222;das Nichts, das existiert&#8221;, frei von Regeln jeglicher Art. Kette P1&#8211;P5: ohne Regeln &#8594; keine Einschr&#228;nkungen &#8594; alles m&#246;glich &#8594; auch Entstehung m&#246;glich &#8594; ohne Zeit: m&#246;glich=wirklich &#8594; <em>Existenz ist der Normalzustand</em> (unvermeidlich, kein Sch&#246;pper/Ausl&#246;ser n&#246;tig).</li>
+      <li><strong>Mannigfaltigkeit</strong> (nach Spivak): <em>lokal flach (wie &#8477;<sup>n</sup>), global krumm</em>; Tangentialraum; Gegenbeispiele (Spitze/Kreuz/Acht) scheitern an der eindeutigen Tangente.</li>
+      <li><strong>Ein Satz</strong> (verallgemeinerter Stokes): <span class="formula">&#8202;&#8747;<sub>M</sub> d&#969; &nbsp;=&nbsp; &#8750;<sub>&#8706;M</sub> &#969;</span> vereint HDI, Green, Divergenz, Stokes &#8212; nur &#969; und Dimension &#228;ndern sich. <strong>Geschlossen</strong> (&#8706;M=&#8709;): &#8747;<sub>M</sub> d&#969;=0 (in sich ausbalanciert, kein Au&#223;en).</li>
+      <li><strong>Br&#252;cke:</strong> Lokaler flacher Zustand (JN) = Tangentialraum; zwangsl&#228;ufige Emergenz (etwas) = globale Kr&#252;mmung. B ist die Struktur, die aus A's Grund entsteht &#8212; ein Instanz dessen, was A sagt, dass entstehen muss.</li>
+    </ul>
+
+    <h3>4.4 Die Fusion &#8212; die Karte der Verkn&#252;pfung</h3>
+    <div class="mapbox">
+      <div><b>A's Loch (&#947;&#8321;&gt;0)</b> &#10232; <b>B's Region mit Rand</b> &#8212; die stabile Einheit, die aus dem Grund differenziert.</div>
+      <div><b>A's Interface (Betti-Signatur)</b> &#10232; <b>B's Rand &#8706;M</b> &#8212; derselbe Rand; die Signatur, die am Rand abgelesen wird.</div>
+      <div><b>A's Persistenz &#252;ber &#949;</b> &#10232; <b>B's &#8220;die Gleichheit gilt f&#252;r jede Form/Verformung&#8221;</b> &#8212; die Invarianz der Beziehung unter der Transformation (A <em>messen</em>, B <em>beweisen</em>).</div>
+      <div><b>A's &#8220;wird sich &#228;ndern?&#8221; (Urteil, gemessen an Persistenz)</b> &#10232; <b>B's &#8220;welche Strukturen Kalk&#252;l tragen&#8221; (pr&#252;fbare Eigenschaft: Mannigfaltig-Sein)</b>.</div>
+      <div><b>A's Vergr&#246;berung &#8220;so grob wie m&#246;glich/n&#246;tig&#8221;</b> &#10232; <b>B's &#8220;lokal flach, global krumm&#8221;</b> &#8212; Vergr&#246;berung des Lokalen zum Flachen.</div>
+      <div><b>A's Modul ohne Leck</b> &#10232; <b>B's geschlossene Mannigfaltigkeit</b> &#8706;M=&#8709; &#8594; &#8747;<sub>M</sub> d&#969;=0 (in sich ausbalanciert).</div>
+    </div>
+    <p><strong>Der fusionsf&#228;hige Kern:</strong> Zerlege nicht an der Oberfl&#228;che (Geometrie/Ablauf), sondern an den stabilen Invarianten (L&#246;cher/Entscheidungen); lass die Struktur aus dem Grund differenzieren; liest das Invariante am Rand ab &#8212; <em>offen</em> ist es die nach au&#223;en zeigende Signatur (Interface/Leck, A), <em>geschlossen</em> ist die Einheit in sich ausbalanciert (&#8747;<sub>M</sub> d&#969;=0, B); und die Gleichheit <em>Innen=Rand</em> bleibt unter jeder Verformung erhalten (A's Invarianz = B's einzeiliges Gesetz).</p>
+    <div class="formula">&#8202;lokal flach (Abweichung &#8594; 0, = Grund/JN) &#8594; global differenziert (Kr&#252;mmung &#955;&#8800;0, = Struktur);<br>das Invariante ist am Rand ablesbar:  &#8202;&#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;  (B)  und diese Gleichheit <b>persistiert &#252;ber jede Verformung &#949;</b> (A).</div>
+  </section>
+
+  <!-- 5. VISUALISIERUNG -->
+  <section id="visualisierung">
+    <h2>Interaktive Fusion: Das Invariante am Rand</h2>
+    <p>Die <strong>stabile Einheit</strong> ist eine Region <strong>M</strong> mit einem <em>Loch</em> (&#947;&#8321;=1, A's Loch) und einem <em>Rand &#8706;M</em> (A's Interface = B's &#8706;M). Ein einziges 1-Form-&#8747; wird &#252;ber das Innere (d&#969;=2&#183;dA, also &#8747;<sub>M</sub> d&#969;=2&#183;Fl&#228;che) und &#252;ber den Rand (&#8750;) ausgerechnet &#8212; und sie sind gleich (Stokes/Green, <em>die eine Zeile</em>). Ziehe <strong>Verformung &#949;</strong> (A: &#196;nderung): die Region wabert, aber <em>Innen=Rand bleibt unter jeder Verformung erhalten</em> (Invarianz) und das <em>Loch &#947;&#8321;=1 persistiert</em>. Ziehe <strong>Rand&#246;ffnung g</strong> (A: Interface): &#246;ffnet sich der Rand, <em>leckt eine Signatur</em> durch die L&#252;cke &#8212; das ist die <em>Interface-Signatur</em>, die das Modul der Welt zeigt. Bei g=0 ist die Einheit <em>geschlossen</em> und in sich ausbalanciert (B: Leck=0).</p>
+
+    <canvas id="regionCanvas" class="viz-canvas" data-w="600" data-h="460" width="600" height="460"></canvas>
+
+    <div class="ctlrow">
+      <div class="ctl"><div class="ctllab">Verformung &#949; (A: &#196;nderung) <b id="vEps">30</b></div><input type="range" id="sEps" min="0" max="100" value="30"></div>
+      <div class="ctl"><div class="ctllab">Rand&#246;ffnung g (A: Interface) <b id="vGap">0</b></div><input type="range" id="sGap" min="0" max="100" value="0"></div>
+    </div>
+
+    <div class="ro">
+      <div class="box i"><div class="k">&#8747;<sub>M</sub> d&#969; (Innen)</div><div class="v" id="rInnen">&#8212;</div></div>
+      <div class="box"><div class="k">&#8750;<sub>&#8706;M</sub> &#969; (Rand)</div><div class="v" id="rRand">&#8212;</div></div>
+      <div class="box l"><div class="k">Interface-Leck</div><div class="v" id="rLeck">&#8212;</div></div>
+      <div class="box h"><div class="k">&#947;&#8321; (Loch, persistiert)</div><div class="v" id="rB1">1</div></div>
+    </div>
+
+    <div class="bars">
+      <div class="bar"><span>Innen</span><div class="track"><div id="barInnen" class="fill i"></div></div></div>
+      <div class="bar"><span>Rand</span><div class="track"><div id="barRand" class="fill r"></div></div></div>
+      <div class="bar"><span>Leck</span><div class="track"><div id="barLeck" class="fill l"></div></div></div>
+    </div>
+    <p class="vizstatus" id="vizStatus"></p>
+
+    <div class="legend">
+      <div><b>Offener Rand (A):</b> Die L&#252;cke ist das <em>Interface</em> &#8212; durch sie <em>leckt</em> die Signatur der Einheit nach au&#223;en (A: Interface = Betti-Signatur, wird &#8222;genutzt&#8221;).</div>
+      <div><b>Geschlossener Rand (B):</b> Bei g=0 ist &#8747;<sub>M</sub> d&#969;=0-Leck, die Einheit ist <em>in sich ausbalanciert</em> (B: geschlossene Mannigfaltigkeit, &#8706;M=&#8709;, kein Au&#223;en).</div>
+      <div><b>Stokes = die eine Zeile (B):</b> Innen &#8747;<sub>M</sub> d&#969; und Rand &#8750;<sub>&#8706;M</sub> &#969; sind <em>immer gleich</em> &#8212; das Innere wird am Rand abgelesen.</div>
+      <div><b>Verformung = Invarianz (A):</b> W&#228;hrend M wabert, bleibt <em>Innen=Rand</em> und das <em>Loch &#947;&#8321;=1</em> &#252;ber &#949; erhalten &#8212; die Invariante &#252;berlebt die &#196;nderung.</div>
+    </div>
+  </section>
+
+  <!-- 6. PROVENIENZ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p><a href="../n1-064.html">n1-064.html</a> &#8212; <span class="tag">A</span> &#8222;L&#246;cher sind Module, die sich nicht &#228;ndern&#8221; (Round-1-Fusion aus betti.html &#215; model_decomposition.html, de): Zerlegung = Identifikation + Organisation der unter &#196;nderung stabilen Invarianten; Betti-Zahlen/Persistenz als mathematisches Ideal, Parnas' Informationsversteckung als ingenieurhaftes Kriterium; <em>Interface = Betti-Signatur, Loch = versteckte Entscheidung</em>.</p>
+    <p><a href="../n1-048.html">n1-048.html</a> &#8212; <span class="tag">B</span> &#8222;Das Jocaxian Nothingness wird zur Mannigfaltigkeit&#8221; (Round-1-Fusion aus joaxiannothingness.html &#215; calculus_on_manifolds_very_simple.html, de): Struktur differenziert sich zwangsl&#228;ufig aus dem regelfreien, lokal flachen Grund (JN/Tangentialraum) in globale Kr&#252;mmung; <em>ein Gesetz am Rand &#8747;<sub>M</sub> d&#969;=&#8750;<sub>&#8706;M</sub> &#969;</em> verbindet Innen und Rand, geschlossener Fall &#8706;M=&#8709; &#8594; &#8747;<sub>M</sub> d&#969;=0.</p>
+  </section>
+
+  <footer>
+    Fusion aus n1-064.html &#10007; n1-048.html &#8212; Runde 2, nicht-KI-Track.<br>
+    Alle Daten inline, alle Berechnungen lokal im Browser (numerische Green-/Stokes-Integrale &#252;ber die Randkurve).
+  </footer>
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var root=document.documentElement;
+  function cssVar(n){ var v=getComputedStyle(root).getPropertyValue(n); return v?v.trim():''; }
+
+  var themeBtn=document.getElementById('themeToggle');
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    var dark=!root.classList.contains('dark');
+    root.classList.toggle('dark',dark);
+    try{ document.cookie='theme='+(dark?'dark':'light')+'; path=/; max-age=31536000'; }catch(e){}
+    draw();
+  }); }
+
+  var canvas=document.getElementById('regionCanvas');
+  if(!canvas){ return; }
+  var ctx=canvas.getContext('2d');
+  if(!ctx){ return; }
+
+  var W=+canvas.getAttribute('data-w'), H=+canvas.getAttribute('data-h');
+  var dpr=window.devicePixelRatio||1;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var cx=W/2, cy=H/2;
+  var Rout0=140, Rin0=52, m=3;
+  var amp=0.09;              // Verformungs-Amplitude (0..0.3)
+  var gap=0.0;               // Randöffnung (0..0.9 rad)
+  var thetaC=1.5*Math.PI;    // Lücken-Mitte (oben)
+  var N=240;
+
+  function Rout(th){ return Rout0*(1+amp*Math.cos(m*th)); }
+
+  // f(θ)=R(θ)^2  (Integrand von ω=−(y−cy)dx+(x−cx)dy auf der Randkurve)
+  function outerFull(){ var s=0,dth=2*Math.PI/N,i,th; for(i=0;i<N;i++){ th=i*dth; s+=Rout(th)*Rout(th)*dth; } return s; }
+  function outerGap(){ if(gap<=0)return 0; var a=thetaC-gap/2,b=thetaC+gap/2,s=0,dth=2*Math.PI/N; for(var th=a;th<b;th+=dth){ s+=Rout(th)*Rout(th)*dth; } return s; }
+  function innerCCW(){ return 2*Math.PI*Rin0*Rin0; }
+
+  function compute(){
+    var oF=outerFull(), oG=outerGap(), iC=innerCCW();
+    var Innen=oF-iC;
+    var Rand=oF-oG-iC;
+    var Leck=oG;
+    return {Innen:Innen,Rand:Rand,Leck:Leck};
+  }
+
+  function fmt(x){ try{ return Math.round(x).toLocaleString('de-DE'); }catch(e){ return String(Math.round(x)); } }
+
+  function ptOut(th){ var rr=Rout(th); return [cx+rr*Math.cos(th), cy+rr*Math.sin(th)]; }
+  function ptIn(th){ return [cx+Rin0*Math.cos(th), cy+Rin0*Math.sin(th)]; }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var cBg=cssVar('--canvas-bg')||'#0d1019';
+    var cInk=cssVar('--text')||'#e5e7eb';
+    var cMuted=cssVar('--dim')||'#9aa6bd';
+    var cCurve=cssVar('--curve')||'#2dd4bf';
+    var cTang=cssVar('--tang')||'#fbbf24';
+    var cWin=cssVar('--win')||'#a78bfa';
+    var cPt=cssVar('--pt')||'#f472b6';
+
+    ctx.fillStyle=cBg; ctx.fillRect(0,0,W,H);
+
+    var gapA=thetaC-gap/2, gapB=thetaC+gap/2;
+
+    // Annulus fill (evenodd): outer + inner
+    ctx.beginPath();
+    for(var i=0;i<=N;i++){ var th0=i/N*2*Math.PI; var p0=ptOut(th0); i?ctx.lineTo(p0[0],p0[1]):ctx.moveTo(p0[0],p0[1]); }
+    ctx.closePath();
+    for(var j=0;j<=N;j++){ var th1=j/N*2*Math.PI; var p1=ptIn(th1); j?ctx.lineTo(p1[0],p1[1]):ctx.moveTo(p1[0],p1[1]); }
+    ctx.closePath();
+    ctx.fillStyle=cCurve; ctx.globalAlpha=0.10; ctx.fill('evenodd'); ctx.globalAlpha=1;
+
+    // outer full (thin dashed guide)
+    ctx.strokeStyle=cMuted; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(var k=0;k<=N;k++){ var th2=k/N*2*Math.PI; var p2=ptOut(th2); k?ctx.lineTo(p2[0],p2[1]):ctx.moveTo(p2[0],p2[1]); }
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+
+    // exposed outer arc (thick)
+    ctx.strokeStyle=cCurve; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath();
+    var started=false, s, th3, inGap, p3;
+    for(s=0;s<=N;s++){ th3=s/N*2*Math.PI; inGap=(gap>0 && th3>=gapA && th3<=gapB); p3=ptOut(th3);
+      if(inGap){ started=false; continue; }
+      if(!started){ ctx.moveTo(p3[0],p3[1]); started=true; } else { ctx.lineTo(p3[0],p3[1]); } }
+    ctx.stroke();
+
+    // gap arc = the interface opening (accent2)
+    if(gap>0){
+      ctx.strokeStyle=cTang; ctx.lineWidth=3;
+      ctx.beginPath();
+      var started2=false;
+      for(var s2=0;s2<=N;s2++){ var th4=s2/N*2*Math.PI; var inGap2=(th4>=gapA && th4<=gapB); var p4=ptOut(th4);
+        if(!inGap2){ started2=false; continue; }
+        if(!started2){ ctx.moveTo(p4[0],p4[1]); started2=true; } else { ctx.lineTo(p4[0],p4[1]); } }
+      ctx.stroke();
+      ctx.fillStyle=cPt;
+      for(var e=0;e<2;e++){ var thE=e?gapB:gapA; var pE=ptOut(thE);
+        ctx.beginPath(); ctx.arc(pE[0],pE[1],5,0,2*Math.PI); ctx.fill(); }
+    }
+
+    // inner boundary (edge of the hole)
+    ctx.strokeStyle=cWin; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(var q=0;q<=N;q++){ var th5=q/N*2*Math.PI; var p5=ptIn(th5); q?ctx.lineTo(p5[0],p5[1]):ctx.moveTo(p5[0],p5[1]); }
+    ctx.closePath(); ctx.stroke();
+
+    // center labels (the hole / Loch)
+    ctx.fillStyle=cInk; ctx.font='12px Georgia'; ctx.textAlign='center';
+    ctx.fillText('Loch  (β₁ = 1)', cx, cy-6);
+    ctx.fillStyle=cMuted; ctx.font='10.5px Georgia';
+    ctx.fillText('der Grund / das Nichts', cx, cy+11);
+
+    // legend (top-left)
+    ctx.font='11.5px Georgia'; ctx.textAlign='left';
+    var lx=14, ly=22;
+    ctx.strokeStyle=cCurve; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(lx,ly-4); ctx.lineTo(lx+18,ly-4); ctx.stroke();
+    ctx.fillStyle=cInk; ctx.fillText('M  (stabile Einheit / Mannigfaltigkeit)', lx+24, ly);
+    ctx.strokeStyle=cTang; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(lx,ly+12-4); ctx.lineTo(lx+18,ly+12-4); ctx.stroke();
+    ctx.fillStyle=cInk; ctx.fillText('Randöffnung = Interface (Leck)', lx+24, ly+12);
+    ctx.strokeStyle=cWin; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(lx,ly+28-4); ctx.lineTo(lx+18,ly+28-4); ctx.stroke();
+    ctx.fillStyle=cInk; ctx.fillText('innerer Rand (Kante des Lochs)', lx+24, ly+28);
+
+    // readouts + bars + status
+    var r=compute();
+    var rInnen=document.getElementById('rInnen'), rRand=document.getElementById('rRand'),
+        rLeck=document.getElementById('rLeck'), rB1=document.getElementById('rB1'),
+        barI=document.getElementById('barInnen'), barR=document.getElementById('barRand'), barL=document.getElementById('barLeck'),
+        st=document.getElementById('vizStatus');
+    if(rInnen)rInnen.textContent=fmt(r.Innen);
+    if(rRand)rRand.textContent=fmt(r.Rand);
+    if(rLeck)rLeck.textContent=fmt(r.Leck);
+    if(rB1)rB1.textContent='1';
+    var maxV=Math.max(r.Innen,r.Rand,r.Leck,1);
+    if(barI)barI.style.width=(Math.max(0,r.Innen)/maxV*100).toFixed(1)+'%';
+    if(barR)barR.style.width=(Math.max(0,r.Rand)/maxV*100).toFixed(1)+'%';
+    if(barL)barL.style.width=(Math.max(0,r.Leck)/maxV*100).toFixed(1)+'%';
+    if(st){
+      if(gap<=1e-6){
+        st.textContent='Geschlossener Rand (kein Leck): Innen = Rand — die Struktur der stabilen Einheit ist vollständig am Rand ablesbar (B: ∫_M dω = ∮_{∂M} ω). Die Gleichheit bleibt unter jeder Verformung ε erhalten (A: Invarianz), und das Loch β₁=1 persistiert.';
+      } else {
+        st.textContent='Offener Rand: es leckt eine Signatur durch die Lücke — das ist die Interface-Signatur (A: Interface = Betti-Signatur, wird nach außen gezeigt). Wäre der Rand geschlossen, bliebe die Einheit in sich ausbalanciert (B: Leck=0). β₁=1 persistiert über ε.';
+      }
+    }
+  }
+
+  var sEps=document.getElementById('sEps'), sGap=document.getElementById('sGap'),
+      vEps=document.getElementById('vEps'), vGap=document.getElementById('vGap');
+  if(sEps)sEps.addEventListener('input',function(){ amp=(+sEps.value/100)*0.3; if(vEps)vEps.textContent=sEps.value; draw(); });
+  if(sGap)sGap.addEventListener('input',function(){ gap=(+sGap.value/100)*0.9; if(vGap)vGap.textContent=sGap.value; draw(); });
+
+  draw();
+})();
+</script>
+</body>
+</html>

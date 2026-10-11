@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Verklebungsprinzip: Vom lokalen Einvernehmen zum globalen Ganzem (Runde 2)</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#f7f8fa; --fg:#1e293b; --muted:#5b6b82;
+    --card:#ffffff; --border:#e2e8f0;
+    --accent:#1e3a8a; --accent2:#2563eb;
+    --gold:#b45309; --clay:#b91c1c; --ok:#15803d;
+    --soft:#f1f5f9;
+    --viz-canvas-bg:#ffffff; --viz-dot:#0e7490; --viz-fab:#b91c1c;
+    --viz-accent:#2563eb; --viz-gold:#b45309; --viz-clay:#b91c1c;
+    --viz-mute:#94a3b8; --viz-ink:#1e293b; --viz-arm:#cbd5e1;
+  }
+  html.dark{
+    --bg:#0f172a; --fg:#e2e8f0; --muted:#93a3ba;
+    --card:#16213a; --border:#2b3a55;
+    --accent:#7aa2ff; --accent2:#60a5fa;
+    --gold:#fbbf24; --clay:#f87171; --ok:#4ade80;
+    --soft:#1b2740;
+    --viz-canvas-bg:#0b1120; --viz-dot:#22d3ee; --viz-fab:#f87171;
+    --viz-accent:#60a5fa; --viz-gold:#fbbf24; --viz-clay:#f87171;
+    --viz-mute:#64748b; --viz-ink:#e2e8f0; --viz-arm:#33455f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.66; font-size:16px; -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:32px 20px 72px;}
+  h1{font-size:1.92rem; line-height:1.22; letter-spacing:-.5px; margin:0 0 8px; color:var(--fg);}
+  .subtitle{margin:0 0 4px; color:var(--accent); font-weight:600; font-size:.98rem;}
+  .kicker{color:var(--muted); letter-spacing:.1em; text-transform:uppercase; font-size:.72rem; margin:0 0 10px;}
+  section{margin:34px 0;}
+  h2{font-size:1.32rem; border-bottom:2px solid var(--accent2); padding-bottom:5px; margin:0 0 14px; letter-spacing:-.3px;}
+  h3{font-size:1.06rem; margin:20px 0 8px; color:var(--accent);}
+  p{margin:0 0 12px;}
+  a{color:var(--accent2);}
+  strong{color:var(--fg);}
+  .math{font-family:"Times New Roman",Times,serif; font-style:italic; font-weight:600; white-space:nowrap;}
+  .A{color:var(--accent); font-weight:700;}
+  .B{color:var(--gold); font-weight:700;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin:14px 0;}
+  .tension{border-left:3px solid var(--accent2); background:var(--card); border-radius:0 8px 8px 0; padding:10px 16px; margin:12px 0;}
+  .tension b.tag{color:var(--accent);}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.92rem; background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{background:var(--soft); font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  td.b{color:var(--accent); font-weight:700;}
+  ul{margin:8px 0 12px; padding-left:22px;}
+  li{margin:5px 0;}
+  .note{font-size:.88rem; color:var(--muted);}
+  code{font-family:"Courier New",Courier,monospace; background:var(--soft); padding:1px 5px; border-radius:4px; font-size:.88em;}
+  .prov a{font-weight:700;}
+  .prov li{margin:8px 0;}
+  .themebtn{float:right; background:var(--soft); color:var(--fg); border:1px solid var(--border); border-radius:20px; padding:5px 14px; font-size:.82rem; cursor:pointer;}
+
+  .viz{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-top:12px;}
+  .viz-controls{display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center; margin-bottom:10px;}
+  .viz-controls label{font-size:.85rem; color:var(--muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  select,input[type="range"]{accent-color:var(--accent2);}
+  select{background:var(--soft); color:var(--fg); border:1px solid var(--border); border-radius:6px; padding:4px 6px;}
+  input[type="range"]{width:150px;}
+  input[type="radio"]{accent-color:var(--accent2);}
+  .val{color:var(--accent2); font-weight:700; font-variant-numeric:tabular-nums;}
+  .presets{display:flex; flex-wrap:wrap; gap:6px; width:100%; margin-top:2px;}
+  .presets button{background:var(--soft); color:var(--fg); border:1px solid var(--border); border-radius:20px; padding:4px 11px; font-size:.8rem; cursor:pointer;}
+  .presets button:hover{border-color:var(--accent2); color:var(--accent2);}
+  #vizCanvas{width:100%; height:auto; display:block; background:var(--viz-canvas-bg); border-radius:8px; border:1px solid var(--border);}
+  .vizreadout{font-family:"Courier New",Courier,monospace; font-size:.85rem; background:var(--soft); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-top:12px; line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="themebtn" id="themeBtn">Theme wechseln</button>
+  <p class="kicker">Knockout Synthesis &middot; Runde 2 &middot; Nicht-KI-Track &middot; Pair 033</p>
+  <h1>Das Verklebungsprinzip: Vom lokalen Einvernehmen zum globalen Ganzem</h1>
+  <p class="subtitle">Fusion aus: n1-008.html &times; n1-096.html (Runde 2)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Quellen sind selbst schon Fusionen (Runde 1) und sind, aus ganz verschiedenen Richtungen kommend, auf denselben Grundzusammenhang gestoßen. <span class="A">A</span> (n1-008) liest einen Primzahlexplorer und eine Garben-Tafel als zwei Register des <strong>Lokal-Global-Prinzips</strong>: lokale Daten, die auf ihren Überlappungen übereinstimmen, verkleben zu genau <em>einem</em> globalen Objekt. <span class="B">B</span> (n1-096) liest HoTT und eine Essayistik über kohärente Weltbilder als zwei Register desselben Gesetzes: ein kohärentes Ganzes entsteht, wenn lokale Teile auf ihren Überlappungen zusammentreffen &ndash; und die &bdquo;Gleichheit&ldquo;, die dieses Zusammentreffen ermöglicht, ist selbst eine <em>strukturierte, höherdimensionale</em> Größe, kein primitives Fundament.</p>
+    <p>Die fusionierte Position lautet: <strong>Ein kohärentes globales Ganzes existiert genau dann, wenn die lokalen Teile auf allen ihren Überlappungen übereinstimmen &ndash; und diese Übereinstimmung zwingt, das Ganze <em>eindeutig</em> zu machen; die Kompatibilitätsrelation, die das Verkleben vollzieht, ist selbst keine primitive Gleichheit, sondern eine <em>stratifizierte, höherdimensionale</em> Struktur.</strong> Ein Gesetz, vier Register: (i) die <em>Garbe-Bedingung</em> der Topologie (Unizität + Verklebbarkeit), (ii) ein <em>arithmetisch-geometrisches</em> Phänomen (Primzahlen bilden Spiralarme genau dann, wenn der Winkelmultiplikator sich zu einer kleinen rationalen Größe schließt), (iii) die <em>Univalenten Grundlagen</em> (Transport, Kontrahierbarkeit, Univalenz) und (iv) das <em>Wahrheitskriterium</em> für Weltbilder (Kohärenz &times; Korrespondenz).</p>
+    <p>Was die vier Register nicht nur über &bdquo;lokal &rArr; global&ldquo; verbindet, ist die <em>Stratifizierung</em> der Kleb-Relation. Der diskrete Invariant bei A &ndash; die Rationalit&auml;t von <span class="math">k/&pi;</span> und die Periode&nbsp;<span class="math">q</span> &ndash; ist der Set-Ebene-Schatten (Stufe&nbsp;0) der Stufenleiter bei B (<span class="math">=&gt;\cong&gt;\simeq&gt;\approx</span>) und ihres &infin;-Gruppoides aus Pfaden-zu-Pfaden; die Univalenz ist gerade der Kollaps der obersten Stufen auf Ebene des Universums. Dasselbe organisierende Gesetz, auf vier Detailstufen gelesen.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Kein direkter <em>Fakten-</em>Widerspruch &ndash; die Papiere behandeln verschiedene Gegenst&auml;nde (arithmetisch-geometrische Visualisierung und Garbenaxiome einerseits, HoTT und Erkenntnistheorie andererseits). Es gibt aber drei echte, im Kern liegende Spannungen &uuml;ber <em>dasselbe</em> Verklebungsprinzip:</p>
+    <div class="tension"><b class="tag">W1 &middot; Die Natur der Kleb-/Gleichheitsbedingung: ein diskreter Invariant vs. eine stratifizierte, h&ouml;herdimensionale Struktur.</b>
+      <span class="A">A</span> reduziert die Kompatibilit&auml;tsbedingung auf <em>einen einzelnen diskreten, algebraischen Invariant</em>: die Rationalit&auml;t von <span class="math">&alpha;=k/&pi;</span> und seine kleine Periode&nbsp;<span class="math">q</span>. &bdquo;Die Rationalit&auml;t von <span class="math">k/&pi;</span> ist eine diskrete, algebraische Invariante, die &uuml;ber einen kontinuierlichen Regler abgefragt wird.&ldquo; Der Winkel ist der Kokzyklus; das Ergebnis ist bin&auml;r &ndash; schlie&szlig;t die Regel (klein rational, <span class="math">q</span>-fache Symmetrie) oder nicht (fast irrational, kein globales Bild). Die &bdquo;Gleichheit&ldquo;, die verklebt, ist eine Periode, eine einzige Zahl.
+      <span class="B">B</span> best&auml;tigt im Gegenteil, dass die &bdquo;Gleichheit&ldquo;, die lokale Teile zusammenkommen l&auml;sst, <em>keine primitive, sondern eine stratifizierte, h&ouml;herdimensionale Struktur</em> ist &ndash; Pfade zwischen Pfaden, <em>ad&nbsp;infinitum</em> (ein &infin;-Gruppoid) &ndash; und zwar in einer ganzen <em>Stufenleiter</em> (<span class="math">=&gt;\cong&gt;\simeq&gt;\approx</span>), deren oberste Stufen (Äquivalenz&nbsp;=&nbsp;Gleichheit) durch die Univalenz <em>kollabieren</em>. Das Verkleben vollzieht sich bei B durch <em>Transport</em> entlang Pfaden durch Faserb&uuml;ndel &ndash; eine genuin h&ouml;here Struktur.
+      <em>Spannung:</em> A reduziert das Kleben auf einen diskreten Schwellenwert (schlie&szlig;t es sich?); B besteht darauf, dass die verklebende Relation selbst eine mehrschichtige, h&ouml;herdimensionale Struktur ist und dass verschiedene Ebenen kollabieren k&ouml;nnen. Einzelne Schwelle vs. stratifizierte Struktur.</div>
+    <div class="tension"><b class="tag">W2 &middot; Versagt das Verkleben total oder graduell? (bin&auml;re Existenz vs. Taxonomie der Versagensmodi).</b>
+      <span class="A">A</span> kennt eine saubere <em>Existenzschwelle</em>: das globale Objekt existiert (Garbe-Bedingung erf&uuml;llt, Arme bilden sich) oder es existiert nicht (Pr&auml;garbe, kein globales Objekt). Es gibt bei A keinen halb-verklebten oder teilweise-koh&auml;renten Zustand &ndash; entweder sind die Arme da, oder die Punkte sind Rauschen. Versagen = <em>totales Fehlen</em> des globalen Objekts.
+      <span class="B">B</span> ist koh&auml;rente Koh&auml;renz zugleich <em>garantiert durch Konstruktion</em> (HoTT: Kontrahierbarkeit erzwingt ein eindeutiges Kleben) <em>und</em> eine <em>fragile Errungenschaft mit einer Taxonomie des Versagens</em> (COHERENTs f&uuml;nf Pathologien). Entscheidend: die Versagensmodi sind <em>graduiert</em> &ndash; factbook (kein globaler Schnitt), fantasy (koh&auml;rent aber nicht verankert), liar, calibrated (<em>kleine Verzerrung</em>, nur ann&auml;hernd koh&auml;rent, kleine Holonomie), out-of-cover. B admits also teilweiser/naher Koh&auml;renz (calibrated) und Koh&auml;renz-ohne-Korrespondenz (fantasy) als eigenst&auml;ndige Zust&auml;nde.
+      <em>Spannung:</em> A's Versagen ist eine einzelne Bin&auml;re (existiert / nicht); B's ist ein Spektrum, das <em>partielle</em> und <em>koh&auml;rent-aber-abgekoppelte</em> Zust&auml;nde einschlie&szlig;t. A hat kein Analogon zu &bdquo;calibrated&ldquo; (nahe-Koh&auml;renz) oder &bdquo;fantasy&ldquo; (koh&auml;rent aber nicht verankert).</div>
+    <div class="tension"><b class="tag">W3 &middot; Braucht das globale Ganze eine Au&szlig;enwelt, die es treffen muss? (keine Au&szlig;enwelt vs. Korrespondenz zu W).</b>
+      <span class="A">A</span> ist das Verkleben <em>rein intern</em> der Konstruktion: Das globale Arm-Bild ist das Objekt, das die lokalen Punkte unter der schlie&szlig;enden Bedingung erzeugen. Es gibt keine au&szlig;enliegende &bdquo;Welt W&ldquo;, der es entsprechen muss, keinen Korrespondenzbegriff, keine Blinderschleife. &bdquo;Wahrheit&ldquo; (so man es nennen will) ist intern: Die Spirale schlie&szlig;t sich oder sie schlie&szlig;t sich nicht.
+      <span class="B">B</span> (aus COHERENT) macht die <em>Korrespondenz zu einer au&szlig;enliegenden Welt&nbsp;W</em> lasttragend f&uuml;r die Wahrheit: Wahrheit = Koh&auml;renz &times; <em>Korrespondenz</em>; Koh&auml;renz <em>ohne</em> Kontakt zu&nbsp;W ist &bdquo;Fantasie&ldquo;; und W ist nur <em>teilweise</em> zug&auml;nglich (Blinderschleife <span class="math">c_{acc}\subset W</span>). Ein wahrer Weltbild muss selbstkonsistent <em>und</em> die Au&szlig;enwelt ber&uuml;hren, mit begrenztem Zugriff.
+      <em>Spannung:</em> A's globales Ganzes braucht keinen au&szlig;enliegenden Anker; B best&auml;tigt, dass ein koh&auml;rentes Ganzes, das W nicht ber&uuml;hrt, nur &bdquo;Fantasie&ldquo; und keine Wahrheit ist. A ist geschlossen/selbst&auml;ndig; B ist offen/verankert.</div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <p>Alle drei Spannungen l&ouml;sen sich auf, sobald man erkennt, dass sie Projektionen desselben Sachverhalts auf <em>verschiedene Stufen</em> sind &ndash; genau die Stufen, die B selbst (via HoTTs Trunkierungshierarchie) schon benennt:</p>
+    <ul>
+      <li><strong>R1 (f&uuml;r W1) &ndash; Der diskrete Invariant ist der Set-Ebene-Schatten der Stufenleiter.</strong> A arbeitet auf Ebene eines <em>Mengen</em>s (Stufe&nbsp;0): dort ist die Identit&auml;tsart eine Proposition (maximal ein Pfad), und die ganze h&ouml;here Pfadstruktur degeneriert &ndash; es bleibt genau <em>ein</em> Invariant &uuml;brig (schlie&szlig;t es sich? Periode&nbsp;<span class="math">q</span>). Das ist nicht weniger als B's stratifizierte Relation, sondern <em>dieselbe Relation auf der niedrigsten Stufe</em>, wo alle h&ouml;heren Pfade verschwinden. B's h&ouml;here Stufen (Pfade-zu-Pfaden, Transport, der Kollaps von <span class="math">\simeq</span> und <span class="math">=</span> via Univalenz) sind bei A unsichtbar, <em>weil</em> A auf der Set-Ebene arbeitet, wo sie entarten. &bdquo;Eine Schwelle&ldquo; vs. &bdquo;eine Leiter&ldquo; ist dieselbe Struktur, auf unterschiedlichen Detailstufen gelesen.</li>
+      <li><strong>R2 (f&uuml;r W2) &ndash; Existenzschwelle und Versagens-Taxonomie sind zwei Projektionen.</strong> A ausspricht die <em>hinreichende Bedingung und ihre bin&auml;re Konsequenz</em> (Bedingung erf&uuml;llt &rArr; eindeutiges globales Objekt; nicht erf&uuml;llt &rArr; kein globales Objekt). B <em>l&ouml;st die &bdquo;nicht erf&uuml;llt&ldquo;-Seite in eine Taxonomie auf</em> (auf welche Weise genau scheitert das Kleben? kein Schnitt / koh&auml;rent-aber-abgekoppelt / nahe-koh&auml;rent / nicht verankerter Ursprung / au&szlig;erhalb des Baseraums). Der Zustand &bdquo;calibrated&ldquo; (kleine Verzerrung) <em>ist</em> A's &bdquo;fast rationaler Winkel&ldquo;: Ein <span class="math">k/&pi;</span>, das einer kleinen rationalen Gr&ouml;&szlig;e nahe, aber nicht exakt gleicht, erzeugt <em>schwache, nahezu geschlossene</em> Arme &ndash; einen graduierten Zwischenzustand, den A empirisch sieht, aber als Zustand nicht benennt. A's Bin&auml;re sind B's zwei Extreme (vollst&auml;ndig verklebt / factbook); B's graduierte Pathologien fangen die knapp-verfehlten F&auml;lle, die A sieht, ab. Aufl&ouml;sung: A = die scharfe Existenzaussage; B = dieselbe Aussage mit ihrer <em>Verifikationsseite</em> (Suffizienz vs. Pr&uuml;fung).</li>
+      <li><strong>R3 (f&uuml;r W3) &ndash; A l&auml;sst W implizit; macht man es explizit, ist A's Kleben = B's Koh&auml;renz &times; Korrespondenz.</strong> Bei A <em>sind</em> die Primzahlen die Welt&nbsp;W, und die Winkelregel&nbsp;<span class="math">k</span> das Instrument; das &bdquo;Arm-Bild&ldquo; entspricht W genau dann, wenn es die Primzahlen treu organisiert. A <em>au&szlig;enweltet</em> W aber nie &ndash; es behandelt die Primzahlen als gegeben und das Muster als ihre Lekt&uuml;re. B macht explizit, was A implizit l&auml;sst: Es gibt ein W (die Primzahlen / die Daten / die Welt) und eine Lekt&uuml;re (die Spirale), und die Lekt&uuml;re ist &bdquo;wahr&ldquo; nur, wenn sie mit W <em>korrespondiert</em> &ndash; und das ist genau A's Bedingung, dass <span class="math">k</span> das Muster koh&auml;rent auf der echten Primzahlverteilung schlie&szlig;en l&auml;sst. A's &bdquo;schlie&szlig;t &rArr; echte Arme&ldquo; ist B's &bdquo;Koh&auml;renz + Korrespondenz&ldquo;; A's &bdquo;schlie&szlig;t nicht &rArr; Rauschen&ldquo; umspannt B's factbook/fantasy. Und die Blinderschleife: A's Regler erkundet nur <em>endliche</em> Primzahlen (Sieb bis&nbsp;200000) &ndash; A hat also selbst eine zugriffsbegrenzte &Uuml;berdeckung und behauptet das globale Bild nur auf dem Teil der Primzahlen, den es berechnet. Die &bdquo;Au&szlig;enwelt&ldquo; ist keine zus&auml;tzliche Last, sondern die implizite Pr&auml;miss von A.</li>
+    </ul>
+    <p class="card"><strong>Fusionierter Schluss:</strong> Ein organisierendes Gesetz, vier Register. Die Garbe-Bedingung (formal), die Primzahlschnecke (geometrisch-arithmetisch), die Univalenten Grundlagen (logisch-fundamental) und die Koh&auml;renz-&times;-Korrespondenz (erkentnisthetisch) sind nicht vier Tatsachen, sondern vier Lesarten eines einzigen Lokal-Global-Verklebungsprinzips. Die <em>Stratifizierung</em> der Kleb-Relation &ndash; vom diskreten Invariant (Periode&nbsp;<span class="math">q</span>) bis zu Pfaden-zu-Pfaden und der Univalenz &ndash; ist genau das, was es einem einzigen Gesetz erm&ouml;glicht, von der Primzahlschnecke bis zum Universum der Typen zu reichen. &bdquo;Lokal kompatibel &rArr; global eindeutig&ldquo; ist der Klammer-Satz; &bdquo;das Ganze h&auml;lt durch das Zusammenpassen, nicht durch Gleichheit&ldquo; (B's Coda) und &bdquo;die Arme sind das globale Objekt, das existiert, wenn die lokale Kompatibilit&auml;tsbedingung erf&uuml;llt ist&ldquo; (A's Schluss) sind dieselbe Aussage in zwei Stimmen.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Beide Quellen sind bereits synthetisiert; auf der Ebene ihrer Thesen teilen sie, einmal man A's Maschinen als den formalen Motor unter B's Erkenntnis lesen, ein Vokabular. Der fusionierte Inhalt ist die Union beider, mit einer Karte zwischen ihnen.</p>
+
+    <h3>Das Gesetz in seiner sch&auml;rfsten Form</h3>
+    <p>Die <em>Garbe-Bedingung</em> (bei A aus der Garben-Tafel, bei B aus dem Fundamentalsatz der Identit&auml;tstypen) lautet f&uuml;r eine offene &Uuml;berdeckung <span class="math">U=\bigcup_i U_i</span>:</p>
+    <ul>
+      <li><strong>Unizit&auml;t / Separatedness:</strong> <span class="math">(\forall i:\ s|_{U_i}=t|_{U_i})\Rightarrow s=t</span> &ndash; zwei Schnitte, die lokal &uuml;berall gleich sind, sind global gleich.</li>
+      <li><strong>Verklebbarkeit / Gluing:</strong> Lokale Schnitte <span class="math">s_i\in F(U_i)</span>, die auf allen &Uuml;berlappungen &uuml;bereinstimmen, verkleben zu <em>genau einem</em> globalen <span class="math">s\in F(U)</span>.</li>
+      <li><strong>HoTT-Aquivalent (B):</strong> eine Familie <span class="math">B(x)</span> charakterisiert die Identit&auml;tstypen von <span class="math">A</span> gdw. ihr Gesamt-Raum <span class="math">\Sigma(x:A)\ B(x)</span> <em>kontrahierbar</em> ist &ndash; Kontrahierbarkeit macht das Kleben <em>eindeutig</em> (maximal ein Pfad). &bdquo;Lokal kompatibel &rArr; global eindeutig&ldquo;.</li>
+    </ul>
+
+    <h3>Die vier Register eines Prinzips</h3>
+    <table>
+      <thead><tr><th>Register</th><th>lokales St&uuml;ck</th><th>verklebende Relation</th><th>globales Ganzes</th><th>Versagen</th></tr></thead>
+      <tbody>
+        <tr><td class="b">Garbe (Topologie)</td><td>Schnitt <span class="math">s\in F(U_i)</span></td><td>&Uuml;bereinstimmung auf &Uuml;berlappungen <span class="math">U_i\cap U_j</span></td><td>globaler Schnitt <span class="math">s\in F(U)</span></td><td>kein globaler Schnitt</td></tr>
+        <tr><td class="b">Zahlen-Geometrie (A)</td><td>Primzahl&nbsp;<span class="math">p</span> (Punkt)</td><td>Winkel <span class="math">&alpha;=k/&pi;</span> klein rational, Periode&nbsp;<span class="math">q</span></td><td>Spiralarme (globales Bild)</td><td>gleichm&auml;&szlig;ige Scheibe (keine Arme)</td></tr>
+        <tr><td class="b">HoTT (B)</td><td>Faser <span class="math">B(x)</span> / Punkt</td><td>Transport / Pfad (&infin;-Gruppoid)</td><td>kontrahierbarer Gesamt-Raum / globaler Schnitt</td><td>nicht-kontrahierbare Faser</td></tr>
+        <tr><td class="b">Erkenntnistheorie (B)</td><td>lokale Lekt&uuml;re <span class="math">R_i</span></td><td>&Uuml;bereinstimmung auf &Uuml;berlappung (Koh&auml;renz)</td><td>Weltbild <span class="math">G</span></td><td>fantasy / factbook / &hellip;</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die stratifizierte Kleb-Relation (W1 aufgel&ouml;st in Inhalt)</h3>
+    <table>
+      <thead><tr><th>Trunkierungsstufe</th><th>Gleichheitsrelation</th><th>in A's Primzahlen</th><th>in B's HoTT</th></tr></thead>
+      <tbody>
+        <tr><td>Set (0)</td><td>Gleichheit (Pfade &le;1)</td><td>&bdquo;schlie&szlig;t es sich?&ldquo; &ndash; Periode&nbsp;<span class="math">q</span>, diskret</td><td>f&uuml;r ein Set fallen <span class="math">\simeq</span> und <span class="math">=</span> zusammen</td></tr>
+        <tr><td>Gruppoid (1)</td><td>Isomorphie / &Auml;quivalenz (Pfade)</td><td>&ndash;</td><td><span class="math">S^1</span> mit <span class="math">\pi_1(S^1)\cong\mathbb{Z}</span></td></tr>
+        <tr><td>&infin;</td><td>Pfade-zu-Pfaden; <span class="math">\simeq</span> = <span class="math">=</span> via Univalenz</td><td>&ndash;</td><td>Univalenz <span class="math">(A=B)\simeq(A\simeq B)</span></td></tr>
+      </tbody>
+    </table>
+    <p class="note">Die Periode&nbsp;<span class="math">q</span> (A) spielt die Rolle der Bl&auml;ttelzahl im universellen &Uuml;berdeckungshelix (B): Beide z&auml;hlen, wie oft man &bdquo;um den Basenraum herum&ldquo; laufen muss, bevor das lokale Datenpaket global konsistent wird.</p>
+
+    <h3>Die vier Register des Versagens (W2 aufgel&ouml;st in Inhalt)</h3>
+    <ul>
+      <li><strong>Kein globaler Schnitt / factbook</strong> = A's nicht-schlie&szlig;ender Winkel (echte Daten, kein Muster) &ndash; Kontakt zu W ja, Koh&auml;renz nein.</li>
+      <li><strong>Fantasy</strong> = koh&auml;rentes Arm-Bild aus <em>falschen</em> Zahlen (koh&auml;rent, aber kein Kontakt zu W) &ndash; bei A unsichtbar, da W implizit; die Blinderschleife macht den Unterschied.</li>
+      <li><strong>Calibrated / nahe-Koh&auml;renz</strong> = A's fast-rationaler Winkel (schwache, beinahe geschlossene Arme) &ndash; eine <em>graduierte</em> Mitte, die A sieht, aber nicht benennt.</li>
+      <li><strong>Liar / nicht verankerter Ursprung</strong> &amp; <strong>out-of-cover</strong> = abgefragter Punkt au&szlig;erhalb des Basenraums, wo Transport undefiniert ist; bei A: Primzahl au&szlig;erhalb der berechneten Siebgrenze.</li>
+    </ul>
+    <p><strong>Wahrheit = Koh&auml;renz &times; Korrespondenz (B) = A's &bdquo;schlie&szlig;t auf der echten Verteilung&ldquo;.</strong> Das 2&times;2-Quadrat von Koh&auml;renz (interne Konsistenz) &times; Korrespondenz (Kontakt zu W) ist die explizite Fassung dessen, was A als &bdquo;die Arme bilden sich auf den echten Primzahlen&ldquo; voraussetzt. Die Blinderschleife <span class="math">c_{acc}\subset W</span> &ndash; man darf &Auml;quivalenz nur auf dem Teil von W behaupten, den man sieht &ndash; ist A's endliches Sieb: Das globale Bild wird nur auf den berechneten Primzahlen geltend gemacht.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung: Verkleben + Koh&auml;renz &times; Korrespondenz</h2>
+    <p>Links die Primzahlschnecke (Phyllotaxis): <em>lokale</em> Primzahlen als Punkte. Schlie&szlig;t der Winkelmultiplikator&nbsp;<span class="math">k</span> sich zu einer kleinen rationalen Gr&ouml;&szlig;e, <em>verkleben</em> die lokalen Punkte zu <em>globalem</em> Arm-Bild (das globale Ganze existiert und ist eindeutig). Rechts wird das Ergebnis in B's 2&times;2-Quadrat (Koh&auml;renz &times; Korrespondenz) eingeordnet und die <em>Stufe</em> der Kleb-Relation (=&nbsp;/&nbsp;&cong;&nbsp;/&nbsp;&simeq;&nbsp;/&nbsp;&approx;&nbsp;/&nbsp;&times;) angezeigt. Der Datenquellen-Umschalter trennt <em>Koh&auml;renz</em> (schlie&szlig;t es sich?) von <em>Korrespondenz</em> (treifst du die echten Primzahlen&nbsp;W?): geschlossenes Muster aus erfundenen Zahlen = <strong>Fantasy</strong> (koh&auml;rent, nicht verankert).</p>
+    <div class="viz">
+      <div class="viz-controls">
+        <label>Winkel k <span class="val" id="cAngleVal"></span>
+          <input type="range" id="vAngle" min="0" max="6.2831853" step="0.0001" value="0.897598">
+        </label>
+        <label>Anzahl <span class="val" id="cCountVal"></span>
+          <input type="range" id="vCount" min="200" max="4000" step="100" value="1200">
+        </label>
+        <label>Datenquelle (Korrespondenz zu W)
+          <select id="vSource">
+            <option value="real">Wahr &ndash; Primzahlen (W)</option>
+            <option value="fab">Erfindung &ndash; aufz&auml;hlend (Fantasy)</option>
+          </select>
+        </label>
+        <div class="presets">
+          <button data-k="1.256637">2&pi;/5</button>
+          <button data-k="0.897598">2&pi;/7</button>
+          <button data-k="1.570796">&pi;/2</button>
+          <button data-k="2.399963">Goldener &oslash;</button>
+          <button data-k="random">random</button>
+        </div>
+      </div>
+      <canvas id="vizCanvas"></canvas>
+      <div class="vizreadout" id="vizReadout"></div>
+      <p class="note">Alle Daten (Primzahlen via Sieb des Eratosthenes) werden inline erzeugt; keine externen Abfragen, keine externen Bibliotheken. Koh&auml;renz = N&auml;he des Winkelschritts&nbsp;<span class="math">k/2&pi;</span> zu einer kleinen rationalen Gr&ouml;&szlig;e&nbsp;<span class="math">p/q</span> (<span class="math">q\le18</span>); Korrespondenz = ob die Lekt&uuml;re die echten Primzahlen (W) triff.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><span class="A">A</span> &ndash; <a href="../n1-008.html">n1-008.html</a> &ndash; <em>Vom Halm zur Galaxie: Wie lokale Daten zum globalen Bild verkleben</em> (Runde 1, aus pz.html &times; garben_uebersicht.html): das Lokal-Global-Prinzip als Garbe-Bedingung (Unizit&auml;t + Verklebbarkeit), verk&ouml;rpert in der Primzahlschnecke, deren Winkelmultiplikator bei kleinen rationalen Werten Spiralarme (globales Arm-Bild) und bei fast irrationalen Werten eine gleichm&auml;&szlig;ige, armlose Scheibe erzeugt; die diskrete Invariance der Rationalit&auml;t von <span class="math">k/&pi;</span>.</li>
+      <li><span class="B">B</span> &ndash; <a href="../n1-096.html">n1-096.html</a> &ndash; <em>Coherence Is Local Gluing</em> (Runde 1, aus hott_book.html &times; coherent_worldview.html): Koh&auml;renz als lokales Verkleben &ndash; HoTTs Mathematik des Klebens (Transport, Kontrahierbarkeit, Univalenz <span class="math">(A=B)\simeq(A\simeq B)</span>, Trunkierungsstufen) als Motor unter COHERENTs Erkenntnistheorie (Weltbild&nbsp;G aus lokalen Lekt&uuml;ren, Stufenleiter der Gleichheit, Wahrheit als Koh&auml;renz &times; Korrespondenz, f&uuml;nf Pathologien, Blinderschleife).</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('vizCanvas');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+
+  var angleEl = document.getElementById('vAngle');
+  var countEl = document.getElementById('vCount');
+  var sourceEl = document.getElementById('vSource');
+  var cAngle = document.getElementById('cAngleVal');
+  var cCount = document.getElementById('cCountVal');
+  var readoutEl = document.getElementById('vizReadout');
+
+  var primes = [];
+  (function genPrimes(limit){
+    var s = new Uint8Array(limit + 1);
+    for (var p = 2; p <= limit; p++) {
+      if (!s[p]) {
+        primes.push(p);
+        if (p * p <= limit) {
+          for (var i = p * p; i <= limit; i += p) s[i] = 1;
+        }
+      }
+    }
+  })(300000);
+
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  var COLORS = {};
+  function readTheme(){
+    COLORS.bg     = cssVar('--viz-canvas-bg') || '#0b1120';
+    COLORS.dot    = cssVar('--viz-dot')    || '#22d3ee';
+    COLORS.fab    = cssVar('--viz-fab')    || '#f87171';
+    COLORS.accent = cssVar('--viz-accent') || '#60a5fa';
+    COLORS.gold   = cssVar('--viz-gold')   || '#fbbf24';
+    COLORS.clay   = cssVar('--viz-clay')   || '#f87171';
+    COLORS.mute   = cssVar('--viz-mute')   || '#64748b';
+    COLORS.ink    = cssVar('--viz-ink')    || '#e2e8f0';
+    COLORS.arm    = cssVar('--viz-arm')    || '#33455f';
+  }
+  readTheme();
+  if (window.MutationObserver) {
+    new MutationObserver(function(){ readTheme(); draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  function bestRational(x, qmax){
+    var best = { p:0, q:1, err:Infinity };
+    for (var q = 1; q <= qmax; q++) {
+      var p = Math.round(x * q);
+      var err = Math.abs(x - p / q);
+      if (err < best.err) best = { p:p, q:q, err:err };
+    }
+    return best;
+  }
+  function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
+
+  function fitCanvas(){
+    var wrap = canvas.parentElement;
+    var w = Math.max(340, Math.floor(wrap.clientWidth));
+    var dpr = window.devicePixelRatio || 1;
+    var cssW = w, cssH = Math.round(cssW * 0.72);
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function state(){
+    var k = (angleEl && angleEl.value !== undefined) ? (parseFloat(angleEl.value) || 0) : 0.897598;
+    var count = (countEl && countEl.value !== undefined) ? (parseInt(countEl.value, 10) || 0) : 1200;
+    count = Math.min(count, primes.length);
+    if (count < 2) count = 2;
+    var source = (sourceEl && sourceEl.value) ? sourceEl.value : 'real';
+    return { k:k, count:count, source:source };
+  }
+
+  function draw(){
+    var cssW = canvas.clientWidth || 700;
+    var cssH = canvas.clientHeight || 500;
+    var st = state();
+    var k = st.k, count = st.count, real = (st.source === 'real');
+
+    var beta = k / (2 * Math.PI);
+    var br = bestRational(beta, 18);
+    var err = br.err;
+    var coh = clamp(1 - err / 0.005, 0, 1);
+    var closes = coh >= 0.5;
+    var corr = real ? 1 : 0;
+
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    // ===== galaxy (left/center) =====
+    var gx = cssW * 0.30, gy = cssH * 0.50;
+    var R = Math.min(cssW * 0.27, cssH * 0.40);
+
+    // faint base ring = the world W
+    ctx.beginPath();
+    ctx.arc(gx, gy, R, 0, 2 * Math.PI);
+    ctx.strokeStyle = COLORS.arm; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(gx + R, gy, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = COLORS.accent; ctx.fill();
+
+    var maxVal = real ? primes[count - 1] : (count + 1);
+    var scale = R / Math.sqrt(maxVal);
+    var dotCol = real ? COLORS.dot : COLORS.fab;
+    ctx.fillStyle = dotCol;
+    for (var i = 0; i < count; i++) {
+      var val = real ? primes[i] : (i + 2);
+      var r = Math.sqrt(val) * scale;
+      var th = val * k;
+      var x = gx + r * Math.cos(th);
+      var y = gy + r * Math.sin(th);
+      if (x >= 0 && x <= cssW && y >= 0 && y <= cssH) {
+        ctx.globalAlpha = closes ? 0.95 : 0.6;
+        ctx.beginPath(); ctx.arc(x, y, 1.9, 0, 2 * Math.PI); ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = COLORS.mute; ctx.font = '11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('lokale Punkte  \u2192  globales Ganzes (Arme)', gx, gy + R + 20);
+    ctx.fillText(real ? 'W = echte Primzahlen' : 'W = erfundene Zahlen (abgekoppelt)', gx, gy + R + 34);
+
+    // ===== right panel =====
+    var px = cssW * 0.58, pw = cssW * 0.40;
+
+    // registers strip
+    var regs = ['Garbe', 'Zahlen', 'HoTT', 'Erkenntnis'];
+    var rw = pw / 4;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (var g = 0; g < 4; g++) {
+      var rx = px + g * rw;
+      ctx.fillStyle = closes ? COLORS.soft : COLORS.bg;
+      ctx.fillRect(rx + 3, 14, rw - 6, 26);
+      ctx.strokeStyle = closes ? COLORS.accent : COLORS.mute; ctx.lineWidth = 1;
+      ctx.strokeRect(rx + 3, 14, rw - 6, 26);
+      ctx.fillStyle = closes ? COLORS.accent : COLORS.mute;
+      ctx.font = '10px sans-serif';
+      ctx.fillText(regs[g], rx + rw / 2, 27);
+      if (closes) { ctx.beginPath(); ctx.arc(rx + rw / 2, 45, 3, 0, 2 * Math.PI); ctx.fillStyle = COLORS.gold; ctx.fill(); }
+    }
+    ctx.fillStyle = COLORS.mute; ctx.font = '10px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('4 Register eines Prinzips (leuchten bei geschlossener Klebung)', px + 3, 60);
+
+    // 2x2 coherence x correspondence
+    var gridY = 76, cellW = pw / 2, cellH = 62;
+    var cellNames = {
+      tl: 'Fantasie',        // coherent, no contact
+      tr: 'Wahrheit G',      // coherent + contact
+      bl: '\u00d7 Rauschen', // incoherent, no contact
+      br: 'Factbook'         // incoherent + contact
+    };
+    var curTL = closes && !corr, curTR = closes && corr, curBL = !closes && !corr, curBR = !closes && corr;
+    function cell(cx, cy, name, active, isTruth){
+      ctx.fillStyle = active ? (isTruth ? COLORS.gold : COLORS.arm) : COLORS.bg;
+      ctx.fillRect(cx, cy, cellW - 6, cellH - 6);
+      ctx.strokeStyle = active ? (isTruth ? COLORS.gold : COLORS.accent) : COLORS.mute;
+      ctx.lineWidth = active ? 2.5 : 1;
+      ctx.strokeRect(cx, cy, cellW - 6, cellH - 6);
+      ctx.fillStyle = active ? (isTruth ? '#1b1b24' : COLORS.accent) : COLORS.mute;
+      ctx.font = (active ? 'bold 12px' : '11px') + ' sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      var label = name + (isTruth && active ? ' \u2713' : '');
+      ctx.fillText(label, cx + (cellW - 6) / 2, cy + (cellH - 6) / 2 - 6);
+    }
+    cell(px, gridY, cellNames.tl, curTL, false);
+    cell(px + cellW, gridY, cellNames.tr, curTR, true);
+    cell(px, gridY + cellH, cellNames.bl, curBL, false);
+    cell(px + cellW, gridY + cellH, cellNames.br, curBR, false);
+    // axis labels
+    ctx.fillStyle = COLORS.mute; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Korrespondenz zu W  \u2192', px + pw / 2, gridY + 2 * cellH + 12);
+    ctx.save();
+    ctx.translate(px - 10, gridY + cellH); ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Koh\u00e4renz \u2192', 0, 0);
+    ctx.restore();
+    ctx.textAlign = 'left';
+    ctx.fillText('Koh\u00e4renz \u00d7 Korrespondenz = Wahrheit', px + 3, gridY + 2 * cellH + 26);
+
+    // sameness ladder
+    var ly0 = gridY + 2 * cellH + 42, rh = 30;
+    var rungs = ['Identit\u00e4t  =', 'Isomorphie  \u2245', 'Aquivalenz  \u2243', 'Ann\u00e4herung  \u2248', 'inkoh\u00e4rent  \u00d7'];
+    var rungF;
+    if (coh < 0.3) rungF = 4;
+    else if (coh < 0.6) rungF = 3;
+    else if (coh >= 0.6 && !corr) rungF = 2;
+    else rungF = 0;
+    ctx.fillStyle = COLORS.mute; ctx.font = '10px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Stufe der Kleb-Relation (Trunkierung):', px + 3, ly0 - 6);
+    ctx.strokeStyle = COLORS.mute; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px + 6, ly0); ctx.lineTo(px + 6, ly0 + 4 * rh); ctx.stroke();
+    for (var r = 0; r < rungs.length; r++) {
+      var yy = ly0 + r * rh;
+      var active = Math.abs(r - rungF) < 0.5;
+      ctx.beginPath(); ctx.moveTo(px + 6, yy); ctx.lineTo(px + 6 + (active ? 12 : 5), yy);
+      ctx.strokeStyle = active ? (r === 0 ? COLORS.gold : COLORS.accent) : COLORS.mute;
+      ctx.lineWidth = active ? 3 : 1; ctx.stroke();
+      ctx.font = (active ? 'bold 12px' : '11px') + ' sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = active ? (r === 0 ? COLORS.gold : COLORS.accent) : COLORS.mute;
+      ctx.fillText(rungs[r], px + 24, yy);
+    }
+
+    // readout
+    if (readoutEl) {
+      var status;
+      if (closes && corr) {
+        status = '\u2714 Kohaerent & kontaktiert \u2014 die lokalen Punkte verkleben zu EINEM globalen Arm-Bild, das mit den echten Primzahlen (W) ubereinstimmt. Wahrheit / G (Unizitat + Verklebbarkeit + Korrespondenz).';
+      } else if (closes && !corr) {
+        status = '\u25c7 Kohaerent, aber abgekoppelt \u2014 ein geschlossenes Arm-Bild aus erfundenen Zahlen: konsistent, aber ohne Kontakt zu W. FANTASY (Kohaerenz ohne Korrespondenz).';
+      } else if (!closes && corr) {
+        status = '\u2718 Echte Primzahlen, aber kein globales Bild \u2014 der Winkelschritt schlie\u00dft sich nicht, die lokalen Punkte streuen. FACTBOOK (Kontakt ohne Kohaerenz / keine Verklebung).';
+      } else {
+        status = '\u00d7 Rauschen \u2014 weder Kohaerenz noch Kontakt zum globalen Ganzen.';
+      }
+      readoutEl.textContent =
+        'Lokal kompatibel \u21d2 global eindeutig.   ' +
+        'k = ' + k.toFixed(5) + '  (k/2\u03c0 = ' + beta.toFixed(5) + ')' +
+        '  \u00b7  beste kleine Naehrung ' + br.p + '/' + br.q + ' (Periode ' + br.q + ')' +
+        '  \u00b7  Kohaerenz ' + Math.round(coh * 100) + '%' +
+        '  \u00b7  Zustand: ' + status;
+    }
+  }
+
+  function refreshDisplays(){
+    if (cAngle) cAngle.textContent = parseFloat(angleEl.value).toFixed(5);
+    if (cCount) cCount.textContent = countEl.value;
+  }
+  function onInput(){ refreshDisplays(); draw(); }
+
+  if (angleEl) angleEl.addEventListener('input', onInput);
+  if (countEl) countEl.addEventListener('input', onInput);
+  if (sourceEl) sourceEl.addEventListener('change', onInput);
+
+  var presetBtns = document.querySelectorAll('.presets button');
+  for (var i = 0; i < presetBtns.length; i++) {
+    presetBtns[i].addEventListener('click', function(){
+      if (this.dataset.k === 'random') {
+        angleEl.value = (Math.random() * Math.PI * 2).toFixed(5);
+      } else {
+        angleEl.value = this.dataset.k;
+      }
+      refreshDisplays();
+      draw();
+    });
+  }
+
+  var themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    readTheme();
+    draw();
+  });
+
+  window.addEventListener('resize', function(){ fitCanvas(); draw(); });
+
+  fitCanvas();
+  refreshDisplays();
+  draw();
+})();
+</script>
+</body>
+</html>

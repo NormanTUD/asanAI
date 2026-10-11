@@ -1,0 +1,16 @@
+{
+  "no": "015",
+  "a": "n1-005.html",
+  "b": "n1-098.html",
+  "a_title": "Prime Dual-Coordinate Geometry — Fusion pz3 × pz5",
+  "b_title": "Geometrie des Geistes — und ihre Manipulation",
+  "combined_theme": "attraktor-und-residual",
+  "one_line": "Beide Papiere sind Fälle eines Musters: In der nativen Koordinatengeometrie ist die wahre Struktur ein stabiler Attraktor (A: Sieb-Baseline/Nah-Zufälligkeit, B: selbstorganisierte konvexe Region), und alles wirklich Interessante ist die gemessene Abweichung von ihm — endogen (A: offener PNT-Kern) oder exogen (B: Manipulation durch einen 2. Agenten).",
+  "contradictions": [
+    "A liest das Residual als endogenen, dem Objekt innewohnenden, noch unerklärten offenen Kern der Primzahltheorie (kein äußerer Urheber); B liest die Abweichung als exogene, von einem zweiten Agenten verursachte, umkehrbare Pathologie mit identifizierbarem Urheber.",
+    "A behandelt sichtbare Struktur misstrauisch (mögliches Projektionsartefakt; erst das Residual nach Null-Subtraktion zählt als real); B nimmt sichtbare Struktur (deformierte Region) direkt für real und bedeutsam und subtrahiert kein Nullmodell.",
+    "A beschreibt eine atemporale, agentenlose, geschlossene Geometrie (Sieve/Dünung endogen); B erfordert einen äußeren zweiten Agenten und eine zeitliche Entwicklung (Zyklus, Erosion, Erholung)."
+  ],
+  "resolution": "Keine echten Kontradiktionen, sondern zwei Halben einer Attraktor-Landschaft: (1) Die Abweichung vom Attraktor kann endogen (A: intrinsisches Residual) oder exogen (B: aufgelegte Perturbation) sein — beides ist 'dieselbe Geometrie, perturbiert' und in beiden zurückgewinnbar (A: erklärbar, B: heilbar); der Attraktor ist die gemeinsame Grundwahrheit. (2) Null-Subtraktion (A) und 'Maske ablegen' (B) sind dieselbe Operation: Basisschicht abziehen, dann dem Rest vertrauen. (3) A ist der statische Snapshot des Attraktors, B der Film seiner zeitlichen Perturbation — zusammen bilden sie die Meta-Theorie der drei Zustände (Gleichgewicht / endogenes Residual / exogene Perturbation).",
+  "viz": "Themreaktive Canvas-Darstellung eines 2-D-Koordinatenraums: ein stabiler konvexer Attraktor (Baseline, grün), der aktuelle Zustand (deformierte Region, rot) und das Residual als warmes Feld = Symmetrische Differenz (beobachtet minus Baseline). Slider für Störung/Erholung plus Schalter für die Störungsquelle (exogen=2. Agent / endogen=intrinsisch) und für die Null-Baseline; zeigt Prototyp-Attraktion, Region-Verkleinerung, Nicht-Konvexität und Rückkehr zum Attraktor."
+}

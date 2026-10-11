@@ -1,0 +1,16 @@
+{
+  "no": "043",
+  "a": "n1-003.html",
+  "b": "n1-072.html",
+  "a_title": "Dimension-Reduktion: der gemeinsame Kern (R1·003, Spivak ✕ Projektion)",
+  "b_title": "Dualität als Adjunktion — zwei Wege, ein Ziel (R1·072, Schleifenraum ΩX ✕ Sorting with Bialgebras)",
+  "combined_theme": "many-to-one-coherence",
+  "one_line": "Beide R1-Papiere sind ein Meta-Theorem auf zwei Höhen: eine universelle viel-zu-eins-Abbildung (Ableitung Df bzw. Adjunktion F⊣G) plus ein einzelnes Kohärenzgesetz (Stokes–Fubini bzw. Bialgebra/Eckmann–Hilton) setzen zwei Routen zwischen denselben Eckpunkten in ein Ziel gleich; 'kostenlos ableiten' = die reduzierte Route (Rand/Wand/ko-freier Objekt) als treuen Stellvertreter der vollen (Innere/Szene/freier Objekt) lesen.",
+  "contradictions": [
+    "Verlustfrei vs. verlustbehaftet: B behauptet, die Adjunktion sei eine verlustfreie Bijektion ([ΣX,Y]≅[X,ΩY]; bubbleSort=naiveInsertSort, nichts geht verloren); A behauptet, die Ableitung verliere echten Range (ker Df≠0), der Verlust sei real und ein diskretes Label (Farbe/Orientierung = 1 Bit) rette nur EINEN AST der Faser, nicht die ganze.",
+    "Art der Kohärenz: A identifiziert zwei Routen als gleiche reelle Zahlen (grobe, skalare, extensionale Wertgleichheit via Stokes–Fubini); B als gleiche Morphismen/Programme (feine, strukturelle, strikte Identität via Bialgebra/Eckmann–Hilton, c·a=map a·swap·map c).",
+    "Ziel der Ableitung: A's zwei Routen münden in einen Wert (das Integral, ein Skalar in ℝ); B's münden in ein Objekt (die freie/ko-freie Konstruktion, der Algorithmus, eine Struktur in einer Kategorie)."
+  ],
+  "resolution": "Beide sind dieselbe viel-zu-eins-Abbildung F mit Faser ker F und Faser-Label ℓ; der Unterschied ist nur, wie viel der Faser das Label wiederherstellt. A's Label (Orientierung/Farbe, ein Vorzeichen) ist eine partielle Sektion -> verlustbehaftet; B's (die Hom-Bijektion) ist eine volle Sektion -> verlustfrei. Verlust ist eine Größe (Anteil von ker F, den ℓ rekonstruiert), kein Ja/Nein: A = auflösungsarmes, B = auflösungsvolles Ende eines Spektrums. Eine viel-zu-eins-Abbildung ist verlustfrei genau für Invarianten, die auf dem Quotienten M/ker F absteigen (A: das Integral, daher numerische Wertgleichheit) und verlustbehaftet für Invarianten, die die Faser sehen (B: der Morphemus, daher strikte Strukturgleichheit). Das 'Ziel' (Wert vs. Objekt) ist der Träger der verfolgten Invariante. Orientierung/Farbe (A) ≅ Kohärenzgesetz/swap (B) = die überlebende Buchführung.",
+  "viz": "Interaktives Canvas 'Viel-zu-eins-Abbildung · Faser · Label · Kohärenz': 2D-Quellraum (14 Punkte in 5 farbigen Fasern) wird auf eine 1D-Basis projiziert (viele-zu-eins). Ein Schieberegler 'Labelauflösung ℓ' steuert, wie viel der Faser das Label rettet (1-Bit/verlustbehaftet ≈ A bis volle Bijektion/verlustfrei ≈ B); ein 'Kohärenzgesetz'-Schalter zeigt, wie die reduzierte Route (Σ über die rekonstruierten Fasern auf der Basis) bei vollem Label der Vollroute (Σ über alle) gleich wird (Fubini bzw. kommutierendes Quadrat); die Lücke der Balken = ker F (Verlust). Klick auf einen Basis-Punkt markiert seine ganze Faser. Theme-aware, alle Daten inline, kein Netzwerk."
+}

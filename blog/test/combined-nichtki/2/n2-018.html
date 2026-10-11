@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der native Kern, das Fenster und die Ehrlichkeit — Zahlenraum × Hologramm</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ede2; --fg:#1c2230; --muted:#5a6478;
+  --panel:#fffdf8; --border:rgba(0,0,0,.12);
+  --accent:#0f7ea8; --accent2:#6d4fc0; --prime:#0d8a99; --env:#b5651d;
+  --ok:#15803d; --bad:#b23a3a; --track:#e7e1d3; --line:rgba(0,0,0,.12);
+  --code:#eef1f6; --code-fg:#1c2230; --comp-hue:300;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+}
+html.dark{
+  --bg:#0a0e16; --bg2:#10151f; --fg:#e8edf7; --muted:#8c97ad;
+  --panel:#0e131d; --border:rgba(255,255,255,.10);
+  --accent:#6ee7ff; --accent2:#a78bfa; --prime:#34e0f0; --env:#ffb86b;
+  --ok:#4ade80; --bad:#ff8a8a; --track:#1e293b; --line:rgba(255,255,255,.10);
+  --code:#0b1220; --code-fg:#c9d4e6; --comp-hue:300;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);
+  line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+article{max-width:820px;margin:0 auto;padding:clamp(2rem,6vw,4.5rem) 1.4rem 6rem}
+h1{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;
+  font-size:clamp(2rem,5.6vw,3.2rem);line-height:1.1}
+.subtitle{font-size:.82rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-top:1rem}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.6vw,2.05rem);
+  line-height:1.15;margin:0 0 1.1rem}
+section{margin-top:clamp(2.6rem,7vw,4rem);scroll-margin-top:1rem}
+p{max-width:72ch;font-size:1.04rem}
+p+p{margin-top:1rem}
+ul{margin:.4rem 0 1rem 1.1rem}li{margin-bottom:.5rem}
+.hl{font-style:normal;
+  background:linear-gradient(transparent 62%,color-mix(in srgb,var(--accent) 26%,transparent) 62%)}
+.k{color:var(--accent);font-weight:600}
+.k2{color:var(--accent2);font-weight:600}
+.pr{color:var(--prime);font-weight:600}
+.env{color:var(--env);font-weight:600}
+.m{font-family:var(--serif);font-style:italic;white-space:nowrap}
+.m sub,.m sup{font-size:.68em}
+code{font-family:"SFMono-Regular",Consolas,monospace;background:var(--code);
+  color:var(--code-fg);padding:1px 6px;border-radius:5px;font-size:.86em}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:1.1rem 1.2rem;margin:1.1rem 0}
+.card h3{font-family:var(--serif);font-weight:400;font-size:1.14rem;margin-bottom:.5rem}
+.card p+p{margin-top:.7rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.1rem .5rem;border-radius:6px;border:1px solid var(--border);color:var(--muted);margin-right:.4rem;vertical-align:middle}
+.tag.a{color:var(--accent)} .tag.b{color:var(--accent2)}
+.tension{margin:0 0 1rem;padding:12px 16px;border:1px solid var(--border);
+  border-left:3px solid var(--accent2);border-radius:10px;background:var(--panel)}
+.tension b{color:var(--fg)}
+.who{display:inline-block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-right:6px}
+.formula{font-family:"SFMono-Regular",Consolas,monospace;font-size:.9rem;
+  background:var(--code);color:var(--code-fg);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto;display:block;white-space:pre}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;margin:0 0 12px;font-size:.9rem}
+.viz-controls label{display:flex;align-items:center;gap:8px;color:var(--muted);
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.viz-controls input[type=range]{accent-color:var(--accent);cursor:pointer;width:130px}
+.viz-controls select{background:var(--code);color:var(--code-fg);border:1px solid var(--border);
+  border-radius:6px;padding:3px 6px;font-family:monospace}
+.viz-controls .val{color:var(--accent);font-family:monospace;min-width:34px;text-align:right}
+.viz-controls button{background:var(--code);color:var(--code-fg);border:1px solid var(--border);
+  border-radius:6px;padding:5px 12px;cursor:pointer;font-size:.82rem;font-weight:700}
+.viz-controls button:hover{border-color:var(--accent);color:var(--accent)}
+.meter-row{display:flex;flex-direction:column;gap:.7rem;margin:0 0 12px}
+.meter-head{display:flex;justify-content:space-between;font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.meter-track{height:9px;border-radius:6px;background:var(--track);overflow:hidden;border:1px solid var(--border)}
+.meter-fill{height:100%;width:0%;transition:width .12s}
+#coreFill{background:var(--prime)} #envFill{background:var(--env)}
+#viz{position:relative;width:100%;height:560px;border:1px solid var(--border);
+  border-radius:12px;background:var(--bg2);overflow:hidden;
+  box-shadow:0 24px 50px -34px rgba(0,0,0,.6)}
+#spectrum{width:100%;height:100%;display:block;cursor:crosshair}
+#hud{position:absolute;display:none;pointer-events:none;z-index:20;background:var(--panel);
+  border:1px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:.78rem;
+  line-height:1.5;width:214px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#hud .big{font-size:1.05rem;font-weight:800;font-family:monospace}
+#hud hr{border:0;border-top:1px solid var(--border);margin:7px 0}
+#hud .k{color:var(--muted);font-weight:400}
+.viz-hint{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+.legend{font-size:.82rem;color:var(--muted);margin-top:8px}
+.legend .p{color:var(--prime);font-weight:700}
+.legend .e{color:var(--env);font-weight:700}
+.toggle{position:fixed;top:12px;right:12px;z-index:50;background:var(--panel);
+  border:1px solid var(--border);color:var(--muted);border-radius:20px;
+  padding:.35rem .8rem;font-size:.72rem;cursor:pointer;letter-spacing:.08em}
+footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);
+  color:var(--muted);font-size:.8rem}
+.prov{display:flex;gap:.8rem;align-items:baseline;padding:.7rem 0;border-bottom:1px dashed var(--border)}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600}
+.prov span{color:var(--muted);font-size:.92rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" aria-label="Farbschema wechseln">☾ / ☀</button>
+<article>
+
+<h1>Der native Kern, das Fenster und die Ehrlichkeit</h1>
+<div class="subtitle">Fusion aus: n1-019.html ✕ n1-007.html&nbsp;&nbsp;(Runde 2)</div>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere tun auf den ersten Blick völlig anderes — A dekodiert ein
+<span class="k">holographisches Bild</span> und spaltet es an einer <em>nativen
+Auflösungslinie</em> in Daten-Read-out und Extrapolation; B legt die
+<span class="k2">natürlichen Zahlen</span> in einen geometrischen Raum und trennt
+sie in eine niedrig-komplexe <em>Primkante</em> und einen umgebenden Raum. Auf
+der Ebene ihrer <em>Thesen</em> tun sie aber dasselbe: Sie lesen ein
+<span class="hl">strukturiertes Objekt</span> durch ein gewähltes <em>Fenster</em> und
+müssen ehrlich trennen, <em>was das Objekt selbst bestimmt</em> von dem, <em>was das
+Lesegerät dazu beisteuert</em>.</p>
+<p>Die fusionierte Position lautet: <span class="hl">Jedes strukturierte Objekt
+besitzt einen nativen, datenbestimmten Kern und eine Umgebung, die nur über ein
+gewähltes Fenster erreichbar ist.</span> Der Kern ist das
+<span class="pr">minimal-komplexe, invariant</span> Gefüge — bei A das
+<span class="k">bandbegrenzte, in-Band-Signal</span> unterhalb der Nyquist-Linie
+(<span class="m">f<sub>max</sub>=S/2</span>), bei B die
+<span class="k2">Primsektion ω(n)=1</span>, das „Rückgrat" des Zahlenraums.
+Darüber/außerhalb liegt das, was erst durch die Wahl des Fensters existiert: bei A
+der <span class="env">Außerband-Anteil</span>, der aus einem Prior stammt; bei B der
+Umgebungsraum <span class="env">zusammengesetzter Zahlen (ω&gt;1)</span> mit seiner
+Torsion. Die vermeintlich rivalisierenden Beschreibungen —
+<span class="k">in-/außerband</span> (A) und
+<span class="k2">additiv- vs. multiplikativ</span> (B) — sind
+<em>orthogonale Projektionen desselben Objekts</em>, und „Ehrlichkeit" ist das
+Einheitliche: den Kern-Anteil messen, den Fenster-abhängigen Anteil sichtbar
+machen und den Fenster-<em>invarianten</em> Inhalt vom Fenster-abhängigen
+trennen.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Zuerst der ehrliche Hinweis: A arbeitet über einem <em>Bildsignal</em>, B über
+der <em>multiplikativen Arithmetik der ganzen Zahlen</em>. Sie sind Papiere über
+verschiedene Objekte, also widersprechen sie einander an keiner Stelle
+tatsächlich faktisch. Die <em>nächsten echten Spannungen</em> zwischen ihren
+Positionen — dort, wo die beiden „Ehrlichkeits-Ideen" unvereinbare Annahmen
+tragen — sind diese drei:</p>
+
+<div class="tension"><b>1 · Harte Linie vs. fließende Grenze.</b><br>
+<span class="who">A / n1-019</span>A setzt eine <em>harte, vom Sampling
+festgelegte</em> native Linie (<span class="m">f<sub>max</sub>=S/2</span>):
+darunter reines Daten-Read-out, darüber Extrapolation — eine absolute Dichotomie,
+die unabhängig vom Beobachter liegt.<br>
+<span class="who">B / n1-007</span>B kennt <em>keinen</em> harten Cut: die
+„Primkante" ist ein <em>graduiertes</em> Komplexitätskontinuum — je größer
+<span class="m">ω(n)</span>, desto weiter von der Primkante entfernt. Die Grenze
+„Kern vs. Umgebung" ist bei B weich und relativ. → A: absolute Linie; B:
+fließende Distanz.</div>
+
+<div class="tension"><b>2 · Anker der Ehrlichkeit — Daten-First vs. Invarianz-First.</b><br>
+<span class="who">A / n1-019</span>A verankert Ehrlichkeit in den <em>Daten</em>:
+der bandbegrenzte/Sinc-Prior ist der „richtige", weil er die
+<em>minimal-verpflichtende</em> Extrapolation ist (injiziert die wenigste
+Außerband-Energie, <span class="m">H≈0</span>). Das Fenster soll das Signal nicht
+verfälschen.<br>
+<span class="who">B / n1-007</span>B akzeptiert offen, dass die
+Karte/Parametrisierung <em>konstruiert</em> ist, und verankert Ehrlichkeit in
+<em>Fenster-Invarianz</em>: das <em>entdeckte</em> Muster (Primzahlen besetzen nur
+die zu M koprimen Restklassen; Primsektion ω=1) überlebt den Koordinatenwechsel.
+→ A fragt „wie wenig fügt das Fenster bei?"; B fragt „was bleibt, wenn ich das
+Fenster wechsle?".</div>
+
+<div class="tension"><b>3 · Bewertung des Über-dem-Kern-Inhalts — Jüngel vs. Ressource.</b><br>
+<span class="who">A / n1-019</span>A behandelt den Inhalt <em>über</em> der
+nativen Linie (Out-of-Band) überwiegend als <em>Warnung</em>: „⚠ HALLUCINATION",
+Feinstruktur, die in den Daten nicht steckt — zu flaggen.<br>
+<span class="who">B / n1-007</span>B behandelt den Umgebungsraum
+<em>über/abseits</em> der Primkante (zusammengesetzte Zahlen) als <em>echtes,
+strukturiertes</em> Objekt: „Noise = <em>nicht-prim, aber strukturiert</em>" — mit
+voller Faktorisierung/Phase kodiert, eine Ressource. → A: das Außerhalb ist
+Verdächtiges; B: das Außerhalb ist Informatives.</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p><strong>1 (Linie):</strong> Die native Linie ist <em>beides</em> — und die beiden
+Sichten liegen auf verschiedenen Ebenen. <em>Wo die Daten aufhören zu bestimmen</em>
+(bei A: Sampling/Nyquist; bei B: der ω=1-Kern selbst) ist die Grenze
+<hl>hart und absolut</hls>: unterhalb davon liest man Daten, oberhalb muss ein
+Fenster/Prior entscheiden. <em>Darüber</em> aber — im Außerband bzw. im
+Umgebungsraum — gibt es keinen harten Cut, sondern ein
+<span class="env">Komplexitäts-/Energie-Kontinuum</span>. A's harte Linie markiert
+also den <em>Übergang</em> von „datenbestimmt" zu „fensterabhängig"; B's
+graduierte ω-Distanz beschreibt die <em>Struktur innerhalb</em> des
+Fenster-abhängigen Bereichs. Fusioniert: die Linie ist die <em>Kante des
+Datenbestimmten</em>, und das darüber ist geordnet, nicht leer.</p>
+<p><strong>2 (Anker):</strong> Die beiden Ehrlichkeitsanker
+<em>komponieren</em> sich zu einer vollständigen. A liefert die
+<em>Fenster-Abhängigkeit</em> (wie viel injiziert das Fenster — gemessen durch
+<span class="m">H=E<sub>out</sub>/(E<sub>in</sub>+E<sub>out</sub>)</span>), B
+liefert die <em>Fenster-Invarianz</em> (welcher Inhalt überlebt den Wechsel des
+Fensters). Ein ehrlicher Leser <em>jedes</em> strukturierten Objekts berichtet
+beides: <span class="k">den Fenster-abhängigen Anteil</span> (flaggen) und
+<span class="k2">den Fenster-invarianten Inhalt</span> (als entdeckte Struktur
+bewahren). Daten-First und Invarianz-First sind die beiden Beine derselben
+Definition von Ehrlichkeit.</p>
+<p><strong>3 (Jüngel vs. Ressource):</strong> Der Über-dem-Kern-Inhalt wird
+<em>zerlegt</em> in zwei Teile: einen <span class="k2">strukturiert-invarianten</span>
+Anteil (echter Inhalt des Objekts, bleibt beim Fensterwechsel — bei B die
+Koprim-Restklassen-Constraint und die Faktorisierung, bei A das in-Band-Signal)
+und einen <span class="env">Fenster-injizierten</span> Anteil (bloße Prior-Beigabe
+— bei A der Rauschen-Prior, bei B die konkrete Koordinatenwahl). A's
+„Halluzination" ist der <em>injizierte</em> Teil, B's „Noise" ist überwiegend der
+<em>strukturierte</em> Teil. <em>Fusionierter Schluss:</em> „Außerhalb des
+Kerns" ist weder grundsätzlich Verdacht noch grundsätzlich Ressource — es ist
+eine <em>Mischung</em>, und die Ehrlichkeit besteht darin, den Mischanteil
+auszuweisen. Die fusionierte Metrik (unten) misst genau diese Zerlegung.</p>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p>Das integrierte Modell ist ein <span class="hl">Schema</span>, in das beide
+Papiere als Spezialfälle einsetzen: <em>Objekt + Fenster + nativer Kern +
+Umgebung + Ehrlichkeits-Zerlegung.</em></p>
+
+<div class="card">
+<h3>Das gemeinsame Schema</h3>
+<p>Ein <em>Objekt O</em> (A: ein bandbegrenztes Signal in nativen Abtastwerten;
+B: die Menge der ganzen Zahlen n≥2) wird durch ein <em>Fenster W</em> gelesen
+(A: Zoom-Stufe + gewählter Prior; B: Modul M der Restklassenuhr + gewählte
+Bündel-Parametrisierung). O hat einen <em>nativen Kern C</em> (A: in-Band,
+f≤f<sub>max</sub>; B: Primsektion ω=1) und eine <em>Umgebung U</em>
+(A: Außerband; B: zusammengesetzte Zahlen). Der Leser muss C von U und den
+Fenster-invarianten von den Fenster-abhängigen Inhalt trennen.</p>
+</div>
+
+<div class="card">
+<h3>Der native Kern — minimal-komplex und invariant (beide)</h3>
+<p><span class="tag a">A</span> Das in-Band-Signal unter
+<span class="m">f<sub>max</sub>=S/2</span>; seine ehrlichste Wiederherstellung ist
+die <span class="k">Whittaker–Shannon-Interpolation</span>
+<span class="m">f(x)=Σ<sub>n</sub> f[n]·sinc(x−n)</span> — datenbestimmt,
+minimal-verpflichtend, <span class="m">H≈0</span>. Die Sinc-/Sinuswellen-Ringe
+(Gibbs) an Kanten sind die <em>Signatur</em> dieses bandbegrenzten Kerns.<br>
+<span class="tag b">B</span> Die <span class="pr">Primsektion ω(n)=1</span> —
+die „Haupt-Sektion"/„Rückgrat" des Zahlenraums. Primzahlen &gt; 5 fallen nur auf
+die <span class="m">φ(30)=8</span> zu 30 koprimen Restklassen
+<code>{1,7,11,13,17,19,23,29}</code>; „Takte" und „bevorzugte Lücken" sind die
+additiv-modulare Geometrie <em>auf</em> diesem Kern.</p>
+</div>
+
+<div class="card">
+<h3>Die Umgebung — nur über ein Fenster erreichbar (beide)</h3>
+<p><span class="tag a">A</span> Der Außerband-Anteil: unendlich viele Signale
+passen zu den Abtastwerten; „mehr Detail" kommt <em>nur</em> aus einem Prior.
+Der <em>beste</em> Prior (bandbegrenzt/Sinc) injiziert kaum Außerband-Energie; der
+<em>schlechteste</em> (verrauschter Prior) züchtet Artefakte — dieselbe
+Operation, entgegengesetzte Wertung (Schätzung vs. Halluzination).<br>
+<span class="tag b">B</span> Der Umgebungsraum: zusammengesetzte Zahlen tragen
+<span class="m">ω(n)&gt;1</span>, eine Torsions-Phase <span class="m">v=τ·Σ√f</span>
+über ihre Primfaktoren und einen Radius nach Komplexität. „Noise" heißt hier:
+<em>nicht-prim, aber strukturiert</em> — die Umgebung ist der Raum, in den die
+Primsektion eingebettet ist.</p>
+</div>
+
+<div class="grid2">
+<div class="card">
+<h3>Die zwei „rivalisierenden" Achsen = Projektionen (A)</h3>
+<p>In-Band (datenbestimmt) und Außerband (Prior) sind zwei Teile <em>eines</em>
+Spektrums, getrennt durch die native Linie; gemessen wird der Außerband-Anteil
+<span class="m">H=E<sub>out</sub>/(E<sub>in</sub>+E<sub>out</sub>)</span>.</p>
+</div>
+<div class="card">
+<h3>Die zwei „rivalisierenden" Achsen = Projektionen (B)</h3>
+<p>Additiv/modular (<span class="m">n mod M</span>, Lücke
+<span class="m">g(n)</span>) und multiplikativ (<span class="m">ω(n)</span>,
+Faktoren) sind zwei Koordinaten <em>einer</em> Mannigfaltigkeit — lokal-positional
+vs. intrinsisch.</p>
+</div>
+</div>
+
+<div class="card">
+<h3>Die tiefe Brücke zwischen den beiden Objekten</h3>
+<p>Was A an der <em>Spektralkante</em> findet, hat B am <em>multiplikativen
+Kern</em>: der Grund, warum A's bandbegrenzter Prior „ehrlich" ist (er respektiert
+die native Kante), ist derselbe Typ von Tatsache wie der Grund, warum B's Modul 30
+funktioniert (Primzahlen meiden Vielfache von 2·3·5). In beiden Fällen strukturieren
+<em>die kleinen Bausteine</em> (bei A: die unteren Frequenzen / bei B: die kleinen
+Primfaktoren 2, 3, 5) sowohl die <em>Kern-Landschaft</em> als auch den
+Komplexitätsgrad der Umgebung. „Wie viel von der Kante respektiere ich?" (A) und
+„welche kleinen Faktoren trägt n?" (B) sind zwei Seiten derselben
+<em>klein-Baustein-Teilbarkeit</em>.</p>
+</div>
+
+<div class="card">
+<h3>Die fusionierte Ehrlichkeits-Metrik (der gemeinsame Beitrag)</h3>
+<p><span class="m">Kern-Anteil&nbsp;= |C| / |O|</span> — der datenbestimmte,
+in-Band bzw. ω=1-Anteil.<br>
+<span class="m">Umgebung-Anteil&nbsp;= 1 − |C|/|O|</span> — das
+Fenster-abhängige (der H-Analog von A).<br>
+<span class="m">Invarianter Inhalt</span> — der Teil, der das Fenster überlebt
+(A: in-Band-Signal; B: Koprim-Constraint + Faktorisierung).<br>
+<span class="hl">Faustregel:</span> Je näher ein Element am Kern
+(kleines ω / in-Band), desto datenbestimmter; je weiter (großes ω / stark
+außerband), desto stärker Fenster-abhängig — und genau diesen Anteil muss die
+Ehrliche Linse anzeigen. Das ist die Verallgemeinerung von A's
+<span class="m">H</span> und B's ω-Distanz zu einer Zahl, die beide Objekte
+bedient.</p>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung: ein Objekt — Kern, Umgebung, Fenster, Ehrlichkeit</h2>
+<p>Ein 2-D-Zahlenspektrum, in dem beide Papiere in <em>einem</em> Bild aufgehen.
+Die X-Achse ist n = 2…N. Jede Zahl ist ein Punkt; die Höhe ist ihre Komplexität
+<span class="m">ω(n)</span> — damit liegen die <span class="pr">Primzahlen
+(ω=1)</span> als leuchtende <em>native Linie / Kern</em> unten und die
+zusammengesetzten Zahlen als <em>Umgebung</em> (Farbton nach ω) darüber. Die
+gestrichelte Linie trennt Kern (datenbestimmt / in-Band) von Umgebung
+(Fenster-abhängig / Außerband). Die <em>untere Spur</em> ist das gewählte
+<em>Fenster</em>: die Restklassen mod M, wobei die zu M koprimen Takte
+(accent) die <em>invariante Taktstruktur</em> zeigen und eine cyan-Markierung
+ausweist, in welchen Takte Primzahlen tatsächlich landen (entdecktes Muster).
+Die beiden Meter oben lesen die <em>fusionierte Ehrlichkeits-Zerlegung</em>
+(Kern-Anteil vs. Umgebung-Anteil) ab — das ist A's H als Anteil. N-Regler,
+M-Fenster, Umgebung-Toggle, Hover-HUD, themenreaktiv, reine Inline-Daten.</p>
+
+<div class="viz-controls">
+  <label>N <span class="val" id="nVal">120</span>
+    <input type="range" id="nRange" min="20" max="300" step="10" value="120">
+  </label>
+  <label>Fenster M
+    <select id="mSel"><option value="30">30</option><option value="60">60</option><option value="210">210</option></select>
+  </label>
+  <label class="chk"><input type="checkbox" id="showComp" checked> Umgebung zeigen</label>
+  <button id="themeBtn" type="button">☀ hell</button>
+</div>
+
+<div class="meter-row">
+  <div class="meter"><div class="meter-head"><span>Kern (Primzahlen, ω=1) — datenbestimmt / in-Band (A)</span><span id="corePct">—</span></div>
+    <div class="meter-track"><div class="meter-fill" id="coreFill"></div></div></div>
+  <div class="meter"><div class="meter-head"><span>Umgebung (zusammengesetzt) — Fenster-abhängig / Außerband = H-Analog (A) + B's ω-Struktur</span><span id="envPct">—</span></div>
+    <div class="meter-track"><div class="meter-fill" id="envFill"></div></div></div>
+</div>
+
+<div id="viz">
+  <canvas id="spectrum"></canvas>
+  <div id="hud"></div>
+</div>
+<div class="legend"><span class="p">●</span> Primzahlen — der native Kern (ω=1)&nbsp;&nbsp;
+  <span class="e">●</span> Zusammengesetzt — die Umgebung, Höhe/Farbe nach ω(n)</div>
+<p class="viz-hint">Über einen Punkt fahren = Signatur anzeigen (Typ, ω(n), Faktoren, Restklasse mod M, Kern/Umgebung). Fenster M wechseln = die Taktstruktur verändert sich (Fenster-abhängig), der Kern bleibt (Fenster-invariant).</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../n1-019.html">n1-019.html</a>
+<span>— „Holografisches Zoomen: Schätzung oder Halluzination?": die native
+Auflösungslinie als Kante zwischen datenbestimmtem in-Band-Signal (Sinc-Prior)
+und Außerband-Extrapolation; Metrik H, räumlich- und skalig-redundantes
+Hologramm.</span></div>
+<div class="prov"><a href="../n1-007.html">n1-007.html</a>
+<span>— „Der Zahlenraum und seine Primkante": der multiplikative Zahlenraum mit
+Primsektion ω=1 als Kern und zusammengesetzten Zahlen als Umgebung; additive
+(Rest/Lücke) vs. multiplikative (Faktorisierung/Torsion) Signaturen.</span></div>
+</section>
+
+<footer>Fusion n2-018 · Runde 2 · Nicht-KI-Track · self-contained, no external data.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('spectrum');
+  var ctx=canvas.getContext('2d');
+  var hud=document.getElementById('hud');
+  var viz=document.getElementById('viz');
+  var nRange=document.getElementById('nRange');
+  var mSel=document.getElementById('mSel');
+  var showComp=document.getElementById('showComp');
+  var themeBtn=document.getElementById('themeBtn');
+  var nVal=document.getElementById('nVal');
+  var corePct=document.getElementById('corePct');
+  var envPct=document.getElementById('envPct');
+  var coreFill=document.getElementById('coreFill');
+  var envFill=document.getElementById('envFill');
+
+  var MAXN=300;
+  function gcd(a,b){ while(b){ var t=a%b; a=b; b=t; } return a; }
+  function sieve(limit){
+    var s=new Uint8Array(limit+1).fill(1);
+    if(limit>=0)s[0]=0; if(limit>=1)s[1]=0;
+    for(var i=2;i*i<=limit;i++){ if(s[i]){ for(var j=i*i;j<=limit;j+=i){ s[j]=0; } } }
+    var primes=[]; for(var k=2;k<=limit;k++){ if(s[k]) primes.push(k); }
+    return { sieve:s, primes:primes };
+  }
+  function factorsOf(n){
+    var f=[], d=2, t=n;
+    while(t>1){ if(t%d===0){ f.push(d); while(t%d===0){ t/=d; } } d++;
+      if(d*d>t){ if(t>1) f.push(t); break; } }
+    return f;
+  }
+  var sv=sieve(MAXN+1000);
+  var base=new Array(MAXN+1);
+  for(var n=2;n<=MAXN;n++){
+    var f=factorsOf(n), omega=f.length;
+    var isPrime=(omega===1 && f[0]===n);
+    base[n]={ f:f, omega:omega, isPrime:isPrime };
+  }
+
+  var colors={};
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    var g=function(nm){ return cs.getPropertyValue(nm).trim(); };
+    colors.bg=g('--bg2'); colors.muted=g('--muted'); colors.accent=g('--accent');
+    colors.accent2=g('--accent2'); colors.prime=g('--prime'); colors.env=g('--env');
+    colors.line=g('--line');
+    var h=parseInt(g('--comp-hue'),10); colors.compHue=isNaN(h)?300:h;
+  }
+
+  var framePoints=[];
+  var dirty=true;
+
+  function render(){
+    var N=+nRange.value, M=+mSel.value, comp=showComp.checked;
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var r=canvas.getBoundingClientRect();
+    var W=r.width, H=r.height;
+    if(W<10||H<10) return;
+    if(canvas.width!==Math.round(W*dpr)||canvas.height!==Math.round(H*dpr)){
+      canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+    }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=colors.bg; ctx.fillRect(0,0,W,H);
+
+    var padL=48,padR=18,dataTop=30,dataBottom=H-118;
+    var plotW=W-padL-padR, coreY=dataBottom;
+    if(plotW<20){ return; }
+
+    var maxOmega=1, primesN=0,total=0;
+    for(var a=2;a<=N;a++){ if(base[a].omega>maxOmega) maxOmega=base[a].omega;
+      total++; if(base[a].isPrime) primesN++; }
+    var yFor=function(om){ return coreY-(maxOmega===1?0:(om-1)/(maxOmega-1))*(coreY-dataTop-14); };
+
+    framePoints=[];
+
+    ctx.font='11px monospace'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    for(var om=1;om<=maxOmega;om++){
+      var gy=yFor(om);
+      ctx.strokeStyle=colors.line; ctx.globalAlpha=.5; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(padL,gy); ctx.lineTo(padL+plotW,gy); ctx.stroke();
+      ctx.globalAlpha=1; ctx.fillStyle=colors.muted; ctx.fillText('ω='+om, padL-8, gy);
+    }
+
+    ctx.setLineDash([6,5]); ctx.strokeStyle=colors.prime; ctx.lineWidth=1.5; ctx.globalAlpha=.9;
+    ctx.beginPath(); ctx.moveTo(padL,coreY); ctx.lineTo(padL+plotW,coreY); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha=1; ctx.lineWidth=1;
+    ctx.fillStyle=colors.prime; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('native Linie — Kern (ω=1, datenbestimmt / in-Band)', padL, coreY+7);
+
+    for(var n2=2;n2<=N;n2++){
+      var b=base[n2];
+      if(!b.isPrime && !comp) continue;
+      var px=padL+(N<=2?0:(n2-2)/(N-1))*plotW;
+      var py=yFor(b.omega);
+      if(b.isPrime){
+        ctx.fillStyle=colors.prime;
+        if(primesN<450){ ctx.shadowBlur=9; ctx.shadowColor=colors.prime; }
+        ctx.globalAlpha=.95; ctx.beginPath(); ctx.arc(px,py,3.2,0,6.2832); ctx.fill();
+        ctx.shadowBlur=0;
+      } else {
+        ctx.fillStyle='hsl('+(colors.compHue+b.omega*14)+',78%,55%)';
+        ctx.globalAlpha=.4; ctx.beginPath(); ctx.arc(px,py,2.0,0,6.2832); ctx.fill();
+      }
+      ctx.globalAlpha=1;
+      framePoints.push({ n:n2, x:px, y:py, isPrime:b.isPrime, omega:b.omega, f:b.f });
+    }
+
+    ctx.fillStyle=colors.muted; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.font='10px monospace';
+    var step=Math.max(1,Math.ceil(N/15));
+    for(var n3=2;n3<=N;n3+=step){
+      var px3=padL+(n3<=2?0:(n3-2)/(N-1))*plotW;
+      ctx.fillText(String(n3), px3, coreY+22);
+    }
+
+    var stripTop=coreY+50, stripH=30;
+    ctx.fillStyle=colors.muted; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='11px monospace';
+    ctx.fillText('Fenster: Restklassen-Track mod '+M+'  (accent = zu M koprim = invariante Taktstruktur)', padL, stripTop-7);
+    var hit=new Array(M); for(var hi=0;hi<M;hi++) hit[hi]=false;
+    for(var n4=2;n4<=N;n4++){ if(base[n4].isPrime){ hit[n4%M]=true; } }
+    var cellW=plotW/M;
+    for(var rr=0;rr<M;rr++){
+      var cop=gcd(rr,M)===1, cx0=padL+(rr/M)*plotW;
+      ctx.fillStyle= cop?colors.accent:colors.muted;
+      ctx.globalAlpha= cop?0.42:0.10;
+      ctx.fillRect(cx0+0.5,stripTop,Math.max(0.5,cellW-1),stripH);
+      ctx.globalAlpha=1;
+      if(cop && hit[rr]){ ctx.fillStyle=colors.prime; ctx.fillRect(cx0+0.5,stripTop,Math.max(0.5,cellW-1),4); }
+    }
+    ctx.fillStyle=colors.muted; ctx.font='10px monospace'; ctx.textAlign='left';
+    ctx.fillText('cyan-Kante = Primzahl landet in diesem Takt (entdecktes Muster)', padL, stripTop+stripH+14);
+
+    var coreFrac= total>0? primesN/total :0;
+    var envFrac=1-coreFrac;
+    corePct.textContent=(coreFrac*100).toFixed(1)+' %';
+    envPct.textContent=(envFrac*100).toFixed(1)+' %';
+    coreFill.style.width=(coreFrac*100).toFixed(1)+'%';
+    envFill.style.width=(envFrac*100).toFixed(1)+'%';
+  }
+
+  canvas.addEventListener('mousemove',function(e){
+    var rect=canvas.getBoundingClientRect();
+    var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    var found=null,best=100;
+    for(var i=0;i<framePoints.length;i++){
+      var p=framePoints[i], d=(p.x-mx)*(p.x-mx)+(p.y-my)*(p.y-my);
+      if(d<best){ best=d; found=p; }
+    }
+    if(found){
+      var M=+mSel.value, res=found.n%M, cop=gcd(res,M)===1;
+      var typeStr=found.isPrime?'Kern / native Linie (Primzahl, ω=1)':'Umgebung (zusammengesetzt)';
+      hud.style.display='block';
+      var vz=viz.getBoundingClientRect();
+      var hx=e.clientX-vz.left+14, hy=e.clientY-vz.top-10;
+      if(hx+230>vz.width) hx=e.clientX-vz.left-244;
+      hud.style.left=hx+'px'; hud.style.top=hy+'px';
+      hud.innerHTML=
+        '<div class="big" style="color:'+(found.isPrime?colors.prime:colors.env)+'">n = '+found.n+'</div>'+
+        '<span class="k">Ort:</span> '+typeStr+
+        '<br><span class="k">Komplexität ω(n):</span> '+found.omega+
+        '<br><span class="k">Faktoren:</span> '+(found.f.length?found.f.join(' × '):'—')+
+        '<hr><span class="k">Restklasse (Fenster):</span> '+found.n+' mod '+M+' = '+res+
+        (found.isPrime?'<br><span class="k">zu M koprim:</span> '+(cop?'ja (invarianter Takt)':'nein'):'');
+    } else { hud.style.display='none'; }
+  });
+  canvas.addEventListener('mouseleave',function(){ hud.style.display='none'; });
+
+  function mark(){ dirty=true; }
+  nRange.addEventListener('input',function(){ nVal.textContent=nRange.value; mark(); });
+  mSel.addEventListener('change',mark);
+  showComp.addEventListener('change',mark);
+  themeBtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    themeBtn.textContent=document.documentElement.classList.contains('dark')?'☀ hell':'☾ dunkel';
+    readTheme(); mark();
+  });
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    themeBtn.textContent=document.documentElement.classList.contains('dark')?'☀ hell':'☾ dunkel';
+    readTheme(); mark();
+  });
+  window.addEventListener('resize',mark);
+
+  function tick(){ if(dirty){ dirty=false; render(); } requestAnimationFrame(tick); }
+  readTheme();
+  themeBtn.textContent=document.documentElement.classList.contains('dark')?'☀ hell':'☾ dunkel';
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

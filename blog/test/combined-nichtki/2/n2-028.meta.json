@@ -1,0 +1,16 @@
+{
+  "no": "028",
+  "a": "n1-046.html",
+  "b": "n1-045.html",
+  "a_title": "Lokale Dichte, globale Invariante (Loop Spaces × Laplace-Operator)",
+  "b_title": "Topologie, die man sehen und formal fassen kann (Topologie zum Sehen × Fibrationen)",
+  "combined_theme": "winding-monodromy-abelianization",
+  "one_line": "Die eine topologische Invariante n ∈ π₁(S¹)≅ℤ ist zugleich A's gemessene Windung (lokale Wendungsdichte → globales Integral) und B's Abelschung der Monodromie ρ:π₁(B)→Aut(F); sie ist genau dann von 0 verschieden, wenn ein globaler Schnitt obstruiert ist (Igel-Satz). Messen (A) und Existenz (B) lesen dieselbe Zahl.",
+  "contradictions": [
+    "Die eine Zahl: A — die Windungszahl n∈ℤ ist der Payoff/climax (die lokale Wendungsdichte integriert sich zur globalen Ganzzahl, die Invariante ist die abgelesene Zahl); B — die einzelne Zahl (Eulers χ) wird ausdrücklicher zum groben Schatten herabgestuft, die eigentliche Invariante sei die feine Leiter der Homotopiegruppen plus Monodromie.",
+    "Wie die Invariante entsteht: A — durch stetige Integration einer lokalen Dichte (∮dθ = n·2π, Wendungszahl-Satz, Route Analysis→Topologie); B — durch kombinatorisches Zählen (χ = V−E+F) und Gruppen-Leitern, ohne jedes Integral (Route Kombinatorik/Algebra→Topologie).",
+    "Existenz vs. Messung: A — ein Wert existiert immer und ist messbar (die Dichte integriert immer zu einer Ganzzahl, Topologie als 'wie viel?'); B — ein globales Objekt fehlt (Igel-Satz: kein nirgends-verschwindender Schnitt von TS², Obstruktion, Topologie als 'existiert es?')."
+  ],
+  "resolution": "Die eine Zahl IST die Abelschung der feinen Leiter: B's 'Schatten' und A's Eckmann–Hilton-Abelschung (π₁→H₁) sind dieselbe Operation — A berechnet, was B nur benennt. Integration (A) und Zählen (B) sind zwei Diskretisierungen desselben globalen Coboundary-Checks. Und die Obstruktion ist die Messung: 'kein globaler Schnitt' ⇔ 'Obstruktionsklasse/Wendung ≠ 0' — die Monodromie ρ(1)=−id (Möbius) ist eine nichttriviale Wendung, die die Nullstelle erzwingt. Existenz (B) und Messung (A) sind zwei Seiten derselben Münze; gemeinsamer Bruchpunkt ist die Abelsung zur Ganzzahl n∈ℤ.",
+  "viz": "Canvas: ein Punkt umrundet die Basis S¹ (eine Umrundung = der Generator von π₁(S¹)≅ℤ). Links (A): Schleife mit Windungszahl n (Slider −3..3), Bögen nach Vorzeichen der lokalen Wendungsdichte gefärbt + unten die Dichte dθ/dt (oszilliert um 0, globales Σ = n·2π). Rechts (B): Faser [−1,1] + Schnitt-Linie s(θ); trivial (ρ≡id) bleibt positiv (Schnitt existiert), verdrillt (Möbius, ρ(1)=−id) muss sie null werden (rote ×, Igel-Satz/Obstruktion). Dieselbe Umrundung wird links gemessen, rechts obstruiert — dieselbe Zahl n∈ℤ, theme-aware."
+}

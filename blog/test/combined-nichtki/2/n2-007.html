@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 007: Wahrnehmung = Projektion auf einen Anker</title>
+<style>
+:root{
+  --bg:#f5f4ef; --panel:#ffffff; --bg2:#fbfaf7; --text:#1a1a24; --muted:#5b6270;
+  --line:#ddd8cc; --accent:#1f8f6a; --accent2:#0e7fb0; --good:#16a34a; --bad:#d9483a;
+  --grid:rgba(0,0,0,0.06); --shadow:0 10px 30px rgba(20,30,60,0.07);
+}
+html.dark{
+  --bg:#0a0e0d; --panel:#101715; --bg2:#0c1311; --text:#e8edf7; --muted:#93a1b6;
+  --line:#24312b; --accent:#5fd6a4; --accent2:#7dd3fc; --good:#86efac; --bad:#ff7a6e;
+  --grid:rgba(255,255,255,0.06); --shadow:0 12px 34px rgba(0,0,0,0.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.66;
+  font:16px/1.66 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(25px,4.2vw,38px);line-height:1.12;margin:6px 0 8px;letter-spacing:-.01em}
+.subtitle{color:var(--accent);font-size:14.5px;margin:0 0 8px}
+.lede{color:var(--muted);font-size:15px;margin:0 0 8px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:22px 24px;margin:20px 0;box-shadow:var(--shadow)}
+h2{font-size:21px;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:15.5px;margin:22px 0 8px;color:var(--accent)}
+p{margin:0 0 13px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 13px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--text)}
+em{color:var(--muted)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;
+  background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.card{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:11px;padding:14px 16px;margin:14px 0}
+.card b,.card strong{color:var(--accent)}
+.card.warn{border-left-color:var(--bad)}
+.card.warn b,.card.warn strong{color:var(--bad)}
+.card.ok{border-left-color:var(--good)}
+.card.ok b,.card.ok strong{color:var(--good)}
+.tagA{display:inline-block;font-size:.72em;font-weight:700;color:var(--accent);
+  border:1px solid var(--accent);border-radius:5px;padding:1px 6px;margin-right:5px}
+.tagB{display:inline-block;font-size:.72em;font-weight:700;color:var(--bad);
+  border:1px solid var(--bad);border-radius:5px;padding:1px 6px;margin-right:5px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.78em;text-transform:uppercase;letter-spacing:.04em}
+td:first-child{font-weight:700;color:var(--text)}
+td.ca{color:var(--accent);font-weight:600}
+td.cb{color:var(--bad);font-weight:600}
+.mathblock{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg2);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.6}
+.viz-controls{display:flex;flex-wrap:wrap;gap:12px;margin:6px 0 14px}
+.vc{flex:1 1 172px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+.vc label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.vc label span{color:var(--accent);font-variant-numeric:tabular-nums}
+.vc input[type=range]{width:100%;accent-color:var(--accent)}
+.vizwrap{width:100%}
+canvas#viz{width:100%;display:block;background:var(--bg2);border:1px solid var(--line);border-radius:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0 6px}
+.stat{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat .k{font-size:12px;color:var(--muted)}
+.stat .v{font-size:20px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.status{font-size:13.5px;color:var(--muted);margin:10px 0 4px}
+.status.warn{color:var(--bad)}
+.vnote{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.6}
+.dot{font-style:normal}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600}
+.prov a:hover{text-decoration:underline}
+.prov .hint{color:var(--muted);font-size:13.5px}
+.foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">&#9728; / &#9790;</button>
+<article>
+<h1>Wahrnehmung = Projektion auf einen Anker</h1>
+<p class="subtitle">Fusion aus: n1-033.html &#10005; n1-052.html &nbsp;(Runde 2)</p>
+<p class="lede">Zwei Runde-1-Fusionen, eine gemeinsame Ebene: beide sind Theorien <em>dar&uuml;ber, wie ein Wahrnehmender ein rohes Feld lesbar macht</em> &mdash; A von unten (Biologie + Komputation), B von zwei Domains (Primzahlen + Psychologie). Die Fusion hebt auf die Ebene ihrer <strong>Theorien</strong>, nicht auf die Details ihrer Quellen.</p>
+
+<section id="these">
+<h2><span class="num">1.</span> Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> (n1-033) sagt <em>von unten herauf</em>: Bedeutung und Interpretation brauchen kein zentrales Verstehens-Modul. Eine Froschretina aus lokalen Ganglienzellen mit einfachen, evolution&auml;r <b>selektierten</b> Regeln gibt bereits <b>interpretierte</b> Kategorien aus (&bdquo;Perception, not sensation&ldquo;); das <em>selbe</em> lokale Feld wird <b>vierfach gelesen</b> (vier Detektoren = vier Projektionen desselben Feldes); und die Zusammengesetztheit wird <b>irreduzibel</b> (Wolfram-Klasse 3/4, nicht vorhersagbar ohne Ausf&uuml;hren). <span class="tagB">B</span> (n1-052) sagt <em>von zwei Domains her</em>: Hinter scheinbarer Zuf&auml;lligkeit liegt geordnete Struktur, und das Entscheidende zum <em>Sehen</em> ist (i) die <b>Projektion</b> (die Linse, &bdquo;die Projektion bestimmt, welches Muster sichtbar wird&ldquo;) und (ii) die <b>Integrit&auml;t des Ankers</b> (souver&auml;ner Beobachter liest sauber; gaslightetes Opfer nicht &mdash; bis die Referenz wiederhergestellt ist).</p>
+<p>Die fusionierte, einzige Position: <b>Wahrnehmung ist Projektion auf einen Anker.</b> Was ein System &bdquo;sieht&ldquo;, ist <em>keine</em> Eigenschaft des Rohsignals (Licht / Primzahlen / Beziehung), sondern wird durch <b>zwei Dinge</b> bestimmt, die der Wahrnehmende mitbringt: (1) die <b>Projektion</b> &mdash; ein Satz lokaler Regeln/Linsen, der Rohes in Interpretiertes &uuml;berf&uuml;hrt (A: genetisch <em>selektierte</em> Detektoren; B: analytisch <em>gew&auml;hlte</em> Projektionen), und (2) den <b>Anker</b> &mdash; die Referenz-Baseline, an die das Gelesene angelegt wird (A: durch Selektion <em>intakt</em>; B: <em>angreifbar</em>, bei Verletzung zu <em>rekonstruieren</em>).</p>
+<p>Die Struktur selbst ist dabei <b>zweischichtig</b>: eine <em>irreduzible Mikrodynamik</em> (A: die Klasse-3/4-Zusammengesetztheit) reitet auf einer <em>langsam driftenden Makro-Baseline</em>, die sich in <em>Trend + Periode</em> zerlegen l&auml;sst (B). Der <b>einzige</b> Diskriminator zwischen einem Muster, das man <em>meistert</em> (harmlos) und einem, aus dem man <em>austeigt</em> (feindlich), ist das <b>Zeichen des Makro-Drifts</b> &mdash; kombiniert mit dem, ob der <b>Anker intakt</b> ist. A&rsquo;s &bdquo;Mastery&ldquo; und B&rsquo;s &bdquo;Exit&ldquo; sind <em>dasselbe Instrument</em>, angewandt bei intaktem bzw. vergiftetem Anker.</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="num">2.</span> Widerspr&uuml;che zwischen A und B</h2>
+<p>Kein Widerspruch ist erfunden; sie liegen in den <em>Thesen</em> der beiden Runde-1-Papiere, die inkompatible Stellungen beziehen.</p>
+<div class="card warn">
+<b>1 &middot; Referenz-Integrit&auml;t: gegeben vs. zu verteidigen.</b><br>
+<span class="tagA">A</span> h&auml;lt die Referenz des Wahrnehmenden f&uuml;r <b>durch Konstrukt intakt</b>: die &bdquo;Bedeutung&ldquo; des Auges ist verl&auml;ssig, weil die Evolution <em>genau die</em> lokalen Regeln selektiert hat, die mit dem &Uuml;berleben kovariieren (&bdquo;Perception, not sensation&ldquo;, &bdquo;die Verdrahtung ist genetisch determiniert&ldquo;). Es gibt in A <em>keinen</em> Mechanismus, durch den der Wahrnehmende falsch liest.<br>
+<span class="tagB">B</span> h&auml;lt die Referenz f&uuml;r <b>fragil und angreifbar</b>: Gaslighting untergr&auml;bt sie systematisch, und die <em>Wiederherstellung</em> der Referenz (Erholung) ist eine <em>Voraussetzung</em>, um &uuml;berhaupt etwas zu sehen.<br>
+&rarr; A baut den Anker als festes, vertrauensw&uuml;rdiges Gut ein; B baut seine <em>Verteidigung und Reparatur</em> ein.
+</div>
+<div class="card">
+<b>2 &middot; Natur des Musters: irreduzibel vs. dekomponierbar (Trend + Periode).</b><br>
+<span class="tagA">A</span> tr&auml;gt als Kernthese die <b>computational Irreducibility</b> &mdash; die Zusammengesetztheit (Klasse 3/4) l&auml;sst sich <em>keinerlei</em> Gesetz/Trend vorhersagen; das Interessante ist genau das, wof&uuml;r <em>kein</em> Abk&uuml;rzungsweg existiert.<br>
+<span class="tagB">B</span> tr&auml;gt als Kerninstrument die <b>Zerlegung Signal(t) = Trend(t) + Periode(t)</b>, und seine Diagnose <em>ist</em> der vorhersagbare Drift.<br>
+&rarr; F&uuml;r A ist Gesetzm&auml;&szlig;igkeit <em>fehlend</em> der Punkt; f&uuml;r B ist Gesetzm&auml;&szlig;igkeit (dekomponierbarer Trend + Periode) das Werkzeug.
+</div>
+<div class="card ok">
+<b>3 &middot; Wo Bedeutung wohnt: im Projektionsobjekt vs. im Projektionsschritt.</b><br>
+<span class="tagA">A</span> landet (nach seiner eigenen inneren Aufl&ouml;sung) auf Bedeutung als <b>selektiertes Kovariations-Mapping, das vom Wahrnehmenden-als-Artefakt getragen wird</b> &mdash; die Retina <em>selbst</em> &bdquo;spricht in Bedeutung&ldquo;; das <em>System</em> ist der Interpret.<br>
+<span class="tagB">B</span> schreibt die Lesbarkeit dem <b>gew&auml;hlten Projektionsschritt des Beobachters</b> &uuml;ber einem <em>bedeutungsfreien</em> Feld zu &mdash; das Rohsubstrat (Primzahlen) bedeutet nichts, bis es projiziert wird.<br>
+&rarr; A: der Wahrnehmende <em>ist</em> der Interpret (physisches Artefakt). B: der Interpret <em>w&auml;hlt</em> unter Projektionen &uuml;ber einem externen Objekt.
+</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="num">3.</span> Aufl&ouml;sung</h2>
+<p>Drei Aufl&ouml;sungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussfolgerung.</p>
+<div class="card">
+<b>Aufl&ouml;sung 1 &mdash; Der Anker hat zwei Teile: eine robuste Linse und eine kalibrierbare Baseline.</b>
+A hat recht, dass die <b>Projektionsregeln</b> (die lokale Linse) robust konstruiert/selektiert sein k&ouml;nnen (die Detektoren des Frosches arbeiten verl&auml;sslich). B hat recht, dass die <b>interne Baseline/der Anker</b> (das Gesp&uuml;r f&uuml;r &bdquo;was z&auml;hlt als real/normal&ldquo;) driftet oder vergiftet wird. Der &bdquo;Anker&ldquo; zerf&auml;llt also in (a) die <b>Linse/Projektion</b> (robust, entworfen &mdash; A) und (b) die <b>Baseline/Referenz</b> (angreifbar, rekali­brierbar &mdash; B).
+<strong>Fusion:</strong> Ein gesunder Wahrnehmender braucht <em>beides</em> &mdash; eine gut gew&auml;hlte Projektion <em>und</em> einen unverletzten Anker. Die Linse wird selektiert/entworfen, der Anker muss <em>gepflegt und bei Verletzung wiederhergestellt</em> werden. Sehen = richtige Linse &times; intakter Anker.
+</div>
+<div class="card">
+<b>Aufl&ouml;sung 2 &mdash; Irreduzibilit&auml;t ist die Mikro-Schicht, Trend + Periode die Makro-Schicht.</b>
+A&rsquo;s Irreduzibilität gilt f&uuml;r die <b>lokale, kompositorische</b> Ebene (die Klasse-3/4-Wechselwirkung vieler Einheiten &mdash; der &bdquo;Inhalt&ldquo; innerhalb eines Zyklus). B&rsquo;s Trend + Periode gilt f&uuml;r die <b>aggregierte, langsame</b> Ebene (die Baseline &uuml;ber Zyklen &mdash; das &bdquo;Enveloppe&ldquo;). Das sind <em>verschiedene Skalen</em> &mdash; genau die Skalentrennung, die A selbst in seiner inneren Aufl&ouml;sung nutzte (einzelner Detektor beschreibbar; Zusammengesetztheit irreduzibel).
+<strong>Fusion:</strong> Die volle Beschreibung = <em>irreduzible periodische Mikrodynamik</em> auf einer <em>m&ouml;glicherweise driftenden Makro-Baseline</em>. Die <em>Baseline</em> dekomponiert man (Trend + Periode), die <em>Mikro-Wechselwirkungen</em> nicht (irreduzibel). Die beiden sind komplement&auml;r, nicht gegens&auml;tzlich &mdash; Enveloppe vs. Inhalt.
+</div>
+<div class="card ok">
+<b>Aufl&ouml;sung 3 &mdash; Der Wahrnehmende ist beides: Projektionsobjekt und Projektionsschritt.</b>
+A&rsquo;s &bdquo;das Auge spricht in Bedeutung&ldquo; <em>ist selbst</em> die Behauptung, dass das Artefakt <em>als ein Satz von Projektionen</em> funktioniert (vier Detektoren = vier Projektionen desselben Feldes). A&rsquo;s &bdquo;Artefakt&ldquo; und B&rsquo;s &bdquo;Projektion&ldquo; sind also dasselbe von zwei Seiten: ein <b>evolvierter Projektierer</b>. B&rsquo;s Analyst ist ein <b>gew&auml;hlter Projektierer</b> (Gitter/Ulam/Sacks &mdash; umkonfigurierbar).
+<strong>Fusion:</strong> Es gibt zwei Projektierer &mdash; <em>evolvierter</em> (fest, schnell, A&rsquo;s Retina) und <em>gew&auml;hlter</em> (flexibel, langsam, B&rsquo;s Analyst). A&rsquo;s Frosch = hardverdrahteter Projektierer mit eingebautem Anker; B&rsquo;s Analyst = umkonfigurierbarer Projektierer, dessen Anker vergiftet sein kann. Gleiche Struktur, verschiedene Implementierung.
+</div>
+<p><strong>Fusionierte Schlussfolgerung:</strong> Man &bdquo;sieht&ldquo; genau dann, wenn <code>(Projektion passt zur Struktur) &and; (Anker intakt) &and; (Makro-Trend gemessen)</code>. Die eine Frage, die ein zu-meisterndes Gesetz von einer Falle trennt, lautet: <em>Wer erzeugt dieses Muster, und was will es?</em> Antwort &bdquo;niemand&ldquo; &rarr; Gesetz (A&rsquo;s Mastery, belohnend). Antwort &bdquo;jemand, der von deiner Fehlwahrnehmung profitiert&ldquo; &rarr; Manipulation (B&rsquo;s Exit, beginnend mit der Anker-Wiederherstellung).</p>
+</section>
+
+<section id="inhalt">
+<h2><span class="num">4.</span> Fusionierter Inhalt</h2>
+<h3>Das gemeinsame Wahrnehmungs-Modell (vier Komponenten)</h3>
+<p>Beide Runde-1-Papiere lassen sich in ein einzies Modell gie&szlig;en, das ein &bdquo;Muster-Signal&ldquo; in vier Komponenten zerlegt:</p>
+<div class="mathblock">Rohsignal  &rarr;  Projektion  &rarr;  lesbares Muster, angelegt am Anker
+
+Rohsignal     = bedeutungsfreies Feld (Licht / Primzahlen / Beziehung)
+Projektion    = lokale Regeln / Linse (selektiert  = A,  gew&auml;hlt = B)
+Anker         = Referenz-Baseline (intakt = A,  vergiftet = B)
+Struktur      = Mikrodynamik (irreduzibel, A)
+              + Makro-Baseline = Trend(t) + Periode(t)   (B)
+Diskriminator = Zeichen des Makro-Trends (Drift)  &times;  Anker-Integrit&auml;t</div>
+<ul>
+<li><b>Rohsignal</b> &mdash; &bdquo;Perception, not sensation&ldquo; (A): renes Sinnenbild &ne; Bedeutung. B: Primzahlen &bdquo;bedeuten&ldquo; nichts, bis projiziert.</li>
+<li><b>Projektion</b> &mdash; A: vier Detektoren = vier Lesungen desselben Feldes; B: Gitter/Ulam/Sacks/Restklassen. <em>Dasselbe Feld, verschiedene Projektion &rarr; verschiedene Lesbarkeit.</em></li>
+<li><b>Anker</b> &mdash; A: durch Selektion intakt (kovariert mit &Uuml;berleben); B: angreifbar (Gaslighting), wiederherstellbar (Erholung = Kalibrierungsschritt).</li>
+<li><b>Struktur (zweischichtig)</b> &mdash; Mikro: irreduzible lokale Wechselwirkung (A, Klasse 3/4); Makro: Baseline = Trend + Periode (B). Harmlos vs. feindlich = Vorzeichen des Makro-Drifts.</li>
+</ul>
+
+<h3>Die gemeinsamen Gro&szlig;en, aus zwei Seiten gelesen</h3>
+<table>
+<thead><tr><th>Gro&szlig;e</th><th class="ca">A &middot; lokale Berechnung</th><th class="cb">B &middot; Muster &amp; Drift</th></tr></thead>
+<tbody>
+<tr><td>Substrat</td><td class="ca">lokales Feld von Ganglienzellen / CA-Zellen</td><td class="cb">Rohdaten (Primzahlen / Beziehung)</td></tr>
+<tr><td>Was Bedeutung macht</td><td class="ca">Projektion (selektierte lokale Regeln)</td><td class="cb">Projektion (gew&auml;hlte Linse)</td></tr>
+<tr><td>Bedeutung tr&auml;gt</td><td class="ca">das Projektionsobjekt (selektiertes Artefakt)</td><td class="cb">der Projektionsschritt (Beobachter)</td></tr>
+<tr><td>Anker / Referenz</td><td class="ca">intakt (evolution&auml;re Selektion)</td><td class="cb">angreifbar (Gaslighting), wiederherstellbar</td></tr>
+<tr><td>Mikrodynamik</td><td class="ca">irreduzibel (Klasse 3/4)</td><td class="cb">&mdash; (nicht betont)</td></tr>
+<tr><td>Makro-Baseline</td><td class="ca">&mdash; (nicht betont)</td><td class="cb">Trend + Periode</td></tr>
+<tr><td>Diskriminator</td><td class="ca">irreduzibel (kein Trend)</td><td class="cb">Drift-Vorzeichen (0 station&auml;r, &lt;0 degenerativ)</td></tr>
+<tr><td>Substrat-Äquivalenz</td><td class="ca">PCE: Retina &equiv; Rule 110 &equiv; Wetter</td><td class="cb">dieselbe Lesung &uuml;ber jede Linse</td></tr>
+<tr><td>Muster-Erkennung</td><td class="ca">&bdquo;Perception, not sensation&ldquo; (Mastery)</td><td class="cb">Mastery (harmlos) / Exit (feindlich)</td></tr>
+<tr><td>Schl&uuml;ssel-Frage</td><td class="ca">welche lokalen Regeln laufen?</td><td class="cb">welche Projektion + welcher Drift + intakter Anker?</td></tr>
+</tbody>
+</table>
+
+<h3>Substanz aus A (auf Theorien-Ebene)</h3>
+<p>Lokale Einheiten + parallele Regeln = das Substrat der Wahrnehmung (kein zentrales Modul). <b>PCE</b> (Principle of Computational Equivalence): jedes System &uuml;ber einem Komplexit&auml;tsschwellwert ist rechnerisch &auml;quivalent &rarr; Bedeutung ist <em>substrat-unabh&auml;ngig</em>. <b>Computational Irreducibility</b>: Zusammengesetztes (Klasse 3/4) ist ohne Ausf&uuml;hren nicht vorhersagbar; einzelne Einheiten (Klasse 1/2) sind beschreibbar &rarr; <em>Skalentrennung</em>. <b>Bedeutung = selektiertes Kovariations-Mapping</b> (nicht inh&auml;rent im Symbol, nicht rein vom Beobachter auferlegt, sondern die <em>selektierte Funktion</em> des Wahrnehmenden). <b>Modell vs. Realisierung</b>: eine diskrete Regel-Tabelle kann ein analoges Substrat modellieren &mdash; PCE ist die Br&uuml;cke, die die &Uuml;bersetzung legitimiert.</p>
+
+<h3>Substanz aus B (auf Theorien-Ebene)</h3>
+<p>Hinter scheinbarer Zuf&auml;lligkeit liegt geordnete Struktur, schwer zu sehen. Ein Muster = <b>Trend + Periode + Referenz</b>. Station&auml;r (harmlos, kein Drift) vs. degenerativ (feindlich, negativer Drift) &mdash; Diskriminator ist die <em>Richtung</em> des Drifts. Die <b>Integrit&auml;t des Beobachters</b> z&auml;hlt: souver&auml;n (vertrauensw&uuml;rdig, freie Linse) vs. manipultiert (Referenz vergiftet). Die <b>Referenz</b> ist objektiv/unver&auml;nderlich (A-Seite: das Sieb) oder vergiftet (B-Seite: Gaslighting); <b>Erholung = der Kalibrierungsschritt</b>, den A gratis hat. <b>Erzeuger + Absicht</b> (&bdquo;Wer erzeugt es, was will es?&ldquo;): ohne adversariales Erzeuger &rarr; Gesetz zu meistern; mit &rarr; Manipulation, aus der man aussteigt. <em>Dasselbe</em> Instrument decodiert beides.</p>
+
+<div class="card ok">
+<b>Fusionierte Formel.</b> Ein scheinbar zuf&auml;lliges System ist <em>entweder ein Gesetz oder eine Falle</em>. Man unterscheidet sie, indem man vier Dinge tut: (1) die <em>richtige Projektion</em> w&auml;hlen (welche lokalen Regeln machen Struktur sichtbar), (2) den <em>Anker</em> auf Intaktheit pr&uuml;fen &mdash; bei Verletzung <em>zuerst wiederherstellen</em> (Erholung), (3) die <em>Baseline</em> in Trend + Periode zerlegen und das <em>Zeichen des Drifts</em> lesen, (4) die <em>Erzeuger-Frage</em> stellen. A&rsquo;s Mastery und B&rsquo;s Exit sind dasselbe Instrument unter intaktem bzw. vergiftetem Anker.
+</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="num">5.</span> Visualisierung: Projektion, Anker und Drift in einem Signal</h2>
+<p>Ein Signal mit <b>irreduzibler Mikro-Komponente</b> (A &mdash; nicht in Trend+Periode zerlegbar, &bdquo;Muss ausgef&uuml;hrt werden&ldquo;) reitet auf einer <b>Makro-Baseline = Trend + Periode</b> (B). Drei Achsen der <em>eigenen</em> Wahrnehmung steuern, was lesbar ist: die <b>Linse/Projektion</b> (passt sie zur Struktur?), der <b>Anker</b> (ist die Referenz intakt?) und das <b>Drift-Vorzeichen</b> der Baseline (harmlos vs. feindlich). Gr&uuml;n = die <em>echte</em> Struktur; rot = das <em>wahrgenommene</em> Signal (durch Linse + Anker); blau gestrichelt = die <em>gefittete Drift</em>, die Diagnose, die der Wahrnehmende aus <em>seinem</em> (m&ouml;glicherweise verzerrten) Bild zieht. F&uuml;hre den Anker-Slider runter und beobachte, wie die gefittete Drift von der echten abweicht &mdash; das ist A&rsquo;s &bdquo;intakte Referenz&ldquo; trifft B&rsquo;s &bdquo;Gaslighting&ldquo;.</p>
+
+<div class="viz-controls">
+  <div class="vc"><label>Linse / Projektion <span id="projV"></span></label>
+    <input type="range" id="proj" min="0" max="100" value="100" step="1"></div>
+  <div class="vc"><label>Drift (Trend-Richtung) <span id="driftV"></span></label>
+    <input type="range" id="drift" min="-100" max="100" value="-60" step="1"></div>
+  <div class="vc"><label>Anker / Integrit&auml;t <span id="anchorV"></span></label>
+    <input type="range" id="anchor" min="0" max="100" value="100" step="1"></div>
+  <div class="vc"><label>Periodik (Zyklen) <span id="cycV"></span></label>
+    <input type="range" id="cycles" min="1" max="8" value="4" step="1"></div>
+  <div class="vc"><label>Mikro-Komplexit&auml;t (A) <span id="microV"></span></label>
+    <input type="range" id="micro" min="0" max="100" value="45" step="1"></div>
+</div>
+
+<div class="vizwrap"><canvas id="viz"></canvas></div>
+
+<div class="stats">
+  <div class="stat"><div class="k">Echte Drift (Makro-Baseline)</div><div class="v" id="rTrue">&ndash;</div></div>
+  <div class="stat"><div class="k">Wahrgenommene Drift (gefittet)</div><div class="v" id="rFitted">&ndash;</div></div>
+  <div class="stat"><div class="k">Anker-Integrit&auml;t</div><div class="v" id="rAnchor">&ndash;</div></div>
+  <div class="stat"><div class="k">Linse / Projektion</div><div class="v" id="rProj">&ndash;</div></div>
+</div>
+<p class="status" id="rStatus"></p>
+
+<p class="vnote">
+  <span class="dot" style="color:var(--good)">&#9679;</span> echte Struktur &nbsp;
+  <span class="dot" style="color:var(--bad)">&#9679;</span> wahrgenommenes (Linse &times; Anker) &nbsp;
+  <span class="dot" style="color:var(--accent)">&#9679;</span> gefittete Drift (Diagnose) &nbsp;
+  <span class="dot" style="color:var(--muted)">&#9679;</span> echte Trend-Richtung (fahl).<br>
+  <em>Mikro-Schicht: irreduzibel (&asymp; Wolfram-Klasse 3/4) &middot; Makro-Schicht: Trend + Periode (&asymp; Klasse 1/2, beschreibbar).</em>
+  Bei <em>Linse&nbsp;=&nbsp;0</em> verschwindet die Struktur (falsche Linse, A: die Projektion bestimmt die Sichtbarkeit). Bei <em>Anker&nbsp;&lt;&nbsp;50</em> driftet das wahrgenommene (rot) vom echten (gr&uuml;n) ab und die gefittete Drift liest den Trend falsch (B: Gaslighting). Bei <em>Drift&nbsp;&asymp;&nbsp;0</em> wird die Baseline station&auml;r (harmlos, zu meistern).
+</p>
+</section>
+
+<section id="provenienz">
+<h2><span class="num">6.</span> Provenienz</h2>
+<div class="prov"><a href="../n1-033.html">A &middot; n1-033.html &mdash; &bdquo;Wahrnehmung als lokale Berechnung&ldquo;</a><br>
+<span class="hint">Runde-1-Fusion von Lettvin et al. (Froschretina, &bdquo;Perception, not sensation&ldquo;) &times; Wolframs &bdquo;A New Kind of Science&ldquo;: lokale Einheiten, die vier Detektoren als Projektionen desselben Feldes, computational Irreducibility und PCE &mdash; die Quelle f&uuml;r &bdquo;Projektion &amp; irreduzible Mikrodynamik&ldquo; und &bdquo;Anker durch Selektion intakt&ldquo;.</span></div>
+<div class="prov"><a href="../n1-052.html">B &middot; n1-052.html &mdash; &bdquo;Versteckte Muster, Drift und die Integrit&auml;t der Wahrnehmung&ldquo;</a><br>
+<span class="hint">Runde-1-Fusion von Primzahlen-Explorer &times; Narzisstische Manipulation: Muster = Trend + Periode + Referenz, Drift als Diskriminator, vergiftete Wahrnehmung und Erholung als Kalibrierung &mdash; die Quelle f&uuml;r &bdquo;Makro-Baseline, Drift-Vorzeichen und angreifbaren Anker&ldquo;.</span></div>
+<p class="foot">Fusion 007 &middot; Runde 2 (non-AI-Track) &middot; selbstbezügliches HTML, keine externen Datenquellen &mdash; alle Daten inline.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var elProj  = document.getElementById('proj');
+  var elDrift = document.getElementById('drift');
+  var elAnchor= document.getElementById('anchor');
+  var elCyc   = document.getElementById('cycles');
+  var elMicro = document.getElementById('micro');
+  var vProj   = document.getElementById('projV');
+  var vDrift  = document.getElementById('driftV');
+  var vAnchor = document.getElementById('anchorV');
+  var vCyc    = document.getElementById('cycV');
+  var vMicro  = document.getElementById('microV');
+  var rTrue   = document.getElementById('rTrue');
+  var rFitted = document.getElementById('rFitted');
+  var rAnchor = document.getElementById('rAnchor');
+  var rProj   = document.getElementById('rProj');
+  var rStatus = document.getElementById('rStatus');
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function rnd(i){ var x = Math.sin(i*127.1 + 311.7)*43758.5453; return x - Math.floor(x); }
+
+  function fit(){
+    var wrap = canvas.parentElement;
+    var w = wrap ? wrap.clientWidth : 720;
+    if(w < 280){ w = 280; }
+    var dpr = window.devicePixelRatio || 1;
+    var H = 420;
+    canvas.width  = Math.round(w*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.width  = w + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:w, H:H};
+  }
+
+  function model(){
+    var proj    = (parseFloat(elProj.value)  || 0) / 100;
+    var driftS  = (parseFloat(elDrift.value) || 0);
+    var anchor  = (parseFloat(elAnchor.value)|| 100) / 100;
+    var cyc     = parseInt(elCyc.value,10) || 4;
+    var micro   = (parseFloat(elMicro.value) || 0) / 100;
+    var drift   = (driftS/100) * 0.8;
+    var amp     = 0.18;
+    var base    = 0.55;
+    var phase   = Math.PI/2;
+    var TAU     = Math.PI*2;
+    var N       = 400;
+    var corrupt = 1 - anchor;
+    var S = new Array(N+1), R = new Array(N+1);
+    for(var i=0;i<=N;i++){
+      var t   = i/N;
+      var per = amp * Math.sin(TAU*cyc*t + phase);
+      var mi  = (rnd(i*3.7)-0.5) * 2 * (0.28*micro);
+      var s   = base + drift*t + per + mi;
+      S[i] = s;
+      var read = proj*s + (1-proj)*0.5;
+      read += corrupt * (-0.30 - 0.45*t);
+      read += corrupt * (rnd(i*9.1+5)-0.5) * 0.5;
+      R[i] = read;
+    }
+    return {S:S,R:R,N:N,proj:proj,drift:drift,driftS:driftS,anchor:anchor,corrupt:corrupt,base:base};
+  }
+
+  function fitSlope(y){
+    var n=y.length, sx=0, sy=0, sxy=0, sxx=0;
+    for(var i=0;i<n;i++){ var x=i/(n-1); sx+=x; sy+=y[i]; sxy+=x*y[i]; sxx+=x*x; }
+    var den = n*sxx - sx*sx;
+    if(den===0){ return 0; }
+    return (n*sxy - sx*sy)/den;
+  }
+
+  function draw(){
+    var d = fit();
+    var W = d.w, H = d.H;
+    var bg     = cssVar('--panel') || '#ffffff';
+    var text   = cssVar('--text')  || '#000000';
+    var muted  = cssVar('--muted') || '#666666';
+    var good   = cssVar('--good')  || '#16a34a';
+    var bad    = cssVar('--bad')   || '#d9483a';
+    var accent = cssVar('--accent')|| '#0e7fb0';
+    var line   = cssVar('--line')  || '#cccccc';
+    var grid   = cssVar('--grid')  || 'rgba(128,128,128,0.15)';
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    var m = model();
+    var padL=52, padR=16, padT=40, padB=34;
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+    if(plotW<=0 || plotH<=0){ return; }
+
+    var dataMin=Infinity, dataMax=-Infinity, i, t;
+    for(i=0;i<=m.N;i++){
+      if(m.S[i]<dataMin)dataMin=m.S[i]; if(m.S[i]>dataMax)dataMax=m.S[i];
+      if(m.R[i]<dataMin)dataMin=m.R[i]; if(m.R[i]>dataMax)dataMax=m.R[i];
+    }
+    var range = dataMax - dataMin; if(range < 0.05){ range = 0.05; }
+    var padv = range*0.12;
+    var vmin = dataMin - padv, vmax = dataMax + padv;
+
+    ctx.lineWidth = 1;
+    for(var g=0; g<=4; g++){
+      var yy = padT + plotH*g/4;
+      ctx.strokeStyle = grid;
+      ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(W-padR,yy); ctx.stroke();
+      ctx.fillStyle = muted; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='right';
+      var val = vmax - (vmax-vmin)*g/4;
+      ctx.fillText(val.toFixed(2), padL-8, yy+4);
+    }
+    ctx.strokeStyle = line; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
+    ctx.setLineDash([]);
+
+    function X(tt){ return padL + tt*plotW; }
+    function Y(v){ return padT + plotH*(1 - (v-vmin)/(vmax-vmin)); }
+
+    ctx.strokeStyle=muted; ctx.globalAlpha=0.45; ctx.lineWidth=1; ctx.setLineDash([5,4]);
+    ctx.beginPath();
+    for(i=0;i<=m.N;i++){ t=i/m.N; var vx=m.base + m.drift*t; if(i===0)ctx.moveTo(X(t),Y(vx)); else ctx.lineTo(X(t),Y(vx)); }
+    ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+
+    ctx.strokeStyle=good; ctx.lineWidth=2; ctx.beginPath();
+    for(i=0;i<=m.N;i++){ t=i/m.N; if(i===0)ctx.moveTo(X(t),Y(m.S[i])); else ctx.lineTo(X(t),Y(m.S[i])); }
+    ctx.stroke();
+
+    ctx.strokeStyle=bad; ctx.lineWidth=1.6; ctx.beginPath();
+    for(i=0;i<=m.N;i++){ t=i/m.N; if(i===0)ctx.moveTo(X(t),Y(m.R[i])); else ctx.lineTo(X(t),Y(m.R[i])); }
+    ctx.stroke();
+
+    var slope = fitSlope(m.R);
+    var mean = 0; for(i=0;i<=m.N;i++){ mean += m.R[i]; } mean = mean/(m.N+1);
+    var yAt0 = mean - slope*0.5;
+    ctx.strokeStyle=accent; ctx.lineWidth=2; ctx.setLineDash([7,4]); ctx.beginPath();
+    ctx.moveTo(X(0), Y(yAt0)); ctx.lineTo(X(1), Y(yAt0 + slope)); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.fillStyle=muted; ctx.font='12px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Makro-Baseline: Trend + Periode  (B)', padL, 20);
+    ctx.textAlign='right';
+    ctx.fillText('Mikro: irreduzibel  (A)', W-padR, 20);
+
+    var fittedEquiv = Math.round(slope/0.8*100);
+    if(rTrue)   rTrue.textContent   = Math.round(m.driftS) + ' %';
+    if(rFitted) rFitted.textContent = fittedEquiv + ' %';
+    if(rAnchor) rAnchor.textContent = Math.round(m.anchor*100) + ' %';
+    if(rProj)   rProj.textContent   = Math.round(m.proj*100) + ' %';
+
+    var status, warn = false;
+    if(m.proj < 0.3){ status='Falsche Linse \u2014 die Struktur wird nicht sichtbar (A: die Projektion bestimmt die Sichtbarkeit).'; warn=true; }
+    else if(m.corrupt > 0.5){ status='Referenz vergiftet \u2014 die gefittete Drift weicht von der echten ab (B: Gaslighting; der Anker muss wiederhergestellt werden).'; warn=true; }
+    else if(Math.abs(m.driftS) < 5){ status='Station\u00e4r (Drift \u2248 0) \u2014 harmloses Muster, zu meistern (A: Mastery, B: belohnend).'; }
+    else if(m.driftS < 0){ status='Negativer Drift \u2014 degenerativer Zyklus (B: kumulativ sch\u00e4digend).'; }
+    else { status='Positiver Drift \u2014 aufbauend, Muster stabil/verbessernd.'; }
+    if(rStatus){ rStatus.textContent = status; rStatus.classList.toggle('warn', warn); }
+
+    var ly = H-12;
+    ctx.font='11px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillStyle=good;  ctx.fillText('\u25cf  echte Struktur', padL, ly);
+    ctx.fillStyle=bad;   ctx.fillText('\u25cf  wahrgenommenes (Linse \u00d7 Anker)', padL+130, ly);
+    ctx.fillStyle=accent;ctx.fillText('\u25cf  gefittete Drift (Diagnose)', padL+360, ly);
+  }
+
+  function syncLabels(){
+    if(vProj)  vProj.textContent  = elProj.value + ' %';
+    if(vDrift) vDrift.textContent = elDrift.value + ' %';
+    if(vAnchor)vAnchor.textContent= elAnchor.value + ' %';
+    if(vCyc)   vCyc.textContent   = elCyc.value;
+    if(vMicro) vMicro.textContent = elMicro.value + ' %';
+  }
+  function onInput(){ syncLabels(); draw(); }
+
+  var els = [elProj,elDrift,elAnchor,elCyc,elMicro];
+  for(var k=0;k<els.length;k++){ if(els[k]){ els[k].addEventListener('input', onInput); } }
+
+  var themeBtn = document.getElementById('themeBtn');
+  if(themeBtn){ themeBtn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(); }); }
+  if(window.addEventListener){ window.addEventListener('resize', draw); }
+  if(window.MutationObserver){
+    var mo = new MutationObserver(function(){ draw(); });
+    mo.observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  syncLabels();
+  draw();
+})();
+</script>
+</body>
+</html>

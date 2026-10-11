@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 006 (Runde 2): Was vom Operator übrig bleibt</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#3566c9; --accent2:#0f766e; --good:#16a34a; --warn:#d97706; --red:#c0392b;
+  --inv-lo:#eef1f6; --inv-hi:#d97706; --ellipse:#0f766e; --grad:#b45309; --base:#7c3aed;
+  --txt:#1a1a24; --grid:rgba(20,20,40,0.10);
+}
+html.dark{
+  --bg:#0b0f1a; --panel:#121a2b; --text:#e8edf7; --muted:#9aa7bf; --line:#263149;
+  --accent:#7ca5ff; --accent2:#2dd4bf; --good:#86efac; --warn:#fbbf24; --red:#f87171;
+  --inv-lo:#0f1626; --inv-hi:#f59e0b; --ellipse:#2dd4bf; --grad:#fbbf24; --base:#c4b5fd;
+  --txt:#f1f5f9; --grid:rgba(255,255,255,0.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.62 Georgia,'Iowan Old Style','Times New Roman',serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,38px);line-height:1.12;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 6px;font-style:italic}
+.subtitle.req{color:var(--accent);font-style:normal;font-weight:700}
+h2{font-size:22px;margin:42px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);color:var(--accent)}
+h3{font-size:16.5px;margin:24px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 8px}
+b{color:var(--text)}
+em{color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:color-mix(in srgb, var(--line) 22%, var(--panel));border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.75}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 9px;border-radius:99px;margin-right:.5rem;color:#fff}
+.tag.a{background:var(--accent)} .tag.b{background:var(--accent2)} .tag.f{background:var(--warn);color:#1a1a24}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:color-mix(in srgb, var(--line) 30%, var(--panel))}
+canvas#viz{display:block;width:100%;height:440px;background:var(--bg);border:1px solid var(--line);border-radius:12px;margin:6px 0;touch-action:none;cursor:crosshair}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+select,input[type=range]{padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-size:14px}
+input[type=range]{width:190px;padding:0}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0;font-size:13px}
+.ro{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.ro .k{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.ro .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;color:var(--accent2);font-variant-numeric:tabular-nums}
+.msg{margin-top:10px;padding:12px 14px;border-radius:10px;background:var(--panel);border-left:3px solid var(--accent);font-size:.98rem;min-height:3.4em;line-height:1.5}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.theme-toggle:hover{border-color:var(--accent)}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.hint{color:var(--muted);font-size:13.5px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728; / &#9790;</button>
+<article>
+<h1>Was vom Operator übrig bleibt</h1>
+<p class="subtitle">&part; = d: der eine Operator, der das <b>Gegebene</b> (Pullback), das <b>Abgeleitete</b> (Christoffel) und das <b>Invariante</b> (Loch&nbsp;/&nbsp;Krümmung) trennt &mdash; und zeigt, wo es sich lohnt zu handeln.</p>
+<p class="subtitle req">Fusion aus: n1-012.html &#10005; n1-035.html&nbsp; (Runde 2)</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Runden-1-Papiere drehen sich um <b>einen einzigen Operator &mdash; die Ableitung</b> &mdash; und um die
+Disziplin, <b>Gegebenes von Abgeleitetem und Überlebendem</b> zu trennen. <span class="tag a">A &middot; n1-012</span>
+läuft auf dem <b>Rand-/Ableitungsoperator &part;</b>: Führt man &part; auf eine Form/Situation aus, trennt er den
+<b>Rand</b> (das Transiente, Reaktive &mdash; es hebt sich auf, weil <b style="color:var(--good)">&part;&part;&nbsp;=&nbsp;0</b>)
+vom <b>Invarianten</b> (das Loch, den Zyklus, der <i>kein</i> Rand ist &mdash; das, was übrig bleibt), gezählt durch die
+Betti-Zahlen. Sein zweites Papier (der Weisheits-Essay) liefert die <b>Praxis</b>: das <i>Wann</i>, die <b>Pause</b> &mdash;
+wo aufhören und das Transiente abbauen lassen, und nur auf dem Invarianten handeln.</p>
+<p><span class="tag b">B &middot; n1-035</span> läuft auf der <b>dieselben Ableitung</b> als <b>Pipeline</b>: Eine flachere
+Geometrie wird per <b>Pullback geerbt</b> (und der Pullback <i>kommutiert mit der Ableitung d</i> &mdash; das ist
+A's &part;), dann wird die ererbte Metrik <b>einmal abgeleitet</b>, um die Christoffel-Symbole &Gamma; (die Krümmung)
+zu gewinnen, dann zu Transport&nbsp;&amp;&nbsp;Geodäten integriert. Sein zweites Papier (die Christoffel-Demo) liefert
+das <i>Wo</i>: Krümmung ist <b>kein</b> fundamentaler Input, sondern abgeleitet; die „gegebene" Metrik ist selbst ein
+Pullback der flachen Umgebung.</p>
+<p><b style="color:var(--accent)">Die eine integrierte Position.</b> Der Ableitungsoperator
+(<b>&part;&nbsp;=&nbsp;d</b>) ist das einzige Fundament. Alles Geometrische ist relativ zu ihm genau eines von
+<b>dreien</b>: (i) ein <b>Rand</b> (im&nbsp;&part; / das Bild von d) &mdash; transient, hebt sich auf, weil
+&part;&part;&nbsp;=&nbsp;d&sup2;&nbsp;=&nbsp;0; (ii) ein <b>flacher/ererbter</b> Baustein &mdash; ein Pullback flacher
+Geometrie, das „Gegebene", das in Wahrheit <i>abgeleitet</i> ist; (iii) eine <b>Invariante</b> &mdash; etwas
+Geschlossenes, das nicht nur ein Rand ist (ein Loch, eine echte Krümmung, Betti&nbsp;&gt;&nbsp;0&nbsp;/&nbsp;&Gamma;&ne;0),
+das die Ableitung überlebt und das <b>einziges</b> ist, worauf sich Handeln lohnt. Die beiden Papiere sind die
+<b>zwei Seiten derselben Bilanz</b>: A liest sie <b>algebraisch &amp; normativ</b> (welche Einträge heben sich auf, wo
+aufhören, wie viele Invarianten bleiben &mdash; die Betti-Zählung), B liest sie <b>differentiageometrisch &amp;
+deskriptiv</b> (wie das flache Umfeld geerbt wird, wie eine Ableitung die ererbte Metrik zur Krümmung macht, und wo sich
+diese konzentriert &mdash; die Steigung). „Das Loch, das übrig bleibt" (A) und „die Krümmung, die in Wahrheit die
+Ableitung eines Pullbacks ist" (B) sind <b>die selbe Invariante</b> &mdash; gesehen als <b>globale Zählung</b>
+(A: ein Loch, topologisch starr) vs. als <b>lokale Dichte</b> (B: Krümmung, punktuell, verschwindend dort, wo die Fläche
+flach ist). Und A's „Wann/die Pause" <b>lokalisiert sich</b> exakt auf B's „Punkt maximaler Steigung": <i>verbringe die
+Pause dort, wo die Ableitung der ererbten Metrik am größten ist, und handle dann auf dem Invarianten.</i></p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden Runden-1-Papiere widersprechen sich in <b>keiner harten Faktenbehauptung</b> &mdash; sie sind
+komplementär (ein algebraisch-normatives vs. ein differentiageometrisch-deskriptives Lesen desselben Operators). Aber
+auf der Ebene ihrer <b>Thesen/Stellungen</b> nehmen sie an drei Punkten inkompatible, teils entgegengesetzte Stellungen
+ein:</p>
+
+<div class="card">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>1. Geschlossene Gewissheit (A) vs. offene Nicht-Fundamentalität (B).</b></p>
+<p><span class="tag a">A</span> krönt den Operator und seine <b>Geschlossenheit</b>: die Regel ist „exact, mechanical,
+and closed"; die Krone ist die <i>abgeschlossene Identität</i> &part;&part;&nbsp;=&nbsp;0 &mdash; das System schließt sich
+selbst ab, alles hebt sich garantiert auf, und <i>genau das</i> ist der Punkt. <span class="tag b">B</span> verneint
+dagegen <b>jede</b> geschlossene Essenz: nichts ist fundamental, „alles nach dem ersten Pfeil ist abgeleitet"; die
+Pipeline ist <b>offen</b> und erreicht immer wieder ein flacheres Umgebungsfeld <i>g<sub>E</sub></i>. A feiert die
+<b>Schließung</b> der Regel; B verneint die <b>Fundamentalität</b> von irgendetwas (offene Ableitungskette).</p>
+</div>
+
+<div class="card">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>2. Globale diskrete Invariante (A) vs. lokale kontinuierliche Invariante (B).</b></p>
+<p><span class="tag a">A</span>'s Invariante ist die <b>Betti-Zahl</b> &mdash; eine <b>globale, diskrete, topologische
+Zählung</b> („wie viele Löcher"), ein Rest, der nach <i>totaler</i> Aufhebung übrig bleibt und unter stetiger Verformung
+starr bleibt. <span class="tag b">B</span>'s Invariante ist die <b>Krümmung &Gamma;</b> &mdash; eine <b>lokale,
+kontinuierliche, punktuell berechnete</b> Größe („flach&nbsp;&rArr;&nbsp;g&approx;&delta;, &Gamma;&approx;0;
+schief&nbsp;&rArr;&nbsp;&Gamma; wächst"), die sich stetig ändert und <i>verschwindet</i>, wenn man die Fläche abflacht.
+Inkompatible Stellungen über die <i>Art</i> der Invariante: starr/global vs. verformbar/lokal.</p>
+</div>
+
+<div class="card">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>3. Das „Wann" ist konstitutiv (A) vs. die Punktwahl ist extern/trivial (B).</b></p>
+<p><span class="tag a">A</span> macht die <b>Entscheidung</b> &mdash; wann/wo handeln, die Pause &mdash; zum <b>Kern</b>
+des Inhalts (Weisheit&nbsp;=&nbsp;das „when"; „It's the quiet voice that says <i>wait</i>"). <span class="tag b">B</span>
+hat <b>kein</b> „Wann": die Mechanik läuft rein deskriptiv („wähle einen Punkt, berechne &Gamma;"); die <b>Wahl des
+Punktes</b> ist der Mechanik <b>extern</b>. Inkompatible Stellungen: A sagt „die Wahl <i>ist</i> der Inhalt", B sagt
+„die Wahl ist gleichgültig, die Formel läuft trotzdem."</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p>Drei Auflösungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussfolgerung.</p>
+
+<div class="card">
+<h3>&#8594; 1. Lokale Schließung legitimiert globale Ableitung</h3>
+<p>&part;&part;&nbsp;=&nbsp;0 (A) ist eine <b>lokal-algebraische Identität</b>; „nichts ist fundamental" (B) ist die
+<b>globale Buchführung</b>. Sie versöhnen sich, weil &part;&part;&nbsp;=&nbsp;0 genau die Bedingung ist, die aus B's
+Pipeline ein <b>Komplex</b> macht: Der Pullback <i>kommutiert mit d</i> (B: &phi;*(d&omega;)&nbsp;=&nbsp;d(&phi;*&omega;))
+und die Kette <i>g<sub>E</sub>&nbsp;&rarr;&nbsp;&iota;* &rarr; g &rarr; &part;g &rarr; &Gamma;</i> ist ein
+Differentialkomplex mit d&sup2;&nbsp;=&nbsp;0. Genau diese <b>lokale Schließung</b> erlaubt es, „ererbtes/exaktes"
+(im&nbsp;&part; &mdash; hebt sich auf, flach) von „echtem Invariant" (ker&nbsp;&part;&nbsp;\\&nbsp;im&nbsp;&part; &mdash;
+das Loch, die nicht-flache Krümmung) zu <b>unterscheiden</b>. Die Regel, die A als „geschlossen&nbsp;&amp;&nbsp;gewiss"
+krönt, ist der <b>Grund</b>, warum B's „alles abgeleitet" eine <i>legitime</i> Ableitungskette und kein unendlicher
+Regress ist. <b>Fusion: <i>lokale Schließung</i> (&part;&part;=0) ist die <i>Lizenz</i> für <i>globale
+Ableitung</i> (Pullback&nbsp;&rarr;&nbsp;Christoffel).</b></p>
+</div>
+
+<div class="card">
+<h3>&#8594; 2. Zählung und Dichte desselben Invariants</h3>
+<p>A's Betti-Zahl ist der <b>globale Zähler</b> (Rank, das „wie viele"); B's Krümmung &Gamma; ist die <b>lokale
+Dichte</b> (Ableitung, das „wo&nbsp;&amp;&nbsp;wie stark"). Beide beschreiben dasselbe <b>Überlebende der
+Ableitung</b>: A <i>integriert</i> es (Zählung), B <i>differenziert</i> es (Dichte). B's „flach&nbsp;&rArr;&nbsp;&Gamma;&approx;0,
+schief&nbsp;&rArr;&nbsp;&Gamma; wächst" ist die <i>lokale</i> Aussage; A's „Betti&nbsp;=&nbsp;was übrig bleibt" ist die
+<i>globale</i>. (In der tieferen Theorie wird eine globale Zählung aus einer lokalen Dichte gebaut &mdash; das ist das
+allgemeine Muster, keine der beiden Quellen behauptet es selbst.) <b>Fusion: das Invariante hat eine <i>globale
+Zählung</i> und eine <i>lokale Dichte</i>; die Pause (A's „Wann") gehört genau dorthin, wo die lokale Dichte (B's
+Krümmung) am größten ist.</b></p>
+</div>
+
+<div class="card">
+<h3>&#8594; 3. Das „Wann" (A) <i>ist</i> die Punktwahl (B)</h3>
+<p>A's Pause/„Wann" ist nicht willkürlich &mdash; es ist die Entscheidung, <i>welches</i> &part; man ausführt und <i>wo
+man stoppt</i>. B's „Punkt, an dem man auswertet" ist <b>genau</b> diese Entscheidung: man wählt den Punkt, wo die
+Steigung (<i>h<sub>x</sub>, h<sub>y</sub></i>) groß ist, d.h. wo die Invariante (&Gamma;) konzentriert ist. Die
+Mechanik (Pullback&nbsp;+&nbsp;Ableitung) ist die <b>Karte</b> (was sich aufhebt / was abgeleitet ist); die Punktwahl ist
+die <b>Praxis</b> (wo stoppen und das Invariante ablesen). <b>Fusion: die Pause/das „Wann" (A) wird durch die
+<i>Steigung der Metrik</i> (B) <i>lokalisiert</i>; die Praxis heißt „die Ableitung genau dort auslesen, wo die Ableitung
+der ererbten Metrik am größten ist."</b></p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>1. Der eine Operator: Ableitung (&part; = d) &mdash; das Scharnier</h3>
+<p><span class="tag a">A</span> definiert &part; auf Ketten: <code>&part;[v<sub>i</sub>,v<sub>j</sub>] = v<sub>j</sub> &minus; v<sub>i</sub></code>
+(Kopf minus Fuß) und für ein n-Simplex <code>&part;[v&#8320;,&hellip;,v<sub>n</sub>] = &Sigma;<sub>i</sub> (&minus;1)<sup>i</sup>
+[v&#8320;,&hellip;,v&#772;<sub>i</sub>,&hellip;,v<sub>n</sub>]</code> (ein Vertex wird mit Vorzeichen (&minus;1)<sup>i</sup>
+entfernt). Für das Dreieck: <code>&part;[v&#8320;,v&#8321;,v&#8322;] = +[v&#8321;,v&#8322;] &minus; [v&#8320;,v&#8322;]
++ [v&#8320;,v&#8321;]</code> &mdash; die drei Kanten Kopf-auf-Fuß zu einer Schleife. Die Krone ist
+<b>&part;&part; = 0</b>: an jeder Ecke trifft ein +1 (Kopf) auf ein &minus;1 (Fuß) und sie heben sich &mdash; „ein Rand
+hat keine Enden".</p>
+<p><span class="tag b">B</span> kennt dieselbe Ableitung als <i>äußere Ableitung d</i> &mdash; und den
+<b>Pullback</b> &phi;*&omega; mit <code>(&phi;*&omega;)<sub>p</sub>(v&#8321;,&hellip;,v<sub>k</sub>) =
+&omega;<sub>&phi;(p)</sub>( d&phi;<sub>p</sub>(v&#8321;), &hellip; )</code>. Seine Struktursätze: <b>linear</b>,
+<b>keilprodukt-verträglich</b> (&phi;*(&omega;&and;&eta;)=&phi;*&omega;&and;&phi;*&eta;), <b>kommutiert mit d</b>
+(&phi;*(d&omega;)=d(&phi;*&omega;)), <b>funktoral</b> ((&psi;&circ;&phi;)* = &phi;*&circ;&psi;*), für Funktionen bloße
+Komposition. <b>A's &part; und B's d sind derselbe Operator</b> &mdash; daran hängt die ganze Fusion: A's „Rand" ist
+B's „Bild von d", A's „Zyklus, der kein Rand ist" ist B's „geschlossene, nicht-exakte" Größe.</p>
+
+<h3>2. Die Ableitungsbilanz / Pipeline (B's Kette, durch A's Linse)</h3>
+<div class="mathblock">g_E (flach, R^3)  &rarr;  &iota;* (Pullback, B)  &rarr;  g (Flächemetrik)
+g  &rarr;  &part;g (Ableitung, A)  &rarr;  &Gamma; (Christoffel)
+&Gamma;  &rarr;  &int; (Integration)  &rarr;  Paralleltransport &amp; Geodäten</div>
+<p>Das <b>Gegebene</b> (<i>g<sub>E</sub></i>) ist flach; das <b>Ererbte</b> (<i>g = &iota;*g<sub>E</sub></i>) ist ein
+Pullback; das <b>Abgeleitete</b> (&Gamma; = &part;g, die Krümmung) ist eine Ableitung tiefer; Transport/Geodäten
+integrieren es. Konkret &mdash; Graphfläche <i>&iota;(x,y)=(x,y,h(x,y))</i> in &Ropf;&sup3; mit
+<i>du=dx, dv=dy, dw=dh=h<sub>x</sub>dx+h<sub>y</sub>dy</i>:</p>
+<div class="mathblock">g = &iota;*g_E = dx&sup2; + dy&sup2; + (h_x dx + h_y dy)&sup2;
+        = (1+h_x&sup2;) dx&sup2; + 2 h_x h_y dx dy + (1+h_y&sup2;) dy&sup2;
+
+g_11 = 1+h_x&sup2;     g_12 = h_x h_y     g_22 = 1+h_y&sup2;</div>
+<p><code>&Gamma;<sup>k</sup><sub>ij</sub> = ½ g<sup>kl</sup> ( &part;<sub>i</sub>g<sub>jl</sub> + &part;<sub>j</sub>g<sub>il</sub>
+&minus; &part;<sub>l</sub>g<sub>ij</sub> )</code>; Geodäte: <code>d&sup2;x<sup>k</sup>/dt&sup2; +
+&Gamma;<sup>k</sup><sub>ij</sub>(dx<sup>i</sup>/dt)(dx<sup>j</sup>/dt) = 0</code>. Markierung der Bilanz:
+<b>g &approx; &delta; (flach) &hArr; &Gamma; = 0</b> &mdash; „Inhalts-Invariante" ist also &Gamma;&ne;0, der Teil, der
+<b>kein</b> flacher Pullback ist.</p>
+
+<h3>3. Das Invariante: Zählung + Dichte (die fusionierte Größe)</h3>
+<table>
+<tr><th></th><th><span class="tag a">A</span> global</th><th><span class="tag b">B</span> lokal</th></tr>
+<tr><td>Größe</td><td>Betti-Zahl b<sub>n</sub> = rank H<sub>n</sub></td><td>Krümmung &Gamma; am Punkt</td></tr>
+<tr><td>Definition</td><td>H<sub>n</sub> = ker &part;<sub>n</sub> / im &part;<sub>n+1</sub></td><td>&Gamma; = &part;g (Ableitung der Metrik)</td></tr>
+<tr><td>Sagt</td><td><b>wie viele</b> Invarianten (Löcher) bleiben</td><td><b>wo &amp; wie stark</b> die Invariante konzentriert ist</td></tr>
+<tr><td>Charakter</td><td>diskret, topologisch starr</td><td>kontinuierlich, verschwindet bei Flachheit</td></tr>
+<tr><td>Formel</td><td>b<sub>n</sub> = (#n-Simplexe) &minus; rank &part;<sub>n</sub> &minus; rank &part;<sub>n+1</sub></td><td>Einheitskreis der Metrik = Ellipse; flach&nbsp;&rArr;&nbsp;&Gamma;&approx;0</td></tr>
+</table>
+<p><span class="tag f">F</span> Das Invariante ist <b>das Übrigbleibende der Ableitung</b> in zwei Auflösungen: als
+<i>integraler Rest</i> (Zählung, A) und als <i>differentielle Dichte</i> (&Gamma;, B). Beide gehören zusammen: die
+Zählung sagt <i>an wie vielen Stellen</i> sich lohnt zu handeln, die Dichte sagt <i>genau wo</i>.</p>
+
+<h3>4. Die Praxis: A's „Wann" lokalisiert durch B's Steigung</h3>
+<p><span class="tag a">A</span> (aus seinem Weisheits-Papier): Weisheit&nbsp;&ne;&nbsp;Wissen; die <b>Pause</b>;
+<b>Gleichgewicht</b>; die Frage offenhalten; aus Klarheit antworten statt aus Emotion reagieren. Neu gelesen in der
+Bilanz: die Pause&nbsp;=&nbsp;die Entscheidung, <i>welches</i> &part; man ausführt und <i>wo man stoppt</i>; nur auf dem
+Invarianten handeln; den Rand abbauen lassen (&part;&part;=0).</p>
+<p><span class="tag b">B</span>: der <b>Gradient (h<sub>x</sub>,h<sub>y</sub>)</b> der ererbten Fläche ist das
+<b>Signal</b> &mdash; er zeigt, wo &Gamma; (die Invariante) konzentriert ist. Dort, wo h<sub>x</sub>,h<sub>y</sub>
+groß sind, ist g nicht-identisch und &Gamma; groß.</p>
+<p><span class="tag f">F</span><b>Fusionierendes Mapping</b> (jede Zeile an die Quellen rückverfolgbar):</p>
+<ul>
+<li><b>ein Stück der Situation</b> &harr; <b>eine Zelle/Punkt auf der Fläche</b>.</li>
+<li><b>das Transiente / Reaktive</b> (was sich aufhebt) &harr; <b>der flache Pullback-Anteil</b> (g&approx;&delta;, &Gamma;=0): eine Ableitung von Flache, hebt sich auf.</li>
+<li><b>das Invariante / die echte Struktur</b> &harr; <b>die echte Krümmung &Gamma;&ne;0</b> (ein Zyklus, der kein Rand ist / kein flacher Pullback ist).</li>
+<li><b>„eine Reaktion auf eine Reaktion"</b> &harr; <b>&part;&part;=0 / d&sup2;=0</b>: reine Reaktivität hat keinen Inhalt („ein Rand hat keine Enden").</li>
+<li><b>„das Wann / die Pause"</b> &harr; <b>der Punkt maximaler |&part;g| (Steigung)</b> &mdash; wo stoppen und das Invariante ablesen.</li>
+<li><b>„Komfort mit Unsicherheit / Frage offenhalten"</b> &harr; <b>das nicht-triviale Invariante</b>, das sich nicht auf einen flachen Pullback reduziert (ein &Gamma;, das man nicht abflachen kann).</li>
+<li><b>„wie viele Dinge lohnen sich zum Handeln"</b> &harr; <b>die Betti-artige Zählung</b> = Anzahl der Zellen mit &Gamma; über Schwellwert.</li>
+<li><b>„wissen, wann Feuer zu nutzen"</b> &harr; wissen, <i>wo auf der Fläche</i> |&Gamma;| seinen Peak hat und die Ableitung dort stoppen.</li>
+</ul>
+
+<h3>5. One-line carry-forward (für die nächste Runde)</h3>
+<p class="hint">Behandle jede Fläche als <i>geerbte</i> (per Pullback übernommene) Geometrie; führe die Ableitung aus:
+der flache Teil hebt sich auf (&part;&part;=0 / d&sup2;=0 &mdash; ein flacher Pullback hat keinen Inhalts-Invariant),
+die Krümmung &Gamma; ist die <b>Invariante-Dichte</b>, und die Betti-artige Zählung (Zellen mit &Gamma; über
+Schwellwert) sagt, <i>wie viele</i> Invarianten es gibt; verbringe die Pause, wo die Steigung (&part;g) am größten ist,
+und handle nur auf dem Invarianten. <b>Gewissheit</b> (&part;&part;=0) regiert, <i>was sich aufhebt</i>; die
+<b>Ableitung</b> (Pullback&nbsp;&rarr;&nbsp;&Gamma;) regiert, <i>was gegeben vs. abgeleitet ist</i>; und was die
+Ableitung überlebt &mdash; global gezählt, lokal dicht &mdash; ist das, was sich zu handeln lohnt.</p>
+</section>
+
+<section id="visualisierung">
+<h2>Interaktive Visualisierung</h2>
+<p>Ein <b>ziehbarer Punkt</b> auf einer Graphfläche <i>z = h(x,y)</i> in flachem &Ropf;&sup3;. Das
+<b>Farbfeld</b> ist die <b>Dichte der Invariante</b> |&Gamma;| (B) &mdash; wo sich die Krümmung konzentriert, dort ist
+das „Wann" (A) zu verorten. Am Punkt: die <b>Ellipse</b> = Einheitskreis der induzierten Metrik
+(<i>g = &iota;*g<sub>E</sub></i>, der Pullback, B); der <b>Gradient-Pfeil</b> = Steigung (h<sub>x</sub>,h<sub>y</sub>)
+&mdash; das Signal, wo die Invariante liegt. Die <b>blauen Rahmen</b> sind die Zellen mit |&Gamma;| über dem
+<b>Schwellwert</b> &mdash; das ist die <b>Betti-artige Zählung</b> (A): „wie viele Zellen lohnen Handeln". Ändere die
+Fläche, die Amplitude, den Schwellwert (das „Wann": niedrig&nbsp;=&nbsp;kühn, hoch&nbsp;=&nbsp;vorsichtig), ziehe den
+Punkt, wechsele das Thema.</p>
+<canvas id="viz" height="440"></canvas>
+<div class="viz-controls">
+  <label>Fläche
+    <select id="surfSel">
+      <option value="wavy" selected>wellenförmig (cos&middot;sin)</option>
+      <option value="bump">Gauß-Wulst</option>
+      <option value="flat">flach</option>
+    </select>
+  </label>
+  <label>Amplitude <span class="hint" id="ampVal">0.90</span>
+    <input type="range" id="ampSlider" min="0" max="1.5" step="0.05" value="0.9">
+  </label>
+  <label>Schwellwert „Wann" (kühn &larr; &rarr; vorsichtig) <span class="hint" id="thrVal">30 %</span>
+    <input type="range" id="thrSlider" min="0" max="0.9" step="0.05" value="0.3">
+  </label>
+</div>
+<div class="readout">
+  <div class="ro"><span class="k">Invariante-Dichte am Punkt (|&Gamma;|)</span><span class="v" id="rLocal">&ndash;</span></div>
+  <div class="ro"><span class="k">Metrik g&#8321;&#8321;, g&#8322;&#8322;, g&#8321;&#8322; (Pullback)</span><span class="v" id="rG">&ndash;</span></div>
+  <div class="ro"><span class="k">Steigung h<sub>x</sub>, h<sub>y</sub></span><span class="v" id="rSlope">&ndash;</span></div>
+  <div class="ro"><span class="k">Zählung (Zellen über Schwelle / gesamt)</span><span class="v" id="rCount">&ndash;</span></div>
+  <div class="ro"><span class="k">Schwellwert</span><span class="v" id="rThr">&ndash;</span></div>
+</div>
+<div class="msg" id="msg"></div>
+<div class="legend">
+  <span><i class="dot" style="background:var(--inv-lo)"></i> |&Gamma;| niedrig (flach = reiner Pullback)</span>
+  <span><i class="dot" style="background:var(--inv-hi)"></i> |&Gamma;| hoch (Invariante konzentriert)</span>
+  <span><i class="dot" style="background:var(--ellipse)"></i> Einheitskreis der Metrik (Pullback)</span>
+  <span><i class="dot" style="background:var(--grad)"></i> Steigung &nabla;h (das Signal fürs „Wann")</span>
+  <span><i class="dot" style="background:var(--accent)"></i> Zellen über Schwellwert (Zählung)</span>
+</div>
+<p class="viz-cap">Farbfeld = Dichte der Invariante (lokales &Gamma;, B). Rahmen = Betti-artige Zählung (globales „wie viele", A).
+Ellipse = Pullback der Metrik. Gradient = dort verbringe die Pause. Hier: Christoffel-Symbole als Krümmungsgröße der
+Quelle n1-035 (lokale Dichte). Alle Daten inline, themenbewusst, ohne Netzwerk.</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../n1-012.html">A &middot; n1-012.html — „The Boundary of Wisdom — what survives &part;"</a>
+<br><span class="hint">Runden-1-Fusion (Homologie-Tutorial &times; Weisheits-Essay): der Rand-Operator &part;, die
+Identität &part;&part;=0, die Betti-Zahlen, die „Löcher" zählen, die nach totaler Aufhebung übrig bleiben &mdash; plus
+die Praxis des „Wann" (die Pause, Gleichgewicht, Frage offenhalten, nur auf dem Invarianten handeln).</span></div>
+<div class="prov"><a href="../n1-035.html">B &middot; n1-035.html — „Der Pullback speist die Christoffel-Maschinerie"</a>
+<br><span class="hint">Runden-1-Fusion (Pullback &times; Christoffel): der Pullback &phi;*&omega; (kommutiert mit d),
+die induzierte Metrik g = &iota;*g<sub>E</sub> als ererbte Größe, die Christoffel-Symbole &Gamma; = &part;g als
+abgeleitete Krümmung, die Pipeline g<sub>E</sub> &rarr; &iota;* &rarr; g &rarr; &Gamma; &rarr; Transport/Geodäten.</span></div>
+<p class="foot">Fusion 006 &middot; Runde 2 (non-AI-Track) &middot; autonom, keine Netzwerte &mdash; alle Daten inline.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var ctx=canvas.getContext('2d');
+  var surfSel=document.getElementById('surfSel');
+  var ampSlider=document.getElementById('ampSlider');
+  var ampVal=document.getElementById('ampVal');
+  var thrSlider=document.getElementById('thrSlider');
+  var thrVal=document.getElementById('thrVal');
+
+  var cssW=0, cssH=440;
+  var point={x:0.6,y:0.3};
+  var dragging=false;
+  var XMIN=-2, XMAX=2, YMIN=-1.5, YMAX=1.5;
+  var GX=46, GY=30;
+  var density=null, maxNorm=0;
+
+  function fit(){
+    var d=window.devicePixelRatio||1;
+    cssW=canvas.clientWidth||720; cssH=440;
+    canvas.width=Math.round(cssW*d); canvas.height=Math.round(cssH*d);
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function curAmp(){var a=parseFloat(ampSlider.value);return isNaN(a)?0:a;}
+  function curThr(){var t=parseFloat(thrSlider.value);return isNaN(t)?0:t;}
+
+  function hAt(x,y){
+    var A=curAmp(), s=surfSel.value;
+    if(s==='flat') return 0;
+    if(s==='wavy') return A*Math.cos(x*1.3)*Math.sin(y*1.3);
+    var w=1.2; return A*Math.exp(-(x*x+y*y)/(w*w));
+  }
+  function metricAt(x,y){
+    var e=1e-3;
+    var hx=(hAt(x+e,y)-hAt(x-e,y))/(2*e);
+    var hy=(hAt(x,y+e)-hAt(x,y-e))/(2*e);
+    return {g11:1+hx*hx, g12:hx*hy, g22:1+hy*hy, hx:hx, hy:hy};
+  }
+  function make3(){return [[[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]]];}
+  function christoffelAt(x,y){
+    var e=1e-2;
+    var c=metricAt(x,y);
+    var gR=metricAt(x+e,y), gL=metricAt(x-e,y);
+    var hU=metricAt(x,y+e), hD=metricAt(x,y-e);
+    var dg=make3();
+    dg[1][1][1]=(gR.g11-gL.g11)/(2*e); dg[1][1][2]=(hU.g11-hD.g11)/(2*e);
+    dg[1][2][1]=(gR.g12-gL.g12)/(2*e); dg[1][2][2]=(hU.g12-hD.g12)/(2*e);
+    dg[2][2][1]=(gR.g22-gL.g22)/(2*e); dg[2][2][2]=(hU.g22-hD.g22)/(2*e);
+    dg[2][1][1]=dg[1][2][1]; dg[2][1][2]=dg[1][2][2];
+    var det=c.g11*c.g22-c.g12*c.g12;
+    if(Math.abs(det)<1e-9) return null;
+    var inv=make3();
+    inv[1][1]=c.g22/det; inv[1][2]=-c.g12/det;
+    inv[2][1]=-c.g12/det; inv[2][2]=c.g11/det;
+    var C=make3();
+    for(var k=1;k<=2;k++)for(var i=1;i<=2;i++)for(var j=1;j<=2;j++){
+      var s=0;
+      for(var l=1;l<=2;l++){ s+=inv[k][l]*(dg[j][l][i]+dg[i][l][j]-dg[i][j][l]); }
+      C[k][i][j]=0.5*s;
+    }
+    return C;
+  }
+  function normGamma(x,y){
+    var C=christoffelAt(x,y);
+    if(!C) return 0;
+    var s=0;
+    for(var k=1;k<=2;k++)for(var i=1;i<=2;i++)for(var j=1;j<=2;j++){ s+=C[k][i][j]*C[k][i][j]; }
+    return Math.sqrt(s);
+  }
+
+  function recomputeDensity(){
+    density=[]; maxNorm=0;
+    for(var gy=0; gy<GY; gy++){
+      var row=[];
+      var yy=YMIN+(gy+0.5)/GY*(YMAX-YMIN);
+      for(var gx=0; gx<GX; gx++){
+        var xx=XMIN+(gx+0.5)/GX*(XMAX-XMIN);
+        var n=normGamma(xx,yy);
+        row.push(n);
+        if(n>maxNorm) maxNorm=n;
+      }
+      density.push(row);
+    }
+  }
+  function countAbove(thr){
+    var c=0;
+    for(var gy=0; gy<GY; gy++)for(var gx=0; gx<GX; gx++){
+      if(maxNorm>0 && density[gy][gx]/maxNorm>=thr) c++;
+    }
+    return c;
+  }
+
+  function sx(x){return (x-XMIN)/(XMAX-XMIN)*cssW;}
+  function sy(y){return (YMAX-y)/(YMAX-YMIN)*cssH;}
+  function invX(px){return XMIN+px/cssW*(XMAX-XMIN);}
+  function invY(py){return YMAX-py/cssH*(YMAX-YMIN);}
+  function scalePX(){return cssW/(XMAX-XMIN);}
+
+  function arrow(x1,y1,x2,y2,color,lw){
+    var a=Math.atan2(y2-y1,x2-x1), hl=10;
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hl*Math.cos(a-0.4), y2-hl*Math.sin(a-0.4));
+    ctx.lineTo(x2-hl*Math.cos(a+0.4), y2-hl*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+  function hexToRgb(str){
+    str=(str||'').trim();
+    if(str.charAt(0)==='#'){
+      var h=str.slice(1);
+      if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=str.match(/\d+/g);
+    return m?[+m[0],+m[1],+m[2]]:[0,0,0];
+  }
+
+  var MSGS=[
+    "Flach: hier ist die Metrik ein reiner Pullback flacher Geometrie (g&approx;&delta;), &Gamma;&approx;0. <b>Keine Invariante</b> &mdash; nichts, worauf sich Handeln lohnt. Warte, bis die Steigung (&part;g) anwächst.",
+    "Leicht gekrümmt: ein Teil der Metrik ist abgeleitet, aber die Invariante (&Gamma;) ist noch schwach. <b>Vielleicht weiter warten</b> &mdash; die Pause lohnt sich erst dort, wo |&Gamma;| spürbar ist.",
+    "Der Sweet-Spot: &Gamma; ist hier groß &mdash; die Invariante (die Krümmung) konzentriert sich. <b>Hier handeln:</b> auf dem Invarianten, nicht auf dem flachen Pullback. Genau dort endet die Aufhebung (&part;&part;=0) und es bleibt etwas übrig.",
+    "Starke Krümmung: viel Invariante, hohe Dichte. <b>Handeln</b> &mdash; aber achte, dass du auf dem Invarianten (&Gamma;) stehst, nicht auf dem transienten Rand. Das ist der Punkt maximaler &bdquo;Wann&ldquo;-Wirkung."
+  ];
+
+  function draw(){
+    if(!density) recomputeDensity();
+    var lo=hexToRgb(cssVar('--inv-lo'));
+    var hi=hexToRgb(cssVar('--inv-hi'));
+    var grid=cssVar('--grid'), ell=cssVar('--ellipse'), grad=cssVar('--grad');
+    var base=cssVar('--base'), txt=cssVar('--txt'), hi2=cssVar('--accent');
+    var thr=curThr();
+    ctx.clearRect(0,0,cssW,cssH);
+
+    var cw=cssW/GX, ch=cssH/GY;
+    for(var gy=0; gy<GY; gy++){
+      for(var gx=0; gx<GX; gx++){
+        var n=maxNorm>0? density[gy][gx]/maxNorm:0;
+        var r=Math.round(lo[0]+(hi[0]-lo[0])*n);
+        var g2=Math.round(lo[1]+(hi[1]-lo[1])*n);
+        var b=Math.round(lo[2]+(hi[2]-lo[2])*n);
+        ctx.fillStyle='rgb('+r+','+g2+','+b+')';
+        ctx.fillRect(gx*cw, gy*ch, cw+0.6, ch+0.6);
+      }
+    }
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var gxx=XMIN; gxx<=XMAX+1e-9; gxx+=1){ ctx.beginPath(); ctx.moveTo(sx(gxx),0); ctx.lineTo(sx(gxx),cssH); ctx.stroke(); }
+    for(var gyy=-1.5; gyy<=YMAX+1e-9; gyy+=0.5){ ctx.beginPath(); ctx.moveTo(0,sy(gyy)); ctx.lineTo(cssW,sy(gyy)); ctx.stroke(); }
+
+    ctx.strokeStyle=hi2; ctx.lineWidth=1.5; ctx.globalAlpha=0.85;
+    for(var hgy=0; hgy<GY; hgy++){
+      for(var hgx=0; hgx<GX; hgx++){
+        var n2=maxNorm>0? density[hgy][hgx]/maxNorm:0;
+        if(n2>=thr){ ctx.strokeRect(hgx*cw+1, hgy*ch+1, Math.max(2,cw-2), Math.max(2,ch-2)); }
+      }
+    }
+    ctx.globalAlpha=1;
+
+    var p=point, pxx=sx(p.x), pyy=sy(p.y);
+    var m=metricAt(p.x,p.y);
+
+    ctx.strokeStyle=ell; ctx.lineWidth=2; ctx.beginPath();
+    var s0=null;
+    for(var a=0;a<=Math.PI*2+0.02;a+=0.05){
+      var c=Math.cos(a), s=Math.sin(a);
+      var rad=1/Math.sqrt(Math.max(1e-9, m.g11*c*c + 2*m.g12*c*s + m.g22*s*s));
+      var ex=pxx+scalePX()*rad*c, ey=pyy-scalePX()*rad*s;
+      if(s0===null){ctx.moveTo(ex,ey);s0=1;} else ctx.lineTo(ex,ey);
+    }
+    ctx.closePath(); ctx.stroke();
+
+    var bl=scalePX()*0.55;
+    arrow(pxx,pyy,pxx+bl,pyy,base,2);
+    arrow(pxx,pyy,pxx,pyy-bl,base,2);
+
+    var gl=Math.hypot(m.hx,m.hy);
+    if(gl>1e-6){
+      var L=48;
+      arrow(pxx,pyy,pxx+scalePX()*m.hx/gl*L,pyy-scalePX()*m.hy/gl*L,grad,3);
+    }
+
+    ctx.beginPath(); ctx.arc(pxx,pyy,5,0,Math.PI*2); ctx.fillStyle=txt; ctx.fill();
+
+    update(p,m,thr);
+  }
+
+  function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+  function update(p,m,thr){
+    var localN=normGamma(p.x,p.y);
+    var local01=maxNorm>0? localN/maxNorm:0;
+    var cnt=countAbove(thr);
+    set('rLocal', local01.toFixed(2)+'  (|&Gamma;|='+localN.toFixed(3)+')');
+    set('rG', m.g11.toFixed(3)+' , '+m.g22.toFixed(3)+' , '+m.g12.toFixed(3));
+    set('rSlope', m.hx.toFixed(3)+' , '+m.hy.toFixed(3));
+    set('rCount', cnt+' / '+(GX*GY));
+    set('rThr', (thr*100).toFixed(0)+' %');
+    var band;
+    if(local01<0.15) band=0;
+    else if(local01<0.4) band=1;
+    else if(local01<0.7) band=2;
+    else band=3;
+    var msg=document.getElementById('msg'); if(msg) msg.innerHTML=MSGS[band];
+  }
+
+  function move(e){
+    var r=canvas.getBoundingClientRect();
+    var px=(e.clientX-r.left)*(cssW/r.width);
+    var py=(e.clientY-r.top)*(cssH/r.height);
+    point.x=clamp(invX(px),XMIN,XMAX);
+    point.y=clamp(invY(py),YMIN,YMAX);
+    draw();
+  }
+  canvas.addEventListener('pointerdown',function(e){dragging=true;try{canvas.setPointerCapture(e.pointerId);}catch(_){}move(e);});
+  canvas.addEventListener('pointermove',function(e){if(dragging)move(e);});
+  canvas.addEventListener('pointerup',function(){dragging=false;});
+  canvas.addEventListener('pointercancel',function(){dragging=false;});
+
+  function recompute(){ recomputeDensity(); draw(); }
+  ampSlider.addEventListener('input',function(){ampVal.textContent=curAmp().toFixed(2);recompute();});
+  surfSel.addEventListener('change',function(){recompute();});
+  thrSlider.addEventListener('input',function(){thrVal.textContent=(curThr()*100).toFixed(0)+' %';draw();});
+  document.getElementById('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+  var mo=new MutationObserver(function(){draw();});
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',function(){fit();draw();});
+
+  ampVal.textContent=curAmp().toFixed(2);
+  thrVal.textContent=(curThr()*100).toFixed(0)+' %';
+  fit(); recompute();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologie der Unterscheidung — Form als Invariante des Schnitts</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}var d=s?s==='dark':true;var el=document.documentElement;if(d){el.classList.add('dark');}else{el.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --ink:#1f2430; --muted:#5a6272; --card:#ffffff; --card-ink:#1f2430;
+  --accent:#8a3ffc; --accent2:#2b6cb0; --line:#d8d2c4; --soft:#f0ece1;
+  --canvas-bg:#fffdf8; --grid:#e8e2d4; --ok:#2f8f4e; --warn:#c0392b;
+}
+html.dark{
+  --bg:#12151f; --ink:#e6e8ee; --muted:#9aa3b5; --card:#1a1f2e; --card-ink:#e6e8ee;
+  --accent:#a98bff; --accent2:#5aa9ff; --line:#2a3348; --soft:#161b28;
+  --canvas-bg:#0d1019; --grid:#232b3d; --ok:#5ecb83; --warn:#ff7a6b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Georgia','Times New Roman',serif;
+  background:var(--bg); color:var(--ink); line-height:1.75;
+  transition:background .3s,color .3s; overflow-x:hidden;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+h1{font-size:2.05em;line-height:1.2;margin:18px 0 6px;color:var(--ink);}
+.subtitle{color:var(--muted);font-size:.95em;margin-bottom:6px;letter-spacing:.2px;font-style:italic;}
+.lede{color:var(--muted);font-size:1.02em;margin-bottom:26px;font-style:italic;}
+section{margin:42px 0;scroll-margin-top:20px;}
+h2{font-size:1.5em;color:var(--accent);margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+h3{font-size:1.14em;color:var(--accent2);margin:22px 0 8px;}
+p{margin:0 0 14px;}
+p a,li a{color:var(--accent2);}
+ul{padding-left:22px;margin:0 0 14px;}
+li{margin-bottom:8px;}
+.card{background:var(--card);color:var(--card-ink);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0;}
+.card p:last-child{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-right:6px;vertical-align:middle;}
+.tag.a{background:rgba(138,63,252,.16);color:var(--accent);}
+.tag.b{background:rgba(43,108,176,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.formula{display:block;text-align:center;margin:14px 0;padding:12px;background:var(--soft);border-radius:8px;overflow-x:auto;font-family:'Courier New',monospace;}
+.insight{border-left:4px solid var(--accent);background:var(--soft);padding:12px 18px;border-radius:0 8px 8px 0;font-style:italic;margin:14px 0;color:var(--card-ink);}
+.insight b{font-style:normal;color:var(--accent);}
+table{border-collapse:collapse;margin:14px auto;font-size:.93em;width:100%;}
+th,td{border:1px solid var(--line);padding:7px 12px;text-align:left;}
+th{background:var(--soft);color:var(--accent);}
+.viz-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;}
+#cutCanvas{width:100%;height:auto;display:block;border-radius:8px;cursor:crosshair;background:var(--canvas-bg);border:1px solid var(--line);}
+.btnrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+button.btn{background:var(--accent);color:var(--bg);border:none;padding:9px 18px;border-radius:6px;font-size:.95em;font-weight:bold;cursor:pointer;font-family:inherit;}
+button.btn:hover{opacity:.9;transform:translateY(-1px);}
+button.btn.ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:1em;}
+.prov{display:block;padding:10px 0;border-bottom:1px dashed var(--line);}
+.prov:last-child{border-bottom:none;}
+.prov .src{font-weight:bold;color:var(--accent2);}
+.mono{font-family:'Courier New',monospace;font-size:.95em;}
+@media (max-width:560px){h1{font-size:1.6em;}article{padding:28px 16px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="Farbschema wechseln" onclick="toggleTheme()">◐</button>
+<article>
+
+<h1>Topologie der Unterscheidung<br>Form als Invariante des Schnitts</h1>
+<p class="subtitle">Fusion aus: topology.html ✕ n1-044.html &nbsp;(Runde 2)</p>
+<p class="lede">Die Mark, die in das Leere gesetzt wird, ist ein topologischer Akt: Sie zieht eine Grenze, und die Invarianten dieser Grenze — Verbundenheit, Löcher, Eulers χ — sind die Form, die bleibt, während das Ungeteilte (Quality) unwiederbringlich zerschnitten wird.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Texte drehen sich um denselben Urakt — eine Operation auf einem ungeteilten Grund — und um dieselbe Frage: <em>Was am Ergebnis ist wirklich?</em> B (<em>n1-044</em>) nennt den Urakt die <strong>Unterscheidung / den Schnitt</strong> (Spencer-Browns Mark, PirSIGs Messer) auf dem Ungeteilten (Leeres / Quality). A (<em>topology.html</em>) nennt den <em>selben</em> Urakt anders: das Ziehen einer <strong>Grenze</strong> zwischen Innen und Außen — die elementare topologische Operation — und fragt, welche Eigenschaften des Ergebnisses <em>alle</em> Verformungen überstehen. Die fusionierte These lautet: <strong>Der Schnitt ist ein topologischer Operator, und „Form" ist genau die Menge der Invarianten, die dieser Schnitt hinterlässt.</strong></p>
+<p>Was B als <strong>FORM</strong> bezeichnet (die erzeugte Struktur, die Logik), ist in der Sprache von A die <strong>topologische Invariante</strong> des Schnitt-Raums: die verbundenen Komponenten (β₀), die Löcher (β₁), der Eulersche Charakteristik χ = V − E + F, die Fundamentalgruppe π₁. Das sind genau die Dinge, die keine Verformung des Schnitts verändern kann — weshalb A's Losung „Struktur statt Form" und B's „der Schnitt ist beliebig, nur die tiefere Struktur zählt" denselben Satz sind: Die exakte Geometrie eines Schnitts ist Rauschen; sein invarianter Skelett-Kern ist die Form.</p>
+<p>Was B als <strong>QUALITY</strong> bezeichnet (die Präsenz, die jeder Schnitt kostet), ist in der Sprache von A die <strong>Verbundenheit des Grundes vor dem Schnitt</strong>. Das Ungeteilte ist ein einziger zusammenhängender, kontrahierbarer Baustein (β₀ = 1, χ = 1). Ein Schnitt kann die Betti-Struktur nur <em>vergrößern</em> (Regionen/Löcher erzeugen) und kann die ursprüngliche Verbundenheit nie wiederherstellen — „der Schnitt ist ein Verlust" ist daher keine Metapher, sondern eine monotone, irreversible topologische Aussage: der Homotopietyp ändert sich in eine Richtung. Die Unterscheidung ist zugleich Gewinn (neue Invarianten, FORM↑) und unwiederbringlicher Verlust (die Verbundenheit des Grundes, QUALITY↓) — ein Akt, zwei Register, jetzt mit exaktem topologischem Gehalt.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+
+<h3>1. Ist der Grundakt ein Verlust — oder verlustfrei?</h3>
+<div class="card">
+<p><span class="tag b">B · n1-044</span> Jeder Schnitt <em>kostet</em> Präsenz (Quality↓). Der Urakt ist „Abfall vom Echten": Quality liegt <em>vor</em> der Teilung, und jede Analyse entfernt uns von der einen Wahrheit. Der Schnitt ist ein Verlust.</p>
+<p><span class="tag a">A · topology</span> Die elementare Operation — die <em>kontinuierliche Verformung</em> (Homöomorphismus) — ist <em>verlustfrei</em>: Sie ändert nichts Topologisches. „Dehnen, Biegen, Verdrehen" ist kostenlos; es bleibt in derselben Äquivalenzklasse, es entsteht nichts und geht nichts verloren.</p>
+<p><span class="tag x">Spannung</span> B's Urakt (der Schnitt) kostet. A's Fundament-Operation (die Verformung) erhält. — Der Knackpunkt: meinen beide dieselbe Operation? B schneidet (erzeugt eine Grenze), A verformt (bleibt in einer Klasse). Das ist eine echte, nicht nur scheinbare Divergenz darüber, <em>welcher</em> Akt fundamental ist.</p>
+</div>
+
+<h3>2. Ist das Ungeteilte leer oder gefüllt — und ist es überhaupt bestimmt?</h3>
+<div class="card">
+<p><span class="tag b">B · n1-044</span> Der Grund ist <em>undeterminiert</em>: leeres Nichts (Spencer-Browns Void) oder volle Präsenz (Pirsigs Quality, „das Vollste") — je nach Register. Er wird <em>absichtlich</em> nicht auf einen bestimmten Zustand festgenagelt.</p>
+<p><span class="tag a">A · topology</span> Formalisiert ist das Ungeteilte ein <em>bestimmtes</em> Objekt: der indiskrete / kontrahierbare Raum — ein einziger zusammenhängender, einfach zusammenhängender Klumpen ohne Löcher (β₀ = 1, alle höheren Betti 0, χ = 1). Ein realer, zählbarer Raum — weder „Nichts" noch „Alles".</p>
+<p><span class="tag x">Spannung</span> B hält den Grund bewusst offen/undeterminiert; A nagle ihn auf einen konkreten (kontrahierbaren) Raum fest.</p>
+</div>
+
+<h3>3. Ist die formale Klassifikation vollständig — oder offen?</h3>
+<div class="card">
+<p><span class="tag a">A · topology</span> Die Klassifikation der geschlossenen Flächen ist <em>vollständig</em>: Jede geschlossene Fläche ist orientierbar (Genus) oder nicht-orientierbar, festgelegt durch Orientierbarkeit + χ. Und die Sätze (Brouwer, Hairy Ball, Poincaré–Hopf) liefern <em>garantierte</em> Existenz. Formale Topologie ist über der Form abgeschlossen und entscheidbar.</p>
+<p><span class="tag b">B · n1-044</span> Formalisierung ist <em>reduktiv und divergent</em>: Die Anzahl rationaler Hypothesen ist unendlich und wächst mit jedem Experiment („Wissenschaft multipliziert, statt zu konvergieren"); der formale Schnitt erreicht die Quality nie.</p>
+<p><span class="tag x">Spannung</span> A feiert Vollständigkeit/Entscheidbarkeit; B warnt, dass Formalisierung divergiert und das Reale nie erfasst.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<h3>1. Zwei verschiedene Operationen</h3>
+<p>Die <em>Verformung</em> (A) bleibt <em>innerhalb</em> einer topologischen Klasse — sie ist ein Koordinatenwechsel auf derselben Form, daher verlustfrei. Der <em>Schnitt</em> (B) <em>wechselt</em> die Klasse — er zieht eine neue Grenze und erzeugt damit eine Region/ein Loch, daher irreversibel und kostenbehaftet. A behauptet nie, der <em>Schnitt</em> sei verlustfrei — nur die <em>Verformung</em>. <strong>Fusioniert:</strong> Innerhalb einer Form ist alles frei (man kann sie beliebig umgestalten); <em>zwischen</em> Formen ist der Schnitt der eine kostenvolle, einweg-Akt. Gewinn und Verlust koexistieren, weil sie auf verschiedene Züge treffen.</p>
+
+<h3>2. Das Ungeteilte ist der kontrahierbare Raum</h3>
+<p>Das Ungeteilte ist der kontrahierbare Raum (β₀ = 1, χ = 1): Er hat <em>keine</em> Löcher zu zählen → „leer an Struktur" (die Void-Lesart); und er ist <em>maximal</em> verbunden, nichts ist davongeschnitten → „voll an Präsenz" (die Quality-Lesart). „Leer an Struktur" und „voll an Verbundenheit" sind derselbe Gegenstand aus den zwei Registern. Er ist „undeterminiert" (B) nicht aus Mysterium, sondern weil er <em>maximal symmetrisch</em> ist (keine Grenze, kein bevorzugter Punkt, kein Loch) — formale Symmetrie = erfahrungsmäßige Fülle. B's undeterminierter Grund <em>ist</em> A's kontrahierbarer Raum.</p>
+
+<h3>3. Vollständig über Form, stumm über Quality — die Invariante als verlustbehaftete Abbildung</h3>
+<p>A's Vollständigkeit gilt <em>über dem Bereich der Form</em>: Die Invarianten (Orientierbarkeit + χ, bzw. die Betti-Zahlen) klassifizieren wirklich jeden möglichen Schnitt-Raum bis auf Verformung. B's Unvollständigkeit gilt <em>über Quality</em>: Keine Invariante stellt das Ungeteilte wieder her. Das deckt sich, weil eine topologische Invariante eine <strong>Many-to-One-Abbildung</strong> ist — unendlich viele verschiedene Schnitt-Konfigurationen (differierend in ihrer „Quality"/Detail) teilen sich dieselbe Invariante (dieselbe „Form"). Die unendliche Faser <em>ist</em> B's „Hypothesen-Explosion" (unendlich viele formale Schnitte, keiner stellt das Ungeteilte her); das verworfene Detail <em>ist</em> die verlorene Quality. <strong>Fusioniert:</strong> vollständig und entscheidbar über der Form; stumm über Quality — denn „Vollständigkeit" ruht auf einer verlustbehafteten Komprimierung.</p>
+
+<div class="insight"><b>Gesamtfolgerung:</b> Die Unterscheidung ist ein topologischer Urakt. Innerhalb einer Form ist jede Verformung frei; der Schnitt — der Übergang <em>zwischen</em> Formen — ist der eine kostenvolle, irreversibler Schritt. Das Ungeteilte ist der kontrahierbare Raum: formal ohne Struktur, erfahrungsmäßig voll. Die Invariante ist eine verlustbehaftete Many-to-One-Komprimierung: sie trägt die Form, wirft die Quality weg. <strong>Form = Invariante. Quality = die verworfene Faser.</strong></div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>Seite A — Topologie: Invarianten statt Form</h3>
+<p>Alles, was bei einer kontinuierlichen Verformung übersteht (dehnen/biegen/verdrehen, ohne zu reißen oder zu kleben), ist <em>topologisch</em>. Fundament ist die offene Menge: Stetigkeit heißt „das Urbild jeder offenen Menge ist offen" — eine Topologie ist die <em>Wahl</em>, welche Teilmengen „offen" sind (ein Interface, das Operationen festlegt, ohne Abstand/Implementierung). Ein <strong>Homöomorphismus</strong> = Bijektion + stetig + stetige Umkehrung (wobei stetige Bijektion <em>nicht</em> automatisch ein Homöomorphismus ist, z.&nbsp;B. [0,&thinsp;2π) → Kreis). Die <strong>Invarianten</strong>, die Räume trennen: Zusammenhang, Kompaktheit, Genus, <span class="mono">χ = V − E + F = 2 − 2g</span> (Kugel 2, Torus 0), Fundamentalgruppe π₁ (π₁(S¹) = ℤ via Windungszahl; Torus ℤ×ℤ), Betti-Zahlen βᵢ. <strong>Klassifikation:</strong> Jede geschlossene Fläche ist orientierbar (Genus) oder nicht-orientierbar — festgelegt durch Orientierbarkeit + χ. <strong>Existenz-Sätze:</strong> Brouwer (Fixpunkt in der Scheibe), Hairy Ball (kein nichtverschwindendes Feld auf S²), Poincaré–Hopf (Σ Indizes = χ). <strong>Anwendungen:</strong> topologische Datenanalyse / persistente Homologie (Merkmale entstehen und sterben, wenn der Radius ε wächst; persistente = echte Struktur), topologische Isolatoren (Nobelpreis 2016), DNA, Robotik (Konfigurationsraum Tⁿ), Quantencomputing (Anyonen/Braiding). Leitgedanke (Thom): „vom Lokalen zum Globalen".</p>
+
+<h3>Seite B — Der Schnitt: Form erzeugt, Quality kostet</h3>
+<p>Ein Ungeteiltes; die <strong>Mark / der Schnitt</strong> als Urakt. Zwei Axiome — <strong>Ruf</strong> (⌐⌐ = ⌐) und <strong>Kreuzen</strong> (⌐(⌐) = ∅) — erzeugen die gesamte Boolesche Algebra. Zwei Register: <strong>FORM</strong> (Erzeugung, Struktur, Logik) vs. <strong>PRÄSENZ/QUALITY</strong> (Unmittelbarkeit, Gefühl). Die Analyse ist ein Messer: jeder Schnitt erzeugt Kategorien — Kategorien sind aber menschliche Entscheidungen, keine Naturgesetze. Phædrus: die Anzahl rationaler Hypothesen ist unendlich und <em>wächst</em> (divergent). Der formale Schatten: ein Eingangsparameter C (Anzahl der Unterscheidungen) steuert zwei Größen — <span class="mono">Q = Q₀·e^(−k·C)</span> (sinkt) und <span class="mono">F = 100·(1 − e^(−k′·C))</span> (steigt); dazu das 2ⁿ-Wachstum der Kategorien.</p>
+
+<h3>Die fusionierte Verknüpfung (die eigentliche Synthese)</h3>
+<ul>
+<li><strong>Der Schnitt ist ein topologischer Operator.</strong> Eine Mark/ein Schnitt zieht eine Grenze; eine Grenze ist das elementare topologische Objekt. Die Menge aller Schnitte ist ein Raum; sein invarianter Skelett-Kern (Homotopie-/Homologietyp) ist die „Form".</li>
+<li><strong>Form = Invariante; Geometrie = Schatten.</strong> Beide Seiten sagen: die exakte Geometrie zählt nicht. Fusioniert: „Form" ist <em>genau</em> die topologische Invariante — jener Teil der Schnitt-Konfiguration, den keine Verformung ändert.</li>
+<li><strong>Quality = Verbundenheit, monotone verloren.</strong> Vor dem Schnitt: ein zusammenhängender kontrahierbarer Baustein (β₀ = 1, β₁ = β₂ = 0, χ = 1). Schnitte vergrößern die Betti-Struktur nur; die Verbundenheit geht beim ersten Schnitt verloren und kommt nie zurück. Q↓/F↑ ist das erfahrungsmäßige Modell; das mathematische ist βᵢ(C) monoton nicht-fallend + Verbundenheit verloren ab C ≥ 1.</li>
+<li><strong>2ⁿ (logische Möglichkeiten) vs. βᵢ (reale Invarianten).</strong> B's 2ⁿ zählt logische Zustände (der Boolesche Möglichkeitsraum); A's βᵢ zählen strukturell reale, verformungs-invariante Merkmale. Die Lücke (2ⁿ ≫ realisierter β) ist die Form/Substanz-Spalte: Die meisten logischen Möglichkeiten überleben nicht als echte invariante Struktur.</li>
+<li><strong>Vollständigkeit = verlustbehaftete Many-to-One-Abbildung.</strong> Die Invariante hat unendliche Fasern (∞ Schnitte → 1 Invariante) = die Hypothesen-Explosion; das verworfene Detail = die verlorene Quality. Vollständig &amp; entscheidbar über Form, stumm über Quality.</li>
+<li><strong>Lokal → global, mit Kehrseite.</strong> Thom: Topologie rekonstruiert globale Invarianten aus lokalen Daten (offenen Mengen, Nachbarschaften). B's Kehrseite: Lokale Schnitte rekonstruieren die <em>Form</em> (gewonnen, vollständig), aber nie die <em>Quality</em> (das Ungeteilte). Lokale Schnitte → globale Form (vollständig); → globale Quality (nicht wiederherstellbar).</li>
+<li><strong>Persistente Homologie als der operative Schmelztiegel.</strong> TDA ist der Algorithmus, der aus Schnitten/Punkten — bei wachsender Auflösung ε — beobachtet, welche topologischen Merkmale <em>entstehen</em> und <em>sterben</em>; persistente Merkmale = echte Invarianten (Form), kurzlebige = willkürlich (Quality). Damit wird B's Programm — echte Struktur von willkürlichen Schnitten trennen — <em>operationalisiert</em>.</li>
+</ul>
+
+<table>
+<tr><th>Register</th><th>Seite A (Topologie)</th><th>Seite B (Schnitt/Quality)</th><th>Fusioniert</th></tr>
+<tr><td>Urakt</td><td>Grenze ziehen / Verformung</td><td>Mark / Schnitt ins Leere</td><td>topologischer Operator</td></tr>
+<tr><td>Ungeteiltes</td><td>kontrahierbarer Raum, β₀=1, χ=1</td><td>Void / Quality (undeterminiert)</td><td>kontrahierbar = leer an Struktur, voll an Verbindung</td></tr>
+<tr><td>„Form"</td><td>Invariante (βᵢ, χ, π₁)</td><td>erzeugte Struktur / Logik</td><td>Form = Invariante</td></tr>
+<tr><td>„Quality"</td><td>Verbundenheit vor dem Schnitt</td><td>Präsenz, die verloren geht</td><td>Quality = verworfene Faser</td></tr>
+<tr><td>Gewinn/Verlust</td><td>Verformung verlustfrei</td><td>Schnitt kostet Präsenz</td><td>innerhalb Klasse frei; zwischen Klassen einweg</td></tr>
+<tr><td>2ⁿ</td><td>—</td><td>Boolesche Zustände</td><td>logische Möglichkeiten vs. realisierter β</td></tr>
+<tr><td>Vollständigkeit</td><td>Klassifikation abgeschlossen</td><td>divergent, Quality offen</td><td>Many-to-One: vollständig über Form, stumm über Quality</td></tr>
+</table>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung — Das Ungeteilte schneiden, Invarianten zählen</h2>
+<p>Die Punktewolke ist das <strong>Ungeteilte</strong> (Quality / der kontrahierbare Raum, β₀ = 1). <strong>Klicke in das Feld</strong>, um einen Schnitt (eine Mark/Linie) zu setzen. Jeder Schnitt teilt die Wolke neu ein — jede <em>Region</em> ist eine verbundene Komponente, also eine echte Invariante (β₀). Oben links laufen zwei Zeiger: <span style="color:var(--accent2)"><strong>Quality</strong></span> (Verbundenheit/Präsenz, sinkt) und <span style="color:var(--accent)"><strong>Form</strong></span> (Struktur/Invariante, steigt) — B's Q↓/F↑. Daneben der Kontrast: <em>reale Regionen β₀</em> (was bleibt, nach A) vs. <em>formale Zustände 2ⁿ</em> (was logisch möglich ist, nach B). Derselbe Akt, drei Lesarten — die Fusion in einem Bild.</p>
+
+<div class="formula">Q = Q₀·e^(−k·C) &nbsp;|&nbsp; F = 100·(1 − e^(−k′·C)) &nbsp;&nbsp;&nbsp; (k = 0,35;&nbsp; k′ = 0,5) &nbsp;&nbsp;&nbsp; β₀ = #realisierte Regionen ≤ 2^C</div>
+
+<div class="viz-box">
+<canvas id="cutCanvas" width="760" height="440"></canvas>
+<div class="btnrow">
+<button class="btn" id="cutReset">↺ Neu (Ungeteiltes)</button>
+<button class="btn ghost" id="cutAuto">+ 1 Schnitt (zufällig)</button>
+<span id="cutHint" style="color:var(--muted);font-size:.9em;">Klicken = Schnitt / Mark setzen.</span>
+</div>
+</div>
+<div class="insight"><b>Was du siehst:</b> Je mehr du schneidest, desto klarer wird die invariante Struktur (β₀ / Form↑) — und desto matter wird die unmittelbare Verbundenheit (Quality↓). 2ⁿ wächst exponentiell (B's formale Zustände), aber nur ein Bruchteil davon wird zu <em>realen</em> Regionen (A's Invariante): die Lücke ist die Form/Substanz-Spalte. Topologie würde sagen: Du baust einen Raum mit messbaren Invarianten. PirSIG würde sagen: Du entfernst dich vom Motorrad „da draußen". Beides ist derselbe Handgriff.</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<span class="prov"><span class="src">A — <a href="../../topology.html">topology.html</a></span><br>Interaktive Einführung in die Topologie (Original, Englisch): Verformungs-Invarianz, offene Mengen &amp; Stetigkeit, Homöomorphismen, χ = V − E + F, Klassifikation der Flächen, π₁, Fixpunktsätze (Brouwer / Hairy Ball / Poincaré–Hopf), TDA / persistente Homologie.</span>
+<span class="prov"><span class="src">B — <a href="../n1-044.html">n1-044.html</a></span><br>Runde-1-Fusion „Unterscheidung &amp; Quality" (Spencer-Brown × Pirsig): das Ungeteilte, die Mark/Schnitt als Urakt, die Axiome Ruf/Kreuzen, Form vs. Präsenz, Q↓/F↑, das 2ⁿ-Wachstum.</span>
+</section>
+
+</article>
+
+<script>
+function toggleTheme(){
+  var d=document.documentElement;
+  var dark=d.classList.toggle('dark');
+  try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+}
+
+(function(){
+  var canvas=document.getElementById('cutCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height;
+  var N=1200, K=0.35, Kp=0.5, MAXC=18;
+  var points=[], cuts=[];
+  var hues=[38,18,200,330,150,265,60,210,280,120,230,25,190,350,210,300,90,45];
+  function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function hash(h){h=Math.imul(h^61,0x27d4eb2f);h^=h>>>15;return Math.abs(h);}
+  function init(){
+    points=[];
+    for(var i=0;i<N;i++) points.push({x:Math.random(),y:Math.random()});
+    cuts=[];
+    draw();
+  }
+  function regionCode(p,ci){
+    var code=0;
+    for(var k=0;k<ci;k++){
+      var c=cuts[k];
+      var side=(p.x-c.px)*c.nx + (p.y-c.py)*c.ny;
+      if(side>0) code|=(1<<k);
+    }
+    return code;
+  }
+  function distinctRegions(ci){
+    var seen={};
+    for(var i=0;i<points.length;i++){
+      seen[regionCode(points[i],ci)]=1;
+    }
+    return Object.keys(seen).length;
+  }
+  function fmt2n(C){
+    var v=Math.pow(2,C);
+    if(v<100000) return (''+Math.round(v));
+    return v.toExponential(2);
+  }
+  function gauge(x,y,w,h,val,label,color){
+    ctx.fillStyle='rgba(128,128,128,0.20)'; ctx.fillRect(x,y,w,h);
+    ctx.fillStyle=color; ctx.fillRect(x,y,w*Math.max(0,Math.min(100,val))/100,h);
+    ctx.fillStyle=css('--muted')||'#9aa3b5'; ctx.font='11px Georgia'; ctx.textAlign='left';
+    ctx.fillText(label+' '+val.toFixed(0)+'%', x, y-5);
+  }
+  function draw(){
+    ctx.fillStyle=css('--canvas-bg')||'#0d1019'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=css('--grid')||'#232b3d'; ctx.lineWidth=1;
+    for(var gx=0;gx<=W;gx+=48){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(var gy=0;gy<=H;gy+=48){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+    var ci=cuts.length;
+    for(var i=0;i<points.length;i++){
+      var p=points[i];
+      var code=regionCode(p,ci);
+      var hue=hues[hash(code)%hues.length];
+      ctx.fillStyle='hsl('+hue+',72%,58%)';
+      ctx.fillRect(p.x*W, p.y*H, 2, 2);
+    }
+    var accent=css('--accent')||'#a98bff';
+    ctx.lineWidth=2;
+    for(var k=0;k<ci;k++){
+      var c=cuts[k];
+      ctx.strokeStyle=accent; ctx.beginPath();
+      var len=1600, dx=Math.cos(c.angle), dy=Math.sin(c.angle);
+      ctx.moveTo(c.px*W-len*dx, c.py*H-len*dy);
+      ctx.lineTo(c.px*W+len*dx, c.py*H+len*dy);
+      ctx.stroke();
+    }
+    var C=ci;
+    var quality=100*Math.exp(-K*C);
+    var form=100*(1-Math.exp(-Kp*C));
+    var R=distinctRegions(C);
+    gauge(20,34,250,13,quality,'Quality (Ungeteilt/verbunden)',css('--accent2')||'#5aa9ff');
+    gauge(20,64,250,13,form,'Form (Invariante/Struktur)',accent);
+    ctx.fillStyle=css('--muted')||'#9aa3b5'; ctx.font='12px Georgia'; ctx.textAlign='left';
+    ctx.fillText('Schnitte C='+C+'    reale Regionen β₀='+R+'    formale Zustände 2^C='+fmt2n(C), 20, 100);
+    ctx.fillStyle=css('--ink')||'#e6e8ee'; ctx.font='12px Georgia';
+    ctx.fillText('Jeder Schnitt = Unterscheidung: erzeugt Invariante (β₀↑), kostet Verbundenheit (Quality↓).', 20, H-14);
+  }
+  function addCut(nx,ny){
+    if(cuts.length>=MAXC) return;
+    var i=cuts.length;
+    var angle=i*0.618+0.35;
+    cuts.push({px:nx,py:ny,angle:angle,nx:-Math.sin(angle),ny:Math.cos(angle)});
+    draw();
+  }
+  canvas.addEventListener('click',function(e){
+    var rect=canvas.getBoundingClientRect();
+    var x=(e.clientX-rect.left)/rect.width;
+    var y=(e.clientY-rect.top)/rect.height;
+    x=Math.max(0,Math.min(1,x)); y=Math.max(0,Math.min(1,y));
+    addCut(x,y);
+  });
+  var rb=document.getElementById('cutReset');
+  if(rb) rb.addEventListener('click',function(){ cuts=[]; draw(); });
+  var ab=document.getElementById('cutAuto');
+  if(ab) ab.addEventListener('click',function(){ addCut(0.2+0.6*Math.random(),0.2+0.6*Math.random()); });
+  new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  init();
+})();
+</script>
+</body>
+</html>

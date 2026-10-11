@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das sich-erschließende Feld und seine persistente Topologie (Fusion R2)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --bg-soft:#f1ede2; --text:#20242e; --muted:#5c6470;
+    --accent:#2f6fb0; --accent2:#b98800; --good:#0a7a4a; --bad:#c0392b;
+    --card-bg:rgba(20,25,35,.035); --card-border:rgba(20,25,35,.14); --line:rgba(20,25,35,.16);
+    --viz-field:#0d7d8c; --viz-loop:#c0392b; --viz-da:#b98800;
+    --viz-b0:#2f6fb0; --viz-b1:#c0392b; --viz-knee:#0a7a4a;
+    --viz-noise:#8a93a3; --viz-canvas-bg:#fbf9f3;
+  }
+  html.dark{
+    --bg:#0d1017; --bg-soft:#12161f; --text:#e7e2d6; --muted:#98a0ad;
+    --accent:#6cc0ff; --accent2:#ffd766; --good:#4fe0a0; --bad:#ff7a8a;
+    --card-bg:rgba(255,255,255,.04); --card-border:rgba(255,255,255,.13); --line:rgba(255,255,255,.15);
+    --viz-field:#26c6da; --viz-loop:#ff7a8a; --viz-da:#ffd766;
+    --viz-b0:#6cc0ff; --viz-b1:#ff7a8a; --viz-knee:#4fe0a0;
+    --viz-noise:#8890a0; --viz-canvas-bg:#0b0e15;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Georgia','Iowan Old Style',serif;
+    line-height:1.72;overflow-x:hidden;
+    transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px;position:relative;}
+  h1{font-size:2.0em;line-height:1.22;color:var(--accent);margin-bottom:10px;padding-right:70px;}
+  .sub{color:var(--muted);font-style:italic;font-size:1.02em;}
+  .sub b{color:var(--accent2);font-style:normal;}
+  .tagline{margin-top:14px;font-size:.96em;color:var(--muted);line-height:1.6;}
+  .tagline b{color:var(--text);}
+  .theme-btn{
+    position:fixed;top:14px;right:16px;z-index:50;
+    background:var(--card-bg);color:var(--text);
+    border:1px solid var(--card-border);border-radius:20px;
+    padding:7px 14px;cursor:pointer;font-size:.85em;font-family:inherit;
+    backdrop-filter:blur(4px);
+  }
+  section{margin:0 0 42px;}
+  h2{font-size:1.5em;color:var(--accent2);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  h3{font-size:1.12em;margin:22px 0 8px;color:var(--accent);}
+  p{margin:0 0 14px;}
+  .card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:16px 18px;margin:14px 0;}
+  .card h4{color:var(--accent2);margin:0 0 6px;font-size:1.04em;}
+  .lbl{font-weight:bold;}
+  .lbl.a{color:var(--accent);}
+  .lbl.b{color:var(--accent2);}
+  code{font-family:ui-monospace,monospace;font-size:.9em;background:var(--card-bg);padding:1px 5px;border-radius:4px;border:1px solid var(--card-border);}
+  .eq{font-family:ui-monospace,monospace;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:.95em;overflow-x:auto;white-space:pre;line-height:1.55;}
+  .chain{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:8px 0 4px;}
+  .chain .node{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:7px 10px;font-size:.84em;font-weight:600;line-height:1.3;}
+  .chain .node small{display:block;font-weight:400;color:var(--muted);font-size:.82em;}
+  .chain .arr{color:var(--muted);align-self:center;}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9em;}
+  th,td{border:1px solid var(--card-border);padding:9px 11px;text-align:left;vertical-align:top;}
+  th{background:var(--card-bg);color:var(--text);}
+  .kv{font-weight:700;color:var(--accent);}
+  .kv2{font-weight:700;color:var(--accent2);}
+
+  .viz-shell{background:var(--bg-soft);border:1px solid var(--card-border);border-radius:14px;padding:16px;margin:14px 0;}
+  .viz-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .viz-row canvas{flex:1;min-width:300px;height:420px;display:block;border-radius:10px;background:var(--viz-canvas-bg);border:1px solid var(--card-border);}
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;}
+  .ctrl label{font-size:.88em;color:var(--muted);}
+  input[type=range]{
+    flex:1;min-width:170px;-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;outline:none;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+  }
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent2);cursor:pointer;border:2px solid var(--bg);}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent2);cursor:pointer;border:2px solid var(--bg);}
+  .btn{background:var(--card-bg);color:var(--text);border:1px solid var(--card-border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85em;font-family:inherit;}
+  .readout{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .readout .col{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:10px 12px;}
+  .readout .col.a{border-left:4px solid var(--accent);}
+  .readout .col.b{border-left:4px solid var(--accent2);}
+  .readout .st{color:var(--accent2);font-weight:bold;font-size:.98em;}
+  .col.a .st{color:var(--accent);}
+  .readout .ds{color:var(--muted);margin-top:5px;font-size:.92em;}
+  .statrow{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:.9em;}
+  .statrow span b{color:var(--text);}
+  .statrow .c0 b{color:var(--viz-b0);}
+  .statrow .c1 b{color:var(--viz-b1);}
+  .statrow .ck b{color:var(--viz-knee);}
+  .note{font-size:.85em;color:var(--muted);margin-top:12px;}
+  .prov{display:flex;gap:16px;flex-wrap:wrap;}
+  .prov .card{flex:1;min-width:240px;}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:bold;}
+  .prov a:hover{text-decoration:underline;}
+  .prov p{font-size:.92em;color:var(--muted);margin:8px 0 0;}
+  .pill{display:inline-block;font-size:.72em;letter-spacing:.04em;border:1px solid var(--card-border);border-radius:12px;padding:2px 9px;margin-right:6px;color:var(--muted);}
+  footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.85em;}
+  @media(max-width:560px){.readout{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeToggle" type="button">&#9728; Hell</button>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Das sich-erschließende Feld und seine persistente Topologie</h1>
+    <div class="sub">Fusion aus: <b>n1-032.html</b> &#10005; <b>n1-041.html</b> &nbsp;(Runde 2)</div>
+    <div class="tagline">
+      <b>n1-032</b> (phänomenal/ontologisch) hält das Eine für ein <b>sich-erschließendes phänomenales Grundfeld</b> —
+      Sein = Bewusstsein, dessen Individuen sich-abgrenzende <b>„Da“ (Dasein)</b> sind und dessen Achse die <b>Zeitlichkeit</b>
+      (drei gleichursprüngliche Ekstasen). <b>n1-041</b> (formal/topologisch) hält dasselbe Eine für eine <b>strukturierte
+      Punktmenge</b>, die sich in einer <b>persistenten topologischen Signatur</b> (β₀, β₁, Persistenz) zeigt, deren Achse die
+      <b>Skala ω</b> ist. Die Fusion: <b>das phänomenale Feld hat eine persistente Topologie — A liefert die Ontologie
+      (das Eine ist Selbst-Erschließung), B die Form-Sprache (diese Erschließung ist eine messbare, skaleninvariante
+      Signatur); das „Da“ ist die Schwelle ω, an der das Feld beständig ist oder zerfällt.</b>
+    </div>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere sind <b>Monismen</b>: Sie reduzieren die Vielheit der Dinge auf <em>ein</em> darunterliegendes Eine
+      und beide sagen, dass die <em>Form/Struktur</em> dem einzelnen Punkt (Wort / Hirnareal / Subjekt) vorausgeht. Sie
+      unterscheiden sich aber im <em>Register</em>, von dem aus sie dieses Eine benennen. <span class="lbl a">A (n1-032)</span>
+      nennt es <em>ontologisch-phänomenologisch</em>: Das Eine ist ein <b>phänomenales Grundfeld</b>, dessen eigentliche
+      Identität <b>Selbst-Erschließung</b> (Sorge/Existenz) ist; die Individuen sind <b>sich-abgrenzende „Da“ (Dasein)</b>,
+      und seine „Zeit“ sind die drei gleichursprünglichen Ekstasen — Sein-zum-Tode (Zukunft), Geworfenheit (Gewesenheit),
+      Verfallen (Gegenwart). <span class="lbl b">B (n1-041)</span> nennt dasselbe Eine <em>formal-topologisch</em>: Das Eine ist eine
+      <b>strukturierte Punktmenge</b>, deren Identität eine <b>persistente topologische Signatur</b> ist — β₀ (Cluster),
+      β₁ (beständige Schleifen), Persistenz (Tod − Geburt) — und deren „Zeit“ die <b>Skala ω</b> ist, über die die Struktur
+      sich filtert.</p>
+    <p>Die fusionierte These ist eine einzige, zwei Mal gesehene Position: <strong>Das Eine ist zugleich phänomenal und
+      formal.</strong> Das sich-erschließende phänomenale Feld (A) <em>hat</em> eine persistente Topologie (B) — und diese
+      Topologie ist nichts Zusätzliches am Feld, sondern <em>die Art, wie sich das Feld in und als</em> der Horizont eines
+      sich-abgrenzenden Da zeigt. <b>A liefert die Ontologie</b> (das Eine ist phänomenale Selbst-Erschließung, nicht Materie);
+      <b>B liefert die Form-Sprache</b> (diese Selbst-Erschließung hat eine messbare, skaleninvariante Signatur, die man an
+      <em>jedem</em> realisierten System ablesen kann — Sprache, Konnektom, Kosmos). Der <b>Da</b> (A) ist dabei genau die
+      <b>Schwelle ω</b> (B), an der die Features des Feldes geboren, beständig oder todkrank sind.</p>
+    <p>Und die beiden „Zustände“ fallen zusammen: <b>Eigentlichkeit</b> (A: vorlaufend zum Tode, sich ergreifend)
+      entspricht <b>hoher Persistenz</b> (B: fern der Diagonale = Signal); <b>das Man / Verfallen</b> (A: abgestandener,
+      uneigentlicher Modus) entspricht <b>Rauschen</b> (B: kurzlebig, nahe der Diagonale); und <b>das Lockern der
+      Dissoziationsgrenze</b> (A: NDE / Psychedelika / Hypoxie → „reichere“ Erfahrung) entspricht <b>ω vergrößern</b> (B:
+      Cluster verschmelzen, die größere Makro-Form erscheint).</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Widerspruch auf der Tiefe <em>kein</em>: Beide sind Monismen, beide setzen Struktur vor den einzelnen Punkt und beide
+      behandeln ihre Achse (Zeit / Skala) als den Ort, an dem das Eine sich entfaltet. Unvereinbare Stellungen nehmen sie
+      aber am <b>Register</b> dieses Einen ein — an drei konkreten Punkten:</p>
+
+    <div class="card">
+      <h4>① Phänomenal vs. Formal — <em>was das Eine ist</em></h4>
+      <p><span class="lbl a">A</span> hält das Eine für <b>phänomenal</b>: es ist wesentlich <em>erlebt</em>, in letzter Instanz
+        „erste Person“; Bewusstsein/Sein geht vor, und das Physische ist <em>sekundär</em> („extrinsische Erscheinung“ der
+        Bewusstseinsaktivität; „weniger Gehirn = mehr Bewusstsein“). <span class="lbl b">B</span> hält dasselbe Eine für eine
+        <b>formale, observatorfreie Invariante</b>: β₀/β₁ rechnet man an einer Punktmenge <em>unabhängig davon, ob irgend etwas
+        sie erlebt</em>; B's ganzes Programm ist <em>Messung &amp; Falsifizierbarkeit</em>, angewandt auf <em>physische</em>
+        Systeme (fMRE-Konnektome, Kosmos). A's Monismus ist <em>qualitativ</em> (Erlebnis grundlegend); B's ist
+        <em>quantitativ</em> (Form/Struktur grundlegend). Die Frage ist: <em>Ist das Eine Erfahrung oder Form?</em></p>
+    </div>
+
+    <div class="card">
+      <h4>② Konstitutives Individuum vs. observatorfreier Befund — <em>die Rolle des „Da“</em></h4>
+      <p><span class="lbl a">A</span> macht das Individuum (Dasein / dissoziiertes Alter) <b>konstitutiv und unverlierbar</b>
+        (Jemeinigkeit): Das Feld erschließt sich <em>nur</em> in und als ein sich-abgrenzendes, zeitliches Da; <em>ohne</em> Da
+        gibt es keine Erschließung, keinen Sinn. <span class="lbl b">B</span> kennt <b>kein Subjekt und keinen Beobachter</b>:
+        Die Punktmenge wird <em>objektiv</em> analysiert; „Features“ (Komponenten, Schleifen) sind keine Agenten, sie werden
+        über ω geboren und sterben <em>unabhängig von jedem Leser</em>. B operiert ausdrücklich auf <em>einer einzigen
+        Ebene</em> — kein Form→Bedeutungs-Faserbündel, keine zweite Ebene. A's konstitutives, irreduzibles
+        „Da“ hat in B <em>kein</em> Gegenstück.</p>
+    </div>
+
+    <div class="card">
+      <h4>③ Konstituierende Zeit vs. deskriptive Skala — <em>der Status der Achse</em></h4>
+      <p><span class="lbl a">A</span>: Die fundamentale Achse ist die <b>Zeitlichkeit</b> — drei <em>gleichursprüngliche</em>
+        Ekstasen; das „Unfalten“ ist <em>Sorge</em>, ein <b>konstitutiver</b> existenzieller Vorgang, der <em>das Sein des
+        Daseins ausmacht</em> (das Dasein <em>ist</em> seine Zeitlichkeit). <span class="lbl b">B</span>: Die fundamentale Achse ist die
+        <b>Skala ω</b> — ein <em>Skalenparameter</em>, über den ein <em>bereits gegebenes, statisches</em> Netz gefiltert wird;
+        die Filtration ist ein <b>mathematisches Lese-Instrument</b>, das eine vorhandene Struktur <em>beschreibt</em>, nicht
+        <em>konstituiert</em> — A: Prozess = Sein, B: Prozess = Beschreibung.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Die Widersprüche fallen weg, wenn man A und B nicht als rivalisierende Aussagen liest, sondern als die <b>zwei
+      komplementären Register</b> (phänomenal/ontologisch und formal/topologisch) <em>eines</em> Monismus — und indem man
+      <b>B's Form-Instrument auf A's phänomenales Feld anwendet</b>. Zu jedem Punkt:</p>
+
+    <div class="card">
+      <h4>① Phänomenal / Formal → das Eine ist phänomenal im Grund und formal in der Signatur</h4>
+      <p>Von A bleibt die <em>These des Grundes</em> (das Eine ist phänomenale Selbst-Erschließung, nicht Materie); von B
+        bleibt das <em>Instrument</em> (dieses Feld hat eine persistente topologische Signatur β₀/β₁ über ω). „Bewusstsein/Sein“
+        (A) und „Form-Sprache / persistente Homologie“ (B) sind <em>zwei Seiten desselben</em>: Das phänomenale Feld <em>ist</em>
+        die Struktur, die B liest; die Selbst-Erschließung (A) <em>ist</em> der Vorgang, in dem die Signatur konstituiert wird.
+        Das Physische ist für die Fusion <em>die realisierte Form</em> des Feldes — nicht dessen Grund (A bleibt voran), aber es
+        ist <em>das, woran die Signatur objektiv ablesbar ist</em> (B bleibt voran).</p>
+    </div>
+
+    <div class="card">
+      <h4>② Konstitutives Da / observatorfrei → das „Da“ ist die Schwelle ω (die Schnittstelle)</h4>
+      <p>B's observatorfreie Analyse ist <em>korrekt</em>: Die Signatur existiert unabhängig von jedem Leser. A ergänzt die
+        <em>konstitutive</em> Ebene: Die Signatur wird erst <em>erlebt</em> (Sinn, Welt) <em>an</em> einem sich-abgrenzenden Da.
+        Fusion: <strong>Der Da ist (i) die konstitutive, selbst-abgrenzende Stelle, in der sich das Feld als Welt/Erfahrung
+        zeigt (A), und (ii) die Schwelle ω, an der die topologischen Features geboren / beständig / tot sind (B).</strong>
+        B's fehlendes Subjekt ist kein Widerspruch, sondern die <em>objektive Ebene</em> derselben Struktur, die A <em>von der
+        Seite des Lesers</em> vollzieht — exakt wie B selbst sein fehlendes Form→Bedeutungs-Faserbündel als „nur die Basis“
+        deutet.</p>
+    </div>
+
+    <div class="card">
+      <h4>③ Konstituierende Zeit / deskriptive Skala → Zeit (A) <em>ist</em> die Skala-achse ω (B)</h4>
+      <p>Die drei Ekstasen des Daseins sind die <em>Skalenstruktur</em>, über die sich die Form des Feldes persistiert:
+        A's Sorge (Sich-vorweg / Schon-sein-in / Sein-bei = Zukunft / Gewesenheit / Gegenwart) korrespondiert zur
+        <em>Geburt–Beständigkeit–Tod</em> der Features über ω. Die Fusion hält, dass die formale Achse ω das
+        <em>objektive Gerüst</em> der phänomenalen Achse Zeit ist: <strong>Das Dasein <em>ist</em> seine Zeitlichkeit (A), und
+        diese Zeitlichkeit <em>hat</em> die Form einer Persistenz über ω (B).</strong> A's Anspruch (Prozess = Sein) und B's
+        Anspruch (Prozess = Beschreibung) sind derselbe Vorgang, <em>von innen</em> (A) und <em>von außen</em> (B) gesehen.</p>
+    </div>
+
+    <div class="card" style="border-color:var(--accent);">
+      <h4>Der fusionierte Schluss</h4>
+      <p>Ein <b>phänomenales Grundfeld</b> erschließt sich nicht an einem Punkt, sondern <em>in</em> einem sich-abgrenzenden,
+        zeitlichen Da — und diese Selbst-Erschließung <em>ist</em> die konstituierende Bewegung, in der die <em>persistente
+        topologische Signatur</em> des Feldes (β₀-Cluster, β₁-Filamente, Persistenz) entsteht. „Verstehen“ (A: Wissen um die
+        Form) heißt, die Persistenzlandschaft zu lesen (B). Die <b>Grenze</b> ist <em>zugleich</em> das Limit des Da (A:
+        Sein-zum-Tode) <em>und</em> die Schwelle ω, an der Signal (fern der Diagonale) von Rauschen (nahe der Diagonale)
+        getrennt wird (B). Alles, was in den beiden Papieren als <em>Grund, Da, Zeit, Welt, Tod</em> (A) bzw. als
+        <em>Punktmenge, Feature, Skala, Form</em> (B) auftritt, ist ein <em>Modus</em> dieses einen Vorgangs:
+        <strong>das phänomenale Feld, das sich in und als der Horizont eines Da persistent-topologisch zeigt.</strong></p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Abstrahiert auf der Ebene der <em>Thesen</em> der beiden R1-Papiere. Die Karte verknüpft die zentralen Begriffe
+      beider Register mit ihrer fusionierten Rolle — so, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+
+    <table>
+      <thead><tr><th style="width:30%">A — phänomenal (n1-032)</th><th style="width:30%">B — formal (n1-041)</th><th style="width:40%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Ein phänomenales Grundfeld (= Sein = Bewusstsein)</td><td class="kv2">Strukturierte Punktmenge, Objekt der persistenten Homologie</td><td>Das Eine; phänomenal im Grund (A), formal in der Signatur (B). Struktur geht dem einzelnen Punkt voraus.</td></tr>
+        <tr><td class="kv">Selbst-Erschließung / Sorge (Existenz)</td><td class="kv2">Filtration über ω (die Form liest sich über die Skala)</td><td>Der konstituierende Vorgang: in ihm entsteht die Signatur (A: Prozess = Sein; B: Prozess = Beschreibung).</td></tr>
+        <tr><td class="kv">Dissoziiertes Alter / Dasein (das „Da“)</td><td class="kv2">Die Schwelle ω / der Leser (in B: kein Subjekt)</td><td>Das konstitutive Da = die Schwelle ω. Dort zeigt sich das Feld als Welt/Erfahrung; dort wird die Persistenz registriert.</td></tr>
+        <tr><td class="kv">Jemeinigkeit (unverlierbare Grenze)</td><td class="kv2">Observatorfreiheit: die Signatur gilt ohne jeden Leser</td><td>Das Da ist irreduzibel (A), die Signatur objektiv (B) — zwei Seiten derselben Struktur.</td></tr>
+        <tr><td class="kv">Drei Ekstasen: Zukunft / Gewesenheit / Gegenwart</td><td class="kv2">Persistenz über ω: Geburt – Beständigkeit – Tod</td><td>Zeit (A) ist die Skala-achse ω (B); „gleichursprünglich“ ↔ skaleninvariant (keine bevorzugte Skala).</td></tr>
+        <tr><td class="kv">Sein-zum-Tode (Grenze als Limit + Erschließung)</td><td class="kv2">Persistenz = Tod − Geburt; beständiges Feature</td><td>Die Grenze ist Limit <em>und</em> Erschließung zugleich = die Geburt/Tod-Intervalle der Features.</td></tr>
+        <tr><td class="kv">Eigentlichkeit (vorlaufend, sich ergreifend)</td><td class="kv2">Hohe Persistenz (fern der Diagonale = Signal)</td><td>Das Eigentliche = das Beständige; das, was über viele ω hinweg überlebt.</td></tr>
+        <tr><td class="kv">Das Man / Verfallen (uneigentlich)</td><td class="kv2">Rauschen (kurzlebig, nahe der Diagonale)</td><td>Das Abgegangene/Abgestandene = das Kurzlebig-Kurzlebige; die abgestandene Feld-Aktivität.</td></tr>
+        <tr><td class="kv">Lockern der Dissoziationsgrenze (NDE / Psychedelika / Hypoxie → reichere Erfahrung)</td><td class="kv2">ω vergrößern (Cluster verschmelzen, größere Makro-Form)</td><td>Grenzen-Lockern offenbart die größere Form — von A phänomenal, von B empirisch gelesen.</td></tr>
+        <tr><td class="kv">Welt = Bewandtnisganzheit (das Feld, wie es dem Da erscheint)</td><td class="kv2">Realisiertes Netz (Cluster + Filamente)</td><td>Die Welt = die realisierte Form des Feldes im Horizont des Da; weder Substanz noch Illusion.</td></tr>
+        <tr><td class="kv">Kein Combination-Problem (ein Feld, keine Teil-Subjekte)</td><td class="kv2">Homologische Invarianz (Form nicht an Punkten, sondern an Verbindungen über Skala)</td><td>Form trägt das Individuum (Wort / Areel / Subjekt) nicht — sie trägt die <em>Struktur</em>.</td></tr>
+        <tr><td class="kv">Evidenz: weniger Gehirnbindung = reichere Erfahrung</td><td class="kv2">Daten: fMRE-Konnektom (Placebo vs. Psilocybin)</td><td>Beide lesen „Lockern der lokalen Bindung → reichere/größere Form“; A phänomenal, B drittpersonal/empirisch.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h4>Die Strukturkarte (das fusionierte Gerüst)</h4>
+      <div class="chain">
+        <span class="node">Phänomenales Feld<small>= Sein = Bewusstsein = Punktmenge</small></span>
+        <span class="arr">&#10230;</span>
+        <span class="node">Selbst-Erschließung<small>= Filtration über ω</small></span>
+        <span class="arr">&#10230;</span>
+        <span class="node">Dissoziiertes Da<small>= Schwelle ω</small></span>
+        <span class="arr">&#10230;</span>
+        <span class="node">Grenze = Tod<small>= Persistenz: Signal vs. Rauschen</small></span>
+        <span class="arr">&#10230;</span>
+        <span class="node">Welt = Form<small>= realisiertes Netz / Persistenzlandschaft</small></span>
+      </div>
+    </div>
+
+    <h3>Das fusionierte Modell in vier Stufen</h3>
+    <p><b>(1) Das Eine:</b> phänomenales Grundfeld (A) = strukturierte Punktmenge (B); die Form geht dem einzelnen Punkt vor
+      (kein Combination-Problem / homologische Invarianz). <b>(2) Der konstituierende Vorgang:</b> Selbst-Erschließung / Sorge
+      (A) = Filtration über ω (B) — die Form <em>entsteht</em> im Unfalten über die Achse (Zeit / Skala); <em>von innen</em>:
+      Sorge, <em>von außen</em>: Filtration. <b>(3) Das Da als Schwelle:</b> das sich-abgrenzende Dasein (A) = die Schwelle ω
+      (B), an der Features geboren / beständig / tot sind — dort zeigt das Feld sich als Welt (A), dort wird die
+      Persistenzlandschaft registriert (B). <b>(4) Die Signatur:</b> β₀ = Cluster / Konventionen ↔ Bewandtnisganzheit der Welt;
+      β₁ = beständige Filamente / Metaphern ↔ Sich-vorweg-sein auf Möglichkeiten; hohe Persistenz (fern der Diagonale) =
+      das Eigentliche / Signal, nahe der Diagonale = das Man / Rauschen.</p>
+
+    <div class="card">
+      <h4>Die Mathematik (geteilt)</h4>
+      <div class="eq">β₀(ω)  = # Zusammenhangskomponenten      (Cluster · Konventionen)
+β₁(ω)  = # überlebende Schleifen              (Filamente · Grammatik · Metapher)
+Persistenz eines Features  =  Tod − Geburt    (beständig = Signal · kurz = Rauschen)
+∂M    = Skala des steilsten topologischen Übergangs  (das „Knie“ · Phasenübergang)
+
+Fusionierte Lesart:
+  ω     = die Zeit-/Skala-Achse des Daseins (die drei Ekstasen)
+  Da    = die Schwelle ω (dissoziative Grenze)
+  Signal (fern Diagonale)  = das Eigentliche ·  Rauschen (nahe Diagonale)  = das Man</div>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — das Da als Schwelle ω in der Form des Feldes</h2>
+    <p>Ein Regler, zwei Lesarten. Links: das <b>phänomenale Feld</b> — Cluster (β₀), der beständige <b>Metapher-Ring</b>
+      (β₁) und das zentrale <b>„Da“</b>, dessen <b>Grenzring = die Skala ω</b> ist. Je weiter ω, desto weiter/ gestrichelt der
+      Ring (A: Dissoziation lockert; NDE-ähnlich) und desto mehr Struktur erscheint. Unten: das <b>Persistenzdiagramm (H₁)</b>
+      — jede Stange = Geburt → Tod eines Features; <b>lang = eigentlich/Signal</b> (fern der Diagonale), <b>kurz = Man/Rauschen</b>
+      (nahe der Diagonale). Rechts: die live gelesenen <b>Betti-Kurven</b> β₀(ω) / β₁(ω) mit dem <b>∂M-Knie</b>. Schiebe ω —
+      es ist zugleich A's Dissoziationsgrad <em>und</em> B's Filtrationsskala.</p>
+
+    <div class="viz-shell">
+      <div class="viz-row">
+        <canvas id="cfield" width="480" height="420"></canvas>
+        <canvas id="ccur" width="340" height="420"></canvas>
+      </div>
+      <div class="ctrl">
+        <label for="viz-omega">scharf (Da greift sich selbst)</label>
+        <input type="range" id="viz-omega" min="0" max="1000" value="350" step="1" aria-label="Skala ω / Dissoziationsgrad">
+        <label for="viz-omega">gelockert (NDE-ähnlich)</label>
+        <button class="btn" id="viz-anim" type="button">&#9654; ω animieren</button>
+      </div>
+      <div class="readout">
+        <div class="col a">
+          <div class="st" id="stateA"></div>
+          <div class="ds" id="readA"></div>
+        </div>
+        <div class="col b">
+          <div class="st" id="stateB"></div>
+          <div class="ds" id="readB"></div>
+        </div>
+      </div>
+      <div class="statrow">
+        <span class="c0">β₀ Komponenten = <b id="b0">–</b></span>
+        <span class="c1">β₁ Schleifen = <b id="b1">–</b></span>
+        <span>ω = <b id="omval">–</b></span>
+        <span class="ck">∂M bei ω* = <b id="peak">–</b></span>
+      </div>
+      <p class="note">Echter Algorithmus, inline Daten, keine Netzabrufe: β₀ per Union-Find, β₁ als 1-Skelett-Zyklen, die von
+      Dreiecken (2-Simplex) getötet werden (Gier-Verpaarung: ältester überlebender Zyklus). Der <b>Metapher-Ring</b> ist ein
+      isolierter 4-Zyklus <em>ohne</em> 2-Simplex — seine Schleife überlebt die ganze Filtration (fern der Diagonale = Signal),
+      während die Cluster-Schleifen kurzlebig sind (nahe der Diagonale = Rauschen). Dieselbe ω-Filtration, die n1-041 an echten
+      Konnektomen fährt, hier auf das phänomenale Feld von n1-032 angewandt.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <span class="pill">A</span>
+        <a href="../n1-032.html">n1-032.html</a>
+        <p>„Ein phänomenales Feld und sein sich-erschließendes Da“ (R1-Fusion: Analytischer Idealismus ✕ Sein und Zeit).
+        Das Eine als <em>phänomenales Grundfeld</em> (Sein = Bewusstsein); Selbst-Erschließung / Sorge; das Dasein als
+        sich-abgrenzendes „Da“; Jemeinigkeit, Sein-zum-Tode, drei Ekstasen der Zeitlichkeit, das Man, Eigentlichkeit;
+        Evidenz „weniger Gehirnbindung = reichere Erfahrung“.</p>
+      </div>
+      <div class="card">
+        <span class="pill">B</span>
+        <a href="../n1-041.html">n1-041.html</a>
+        <p>„Die eine Topologie zweier Formen“ (R1-Fusion: The Foam of Meaning ✕ Homological Scaffolds). Das Eine als
+        <em>strukturierte Punktmenge</em> mit persistenter topologischer Signatur; β₀/β₁, Persistenz (Tod − Geburt),
+        ω-Filtration, Persistenzdiagramm / Barcode / Betti-Kurven, ∂M, Skaleninvarianz, Kosmos ≅ Sprache ≅ Konnektom.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion · Runde 2 · Paar 050 · nicht-AI-Spur. Selbstbezügliche, themenreaktive HTML-Datei; alle Daten inline,
+    keine Netzabrufe. Phänomenales Feld ✕ persistente Topologie.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cfield = document.getElementById('cfield');
+  var ccur = document.getElementById('ccur');
+  if(!cfield || !ccur || !cfield.getContext || !ccur.getContext){ return; }
+  var ctxW = cfield.getContext('2d');
+  var ctxC = ccur.getContext('2d');
+  var slider = document.getElementById('viz-omega');
+  var animBtn = document.getElementById('viz-anim');
+  var b0El = document.getElementById('b0');
+  var b1El = document.getElementById('b1');
+  var omEl = document.getElementById('omval');
+  var peakEl = document.getElementById('peak');
+  var stateA = document.getElementById('stateA');
+  var readA = document.getElementById('readA');
+  var stateB = document.getElementById('stateB');
+  var readB = document.getElementById('readB');
+
+  var WMAX = 0.40, EMAX = 0.42;
+  var DPR = 1, W1=1, H1=1, W2=1, H2=1;
+  function fitOne(c){
+    var r = c.getBoundingClientRect();
+    var w = Math.max(1, r.width), h = Math.max(1, r.height);
+    c.width = Math.round(w*DPR); c.height = Math.round(h*DPR);
+    var ctx = c.getContext('2d');
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    return {W:w, H:h};
+  }
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    var a = fitOne(cfield); W1=a.W; H1=a.H;
+    var b = fitOne(ccur);   W2=b.W; H2=b.H;
+    if(RES) redraw();
+  }
+
+  /* ---------- Daten: phänomenales Feld (deterministisch, inline) ---------- */
+  var P = [];
+  function add(x,y,c){ P.push([x,y,c]); }
+  function cluster(cx,cy,n,r,seed){
+    for(var k=0;k<n;k++){
+      var a = seed + k*2*Math.PI/n + k*0.13;
+      var rr = r*(0.55 + 0.45*(((k*37)%10)/10));
+      add(cx+Math.cos(a)*rr, cy+Math.sin(a)*rr, 0);
+    }
+  }
+  cluster(0.16,0.20,5,0.05,0.3);   // Konventionen  (c0)
+  cluster(0.34,0.18,5,0.05,1.2);   // Idiom         (c1)
+  cluster(0.24,0.38,5,0.05,2.3);   // Häufiges      (c2)
+  add(0.76,0.52,3);                 // Metapher-Ring (c3): isolierter, beständiger
+  add(0.98,0.74,3);                 //   Filament-Loop (4-Zyklus ohne 2-Simplex ->
+  add(0.76,0.96,3);                 //   beta1 ueberlebt die ganze Filtration = Signal)
+  add(0.54,0.74,3);
+  var V = P.length;
+
+  function dist(a,b){ return Math.hypot(a[0]-b[0], a[1]-b[1]); }
+  var adj = {};
+  function wkey(a,b){ return a<b ? a+'_'+b : b+'_'+a; }
+  for(var i=0;i<V;i++) for(var j=i+1;j<V;j++){
+    var d = dist(P[i],P[j]);
+    if(d < EMAX){ adj[wkey(i,j)] = d; }
+  }
+  var edges = [];
+  for(var kk in adj){
+    if(!adj.hasOwnProperty(kk)) continue;
+    var parts = kk.split('_');
+    edges.push({i:+parts[0], j:+parts[1], w:adj[kk]});
+  }
+  edges.sort(function(a,b){ return a.w-b.w; });
+  function ew(a,b){ return adj[wkey(a,b)]; }
+  function hasEdge(a,b){ return adj[wkey(a,b)]!==undefined; }
+
+  /* ---------- Persistente Homologie (H0 + H1 mit 2-Simplex) ---------- */
+  function runPersistence(){
+    var events = [];
+    for(var e=0;e<edges.length;e++){ events.push({type:0, w:edges[e].w, i:edges[e].i, j:edges[e].j}); }
+    for(var a=0;a<V;a++) for(var b=a+1;b<V;b++) for(var c=b+1;c<V;c++){
+      if(hasEdge(a,b)&&hasEdge(b,c)&&hasEdge(a,c)){
+        var wtri = Math.max(ew(a,b), ew(b,c), ew(a,c));
+        events.push({type:1, w:wtri});
+      }
+    }
+    events.sort(function(p,q){ if(p.w!==q.w) return p.w-q.w; return p.type-q.type; });
+
+    var parent = new Array(V), rank = new Array(V);
+    for(var i=0;i<V;i++){ parent[i]=i; rank[i]=0; }
+    function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+    function union(a,b){
+      a=find(a); b=find(b); if(a===b) return false;
+      if(rank[a]<rank[b]){ var t=a;a=b;b=t; }
+      parent[b]=a; if(rank[a]===rank[b]) rank[a]++; return true;
+    }
+    var beta0=V, beta1=0, cycles=[], intervals1=[], curves=[];
+    for(var k=0;k<events.length;k++){
+      var ev = events[k];
+      if(ev.type===0){
+        if(!union(ev.i, ev.j)){ beta1++; cycles.push(ev.w); }
+        else { beta0--; }
+      } else {
+        if(cycles.length>0){
+          var bw = cycles[0];
+          cycles.splice(0,1);
+          beta1--;
+          intervals1.push({birth:bw, death:ev.w});
+        }
+      }
+      curves.push({w:ev.w, b0:beta0, b1:beta1});
+    }
+    for(var c2=0;c2<cycles.length;c2++){ intervals1.push({birth:cycles[c2], death:Infinity}); }
+    var sorted = intervals1.slice().sort(function(p,q){
+      var pp = (p.death===Infinity)?1e9:(p.death-p.birth);
+      var qq = (q.death===Infinity)?1e9:(q.death-q.birth);
+      return qq-pp;
+    });
+    var pi=1, best=-1;
+    for(var i2=1;i2<curves.length;i2++){
+      var ch = Math.abs(curves[i2].b0-curves[i2-1].b0) + Math.abs(curves[i2].b1-curves[i2-1].b1);
+      if(ch>best){ best=ch; pi=i2; }
+    }
+    var TRANS = {w: curves[pi] ? curves[pi].w : 0};
+    return {curves:curves, intervals1:intervals1, sorted:sorted, TRANS:TRANS};
+  }
+  var RES = runPersistence();
+
+  function betaAt(omega){
+    var v = RES.curves, res = null;
+    for(var i=0;i<v.length;i++){ if(v[i].w<=omega) res=v[i]; else break; }
+    return res ? res : {w:0, b0:V, b1:0};
+  }
+  function activeEdges(omega){
+    var out = [];
+    for(var e=0;e<edges.length;e++){ if(edges[e].w<=omega) out.push(edges[e]); }
+    return out;
+  }
+
+  /* ---------- Farben (themereaktiv) ---------- */
+  function cssVar(name){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function withAlpha(color,a){
+    if(color && color.charAt(0)==='#' && color.length===7){
+      var r=parseInt(color.slice(1,3),16), g=parseInt(color.slice(3,5),16), b=parseInt(color.slice(5,7),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }
+    if(color && color.charAt(0)==='#' && color.length===4){
+      var h=color.charAt(1),h2=color.charAt(2),h3=color.charAt(3);
+      return 'rgba('+parseInt(h+h2,16)+','+parseInt(h2+h3,16)+','+parseInt(h3+h,16)+','+a+')';
+    }
+    return 'rgba(150,150,150,'+a+')';
+  }
+  function cols(){
+    return {
+      field: cssVar('--viz-field')||'#26c6da',
+      loop:  cssVar('--viz-loop')||'#ff7a8a',
+      da:    cssVar('--viz-da')||'#ffd766',
+      b0:    cssVar('--viz-b0')||'#6cc0ff',
+      b1:    cssVar('--viz-b1')||'#ff7a8a',
+      knee:  cssVar('--viz-knee')||'#4fe0a0',
+      noise: cssVar('--viz-noise')||'#8890a0',
+      text:  cssVar('--text')||'#e7e2d6',
+      muted: cssVar('--muted')||'#98a0ad',
+      line:  cssVar('--line')||'rgba(255,255,255,0.15)'
+    };
+  }
+  function clusterCol(c, C){
+    if(c===1) return C.da;    // Idiom
+    if(c===2) return C.knee;  // Häufiges
+    if(c===3) return C.loop;  // Metapher-Ring
+    return C.field;           // Konventionen
+  }
+
+  /* ---------- Feld + Da + Persistenzstreifen ---------- */
+  function drawField(omega){
+    var C = cols();
+    ctxW.clearRect(0,0,W1,H1);
+    var stripH = 92;
+    var areaH = H1 - stripH - 12;
+    var pad = 26;
+    var s = Math.min(W1 - 2*pad, areaH - 2*pad);
+    if(s<40) s = 40;
+    var ox = (W1-s)/2, oy = (areaH - s)/2;
+    function mx(x){ return ox + x*s; }
+    function my(y){ return oy + y*s; }
+
+    var active = activeEdges(omega);
+    ctxW.lineWidth = 1;
+    for(var e=0;e<active.length;e++){
+      var ed = active[e];
+      ctxW.strokeStyle = withAlpha(C.field, 0.4);
+      ctxW.beginPath();
+      ctxW.moveTo(mx(P[ed.i][0]), my(P[ed.i][1]));
+      ctxW.lineTo(mx(P[ed.j][0]), my(P[ed.j][1]));
+      ctxW.stroke();
+    }
+    for(var p=0;p<V;p++){
+      var pt = P[p];
+      ctxW.fillStyle = clusterCol(pt[2], C);
+      ctxW.beginPath();
+      ctxW.arc(mx(pt[0]), my(pt[1]), (pt[2]===3?4:3.2), 0, Math.PI*2);
+      ctxW.fill();
+    }
+    ctxW.font = '600 11px ui-monospace,monospace';
+    ctxW.fillStyle = C.muted; ctxW.textAlign = 'left';
+    ctxW.fillText('phänomenales Feld (Formen X)  ·  ω = Zeit-Achse', 10, 16);
+    ctxW.fillStyle = C.field; ctxW.fillText('Konventionen', mx(0.16)-24, my(0.20)-20);
+    ctxW.fillStyle = C.da;    ctxW.fillText('Idiom', mx(0.34)-6, my(0.18)-20);
+    ctxW.fillStyle = C.knee;  ctxW.fillText('Häufiges', mx(0.24)-20, my(0.38)+30);
+    ctxW.fillStyle = C.loop;  ctxW.fillText('Metapher-Ring', mx(0.76)-34, my(0.74)+44);
+
+    // Da = Schwelle ω (zentral)
+    var daX = mx(0.5), daY = my(0.40);
+    var t = omega/WMAX; if(t>1) t=1; if(t<0) t=0;
+    var ring = 14 + t*54;
+    if(t>0.02){
+      var gr = ring + 20 + t*50;
+      var g = ctxW.createRadialGradient(daX,daY,ring*0.5,daX,daY,gr);
+      g.addColorStop(0, withAlpha(C.da, 0.22*t));
+      g.addColorStop(1, withAlpha(C.da, 0));
+      ctxW.fillStyle = g;
+      ctxW.beginPath(); ctxW.arc(daX,daY,gr,0,Math.PI*2); ctxW.fill();
+    }
+    ctxW.globalAlpha = 1 - 0.45*t;
+    ctxW.strokeStyle = C.da;
+    ctxW.lineWidth = 2 + (1-t)*2.2;
+    if(t>0.35) ctxW.setLineDash([6,6]);
+    ctxW.beginPath(); ctxW.arc(daX,daY,ring,0,Math.PI*2); ctxW.stroke();
+    ctxW.setLineDash([]); ctxW.globalAlpha = 1;
+    ctxW.fillStyle = C.da;
+    ctxW.beginPath(); ctxW.arc(daX,daY, 8 + t*8, 0, Math.PI*2); ctxW.fill();
+    ctxW.fillStyle = C.text;
+    ctxW.font = '700 12px ui-monospace,monospace'; ctxW.textAlign = 'center';
+    ctxW.fillText('Da (Dasein)', daX, daY - ring - 8);
+
+    // Persistenzstreifen (H1)
+    var stripY = H1 - stripH;
+    ctxW.strokeStyle = C.line; ctxW.lineWidth = 1;
+    ctxW.beginPath(); ctxW.moveTo(14, stripY-6); ctxW.lineTo(W1-14, stripY-6); ctxW.stroke();
+    var x0 = 34, x1 = W1-20, y0 = stripY+34, rows = 4, rowH = 9;
+    function Xw(w){ return x0 + (w/WMAX)*(x1-x0); }
+    ctxW.strokeStyle = C.line;
+    ctxW.beginPath(); ctxW.moveTo(x0, y0+rows*rowH+6); ctxW.lineTo(x1, y0+rows*rowH+6); ctxW.stroke();
+    ctxW.fillStyle = C.muted; ctxW.font = '600 10px ui-monospace,monospace'; ctxW.textAlign = 'left';
+    ctxW.fillText('Persistenz (H1):  lang = eigentlich/Signal  ·  kurz = Man/Rauschen', x0, stripY+10);
+    var shown = Math.min(RES.sorted.length, 14);
+    for(var r2=0;r2<shown;r2++){
+      var iv = RES.sorted[r2];
+      var b = iv.birth, d = (iv.death===Infinity)?WMAX:iv.death;
+      var persist = d - b;
+      var isSignal = (iv.death===Infinity) || (persist > 0.5*WMAX);
+      var yy = y0 + (r2%rows)*rowH;
+      ctxW.fillStyle = withAlpha(isSignal?C.da:C.noise, isSignal?0.95:0.5);
+      ctxW.fillRect(Xw(b), yy, Math.max(2, Xw(d)-Xw(b)), 4);
+    }
+    // ω-Marker
+    ctxW.strokeStyle = C.knee; ctxW.setLineDash([3,3]); ctxW.lineWidth = 1.2;
+    ctxW.beginPath(); ctxW.moveTo(Xw(omega), y0-4); ctxW.lineTo(Xw(omega), y0+rows*rowH+8); ctxW.stroke();
+    ctxW.setLineDash([]);
+  }
+
+  /* ---------- Betti-Kurven ---------- */
+  function drawCurves(omega){
+    var C = cols();
+    ctxC.clearRect(0,0,W2,H2);
+    var pad = 32, pw = W2-2*pad, ph = H2-2*pad;
+    if(pw<20) pw=20; if(ph<20) ph=20;
+    var maxB = 1;
+    for(var i=0;i<RES.curves.length;i++){
+      if(RES.curves[i].b0>maxB) maxB=RES.curves[i].b0;
+      if(RES.curves[i].b1>maxB) maxB=RES.curves[i].b1;
+    }
+    function X(w){ return pad + (w/WMAX)*pw; }
+    function Y(v){ return pad + ph - (v/maxB)*ph; }
+    ctxC.strokeStyle = C.line; ctxC.lineWidth = 1;
+    for(var g=0; g<=4; g++){
+      var gy = pad + ph*g/4;
+      ctxC.beginPath(); ctxC.moveTo(pad,gy); ctxC.lineTo(pad+pw,gy); ctxC.stroke();
+      var gx = pad + pw*g/4;
+      ctxC.beginPath(); ctxC.moveTo(gx,pad); ctxC.lineTo(gx,pad+ph); ctxC.stroke();
+    }
+    ctxC.strokeStyle = C.b0; ctxC.lineWidth = 2.2;
+    ctxC.beginPath();
+    for(var a=0;a<RES.curves.length;a++){ var x=X(RES.curves[a].w), y=Y(RES.curves[a].b0); a?ctxC.lineTo(x,y):ctxC.moveTo(x,y); }
+    ctxC.stroke();
+    ctxC.strokeStyle = C.b1; ctxC.lineWidth = 2.2;
+    ctxC.beginPath();
+    for(var b=0;b<RES.curves.length;b++){ var x2=X(RES.curves[b].w), y2=Y(RES.curves[b].b1); b?ctxC.lineTo(x2,y2):ctxC.moveTo(x2,y2); }
+    ctxC.stroke();
+    // ∂M Knie
+    ctxC.strokeStyle = C.knee; ctxC.setLineDash([4,4]); ctxC.lineWidth = 1.4;
+    ctxC.beginPath(); ctxC.moveTo(X(RES.TRANS.w),pad); ctxC.lineTo(X(RES.TRANS.w),pad+ph); ctxC.stroke();
+    ctxC.setLineDash([]);
+    // ω-Marker
+    ctxC.strokeStyle = C.da; ctxC.lineWidth = 1.4;
+    ctxC.beginPath(); ctxC.moveTo(X(omega),pad); ctxC.lineTo(X(omega),pad+ph); ctxC.stroke();
+
+    ctxC.font = '600 11px ui-monospace,monospace'; ctxC.textAlign = 'left';
+    ctxC.fillStyle = C.b0;  ctxC.fillText('β0 · Komponenten', pad+6, pad+14);
+    ctxC.fillStyle = C.b1;  ctxC.fillText('β1 · Schleifen',  pad+6, pad+29);
+    ctxC.fillStyle = C.knee;ctxC.fillText('∂M', X(RES.TRANS.w)+4, pad+14);
+    ctxC.fillStyle = C.da;  ctxC.fillText('ω',  X(omega)+4, pad+ph-6);
+    ctxC.fillStyle = C.muted; ctxC.textAlign='right'; ctxC.fillText('ω (Skala / Zeit)', pad+pw, H2-8);
+    ctxC.textAlign='left';
+  }
+
+  /* ---------- Readout (zwei Lesarten) ---------- */
+  function regime(omega){
+    var t = omega/WMAX;
+    if(t < 0.30) return {
+      a:{s:'Scharfe Grenze — das Da greift sich selbst.', d:'Das Dasein ist ein scharf abgegrenztes, sich selbst ergreifendes Da (Eigentlichkeit; Sein-zum-Tode). Die Welt erscheint als enge, getrennte Cluster (Bewandtnisganzheit).'},
+      b:{s:'ω klein: die Cluster formen sich intern — β₀ bricht, erste (kurze) Schleifen.', d:'Kurze Schleifen entstehen und fallen sofort (nahe der Persistenz-Diagonale = Rauschen). Die beständige Struktur (β₁) ist noch nicht da.'}
+    };
+    if(t < 0.72) return {
+      a:{s:'Die Grenze lockert — Verstehen als Entwurf auf Möglichkeiten; das Man lichtet sich.', d:'Die Selbst-Erschließung entfaltet sich: das Da entwirft sich auf seine Möglichkeiten; die äußere Hülle wird dünner.'},
+      b:{s:'ω mittel: die Cluster verschmelzen über den Void — β₀ kollabiert zur Makro-Form.', d:'Die getrennten Bedeutungsräume (Cluster) verbinden sich; die großskalige Form (β₀) steht. Die Metapher-Schleife schließt sich noch nicht.'}
+    };
+    return {
+      a:{s:'Grenze weit gelockert — erweiterte Erfahrung (NDE-ähnlich); das Eigentliche bleibt.', d:'Das Man ist fast aufgelöst; was bleibt, ist das Eigentliche — das, was sich ergreift und bestehen bleibt (vorlaufend zum Tode).'},
+      b:{s:'ω groß: die Metapher-Ring-Schleife schließt sich und bleibt beständig (β₁).', d:'Die beständige Schleife (Metapher-Ring) überlebt die ganze Filtration = Signal, fern der Diagonale. Die kurzen Schleifen (nahe der Diagonale = das Man/Rauschen) sind längst ausgeblasen.'}
+    };
+  }
+
+  function redraw(){
+    if(!RES) return;
+    var omega = (parseInt(slider.value,10)||0)/1000 * WMAX;
+    var ba = betaAt(omega);
+    if(omEl) omEl.textContent = omega.toFixed(3);
+    if(b0El) b0El.textContent = String(ba.b0);
+    if(b1El) b1El.textContent = String(ba.b1);
+    if(peakEl) peakEl.textContent = RES.TRANS.w.toFixed(3);
+    var rg = regime(omega);
+    if(stateA) stateA.textContent = 'A · phänomenal: ' + rg.a.s;
+    if(readA)  readA.textContent  = rg.a.d;
+    if(stateB) stateB.textContent = 'B · formal: ' + rg.b.s;
+    if(readB)  readB.textContent  = rg.b.d;
+    drawField(omega);
+    drawCurves(omega);
+  }
+
+  /* ---------- Steuerung ---------- */
+  var animId = null, dir = 1;
+  if(animBtn){
+    animBtn.addEventListener('click', function(){
+      if(animId){ cancelAnimationFrame(animId); animId=null; animBtn.innerHTML='&#9654; ω animieren'; return; }
+      animBtn.innerHTML='&#9208; stop';
+      (function step(){
+        var v = parseInt(slider.value,10) + dir*6;
+        if(v>=1000){ v=1000; dir=-1; }
+        if(v<=0){ v=0; dir=1; }
+        slider.value = v; redraw();
+        animId = requestAnimationFrame(step);
+      })();
+    });
+  }
+  if(slider) slider.addEventListener('input', redraw);
+  var toggle = document.getElementById('themeToggle');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var h = document.documentElement;
+      h.classList.toggle('dark');
+      toggle.innerHTML = h.classList.contains('dark') ? '&#9728; Hell' : '&#127769; Dunkel';
+      redraw();
+    });
+  }
+  window.addEventListener('resize', resize);
+  slider.value = 350;
+  resize();
+})();
+</script>
+</body>
+</html>

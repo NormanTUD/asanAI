@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Immanente Ordnung: Invarianz, Fluss &amp; Abstimmung (Fusion · Runde 2)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#faf8f1; --bg-soft:#f1eee3; --card:#ffffff; --ink:#1a1a2e; --ink-soft:#4a4a5e;
+  --dim:#8a8a9c; --line:rgba(0,0,0,.10);
+  --teal:#0e8f86; --coral:#d64545; --violet:#6b2fd6; --amber:#b8860b; --sky:#2b7fc0;
+  --accent:#0e8f86; --accent2:#b8860b; --bad:#d64545;
+  --card-br:rgba(0,0,0,.10); --shadow:0 10px 30px rgba(0,0,0,.06);
+}
+html.dark{
+  --bg:#0a0a12; --bg-soft:#101019; --card:#14141f; --ink:#e8e8f0; --ink-soft:#b6b6c9;
+  --dim:#7c7c92; --line:rgba(255,255,255,.09);
+  --teal:#4ecdc4; --coral:#ff6b6b; --violet:#a970ff; --amber:#feca57; --sky:#54a0ff;
+  --accent:#4ecdc4; --accent2:#feca57; --bad:#ff6b6b;
+  --card-br:rgba(255,255,255,.08); --shadow:0 12px 34px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:64px 20px 28px;text-align:center}
+.kicker{display:inline-block;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--teal);border:1px solid var(--line);border-radius:100px;padding:6px 14px;margin-bottom:20px;
+  background:var(--bg-soft)}
+h1{font-size:clamp(1.95rem,5.2vw,3rem);line-height:1.14;font-weight:800;letter-spacing:-.02em}
+.subtitle{color:var(--dim);font-size:1.02rem;margin-top:14px}
+.subtitle b{color:var(--ink-soft);font-weight:650}
+.tagline{color:var(--ink-soft);font-size:1rem;margin-top:12px;font-style:italic}
+.tagline b{color:var(--ink)}
+.theme-btn{margin-top:20px;background:var(--card);border:1px solid var(--card-br);color:var(--ink-soft);
+  border-radius:10px;padding:8px 16px;font-size:.86rem;cursor:pointer;box-shadow:var(--shadow);transition:.2s}
+.theme-btn:hover{color:var(--ink);transform:translateY(-1px)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:26px auto 8px}
+nav.toc a{font-size:.82rem;color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);
+  border-radius:8px;padding:6px 12px;background:var(--card);transition:.2s}
+nav.toc a:hover{border-color:var(--teal);color:var(--teal)}
+section{margin-top:52px;scroll-margin-top:20px}
+h2{font-size:1.5rem;font-weight:750;letter-spacing:-.01em;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+h2 .n{font-family:"JetBrains Mono",monospace;font-size:.9rem;color:var(--bg);background:var(--teal);
+  border-radius:7px;padding:2px 9px;font-weight:700}
+h3{font-size:1.1rem;font-weight:720;margin:26px 0 8px;color:var(--ink)}
+p{margin:12px 0;color:var(--ink-soft)}
+p b,li b{color:var(--ink);font-weight:650}
+.lead{font-size:1.08rem;color:var(--ink)}
+ul{margin:12px 0 12px 4px;padding-left:22px;color:var(--ink-soft)}
+li{margin:9px 0}
+.card{background:var(--card);border:1px solid var(--card-br);border-radius:14px;padding:18px 20px;
+  box-shadow:var(--shadow);margin:16px 0}
+.card .tag{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+.card.a{border-left:4px solid var(--coral)}
+.card.b{border-left:4px solid var(--sky)}
+.card.fuse{border-left:4px solid var(--teal);background:linear-gradient(180deg,var(--card),var(--bg-soft))}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+.eq{font-family:"JetBrains Mono",ui-monospace,monospace;background:var(--bg-soft);
+  border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;overflow-x:auto;
+  color:var(--ink);font-size:.98rem}
+.eq .lbl{display:block;font-family:Inter,sans-serif;font-size:.76rem;color:var(--dim);margin-top:6px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem}
+th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--ink);font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.05em}
+td{color:var(--ink-soft)}
+td .k{color:var(--teal);font-weight:650}
+.note{font-size:.88rem;color:var(--dim);font-style:italic;margin-top:8px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:var(--card);
+  border:1px solid var(--card-br);border-radius:12px;padding:14px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.controls label{font-size:.9rem;font-weight:600;color:var(--ink-soft)}
+.controls input[type=range]{flex:1;min-width:180px;accent-color:var(--teal);height:6px}
+.controls .val{font-family:"JetBrains Mono",monospace;color:var(--teal);font-weight:700;font-size:1.1rem;min-width:70px;text-align:right}
+.viz-shell{background:var(--card);border:1px solid var(--card-br);border-radius:14px;padding:10px;
+  box-shadow:var(--shadow);margin:14px 0}
+canvas#wviz{width:100%;height:420px;display:block;border-radius:10px;background:var(--bg)}
+.ro{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media(max-width:640px){.ro{grid-template-columns:1fr}}
+.ro .box{background:var(--card);border:1px solid var(--card-br);border-radius:11px;padding:13px 14px;text-align:center}
+.ro .box .l{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.ro .box .v{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:700;color:var(--teal);margin-top:4px}
+.prov{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--card-br);
+  border-radius:12px;padding:16px 18px;margin:12px 0;box-shadow:var(--shadow)}
+.prov .dot{font-size:1.3rem;line-height:1.3}
+.prov a{color:var(--teal);text-decoration:none;font-weight:650}
+.prov a:hover{text-decoration:underline}
+.prov .d{color:var(--ink-soft);font-size:.94rem;margin-top:4px}
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:.85rem;text-align:center}
+.katex{color:var(--ink)}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.88em;background:var(--bg-soft);
+  padding:1px 5px;border-radius:5px;border:1px solid var(--line);color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <span class="kicker">Fusion · Runde 2 · nicht-AI-Track · Pair 014</span>
+  <h1>Die immanente Ordnung: Invarianz, Fluss &amp; Abstimmung</h1>
+  <div class="subtitle">Fusion aus: <b>n1-103.html</b> ✕ <b>n1-039.html</b> (Runde 2)</div>
+  <div class="tagline">
+    <b>n1-103</b> (Invarianz) liest die Welt als <b>ein paar feste Maßpunkte in einem sich verändernden Zustand</b>,
+    gehalten durch ein Rückkopplungs-/Transformationsgesetz, das den Zustand zu einer fixen Geometrie hinzieht.
+    <b>n1-039</b> (Fluss &amp; Nerven) liest dieselbe Welt als <b>immanente, sich total verwandelnde Substanz</b> mit einem
+    in ihr ruhenden Ordnungsprinzip, das einem Subjekt je nach seiner <b>Abstimmung</b> als Harmonie oder als Zwang begegnet.
+  </div>
+  <button class="theme-btn" id="themeToggle">◐ Thema wechseln</button>
+  <nav class="toc">
+    <a href="#these">These</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+<section id="these">
+  <h2><span class="n">1</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Vorläufer sind schon selbst Fusionen, und sie sind aus entgegengesetzten Richtungen auf dieselbe Tiefenstruktur gestoßen. <b>n1-103</b> (Körper&nbsp;=&nbsp;Raumzeit) hält fest: <b>ein paar Invarianten bleiben stabil, während alles Lokale sich ändert</b> — Sollwerte, das Lichtkonstante&nbsp;$c$, das Raumzeitintervall&nbsp;$s^2$ — und das Regelwerk, das zwischen den Perspektiven wechselt, ist ein <b>Transformations-/Rückkopplungsgesetz</b>, das den Zustand <b>den Gradienten hinab zu einer fixen Geometrie</b> (Tal, Attraktor, Geodäte) zieht. <b>n1-039</b> (Heraklit&nbsp;×&nbsp;Schreber) hält fest: die Realität ist <b>kein statischer Bestand, sondern ein lebendiger Prozess aus sich umwandelnder Substanz</b> (ewiges Feuer / Gottesnerven) mit einem <b>in ihr selbst ruhenden Ordnungsprinzip</b> (Logos / Weltordnung) — und wie diese <i>eine</i> Ordnung einem Subjekt begegnet (befreiende Harmonie oder erpressende Kompulsion), entscheidet die <b>Abstimmung des Subjekts</b>.</p>
+  <p>Die integrierte These lautet: <b>Ordnung ist immanent in einem sich wandelnden Prozess — weder ein starrer Anker über dem Wandel noch bloßes Werden ohne Form, sondern das wiederkehrende Maß, das der Wandel selbst annimmt.</b> Invarianz und Fluss sind nicht Gegensätze: Die Invariante von n1-103 <i>ist</i> das Muster, das n1-039s Fluss wiederholt, und die „Geometrie", in die der Zustand absteigt, ist genau die Form, die das Feuer „nach Maßen erglimmend und erlöschend" annimmt. Was n1-103 objektiv als Struktur benennt (Sollwert, Intervall, Attraktor) und n1-039 als gelebte Erfahrung benennt (Logos, Maß, Resonanz), ist ein und derselbe Gegenstand in zwei Beschreibungsmodi.</p>
+  <p>Und die eigentliche Klammer der Runde-2-Fusion ist <b>die Abstimmlage des Systems zur Ordnung</b>. In Resonanz — kleinste Abweichung, nachgesteuert, phasengesperrt — wird dieselbe immanente Ordnung zur <b>stabilisierenden Invariante</b>: der Körper hält seinen Sollwert, das Subjekt klingt mit dem Logos, Wandel erlebt sich als befreiende Harmonie. Aus der Resonanz gerissen — übersteuert, de-abgestimmt, saturiert — wird <i>dieselbe</i> Ordnung zur <b>Störung bzw. Kompulsion</b>: die Regulation versagt (Hitzschlag), das Subjekt erlebt Denkzwang. <b>Invarianz (n1-103) ist die objektive Seite einer immanenten Ordnung; die Abstimmung (n1-039) ist deren erlebte Seite. Beide beschreiben eine Ordnung, die in einem Wandelprozess besteht und je nach Abstimmlage des Systems als Heimat oder als Zwang begegnet.</b></p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span> Widersprüche zwischen A und B</h2>
+  <p>Die beiden Runde-1-Papiere stehen sich an vier Punkten tatsächlich unvereinbar gegenüber — jeweils ein konkreter Anspruch des einen gegen den des anderen:</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · n1-103 (Invarianz)</span>
+      <p>Die Ordnung ist ein <b>fixer Punkt, in den man absteigt</b>: „Der Körper rollt auf seiner Zustandslandschaft hinab ins Tal des Sollwerts (ein Attraktor)"; „Spacetime tells matter how to move" — Materie folgt Geodäten in eine fixierte Krümmung. Die Invariante ist ein <i>Zielzustand</i> (Sollwert, Minimum, Tal), und die Dynamik ist <b>Abstieg dorthin</b>.</p>
+    </div>
+    <div class="card b"><span class="tag">B · n1-039 (Fluss)</span>
+      <p>Es gibt <b>keinen festen Anker, nur Wandel</b>: „Panta Rhei — alles fließt"; „Die Realität ist kein statischer Bestand". Das ewige Feuer ist <i>stets</i> „nach Maßen erglimmend und nach Maßen erlöschend" — das Logos/Maß ist der <b>Rhythmus der Bewegung</b>, nie ein Ruhezustand, in den man eintrifft.</p>
+    </div>
+  </div>
+  <p class="note">Konflikt 1 — Funktion der Invariante: <b>fester Attraktor/Minimum, das man erreicht (A)</b> vs. <b>kein Gleichgewicht, nur ein Maß des immerfortigen Wandels (B)</b>.</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · n1-103 (Invarianz)</span>
+      <p>Die Ordnung ist eine <b>subjektunabhängige Struktur</b>: Homöostase als Rückkopplung, Raumzeit als Geometrie. Der „Selbst"-Rahmen ist ausdrücklich nur <b>funktional, nicht fundamental</b> — „der nützliche Bezugspunkt … eine Beschreibungskonvention, kein Gesetz". Niemand erlebt etwas; es ist Physik. Die Invariante gilt, unabhängig von jedem Beobachter.</p>
+    </div>
+    <div class="card b"><span class="tag">B · n1-039 (Fluss)</span>
+      <p>Der <b>Charakter der Ordnung für den Einzelnen</b> wird vom Subjekt mitbestimmt: „dieselbe Ordnung begegnet … als befreiende Harmonie oder als erpressende Kompulsion"; die Entscheidung liegt „an der <b>Abstimmung des Subjekts</b>". Die Ordnung ist an sich gemein, aber wie sie <i>begegnet</i>, ist erlebungsabhängig und konstitutiv.</p>
+    </div>
+  </div>
+  <p class="note">Konflikt 2 — Status der Ordnung: <b>objektiv, unabhängig von jedem Subjekt (A)</b> vs. <b>deren Charakter für den Einzelnen an die Abstimmung des Aufnahmesystems gebunden (B)</b>.</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · n1-103 (Invarianz)</span>
+      <p>Die Ordnung <b>wirkt als korrigierender Zug</b>: Rückkopplung steuert gegen jede Abweichung zum Sollwert; „Kraft … ist die lokale Projektion des Gradienten". Das System wird <b>hin zu einem festen Wert</b> hin korrigiert — Interaktion = <i>Korrektion gegen Abweichung</i>.</p>
+    </div>
+    <div class="card b"><span class="tag">B · n1-039 (Fluss)</span>
+      <p>Die Ordnung ist etwas, dem man sich <b>anstimmt / hinhört</b>: „nach der Natur handeln, <b>auf sie hinhörend</b>"; Harmonie entsteht aus <b>balancierter Spannung</b> (Bogen &amp; Leier, Fr.&nbsp;51), nicht aus einem Zug zu einem Punkt. Interaktion = <i>Resonanz mit einem Muster</i>.</p>
+    </div>
+  </div>
+  <p class="note">Konflikt 3 — Wirkungsmodus: <b>Zug/Korrektion zu einem fixen Sollwert (A)</b> vs. <b>Resonanz/Harmonie durch Abstimmung auf ein Muster (B)</b>.</p>
+
+  <div class="two">
+    <div class="card a"><span class="tag">A · n1-103 (Invarianz)</span>
+      <p>Pathologie heißt <b>Verlust bzw. Überforderung der Invariante</b>: Bei zu starker Störung „verloren" — Hitzschlag &gt;40&nbsp;°C, Hypothermie, das Tal wird überflutet, Homöostase <i>versagt</i>; das Gegenstück in B' ist der Eventhorizont, wo das Tal „unendlich tief" wird. Das Ordnungsgerüst selbst bricht auf.</p>
+    </div>
+    <div class="card b"><span class="tag">B · n1-039 (Fluss)</span>
+      <p>Die „Pathologie" ist <b>nicht</b> Verlust der Ordnung, sondern <b>Übersteuerung der Aufnahme</b>: Die Ordnung bleibt <i>intakt und voll real</i> — Denkzwang, Entmannung, Seelenmord — sie begegnet nur dem <b>falsch abgestimmten</b> Subjekt als erpressend. Der Mangel liegt im Subjekt, nicht in der Ordnung.</p>
+    </div>
+  </div>
+  <p class="note">Konflikt 4 — Fehlschlag: <b>Pathologie = Kollaps/Überforderung der Invariante (A)</b> vs. <b>Ordnung intakt, nur die (falsche) Abstimmung macht sie erpressend (B)</b>. Kein Widerspruch ist ein Fehlschluss; die Spannung liegt im <b>Grundverständnis von Struktur, Subjekt und Ursache</b>.</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span> Auflösung</h2>
+  <p>Alle vier Konflikte fallen weg, sobald man die beiden Papiere nicht als zwei verschiedene Welten, sondern als die <b>objektive</b> und die <b>erlebte</b> Seite <i>derselben</i> immanenten Ordnung liest. Zu jedem Paar:</p>
+
+  <div class="card fuse"><span class="tag">Auflösung 1 · Attraktor ≙ Maß</span>
+    <p>Das Attraktor-Minimum von A <i>ist</i> die wiederkehrende Form, die B's Feuer annimmt. Der „Tiefpunkt" des Zustandsraums und B's „Maß" sind derselbe Gegenstand, gesehen statisch (A: die Struktur, in die man absteigt) vs. dynamisch (B: der Rhythmus, den man durchläuft). „Absteigen ins Tal" <i>ist</i> „nach Maßen erglimmen und erlöschen". Die Invariante ist also weder ein Anker <i>über</i> dem Wandel noch formloses Werden, sondern <b>die Form, die der Wandel wiederholt</b>. Damit sind „Ordnung&nbsp;=&nbsp;Ziel" (A) und „Ordnung&nbsp;=&nbsp;Form der Bewegung" (B) identisch.</p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Auflösung 2 · Objektive Struktur + erlebte Form</span>
+    <p>Beide haben recht — auf verschiedenen Ebenen. A beschreibt, was <b>objektiv</b> an der Ordnung wahr ist (die Invariante gilt unabhängig von jedem Beobachter); B beschreibt, wie dieselbe objektive Ordnung <b>begegnet</b> (ihr Erlebens-Charakter ist an die Abstimmlage des Aufnahmesystems gebunden). Die <i>Ordnung</i> ist subjektunabhängig; ihre <i>Begegnungsform</i> (Harmonie vs. Kompulsion) ist abstimmungsrelativ. Fusion: <b>objektive Invariante + subjektive Resonanzform desselben Objekts.</b></p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Auflösung 3 · Zug ≙ Resonanz (Kleinsignal-Limes)</span>
+    <p>A's korrigierende Rückkopplung ist <b>Resonanz im Kleinsignal-Limes</b>. Bei kleiner Abweichung ist „zum Sollwert gegensteuern" und „in Resonanz mit dem Maß klingen" dasselbe — das System folgt dem Muster phasengesperrt. Bei wachsender Abweichung bricht die Resonanz in den übersteuerten, saturierten Regime, den B als Kompulsion/Denkzwang beschreibt. <b>A ist der lineare, abgestimmte Fall; B ist derselbe Kopplungsmechanismus bei de-abgestimmter, gesättigter Kopplung.</b></p>
+  </div>
+
+  <div class="card fuse"><span class="tag">Auflösung 4 · Kollaps ≙ De-Abstimmung</span>
+    <p>„Verlust der Invariante" (A) und „intakte Ordnung, falsche Abstimmung" (B) sind dasselbe Ereignis: Das System <b>verlässt sein Resonanz-Regime</b>. Wenn die Störung die Regelkapazität übersteigt (Hitzschlag), bricht die homöostatische Resonanz auf — die Invariante/der Logos verschwindet dabei <i>nicht</i>; nur die <b>Kopplung</b> des Systems an sie versagt. A's „Systemversagen" ist B's „De-Abstimmung" von der Innenseite eines lokalen Systems beschrieben.</p>
+  </div>
+
+  <div class="card fuse" style="margin-top:20px">
+    <span class="tag">Fusionierte Schlussposition</span>
+    <p class="lead">Ein einziges Modell: <b>eine immanente Ordnung</b> — ein paar Invarianten/Maße, gehalten durch ein Transformations-/Rückkopplungsgesetz, in einem sich verwandelnden Prozess. Ihr Charakter für ein konkretes System ist eine Funktion dessen <b>Abstimmlage</b>: in Resonanz wird sie zur stabilisierenden Invariante (Sollwert/Attraktor, befreiende Harmonie — A's Körper hält sich, B's Subjekt klingt mit dem Logos); de-abgestimmt wird dieselbe Ordnung zur Störung bzw. Kompulsion (Regelungsversagen, Denkzwang). <b>Was wir „Invarianz" und „Fluss" nennen, ist dieselbe immanente Ordnung — Invarianz ist ihre objektive, Fluss ihre prozessuale Seite, und die Abstimmlage des Systems entscheidet, ob es sie als Heimat oder als Zwang erlebt.</b></p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span> Fusionierter Inhalt</h2>
+  <p>Der konsolidierte Stoff beider Runde-1-Papiere — abstrahiert auf die Ebene ihrer Thesen/Positionen und ihrer nützlichen Mathematik, integriert statt hintergestellt. Spätere Runden können allein von hier arbeiten.</p>
+
+  <h3>4.1 Das eine Modell in vier Schichten</h3>
+  <ul>
+    <li><b>Substanz/Prozess:</b> A's sich verändernder Zustand (Körpertemperatur, Bezugsrahmen) ≙ B's ewiges Feuer / Gottesnerven — eine sich total umwandelnde „Substanz", in der „Wert bleibt, Form wechselt" (B's Gold-Metapher, Fr.&nbsp;90).</li>
+    <li><b>Invariante/Ordnung in der Substanz:</b> A's Sollwerte, $c$, $s^2$, $m_0$ ≙ B's Logos / „Maß" des Feuers — ein Ordnungsprinzip, das <i>in</i> dem Prozess liegt und ihn von innen ordnet („diese Weltordnung hat kein Gott und kein Mensch geschaffen").</li>
+    <li><b>Kopplungsgesetz:</b> A's Rückkopplung (Regelstärke $k\approx0.85$) / Lorentz-Transformation ≙ B's „nach Maßen erglimmend und erlöschend" — das Gesetz, das zwischen Perspektive/Zustand wechselt.</li>
+    <li><b>Form, die der Wandel annimmt + Abstimmlage des Systems:</b> A's Tal/Attraktor/Geodäte ≙ B's Resonanz (Wachen / Nervenanhang). Wie die Ordnung begegnet, setzt die Abstimmlage.</li>
+  </ul>
+
+  <h3>4.2 Die Mathematik (A) — als objektive Seite</h3>
+  <ul>
+    <li><b>Invariante:</b> $s^2=-(c\,\Delta t)^2+\Delta x^2+\Delta y^2+\Delta z^2$ bleibt unter Lorentz-Transformation <u>unverändert</u>; $c\approx299\,792\,458$&nbsp;m/s und $m_0$ sind invariant; $E^2=(pc)^2+(m_0 c^2)^2$.</li>
+    <li><b>Transformationsgesetz:</b> $x'=\gamma(x-vt)$, $t'=\gamma\!\left(t-\dfrac{vx}{c^2}\right)$ mit $\gamma=\dfrac{1}{\sqrt{1-v^2/c^2}}$; daraus $\Delta t=\gamma\,\Delta t_0$, $L=\tfrac{L_0}{\gamma}$, $E=\gamma m_0 c^2$. Für $v\ll c$ fällt $\gamma\to1$ auf Galilei ($x'=x-vt,\,t'=t$) zurück — der „Kleinsignal-Limes", in dem sich B' auf Alltag reduziert.</li>
+    <li><b>Regelgesetz (A-Körper):</b> linear um den Sollwert, $\text{Temp}\to37+(\text{Temp}-37)(1-k)$, $k\approx0.85$; bei $|Störung|&gt;$ Kapazität (Hitzschlag &gt;40&nbsp;°C) wird die Regulation überwältigt — das Tal „verloren".</li>
+    <li><b>Geometrie/Abstieg:</b> Zustand folgt dem Gradienten zum Minimum (Tal); GR: Materie folgt Geodäten; $r_s=\tfrac{2GM}{c^2}$ (Schwarzschild), $E_0=m_0 c^2$ (1&nbsp;kg&nbsp;&asymp;&nbsp;21,5&nbsp;Mt TNT), GPS +45&nbsp;µs/Tag.</li>
+  </ul>
+  <div class="eq">$\gamma=\frac{1}{\sqrt{1-\beta^2}} \;\Rightarrow\; \Delta t=\gamma\,\Delta t_0 \;\cdot\; L=\tfrac{L_0}{\gamma} \;\cdot\; E=\gamma m_0 c^2$ &nbsp;&nbsp;|&nbsp;&nbsp; A-Regel: $\text{Temp}\to37+(\text{Temp}-37)(1-k)$<span class="lbl">B's Kopplungsgesetz; A's Regelgesetz ist dessen Kleinsignal-Limes bei „kleiner Abweichung".</span></div>
+
+  <h3>4.3 Die Abstimmlage (B) — als erlebte Seite</h3>
+  <p>B liefert vier Schichten, die sich exakt auf A's Regime legen: <b>Substanz</b> (Feuer ≙ Nerven) → <b>Ordnung in der Substanz</b> (Logos ≙ Weltordnung) → <b>Resonanz des Subjekts</b> (Wachen ≙ Nervenanhang/Denkzwang) → <b>Spannungsbalance</b> (Bogen/Leier ≙ Zwei-Götter-Krieg). Auf A übersetzt: <b>abgestimmt (Resonanz)</b> = Homöostase hält, System folgt dem Maß phasengesperrt ($\gamma\approx1$, kleine Abweichung); <b>de-abgestimmt (Übersteuerung)</b> = Kopplung bricht, Regulation versagt (Hitzschlag ≙ Denkzwang). B's „Empfindsamkeit des Aufnahmesystems" und A's $\gamma$ (Geschwindigkeit des Rahmens relativ zur Invariante) sind beide <b>Abstimmlagen relativ zu derselben Ordnung</b> — die eine subjektiv (Empfänger), die andere objektiv (Bezugsrahmen). <b>Die Abstimmlage ist der einzige Regler, der die Begegnungsform setzt.</b></p>
+  <div class="two">
+    <div class="card a"><span class="tag">Abgestimmt · Resonanz</span>
+      <ul style="margin:6px 0 0">
+        <li><b>A:</b> Körper hält Sollwert (37&nbsp;°C, Blutzucker 70–100&nbsp;mg/dL, pH 7,35–7,45); Gegensteuerung bei jeder Abweichung.</li>
+        <li><b>B:</b> „trockene Seele", Wach, „auf sie hinhörend" — nimmt die Ordnung als gemeines Gesetz, bleibt souverän.</li>
+        <li><b>Fusion:</b> Ordnung als Heimat; Wandel als befreiende Harmonie.</li>
+      </ul>
+    </div>
+    <div class="card b"><span class="tag">De-abgestimmt · Übersteuerung</span>
+      <ul style="margin:6px 0 0">
+        <li><b>A:</b> Hitzschlag/Hypothermie — Störung überfordert die Regulation, das Tal wird überflutet.</li>
+        <li><b>B:</b> „überreizte Nerven", Denkzwang, Entmannung — dieselbe Ordnung als unwiderstehliche, persönliche Anziehung.</li>
+        <li><b>Fusion:</b> dieselbe Ordnung als Zwang; die Kopplung versagt, nicht die Ordnung.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4.4 Kennzahlen &amp; Phänomene (beide Seiten)</h3>
+  <ul>
+    <li><b>A (Struktur/Invarianz):</b> Grundumsatz 60–75&nbsp;% des Verbrauchs, Gehirn ~20&nbsp;% bei 2&nbsp;% Masse; ATP 40–70&nbsp;kg/Tag; Mikrobiom ~39&nbsp;Billionen Bakterien, ~95&nbsp;% Serotonin im Darm; ~86&nbsp;Mrd. Neuronen, ~100&nbsp;Billionen Synapsen, BDNF durch Sport; Zeitdilatation, Zwillingsparadoxon, Photonensphäre $1.5\,r_s$, ISCO $3\,r_s$, Gravitationsrotverschiebung $z=\tfrac{1}{\sqrt{1-r_s/r}}-1$.</li>
+    <li><b>B (Fluss/Ordnung):</b> Panta Rhei; Einheit der Gegensätze (Fr.&nbsp;51 Bogen/Leier, Fr.&nbsp;60 „Weg auf und ab ist einer"); ewiges Feuer (Fr.&nbsp;76/31 Elementkreislauf: „Feuer lebt der Erde Tod …"); Logos „ewig" (Fr.&nbsp;1, 112, 113); „Schlafende" (Fr.&nbsp;1, 34); „schönste Weltordnung … Kehrichthaufen" (Fr.&nbsp;124); „Zeit ist ein Knabe, der spielt" (Fr.&nbsp;52); Gold-Metapher (Fr.&nbsp;90); Schreber: Gottesnerven/Strahlen, Weltordnung, Nervenanhang, Denkzwang, Entmannung, Seelenmord/Flechsig, Ariman&nbsp;vs.&nbsp;Ormuzd; Rezeption (Freud, Canetti, Deleuze&nbsp;&amp;&nbsp;Guattari „Wunschmaschine").</li>
+  </ul>
+
+  <h3>4.5 Die Übereinstimmungstabelle (A ↔ B)</h3>
+  <table>
+    <thead><tr><th>Ebene</th><th>A · n1-103 (Invarianz)</th><th>B · n1-039 (Fluss)</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td>Prozess</td><td>sich verändernder Zustand (Körper/Raumzeit)</td><td>ewiges Feuer, Panta Rhei, Nerven/Strahlen</td><td>Wandel</td></tr>
+      <tr><td>Invariante</td><td class="k">Sollwert, $c$, $s^2$, $m_0$</td><td class="k">Logos, „Maß" des Feuers</td><td>immanentes Maß</td></tr>
+      <tr><td>Kopplungsgesetz</td><td>Rückkopplung, Lorentz-Transformation</td><td>„nach Maßen erglimmend/erlöschend"</td><td>Kopplung an das Maß</td></tr>
+      <tr><td>Form/Geometrie</td><td>Tal, Attraktor, Geodäte</td><td>Rhythmus/Struktur des Wandels</td><td>Form, die der Fluss annimmt</td></tr>
+      <tr><td>System</td><td>funktionaler Selbst-Frame</td><td>Resonanzkörper (Wachen/Denkzwang)</td><td>abgestimmtes System</td></tr>
+      <tr><td>Abgestimmt</td><td>Homöostase hält ($\gamma\approx1$)</td><td>Wachen, Mitklingen (Harmonie)</td><td>Invariante als Heimat</td></tr>
+      <tr><td>De-abgestimmt</td><td>Hitzschlag, Regelungsversagen</td><td>Denkzwang, Kompulsion</td><td>Invariante als Zwang</td></tr>
+      <tr><td>Grenzfall</td><td>Alltag, $v\ll c$, $\gamma\to1$</td><td>Kleinsignal, kleine Abweichung</td><td>lineare Resonanz</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Die Tabelle ist die operative Klammer der Runde-2-Fusion: Jede Zeile trägt dieselbe Struktur in zwei Beschreibungsmodi — objektiv (A) und erlebt (B).</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span> Visualisierung: eine Ordnung, zwei Abstimmlagen</h2>
+  <p>Ein einziges Flussfeld mit <b>denselben Partikeln</b> in beiden Lagen. Die goldene Linie ist die <b>immanente Ordnung</b> — ein Maß/Rhythmus (n1-103: Sollwert/$c$/$s^2$; n1-039: Logos/„Maß" des Feuers), das <b>immer gleich bleibt</b>, nur fortfließt (Panta Rhei). Der farbige Verlauf ist das <b>System</b>, das sich auf diese eine Ordnung einstellt. Der Regler ändert <i>nicht</i> die Ordnung, sondern die <b>Abstimmlage</b> des Systems: ganz links (abgestimmt) folgt das System der Ordnung phasengesperrt und glatt — Resonanz, kleine Verzerrung (Körper hält, Subjekt klingt mit). Ganz rechts (de-abgestimmt) wird dieselbe Kopplung übersteuert — rauschende, phasenverschobene Übersteuerung, große Verzerrung (Regulation versagt, Denkzwang). <b>Je weiter die Abstimmlage aus der Resonanz gerät, desto sichtbarer wird: dieselbe Invariante — als Heimat oder als Zwang.</b></p>
+
+  <div class="controls">
+    <label>Abstimmlage des Systems: &nbsp; Resonanz ⇄ Kompulsion</label>
+    <input type="range" id="tuning" min="0" max="100" value="12" step="1" aria-label="Abstimmlage des Systems zur Ordnung">
+    <span class="val" id="tuneVal">0.12</span>
+  </div>
+
+  <div class="viz-shell"><canvas id="wviz" width="800" height="420"></canvas></div>
+
+  <div class="ro">
+    <div class="box"><div class="l">Ordnung (invariant)</div><div class="v" id="roOrder">fix</div></div>
+    <div class="box"><div class="l">Verzerrung zum Maß</div><div class="v" id="roDist">0 %</div></div>
+    <div class="box"><div class="l">Regime</div><div class="v" id="roRegime">Resonanz</div></div>
+  </div>
+  <p class="note">Reine Inline-Daten, themenreaktiv (hell/dunkel), kein Netzwerk-Datenabruf. Die goldene Invariante bleibt konstant; nur die Kopplung des Systems ändert sich — so ist Invarianz (A) und Abstimmpol (B) eine Geste.</p>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span> Provenienz</h2>
+  <div class="prov"><span class="dot">📐</span><div>
+    <a href="../n1-103.html">n1-103.html — „Invarianz: das eine Muster hinter Körper = Raumzeit" (A)</a>
+    <div class="d">Runde-1-Fusion aus <i>koerper.html</i> ✕ <i>relativity.html</i>. Trägt die <b>objektive</b> Seite: die Invariante als fixer Sollwert/Intervall, gehalten durch Rückkopplung/Lorentz in Zeit/Perspektive, plus die Geometrie des Abstiegs (Tal/Attraktor/Geodäte) und die Verlust-Modi (Hitzschlag, Eventhorizont).</div>
+  </div></div>
+  <div class="prov"><span class="dot">🔥</span><div>
+    <a href="../n1-039.html">n1-039.html — „Fluss &amp; Nerven — Die eine Weltordnung in zwei Stimmen" (B)</a>
+    <div class="d">Runde-1-Fusion aus <i>heraklit.html</i> ✕ <i>daniel_paul_schreber.html</i>. Trägt die <b>erlebte</b> Seite: eine immanente, sich total verwandelnde Substanz (Feuer/Nerven) mit innerem Ordnungsprinzip (Logos/Weltordnung), deren Begegnungsform für den Einzelnen an dessen Abstimmlage (Wachen/Denkzwang) hängt.</div>
+  </div></div>
+</section>
+
+<footer>
+  Fusion-Paper 014 · Runde 2 · nicht-AI-Track · n1-103.html ✕ n1-039.html · Alle Daten inline, themenreaktiv, kein Netzwerk-Datenabruf.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('wviz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var slider = document.getElementById('tuning');
+  var tuneValEl = document.getElementById('tuneVal');
+  var roOrderEl = document.getElementById('roOrder');
+  var roDistEl  = document.getElementById('roDist');
+  var roRegimeEl= document.getElementById('roRegime');
+
+  var W=0,H=0,DPR=1;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    var rect = canvas.getBoundingClientRect();
+    W = Math.max(1, rect.width);
+    H = Math.max(1, rect.height);
+    canvas.width = Math.round(W*DPR);
+    canvas.height = Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function cssVar(name){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function withAlpha(color, a){
+    if(color && color.charAt(0)==='#' && color.length===7){
+      var r=parseInt(color.slice(1,3),16), g=parseInt(color.slice(3,5),16), b=parseInt(color.slice(5,7),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }
+    return 'rgba(200,200,200,'+a+')';
+  }
+
+  var N = 90;
+  var parts = [];
+  for(var i=0;i<N;i++){
+    parts.push({ u:i/N, jit: Math.random()*Math.PI*2, sp:0.5+Math.random()*1.1 });
+  }
+
+  var lastBucket=-1, lastDistStr='';
+  var REGIMES = [
+    {s:"Resonanz · abgestimmt", d:"kleine Abweichung, phasengesperrt"},
+    {s:"Übergang · Erregung", d:"Kopplung lockert, Verzerrung wächst"},
+    {s:"Kompulsion · de-abgestimmt", d:"Übersteuerung, Kopplung bricht"}
+  ];
+
+  function frame(now){
+    ctx.clearRect(0,0,W,H);
+    var k = (parseInt(slider.value,10)||0)/100;
+    var accent  = cssVar('--accent')  || '#4ecdc4';
+    var accent2 = cssVar('--accent2') || '#feca57';
+    var bad     = cssVar('--bad')     || '#ff6b6b';
+    var mid   = H*0.52;
+    var invAmp= H*0.17;
+    var lambda= Math.max(120, W*0.55);
+    var speed = 0.0018;
+
+    // Invariante (das Maß/Logos/Sollwert-Band) — bleibt immer gleich
+    ctx.fillStyle = withAlpha(accent2, 0.06);
+    ctx.fillRect(0, mid-invAmp*0.85, W, invAmp*1.7);
+    // Sollwert-Mittellinie
+    ctx.beginPath();
+    ctx.moveTo(0, mid); ctx.lineTo(W, mid);
+    ctx.strokeStyle = withAlpha(accent2, 0.28);
+    ctx.setLineDash([5,7]); ctx.lineWidth=1; ctx.stroke(); ctx.setLineDash([]);
+
+    var step = Math.max(4, W/140);
+    var lock    = 1 - k*0.92;
+    var noiseAmp= k*invAmp*0.55;
+    var jitAmp  = k*invAmp*0.75;
+    var ovrAmp  = k*invAmp*0.62;
+
+    function yInvAt(x){ var ph=(x/lambda)*Math.PI*2 - now*speed; return mid + invAmp*Math.sin(ph); }
+    function ySysAt(x){
+      var ph=(x/lambda)*Math.PI*2 - now*speed;
+      var base = (yInvAt(x)-mid)*lock;
+      var ovr  = ovrAmp*Math.sin(ph*2.7 + now*0.0022);
+      var jit  = jitAmp*Math.sin(x*0.09 + now*0.0038)*Math.sin(x*0.053 - now*0.0029);
+      var nz   = (k>0.03)? noiseAmp*Math.sin(x*0.14 + now*0.006) : 0;
+      return mid + base + ovr + jit + nz;
+    }
+
+    // Invariante Linie (gold)
+    ctx.beginPath();
+    for(var x=0;x<=W+step;x+=step){ var y=yInvAt(x); if(x===0){ctx.moveTo(x,y);}else{ctx.lineTo(x,y);} }
+    ctx.strokeStyle = withAlpha(accent2,0.95); ctx.lineWidth=2; ctx.stroke();
+
+    // System-Linie (Farbe lerp accent→bad)
+    var sr = accent, sg = bad;
+    var sysCol = k<0.5 ? accent : (k>0.8? bad : accent);
+    var mixc = k;
+    // simple lerp via rgba blend of the two hex
+    function hex(c){ var r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16); return [r,g,b]; }
+    var c1=hex(accent), c2=hex(bad);
+    var lr=Math.round(c1[0]+(c2[0]-c1[0])*mixc), lg=Math.round(c1[1]+(c2[1]-c1[1])*mixc), lb=Math.round(c1[2]+(c2[2]-c1[2])*mixc);
+    ctx.beginPath();
+    var distSum=0, distN=0;
+    for(var x2=0;x2<=W+step;x2+=step){
+      var ys=ySysAt(x2), yi=yInvAt(x2);
+      if(x2===0){ctx.moveTo(x2,ys);}else{ctx.lineTo(x2,ys);}
+      distSum += (ys-yi)*(ys-yi); distN++;
+    }
+    ctx.strokeStyle = 'rgb('+lr+','+lg+','+lb+')'; ctx.lineWidth=3; ctx.stroke();
+
+    // Partikel entlang des System-Verlaufs (die umwandelnde Substanz)
+    for(var p=0;p<N;p++){
+      var q=parts[p];
+      var px=q.u*W;
+      var py=ySysAt(px);
+      var wob = 3 + k*10;
+      var yy = py + Math.sin(now*0.004*q.sp + q.jit)*wob;
+      var sz = 1.6 + 1.8*(1-Math.abs(q.u-0.5)*2);
+      ctx.beginPath(); ctx.arc(px, yy, sz, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba('+lr+','+lg+','+lb+','+(0.5+k*0.3)+')';
+      ctx.fill();
+    }
+
+    // Readout
+    var rms = Math.sqrt(distSum/Math.max(1,distN));
+    var distPct = Math.min(150, Math.round((rms/invAmp)*100));
+    var ds = distPct+" %";
+    if(ds!==lastDistStr){ roDistEl.textContent = ds; lastDistStr=ds; }
+    var bucket = k<0.33?0:(k<0.66?1:2);
+    if(bucket!==lastBucket){
+      lastBucket=bucket;
+      roRegimeEl.textContent = REGIMES[bucket].s.split(' · ')[0];
+      tuneValEl && (tuneValEl.textContent = k.toFixed(2));
+    }
+    roOrderEl.textContent = 'fix · fließt';
+    if(tuneValEl){ tuneValEl.textContent = k.toFixed(2); }
+    requestAnimationFrame(frame);
+  }
+
+  var toggle = document.getElementById('themeToggle');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var h=document.documentElement;
+      h.classList.toggle('dark');
+      lastBucket=-1; lastDistStr='';
+    });
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+
+  document.addEventListener('DOMContentLoaded', function(){
+    if(typeof renderMathInElement!=='undefined'){
+      renderMathInElement(document.body, {
+        delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+        throwOnError:false
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

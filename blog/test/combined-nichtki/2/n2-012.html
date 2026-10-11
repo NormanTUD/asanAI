@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Das Eine: maßtragend und zentrumlos — Kohärenzkern im Rausch</title>
+<script>try{if(localStorage.getItem('n2012theme')==='light')document.documentElement.classList.remove('dark');}catch(e){}</script>
+<style>
+:root{
+  --bg:#f6f3ea;
+  --panel:#ffffff;
+  --panel2:#f0ecdf;
+  --ink:#20242e;
+  --dim:#5c6472;
+  --accent:#2f5fe0;
+  --accent2:#c46a1c;
+  --good:#0a8f63;
+  --border:#e0dac9;
+  --shadow:rgba(60,45,20,.10);
+}
+html.dark{
+  --bg:#0a0e1a;
+  --panel:#141b30;
+  --panel2:#1a2340;
+  --ink:#e7ecff;
+  --dim:#8892b8;
+  --accent:#7c9cff;
+  --accent2:#f0a35e;
+  --good:#6ee7b7;
+  --border:#2a3358;
+  --shadow:rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+h1{font-size:clamp(1.9rem,4.6vw,2.7rem);line-height:1.18;letter-spacing:-.015em;font-weight:800;margin-bottom:.35rem}
+.subtitle{color:var(--dim);font-style:italic;font-size:1.05rem;margin-bottom:.35rem}
+.subtitle .x{color:var(--accent2);font-style:normal;font-weight:700}
+.subtitle.provline{font-style:normal;font-size:.82rem;letter-spacing:.01em}
+h2{font-size:1.42rem;margin:46px 0 14px;padding-left:12px;border-left:4px solid var(--accent);line-height:1.22;color:var(--ink)}
+h3{font-size:1.12rem;margin:22px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+section{scroll-margin-top:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:0 6px 22px var(--shadow)}
+blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--accent2);background:var(--panel2);border-radius:0 8px 8px 0;font-style:italic}
+blockquote .src{display:block;font-style:normal;font-size:.8rem;color:var(--dim);margin-top:6px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px}
+.tagpill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif;margin-right:4px}
+.tagA{background:rgba(124,156,255,.16);color:var(--accent)}
+.tagB{background:rgba(240,163,94,.18);color:var(--accent2)}
+.math{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.98rem;line-height:1.85;overflow-x:auto}
+.math .sym{color:var(--accent);font-family:'Cambria Math','STIX Two Math',Georgia,serif;font-style:italic}
+.math .lbl{color:var(--dim);font-size:.86rem}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:8px}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.ctrl{display:flex;flex-direction:column;gap:6px;min-width:190px;flex:1}
+.ctrl label{font-size:.74rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.ctrl .val{color:var(--ink);font-weight:700;font-family:ui-monospace,monospace;text-transform:none}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:600;font-family:system-ui,sans-serif;transition:.18s}
+button:hover{border-color:var(--accent)}
+button.active{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50;width:42px;height:42px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--border);cursor:pointer;font-size:1.15rem;box-shadow:0 4px 16px var(--shadow)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;min-width:130px}
+.stat .k{color:var(--dim);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif;display:block;margin-bottom:2px}
+.stat .v{font-family:ui-monospace,monospace;font-weight:700;font-size:1.05rem}
+.viz-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 8px 30px var(--shadow)}
+#viz{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;margin:8px 0 2px;font-family:system-ui,sans-serif}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.readout{margin-top:12px;min-height:3rem;text-align:center;font-style:italic;color:var(--accent);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-size:.95rem}
+.prov{padding:14px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;word-break:break-all;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--dim);border:1px solid var(--border);border-radius:999px;padding:1px 8px;margin-right:8px;font-family:system-ui,sans-serif}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:4px}
+footer{margin-top:3rem;color:var(--dim);font-size:.85rem;text-align:center;border-top:1px solid var(--border);padding-top:1.4rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Farbschema umschalten" aria-label="Theme wechseln">🌙</button>
+<article>
+
+<h1>Das Eine: maßtragend und zentrumlos</h1>
+<p class="subtitle">Der typische Kern im Rauschkanal <span class="x">✕</span> Kohärente Verschiedenheit ohne Zentrum</p>
+<p class="subtitle provline">Fusion aus: n1-059.html ✕ n1-014.html  (Runde 2)</p>
+
+<!-- ============ 1 THESE ============ -->
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Quellen fragen <b>dasselbe</b>: Was ist „das Eine" — das <i>gleiche</i>, das <i>dasselbe</i>, das <i>eine</i>? A (<i>Der typische Kern im Rauschkanal</i>, Shannon × Joyce) antwortet: es ist eine <b>typische Menge</b> — von <span class="mono">2ⁿ</span> Möglichkeiten tragen nur ~<span class="mono">2ⁿᴴ</span> fast die gesamte Masse, sind selbstähnlich, „the same returns". B (<i>Kohärente Verschiedenheit</i>, Philosophie ohne Zentrum) antwortet: es ist <b>kein Ding hinter den Dingen</b>, sondern „das kohärente Zusammenspiel verschiedener Perspektiven"; „das Zentrum verschwindet". Die Fusion beider Papiere lautet: <b>Das Eine ist ein maßtragendes, zentrumloses Kohärenzkern.</b></p>
+<p>Das verschmolzene Objekt vereint das Bestechende beider Seiten. Es ist <b>maßtragend</b> wie bei A: Die typische Menge ist ein reales, messbares Objekt, das fast die ganze Wahrscheinlichkeitsmasse trägt (P→1) und ein irreduzibles Minimum hat (H Bits — die Shannon-Grenze). Und es ist <b>zentrumlos</b> wie bei B: Kein einziges Element <i>ist</i> das Eine; „das Eine" ist die <i>Übereinstimmung</i> zwischen den Elementen, nicht ein Ding, das dahintersteht. Shannons typische Menge <i>ist</i> genau eine Garbe/Biindel im Sinne von B — die Menge aller Sequenzen, die auf einer Statistik (empirische Entropie ≈ H) <i>übereinstimmen</i>, zusammengeklebt zu einem globalen Objekt <span class="mono">O</span>, ohne zusätzliches Zentrum.</p>
+<p>Und das verbindende Prinzip ist <b>Redundanz = Kohärenz unter Rausch</b>. A: „Redundanz ist Fehlerkorrektur" — Wiederholung rettet „the same returns" durch den rauschintensivsten Kanal (Traum, Gerücht, Litter). B: Das Netz hält durch Kohärenz (Übereinstimmung auf Überlappungen), während die Verschiedenheit <i>bewahrt</i> bleibt. Fusion: <b>Kohärenz, die im Rauschkanal überleben muss, manifestiert sich als Redundanz.</b> Das Eine hat also Gewicht (A) und kein Zentrum (B) zugleich: ein massetragendes, zentrumloses Muster, das sich selbstähnlich durch den Rausch recirculiert.</p>
+</section>
+
+<!-- ============ 2 WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden Runde-1-Papiere nehmen an zwei Punkten unvereinbare Haltungen ein — jeweils eine These von A gegen eine These von B:</p>
+
+<div class="card">
+<h3><span class="tagpill tagA">A</span> Das Eine als reales, maßtragendes Kern-Objekt &nbsp;vs&nbsp; <span class="tagpill tagB">B</span> Das Eine als zentrumloses Netz ohne Substanz</h3>
+<p><b>A sagt:</b> Das Eine ist ein <b>reales, determiniertes Objekt mit Maß</b>. Die typische Menge <span class="mono">A_ε⁽ⁿ⁾</span> trägt fast die gesamte Masse (<span class="mono">P → 1</span>), hat eine <b>irreduzible Untergrenze</b> — H Bits, ein fester, messbarer Pol. „The same returns" heißt: es gibt eine stabile, quantifizierbare, wiederkehrende Struktur mit Gewicht. Das Eine <i>existiert</i> im starken, metrischen Sinne.</p>
+<p><b>B sagt:</b> Das Eine ist <b>kein Ding, keine Substanz, kein Zentrum</b>. „Das Zentrum verschwindet." Das Eine ist rein <b>relational</b> — das Netz der Kohärenzen zwischen Perspektiven, definiert durch Übereinstimmung auf Überlappungen, <i>ohne</i> jede Substanz dahinter. Es hat <b>kein Maß, keine Untergrenze, keinen „Ding"-Status</b>; es <i>ist</i> die Übereinstimmung selbst, nicht ein Objekt mit Gewicht.</p>
+<p style="color:var(--dim)"><b>Der scharfe Punkt:</b> A reifiziert das Eine als <i>maßtragenden</i> Kern (H ist ein fester Pol, die typische Menge ein reales Objekt). B negiert dem Einen jeglichen Ding-/Maß-/Zentrumsstatus. Ist das Eine ein reales Objekt mit Gewicht (A) oder ein zentrumloses Muster ohne intrinsisches Sein (B)?</p>
+</div>
+
+<div class="card">
+<h3><span class="tagpill tagA">A</span> Zusammengehalten durch Redundanz/Repetition &nbsp;vs&nbsp; <span class="tagpill tagB">B</span> Zusammengehalten durch Kohärenz bei erhaltener Verschiedenheit</h3>
+<p><b>A sagt:</b> Das Eine überlebt den Rauschkanal, weil es <b>redundant</b> ist — „Redundanz ist Fehlerkorrektur". Joyce maximalisiert die Zeichen pro Bit; der Kern wird durch <b>Wiederholung</b> geschützt, „the same returns" via <i>redundante</i> Recirculation. Der Mechanismus ist Repetition: Kollaps auf ein selbstähnliches Minimum, das man durch Überfluss schützt. Das <i>Gleiche</i> kehrt durch das <i>Wiederholte</i> zurück.</p>
+<p><b>B sagt:</b> Das Eine wird durch <b>Kohärenz</b> (Übereinstimmung auf Überlappungen) zusammengehalten, und <b>die Verschiedenheit bleibt bestehen</b> — „Verschiedenheit muss nicht aufgehoben werden, um Einheit zu erzeugen." Die Perspektiven <i>bleiben verschieden</i>; die Einheit ist der Klebstoff, kein Kollaps auf das Gleiche. Der Mechanismus ist Kohärenz-<i>zwischen-Variouschem</i>, nicht Repetition des Gleichen.</p>
+<p style="color:var(--dim)"><b>Der scharfe Punkt:</b> A's Eine ist ein selbstähnlicher Kern, geschützt durch <i>Repetition</i> (das Gleiche kehrt zurück). B's Eine ist ein Kohärenznetz, das die <i>Verschiedenheit erhält</i> (das Verschiedene bleibt, verklebt durch Übereinstimmung). Gleiche-wiederholend vs. Verschiedene-beibehaltend; Redundanz vs. Kohärenz.</p>
+</div>
+</section>
+
+<!-- ============ 3 AUFLOESUNG ============ -->
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<div class="card">
+<h3>1. Maßtragend <i>und</i> zentrumlos: die typische Menge ist eine Garbe</h3>
+<p>Die Rekonstruktion: A's „reales Kern-Objekt" und B's „zentrumloses Netz" sind <b>derselbe Gegenstand</b>. A's typische Menge ist definiert als die Menge aller Sequenzen, die auf einer Statistik <i>übereinstimmen</i> — <span class="mono">|−(1/n)·log₂ p(x) − H| &lt; ε</span>. Das ist exakt B's Garbe: lokale Daten (jeweils eine Sequenz), die auf den Überlappungen (der geteilten Statistik) übereinstimmen, <b>ohne</b> ein zusätzliches Zentrum. Die typische Menge <i>trägt Maß</i> (die fast-sichere Konvergenz macht sie „real"/gewichtstragend — A) <i>und</i> hat <b>kein Zentrum</b> (keine einzelne Sequenz <i>ist</i> der Kern; der Kern ist die statistische Übereinstimmung, die sie alle teilen — B). H Bits ist keine versteckte Substanz, sondern das <b>Maß der Kohärenz</b> — der <i>Kohärenzpol</i>, der stabilste Punkt im Netz, nicht ein Ding dahinter. Das Eine ist also beides zugleich: maßtragend <i>und</i> zentrumlos.</p>
+</div>
+
+<div class="card">
+<h3>2. Redundanz ist die rauschfeste Form der Kohärenz</h3>
+<p>B's Kohärenz (Übereinstimmung auf Überlappungen) ist, sobald das Medium ein <b>Rauschkanal</b> ist, nur dann robust, wenn sie sich <b>redundant wiederholt</b>: Damit zwei über verrauschte Übertragungen hinweg „übereinstimmen", muss jede von ihnen die Information mehrfach tragen. A's „Redundanz ist Fehlerkorrektur" ist also die <i>Rauschform</i> von B's Kohärenz — und „the same returns" ist Kohärenz, die das Rauschen überlebt. Umgekehrt: B's „Verschiedenheit bleibt erhalten" korrespondiert zu A's „die atypischen Sequenzen sind Scheinwelt, die verworfen wird" — die Verschiedenheit (die <span class="mono">2ⁿ</span>-Scheinwelt bei A, die fünf Fächer bei B) bleibt als <i>Scheinwelt bzw. als lebende Knoten</i> erhalten, ist aber <b>nicht das Eine</b>. Fusion: Das Eine ist die Kohärenz/der Kern; die Verschiedenheit bleibt als das <i>Nicht-Eine</i> am Rand bestehen. Redundanz (A) und Kohärenz-<i>plus</i>-Verschiedenheit (B) sind zwei Stellungen eines einzigen Reglers — der Rauschtoleranz des Kanals.</p>
+</div>
+</section>
+
+<!-- ============ 4 INHALT ============ -->
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>① Die eine Frage: Was ist „das Eine"?</h3>
+<p>Beide Papiere konvergieren auf dieselbe Frage und dieselbe doppelte Negation. Negation I — <b>kein flacher Raum unabhängiger Elemente</b>: A's <span class="mono">2ⁿ</span>-Scheinwelt, in der fast nichts steckt; B's fünf getrennten Fächer, die nicht auf ein „Gegenstands-Ding" zeigen. Negation II — <b>kein zentrales Ding dahinter</b>: B's „das Zentrum verschwindet"; A's Verzicht auf eine einzelne privilegierte Original-Nachricht (die Bedeutung des Briefs ist der Plural des Traums). Was bleibt, ist der gemeinsame positive Kern: <b>ein kleiner, selbstähnlicher/kohärenter Kern, der das ganze Gewicht trägt.</b> A nennt ihn „the same returns"; B nennt ihn „das Netz der Kohärenzen".</p>
+
+<h3>② Das Eine als maßtragendes, zentrumloses Kohärenzkern</h3>
+<p>Das verschmolzene Objekt, in A's Formelsprache und B's Struktur:</p>
+<div class="math">
+<b>Typische Menge (A) = Garbe (B):</b> die Menge aller lokalen Daten, die auf einer Statistik übereinstimmen, klebt zum globalen Objekt — <b>ohne Zentrum</b>.<br>
+<span class="sym">A_ε⁽ⁿ⁾</span> = { <span class="sym">x</span> : | −(1/n)·log₂ <span class="sym">p(x)</span> − <span class="sym">H</span> | &lt; ε } &nbsp;↔&nbsp; <span class="sym">O = lim {P_i}</span><br>
+<span class="lbl">Eigenschaften: P(A_ε⁽ⁿ⁾) → 1 (maßtragend, A) · |A| ≤ 2ⁿ⁽ᴴ⁺ᵋ⁾ (klein) · p(x) ≈ 2⁻ⁿᴴ (alle gleich wahrscheinlich)</span><br><br>
+<b>Fusionsformel:</b> <span class="sym">O</span> = { typische Sequenzen } + ihre Kohärenz (Übereinstimmung auf ε) — <b>ohne zusätzliches Zentrum.</b> <span class="sym">H</span> ist nicht Substanz, sondern das <b>Maß der Kohärenz</b> (= Kohärenzpol).<br>
+<span class="lbl">Einheit = maßtragende, zentrumlose Kohärenz.</span>
+</div>
+
+<h3>③ Rauschkanal als Prüfstand: große Abweichungen = die atypische Scheinwelt</h3>
+<p>A: Der Rauschkanal (Gerücht, Traum, Litter) degradiert die Nachricht; die Wahrscheinlichkeit einer stark <i>atypischen</i> Sequenz (starker Abweichung von der Kohärenz) fällt <b>exponentiell</b> ab (Theorie der großen Abweichungen / Cramér: <span class="mono">P(atypisch) ~ e^{−n·D}</span>). B: Das Rauschen ist der <i>Shift</i> der Perspektiven (das „harte Problem", das „sich verschiebt"; das Gerücht, das „mutiert"). Fusion: Das Eine ist stabil, <b>weil es kohärent ist</b>; Kohärenz unter Rausch zeigt sich als Redundanz/Fehlerkorrektur. Die atypische Masse (A) = die Scheinwelt der reinen Verschiedenheit (B): sie <i>existiert</i> im Raum der Möglichkeiten, aber sie <i>trägt keine Masse</i> und <i>ist nicht das Eine</i>.</p>
+
+<h3>④ Ergodizität = Isomorphie-Familie: ein Pfad = ein Muster in vielen Domänen</h3>
+<p>A: <b>Ergodizität</b> — Zeitmittel = Ensembledurchschnitt; ein einzelner, unendlicher Pfad trägt die gesamte statistische Information des Prozesses. Der Vico-Zyklus <i>ist</i> der ergodische Orbit; „every figure is every other figure". B: die <b>Isomorphie-Familie</b> — dasselbe Prinzip (Einheit = kohärente Verschiedenheit ohne Zentrum) erscheint isomorph in: dem Zug (Sinnesmodalitäten, die zusammenpassen), KI-Embeddings (Bedeutung = Position im Relationsnetz, <span class="mono">sim(u,v)=cos(w_u,w_v)</span>), HoTT (<span class="mono">a ≃ b</span> als <i>Raum von Pfaden</i>, nicht atomares <span class="mono">a=b</span>), Schmitz' Leibraum (Räumlichkeit als Beziehung), Garben. Fusion: A's „ein Pfad enthält das ganze Ensemble" und B's „dieselbe Struktur in allen Domänen" sind <b>zwei Seiten desselben Faktums</b> — ein einziges selbstähnliches, wiederkehrendes Muster, das auf allen Skalen/Domänen wiederkehrt.</p>
+
+<h3>⑤ Zwei Stellungen eines Reglers: Komprimierung ↔ Expansion = Kohärenz mit variabler Rauschtoleranz</h3>
+<p>A: Komprimierung (auf H Bits, das reine verlustfreie Signal) und Expansion (maximale Redundanz für Schönheit/Überleben im rauschigsten Kanal) sind <b>zwei Stellungen eines einzigen Reglers</b> (Rate-Distortion). B: Kohärenz (der Klebstoff) und bewahrte Verschiedenheit (die lebenden, verschiedenen Knoten) stehen im Gleichgewicht — das Netz ist Einheit <i>ohne</i> Kollaps der Verschiedenheit. Fusion: Das Eine liegt auf einem Spektrum. Ein Ende: das <i>minimal, verlustfrei komprimierte</i> Kern — Shannons H, das reine Signal, die fünf Fächer als reine Kohärenz-Pole. Das andere Ende: der <i>maximal-redundante, maximal-verschiedene, maximal-schöne</i> Text — Joyce, die fünf Fächer als lebende, erhaltene Verschiedenheit. Dazwischen liegt derselbe Kern bei unterschiedlicher <b>Rauschtoleranz</b> (A) = unterschiedlicher <b>Kohärenzstärke</b> (B). Der Regler ist das Rauschen des Kanals.</p>
+
+<h3>⑥ Der Kohärenzpol: H als stabilster Punkt, nicht als Ding</h3>
+<p>Beide Papiere haben einen „stabilsten Punkt", aber sie interpretieren ihn anders, und die Fusion korrigiert beides. Bei A ist H das <b>irreduzible Minimum</b> (Source-Coding-Theorem) — ein fester, messbarer Pol, aber ein Pol <i>der Kohärenz</i>, keine Substanz. Bei B ist der „stabilste Punkt im Netz" (<span class="mono">O</span>) <b>kein Zentrum</b> — die Kohärenzpole (Platons Ideen, Descartes' Cogito, bei A: der Kern) sind die stabilsten Punkte <i>im</i> Netz, nicht Dinge <i>dahinter</i>. Fusion: <b>H = der Kohärenzpol</b> — das Maß der Übereinstimmung, der stabilste Punkt, an den sich alles ergodisch „wieder zurück" bewegt, ohne selbst ein Zentrum/das Ding zu sein.</p>
+</section>
+
+<!-- ============ 5 VISUALISIERUNG ============ -->
+<section id="visualisierung">
+<h2>Interaktive Visualisierung — Das Eine: maßtragend, zentrumlos, rauschfest</h2>
+<div class="viz-wrap">
+<p style="font-size:.92rem;margin-bottom:12px"><b>Ein Feld, ein Kern, ein (verlierendes) Zentrum.</b> Die <i>hellen</i> Punkte sind die Scheinwelt — die <span class="mono">2ⁿ</span>-Möglichkeiten / die vielen verschiedenen Perspektiven, die fast keine Masse tragen. Die <b>blauen</b> Punkte sind das Eine: ein straffer, <b>maßtragender</b> Kern in einem „Übereinstimmungs-Band" (die typische Menge = die Kohärenz-Garbe; alle Punkte teilen dieselbe Statistik ≈ H, daher „alle gleich wahrscheinlich"). Der <b>goldene Ring</b> ist die Kohärenz (die Übereinstimmung/der Overlap). In <em>Klassisch</em>-Modus steht dahinter ein <b>Zentrum</b> („das Ding"); in <em>Kohärent</em>-Modus <b>verschwindet es</b> — das Eine ist dann nur noch die Kohärenz, aber sie trägt trotzdem Masse. Schiebt ihr das <b>Rausch q</b>, wandert die atypische Masse in den Schwanz, aber der <b>Peak bleibt bei H</b> — „das Gleiche kehrt zurück"; der Kern ist rauschfest, weil Redundanz = Kohärenz.</p>
+<div class="controls">
+  <button id="btnSubstance">Klassisch — Zentrum dahinter (A)</button>
+  <button id="btnCoherence" class="active">Kohärent — Zentrum verschwindet (B)</button>
+  <button id="btnReseed">Neu würfeln</button>
+</div>
+<div class="controls">
+  <div class="ctrl"><label>Rausch q (Gerücht / Kanaldämpfung) <span class="val" id="valQ">0.15</span></label><input type="range" id="vizQ" min="0" max="0.6" step="0.01" value="0.15"></div>
+</div>
+<div class="legend">
+  <span><span class="sw" style="background:var(--accent)"></span>das Eine — maßtragender Kern (typische Menge / Kohärenz)</span>
+  <span><span class="sw" style="background:var(--accent);opacity:.3"></span>Scheinwelt — 2ⁿ / verschiedene Perspektiven (keine Masse)</span>
+  <span><span class="sw" style="background:var(--accent2)"></span>Kohärenz / Übereinstimmungs-Band</span>
+  <span><span class="sw" style="background:var(--good)"></span>H — Kohärenzpol / Shannon-Grenze</span>
+</div>
+<canvas id="viz" width="760" height="540" role="img" aria-label="Das Eine als maßtragender, zentrumloser Kohärenzkern im Rauschfeld"></canvas>
+<div class="readout" id="vizReadout"></div>
+<div class="statrow">
+  <div class="stat"><span class="k">H — Kohärenzpol (Shannon-Grenze)</span><span class="v" id="stH" style="color:var(--good)">—</span></div>
+  <div class="stat"><span class="k">Masse im Kern-Band (±ε um H)</span><span class="v" id="stCore" style="color:var(--accent)">—</span></div>
+  <div class="stat"><span class="k">Rausch q</span><span class="v" id="stQ" style="color:var(--accent2)">—</span></div>
+</div>
+</div>
+</section>
+
+<!-- ============ 6 PROVENIENZ ============ -->
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="card">
+  <div class="prov">
+    <div><span class="tag">A</span><a href="../n1-059.html">n1-059.html</a></div>
+    <div class="desc">„Der typische Kern im Rauschkanal" (Fusion aus Shannons Asymptotischer Gleichverteilungseigenschaft × Joyces Finnegans Wake): die typische Menge als wiederkehrender Kern, Entropie als Überraschung, Ergodizität, große Abweichungen, Redundanz als Fehlerkorrektur, die Shannon-Grenze H als Wirbelsäule — mit Plotly-AEP-Experiment (sauber vs. geräuscht).</div>
+  </div>
+  <div class="prov">
+    <div><span class="tag">B</span><a href="../n1-014.html">n1-014.html</a></div>
+    <div class="desc">„Kohärente Verschiedenheit — Philosophie ohne Zentrum" (Fusion aus philosophy.html × zug_idee.html): das Eine ist kein verborgenes Ding, sondern das kohärente Zusammenspiel der Perspektiven; Garben/Limes ohne Zentrum, HoTT, Embeddings, Schmitz; das harte Problem verschiebt sich zu einer Kohärenz-Gewichtung — mit dem SVG der fünf Fächer und dem verschwindenden Zentrum.</div>
+  </div>
+</div>
+</section>
+
+<footer>Fusion · Runde 2 · Paar 012 · nicht-künstlerische Sparte</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }
+  function binaryEntropy(p){ if(p<=0||p>=1) return 0; return -(p*Math.log(p)+(1-p)*Math.log(1-p))/Math.LN2; }
+  function gauss(){ return (Math.random()+Math.random()+Math.random()+Math.random()-2)/2; }
+
+  /* ---- theme toggle ---- */
+  var tbtn = $('themeToggle');
+  if(tbtn){
+    function syncT(){ tbtn.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀'; readColors(); }
+    tbtn.addEventListener('click', function(){
+      document.documentElement.classList.toggle('dark');
+      try{ localStorage.setItem('n2012theme', document.documentElement.classList.contains('dark') ? 'dark':'light'); }catch(e){}
+      syncT();
+    });
+    syncT();
+  }
+
+  /* ---- viz ---- */
+  var canvas = $('viz');
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var readout = $('vizReadout');
+  var qSlider = $('vizQ');
+  var valQ = $('valQ'), stH = $('stH'), stCore = $('stCore'), stQ = $('stQ');
+  var bSub = $('btnSubstance'), bCoh = $('btnCoherence'), bRes = $('btnReseed');
+  if(!ctx || !qSlider) return;
+
+  var pSource = 0.30;
+  var Hval = binaryEntropy(pSource);
+  var N_CORE = 56, N_SCHEIN = 320;
+  var mode = 'coherence';
+  var core = [], schein = [];
+  var W=0,H=0,dpr=1,fieldTop=24,histH=0,fieldBottom=0;
+  var C = {};
+  var histBins=[], refBins=[];
+
+  function readColors(){
+    C.panel = cssVar('--panel')||'#141b30';
+    C.accent = cssVar('--accent')||'#7c9cff';
+    C.accent2 = cssVar('--accent2')||'#f0a35e';
+    C.good = cssVar('--good')||'#6ee7b7';
+    C.ink = cssVar('--ink')||'#e7ecff';
+    C.dim = cssVar('--dim')||'#8892b8';
+    C.border = cssVar('--border')||'#2a3358';
+  }
+
+  function seed(){
+    core = [];
+    for(var i=0;i<N_CORE;i++){
+      core.push({ fa:Math.random(), fr:Math.random(), ph:Math.random()*6.283 });
+    }
+    schein = [];
+    for(var j=0;j<N_SCHEIN;j++){
+      var a = Math.random()*6.283, r = Math.sqrt(Math.random());
+      schein.push({ fx:Math.cos(a)*r, fy:Math.sin(a)*r });
+    }
+  }
+
+  function layout(){
+    var wrap = canvas.parentNode;
+    W = Math.max(300, Math.min(860, wrap.clientWidth - 4));
+    H = Math.max(360, Math.min(560, Math.round(W*0.74)));
+    dpr = window.devicePixelRatio||1;
+    canvas.width = Math.round(W*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.width = W+'px';
+    canvas.style.height = H+'px';
+    fieldTop = 24;
+    histH = Math.round(H*0.26);
+    fieldBottom = H - histH;
+  }
+
+  function genHist(){
+    var q = +qSlider.value;
+    valQ.textContent = q.toFixed(2);
+    stQ.textContent = q.toFixed(2);
+    stH.textContent = Hval.toFixed(3)+' bit';
+    var nb=25, M=1400, samples=[];
+    for(var i=0;i<M;i++){
+      var v;
+      if(Math.random() < (1 - q*0.9)){
+        v = Hval + gauss()*(0.03 + 0.11*q);
+      } else {
+        v = (Math.random()<0.5) ? Math.random()*Hval*0.85 : (Hval + Math.random()*(1.0-Hval)*1.7);
+      }
+      if(v<0)v=0; if(v>1.0)v=1.0;
+      samples.push(v);
+    }
+    histBins = new Array(nb).fill(0);
+    var c=0;
+    for(var j=0;j<samples.length;j++){
+      var b=Math.floor(samples[j]*nb); if(b<0)b=0; if(b>=nb)b=nb-1; histBins[b]++;
+      if(Math.abs(samples[j]-Hval)<=0.08) c++;
+    }
+    stCore.textContent = (c/samples.length*100).toFixed(0)+' %';
+    var M2=1400; refBins=new Array(nb).fill(0);
+    for(var k=0;k<M2;k++){
+      var v2=Hval+gauss()*0.03; if(v2<0)v2=0; if(v2>1.0)v2=1.0;
+      var b2=Math.floor(v2*nb); if(b2<0)b2=0; if(b2>=nb)b2=nb-1; refBins[b2]++;
+    }
+  }
+
+  function refresh(){
+    bSub.classList.toggle('active', mode==='substance');
+    bCoh.classList.toggle('active', mode==='coherence');
+    if(readout){
+      if(mode==='substance'){
+        readout.textContent = 'Klassisch (A): Hinter dem Kern steht ein Zentrum — „die Wirklichkeit", das „Subjekt", das „Eine" als Ding mit Maß. Der Kern ist ein reales, maßtragendes Objekt, das H als Pol hat.';
+      } else {
+        readout.textContent = 'Kohärent (B): Es gibt kein Zentrum. Das Eine IST die Kohärenz des Kerns — die Übereinstimmung aller typischen Sequenzen auf ≈ H. Kein Ding dahinter, aber trotzdem maßtragend: das Eine hat Gewicht, aber kein Zentrum.';
+      }
+    }
+  }
+
+  function drawHist(){
+    var hx0=30, hx1=W-30, hy0=fieldBottom+34, hy1=H-24;
+    if(hy1-hy0<20) return;
+    var maxv=1, i;
+    for(i=0;i<histBins.length;i++){ if(histBins[i]>maxv)maxv=histBins[i]; if(refBins[i]>maxv)maxv=refBins[i]; }
+    var nb=histBins.length, bw=(hx1-hx0)/nb;
+    ctx.strokeStyle=C.border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(hx0,hy1); ctx.lineTo(hx1,hy1); ctx.stroke();
+    ctx.globalAlpha=0.45; ctx.fillStyle=C.accent2;
+    for(i=0;i<nb;i++){ var h=(refBins[i]/maxv)*(hy1-hy0); if(h>0) ctx.fillRect(hx0+i*bw+1, hy1-h, bw-2, h); }
+    ctx.globalAlpha=0.85; ctx.fillStyle=C.accent;
+    for(i=0;i<nb;i++){ var h2=(histBins[i]/maxv)*(hy1-hy0); if(h2>0) ctx.fillRect(hx0+i*bw+1, hy1-h2, bw-2, h2); }
+    ctx.globalAlpha=1;
+    var hx = hx0 + Hval*(hx1-hx0);
+    ctx.strokeStyle=C.good; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(hx,hy0-4); ctx.lineTo(hx,hy1); ctx.stroke();
+    ctx.fillStyle=C.good; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('H = '+Hval.toFixed(3)+' (Kohärenzpol)', hx, hy0-8);
+    ctx.fillStyle=C.dim; ctx.font='10px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('s = −(1/n)·log₂ p(x)  ·  Peak bleibt bei H — „das Gleiche kehrt zurück"', hx0, hy1+15);
+  }
+
+  var rafId=null;
+  function frame(){
+    var t = performance.now()/1000;
+    var q = +qSlider.value;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.panel; ctx.fillRect(0,0,W,H);
+    var cx=W/2, cyField=(fieldTop+fieldBottom)/2;
+    var Rbig = Math.min(cx-30, (fieldBottom-fieldTop)/2 - 8);
+    var R0 = Rbig*0.42, R1 = Rbig*0.60;
+
+    ctx.globalAlpha=0.14; ctx.fillStyle=C.accent;
+    for(var s=0;s<schein.length;s++){
+      var sc=schein[s];
+      ctx.beginPath(); ctx.arc(cx+sc.fx*Rbig, cyField+sc.fy*Rbig, 1.6, 0, 6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    if(mode==='coherence'){
+      ctx.globalAlpha=0.12; ctx.fillStyle=C.accent2;
+      ctx.beginPath(); ctx.arc(cx,cyField,R1,0,6.2832); ctx.arc(cx,cyField,R0,0,6.2832,true); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+
+    ctx.fillStyle=C.accent;
+    for(var c=0;c<core.length;c++){
+      var p=core[c];
+      var ang = p.fa*6.2832 + 0.12*q*Math.sin(t*0.8+p.ph);
+      var rr  = R0 + p.fr*(R1-R0) + (R1-R0)*0.16*q*Math.sin(t*0.6+p.ph*1.7);
+      var x=cx+rr*Math.cos(ang), y=cyField+rr*Math.sin(ang);
+      ctx.globalAlpha=0.92; ctx.beginPath(); ctx.arc(x,y,3.1,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    if(mode==='substance'){
+      ctx.fillStyle=C.accent; ctx.beginPath(); ctx.arc(cx,cyField,10,0,6.2832); ctx.fill();
+      ctx.fillStyle=C.ink; ctx.font='600 15px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Zentrum', cx, cyField-16);
+      ctx.fillStyle=C.dim; ctx.font='12px system-ui,sans-serif'; ctx.fillText('das Ding', cx, cyField+27);
+    } else {
+      ctx.globalAlpha=0.15; ctx.fillStyle=C.accent2; ctx.beginPath(); ctx.arc(cx,cyField,10,0,6.2832); ctx.fill(); ctx.globalAlpha=1;
+      ctx.fillStyle=C.accent2; ctx.font='600 15px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('≃ Kohärenz', cx, cyField-16);
+      ctx.fillStyle=C.dim; ctx.font='12px system-ui,sans-serif'; ctx.fillText('kein Zentrum', cx, cyField+27);
+    }
+
+    drawHist();
+    rafId = window.requestAnimationFrame(frame);
+  }
+
+  function start(){
+    if(rafId) window.cancelAnimationFrame(rafId);
+    readColors();
+    layout();
+    genHist();
+    refresh();
+    rafId = window.requestAnimationFrame(frame);
+  }
+
+  if(bSub) bSub.addEventListener('click', function(){ mode='substance'; refresh(); });
+  if(bCoh) bCoh.addEventListener('click', function(){ mode='coherence'; refresh(); });
+  if(bRes) bRes.addEventListener('click', function(){ seed(); genHist(); });
+  qSlider.addEventListener('input', genHist);
+  window.addEventListener('resize', function(){ layout(); });
+
+  readColors();
+  seed();
+  layout();
+  genHist();
+  refresh();
+  rafId = window.requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

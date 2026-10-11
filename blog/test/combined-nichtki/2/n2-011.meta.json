@@ -1,0 +1,16 @@
+{
+  "no": "011",
+  "a": "n1-043.html",
+  "b": "n1-021.html",
+  "a_title": "Symbiose oder Spiegel? — Exogene Neurotransmitter als heilige Technologie und als Falle",
+  "b_title": "Konsistenz von Wissen als kategorisches System (Ologs ✕ Garbentheorie)",
+  "combined_theme": "zweischichtige-kohaerenz",
+  "one_line": "Kohärenz ist immer zweischichtig: eine formale/struktuelle Ebene, die notwendig aber nicht hinreichend ist, plus eine orthogonale inhaltlich-relationelle Ebene (Verklebung/Integration), die allein ausschlaggebend ist — der Test ist skaleninvariant (global = Minimum über alle lokalen Overlaps) und die Reparatur kennt zwei Garben-Operationen (verkleben, restriktion).",
+  "contradictions": [
+    "Einheit der Diagnose: B (n1-021) entscheidet globale Konsistenz lokal auf dem Overlap / am Halm (Lokal-Global-Prinzip); A (n1-043) liest die Bindung nur als Gesamtbahn (Rundreise) und widersteht der Reduktion auf einen Punkt/eine Momentaufnahme.",
+    "Art der Ausschlags-Ebene: B's zweite Ebene (Verklebbarkeit) ist intrinsisch, objektiv und bivalent prüfbar (Fakten-Check); A's zweite Ebene (Kopplungsqualität: Einwilligung, Reziprozität, Wer sitzt im Fahrersitz) ist relationell-moralisch und nicht mechanisch verifizierbar.",
+    "Rezept: B strebt immer Wiedervereinigung zu einem eindeutigen globalen Schnitt (Verklebung/Sheafification); A legitimiert den endgültigen Austritt (Bühne verlassen, kein Kontakt) als Heilung, ohne die Fragmente zu vereinen."
+  ],
+  "resolution": "Beide Ebenen sind derselbe logische Ort: die Form-Ebene (A: exogene Neurochemie/Mechanismus = B: kommutierendes Olog) ist transparent und notwendig; die Inhalt-Ebene (A: Kopplungsqualität = B: Garben-Daten/Keime) entscheidet über 'verklebt?'. Der Test ist skaleninvariant: B's Lokal-Global-Prinzip und A's Rundreise sind derselbe Kohärenztest auf verschiedenen Skalen, wobei global = Minimum über alle lokalen Overlaps (ein einziger kollidierender Overlap bricht das Ganze). Die Reparatur hat zwei Operationen aus der Garbentheorie: (i) verkleben/angleichen (Integration/Sheafification), wenn der Konflikt auflösbar ist, und (ii) auf den gesunden Teilbereich restriktieren (A: Bühne verlassen = B: Einschränkung auf offene Teilmenge), wenn das System sich selbst vergiftet. Austritt ist kein Scheitern, sondern die Restriktion, die ein kohärentes Teilsystem zurückgewinnt.",
+  "viz": "Interaktives Canvas-Diagramm (theme-aware, inline Data): flache Form/Struktur-Linie (immer erfüllt) plus zackige Inhalt/Relation-Linie; ein Skala-Regler wandert entlang der Bahn und zeigt, dass der globale Kohärenzwert = Minimum über alle lokalen Overlaps (ein Manipulations-Overlap senkt ihn auf ~0 und bricht das Ganze, trotz erfüllter Form). Regime-Umschalter (Symbiotisch/Garbe vs. Falle/Prägarbe) und zwei Reparatur-Buttons (Verkleben i / Restriktion ii = Austritt) mit Live-Readouts (Form, Inhalt lokal, Inhalt global, Marge) und Urteilsbalken."
+}

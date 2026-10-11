@@ -1,0 +1,16 @@
+{
+  "no": "007",
+  "a": "n1-033.html",
+  "b": "n1-052.html",
+  "a_title": "Wahrnehmung als lokale Berechnung",
+  "b_title": "Versteckte Muster, Drift und die Integrität der Wahrnehmung",
+  "combined_theme": "perception-projection-anchor",
+  "one_line": "Wahrnehmung = Projektion × Anker: Was ein System sieht, bestimmt sich über die gewählte/selektierte Linse (Projektion), die Integrität seiner Referenz (Anker) und das Vorzeichen des Makro-Drifts — irreduzible Mikrodynamik in einem langsam driftenden Enveloppe.",
+  "contradictions": [
+    "Referenz-Integrität: A hält sie durch evolutionäre Selektion gegeben und verlässlich (kein Fehllese-Mechanismus); B hält sie angreifbar (Gaslighting) und wiederherstellungspflichtig (Erholung als Voraussetzung).",
+    "Natur des Musters: A feiert die Computational Irreducibility (Klasse 3/4, kein Gesetz/Trend, kein Abkürzungsweg); B's Kerninstrument ist genau das Dekomponierbare Signal = Trend + Periode (ein vorhersagbares Gesetz).",
+    "Bedeutungs-Lokalisierung: A trägt Bedeutung im Projektionsobjekt (selektiertes Artefakt, die Retina 'spricht in Bedeutung'); B im Projektionsschritt (gewählte Linse über einem bedeutungsfreien Feld)."
+  ],
+  "resolution": "Der 'Anker' zerfällt in eine robuste Linse (selektiert, A) und eine kalibrierbare Baseline (angreifbar, B); Irreduzibilität gilt für die Mikro-Schicht, Trend+Periode für die Makro-Schicht (Skalentrennung); der Wahrnehmende ist zugleich Projektionsobjekt und Projektionsschritt (evolved vs chosen projector). Man sieht nur, wenn Linse passt ∧ Anker intakt ∧ Makro-Drift gemessen; A's Mastery und B's Exit sind dasselbe Instrument bei intaktem bzw. vergiftetem Anker.",
+  "viz": "Interaktives Canvas: ein Signal mit irreduzibler Mikro-Komponente (A) auf einer Trend+Periode-Baseline (B). Slider für Linse/Projektion (Sichtbarkeit), Drift-Vorzeichen (harmlos vs. feindlich), Anker-Integrität (Gaslighting) und Mikro-Komplexität; zeigt echtes (grün) vs. wahrgenommenes (rot) Signal plus die gefittete Drift-Diagnose (blau gestrichelt) mit Live-Readout echter vs. wahrgenommener Drift."
+}

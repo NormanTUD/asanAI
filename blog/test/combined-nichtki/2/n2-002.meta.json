@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "n1-013.html",
+  "b": "n1-070.html",
+  "a_title": "Lokaler additiver Fokus, globales kohärentes Ganzes",
+  "b_title": "Der Zyklus mit Gedächtnis",
+  "combined_theme": "glokale-kohaerenz",
+  "one_line": "Beide Runde-1-Papiere (Garben-Klebung/Hologramm und Principal-Bundles/Holonomie×Finnegans-Wake) sind eine Instanz desselben Gesetzes: lokale Trivialisierbarkeit + Kohärenz auf Überlappungen ⇒ globale Nicht-Trivialität — A's Gluing und B's Kozykulusbedingung sind dieselbe Invariante; das Ganze ist eine Kohärenz-Invariante, lokal nicht ablesbar, je nach Ablesungsrichtung ein statischer Schnitt (A) oder ein mitgenommenes Gedächtnis (B).",
+  "contradictions": [
+    "Statisch vs. dynamisch (was das Ganze ist): A hat das Ganze als statisches Objekt/Zustand — der globale Schnitt, ein (festes) Feld, smileyAt ist vorgegeben und der Fokus enthüllt nur, was da ist (Nomen); B hat es als dynamische Transformation — die Holonomie ist die Änderung, die nach einem Umlauf zurückgetragen wird (Verbum, Gruppenelement/Phase).",
+    "Trägt das Lokal die Wahrheit oder nur das Kleben: A baut das Ganze wörtlich aus lokalen Daten (Smiley = Summe der Zellen-Daten, globaler Schnitt aus lokalen Schnitten — Inhalt in den lokalen Werten); B sagt, das Lokal ist trivial und verbirgt (E≈U_i×F, F=0 kann nicht-triviale Holonomie verbergen — Inhalt lebt in den Übergängen/Schleife, nicht im Patch).",
+    "Lineare Superposition vs. Gruppen-Kozykulus: A komponiert durch additive Superposition (Gauß-gewichtet, nie rückholbar) mit austauschbarer Regel {Gleichheit, ≃, additiv}; B komponiert durch Gruppenmultiplikation unter Kozykulus g_ij·g_jk·g_ki=e mit Holonomie exp(i∮A)∈U(1), die nicht-abelsch sein kann (SU(2), SU(3))."
+  ],
+  "resolution": "Statisch/dynamisch sind dieselbe Invariante in zwei Richtungen abgelesen (A = gebauter Zustand auf der Basis, B = Transport um die Schleife); das Ganze ist eine Invariante der geschlossenen Selbst-Zusammensetzung. Trägt-der-Patch-oder-das-Kleben ist die eigene Faser/Zusammenhang-Spaltung des Bündels (A = Faser-/Wert-Story, B = Zusammenhangs-/Regel-Story; 'lokal trivial' heißt 'Faser trivial', nicht 'Bündel trivial'). Additive Superposition ist der abelsche/lineare Spezialfall des Gruppen-Kozykulus; A's Lockerung Gleichheit→≃ ist B's Eich-Äquivalenz. Über allen steht die eine Invariante: Kohärenz/Kozykulus auf Überlappungen ⇒ globales Objekt; das lokale Reglement ist nur ein Parameter (eine Darstellung desselben Kozyklus).",
+  "viz": "Ein Ring aus 12 lokalen Patches (Canvas): jeder Patch lokal trivial (Faser-Uhr), der Übergang pro Patch (Zusammenhang) dreht die Uhr von Patch zu Patch; die mittige Uhr zeigt die Netto-Holonomie nach dem Umlauf. Bei 30°/60°/90°… schließt der Ring kohärent (globaler Schnitt, keine Naht), dazwischen bleibt eine Naht = nicht-triviale Holonomie (die Schleife trägt Gedächtnis). Faser-Pfeile = A's lokale Schnitte, farbige Naht-Kante = B's Holonomie an der Überlappung U_{N−1}∩U_0; Slider + Umlauf-/Sweep-Animation, themenreaktiv, nur inline-Daten."
+}

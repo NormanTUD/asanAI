@@ -1,0 +1,16 @@
+{
+  "no": "025",
+  "a": "n1-054.html",
+  "b": "n1-094.html",
+  "a_title": "Spur, Gitter, Inversion",
+  "b_title": "Bialgebra-Garten",
+  "combined_theme": "kernel-substrate-duality",
+  "one_line": "Beide ROUND-1-Papiere sind Projektionen eines einzigen generativen Akts X = Interface(Kern ∘ Substrat): Eleganz (B) reduziert den Kern auf wenige Essenzen, Echtheit (A) verlangt ein nicht-invertierbares Substrat — und der Beobachter liest beides nur so gut, wie es seine Ressource (DMT/Rechenpower/Beweis-Zugang) hergibt.",
+  "contradictions": [
+    "Substrat des Zufalls: n1-054 verlangt echtes externes physikalische Entropie für 'genuine' Quellen, n1-094 behandelt Zufall als rein formales Unfold eines Seeds (kein 'extern' existiert — alles ist lokal ein Unfold-eines-Parameters).",
+    "Das Ideal zieht entgegengesetzt: n1-054 feiert Irreduzibilität (Echtheit = Nicht-Invertierbarkeit des Substrats), n1-094 feiert Reduzierbarkeit (Eleganz = Kollaps des Kerns auf eine Essenz).",
+    "Zeitliche Invarianz + Ton: n1-054 modelliert einen stationären Generator (feste PRNG-Abbildung, die man sondiert) und bleibt agnostisch (Nullhypothese 'Halluzination'); n1-094 modelliert ein selbständerndes persistentes System (Level-Up re-seedet den Unfold, Kernmenge wächst) und ist assertiv (Eindeutigkeitstheorem)."
+  ],
+  "resolution": "Beide ziehen an verschiedenen Faktoren desselben Produkts X = Kern ∘ Substrat: Eleganz (B) reduziert den Kern-Faktor, Echtheit (A) testet den Substrat-Faktor — Irreduzibilität des Substrats und Reduzierbarkeit des Kerns sind komplementär. Das ideale System hat einen minimalen Kern (B) über einem irreduziblen Substrat (A). B ist der universelle formale Fall (alles ist Unfold-eines-Seeds), A der normative Spezialfall (nicht rekonstruierbarer Seed); stationär (A) vs. selbständernd (B) sind zwei Projektionen einer zeitindexierten Kernfamilie {K_t}, und Assertivität vs. Agnostizismus ist nur ein Unterschied des Kern-/Substrat-Zugangs (Ressource) desselben Lesers.",
+  "viz": "Interaktives Canvas: Seed→Unfold erzeugt eine (xₙ,xₙ₊₁)-Trajektorie, Fold reduziert/invertiert sie zurück in den Kern. Quell-Tab (lokal · reduzierbarer Kern = schwacher LCG vs. extern · irreduzibles Substrat = starker Splitmix) + Ressourcen-Regler (Interface/DMT · Rechenpower · Beweis-Zugang) zeigen, bei welchem Lese-Level das Gitter des lokalen Kerns sichtbar wird; zweifaktorieller Echtheits-Balken (Kern-Eleganz × Substrat-Echtheit × unresolved Rauschen) + 3-Ausgaben-LCG-Inversion (B's Fold = A's Inversion)."
+}

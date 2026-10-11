@@ -1,0 +1,16 @@
+{
+  "no": "052",
+  "a": "n1-079.html",
+  "b": "n1-089.html",
+  "a_title": "The signal as a shadow: unprojecting it back to space and back to frequency",
+  "b_title": "Der Zykel ohne Rand — Homologie & das Wesen des Denkens",
+  "combined_theme": "residual-invariant-threshold",
+  "one_line": "Beide Papiere sind Theorien des Rests: das Objekt der Erkenntnis ist die Invariante, die aus einer verlustbehafteten Projektion überlebt — und lesbar ist sie genau an der Schwelle, an der die Projektion aufhört, in sich zu kollabieren.",
+  "contradictions": [
+    "A: das Objekt ist vollständig aus seinem Schatten rückgewinnbar/invertierbar (die Invariante wird abgelesen); B: das höchste Objekt ist durch seinen Rückzug definiert und entzieht sich der vollständigen Erfassung.",
+    "A: die Lücke/Schwelle ist ein technischer Defekt, den man überwindet (Raum groß genug dimensionieren); B: das Loch/der Abstand ist die positivste Quelle, die das Denken ruft (Ursprung, nicht Defekt).",
+    "A: die Rückgewinnung ist aktive Technik/Konstruktion (τ, d, FNN, DFT); B: das Denken ist rezeptive Antwort auf einen Ruf, den man nicht ausgesandt hat."
+  ],
+  "resolution": "Invariante = der erfaßbare Schatten des Objekts; Rückzug = der Kern, den keine endliche Invariantenmenge erschöpft. A's Chaos (Lyapunov>0) ist das konkrete Modell von B's Rückzug: die Form wird erfasst, die partikuläre Geschichte zieht sich zurück. Die Schwelle (∂∘∂=0 bei B, die Dimensions-Grenze bei A) ist genau der Ort, an dem sich der erfaßbare Schatten vom zurückziehenden Kern trennt — die Lücke ist kein Defekt, sondern der Lesbarkeits-Ort. Konstruktion ist real, aber immer Antwort auf ein gegebenes Gesetz (∂∘∂=0 / die intrinsische Dimension).",
+  "viz": "1-D-Schatten x(t) (oben) + 2-D-Verzögerungs-Embedding [x(t), x(t-τ)] (links, Unprojektion in den Raum) + False-Nearest-Neighbor-Kurve über d=1..5 (rechts, die Lesbarkeits-Schwelle). Periodisch (2:1-Lissajous, Knie d≈2, voll erfasst/exakt/H=0) vs. chaotisch (Lorenz, Knie d≥5, Form erfasst aber partikuläre Geschichte zurückgezogen). τ- und d-Slider; zeigt: das Objekt wird genau an der Schwelle lesbar, an der die Projektion aufhört, sich zu falten. Inline, themenbewusst, null Netzwerk."
+}

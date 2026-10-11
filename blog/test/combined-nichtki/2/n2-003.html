@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 003: Zwei Adressen eines Pfades — Typ × Lift</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#0d9488; --accent2:#7c3aed; --good:#16a34a; --warn:#d97706; --bad:#b0342b; --warm:#b5651d;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#64ffda; --accent2:#a78bfa; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e; --warm:#ffb86b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.1;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 6px}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 30px}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+h2{font-size:22px;margin:0 0 12px;color:var(--accent)}
+h3{font-size:16.5px;margin:20px 0 8px;color:var(--text)}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--text)}
+em{color:var(--muted);font-style:italic}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.6}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.aha b{color:var(--accent2)}
+.tagA{color:var(--accent);font-weight:700}
+.tagB{color:var(--accent2);font-weight:700}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.vs{grid-template-columns:1fr}}
+.vs .col{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.vs .col h3{margin:0 0 8px;font-size:15px}
+.vs .col .src{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.vs .col p{font-size:14px;margin:0 0 10px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0}
+#pathCanvas{display:block;width:100%;height:420px;border:1px solid var(--line);border-radius:12px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+.viz-controls label b{color:var(--text);font-variant-numeric:tabular-nums}
+input[type=range]{width:200px;accent-color:var(--accent)}
+.readout-row{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;font-size:14px}
+.readout-row b{color:var(--accent)}
+#stateRead{font-size:15px;font-weight:700}
+.hint{color:var(--muted);font-size:13.5px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700}
+.prov a:hover{text-decoration:underline}
+.prov em{color:var(--muted)}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">☀ / ☾</button>
+<article>
+<h1>Zwei Adressen eines Pfades: Typ × Lift</h1>
+<p class="subtitle">Fusion aus: n1-006.html ✕ n1-015.html  (Runde 2)</p>
+<p class="meta">Runde 2 · Nicht-KI-Track · Paar 003 · primale Homotopie (Typ / Lift) trifft leibliches Kippen (Struktur / Leib)</p>
+<hr>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Runde-1-Papiere stammen aus völlig unterschiedlichem Material, verweigern aber
+<em>denselben</em> atomistischen Grundgedanken. <span class="tagA">A</span> (n1-006) verweigert ihn in der
+Zahlentheorie: eine Zahl ist kein selbstdenkender Punkt, sondern ein <em>Pfad</em> (ein 1-Morphismus); ihre
+Position und ihr Sinn sind <em>relational</em> — ihre Primfaktorzerlegung ist eine kanonische
+Wortdarstellung über irreduziblen Erzeugern (die Primzahlen als <em>fundamentale Schleifen</em>).
+<span class="tagB">B</span> (n1-015) verweigert ihn in der Anatomie des Verstehens: ein einzelner Fakt ist fast
+wertlos, seine Bedeutung entsteht erst in den <em>Beziehungen</em>, im sich schließenden Netz; Verstehen
+passiert als <em>Phasenübergang</em> (Perkolation), nicht durch Verlängern einer Liste. <b>Gemeinsam: die
+Einheit ist nie der Atom; das Objekt ist der Pfad / das Gewebe.</b></p>
+<p>Beide lösen daraufhin denselben Konflikt: sie lesen ein und dasselbe Objekt einmal in einem
+<em>strukturalen, ordnungsunabhängigen</em> Sinn, einmal in einem <em>prozessualen, ordnungsabhängigen</em>
+Sinn. <span class="tagA">A</span>: die Homotopieklasse (die invariante <em>Signatur</em>, der <em>Typ</em>,
+ordnungsunabhängig) vs. der konkrete Pfad (der <em>Repräsentant</em>, der <em>Lift</em>, ordnungsabhängig) —
+„A ist der Typ, B der Repräsentant", „Die Identität eines Punkts ist sein Pfad". <span class="tagB">B</span>:
+die Topologie des Netzes (Struktur, zählbar, neutral) vs. der vitale Antrieb (gefühlte, zeitliche Bewegung,
+Engung ↔ Weitung) — „A ist B minus Leib; B ist A plus Leib". <b>Gemeinsam: ein Objekt, zwei Adressen — die
+invariante Struktur (Typ: was es <em>ist</em>, zählbar) und die realisierte Geschichte (Lift: wie es
+<em>geschieht</em> und sich anfühlt).</b></p>
+<p>Und beide lokalisieren das entscheidende Ereignis dort, wo die zwei Adressen <em>zueinander
+greifen</em>: Der Pfad von <span class="tagA">A</span> bleibt genau dann <em>beschränkt/stabil</em>, wenn der
+Typ (die lokalen Wendungen) den Lift (den kumulativen Wandel) per Dämpfung <code>λ&lt;1</code> lenkt; das
+Netz von <span class="tagB">B</span> durchläuft genau dann seine <em>Perkolationsschwelle</em>, wenn der vitale
+Antrieb von Engung in Weitung umschlägt. <b>Fusionierte Position: Ein Phänomen ist ein Pfad (kein Punkt),
+lesbar als Typ und als Lift; es „bindet sich" bzw. „versteht sich" im nicht-linearen Moment, in dem Typ und
+Lift eins werden.</b></p>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+<p>Die beiden Papiere widersprechen sich im <em>Gegenstand</em> nicht (das eine ist Zahlentopologie, das
+andere die Anatomie des Verstehens). Auf der Ebene ihrer <em>gemeinsamen Grundform</em> — anti-atomistisch,
+zweistufig, nicht-linear — nehmen sie aber an drei Punkten <em>unterschiedliche, unvereinbar wirkende
+Haltungen</em> ein:</p>
+
+<div class="vs">
+<div class="col">
+<h3>1. Welche Ebene ist fundamental</h3>
+<div class="src">A · n1-006</div>
+<p>Die zwei Adressen sind nahezu symmetrische Seiten eines Objekts; die
+<em>invariante Seite trägt die Identität</em> — „Die Identität eines Punkts ist sein Pfad ab einem
+Basispunkt", „A liest die Homotopieklasse — sein Typ". Die Struktur / der Typ ist die Identität, der Lift
+der bloße Repräsentant.</p>
+</div>
+<div class="col">
+<h3>1. Welche Ebene ist fundamental</h3>
+<div class="src">B · n1-015</div>
+<p>Die <em>gefühlte / leibliche Seite ist ontologisch primär</em>; die Struktur ist nur ihr
+<em>Schatten</em> — „A ist B minus Leib; B ist A plus Leib". Der Lift / der Leib ist der Boden, die
+Topologie die davon abgeleitete Abbildung.</p>
+</div>
+</div>
+
+<div class="vs">
+<div class="col">
+<h3>2. Volle Reduktion vs. irreduzibler Rest</h3>
+<div class="src">A · n1-006</div>
+<p>Erreicht eine <em>vollständige, restlose</em> Zwei-Adressen-Reduktion — „das ist genau die
+Auflösung"; nichts bleibt übrig, das Phänomen wird vollständig erfasst (Typ + Lift = alles).</p>
+</div>
+<div class="col">
+<h3>2. Volle Reduktion vs. irreduzibler Rest</h3>
+<div class="src">B · n1-015</div>
+<p>Bewahrt <em>absichtlich einen Rest</em>: die gefühlte Erfahrung, und Schmitz-Begriffe ohne
+Struktur-Gegenstück (Atombombe als ethische Bruchstelle, Tiere als Bewussthaber) — „Schmitz bleibt im
+Erfahrenen; die Anatomie liefert die Metasicht".</p>
+</div>
+</div>
+
+<div class="vs">
+<div class="col">
+<h3>3. Natur des irreduziblen Erzeugers</h3>
+<div class="src">A · n1-006</div>
+<p>Das irreduzible Erzeugnis ist eine <em>abstrakte Form</em> — eine Primzahl, eine
+„fundamentale Schleife", eine reine Invariante ohne Leib.</p>
+</div>
+<div class="col">
+<h3>3. Natur des irreduziblen Erzeugers</h3>
+<div class="src">B · n1-015</div>
+<p>Das irreduzible Erzeugnis ist eine <em>leiblich-affektive Präsenz</em> — eine „flächenlose
+Leibesinsel" im vitalen Feld, „schon leiblich-affektiv", nicht erst formbar.</p>
+</div>
+</div>
+
+<p class="hint"><b>Nähte, keine Widersprüche (die nächste echte Spannung):</b> Beide teilen die
+anti-atomistische, zweistufige, nicht-lineare Grundform — A's „Beschränkung" (Dämpfung) und B's
+„Phasenübergang" (Perkolation) sind <em>derselbe</em> Kipp-Moment, nur einmal gezählt (A), einmal gefühlt (B).
+Die drei Spannungen oben drehen sich daher <em>nicht</em> um den Gegenstand, sondern darum, <em>wie</em> die
+zwei Adressen zueinanderstehen: Priorität, Rest und Natur der Einheit.</p>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+
+<p><b>(1) Welche Ebene ist fundamental →</b> Die Priorität ist <em>methodisch, nicht
+ontologisch</em>. Die zwei Adressen beantworten <em>verschiedene</em> Fragen: Der <em>Typ</em> (die
+Invariante) beantwortet „was ist es" — Benennung, Zählen, das, was über <em>alle</em> seine Realisierungen
+hinweg identisch bleibt. Der <em>Lift</em> (die Realisierung) beantwortet „wie geschieht es / wie fühlt es
+sich an" — der konkrete Weg durch <em>eine</em> Geschichte / einen Leib. <b>Fusion:</b> die Identität liest
+man ab vom Typ, das Leben vom Lift. A's „Typ = Identität" und B's „Leib = Boden" sind <em>beide wahr</em>,
+für verschiedene Facetten. Das Phänomen ist <em>Invariante (Typ) × Realisierung (Lift)</em>: die Identität
+ist die Invariante, das Leben ist die Realisierung.</p>
+
+<p><b>(2) Volle Reduktion vs. irreduzibler Rest →</b> Der Rest ist <em>konstitutiv, nicht residual</em> —
+es ist eine Frage der Abstraktionsebene. A's restlose Reduktion gilt <em>für den Schatten</em>: auf der
+strukturalen Ebene ist die Karte vollständig und erschöpfend. B's Rest gilt <em>für das Fleisch</em>: auf der
+erlebnisseitigen Ebene übersteigt das Terrain <em>immer</em> die Karte — und dieses Mehr ist kein
+Störanteil, sondern die <em>Substanz, von der die Karte abstrahiert wurde</em>. <b>Fusion:</b> die Karte ist
+als Karte vollständig; das Terrain übersteigt die Karte immer; und das Mehr ist genau das, woraus die Karte
+besteht. Schmitz' „Rest" (Atombombe, Tierbewusstsein) ist kein Fehler des Modells, sondern
+<em>Lift-seitiger Inhalt, der noch keinen Typ-seitigen Namen hat</em> — er lebt in der Realisierung, nicht
+in der Invariante.</p>
+
+<p><b>(3) Natur des Erzeugers →</b> <em>Form ohne Medium ist kein Erzeuger.</em> Das Irreduzible ist
+<em>in der Form abstrakt, in der Realisierung leibhaftig</em>. Eine Primzahl ist eine Schleife (eine Form);
+eine Leibesinsel ist eine gefühlte Präsenz (eine Realisierung einer Form). <b>Fusion:</b> jeder Erzeuger ist
+eine <em>Invariante</em> (eine Form, eine ordnungsunabhängige Signatur), die in ein <em>Medium</em> (einen
+Pfad, einen Leib) <em>instanziiert</em> werden muss, um zu existieren. 006's Primzahl ist die Form, 015's
+Leib ist das Medium, das sie trägt; eine Form, die nie instanziiert wird, ist ein Erzeuger, der nie
+abfeuert.</p>
+
+<div class="aha">
+<b>Fusion in einer Aussage:</b> Ein Phänomen ist ein <b>Pfad, kein Punkt</b>, und trägt <b>zwei
+Adressen</b> — die invariante <em>Struktur</em> (Typ: was es ist, zählbar) und die realisierte
+<em>Geschichte / der Leib</em> (Lift: wie es geschieht und sich anfühlt). Sie sind <em>methodisch</em>
+priorisiert (Typ = Invariante, Lift = Realisierung), der Rest ist <em>konstitutiv</em> (die Substanz, von
+der die Karte abstrahiert ist), und jede Form braucht ein Medium, um Erzeuger zu sein. Das
+<b>Kippen</b> — Beschränkung (A) bzw. Perkolation (B) — ist derselbe Moment, in dem der <em>Typ den Lift
+ergreift</em>: Engung ↔ Weitung, Drift ↔ Bindung.
+</div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine Muster.</b> Beide Papiere sind Instanzen derselben Pipeline:</p>
+<div class="mathblock">anti-atomistisch   Objekt = Pfad / Gewebe,  nicht  Knoten / Fakt
+irreduzible Erzeuger  (Primzahl / fundamentale Schleife  ·  Leibesinsel / Atmosphäre)
+        →  Wörter / Kompositionen  (Zahl  ·  verstandenes, geschlossenes Netz)
+zwei Adressen   Typ (invariant, ordnungsunabhängig, zählbar)  ×  Lift (realisiert, ordnungsabhängig, gefühlt)
+Kippen   σ &lt; σc  ⇒  Lift driftet vom Typ   (ENGUNG, nicht verstehen)
+          σ ≥ σc  ⇒  Lift greift den Typ     (WEITUNG, plötzlich einfach)</div>
+
+<h3>Station 0 — Gemeinsames Fundament (Anti-Atomismus + Erzeuger)</h3>
+<p>Das Objekt ist das <em>Gewebe / der Pfad</em>, nicht die Knoten; Bedeutung und Position leben in den
+<em>Beziehungen</em>. Es gibt <em>irreduzible Erzeuger</em> — bei <span class="tagA">A</span> die Primzahlen
+(„fundamentale Schleifen"), bei <span class="tagB">B</span> die primären Leibesinseln / Atmosphären — und
+<em>Kompositionen</em> aus ihnen — bei A die zusammengesetzten Zahlen als Wörter über den Primzahlen, bei B
+das verstandene, geschlossene Netz. „Ein einzelner Fakt ist fast wertlos" (B) und „eine Zahl ist ein Pfad,
+ihr Sinn liegt in ihrer Zerlegung" (A) sagen dasselbe auf zwei Skalen.</p>
+
+<h3>Station 1 — Der Pfad / das Netz</h3>
+<p><span class="tagA">A</span> zeichnet eine <em>zusammenhängende Bahn</em> durch den Punktraum; die
+lokale Wendung an jeder Stufe ist das <em>beschränkte toroidale Faktoren-Mapping</em> <code>L(n)</code>.
+<span class="tagB">B</span> zeichnet ein <em>Netz von Leibesinseln</em>; jede Beziehung zwischen zwei Inseln
+ist eine <em>Einleibung</em> (das Neue wird in den eigenen Fluss eingeatmet). <b>Fusion:</b> das Objekt ist
+der <em>Weg / das Gewebe</em>; die Knoten sind die Stellen, an denen er „ruht"; die Primzahlen / Inseln
+sind die Erzeuger, die der Weg durchläuft.</p>
+
+<h3>Station 2 — Die zwei Adressen (Typ &amp; Lift)</h3>
+<p><b>Typ</b> (invariant, ordnungsunabhängig, zählbar, der Schatten): bei <span class="tagA">A</span> die
+Homotopieklasse / Signatur, bei <span class="tagB">B</span> die Topologie des Netzes. Das, was man
+<em>benennen</em> und <em>zählen</em> kann. <b>Lift</b> (realisiert, ordnungsabhängig, gefühlt, das
+Fleisch): bei <span class="tagA">A</span> der konkrete, in der Geschichte gewählte Pfad, bei
+<span class="tagB">B</span> der vitale Antrieb (Engung ↔ Weitung). Das, was man <em>gehen</em> und
+<em>fühlen</em> kann. „A ist der Typ, B der Repräsentant" (006); „A ist B minus Leib; B ist A plus Leib"
+(015). <b>Fusion:</b> die topologische Ordnung (A) ist das, was übrig bleibt, wenn man die leiblichen
+Atmosphären (B) auf ihre Struktur reduziert — A ist B minus Leib; das Kippen liest A <em>ab</em>, B
+<em>spürt</em> es.</p>
+
+<h3>Station 3 — Die Kopplung / das Kippen</h3>
+<p>Der entscheidende Schritt ist die <em>Kopplung</em> der zwei Adressen. <span class="tagA">A</span>: der
+Pfad bleibt beschränkt / stabil, <em>wenn</em> der Typ (die lokalen Wendungen <code>L(n)</code>) den Lift
+(den kumulativen Wandel) per Dämpfung <code>λ&lt;1</code> lenkt — ansonsten driftet die Bahn ins
+Unendliche. <span class="tagB">B</span>: das Netz überschreitet die <em>Perkolationsschwelle</em>, <em>wenn</em>
+der vitale Antrieb von Engung in Weitung umschlägt — ausgelöst durch „eine winzige zusätzliche
+Verbindung". <b>Fusion:</b> der entscheidende Moment ist die <em>Kopplung</em> von Invariante und
+Realisierung. Unterhalb der Schwelle entkommt der Lift dem Typ → <em>Drift / Engung</em> (der Pfad
+wandert, das Netz ist fragmentiert, „ich krieg das nicht hin"). Oberhalb ergreift der Lift den Typ →
+<em>Bindung / Weitung</em> (der Pfad zieht sich auf die Schleife zusammen, das Netz schließt, „pötzlich
+einfach"). A's <em>Beschränkung</em> und B's <em>Phasenübergang</em> sind dasselbe Phänomen: <em>der Moment,
+in dem die Invariante die Realisierung vollständig lenkt.</em></p>
+
+<h3>Station 4 — Das Ergebnis (das geschlossene Netz / „einfach")</h3>
+<p><span class="tagA">A</span>: der Pfad ist kompakt, jeder Punkt gefärbt nach seiner Typ-Signatur (Omega
+<code>ω(n)</code>), die Primzahlen leuchten als Erzeuger. <span class="tagB">B</span>: „pötzlich einfach"
+<em>ist</em> Weitung <em>ist</em> Erleichterung. <b>Fusion:</b> der geschlossene, beschränkte,
+vollständig-gelenkte Pfad <em>ist</em> das gefühlte Weitung; das sich schließende Netz <em>ist</em> der sich
+öffnende Atem. Das Verstehen <em>fühlt sich an wie</em>, was es topologisch <em>tut</em>. Ergebnis: eine
+stabile, beschränkte, benennbare Struktur, die sich wie Loslassen anfühlt.</p>
+
+<h3>Die Hebel, neu gelesen (A's Dämpfung + B's vier Hebel auf der Meta-Ebene)</h3>
+<ul>
+<li><b>Kopplung <code>λ / σ</code></b> (A's Dämpfung) = der <em>Meisterhebel</em>: wie stark der Typ den
+Lift lenkt. Je stärker, desto eher bindet der Lift den Typ (Weitung).</li>
+<li><b>Reduktion</b> (B) = die nicht tragende Enge wird freigegeben → Weitung; im Zahlenraum der Schritt,
+der Drift abwirft.</li>
+<li><b>Analogie</b> (B) = gezielte <em>Einleibung in altes Material</em> — ein neues Wort über alten
+Erzeugern (bei A: eine zusammengesetzte Zahl über vorhandenen Primzahlen).</li>
+<li><b>Eigenaktivität</b> (B) = der Leib muss den Pfad <em>selbst</em> einleiben / gehen (Abruf formt, nicht
+Aufnahme) — der Lift ist nicht gegeben, er wird <em>durchlaufen</em>.</li>
+<li><b>Pause</b> (B) = offline-Konsolidierung, in der der Antrieb die Inseln neu ordnet (der Weg ruht,
+bevor er weiterbindet).</li>
+</ul>
+
+<h3>Der Rest (B's Beitrag, als Rahmen übernommen)</h3>
+<p>Manche Phänomene leben im Lift / im Leib, ohne dass sie noch einen Namen auf der Typ-Ebene haben:
+Schmitz' <em>Atombombe</em> als ethische „Bruchstelle" (Menschheit „auf zu hohem Emanzipationsniveau
+festgeklemmt") und <em>Tiere als Bewussthaber</em> (Du-Evidenz über Einleibung, ohne Sprache). Das
+fusionierte Modell behält sie als <em>Lift-seitigen Inhalt, dem ein Typ noch fehlt</em> — es ist damit
+ehrlich gegenüber der Grenze der Karte, statt sie wegzurationalisieren.</p>
+
+<p><b>Die fusionierte Regel (Mathematik beider Papiere, vereint):</b></p>
+<div class="mathblock">Typ (invariant, ordnungsunabhängig)      // A: lokale Wendung, beschränktes Torus-Mapping
+L(n)   = Σ_i  [ sin(p_i·k),  cos(p_i·k),  sin(0.5·p_i·k) ] / (i+1)
+ω(n)   = Anzahl der distinkten Primfaktoren                    (Grad / „Farbe" des Worts)
+
+Lift (realisiert, ordnungsabhängig)        // A: kumulativer Wandel + Kopplung an den Typ
+instr(n) = Richtung zum nächsten Punkt des Typs               (beschränkte Rückführungsanweisung des Typs)
+h      ←  σ · instr(n)  +  (1−σ) · h                            (Kopplung σ an die Invariante)
+p(n)   =  p(n−1) + step · dir(h)                                 (der reale, geschichtete Pfad)
+
+Kippen (die Kopplung)                     // B: Perkolation / Engung → Weitung
+σ  &lt;  σc   ⇒  Lift driftet vom Typ       (ENGUNG, nicht verstehen, Drift)
+σ  ≥  σc   ⇒  Lift greift den Typ        (WEITUNG, plötzlich einfach, Bindung)
+σc = Perkolationsschwelle (B) = Beschränkungsschwelle (A)   (dieselbe kritische Kopplung)</div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Pfad mit zwei Adressen — der Typ ergreift den Lift</h2>
+<p class="hint">Eine Ebene, zwei Adressen. Die <b>schwache geschlossene Kurve</b> ist die
+<b>invariante Struktur</b> — der <span class="tagA">Typ</span> (die Homotopieklasse / die Topologie des
+Netzes: das, was zählbar und benennbar ist, ordnungsunabhängig, also <em>still</em>). Die
+<b>farbige durchgehende Bahn</b> ist die <b>realisierte Geschichte</b> — der
+<span class="tagB">Lift</span> (der konkrete Pfad / der vitale Antrieb: das, was man gehen und fühlen
+kann, ordnungsabhängig). Die <b>violette Punkte</b> auf der Kurve sind die <em>irreduziblen Erzeuger</em>
+(Primzahlen / Leibesinseln), aus denen der Pfad zusammengesetzt ist. Der Regler <b>Kopplung σ</b> steuert,
+wie stark der Typ den Lift lenkt. Unterhalb der Schwelle <b>driftet</b> der Lift vom Typ ab
+(<em>ENGUNG</em>, rot, unbeschränkt); oberhalb <b>ergreift</b> er den Typ und <b>bindet</b> sich an die
+Kurve an (<em>WEITUNG</em>, grün, beschränkt). Bewege σ langsam über die Schwelle und beobachte, wie
+Struktur <em>und</em> Stimmung zusammen umschlagen — dasselbe Ereignis, das <span class="tagA">A</span>
+<em>Beschränkung</em> und <span class="tagB">B</span> <em>Perkolation / Aha</em> nennt.</p>
+
+<div class="viz-panel">
+  <canvas id="pathCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Kopplung σ (Typ lenkt Lift) <b id="cVal">30</b>%
+      <input type="range" id="cRange" min="0" max="100" step="1" value="30">
+    </label>
+    <label>Pfad-Länge N <b id="nVal">900</b>
+      <input type="range" id="nRange" min="300" max="2000" step="50" value="900">
+    </label>
+  </div>
+  <div class="readout-row">
+    <span id="stateRead">…</span>
+    <span>Bindung: <b id="bindRead">—</b></span>
+    <span>Drift vom Typ: <b id="driftRead">—</b></span>
+  </div>
+  <p class="hint">Bindung = Anteil der Pfad-Schritte, die nahe am Typ bleiben (die
+  „größte zusammenhängende Komponente", die über die Schwelle springt); Drift = maximale Entfernung des
+  Lifts vom Typ. Beide springen an derselben kritischen Kopplung σc um.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov">
+  <a href="../n1-006.html">A · n1-006.html</a> — <em>„Der primale Raum: Homotopie × Origami"</em>:
+  Zahl als Pfad (1-Morphismus); Primfaktorzerlegung als kanonische Wortdarstellung; Primzahlen als
+  irreduzible Erzeuger (fundamentale Schleifen); zwei Adressen — invariante Homotopieklasse (Typ) ×
+  konkreter Pfad (Lift); Dämpfung <code>λ&lt;1</code> hält die Bahn beschränkt; Ω(n) als Grad/Farbe.
+</div>
+<div class="prov">
+  <a href="../n1-015.html">B · n1-015.html</a> — <em>„Verstehen ist ein leibliches Kippen"</em>:
+  Verstehen als sich schließendes Netz, Phasenübergang (Perkolation); vitaler Antrieb Engung ↔ Weitung;
+  Gefühle als Atmosphären; Einleibung vor Analogie; „A ist B minus Leib; B ist A plus Leib"; vier Hebel
+  (Reduktion, Analogie, Eigenaktivität, Pause); ein konstitutiver Rest ohne Struktur-Gegenstück
+  (Atombombe, Tiere als Bewussthaber).
+</div>
+</section>
+
+<div class="foot">Mathematischer Hinweis: Die Visualisierung ist ein didaktisches Modell der fusionierten
+These. „Typ" ist eine invariante, geschlossene, beschränkte Kurve (ordnungsunabhängig); „Lift" ist ein
+Pfad, dessen Laufrichtung durch die Kopplung σ an den nächstgelegenen Punkt des Typs zurückgeführt wird.
+Unterhalb einer kritischen Kopplung gewinnt die Trägheit — der Lift driftet ab (ENGUNG); oberhalb gewinnt
+die Rückführung — der Lift bindet sich an den Typ (WEITUNG). Die Binungs-Schwelle entspricht B's
+Perkolationsschwelle und A's Beschränkungsschwelle. Alle Daten sind inline; keine externen Abfragen.</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('pathCanvas');
+  if(!cv || !cv.getContext){ return; }
+  var ctx = cv.getContext('2d');
+  var cRange = document.getElementById('cRange');
+  var nRange = document.getElementById('nRange');
+
+  var W=0, H=0, CX=0, CY=0, R=0;
+  var M=180;
+  var S=[], T=[], GEN=[], WALK=[];
+  var t=0, flash=0, wasBound=false;
+  var aRGB={r:0,g:0,b:0}, a2RGB={r:0,g:0,b:0}, dRGB={r:0,g:0,b:0}, wRGB={r:0,g:0,b:0};
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || '#888';
+  }
+  function hexRGB(h){
+    h = (h||'').replace('#','');
+    if(h.length===3){ h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    if(h.length<6){ return {r:136,g:136,b:136}; }
+    return { r:parseInt(h.substr(0,2),16), g:parseInt(h.substr(2,2),16), b:parseInt(h.substr(4,2),16) };
+  }
+  function rgba(c,a){ return 'rgba('+c.r+','+c.g+','+c.b+','+a+')'; }
+  function mix(c1,c2,tt){
+    return { r:Math.round(c1.r+(c2.r-c1.r)*tt), g:Math.round(c1.g+(c2.g-c1.g)*tt), b:Math.round(c1.b+(c2.b-c1.b)*tt) };
+  }
+  function norm(v,fb){
+    var l = Math.sqrt(v.x*v.x + v.y*v.y);
+    if(l<1e-6){ return fb || {x:1,y:0}; }
+    return { x:v.x/l, y:v.y/l };
+  }
+
+  function readTheme(){
+    aRGB  = hexRGB(cssVar('--accent'));
+    a2RGB = hexRGB(cssVar('--accent2'));
+    dRGB  = hexRGB(cssVar('--bad'));
+    wRGB  = hexRGB(cssVar('--warm'));
+  }
+
+  function buildLoop(){
+    S=[]; T=[];
+    for(var i=0;i<M;i++){
+      var tt = i/M*2*Math.PI;
+      S.push({ x: CX + R*(0.62*Math.sin(tt)+0.22*Math.sin(3*tt+0.6)),
+               y: CY + R*(0.55*Math.cos(2*tt)+0.20*Math.sin(tt+1.2)) });
+    }
+    for(var i=0;i<M;i++){
+      var a=S[(i-1+M)%M], b=S[(i+1)%M];
+      T.push(norm({x:b.x-a.x, y:b.y-a.y}, {x:0,y:1}));
+    }
+    GEN=[];
+    for(var g=0; g<12; g++){ GEN.push(Math.floor(g*M/12)); }
+  }
+
+  function nearest(px,py){
+    var best=0, bd=1e18;
+    for(var i=0;i<M;i++){
+      var dx=S[i].x-px, dy=S[i].y-py, dd=dx*dx+dy*dy;
+      if(dd<bd){ bd=dd; best=i; }
+    }
+    return { i:best, d:Math.sqrt(bd) };
+  }
+
+  function computeWalk(){
+    var sigma = (cRange ? (+cRange.value) : 30) / 100;
+    var N = (nRange ? (+nRange.value) : 900);
+    var step = R*0.02, rbind = R*0.12;
+    WALK=[];
+    var px=S[0].x, py=S[0].y;
+    var h=T[0];
+    var prevD=1e9;
+    for(var n=1; n<=N; n++){
+      var nr=nearest(px,py), j=nr.i;
+      var rn = norm({x:S[j].x-px, y:S[j].y-py}, h);
+      var instr = norm({x:0.65*rn.x+0.35*T[j].x, y:0.65*rn.y+0.35*T[j].y}, h);
+      var c = Math.pow(sigma,1.4);
+      var fb = 0.6 + 0.4*Math.max(0, Math.min(1, 1 - prevD/(3*rbind)));
+      var ce = c*fb;
+      h = norm({x:ce*instr.x+(1-ce)*h.x, y:ce*instr.y+(1-ce)*h.y}, h);
+      px += step*h.x; py += step*h.y;
+      var dx=S[j].x-px, dy=S[j].y-py, d=Math.sqrt(dx*dx+dy*dy);
+      var g = Math.max(0, Math.min(1, 1 - d/rbind));
+      WALK.push({x:px, y:py, g:g, d:d});
+      prevD = d;
+    }
+  }
+
+  function boundFraction(){
+    if(!WALK.length){ return 0; }
+    var s=0;
+    for(var i=0;i<WALK.length;i++){ s+=WALK[i].g; }
+    return s/WALK.length;
+  }
+
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    var d = window.devicePixelRatio || 1;
+    W = Math.max(320, r.width); H = Math.max(300, r.height);
+    cv.width = Math.round(W*d); cv.height = Math.round(H*d);
+    ctx.setTransform(d,0,0,d,0,0);
+    CX = W/2; CY = H/2; R = Math.min(W,H)*0.34;
+    buildLoop();
+    computeWalk();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var sigma = (cRange ? (+cRange.value) : 30) / 100;
+    var eng = 1 - sigma;
+    var bf = boundFraction();
+
+    if(bf>0.8 && !wasBound){ flash=1; wasBound=true; }
+    if(bf<0.7){ wasBound=false; }
+    flash *= 0.94;
+
+    if(flash>0.01){
+      var gg = ctx.createRadialGradient(CX,CY,0,CX,CY,Math.max(W,H)*0.72);
+      gg.addColorStop(0, rgba(wRGB, flash*0.34));
+      gg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle=gg; ctx.fillRect(0,0,W,H);
+    }
+
+    ctx.beginPath();
+    for(var i=0;i<M;i++){ var s=S[i]; if(i===0){ ctx.moveTo(s.x,s.y); } else { ctx.lineTo(s.x,s.y); } }
+    ctx.closePath();
+    ctx.strokeStyle = rgba(aRGB,0.42); ctx.lineWidth=1.6; ctx.stroke();
+
+    for(var gi=0; gi<GEN.length; gi++){
+      var gs=S[GEN[gi]];
+      ctx.fillStyle = rgba(a2RGB,0.9);
+      ctx.beginPath(); ctx.arc(gs.x, gs.y, 2.6, 0, Math.PI*2); ctx.fill();
+    }
+
+    var prev={x:S[0].x, y:S[0].y}, maxD=0;
+    for(var n=0; n<WALK.length; n++){
+      var w=WALK[n];
+      if(w.d>maxD){ maxD=w.d; }
+      var wob = (1-w.g)*2.4*eng;
+      var px2 = w.x + Math.sin(t*2 + n*0.13)*wob;
+      var py2 = w.y + Math.cos(t*1.7 + n*0.11)*wob;
+      var col = mix(dRGB, aRGB, w.g);
+      ctx.strokeStyle = rgba(col, 0.20 + w.g*0.55);
+      ctx.lineWidth = 1.2 + w.g*1.2;
+      ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(px2, py2); ctx.stroke();
+      prev = {x:px2, y:py2};
+    }
+
+    var bfPct = Math.round(bf*100);
+    var key = bfPct>80 ? 'high' : (bfPct>35 ? 'mid' : 'low');
+    var stateEl = document.getElementById('stateRead');
+    if(stateEl){
+      var labels = {
+        low: 'ENGUNG — der Lift driftet vom Typ ab (zugeschnürt)',
+        mid: 'KIPPT… (der Lift greift nach dem Typ)',
+        high:'WEITUNG — der Lift hat den Typ ergriffen (pötzlich einfach)'
+      };
+      stateEl.textContent = labels[key];
+      stateEl.style.color = key==='high' ? cssVar('--good') : (key==='mid' ? cssVar('--warn') : cssVar('--bad'));
+    }
+    var bEl = document.getElementById('bindRead'); if(bEl){ bEl.textContent = bfPct+' %'; }
+    var dEl = document.getElementById('driftRead'); if(dEl){ dEl.textContent = Math.round(maxD/R*100)+' %'; }
+    var cEl = document.getElementById('cVal'); if(cEl){ cEl.textContent = Math.round(sigma*100); }
+    var nEl = document.getElementById('nVal'); if(nEl){ nEl.textContent = WALK.length; }
+  }
+
+  function frame(){
+    t += 0.01;
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  if(cRange){ cRange.addEventListener('input', computeWalk); }
+  if(nRange){ nRange.addEventListener('input', computeWalk); }
+  var themeBtn = document.getElementById('themeBtn');
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    readTheme();
+  }); }
+  window.addEventListener('resize', resize);
+
+  readTheme();
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

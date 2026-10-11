@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Invariante Feld — Gauge-Punkt, robuster Rest, harte Schwelle</title>
+<script>
+(function(){try{
+  var s=null; try{s=localStorage.getItem('n2-034-theme');}catch(e){}
+  var dark = s ? s==='dark' : true;
+  if(dark) document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+}catch(e){ document.documentElement.classList.add('dark'); }
+})();
+</script>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --panel2:#f1f0ea;
+  --ink:#1c2230; --dim:#4a5468; --faint:#8a93a6;
+  --stroke:rgba(20,26,40,.14); --stroke-hi:rgba(20,26,40,.30);
+  --acc:#7c3aed; --acc2:#d24a1e; --acc3:#0f9d8f;
+  --koerper:#1d4ed8; --leib:#047857;
+  --warn:#a9760a; --good:#2f8f4e; --bad:#c0392b;
+  --fd:rgba(124,58,237,.10); --fdS:rgba(124,58,237,.45);
+}
+html.dark{
+  --bg:#0a0e18; --panel:#121a2c; --panel2:#0e1524;
+  --ink:#e8ecf6; --dim:#9aa6c0; --faint:#64708c;
+  --stroke:rgba(255,255,255,.10); --stroke-hi:rgba(255,255,255,.22);
+  --acc:#a78bfa; --acc2:#ff6b4a; --acc3:#5ee0d0;
+  --koerper:#60a5fa; --leib:#34d399;
+  --warn:#ffc860; --good:#7ee787; --bad:#ff8aa5;
+  --fd:rgba(167,139,250,.12); --fdS:rgba(167,139,250,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:38px 20px 80px}
+h1{font-size:clamp(25px,4.3vw,38px);line-height:1.13;letter-spacing:-.02em;font-weight:760;margin-bottom:10px}
+h1 em{font-style:normal;color:var(--acc)}
+.subtitle{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;color:var(--faint);
+  border:1px solid var(--stroke);border-radius:99px;padding:6px 12px;display:inline-block;margin:0 0 14px}
+p{color:var(--dim);margin:0 0 14px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--ink)}
+strong{color:var(--ink);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+section{padding:34px 0}
+section+section{border-top:1px solid var(--stroke)}
+h2{font-size:clamp(20px,2.8vw,27px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:15.5px;font-weight:660;margin:20px 0 8px;color:var(--ink)}
+.k{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.9em;background:rgba(127,127,127,.16);
+  padding:1px 6px;border-radius:5px;color:var(--ink)}
+.tag{display:inline-block;font-family:ui-monospace,monospace;font-size:11px;font-weight:700;padding:1px 7px;
+  border-radius:5px;border:1px solid var(--stroke-hi)}
+.tag.a{color:var(--acc)} .tag.b{color:var(--acc2)}
+.note{border-left:3px solid var(--acc);background:var(--fd);padding:13px 16px;border-radius:0 11px 11px 0;
+  margin:18px 0;font-size:14px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note .h{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:6px;display:block;font-weight:700}
+.note.t{border-color:var(--acc3);background:rgba(15,157,143,.08)}
+.note.t .h{color:var(--acc3)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border:1px solid var(--stroke);vertical-align:top}
+th{background:var(--panel2);color:var(--ink);font-weight:660;font-size:12.5px;letter-spacing:.02em}
+td{color:var(--dim)}
+td .a{color:var(--acc);font-weight:600}
+td .b{color:var(--acc2);font-weight:600}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke-hi);border-radius:14px;padding:8px;margin:16px 0}
+canvas{display:block;width:100%;border-radius:8px}
+.vizbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.vizbar .hint{font-size:12px;color:var(--faint)}
+button{font-family:inherit;font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;
+  border:1px solid var(--stroke-hi);background:var(--panel2);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--acc)}
+button.on{border-color:var(--acc);background:var(--fd)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:10px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:14px 0}
+.ro .box{background:var(--panel2);border:1px solid var(--stroke);border-radius:10px;padding:9px 12px}
+.ro .box .k2{font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:4px}
+.ro .box .v{font-family:ui-monospace,monospace;font-size:18px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.p{color:var(--acc3)} .ro .box .v.w{color:var(--warn)}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px;margin:6px 0 4px}
+.ctl{margin-bottom:12px}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:ui-monospace,monospace;color:var(--acc);font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--panel)}
+.takeaway{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:12px 15px;margin-bottom:10px;font-size:14px;color:var(--dim);display:flex;gap:12px}
+.takeaway .num{font-family:ui-monospace,monospace;font-weight:700;color:var(--acc2);font-size:15px;flex:none}
+.takeaway a{color:var(--acc);text-decoration:none}
+.takeaway a:hover{text-decoration:underline}
+footer{border-top:1px solid var(--stroke);padding:24px 20px;max-width:820px;margin:0 auto;color:var(--faint);font-size:12.5px}
+footer a{color:var(--acc);text-decoration:none}
+@media(max-width:560px){.sliders{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <span class="subtitle">Fusion aus: n1-083.html ✕ n1-063.html  (Runde 2)</span>
+  <h1>Das <em>Invariante</em> Feld<br>— Gauge-Punkt, robuster Rest, harte Schwelle</h1>
+  <p class="lead">Zwei Fusionspapiere aus Runde&nbsp;1 treffen aufeinander — eines aus reiner Geometrie × Statistik-Kritik (n1-083), eines aus Topologischer Datenanalyse × Phänomenologie (n1-063). Beide haben in Runde&nbsp;1 dieselbe Geste vollzogen und hier eine <em>Meta-Position</em>: Das Reale ist <strong>kein</strong> roher, konventionsgebundener Primitiv (ein fester Koordinatenpunkt τ, ein nackter Quotient t, ein atomisierter Punkt (b,d)) <em>und</em> <strong>keine</strong> harte Schwelle (die 5%-Linie, die Diagonale, der λ₁-Abschnitt). Das Reale ist ein <strong>kontinuierliches invarian­tes Feld</strong> — ein Persistent-Spektrum echter Lücken — und jede einzelne Zahl ist nur eine <em>Projektion</em> dieses Feldes auf einen Skalar.</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p><span class="tag a">A · n1-083</span> sagt: <strong>JUDGE THE INVARIANT, NOT THE GAUGE.</strong> Die echte Form ist nicht ein einzelnes τ, das sich in einer festen Basis verschiebt, sondern die Äquivalenzklasse τ / SL(2,Z); die echte Lücke ist nicht ein roher Quotient, sondern die <em>minimierte</em> Dilatation d&nbsp;=&nbsp;½&nbsp;ln(min&nbsp;K) — eine gauge-invariante, kontinuierliche Größe, nicht die willkürliche 5%-Linie. <span class="tag b">B · n1-063</span> sagt: <strong>Struktur&nbsp;=&nbsp;Persistenz als Feld, Vereinfachung&nbsp;=&nbsp;Trunkieren, Rest&nbsp;=&nbsp;Parameter.</strong> Das Echte ist nicht der Haufen neutraler Punkte, sondern die Landschaft λₖ(t) / die Atmosphäre; und was nach der Vereinfachung übrig bleibt, ist ein <em>Rest</em>, der ein <em>Auflösungsparameter</em> ist — kein Naturgesetz.</p>
+    <p>Die eine integrierte Position lautet: <strong>Die Invariante ist ein Feld, nicht ein Punkt — und ein Skalar ist nur die führende Projektion dieses Feldes.</strong> Beides — A's „Quotientieren des puren Gauges + Minimieren" und B's „das volle λₖ-Stack behalten, nicht beim λ₁-Abschnitt stehen bleiben" — ist dieselbe Operation in zwei Auflösungen: Man geht vom <em>konventionellen/atomisierten Primitiv</em> zum <em>invarianten, robusten, kontinuierlichen Feld</em>, ersetzt die <em>harte Schwelle</em> durch eine <em>kontinuierliche, entscheidungsrelevante Distanz</em>, und behandelt den <em>Rest</em> jeder Vereinfachung als <em>sichtbaren Parameter</em>, nicht als etwas, das man durch eine starre Linie wegwischt.</p>
+    <p>A liefert die <em>Geometrie</em> dieses Feldes (der Moduli-Raum, die hyperbolische/Teichmüller-Distanz), B liefert seine <em>Persistenz-Lektüre</em> (das λₖ-Spektrum, der Rest als Parameter, das Wellenreiten). Zusammen: <strong>das invariante Feld messen, nicht den Gauge-Punkt; den Rest als Parameter sichtbar lassen, nicht als Gesetz erstarrn.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>A und B teilen dieselbe <em>Richtung</em> (Primitiv → Invariante), stehen sich aber in drei konkreten, unvereinbar wirkenden Stancen gegenüber:</p>
+    <h3>① Die Methode: reductiv-kollabieren vs. preservativ-behalten</h3>
+    <p><span class="tag a">A</span> erreicht das Reale <em>reductiv</em>: „Forgetting the marking gives the Moduli space" — man <strong>quotientiert</strong> den reinen Gauge (die Markierung) heraus und <strong>minimiert</strong> über alle Karten. Das Resultat ist <em>ein</em> Skalar: d = ½ ln(min K). Der Weg zur Wahrheit ist also ein <strong>Kollabieren</strong> in eine einzelne optimierte Zahl.<br>
+    <span class="tag b">B</span> erreicht das Reale <em>preservativ/istisch</em>: „Man verweigert den λ₁-Abschnitt", „mehr Layer = kleinerer Rest", „das Ganze ist primär". Der Weg zur Wahrheit ist, <strong>nicht</strong> zu kollabieren — das ganze mehrschichtige Feld λ₁, λ₂, …, λₖ <strong>beizuhalten</strong>.<br>
+    → A's Zug <em>zusammenfalten zu einer Zahl</em> ist bei B gerade der <em>Fehler</em>, den man begeht, wenn man „beim obersten Layer stehen bleibt". Kollabieren vs. Bewahren.</p>
+    <h3>② Die Valenz des Restes: Müll vs. Essenz</h3>
+    <p><span class="tag a">A</span> wertet den Rest der Vereinfachung als <em>reinen Gauge/Überschuss</em>: die Markierung „trägt keine Entscheidungs-Information" — der konventionelle Teil ist <strong>wegzuwerfender Müll</strong>. Man dividiert ihn sauber heraus, um zur Wahrheit zu kommen.<br>
+    <span class="tag b">B</span> wertet den Rest der Vereinfachung als <em>Essenz</em>: die „Kite", der „nicht digitalisierbare Rest", das, was unter Neutralisierung <em>verschwindet</em>, ist <em>gerade das Wertvollste</em> — und man muss den λ₁-Abschnitt <em>weigern</em>, um ihn zu behalten.<br>
+    → Das „Übrigbleibende" nach der Vereinfachung wird <em>entgegengesetzt</em> bewertet: bei A wertlos (Gauge), bei B höchstwertig (Essenz).</p>
+    <h3>③ Das Fundament: metrischer Raum vs. flächenloser Raum</h3>
+    <p><span class="tag a">A</span> setzt durchgehend eine <em>metrische, kontinuierliche Geometrie</em> voraus: die obere Halbebene ℍ, d = arccosh(1&nbsp;+&nbsp;|Δτ|²/(2·Im&nbsp;τ₁·Im&nbsp;τ₂)), hyperbolische Geodäten. Die Invariante wird <em>aus</em> der metrischen Struktur extrahiert.<br>
+    <span class="tag b">B</span> lokalisiert den realsten Bereich gerade <em>dort nicht</em>: der <em>Leib</em> lebt in einem „<strong>flächenlosen Raum</strong>", einem „Gewoge verschwommener Inseln" — ausdrücklich <em>keine</em> metrische, flächenhaltige Fläche (das wäre der Körper). B verknüpft diese Nicht-Metrik mit der <em>Unmöglichkeit</em>, die Situation restlos zu digitalisieren.<br>
+    → A's ganzes Gerät setzt eine Metrik voraus; B's realster Bereich <em>widersteht</em> genau dieser metrischen Erfassung.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Alle drei Spannungen lösen sich auf <em>einer</em> Meta-Achse auf: <strong>konventioneller/atomisierter Primitiv vs. invariantes kontinuierliches Feld</strong> — plus die Regel, dass eine Metrik nur eine <em>Projektion</em> auf dieses Feld ist, nicht sein Fundament.</p>
+    <p><strong>Auflösung ① — Der Skalar ist die führende Projektion des Feldes.</strong> A's einzelne optimierte Zahl d = ½ ln(min K) ist <em>nicht</em> im Widerspruch zu B's vollem λₖ-Stack, sondern <em>der λ₁-Abschnitt</em> desselben Feldes: die <em>führende (erste) Invariante</em>. A „kollabiert" in die obere Hülle; B sagt, man dürfe dort nicht <em>stehen bleiben</em>. Die Vereinigung ist trivial, sobald man die Ebenen trennt: <em>die Invariante ist das ganze Persistent-Feld λₖ; A's d ist dessen führende Projektion λ₁.</em> „Kollabieren zu einer Zahl" und „das Feld behalten" sind derselbe Zug in zwei Auflösungen — man liest A's Skalar als <em>Projektion</em>, nicht als <em>Ersatz</em>.</p>
+    <p><strong>Auflösung ② — Die Valenz des Restes hängt von der erzeugenden Operation ab.</strong> A und B werfen nicht denselben Rest weg/halten. A's Rest entsteht durch <em>Gauge-Eliminierung</em> (das Konventionelle entfernen) → das ist Rauschen, korrekt <strong>wegzuwerfen</strong>. B's Rest entsteht durch <em>Threshold-/Neutralisierungs-Eliminierung</em> (das Robuste/„Objektive" entfernen, um zur „Tatsache" zu kommen) → das ist die <strong>Essenz</strong>, zu <strong>behalten</strong>. Die gemeinsame Regel lautet: <em>ein Rest ist wertlos, wenn er durch das Entfernen von <b>purer Konvention/Gauge</b> entsteht; er ist wertvoll, wenn er durch das Entfernen des <b>Robusten/Neutralen</b> entsteht — denn genau diese Operation löscht den entscheidungsrelevanten/affektiven Inhalt.</em> Kurz: <strong>das Konventionelle/Neutrale weg, das Invariante/Entscheidungsrelevante behalten.</strong> A's Gauge ≡ B's „objektive Hülle" (beides Neutral/ konventionell → weg); A's Invariante-Distanz ≡ B's volles Feld inkl. Kite (beides Echt/entscheidungsrelevant → behalten). Damit stimmen beide überein.</p>
+    <p><strong>Auflösung ③ — Die Metrik ist keine Basis, sondern eine gewählte Projektion auf einen flächenlosen Untergrund.</strong> A's hyperbolische/Teichmüller-Metrik ist <em>eine</em> auf dem Moduli-Raum <em>gewählte</em> Distanz; der <em>Untergrund</em> ist der Moduli-Raum selbst (der Raum aller Formen), der <em>ohne</em> jede Metrik existiert. B's „flächenloser Raum" wird <em>exakt</em> realisiert durch die <em>Feld-Funktion</em> λₖ(t) — eine <em>kontinuierliche Funktion</em>, nicht ein Punkt in einer metrischen Ebene (das wäre der Körper / der „faithful core"). <strong>Die Invariante lebt im flächenlosen Feld-Untergrund; der Skalar (d, Wasserstein, Effektgröße) ist seine Projektion auf eine Zahl.</strong> A liefert den Untergrund (Moduli-Raum) <em>und</em> eine Metrik darauf; B liefert die Feld-Funktions-Lektüre desselben Untergrunds. Beide sind dieselbe Sache.</p>
+    <div class="note t"><span class="h">Fusionierter Schluss</span>
+    Ein gutes Objekt der „echten Struktur" muss <b>(i)</b> ein <em>kontinuierliches invarian­tes Feld</em> sein (nicht ein Punkt, nicht ein roher Quotient), <b>(ii)</b> eine <em>harte Schwelle</em> durch eine <em>kontinuierliche, entscheidungsrelevante Distanz</em> ersetzen, und <b>(iii)</b> den <em>Rest</em> jeder Vereinfachung als <em>sichtbaren Parameter</em> behandeln — nicht als Gesetz erstarrn, nicht als Müll wegwerfen. <b>Teichmüller-Distanz</b> (½&nbsp;ln&nbsp;min&nbsp;K) ist die <em>führende Projektion</em> des Feldes; <b>die Landschaft λₖ</b> ist das <em>Feld</em> selbst; <b>Effektgröße + Verlustfunktion</b> ist die <em>entscheidungsrelevante</em> Projektion. Fishers 5%-Linie und der λ₁-Abschnitt sind dieselbe Falle in zwei Sprachen: <em>ein roher, gauge-abhängiger/neutraler Wert, eingefroren in eine starre Linie.</em></div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Abstrahiert auf das Niveau der <em>Thesen</em> der beiden Runde-1-Papiere (nicht deren rohe Quellsdetails) trägt die Fusion ein gemeinsames Gerüst: <em>von der konventionsgebundenen/atomisierten Koordinate zum invarianten, robusten, kontinuierlichen Feld; von der harten Schwelle zur kontinuierlichen, entscheidungsrelevanten Distanz; der Rest ist ein Parameter.</em></p>
+    <h3>A (n1-083) — „Judge the invariant, not the gauge"</h3>
+    <p>Die echte Form ist die <strong>Moduli-Klasse</strong> τ / SL(2,Z), nicht ein τ in fester Basis; die echte Lücke ist die <strong>minimierte</strong> Dilatation. <em>Geometrie:</em> Tors = Parallelogramm, τ = x+iy ∈ ℍ; zwei τ sind gleich (unmarkiert), wenn SL(2,Z): τ → (aτ+b)/(cτ+d) sie verknüpft; konform (K=1) erhält Winkel, quasikonform (K&gt;1) verzerrt sie <em>beschränkt</em> (Achsenquotient ≤ K); Teichmüller-Distanz d = ½ ln K = arccosh(1+|Δτ|²/(2·Imτ₁·Imτ₂)), Geodäten = Hyperbel-Bögen; Dimensionen: Genus g≥2 → 6g−6. <em>Statistik:</em> σ ≠ SE (SE = σ/√n schrumpft, σ nicht); t = Signal/Rauschen ist ein „sizeless stare" (gleiche Signifikanz aus riesigem ungenauem <em>und</em> winzigem präzisen Effekt); der p-Wert ist nur eine Umrechnung von t; die 5%-Linie ist arbitrar (Fisher 1926: „bequem … persönlich"); die richtige Größe ist <strong>Effektgröße + Kosten/Verlustfunktion</strong> (Gosset/DeGroot), nicht das t; Vioxx und DeGroots 20&nbsp;000 zeigen: Signifikanz misst das Budget, nicht die Natur.</p>
+    <h3>B (n1-063) — „Persistenz gegen Digitalisierung"</h3>
+    <p>Die Struktur ist <strong>Persistenz über ein Kontinuum von Skalen/Öffnungen</strong> und wird nur von <em>feldhaften</em> Zusammenfassungen erfasst, nie von der Atomisierung in neutrale Punkte. <em>Topologie:</em> ein Persistenzdiagramm ist ein Multi-Set von Zelt-Funktionen <span class="k">tent(b,d,t)</span> (Mittel m=(b+d)/2, Höhe h=(d−b)/2); die Landschaft <span class="k">λₖ(t)</span> ist die k-te größte Zelt-Höhe (absteigende Hülle, λ₁ = obere Hülle = „das Ganze"); Persistenzmasse eines Merkmals = (d−b)²/4; Distanzen: Wasserstein-1 = minimale „Arbeit" (L∞, Punkte dürfen zur Diagonalen projiziert werden, Kosten (d−b)/2) und Landschafts-L¹ = ∫|λᴬ(t)−λᴮ(t)|dt (ein <em>Feld-Integral</em>). <em>Phänomenologie (Schmitz):</em> Antrieb ≈ min(Enge, Weitung); Ergriffenheit = Atmosphäre × Öffnung; Wellenreiten/Reifung = der Rhythmus <em>Emanzipation ⇄ Regression</em> (Neutralisierung/Abstand ⇄ Ergriffenheit/Zurückfließen-ins-Ganze); der Leib lebt flächenlos, das „Objektive" ist nur die Hülle.</p>
+    <h3>Das gemeinsame Gerüst: Primitiv → invariantes Feld → (Projektion / Rest)</h3>
+    <table>
+      <thead><tr><th>Begriff aus A (n1-083)</th><th>Begriff aus B (n1-063)</th><th>Rolle im Gerüst</th></tr></thead>
+      <tbody>
+        <tr><td><span class="a">τ = x+iy</span> in fester Basis; rohes <span class="a">t</span></td><td>atomisierter Punkt <span class="b">(b,d)</span>; der Körper</td><td>der <strong>Gauge-/Primitiv-Punkt</strong> (konventionsgebunden/neutral)</td></tr>
+        <tr><td><span class="a">SL(2,Z)</span>-Quotient + <span class="a">Infimum</span> über Karten</td><td><span class="b">Neutralisierung / Trunkierung</span> (λ₁-Abschnitt)</td><td>die <strong>Vereinfachungs-Operation</strong></td></tr>
+        <tr><td><span class="a">Moduli-Raum</span> (alle Formen)</td><td>das volle <span class="b">λₖ-Stack</span> / die Atmosphäre</td><td>das <strong>invariante Feld</strong> (das Reale)</td></tr>
+        <tr><td><span class="a">d = ½ ln(min K)</span></td><td><span class="b">∫λ₁ / Wasserstein-1</span></td><td>die <strong>führende Skalar-Projektion</strong> des Feldes</td></tr>
+        <tr><td>Rest der <span class="a">Gauge-Eliminierung</span> (Markierung)</td><td>Rest der <span class="b">Neutralisierung</span> (Kite)</td><td>der <strong>Rest</strong>: weg (Gauge) bzw. behalten (Essenz) — Parameter</td></tr>
+        <tr><td>die <span class="a">5%-Linie</span></td><td>die <span class="b">Diagonale / λ₁-Schwelle</span></td><td>die <strong>harte Schwelle</strong> (die Falle)</td></tr>
+        <tr><td>Effektgröße + Verlustfunktion</td><td>Atmosphäre × Öffnung (Ergriffenheit)</td><td>die <strong>entscheidungsrelevante</strong> Projektion</td></tr>
+        <tr><td>Geodäte = der minimierende Weg</td><td>Wellenreiten: Emanzipation ⇄ Regression</td><td>der <strong>Rhythmus</strong>: Optimieren / Oszillieren des Restes</td></tr>
+      </tbody>
+    </table>
+    <p>Der entscheidende Fusionspunkt: A's Skalar <em>d</em> und B's Feld <em>λₖ</em> sind <strong>dasselbe Objekt in zwei Auflösungen</strong> — die eine Zahl ist die <em>führende Projektion</em> (λ₁) des Feldes. Und A's „Gauge wegwürfen" + B's „λ₁-Abschnitt weigern" sind <strong>komplementär korrekt</strong>: Weggeworfen wird nur das <em>Konventionelle/Neutrale</em> (A's Gauge = B's objektive Hülle), behalten wird das <em>Invariante/Entscheidungsrelevante</em> (A's Invariante = B's volles Feld inkl. Kite). Die Metrik (d, Wasserstein, Effektgröße) ist immer eine <em>gewählte Projektion</em> auf den flächenlosen Feld-Untergrund (Moduli-Raum / Landschaft) — nie das Fundament.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung — das invariante Feld und seine Projektionen</h2>
+    <p>Ein Canvas, zwei Seiten des Arguments. <strong>Links (Primitiv):</strong> das Persistenzdiagramm — die <em>atomisierten</em> Punkte (b,d) = die „Gauge-Punkte"/neutralen Tatsachen, farbcodiert nach Persistenz (<span style="color:var(--koerper)">blau</span> = robust, weit von der Diagonalen; <span style="color:var(--acc2)">pink</span> = Kite, nahe der Diagonalen). <strong>Rechts (das Reale):</strong> das <em>invariante Feld</em> λₖ(t) — das Persistent-Spektrum, umhüllt von der Atmosphäre λ₁. <em>Projektionstiefe&nbsp;k</em> blättert das Feld auf: bei <b>k=1</b> siehst du nur die führende Invariante (A's Skalar&nbsp;d = ∫λ₁), bei <b>k&gt;1</b> das volle Feld (B). Der <em>Trunkierungs-</em>Regler erzeugt den <strong>Rest</strong> — ein Parameter, kein Gesetz. <em>Wellenreiten</em> lässt den Rest atmen (Emanzipation ⇄ Regression).</p>
+    <div class="vizbar">
+      <button id="theme">🌗 Thema umschalten</button>
+      <button id="wave">▶ Wellenreiten (Emanzipation ⇄ Regression)</button>
+      <span class="hint">links = Primitiv-Punkte · rechts = invariantes Feld λₖ · alles Inline, keine Netzdaten</span>
+    </div>
+    <div class="vizwrap"><canvas id="cv"></canvas></div>
+    <div class="legend">
+      <span><i style="background:var(--koerper)"></i>Robust (weit von der Diagonalen)</span>
+      <span><i style="background:var(--acc2)"></i>Kite / affektiv (nahe der Diagonalen)</span>
+      <span><i style="background:var(--acc)"></i>Feld-Hülle λ₁ (Atmosphäre)</span>
+      <span><i style="background:var(--acc3)"></i>höhere Layern λ₂…λₖ</span>
+      <span><i style="background:var(--warn)"></i>Trunkierungslinie / Rest</span>
+    </div>
+    <div class="ro">
+      <div class="box"><div class="k2">Rest (Parameter, kein Gesetz)</div><div class="v w" id="v-rest">–</div></div>
+      <div class="box"><div class="k2">Führende Invariante ∫λ₁ (A's d)</div><div class="v" id="v-scalar">–</div></div>
+      <div class="box"><div class="k2">Feldmasse Σ<sub>k≤K</sub> ∫λₖ</div><div class="v p" id="v-mass">–</div></div>
+      <div class="box"><div class="k2">Projektionstiefe k</div><div class="v m" id="v-k">1</div></div>
+    </div>
+    <div class="sliders">
+      <div class="ctl"><div class="ctl-lab"><span>Trunkierung / Neutralisierung (Rest erzeugen)</span><b id="lbl-th">15%</b></div><input type="range" id="s-th" min="0" max="100" step="1" value="15"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Projektionstiefe k (1 = Skalar, hoch = volles Feld)</span><b id="lbl-k">1</b></div><input type="range" id="s-k" min="1" max="4" step="1" value="1"></div>
+    </div>
+    <div class="note"><span class="h">Lesart</span>
+    <b>Links</b> sind die Primitiv-Punkte (der „Gauge", das Neutrale). <b>Rechts</b> wächst aus ihnen das invariante Feld λₖ. Zieh <b>Projektionstiefe k</b> von 1 nach oben: bei <b>k=1</b> hast du A's einzelnen optimierten Skalar (die führende Invariante ∫λ₁); bei <b>k=4</b> siehst du B's volles Persistent-Feld — derselbe Zug, zwei Auflösungen. Zieh <b>Trunkierung</b>: Der <b>Rest</b> wächst — und er ist <b>kein Gesetz</b>, sondern ein Parameter deiner Operation. <b>Wellenreiten</b>: Der Rest atmet — der Rhythmus Emanzipation ⇄ Regression, in den der Trunkierungs-Parameter aufgeht.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="takeaway"><span class="num">A</span><div><a href="../n1-083.html">n1-083.html</a> — „Der Invariante Blick — Geometrie der Form und Größe des Effekts" (Runde 1, teichmueller × kult_der_statistischen_signifikanz): „Judge the invariant, not the gauge"; Teichmüller-Distanz d = ½ ln(min K), Moduli-Raum, quasikonforme Dilatation; gegenüber σ≠SE, dem „sizeless stare" t, der willkürlichen 5%-Linie, Effektgröße + Verlustfunktion.</div></div>
+    <div class="takeaway"><span class="num">B</span><div><a href="../n1-063.html">n1-063.html</a> — „Persistenz gegen Digitalisierung" (Runde 1, persistent_landscape × Hermann Schmitz): Struktur = Persistenz als Feld λₖ / Atmosphäre; Zelt-Funktionen, Wasserstein-1, Landschafts-L¹; gegenüber Schmitz' affektivem Betroffensein, dem flächenlosen Leib, Emanzipation ⇄ Regression, dem „nicht digitalisierbaren Rest".</div></div>
+  </section>
+</main>
+<footer>
+  <p>Fusion (Runde 2, Paar 034, nicht-KI-Track). Fused aus den zwei Runde-1-Papieren n1-083.html und n1-063.html. Beide bleiben Quelle der Wahrheit; keine erfundenen Behauptungen. Konventionen: A d = ½ ln K = arccosh(1+|Δτ|²/(2·Imτ₁·Imτ₂)); B λₖ = k-te größte Zelt-Höhe, Persistenzmasse (d−b)²/4, L¹ = ∫|λᴬ−λᴮ|dt. Alle Diagramme laufen lokal im Browser — keine Daten verlassen diese Seite.</p>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  function set(id,txt){ var el=$(id); if(el) el.textContent=txt; }
+
+  var P = [
+    {b:0.4,d:9.2},{b:1.2,d:8.1},{b:2.4,d:7.2},{b:3.1,d:7.6},{b:4.2,d:5.4},
+    {b:5.6,d:6.9},{b:6.4,d:7.1},{b:7.3,d:8.2},{b:1.4,d:2.3},{b:2.6,d:3.4},
+    {b:4.9,d:5.5},{b:6.2,d:6.7},{b:8.1,d:8.6}
+  ];
+  var tMax = 10, pMax = 0, i;
+  for(i=0;i<P.length;i++){ var pp=(P[i].d-P[i].b)/2; if(pp>pMax) pMax=pp; }
+
+  var cv = $('cv');
+  function readColors(){
+    var cs = getComputedStyle(document.documentElement);
+    function v(n){ var val=cs.getPropertyValue(n).trim(); return val||'#888'; }
+    return { bg:v('--bg'),panel:v('--panel'),panel2:v('--panel2'),ink:v('--ink'),dim:v('--dim'),
+      faint:v('--faint'),stroke:v('--stroke'),strokeHi:v('--stroke-hi'),acc:v('--acc'),
+      acc2:v('--acc2'),acc3:v('--acc3'),warn:v('--warn'),koerper:v('--koerper'),leib:v('--leib') };
+  }
+  function hexToRgb(h){ h=(h||'#888888').replace('#',''); if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    var n=parseInt(h,16); if(isNaN(n)) return [136,136,136]; return [(n>>16)&255,(n>>8)&255,n&255]; }
+  function rgba(c,a){ return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  function mix(c1,c2,t){ t=Math.max(0,Math.min(1,t)); return [Math.round(c1[0]+(c2[0]-c1[0])*t),
+    Math.round(c1[1]+(c2[1]-c1[1])*t), Math.round(c1[2]+(c2[2]-c1[2])*t)]; }
+
+  function tent(b,d,t){ var m=(b+d)/2; if(t<=b||t>=d) return 0; if(t<=m) return t-b; return d-t; }
+  function lamk(pts,k,t){ var v=[],j; for(j=0;j<pts.length;j++) v.push(tent(pts[j].b,pts[j].d,t));
+    v.sort(function(a,b){return b-a;}); return (k<v.length)?Math.max(0,v[k]):0; }
+  function integ(pts,k){ var N=360,sum=0,prev=lamk(pts,k,0),t,vv,j;
+    for(j=1;j<=N;j++){ t=j/N*tMax; vv=lamk(pts,k,t); sum+=(vv+prev)/2*(tMax/N); prev=vv; } return sum; }
+  function areaOf(p){ return Math.pow(p.d-p.b,2)/4; }
+  function survPts(th){ var r=[],j; for(j=0;j<P.length;j++){ if((P[j].d-P[j].b)/2 >= th-1e-9) r.push(P[j]); } return r; }
+
+  var H = 470;
+  function setup(){ var pe=cv.parentElement; var w=Math.max(340, (pe&&pe.clientWidth)||760);
+    var dpr=window.devicePixelRatio||1;
+    if(cv.width!==Math.round(w*dpr)){ cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr); }
+    cv.style.width=w+'px'; cv.style.height=H+'px';
+    var g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); return {g:g,W:w}; }
+
+  function draw(){
+    var S=setup(), g=S.g, W=S.W, C=readColors();
+    var mid=W*0.5;
+    var L={x0:40, y0:46, w:mid-40-15, h:H-86};
+    var R={x0:mid+15, y0:46, w:W-mid-15-22, h:H-86};
+    var thr=+$('s-th').value/100, kproj=Math.round(+$('s-k').value);
+    var th=thr*pMax;
+    var surv=survPts(th);
+    var Mt=0,Ms=0,j;
+    for(j=0;j<P.length;j++){ Mt+=areaOf(P[j]); }
+    for(j=0;j<surv.length;j++){ Ms+=areaOf(surv[j]); }
+    var survFrac = Mt>0 ? Ms/Mt : 1, rest=1-survFrac;
+    var scalar = integ(surv,0);
+    var mass=0; for(var kk=0; kk<kproj; kk++){ mass += integ(surv,kk); }
+
+    g.clearRect(0,0,W,H);
+    g.fillStyle=C.bg; g.fillRect(0,0,W,H);
+    g.strokeStyle=C.stroke; g.lineWidth=1; g.beginPath(); g.moveTo(mid,6); g.lineTo(mid,H-6); g.stroke();
+    g.font='bold 12px sans-serif'; g.fillStyle=C.ink;
+    g.textAlign='left'; g.fillText('PRIMITIV · atomisierte Punkte',L.x0,20);
+    g.textAlign='right'; g.fillText('INARIANTES FELD · λ\u2096(t)',W-12,20);
+
+    // LEFT: persistence diagram
+    function toX(b){ return L.x0 + (b/tMax)*L.w; }
+    function toY(d){ return (L.y0+L.h) - (d/tMax)*L.h; }
+    g.strokeStyle=C.strokeHi; g.lineWidth=1.3; g.beginPath();
+    g.moveTo(L.x0,L.y0+L.h); g.lineTo(L.x0+L.w,L.y0+L.h);
+    g.moveTo(L.x0,L.y0); g.lineTo(L.x0,L.y0+L.h); g.stroke();
+    g.strokeStyle=C.faint; g.lineWidth=1; g.setLineDash([6,4]);
+    g.beginPath(); g.moveTo(toX(0),toY(0)); g.lineTo(toX(tMax),toY(tMax)); g.stroke(); g.setLineDash([]);
+    g.fillStyle=C.faint; g.font='9px sans-serif'; g.textAlign='center';
+    for(var gv=0; gv<=5; gv++){ var gval=gv/5*tMax; g.fillText(gval.toFixed(0), toX(gval), toY(0)+13); }
+    if(th>1e-6){ g.strokeStyle=C.warn; g.lineWidth=1.4; g.setLineDash([3,4]); g.beginPath();
+      g.moveTo(toX(0), toY(Math.min(tMax,0+2*th))); g.lineTo(toX(tMax), toY(Math.min(tMax,tMax+2*th)));
+      g.stroke(); g.setLineDash([]); }
+    var rob=hexToRgb(C.koerper), kit=hexToRgb(C.acc2);
+    for(j=0;j<P.length;j++){ var p=P[j], per=(p.d-p.b)/2, fp=per/pMax;
+      var isSurv = per>=th-1e-9, alpha=isSurv?0.92:0.28;
+      var col=mix(kit,rob,fp); var cx=toX(p.b), cy=toY(p.d);
+      g.strokeStyle=rgba(col,alpha*0.4); g.lineWidth=1; g.beginPath();
+      g.moveTo(cx,cy); g.lineTo(cx,toY(p.b)); g.stroke();
+      g.beginPath(); g.arc(cx,cy, 3.5+fp*5.5, 0, 7);
+      g.fillStyle=rgba(col,alpha); g.fill();
+      g.strokeStyle=rgba(hexToRgb(C.panel),alpha); g.lineWidth=1.1; g.stroke();
+    }
+
+    // RIGHT: invariant field lambda_k
+    function toXr(t){ return R.x0 + (t/tMax)*R.w; }
+    var mx=pMax*1.16;
+    function toYr(v){ return (R.y0+R.h) - (v/mx)*R.h; }
+    g.strokeStyle=C.strokeHi; g.lineWidth=1.3; g.beginPath();
+    g.moveTo(R.x0,R.y0+R.h); g.lineTo(R.x0+R.w,R.y0+R.h);
+    g.moveTo(R.x0,R.y0); g.lineTo(R.x0,R.y0+R.h); g.stroke();
+    g.fillStyle=C.faint; g.font='9px sans-serif'; g.textAlign='center';
+    for(var g2=0; g2<=5; g2++){ var gval2=g2/5*tMax; g.fillText(gval2.toFixed(0), toXr(gval2), toYr(0)+13); }
+    var N=220, s, t;
+    // envelope fill (atmosphere) using surviving field
+    g.beginPath(); g.moveTo(toXr(0), toYr(0));
+    for(s=0;s<=N;s++){ t=s/N*tMax; g.lineTo(toXr(t), toYr(lamk(surv,0,t))); }
+    g.lineTo(toXr(tMax), toYr(0)); g.closePath();
+    g.globalAlpha=0.12; g.fillStyle=C.acc; g.fill(); g.globalAlpha=1;
+    // tents of surviving features
+    for(j=0;j<surv.length;j++){ var q=surv[j], m2=(q.b+q.d)/2, h2=(q.d-q.b)/2;
+      g.beginPath(); g.moveTo(toXr(q.b),toYr(0)); g.lineTo(toXr(m2),toYr(h2)); g.lineTo(toXr(q.d),toYr(0));
+      g.closePath(); g.globalAlpha=0.10; g.fillStyle=C.acc3; g.fill(); g.globalAlpha=1; }
+    // lambda lines for k = 1..kproj
+    var lineCols=[C.acc, C.acc3, C.warn, C.acc2];
+    for(var kk2=0; kk2<kproj; kk2++){
+      g.beginPath();
+      for(s=0;s<=N;s++){ t=s/N*tMax; var vv=lamk(surv,kk2,t);
+        if(s===0) g.moveTo(toXr(t),toYr(vv)); else g.lineTo(toXr(t),toYr(vv)); }
+      g.strokeStyle=lineCols[kk2%lineCols.length]; g.lineWidth=(kk2===0?2.4:1.4);
+      if(kk2>0) g.setLineDash([4,3]); g.stroke(); g.setLineDash([]);
+      g.fillStyle=lineCols[kk2%lineCols.length]; g.font='bold 10px sans-serif'; g.textAlign='left';
+      g.fillText('\u03bb'+(kk2+1), R.x0+4, R.y0+12+kk2*14);
+    }
+
+    set('v-rest', (rest*100).toFixed(1)+'%');
+    set('v-scalar', scalar.toFixed(2));
+    set('v-mass', mass.toFixed(2));
+    set('v-k', String(kproj));
+    set('lbl-th', Math.round(thr*100)+'%');
+    set('lbl-k', String(kproj));
+  }
+
+  ['s-th','s-k'].forEach(function(id){
+    var el=$(id); if(el) el.addEventListener('input', function(){ if(state.anim) stopWave(); draw(); });
+  });
+  var state={anim:false, wt:0};
+  function stopWave(){ state.anim=false; var w=$('wave'); if(w) w.textContent='\u25b6 Wellenreiten (Emanzipation \u21c4 Regression)'; }
+  var wave=$('wave');
+  if(wave) wave.addEventListener('click', function(){
+    state.anim=!state.anim;
+    wave.textContent = state.anim ? '\u23f8 Wellenreiten l\u00e4uft\u2026' : '\u25b6 Wellenreiten (Emanzipation \u21c4 Regression)';
+  });
+  $('theme').addEventListener('click', function(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n2-034-theme', d?'dark':'light'); }catch(e){}
+    draw();
+  });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+  function loop(){
+    if(state.anim){ state.wt+=0.012;
+      var s=$('s-th'); if(s) s.value=Math.round((0.5+0.42*Math.sin(state.wt))*100);
+      draw();
+    }
+    requestAnimationFrame(loop);
+  }
+  if(document.readyState==='complete'){ draw(); } else { window.addEventListener('load', draw); }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

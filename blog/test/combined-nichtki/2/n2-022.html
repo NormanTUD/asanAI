@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die graduierte Garbe mit Krümmung — Höhere Struktur als globale Sektion</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --fg:#1c1c24; --panel:#ffffff; --panel-brd:#e6e2d8;
+    --muted:#6a6a76; --accent:#4361c8; --accent2:#4338ca;
+    --ok:#16a34a; --bad:#dc2626; --global:#7c3aed; --overlap:#d97706;
+    --code-bg:#efece3; --canvas-bg:#f1efe8; --grid:rgba(20,20,30,0.14);
+    --shadow:0 2px 14px rgba(15,23,42,.08);
+  }
+  html.dark{
+    --bg:#0b0b12; --fg:#e8e8ea; --panel:#14141c; --panel-brd:#24242e;
+    --muted:#8a8a98; --accent:#7eb4ff; --accent2:#a5b4fc;
+    --ok:#4ade80; --bad:#f87171; --global:#c4b5fd; --overlap:#fbbf24;
+    --code-bg:#0f0f16; --canvas-bg:#0e0e16; --grid:rgba(200,200,220,0.10);
+    --shadow:0 2px 18px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased;}
+  article{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+  header{border-bottom:2px solid var(--panel-brd);padding-bottom:18px;margin-bottom:8px;position:relative;}
+  h1{font-size:2.05em;line-height:1.18;margin:0 0 8px;letter-spacing:-0.01em;
+    background:linear-gradient(90deg,var(--accent),var(--global),var(--overlap));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .subtitle{color:var(--muted);font-size:.95rem;margin:0 0 4px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .theme-toggle{position:absolute;top:0;right:0;background:var(--panel);color:var(--fg);
+    border:1px solid var(--panel-brd);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:.85em;}
+  .theme-toggle:hover{border-color:var(--accent);}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  nav.toc a{font-size:.82em;color:var(--muted);text-decoration:none;border:1px solid var(--panel-brd);
+    border-radius:14px;padding:3px 10px;}
+  nav.toc a:hover{color:var(--fg);border-color:var(--accent);}
+  section{margin-top:42px;}
+  h2{font-size:1.42em;margin:0 0 14px;color:var(--accent);border-bottom:1px solid var(--panel-brd);padding-bottom:6px;}
+  h2 .no{color:var(--muted);font-weight:600;margin-right:8px;font-size:.7em;vertical-align:middle;}
+  h3{font-size:1.06em;margin:24px 0 8px;color:var(--fg);}
+  p{margin:0 0 13px;}
+  ul,ol{margin:0 0 13px;padding-left:22px;}
+  li{margin-bottom:8px;}
+  strong{font-weight:600;}
+  code,.m{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--code-bg);
+    color:var(--fg);padding:1px 6px;border-radius:4px;font-size:.9em;}
+  .math{font-style:italic;color:var(--accent2);}
+  .tagA{color:var(--accent);font-weight:700;}
+  .tagB{color:var(--accent2);font-weight:700;}
+  .card{background:var(--panel);border:1px solid var(--panel-brd);border-radius:12px;
+    padding:16px 18px;margin:16px 0;box-shadow:var(--shadow);}
+  .card h3{margin-top:0;color:var(--fg);}
+  .card p:last-child{margin-bottom:0;}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9em;}
+  th,td{border:1px solid var(--panel-brd);padding:9px 11px;text-align:left;vertical-align:top;}
+  th{background:var(--code-bg);}
+  .kv{font-weight:700;color:var(--accent);}
+  .lede{font-size:1.03rem;border-left:3px solid var(--accent);padding-left:14px;margin:20px 0 4px;}
+  .viz-card{background:var(--panel);border:1px solid var(--panel-brd);border-radius:14px;
+    padding:18px;box-shadow:var(--shadow);margin-top:14px;}
+  .ctl-row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin-bottom:14px;}
+  .ctrl{display:flex;flex-direction:column;gap:6px;min-width:170px;flex:1;}
+  .ctrl label{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  .ctrl .val{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--accent);font-size:.8rem;}
+  input[type=range]{width:100%;accent-color:var(--accent);}
+  .chk{display:flex;flex-direction:row;align-items:center;gap:8px;min-width:auto;font-size:.9em;}
+  .chk input{width:16px;height:16px;accent-color:var(--accent);}
+  button{background:var(--panel);color:var(--fg);border:1px solid var(--panel-brd);
+    padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.82rem;}
+  button:hover{border-color:var(--accent);color:var(--accent);}
+  canvas{display:block;width:100%;height:470px;border-radius:10px;border:1px solid var(--panel-brd);
+    background:var(--canvas-bg);touch-action:none;}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:.8rem;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:13px;height:13px;border-radius:3px;display:inline-block;}
+  .verdict{margin-top:12px;padding:12px 15px;border-radius:10px;font-weight:600;
+    border-left:5px solid var(--muted);background:var(--code-bg);font-size:.92em;}
+  .v-ok{border-left-color:var(--ok);}
+  .v-warn{border-left-color:var(--overlap);}
+  .viz-cap{color:var(--muted);font-size:.86rem;margin-top:12px;}
+  .prov{display:block;padding:12px 14px;border:1px solid var(--panel-brd);border-radius:10px;
+    margin-bottom:12px;background:var(--panel);}
+  .prov .path{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;}
+  a{color:var(--accent2);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  footer{margin-top:40px;color:var(--muted);font-size:.85em;text-align:center;
+    border-top:1px solid var(--panel-brd);padding-top:16px;}
+</style>
+</head>
+<body>
+<article>
+
+<header>
+  <h1>Die graduierte Garbe mit Krümmung</h1>
+  <p class="subtitle">Fusion aus: n1-009.html &times; n1-031.html &nbsp;(Runde 2)</p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widerspr&uuml;che</a>
+    <a href="#aufloesung">Aufl&ouml;sung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+  <button class="theme-toggle" id="themeBtn" type="button">Theme</button>
+</header>
+
+<p class="lede">Beide Quellpapiere sind selbst schon Fusionen &mdash; und beide landen, aus ganz
+verschiedenen Richtungen kommend, an <strong>dieselben zwei W&ouml;rtern</strong>: <em>lokal</em> und
+<em>Koh&auml;renz</em>. <span class="tagA">A (n1-009)</span> sagt: der Inhalt eines Objekts ist seine
+<strong>h&ouml;here Struktur</strong> &mdash; ein flaches Ding ist ein Querschnitt durch einen Turm abgeleiteter
+Ebenen (Momente, h&ouml;here Morphismen). <span class="tagB">B (n1-031)</span> sagt: <strong>Verklebung ist
+Modellerf&uuml;llung</strong> &mdash; viele lokale St&uuml;cke fassen sich genau dann zu einem koh&auml;renten Ganzen
+zusammen, wenn sie auf den &Uuml;berlappungen zusammenpassen. Diese Runde verbindet beide zu einer einzigen
+Position: <strong>ein koh&auml;rentes Objekt ist eine globale Sektion einer <em>gradierten</em> Garbe</strong> &mdash;
+gestufte Keime (der Momenten-/Morphismus-Turm) + ein Klebungs-/Koh&auml;renzgesetz + ein (m&ouml;glicherweise
+nicht verschwindender) Koh&auml;renz-<em>Defekt</em>.</p>
+
+<section id="these">
+  <h2><span class="no">1</span>Kernthese der Fusion</h2>
+  <p><span class="tagA">A</span> und <span class="tagB">B</span> antworten auf dieselbe Grundfrage, beschreiben
+aber je nur eine Achse der Antwort. <span class="tagA">A</span> fragt: <em>Woraus besteht ein Objekt, wenn man es
+in seine h&ouml;heren Ebenen aufl&ouml;st?</em> &mdash; und antwortet: aus einem <strong>Turm</strong> abgeleiteter
+Gr&ouml;&szlig;en (Masse, Mittel, Varianz, Schiefe; oder 1-, 2-, 3-Morphismen &hellip;), wobei die volle Sequenz das
+Objekt eindeutig bestimmt. <span class="tagB">B</span> fragt: <em>Wann werden viele getrennt gegebene St&uuml;cke zu
+genau einem Ganzen?</em> &mdash; und antwortet: wenn sie eine <strong>Garbe</strong> bilden, deren globale Sektionen
+(= Modelle) durch exakte &Uuml;bereinstimmung auf den &Uuml;berlappungen definiert sind.</p>
+  <p>Die einende Position lautet: <strong>&bdquo;H&ouml;here Struktur&ldquo; hat zwei orthogonale Richtungen.</strong>
+Die <em>Tiefe</em> &mdash; der gestufte Turm abgeleiteter Ebenen <em>an jedem lokalen Punkt</em> (das ist
+<span class="tagA">A</span>&rsquo;s Momenten-Turm / h&ouml;here-Morphismen-Turm) &mdash; und die
+<em>Breite</em> &mdash; das Koh&auml;renz-/Klebungs-Gesetz, das diese lokalen Turme <em>zu einem Ganzen
+zusammenf&gt;gt</em> (das ist <span class="tagB">B</span>&rsquo;s Verklebung / gemeinsame Wahrheit). Ein Objekt ist
+also <em>keine</em> Ebene und <em>keine</em> blo&szlig;e Verklebung, sondern beides auf einmal: eine <strong>graduierte
+Garbe</strong>. Ihr Faser-/Keim-Gehalt ist der Turm (Tiefe); ihr Garben-Struktur ist das Kleben (Breite); und beides
+tr&auml;gt einen <em>Koh&auml;renz-Defekt</em>, der misst, wie sehr das Kleben von der exakten Idee abweicht.</p>
+  <p>Ein Satz, der die Fusion tr&auml;gt: <strong>Ein koh&auml;rentes Objekt = eine globale Sektion einer
+graduierten Garbe; &bdquo;h&ouml;here Struktur&ldquo; = (gestufte Faser am Keim) &times; (Klebungsstruktur zwischen
+Keimen) + (messbare Kr&uuml;mmung des Klebens).</strong> <span class="tagA">A</span> liefert die Faser und die
+Kr&uuml;mmung; <span class="tagB">B</span> liefert die Garben-Struktur und die Tatsache, dass &bdquo;globale
+Sektion&ldquo; und &bdquo;Modell&ldquo; dasselbe sind.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="no">2</span>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden Papiere sind keine Negation voneinander, aber an drei Stellen treffen
+<em>inkompatible Thesen</em> aufeinander &mdash; jeweils ein namentlich benannter Anspruch in den Quellen.</p>
+
+  <div class="card">
+    <h3>W1 &middot; Wird das Ganze bestimmt? <span class="tagA">eindeutig bestimmt</span> vs. <span class="tagB">viele Modelle</span></h3>
+    <p><span class="tagA">A</span> st&uuml;tzt sich auf das <em>Momentenproblem</em>: <em>die volle Sequenz der
+Momente bestimmt die Verteilung eindeutig</em>. Der volle Momenten-Turm (&bdquo;alle Momente auf einmal&ldquo;,
+die Foam bei Tiefe &infin;) bestimmt also das Objekt &mdash; die h&ouml;here Struktur <em>fixiert</em> das Ganze.</p>
+    <p><span class="tagB">B</span> sagt das Gegenteil: <em>dieselben</em> lokalen Regeln (Axiome der dichten
+Ordnung) werden von <strong>&Qopf; ebenso wie von &Reals;</strong> erf&uuml;lt &mdash; &bdquo;ein Satz lokaler Regeln
+&Rightarrow; viele globale Welten&ldquo;. Einzigartigkeit ist dort kein Anspruch der Struktur, sondern eine
+<em>Zusatz-Eigenschaft</em> (Kategorialit&auml;t). Lokale Daten <em>bestimmen</em> das Ganze im Allgemeinen
+<em>nicht</em>.</p>
+  </div>
+
+  <div class="card">
+    <h3>W2 &middot; Was &bdquo;h&ouml;here Struktur&ldquo; ist: <span class="tagA">vertikaler Ebenen-Turm</span> vs. <span class="tagB">horizontale Koh&auml;renz</span></h3>
+    <p><span class="tagA">A</span>: h&ouml;here Struktur = ein <strong>vertikaler Turm</strong> abgeleiteter,
+quantitativer Ebenen &mdash; St&uuml;tzmenge/Masse, Mittel, Varianz, Schiefe &mdash; also <em>Tiefe</em>. Der
+Inhalt w&auml;chst nach <em>unten</em> in weitere Ebenen; der Turm &bdquo;l&auml;uft weiter&ldquo;.</p>
+    <p><span class="tagB">B</span>: h&ouml;here Struktur = <strong>relationale Koh&auml;renz</strong> &mdash; die
+Verklebungsbedingung auf den &Uuml;berlappungen und die gemeinsame Wahrheit, die lokale St&uuml;cke zu einer
+globalen Sektion f&gt;gen. Es gibt dort <em>keinen</em> Turm, keine gestuften Ebenen; der &bdquo;h&ouml;here&ldquo;
+Gehalt ist das <em>Zusammenf&gt;gen</em> (Breite/Koh&auml;renz), nicht das <em>Tiefer-Graben</em>.</p>
+  </div>
+
+  <div class="card">
+    <h3>W3 &middot; Exakte vs. ungenaue Koh&auml;renz: <span class="tagA">messbarer Defekt</span> vs. <span class="tagB">Defekt 0</span></h3>
+    <p><span class="tagA">A</span> betont, dass das Kleben <em>ungenau</em> ist: der <strong>Defekt
+&Delta; aug &minus; raw</strong> ist ein eigenes, messbares Objekt &mdash; die &bdquo;Kr&uuml;mmung&ldquo; des
+Transforms. Ein Funktor &bdquo;bis auf Defekt&ldquo; ist die Regel, nicht die Ausnahme.</p>
+    <p><span class="tagB">B</span> verlangt <em>exakte</em> Koh&auml;renz: Schnitte m&uuml;ssen auf
+<code class="math">U &cap; V</code> <em>exakt</em> &uuml;bereinstimmen (<code class="math">s_u|_{U&cap;V} = s_v|_{U&cap;V}</code>);
+ein Modell erf&uuml;llt die Axiome <em>exakt</em>. Inkoh&auml;renz ist bin&auml;r: entweder gibt es eine globale
+Sektion oder &mdash; vollst&auml;ndig &mdash; keine. Der Defekt ist stets 0.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="no">3</span>Aufl&ouml;sung</h2>
+
+  <div class="card">
+    <h3>W1 &rarr; Bestimmung ist geschichtet</h3>
+    <p>Einzigartigkeit ist keine Eigenschaft der &bdquo;Struktur an sich&ldquo;, sondern des Paares
+<strong>(feste Basis, volle Tiefe)</strong>. <span class="tagA">A</span>&rsquo;s Momentenproblem ist genau der
+<em>kategorielle</em> Spezialfall (Tiefe = &infin;, Basis fixiert &rArr; eindeutig), <span class="tagB">B</span>&rsquo;s
+&bdquo;viele Modelle&ldquo; der <em>allgemeine</em> Fall (Trunkation / Basiswechsel &rArr; viele).
+<strong>Fassung:</strong> Das Objekt ist eindeutig <em>relativ zu</em> voller Tiefe auf fester Basis; bei
+endlicher Trunkation (oder ver&auml;nderter Basis) sind viele globale Sektionen kompatibel. A und B sind dieselbe
+Aussage &mdash; Bestimmung = Kategorialit&auml;t &mdash; auf verschiedenen Stufen gelesen.</p>
+  </div>
+
+  <div class="card">
+    <h3>W2 &rarr; Tiefe und Breite sind orthogonale Koordinaten eines Objekts</h3>
+    <p>Der Momenten-Turm ist die <strong>graduierte Faser am Keim</strong> (Tiefe); das Kleben ist die
+<strong>Garben-/&Uuml;bergangsstruktur zwischen Keimen</strong> (Breite). Zusammen tragen sie ein Objekt.
+<strong>Fassung:</strong> Das fusionierte Objekt ist eine <em>graduierte Garbe</em> &mdash; eine Garbe, deren Werte
+selbst graduierte Objekte (Momenten-T&uuml;rme) sind. <span class="tagA">A</span> ist die Faser, <span class="tagB">B</span>
+die Garben-Struktur; beides ist n&ouml;tig.</p>
+  </div>
+
+  <div class="card">
+    <h3>W3 &rarr; Exakte Koh&auml;renz ist das Null-Defekt-Ideal</h3>
+    <p>Eine graduierte Garbe darf <em>nicht verschwindende Koh&auml;renz-Cocyklen</em> tragen &mdash; das ist die
+<strong>Kr&uuml;mmung</strong> des Klebens. <span class="tagB">B</span>&rsquo;s exakte Verklebung ist die <em>flache</em>
+(Null-Kr&uuml;mmung) Verbindung; <span class="tagA">A</span>&rsquo;s &Delta; aug &minus; raw ist eine Verbindung
+<em>mit</em> messbarer Kr&uuml;mmung. <strong>Fassung:</strong> Ein <em>exaktes Modell</em> (= &bdquo;g&uuml;ltiges
+Modell&ldquo; bei B) ist eine <em>flache</em> (defekt-freie, &Delta;=0) globale Sektion; die Augmentation bei A ist die
+mit Kr&uuml;mmung. Der Defekt ist nicht ein Fehler, sondern die messbare Nicht-Koh&auml;renz des Klebens.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+
+  <p>Das gemeinsame Schema &mdash; dieselben Rollen, zwei F&uuml;llungen, jetzt in einer Zeile vereint:</p>
+  <table>
+    <tr><th>Rolle</th><th><span class="tagA">A &middot; n1-009<br>(Foam / &infin;-Topos)</span></th>
+        <th><span class="tagB">B &middot; n1-031<br>(Garbe / Modelltheorie)</span></th></tr>
+    <tr><td class="kv">Basis / Welt</td>
+        <td>Pixel-Grid (x,y); Kontexte</td>
+        <td>topologischer Raum / Raum der Variablenkontexte &amp; Diagramme</td></tr>
+    <tr><td class="kv">lokales St&uuml;ck (Keim)</td>
+        <td>lokale Helligkeitsverteilung am Pixel</td>
+        <td>Schnitt <code class="math">s &in; &#x1D4D0;(U)</code> / Formel &phi; &uuml;ber Kontext &Gamma;</td></tr>
+    <tr><td class="kv">h&ouml;herer Aufbau (Tiefe)</td>
+        <td>Momenten-Turm: Masse, &mu;&#8321;, &sigma;&sup2;, &gamma;, &hellip; (oder h&ouml;here Morphismen)</td>
+        <td>&mdash; (keine Tiefe; nur Koh&auml;renz)</td></tr>
+    <tr><td class="kv">Koh&auml;renz (Breite)</td>
+        <td>&Uuml;berg&auml;nge/Kleben zwischen Pixel-S&auml;ulen</td>
+        <td>Verklebung auf <code class="math">U&cap;V</code> / gemeinsame Wahrheit</td></tr>
+    <tr><td class="kv">globales Objekt</td>
+        <td>die Ziffern-Form / die volle Verteilung</td>
+        <td>verklebte Sektion / Modell <code class="math">&#x1D4D1; &models; T</code></td></tr>
+    <tr><td class="kv">Einzigartigkeit</td>
+        <td>Momentenproblem &rArr; bestimmt (bei voller Tiefe)</td>
+        <td>nur bei Kategorialit&auml;t; sonst viele</td></tr>
+    <tr><td class="kv">Defekt</td>
+        <td>&Delta; aug &minus; raw (Kr&uuml;mmung, &ne; 0)</td>
+        <td>Defekt 0 (exakt, flach)</td></tr>
+  </table>
+
+  <div class="card">
+    <h3>Das fusionierte Objekt: die graduierte Garbe</h3>
+    <p>Man definiert zu einem System eine <strong>graduierte Garbe</strong>
+    <code class="math">&#x1D4D1;</code> auf einer Basis <code class="math">X</code>. Zu jedem lokalen Punkt
+    <code class="math">x</code> geh&ouml;rt eine <strong>graduierte Faser</strong>
+    <code class="math">&#x1D4D1;x = &oplus;_k &#x1D4D1;x,k</code> &mdash; <span class="tagA">A</span>&rsquo;s Momenten-Turm
+    (<code class="math">&#x1D4D1;x,0</code> = Masse/St&uuml;tzmenge, <code class="math">&#x1D4D1;x,1</code> = Mittel,
+    <code class="math">&#x1D4D1;x,2</code> = Varianz, <code class="math">&#x1D4D1;x,3</code> = Schiefe, &hellip;).
+    Die <strong>Garben-Struktur</strong> (<span class="tagB">B</span>) besteht aus Restriktions-/&Uuml;bergangs-Abbildungen
+    <code class="math">&rho;^U_V</code> auf &Uuml;berlappungen; die <strong>Globale Sektion</strong>
+    <code class="math">s &in; &#x1D4D1;(X)</code> ist eine Zuordnung, die auf allen Kontexten definiert ist und
+    &uuml;berall mit ihren Einschr&auml;nkungen kompatibel ist &mdash; und ist genau das <em>Objekt</em>
+    (bei B: ein Modell).</p>
+    <p>Der <strong>Koh&auml;renz-Defekt</strong> <code class="math">&Delta;</code> misst, wie sehr das Kleben von der
+    exakten (flachen) Idee abweicht: <code class="math">&Delta; = 0</code> (flach, exakt,
+    <span class="tagB">B</span>&rsquo;s g&uuml;ltiges Modell) vs. <code class="math">&Delta; &ne; 0</code>
+    (gekr&uuml;mmte Verbindung, <span class="tagA">A</span>&rsquo;s &Delta; aug &minus; raw). Der Defekt ist eine
+    Kr&uuml;mmung &mdash; die messbare Nicht-Koh&auml;renz.</p>
+  </div>
+
+  <div class="card">
+    <h3>Die drei fusionierten S&auml;tze</h3>
+    <ul>
+      <li><strong>Bestimmung ist geschichtet.</strong> Eindeutigkeit = Kategorialit&auml;t, gilt bei
+      <em>voller Tiefe auf fester Basis</em> (<span class="tagA">A</span>&rsquo;s Momentenproblem); endliche
+      Trunkation oder Basiswechsel &Rightarrow; viele globale Sektionen (<span class="tagB">B</span>&rsquo;s
+      &Qopf;, &Reals;).</li>
+      <li><strong>H&ouml;here Struktur = Tiefe &times; Breite.</strong> Gestufte Faser am Keim (Tiefe,
+      <span class="tagA">A</span>) <em>mal</em> Klebungs-/&Uuml;bergangsstruktur zwischen Keimen (Breite,
+      <span class="tagB">B</span>) = graduierte Garbe. Der &bdquo;Turm l&auml;uft weiter&ldquo; (A) und das
+      &bdquo;Ganze f&gt;gt zusammen&ldquo; (B) sind dieselbe Struktur, gelesen in zwei Richtungen.</li>
+      <li><strong>Koh&auml;renz ist Kr&uuml;mmung.</strong> Exakte Koh&auml;renz (<span class="tagB">B</span>) ist die
+      flache Verbindung (Kr&uuml;mmung 0); jede echte Transformation ist eine Verbindung mit (m&ouml;glicherweise
+      nicht verschwindender) Kr&uuml;mmung <code class="math">&Delta;</code> (<span class="tagA">A</span>). Ein
+      g&uuml;ltiges Modell ist genau eine flache globale Sektion.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Berechenbares Rezept (wof&uuml;r sp&auml;tere Runden arbeiten)</h3>
+    <p>Gegeben eine Stichprobe lokaler Daten: (1) pro Punkt die <em>lokale Verteilung</em> aufstellen;
+    (2) deren <strong>Momenten-Turm</strong> m, &mu;&#8321;, &sigma;&sup2;, &gamma; &hellip; berechnen &rArr; die
+    <em>graduierte Faser</em>; (3) &Uuml;bergangs-/Klebungs-Abbildungen auf &Uuml;berlappungen definieren
+    &rArr; die <em>Garben-Struktur</em>; (4) den <strong>Defekt</strong> als Differenz zweier transformierter
+    Momenten-Felder messen &rArr; die <em>Kr&uuml;mmung</em>; (5) die Anzahl kompatibler globaler Sektionen
+    &uuml;ber die <em>Tiefe</em; variieren &rArr; die <em>Bestimmung</em>. Ergebnis: ein selbst&auml;ndiges
+    Objekt &mdash; flache Daten, ihre h&ouml;here Struktur (Tiefe &times; Breite) und ihr messbarer Koh&auml;renz-Defekt.</p>
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="no">5</span>Visualisierung</h2>
+  <p>Die <strong>graduierte Garbe</strong> in einem Blick. Auf der Basis (die Kontexte/Zeit, wie bei
+  <span class="tagB">B</span>) stehen <em>Keime</em>, von denen <strong>Momenten-T&uuml;rme</strong> aufsteigen
+  (die <em>Tiefe</em> aus <span class="tagA">A</span>). Der <strong>Tiefen-Slider</strong> trunciert diese
+  T&uuml;rme &mdash; bei Tiefe 0 bleibt nur die Silhouette (die Constraints allein), bei Tiefe 4 der volle Turm.
+  Dazwischen laufen <strong>kandidierende globale Sektionen</strong> (Riemen) &uuml;ber die Basis: bei kleiner
+  Tiefe sind mehrere kompatibel (&bdquo;viele Modelle&ldquo;, wie <span class="tagB">B</span>), bei voller Tiefe
+  &uuml;berlebt nur die eindeutige (&bdquo;kategorial&ldquo;, wie <span class="tagA">A</span>&rsquo;s
+  Momentenproblem). Die <strong>&Uuml;berlappungsb&auml;nder</strong> auf der Basis sind das
+  <em>Kleben</em> (die Breite aus <span class="tagB">B</span>). Der <strong>Defekt-Umschalter</strong> macht das
+  Kleben <em>flach</em> (exakt, Kr&uuml;mmung 0, <span class="tagB">B</span>) oder <em>gekr&uuml;mmt</em> mit rotem
+  &Delta; (messbare Nicht-Koh&auml;renz, <span class="tagA">A</span>). Alle Daten werden inline erzeugt &mdash;
+  keine Netz-Daten.</p>
+
+  <div class="viz-card">
+    <div class="ctl-row">
+      <div class="ctrl">
+        <label>Garben-Tiefe (Trunkation) &mdash; <span class="val" id="depth-label">Tiefe 2</span></label>
+        <input type="range" id="depth" min="0" max="4" step="1" value="2">
+      </div>
+      <label class="chk"><input type="checkbox" id="curved"> Defekt &Delta; &ne; 0 (gekr&uuml;mmtes Kleben)</label>
+      <button id="resetBtn" type="button">Reset</button>
+    </div>
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:#7eb4ff"></span>Ebene 0 &middot; Masse/Silhouette</span>
+      <span><span class="sw" style="background:#f472b6"></span>Ebene 1 &middot; Mittel</span>
+      <span><span class="sw" style="background:#facc15"></span>Ebene 2 &middot; Varianz</span>
+      <span><span class="sw" style="background:#34d399"></span>Ebene 3 &middot; Schiefe</span>
+      <span><span class="sw" style="background:#c084fc"></span>Ebene 4 &middot; alle Momente</span>
+      <span><span class="sw" style="background:var(--overlap)"></span>&Uuml;berlappung (Kleben)</span>
+      <span><span class="sw" style="background:var(--ok)"></span>g&uuml;ltige globale Sektion</span>
+      <span><span class="sw" style="background:var(--bad)"></span>Defekt / Kr&uuml;mmung</span>
+    </div>
+    <div class="verdict" id="vizStatus"></div>
+  </div>
+  <p class="viz-cap">Tiefe = <span class="tagA">A</span>&rsquo;s Turm (Tiefe). Breite = das Kleben &amp; die
+  kandidierenden globalen Sektionen (<span class="tagB">B</span>). Die Anzahl der &uuml;berlebenden Sektionen
+  sinkt mit der Tiefe von &bdquo;viele&ldquo; zu &bdquo;eindeutig&ldquo; &mdash; Bestimmung = Kategorialit&auml;t.
+  Der Umschalter zeigt: exakt (flach) ist das Null-Defekt-Ideal der gekr&uuml;mmten Verbindung.</p>
+</section>
+
+<section id="provenienz">
+  <h2><span class="no">6</span>Provenienz</h2>
+  <span class="prov">
+    <strong>A</strong> &mdash; <a class="path" href="../n1-009.html">n1-009.html</a> &mdash; &bdquo;The Higher
+    Structure of Flat Things&ldquo;. Fusion von mnist_foam/viewer.html &times; inftytopoi.html: ein Bild als
+    3-D-Foam, ein Punkt als &infin;-Turm; der Momenten-Turm als h&ouml;here Struktur, &Delta; aug &minus; raw als
+    messbarer Koh&auml;renz-Defekt, MIP als Projektion, Momentenproblem als Bestimmung.
+  </span>
+  <span class="prov">
+    <strong>B</strong> &mdash; <a class="path" href="../n1-031.html">n1-031.html</a> &mdash; &bdquo;Verklebung
+    trifft Modellerf&uuml;llung&ldquo;. Fusion von garben_zug.html &times; modelltheorie.html: Verklebung lokaler
+    Schnitte = Modellerf&uuml;llung; Existenz ist gemeinsam, Einzigartigkeit = Kategorialit&auml;t; dieselben
+    Regeln haben viele Modelle (&Qopf;, &Reals;).
+  </span>
+</section>
+
+<footer>
+  Fusion (nicht-k.i.-Track), Runde 2, Paar 022 &middot; graduierte Garbe mit Kr&uuml;mmung &middot; Standalone,
+  keine Netz-Daten.
+</footer>
+
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if (!canvas || !canvas.getContext) { return; }
+  var ctx = canvas.getContext('2d');
+  var depthEl = document.getElementById('depth');
+  var depthLabel = document.getElementById('depth-label');
+  var curvedEl = document.getElementById('curved');
+  var statusEl = document.getElementById('vizStatus');
+  var themeBtn = document.getElementById('themeBtn');
+  var resetBtn = document.getElementById('resetBtn');
+
+  var K = 5;
+  var LEVEL_COLORS = ['#7eb4ff', '#f472b6', '#facc15', '#34d399', '#c084fc'];
+  var DEPTH_NAMES = ['Tiefe 0 (nur Silhouette)', 'Tiefe 1 (+ Mittel)', 'Tiefe 2 (+ Varianz)',
+                     'Tiefe 3 (+ Schiefe)', 'Tiefe 4 (volle Momente)'];
+  var BASE = [0.62, 0.46, 0.34, 0.26, 0.40];
+  var BASE_SUM = BASE[0] + BASE[1] + BASE[2] + BASE[3] + BASE[4];
+
+  var state = { depth: 2, curved: false };
+
+  function cssVar(n) {
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  }
+
+  function prof(i) {
+    var t = i / (K - 1);
+    return Math.exp(-((t - 0.5) * (t - 0.5)) / 0.11);
+  }
+
+  function fitCanvas() {
+    var rect = canvas.getBoundingClientRect();
+    if (rect.width < 4 || rect.height < 4) { return false; }
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return true;
+  }
+
+  function draw() {
+    if (!fitCanvas()) { return; }
+    var rect = canvas.getBoundingClientRect();
+    var w = rect.width, h = rect.height;
+    var fg = cssVar('--fg'), muted = cssVar('--muted'),
+        accent = cssVar('--accent'), accent2 = cssVar('--accent2'),
+        ok = cssVar('--ok'), bad = cssVar('--bad'),
+        overlap = cssVar('--overlap'), grid = cssVar('--grid');
+
+    ctx.clearRect(0, 0, w, h);
+
+    var x0 = 62, x1 = w - 40;
+    var gap = (x1 - x0) / (K - 1);
+    var baseY = h * 0.82;
+    var maxTowerPx = h * 0.40;
+    var segW = Math.min(gap * 0.30, 24);
+
+    // base line
+    ctx.strokeStyle = muted; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0, baseY); ctx.lineTo(x1, baseY); ctx.stroke();
+
+    // overlap bands on the base (gluing / common variables)
+    for (var k = 0; k < K - 1; k++) {
+      var mx = x0 + k * gap + gap / 2;
+      ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = overlap;
+      ctx.fillRect(mx - gap * 0.16, baseY - 7, gap * 0.32, 14); ctx.restore();
+    }
+    ctx.fillStyle = muted; ctx.font = '12px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('Basis = Kontexte / Zeit  (\u2248 \u211D)', x0, baseY + 22);
+
+    // stalk towers
+    var tops = [];
+    for (var i = 0; i < K; i++) {
+      var x = x0 + i * gap;
+      var yCur = baseY;
+      for (var L = 0; L <= state.depth; L++) {
+        var hv = prof(i) * BASE[L] * (maxTowerPx / BASE_SUM);
+        if (hv < 0.5) { hv = 0.5; }
+        ctx.fillStyle = LEVEL_COLORS[L];
+        ctx.globalAlpha = 0.9;
+        ctx.fillRect(x - segW / 2, yCur - hv, segW, hv - 1);
+        yCur -= hv;
+      }
+      ctx.globalAlpha = 1;
+      tops[i] = yCur;
+      // base node
+      ctx.fillStyle = accent;
+      ctx.beginPath(); ctx.arc(x, baseY, 4, 0, 6.2832); ctx.fill();
+    }
+
+    // candidate global sections (ribbons)
+    var defs = [
+      { off: 0,   col: ok,       label: 'eindeutig' },
+      { off: -20, col: accent,   label: 'alternativ' },
+      { off: 20,  col: accent2,  label: 'alternativ' }
+    ];
+    var validCount = state.depth < 2 ? 3 : (state.depth === 2 ? 2 : 1);
+
+    for (var c = 0; c < 3; c++) {
+      var valid = c < validCount;
+      ctx.beginPath();
+      for (var j = 0; j < K; j++) {
+        var rx = x0 + j * gap;
+        var ry = tops[j] + defs[c].off - 6;
+        if (j === 0) { ctx.moveTo(rx, ry); } else { ctx.lineTo(rx, ry); }
+      }
+      if (valid) {
+        ctx.save(); ctx.shadowColor = defs[c].col; ctx.shadowBlur = 10;
+        ctx.strokeStyle = defs[c].col; ctx.lineWidth = 3; ctx.globalAlpha = 0.95;
+        ctx.stroke(); ctx.restore();
+      } else {
+        ctx.strokeStyle = muted; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.32;
+        ctx.setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+      }
+      // label at right end
+      var lx = x0 + (K - 1) * gap;
+      var ly = tops[K - 1] + defs[c].off - 6;
+      ctx.fillStyle = valid ? defs[c].col : muted;
+      ctx.globalAlpha = valid ? 0.95 : 0.4;
+      ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(defs[c].label, lx + 6, ly + 4);
+      ctx.globalAlpha = 1;
+    }
+
+    // defect markers (curved gluing) at junctions of the surviving ribbon
+    if (state.curved) {
+      ctx.fillStyle = bad;
+      for (var m = 0; m < K - 1; m++) {
+        var jx = x0 + m * gap + gap / 2;
+        var jy = (tops[m] + tops[m + 1]) / 2 - 6;
+        ctx.beginPath();
+        ctx.moveTo(jx, jy - 9); ctx.lineTo(jx - 8, jy + 7); ctx.lineTo(jx + 8, jy + 7);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+
+    // depth scale hint on the left
+    ctx.fillStyle = muted; ctx.font = '11px monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Tiefe \u2191 (Momente)', 6, 18);
+  }
+
+  function updateStatus() {
+    var cls, msg;
+    if (state.curved) {
+      cls = 'v-warn';
+      msg = 'Defekt &Delta; &ne; 0 &rarr; das Kleben ist <b>gekr&uuml;mmt</b> (messbare Nicht-Koh&auml;renz, A). ' +
+            'Nur <b>flache</b> (Δ=0) globale Sektionen sind exakte Modelle (B).';
+    } else if (state.depth < 2) {
+      cls = 'v-warn';
+      msg = 'Tiefe &le; 1 (nur Silhouette/Constraints) &rarr; <b>viele</b> globale Sektionen kompatibel ' +
+            '(wie Axiome allein: &Qopf;, &Reals;, &hellip; &mdash; B).';
+    } else if (state.depth === 2) {
+      cls = 'v-warn';
+      msg = 'Tiefe 2 &rarr; <b>zwei</b> globale Sektionen verbleiben (teilbestimmt).';
+    } else {
+      cls = 'v-ok';
+      msg = 'Tiefe 3&ndash;4 (voller Turm, flaches Kleben) &rarr; <b>eindeutige</b> globale Sektion: ' +
+            'Momentenproblem &Rightarrow; kategorial (A + B).';
+    }
+    statusEl.className = 'verdict ' + cls;
+    statusEl.innerHTML = msg;
+  }
+
+  function refresh() { updateStatus(); draw(); }
+
+  depthEl.addEventListener('input', function () {
+    state.depth = parseInt(depthEl.value, 10);
+    depthLabel.textContent = DEPTH_NAMES[state.depth];
+    refresh();
+  });
+  curvedEl.addEventListener('change', function () { state.curved = curvedEl.checked; refresh(); });
+  resetBtn.addEventListener('click', function () {
+    state.depth = 2; state.curved = false;
+    depthEl.value = '2'; curvedEl.checked = false;
+    depthLabel.textContent = DEPTH_NAMES[2]; refresh();
+  });
+  themeBtn.addEventListener('click', function () {
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 150); });
+
+  refresh();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(draw).catch(function () {}); }
+})();
+</script>
+</body>
+</html>

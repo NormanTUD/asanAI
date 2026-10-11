@@ -1,0 +1,16 @@
+{
+  "no": "029",
+  "a": "n1-078.html",
+  "b": "n1-024.html",
+  "a_title": "Das höhere Objekt ist die Invariante",
+  "b_title": "Die Periode ist die Antwort",
+  "combined_theme": "invariante-im-hoheren-objekt",
+  "one_line": "Die verdeckte Antwort (Glattheit / Periode / Faktoren) ist nie aus dem flachen Schatten lesbar, sondern nur aus dem höheren/transformierten Objekt (Modulraum ∞-Topos bzw. Fourier-Peak), das den Schatten trägt — von der Parität (r=2, exakt) bis zum Hard-Case (großes r, Dim 4 als Phasenübergang).",
+  "contradictions": [
+    "Funktion: n1-078 macht das höhere Objekt zum Verbot-Filter (streicht Glattheit, E8 unglättbar → Negation/Starrheitstheorem), n1-024 macht den Transform zum Antwort-Decoder (kollabiert Redundanz auf einen Peak → positive Extraktion der Periode/Faktoren).",
+    "Natur der Invariante: n1-078 liefert sie exakt, deterministisch, zeitlos als Theorem in einem Schuss (σ(X)=rang(Q)=n(Q)); n1-024 (B-Hälfte) liefert sie probabilistisch — gemessen, per Interferenz konzentriert, wiederholt, mit Wahrscheinlichkeit.",
+    "Bruchpunkt: n1-078 ist ein geometrischer Phasenübergang (Dim 4: glatte & topologische ∞-Strukturen klaffen über demselben Schatten auseinander, Struktur-Verzweigung); n1-024 ist ein algebraischer Fixpunkt-Ausbruch (f=←(f) ohne binäre Lösung → Wert entkommt in Oszillation / komplexe Phase)."
+  ],
+  "resolution": "Filter und Decoder sind derselbe verlustbehaftete, entscheidende Redundanz-Kollaps, von zwei Seiten gelesen (A: wer übrig bleibt / Bild; B: wo die Masse landet / Peak). Exaktheit vs. Wahrscheinlichkeit hängt davon ab, ob man das höhere Objekt in voller Hand hat (Theorem, A) oder nur Proben (Schätzung, B). Beide Bruchpunkte sind derselbe Punkt, an dem der flache (reelle/binäre/topologische) Schatten die höhere Struktur nicht mehr trägt: A liest ihn als Struktur-Verzweigung (Dim 4), B als Wert-Entkommen in das Komplex/Oszillierende — 'imaginärer Wert' und 'wilder Westen' sind dasselbe Phänomen.",
+  "viz": "Ein theme-reaktives 2D-Canvas in drei Bändern: (1) der flache Schatten als wiederholende Sequenz s[x] mit Periode r (Barcode; r=2 zeigt die ←/∅-Abfolge), (2) der Transform als Fourier-Spektrum |DFT s[k]| mit dem einzigen Peak bei k=N/r (die Invariante), (3) das höhere Objekt (Modulraum ∞-Topos) als rotierender 3D-Torus, der per Trunkations-Regler t zum flachen Schatten zusammenklappt und die zwei Defekt-Richtungen zeigt (rot = Phantom-Objekte 'Schatten zu reich', bernstein = verlorene Morphismen 'Schatten zu arm'); Regler r (Skalen-/Komplexitätsachse, Teiler von 60) und t, Pause/Reset/Theme-Buttons; alle Daten inline, kein Netzwerk-Zugriff."
+}

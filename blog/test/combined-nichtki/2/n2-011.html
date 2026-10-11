@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zweischichtige Kohärenz — Form ist notwendig, Inhalt entscheidet (skaleninvariant)</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --bg-card:#ffffff; --text:#20242e; --dim:#5b6472;
+    --accent:#0f766e; --accent2:#b8860b; --accent3:#a0395b; --accent4:#5b4bc4;
+    --border:rgba(20,20,40,.14); --code-bg:rgba(15,118,110,.08); --chip:#efece2;
+    --ok:#166a3b; --bad:#a0395b;
+  }
+  html.dark{
+    --bg:#0a0e1a; --bg-card:#141a2c; --text:#e8eefc; --dim:#8b9bb8;
+    --accent:#6fd6c4; --accent2:#e5b769; --accent3:#e97b8f; --accent4:#a794ff;
+    --border:rgba(255,255,255,.14); --code-bg:rgba(111,214,196,.10); --chip:#161d33;
+    --ok:#4ade80; --bad:#f87171;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+    line-height:1.72; -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 90px}
+  header{padding:48px 20px 22px;text-align:center;border-bottom:1px solid var(--border);max-width:820px;margin:0 auto}
+  .kicker{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+  h1{font-size:clamp(1.7rem,5vw,2.55rem);font-weight:800;line-height:1.14;
+     background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));
+     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{margin-top:12px;color:var(--dim);font-size:.98rem}
+  .subtitle .fx{color:var(--accent2)}
+  .theme-btn{margin-top:16px;background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+     padding:8px 18px;border-radius:22px;cursor:pointer;font-size:.9rem;transition:.2s}
+  .theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin-top:42px}
+  h2{font-size:1.42rem;margin-bottom:14px;padding-left:14px;border-left:4px solid var(--accent);line-height:1.2}
+  h3{font-size:1.07rem;margin:22px 0 8px;color:var(--accent)}
+  p{margin-bottom:13px}
+  .dim{color:var(--dim)}
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .card h3{margin-top:0}
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+  .ab>div{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .ab .tagA{border-top:3px solid var(--accent2)}
+  .ab .tagB{border-top:3px solid var(--accent3)}
+  .who{font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .ab .tagA .who{color:var(--accent2)}
+  .ab .tagB .who{color:var(--accent3)}
+  .tagA{color:var(--accent2);font-weight:700}
+  .tagB{color:var(--accent3);font-weight:700}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;
+     padding:16px 18px;margin:16px 0;text-align:center;font-family:"Courier New",monospace;
+     font-size:1.02rem;overflow-x:auto}
+  .formula sub{font-size:.72em}
+  .note{background:var(--bg-card);border-left:3px solid var(--accent4);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+  .note strong{color:var(--accent4)}
+  .list{margin:8px 0 8px 2px;list-style:none}
+  .list li{padding:7px 0 7px 26px;position:relative}
+  .list li::before{content:'▸';position:absolute;left:6px;color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
+  th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--code-bg);color:var(--text)}
+  td.kv{color:var(--accent);font-weight:700}
+  .prov{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .prov a{display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+     padding:16px 18px;text-decoration:none;color:var(--text);transition:.2s}
+  .prov a:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .prov .k{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:6px}
+  .prov .t{font-weight:700;margin-bottom:4px}
+  .prov .d{font-size:.9rem;color:var(--dim)}
+  /* viz */
+  .viz-box{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:14px}
+  #viz{width:100%;height:380px;display:block}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+  .grp{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .grp .gl{font-size:.78rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
+  .controls button{background:var(--bg-card);color:var(--text);border:1px solid var(--border);
+     padding:9px 15px;border-radius:9px;cursor:pointer;font-size:.88rem;transition:.15s}
+  .controls button:hover:not(:disabled){border-color:var(--accent)}
+  .controls button.on{background:var(--accent);color:#08110f;border-color:var(--accent);font-weight:700}
+  .controls button:disabled{opacity:.4;cursor:not-allowed}
+  .controls .rng{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--dim)}
+  input[type=range]{accent-color:var(--accent2)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  .stat{background:var(--chip);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+  .stat .n{font-size:1.35rem;font-weight:800;font-variant-numeric:tabular-nums}
+  .stat .l{color:var(--dim);font-size:.74rem;margin-top:2px}
+  #verdict{margin-top:12px;font-weight:700;text-align:center;padding:10px 12px;border-radius:10px;background:var(--code-bg)}
+  @media(max-width:640px){.ab,.prov,.stats{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){try{var t=localStorage.getItem('theme');if(t!=='light'){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+</head>
+<body>
+<header>
+  <div class="kicker">Nicht-KI-Track · Runde 2 · Paar 011</div>
+  <h1>Zweischichtige Kohärenz</h1>
+  <div class="subtitle">Form ist notwendig, Inhalt entscheidet — und der Test ist skaleninvariant
+    (<span class="fx">Fusion aus: n1-043.html ✕ n1-021.html&nbsp; (Runde 2)</span>)</div>
+  <button class="theme-btn" id="themeBtn">🌙 / ☀️ Theme</button>
+</header>
+
+<div class="wrap">
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Runde-1-Papiere sind, auf völlig verschiedenen Oberflächen, <strong>derselbe architektonische
+    Gedanke</strong>: Ein System — sei es eine <em>Bindung</em> (A) oder ein <em>Wissensbestand</em> (B) — ist
+    kohärent bzw. gesund <strong>genau dann, wenn zwei unabhängige Ebenen zugleich erfüllt sind</strong>, und
+    die eine (die formale) reicht allein <strong>nie</strong>. Diese „zweischichtige Kohärenz" ist die
+    vereinigte Position: eine <em>formale/struktuelle</em> Schicht, die transparent, neutral und
+    <strong>notwendig aber nicht hinreichend</strong> ist, plus eine orthogonale <em>inhaltlich-relationelle</em>
+    Schicht, die <strong>allein den Ausschlag</strong> gibt.</p>
+    <p>In <span class="tagA">A (n1-043)</span> ist die formale Ebene die <strong>exogene Neurochemie</strong> —
+    ein Pflanzenstoff dockt an einen körpereigenen Rezeptor an (Morphin→Endorphin, Nikotin→Acetylcholin,
+    THC→Anandamid, Kokain→Transporter) und erzeugt eine Bindung, die sich <em>echt</em> anfühlt. Die inhaltliche
+    Ebene ist die <strong>Kopplungsqualität</strong>: Einwilligung, Reziprozität, wer im Fahrersitz sitzt,
+    ob der Zustand integrierbar ist. In <span class="tagB">B (n1-021)</span> ist die formale Ebene das
+    <strong>kommutierende Typ-Gerüst</strong> (das Olog: Typen = Boxen, Aspekte = Pfeile, beide Wege liefern
+    dasselbe); die inhaltliche Ebene sind die <strong>Garben-Daten</strong> (Schnitte, Keime [s]<sub>x</sub>,
+    Restriktionen ρ<sub>U,V</sub>), die auf den Überlappungen verkleben müssen.</p>
+    <p>Die fusionierte These: <strong>Die Form-Ebene ist immer nur eine Voraussetzung, nie eine Erlaubnis.</strong>
+    Dass eine Bindung echt ist (A) bzw. dass ein Gerüst kommutiert (B) sagt lediglich, <em>dass etwas
+    existiert</em>. Ob es <em>heilig oder Falle</em> (A) bzw. <em>konsistent oder widersprüchlich</em> (B) ist,
+    entscheidet <strong>ausschließlich die Inhalt-Ebene: „verklebt der Inhalt?"</strong> — in B: stimmen die Keime
+    auf jedem Overlap überein; in A: ist die Relation ohne Selbstvergiftung integrierbar. Und — der tiefe Punkt,
+    den beide Papiere unabhängig voneinander treffen — <strong>der Kohärenztest ist skaleninvariant</strong>
+    (lokal ⇔ global), und die <strong>Reparatur kennt genau zwei Operationen: verkleben und restriktion</strong>.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="dim">Die beiden arbeiten in verschiedenen Domänen (Neurochemie/Beziehungsphänomenologie vs.
+    Kategorie-/Garbentheorie) und widersprechen sich <em>faktisch</em> nicht. Aber sie treffen auf drei Punkten
+    auf <strong>unvereinbare Stellungen zur Methode der Kohärenzbeurteilung</strong> — und genau dort liegt der
+    Wert der Fusion:</p>
+
+    <h3>Widerspruch 1 — Einheit der Diagnose: lokal (B) vs. global/holistisch (A)</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · n1-043</div>
+        <p>Die Natur der Bindung ist nur als <strong>Gesamtbahn</strong> lesbar: Vorbereitung → Einnahme →
+        Erfahrung → Integration. Der Test ist „kehrst du heil zurück" — eine Eigenschaft der <em>ganzen
+        Rundreise</em>; Dosis und Integrierbarkeit sind <em>Kontinuen</em>. A widersteht der Reduktion auf einen
+        einzelnen Punkt oder eine Momentaufnahme.</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · n1-021</div>
+        <p>Die ganze Methode <em>reduziert</em> eine globale Frage („Ist dies eine Garbe?") auf
+        <strong>lokale Punkt-Checks</strong>: den Halm F<sub>x</sub> als „Lupe", die den Widerspruch auf
+        <em>genau einen Punkt</em> lokalisiert, plus das Überlapp-Abgleich-Kriterium (Lokal–Global-Prinzip).</p>
+      </div>
+    </div>
+    <p>Gegenpol: <strong>B entscheidet das Ganze lokal, A liest das Ganze nur als Ganzen.</strong></p>
+
+    <h3>Widerspruch 2 — Art der Ausschlags-Ebene: objektiv-prüfbar (B) vs. relationell-moralisch (A)</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · n1-043</div>
+        <p>Die entscheidende Ebene (Kopplungsqualität) ist eine <strong>relationelle, moralische</strong>
+        Eigenschaft des <em>Verhältnisses zweier Akteure</em>: „Wer bleibt im Fahrersitz?", Einwilligung,
+        Reziprozität. Das ist ein <em>Urteil</em> über eine Beziehung — nicht eine mechanisch verifizierbare
+        Eigenschaft eines einzelnen Objekts.</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · n1-021</div>
+        <p>Die entscheidende Ebene (Verklebbarkeit) ist eine <strong>intrinsische, objektive, bivalente</strong>
+        Eigenschaft des Objekts selbst: zwei Keime stimmen am Overlap überein oder nicht (SNARC 1951 &lt;
+        Perzeptron 1958 — ein Fakten-Check). Mechanisch verifizierbar, kein Urteil.</p>
+      </div>
+    </div>
+    <p>Gegenpol: <strong>B verspricht einen objektiven Konsistenztest, A's Ausschlag ist ein relational-moralisches Urteil.</strong></p>
+
+    <h3>Widerspruch 3 — Rezept: Wiedervereinigung (B) vs. zulässiger endgültiger Austritt (A)</h3>
+    <div class="ab">
+      <div class="tagA">
+        <div class="who">A · n1-043</div>
+        <p>Für die Falle (Spiegel) ist die Heilung der <strong>endgültige Austritt</strong>: „Bühne verlassen …
+        Leise, geplant, endgültig. Kein Kontakt." Die Fragmente werden <em>nicht</em> wieder vereint — man trennt.</p>
+      </div>
+      <div class="tagB">
+        <div class="who">B · n1-021</div>
+        <p>Das Konsistenzprojekt strebt <em>immer</em> auf <strong>Wiedervereinigung</strong> zu: Sheafification
+        angleicht die kollidierenden Kapitel, um <em>einen eindeutigen globalen Schnitt</em> zu wiederherstellen.
+        Man „verlässt" das System nie — man glättet es.</p>
+      </div>
+    </div>
+    <p>Gegenpol: <strong>B will immer ein Ganzes verkleben, A legitimiert dauerhafte Trennung als Heilungszug.</strong></p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Jede Spannung löst sich auf, wenn man die beiden Papiere als <em>derselbe Kohärenzbegriff</em> auf
+    verschiedenen Skalen und verschiedenen Objekten liest.</p>
+
+    <h3>Auflösung 1 — Der Test ist skaleninvariant und rekursiv</h3>
+    <p>B's <strong>Lokal–Global-Prinzip</strong> („ein globaler Schnitt existiert <em>genau dann, wenn</em> die
+    Keime auf <em>jedem</em> Overlap übereinstimmen") ist der Satz; A's <strong>Rundreise</strong> („kehrst du
+    heil zurück") ist deren globale Aggregate. Fusion: Der Kohärenztest ist <em>skaleninvariant</em> — der lokale
+    Overlap-Check (B's Halm, A's einzelne Dosis-Momente/Phase) ist die Mikro-Probe; die globale Rundreise ist der
+    Grenzwert, in dem <em>alle</em> lokalen Checks bestehen. Man behält B's Stärke (der lokale Check ist
+    <strong>hinreichend</strong>, um das Ganze zu entscheiden) und füllt ihn mit A's relationaler Substanz
+    (was ein „lokaler Overlap" in einer Beziehung misst: Einwilligung &amp; Reziprozität <em>in diesem Moment</em>).
+    <div class="note"><strong>Fusionierter Schluss:</strong> global = Minimum über alle lokalen Overlaps. Ein
+    einziger kollidierender Punkt (B: ein Keim-Paar; A: ein Love-Bombing-Overlap) reicht, um die Kohärenz des
+    Ganzen zu brechen — und die Gesamtbahn ist nur die Summe all dieser Punkt-Checks.</div></p>
+
+    <h3>Auflösung 2 — Die Ausschlags-Ebene ist immer die Inhalt-Ebene</h3>
+    <p>Die „entgegengesetzten" zweiten Ebenen von A und B spielen <strong>denselben logischen Ort</strong> —
+    den orthogonalen Diskriminator — nur an unterschiedlichen Objekten: B wendet ihn auf die
+    <em>internen Daten eines Objekts</em> an, A auf die <em>Relation zwischen zwei Akteuren</em>. Fusion: Der
+    Diskriminator ist <em>immer</em> „verklebt der Inhalt?" — der Inhalt sind in B <strong>faktische Aussagen</strong>
+    (die übereinstimmen müssen), in A <strong>relationale/ethische Zustände</strong> (die verkleben müssen:
+    Einwilligung und Realität dürfen am Overlap <em>nicht</em> kollidieren).
+    <div class="note"><strong>Fusionierter Schluss:</strong> A's moralisches Urteil <em>ist</em> eine
+    Garben-Bedingung: „symbiotisch" heißt, die relationalen Daten kleben entlang der ganzen Bahn; „toxisch"
+    heißt, sie kollidieren auf den Manipulations-Overlaps (gefühlte Nähe vs. reale Kontrolle). Die
+    Inhalt-Ebene verallgemeinert von Fakten-Übereinstimmung (B) auf ethische Übereinstimmung (A).</div></p>
+
+    <h3>Auflösung 3 — Das Reparatur-Toolkit der Garbentheorie</h3>
+    <p>Beide „Rezepte" sind <strong>derselbe Operator</strong> aus der Garbentheorie. B's Verklebung
+    (Sheafification) ist Operation <em>(i)</em>; A's Austritt ist Operation <em>(ii)</em>. In der Garbentheorie
+    ist „auf eine offene Teilmenge einschränken" (Restriktion ρ auf U' ⊂ U) ein <em>legitimer</em> Grundzug —
+    die eingeschränkte Garbe bleibt eine Garbe. A's „Bühne verlassen / Raum verändern / Kommunikationsfläche
+    verkleinern" ist exakt diese Restriktion: man nimmt den Teilbereich, auf dem der Keim gesund ist.
+    <div class="note"><strong>Fusionierter Schluss:</strong> Die Reparatur hat zwei Operationen —
+    <em>(i) verkleben/angleichen</em> (Integration; wenn der Konflikt auflösbar ist) und
+    <em>(ii) auf den gesunden Teilbereich restriktieren</em> (Austritt; wenn das System sich <em>selbst</em> so
+    verabreicht, dass Verklebung unmöglich ist). <strong>Austritt ist kein Scheitern</strong> des Konsistenzprojekts,
+    sondern die Restriktion-Operation, die ein kohärentes Teilsystem (den eigenen Raum) zurückgewinnt.</div></p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Die folgende Karte verknüpft die zentralen Strukturen beider Papiere mit ihrer fusionierten Rolle.
+    Sie ist so abstrahiert, dass eine spätere Runde allein von ihr weiterarbeiten kann.</p>
+    <table>
+      <thead><tr><th style="width:16%">Schicht</th><th style="width:29%">In A (n1-043)</th>
+      <th style="width:29%">In B (n1-021)</th><th style="width:26%">Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Form-Ebene</td><td>exogene Neurochemie / Mechanismus (Morphin→Endorphin, Nikotin→Acetylcholin, THC→Anandamid, Kokain→Transporter)</td><td>kommutierendes Olog / Typ-Gerüst (Typen = Boxen, Aspekte = Pfeile, beide Wege gleich)</td><td>die transparente, neutrale, <em>notwendige</em> Schicht — sagt nur „es existiert".</td></tr>
+        <tr><td class="kv">Inhalt-Ebene</td><td>Kopplungsqualität (Einwilligung, Reziprozität, Fahrersitz, Integrierbarkeit)</td><td>Garben-Daten (Schnitte, Keime [s]<sub>x</sub>, Restriktion ρ<sub>U,V</sub>)</td><td>die <em>entscheidende</em> Schicht — „verklebt?" ist der Ausschlag.</td></tr>
+        <tr><td class="kv">Der Overlap / kritischer Punkt</td><td>das Moment, wo Einwilligung &amp; Realität kollidieren (Love-Bombing vs. Kontrolle)</td><td>U<sub>i</sub> ∩ U<sub>j</sub>, lokalisiert per Halm F<sub>x</sub></td><td>dort, wo die Keime kollidieren, wird es toxisch/widersprüchlich.</td></tr>
+        <tr><td class="kv">Verkleben / Integration</td><td>Integration (Erzählen, Deuten, Handeln) — Rückkehr ins System</td><td>Verklebbarkeit (Unizität + Existenz) → eindeutiger globaler Schnitt</td><td>Reparatur-Operation (i): angleichen.</td></tr>
+        <tr><td class="kv">Restriktion / Austritt</td><td>Bühne verlassen, Raum verändern, Fläche verkleinern, kein Kontakt</td><td>Restriktion ρ auf offene Teilmenge (Garbe bleibt Garbe)</td><td>Reparatur-Operation (ii): auf den gesunden Teilbereich beschränken.</td></tr>
+        <tr><td class="kv">Lokale Probe</td><td>ein Dosis-Moment / eine Phase (Dreistufenmodell)</td><td>Keim [s]<sub>x</sub> an einem Punkt x</td><td>Mikro-Probe; <em>global = Minimum über alle lokalen Overlaps</em>.</td></tr>
+        <tr><td class="kv">Selbst-Erneuerung</td><td>intermittierende Verstärkung, Hoovering, Traumabindung</td><td>—</td><td>der Overlap wird wieder geöffnet, um Integration zu verhindern (nur in A, als Falle-Merkmals).</td></tr>
+        <tr><td class="kv">Regel / Formel</td><td>Handeln = B (Bedürfnis) − A (Angst) &gt; 0</td><td>konsistent ⟺ kommutativ ∧ verklebbar</td><td>echt ⟺ Form erfüllt ∧ min(lokal) ≥ Schwelle.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Das gemeinsame Muster in einem Satz</h3>
+      <p>Ein System = <strong>Form + Daten darüber</strong>. Die Form ist kommutativ/echt (A: echte Chemie, B:
+      kommutierendes Olog) — aber das ist nur die <em>notwendige</em> Hälfte. Der Ausschlag liegt in der
+      <em>Inhalt-Ebene</em>: Die Daten sind „verklebt", wenn sie auf <em>jedem</em> Overlap übereinstimmen
+      (B) bzw. wenn die Relation <em>ohne Selbstvergiftung</em> integrierbar ist (A). Das gefährliche Regime —
+      und der Kernfall <em>beider</em> Papiere — ist <strong>Form erfüllt, Inhalt kollidiert</strong>: A's
+      <em>Falle/Spiegel</em> (echte Chemie, toxische Kopplung) und B's <em>Prägarbe</em> (kommutiert, aber
+      SNARC ≠ Perzeptron am Overlap) sind dieselbe Struktur.</p>
+    </div>
+
+    <div class="card">
+      <h3>Skaleninvarianz — Lokal ⇔ Global</h3>
+      <p>B liefert den <em>Satz</em>: globale Kohärenz ist durch lokale Overlap-Checks <strong>entscheidbar</strong>
+      (Lokal–Global-Prinzip, Unizität + Existenz). A liefert den <em>Gehalt</em>: was ein lokaler Check in einer
+      Beziehung misst (Einwilligung &amp; Reziprozität an genau diesem Punkt) und warum die Gesamtbahn die
+      <em>Aggregate</em> all dieser Checks ist. Fusion: <strong>global = Minimum über alle lokalen Overlaps.</strong>
+      Ein einziger kollidierender Overlap senkt das Minimum auf ≈ 0 und bricht die Kohärenz des Ganzen — das ist
+      gleichzeitig B's Garben-Fehlschlag und A's Falle, die „sich zu gut anfühlt, um wahr zu sein", aber an
+      genau den Kollisionspunkten zerbricht.</p>
+    </div>
+
+    <div class="card">
+      <h3>Das Reparatur-Toolkit (zwei Operationen)</h3>
+      <p><strong>(i) Verkleben / angleichen</strong> (B: Sheafification — Halm finden den kollidierenden Punkt,
+      faktisch entscheiden, Kapitel angleichen, Verklebbarkeit neu prüfen; A: Integration — erzählen, deuten,
+      handeln). Anwendbar, wenn der Konflikt <em>auflösbar</em> ist.
+      <strong>(ii) Restriktion / Austritt</strong> (B: Einschränkung auf die offene Teilmenge, auf der der Keim
+      gesund ist; A: Bühne verlassen, eigenen Raum verkleinern, kein Kontakt). Anwendbar, wenn das System sich
+      <em>selbst</em> so verabreicht, dass Verklebung unmöglich ist. Beides sind legitime Garben-Züge; beides
+      gewinnt ein <em>kohärentes Teilsystem</em> zurück.</p>
+    </div>
+
+    <h3>Die fusionierte Diskriminator-Formel</h3>
+    <div class="formula">echt / kohärent &nbsp;⟺&nbsp; Form ≥ F* &nbsp;∧&nbsp; min<sub>i</sub>( Inhalt<sub>i</sub> ) ≥ C*</div>
+    <p class="dim">In A's Notation: Autonomie/Bedürfnis (B) ≈ min<sub>i</sub>(Inhalt<sub>i</sub>),
+    Angst (A) ≈ Kollisions-Tiefe; „Handeln = B − A &gt; 0" ist derselbe Diskriminator. F* und C* sind
+    Schwellen (hier F* = C* = 50). Die Form-Ebene allein (Form ≥ F*) genügt <em>nicht</em> — der Ausschlag ist
+    das Minimum über die lokalen Overlaps.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — Form × Inhalt, lokal ⇔ global</h2>
+    <p>Ein einzelner Mechanismus, zwei Ebenen, zwei Reparatur-Züge. Die <strong>flache Linie (Form/Struktur)</strong>
+    ist in beiden Regimen erfüllt — sie sagt nur, dass die Bindung/das Gerüst <em>existiert</em>. Die
+    <strong>zackige Linie (Inhalt/Relation)</strong> ist der Ausschlag. Ziehe den <em>Skala-Regler</em> entlang der
+    Bahn: der <strong>globale Kohärenzwert ist das Minimum über alle lokalen Overlaps</strong> (garben-artig) —
+    ein einziger Kollisions-Overlap (Manipulations-Moment) senkt ihn auf ≈ 0 und bricht die Kohärenz des Ganzen,
+    selbst wenn die Form erfüllt ist und die meisten Momente gesund sind.</p>
+    <ul class="list">
+      <li><strong>Symbiotisch / Garbe:</strong> Form erfüllt <em>und</em> alle lokalen Overlaps verkleben →
+      min(lokal) hoch → echt/kohärent (Rundreise, eindeutiger globaler Schnitt).</li>
+      <li><strong>Falle / Prägarbe:</strong> Form erfüllt, aber die Manipulations-Overlaps kollidieren →
+      min(lokal) ≈ 0 → <em>Form reicht nicht</em> (A's Spiegel, B's SNARC≠Perzeptron).</li>
+      <li><strong>Verkleben (i):</strong> angleicht die kollidierenden Overlaps → Garbe (Integration).</li>
+      <li><strong>Restriktion (ii):</strong> beschränkt auf den gesunden Teilbereich (eigener Raum) →
+      kohärentes Teilsystem (Austritt).</li>
+    </ul>
+    <div class="viz-box">
+      <canvas id="viz"></canvas>
+      <div class="controls">
+        <div class="grp"><span class="gl">Regime</span>
+          <button id="mSymbiose" class="on">Symbiotisch (Garbe)</button>
+          <button id="mFalle">Falle (Prägarbe)</button>
+        </div>
+        <div class="grp"><span class="gl">Reparatur</span>
+          <button id="rGlue" disabled>Verkleben (i)</button>
+          <button id="rRest" disabled>Restriktion (ii) / Austritt</button>
+        </div>
+        <div class="grp rng">Skala (ein Moment)
+          <input id="scale" type="range" min="0" max="59" value="10">
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n" id="sForm">–</div><div class="l">Form / Struktur</div></div>
+        <div class="stat"><div class="n" id="sLoc">–</div><div class="l">Inhalt lokal (an x)</div></div>
+        <div class="stat"><div class="n" id="sGlob">–</div><div class="l">Inhalt global = min(lokal)</div></div>
+        <div class="stat"><div class="n" id="sMargin">–</div><div class="l">Marge (global − C*)</div></div>
+      </div>
+      <div id="verdict"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <a href="../n1-043.html">
+        <div class="k">A · n1-043.html</div>
+        <div class="t">Symbiose oder Spiegel? — Exogene Neurotransmitter als heilige Technologie und als Falle</div>
+        <div class="d">Fusion (Runde 1) aus raetsch.html ✕ spiegelsaal.html: exogene Neurochemie (Form) ×
+        Kopplungsqualität (Inhalt), Set &amp; Setting, Rundreise vs. endgültiger Austritt, B − A &gt; 0.</div>
+      </a>
+      <a href="../n1-021.html">
+        <div class="k">B · n1-021.html</div>
+        <div class="t">Konsistenz von Wissen als kategorisches System (Ologs ✕ Garbentheorie)</div>
+        <div class="d">Fusion (Runde 1) aus olog.html ✕ garben_2.html: kommutierendes Olog (Form) ×
+        Garben-Verklebbarkeit (Inhalt), Halm/Keim/Restriktion, Lokal–Global-Prinzip, Sheafification.</div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<script>
+'use strict';
+(function(){
+  var root=document.documentElement;
+  var cv=document.getElementById('viz');
+  var N=60, FSTAR=50, CSTAR=50;
+  var state={regime:'symbiose', glued:false, restricted:false, scale:10};
+
+  function varc(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+
+  function gen(regime, glued){
+    var form=[], content=[], i;
+    for(i=0;i<N;i++){
+      form[i]=82;
+      if(regime==='symbiose'){
+        content[i]=76+3*Math.sin(i*0.25);
+      } else {
+        content[i]=78+3*Math.sin(i*0.3);
+        if(!glued && (i%15===10 || i%15===12)) content[i]=4;
+      }
+    }
+    return {form:form, content:content};
+  }
+
+  function bounds(){
+    return state.restricted ? {x0:0,x1:9} : {x0:0,x1:N-1};
+  }
+
+  function contentGlobal(){
+    var b=bounds(), g=gen(state.regime, state.glued);
+    var m=Infinity, i;
+    for(i=b.x0;i<=b.x1;i++){ if(g.content[i]<m) m=g.content[i]; }
+    return m;
+  }
+
+  function draw(){
+    var b=bounds(), g=gen(state.regime, state.glued);
+    var W=cv.clientWidth||720, H=380;
+    var dpr=window.devicePixelRatio||1;
+    cv.width=W*dpr; cv.height=H*dpr;
+    var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    var cText=varc('--text'), cDim=varc('--dim'), cGrid=varc('--border'),
+        cForm=varc('--accent'), cCont=varc('--accent3'), cGlob=varc('--accent4'),
+        cScale=varc('--accent2');
+    var pl=52, pr=18, pt=30, pb=42;
+    var pw=W-pl-pr, ph=H-pt-pb;
+    function X(i){ return pl + (i-b.x0)/Math.max(1,(b.x1-b.x0))*pw; }
+    function Y(v){ return pt + (1-v/100)*ph; }
+
+    ctx.font='12px -apple-system,Segoe UI,system-ui,sans-serif';
+    // grid + y labels
+    ctx.strokeStyle=cGrid; ctx.lineWidth=1; ctx.fillStyle=cDim;
+    var v;
+    for(v=0; v<=100; v+=25){
+      var yy=Y(v);
+      ctx.beginPath(); ctx.moveTo(pl,yy); ctx.lineTo(W-pr,yy); ctx.stroke();
+      ctx.fillText(String(v), 16, yy+4);
+    }
+    // threshold C*
+    ctx.strokeStyle=cDim; ctx.setLineDash([5,4]); ctx.beginPath();
+    ctx.moveTo(pl,Y(CSTAR)); ctx.lineTo(W-pr,Y(CSTAR)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillText('Schwelle C*', W-pr-64, Y(CSTAR)-5);
+
+    // global glue line (min over local)
+    var gg=contentGlobal();
+    ctx.strokeStyle=cGlob; ctx.setLineDash([2,3]); ctx.lineWidth=1.5; ctx.beginPath();
+    ctx.moveTo(pl,Y(gg)); ctx.lineTo(W-pr,Y(gg)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=cGlob; ctx.fillText('global = min(lokal) '+Math.round(gg), pl+6, Y(gg)-6);
+
+    // form line
+    ctx.strokeStyle=cForm; ctx.lineWidth=3; ctx.beginPath();
+    var i; for(i=b.x0;i<=b.x1;i++){ var px=X(i), py=Y(g.form[i]); if(i===b.x0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+    // content line
+    ctx.strokeStyle=cCont; ctx.lineWidth=2.6; ctx.beginPath();
+    for(i=b.x0;i<=b.x1;i++){ var cx=X(i), cy=Y(g.content[i]); if(i===b.x0) ctx.moveTo(cx,cy); else ctx.lineTo(cx,cy); }
+    ctx.stroke();
+
+    // scale marker
+    var sx=state.scale; if(sx>b.x1) sx=b.x1; if(sx<b.x0) sx=b.x0;
+    ctx.strokeStyle=cScale; ctx.lineWidth=1.5; ctx.beginPath();
+    ctx.moveTo(X(sx),pt); ctx.lineTo(X(sx),pt+ph); ctx.stroke();
+    ctx.fillStyle=cScale; ctx.beginPath(); ctx.arc(X(sx),Y(g.content[sx]),4.5,0,Math.PI*2); ctx.fill();
+
+    // legend
+    ctx.font='12px -apple-system,Segoe UI,system-ui,sans-serif';
+    var lx=pl, ly=15;
+    ctx.strokeStyle=cForm; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+22,ly); ctx.stroke();
+    ctx.fillStyle=cDim; ctx.fillText('Form / Struktur', lx+28, ly+4);
+    lx+=150;
+    ctx.strokeStyle=cCont; ctx.lineWidth=2.6; ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+22,ly); ctx.stroke();
+    ctx.fillStyle=cDim; ctx.fillText('Inhalt / Relation', lx+28, ly+4);
+
+    // axis titles
+    ctx.fillStyle=cDim;
+    ctx.fillText('Position entlang der Kopplung (Phase / Overlap)', pl, H-12);
+    ctx.save(); ctx.translate(14, pt+ph/2); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.fillText('0 – 100', 0, 0); ctx.restore(); ctx.textAlign='left';
+
+    if(state.restricted){
+      ctx.fillStyle=cScale; ctx.font='12px -apple-system,Segoe UI,system-ui,sans-serif';
+      ctx.fillText('Restriktion: eigener Raum (offene Teilmenge)', pl, pt-8);
+    }
+    return {form:g.form[sx], local:g.content[sx], global:gg};
+  }
+
+  function updateStats(r){
+    var formOk=r.form>=FSTAR, glueOk=r.global>=CSTAR, echt=formOk&&glueOk;
+    document.getElementById('sForm').textContent=Math.round(r.form);
+    document.getElementById('sLoc').textContent=Math.round(r.local);
+    document.getElementById('sGlob').textContent=Math.round(r.global);
+    var mEl=document.getElementById('sMargin');
+    var margin=Math.round(r.global-CSTAR);
+    mEl.textContent=(margin>0?'+':'')+margin;
+    mEl.style.color = margin>=0 ? varc('--ok') : varc('--bad');
+    var v=document.getElementById('verdict'), msg, col;
+    if(state.regime==='symbiose'){ msg='Echt / kohärent: Form erfüllt ∧ alle Overlaps verkleben → Rundreise / eindeutiger globaler Schnitt.'; col=varc('--ok'); }
+    else if(state.glued){ msg='Verklebt (Reparatur i): kollidierende Overlaps angleicht → Garbe / Integration.'; col=varc('--ok'); }
+    else if(state.restricted){ msg='Restriktion (Reparatur ii): auf gesunden Teilbereich beschränkt → kohärentes Teilsystem (Garbe auf Teilmenge) / Austritt.'; col=varc('--ok'); }
+    else { msg='Falle / Prägarbe: Form erfüllt, aber Manipulations-Overlaps kollidieren → min(lokal) ≈ 0. Form allein genügt nicht (A: Spiegel, B: SNARC≠Perzeptron).'; col=varc('--bad'); }
+    v.textContent=msg; v.style.color=col;
+    return echt;
+  }
+
+  function refresh(){
+    var r=draw(); updateStats(r);
+  }
+
+  function syncControls(){
+    document.getElementById('mSymbiose').classList.toggle('on', state.regime==='symbiose');
+    document.getElementById('mFalle').classList.toggle('on', state.regime==='falle');
+    var rep = state.regime==='falle';
+    document.getElementById('rGlue').disabled=!rep;
+    document.getElementById('rRest').disabled=!rep;
+    document.getElementById('rGlue').classList.toggle('on', state.glued);
+    document.getElementById('rRest').classList.toggle('on', state.restricted);
+    var sc=document.getElementById('scale');
+    var b=bounds();
+    sc.min=b.x0; sc.max=b.x1; sc.value=Math.min(state.scale,b.x1);
+  }
+
+  function setRegime(m){
+    state.regime=m; state.glued=false; state.restricted=false;
+    if(state.regime==='symbiose') state.scale=10;
+    syncControls(); refresh();
+  }
+
+  document.getElementById('mSymbiose').onclick=function(){ setRegime('symbiose'); };
+  document.getElementById('mFalle').onclick=function(){ setRegime('falle'); };
+  document.getElementById('rGlue').onclick=function(){ state.glued=!state.glued; syncControls(); refresh(); };
+  document.getElementById('rRest').onclick=function(){ state.restricted=!state.restricted; state.glued=false; syncControls(); refresh(); };
+  document.getElementById('scale').oninput=function(e){ state.scale=+e.target.value; refresh(); };
+  document.getElementById('themeBtn').onclick=function(){
+    root.classList.toggle('dark');
+    try{ localStorage.setItem('theme', root.classList.contains('dark')?'dark':'light'); }catch(e){}
+    refresh();
+  };
+  window.addEventListener('resize', function(){ refresh(); });
+
+  syncControls(); refresh();
+})();
+</script>
+</body>
+</html>

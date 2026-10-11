@@ -1,0 +1,15 @@
+{
+  "no": "020",
+  "a": "n1-077.html",
+  "b": "n1-029.html",
+  "a_title": "Kompression ist Struktur (Runde 1: Johnson–Lindenstrauss-Lemma ✕ Krautchan-Karte)",
+  "b_title": "Krümmung ist der sich nicht schließende Kreislauf (Runde 1: Ehresmann-Konnektor ✕ Rückkopplungsschleifen)",
+  "combined_theme": "reduktion-als-residuum-balance",
+  "one_line": "Jedes Modell ist eine Reduktion, die Realität in Absorption + Residuum zerlegt; das Residuum (Verzerrung statisch / Holonomie dynamisch) ist dieselbe Krümmung, und das gute Modell ist der Balance-Punkt (ε-Band = Tragfähigkeit), an dem 'Struktur erhalten' und 'Trieb = Korrektur' zugleich gelten.",
+  "contradictions": [
+    "Status des Residuums: n1-077 will es minimieren (Verzerrung = Kosten, 'Struktur erhalten' = gut, Ziel Residuum→0); n1-029 will es vorhanden und reich (Holonomie/Krümmung = 'die gesamte Substanz', der flache Fall = 'entartet/einfach'). Unvereinbar: gutes Modell = kleines Residuum vs. reiches System = vorhandenes Residuum.",
+    "Residuum-Typ: n1-077 misst ein statisches Residuum an einer Karte (Snapshot, Eigenschaft der Abbildung, keine Zeit); n1-029 ein dynamisches, integralisiertes Residuum an einem Kreislauf (Prozess, summiert sich mit den Schritten). (Hinweis: auf dem Punkt 'Wahl vs. Entdeckung / Existenz vs. Kuratierung' konvergieren beide — kein Widerspruch.)"
+  ],
+  "resolution": "Das Residuum ist keine einzelne Größe, sondern eine Bilanz mit mindestens zwei gegenläufigen Termen (Trieb/Verzerrung vs. Absorption/Korrektur). Das ε-Band (n1-077) ist das Tragfähigkeits-Band (n1-029): der Bereich um die Identität, wo das Netto-Residuum null wird — 'Struktur erhalten' und 'S-Kurven-Plateau' sind derselbe Balance-Punkt. Verzerrung = lokale Krümmung, Holonomie = integrale Krümmung (das Snapshot ist ein Schritt des Kreislaufs). Flach ≠ leer: die JL-Existenzgarantie zeigt, dass geringes Residuum keine Stagnation ist. k≈log n ist der statische 'zu grob?'-Test, die S-Kurve der dynamische Weg dorthin; deren Brechpunkt (Karte zu grob / reine positive Schleife verlässt das Diagramm) sind statische und dynamische Zwillinge desselben Zusammenbruchs.",
+  "viz": "Interaktives Canvas-Doppelregister desselben fusionierten Gedankens. Oben links die Karte (n Punkte nach zufälliger Projektion auf k Achsen, 4 Cluster); oben rechts das Verzerrungshistogramm aller Paare (‖f(x)−f(y)‖/‖x−y‖) mit ε-Band — die Masse außer Band ist das Verzerrungs-Residuum (statisch); unten der Kreislauf: lila S-Kurve, rote gestrichelte ungezähmte Krümmung (reine positive Schleife), grüne Tragfähigkeit K, Laufpunkt mit Netto-Trieb und absorbierteter Holonomie (dynamisch). Der geteilte Readout meldet 'Balance', wenn Struktur erhalten (Karte) und Trieb=Korrektur (Plateau) zugleich gelten — das ε-Band ist die Tragfähigkeit. Sliders n, k, ε, d, r, K; Buttons würfeln/animieren/theme; inline seeded data, theme-reactive, keine Netzwerk-Aufrufe."
+}

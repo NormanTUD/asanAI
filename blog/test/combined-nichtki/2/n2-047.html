@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form &amp; Substanz — Der universale Trennungsoperator der persistenten Topologie</title>
+<style>
+  :root{
+    --mn-bg:#FAF8F1; --mn-surface:#ffffff; --mn-text:#1c1a17; --mn-muted:#6b6558;
+    --mn-border:#e4ddcd; --mn-accent:#2f6db0; --mn-accent2:#c0306a; --mn-accent3:#6a4fd0; --mn-accent4:#1f8a4c;
+    --mn-warn:#a9700f; --mn-code:#f4efe4;
+    --mn-viz-bg:#eef0f7; --mn-viz-line:#c9ccda;
+    --mn-shadow:0 14px 40px rgba(20,24,60,.10);
+  }
+  html.dark{
+    --mn-bg:#080a14; --mn-surface:#12162a; --mn-text:#e6ebff; --mn-muted:#9aa6cc;
+    --mn-border:#243154; --mn-accent:#5ee7ff; --mn-accent2:#ff5ea8; --mn-accent3:#a98bff; --mn-accent4:#7dffb0;
+    --mn-warn:#ffd166; --mn-code:#101a30;
+    --mn-viz-bg:#0b0e1a; --mn-viz-line:#2a3358;
+    --mn-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:var(--mn-bg); color:var(--mn-text); font-family:Georgia,'Times New Roman',serif;
+         line-height:1.72; transition:background .3s ease,color .3s ease; }
+  .wrap{ max-width:820px; margin:0 auto; padding:46px 22px 90px; }
+  h1{ font-size:2.0em; line-height:1.22; margin:.1em 0 .18em; letter-spacing:-.01em; }
+  .subtitle{ color:var(--mn-muted); font-style:italic; margin:0 0 1.6em; font-size:1.02em; }
+  .subtitle .x{ color:var(--mn-accent2); font-style:normal; font-weight:700; }
+  section{ margin:2.3em 0; scroll-margin-top:20px; }
+  h2{ font-size:1.4em; border-bottom:2px solid var(--mn-border); padding-bottom:.28em; margin-top:1.1em; }
+  h2 .n{ font-size:.6em; color:var(--mn-accent); border:1px solid var(--mn-border); border-radius:7px;
+          padding:2px 9px; margin-right:.5em; vertical-align:middle; font-family:monospace; }
+  h3{ font-size:1.08em; margin:1.35em 0 .4em; color:var(--mn-accent); }
+  p{ margin:.78em 0; }
+  .lead{ font-size:1.05em; color:var(--mn-text); }
+  ul,ol{ margin:.6em 0; padding-left:1.35em; }
+  li{ margin:.46em 0; }
+  code{ font-family:'SFMono-Regular',Consolas,Menlo,monospace; font-size:.86em;
+         background:var(--mn-code); border:1px solid var(--mn-border); border-radius:5px; padding:.08em .38em; }
+  sub,sup{ font-size:.72em; }
+  .ab{ color:var(--mn-accent4); font-weight:700; }
+  .nab{ color:var(--mn-accent2); font-weight:700; }
+  .fuse{ color:var(--mn-accent); font-weight:700; }
+  .callout{ background:var(--mn-surface); border:1px solid var(--mn-border); border-left:4px solid var(--mn-accent);
+             border-radius:10px; padding:12px 18px; margin:1.1em 0; box-shadow:var(--mn-shadow); }
+  .callout.a2{ border-left-color:var(--mn-accent2); }
+  .callout.a3{ border-left-color:var(--mn-accent3); }
+  .callout.a4{ border-left-color:var(--mn-accent4); }
+  .callout .t{ display:block; font-size:.72em; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+                color:var(--mn-accent); margin-bottom:.35em; }
+  .callout.a2 .t{ color:var(--mn-accent2); }
+  .callout.a3 .t{ color:var(--mn-accent3); }
+  .callout.a4 .t{ color:var(--mn-accent4); }
+  table{ width:100%; border-collapse:collapse; margin:1.1em 0; font-size:.9em; }
+  th,td{ padding:8px 11px; text-align:left; border-bottom:1px solid var(--mn-border); vertical-align:top; }
+  th{ color:var(--mn-accent); font-size:.72em; letter-spacing:.08em; text-transform:uppercase; }
+  td.a{ color:var(--mn-accent4); } td.b{ color:var(--mn-accent2); }
+  tr.hl td{ background:rgba(120,140,220,.08); }
+  .themebtn{ position:fixed; top:14px; right:14px; z-index:50; background:var(--mn-surface); color:var(--mn-text);
+              border:1px solid var(--mn-border); border-radius:20px; padding:6px 13px; cursor:pointer; font-size:12.5px;
+              font-family:inherit; box-shadow:var(--mn-shadow); }
+  .themebtn:hover{ border-color:var(--mn-accent); color:var(--mn-accent); }
+  .math{ font-family:'Cambria Math','Times New Roman',serif; background:var(--mn-code); border:1px solid var(--mn-border);
+         border-radius:8px; padding:9px 14px; margin:.85em 0; overflow-x:auto; font-size:1em; }
+  .fz-card{ background:var(--mn-surface); border:1px solid var(--mn-border); border-radius:14px; padding:18px;
+             margin:1.1em 0; box-shadow:var(--mn-shadow); }
+  .fz-ctrl{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; margin-bottom:14px; }
+  .fz-ctrl label{ font-size:.85em; color:var(--mn-muted); display:flex; flex-direction:column; gap:5px; }
+  .fz-ctrl .v{ color:var(--mn-accent); font-family:monospace; font-weight:700; }
+  input[type=range]{ -webkit-appearance:none; appearance:none; width:200px; height:4px; border-radius:99px;
+                      background:linear-gradient(90deg,var(--mn-accent4),var(--mn-accent2)); outline:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+                      background:var(--mn-text); box-shadow:0 0 0 4px rgba(120,140,220,.25); cursor:grab; }
+  input[type=range]::-moz-range-thumb{ width:16px; height:16px; border:none; border-radius:50%; background:var(--mn-text); cursor:grab; }
+  .btn{ background:transparent; border:1px solid var(--mn-border); color:var(--mn-text); padding:7px 14px;
+         border-radius:9px; cursor:pointer; font-size:.85em; font-family:inherit; }
+  .btn:hover{ border-color:var(--mn-accent); color:var(--mn-accent); }
+  .btn.active{ background:var(--mn-accent); color:var(--mn-bg); border-color:var(--mn-accent); }
+  .btn.active.alt{ background:var(--mn-accent2); border-color:var(--mn-accent2); }
+  .fz-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-bottom:10px; font-size:.82em; color:var(--mn-muted); }
+  .fz-legend .lg i{ display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+  #fz-cv{ width:100%; display:block; border-radius:11px; background:var(--mn-viz-bg); border:1px solid var(--mn-border); touch-action:none; }
+  .fz-readout{ margin-top:14px; font-size:.94em; background:var(--mn-bg); border:1px solid var(--mn-border);
+                border-radius:10px; padding:12px 15px; }
+  .fz-readout .ro-fuse{ margin-top:.7em; border-top:1px dashed var(--mn-border); padding-top:.7em;
+                         border-left:3px solid var(--mn-accent2); padding-left:12px; font-size:.95em; }
+  .stats{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+  .stat{ flex:1 1 120px; background:var(--mn-bg); border:1px solid var(--mn-border); border-radius:9px;
+         padding:9px 11px; text-align:center; }
+  .stat .n{ font-size:1.35rem; font-weight:800; color:var(--mn-accent4); font-variant-numeric:tabular-nums; }
+  .stat .l{ font-size:.72rem; color:var(--mn-muted); text-transform:uppercase; letter-spacing:.04em; }
+  .prov{ display:flex; flex-direction:column; gap:12px; margin-top:.8em; }
+  .prov .item{ background:var(--mn-surface); border:1px solid var(--mn-border); border-radius:11px; padding:13px 16px; box-shadow:var(--mn-shadow); }
+  .prov .item .tag{ font-size:.7em; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mn-accent4); }
+  .prov .item.b .tag{ color:var(--mn-accent2); }
+  .prov .item b a{ color:var(--mn-accent); text-decoration:none; border-bottom:1px dotted var(--mn-accent); }
+  .prov .item b a:hover{ color:var(--mn-accent2); border-color:var(--mn-accent2); }
+  .prov .item p{ margin:.5em 0 0; color:var(--mn-muted); font-size:.92em; }
+  footer{ margin-top:2.4em; padding-top:1em; border-top:1px solid var(--mn-border); color:var(--mn-muted); font-size:.82em; }
+</style>
+</head>
+<body>
+<button id="op-theme" class="themebtn">🌙 Dunkel</button>
+<div class="wrap">
+
+  <h1>Form &amp; Substanz: der universale Trennungsoperator der persistenten Topologie</h1>
+  <p class="subtitle">Fusion aus: <span class="x">n1-066.html</span> ✕ <span class="x">n1-105.html</span>
+  &nbsp;·&nbsp; Runde 2 · Pair 047 (nicht-KI-Track)</p>
+
+  <section id="these">
+    <h2><span class="n">1</span>Kernthese der Fusion</h2>
+    <p class="lead">Beide Round-1-Papiere tragen zwar völlig verschiedene Titel und Domains —
+    <b>A</b> (n1-066, „Persistenz: die gemeinsame Topologie von Form &amp; Geschichte“,
+    persistente Homologie × Braudel) und <b>B</b> (n1-105, „Struktur transparent, Inhalt opak“,
+    homologische Gerüste des Gehirns × sichere HPC-Isolation) — aber unter der Oberfläche sind sie
+    <b>ein und derselbe Operator, zweimal angewandt</b>: die <span class="fuse">persistenten
+    Homologie als Trennung der Form von der Substanz</span>.</p>
+    <p>In <b>beiden</b> Papieren gilt: Ein System wird als gewichtete Punktwolke mit Beziehungen
+    (Punkte = Einheiten, Kanten = Relationen, Gewicht/Entfernung = Skala) gefasst, eine
+    <b>Filtration</b> lässt die Struktur über eine Skalenreihe wachsen, und jedes topologische Merkmal
+    bekommt Geburts- und Todesradius. Was <em>lange</em> überlebt, ist die <span class="ab">Form</span>
+    — die invariante, langlebige Struktur. Was nur <em>flackert</em>, ist die <span class="nab">Substanz</span>
+    — das Kontingente, das Partikulare, das Private.</p>
+    <p>A und B unterscheiden sich nur darin, <em>welche Substanz</em> sie abtrennen und <em>welchen Zweck</em>
+    sie damit verfolgen. <b>A</b> trennt die <span class="nab">kontingente Realisierung</span> ab
+    (die konkreten Ereignisse, den exakten Pfad, das „Rauschen“ der Oberfläche) und liest die
+    <span class="ab">Form</span> als die <em>longue durée</em> — den langlebigen Zyklus. Sein Motto:
+    „Geschichte reimt sich, sie wiederholt sich nicht“: die Form reimt sich, die Substanz wiederholt
+    sich nie. <b>B</b> trennt die <span class="nab">geheimen Daten</span> ab (die Bytes auf den Kanten)
+    und liest die <span class="ab">Form</span> als die auditierbare Zugriffs-/Struktur-Topologie. Sein
+    Motto: „Struktur transparent, Inhalt opak“. Die <b>integrierte Position</b>:
+    <span class="fuse">Persistent Homology ist der universelle Operator, der in jedem System die
+    invariante Form von der kontingenten/geheimen Substanz abtrennt</span> — die Form, weil sie über
+    alle Skalen und Störungen stabil ist, kann <em>vollständig transparent</em> gemacht werden; die
+    Substanz ist zweckgebunden: entweder <em>als Rauschen zu verstehen</em> (A, epistemisch) oder
+    <em>als Geheimnis zu schützen</em> (B, privat). A und B sind damit keine Gegenstücke, sondern
+    <b>zwei Zwecke desselben Operators</b>: Verstehen und verifizierbare Privatsphäre.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+    <p>Wichtig vorab: Auf dem <b>Kern</b> widersprechen sich die beiden Papiere <em>nicht</em> — im Gegenteil,
+    sie <b>einigen sich</b> auf genau dem, was die Fusion trägt: die Form wird transparent gemacht und
+    <b>schwellenwertfrei über alle Skalen</b> gemessen (beide erben das von der persistenten Homologie:
+    kein willkürlicher Cut, sondern eine Filtration „wie ein steigender Wasserspiegel“). Zwei
+    <em>echte</em> Spannungen bleiben, die aus dem <em>Unterschied der Substanzen</em> folgen:</p>
+    <div class="callout a2">
+      <span class="t">Spannung 1 — Das Schicksal der Substanz: offenlegen als Rauschen (A) vs. verbergen als Geheimnis (B)</span>
+      <p><b>A</b> nennt das Abgetrennte ausdrücklich <span class="nab">„Rauschen“</span> und macht aus ihm
+      einen epistemischen Wert: kurze Persistenz = Ereignis = <em>oberflächlich</em>, und die Methode besteht
+      darin, es <em>zu erkennen und aussortieren</em> (Signal vs. Rauschen). Die Substanz ist A etwas
+      <em>Untergeordnetes</em>, dessen ganzer Sinn darin liegt, als <em>nicht-strukturell</em> entlarvt zu werden.
+      <b>B</b> dagegen behandelt das Abgetrennte — den Inhalt — als etwas <em>Wertvolles, das geschützt werden
+      muss</em>: er wird <span class="nab">„opak“</span> gehalten (verschlüsselt), selbst vor dem
+      Root-Admin. Die Substanz ist B etwas <em>Schützenswertes</em>. Die entgegengesetzte Haltung:
+      A <em>entwertet</em> die Substanz (Rauschen), B <em>erhellt</em> sie (Geheimnis).</p>
+    </div>
+    <div class="callout a3">
+      <span class="t">Spannung 2 — Weiche Gradienten (A) vs. harte binäre Mauer (B)</span>
+      <p><b>A</b> kennt <em>keine</em> durchgesetzte Grenze. Die Trennung von „echt“ und „Rauschen“ ist ein
+      <em>weiches, interpretierendes Lesen</em> eines kontinuierlichen Persistenz-Gradienten: weit über der
+      Diagonalen = echt, nahe daran = Rauschen — aber es wird nichts abgeschnitten oder durchgesetzt, die
+      Daten liegen alle sichtbar da. <b>B</b> erzeugt seine Sicherheit <em>gerade durch</em> eine <b>harte,
+      binäre, durchsetzbare</b> Grenze: die <span class="nab">Firewall</span> kuppelt den Knoten voll ab,
+      die Verschlüsselung macht den Inhalt unlesbar — ja/nein, erlaubt/verboten. Die harte Mauer <em>ist</em>
+      der Schutz. A will Kontinuität über alle Skalen, B eine binäre Mauer.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="n">3</span>Auflösung</h2>
+    <p>Beide Spannungen lösen sich, sobald man die <b>Messachse</b> von der <b>Governance-Achse</b> trennt —
+    eine Unterscheidung, die A gar nicht braucht (er ist rein deskriptiv) und die B intern schon vollzieht.</p>
+    <div class="callout a4">
+      <span class="t">Auflösung 1 — Dieselbe Substanz, zwei orthogonale Zwecke</span>
+      <p>Die Form/Substanz-<b>Trennung ist zweckunabhängig</b>; nur die <em>Bearbeitung</em> des abgetrennten
+      Restes ist zweckabhängig. A fragt <em>„Was ist wirklich da?“</em> (Verstehen) — da darf die Substanz
+      offen gelegt werden, denn ihre Bedeutung ist dann <em>nicht-strukturell</em> (Rauschen). B fragt
+      <em>„Wie verifiziere ich, ohne zu sehen?“</em> (Vertrauen) — da muss die Substanz verborgen werden, denn
+      ihre Bedeutung ist dann <em>wertvoll-privat</em>. <b>Fusion:</b> Persistent Homology liefert die Form
+      und übergibt die Substanz als <em>Residuum</em>, dessen Behandlung (offenlegen-als-Rauschen vs.
+      schützen-als-Geheimnis) eine <b>Zweckwahl</b> ist, kein Teil der Topologie. „Rauschen“ (A) und „Geheimnis“
+      (B) sind zwei <em>legitime Nutzungen desselben Residums</em>.</p>
+    </div>
+    <div class="callout">
+      <span class="t">Auflösung 2 — Weich beim Messen, hart beim Verwalten</span>
+      <p>A und B reden über <em>verschiedene Gegenstände</em>. Der <em>weiche, schwellenwertfreie
+      Gradient</em> gehört zur <b>Messachse</b> (wie man die Form liest — persistent Homology über alle
+      Skalen; beider Einigkeit). Die <em>harte, binäre Mauer</em> gehört zur <b>Governance-Achse</b> (wie man
+      den Zugriff auf die Substanz erzwingt — ja/nein, erlaubt/verboten). <b>Fusionierte Regel:</b>
+      <span class="fuse">Die Form wird weich über alle Skalen gemessen (epistemisch, A+B), die Substanz wird
+      hart als Mauer abgetrennt (normativ, B).</span> Weich = lesen; hart = durchsetzen. Kein Widerspruch mehr,
+      sondern eine Arbeitsteilung — exakt das, was B für sich selbst bereits anwendet („bei der Messung
+      kontinuierlich, bei der Abwehr binär“), das A nur nie nötig hatte, weil es keine Governance-Achse besaß.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+    <p class="lead">Der gemeinsame Nenner, auf die Ebene der Thesen abstrahiert: ein Modell, das auf beide
+    Round-1-Papiere (und damit auf all ihre Rohquellen) anwendbar ist.</p>
+
+    <h3>Das gemeinsame Modell: ein gewichtetes System und ein Trennungsoperator</h3>
+    <p>Repräsentiere das System als Punktwolke mit Relationen und Gewichten <code>G = (V, E, ω)</code>.
+    Baue eine Filtration <code>K<sub>ε₁</sub> ⊆ K<sub>ε₂</sub> ⊆ ⋯</code> (Vietoris-Rips über wachsenden
+    Radius ε, bzw. Kanten nach sinkendem Gewicht). Jedes Merkmal bekommt <em>Geburt b</em> und <em>Tod d</em>;
+    <code>Persistenz p = d − b</code>. Die Lektüre ist in <b>beiden</b> Papieren identisch:</p>
+    <div class="math">
+      <b>Form</b> = Merkmale weit über der Diagonalen (große p) — langlebig, stabil, invariant.<br>
+      <b>Substanz</b> = Merkmale an der Diagonalen (kleine p) — kurzlebig, kontingent (A) bzw. privat (B).<br>
+      Invarianz: kleine Störung der Daten → kleine Störung des Diagramms. Schwellenwertfrei: scannt alle Skalen.
+    </div>
+
+    <h3>Die zwei Dispositionen der Substanz (der A/B-Unterschied, produktiv gemacht)</h3>
+    <table>
+      <tr><th>Dimension</th><th>A — Verstehen (epistemisch)</th><th>B — Schützen (privativ)</th></tr>
+      <tr><td>Substanz ist</td><td class="a">die konkrete Realisierung / das Ereignis / das Rauschen</td>
+          <td class="b">die Daten-Bytes / der Inhalt auf den Kanten</td></tr>
+      <tr class="hl"><td>Form ist</td><td class="a">der langlebige Zyklus = Braudels <em>longue durée</em></td>
+          <td class="b">die auditierbare Struktur (Knoten, Kanten, Signatur, Isolation)</td></tr>
+      <tr><td>Disposition</td><td class="a">offenlegen &amp; als Rauschen entlarven</td>
+          <td class="b">verschlüsseln &amp; opak halten</td></tr>
+      <tr><td>Wert der Form</td><td class="a">Lesbarkeit („reimt sich“)</td><td class="b">Verifizierbarkeit</td></tr>
+      <tr><td>Ziel</td><td class="a">Verstehen, was echt ist</td><td class="b">verifizierbare Privatsphäre</td></tr>
+    </table>
+
+    <h3>Robustheit als Topologie (von B verallgemeinert)</h3>
+    <p>B liefert die tiefere Lektüre, die auch auf A paßt: Die Form kodiert nicht nur <em>was existiert</em>,
+    sondern <em>wo das System robust oder brüchig ist</em>. Ein <b>Zyklus</b> (ein H<sub>1</sub>-Loch,
+    ein Ring starker Kanten um ein schwaches Innere) ist ein <em>redundanter, robuster</em> Pfad; ein
+    <b>Gelenkpunkt</b> (Artikulationsknoten) ist der „Dual“ eines Lochs und eine <em>einzige Fehlerquelle</em>.
+    In A ist der langlebige Zyklus genau so ein robustes topologisches Merkmal (der Grenzzyklus der
+    <em>longue durée</em>). <b>Fusion:</b> Persistent Homology misst die <span class="fuse">Topologie der
+    Robustheit</span> — redundante (Zyklen) vs. brüchige (Gelenkpunkte) Stellen — und genau das ist die
+    Information, die man sowohl zum <em>Verstehen</em> (A) als auch zum <em>Securen</em> (B) braucht.</p>
+
+    <h3>Der Vergleich zweier Zustände (beide nutzen ihn)</h3>
+    <p>Die Methode liest ihr Signal <em>nicht</em> aus der Substanz, sondern aus der <em>(Konstanz oder dem
+    Unterschied) der Form</em>. <b>A</b> vergleicht historische <em>Instanzen</em>: die Form (der Zyklus, die
+    Betti-Zahlen) bleibt gleich, die Substanz (die Ereignisse) ist anders → genau das ist „der Reim ohne die
+    Wiederholung“. <b>B</b> vergleicht Struktur-<em>Zustände</em> (Placebo vs. Psilocybin, isoliert vs. offen):
+    die Form ändert sich messbar, das lokale Zählen nicht. Ein konkretes Beispiel aus B, das die Fusion
+    bezeugt: Die <em>Persistenzverteilung</em> (die Form) unterscheidet sich hochsignifikant
+    (Kolmogorow–Smirnow: Stat. = 0.22, p &lt; 10⁻¹⁰), während das <em>Frequenzgerüst</em> — wie oft eine Kante
+    in einem Zyklus vorkommt, eine „substanznähere“ lokale Größe — <em>keinen</em> Unterschied zeigt
+    (p = 0.72).     <b>Das Signal liegt in der Form, nicht in der lokalen Substanz.</b> Und die Kosten sind
+    trivial: B misst Verschlüsselung auf ≈ 2.5 s/GB — verifizierbare Privatsphäre kostet an Rechen-Form
+    fast nichts.</p>
+
+    <h3>Das vereinigte Werkzeug (die Formeln beider)</h3>
+    <div class="math">
+      <b>von A:</b> &nbsp; H<sub>k</sub> = Zyklen/Ränder = Z<sub>k</sub>/B<sub>k</sub>, &nbsp; β<sub>k</sub> = dim H<sub>k</sub> &nbsp;
+      (β<sub>0</sub> Komponenten, β<sub>1</sub> Tunnel, β<sub>2</sub> Hohlräume)<br>
+      &nbsp;&nbsp; χ = V − E + F = Σ<sub>k</sub> (−1)<sup>k</sup> β<sub>k</sub> &nbsp;(Kugel χ=2, Torus χ=0)<br>
+      <b>von B:</b> &nbsp; Persistenz p = d − b &nbsp;·&nbsp; Gerüste: Persistenzgewicht w<sup>p</sup><sub>e</sub> = Σ<sub>gᵢ∋e</sub> p<sub>gᵢ</sub>,
+      &nbsp;Frequenzgewicht w<sup>f</sup><sub>e</sub> = Σ<sub>gᵢ</sub> 𝟙<sub>e∈gᵢ</sub><br>
+      <b>fusioniert:</b> &nbsp; Form = max-p-Merkmal (weit über der Diagonalen) &nbsp;·&nbsp;
+      Substanz = min-p-Residuum (an der Diagonalen)<br>
+      &nbsp;&nbsp; Residuum → offenlegen-als-Rauschen (A) &nbsp;|&nbsp; schützen-als-Geheimnis (B)
+    </div>
+    <div class="callout">
+      <span class="t">Fusionierte Schlussfolgerung</span>
+      <p>Persistent Homology ist der <b>universelle Form-Extractor</b>. Er trennt in <em>jedem</em> System
+      das invariante, über-alle-Skalen-stabile <span class="ab">Was</span> (die Form: der Zyklus, die
+      <em>longue durée</em>, die auditierbare Struktur) vom kontingenten, privaten <span class="nab">Wie</span>
+      (die Substanz: das Ereignis, der Pfad, die Daten-Bytes). Die Form darf <em>voll transparent</em> sein,
+      weil sie invariant ist; die Substanz wird nach <em>Zweck</em> behandelt — als Rauschen verstanden (A)
+      oder als Geheimnis geschützt (B). Messung ist weich (alle Skalen), Verwaltung ist hart (binäre Mauer).
+      Das ist eine einzige Idee, dreimal bezeugt: an der Geschichte (A), am Gehirn (B/A), am HPC-Cluster (B/B).</p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="n">5</span>Interaktive Visualisierung</h2>
+    <p class="lead">Ein und dasselbe System — ein <b>langlebiger Zyklus</b> (die Form, ein persistentes
+    H<sub>1</sub>-Loch) umgeben von <b>verstreuten Ereignissen</b> (die Substanz) — durchlaufen mit der
+    Vietoris-Rips-Filtration. Der ε-Regler wächst; rechts entsteht das Persistenzdiagramm, in dem die
+    Form weit über der Diagonalen (längste Persistenz) und die Substanz dicht an ihr (Rauschen) steht.
+    Der Umschalter <em>Verstehen / Schützen</em> zeigt die Fusion: <b>Verstehen (A)</b> legt die Substanz
+    <em>sichtbar als Rauschen</em> offen; <b>Schützen (B)</b> macht sie <em>opak</em> (verschlossen),
+    während nur die <b>Form</b> (der Zyklus-Kern) transparent und auditierbar bleibt, hinter einer harten
+    Firewall mit einem einzigen erlaubten Audit-Ausgang. Dieselbe Topologie, zwei Dispositionen der Substanz.</p>
+
+    <div class="fz-card">
+      <div class="fz-ctrl">
+        <label>Filtrations-Skala ε <span class="v" id="fz-eps">0.000</span>
+          <input type="range" id="fz-slider" min="0" max="1000" value="300">
+        </label>
+        <button class="btn" id="fz-play">▶ Filtration</button>
+        <label>Disposition der Substanz
+          <span style="display:flex; gap:6px;">
+            <button class="btn active" id="fz-verstehen">Verstehen (A)</button>
+            <button class="btn alt" id="fz-schuetzen">Schützen (B)</button>
+          </span>
+        </label>
+      </div>
+      <div class="fz-legend">
+        <span class="lg"><i style="background:var(--mn-accent4)"></i> Form: langlebiger Zyklus</span>
+        <span class="lg"><i style="background:var(--mn-muted)"></i> Substanz: Ereignisse</span>
+        <span class="lg"><i style="background:var(--mn-accent2)"></i> H₁-Loch (die Form)</span>
+        <span class="lg"><i style="background:var(--mn-warn)"></i> Diagonale (null Persistenz)</span>
+        <span class="lg"><i style="background:var(--mn-accent2)"></i> Firewall / Audit-Exit (B)</span>
+      </div>
+      <canvas id="fz-cv" width="780" height="440"></canvas>
+      <div class="stats">
+        <div class="stat"><div class="n" id="st-b0">–</div><div class="l">β₀ Komponenten</div></div>
+        <div class="stat"><div class="n" id="st-b1">–</div><div class="l">β₁ Löcher jetzt</div></div>
+        <div class="stat"><div class="n" id="st-eps">–</div><div class="l">Skala ε</div></div>
+        <div class="stat"><div class="n" id="st-form">–</div><div class="l">Persistenz der Form</div></div>
+      </div>
+      <div class="fz-readout" id="fz-ro"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="n">6</span>Provenienz</h2>
+    <div class="prov">
+      <div class="item a">
+        <span class="tag">Quelle A</span>
+        <p style="margin-top:.4em"><b><a href="../n1-066.html">n1-066.html — Persistenz: die gemeinsame Topologie von Form &amp; Geschichte</a></b></p>
+        <p>Round-1-Fusion (holes.html × history.html). Liefert die epistemische Seite: Persistent Homology als
+        Messlehre, Betti-Zahlen, Vietoris-Rips-Filtration, Persistenzdiagramm; die Substanz wird als
+        „Rauschen“ (die <em>événements</em>) offengelegt, die Form als Braudels <em>longue durée</em>;
+        Motto „reimt sich, wiederholt sich nicht“.</p>
+      </div>
+      <div class="item b">
+        <span class="tag">Quelle B</span>
+        <p style="margin-top:.4em"><b><a href="../n1-105.html">n1-105.html — Struktur transparent, Inhalt opak</a></b></p>
+        <p>Round-1-Fusion (homological_scaffolding_psilocybin.html × secure_hpc_workflow.html). Liefert die
+        privative Seite: Persistent Homology am Gehirn (Placebo vs. Psilocybin, Gerüste, Robustheit als
+        Topologie) plus sichere HPC-Isolation (Verschlüsselung, Signatur, Firewall-Isolation); die Substanz
+        (Inhalt) bleibt opak, die Form transparent — „verifizierbare Privatsphäre“.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion n2-047 · Runde 2 (nicht-KI-Track) · n1-066.html ✕ n1-105.html · selbstständig, themenreaktiv, alle Daten inline, keine externen Abrufe.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('fz-cv');
+  var ctx = cv.getContext('2d');
+  var slider = document.getElementById('fz-slider');
+  var epsOut = document.getElementById('fz-eps');
+  var playBtn = document.getElementById('fz-play');
+  var modeV = document.getElementById('fz-verstehen');
+  var modeS = document.getElementById('fz-schuetzen');
+  var themeBtn = document.getElementById('op-theme');
+  var ro = document.getElementById('fz-ro');
+  var stB0 = document.getElementById('st-b0'), stB1 = document.getElementById('st-b1'),
+      stEps = document.getElementById('st-eps'), stForm = document.getElementById('st-form');
+
+  var MAXEPS = 0.62;
+  var NC = 44, NN = 20;
+  var mode = 'verstehen';
+  var W = 0, H = 0;
+
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v; }
+  var C = {};
+  function readTheme(){
+    C = {
+      bg: cssVar('--mn-viz-bg') || '#0b0e1a', surface: cssVar('--mn-surface') || '#12162a',
+      text: cssVar('--mn-text') || '#e6ebff', muted: cssVar('--mn-muted') || '#9aa6cc',
+      border: cssVar('--mn-border') || '#243154',
+      a4: cssVar('--mn-accent4') || '#7dffb0', a2: cssVar('--mn-accent2') || '#ff5ea8',
+      acc: cssVar('--mn-accent') || '#5ee7ff', warn: cssVar('--mn-warn') || '#ffd166',
+      green: cssVar('--mn-accent4') || '#7dffb0'
+    };
+  }
+  function hexA(hex, a){
+    hex = String(hex).replace('#','').trim();
+    if (hex.length===3) hex = hex.split('').map(function(c){return c+c;}).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) hex='7dffb0';
+    var n = parseInt(hex,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  }
+
+  var pts=[], pairs=[], N=0, feat0=[], feat1=[], maxF=null;
+  function genData(seed){
+    var rng = mulberry32(seed);
+    pts=[];
+    for (var i=0;i<NC;i++){
+      var ang = i/NC*Math.PI*2 + (rng()-0.5)*0.10;
+      var r = 1.0 + (rng()-0.5)*0.12;
+      pts.push({x:Math.cos(ang)*r, y:Math.sin(ang)*r, cyc:true});
+    }
+    for (var j=0;j<NN;j++){
+      pts.push({x:(rng()-0.5)*2.6, y:(rng()-0.5)*2.6, cyc:false});
+    }
+    N = pts.length;
+    pairs=[];
+    for (var a=0;a<N;a++) for (var b=a+1;b<N;b++){
+      var d = Math.hypot(pts[a].x-pts[b].x, pts[a].y-pts[b].y);
+      pairs.push([d,a,b]);
+    }
+    pairs.sort(function(p,q){ return p[0]-q[0]; });
+  }
+
+  function computeState(eps){
+    var adj=[]; for (var i=0;i<N;i++) adj.push({});
+    var E=0, edges=[];
+    for (var k=0;k<pairs.length;k++){
+      var p=pairs[k];
+      if (p[0] <= 2*eps){ adj[p[1]][p[2]]=1; adj[p[2]][p[1]]=1; E++; edges.push([p[1],p[2]]); }
+    }
+    var uf=[]; for (var u=0;u<N;u++) uf.push(u);
+    function find(x){ while(uf[x]!==x){ uf[x]=uf[uf[x]]; x=uf[x]; } return x; }
+    function un(i,j){ var ra=find(i), rb=find(j); if (ra!==rb) uf[ra]=rb; }
+    for (var e=0;e<edges.length;e++) un(edges[e][0], edges[e][1]);
+    var roots={}; for (var r=0;r<N;r++) roots[find(r)]=1;
+    var b0=0; for (var kk in roots) b0++;
+    var T=0;
+    for (var i2=0;i2<N;i2++){
+      var ai=adj[i2];
+      for (var jj in ai){
+        if (+jj <= i2) continue;
+        var aj=adj[jj];
+        for (var q in aj){ if (+q > +jj && ai[q]) T++; }
+      }
+    }
+    var b1=Math.max(0, E - N + b0 - T);
+    return {b0:b0, b1:b1, edges:edges};
+  }
+
+  function runSweep(){
+    feat0=[]; feat1=[];
+    var uf=[]; for (var i=0;i<N;i++) uf.push(i);
+    function find(x){ while(uf[x]!==x){ uf[x]=uf[uf[x]]; x=uf[x]; } return x; }
+    for (var k=0;k<pairs.length;k++){
+      var p=pairs[k]; var eps=p[0]/2;
+      if (eps>MAXEPS) break;
+      var ri=find(p[1]), rj=find(p[2]);
+      if (ri!==rj){ uf[ri]=rj; feat0.push({b:0, d:eps}); }
+    }
+    var surv={}; for (var s=0;s<N;s++) surv[find(s)]=1;
+    var cnt=0; for (var m in surv) cnt++;
+    for (var z=0;z<cnt;z++) feat0.push({b:0, d:MAXEPS});
+
+    var K=150, alive=[];
+    for (var kk=1;kk<=K;kk++){
+      var e2=kk/K*MAXEPS;
+      var b1=computeState(e2).b1;
+      while (alive.length<b1) alive.push(e2);
+      while (alive.length>b1) feat1.push({b:alive.pop(), d:e2});
+    }
+    for (var q=0;q<alive.length;q++) feat1.push({b:alive[q], d:MAXEPS});
+
+    maxF=null; var best=-1;
+    for (var f=0;f<feat1.length;f++){
+      var per=feat1[f].d-feat1[f].b;
+      if (per>best){ best=per; maxF=feat1[f]; }
+    }
+  }
+
+  function setup(){
+    var dpr = window.devicePixelRatio || 1;
+    W = cv.clientWidth; H = Math.max(360, Math.min(480, Math.round(W*0.56)));
+    cv.width = Math.max(1, Math.round(W*dpr));
+    cv.height = Math.max(1, Math.round(H*dpr));
+    cv.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function areas(){
+    var pad=10;
+    var net = {x:pad, y:pad, w:W*0.56 - pad, h:H - 2*pad};
+    var pd  = {x:W*0.60, y:pad, w:W*0.40 - pad, h:H - 2*pad};
+    var Nn = pts.map(function(p){
+      return { x: net.x + 40 + (p.x+1.4)/2.8*(net.w-80), y: net.y + 40 + (p.y+1.4)/2.8*(net.h-80) };
+    });
+    return {net:net, pd:pd, Nn:Nn};
+  }
+
+  function curEps(){ return (+slider.value)/1000*MAXEPS; }
+
+  function drawSystem(area, Nn, active, eps){
+    ctx.fillStyle = hexA(C.surface,0.5); roundRect(area.x,area.y,area.w,area.h,12); ctx.fill();
+    ctx.strokeStyle = C.border; ctx.lineWidth=1; roundRect(area.x,area.y,area.w,area.h,12); ctx.stroke();
+
+    var cx=0, cy=0;
+    for (var c=0;c<Nn.length;c++){ cx+=Nn[c].x; cy+=Nn[c].y; } cx/=Nn.length; cy/=Nn.length;
+
+    if (mode==='verstehen'){
+      for (var e=0;e<active.length;e++){
+        var a=Nn[active[e][0]], b=Nn[active[e][1]];
+        ctx.strokeStyle = hexA(C.a4,0.30); ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+      }
+      for (var i=0;i<Nn.length;i++){
+        var p=pts[i], P=Nn[i];
+        ctx.fillStyle = p.cyc ? hexA(C.a4,0.10) : hexA(C.muted,0.06);
+        ctx.beginPath(); ctx.arc(P.x,P.y, Math.max(0.5, eps* (area.w-80)/2.8), 0, Math.PI*2); ctx.fill();
+      }
+      for (var q=0;q<Nn.length;q++){
+        var pt=pts[q], Q=Nn[q];
+        ctx.fillStyle = pt.cyc ? C.a4 : C.muted;
+        ctx.beginPath(); ctx.arc(Q.x,Q.y, pt.cyc?4:3, 0, Math.PI*2); ctx.fill();
+      }
+    } else {
+      ctx.strokeStyle = hexA(C.a4,0.55); ctx.lineWidth=1.4;
+      for (var s=0;s<active.length;s++){
+        var sa=Nn[active[s][0]], sb=Nn[active[s][1]];
+        ctx.beginPath(); ctx.moveTo(sa.x,sa.y); ctx.lineTo(sb.x,sb.y); ctx.stroke();
+      }
+      var R = Math.min(area.w, area.h)*0.5;
+      ctx.setLineDash([9,5]); ctx.strokeStyle = hexA(C.a2,0.85); ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      for (var d=0;d<8;d++){
+        var aa=(Math.PI*2/8)*d - Math.PI/2;
+        var x1=cx+Math.cos(aa)*R, y1=cy+Math.sin(aa)*R;
+        var x2=cx+Math.cos(aa)*(R+13), y2=cy+Math.sin(aa)*(R+13);
+        ctx.strokeStyle = hexA(C.a2,0.5); ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      }
+      for (var n2=0;n2<Nn.length;n2++){
+        var pn=pts[n2], Pn=Nn[n2];
+        if (pn.cyc){
+          ctx.fillStyle = hexA(C.a4,0.95);
+          ctx.beginPath(); ctx.arc(Pn.x,Pn.y,4,0,Math.PI*2); ctx.fill();
+        } else {
+          ctx.fillStyle = hexA(C.muted,0.85);
+          ctx.fillRect(Pn.x-4,Pn.y-4,8,8);
+          ctx.strokeStyle = hexA(C.muted,0.4); ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(Pn.x-4,Pn.y-4); ctx.lineTo(Pn.x+4,Pn.y+4); ctx.stroke();
+        }
+      }
+      var ex = {x: area.x + area.w - 22, y: area.y + 26};
+      ctx.fillStyle = hexA(C.green,0.18); ctx.beginPath(); ctx.arc(ex.x,ex.y,12,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = C.green; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(ex.x,ex.y,12,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle = C.green; ctx.font='700 10px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('\u2713', ex.x, ex.y);
+      ctx.fillStyle = hexA(C.green,0.7); ctx.lineWidth=1.5;
+      var na=Nn[3];
+      ctx.beginPath(); ctx.moveTo(na.x,na.y); ctx.lineTo(ex.x,ex.y); ctx.stroke();
+    }
+
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle = C.muted; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText('Form = langlebiger Zyklus (H\u2081)', area.x+12, area.y+area.h-12);
+    ctx.textAlign='right';
+    ctx.fillStyle = mode==='verstehen' ? C.muted : hexA(C.a2,0.9);
+    ctx.fillText(mode==='verstehen' ? 'Substanz = Rauschen (offen)' : 'Substanz = opak (Schl\u00fcssel)', area.x+area.w-12, area.y+area.h-12);
+    ctx.textAlign='left';
+  }
+
+  function drawDiagram(area, eps, alpha){
+    ctx.save(); ctx.globalAlpha = alpha;
+    var m=34;
+    var px=area.x+m, py=area.y+m+10, pw=area.w-2*m, ph=area.h-2*m-26;
+    ctx.fillStyle = hexA(C.surface,0.6); ctx.fillRect(px,py,pw,ph);
+    ctx.fillStyle = hexA(C.a2,0.05);
+    ctx.beginPath(); ctx.moveTo(px,py+ph); ctx.lineTo(px+pw,py); ctx.lineTo(px+pw,py+ph); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = hexA(C.warn,0.55); ctx.setLineDash([5,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,py+ph); ctx.lineTo(px+pw,py); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = C.border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py+ph); ctx.lineTo(px+pw,py+ph); ctx.stroke();
+
+    ctx.fillStyle = C.muted; ctx.font='9px monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    for (var v=0; v<=1.0001; v+=0.25){
+      ctx.fillText(v.toFixed(2), px+v*pw, py+ph+13);
+      ctx.textAlign='right'; ctx.fillText(v.toFixed(2), px-5, py+ph-v*ph+3); ctx.textAlign='center';
+    }
+    ctx.fillText('Geburt \u03b5', px+pw/2, area.y+area.h-2);
+    ctx.save(); ctx.translate(px-18, py+ph/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('Tod \u03b5', 0, 0); ctx.restore();
+    ctx.font='600 11px monospace'; ctx.fillText('Persistenzdiagramm', area.x+area.w/2, area.y+16);
+
+    var ex = px + (eps/MAXEPS)*pw;
+    if (ex>px && ex<px+pw){ ctx.strokeStyle = hexA(C.warn,0.5); ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(ex,py); ctx.lineTo(ex,py+ph); ctx.stroke(); ctx.setLineDash([]); }
+
+    function X(b){ return px + (b/MAXEPS)*pw; }
+    function Y(d){ return py + ph - (d/MAXEPS)*ph; }
+    for (var i=0;i<feat0.length;i++){ var f0=feat0[i]; ctx.fillStyle=hexA(C.acc,0.7); ctx.beginPath(); ctx.arc(X(f0.b),Y(f0.d),3,0,Math.PI*2); ctx.fill(); }
+    for (var j=0;j<feat1.length;j++){ var f1=feat1[j]; ctx.fillStyle=hexA(C.a2,0.9); ctx.beginPath(); ctx.arc(X(f1.b),Y(f1.d),4,0,Math.PI*2); ctx.fill(); }
+    if (maxF){
+      ctx.strokeStyle = C.a4; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(X(maxF.b),Y(maxF.d),10,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle = C.a4; ctx.font='bold 11px monospace'; ctx.textAlign='center';
+      ctx.fillText('die Form', Math.min(px+pw-30, X(maxF.b)), Math.max(py+10, Y(maxF.d)-14));
+    }
+    if (mode==='schuetzen'){
+      ctx.fillStyle = hexA(C.surface,0.82); ctx.fillRect(px+pw/2-58, py+ph/2-16, 116, 30);
+      ctx.strokeStyle = C.a2; ctx.lineWidth=1; ctx.strokeRect(px+pw/2-58, py+ph/2-16, 116, 30);
+      ctx.fillStyle = C.a2; ctx.font='700 11px monospace'; ctx.textAlign='center';
+      ctx.fillText('\u{1F512} Inhalt opak', px+pw/2, py+ph/2+1);
+      ctx.fillStyle = C.muted; ctx.font='10px monospace';
+      ctx.fillText('Form bleibt auditierbar', px+pw/2, py+ph/2+13);
+    }
+    ctx.restore();
+  }
+
+  function updateReadout(eps, st){
+    if (mode==='verstehen'){
+      ro.innerHTML = '<b>Disposition A (Verstehen):</b> Die Substanz wird <i>offen gelegt</i> und als '
+        + '<span style="color:var(--mn-accent2)">Rauschen</span> entlarvt. Was weit \u00fcber der Diagonalen '
+        + 'steht, ist die <span style="color:var(--mn-accent4)">Form</span> (der Zyklus = <em>longue dur\u00e9e</em>); '
+        + 'was an ihr klebt, ist das Ereignis. \u201eReimt sich, wiederholt sich nicht\u201c.';
+    } else {
+      ro.innerHTML = '<b>Disposition B (Sch\u00fctzen):</b> Die Substanz (Inhalt) wird <i>opak</i> gehalten '
+        + '(\u{1F512}), die <span style="color:var(--mn-accent4)">Form</span> bleibt transparent und auditierbar, '
+        + 'hinter einer harten Firewall mit einem erlaubten Audit-Ausgang (\u2713). '
+        + '<span style="color:var(--mn-accent2)">Verifizierbare Privatsph\u00e4re.</span>';
+    }
+    stB0.textContent = st.b0; stB1.textContent = st.b1;
+    stEps.textContent = eps.toFixed(3);
+    stForm.textContent = maxF ? (maxF.d-maxF.b).toFixed(3) : '\u2013';
+    epsOut.textContent = eps.toFixed(3);
+  }
+
+  function draw(){
+    readTheme();
+    var eps = curEps();
+    var L = areas();
+    var st = computeState(eps);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
+    drawSystem(L.net, L.Nn, st.edges, eps);
+    drawDiagram(L.pd, eps, mode==='verstehen' ? 1.0 : 0.4);
+    updateReadout(eps, st);
+  }
+
+  function setActive(){
+    modeV.classList.toggle('active', mode==='verstehen');
+    modeS.classList.toggle('active', mode==='schuetzen');
+  }
+  var animId=null;
+  function stopAnim(){ if (animId){ cancelAnimationFrame(animId); animId=null; } playBtn.innerHTML='\u25B6 Filtration'; }
+  function play(){
+    if (animId){ stopAnim(); return; }
+    playBtn.innerHTML='\u25A0 Pause';
+    (function step(){
+      var v=+slider.value; v+=7;
+      if (v>1000){ slider.value=1000; draw(); stopAnim(); return; }
+      slider.value=v; draw();
+      animId=requestAnimationFrame(step);
+    })();
+  }
+
+  themeBtn.addEventListener('click', function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    themeBtn.innerHTML = dark ? '\u{1F319} Dunkel' : '\u2600\uFE0F Hell';
+    draw();
+  });
+  slider.addEventListener('input', function(){ stopAnim(); draw(); });
+  playBtn.addEventListener('click', play);
+  modeV.addEventListener('click', function(){ mode='verstehen'; setActive(); draw(); });
+  modeS.addEventListener('click', function(){ mode='schuetzen'; setActive(); draw(); });
+  window.addEventListener('resize', function(){ setup(); draw(); });
+  new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+
+  genData(20261011);
+  runSweep();
+  setActive();
+  setup();
+  draw();
+})();
+</script>
+</body>
+</html>

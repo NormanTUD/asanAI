@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bestimmung durch Konsistenz an der Lücke — Vervollständigung als Auswahl ✕ Garbe als Gehirn</title>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --ink:#1a1a2a; --dim:#5a5648;
+  --line:#d8d2c4; --grid:#e6e0d2;
+  --acc:#6d28d9; --acc2:#0e7490; --ok:#16a34a; --bad:#dc2626;
+  --warn:#b45309; --sky:#2f6fb0;
+  --p1:#d97706; --p2:#2563eb; --p3:#059669; --p4:#9333ea;
+}
+html.dark{
+  --bg:#0f172a; --card:#111c33; --ink:#e2e8f0; --dim:#94a3b8;
+  --line:#2b3a55; --grid:#1c2740;
+  --acc:#a78bfa; --acc2:#22d3ee; --ok:#4ade80; --bad:#f87171;
+  --warn:#fbbf24; --sky:#7aa2ff;
+  --p1:#fbbf24; --p2:#60a5fa; --p3:#34d399; --p4:#c084fc;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased; transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:28px 20px 90px;}
+a{color:var(--acc2);}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--acc);border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;
+  background:color-mix(in srgb,var(--acc) 9%,transparent);}
+h1{font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.14;letter-spacing:-.02em;font-weight:800;margin:.15em 0 .1em;}
+.sub{color:var(--dim);font-size:.96rem;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:10px;}
+.sub .mono{font-family:ui-monospace,Menlo,Consolas,monospace;}
+section{padding:28px 0;border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:0;}
+h2{font-size:1.32em;color:var(--acc);margin-bottom:12px;letter-spacing:-.01em;}
+h3{font-size:1.04em;font-weight:650;color:var(--ink);margin:1em 0 .35em;}
+p{margin-bottom:12px;}
+.lede{font-size:1.05em;}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;}
+.card.wc{border-left:4px solid var(--bad);}
+.card.res{border-left:4px solid var(--ok);}
+.card.wc b{color:var(--bad);} .card.res b{color:var(--ok);}
+.card.final{border-left:4px solid var(--acc);}
+.note{font-size:.87rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:10px 0;}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;
+  white-space:pre;font-size:.82em;color:var(--ink);}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:14px 0;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{color:var(--acc);font-weight:700;font-size:.72em;letter-spacing:.04em;text-transform:uppercase;}
+td:first-child{color:var(--ink);font-weight:650;}
+ol,ul{margin:.5em 0 .5em 1.2em;} li{margin:.35em 0;font-size:.95em;}
+li b{color:var(--acc);}
+.ladder{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px;margin:12px 0;}
+.ladder ol{margin:6px 0 0 18px;}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px;}
+canvas{display:block;width:100%;height:auto;border-radius:10px;background:var(--card);border:1px solid var(--line);}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 8px;}
+.ctrl .c{flex:1 1 220px;min-width:170px;}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:5px;}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab;}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card);}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;
+  background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent);}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent);}
+button.primary{background:var(--acc);color:var(--bg);border-color:var(--acc);}
+.stat{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.92rem;margin-top:14px;align-items:baseline;}
+.stat .big{font-family:ui-monospace,monospace;font-size:1.5rem;font-weight:700;color:var(--acc);}
+.stat .lab{color:var(--dim);}
+.legend{display:flex;gap:12px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px;}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+.legend .dash{width:16px;height:0;border-top:2px dashed var(--ink);border-radius:0;display:inline-block;vertical-align:2px;margin-right:5px;}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px;}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:560px){.prov{grid-template-columns:1fr;}}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+.prov .k{font-size:.7em;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);font-weight:700;}
+.prov a{text-decoration:none;font-weight:650;border-bottom:1px solid var(--line);}
+.prov a:hover{border-bottom-color:var(--acc);}
+.prov .d{display:block;color:var(--dim);font-size:.87rem;margin-top:8px;}
+footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-size:.82em;}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Thema wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Runde 2 &middot; Nicht-KI-Track &middot; Pair 045</div>
+  <h1>Bestimmung durch Konsistenz an der L&uuml;cke</h1>
+  <p class="sub">Der feste Punkt als 0-dimensionale Garbe &middot; Fusion aus: <span class="mono">n1-065.html</span> &#10005; <span class="mono">n1-099.html</span> &nbsp;(Runde 2)</p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lede">Beide Runde-1-Papiere sind Instanzen von <em>einem</em> einzigen Meta-Prinzip: <strong>Ein bestimmtes Objekt ist der &Uuml;berlebende einer Konsistenz- / Vervollst&auml;ndigungsbedingung, die man &uuml;ber ein unbestimmtes, &bdquo;l&ouml;chriges&ldquo; Substrat legt; es ist der <em>L&ouml;sungsraum dieser Bedingung</em>, lokalisiert genau an der <em>L&uuml;cke / Obstruktion</em>, die das Substrat nicht f&uuml;llen kann.</strong> <b>A</b> (n1-065, &bdquo;Vervollst&auml;ndigung = Auswahl&ldquo;) liefert die <em>0-dimensionale</em> Instanz: die Bedingung kollabiert auf <em>eine</em> Zahl / <em>eine</em> Dimension (&radic;2, die 3), festgemacht am Rand (&epsilon;&rarr;0, r&rarr;&infin;). <b>B</b> (n1-099, &bdquo;lokale Daten, globale Form&ldquo;) liefert die <em>strukturbildende</em> Instanz: die Bedingung (Verklebung) klebt lokale Daten zu einer globalen Form und l&auml;sst einen <em>irreduziblen Rest</em> (Kohomologie = &Phi;) &uuml;brig, den kein lokales St&uuml;ck tr&auml;gt.</p>
+    <p>In beiden ist das Objekt <em>relationell</em> bestimmt, nicht durch ein intrinsisches Wesen: &radic;2 ist der <em>Schnitt / die L&uuml;cke</em> in &Qopf; (definiert durch seine Lage zwischen L und R), die 3 ist der &Uuml;berlebende in der Dimensionslinie; bei B ist das Yoneda-Lemma das Programm &mdash; &bdquo;ein Objekt ist, was es tut&ldquo;, eine Region ist ihr Konnektom. Die &bdquo;Sonderstellung&ldquo; ist in beiden F&auml;llen dasselbe: <em>die L&uuml;cke zu sein, die das Substrat nicht f&uuml;llt</em>.</p>
+    <p>Beide Papiere teilen au&szlig;erdem eine <strong>zweigespaltige Struktur</strong>: A trennt das <em>metrische, dynamische</em> Gesicht (Cauchy, der Grenzwertlauf) vom <em>ordnungstheoretischen, statischen</em> Gesicht (Dedekind, der Schnitt) &mdash; isomorph, gleiches &Ropf;. B trennt das <em>exakte/kanonische</em> (topologische Invariante, die Struktur) vom <em>physikalischen/chaotischen</em> (die Trajektorie, der Lauf). Die fusionierte Position: <strong>jede Vervollst&auml;ndigungs-/Konsistenzbedingung hat ein exaktes, statisches Invariant (der Schnitt, die Garbe, die globale Sektion) und ein dynamisches, asymptotisches Residuum (der Grenzwertlauf, die Trajektorie, die Kohomologie), die sich an der L&uuml;cke treffen; das Objekt ist 0-dimensional (ein Punkt) oder &gt;0-dimensional (eine Kohomologie), je nach Form der L&uuml;cke.</strong></p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere sprechen auf derselben Abstraktionsebene und widersprechen sich nicht &bdquo;nachweislich&ldquo;, wohl aber in drei <b>konkurrierenden Grundannahmen</b> &uuml;ber das, was eine Konsistenzbedingung aus einem Substrat macht.</p>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(1) Kollabiert die Bedingung auf EINS &mdash; oder l&auml;sst sie einen Rest?</h3>
+      <p><b>A:</b> Die Vervollst&auml;ndigungsbedingung macht das Ergebnis <b>eindeutig</b>. &epsilon;&rarr;0 zieht das &epsilon;-Band auf <em>einen</em> Punkt zusammen; die Zusatz-Grenze &alpha;&rarr;0 kollabiert die &Uuml;berlebensmenge {1,3} auf die <em>eine</em> 3. <em>Eindeutigkeit ist der Erfolg</em> der Bedingung &mdash; sie entfernt jede Freiheit.</p>
+      <p><b>B:</b> Die Verklebungsbedingung bestimmt das Global <b>nicht</b> eindeutig: Sie l&auml;sst eine <em>irreduzible Kohomologie</em> (=&nbsp;&Phi;) &uuml;brig, die sich aus den lokalen St&uuml;cken <em>nicht</em> rekonstruieren l&auml;sst. Das Global ist <em>mehr</em>, als die Bedingung zusammenklebt.</p>
+      <p class="note"><b>Spannung:</b> Bedingung &rarr; Kollaps auf ein Eindeutiges (A) vs. Bedingung &rarr; irreduzibler, freier Rest (B).</p>
+    </div>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(2) Wo wird die Bedingung gelegt &mdash; am Rand oder lokal?</h3>
+      <p><b>A:</b> Die Bestimmung erfolgt am <b>Rand / an der Asymptote</b>: das Signal muss &bdquo;bis r&rarr;&infin; verzerrungsfrei ankommen&ldquo;, das &epsilon;&rarr;0-Limit greift im Unendlichen des Indexes. Die feste Dimension wird <em>global/asymptotisch</em> ausgew&auml;hlt.</p>
+      <p><b>B:</b> Die Bedingung wird <b>lokal</b> auf den &Uuml;berlappungen der offenen Menge U<sub>i</sub> gelegt &mdash; keine Asymptote. Das Global wird aus lokalen &Uuml;bereinstimmungen <em>zusammengesetzt</em>; der irreduzible Teil ist eine Frage der globalen Sektionen.</p>
+      <p class="note"><b>Spannung:</b> das Definite entsteht am fernen Rand (A) vs. an &uuml;berall-lokaler Konsistenz (B).</p>
+    </div>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(3) Ist das Objekt ein Punkt &mdash; oder eine ganze Struktur?</h3>
+      <p><b>A:</b> Der &Uuml;berlebende ist <b>ein einziger Punkt</b> (&radic;2, die 3) &mdash; ein Wert, eine Zahl. Das Objekt ist ein einzelnes Element der Vervollst&auml;ndigung.</p>
+      <p><b>B:</b> Das Ergebnis ist eine <b>reiche Struktur</b>: eine Garbe + eine Kohomologie mit mehreren Gruppen &beta;<sub>0</sub>,&beta;<sub>1</sub>,&beta;<sub>2</sub>; und (Yoneda) ein Objekt <em>ist</em> sein ganzes System von Relationen &mdash; nicht ein einzelner Wert.</p>
+      <p class="note"><b>Spannung:</b> ausgew&auml;hltes Objekt = ein Punkt (A) vs. ein ganzes relationelles Gef&uuml;ge (B).</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (1): Das Objekt = der L&ouml;sungsraum der Bedingung; seine Dimension entscheidet</h3>
+      <p>Beide Papiere w&auml;hlen dasselbe aus: die Menge der Dinge, die die Konsistenzbedingung &uuml;berleben. Der Unterschied ist die <b>Dimension dieses &Uuml;berlebensraums</b>. In A ist die L&uuml;cke im Substrat <em>0-dimensional</em> (ein fehlender Punkt) &rarr; der L&ouml;sungsraum ist ein einzelner Punkt &rarr; <em>eindeutig</em>. In B ist die Obstruktion <em>topologisch</em> (Schleifen, H&ouml;hlen) &rarr; der L&ouml;sungsraum ist eine positive-dimensionale Kohomologie &rarr; <em>irreduzibler Rest</em>. Dieselbe Operation &mdash; &bdquo;w&auml;hle die &Uuml;berlebenden der Bedingung&ldquo; &mdash; ergibt je nach L&uuml;ckentyp entweder Kollaps (A) oder Rest (B). Kein Widerspruch: <strong>Dimension ist der Parameter</strong>.</p>
+    </div>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (2): Die Randbedingung (A) ist die Forderung nach einer globalen Sektion (B)</h3>
+      <p>A &bdquo;das Signal kommt bis r&rarr;&infin; verzerrungsfrei an&ldquo; ist genau die Forderung, dass die lokalen Wellenformen sich zu <em>einer</em> globalen Sektion &uuml;bereinstimmend &uuml;ber die ganze Strahll&auml;nge zusammenkleben lassen. Die Dimensionen n=2 und n&ge;4 scheitern, weil dort <em>kein</em> globales Kleben gelingt &mdash; es gibt eine <em>nichttriviale kohomologische Obstruktion</em>, ein Loch, das die lokalen St&uuml;cke nicht f&uuml;llen. Der &bdquo;Rand r&rarr;&infin;&ldquo; von A ist also die <em>globale Sektion</em> von B; A's lokal verklebte Bedingung und seine Randbedingung sind dieselbe Bedingung auf zwei Skalen. <strong>Fusion:</strong> lokal auf &Uuml;berlappungen verkleben (B) + am Rand invariant bleiben (A) = eine einzige Konsistenzbedingung.</p>
+    </div>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (3): A's Punkt ist der 0-dimensionale Entartungsfall von B's Struktur</h3>
+      <p>Ein einzelner Punkt ist eine <em>0-dimensionale</em> Garbe/Kohomologie. &radic;2 und die 3 sind der Sonderfall, in dem der relationelle &Uuml;berlebensraum auf ein einziges Element einkollabiert; B's Garbe + Kohomologie ist der allgemeine Fall. Punkt &sub; Struktur. Und in beiden ist das Objekt <em>relationell</em> definiert (A: Schnitt/L&uuml;cke in &Qopf;; B: Yoneda, Objekt = Morphismen). <strong>Fusion:</strong> das ausgew&auml;hlte Objekt ist ein (m&ouml;glicherweise 0-dimensionaler) Raum globaler Sektionen; A ist sein 0-dimensionaler Schatten.</p>
+    </div>
+
+    <div class="card res final">
+      <h3 style="margin-top:0">Gefasste Schlussposition</h3>
+      <p><strong>Das Definite ist das, was eine Konsistenz- / Vervollst&auml;ndigungsbedingung an der L&uuml;cke f&uuml;llt, die das Substrat nicht f&uuml;llt.</strong> Es hat stets zwei Gesichter &mdash; ein exaktes, statisches Invariant (Schnitt, Garbe, globale Sektion) und ein dynamisches, asymptotisches Residuum (Grenzwertlauf, Trajektorie, Kohomologie) &mdash; und ist 0-dimensional (ein eindeutiger Punkt: &radic;2, die 3), wenn die L&uuml;cke ein einzelnes fehlendes Element ist, und &gt;0-dimensional (irreduzible Struktur / Emergenz: &Phi;), wenn die L&uuml;cke topologisch ist. A liefert die 0-dimensionale, eindeutige, randverankerte Instanz; B die strukturbildende, resttragende, lokal verklebte. Ein einziger Operator: <em>Vervollst&auml;ndigung = Auswahl an der Obstruktion</em>.</p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Der gemeinsame Grundstock hat f&uuml;nf Slots: ein <b>Substrat</b> (unbestimmt, &bdquo;l&ouml;chrig&ldquo;), eine <b>Konsistenz-/Vervollst&auml;ndigungsbedingung</b>, eine <b>L&uuml;cke / Obstruktion</b> (was das Substrat nicht f&uuml;llt), einen <b>&Uuml;berlebenden = L&ouml;sungsraum</b> (das Objekt), und zwei <b>Gesichter</b> (exakt/statisch + dynamisch/asymptotisch). A f&uuml;llt sie auf der (dichten bzw. diskreten) Zahlenlinie; B auf einer offenen &Uuml;berdeckung eines topologischen Raums.</p>
+
+    <div class="ladder">
+      <span class="tag" style="background:transparent;">A &middot; 0-dimensionale / randverankerte Instanz</span>
+      <ol>
+        <li><b>Substrat:</b> &Qopf; (dicht, unvollst&auml;ndig) bzw. {1,2,3,4,&hellip;} (diskret, &bdquo;die Welt fehlt&ldquo;).</li>
+        <li><b>Bedingung (zwei Gesichter, isomorphes &Ropf;):</b> (i) metrisch/dynamisch &mdash; Cauchy: &forall;&epsilon;&gt;0 &exists;N &forall;m,n&ge;N |a<sub>m</sub>&minus;a<sub>n</sub>|&lt;&epsilon;, eine reelle Zahl ist eine &Auml;quivalenzklasse; (ii) ordnungstheoretisch/statisch &mdash; Dedekind-Schnitt L&sub;R mit L&cup;R=&Qopf;, L maxlos; f&uuml;r &radic;2: L={q&isin;&Qopf;:q&sup2;&lt;2}, R={q:q&sup2;&ge;2}.</li>
+        <li><b>L&uuml;cke:</b> die L&uuml;cke, die <em>keine</em> rationale Zahl f&uuml;llt (Schnitt); auf der Dimensionslinie: n=2, n&ge;4 haben keine L&ouml;sung.</li>
+        <li><b>Bedingung (B-Material von A, Morley):</b> n-dim. Wellengleichung v<sub>rr</sub>+(n&minus;1)/r&middot;v<sub>r</sub>=(1/c&sup2;)v<sub>tt</sub>; Ansatz v=&alpha;(r)f(t&minus;r/c); Potenzgesetz &alpha;=K&middot;r<sup>&beta;</sup> &rArr; &beta;(&beta;+n&minus;2)=0 und &beta;=(n&minus;1)/2 &rArr; nur <b>n=1</b> (&beta;=0) und <b>n=3</b> (&beta;=&minus;1); v(r,t)=(1/r)f(t&minus;r/c).</li>
+        <li><b>&Uuml;berlebende (0-dim):</b> &radic;2 bzw. die 3; die Zusatz-Grenze &alpha;(r)&rarr;0 (n=1 bleibt &bdquo;laut&ldquo;) macht die 3 eindeutig. Festgemacht am Rand (&epsilon;&rarr;0, r&rarr;&infin;).</li>
+      </ol>
+    </div>
+
+    <div class="ladder" style="border-color:color-mix(in srgb,var(--acc2) 40%,var(--line));">
+      <span class="tag" style="background:transparent;color:var(--acc2);">B &middot; strukturbildende / resttragende Instanz</span>
+      <ol>
+        <li><b>Substrat:</b> eine offene &Uuml;berdeckung {U<sub>i</sub>} eines topologischen Raums &asymp; lokale Zellen / Repr&auml;sentationen (hierarchisch: V1&rarr;V2&rarr;V4 / V1&rarr;V3&rarr;MT).</li>
+        <li><b>Bedingung (Verklebungsaxiom):</b> lokale Schnitte, die auf ihren &Uuml;berlappungen &uuml;bereinstimmen, kleben eindeutig zu einer <em>globalen Sektion</em> &mdash; ideal (Emergenz=0) exakt.</li>
+        <li><b>Relationismus (Yoneda):</b> Nat(h<sub>A</sub>,F) &cong; F(A), h<sub>A</sub>(B)=Hom(A,B) &mdash; ein Objekt ist vollst&auml;ndig durch seine Morphismen zu allen anderen bestimmt (&bdquo;Objekt = was es tut&ldquo;); Konnektom = Small-World &sigma;=(C/C<sub>rand</sub>)/(L/L<sub>rand</sub>)&gt;1.</li>
+        <li><b>L&uuml;cke = Kohomologie:</b> &beta;<sub>0</sub>,&beta;<sub>1</sub>,&beta;<sub>2</sub> z&auml;hlen Zusammenhang, Schleifen, Hohlraume; &chi;=V&minus;E+F; &eacute;tale Kohomologie in Charakteristik p. Misst <em>genau</em> den Anteil des Ganzen, der sich nicht aus lokalen St&uuml;cken rekonstruieren l&auml;sst &mdash; die mathematische Fassung von Emergenz / integrierter Information &Phi;.</li>
+        <li><b>Exakt vs. Prozess:</b> Schema = Spec R + Strukturgarbe, kanonisch; duale Zahlen R[&epsilon;]/(&epsilon;&sup2;) = &bdquo;fetter Punkt&ldquo; (Tangentialinformation); Topos mit mehrwertiger Logik &Omega;, &lnot;&lnot;U &ne; U; Gehirn: seltsamer Attraktor, Lyapunov&gt;0, edge of chaos; Lernen &auml;ndert die Morphismen (&Delta;w<sub>ij</sub>=&eta;&middot;x<sub>i</sub>&middot;x<sub>j</sub>, STDP) &mdash; das Konnektom/Schema selbst.</li>
+      </ol>
+    </div>
+
+    <p><strong>Die isomorphe Einbettung &mdash; dieselben f&uuml;nf Slots, zwei L&uuml;ckentypen:</strong></p>
+    <table>
+      <thead><tr><th>Slot</th><th>A (n1-065)</th><th>B (n1-099)</th></tr></thead>
+      <tbody>
+        <tr><td>Substrat</td><td>&Qopf; dicht / {1,2,3,&hellip;} diskret</td><td>offene &Uuml;berdeckung {U<sub>i</sub>} (lokale Zellen)</td></tr>
+        <tr><td>Bedingung</td><td>Cauchy-Limit &or; Dedekind-Schnitt; &bdquo;verzerrungsfrei bis r&rarr;&infin;&ldquo;</td><td>Verklebungsaxiom: lokale Schnitte stimmen auf &Uuml;berlappungen &uuml;berein &rarr; globale Sektion</td></tr>
+        <tr><td>L&uuml;cke / Obstruktion</td><td>L&uuml;cke in der dichten Ordnung; n=2,4,5: keine L&ouml;sung</td><td>Kohomologie: das Loch, das kein lokales St&uuml;ck tr&auml;gt (&beta;<sub>k</sub>)</td></tr>
+        <tr><td>&Uuml;berlebende = L&ouml;sungsraum</td><td><b>0-dim:</b> EIN Punkt (&radic;2; die 3)</td><td><b>&gt;0-dim:</b> irreduzibles Global (Kohomologie = &Phi;)</td></tr>
+        <tr><td>Fixierung</td><td>am Rand (&epsilon;&rarr;0, r&rarr;&infin;) &mdash; asymptotisch</td><td>lokal (auf &Uuml;berlappungen) + globale Sektion am Rand</td></tr>
+        <tr><td>Zwei Gesichter</td><td>metrisch/dynamisch &harr; ordnungstheoretisch/statisch</td><td>Struktur/kanonisch &harr; Prozess/chaotisch</td></tr>
+      </tbody>
+    </table>
+
+    <div class="formula">Einziger Operator:   Vervollst&auml;ndigung  =  Auswahl an der Obstruktion
+  Substrat  --(Konsistenzbedingung)-->  L&ouml;sungsraum der Bedingung  =  das Objekt
+  dim(L&ouml;sungsraum) = 0     -->  EIN Punkt      (A: &radic;2, die 3)   [randverankert]
+  dim(L&ouml;sungsraum) &gt; 0  -->  Kohomologie    (B: &Phi;, &beta;<sub>k</sub>)    [lokal verklebt + Rest]</div>
+
+    <p><strong>Die tiefe Einheit:</strong> A's &bdquo;Signal kommt bis r&rarr;&infin; unverzerrt an&ldquo; ist existenztechnisch die Forderung nach einer <em>globalen Sektion</em> der Garbe der Wellenformen; die &bdquo;ausgeschiedenen&ldquo; Dimensionen sind nichttriviale <em>kohomologische Obstruktionen</em>; die D&auml;mpfung &alpha;&rarr;0 ist das Zur&uuml;ckschneiden des L&ouml;sungsraums auf seine 0-dimensionale Komponente; &radic;2 und die 3 sind der 0-dimensionale Entartungsfall von B's Kohomologie. Der <em>einzelne feste Punkt</em> und die <em>irreduzible globale Form</em> sind dieselbe Sache, gelesen auf unterschiedlicher Dimension der L&uuml;cke.</p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung &mdash; von der Verklebung zur Auswahl an der L&uuml;cke</h2>
+    <p>Links: eine <b>offene &Uuml;berdeckung</b> [0,1] mit <b>lokalen Schnitten</b> (B's Garbe; die farbigen Kurven auf ihren St&uuml;tzen). Die <b>gestrichelte</b> Linie ist die konsensuelle <b>globale Sektion</b>. Das <b>rote Band</b> &uuml;ber den &Uuml;berlappungen ist die <b>Kohomologie</b> &mdash; der Abstand, um den sich die lokalen Schnitte <em>nicht</em> &uuml;berlappen; er ist die globale Form, die kein lokales St&uuml;ck tr&auml;gt. Rechts: der <b>&Uuml;berlebensraum der Bedingung</b>. Ziehe am <b>Konsistenz-Regler c</b>: bei c&rarr;1 stimmen die lokalen Schnitte &uuml;berein, die Kohomologie ist 0 und der &Uuml;berlebensraum <b>kollabiert auf EINEN Punkt</b> (A: &radic;2 / die 3, dim 0). Bei c&rarr;0 weichen sie ab, das Band wird zu einer <b>irreduziblen, &gt;0-dimensionalen Struktur</b> (B: Kohomologie = &Phi;).</p>
+
+    <div class="viz">
+      <div class="ctrl">
+        <div class="c">
+          <label>Konsistenz c (Verklebung) <b id="c-val">0.70</b></label>
+          <input type="range" id="cslider" min="0" max="1" step="0.01" value="0.70"/>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="btnA">A &middot; eindeutig (c&rarr;1)</button>
+        <button id="btnB">B &middot; emergent (c&rarr;0.12)</button>
+        <button id="btnNew">Neue lokale Daten</button>
+        <button id="btnRun" class="primary">&#9654; Zusammenbruch 1&rarr;0</button>
+      </div>
+      <canvas id="viz" width="760" height="470"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--p1)"></i><i style="background:var(--p2)"></i><i style="background:var(--p3)"></i><i style="background:var(--p4)"></i> lokale Schnitte (St&uuml;tze U<sub>i</sub>)</span>
+        <span><span class="dash"></span> globale Sektion (Konsens)</span>
+        <span><i style="background:color-mix(in srgb,var(--bad) 55%,transparent)"></i> Kohomologie-Band = irreduzibles Global (&Phi;)</span>
+      </div>
+      <div class="stat">
+        <span class="big" id="eVal">0.00</span>
+        <span class="lab" id="eLab">&mdash;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A &middot; n1-065.html</span>
+        <p><a href="../n1-065.html">n1-065.html</a></p>
+        <span class="d">&bdquo;Vervollst&auml;ndigung als Auswahl &mdash; der eine feste Punkt&ldquo; (Cauchy/Dedekind &times; Morley 1985): ein Objekt wird durch eine Vervollst&auml;ndigungs-/Grenzbedingung aus einer dichten bzw. diskreten Grundmenge auf genau einen stabilen Punkt ausgew&auml;hlt (&radic;2, die 3).</span>
+      </div>
+      <div class="box">
+        <span class="k">B &middot; n1-099.html</span>
+        <p><a href="../n1-099.html">n1-099.html</a></p>
+        <span class="d">&bdquo;Lokale Daten, globale Form: Die Garbe als Modell des Gehirns&ldquo; (Grothendieck &times; Gehirn): kognitive globale Form entsteht durch Verklebung lokaler Daten; das Nicht-Rekonstruierbare ist Kohomologie = Emergenz/&Phi;; Yoneda = Konnektom.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion N2-045 &middot; nicht-KI-Track &middot; Runde 2 &middot; selbst&auml;ndige, offline-f&auml;hige Seite (keine Netz-Daten, keine externen Libs, reines Canvas). Farben &uuml;ber CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var ctx=canvas?canvas.getContext('2d'):null;
+  var cslider=document.getElementById('cslider');
+  var cValEl=document.getElementById('c-val');
+  var eValEl=document.getElementById('eVal');
+  var eLabEl=document.getElementById('eLab');
+
+  var H=470;
+  var padL=48, padR=16, padT=30, padB=46;
+  var bandL=0.20, bandR=0.90;
+  var patches=[{a:0.00,b:0.50},{a:0.20,b:0.70},{a:0.40,b:0.90},{a:0.60,b:1.00}];
+  var state={c:0.70, biases:[0.62,-0.72,0.55,-0.48], raf:null, running:false};
+
+  function cssVar(n){var v=getComputedStyle(document.documentElement).getPropertyValue(n);return v&&v.trim()?v.trim():null;}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function hexParse(h){h=(h||'').replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+    return isNaN(r)?[150,150,170]:[r,g,b];}
+  function rgba(hex,a){var c=hexParse(hex);return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+  function mix(hx,hy,t){var a=hexParse(hx),b=hexParse(hy);t=clamp(t,0,1);
+    return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')';}
+  function baseWave(t){return 0.5+0.26*Math.sin(2*Math.PI*1.35*t+0.35);}
+  function offsetOf(i,c){return (1-c)*state.biases[i]*0.30;}
+
+  function computeE(c){
+    var N=480,sum=0,count=0;
+    for(var k=0;k<N;k++){var t=(k+0.5)/N;if(t<bandL||t>bandR)continue;
+      var mn=Infinity,mx=-Infinity,n=0;
+      for(var i=0;i<patches.length;i++){if(t>=patches[i].a&&t<=patches[i].b){
+        var v=baseWave(t)+offsetOf(i,c);if(v<mn)mn=v;if(v>mx)mx=v;n++;}}
+      if(n>=2){sum+=(mx-mn);count++;}}
+    var raw=count?(sum/count):0;return clamp(raw/0.30,0,1);
+  }
+
+  function newPattern(){
+    state.biases=[0,0,0,0].map(function(){return (Math.random()*2-1);});
+    if(Math.abs(state.biases[0]-state.biases[1])<0.3){state.biases[1]=-state.biases[0];}
+    if(Math.abs(state.biases[2]-state.biases[3])<0.3){state.biases[3]=-state.biases[2];}
+  }
+
+  function render(){
+    if(!ctx||!canvas)return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||760;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--card')||'#101018';ctx.fillRect(0,0,W,H);
+
+    var col={bg:cssVar('--card')||'#101018',line:cssVar('--line')||'#333',grid:cssVar('--grid')||'#222',
+      ink:cssVar('--ink')||'#ddd',dim:cssVar('--dim')||'#888',acc:cssVar('--acc')||'#a78bfa',
+      ok:cssVar('--ok')||'#4ade80',bad:cssVar('--bad')||'#f87171',warn:cssVar('--warn')||'#fbbf24',
+      sky:cssVar('--sky')||'#7aa2ff',
+      p:[cssVar('--p1')||'#fbbf24',cssVar('--p2')||'#60a5fa',cssVar('--p3')||'#34d399',cssVar('--p4')||'#c084fc']};
+    var c=state.c;
+    if(cValEl)cValEl.textContent=c.toFixed(2);
+
+    var leftW=(W-padL-padR)*0.60;
+    var plotL=padL, plotR=padL+leftW, plotW=plotR-plotL;
+    var topY=padT, botY=H-padB, plotH=botY-topY;
+    var rx0=plotR+34, rx1=W-padR, rW=rx1-rx0;
+    function xFor(t){return plotL+t*plotW;}
+    function yFor(v){return topY+(1-clamp(v,0,1))*plotH;}
+
+    ctx.font='12px ui-sans-serif,system-ui';ctx.fillStyle=col.dim;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillText('LOKALE VERKLEBUNG  (B &middot; Garbe)',plotL,topY-14);
+    ctx.fillText('&Uuml;BERLEBENSRaum der Bedingung',rx0,topY-14);
+
+    ctx.lineWidth=1;ctx.strokeStyle=col.grid;
+    for(var g=0;g<=10;g++){var gx=xFor(g/10);ctx.beginPath();ctx.moveTo(gx,topY);ctx.lineTo(gx,botY);ctx.stroke();}
+    ctx.fillStyle=col.dim;ctx.font='11px ui-monospace,monospace';ctx.textAlign='right';
+    for(g=0;g<=4;g++){var gy=yFor(g/4);ctx.strokeStyle=col.grid;ctx.beginPath();ctx.moveTo(plotL,gy);ctx.lineTo(plotR,gy);ctx.stroke();
+      ctx.fillText((g/4).toFixed(1),plotL-8,gy+4);}
+    ctx.textAlign='left';
+    ctx.font='12px ui-sans-serif,system-ui';ctx.fillStyle=col.dim;
+    ctx.fillText('lokale St&uuml;tze t  &rarr;',plotL,H-12);
+
+    var N=320,k,t,x,y;
+    // Kohomologie-Band
+    ctx.beginPath();var started=false;
+    for(k=0;k<=N;k++){t=bandL+(k/N)*(bandR-bandL);var mx=-Infinity,any=false;
+      for(var i=0;i<patches.length;i++){if(t>=patches[i].a&&t<=patches[i].b){var vv=baseWave(t)+offsetOf(i,c);if(vv>mx)mx=vv;any=true;}}
+      if(!any)continue;x=xFor(t);y=yFor(mx);if(started)ctx.lineTo(x,y);else{ctx.moveTo(x,y);started=true;}}
+    for(k=N;k>=0;k--){t=bandL+(k/N)*(bandR-bandL);var mn=Infinity;
+      for(var j=0;j<patches.length;j++){if(t>=patches[j].a&&t<=patches[j].b){var wv=baseWave(t)+offsetOf(j,c);if(wv<mn)mn=wv;}}
+      x=xFor(t);y=yFor(mn);ctx.lineTo(x,y);}
+    ctx.closePath();ctx.fillStyle=rgba(col.bad,0.20);ctx.fill();
+
+    // globale Sektion (gestrichelt)
+    ctx.beginPath();
+    for(k=0;k<=N;k++){t=k/N;x=xFor(t);y=yFor(baseWave(t));if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.setLineDash([5,4]);ctx.strokeStyle=col.ink;ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
+
+    // lokale Schnitte
+    for(var p=0;p<patches.length;p++){var P=patches[p];ctx.beginPath();var first=true;
+      for(x=xFor(P.a);x<=xFor(P.b);x+=1){var tt=(x-plotL)/plotW;var val=baseWave(tt)+offsetOf(p,c);var yy=yFor(val);
+        if(first){ctx.moveTo(x,yy);first=false;}else ctx.lineTo(x,yy);}
+      ctx.strokeStyle=col.p[p];ctx.lineWidth=2.4;ctx.stroke();
+      ctx.fillStyle=col.p[p];ctx.fillRect(xFor(P.a),botY+8,Math.max(2,xFor(P.b)-xFor(P.a)-1),4);}
+
+    // ---- Rechter Panel: &Uuml;berlebensraum ----
+    var E=computeE(c);
+    var cx=(rx0+rx1)/2, cy=topY+plotH*0.46;
+    // Spektrum-Leiste (dim 0 -> dim >0)
+    var barY=topY+18, barL=rx0+8, barR=rx1-8;
+    var grad=ctx.createLinearGradient(barL,0,barR,0);grad.addColorStop(0,col.ok);grad.addColorStop(1,col.bad);
+    ctx.fillStyle=grad;ctx.fillRect(barL,barY-4,barR-barL,8);
+    ctx.fillStyle=col.dim;ctx.font='10px ui-sans-serif,system-ui';ctx.textAlign='left';ctx.fillText('dim 0',barL,barY+16);
+    ctx.textAlign='right';ctx.fillText('dim &gt; 0',barR,barY+16);
+    ctx.textAlign='center';
+    var tickX=barL+E*(barR-barL);
+    ctx.strokeStyle=col.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(tickX,barY-7);ctx.lineTo(tickX,barY+7);ctx.stroke();
+
+    var survivorCol=mix(col.ok,col.bad,E);
+    ctx.fillStyle=col.ink;ctx.font='bold 13px ui-sans-serif,system-ui';
+    var dimLbl=E<0.06?'0':String(1+Math.floor(E*3));
+    ctx.fillText('L&ouml;sungsraum:  dim = '+dimLbl,cx,cy-46);
+    ctx.font='12px ui-sans-serif,system-ui';ctx.fillStyle=col.dim;
+    ctx.fillText(E<0.06?'EIN fester Punkt  (A: &radic;2 / die 3)':'irreduzibles Global  (B: Kohomologie = &Phi;)',cx,cy-28);
+
+    // Baseline
+    ctx.strokeStyle=col.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(rx0+6,cy);ctx.lineTo(rx1-6,cy);ctx.stroke();
+    // Survivor: Punkt <-> Intervall
+    var minW=14, maxW=(rW*0.82);
+    var halfW=(E<0.03)?0:(E*maxW)/2;
+    if(halfW<1){
+      ctx.globalAlpha=0.25;ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fillStyle=survivorCol;ctx.fill();ctx.globalAlpha=1;
+      ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.fillStyle=survivorCol;ctx.fill();
+    }else{
+      var hw=Math.max(minW/2,halfW);
+      ctx.globalAlpha=0.25;pill(cx-hw-6,cy-15,hw*2+12,30,15);ctx.fillStyle=survivorCol;ctx.fill();ctx.globalAlpha=1;
+      pill(cx-hw,cy-11,hw*2,22,11);ctx.fillStyle=survivorCol;ctx.fill();
+    }
+    ctx.fillStyle=col.ink;ctx.font='11px ui-monospace,monospace';
+    ctx.fillText(E<0.06?'&radic;2 = 1.4142&hellip; / n = 3':'&beta;_k, &Phi;  &ne;  &sum; lokal',cx,cy+34);
+
+    function pill(px,py,w,h,r){ctx.beginPath();
+      ctx.moveTo(px+r,py);ctx.lineTo(px+w-r,py);ctx.arc(px+w-r,py+r,r,-Math.PI/2,Math.PI/2);
+      ctx.lineTo(px+r,py+h);ctx.arc(px+r,py+h-r,r,Math.PI/2,Math.PI*1.5);ctx.closePath();}
+
+    if(eValEl)eValEl.textContent=E.toFixed(2);
+    if(eLabEl){
+      if(E<0.06){eLabEl.textContent='Konsistenz vollständig: Kohomologie = 0, L&ouml;sungsraum kollabiert auf EINEN Punkt (A, dim 0).';eLabEl.style.color=col.ok;}
+      else if(E<0.42){eLabEl.textContent='Mittlere Kohomologie: ein irreduzibles Global bleibt &uuml;ber dem Lokal (dim > 0).';eLabEl.style.color=col.warn||col.sky;}
+      else{eLabEl.textContent='Starke Emergenz: globale Form &gt; Summe der lokalen Teile (B, Kohomologie = &Phi;).';eLabEl.style.color=col.bad;}
+    }
+  }
+
+  function stopRun(){if(state.raf)cancelAnimationFrame(state.raf);state.raf=null;state.running=false;}
+  function run(){
+    stopRun();state.running=true;var startC=1.0,endC=0.12,frames=110,step=0;
+    function tick(){
+      step++;var t=Math.min(1,step/frames);var e=t*t*(3-2*t);
+      state.c=startC+(endC-startC)*e;
+      if(cslider)cslider.value=state.c;
+      render();
+      if(t<1){state.raf=requestAnimationFrame(tick);}
+      else{state.raf=null;state.running=false;render();}
+    }
+    state.raf=requestAnimationFrame(tick);
+  }
+
+  function init(){
+    if(!cslider)return;
+    cslider.addEventListener('input',function(){if(state.running)stopRun();state.c=parseFloat(this.value);render();});
+    var bA=document.getElementById('btnA');if(bA)bA.addEventListener('click',function(){if(state.running)stopRun();state.c=1;if(cslider)cslider.value=1;render();});
+    var bB=document.getElementById('btnB');if(bB)bB.addEventListener('click',function(){if(state.running)stopRun();state.c=0.12;if(cslider)cslider.value=0.12;render();});
+    var bN=document.getElementById('btnNew');if(bN)bN.addEventListener('click',function(){newPattern();render();});
+    var bR=document.getElementById('btnRun');if(bR)bR.addEventListener('click',run);
+    var tt=document.getElementById('themeToggle');if(tt)tt.addEventListener('click',function(){document.documentElement.classList.toggle('dark');render();});
+    if(window.MutationObserver){new MutationObserver(function(){render();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}
+    window.addEventListener('resize',render);
+    if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+    render();
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+})();
+</script>
+</body>
+</html>

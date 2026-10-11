@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grob klassifiziert, fein unterschieden — Invarianten über Auflösungsstufen (Fusion 023)</title>
+<style>
+  :root{
+    --bg:#f7f6f2; --bg-alt:#efece4; --surface:#ffffff;
+    --text:#1f2430; --muted:#5a6072; --border:#d8d4c8;
+    --accent:#4f5fd6; --accent2:#7a4fb0;
+    --c-manifold:#3f56d6; --c-orbifold:#c92f98; --c-cone:#d92d2d;
+    --viz-bg:#ffffff; --shadow:0 10px 30px rgba(20,20,40,.08);
+  }
+  html.dark{
+    --bg:#0b0d16; --bg-alt:#0e1220; --surface:#141a2b;
+    --text:#e7e9f2; --muted:#9aa1b5; --border:#2a3145;
+    --accent:#8492ff; --accent2:#b07fd6;
+    --c-manifold:#6f8bff; --c-orbifold:#f07ad0; --c-cone:#ff6b6b;
+    --viz-bg:#0f1526; --shadow:0 12px 34px rgba(0,0,0,.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Georgia','Iowan Old Style',serif;
+    background:var(--bg); color:var(--text);
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+    transition:background .3s ease,color .3s ease; overflow-x:hidden;
+  }
+  article{max-width:820px;margin:0 auto;padding:48px 22px 90px;}
+  header{text-align:center;margin-bottom:34px;position:relative;}
+  h1{font-size:2.0rem;line-height:1.2;letter-spacing:-.5px;margin-bottom:10px;}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;}
+  .lede{color:var(--muted);font-size:1.02rem;margin-top:12px;font-style:italic;}
+  .theme-btn{
+    position:absolute;top:0;right:0;cursor:pointer;
+    background:transparent;border:1px solid var(--border);color:var(--muted);
+    padding:6px 12px;border-radius:20px;font-size:.8rem;font-family:inherit;transition:all .2s;
+  }
+  .theme-btn:hover{border-color:var(--accent);color:var(--accent);}
+  section{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:24px 26px;margin-bottom:24px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  section::before{
+    content:'';position:absolute;inset:0 0 auto 0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.6;
+  }
+  h2{font-size:1.35rem;margin-bottom:14px;color:var(--accent);letter-spacing:-.3px;}
+  html.dark h2{color:var(--accent2);}
+  h3{font-size:1.06rem;margin:20px 0 8px;color:var(--text);}
+  p{margin-bottom:12px;}
+  p:last-child{margin-bottom:0;}
+  .lead{font-size:1.05rem;}
+  .muted{color:var(--muted);}
+  .hl{color:var(--accent);font-weight:600;}
+  .slogan{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.98rem;color:var(--accent);letter-spacing:.4px;}
+  .tag{
+    display:inline-block;font-size:.72rem;font-family:monospace;
+    border:1px solid var(--border);border-radius:6px;padding:1px 7px;
+    color:var(--muted);margin-right:6px;vertical-align:middle;
+  }
+  .tag.A{color:var(--c-manifold);border-color:var(--c-manifold);}
+  .tag.B{color:var(--c-orbifold);border-color:var(--c-orbifold);}
+  .claim{
+    border-left:3px solid var(--border);padding:10px 16px;margin:14px 0;
+    background:var(--bg-alt);border-radius:0 8px 8px 0;font-size:.96rem;
+  }
+  .claim.A{border-left-color:var(--c-manifold);}
+  .claim.B{border-left-color:var(--c-orbifold);}
+  .claim .who{font-weight:bold;display:block;margin-bottom:5px;font-size:.85rem;}
+  .claim.A .who{color:var(--c-manifold);}
+  .claim.B .who{color:var(--c-orbifold);}
+  .bridge{
+    border-left:3px solid var(--accent);padding:10px 16px;margin:14px 0;
+    background:var(--bg-alt);border-radius:0 8px 8px 0;
+  }
+  .bridge .who{font-weight:bold;color:var(--accent);display:block;margin-bottom:5px;font-size:.85rem;}
+  .math{text-align:center;margin:16px 0;overflow-x:auto;color:var(--text);font-size:1.06rem;}
+  .note{font-size:.86rem;color:var(--muted);margin-top:6px;}
+  ul{margin:8px 0 12px 22px;}
+  li{margin-bottom:7px;}
+  table{width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:.9rem;}
+  th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--bg-alt);font-weight:600;}
+  code{background:var(--bg-alt);padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;}
+  .prov a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+  .prov a:hover{border-bottom-style:solid;}
+  .prov li{margin-bottom:14px;}
+  /* viz */
+  .viz-wrap{margin-top:16px;}
+  #vizCanvas{
+    display:block;width:100%;border:1px solid var(--border);
+    border-radius:10px;background:var(--viz-bg);
+  }
+  .viz-controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin-top:14px;}
+  .viz-controls label{font-size:.9rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+  .viz-controls input[type=range]{accent-color:var(--accent);width:140px;vertical-align:middle;}
+  .viz-controls .val{font-family:monospace;color:var(--accent);min-width:22px;display:inline-block;}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+  .seg button{padding:7px 12px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:.84rem;font-family:inherit;}
+  .seg button.active{background:var(--accent);color:var(--bg);}
+  .readout{display:grid;gap:8px;margin-top:14px;}
+  .ro{display:flex;gap:10px;align-items:baseline;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.9rem;background:var(--bg-alt);}
+  .ro .rol{flex:0 0 132px;font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.4px;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--muted);margin-top:10px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+  .caption{font-size:.86rem;color:var(--muted);margin-top:10px;}
+  @media(max-width:560px){.ro{flex-direction:column;gap:4px;}.ro .rol{flex:none;}}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Grob klassifiziert, fein unterschieden</h1>
+    <p class="subtitle">Fusion aus: n1-085.html &#10021; n1-088.html &nbsp;(Runde 2)</p>
+    <p class="lede">Zwei Runde-1-Integrationen, ein Meta-Muster: Invarianten&nbsp;&uuml;ber Aufl&ouml;sungsstufen,
+      bei denen die grobe Invariante <em>klassifiziert</em> und die feine Struktur &mdash; lokal sichtbar
+      (Kegel-Punkt) oder global verborgen (exotischer Twist) &mdash; den <em>kategorischen</em> Unterschied tr&auml;gt.</p>
+    <button class="theme-btn" id="themeToggle">Theme umschalten</button>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Runde-1-Papiere sind, auf ihre These abstrahiert, <em>dasselbe Argument in zwei
+      Dom&auml;nen</em>: <span class="hl">Ein System ist eine Hierarchie von Invarianten &uuml;ber mehrere
+      Aufl&ouml;sungsstufen.</span> Auf der <em>grob</em>en Ebene sieht das System <em>identisch</em> aus
+      (eine glatte Scheibe / ein Quotient&nbsp;X/G; topologisch eine Kugel / eine Kalorienbilanz) &mdash; die grobe
+      Invariante <strong>klassifiziert</strong>. Auf einer <em>feiner</em>en Ebene ist es
+      <em>grundlegend, nicht wegzudeformieren</em> verschieden: der eine Unterschied wohnt in der
+      <span class="tag A">A</span> Feinstruktur <em>Stabilisator&nbsp;C<sub>n</sub> &rarr; Kegel-Punkt</em>
+      (Orbifold vs. glatte Mannigfaltigkeit), der andere in der
+      <span class="tag B">B</span> Feinstruktur <em>Glattstruktur / GI-Fett-Dynamik</em>
+      (exotische Sph&auml;re; Blutzucker-Crash). Die beobachtbaren Zustände sind dabei in beiden Welten
+      <strong>kategorisch</strong> (Ordnung&nbsp;n; eine von 28 Glattstrukturen; &bdquo;Schwitzen:
+      wahrscheinlich/m&ouml;glich/unwahrscheinlich&rdquo;), w&auml;hrend die zugrunde liegenden Parameter
+      <strong>kontinuierlich</strong> sind (Winkel, Verklebung, Kalorien, GI).</p>
+    <p><span class="tag A">A</span> (Quotient durch Symmetrie) liefert die <em>Operation</em>, die diese
+    Hierarchie erzeugt, und nennt ihren Namen: <span class="slogan">&bdquo;It's all representation
+    theory&rdquo;</span> / <span class="slogan">X/G</span>. Der Quotient einer Gruppenwirkung ist die grobe
+    Schicht; der <em>nicht vergessene</em> Stabilisator (der Fixpunkt, der Kegel-Punkt) ist die Feinschicht.
+    <span class="tag B">B</span> (exotische Sph&auml;ren &times; K&ouml;rper) liefert die <em>Erfahrung</em>
+    dieser Hierarchie: das Feine ist nicht nebens&auml;chlich, es ist genau die <em>erlebte Funktion</em>
+    (Crash/Schwitzen; der unverformbare Twist). Die beiden sind zwei Seiten derselben Medaille.</p>
+    <p><strong>Der fusionierte Kern:</strong> <span class="hl">Die grobe Invariante ist immer ein
+    <em>Quotient, der die Feinstruktur vergisst</em>.</span> &bdquo;Grob&rdquo; ist nie die fundamentalere Ebene
+    &mdash; es ist die <em>verlustbehaftete Projektion</em> des feinen Objekts: A's glatte Mannigfaltigkeit
+    entsteht aus dem Orbifold, indem man den Stabilisator vergisst (freie Wirkung); B's nackte Topologie-Sph&auml;re
+    entsteht aus der exotischen, indem man die Glattstruktur vergisst; B's Kalorienbilanz entsteht aus dem vollen
+    GI-Modell, indem man GI/Fett vergisst. Die Feinstruktur ist also das <em>allgemeinere</em> Objekt, die grobe
+    Ebene der <em>Spezialfall</em>, in dem die kategoriale Invariante quotientiert wurde. Und weil das Feine
+    <em>diskret</em> ist, steuern <strong>kontinuierliche Regler kategorische Zust&auml;nde</strong>
+    (&bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&rdquo;). Die gemeinsame epistemische Regel beider Papiere:
+    <span class="hl">Nenne deine Aufl&ouml;sung und dein offenes Problem</span> &mdash; die relevante
+    Unterschiedlichkeit lebt genau auf der Aufl&ouml;sung, in der man fragt. <span class="tag A">A</span>
+    gesteht das 4-dimensionale Smooth-Poincar&eacute;-Problem als offen zu; <span class="tag B">B</span> nennt den
+    Mifflin-St-Jeor-Grundumsatz ausdr&uuml;cklich eine &bdquo;male approximation, age&nbsp;~30&rdquo;.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p class="muted">A und B arbeiten in <strong>unterschiedlichen Dom&auml;nen</strong> (geometrische
+    Gruppenquotienten / Mannigfaltigkeitstheorie vs. Differentialtopologie &times; Ern&auml;hrungsphysiologie) und
+    treffen <em>keine direkt widerspr&uuml;chlichen Tatsachenaussagen</em> &mdash; einen faktischen Konflikt w&uuml;rden
+    wir nicht erfinden. Es gibt aber <strong>zwei echte, nicht konstruierte Spannungen in der Haltung</strong>
+    (in welcher Ebene das Wesentliche liegt und wo die Feinstruktur &bdquo;lebt&rdquo;):</p>
+
+    <p><strong>Widerspruch&nbsp;1 &mdash; Welche Ebene ist die fundamentale / normale?</strong></p>
+    <div class="claim A">
+      <span class="who">A (n1-085) &mdash; Fein ist der Normalfall</span>
+      &bdquo;Glattheit ist der Spezialfall, Singularit&auml;t der allgemeine Fall &mdash; und beides ist
+      <em>dasselbe Objekt</em>, der Quotient&nbsp;X/G.&rdquo; A stellt die <em>feine/singul&auml;re</em> Schicht
+      (das Orbifold mit Kegel-Punkt, der nicht-triviale Stabilisator) als den <strong>allgemeinen Fall</strong>
+      auf; das glatte Blatt ist nur der <em>Ausnahmefall</em> (freie Wirkung). Die Feinstruktur <em>ist</em> der
+      Punkt, und das Glatte ist das, was man davon vergisst.
+    </div>
+    <div class="claim B">
+      <span class="who">B (n1-088) &mdash; Grob ist das Grundprinzip</span>
+      &bdquo;Isst du mehr Energie als du verbrauchst &rarr; K&ouml;rper speichert den Rest als Fett.
+      <strong>So einfach ist das Grundprinzip.</strong>&rdquo; B stellt die <em>grobe</em> Ebene (Kalorienbilanz,
+      Topologie) als das <strong>fundamentale Prinzip</strong> auf; die Feinstruktur (GI, Fetttyp) wird erst
+      &bdquo;als sekund&auml;re Verfeinerung&rdquo; auf das einfache Modell nachger&uuml;stet.
+    </div>
+    <p><strong>Die Spannung:</strong> A sagt, die Feinstruktur sei der <em>allgemeine</em> Fall und das Glatte der
+    Spezialfall; B sagt, die grobe Ebene sei das <em>Grundprinzip</em> und das Feine optional nachr&uuml;stbar.
+    Inkompatibel dar&uuml;ber, welche Ebene <em>a priori</em> fundamental ist.</p>
+
+    <p><strong>Widerspruch&nbsp;2 &mdash; Wo lebt die verborgene Feinstruktur: lokal sichtbar oder global unsichtbar?</strong></p>
+    <div class="claim A">
+      <span class="who">A (n1-085) &mdash; Feinstruktur mit lokalem Avatar</span>
+      Die Feinstruktur hat einen <em>lokalen, einsehbaren</em> Tr&auml;ger: Der Kegel-Punkt / Fixpunkt zeigt seinen
+      reduzierten Winkel (360&deg;/n = 2&pi;/n) <em>direkt an der Stelle</em>. Der Defekt ist <strong>lokal
+      geometrisch sichtbar</strong> &mdash; man sieht den Kegel-Punkt.
+    </div>
+    <div class="claim B">
+      <span class="who">B (n1-088) &mdash; Feinstruktur ohne lokalen Avatar</span>
+      Die Feinstruktur (exotische Glattstruktur) ist explizit <em>global und lokal unsichtbar</em>:
+      &bdquo;keine einzelne Koordinatenkarte offenbart sie; nur die &Uuml;berg&auml;nge zwischen allen Karten
+      zusammen.&rdquo; Die Exotizit&auml;t ist an <em>keiner</em> einzelnen Stelle zu sehen.
+    </div>
+    <p><strong>Die Spannung:</strong> Beide sprechen von &bdquo;verborgener Feinstruktur&rdquo;, aber bei A ist sie
+    <em>lokal sichtbar</em> (der Kegel-Punkt), bei B <em>global/lokal unsichtbar</em> (der Twist). Unterschiedliche
+    Auffassung davon, ob &mdash; und wo &mdash; die Feinstruktur lokal detektierbar ist.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+
+    <h3>1. Grob ist der Quotient, der die Feinstruktur vergisst</h3>
+    <div class="bridge"><span class="who">Aufl&ouml;sung zu Widerspruch&nbsp;1</span>
+    Weder Ebene ist absolut fundamental &mdash; aber sie sind <em>nicht symmetrisch</em>. Der fusionierte Br&uuml;ckenschlag
+    (der A's &bdquo;Quotient durch Symmetrie&rdquo; als die Meisteridee einbaut): Die <strong>grobe Invariante ist
+    immer ein Quotient, der die Feinstruktur vergisst</strong>. In <span class="tag A">A</span> ist die glatte
+    Mannigfaltigkeit (grob) genau das, was aus dem Orbifold (fein) &uuml;brigbleibt, wenn die Wirkung frei ist &mdash;
+    man vergisst den Stabilisator&nbsp;C<sub>n</sub>, den Kegel-Punkt. In <span class="tag B">B</span> ist die nackte
+    Topologie-Sph&auml;re (grob) das, was aus der exotischen &uuml;brigbleibt, wenn man die Glattstruktur vergisst;
+    und die Kalorienbilanz (grob) das, was aus dem vollen GI-Modell &uuml;brigbleibt, wenn man GI/Fett vergisst.
+    <strong>Fusion:</strong> &bdquo;Grob&rdquo; ist niemals fundamentalere Ebene &mdash; es ist der
+    <em>Spezialfall</em>, in dem die kategoriale Invariante quotientiert wurde. Das l&ouml;st die Spannung: B's
+    &bdquo;grob ist das Grundprinzip&rdquo; ist <em>f&uuml;r die Praxis</em> richtig (die grobe Schicht klassifiziert
+    und l&auml;sst sich einfach handhaben), aber A's &bdquo;fein ist der allgemeine Fall&rdquo; ist
+    <em>logisch/fundamental</em> richtig &mdash; das Grobe ist ein Quotient des Feinen. &bdquo;Fein ist general, grob
+    ist der Quotient.&rdquo;</div>
+
+    <h3>2. Dieselbe Mechanik, zwei Pr&auml;sentationen: lokal vs. global</h3>
+    <div class="bridge"><span class="who">Aufl&ouml;sung zu Widerspruch&nbsp;2</span>
+    Beide &bdquo;Feinstrukturen&rdquo; sind <em>dasselbe Objekt</em>: eine <strong>diskrete, kategoriale,
+    nicht-wegzudeformierende Invariante, die die grobe Schicht vergisst</strong>. Der einzige Unterschied ist die
+    <em>Pr&auml;sentation</em>: <span class="tag A">A</span>'s Invariante (Stabilisator&nbsp;C<sub>n</sub>
+    &rarr; Kegel-Punkt) tr&auml;gt einen <strong>lokalen geometrischen Avatar</strong> (man sieht den reduzierten
+    Winkel an der Stelle); <span class="tag B">B</span>'s Invariante (Glattstruktur / Verklebung) ist
+    <strong>rein global</strong> (keine einzelne Karte offenbart sie). Die <em>definierende</em> Eigenschaft einer
+    Feinstruktur ist also nicht &bdquo;lokal sichtbar&rdquo;, sondern: (a) sie ist <em>diskret/kategorisch</em>,
+    (b) die groben Daten <em>konnen sie nicht zur&uuml;ckgewinnen</em>, (c) sie ist <em>nicht deformierbar</em>
+    (&bdquo;baked in&rdquo;, &bdquo;a theorem, not a choice&rdquo;). Lokale Sichtbarkeit (A) vs. globale
+    Unsichtbarkeit (B) ist nur ein <em>Spektrum</em>, in dem dieselbe Invariante auftritt. Die Visualisierung unten
+    macht dies live: bei <em>grob</em>er Aufl&ouml;sung sind A und B <strong>identisch</strong> (beide nur eine glatte
+    Quotienten-Scheibe); bei <em>feiner</em> Aufl&ouml;sung enth&uuml;lt A einen <strong>lokalen</strong> Kegel-Punkt,
+    B nur eine <strong>globale</strong> Invariante (&chi;<sub>orb</sub>) ohne lokalen Marker.</div>
+
+    <div class="bridge"><span class="who">Fusions-Schlussfolgerung</span>
+    <span class="hl">Ein System = (grobe Invariante, feine Struktur, Aufl&ouml;sung).</span> Die grobe Invariante
+    klassifiziert (und ist ein Quotient des Feinen); die feine Struktur tr&auml;gt den kategorischen,
+    nicht-wegzudeformierenden Unterschied und pr&auml;sentiert sich lokal (Kegel-Punkt) oder global (Glattstruktur);
+    kontinuierliche Regler (Winkel, Verklebung, kcal/GI) steuern die diskreten Zust&auml;nde
+    (&bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&rdquo;). Man benennt die <em>eigene</em> Aufl&ouml;sung &mdash; und das
+    offene Problem (A: 4-dim. Smooth-Poincar&eacute;; B: Mifflin-St-Jeor-N&auml;herung). Genau darauf lebt die
+    Antwort, die man auf die <em>eigene</em> Frage sucht.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das Meta-Modell: Aufl&ouml;sungshierarchie (gemeinsames R&uuml;ckgrat)</h3>
+    <p>Jedes System wird hier als <em>Dreierpaar</em> gelesen: <strong>(grobe Invariante, feine Struktur,
+    w&a4hlebare Aufl&ouml;sung)</strong>. Die grobe Invariante <em>klassifiziert</em>; die feine Struktur &mdash;
+    lokal sichtbar (A) oder global verborgen (B) &mdash; tr&auml;gt den <em>kategorischen</em> Unterschied;
+    kontinuierliche Regler steuern diskrete Zust&auml;nde. Das Leitmotto
+    <span class="slogan">topologisch &cong;, glatt &ne;</span> (B) bekommt in A seinen geometrischen Zwillings-
+    Satz <span class="slogan">X/G glatt (frei) vs. X/G Orbifold (nicht frei)</span>. Gleiche grobe Gestalt,
+    andere feine Struktur &rarr; anderes Ergebnis.</p>
+
+    <h3><span class="tag A">A</span> &mdash; Quotient durch Symmetrie (als konkrete Realisierung)</h3>
+    <p>Die <em>eine Operation</em> beider Seiten: <span class="slogan">X/G</span> &mdash; &bdquo;Every time you say
+    &lsquo;these are essentially the same,&rsquo; you&rsquo;re quotienting by a group action.&rdquo; Die
+    <em>freie</em> Wirkung (kein Punkt bleibt fest, trivialer Stabilisator) ergibt eine glatte
+    <strong>Mannigfaltigkeit</strong> (lokal &cong; &RBB;<sup>n</sup>; Quadrat mit gegen&uuml;blichen Kanten
+    &rarr; Torus). Die <em>nicht-freie</em> Wirkung ergibt einen <strong>Orbifold</strong>: ein Punkt&nbsp;p mit
+    endlichem, nicht-trivialem Stabilisator G<sub>p</sub>&thinsp;&cong;&thinsp;C<sub>n</sub> (n Bl&auml;tter fallen
+    auf einen Punkt) wird zum <strong>Kegel-Punkt der Ordnung&nbsp;n</strong> mit Kegelwinkel 2&pi;/n = 360&deg;/n.
+    Die Br&uuml;cke: <em>Fixpunkt = Kegel-Punkt = Punkt mit nicht-trivialem Stabilisator</em> &mdash; dieselbe Zahl
+    n von zwei Seiten (A: Ordnung des Stabilisators, &bdquo;g&middot;x = x&rdquo;; B: gefaltete Bl&auml;tter,
+    reduzierter Winkel). Kanonische Beispiele: <em>Teardrop</em> S&sup2;(n), <em>Football</em> S&sup2;(2,3),
+    <em>Pillow</em> S&sup2;(2,2,2,2). A fasselt alles als Repr&auml;sentationstheorie: &bdquo;It's all representation
+    theory&rdquo; (Konvolution, Fixpunkte, Entropie, Fourier-Dualit&auml;t, Mannigfaltigkeiten, Gruppenwirkungen),
+    &bdquo;Manifolds are the quotient spaces of high-dimensional groups&rdquo;, und &bdquo;There are exactly 17
+    wallpaper groups &mdash; this is a theorem, not a choice.&rdquo;</p>
+    <p>Die fraktionale Invariante &mdash; die <strong>Orbifold-Euler-Kennzahl</strong> &mdash; verfeinert A's ganze
+    Zahl &chi;&thinsp;=&thinsp;2 (glatte Sph&auml;re, der grobe Fall) zur rationalen Kennzahl (feiner Fall):</p>
+    <p class="math">&chi;<sub>orb</sub> = 2 &minus; &Sigma;<sub>i=1</sub><sup>k</sup> (1 &minus; 1/n<sub>i</sub>)
+      &nbsp;&nbsp;&rArr;&nbsp;&nbsp; Teardrop S&sup2;(n): 1 + 1/n; &nbsp; Football S&sup2;(2,3): 1/2 + 1/3 = 5/6; &nbsp;
+      Pillow: 0</p>
+
+    <h3><span class="tag B">B</span> &mdash; Hierarchie der Invarianten (als konkrete Realisierung)</h3>
+    <p><em>Exotische Sph&auml;ren:</em> topologisch eine gew&ouml;hnliche Kugel (keine L&ouml;cher, gleiche
+    Konnektivit&auml;t), aber mit einer <strong>Glattstruktur</strong> (Atlas + glatte &Uuml;bergangskarten), die man
+    nicht glatt in die Standardstruktur &uuml;berf&uuml;hren kann. Bau-Bild: zwei Halbkugeln entlang des
+    &A4;quators <em>verkleben</em>; verdreht man eine vor dem Verkleben, ist der Twist &bdquo;baked in&rdquo; und
+    unverformbar. <strong>Milnor (1956)</strong>: genau 28 glatte Strukturen auf S&sup7; (1 standard + 27 exotisch).
+    Dimension 4 = das offene <em>Smooth-Poincar&eacute;-Problem</em>. Anzahl glatter Strukturen pro Dimension
+    (inline):</p>
+    <table>
+      <tr><th>Dimension n</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>11</th><th>15</th><th>31</th></tr>
+      <tr><td># glatte Strukturen</td><td>1</td><td>1</td><td>1</td><td><b>? (offen)</b></td><td>1</td><td>1</td><td><b>28</b></td><td>2</td><td>992</td><td>16256</td><td>16&nbsp;931&nbsp;177</td></tr>
+    </table>
+    <p class="note">Muster: Dimensionen 4k&minus;1 (7, 11, 15, 31) tragen auff&a4l;lig viele; das Wachstum wird astronomisch.</p>
+    <p><em>K&ouml;rper als System:</em> jede Zutat ist ein Vektor <code>{kcal, carbs, fat, protein, gi, satFat}</code>,
+    die Summe ergibt den Tageswert. <code>BMR</code> = Mifflin-St-Jeor
+    <code>10&middot;Gewicht + 6.25&middot;Gr&ouml;ße &minus; 5&middot;Alter + 5</code> (m&a4nn;lich, Alter &asymp; 30
+    &mdash; <em>ausdr&uuml;cklich N&a4h;erung</em>). <code>TDEE</code> = BMR&middot;(1.2 + Aktivit&a4t);
+    <code>Bilanz</code> = Aufnahme &minus; TDEE; &asymp; 7700&nbsp;kcal = 1&nbsp;kg Fett. Makro-Kalorien: KH&times;4,
+    Fett&times;9, Prot&times;4. Hoher <em>glyk&a4mischer Index</em> &rarr; Blutzucker-Spike &rarr; viel Insulin
+    &rarr; Crash &rarr; <strong>Schwitzen/Hei&szlig;hunger</strong>. Fetttypen: ges&a4tt;igt erh&ouml;ht
+    Cholesterin, unges&a4tt;igt senkt es; Richtwert &frac23; unges&a4tt;igt. Am Ende: <em>kategoriale
+    Impact-Karten</em> (Schwitzen, Gewicht, Herz, Blutzucker, Energie, R&uuml;cken, Schlaf, Konzentration) &mdash;
+    die &bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&rdquo;-Ebene.</p>
+
+    <h3>Die vereinheitlichte Architektur (die eigentliche Fusion)</h3>
+    <p>Beide Papiere sind dieselbe Maschinerie auf zwei Ebenen &mdash; und die grobe Spalte ist in beiden ein
+    <em>Quotient</em> der feinen:</p>
+    <table>
+      <tr><th>Ebene</th><th><span class="tag A">A</span> Quotient durch Symmetrie</th><th><span class="tag B">B</span> Hierarchie der Invarianten</th></tr>
+      <tr><td><b>Grobe Invariante</b> (klassifiziert = Quotient, vergisst das Feine)</td><td>Topologie von X/G als glatte Scheibe (Stabilisator vergessen)</td><td>Topologie S&supn; / Kalorienbilanz (Glattstruktur bzw. GI/Fett vergessen)</td></tr>
+      <tr><td><b>Feine Struktur</b> (kategorisch, nicht wegzudeformieren)</td><td>Stabilisator C<sub>n</sub> &rarr; Kegel-Punkt, Winkel 2&pi;/n</td><td>Glattstruktur / Verklebung (28 auf S&sup7;) &middot; GI + Fett-Typ + Timing</td></tr>
+      <tr><td><b>Pr&auml;sentation</b> des Feinen</td><td><b>lokal sichtbar</b> (Kegel-Punkt, einsehbarer Defekt)</td><td><b>global, lokal unsichtbar</b> (keine Karte offenbart den Twist)</td></tr>
+      <tr><td><b>Aufl&ouml;sung</b> (w&a4hlbar)</td><td>wie frei die Wirkung ist / wie man faltet</td><td>wie viele Koordinatenkarten / Zutaten man betrachtet</td></tr>
+      <tr><td><b>Kategorischer Zustand</b> (beobachtbar)</td><td>Ordnung n &middot; &chi;<sub>orb</sub></td><td>eine von 28 Glattstrukturen &middot; Impact-Einstufung</td></tr>
+    </table>
+    <div class="bridge"><span class="who">Fusionierter Grundsatz &bdquo;Regler &rarr; Klasse&rdquo;</span>
+    Kontinuierliche Kn&ouml;pfe (Winkel/Verklebung &middot; kcal/GI/ges&a4tt;igtes Fett) steuern kategorische
+    Zust&a4nde (Ordnung n / Glattklasse &middot; Impact-Einstufung). Die <em>Karte dazwischen</em> ist der Ort der
+    Information. Und die gemeinsame, neu fusionierte Regel: <strong>die grobe Invariante ist ein Quotient des Feinen</strong>
+    &mdash; &bdquo;Grob&rdquo; entsteht immer dadurch, dass man die kategoriale Feinstruktur quotientiert
+    (w&ouml;rtlich A's X/G). Dazu: <em>benenne deine Aufl&ouml;sung und dein offenes Problem.</em></div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktiv: eine Quotienten-Nachbarschaft, zwei Aufl&ouml;sungen, zwei Perspektiven</h2>
+    <p class="muted">Ein und dieselbe glatte Scheibe (der Quotient X/G) &mdash; bei <em>grob</em>er Aufl&ouml;sung
+    sind Perspektive A und B <strong>identisch</strong> (nur die glatte Scheibe, die grobe Invariante). Der
+    <strong>Aufl&ouml;sungs-Regler</strong> enth&uuml;lt die Feinstruktur; der <strong>Feinstruktur-Regler n</strong>
+    ist der kontinuierliche Knopf (Stabilisator C<sub>n</sub>), der den kategorischen Zustand ansteuert. Der
+    Perspektiven-Umschalter zeigt die zentralen zwei Widerspr&uuml;che:
+    <strong>A&nbsp;&middot; lokal</strong> (n1-085) &mdash; die Feinstruktur hat einen lokalen Avatar (Kegel-Punkt,
+    einsehbarer Defekt 360&deg;/n); <strong>B&nbsp;&middot; global</strong> (n1-088) &mdash; die Feinstruktur ist
+    lokal unsichtbar, nur die Globalinvariante &chi;<sub>orb</sub> verr&a4t sie (kein lokaler Marker, stattdessen ein
+    globaler Twist/Verklebung der Kopien).</p>
+    <div class="viz-wrap">
+      <div class="viz-controls">
+        <label>Feinstruktur n:
+          <input type="range" id="vN" min="2" max="8" value="3" step="1">
+          <span class="val" id="vNVal">3</span>
+        </label>
+        <label>Aufl&ouml;sung (grob&larr;fein):
+          <input type="range" id="vRes" min="0" max="100" value="72" step="1">
+          <span class="val" id="vResVal">72</span>
+        </label>
+        <div class="seg" role="group" aria-label="Parameter-Charakter">
+          <button id="v-cont">Kontinuierlich (Regler)</button>
+          <button id="v-disc" class="active">Diskret (Klasse)</button>
+        </div>
+        <div class="seg" role="group" aria-label="Perspektive">
+          <button id="v-a" class="active">A &middot; lokal (Kegel-Punkt)</button>
+          <button id="v-b">B &middot; global (&chi;orb)</button>
+        </div>
+      </div>
+      <canvas id="vizCanvas" aria-label="Quotienten-Nachbarschaft mit verstellbarer Aufl&ouml;sung und Perspektive"></canvas>
+      <div class="readout">
+        <div class="ro"><span class="rol">Grobe Invariante</span>
+          <div id="ro-coarse"></div></div>
+        <div class="ro"><span class="rol">Feine Struktur</span><div id="ro-fine"></div></div>
+        <div class="ro"><span class="rol">Beobachtbarer Zustand</span><div id="ro-state"></div></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--c-manifold)"></span> Quotient X/G (grob, invariant)</span>
+        <span><span class="dot" style="background:var(--c-orbifold)"></span> Fundamental-Domain / feine Kopien</span>
+        <span><span class="dot" style="background:var(--c-cone)"></span> Kegel-Punkt (nur Perspektive A, lokal)</span>
+      </div>
+      <p class="caption">N = n-fache Identifikation der Fundamentaldomain durch C<sub>n</sub>. Perspektive A:
+      Kegel-Punkt der Ordnung n, Kegelwinkel 360&deg;/n = 2&pi;/n. Perspektive B: Teardrop S&sup2;(n) mit
+      &chi;<sub>orb</sub> = 1 + 1/n, globaler Twist ohne lokalen Marker. Alle Daten inline, kein Netzwerk.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../n1-085.html"><strong>A &mdash; n1-085.html</strong></a> &middot;
+        <em>&bdquo;Der Quotient durch Symmetrie&rdquo;</em> (Fusion: useful_math.html &times; orbifold.html):
+        eine Operation &mdash; der Quotient X/G; freie Wirkung &rarr; glatte Mannigfaltigkeit, nicht-freie &rarr;
+        Orbifold; Fixpunkt = Kegel-Punkt = Stabilisator C<sub>n</sub>, Winkel 2&pi;/n; Orbifold-Euler-Kennzahl;
+        &bdquo;It's all representation theory&rdquo;. Die Feinstruktur pr&a4sentiert sich <em>lokal</em>.</li>
+      <li><a href="../n1-088.html"><strong>B &mdash; n1-088.html</strong></a> &middot;
+        <em>&bdquo;Gleiche Gestalt, verborgene Feinstruktur&rdquo;</em> (Fusion: exotic_spheres.html &times;
+        essen.html): Hierarchie von Invarianten &uuml;ber Aufl&ouml;sungsstufen; topologisch &cong; aber glatt &ne;
+        (Milnor 1956, 28 auf S&sup7;, 4D offen); K&ouml;rper als System (Bilanz, GI, Fett, kategoriale
+        Impact-Karten); &bdquo;Regler &rarr; Klasse&rdquo;; &bdquo;Nenne deine N&a4h;erung&rdquo;. Die Feinstruktur
+        pr&a4sentiert sich <em>global/lokal unsichtbar</em>.</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var htmlEl = document.documentElement;
+
+  function readPalette(){
+    var cs = getComputedStyle(htmlEl);
+    return {
+      text:     cs.getPropertyValue('--text').trim()     || '#e7e9f2',
+      muted:    cs.getPropertyValue('--muted').trim()    || '#9aa1b5',
+      accent:   cs.getPropertyValue('--accent').trim()   || '#8492ff',
+      manifold: cs.getPropertyValue('--c-manifold').trim() || '#6f8bff',
+      orbifold: cs.getPropertyValue('--c-orbifold').trim() || '#f07ad0',
+      cone:     cs.getPropertyValue('--c-cone').trim()   || '#ff6b6b',
+      border:   cs.getPropertyValue('--border').trim()   || '#2a3145',
+      bg:       cs.getPropertyValue('--viz-bg').trim()   || '#0f1526'
+    };
+  }
+
+  var tBtn = document.getElementById('themeToggle');
+  if (tBtn){
+    tBtn.addEventListener('click', function(){ htmlEl.classList.toggle('dark'); });
+  }
+
+  var canvas = document.getElementById('vizCanvas');
+  if (!(canvas && canvas.getContext)){ return; }
+  var ctx = canvas.getContext('2d');
+
+  var nSlider = document.getElementById('vN');
+  var resSlider = document.getElementById('vRes');
+  var nValEl = document.getElementById('vNVal');
+  var resValEl = document.getElementById('vResVal');
+  var btnDisc = document.getElementById('v-disc');
+  var btnCont = document.getElementById('v-cont');
+  var btnA = document.getElementById('v-a');
+  var btnB = document.getElementById('v-b');
+  var roCoarse = document.getElementById('ro-coarse');
+  var roFine = document.getElementById('ro-fine');
+  var roState = document.getElementById('ro-state');
+
+  var n = 3, res = 72, discrete = true, perspA = true, t = 0;
+
+  function resize(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = canvas.parentElement ? canvas.parentElement.clientWidth : 700;
+    var h = Math.max(320, Math.min(460, Math.round(w * 0.6)));
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(){
+    t = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    var W = canvas.clientWidth, H = canvas.clientHeight;
+    if (W < 2 || H < 2){ requestAnimationFrame(draw); return; }
+    var c = readPalette();
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = c.bg;
+    ctx.fillRect(0, 0, W, H);
+
+    var cx = W / 2, cy = H / 2;
+    var R = Math.min(W, H) * 0.4;
+    var reveal = Math.max(0, Math.min(1, res / 100));
+    var sector = 2 * Math.PI / n;
+    var start = -Math.PI / 2 - sector / 2;
+
+    // Coarse object: the quotient disk (always present, identical in A and B)
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = c.manifold;
+    ctx.globalAlpha = 0.05;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.border;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Fine structure fades in with resolution
+    // fold lines (the n group elements)
+    ctx.strokeStyle = c.border;
+    ctx.globalAlpha = reveal * 0.6;
+    ctx.lineWidth = 1;
+    for (var i = 0; i < n; i++){
+      var a = (2 * Math.PI * i) / n - Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // fundamental domain sector (1/n)
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, start, start + sector);
+    ctx.closePath();
+    ctx.fillStyle = c.orbifold;
+    ctx.globalAlpha = reveal * 0.15;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.orbifold;
+    ctx.globalAlpha = reveal;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // n identified copies (the group orbit); in perspective B they carry a global twist
+    var spin = t * 0.0015;
+    for (var k = 0; k < n; k++){
+      var base = (2 * Math.PI * k) / n - Math.PI / 2;
+      var mid = base + sector / 2 + spin * 0.25;
+      var twist = perspA ? 0 : reveal * 0.55 * (k - (n - 1) / 2);
+      var midT = mid + twist;
+      var dist = R * 0.55;
+      var mx = cx + dist * Math.cos(midT);
+      var my = cy + dist * Math.sin(midT);
+      ctx.save();
+      ctx.translate(mx, my);
+      ctx.rotate(midT + Math.PI / 2);
+      ctx.beginPath();
+      ctx.moveTo(0, -10);
+      ctx.lineTo(8, 8);
+      ctx.lineTo(-8, 8);
+      ctx.closePath();
+      ctx.fillStyle = (k === 0) ? c.orbifold : c.manifold;
+      ctx.globalAlpha = reveal * ((k === 0) ? 0.9 : 0.5);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+
+    if (reveal > 0.05){
+      if (perspA){
+        // A: LOCAL cone point + cone-angle arc (2 pi / n)
+        var pulse = 0.5 + 0.5 * Math.sin(t * 0.004);
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * 0.26, start, start + sector);
+        ctx.strokeStyle = c.cone;
+        ctx.lineWidth = 3;
+        ctx.globalAlpha = reveal;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 13 + 7 * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = c.cone;
+        ctx.globalAlpha = reveal * 0.18;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+        ctx.fillStyle = c.cone;
+        ctx.globalAlpha = reveal;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      } else {
+        // B: GLOBAL, no local marker - a dashed invariant ring + baked-in global twist
+        var pulse = 0.5 + 0.5 * Math.sin(t * 0.004);
+        ctx.beginPath();
+        ctx.arc(cx, cy, R * (0.30 + 0.02 * pulse), 0, Math.PI * 2);
+        ctx.strokeStyle = c.orbifold;
+        ctx.globalAlpha = reveal * 0.55;
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // labels
+    var deg = 360 / n;
+    var degStr = (deg % 1 === 0) ? deg.toFixed(0) : deg.toFixed(2);
+    ctx.textAlign = 'left';
+    ctx.font = '12px Georgia, serif';
+    ctx.fillStyle = c.muted;
+    var resLabel = reveal < 0.34 ? 'grob' : (reveal < 0.7 ? 'mittel' : 'fein');
+    ctx.fillText('Aufl\u00f6sung: ' + resLabel, 14, 24);
+    ctx.fillStyle = perspA ? c.cone : c.orbifold;
+    if (perspA){
+      ctx.fillText('A \u00b7 lokal sichtbar: Kegel-Punkt Ordnung ' + n +
+        ' \u00b7 Kegelwinkel ' + degStr + '\u00b0 (2\u03c0/' + n + ')', 14, 42);
+    } else {
+      ctx.fillText('B \u00b7 global, lokal unsichtbar: \u03c7_orb = 1 + 1/' + n +
+        ' (Teardrop S\u00b2(' + n + ')) \u00b7 kein lokaler Marker', 14, 42);
+    }
+    requestAnimationFrame(draw);
+  }
+
+  function updateReadout(){
+    if (!roCoarse || !roFine || !roState) return;
+    var chi = 1 + 1 / n;
+    roCoarse.textContent = 'Quotient X/G \u00b7 topologisch = glatte Scheibe \u00b7 invariant (klassifiziert) \u2014 in Perspektive A UND B identisch.';
+    if (discrete){
+      roFine.textContent = 'Stabilisator C' + n + ' \u00b7 Ordnung ' + n +
+        ' \u2192 diskrete Klasse (kategorisch, irreversibel, \u201cbaked in\u201d / \u201ca theorem, not a choice\u201d).';
+    } else {
+      roFine.textContent = 'Stabilisator C' + n + ' \u00b7 \u03c4 kontinuierlich (justierbarer Regler, reversibel) \u2014 n wird stufenlos bewegt.';
+    }
+    if (perspA){
+      roState.textContent = 'LOKAL SICHTBAR: der Defekt sitzt am Kegel-Punkt (Fixpunkt, g\u00b7x = x) \u2014 der reduzierte Winkel 360\u00b0/' +
+        n + ' ist an der Stelle einsehbar. (n1-085.)';
+    } else {
+      roState.textContent = 'GLOBAL, lokal unsichtbar: kein lokaler Marker \u2014 nur die Globalinvariante \u03c7_orb = 1 + 1/' +
+        n + ' = ' + chi.toFixed(3) + ' verr\u00e4t die Feinstruktur. (n1-088.)';
+    }
+  }
+
+  function setSeg(active, other){
+    if (active) active.classList.add('active');
+    if (other) other.classList.remove('active');
+  }
+
+  if (nSlider){
+    nSlider.addEventListener('input', function(){
+      n = Math.max(2, Math.min(8, parseInt(nSlider.value, 10) || 2));
+      if (nValEl) nValEl.textContent = String(n);
+      updateReadout();
+    });
+  }
+  if (resSlider){
+    resSlider.addEventListener('input', function(){
+      res = Math.max(0, Math.min(100, parseInt(resSlider.value, 10) || 0));
+      if (resValEl) resValEl.textContent = String(res);
+    });
+  }
+  if (btnDisc){
+    btnDisc.addEventListener('click', function(){
+      discrete = true; setSeg(btnDisc, btnCont); updateReadout();
+    });
+  }
+  if (btnCont){
+    btnCont.addEventListener('click', function(){
+      discrete = false; setSeg(btnCont, btnDisc); updateReadout();
+    });
+  }
+  if (btnA){
+    btnA.addEventListener('click', function(){
+      perspA = true; setSeg(btnA, btnB); updateReadout();
+    });
+  }
+  if (btnB){
+    btnB.addEventListener('click', function(){
+      perspA = false; setSeg(btnB, btnA); updateReadout();
+    });
+  }
+  window.addEventListener('resize', resize);
+
+  resize();
+  updateReadout();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

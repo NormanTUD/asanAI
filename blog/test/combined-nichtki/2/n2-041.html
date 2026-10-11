@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganzes als strukturgetreues Kleben — Zahl und Stack — Fusion (Runde 2)</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --ink:#1f2430; --muted:#5a6272; --card:#fffdf8; --card-ink:#1f2430;
+  --accent:#b5651d; --accent2:#2b6cb0; --accent3:#7c3aed;
+  --line:#d8d2c4; --soft:#f0ece1;
+  --good:#2f8f4e; --warn:#b45309; --danger:#c0392b;
+  --canvas-bg:#fffdf8; --grid:#ece6d8;
+  --viz-frame:#b5651d; --viz-void:#c0392b;
+  --viz-p1:#b5462d; --viz-p2:#2b6cb0; --viz-p3:#2f8f4e;
+}
+html.dark{
+  --bg:#12151f; --ink:#e6e8ee; --muted:#9aa3b5; --card:#1a1f2e; --card-ink:#e6e8ee;
+  --accent:#f0a500; --accent2:#5aa9ff; --accent3:#a78bfa;
+  --line:#2a3348; --soft:#161b28;
+  --good:#34d399; --warn:#fbbf24; --danger:#ff7a6b;
+  --canvas-bg:#0d1019; --grid:#232b3d;
+  --viz-frame:#f0a500; --viz-void:#ff7a6b;
+  --viz-p1:#ff8a7a; --viz-p2:#60a5fa; --viz-p3:#34d399;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Georgia','Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.75;transition:background .3s,color .3s;overflow-x:hidden;}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;}
+h1{font-size:2.1em;line-height:1.2;margin:16px 0 6px;color:var(--ink);}
+.subtitle{color:var(--muted);font-size:1em;margin-bottom:6px;letter-spacing:.2px;}
+.lede{color:var(--muted);font-size:1.03em;margin-bottom:24px;font-style:italic;}
+section{margin:42px 0;scroll-margin-top:20px;}
+h2{font-size:1.48em;color:var(--accent);margin:0 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+h3{font-size:1.14em;color:var(--accent2);margin:22px 0 8px;}
+p{margin:0 0 14px;}
+p a,li a,.prov a{color:var(--accent2);}
+ul{padding-left:22px;margin:0 0 14px;}
+li{margin-bottom:8px;}
+.card{background:var(--card);color:var(--card-ink);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0;}
+.card p:last-child{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-right:6px;vertical-align:middle;}
+.tag.a{background:rgba(181,101,29,.16);color:var(--accent);}
+.tag.b{background:rgba(43,108,176,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.formula{display:block;text-align:center;margin:14px 0;padding:12px 14px;background:var(--soft);border:1px solid var(--line);border-radius:8px;overflow-x:auto;font-family:ui-monospace,'Cascadia Code',monospace;font-size:.92em;color:var(--card-ink);}
+.insight{border-left:4px solid var(--accent);background:var(--soft);padding:12px 18px;border-radius:0 8px 8px 0;font-style:italic;margin:16px 0;color:var(--card-ink);}
+.insight b{font-style:normal;color:var(--accent);}
+table{border-collapse:collapse;margin:14px auto;font-size:.84em;width:100%;}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;}
+th{background:var(--soft);color:var(--accent);}
+.twrap{overflow-x:auto;}
+.viz-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;}
+#glueCanvas{width:100%;height:460px;display:block;border-radius:10px;cursor:default;background:var(--canvas-bg);border:1px solid var(--line);}
+.btnrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+.btnrow label{font-size:.85em;color:var(--muted);display:flex;flex-direction:column;gap:4px;font-weight:bold;}
+.btnrow input[type=range]{width:170px;accent-color:var(--accent);}
+button.btn{background:var(--accent);color:var(--bg);border:none;padding:8px 15px;border-radius:6px;font-size:.9em;font-weight:bold;cursor:pointer;font-family:inherit;}
+button.btn:hover{opacity:.9;transform:translateY(-1px);}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+.chip{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82em;color:var(--muted);font-family:ui-monospace,monospace;}
+.chip b{color:var(--accent);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:1em;}
+.prov{display:block;padding:11px 0;border-bottom:1px dashed var(--line);}
+.prov:last-child{border-bottom:none;}
+.prov .src{font-weight:bold;color:var(--accent2);}
+.prov .ds{display:block;color:var(--muted);font-size:.9em;margin-top:4px;}
+@media (max-width:560px){h1{font-size:1.55em;}article{padding:28px 16px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="Farbschema wechseln" onclick="toggleTheme()">&#9680;</button>
+<article>
+
+<h1>Ganzes als strukturgetreues Kleben<br>Zahl und Stack derselben Invariante</h1>
+<p class="subtitle">Fusion aus: n1-049.html &#10007; n1-097.html &nbsp;(Runde 2)</p>
+<p class="lede">Beide Runde-1-Papiere vollziehen dieselbe Operation &#8212; <em>strukturgetreues Kleben lokaler Bausteine</em> &#8212; und schließen beide, dass das Ganze <em>keine Substanz in der Mitte</em> ist. A (n1-049, Descent/Stacks) liest das Ergebnis als <em>Struktur mit inneren Symmetrien</em>, B (n1-097, TQFT) als <em>Zahl</em>. Die Fusion: Zahl und Stack sind <em>derselbe Wert, abgelesen bei unterschiedlicher Treue</em>.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere sind zwei Gesichter <em>einer</em> Operation: eines <strong>strukturgetreuen Klebens</strong> (Komposition / Descent) lokaler Fragmente zu einem globalen Objekt, das durch die <em>Art des Verklebens</em> festgelegt ist und <em>nicht</em> durch die konkrete Geometrie. B (<em>n1-097</em>) tut es mit einem stark monoidalen Funktor <em>Z : Cob &#8594; Vect</em>, der Cobordismen-Generatoren (Kappe/Becher/Hose/Copants) zu einem geschlossenen Cobordismus klebt und es auf einen <strong>Skalar auswertet</strong> &#8212; die Zahl <em>Z(&#931;)=q<sup>k</sup></em>, &ldquo;Topologie, nicht Geometrie&rdquo;. A (<em>n1-049</em>) tut es mit <em>Descent</em>, der lokale Patches <em>&ldquo;up to isomorphism&rdquo;</em> zu einem globalen Objekt verklebt, das <em>keine Substanz in der Mitte</em>, sondern <em>eine Struktur mit inneren Symmetrien</em> ist &#8212; ein <em>Stack</em> mit dem &#8484;/2-Automorphismus (P &#8594; &#8722;P), nicht ein Punkt.</p>
+<p>Die fusionierte These in einem Zug: <strong>Das Ganze ist eine strukturelle Invariante, die durch strukturgetreues Kleben lokaler Bausteine entsteht und nur bis auf ihre <em>inneren Symmetrien</em> festgelegt ist.</strong> Der &ldquo;Wert&rdquo; eines solchen Klebens ist stets das Paar <em>(Invariante, Residual-Symmetrie)</em>. B's Zahl ist der <em>degenerierte</em> Fall: die Residual-Symmetrie ist <em>trivial</em>, der Wert ist ein einzelner, steifer Skalar &#8212; eine &ldquo;Zahl ohne freien Rest&rdquo;. A's Stack ist der <em>allgemeine</em> Fall: das Residual ist eine <em>nichttriviale</em> Automorphismus-Gruppe (&#8484;/2), der Wert ist ein Objekt <em>&ldquo;up to isomorphism&rdquo;</em>. Eine Zahl ist ein Stack, dessen Automorphismen auf einen Skalar ausgewertet wurden &#8212; <strong>die Zahl ist der Schatten (Trace) des Stacks</strong>.</p>
+<p>Was entscheidet, ob man die Zahl oder die Struktur sieht? Nicht das Kleben (das ist fest), sondern das <strong>Ziel &#8212; die &ldquo;Kamera&rdquo; / die Treue (Fidelity)</strong>. A's Geste &ldquo;Zoom back, camera!&rdquo; ist genau der Wechsel der Fidelity, der den Stack hinter dem naiven Punkt sichtbar macht; B's &ldquo;Topologie, nicht Geometrie&rdquo; ist dieselbe Invarianz, abgelesen bei Skalar-Treue. Ein Satz: <strong>Das Ganze ist nie Substanz in der Mitte, sondern die Struktur des Klebens und ihrer Symmetrie; die Zahl ist, was von dieser Struktur übrig bleibt, wenn man die Symmetrie auswertet, und das Zentrum bleibt leer.</strong></p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Weder Papier leugnet das Kleben, und beide stimmen im Kern überein (strukturgetreues Verkleben &#8594; wohldefiniertes Ganze). Die echten Spannungen liegen in <em>dem, was am Ende übrig bleibt</em> und <em>wie</em>: A behält Struktur und Symmetrie, B kollabiert auf eine Zahl. Drei konkrete Punkte:</p>
+
+<h3>1. Das Ganze: Struktur mit inneren Symmetrien (A) vs. Zahl (B)</h3>
+<div class="card">
+<p><span class="tag a">A &#183; Descent/Stacks</span> &ldquo;Das globale Objekt ist <em>kein Punkt im Zentrum</em>, sondern <em>eine Struktur mit inneren Symmetrien</em>&rdquo; &#8212; bei B ein Stack, bei A ein Frame; &ldquo;die Wahrheit eines Zusammengesetzten liegt nicht in seiner Mitte, sondern in seiner Struktur des Verklebens und seiner Symmetrien.&rdquo; Der Gipfel ist leer: &ldquo;Es gibt keine Unsterblichen&rdquo; (Puppen, Attrappen). Das Ganze ist <em>Struktur</em>; die naime Substanz in der Mitte ist ein Köder.</p>
+<p><span class="tag b">B &#183; TQFT-Funktor</span> &ldquo;A TQFT is a bridge between shapes (topology) and <em>numbers</em>&rdquo;; &ldquo;Der Funktor Z wird gerade <em>zum Zahlen-Liefern</em> definiert.&rdquo; Das Ganze ist <em>die konkrete Zahl</em> &#8212; ein einziger, austretbarer Skalar <em>Z(&#931;)=q<sup>k</sup></em>, der erzielbare Wert.</p>
+<p><span class="tag x">Spannung</span> Ist das Ganze eine <em>Struktur mit inneren Symmetrien</em> (A), die gerade <em>kein</em> Punkt/keine Substanz ist, oder ist es <em>die Zahl selbst</em> &#8212; ein konkreter, auswertbarer Wert (B)?</p>
+</div>
+
+<h3>2. Symmetrie: die Substanz des Ganzen (A) vs. im Wert aufgehoben (B)</h3>
+<div class="card">
+<p><span class="tag a">A &#183; Descent/Stacks</span> Das <em>definiierende</em> Merkmal des Ganzen ist die <em>innere Symmetrie</em>: &ldquo;erinnert seine Automorphismen&rdquo;, das &#8484;/2, der Spiegel. &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo; &#8212; die Symmetrie als <em>Typ</em> ist das, was überlebt und <em>der Punkt</em> ist; die <em>Instanz</em> wird gebrochen. Symmetrie = die Substanz des Ganzen.</p>
+<p><span class="tag b">B &#183; TQFT-Funktor</span> Das Ganze (die Zahl) hat <em>keine innere Symmetrie</em> &#8212; eine Zahl ist steif. Die relevante Invarianz ist <em>äußerlich</em>: &ldquo;gleiche Form &#8594; gleiche Zahl&rdquo;, die Funktorialität (Unabhängigkeit von der Zerlegung). Die &ldquo;Symmetrie&rdquo; in B ist keine Automorphismus-Gruppe des Werts, sondern die Invarianz <em>des Funktors</em>.</p>
+<p><span class="tag x">Spannung</span> Bei A <em>ist</em> das Ganze die (nichttriviale) innere Symmetrie; bei B ist das Ganze das, was <em>nach</em> dem Wegquotientieren aller Struktur &#8212; inklusive Symmetrie &#8212; übrig bleibt: eine steife Zahl. <em>Innere</em> Symmetrie als Substanz (A) vs. <em>abwesend/trivial</em> im Wert (B).</p>
+</div>
+
+<h3>3. Ziel-Ebene: hoch zum Stack (A) vs. runter zum Skalar (B)</h3>
+<div class="card">
+<p><span class="tag a">A &#183; Descent/Stacks</span> Descent erzeugt ein <em>höheres</em> Objekt: einen Stack, der <em>Automorphismen erinnert</em> (&ldquo;up to isomorphism&rdquo;). Das Ziel ist <em>strukturierter / reicher</em> als die Teile; das Ganze trägt mehr als die Patches.</p>
+<p><span class="tag b">B &#183; TQFT-Funktor</span> Der Funktor mappt <em>in</em> Vect / <em>runter</em> auf einen <em>Skalar</em> &#8212; das <em>niedrigste</em> Objekt, das alles außer der Invariante <em>vergisst</em> (&ldquo;Topologie, nicht Geometrie&rdquo;). Das Ziel ist <em>ärmer</em> als die Teile.</p>
+<p><span class="tag x">Spannung</span> Kleben erzeugt bei A etwas <em>Strukturierteres</em> als die Teile (Stack mit Automorphismen); bei B etwas <em>Unstrukturierteres</em> (Skalar). <em>Hoch</em> (A) vs. <em>runter</em> (B).</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<h3>1 &#8594; Die Zahl ist der Trace des Stacks (ausgewertete Symmetrie)</h3>
+<p>Beide sind <em>&ldquo;bis auf Symmetrie&rdquo;</em>. A's Wert ist ein Objekt <em>up to isomorphism</em> mit <em>nichttrivialer</em> Automorphismus-Gruppe; B's Wert ist eine Zahl &#8212; der <em>degenerierte</em> Fall, in dem die Automorphismus-Gruppe <em>trivial</em> ist. Eine Zahl <em>ist</em> ein Wert &ldquo;bis auf (triviale) Symmetrie&rdquo;. Die Zahl entsteht, wenn man den Stack <em>auswertet</em>: den Rand schließen (&#8450;&#8594;&#8450;, die geschlossene Cobordismus-Komposition) und die Automorphismen auf einen Skalar zusammenklappen. <strong>Fusioniert:</strong> das Ganze ist eine strukturelle Invariante <em>bis auf innere Symmetrie</em>; je nach Struktur, die das Ziel behält, ist die Invariante ein reiches Objekt (Stack, nichttriviale Automorphismen) oder eine steife Zahl (triviale Automorphismen). <em>Die Zahl ist der Schatten des Stacks.</em></p>
+
+<h3>2 &#8594; A behält den Typ, B liest den Trace ab &#8212; beides Invarianz unter Symmetrie</h3>
+<p>A's &#8484;/2 ist die <em>innere</em> Symmetrie des Objekts (ein Automorphismus); B's Invarianz ist die <em>äußere</em> Symmetrie des Werts (Unabhängigkeit von der Zerlegung / Funktorialität). Die Zahl q<sup>k</sup> ist der <em>Trace über</em> die symmetrische Struktur: Sie wertet die symmetrischen Bausteine aus &#8212; jede geschlossene Schleife (Becher) trägt einen Faktor q bei. &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo; (A) und &ldquo;die Zahl ist eine Konsequenz der Strukturerhaltung&rdquo; (B) sind dieselbe Bewegung auf zwei Ebenen. <strong>Fusioniert:</strong> die Zahl ist das, was man abliest, wenn man die Symmetrie wirken lässt und den invarianten Teil nimmt. <em>A's aufbewahrter Typ (&#8484;/2) ist die Maschine; B's Zahl ist deren Ablesung.</em></p>
+
+<h3>3 &#8594; Die Richtung (hoch/runter) ist eine Eigenschaft des Ziels, nicht des Klebens</h3>
+<p>Die <em>Operation</em> &#8212; ein strukturgetreuer Funktor / eine Descent, die lokale Bausteine klebt und unabhängig von der Zerlegung wohldefiniert ist (Funktorialität / &ldquo;up to isomorphism&rdquo;) &#8212; ist in beiden <em>identisch</em>. Die Richtung (hoch/runter) wählt das <em>Ziel</em>: A wählt ein Ziel, das Automorphismen <em>behält</em> (Stack, volle Fidelity, &ldquo;Zoom back&rdquo;); B wählt ein Ziel, das sie auf Skalar <em>kollabiert</em> (Zahl, Skalar-Fidelity). <strong>Fusioniert:</strong> der Kleben-Funktor kann auf jeder Fidelity-Ebene abgelesen werden; der Stack ist die Lesung mit maximaler Treue (Symmetrien sichtbar), die Zahl die mit minimaler Treue (Trace). &ldquo;Zoom back, camera!&rdquo; (A) ist genau die Fidelity-Änderung, die den Stack hinter dem naiven Punkt enthüllt &#8212; und erklärt, warum B's Zahl und A's Struktur <em>dieselbe</em> Invariante sind.</p>
+
+<div class="insight"><b>Gesamtfolgerung:</b> Das Ganze ist eine strukturelle Invariante, definiert <em>bis auf innere Symmetrie</em>. B's Zahl ist der Trace (triviales Residual), A's Stack die volle Struktur (nicht triviales Residual &#8484;/2); die &ldquo;Kamera&rdquo; / das Zielraum-<em>Fidelity</em> wählt, welches du siehst. <em>Die Zahl ist der Schatten des Stacks &#8212; und das Zentrum ist leer.</em></div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p>Abstrahiert auf die These-Ebene beider Papiere (nicht auf ihre Roh-Daten): ein zusammenhängendes Bild, das für eine spätere Runde allein tragfähig ist.</p>
+
+<div class="formula">Kleben:&nbsp; Baustein&#8321; &#8594; Baustein&#8322; &#8594; &#8230; (nur wenn Ränder passen)&nbsp;&nbsp;&#10230;&nbsp;&nbsp; ganzes Invariant&nbsp;&nbsp;up to (innere) Symmetrie</div>
+
+<h3>5.1 Die gemeinsame Operation &#8212; strukturgetreues Kleben (Descent / Funktorialität)</h3>
+<p>Beide kleben lokale Fragmente zu einem globalen Objekt, und beide gelten <em>nur</em> unter einer Passbedingung: B's &ldquo;Teile werden <em>nur</em> gestapelt, wenn die Randkreise passen&rdquo;, A's &ldquo;nur wenn sie auf Überlappungen übereinstimmen&rdquo;. B's Bausteine sind die Cobordismen-Generatoren <em>Kappe</em> (&#951;:0&#8594;1), <em>Becher</em> (&#953;:1&#8594;0), <em>Hose</em> (m:1&#8594;2), <em>Copants</em> (&#916;:2&#8594;1), <em>Zylinder</em> (id:1&#8594;1); A's sind die lokalen Patches U&#8321;, U&#8322;, U&#8323; (Akte/Szenen). B's Axiom <em>Z(M&#8321;&#8728;M&#8322;)=Z(M&#8321;)&#8728;Z(M&#8322;)</em> (Kompositionserhaltung) und A's &ldquo;up to isomorphism&rdquo; sind dieselbe Regel: <strong>das Kleben ist nur wohldefiniert, wenn die Ränder/Übergänge passen.</strong></p>
+
+<div class="formula">Z : Cob &#8594; Vect,&nbsp; Z(M&#8321;&#8728;M&#8322;)=Z(M&#8321;)&#8728;Z(M&#8322;),&nbsp; Z(&#931;&#8321;&#8858;&#931;&#8322;)=Z(&#931;&#8321;)&#8857;Z(&#931;&#8322;),&nbsp; Z(&#8709;)=&#8450;,&nbsp; Z(&#931;)=q<sup>k</sup></div>
+
+<h3>5.2 Die gemeinsame Invarianz &#8212; das Ganze hängt von der Struktur, nicht von der Zerlegung ab</h3>
+<p>B: &ldquo;Topologie, nicht Geometrie&rdquo; &#8212; gleiche Topologie &#8594; gleiche Zahl, <em>unabhängig von der Zerlegung</em> in Bausteine (die topologische Instanz von A's Yoneda-Prinzip &ldquo;Objekt = seine Beziehungen&rdquo;). A: Descent &ldquo;up to isomorphism&rdquo; &#8212; das globale Objekt ist <em>unabhängig von der Wahl</em> des Covers/Atlas. <strong>Gemeinsam: der Wert ist eine strukturelle Invariante &#8212; der Weg der Zerlegung ist frei, das Ergebnis nicht.</strong></p>
+
+<div class="formula">(P &#8594; &#8722;P)<sup>2</sup> = id&nbsp;&nbsp;(&#8484;/2, Involution = der Spiegel);&nbsp;&nbsp; ganzes = (Invariante, Residual-Symmetrie)</div>
+
+<h3>5.3 Der Wert und sein Residual &#8212; (Invariante, Residual-Symmetrie)</h3>
+<ul>
+<li><strong>Zahl (B):</strong> Residual <em>trivial</em> &#8594; steif, <em>Z(&#931;)=q<sup>k</sup></em>. Ein Skalar hat keinen freien Rest.</li>
+<li><strong>Stack (A):</strong> Residual <em>nicht trivial</em> &#8594; die Automorphismus-Gruppe &#8484;/2; das Objekt ist &ldquo;up to isomorphism&rdquo;.</li>
+<li><strong>Fusion:</strong> eine Zahl ist ein Stack mit <em>trivialen</em> Automorphismen; ein Stack ist eine &ldquo;Zahl, die ihre Symmetrie sich merkt&rdquo;. Das allgemeine Ganze ist ein <em>Wert bis auf innere Symmetrie</em>.</li>
+</ul>
+
+<h3>5.4 Die Brücke &#8212; B's Zahl ist A's Stack ausgewertet</h3>
+<p>B's <em>Z(&#931;)</em> ist die <em>Auswertung</em> (geschlossener Cobordismus, &#8450;&#8594;&#8450;) &#8212; der Trace über der Frobenius-Struktur (Kappe/Becher/Hose/Copants = &#951;/&#953;/m/&#916;). A's &ldquo;Punkt&rdquo; (Objekt mit Automorphismen) ist das <em>unausgewertete</em> Objekt. &ldquo;Zoom back, camera!&rdquo; (A) = der Zielraum-/Fidelity-Wechsel <em>von</em> Stack (volle Treue) <em>zu</em> Zahl (kollabiert). B's Frobenius-Algebra ist die &ldquo;Algebra des Klebens&rdquo;; A's Descent-Daten (Kleben up to isomorphism) sind dieselbe &ldquo;Algebra&rdquo; bei Stack-Fidelity. <strong>Die Zahl ist, was vom Stack übrig bleibt, wenn man den Rand schließt und die Symmetrie auswertet.</strong></p>
+
+<h3>5.5 Der leere Zentrum / der Köder</h3>
+<p>A: der naive Mittelpunkt (die Unsterblichen / der Moduli-<em>Punkt</em>) ist ein Köder; die Wahrheit ist die Struktur mit Symmetrien. B's Analogon: die naive <em>Form</em> (Geometrie) ist der Köder; die echte Invariante ist die <em>Zahl</em> (Topologie). <strong>Fusion: der naive &ldquo;Punkt in der Mitte&rdquo; (Substanz/Geometrie/Form) ist nie die Invariante; die Invariante ist der strukturelle Wert (Zahl oder Stack) bis auf Symmetrie &#8212; und das Zentrum ist leer.</strong></p>
+
+<h3>Die Karte der Fusion &#8212; These für These</h3>
+<div class="twrap">
+<table>
+<tr><th>Ebene</th><th>A (n1-049 &#183; Descent/Stacks)</th><th>B (n1-097 &#183; TQFT-Funktor)</th><th>Fusion</th></tr>
+<tr><td>Operation</td><td>Descent: lokale Patches verkleben, up to isomorphism</td><td>Funktor Z:Cob&#8594;Vect: Cobordismen kleben (Komposition)</td><td>strukturgetreues Kleben / Komposition</td></tr>
+<tr><td>Bausteine</td><td>lokale Patches U&#8321; U&#8322; U&#8323; (Akte/Szenen)</td><td>Kappe/Becher/Hose/Copants/Zylinder</td><td>lokale Bausteine mit passenden Rändern</td></tr>
+<tr><td>Passbedingung</td><td>&ldquo;nur wenn sie auf Überlappungen übereinstimmen&rdquo;</td><td>&ldquo;nur wenn die Randkreise passen&rdquo;</td><td>wohldefiniert nur bei passender Komposition</td></tr>
+<tr><td>Ganzes</td><td>Stack/Frame &#8212; Struktur mit inneren Symmetrien</td><td>Zahl (Skalar) Z(&#931;)=q<sup>k</sup></td><td>strukturrelle Invariante bis auf innere Symmetrie</td></tr>
+<tr><td>Residual</td><td>nicht trivial: Automorphismus-Gruppe &#8484;/2</td><td>trivial: steif (Zahl)</td><td>(Invariante, Residual-Symmetrie)</td></tr>
+<tr><td>Symmetrie</td><td>Substanz des Ganzen; Typ bleibt, Instanz bricht</td><td>im Wert aufgehoben (Zerlegungsunabhängigkeit)</td><td>Zahl = Trace der Symmetrie</td></tr>
+<tr><td>Ziel/Fidelity</td><td>hoch: Stack (behält Automorphismen); &ldquo;Zoom back&rdquo;</td><td>runter: Skalar (vergisst Struktur)</td><td>die Kamera / Zielraum wählt Stack vs. Zahl</td></tr>
+<tr><td>Leeres Zentrum</td><td>Gipfel leer (Puppen, keine Unsterblichen); Punkt = Köder</td><td>Form/Geometrie = Köder; Topologie = Invariante</td><td>der naive Mittelpunkt ist nie die Invariante</td></tr>
+</table>
+</div>
+
+<div class="insight"><b>Ein Gedanke, zwei Ablesungen:</b> (1) Beide kleben lokale Bausteine strukturgetreu zu einem globalen Objekt. (2) Beide sind unabhängig von der Zerlegung &#8212; eine strukturelle Invariante. (3) B's Zahl ist der Trace (triviales Residual); A's Stack die volle Struktur (nicht triviales Residual &#8484;/2). (4) Die Kamera / das Zielraum-Fidelity (A's &ldquo;Zoom back&rdquo;) wählt, ob man die Zahl oder die Struktur sieht. <em>Zahl und Stack sind dieselbe Invariante &#8212; das Zentrum ist leer.</em></div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung &#8212; die Kamera / Fidelity: Zahl &#8596; Stack</h2>
+<p>Links liegen die <em>lokalen Bausteine</em> (Kappe/Becher/Hose/Copants/Zylinder), die <em>nur</em> komponieren, wenn die Ränder passen (die gemeinsame Klebe-Regel von A und B). Die Mitte ist das Kleben / der Funktor <em>Z</em>. Rechts morphisiert <em>das Ganze</em> über den <strong>Fidelity-Regler (&ldquo;Kamera / Zoom&rdquo;)</strong> zwischen <strong>Sklare Z(&#931;)=q<sup>k</sup></strong> (steif, Residual trivial &#8212; B's Ablesung) und der <strong>Stack-Struktur mit innerer &#8484;/2-Symmetrie</strong> (Spiegel-Zwilling, leeres Zentrum &#8212; A's Ablesung). <strong>&ldquo;Symmetrie brechen&rdquo;</strong> zerbricht die symmetrische <em>Instanz</em>, während der <em>Typ</em> (die Bahn) bleibt &#8212; A's &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo;. Die Zahl ist stets als <em>Trace</em> eingeblendet.</p>
+
+<div class="formula">Ganzes = (Invariante, Residual-Symmetrie)&nbsp;&nbsp;|&nbsp;&nbsp; Zahl = Trace(Stack),&nbsp; (P &#8594; &#8722;P)<sup>2</sup>=id&nbsp;&nbsp;|&nbsp;&nbsp; &#8709; Zentrum</div>
+
+<div class="viz-box">
+<canvas id="glueCanvas" width="760" height="460"></canvas>
+<div class="btnrow">
+<label>Kamera / Fidelity
+  <input type="range" id="fidelity" min="0" max="100" value="62">
+</label>
+<label>Quant. Dimension q
+  <input type="range" id="qSlider" min="1" max="5" value="2" step="1">
+</label>
+</div>
+<div class="btnrow">
+<button class="btn" data-act="cap">+ Kappe &#951;</button>
+<button class="btn" data-act="cup">+ Becher &#953;</button>
+<button class="btn" data-act="pants">+ Hose m</button>
+<button class="btn" data-act="copants">+ Copants &#916;</button>
+<button class="btn" data-act="cyl">+ Zylinder id</button>
+<button class="btn ghost" data-act="pop">&#11015; Pop</button>
+<button class="btn ghost" data-act="reset">&#8634; Reset</button>
+<button class="btn ghost" data-act="closed">Beispiel: geschlossen</button>
+<button class="btn ghost" data-act="open">Beispiel: offen</button>
+<button class="btn ghost" data-act="break">&#9680; Symmetrie brechen</button>
+</div>
+<div class="btnrow">
+<span class="chip">Bausteine: <b id="countVal">0</b> / 8</span>
+<span class="chip">Z(&#931;) = <b id="valVal">—</b></span>
+<span class="chip">klebe nur passende Ränder (Kleben-Regel)</span>
+</div>
+<div id="vstat" style="margin-top:10px;color:var(--muted);font-size:.92em;"></div>
+</div>
+<div class="insight"><b>Was du siehst:</b> Bei niedriger Fidelity ist das Ganze eine <em>steife Zahl</em> (B). Erhöhe die Kamera: der Wert <em>entzieht</em> sich als Zahl und enthüllt eine <em>Struktur mit innerer &#8484;/2-Symmetrie</em> um ein <em>leeres Zentrum</em> (A). Die Zahl verschwindet nicht &#8212; sie bleibt als <em>Trace</em> eingeblendet: <em>die Zahl ist der Schatten des Stacks.</em> &ldquo;Symmetrie brechen&rdquo; zerstört die Instanz, die Bahn (der Typ) bleibt &#8212; A's Auflösung von Widerspruch 2/3 in B's Sprache.</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<span class="prov"><span class="src">A &#8212; <a href="../n1-049.html">n1-049.html</a></span><span class="ds">Runde-1-Fusion (montana_sacra.html &#10007; stacks.html), &ldquo;Descent &#8212; der leere Gipfel als Stack&rdquo;: Descent als Verkleben lokaler Fragmente zum globalen Objekt, das eine <em>Struktur mit inneren Symmetrien</em> (Stack, &#8484;/2) ist, kein Punkt in der Mitte; das Zentrum leer, &ldquo;Zerbrich die Instanz, behalt den Typ&rdquo;.</span></span>
+<span class="prov"><span class="src">B &#8212; <a href="../n1-097.html">n1-097.html</a></span><span class="ds">Runde-1-Fusion (kategorientheorie.html &#10007; topologische_quantenfeldtheorie.html), &ldquo;Die TQFT als strukturgetreuer Funktor&rdquo;: TQFT als stark monoidaler Funktor Z:Cob&#8594;Vect, der Cobordismen klebt und auf geschlossenen Mannigfaltigkeiten eine <em>Zahl</em> Z(&#931;)=q<sup>k</sup> liefert; &ldquo;Topologie, nicht Geometrie&rdquo;.</span></span>
+</section>
+
+</article>
+
+<script>
+function toggleTheme(){
+  var d=document.documentElement;
+  var dark=d.classList.toggle('dark');
+  try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+  if(window.__redrawViz) window.__redrawViz();
+}
+(function(){
+  "use strict";
+  var canvas=document.getElementById('glueCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var fidEl=document.getElementById('fidelity');
+  var qEl=document.getElementById('qSlider');
+  var qVal=null;
+  var countEl=document.getElementById('countVal');
+  var valEl=document.getElementById('valVal');
+  var statEl=document.getElementById('vstat');
+
+  var stack=['cap','pants','copants','cup'];
+  var q=2;
+  var broken=false;
+
+  var PIECES={
+    cap:{in:0,out:1,op:'Kappe'},
+    cup:{in:1,out:0,op:'Becher'},
+    pants:{in:1,out:2,op:'Hose'},
+    copants:{in:2,out:1,op:'Copants'},
+    cyl:{in:1,out:1,op:'Zylinder'}
+  };
+  var OP={cap:'\u03b7',cup:'\u03b5',pants:'m',copants:'\u0394',cyl:'id'};
+
+  function css(n,fb){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function smooth(t){return t*t*(3-2*t);}
+  function rrect(x,y,ww,hh,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+ww,y,x+ww,y+hh,r);
+    ctx.arcTo(x+ww,y+hh,x,y+hh,r);
+    ctx.arcTo(x,y+hh,x,y,r);
+    ctx.arcTo(x,y,x+ww,y,r);
+    ctx.closePath();
+  }
+
+  function resize(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth,h=canvas.clientHeight;
+    if(w<10||h<10) return;
+    canvas.width=Math.max(1,Math.floor(w*dpr));
+    canvas.height=Math.max(1,Math.floor(h*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function frontiers(){
+    var f=0,fr=[0],valid=true,i,p;
+    for(i=0;i<stack.length;i++){p=PIECES[stack[i]];if(f!==p.in)valid=false;f=p.out;fr.push(f);}
+    var cups=0;for(i=0;i<stack.length;i++){if(stack[i]==='cup')cups++;}
+    return {fr:fr,valid:valid,top:f,cups:cups};
+  }
+  function circLabel(n){if(n===0)return '\u2205';if(n===1)return 'S\u00b9';if(n===2)return 'S\u00b9\u2282S\u00b9';return 'S\u00b9\u00d7'+n;}
+
+  function draw(){
+    var w=canvas.clientWidth,h=canvas.clientHeight;
+    if(w<10||h<10) return;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=css('--canvas-bg','#0d1019');ctx.fillRect(0,0,w,h);
+
+    var textC=css('--ink','#e6e8ee'),muted=css('--muted','#9aa3b5');
+    var accent=css('--accent','#f0a500'),accent2=css('--accent2','#5aa9ff');
+    var accent3=css('--accent3','#a78bfa'),good=css('--good','#34d399');
+    var warn=css('--warn','#fbbf24'),frame=css('--viz-frame','#f0a500');
+    var voidc=css('--viz-void','#ff7a6b'),line=css('--line','#2a3348');
+    var p1=css('--viz-p1','#ff8a7a'),p2=css('--viz-p2','#60a5fa'),p3=css('--viz-p3','#34d399');
+
+    var info=frontiers();
+    var L=stack.length;
+    var f=smooth((parseInt(fidEl.value,10)||0)/100);
+    var c50=w*0.5,cxl=w*0.22,cxr=w*0.80;
+    var yTop=96,yBot=h-66;
+
+    ctx.textBaseline='alphabetic';
+    ctx.font='700 13px Inter,system-ui,sans-serif';
+    ctx.textAlign='left';ctx.fillStyle=accent2;ctx.fillText('Lokale Bausteine (Cob / Patches)',w*0.05,32);
+    ctx.textAlign='center';ctx.fillStyle=accent;ctx.fillText('Z \u00b7 Descent (Kleben)',c50,32);
+    ctx.textAlign='right';ctx.fillStyle=accent3;ctx.fillText('Das Ganze',w*0.95,32);
+
+    ctx.textAlign='center';ctx.fillStyle=muted;ctx.font='11px Inter,system-ui,sans-serif';
+    ctx.fillText('Kamera / Fidelity:  Zahl (Trace)   \u2194   Stack (volle Struktur, Z/2)',c50,50);
+
+    var gap=Math.min(44,w*0.05);
+    var i,k,s;
+
+    // LEFT: pieces + boundaries
+    if(L===0){
+      ctx.fillStyle=muted;ctx.font='12px Inter,system-ui,sans-serif';ctx.textAlign='center';
+      ctx.fillText('\u2205  leer (Identit\u00e4t)',cxl,(yTop+yBot)/2-4);
+      ctx.fillText('+ Baustein (Button unten)',cxl,(yTop+yBot)/2+16);
+    } else {
+      for(i=0;i<=L;i++){
+        var yy=(yBot - i*(yBot-yTop)/L);
+        var n=info.fr[i];
+        if(n===0){
+          ctx.beginPath();ctx.arc(cxl,yy,7,0,Math.PI*2);ctx.setLineDash([3,3]);ctx.strokeStyle=muted;ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
+        } else {
+          for(k=0;k<n;k++){
+            var bx=cxl+(k-(n-1)/2)*gap;
+            ctx.beginPath();ctx.arc(bx,yy,7,0,Math.PI*2);
+            ctx.fillStyle=css('--canvas-bg','#0d1019');ctx.fill();
+            ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
+          }
+        }
+      }
+      for(s=0;s<L;s++){
+        var key=stack[s];
+        var yc=yBot-(s+0.5)*(yBot-yTop)/L;
+        var cw=Math.min(w*0.30,150),ch=26;
+        rrect(cxl-cw/2,yc-ch/2,cw,ch,7);
+        ctx.fillStyle=css('--card','#1a1f2e');ctx.fill();
+        ctx.strokeStyle=line;ctx.lineWidth=1;ctx.stroke();
+        ctx.fillStyle=textC;ctx.font='600 12px Inter,system-ui,sans-serif';ctx.textAlign='center';
+        ctx.fillText(OP[key]+'  '+PIECES[key].in+'\u2192'+PIECES[key].out,cxl,yc+4);
+      }
+    }
+
+    // MIDDLE: arrow
+    var my=(yTop+yBot)/2;
+    ctx.strokeStyle=accent2;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(w*0.40,my);ctx.lineTo(w*0.55,my);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(w*0.55,my);ctx.lineTo(w*0.55-9,my-5);ctx.lineTo(w*0.55-9,my+5);ctx.closePath();ctx.fillStyle=accent2;ctx.fill();
+    ctx.fillStyle=accent2;ctx.font='700 18px Inter,system-ui,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Z',c50,my-16);
+    ctx.fillStyle=muted;ctx.font='10px Inter,system-ui,sans-serif';
+    ctx.fillText('F(g\u2218f)=F(g)\u2218F(f) \u00b7 up to \u2245',c50,my+22);
+
+    // RIGHT: the whole (morph number <-> stack)
+    var rcx=cxr,rcy=(yTop+yBot)/2;
+    if(L===0){
+      ctx.fillStyle=muted;ctx.font='12px Inter,system-ui,sans-serif';ctx.textAlign='center';
+      ctx.fillText('\u2205  kein Ganzes',rcx,rcy);
+    } else if(!info.valid){
+      ctx.fillStyle=warn;ctx.font='700 14px Inter,system-ui,sans-serif';ctx.textAlign='center';
+      ctx.fillText('\u26a0 inkompatible R\u00e4nder',rcx,rcy-8);
+      ctx.fillStyle=muted;ctx.font='11px Inter,system-ui,sans-serif';
+      ctx.fillText('das Ganze ist nicht wohldefiniert \u2014',rcx,rcy+12);
+      ctx.fillText('nur wenn die R\u00e4nder passen (Kleben-Regel)',rcx,rcy+28);
+    } else if(info.top>0){
+      ctx.fillStyle=accent3;ctx.font='700 16px Inter,system-ui,sans-serif';ctx.textAlign='center';
+      ctx.fillText('V^'+info.top+'  (offen)',rcx,rcy-6);
+      ctx.fillStyle=muted;ctx.font='11px Inter,system-ui,sans-serif';
+      ctx.fillText('lineare Abbildung \u2014 kein Skalar,',rcx,rcy+14);
+      ctx.fillText('keine geschlossene Struktur',rcx,rcy+30);
+    } else {
+      var val=Math.pow(q,info.cups);
+      var structA=f, numA=1-f;
+
+      // STRUCT scene (stack)
+      if(structA>0.02){
+        ctx.save();ctx.globalAlpha=structA;
+        var R=lerp(12,66,f);
+        ctx.beginPath();ctx.strokeStyle=frame;ctx.lineWidth=2.5;ctx.arc(rcx,rcy,R,0,Math.PI*2);ctx.stroke();
+        var nodes=[p1,p2,p3];
+        for(i=0;i<3;i++){
+          var a=-Math.PI/2+i*(2*Math.PI/3);
+          var px=rcx+Math.cos(a)*R,py=rcy+Math.sin(a)*R;
+          ctx.beginPath();ctx.fillStyle=nodes[i];ctx.arc(px,py,7,0,Math.PI*2);ctx.fill();
+        }
+        if(!broken){
+          ctx.save();ctx.globalAlpha=structA*0.45;
+          ctx.translate(rcx*2,0);ctx.scale(-1,1);
+          ctx.beginPath();ctx.strokeStyle=frame;ctx.lineWidth=2;ctx.arc(rcx,rcy,R,0,Math.PI*2);ctx.stroke();
+          for(i=0;i<3;i++){var a2=-Math.PI/2+i*(2*Math.PI/3);var mx=rcx+Math.cos(a2)*R,my2=rcy+Math.sin(a2)*R;ctx.beginPath();ctx.fillStyle=nodes[i];ctx.arc(mx,my2,7,0,Math.PI*2);ctx.fill();}
+          ctx.restore();
+          ctx.fillStyle=accent;ctx.font='700 18px Inter,system-ui,sans-serif';ctx.textAlign='center';
+          ctx.fillText('\u2245',rcx,rcy-R-12);
+        } else {
+          ctx.strokeStyle=voidc;ctx.lineWidth=1.5;
+          for(var kk=0;kk<10;kk++){var aa=kk/10*Math.PI*2+0.3;ctx.beginPath();ctx.moveTo(rcx+Math.cos(aa)*6,rcy+Math.sin(aa)*6);ctx.lineTo(rcx+Math.cos(aa)*20,rcy+Math.sin(aa)*20);ctx.stroke();}
+          ctx.fillStyle=voidc;ctx.font='11px Inter,system-ui,sans-serif';ctx.textAlign='center';
+          ctx.fillText('Instanz gebrochen \u00b7 Typ (Z/2) bleibt',rcx,rcy-R-12);
+        }
+        ctx.beginPath();ctx.fillStyle=textC;ctx.arc(rcx,rcy,4,0,Math.PI*2);ctx.fill();
+        if(f>0.5){
+          ctx.fillStyle=voidc;ctx.font='700 15px Inter,system-ui,sans-serif';ctx.textAlign='center';
+          ctx.fillText('\u2205 leeres Zentrum',rcx,rcy-R-30);
+        }
+        ctx.restore();
+      }
+      // NUMBER scene
+      if(numA>0.02){
+        ctx.save();ctx.globalAlpha=numA;
+        var nw=lerp(150,46,f),nh=lerp(58,46,f);
+        rrect(rcx-nw/2,rcy-nh/2,nw,nh,12);
+        ctx.fillStyle=css('--card','#1a1f2e');ctx.fill();
+        ctx.strokeStyle=good;ctx.lineWidth=2;ctx.stroke();
+        ctx.fillStyle=good;ctx.font='700 16px Inter,system-ui,sans-serif';ctx.textAlign='center';
+        ctx.fillText('Z(\u03a3) = '+val,rcx,rcy-4);
+        ctx.fillStyle=muted;ctx.font='11px Inter,system-ui,sans-serif';
+        ctx.fillText('Skalar \u00b7 steif \u00b7 Residual trivial',rcx,rcy+16);
+        ctx.restore();
+      }
+      // persistent caption
+      ctx.fillStyle=muted;ctx.font='11px Inter,system-ui,sans-serif';ctx.textAlign='center';
+      ctx.fillText('Zahl = Trace des Stacks (Symmetrie ausgewertet)',rcx,rcy+(f>0.5?R+24:54));
+    }
+
+    // bottom labels
+    ctx.font='11px Inter,system-ui,sans-serif';ctx.textAlign='left';ctx.fillStyle=muted;
+    ctx.fillText('Randsignatur:  '+info.fr.map(circLabel).join(' \u2192 '),w*0.05,h-40);
+    ctx.textAlign='right';
+    if(L>0&&info.valid&&info.top===0){ctx.fillStyle=good;ctx.fillText('geschlossen \u00b7 k = '+info.cups+' \u00b7 q = '+q,w*0.95,h-40);}
+
+    // status
+    if(statEl){
+      var msg='';
+      if(L===0) msg='Leere Komposition (Identit\u00e4t) \u2014 f\u00fcge unten Bausteine hinzu (Kappe, Becher, Hose, Copants, Zylinder).';
+      else if(!info.valid) msg='Inkompatible R\u00e4nder: Komposition nur, wenn der untere Ausgang = der obere Eingang passt \u2014 die gemeinsame Klebe-Regel (A: \u201enur wenn sie \u00fcbereinstimmen\u201c, B: \u201epassende R\u00e4nder\u201c).';
+      else if(info.top>0) msg='Offen: \u2116 \u2192 V^'+info.top+' \u2014 lineare Abbildung, noch keine Zahl. Schlie\u00dfe den Rand (oben 0), um einen Skalar/Stack zu erhalten.';
+      else {
+        var val2=Math.pow(q,info.cups);
+        var mode=f>0.66?'Stack (volle Struktur, Residual Z/2)':(f<0.33?'Zahl (steif, Residual trivial)':'\u00dcbergang: Zahl \u2194 Stack');
+        msg='Geschlossen \u2192 das Ganze ist eine strukturelle Invariante: '+mode+'. Zahl = '+val2+' (Trace). Der Fidelity-Regler (\u201eKamera\u201c) blendet zwischen Zahl und Stack mit innerer Z/2-Symmetrie. \u201eSymmetrie brechen\u201c zerbricht die Instanz, der Typ bleibt.';
+      }
+      statEl.textContent=msg;
+    }
+    if(countEl) countEl.textContent=stack.length;
+    if(valEl) valEl.textContent=(L>0&&info.valid&&info.top===0)?('q^'+info.cups+' = '+Math.pow(q,info.cups)):'\u2014';
+  }
+
+  function addP(k){if(stack.length>=8)return;stack.push(k);}
+  function popP(){if(stack.length)stack.pop();}
+  function resetP(){stack=[];}
+  function demoClosed(){stack=['cap','pants','copants','cup'];}
+  function demoOpen(){stack=['cap','cyl'];}
+
+  var btns=document.querySelectorAll('.btn');
+  btns.forEach(function(b){
+    var a=b.getAttribute('data-act');
+    if(!a) return;
+    b.addEventListener('click',function(){
+      if(a==='cap')addP('cap');else if(a==='cup')addP('cup');else if(a==='pants')addP('pants');
+      else if(a==='copants')addP('copants');else if(a==='cyl')addP('cyl');
+      else if(a==='pop')popP();else if(a==='reset')resetP();
+      else if(a==='closed')demoClosed();else if(a==='open')demoOpen();
+      else if(a==='break'){broken=!broken;}
+      draw();
+    });
+  });
+  if(fidEl) fidEl.addEventListener('input',draw);
+  if(qEl) qEl.addEventListener('input',function(){q=parseInt(qEl.value,10)||2;draw();});
+
+  window.addEventListener('resize',resize);
+  if(window.MutationObserver){
+    new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+  window.__redrawViz=function(){draw();};
+  resize();
+})();
+</script>
+</body>
+</html>

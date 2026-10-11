@@ -1,0 +1,16 @@
+{
+  "no": "049",
+  "a": "n1-071.html",
+  "b": "n1-106.html",
+  "a_title": "Wiederkunft — die gemeinsame Dynamik von Regel & Fluss",
+  "b_title": "Fusion: Invariante Form — Post-Quantum-Krypto × Grothendiecks Raum",
+  "combined_theme": "wiederkunft-invarianz",
+  "one_line": "Wiederkunft ist Invarianz über die Zeit, Invarianz ist Wiederkunft über die Beschreibung — die Form, die zugleich wiederkommt (Rad/Attraktor) und jede Beschreibung übersteht (Gitter/geheimer Vektor): das Wiederkommende ist das Invariante.",
+  "contradictions": [
+    "Entzug vs. Persistenz: A feiert, dass die Form sich der sie definierenden Regel entzieht ('zu groß, um von der Regel erfasst zu werden'; 'Bedeutung weicht'); B ruht auf einer festen, objektiv persistenten, betrachterunabhängigen Invariante (Gitter, geheimer Vektor s).",
+    "Konstitutiver vs. externer Beobachter: A — der Beobachter ist teilnehmend und gestaltet die Trajektorie mit ('You ARE the dream now'; die Wahl kippt eine Zelle) und kann aufgesogen werden; B — die Invariante ist betrachterunabhängig, der Angreifer extern zum Objekt.",
+    "Überwunden vs. dauernde Hürde: A — das Schwierige/Chaotische (Kante des Chaos) wird durch regenerativ-anti-entropische Rückkehr überwunden (Ende = Anfang, Tod → Leben); B — das Schwierige ist eine stabile, dauernde Barriere (der Widerstand der Form, ~11% quanten-beschleunigt, aber nicht überwunden)."
+  ],
+  "resolution": "Wiederkunft ≡ Invarianz: das Wiederkommende ist das Invariante, dieselbe Idee auf zwei Achsen (Zeit vs. Beschreibung). Die Form bleibt in ihren messbaren Invarianten fest und betrachterunabhängig (B: Persistenz — Periode, Entropie, geheimer Vektor, Gitter), entzieht sich aber der einen Regel/Beschreibung, die sie definiert, weil sie sich selbst referenziert und proteische Gesichter zeigt (A: Offenheit). Der Beobachter wählt den Zugang (Trajektorie/Beschreibung/Gesicht — konstitutiv für die Deutung, nicht für die Invariante); und das Schwierige ist derselbe Widerstand der Form auf zwei Achsen — wiederkommen (Zeit) und übersteigen (Beschreibung).",
+  "viz": "Limit-Zyklus ('das Rad') als Wiederkunft in der Zeit; ein 'Linse/Beschreibung'-Regler (B's Achse) projiziert die Bahn in immer gröbere, wildere Sicht (Quetschung + Rauschen). Die Invarianten (Periode T, echter Radius R*) bleiben konstant — die Form übersteht den Beschreibungswechsel — während die Rekonstruktion R̂ aus der groben Sicht über einer Schwelle abbricht (Verschlüsselungs-/Entzugs-Analogon). Theme-aware, inline, zero console errors."
+}

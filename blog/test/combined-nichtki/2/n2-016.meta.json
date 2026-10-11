@@ -1,0 +1,16 @@
+{
+  "no": "016",
+  "a": "n1-038.html",
+  "b": "n1-107.html",
+  "a_title": "Ein Ort als Funktion der Zeit",
+  "b_title": "HoTT: das Formalbeweis-System und der Konstruktionsmotor",
+  "combined_theme": "identity-as-path",
+  "one_line": "Die Identität eines Dings — einer Stadt oder eines Typs — ist nicht der Wert, nicht der Punkt, sondern der Pfad: die Regel (Funktion/Struktur), die die Stichproben erzeugt; den Pfad zu berühren (Uhr schieben / Schleife komponieren) heißt, ihn zu berechnen.",
+  "contradictions": [
+    "Ursprung der Regel — A *fittet* ein schematisches parametrisches Modell an reale Anker (model-of, 'not a data claim'); B *konstruiert* die Regel aus Axiomen und *bezeugt* sie (proof-of, 'witnessed by refl').",
+    "Rolle der Manipulation — A offenbart den Wandel eines *fixen* Ortes (Uhr schieben = historisch/interpretativ, Objekt gegeben); B *konstituiert* den Wert selbst (Schleife komponieren = in ℤ addieren, der Zug erzeugt das Ergebnis).",
+    "Invarianz — A: dasselbe durch Kontinuität der Geschichte (derselbe Ort 1127→2025, empirisch/narrativ); B: dasselbe durch Univalenz (≃ ⇒ =, homöomorphe Räume gleich, axiomatisch/strukturell)."
+  ],
+  "resolution": "Die Regel/den Pfad als Identität tragen beide; der Unterschied ist nur der epistemische Weg (fitted vs. constructed) und die Domäne (empirisch vs. formal), nicht die Struktur der Aussage. 'Beweis = Algorithmus = Trajektorie' (B) verallgemeinert sich zu: Regel = Generator = Pfad, und 'berühren heißt berechnen' gilt in beiden. Univalenz (B) ist die Formalisierung von 'ein Ding bleibt dasselbe durch seine Transformationen'; A's 'derselbe Ort durch die Geschichte' ist die empirische Instanz. Die geteilte Ethik: Treue zur Regel, nicht zum Snapshot — erzeugt wird (Kurve/Beweis) nie als gegeben (Daten/Terme) ausgegeben.",
+  "viz": "Reines Canvas 2D, ein einziger Takt (Jahr 1127–2025) steuert gleichzeitig: links A's Trajektorie P(t) (schematische S-Kurve mit realen Jahres-Ankern, laufender Punkt, Tangente = Rate P'(t)), rechts B's Schleifenstruktur Ω(S¹) (Punkt windet sich n-mal um base, Komposition = Addition, loop^n). Readout: Wert = Stichprobe, Identität = der zurückgelegte Pfad; Buttons Abspielen/Zurücksetzen/Theme; theme-aware, inline data, 0 Konsolenfehler."
+}

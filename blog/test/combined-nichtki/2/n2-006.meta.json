@@ -1,0 +1,16 @@
+{
+  "no": "006",
+  "a": "n1-012.html",
+  "b": "n1-035.html",
+  "a_title": "The Boundary of Wisdom — what survives ∂",
+  "b_title": "Der Pullback speist die Christoffel-Maschinerie",
+  "combined_theme": "ableitungs-operator-invarianten",
+  "one_line": "Der eine Operator ∂=d trennt Rand (hebt sich auf, ∂∂=0), ererbtes Flaches (Pullback) und das Invariante (Loch/Krümmung); die Pause verbringe, wo die Metrik-Steigung am größten ist, und handle nur auf dem Invarianten — global gezählt, lokal dicht.",
+  "contradictions": [
+    "Geschlossene Gewissheit (A) vs. offene Nicht-Fundamentalität (B): A krönt die abgeschlossene Identität ∂∂=0 (das System schließt sich, alles hebt sich garantiert auf); B verneint jede geschlossene Essenz (alles nach dem ersten Pfeil ist abgeleitet, die Pipeline ist offen und erreicht immer ein flacheres Umgebungsfeld g_E).",
+    "Globale diskrete Invariante (A) vs. lokale kontinuierliche Invariante (B): A's Invariante ist die Betti-Zahl (diskrete, topologisch starre Zählung: wie viele Löcher, Rest nach totaler Aufhebung); B's Invariante ist die Krümmung Γ (lokale, kontinuierliche Dichte, die bei Flachheit verschwindet).",
+    "Das Wann ist konstitutiv (A) vs. die Punktwahl ist extern/trivial (B): A macht die Entscheidung wann/wo handeln (die Pause) zum Kern des Inhalts; B hat kein Wann, die Mechanik läuft rein deskriptiv und die Wahl des Auswertungspunkts ist der Formel extern."
+  ],
+  "resolution": "Lokale Schließung (∂∂=0) ist die Lizenz für globale Ableitung: aus B's Pipeline wird ein Differentialkomplex (d²=0, Pullback kommutiert mit d), in dem sich ererbtes/exaktes (im ∂, flach) von echtem Invariant (ker ∂ minus im ∂, das Loch / die nicht-flache Krümmung) unterscheiden lässt. Das Invariante hat eine globale Zählung (Betti, A) und eine lokale Dichte (Γ, B). A's Wann/Pause lokalisiert sich auf B's Punkt maximaler Metrik-Steigung — die Praxis heißt, die Ableitung genau dort auslesen, wo ∂g am größten ist, und nur auf dem Invarianten handeln.",
+  "viz": "Ziehbarer Punkt auf einer Graphfläche z=h(x,y) in flachem R^3; Farbfeld = Dichte der Invariante |Γ| (lokale Dichte, B), blaue Rahmen = Betti-artige Zählung der Zellen über einem Schwellwert (globales wie-viele, A), Ellipse = Einheitskreis der Pullback-Metrik g=ι*g_E, Gradient-Pfeil = Metrik-Steigung (das Signal fürs Wann). Schwellwert-Slider (kühn bis vorsichtig), Flächen- und Amplitudenwahl, Themen-Umschalter; alle Daten inline, themenbewusst, ohne Netzwerk."
+}

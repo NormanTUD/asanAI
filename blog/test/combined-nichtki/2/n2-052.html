@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Rest ohne Ursprung — Invariante, Schwellwert und das Rückziehende</title>
+<style>
+:root{
+  --bg:#f7f5ee; --panel:#fffdf7; --line:rgba(40,45,70,.15);
+  --text:#20242f; --dim:#5c6377;
+  --accent:#6c63ff; --accent2:#0f9d7f; --accent3:#d9504f; --accent4:#b98517;
+  --code:#eef1f6; --code-fg:#20242f; --shadow:rgba(0,0,0,.07);
+}
+html.dark{
+  --bg:#0b0e16; --panel:#141828; --line:rgba(120,140,220,.20);
+  --text:#e6ebff; --dim:#9aa6cc;
+  --accent:#8a83ff; --accent2:#00c9a7; --accent3:#ff6b6b; --accent4:#ffd93d;
+  --code:#0c1526; --code-fg:#c9d4e6; --shadow:rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 620px at 12% -12%, rgba(138,131,255,.10), transparent 55%),
+    radial-gradient(1000px 620px at 92% -8%, rgba(0,201,167,.09), transparent 52%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:42px 22px 90px}
+h1{font-size:clamp(1.6rem,4.4vw,2.4rem);line-height:1.1;margin:.15em 0 .3em;font-weight:800;letter-spacing:-.02em}
+.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 8px}
+.subtitle{font-family:ui-monospace,'SFMono-Regular',Consolas,monospace;font-size:.82rem;color:var(--dim);margin:0 0 6px}
+.subtitle code{font-style:normal;background:none;color:var(--dim);padding:0}
+section{margin:0 0 32px;scroll-margin-top:20px}
+h2{font-size:clamp(1.22rem,2.8vw,1.6rem);margin:.2em 0 .55em;font-weight:800;letter-spacing:-.01em}
+h2 .num{font-family:ui-monospace,monospace;font-size:.56em;color:var(--accent);border:1px solid var(--line);padding:3px 9px;border-radius:7px;margin-right:10px;vertical-align:middle}
+h3{font-size:1.06rem;margin:22px 0 8px;color:var(--text);font-weight:700}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0}
+b,strong{font-weight:650;color:var(--text)}
+em{color:var(--accent2);font-style:italic}
+a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+a:hover{border-bottom-style:solid}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(--code);color:var(--code-fg);padding:1px 6px;border-radius:5px}
+.eq{font-family:ui-monospace,Consolas,monospace;background:var(--code);color:var(--code-fg);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin:14px 0;font-size:.92rem;overflow-x:auto;line-height:1.6}
+.note{border-left:3px solid var(--accent);background:rgba(138,131,255,.07);padding:13px 17px;border-radius:0 12px 12px 0;margin:18px 0;font-size:.95rem}
+.note b{color:var(--text)}
+.note.key{border-left-color:var(--accent2);background:rgba(0,201,167,.07)}
+.tagA{color:var(--accent);font-weight:700;font-size:.86em}
+.tagB{color:var(--accent3);font-weight:700;font-size:.86em}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media (max-width:640px){.vs{grid-template-columns:1fr}}
+.vs .col{border:1px solid var(--line);border-radius:12px;padding:12px 15px;background:var(--panel)}
+.vs .col h3{margin:0 0 6px;font-size:.98rem}
+.vs .col .src{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:700}
+.vs .col .src.a{color:var(--accent)} .vs .col .src.b{color:var(--accent3)}
+.vs .col p{font-size:.92rem;color:var(--dim);margin:0 0 10px}
+.vs .col p:last-child{margin:0}
+.resolve{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent2);border-radius:12px;padding:14px 18px;margin:13px 0}
+.resolve .tag{color:var(--accent2);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.resolve p{font-size:.94rem;color:var(--dim);margin:6px 0 0}
+.resolve p b{color:var(--text)}
+table.map{width:100%;border-collapse:collapse;margin:16px 0;font-size:.87rem}
+table.map th{background:var(--code);color:var(--text);text-align:left;padding:9px 11px;border:1px solid var(--line);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em}
+table.map td{padding:9px 11px;border:1px solid var(--line);color:var(--dim);vertical-align:top}
+table.map td:first-child{color:var(--text);font-weight:600}
+.viz-stage{position:relative;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 16px 44px var(--shadow)}
+.viz-stage canvas{width:100%;height:470px;display:block;border-radius:11px;touch-action:none}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--dim);margin:10px 4px 4px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ctrls{display:flex;flex-wrap:wrap;gap:12px 20px;margin:14px 2px 4px;align-items:flex-end}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:170px;flex:1}
+.ctrl label{font-size:12px;color:var(--dim);display:flex;justify-content:space-between;gap:10px}
+.ctrl label .v{color:var(--accent);font-family:ui-monospace,monospace;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(138,131,255,.22);cursor:grab}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--accent);cursor:grab}
+.btnrow{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 4px}
+button.btn{background:transparent;border:1px solid var(--line);color:var(--dim);padding:7px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .16s}
+button.btn:hover{color:var(--text);border-color:var(--accent)}
+button.btn.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+button.btn.acc2.on{background:var(--accent2);border-color:var(--accent2)}
+.readout{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:var(--accent2);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:12px 0 0;line-height:1.6}
+.readout b{color:var(--text)}
+.prov{display:grid;gap:12px;margin:14px 0}
+.prov .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 18px}
+.prov .who{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--dim);margin-bottom:5px}
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:.85rem}
+</style>
+</head>
+<body>
+<article>
+  <p class="eyebrow">Fusion &middot; Runde 2 &middot; non-AI-Track &middot; Paar 052</p>
+  <h1>Der Rest ohne Ursprung &mdash; Invariante, Schwellwert und das R&uuml;ckziehende</h1>
+  <p class="subtitle">Fusion aus: <code>n1-079.html</code> &nbsp;&#10005;&nbsp; <code>n1-089.html</code> &nbsp;(Runde 2)</p>
+
+  <!-- ═════════ 1 · KERNTHESE ═════════ -->
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>
+      Auf den ersten Blick trifft hier <em>Signaltheorie</em> auf <em>homologische Algebra und
+      Philosophie</em>. <span class="tagA">A &mdash; 079</span> liest eine Zeitreihe
+      <code>x(t)</code> als <b>verlustbehaftete Projektion</b> (einen Schatten) eines
+      höherdimensionalen Objekts und erfaßt dessen Inhalt durch <i>Unprojektion</i>
+      (Verzögerungs-Embedding &rarr; Raum, DFT &rarr; Frequenz). <span class="tagB">B &mdash; 089</span>
+      liest das viele „Seiende“ als Schatten des Einen und erfaßt dessen Inhalt durch den
+      <i>Quotienten</i> <code>H_n = Z_n / B_n</code> &mdash; der Zykel, der <em>kein Rand ist</em>, also
+      nicht von Etwas Höherdimensionalem herkommt.
+    </p>
+    <p>
+      Die eine gemeinsame Position: <b>Erkenntnis ist in beiden Papieren die Rückgewinnung eines
+      <i>Rest-Invariante</i> aus einer verlustbehafteten Projektion &mdash; und dieser Rest ist genau an
+      der <i>Schwelle</i> lesbar, an der die Projektion aufhört, in sich zusammenzukollabieren.</b> A
+      faktoriert das <i>Faltwerk</i> aus (die Unprojektion wird injektiv, sobald der Rekonstruktionsraum
+      groß genug ist); B faktoriert die <i>Ränder</i> aus (der Rest ist, was nicht von Etwas anderem
+      herkommt). Was in beiden als „Wichtiges“ übrig bleibt, ist definiert als <em>das Nicht-Herkommende</em>.
+    </p>
+    <p>
+      Und die Schwelle ist in beiden derselbe Gestus: A mißt sie in <b>Dimensionen</b>
+      (<code>d &ge; 2m+1</code>, <code>f_s &ge; 2&middot;f_max</code>), B in einem einzigen
+      <b>Grenzgesetz</b> (<code>&part;&circ;&part; = 0</code>). Unterhalb der Schwelle ist der Rest
+      <em>verborgen</em> (falsche nächste Nachbarn / Aliasing bei A; ein schlecht definierter Quotient bei B);
+      ab der Schwelle wird er <em>lesbar</em>. A <b>zählt</b> den erfaßbaren Schatten (Dimension, Exponenten,
+      &chi;); B <b>benennt</b> den Kern, der über jeden Schatten hinauszieht (das Geheiß, die Zwiefalt).
+      <b>Es gibt einen erfaßbaren Schatten <i>und</i> einen zurückziehenden Kern &mdash; und die Schwelle ist
+      genau der Ort, an dem sich beide voneinander trennen.</b>
+    </p>
+  </section>
+
+  <!-- ═════════ 2 · WIDERSPRÜCHE ═════════ -->
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>
+      Die beiden (schon fusionierten) Papiere machen keine widersprüchlichen <em>faktischen</em>
+      Aussagen &mdash; sie leben in anderen Domänen. Aber sie nehmen auf dieselben
+      <strong>Meta-Fragen</strong> inkompatible Stellungen ein. Drei konkrete Kanten:
+    </p>
+    <div class="vs">
+      <div class="col">
+        <div class="src a">A &mdash; 079 &middot; Signal als Schatten</div>
+        <h3>R&uuml;ckgewinnbarkeit: das Objekt ist invertierbar</h3>
+        <p>Das Objekt hinter dem Schatten ist <b>erfaßbar</b>: „the full picture is the union“ der beiden
+        Unprojektionen; Verstehen heißt <b>vollständige Invertierung</b> der Projektion. Die Invarianten
+        (Lyapunov-Exponenten, fraktale Dimension, die sauberen DFT-Peaks) werden <em>abgelesen</em> &mdash;
+        der Schatten ist (bei gen&uuml;gend Dimension) ein invertierbares Bild des Objekts.</p>
+      </div>
+      <div class="col">
+        <div class="src b">B &mdash; 089 &middot; Zykel ohne Rand</div>
+        <h3>R&uuml;ckzug: das Höchste entzieht sich der Erfassung</h3>
+        <p>Das höchste Objekt (das Sein, das Geheiß) ist <b>definiert durch seinen Rückzug</b>:
+        „es am meisten sich zu denken gibt, während es sich gerade zurückzieht“; „migratory birds pulled
+        toward what recedes“. Verstehen ist <em>keine</em> vollständige Invertierung, sondern <b>Antwort auf
+        einen Ruf</b>. Das Höchste läßt sich gerade <em>nicht</em> greifen.</p>
+      </div>
+    </div>
+    <div class="vs">
+      <div class="col">
+        <div class="src a">A &mdash; 079 &middot; die L&uuml;cke als Defekt</div>
+        <h3>Die L&uuml;cke ist eine Schwelle, die man &uuml;berwindet</h3>
+        <p>Die „Lücke“ ist ein <b>technischer Grenzwert</b> (Dimension / Nyquist). Unter ihm
+        <em>bricht</em> die Rekonstruktion (falsche Nachbarn / Aliasing). Man <em>dimensioniert den Raum
+        groß genug</em>, um den Defekt zu umgehen. Die Lücke ist etwas, das man <b>ausbügelt</b>.</p>
+      </div>
+      <div class="col">
+        <div class="src b">B &mdash; 089 &middot; die L&uuml;cke als Quelle</div>
+        <h3>Das Loch ist die positivste Quelle</h3>
+        <p>Das Loch (der ontologische Abstand, der Zykel, der kein Rand ist) ist <b>„das
+        Bedenklichste“</b> &mdash; das, was das Denken <em>ruft</em>. Das Loch ist kein Defekt, sondern
+        der <b>Ursprung</b>. Das, was übrig bleibt, ist das Wertvollste &mdash; nicht etwas, das man
+        wegwünscht.</p>
+      </div>
+    </div>
+    <div class="vs">
+      <div class="col">
+        <div class="src a">A &mdash; 079 &middot; aktive Invertierung</div>
+        <h3>Methode: Konstruktion / Technik</h3>
+        <p>Die Rückgewinnung ist <b>aktive Technik</b>: man baut das Embedding, wählt <code>&tau;</code>
+        und <code>d</code>, läuft FNN, rechnet die DFT. „Choosing the right unprojection is the whole
+        game.“ Der Akteur ist der <b>aktive Konstrukteur / Ingenieur</b>.</p>
+      </div>
+      <div class="col">
+        <div class="src b">B &mdash; 089 &middot; rezeptive Antwort</div>
+        <h3>Methode: Antwort auf den Ruf</h3>
+        <p>Denken ist <b>Antwort, nicht Initiative</b>: „What calls us into thinking?“ Der Akteur ist
+        <em>überantwortet</em> (<i>hei&szlig;en</i> = „to bid, to command, to entrust“). Das Erfassen
+        wird <b>erhalten</b>, nicht gebaut.</p>
+      </div>
+    </div>
+    <div class="note">
+      <b>Net:</b> keine Fakten-Widersprüche. Die schärfste reale Kante ist
+      <b>A&rsquo;s „das Objekt ist vollständig aus seinem Schatten rückgewinnbar“ gegen B&rsquo;s „das
+      höchste Objekt ist durch seinen Rückzug definiert“</b> &mdash; A behauptet vollständige Lesbarkeit
+      (ab der Schwelle), B behauptet ein prinzipielles Sich-Entziehen.
+    </div>
+  </section>
+
+  <!-- ═════════ 3 · AUFLOSUNG ═════════ -->
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Aufl&ouml;sung</h2>
+    <div class="resolve">
+      <span class="tag">zu (1) &mdash; R&uuml;ckgewinnbarkeit vs. R&uuml;ckzug</span>
+      <p>Ebenen trennen: <em>Invariante</em> vs. <em>partikuläre Geschichte</em>. Auch A erfaßt nur
+      <b>Invarianten</b> (Geometrie, Dimension, Exponenten) &mdash; nie die rohe Bahn Punkt für Punkt. Und
+      gerade im chaotischen Regime (Lyapunov &gt; 0, sensitive Abhängigkeit) <em>scheitert</em> die
+      Vorhersage (die Rückgewinnung der <i>partikulären</i> Bahn) „nur über kurze Horizonte“, während die
+      <i>Form</i> des Attraktors erfaßt wird. A enthält den Rückzug also <em>schon verdeckt</em>: die
+      Invariante ist gefaßt, die Geschichte zieht sich zurück. B benennt genau dies: „what recedes“ ist
+      „am meisten“. <b>Fusion:</b> die Invariante (A) ist der <em>erfaßbare Schatten</em> des Objekts; der
+      Rückzug (B) ist der <em>Rest, den keine endliche Menge von Invarianten erschöpft</em>. A&rsquo;s Chaos
+      ist das konkrete Modell von B&rsquo;s Rückzug.</p>
+    </div>
+    <div class="resolve">
+      <span class="tag">zu (2) &mdash; L&uuml;cke als Defekt vs. als Quelle</span>
+      <p>Die Schwelle ist nicht willkürlich &mdash; sie ist <em>gesetzt durch die intrinsische
+      Komplexität</em> (bei A das <code>m</code>). Der „Margin“ (das <code>+1</code> in
+      <code>2m+1</code>) ist genau das, was den Rest <em>lesbar</em> macht: unterhalb ist die wahre
+      Struktur im Faltwerk <em>vergraben</em> (Aliasing), ab der Schwelle <em>tritt sie zutage</em>. Die
+      Lücke ist also kein Defekt, der weggeflickt wird, sondern der <b>Lesbarkeits-Ort</b>. B&rsquo;s
+      „das Rückziehende wird als Loch sichtbar“ ist derselbe Gestus. <b>Fusion:</b> Schwelle und Rest sind
+      ein Gestus &mdash; das Objekt (das Nicht-Randische / die wahre Geometrie) ist <em>genau an</em> der
+      Stelle lesbar, an der die Projektion aufhört, in sich zu kollabieren. Die Lücke ist, wo sich das
+      Objekt zeigt &mdash; nicht wo es fehlschlägt.</p>
+    </div>
+    <div class="resolve">
+      <span class="tag">zu (3) &mdash; aktive Invertierung vs. rezeptive Antwort</span>
+      <p>Auch bei A ist das „richtige“ <code>&tau;</code> und <code>d</code> <em>nicht frei gewählt</em>
+      &mdash; sie sind <em>durch die Daten gezwungen</em>: <code>&tau;</code> kommt aus Autokorrelation /
+      Mutual Information, <code>d</code> aus FNN. Der Konstrukteur <em>entdeckt</em> die Struktur, die der
+      Schatten auferlegt, statt sie aufzuerlegen. B liest dieselbe Haltung existenziell: Denken ist Antwort
+      auf einen Ruf. <b>Fusion:</b> Konstruktion ist real, aber immer <em>Antwort</em> auf eine gegebene
+      Struktur / ein Gesetz (<code>&part;&circ;&part; = 0</code> / die intrinsische Dimension des
+      Objekts) &mdash; weder reine Erfindung (A&rsquo;s Oberfläche) noch reine Passivität (B&rsquo;s
+      Oberfläche). FNN ist, wie man A&rsquo;s Gesetz <em>hört</em>.</p>
+    </div>
+    <div class="note key">
+      <b>Fusionierte Schlussfolgerung.</b> Die drei Kanten fallen zu einer zusammen:
+      <b>das Objekt der Erkenntnis ist ein Rest; die Invariante ist sein erfaßbarer Schatten, der Rückzug
+      sein unfaßbarer Kern; und die Schwelle (das Grenzgesetz <code>&part;&circ;&part; = 0</code> bei B, die
+      Dimensions-Grenze bei A) ist der Ort, an dem sich Schatten und Kern trennen.</b> A mißt den Schatten;
+      B benennt den Kern; die Schwelle teilen sie.
+    </div>
+  </section>
+
+  <!-- ═════════ 4 · INHALT ═════════ -->
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <h3>1 &middot; Die gemeinsame Grundgeste: Projektion &rarr; Invariante durch Abzug</h3>
+    <p>Beide Papiere starten bei einem <b>verlustbehafteten Bild eines reicheren Objekts</b> und
+    gewinnen das Objekt, indem sie <em>das Herkommende herausdividieren</em>:</p>
+    <div class="eq">
+      A (079): &nbsp; x(t) = Projektion des Attraktors &rarr; Unprojektion &Phi;(t) = [x(t), x(t&minus;&tau;), &hellip;]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rest = das, was <b>kein Falt-Artefakt</b> ist &middot; Bedingung: Rekonstruktionsraum &ge; intrinsische Komplexität<br><br>
+      B (089): &nbsp; das Seiende = Schatten des Einen &rarr; Quotient H_n = Z_n / B_n<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rest = der Zykel, der <b>kein Rand</b> ist &middot; Bedingung: &part;&circ;&part; = 0
+    </div>
+    <p>
+      A „faktoriert das Faltwerk aus“, indem er den Raum so groß nimmt, daß das Embedding injektiv wird
+      („no false neighbors“); B faktoriert die Ränder aus (das, was von einem höherdimensionalen Objekt
+      herkommt). In beiden ist das Zielobjekt <em>definiert als der Rest</em> &mdash; das, was nicht auf
+      Etwas anderes zurückführbar ist.
+    </p>
+
+    <h3>2 &middot; Das „groß genug“-Gesetz &harr; &part;&circ;&part; = 0 (Lesbarkeitsbedingung)</h3>
+    <p>Die beiden „groß genug“-Theoreme sind dieselbe <b>Lesbarkeitsbedingung</b> in zwei Einheiten:</p>
+    <div class="eq">
+      A: &nbsp; d &ge; 2m + 1 &nbsp;&nbsp;(geometrische Dimension &rarr; kein Selbst&uuml;berlappen / keine falschen Nachbarn)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; f_s &ge; 2&middot;f_max &nbsp;(Nyquist &rarr; kein Aliasing / keine spektrale Leckage)<br>
+      B: &nbsp; &part;&circ;&part; = 0 &nbsp;&nbsp;(B_n &sube; Z_n &rarr; der Rest ist wohldefiniert)
+    </div>
+    <p>
+      Beide sagen: <b>das Objekt ist sichtbar genau an der Schwelle, an der die Projektion aufhört, in sich
+      zu kollabieren.</b> A mißt die Schwelle in Dimensionen (unter ihr faltet sich der Schatten über sich
+      selbst); B in einem Grenzgesetz (ohne es existiert der Quotient, also der Rest, nicht).
+    </p>
+
+    <h3>3 &middot; Die drei Zustände des Rests (A&rsquo;s Signalregime &harr; B&rsquo;s Homologie-Fälle)</h3>
+    <div class="vs">
+      <div class="col">
+        <h3>Voll erfasst &middot; exakt &middot; H = 0</h3>
+        <p><b>A:</b> das periodische, harmonische Signal &mdash; saubere DFT-Peaks und eine
+        <em>geschlossene</em> Kurve im Embedding (eine 1-D-Invariente). Alles ist auf das Seiende
+        zurückführbar. <b>B:</b> reine <em>Vorstellung</em>; der „letzte Mensch blinzelt“, das
+        Bedenkliche ist nicht gedacht.</p>
+      </div>
+      <div class="col">
+        <h3>Zurückgezogen &middot; das Loch &middot; H &cong; &Zopf;</h3>
+        <p><b>A:</b> das chaotische Signal &mdash; breites Spektrum (keine sauberen Peaks), aber das
+        Embedding entfaltet eine wahre Geometrie; die <em>partikuläre Geschichte</em> geht durch das Chaos
+        verloren. <b>B:</b> das Bedenklichste, das Loch &mdash; das, was übrig bleibt und ruft.</p>
+      </div>
+    </div>
+    <div class="vs">
+      <div class="col">
+        <h3>Halb erfasst &middot; Torsion &middot; H &cong; &Zopf;/2&Zopf;</h3>
+        <p><b>A:</b> das quasi-periodische / gemischte Signal &mdash; <em>einige</em> Invarianten sind
+        sauber, andere widerstehen (ein „halb erfasstes“ Objekt; ein Zykel, dessen Doppeltes ein Rand ist,
+        der Einzelne nicht). <b>B:</b> das <em>Halb-Gedachte</em>: eine Differenz, die sich nicht auflöst
+        (die Zwiefalt, „used but never thought“).</p>
+      </div>
+      <div class="col">
+        <h3>Lesart &middot; derselbe Rest, drei Füllstände</h3>
+        <p>Je „reicher“ das Objekt (je mehr „Löcher“ / je mehr Seiendes), desto <em>höher</em> die Schwelle,
+        an der sein Rest lesbar wird. Der Füllstand des Rests ist die gemeinsame Währung:
+        <em>erfasst &rarr; zurückgezogen &rarr; halbgedacht</em>.</p>
+      </div>
+    </div>
+
+    <h3>4 &middot; Die eine Zahl &harr; die eine Frage</h3>
+    <p>
+      A kollabiert das Objekt zu <em>einer Zahl</em> &mdash; der intrinsischen Dimension <code>m</code> (und
+      &chi;-artigen Invarianten): zerlegungsunabhängig, aus einer <em>einzelnen</em> Messung nicht
+      ablesbar. B kollabiert die ganze Geschichte zu <em>einer Frage</em> („Was heißt Denken?“) bzw.
+      <em>einem Gesetz</em> (<code>&part;&circ;&part; = 0</code> als Zwiefalt): aus einem <em>einzelnen</em>
+      Satz nicht hörbar. Beide sind <b>globale Invarianten, die aus der lokalen Sicht verschwinden</b> &mdash;
+      <code>m</code> liest man nicht aus einem Sample, das Geheiß hört man nicht aus einem Satz.
+    </p>
+
+    <h3>5 &middot; Die Br&uuml;cke &mdash; und der Sprung</h3>
+    <p>
+      A&rsquo;s <b>Wavelet</b> ist der Ort, an dem sich die beiden Unprojektionen treffen:
+      <em>zeitlokale Geometrie</em> (Embedding) &times; <em>frequenzlokaler Inhalt</em> (DFT). B&rsquo;s
+      <b>chain map / commuting square</b> ist der Ort, an dem sich zwei Komplexe verbinden, <em>weil sie
+      demselben Grenzgesetz gehorchen</em>; der „Übergang“, wo das Gesetz sich <em>bricht</em>, ist
+      „no bridge, only a leap“. <b>Fusion:</b> eine Brücke existiert genau dort, wo das <em>dieselbe</em>
+      Gesetz beide Enden beherrscht; wo sich das Gesetz selbst ändert, bleibt der <em>Sprung</em>. Bei A
+      schließen sich DFT und Embedding, weil beide <em>lineare</em> Unprojektionen desselben Schattens sind
+      (selbes Gesetz: eine Projektion invertieren); der <em>Sprung</em> ist von der Invariante zur
+      partikulären Geschichte (Chaos), wo keine weitere Invariante mehr reicht. Bei B schließen chain maps
+      sich innerhalb eines Gesetzes (<code>&part;&circ;&part; = 0</code>); der Sprung ist vom formalen Domäne
+      zur Essenz. <b>Der Sprung <em>ist</em> der Rückzug.</b>
+    </p>
+
+    <h3>6 &middot; Glossar der Entsprechungen</h3>
+    <table class="map">
+      <tr><th>A &middot; Signal / Embedding</th><th>Gestus</th><th>B &middot; Homologie / Heidegger</th></tr>
+      <tr><td>das Objekt (Attraktor)</td><td>das, was der Schatten verbirgt</td><td>das Sein / der ontologische Abstand</td></tr>
+      <tr><td>Invariante (m, &chi;, Exponenten)</td><td>der erfaßbare Schatten des Rests</td><td>der Zykel, der kein Rand ist (H_n)</td></tr>
+      <tr><td>Faltwerk / falsche Nachbarn / Aliasing</td><td>das Nicht-Lesbare unter der Schwelle</td><td>das bloße Rand / Herkommende (B_n)</td></tr>
+      <tr><td>Schwellwert d &ge; 2m+1, f_s &ge; 2 f_max</td><td>die Lesbarkeits-Schwelle</td><td>&part;&circ;&part; = 0 / die Zwiefalt</td></tr>
+      <tr><td>Chaos (Lyapunov &gt; 0)</td><td>das zurückziehende Teil des Objekts</td><td>das Geheiß / das sich Rückziehende</td></tr>
+      <tr><td>Wavelet (Zeit &times; Frequenz)</td><td>die Brücke innerhalb eines Gesetzes</td><td>chain map / commuting square</td></tr>
+      <tr><td>Sprung: Invariante &rarr; partikuläre Geschichte</td><td>wo das Gesetz sich bricht</td><td>der Übergang &mdash; „no bridge, only a leap“</td></tr>
+      <tr><td>FNN (d finden)</td><td>das Gesetz des Schattens hören</td><td>Gedächtnis / Andenken &mdash; Denken als Empfang</td></tr>
+    </table>
+  </section>
+
+  <!-- ═════════ 5 · VISUALISIERUNG ═════════ -->
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Fusionierte Visualisierung</h2>
+    <p>
+      Ein Canvas, ein <b>eindimensionaler Schatten</b> <code>x(t)</code>, drei Ansichten zugleich: der
+      <b>rohe Schatten</b> (oben), seine <b>2-D-Unprojektion in den Raum</b> <code>[x(t), x(t&minus;&tau;)]</code>
+      (links), und die <b>False-Nearest-Neighbor-Kurve</b> über der Embedding-Dimension
+      <code>d = 1&hellip;5</code> (rechts). Die Kurve zeigt die <b>Schwelle</b>: links des Knies faltet sich
+      der Schatten (Rest verborgen), rechts wird er lesbar (Rest zutage). Wechsle das System: das
+      <b>periodische</b> (2:1-Lissajous) Objekt ist einfach &mdash; sein Knie liegt bei <code>d&asymp;2</code>
+      (voll erfasst). Das <b>chaotische</b> (Lorenz) Objekt ist reicher &mdash; sein Knie liegt bei
+      <code>d&ge;5</code>; die <em>Form</em> wird erfaßt, die <em>partikuläre Geschichte</em> bleibt
+      zurückgezogen. Ziehe <code>&tau;</code> (zu klein &rarr; Diagonale, zu groß &rarr; Wolke), ziehe
+      <code>d</code> (der Marker wandert auf der Schwelle).
+    </p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>System (der Schatten)</label>
+        <div class="btnrow" style="margin:0">
+          <button class="btn on" id="sysChaotic">Chaos (zurückgezogen)</button>
+          <button class="btn acc2" id="sysPeriodic">Periodisch (erfasst)</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <label>Zeitverzögerung &tau; <span class="v" id="tauVal">25</span></label>
+        <input type="range" id="tauRange" min="1" max="160" step="1" value="25">
+      </div>
+      <div class="ctrl">
+        <label>Embedding-Dimension d <span class="v" id="dVal">2</span></label>
+        <input type="range" id="dRange" min="1" max="5" step="1" value="2">
+      </div>
+      <div class="ctrl">
+        <label>Animation</label>
+        <div class="btnrow" style="margin:0">
+          <button class="btn on" id="playBtn">Pause</button>
+        </div>
+      </div>
+    </div>
+    <div class="viz-stage">
+      <canvas id="viz"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>1-D-Schatten x(t)</span>
+        <span><i style="background:var(--accent2)"></i>Unprojektion [x(t), x(t&minus;&tau;)]</span>
+        <span><i style="background:var(--accent3)"></i>FNN &lt; d_min (gefaltet)</span>
+        <span><i style="background:var(--accent4)"></i>FNN &ge; d_min (lesbar)</span>
+        <span><i style="background:var(--text)"></i>aktueller Marker d</span>
+      </div>
+    </div>
+    <div class="readout" id="readout"></div>
+    <div class="btnrow">
+      <button class="btn" id="themeBtn">Theme: dunkel / hell</button>
+    </div>
+
+    <script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var readout = document.getElementById('readout');
+  var TAU = Math.PI*2;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  var pal={};
+  function readPal(){
+    pal={bg:toRgb(cssVar('--bg')),panel:toRgb(cssVar('--panel')),line:toRgb(cssVar('--line')),
+      text:toRgb(cssVar('--text')),dim:toRgb(cssVar('--dim')),
+      accent:toRgb(cssVar('--accent')),accent2:toRgb(cssVar('--accent2')),
+      accent3:toRgb(cssVar('--accent3')),accent4:toRgb(cssVar('--accent4'))};
+  }
+
+  var N=4096, DMAX=5;
+  var state={system:'chaotic', tau:25, d:2, sweep:0, playing:true};
+  var TAU_DEFAULT={chaotic:25, periodic:128};
+  var sig=[], FNN=[0,0,0,0,0,0], dmin=2, sigName='';
+
+  function norm(a){
+    var mn=Infinity,mx=-Infinity,i;
+    for(i=0;i<a.length;i++){ if(a[i]<mn)mn=a[i]; if(a[i]>mx)mx=a[i]; }
+    var mid=(mn+mx)/2, sc=(mx-mn)/2||1;
+    for(i=0;i<a.length;i++) a[i]=(a[i]-mid)/sc;
+  }
+  function genChaotic(){
+    var sigma=10,rho=28,beta=8/3,dt=0.005,x=1,y=1,z=1,i,dx,dy,dz;
+    for(i=0;i<2000;i++){ dx=sigma*(y-x); dy=x*(rho-z)-y; dz=x*y-beta*z; x+=dx*dt; y+=dy*dt; z+=dz*dt; }
+    sig=[];
+    for(i=0;i<N;i++){ dx=sigma*(y-x); dy=x*(rho-z)-y; dz=x*y-beta*z; x+=dx*dt; y+=dy*dt; z+=dz*dt; sig.push(x); }
+    norm(sig);
+    sigName='Lorenz x(t) · chaotisch, aperiodisch';
+  }
+  function genPeriodic(){
+    sig=[];
+    for(var i=0;i<N;i++){
+      sig.push(Math.sin(TAU*8*i/N) + 0.6*Math.sin(TAU*16*i/N + 0.5));
+    }
+    norm(sig);
+    sigName='2:1-Lissajous x(t) · periodisch, harmonisch';
+  }
+
+  function computeFNN(){
+    FNN=[0,0,0,0,0,0];
+    var usable=N-state.tau*DMAX-2;
+    if(usable<60) usable=60;
+    var np=180;
+    if(np>usable) np=Math.max(30,usable);
+    var step=Math.max(1,Math.floor(usable/np));
+    var pts=[],i,k;
+    for(i=state.tau*DMAX;i<N;i+=step){
+      var p=[];
+      for(k=0;k<=DMAX;k++){ p.push(sig[i-state.tau*k]); }
+      pts.push(p);
+    }
+    var M=pts.length;
+    for(var d=1;d<=DMAX;d++){
+      var falsec=0,tot=0;
+      for(i=0;i<M;i++){
+        var bd=Infinity,bj=-1,j,a,dd;
+        for(j=0;j<M;j++){
+          if(j===i) continue;
+          dd=0; for(a=0;a<d;a++){ var df=pts[i][a]-pts[j][a]; dd+=df*df; }
+          dd=Math.sqrt(dd);
+          if(dd<bd){ bd=dd; bj=j; }
+        }
+        if(bj<0) continue;
+        var dd1=0;
+        for(a=0;a<=d;a++){ var dg=pts[i][a]-pts[bj][a]; dd1+=dg*dg; }
+        dd1=Math.sqrt(dd1);
+        tot++;
+        if(dd1>10*bd && dd1>0.4){ falsec++; }
+      }
+      FNN[d]= tot>0 ? falsec/tot : 0;
+    }
+    dmin=DMAX;
+    for(var q=1;q<=DMAX;q++){ if(FNN[q]<0.05){ dmin=q; break; } }
+  }
+
+  function regenSignal(){
+    if(state.system==='chaotic'){ genChaotic(); state.tau=TAU_DEFAULT.chaotic; }
+    else { genPeriodic(); state.tau=TAU_DEFAULT.periodic; }
+    computeFNN();
+    syncControls();
+  }
+
+  function frame(x0,y0,x1,y1,title){
+    ctx.strokeStyle=rgba(pal.line,1); ctx.lineWidth=1;
+    ctx.strokeRect(x0+0.5,y0+0.5,(x1-x0)-1,(y1-y0)-1);
+    ctx.fillStyle=rgba(pal.dim,1);
+    ctx.font='11px ui-monospace,Consolas,monospace';
+    ctx.textBaseline='top'; ctx.textAlign='left';
+    ctx.fillText(title, x0+7, y0+6);
+  }
+
+  function drawStrip(x0,y0,x1,y1){
+    var W=x1-x0,H=y1-y0,i,pad=14;
+    frame(x0,y0,x1,y1,'1-D Schatten  x(t)   ['+sigName+']');
+    ctx.strokeStyle=rgba(pal.line,0.6); ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(x0,y0+H/2); ctx.lineTo(x1,y0+H/2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=rgba(pal.accent,0.9); ctx.lineWidth=1.3; ctx.beginPath();
+    var stepn=Math.max(1,Math.floor(sig.length/Math.max(1,W)));
+    for(i=0;i<sig.length;i+=stepn){
+      var px=x0+(i/sig.length)*W;
+      var py=y0+H/2 - (sig[i]/1.05)*(H/2-pad);
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    var sxF=x0+state.sweep*W;
+    var ci=Math.floor(state.sweep*(sig.length-1));
+    ctx.strokeStyle=rgba(pal.dim,0.5); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(sxF,y0+2); ctx.lineTo(sxF,y0+H-2); ctx.stroke();
+    var sy=y0+H/2 - (sig[ci]/1.05)*(H/2-pad);
+    ctx.fillStyle=rgba(pal.accent4,1); ctx.beginPath(); ctx.arc(sxF,sy,3.2,0,TAU); ctx.fill();
+  }
+
+  function drawEmbedding(x0,y0,x1,y1){
+    var W=x1-x0,H=y1-y0,i,pad=18,tau=state.tau,Np=sig.length;
+    frame(x0,y0,x1,y1,'Unprojektion in den Raum  [x(t), x(t\u2212'+tau+')]');
+    var step=Math.max(1,Math.floor(Np/2200));
+    ctx.beginPath();
+    var started=false;
+    for(i=tau;i<Np;i+=step){
+      var a=sig[i], b=sig[i-tau];
+      var px=x0+W/2 + (a/1.05)*(W/2-pad);
+      var py=y0+H/2 - (b/1.05)*(H/2-pad);
+      if(!started){ ctx.moveTo(px,py); started=true; } else { ctx.lineTo(px,py); }
+    }
+    ctx.strokeStyle=rgba(pal.accent2,0.4); ctx.lineWidth=1; ctx.stroke();
+    var ci=tau+Math.floor(state.sweep*(Np-tau));
+    var ax=sig[ci], by=sig[ci-tau];
+    var hx=x0+W/2+(ax/1.05)*(W/2-pad);
+    var hy=y0+H/2-(by/1.05)*(H/2-pad);
+    ctx.strokeStyle=rgba(pal.dim,0.5); ctx.setLineDash([2,3]);
+    ctx.beginPath(); ctx.moveTo(x0, y0+H/2); ctx.lineTo(hx, y0+H/2); ctx.lineTo(hx,hy);
+    ctx.moveTo(x0+W/2, y0); ctx.lineTo(x0+W/2, hy); ctx.lineTo(hx,hy); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=rgba(pal.accent4,1); ctx.beginPath(); ctx.arc(hx,hy,3.6,0,TAU); ctx.fill();
+  }
+
+  function drawFNN(x0,y0,x1,y1){
+    frame(x0,y0,x1,y1,'False-Nearest-Neighbor % vs d  (die Schwelle)');
+    var padL=14,padR=14,padT=30,padB=30;
+    var baseY=y1-padB, topY=y0+padT;
+    var plotW=(x1-x0)-(padL+padR), plotH=baseY-topY;
+    var K=DMAX, slot=plotW/K, barW=slot*0.56;
+    ctx.strokeStyle=rgba(pal.line,0.7); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x0+padL,baseY); ctx.lineTo(x1-padR,baseY); ctx.stroke();
+    var d;
+    for(d=1;d<=K;d++){
+      var f=FNN[d];
+      var cx=x0+padL + slot*(d-0.5);
+      var h=Math.max(2, f*plotH), top=baseY-h;
+      var col=(d>=dmin)? pal.accent4 : pal.accent3;
+      ctx.fillStyle=rgba(col,0.8);
+      ctx.fillRect(cx-barW/2, top, barW, h);
+      ctx.fillStyle=rgba(pal.dim,1);
+      ctx.font='10px ui-monospace,Consolas,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='bottom';
+      ctx.fillText((f*100).toFixed(0)+'%', cx, top-3);
+      ctx.textBaseline='top';
+      ctx.fillText('d='+d, cx, baseY+4);
+    }
+    var dminCx=x0+padL+slot*(dmin-0.5);
+    ctx.fillStyle=rgba(pal.accent,1);
+    ctx.beginPath();
+    ctx.moveTo(dminCx, topY-12); ctx.lineTo(dminCx-5, topY-20); ctx.lineTo(dminCx+5, topY-20);
+    ctx.closePath(); ctx.fill();
+    ctx.font='700 11px ui-monospace,Consolas,monospace';
+    ctx.textAlign='center'; ctx.textBaseline='bottom';
+    ctx.fillText('d_min='+dmin, dminCx, topY-22);
+    var curCx=x0+padL+slot*(state.d-0.5);
+    ctx.strokeStyle=rgba(pal.text,0.9); ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(curCx, topY-2); ctx.lineTo(curCx, baseY); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  function draw(){
+    var w=canvas.clientWidth||canvas.parentNode.clientWidth||600;
+    var h=470;
+    if(w<2) w=2;
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.panel,1); ctx.fillRect(0,0,w,h);
+    var topY=8,topH=80,topBot=topY+topH,gap=10;
+    var botTop=topBot+gap, botBot=h-8, midX=w/2;
+    var leftX=8, leftR=midX-gap/2, rightX=midX+gap/2, rightR=w-8;
+    drawStrip(leftX,topY,rightR,topBot);
+    drawEmbedding(leftX,botTop,leftR,botBot);
+    drawFNN(rightX,botTop,rightR,botBot);
+  }
+
+  function readoutText(){
+    var leg=state.d>=dmin, pf=(FNN[state.d]*100).toFixed(0);
+    if(state.system==='periodic'){
+      if(!leg){
+        return 'Periodischer Schatten (2:1-Lissajous), d='+state.d+' < d_min='+dmin+
+          ': die Unprojektion faltet sich über sich selbst — falsche Nachbarn ≈ '+pf+'%. Das Objekt ist '
+          +'eigentlich <b>1-D</b> (eine geschlossene Kurve); zu kleine d lässt es sich noch nicht zeigen. '
+          +'Ziehe d bis d_min: dann wird es voll <b>erfasst</b> (exakt, H=0, „Vorstellung“).';
+      }
+      return 'Periodischer Schatten, d='+state.d+' ≥ d_min='+dmin+': Falsche-Nachbarn ≈ '+pf+'% — der Rest ist '
+        +'<b>lesbar</b>. Eine geschlossene 1-D-Invariente, saubere Peaks: alles auf das Seiende zurückführbar. '
+        +'<b>A:</b> voll erfasst. <b>B:</b> exakt, H=0 — reine Vorstellung, „der letzte Mensch blinzelt“.';
+    }
+    if(!leg){
+      return 'Chaotischer Schatten (Lorenz), d='+state.d+' < d_min='+dmin+': Falsche-Nachbarn ≈ '+pf+'%. '
+        +'Der Schatten faltet sich über sich selbst — die wahre Geometrie ist <b>verborgen</b> (Aliasing). '
+        +'Ziehe d hoch: das Objekt ist <b>reicher</b> als das periodische, seine Schwelle liegt höher.';
+    }
+    return 'Chaotischer Schatten, d='+state.d+' ≥ d_min='+dmin+': die Faltung hört auf, die <b>Form</b> wird '
+      +'erfasst. Aber die <em>partikuläre Geschichte</em> bleibt <b>zurückgezogen</b> (Chaos, Lyapunov>0) — '
+      +'genau der Kern, den keine Invariante erreicht. <b>A:</b> Invariante gefaßt. <b>B:</b> das Loch, '
+      +'das Bedenklichste — das, was übrig bleibt und ruft.';
+  }
+  function setReadout(){ if(readout) readout.innerHTML=readoutText(); }
+
+  var sysC=document.getElementById('sysChaotic');
+  var sysP=document.getElementById('sysPeriodic');
+  var tauRange=document.getElementById('tauRange');
+  var tauVal=document.getElementById('tauVal');
+  var dRange=document.getElementById('dRange');
+  var dVal=document.getElementById('dVal');
+  var playBtn=document.getElementById('playBtn');
+  var themeBtn=document.getElementById('themeBtn');
+
+  function syncControls(){
+    if(sysC) sysC.classList.toggle('on', state.system==='chaotic');
+    if(sysP) sysP.classList.toggle('on', state.system==='periodic');
+    if(tauVal) tauVal.textContent=state.tau;
+    if(dVal) dVal.textContent=state.d;
+    if(tauRange) tauRange.value=state.tau;
+    if(dRange) dRange.value=state.d;
+  }
+  function setSystem(name){ state.system=name; regenSignal(); setReadout(); draw(); }
+  if(sysC) sysC.addEventListener('click',function(){ setSystem('chaotic'); });
+  if(sysP) sysP.addEventListener('click',function(){ setSystem('periodic'); });
+  if(tauRange) tauRange.addEventListener('input',function(){
+    state.tau=parseInt(this.value,10)||1;
+    if(tauVal) tauVal.textContent=state.tau;
+    computeFNN(); setReadout(); draw();
+  });
+  if(dRange) dRange.addEventListener('input',function(){
+    state.d=parseInt(this.value,10)||1;
+    if(dVal) dVal.textContent=state.d;
+    setReadout(); draw();
+  });
+  if(playBtn) playBtn.addEventListener('click',function(){
+    state.playing=!state.playing;
+    this.classList.toggle('on', state.playing);
+    this.textContent=state.playing?'Pause':'Play';
+  });
+  if(themeBtn) themeBtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    readPal(); draw();
+  });
+
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    if(mq.addEventListener){ mq.addEventListener('change',function(){ readPal(); draw(); }); }
+  }
+  window.addEventListener('resize',function(){ draw(); });
+
+  var last=performance.now();
+  function loop(now){
+    var dt=(now-last)/1000; last=now; if(dt>0.1)dt=0.1;
+    if(state.playing){ state.sweep+=dt*0.1; if(state.sweep>1)state.sweep-=1; }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  readPal();
+  regenSignal();
+  setReadout();
+  if(window.requestAnimationFrame){ requestAnimationFrame(loop); } else { draw(); }
+})();
+    </script>
+  </section>
+
+  <!-- ═════════ 6 · PROVENIENZ ═════════ -->
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <div class="who">Quelle A &mdash; Runde 1 &middot; Signal als Schatten</div>
+        <p><a href="../n1-079.html"><strong>n1-079.html &mdash; The signal as a shadow: unprojecting it back to space and back to frequency</strong></a></p>
+        <p>Die Zeitreihe <code>x(t)</code> als Projektion eines Attraktors, rückgewonnen durch Unprojektion:
+        Verzögerungs-Embedding (in den Raum, <code>d &ge; 2m+1</code>) und DFT (in die Frequenz,
+        <code>f_s &ge; 2&middot;f_max</code>); falsche Nachbarn und Aliasing als Zwillings-Fehlmodi unter der
+        Dimensions-Schwelle; Wavelets als Begegnungsort der beiden Unprojektionen.</p>
+      </div>
+      <div class="card">
+        <div class="who">Quelle B &mdash; Runde 1 &middot; Zykel ohne Rand</div>
+        <p><a href="../n1-089.html"><strong>n1-089.html &mdash; Der Zykel ohne Rand: Homologie &amp; das Wesen des Denkens</strong></a></p>
+        <p>Homologie als Mathematik des ontologischen Abstands: Kettenkomplexe, <code>&part;&circ;&part; = 0</code>,
+        <code>H_n = Z_n/B_n</code> als „Zykel, der kein Rand ist“, Euler-Charakteristik und chain maps als Brücken;
+        gelesen als Heidegger &mdash; das Geheiß, „Die Wissenschaft denkt nicht“, der Übergang „no bridge, only a
+        leap“.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion &middot; Runde 2 &middot; non-AI-Track &middot; Paar 052. Selbstständiges Dokument &mdash;
+    alle Daten inline, keine Netzwerk-Abrufe. Die Signale, das Embedding und die FNN-Kurve werden im
+    Browser berechnet.
+  </footer>
+</article>
+</body>
+</html>

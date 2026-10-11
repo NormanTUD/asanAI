@@ -1,0 +1,16 @@
+{
+  "no": "013",
+  "a": "n1-050.html",
+  "b": "n1-042.html",
+  "a_title": "Bewusstsein als Fenster über dem neuronalen Kernel",
+  "b_title": "Das Objekt ist seine Pfeile",
+  "combined_theme": "identity-as-mediation-layer",
+  "one_line": "Das Ding — ob bewusste Erfahrung oder mathematisches Objekt — ist nicht sein Substrat, sondern seine Präsentations-Schicht: ein Fenster aus Pfeilen über einem immer laufenden Kernel.",
+  "contradictions": [
+    "Substrat vs. reine Relation — A: der Kernel ist reales, immer laufendes Substrat (läuft auch beim Zombie); B: das Objekt kann gelöscht werden, die Relationen genügen (reine Relation ohne Substrat).",
+    "Mysterium vs. auflösbare Leere — A: die Erklärungslücke (Hard Problem) ist in ihrer Art irreduzibel, mögl. unüberbrückbar (Mystizianismus); B: die Leere ist auflösbares Potenzial, das durch Schnitt/Yoneda in totale Bestimmtheit kollabiert.",
+    "Dualismus vs. relationaler Monism — A: Eigenschaftsdualismus, zwei Arten von Realität (Kernel+Fenster, physisch+phänomenal, Zombie-Argument); B: eine einzige Grammatik (alles ist Pfeile), keine zweite Substanz, Objekt löst sich in Relationen auf."
+  ],
+  "resolution": "Substrat und Schicht auf verschiedenen Ebenen derselben relationalen Grammatik: der Kernel (A) ist das immer laufende Substrat = B's Leere + Raum der Relationen + fixierte Struktur, aber die Identität des Dings (Fenster/Objekt) wird von der relationalen Schicht konstituiert (B: Objekt = seine Pfeile; A: Fenster irreduzibel zur einzelnen Kernel-Instruktion). Die Leere kollabiert in Form (welches Fenster) durch den Schnitt (= Globaler Arbeitsraum), bleibt aber in Art irreduzibel (warum es überhaupt ein Fenster gibt). Dualismus wird zu zwei Ebenen derselben Grammatik umgedeutet: Substrat-Ebene (Kernel, Zombie-möglich) + Präsentations-Ebene (Fenster/Objekt, Identität).",
+  "viz": "Canvas: zentrales Objekt A (Fenster/Erlebnis) mit Satelliten-Pfeilen (Hom-Relationen) über einem immer pulsierenden Kernel-Streifen; Regler 'Schnitt/Broadcast' fixiert die Leere zu einem Fenster, Button 'Objekt entfernen (Yoneda)' zeigt, dass die Relationen die Identität tragen; 0% = Zombie (Kernel läuft, Fenster dunkel)."
+}

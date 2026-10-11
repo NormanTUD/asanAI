@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lokaler Kern, globale Währung — Fusion: n1-091 ✕ n1-090 (Runde 2)</title>
+<style>
+  :root{
+    --mn-bg:#FAF8F1; --mn-surface:#ffffff; --mn-text:#1c1a17; --mn-muted:#6b6558;
+    --mn-border:#e4ddcd; --mn-accent:#2f6db0; --mn-accent2:#c0306a; --mn-accent3:#6a4fd0; --mn-accent4:#1f8a4c;
+    --mn-warn:#a9700f; --mn-code:#f4efe4;
+    --mn-viz-bg:#eef0f7; --mn-viz-line:#c9ccda;
+    --mn-shadow:0 14px 40px rgba(20,24,60,.10);
+  }
+  html.dark{
+    --mn-bg:#080a14; --mn-surface:#12162a; --mn-text:#e6ebff; --mn-muted:#9aa6cc;
+    --mn-border:#243154; --mn-accent:#5ee7ff; --mn-accent2:#ff5ea8; --mn-accent3:#a98bff; --mn-accent4:#7dffb0;
+    --mn-warn:#ffd166; --mn-code:#101a30;
+    --mn-viz-bg:#0b0e1a; --mn-viz-line:#2a3358;
+    --mn-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:var(--mn-bg); color:var(--mn-text); font-family:Georgia,'Times New Roman',serif;
+        line-height:1.7; transition:background .3s ease,color .3s ease; }
+  .wrap{ max-width:820px; margin:0 auto; padding:46px 22px 90px; }
+  h1{ font-size:2.0em; line-height:1.22; margin:.1em 0 .18em; letter-spacing:-.01em; }
+  .subtitle{ color:var(--mn-muted); font-style:italic; margin:0 0 1.6em; font-size:1.02em; }
+  .subtitle .x{ color:var(--mn-accent2); font-style:normal; font-weight:700; }
+  section{ margin:2.3em 0; scroll-margin-top:20px; }
+  h2{ font-size:1.4em; border-bottom:2px solid var(--mn-border); padding-bottom:.28em; margin-top:1.1em; }
+  h2 .n{ font-size:.62em; color:var(--mn-accent); border:1px solid var(--mn-border); border-radius:7px;
+         padding:2px 9px; margin-right:.5em; vertical-align:middle; font-family:monospace; }
+  h3{ font-size:1.08em; margin:1.35em 0 .4em; color:var(--mn-accent); }
+  p{ margin:.78em 0; }
+  ul,ol{ margin:.6em 0; padding-left:1.35em; }
+  li{ margin:.46em 0; }
+  code{ font-family:'SFMono-Regular',Consolas,Menlo,monospace; font-size:.86em;
+        background:var(--mn-code); border:1px solid var(--mn-border); border-radius:5px; padding:.08em .38em; }
+  sub,sup{ font-size:.72em; }
+  .ab{ color:var(--mn-accent4); font-weight:700; }
+  .nab{ color:var(--mn-accent2); font-weight:700; }
+  .callout{ background:var(--mn-surface); border:1px solid var(--mn-border); border-left:4px solid var(--mn-accent);
+            border-radius:10px; padding:12px 18px; margin:1.1em 0; box-shadow:var(--mn-shadow); }
+  .callout.a2{ border-left-color:var(--mn-accent2); }
+  .callout.a3{ border-left-color:var(--mn-accent3); }
+  .callout.a4{ border-left-color:var(--mn-accent4); }
+  .callout .t{ display:block; font-size:.72em; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+               color:var(--mn-accent); margin-bottom:.35em; }
+  .callout.a2 .t{ color:var(--mn-accent2); }
+  .callout.a3 .t{ color:var(--mn-accent3); }
+  .callout.a4 .t{ color:var(--mn-accent4); }
+  table{ width:100%; border-collapse:collapse; margin:1.1em 0; font-size:.9em; }
+  th,td{ padding:8px 11px; text-align:left; border-bottom:1px solid var(--mn-border); vertical-align:top; }
+  th{ color:var(--mn-accent); font-size:.72em; letter-spacing:.08em; text-transform:uppercase; }
+  tr.hl td{ background:rgba(120,140,220,.08); }
+  .themebtn{ position:fixed; top:14px; right:14px; z-index:50; background:var(--mn-surface); color:var(--mn-text);
+             border:1px solid var(--mn-border); border-radius:20px; padding:6px 13px; cursor:pointer; font-size:12.5px;
+             font-family:inherit; box-shadow:var(--mn-shadow); }
+  .themebtn:hover{ border-color:var(--mn-accent); color:var(--mn-accent); }
+  .fz-card{ background:var(--mn-surface); border:1px solid var(--mn-border); border-radius:14px; padding:18px;
+            margin:1.1em 0; box-shadow:var(--mn-shadow); }
+  .fz-ctrl{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; margin-bottom:14px; }
+  .fz-ctrl label{ font-size:.85em; color:var(--mn-muted); display:flex; align-items:center; gap:10px; }
+  .fz-ctrl .v{ color:var(--mn-accent); font-family:monospace; font-weight:700; }
+  input[type=range]{ -webkit-appearance:none; appearance:none; width:200px; height:4px; border-radius:99px;
+                     background:linear-gradient(90deg,var(--mn-accent4),var(--mn-accent2)); outline:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+                     background:var(--mn-text); box-shadow:0 0 0 4px rgba(120,140,220,.25); cursor:grab; }
+  input[type=range]::-moz-range-thumb{ width:16px; height:16px; border:none; border-radius:50%; background:var(--mn-text); cursor:grab; }
+  .btn{ background:transparent; border:1px solid var(--mn-border); color:var(--mn-text); padding:7px 14px;
+        border-radius:9px; cursor:pointer; font-size:.85em; font-family:inherit; }
+  .btn:hover{ border-color:var(--mn-accent); color:var(--mn-accent); }
+  .fz-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-bottom:10px; font-size:.82em; color:var(--mn-muted); }
+  .fz-legend .lg i{ display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+  #op-cv{ width:100%; display:block; border-radius:11px; background:var(--mn-viz-bg); border:1px solid var(--mn-border); touch-action:none; }
+  .fz-readout{ margin-top:14px; font-size:.94em; background:var(--mn-bg); border:1px solid var(--mn-border);
+               border-radius:10px; padding:12px 15px; }
+  .fz-readout .ro-row{ margin:.5em 0; }
+  .fz-readout .ro-ab{ color:var(--mn-accent4); }
+  .fz-readout .ro-nab{ color:var(--mn-accent2); }
+  .fz-readout .ro-fuse{ margin-top:.7em; border-top:1px dashed var(--mn-border); padding-top:.7em;
+                        border-left:3px solid var(--mn-accent2); padding-left:12px; color:var(--mn-text); font-size:.95em; }
+  .prov{ display:flex; flex-direction:column; gap:12px; margin-top:.8em; }
+  .prov .item{ background:var(--mn-surface); border:1px solid var(--mn-border); border-radius:11px; padding:13px 16px; box-shadow:var(--mn-shadow); }
+  .prov .item .tag{ font-size:.7em; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--mn-accent4); }
+  .prov .item.b .tag{ color:var(--mn-accent2); }
+  .prov .item b a{ color:var(--mn-accent); text-decoration:none; border-bottom:1px dotted var(--mn-accent); }
+  .prov .item b a:hover{ color:var(--mn-accent2); border-color:var(--mn-accent2); }
+  footer{ margin-top:2.4em; padding-top:1em; border-top:1px solid var(--mn-border); color:var(--mn-muted); font-size:.82em; }
+</style>
+</head>
+<body>
+<button id="op-theme" class="themebtn">🌙 Dunkel</button>
+<div class="wrap">
+
+  <h1>Lokaler Kern, globale Währung: Ordnungspartikel und Phasen-Übergang</h1>
+  <p class="subtitle">Fusion aus: <span class="x">n1-091.html</span> ✕ <span class="x">n1-090.html</span>
+  &nbsp;·&nbsp; Runde 2 · Pair 044 (nicht-KI-Track)</p>
+
+  <section id="these">
+    <h2><span class="n">1</span>Kernthese der Fusion</h2>
+    <p>Beide Round-1-Papiere — <b>A</b> (n1-091, „Form wird Algebra“, Homotopie × Morse-Theorie) und
+    <b>B</b> (n1-090, „Die Katastrophe als algebraische Varietät“, Katastrophentheorie × algebraische Topologie) — sind,
+    unter der Oberfläche betrachtet, <b>dieselbe lokale-zu-globale Konstruktion</b>, von je zwei unterschiedlichen
+    Rohquellen aus unabhängig hergeleitet. Beide sagen: Ein <b>lokaler Kern</b> (ein kritischer Punkt mit Index in A,
+    ein Germ mit Taylor-Daten in B) erzeugt Struktur; ein <b>kontrollierter Parameter</b> (Wasserstand t in A,
+    Steuergröße a,b in B) lässt sie Stück für Stück entstehen; und eine <b>globale, abelsche Invariante</b>
+    (die Betti-Zahl b<sub>k</sub> in A, die Zahl der stabilen Minima / die H¹-Obstruktion in B) liest das Ergebnis
+    ab — <i>stückweise konstant</i>, mit <i>diskreten Sprüngen</i> an einer <i>Wand</i>, die an einer
+    <i>Singularität</i> (degenerierter kritischer Punkt in A, Cusp-Punkt = Singularpunkt der Varietät in B)
+    ihre höchste Ordnung erreicht.</p>
+    <p>Die integrierte Position: <b>Topologie ist ein Ordnungspartikel, der lokal erzeugt, global abgelesen und an
+    Singularitäten phasenumschaltet.</b> Der lokale Kern (kritischer Punkt / Germ) ist der <i>Motor</i>; die globale
+    Invariante (Betti-Zahl / Zählung der stabilen Minima) ist die <i>gemeinsame Währung</i>, in der sich „Bauen“
+    und „Zählen“ treffen; die Wand ist der <i>Phasen-Übergang</i>. Und der <b>irreduzible Spalt</b> — die Information,
+    die die abelsche Währung ausblendet — ist in beiden Papieren <i>derselbe</i>: A nennt sie die
+    <span class="nab">nicht-abelsche Fundamentalgruppe π<sub>1</sub></span> (F<sub>2</sub> vs. ℤ², die bei der
+    Abelschierung zu b<sub>1</sub>=2 kollabiert), B nennt sie die <span class="ab">nichttriviale Kohomologie H¹ /
+    Monodromie</span> (Hysterese, pfadabhängig). Das ist exakt der Inhalt, den beide als das Eigentliche der
+    Topologie benennen — nur jeder sieht ihn von einer anderen Seite.</p>
+    <div class="callout a3">
+      <span class="t">Kernthese in einem Satz</span>
+      Ein lokaler Kern erzeugt eine globale Struktur; an der Singularität, an der der Kern zusammenbricht, macht die
+      Invariante einen diskreten Phasen-Übergang — und das, was die Invariante unter Abbildung verliert
+      (Nicht-Abelschheit bei A, Verklebe-Obstruktion bei B), ist exakt der irreduzible topologische Inhalt, der nur
+      global existiert.
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+    <div class="callout">
+      <span class="t">Vorab — keine logischen, aber thesenhafte Widersprüche</span>
+      A und B widersprechen sich nicht logisch (sie beschreiben komplementäre Seiten derselben Konstruktion). Aber
+      ihre <b>Kernthesen</b> nehmen zu drei Fragen <b>inkompatible Stände</b> ein. Ich benenne konkret, wer was sagt.
+    </div>
+    <ol>
+      <li><b>Genügt das Lokale? — Vollbestimmung (A) vs. irreduzibler Spalt (B).</b>
+        <b>A</b> macht über seinen Morse-Flügel den <i>Vollbestimmungs</i>-Anspruch: „The topology of a smooth
+        manifold is completely determined by the critical points (and their indices) of any generic smooth function“
+        — die lokalen Daten (kritische Punkte + Indizes) <i>reichen aus</i>, den Raum (seine Homologie) Zell um Zell
+        zu <i>rekonstruieren</i>. Das ist ein konstruktives Versprechen: <b>lokal ⇒ global</b>, man baut das Ganze aus
+        dem Lokalen. <b>B</b> geht vom <i>Gegenteilspostulat</i> aus: lokale Daten sind <i>strukturell unzureichend</i>;
+        H¹ „misst, was global fehlschlägt, obwohl es lokal klappt“; der Grundansatz ist <b>lokal ⇏ global</b>. Das
+        Ganze (Verklebung, Monodromie, Hysterese) trägt <i>inhalt</i>, den das Lokale <i>nicht</i> erzeugen kann.
+        <b>Inkompatibel:</b> A sagt, das Lokale bestimmt das Globale <i>vollständig</i>; B sagt, das Globale hat
+        <i>irreduziblen</i> Inhalt, den das Lokale <i>nicht</i> sehen kann. A’s Konstruktion gelingt gerade dort, wo
+        B’s Obstruktion sagen würde, sie müsse scheitern.</li>
+      <li><b>Die Invariante: Bauwerk/Überschuss (A) vs. Obstruktion/Defizit (B) — und die Währung: Homologie (A,
+        Quotient) vs. Kohomologie (B, Defizit).</b>
+        <b>A</b> liest seine Währung als <i>Bauwerk / Überschuss</i>: man hängt Zellen an (c<sub>k</sub> ≥ b<sub>k</sub>)
+        und zählt — die Betti-Zahl ist das, was man <i>zusammenbaut</i>, der „Knochen“. Die Währung ist
+        <i>Homologie</i>, gewonnen durch <i>Abelschierung</i> (einen Quotienten): H<sub>1</sub> = Abelschierung von
+        π<sub>1</sub>. Man <i>teilt ab</i>, behält die Zählung, verliert die Kommutator-Struktur. <b>B</b> liest seine
+        Währung als <i>Obstruktion / Defizit</i>: H¹ misst das, was <i>nicht</i> zusammenklebt; Riemann–Roch
+        χ(L)=deg(L)+1−g trägt den Term „−g“ als <i>globales Hindernis</i>, das man <i>addieren muss</i>, um die Bilanz
+        zu schließen. Die Währung ist <i>Kohomologie</i>, gewonnen als <i>Cokern / Obstruktion</i> (das, was
+        <i>fehlt</i>). <b>Inkompatibel:</b> A’s Invariante ist „was übrig bleibt, wenn man auf eine Zählung
+        kollabiert“ (Überschuss, Quotient); B’s ist „was fehlt und aufgefüllt werden muss“ (Defizit, Obstruktion).
+        Und die beiden Währungen sind <i>duale</i> algebraische Operationen auf derselben Struktur — nicht dasselbe
+        Objekt.</li>
+      <li><b>Primat: die Unveränderlichkeit (A) vs. der Bruch (B).</b>
+        <b>A</b> stellt die <i>Unveränderlichkeit</i> in den Titel („Form wird Algebra: … die unter stetigem
+        Verbiegen unverändert bleibt“): das <i>Invariante</i> (Homotopieäquivalenz; die Betti-Zahlen bleiben zwischen
+        kritischen Werten fest) ist das <i>Subjekt</i>, die Änderung (der kritische Wert) nur der <i>kontrollierte
+        Mechanismus</i> zwischen invarianten Zuständen. Das Unveränderliche kommt zuerst. <b>B</b> stellt den
+        <i>Bruch</i> in den Titel („Die Katastrophe“): der <i>Sprung</i> (sudden discontinuous jumps, Hysterese,
+        Divergenz) ist das <i>Subjekt</i>; „A feiert den Bruch“. Die Invariante (Zahl der stabilen Minima) ist dort
+        nur ein <i>Detektor</i>, um die Wand zu finden. Das Veränderliche kommt zuerst. <b>Inkompatibel:</b> A setzt
+        das Unveränderliche (das Plateau) voraus und die Änderung dazwischen; B setzt die Änderung (den Sprung) voraus
+        und das Unveränderliche dazwischen als Fühler. Gleiche Funktion, umgekehrtes Primat.</li>
+    </ol>
+  </section>
+  <section id="aufloesung">
+    <h2><span class="n">3</span>Auflösung</h2>
+    <p>Jede Spannung löst sich auf, weil A und B <b>dieselbe</b> lokale-zu-globale Konstruktion <b>verschiedene
+    Etagen</b> zuweisen — und zusammen ein vollständiges „Konto“ bilden: Ordnungspartikel + Phasen-Übergang +
+    Singularität + verborgener Spalt.</p>
+    <ol>
+      <li><b>zu (1): A’s Vollbestimmung gilt für die Etage, die er baut; B’s Spalt für die Etage, die er misst.</b>
+        A hat recht, dass das Lokale die <i>grobe, abelsche</i> Währung <i>vollständig</i> bestimmt — man kann die
+        Betti-Zahlen b<sub>k</sub> aus den kritischen Punkten rechnen. B hat recht, dass genau die <i>feinere</i>
+        Struktur (π<sub>1</sub> nicht abelsch, Monodromie) von <i>genau dieser</i> Etage <i>ausgelöscht</i> wird.
+        <b>Fusion: lokal ⇒ Homologie (vollständig); Homologie ⇏ Homotopie/Verklebung (unvollständig) — der Spalt ist
+        by design, der Preis, die abelsche Währung zu wählen.</b> A’s „completely determined“ ist <i>genau</i> an
+        B’s „Obstruktion“ begrenzt: A’s Konstruktion reicht <i>bis</i> zur Homologie und keinen Schritt weiter; B
+        misst <i>genau</i> den Fußboden, unter den A’s Konstruktion nicht hindurchreicht. Die beiden Grenzen fallen
+        aufeinander.</li>
+      <li><b>zu (2): dieselbe Währung, zwei Kassenbücher.</b> A’s Währung (Homologie/Betti-Zahl = der „Überschuss“
+        = der Rang) und B’s Währung (Kohomologie/Obstruktion = das „Defizit“) sind <i>duale</i> Operationen auf
+        <i>derselben</i> Struktur: über einem Körper gilt dim H<sup>k</sup> = dim H<sub>k</sub> (gleiche
+        Betti-Zahl), und Kohomologie trägt <i>zusätzlich</i> die Verdrehung (Ext-/Torsion- bzw. Produkt-Struktur),
+        die Homologie <i>als bloße Zählung</i> versteckt. <b>Fusion: derselbe Wert (die Betti-Zahl), zwei
+        Kassenbücher.</b> A liest ihn als <i>Bauwerk</i> (Zellen anhängen, zählen); B liest ihn als <i>Audit</i>
+        (was schließt sich nicht, wie viel fehlt). Der <i>freie</i> Teil (Rang) und der <i>verdrehte</i> Teil
+        (Obstruktion) zusammen = die vollständige Bilanz. A „verliert“ die Nicht-Abelschheit, weil er den
+        Quotienten nimmt; B „misst“ sie als Obstruktion, weil er den Cokern nimmt. Gleiche Größe, zwei Vorzeichen.</li>
+      <li><b>zu (3): Invariante und Bruch sind dieselbe Funktion auf zwei Zeitskalen.</b> Die Invariante (b<sub>1</sub>
+        in A, Zahl der stabilen Minima in B) ist <i>stückweise konstant</i> und <i>sprungen diskret an der Wand / am
+        kritischen Wert</i>. A’s „Invariante unter Deformation“ ist also wörtlich <i>konstant zwischen den Ereignissen
+        und springt an ihnen</i> — die Invarianz ist <i>stückweise</i>, und die Stücks­grenzen <i>sind</i> die Brüche,
+        die B feiert. <b>Fusion: die Invariante ist der <i>Ordnungspartikel</i>, die Wand ihr <i>Phasen-Übergang</i>.</b>
+        A studiert die Plateaus, B die Diskontinuitäten. Die <i>Singularität</i> (degenerierter kritischer Punkt in A,
+        Cusp-Punkt (0,0) = Singularpunkt der Varietät in B) ist der <i>Übergang höchster Ordnung</i>: dort ist der
+        Ordnungspartikel nicht einmal stetig/differenzierbar — der Punkt, an dem beide Papiere auf denselben Satz
+        zusammenfallen.</li>
+    </ol>
+    <div class="callout a4">
+      <span class="t">Fusioniertes Gesamtbild</span>
+      Ein kohärentes Programm: <b>wähle einen lokalen Kern (eine Morse-Funktion mit kritischen Punkten / ein Potential
+      mit Germ) → lasse einen Parameter wandern (Wasserstand t / Steuergröße a) → beobachte, wie die globale Währung
+      (b<sub>k</sub> / Zahl der stabilen Minima) stückweise konstant bleibt und an den kritischen Werten / an der Wand
+      diskret springt → markiere die Singularität, an der der Sprung degeneriert → und erkenne: das, was die Währung
+      bei der Abbildung verliert (Nicht-Abelschheit / Monodromie), ist der irreduzible topologische Inhalt, der nur
+      global existiert.</b>
+    </div>
+  </section>
+  <section id="inhalt">
+    <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+    <h3>Das gemeinsame Schema — fünf Bausteine</h3>
+    <p>Abstrahiert man die beiden Round-1-Papiere auf die Ebene ihrer Thesen, bleiben fünf Bausteine übrig, die in
+    A und B beide vorkommen — nur mit anderem „Material“ gefüllt:</p>
+    <ul>
+      <li><b>Lokaler Kern</b> — kritischer Punkt mit Index (A) / Germ mit Taylor-Daten (B). Finit lokal, aus
+      Ableitungen lesbar.</li>
+      <li><b>Kontrollierter Prozess</b> — Wasserstand t (A) / Steuergröße a,b (B). Wandert stetig; erzeugt Struktur
+      schrittweise.</li>
+      <li><b>Globale Währung</b> — Betti-Zahl b<sub>k</sub> (A) / Zahl der stabilen Minima (B). <i>Gleiche Zahl</i>
+      (dim H<sub>k</sub> = dim H<sup>k</sup> über einem Körper); stückweise konstant.</li>
+      <li><b>Wand / Phasen-Übergang</b> — kritischer Wert (A) / Bifurkationsmenge 8a³+27b²=0 (B). Diskreter Sprung der
+      Währung.</li>
+      <li><b>Singularität</b> — degenerierter kritischer Punkt (A) / Cusp-Punkt (0,0) = Singularpunkt der Varietät
+      (B). Der Übergang, an dem es nicht glatt ist.</li>
+      <li><b>Irreduzibler Spalt</b> — nicht-abelsches π<sub>1</sub> (F<sub>2</sub> vs. ℤ²) (A) / nichttriviale
+      H¹·Monodromie (Hysterese) (B). Das, was die abelsche Währung ausblendet.</li>
+    </ul>
+
+    <h3>A — der Morse-/Homotopie-Flügel (baut, zählt, unterscheidet)</h3>
+    <ul>
+      <li><b>Kritische Punkte &amp; Index:</b> ∇f = 0; nicht-degeneriert (Morse) = Hesse-Matrix ohne Null-Eigenwerte.
+      In 2D: Minimum (Index 0), Sattel (Index 1), Maximum (Index 2).</li>
+      <li><b>Kernsatz:</b> Die Topologie der Unterpegel-Menge {f ≤ t} ändert sich <b>nur</b>, wenn t einen
+      kritischen Wert passiert; dazwischen ist sie homotopieäquivalent (nichts Neues). <i>Das</i> ist A’s
+      „stückweise konstanter Ordnungspartikel“.</li>
+      <li><b>Zell-Anhängung:</b> kritischer Punkt Index k ≅ Anhängen einer k-Zelle. Torus (4 kritische Punkte):
+      ∅ → Scheibe → Zylinder (b<sub>1</sub>=1) → Torus−Scheibe (b<sub>1</sub>=2) → Torus. χ = 1−2+1 = 0.</li>
+      <li><b>Morse-Ungleichungen:</b> c<sub>k</sub> ≥ b<sub>k</sub>; Euler χ = Σ(−1)<sup>k</sup> c<sub>k</sub> =
+      Σ(−1)<sup>k</sup> b<sub>k</sub>.</li>
+      <li><b>Die Singularität in A:</b> f(x)=x⁴ hat an x=0 einen degenerierten kritischen Punkt (f″(0)=0); eine
+      winzige Störung (−εx²) splittet ihn in 3 nicht-degenerierte Punkte. <i>Das</i> ist der Ort, an dem A’s
+      Ordnungspartikel nicht glatt ist.</li>
+      <li><b>Der feinere Fußboden:</b> π<sub>1</sub> (Fundamentalgruppe, teils nicht-abelsch); π<sub>1</sub>(S<sup>1</sup>)=ℤ;
+      Van Kampen; Eckmann–Hilton (π<sub>n</sub> abelsch für n ≥ 2); Hurewicz (Brücke π<sub>n</sub>→H<sub>n</sub>).
+      Die <i>Abelschierung</i> H<sub>1</sub> ≅ π<sub>1</sub>/[π<sub>1</sub>,π<sub>1</sub>] <i>löscht</i> die
+      Nicht-Abelschheit: F<sub>2</sub> und ℤ² haben dieselbe Abelschierung (b<sub>1</sub>=2), π<sub>1</sub> selbst
+      ist F<sub>2</sub> (nicht abelsch, <code>ab≠ba</code>) bzw. ℤ² (abelsch).</li>
+    </ul>
+
+    <h3>B — der Katastrophe-/Algebra-Flügel (lokal findet die Wand, global bilanziert sie)</h3>
+    <ul>
+      <li><b>Potential:</b> V(x; a, b, …); Gleichgewichte <code>dV/dx=0</code>; stabil wenn <code>d²V/dx²&gt;0</code>
+      (Minimum). Bei stetiger Änderung der Parameter kann ein Minimum verschwinden → Sprung.</li>
+      <li><b>Cuspoid-Familie:</b> Fold A<sub>2</sub> (x³+ax, codim 1), Cusp A<sub>3</sub> (x⁴+ax²+bx, codim 2),
+      Swallowtail A<sub>4</sub>, Butterfly A<sub>5</sub>. Thom: genau <b>7 elementare Katastrophen</b> (≤2
+      Zustands-, ≤4 Steuergrößen), „up to smooth equivalence“ (Germ-Äquivalenz).</li>
+      <li><b>Cusp-Bifurkationsmenge:</b> <code>dV/dx=4x³+2ax+b=0</code> ∧ <code>d²V/dx²=12x²+2a=0</code> ⇒
+      <b>8a³+27b²=0</b> — eine <i>algebraische Varietät</i> (Nullmengenmenge des Polynoms
+      F(a,b)=8a³+27b²). Innen bistabil (2 Minima + 1 Maximum), Hysterese, Divergenz (kleine Δb → große Δx).</li>
+      <li><b>Der Singularpunkt (0,0):</b> ∂F/∂a=24a²=0 ∧ ∂F/∂b=54b=0 ⇒ a=b=0 — der Cusp-Punkt, wo die zwei
+      stabilen Äste kollidieren. <i>Das</i> ist B’s Ort, an dem der lokale Germ nicht mehr fortsetzbar ist.</li>
+      <li><b>Die globale Bilanz:</b> H¹ = Obstruktion, lokal→global; Monodromie (Wahl des stabilen Zweigs um eine
+      Schleife nicht eindeutig) = Hysterese; Riemann–Roch χ(L)=deg(L)+1−g (lokale Chern-Daten + globales Hindernis
+      −g = globale Kohomologie-Bilanz).</li>
+    </ul>
+
+    <h3>Die Brücken (das eigentliche fusionierte Material)</h3>
+    <ul>
+      <li><b>Brücke 1 — gemeinsame Währung:</b> b<sub>k</sub> = dim H<sub>k</sub> = dim H<sup>k</sup> (über einem
+      Körper). A <i>baut</i> sie (Zellen → Zählung), B <i>auditiert</i> sie (Obstruktion → Zählung). Gleiche Zahl,
+      zwei Kassenbücher.</li>
+      <li><b>Brücke 2 — dieselbe Singularität:</b> A’s degenerierter kritischer Punkt (x⁴, f″=0) = B’s Cusp-Punkt
+      (0,0) = Singularpunkt der Varietät = der Phasen-Übergang, an dem der Ordnungspartikel nicht differenzierbar
+      ist. B’s „Ort der Katastrophe“ ist exakt A’s „Ort, an dem das Lokale nicht glatt fortsetzbar ist“.</li>
+      <li><b>Brücke 3 — derselbe Spalt:</b> A’s ausgelöschtes π<sub>1</sub> (F<sub>2</sub> vs. ℤ², abelsch zu
+      b<sub>1</sub>=2) = B’s nichttriviale H¹/Monodromie (Hysterese, pfadabhängig). Beides ist „die Information, die
+      die abelsche Währung ausblendet“. A sieht sie als „bei der Abelschierung verloren“, B als „das, was global
+      nicht zusammenklebt“.</li>
+      <li><b>Brücke 4 — Ordnungspartikel &amp; Phasen-Übergang:</b> A’s b<sub>1</sub>(t) und B’s n<sub>stable</sub>(a)
+      sind <i>beide</i> stückweise konstante, ganzzahlige Ordnungspartikel mit diskreten Sprüngen an ihren Wänden;
+      die Wand ist der Phasen-Übergang; die Singularität der Übergang höchster Ordnung.</li>
+      <li><b>Brücke 5 — dieselbe Formel:</b> „lokal + globales Hindernis = global“. A: lokale kritische Punkte →
+      globales Zähl-Sprung. B: lokale Chern-Daten (deg) + globales Hindernis (−g) → globale Kohomologie (χ).
+      Riemann–Roch ist das strukturierte Analogon von Morse-Euler.</li>
+    </ul>
+
+    <table>
+      <thead><tr><th>Aspekt</th><th>A · Morse/Homotopie</th><th>B · Katastrophe/Algebra</th><th>Gemeinsame Lesart</th></tr></thead>
+      <tbody>
+        <tr><td>Lokaler Kern</td><td>kritischer Punkt + Index</td><td>Germ + Taylor-Daten</td><td>finit lokal, aus Ableitungen lesbar</td></tr>
+        <tr><td>Kontrollierter Prozess</td><td>Wasserstand t</td><td>Steuergröße a (b=0)</td><td>stetig wandernder Parameter</td></tr>
+        <tr class="hl"><td>Globale Währung</td><td>b<sub>k</sub> (Zellen anhängen)</td><td>n<sub>stable</sub> (Zählung)</td><td>dim H<sub>k</sub>=dim H<sup>k</sup>; stückweise konstant</td></tr>
+        <tr><td>Wand / Übergang</td><td>kritischer Wert (t=0.25, 0.75)</td><td>Bifurkationsmenge 8a³+27b²=0</td><td>diskreter Sprung der Währung</td></tr>
+        <tr class="hl"><td>Singularität</td><td>degenerierter kritischer Punkt (x⁴)</td><td>Cusp (0,0) = Singularpunkt</td><td>Übergang, an dem nicht differenzierbar</td></tr>
+        <tr><td>Irreduzibler Spalt</td><td>π<sub>1</sub>: F<sub>2</sub> vs. ℤ²</td><td>H¹/Monodromie: Hysterese</td><td>das, was die abelsche Währung ausblendet</td></tr>
+      </tbody>
+    </table>
+    <div class="callout a2">
+      <span class="t">Lesart</span>
+      Die Spalten A und B sind <i>nicht</i> zwei Beispiele für dasselbe — sie sind <i>dieselbe Funktion</i> auf zwei
+      Zeitskalen: das Unveränderliche (Plateau, A’s Subjekt) und der Bruch (Sprung, B’s Subjekt) sind zwei Seiten
+      eines stückweise konstanten Ordnungspartikels. Die Währung (b<sub>k</sub>) ist die gemeinsame Währung; der
+      Spalt (π<sub>1</sub> / H¹) ist der gemeinsame, von der Währung ausgeblendete Inhalt.
+    </div>
+  </section>
+  <section id="visualisierung">
+    <h2><span class="n">5</span>Fusionierte Visualisierung</h2>
+    <p>Zwei <b>stückweise konstante Ordnungspartikel</b> nebeneinander auf einer Achse — die gefusionierte Idee in
+    einem Bild. <b>Oben (grün)</b> A’s Morse-Ordnungspartikel <b>b<sub>1</sub>(t)</b> über dem Wasserstand
+    <em>t</em> (Torus): er bleibt konstant und <b>springt an den kritischen Werten</b> t=0.25 (S₁) und t=0.75 (S₂) —
+    dem Phasen-Übergang. <b>Unten (rosa)</b> B’s Katastrophe-Ordnungspartikel <b>n<sub>stable</sub>(a)</b> über der
+    Steuergröße <em>a</em> (b=0, Potential x⁴+ax²+bx): bistabil (2 Minima) für a&lt;0, monostabil (1) für a&gt;0,
+    Sprung exakt beim <b>Singularpunkt (Cusp) a=0</b> — dem Übergang höchster Ordnung. Schiebe die beiden Regler und
+    beobachte: <i>dieselbe Mechanik</i> (lokal erzeugen, global ablesen, an der Wand springen, an der Singularität
+    degenerieren) in zwei getrennten Konstruktionen.</p>
+
+    <div class="fz-card">
+      <div class="fz-ctrl">
+        <label>Wasserstand t (A) <span class="v" id="op-vt">0.80</span></label>
+        <input type="range" id="op-t" min="0" max="100" value="80" step="1" aria-label="Wasserstand t">
+        <label>Steuergröße a (B) <span class="v" id="op-va">-0.50</span></label>
+        <input type="range" id="op-a" min="-2" max="0.5" step="0.01" value="-0.5" aria-label="Steuergröße a">
+        <button class="btn" id="op-theme2">🌓 Thema wechseln</button>
+      </div>
+      <div class="fz-legend">
+        <span class="lg"><i style="background:var(--mn-accent4)"></i> A · b₁(t) — Morse</span>
+        <span class="lg"><i style="background:var(--mn-accent2)"></i> B · n_stable(a) — Katastrophe</span>
+        <span class="lg"><i style="background:var(--mn-accent3)"></i> krit. Wert (Phasen-Übergang)</span>
+        <span class="lg"><i style="background:var(--mn-warn)"></i> Singularität (Cusp)</span>
+      </div>
+      <canvas id="op-cv"></canvas>
+      <div class="fz-readout" id="op-readout"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="n">6</span>Provenienz</h2>
+    <div class="prov">
+      <div class="item">
+        <span class="tag">A · Round-1-Quelle</span>
+        <p style="margin:.4em 0 0"><b><a href="../n1-091.html">n1-091.html</a></b> — „Form wird Algebra: Homotopie
+        trifft Morse-Theorie“ (aus homotopie_kurz.html ✕ morse_theory.html). Der lokale-zu-globale <i>Aufbau</i>:
+        kritische Punkte/Zellen bauen den Raum, Homotopie (π<sub>1</sub>, teils nicht-abelsch) und Morse
+        (Betti-Zahlen) treffen auf der Homologie; die Abelschierung löscht die Nicht-Abelschheit (F<sub>2</sub> vs.
+        ℤ², beide b<sub>1</sub>=2). Liefert den Morse-Flügel und den „Bauwerk/Quotient“-Standpunkt.</p>
+      </div>
+      <div class="item b">
+        <span class="tag">B · Round-1-Quelle</span>
+        <p style="margin:.4em 0 0"><b><a href="../n1-090.html">n1-090.html</a></b> — „Die Katastrophe als
+        algebraische Varietät“ (aus catastrophe_theory.html ✕ algebraische_topologie.html). Der lokale Germ (Thom,
+        Cusp 8a³+27b²=0) als algebraische Varietät, deren Singularpunkt (0,0) der Cusp ist; H¹/Monodromie
+        (Hysterese) als das, was lokal existiert aber global nicht zusammenklebt; Riemann–Roch
+        χ(L)=deg(L)+1−g. Liefert den Katastrophe-/Algebra-Flügel und den „Obstruktion/Defizit“-Standpunkt.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Runde 2 · Pair 044 · nicht-KI-Track · Fusion: (Homotopie × Morse) ✕ (Katastrophentheorie × algebraische
+  Topologie). Selbstanfälliges HTML, keine externen Daten, theme-reaktiv (dunkel als Default).</footer>
+</div>
+<script>
+(function(){
+  'use strict';
+  var cv=document.getElementById('op-cv');
+  var sT=document.getElementById('op-t');
+  var sA=document.getElementById('op-a');
+  var vT=document.getElementById('op-vt');
+  var vA=document.getElementById('op-va');
+  var readout=document.getElementById('op-readout');
+  var themeBtn=document.getElementById('op-theme');
+  var themeBtn2=document.getElementById('op-theme2');
+  if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var H=460;
+  var curT=0.8, curA=-0.5;
+
+  function cssVar(n, fb){ try{ var v=getComputedStyle(document.documentElement).getPropertyValue(n); if(v && v.replace(/\s/g,'')!=='') return v.trim(); }catch(e){} return fb; }
+  function pal(){ return {
+    a:cssVar('--mn-accent','#5ee7ff'), a2:cssVar('--mn-accent2','#ff5ea8'),
+    a3:cssVar('--mn-accent3','#a98bff'), a4:cssVar('--mn-accent4','#7dffb0'),
+    warn:cssVar('--mn-warn','#ffd166'), text:cssVar('--mn-text','#e6ebff'),
+    dim:cssVar('--mn-muted','#9aa6cc'), bg:cssVar('--mn-viz-bg','#0b0e1a'),
+    line:cssVar('--mn-viz-line','#2a3358')
+  }; }
+  function setup(){
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var w=cv.clientWidth||760; if(!w) w=760;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr); cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:w,h:H};
+  }
+  function phaseA(t){
+    if(t<0.03) return {b1:0, name:'leer (\u2205)'};
+    if(t<0.25) return {b1:0, name:'Scheibe / disk (zusammenziehbar)'};
+    if(t<0.75) return {b1:1, name:'Zylinder / Ring (\u2248 S\u00b9)'};
+    if(t<0.97) return {b1:2, name:'Torus \u2212 Scheibe (genus 1, 1 Rand)'};
+    return {b1:2, name:'Torus (geschlossen)'};
+  }
+  function critA(t){ return Math.abs(t-0.25)<0.03 || Math.abs(t-0.75)<0.03; }
+  function phaseB(a){
+    var n = a<0?2:1;
+    var name = a<0 ? 'bistabil (2 Minima + 1 Maximum)' : 'monostabil (1 Minimum)';
+    return {n:n, name:name};
+  }
+  function singB(a){ return Math.abs(a)<0.05; }
+
+  function drawMark(P,x,yTop,yBot,color,label){
+    ctx.save();
+    ctx.strokeStyle=color; ctx.lineWidth=1.4; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(x,yTop); ctx.lineTo(x,yBot); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=color; ctx.font='bold 10px system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(label,x,yTop+2);
+    ctx.restore();
+  }
+  function drawRowA(P,x0,x1,yTop,yBot){
+    var t=curT;
+    function X(tv){ return x0 + tv*(x1-x0); }
+    function Y(v){ return yBot - (v/2)*(yBot-yTop); }
+    ctx.font='10px system-ui, sans-serif';
+    for(var v=0;v<=2;v++){
+      var y=Y(v);
+      ctx.strokeStyle=P.line; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+      ctx.fillStyle=P.dim; ctx.textAlign='right'; ctx.textBaseline='middle';
+      ctx.fillText(String(v), x0-8, y);
+    }
+    var ticks=[0,0.25,0.5,0.75,1];
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    for(var i=0;i<ticks.length;i++){ ctx.fillStyle=P.dim; ctx.fillText(String(ticks[i]), X(ticks[i]), yBot+6); }
+    ctx.fillStyle=P.dim; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('A \u00b7 Morse: b\u2081(t) \u2014 Wasserstand t', x0, yTop-18);
+    var pts=[[0,0],[0.25,0],[0.25,1],[0.75,1],[0.75,2],[1,2]];
+    ctx.strokeStyle=P.a4; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath();
+    for(var j=0;j<pts.length;j++){ var px=X(pts[j][0]), py=Y(pts[j][1]); if(j===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+    drawMark(P, X(0.25), yTop, yBot, P.a3, 'S\u2081');
+    drawMark(P, X(0.75), yTop, yBot, P.a3, 'S\u2082');
+    var sx=X(t), sy=Y(phaseA(t).b1);
+    ctx.strokeStyle=P.a4; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(sx,yTop); ctx.lineTo(sx,yBot); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(sx,sy,6,0,2*Math.PI); ctx.fillStyle=P.a4; ctx.fill();
+    ctx.strokeStyle=P.bg; ctx.lineWidth=2; ctx.stroke();
+  }
+  function drawRowB(P,x0,x1,yTop,yBot){
+    var a=curA;
+    function X(av){ return x0 + ((av+2)/2.5)*(x1-x0); }
+    function Y(v){ return yBot - ((v-1)/1)*(yBot-yTop); }
+    ctx.font='10px system-ui, sans-serif';
+    for(var v=1;v<=2;v++){
+      var y=Y(v);
+      ctx.strokeStyle=P.line; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+      ctx.fillStyle=P.dim; ctx.textAlign='right'; ctx.textBaseline='middle';
+      ctx.fillText(String(v), x0-8, y);
+    }
+    var ticks=[-2,-1,0,0.5];
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    for(var i=0;i<ticks.length;i++){ ctx.fillStyle=P.dim; ctx.fillText(String(ticks[i]), X(ticks[i]), yBot+6); }
+    ctx.fillStyle=P.dim; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('B \u00b7 Katastrophe: n_stable(a) \u2014 Parameter a (b=0)', x0, yTop-18);
+    var pts=[[-2,2],[0,2],[0,1],[0.5,1]];
+    ctx.strokeStyle=P.a2; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath();
+    for(var j=0;j<pts.length;j++){ var px=X(pts[j][0]), py=Y(pts[j][1]); if(j===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+    drawMark(P, X(0), yTop, yBot, P.warn, 'Cusp a=0');
+    var sx=X(a), sy=Y(phaseB(a).n);
+    ctx.strokeStyle=P.a2; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(sx,yTop); ctx.lineTo(sx,yBot); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(sx,sy,6,0,2*Math.PI); ctx.fillStyle=P.a2; ctx.fill();
+    ctx.strokeStyle=P.bg; ctx.lineWidth=2; ctx.stroke();
+  }
+  function draw(){
+    var S=setup(); var w=S.w, h=S.h; var P=pal();
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=P.bg; ctx.fillRect(0,0,w,h);
+    var x0=54, x1=w-24;
+    drawRowA(P,x0,x1,40,208);
+    ctx.strokeStyle=P.line; ctx.lineWidth=1; ctx.setLineDash([4,5]);
+    ctx.beginPath(); ctx.moveTo(20,228); ctx.lineTo(w-20,228); ctx.stroke(); ctx.setLineDash([]);
+    drawRowB(P,x0,x1,258,426);
+  }
+  function setReadout(){
+    var pA=phaseA(curT), pB=phaseB(curA);
+    var h='';
+    h+='<div class="ro-row"><b class="ro-ab">A \u00b7 Morse</b> &nbsp; Ordnungspartikel b\u2081 = <span style="color:var(--mn-accent4)">'+pA.b1+'</span> \u2014 Phase: '+pA.name+'.';
+    if(critA(curT)) h+=' <span style="color:var(--mn-warn)">\u26a0 am kritischen Wert \u2192 Phasen-\u00dcbergang</span>.';
+    h+='</div>';
+    h+='<div class="ro-row"><b class="ro-nab">B \u00b7 Katastrophe</b> &nbsp; Ordnungspartikel n_stable = <span style="color:var(--mn-accent2)">'+pB.n+'</span> \u2014 Phase: '+pB.name+'.';
+    if(singB(curA)) h+=' <span style="color:var(--mn-warn)">\u26a0 Singularit\u00e4t (Cusp, a\u22480) \u2192 \u00dcbergang h\u00f6chster Ordnung</span>.';
+    h+='</div>';
+    h+='<div class="ro-fuse">Fusion: beide Ordnungspartikel sind st\u00fcckweise konstant und springen diskret an ihrer Wand; die Singularit\u00e4t ist der Ort, an dem der Sprung degeneriert und die abelsche W\u00e4hrung (b_k / Z\u00e4hlung) den feineren Inhalt (Nicht-Abelschheit / Monodromie) ausblendet.</div>';
+    if(readout) readout.innerHTML=h;
+  }
+  function update(){
+    curT=(parseFloat(sT.value)||0)/100;
+    curA=parseFloat(sA.value)||0;
+    if(vT) vT.textContent=curT.toFixed(2);
+    if(vA) vA.textContent=curA.toFixed(2);
+    draw();
+    setReadout();
+  }
+  function toggleTheme(){
+    document.documentElement.classList.toggle('dark');
+    if(themeBtn) themeBtn.textContent=document.documentElement.classList.contains('dark') ? '\u2600\u2600  Hell' : '\ud83c\udf19  Dunkel';
+    update();
+  }
+  sT.addEventListener('input', update);
+  sA.addEventListener('input', update);
+  if(themeBtn) themeBtn.addEventListener('click', toggleTheme);
+  if(themeBtn2) themeBtn2.addEventListener('click', toggleTheme);
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+  if(themeBtn){ themeBtn.textContent=document.documentElement.classList.contains('dark') ? '\u2600\u2600  Hell' : '\ud83c\udf19  Dunkel'; }
+  update();
+})();
+</script>
+</body>
+</html>

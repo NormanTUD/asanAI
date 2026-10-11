@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invarianz als kanonischer Kern — R2-031 (n1-081 ✕ n1-060)</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#2563eb;
+  --mn-accent2:#0e7490; --mn-accent3:#be185d; --mn-accent4:#b45309;
+  --mn-border:#d8d2c4; --mn-panel:#fffdf9; --mn-panel2:#f1ece0;
+  --mn-boundary:#dc2626; --mn-ok:#16a34a;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#60a5fa;
+  --mn-accent2:#22d3ee; --mn-accent3:#f472b6; --mn-accent4:#fbbf24;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-boundary:#f87171; --mn-ok:#4ade80;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--mn-bg);color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:820px;margin:0 auto;padding:26px 20px 80px;}
+header{border:1px solid var(--mn-border);border-radius:14px;background:var(--mn-panel);padding:24px 22px;margin-bottom:24px;}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mn-accent2);
+  border:1px solid var(--mn-border);border-radius:20px;padding:3px 12px;margin-bottom:12px;}
+h1{font-size:2rem;line-height:1.2;margin:.1em 0 .35em;font-weight:800;letter-spacing:-.02em;color:var(--mn-fg);}
+h1 .grad{background:linear-gradient(90deg,var(--mn-accent),var(--mn-accent2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.sub{color:var(--mn-dim);font-size:.92rem;margin:0;}
+.toggle{margin-top:14px;padding:8px 16px;border:1px solid var(--mn-border);background:var(--mn-panel2);
+  color:var(--mn-fg);border-radius:22px;cursor:pointer;font-size:.88rem;transition:.2s;}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 26px;border:1px solid var(--mn-border);border-radius:14px;background:var(--mn-panel);padding:22px 24px;}
+h2{font-size:1.35em;margin-bottom:12px;color:var(--mn-accent);border-bottom:2px solid var(--mn-border);padding-bottom:6px;display:flex;align-items:center;gap:10px;}
+h2 .n{font-size:.78rem;font-weight:700;color:var(--mn-accent2);border:1px solid var(--mn-border);border-radius:6px;padding:2px 8px;}
+h3{font-size:1.05em;color:var(--mn-accent);margin:18px 0 6px;}
+p{margin:11px 0;}
+.lead{font-size:1.04em;}
+strong{color:var(--mn-fg);}
+em{color:var(--mn-fg);}
+.note{font-size:.9em;color:var(--mn-dim);font-style:italic;}
+a{color:var(--mn-accent2);}
+.who{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.who.a{color:var(--mn-accent);} .who.b{color:var(--mn-accent2);}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+@media(max-width:640px){.vs{grid-template-columns:1fr;}}
+.pane{background:var(--mn-panel2);border:1px solid var(--mn-border);border-radius:10px;padding:12px 14px;font-size:.95em;}
+.pane .t{font-weight:700;margin-bottom:4px;}
+.pane.p-a{border-left:4px solid var(--mn-accent);}
+.pane.p-b{border-left:4px solid var(--mn-accent2);}
+.callout{border-left:4px solid var(--mn-ok);border-radius:10px;padding:14px 16px;margin:14px 0;background:var(--mn-panel2);}
+.callout b{color:var(--mn-ok);}
+.formula{font-family:'Courier New',ui-monospace,monospace;background:var(--mn-panel2);
+  border:1px solid var(--mn-border);border-left:4px solid var(--mn-accent);border-radius:10px;padding:14px 16px;
+  margin:14px 0;overflow-x:auto;white-space:pre;font-size:.78rem;line-height:1.5;color:var(--mn-fg);}
+.viz{border:1px solid var(--mn-border);border-radius:14px;background:var(--mn-panel2);padding:14px;margin-top:8px;}
+.viz canvas{width:100%;display:block;border-radius:10px;background:var(--mn-panel);border:1px solid var(--mn-border);}
+.viz .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 4px;}
+.viz .controls input[type=range]{flex:1;min-width:130px;accent-color:var(--mn-accent);}
+.viz .controls input[type=checkbox]{width:18px;height:18px;accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700;white-space:nowrap;font-size:.9em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{padding:8px 14px;border:1px solid var(--mn-border);background:var(--mn-panel);color:var(--mn-fg);
+  border-radius:8px;cursor:pointer;font-weight:700;font-size:.88em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.primary{background:var(--mn-accent);color:var(--mn-bg);border-color:var(--mn-accent);}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+@media(max-width:640px){.readout{grid-template-columns:1fr;}}
+.readbox{border:1px solid var(--mn-border);border-radius:10px;background:var(--mn-panel);padding:12px 14px;font-size:.9em;}
+.readbox .rb-title{font-weight:700;margin-bottom:6px;}
+.readbox.a .rb-title{color:var(--mn-accent);}
+.readbox.b .rb-title{color:var(--mn-accent2);}
+.readbox .regime{font-weight:700;margin:6px 0;}
+.readbox .desc{color:var(--mn-dim);}
+.fused{margin-top:14px;border:1px dashed var(--mn-accent);border-radius:10px;padding:12px 14px;background:var(--mn-panel);font-size:.93em;}
+.fused b{color:var(--mn-accent);}
+footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--mn-border);color:var(--mn-dim);font-size:.82em;}
+.prov{display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--mn-border);font-size:.92em;}
+.prov:last-child{border-bottom:none;}
+.prov .id{font-family:ui-monospace,monospace;font-weight:700;min-width:22px;}
+.prov .id.a{color:var(--mn-accent);} .prov .id.b{color:var(--mn-accent2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <button class="toggle" id="themeToggle" type="button">🌓 Thema wechseln</button>
+  <span class="tag">Knockout-Synthese · Runde 2 · nicht-AI-Track · id 031</span>
+  <h1>Invarianz als <span class="grad">kanonischer Kern</span></h1>
+  <p class="sub">Fusion aus: n1-081.html ✕ n1-060.html  (Runde 2)</p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Runde-1-Papiere drehen sich um dasselbe Grundphänomen: <strong>Struktur ist das, was invariant bleibt — und sie ist dabei kanonisch</strong> (eindeutig, im Wesentlichen nur eine). A (<b>n1-081</b>) sagt: eine Struktur <em>entsteht aus einem lokalen Prozess</em> (der Trajektorie/dem Fluss) und ist kanonisch, weil der Raum aller Wege, die zu ihr führen, <em>kontrahierbar</em> ist. B (<b>n1-060</b>) sagt: eine Struktur <em>ist die Menge aller Transformationen, unter denen das Wesentliche gleich bleibt</em> (die Symmetriegruppe). Fusioniert: <strong>Ein kanonisches Objekt ist der gemeinsame Fixkern — invariant sowohl unter einer Gruppe von Transformationen (B: Symmetrie) als auch unter einem dynamischen Prozess (A: Attraktor) — und eindeutig bis auf einen kontrahierbaren Raum von Wegen/Modellen.</strong></p>
+  <p>Die tiefste Struktur ist bei beiden eine <strong>verborgene Verbindung zwischen zwei scheinbar getrennten Welten</strong> — ein <em>kanonischer Kanal</em> (ein Isomorphismus zwischen Invarianten). A kanalisiert <em>dynamische Daten</em> (Trajektorien) in <em>stabile Daten</em> (Attraktoren) über die <strong>Endzustands-Map Φ</strong> (dynamische Entsprechung des Stabilisierungs-Funktoral Σ<sup>∞</sup>). B kanalisiert <em>gruppen-theoretische Daten</em> (Darstellungsdimensionen) in <em>zahlentheoretische Daten</em> (j-Koeffizienten) über <strong>Monstrous Moonshine</strong> (196884 = 196883 + 1). Beides ist „die Invariante der einen Welt codiert die Invariante der anderen“.</p>
+  <p>Und beides hat eine <strong>Maximal- und eine Minimalform auf denselben Skalen</strong>: A's fraktaler Basin-Rand (wo Kohärenz bricht und „interessante Topologie“ lebt) ↔ B's Monster (196.883 Dimensionen, 8 × 10⁵³) auf der einen; A's einzelner Fixpunkt-Attraktor ↔ B's n-Eck mit |D_n| = 2n auf der anderen. Eine einzige Definition — <em>Invarianz, die das Getrennte verbindet</em> — trägt die ganze Fusionsbreite.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span> Widersprüche zwischen A und B</h2>
+  <p class="note">A (n1-081) und B (n1-060) behandeln andere Domänen (dynamische Systeme + höhere Algebra vs. Gruppentheorie + sensorisches Erlebnis) und machen keine direkt kollidierenden Faktenbehauptungen. Die echten Spannungen liegen in ihren <em>Stellungen</em> zu „was ist kanonisch“ und „wo die tiefe Struktur liegt“.</p>
+
+  <h3>(W1) Reduktion auf einen Punkt vs. Bewahren des Ganzen</h3>
+  <div class="vs">
+    <div class="pane p-a"><div class="t"><span class="who a">A sagt</span></div>
+      kanonisch = der <strong>Limes/Attraktor</strong>. Viele Trajektorien werden <em>weg-gewaschen</em> (Stabilisierung Σ<sup>∞</sup>); übrig bleibt <em>ein einziger Punkt</em>. „Viele Türen, ein Ziel.“ Der Raum der Wege ist <em>kontrahierbar</em> — A reduziert (Viele → 1).</div>
+    <div class="pane p-b"><div class="t"><span class="who b">B sagt</span></div>
+      kanonisch = die <strong>Symmetriegruppe selbst</strong>. Die <em>ganze Menge</em> der Transformationen (beim Monster 8 × 10⁵³) wird <em>beibehalten</em>; das Objekt ist der <em>Festpunkt</em>, den diese Transformationen invariant lassen. Die Struktur <em>ist</em> die Menge der Bewegungen — B bewahrt (die volle Gruppe bleibt).</div>
+  </div>
+  <p>Das „kanonische Objekt“ ist bei A ein <strong>Punkt</strong> (das Ergebnis der Kollapsierung), bei B ein <strong>Set von 8 × 10⁵³ Elementen</strong> (die Struktur).</p>
+
+  <h3>(W2) Die tiefe Verbindung ist zeitlich-dynamisch (A) vs. zeitlos-algebraisch (B)</h3>
+  <div class="vs">
+    <div class="pane p-a"><div class="t"><span class="who a">A sagt</span></div>
+      Die Verbindung lebt in einer <strong>Bewegung über die Zeit</strong>: eine Trajektorie konvergiert zum Limes; Kohärenz = alle Trajektorien laufen zu einem Attraktor; Chaos = Sensitivität gegenüber Anfangsbedingungen am fraktalen Rand. Die Verbindung ist <em>diachron</em>.</div>
+    <div class="pane p-b"><div class="t"><span class="who b">B sagt</span></div>
+      Die Verbindung (Moonshine) ist eine <strong>exakte, zeitlose Identität</strong> zwischen zwei statischen Objekten (Monster-Gruppe ↔ j-Funktion): „196884 = 196883 + 1“. Kein Prozess, keine Zeit, keine Trajektorie — die Verbindung <em>ist</em> eine Gleichung. Sie ist <em>synchron/algebraisch</em>.</div>
+  </div>
+  <p>A erklärt Tiefe durch eine <strong>dynamische Grenze</strong> (ein Limes, den man durchlaufen muss); B erklärt Tiefe durch eine <strong>algebraische Gleichung</strong> (die sofort gilt, ohne durchlaufen zu werden).</p>
+
+  <h3>(W3) Die nichttriviale Struktur sitzt am Rand (A) vs. im exakten Kern (B)</h3>
+  <div class="vs">
+    <div class="pane p-a"><div class="t"><span class="who a">A sagt</span></div>
+      Das <em>Interessante/Nicht-Kontrahierbare</em> lebt am <strong>fraktalen Basin-Rand</strong> — dem Ort, an dem die Kohärenz <em>bricht</em> (final state sensitivity): „da lebt interessante Topologie“. Nichttrivialität = <em>Ausnahme am Rand</em> (unstetig, chaotisch).</div>
+    <div class="pane p-b"><div class="t"><span class="who b">B sagt</span></div>
+      Das <em>Interessante</em> (die Tiefe des Monsters in 196.883 Dimensionen, Moonshine) ist <strong>versteckt im exakten Kern</strong> des Objekts als <em>präzise</em> Identität. Nichttrivialität = <em>versteckte Exaktheit im Objekt</em> (stetig/identitär, nicht am Rand).</div>
+  </div>
+  <p>A sagt, die Topologie <strong>bricht die Invarianz</strong> und zeigt sich <em>an der Grenze</em> zwischen zwei Attraktoren; B sagt, die Topologie <strong>ist die Invarianz selbst</strong>, nur <em>versteckt im Zentrum</em>.</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span> Auflösung</h2>
+
+  <h3>Zu (W1) — Punkt und Gruppe sind zwei Ansichten desselben Invarianten</h3>
+  <p>Der Attraktor (A) ist genau der <strong>Fixkern</strong> unter der „Gruppe aller Trajektorien“; die Symmetriegruppe (B) ist die <strong>Vollmenge der Transformationen</strong>, die diesen Kern invariant lässt. A beschreibt den <em>Kern</em> (ein Punkt, das Ergebnis der Kollapsierung); B beschreibt die <em>Bewegung</em>, die diesen Kern trägt (die Gruppe). „Viele Wege kollabieren auf den Fixpunkt“ (A) und „die Gruppe bewahrt den Fixpunkt“ (B) sind dieselbe Struktur: <strong>der Fixpunkt ist der Quotient/Orbit-Kern, die Gruppe ist, was ihn erzeugt.</strong> Kontrahierbarkeit (A) = die Dynamik hat genau <em>einen</em> Orbit auf dem Attraktor; die volle Gruppe (B) <em>ist</em> die Invariante. <strong>Fusioniert: ein kanonisches Objekt ist zugleich (i) der Limes, auf den alle Wege zusammenlaufen, und (ii) das, was die volle Transformationsgruppe invariant lässt.</strong></p>
+
+  <h3>Zu (W2) — dynamisch und algebraisch sind zwei Modien derselben Invarianz</h3>
+  <p>A's „Trajektorie → Limes“ ist <em>dynamische</em> Invarianz (zeitliche Konvergenz); B's „Gruppe ↔ j-Funktion“ ist <em>algebraische</em> Invarianz (exakte Identität). Beide formulieren „die Struktur bleibt gleich, wenn [man den Prozess vergisst / man die Symmetrie anwendet]“. Und beide haben <strong>eine Endzustands-/Korrespondenz-Map als kanonischen Kanal</strong>: A's Φ: Zustand → Attraktor kanalisiert dynamische in stabile Daten; B's Moonshine-Korrespondenz kanalisiert gruppentheoretische in zahlentheoretische Daten. <strong>Fusioniert: die tiefe Struktur ist immer ein kanonischer Isomorphismus zwischen zwei Invarianten</strong> — nur dass A's Kanal <em>zeitlich</em> (ein Limes, den man durchläuft) und B's Kanal <em>zeitlos</em> (eine Identität, die sofort gilt) realisiert ist.</p>
+
+  <h3>Zu (W3) — der Rand und der Kern sind derselbe Übergangsort</h3>
+  <p>Bei A ist der fraktale Rand die <strong>Grenze zwischen zwei Attraktoren</strong> (zwei „Welten“), an der der Raum der Wahl <em>nicht kontrahierbar</em> wird — die „interessante Topologie“ ist der <em>Übergang zwischen Invarianten</em>. Bei B ist Moonshine die <strong>Brücke zwischen zwei Welten</strong> (Monster-Welt ↔ j-Funktion-Welt). <strong>Fusioniert: die nichttriviale Struktur lebt an der Schnittstelle zweier Invarianten</strong> — bei A <em>sichtbar</em> am fraktalen Rand (unstetig, chaotisch, wo Kohärenz bricht), bei B <em>versteckt</em> im exakten Kern (identitär, präzise). Der fraktale Basin-Rand (A) und die Moonshine-Gleichung (B) sind dieselbe Sache in zwei Zuständen: <em>der Ort, an dem zwei scheinbar getrennte Strukturen sich als eine erweisen</em> — einmal offen (Chaos), einmal verborgen (Exaktheit).</p>
+
+  <div class="callout">
+    <strong>Fusionierte Gesamtkonklusion.</strong> Ein kanonisches Objekt ist das, was invariant bleibt — unter einer Gruppe von Transformationen (B) oder unter einem dynamischen Prozess (A) — und eindeutig bis auf einen kontrahierbaren Raum von Wegen/Modellen. Die tiefste Struktur ist immer eine verborgene Verbindung (ein kanonischer Kanal) zwischen zwei scheinbar getrennten Welten: A verbindet <em>Dynamik ↔ stabile Homotopie</em> (Φ ↔ Σ<sup>∞</sup>), B verbindet <em>Gruppe ↔ Zahlentheorie</em> (Monster ↔ j-Funktion). Wo die Invarianz <em>bricht</em> (fraktaler Rand, Chaos) lebt interessante Topologie; wo sie <em>verborgen</em> ist (Moonshine, 196.883 Dimensionen) ist sie exakt. Maximalform (Monster, 8 × 10⁵³; fraktaler Rand) und Minimalform (n-Eck/D_n, 2n; einzelner Fixpunkt) sind dieselbe Definition auf zwei Skalen — ein einziger kanonischer Kern, der aus jedem lokalen Prozess und jeder Transformation folgt.
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span> Fusionierter Inhalt</h2>
+  <p>Das gemeinsame Skelett hat <strong>sechs Slots</strong> — eine <em>Definition von Invarianz</em>, eine <em>Zusammensetzbarkeit zu einer Struktur</em>, ein <em>unteilbarer „Atom“-Kern</em>, eine <em>Klassifikation</em>, ein <em>Objekt in Maximal- und Minimalform</em>, und eine <em>verborgene Verbindung</em> (ein kanonischer Kanal zwischen zwei Invarianten). A füllt die Slots mit der <em>dynamisch/algebraisch-stabilen</em> Instanz, B mit der <em>gruppen-theoretischen/sensorischen</em> Instanz.</p>
+
+  <h3>Slot 1 · Definition von Invarianz</h3>
+  <p><strong>A:</strong> Invarianz = das, was <em>überlebt, wenn man den Prozess vergisst</em>. Der Attraktor ist die Menge, auf die Trajektorien im Langzeitverhalten zulaufen; er ist invariant unter der <em>Zeit</em> (bleibt gleich für t → ∞). <strong>B:</strong> Invarianz = „eine Bewegung, nach der ein Objekt gleich aussieht“. Symmetrie = invariant unter der <em>Gruppe</em> D_n. <strong>Fusioniert: Invarianz in zwei Modien</strong> — zeitlich (A: Fixkern unter der Dynamik) und transformationsmäßig (B: Fixkern unter der Gruppe).</p>
+
+  <h3>Slot 2 · Zusammensetzbarkeit zu einer Struktur</h3>
+  <p><strong>A:</strong> Trajektorien setzen sich in der Zeit zusammen (x<sub>n+1</sub> = f(x<sub>n</sub>)); der Basin = die Menge aller Trajektorien mit demselben Limes = eine Homotopieklasse. <strong>B:</strong> zwei Symmetrien hintereinander = wieder eine Symmetrie → die Symmetrien bilden eine <em>Gruppe</em> (Komposition, Einheit, Inverse). <strong>Fusioniert: beides ist unter Komposition abgeschlossen.</strong> Die Struktur (A: das dynamische System / die Endzustands-Map Φ; B: die Gruppe D_n) ist eine <em>abgeschlossene Menge von Wegen/Transformationen</em>, und das kanonische Objekt ist ihr <em>Fix-/Limes-Kern</em>.</p>
+
+  <h3>Slot 3 · Unteilbarer „Atom“-Kern</h3>
+  <p><strong>A:</strong> der Fixpunkt-Attraktor ist das „Atom“ — der Endzustand, auf den alles zusammenläuft und der sich nicht weiter zerlegen lässt. <strong>B:</strong> einfache Gruppen = „Symmetrie-Atome“ — unteilbar, nicht weiter zerlegbar. <strong>Fusioniert: das kanonische Objekt hat einen atomaren Kern</strong> — A's Attraktor (der Fixpunkt, auf den alle Wege kollabieren) und B's einfache Gruppe (das Atom, das sich nicht faktorisieren lässt) sind beide <em>unteilbare</em> Endstrukturen.</p>
+
+  <h3>Slot 4 · Klassifikation</h3>
+  <p><strong>A:</strong> 4 Attraktor-Typen (Fixpunkt, periodischer Orbit, Torus, seltsam/chaotisch) + Multistabilität. <strong>B:</strong> Klassifikation der endlichen einfachen Gruppen: 4 Familien (zyklisch, Lie-Typ, alternierend, 26 sporadisch) + 20 Happy Family + 6 Parias. <strong>Fusioniert: beide beantworten „Welche invarianten Strukturen gibt es?“</strong> — A klassifiziert nach <em>Art des Attraktors</em>, B nach <em>Art der Gruppe</em>.</p>
+
+  <h3>Slot 5 · Objekt in Maximal- und Minimalform</h3>
+  <p><strong>A:</strong> Maximal = fraktaler Basin-Rand (wo Topologie lebt); Minimal = einzelner Fixpunkt. <strong>B:</strong> Maximal = Monster (Ordnung ≈ 8 × 10⁵³, 196.883 Dimensionen); Minimal = n-Eck mit |D_n| = 2n. <strong>Fusioniert: dieselbe Definition auf zwei Skalen.</strong></p>
+
+  <h3>Slot 6 · Die verborgene Verbindung (der kanonische Kanal)</h3>
+  <p><strong>A:</strong> <strong>Φ ↔ Σ<sup>∞</sup></strong> — die Endzustands-Map (dynamische Daten → Attraktoren) ist die dynamische Entsprechung des Stabilisierungs-Funktoral; dazu die große Analogie ℤ ↔ 𝕊, Ab ↔ Spectra, Ring ↔ A∞-Ring, komm. Ring ↔ E∞-Ring. <strong>B:</strong> <strong>Monster ↔ j-Funktion (Moonshine)</strong> — j-Koeffizienten 1, 744, 196884, 21493760, … sind Summen der Monster-Darstellungsdimensionen 1, 196883, 21296876, …: 196884 = 196883 + 1; 21493760 = 21296876 + 196883 + 1 (Borcherds 1992 → Fields-Medaille). <strong>Fusioniert: die tiefste Struktur ist immer ein kanonischer Isomorphismus zwischen zwei scheinbar getrennten Invarianten</strong> — A's Kanal ist zeitlich (ein Limes), B's Kanal ist zeitlos (eine Identität).</p>
+
+  <p class="note">Ehrlichkeitshinweis: A (n1-081) macht dynamisch-algebraische Behauptungen (Attraktoren, Φ, Σ<sup>∞</sup>, Kohärenz = kontrahierbarer Raum der Wege, fraktaler Rand), B (n1-060) macht gruppentheoretische + sensorische (Monster, Moonshine, D_n, France-Erlebnis). Die Zuordnung von A's Attraktor auf B's „Fixkern unter der Gruppe“ und die Behandlung von Φ und Moonshine als „derselbe Kanaltyp“ ist die <em>Linse dieser Fusion</em>, nicht wörtlicher Inhalt beider.</p>
+
+  <p><strong>Die isomorphe Einbettung (der eigentliche Fusionsinhalt) — dieselben sechs Slots, zwei Skalen:</strong></p>
+  <div class="formula">n1-081 (A · dynamisch)              n1-060 (B · gruppentheoretisch)     [Fusions-Linse]
+──────────────────────────────────────────────────────────────────────────────────────────
+Invarianz  "was überlebt, wenn der    "Bewegung, nach der es gleich    Invarianz = Fixkern unter
+Prozess vergessen wird" (Attraktor)    aussieht" (Symmetrie D_n)        einer Gruppe (B) ODER
+                                                                    einem Prozess (A)
+
+Struktur   Endzustands-Map Φ, Basin =  Gruppe D_n, |D_n| = 2n        abgeschlossene Menge von
+             Homotopieklassen             (Komposition → Gruppe)       Wegen/Transformationen
+
+Atom       Fixpunkt-Attraktor (dim 0)    einfache Gruppen = "Symmetrie- unteilbarer Endkern
+                                                            Atome"
+
+Klassif.   4 Attraktor-Typen             4 Familien + 26 sporadisch    "welche invarianten
+             (Fixpunkt, Orbit, Torus,    (Happy 20 + Parias 6)          Strukturen gibt es?"
+              seltsam)
+
+Objekt     Max: fraktaler Basin-Rand;    Max: Monster (8×10⁵³,         dieselbe Definition auf
+            Min: einzelner Fixpunkt        196.883 Dim.); Min: n-Eck/D_n zwei Skalen
+                                                    (2n)
+
+Kanal      Φ ↔ Σ∞ (Dynamik ↔ stabile    Monster ↔ j-Funktion (Moonshine): kanonischer Isomorphismus
+            Homotopie); fraktaler Rand   196884 = 196883 + 1            zwischen zwei Invarianten
+            = wo Kohärenz bricht</div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span> Interaktive Visualisierung — dieselbe Invarianz, zwei Modalitäten</h2>
+  <p>Ein Canvas, zwei Panels, <em>dieselbe</em> Definition („Invarianz = das Wesentliche bleibt gleich“). Links die <strong>gruppe-invariante</strong> Seite (B): ein n-Eck in französischer Macaron-Palette, das du drehen und spiegeln kannst — bei jedem Drehwinkel, unter dem es gleich aussieht, leuchtet es grün, und |D_n| = 2n wird abgelesen. Rechts die <strong>prozess-invariante</strong> Seite (A): eine Wolke Startpunkte, deren Trajektorien in denselben Attraktor spiralt — <em>viele Wege, ein Ziel</em> = der kontrahierbare Raum der Wege (Kohärenz). Beide Panels definieren <em>EIN</em> kanonischen Kern.</p>
+
+  <div class="viz">
+    <canvas id="vizCanvas" height="470"></canvas>
+    <div class="controls">
+      <label for="nSlider" class="cl">Ecken n (links): <b id="nLab">5</b></label>
+      <input type="range" id="nSlider" min="3" max="12" step="1" value="5">
+      <button class="btn primary" id="spinBtn" type="button">▶ Drehen</button>
+      <button class="btn" id="newCloudBtn" type="button">✦ Neue Wolke (rechts)</button>
+      <button class="btn" id="resetBtn" type="button">↺ Reset</button>
+    </div>
+    <div class="controls">
+      <label for="rotSlider" class="cl">Drehwinkel: <b id="rotLab">0°</b></label>
+      <input type="range" id="rotSlider" min="0" max="360" step="1" value="0">
+      <label class="cl" for="mirrorBox">Spiegeln</label>
+      <input type="checkbox" id="mirrorBox">
+    </div>
+    <div class="readout">
+      <div class="readbox a">
+        <div class="rb-title">Invarianz unter der Gruppe (B)</div>
+        <div>n = <b id="nVal">5</b> · |D_n| = 2n = <b id="ordVal">10</b></div>
+        <div>Drehwinkel = <b id="rotVal">0°</b> · <b id="mirVal">reine Drehung</b></div>
+        <div class="regime" id="symState">—</div>
+        <div class="desc">Drehe auf k·(360/n)° — das n-Eck sieht <em>gleich</em> aus. Der Fixkern bleibt unter der Gruppe D_n invariant: das greifbare „gleich bleibt“.</div>
+      </div>
+      <div class="readbox b">
+        <div class="rb-title">Invarianz unter dem Prozess (A)</div>
+        <div>Φ: viele Startpunkte → <b>ein</b> Attraktor</div>
+        <div class="regime" style="color:var(--mn-ok);">kontrahierbarer Raum der Wege = Kohärenz</div>
+        <div class="desc">Jede Trajektorie spiralt in denselben Attraktor: das Wesentliche bleibt unter dem dynamischen Prozess gleich. Φ ist die dynamische Entsprechung von Σ<sup>∞</sup> (vergisst den Weg, behält den Kern).</div>
+      </div>
+    </div>
+    <div class="fused"><strong>Fusion:</strong> dieselbe Invarianz definiert links den <strong>Fixkern unter der Gruppe</strong> (B) und rechts den <strong>Attraktor unter dem Prozess</strong> (A) — ein einziger kanonischer Kern, zwei Modalitäten/Skalen. Links minimal (|D_n| = 2n), rechts dynamisch; die verborgene Verbindung ist bei A die Endzustands-Map Φ ↔ Σ<sup>∞</sup>, bei B Moonshine (Monster ↔ j-Funktion).</div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span> Provenienz</h2>
+  <div class="prov"><span class="id a">A</span>
+    <div><a href="../n1-081.html">n1-081.html</a> — „Von der Trajektorie zum kanonischen Objekt“ (Fusion: higher_algebra ✕ effortless_basins_of_attraction). Dynamische Systeme + höhere Algebra: Attraktoren, Endzustands-Map Φ, Kohärenz = kontrahierbarer Raum der Wege, fraktaler Basin-Rand (Chaos = Fehlschlag der Kohärenz), E∞-Ringe/Spectra/Σ<sup>∞</sup>.</div></div>
+  <div class="prov"><span class="id b">B</span>
+    <div><a href="../n1-060.html">n1-060.html</a> — „Tastbare Symmetrie — Das Monster trifft Frankreich“ (Fusion: monster ✕ france). Symmetrie = die Transformationen, unter denen das Wesentliche gleich bleibt; Monster-Gruppe (Ordnung ≈ 8 × 10⁵³, 196.883 Dimensionen), Monstrous Moonshine (196884 = 196883 + 1, Borcherds 1992), Klassifikation einfacher Gruppen, tastbares n-Eck/D_n.</div></div>
+</section>
+
+<footer>Knockout-Synthese · Runde 2 · id 031 · nicht-AI-Track. Selbst-generierte Fusion; alle mathematischen Behauptungen zu A/B stammen aus den beiden Runde-1-HTMLs, die isomorphe Einbettung und die gemeinsame Invarianz-Linse sind die hier erzeugte Synthese. Offline-fähig, keine Netz-Daten, keine externen Libs.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('vizCanvas');
+  if(!canvas||!canvas.getContext){return;}
+  var ctx=canvas.getContext('2d');
+  var nSlider=document.getElementById('nSlider');
+  var rotSlider=document.getElementById('rotSlider');
+  var mirrorBox=document.getElementById('mirrorBox');
+  var spinBtn=document.getElementById('spinBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var newCloudBtn=document.getElementById('newCloudBtn');
+  var nLab=document.getElementById('nLab');
+  var rotLab=document.getElementById('rotLab');
+
+  var H=470, TAU=Math.PI*2;
+  var FRENCH=['#FF69B4','#98FB98','#DDA0DD','#F0E68C','#87CEEB','#FFA07A','#E6E6FA','#FFB6C1','#FFDAB9','#B0E0E6','#DEB887','#F5DEB3'];
+  var state={n:5, rot:0, mirror:false, spinning:false};
+  var time=0, raf=null, cloud=[], themeC=null;
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';}
+  function readTheme(){
+    themeC={A:cssVar('--mn-accent'),A2:cssVar('--mn-accent2'),A3:cssVar('--mn-accent3')||cssVar('--mn-accent'),
+      ok:cssVar('--mn-ok'),bad:cssVar('--mn-boundary'),gold:cssVar('--mn-accent4')||'#b45309',
+      fg:cssVar('--mn-fg'),dim:cssVar('--mn-dim'),border:cssVar('--mn-border'),panel2:cssVar('--mn-panel2')};
+  }
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function label(t,x,y,color,font,align){ctx.fillStyle=color;ctx.font=font;ctx.textAlign=align||'center';ctx.textBaseline='middle';ctx.fillText(t,x,y);}
+
+  function integrateTraj(x0,y0,steps,dt){
+    var p=[[x0,y0]],x=x0,y=y0;
+    for(var i=0;i<steps;i++){
+      var ax=-x-y, ay=x-y;
+      x+=dt*ax; y+=dt*ay;
+      p.push([x,y]);
+      if(x*x+y*y<1e-7) break;
+    }
+    return p;
+  }
+  function genCloud(N){
+    cloud=[];
+    for(var i=0;i<N;i++){
+      var a=Math.random()*TAU;
+      var r=0.45+0.6*Math.random();
+      cloud.push(integrateTraj(r*Math.cos(a), r*Math.sin(a), 90, 0.25));
+    }
+  }
+  function rToPx(x,y,cx,cy,R){return [cx + x/1.15*R, cy - y/1.15*R];}
+
+  function isSymmetry(){
+    var step=360/state.n, r=((state.rot%step)+step)%step;
+    return r<1.5 || (step-r)<1.5;
+  }
+
+  function renderLeft(lx0,lx1,C){
+    var cx=(lx0+lx1)/2, cy=205, R=Math.min(118,(lx1-lx0)*0.30);
+    var n=state.n, rot=state.rot, rr=rot*Math.PI/180, m=state.mirror?-1:1;
+    var sym=isSymmetry();
+    label('INVARIANZ UNTER DER GRUPPE  ·  (B)',cx,26,C.fg,'bold 13px Segoe UI, sans-serif');
+    label('tastbare Symmetrie · frz. Macaron-Palette',cx,44,C.dim,'11px Segoe UI, sans-serif');
+    ctx.strokeStyle=hexToRgba(C.A,0.14);ctx.lineWidth=1;
+    for(var g=0;g<n;g++){var ga=(TAU*g)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*1.16*Math.cos(ga),cy+R*1.16*Math.sin(ga));ctx.stroke();}
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(rr);ctx.scale(m,1);
+    if(sym){ctx.shadowColor=C.ok;ctx.shadowBlur=22;}
+    ctx.beginPath();
+    for(var i=0;i<n;i++){var a=(TAU*i)/n-Math.PI/2;var x=R*Math.cos(a),y=R*Math.sin(a);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.closePath();
+    ctx.strokeStyle=sym?C.ok:C.A;ctx.lineWidth=3;ctx.stroke();ctx.shadowBlur=0;
+    ctx.globalAlpha=0.08;ctx.fillStyle=C.A;ctx.fill();ctx.globalAlpha=1;
+    for(var i=0;i<n;i++){var a=(TAU*i)/n-Math.PI/2;var x=R*Math.cos(a),y=R*Math.sin(a);
+      ctx.beginPath();ctx.arc(x,y,9,0,TAU);ctx.fillStyle=FRENCH[i%FRENCH.length];ctx.fill();
+      ctx.lineWidth=1.5;ctx.strokeStyle=hexToRgba(C.fg,0.55);ctx.stroke();}
+    ctx.restore();
+    ctx.fillStyle=C.gold;ctx.beginPath();ctx.arc(cx,cy,4,0,TAU);ctx.fill();
+    label('n = '+n,cx,cy+R+32,C.fg,'bold 15px Segoe UI, sans-serif');
+    label('|D_'+n+'| = 2n = '+(2*n)+'  (Fixkern bleibt unter der Gruppe gleich)',cx,cy+R+52,C.dim,'11px Segoe UI, sans-serif');
+  }
+
+  function renderRight(rx2,rx3,C){
+    var cw=rx3-rx2, cx=(rx2+rx3)/2;
+    label('INVARIANZ UNTER DEM PROZESS  ·  (A)',cx,26,C.fg,'bold 13px Segoe UI, sans-serif');
+    label('viele Trajektorien → ein Attraktor (kontrahierbarer Raum der Wege)',cx,44,C.dim,'11px Segoe UI, sans-serif');
+    var R=Math.min(cw/2-14, 150), cy=210;
+    ctx.strokeStyle=hexToRgba(C.border,0.6);ctx.lineWidth=1;
+    ctx.strokeRect(cx-R, cy-R, 2*R, 2*R);
+    for(var i=0;i<cloud.length;i++){
+      var p=cloud[i], L=p.length;
+      var hi=Math.floor(time*(L-1));
+      ctx.strokeStyle=hexToRgba(C.A2,0.10);ctx.lineWidth=1;ctx.beginPath();
+      for(var j=0;j<L;j++){var q=rToPx(p[j][0],p[j][1],cx,cy,R); if(j===0)ctx.moveTo(q[0],q[1]);else ctx.lineTo(q[0],q[1]);}
+      ctx.stroke();
+      var start=Math.max(0,hi-14);
+      ctx.strokeStyle=hexToRgba(C.A2,0.85);ctx.lineWidth=1.6;ctx.beginPath();
+      for(var k=start;k<=hi;k++){var q2=rToPx(p[k][0],p[k][1],cx,cy,R); if(k===start)ctx.moveTo(q2[0],q2[1]);else ctx.lineTo(q2[0],q2[1]);}
+      ctx.stroke();
+      var qh=rToPx(p[hi][0],p[hi][1],cx,cy,R);
+      ctx.fillStyle=C.A2;ctx.beginPath();ctx.arc(qh[0],qh[1],2.4,0,TAU);ctx.fill();
+    }
+    var o=rToPx(0,0,cx,cy,R);
+    ctx.save();ctx.shadowColor=C.gold;ctx.shadowBlur=22;ctx.fillStyle=C.gold;ctx.beginPath();ctx.arc(o[0],o[1],6,0,TAU);ctx.fill();ctx.restore();
+    label('Attraktor (A)',o[0],o[1]+26,C.gold,'bold 12px Segoe UI, sans-serif');
+    label('Φ: Zustand → Attraktor',cx,cy+R+30,C.fg,'12px monospace');
+    label('Endzustands-Map = dynamisches Σ∞ · Kohärenz',cx,cy+R+48,C.dim,'11px Segoe UI, sans-serif');
+  }
+
+  function render(){
+    if(!ctx)return;
+    if(!themeC)readTheme();
+    var C=themeC;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||760;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.panel2;ctx.fillRect(0,0,W,H);
+    var gap=Math.min(26,W*0.035);
+    var lx0=12,lx1=(W-gap)/2,rx2=(W+gap)/2,rx3=W-12;
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W/2,64);ctx.lineTo(W/2,H-16);ctx.stroke();
+    label('Invarianz  =  das Wesentliche bleibt gleich — unter einer Gruppe (B) ODER einem Prozess (A)',W/2,18,C.dim,'11px Segoe UI, sans-serif');
+    renderLeft(lx0,lx1,C);
+    renderRight(rx2,rx3,C);
+  }
+
+  function updateReadout(){
+    var n=state.n, step=360/state.n, r=((state.rot%step)+step)%step, sym=(r<1.5||(step-r)<1.5);
+    document.getElementById('nVal').textContent=n;
+    document.getElementById('ordVal').textContent=2*n;
+    document.getElementById('rotVal').textContent=state.rot.toFixed(0)+'°';
+    document.getElementById('mirVal').textContent=state.mirror?'Drehung + Spiegelung':'reine Drehung';
+    var st=document.getElementById('symState');
+    if(sym){st.textContent='✅ SYMMETRIE — das n-Eck sieht gleich aus';st.style.color=cssVar('--mn-ok');}
+    else{st.textContent='✖ keine Symmetrie — nächste bei k·'+step.toFixed(1)+'°';st.style.color=cssVar('--mn-boundary');}
+  }
+
+  function tick(){
+    var changed=false;
+    if(state.spinning){state.rot=(state.rot+0.8)%360;if(rotSlider)rotSlider.value=state.rot;changed=true;}
+    time=(time+0.005)%1;
+    render();
+    if(changed)updateReadout();
+    raf=requestAnimationFrame(tick);
+  }
+
+  nSlider.addEventListener('input',function(){state.n=parseInt(nSlider.value,10);if(nLab)nLab.textContent=state.n;updateReadout();});
+  rotSlider.addEventListener('input',function(){state.rot=parseFloat(rotSlider.value);if(rotLab)rotLab.textContent=state.rot.toFixed(0)+'°';updateReadout();});
+  mirrorBox.addEventListener('change',function(){state.mirror=mirrorBox.checked;updateReadout();});
+  spinBtn.addEventListener('click',function(){state.spinning=!state.spinning;spinBtn.textContent=state.spinning?'⏸ Stop':'▶ Drehen';});
+  newCloudBtn.addEventListener('click',function(){genCloud(40);});
+  resetBtn.addEventListener('click',function(){
+    state.spinning=false;state.n=5;state.rot=0;state.mirror=false;
+    if(nSlider)nSlider.value=5;if(rotSlider)rotSlider.value=0;if(mirrorBox)mirrorBox.checked=false;
+    if(nLab)nLab.textContent='5';if(rotLab)rotLab.textContent='0°';
+    if(spinBtn)spinBtn.textContent='▶ Drehen';
+    updateReadout();
+  });
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    readTheme();
+  });
+
+  readTheme();
+  genCloud(40);
+  updateReadout();
+  raf=requestAnimationFrame(tick);
+  window.addEventListener('resize',function(){render();});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+})();
+</script>
+</body>
+</html>

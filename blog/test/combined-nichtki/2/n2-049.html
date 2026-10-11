@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiederkunft ist Invarianz &mdash; die Form, die wiederkommt und bleibt</title>
+<style>
+:root{
+  --bg:#f6f3ec; --bg2:#efe9dd; --card:#ffffff; --text:#1c2530; --muted:#5f6b78;
+  --border:#d9d2c4; --accent:#0369a1; --accent2:#a21caf; --accent3:#b45309;
+  --good:#15803d; --viz-bg:#ffffff; --grid:#e7e1d4; --panel:#fbfaf6;
+  --code:#eef1f6; --code-fg:#1c2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#0e1424; --card:#141b30; --text:#e2e8f0; --muted:#94a3b8;
+  --border:#2a3556; --accent:#7dd3fc; --accent2:#f0abfc; --accent3:#fde047;
+  --good:#4ade80; --viz-bg:#0a0e1a; --grid:#1a2340; --panel:#111829;
+  --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Georgia,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+header.top{padding:1.5rem 0 2rem;border-bottom:2px solid var(--border);margin-bottom:2.2rem}
+h1{font-size:clamp(1.9rem,4.4vw,2.6rem);font-weight:800;line-height:1.16;margin-bottom:.6rem;letter-spacing:-.01em}
+h1 .acc{color:var(--accent)}
+.sub{color:var(--muted);font-size:1rem;font-style:italic}
+.sub code{font-style:normal;background:var(--code);color:var(--code-fg);padding:1px 6px;border-radius:5px;font-size:.9em}
+.themebtn{margin-top:1rem;background:var(--card);color:var(--text);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .9rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+.themebtn:hover{border-color:var(--accent)}
+section{margin:2.4rem 0}
+h2{font-size:1.5rem;font-weight:750;margin-bottom:.9rem;color:var(--accent);
+  padding-bottom:.35rem;border-bottom:1px solid var(--border)}
+h3{font-size:1.12rem;font-weight:650;margin:1.4rem 0 .5rem;color:var(--accent2)}
+p{margin:0 0 1rem}
+.lead{color:var(--muted);font-style:italic;margin-bottom:1.2rem}
+ul{margin:0 0 1rem 1.3rem;color:var(--text)}
+li{margin:.35rem 0}
+strong{color:var(--text)}
+em.k{color:var(--accent3);font-style:normal;font-weight:650}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.callout{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+  padding:.9rem 1.1rem;margin:1.1rem 0;box-shadow:var(--shadow)}
+.callout.warn{border-color:var(--accent2)}
+.callout.win{border-color:var(--accent3)}
+.callout b{color:var(--text)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+@media (max-width:600px){.pair{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:var(--shadow)}
+.card h4{font-size:.98rem;margin-bottom:.5rem;color:var(--accent)}
+.card.b h4{color:var(--accent2)}
+.card p{font-size:.92rem;margin:0;color:var(--muted)}
+.math{font-family:'Cambria Math','Times New Roman',serif;background:var(--panel);
+  border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;margin:.7rem 0;
+  font-size:1.02rem;overflow-x:auto}
+.math sub,.math sup{font-size:.72em}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
+th,td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent);font-weight:650}
+td.a{color:var(--accent)} td.b{color:var(--accent2)}
+.viz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem;margin-top:.5rem;box-shadow:var(--shadow)}
+.viz-ctrl{display:flex;flex-wrap:wrap;gap:.9rem;align-items:center;margin-bottom:.9rem}
+.viz-ctrl label{font-size:.82rem;color:var(--muted);display:block;margin-bottom:.2rem}
+.viz-ctrl .val{color:var(--accent3);font-variant-numeric:tabular-nums;font-weight:600}
+input[type=range]{-webkit-appearance:none;width:150px;height:6px;background:var(--grid);border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:none}
+button.vbtn{background:var(--accent);color:var(--bg);border:none;padding:.5rem 1rem;border-radius:8px;font-weight:650;cursor:pointer;font-family:inherit;font-size:.85rem}
+button.vbtn:hover{filter:brightness(1.1)}
+button.vbtn.alt{background:var(--accent2)}
+canvas#viz{display:block;width:100%;height:460px;border-radius:8px;background:var(--viz-bg)}
+.cap{font-size:.8rem;color:var(--muted);margin-top:.45rem;font-style:italic}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:.6rem;margin-top:1rem}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:8px;text-align:center;padding:.6rem}
+.stat .n{font-size:1.3rem;font-weight:800;color:var(--accent3);font-variant-numeric:tabular-nums}
+.stat .l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.7rem;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.prov a{color:var(--accent);font-weight:650;text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.prov p{margin:.3rem 0 0;color:var(--muted);font-size:.92rem}
+footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Wiederkunft ist <span class="acc">Invarianz</span>: die Form, die wiederkommt und bleibt</h1>
+  <p class="sub">Fusion aus: <code>n1-071.html</code> &#10005; <code>n1-106.html</code>&nbsp; (Runde 2)</p>
+  <button class="themebtn" id="themeBtn">&#9790; Theme wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Zwei Runden-1-Synthesen, ganz verschiedene Rohquellen &mdash; und doch derselbe Gegenstand: <em class="k">eine Form, die bleibt, w&auml;hrend sich alles um sie&auml;ndert.</em></p>
+  <p><strong>A (n1-071)</strong> kommt aus zellul&auml;ren Automaten &#215; Finnegans Wake und nennt den Gegenstand
+  <strong>Wiederkunft</strong>: ein System macht seine eigene Ausgabe zur n&auml;chsten Eingabe (geschlossener R&uuml;ckkopplungskreislauf,
+  <span class="math" style="display:inline;padding:.1rem .4rem">x<sub>t+1</sub> = f(x<sub>t</sub>)</span>) und erzeugt daraus
+  Zyklen, Oszillatoren und Attraktoren &mdash; &bdquo;Ordnung aus Wiederkunft&ldquo;. Das Wiederkommende ist die Form: die Periode des
+  Blinkers, Vicos Rad, der Waldbrand-Attraktor, der zu seinem eigenen Ursprung zur&uuml;ckkehrt.</p>
+  <p><strong>B (n1-106)</strong> kommt aus Post-Quantum-Kryptographie &#215; Grothendiecks Raumbegriff und nennt denselben
+  Gegenstand <strong>Invarianz</strong>: die invariante Form, die einer Beschreibungsurwandlung (Superposition, QFT,
+  &RBB;&nbsp;&rarr;&nbsp;&F;<sub>p</sub>) &uuml;bersteht. Verschl&uuml;sseln zeigt nur <em>lokale</em> Gesichter
+  (Ciphertext, das &ouml;ffentliche <code>b = A&middot;s + e</code>), w&auml;hrend die <em>globale</em> Invariante
+  (der geheime Vektor <code>s</code>, die Periode <code>r</code>) als Form verborgen bleibt &mdash; &bdquo;die Form, die die
+  Transformation &uuml;bersteht&ldquo;.</p>
+  <p><strong>Die Fusion lautet: Wiederkunft ist Invarianz &uuml;ber die Zeit; Invarianz ist Wiederkunft &uuml;ber die
+  Beschreibung.</strong> Beides ist dasselbe Ph&auml;nenomen auf zwei Achsen &mdash; <em class="k">das Unver&auml;nderte im
+  Ver&auml;ndernden</em>. Was in der Zeit wiederkommt (A: Periode, Attraktor, das Rad) ist genau das, was unter
+  Beschreibungswechsel invariant ist (B: geheimer Vektor, Gitter, die Form hinter den Gesichtern). Und umgekehrt:
+  Invarianz unter Beschreibungswechsel ist eine Wiederkunft &mdash; dieselbe Form, nur durch eine andere Linse gesehen. Die
+  vereinte These: <em class="k">Eine Form, die sich selbst referenziert (Output&nbsp;=&nbsp;Eingabe), bleibt in ihren
+  messbaren Invarianten fest und betrachterunabh&auml;ngig, entzieht sich aber zugleich der einen Regel/Beschreibung, die
+  sie definiert.</em> Das Wiederkommende ist das Invariante.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p class="lead">In keinem einzelnen Rechnen widersprechen sie sich &mdash; sie sind selbst schon Synthesen auf verschiedenen Skalen. Aber die zwei Runden-1-Papiere nehmen drei unvereinbar wirkende Staturen ein, die aneinandergrenzen:</p>
+
+  <div class="pair">
+    <div class="card"><h4>A &mdash; n1-071</h4><p><strong>Die Form flieht der Erfassung.</strong> &bdquo;Ein System, das einfach genug ist, um eine Regel zu sein, ist &mdash; weil es sich selbst zur Eingabe macht &mdash; zu gro&szlig;, um von dieser Regel erfasst zu werden&ldquo;; &bdquo;Bedeutung weicht, wenn man greift&ldquo;. Die <em>Offenheit</em>/Unfassbarkeit ist der Wert, das Produktive.</p></div>
+    <div class="card b"><h4>B &mdash; n1-106</h4><p><strong>Die Form ist eine feste Invariante.</strong> Das Gitter, der geheime Vektor <code>s</code>; Sicherheit ist &bdquo;ein betrachterunabh&auml;ngiges Faktum &uuml;ber ein festes Objekt&ldquo;. Die <em>Persistenz</em>/Festigkeit ist der Wert &mdash; die Form ist, was wirklich da ist.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 1 &mdash; Entzug vs. Persistenz.</b> A feiert, dass die Form sich der sie definierenden Regel <em>entzieht</em> (sie ist ungreifbar, und genau darin ihr Wert); B ruht darauf, dass die Form eine feste Invariante ist, die <em>bleibt</em> (sie ist objektiv da, und genau darin ihr Wert). Das eine sagt &bdquo;es entgeht&ldquo;, das andere &bdquo;es bleibt&ldquo;.</p></div>
+
+  <div class="pair">
+    <div class="card"><h4>A &mdash; n1-071</h4><p><strong>Konstitutiver, teilnehmender Beobachter.</strong> &bdquo;You ARE the dream now&ldquo;; die Wahl des Spielers ist &bdquo;genau diese eine umgekippte Zelle&ldquo; und formt die Trajektorie; &bdquo;die Struktur ist fix, die Trajektorie wird gew&auml;hlt&ldquo;. Der Beobachter ist <em>darin</em> und kann aufgesogen werden.</p></div>
+    <div class="card b"><h4>B &mdash; n1-106</h4><p><strong>Betrachterunabh&auml;ngige Invariante.</strong> Der Angreifer steht <em>extern</em> zum Objekt; die H&uuml;rde ist &bdquo;physisch und extern zum Objekt&ldquo;. Das, was bleibt, bleibt <em>unabh&auml;ngig davon, wer zusieht</em>.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 2 &mdash; konstitutiver vs. externer Beobachter.</b> A: wer zusieht, gestaltet die Trajektorie mit (und wird vom System aufgesogen); B: die Invariante bleibt, ob jemand zusieht oder nicht &mdash; der Beobachter ist au&szlig;erhalb der Form.</p></div>
+
+  <div class="pair">
+    <div class="card"><h4>A &mdash; n1-071</h4><p><strong>Das Schwierige wird durch R&uuml;ckkehr &uuml;berwunden.</strong> Die Kante des Chaos wird <em>regenerativ/anti-entropisch</em> zur&uuml;ck&uuml;berschritten: &bdquo;das Ende wird zum Anfang&ldquo;, &bdquo;abbrennen, nachwachsen, wieder kritisch&ldquo;. Der Zeitpfeil wird umgekehrt; der Attraktor ist der eigene Ursprung.</p></div>
+    <div class="card b"><h4>B &mdash; n1-106</h4><p><strong>Das Schwierige ist eine dauernde Barriere.</strong> &bdquo;die Rechnung leisten wir nicht&ldquo;; &bdquo;der Widerstand dieser Form, aus einer gr&ouml;beren Sicht rekonstruiert zu werden&ldquo;. Der Quantencomputer ist ~11&nbsp;% schneller, aber die H&uuml;rde <em>bleibt</em> &mdash; sie wird nicht &uuml;berwunden, nur n&auml;her ger&uuml;ckt.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 3 &mdash; &uuml;berwunden durch R&uuml;ckkehr vs. dauernde H&uuml;rde.</b> A: das Harte gibt durch Wiederkunft nach (Tod&nbsp;&rarr;&nbsp;Leben, Ende&nbsp;=&nbsp;Anfang); B: das Harte ist die <em>dauernde</em> Widerstandskraft der Form, die nicht weicht.</p></div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p class="lead">Alle drei Spannungen fallen zusammen, sobald man erkennt, dass &bdquo;Wiederkunft&ldquo; und &bdquo;Invarianz&ldquo; keine zwei Ideen, sondern eine Idee auf zwei Achsen sind.</p>
+
+  <h3>1. Entzug vs. Persistenz &mdash; eine Form, die bleibt <em>und</em> sich der Regel entzieht</h3>
+  <p>Die Form ist in ihren <em>Invarianten</em> fest und messbar (B: Periode, Entropie, der geheimer Vektor <code>s</code>, das Gitter) &mdash; die Persistenz ist real. Zugleich entzieht sie sich der <em>einen</em> Regel/Beschreibung, die sie definiert (A), weil sie sich selbst referenziert und proteische Gesichter zeigt (dieselbe Struktur sieht &uuml;ber &RBB; und &F;<sub>p</sub>, als Ciphertext und als <code>s</code>, anders aus). <strong>Fusionsschluss:</strong> Die Form ist eine feste Invariante, die sich der sie definierenden Beschreibung entzieht, weil sie sich selbst referenziert. A&rsquo;s &bdquo;Unfasse&shy;bare&ldquo; und B&rsquo;s &bdquo;versteckter globaler Schnitt&ldquo; sind dieselbe Sache: <em>die Invariante, die sich der lokalen/groben Sicht entzieht</em>.</p>
+
+  <h3>2. Konstitutiv vs. extern &mdash; Struktur fix, Zugang gew&auml;hlt</h3>
+  <p>Beide Papiere sagen im Kern: &bdquo;die Struktur ist fix&ldquo;. Was sich &auml;ndert, ist der <em>Zugang</em>: A&rsquo;s Beobachter w&auml;hlt die <em>Trajektorie</em> (eine Zelle umkippen); B&rsquo;s Angreifer hat nur eine <em>Beschreibung/ein Gesicht</em> (eine Basis, ein K&ouml;rper, der Ciphertext). <strong>Fusionsschluss:</strong> Die Invariante ist eine und betrachterunabh&auml;ngig (B hat recht &uuml;ber die <em>Form</em>); die gew&auml;hlte Beschreibung/Trajektorie/Deutung ist konstitutiv (A hat recht &uuml;ber den <em>Zugang</em>). Ein Gesicht, viele Linsen; die Form bleibt eine. Der Beobachter gestaltet das, was er sieht, nicht das, was ist.</p>
+
+  <h3>3. &Uuml;berwunden vs. H&uuml;rde &mdash; eine Quelle, zwei Achsen</h3>
+  <p>Der &bdquo;Widerstand der Form&ldquo; zeigt sich auf der <em>Zeitachse</em> als R&uuml;ckkehr (A: das System re-kritisiert sich, kehrt zum Ursprung, Tod&nbsp;&rarr;&nbsp;Leben) und auf der <em>Beschreibungsachse</em> als Resistenz (B: die Form l&auml;sst sich ohne den z&auml;hen Schl&uuml;ssel nicht rekonstruieren). <strong>Fusionsschluss:</strong> Das Schwierige ist <em>die Form, die bestehen will</em> &mdash; und &bdquo;bestehen&ldquo; hei&szlig;t: wiederkommen (Zeit) und persistieren (Beschreibung). Die Kante des Chaos (A) und das Gitter (B) sind dieselbe Sache: die Invariante, deren Wiederkehr-Kosten wir je nach Achse als Chaos (A) bzw. als kryptographische H&uuml;rde (B) lesen.</p>
+
+  <div class="callout win"><b>Fusionierte Schlussfolgerung:</b> <em>Wiederkunft &equiv; Invarianz.</em> Das Wiederkommende ist das Invariante. Eine durch Self-Reference erzeugte Form bleibt in ihren Invarianten fest (B: Persistenz) und entzieht sich zugleich der einen Regel/Beschreibung, die sie definiert (A: Offenheit); der Beobachter w&auml;hlt den Zugang &mdash; konstitutiv f&uuml;r die Deutung, nicht f&uuml;r die Invariante; und das Schwierige ist derselbe Widerstand der Form auf zwei Achsen: <em>wiederkommen</em> (Zeit) und <em>&uuml;bersteigen</em> (Beschreibung).</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Nicht zwei Anekdoten-Stapel, sondern ein durchgehender Faden: die Form als Unver&auml;ndertes im Ver&auml;ndernden, gelesen auf zwei Achsen.</p>
+
+  <div class="callout"><b>Gemeinsame Leitfrage.</b> Beide Texte antworten auf <em>Was bleibt, wenn sich X &auml;ndert?</em> A setzt X = <em>Zeit/Trajektorie</em> (das System l&auml;uft, kehrt zur&uuml;ck); B setzt X = <em>Beschreibung</em> (Angreifer wechselt Linse, K&ouml;rper, Basis). Gemeinsame Antwort: die <strong>Invariante</strong>, die der &Auml;nderung &uuml;bersteht &mdash; und die Operation, die sie verdeckt: A die Regel, die Bedeutung erzeugt, ohne sie zu fassen; B die Lokalisierung, die nur lokale Gesichter zeigt.</div>
+
+  <h3>A &mdash; Wiederkunft als Zeit-Invarianz</h3>
+  <ul>
+    <li><strong>Der geschlossene Kreislauf:</strong> ein zellul&auml;rer Automat l&auml;uft eine lokale Regel durch, deren Output n&auml;chste Eingabe wird:
+      <span class="math" style="display:inline;padding:.1rem .4rem">s<sub>i</sub><sup>t+1</sup> = f(s<sub>i&minus;1</sub><sup>t</sup>, s<sub>i</sub><sup>t</sup>, s<sub>i+1</sub><sup>t</sup>)</span>.
+      Dieser Self-Reference-Kreislauf ist der <em>Motor</em> der Wiederkunft.</li>
+    <li><strong>Oszillatoren = das Rad:</strong> Blinker (Periode 2), Pulsar &mdash; kurze Perioden-Attraktoren, &bdquo;das Rad dreht sich&ldquo; (Vicos Rad: Geburt/Hochzeit/Tod/Auferstehung).</li>
+    <li><strong>Der Attraktor am Ursprung:</strong> selbstorganisierte Kritikalit&auml;t (Waldbrand, Potenzgesetz) &mdash; das System kehrt von selbst zu einem kritischen Zustand zur&uuml;ck; bei B ist dieser Fixpunkt <em>der eigene Ursprung</em> (Ende&nbsp;=&nbsp;Anfang).</li>
+    <li><strong>Ma&szlig;e der Wiederkunft:</strong> sensitive Dependence (eine umgekippte Zelle, Hamming-&Delta;, Lyapunov-artiger Exponent) und Shannon-Entropie
+      <span class="math" style="display:inline;padding:.1rem .4rem">H = &minus;&Sigma;<sub>i</sub> p<sub>i</sub> log<sub>2</sub> p<sub>i</sub></span>
+      (Ordnung als Zahl 0&ndash;1: chaotisch&nbsp;&rarr;&nbsp;maximal, geordnet&nbsp;&rarr;&nbsp;fixiert).</li>
+  </ul>
+  <p><em>Fusionssprache:</em> die Periode und der Attraktor sind die Form, die der <em>Zeit</em> &uuml;bersteht &mdash; Wiederkunft.</p>
+
+  <h3>B &mdash; Invarianz als Beschreibung-Invarianz</h3>
+  <ul>
+    <li><strong>Verschl&uuml;sseln = Lokalisierung; sicherer Kanal = Raum.</strong> Gezeigt werden nur lokale Daten (die &ouml;ffentlichen/verrauschten Gesichter); der <em>globale Schnitt</em> (das geheime <code>s</code>) bleibt verborgen. Entschl&uuml;sseln ist die <strong>Garbenbedingung</strong>: lokale St&uuml;cke zu einem globalen Schnitt verkleben.</li>
+    <li><strong>Das Gitter als invariante Form:</strong> LWE <code>b = A&middot;s + e</code> versteckt <code>s</code> durch Rauschen <code>e</code> (B&rsquo;s &bdquo;Wildheit&ldquo;, Monster aus der falschen Beschreibung); SVP kostet klassisch <code>2<sup>0,298&middot;n</sup></code>, quanten <code>2<sup>0,268&middot;n</sup></code> (nur ~11&nbsp;% schneller).</li>
+    <li><strong>Spec &amp; Topoi:</strong> jeder kommutative Ring ist ein Raum (Punkte&nbsp;=&nbsp;Primideale, generischer Punkt); Topoi sind &Uuml;berdeckungen ohne Punkte. Die Arithmetik ist selbst Geometrie &mdash; das <strong>Raum-Zahl</strong>.</li>
+    <li><strong>Das Kontinuum als Fiktion</strong> &uuml;ber dem sehr gro&szlig;en Endlichen; die <em>z&auml;he</em>/semianalytische Beschreibung ist das entschl&uuml;sselbare Modell, die wilde die gefangene Sicht.</li>
+  </ul>
+  <p><em>Fusionssprache:</em> der geheimer Vektor <code>s</code> und die Periode <code>r</code> sind die Form, die der <em>Beschreibung</em> &uuml;bersteht &mdash; Invarianz.</p>
+
+  <h3>Die Faltung &mdash; jede Struktur von A bekommt den Gegenpart von B</h3>
+  <table>
+    <tr><th>A (Wiederkunft / Zeit)</th><th>B (Invarianz / Beschreibung)</th><th>Fusionierte Lesart</th></tr>
+    <tr><td class="a">geschlossener Kreislauf (Output&nbsp;=&nbsp;Eingabe)</td><td class="b">Form unter Beschreibungswechsel (QFT, &RBB;/&F;<sub>p</sub>)</td><td>dieselbe Struktur: selbstreferenziert / proteisch</td></tr>
+    <tr><td class="a">Oszillator, Periode (Blinker, Vicos Rad)</td><td class="b">invariante Periode <code>r</code>, geheimer Vektor <code>s</code></td><td>das Unver&auml;nderte im Ver&auml;ndernden</td></tr>
+    <tr><td class="a">Attraktor am eigenen Ursprung (Ende&nbsp;=&nbsp;Anfang)</td><td class="b">das Gitter als feste Form (LWE/SVP)</td><td>die Form, die zur&uuml;ckkehrt <em>und</em> bleibt</td></tr>
+    <tr><td class="a">sensitive Dependence (eine Zelle kippt)</td><td class="b">der gew&auml;hlte Zugang (Basis, K&ouml;rper, Gesicht)</td><td>Struktur fix, Zugang gew&auml;hlt</td></tr>
+    <tr><td class="a">Shannon-Entropie H (Fakt, messbar)</td><td class="b">verstecktes globales Invariante (<code>s</code>, Periode)</td><td>die Tatsache vs. die offene Deutung</td></tr>
+    <tr><td class="a">&bdquo;zu gro&szlig;, um von der Regel erfasst zu werden&ldquo;</td><td class="b">&bdquo;betrachterunabh&auml;ngiges Faktum&ldquo;</td><td>sich der Regel entziehen <em>und</em> Invariante bleiben</td></tr>
+    <tr><td class="a">Kante des Chaos (das Harte wird zur&uuml;ck&uuml;berquert)</td><td class="b">kryptographische H&uuml;rde (das Harte bleibt)</td><td>derselbe Widerstand der Form, zwei Achsen</td></tr>
+  </table>
+
+  <h3>Die vereinigte Formel</h3>
+  <div class="math">
+    Wiederkunft &equiv; Invarianz : das Wiederkommende ist das Invariante.<br>
+    Periode (A, Zeit) &nbsp;=&nbsp; invariante Form (B, Beschreibung)<br>
+    Attraktor am Ursprung (A) &nbsp;=&nbsp; das Gitter / der geheimer Schnitt (B)<br>
+    Entropie H &nbsp;=&nbsp; die Tatsache &nbsp;&middot;&nbsp; die Deutung &nbsp;=&nbsp; die offene Bedeutung<br>
+    Self-Reference (Output&nbsp;=&nbsp;Eingabe) &rArr; fest in den Invarianten + entzieht sich der einen Regel<br>
+    das Schwierige &nbsp;=&nbsp; der Widerstand der Form &nbsp;=&nbsp; Wiederkommen (Zeit) + &uuml;bersteigen (Beschreibung)
+  </div>
+  <div class="callout"><b>Kurz:</b> A liefert das <em>RAD</em> (die Zeit-Achse der Form: es kommt zur&uuml;ck); B liefert die <em>FORM, die jede Beschreibung &uuml;bersteht</em> (die Beschreibung-Achse). Das Rad, das die Form h&auml;lt: was in der Zeit wiederkommt, ist invariant; was &uuml;ber jede Beschreibung bleibt, ist eine Wiederkunft.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion &mdash; das Rad, das die Form h&auml;lt</h2>
+  <p class="lead">Ein stabiler <strong>Limit-Zyklus</strong> (der Attraktor, &bdquo;das Rad&ldquo; &mdash; A) dreht sich: die Bahn <strong>kehrt in der Zeit zur&uuml;ck</strong> (Wiederkunft). Der Regler <em>Linse/Beschreibung</em> (B&rsquo;s Achse) projiziert dieselbe Bahn in eine immer <strong>gr&ouml;bere, wildere Sicht</strong> (Quetschung + Rauschen). Die <strong>Invarianten</strong> (Periode T, echter Radius R*) bleiben dabei <em>konstant</em> &mdash; die Form &uuml;bersteht den Beschreibungswechsel; aber die <strong>Rekonstruktion R&#770;</strong> <em>aus der groben Sicht</em> bricht &uuml;ber einer Schwelle ab (das Verschl&uuml;sslungs-/Entzugs-Analogon). Wiederkunft = Invarianz, sichtbar.</p>
+
+  <div class="viz">
+    <div class="viz-ctrl">
+      <div>
+        <label>Linse / Beschreibung (Wildheit): <span class="val" id="lensVal">15</span>%</label>
+        <input type="range" id="lensRange" min="0" max="100" step="1" value="15">
+      </div>
+      <div>
+        <label>Tempo: <span class="val" id="tempoVal">1</span>&times;</label>
+        <input type="range" id="tempoRange" min="1" max="4" step="1" value="1">
+      </div>
+      <div><button class="vbtn" id="playBtn">&#10074;&#10074; Pause</button></div>
+      <div><button class="vbtn alt" id="newBtn">&#8635; Neue Instanz</button></div>
+    </div>
+
+    <canvas id="viz" width="720" height="460"></canvas>
+    <div class="cap">Dunkel gestrichelt: die <strong>invariante Form</strong> (R*, der geheime globale Schnitt &mdash; B, verborgen). Farbe: die <strong>gesehene Bahn</strong> durch die gew&auml;hlte Linse (A, die Wiederkunft). Gelber Puls = ein abgeschlossener Umlauf (&bdquo;das Rad dreht sich&ldquo;).</div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent)"></i> gesehen / wiederkommend (A)</span>
+      <span><i class="dot" style="background:var(--accent2)"></i> invariante Form, R* (B, verborgen)</span>
+      <span><i class="dot" style="background:var(--accent3)"></i> Umlauf-Puls (Wiederkunft)</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="sUml">0</div><div class="l">Uml&auml;ufe (Wiederkunft)</div></div>
+      <div class="stat"><div class="n" id="sT">0</div><div class="l">Periode T (invariant)</div></div>
+      <div class="stat"><div class="n" id="sRstar">0</div><div class="l">R* &middot; invariante Form</div></div>
+      <div class="stat"><div class="n" id="sRhat">0</div><div class="l">R&#770; &middot; aus Sicht</div></div>
+      <div class="stat"><div class="n" id="sStatus">&hellip;</div><div class="l">Form-Status</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../n1-071.html">n1-071.html</a> &mdash; <em>&bdquo;Wiederkunft: die gemeinsame Dynamik von Regel &amp; Fluss&ldquo;</em>
+    <p>Runde-1-Fusion (zellul&auml;re Automaten &#215; Finnegans Wake): ein geschlossener, selbstreferenzieller R&uuml;ckkopplungskreislauf erzeugt aus einer lokalen Regel Zyklen, Oszillatoren und Attraktoren &mdash; die These, dass das einfach-Regelhafte, weil es sich selbst zur Eingabe macht, zu gro&szlig; wird, um von der Regel erfasst zu werden; Ordnung aus Wiederkunft.</p>
+  </div>
+  <div class="prov">
+    <a href="../n1-106.html">n1-106.html</a> &mdash; <em>&bdquo;Die Form, die die Transformation &uuml;bersteht&ldquo;</em>
+    <p>Runde-1-Fusion (Post-Quantum-Krypto &#215; Grothendiecks Raumbegriff): Verschl&uuml;sselung ist Lokalisierung, ein sicherer Kanal ist ein Raum; die invariante Form (Gitter, geheimer Vektor, Periode) &uuml;bersteht jede Beschreibungsurwandlung, und das Schwierige ist der Widerstand dieser Form, aus einer gr&ouml;beren Sicht rekonstruiert zu werden.</p>
+  </div>
+</section>
+
+<footer>Fusion n2-049 &middot; Runde 2 (non-AI track) &middot; n1-071.html &#10005; n1-106.html &middot; Wiederkunft &equiv; Invarianz &middot; selbstst&auml;ndig, alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2;
+
+  var Rstar = 1.0, omega = 1.1, tau = 0.7;
+  var S, cx, cy;
+
+  var state = {
+    L: 0.15, seed: Math.random()*10,
+    theta: 0, r: 0.6*Rstar, t: 0,
+    running: true, tempo: 1,
+    revs: 0, pulseT: -1, buf: []
+  };
+
+  var pal = {};
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v||''; }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg: toRgb(cssVar('--viz-bg')),
+      grid: toRgb(cssVar('--grid')),
+      text: toRgb(cssVar('--text')),
+      muted: toRgb(cssVar('--muted')),
+      accent: toRgb(cssVar('--accent')),
+      accent2: toRgb(cssVar('--accent2')),
+      accent3: toRgb(cssVar('--accent3')),
+      good: toRgb(cssVar('--good'))
+    };
+  }
+  function wob(th, seed){ return Math.sin(3*th+seed)*0.5 + Math.sin(5*th+seed*1.7)*0.3 + Math.sin(2*th+seed*0.6)*0.2; }
+
+  function viewPoint(th, r, L){
+    var x=r*Math.cos(th), y=r*Math.sin(th);
+    var phi=L*(Math.PI/2), sY=1-0.85*L, yy=y*sY;
+    var c=Math.cos(phi), s=Math.sin(phi);
+    var vx=x*c-yy*s, vy=x*s+yy*c;
+    var n=L*0.35;
+    vx += n*wob(th, state.seed);
+    vy += n*wob(th+1.3, state.seed+2.1);
+    return {x:vx, y:vy};
+  }
+  function truePoint(th, r){ return {x:r*Math.cos(th), y:r*Math.sin(th)}; }
+
+  function step(dt){
+    state.r += (Rstar - state.r)*(dt/tau);
+    if(state.r > Rstar*1.001){ state.r = Rstar; }
+    var prev = state.theta;
+    state.theta += omega*dt*state.tempo;
+    state.t += dt*state.tempo;
+    var lap = Math.floor(state.theta/TAU) - Math.floor(prev/TAU);
+    if(lap>0){ state.revs += lap; state.pulseT = state.t; }
+    state.buf.push(viewPoint(state.theta, state.r, state.L));
+    if(state.buf.length>140) state.buf.shift();
+  }
+  function estRadius(){
+    if(state.buf.length<8) return Rstar;
+    var sum=0;
+    for(var i=0;i<state.buf.length;i++){ var p=state.buf[i]; sum += Math.sqrt(p.x*p.x+p.y*p.y); }
+    return sum/state.buf.length;
+  }
+
+  var eUml, eT, eRstar, eRhat, eStatus;
+  function updateStats(T, Rh, dev, ok){
+    if(!eUml) return;
+    eUml.textContent = state.revs;
+    eT.textContent = T.toFixed(2)+' s';
+    eRstar.textContent = Rstar.toFixed(2);
+    eRhat.textContent = Rh.toFixed(3);
+    eStatus.textContent = ok ? 'invariant \u2713' : 'verlost \u2717';
+    eStatus.style.color = ok ? 'var(--good)' : 'var(--accent3)';
+  }
+
+  function draw(){
+    var w = canvas.clientWidth || 720;
+    var H = 460;
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var pw = Math.round(w*dpr), ph = Math.round(H*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle = rgba(pal.bg,1); ctx.fillRect(0,0,w,H);
+
+    cx = w*0.46; cy = H*0.5;
+    S = Math.min(w,H)*0.34;
+
+    ctx.strokeStyle = rgba(pal.grid,0.5); ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(cx-S*1.5, cy); ctx.lineTo(cx+S*1.5, cy);
+    ctx.moveTo(cx, cy-S*1.5); ctx.lineTo(cx, cy+S*1.5);
+    ctx.stroke();
+
+    ctx.strokeStyle = rgba(pal.accent2, 0.4);
+    ctx.setLineDash([4,5]); ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.arc(cx, cy, Rstar*S, 0, TAU); ctx.stroke();
+    ctx.setLineDash([]);
+
+    var N = state.buf.length;
+    for(var i=1;i<N;i++){
+      var p0=state.buf[i-1], p1=state.buf[i], a=i/N;
+      ctx.strokeStyle = rgba(pal.accent, 0.10+0.78*a);
+      ctx.lineWidth = 1.4 + a*1.6;
+      ctx.beginPath();
+      ctx.moveTo(cx+p0.x*S, cy+p0.y*S);
+      ctx.lineTo(cx+p1.x*S, cy+p1.y*S);
+      ctx.stroke();
+    }
+
+    var cvp = viewPoint(state.theta, state.r, state.L);
+    ctx.fillStyle = rgba(pal.accent,1);
+    ctx.beginPath(); ctx.arc(cx+cvp.x*S, cy+cvp.y*S, 5, 0, TAU); ctx.fill();
+
+    if(state.pulseT>0){
+      var age = state.t - state.pulseT;
+      if(age>=0 && age<1.1){
+        var pr = age/1.1;
+        ctx.strokeStyle = rgba(pal.accent3, (1-pr)*0.8);
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(cx+cvp.x*S, cy+cvp.y*S, 6+pr*46, 0, TAU); ctx.stroke();
+      }
+    }
+
+    var tp = truePoint(state.theta, state.r);
+    ctx.fillStyle = rgba(pal.accent2, 0.9);
+    ctx.beginPath(); ctx.arc(cx+tp.x*S, cy+tp.y*S, 3.5, 0, TAU); ctx.fill();
+
+    var T = TAU/omega;
+    var Rh = estRadius();
+    var dev = Math.abs(Rh - Rstar)/Rstar;
+    var settled = state.buf.length>=40 && state.r>0.9*Rstar;
+    var ok = settled && (dev < 0.18);
+
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.font='bold 15px sans-serif';
+    ctx.fillStyle = !settled ? rgba(pal.muted,0.9) : (ok ? rgba(pal.good,0.95) : rgba(pal.accent3,0.95));
+    ctx.fillText(!settled ? 'Attraktor stabilisiert sich\u2026' : (ok ? 'Form invariant \u2713  (Wiederkunft = Invarianz)' : 'Form in grober Sicht verlost \u2717  (entzieht sich der Beschreibung)'), 16, 16);
+    ctx.font='12px monospace';
+    ctx.fillStyle = rgba(pal.muted,0.95);
+    ctx.fillText('Periode T = '+T.toFixed(2)+' s (invariant, A)  \u00b7  R* = '+Rstar.toFixed(2)+' (invariante Form, B)', 16, 38);
+    ctx.fillText('R\u0302 aus Sicht = '+Rh.toFixed(3)+'  \u00b7  Abweichung = '+(dev*100).toFixed(1)+' %  \u00b7  Linse = '+(state.L*100).toFixed(0)+' %', 16, 56);
+
+    updateStats(T, Rh, dev, ok);
+  }
+
+  var last = null;
+  function loop(now){
+    if(last==null) last=now;
+    var dt = (now-last)/1000; last=now;
+    if(dt>0.1) dt=0.1;
+    if(state.running) step(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  var lensRange=document.getElementById('lensRange'), lensVal=document.getElementById('lensVal');
+  var tempoRange=document.getElementById('tempoRange'), tempoVal=document.getElementById('tempoVal');
+  var playBtn=document.getElementById('playBtn'), newBtn=document.getElementById('newBtn'), themeBtn=document.getElementById('themeBtn');
+  eUml=document.getElementById('sUml'); eT=document.getElementById('sT');
+  eRstar=document.getElementById('sRstar'); eRhat=document.getElementById('sRhat');
+  eStatus=document.getElementById('sStatus');
+
+  if(lensRange) lensRange.addEventListener('input',function(){ state.L=+this.value/100; lensVal.textContent=this.value; });
+  if(tempoRange) tempoRange.addEventListener('input',function(){ state.tempo=+this.value; tempoVal.textContent=this.value; });
+  if(playBtn) playBtn.addEventListener('click',function(){ state.running=!state.running; playBtn.innerHTML = state.running ? '\u275a\u275a Pause' : '\u25b6 Los'; });
+  if(newBtn) newBtn.addEventListener('click',function(){ state.seed=Math.random()*10; state.theta=0; state.r=0.6*Rstar; state.revs=0; state.buf=[]; state.pulseT=-1; });
+  if(themeBtn) themeBtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    readPal();
+  });
+
+  readPal();
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    if(mq.addEventListener){ mq.addEventListener('change', readPal); }
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

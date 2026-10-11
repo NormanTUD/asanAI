@@ -1,0 +1,16 @@
+{
+  "no": "026",
+  "a": "n1-018.html",
+  "b": "n1-093.html",
+  "a_title": "Offene Selbstüberschreitung — Gödel ✕ Whitehead (Fusion)",
+  "b_title": "Form ist die Struktur — Cohomologie × HoTT",
+  "combined_theme": "offene-form-offener-turm",
+  "one_line": "Die fixe, geschlossene Beschreibung eines Ganzen ist immer nur der verlustbehaftete Schatten einer offenen, sich selbst referenzierenden, strukturierenden Realität: fixer Kreis (B) und offener Turm ohne Spitze (A) sind ein und dasselbe Objekt.",
+  "contradictions": [
+    "Primat: A nennt Offenheit/Kreativität das Tiefste (offener, generativer Prozess), B nennt die fixe Form/Struktur das Primäre (die gegebene Form, aus der alles 'herausfällt').",
+    "Ort des Überschusses: A legt ihn JENSEITS des Fixen (neuer wahrer Satz / neue Occasion, Transzendenz), B legt ihn IM INNEREN desselben Objekts (Cochain-Ring / Pfadraum, immanente Rückgewinnung).",
+    "Auflösbarkeit der Lücke: A hält sie irreduzibel und dauerhaft (keine fixe Beschreibung je vollständig, 'endloses Abenteuer'), B hält sie im Prinzip exakt und vollständig rückgewinnbar (Ω(S¹)≅ℤ, Univalence, 'it's just correct')."
+  ],
+  "resolution": "Die drei Spannungen lösen sich in ein Bild auf: einen Turm von Ebenen. Fix und offen sind zwei Seiten derselben selbstreferenziellen, generativen Form (1); das Aufsteigen ist immanent in einer Ebene und transzendent über den Ebenen (2); Exaktheit gilt für jede einzelne Faser/Ebene, Offenheit für den Turm aller Ebenen, der keine Spitze hat (3) — genau wie B's eigene 'exakt am Punkt, unvollständig über der Familie' eine Ebene höher gehoben.",
+  "viz": "Canvas: der Kreis S¹ als fixe Form mit farbcodiertem Datenring (Invariante/Schatten), windender Spirale für n∈ℤ (exakte Struktur) und konzentrischen Ebenen-Ringen; die äußere Linie pulsiert gestrichelt (offener Turm, keine letzte Ebene) oder erstarrt fest bei Selbstreferenz=0. Regler: Windung n, Fokus-Ebene, Selbstreferenz; themenreaktiv, inline."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "048",
+  "a": "n1-058.html",
+  "b": "n1-068.html",
+  "a_title": "Stabilität als normale Form — Chemie × Homotopietypentheorie",
+  "b_title": "Das Hinübergehen — von der Rache gegen das „Es war“ zum Ja der ewigen Wiederkunft",
+  "combined_theme": "stabilitat-als-hinubergehen",
+  "one_line": "Das Stabile (Normalform) und das Denkende (Hinübergehen) sind dieselbe, Tiefe-anziehende Bewegung, deren Fixpunkt zugleich Ruhe (A) und ewige Wiederkunft (B) ist.",
+  "contradictions": [
+    "Ruhe/Gleichgewicht (A: der Ball ruht im eindeutigen, entscheidbaren Minimum, Normalform erreicht) vs. ewige, nie endende Bewegung (B: „ewig rollt das Rad“, die Wiederkunft hält an, das Ziel ist „Etwas, das überwunden werden soll“).",
+    "Bestimmte, konvergierende Relaxation (A: der Ball folgt dem Morse-Gradienten F = −dE/dr, gedämpft) vs. freier, gewollter Sprung (B: „einen Sprung, keine Methode“, der Wille überquert, nicht-konvergent).",
+    "Gefüllte, positive Grube (A: die Mulde ist voll Pfaden, De = Bindung = Tiefe) vs. leere, entziehende Tiefe (B: der Abgrund zieht gerade durch Abwesenheit, das „Entziehende“)."
+  ],
+  "resolution": "Beide beschreiben dieselbe Bewegung zu einem Fixpunkt: Ruhe ist die eingefrorene Wiederkunft, der Gradient ist der Zug von außen, und die gefüllte Grube ist die leere Tiefe, die die Präsenz organisiert — jede „Widerspruch“-Seite ist ein Pol bzw. Tempo derselben Tiefe-anziehenden Bewegung.",
+  "viz": "Canvas: N Teilchen werden von einer zentralen Tiefe-Anziehung (De = Zug, per Regler) zum selben Fixpunkt gezogen; Modus A (Ruhe) dämpft sie spiralförmig in den Fixpunkt, Modus B (Wiederkunft) lässt sie ewig um denselben Fixpunkt kreisen — derselbe Fixpunkt in zwei Tempi."
+}

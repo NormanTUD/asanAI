@@ -1,0 +1,16 @@
+{
+  "no": "019",
+  "a": "n1-061.html",
+  "b": "n1-023.html",
+  "a_title": "Topologie als Struktur — Trennungsaxiome als Constraints",
+  "b_title": "Identität als Prozess — Bordismus trifft Nervenfeld (Bordismus ✕ Schreber)",
+  "combined_theme": "das-dazwischen-als-substanz",
+  "one_line": "Die Form (Punkt, Rand, Zustand) ist der Schatten; das Dazwischen (Topologie als Relationsstruktur / Bordismus-Medium W) ist die Substanz — Trennung (A) macht die Zustände lesbar, Identität-durch-Medium (B) macht die Abfolge zu einem Prozess, und die Invariante (eindeutige Grenzwerte / geschlossene Bordismengruppe) ist, was die Bewegung überlebt.",
+  "contradictions": [
+    "Primat: A macht die gegebene, fixe Struktur/Topologie zur 'Bühne', auf der der Prozess nachgeordnet läuft (Struktur-first); B leugnet jedes statische Fundament und macht das Medium/den Prozess zur Substanz, die Form nur zu ihrem Schatten (Prozess-first).",
+    "Wertachse: A feiert Unterscheidbarkeit/Trennung (Trennungshierarchie, T₂, eindeutige Grenzwerte) als Wert — tellable apart; B feiert Identität/Gleichheit-obwohl-verschieden (bordant = gemeinsames Medium W) als Wert — connection across difference.",
+    "Ort des Werts: A ortet das Wertvolle in der generativen MITTE zwischen den starr Polen (Bifurkation/Selbstorganisation); B ortet es in der statischen INVARIANTE (Bordismengruppe/Weltordnung), die die Krise überlebt."
+  ],
+  "resolution": "Das Medium W (B) ist die Topologie (A) lokal geschnitten: Struktur ist die Zeitschnitte des Prozesses, der Prozess ist die Struktur in Bewegung. Trennung (A) gilt innerhalb eines Zustands (Lesbarkeit, eindeutige Grenzwerte), Identität (B) über Zustände hinweg (Kohärenz durch dasselbe Medium). Der Wert liegt ko-lokalisiert: Bewegung (A's Mitte = B's 'Dazwischen') ist generativ genau, weil sie von einer Invariante (A's Hausdorff-Wohlverhalten = B's Bordismengruppe) begrenzt ist — Leben = Invariante + Bewegung.",
+  "viz": "Canvas: ein Medium W (fließende Strahlen/Nerven) läuft von links nach rechts, eine goldene Invariante-Linie persistiert durch alle Querschnitte; ein bewegter Scan schneidet das Medium und zeigt den lokalen Rand (Punkte + Umgebungen), dessen Trennung s ein Regler von indiscret (alle indistinguiert) bis metrisch/Hausdorff (alle disjunkt) steuert — der Rand umformt sich, Medium + Invariante bleiben."
+}

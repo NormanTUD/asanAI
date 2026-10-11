@@ -1,0 +1,16 @@
+{
+  "no": "033",
+  "a": "n1-008.html",
+  "b": "n1-096.html",
+  "a_title": "Vom Halm zur Galaxie: Wie lokale Daten zum globalen Bild verkleben",
+  "b_title": "Coherence Is Local Gluing (HoTT x COHERENT)",
+  "combined_theme": "lokal-global-verklebungsprinzip",
+  "one_line": "Das Lokal-Global-Verklebungsprinzip: ein kohärentes globales Ganzes existiert genau dann, wenn die lokalen Teile auf ihren Überlappungen übereinstimmen (und das Ganze eindeutig ist) — dasselbe Gesetz in vier Registern (Garbe-Bedingung, Primzahlschnecke, Univalente Grundlagen/HoTT, Kohärenz×Korrespondenz als Wahrheit); die Kleb-Relation ist selbst stratifiziert (diskreter Invariant → Stufenleiter → ∞-Gruppoid/Univalenz).",
+  "contradictions": [
+    "Die Kleb-/Gleichheitsbedingung ist bei A (n1-008) ein einzelner diskreter, algebraischer Invariant (Rationalität von k/pi, Periode q, binär 'schließt/schließt nicht'); bei B (n1-096) ist die verklebende Relation selbst eine stratifizierte, höherdimensionale Struktur (∞-Gruppoid aus Pfaden-zu-Pfaden, Stufenleiter = > ≅ > ≃ > ≈, Univalenz kollabiert die obersten Stufen).",
+    "A kennt nur eine binäre Existenz (globales Arm-Bild existiert / Prägarbe ohne globales Objekt, kein Zwischenzustand); B hat eine Taxonomie gradueller Versagensmodi (factbook, fantasy, liar, calibrated=nahe-Kohärenz, out-of-cover), inkl. teilweiser Kohärenz und Kohärenz-ohne-Kontakt.",
+    "A ist rein intern/geometrisch (das globale Arm-Bild braucht keine Außenwelt, kein Korrespondenzbegriff, keine Blinderschleife); B macht Korrespondenz zu einer Außenwelt W lasttragend für Wahrheit (Kohärenz ohne Kontakt = Fantasy, blind-spot ring c_acc ⊂ W)."
+  ],
+  "resolution": "Alle drei Spannungen sind Projektionen desselben Sachverhalts auf verschiedene Stufen (B's Trunkierungshierarchie). R1 (W1): A's diskreter Invariant ist der Set-Ebene-Schatten (Stufe 0) von B's Stufenleiter — auf der Set-Ebene degeneriert die Pfadstruktur, es bleibt ein einziger Invariant (Periode q); B's höhere Stufen sind bei A unsichtbar, weil A auf Stufe 0 arbeitet. R2 (W2): A's binäre Existenz ist B's zwei Extreme; B löst die 'nicht erfüllt'-Seite in eine Taxonomie auf — 'calibrated' (kleine Verzerrung) IST A's fast-rationaler Winkel (schwache, beinahe geschlossene Arme), den A sieht aber nicht benennt; Suffizienz (A) vs. Verifikation (B). R3 (W3): A lässt W implizit — die Primzahlen SIND die Welt W und 'schließt sich auf der echten Verteilung' IST B's Korrespondenz; A's endliches Sieb (bis 200000) IST B's blind-spot ring. Wird W explizit, ist A's Verklebung = B's Kohärenz × Korrespondenz.",
+  "viz": "Interaktive Primzahlschnecke (Phyllotaxis): lokale Primzahlen als Punkte, die sich zu einem globalen Arm-Bild verkleben, wenn der Winkelmultiplikator k (Kompatibilitätsparameter, A) sich zu einer kleinen rationalen Größe schließt. Ein Datenquellen-Umschatter trennt Kohärenz (schließt es sich?) von Korrespondenz zu W (echte Primzahlen vs. erfundene Zahlen = Fantasy). Rechts: ein Kohärenz×Korrespondenz-2×2-Quadrant mit Lichtpunkt G im Wahrheit-Cell sowie die Stufenleiter der Kleb-Relation (=, ≅, ≃, ≈, ×) und 4 Register, die bei geschlossener Klebung leuchten. Presets für kanonische Winkel (2π/5, 2π/7, π/2, goldener Winkel, random); alle Daten inline, theme-aware, keine externen Abfragen."
+}

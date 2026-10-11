@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Lokal Faser, global Motiv &middot; Fusion R2 &middot; Hopf-Faserung &#10005; Bedeutung-als-Geometrie</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#fbfaf4; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0; --acc2:#7a5cd6; --acc3:#d64f8f; --acc4:#b5831b;
+  --viz-c0:#2f6fb0; --viz-c1:#2f9e4f; --viz-c2:#7a4fb0; --viz-c3:#c04a5b;
+  --viz-motive:#b8860b; --viz-noise:#9aa0ad; --viz-edge:#8a93a3;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff; --acc2:#b597ff; --acc3:#ff7fb0; --acc4:#ffcf5c;
+  --viz-c0:#7aa2ff; --viz-c1:#64d68a; --viz-c2:#b98cff; --viz-c3:#ff8b9e;
+  --viz-motive:#ffd166; --viz-noise:#5a6478; --viz-edge:#4a5468;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(181,151,255,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;position:relative}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.02rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.94em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.eq{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.95em;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.87rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+td:nth-child(2){color:var(--sky)}
+td:nth-child(3){color:var(--warn)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%;height:auto;border-radius:10px}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 210px;min-width:170px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+button.on{background:var(--acc);color:var(--bg);font-weight:650}
+.stat{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:.9rem;margin-top:12px;align-items:baseline}
+.stat .big{font-family:ui-monospace,monospace;font-size:1.5rem;font-weight:700}
+.stat .lab{color:var(--dim)}
+.legend{display:flex;gap:12px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px}
+ul{margin:.6em 0;padding-left:1.2em}
+li{margin:.35em 0}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.prov a{text-decoration:none;border-bottom:1px solid var(--line);font-weight:600}
+.prov a:hover{border-bottom-color:var(--acc)}
+.prov .d{display:block;color:var(--dim);font-size:.88rem;margin-top:8px}
+.prov .k{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+@media(max-width:560px){.prov{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Theme wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Round 2 &middot; Nicht-KI-Track &middot; Pair 055</div>
+  <h1>Lokal Faser, global Motiv</h1>
+  <p class="sub">Fusion aus: <span class="mono">n1-109.html</span> &#10005; <span class="mono">n1-100.html</span> &nbsp;(Runde 2)</p>
+
+  <section id="these">
+    <div class="tag">01 &middot; Kernthese der Fusion</div>
+    <h2>Ein Schema, zwei Skalen: das Faserb&uuml;ndel als Grammatik, die Invariante als Bedeutung</h2>
+    <p>
+      Die beiden Round-1-Papiere sind <b>zwei Lesarten eines und desselben Musters</b> in zwei Gr&ouml;&szlig;enordnungen.
+      <b>A</b> (n1-109, Hopf-Faserung <span class="mono">S&sup1;&rarr;S&sup3;&rarr;S&sup2;</span>) sagt: ein Totalraum
+      faser&uuml;ber eine Basis, <b>lokal Produkt, global verdreht</b>; die Fasern sind die <b>Realisierungen</b>
+      (verkettete Kreise), und die Identit&auml;t des Objekts ist seine <b>Hopf-Invariante</b> &mdash; die
+      Verkettungszahl zweier Fasern, eine <b>einzige ganze Zahl</b>, die man <i>ablesend</i> (Geometrie misst
+      Algebra) aus dem globalen Verdrehtsein gewinnt. <b>B</b> (n1-100, Bedeutung-als-Geometrie
+      <span class="mono">X&rarr;S&harr;W</span>) sagt: der Satzraum <span class="mono">X</span> faser&uuml;ber
+      den semantischen Raum <span class="mono">S</span>; jeder konkrete Satz ist eine <b>Realisierung</b>
+      (ein Faserelement <span class="mono">&pi;&#8315;&#185;(s)</span>) einer Bedeutung, und die Bedeutung ist ihr
+      <b>Motiv</b> &mdash; eine grobk&ouml;rnungs-invariante, darstellungsunabh&auml;ngige Struktur, aus der alle
+      Realisierungen entspringen und die sich anabelisch aus ihren stabilen Invarianten rekonstruiert.
+    </p>
+    <p>
+      Die fusionierte Position in einem Satz: <b>Die Identit&auml;t einer strukturierten Struktur ist ihr Motiv
+      &mdash; eine grobk&ouml;rnungs- und darstellungsunabh&auml;ngige Invariante, die (1)&nbsp;nur aus der globalen
+      Verklebung ablesbar ist und niemals aus einer einzelnen Faser, (2)&nbsp;das Objekt bis auf die richtige
+      &Auml;quivalenz klassifiziert, und (3)&nbsp;aus der jede konkrete Realisierung (jedes Faserelement)
+      entspringt.</b>
+    </p>
+    <p>
+      <b>&bdquo;Lokal Produkt, global verdreht&ldquo;</b> ist die <i>geometrische</i> Seite;
+      <b>&bdquo;Rekonstruktion aus Invarianten&ldquo;</b> (anabelisch / exakte Sequenz) ist die
+      <i>algebraische</i> Seite &mdash; zwei Seiten derselben Struktur. Das Faserb&uuml;ndel ist die
+      <b>Grammatik</b>, die Invariante/das Motiv die <b>Bedeutung</b>, die Fasern die
+      <b>Realisierungen</b>. A liefert den <b>bewiesenen, minimalen, einstelligen</b> Fall (die Hopf-Faserung,
+      deren Klasse eine einzige Zahl tr&auml;gt); B liefert den <b>vermuteten, hochdimensionalen, graduierten</b>
+      Fall (das semantische Universum, dessen Offenheit zur Welt dadurch schlie&szlig;t, dass man
+      <span class="mono">W</span> zu einem weiteren Topos macht).
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <div class="tag">02 &middot; Widerspr&uuml;che zwischen A und B</div>
+    <h2>Kein mathematischer Widerspruch &mdash; vier inkompatible Stellungen</h2>
+    <p>
+      Die zwei Papiere widersprechen sich <b>nicht inhaltlich</b>: beide landen auf
+      <b>Struktur = lokale Daten, die zu einem globalen Verdrehtsein verkleben, mit einer stabilen
+      Invariante, die es klassifiziert</b>. Sie nehmen aber an vier konkreten Stellen
+      <b>inkompatible Stellungen</b> ein.
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0">(a) Fundamentaldirektion: konkret&rarr;Invariante (A) vs. Invariante&rarr;konkret (B)</h3>
+      <p><b>A:</b> Das <b>konkrete geometrische Objekt</b> (die tats&auml;chliche
+        <span class="mono">S&sup3;</span>, die tats&auml;chlich verketteten Kreise) ist prim&auml;r; die
+        Hopf-Invariante wird <b>ableitend durch Messen</b> gewonnen &mdash; &bdquo;Geometrie misst die
+        Algebra&ldquo;. Man liest <i>bottom-up</i>: Objekt &rarr; Zahl.</p>
+      <p><b>B:</b> Das <b>abstrakte universelle Objekt</b> (Motiv, Ring,
+        <span class="mono">Gal(&Qbar;/&Q;)</span>) ist prim&auml;r; die konkreten Realisierungen (S&auml;tze,
+        Kohomologien, Variet&auml;ten) sind <b>ableitende Schatten</b> &mdash; &bdquo;Anabelische Rekonstruktion:
+        <span class="mono">&pi;&#8321;&#777;</span> bestimmt die Geometrie&ldquo;. Man liest <i>top-down</i>:
+        Motiv &rarr; Realisierungen.</p>
+      <p class="note"><b>Spannung:</b> In welche Richtung ver&auml;uft sich die Ableitung? A: von unten (Objekt
+        &rarr; Invariante); B: von oben (Invariante &rarr; Objekte). Genau entgegengesetzt.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(b) Geschlossen vs. offen: A nativ abgeschlossen, B reifiziert die Welt</h3>
+      <p><b>A:</b> <span class="mono">S&sup1;&rarr;S&sup3;&rarr;S&sup2;</span> ist <b>in sich vollst&auml;ndig</b>
+        &mdash; eine geschlossene mathematische Struktur ohne externen Bezug; die &bdquo;Welt&ldquo; erscheint nur
+        in <i>Anwendungen</i> (Bloch-Kugel, slerp), nicht im Objekt selbst.</p>
+      <p><b>B:</b> Bedeutung ist <b>ohne Kopplung an die externe Welt</b>
+        <span class="mono">W</span> unvollst&auml;ndig (Tarski <span class="mono">&#10072;s&#10073; =
+        { w &in; W }</span>) &mdash; ein offenes, externalistisches System, das sich erst schlie&szlig;t,
+        indem man <span class="mono">W</span> zu &bdquo;einem weiteren Topos&ldquo; macht
+        (geometrischer Morphismus <span class="mono">S&harr;W</span>).</p>
+      <p class="note"><b>Spannung:</b> A ist schon geschlossen (eine einzige Fibration, ein Knoten); B ist offen
+        und braucht einen zus&auml;tzlichen Knoten, um sich zu schlie&szlig;en.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(c) Scharf &amp; eine Zahl (A) vs. weich &amp; ein Objekt (B)</h3>
+      <p><b>A:</b> Die lokalen Daten sind <b>exakt und scharf</b> (Faser <span class="mono">S&sup1;</span>,
+        Kozykel <span class="mono">g&#945;&#946;&middot;g&#946;&gamma;&middot;g&#947;&#945; = I</span>); die
+        Invariante ist eine <b>einzige ganze Zahl</b> (Hopf-Zahl <span class="mono">&isin;&Zopf;</span>;
+        <span class="mono">H&sup2;(S&sup2;;&Zopf;)&cong;&Zopf;</span> klassifiziert die B&uuml;ndel).</p>
+      <p><b>B:</b> Die lokalen Daten sind <b>weich und graduiert</b> (Faser = Realisierungen mit Koh&auml;renz
+        <span class="mono">C,S,G,E &isin; [0,1]</span>; der Unterobjektklassifizierer
+        <span class="mono">&Omega;</span> ist reicher als <span class="mono">{0,1}</span>); die Invariante ist ein
+        <b>reich strukturiertes Objekt</b> (ein Motiv mit Gewichtsfiltration und vielen Kohomologie-Realisierungen).
+        Keine einzige Zahl gen&uuml;gt.</p>
+      <p class="note"><b>Spannung:</b> scharf/exakt/1-dimensional + <i>Zahl</i> gegen weich/graduiert/
+        hoch-dimensional + <i>Objekt</i>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(d) Bewiesener Klassiker (A) vs. offene Konjunktur (B)</h3>
+      <p><b>A:</b> Die Hopf-Faserung ist ein <b>bewiesener Klassiker</b> (Hopf 1931); beide Quellen
+        pr&auml;sentieren sie als etablierte Mathematik.</p>
+      <p><b>B:</b> &bdquo;Bedeutung = Motiv&ldquo; ist explizit eine <b>Konjunktur / ein
+        Forschungsprogramm</b> (&bdquo;keine empirischen Messungen&ldquo;).</p>
+      <p class="note"><b>Spannung:</b> feststehender Theorem (A) gegen laufende, testbare Vermutung (B).</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <div class="tag">03 &middot; Aufl&ouml;sung</div>
+    <h2>Wie die vier Stellungen zusammenpassen &mdash; und die fusionierte Schlussfolgerung</h2>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (a): dieselbe Abbildung, gelesen in zwei Richtungen &mdash; Fixpunkt</h3>
+      <p>Die Invariante ist der <b>Fixpunkt der Grobk&ouml;rnung</b>. Von unten (A): Objekt &rarr; Invariante
+        (Messen). Von oben (B): Invariante &rarr; Realisierungen (Rekonstruktion). Beides trifft auf
+        <span class="mono">R(S)&asymp;S</span>: Die Hopf-Invariante ist <i>exakt</i> das, was beim
+        Herauszoomen der Faserung &uuml;berlebt &mdash; wie auch immer man die Fasern grob k&ouml;rnt, die
+        Verkettung <span class="mono">&plusmn;1</span> bleibt. &rarr; <b>Fusion:</b> bottom-up
+        (Daten&rarr;Invariante) und top-down (Motiv&rarr;Realisierungen) sind <i>dieselbe</i> Abbildung, in zwei
+        Richtungen gelesen; die Invariante ist ihr gemeinsamer Fixpunkt.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (b): das kommutierende Diagramm; A ist der geschlossene Minimalfall</h3>
+      <p>Die allgemeine Form ist ein <b>kommutierendes Diagramm von Topoi/Fibrationen</b>. A&rsquo;s Fibration ist
+        das <i>minimale geschlossene</i> Diagramm (ein Knoten, <span class="mono">E&rarr;B</span>); B&rsquo;s
+        offene Kette <span class="mono">X&rarr;S&harr;W</span> wird geschlossen, sobald
+        <span class="mono">W</span> ein weiterer Topos ist. &rarr; <b>Fusion:</b> das Muster ist &bdquo;ein
+        Diagramm, das kommutiert&ldquo;; A ist seine 1-Knoten-Form, B die offene-und-wieder-geschlossene Form.
+        Kein Widerspruch &mdash; unterschiedliche Diagramm-Gr&ouml;&szlig;en.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (c): eine Realisierung vs. das volle Motiv; scharf = Reinheitslimes</h3>
+      <p>A&rsquo;s einzelne Zahl ist <i>eine</i> Kohomologie-Realisierung
+        (<span class="mono">H&sup2;(S&sup2;;&Zopf;)</span>, der Hopf-Grad) des klassifizierenden Daten des
+        B&uuml;ndels; B&rsquo;s Motiv ist das <i>volle</i> gefilterte Objekt, dessen Realisierungen solche Zahlen
+        enthalten. Und A&rsquo;s Sch&auml;rfe ist der <b>Reinheitslimes</b> &mdash; in B&rsquo;s eigenem
+        Wortschatz ist das exakte Objekt der reine Limes des Graduierten. &rarr; <b>Fusion:</b> die Invariante
+        ist ein gewichtsgefiltertes Objekt (Motiv); eine einzige Zahl ist eine seiner reinen
+        Kohomologie-Realisierungen; scharf/exakt ist der reine Limes von weich/graduiert.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Zu (d): bewiesenes Muster, mutma&szlig;liche Instanz</h3>
+      <p>Das <b>Muster</b> (B&uuml;ndel &rarr; Invariante &rarr; Motiv &rarr; Realisierungen) ist
+        <b>bewiesen</b> &mdash; A (Hopf) ist eine bewiesene Instanz. Ob B (Bedeutung) eine echte Instanz ist, ist
+        die offene, testbare Frage (Zipf/Heaps/Persistenz). &rarr; <b>Fusion:</b> das universelle Schema ist
+        Theorem-Grad (bezeugt durch Hopf); die semantische Anwendung ist Konjunktur-Grad (ein laufendes,
+        messbares Programm).</p>
+    </div>
+  </section>
+  <section id="inhalt">
+    <div class="tag">04 &middot; Fusionierter Inhalt</div>
+    <h2>Der gemeinsame Grundstock, nach der Kernthese geordnet</h2>
+    <p>Wo beide Seiten liefern, ist die &Uuml;bersetzung angegeben. Alles ist so gefasst, dass eine sp&auml;tere
+      Runde allein von hier arbeiten kann.</p>
+
+    <h3>1. Das Skelett: Faserb&uuml;ndel <span class="mono">&pi;: E&rarr;B</span>, Faser <span class="mono">F</span></h3>
+    <p>
+      <b>Das gemeinsame Ger&uuml;st:</b> ein Totalraum <span class="mono">E</span> faser&uuml;ber eine Basis
+      <span class="mono">B</span> mit Faser <span class="mono">F</span>; lokal sieht
+      <span class="mono">E</span> wie <span class="mono">U&times;F</span> aus (lokale Trivialisierung,
+      &Uuml;bergangsfunktionen <span class="mono">g&#945;&#946;</span>, Kozykel
+      <span class="mono">g&#945;&#946;&middot;g&#946;&gamma;&middot;g&#947;&#945;=I</span>), global kann die
+      Verdrehung nicht-trivial sein.
+    </p>
+    <p>
+      <b>A:</b> <span class="mono">E=S&sup3;</span>, <span class="mono">B=S&sup2;</span>,
+      <span class="mono">F=S&sup1;</span> (Haupt-<span class="mono">S&sup1;</span>-B&uuml;ndel; Faser = die
+      gemeinsame Phase <span class="mono">e^{i&lambda;}</span>). <b>B:</b>
+      <span class="mono">E=X</span> (Satzraum), <span class="mono">B=S</span> (semantischer Raum),
+      <span class="mono">F=&pi;&#8315;&#185;(s)</span> (Realisierungen einer Bedeutung).
+    </p>
+    <div class="eq">Gemeinsames Prinzip:  lokal  E &#8776; U &times; F   &middot;   global  E &ne; B &times; F   &middot;   &bdquo;lokal Produkt, global verdreht&ldquo;</div>
+    <p><b>Fusion:</b> A&rsquo;s &bdquo;lokal Produkt, global verdreht&ldquo; <b>ist</b> B&rsquo;s
+      &bdquo;lokal triviales, global nicht-triviales B&uuml;ndel&ldquo;. Beide: <i>kein Produkt</i>.</p>
+
+    <h3>2. Die Invariante / das Motiv: der Fixpunkt der Grobk&ouml;rnung</h3>
+    <p>
+      <b>A:</b> Die Identit&auml;t der Faserung ist die <b>Hopf-Invariante</b> (Verkettungszahl zweier Fasern),
+      eine ganze Zahl; sie klassifiziert die Haupt-<span class="mono">S&sup1;</span>-B&uuml;ndel &uuml;ber
+      <span class="mono">S&sup2;</span> (<span class="mono">H&sup2;(S&sup2;;&Zopf;)&cong;&Zopf;</span>); die
+      Hopf-Faserung ist der <b>Erzeuger von</b> <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>;
+      <span class="mono">(z&#8321;,z&#8322;)&rarr;z&#8322;&supn;/z&#8321;&supn;</span> hat Invariante
+      <span class="mono">n&sup2;</span>. Die <b>lange exakte Sequenz</b> der Fibration liefert
+      <span class="mono">&pi;&#7522;(S&sup2;)&cong;&pi;&#7522;(S&sup3;)</span> f&uuml;r
+      <span class="mono">i&gt;2</span>, also <span class="mono">&pi;&#8323;(S&sup2;)&cong;&pi;&#8323;(S&sup3;)=&Zopf;</span>.
+    </p>
+    <div class="eq">0 &rarr; &pi;&#7522;(S&sup3;) &rarr; &pi;&#7522;(S&sup2;) &rarr; 0  (i&gt;2)  &rArr;  &pi;&#8323;(S&sup2;)&cong;&pi;&#8323;(S&sup3;)=&Zopf;</div>
+    <p>
+      <b>B:</b> Die Identit&auml;t einer Bedeutung ist ihr <b>Motiv</b> &mdash; grobk&ouml;rnungs-invariant,
+      darstellungsunabh&auml;ngig. <b>Persistente Homologie</b> (Vietoris&ndash;Rips
+      <span class="mono">VR(P,&epsilon;)</span>) rechnet es endlich: <b>lange</b> Balken = stabile Features = das
+      Motiv; <b>kurze</b> Balken = Rauschen. &bdquo;Was &uuml;berlebt, ist das Motiv.&ldquo;
+    </p>
+    <p>
+      <b>Fusion:</b> Die Invariante/das Motiv = <b>der Fixpunkt der Grobk&ouml;rnung</b>: nur aus dem globalen
+      Verdrehtsein ablesbar, niemals aus einer Faser; klassifiziert das Objekt; alle Realisierungen entspringen
+      ihr. A&rsquo;s Zahl ist eine <i>reine</i> Realisierung; B&rsquo;s Motiv das <i>volle</i> gefilterte Objekt.
+    </p>
+
+    <h3>3. Zwei Lesarten, ein Objekt: Geometrie misst / Algebra rekonstruiert</h3>
+    <p>
+      <b>A:</b> Geometrie (verkettete Kreise, Treismans &Auml;quator-Argument) <b>misst</b> die Algebra
+      (<span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>) &mdash; &bdquo;Geometrie misst die
+      Algebra&ldquo;. <b>B:</b> Die anabelische / exakte-Sequenz-Maschinerie <b>rekonstruiert</b> die Geometrie
+      aus Invarianten (exakte Sequenz
+      <span class="mono">1&rarr;&pi;&#8321;&#777;(&#8492;&#8345;&#772;)&rarr;&pi;&#8321;&#777;(&#8492;)&rarr;
+      Gal(&Qbar;/&Q;)&rarr;1</span>).
+    </p>
+    <p>
+      <b>Fusion:</b> zwei Richtungen desselben Pfeils &mdash; konkret&rarr;Invariante (Messen) und
+      Invariante&rarr;konkret (Rekonstruieren) &mdash; die sich am Fixpunkt treffen. A&rsquo;s
+      &bdquo;geometrisch von unten / axiomatisch von oben&ldquo; und B&rsquo;s &bdquo;bottom-up von Strings /
+      top-down von Invarianten&ldquo; sind <i>dasselbe</i> Paar von Lesarten.
+    </p>
+
+    <h3>4. Nicht-Trivialit&auml;t: zwei Kriterien, ein Urteil</h3>
+    <p>
+      <b>A (geometrischer Zeuge):</b> Nicht-trivial, weil die Fasern <b>verkettet</b> sind (Verkn&uuml;pfungszahl
+      = 1); w&auml;re <span class="mono">S&sup3; = S&sup2;&times;S&sup1;</span>, lagen alle Kreise unverschlungen
+      nebeneinander &mdash; tun sie nicht. <b>B (algebraisches Kriterium):</b> Nicht-trivial, weil <b>kein Schnitt
+      ohne Nullstelle existiert</b> (M&ouml;bius: ein Schnitt wird mit <span class="mono">&minus;1</span>
+      multipliziert; per Zwischenwertsatz muss er <span class="mono">0</span> annehmen).
+    </p>
+    <p><b>Fusion:</b> <b>kein triviales B&uuml;ndel</b> &mdash; geometrisch (verkettete, untrennbare Fasern) und
+      algebraisch (keine nullstellenfreie Sektion). Dasselbe Urteil, zwei Zeugen.</p>
+
+    <h3>5. Sign &amp; Realisierungsfelder: <span class="mono">&plusmn;1</span> vs. <span class="mono">C,S,G,E</span></h3>
+    <p>
+      <b>A:</b> rechts vs. links
+      (<span class="mono">R&#113;(p)=q&minus;&sup1;pq</span> vs.
+      <span class="mono">L&#113;(p)=qpq&minus;&sup1;</span>, Steigung <span class="mono">&plusmn;1</span>) = das
+      <b>Orientierungsvorzeichen der Strukturgruppe</b> = das Vorzeichen der Hopf-Invariante.
+    </p>
+    <p>
+      <b>B:</b> die vier Koh&auml;renz-Felder <span class="mono">C,S,G,E&isin;[0,1]</span> sind <b>vier
+      Kohomologie-Realisierungen eines einzigen Bedeutungs-Motivs</b>; das Void ist der gemischte Anteil, den
+      keine einzelne Realisierung erfasst.
+    </p>
+    <p><b>Fusion:</b> das &bdquo;Vorzeichen/der Grad&ldquo; (A&rsquo;s <span class="mono">&plusmn;1</span>) und
+      die &bdquo;mehreren Realisierungen&ldquo; (B&rsquo;s <span class="mono">C,S,G,E</span>) sind zwei Seiten der
+      selben Idee: <i>ein Objekt, mehrere Lesarten</i>. Das Vorzeichen ist der 1-dimensional-reine Fall, das
+      Feld der hochdimensional-graduierte.</p>
+
+    <h3>6. Die Welt: Anwendung (A) &harr; weiterer Topos (B)</h3>
+    <p>
+      <b>A:</b> die Basis ist der <b>lesbare / observable Raum</b> &mdash; Quantenmechanik (Qubit-Zustand = Punkt
+      in <span class="mono">S&sup3;</span>, physikalisch ununterscheidbar bis auf globale Phase = <i>eine</i>
+      Hopf-Faser; sichtbarer Raum = Basis <span class="mono">S&sup2;</span> = <b>Bloch-Kugel</b>), Grafik/Robotik
+      (slerp = Bewegung auf einem Gro&szlig;kreis von <span class="mono">S&sup3;</span>), Spin&nbsp;&frac12;
+      (<span class="mono">S&sup3;/{&plusmn;1}&cong;SO(3)</span>).
+    </p>
+    <p>
+      <b>B:</b> die Welt <span class="mono">W</span> ist <b>ein weiterer Topos</b>; Grounding
+      <span class="mono">S&harr;W</span> ist ein geometrischer Morphismus (Adjungtenpaar); die Kette
+      <span class="mono">X&rarr;S&harr;W</span> ist ein kommutierendes Diagramm von Topoi.
+    </p>
+    <p>
+      <b>Fusion:</b> Die Basis/die Welt ist der Ort, an dem die Invariante <i>gelesen</i> wird: bei A die
+      Bloch-Kugel (das Observable), bei B ein weiterer Topos (die Welt). Die Invariante ist
+      darstellungsunabh&auml;ngig; ihre Lesarten (Bloch-Kugel / Weltzust&auml;nde) sind ihre Realisierungen.
+    </p>
+
+    <table>
+      <thead><tr><th>A &mdash; Hopf (n1-109)</th><th>B &mdash; Bedeutung (n1-100)</th><th>Geteilt</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mono">S&sup1;&rarr;S&sup3;&rarr;S&sup2;</span>, Faser <span class="mono">S&sup1;</span> (Phase <span class="mono">e^{i&lambda;}</span>)</td><td><span class="mono">X&rarr;S</span>, Faser <span class="mono">&pi;&#8315;&#185;(s)</span> (Realisierungen)</td><td>Faserb&uuml;ndel <span class="mono">&pi;:E&rarr;B</span></td></tr>
+        <tr><td>lokale Trivialisierung, Kozykel <span class="mono">g&#945;&#946;g&#946;&gamma;g&#947;&#945;=I</span></td><td>Garbe, Verklebungsaxiom</td><td>&bdquo;lokal Produkt, global verdreht&ldquo;</td></tr>
+        <tr><td>Hopf-Zahl <span class="mono">&isin;&Zopf;</span>, <span class="mono">H&sup2;(S&sup2;;&Zopf;)&cong;&Zopf;</span>, <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span></td><td>Motiv (Gewichtsfiltration, Kohomologien, Persistenz)</td><td>Fixpunkt der Grobk&ouml;rnung</td></tr>
+        <tr><td>Geometrie misst (Treisman-&Auml;quator)</td><td>Algebra rekonstruiert (anabelisch, exakte Sequenz)</td><td>zwei Richtungen einer Abbildung</td></tr>
+        <tr><td>verkettete Kreise (Verkn&uuml;pfung = 1)</td><td>keine nullstellenfreie Sektion (M&ouml;bius)</td><td>kein triviales B&uuml;ndel</td></tr>
+        <tr><td><span class="mono">&plusmn;1</span> (H&auml;ndigkeit, Steigung)</td><td><span class="mono">C,S,G,E</span> (4 Kohomologie-Realisierungen)</td><td>ein Objekt, mehrere Lesarten</td></tr>
+        <tr><td>Bloch-Kugel, slerp, Spin&nbsp;&frac12;</td><td><span class="mono">W</span> = weiterer Topos</td><td>Basis = lesbarer Raum</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="visualisierung">
+    <div class="tag">05 &middot; Interaktive Visualisierung</div>
+    <h2>Was die Grobk&ouml;rnung &uuml;berlebt: die Invariante (das Motiv)</h2>
+    <p>
+      Links die <b>Basis <span class="mono">S&sup2;</span></b> (jeder Punkt = eine Bedeutung, Farbe = Cluster);
+      rechts der <b>Totalraum <span class="mono">S&sup3;</span></b> mit den <b>Fasern
+      <span class="mono">S&sup1;</span></b> (den Realisierungen). Der Regler
+      <span class="mono">&epsilon;</span> ist die <b>Grobk&ouml;rnung</b>: w&auml;chst sie, verschmelzen die
+      Basis-Punkte zu Komponenten und die feine Realisierungs-Struktur verblasst. Die
+      <b>hopf-verketteten Fasern</b> (gold/rot, mit L&auml;ufern) bleiben leuchtend &mdash; ihre
+      <b>Verkettung ist die Invariante</b> (das Motiv), die die Grobk&ouml;rnung <b>nicht</b> &auml;ndert.
+      Der H&auml;ndigkeits-Button dreht die Wicklung und wechselt damit das Vorzeichen
+      <span class="mono">&plusmn;1</span> der Invariante.
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c">
+          <label>Grobk&ouml;rnung &epsilon; <b id="eps-val">0.25</b></label>
+          <input type="range" id="eps" min="0.02" max="0.90" step="0.01" value="0.25"/>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="btnRight" class="on">Rechtsh&auml;ndig (+1)</button>
+        <button id="btnLeft">Linksh&auml;ndig (&minus;1)</button>
+      </div>
+      <canvas id="viz" width="820" height="470"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--viz-c0)"></i>AGENT&ndash;AKTION</span>
+        <span><i style="background:var(--viz-c1)"></i>KAUSALIT&Auml;T</span>
+        <span><i style="background:var(--viz-c2)"></i>TEIL&ndash;GANZES</span>
+        <span><i style="background:var(--viz-c3)"></i>OBJEKT&ndash;EIGEN.</span>
+        <span><i style="background:var(--viz-motive)"></i>Motiv / verkettete Faser (stabil)</span>
+        <span><i style="background:var(--bad)"></i>2. Faser des Paares</span>
+      </div>
+      <div class="stat">
+        <span class="big" id="inv-val" style="color:var(--viz-motive)">+1</span>
+        <span class="lab" id="inv-label">Motiv / Hopf-Invariante &mdash; invariante unter Grobk&ouml;rnung &amp; Realisierung</span>
+      </div>
+      <div class="stat">
+        <span class="big" id="comp-val">&mdash;</span>
+        <span class="lab" id="comp-label">feine Komponenten (Realisierungs-Struktur) &mdash; verdorrt bei Grobk&ouml;rnung</span>
+      </div>
+      <div class="note" id="readout">&mdash;</div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <div class="tag">06 &middot; Provenienz</div>
+    <h2>Quellen</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A</span>
+        <p><a href="../n1-109.html">n1-109.html</a></p>
+        <span class="d">&bdquo;Die Hopf-Faserung S&sup3;&rarr;S&sup2;: gesehen von A, bewiesen von B&ldquo;
+          (Round 1, Hopf &times; Faserb&uuml;ndel): die Hopf-Faserung als Haupt-<span class="mono">S&sup1;</span>-B&uuml;ndel
+          und Fibration; Fasern = verkettete Kreise, deren Verkettung die Hopf-Invariante ist; Kozykel,
+          Homotopie-Hochhebung, lange exakte Sequenz &rarr; <span class="mono">&pi;&#8323;(S&sup2;)=&Zopf;</span>;
+          zwei H&auml;ndigkeiten (Steigung &plusmn;1); Anwendungen Bloch-Kugel, slerp, Spin&nbsp;&frac12;.</span>
+      </div>
+      <div class="box">
+        <span class="k">B</span>
+        <p><a href="../n1-100.html">n1-100.html</a></p>
+        <span class="d">&bdquo;Bedeutung als Geometrie&ldquo; (Round 1, Geometrie der Bedeutung &times;
+          Grothendiecks Universum): Satzraum <span class="mono">X</span> faser&uuml;ber semantischen
+          <span class="mono">S</span>; Bedeutung = Motiv (grobk&ouml;rnungs-invariante,
+          darstellungsunabh&auml;ngige Struktur); Garben/Verklebung, persistente Homologie, Grobk&ouml;rnung,
+          Topoi, anabelische Rekonstruktion; Welt <span class="mono">W</span> als weiterer Topos.</span>
+      </div>
+    </div>
+    <p class="note" style="margin-top:18px">Konzeptionelle Fusion (Round 2, Nicht-KI-Track, Pair 055).
+      Alle Aussagen sind Paraphrasen der beiden Round-1-Quellen; die Visualisierung ist eine
+      konzeptionelle Illustration der fusionierten These, keine empirische Messung.</p>
+  </section>
+</article>
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var canvas = document.getElementById('viz');
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var W = 820, H = 470;
+
+  var hand = 1;
+  var ang = 0;
+  var tAnim = 0;
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function C(n, f){ var v = cssVar(n); return (v && v.trim()) ? v.trim() : f; }
+  function mulberry(s){
+    return function(){
+      s |= 0; s = s + 0x6D2B79F5 | 0;
+      var t = Math.imul(s ^ s >>> 15, 1 | s);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- komplexe / Hopf-Mathematik ---------- */
+  function cmul(a,b){ return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]]; }
+  function cscale(a,s){ return [a[0]*s, a[1]*s]; }
+  function cconj(a){ return [a[0], -a[1]]; }
+  function stereo4(x){ var d = 1-x[3]; var k = Math.abs(d)<1e-6 ? 1e5 : 1/d; return [x[0]*k, x[1]*k, x[2]*k]; }
+  function hopf(z, t, h){
+    var m = 1/Math.sqrt(1+z[0]*z[0]+z[1]*z[1]);
+    var l = [Math.cos(t), Math.sin(t)];
+    var z1 = cscale(l, m);
+    if(h>0){ var z2 = cmul(z, z1); return [z1[0], z1[1], z2[0], z2[1]]; }
+    var z2b = cmul(cconj(z), z1); return [z1[0], z1[1], z2b[0], -z2b[1]];
+  }
+  function baseP(lat, lon){ return [Math.sin(lat)*Math.cos(lon), Math.sin(lat)*Math.sin(lon), Math.cos(lat)]; }
+  function stereo3(P){ var d = 1-P[2]; if(Math.abs(d)<1e-9) return [1e5,0]; return [P[0]/d, P[1]/d]; }
+  function proj(p, cx, cy, s, ry, rx){
+    var x=p[0], y=p[1], z=p[2];
+    var x1 = x*Math.cos(ry) - z*Math.sin(ry);
+    var z1 = x*Math.sin(ry) + z*Math.cos(ry);
+    var y1 = y*Math.cos(rx) - z1*Math.sin(rx);
+    var z2 = y*Math.sin(rx) + z1*Math.cos(rx);
+    var d = 1/(1 + z2*0.05);
+    return {x:cx + x1*s*d, y:cy - y1*s*d, z:z2};
+  }
+
+  /* ---------- 4 Bedeutung-Cluster auf S^2, je K Basis-Punkte ---------- */
+  var CLUSTERS = [
+    { lat:  0.615, lon:  0.785 },
+    { lat: -0.615, lon: -0.785 },
+    { lat: -0.615, lon:  2.356 },
+    { lat:  0.615, lon: -2.356 }
+  ];
+  var K = 3;
+  var bases = [];
+  (function(){
+    var r = mulberry(20240607);
+    for (var c=0; c<CLUSTERS.length; c++){
+      var Cc = CLUSTERS[c];
+      for (var i=0; i<K; i++){
+        var off = 0.16*Math.sqrt(r());
+        var dl  = (r()-0.5)*2*off;
+        var dlo = (r()-0.5)*2*off;
+        bases.push({ lat: Cc.lat+dl, lon: Cc.lon+dlo, cluster: c });
+      }
+    }
+  })();
+  var P3 = [];
+  for (var i=0; i<bases.length; i++){ P3.push(baseP(bases[i].lat, bases[i].lon)); }
+  function chord(a,b){
+    var A=P3[a], B=P3[b];
+    var d = Math.sqrt((A[0]-B[0])*(A[0]-B[0])+(A[1]-B[1])*(A[1]-B[1])+(A[2]-B[2])*(A[2]-B[2]));
+    return d/2;
+  }
+  var D = [];
+  for (var a=0; a<bases.length; a++){ D.push([]); for (var b=0; b<bases.length; b++){ D[a][b] = (a===b)?0:chord(a,b); } }
+
+  /* persistente H0-Komponenten bei Grobkornung eps (Union-Find) */
+  function componentsAt(eps){
+    var n = bases.length, par=[], sz=[], k;
+    for(k=0;k<n;k++){ par[k]=k; sz[k]=1; }
+    function f(x){ while(par[x]!==x){ par[x]=par[par[x]]; x=par[x]; } return x; }
+    function u(p,q){ p=f(p); q=f(q); if(p===q)return; if(sz[p]<sz[q]){ var t=p; p=q; q=t; } par[q]=p; sz[p]+=sz[q]; }
+    for (var i=0;i<n;i++) for (var j=i+1;j<n;j++){ if (D[i][j] <= eps) u(i,j); }
+    var label = new Array(n), map = {};
+    for(k=0;k<n;k++){ var r=f(k); label[k]=r; if(!map[r]) map[r]={size:0}; map[r].size++; }
+    var out = []; for (var key in map){ out.push(map[key].size); }
+    return { comps: out.length, label: label };
+  }
+
+  function drawFiber(z, colr, lw, ry, rx, cx, cy, s, bright, alpha){
+    var SEG = 120;
+    ctx.beginPath();
+    var started = false;
+    for (var k=0; k<=SEG; k++){
+      var t = k/SEG*TAU;
+      var p4 = hopf(z, t, hand);
+      var p3 = stereo4(p4);
+      if(!isFinite(p3[0])||!isFinite(p3[1])||!isFinite(p3[2]) ||
+         (p3[0]*p3[0]+p3[1]*p3[1]+p3[2]*p3[2]) > 2.2e4){ started=false; continue; }
+      var q = proj(p3, cx, cy, s, ry, rx);
+      if(!isFinite(q.x)||!isFinite(q.y)){ started=false; continue; }
+      if(!started){ ctx.moveTo(q.x,q.y); started=true; } else { ctx.lineTo(q.x,q.y); }
+    }
+    ctx.strokeStyle = colr;
+    ctx.lineWidth = bright ? lw+1.2 : lw;
+    ctx.globalAlpha = bright ? 1 : (alpha==null?0.6:alpha);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawLinkPair(ry, rx, cx, cy, s){
+    var zA = [0,0];
+    var zB = stereo3(baseP(0.9, 0.4));
+    drawFiber(zA, C('--viz-motive','#ffd166'), 2.4, ry, rx, cx, cy, s, true, 1);
+    drawFiber(zB, C('--bad','#ff6f6f'), 2.4, ry, rx, cx, cy, s, true, 1);
+    var tA = tAnim, tB = tAnim*1.35 + 0.7;
+    var pA = hopf(zA, tA, hand), pB = hopf(zB, tB, hand);
+    var qA = proj(stereo4(pA), cx, cy, s, ry, rx);
+    var qB = proj(stereo4(pB), cx, cy, s, ry, rx);
+    if(isFinite(qA.x)&&isFinite(qA.y)){ ctx.fillStyle = C('--viz-motive','#ffd166'); ctx.beginPath(); ctx.arc(qA.x,qA.y,5,0,TAU); ctx.fill(); }
+    if(isFinite(qB.x)&&isFinite(qB.y)){ ctx.fillStyle = C('--bad','#ff6f6f'); ctx.beginPath(); ctx.arc(qB.x,qB.y,5,0,TAU); ctx.fill(); }
+  }
+
+  function draw(){
+    if(!canvas || !ctx) return;
+    var col = {
+      bg:   C('--card','#f6f5f0'),
+      line: C('--line','#cccccc'),
+      grid: C('--grid','#e5e5e5'),
+      ink:  C('--ink','#222222'),
+      dim:  C('--dim','#888888'),
+      edge: C('--viz-edge','#8a93a3')
+    };
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = col.bg;
+    ctx.fillRect(0,0,W,H);
+
+    var eps = parseFloat((document.getElementById('eps')||{}).value||'0.35');
+    if(!isFinite(eps)) eps = 0.35;
+    var res = componentsAt(eps);
+
+    /* ---------- LINKS: Basis S^2 ---------- */
+    var bcx = W*0.22, bcy = H*0.5, Rb = Math.min(W*0.14, H*0.32);
+    ctx.strokeStyle = col.line; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(bcx, bcy, Rb, 0, TAU); ctx.stroke();
+    for (var li=0; li<4; li++){
+      var lat = (li/3)*Math.PI - Math.PI/2;
+      ctx.beginPath();
+      var started = false;
+      for (var a=0; a<=TAU+0.001; a+=TAU/64){
+        var P = baseP(lat, a);
+        var bx = bcx + Rb*P[0], by = bcy - Rb*P[2];
+        if(!started){ ctx.moveTo(bx,by); started=true; } else { ctx.lineTo(bx,by); }
+      }
+      ctx.strokeStyle = col.grid; ctx.lineWidth = 1; ctx.stroke();
+    }
+    ctx.fillStyle = col.dim; ctx.font = '12px ui-sans-serif,system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Basis  S\u00B2  (Bedeutungen)', bcx, bcy - Rb - 12);
+    ctx.textAlign = 'left';
+
+    /* VR-Kanten: Punkte gleicher Komponente verbinden */
+    ctx.strokeStyle = col.edge; ctx.lineWidth = 1;
+    for (var i=0; i<bases.length; i++){
+      for (var j=i+1; j<bases.length; j++){
+        if (res.label[i]===res.label[j] && D[i][j] <= eps){
+          ctx.globalAlpha = 0.35;
+          ctx.beginPath();
+          ctx.moveTo(bcx+Rb*P3[i][0], bcy-Rb*P3[i][2]);
+          ctx.lineTo(bcx+Rb*P3[j][0], bcy-Rb*P3[j][2]);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    /* Basis-Punkte */
+    for (var i2=0; i2<bases.length; i2++){
+      var P2 = P3[i2];
+      var front = P2[2] >= -0.05;
+      ctx.fillStyle = C('--viz-c'+bases[i2].cluster, '#888888');
+      ctx.globalAlpha = front?0.95:0.4;
+      ctx.beginPath(); ctx.arc(bcx+Rb*P2[0], bcy-Rb*P2[2], front?5:3.5, 0, TAU); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    /* ---------- RECHTS: Totalraum S^3 (stereographisch) ---------- */
+    var tcx = W*0.68, tcy = H*0.50, ts = Math.min(W*0.024, H*0.082);
+    var ry = ang, rx = 0.5 + 0.15*Math.sin(ang*0.3);
+    ctx.fillStyle = col.dim; ctx.font='12px ui-sans-serif,system-ui'; ctx.textAlign='center';
+    ctx.fillText('Totalraum  S\u00B3  (Fasern S\u00B9 = Realisierungen)', tcx, tcy - H*0.40);
+    ctx.textAlign='left';
+
+    /* feine Fasern (verblasst mit Grobkornung) */
+    var fade = Math.max(0.10, 0.60 - eps*0.55);
+    for (var f=0; f<bases.length; f++){
+      var z = stereo3(P3[f]);
+      var colr = C('--viz-c'+bases[f].cluster, '#888888');
+      drawFiber(z, colr, 1.2, ry, rx, tcx, tcy, ts, false, fade);
+    }
+    /* hopf-verkettetes Paar = die stabile Invariante */
+    drawLinkPair(ry, rx, tcx, tcy, ts);
+
+    /* ---------- Readout ---------- */
+    var invEl = document.getElementById('inv-val');
+    var labEl = document.getElementById('inv-label');
+    var compEl = document.getElementById('comp-val');
+    var compLab = document.getElementById('comp-label');
+    var roEl = document.getElementById('readout');
+    if(invEl) invEl.textContent = (hand>0?'+1':'\u22121');
+    if(labEl) labEl.textContent = 'Motiv / Hopf-Invariante \u2014 invariante unter Grobk\u00f6rnung & Realisierung';
+    if(compEl) compEl.textContent = String(res.comps);
+    if(compLab) compLab.textContent = 'feine Komponenten bei \u03b5='+eps.toFixed(2)+' \u2014 Realisierungs-Struktur, verdorrt bei Grobk\u00f6rnung';
+    if(roEl) roEl.textContent =
+      '\u03b5='+eps.toFixed(2)+'  \u2192  feine Struktur: '+res.comps+' Komponenten. ' +
+      'Die verkettete Faser (gold/rot) und ihre Hopf-Invariante ' + (hand>0?'+1':'\u22121') +
+      ' bleiben bei jeder Grobk\u00f6rnung erhalten \u2014 sie ist das Motiv, das \u00fcberlebt, ' +
+      'w\u00e4hrend die Realisierungen (Fasern) in der Grobk\u00f6rnung verschwinden.';
+  }
+
+  function loop(){
+    ang += 0.0035;
+    tAnim += 0.03;
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function setHand(h){
+    hand = h;
+    var br = document.getElementById('btnRight');
+    var bl = document.getElementById('btnLeft');
+    if(br) br.classList.toggle('on', h>0);
+    if(bl) bl.classList.toggle('on', h<0);
+  }
+
+  function init(){
+    var epsEl = document.getElementById('eps');
+    if(epsEl) epsEl.addEventListener('input', function(){
+      var v = document.getElementById('eps-val');
+      if(v) v.textContent = parseFloat(epsEl.value).toFixed(2);
+    });
+    var br = document.getElementById('btnRight');
+    var bl = document.getElementById('btnLeft');
+    if(br) br.addEventListener('click', function(){ setHand(1); });
+    if(bl) bl.addEventListener('click', function(){ setHand(-1); });
+    var tt = document.getElementById('themeToggle');
+    if(tt) tt.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); });
+    requestAnimationFrame(loop);
+  }
+
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

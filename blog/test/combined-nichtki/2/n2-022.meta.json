@@ -1,0 +1,16 @@
+{
+  "no": "022",
+  "a": "n1-009.html",
+  "b": "n1-031.html",
+  "a_title": "The Higher Structure of Flat Things",
+  "b_title": "Verklebung trifft Modellerfüllung",
+  "combined_theme": "graded-sheaf-coherence",
+  "one_line": "Ein kohärentes Objekt ist eine globale Sektion einer gradierten Garbe: gestufte Keime (Momenten-/Morphismus-Turm) + Kleben/Kohärenz zwischen Keimen + ein messbarer Kohärenz-Defekt (Krümmung).",
+  "contradictions": [
+    "Bestimmung des Ganzen: n1-009 — der volle Momententurm bestimmt die Verteilung eindeutig (Momentenproblem, 'alle Momente bestimmen die Verteilung'); n1-031 — dieselben lokalen Regeln haben viele Modelle (ℚ und ℝ erfüllen beide T), Einzigartigkeit nur bei Kategorialität.",
+    "Was 'höhere Struktur' heißt: n1-009 — vertikaler Turm abgeleiteter quantitativer Ebenen (Masse/Stützmenge, Mittel, Varianz, Schiefe) = Tiefe; n1-031 — relationale Kohärenz/Verklebung auf Überlappungen (gemeinsame Wahrheit) = Breite, kein Ebenen-Turm.",
+    "Exakte vs. ungenaue Kohärenz: n1-009 — Kohärenz ist ungenau, der Defekt Δ aug−raw ist ein eigenes messbares Objekt (Funktor 'bis auf Defekt', Δ = Krümmung des Transforms); n1-031 — Kohärenz ist exakt/binär (Schnitte stimmen auf U∩V exakt überein, Modell erfüllt Axiome exakt, Defekt=0)."
+  ],
+  "resolution": "Bestimmung ist geschichtet: Eindeutigkeit = Kategorialität gilt bei voller Tiefe auf fester Basis (n1-009s Momentenproblem), bei endlicher Trunkation/Basiswechsel gibt es viele globale Sektionen (n1-031s ℚ, ℝ). Tiefe und Breite sind orthogonale Koordinaten eines Objekts: der Momententurm ist die graduierte Faser am Keim, das Kleben die Garben-/Übergangsstruktur zwischen Keimen → das fusionierte Objekt ist eine graduierte Garbe (eine Garbe, deren Werte selbst graduierte Momente-Türme sind). Exakte Kohärenz ist das Null-Defekt-Ideal der ungefähren Kohärenz: der Defekt ist die Krümmung des Klebens; ein gültiges/exaktes Modell ist genau eine flache (Δ=0) globale Sektion, n1-009s Augmentation eine gekrümmte Verbindung.",
+  "viz": "Canvas: eine graduierte Garbe — Momenten-Türme (Tiefe, n1-009) auf einer Basis mit Überlappungsbändern (Kleben/Breite, n1-031). Der Tiefen-Slider trunciert die Türme (Tiefe 0 = nur Silhouette/Constraints, Tiefe 4 = voller Turm); die Anzahl kompatibler globaler Sektionen (Riemen) sinkt mit der Tiefe von 'viele' zu 'eindeutig' (Bestimmung = Kategorialität); der Defekt-Umschalter zeigt das Kleben flach (exakt, Krümmung 0, n1-031) oder gekrümmt mit rotem Δ (n1-009)."
+}

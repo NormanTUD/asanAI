@@ -1,0 +1,16 @@
+{
+  "no": "010",
+  "a": "n1-069.html",
+  "b": "n1-057.html",
+  "a_title": "Regelmäßigkeit & Form — Sobolev-Räume ✕ Topologische Datenanalyse",
+  "b_title": "Verstehst du, wie Wein entsteht? — IOED trifft Weinherstellung",
+  "combined_theme": "load-bearing-vs-fragile-layer",
+  "one_line": "Eine Signatur über eine Skala: das Grobe ist lasttragend und stabil (Objekt: Topologie übersteht Rauschen; Geist: Prozedur wird ehrlich getragen), das Feine ist fragil (Objekt: reale H¹-Kosten; Geist: gefühlt aber abwesend) — die Illusion ist der Geist-Schatten des Rauschens.",
+  "contradictions": [
+    "Das Fragile: A hält die feine Schicht für real und im Objekt vorhanden (H¹-Energie, bezahlt) und misst die Lücke zwischen zwei realen Objekten; B hält die tiefe Schicht für abwesend und nur gefühlt (Illusion) und misst die Lücke zwischen einem realen Glauben und einem Nichts.",
+    "Der Readout: A liest die grobe Signatur treu aus den Daten (Projektion, nichts externalisiert, Stabilität ⇒ Vertrauen); B macht gerade die Anzeige im Tool zur Ursache der Täuschung (Umwelt↔Kopf, sichtbare Teile ≈ Prädiktor der Überkonfidenz, R²≈.47).",
+    "Das Grobe: A ist die letzte, lasttragende Wahrheit (die Form ist die Antwort); B ist eine ehrliche, aber nicht tiefe Decke (für den Macher genug, für den Forscher eine Grenze — dort beginnt die Illusion)."
+  ],
+  "resolution": "Ein gemeinsamer Betrieb — eine Signatur über eine Skala lesen und den Anspruch an die tatsächlich getragene/lasttragende Skala kalibrieren: bezahle/umschließe das Reale-und-Fragile (Objekt, Stabilitätssatz ‖f−g‖_L∞ ≥ d_bottleneck), verweigere das Gefühlte-und-Abwesende (Geist, T1→T2-Einbruch); die fragile Schicht ist in beiden Sinnen 'nicht lasttragend'; ein Readout ist treu nur, solange sein Inhalt im Objekt/Selbst bleibt und nicht ins Tool externalisiert wird; und 'lasttragend' ist fragen-relativ (Form-Frage vs. Verstehens-Frage).",
+  "viz": "Eine Skala, zwei Seiten — ein gemeinsamer 'Lese-Tiefe/Anspruch'-Regler steuert links den Objekt-Ring (Form bleibt β₁=1 lasttragend/stabil, H¹-Kosten steigen) und rechts die Geist-Ebenen (geglaubt vs. wirklich getragen); 'Kalibrieren' wendet den geteilten Test an (Objekt: Stabilität/treu; Geist: IOED-Einbruch, Anspruch kollabiert auf das Tragende, Lücke=0)."
+}

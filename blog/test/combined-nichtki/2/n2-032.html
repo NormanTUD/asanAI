@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion · n1-028 ✕ n1-095 — Vom einzelnen Bild zur invarianten Struktur</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#211c12; --muted:#6b6352; --panel:#fffdf8; --border:#e2d8c3;
+  --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --accent2:#2563eb; --accent3:#c2410c; --accent4:#7c3aed;
+  --code:#f0ead9; --code-fg:#211c12;
+  --canvas-bg:#fffdf8; --shadow:0 1px 2px rgba(60,40,10,.06),0 6px 24px rgba(60,40,10,.06);
+  --viz-ink:#211c12; --viz-dim:#6b6352; --viz-grid:rgba(0,0,0,.12); --viz-axis:rgba(0,0,0,.35);
+  --viz-a:#0d9488; --viz-b:#2563eb; --viz-chaos:#c22f2f; --viz-order:#0d9488; --viz-marker:#c2410c;
+}
+html.dark{
+  --bg:#0a0e1a; --fg:#e8ecf5; --muted:#8892b0; --panel:#141b2e; --border:rgba(255,255,255,.08);
+  --accent:#64ffda; --accent-soft:rgba(100,255,218,.14);
+  --accent2:#82aaff; --accent3:#ffb86b; --accent4:#c792ea;
+  --code:#0a0815; --code-fg:#e8ecf5;
+  --canvas-bg:#0a0815; --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+  --viz-ink:#e8ecf5; --viz-dim:#8892b0; --viz-grid:rgba(255,255,255,.12); --viz-axis:rgba(255,255,255,.4);
+  --viz-a:#64ffda; --viz-b:#82aaff; --viz-chaos:#ff6b6b; --viz-order:#64ffda; --viz-marker:#ffb86b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Iowan Old Style",Georgia,system-ui,serif;
+  line-height:1.68; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:40px 24px 90px;}
+header{margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+h1{font-size:2.05rem;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;}
+.kicker{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:12px;}
+.subtitle{color:var(--muted);font-size:1.02rem;margin:0;font-style:italic;}
+.subtitle b{color:var(--fg);font-style:normal;}
+section{margin:0 0 34px;}
+section > h2{
+  font-size:1.4rem;margin:0 0 14px;padding-bottom:8px;
+  border-bottom:2px solid var(--accent-soft);color:var(--fg);
+}
+section > h2 .n{color:var(--accent);font-family:"SF Mono",Menlo,monospace;font-size:.72em;vertical-align:middle;margin-right:10px;}
+h3{font-size:1.06rem;margin:20px 0 8px;color:var(--accent);}
+p{margin:0 0 14px;}
+em{color:var(--accent);font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px;padding-left:22px;}
+li{margin:0 0 9px;}
+code,.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code);color:var(--code-fg);padding:1px 6px;border-radius:5px;font-size:.9em;
+}
+pre{
+  background:var(--code);color:var(--code-fg);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;overflow-x:auto;font-size:.86rem;line-height:1.6;margin:12px 0;
+}
+pre code{background:none;padding:0;color:inherit;}
+.eq{
+  font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.9rem;background:var(--code);color:var(--code-fg);
+  border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;
+  padding:12px 16px;margin:14px 0;overflow-x:auto;line-height:1.7;
+}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow);}
+.card .tag{
+  display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:20px;margin-bottom:10px;
+}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border);border-radius:12px;padding:13px 15px;background:var(--panel);}
+.vs .col h3{margin:0 0 8px;font-size:1rem;}
+.vs .col .src{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+.vs .col .src.a{color:var(--accent);}
+.vs .col .src.b{color:var(--accent3);}
+.tension{font-size:.92rem;color:var(--muted);border-left:3px solid var(--accent3);padding:6px 0 6px 14px;margin:8px 0 0;font-style:italic;}
+blockquote{
+  margin:14px 0;padding:10px 18px;border-left:3px solid var(--accent4);
+  color:var(--muted);font-style:italic;background:var(--panel);border-radius:0 10px 10px 0;
+}
+.viz-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin:14px 0;box-shadow:var(--shadow);}
+#viz{display:block;width:100%;height:440px;margin:8px 0 auto;border-radius:10px;}
+.ctl{display:flex;flex-direction:column;gap:6px;margin:6px 0 4px;}
+.ctl label{font-size:.9rem;color:var(--muted);display:flex;justify-content:space-between;}
+.ctl label .val{color:var(--accent);font-family:"SF Mono",Menlo,monospace;font-weight:600;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--border);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:none;}
+.readout{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
+.stat{flex:1;min-width:120px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;}
+.stat .num{font-size:1.3rem;font-weight:700;font-family:"SF Mono",Menlo,monospace;color:var(--accent);}
+.stat .lab{font-size:.74rem;color:var(--muted);margin-top:4px;line-height:1.35;}
+.viz-status{text-align:center;margin-top:14px;font-size:.95rem;min-height:1.5em;color:var(--accent2);font-weight:600;line-height:1.5;}
+.hint{font-size:.86rem;color:var(--muted);font-style:italic;margin-top:10px;}
+.prov{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:12px 0;background:var(--panel);}
+.prov .src{font-weight:700;}
+.prov .src code{font-family:"SF Mono",Menlo,monospace;color:var(--accent);font-size:.9em;}
+.prov p{margin:8px 0 0;color:var(--muted);font-size:.94rem;}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;font-size:.85rem;cursor:pointer;
+  background:var(--panel);color:var(--fg);border:1px solid var(--border);padding:7px 13px;border-radius:8px;}
+.theme-btn:hover{border-color:var(--accent);}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeToggle">☾/☀ Thema</button>
+<article>
+<header>
+  <div class="kicker">Knockout-Synthese · Runde 2 · Nicht-KI-Track · Paare 032</div>
+  <h1>Vom einzelnen Bild zur invarianten Struktur</h1>
+  <p class="subtitle">Fusion aus: <b>n1-028.html</b> ✕ <b>n1-095.html</b> &nbsp;·&nbsp; Das <em>stille Objekt</em> (A) und der <em>irreführende Frame</em> (B) sind dasselbe Phänomen: Erst die <em>invariante Struktur unter der Wirkung</em> — Symmetriegruppe / Attraktor — macht das System lesbar.</p>
+</header>
+
+<!-- ============ THESE ============ -->
+<section id="these">
+  <h2><span class="n">01</span>Kernthese der Fusion</h2>
+  <p>Beide Ausgangspapiere sind selbst Fusionen — und sie münden, eine Ebene höher, in <strong>eine einzige Position</strong>: <em>Ein Objekt oder System ist erst auf der Ebene über der einzelnen Instanz lesbar.</em> In <strong>A</strong> („Das stille Objekt und seine Standpunkte“, aus <em>Récoltes et Semailles</em> × Gruppentheorie) ist die einzelne Instanz der <em>Standpunkt</em>: für sich stumm, und erst die Gesamtheit aller Standpunkte — die Symmetriegruppe, die <em>Vision</em> — lässt das Objekt aufleuchten. In <strong>B</strong> („Der Zoom als Geometrie“, aus Chaos-Theorie × Framespotting) ist die einzelne Instanz die <em>Bahn</em> bzw. das <em>Symptom</em>: für sich irreführend (sie „zeigt ein falsches Bild“), und erst die Struktur — der <em>Attraktor</em>, das <em>Reframe</em> — zeigt, was wirklich los ist.</p>
+  <p>Beide beschreiben denselben Übergang — <strong>vom Element zur Menge, von der Instanz zur invarianten Struktur</strong> — und benennen dasselbe fusionierte Objekt: die <em>Menge, die die Wirkung des Systems auf sich selbst abbildet</em>. In A ist das die Symmetriegruppe (die selbstbewahrenden Transformationen des Quadrats, <code>D₄</code>); in B ist das der Attraktor (die Teilmenge des Phasenraums, auf die die Iteration abbildet und die sie auf sich selbst zurückführt). Und genau hier schließen sich beide zusammen: <em>Der Attraktor <strong>ist</strong> eine A-Invariante</em> — er ist die Menge, die die Wirkung invariant lässt. A fragt „was bleibt unter der Wirkung fest?“, B fragt „wo läuft die Wirkung hin?“; beide antworten mit derselben Menge.</p>
+  <p><strong>Die fusionierte Kernthese:</strong> <em>Die einzelne Instanz (Standpunkt, Bahn) ist keine Sache, sondern eine <strong>Probe</strong>. Das System selbst ist die invariante Struktur, zu der die Probe gehört.</em> A nennt dies „Symmetrie ist Vision“; B nennt dies „der Zoom ist Geometrie“. Zwei Sätze, eine Bewegung: <strong>Das stille Objekt (A) und der irreführende Frame (B) werden beide sichtbar, indem man aufhört, die Probe zu lesen, und stattdessen die Menge liest, in der die Probe lebt.</strong></p>
+</section>
+
+<!-- ============ WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+  <h2><span class="n">02</span>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich in keiner faktischen Aussage, doch auf vier konkreten Punkten stehen echte, benennbare Positionen gegenüber. (A = <code>n1-028.html</code>, B = <code>n1-095.html</code>.)</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src a">A · das Teilbild ist stumm</div>
+      <h3>Das Teilbild zeigt <em>nichts</em> (Abwesenheit)</h3>
+      <p>„Ein Objekt ist für sich <em>stumm</em>.“ Ein einzelner Standpunkt „sieht nur einen Aspekt“ und enthüllt das Objekt nicht — das Teilbild ist leer, unvollständig, eine Art <strong>Absenz</strong>. Das Quadrat bleibt „stumm“, bis die 8 Standpunkte fallen.</p>
+    </div>
+    <div class="col">
+      <div class="src b">B · das Teilbild ist irreführend</div>
+      <h3>Das Teilbild zeigt ein <em>falsches</em> Bild (Störsignal)</h3>
+      <p>„Die Detail-Ansicht zeigt einem ein <em>falsches Bild</em>.“ Eine einzelne Bahn „scheint zufällig“ — sie ist aktiv <em>irreführendes Rauschen</em>, ein <strong>Störsignal</strong>, nicht bloße Abwesenheit.</p>
+    </div>
+  </div>
+  <p class="tension">Spannung: Ist das Teilbild <b>stumm/leer</b> (A: nichts zu sehen) oder <b>aktiv täuschend</b> (B: etwas Falsches zu sehen)?</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src a">A · Invarianz ist das Objekt</div>
+      <h3>Struktur = was <em>bewahrt</em> bleibt</h3>
+      <p>A studiert die <em>Selbstbewahrung</em>: „die Form des Quadrats bleibt unter allen 8 Symmetrien ein Quadrat“, „dieselben Betti-Zahlen in allen Tonarten“. Das Zielobjekt ist die <strong>Invariante</strong> — das, was die Wirkung <em>nicht</em> ändert (fixe Größe).</p>
+    </div>
+    <div class="col">
+      <div class="src b">B · Struktur = wohin es läuft</div>
+      <h3>Struktur = wo <em>die Veränderung</em> endet</h3>
+      <p>B studiert die <em>Dynamik</em>: Bahnen laufen auseinander (λ &gt; 0), der Attraktor ist die <strong>Endmenge</strong>, nicht das Bewahrte. Und gerade das <em>Verlieren</em> der Anfangsbedingung (sensitive Abhängigkeit) ist die Signatur von Chaos.</p>
+    </div>
+  </div>
+  <p class="tension">Spannung: A feiert das, was unter der Wirkung <b>fest bleibt</b> (Invarianz); B misst das, was unter der Wirkung <b>auseinanderläuft</b> (Divergenz, λ &gt; 0).</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src a">A · voll zählbar &amp; bestimmt</div>
+      <h3>Exakte, vollständige Bestimmtheit</h3>
+      <p>A's fusioniertes Objekt ist <em>exakt und vollständig zählbar</em>: <code>D₄</code> hat genau 8 Elemente, die Cayley-Tabelle ist eine checkbare 8×8, das Untergruppen-Gitter und die Betti-Zahlen sind fest. Es gibt <strong>keinen</strong> irreduziblen Unsicherheitsrest — wer die Gruppe kennt, kennt alles.</p>
+    </div>
+    <div class="col">
+      <div class="src b">B · fundamentale Unvorhersagbarkeit</div>
+      <h3>Prinzipielle Unvorhersagbarkeit des Details</h3>
+      <p>B's Detail ist <em>fundamental, physikalisch unvorhersagbar</em>: ein positiver Lyapunov-Exponent bedeutet <strong>exponentielle</strong> Divergenz (Schmetterlingseffekt). Nur das Regime ist vorhersagbar; die Bahn bleibt für immer teilweise unbekannt.</p>
+    </div>
+  </div>
+  <p class="tension">Spannung: A's Welt ist ein <b>endliches, exaktes</b> Objekt; B's Welt trägt einen <b>permanenten, unauflösbaren</b> Unbestimmtheitsrest im Detail.</p>
+
+  <div class="vs">
+    <div class="col">
+      <div class="src a">A · je fassender, desto mehr Vision</div>
+      <h3>Totale Vereinigung ist das Ziel</h3>
+      <p>A strebt <em>maximale</em> Vereinigung an — Schema/Topos/Motiv, „alle Pferde des Königs trinken“, „die richtige allgemeine Theorie macht das harte Problem trivial“ (steigende Flut). <strong>Mehr Struktur = mehr Verstehen.</strong></p>
+    </div>
+    <div class="col">
+      <div class="src b">B · den <em>rechten</em> Frame halten</div>
+      <h3>Der sichere Frame ist das Ziel</h3>
+      <p>B will <em>am</em> Edge of Chaos operieren, aber <em>nicht</em> in den schlechten Attraktor kippen; „Erwachsenwerden“ = auf einem <strong>nachhaltigen</strong> Attraktor leben, den Parameter fern vom Kipppunkt halten. <strong>Mehr/Chaos ist eine Gefahr.</strong></p>
+    </div>
+  </div>
+  <p class="tension">Spannung: A glorifiziert das <b>Größere/Gesamte</b> (mehr = besser); B warnt, dass <b>„mehr“ (Chaotisches)</b> der zu vermeidende Kipppunkt sein kann.</p>
+</section>
+
+<!-- ============ AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2><span class="n">03</span>Auflösung</h2>
+  <p>Alle vier Gegensätze fallen, sobald man erkennt: <em>A und B studieren dieselbe Menge — die invariante Struktur unter der Wirkung eines Systems auf seinen Zustandsraum</em> — und zwar aus zwei komplementären Registern.</p>
+
+  <h3>1 · Stumm ↔ Rauschen → zwei Gesichter derselben Blindheit</h3>
+  <p>Das Teilbild ist in beiden Fällen unlesbar, <em>weil Struktur im <strong>Mengen</strong>- nicht im <strong>Element</strong>-Leben</em>. In A ist ein einziger Standpunkt stumm, denn das Quadrat ist nur durch die <em>Beziehungen zwischen</em> den Standpunkten definiert (eine einzelne Symmetrie ist nicht „das Objekt“). In B ist eine einzelne Bahn Rauschen, denn sie ist nur <em>ein Stichprobenpunkt</em> des Attraktors; ihr „Zufall“ ist die Komplexität des Attraktors, projiziert auf eine Orbitlinie. Ob das Teilbild als <em>Abwesenheit</em> (A) oder als <em>Störsignal</em> (B) erscheint, hängt nur von der <em>Komplexität des lokalen Signals</em> ab — A's Objekt ist „einfacher“ (ein Quadrat: eine Probe ist zu unterbestimmt → liest sich stumm), B's hochdimensional (eine Bahn ist ein reiches, aber uninterpretierbares Signal → liest sich als Rauschen). <em>Die Methode ist identisch: vom Element zur Menge wechseln.</em></p>
+
+  <h3>2 · Invarianz ↔ Divergenz → das Spektrum derselben Wirkung</h3>
+  <p>Beides sind <strong>Spektren derselben Wirkung</strong> — einer Abbildung auf einen Zustandsraum. A fragt nach dem <em>Fixen/Neutralen</em> (was die Gruppe invariant lässt: Form, Betti-Zahlen); B fragt nach dem <em>Expansiven/Verlaufenden</em> (wie die Iteration nahe Punkte auseinanderzieht, λ; und wo sie landet, der Attraktor). Und die Verbindung ist exakt: <strong>Der Attraktor (B) ist die invariante Menge (A)</strong> — die Teilmenge, die die Abbildung auf sich selbst abbildet. Invarianz ist der neutrale Teil des Wirkungsspektrums, Divergenz sein expansiver Teil. <em>A und B lesen dieselbe Wirkung in zwei Registern; der Attraktor ist A's „stilles Objekt, das sichtbar wird“.</em></p>
+
+  <h3>3 · Bestimmt ↔ Unvorhersagbar → nach Ebenen trennen</h3>
+  <p>A zählbar, B unvorhersagbar — das ist kein Widerspruch, denn sie messen <em>unterschiedliche Ebenen</em>. A zählt die <em>Struktur</em> (Gruppe, Invarianten) — die ist immer exakt und endlich. B's Unvorhersagbarkeit lebt in der <em>Bahn</em> (dem Detail) — genau der Ebene, die A gar nicht studiert. Fusioniert: <strong>die Struktur (Gruppe/Attraktor) ist immer vollständig kenntlich; die Instanz ist es nur, wenn die Wirkung nicht sensitiv ist.</strong> A's endliche Symmetriegruppe ist eine <em>stetige Abbildung</em> (eine Bijektion) — auch das Detail (wohin jede Ecke geht) ist exakt bestimmt, es gibt kein Chaos. B's sensitives iteratives Mapping lässt das Detail prinzipiell offen. <em>A ist der nicht-sensitiven Grenzfall, voll lesbar bis ins Detail; B der sensitive Fall, Struktur lesbar, Detail für immer halb verdeckt.</em> Beide stimmen: <strong>immer die Struktur lesen.</strong></p>
+
+  <h3>4 · Totale Vereinigung ↔ sicherer Frame → Erkenntnis vs. Handlung</h3>
+  <p>A's „je fassender, desto mehr“ ist ein <em>Erkenntnis</em>-Prinzip (die generalisierende Struktur erklärt mehr: Schema > Geometrie in Charakteristik p). B's „nicht ins Chaos kippen“ ist ein <em>Handlungs</em>-Prinzip (den <em>Parameter so setzen</em>, dass das System auf einem guten Attraktor bleibt). Sie betreffen <em>unterschiedliche Richtungen des Parameters</em>: man <strong>versteht</strong> mit dem weitesten verfügbaren Frame (A's Totales), aber man <strong>handelt</strong>, um auf einem nachhaltigen Regime zu bleiben (B's Restriktion). <em>Die „steigende Flut“ (A) und das „nicht ins Heißhaus kippen“ (B) sind ein und dasselbe Prinzip — einmal epistemisch, einmal pragmatisch.</em></p>
+
+  <blockquote>„Der fruchtbare Standpunkt ist das Auge, das uns entdecken lässt, wie in einer gemeinsamen Ganzheit organisiert das Vielfältige zusammengehört.“ — dieses „Zusammengehören“ ist, formal gesprochen, die Menge, die die Wirkung invariant lässt: die Symmetriegruppe (A), der Attraktor (B). Dieselbe Menge, zwei Namen.</blockquote>
+</section>
+
+<!-- ============ INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="n">04</span>Fusionierter Inhalt</h2>
+
+  <h3>1 · Das fusionierte Objekt: die invariante Menge unter der Wirkung</h3>
+  <p>Beide Papiere lösen das „stumme Objekt“ bzw. den „irreführenden Frame“, indem sie den Inhalt vom Punkt auf die <em>Menge</em> verlegen. A's Objekt ist die <strong>Symmetriegruppe</strong> — die Menge der selbstbewahrenden Transformationen des Quadrats (<code>D₄</code>, 8 Elemente). B's Objekt ist der <strong>Attraktor</strong> — die Menge, auf die der Phasenraum unter der Iteration abbildet und die die Iteration auf sich selbst zurückführt. Beides ist <em>die Teilmenge des Zustandsraums, die unter der Wirkung invariant ist</em>. Der entscheidende fusionierende Zug: <strong>Der Attraktor ist eine Invariante im Sinne von A</strong>. A's „stilles Objekt, das sichtbar wird“ <em>ist</em> B's Attraktor. Die Instanz (Standpunkt/Bahn) ist eine <em>Probe</em> dieser Menge — nie die Menge selbst.</p>
+
+  <h3>2 · Zwei Ebenen: Instanz ↔ Struktur</h3>
+  <p>A: <em>Standpunkt</em> (1) ↔ <em>Gruppe</em> (8). B: <em>Bahn</em> (1 Trajektorie) ↔ <em>Attraktor</em> (die Menge). Auf beiden Seiten ist das lesbare Objekt immer die <strong>Aggregation</strong>; die Instanz ist stumm (A) oder rauschend (B). Genau dieser Sprung ist der „Zoom“: vom Element zur Menge. A's „8 Standpunkte → eine Vision“ und B's „eine Bahn → der Attraktor“ sind dieselbe Operation.</p>
+
+  <h3>3 · Das Zusammengesetzungs-Gesetz: Operation ↔ Dynamik</h3>
+  <p>Jede invariante Menge trägt ein <em>Gesetz, wie die Proben sich zu ihr zusammensetzen</em>. In A ist es die <strong>Gruppenoperation</strong> (Zusammensetzen) — assoziativ, also kohärent („Werte stimmen auf Überlappungen überein“, die A's Garben-Verklebung ist). In B ist es die <strong>Dynamik</strong> (die Karte <code>x ↦ f(x)</code>, deterministischer nächster Zustand). Beide sind das Gesetz, nach dem Proben zum Ganzen verklebt werden. A's Assoziativität <code>(a∘b)∘c = a∘(b∘c)</code> ist B's Determinismus <code>f(f(x))</code>:</p>
+  <div class="eq">A (Gruppe): &nbsp; a∘b ∈ G &nbsp;·&nbsp; (a∘b)∘c = a∘(b∘c) &nbsp;·&nbsp; ∃e: e∘a=a∘e=a &nbsp;·&nbsp; ∀a ∃a⁻¹: a∘a⁻¹=e
+<br>B (Karte): &nbsp; x<sub>n+1</sub> = f(x<sub>n</sub>) &nbsp;—&nbsp; z.&nbsp;B. logistisch x<sub>n+1</sub> = r·x<sub>n</sub>·(1−x<sub>n</sub>)</div>
+
+  <h3>4 · Die Diagnose der Wirkung: Invarianz ↔ Divergenz (das Spektrum)</h3>
+  <p>Um zu lesen, <em>in welchem Frame</em> man sich befindet, befragen beide die Wirkung. A liest die <strong>Invariante</strong> — was unter der Gruppe fix bleibt (Form, Betti-Zahlen, „dieselbe Tonart“). B liest den <strong>Lyapunov-Exponenten</strong> — die mittlere Rate, mit der infinitesimal nahe Bahnen auseinanderlaufen — <em>die quantitative Version der Frage „in welchem Frame bin ich?“</em> Und er liest den <strong>Attraktor</strong>, wo die Wirkung landet. Zusammen: das <strong>Spektrum der Wirkung</strong> — sein Fixer/neutraler Teil (A) und sein Expansiver Teil (B):</p>
+  <div class="eq">Lyapunov (B): &nbsp; λ = lim<sub>N→∞</sub> (1/N) · Σ<sub>n</sub> ln | f′(x<sub>n</sub>) | &nbsp;—&nbsp; λ &lt; 0: konvergent (stabil) &nbsp;·&nbsp; λ &gt; 0: chaotisch (Detail unvorhersagbar)</div>
+  <p>Invarianz (A) = der neutrale Teil des Spektrums; Divergenz (B) = sein expansiver Teil. <em>Beide lesen dieselbe Wirkung, nur verschiedene Eigenwerte.</em></p>
+
+  <h3>5 · Kippen = Strukturwechsel über einen Parameter</h3>
+  <p>Die invariante Menge wird durch einen <strong>Parameter</strong> ausgewählt — und wechselt an einem kritischen Wert. A: die „richtige allgemeine Theorie“ (Schema/Topos/Motiv) „macht das harte Problem trivial“ — die <em>steigende Flut</em> öffnet die Nuss, d.&nbsp;h. die passende Struktur löst das Problem auf. B: der <em>Kipppunkt</em> (Feigenbaum-Punkt <strong>r ≈ 3,5699</strong>, universelle Konstante <strong>δ ≈ 4,6692</strong>, subkritische Hopf-Bifurkation, der CO₂-Kipppunkt) — wenn ein Parameter die Schwelle überschreitet, wechselt das Regime/der Attraktor; <strong>der Lyapunov-Exponent kreuzt dort 0</strong>. Fusioniert: <em>die Struktur ist eine Funktion des Parameters; über eine kritische Stelle wird das invariante Objekt ausgetauscht</em> (neue Gruppe / neuer Attraktor). B's „Kipppunkt im Nebel“ wird zu A's messbarem Punkt: λ kreuzt 0.</p>
+  <div class="eq">Logistische Karte (B): &nbsp; r&lt;3 Fixpunkt · ≈3,449 Periode 2 · ≈3,544 Periode 4 · r≈3,5699 (Feigenbaum δ≈4,6692) → Chaos
+<br>Doppeltopf / Bistabilität (B): &nbsp; V(x) = x⁴/4 − x²/2 + p·x &nbsp; (Kippen mit Hysterese bei wachsendem p)</div>
+
+  <h3>6 · Das Steuerungsprinzip: den Parameter ändern, nicht die Instanz</h3>
+  <p>Beide enden beim Hebel. A: man „bewegt“ die Ecken nicht, man <em>liest die 8</em> — die Gruppe zu benennen macht das Objekt lesbar (steigende Flut = die Struktur finden, in der das Problem sich auflöst). B: man dreht den <em>upstream</em>-Hahn (Cap &amp; Share) statt tausend downstream-Ventile, denn die einzelnen Bahnen sind unkontrollierbar (Schmetterlingseffekt). Fusioniert: <strong>Man steuert ein System über seinen Parameter/durch seine Struktur — niemals über seine einzelnen Instanzen.</strong> Verstehe mit dem weitesten Frame (A), handle so, dass du auf einem nachhaltigen Attraktor bleibst und den Parameter fern vom kritischen Punkt hältst (B).</p>
+
+  <p><strong>Der fusionierte Leitsatz:</strong> Ein Objekt wird lesbar, indem man seine <em>invariante Struktur unter der Wirkung</em> findet — die Menge der selbstbewahrenden Transformationen (Symmetriegruppe, A) bzw. die Menge, die die Iteration auf sich selbst abbildet (Attraktor, B) — und liest, wie die Wirkung sie zusammensetzt (Operation/Dynamik), welche Größen invariant bleiben (Melodie/Betti-Zahlen) und welche divergieren (Lyapunov), und durch welchen Parameter sie gewählt wird (Kipppunkt). A liefert den Grund, <em>warum</em> es funktioniert (ein Objekt wird sichtbar über die Gesamtheit der Wege, auf denen es sich selbst bewahrt); B liefert die <em>Messgröße</em> dahinter. <em>Beide lesen dasselbe: die invariante Struktur, aus der das einzelne Bild nur eine Probe ist.</em></p>
+</section>
+
+<!-- ============ VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="n">05</span>Interaktiv: Vom einzelnen Bild zur invarianten Struktur</h2>
+  <p>Ein einziges <strong>Aggregations-Regelwerk</strong>, das beide Hälften gleichzeitig treibt — der fusionierte Gedanke in einem Bild. Links <strong>A</strong>: das stille Quadrat, an dem die Standpunkte (Symmetrien von <code>D₄</code>) einer nach dem anderen erscheinen — die <em>Form bleibt invariant</em>, nur die 8 Proben wachsen. Rechts <strong>B</strong>: die logistische Karte (r = 3,9, chaotisch) — bei wenigen Abtastungen ein <em>Rauschen</em>, bei vielen die glatte <em>invariante Dichte</em> (der Attraktor). Schiebe den Regler: <em>je mehr Proben, desto deutlicher die invariante Struktur.</em></p>
+
+  <div class="viz-wrap">
+    <canvas id="viz" width="820" height="440"></canvas>
+
+    <div class="ctl">
+      <label>Aggregation: <em>1 Instanz</em> → <em>die invariante Struktur</em> <span class="val" id="aggVal">50 %</span></label>
+      <input type="range" id="agg" min="0" max="100" step="1" value="50">
+    </div>
+
+    <div class="readout">
+      <div class="stat"><div class="num" id="kEl">–</div><div class="lab">Standpunkte sichtbar (A) · Form invariant</div></div>
+      <div class="stat"><div class="num" id="sEl">–</div><div class="lab">Abtastungen (B) · Rauschen → Dichte</div></div>
+      <div class="stat"><div class="num" id="lamEl">–</div><div class="lab">Lyapunov λ (B, r=3,9) · &gt;0 ⇒ Detail unvorhersagbar</div></div>
+    </div>
+    <p class="hint">A: ein Standpunkt = stumm (1 Probe), alle 8 = die Vision. B: eine Bahn = Rauschen, die Menge aller Bahnen = der Attraktor (die invariante Struktur). Dieselbe Operation — vom Element zur Menge.</p>
+  </div>
+</section>
+
+<!-- ============ PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="n">06</span>Provenienz</h2>
+  <div class="prov">
+    <div class="src">A · <a href="../n1-028.html"><code>n1-028.html</code></a> — „Das stille Objekt und seine Standpunkte“</div>
+    <p>Runde-1-Fusion: <em>Récoltes et Semailles</em> (Grothendieck) × Gruppentheorie. Kern: „Symmetrie ist Vision“ — das stille Objekt leuchtet erst durch die Gesamtheit seiner selbstbewahrenden Standpunkte (D₄, Garben, Schemata, Motive, steigende Flut).</p>
+  </div>
+  <div class="prov">
+    <div class="src">B · <a href="../n1-095.html"><code>n1-095.html</code></a> — „Der Zoom als Geometrie“</div>
+    <p>Runde-1-Fusion: Chaos-Theorie × Framespotting. Kern: „Der Zoom ist Geometrie“ — die Detail-Bahn ist irreführend, der Attraktor die Struktur; Lyapunov-Exponent = Frame-Indikator, Bifurkation = Kipppunkt.</p>
+  </div>
+</section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  var ctx = cv.getContext('2d');
+  var slider = document.getElementById('agg');
+  var aggVal = document.getElementById('aggVal');
+  var kEl = document.getElementById('kEl');
+  var sEl = document.getElementById('sEl');
+  var lamEl = document.getElementById('lamEl');
+  var statusEl = document.querySelector('.viz-status');
+
+  function getVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function colors(){ return {
+    bg:getVar('--canvas-bg'), ink:getVar('--viz-ink'), dim:getVar('--viz-dim'),
+    grid:getVar('--viz-grid'), axis:getVar('--viz-axis'), panel:getVar('--panel'),
+    a:getVar('--viz-a'), b:getVar('--viz-b'), chaos:getVar('--viz-chaos'),
+    order:getVar('--viz-order'), marker:getVar('--viz-marker')
+  }; }
+  function sizeCanvas(){
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.clientWidth, h = cv.clientHeight;
+    var pw = Math.round(w*dpr), ph = Math.round(h*dpr);
+    if (cv.width!==pw || cv.height!==ph){ cv.width=pw; cv.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:w, h:h};
+  }
+  function logi(x,r){ return r*x*(1-x); }
+  function computeLyap(r){
+    var N=4000, burn=1000, x=0.5, s=0, i;
+    for (i=0;i<burn;i++) x = logi(x,r);
+    for (i=0;i<N;i++){ x = logi(x,r); var d = Math.abs(r*(1-2*x)); if (d<1e-12) d = 1e-12; s += Math.log(d); }
+    return s/N;
+  }
+
+  var R_B = 3.9, BINS = 40, LAMBDA = computeLyap(R_B);
+
+  function drawA(c, midX, h, s){
+    var aCx = midX*0.5, aCy = h*0.54;
+    var half = 60, ringR = 96;
+    var K = 1 + Math.round(s*7);
+    ctx.fillStyle = c.dim; ctx.font='600 12px system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('A · Das stille Quadrat \u2192 seine Standpunkte (D\u2084)', 14, 20);
+    ctx.beginPath();
+    ctx.moveTo(aCx-half, aCy-half); ctx.lineTo(aCx+half, aCy-half);
+    ctx.lineTo(aCx+half, aCy+half); ctx.lineTo(aCx-half, aCy+half); ctx.closePath();
+    ctx.fillStyle = c.panel; ctx.globalAlpha=0.35; ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle = c.a; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle = c.a; ctx.font='700 13px system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('A', aCx-half, aCy-half-0); ctx.fillText('B', aCx+half, aCy-half);
+    ctx.fillText('C', aCx+half, aCy+half); ctx.fillText('D', aCx-half, aCy+half);
+    for (var i=0;i<8;i++){
+      var ang = -Math.PI/2 + i*Math.PI/4;
+      var dx = aCx + ringR*Math.cos(ang), dy = aCy + ringR*Math.sin(ang);
+      var active = (i < K);
+      if (active){
+        ctx.beginPath(); ctx.moveTo(aCx,aCy); ctx.lineTo(dx,dy);
+        ctx.strokeStyle = c.a; ctx.globalAlpha=0.18; ctx.lineWidth=1.5; ctx.stroke(); ctx.globalAlpha=1;
+      }
+      ctx.beginPath(); ctx.arc(dx,dy, active?11:7, 0, Math.PI*2);
+      ctx.fillStyle = active? c.a : c.panel; ctx.fill();
+      ctx.lineWidth = active?2.5:1.5; ctx.strokeStyle = active? c.a : c.dim; ctx.stroke();
+      ctx.fillStyle = active? c.panel : c.dim;
+      ctx.font='600 10px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(String(i+1), dx, dy);
+    }
+    ctx.fillStyle = c.dim; ctx.font='italic 12px system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Form bleibt invariant \u2014 nur die Standpunkte erscheinen (1\u21928).', 14, h-14);
+    return K;
+  }
+
+  function drawB(c, midX, w, h, s){
+    var S = Math.round(20 + s*(3000-20));
+    var x0 = midX + 22, x1 = w-16;
+    var top = h*0.16, bot = h*0.84;
+    ctx.fillStyle = c.dim; ctx.font='600 12px system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('B · logistische Karte, r = 3,9 \u2192 invariante Dichte', midX+20, 20);
+    var counts = new Array(BINS).fill(0);
+    var x = 0.5, i;
+    for (i=0;i<400;i++) x = logi(x,R_B);
+    for (i=0;i<S;i++){ x = logi(x,R_B); var b = Math.min(BINS-1, Math.floor(x*BINS)); counts[b]++; }
+    var maxc = 1; for (i=0;i<BINS;i++) if (counts[i]>maxc) maxc = counts[i];
+    var bw = (x1-x0)/BINS;
+    ctx.strokeStyle = c.axis; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x0,bot); ctx.lineTo(x1,bot); ctx.stroke();
+    for (i=0;i<BINS;i++){
+      var bh = (counts[i]/maxc)*(bot-top);
+      ctx.fillStyle = c.b; ctx.globalAlpha=0.72;
+      ctx.fillRect(x0+i*bw+1, bot-bh, Math.max(1,bw-2), bh);
+      ctx.globalAlpha=1;
+    }
+    ctx.fillStyle = c.dim; ctx.font='10px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('x=0', x0, bot+13); ctx.fillText('x=1', x1-18, bot+13);
+    ctx.font='italic 12px system-ui,sans-serif';
+    ctx.fillText('wenig Abtastung = Rauschen  \u00b7  viel Abtastung = invariante Dichte (Struktur)', midX+20, h-14);
+    return S;
+  }
+
+  function draw(){
+    var s = sizeCanvas(); var w = s.w, h = s.h; var c = colors();
+    var t = slider.value/100;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = c.bg; ctx.fillRect(0,0,w,h);
+    var midX = w*0.45;
+    ctx.strokeStyle = c.grid; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(midX, 12); ctx.lineTo(midX, h-12); ctx.stroke(); ctx.setLineDash([]);
+    var K = drawA(c, midX, h, t);
+    var S = drawB(c, midX, w, h, t);
+    aggVal.textContent = slider.value + ' %';
+    kEl.textContent = K + ' von 8';
+    sEl.textContent = (S<1000? String(S) : (S/1000).toFixed(1)+' k');
+    lamEl.textContent = (LAMBDA>0?'+':'') + LAMBDA.toFixed(4);
+    lamEl.style.color = LAMBDA>0 ? c.chaos : c.order;
+    if (statusEl){
+      statusEl.textContent = t<0.25 ? 'Detail: ein Standpunkt (stumm) / eine Bahn (Rauschen) \u2014 das Bild ist unlesbar.'
+        : (t>0.75 ? 'Struktur: die invariante Menge (D\u2084 / Attraktor) ist sichtbar \u2014 das stille Objekt hat eine Vision.'
+        : 'Aggregation: je mehr Proben, desto deutlicher die invariante Struktur (Form / Dichte).');
+    }
+  }
+
+  slider.addEventListener('input', draw);
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); draw();
+  });
+  var rto = null;
+  window.addEventListener('resize', function(){ clearTimeout(rto); rto = setTimeout(draw, 120); });
+  draw();
+})();
+</script>
+</body>
+</html>

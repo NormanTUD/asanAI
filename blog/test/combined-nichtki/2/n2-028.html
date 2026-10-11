@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eine Zahl, zwei Höhen — Windung, Monodromie &amp; der fehlende Schnitt</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#7b2ff7; --accent-soft:rgba(123,47,247,.12);
+  --accent2:#0b8fb0; --accent3:#d8492b; --accent4:#2f9e6f;
+  --pt:#d99a06; --grid:#1e2530; --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1020; --fg:#e7ecf6; --muted:#93a0b6; --panel:#111a30; --border:#243455;
+  --accent:#b98cff; --accent-soft:rgba(185,140,255,.14);
+  --accent2:#3fd0ff; --accent3:#ff7a5c; --accent4:#57d99a;
+  --pt:#ffcf4d; --grid:#93a0b6; --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.66; -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+}
+article{ max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+header{margin-bottom:26px;}
+h1{ font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; }
+.subtitle{ color:var(--muted); font-size:1.02rem; margin:0; font-style:italic; }
+.subtitle code{font-style:normal;}
+.lede{color:var(--muted); font-size:1.02rem; margin:14px 0 0; font-style:italic;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{ font-size:1.04rem; margin:18px 0 8px; color:var(--accent); }
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent2); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code, .mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+.mathbox{
+  background:var(--code); color:var(--code-fg);
+  border-left:3px solid var(--accent); border-radius:0 8px 8px 0;
+  padding:12px 16px; margin:14px 0; font-size:.92rem; line-height:1.8;
+  overflow-x:auto;
+}
+.mathbox .row{white-space:nowrap;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.card p:last-child{margin-bottom:0;}
+.tag{
+  display:inline-block; font-size:.7rem; font-weight:bold; letter-spacing:.04em;
+  padding:2px 9px; border-radius:20px; margin-right:6px; vertical-align:middle;
+}
+.tag.a{background:rgba(123,47,247,.16); color:var(--accent);}
+.tag.b{background:rgba(11,143,176,.16); color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16); color:var(--muted);}
+html.dark .tag.a{color:var(--accent);}
+html.dark .tag.b{color:var(--accent2);}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.vs .col p{margin:0; font-size:.94rem;}
+.insight{
+  border-left:4px solid var(--accent); background:var(--accent-soft);
+  padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0;
+}
+.insight b{color:var(--accent);}
+table{border-collapse:collapse;margin:14px 0;font-size:.92em;width:100%;}
+th,td{border:1px solid var(--border);padding:7px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel);color:var(--accent);}
+.note{
+  border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);
+}
+.note b{color:var(--fg);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:520px; touch-action:none;}
+.legend{display:flex; flex-wrap:wrap; gap:14px; padding:8px 14px 2px; font-size:.74rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:130px;}
+.viz-controls select{padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--panel);color:var(--fg);font:inherit;font-size:.82rem;}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted); max-width:280px;}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);color:var(--fg);border:1px solid var(--border);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:.95em;}
+#readout{min-height:1.2em;}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:6px 0;}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" title="Farbschema wechseln">&#9680;</button>
+<article>
+<header>
+  <h1>Eine Zahl, zwei H&ouml;hen</h1>
+  <p class="subtitle">Fusion aus: <code>n1-046.html</code> &#10007; <code>n1-045.html</code> &nbsp;(Runde 2)</p>
+  <p class="lede">Windung, Monodromie und der fehlende Schnitt: dieselbe topologische Invariante, gemessen
+  von einer Seite, strukturiert von der anderen &mdash; und an genau derselben Stelle abgelesen, an der
+  ein globales Objekt existiert bzw. nicht existiert.</p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Round-1-Papiere sind <em>derselbe Meta-Satz der Topologie, von zwei H&ouml;hen her</em>:
+  <strong>Eine topologische Invariante ist der Schatten, den lokale Daten auf die globale Struktur werfen
+  &mdash; und dieser Schatten ist eine einzige Ganzzahl, die (bei&nbsp;A, n1-046) als <em>globales Integral
+  einer lokalen Dichte</em> und (bei&nbsp;B, n1-045) als <em>Abelschung der Monodromie</em> auftritt und die
+  genau dann von&nbsp;0 verschieden ist, wenn ein globales Objekt (eine Schnitt-Linie) <em>obstruiert</em> ist.</strong>
+  A mi&szlig;t die Schleife &mdash; eine lokale Wendungsdichte, die um&nbsp;0 oszilliert, deren globales Integral
+  die Windungszahl <code>n &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</code> ergibt (Wendungszahl-Satz). B
+  strukturiert dieselbe Schleife &mdash; ein Faserb&uuml;ndel mit Projektion <code>p: E &rarr; B</code>, lokal
+  trivial und global verklebt, dessen Umrundung eine Monodromie <code>&rho;: &pi;&#8321;(B) &rarr; Aut(F)</code>
+  tr&auml;gt, die eine globale Schnitt-Linie erzwingt, wenn sie nichttrivial ist (Igel-Satz als fehlender Schnitt).
+  Beide Wege laufen auf <em>einen und denselben Generator von &pi;&#8321;(S&#185;) &cong; &#8484;</em> hinaus.</p>
+  <p>Die fusionierte Position: <strong>&bdquo;Lokal trivial, global verklebt&ldquo; (B) und &bdquo;lokal
+  oszillierend, global integriert&ldquo; (A) sind derselbe Satz.</strong> A's Windung <code>n</code> (gemessen)
+  und B's Monodromie <code>&rho;</code> (strukturiert) leben auf demselben <code>&#8484;</code>; A's
+  Eckmann&ndash;Hilton-Erkenntnis &mdash; Iteration/Linearisierung erzwingt abelsche Struktur
+  (<code>&pi;&#8321; &rarr; H&#8321;</code>) &mdash; erkl&auml;rt, <em>warum</em> genau diese eine Zahl der
+  <em>abelsche Kern</em> von B's feiner, nichtabel'schen Leiter (Monodromie in <code>Aut(F)</code>, lange exakte
+  Homotopie-Sequenz) ist. Kurz: <em>Messen und Existenz lesen dieselbe Zahl.</em></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Beide Papiere sind Topologie und widersprechen sich in <em>keiner</em> faktischen Aussage (sie
+  ber&uuml;hren sich an genau derselben Stelle: <code>&pi;&#8321;(S&#185;) &cong; &#8484;</code>). Aber ihre
+  Round-1-Thesen nehmen drei unvereinbar wirkende <em>Staturen</em> ein:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Die eine Zahl = Payoff</h3>
+      <div class="src">A &mdash; n1-046</div>
+      <p>Der <em>climax</em> ist die einzelne Zahl: Die lokale Wendungsdichte integriert sich zur globalen
+      Windungszahl <code>n &isin; &#8484;</code> &mdash; die Invariante <em>ist</em> das Ergebnis, die
+      abgelesene Ganzzahl.</p>
+    </div>
+    <div class="col">
+      <h3>1. Die eine Zahl = Schatten</h3>
+      <div class="src">B &mdash; n1-045</div>
+      <p>Die einzelne Zahl (Eulers <code>&#967;</code>) wird ausdr&uuml;cklich <em>herabgestuft</em> zu einem
+      groben <em>Schatten</em>; die <em>eigentliche</em> Invariante ist die feine Leiter der Homotopiegruppen
+      plus Monodromie &mdash; die Zahl muss verfeinert werden.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Stetige Integration</h3>
+      <div class="src">A &mdash; n1-046</div>
+      <p>Die Invariante entsteht durch <em>Integration einer stetigen lokalen Dichte</em>
+      (<code>&#8750; d&theta; = n&middot;2&pi;</code>) &mdash; der Weg f&uuml;hrt <em>Analysis&nbsp;&rarr;
+      Topologie</em> (Laplace/Wendungszahl).</p>
+    </div>
+    <div class="col">
+      <h3>2. Kombinatorisches Z&auml;hlen</h3>
+      <div class="src">B &mdash; n1-045</div>
+      <p>Die Invariante entsteht durch <em>Z&auml;hlen</em> (<code>&#967; = V &minus; E + F</code>) und
+      <em>Gruppen-Leitern</em> &mdash; der Weg f&uuml;hrt <em>Kombinatorik/Algebra&nbsp;&rarr; Topologie</em>,
+      ohne jedes Integral.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. Messung (Dichte)</h3>
+      <div class="src">A &mdash; n1-046</div>
+      <p>Signatur: ein <em>wohldefinierter Wert existiert immer</em> und ist messbar &mdash; die Dichte
+      integriert immer zu einer Ganzzahl. Topologie als <em>&bdquo;wie viel?&ldquo;</em></p>
+    </div>
+    <div class="col">
+      <h3>3. Obstruktion (Existenz)</h3>
+      <div class="src">B &mdash; n1-045</div>
+      <p>Signatur (Igel-Satz): ein globales Objekt <em>fehlt</em> &mdash; ein nirgends-verschwindender Schnitt
+      kann <em>nicht</em> existieren. Topologie als <em>&bdquo;existiert es?&ldquo;</em></p>
+    </div>
+  </div>
+  <div class="note">Kein Widerspruch in der Mathematik (beide leben auf <code>&pi;&#8321;(S&#185;) &cong;
+  &#8484;</code>), aber drei unvereinbar wirkende Gesten: Zahl als Payoff vs. Zahl als Schatten, Integration vs.
+  Z&auml;hlen, Messung vs. Existenz.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p><strong>1. Die eine Zahl ist die Abelschung der feinen Leiter.</strong> B nennt die Zahl den
+  &bdquo;Schatten der feinen Leiter&ldquo;; A erkl&auml;rt, <em>warum</em> dieser Schatten genau <code>&#8484;</code>
+  ist: Iteration/Linearisierung (Eckmann&ndash;Hilton) <em>commutisiert</em> die nichtabel'sche Struktur,
+  sodass der <em>abelsche Kern</em> die ganze Zahl ist. <em>Fusionsschluss:</em> B's &bdquo;Schatten&ldquo; und
+  A's &bdquo;Abelschung&ldquo; (<code>&pi;&#8321; &rarr; H&#8321;</code>) sind dieselbe Operation &mdash; A
+  berechnet, was B nur benennt.</p>
+  <p><strong>2. Integration und Z&auml;hlen sind zwei Diskretisierungen desselben globalen
+  Coboundary-Checks.</strong> Ob man eine Differentialdichte integriert (A) oder Zellen z&auml;hlt
+  (<code>V&minus;E+F</code>, B) &mdash; in beiden F&auml;llen ist die Invariante &bdquo;Summe/Integral einer
+  lokal definierten, coboundary-artigen Gr&ouml;&szlig;e&ldquo;. Wendungszahl-Satz (A) und Eulers Z&auml;hlung (B)
+  sind dasselbe Prinzip in zwei Rechnungen. <em>Fusionsschluss:</em> &bdquo;lokale Daten &rarr; globale
+  Ganzzahl&ldquo; gilt kalk&uuml;l-unabh&auml;ngig; Integral und Z&auml;hlung sind zwei Diskretisierungen
+  eines einzigen globalen Coboundary-Checks.</p>
+  <p><strong>3. Die Obstruktion ist die Messung.</strong> &bdquo;Kein globaler Schnitt&ldquo; (B) &hArr;
+  &bdquo;Obstruktionsklasse &ne; 0&ldquo; (A). Die Obstruktion wird <em>quantiert</em> durch dieselbe Zahl:
+  die M&ouml;bius-Verdrillung (<code>&rho;(1) = &minus;id</code>) ist eine nichttriviale Wendung und erzwingt
+  genau die Nullstelle. <em>Fusionsschluss:</em> Existenz (B) und Messung (A) sind zwei Seiten derselben
+  M&uuml;nze &mdash; die Obstruktion ist die Invariante als Ja/Nein gelesen, die Dichte/der Grad als Zahl
+  gelesen.</p>
+  <div class="insight"><b>Gesamtfolgerung:</b> A und B sind dasselbe Objekt &mdash; der Generator von
+  <code>&pi;&#8321;(S&#185;) &cong; &#8484;</code> &mdash; auf zwei H&ouml;hen. A liest ihn als <em>gemessene
+  Windung</em>, B als <em>strukturierte Monodromie</em>; die Abelschung ist der Bruchpunkt, an dem die feine
+  nichtabel'sche Leiter (B) zur abelschen Ganzzahl (A) wird. Was A <em>mi&szlig;t</em>, ist das, was B
+  <em>obstruiert</em>.</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Das gemeinsame Objekt</span>
+    <p>Der Generator <code>[g] &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</code>. Bei&nbsp;A ist er die
+    Homotopieklasse <code>[p]</code> einer Schleife, abgelesen als Windungszahl <code>n</code>. Bei&nbsp;B ist er
+    genau das Element, auf dem die Monodromie <code>&rho;: &pi;&#8321;(B,b&#8320;) &rarr; Aut(F)</code> wirkt.
+    Dasselbe <code>&#8484;</code> &mdash; einmal gemessen, einmal strukturiert.</p>
+  </div>
+
+  <h3>A's These (abstrahiert): lokale Dichte &rarr; globales Integral &rarr; abelsche Invariante</h3>
+  <ul>
+    <li>Ein kanonischer <em>Zustand</em> (harmonischer Punkt / Identit&auml;tsschleife) ist das Zentrum, von dem
+      abgewichen wird.</li>
+    <li>Die <em>lokale Abweichung</em> (Wendungsdichte <code>d&theta;/dt</code>, Laplaces <code>&Delta;f</code>)
+      oszilliert um&nbsp;0, Mittel&nbsp;=&nbsp;0.</li>
+    <li>Das <em>globale Integral</em> dieser Dichte ist eine exakte Ganzzahl:
+      <code>(1/2&pi;)&#8750; d&theta; = n &isin; &#8484;</code> (Wendungszahl-Satz = <code>&pi;&#8321;(S&#185;)
+      &cong; &#8484;</code>).</li>
+    <li><em>Iteration erzwingt Abelschheit</em> (Eckmann&ndash;Hilton): <code>&Omega;&#178;</code> abelsch,
+      <code>&pi;&#8321; &rarr; H&#8321;</code> (Abelschung) &mdash; die eine Zahl ist der abelsche Kern.</li>
+  </ul>
+
+  <h3>B's These (abstrahiert): lokal trivial, global verklebt &rarr; Monodromie &rarr; Obstruktion</h3>
+  <ul>
+    <li>Ein <em>Faserb&uuml;ndel</em> <code>p: E &rarr; B</code> mit Faser <code>F</code>: lokal Trivialisierung
+      <code>p&#8315;&#185;(U) &cong; U &times; F</code>, global verklebt durch &Uuml;bergangsfunktionen (Kozykel
+      <code>g&#945;&#946;&middot;g&#946;&#947; = g&#945;&#947;</code>).</li>
+    <li>Einmal um die Basis herum wirkt die <em>Monodromie</em> <code>&rho;: &pi;&#8321;(B) &rarr; Aut(F)</code>:
+      trivial <code>&rho; &equiv; id</code>, M&ouml;bius <code>&rho;(1) = &minus;id</code>.</li>
+    <li>Der <em>Igel-Satz</em> ist ein fehlender Schnitt: <code>TS&#178; &rarr; S&#178;</code> hat keine
+      nirgends-verschwindende Schnitt &mdash; die Monodromie erzwingt die Nullstelle.</li>
+    <li><em>Grob vs. fein:</em> Eulers <code>&#967; = V&minus;E+F</code> (<code>&#967;(S&#178;)=2</code>,
+      <code>&#967;(T&#185;)=0</code>) ist der grobe Schatten der feinen Leiter (lange exakte
+      Homotopie-Sequenz <code>&pi;&#8348;(F) &rarr; &pi;&#8348;(E) &rarr; &pi;&#8348;(B) &rarr; &pi;&#8347;&#8321;(F)</code>).</li>
+  </ul>
+
+  <h3>Die Verschmelzung (f&uuml;rfach dieselbe Sache)</h3>
+  <ul>
+    <li><strong>1. Dasselbe &#8484;.</strong> A's gemessene Windung <code>n</code> = B's
+    <em>Abelschung der Monodromie</em>: die net-Drehung nach dem Generator ist ein Grad &mdash; eine
+    Ganzzahl, die in der abelschen H&#178;/&pi;&#8321;-Ebene lebt.</li>
+    <li><strong>2. Verklebung = Wendung.</strong> B's Kozykel/&Uuml;bergangsfunktionen (die globale
+    Verklebung) <em>ist</em> genau das, was A als Windungszahl <code>n</code> abliest: wie oft/um wie viel die
+    Faser beim Umrundungsschritt dreht.</li>
+    <li><strong>3. Obstruktion = Invariante &ne; 0.</strong> Fehlender Schnitt (B) &hArr; nichttriviale
+    Wendung/Grad (A): die Obstruktionsklasse ist die Invariante, die &ne; 0 wird, sobald die Monodromie nicht
+    die Identit&auml;t ist.</li>
+    <li><strong>4. Abelschung verbindet.</strong> A's Eckmann&ndash;Hilton erkl&auml;rt, warum B's feine,
+    nichtabel'sche Leiter (Monodromie in <code>Aut(F)</code>, exakte Sequenz) auf <code>&#8484;</code>
+    abelsch wird &mdash; die eine Zahl ist der gemeinsame Bruchpunkt.</li>
+    <li><strong>5. Zwei Rechenk&uuml;hle, ein Check.</strong> Integration (A) und Z&auml;hlen (B) sind zwei
+    Diskretisierungen desselben globalen Coboundary-Checks.</li>
+  </ul>
+
+  <div class="mathbox">
+    <div class="row">Gemeinsam: &nbsp; &pi;&#8321;(S&#185;) &cong; &#8484;, Generator [g] &mdash; A: [p] (Windung n) &nbsp;&middot;&nbsp; B: &rho;-Wirkung</div>
+    <div class="row">A (Wendung): &nbsp; n = [p] = (1/2&pi;) &#8750; d&theta; &nbsp;&nbsp;(Wendungszahl-Satz, lokale Dichte &rarr; globales Integral)</div>
+    <div class="row">B (Monodromie): &nbsp; &rho; : &pi;&#8321;(B,b&#8320;) &rarr; Aut(F), &nbsp; M&ouml;bius &rho;(1) = &minus;id, &nbsp; trivial &rho; &equiv; id</div>
+    <div class="row">Abelschung: &nbsp; &pi;&#8321; &rarr; H&#8321; (A) = abelscher Kern der Monodromie (B) = Windungszahl / Grad &isin; &#8484;</div>
+    <div class="row">Igel-Satz: &nbsp; TS&#178; &rarr; S&#178; hat keinen nirgends-verschwindenden Schnitt (B) &nbsp;&hArr;&nbsp; Wendung/Grad &ne; 0 (A)</div>
+    <div class="row">Grobe Zahl: &nbsp; &#967; = V &minus; E + F; &nbsp; &#967;(S&#178;) = 2, &nbsp; &#967;(T&#185;) = 0 (B, Schatten der feinen Leiter)</div>
+  </div>
+
+  <h3>Die Karte der Fusion &mdash; A &#8596; B</h3>
+  <table>
+    <tr><th>A &middot; n1-046 (Windung / Dichte)</th><th>B &middot; n1-045 (B&uuml;ndel / Monodromie)</th></tr>
+    <tr><td>lokale Wendungsdichte <code>d&theta;/dt</code> (oszilliert, Mittel&nbsp;=&nbsp;0)</td>
+        <td>lokale Trivialisierung <code>p&#8315;&#185;(U) &cong; U &times; F</code> (lokal Produkt)</td></tr>
+    <tr><td>globales Integral <code>&#8750; d&theta; = n&middot;2&pi;</code> &rarr; Windung <code>n &isin; &#8484;</code></td>
+        <td>globale Verklebung / Kozykel &rarr; B&uuml;ndeltyp (Monodromie)</td></tr>
+    <tr><td><code>&pi;&#8321;(S&#185;) &cong; &#8484;</code> &mdash; <em>gemessen</em></td>
+        <td><code>&rho;: &pi;&#8321;(B) &rarr; Aut(F)</code> &mdash; <em>strukturiert</em>; Abelschung = n</td></tr>
+    <tr><td>Eckmann&ndash;Hilton: Iteration &rarr; abelsch (<code>&pi;&#8321; &rarr; H&#8321;</code>)</td>
+        <td>lange exakte Homotopie-Sequenz (feine Leiter)</td></tr>
+    <tr><td>&bdquo;wie viel?&ldquo; &mdash; eine Zahl (Messung)</td>
+        <td>&bdquo;existiert es?&ldquo; &mdash; Igel-Satz / fehlender Schnitt (Obstruktion)</td></tr>
+  </table>
+
+  <div class="insight"><b>Ein Gedanke, zwei H&ouml;hen:</b> Die Schleife umrundet die Basis einmal. Von A aus
+  gelesen: ihre lokale Wendungsdichte integriert sich zur Windungszahl <code>n</code>. Von B aus gelesen: dieselbe
+  Umrundung dreht die Faser um die Monodromie <code>&rho;(1)</code>; ist diese nicht die Identit&auml;t, so muss
+  jeder globale Schnitt durch null gehen. <em>Die eine Zahl ist zugleich das Gemessene (A), das Strukturierte (B)
+  und der Obstruktionstest (A/B).</em></div>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p>Ein Punkt umrundet die Basis <code>B = S&#185;</code> (eine Umrundung = der Generator von
+  <code>&pi;&#8321;(S&#185;) &cong; &#8484;</code>). Links (A, Violett): die Schleife mit einstellbarer
+  <strong>Windungszahl <code>n</code></strong>, jeder Bogen nach dem Vorzeichen der lokalen Wendungsdichte
+  gef&auml;rbt; unten die <strong>Dichte <code>d&theta;/dt</code></strong> (oszilliert um&nbsp;0, globales
+  Integral = <code>n&middot;2&pi;</code>). Rechts (B, Cyan): die <strong>Faser</strong> und die
+  <strong>Schnitt-Linie <code>s(&theta;)</code></strong> &mdash; trivial bleibt sie positiv (Schnitt existiert),
+  verdrillt (M&ouml;bius, <code>&rho;(1) = &minus;id</code>) muss sie <em>null werden</em> (rote&nbsp;&times;,
+  Igel-Satz/Obstruktion). Dieselbe Umrundung wird links <em>gemessen</em>, rechts <em>obstruiert</em>.</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>Basis / Schleife (A)</span>
+      <span><span class="sw" style="background:var(--accent3)"></span>lokale Wendung &gt; 0 (A)</span>
+      <span><span class="sw" style="background:var(--accent4)"></span>lokale Wendung &lt; 0 (A)</span>
+      <span><span class="sw" style="background:var(--accent2)"></span>Faser / Schnitt (B)</span>
+      <span><span class="sw" style="background:var(--accent3)"></span>Schnitt = 0 (B, Obstruktion)</span>
+      <span><span class="sw" style="background:var(--pt)"></span>laufender Punkt</span>
+    </div>
+    <div class="viz-controls">
+      <div class="grp">Windungszahl <b id="nVal">1</b>
+        <input type="range" id="nRange" min="-3" max="3" step="1" value="1"></div>
+      <div class="grp">B&uuml;ndel <b id="modeVal">verdrillt (M&ouml;bius)</b>
+        <select id="modeSel">
+          <option value="twisted" selected>verdrillt (M&ouml;bius, &rho;(1)=&minus;id)</option>
+          <option value="trivial">trivial (Zylinder, &rho;&equiv;id)</option>
+        </select></div>
+      <div class="grp">Bewegung
+        <button class="ctl on" id="playBtn">Pause</button></div>
+      <div class="hint">Dasselbe &pi;&#8321;(S&#185;) &cong; &#8484;: gemessen als Windung (A) &middot; strukturiert
+      als Monodromie (B). Verdrilltes B&uuml;ndel &rArr; Schnitt muss 0 werden.</div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <footer>
+    <p class="src"><a href="../n1-046.html"><strong>n1-046.html &mdash; Lokale Dichte, globale Invariante</strong></a>
+    (Round&nbsp;1, &ldquo;Loop Spaces &times; Laplace-Operator&rdquo;): eine lokale Wendungsdichte / Laplace-Dichte
+    oszilliert um&nbsp;0 und integriert sich zur globalen Windungszahl <code>n &isin; &pi;&#8321;(S&#185;) &cong;
+    &#8484;</code>; Iteration/Linearisierung erzwingt abelsche Struktur (Eckmann&ndash;Hilton,
+    <code>&pi;&#8321; &rarr; H&#8321;</code>). &mdash; Quelle A (die <em>messende</em> H&ouml;he).</p>
+    <p class="src"><a href="../n1-045.html"><strong>n1-045.html &mdash; Topologie, die man sehen und formal
+    fassen kann</strong></a> (Round&nbsp;1, &ldquo;Topologie zum Sehen &times; Fibrationen&rdquo;): ein Faserb&uuml;ndel
+    <code>p: E &rarr; B</code>, lokal trivial und global verklebt, mit Monodromie
+    <code>&rho;: &pi;&#8321;(B) &rarr; Aut(F)</code>; Igel-Satz als fehlender Schnitt (Obstruktion); Eulers Zahl als
+    grober Schatten der feinen Homotopie-Leiter. &mdash; Quelle B (die <em>strukturierende</em> H&ouml;he).</p>
+    <p style="margin-top:12px;">Fusion (Round&nbsp;2, nicht-AI-Track, Paar 028). Selbstenthalten, ohne
+    Netzwerk-Datenzugriffe; alle Daten (Schleifengeometrie, lokale Wendungsdichte, Schnitt-Linie, Windungszahl)
+    werden im Browser berechnet.</p>
+  </footer>
+</section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var readout=document.getElementById('readout');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx=canvas.getContext('2d');
+  var TAU=Math.PI*2, R=78, K=3, N=480, WOBBLE=30;
+
+  var nEl=document.getElementById('nRange');
+  var modeEl=document.getElementById('modeSel');
+  var nVal=document.getElementById('nVal');
+  var modeVal=document.getElementById('modeVal');
+  var playBtn=document.getElementById('playBtn');
+  var themeBtn=document.getElementById('themeBtn');
+
+  var state={ playing:true, tMove:0 };
+  var pal={};
+  var pts=[], seg=[], totalTurn=0, turnNum=0, maxAbs=1;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var num=parseInt(h,16);
+      if(isNaN(num)) return [128,140,170];
+      return [(num>>16)&255,(num>>8)&255,num&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function readPal(){
+    pal={
+      bg:toRgb(cssVar('--bg')), fg:toRgb(cssVar('--fg')), muted:toRgb(cssVar('--muted')),
+      grid:toRgb(cssVar('--grid')), loop:toRgb(cssVar('--accent')),
+      pos:toRgb(cssVar('--accent3')), neg:toRgb(cssVar('--accent4')),
+      fiber:toRgb(cssVar('--accent2')), pt:toRgb(cssVar('--pt'))
+    };
+  }
+
+  function curN(){ return parseInt(nEl.value,10)||0; }
+  function curMode(){ return modeEl?modeEl.value:'twisted'; }
+
+  function posAt(t,n,A){
+    var phi=t*n*TAU;
+    var r=R+A*Math.sin(t*TAU*K);
+    return { x:r*Math.cos(phi), y:r*Math.sin(phi) };
+  }
+  function secAt(t,mode){
+    return mode==='trivial' ? 0.85 : 0.85*Math.cos(t*Math.PI);
+  }
+
+  function recompute(){
+    var n=curN();
+    pts=new Array(N+1);
+    for(var i=0;i<=N;i++){ pts[i]=posAt(i/N,n,WOBBLE); }
+    if(n===0){
+      seg=new Array(N); for(var j=0;j<N;j++){ seg[j]=0; }
+      totalTurn=0; turnNum=0; maxAbs=1; return;
+    }
+    var tan=new Array(N);
+    for(var i2=0;i2<N;i2++){
+      var a=pts[Math.max(0,i2-1)], b=pts[Math.min(N,i2+1)];
+      var dx=b.x-a.x, dy=b.y-a.y;
+      tan[i2]=(dx===0&&dy===0)?0:Math.atan2(dy,dx);
+    }
+    seg=new Array(N); var total=0;
+    for(var i3=0;i3<N;i3++){
+      var prev=(i3-1+N)%N;
+      var d=tan[i3]-tan[prev];
+      while(d>Math.PI)d-=TAU; while(d<-Math.PI)d+=TAU;
+      seg[i3]=d; total+=d;
+    }
+    totalTurn=total; turnNum=total/TAU;
+    maxAbs=1e-6;
+    for(var i4=0;i4<N;i4++){ var av=Math.abs(seg[i4]); if(av>maxAbs)maxAbs=av; }
+  }
+
+  function draw(){
+    var w=canvas.clientWidth; if(w<2)w=2;
+    var h=520, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var n=curN(), mode=curMode();
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var top=45, bot=290, mid=(top+bot)/2, half=(bot-top)/2-22;
+    var cx1=w*0.26, cy1=mid, scale=118/(R+WOBBLE);
+    var fx=w*0.55;
+    var sx0=w*0.68, sx1=w*0.97;
+
+    ctx.textBaseline='alphabetic';
+    // top labels
+    ctx.textAlign='center';
+    ctx.font='bold 12px monospace'; ctx.fillStyle=rgba(pal.loop,1); ctx.fillText('Basis B = S\u00b9', cx1, 22);
+    ctx.font='10px monospace'; ctx.fillStyle=rgba(pal.muted,1); ctx.fillText('A \u00b7 Windung n', cx1, 35);
+    ctx.font='bold 12px monospace'; ctx.fillStyle=rgba(pal.fiber,1); ctx.fillText('Faser F', fx, 22);
+    ctx.font='10px monospace'; ctx.fillStyle=rgba(pal.muted,1); ctx.fillText('B', fx, 35);
+    ctx.font='bold 12px monospace'; ctx.fillStyle=rgba(pal.fiber,1); ctx.fillText('Schnitt s(\u03b8)', (sx0+sx1)/2, 22);
+    ctx.font='10px monospace'; ctx.fillStyle=rgba(pal.muted,1); ctx.fillText('B \u00b7 Monodromie', (sx0+sx1)/2, 35);
+
+    // ---- Panel A: base circle + rose ----
+    function SX(p){ return cx1+p.x*scale; }
+    function SY(p){ return cy1-p.y*scale; }
+    ctx.strokeStyle=rgba(pal.loop,0.5); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx1,cy1,R*scale,0,TAU); ctx.stroke();
+    ctx.fillStyle=rgba(pal.fg,0.7); ctx.beginPath(); ctx.arc(cx1,cy1,3,0,TAU); ctx.fill();
+    if(n!==0){
+      ctx.lineWidth=3;
+      for(var i=0;i<N;i++){
+        var a=pts[i], b=pts[i+1];
+        ctx.beginPath(); ctx.moveTo(SX(a),SY(a)); ctx.lineTo(SX(b),SY(b));
+        if(seg[i]>1e-4) ctx.strokeStyle=rgba(pal.pos,0.95);
+        else if(seg[i]<-1e-4) ctx.strokeStyle=rgba(pal.neg,0.95);
+        else ctx.strokeStyle=rgba(pal.loop,0.95);
+        ctx.stroke();
+      }
+    }
+    var mp = (n===0)?{x:R,y:0}:posAt(state.tMove,n,WOBBLE);
+    // little trail
+    if(state.playing && n!==0){
+      for(var tt=18; tt>=1; tt--){
+        var tr=state.tMove-0.006*tt; if(tr<0)tr+=1;
+        var tp=posAt(tr,n,WOBBLE);
+        ctx.fillStyle=rgba(pal.pt,0.45*(1-tt/20));
+        ctx.beginPath(); ctx.arc(SX(tp),SY(tp),Math.max(1,4-0.13*tt),0,TAU); ctx.fill();
+      }
+    }
+    ctx.fillStyle=rgba(pal.pt,1);
+    ctx.beginPath(); ctx.arc(SX(mp),SY(mp),6,0,TAU); ctx.fill();
+    ctx.strokeStyle=rgba(pal.fg,0.85); ctx.lineWidth=1.5; ctx.stroke();
+
+    // ---- Panel B: fiber axis ----
+    ctx.strokeStyle=rgba(pal.grid,0.6); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(fx,top); ctx.lineTo(fx,bot); ctx.stroke();
+    ctx.font='11px monospace'; ctx.textAlign='right'; ctx.fillStyle=rgba(pal.fg,0.8);
+    ctx.fillText('+1', fx-8, top+4); ctx.fillText(' 0', fx-8, mid+4); ctx.fillText('\u22121', fx-8, bot);
+    var fval=secAt(state.tMove,mode);
+    var fy=mid - fval*half;
+    ctx.strokeStyle=rgba(pal.fiber,1); ctx.lineWidth=5;
+    ctx.beginPath(); ctx.moveTo(fx,mid); ctx.lineTo(fx,fy); ctx.stroke();
+    var dir=fy<mid?-1:1;
+    ctx.fillStyle=rgba(pal.fiber,1);
+    ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(fx-6,fy+dir*11); ctx.lineTo(fx+6,fy+dir*11); ctx.closePath(); ctx.fill();
+    ctx.textAlign='left'; ctx.fillStyle=rgba(pal.fiber,1); ctx.font='11px monospace';
+    ctx.fillText('v='+fval.toFixed(2), fx+8, fy+4);
+    ctx.textAlign='center'; ctx.font='11px monospace';
+    ctx.fillStyle= mode==='trivial'?rgba(pal.muted,1):rgba(pal.pos,1);
+    ctx.fillText(mode==='trivial'?'\u03c1 \u2261 id':'\u03c1(1) = \u2212id', fx, bot+18);
+
+    // ---- Panel B: section curve ----
+    ctx.strokeStyle=rgba(pal.grid,0.5); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(sx0,mid); ctx.lineTo(sx1,mid); ctx.stroke();
+    ctx.font='10px monospace'; ctx.fillStyle=rgba(pal.muted,1); ctx.textAlign='center';
+    ctx.fillText('0', sx0, bot+18); ctx.fillText('\u03c0', (sx0+sx1)/2, bot+18); ctx.fillText('2\u03c0', sx1, bot+18);
+    ctx.strokeStyle=rgba(pal.fiber,0.95); ctx.lineWidth=2.5; ctx.beginPath();
+    var M=180;
+    for(var i2=0;i2<=M;i2++){
+      var t=i2/M, v=secAt(t,mode);
+      var x=sx0+(sx1-sx0)*t, y=mid - v*half;
+      if(i2===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    if(mode==='trivial'){
+      ctx.fillStyle=rgba(pal.neg,0.9); ctx.font='bold 10px monospace'; ctx.textAlign='center';
+      ctx.fillText('Schnitt existiert', (sx0+sx1)/2, mid-half-8);
+    } else {
+      var zx=sx0+(sx1-sx0)*0.5;
+      ctx.strokeStyle=rgba(pal.pos,1); ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.moveTo(zx-7,mid-7); ctx.lineTo(zx+7,mid+7); ctx.moveTo(zx+7,mid-7); ctx.lineTo(zx-7,mid+7); ctx.stroke();
+      ctx.fillStyle=rgba(pal.pos,1); ctx.font='bold 10px monospace'; ctx.textAlign='center';
+      ctx.fillText('Schnitt = 0', zx, mid-14);
+    }
+    var cmx=sx0+(sx1-sx0)*state.tMove;
+    ctx.strokeStyle=rgba(pal.pt,0.8); ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(cmx,top); ctx.lineTo(cmx,bot); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=rgba(pal.pt,1);
+    ctx.beginPath(); ctx.arc(cmx, mid - secAt(state.tMove,mode)*half, 5, 0, TAU); ctx.fill();
+
+    // ---- bottom strip: local turning density (A) ----
+    var stripTop=320, stripBot=500, smid=(stripTop+stripBot)/2, shalf=(stripBot-stripTop)/2-18;
+    ctx.strokeStyle=rgba(pal.grid,0.5); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,smid); ctx.lineTo(w,smid); ctx.stroke();
+    ctx.font='11px monospace'; ctx.fillStyle=rgba(pal.muted,1); ctx.textAlign='left';
+    ctx.fillText('lokale Wendungsdichte  d\u03b8/dt  (A)  \u00b7  Mittel = 0  \u00b7  \u03a3 = n\u00b72\u03c0', 10, stripTop-8);
+    ctx.lineWidth=2;
+    for(var i3=0;i3<N-1;i3++){
+      var t0=i3/N, t1=(i3+1)/N;
+      var x0=t0*w, x1=t1*w;
+      var y0=smid-(seg[i3]/maxAbs)*shalf;
+      var y1=smid-(seg[i3+1]/maxAbs)*shalf;
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
+      ctx.strokeStyle=rgba(seg[i3]>1e-4?pal.pos:(seg[i3]<-1e-4?pal.neg:pal.loop),0.85);
+      ctx.stroke();
+    }
+    var xM=state.tMove*w;
+    ctx.strokeStyle=rgba(pal.pt,0.8); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(xM,stripTop); ctx.lineTo(xM,stripBot); ctx.stroke();
+  }
+
+  function updateReadout(){
+    var n=curN(), mode=curMode();
+    nVal.textContent=n;
+    if(modeVal){ modeVal.textContent = (mode==='trivial'?'trivial (Zylinder)':'verdrillt (M\u00f6bius)'); }
+    var base;
+    if(n===0){
+      base='n = 0: Identit\u00e4tsschleife (trivial). Lokale Wendungsdichte = 0 \u00fcberall, globales Integral = 0 \u2208 \u2124. '
+        + 'Der neutrale Punkt von \u03c0\u2081(S\u00b9) \u2014 das, was A als \u201eZentrum\u201c und B als \u201etriviale Faser\u201c liest.';
+    } else {
+      base='Windungszahl n = '+(n>0?n:'\u2212'+Math.abs(n))+' \u2208 \u03c0\u2081(S\u00b9) \u2245 \u2124 (A: die lokale Wendungsdichte '
+        + 'd\u03b8/dt oszilliert um 0; ihr globales Integral \u03a3 d\u03b8 = '+totalTurn.toFixed(3)+' = '
+        + turnNum.toFixed(3)+'\u00b72\u03c0). Dasselbe \u2124 ist bei B der Definitionsbereich der Monodromie '
+        + '\u03c1: \u03c0\u2081(B)\u2192Aut(F) \u2014 und die Abelschung der Monodromie ist genau diese Windungszahl.';
+    }
+    var tail;
+    if(mode==='trivial'){
+      tail='B\u00fcndel trivial: \u03c1 \u2261 id. Ein globaler Schnitt existiert (die Schnitt-Linie bleibt positiv) \u2014 keine Obstruktion.';
+    } else {
+      tail='B\u00fcndel verdrillt (M\u00f6bius): \u03c1(1) = \u2212id. Ein globaler Schnitt MUSS null werden (rote \u00d7) \u2014 '
+        + 'das ist Bs Igel-Satz/Obstruktion, gelesen als \u201enichttriviale Wendung \u2260 0\u201c (A). '
+        + 'Messen (A) und Existenz (B) lesen dieselbe Zahl.';
+    }
+    if(readout){ readout.innerHTML=base+' '+tail; }
+  }
+
+  function loop(){
+    if(state.playing){ state.tMove=(state.tMove+0.0025)%1; }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  nEl.addEventListener('input', function(){ state.tMove=0; recompute(); updateReadout(); });
+  modeEl.addEventListener('input', function(){ updateReadout(); });
+  playBtn.addEventListener('click', function(){
+    state.playing=!state.playing;
+    this.classList.toggle('on', state.playing);
+    this.textContent=state.playing?'Pause':'Play';
+  });
+  if(themeBtn){
+    themeBtn.addEventListener('click', function(){
+      var d=document.documentElement;
+      var dark=d.classList.toggle('dark');
+      try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+      readPal();
+    });
+  }
+  if(window.MutationObserver){
+    new MutationObserver(function(){ readPal(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  readPal();
+  recompute();
+  updateReadout();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Ding ist seine Schicht — Fenster aus Pfeilen über dem laufenden Kernel</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --text:#1b1a17; --muted:#5b574d; --card:#fffdf8;
+    --line:rgba(0,0,0,0.12); --accent:#7c3aed; --accent2:#0078d4;
+    --code-bg:rgba(0,0,0,0.05); --link:#0078d4;
+    --viz-bg:#f3f0e8; --viz-grid:rgba(0,0,0,0.06);
+    --viz-kernel:#0078d4; --viz-arrow:#7c3aed; --viz-void:#94a3b8;
+    --viz-window:#d11a6f; --viz-text:#1b1a17; --viz-sub:#5b574d;
+  }
+  html.dark{
+    --bg:#0a0e27; --text:#e8ecf1; --muted:#94a3b8; --card:#111936;
+    --line:rgba(148,163,184,0.18); --accent:#a78bfa; --accent2:#38bdf8;
+    --code-bg:rgba(255,255,255,0.06); --link:#38bdf8;
+    --viz-bg:#0d1230; --viz-grid:rgba(148,163,184,0.10);
+    --viz-kernel:#38bdf8; --viz-arrow:#a78bfa; --viz-void:#64748b;
+    --viz-window:#f472b6; --viz-text:#e8ecf1; --viz-sub:#94a3b8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,'Segoe UI',Georgia,system-ui,sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 90px;}
+  header.hero{padding:60px 22px 26px;text-align:center;}
+  header.hero .eyebrow{
+    text-transform:uppercase;letter-spacing:3px;font-size:0.72rem;color:var(--accent);
+    font-weight:700;margin-bottom:14px;
+  }
+  h1{
+    font-size:clamp(2rem,5.5vw,3rem);line-height:1.12;font-weight:800;letter-spacing:-0.5px;
+    background:linear-gradient(120deg,var(--accent2),var(--accent) 55%,var(--viz-window));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  }
+  .tagline{margin-top:14px;color:var(--text);font-size:1.06rem;font-weight:600;}
+  .tagline .fa{color:var(--viz-window);}
+  .tagline .fb{color:var(--accent2);}
+  .subtitle{margin-top:12px;color:var(--muted);font-size:0.98rem;}
+  .subtitle .x{color:var(--accent);font-weight:700;}
+  .theme-btn{
+    margin-top:20px;background:var(--card);color:var(--text);border:1px solid var(--line);
+    padding:8px 16px;border-radius:22px;cursor:pointer;font-size:0.85rem;font-weight:600;
+  }
+  .theme-btn:hover{border-color:var(--accent);}
+  article{margin-top:8px;}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:28px 30px;margin:24px 0;box-shadow:0 8px 30px rgba(0,0,0,0.06);
+  }
+  section h2{
+    font-size:1.5rem;font-weight:800;margin-bottom:16px;color:var(--text);
+    display:flex;align-items:center;gap:10px;
+  }
+  section h2 .num{
+    color:var(--accent);font-size:0.8rem;font-weight:700;letter-spacing:2px;
+    background:var(--code-bg);padding:3px 10px;border-radius:20px;
+  }
+  p{margin-bottom:14px;color:var(--text);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--text);}
+  em{color:var(--accent);font-style:italic;}
+  .lead{font-size:1.08rem;color:var(--muted);}
+  code{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.86em;
+    background:var(--code-bg);padding:2px 6px;border-radius:5px;
+  }
+  pre{
+    background:var(--code-bg);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;overflow-x:auto;font-size:0.82rem;line-height:1.65;margin:14px 0;
+  }
+  pre code{background:none;padding:0;font-size:inherit;}
+  .paper-tag{
+    display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 9px;border-radius:12px;
+    margin-right:6px;vertical-align:middle;
+  }
+  .tag-a{background:rgba(209,26,111,0.14);color:var(--viz-window);}
+  .tag-b{background:rgba(0,120,212,0.14);color:var(--accent2);}
+  ul{margin:6px 0 14px 22px;}
+  li{margin-bottom:9px;}
+  .tension{
+    border-left:4px solid var(--accent);background:var(--code-bg);
+    padding:16px 18px;border-radius:0 12px 12px 0;margin:16px 0;
+  }
+  .tension h4{font-size:1.02rem;margin-bottom:8px;color:var(--text);}
+  .tension .a{color:var(--viz-window);font-weight:700;}
+  .tension .b{color:var(--accent2);font-weight:700;}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.9rem;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{color:var(--muted);font-size:0.76rem;text-transform:uppercase;letter-spacing:1px;}
+  td:first-child{color:var(--muted);}
+  .keybox{
+    background:linear-gradient(135deg,rgba(124,58,237,0.10),rgba(0,120,212,0.10));
+    border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0;font-size:1.02rem;
+  }
+  .keybox .k{color:var(--accent);font-weight:700;}
+  .viz-box{
+    background:var(--viz-bg);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0;
+  }
+  .viz-box canvas{width:100%;display:block;background:transparent;touch-action:none;}
+  .viz-ctrl{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:6px 0 14px;}
+  .viz-ctrl label{font-size:0.9rem;color:var(--muted);font-weight:600;}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:220px;max-width:50vw;height:6px;border-radius:3px;
+    background:var(--line);outline:none;accent-color:var(--accent);
+  }
+  .viz-level{font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;}
+  button.vbtn{
+    background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:9px;
+    padding:7px 13px;cursor:pointer;font:inherit;font-size:0.82rem;font-weight:600;
+  }
+  button.vbtn:hover{border-color:var(--accent);}
+  button.vbtn.on{border-color:var(--viz-window);color:var(--viz-window);}
+  #yo-readout{
+    border-left:4px solid var(--accent);background:var(--code-bg);border-radius:0 10px 10px 0;
+    padding:13px 15px;font-size:0.95rem;margin-top:12px;min-height:52px;line-height:1.55;
+  }
+  .viz-cap{font-size:0.86rem;color:var(--muted);margin-top:12px;}
+  .prov{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
+  .prov a{
+    flex:1;min-width:240px;display:block;text-decoration:none;color:var(--text);
+    background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    transition:border-color .2s,transform .2s;
+  }
+  .prov a:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .prov a .t{font-weight:700;color:var(--link);margin-bottom:6px;font-size:1.02rem;}
+  .prov a .d{font-size:0.9rem;color:var(--muted);}
+  footer{text-align:center;color:var(--muted);font-size:0.82rem;padding:30px 22px;border-top:1px solid var(--line);margin-top:30px;}
+  @media (max-width:560px){ section{padding:22px 18px;} }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="eyebrow">Fusion &middot; Runde 2 &middot; Paar 013 &middot; nicht-KI-Track</div>
+  <h1>Das Ding ist seine Schicht</h1>
+  <p class="tagline">Ein <span class="fa">Fenster</span> aus <span class="fb">Pfeilen</span> &mdash; Identit&auml;t als Pr&auml;sentations-Schicht &uuml;ber einem laufenden Kernel</p>
+  <p class="subtitle">Fusion aus: <span class="x">n1-050.html</span> <span class="x">&#10006;</span> <span class="x">n1-042.html</span> &nbsp;(Runde 2)</p>
+  <button class="theme-btn" id="theme-toggle">&#9680; Thema wechseln</button>
+</header>
+
+<article class="wrap">
+
+<section id="these">
+  <h2><span class="num">01</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere sind selbst schon Fusionen &mdash; und sie treffen sich auf einer &uuml;berraschend tiefen Stelle: <strong>Was ein Ding &ldquo;ist&rdquo;, findet sich nicht im Substrat, das darunter l&auml;uft, sondern in der vermittelnden, relationalen Schicht, die es pr&auml;sentiert.</strong> A (n1-050) sagt: Bewusstsein ist ein <em>Fenster</em> &uuml;ber einem neuronalen <em>Kernel</em> &mdash; das Zugangsbewusstsein ist der Kernel (funktional, berechenbar, <em>l&auml;uft immer</em>), das ph&auml;nomenale Erleben ist die GUI, das vermittelte, irreduzible <em>Fenster</em>. B (n1-042) sagt: ein Objekt <em>ist</em> seine Pfeile (Yoneda) &mdash; die Substanz kann gel&ouml;scht werden, die Relationen bleiben und bestimmen es trotzdem.</p>
+  <p>Die integrierte Position lautet: <strong>Das Ding ist seine Schicht.</strong> A&rsquo;s Satz &ldquo;das Fenster l&auml;sst sich nicht auf eine einzige Kernel-Instruktion reduzieren&rdquo; ist exakt B&rsquo;s &ldquo;Remove the Object &mdash; the hom-sets remain&rdquo;. In beiden ist die <em>Identit&auml;t</em> des Dings (Erfahrung / Objekt) eine Eigenschaft der <em>relationen, pr&auml;sentierenden Schicht</em>, nicht des Substrats darunter. Der Substrat-Knoten (Kernel / Objekt) ist das, was <em>l&auml;uft</em>; die Pr&auml;sentation (Fenster / Pfeile) ist das, was das Ding <em>ausmacht</em>.</p>
+  <p>Beide beschreiben dasselbe als <strong>einen Vorgang mit drei Ebenen</strong>: <strong>(0) Substrat/Leere</strong> &mdash; die immer laufende Basis, zugleich der Raum aller m&ouml;glichen Relationen (reines Potenzial); <strong>(1) der Schnitt / Broadcast</strong> &mdash; der Akt, der eine konkrete Struktur fixiert (Globaler Arbeitsraum = der &ldquo;XP-Merge&rdquo; bei A; die Beobachtung, die eine Kategorie w&auml;hlt, bei B); <strong>(2) das Fenster / das Objekt-als-Pfeile</strong> &mdash; die voll bestimmte Pr&auml;sentation, die die Identit&auml;t des Dings tr&auml;gt (Yoneda). A liefert die <em>Erfahrung</em> und das <em>Substrat</em> (der l&auml;ufige Kernel, das Fenster als irreduzible Schicht); B liefert die <em>Maschinerie</em> und die <em>Garantie</em> (Pfeile, Komposition, Yoneda). &ldquo;Bewusstsein als Fenster&rdquo; (A) und &ldquo;Das Objekt ist seine Pfeile&rdquo; (B) verschmelzen zu: <em>Das Ding ist seine Schicht &mdash; ein Fenster aus Pfeilen &uuml;ber einem laufenden Kernel.</em></p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span> Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht auf der Hauptachse &mdash; beide lehnen eine <em>Substanz-prim&auml;r</em>-Ontologie ab und setzen Identit&auml;t auf die relationale/Pr&auml;sentations-Schicht. Aber sie stehen an <em>unterschiedlichen Polen</em> derselben Spannung. Drei konkrete Punkte:</p>
+
+  <div class="tension">
+    <h4>&#9312; Substrat vs. reine Relation &mdash; ist der Knoten unentbehrlich?</h4>
+    <p><span class="tag-a paper-tag">A &middot; Fenster/Kernel</span><span class="a">Der Kernel ist reales, immer laufendes Substrat.</span> Er &ldquo;l&auml;uft immer&rdquo; &mdash; auch im Zombie-Fall feuern die neuronalen Prozesse voll, nur das Fenster ist dunkel. Die Pr&auml;sentation (Fenster) ist ein irreduzibles <em>Zus&auml;tzliches</em>, aber sie braucht einen Substrat-Kernel, der tats&auml;chlich existiert und l&auml;uft. Substanz (Kernel) ist prim&auml;r.</p>
+    <p style="margin-top:12px"><span class="tag-b paper-tag">B &middot; Objekt/Pfeile</span><span class="b">Das Objekt kann komplett gel&ouml;scht werden.</span> &ldquo;Remove the Object &mdash; the hom-sets remain, and they still define it completely.&rdquo; Reine Relation ohne Substrat: der Knoten ist &uuml;berfl&uuml;ssig, die Pfeile gen&uuml;gen. Es gibt keinen unentbehrlichen Substrat-Knoten &mdash; nicht einmal im Grenzfall.</p>
+  </div>
+
+  <div class="tension">
+    <h4>&#9313; Mysterium vs. aufl&ouml;sbare Leere &mdash; ist die L&uuml;cke eine Grenze oder ein Design?</h4>
+    <p><span class="tag-a paper-tag">A &middot; Fenster/Kernel</span><span class="a">Die Erkl&auml;rungsl&uuml;cke ist eine (m&ouml;gliche) Grenze.</span> Das Hard Problem ist eine Abstraktionsgrenze zwischen Kernel und GUI &mdash; real, aber <em>in ihrer Art irreduzibel</em>. Der Mystizianismus (McGinn) h&auml;lt es f&uuml;r m&ouml;glich, dass das Gehirn schlicht nicht f&auml;hig ist, Bewusstsein zu verstehen, &ldquo;wie eine Katze keine Quantenphysik versteht&rdquo;. Die L&uuml;cke wird nicht &ldquo;weggel&ouml;st&rdquo; wie ein Bug.</p>
+    <p style="margin-top:12px"><span class="tag-b paper-tag">B &middot; Objekt/Pfeile</span><span class="b">Die Leere ist aufl&ouml;sbare, fruchtbare Potenzialit&auml;t.</span> &ldquo;das Nichts, das alles enth&auml;lt &hellip; reines Potenzial &mdash; wie ein unbeschriebenes Blatt, das alle Geschichten gleichzeitig ist.&rdquo; Der Schnitt (Beobachtung) <em>kollabiert</em> diese Leere in eine fixierte Struktur, und Yoneda verb&uuml;rgt danach <strong>totale Bestimmtheit</strong>: am Ende bleibt <em>nichts</em> unbestimmt. Was wie eine L&uuml;cke wirkt, ist ein Zustand <em>vor</em> der Fixierung &mdash; kein Mysterium.</p>
+  </div>
+
+  <div class="tension">
+    <h4>&#9314; (N&auml;herliegende Spannung) Dualismus vs. relationaler Monism &mdash; wie viele Arten von Realit&auml;t gibt es?</h4>
+    <p><span class="tag-a paper-tag">A &middot; Fenster/Kernel</span> A tr&auml;gt einen <em>Eigenschaftsdualismus</em> (Chalmers) in sich: es gibt <strong>zwei Arten von Realit&auml;t</strong> &mdash; das physikalische/Kernel und das Ph&auml;nomenale/Fenster. Das Zombie-Argument (physisch identisch, null Erleben) und Marys Zimmer sagen: <em>&uuml;ber</em> dem Kernel bleibt etwas, das die Physik nicht f&auml;ngt. Zwei ontologische Arten.</p>
+    <p style="margin-top:12px"><span class="tag-b paper-tag">B &middot; Objekt/Pfeile</span> B hat <em>eine einzige Grammatik</em>: alles ist Pfeile/Relationen. Es gibt keine zweite Substanz &mdash; das Objekt l&ouml;st sich rein in Relationen auf. &ldquo;Objects have no internal structure.&rdquo; Eine Art von Realit&auml;t, die sich auf zwei <em>Ebenen</em> (Leere/Meta &rarr; fixierte Struktur/Instanz) verteilt, aber nicht auf zwei <em>Arten</em>.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span> Aufl&ouml;sung</h2>
+  <p>Die Aufl&ouml;sung besteht darin, <strong>Substrat und Schicht auf verschiedenen Ebenen derselben relationalen Grammatik zu verorten</strong> &mdash; statt sie gegen denselben Gegenstand zu pressen.</p>
+
+  <p><strong>Zu &#9312;:</strong> A&rsquo;s <em>Kernel</em> besetzt in B&rsquo;s Modell die Rolle des <strong>Substrats auf der Ebene <em>unter</em> der Pr&auml;sentation</strong> &mdash; er ist zugleich die Leere (Raum aller Relationen) und die fixierte Struktur, die &ldquo;l&auml;uft&rdquo;. A&rsquo;s <em>Fenster</em> ist B&rsquo;s <strong>Objekt-als-Pfeile</strong>: die Pr&auml;sentation, die die Identit&auml;t tr&auml;gt und sich nicht auf einen einzelnen Substrat-Knoten reduziert. Beides gilt komplement&auml;r: <em>der Substrat-Knoten (Kernel) ist real und l&auml;uft (A), aber die Identit&auml;t des Dings wird von der relationalen Schicht konstituiert, und an dieser Schicht ist der einzelne Knoten &uuml;berfl&uuml;ssig (B).</em> &ldquo;Remove the Object&rdquo; (B) ist die formale Gestalt von &ldquo;das Fenster l&auml;sst sich nicht auf eine Kernel-Instruktion reduzieren&rdquo; (A).</p>
+
+  <p><strong>Zu &#9313;:</strong> Die L&uuml;cke (A) und die Leere (B) sind dieselbe Stelle, von zwei Seiten betrachtet. Die Leere (B) = der Raum <em>aller</em> m&ouml;glichen Fenster/Erlebnisse = reines Potenzial (A: das Quale, das Mary au&szlig;en lernt, das keine physikalische Tatsache war). Der <em>Schnitt</em> / <em>Globaler Arbeitsraum-Broadcast</em> (A) = die Beobachtung, die eine konkrete Struktur w&auml;hlt (B). Danach greift Yoneda: <em>in der Form</em> (welches Fenster) ist alles fixiert und bestimmt &mdash; B hat recht. Aber <em>in der Art</em> (warum es &uuml;berhaupt etwas gibt, das sich an einem Fenster <em>anf&uuml;hlt</em>, statt nur ein l&auml;ufiger Kernel zu sein) bleibt die Abstraktionsgrenze irreduzibel &mdash; A hat recht. Die L&uuml;cke ist also <strong>aufl&ouml;sbar in Form, irreduzibel in Art</strong>: der Schicht-Charakter (dass &uuml;ber dem Substrat eine Pr&auml;sentation liegt) ist kein Defekt, sondern die Natur jeder Abstraktionsschicht.</p>
+
+  <div class="keybox">
+    <span class="k">Fusionierter Schluss (Zu &#9314;):</span> Der Dualismus (A) wird zu <strong>zwei Ebenen derselben relationalen Grammatik</strong> (B) umgedeutet &mdash; nicht &ldquo;zwei Arten von Substanz&rdquo;, sondern <em>Substrat-Ebene</em> (Kernel: l&auml;uft immer, Zombie-m&ouml;glich, die &ldquo;leichten Probleme&rdquo;) und <em>Pr&auml;sentations-Ebene</em> (Fenster/Objekt: die Identit&auml;t, konstituiert aus Relationen). &ldquo;Objects have no internal structure&rdquo; (B) ist der formale Kern von &ldquo;das Fenster steckt nicht im Kernel&rdquo; (A): <strong>die Erfahrung ist extern, relationell konstituiert &mdash; nicht aus dem internen Zustand ablesbar.</strong> Das ist der formale Schatten des Hard Problems: Die Pr&auml;sentation ist nicht aus dem Substrat ableitbar, weil sie eine <em>andere Ebene</em> desselben Pfeil-Materials ist.
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span> Fusionierter Inhalt</h2>
+  <p>Abstrahiert man von den Rohquellen beider Papiere, bleibt ein gemeinsames <strong>drei-Ebenen-Modell</strong>, in dem A die untere Ebene (Erfahrung + Substrat) und B die obere (Maschinerie + Garantie) besetzt. Die &ldquo;Grammatik&rdquo;, in der beide sprechen, ist dieselbe. Die Ebenen lassen sich direkt aufeinander abbiegen:</p>
+
+  <h3 style="font-size:1.05rem;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Die drei Ebenen, fusioniert</h3>
+  <table>
+    <thead><tr><th>Ebene</th><th>A &mdash; Fenster / Kernel (n1-050)</th><th>B &mdash; Objekt / Pfeile (n1-042)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>(0) Substrat / Leere</strong> &mdash; l&auml;uft immer, reines Potenzial</td>
+        <td>neuronaler Kernel / Zugangsbewusstsein: die &ldquo;leichten Probleme&rdquo;, ~50 Mio. Zeilen, feuert auch beim Zombie</td>
+        <td>die Leere + der Raum <em>aller</em> Kategorien: &ldquo;das Nichts, das alles enth&auml;lt&rdquo;, unbestimmt, voller m&ouml;glicher Relationen</td></tr>
+      <tr><td><strong>(1) Schnitt / Broadcast</strong> &mdash; die Fixierung</td>
+        <td>Globaler Arbeitsraum = der &ldquo;XP-Merge&rdquo;: Zugang + ph&auml;nominales Bewusstsein vereinigen sich (breite Verf&uuml;gbarkeit)</td>
+        <td>der Schnitt / die Beobachtung: W&auml;hlen einer konkreten Kategorie, Kollaps des Potenzials in Formen</td></tr>
+      <tr><td><strong>(2) Fenster / Objekt-als-Pfeile</strong> &mdash; die Identit&auml;t</td>
+        <td>ph&auml;nominales Erleben (Qualia): das erlebte Fenster, irreduzibel zur einzelnen Kernel-Instruktion</td>
+        <td>Objekt voll bestimmt durch Hom(&ndash;,A) (Yoneda); &ldquo;Remove the Object&rdquo; &mdash; die Relationen tragen die Identit&auml;t</td></tr>
+      <tr><td><strong>Die L&uuml;cke</strong> &mdash; die Abstraktionsgrenze</td>
+        <td>Hard Problem: K&uuml;rzel-Grenze Kernel&rarr;GUI, in Form l&ouml;sbar, in Art irreduzibel (Mystizianismus)</td>
+        <td>der &Uuml;bergang Leere&rarr;fixierte Struktur; &ldquo;Objects have no internal structure&rdquo; = die Pr&auml;sentation ist nicht im Substrat</td></tr>
+      <tr><td><strong>Zombie / entferntes Objekt</strong> &mdash; Substrat ohne Schicht</td>
+        <td>Zombie: Kernel l&auml;uft voll, Fenster dunkel, physisch identisch, null Erleben</td>
+        <td>Objekt entfernt / Leere ohne Schnitt: Struktur vorhanden, Pr&auml;sentation nicht fixiert &mdash; die Pfeile bestimmen den (fehlenden) Ort</td></tr>
+      <tr><td><strong>Entwicklung</strong></td>
+        <td>Bewusstsein als &ldquo;Insider-Build&rdquo;: wir sind die ersten Nutzer unseres eigenen, sich entwickelnden Erlebens</td>
+        <td>die Meta-Ebene (Raum aller Kategorien) setzt die gew&auml;hlte Instanz voraus &mdash; A macht sie sichtbar, B nimmt sie still</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size:1.05rem;margin:22px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Die fusionierte Mathematik (B&rsquo;s Grammatik als Ger&uuml;st, A darauf abgebogen)</h3>
+  <p>Alles, was beide Papiere brauchen, steckt in diesen wenigen Regeln &mdash; A <em>erlebt</em> sie, B <em>beweist</em> sie:</p>
+  <pre><code>Kernel als Kategorie C:   Objekte = neuronale Zust&auml;nde, Pfeile = Zug&auml;nge/&Uuml;berg&auml;nge
+                          assoziativ: h&#8728;(g&#8728;f) = (h&#8728;g)&#8728;f     Identit&auml;t: id_A: A&rarr;A
+
+Das Erlebnis = Yoneda:   die Identit&auml;t des Zustands A = Hom(&ndash;, A)
+                          &ldquo;Das Fenster IST die Totalit&auml;t seiner Relationen.&rdquo;
+
+Der entscheidende Satz:  &ldquo;Objects have no internal structure&rdquo; (B)
+                          = &ldquo;das Fenster steckt nicht im Kernel&rdquo; (A)
+                          &rArr; die Pr&auml;sentation ist EXTERN (relationell) konstituiert,
+                             nicht aus dem internen Zustand ableitbar  ==&gt; formales Hard Problem
+
+Der Schnitt:             Auswahl einer konkreten Struktur/Kategorie aus der Leere
+                         (= Globaler Arbeitsraum: breiter Broadcast = die gew&auml;hlte Zeichnung)
+
+Zombie:                  C existiert und &ldquo;l&auml;uft&rdquo; (Struktur/Funktor vorhanden),
+                         aber die Yoneda-Pr&auml;sentation ist nicht &ldquo;angeleuchtet&rdquo;
+                         (physisch identisch, null Erleben / Objekt nicht fixiert)
+
+Adjunktion (Schatten):   Free &#8989; Forgetful
+                         Free f&uuml;gt Struktur hinzu (= der Schnitt),
+                         Forgetful streift sie ab (= R&uuml;ckkehr zur Einheit/Leere)</code></pre>
+  <div class="keybox">
+    <span class="k">Das fusionierte Modell in einem Satz:</span> Das Substrat (neuronale Prozesse / Objekt) l&auml;uft in der Kategorie C &mdash; und ist dabei <em>strukturlos von innen</em>. Aus der Leere (Raum aller m&ouml;glichen Fenster) w&auml;hlt der Schnitt (Globaler Arbeitsraum) eine konkrete Zeichnung; deren Pfeile (Hom(&ndash;,A), Yoneda) konstituieren dann die Identit&auml;t &mdash; das erlebte Fenster. Der Zombie ist der l&auml;ufige Kernel ohne angeleuchtetes Fenster; und das Hard Problem ist genau die Tatsache, dass man eine Pr&auml;sentationsschicht nicht in ein einzelnes Substrat-Instrukt &uuml;bersetzen kann, ohne aufzuh&ouml;ren, &uuml;ber eine Schicht zu sprechen.
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span> Visualisierung: Das Fenster aus Pfeilen &uuml;ber dem laufenden Kernel</h2>
+  <p>Das Objekt <strong>A</strong> (das erlebte <em>Fenster</em>) liegt im Zentrum, umgeben von Satteliten <code>X&hellip;U</code>, die <em>Relationen</em> (Hom-Pfeile) zu A tragen. <em>Gestrichelt</em> = m&ouml;gliche Relation (die <strong>Leere</strong>, reines Potenzial); <em>durchgezogen</em> = fixierte Relation (der <strong>Schnitt</strong>). Darunter l&auml;uft &mdash; unabh&auml;ngig vom Fenster &mdash; der <strong>Kernel</strong>: er pulsiert immer weiter, auch wenn das Fenster dunkel ist. Der Regler <em>Schnitt / Broadcast</em> fixiert die Leere zu einem Fenster. <strong>&ldquo;Objekt A entfernen (Yoneda)&rdquo;</strong> l&ouml;scht den Knoten &mdash; die Pfeile bleiben und tragen die Identit&auml;t trotzdem.</p>
+
+  <div class="viz-box">
+    <div class="viz-ctrl">
+      <label for="yo-frac">Schnitt / Broadcast (Leere &rarr; Fenster):</label>
+      <input type="range" id="yo-frac" min="0" max="100" value="65">
+      <span class="viz-level" id="yo-frac-val">65%</span>
+      <button class="vbtn" id="yo-remove">Objekt A entfernen (Yoneda)</button>
+    </div>
+    <canvas id="yo-canvas"></canvas>
+    <div id="yo-readout"></div>
+    <p class="viz-cap">Wie die DOS- und NT-Kernel-Linie, die sich 2001 in XP vereinten, vereinigen sich hier <em>Substrat</em> und <em>Pr&auml;sentation</em> im Schnitt. Der Kernel pulsiert unten unabh&auml;ngig vom Erleben &mdash; genau das macht den Zombie denkbar (0%): l&auml;ufiger Substrat-Knoten, aber dunkles Fenster.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span> Provenienz</h2>
+  <div class="prov">
+    <a href="../n1-050.html">
+      <div class="t">n1-050.html &mdash; Bewusstsein als Fenster &uuml;ber dem neuronalen Kernel</div>
+      <div class="d">Runde-1-Fusion (bewusstsein.html &#10006; windows.html): Zugang = Kernel (l&auml;uft immer, Zombie-m&ouml;glich), ph&auml;nominales Erleben = das irreduzible Fenster/GUI; Globaler Arbeitsraum als &ldquo;XP-Merge&rdquo;; das Hard Problem als Abstraktionsgrenze Kernel&rarr;GUI. Quelle A &mdash; die Erfahrung und das Substrat.</div>
+    </a>
+    <a href="../n1-042.html">
+      <div class="t">n1-042.html &mdash; Das Objekt ist seine Pfeile</div>
+      <div class="d">Runde-1-Fusion (abstract.html &#10006; categorytheorie.html): Identit&auml;t ist konstitutiv relational; Yoneda (Objekt voll bestimmt durch Hom-Pfeile, &ldquo;Remove the Object&rdquo;); die Leere als Raum aller Kategorien, der Schnitt als Fixierung. Quelle B &mdash; die Maschinerie und die Garantie.</div>
+    </a>
+  </div>
+</section>
+
+</article>
+
+<footer>
+  Fusion aus n1-050.html &#10006; n1-042.html &middot; Runde 2 &middot; Paar 013 &middot; nicht-KI-Track &middot; selbstenthalten, ohne Netzwerk-Datenzugriffe
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('yo-canvas');
+  var wrap = canvas ? canvas.parentElement : null;
+  var readout = document.getElementById('yo-readout');
+  var slider = document.getElementById('yo-frac');
+  var fval = document.getElementById('yo-frac-val');
+  var removeBtn = document.getElementById('yo-remove');
+  var themeBtn = document.getElementById('theme-toggle');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  if(!ctx) return;
+
+  var TAU = Math.PI*2;
+  var counts=[3,2,4,2,3,3];
+  var labels=['X','Y','Z','W','V','U'];
+  var slots=[];
+  for(var i=0;i<counts.length;i++){ for(var k=0;k<counts[i];k++){ slots.push({i:i,k:k}); } }
+  var total=slots.length;
+  var state={frac:0.65, removed:false, t:0};
+  var pal={};
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [124,58,237];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [124,58,237];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg:     toRgb(cssVar('--viz-bg') || cssVar('--bg')),
+      text:   toRgb(cssVar('--viz-text') || cssVar('--text')),
+      sub:    toRgb(cssVar('--viz-sub') || cssVar('--muted')),
+      kernel: toRgb(cssVar('--viz-kernel')),
+      arrow:  toRgb(cssVar('--viz-arrow')),
+      void:   toRgb(cssVar('--viz-void')),
+      win:    toRgb(cssVar('--viz-window'))
+    };
+  }
+
+  function roundRect(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function arrowTo(x1,y1,x2,y2,col,lw,head){
+    var dx=x2-x1, dy=y2-y1, l=Math.sqrt(dx*dx+dy*dy);
+    if(l<1){ return; }
+    var a=Math.atan2(dy,dx), hs=head||7;
+    ctx.strokeStyle=col; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.fillStyle=col;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.42), y2-hs*Math.sin(a-0.42));
+    ctx.lineTo(x2-hs*Math.cos(a+0.42), y2-hs*Math.sin(a+0.42));
+    ctx.closePath(); ctx.fill();
+  }
+  function satPos(i,cx,cy,R){
+    var ang=-Math.PI/2 + i*(TAU/counts.length);
+    return { x:cx+R*Math.cos(ang), y:cy+R*Math.sin(ang) };
+  }
+  function drawArrow(sl,S,cx,cy,aR,sR,col,lw,dashed){
+    var s=S[sl.i];
+    var ux=cx-s.x, uy=cy-s.y, L=Math.sqrt(ux*ux+uy*uy)||1;
+    ux=ux/L; uy=uy/L;
+    var px=-uy, py=ux;
+    var c=counts[sl.i], off=(sl.k-(c-1)/2)*7;
+    var x1=s.x+ux*(sR+2)+px*off, y1=s.y+uy*(sR+2)+py*off;
+    var x2=cx-ux*(aR+2)+px*off, y2=cy-uy*(aR+2)+py*off;
+    if(dashed){ ctx.setLineDash([4,5]); }
+    arrowTo(x1,y1,x2,y2,col,lw,6);
+    if(dashed){ ctx.setLineDash([]); }
+  }
+
+  function updateReadout(realized,frac){
+    var pct=Math.round(frac*100), msg;
+    if(state.removed){
+      msg='Objekt A entfernt &mdash; die Pfeile bleiben und tragen die Identit&auml;t. <b>Yoneda:</b> Hom(&ndash;,A) bestimmt A; der Substrat-Knoten ist &uuml;berfl&uuml;ssig. Das ist die formale Gestalt von <em>&ldquo;das Fenster l&auml;sst sich nicht auf eine Kernel-Instruktion reduzieren&rdquo;</em>.';
+    } else if(pct<15){
+      msg='Leere / Zombie: Der Kernel pulsiert unten, aber oben ist kein Fenster fixiert &mdash; reines Potenzial, der Raum aller m&ouml;glichen Relationen. Physisch l&auml;uft alles, es f&uuml;hlt sich an wie nichts (Chalmers&#8217; Zombie: l&auml;ufiger Substrat, dunkles Fenster).';
+    } else if(pct<50){
+      msg='Der Schnitt / Broadcast: Unterscheidungen werden gezeichnet. Aus der Leere kristallisiert ein Fenster (Globaler Arbeitsraum); die Potentiale werden zu fixierten Pfeilen (Hom-Relationen).';
+    } else if(pct<85){
+      msg='Strukturierung: Das Fenster wird zunehmend durch seine Relationen bestimmt &mdash; Substrat (Zugang) und Pr&auml;sentation (ph&auml;nomenal) sind im &ldquo;XP-Merge&rdquo; vereint. Je mehr fixiert, desto mehr ist A genau <em>das</em>.';
+    } else {
+      msg='Totale Bestimmtheit: alle Relationen fixiert. <b>Yoneda:</b> A ist vollst&auml;ndig durch Hom(&ndash;,A) bestimmt. In <em>Form</em> ist alles gel&ouml;st &mdash; aber die Abstraktionsgrenze (warum es &uuml;berhaupt ein Fenster gibt) bleibt in <em>Art</em> irreduzibel: das ist das Hard Problem.';
+    }
+    if(readout){
+      readout.innerHTML='Fenster zu <b>'+pct+'%</b> fixiert &middot; '+realized+'/'+total+' Relationen fixiert &middot; '+
+        (state.removed?'<b>Objekt entfernt</b> &middot; ':'')+'<b>Kernel: l&auml;uft immer</b>. '+msg;
+    }
+  }
+
+  function draw(){
+    var w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 720;
+    if(w<2){ w=2; }
+    var h=460, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var bandH=54, bandTop=h-bandH-14;
+    var cy=bandTop*0.50, cx=w/2;
+    var R=Math.min(w,bandTop)*0.33, aR=30, sR=20;
+    var frac=state.frac, realized=Math.round(frac*total);
+    var pulse=0.5+0.5*Math.sin(state.t*1.6);
+
+    // Gitter
+    ctx.lineWidth=1; ctx.strokeStyle=rgba(pal.sub,0.10);
+    var gx,gy;
+    for(gx=40; gx<w; gx+=40){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,bandTop); ctx.stroke(); }
+    for(gy=40; gy<bandTop; gy+=40){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+
+    // Leere-Glow hinter Zentrum (verblasst mit Fixierung)
+    var vg=(1-frac)*0.24;
+    if(vg>0.01){
+      var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*0.85);
+      g.addColorStop(0,rgba(pal.void,vg)); g.addColorStop(1,rgba(pal.void,0));
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,bandTop);
+    }
+    // Fenster-Glow hinter Zentrum (leuchtet mit Fixierung)
+    if(!state.removed && frac>0.02){
+      var wg=ctx.createRadialGradient(cx,cy,2,cx,cy,R*0.7);
+      wg.addColorStop(0,rgba(pal.win,0.12+0.5*frac)); wg.addColorStop(1,rgba(pal.win,0));
+      ctx.fillStyle=wg; ctx.fillRect(0,0,w,bandTop);
+    }
+
+    // Satteliten-Positionen
+    var S=[],ii;
+    for(ii=0; ii<counts.length; ii++){ S.push(satPos(ii,cx,cy,R)); }
+
+    // Gestrichelte (Leere) + durchgezogene (fixierte) Pfeile
+    for(var s=0; s<slots.length; s++){
+      drawArrow(slots[s],S,cx,cy,aR,sR,rgba(pal.void,0.30+0.18*pulse),1,true);
+    }
+    for(var r=0; r<realized; r++){
+      drawArrow(slots[r],S,cx,cy,aR,sR,rgba(pal.arrow,0.55+0.35*pulse),1.9,false);
+    }
+
+    // Satteliten-Knoten
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(ii=0; ii<S.length; ii++){
+      var p=S[ii];
+      ctx.beginPath(); ctx.arc(p.x,p.y,sR,0,TAU); ctx.fillStyle=rgba(pal.bg,1); ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle=rgba(pal.arrow,0.85); ctx.stroke();
+      ctx.fillStyle=rgba(pal.text,0.95); ctx.font='bold 15px sans-serif'; ctx.fillText(labels[ii],p.x,p.y);
+    }
+
+    // Zentrales Objekt A (Fenster)
+    if(state.removed){
+      ctx.beginPath(); ctx.arc(cx,cy,aR,0,TAU); ctx.setLineDash([5,5]);
+      ctx.strokeStyle=rgba(pal.win,0.5); ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=rgba(pal.win,0.6); ctx.font='bold 15px sans-serif'; ctx.fillText('A?',cx,cy);
+    } else {
+      if(frac>0.6){
+        ctx.beginPath(); ctx.arc(cx,cy,aR+8+6*pulse,0,TAU);
+        ctx.strokeStyle=rgba(pal.win,(frac-0.6)*0.5); ctx.lineWidth=1.5; ctx.stroke();
+      }
+      var al=0.25+0.75*frac;
+      ctx.beginPath(); ctx.arc(cx,cy,aR,0,TAU); ctx.fillStyle=rgba(pal.bg,1); ctx.fill();
+      ctx.lineWidth=3; ctx.strokeStyle=rgba(pal.win,al); ctx.stroke();
+      ctx.fillStyle=rgba(pal.win,al); ctx.beginPath(); ctx.arc(cx,cy,aR*0.55,0,TAU); ctx.fill();
+      ctx.fillStyle=rgba(pal.text,al); ctx.font='bold 16px sans-serif'; ctx.fillText('A',cx,cy);
+    }
+
+    // Kernel-Band (l&auml;uft IMMER, unabh&auml;ngig vom Fenster)
+    roundRect(14,bandTop,w-28,bandH-14,10);
+    ctx.fillStyle=rgba(pal.kernel,0.10); ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle=rgba(pal.kernel,0.40); ctx.stroke();
+    var n=12, span=(w-28), sp=span/n, kbY=bandTop+(bandH-14)/2;
+    for(var q=0;q<n;q++){
+      var kx=14+((state.t*46 + q*sp) % span);
+      var kb=0.35+0.5*(0.5+0.5*Math.sin(state.t*2.2 + q*0.9));
+      ctx.fillStyle=rgba(pal.kernel,0.35+0.55*kb);
+      ctx.beginPath(); ctx.arc(kx,kbY,2.2+kb*2.4,0,TAU); ctx.fill();
+    }
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillStyle=rgba(pal.kernel,0.95); ctx.font='bold 12px sans-serif';
+    ctx.fillText('KERNEL / Substrat &mdash; l&auml;uft immer (Zugangsbewusstsein &middot; &ldquo;leichte Probleme&rdquo;)', 20, bandTop+bandH-40);
+
+    updateReadout(realized,frac);
+  }
+
+  if(slider){
+    slider.addEventListener('input',function(){
+      state.frac=parseInt(this.value,10)/100;
+      if(fval){ fval.textContent=this.value+'%'; }
+    });
+  }
+  if(removeBtn){
+    removeBtn.addEventListener('click',function(){
+      state.removed=!state.removed;
+      this.classList.toggle('on',state.removed);
+      this.textContent=state.removed?'Objekt A wiederherstellen':'Objekt A entfernen (Yoneda)';
+    });
+  }
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      document.documentElement.classList.toggle('dark');
+      readPal();
+    });
+  }
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+  }
+
+  readPal();
+  var last=performance.now();
+  function loop(now){
+    var dt=(now-last)/1000; last=now; if(dt>0.1){ dt=0.1; }
+    state.t+=dt; draw(); requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

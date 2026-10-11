@@ -1,0 +1,17 @@
+{
+  "no": "032",
+  "a": "n1-028.html",
+  "b": "n1-095.html",
+  "a_title": "Das stille Objekt und seine Standpunkte (Symmetrie ist Vision)",
+  "b_title": "Der Zoom als Geometrie (Chaos-Theorie ✕ Framespotting)",
+  "combined_theme": "instance-to-invariant-structure",
+  "one_line": "Das einzelne Bild (Standpunkt / Bahn) ist stumm oder irreführend; erst die invariante Struktur unter der Wirkung — Symmetriegruppe (A) / Attraktor (B) — macht das System lesbar.",
+  "contradictions": [
+    "Das Teilbild: A sieht es als stumm/leer (ein Standpunkt zeigt nichts, das Objekt ist 'stumm'), B als aktiv irreführendes Rauschen (eine Bahn zeigt ein falsches Bild).",
+    "Was die Struktur ist: A studiert Invarianz/Selbstbewahrung (die Form bleibt, dieselben Betti-Zahlen — was die Wirkung nicht ändert); B studiert Dynamik/Divergenz (λ>0, Bahnen laufen auseinander, der Attraktor ist die Endmenge, nicht das Bewahrte).",
+    "Bestimmtheit vs. Unvorhersagbarkeit: A's Objekt ist exakt und vollständig zählbar (8 Elemente, checkbare Cayley-Tabelle, feste Invarianten); B's Detail ist prinzipiell, physikalisch unvorhersagbar (Schmetterlingseffekt, λ>0).",
+    "Ziel des Zooms: A strebt totale Vereinigung (je fassender die Struktur, desto mehr Vision — 'alle Pferde trinken'); B strebt den rechten, sicheren Frame (auf einem nachhaltigen Attraktor bleiben, nicht in den schlechten Regime kippen)."
+  ],
+  "resolution": "Beide studieren dieselbe Menge — die invariante Struktur unter der Wirkung eines Systems auf seinen Zustandsraum. A's Symmetriegruppe (die selbstbewahrenden Transformationen) und B's Attraktor (die Menge, die die Iteration auf sich selbst abbildet) sind dieselbe Idee: die Teilmenge, die unter der Wirkung invariant bleibt — der Attraktor IST eine A-Invariante. Invarianz (A) und Divergenz (B) sind zwei Register desselben Wirkungsspektrums (der Fixe/Neutrale Teil vs. der Expansive). Das Teilbild ist stumm oder rauschend, weil Struktur im Menge- nicht im Element-Leben hat; man wechselt vom Element zur Menge. Bestimmt vs. unvorhersagbar trennt sich nach Ebene: die Struktur (Gruppe/Attraktor) ist immer exakt kenntlich, die Instanz nur, wenn die Wirkung nicht sensitiv ist (endliche Gruppe = A, voll lesbar; sensitives iteratives Mapping = B, Detail bleibt halb verdeckt). Totale Vereinigung (A) ist ein Erkenntnis-Prinzip (je fassender, desto mehr Verstehen); der sichere Frame (B) ein Handlungs-Prinzip (Parameter so setzen, dass das System auf einem guten Attraktor bleibt).",
+  "viz": "Ein Canvas mit einem einzigen 'Aggregation'-Slider, der zwei Hälften gleichzeitig treibt: links A — das Quadrat mit wachsendem Ring von Standpunkten (1→8, Form bleibt invariant, D₄), rechts B — die logistische Karte (r=3,9), deren Orbit von wenigen Rausch-Punkten zur vollen invarianten Dichte (dem Attraktor) wird; dazu λ-/Regime-Readout."
+}

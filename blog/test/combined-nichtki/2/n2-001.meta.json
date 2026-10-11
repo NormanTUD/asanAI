@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "topology.html",
+  "b": "n1-044.html",
+  "a_title": "Topology: See The World Differently (interaktive Topologie-Einführung, Original)",
+  "b_title": "Unterscheidung & Quality — Die Geburt der Form aus dem Ungeteilten (Runde 1, Spencer-Brown × Pirsig)",
+  "combined_theme": "topologie-der-unterscheidung",
+  "one_line": "Der Schnitt (Mark/Grenze) ist ein topologischer Urakt: 'Form' ist genau die Invariante (βᵢ, χ, π₁), die der Schnitt hinterlässt, und 'Quality' ist die Verbundenheit des Ungeteilten, die er irreversibel zerstört — Form = Invariante, Quality = die verworfene Faser.",
+  "contradictions": [
+    "Gewinn vs. Verlust: A (Topologie) hält den Fundament-Akt — die kontinuierliche Verformung/Homöomorphismus — für verlustfrei (ändert nichts Topologisches, bleibt in derselben Klasse); B (n1-044) hält den Urakt — den Schnitt/die Mark — für kostenbehaftet (Quality↓, 'Abfall vom Echten'). Der Konflikt: welche Operation ist fundamental — Verformen (erhält) oder Schneiden (kostet)?",
+    "Leere/Fülle vs. bestimmter Raum: B hält das Ungeteilte absichtlich undeterminiert (Void = leeres Nichts ODER Quality = volle Präsenz, je nach Register); A nagelt dasselbe Ungeteilte auf ein bestimmtes Objekt fest — den kontrahierbaren/indiskreten Raum (β₀=1, χ=1, keine Löcher).",
+    "Vollständig vs. offen: A feiert die Vollständigkeit der formalen Klassifikation (jede geschlossene Fläche festgelegt durch Orientierbarkeit + χ; Existenz-Sätze Brouwer/Hairy Ball/Poincaré–Hopf); B warnt, dass Formalisierung divergiert (unendliche, wachsende Hypothesen) und die Quality nie erfasst."
+  ],
+  "resolution": "Zwei Operationen, keine: Verformung bleibt innerhalb einer topologischen Klasse (verlustfrei, Koordinatenwechsel), der Schnitt wechselt die Klasse (erzeugt Region/Loch, irreversibel, kostenbehaftet) — Gewinn und Verlust treffen auf verschiedene Züge. Das Ungeteilte ist der kontrahierbare Raum: formal ohne Struktur (leer) und erfahrungsmäßig maximal verbunden (voll) — zwei Register desselben maximal-symmetrischen Objekts. Die Klassifikation ist über der Form vollständig, über Quality stumm, weil die Invariante eine verlustbehaftete Many-to-One-Abbildung ist: unendlich viele Schnitte teilen sich dieselbe Invariante (= die Hypothesen-Explosion), und das verworfene Detail ist die verlorene Quality. Form = Invariante; Quality = verworfene Faser; lokale Schnitte → globale Form (vollständig) aber nie → globale Quality.",
+  "viz": "Interaktives Canvas 'Das Ungeteilte schneiden, Invarianten zählen': Punktewolke = Ungeteiltes (β₀=1); per Klick werden Schnitte/Marken (Linien) gesetzt, die die Wolke in Regionen teilen — jede Region = verbundene Komponente = echte Invariante β₀. Zwei Gauges zeigen simultan Q=100·e^(-0.35·C) (Quality↓) und F=100·(1-e^(-0.5·C)) (Form↑), daneben reale Regionen β₀ vs. formale Zustände 2^C (die Form/Substanz-Spalte)."
+}

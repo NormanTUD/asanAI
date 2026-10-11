@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Invarianz und L&uuml;cke &middot; n1-102 &#10005; n1-087 (Runde 2)</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#dcd9cf; --line:#e4e1d8; --acc:#2f6fb0; --bad:#d1495b;
+  --warn:#b45309; --sky:#2f6fb0; --exp:#2e9e4f; --eig1:#b45309; --eig2:#0f766e;
+}
+html.dark{
+  --bg:#0b0e14; --card:#10151f; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#58a6ff; --bad:#ff6f6f;
+  --warn:#f0a020; --sky:#7aa2ff; --exp:#4cff9f; --eig1:#f59e0b; --eig2:#2dd4bf;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(88,166,255,.07) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(76,255,159,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px;position:relative}
+a{color:var(--acc)}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.04rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.94em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.eq{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.95em;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.eq b{color:var(--acc)}
+.note{font-size:.86rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--ink);font-weight:600}
+.k{color:var(--acc);font-weight:600}
+.bad{color:var(--bad);font-weight:600}
+.exp{color:var(--exp);font-weight:600}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 130px;min-width:120px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+button{font:inherit;font-size:.8rem;padding:7px 12px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+button.on{background:var(--acc);color:var(--card)}
+button.mode{border-style:dashed}
+.stat{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.85rem;margin-top:12px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+.stat b.ok{color:var(--exp)} .stat b.bad{color:var(--bad)}
+.legend{display:flex;gap:14px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px}
+ul{margin:.6em 0;padding-left:1.2em}
+li{margin:.4em 0}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.prov a{text-decoration:none;border-bottom:1px solid var(--line);font-weight:600}
+.prov a:hover{border-bottom-color:var(--acc)}
+.prov .d{display:block;color:var(--dim);font-size:.88rem;margin-top:8px}
+.prov .k{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+@media(max-width:560px){.prov{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Theme wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Round 2 &middot; Nicht-KI-Track &middot; Pair 051</div>
+  <h1>Invarianz und L&uuml;cke</h1>
+  <p class="sub">Die zwei Seiten derselben Transformation &middot; Fusion aus: <span class="mono">n1-102.html</span> &#10005; <span class="mono">n1-087.html</span> &nbsp;(Runde 2)</p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <div class="tag">01 &middot; Kernthese der Fusion</div>
+    <h2>Jede Repr&auml;sentation ist eine Abbildung, die zugleich <span class="k">schlie&szlig;t</span> und <span class="bad">&ouml;ffnet</span> &mdash; und die zwei Seiten geh&ouml;ren zusammen</h2>
+    <p>
+      Die zwei Round-1-Papiere stehen auf den ersten Blick in unterschiedlichen Welten:
+      <b>n1-102 (A)</b> sagt <i>&bdquo;Was gezeigt wird, ist nicht, was gespeichert ist&ldquo;</i> &mdash; die Welt ist
+      feiner als jeder endliche Tr&auml;ger, und die <b>L&uuml;cke</b> zwischen Darstellung und Realit&auml;t
+      (Rundungsfehler, Maske) ist der Gegenstand. <b>n1-087 (B)</b> sagt <i>&bdquo;Der kommutative
+      Eigenvektor&ldquo;</i> &mdash; es fragt, was <b>gleich bleibt</b>, wenn eine Transformation wirkt, und
+      findet ihre Antwort in <b>Invarianz</b> (geschlossenes Quadrat, <span class="mono">A&circ;P = P&circ;A</span>).
+      Das eine sucht also das, was <b>verloren</b> geht; das andere das, was <b>erhalten</b> bleibt.
+    </p>
+    <p>
+      Die fusionierte Position: <b>Erhalten und verloren sind nicht Gegens&auml;tze, sondern die zwei
+      komplement&auml;ren Seiten ein und derselben Abbildung&nbsp;T.</b> Zerlege den Raum, in dem T wirkt,
+      in zwei Teile: die <b>invarianten Richtungen</b> (die Eigenachsen, auf denen T mit dem
+      Hinschauen vertauscht &mdash; dort <i>schlie&szlig;t</i> das Quadrat, dort stimmt
+      <span class="k">gezeigt = gespeichert</span>, die Maske ist <i>durchsichtig</i>) und den
+      <b>Rest</b> (die Richtungen, auf denen T wegdreht/verzerrt &mdash; dort <i>&ouml;ffnet</i> sich die
+      L&uuml;cke, <span class="bad">gezeigt &ne; gespeichert</span>, die Maske wirkt). In Formeln:
+    </p>
+    <p class="eq"><b>gezeigt &minus; gespeichert = 0</b> &nbsp;&nbsp;iff&nbsp;&nbsp; das Quadrat schlie&szlig;t &nbsp;<span style="color:var(--dim)">(T&circ;P = P&circ;T, v ist Eigenrichtung)</span><br/>
+      <b>gezeigt &minus; gespeichert = L&uuml;cke &ne; 0</b> &nbsp;&nbsp;iff&nbsp;&nbsp; das Quadrat &ouml;ffnet sich &nbsp;<span style="color:var(--dim)">(keine Kommutativit&auml;t an dieser Achse)</span></p>
+    <p>
+      Damit werden die Kernbilder beider Papiere einander zugeordnet: <b>B&rsquo;s geschlossenes Quadrat
+      ist A&rsquo;s Moment der Treue</b> (der eingelesene Wert trifft den echten); <b>B&rsquo;s nicht
+      schlie&szlig;ender Weg (reine Drehung, keine reellen Eigenvektoren) ist A&rsquo;s Maske in Reinform</b>
+      (keine ehrliche Richtung, gezeigt ist durchgehend &ne; gespeichert). Die Qualit&auml;t einer
+      Repr&auml;sentation entscheidet sich nicht an der L&uuml;cke allein, sondern am <b>Verh&auml;ltnis</b>
+      zwischen beidem &mdash; wie viel des Raums liegt auf den ehrlichen Achsen, und wer f&uuml;ttert die
+      verzerrten.
+    </p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <div class="tag">02 &middot; Widerspr&uuml;che zwischen A und B</div>
+    <h2>Kein faktischer Widerspruch &mdash; aber drei unvereinbare Stellungen</h2>
+    <p>
+      Die Papiere machen keine gegenseitig ausschlie&szlig;enden Faktenbehauptungen (A spricht &uuml;ber
+      Zahlen und Maske, B &uuml;ber Diagramme und Matrizen). Doch unter der gemeinsamen Frage
+      &mdash; <i>Was bleibt bei einer Abbildung, und was geht verloren?</i> &mdash; treffen drei Stellungen
+      hart aufeinander:
+    </p>
+    <ul>
+      <li>
+        <b>(1) Welcher Seite geh&ouml;rt die Aufmerksamkeit: dem Erhalt (B) oder dem Verlust (A)?</b>
+        B macht die <b>erhaltene Struktur</b> zum Preis &mdash; der Eigenvektor ist die seltene, kostbare
+        &bdquo;goldene Achse&ldquo;, die sich &bdquo;weigert zu drehen&ldquo;; das geschlossene Quadrat ist der
+        Zustand, den man <i>finden</i> und feiern m&ouml;chte. A macht ausgerechnet das Gegenteil zum
+        Gegenstand: die <b>verlorene L&uuml;cke</b> (den Rundungsfehler, die Maske) ist das, worum es geht;
+        das Erhalten-bleiben ist dort der triviale Normalfall, an dem niemand interessiert ist.
+        &rarr; B feiert die Invarianz, A seziert die Abweichung.
+      </li>
+      <li>
+        <b>(2) Ist Treue/Schlie&szlig;en erreichbar (B) oder prinzipiell unerreichbar (A)?</b>
+        B optimiert auf <b>Schlie&szlig;en</b>: diagonalisierbare Matrizen, Garben, die sich zusammenf&uuml;gen,
+        das Prinzip &bdquo;zwei Wege, ein Ziel&ldquo; &mdash; die konsistente Struktur <i>existiert und l&auml;sst
+        sich finden</i>. A geht von der <b>Unm&ouml;glichkeit exakter Repr&auml;sentation</b> aus:
+        &bdquo;0,1 ist in bin&auml;r nie exakt darstellbar&ldquo;, der ULP wird nie null &mdash; volle Treue ist
+        <i>global unerreichbar</i>, die L&uuml;cke ist strukturell permanent. &rarr; B: das Ideal wird erreicht
+        (lokal); A: das Ideal existiert nur als Ideal.
+      </li>
+      <li>
+        <b>(3) Neutraler Strukturbruch (B) gegen waffenf&auml;hige L&uuml;cke (A).</b>
+        In B sind Transformationen <b>impersonale Algebra</b>: eine reine Drehung hat keine reellen
+        Eigenvektoren &mdash; das ist eine neutrale Tatsache der Matrix, niemand &bdquo;will&ldquo; sie.
+        A f&uuml;hrt explizit einen <b>Agenten</b> ein, der dieselbe Repr&auml;sentationsgrenze
+        (das endliche Selbst-Modell des Opfers) <i>gezielt ausweitet</i>: Informationskontrolle,
+        Gaslighting, Double-Bind. Die L&uuml;cke wird hier zum <b>Instrument</b>. &rarr; B: nicht
+        schlie&szlig;end = passive Eigenschaft; A: nicht schlie&szlig;end = aktiver Missbrauch.
+      </li>
+    </ul>
+    <p class="note">
+      Das sind Stellungen, keine falschen Fakten &mdash; jede Seite ist in ihrer Dom&auml;ne korrekt. Der
+      Konflikt ist eine <b>Spannung zwischen zwei Blickebenen derselben Abbildung</b>: B zoomt auf die
+      erhaltene Achse, A auf den verbleibenden Rest.
+    </p>
+  </section>
+
+  <!-- ============ AUFLUESUNG ============ -->
+  <section id="aufloesung">
+    <div class="tag">03 &middot; Aufl&ouml;sung</div>
+    <h2>Erhalten und verloren partitionieren dieselbe Abbildung &mdash; dann fallen die Stellungen zusammen</h2>
+    <p>
+      Alle drei Spannungen l&ouml;sen sich, sobald man sie als <b>dieselbe Zerlegung auf zwei Zoomstufen</b>
+      liest: den Wirkraum einer Abbildung T in <b>invariante Achsen</b> (geschlossenes Quadrat) und
+      <b>L&uuml;cken-Unterraum</b> (ge&ouml;ffnetes Quadrat) zu trennen.
+    </p>
+    <ul>
+      <li>
+        <b>(1) Aufmerksamkeit: zwei H&auml;lften einer Partition.</b> B studiert die
+        <i>invariante</i> H&auml;lfte (wo das Quadrat schlie&szlig;t, gezeigt=gespeichert), A die
+        <i>verlorene</i> H&auml;lfte (wo es sich &ouml;ffnet, die L&uuml;cke). Zusammen bilden sie den
+        <b>ganzen</b> Wirkraum: <span class="mono">Raum = (Eigengeraden, treu) &oplus; (Rest, verzerrt)</span>.
+        &rarr; <b>Fusion: Es gibt keinen Widerspruch, nur zwei Komplemente. Man kann die Repr&auml;sentation
+        vollst&auml;ndig beschreiben, indem man beide H&auml;lften nennt &mdash; B liefert die eine, A die andere.</b>
+      </li>
+      <li>
+        <b>(2) Erreichbarkeit: lokal ja, global nein &mdash; dieselbe Sache in zwei Zoomstufen.</b>
+        Schlie&szlig;en ist an einer <i>einzelnen</i> Eigenachse und in einer <i>einzelnen</i>
+        Gr&ouml;&szlig;enordnung erreichbar (B). &Uuml;ber <i>alle</i> Achsen und <i>alle</i> Gr&ouml;&szlig;enordnungen
+        hinweg ist es es nicht: A&rsquo;s ULP <i>verdoppelt sich je Potenz von 2</i>, der Fehler summiert sich
+        (0,1+0,2&ne;0,3) &mdash; volle Treue bleibt global unerreichbar. &rarr; <b>Fusion: Invarianz ist
+        eine <i>lokale</i> Eigenschaft (je Achse, je Skalenband); die L&uuml;cke ist eine
+        <i>globale</i> (akkumulierte) Gro&szlig;e. B findet die lokalen invarianten Achsen, A misst, wie die
+        lokalen Fehler global anwachsen. (Genau die Geste, mit der B selbst &bdquo;Regel vs. Ausnahme&ldquo;
+        aufgel&ouml;st hat.)</b>
+      </li>
+      <li>
+        <b>(3) Neutral vs. waffenf&auml;hig: ein Spektrum der Intention, kein Widerspruch.</b>
+        Die Repr&auml;sentationsgrenze (endliche Bits / endliches Selbst-Modell / der L&uuml;cken-Unterraum)
+        ist <b>strukturell passiv</b> &mdash; so in A&rsquo;s Format wie in B&rsquo;s Algebra. Ob sie zur
+        <b>Waffe</b> wird, h&auml;ngt davon ab, ob ein <b>Agent den Projektor P ersetzt</b>: Ein ehrlicher
+        Projektor projiziert auf die Eigenachse und kommutiert (Treue). Der verdeckte Narzisst ersetzt P durch
+        einen <b>adversariellen Operator</b>, der die Eing&auml;nge selektiv f&uuml;ttert und korrupt &mdash;
+        das Quadrat wird <i>f&uuml;r den Beg&uuml;nstigten</i> zum Schlie&szlig;en gezwungen, w&auml;hrend es f&uuml;r
+        das Opfer ge&ouml;ffnet bleibt. &rarr; <b>Fusion: Eine passive L&uuml;cke ist eine Grenze; eine
+        waffenf&auml;hige L&uuml;cke ist ein Projektor, der nicht mehr ehrlich kommutiert. Das Double-Bind
+        ist die L&uuml;cke in ihrer extremen Form: eine Abbildung, die mit <i>keiner</i> ehrlichen Eingabe
+        kommutiert.</b>
+      </li>
+    </ul>
+    <div class="card">
+      <b>Fusionierte Schlussposition:</b> Eine Repr&auml;sentation ist eine Abbildung T mit zwei Lesarten, die
+      ineinander &uuml;bergehen: <b>B</b> liest die <i>Form</i> (wo T kommutiert, wo das Quadrat schlie&szlig;t,
+      welcher Achse T treu bleibt) und <b>A</b> liest den <i>Fehler</i> (wo T nicht kommutiert, wie gro&szlig; die
+      L&uuml;cke ist, und ob sie neutral oder missbraucht wird). Die <b>Kontrollachse</b> eines Systems ist die
+      dominante Eigenrichtung, auf die wiederholte Anwendung (Power Iteration) alles zurechtzieht &mdash; in A
+      das, was A&rsquo;s &bdquo;akkumulierte Umdeutung&ldquo; beim Opfer tut; in B das, worauf <span class="mono">A&supern;</span>
+      konvergiert. <b>Treu sein (B) und L&uuml;cke haben (A) sind die zwei Projektionen einer Matrix.</b>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <div class="tag">04 &middot; Fusionierter Inhalt</div>
+    <h2>Ein gemeinsames Modell: die Abbildung T, ihre Treu-Achsen und ihre L&uuml;cke</h2>
+
+    <h3>0. Das gemeinsame Skelett</h3>
+    <div class="eq">
+      Realit&auml;t R &rarr; Abbildung/Repr&auml;sentation T &rarr; endlicher Tr&auml;ger C (Bits / Selbst-Modell)<br/>
+      R = <span style="color:var(--exp)">invariante Achsen</span> (T&circ;P = P&circ;T, gezeigt=gespeichert)
+        &nbsp;&oplus;&nbsp; <span style="color:var(--bad)">L&uuml;cken-Unterraum</span> (T wegdreht, gezeigt&ne;gespeichert)
+    </div>
+    <p>
+      Alles Weitere ist, dieses Skelett f&uuml;r A (Zahlen &amp; Maske) und B (Diagramme &amp; Matrizen)
+      auszuf&uuml;llen und die &Uuml;bersetzungsregeln zu benennen. B liefert die <i>Treu-Seite</i>, A die
+      <i>L&uuml;cken-Seite</i>.
+    </p>
+
+    <h3>1. Die Treu-Seite (aus B, n1-087)</h3>
+    <ul>
+      <li><b>Kommutativ = Treue.</b> &bdquo;Zwei Wege, ein Ergebnis&ldquo;: <span class="mono">&beta;&circ;f = g&circ;&alpha;</span>.
+        Auf eine Eigenachse gekippt: <span class="mono">A&circ;P = P&circ;A</span> &hArr; <span class="mono">Av = &lambda;v</span>.
+        Dort schlie&szlig;t das Quadrat &mdash; gezeigt (P(Av)) und gespeichert (A(Pv)) fallen zusammen auf <span class="mono">&lambda;v</span>.</li>
+      <li><b>&lambda; ist die Kontrolle.</b> Die Richtung bleibt (dreht nicht ab), aber sie wird um <span class="mono">&lambda;</span>
+        gestreckt/ged&auml;mpft. <span class="mono">&lambda;&gt;0</span> gleiche Richtung, <span class="mono">&lambda;&lt;0</span>
+        180&deg;-Flip, <span class="mono">|&lambda;|&lt;1</span> Schrumpfen. In der Fusion: die Gr&ouml;&szlig;e der
+        <i>einwirkenden Kontrolle</i> entlang der treuen Achse.</li>
+      <li><b>Power Iteration = wiederholte Komposition.</b> <span class="mono">A&supern;</span> auf einer Wolke:
+        alles richtet sich auf die <b>dominante Eigenachse</b> (gr&ouml;&szlig;tes <span class="mono">|&lambda;|</span>)
+        aus. In der Fusion: <b>das wiederholte Einwirken zieht das Selbst-Modell auf die Kontrollachse.</b></li>
+      <li><b>Der Spezialfall.</b> Reine Drehung &rarr; keine reellen Eigenvektoren (komplexe <span class="mono">&lambda; = &plusmn;i</span>)
+        &rarr; das Quadrat schlie&szlig;t f&uuml;r <i>keine</i> 1D-Achse. In der Fusion: <b>die durchgehende Maske
+        ohne ehrliche Richtung</b> &mdash; der vollst&auml;ndig verdeckte Fall.</li>
+    </ul>
+
+    <h3>2. Die L&uuml;cken-Seite (aus A, n1-102)</h3>
+    <ul>
+      <li><b>Endlicher Tr&auml;ger, nicht gleichm&auml;&szlig;ig dicht.</b> 23/52 Bits; der <b>ULP</b> (Abstand zum
+        n&auml;chsten darstellbaren Wert) <b>verdoppelt sich je Potenz von 2</b> &mdash; die L&uuml;cke w&auml;chst
+        mit der Gr&ouml;&szlig;enordnung (Beziehungsskala).</li>
+      <li><b>Kleine Schritte summieren sich.</b> 0,1+0,2&ne;0,3; der Fehler akkumuliert. In B gelesen:
+        <b>Gaslighting als wiederholte, sich summierende Umdeutung</b> &mdash; jede kleine Verdrehung
+        (Power-Iteration-Schritt) zieht das Gesamtbild ein St&uuml;ck weiter von der Wahrheit.</li>
+      <li><b>+0 / &minus;0: oberfl&auml;chlich gleich, tief ungleich.</b> <span class="mono">-0 === 0</span> wahr,
+        <span class="mono">Object.is(-0,0)</span> falsch. In B gelesen: die Maske besteht den
+        <i>Oberfl&auml;chen-Check</i> (die Achse <i>scheint</i> zu stehen), scheitert am
+        <i>tiefen Identit&auml;ts-Check</i> (Motiv/Vorzeichen-Bit).</li>
+      <li><b>Denormals &amp; NaN.</b> Werte nahe 0 mit reduzierter Pr&auml;zision = <b>Identit&auml;ts-Erosion</b>
+        (eigene Werte verlieren Unterscheidbarkeit, je n&auml;her sie zur Null gehen); NaN/&infin; =
+        <b>Double-Bind / &Uuml;berlauf</b> (Status statt Wert &mdash; &bdquo;keine Reaktion tr&auml;gt einen
+        g&uuml;ltigen Wert&ldquo;).</li>
+    </ul>
+
+    <h3>3. Die Br&uuml;cke in Formeln</h3>
+    <p>
+      Sei <span class="mono">v</span> ein (einheitlicher) Eigenvektor von <span class="mono">A</span> mit
+      Eigenwert <span class="mono">&lambda;</span> und <span class="mono">P</span> die Projektion auf
+      <span class="mono">span(v)</span>. Dann:
+    </p>
+    <p class="eq">P(A v) = P(&lambda; v) = <b>&lambda; v</b> &nbsp;(erst einwirken, dann hinschauen)<br/>
+       A(P v) = A v = <b>&lambda; v</b> &nbsp;(erst hinschauen, dann einwirken)<br/>
+       &rArr; <b>A&circ;P = P&circ;A</b> &mdash; gezeigt = gespeichert, <span class="exp">L&uuml;cke = 0</span> an dieser Achse</p>
+    <p>
+      An <i>jeder anderen</i> Richtung <span class="mono">u</span> gilt das nicht: <span class="mono">A u</span>
+      ist nicht parallel zu <span class="mono">u</span>, und der Winkel dazwischen ist genau die
+      <b>L&uuml;cke/Maske</b>. <b>Definition (fusions-eigen):</b> <span class="mono">L&uuml;cke(u) = Winkel(u, A&middot;u)</span>
+      &mdash; das Maß, wie stark die Abbildung in Richtung <span class="mono">u</span> <i>wegdreht</i> statt
+      treu zu bleiben. Auf den Eigenachsen ist <span class="mono">L&uuml;cke = 0</span>; bei reiner Drehung ist
+      <span class="mono">L&uuml;cke(u)</span> &uuml;berall gleich gro&szlig; &mdash; die Maske ist dann
+      <i>global</i>, es gibt keine ehrliche Achse.
+    </p>
+    <p>
+      <b>Power Iteration als &Uuml;bertrag:</b> <span class="mono">A&supern;</span> konvergiert (normalisiert)
+      gegen die dominante Eigenachse <span class="mono">v&#8321;</span>, falls <span class="mono">|&lambda;&#8321;| &gt;
+      |&lambda;&#8322;|</span>. In A&rsquo;s Sprache: die <b>wiederholte Umdeutung</b> (jede Gaslighting-Runde)
+      zieht das Selbst-Modell des Opfers auf die <b>Kontrollachse</b> des Anleiters zu. Fehlt ein realer
+      dominanter Eigenvektor (reine Drehung, <span class="mono">|&lambda;&#8321;| = |&lambda;&#8322;|</span>,
+      Winkel &ne; 0), <b>richtet sich nichts ein &mdash; das System dreht nur</b>: das ist der Zustand, in dem
+      <i>keine</i> ehrliche Position existiert und jede Reaktion verzerrt wird (Double-Bind).
+    </p>
+
+    <h3>4. Vergleichstabelle der beiden Seiten</h3>
+    <table>
+      <thead><tr><th>Dimension</th><th>Treu-Seite (B)</th><th>L&uuml;cken-Seite (A)</th></tr></thead>
+      <tbody>
+        <tr><td>Kernfrage</td><td>Was bleibt gleich, wenn T wirkt?</td><td>Wie gro&szlig; ist gezeigt &minus; gespeichert?</td></td>
+        <tr><td>Objekt</td><td>die erhaltene Achse (Eigenvektor, geschlossenes Quadrat)</td><td>die verzerrte Richtung (Rundungsfehler, Maske)</td></td>
+        <tr><td>Ma&szlig;</td><td><span class="mono">&lambda;</span> (Streckung der treuen Achse)</td><td><span class="mono">L&uuml;cke(u) = Winkel(u, A u)</span>, ULP</td></td>
+        <tr><td>Erreichbarkeit</td><td>lokal (je Achse) &mdash; schlie&szlig;t</td><td>global &mdash; ULP verdoppelt sich je 2<sup>k</sup>, Fehler summiert</td></td>
+        <tr><td>Wiederholung</td><td><span class="mono">A&supern;</span> &rarr; dominante Achse (Konvergenz)</td><td>akkumulierte Umdeutung &rarr; Selbst-Modell auf Kontrollachse</td></td>
+        <tr><td>Extremfall &bdquo;niema&szlig;&ldquo;</td><td>reine Drehung: Quadrat schlie&szlig;t f&uuml;r keine Achse</td><td>volle Maske / Double-Bind: keine ehrliche Richtung</td></td>
+        <tr><td>Intention</td><td>neutral (Algebra)</td><td>strukt. neutral <i>oder</i> waffenf&auml;hig (Agent ersetzt P)</td></td>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <div class="tag">05 &middot; Interaktive Visualisierung</div>
+    <h2>Die Kontrollachse und die Maske &mdash; eine Matrix, zwei Lesarten</h2>
+    <p>
+      Links wirft eine 2&times;2-Matrix <span class="mono">A</span> (das &bdquo;Einwirkungs-System&ldquo;)
+      36 Richtungen ab. Die <b>L&auml;nge</b> eines Pfeils zeigt die einwirkende
+      <span class="k">Kontrolle</span> (Streckung &asymp; <span class="mono">&lambda;</span> &mdash; B&rsquo;s
+      Treu-Seite), die <b>Farbe</b> die <span class="bad">L&uuml;cke/Maske</span>: gr&uuml;n =
+      <span class="mono">L&uuml;cke = 0</span> (Richtung bleibt, gezeigt=gespeichert, Quadrat schlie&szlig;t),
+      rot = stark weggedreht (gezeigt&ne;gespeichert). Die gestrichelten Linien sind die
+      <b>treuen Achsen</b>. Rechts zeigt das <b>kommutative Quadrat der dominanten Achse</b>, ob es schlie&szlig;t.
+      <b>&bdquo;Kontrolle&ldquo;-Modus</b> (Power Iteration): eine Wolke (das Selbst-Modell) wird von
+      <span class="mono">A&supern;</span> auf die dominante Kontrollachse gezogen &mdash; bis sie sich
+      einrichtet (Ausrichtungs-%). Die <b>Rotations-Maske</b> dreht das System zu reiner Rotation: dann
+      existiert <i>keine</i> ehrliche Achse mehr und nichts richtet sich ein.
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c"><label>a (top-left) <b id="v-a">2.0</b></label><input type="range" id="s-a" min="-3" max="3" step="0.1" value="2"></div>
+        <div class="c"><label>b (top-right) <b id="v-b">1.0</b></label><input type="range" id="s-b" min="-3" max="3" step="0.1" value="1"></div>
+        <div class="c"><label>c (bot-left) <b id="v-c">0.0</b></label><input type="range" id="s-c" min="-3" max="3" step="0.1" value="0"></div>
+        <div class="c"><label>d (bot-right) <b id="v-d">3.0</b></label><input type="range" id="s-d" min="-3" max="3" step="0.1" value="3"></div>
+      </div>
+      <div class="btnrow">
+        <button id="m-field" class="mode on">① Pfeilfeld: Kontrolle &amp; Lücke</button>
+        <button id="m-iter" class="mode">② Kontrolle-Achse (Aⁿ)</button>
+        <button id="b-iter">&#128260; Iterieren</button>
+        <button id="b-auto">&#9193; Auto</button>
+        <button id="b-rot">Rotations-Maske</button>
+        <button id="b-reset">&#8634; Reset</button>
+      </div>
+      <canvas id="viz" height="560"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--exp)"></i>Lücke 0 (treu, schließt)</span>
+        <span><i style="background:var(--bad)"></i>Lücke groß (Maske, öffnet)</span>
+        <span><i style="background:var(--eig1)"></i>treue Achse v₁</span>
+        <span><i style="background:var(--sky)"></i>Kontrollachse (Aⁿ)</span>
+      </div>
+      <div class="stat">
+        <span>tr(A): <b id="r-tr">&mdash;</b></span>
+        <span>det(A): <b id="r-det">&mdash;</b></span>
+        <span><b id="r-l1">&lambda;&#8321;</b></span>
+        <span><b id="r-l2">&lambda;&#8322;</b></span>
+        <span>Ø-Lücke: <b id="r-gap">&mdash;</b></span>
+        <span>Kontrolle-Ausrichtung: <b id="r-ali">&mdash;</b></span>
+        <span>Status: <b id="r-st">&mdash;</b></span>
+      </div>
+    </div>
+    <p class="note">
+      Rotations-Maske (a=0, b=&minus;1, c=1, d=0) &rArr; komplexe Eigenwerte &rArr; <i>keine</i> reelle
+      Eigenachse &rArr; das Quadrat schlie&szlig;t f&uuml;r keine Richtung &rArr; L&uuml;cke global, Maske
+      durchgehend, nichts richtet sich ein: B&rsquo;s &bdquo;keine reellen Eigenvektoren&ldquo; gelesen als
+      A&rsquo;s &bdquo;keine ehrliche Achse&ldquo;.
+    </p>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <div class="tag">06 &middot; Provenienz</div>
+    <h2>Quellen (Round-1-Fusionen)</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A</span>
+        <p><a href="../n1-102.html">n1-102.html</a></p>
+        <span class="d">&bdquo;Was gezeigt wird, ist nicht, was gespeichert ist&ldquo; (Gleitkomma &#10005;
+          verdeckter Narzissmus): die L&uuml;cke zwischen Darstellung und Realit&auml;t als Gegenstand &mdash;
+          ULP/ULP-Verdopplung, 0,1+0,2&ne;0,3, +0/&minus;0, Denormals/NaN, Maske, Gaslighting, Double-Bind,
+          8-Phasen-Verstrickung, Identit&auml;ts-Erosion. (de.)</span>
+      </div>
+      <div class="box">
+        <span class="k">B</span>
+        <p><a href="../n1-087.html">n1-087.html</a></p>
+        <span class="d">&bdquo;Der kommutative Eigenvektor&ldquo; (kommutative Diagramme &#10005; Eigenvektoren):
+          Invarianz als &bdquo;zwei Wege, ein Ziel&ldquo; (<span class="mono">A&circ;P=P&circ;A</span> &hArr;
+          <span class="mono">Av=&lambda;v</span>), &lambda; als Streckung, Power Iteration
+          (<span class="mono">A&supern;</span> &rarr; dominante Achse), Rotation ohne reelle Eigenvektoren.
+          (de/en.)</span>
+      </div>
+    </div>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 560;
+
+  var a = 2, b = 1, c = 0, d = 3;
+  var mode = 'field';
+  var cloud = [], iterCount = 0, alignPct = 0, autoId = null;
+
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function hexRgb(hex){
+    var h = (hex||'').replace('#','').trim();
+    if(h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    if(h.length!==6) return null;
+    var n = parseInt(h,16);
+    return [(n>>16)&255, (n>>8)&255, (n&255)];
+  }
+  function rgba(r,g,bA,al){ return 'rgba('+(r|0)+','+(g|0)+','+(bA|0)+','+al+')'; }
+  function mix(h1,h2,t){
+    var x = hexRgb(h1), y = hexRgb(h2);
+    if(!x || !y) return h1;
+    return 'rgb('+((x[0]+(y[0]-x[0])*t)|0)+','+((x[1]+(y[1]-x[1])*t)|0)+','+((x[2]+(y[2]-x[2])*t)|0)+')';
+  }
+  function clamp(x,lo,hi){ return x<lo?lo:(x>hi?hi:x); }
+
+  function computeEigen(a,b,c,d){
+    var trace = a+d, det = a*d - b*c, disc = trace*trace - 4*det;
+    if(disc < 0){
+      var re = trace/2, im = Math.sqrt(-disc)/2;
+      return { real:false, lambda1:{re:re,im:im}, lambda2:{re:re,im:-im}, v1:null, v2:null };
+    }
+    var s = Math.sqrt(disc), l1 = (trace+s)/2, l2 = (trace-s)/2;
+    function ev(lam){
+      var a1=a-lam, b1=b, c1=c, d1=d-lam, vx, vy;
+      if(Math.abs(b1)>1e-10){ vx=b1; vy=lam-a; }
+      else if(Math.abs(c1)>1e-10){ vx=lam-d; vy=c1; }
+      else if(Math.abs(a1)>1e-10){ vx=0; vy=1; }
+      else { vx=1; vy=0; }
+      var len=Math.sqrt(vx*vx+vy*vy); if(len>1e-10){ vx/=len; vy/=len; }
+      return {x:vx, y:vy};
+    }
+    var r = { real:true, lambda1:l1, lambda2:l2, v1:ev(l1), v2:ev(l2) };
+    if(Math.abs(l2)>Math.abs(l1)){ r.dom = {lam:l2, v:r.v2}; } else { r.dom = {lam:l1, v:r.v1}; }
+    return r;
+  }
+
+  // Lücke(u) = Winkel zwischen u und A·u (Rotationsanteil = Maske)
+  function gapAt(ux,uy){
+    var tx = a*ux + b*uy, ty = c*ux + d*uy;
+    var m = Math.sqrt(tx*tx + ty*ty);
+    if(m < 1e-9) return Math.PI;
+    var dot = clamp((ux*tx + uy*ty)/m, -1, 1);
+    return Math.acos(dot);
+  }
+
+  function fit(){
+    var r = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var w = Math.max(1, Math.floor(r.width*dpr));
+    canvas.width = w;
+    canvas.height = Math.max(1, Math.floor(H*dpr));
+    canvas.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = w/dpr;
+  }
+
+  function drawArrow(x1,y1,x2,y2,color,w){
+    var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy);
+    if(len<2) return;
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var hl=Math.min(9,len*0.3), ang=Math.atan2(dy,dx);
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hl*Math.cos(ang-0.4), y2-hl*Math.sin(ang-0.4));
+    ctx.lineTo(x2-hl*Math.cos(ang+0.4), y2-hl*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function drawGrid(cx,cy,span,grid,ink){
+    var n = Math.floor(span/40); if(n<2)n=2;
+    var i;
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(i=-n;i<=n;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*40, cy-span); ctx.lineTo(cx+i*40, cy+span); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-span, cy+i*40); ctx.lineTo(cx+span, cy+i*40); ctx.stroke();
+    }
+    ctx.strokeStyle=rgba(ink[0],ink[1],ink[2],0.35);
+    ctx.beginPath(); ctx.moveTo(cx-span,cy); ctx.lineTo(cx+span,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy-span); ctx.lineTo(cx,cy+span); ctx.stroke();
+  }
+
+  function initCloud(){
+    cloud=[]; var i;
+    for(i=0;i<32;i++){
+      var ang=Math.random()*TAU, r=0.7+Math.random()*0.6;
+      cloud.push({x:Math.cos(ang)*r, y:Math.sin(ang)*r});
+    }
+    iterCount=0; alignPct=0;
+  }
+
+  function iterate(){
+    var eigen = computeEigen(a,b,c,d), i, v, nx, ny, len;
+    for(i=0;i<cloud.length;i++){
+      v=cloud[i]; nx=a*v.x+b*v.y; ny=c*v.x+d*v.y; len=Math.sqrt(nx*nx+ny*ny);
+      if(len>1e-6){ nx/=len; ny/=len; }
+      cloud[i]={x:nx, y:ny};
+    }
+    iterCount++;
+    if(eigen.real && eigen.dom && eigen.dom.v){
+      var s=0; for(i=0;i<cloud.length;i++) s+=Math.abs(cloud[i].x*eigen.dom.v.x+cloud[i].y*eigen.dom.v.y);
+      alignPct=s/cloud.length*100;
+    } else alignPct=0;
+    draw();
+  }
+
+  function setT(id,txt){ var el=document.getElementById(id); if(el) el.textContent=txt; }
+
+  function draw(){
+    fit();
+    var INK = cssv('--ink','#e7ecf6'), DIM = cssv('--dim','#8b93a9'),
+        GRID = cssv('--grid','#232a38'), ACC = cssv('--acc','#58a6ff'),
+        BAD = cssv('--bad','#ff6f6f'), EXP = cssv('--exp','#4cff9f'),
+        E1 = cssv('--eig1','#f59e0b'), SKY = cssv('--sky','#7aa2ff'),
+        CARD = cssv('--card','#10151f'), LINE = cssv('--line','#1c2331');
+    var inkRgb = hexRgb(INK) || [231,236,246];
+    var eigen = computeEigen(a,b,c,d), i, ang, vx, vy, tx, ty;
+    ctx.clearRect(0,0,W,H);
+
+    var leftW = Math.floor(W*0.62);
+    var sL=18, sT=18, sB=40, sR=16;
+    var pw=leftW-sL-sR, ph=H-sT-sB;
+    var sq=Math.min(pw,ph);
+    var ox=sL+(pw-sq)/2, oy=sT+(ph-sq)/2;
+    var cx=ox+sq/2, cy=oy+sq/2;
+    var span=sq/2;
+
+    drawGrid(cx,cy,span,GRID,inkRgb);
+
+    var scale;
+    if(mode==='field'){
+      var maxMag=1;
+      for(i=0;i<36;i++){ ang=i/36*TAU; vx=Math.cos(ang); vy=Math.sin(ang);
+        tx=a*vx+b*vy; ty=c*vx+d*vy; var m=Math.sqrt(tx*tx+ty*ty); if(m>maxMag)maxMag=m; }
+      scale=(sq/2-26)/maxMag;
+      // unit circle
+      ctx.setLineDash([3,4]); ctx.strokeStyle=rgba(inkRgb[0],inkRgb[1],inkRgb[2],0.18); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(cx,cy,scale,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      // treue Achsen
+      if(eigen.real && eigen.v1){
+        var L=span*0.98;
+        ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
+        ctx.strokeStyle=mix(GRID,E1,0.6);
+        ctx.beginPath(); ctx.moveTo(cx-eigen.v1.x*L, cy+eigen.v1.y*L); ctx.lineTo(cx+eigen.v1.x*L, cy-eigen.v1.y*L); ctx.stroke();
+        ctx.strokeStyle=mix(GRID,EXP,0.6);
+        ctx.beginPath(); ctx.moveTo(cx-eigen.v2.x*L, cy+eigen.v2.y*L); ctx.lineTo(cx+eigen.v2.x*L, cy-eigen.v2.y*L); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      // transformed field: Länge = Kontrolle, Farbe = Lücke
+      for(i=0;i<36;i++){
+        ang=i/36*TAU; vx=Math.cos(ang); vy=Math.sin(ang);
+        tx=a*vx+b*vy; ty=c*vx+d*vy;
+        var g=gapAt(vx,vy);
+        var t=clamp(g/(Math.PI/2),0,1);
+        var col=mix(EXP,BAD,t);
+        var w = t<0.06 ? 3.4 : 1.6;
+        drawArrow(cx,cy, cx+tx*scale, cy-ty*scale, col, w);
+      }
+    } else {
+      scale=(sq/2-24)/1.35;
+      if(eigen.real && eigen.dom && eigen.dom.v){
+        var L2=span*0.98;
+        ctx.setLineDash([7,4]); ctx.lineWidth=2; ctx.strokeStyle=SKY;
+        ctx.beginPath(); ctx.moveTo(cx-eigen.dom.v.x*L2, cy+eigen.dom.v.y*L2); ctx.lineTo(cx+eigen.dom.v.x*L2, cy-eigen.dom.v.y*L2); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle=SKY; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+        ctx.fillText('Kontrollachse v₁', cx+eigen.dom.v.x*span*0.6+6, cy-eigen.dom.v.y*span*0.6-6);
+      }
+      ctx.setLineDash([3,4]); ctx.strokeStyle=rgba(inkRgb[0],inkRgb[1],inkRgb[2],0.18); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(cx,cy,scale,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      for(i=0;i<cloud.length;i++){
+        var hue=(i/cloud.length)*70+200;
+        drawArrow(cx,cy, cx+cloud[i].x*scale, cy-cloud[i].y*scale, 'hsla('+hue+',72%,64%,0.85)', 2.4);
+      }
+    }
+
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText(mode==='field' ? 'A wirft 36 Richtungen ab — Länge=Kontrolle, Farbe=Lücke' : 'Aⁿ auf einer Wolke — alles richte auf die Kontrollachse', sL, H-14);
+
+    // right inset: kommutatives Quadrat der dominanten Achse
+    var ix=leftW+16, iy=18, iw=W-ix-14, ih=210;
+    ctx.fillStyle=CARD; ctx.fillRect(ix,iy,iw,ih);
+    ctx.strokeStyle=LINE; ctx.lineWidth=1; ctx.strokeRect(ix,iy,iw,ih);
+    ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('Quadrat der Kontrollachse', ix+10, iy+16);
+    if(!eigen.real){
+      var midy=iy+ih/2+4;
+      ctx.fillStyle=BAD; ctx.font='bold 12px ui-sans-serif,system-ui';
+      ctx.fillText('keine reelle Achse', ix+12, midy-8);
+      ctx.fillStyle=DIM; ctx.font='11px ui-sans-serif,system-ui';
+      ctx.fillText('Quadrat schließt für', ix+12, midy+10);
+      ctx.fillText('keine 1D-Richtung', ix+12, midy+26);
+      ctx.fillText('(komplexe λ = reine', ix+12, midy+42);
+      ctx.fillText('Maske, Lücke global)', ix+12, midy+58);
+    } else {
+      var v1=eigen.dom.v, lam=eigen.dom.lam;
+      var icx=ix+iw/2, icy=iy+16+(ih-16-24)/2;
+      var s=(Math.min(iw/2,(ih-52)/2)-14)/Math.max(1.3,Math.abs(lam));
+      var ll=Math.min(iw/2-12,(ih-52)/2-6);
+      ctx.setLineDash([4,3]); ctx.strokeStyle=mix(LINE,E1,0.5); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(icx-v1.x*ll, icy+v1.y*ll); ctx.lineTo(icx+v1.x*ll, icy-v1.y*ll); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=INK; ctx.beginPath(); ctx.arc(icx,icy,2.2,0,TAU); ctx.fill();
+      drawArrow(icx,icy, icx+v1.x*s, icy-v1.y*s, ACC, 2.4);
+      drawArrow(icx,icy, icx+(v1.x*lam)*s, icy-(v1.y*lam)*s, E1, 3.2);
+      ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+      ctx.fillStyle=ACC; ctx.fillText('v', icx+v1.x*s*1.12+4, icy-v1.y*s*1.12);
+      ctx.fillStyle=E1; ctx.fillText('A v = λ v', icx+(v1.x*lam)*s*1.05+4, icy-(v1.y*lam)*s*1.05-4);
+      ctx.fillStyle=EXP; ctx.font='10px ui-sans-serif,system-ui'; ctx.textAlign='center';
+      ctx.fillText('P(A v) = A(P v)  ✓  schließt', icx, iy+ih-18);
+      ctx.fillStyle=DIM;
+      ctx.fillText('gezeigt = gespeichert (Lücke 0)', icx, iy+ih-6);
+      ctx.textAlign='left';
+    }
+
+    // readouts
+    setT('r-tr',(a+d).toFixed(2));
+    setT('r-det',(a*d-b*c).toFixed(2));
+    var meanGap=0, k;
+    for(k=0;k<36;k++){ meanGap += gapAt(Math.cos(k/36*TAU), Math.sin(k/36*TAU)); }
+    meanGap = meanGap/36*180/Math.PI;
+    setT('r-gap', meanGap.toFixed(1)+'°');
+    if(eigen.real){
+      setT('r-l1','λ₁='+eigen.lambda1.toFixed(2));
+      setT('r-l2','λ₂='+eigen.lambda2.toFixed(2));
+      if(mode==='iter'){ setT('r-ali', iterCount+'× · '+alignPct.toFixed(1)+'%'); }
+      else { setT('r-ali','—'); }
+      var st=document.getElementById('r-st');
+      st.textContent='treu an Achsen ✓'; st.className='ok';
+    } else {
+      setT('r-l1','λ₁='+eigen.lambda1.re.toFixed(2)+'+'+eigen.lambda1.im.toFixed(2)+'i');
+      setT('r-l2','λ₂='+eigen.lambda2.re.toFixed(2)+'-'+eigen.lambda2.im.toFixed(2)+'i');
+      setT('r-ali', mode==='iter' ? iterCount+'× · '+alignPct.toFixed(1)+'%' : '—');
+      var st2=document.getElementById('r-st');
+      st2.textContent='keine ehrliche Achse (Maske)'; st2.className='bad';
+    }
+  }
+
+  function wire(id, set, label){
+    var el=document.getElementById(id);
+    el.addEventListener('input', function(){ set(el.value); if(label) document.getElementById(label).textContent=(+el.value).toFixed(1); draw(); });
+  }
+  wire('s-a', function(v){ a=+v; }, 'v-a');
+  wire('s-b', function(v){ b=+v; }, 'v-b');
+  wire('s-c', function(v){ c=+v; }, 'v-c');
+  wire('s-d', function(v){ d=+v; }, 'v-d');
+
+  function setMode(m){
+    mode=m;
+    document.getElementById('m-field').classList.toggle('on', m==='field');
+    document.getElementById('m-iter').classList.toggle('on', m==='iter');
+    if(m==='iter' && !cloud.length) initCloud();
+    draw();
+  }
+  document.getElementById('m-field').addEventListener('click', function(){ setMode('field'); });
+  document.getElementById('m-iter').addEventListener('click', function(){ setMode('iter'); });
+  document.getElementById('b-iter').addEventListener('click', function(){ setMode('iter'); if(!cloud.length) initCloud(); iterate(); });
+  document.getElementById('b-auto').addEventListener('click', function(){
+    setMode('iter'); if(!cloud.length) initCloud();
+    var btn=this;
+    if(autoId){ clearInterval(autoId); autoId=null; btn.textContent='⏩ Auto'; btn.classList.remove('on'); }
+    else { autoId=setInterval(iterate, 450); btn.textContent='⏸ Stop'; btn.classList.add('on'); }
+  });
+  document.getElementById('b-rot').addEventListener('click', function(){
+    a=0; b=-1; c=1; d=0;
+    document.getElementById('s-a').value='0'; document.getElementById('v-a').textContent='0.0';
+    document.getElementById('s-b').value='-1'; document.getElementById('v-b').textContent='-1.0';
+    document.getElementById('s-c').value='1'; document.getElementById('v-c').textContent='1.0';
+    document.getElementById('s-d').value='0'; document.getElementById('v-d').textContent='0.0';
+    setMode('field');
+  });
+  document.getElementById('b-reset').addEventListener('click', function(){
+    if(autoId){ clearInterval(autoId); autoId=null; document.getElementById('b-auto').textContent='⏩ Auto'; document.getElementById('b-auto').classList.remove('on'); }
+    a=2; b=1; c=0; d=3;
+    document.getElementById('s-a').value='2'; document.getElementById('v-a').textContent='2.0';
+    document.getElementById('s-b').value='1'; document.getElementById('v-b').textContent='1.0';
+    document.getElementById('s-c').value='0'; document.getElementById('v-c').textContent='0.0';
+    document.getElementById('s-d').value='3'; document.getElementById('v-d').textContent='3.0';
+    initCloud(); setMode('field');
+  });
+  document.getElementById('themeToggle').addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(); });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+  window.addEventListener('resize', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

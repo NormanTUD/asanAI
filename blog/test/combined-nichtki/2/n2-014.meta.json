@@ -1,0 +1,17 @@
+{
+  "no": "014",
+  "a": "n1-103.html",
+  "b": "n1-039.html",
+  "a_title": "Invarianz: das eine Muster hinter Körper = Raumzeit",
+  "b_title": "Fluss & Nerven — Die eine Weltordnung in zwei Stimmen",
+  "combined_theme": "immanente-ordnung-invarianz-fluss-abstimmung",
+  "one_line": "Eine immanente Ordnung im Wandel: Invarianz (n1-103) ist die objektive, Fluss (n1-039) die erlebte Seite derselben — die Abstimmlage des Systems entscheidet, ob dieselbe Invariante als stabilisierende Heimat/Sollwert oder als erpressende Störung/Kompulsion begegnet.",
+  "contradictions": [
+    "A liest die Invariante als fixen Attraktor/Minimum (Sollwert, Tal), in den die Dynamik absteigt ('Spacetime tells matter how to move'); B lehnt jeden starren Anker ab (Panta Rhei, ewiges Feuer) — das Maß/Logos ist Rhythmus des immerfortigen Wandels, kein erreichbarer Ruhezustand.",
+    "A behandelt die Ordnung als subjektunabhängige Struktur (Homöostase/Geometrie; der Selbst-Frame ist nur funktional); B macht den Charakter der Ordnung für den Einzelnen von der Abstimmung des Subjekts abhängig (dieselbe Ordnung als befreiende Harmonie oder erpressende Kompulsion).",
+    "A: die Ordnung wirkt als korrigierender Rückkopplungszug zum fixen Sollwert (Gradientenabstieg, Kraft als Schatten der Geometrie); B: die Ordnung ist Resonanz, der man sich anstimmt ('auf sie hinhörend', Harmonie aus balancierter Spannung), kein Zug zu einem Punkt.",
+    "A: Pathologie = Verlust/Überforderung der Invariante (Hitzschlag, das Tal wird überflutet, Regelungsversagen); B: die Ordnung bleibt intakt, nur die (falsche) Abstimmung des Subjekts macht sie erpressend (Denkzwang, Entmannung)."
+  ],
+  "resolution": "Beide Seiten gehören zusammen: A trägt die objektive Seite (Invariante + Kopplungsgesetz + Abstieg zur Form), B die erlebte Seite (Resonanz des abgestimmten Subjekts). Das Attraktor-Minimum von A ist genau die wiederkehrende Form, die B's Feuer 'nach Maßen' annimmt; Rückkopplung (A) ist Resonanz im Kleinsignal-Limes, Kompulsion (B) derselbe Kopplungsmechanismus in de-abgestimmter Sättigung; A's 'Regelungsversagen' und B's 'Denkzwang' sind dasselbe — das Verlassen des Resonanz-Regimes. Die Abstimmlage des Systems zur immanenten Ordnung ist der einzige Regler, der die Begegnungsform (Heimat vs. Zwang) setzt.",
+  "viz": "Canvas-Flussfeld: eine sich fortbewegende, immer gleiche 'Ordnungs-Welle' (die immanente Invariante: A's Sollwert/c/s², B's Logos/Maß) bleibt konstant und fließt (Panta Rhei), während der System-Verlauf per Regler von abgestimmter, phasengesperrter Nachführung (Resonanz, kleine Verzerrung) zu de-abgestimmter, rauschender Übersteuerung (Kompulsion, große Verzerrung) übergeht — dieselbe Ordnung, zwei Abstimmlagen; Live-Readout der Verzerrung zum Maß; themenreaktiv via CSS-Variablen, Inline-Daten, keine Netzabrufe."
+}

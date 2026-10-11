@@ -1,0 +1,16 @@
+{
+  "no": "027",
+  "a": "n1-022.html",
+  "b": "n1-074.html",
+  "a_title": "Lokales verklebt zum Globalen: die Garbe in der Halluzination",
+  "b_title": "Kohärente Welt: der Topos als mögliches Universum",
+  "combined_theme": "garben-luecken-fovea-situs",
+  "one_line": "Eine durch Verkleben gebaute Garbenwelt trägt zwei unabhängige Lücken zum Ganzen: die Domänen-Lücke (A's Fovea, wo der Chart bei log r→−∞ nicht definiert ist) und die Wahrheitss-Lücke (B's Situs, die keine Kohärenz erreicht) — und A's strikte Eindeutigkeit ist nur der 1-trunkierte Schatten von B's kohärenter Äquivalenz s₁≃s₂ via f.",
+  "contradictions": [
+    "Ist lokale Kohärenz hinreichend? A — 'kompatible lokale Daten ⇔ eindeutiges globales Objekt' (Bidirektionalität, hinreichend, rekonstruierbar); B — 'Kohärent ≠ wahr': ein voll verklebtes, lokal kompatibles Objekt kann den verborgenen Situs verfehlen (Kohärenz ist nur notwendige, nicht hinreichende Bedingung; Schicht 1 von 3).",
+    "Strikte Eindeutigkeit vs. kohärente Äquivalenz (das Verklebungsaxiom): A — 'das eindeutige Objekt, dessen Keime an jedem Punkt übereinstimmen', Garbenaxiome + Equalizer liefern ein einziges globales Objekt (Punktmenge, Transformation f vergessen); B — ∞-Garbe s₁≃s₂ via f, die Homotopie f bleibt als Daten (2-Morphismus) erhalten, A's 1-Garbe ist nur der 1-trunkierte Schatten.",
+    "Dynamischer Attraktor vs. zeitlose geschlossene Struktur: A — das Verkleben entsteht durch einen zeitabhängigen physikalischen Mechanismus (Turing-Aktivator–Inhibitor-PDE + N₂O-E/I-Trigger, 'die PDE ist der Weg dorthin'); B — der Topos ist ein abgeschlossenes, selbstgenügsames, zeitloses Universum (Wahrheit intern, kein Außen, keine Dynamik)."
+  ],
+  "resolution": "Zwei verschiedene 'Globalen' trennen die Lücken: A's Fovea ist eine Domänen-Lücke (Chart nicht definiert bei r=0, ein Loch im eigenen Raum ℝ²\\{0}), B's Situs eine Wahrheitss-Lücke (total kohärent, doch nicht das Ding); 'kompatibel ⇔ eindeutig' bleibt fürs Objekt wahr, 'kohärent ⇒ wahr' ist falsch (B). Die zwei Lücken sind verschiedene Arten desselben: das Lokal verklebte ist nicht automatisch das Ganze (nicht-definiert-hier vs. definiert-überall-aber-nicht-das-Ganze). Strikte Eindeutigkeit ist die 1-Trunkierung der kohärenten Äquivalenz (Snapshot/gauge-fixiert = A vs. Attraktor mit erhaltener Homotopie f = B); der zeitlose Topos (B) ist der Attraktor, den A's PDE-Fluss in der Meta-Zeit erreicht (interne vs. externe Sicht desselben).",
+  "viz": "Interaktives Garbenfeld auf einem Disk: 8 lokale Sektoren (Überdeckung) mit Gauge-Offsets; zentrale Fovea-Lücke mit Schraffur (Domänen-Lücke, A, log r→−∞) und ∂U-Randring (Heyting-Lücke p∨¬p≠⊤, B); f-Slider 0..1 (0=kohärent B, Nähte/Homotopie g_i erhalten, 1=strikte A, gauge fixiert, Nähte schließen); Situs-Überschuss-Overlay (B, Schicht 3) zeigt den unverschließbaren Anteil Δ>0, der bei jeder Kohärenz bleibt (Kohärent ≠ wahr); drei Readout-Lampen (Kohärenz/interne Konsistenz/Situs); themenreaktiv, nur inline Daten, keine externen Abfragen."
+}

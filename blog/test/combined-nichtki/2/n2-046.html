@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Gegenstand, viele Lesarten — Objektivität zwischen Sein und Score</title>
+<style>
+  :root{
+    --bg:#f5f2ea; --bg2:#ece7da; --card:#fffdf8; --text:#211f1a; --muted:#5f5a4c;
+    --border:#d8d0bd; --accent:#a34e10; --accent2:#2f6df0; --accent3:#a82e6a;
+    --good:#1c7a4a; --viz-bg:#efeadd; --grid:#e4ddca; --panel:#fbf8f0;
+    --lens0:#2b6cb0; --lens1:#0a93b8; --lens2:#a34e10; --lens3:#7c3aed;
+  }
+  html.dark{
+    --bg:#0a0e1a; --bg2:#0e1424; --card:#131b30; --text:#e8ecf7; --muted:#93a0b8;
+    --border:#283356; --accent:#ffb454; --accent2:#7c9eff; --accent3:#ff7ab6;
+    --good:#5eead4; --viz-bg:#0a0e1a; --grid:#18203a; --panel:#111829;
+    --lens0:#4ea8de; --lens1:#22d3ee; --lens2:#ffb454; --lens3:#a78bfa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.72; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+  header.top{padding:1rem 0 1.7rem;border-bottom:2px solid var(--border);margin-bottom:2rem}
+  .eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:.7rem;font-weight:700;
+    color:var(--accent);margin-bottom:.9rem}
+  h1{font-size:clamp(1.9rem,4.8vw,2.7rem);font-weight:800;line-height:1.14;margin-bottom:.7rem}
+  h1 .acc{color:var(--accent)}
+  h1 .acc2{color:var(--accent2)}
+  .subtitle{color:var(--muted);font-size:1rem;font-style:italic}
+  .subtitle .x{color:var(--accent);font-weight:700;font-style:normal}
+  .themebtn{margin-top:1.05rem;background:var(--card);color:var(--text);border:1px solid var(--border);
+    border-radius:8px;padding:.45rem .95rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+  .themebtn:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin:2.6rem 0}
+  h2{font-size:1.5rem;font-weight:750;margin-bottom:1rem;color:var(--accent);
+    padding-bottom:.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+  h2 .num{font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:.15rem .6rem}
+  h3{font-size:1.1rem;font-weight:680;margin:1.5rem 0 .55rem;color:var(--accent2)}
+  p{margin:0 0 1rem}
+  .lead{color:var(--muted);font-style:italic;margin-bottom:1.15rem}
+  ul,ol{margin:0 0 1rem 1.35rem}
+  li{margin:.4rem 0}
+  strong{color:var(--text);font-weight:700}
+  em.k{color:var(--accent3);font-style:normal;font-weight:680}
+  code{font-family:'JetBrains Mono','Consolas',monospace;font-size:.85em;background:var(--panel);
+    border:1px solid var(--border);border-radius:5px;padding:.05em .38em}
+  .callout{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+    padding:.95rem 1.1rem;margin:1.1rem 0}
+  .callout b{color:var(--text)}
+  .tag{display:inline-block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:700;color:var(--accent);margin-right:.35rem;vertical-align:middle}
+  .tag.b{color:var(--accent2)}
+  .tension{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);
+    border-radius:0 12px 12px 0;padding:.9rem 1.1rem;margin:1rem 0}
+  .tension h4{font-size:1.02rem;margin-bottom:.55rem;color:var(--text)}
+  .tension .a{color:var(--accent);font-weight:700}
+  .tension .b{color:var(--accent2);font-weight:700}
+  .tension p{font-size:.93rem;color:var(--muted);margin:0 0 .7rem}
+  .tension p:last-child{margin-bottom:0}
+  .math{font-family:'Cambria Math','Times New Roman',serif;background:var(--panel);
+    border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;margin:.8rem 0;
+    font-size:1.0rem;overflow-x:auto;line-height:1.6}
+  .math sub,.math sup{font-size:.72em}
+  .math .lbl{display:block;font-family:-apple-system,sans-serif;font-size:.7rem;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--muted);margin-bottom:.35rem}
+  table{width:100%;border-collapse:collapse;margin:.9rem 0 .2rem;font-size:.9rem}
+  th,td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+  td:first-child{color:var(--muted)}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:680}
+  .prov a:hover{text-decoration:underline}
+  .prov p{margin-bottom:1rem}
+
+  .viz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem;margin:1.2rem 0}
+  .viz canvas{display:block;width:100%;min-width:540px;border-radius:10px;background:var(--viz-bg);
+    border:1px solid var(--border)}
+  .vscroll{overflow-x:auto}
+  .vcontrols{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.9rem 0 .5rem}
+  .vcontrols label{font-size:.86rem;color:var(--muted);font-weight:600}
+  .vcontrols .val{font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;min-width:14px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:180px;max-width:50vw;height:6px;
+    border-radius:3px;background:var(--border);outline:none;accent-color:var(--accent)}
+  .lens-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 .9rem}
+  .lens-btn{background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:20px;padding:.4rem .85rem;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;
+    transition:border-color .15s,color .15s}
+  .lens-btn:hover{border-color:var(--accent)}
+  .lens-btn.active{border-color:var(--accent);color:var(--accent)}
+  .scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-top:.9rem}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:.6rem .8rem}
+  .stat .n{font-size:1.4rem;font-weight:800;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat.e .n{color:var(--good)}
+  .stat .l{font-size:.72rem;color:var(--muted);letter-spacing:.02em;margin-top:.15rem}
+  .readout{border-left:4px solid var(--accent);background:var(--panel);border-radius:0 10px 10px 0;
+    padding:.8rem 1rem;font-size:.93rem;margin-top:.9rem;min-height:3em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Fusion · Runde 2 · Paar 046 · nicht-KI-Track</div>
+  <h1>Ein Gegenstand, viele Lesarten — <span class="acc2">Objektivität</span> zwischen <span class="acc">Sein</span> und <span class="acc">Score</span></h1>
+  <div class="subtitle">Fusion aus: <span class="x">n1-073.html</span> <span class="x">✕</span> <span class="x">n1-051.html</span> &nbsp;(Runde 2)</div>
+  <button class="themebtn" id="themebtn">🌗 Theme wechseln</button>
+</header>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <h2><span class="num">01</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere sind selbst schon Fusionen und kreisen um dieselbe tiefere Struktur — nur auf anderen Domänen. Die hier wird daraus abstrahiert, nicht die Rohquellen.</p>
+  <p>
+    <span class="tag">A</span> <em>n1-073</em> (Karte &amp; Score) hat eine <strong>eine Welt</strong> gefunden, die auf zwei
+    Seiten gelesen wird: als <em>Karte/Sein</em> (deterministisch, Seed-gesteuert) und als <em>Score/Meinen</em>
+    (deontisches Scorekeeping nach Brandom). <span class="tag b">B</span> <em>n1-051</em> (Zahl &amp; Wahrscheinlichkeit)
+    hat einen <strong>einen Gegenstand</strong> (die Zahl, der Wert p) gefunden, der unter <em>vielen Lesarten/Kontexten</em>
+    denselben Wert behält (Anti-Psychologismus: „dein p = mein p").
+  </p>
+  <div class="callout">
+    <b>Die eine integrierte Position:</b> Es gibt ein <em>festes, verstandsunabhängiges Substrat</em> —
+    <em>Sein</em>: die Karte, die Kardinalzahl, der Wert p — und eine <em>interpretierende Schicht</em> —
+    <em>Meinen</em>: der Score, die Kontexte, die Lesarten. „Bedeutung" entsteht weder im Substrat allein
+    noch im Kopf allein, sondern an der <em>Schnittstelle beider Ebenen</em>. Und <em>Objektivität</em> ist
+    weder das innere Wesen des Objekts noch ein metaphysischer Standpunkt — sie ist die
+    <strong>Struktur, die das Feste vom Gelesenen trennt</strong> und so gewährleistet, dass der Wert
+    unter dem Wechsel aller Lesarten derselbe bleibt.
+  </div>
+  <p>
+    A liefert die <strong>zwei Ebenen</strong> (Sein/Meinen, Karte/Score) und die These, dass
+    <em>Bedeutsamkeit im Score konstituiert wird</em>; B liefert die <strong>Vielzahl gleicher Lesarten</strong>
+    auf einem festen Wert und die These, dass <em>der Wert objektiv bleibt</em>. Zusammen:
+    <em class="k">Ein Feld, viele Lesarten — der Wert ist fest, die Bedeutsamkeit ist konstituiert,
+    und Objektivität ist die Unterscheidungsstruktur dazwischen.</em> Seltenheit (A) und Wahrscheinlichkeit (B)
+    sind dabei zwei Namen für dieselbe Größe: wie viel ein einzelner Fall auf den Betrachter zurückwirft
+    (Commitment / Information).
+  </p>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <h2><span class="num">02</span> Widersprüche zwischen A und B</h2>
+  <p>Sie widerlegen einander nicht (andere Domänen: Weltgenerierung/Semantik vs. Arithmetik/Wahrscheinlichkeit).
+  Aber sie treffen auf drei Punkten — und einem naheliegenden vierten —
+  <strong>inkompatible Grundannahmen</strong> darüber, wo Objektivität lebt, wo Inhalt lebt und wie die Lesarten
+  zueinanderstehen.</p>
+
+  <div class="tension">
+    <h4>① Standort der Objektivität</h4>
+    <p><span class="tag">A</span> <span class="a">Objektivität ist eine strukturelle Fähigkeit.</span>
+    Nicht eine Eigenschaft eines Objekts, sondern die <em>I-Du-Sozialität</em> — „die Gestaltung der
+    Unterscheidung" zwischen Sein (Karte/Seed) und Meinen (Score). Der Seed ist „nur das Sein",
+    nicht die Objektivität; es gibt keinen Standpunkt von nirgendwo.</p>
+    <p><span class="tag b">B</span> <span class="b">Objektivität ist eine Eigenschaft des Gegenstands.</span>
+    Der Anti-Psychologismus: der Wert p ist ein objektiver, <em>verstandsunabhängiger</em> logischer
+    Gegenstand; „dein p = mein p", einerlei Kontext. Objektivität = die Verstandsunabhängigkeit des Objekts selbst.</p>
+    <p><strong>→</strong> A macht Objektivität zu einem <em>Verhältnis/Kapazität</em> (zwischen zwei Schichten);
+    B zu einer <em>Intrinsischen-Eigenschaft</em> (des einen Objekts). Inkompatibel.</p>
+  </div>
+
+  <div class="tension">
+    <h4>② Ort des Inhalts — konstituiert vs. fest</h4>
+    <p><span class="tag">A</span> <span class="a">Bedeutung wird im Score konstituiert.</span>
+    „Inhalt ist nicht in der Karte, er ist im Score, den du führst, während du sie durchläufst."
+    Wer behauptet, <em>konstituiert</em> Inhalt durch die Verpflichtungen, die er eingeht (Brandom).</p>
+    <p><span class="tag b">B</span> <span class="b">Bedeutung ist am Gegenstand fest.</span>
+    „Bedeutung lebt im Objekt, nicht im Kopf." Bedeutung wird am Gegenstand relational/axiomatisch
+    festgelegt (Kontextprinzip); die Kontexte sind nur <em>Etiketten</em> und ändern den Gegenstand nicht.</p>
+    <p><strong>→</strong> A: Inhalt sitzt auf der <em>Leser-/Score-Seite</em> und ist <em>konstituiert</em>;
+    B: Inhalt sitzt auf der <em>Objekt-Seite</em> und ist <em>fest</em>. Direkter Gegensatz.</p>
+  </div>
+
+  <div class="tension">
+    <h4>③ Symmetrie der Lesarten</h4>
+    <p><span class="tag">A</span> <span class="a">Die Ebenen sind asymmetrisch.</span>
+    Die Karte (Sein) ist <em>inertes Material</em>, der Score (Meinen) ist <em>produktiv</em> —
+    „B liefert das, was dem Material Gewicht gibt." Eine Seite ist tot, eine erzeugt.</p>
+    <p><span class="tag b">B</span> <span class="b">Die Lesarten sind symmetrisch.</span>
+    Alle sechs Kontexte sind <em>gleichberechtigte</em> Lesarten auf demselben Wert; keine ist
+    „realer" oder generativer. „Nur der Kontext wechselt — der Wert p bleibt exakt derselbe."</p>
+    <p><strong>→</strong> A: asymmetrisch (Material inerten / Score produktiv);
+    B: symmetrisch (alle neutral, alle erhalten den Wert). Strukturell inkompatibel.</p>
+  </div>
+
+  <div class="tension">
+    <h4>④ (näherliegend) Rolle des Akteurs — konstitutiv-dynamisch vs. neutral-statisch</h4>
+    <p><span class="tag">A</span> <span class="a">Der Agent konstituiert Inhalt, indem er durchläuft.</span>
+    Streak, „it sees you too", C/E wachsen <em>mit dem Gehen</em>. Dynamisch, subjektgebunden, produktiv.</p>
+    <p><span class="tag b">B</span> <span class="b">Der Beobachter ist neutral.</span>
+    Der Wert ändert sich nicht mit dem Betrachter („dein p = mein p"); der Kontextwechsel
+    ändert nichts am Gegenstand. Statisch, objektiv.</p>
+    <p><strong>→</strong> A: das Durchlaufen <em>erzeugt</em> Bedeutung; B: das Lesen
+    <em>erzeugt nichts</em>, der Gegenstand ist schon da.</p>
+  </div>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2><span class="num">03</span> Auflösung</h2>
+  <p>Alle Spannungen lösen sich, sobald man <em>zwei Ebenen sauber trennt</em> und jeder Seite zugeibt,
+  worin sie recht hat. Das Schema:</p>
+  <div class="math"><span class="lbl">Auflösungs-Schema</span>
+    Substrat (Sein) ist <b>fest</b> &nbsp;·&nbsp; Lesart (Meinen/Score) <b>konstituiert</b> Bedeutsamkeit &nbsp;·&nbsp;
+    Objektivität = die <b>Unterscheidungsstruktur</b> dazwischen.
+  </div>
+
+  <h3>① Standort der Objektivität</h3>
+  <p>Beide verwerfen den „Standpunkt von nirgendwo" (A: nicht der Seed; B: nicht das innere Wesen, nicht der Glaube).
+  Die Differenz auflösen: Die Verstandsunabhängigkeit des Werts (B) ist <em>erkennbar und haltbar nur</em>, weil
+  die Unterscheidungsstruktur (A) Sein vom Meinen trennt. Man kann nur „dein p = mein p" sagen (B), weil das System
+  intern zwischen „was der Wert <em>ist</em>" (Sein) und „wie ich ihn <em>lese</em>" (Meinen) unterscheiden kann.</p>
+  <div class="callout"><b>Fusion:</b> Objektivität ist der verstandsunabhängige <em>Wert</em> (B), dessen
+  <em>Möglichkeit und Erkennbarkeit</em> die Unterscheidungsstruktur (A) sichert — die Struktur ist die
+  Bedingung der Objektivität, die Objektivität ihr Inhalt.</div>
+
+  <h3>② Ort des Inhalts</h3>
+  <p>Es gibt <em>zwei</em> „Inhalte", und beide Papiere nennen je einen. (i) Der <em>Gegenstand</em>
+  (der Wert / der Token / die Kardinalzahl / der Fakt auf der Karte) ist fest und verstandsunabhängig — B hat recht.
+  (ii) Die <em>Bedeutsamkeit</em> (was es für einen Agenten „auf sich nimmt", welche Verpflichtungen/Information
+  es erzeugt) ist konstituiert — A hat recht. Der Gegenstandskern ist identisch; die Bedeutungsschicht entsteht im
+  Lesen. A und B meinen mit „Inhalt" einfach Verschiedenes (Gegenstand vs. Bedeutsamkeit).</p>
+  <div class="callout"><b>Fusion:</b> Der <em>Gegenstand ist fest</em> (B); seine <em>Bedeutsamkeit ist
+  konstituiert</em> (A). Inhalt = der feste Gegenstand, <em>wie er vom Score/von der Lesart aufgenommen wird</em>.</div>
+
+  <h3>③ Symmetrie der Lesarten</h3>
+  <p>Auf der <em>Objekt-Ebene</em> sind die Lesarten symmetrisch — keine ändert den Wert (B hat recht).
+  Auf der <em>Bedeutungs-Ebene</em> sind sie asymmetrisch — nur die Score-/Kontext-Lesart erzeugt
+  <em>Bedeutsamkeit</em>, das rohe Material (Zählung/Karte) bleibt inerten (A hat recht).</p>
+  <div class="callout"><b>Fusion:</b> <em>symmetrisch in der Objekterhaltung, asymmetrisch in der
+  Bedeutsamkeitserzeugung</em> — die Zählungs-/Material-Ebene ist die Wurzel, von der die Lesarten
+  abgeleitet sind und die ihnen Gewicht gibt.</div>
+
+  <h3>④ Rolle des Akteurs</h3>
+  <p>Der Akteur tut zwei Dinge, die vermischt wurden: (a) er <em>liest</em> den festen Gegenstand — neutral,
+  erzeugt nichts Neues am Gegenstand (B); (b) er <em>nimmt Verpflichtungen an</em> (Score) — konstituiert
+  <em>Bedeutsamkeit für sich</em> (A). Das Durchlaufen ändert weder die Karte noch den Wert, aber es ändert,
+  was für den Wanderer <em>Bedeutung hat</em>.</p>
+  <div class="callout"><b>Fusion:</b> <em>statischer Gegenstand</em> (bleibt beim Lesen gleich) +
+  <em>dynamischer Score</em> (wächst mit dem Durchlaufen). Statische Karte + lebendiger Score =
+  dasselbe Feld, zwei Seiten.</div>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="num">04</span> Fusionierter Inhalt</h2>
+  <p class="lead">Abstrahiert auf die Ebene der Thesen/Positionen beider Papiere — genug Substanz,
+  damit eine spätere Runde allein davon arbeitet.</p>
+
+  <h3>4.1 Das gemeinsame Schema: „Ein Feld, viele Lesarten"</h3>
+  <p>A: ein Feld (die Welt) · zwei Lesarten (Sein = Karte/Seed, Meinen = Score).
+  B: ein Gegenstand (Zahl/Wert) · viele Lesarten (die sechs Kontexte). Das wiederverwendbare Schema:</p>
+  <ul>
+    <li>(i) ein <strong>festes Substrat</strong> (Sein: die Kardinalzahlen, die Karte, der Wert p),</li>
+    <li>(ii) eine <strong>interpretierende Schicht</strong> (Meinen: der Score, die Kontexte/Lesarten).</li>
+  </ul>
+  <div class="math"><span class="lbl">Formales Schema</span>
+    Gegenstand <b>F</b> (fest) · Lesarten <b>R</b> = { r₁ … rₙ }<br>
+    p = Wert(F) &nbsp;(objektiv, ∀ rᵢ gleich) &nbsp;·&nbsp; Sign(rᵢ) = Bedeutsamkeit unter Lesart rᵢ (konstituiert)<br>
+    <b>Objektivität</b> = { p(rᵢ) = p &nbsp;∀ i } ∧ Struktur( Sein ⊥ Meinen )
+  </div>
+
+  <h3>4.2 Der gemeinsame Zug: Definition über Relationen, nicht über Wesen</h3>
+  <p>B (explizit): Humesches Prinzip (#F = #G ⇔ Bijektion), natürliche Zahlen aus der leeren Extension,
+  Kolmogorov-Axiome. A (implizit): die Karte wird relational durch den Seed erzeugt; der Score wird durch
+  seine <em>inferentielle Rolle</em> (C/E-Paare) festgelegt, nicht durch ein „Wesen" des Tokens.</p>
+  <div class="math"><span class="lbl">Die drei relationale Festlegungen</span>
+    <b>Humesches Prinzip</b> (B): #F = #G &nbsp;⇔&nbsp; es gibt eine Bijektion F → G<br>
+    <b>Kolmogorov</b> (B): P(A) ≥ 0 · P(Ω) = 1 · P(∪Aᵢ) = ΣP(Aᵢ) (σ-additiv)<br>
+    <b>Score-Rolle</b> (A): Rolle(t) = die Menge der (C, E)-Paare, die mit t stehen und fallen
+  </div>
+  <p>Beide weigern sich, den Gegenstand durch „Hingewiesenes" (mentales Bild, physischer Haufen,
+  inneres Wesen) zu erklären. <em>Fixiert wird er über seine Beziehungen</em> — das ist der Kern der Fusion.</p>
+
+  <h3>4.3 Zählung &amp; Karte als Substrat (Sein-Ebene)</h3>
+  <p>B: Wahrscheinlichkeit auf endlichem Raum ist <strong>normierte Zählung</strong> aus Frege's
+  Kardinalzahlen — p = |A| / |Ω|. A: Welt = f(seed); Biome = discretize(fbm+fbm);
+  Token = { t : hash &lt; p(rarity) } — „unendlich, aber geschlossen". Das Substrat ist immer eine
+  <em>zählbare/deterministische</em> Struktur: Kardinalzahlen (B) ↔ geseedte Zellen (A). Beides ist
+  verstandsunabhängiges „Was ist".</p>
+
+  <h3>4.4 Score &amp; Kontexte als interpretierende Schicht (Meinen-Ebene)</h3>
+  <p>B: die sechs Lesarten (Laplace, von Mises, Bayes, Shannon, Born, Kolmogorov) als Kontexte.
+  A: der deontische Score (C/E), die inferentielle Rolle, Auto-Explore als inferentielles Policy,
+  Seltenheit als Commitment-Gradient. Die Lesart weist <em>Bedeutsamkeit</em> zu. In B sind es
+  gleichrangige Linsen; in A ist es ein einzelner, dynamischer Score, den der Agent aufbaut.
+  Beides ist „Meinen" — die Ebene, wo Gewicht entsteht.</p>
+
+  <h3>4.5 Objektivität als Struktur (das verbindende Konzept)</h3>
+  <p>B: Anti-Psychologismus (dein p = mein p); der Wert ist verstandsunabhängig.
+  A: Objektivität = Struktur, die <em>truth(t) = seed(t)</em> (Sein) von <em>believed(t) = S(t)</em>
+  (Meinen) unterscheidet.</p>
+  <div class="math"><span class="lbl">Fused-Definition</span>
+    <b>Objektivität</b> = die Eigenschaft des Werts, sich unter dem Wechsel <em>aller</em> Lesarten
+    als derselbe zu erweisen (B), <em>und zugleich</em> die Struktur, die Substrat (Sein) von
+    Lesart (Score) trennt — was das möglich macht (A).
+  </div>
+
+  <h3>4.6 Seltenheit = Wahrscheinlichkeit = Information = Commitment</h3>
+  <p>A: Rarität 1–6 („Rainbow Slime" → „THE ARTIFACT") als Commitment-Gradient; je seltener, desto
+  mehr Verpflichtungen (C = 2·r) geht der Agent ein. B: ein kleiner Wert p trägt große Information
+  I(x) = −log₂ p(x) (Shannon); seltene Ereignisse wiegen viel.</p>
+  <div class="callout"><b>Fusion:</b> <em>Seltenheit (A) und kleine Wahrscheinlichkeit (B) sind zwei
+  Namen für dieselbe Größe</em> — wie viel ein Fall auf den Betrachter zurückwirft. Je seltener
+  (größeres r, kleineres p): desto mehr <em>Information</em> (B) und desto mehr <em>Commitment</em> (A).
+  Die „Rarität" eines Fundes ist die Größe des Scores, den der Claim erzeugt; die „Information"
+  eines Ereignisses die Größe des Updates, das die Evidenz erzwingt.</div>
+
+  <h3>4.7 Das zweistufige Modell (wiederverwendbar)</h3>
+  <ul>
+    <li><strong>Ebene 0 (Sein):</strong> festes Substrat — Kardinalzahlen / geseedte Karte / der Wert p.</li>
+    <li><strong>Ebene 1 (Meinen):</strong> interpretierende Schicht — Score / Kontexte / Linsen.</li>
+    <li><strong>Objekt:</strong> die Schnittstelle. <em>Objektivität</em> = Festigkeit von Ebene 0 unter Ebene 1;
+    <em>Bedeutsamkeit</em> = was Ebene 1 über Ebene 0 erzeugt.</li>
+  </ul>
+  <div class="callout"><b>Reusability-Claim:</b> Jede „Bedeutungsfrage" (Was bedeutet die Zahl? Was
+  bedeutet der Fund? Was ist Wahrscheinlichkeit?) lässt sich auf dieses Schema reduzieren:
+  <em>Substrat fest, Lesart konstituiert, Objektivität = die Trennung.</em></div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="num">05</span> Visualisierung — Ein Wert, viele Lesarten, eine konstituierte Bedeutsamkeit</h2>
+  <p class="lead">Links das <strong>feste, geseedete Substrat</strong> (Sein: deterministisches Feld,
+  gezählt wie bei Frege/Laplace). In der Mitte der <strong>objektive Wert</strong> p (B: „dein p = mein p").
+  Rechts vier <strong>gleiche Lesarten</strong> (Meinen/Kontexte) — nur die Lesart wechselt, der Wert bleibt.
+  Der <em>Seltenheits-Regler</em> (A) zeigt: je seltener, desto größer werden <em>Information</em> (B) und
+  <em>Commitment</em> (A) zusammen — Seltenheit erzeugt Bedeutung.</p>
+
+  <div class="viz">
+    <div class="vscroll"><canvas id="viz" height="460"></canvas></div>
+    <div class="vcontrols">
+      <label for="vr">Seltenheit r:</label>
+      <input type="range" id="vr" min="1" max="6" step="1" value="3">
+      <span class="val" id="vrl">3</span>
+    </div>
+    <div class="lens-row">
+      <button class="lens-btn active" data-lens="0" type="button">Klassisch (Laplace)</button>
+      <button class="lens-btn" data-lens="1" type="button">Frequenz (von Mises)</button>
+      <button class="lens-btn" data-lens="2" type="button">Bayes (Score)</button>
+      <button class="lens-btn" data-lens="3" type="button">Maß (Kolmogorov)</button>
+    </div>
+    <div class="scoreboard">
+      <div class="stat"><div class="n" id="s-p">0.125</div><div class="l">OBJEKTIVER WERT p</div></div>
+      <div class="stat e"><div class="n" id="s-i">3.00</div><div class="l">INFORMATION I = −log₂ p (B)</div></div>
+      <div class="stat"><div class="n" id="s-c">6</div><div class="l">COMMITMENT C = 2r (A)</div></div>
+      <div class="stat e"><div class="n" id="s-a">8</div><div class="l">GÜNSTIGE a / 64</div></div>
+    </div>
+    <div class="readout" id="readout"></div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="num">06</span> Provenienz</h2>
+  <div class="prov">
+    <p>
+      <span class="tag">A</span>
+      <a href="../n1-073.html">n1-073.html</a> — <em>„Die Karte und der Score: Weltgenerierung trifft
+      inferentielle Bedeutung"</em> (Runde 1: game.html ✕ making_it_explicit.html).
+      Eine endlos wandelbare, Seed-deterministische Welt (Sein) trifft Brandoms deontischen Score (Meinen):
+      Inhalt ist nicht in der Karte, er ist im Score; Objektivität ist die Struktur, die Sein und Meinen trennt.
+      <em>Quelle hier: die beiden Ebenen (Karte/Score), die Konstitution von Bedeutsamkeit, Seltenheit als
+      Commitment-Gradient, truth = seed vs. believed = S.</em>
+    </p>
+    <p>
+      <span class="tag b">B</span>
+      <a href="../n1-051.html">n1-051.html</a> — <em>„Objektive Bedeutung im Kontext — Zahl &amp;
+      Wahrscheinlichkeit"</em> (Runde 1: frege.html ✕ wahrscheinlichkeit.html).
+      Zahl und Wahrscheinlichkeit sind objektive, logische Gegenstände, relational definiert
+      (Humesches Prinzip ↔ Kolmogorov-Axiome); die sechs Lesarten sind Kontexte, nicht Wesen;
+      „dein p = mein p". <em>Quelle hier: der objektive Wert, die vielen gleichen Lesarten, Anti-Psychologismus,
+      Information I = −log₂ p.</em>
+    </p>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  if(!ctx) return;
+
+  var N = 64;
+  var SEED = 1337;
+  var readout = document.getElementById('readout');
+  var vr = document.getElementById('vr');
+  var vrl = document.getElementById('vrl');
+  var lensBtns = Array.prototype.slice.call(document.querySelectorAll('.lens-btn'));
+
+  var LENSES = [
+    { name:'Klassisch (Laplace)', tag:'Symmetrie & Zählung',
+      cap:'Klassisch (Laplace, 1814): Sind alle Fälle gleich möglich, so ist p das Verhältnis der günstigen zu den möglichen — p = |A|/|Ω|. Hier: a günstige von 64. (Dasselbe Zählen, das Frege über das Humesche Prinzip zu den Kardinalzahlen erhebt — die gemeinsame Wurzel der Substrat-Ebene von A und B.)' },
+    { name:'Frequenz (von Mises)', tag:'Wiederholung (n→∞)',
+      cap:'Frequentistisch (von Mises, 1928): p ist der Grenzwert der relativen Häufigkeit, p = lim hₙ/n für n→∞. Kontext: wiederholbare Experimente. — Frege/A-Kritik: Für ein einmaliges Ereignis (ein Fund, eine Partie) gibt es keine unendliche Folge. Gültiger Kontext, nicht das Wesen.' },
+    { name:'Bayes (Score)', tag:'Evidenz / Glaube',
+      cap:'Bayesianisch (Bayes/Jeffreys): p ist ein Grad der Überzeugung, aktualisiert durch Evidenz: P(H|E)=P(E|H)·P(H)/P(E). — Der subjektive Strang. A: Der Wert bleibt derselbe objektive Gegenstand; subjektiv ist nur, wie man zu ihm kommt — das ist genau der Score (Meinen), der Bedeutsamkeit konstituiert.' },
+    { name:'Maß (Kolmogorov)', tag:'Axiome des Maßes',
+      cap:'Axiomatisch (Kolmogorov, 1933): p ist ein Maß auf Ereignissen, P(Ω)=1, P(∅)=0, σ-additiv. — Kolmogorovs Axiome sind der Wahrscheinlichkeits-Zwilling von Freges Humeschem Prinzip: beides definiert den Gegenstand über Relationen. Der Score (A) ist die normative Version derselben relationale Festlegung.' }
+  ];
+
+  // ---- deterministic PRNG (mulberry32) + seeded shuffle ----
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function seededShuffle(n, seed){
+    var rng = mulberry32(seed);
+    var a = []; for(var i=0;i<n;i++) a[i]=i;
+    for(var j=n-1;j>0;j--){ var k = Math.floor(rng()*(j+1)); var t=a[j]; a[j]=a[k]; a[k]=t; }
+    return a;
+  }
+  var order = seededShuffle(N, SEED);
+
+  // ---- state ----
+  var r = 3;
+  var activeLens = 0;
+  function favCount(){ return Math.max(1, Math.round(N * Math.pow(2, -r))); }
+  var cntA = favCount();
+  var pVal = cntA / N;
+  var infoBits = -Math.log2(pVal);
+  var commit = 2 * r;
+
+  // ---- theme ----
+  function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function readTheme(){
+    return {
+      bg:   css('--viz-bg') || '#0a0e1a',
+      text: css('--text')   || '#e8ecf7',
+      sub:  css('--muted')  || '#93a0b8',
+      acc:  css('--accent') || '#ffb454',
+      acc2: css('--accent2')|| '#7c9eff',
+      acc3: css('--accent3')|| '#ff7ab6',
+      good: css('--good')   || '#5eead4',
+      grid: css('--grid')   || '#18203a',
+      panel:css('--panel')  || '#111829',
+      lens: [css('--lens0')||'#4ea8de', css('--lens1')||'#22d3ee',
+             css('--lens2')||'#ffb454', css('--lens3')||'#a78bfa']
+    };
+  }
+  var C = readTheme();
+
+  function hexA(hex, al){
+    hex = (hex || '').replace('#','');
+    if(hex.length === 3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    if(hex.length < 6){ return 'rgba(128,128,128,'+al+')'; }
+    var rr = parseInt(hex.substr(0,2),16), gg = parseInt(hex.substr(2,2),16), bb = parseInt(hex.substr(4,2),16);
+    return 'rgba('+rr+','+gg+','+bb+','+al+')';
+  }
+  function roundRect(x,y,w,h,rad){
+    rad = Math.min(rad, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rad,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rad);
+    ctx.arcTo(x+w,y+h,x,y+h,rad);
+    ctx.arcTo(x,y+h,x,y,rad);
+    ctx.arcTo(x,y,x+w,y,rad);
+    ctx.closePath();
+  }
+
+  var dpr = 1, W = 700, H = 460;
+  function resize(){
+    dpr = window.devicePixelRatio || 1;
+    W = canvas.clientWidth || 700;
+    if(W < 540) W = 540;
+    H = 460;
+    canvas.width = Math.round(W*dpr);
+    canvas.height = Math.round(H*dpr);
+    canvas.style.height = H + 'px';
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var t = 0;
+  function frame(){
+    t += 1;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
+
+    var fs = Math.max(11, Math.min(15, W/56));
+    var pulse = 0.5 + 0.5*Math.sin(t*0.06);
+
+    // Title
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = C.text;
+    ctx.font = '700 ' + (fs+5) + 'px sans-serif';
+    ctx.fillText('Ein Gegenstand, viele Lesarten — der Wert bleibt, die Bedeutsamkeit entsteht', W/2, 34);
+    ctx.fillStyle = C.sub;
+    ctx.font = '400 ' + (fs-1) + 'px sans-serif';
+    ctx.fillText('links: Substrat (Sein, geseedet)   ·   mitte: der objektive Wert p   ·   rechts: Lesarten (Meinen)', W/2, 54);
+
+    var topY = 92;
+
+    // ---- LEFT: seeded field (Sein) ----
+    var leftX = 20;
+    var leftW = Math.max(150, Math.min(210, W*0.30));
+    ctx.textAlign = 'left';
+    ctx.fillStyle = C.acc2;
+    ctx.font = '700 ' + (fs+1) + 'px sans-serif';
+    ctx.fillText('Substrat · Sein (geseedetes Feld)', leftX, topY-8);
+    var cols = 8, rows = 8;
+    var cell = Math.min((leftW-6)/cols, 26);
+    var gx0 = leftX, gy0 = topY + 4;
+    var fav = {};
+    for(var fi=0; fi<cntA; fi++){ fav[order[fi]] = true; }
+    for(var idx=0; idx<N; idx++){
+      var cx = gx0 + (idx%cols)*cell + cell/2;
+      var cy = gy0 + Math.floor(idx/cols)*cell + cell/2;
+      var isF = !!fav[idx];
+      ctx.beginPath();
+      ctx.arc(cx, cy, cell*0.32, 0, Math.PI*2);
+      ctx.fillStyle = isF ? C.acc : C.grid;
+      ctx.fill();
+      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = isF ? C.acc : C.sub;
+      ctx.stroke();
+    }
+    var gy = gy0 + rows*cell + 18;
+    ctx.font = '700 ' + fs + 'px sans-serif';
+    ctx.fillStyle = C.acc;  ctx.fillText('a (günstig) = ' + cntA, leftX, gy);
+    ctx.fillStyle = C.sub;  ctx.fillText('n (alle)    = ' + N, leftX, gy+20);
+    ctx.font = '400 ' + (fs-1) + 'px sans-serif';
+    ctx.fillStyle = C.sub;  ctx.fillText('Seed ' + SEED + ' → deterministisch,', leftX, gy+40);
+    ctx.fillText('jeder Seed = dieselbe Welt.', leftX, gy+56);
+
+    // ---- MIDDLE: object (Wert p) ----
+    var midX = leftX + leftW + 14;
+    var midW = Math.max(118, Math.min(150, W*0.20));
+    var bx = midX, by = topY, bw = midW, bh = 150;
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = hexA(C.acc, 0.06 + 0.14*pulse);
+    roundRect(bx-4, by-4, bw+8, bh+8, 18); ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.fillStyle = C.panel;
+    roundRect(bx, by, bw, bh, 14); ctx.fill();
+    ctx.strokeStyle = C.acc; ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = C.text;
+    ctx.font = '800 ' + (fs+8) + 'px sans-serif';
+    ctx.fillText('p = ' + pVal.toFixed(4), bx+bw/2, by+42);
+    ctx.fillStyle = C.sub;
+    ctx.font = '700 ' + fs + 'px sans-serif';
+    ctx.fillText('= ' + cntA + ' / ' + N, bx+bw/2, by+68);
+    ctx.fillText('= 2^(-' + r + ')', bx+bw/2, by+88);
+    ctx.fillStyle = C.acc2;
+    ctx.font = '700 ' + (fs-1) + 'px sans-serif';
+    ctx.fillText('objektiver', bx+bw/2, by+112);
+    ctx.fillText('logischer', bx+bw/2, by+130);
+    ctx.fillText('Gegenstand', bx+bw/2, by+148);
+    ctx.textAlign = 'left';
+    ctx.beginPath(); ctx.arc(bx+8, by+bh+20, 5, 0, Math.PI*2); ctx.fillStyle = C.good; ctx.fill();
+    ctx.fillStyle = C.text;
+    ctx.font = '700 ' + (fs-2) + 'px sans-serif';
+    ctx.fillText('Anti-Psychologismus (B):', bx+20, by+bh+24);
+    ctx.fillStyle = C.sub;
+    ctx.font = '400 ' + (fs-2) + 'px sans-serif';
+    ctx.fillText('dein p = mein p — einerlei Lesart.', bx+20, by+bh+42);
+
+    // ---- RIGHT: lenses (Meinen) ----
+    var rightX = midX + midW + 18;
+    var rightW = Math.max(150, W - 20 - rightX);
+    var rowH = 78;
+    for(var c=0; c<4; c++){
+      var lcy = topY + 4 + c*rowH + 32;
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = hexA(C.lens[c], 0.30 + 0.45*(c===activeLens));
+      ctx.beginPath(); ctx.moveTo(bx+bw, by+bh/2); ctx.lineTo(rightX, lcy); ctx.stroke();
+    }
+    for(var j=0; j<4; j++){
+      var lty = topY + 4 + j*rowH;
+      var active = (j===activeLens);
+      var lx = rightX, lwd = rightW, lht = rowH-14;
+      roundRect(lx, lty, lwd, lht, 10);
+      ctx.fillStyle = active ? C.panel : 'rgba(0,0,0,0)';
+      ctx.fill();
+      ctx.lineWidth = active ? 2.5 : 1.5;
+      ctx.strokeStyle = active ? C.lens[j] : C.grid;
+      ctx.stroke();
+      ctx.beginPath(); ctx.arc(lx+16, lty+lht/2, 6, 0, Math.PI*2);
+      ctx.fillStyle = C.lens[j]; ctx.fill();
+      ctx.textAlign = 'left';
+      ctx.fillStyle = C.text;
+      ctx.font = '700 ' + (fs-0) + 'px sans-serif';
+      ctx.fillText(LENSES[j].name, lx+32, lty+22);
+      ctx.fillStyle = active ? C.lens[j] : C.sub;
+      ctx.font = '700 ' + (fs-1) + 'px sans-serif';
+      ctx.fillText('p = ' + pVal.toFixed(4) + '  (gleicher Wert)', lx+32, lty+41);
+      ctx.fillStyle = C.sub;
+      ctx.font = '400 ' + (fs-2) + 'px sans-serif';
+      ctx.fillText('Kontext: ' + LENSES[j].tag, lx+32, lty+58);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function updateStats(){
+    var pe = document.getElementById('s-p'), ie = document.getElementById('s-i');
+    var ce = document.getElementById('s-c'), ae = document.getElementById('s-a');
+    if(pe) pe.textContent = pVal.toFixed(3);
+    if(ie) ie.textContent = infoBits.toFixed(2);
+    if(ce) ce.textContent = commit;
+    if(ae) ae.textContent = cntA;
+    if(vrl) vrl.textContent = r;
+  }
+  function updateReadout(){
+    if(!readout) return;
+    readout.textContent = LENSES[activeLens].cap;
+    readout.style.borderColor = C.lens[activeLens];
+  }
+  function recompute(){
+    cntA = favCount();
+    pVal = cntA / N;
+    infoBits = -Math.log2(pVal);
+    commit = 2 * r;
+    updateStats();
+  }
+
+  if(vr) vr.addEventListener('input', function(){
+    r = parseInt(vr.value, 10);
+    if(isNaN(r)) r = 3;
+    recompute();
+  });
+  lensBtns.forEach(function(b, idx){
+    b.addEventListener('click', function(){
+      activeLens = idx;
+      lensBtns.forEach(function(x, jj){ x.classList.toggle('active', jj===idx); });
+      updateReadout();
+    });
+  });
+  var themeBtn = document.getElementById('themebtn');
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    C = readTheme();
+    updateReadout();
+  });
+
+  recompute();
+  updateReadout();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

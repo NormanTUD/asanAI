@@ -1,0 +1,17 @@
+{
+  "no": "046",
+  "a": "n1-073.html",
+  "b": "n1-051.html",
+  "a_title": "Die Karte und der Score: Weltgenerierung trifft inferentielle Bedeutung",
+  "b_title": "Objektive Bedeutung im Kontext — Zahl & Wahrscheinlichkeit",
+  "combined_theme": "ein-gegenstand-viele-lesarten",
+  "one_line": "Ein Feld, viele Lesarten: der objektive Wert (Sein) ist fest, die Bedeutsamkeit (Score/Meinen) ist konstituiert — Objektivität ist die Unterscheidungsstruktur dazwischen.",
+  "contradictions": [
+    "Standort der Objektivität: A = strukturelle Fähigkeit/Unterscheidungsstruktur (Sein ⊥ Meinen), B = Intrinsische-Eigenschaft des Gegenstands (verstandsunabhängiger Wert, 'dein p = mein p').",
+    "Ort des Inhalts: A konstituiert Bedeutung im Score (Leser-Seite, Brandom), B legt Bedeutung am Gegenstand fest (Objekt-Seite, Frege/Kontextprinzip).",
+    "Symmetrie der Lesarten: A asymmetrisch (Material inerten, Score produktiv), B symmetrisch (alle Kontexte gleichberechtigt, alle erhalten den Wert).",
+    "Rolle des Akteurs: A konstitutiv-dynamisch (Durchlaufen erzeugt Bedeutung), B neutral-statisch (Lesen erzeugt nichts, Wert bleibt gleich)."
+  ],
+  "resolution": "Zwei Ebenen trennen: Substrat (Sein) ist fest, Lesart (Score/Kontext) konstituiert Bedeutsamkeit; Objektivität = der verstandsunabhängige Wert (B), dessen Erkennbarkeit die Unterscheidungsstruktur (A) sichert — symmetrisch in der Objekterhaltung, asymmetrisch in der Bedeutsamkeitserzeugung.",
+  "viz": "Geseedetes Feld (64 Zellen, deterministisch) · objektiver Wert p = a/n = 2^(-r) · vier gleiche Lesarten (Klassisch/Frequenz/Bayes/Maß) · Seltenheit r → Information I = -log2 p (B) und Commitment C = 2r (A) wachsen zusammen."
+}

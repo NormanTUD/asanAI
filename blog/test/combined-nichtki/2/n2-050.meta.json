@@ -1,0 +1,16 @@
+{
+  "no": "050",
+  "a": "n1-032.html",
+  "b": "n1-041.html",
+  "a_title": "Ein phänomenales Feld und sein sich-erschließendes Da",
+  "b_title": "Die eine Topologie zweier Formen — Bedeutung & Konnektom",
+  "combined_theme": "phenomenal-field-as-persistent-topology",
+  "one_line": "Das sich-erschließende phänomenale Feld (Sein = Bewusstsein) hat eine persistente topologische Signatur (β₀/β₁): das Da ist die Schwelle ω, Eigentlichkeit = hohe Persistenz (Signal), das Man = Rauschen — ein Monismus in zwei Registern (phänomenal/ontologisch + formal/topologisch).",
+  "contradictions": [
+    "Phänomenal vs. Formal: A hält das Eine für phänomenal/erlebt (1. Person, das Physische sekundär); B für eine objektive, observatorfreie topologische Invariante (3. Person, messbar/falsifizierbar, an physikalischen Systemen wie fMRE-Konnektomen/Kosmos).",
+    "Konstitutives Da vs. observatorfrei: A macht das sich-abgrenzende Dasein konstitutiv & unverlierbar (ohne Da keine Erschließung); B kennt kein Subjekt — die Struktur gilt ohne jeden Leser (eine einzige Ebene, kein Faserbündel).",
+    "Konstituierende Zeit vs. deskriptive Skala: A's Achse ist die Zeitlichkeit (Sorge), die das Sein des Daseins konstituiert; B's Achse ist die Skala ω, die ein statisches Netz deskriptiv filtert (Prozess = Beschreibung, nicht Sein)."
+  ],
+  "resolution": "A und B sind zwei komplementäre Register desselben Monismus. B's Form-Instrument wird auf A's phänomenales Feld angewandt: das Da ist die Schwelle ω, Zeit = die Skala-achse ω, Eigentlichkeit = hohe Persistenz (fern der Diagonale = Signal), das Man = Rauschen (nahe der Diagonale); die Selbst-Erschließung ist der konstituierende Vorgang, in dem die persistente topologische Signatur entsteht (Prozess = Sein von innen, = Beschreibung von außen).",
+  "viz": "Canvas: ein phänomenales Feld (Cluster=β₀, Metapher-Ring=beständiger β₁-Filament) mit zentralem 'Da', dessen Grenzring = ω-Skala; ein ω-Regler fährt die Vietoris–Rips-Filtration (Union-Find für β₀, β₁-Zyklen getötet durch 2-Simplex). Live: Betti-Kurven β₀(ω)/β₁(ω) mit ∂M-Knie + ω-Marker und Persistenzdiagramm (H1) als Barcodes (lang=Signal/eigentlich, kurz=Rauschen/Man) — parallele Readouts in A-(phänomenal) und B-(formal)-Lesart."
+}

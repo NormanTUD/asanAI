@@ -1,0 +1,16 @@
+{
+  "no": "021",
+  "a": "n1-067.html",
+  "b": "n1-053.html",
+  "a_title": "Höhere Struktur als Grundlage (Bewusstsein ✕ HoTT)",
+  "b_title": "Die Architektur der Grenze – Leitern, Schichten und das Unzugängliche",
+  "combined_theme": "level-structure-and-gates",
+  "one_line": "Die Essenz eines Systems ist seine stufenförmige, höherstufige Struktur: ein gestufter Stack (B), dessen Identität höhere Relationen/Selbstreferenz über den Teilen tragen (A), gegliedert in Grenzen/Tore (B), die intrinsische Übergangsregeln sind (A), an denen der kontinuierliche Rahmen (A) zum diskreten Regimewechsel wird (B).",
+  "contradictions": [
+    "Integration vs. Separation: A idealisiert das zusammenhängende Ganze (das Ganze > die Teile, Φ); B idealisiert die scharf abgegrenzte Stufe (die inaccessible-Grenze schließt aus, trennt Regime).",
+    "Intrinsisch vs. gestaltetes Protokoll: A hält die höhere Struktur für intrinsisch/emergent (Kohärenz entsteht von innen, 'das Oben erzeugt das Unten'); B macht die Grenze zu einem bewussten, konstruierten Protokoll (System Call/Axiom/Page Table).",
+    "Kontinuierlich vs. diskret: A hat einen gradienten, homotopischen höheren Rahmen (Φ als Skalar, Pfadraum); B eine diskrete Leiter mit hartem binärem Regime-Schalter an einer bestimmten Sprosse."
+  ],
+  "resolution": "Grenz-Struktur-Ganzes: Grenzen und Integration sind zwei Gesichter desselben (Grenzen konstituieren Ebenen); das 'gestaltete' Protokoll ist die eigene intrinsische Übergangsregel des Systems; der Gradient (A) erzeugt den Schalter (B) als seine Schwellung an der Grenze. Identität = Integration × Grenze.",
+  "viz": "Ein einzelner Ebenen-Stack mit scharfer Grenze/Tor: ein Regler bewegt den Cursor 'Du'; die kontinuierliche Integration (Φ, A) füllt die Stufen als Gradient, und überschreitet er die Grenze, kippt das diskrete Regime oberhalb der Linie um (B) — kontinuierlicher Rahmen und diskretes Tor am selben Ort."
+}

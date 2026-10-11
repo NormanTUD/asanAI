@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 002: Glokale Kohärenz — das Ganze aus lokalen Teilen</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#a92c86; --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --viz-bg:#ffffff; --viz-line:#c9c4b8;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#ff7cc4; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e;
+  --viz-bg:#0a1220; --viz-line:#263452;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.1;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 6px}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 30px}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+h2{font-size:22px;margin:0 0 12px;color:var(--accent)}
+h3{font-size:16.5px;margin:20px 0 8px;color:var(--text)}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--text)}
+em{color:var(--muted);font-style:italic}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.6}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.aha b{color:var(--accent2)}
+.tagA{color:var(--accent);font-weight:700}
+.tagB{color:var(--accent2);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0}
+#loopCanvas{display:block;width:100%;height:380px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=range]{width:190px;accent-color:var(--accent)}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+button.action.active{border-color:var(--accent);color:var(--accent)}
+button.action:hover{border-color:var(--accent)}
+.meter{height:10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:8px 0}
+.meter>div{height:100%;width:0;background:var(--good);transition:width .12s linear}
+.readout-row{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;font-size:14px}
+.readout-row b{color:var(--accent)}
+.coherence-read{font-size:15px;font-weight:700;color:var(--good)}
+#verdict{font-size:14px;margin:8px 0 0}
+.hint{color:var(--muted);font-size:13.5px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700}
+.prov a:hover{text-decoration:underline}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">☀ / ☾</button>
+<article>
+<h1>Glokale Kohärenz: das Ganze aus lokalen Teilen</h1>
+<p class="subtitle">Fusion aus: n1-013.html ✕ n1-070.html  (Runde 2)</p>
+<p class="meta">Runde 2 · Nicht-KI-Track · Paar 002 · Garben-Klebung trifft Holonomie</p>
+<hr>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Runde-1-Papiere kommen aus entgegengesetztem Material — <span class="tagA">A</span> (n1-013)
+vereint ein additiv fokussiertes Hologramm mit der Garben-/∞-Kohärenz-Leiter, <span class="tagB">B</span>
+(n1-070) vereint Principal Bundles mit dem Kreislauf des <em>Finnegans Wake</em> — und konvergieren
+doch auf <b>ein und dasselbe Strukturgesetz</b>: <b>Ein globales Objekt wird nicht von außen
+vorgegeben, sondern entsteht aus lokal trivialen Stücken, die durch eine einzige, invariante
+Kohärenzbedingung auf ihren Überlappungen zusammengehalten werden; und der eigentliche, nicht-triviale
+Inhalt des Ganzen ist in keinem einzelnen Stück sichtbar — er offenbart sich erst in der geschlossenen
+Zusammensetzung.</b></p>
+<p><span class="tagA">A</span> sagt das im register der Garben: lokale Schnitte, die auf ihren
+Schnitten übereinstimmen, <em>kleben</em> zu einem globalen Schnitt (Descent/Gluing); das kohärente
+Ganze ist mehr als die Summe seiner Zellen, und die konkrete Klebregel (Gleichheit / Äquivalenz ≃ /
+additive Superposition) ist ein austauschbarer <em>Parameter</em>. <span class="tagB">B</span> sagt
+dasselbe im register der Bündel: lokale Trivialisierungen, deren Übergangsfunktionen der Kozyklusbedingung
+genügen, definieren ein Bündel bis auf Isomorphie; die <em>Holonomie</em> — der Twist, den eine
+geschlossene Schleife mitnimmt — ist genau die Invariante, die selbst bei flacher Krümmung
+(<code>F=0</code>) nicht-trivial bleibt und die kein einzelner Patch zeigt.</p>
+<p><b>Fusionierte Position:</b> A's <em>Gluing</em> und B's <em>Kozykulusbedingung</em> sind
+<b>dieselbe Bedingung</b> — Kompatibilität auf Überlappungen ⇒ globales Objekt. A's
+„Objekt ≈ kohärentes Netz seiner Erscheinungsweisen" und B's „Bündel ≅ Zyklus mit Gedächtnis" sind
+<b>dasselbe Gesetz, zweimal gelesen</b>. Die Einheit lautet:
+<b>lokale Trivialisierbarkeit + Kohärenz auf Überlappungen ⇒ globale Nicht-Trivialität</b> —
+wobei das lokale Reglement (Wert oder Kleben, additiv oder Gruppe, statischer Schnitt oder mitgenommene
+Holonomie) ein Parameter ist, während die Kohärenzbedingung und die lokale Trivialisierbarkeit die
+<b>Invariante</b> sind.</p>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+
+<div class="card">
+<h3>1. Statisch vs. dynamisch — was das Ganze <em>ist</em></h3>
+<p><span class="tagA">A</span> hat das Ganze als <b>statisches Objekt/Zustand</b>: der globale
+Schnitt ist das rekonstruierte Ganze, eine (feste) Feldfunktion auf der Basis; <code>smileyAt</code>
+ist eine vorgegebene Funktion, und der Fokus <em>enthüllt</em> lediglich, was schon da ist. Das Ganze
+ist ein <em>Nomen</em> — ein Schnitt.</p>
+<p><span class="tagB">B</span> hat das Ganze als <b>dynamische Transformation</b>: die Holonomie ist
+die <em>Änderung, die nach einem Umlauf zurückgetragen wird</em>; der Inhalt des Bündels ist der
+<em>Vorgang</em>, verändert zurückzukehren, nicht ein festes Feld. Das Ganze ist ein <em>Verbum</em> —
+eine Gruppenelement/Phase. A's „Ganzes" ist ein Zustand, B's „Ganzes" eine Rückkehr.</p>
+</div>
+
+<div class="card">
+<h3>2. Trägt das Lokal die Wahrheit — oder nur das Kleben?</h3>
+<p><span class="tagA">A</span>: das Ganze wird <b>wörtlich aus lokalen Daten aufgebaut</b> — der Smiley
+ist die Summe der Zellen-Auflösungsdaten; der globale Schnitt wird <em>aus</em> den lokalen Schnitten
+zusammengesetzt. Der Inhalt lebt in den <em>lokalen Werten</em>.</p>
+<p><span class="tagB">B</span>: das Lokal ist <b>trivial und verbirgt</b> — lokal ist
+<code>E ≈ U_i×F</code>, und <code>F=0</code> kann eine nicht-triviale Holonomie verbergen; der wahre
+Inhalt (der Twist) sitzt <em>nicht in irgendeinem Patch</em>, sondern in den <em>Übergängen</em> /
+der geschlossenen Schleife. Der Inhalt lebt in den <em>Beziehungen</em>, nicht in den Stücken.</p>
+<p class="hint">Echte Spannung: A = Inhalt <em>aufgebaut aus</em> dem Lokalen; B = Inhalt
+<em>abwesend aus</em> dem Lokalen, nur im Kleben vorhanden.</p>
+</div>
+
+<div class="card">
+<h3>3. Lineare Superposition vs. Gruppen-Kozykulus</h3>
+<p><span class="tagA">A</span>: die Zusammensetzung ist <b>additive Superposition</b>
+(Gauß-gewichtete Akkumulation, „nie rückholbar"); die Regel ist ein austauschbarer Parameter unter
+{Gleichheit, ≃, additiv} — A lockert ausdrücklich <em>Gleichheit → Äquivalenz ≃</em>.</p>
+<p><span class="tagB">B</span>: die Zusammensetzung ist <b>Gruppenmultiplikation unter einer
+Kozykulusbedingung</b> (<code>g_ij·g_jk·g_ki = e</code>; <code>Hol(γ)=exp(i∮A) ∈ U(1)</code>); die
+Struktur ist an sich gruppen-theoretisch und kann <em>nicht-abelsch</em> sein (SU(2), SU(3) in der
+Tabelle der vier Kräfte). A's Gesetz ist eine <em>lineare Summe</em>, B's ein <em>Gruppen-Kozykulus</em>.</p>
+</div>
+
+<p class="hint"><b>Nähte, keine Widersprüche (die nächsten echten Spannungen):</b>
+<em>Entdeckt vs. verfasst</em> — A's kohärentes Ganze ist bereits da (wird <em>gefunden</em>);
+B lässt Bedeutung explizit <em>verfasst</em> werden (Shem the Penman schreibt Tinte auf den eigenen
+Körper; „das Erzählen selbst ist realer als die Handlung"). <em>Metrisch vs. homotopisch</em> — A ist
+grundsätzlich quantitativ-metrisch (Pixel, σ=0.7), B transzendiert das Metrische (Topos, ≃,
+explizit „nicht bloß metrische Nähe").</p>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+
+<p><b>(1) Statisch vs. dynamisch →</b> A's statischer globaler Schnitt und B's dynamische Holonomie
+sind <em>dieselbe Invariante, in zwei Richtungen abgelesen</em>. A liest das Ganze als den
+<em>aufgebauten Zustand</em> auf der Basis (ein Schnitt); B liest es als den <em>Transport</em> um die
+Schleife (eine Holonomie). <b>Fusion:</b> das globale Objekt ist eine <em>Invariante der geschlossenen
+Selbst-Zusammensetzung</em> — der Fixpunkt, der unter dem Umlauf <em>unverändert bleibt</em> (A: der
+globale Schnitt) <em>bzw. mitgenommen wird</em> (B: die Holonomie). Statisch und dynamisch sind zwei
+Projektionen desselben Kohärenzobjekts. Das Ganze ist zugleich ein <em>Zustand</em> (A) und der
+<em>Netto-Effekt einer Rückkehr</em> (B).</p>
+
+<p><b>(2) Lokal trägt vs. nur das Kleben →</b> Das ist die <em>eigene Zweiteilung des Bündels</em>:
+<b>Faser</b> (lokaler Wert) + <b>Zusammenhang</b> (Übergangsregel). A ist die <em>Faser-</em>Erzählung
+(der Wert wird von den lokalen Daten getragen: der Smiley <em>ist</em> die Summe der Zellen-Daten).
+B ist die <em>Zusammenhangs-</em>Erzählung (die Invariante lebt in der Übergangsfunktion: der Twist
+sitzt in <code>g_ij</code>, nicht allein in der Faser-Uhr). <b>Fusion:</b>
+<code>global = lokale Werte ⋈ lokale Übergangsregeln</code>. B's „das Lokal ist trivial" heißt
+präzise <em>die Faser allein</em> ist trivial — trivial ist die Faser, <em>nicht</em> das Bündel.
+Das globale Objekt braucht beide; A liest wert-first, B regel-first. <em>Keiner negiert den anderen —
+die Spaltung ist die Faser/Zusammenhang-Spaltung des Bündels selbst.</em></p>
+
+<p><b>(3) Lineare Superposition vs. Gruppen-Kozykulus →</b> Additive Superposition ist der
+<b>abelsche/lineare Spezialfall</b> des Gruppen-Kozykulus. A's Lockerung „Gleichheit → Äquivalenz ≃"
+ist exakt B's Schritt zur <em>Eich-Äquivalenz</em> (Äquivalenzklassen = Gruppenbahnen).
+<b>Fusion:</b> das Zusammensetzungs-Gesetz ist ein <em>Parameter mit Werten in einer (möglicherweise
+abelschen) Gruppe</em>; A instantiiert den abelschen/additiven Fall, B den allgemeinen
+Gruppen-Kozykulus. Beide gehorchen derselben <em>Kozykulus-/Kohärenzbedingung auf Überlappungen</em> —
+und <em>diese</em> Bedingung ist die wahre Invariante, während „additiv", „Gleichheit", „≃",
+„U(1)-Twist" nur Darstellungen desselben Kozyklus sind.</p>
+
+<p><b>(Entdeckt vs. verfasst) →</b> Der Akt der Zusammensetzung — das Kleben / die Übergangsfunktionen —
+ist genau dort, wo Inhalt <em>fixiert</em> wird. „Entdecken" des kohärenten Ganzen (A) und „Verfassen"
+des Ganzen (B, Shems Tinte) sind zwei Seiten desselben <em>konstitutiven Zusammensetzens</em>: das
+Globale wird <em>durch</em die kohärente Zusammensetzung fixiert, ob man diese Fixierung
+Entdeckung oder Schöpfung nennt.</p>
+
+<div class="aha">
+<b>Fusion in einer Aussage:</b>
+Das globale Objekt ist eine <b>Kohärenz-Invariante</b> — lokal nicht ablesbar, als
+Faser-⋈-Zusammenhang aufgebaut, und je nach Ablesungsrichtung ein <em>statischer Schnitt</em> (A)
+oder ein <em>mitgenommenes Gedächtnis</em> (B). <b>Glokale Kohärenz</b> ist der gemeinsame Mechanismus;
+das lokale Reglement ist der Parameter.
+</div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine Gesetz.</b>
+<div class="mathblock">lokale Trivialisierbarkeit  +  Kohärenz auf Überlappungen   ⇒   globale Nicht-Trivialität</div>
+Jedes der beiden Papiere ist eine Instanz: links steht ein lokal triviales Stück (A's Zelle, B's
+Trivialisierung), in der Mitte eine invariante Kompatibilitätsbedingung, rechts ein globales Objekt,
+dessen nicht-trivialer Anteil nur durch die geschlossene Zusammensetzung sichtbar wird.</p>
+
+<p><b>Die einzige Invariante = die Kohärenz-/Kozykulus-Bedingung.</b> A's Garben-Gluing und B's
+Bündel-Kozykulus sind zwei Schreibweisen derselben Bedingung — „lokale Daten, die auf Überlappungen
+passen, fügen sich zu einem globalen Objekt":
+<div class="mathblock">A:  s_i ∈ F(U_i),   s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}   ⇒   globaler s ∈ F(X)
+B:  g_ij : U_i∩U_j → G,   g_ij·g_jk·g_ki = e   ⇒   Bündel bis auf Isomorphie</div>
+A's ∞-Kohärenz (Strenge → Äquivalenz, mit höheren Kohärenzen) ist die <em>Verallgemeinerung</em>
+dieser einen Bedingung; B's Eich-Äquivalenz (Patches können umgedeutet werden, ohne das Bündel zu
+ändern) ist ihre <em>physikalische</em> Form:</p>
+<div class="mathblock">A:  s_i|_{U_{ij}} ≃ s_j|_{U_{ij}},   α_{ij}: s_i ≃ s_j,   höhere Kohärenzen auf U_{ijk}, …</div>
+
+<h3>Die zwei Zutaten: Faser + Zusammenhang</h3>
+<p>Beide Papiere zerlegen das Ganze in <em>lokale Werte</em> (Faser) und <em>Übergangsregeln</em>
+(Zusammenhang). Die Gegenüberstellung macht die Fusion sichtbar:</p>
+<table>
+<tr><th>Ebene</th><th><span class="tagA">A</span> · Garben-/Hologramm (n1-013)</th><th><span class="tagB">B</span> · Bündel-/Holonomie (n1-070)</th></tr>
+<tr><td>Lokales Stück</td><td>Zelle × Schicht (lokaler Schnitt s_i)</td><td>Trivialisierung U_i (lokale Karte, E≈U_i×G)</td></tr>
+<tr><td>Faser (Wert)</td><td>lokale Auflösungs-Daten</td><td>Uhr / Faser-U(1), Faser G</td></tr>
+<tr><td>Zusammenhang (Übergang)</td><td>Gauß-gewichtete additive Mischung (Klebregel)</td><td>Übergangsfunktion g_ij / Potential A_i = s_i^*ω</td></tr>
+<tr><td>Kohärenzbedingung</td><td>s_i|_{U_i∩U_j}=s_j|_{U_i∩U_j}</td><td>Kozykulus g_ij·g_jk·g_ki = e</td></tr>
+<tr><td>Globales Objekt</td><td>globaler Schnitt (rekonstruiertes Ganzes)</td><td>das Bündel (bis Isomorphie)</td></tr>
+<tr><td>Nicht-trivialer Inhalt</td><td>das Ganze &gt; Summe der Zellen</td><td>Holonomie Hol(γ)=exp(i∮A); F=0 ≠ trivial</td></tr>
+<tr><td>Reglement (Parameter)</td><td>Gleichheit / ≃ / additiv</td><td>U(1)-Twist (allg. SU(2), SU(3))</td></tr>
+</table>
+
+<p><b>Aufbau der lokalen Stücke (A).</b> Fünf Schichten mit Basisauflösung und additivem, nie
+rückholbarem Fokus, der in die Schichten darüber ausbreitet und Gauß-gewichtet über Nachbarn
+überblendet — ein <em>metrisches Toy-Garbenmodell</em>, in dem „Fokus" = lokal die Anzahl der lokalen
+Erzeugenden erhöhen ist:
+<div class="mathblock">effRes_i = base_i + Σ_{n∈N(i)} FOCUS_i · focus_i[n] · exp(−d²(i,n) / (2σ²)),   σ = 0.7</div>
+Der FFT-Spektrum-Nachweis ist A's <em>globale Kohärenzprüfung</em>: das Ganze ist in einer geteilten
+Frequenzbasis kodiert — der Ort, an dem alle lokalen Beiträge <em>zusammenpassen müssen</em>.</p>
+
+<p><b>Der nicht-triviale Anteil (B).</b> Der Zusammenhang ω (𝔤-wertige 1-Form) mit lokalem
+Eichpotential <code>A_i = s_i^*ω</code>; Krümmung <code>Ω = dω + ½[ω,ω]</code>, lokal
+<code>F = dA</code> (abelsch) = Feldstärke; und die Holonomie als der Netto-Twist nach einem Umlauf:
+<div class="mathblock">Hol(γ) = exp(i∮_γ A) ∈ U(1);   aharonov–bohm:  F = 0  ⇒  Hol(γ) ≠ e   (Phase exp(iΦ/ℏ))</div>
+Genau dieser „lokal flach, global nicht-trivial"-Signaturen-Fall ist das <b>gemeinsame Markenzeichen</b>
+beider Papiere: bei A ist das Ganze mehr als die Summe seiner Zellen; bei B ist die Holonomie
+nicht-trivial, selbst wenn <code>F=0</code>. In beiden Fällen zeigt <em>kein einzelner Patch</em> den
+Inhalt — nur die geschlossene Zusammensetzung.</p>
+
+<p><b>Das Objekt.</b> A: „Objekt ≈ kohärentes Netz seiner Erscheinungsweisen" (keine privilegierte
+Mitte; visuell, auditiv, leiblich, räumlich sind lokale Manifestationen). B: „Bündel ≅ Zyklus mit
+Gedächtnis" (der Kreis ist die Grammatik; die Retourn-Veränderung ist der Sinn). <b>Fusion:</b> das
+Objekt <em>ist</em> seine Kohärenz-Invariante — ein kohärentes Netz (A) <em>und</em> eine Schleife mit
+Gedächtnis (B) zugleich; die Erscheinungsweisen (A) sind die Trivialisierungen (B), der Twist (B) ist
+die Kohärenz, die die Manifestationen zusammenhält (A).</p>
+
+<div class="aha">
+<b>Die Kompositionsleiter (ein Parameter, viele Darstellungen):</b>
+<code>Gleichheit</code> (starr) ⊂ <code>Äquivalenz ≃</code> (A) = <code>Eich-Äquivalenz</code> (B)
+⊂ <code>Gruppen-Kozykulus</code> (B, allg. nicht-abelsch);
+<code>additive Superposition</code> (A) = der <em>abelsche</em> Spezialfall. Über allen steht die eine
+Invariante: <b>Kohärenz/Kozykulus auf Überlappungen ⇒ globales Objekt.</b>
+</div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Ring aus lokalen Patches — kohärentes Ganzes vs. mitgenommenes Gedächtnis</h2>
+<p class="hint">Der Ring ist <b>beides zugleich</b>: <span class="tagA">A</span>'s lokale Karten, die
+nach einer Klebregel zu einem globalen Schnitt verschweißt werden, und <span class="tagB">B</span>'s
+Zyklus, dessen Uhr (die Faser) um die Schleife transportiert wird. Jeder Patch ist <em>lokal
+trivial</em> (sieht gleich aus). Der <b>Übergang pro Patch</b> (der Zusammenhang) dreht die Faser-Uhr
+von Patch zu Patch. Nach dem Umlauf zeigt die <b>Netto-Holonomie</b> (mittige Uhr), ob die Schleife
+kohärent schließt (0°/360° → globaler Schnitt existiert, keine Naht) oder <em>verändert</em>
+zurückkehrt (Naht ≠ 0° → die Schleife trägt Gedächtnis). Genau dort — an der Naht, der Überlappung
+<code>U_{N−1}∩U_0</code> — scheitert A's Gluing <em>und</em> wird B's Holonomie sichtbar.</p>
+
+<div class="viz-panel">
+  <canvas id="loopCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Übergang pro Patch (Zusammenhang) <span id="stepVal">0°</span>
+      <input type="range" id="stepR" min="0" max="360" step="1" value="0">
+    </label>
+    <button class="action" id="playBtn">▶ Umlauf</button>
+    <button class="action" id="sweepBtn">↔ Sweep</button>
+    <button class="action" id="resetBtn">↺ 0°</button>
+  </div>
+  <div class="readout-row">
+    <span>Netto-Holonomie nach 1 Umlauf: <b id="holoRead">0°</b></span>
+    <span>Kohärenz: <span class="coherence-read" id="cohRead">100%</span></span>
+  </div>
+  <div class="meter"><div id="meterFill"></div></div>
+  <p id="verdict">—</p>
+  <p class="hint">Der Übergang pro Patch ist ein <em>Parameter</em>: bei 30°/60°/90°… schließt der
+  Ring aus 12 Patches kohärent (Netto 0°), dazwischen bleibt eine Naht (Netto-Holonomie). Die mittige
+  Uhr ist B's <code>Hol(γ)=exp(i∮A)</code>; die Faser-Pfeile auf den Patches sind A's lokale
+  Schnitte; die farbige Kante zwischen Patch 11 und 0 ist die Überlappung, an der sich
+  Gluing (A) und Kozykulus (B) entscheiden.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov">
+  <a href="../n1-013.html">A · n1-013.html</a> — <em>„Lokaler additiver Fokus, globales kohärentes
+  Ganzes"</em>: Fusion aus Hologramm (additiver Multi-Skala-Fokus, FFT als Kohärenz-Nachweis) und der
+  Garben-/∞-Kohärenz-Leiter; Gluing als zentraler Schritt; Objekt ≈ kohärentes Netz seiner
+  Erscheinungsweisen; die Klebregel ist ein Parameter.
+</div>
+<div class="prov">
+  <a href="../n1-070.html">B · n1-070.html</a> — <em>„Der Zyklus mit Gedächtnis"</em>: Fusion aus
+  Principal Bundles (Übergangsfunktionen, Zusammenhang, Krümmung, Holonomie, Aharonov–Bohm, vier
+  Kräfte) und dem Kreislauf des Finnegans Wake (Sturz→Fluss→Meer→Sturz, Shem the Penman);
+  Bündel ≅ Zyklus mit Gedächtnis; Bedeutung aus der Rückkehr.
+</div>
+</section>
+
+<div class="foot">Mathematischer Hinweis: Die Visualisierung ist ein didaktisches Modell. „Kohärent"
+heißt hier: die Netto-Holonomie nach einem Umlauf ist ein Vielfaches von 360°, sodass die lokale
+Kompatibilität auf der Naht <code>U_{N−1}∩U_0</code> erfüllt ist und ein globaler Schnitt existiert.
+Alle Daten sind inline; keine externen Abfragen.</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('loopCanvas');
+  if(!cv){ return; }
+  var ctx = cv.getContext('2d');
+  var cw = 0, ch = 0;
+  var N = 12;
+  var twistStep = 0;
+  var playing = false;
+  var sweep = false;
+  var sweepDir = 1;
+  var markerA = -Math.PI/2;
+  var lastT = 0;
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || '#888';
+  }
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    var d = window.devicePixelRatio || 1;
+    cw = Math.max(320, r.width);
+    ch = Math.max(300, r.height);
+    cv.width = Math.round(cw*d);
+    cv.height = Math.round(ch*d);
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+  function seamDeg(){ return (N * twistStep) % 360; }
+  function holRad(){ return seamDeg() * Math.PI/180; }
+  function coherence(){
+    var h = seamDeg();
+    var w = Math.min(h, 360 - h);
+    return 1 - w/180;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,cw,ch);
+    var lineCol = cssVar('--line');
+    var muted = cssVar('--muted');
+    var accent = cssVar('--accent');
+    var accent2 = cssVar('--accent2');
+    var goodCol = cssVar('--good');
+    var warnCol = cssVar('--warn');
+    var panel = cssVar('--panel');
+
+    var cx = cw*0.5, cy = ch*0.46;
+    var R = Math.min(cw,ch)*0.30;
+    var stepAng = (Math.PI*2)/N;
+    var coherent = Math.min(seamDeg(), 360 - seamDeg()) < 4;
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = lineCol;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+
+    var nodes = [];
+    var i, a, x, y;
+    for(i=0;i<N;i++){
+      a = (i/N)*Math.PI*2 - Math.PI/2;
+      nodes.push([cx + R*Math.cos(a), cy + R*Math.sin(a), a]);
+    }
+
+    for(i=0;i<N;i++){
+      var isSeam = (i===N-1);
+      ctx.lineWidth = isSeam ? 5 : 2.5;
+      ctx.strokeStyle = isSeam ? (coherent ? goodCol : warnCol) : lineCol;
+      ctx.beginPath();
+      ctx.arc(cx,cy,R, nodes[i][2], nodes[i][2]+stepAng, false);
+      ctx.stroke();
+    }
+
+    for(i=0;i<N;i++){
+      x = nodes[i][0]; y = nodes[i][1];
+      ctx.fillStyle = panel;
+      ctx.strokeStyle = muted; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.fill(); ctx.stroke();
+
+      var fAng = (i * twistStep) * Math.PI/180;
+      var alen = 20;
+      var ex = x + alen*Math.cos(fAng);
+      var ey = y + alen*Math.sin(fAng);
+      ctx.strokeStyle = accent; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(ex,ey); ctx.stroke();
+      var ah = 5;
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.moveTo(ex,ey);
+      ctx.lineTo(ex - ah*Math.cos(fAng-0.4), ey - ah*Math.sin(fAng-0.4));
+      ctx.lineTo(ex - ah*Math.cos(fAng+0.4), ey - ah*Math.sin(fAng+0.4));
+      ctx.closePath(); ctx.fill();
+    }
+
+    var cr = 26;
+    ctx.fillStyle = panel;
+    ctx.strokeStyle = accent2; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(cx,cy,cr,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    var hRad = holRad();
+    ctx.strokeStyle = accent2; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx + (cr-4)*Math.cos(hRad), cy + (cr-4)*Math.sin(hRad));
+    ctx.stroke();
+    ctx.fillStyle = accent2;
+    ctx.beginPath(); ctx.arc(cx,cy,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = muted;
+    ctx.beginPath(); ctx.arc(cx+cr, cy, 2, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = muted;
+    ctx.font = '11px system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Holonomie (netto)', cx, cy + cr + 14);
+
+    if(playing){
+      var mx = cx + R*Math.cos(markerA);
+      var my = cy + R*Math.sin(markerA);
+      ctx.fillStyle = goodCol;
+      ctx.shadowColor = goodCol; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(mx,my,7,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function updateReadouts(){
+    var h = seamDeg();
+    var w = Math.min(h, 360 - h);
+    var coherent = w < 4;
+    var stepEl = document.getElementById('stepVal');
+    if(stepEl) stepEl.textContent = twistStep.toFixed(0) + '°';
+    var holoEl = document.getElementById('holoRead');
+    if(holoEl) holoEl.textContent = h.toFixed(0) + '°';
+    var meter = document.getElementById('meterFill');
+    if(meter) meter.style.width = (coherence()*100).toFixed(0) + '%';
+    var cohRead = document.getElementById('cohRead');
+    if(cohRead) cohRead.textContent = Math.round(coherence()*100) + '%';
+    var verdict = document.getElementById('verdict');
+    if(verdict){
+      if(coherent){
+        verdict.textContent = 'kohärent — das Ganze schließt ohne Naht (globaler Schnitt existiert)';
+        verdict.style.color = cssVar('--good');
+      } else {
+        verdict.textContent = 'nicht-trivial — die Schleife trägt Gedächtnis (Naht = Holonomie)';
+        verdict.style.color = cssVar('--warn');
+      }
+    }
+  }
+
+  function frame(ts){
+    var dt = Math.min(0.05, (ts - lastT)/1000) || 0;
+    lastT = ts;
+    if(playing){
+      markerA += dt*0.9;
+      if(markerA >= Math.PI*2 - Math.PI/2) markerA -= Math.PI*2;
+    }
+    if(sweep){
+      twistStep += sweepDir * dt * 60;
+      if(twistStep >= 360){ twistStep = 360; sweepDir = -1; }
+      if(twistStep <= 0){ twistStep = 0; sweepDir = 1; }
+      var sl = document.getElementById('stepR');
+      if(sl) sl.value = twistStep.toFixed(0);
+    }
+    draw();
+    updateReadouts();
+    requestAnimationFrame(frame);
+  }
+
+  var stepR = document.getElementById('stepR');
+  if(stepR) stepR.addEventListener('input', function(){ twistStep = parseFloat(stepR.value) || 0; });
+  var playBtn = document.getElementById('playBtn');
+  if(playBtn) playBtn.addEventListener('click', function(){
+    playing = !playing;
+    playBtn.textContent = playing ? '⏸ Pause' : '▶ Umlauf';
+  });
+  var sweepBtn = document.getElementById('sweepBtn');
+  if(sweepBtn) sweepBtn.addEventListener('click', function(){
+    sweep = !sweep;
+    sweepBtn.classList.toggle('active', sweep);
+  });
+  var resetBtn = document.getElementById('resetBtn');
+  if(resetBtn) resetBtn.addEventListener('click', function(){
+    twistStep = 0;
+    if(stepR) stepR.value = 0;
+  });
+  var themeBtn = document.getElementById('themeBtn');
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 005: Ordnung als geprüfte Schließung — das Ganze, das sich erst im Test schließt</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#a92c86; --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --viz-bg:#ffffff; --viz-line:#c9c4b8;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#ff7cc4; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e;
+  --viz-bg:#0a1220; --viz-line:#263452;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.12;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 6px}
+.subtitle code{font-style:normal}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 30px}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+h2{font-size:22px;margin:0 0 12px;color:var(--accent)}
+h3{font-size:16.5px;margin:20px 0 8px;color:var(--text)}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--text)}
+em{color:var(--muted);font-style:italic}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.6}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.aha b{color:var(--accent2)}
+.tagA{color:var(--accent);font-weight:700}
+.tagB{color:var(--accent2);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0}
+#closeCanvas{display:block;width:100%;height:540px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=range]{width:180px;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.meter{height:10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:8px 0}
+.meter>div{height:100%;width:0;background:var(--good);transition:width .12s linear}
+.readout-row{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;font-size:14px}
+.readout-row b{color:var(--accent)}
+.coh-read{font-size:15px;font-weight:700;color:var(--good)}
+#verdict{font-size:14px;margin:8px 0 0}
+.hint{color:var(--muted);font-size:13.5px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700}
+.prov a:hover{text-decoration:underline}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+.theme-toggle:hover{border-color:var(--accent)}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">☀ / ☾</button>
+<article>
+<h1>Ordnung als geprüfte Schließung: das Ganze, das sich erst im Test schließt</h1>
+<p class="subtitle">Fusion aus: <code>n1-004.html</code> ✕ <code>n1-056.html</code>  (Runde 2)</p>
+<p class="meta">Runde 2 · Nicht-KI-Track · Paar 005 · Verifizierte Resonanz trifft Proportion-zu-Jet</p>
+<hr>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Runde-1-Papiere kommen aus entgegengesetztem Material — <span class="tagA">A</span> (n1-004)
+verschmilzt eine <em>formell verifizierte Ethik</em> (10 Schritte, 12 Axiome, sheaf-theoretische
+Verklebung, in Coq prüfbar) mit einem <em>harmonischen Primzahlsieb</em> (Primzahlen riegeln sich bei
+ganzzahligem Modulus in φ(m) Spalten ein); <span class="tagB">B</span> (n1-056) verschmilzt
+<em>Jet-Bündel</em> mit Euklids <em>Elementen</em> (die Steigung der 1-Jet <em>ist</em> eine
+Proportion, höhere Jets sind höhere Proportionen). Und beide konvergieren doch auf <b>ein und
+dasselbe Strukturgesetz</b>: <b>Ordnung und Gleichheit sind keine Eigenschaft, die man von einem
+Objekt abliest, sondern etwas, das ein <em>Schließ-Test</em> auf seinen lokalen bzw. endlichen Daten
+zertifiziert — und der ehrliche Gang besteht darin, genau zu benennen, was dieser Test
+zertifiziert und was er offen lässt.</b></p>
+<p><span class="tagA">A</span> sagt das im register der <em>Verifikation</em>: ein konsistentes
+System — moralisch wie das Primzahlenfeld — „existiert" nur, wenn seine lokalen Teile auf ihren
+Überlappungen übereinstimmen (die sheaf-theoretische <em>Verklebungskondition</em>); die Primzahlen
+„schließen" in Spalten genau dann, wenn der Modulus eine ganze Zahl ist. Ordnung = Emergenz aus
+lokalen Regeln; man muss sie <em>prüfen</em> und dann <em>ehrlich</em> melden — und <span class="tagA">A</span>
+ist explizit, dass der Test <em>Konsistenz/Struktur</em> zertifiziert, aber niemals
+<em>Wahrheit/Bedeutung</em> („values are chosen, not proved"; Gödel: ein System kann seine eigene
+Konsistenz nicht beweisen). <span class="tagB">B</span> sagt dasselbe im register der
+Geometrie: über einer Basis wird das Gleiche eine Turmleiter hinauf <em>verfeinert</em>
+(Proportion → Ähnlichkeit → Irrationale; 0-Jet → k-Jet), und die <em>Schließung</em> der
+höheren Jet-Daten ist, was eine Geometrie <em>flach</em> macht (bzw. <em>gekrümmt</em>, wo sie
+nicht schließt). Die Ableitung (die 1-Jet) ist <em>selbst</em> eine Proportion; höhere Jets sind
+höhere Proportionen.</p>
+<p><b>Fusionierte Position:</b> A's <em>Verklebung</em> und B's <em>Schließung</em> sind
+<b>dieselbe Prüfung</b> — „finden die lokalen/endlichen Teile zu einem kohärenten globalen Objekt
+zusammen?" — und beide Papiere tun danach <b>zwei Dinge</b>, die jeder solche Test verlangt:
+(i) <em>graduieren</em>, wie weit sich die Daten schließen (<span class="tagA">A</span>: ein
+kontinuierlicher Ordnungsscore mit einem <em>scharfen Schwellwert θ</em>; <span class="tagB">B</span>:
+eine <em>diskrete Turmleiter</em> der Jet-Ordnung k, die gegen einen <em>Limes</em> zieht), und
+(ii) eine <em>ehrliche Grenze</em> zwischen dem Zertifizierten und dem Dahinter ziehen. Die Einheit
+lautet: <b>Ordnung ist eine stufige, prüfbare Eigenschaft, die ein Schließ-Test bei einer
+benannten Präzision zertifiziert — und der Rest, der nicht schließt, ist kein Abfall, sondern
+gemessener Inhalt (Krümmung).</b> Die beiden Papiere sind zwei <em>Kalibrierungen</em> einer
+einzigen Schließfunktion: <span class="tagA">A</span> liest einen Schwellwert,
+<span class="tagB">B</span> liest einen Limes.</p>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+<p class="hint">Ehrliche Einordnung: <span class="tagA">A</span> lebt in der Epistemologie der
+Ordnung (Ethik + Zahlentheorie), <span class="tagB">B</span> in der Differentialgeometrie +
+Axiomatik. Es gibt <b>keinen</b> direkten logischen Widerspruch. Hier sind drei <em>echte</em>
+Spannungen, jede mit der konkreten Position.</p>
+
+<div class="card">
+<h3>1. Form der Graduierung: ein Schwellwert auf dem Kontinuum (<span class="tagA">A</span>) vs. eine diskrete Turmleiter gegen den Limes (<span class="tagB">B</span>)</h3>
+<p><span class="tagA">A</span>: Schließen ist ein <b>kontinuierlicher</b> Score c(m);
+„geschlossen" ist ein <b>einziger scharfer Schwellwert θ</b> (c ≥ θ). Das binäre Urteil wird von
+einer kontinuierlichen Kurve <em>abgelesen</em>; A's eigener fusionierter Schluss lautet wörtlich
+„kontinuierliche Messung + expliziter Schwellwert".</p>
+<p><span class="tagB">B</span>: Schließen wird über eine <b>diskrete ganze</b> Turmleiter
+graduiert (Jet-Ordnung k = 0, 1, 2, …); „gleich/geschlossen bis zur Ordnung k" ist an jeder ganzen
+Zahl <em>exakt</em>, und die „volle Schließung" ist ein <em>Limes</em> (k→∞, Taylor-Konvergenz).
+Es gibt <b>keinen</b> Schwellwert — nur einen Grenzprozess.</p>
+<p class="hint">Inkompatibilität: A verlangt einen <em>harten Schnitt</em> auf einem Kontinuum;
+B einen <em>Limes</em> ohne Schnitt. Zwei unterschiedliche <em>Formen</em> für
+„wie präzisse muss die Schließung sein, um zu zählen".</p>
+</div>
+
+<div class="card">
+<h3>2. Das „Dahinter": eine irreduzible Lücke (<span class="tagA">A</span>) vs. eine überbrückbare Grenze (<span class="tagB">B</span>)</h3>
+<p><span class="tagA">A</span>: der Schließ-Test zertifiziert <em>Konsistenz/Struktur</em>; die
+Lücke zu <em>Wahrheit/Bedeutung</em> ist <b>irreduzibel</b> — „values are chosen, not proved", und
+Gödel (ein System kann seine eigene Konsistenz nicht beweisen). Keine Menge an Präzision erreicht
+je die Wahrheit.</p>
+<p><span class="tagB">B</span>: das „Dahinter" (das Infinitesimale) ist <b>überbrückbar</b>: die
+Ableitung ist <em>als Limes</em> euklidischer Proportionen <em>definiert</em>, und Eudoxos'
+endliche robuste Definition („für alle m,n: ma≷nb ⇒ mc≷nd") ist <em>genau das</em>, was diesen
+Limes wohldefiniert macht (auch für √2). Das Dahinter wird <em>aus dem Inneren konstruiert</em>.</p>
+<p class="hint">Inkompatibilität: A besteht auf einer Lücke (Struktur↔Wahrheit), die <em>keine</em>
+Methode schließt; B zeigt eine Lücke (endlich↔infinitesimal), die ein wohldefinierter Limes
+<em>sehr wohl</em> schließt.</p>
+</div>
+
+<div class="card">
+<h3>3. Der Rest: Rauschen zum Filtern (<span class="tagA">A</span>) vs. Inhalt zum Messen (<span class="tagB">B</span>)</h3>
+<p><span class="tagA">A</span>: der nicht-geschlossene Zustand ist <em>Rauschen</em> — „dichtes
+Rauschen, Reste streuen sich"; Ordnung ist das <em>Signal/der Peak</em>, und das System muss
+„sich von Rauschen unterscheiden lassen". Das Ungeordnete ist <em>Absenz</em>, auszufiltern.</p>
+<p><span class="tagB">B</span>: der nicht-geschlossene Zustand (Krümmung = Schließversagen der
+höheren Daten) ist der <em>Inhalt</em>: „Krümmung ist das Schließversagen"; Flachheit (P5) ist der
+<em>planare Sonderfall</em>. Die Jet <em>misst</em> die Krümmung als wesentliches Datum. Das
+Ungeordnete ist der <em>Inhalt</em>.</p>
+<p class="hint">Inkompatibilität: A behandelt den Rest als Abfall-zum-Filtern; B behandelt den
+Rest als das-zu-Messende.</p>
+</div>
+
+<div class="aha">
+<b>Wo sie zustimmend (der Konvergenzspunkt):</b> Beide lösen <em>Existenz/Ordnung</em> auf
+<em>„es existiert, wenn die erzeugende Regel/der Test durchläuft"</em> — A: „the alignment is real
+iff the test passes"; B: „Existenz = Regelbestimmtheit". Diese gemeinsame Wurzel ist es, die die
+Fusion erst möglich macht; die drei Spannungen oben sind die echten Reibungspunkte.
+</div>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+<p><b>(1) Schwellwert vs. Turmleiter → eine Schließfunktion, zwei Lesarten.</b> Modelliere
+Schließen als <em>kontinuierlichen</em> Prozess c(λ) — den Anteil der lokalen/endlichen Daten, die
+zu einem kohärenten globalen Objekt schließen, wenn ein Präzisionsparameter λ wächst. A's
+Schwellwert („genug geschlossen", c ≥ θ) und B's Limes („vollständig geschlossen", lim c) sind
+<b>zwei Merkmale derselben Kurve</b>: der Schwellwert ist die Stelle, an der die Kurve hoch genug
+ist, um zu zertifizieren; der Limes ist ihr Supremum; die diskreten Peaks (A's ganzzahlige
+Moduli / B's ganzzahlige Jet-Ordnungen) sind die <em>exakten Stufen</em>, an denen die Schließung
+perfekt ist. <em>Fusionierter Schluss:</em> <b>Schließen ist eine Funktion eines
+Präzisionsparameters; ein Schwellwert (A) zertifiziert „ausreichend geschlossen", ein Limes (B)
+benennt das „vollständig geschlossen" — Schwellwert und Limes sind der flache Teil und das Supremum
+einer Schließkurve, keine Rivalen.</b></p>
+<p><b>(2) Irreduzibel vs. überbrückbar → zwei Lücken, zwei Arten.</b> Die beiden „Lücken" sind
+<em>unterschiedlicher Art</em>. Die <em>Präzisionsgrenze</em> (endlich↔infinitesimal,
+Ordnung k↔Limes) ist eine <em>mathematische</em> Lücke — überbrückbar durch einen wohldefinierten
+Limes (B hat recht: Eudoxos' endliche robuste Definition konstruiert den Limes; die Struktur kann
+ohne Obergrenze verfeinert werden). Die <em>Bedeutungsgrenze</em> (Struktur↔Wahrheit/Bedeutung)
+ist eine <em>sprachliche</em> Lücke — irreduzibel (A hat recht: kein Limes der Präzision
+zertifiziert Wahrheit/Bedeutung; Gödel). <em>Fusionierter Schluss:</em> <b>brücke die
+Präzisionsgrenze so weit der Limes zulässt (B), überschreite die Bedeutungsgrenze nie (A); die
+Ehrlichkeitsdisziplin besteht darin, zu benennen, an welcher Grenze man gerade steht.</b> Das
+„Dahinter" spaltet sich in ein überbrückbares <em>mathematisches</em> Dahinter (B's
+Zuständigkeitsbereich) und ein irreduzibles <em>sprachliches</em> Dahinter (A's
+Zuständigkeitsbereich) — jedes Papier beherrscht genau eines.</p>
+<p><b>(3) Rauschen vs. Inhalt → Perspektive des Ziels.</b> Der Rest (das Nicht-Geschlossene) ist
+<em>Rauschen</em>, wenn das Ziel darin besteht, die geschlossene Struktur zu <em>lokalisieren</em>
+(A: finde die Spalten → filtere das Gestränge), und ist <em>Inhalt</em>, wenn das Ziel darin
+besteht, die Geometrie zu <em>messen</em> (B: der Rest ist die zu messende Krümmung).
+<em>Fusionierter Schluss:</em> <b>der Schließ-Test tut zwei Dinge auf einmal — er <em>lokalisiert</em>
+den geschlossenen Kern (A: c ≥ θ) <em>und</em> er <em>quantifiziert</em> die Abweichung von der
+Schließung (B: Rest 1−c = gemessene Krümmung).</b> „Filtern zum Finden" und „messen, was übrig
+bleibt" sind ein einziger Vorgang: Struktur lokalisieren, dann deren Abweichung messen. Der Rest
+ist das Objekt der Messung, kein Abfall.</p>
+
+<div class="aha">
+<b>Ein Schließ-Test, zwei Lesarten, zwei Grenzen.</b> Schließen = lokale/endliche Daten, die zu
+einem kohärenten globalen Objekt zusammenfinden (A's Verklebung = B's Schließung). Die Graduierung
+ist eine Funktion c(Präzision): <span class="tagA">A</span> liest den Schwellwert θ,
+<span class="tagB">B</span> liest den Limes; der Rest 1−c ist gemessene Krümmung, kein Abfall.
+Und es gibt genau <b>zwei Grenzen</b>, die man benennen muss: die <em>Präzisionsgrenze</em>
+(endlich↔infinitesimal, per Limes überbrückbar — B) und die <em>Bedeutungsgrenze</em>
+(Struktur↔Wahrheit, irreduzibel — A).
+</div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine Gesetz.</b>
+<div class="mathblock">lokale / endliche Daten  +  Schließ-/Klebebedingung   ⇒   geschlossenes globales Objekt
+Graduierung c(Präzision)   +   ehrliche Grenze (zertifiziert  vs.  offen)</div>
+Jedes der beiden Papiere ist eine Instanz: links lokale/endliche Daten, in der Mitte eine
+invariante Schließbedingung, rechts ein geschlossenes Objekt — plus eine Graduierung, wie weit es
+sich schließt, plus die ehrliche Grenze, was der Test stützt und was er nicht stützt.</p>
+
+<p><b>Die eine Prüfung — Verklebung = Schließung.</b>
+<div class="mathblock">A:  lokale Prinzipien stimmen auf Überlappungen überein        ⇒  globaler Schnitt (Spalten)
+B:  höhere Jet-Daten „schließen"  (flach)   /   schließen nicht (Krümmung)
+Gemeinsam:  „Ordnung/Gleichheit existiert  gdw  die lokalen/endlichen Daten sich schließen"</div>
+<span class="tagA">A</span>'s sheaf-theoretische Verklebungskondition und <span class="tagB">B</span>'s
+Flachheits-/Krümmungskriterium sind zwei Schreibweisen derselben Frage; bei A ist das geschlossene
+Objekt der <em>globale Schnitt</em> (bzw. die φ(m) Spalten), bei B die <em>flache Verbindung</em> —
+und das Schließversagen ist bei A <em>Widerspruch/kein globaler Schnitt</em>, bei B <em>Krümmung</em>.</p>
+
+<div class="card">
+<h3><span class="tagA">A · Verifizierte Resonanz (n1-004)</span> — die Verifikationsseite</h3>
+<ul>
+<li><b>Ordnung = Emergenz aus lokalen Regeln</b> (lokale Prinzipien + Verklebung; Primzahlen + modulare Projektion).</li>
+<li><b>Schließ-Test:</b> sheaf-theoretische Verklebung (lokale Schnitte stimmen auf Überlappungen überein ⇒ globaler Schnitt); Primzahlen riegeln bei ganzzahligem m in <b>φ(m) Spalten</b> ein.</li>
+<li><b>Graduierung:</b> kontinuierlicher Ordnungsscore c(m) (Konzentration der normierten Reste) + <b>scharfer Schwellwert θ</b> (Struktur vorhanden gdw c ≥ θ).</li>
+<li><b>Ehrliche Grenze:</b> der Test zertifiziert <em>Konsistenz/Struktur</em>, niemals <em>Wahrheit/Bedeutung</em> („values are chosen, not proved"; Gödel-Selbstbezug). Struktur ≠ Wahrheit.</li>
+<li><b>Nützliche Math:</b> konstraintes Optimierungsproblem (minimiere Nettonutzen-Schaden unter Restriktionen); Euler φ(m) = Spaltenzahl bei ganzzahligem m; c(m) via Herfindahl-Konzentration; Schwellwert θ.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3><span class="tagB">B · Von Proportion zu Jet (n1-056)</span> — die Fundament-/Ableitungsseite</h3>
+<ul>
+<li><b>Gleichheit = Turmleiter der Präzision</b> (Proportion → Ähnlichkeit → Irrationale; 0-Jet → k-Jet); jede Stufe merkt eine Ordnung mehr; <code>dim JᵏE = n + m·C(n+k,k)</code>.</li>
+<li><b>Der Brückenschlag:</b> die 1-Jet (Steigung/Ableitung) <em>ist</em> eine Proportion (<code>dy:dx</code>); höhere Jets sind <em>höhere Proportionen</em> (2. Ableitung = Verhältnis von Verhältnissen).</li>
+<li><b>Schließ-Test:</b> höhere Jet-Daten <em>schließen</em> (→ flach) oder <em>schließen nicht</em> (→ gekrümmt); Flachheit (P5) ist der niedrigstufige Sonderfall; Krümmung = das Schließversagen in höherer Ordnung.</li>
+<li><b>Ehrliche Grenze:</b> das Endliche (Eudoxos-Proportion, robust „für alle m,n", Exhaustion) vs. das Infinitesimale (Jet, Limes) — Eudoxos' endliche robuste Definition <em>konstruiert</em> den Limes (= Dedekinds Schnitt); Exhaustion (Buch XII) und Limes/Taylor (Jets) sind derselbe Vorgang.</li>
+<li><b>Nützliche Math:</b> Proportion <code>a:b = c:d ⇔ ∀m,n: ma≷nb ⇒ mc≷nd</code>; Taylor-Polynom; P5/Flachheit.</li>
+</ul>
+</div>
+
+<p><b>Die Gegenüberstellung.</b>
+<table>
+<tr><th>Ebene</th><th><span class="tagA">A</span> · Resonanz/Verifikation (n1-004)</th><th><span class="tagB">B</span> · Proportion/Jet (n1-056)</th></tr>
+<tr><td>lokale / endliche Daten</td><td>lokales Prinzip / Primzahl</td><td>endliche Proportion / Vielfache</td></tr>
+<tr><td>Schließ-/Klebe-Test</td><td>Verklebung / ganzzahlige Modulus-Ausrichtung</td><td>Schließung der Jet-Daten / Flachheit (P5)</td></tr>
+<tr><td>geschlossenes Objekt</td><td>globaler Schnitt / φ(m) Spalten</td><td>flache Verbindung / konsistente höhere Jet</td></tr>
+<tr><td>Graduierung</td><td>Ordnungsscore c(m) + Schwellwert θ</td><td>Jet-Ordnung k + Limes (Taylor)</td></tr>
+<tr><td>Rest (Inhalt)</td><td>Rauschen / Streuung</td><td>Krümmung (Schließversagen)</td></tr>
+<tr><td>ehrliche Grenze</td><td>Struktur ≠ Wahrheit (Gödel)</td><td>endlich ↔ infinitesimal (Limes)</td></tr>
+<tr><td>Revisibilität</td><td>Modulus schieben / System offen halten</td><td>Jet-Ordnung erhöhen / Limes nehmen</td></tr>
+</table></p>
+
+<p><b>Die nützliche Math, vereint.</b> A liefert die <em>diskrete Zertifikatszahl</em> — die
+Spaltenzahl bei ganzzahligem m ist <code>φ(m)</code> (Euler) — und den <em>kontinuierlichen
+Score</em> c(m) (Herfindahl-Konzentration der normierten Reste <code>(p mod m)/m</code>); B liefert
+den <em>Turm</em> der Ordnungen (k) und den <em>Limes</em> (Taylor/Exhaustion), der die
+Verfeinerung <em>ohne Obergrenze</em> zulässt. Die Fusion setzt beides an einen Parameter:
+<div class="mathblock">c(Präzision) = Anteil lokaler/endlicher Daten, die zu einem kohärenten globalen Objekt schließen
+A liest:  c ≥ θ        ⇒  „ausreichend geschlossen"  (binär, an der Kurve abgelesen)
+B liest:  lim c(k)     ⇒  „vollständig geschlossen" (der Peak ist exakt; Rest 1−c = Krümmung)</div>
+Der <em>Rest</em> <code>1 − c</code> ist der gemeinsame Gegenstand: bei A das <em>Rauschen</em>
+(auszufiltern), bei B die <em>Krümmung</em> (zu messen) — in der Fusion beides: <em>lokalisierter
+Kern plus gemessene Abweichung</em>.</p>
+
+<div class="aha">
+<b>Die Methode für jedes „System, das ordentlich aussieht":</b>
+(1) die lokale Regel / die endlichen Daten benennen;
+(2) den Schließ-Test bei einer <em>benannten</em> Präzision laufen lassen (Schwellwert θ auf c(m)
+bei A, Jet-Ordnung k bei B);
+(3) ablesen, <em>was sich schließt</em> (Spalten / globaler Schnitt / flacher Kern)
+<b>und</b> den Rest messen (Krümmung 1−c) — der Rest ist Inhalt, kein Abfall;
+(4) die <b>zwei Grenzen</b> benennen: die <em>Präzisionsgrenze</em> (endlich↔infinitesimal,
+überbrückbar per Limes — B) und die <em>Bedeutungsgrenze</em> (Struktur↔Wahrheit, irreduzibel — A).
+</div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Schließ-Prüfstand</h2>
+<p class="hint">Der Prüfstand bringt die fusionierte Idee auf A's konkretem, verifizierbarem
+Objekt (das Primzahlenfeld, inline Sieb) an und legt B's Lesart darüber. <b>Oben:</b> die
+Primzahlen, projiziert durch <code>x=(p mod m)/m</code> — bei <em>ganzzahligem</em> m schließen sie
+in <b>φ(m) Spalten</b> (das geschlossene Objekt, A). <b>Unten:</b> die Schließkurve c(m) mit
+<b>beiden</b> Lesarten — A's <em>scharfer Schwellwert θ</em> (gestrichelt) und B's <em>ganzzahlige
+exakte Stufen</em> (die Peaks); der <b>Rest</b> 1−c (die Fläche über der Kurve) ist als B's
+„gemessene Krümmung — Inhalt, kein Abfall" schattiert. Das Ehrlichkeits-Overlay markiert die zwei
+Grenzen: „Struktur ≠ Wahrheit" (A) am Schwellwert, „Rest = gemessene Krümmung" (B) im Rest.</p>
+
+<div class="viz-panel">
+  <canvas id="closeCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Modulus m (Ausrichtungs-Parameter) <span id="mVal">12.00</span>
+      <input type="range" id="cM" min="2" max="30" step="0.02" value="12">
+    </label>
+    <label>Schwellwert θ (A's binäre Lesart) <span id="tVal">0.10</span>
+      <input type="range" id="cT" min="0" max="1" step="0.01" value="0.10">
+    </label>
+    <label>Ehrlichkeits-Overlay (beide Grenzen)
+      <input type="checkbox" id="cH" checked>
+    </label>
+  </div>
+  <div class="readout-row">
+    <span>Schließscore c(m): <b id="scoreRead">—</b></span>
+    <span>A: c(m) ≥ θ? <span class="coh-read" id="closedRead">—</span></span>
+    <span>Rest 1−c: <b id="resRead">—</b></span>
+  </div>
+  <div class="meter"><div id="meterFill"></div></div>
+  <p id="verdict">—</p>
+  <p class="hint">Schiebe m: an den ganzen Zahlen riegelt das Feld in Spalten ein (Peak der
+  Kurve, exakte Schließstufe, <span class="tagB">B</span>), dazwischen streuen sich die Reste
+  (Tal, „Rauschen", <span class="tagA">A</span>). <span class="tagA">A</span>'s Urteil
+  „geschlossen" ist c(m) ≥ θ; <span class="tagB">B</span> liest denselben Peak als die exakte
+  Stufe φ(m) Spalten und den Rest über der Kurve als zu messende Krümmung.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov">
+  <a href="../n1-004.html">A · n1-004.html</a> — <em>„Verifizierte Resonanz: Ordnung, die geprüft
+  werden muss"</em>: Fusion aus einer formell verifizierten Ethik (10 Schritte, 12 Axiome,
+  sheaf-theoretische Konsistenz, in Coq prüfbar) und einem harmonischen Primzahlsieb (φ(m) Spalten
+  bei ganzzahligem Modulus); Ordnung = Emergenz aus lokalen Regeln, die man prüft und dann ehrlich
+  meldet; Struktur ≠ Wahrheit (Gödel).
+</div>
+<div class="prov">
+  <a href="../n1-056.html">B · n1-056.html</a> — <em>„Von Proportion zu Jet: Die Verfeinerung des
+  Gleichen"</em>: Fusion aus Jet-Bündel und Euklids Elementen; die Ableitung (1-Jet) ist eine
+  Proportion, höhere Jets sind höhere Proportionen; das Gleiche wird eine Turmleiter hinauf
+  verfeinert; Flachheit = höhere Jet-Daten schließen, Krümmung = das Schließversagen; Eudoxos'
+  endliche Proportion konstruiert den infinitesimalen Limes.
+</div>
+</section>
+
+<div class="foot">Mathematischer Hinweis: Die Visualisierung ist ein didaktisches Modell auf A's
+konkretem Primzahlenfeld (inline Sieb, keine externen Abfragen). c(m) = Konzentration der
+normierten Reste (Herfindahl-Index, normalisiert auf [0,1]); „geschlossen" heißt c(m) ≥ θ
+(A's binäre Lesart) bzw. ein Peak an einer ganzen Zahl n, wo das Feld exakt in φ(n) Spalten
+schließt (B's exakte Stufe). Der Rest 1−c ist die gemessene Abweichung von der Schließung (B's
+Krümmung, als Inhalt gelesen). Alle Daten inline; keine externen Datenquellen.</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('closeCanvas');
+  if(!cv){ return; }
+  var ctx = cv.getContext('2d');
+  if(!ctx){ return; }
+  var cw = 0, ch = 0;
+
+  var LIMIT = 10000;
+  function sieve(n){
+    var s = new Uint8Array(n+1), i, j;
+    for(i=2;i<=n;i++) s[i]=1;
+    s[0]=0; s[1]=0;
+    for(i=2;i*i<=n;i++){ if(s[i]){ for(j=i*i;j<=n;j+=i) s[j]=0; } }
+    var r=[]; for(i=2;i<=n;i++) if(s[i]) r.push(i);
+    return r;
+  }
+  var primes = sieve(LIMIT);
+
+  function phi(n){
+    var res=n, f;
+    for(f=2;f*f<=n;f++){ if(n%f===0){ while(n%f===0)n/=f; res-=res/f; } }
+    if(n>1) res-=res/n;
+    return Math.round(res);
+  }
+
+  var NBINS = 72;
+  function closeScore(m){
+    var counts = new Float64Array(NBINS), total=0, i, p, r, rn, b, H=0;
+    for(i=0;i<primes.length;i++){
+      p = primes[i];
+      r = p - Math.floor(p/m)*m;
+      rn = r/m;
+      b = Math.floor(rn*NBINS);
+      if(b>=NBINS) b=NBINS-1; if(b<0) b=0;
+      counts[b]++; total++;
+    }
+    for(i=0;i<NBINS;i++) H += counts[i]*counts[i];
+    H /= (total*total);
+    var o = (H - 1/NBINS) / (1 - 1/NBINS);
+    if(o<0)o=0; if(o>1)o=1;
+    return o;
+  }
+
+  var MMIN=2, MMAX=30, MSTEP=0.02;
+  var curve=[];
+  for(var m0=MMIN; m0<=MMAX+1e-9; m0+=MSTEP){ curve.push({m:m0, c:closeScore(m0)}); }
+
+  var state = { m:12, theta:0.10, honesty:true };
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || '#888';
+  }
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    var d = window.devicePixelRatio || 1;
+    cw = Math.max(320, r.width);
+    ch = 540;
+    cv.width = Math.round(cw*d);
+    cv.height = Math.round(ch*d);
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,cw,ch);
+    var bg = cssVar('--viz-bg');
+    var line = cssVar('--line');
+    var muted = cssVar('--muted');
+    var accent = cssVar('--accent');
+    var accent2 = cssVar('--accent2');
+    var textCol = cssVar('--text');
+    var goodCol = cssVar('--good');
+    var warnCol = cssVar('--warn');
+
+    ctx.fillStyle = bg; ctx.fillRect(0,0,cw,ch);
+
+    var ml=46, mr=16, plotW = cw-ml-mr;
+    var sTop=32, sBot=244;
+    var cTop=292, cBot=486;
+    var m = state.m, theta = state.theta;
+
+    ctx.strokeStyle = line; ctx.lineWidth=1;
+    ctx.strokeRect(ml, sTop, plotW, sBot-sTop);
+    ctx.strokeRect(ml, cTop, plotW, cBot-cTop);
+
+    var i, p, r, rn, x, y, hue;
+    for(i=0;i<primes.length;i++){
+      p = primes[i];
+      r = p - Math.floor(p/m)*m;
+      rn = r/m;
+      x = ml + rn*plotW;
+      y = sBot - (p/LIMIT)*(sBot-sTop);
+      hue = (rn*360 + 180) % 360;
+      ctx.fillStyle = 'hsla(' + hue.toFixed(0) + ',70%,' + (isDark()?62:45) + '%,.85)';
+      ctx.fillRect(x-0.8, y-0.8, 1.7, 1.7);
+    }
+    ctx.fillStyle = muted; ctx.font='12px ui-monospace,Consolas,monospace';
+    ctx.textAlign='left';
+    ctx.fillText('Primzahlen  x=(p mod m)/m, y=p/LIMIT — bei ganzem m schließen sie in Spalten (A)', ml, sTop-8);
+
+    function cx(mm){ return ml + (mm-MMIN)/(MMAX-MMIN)*plotW; }
+    function cy(cc){ return cBot - cc*(cBot-cTop); }
+
+    if(state.honesty){
+      ctx.beginPath();
+      ctx.moveTo(cx(MMIN), cy(1));
+      for(var k=0;k<curve.length;k++){ ctx.lineTo(cx(curve[k].m), cy(curve[k].c)); }
+      ctx.lineTo(cx(MMAX), cy(1));
+      ctx.closePath();
+      ctx.fillStyle = isDark()?'rgba(255,107,94,.12)':'rgba(176,52,43,.10)';
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(cx(MMIN), cy(0));
+    for(k=0;k<curve.length;k++){ ctx.lineTo(cx(curve[k].m), cy(curve[k].c)); }
+    ctx.lineTo(cx(MMAX), cy(0));
+    ctx.closePath();
+    ctx.fillStyle = isDark()?'rgba(125,211,252,.10)':'rgba(79,70,229,.08)';
+    ctx.fill();
+
+    ctx.strokeStyle = accent; ctx.lineWidth=1.8;
+    ctx.beginPath();
+    for(k=0;k<curve.length;k++){ var px=cx(curve[k].m), py=cy(curve[k].c); if(k===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+
+    if(state.honesty){
+      ctx.fillStyle = accent2;
+      for(var n=MMIN;n<=MMAX;n++){
+        ctx.beginPath(); ctx.arc(cx(n), cy(closeScore(n)), 2.5, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.strokeStyle = accent2; ctx.lineWidth=1.4; ctx.setLineDash([6,4]);
+      ctx.beginPath(); ctx.moveTo(ml, cy(theta)); ctx.lineTo(ml+plotW, cy(theta)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = accent2; ctx.font='11px ui-monospace,Consolas,monospace';
+      ctx.textAlign='right';
+      ctx.fillText('θ (A):  c ≥ θ  ⇒  „geschlossen"', ml+plotW-4, cy(theta)-5);
+      ctx.textAlign='left';
+    }
+
+    var mc = closeScore(m);
+    var mmx = cx(m);
+    ctx.strokeStyle = textCol; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(mmx, cTop); ctx.lineTo(mmx, cBot); ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.beginPath(); ctx.arc(mmx, cy(mc), 4, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = muted; ctx.font='12px ui-monospace,Consolas,monospace';
+    ctx.textAlign='left';
+    ctx.fillText('Schließscore c(m) — Anteil, der zu Spalten „schließt"', ml, cTop-8);
+    ctx.textAlign='right'; ctx.fillText('modulus m →', ml+plotW, cBot+16);
+    ctx.textAlign='left';
+
+    var nNear = Math.round(m);
+    var isNear = Math.abs(m-nNear) < 0.15 && nNear>=MMIN && nNear<=MMAX;
+    var closed = mc >= theta;
+    var residual = 1 - mc;
+    var msg;
+    if(isNear){
+      var kk = phi(nNear);
+      if(mc >= theta){
+        msg = 'ganzes n=' + nNear + ':  <b>geschlossen — φ(n)=' + kk + ' Spalten = verifiziertes Objekt (A), c ≥ θ</b> · exakte Schließstufe (B) · Rest 1−c=' + residual.toFixed(2) + ' = gemessene Krümmung (B)';
+      } else {
+        msg = 'ganzes n=' + nNear + ':  <b>exakte Schließstufe (B): φ(n)=' + kk + ' Spalten als Objekt (A)</b> · c=' + mc.toFixed(2) + ' &lt; θ — viele dünne Spalten, A&#39;s Kontinuums-Score bleibt unter θ · Rest 1−c=' + residual.toFixed(2) + ' = gemessene Krümmung (B)';
+      }
+    } else if(closed){
+      msg = 'c(m)=' + mc.toFixed(3) + ' ≥ θ:  Spalten sichtbar → <b>Struktur (≠ „Wahrheit", A)</b> · Rest = gemessene Krümmung (B)';
+    } else {
+      msg = 'c(m)=' + mc.toFixed(3) + ' &lt; θ:  Reste streuen (Rauschen) — kein geschlossenes Objekt · Rest ≈ ' + residual.toFixed(2);
+    }
+    var v = document.getElementById('verdict'); if(v) v.innerHTML = msg;
+    var sr = document.getElementById('scoreRead'); if(sr) sr.textContent = mc.toFixed(3);
+    var cr = document.getElementById('closedRead'); if(cr){ cr.textContent = closed ? 'ja' : 'nein'; cr.style.color = closed ? goodCol : warnCol; }
+    var rr = document.getElementById('resRead'); if(rr) rr.textContent = residual.toFixed(3);
+    var mf = document.getElementById('meterFill'); if(mf){ mf.style.width = (Math.max(0,Math.min(1,mc))*100) + '%'; mf.style.background = (isNear || closed) ? goodCol : warnCol; }
+    var mv = document.getElementById('mVal'); if(mv) mv.textContent = m.toFixed(2);
+    var tv = document.getElementById('tVal'); if(tv) tv.textContent = theta.toFixed(2);
+  }
+
+  function refresh(){
+    state.m = parseFloat(document.getElementById('cM').value);
+    state.theta = parseFloat(document.getElementById('cT').value);
+    state.honesty = document.getElementById('cH').checked;
+    draw();
+  }
+  document.getElementById('cM').addEventListener('input', refresh);
+  document.getElementById('cT').addEventListener('input', refresh);
+  document.getElementById('cH').addEventListener('change', refresh);
+
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  window.addEventListener('resize', function(){ resize(); draw(); });
+  if(typeof MutationObserver!=='undefined'){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,
+      {attributes:true, attributeFilter:['class']});
+  }
+
+  resize();
+  draw();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

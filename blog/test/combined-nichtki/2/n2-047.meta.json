@@ -1,0 +1,15 @@
+{
+  "no": "047",
+  "a": "n1-066.html",
+  "b": "n1-105.html",
+  "a_title": "Persistenz — Die gemeinsame Topologie von Form & Geschichte",
+  "b_title": "Struktur transparent, Inhalt opak",
+  "combined_theme": "form-vs-substanz-peristente-topologie",
+  "one_line": "Persistent Homology ist der universale Operator, der in jedem System die invariante Form (lange Persistenz) von der Substanz (kurze Persistenz) trennt: A legt die kontingente Substanz (das Ereignis, der Pfad) offen und liest sie als Rauschen (Verstehen, 'reimt sich nicht wiederholt'), B hält die Substanz (die Daten) opak und liest die Form als auditierbare Struktur (verifizierbare Privatsphäre); die Trennung ist zweckunabhängig, die Bearbeitung des Residums zweckabhängig.",
+  "contradictions": [
+    "Schicksal der Substanz: A (n1-066) entwertet das Abgetrennte als 'Rauschen' und macht daraus epistemischen Wert — kurze Persistenz wird sichtbar entlarvt und ausgesortiert (Signal vs. Rauschen); B (n1-105) erhellt die Substanz (den Inhalt) als wertvoll und hält sie 'opak'/verschlüsselt, selbst vor dem Root-Admin. Die Substanz ist A etwas Untergeordnetes, B etwas Schützenswertes.",
+    "Weiche Gradienten vs. harte binäre Mauer: A kennt keine durchgesetzte Grenze — die Trennung von 'echt' und 'Rauschen' ist ein weiches, interpretierendes Lesen eines kontinuierlichen, schwellenwertfreien Persistenz-Gradienten; B erzeugt Sicherheit gerade durch eine harte, binäre, durchsetzbare Mauer (Firewall kuppelt voll ab, Verschlüsselung macht den Inhalt unlesbar, ja/nein)."
+  ],
+  "resolution": "Messachse und Governance-Achse trennen: Die Form wird weich und schwellenwertfrei über alle Skalen gemessen (persistent Homology — beider Einigkeit, die den Kern trägt), die Substanz wird nach Zweck behandelt — offenlegen-als-Rauschen (A, epistemisch) oder schützen-als-Geheimnis (B, privat). Die Form/Substanz-Trennung ist zweckunabhängig und universell; nur die Disposition des abgetrennten Residums ist zweckabhängig. Weich = beim Messen (lesen), hart = beim Verwalten (binäre Mauer durchsetzen) — genau die Arbeitsteilung, die B intern schon vollzieht ('bei der Messung kontinuierlich, bei der Abwehr binär') und die A nie nötig hatte, weil es keine Governance-Achse besaß.",
+  "viz": "Ein und dasselbe System (langlebiger Zyklus = Form/peristentes H1-Loch + verstreute Ereignisse = Substanz) durchlaufen mit einer Vietoris-Rips-Filtration: ε-Regler wächst, rechts entsteht das Persistenzdiagramm (Form weit über der Diagonalen, Substanz an ihr). Der Umschalter 'Verstehen (A) / Schützen (B)' zeigt die Fusion: Verstehen legt die Substanz sichtbar als Rauschen offen; Schützen macht sie opak (Schlüssel-Glyphen) hinter einer harten Firewall mit einem erlaubten Audit-Exit (✓), während nur die Form transparent bleibt. Live-Readout, β₀/β₁/ε/Persistenz-Statistiken; Canvas, themenreaktiv (CSS-Variablen, Dunkel-Default), seeded RNG, alle Daten inline, keine externen Requests."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "040",
+  "a": "n1-010.html",
+  "b": "n1-055.html",
+  "a_title": "Der Leib als Prozess des Erlebens — Schmitz × Whitehead",
+  "b_title": "Die Invariante der Iteration — Anzieher × Windungszahl",
+  "combined_theme": "stabile-struktur-vergehen-invariante",
+  "one_line": "Das Reale ist die stabile Struktur, auf die der Prozess (Konkreszenz/Iteration) der entbehrlichen Einzel-Momente konvergiert und die über sie hinaus fortdauert; ihre Identität ist eine Invariante — A liest sie qualitativ-topologisch (Form der Erfahrung), B metrisch-algebraisch (λ, fraktale Dimension, Windungszahl); fix als Form, fließend im Inhalt, vom Erleben realisiert (A) und objektiv als Invariante lesbar (B).",
+  "contradictions": [
+    "W1 Dauer als ständiges Werden (A: der Leib dauert an, indem er beständig vergeht und neu erfasst wird — kein Ruhepunkt, ein nie wieder derselber Fluss) vs. Ruhe als fixer Anzieher (B: der Orbit 'vergisst' x₀ und landet auf der stabilen Struktur, λ<0 = stabil/periodisch — Konvergenz auf eine fixe Grenzstruktur).",
+    "W2 Invariante als qualitative Form (A: die protopathisch→epikritisch-Polarität, die leibliche Richtung Engung→Weitung — eine Art von Erleben, keine zählbare Größe) vs. Invariante als exakte Zahl (B: λ≈0.693, fraktale Dimension≈1.26, Windungszahl n∈ℤ — quantitativ festgelegt).",
+    "W3 Grund der Wirklichkeit = Erleben (A: pan-erlebnishaft, die Occasion ist ein Tropfen von Erfahrung, 'selbst ein Elektron fühlt') vs. Grund = Struktur (B: das Objekt ist der Anzieher/die Gruppe, objektiv als λ/Windungszahl lesbar ohne jede Erfahrung)."
+  ],
+  "resolution": "Fixe Form + fließender Inhalt (W1: die Struktur ist invariant als Ganzes, ihr Inhalt fließt beständig — der seltsame Anzieher ist fix als Menge, der Orbit darauf chaotisch; der Leib ist fix als Form, die Occasions vergehen beständig — Dauer und Ruhe fallen zusammen). Invariante in zwei Ebenen (W2: topologischer/qualitativer Typ = die Art + metrische/algebraische Maße = λ,D,n desselben Objekts bei verschiedener Auflösung; die Zahl ist der Schatten, den die Form auf die Metrik wirft). Erleben realisiert Struktur (W3: B's stabile Struktur = A's ewiges Objekt/zeitloses Potential; A's Occasion/Konkreszenz = der Akt, der diese Struktur in einem Moment aktualisiert — die Form (B) ist das, was das Erleben (A) annimmt).",
+  "viz": "Canvas 'eine Regel, die Konvergenz, die Struktur, die Invariante': ein Prozess (Logistikkarte x→r·x(1−x)) wird iteriert — der jetze Moment (Occasion/x_t) vergeht und hinterlässt einen verblassten Nachhall (objektive Unsterblichkeit / Orbit-Vergangenheit), während oben die invariante Verteilung als stabile Struktur fix als Form steht; bei Chaos fließt der Inhalt darin (der Moment durchläuft die Struktur und bleibt nie still). Regler r durchläuft die Bifurkationskaskade (Fixpunkt↔Chaos). Live-gelesen wird die Invariante auf zwei Ebenen: λ (metrisches Maß, B) und Struktur-Typ (qualitative Form, A). Alle Daten inline, theme-aware, keine externen Abfragen."
+}

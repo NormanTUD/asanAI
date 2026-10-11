@@ -1,0 +1,16 @@
+{
+  "no": "009",
+  "a": "n1-036.html",
+  "b": "n1-040.html",
+  "a_title": "Types as Spaces: The Circle and Univalence (HoTT)",
+  "b_title": "Lokales bestimmt Globales — Ricci-Fluss ✕ Sheaves & Topoi",
+  "combined_theme": "lokal-zu-global-invariante",
+  "one_line": "Das Ganze wird aus dem Lokalen zusammengesetzt: der exakte, umkehrbare Raum-Übergang (Transport bei HoTT, Verklebung bei Garben; Univalence als dessen Identitäts-Limit) und der verlustreiche Zeit-Übergang (Ricci-Fluss) erhalten beide genau die topologisch-homotopische Invariante (π₁(S¹)≅ℤ bzw. ∫K dA=2πχ(M)).",
+  "contradictions": [
+    "Verlustfreie Identität (A: Univalence — Äquivalent ⇒ wörtlich gleich, Transport = Bijektion, HIT ≃ topologisch, nichts geht verloren) vs. verlustreiche Projektion (B: Ricci-Fluss — viel-zu-eins, nicht injektiv, Varianz wird zerstört, nur Mittel/Invariante bleibt).",
+    "Fixer Behälter (B: der Raum X ist fix und passiv, nur die Sektionen variieren, 'Raum = Behälter') vs. austauschbarer Raum (A: ein Typ ist ein Raum mit Pfaden; Univalence ersetzt einen Raum durch einen äquivalenten als denselben Typ).",
+    "Diskrete Erzeuger (A: HIT = 1 Punkt + 1 Loop, π₁ kombinatorisch abgelesen) vs. kontinuierliche Felder (B: Sektionen auf offenen Mengen, Krümmungsfelder, eine PDE) — engste Stance-Spannung, kein Satzwiderspruch."
+  ],
+  "resolution": "Verschiedene Achsen einer Maschine, keine Gegenbehauptung. Die Raumachse (Transport/Verklebung) ist in beiden exakt und umkehrbar (Einverständnis); A's Univalence ist das Identitäts-Limit (Äquivalent ⇒ gleich), B's Fluss das Projektions-Limit (viel-zu-eins auf die Invariante). Raum exakt / Zeit verlustreich — beide erhalten dieselbe topologisch-homotopische Invariante. Der 'feste Behälter' (B) gilt als Site innerhalb einer Phase; die Ersetzung durch ein äquivalentes Modell (A) wird genau über die exakte Verklebung (Chirurgie) vollzogen. Diskrete Erzeuger (A) = Definition, kontinuierliche Felder (B) = geometrisches Modell desselben Objekts; die geteilte Invariante (n / χ) ist die Brücke.",
+  "viz": "Canvas-Kreis S¹: innerer n-mal windender Loop (A: Invariante π₁≅ℤ, n per Slider/Drag) und äußere 4 lokale Bögen (B: exakte Verklebung im Raum, ✓vereinbar/✗nicht vereinbar). Button 'Fluss' glättet das Detail diskret (Laplace: Varianz→0 bei konstantem Mittel — B's verlustreiche Zeitachse), während die Windung n (A) exakt überlebt. Themen-reagiv über CSS-Variablen, alle Daten inline."
+}

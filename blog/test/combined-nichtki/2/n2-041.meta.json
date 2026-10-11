@@ -1,0 +1,16 @@
+{
+  "no": "041",
+  "a": "n1-049.html",
+  "b": "n1-097.html",
+  "a_title": "Descent — der leere Gipfel als Stack",
+  "b_title": "Die TQFT als strukturgetreuer Funktor — Cobordismen, Vektorräume und Zahlen",
+  "combined_theme": "ganzes-als-strukturgetreues-kleben-invariante-bis-auf-symmetrie",
+  "one_line": "Das Ganze ist keine Substanz in der Mitte, sondern eine strukturelle Invariante, die durch strukturgetreues Kleben lokaler Bausteine entsteht und nur bis auf ihre inneren Symmetrien festgelegt ist: die TQFT-Zahl (steif, Residual trivial) ist der Trace des Descent-Stacks (nichttriviale Symmetrie Z/2); die 'Kamera'/Fidelity des Zielraums wählt, welches du siehst — das Zentrum bleibt leer.",
+  "contradictions": [
+    "Das Ganze: bei A (n1-049) ist es eine Struktur mit inneren Symmetrien (Stack/Frame), gerade kein Punkt/keine Substanz in der Mitte, und das Zentrum ist leer ('Es gibt keine Unsterblichen'); bei B (n1-097) ist es eine konkrete Zahl (Z(Σ)=q^k), der austretbare Wert — Struktur mit Symmetrien vs. Zahl.",
+    "Symmetrie: bei A ist die (nichttriviale) innere Symmetrie Z/2 die Substanz des Ganzen (Typ bleibt, Instanz bricht, 'Zerbrich die Instanz, behalt den Typ'); bei B ist das Ganze eine steife Zahl ohne innere Symmetrie — die Invarianz ist äußerlich (Zerlegungsunabhängigkeit/Funktorialität), die Symmetrie ist im Wert aufgehoben.",
+    "Ziel-Ebene/Fidelity: A's Descent erzeugt ein höheres Objekt (Stack, behält Automorphismen, 'up to isomorphism'), das strukturiert ist reicher als die Teile; B's Funktor mappt runter auf einen Skalar, der alles außer der Invariante vergisst — hoch (A) vs. runter (B)."
+  ],
+  "resolution": "Beides ist dasselbe strukturgetreue Kleben 'bis auf innere Symmetrie': der Wert ist das Paar (Invariante, Residual-Symmetrie). B's Zahl ist der degenerierte Fall (triviales Residual, der Trace), A's Stack der allgemeine Fall (nichttriviales Residual Z/2, 'up to isomorphism'). Die Zahl ist der Schatten des Stacks — man erhält sie, wenn man den Stack auswertet (Rand schließen, Symmetrie auf Skalar zusammenklappen). Die Richtung (hoch/runter) ist eine Eigenschaft des Zielraums, nicht des Klebens; die 'Kamera'/Fidelity (A's 'Zoom back, camera!') wählt, ob man volle Struktur (Stack, nichttriviale Symmetrie sichtbar) oder den ausgewerteten Skalar (Zahl, triviales Residual) sieht. Das Zentrum ist leer.",
+  "viz": "Canvas: links lokale Bausteine (Kappe/Becher/Hose/Copants/Zylinder), die nur komponieren, wenn die Ränder passen (die gemeinsame Klebe-Regel); rechts morphisiert das 'Ganze' über einen Fidelity-Regler ('Kamera/Zoom') zwischen Skalar Z(Σ)=q^k (steif, Residual trivial, B's Ablesung) und Stack-Struktur mit innerer Z/2-Symmetrie (Spiegel-Zwilling, leeres Zentrum, A's Ablesung); die Zahl bleibt als Trace eingeblendet; 'Symmetrie brechen' zerbricht die Instanz, der Typ (die Bahn) bleibt."
+}

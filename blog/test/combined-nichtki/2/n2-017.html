@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der unvollendete Pullback: Invarianz im Inneren, Generierung im Äußeren</title>
+<script>
+(function(){
+  var d=document.documentElement;
+  var saved=null; try{saved=localStorage.getItem('n2_017_theme');}catch(e){}
+  if(saved==='light'){ d.classList.remove('dark'); }
+  else { d.classList.add('dark'); }
+})();
+</script>
+<style>
+:root{
+  --bg:#f6f5f1; --fg:#1e2530; --muted:#5b6575; --panel:#fbfaf6;
+  --border:#d8d3c4; --accent:#4f46e5; --accent-soft:rgba(79,70,229,.12);
+  --accent2:#b8860b;
+  --code:#eef1f6; --code-fg:#1e2530;
+  --data-lo:#2563eb; --data-hi:#f59e0b; --mid:#fbfaf6;
+  --hall:#e11d48; --ev:#059669;
+  --forward:#7c3aed; --pullback:#a3811d;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0a1a; --fg:#e2e8f0; --muted:#94a3b8; --panel:#111127;
+  --border:#282846; --accent:#8b5cf6; --accent-soft:rgba(139,92,246,.14);
+  --accent2:#e5b769;
+  --code:#0c1526; --code-fg:#c9d4e6;
+  --data-lo:#38bdf8; --data-hi:#fbbf24; --mid:#111127;
+  --hall:#fb7185; --ev:#34d399;
+  --forward:#c084fc; --pullback:#facc15;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.68; -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+}
+article{max-width:820px; margin:0 auto; padding:40px 24px 90px;}
+header{margin-bottom:26px;}
+h1{font-size:2.05rem; line-height:1.16; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-left:12px;
+  border-left:4px solid var(--accent); color:var(--fg); line-height:1.25;
+}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code,.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.86rem; line-height:1.55;
+}
+pre code{background:none;padding:0;color:inherit;}
+.formula{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:12px 16px; margin:14px 0; display:block; overflow-x:auto;
+  font-family:"SFMono-Regular",Consolas,monospace; font-size:.92rem; line-height:1.6;
+}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+.col.a{border-top:3px solid var(--accent2);}
+.col.b{border-top:3px solid var(--accent);}
+.col.a h3{color:var(--accent2);}
+.col.b h3{color:var(--accent);}
+table{border-collapse:collapse; width:100%; margin:14px 0; font-size:.92rem;}
+th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top;}
+th{background:var(--accent-soft); font-weight:700;}
+.note{border-left:3px solid var(--accent); padding:6px 0 6px 14px; margin:12px 0; color:var(--muted);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#halluc{display:block; width:100%; height:auto; touch-action:none; cursor:crosshair;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls label{display:flex; flex-direction:column; gap:3px; font-size:.74rem; color:var(--muted);}
+.viz-controls label span{color:var(--fg);}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; font-size:.74rem; color:var(--muted);}
+.viz-controls .grp b{color:var(--fg); font-variant-numeric:tabular-nums;}
+.viz-controls input[type=range]{accent-color:var(--accent); width:120px;}
+.viz-controls input[type=radio]{accent-color:var(--accent);}
+#readout{padding:10px 14px; border-top:1px solid var(--border); font-size:.82rem; color:var(--muted); font-family:"SFMono-Regular",Consolas,monospace;}
+#readout b{color:var(--fg);}
+#themeBtn{
+  margin-left:auto; background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+#themeBtn:hover{border-color:var(--accent); color:var(--accent);}
+.viz-caption{font-size:.82rem; color:var(--muted); margin:10px 2px 0;}
+.legend{display:flex; flex-wrap:wrap; gap:16px; margin:0 2px 0; font-size:.82rem; color:var(--muted);}
+.legend .sw{display:inline-block; width:22px; height:4px; border-radius:2px; vertical-align:middle; margin-right:6px;}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:6px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Der unvollendete Pullback: Invarianz im Inneren, Generierung im Äußeren</h1>
+  <p class="subtitle">Fusion aus: <code>n1-011.html</code> &times; <code>n1-037.html</code> &nbsp;(Runde 2)</p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Runde-1-Papiere beschreiben denselben fundamentalen Akt &mdash; <strong>das
+  Transportieren einer Gr&ouml;ße entlang einer Abbildung <code>f</code> zwischen zwei Welten</strong>
+  (einer Quellwelt&nbsp;A und einer Zielwelt&nbsp;B, auf der eine Struktur&nbsp;<code>g</code> lebt) &mdash;
+  und unterscheiden sich <em>nur</em> darin, ob diese Struktur <code>g</code> auf der Zielwelt
+  <strong>total</strong> ist oder <strong>teilweise</strong>. <strong>B (<code>n1-037</code>, Pullback
+  &times; Hauptstadt)</strong> ist der exakte, totale Fall: <code>(f*g)(a) = g(f(a))</code> gilt f&uuml;r
+  <em>jeden</em>&nbsp;<code>a</code> in A; das Merkmal &bdquo;reitet mit&ldquo;, reißt nicht, es gibt keine
+  Grenze. <strong>A (<code>n1-011</code>, Interpolation &times; Selbstorganisation)</strong> ist der
+  partielle Fall: die Struktur (die Evidenz) ist nur innerhalb eines <em>Frontier</em> zuverl&auml;ssig,
+  und jenseits davon wird der Wert <em>nicht</em> von B abgelesen, sondern von einem <strong>Prior
+  generiert</strong> &mdash; die &bdquo;Halluzination&ldquo;.</p>
+  <p>Die vereinte Position lautet: <strong>Eine Rekonstruktion ist ein Pullback, dessen
+  Exaktheits-Dom&auml;ne eine Grenze haben kann.</strong> Im <em>Inneren</em> dieser Dom&auml;ne ist der
+  Pullback exakt und <strong>invariant</strong> &mdash; der transportierte Wert ist exakt der
+  Quell-Wert, &bdquo;das Merkmal reitet mit&ldquo; (B&rsquo;s Tugend: kein Rei&szlig;en, keine neue
+  Information). Am <em>Frontier</em> &mdash; A&rsquo;s &bdquo;native Aufl&ouml;sung&ldquo; bzw.
+  &bdquo;Stabilit&auml;tsschwelle&ldquo; &mdash; erlischt die Festlegung durch die Quelle; der Pullback ist
+  dort <em>undefiniert</em> und muss von einem Prior <em>vervollst&auml;ndigt</em> werden. Die
+  vervollst&auml;ndigte Region au&szlig;en ist A&rsquo;s &bdquo;Jenseits&ldquo;. Invarianz (B) und
+  Generierung (A) sind also <em>zwei Regime desselben Transports</em>, nicht zwei verschiedene Dinge.</p>
+  <p>Und die <em>Menge neuer Struktur</em>, die au&szlig;en entsteht, ist exakt die
+  <strong>Komplexit&auml;t des Priors</strong>: ein flacher Prior (Interpolation) erzeugt Brei (keine neue
+  Information, der Pullback &bdquo;reitet fast&ldquo; weiter, nur niedertonal), ein bifurkierender,
+  symmetrie-tragender Prior (Turing-Instabilit&auml;t + euklidische Symmetrie) erzeugt universelle
+  Formkonstanten (neue Struktur). Kurz: <strong>Invarianz (keine neue Info) und Generierung (neue Info =
+  Prior-Komplexit&auml;t) sind die zwei Seiten desselben Grenz&uuml;bertritts</strong> &mdash; genau wie
+  B&rsquo;s &bdquo;Label reitet mit&ldquo; und A&rsquo;s &bdquo;die Form verr&auml;t den Generator&ldquo;
+  dasselbe Gesetz von innen und au&szlig;en beschreiben.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden widersprechen sich in <strong>keiner einzelnen Tatsache</strong> &mdash; beide sind
+  Abstraktionen &uuml;ber denselben Transport-Akt. Aber auf <em>gedrehten Konzepte-Ebenen</em> nehmen
+  sie genuin <strong>unterschiedliche, teils entgegengesetzte</strong> Stellungen ein. Das ist die
+  n&auml;chste echte Spannung, die diese Fusion l&ouml;sen muss:</p>
+
+  <div class="vs">
+    <div class="col a"><span class="src">A &middot; n1-011.html</span>
+      <h3>Partielle Struktur &rarr; ein Frontier</h3>
+      <p style="font-size:.92rem;margin:0;">A&rsquo;s Quelle (Evidenz <code>E(q)</code>) ist
+      <em>nur auf einem Teil</em> stark: unterhalb der nativen Aufl&ouml;sung / der
+      Stabilit&auml;tsschwelle. Darum ist der Pullback nur <em>innerhalb einer Grenze</em> exakt;
+      jenseits muss der Wert generiert werden. Die Grenze ist <strong>intrinsisch</strong>.</p>
+    </div>
+    <div class="col b"><span class="src">B &middot; n1-037.html</span>
+      <h3>Totale Struktur &rarr; kein Frontier</h3>
+      <p style="font-size:.92rem;margin:0;">B&rsquo;s Struktur <code>g</code> ist auf <em>ganzem</em> B
+      definiert (Temperaturfeld <code>g(u,v)=sin(3.5u)&middot;cos(3.5v)</code> f&uuml;r alle
+      (u,v); &bdquo;ist Hauptstadt&ldquo; f&uuml;r jede Stadt auswertbar). Der Pullback ist also auf
+      <strong>ganzer</strong> A definiert &mdash; es gibt <em>keine</em> Grenze, das Merkmal reitet
+      &uuml;berall.</p>
+    </div>
+  </div>
+  <ul>
+    <li><strong>1. Total vs. partiell (hat die Abbildung eine Grenze?).</strong> B behandelt die
+    gezogene Struktur als <em>total</em> auf der Zielwelt &rarr; der Pullback ist &uuml;berall definiert,
+    das &bdquo;Label reitet&ldquo;, es gibt <em>kein</em> Frontier. A behandelt seine Struktur (Evidenz)
+    als <em>teilgest&uuml;tzt</em> &rarr; der Pullback ist nur innerhalb einer <em>Exaktheits-Dom&auml;ne</em>
+    exakt, au&szlig;erhalb undefiniert. Dasselbe Wort (&bdquo;Transport&ldquo;) &mdash; eine Seite kennt
+    eine Grenze, die andere behauptet, dass es sie gar nicht gibt.</li>
+    <li><strong>2. Invariant/treu vs. generierend/untreu (Valenz des Jenseits).</strong> B&rsquo;s Kern-Tugend
+    ist <em>Invarianz</em>: <code>(f*g)(a) = g(f(a))</code> &mdash; das transportierte Merkmal ist eine
+    <strong>treue Kopie</strong>, es &bdquo;reißt nicht&ldquo;; Erhaltung ist der Punkt. A&rsquo;s
+    Jenseits ist <em>per Konstruktion untreu</em>: es ist <em>keine</em> Kopie der Quelle (wird gar nicht
+    von B abgelesen) &mdash; in A&rsquo;s einer Quelle (Lens-Focus) ein <strong>Defekt</strong> (rot,
+    &bdquo;nicht real&ldquo;, epistemischer Versto&szlig;), in der anderen (Kl&uuml;ver) eine informative
+    <strong>Signatur</strong>. B macht <em>Treue</em> zum Ideal; A&rsquo;s interessante Region ist genau die
+    <em>untreue</em> (generierte). Soll das transportierte Merkmal eine treue Kopie sein (B) &mdash; oder
+    ist die Generierung der Punkt (A)?</li>
+    <li><strong>3. Nichts vs. neue Struktur (was das Jenseits hinzuf&uuml;gt).</strong> B&rsquo;s Pullback
+    f&uuml;gt <em>keine neue Information</em> hinzu &mdash; <code>g&circum;f</code> dr&uuml;ckt nur
+    <code>g</code> in A&rsquo;s Koordinaten um (gleicher Inhalt, anderes Ger&uuml;st; das 3-elementige
+    Beispiel verlagert blo&szlig; das &bdquo;Hauptstadt&ldquo;-Label). A&rsquo;s Jenseits f&uuml;gt
+    <em>Struktur</em> hinzu: Interpolation gar keine (Brei), Turing-Selbstorganisation aber
+    <strong>neue, symmetrie-selektierte, universale</strong> Formkonstanten (Rollen/Quadrate/Hexagone).
+    Kann der Grenz&uuml;bertritt neuen Inhalt erschaffen, oder ist er immer nur Umformulierung? &mdash;
+    das ist die genaue Uneinigkeit.</li>
+  </ul>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p>Alle drei l&ouml;sen sich zusammen, sobald man fragt, <em>welcher Teil der Zielwelt von der Quelle
+  &uuml;berhaupt festgelegt wird</em>: Es gibt nur <em>einen</em> Transport; die Unterschiede sind die
+  Ausma&szlig;e seiner <strong>Exaktheits-Dom&auml;ne</strong>.</p>
+  <p><strong>1. Total vs. partiell &rarr; die Exaktheits-Dom&auml;ne.</strong> Beide sind derselbe
+  Pullback; der Unterschied ist die <em>Unterst&uuml;tztheit</em> der Quellstruktur. Ist <code>g</code>
+  total (B), ist die Exaktheits-Dom&auml;ne ganzes A &rarr; kein Frontier. Ist die Evidenz
+  <code>E(q)</code> teilgest&uuml;tzt (stark bei niedrigem <code>q</code>, abfallend dar&uuml;ber), ist
+  die Exaktheits-Dom&auml;ne <code>{ q : E(q) &ge; G(q) }</code> &mdash; eine echte Teilmenge mit
+  Frontier. A&rsquo;s &bdquo;native Aufl&ouml;sung&ldquo;/&bdquo;Stabilit&auml;tsschwelle&ldquo; ist
+  <em>nichts anderes</em> als <strong>der Rand dieser Exaktheits-Dom&auml;ne</strong>. Ein einziger
+  Parameter <em>c&nbsp;&isin;&nbsp;[0,1]</em> &mdash; die Evidenz-Abdeckung &mdash; mi&szlig;t, wie gro&szlig;
+  der Anteil von A ist, den die Quelle totalisiert. <strong>Fused:</strong> eine Grenze erscheint
+  <em>genau dann</em>, wenn die Quelle partiell ist.</p>
+  <p><strong>2. Treu vs. generierend &rarr; zwei Regionen eines Transports.</strong> B&rsquo;s Invarianz ist
+  das <em>Innen</em>-Gesetz; A&rsquo;s Generierung das <em>Au&szlig;en</em>-Gesetz. Kein Widerspruch, weil
+  sie verschiedene Regionen regieren:
+  <ul>
+    <li><strong>Innen</strong> (<code>E(q) &ge; G(q)</code>): Ausgabe = Evidenz = der abgezogene Wert;
+    treu, invariant, kein Rei&szlig;en (B&rsquo;s Regime).</li>
+    <li><strong>Au&szlig;en</strong> (<code>E(q) &lt; G(q)</code>): der Pullback ist undefiniert; ein Prior
+    vervollst&auml;ndigt ihn. Ob diese Vervollst&auml;ndigung &bdquo;Defekt&ldquo; oder
+    &bdquo;Signatur&ldquo; ist, ist <em>keine</em> Eigenschaft der Ausgabe, sondern der
+    <em>Offenlegung</em> (A&rsquo;s eigene Aufl&ouml;sung): als Evidenz hingestellt &rarr; Defekt
+    (l&uuml;gt &uuml;ber den Ursprung); als Eigendynamik hingestellt &rarr; Signatur (ehrliche
+    Generierung).</li>
+  </ul>
+  <strong>Fused:</strong> eine Rekonstruktion ist treu <em>genau auf der gest&uuml;tzten Dom&auml;ne</em> und
+  generierend <em>auf ihrem Komplement</em>; die Valenz lebt an der <em>Schnittstelle</em>, nicht in der
+  Ausgabe.</p>
+  <p><strong>3. Nichts vs. neue Struktur &rarr; neue Info = Prior-Komplexit&auml;t.</strong> Auf der
+  Exaktheits-Dom&auml;ne ist ein Pullback <em>informations-erhaltend</em> (Label reitet, null neue Info &mdash;
+  B). Auf ihrem Komplement ist die Komplexit&auml;t des generierten Inhalts gleich der Komplexit&auml;t des
+  Priors (A): flach &rarr; Brei (&asymp; null neue Info, der Pullback &bdquo;reitet fast&ldquo; weiter, als
+  Tiefpa&szlig;), symmetrisch/bifurkierend &rarr; Formkonstanten (reiche neue Info).
+  <strong>Fused (vorhersagend):</strong> <em>ein Grenz&uuml;bertritt ist innen informations-neutral, au&szlig;en
+  informations-generierend &mdash; und die generierte Menge = der Komplexit&auml;t des Priors.</em> Das
+  vereint B&rsquo;s &bdquo;Label reitet mit (keine neue Info)&ldquo; mit A&rsquo;s &bdquo;die Form
+  verr&auml;t den Generator&ldquo;.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Der zusammengef&uuml;hrte Stoff, aus dem eine sp&auml;tere Runde allein weiterarbeiten kann.</p>
+
+  <p><strong>(1) Die zwei Welten und die Abbildung.</strong> Welt&nbsp;A = die Quell-/Frage-Seite (in B:
+  die L&auml;nder; in A: die Ortsfrequenz- / Orts-Koordinate der Rekonstruktion). Welt&nbsp;B = die
+  Ziel-/Karten-Seite, auf der die Struktur <code>g</code> lebt (in B: die St&auml;dte / ein Temperaturfeld;
+  in A: die nativen Daten). Die Abbildung <code>f : A &rarr; B</code> zeigt <em>vorw&auml;rts</em>; in B
+  general ist sie nichtlinear (Warp), im 3-elementigen Toy-Modell
+  <code>f(Frankreich)=Paris, f(Deutschland)=Berlin, f(Spanien)=Madrid</code>.</p>
+
+  <p><strong>(2) Die Struktur auf B und ihre St&uuml;tzung.</strong> B&rsquo;s <code>g</code> ist
+  <em>total</em>: ein Skalarfeld <code>g(u,v) = sin(3.5&middot;u)&middot;cos(3.5&middot;v)</code>
+  (&minus;1&hellip;+1) f&uuml;r alle (u,v), bzw. das boolesche Merkmal &bdquo;ist Hauptstadt&ldquo;.
+  A&rsquo;s <code>E(q)</code> ist <em>partell</em>: stark bei niedrigem <code>q</code> (unterhalb der
+  nativen Aufl&ouml;sung), abfallend dar&uuml;ber. <strong>Die St&uuml;tzung von <code>g</code> bestimmt
+  die Exaktheits-Dom&auml;ne des Pullbacks.</strong></p>
+
+  <p><strong>(3) Der Pullback = die Komposition.</strong> <code>f*g = g&circum;f</code>, definiert durch
+  <code>(f*g)(a) = g(f(a))</code>: den Wert liest man nicht direkt in A ab, sondern geht erst vorw&auml;rts
+  nach B (<code>f(a)</code>) und nimmt dort den Wert (<code>g</code>) &mdash; der &bdquo;r&uuml;ckw&auml;rts&ldquo;-Gedanke.</p>
+
+  <p><strong>(4) Invarianz &mdash; &bdquo;das Merkmal reitet mit&ldquo;.</strong> Per Konstruktion gilt
+  <code>(f*g)(a) = g(f(a))</code>: der Wert an <code>a</code> in A ist <em>exakt</em> der Wert an seinem
+  Bild <code>f(a)</code> in B. Unter einem Koordinatenwechsel (Warp, Verzerrung, Umtonung) reißt das
+  Merkmal <em>nicht</em>. B&rsquo;s sechs Spiele verifizieren genau das auf je andere Weise:
+  Karte&nbsp;(Lokalisierung), Quiz/Drag&nbsp;(Zuordnung), Verbinden&nbsp;(Graph beidseitig),
+  Kratzbild&nbsp;(das unver&auml;nderliche Label).</p>
+
+  <p><strong>(5) Das Frontier und die zwei Regime.</strong> Die vereinte Regel pro Punkt/Frequenz:</p>
+  <span class="formula">Ausgabe(q) = E(q)      falls E(q) &ge; G(q)   &nbsp;(exakter Pullback &mdash; Invarianz, kein Rei&szlig;en, 0 neue Info)<br>
+                = G(q)      falls E(q) &lt;  G(q)   &nbsp;(Generierung &mdash; Halluzination, neue Info = Prior-Komplexit&auml;t)</span>
+  <p>Im <em>totalen</em> Fall (B) gilt <code>E &ge; G</code> &uuml;berall &rarr; die zweite Zeile wird nie
+  aktiv &rarr; reiner, grenzenloser Pullback. Im <em>partellen</em> Fall (A) wird die zweite Zeile au&szlig;erhalb
+  des Frontier aktiv &rarr; Halluzination. Das Frontier ist der Rand von <code>{ E &ge; G }</code>.</p>
+
+  <p><strong>(6) Der Prior und seine Komplexit&auml;t.</strong> Au&szlig;en f&uuml;llt ein Prior
+  <code>G(q)</code> die L&uuml;cke:
+  <ul>
+    <li><strong>flacher Prior</strong> (Interpolation, A&rsquo;s Lens-Focus): Tiefpa&szlig; des
+    Pullbacks &rarr; <em>Brei</em>, kaum neue Information (der Pullback &bdquo;reitet fast&ldquo; weiter).</li>
+    <li><strong>strukturierter, bifurkierender Prior</strong> (Turing, A&rsquo;s Kl&uuml;ver):
+    Mexican-Hat-Dispersion <code>&lambda;(q) = -1 + &mu;&middot;&hat;w(q)</code>; wird <code>&mu;</code>
+    (Erregbarkeit/Drogenwirkung) gro&szlig; genug, wird <code>&lambda;(q*)&gt;0</code> an genau einem
+    <code>q*</code> und das Muster w&auml;chst spontan. Die Planformen (Rollen/Streifen, Quadrate,
+    Hexagone) werden durch die axialen Untergruppen der euklidischen Gruppe <code>E(2)</code> selektiert
+    &rarr; <strong>Formkonstanten</strong> (an die Architektur, nicht den Input gekoppelt).</li>
+  </ul>
+  Die <em>neue</em> Menge Struktur au&szlig;en = die Komplexit&auml;t von <code>G</code>.</p>
+
+  <div class="card">
+    <span class="tag">Vereinigtes Modell in einem Satz</span>
+    <p style="margin:0;">Eine Rekonstruktion ist ein <strong>partiell definierter Pullback</strong>:
+    auf der gest&uuml;tzten Dom&auml;ne <code>{ E &ge; G }</code> zahlt er den Quell-Wert <em>treu</em> ab
+    (Invarianz, <code>g&circum;f</code>, Label reitet, 0 neue Info &mdash; B); au&szlig;erhalb
+    vervollst&auml;ndigt ihn ein Prior, und die Form des Generierten kodiert dessen Komplexit&auml;t
+    (flach&rarr;Brei, symmetrisch&rarr;Formkonstanten &mdash; A). Invarianz und Generierung sind die
+    Innen- bzw. Au&szlig;en-Seite desselben Grenz&uuml;bertritts; die Valenz (Defekt vs. Signatur) liegt
+    an der Offenlegung, nicht in der Ausgabe.</p>
+  </div>
+  <p><strong>(7) Was jeder Runde-1-Papier einbringt.</strong> B liefert die <em>Mechanik</em>:
+  Komposition, Invarianz, vorw&auml;rts/r&uuml;ckw&auml;rts, totale Quelle, Warp-Invarianz, das
+  3-elementige Toy-Modell, die sechs Verifizierungs-Spiele. A liefert das <em>Frontier und das
+  Jenseits</em>: partielle Quelle, Exaktheits-Dom&auml;ne, Prior, Prior-Komplexit&auml;t = generierte
+  Struktur, Valenz = Offenlegung. Zusammen: eine vollst&auml;ndige Rechenschaft dar&uuml;ber, was der
+  Grenz&uuml;bertritt mit einer Gr&ouml;ße macht &mdash; sie wird <em>erhalten</em>, wo die Quelle sie
+  st&uuml;tzt, und <em>generiert</em>, wo die Quelle aufh&ouml;rt, wobei die Form des Generierten den
+  Generator verr&auml;t.</p>
+  <div class="note">Faithfulness-Check: B (n1-037) liefert die Pullback-Mechanik (Komposition
+  <code>g&circum;f</code>, Invarianz, totale Struktur, Warp, Toy-Modell); A (n1-011) liefert das
+  Frontier, den Prior, die Prior-Komplexit&auml;t und die Formkonstanten. Das vereinigte
+  &bdquo;partiell definierter Pullback&ldquo;-Kriterium ist die gemeinsame Abstraktion, keine neue
+  Behauptung &uuml;ber die Quellen.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung: Der partiell definierte Pullback</h2>
+  <p>Zwei Welten. <strong>Links Welt&nbsp;B</strong> &mdash; die Ziel-/Kartenwelt, auf der die (totale)
+  Struktur <code>g</code> lebt (Temperaturfeld). <strong>Rechts Welt&nbsp;A</strong> &mdash; die
+  Rekonstruktion, der Pullback-Ziel. Ein <strong>Frontier</strong> (Evidenz-Abdeckung
+  <code>c</code>) teilt A: <em>links</em> des Frontier ist der Pullback <code>g&circum;f</code>
+  <em>exakt</em> (das Merkmal reitet mit, Warp-invariant, keine neue Information &mdash; B&rsquo;s
+  Regime); <em>rechts</em> davon ist er undefiniert und wird vom w&auml;hlbaren <strong>Prior</strong>
+  vervollst&auml;ndigt (flach&rarr;Brei, oder Turing&rarr;Formkonstanten &mdash; A&rsquo;s Regime),
+  rot angezint. Lila Pfeile zeigen vorw&auml;rts <code>f</code> (A&rarr;B); ziehe den Cursor in Welt A,
+  um <code>(g&circum;f)(a)=g(f(a))</code> (Innen) vs. Generierung (Au&szlig;en) zu sehen.</p>
+  <div id="vizwrap">
+    <canvas id="halluc" width="760" height="360"></canvas>
+    <div class="viz-controls">
+      <div class="grp">
+        <label>Evidenz-Abdeckung <code>c</code> (Frontier in A)
+          <input type="range" id="ctl-coverage" min="10" max="90" value="55">
+          <b id="coverage-val">55%</b>
+        </label>
+      </div>
+      <div class="grp">
+        <label>Warp (Verzerrung von <code>f</code>)
+          <input type="range" id="ctl-warp" min="0" max="100" value="35">
+          <b id="warp-val">35%</b>
+        </label>
+      </div>
+      <div class="grp">
+        <label>Prior der L&uuml;cke
+          <span>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="gen" value="flat"> flach (Interpolation &rarr; Brei)</label>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="gen" value="turing" checked> strukturiert (Turing &rarr; Formkonstanten)</label>
+          </span>
+        </label>
+      </div>
+      <div class="grp" id="turing-wrap">
+        <label>Planform
+          <span>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="mode" value="rolls" checked> Rollen</label>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="mode" value="squares"> Quadrate</label>
+            <label style="flex-direction:row;gap:5px;"><input type="radio" name="mode" value="hexagons"> Hexagone</label>
+          </span>
+        </label>
+        <label>Wellenzahl <code>q*</code>
+          <input type="range" id="ctl-q" min="2" max="16" value="6">
+          <b id="q-val">6</b>
+        </label>
+      </div>
+      <button id="themeBtn" type="button">Theme umschalten</button>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--ev)"></span>exakter Pullback (Innen, Invarianz)</span>
+      <span><span class="sw" style="background:var(--hall)"></span>Generierung (Au&szlig;en, Halluzination)</span>
+      <span><span class="sw" style="background:var(--forward)"></span>vorw&auml;rts <code>f</code> (A&rarr;B)</span>
+      <span>&#128308; warm &middot; &#128312; kalt = Struktur <code>g</code></span>
+    </div>
+    <div id="readout"></div>
+  </div>
+  <p class="viz-caption">Links: <strong>Welt B</strong> (totale Struktur <code>g</code>, der Pullback liest
+  hier). Rechts: <strong>Welt A</strong> (Rekonstruktion). Innerhalb des Frontier: <code>g&circum;f</code>,
+  das Merkmal reitet mit (drehe den Warp &mdash; es reißt nicht). Au&szlig;erhalb: vom Prior generiert &mdash;
+  flacher Prior &rarr; Brei (keine neue Info), strukturierter Prior &rarr; universelle Formkonstanten (neue
+  Info = Prior-Komplexit&auml;t). Themen-reaktiv, nur Inline-Daten, kein Netzwerk.</p>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="vs" style="grid-template-columns:1fr 1fr;">
+    <div class="col a">
+      <span class="src">A</span>
+      <h3 style="margin:6px 0;"><a href="../n1-011.html"><code>n1-011.html</code></a></h3>
+      <p style="font-size:.9rem;margin:0;color:var(--muted);"><em>&bdquo;Über der Evidenzgrenze:
+      Interpolation &times; Selbstorganisation&ldquo;.</em> Liefert das <strong>Frontier und das
+      Jenseits</strong>: partielle Evidenz <code>E(q)</code>, Exaktheits-Dom&auml;ne
+      <code>{ E &ge; G }</code>, den Prior, die Prior-Komplexit&auml;t = generierte Struktur (flach
+      &rarr; Brei, symmetrisch &rarr; Formkonstanten via Turing/E(2)) und die Valenz = Offenlegung
+      (Defekt vs. Signatur).</p>
+    </div>
+    <div class="col b">
+      <span class="src">B</span>
+      <h3 style="margin:6px 0;"><a href="../n1-037.html"><code>n1-037.html</code></a></h3>
+      <p style="font-size:.9rem;margin:0;color:var(--muted);"><em>&bdquo;Das Merkmal, das &uuml;ber die
+      Karte zieht&ldquo; (Pullback &times; Hauptstadt von Frankreich).</em> Liefert die
+      <strong>Mechanik</strong>: Komposition <code>g&circum;f</code>, Invarianz (&bdquo;Label reitet
+      mit, reißt nicht&ldquo;), totale Struktur <code>g</code>, Warp-Invarianz, das 3-elementige
+      Toy-Modell und die sechs Verifizierungs-Spiele (Karte, Quiz, Drag, Verbinden, Kratzbild,
+      Eiffelturm).</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="src">Runde 2 &middot; Nicht-AI-Track &middot; Paar 017. Fusion aus
+  <code>n1-011.html</code> &times; <code>n1-037.html</code>.</div>
+  <div class="src">Thema: eine Rekonstruktion als <em>partiell definierter Pullback</em> &mdash; im Inneren
+  seiner Exaktheits-Dom&auml;ne treu/invariant (Label reitet, 0 neue Info), im Au&szlig;en von einem
+  Prior vervollst&auml;ndigt (Halluzination; neue Info = Prior-Komplexit&auml;t, Form verr&auml;t
+  den Generator).</div>
+</footer>
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var canvas = document.getElementById('halluc');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  var coverageEl = document.getElementById('ctl-coverage');
+  var coverageVal = document.getElementById('coverage-val');
+  var warpEl = document.getElementById('ctl-warp');
+  var warpVal = document.getElementById('warp-val');
+  var qSlider = document.getElementById('ctl-q');
+  var qVal = document.getElementById('q-val');
+  var readout = document.getElementById('readout');
+  var themeBtn = document.getElementById('themeBtn');
+  var turingWrap = document.getElementById('turing-wrap');
+
+  function clamp01(x){ return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function gauss(x, y, cx, cy, s){ var dx=x-cx, dy=y-cy; return Math.exp(-(dx*dx+dy*dy)/(2*s*s)); }
+
+  // ---- total structure g on world B (temperature-like field, matches A's evidence blobs) ----
+  function g(u, v){
+    var val = 0.32*Math.sin(u*3.1)*Math.cos(v*2.2);
+    val += 0.95*gauss(u, v, 0.30, 0.40, 0.10);
+    val += 0.80*gauss(u, v, 0.60, 0.60, 0.08);
+    val -= 0.70*gauss(u, v, 0.44, 0.74, 0.13);
+    return val;
+  }
+  // ---- forward map f : A -> B (nonlinear warp) ----
+  function fMap(x, y, warp){
+    var u = x + warp*0.22*Math.sin(3*y);
+    var v = y + warp*0.22*Math.cos(3*x);
+    return { u: clamp01(u), v: clamp01(v) };
+  }
+  // ---- weak prior: heavy low-pass of the pullback (interpolation -> mush) ----
+  var LPW = 14, LPH = 9, lowpass = new Float32Array(LPW*LPH);
+  function buildLowPass(warp){
+    for (var j=0; j<LPH; j++){
+      for (var i=0; i<LPW; i++){
+        var cx=(i+0.5)/LPW, cy=(j+0.5)/LPH, fb=fMap(cx, cy, warp), s=0, n=0;
+        for (var k=-1; k<=1; k++){
+          for (var l=-1; l<=1; l++){ s += g(fb.u, fb.v); n++; }
+        }
+        lowpass[j*LPW+i] = s/n;
+      }
+    }
+  }
+  function lpSample(nx, ny){
+    var fx=nx*LPW-0.5, fy=ny*LPH-0.5;
+    var x0=Math.floor(fx), y0=Math.floor(fy);
+    var tx=fx-x0, ty=fy-y0;
+    var xa=Math.max(0, Math.min(LPW-1, x0)), xb=Math.max(0, Math.min(LPW-1, x0+1));
+    var ya=Math.max(0, Math.min(LPH-1, y0)), yb=Math.max(0, Math.min(LPH-1, y0+1));
+    var a=lowpass[ya*LPW+xa], b=lowpass[ya*LPW+xb], c=lowpass[yb*LPW+xa], d=lowpass[yb*LPW+xb];
+    return a*(1-tx)*(1-ty) + b*tx*(1-ty) + c*(1-tx)*ty + d*tx*ty;
+  }
+  function interpFill(nx, ny, warp){ return lpSample(nx, ny) * 0.7; }
+  // ---- structured prior: Turing planforms (form constants) ----
+  function turingFill(nx, ny, mode, q){
+    var X = nx*Math.PI*2*(q/4), Y = ny*Math.PI*2*(q/4);
+    if (mode === 'rolls')   return Math.cos(Y);
+    if (mode === 'squares') return (Math.cos(X) + Math.cos(Y)) / 2;
+    return (Math.cos(X) + Math.cos(-0.5*X + 0.866*Y) + Math.cos(-0.5*X - 0.866*Y)) / 3;
+  }
+
+  // ---- theme-aware colors (read from CSS vars) ----
+  var C = { lo:[37,99,235], hi:[245,158,11], mid:[17,17,39],
+            hall:[251,113,133], fg:[226,232,240], accent:[139,92,246],
+            forward:[192,132,252], ev:[52,211,153], border:[40,40,70] };
+  function hex2rgb(h){ h=h.trim(); if (h[0]==='#') h=h.slice(1);
+    if (h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function readColors(){
+    var cs = getComputedStyle(document.documentElement);
+    function gn(name){ var v=cs.getPropertyValue(name); if(!v) return null; v=v.trim();
+      if (v[0]==='#') return hex2rgb(v);
+      var m=v.match(/rgba?\(([^)]+)\)/); if (m){ var p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2]]; }
+      return null; }
+    var v;
+    if ((v=gn('--data-lo'))!==null) C.lo=v;
+    if ((v=gn('--data-hi'))!==null) C.hi=v;
+    if ((v=gn('--mid'))!==null) C.mid=v;
+    if ((v=gn('--hall'))!==null) C.hall=v;
+    if ((v=gn('--fg'))!==null) C.fg=v;
+    if ((v=gn('--accent'))!==null) C.accent=v;
+    if ((v=gn('--forward'))!==null) C.forward=v;
+    if ((v=gn('--ev'))!==null) C.ev=v;
+    if ((v=gn('--border'))!==null) C.border=v;
+  }
+  function mix(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function cmap(val){ val=Math.max(-1,Math.min(1,val));
+    return val>=0 ? mix(C.mid,C.hi,val) : mix(C.mid,C.lo,-val); }
+
+  function getGen(){ var el=document.querySelector('input[name=gen]:checked'); return el?el.value:'turing'; }
+  function getMode(){ var el=document.querySelector('input[name=mode]:checked'); return el?el.value:'rolls'; }
+
+  var cursor = { x:0.25, y:0.5, dragging:false };
+  var leftW = W*0.5;   // B panel left, A panel right
+
+  function render(){
+    readColors();
+    var c = parseInt(coverageEl.value,10)/100;   // frontier fraction (within A panel)
+    var warp = parseInt(warpEl.value,10)/100;
+    var gen = getGen();
+    var mode = getMode();
+    var q = parseInt(qSlider.value,10);
+    turingWrap.style.display = (gen==='turing') ? '' : 'none';
+
+    buildLowPass(warp);
+    var img = ctx.createImageData(W,H);
+    var d = img.data;
+    var band = 0.07;
+    var rightW = W - leftW;
+    for (var py=0; py<H; py++){
+      var ny = (py+0.5)/H;
+      for (var px=0; px<W; px++){
+        var val;
+        if (px < leftW){
+          // WORLD B (total structure g)
+          var nxB = (px+0.5)/leftW;
+          val = g(nxB, ny);
+          var col = cmap(val);
+          var idx = (py*W+px)*4;
+          d[idx]=col[0]; d[idx+1]=col[1]; d[idx+2]=col[2]; d[idx+3]=255;
+        } else {
+          // WORLD A (reconstruction): left of frontier = faithful pullback, right = prior
+          var nxA = (px+0.5-leftW)/rightW;
+          var fb = fMap(nxA, ny, warp);
+          var ev = g(fb.u, fb.v);                                   // faithful pullback value
+          var prior = (gen==='turing') ? turingFill(nxA,ny,mode,q) : interpFill(nxA,ny,warp);
+          if (nxA < c-band) val = ev;
+          else if (nxA > c+band) val = prior;
+          else { var t=(nxA-(c-band))/(2*band); t=t*t*(3-2*t); val = ev*(1-t)+prior*t; }
+          var col2 = cmap(val);
+          var idx2 = (py*W+px)*4;
+          d[idx2]=col2[0]; d[idx2+1]=col2[1]; d[idx2+2]=col2[2]; d[idx2+3]=255;
+          if (nxA > c-band){ var f=0.16;
+            d[idx2]=col2[0]*(1-f)+C.hall[0]*f;
+            d[idx2+1]=col2[1]*(1-f)+C.hall[1]*f;
+            d[idx2+2]=col2[2]*(1-f)+C.hall[2]*f; }
+        }
+      }
+    }
+    ctx.putImageData(img,0,0);
+
+    // divider between the two worlds
+    ctx.strokeStyle = 'rgba(' + C.border[0]+','+C.border[1]+','+C.border[2]+',1)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(leftW,0); ctx.lineTo(leftW,H); ctx.stroke();
+
+    // frontier line inside A (right panel)
+    var fx = leftW + c*rightW;
+    ctx.setLineDash([6,5]);
+    ctx.strokeStyle = 'rgba(' + C.accent[0]+','+C.accent[1]+','+C.accent[2]+',0.9)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(fx,0); ctx.lineTo(fx,H); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // panel labels
+    ctx.font = '600 14px system-ui, sans-serif';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(' + C.hi[0]+','+C.hi[1]+','+C.hi[2]+',0.95)';
+    ctx.fillText('WELT B — Zielseite (hat g, total)', 10, 10);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(' + C.ev[0]+','+C.ev[1]+','+C.ev[2]+',0.95)';
+    ctx.fillText('EXAKTER PULLBACK', leftW+8, 10);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(' + C.hall[0]+','+C.hall[1]+','+C.hall[2]+',0.95)';
+    ctx.fillText('GENERIERUNG', W-10, 10);
+    ctx.textAlign = 'left';
+
+    // forward f arrows for a few A sample points (inside the frontier = faithful)
+    var samples = [[0.15,0.32],[0.35,0.60],[0.22,0.75],[0.42,0.42]];
+    for (var s=0; s<samples.length; s++){
+      var sa = samples[s];
+      if (sa[0] > c - band) continue;
+      var aPixX = leftW + sa[0]*rightW, aPixY = sa[1]*H;
+      var sf = fMap(sa[0], sa[1], warp);
+      var bPixX = sf.u*leftW, bPixY = sf.v*H;
+      drawArrow(aPixX, aPixY, bPixX, bPixY, C.forward, 2, false);
+      ctx.beginPath(); ctx.arc(aPixX, aPixY, 4, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(' + C.fg[0]+','+C.fg[1]+','+C.fg[2]+',0.9)'; ctx.fill();
+    }
+
+    // cursor marker (A point) + its image in B, connected
+    var cPixX = leftW + cursor.x*rightW, cPixY = cursor.y*H;
+    var cf = fMap(cursor.x, cursor.y, warp);
+    var cBx = cf.u*leftW, cBy = cf.v*H;
+    var inside = cursor.x < c - band;
+    var cValPull = g(cf.u, cf.v);
+    var cValGen = (gen==='turing') ? turingFill(cursor.x, cursor.y, mode, q) : interpFill(cursor.x, cursor.y, warp);
+    var cCol = cmap(inside ? cValPull : cValGen);
+    drawArrow(cPixX, cPixY, cBx, cBy, inside ? C.forward : C.hall, 1.5, true);
+    ctx.beginPath(); ctx.arc(cBx, cBy, 6, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(' + cCol[0]+','+cCol[1]+','+cCol[2]+',1)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(' + C.fg[0]+','+C.fg[1]+','+C.fg[2]+',1)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cPixX, cPixY, 8, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(' + cCol[0]+','+cCol[1]+','+cCol[2]+',1)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(' + C.accent[0]+','+C.accent[1]+','+C.accent[2]+',1)'; ctx.lineWidth=2.5; ctx.stroke();
+
+    // readout
+    var modeNames = { rolls:'Rollen', squares:'Quadrate', hexagons:'Hexagone' };
+    var genName = (gen==='turing') ? ('Turing / '+modeNames[mode]+' (q*='+q+')') : 'Interpolation (flach)';
+    var line;
+    if (inside){
+      line = 'Cursor A (' + cursor.x.toFixed(2)+', '+cursor.y.toFixed(2)+') in Frontier &rarr; ' +
+        '<b>exakter Pullback</b>: (g&circum;f)(a) = g(f(a)) = <b>' + cValPull.toFixed(3) +
+        '</b> &middot; Label reitet mit, kein Rei&szlig;en, 0 neue Info';
+    } else {
+      line = 'Cursor A (' + cursor.x.toFixed(2)+', '+cursor.y.toFixed(2)+') au&szlig;er Frontier &rarr; ' +
+        '<b>Generierung</b> vom Prior <b>'+genName+'</b> = <b>' + cValGen.toFixed(3) +
+        '</b> &middot; neue Info = Prior-Komplexit&auml;t (Halluzination)';
+    }
+    readout.innerHTML = 'Frontier <b>'+Math.round(c*100)+'%</b> &middot; Warp <b>'+Math.round(warp*100)+
+      '%</b> &middot; Prior: <b>'+genName+'</b><br>'+line;
+  }
+
+  function drawArrow(x1,y1,x2,y2,col,lw,dashed){
+    ctx.save();
+    if (dashed) ctx.setLineDash([7,5]);
+    ctx.strokeStyle = 'rgba('+col[0]+','+col[1]+','+col[2]+',0.85)';
+    ctx.lineWidth = lw; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.setLineDash([]);
+    var a = Math.atan2(y2-y1,x2-x1), hs = Math.max(7, lw*3);
+    ctx.translate(x2,y2); ctx.rotate(a);
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-hs,-hs*0.5); ctx.lineTo(-hs,hs*0.5); ctx.closePath();
+    ctx.fillStyle = 'rgba('+col[0]+','+col[1]+','+col[2]+',0.9)'; ctx.fill();
+    ctx.restore();
+  }
+
+  function localPos(e){
+    var rect = canvas.getBoundingClientRect();
+    return { lx:(e.clientX-rect.left)*(W/rect.width), ly:(e.clientY-rect.top)*(H/rect.height) };
+  }
+  function inA(lx, ly){ return lx >= leftW && lx <= W && ly >= 0 && ly <= H; }
+  canvas.addEventListener('pointerdown', function(e){
+    var p = localPos(e);
+    if (inA(p.lx, p.ly)){
+      cursor.dragging = true;
+      cursor.x = clamp01((p.lx-leftW)/(W-leftW));
+      cursor.y = clamp01(p.ly/H);
+      try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+    }
+  });
+  canvas.addEventListener('pointermove', function(e){
+    if (!cursor.dragging) return;
+    var p = localPos(e);
+    cursor.x = clamp01((p.lx-leftW)/(W-leftW));
+    cursor.y = clamp01(p.ly/H);
+    render();
+  });
+  function endDrag(){ cursor.dragging = false; }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  function syncLabels(){
+    coverageVal.textContent = coverageEl.value + '%';
+    warpVal.textContent = warpEl.value + '%';
+    qVal.textContent = qSlider.value;
+  }
+  [coverageEl, warpEl, qSlider].forEach(function(el){
+    el.addEventListener('input', function(){ syncLabels(); render(); });
+  });
+  document.querySelectorAll('input[name=gen]').forEach(function(el){
+    el.addEventListener('change', render);
+  });
+  document.querySelectorAll('input[name=mode]').forEach(function(el){
+    el.addEventListener('change', render);
+  });
+
+  themeBtn.addEventListener('click', function(){
+    var dark = document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n2_017_theme', dark?'dark':'light'); }catch(_){}
+    render();
+  });
+  if (window.matchMedia){
+    try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render); } catch(e){}
+  }
+
+  syncLabels();
+  render();
+})();
+</script>
+</body>
+</html>

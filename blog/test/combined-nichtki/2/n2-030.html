@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gauge und Grenze — Runde 2: n1-034 ✕ n1-076</title>
+<style>
+:root{
+  --bg:#faf8f1; --card:#fffdf8; --bg2:#f4efe4; --fg:#1c202c; --muted:#5b6270; --border:#e3ddce;
+  --accent:#0f766e; --accent2:#b5218f; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --viz-bg:#fffdf8; --viz-line:#d9d3c4; --viz-grid:#efe9dc;
+}
+html.dark{
+  --bg:#0a0e1a; --card:#121826; --bg2:#0d1322; --fg:#e8ecf7; --muted:#9aa7bf; --border:#26304a;
+  --accent:#2dd4bf; --accent2:#f093fb; --warn:#fbbf24; --good:#86efac; --bad:#fb7185;
+  --viz-bg:#0c1120; --viz-line:#26304a; --viz-grid:#182034;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.12;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .g{color:var(--accent)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  h1 .g{background:linear-gradient(90deg,var(--accent),var(--accent2),var(--warn));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.9rem;margin:0 0 6px}
+.lede{color:var(--muted);font-size:1rem;margin:0 0 4px}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.4rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:8px}
+h3{font-size:1.06rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+em{color:var(--muted)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.mathblock{font-family:ui-monospace,"Courier New",monospace;font-size:.92rem;background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;padding:13px 15px;overflow:auto;margin:12px 0;
+  white-space:pre;line-height:1.6;color:var(--muted)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent2);border:1px solid var(--accent2)}
+.tag.b{color:var(--accent);border:1px solid var(--accent)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card.a{border-left-color:var(--accent2)}
+.card.b{border-left-color:var(--accent)}
+.card.f{border-left-color:var(--warn)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td:first-child{color:var(--fg);font-weight:700}
+canvas#viz{width:100%;height:440px;display:block;background:var(--viz-bg);
+  border:1px solid var(--viz-line);border-radius:12px;margin:6px 0}
+.viz-ctrl{display:flex;gap:14px 18px;flex-wrap:wrap;align-items:flex-end;margin:14px 0}
+.viz-ctrl label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+.viz-ctrl .hint{font-size:12px;color:var(--muted);align-self:flex-end;padding-bottom:9px;font-family:system-ui,sans-serif}
+input[type=range]{width:160px;accent-color:var(--accent)}
+button.action{border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:9px;
+  padding:8px 12px;cursor:pointer;font-size:13px;font-family:system-ui,sans-serif}
+button.action:hover{border-color:var(--accent)}
+.readout{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 15px;
+  margin:12px 0;font-size:.92rem;line-height:1.7;font-family:system-ui,sans-serif}
+.readout b{color:var(--fg)}
+.readout .a{color:var(--accent2);font-weight:700}
+.readout .b{color:var(--accent);font-weight:700}
+.readout .warn{color:var(--bad);font-weight:700}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.prov a b{color:var(--fg)}
+.hint{color:var(--muted);font-size:13px}
+.foot{margin-top:8px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">☀ / ☾</button>
+<article>
+<h1>Gauge und <span class="g">Grenze</span></h1>
+<p class="subtitle">Fusion aus: n1-034.html ✕ n1-076.html  (Runde 2)</p>
+<p class="lede">Beide Quellen handeln vom selbstbezüglichen Instrument: A davon, dass es <em>lokal präzise, aber blind für die globale Invariante</em> ist; B davon, dass es <em>sein eigenes Fundament von innen nie erreicht</em>. Beide Blindstellen sind dasselbe Phänomen in zwei Tiefen — und zusammen machen sie die Architektur jeder Gewissheit aus.</p>
+
+<section id="these">
+<h2><span class="num">1</span>Kernthese der Fusion</h2>
+<p>Die zwei Runde-1-Papiere sagen <b>denselben Gedanken auf zwei Ebenen</b>: <b>Ein System, das sich selbst beschreibt, ist blind für seinen eigenen Grund.</b> <span class="tag a">A · Gauge/Invariante</span> zeigt es am lokalen Gauge: Der t‑Wert bzw. die lokale Trivialisierung <span class="m">π⁻¹(U)≅U×F</span> sind exakt, was sie sein sollen — <em>lokale Koordinaten</em> — und gerade deshalb blind für die <b>globale Invariante</b> (die Effektgröße μ, die Holonomie). Der entscheidende Akt ist der <b>globale Vergleich</b>: die Größe berichten, den Vektor um die Schleife transportieren. <span class="tag b">B · Architektur der Gewissheit</span> zeigt es am Fundament: Eine Gewissheits-Architektur (Kant: Kategorien; Hales: Kernel + Inferenzregeln) trägt jede darüberliegende Schicht, <em>erreicht ihr eigenes Fundament aber mit den eigenen Werkzeugen nicht</em> — das Restrisiko <span class="m">pⁿ</span> strebt gegen Null, <em>erreicht es nie</em>, und die letzte Rechtfertigung <b>wechselt immer die Währung</b>.</p>
+<p>Die fusionierte These: <b>Jedes selbstbezügliche System ist lokal präzise und blind für seinen eigenen Grund — und zwar in zwei geschachtelten Schichten.</b> <em>Erste Schicht (A, geschlossen):</em> innerhalb einer festen Struktur verdeckt der lokale Gauge die globale Invariante; diese ist <b>durch eine wohldefinierte globale Operation erreichbar</b> (Transport, Integration, Größen-Bericht). <em>Zweite Schicht (B, offen):</em> das Fundament der Struktur selbst ist für <b>jede innere Sicht</b> (auch die globale) blind; es wird nur <em>asymptotisch</em> von einer <b>äußeren Währung</b> angegangen (unabhängige Querverifizierung, das konstitutive Subjekt). Die Invariante der ersten Schicht ist <b>erreichbar</b>; die Grenze der zweiten Schicht ist <b>nie abgeschlossen</b>.</p>
+<p>kurz: <b>Gewissheit = der gauge‑unabhängige Kern (was die Struktur aus der willkürlichen lokalen Schicht isoliert, A) + die ehrlich benannte, unabschließbare Grenze (der offene Regress, B).</b> A zeigt, wie man die Invariante einer Struktur <em>gewinnt</em>; B zeigt, dass der Grund <em>der Struktur</em> von der Struktur selbst nie gewonnen werden kann. Zusammen: <em>Erkenne deinen Gauge, gewinne die Invariante — und nenne die Grenze, die du von innen nicht überschreiten kannst.</em></p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="num">2</span>Widersprüche zwischen A und B</h2>
+<p>Die beiden widersprechen sich nicht in den Fakten, aber sie beziehen <b>inkompatible Stellungen</b> zu zwei Kernfragen. (Honesty-Notiz: Auf der Meta-Ebene sind beide einig — selbstbezüglich → blind für den eigenen Grund; ersetzen des passiven Spiegels / des naiven lokalen Blicks durch Struktur. Die Punkte unten sind die <em>realen</em> Stellen, an denen sie auseinanderlaufen, keine erfundenen.)</p>
+<div class="card a">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>Widerspruch 1 · Erreichbarkeit des Grundes — geschlossene Operation vs. unabschließbarer Regress.</b></p>
+<p><b>A (Gauge/Invariante)</b> hält die globale Invariante für <em>voll erreichbar</em>: Führe den globalen Vergleich aus — transportiere den Vektor um die Schleife, berichte die Effektgröße — und du <em>besitzt</em> die Invariante (die Holonomie <em>ist</em> die Krümmung; μ <em>ist</em> der Effekt). Der Schritt von Gauge zu Invariante ist eine <b>abgeschlossene, wohldefinierte Operation</b>; ein Rest bleibt nicht. Die Blindheit des lokalen Gauges ist <em>innerhalb der Struktur ausheilbar</em>.</p>
+<p><b>B (Architektur der Gewissheit)</b> hält das Fundament für <em>von innen nie erreichbar</em>: Das Restrisiko <span class="m">pⁿ</span> strebt <em>asymptotisch</em> gegen Null, ist aber <em>nie gleich Null</em>; das Ding an sich ist <em>konstitutiv unerreichbar</em>; die Antinomien sind <em>unlösbar</em> („können weder bejaht noch verneint werden"). Der Schritt zu Gewissheit wird <em>nie abgeschlossen</em> — er braucht stets eine äußere Währung und hinterlässt einen Rest.</p>
+<p class="hint"><b>→ Die Spannung:</b> Für A <em>beendet</em> der globale Vergleich die Suche (man bekommt eine definitive Antwort). Für B ist die Suche ein <em>unendlicher Regress</em>, der nur gedämpft, nie gestoppt wird.</p>
+</div>
+<div class="card b">
+<p><span class="tag a">A</span><span class="tag b">B</span><b>Widerspruch 2 · Status der Invariante — entdecktes Welt-/Raum-Fakt vs. konstituierende Struktur.</b></p>
+<p><b>A (Gauge/Invariante)</b> sieht die Invariante (Effektgröße μ, Holonomie) als <em>Fakt über die Welt / den Raum</em>, das <em>unabhängig</em> vom Instrument existiert. Der Gauge <em>verfehlt</em> eine objektive Realität; die Disziplin ist <em>epistemisch</em> — die Wahrheit liegt „da draußen" (ein Effekt, eine Verdrillung), der lokale Blick sieht sie nur nicht, und das Remedium ist, sie <em>korrekt zu berichten</em>. A teilt sie gar: epistemische Invariante (die wahre Effektgröße, ein Welt-Fakt, verdeckt durch Budget und Rauschen) und ontische Invariante (Krümmung/Flip, ein Raum-Fakt).</p>
+<p><b>B (Architektur der Gewissheit)</b> sieht Gewissheit <em>nicht</em> als abgelesenes Welt-Fakt, sondern als von einer <em>vorab gegebenen Grammatik</em> (12 Kategorien / 10 Inferenzregeln) <em>erzeugten</em> Maßstab. Es gibt keinen vorbestehenden „korrekten Wert", den das Instrument verzerren würde — die <em>Struktur selbst</em> <em>konstituiert</em> den Richtigkeitsmaßstab („erweiternd und zugleich sicher"). Gewissheit ist <em>konstitutiv/normativ</em>, nicht <em>repräsentativ</em>.</p>
+<p class="hint"><b>→ Die Spannung:</b> Für A wird die Invariante <em>entdeckt</em> (ein unabhängiges Fakt, aufzudecken); für B wird Gewissheit <em>konstituiert</em> (eine Konstruktion, die den Maßstab schafft). Der eine liest die Wahrheit von der Welt ab; der andere baut den Maßstab der Wahrheit.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="num">3</span>Auflösung</h2>
+<div class="card f">
+<h3>Auflösung 1 · Zwei Blindstellen, ein Regress — die erste innen, die zweite außen abschließbar</h3>
+<p>Beide stimmen zu: der selbstbezügliche / lokale Blick ist blind, und man muss ihn <em>verlassen</em>, um den Grund zu erreichen. Der <b>globale Vergleich</b> (A) und die <b>äußere Währung</b> (B) sind <em>dasselbe Manöver auf zwei Reichweiten</em>. A's Invariante ist eine globale Eigenschaft <em>einer festen Struktur</em>, die der lokale Blick verfehlt — ausheilbar <em>innerhalb</em> der Struktur. B's Fundament ist eine globale Eigenschaft <em>der Struktur selbst</em>, die kein innerer Blick erreicht — erreichbar nur durch <em>Verlassen</em> der Struktur (ein unabhängiges System, das konstitutive Subjekt).</p>
+<p><b>Fusion:</b> Es gibt eine <b>Hierarchie der Gauges</b>. Der lokale Gauge (A) ist blind für die globale Invariante <em>der Struktur</em> — geschlossen durch globalen Vergleich <em>in</em> der Struktur. Der eigene Grund der Struktur (B) ist eine <em>zweite-Ordnung-Blindstelle</em>: Er <em>setzt die Struktur voraus</em>, erreicht also kein innerer (selbst globaler) Blick der Struktur; nur eine <em>äußere</em> Währung geht ihn asymptotisch an (<span class="m">pⁿ→0, ≠0</span>). <b>Gewissheit hat somit zwei Schichten: eine <em>geschlossene</em> (die Invariante einer festen Struktur, immer erreichbar bei richtigem globalen Vergleich) und eine <em>offene</em> (das Fundament der Struktur, nie von innen abgeschlossen, nur asymptotisch gedämpft).</b> Die ehrliche Architektur <em>macht</em> den globalen Vergleich <em>und</em> <em>benennt</em> den offenen Regress.</p>
+</div>
+<div class="card f">
+<h3>Auflösung 2 · Die Invariante ist der gauge-unabhängige Kern, den die Struktur aus der Darstellung isoliert</h3>
+<p>A's „Fakt über die Welt" und B's „konstituierende Grammatik" sind zwei Seiten derselben Münze: Die Invariante ist <em>objektiv</em> gerade, weil sie <em>unabhängig vom Gauge</em> ist — sie hängt nicht von der lokalen Koordinate ab. Genau diese <b>Gauge- Unabhängigkeit</b> ist, was B „Gewissheit, erzeugt von der Struktur" nennt: die Invariante ist <em>der Anteil, der überlebt, wenn die willkürliche / repräsentative Schicht eliminiert wird</em>.</p>
+<p><b>Fusion:</b> <b>Gewissheit = der gauge-unabhängige Kern einer Darstellung.</b> Man <em>entdeckt</em> die Invariante (A: sie ist ein stabiles Fakt) <em>indem</em> man den willkürlichen Gauge streift (B: die Struktur setzt den Maßstab). Sie ist „da draußen" <em>relativ zum Gauge</em> und „konstituiert" <em>relativ zur Darstellung</em> — beides wahr, je nach Bezugsrahmen.</p>
+<p><b>Fusionierte Schlussfolgerung:</b> Ein selbstbezügliches Instrument ist für seinen eigenen Grund auf zwei Arten blind: (1) der lokale Gauge ist blind für die globale Invariante der Struktur (A) — <em>geschlossen</em> durch globalen Vergleich; (2) das Fundament der Struktur ist blind für jede innere Sicht (B) — <em>offen</em>, nur asymptotisch von außen angedingt. <b>Gewissheit = die Invariante (der gauge-unabhängige Kern) + die ehrlich benannte offene Grenze.</b> Die Disziplin: <em>berichte die Invariante, und nenne die Grenze, die du von innen nicht überschreiten kannst.</em></p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="num">4</span>Fusionierter Inhalt</h2>
+<h3>Das gemeinsame Skelett: ein selbstbezügliches Instrument mit zwei Blindstellen</h3>
+<p>Beide Architekturen haben dieselbe Form: ein <b>Instrument</b> (Gauge / Grammatik), das einen <b>Inhalt</b> lokal und präzise ordnet, dabei aber seinen <b>eigenen Grund</b> auf zwei Tiefen verfehlt. Die erste Blindstelle (Gauge→Invariante) ist <em>innerhalb</em> der Struktur heilbar; die zweite (Fundament→Grenze) <em>nicht</em>.</p>
+<table>
+<tr><th>Element</th><th>A · Gauge/Invariante</th><th>B · Architektur der Gewissheit</th><th>Gemeinsame Rolle</th></tr>
+<tr><td>Das selbstbezügliche Instrument (der „Gauge")</td><td>lokaler Gauge (t‑Wert / lokale Trivialisierung)</td><td>lokale Schicht / roher Input (Erscheinung / Skript)</td><td>präzise, aber blind für den Grund</td></tr>
+<tr><td>Die Operation, die den Grund gewinnt</td><td>globaler Vergleich (Transport / μ berichten)</td><td>Grammatik (Kategorien / Inferenzregeln)</td><td>hebt die willkürliche Schicht auf</td></tr>
+<tr><td>Der gewonnene Grund (1. Schicht)</td><td>Invariante (μ / Holonomie)</td><td>Gewissheit (verifiziertes Theorem / a‑priori‑Urteil)</td><td>gauge‑unabhängiger Kern</td></tr>
+<tr><td>Die Grenze (2. Schicht)</td><td>keine explizite (Operation abgeschlossen)</td><td>Fundament (Kernel / Kategorien) + Ding an sich / pⁿ</td><td>was von innen nicht erreichbar ist</td></tr>
+<tr><td>Preis / Maßstab</td><td>√n, Flux (wächst mit der Skala)</td><td>De‑Bruijn ≈ 4×, pⁿ</td><td>der Cost der Struktur</td></tr>
+</table>
+
+<h3>1. Schicht — die erreichbare Invariante (A)</h3>
+<ul>
+<li><b>Gauge vs. Invariante:</b> Der lokale Gauge ist exakt und lokal — aber <em>größenlos / blind</em>. Der „sizeless stare": gleicher t aus großem ungenauem und kleinem präzisem Effekt. Die Invariante (μ, Holonomie) ist der Anteil, der <em>über alle Gauges stabil</em> bleibt.</li>
+<li><b>Geschlossener Gewinn:</b> Gegeben Gauge + Verbindung ist die Invariante <em>bestimmt</em>: <span class="m">μ = t·SE</span> bzw. <span class="m">Holonomie(Schleife) = Krümmung</span>. Man <em>rechnet</em> sie aus — kein Rest.</li>
+<li><b>Die willkürliche Linie als Gauge-Artefakt:</b> Die 5%-/1,96-Linie (Fisher „bequem / persönlich") ist ein <em>Cut</em> auf dem Gauge, keine Invariante — der typische Fehler, die Konvention für den Wahrheits-Träger zu halten.</li>
+<li><b>Skala:</b> √n (SE=σ/√n) und Flux (Krümmung × Fläche) sind der Mechanismus, mit dem die Invariante <em>mit der Skala wächst</em> — in der Statistik <em>Gefahr</em> (fabriziert Signifikanz aus Nichts), in der Geometrie <em>Ziel</em> (misst echte Krümmung).</li>
+</ul>
+
+<h3>2. Schicht — die offene Grenze (B)</h3>
+<ul>
+<li><b>Struktur statt Vertrauen:</b> Roher, fehleranfälliger Input (das sinnliche Mannigfaltige / der geschriebene Code, ~1,5 Bugs pro Zeile) wird durch eine <em>vorab gegebene Grammatik</em> (12 Kategorien / 10 Inferenzregeln + 3 Axiome) in notwendige Form gebracht. Die Notwendigkeit <em>entsteht</em> durchs Strukturieren, nicht durch Abspiegeln.</li>
+<li><b>Das Fundament trägt, erreicht sich aber nicht selbst:</b> Der Kernel (~500 Zeilen) / die Kategorien tragen jede Schicht darüber, werden aber <em>nicht</em> durch die eigenen Regeln geprüft. Sicherung: Finitheit + unabhängige Querverifizierung, Restrisiko <span class="m">pⁿ</span>.</li>
+<li><b>Asymptotisch, nie null:</b> <span class="m">pⁿ → 0 (n→∞), ≠ 0</span> — der Regress der Rechtfertigung wird gedämpft, nie gestoppt. Kants Gegenstück: die Antinomie (beide Beweise gültig, unlösbar) ist das sichtbare Zeichen, dass die eigene Methode keine Währung mehr liefert.</li>
+<li><b>Währungwechsel:</b> Die letzte Rechtfertigung kommt immer von <em>außen</em> — unabhängige Systeme + Logiker-Inspektion (B) bzw. die konstitutive Rolle des Subjekts (Kant).</li>
+</ul>
+
+<h3>Die zentralen Formeln der Fusion</h3>
+<div class="mathblock">-- 1. Schicht (A, GESCHLOSSEN): Gauge -> Invariante --
+Gauge     = lokale, exakte, blinde Koordinate   (t | lokale Trivialisierung)
+mu        = t * SE                              (Effekt = t * Standardfehler)
+Holonomie = int_Krummung  ~  eingeschlossener Winkel   (auf S^2 = Rauminwinkel)
+Status    = WIE definiert: gegeben Gauge + Verbindung ist die Invariante bestimmt -> kein Rest
+
+-- 2. Schicht (B, OFFEN): Fundament -> Grenze --
+Restrisiko  = p^n  -> 0   (n -> unendlich),  != 0    (p ~ 10^-4)
+Antinomie   = beide Beweise gueltig, unl.oosbar      (Zeichen: eigene Methode liefert keine Wuerzung mehr)
+De-Bruijn   ~ 4x  (formal / traditionell)             (der Cost der Struktur)
+
+-- FUSION: zwei Blindstellen, ein Regress --
+Gewissheit  = Invariante (geschlossen, gauge-unabhaengiger Kern)
+            + offener Regress (Fundament, asymptotisch, nie null)
+Regel       = lokalen Gauge entlarven, Invariante gewinnen, GRENZE benennen
+            (die von innen nie ueberschreitbar ist)</div>
+
+<h3>Fusionierte Forderungen an jede „Gewissheits-Architektur"</h3>
+<div class="card f">
+<p>1. <b>Erkenne deinen Gauge</b> — halte den lokalen Instrument-Begriff (t / lokale Trivialisierung) nicht für den Grund selbst. <span class="tag a">A</span></p>
+<p>2. <b>Gewinne die Invariante</b> — führe den globalen Vergleich aus (Transport / Größen-Bericht), um den gauge-unabhängigen Kern der <em>festen Struktur</em> zu erhalten. <span class="tag a">A</span></p>
+<p>3. <b>Ersetze Vertrauen durch Struktur</b> — kleines, transparentes Fundament (Kategorien / Kernel ~500 Zeilen), das den Richtigkeitsmaßstab konstituiert. <span class="tag b">B</span></p>
+<p>4. <b>Benenne die Grenze</b> — sag aus, <em>was die Struktur von innen nicht erreicht</em> (Ding an sich / Kernel), und mache den offenen Regress sichtbar (Antinomie / pⁿ-Kurve). <span class="tag b">B</span></p>
+<p>5. <b>Die letzte Währung wechselt</b> — erkenne an, dass die Fundament-Sicherung <em>außen</em> liegt (unabhängige Systeme / konstitutes Subjekt) und asymptotisch, nie absolut, ist. <span class="tag b">B</span></p>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="num">5</span>Interaktive Visualisierung</h2>
+<p>Ein Canvas, zwei Blindstellen, ein Satz. <b>Links (1. Schicht, A):</b> die Schleife mit <em>lokal-trivialen</em> Rahmen (der Gauge — überall sieht es aus wie Zylinder) und einem Vektor, der um die Schleife transportiert wird; drehe die <b>Verdrillung</b> und lies die <b>Holonomie</b> ab — die <em>erreichbare</em> Invariante, die der lokale Gauge nicht zeigt. <b>Rechts (2. Schicht, B):</b> der 4‑Schicht-Stack; schiebe die <b>Tiefe der Prüfung</b> und sehe, wie die <b>Probe</b> sinkt, während das <b>Restrisiko pⁿ</b> gegen Null fällt — die <b>GRENZE</b> am Fundament wird dabei <em>nie kreuzt</em>. Der Readout koppelt beide: erreichbare Invariante (geschlossen) vs. unabschließbarer Regress (offen).</p>
+<canvas id="viz"></canvas>
+<div class="viz-ctrl">
+  <label>Verdrillung (Gauge→Invariante)<input type="range" id="twistSlider" min="0" max="180" step="1" value="90"></label>
+  <span class="hint" id="twistVal">90°</span>
+  <label>Tiefe der Prüfung (Probe)<input type="range" id="depthSlider" min="0" max="100" step="1" value="30"></label>
+  <span class="hint" id="depthVal">30%</span>
+  <label>n unabhängige Systeme<input type="range" id="nSlider" min="1" max="8" step="1" value="3"></label>
+  <span class="hint" id="nVal">3</span>
+  <button class="action" id="resetBtn">↺ Reset</button>
+</div>
+<div id="readout" class="readout"></div>
+<p class="viz-cap">Die Pfade sind <em>Analogien</em>, die das fusionierte Gesetz tragen: links die Holonomie als gauge-invariante Größe, die der lokale Gauge verfehlt aber die <em>erreicht</em> wird (geschlossene Operation); rechts pⁿ als Restrisiko, das gegen 0 strebt, aber die Grenze nie erreicht (offener Regress). Alles läuft lokal, keine externen Daten.</p>
+</section>
+
+<section id="provenienz">
+<h2><span class="num">6</span>Provenienz</h2>
+<div class="prov"><a href="../n1-034.html"><b>A · n1-034.html — „Gauge und Invariante: Präzision ist kein Wahrheitsmaß"</b></a><br><span class="hint">Runde-1-Fusion (Signifikanzkult × Faserbündel): der lokale Gauge (t‑Wert / lokale Trivialisierung) ist blind für die globale Invariante (Effektgröße μ / Holonomie); der globale Vergleich gewinnt sie als geschlossene, erreichbare Operation. „Kennt, welchen Gauge du hältst — und vergleiche global."</span></div>
+<div class="prov"><a href="../n1-076.html"><b>B · n1-076.html — „Architektur der Gewissheit: Kants Grenzen ✕ formaler Beweis"</b></a><br><span class="hint">Runde-1-Fusion (Kritik der reinen Vernunft × Formal Proof): Gewissheit entsteht durch Struktur statt Vertrauen; jede Architektur trägt ihr Fundament, erreicht es aber von innen nie — Restrisiko pⁿ strebt gegen 0, erreicht es nie, und die letzte Rechtfertigung wechselt immer die Währung.</span></div>
+<p class="foot">Fusion 030 · Runde 2 (non-AI-Track) · autonom, keine Netzwerkabrufe — alle Daten inline.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var S = { twist:90, depth:30, n:3, angle:0, ctx:null, cssW:776, cssH:440 };
+  var P = 1e-4;
+  function $(id){ return document.getElementById(id); }
+  var canvas=$('viz'), twistSlider=$('twistSlider'), depthSlider=$('depthSlider'),
+      nSlider=$('nSlider'), resetBtn=$('resetBtn'), readout=$('readout'),
+      twistVal=$('twistVal'), depthVal=$('depthVal'), nVal=$('nVal');
+
+  function fmt(x,d){ return Number(x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+  function clamp(v,a,b){ return Math.min(b,Math.max(a,v)); }
+  function cssVar(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n); return v?v.trim():''; }
+  function hexA(hex,a){
+    if(!hex) return 'rgba(127,127,127,'+a+')';
+    hex=String(hex).replace('#','');
+    if(hex.length===3){ hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)) return 'rgba(127,127,127,'+a+')';
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  var STRATA=[
+    { title:'Inhalt / Gewissheit',    sub:'was als erkannt / bewiesen gilt' },
+    { title:'Grammatik / Inferenz',   sub:'Kategorien / Inferenzregeln' },
+    { title:'Formen / Sprache',       sub:'Raum & Zeit / Typen & Terme' },
+    { title:'Fundament',              sub:'Kernel ~500 Z. / Kategorien / Subjekt' }
+  ];
+
+  function fit(){
+    var d=window.devicePixelRatio||1;
+    var w=canvas.clientWidth||776;
+    S.cssW=w; S.cssH=440;
+    canvas.width=Math.round(w*d); canvas.height=Math.round(440*d);
+    S.ctx=canvas.getContext('2d');
+    if(S.ctx) S.ctx.setTransform(d,0,0,d,0,0);
+  }
+
+  function drawGauge(ctx,x0,x1,y0,y1){
+    var a=cssVar('--accent'),a2=cssVar('--accent2'),muted=cssVar('--muted'),
+        ink=cssVar('--fg'),warn=cssVar('--warn'),good=cssVar('--good');
+    var f=S.twist/180;
+    ctx.font='bold 13px system-ui';ctx.fillStyle=a2;ctx.textAlign='left';
+    ctx.fillText('1 · Gauge blind f\u00FCr die Invariante',x0+6,y0+16);
+    ctx.font='10px system-ui';ctx.fillStyle=muted;
+    ctx.fillText('(Schleife, lokal-triviale Rahmen, transportierter Vektor)',x0+6,y0+30);
+    var cx=(x0+x1)/2,cy=y0+(y1-y0)*0.50,R=Math.min((x1-x0),(y1-y0))*0.30;
+    ctx.strokeStyle=hexA(a,0.85);ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+    ctx.font='9px system-ui';ctx.fillStyle=muted;ctx.textAlign='center';
+    ctx.fillText('Basis B (Schleife)',cx,cy+3);
+    var N=28;
+    for(var i=0;i<N;i++){
+      var ang=2*Math.PI*i/N;
+      var px=cx+R*Math.cos(ang),py=cy+R*Math.sin(ang);
+      var dir=ang+f*(ang/2);
+      ctx.strokeStyle=hexA(a,0.35);ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+Math.cos(dir)*12,py+Math.sin(dir)*12);ctx.stroke();
+    }
+    var sx=cx+R,sy=cy;
+    ctx.strokeStyle=muted;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(sx-5,sy-5);ctx.lineTo(sx+5,sy+5);
+    ctx.moveTo(sx+5,sy-5);ctx.lineTo(sx-5,sy+5);ctx.stroke();
+    var da=S.angle,dx=cx+R*Math.cos(da),dy=cy+R*Math.sin(da),ddir=da+f*(da/2);
+    var ex=dx+Math.cos(ddir)*22,ey=dy+Math.sin(ddir)*22;
+    ctx.strokeStyle=a2;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(dx,dy);ctx.lineTo(ex,ey);ctx.stroke();
+    var ha=0.5;
+    ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-Math.cos(ddir-ha)*7,ey-Math.sin(ddir-ha)*7);
+    ctx.moveTo(ex,ey);ctx.lineTo(ex-Math.cos(ddir+ha)*7,ey-Math.sin(ddir+ha)*7);ctx.stroke();
+    ctx.fillStyle=a2;ctx.beginPath();ctx.arc(dx,dy,5,0,Math.PI*2);ctx.fill();
+    var hy=y0+(y1-y0)*0.85;
+    ctx.font='11px system-ui';ctx.fillStyle=muted;ctx.textAlign='left';
+    ctx.fillText('lokale Rahmen: \u00FCberall trivial (Gauge)',x0+12,hy);
+    ctx.font='bold 15px system-ui';ctx.fillStyle=a;
+    ctx.fillText('Invariante: Holonomie = '+fmt(S.twist,0)+'\u00B0',x0+12,hy+20);
+    var lab=f<0.03?'trivial (+1, Zylinder)':(f>0.97?'M\u00F6bius (\u22121, Flip)':'verdrillt (zwischen)');
+    ctx.font='11px system-ui';ctx.fillStyle=f>0.97?warn:good;
+    ctx.fillText('geschlossene Operation \u2192 erreichbare Invariante ('+lab+')',x0+12,hy+38);
+  }
+
+  function drawBoundary(ctx,x0,x1,y0,y1){
+    var a=cssVar('--accent'),a2=cssVar('--accent2'),muted=cssVar('--muted'),
+        ink=cssVar('--fg'),danger=cssVar('--bad'),grid=cssVar('--viz-grid');
+    ctx.font='bold 13px system-ui';ctx.fillStyle=a;ctx.textAlign='left';
+    ctx.fillText('2 · Fundament blind f\u00FCr jede innere Sicht',x0+6,y0+16);
+    ctx.font='10px system-ui';ctx.fillStyle=muted;
+    ctx.fillText('(4 Schichten, Probe sinkt, GRENZE wird nie kreuzt)',x0+6,y0+30);
+    var x=x0+10,bw=(x1-x0)-20,bandTop=y0+44,n=STRATA.length,
+        totalH=(y1-y0-bandTop-26),gap=8,bh=(totalH-(n-1)*gap)/n;
+    for(var i=0;i<n;i++){
+      var s=STRATA[i],y=bandTop+i*(bh+gap),isBase=(i===n-1);
+      ctx.fillStyle=hexA(a,isBase?0.26:(0.08+i*0.05));
+      ctx.strokeStyle=a;ctx.lineWidth=isBase?2:1.1;
+      ctx.fillRect(x,y,bw,bh);ctx.strokeRect(x,y,bw,bh);
+      ctx.textAlign='left';ctx.fillStyle=ink;ctx.font='bold 12px system-ui';
+      ctx.fillText(s.title,x+12,y+17);
+      ctx.font='10px system-ui';ctx.fillStyle=muted;
+      ctx.fillText(s.sub,x+12,y+32);
+      ctx.textAlign='right';ctx.fillStyle=hexA(a2,0.9);ctx.font='10px system-ui';
+      ctx.fillText(isBase?'FUNDAMENT':'Schicht '+(i+1),x+bw-12,y+17);
+    }
+    var bY=bandTop+n*bh+(n-1)*gap;
+    ctx.strokeStyle=danger;ctx.lineWidth=1.6;ctx.setLineDash([7,4]);
+    ctx.beginPath();ctx.moveTo(x,bY);ctx.lineTo(x+bw,bY);ctx.stroke();ctx.setLineDash([]);
+    ctx.textAlign='center';ctx.fillStyle=danger;ctx.font='bold 11px system-ui';
+    ctx.fillText('GRENZE \u2014 von innen nie erreichbar',x+bw/2,bY+15);
+    var v=S.depth/100,probeY=bandTop+v*(n*bh+(n-1)*gap);
+    ctx.strokeStyle=hexA(a2,0.3);ctx.lineWidth=6;
+    ctx.beginPath();ctx.moveTo(x,probeY);ctx.lineTo(x+bw,probeY);ctx.stroke();
+    ctx.strokeStyle=a2;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(x,probeY);ctx.lineTo(x+bw,probeY);ctx.stroke();
+    ctx.fillStyle=a2;ctx.beginPath();ctx.arc(x+bw,probeY,4,0,Math.PI*2);ctx.fill();
+    ctx.textAlign='right';ctx.fillStyle=a2;ctx.font='bold 10px system-ui';
+    ctx.fillText('Probe',x+bw-8,probeY-6);
+    var exp=S.n*-4,barY=y1-20,barH=8,barX=x0+10,barW=(x1-x0)-20;
+    ctx.font='10px system-ui';ctx.fillStyle=muted;ctx.textAlign='left';
+    ctx.fillText('Restrisiko p^'+S.n+' \u2248 10^'+exp+' (strebt \u2192 0, \u2260 0)',x,barY-5);
+    ctx.fillStyle=grid;ctx.fillRect(barX,barY,barW,barH);
+    var frac=clamp(S.n/8,0.02,1);
+    ctx.fillStyle=hexA(danger,0.85);ctx.fillRect(barX,barY,barW*frac,barH);
+    ctx.strokeStyle=danger;ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,barH);
+  }
+
+  function draw(){
+    var ctx=S.ctx;if(!ctx)return;
+    var W=S.cssW,H=S.cssH;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cssVar('--viz-bg');ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=cssVar('--viz-line');ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(W/2,10);ctx.lineTo(W/2,H-10);ctx.stroke();
+    ctx.font='bold 18px system-ui';ctx.fillStyle=cssVar('--muted');ctx.textAlign='center';
+    ctx.fillText('\u21C4',W/2,H/2);
+    drawGauge(ctx,14,W/2-14,12,H-12);
+    drawBoundary(ctx,W/2+14,W-14,12,H-12);
+  }
+
+  function updateReadout(){
+    var f=S.twist/180;
+    var lab=f<0.03?'trivial +1':(f>0.97?'M\u00F6bius \u22121':'zwischen');
+    var exp=S.n*-4,atBase=S.depth>=85;
+    readout.innerHTML=
+      '\u2460 Gauge\u2192Invariante <b>(geschlossen)</b>: lokaler Gauge (Schleife lokal trivial) \u2192 Holonomie = <span class="a">'+fmt(S.twist,0)+'\u00B0</span> ('+lab+') \u2014 die Invariante ist <b>erreichbar</b>.<br>'+
+      '\u2461 Fundament\u2192Grenze <b>(offen)</b>: Probe bei '+fmt(S.depth,0)+'% Tiefe \u00B7 Restrisiko p^'+S.n+' \u2248 <span class="b">10<sup>'+exp+'</sup></span> \u2014 strebt gegen 0, <b>erreicht es nie</b>.'+
+      (atBase?' <span class="warn">GRENZE erreicht: von innen nie kreuzbar.</span>':'')+'<br>'+
+      '<em>Fusion:</em> erreichbare Invariante (A) + unabschlie\u00DFbarer Regress (B) = Gewissheit mit ehrlich benannter Grenze.';
+  }
+
+  function syncVals(){
+    twistVal.textContent=fmt(S.twist,0)+'\u00B0';
+    depthVal.textContent=fmt(S.depth,0)+'%';
+    nVal.textContent=fmt(S.n,0);
+    updateReadout();
+  }
+
+  function loop(){
+    S.angle+=0.006;if(S.angle>Math.PI*2)S.angle-=Math.PI*2;
+    draw();requestAnimationFrame(loop);
+  }
+
+  twistSlider.addEventListener('input',function(){S.twist=+twistSlider.value;syncVals();});
+  depthSlider.addEventListener('input',function(){S.depth=+depthSlider.value;syncVals();});
+  nSlider.addEventListener('input',function(){S.n=+nSlider.value;syncVals();});
+  resetBtn.addEventListener('click',function(){
+    S.twist=90;S.depth=30;S.n=3;
+    twistSlider.value=90;depthSlider.value=30;nSlider.value=3;syncVals();
+  });
+  $('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+  var mo=new MutationObserver(function(){draw();});
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',function(){fit();draw();});
+
+  fit();syncVals();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "018",
+  "a": "n1-019.html",
+  "b": "n1-007.html",
+  "a_title": "Holografisches Zoomen: Schätzung oder Halluzination?",
+  "b_title": "Der Zahlenraum und seine Primkante",
+  "combined_theme": "kern-umgebung-fenster-ehrlichkeit",
+  "one_line": "Jedes strukturierte Objekt besitzt einen nativen, datenbestimmten Kern und eine Umgebung, die nur über ein gewähltes Fenster erreichbar ist; die vermeintlich rivalisierenden Beschreibungen (in-/außerband; additiv/multiplikativ) sind orthogonale Projektionen desselben Objekts, und Ehrlichkeit heißt, den Kern-Anteil vom Fenster-abhängigen Anteil sichtbar zu machen.",
+  "contradictions": [
+    "Harte vs. fließende Linie: A setzt eine harte, vom Sampling festgelegte native Linie (Nyquist f_max = S/2) zwischen reinem Daten-Read-out und Extrapolation; B kennt nur eine fließende Distanz zur Primkante (Komplexität ω(n)), keinen harten Cut.",
+    "Anker der Ehrlichkeit: A verankert Ehrlichkeit in den Daten (bandbegrenzter/Sinc-Prior als 'richtig', weil minimal-verpflichtend, H≈0); B akzeptiert, dass die Karte/Parametrisierung konstruiert ist, und verankert Ehrlichkeit in Fenster-Invarianz (das entdeckte Muster überlebt den Koordinatenwechsel).",
+    "Bewertung des Über-dem-Kern-Inhalts: A behandelt den Außerband-Anteil als Warnung (Halluzination, zu flaggen); B behandelt den Umgebungsraum (zusammengesetzte Zahlen) als echtes, strukturiertes Objekt ('Noise = nicht-prim, aber strukturiert')."
+  ],
+  "resolution": "Die native Linie ist dort hart, wo die Daten aufhören zu bestimmen (Sampling/Nyquist bzw. der ω=1-Kern selbst), und darüber fließend (Komplexitäts-/Energie-Kontinuum). Die beiden Ehrlichkeitsanker komponieren sich: A liefert die Fenster-Abhängigkeit (wie viel injiziert das Fenster — H), B die Fenster-Invarianz (was bleibt beim Fensterwechsel). Der Über-dem-Kern-Inhalt wird zerlegt in strukturiert-invariant (behalten) und Fenster-injiziert (flaggen); A's 'Halluzination' ist der injizierte Teil, B's 'Noise' überwiegend der strukturierte Teil. Kern-Anteil = |C|/|O|, Umgebung-Anteil = 1−|C|/|O| (H-Analog), plus der Fenster-invariante Inhalt bilden die fusionierte Metrik.",
+  "viz": "2-D-Zahlenspektrum (n=2..N) als ein Objekt: Primzahlen als leuchtende 'native Linie' (ω=1-Kern) unten, Zusammengesetzte als Umgebung mit Höhe/Farbe nach ω(n) darüber; gestrichelte native Linie trennt Kern (datenbestimmt/in-Band) von Umgebung (Fenster-abhängig/Außerband); untere Spur zeigt das gewählte Fenster (Restklassen mod M, koprim = invariante Taktstruktur) und markiert, in welche Takte Primzahlen tatsächlich landen; zwei Live-Meter zeigen die fusionierte Ehrlichkeits-Zerlegung (Kern-Anteil vs. Umgebung-Anteil = H-Allgemeinerung). N-Regler, M-Fenster (30/60/210), Umgebung-Toggle, Hover-HUD, themenreaktiv, nur Inline-Daten."
+}

@@ -1,0 +1,17 @@
+{
+  "no": "055",
+  "a": "n1-109.html",
+  "b": "n1-100.html",
+  "a_title": "Die Hopf-Faserung S³→S²: gesehen von A, bewiesen von B",
+  "b_title": "Bedeutung als Geometrie",
+  "combined_theme": "bundle-invariant-motive",
+  "one_line": "Ein Faserbündel π:E→B (lokal Produkt, global verdreht), dessen Identität eine grobkörnigkeits- und darstellungsunabhängige Invariante/das Motiv ist — nur aus der globalen Verklebung ablesbar, klassifizierend und Ursprung aller Realisierungen (Fasern); Geometrie misst und Algebra rekonstruiert dieselbe Struktur.",
+  "contradictions": [
+    "Fundamentaldirektion: A (Hopf) liest bottom-up — das konkrete Objekt ist primär, die Hopf-Invariante wird durch Messen abgeleitet; B (Bedeutung) liest top-down — das abstrakte Motiv ist primär, die Realisierungen sind abgeleitete Schatten (anabelische Rekonstruktion).",
+    "Geschlossen vs. offen: A (S¹→S³→S²) ist nativ ein geschlossenes System ohne externen Bezug; B (Bedeutung) ist offen und erst mit der externen Welt W (Tarski) vollständig, die man als weiteren Topos reifizieren muss, um es zu schließen.",
+    "Scharf & eine Zahl vs. weich & ein Objekt: A hat exakte, 1-dimensionale lokale Daten (Faser S¹, Kozykel) und eine einzige ganzzahlige Invariante (Hopf-Zahl ∈ℤ); B hat weiche, graduierte Daten (Kohärenz [0,1]⁴, Ω reicher als {0,1}) und ein reich strukturiertes Motiv mit Gewichtsfiltration.",
+    "Epistemischer Status: A ist ein bewiesener Klassiker (Hopf 1931); B ist eine explizite Konjunktur / ein Forschungsprogramm (keine empirischen Messungen)."
+  ],
+  "resolution": "Die Invariante ist der Fixpunkt der Grobkörnung: bottom-up (Objekt→Invariante) und top-down (Motiv→Realisierungen) sind dieselbe Abbildung in zwei Richtungen. Das Schema ist ein kommutierendes Diagramm — A der geschlossene 1-Knoten-Minimalfall, B die offene-und-wieder-geschlossene Form (W als weiterer Topos). A's Zahl ist eine reine Kohomologie-Realisierung des vollen, gewichtsgefilterten Motivs; scharf/exakt ist der Reinheitslimes von weich/graduiert. Das Muster ist theorem-bezeugt (Hopf), die semantische Instanz ist testbare Konjunktur.",
+  "viz": "Hopf-Faserung (Basis S² mit 4 Bedeutung-Clustern + Totalraum S³ mit Fasern S¹) und Grobkörnungs-Regler ε: die feine Komponenten-Struktur (4→1) verdorrt bei wachsender Grobkörnung, während die hopf-verkettete Faser und ihre Invariante ±1 (Händigkeit-Button) invariant bleiben — das Motiv, das überlebt."
+}

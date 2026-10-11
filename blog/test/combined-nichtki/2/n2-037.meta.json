@@ -1,0 +1,16 @@
+{
+  "no": "037",
+  "a": "n1-001.html",
+  "b": "n1-104.html",
+  "a_title": "Wie misst man eine Black Box?",
+  "b_title": "The Examined Life, Proved Coherent",
+  "combined_theme": "local-to-global-wholeness",
+  "one_line": "Ein Ganzes (messbarer Raum, lesbares System, kohärentes Leben) existiert genau dann, wenn seine lokalen Stücke auf allen Überlappungen übereinstimmen; das Kleben (Stokes/Sheaf) zertifiziert die Form, Struktur und Subjekt füllen den Inhalt.",
+  "contradictions": [
+    "Entdeckt vs. erdacht: A — das Ganze ist von der Struktur erzwungen (Igelsatz/Stokes zwingen die Antwort, man entdeckt sie); B — das Ganze erdichtet das Subjekt (der Agent füllt die Sektionen, die Theoreme fixieren nur die Form).",
+    "Zertifikat substantiv vs. formal: A — Stokes ist das Herzstück und zugleich die Antwort (das Theorem trägt die ganze Messung); B — das Gluing-/Konsistenz-Theorem sichert nur Kohärenz/Form, nie den Sinn.",
+    "Geschlossener Bogen vs. offenes Cover: A — Grundeinheit ist der geschlossene Kreis (Motivation→Antwort→roter Faden, schließt an der ersten Frage); B — Grundeinheit ist die globale Sektion über einem offenen Cover überlappender Domänen (kein Bezugspunkt, schließt nirgends)."
+  ],
+  "resolution": "Beides ist ein einziger lokal-zu-globaler Klebe-Vorgang: die Form des Ganzen wird entdeckt (Struktur/Topologie erzwingt, was ein Ganzes sein muss), der Inhalt wird erdacht (das Subjekt füllt die lokalen Sektionen). Das Zertifikat ist stets nur die Kohärenz-/Gluing-Garantie (keine Überlappung reißt; Substanz ist Input, nie Output). Der lokale Frage→Antwort-Bogen ist die Faser, das offene Cover die Basis, das Ganze ihr Kleben; ein Twist (Produkt −1, wie det dψ<0) erzeugt die echte Obstruktion (Igelsatz / 'die globale Sektion existiert nicht').",
+  "viz": "Interaktives 2D-Canvas: sechs lokale Stücke (geschlossene Frage→Antwort-Bögen/Fasern) als offenes Cover; Überlappungen kleben (grün) oder reißen (rot) je nach Übereinstimmung der lokalen Wahlen modulo Übergang ±1 (Twist). Goldenes Zentrum = das Ganze existiert (globale Sektion). Modi: 'Entdeckt' (Struktur erzwingt die einzige konsistente Wahl) und 'Erzählt' (freie Wahl per Klick); 'Twist' erzeugt die topologische Obstruktion (kein Ganzes möglich). Theme-aware, rein inline."
+}

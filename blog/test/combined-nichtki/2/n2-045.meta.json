@@ -1,0 +1,16 @@
+{
+  "no": "045",
+  "a": "n1-065.html",
+  "b": "n1-099.html",
+  "a_title": "Vervollständigung als Auswahl — der eine feste Punkt (Cauchy/Dedekind ✕ Die Welt ist 3-dimensional)",
+  "b_title": "Lokale Daten, globale Form: Die Garbe als Modell des Gehirns (Grothendieck ✕ Gehirn)",
+  "combined_theme": "determination-by-consistency-at-the-gap",
+  "one_line": "Ein bestimmtes Objekt ist der Überlebende einer Konsistenz-/Vervollständigungsbedingung, die über ein lückiges Substrat gelegt wird; es ist der Lösungsraum dieser Bedingung an der Lücke/Obstruktion, die das Substrat nicht füllt — 0-dimensional (ein eindeutiger Punkt: √2, die 3) bei einer einzelnen fehlenden Element-Lücke, >0-dimensional (irreduzible Kohomologie = Φ) bei topologischer Lücke.",
+  "contradictions": [
+    "A: die Vervollständigungs-/Grenzbedingung macht das Ergebnis EINDEUTIG (ε→0 zieht auf einen Punkt; α→0 kollabiert {1,3} auf die eine 3) — vs. — B: die Verklebungsbedingung bestimmt das Global NICHT eindeutig und lässt eine irreduzible Kohomologie (= Φ) übrig, die lokal nicht rekonstruierbar ist.",
+    "A: die Bestimmung erfolgt am RAND/der Asymptote (r→∞, ε→0; das Signal kommt bis ins Unendliche unverzerrt an) — vs. — B: die Bedingung wird LOKAL auf den Überlappungen der Überdeckung gelegt, ohne Asymptote; das Global wird aus lokalen Übereinstimmungen zusammengesetzt.",
+    "A: der Überlebende ist EIN EINZIGER PUNKT (√2, die 3) — ein Wert — vs. — B: das Ergebnis ist eine reiche STRUKTUR (Garbe + Kohomologie mit β₀,β₁,β₂; Yoneda: ein Objekt ist sein ganzes Relationssystem)."
+  ],
+  "resolution": "Das Objekt ist der Lösungsraum der Konsistenzbedingung; seine DIMENSION ist der Parameter: 0-dim → eindeutiger Punkt (A), >0-dim → irreduzibler kohomologischer Rest = Emergenz (B). A's Randbedingung (Signal kommt bis r→∞ unverzerrt an) ist existenztechnisch die Forderung nach einer globalen Sektion der Wellengarben; die ausgeschiedenen Dimensionen n=2,4,5 sind nichttriviale kohomologische Obstruktionen (lokale Stücke kleben nicht global); der Rand r→∞ (A) ist die globale Sektion (B). A's Punkt ist der 0-dimensionale Entartungsfall von B's Struktur; in beiden ist das Objekt relationell definiert (Schnitt/Lücke in ℚ vs. Yoneda). Ein Operator: Vervollständigung = Auswahl an der Obstruktion.",
+  "viz": "Canvas: eine offene Überdeckung [0,1] mit lokalen Schnitten (B's Garbe) und einem Konsistenz-Regler c. Das rote Kohomologie-Band über den Überlappungen misst den irreduziblen Rest E; der rechte Panel zeigt den Überlebensraum der Bedingung, der bei c→1 auf EINEN eindeutigen Punkt (A: √2/die 3, dim 0) kollabiert und bei c→0 zu einer >0-dimensionalen Struktur (B: Kohomologie = Φ) anschwillt; ein Lauf-Button animiert den Zusammenbruch 1→0."
+}

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Garbenmaschine, zwei Gesichter: Blockade und Kurzschluss</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#d1495b;
+  --warn:#c98a1b; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(122,162,255,.06) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+a{color:var(--sky);text-underline-offset:2px}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800}
+h2{font-size:clamp(1.3rem,3vw,1.9rem);letter-spacing:-.01em;margin:0 0 .5em;font-weight:750}
+h3{font-size:1.04rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em}
+p{margin:.7em 0;max-width:74ch}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:color-mix(in srgb,var(--acc) 8%,transparent)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.note{font-size:.9rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:14px 0}
+.lane{background:color-mix(in srgb,var(--acc) 7%,transparent);border-left:3px solid var(--acc);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:14px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-weight:650;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+td:first-child{color:var(--sky);font-weight:600}
+ul{margin:.6em 0 .6em 1.2em} li{margin:.35em 0}
+.k{color:var(--acc)} .b{color:var(--sky)} .bad{color:var(--bad)} .ok{color:var(--acc)}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+canvas{display:block;width:100%}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.ctrl .c{flex:1 1 150px;min-width:140px}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:4px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent)}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+button.alt{background:transparent;color:var(--dim);border-color:var(--line)}
+button.alt:hover{background:color-mix(in srgb,var(--dim) 12%,transparent)}
+.stat{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.86rem;margin-top:14px}
+.stat span{color:var(--dim)}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.faces{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:640px){.faces{grid-template-columns:1fr}}
+.face{background:color-mix(in srgb,var(--card) 60%,transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ft{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.fv{font-size:.9rem;line-height:1.5;color:var(--ink)}
+.fv.ok{color:var(--acc)}
+.fv.bad{color:var(--bad)}
+</style>
+</head>
+<body>
+<article>
+  <div class="tag">Round 2 · Nicht-KI-Track · Pair 035</div>
+  <h1>Eine Garbenmaschine, zwei Gesichter: Blockade und Kurzschluss</h1>
+  <p class="sub">Fusion aus: n1-080.html ✕ n1-084.html  (Runde 2)</p>
+
+  <section id="these">
+    <div class="tag">01 · Kernthese der Fusion</div>
+    <h2>Lokale Daten, ein Invariant, zwei Gesichter</h2>
+    <p>
+      Beide Round-1-Papiere sind selbst Fusionen der Form <b>„etwas × Garben“</b> und teilen damit
+      <i>dasselbe Garben-Bein</i>. A (n1-080) verbindet eine <b>Geometrie</b> — Faserbündel über
+      <span class="mono">S¹</span>, Torsion und Monodromie <span class="mono">(−1)^w</span> — mit
+      <b>Sheaving</b> (Sheaf-Axiome, universelle Konstruktion). B (n1-084) verbindet eine
+      <b>Systemwelt</b> — den Firewall-/Paketfilter-Stack (ufw, iptables, BPF/XDP) — mit
+      <b>Garben</b> (Hälme, Kollimit, Stratifizierung, Exit-Pfade). Die übergeordnete, integrierte
+      Position: <b>Lokale Daten fügen sich unter einer Kohärenzregel an den Überlappungen zu einem
+      globalen Objekt — und derselbe lokale Invariant hat dabei zwei Gesichter.</b>
+    </p>
+    <p>
+      Das eine Gesicht ist das <b>Bestimmungs-Gesicht</b> (B): das Ganze ist das Kollimit der lokalen
+      (Halm-)Daten, und <i>ein einziges lokales Stück kann es sofort fixieren</i> — der XDP-Drop,
+      neu gesagt als „der Halm bestimmt das Ganze“. Das andere Gesicht ist das
+      <b>Blockade-Gesicht</b> (A): dieselbe Kohärenzregel kann es <i>verhindern</i>, dass ein globales
+      Objekt (eine nicht-verschwindende Section) überhaupt existiert — die Monodromie des Möbiusbands
+      blockiert die globale Section. Der <b>Invariant</b> (Monodromie bei A, Tiefe/Stratifizierung bei B,
+      Topologie in beiden Garben-Beinen) ist der <b>Schalter</b> zwischen den Gesichtern:
+      <span class="k">trivial</span> (w gerade / kein Drop) → lokale Daten verkleben <i>frei</i> und das
+      Lokale bestimmt das Ganze; <span class="bad">nicht-trivial</span> (w ungerade / ein Drop) → der
+      Invariant blockiert eine would-be globale Section <i>oder</i> fixiert das Ergebnis an einem einzigen
+      lokalen Stück.
+    </p>
+    <p>
+      Damit verschmelzen zwei „X × Garbe“-Papiere zu <i>einer</i> Maschine:
+      <b>die Garben-/Verklebe-Maschine, bei der ein lokaler Invariant das Globale entweder frei
+      assemblieren lässt (und dort das Lokale das Ganze bestimmt) oder blockiert/fixiert — je nach
+      seinem Wert.</b>
+    </p>
+  </section>
+
+  <section id="widersprueche">
+    <div class="tag">02 · Widersprüche zwischen A und B</div>
+    <h2>Kein harter Widerspruch — drei echte Spannungen</h2>
+    <p>
+      Beide Papiere sind abstrakte Round-1-Positionen (Thesen, nicht Roh-Quellen) und verwenden dasselbe
+      Garben-Bein; sie widersprechen einander im strengen Sinn <b>nicht</b> — sie sind zwei
+      <i>Gesichter</i> derselben Maschine. Die drei nächstliegenden echten Spannungen, jeweils konkret
+      benannt:
+    </p>
+    <div class="card">
+      <h3 style="margin-top:0">(S1) Nicht-Existenz als Kern vs. Bestimmung als Kern</h3>
+      <p>
+        <b>A (n1-080)</b> stellt ein <i>Nicht-Existenz</i>-Ergebnis in den Vordergrund: Der Möbiusband
+        (Halbwindung, ungerades <span class="mono">w</span>) hat <b>keine</b> globale nicht-verschwindende
+        Section — die Torsion/Monodromie <span class="mono">(−1)^w</span> <b>blockiert</b> das globale
+        Objekt; Nicht-Trivialität ist das Tragende. <b>B (n1-084)</b> stellt das
+        <i>Bestimmungs</i>-Ergebnis in den Vordergrund: „ein Morphismus ist genau dann ein Isomorphismus,
+        wenn er es auf <i>jedem Halm</i> ist“; das globale Schicksal = Kollimit der Halm-Entscheide; ein
+        einzelner lokaler Drop <b>fixiert</b> das Kollimit sofort. Spannung: Ist die Maschine dazu da, das
+        Globale zu <b>blockieren</b> (A: der Invariant kann die globale Section vernichten) oder es zu
+        <b>bestimmen</b> (B: das lokale Stück legt das Ganze sofort fest)?
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(S2) Kontinuierliche vs. diskrete lokale Daten</h3>
+      <p>
+        <b>A (n1-080)</b> arbeitet mit <i>kontinuierlichen</i> lokalen Daten — der Section
+        <span class="mono">v(θ)=h·cos((w/2)θ)</span> als <b>Kurve</b>; die globale Frage ist analytisch:
+        <i>ist sie periodisch</i> (schließt sie an der Naht?). Man muss den <b>ganzen</b> Kreis prüfen, um
+        zu wissen, dass sie <i>nicht</i> periodisch ist. <b>B (n1-084)</b> arbeitet mit <i>diskreten</i>
+        lokalen Daten — <b>PASS/DROP</b> pro Schicht; die globale Frage ist entscheidbar: <i>an welcher
+        Schicht wird das Kollimit zuerst fixiert?</i> Es gibt maximalen <b>Short-Circuit</b> (ein Drop an
+        Schicht <span class="mono">h</span> stoppt alles bei <span class="mono">h</span>; 24M vs. ~3,5M pps).
+        Spannung: Ist das globale Objekt eine <b>Kurve, die man beobachten muss</b> (Section, die durch 0
+        laufen kann) oder ein <b>Boolean, den man kurzschließen kann</b> (Urteil, an einer Schicht fixiert)?
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(S3) Das entscheidende lokale Datum: Defekt vs. Zertifikat</h3>
+      <p>
+        In beiden gilt „<i>ein lokales Stück entscheidet das Ganze</i>“ — aber das <b>Vorzeichen</b> ist
+        entgegengesetzt. <b>A (n1-080):</b> das entscheidende lokale Datum ist der <b>Flip an der Naht</b>
+        (<span class="mono">v(0)=−v(2π)</span> bei ungeradem <span class="mono">w</span>) — er
+        <i>zwingt</i> die Section durch 0 und <i>zerstört</i> die globale nicht-verschwindende Section.
+        <b> negatives Vorzeichen</b> (ein Verlust/Defekt). <b>B (n1-084):</b> das entscheidende lokale
+        Datum ist der <b>XDP-Drop</b> — er <i>fixiert</i> das globale Kollimit sofort und <i>spart</i>
+        Durchsatz. <b> positives Vorzeichen</b> (ein Gewinn/Kurzschluss). Spannung: A’s lokales Stück ist
+        ein <b>Defekt, der das Globale blockiert</b> (Schmerz); B’s ist ein <b>Zertifikat, das es günstig
+        fixiert</b> (Gewinn).
+      </p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <div class="tag">03 · Auflösung</div>
+    <h2>Zwei Gesichter desselben Lokal→Global-Prinzips</h2>
+    <div class="card">
+      <h3 style="margin-top:0">(S1) Halm-Kriterium vs. Kohomologie — zwei Sätze über dieselbe Maschine</h3>
+      <p>
+        Das <b>Bestimmungs-Gesicht</b> ist der Halm-Kriterium-Satz:
+        <span class="mono">φ: ℱ→𝒢 ist Iso ⇔ φₓ ist Iso für alle x</span> — das Lokale bestimmt das Ganze
+        in der <i>positiven, entscheidbaren</i> Richtung (B’s XDP-Kurzschluss). Das
+        <b>Blockade-Gesicht</b> ist die Tatsache, dass ein Sheaf <i>überall</i> Hälme haben und trotzdem
+        <i>keine globale Section</i> besitzen kann — exakt A’s Möbius (Halm = <span class="mono">ℝ</span> an
+        jedem Punkt, aber keine nicht-verschwindende globale Section); gemessen durch die Kohomologie
+        <span class="mono">H¹(X,ℱ)</span>, „wie sehr sich lokale Daten nicht global verkleben lassen“ —
+        ein Satz, den B (n1-084) <i>selbst</i> im Inhalt nennt. Auflösung: Das Halm-Kriterium sagt, wann ein
+        <b>Morphismus zwischen Garben</b> ein Iso ist (Lokal→Global für <i>Abbildungen</i>); die Kohomologie
+        sagt, wann eine <b>Garbe keine globale Section</b> hat (Lokal→Global für <i>Sections</i>, was
+        <i>scheitern</i> kann). Zwei verschiedene Aussagen über dieselbe Maschine — kein Widerspruch.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(S2) Werte vs. Boolesche — zwei Darstellungen des Halm-Begriffs</h3>
+      <p>
+        Der Halm ist in beiden „das lokale Datum am Punkt/Schicht“. In A trägt er <b>Werte</b> (eine reelle
+        Sectionshöhe am Punkt), und „die Section ist periodisch“ ist eine <i>analytische</i> Bedingung
+        entlang des Umlaufs; in B trägt er <b>Entscheide</b> (PASS/DROP am Hook), und „das Kollimit ist
+        fixiert“ ist eine <i>endliche, entscheidbare</i> Bedingung entlang des Pfads. Die <i>Art</i> des
+        lokalen Datums (Werte vs. Boolesche) bestimmt, ob das Globale <i>beobachtet</i> (A) oder
+        <i>kurzgeschlossen</i> (B) werden muss.
+      </p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">(S3) Defekt und Zertifikat sind dasselbe Datum in zwei Richtungen gelesen</h3>
+      <p>
+        Das „entscheidende lokale Datum“ ist in beiden <b>der Invariant, an einem lokalen Stück abgelesen</b> —
+        A: der Monodromie-Flip an der Naht; B: der Drop am Halm. In A (Sections) liest man es als
+        <b>Blockade</b> (es <i>hindert</i> ein globales Objekt); in B (Entscheide) liest man es als
+        <b>Kurzschluss</b> (es <i>fixiert</i> das globale Urteil und spart Arbeit). Das <i>Vorzeichen</i>
+        (Schmerz vs. Gewinn) ist nur der Unterschied zwischen „eine <b>Section blockiert</b>“ (A) und „ein
+        <b>Kollimit fixiert</b>“ (B). Substantivell ist es identisch: <b>ein lokaler Invariant wandelt das
+        Globale von „freie Assemblierung“ in „bestimmt/fixiert“ um.</b> Defekt und Zertifikat sind die
+        <i>dieselbe</i> lokale Struktur — der funktionale Kontext (Section vs. Entscheid) dreht das
+        Vorzeichen.
+      </p>
+    </div>
+    <div class="lane">
+      <b>Fusionierte Schlussfolgerung:</b> Die Garben-/Verklebe-Maschine hat ein Lokal→Global-Prinzip mit
+      <b>zwei Gesichtern, umgeschaltet durch den Invariant</b> (Monodromie/Topologie/Tiefe).
+      <b>Trivial</b> (w gerade / kein Drop): die lokalen Daten verkleben <i>frei</i>, das Lokale
+      <i>bestimmt</i> das Ganze, und ein einzelnes lokales Stück <i>fixiert</i> es (Short-Circuit, Kollimit).
+      <b>Nicht-trivial</b> (w ungerade / ein Drop): der Invariant <i>blockiert</i> eine would-be globale
+      Section (A) <i>oder</i> <i>fixiert</i> das Ergebnis an einem einzelnen lokalen Keim (B). A feiert das
+      Blockade-Gesicht als das Interessante (die Struktur, die ein Invariant trägt); B feiert das
+      Bestimmungs-Gesicht als das Nützliche (das Kollimit, das man günstig fixieren kann).
+      <b>Zusammen: derselbe lokale Invariant, der in A eine globale Section <i>vernichtet</i> und in B ein
+      globales Urteil <i>preiswert festlegt</i> — zwei Lesarten einer einzigen Kohärenzregel.</b>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <div class="tag">04 · Fusionierter Inhalt</div>
+    <h2>Beide Papiere auf Thesen-Ebene, verschmolzen</h2>
+
+    <h3>Die gemeinsame Maschine (beide Papiere)</h3>
+    <p>
+      (i) <b>Lokale Daten</b> an kleinen Teilstücken des Raums; (ii) eine <b>Kohärenzregel</b>, die
+      lokales in globales überführt (Übereinstimmung an den Überlappungen); (iii) ein <b>Invariant</b>,
+      der das Fügen regelt (gelingt frei / blockiert / früh fixiert). Die <b>Garbe</b> ist die gemeinsame
+      Heimat: Prägarbe <span class="mono">ℱ: Open(X)^op → 𝒞</span> mit
+      <b>S1</b> (Eindeutigkeit) und <b>S2</b> (Verkleben); Halm
+      <span class="mono">ℱₓ = colim<sub>U∋x</sub> ℱ(U)</span>; Garbifizierung
+      <span class="mono">θ: ℱ→ℱ⁺</span> (universell, erhält die Hälme). A nennt dieselben Axiome
+      „Gluing + Locality“ und die universelle Konstruktion „Sheaving“.
+    </p>
+
+    <h3>Gesicht 1 — Bestimmung (B, n1-084)</h3>
+    <ul>
+      <li><b>Halm-Kriterium:</b> <span class="mono">φ: ℱ→𝒢</span> ist Iso ⇔ <span class="mono">φₓ</span> ist Iso für alle x.</li>
+      <li><b>Stratifizierung</b> <span class="mono">f: X→P</span> in eine Teilordnung (Alexandroff-Topologie); ein Paket = <b>monotoner Exit-Pfad</b> („nur tiefer/aufwärts, nie zurück“).</li>
+      <li><b>Urteil:</b> <span class="mono">verdict(γ) = colim<sub>h∈γ</sub> v<sub>h</sub></span>; ein Drop in <i>jeder</i> Schicht = <b>entscheidender Keim</b> → fixiert das Kollimit sofort (XDP ≈ 24M pps vs. iptables ≈ 3,5M).</li>
+      <li><b>Exodromie:</b> <span class="mono">Cons_P(X) ≃ Fun(Exit_P(X), Set)</span> — Verhalten = Funktor auf den Pfaden.</li>
+      <li><b>BPF-Verifier</b> = wohldefinierter lokaler Keim (lokal sicher, terminierend); Garbenaxiome = globale Wohldefiniertheit. Beide zusammen nötig.</li>
+    </ul>
+
+    <h3>Gesicht 2 — Blockade (A, n1-080)</h3>
+    <ul>
+      <li><b>Faserbündel</b> <span class="mono">π: E→B</span>, Faser <span class="mono">F=π⁻¹(b)</span>, lokal trivial; <b>Section</b> <span class="mono">s: B→E</span> mit <span class="mono">π∘s=id_B</span>.</li>
+      <li><b>Trivial</b> (Zylinder, <span class="mono">m=+1</span>): globale nicht-verschwindende Section existiert. <b>Nicht-trivial</b> (Möbius, ungerades <span class="mono">w</span>, <span class="mono">m=−1</span>): keine nicht-verschwindende globale Section.</li>
+      <li><b>Monodromie</b> <span class="mono">m=(−1)^w</span>: ein Umlauf multipliziert die Faser; w gerade → +1 (triviale Holonomie), w ungerade → −1 (einzige globale Section = 0).</li>
+      <li><b>„Konstante“ Section</b> eines w-Halbwindungs-Bündels: <span class="mono">v(θ)=h·cos((w/2)θ)</span>; periodisch (gültige globale Section) ⇔ w gerade; w ungerade → anti-periodisch, läuft durch 0 = gescheiterte Verklebung an der Naht <span class="mono">θ=0≈2π</span>.</li>
+      <li><b>Sheaf der stetigen Abschnitte:</b> Faser = Halm, Bündel-Sections = Sheaf-Sections. <b>Hopf-Faserung</b> <span class="mono">S³→S²</span> (nicht-trivial, verknüpfte Fasern). <b>Pullback</b> <span class="mono">A×_C B = {(a,b): f(a)=g(b)}</span> = natural join.</li>
+    </ul>
+
+    <h3>Das gemeinsame Wörterbuch</h3>
+    <table>
+      <thead><tr><th>Garben-Ebene</th><th>A (n1-080) — Geometrie</th><th>B (n1-084) — Systeme</th></tr></thead>
+      <tbody>
+        <tr><td>lokales Datum (Halm)</td><td>Sectionswert <span class="mono">v(θ)=h·cos((w/2)θ)</span> am Punkt</td><td>PASS/DROP am Hook</td></tr>
+        <tr><td>Invariant (Schalter)</td><td>Monodromie <span class="mono">m=(−1)^w</span> (Torsion)</td><td>Tiefe / Stratifizierung (Hook-Ordnung)</td></tr>
+        <tr><td>Kohärenzregel</td><td>Section periodisch an der Naht; stetig auf Überlappung</td><td>S2: Entscheide auf Schnittmengen kompatibel</td></tr>
+        <tr><td>globales Objekt</td><td>globale (nicht-verschwindende) Section</td><td>globale Zustellung = <span class="mono">colim<sub>h∈γ</sub> v<sub>h</sub></span></td></tr>
+        <tr><td>„freier“ Fall</td><td>w gerade (<span class="mono">m=+1</span>, Zylinder)</td><td>kein Drop (alle Hälme verkleben, Vollpfad)</td></tr>
+        <tr><td>fixierender lokaler Keim</td><td>Naht-Flip <span class="mono">θ=0≈2π</span> (w ungerade)</td><td>Drop am Halm (XDP)</td></tr>
+        <tr><td>Messgröße</td><td>Kohomologie <span class="mono">H¹(X,ℱ)</span> / Monodromie</td><td>Durchsatz (24M vs. ~3,5M pps)</td></tr>
+        <tr><td>universelle Konstruktion</td><td>Sheaving (Prägarbe → Sheaf)</td><td>Garbifizierung <span class="mono">θ: ℱ→ℱ⁺</span></td></tr>
+      </tbody>
+    </table>
+    <div class="lane">
+      <b>Fusionierter Satz:</b> Sei F ein (stratifizierter oder verdrillter) Raum mit Invariant m. Die
+      lokalen Daten verkleben zu einem globalen Objekt, <i>falls</i> die Kohärenzregel an allen
+      Überlappungen — besonders an der Naht — erfüllt ist. Ist m <b>trivial</b> (w gerade / kein Drop), so
+      ist das Globale die <i>freie</i> Versammlung der Hälme (und wird, wo relevant, von einem einzigen
+      lokalen Stück <i>fixiert</i> — Bestimmungs-Gesicht). Ist m <b>nicht-trivial</b> (w ungerade / ein
+      Drop), so <i>blockiert</i> m eine would-be globale Section (Blockade-Gesicht, gemessen durch H¹)
+      <b>oder</b> <i>fixiert</i> das globale Urteil an einem einzelnen lokalen Keim (Kurzschluss).
+      <b>Ein lokaler Invariant, zwei Gesichter: Blockade und Fixierung derselben Kohärenzregel.</b>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <div class="tag">05 · Visualisierung</div>
+    <h2>Ein verdrilltes Bündel, das sich in zwei Gesichtern liest</h2>
+    <p>
+      <b>Oben (kontinuierlich, A):</b> die „konstante“ Section <span class="mono">v(θ)=h·cos((w/2)θ)</span>
+      des <span class="mono">w</span>-Halbwindungs-Bündels über <span class="mono">S¹</span>. Die Punkte
+      <span class="mono">θ=0</span> und <span class="mono">θ=2π</span> sind derselbe Basispunkt: verkleben
+      sie (gleiche Vorzeichen, grün) oder flippt die Section (−, rot) und muss durch 0 (rote Schnitte)?
+    </p>
+    <p>
+      <b>Unten (diskret, B):</b> dieselbe Datenmenge als <b>Kette lokaler Halm-Entscheide</b> — 7 Regionen
+      (immer PASS, lokal stetig) plus <i>eine</i> Naht. Der <b>Slider w</b> ist der Invariant-Schalter:
+      w gerade → Verklebung/Bestimmung, w ungerade → Blockade/Kurzschluss. <b>Die Naht ist in beiden
+      Gesichtern das „entscheidende lokale Datum“</b> — zugleich Defekt (blockiert die globale Section)
+      und Short-Circuit (fixiert das Kollimit an einem einzigen Halm).
+    </p>
+    <div class="vizbox">
+      <div class="ctrl">
+        <div class="c"><label>Halbwindungen w <b id="v-w">1</b></label><input type="range" id="s-w" min="0" max="4" step="1" value="1"></div>
+        <div class="c"><label>Sectionshöhe h <b id="v-h">0.70</b></label><input type="range" id="s-h" min="0.2" max="1" step="0.05" value="0.7"></div>
+      </div>
+      <div class="btnrow">
+        <button id="b-play">Abschnitt animieren</button>
+        <button id="b-theme" class="alt">Theme wechseln</button>
+      </div>
+      <canvas id="cvFused"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--acc)"></i>„konstante“ Section v(θ)</span>
+        <span><i style="background:var(--sky)"></i>Nahtstart θ=0</span>
+        <span><i style="background:var(--warn)"></i>Naht θ=0≈2π / Position θ</span>
+        <span><i style="background:var(--bad)"></i>0-Schnitte / Naht-DROP</span>
+      </div>
+      <div class="faces">
+        <div class="face">
+          <div class="ft">Gesicht 2 · Blockade (A)</div>
+          <div class="fv" id="faceObst">—</div>
+        </div>
+        <div class="face">
+          <div class="ft">Gesicht 1 · Bestimmung (B)</div>
+          <div class="fv" id="faceDet">—</div>
+        </div>
+      </div>
+      <div class="stat">
+        <span>Invariant m=(−1)^w: <b id="r-mono">—</b></span>
+        <span>Entscheidendes lokales Datum: <b id="r-key">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <div class="tag">06 · Provenienz</div>
+    <h2>Die beiden Round-1-Quellen</h2>
+    <div class="card">
+      <b>A — <a href="../n1-080.html">n1-080.html</a></b>
+      <p>„Lokal zu global: Faserbündel ✕ Sheaving“ — die <i>geometrische</i> Round-1-Fusion: Faserbündel
+      (Totalraum, Fasern, Torsion, Monodromie (−1)^w, Möbius/Nicht-Existenz) × Sheaving (Sheaf-Axiome,
+      universelle Konstruktion). Liefert das <b>Blockade-Gesicht</b>.</p>
+    </div>
+    <div class="card">
+      <b>B — <a href="../n1-084.html">n1-084.html</a></b>
+      <p>„Die Firewall als Garbe: das Paket als Exit-Pfad“ — die <i>systemische</i> Round-1-Fusion:
+      Firewall-Stack (ufw/iptables/BPF/XDP, Verifier, Durchsatz) × Garben (Hälme, Kollimit,
+      Stratifizierung, Exit-Pfade, Exodromie). Liefert das <b>Bestimmungs-Gesicht</b>.</p>
+    </div>
+  </section>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var cv = document.getElementById('cvFused');
+  var S = { w:1, h:0.7, theta:0, playing:false };
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function parseColor(c){
+    c=(c||'').trim();
+    if(c.charAt(0)==='#'){
+      var h=c.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    var m=c.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(','); return [parseFloat(p[0]), parseFloat(p[1]), parseFloat(p[2])]; }
+    return [120,120,120];
+  }
+  function rgba(c,a){ var p=parseColor(c); return 'rgba('+(p[0]|0)+','+(p[1]|0)+','+(p[2]|0)+','+a+')'; }
+  function vOf(t){ return S.h*Math.cos((S.w/2)*t); }
+  function fit(cv, H){
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var cw = Math.max(1, Math.floor(r.width*dpr));
+    var ch = Math.max(1, Math.floor(H*dpr));
+    if(cv.width!==cw || cv.height!==ch){ cv.width=cw; cv.height=ch; cv.style.height=H+'px'; }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w:r.width, h:H, ctx:ctx };
+  }
+  var NSEC = 7;
+  function draw(){
+    var o=fit(cv,400), ctx=o.ctx, w=o.w, h=o.h;
+    var DIM=cssv('--dim','#8b93a9'), GRID=cssv('--grid','#232a38');
+    var ACC=cssv('--acc','#64ffda'), SKY=cssv('--sky','#7aa2ff'), BAD=cssv('--bad','#ff6f6f'), WARN=cssv('--warn','#ffd166');
+    ctx.clearRect(0,0,w,h);
+    var flip=(S.w%2===1);
+    var padL=48, padR=30, padT=30, padB=150;
+    var gw=w-padL-padR, gh=h-padT-padB;
+    var vMax=Math.max(S.h,0.25)*1.35;
+    function X(t){ return padL+(t/TAU)*gw; }
+    function Y(v){ return padT+gh/2-(v/vMax)*(gh/2); }
+    ctx.strokeStyle=GRID; ctx.lineWidth=1; ctx.strokeRect(padL,padT,gw,gh);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=rgba(DIM,0.6);
+    ctx.beginPath(); ctx.moveTo(padL,Y(0)); ctx.lineTo(padL+gw,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=ACC; ctx.lineWidth=3; ctx.beginPath();
+    var M=240, i;
+    for(i=0;i<=M;i++){ var t=i/M*TAU; var x=X(t), y=Y(vOf(t)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke();
+    if(S.w>0){
+      for(var k=0;;k++){
+        var tz=(Math.PI+2*k*Math.PI)/S.w;
+        if(tz>TAU-1e-6) break;
+        if(tz<0) continue;
+        ctx.fillStyle=BAD; ctx.beginPath(); ctx.arc(X(tz),Y(0),4,0,TAU); ctx.fill();
+      }
+    }
+    var v0=vOf(0), vE=vOf(TAU);
+    ctx.fillStyle=SKY; ctx.beginPath(); ctx.arc(X(0),Y(v0),6,0,TAU); ctx.fill();
+    ctx.fillStyle=flip?BAD:ACC; ctx.beginPath(); ctx.arc(X(TAU),Y(vE),6,0,TAU); ctx.fill();
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('\u03B8=0', X(0), padT+gh+18);
+    ctx.fillText('\u03B8=2\u03C0', X(TAU), padT+gh+18);
+    ctx.textAlign='left'; ctx.fillStyle=SKY; ctx.fillText('v(0)=+'+S.h.toFixed(2), X(0)+9, Y(v0)-9);
+    ctx.textAlign=flip?'right':'left'; ctx.fillStyle=flip?BAD:ACC;
+    ctx.fillText('v(2\u03C0)='+(flip?'\u2212':'+')+S.h.toFixed(2), flip?X(TAU)-9:X(TAU)+9, Y(vE)-9);
+    var stripY=h-62, stripH=40, cellW=gw/(NSEC+1), s;
+    for(s=0;s<=NSEC;s++){
+      var isSeam=(s===NSEC);
+      var pass=isSeam?!flip:true;
+      var x0=padL+s*cellW+2, ww=cellW-4;
+      ctx.fillStyle=pass?rgba(ACC,0.22):rgba(BAD,0.28);
+      ctx.strokeStyle=pass?ACC:BAD; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.rect(x0,stripY,ww,stripH); ctx.fill(); ctx.stroke();
+      var cx=x0+ww/2;
+      ctx.fillStyle=pass?ACC:BAD; ctx.font='bold 12px ui-monospace,monospace'; ctx.textAlign='center';
+      ctx.fillText(isSeam?(pass?'PASS':'DROP'):(pass?'\u2713':'\u2717'), cx, stripY+stripH/2+4);
+      if(isSeam){ ctx.fillStyle=WARN; ctx.font='9px ui-monospace,monospace'; ctx.fillText('Naht', cx, stripY-5); }
+    }
+    var xM=X(S.theta), yM=Y(vOf(S.theta));
+    ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(WARN,0.85); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(xM,padT); ctx.lineTo(xM,padT+gh); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=WARN; ctx.beginPath(); ctx.arc(xM,yM,5,0,TAU); ctx.fill();
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('v(\u03B8)=h\u00B7cos((w/2)\u03B8)  \u00B7  w='+S.w+'  \u00B7  7 Regionen + 1 Naht', padL, 15);
+  }
+  function readout(){
+    var flip=(S.w%2===1);
+    var fo=document.getElementById('faceObst'), fd=document.getElementById('faceDet');
+    var rm=document.getElementById('r-mono'), rk=document.getElementById('r-key');
+    rm.textContent=flip?('m = (\u22121)^'+S.w+' = \u22121 (Torsion)'):('m = (\u22121)^'+S.w+' = +1 (trivial)');
+    if(flip){
+      fo.className='fv bad';
+      fo.textContent='Blockiert \u2014 anti-periodisch (v(0)=\u2212v(2\u03C0)), Section muss durch 0; keine globale nicht-verschwindende Section (H\u00B9\u22600).';
+      fd.className='fv bad';
+      fd.textContent='Short-Circuit \u2014 der Flip an der Naht (ein lokaler Halm) fixiert das Kollimit sofort \u2192 globales Objekt = 0-Section.';
+      rk.textContent='Naht \u03B8=0\u22482\u03C0 (Flip)';
+    } else {
+      fo.className='fv ok';
+      fo.textContent='Existiert \u2014 Verklebung schlie\u00DFt (v(0)=v(2\u03C0)=+h); globale nicht-verschwindende Section ist g\u00FCltig (H\u00B9=0).';
+      fd.className='fv ok';
+      fd.textContent='Freie Assemblierung \u2014 Naht verklebt; Kollimit der H\u00E4lme = globale Section (kein einziger fixierender Keim n\u00F6tig).';
+      rk.textContent='\u2014 (kein einzelner fixierender Keim)';
+    }
+  }
+  function wire(id,set){ document.getElementById(id).addEventListener('input',function(e){ set(e.target); draw(); readout(); }); }
+  wire('s-w',function(el){ S.w=parseInt(el.value,10); document.getElementById('v-w').textContent=S.w; });
+  wire('s-h',function(el){ S.h=parseFloat(el.value); document.getElementById('v-h').textContent=S.h.toFixed(2); });
+  document.getElementById('b-play').addEventListener('click',function(){ S.playing=!S.playing; this.textContent=S.playing?'Pause':'Abschnitt animieren'; });
+  document.getElementById('b-theme').addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); draw(); });
+  window.addEventListener('resize',function(){ draw(); });
+  function loop(){ if(S.playing){ S.theta=(S.theta+0.02)%TAU; } draw(); requestAnimationFrame(loop); }
+  readout(); draw(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

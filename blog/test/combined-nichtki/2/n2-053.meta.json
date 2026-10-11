@@ -1,0 +1,16 @@
+{
+  "no": "053",
+  "a": "n1-101.html",
+  "b": "n1-108.html",
+  "a_title": "Struktur über Substanz — Fusion: Analytischer Idealismus ✕ Topologie biologischer Systeme",
+  "b_title": "Das Tor ist nicht das Ding — Fusion: Geheimwissen ✕ Signifikanz",
+  "combined_theme": "struktur-hinter-maske-und-tor",
+  "one_line": "Ein Oberflächen-Zeichen — Homöostase-Lesung, p-Wert, Icon oder Geheimnis — ist nie das Ding; das Ding ist die orthogonale relationale Struktur dahinter, und selbstregulierende Systeme und Kulturen maskieren sie systematisch.",
+  "contradictions": [
+    "Demotion: A (n1-101) demotiert die Substanz (Materie ist das Icon, Struktur ist real); B (n1-108) demotiert das Tor (Schwelle ist Proxy, Substanz/Effektgröße ist real) — sie werfen unterschiedliche Dinge weg und verwenden 'Substanz' für entgegengesetzte Referenten.",
+    "Ontologie vs. Agnostik: A wagt, das Ding zu benennen (Struktur = Selbstorganisation eines Feldes, Analytischer Idealismus als ernste Kandidatin); B weigert sich, zu sagen, was die Substanz IST, und bleibt substanz-/ontologie-neutral (reine Anti-Proxy-Methode).",
+    "Maske durchlesen vs. Tor abschaffen: A's Maske (Homöostase, Gehirnfilter) ist natürlich, funktional, unvermeidbar — man kann nur DURCH sie hindurchlesen; B's Tor (p<0.05, Geheimnis) ist konventionell, willkürlich und 'grundsätzlich abzuschaffen'."
+  ],
+  "resolution": "Es gibt zwei Oberflächen, die mit dem Ding verwechselt werden — rohe Materie (A) und die Schwelle (B) — aber das Ding ist beides nicht: die relationale Struktur (A), und B's 'Substanz/Oomph' ist genau diese Struktur in entscheidungsrelevanten Einheiten gemessen (die zwei 'Substanzen' fallen in eine zusammen: Struktur, quantifiziert). Die Methode (orthogonale Struktur lesen, beide Proxy ignorieren) ist ontologie-neutral; A's Idealismus ist eine mögliche, aber nicht nötige Auffüllung. Masken gibt es in zwei Arten — natürlich (hindurchlesen: wahr=(Anzeige−normal·k)/(1−k)) und konventionell (abschaffen + durch Verlustfunktion α* ersetzen); man diagnostiziert die Art und wendet die passende Therapie an.",
+  "viz": "Canvas-Scatter 'Die Maske und das Tor': je Punkt ein System/Behauptung mit wahrer Struktur/Oomph (x, das Ding) und Oberflächen-Anzeige (y). Regler für natürliche Maske k (Homöostase blendt Anzeige gegen Normal), Tor/Schwelle g und √n-Hebel n (verlegt die Linie, DeGroot). Punkte farbcodiert nach Schicksal: korrekt akzeptiert / falsch akzeptiert (Maske: sieht normal, Struktur kaputt) / falsch verworfen (groß, aber unter dem Tor, Vioxx) / korrekt verworfen. Themenreaktiv, nur Inline-Daten, keine Netzwerkdaten."
+}

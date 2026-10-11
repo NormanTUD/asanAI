@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Zeichen ist nicht das Ding — Fusion: Struktur über Substanz ✕ Das Tor ist nicht das Ding</title>
+<style>
+  :root{
+    --bg:#f5f2ea; --bg2:#ece7db; --panel:#fbfaf6;
+    --ink:#23201a; --ink-dim:#5c5646;
+    --accent:#8b6cb8; --accent2:#c07a4a; --accent3:#2f7d86;
+    --danger:#b8524f; --ok:#3f8f5f;
+    --line:rgba(40,32,16,.16); --grid:rgba(40,32,16,.07);
+    --shadow:0 8px 30px rgba(40,32,16,.08);
+    --viz-ok:#2e9e5b; --viz-falseaccept:#d64545; --viz-falsereject:#c0861f;
+    --viz-correctreject:#8a93a0; --viz-gate:#2b7fc0; --viz-target:#6b2fd6;
+  }
+  html.dark{
+    --bg:#0a0a14; --bg2:#10101e; --panel:#14142a;
+    --ink:#e8e8f5; --ink-dim:#a2a0c0;
+    --accent:#d4a574; --accent2:#8b6cb8; --accent3:#5eb8c4;
+    --danger:#d47474; --ok:#5fbf8a;
+    --line:rgba(212,165,116,.22); --grid:rgba(255,255,255,.06);
+    --shadow:0 10px 40px rgba(0,0,0,.5);
+    --viz-ok:#5fd08a; --viz-falseaccept:#ff6b6b; --viz-falsereject:#e0b04a;
+    --viz-correctreject:#6b7686; --viz-gate:#54a0ff; --viz-target:#a970ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Georgia','Iowan Old Style','Palatino',serif;
+    line-height:1.72; -webkit-font-smoothing:antialiased;
+  }
+  .theme-toggle{
+    position:fixed; top:14px; right:16px; z-index:50;
+    background:var(--panel); color:var(--ink); border:1px solid var(--line);
+    border-radius:20px; padding:.4rem .85rem; font:600 .78rem/1 system-ui,sans-serif;
+    cursor:pointer; box-shadow:var(--shadow);
+  }
+  article{max-width:820px; margin:0 auto; padding:4.5rem 1.3rem 5rem}
+  header.masthead{margin-bottom:2.2rem}
+  .kicker{font:700 .72rem/1 system-ui,sans-serif; letter-spacing:.22em; text-transform:uppercase; color:var(--accent2); margin-bottom:.8rem}
+  h1{font-size:clamp(2rem,5vw,3rem); line-height:1.12; font-weight:700; letter-spacing:-.02em; margin-bottom:.7rem}
+  .subtitle{font-size:.98rem; color:var(--ink-dim); font-style:italic; border-left:3px solid var(--accent); padding-left:.8rem; margin-top:1rem}
+  .subtitle code{font:600 .82rem/1 ui-monospace,monospace; color:var(--accent3)}
+  nav.toc{display:flex; flex-wrap:wrap; gap:8px; margin-top:1.4rem}
+  nav.toc a{font:600 .8rem/1 system-ui,sans-serif; color:var(--ink-dim); text-decoration:none; border:1px solid var(--line); border-radius:8px; padding:6px 11px; background:var(--panel)}
+  nav.toc a:hover{border-color:var(--accent); color:var(--accent)}
+  section{margin-top:3rem; scroll-margin-top:20px}
+  section>h2{font-size:clamp(1.4rem,3.2vw,2rem); font-weight:700; letter-spacing:-.01em; margin-bottom:.2rem; color:var(--accent)}
+  section>.lead{color:var(--ink-dim); font-size:.98rem; margin-bottom:1.1rem}
+  p{margin-bottom:1rem; font-size:1.03rem}
+  p:last-child{margin-bottom:0}
+  strong{color:var(--ink)}
+  em{color:var(--accent); font-style:italic}
+  .tag{display:inline-block; font:700 .68rem/1 system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; padding:.22rem .55rem; border-radius:12px; border:1px solid var(--line); color:var(--accent3); background:var(--bg2); vertical-align:middle}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin:1.2rem 0; box-shadow:var(--shadow)}
+  .card h3{font-size:1.1rem; margin-bottom:.5rem; color:var(--ink); font-weight:700}
+  .card .who{font:700 .7rem/1 system-ui,sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--accent2); display:block; margin-bottom:.4rem}
+  .card.fuse{border-left:4px solid var(--accent)}
+  ul,ol{margin:.4rem 0 1rem 1.2rem}
+  li{margin-bottom:.55rem; font-size:1.01rem}
+  li::marker{color:var(--accent3)}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+  blockquote.fuse{border-left:3px solid var(--accent); background:var(--bg2); padding:1rem 1.2rem; border-radius:0 10px 10px 0; margin:1.3rem 0; font-style:italic; color:var(--ink); font-size:1.02rem}
+  .eq{font-family:ui-monospace,'JetBrains Mono',monospace; font-size:.88rem; background:var(--bg2); border:1px solid var(--line); border-radius:8px; padding:.6rem .8rem; margin:.7rem 0; display:block; overflow-x:auto; color:var(--accent3); white-space:pre}
+  .viz-wrap{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.1rem; box-shadow:var(--shadow)}
+  #mask-canvas{width:100%; height:440px; display:block; border-radius:12px; background:var(--bg2)}
+  .controls{display:flex; flex-wrap:wrap; gap:1rem 1.4rem; margin-top:1rem; align-items:flex-end}
+  .ctrl{display:flex; flex-direction:column; gap:.35rem}
+  .ctrl label{font:700 .68rem/1 system-ui,sans-serif; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-dim)}
+  .ctrl .val{font:600 .78rem/1 ui-monospace,monospace; color:var(--accent3)}
+  input[type=range]{-webkit-appearance:none; appearance:none; width:150px; height:4px; background:var(--line); border-radius:2px; outline:none; cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--accent); cursor:pointer; box-shadow:0 0 10px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:16px; height:16px; border:none; border-radius:50%; background:var(--accent); cursor:pointer}
+  .chk{font-size:.85rem; color:var(--ink-dim); user-select:none}
+  .fb{font:700 .8rem/1 system-ui,sans-serif; padding:.4rem .7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg2); color:var(--ink); cursor:pointer; transition:all .15s}
+  .fb:hover{border-color:var(--accent)}
+  .readout{display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1rem; font:600 .8rem/1.4 ui-monospace,monospace}
+  .readout .chip{background:var(--bg2); border:1px solid var(--line); border-radius:8px; padding:.45rem .7rem}
+  .readout .chip b{color:var(--accent)}
+  .ro-ca{color:var(--ok)} .ro-fa{color:var(--danger)} .ro-fr{color:var(--viz-falsereject)} .ro-cr{color:var(--viz-correctreject)}
+  .verdict{margin-top:.9rem; font-size:.95rem; color:var(--ink); background:var(--bg2); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:.7rem .9rem}
+  .viz-note{font-size:.9rem; color:var(--ink-dim); margin-top:1rem}
+  .provenance li{font-size:.98rem}
+  .provenance a{color:var(--accent3); text-decoration:none; border-bottom:1px dotted var(--accent3); word-break:break-all}
+  .provenance a:hover{color:var(--accent)}
+  footer.colophon{margin-top:3.5rem; padding-top:1.5rem; border-top:1px solid var(--line); font-size:.82rem; color:var(--ink-dim); text-align:center}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">◐ Thema</button>
+
+<article>
+  <header class="masthead">
+    <div class="kicker">Fusion · Runde 2 · Nicht-KI-Track · Paar 053</div>
+    <h1>Das Zeichen ist nicht das Ding</h1>
+    <p class="subtitle">Fusion aus: <code>n1-101.html</code> ✕ <code>n1-108.html</code>  (Runde 2)</p>
+    <nav class="toc">
+      <a href="#these">These</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Visualisierung</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+  </header>
+
+  <!-- ══════════ 1. THESE ══════════ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Runde-1-Papiere sind, auf ihre höchste Abstraktion gebracht, <strong>die und dieselbe Ent-Maskierungs-Epistemik</strong>. n1-101 („Struktur über Substanz“) sagt: Das Wesen eines Systems liegt in seiner <em>relationalen Struktur</em>, nicht im träge Stofflichen — und selbstregulierende Systeme <em>maskieren</em> ihren wahren Zustand (Homöostase schiebt die Anzeige nach „Normal“, der Gehirnfilter senkt die Aktivität, während das Erleben steigt). n1-108 („Das Tor ist nicht das Ding“) sagt: Wissen und Entscheidung werden nicht durch eine <em>oberflächliche Schwelle</em> (das Tor: p&lt;0,05, Geheimnis) bestimmt, sondern durch die <em>orthogonale Substanz</em> dahinter (Effektgröße/Oomph, dokumentierbare Geschichte).</p>
+    <p>Die einigende Position: <strong>Ein Oberflächen-Zeichen — eine Homöostase-Lesung, ein Aktivitätspegel, ein p-Wert, ein Icon, ein Geheimnis — ist nie das Ding. Das Ding ist die tieferliegende, orthogonale, relationale Struktur; und selbstregulierende Systeme <em>und</em> Kulturen maskieren sie systematisch.</strong> Sogar die Art des Fehlers ist in beiden dieselbe: der <em>„sizeless stare“</em> — man beachtet nur das helle Zeichen (das laute „signifikant“, das beruhigende „normal“) und lässt die orthogonale Achse (Effektgröße / wahrer Strukturzustand) ungelesen.</p>
+    <blockquote class="fuse">Fusioniert: <strong>Die ganze Sorgfalt von Wissenschaft und Weisheit ist die Disziplin, die Struktur <em>gegen</em> die Maske zu lesen.</strong> Ob das Zeichen ein Organ ist, das sich selbst kompensiert, oder eine Kultur, die eine 5%-Linie mit der Realität verwechselt — das Ding steht immer <em>hinter</em> dem Zeichen, und es ist orthogonal zu ihm.</blockquote>
+  </section>
+
+  <!-- ══════════ 2. WIDERSPRÜCHE ══════════ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="lead">Die beiden Runde-1-Papiere haben verschiedene Paare fusioniert und treffen sich trotzdem in drei echten Spannungslinien über <em>was</em> demotiert wird, <em>ob</em> man das Ding benennen darf und <em>was</em> mit der Maske zu geschehen hat.</p>
+    <div class="grid2">
+      <div class="card">
+        <span class="who">Spannung 1 · Was wird demotiert</span>
+        <h3>„Substanz ist das Icon“ vs. „das Tor ist der Proxy“</h3>
+        <p>A (n1-101) demotiert die <em>Substanz</em>: Materie ist das Icon auf dem Dashboard, die <em>Struktur</em> ist das Reale. B (n1-108) demotiert das <em>Tor</em>: die Schwelle ist der Proxy, die <em>Substanz</em> (Effektgröße) ist das Reale. Sie werfen also <em>unterschiedliche</em> Dinge weg — und verwenden das Wort „Substanz“ für <em>entgegengesetzte</em> Referenten (bei A = Materie, bei B = Effektgröße/dokumentierter Inhalt).</p>
+      </div>
+      <div class="card">
+        <span class="who">Spannung 2 · Ontologie vs. Agnostik</span>
+        <h3>„Das Ding kann benannt werden“ vs. „ich sage nicht, was es ist“</h3>
+        <p>A wagt, das Ding zu <em>benennen</em>: Struktur = Selbstorganisation eines einzigen Feldes; der Analytische Idealismus steht als ernste metaphysische Kandidatin im Raum. B weigert sich <em>grundsätzlich</em>, zu sagen, was die Substanz <em>ist</em> — es behauptet nur, dass das Tor es nicht ist und die orthogonale Größe dahintersteckt. B ist substanz- und ontologie-neutral, eine reine Anti-Proxy-Methode.</p>
+      </div>
+    </div>
+    <div class="card">
+      <span class="who">Spannung 3 · Maske: durchlesen vs. abschaffen</span>
+      <h3>„Die Maske ist natürlich — man liest durch“ vs. „das Tor ist willkürlich — es ist abzuschaffen“</h3>
+      <p>A’s Maske (Homöostase, Gehirnfilter) ist eine <em>naturale, funktionale, unvermeidbare</em> Eigenschaft des Systems: Man kann sie nicht entfernen — man kann nur <em>durch</em> sie hindurchlesen (der Organismus lebt gerade, weil er kompensiert). B’s Tor (p&lt;0,05, Geheimhaltung) ist eine <em>konventionelle, willkürliche</em> Grenze, die man <em>abschaffen und ersetzen</em> soll („Das Tor ist grundsätzlich abzuschaffen“). Bei A ist die Maske funktional und bleibt; bei B ist das Tor verderblich und geht.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 3. AUFLÖSUNG ══════════ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p class="lead">Die drei Spannungen lösen sich, sobald man erkennt, dass die beiden Papiere das Wort „Substanz“ zweimal für <em>unterschiedliche</em> Oberflächen verwenden — und dass Masken <em>zwei Arten</em> haben.</p>
+    <div class="card fuse">
+      <h3>Auflösung 1 · Die zwei Oberflächen, ein Ding</h3>
+      <p>Der Schlüssel liegt im Wort „Substanz“. A’s Substanz = <em>rohe Materie</em> (das Icon) → wird demotiert. B’s Substanz = <em>prüfbare, kostenbewehrte Größe</em> hinter dem Tor → wird erhöht. Es gibt also <em>zwei</em> Oberflächen, die mit dem Ding verwechselt werden: den rohen Stoff <em>und</em> die Schwelle. Das Ding ist <em>beides nicht</em>: es ist die <em>relationale Struktur</em> (A) — und B’s „Substanz/Oomph“ ist genau <em>diese</em> Struktur, in entscheidungsrelevanten Einheiten gemessen. Die zwei „Substanzen“ <em>fallen in eine zusammen</em>: Struktur, quantifiziert. A demotiert die Materie, B demotiert die Linie — beide deuten auf dieselbe erhöhte Größe: die Struktur und ihre Größe.</p>
+    </div>
+    <div class="card fuse">
+      <h3>Auflösung 2 · Agnostik als Rahmen, Ontologie als Option</h3>
+      <p>Die <em>Methode</em> (die orthogonale Struktur lesen, beide Proxy ignorieren) ist ontologie-neutral — sie funktioniert unter Materialismus, Idealismus wie Dualismus. B’s Agnostik ist der <em>Rahmen</em>; A’s Idealismus ist eine <em>starke, aber nicht nötige</em> Auffüllung dafür, was die Struktur „wirklich“ ist. (Genau so wie n1-101 selbst die substanz-neutrale Topologie den Idealismus als „Strukturgrammatik der Erscheinung“ absorbierte.) Die Fusion hält die Methode neutral und degradiert A’s Ontologie zu einer möglichen Interpretation.</p>
+    </div>
+    <div class="card fuse">
+      <h3>Auflösung 3 · Zwei Maske-Arten, zwei Therapien</h3>
+      <p>Masken gibt es in zwei Arten. <em>Natürliche</em> Masken (Homöostase, Gehirnfilter) sind funktional und unvermeidbar → man <em>liest hindurch</em>: man invertiert die Maske, um den wahren Zustand aus der Anzeige zu rekonstruieren. <em>Konventionelle</em> Masken (p&lt;0,05, Geheimnis-Tor) sind willkürlich → man <em>schießt sie ab und ersetzt</em> sie durch eine aus einer Verlustfunktion abgeleitete Schwelle (α*) und richtet nach der Oomph. Beide sind Fälle von „das Zeichen ist nicht das Ding“; die Verschreibung <em>unterscheidet sich nach der Art der Maske</em>. Man diagnostiziert zuerst, welche Maske vor einem liegt.</p>
+    </div>
+    <div class="card fuse" style="margin-top:1.3rem">
+      <span class="who">Fusionierte Schlussposition</span>
+      <p class="lead">Das Kriterium ist nie das Zeichen — weder die Homöostase-Lesung, noch der p-Wert, noch das Icon, noch das Gelübde — sondern die <em>orthogonale relationale Struktur</em> und ihre <em>entscheidungsrelevante Größe</em>. Selbstregulierende Systeme und Kulturen maskieren sie beide; die Disziplin besteht darin, die Struktur gegen die Maske zu lesen und die Maske zu <em>benennen</em> (natürlich → hindurchlesen, konventionell → abschaffen).</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 4. INHALT ══════════ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="lead">Der konsolidierte, auf der Ebene der <em>Thesen</em> beider Runde-1-Papiere integrierte Stoff — nicht aneinandergereiht. Eine spätere Runde kann von hier allein weiterarbeiten.</p>
+
+    <h3 style="font-size:1.1rem;margin:1.4rem 0 .5rem;color:var(--ink)">4.1 Die gemeinsame Architektur: Zeichen ≠ Ding</h3>
+    <p>Beide Modelle tragen <em>dieselbe</em> Form — ein <strong>Oberflächen-Zeichen</strong> (Schwelle, Anzeige, Icon, Tor) und eine <strong>orthogonale Größe</strong> (das Ding), die das Zeichen <em>nicht</em> erfasst:</p>
+    <ul>
+      <li><strong>n1-101:</strong> Zeichen = Homöostase-Anzeige / Gehirnaktivitätspegel / „das Icon auf dem Dashboard“. Orthogonal = die <em>relationale Struktur</em> (Schleifen, Erreichbarkeit, Schwingungsmuster).</li>
+      <li><strong>n1-108:</strong> Zeichen = das <em>Tor</em> (p&lt;0,05, Geheimhaltung, der „sizeless stare“). Orthogonal = die <em>Substanz</em> (Effektgröße/Oomph, dokumentierbare, überprüfbare Geschichte).</li>
+      <li><strong>Gemeinsamer Fehlermodus:</strong> der „sizeless stare“ — man beachtet nur das helle Zeichen und ignoriert die orthogonale Achse.</li>
+    </ul>
+
+    <h3 style="font-size:1.1rem;margin:1.4rem 0 .5rem;color:var(--ink)">4.2 Das fusionierte Masken-Modell (zwei Masken)</h3>
+    <ul>
+      <li><strong>Natürliche Maske (A):</strong> <span class="eq">Anzeige_i = lerp(wahr_i, normal, k)   k ∈ [0,1]
+k → 1  ⇒  Anzeige_i → normal   (obwohl wahr_i ≠ normal)</span>
+      Selbstregulation (Homöostase) schiebt die Anzeige zu „Normal“, während der strukturelle Fehler aktiv bleibt; senkt man den Filter (Psilocybin/Nahtod), sinkt die Anzeige, während das Erleben <em>steigt</em> (das Inverse). <strong>Hindurchlesen:</strong> <span class="eq">wahr_i = (Anzeige_i − normal·k) / (1 − k)</span></li>
+      <li><strong>Konventionelle Maske (B):</strong> Das Tor <em>g</em> ist eine feste Linie, die die Kultur für die orthogonale Größe substituiert. Der √n-Hebel lässt <em>n</em>↑ winzige Effekte auf „signifikant“ kippen — die Schwelle reagiert auf das <em>Budget</em> (n), nicht auf die <em>Größe</em> (Oomph). DeGroots 20&nbsp;000; Vioxx (5:1 als „kein Unterschied“ gelesen); Sterling’s File-Drawer (79% getestet, 0 repliziert).</li>
+    </ul>
+
+    <h3 style="font-size:1.1rem;margin:1.4rem 0 .5rem;color:var(--ink)">4.3 Die fusionierte Prüflogik (fünf Schritte)</h3>
+    <ol>
+      <li><strong>Was ist das Zeichen, was das Ding?</strong> Trenne Oberflächen-Marker von orthogonalen Größe — verwechsle sie nicht.</li>
+      <li><strong>Ist es prüfbar/falsifizierbar?</strong> (B·A / A·B: die Struktur muss checkbar sein — „Geheim = prüfbar gewesen“.)</li>
+      <li><strong>Ist es konsistent / zusammenhängend?</strong> (A·B: das System muss zusammenhängend sein; B·A: Konsistenz mit überprüfbaren Quellen.)</li>
+      <li><strong>Wie groß ist die Struktur / der Effekt?</strong> — die Oomph, die Erreichbarkeits-Fußnote D(a); „Size matters no matter where you draw the line.“</li>
+      <li><strong>Welche Maske wirkt — natürlich oder konventionell?</strong> → Hindurchlesen (k invertieren) oder Abschaffen+Ersetzen (Verlustfunktion → α*; Minimax).</li>
+    </ol>
+
+    <h3 style="font-size:1.1rem;margin:1.4rem 0 .5rem;color:var(--ink)">4.4 Nützliche Mathematik (aus beiden, fusioniert)</h3>
+    <span class="eq">A · Topologie / Digraph (das Ding als Struktur)
+G = (X, V)        V ⊆ X×X   (gerichtete Kanten / „beeinflusst“)
+U(a) = {a} ∪ { b : (a,b) ∈ V }
+[Y]  = { a : U(a) ∩ Y ≠ ∅ }              (Abschluss)
+D(a) = { b : a ⇝ b }  (Erreichbarkeit, BFS)  → Größe des Syndroms
+S(a) = X \ D(a)
+stetig t: T→T*  ⇔  ∀ offen W⊆T*:  t⁻¹(W) offen in T
+
+B · Präzision / Oomph (das Zeichen als Tor)
+SE = σ/√n      t = (x̄ − μ₀)/SE
+n ↑  ⇒  SE ↓  ⇒  jeder Effekt &gt; 0 wird „signifikant“
+Verlustfunktion → optimale Schwelle α*   (Minimax: Oomph dominiert Präzision)
+
+Fusion · Hindurchlesen der natürlichen Maske
+wahr_i = (Anzeige_i − normal·k) / (1 − k)
+Für konventionelle Masken: g aufgeben, L → α*, nach Oomph richten</span>
+  </section>
+
+  <!-- ══════════ 5. VISUALISIERUNG ══════════ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung — Die Maske und das Tor</h2>
+    <p class="lead">Jeder Punkt ist ein <em>System/Behauptung</em> (ein Organismus aus n1-101, ein Befund aus n1-108), abgetragen auf zwei <em>orthogonalen</em> Achsen: <strong>Wahre Struktur/Oomph</strong> (x — das Ding) und <strong>Zeichen/Anzeige</strong> (y — die Oberfläche). Die <em>gestrichelte Diagonale</em> ist „keine Maske“ (Zeichen = Ding); die <em>violetten Linie</em> der Normal-Setpoint (wo die natürliche Maske hinpulst); die <em>blaue Linie</em> das Tor. Drehe die drei Regler: Die <strong>naturale Maske k</strong> (Homöostase) blendt die Anzeige gegen Normal — kaputte Systeme sehen gesund. Das <strong>Tor g</strong> und der <strong>√n-Hebel n</strong> verlegen die Linie — große Effekte kippen darunter (Vioxx), winzige darüber. <em>Nur die Oberfläche bewegt sich; das Ding (x) bleibt.</em></p>
+    <div class="viz-wrap">
+      <canvas id="mask-canvas"></canvas>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Natürliche Maske (Homöostase) <span class="val" id="ro-ke">0</span></label>
+          <input type="range" id="c-k" min="0" max="100" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Tor / Schwelle <span class="val" id="ro-g">50</span></label>
+          <input type="range" id="c-g" min="0" max="100" value="50">
+        </div>
+        <div class="ctrl">
+          <label>Stichprobe n (√n-Hebel) <span class="val" id="ro-n">10</span></label>
+          <input type="range" id="c-n" min="10" max="100" value="10">
+        </div>
+        <div class="ctrl">
+          <label>&nbsp;</label>
+          <span class="chk"><input type="checkbox" id="c-names"> Namen</span>
+          <button class="fb" id="reset" type="button">Zurücksetzen</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip ro-ca">Korrekt akzeptiert: <b id="ro-ca">0</b></span>
+        <span class="chip ro-fa">Falsch akzeptiert (Maske): <b id="ro-fa">0</b></span>
+        <span class="chip ro-fr">Falsch verworfen (verborgen): <b id="ro-fr">0</b></span>
+        <span class="chip ro-cr">Korrekt verworfen: <b id="ro-cr">0</b></span>
+      </div>
+      <p class="verdict" id="verdict"></p>
+      <p class="viz-note"><strong>Lesart:</strong> „Falsch akzeptiert (Maske)“ = sieht normal, Struktur kaputt (n1-101: Homöostase maskiert den Fehler). „Falsch verworfen (verborgen)“ = groß, aber unter dem Tor (n1-108: Vioxx 5:1 als „kein Unterschied“). Drehe <strong>k</strong> hoch: die Maske gleicht alles nach Normal — die Struktur verrät den wahren Zustand, die Anzeige nicht. Drehe <strong>n</strong> hoch: das Tor fällt, winzige Effekte kippen auf „signifikant“ — <em>Signifikanz misst dein Budget, nicht die Natur.</em></p>
+    </div>
+  </section>
+
+  <!-- ══════════ 6. PROVENIENZ ══════════ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="provenance">
+      <li><span class="tag">A</span> <a href="../n1-101.html">n1-101.html — „Struktur über Substanz“ (Runde 1)</a> — Fusion von Analytischem Idealismus und Topologie biologischer Systeme: Die Essenz liegt in der relationalen Struktur, nicht der Substanz; selbstregulierende Systeme maskieren ihren wahren Zustand (Homöostase, Gehirnfilter); die Struktur ist das Reale und Lesbare, das Zeichen (Icon/Anzeige) nur sein Schatten.</li>
+      <li><span class="tag">B</span> <a href="../n1-108.html">n1-108.html — „Das Tor ist nicht das Ding“ (Runde 1)</a> — Fusion von Geheimwissen und Kult der statistischen Signifikanz: Eine willkürliche Schwelle (p&lt;0,05, Geheimhaltung) wird mit dem Ding verwechselt; das Kriterium ist die orthogonale Substanz (Effektgröße/Oomph, dokumentierbare Geschichte) hinter dem Tor; Falsifizierbarkeit ist nötig, aber nicht hinreichend — man muss die <em>richtige</em> Größe prüfen.</li>
+    </ul>
+  </section>
+
+  <footer class="colophon">
+    Fusion · Runde 2 · Nicht-KI-Track · Paar 053 — Das Zeichen ist nicht das Ding.
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.documentElement;
+  var tbtn = document.getElementById('themeToggle');
+  if (tbtn) tbtn.addEventListener('click', function(){ root.classList.toggle('dark'); });
+
+  var canvas = document.getElementById('mask-canvas');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.max(1, window.devicePixelRatio || 1);
+  var W = 0, H = 0;
+  function resize(){
+    var r = canvas.getBoundingClientRect();
+    canvas.width = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    W = r.width; H = r.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var P = {};
+  function readTheme(){
+    var s = getComputedStyle(root);
+    function g(n, fb){ var v = (s.getPropertyValue(n) || '').trim(); return v || fb; }
+    P.text   = g('--ink', '#e8e8f5');
+    P.sub    = g('--ink-dim', '#a2a0c0');
+    P.grid   = g('--grid', 'rgba(128,128,128,.1)');
+    P.ok     = g('--viz-ok', '#5fd08a');
+    P.fa     = g('--viz-falseaccept', '#ff6b6b');
+    P.fr     = g('--viz-falsereject', '#e0b04a');
+    P.cr     = g('--viz-correctreject', '#6b7686');
+    P.gate   = g('--viz-gate', '#54a0ff');
+    P.target = g('--viz-target', '#a970ff');
+  }
+  readTheme();
+  if (window.MutationObserver){
+    new MutationObserver(readTheme).observe(root, { attributes:true, attributeFilter:['class'] });
+  }
+
+  var SYS = [
+    {t:96,l:'S1'},{t:95,l:'S2'},{t:82,l:'S3'},{t:74,l:'S4'},
+    {t:66,l:'S5'},{t:58,l:'S6'},{t:52,l:'S7'},{t:48,l:'S8'},
+    {t:44,l:'S9'},{t:38,l:'S10'},{t:30,l:'S11'},{t:22,l:'S12'},
+    {t:15,l:'S13'},{t:8,l:'S14'}
+  ];
+  var EFFECT_LINE = 50;
+  var TARGET = 50;
+  var state = { k:0, g:50, n:10, names:false };
+  function gateEff(){ return Math.max(5, Math.min(95, state.g - 0.35*(state.n - 10))); }
+  function surfaceOf(t){ return t + (TARGET - t) * (state.k / 100); }
+  function fateOf(t, s){
+    var real = t >= EFFECT_LINE, acc = s >= gateEff();
+    if (real && acc) return 0;
+    if (!real && acc) return 1;
+    if (real && !acc) return 2;
+    return 3;
+  }
+
+  var M = { l:52, r:18, t:22, b:42 };
+  function px(v){ return M.l + (v/100)*(W - M.l - M.r); }
+  function py(v){ return (H - M.b) - (v/100)*((H - M.b) - M.t); }
+  function hexA(hex, a){
+    try{
+      var h = hex.replace('#','').trim();
+      if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      var r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }catch(e){ return hex; }
+  }
+
+  function draw(now){
+    var pulse = 0.5 + 0.5*Math.sin((now||0) * 0.004);
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.lineWidth = 1; ctx.strokeStyle = P.grid;
+    var v;
+    for (v=0; v<=100; v+=25){
+      ctx.beginPath(); ctx.moveTo(px(v), py(0)); ctx.lineTo(px(v), py(100)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px(0), py(v)); ctx.lineTo(px(100), py(v)); ctx.stroke();
+    }
+    ctx.save();
+    ctx.setLineDash([5,5]); ctx.strokeStyle = P.sub; ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+    ctx.beginPath(); ctx.moveTo(px(0),py(0)); ctx.lineTo(px(100),py(100)); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.setLineDash([2,4]); ctx.strokeStyle = P.target; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(px(0),py(TARGET)); ctx.lineTo(px(100),py(TARGET)); ctx.stroke();
+    ctx.restore();
+    var ge = gateEff();
+    ctx.save();
+    ctx.strokeStyle = P.gate; ctx.lineWidth = 2; ctx.globalAlpha = 0.55 + 0.45*pulse;
+    ctx.beginPath(); ctx.moveTo(px(ge), py(0)); ctx.lineTo(px(ge), py(100)); ctx.stroke();
+    ctx.restore();
+
+    for (var i=0; i<SYS.length; i++){
+      var t = SYS[i].t, s = surfaceOf(t), f = fateOf(t, s);
+      var col = f===0?P.ok : f===1?P.fa : f===2?P.fr : P.cr;
+      var rad = 6 + ((f===1||f===2) ? 2.2*pulse : 0);
+      var x = px(t), y = py(s);
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI*2);
+      ctx.fillStyle = col; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = hexA('#000000', 0.25); ctx.stroke();
+      if (state.names){
+        ctx.fillStyle = P.text; ctx.font = '600 10px ui-monospace, monospace';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+        ctx.fillText(SYS[i].l, x + 8, y - 6);
+      }
+    }
+
+    ctx.fillStyle = P.sub; ctx.font = '600 11px system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('Wahre Struktur / Oomph  (das Ding)  →', px(50), H - 8);
+    ctx.save();
+    ctx.translate(15, py(50)); ctx.rotate(-Math.PI/2);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText('Zeichen / Anzeige  (Oberfläche)  →', 0, 0);
+    ctx.restore();
+    ctx.fillStyle = P.gate; ctx.font = '600 10px system-ui, sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('Tor', px(ge) + 4, py(100) + 4);
+    ctx.fillStyle = P.target; ctx.textAlign = 'right';
+    ctx.fillText('Normal', px(100) - 4, py(TARGET) + 4);
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  function set(id, txt){ var e = document.getElementById(id); if (e) e.textContent = txt; }
+  function renderReadout(){
+    var c = [0,0,0,0];
+    for (var i=0; i<SYS.length; i++){ c[fateOf(SYS[i].t, surfaceOf(SYS[i].t))]++; }
+    set('ro-ca', c[0]); set('ro-fa', c[1]); set('ro-fr', c[2]); set('ro-cr', c[3]);
+    set('ro-ke', state.k); set('ro-g', Math.round(gateEff())); set('ro-n', state.n);
+    var vd = document.getElementById('verdict');
+    if (vd){
+      if (c[1]===0 && c[2]===0){
+        vd.innerHTML = 'Keine Maske, Tor an der Relevant-Linie: <b>Zeichen = Ding</b> — keine Irrtümer.';
+      } else {
+        vd.innerHTML = '<b>'+c[1]+'</b> täuschen (sehen normal, Struktur kaputt — die <em>natürliche</em> Maske) und <b>'+c[2]+'</b> werden unter dem <em>Tor</em> verschluckt (groß, aber „in-signifikant“ — Vioxx). Drehe k, g, n: nur die Oberfläche bewegt sich, das Ding (x) bleibt.';
+      }
+    }
+  }
+
+  function bind(id, fn){ var e = document.getElementById(id); if (e) e.addEventListener('input', fn); }
+  bind('c-k', function(){ state.k = +this.value; renderReadout(); });
+  bind('c-g', function(){ state.g = +this.value; renderReadout(); });
+  bind('c-n', function(){ state.n = +this.value; renderReadout(); });
+  var nm = document.getElementById('c-names');
+  if (nm) nm.addEventListener('change', function(){ state.names = this.checked; });
+  var rb = document.getElementById('reset');
+  if (rb) rb.addEventListener('click', function(){
+    state.k=0; state.g=50; state.n=10; state.names=false;
+    var ek=document.getElementById('c-k'); if(ek) ek.value=0;
+    var eg=document.getElementById('c-g'); if(eg) eg.value=50;
+    var en=document.getElementById('c-n'); if(en) en.value=10;
+    if (nm) nm.checked=false;
+    renderReadout();
+  });
+  renderReadout();
+})();
+</script>
+</body>
+</html>

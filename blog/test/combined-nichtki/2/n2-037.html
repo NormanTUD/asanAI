@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Das Ganze aus dem Lokalen (n1-001 &times; n1-104, Runde 2)</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+  --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+  --accent2:#2f6fd0; --accent3:#c0457f;
+  --glue:#2f8f5b; --tear:#c0392b; --global:#b07d18;
+  --code:#eef1f6; --code-fg:#1e2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e; --border:#233450;
+  --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+  --accent2:#7aa2ff; --accent3:#ff8fd0;
+  --glue:#6fe39a; --tear:#ff8577; --global:#ffcc6a;
+  --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px; margin:0 auto; padding:40px 24px 90px;}
+header{margin-bottom:28px;}
+h1{font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-size:1.02rem; margin:0; font-style:italic;}
+.subtitle code{font-style:normal;}
+section{margin:0 0 30px;}
+section > h2{
+  font-size:1.35rem; margin:0 0 12px; padding-bottom:6px;
+  border-bottom:2px solid var(--accent-soft); color:var(--fg);
+}
+h3{font-size:1.02rem; margin:18px 0 8px; color:var(--accent);}
+p{margin:0 0 14px;}
+em{color:var(--accent); font-style:italic;}
+strong{color:var(--fg);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+ul{margin:6px 0 14px; padding-left:22px;}
+li{margin:0 0 8px;}
+code,.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  background:var(--code); color:var(--code-fg);
+  padding:1px 6px; border-radius:5px; font-size:.9em;
+}
+pre{
+  background:var(--code); color:var(--code-fg);
+  border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; overflow-x:auto; font-size:.84rem; line-height:1.55;
+}
+pre code{background:none; padding:0; color:inherit;}
+.card{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px; margin:14px 0; box-shadow:var(--shadow);
+}
+.card .tag{
+  display:inline-block; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--accent); background:var(--accent-soft); padding:2px 9px; border-radius:20px; margin-bottom:8px;
+}
+table.map{width:100%; border-collapse:collapse; font-size:.85rem; margin:8px 0 16px;}
+table.map th, table.map td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+table.map th{background:var(--panel); color:var(--fg);}
+table.map td b{color:var(--accent);}
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--panel);}
+.vs .col h3{margin:0 0 6px; font-size:1rem;}
+.vs .col .src{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+.note{border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted);}
+.note b{color:var(--fg);}
+#vizwrap{
+  position:relative; border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; background:var(--panel); box-shadow:var(--shadow);
+}
+#viz{display:block; width:100%; height:460px; touch-action:none; cursor:pointer;}
+.legend{display:flex; flex-wrap:wrap; gap:10px 16px; padding:10px 14px 2px; font-size:.76rem; color:var(--muted);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+  padding:12px 14px; border-top:1px solid var(--border);
+}
+.viz-controls .hint{margin-left:auto; font-size:.74rem; color:var(--muted);}
+button.ctl{
+  background:var(--panel); color:var(--fg); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem;
+}
+button.ctl:hover{border-color:var(--accent); color:var(--accent);}
+button.ctl.on{border-color:var(--accent); color:var(--accent);}
+#readout{margin:0 0 12px; color:var(--muted); font-size:.9rem; min-height:1.2em;}
+#readout b{color:var(--fg);}
+footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem;}
+footer .src{margin:4px 0;}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Das Ganze aus dem Lokalen</h1>
+  <p class="subtitle">Fusion aus: <code>n1-001.html</code> &times; <code>n1-104.html</code>&nbsp; (Runde 2)</p>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Quellen sind selbst schon <em>Fusionspapiere</em> (Runde 1) &mdash; und trotzdem machen sie, bei
+  v&ouml;llig unterschiedlichem Gegenstand, exakt dieselbe Geste. <strong>A (n1-001)</strong> konstruiert ein
+  Ganzes aus lokalen St&uuml;cken in der <em>Geometrie</em>: Karten, die wie&nbsp;&RBB;ⁿ aussehen, werden zu einer
+  Mannigfaltigkeit verklebt; Differentialformen sind das lokale Messinstrument, das global verklebt; und ein
+  einzelnes Prinzip &mdash; <strong>Stokes</strong>, das im <strong>Igelsatz</strong> m&uuml;ndet &mdash; macht aus den
+  lokalen Daten eine globale Antwort. Die Black&nbsp;Box / das Kurs-Titelscreen (die acht Module
+  <em>Cosmos&hellip;Convergence</em>) ist dieselbe Geste im Gro&szlig;en: lokale Stationen, verklebt zu einer
+  lesbaren Reise. <strong>B (n1-104)</strong> macht das Gleiche in der <em>Etik</em>: lokale Prinzipien /
+  Stimmungen auf den Lebens-Dom&auml;nen <em>Self, Other, Community</em> bilden ein offenes Cover; die
+  Gluing-/Lokalit&auml;tsbedingung (&ldquo;Tell the Truth&rdquo;) erzwingt &Uuml;bereinstimmung auf allen
+  &Uuml;berlappungen; und das Gluing-Theorem plus <code>consistency</code>-Theorem zertifizieren, dass die lokalen
+  Sektionen in genau einer <strong>globalen Sektion</strong> <code>good_life</code> zusammenklappen &mdash; das
+  koh&auml;rente Leben.</p>
+  <p>Die eine integrierte Position lautet: <strong>Ein Ganzes ist keine Eigenschaft irgendeines Teils &mdash; es ist
+  die Eigenschaft, die entsteht, wenn kompatible lokale St&uuml;cke darauf zertifiziert werden, auf <em>allen</em>
+  &Uuml;berlappungen &uuml;bereinzustimmen.</strong> Der Test auf &bdquo;ist das ein Ganzes?&ldquo; ist in A und B
+  identisch: (i)&nbsp;stimmen die lokalen St&uuml;cke auf ihren &Uuml;berlappungen &uuml;berein? (ii)&nbsp;liefert das
+  Klebeprinzip (Stokes bei A, Sheaf-Gluing/Konsistenz bei B) daraufhin <em>eines</em> globalen Objekts? A&rsquo;s
+  Mannigfaltigkeit / lesbare Black&nbsp;Box und B&rsquo;s koh&auml;rentes Leben sind beide das Ergebnis dieser einen
+  Pr&uuml;fung &mdash; das Gluing-Theorem ist das universelle &ldquo;das Ganze existiert&rdquo;-Zertifikat.</p>
+  <p>Und beide Papiere tragen dieselben drei <em>Dialektiken</em> auf der Ebene ihrer Thesen &mdash; <em>entdeckt
+  vs. erdacht</em> (Struktur erzwingt die Antwort / das Subjekt w&auml;hlt den Inhalt), <em>substantiv vs. formal</em>
+  (das Theorem <em>ist</em> die Antwort / es sichert nur die Form), und <em>geschlossener Bogen vs. offenes Cover</em>
+  (der Bogen schlie&szlig;t an seiner ersten Frage / das Cover schlie&szlig;t nirgends). Die Fusion h&auml;lt alle drei:
+  <strong>der lokale Frage&rarr;Antwort-Bogen ist das Faserb&uuml;ndel-Faserelement, das offene Cover die Basis, und das
+  Kleben die Projektion; das Zertifikat garantiert die Form, w&auml;hrend Struktur und Subjekt den Inhalt
+  liefern.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden Runden-1-Papiere widersprechen sich in <em>keinem</em> faktischen Anspruch &mdash; sie arbeiten auf
+  getrennten Gebieten (Geometrie/Kurs-Vorschau einerseits, Philosophie/verifizierte Ethik andererseits). Aber auf
+  der Ebene ihrer <em>Thesen</em> nehmen sie zu drei Meta-Fragen unvereinbar wirkende Staturen ein:</p>
+  <div class="vs">
+    <div class="col">
+      <h3>1. Entdeckt &mdash; A</h3>
+      <div class="src">A &mdash; n1-001</div>
+      <p>Das Ganze ist <strong>von der Struktur erzwungen</strong>. Igelsatz: &ldquo;jedes glatte Tangentialfeld auf der
+      Sph&auml;re hat eine Nullstelle&rdquo; &mdash; <em>necessarily</em>, per Widerspruch. Stokes &ldquo;f&uuml;hrt
+      <code>d</code> und <code>&int;</code> zusammen&rdquo; und <em>ist</em> die Antwort auf die Leitfrage. Das Ganze
+      wird einem von der Struktur <em>gegeben</em>; man entdeckt es.</p>
+    </div>
+    <div class="col">
+      <h3>1. Erdacht &mdash; B</h3>
+      <div class="src">B &mdash; n1-104</div>
+      <p>Das Ganze wird <strong>vom Subjekt geauthort</strong>. &ldquo;the content of the sections is the agent&rsquo;s;
+      the theorems fix only the shape&rdquo;; Existenzialismus: &ldquo;no pre-given meaning&rdquo;, man
+      &ldquo;author[s] the values&rdquo;. Das Gute Leben ist eine globale Sektion, deren <em>Inhalt</em> das
+      Subjekt frei f&uuml;llt &mdash; nicht etwas, das man findet.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>2. Das Zertifikat ist die Antwort &mdash; A</h3>
+      <div class="src">A &mdash; n1-001</div>
+      <p>Das Klebeprinzip ist <strong>substantiv</strong>: Stokes wird als &ldquo;das Herzst&uuml;ck&rdquo;
+      vorgestellt, das die ganze Messung <em>tr&auml;gt</em> &mdash; das Theorem <em>ist</em> zugleich die
+      Antwort (die globale Messgr&ouml;&szlig;e). Form und Inhalt fallen zusammen.</p>
+    </div>
+    <div class="col">
+      <h3>2. Das Zertifikat sichert nur die Form &mdash; B</h3>
+      <div class="src">B &mdash; n1-104</div>
+      <p>Das Zertifikat ist <strong>formal / nicht-substantiv</strong>: &ldquo;The theorems prove the
+      <em>map</em> is consistent; the agent&rsquo;s authentic choices decide where to walk it.&rdquo; Verifikation
+      sagt nur, dass es <em>zusammenh&auml;ngt</em> &mdash; nie, <em>welchen</em> Sinn es hat.</p>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="col">
+      <h3>3. Geschlossener Bogen &mdash; A</h3>
+      <div class="src">A &mdash; n1-001</div>
+      <p>Die Grundeinheit ist der <strong>geschlossene Kreis</strong>: Motivation&nbsp;&rarr;&hellip;&rarr;&nbsp;Antwort&nbsp;&rarr;
+      &ldquo;der rote Faden&rdquo;, ein Beweisbaum, &ldquo;der alles an die erste Frage zur&uuml;ckbindet&rdquo;.
+      Selbstgen&uuml;gend, an einem Bezugspunkt verankert, schlie&szlig;t sich.</p>
+    </div>
+    <div class="col">
+      <h3>3. Offenes Cover &mdash; B</h3>
+      <div class="src">B &mdash; n1-104</div>
+      <p>Die Grundeinheit ist die <strong>globale Sektion &uuml;ber einem offenen Cover</strong>
+      (&ldquo;open sets = domains of life Self, Other, Community&rdquo;), geklebt &uuml;ber &Uuml;berlappungen &mdash;
+      <em>kein</em> Bezugspunkt, <em>kein</em> Abschluss, ein offenes, verteiltes Ganzes.</p>
+    </div>
+  </div>
+  <div class="note">Kein harter Widerspruch in den Fakten (getrennte Gebiete), aber drei unvereinbar wirkende Gesten auf
+  der These-Ebene: entdeckt vs. erdacht, substantives vs. formales Zertifikat, geschlossener Bogen vs. offenes Cover.
+  Die n&auml;chste Sektion zeigt, dass alle drei sich auf <em>einen</em> lokalen-zu-globalen Klebe-Vorgang reduzieren.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p><strong>1. Entdeckt vs. erdacht &rarr; die Form wird entdeckt, der Inhalt erdacht.</strong> Genau wie B es intern
+  l&ouml;sct, nur jetzt auf A angewandt: die <em>Form</em> des Ganzen ist von der Struktur gezwungen &mdash; die
+  Mannigfaltigkeit ist, was ihre Karten sind, und Stokes beweist, was sie misst (analog: der <em>Typ</em> der
+  Sheaf ist fix). Der <em>in diese Form gef&uuml;llte Inhalt</em> ist dagegen frei: welches Feld man auf der
+  Mannigfaltigkeit w&auml;hlt, welches Prinzip man in welcher Stimmung lebt. <em>Fusionsschluss:</em> der
+  lokal-zu-global-Vorgang <strong>entdeckt die Form des Ganzen</strong> (was ein koh&auml;rentes Ganzes
+  <em>muss</em> sein); das Subjekt <strong>bestimmt den Inhalt</strong>. Ein Ganzes ist eine Form, deren Existenz man
+  beweisen kann, gef&uuml;llt mit Inhalt, den man w&auml;hlen muss.</p>
+  <p><strong>2. Substantiv vs. formal &rarr; das Theorem ist der Kompass, nicht das Ziel.</strong> In A ist Stokes
+  substantiv, weil A&rsquo;s <em>Ziel</em> eine mathematische Gr&ouml;&szlig;e ist (die Messung) &mdash; das Theorem, das
+  sie liefert, ist daher der ganze Punkt. In B ist das Ziel ein <em>Sinn</em>, und kein Theorem kann einen Sinn
+  liefern &mdash; also ist das Theorem zu Recht nur formal. Widerspruch erst weg, wenn man sieht, dass das Ziel
+  anders ist. <em>Fusionsschluss:</em> die Aufgabe des Klebe-Zertifikats ist immer dieselbe &mdash;
+  <strong>garantieren, dass kompatible lokale Daten in genau einem globalen Objekt zusammenklappen (Koh&auml;renz,
+  kein Rei&szlig;en)</strong> &mdash; aber was dieses Objekt <em>wert</em> ist, h&auml;ngt vom Ziel ab: f&uuml;r A (eine
+  Messung) <em>ist</em> das Zertifikat der Gewinn, f&uuml;r B (ein Leben) <em>ist</em> es die Voraussetzung, und der
+  Wert lebt im Inhalt. Das vereinigte Zertifikat ist eine <strong>Koh&auml;renz-/Gluing-Garantie</strong>; Substanz ist
+  Input, nie Output, des Klebens.</p>
+  <p><strong>3. Geschlossener Bogen vs. offenes Cover &rarr; der Bogen ist die Faser, das Cover die Basis.</strong>
+  A&rsquo;s geschlossener Bogen (Motivation&rarr;Antwort) ist eigentlich ein <em>lokaler</em> Kreis &mdash; er ist
+  eine Karte voll &ldquo;Frage&rarr;Antwort&rdquo;, die auf sich selbst zur&uuml;ckl&auml;uft. B&rsquo;s offenes Cover
+  ist die <em>globale</em> Zusammensetzung vieler solcher lokaler Kreise &uuml;ber &uuml;berlappende Dom&auml;nen. Also:
+  der geschlossene Bogen ist das <strong>lokale St&uuml;ck</strong> (die &ldquo;Faser&rdquo;), das offene Cover das
+  <strong>globale Gef&uuml;ge</strong> (die &ldquo;Basis&rdquo;), und das Kleben ist die Projektion zwischen beiden.
+  A&rsquo;s &ldquo;Reise = Folge geschlossener B&ouml;gen&rdquo; und B&rsquo;s &ldquo;globale Sektion = Kleben lokaler
+  Sektionen&rdquo; sind <em>dieselbe Aussage in zwei Ma&szlig;st&auml;ben</em>. <em>Fusionsschluss:</em>
+  <strong>das Ganze ist eine Hierarchie &mdash; der lokale Frage&rarr;Antwort-Bogen (die Faser) sitzt in einem offenen
+  Cover &uuml;berlappender Dom&auml;nen (die Basis), und das globale Objekt (Mannigfaltigkeit / gutes Leben) ist das
+  Ergebnis des Klebens.</strong> Manchmal ist die Basis so verdreht, dass kein Schnitt existiert (Igelsatz /
+  &ldquo;die globale Sektion existiert nicht&rdquo;) &mdash; die Obstruktion ist dann real, nicht ein
+  Versagen des Klebens.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <div class="card">
+    <span class="tag">Die gemeinsame Form</span>
+    <p>Beide Instanzen laufen auf demselben dreiteiligen Schema: <strong>(1) lokale Zerlegung</strong> &mdash; das Ganze
+    wird von einfachen lokalen St&uuml;cken &uuml;berdeckt (Karten &harr; Dom&auml;nen/Stimmungen, die jeweils wie ein
+    vertrauter Raum aussehen); <strong>(2) Kompatibilit&auml;t auf &Uuml;berlappungen</strong> &mdash; die lokalen
+    St&uuml;cke m&uuml;ssen auf ihren gemeinsamen R&auml;ndern &uuml;bereinstimmen (C<sup>k</sup>-Kartenwechsel &harr;
+    Sheaf-Lokalit&auml;t); <strong>(3) globales Zertifikat</strong> &mdash; ein Theorem macht aus den kompatiblem Daten
+    genau ein globales Objekt (Stokes/Igelsatz &harr; Gluing/Konsistenz &rarr; <code>good_life</code>). Abstrahiert auf
+    die Ebene ihrer Thesen sind A und B ein einziger Satz: <em>das Ganze ist das Ergebnis des Klebens kompatibler
+    lokaler St&uuml;cke, und &bdquo;koh&auml;rent&ldquo; hei&szlig;t &bdquo;keine &Uuml;berlappung rei&szlig;t&ldquo;.</em></p>
+  </div>
+
+  <h3>A &mdash; die Instanz in der Geometrie (n1-001)</h3>
+  <p>A f&uuml;hrt die Geste zu Ende und macht sie <em>substantiv</em>: Die <strong>Leitfrage</strong> ist, wie man
+  Ableitung, Integral, Volumen, Extrema auf einem Objekt definiert, das nur st&uuml;ckweise wie&nbsp;&RBB;ⁿ aussieht
+  &mdash; so, dass die Antwort nicht von der gew&auml;hlten Karte abh&auml;ngt. Die L&ouml;sung:
+  <strong>Karten/Atlanten</strong> mit glatten (<code>C<sup>k</sup></code>) Kartenwechseln; orientiert genau dann,
+  wenn <code>det d&psi;<sub>ij</sub> &gt; 0</code> (der Standard-Sph&auml;ren-Atlas ist <em>nicht</em> orientiert,
+  <code>det d&psi;<sub>12</sub> = &minus;|z|<sup>&minus;2n</sup> &lt; 0</code> &mdash; ein &ldquo;Twist&rdquo;).
+  <strong>Differentialformen</strong> sind das lokale Instrument, das kartenunabh&auml;ngig integriert;
+  <strong>Stokes</strong> (<code>&int;_M d&omega; = &int;_{&part;M} &omega;</code>) ist das
+  &ldquo;Herzst&uuml;ck&rdquo; &mdash; der Teleskop-Trick hebt innere Kanten mit entgegengesetzter Orientierung weg,
+  nur der Rand bleibt. Der <strong>Igelsatz</strong> folgt per Widerspruch (<code>S<sup>n</sup></code> k&auml;mmbar
+  genau dann, wenn <code>n</code> ungerade; <code>TS&sup;2</sup> &cong;/ S&sup;2</sup> &times;
+  &RBB;&sup;2</sup> &mdash; &ldquo;irgendwo auf der Erde ist Windstille&rdquo;). Die Kurs-Reise (acht Module) ist
+  dieselbe Geste im Gro&szlig;en: die Module sind die <em>Karten</em>, die Kurs-Spinne der <em>rote Faden</em>.
+  Das Ziel ist <em>Messung</em> &mdash; darum <em>ist</em> das Theorem die Antwort.</p>
+
+  <h3>B &mdash; die Instanz in der Ethik (n1-104)</h3>
+  <p>B f&uuml;hrt die Geste zu Ende und macht sie <em>formal</em>: Das <strong>gute Leben</strong> ist eine globale
+  Sektion eines Sheaf &uuml;ber dem Cover der Lebens-Dom&auml;nen <em>Self, Other, Community</em>; die
+  Sektionen sind ethische Prinzipien. Das <strong>Gluing-Theorem</strong> (&ldquo;local sections that agree on all
+  overlaps glue into the global section <code>good_life</code>&rdquo;) plus das <code>consistency</code>-Theorem
+  (<code>good_life a &rarr; ~ False</code>) zertifizieren Koh&auml;renz. Step&nbsp;3 &ldquo;Tell the Truth&rdquo;
+  <em>ist</em> die Lokalit&auml;tsbedingung; die neun Schritte (Do No Harm&hellip;Grow&hellip;That&nbsp;Is&nbsp;All)
+  sind lokale Sektionen mit Coq-Proofs. Der <strong>Existenzialismus</strong> &uuml;berlebt als
+  <em>inhaltliche Freiheit</em>: die Theoreme fixieren nur die <em>Form</em>, das Subjekt f&uuml;llt den
+  <em>Inhalt</em>. Das Ziel ist <em>Sinn</em> &mdash; darum <em>sichert</em> das Theorem nur die Form.
+  Wenn das Cover so verdreht ist, dass keine Sektion existiert, sagt B schlicht: &ldquo;die globale Sektion
+  existiert nicht&rdquo; &mdash; das Gegenst&uuml;ck zu A&rsquo;s Igelsatz.</p>
+
+  <h3>Die fusionierte Formel</h3>
+  <pre><code>x_i     lokales St&uuml;ck    (Karte in A &middot; Dom&auml;ne/Stimmung in B)
+s_i=&plusmn;1  &Uuml;bergang auf der &Uuml;berlappung x_i &cap; x_{i+1}   (&minus;1 = Twist, wie det d&psi;&lt;0 im Sph&auml;ren-Atlas)
+klebt    iff  v_i &middot; v_{i+1} = s_i
+Ganzes   existiert  &hArr;  &exist;(v_i):  &forall;i  v_i &middot; v_{i+1} = s_i
+           m&ouml;glich      &hArr;  &prod;_i s_i = +1          (sonst: topologische Obstruktion &mdash; Igelsatz)</code></pre>
+
+  <table class="map">
+    <tr><th>Meta-Frage</th><th>A &mdash; n1-001 (Geometrie &times; Big-Bang-Vorschau)</th><th>B &mdash; n1-104 (Philosophie &times; verifiziertes Leben)</th></tr>
+    <tr><td>Das Ganze (globales Objekt)</td><td>Mannigfaltigkeit / Stokes-Antwort / lesbare Black&nbsp;Box</td><td>globale Sektion <code>good_life</code> / koh&auml;rentes Leben</td></tr>
+    <tr><td>Lokale St&uuml;cke</td><td>Karten, Tangentialr&auml;ume, Modul-Stationen (Cosmos&hellip;Convergence)</td><td>Prinzipien/Stimmungen auf Dom&auml;nen Self, Other, Community</td></tr>
+    <tr><td>Kompatibilit&auml;tsbedingung</td><td>C<sup>k</sup>-Kartenwechsel; Kurs-Spinne (Prerequisites)</td><td>Sheaf-Gluing-/Lokalit&auml;tsbedingung (&ldquo;Tell the Truth&rdquo;)</td></tr>
+    <tr><td>Zertifikat (Theorem)</td><td>Stokes (Herzst&uuml;ck), Igelsatz per Widerspruch</td><td>Gluing-Theorem + <code>consistency</code> (<code>~ False</code>)</td></tr>
+    <tr><td>Was das Zertifikat liefert</td><td><b>DIE Antwort</b> (substantiv: die Messung)</td><td><b>nur die Form</b> (formal: Koh&auml;renz, nicht Sinn)</td></tr>
+    <tr><td>Grundeinheit des Ganzen</td><td>geschlossener Bogen (Motivation&rarr;Antwort&rarr;roter Faden)</td><td>offenes Cover &uuml;berlappender Dom&auml;nen, geklebt</td></tr>
+    <tr><td>Ursprung des Ganzen</td><td>entdeckt (Struktur erzwingt)</td><td>erdacht (Subjekt f&uuml;llt die Sektionen)</td></tr>
+    <tr><td>Beispiel einer Obstruktion</td><td>nicht-orientierbarer Sph&auml;ren-Atlas (<code>det d&psi;&lt;0</code>) &rarr; nicht k&auml;mmbar (Igelsatz)</td><td>&ldquo;die globale Sektion existiert nicht&rdquo; (Konsistenz scheitert)</td></tr>
+  </table>
+  <div class="note">Die fusionierte These, in einer Zeile: <b>ein Ganzes &mdash; messbarer Raum, lesbares System,
+  koh&auml;rentes Leben &mdash; existiert genau dann, wenn seine lokalen St&uuml;cke auf allen &Uuml;berlappungen
+  &uuml;bereinstimmen; das Kleben (Stokes / Sheaf) zertifiziert die <em>Form</em>, Struktur und Subjekt liefern den
+  <em>Inhalt</em>. Der lokale Frage&rarr;Antwort-Bogen ist die Faser, das offene Cover die Basis, das Ganze ihr
+  Kleben.</b></div>
+</section>
+
+<section id="visualisierung">
+  <h2>Fusionierte Visualisierung</h2>
+  <p><b>&ldquo;Kleben macht das Ganze.&rdquo;</b> Sechs lokale St&uuml;cke (je ein kleiner geschlossener
+  Frage&rarr;Antwort-Bogen / Faser) bilden ein offenes Cover &uuml;m ein Zentrum. Jede &Uuml;berlappung
+  (Kante) tr&auml;gt einen &Uuml;bergang <code>s = &plusmn;1</code> (&plusmn; = passt, &minus; = Twist, wie
+  <code>det d&psi;&lt;0</code> im Sph&auml;ren-Atlas). Ein St&uuml;ck klebt an seinem Nachbarn, wenn ihre lokalen
+  Wahlen auf der &Uuml;berlappung &uuml;bereinstimmen (gr&uuml;n) &mdash; sonst reißt es (rot). Das Zentrum leuchtet
+  gold &mdash; <em>das Ganze existiert</em> &mdash; nur wenn alle sechs &Uuml;berlappungen kleben. Der Modus
+  <strong>Entdeckt</strong> l&auml;sst die Struktur die einzige konsistente Wahl erzwingen (A: die Antwort ist
+  gegeben); <strong>Erz&auml;hlt</strong> l&auml;sst dich jede lokale Wahl frei tippen (B: Inhalt frei, Koh&auml;renz
+  muss gepr&uuml;ft werden). <em>Twist</em> erzeugt die topologische Obstruktion &mdash; dann kann kein Ganzes
+  existieren (Igelsatz / &ldquo;die globale Sektion existiert nicht&rdquo;).</p>
+  <div class="note" id="readout"></div>
+  <div id="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>lokale Wahl +1</span>
+      <span><span class="sw" style="background:var(--accent3)"></span>lokale Wahl &minus;1</span>
+      <span><span class="sw" style="background:var(--glue)"></span>&Uuml;berlappung klebt</span>
+      <span><span class="sw" style="background:var(--tear)"></span>reißt / Twist</span>
+      <span><span class="sw" style="background:var(--global)"></span>Ganzes existiert (globale Sektion)</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl on" id="modeDisc">Entdeckt (Struktur)</button>
+      <button class="ctl" id="modeAuth">Erz&auml;hlt (frei)</button>
+      <button class="ctl" id="twistBtn">Twist: aus</button>
+      <button class="ctl" id="solveBtn">L&ouml;sen (konsistente Wahl)</button>
+      <button class="ctl" id="themeBtn">Theme</button>
+      <div class="hint">St&uuml;ck anklicken: lokale Wahl flippen (nur im Modus &bdquo;Erz&auml;hlt&ldquo;)</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2, N = 6;
+  var NAMES = ['S0','S1','S2','S3','S4','S5'];
+  var val = [], sgn = [];
+  var mode = 'disc';        // 'disc' = entdeckt (Struktur), 'auth' = erzählt (frei)
+  var obstructed = false;
+
+  function init(){ for(var i=0;i<N;i++){ val[i]=1; sgn[i]=1; } }
+  function prod(a){ var p=1,i; for(i=0;i<a.length;i++){ p*=a[i]; } return p; }
+  function twistParity(){ return prod(sgn); }
+  function glueAt(i){ return val[i]*val[(i+1)%N] === sgn[i]; }
+  function glueCount(){ var c=0,i; for(i=0;i<N;i++){ if(glueAt(i)){ c++; } } return c; }
+  function solve(){
+    val[0]=1;
+    for(var i=0;i<N-1;i++){ val[i+1] = sgn[i]*val[i]; }
+    obstructed = (twistParity() !== 1);
+  }
+
+  var pal = {};
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(str){
+    str=(str||'').trim();
+    if(str.charAt(0)==='#'){
+      var h=str.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)){ return [128,140,170]; }
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=str.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    var g=function(n){ return cssVar(n); };
+    pal = {
+      bg:toRgb(g('--bg')), fg:toRgb(g('--fg')), muted:toRgb(g('--muted')), panel:toRgb(g('--panel')),
+      accent:toRgb(g('--accent')), accent3:toRgb(g('--accent3')),
+      glue:toRgb(g('--glue')), tear:toRgb(g('--tear')), global:toRgb(g('--global'))
+    };
+  }
+
+  function geom(){
+    var w = wrap.clientWidth; if(w<10){ w=10; }
+    var Rp = Math.min(w,460)*0.34;
+    return { w:w, h:460, cx:w/2, cy:230, Rp:Rp, pr:30 };
+  }
+  function nodePos(i,g){
+    var a = (-90 + i*60)*Math.PI/180;
+    return { x:g.cx + g.Rp*Math.cos(a), y:g.cy + g.Rp*Math.sin(a) };
+  }
+  function chip(x,y,txt,col){
+    ctx.font='700 12px Inter,system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var tw = ctx.measureText(txt).width + 12;
+    ctx.fillStyle=rgba(pal.panel,0.9); ctx.fillRect(x-tw/2,y-10,tw,20);
+    ctx.fillStyle=col; ctx.fillText(txt,x,y);
+  }
+  function drawLoop(x,y,r,col){
+    ctx.strokeStyle=col; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.stroke();
+    var a=-Math.PI/4, ex=x+r*Math.cos(a), ey=y+r*Math.sin(a);
+    var tx=-Math.sin(a), ty=Math.cos(a), px=-ty, py=tx, hs=6;
+    ctx.fillStyle=col; ctx.beginPath();
+    ctx.moveTo(ex+tx*hs, ey+ty*hs);
+    ctx.lineTo(ex+px*hs*0.6, ey+py*hs*0.6);
+    ctx.lineTo(ex-px*hs*0.6, ey-py*hs*0.6);
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(t){
+    var g=geom(), w=g.w, h=g.h, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var gc=glueCount(), whole=(gc===6), i, A, B, ok;
+    // edges (overlaps)
+    for(i=0;i<N;i++){
+      A=nodePos(i,g); B=nodePos((i+1)%N,g); ok=glueAt(i);
+      var midx=(A.x+B.x)/2, midy=(A.y+B.y)/2;
+      ctx.strokeStyle=rgba(ok?pal.glue:pal.tear, ok?0.85:0.9);
+      ctx.lineWidth= ok?3.4:2.6;
+      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+      var sTxt = sgn[i]===1 ? '+' : '\u2212';
+      chip(midx, midy, sTxt, sgn[i]===1?pal.accent:pal.tear);
+      if(sgn[i]!==1){
+        ctx.fillStyle=rgba(pal.tear,0.9); ctx.font='600 9px Inter,system-ui,sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('twist', midx, midy-15);
+      }
+    }
+    // center (the whole)
+    var pulse=0.5+0.5*Math.sin(t*3);
+    if(whole){
+      ctx.strokeStyle=rgba(pal.global,0.35+0.5*pulse); ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(g.cx,g.cy,28+12*pulse,0,TAU); ctx.stroke();
+    }
+    var ccol = whole?pal.global : (obstructed?pal.tear:pal.muted);
+    ctx.fillStyle=rgba(ccol, whole||obstructed?0.98:0.5);
+    ctx.beginPath(); ctx.arc(g.cx,g.cy,26,0,TAU); ctx.fill();
+    ctx.fillStyle=rgba((whole||obstructed)?pal.bg:pal.fg,0.95);
+    ctx.font='800 11px Inter,system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(whole){ ctx.fillText('GANZES', g.cx, g.cy-5); ctx.fillText('existiert', g.cx, g.cy+8); }
+    else if(obstructed){ ctx.fillText('KEIN', g.cx, g.cy-8); ctx.fillText('GANZES', g.cx, g.cy+3); ctx.fillText('(obstruiert)', g.cx, g.cy+14); }
+    else { ctx.fillText('noch', g.cx, g.cy-5); ctx.fillText('nicht ganz', g.cx, g.cy+8); }
+
+    // local pieces (fibers)
+    for(i=0;i<N;i++){
+      var P=nodePos(i,g);
+      var ring = val[i]===1 ? pal.accent : pal.accent3;
+      ctx.fillStyle=rgba(pal.panel,0.96); ctx.beginPath(); ctx.arc(P.x,P.y,g.pr,0,TAU); ctx.fill();
+      drawLoop(P.x,P.y,g.pr-2, ring);
+      ctx.fillStyle=rgba(pal.fg,0.95); ctx.font='700 13px Inter,system-ui,sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(val[i]===1?'+1':'\u22121', P.x, P.y);
+      ctx.fillStyle=rgba(pal.muted,0.95); ctx.font='600 11px Inter,system-ui,sans-serif';
+      ctx.fillText(NAMES[i], P.x, P.y - g.pr - 11);
+    }
+  }
+
+  function setReadout(){
+    var gc=glueCount(), whole=(gc===6), obs=obstructed;
+    var html='';
+    if(obs){
+      html='Obstruiert (Twist-Produkt = \u22121): <b>keine</b> Zuordnung der lokalen W&auml;hle kann alle sechs '
+        + '&Uuml;berlappungen zum Kleben bringen &mdash; mindestens eine reißt notgedrungen. Das ist A&rsquo;s '
+        + 'Igelsatz-Analogon: die Obstruktion ist topologisch real, kein Versagen des Klebens. <b>Kein globales '
+        + 'Ganzes</b> existiert.';
+      html += (mode==='disc')
+        ? ' Die Struktur kann es nicht erzwingen &mdash; sie ist blockiert (wie der nicht-k&auml;mmbare Sph&auml;ren-Atlas).'
+        : ' Auch frei gew&auml;hlt scheitert es &mdash; der Twist l&auml;sst sich nicht wegklicken.';
+    } else if(whole){
+      html='Koh&auml;rent: alle 6 &Uuml;berlappungen kleben &mdash; das <b>Ganze existiert</b> (globale Sektion: '
+        + 'der zusammenh&auml;ngende Raum / das Gute Leben). ';
+      html += (mode==='disc')
+        ? 'Die Struktur hat die einzige konsistente Wahl gezwungen <em>(entdeckt)</em>: die Form ist gegeben.'
+        : 'Du hast die lokalen W&auml;hle frei gew&auml;hlt und zum Kleben gebracht <em>(erz&auml;hlt)</em>: der '
+        + 'Inhalt ist von dir, die Form vom Kleben garantiert.';
+    } else {
+      html='Noch nicht koh&auml;rent: <b>'+gc+'/6</b> &Uuml;berlappungen kleben. ';
+      html += (mode==='auth')
+        ? 'Klicke ein St&uuml;ck an, um seine lokale Wahl zu flippen, bis alle kleben (oder &bdquo;L&ouml;sen&ldquo;).'
+        : 'Im Modus &bdquo;Entdeckt&ldquo; l&ouml;st die Struktur automatisch &mdash; nutze &bdquo;Twist&ldquo;, um die '
+        + 'topologische Obstruktion zu sehen, oder wechsle zu &bdquo;Erz&auml;hlt&ldquo; zum freien Experimentieren.';
+    }
+    readout.innerHTML = html;
+  }
+
+  function setMode(m){
+    mode=m;
+    document.getElementById('modeDisc').classList.toggle('on', m==='disc');
+    document.getElementById('modeAuth').classList.toggle('on', m==='auth');
+    if(m==='disc'){ solve(); }
+    setReadout();
+  }
+
+  canvas.addEventListener('click', function(e){
+    if(mode!=='auth'){ setReadout(); return; }
+    var r=canvas.getBoundingClientRect();
+    var mx=e.clientX-r.left, my=e.clientY-r.top;
+    var g=geom();
+    for(var i=0;i<N;i++){
+      var P=nodePos(i,g); var dx=mx-P.x, dy=my-P.y;
+      if(dx*dx+dy*dy <= (g.pr+6)*(g.pr+6)){ val[i]*=-1; setReadout(); break; }
+    }
+  });
+  document.getElementById('modeDisc').addEventListener('click', function(){ setMode('disc'); });
+  document.getElementById('modeAuth').addEventListener('click', function(){ setMode('auth'); });
+  document.getElementById('twistBtn').addEventListener('click', function(){
+    sgn[0] = (sgn[0]===1)?-1:1;
+    this.textContent = 'Twist: '+(sgn[0]===1?'aus':'an');
+    if(mode==='disc'){ solve(); }
+    setReadout();
+  });
+  document.getElementById('solveBtn').addEventListener('click', function(){ solve(); setReadout(); });
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); readPal();
+  });
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change', onScheme); }
+  }
+
+  readPal();
+  init();
+  solve();
+  setReadout();
+  var last=performance.now();
+  function loop(now){
+    var t=(now-last)/1000; if(t>0.1){ t=0.1; } last=now;
+    draw(now/1000);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <p class="src"><a href="../n1-001.html"><strong>n1-001.html &mdash; Wie misst man eine Black&nbsp;Box?</strong></a>
+  &mdash; Runden-1-Fusion (Mannigfaltigkeiten &times; From&nbsp;Big&nbsp;Bang&nbsp;to&nbsp;ChatGPT): die lokale-zu-globale
+  Geste in der Geometrie &mdash; Karten/Differentialformen, Stokes als Herzst&uuml;ck, Igelsatz, der Kurs als
+  Mannigfaltigkeit; das Ganze als <em>entdeckte, substantiv</em> Antwort im geschlossenen Bogen. (Quelle A.)</p>
+  <p class="src"><a href="../n1-104.html"><strong>n1-104.html &mdash; The Examined Life, Proved Coherent</strong></a>
+  &mdash; Runden-1-Fusion (philosophy2 &times; good.html): dieselbe Geste in der Ethik &mdash; Prinzipien/Stimmungen als
+  Sektionen eines Sheaf &uuml;ber Self/Other/Community, Gluing- + Konsistenz-Theorem, das Ganze als <em>erdachte,
+  formal</em> zertifizierte globale Sektion &uuml;ber einem offenen Cover. (Quelle B.)</p>
+</section>
+
+<footer>
+  Fusion (Runde 2, nicht-AI-Track, Paar 037). Selbstenthalten, ohne Netzwerk-Datenzugriffe; alle Daten
+  (St&uuml;cke, &Uuml;berg&auml;nge, W&auml;hle) werden im Browser berechnet. Das Zertifikat sichert die Form;
+  Struktur und Subjekt liefern den Inhalt.
+</footer>
+</article>
+</body>
+</html>

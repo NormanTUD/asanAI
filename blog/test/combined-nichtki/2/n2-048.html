@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Fixpunkt der Bewegung — Normalform (A) × Hinübergehen (B)</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#2563a8;
+  --mn-accent2:#a843a0; --mn-accent3:#1f9d55; --mn-accent4:#c2410c; --mn-accent5:#7c3aed;
+  --mn-border:#d8d2c4; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+  --mn-ok:#16a34a; --mn-grid:rgba(0,0,0,0.10); --mn-abyss:rgba(76,29,149,0.30);
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#60a5fa;
+  --mn-accent2:#ce93d8; --mn-accent3:#34d399; --mn-accent4:#ff8a65; --mn-accent5:#a78bfa;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-ok:#4ade80; --mn-grid:rgba(255,255,255,0.08); --mn-abyss:rgba(2,6,23,0.62);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--mn-bg); color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px; margin:0 auto; padding:24px 20px 80px;}
+header.hero{
+  padding:28px 22px; border:1px solid var(--mn-border); border-radius:14px;
+  background:var(--mn-panel); margin-bottom:26px;
+}
+header.hero h1{font-size:1.7em; line-height:1.25; margin-bottom:10px; color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2); font-weight:600; font-size:.98em;}
+.meta-line{color:var(--mn-dim); font-size:.92em; margin-top:12px; line-height:1.6;}
+.meta-line b{color:var(--mn-accent2);}
+.toggle{
+  margin-top:16px; padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel2); color:var(--mn-fg); border-radius:22px;
+  cursor:pointer; font-size:.9em; transition:.2s;
+}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 30px;}
+section h2{
+  font-size:1.35em; margin-bottom:12px; color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border); padding-bottom:6px;
+}
+section h3{font-size:1.06em; margin:18px 0 8px; color:var(--mn-accent2);}
+p{margin-bottom:12px;}
+.lede{font-size:1.05em;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0;}
+@media(max-width:620px){.grid{grid-template-columns:1fr;}}
+.card{
+  border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel);
+  padding:14px 16px;
+}
+.card h3{font-size:1.03em; margin:0 0 8px; color:var(--mn-fg);}
+.card a{color:var(--mn-accent2); text-decoration:none; font-weight:600;}
+.card a:hover{text-decoration:underline;}
+.card small{color:var(--mn-dim);}
+.wc{border-left:4px solid var(--mn-accent4);}
+.wc .tag{color:var(--mn-accent4); border-color:var(--mn-accent4);}
+.res{border-left:4px solid var(--mn-ok);}
+.res .tag{color:var(--mn-ok); border-color:var(--mn-ok);}
+.tag{
+  display:inline-block; font-size:.72em; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:2px 8px; border-radius:6px; margin-bottom:8px;
+  background:transparent; color:var(--mn-accent); border:1px solid var(--mn-border);
+}
+.tag.b{color:var(--mn-accent2);}
+.hlA{color:var(--mn-accent); font-weight:700;}
+.hlB{color:var(--mn-accent2); font-weight:700;}
+.ladder{border:1px solid var(--mn-border); border-radius:10px; background:var(--mn-panel); padding:14px 16px; margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:7px; font-size:.96em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+table.map{width:100%; border-collapse:collapse; margin:12px 0; font-size:.92em;}
+table.map th,table.map td{border:1px solid var(--mn-border); padding:8px 10px; text-align:left; vertical-align:top;}
+table.map th{background:var(--mn-panel2); color:var(--mn-accent);}
+table.map td:first-child{color:var(--mn-accent2); font-weight:600;}
+.mapbox{background:var(--mn-panel2); border:1px dashed var(--mn-border); border-radius:10px; padding:14px 16px; margin:14px 0; font-size:.97em;}
+.mapbox div{padding:3px 0;}
+.formula{
+  font-family:'Courier New',monospace; background:var(--mn-panel2);
+  border:1px solid var(--mn-border); border-radius:8px; padding:12px 14px;
+  margin:10px 0; overflow-x:auto; white-space:pre; font-size:.86em; color:var(--mn-fg);
+}
+.viz{
+  border:1px solid var(--mn-border); border-radius:14px; background:var(--mn-panel);
+  padding:16px; margin-top:6px;
+}
+.viz canvas{width:100%; height:auto; display:block; border-radius:10px; background:var(--mn-panel2); border:1px solid var(--mn-border);}
+.viz .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1; min-width:130px; accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700; white-space:nowrap; font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);}
+.viz .btn{padding:8px 16px; border:1px solid var(--mn-border);
+  background:var(--mn-panel); color:var(--mn-fg); border-radius:8px; cursor:pointer;
+  font-weight:700; font-size:.9em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.primary{background:var(--mn-accent); color:var(--mn-bg); border-color:var(--mn-accent);}
+.viz .btn.mode{background:var(--mn-accent2); color:var(--mn-bg); border-color:var(--mn-accent2);}
+.viz .status{margin-top:10px; font-size:.92em; color:var(--mn-dim); font-style:italic; min-height:1.4em;}
+.viz .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:.85em; color:var(--mn-dim);}
+.viz .legend span{display:inline-flex; align-items:center; gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-dim); font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Der Fixpunkt der Bewegung — Normalform (A) × Hinübergehen (B)</h1>
+  <div class="subtitle">Fusion aus: n1-058.html ✕ n1-068.html  (Runde 2)</div>
+  <div class="meta-line"><b>Kernidee:</b> Beide Quellen sind selbst schon Fusionen zweier „widersprüchlicher" Disziplinen — und beide landen auf <em>dieselben</em> Meta-Struktur. <b>A</b> (n1-058, Chemie × HoTT) liest „stabil/korrekt" operativ: fertig reduziert = stabil, und der stabile Zustand ist ein <em>kontraktibler Typ</em> (kanonischer Punkt + Pfadraum). <b>B</b> (n1-068, Heidegger × Nietzsche) liest „denkend/gültig" als <em>Bewegung</em>: das <em>Hinübergehen</em> über die Brücke/das Seil. Die Einheit: das Stabile und das Denkende sind <strong>dieselbe, Tiefe-anziehende Bewegung, deren Fixpunkt zugleich Ruhe (A) und ewige Wiederkunft (B) ist.</strong></div>
+  <button class="toggle" id="themeToggle" onclick="toggleTheme()">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Beide Papiere sind <em>zweite</em> Synthesen, die zwei zunächst entgegengesetzte Domänen auf ein gemeinsames Gerüst zurückführen — und zwar auf <em>dasselbe</em> Gerüst. <b>A</b> (n1-058) führt die <em>Materialdynamik</em> (Elektronen rollen ins Energie-Minimum) und die <em>Typentheorie</em> (Terme reduzieren auf Normalform) zusammen: „Ein stabiles Molekül ist eine normale Form; eine Bindung ist ein Pfad; die Oktettregel ist eine Faserung." Der stabile Zustand ist ein <em>kontraktibler Typ</em> — ein eindeutiger Punkt, umgeben vom Raum der Pfade dorthin, und die <em>Verbindungen zwischen</em> Zuständen sind selbst Inhalt. <b>B</b> (n1-068) führt die <em>Ontologie des Denkens</em> (das sich Entziehende, das ruft) und die <em>existenzielle Bewegung</em> (der Mensch als Seil über dem Abgrund) zusammen: „Denken ist das Hinübergehen" — der Gang über die Brücke <em>ist</em> die Bewegung, kein Punkt in einer Geschichte.</p>
+  <p>Die gemeinsame, eine Position, die unter beiden liegt: <strong>Das Stabile und das Denkende sind keine Zustände, sondern eine Bewegung</strong> — eine gerichtete, <em>Tiefe-anziehende</em> Bewegung, deren „stabiler" bzw. „gültiger" Zustand der <em>Fixpunkt</em> einer selbst-zurückkehrenden Anziehung ist. In <b>A</b> rollt der Ball die Morse-Kurve hinab und bleibt in der Mulde (Ruhe); in <b>B</b> rollt das Rad der Wiederkunft um denselben Punkt (ewige Bewegung). Und in beiden lebt der <em>Essentielle</em> in der <em>Mitte</em> — der Pfadraum (A) / die Brücke über den Abgrund (B) — die zugleich <em>Anzieher</em> (die Grube / der Abgrund) und <em>Inhalt</em> (die Pfade / der Gang) ist. Was sich als „Ziel" (A) und als „Gang" (B) gibt, ist eine und dieselbe Fixpunkt-Struktur.</p>
+  <p>Ein Satz: <strong>Stabilität ist eine Reduktion, Denken ist ein Hinübergehen — und beide sind dieselbe Bewegung zu einem Fixpunkt, der zugleich Grab (Tiefe), Ziel (Normalform) und Rad (Wiederkunft) ist; jeder scheinbare Widerspruch ist dieselbe Tiefe, in zwei Tempi gelesen.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Beide Quellen arbeiten in <em>abstrahierten</em> Domänen und widersprechen sich also nicht in Fakten. Doch ihre <em>fundamentalen Stellungen</em> zu „was stabil/gültig ist" tragen drei reale, benennbare Spannungen — plus eine Rahmen-Spannung:</p>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Endzustand: geschlossene Ruhe vs. offene Ewigkeit</span>
+    <h3><span class="hlA">A</span> kollabiert auf einen entscheidbaren Ruhepunkt · <span class="hlB">B</span> kennt keinen, der je eintrifft</h3>
+    <p><b>A</b>: „Stabilität ist eine eindeutige, entscheidbare Zielpunkt-Eigenschaft"; das Molekül „kollabiert auf einen kanonischen Punkt", „alles andere rollt zu ihm". Der Ball <em>ruht</em> im Minimum — die Bewegung <em>endet</em>, die Normalform ist <em>erreicht und abgeschlossen</em> (man kann sie prüfen).</p>
+    <p><b>B</b>: Das „Gültige" (Übermensch / Bejahung) ist „Etwas, das <em>überwunden werden soll</em>" und man „muss noch Chaos in sich haben, um einen tanzenden Stern gebären zu können" — es ist nie <em>erreicht</em>, sondern wird durch das <em>ewige</em> Ja <em>bewahrt</em>. „Ewig rollt das Rad des Seins" — die Bewegung <em>endet nicht</em>, sie kehrt zu sich selbst zurück.</p>
+    <p><em>Spannung:</em> A's Ideal ist <strong>Gleichgewicht</strong> (Bewegung stoppt); B's Ideal ist <strong>ständige Bewegung</strong> (Wiederkunft). Der eine „stabile Zustand" ist ein Punkt, an dem alles stillsteht; der andere ist eine Umdrehung, die nie stillsteht.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 2 · Art der Bewegung: bestimmt vs. gewollt</span>
+    <h3><span class="hlA">A</span> bestimmt, konvergierende Relaxation · <span class="hlB">B</span> freier, gewollter Sprung</h3>
+    <p><b>A</b>: „der Ball rollt zum Minimum" — bestimmt durch die Morse-Kraft F = −dE/dr, gedämpft, konvergierend. Es gibt keine Wahl, keinen Willen: die Landschaft <em>bestimmt</em> den Weg, das Teilchen ist ein passiver Körper im Potential.</p>
+    <p><b>B</b>: „zu denken bedarf es Bereitschaft — einen Sprung, keine Methode"; „Ich will!" (der Löwe); „Schätzen ist Schaffen" — der Wille <em>wählt</em>, „will seine eigene Ewigkeit". Es gibt keinen Gradienten, den man <em>hinunterrutscht</em>; der Denker <em>überquert</em>. Die Bewegung ist <em>frei und nicht-konvergierend</em> (sie relaxt in kein Gleichgewicht).</p>
+    <p><em>Spannung:</em> eine Bewegung, die <em>von außen</em> bestimmt und <em>konvergiert</em> (A), vs. eine, die <em>von innen</em> gewollt und <em>nicht-konvergent</em> bleibt (B).</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 3 · Die Tiefe: gefüllt vs. leer</span>
+    <h3><span class="hlA">A</span> misst die Tiefe durch das, was sie füllt · <span class="hlB">B</span> durch das, was fehlt</h3>
+    <p><b>A</b>: Die Tiefe ist <em>gefüllt</em> — die Potentialmulde ist voll von Pfaden; De (Bindungsstärke) <em>ist</em> die Tiefe der Grube, und je tiefer, desto <em>reicher</em> die Struktur (mehr Pfade, mehr Faserung). Der Grund der Grube ist ein <em>Punkt</em> (ein Ding: die Normalform).</p>
+    <p><b>B</b>: Die Tiefe ist <em>leer</em> — der Abgrund, das „Entziehende", das Vakuum nach dem „Tod Gottes". „Was am meisten zum Denken auffordert, entzieht sich uns." Der Grund der Tiefe ist ein <em>Loch</em> (eine Abwesenheit), das gerade <em>durch sein Fehlen</em> zieht (der <em>Zug</em>).</p>
+    <p><em>Spannung:</em> A liest die Tiefe als <em>Präsenz von Struktur</em> (gefüllt, positiv); B als <em>Abwesenheit</em> (leer, entziehend). Derselbe Grund, zwei entgegengesetzte Lesarten.</p>
+  </div>
+
+  <div class="card wc" style="margin-top:14px;">
+    <span class="tag">Widerspruch 4 · (Rahmen) Was ist fundamental</span>
+    <h3><span class="hlA">A</span> ontologisch strukturell · <span class="hlB">B</span> ontologisch voluntaristisch</h3>
+    <p><b>A</b>: „Typen sind Räume, Pfade, Faserungen" — die <em>Struktur</em> ist das Fundament; der Punkt ist ableitend. Wahrheit ist <em>Typisierung</em> (ein strukturelles Urteil).</p>
+    <p><b>B</b>: Der <em>Wille</em> und die <em>Entscheidung</em> (das Hinübergehen) sind das Fundament; Raum/Brücke ist nur das Bild für die Bewegung des Willens. Wahrheit ist <em>Bejahung</em> (das Ja).</p>
+    <p><em>Spannung:</em> Struktur-Raum (A) vs. Wille-Event (B) als jeweils „das eigentlich Fundamentale".</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag">Auflösung 1 · Ruhe ist die eingefrorene Wiederkunft</span>
+    <p>Beide sagen, das Stabile/Gültige wird <em>durch</em> die Bewegung definiert, nicht <em>vor</em> ihr. A's Prozess <em>konvergiert</em> (der Ball erreicht das Minimum und ruht — Normalform erreicht); B's Prozess ist ein <em>Zyklus</em> (das Rad kehrt zu sich selbst zurück). Die Auflösung: <strong>der „stabile Zustand" ist der Fixpunkt einer selbst-zurückkehrenden Bewegung.</strong> Der Punkt, an dem der Ball ruht (A), und der Punkt, an dem das Rad jede Umdrehung wieder eintrifft (B), sind <em>derselbe</em>. A friert ihn ein (die Wiederkunft, die zum konstanten Pfad / <em>refl</em> kollabiert — das ist Ruhe); B lässt ihn laufen (das Rad dreht sich weiter). Beide beschreiben denselben Fixpunkt in <em>zwei Tempi</em>: <em>Ruhe ist die eingefrorene Wiederkunft; die Wiederkunft ist die nicht-eingefrorene Ruhe.</em></p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag">Auflösung 2 · Gradient und Wille sind ein und derselbe Zug</span>
+    <p>Beide Bewegungen sind <em>gerichtet und nicht-zufällig</em> — der Ball folgt dem Gradienten, der Wille folgt dem <em>Zug</em>. Der Morse-Gradient (A: F = −dE/dr) und der <em>Zug</em> des Entziehenden (B) sind <em>dasselbe</em>: eine Anziehung zur Tiefe. „Bestimmt" (A, von außen: die Landschaft bestimmt den Weg) und „frei" (B, von innen: der Wille folgt der Anziehung und „wählt") sind <em>zwei Beschreibungen derselben Anziehung</em>. Der „Sprung ohne Methode" (B) ist <em>nicht</em> das Fehlen eines Gradienten, sondern der <em>Nichtlinearitätspunkt</em>, an dem die Anziehung — am tiefsten Punkt der Brücke, wo der <em>Zug</em> maximal ist — die Trägheit überwindet und der Denker sich <em>verpflichtet</em>. <strong>Fusioniert: Determinismus (A) und Freiheit (B) sind derselbe Zug, von außen bzw. von innen gesehen.</strong></p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag">Auflösung 3 · Die gefüllte Grube ist die leere Tiefe, die die Präsenz organisiert</span>
+    <p>Die Grube und der Abgrund sind <em>dieselbe Geometrie</em> — eine Tiefe. Der Unterschied ist nur der <em>Blick</em>: misst man, was am Grund <em>ist</em> (A: der Punkt/die Normalform, umgeben vom Pfadraum) oder was dort <em>fehlt</em> (B: das Entziehende, das Vakuum)? Aber beides beschreibt denselben Grund: der Grund eines Potentialtopfes ist <em>gerade dort</em>, wo sich <em>alle</em> Pfade <em>sammeln</em> (A: das Minimum, wo alles zusammenläuft) <em>und</em> <em>gerade dort</em>, wo das „was-ruft" sich <em>entzieht</em> (B: die tiefste, leere Stelle, die durch Abwesenheit zieht). Je tiefer, desto stärker die Bindung (A: De) <em>und</em> desto stärker der <em>Zug</em> (B: am Zentrum maximal). <strong>Fusioniert: das „gefüllte Minimum" (A) ist der Grenzbegriff des „leeren Lochs" (B) — der Punkt, in den sich die Entziehung vollzieht und dadurch alle Pfade zusammenschiebt. Die Abwesenheit organisiert die Präsenz.</strong></p>
+  </div>
+
+  <div class="card res" style="margin-top:14px;">
+    <span class="tag">Auflösung 4 · Struktur und Wille sind zwei Seiten desselben Gangs</span>
+    <p>A's „Raum/Pfad/Faserung" und B's „Wille/Gang" sind <em>nicht</em> zwei Fundamente, sondern <em>zwei Aspekte derselben Bewegung</em>: Die Struktur (der Pfadraum, die Faserung) ist das <em>Spurbild</em>, das der Gang hinterlässt; der Wille ist das <em>Agens</em>, das ihn vollzieht. Man kann dieselbe Bewegung als ihre <em>Geometrie</em> (A) oder als ihre <em>Tat</em> (B) lesen. <strong>Fusioniert: Struktur ist das Abbild der Bewegung; Wille ist ihre Ursache — beides eine einzige, Tiefe-anziehende Bewegung.</strong></p>
+  </div>
+
+  <div class="mapbox" style="border-left:4px solid var(--mn-accent); padding-left:16px;">
+    <strong>Gefasste Schlussposition:</strong> Die <em>Normalform</em> (A) und das <em>Hinübergehen</em> (B) sind <strong>eins</strong>: eine gerichtete, Tiefe-anziehende Bewegung, deren „stabiler/gültiger" Zustand der <strong>Fixpunkt einer selbst-zurückkehrenden Anziehung</strong> ist. Jeder scheinbare Widerspruch — Ruhe vs. ewige Bewegung, Gradient vs. Wille, gefüllte Grube vs. leere Tiefe, Struktur vs. Wille — ist <em>dieselbe Tiefe, in zwei Tempi / zwei Blicken gelesen</em>. Der Inhalt lebt in der <em>Mitte</em> (Pfadraum / Brücke über den Abgrund), die zugleich <em>Anzieher</em> und <em>Inhalt</em> ist.
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p>Abstrahiert auf die Ebene der <em>Thesen</em> (nicht der Roh-Quellen) lassen sich die beiden Positionen in fünf gemeinsamen Slots lesen, die dann die eigentliche Fusion ergeben.</p>
+
+  <h3>4.1 Die zwei Thesen in Kürze</h3>
+  <div class="ladder">
+    <span class="tag">A · n1-058 — „Das Stabile ist eine Normalform"</span>
+    <ol>
+      <li><b>Operative Stabilität:</b> fertig reduziert = stabil (Ball im Minimum / Term auf Normalform); „stabil" ist eine entscheidbare Zielpunkt-Eigenschaft.</li>
+      <li><b>Kontraktibler Typ:</b> der stabile Zustand = ein kanonischer Punkt + der Raum der Pfade dorthin.</li>
+      <li><b>Verbindungen sind Inhalt:</b> die Pfade / Faserungen <em>zwischen</em> Zuständen tragen Bedeutung, nicht nur die Punkte.</li>
+      <li><b>Grundstruktur = Faserung:</b> die Oktettregel ist eine Faserung über der Basis der Atome.</li>
+      <li><b>Diskret → kontinuierlich:</b> diskrete Regeln (Schalen) erzeugen kontinuierliches Verhalten (Morse-Dynamik).</li>
+    </ol>
+  </div>
+  <div class="ladder b">
+    <span class="tag b">B · n1-068 — „Das Denken ist ein Hinübergehen"</span>
+    <ol>
+      <li><b>Bewegung, nicht Zustand:</b> das Denkende/Gültige ist der <em>Gang</em> über die Brücke/das Seil — nicht ein Punkt in einer Geschichte.</li>
+      <li><b>Zwei Pole, eine Bewegung:</b> Empfangen/Schaffen, Vollendung/Überstieg, Doktrin/Prüfung sind <em>zwei Momente</em> einer Bewegung, keine Gegensätze.</li>
+      <li><b>Der Essentielle ist die Mitte:</b> das „Entziehende, das ruft" / der Abgrund, über dem gegangen wird, ist der Inhalt.</li>
+      <li><b>Der Wille kehrt zu sich zurück:</b> ewige Wiederkunft — „ewig rollt das Rad des Seins".</li>
+      <li><b>Die Bewegung ist gewollt:</b> „einen Sprung, keine Methode"; „Ich will!".</li>
+    </ol>
+  </div>
+
+  <h3>4.2 Die gemeinsame Meta-Struktur (der eigentliche Fusionsinhalt)</h3>
+  <p>Unter beiden Thesen liegt ein einzelnes Gerüst aus sechs Merkmalen:</p>
+  <div class="ladder">
+    <span class="tag">Meta-Gerüst · bei A wie bei B</span>
+    <ol>
+      <li><b>Gerichtete Bewegung:</b> von einem ungeklärten Pol (angeregter Zustand / letzter Mensch) zu einem geklärten Pol (Minimum / Bejahung).</li>
+      <li><b>Der „stabile" Zustand wird <em>durch</em> die Bewegung definiert</b> (Normalform / der vollzogene Gang), nicht <em>vor</em> ihr.</li>
+      <li><b>Zwei scheinbar widersprüchliche Beschreibungen</b> (statisch/dynamisch, Punkt/Pfad, Zahl/Typ, Empfangen/Schaffen, Vollendung/Überstieg, Doktrin/Prüfung, gefüllt/leer) sind <em>zwei Pole derselben Struktur</em>.</li>
+      <li><b>Der Inhalt lebt in der Mitte/Tiefe</b> (Pfadraum / Brücke), die zugleich <em>Anzieher</em> (Grube/Abgrund) und <em>Inhalt</em> (Pfade/Gang) ist.</li>
+      <li><b>Der Fixpunkt der Bewegung</b> ist zugleich Grab (Tiefe), Ziel (Normalform) und Rad (Wiederkunft).</li>
+      <li><b>Diskret + kontinuierlich sind dual</b> (in beiden Papieren).</li>
+    </ol>
+  </div>
+
+  <h3>4.3 Isomorphe Einbettung — dieselben Slots, zwei Realisierungen</h3>
+  <table class="map">
+    <tr><th>Slot</th><th>A · n1-058 (Normalform)</th><th>B · n1-068 (Hinübergehen)</th></tr>
+    <tr><td>Ausgangs-Pol (ungeklärt)</td><td>angeregter Zustand / offener Term</td><td>letzter Mensch / Rache gegen „Es war"</td></tr>
+    <tr><td>Regel / Kraft</td><td>uniforme Reduktion / Morse-Gradient F = −dE/dr</td><td>der Wille / der <em>Zug</em> des Entziehenden</td></tr>
+    <tr><td>Bewegung</td><td>Relaxation (Ball rollt)</td><td>Hinübergehen (der Gang über die Brücke)</td></tr>
+    <tr><td>Ziel / Fixpunkt</td><td>Minimum = Normalform (kanonisch)</td><td>Bejahung = Fixpunkt der Wiederkunft</td></tr>
+    <tr><td>„Stabil/gültig" = ?</td><td>fertig reduziert / im Ruhestand</td><td>Gang vollzogen / Wiederkunft bejaht</td></tr>
+    <tr><td>Inhalt in der Mitte</td><td>Pfadraum / Faserung</td><td>die Brücke über den Abgrund</td></tr>
+    <tr><td>Zwei Pole, eine Struktur</td><td>Punkt (A) + Pfadraum = kontraktibler Typ</td><td>Empfangen + Schaffen = ein Hinübergehen</td></tr>
+    <tr><td>Diskret → kontinuierlich</td><td>Schalen → Morse-Dynamik</td><td>Stufen (Kamel/Löwe/Kind) → der Gang</td></tr>
+    <tr><td>Die Tiefe</td><td>gefüllte Grube (De = Bindung)</td><td>leere Tiefe (das Entziehende)</td></tr>
+    <tr><td>Idealzustand</td><td>Ruhe (Gleichgewicht)</td><td>ewige Bewegung (Wiederkunft)</td></tr>
+  </table>
+
+  <h3>4.4 Die zwei Formeln des Übergangs</h3>
+  <p>Beide Papiere fassen den Übergang in einer Formel zusammen, die auf <em>dieselbe</em> Bewegung zeigen — nur in zwei Notationen:</p>
+  <div class="formula">A (Normalform)   :   offener Zustand  --[Reduktion / Rollung zum Minimum]-->  stabile Normalform (kontraktibler Typ)
+
+B (Hinübergehen) :   letzter Mensch  --[Hinübergehen / Ja-sagen über die Brücke]-->   Übermensch (Fixpunkt der Wiederkunft)
+
+Gemeinsam        :   Pol  --[Tiefe-anziehende Bewegung, Fixpunkt = selbst-zurückkehrende Anziehung]-->  Fixpunkt
+                     (Ruhe = eingefrorene Wiederkunft · Gradient = Zug · gefüllte Grube = leere Tiefe)</div>
+
+  <div class="mapbox">
+    <strong>Die eine fusionierte Meta-These (in einem Satz):</strong> „Das Stabile ist eine Bewegung: die Reduktion auf die Normalform und das Hinübergehen über den Abgrund sind dieselbe, Tiefe-anziehende Bewegung; ihr stabiler Zustand ist der Fixpunkt einer selbst-zurückkehrenden Anziehung. Ruhe (A) und ewige Bewegung (B) sind derselbe Fixpunkt in zwei Tempi; Gradient (A) und Wille (B) sind dieselbe Anziehung von außen und innen; gefüllte Grube (A) und leere Tiefe (B) ist dieselbe Abwesenheit, die die Präsenz organisiert."
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion: die Tiefe — ein Fixpunkt, viele Pfade, ein Rad</h2>
+  <p>Ein einziges Canvas, <em>ein</em> Prinzip: <strong>alles wird von derselben zentralen Tiefe (Grube/Abgrund) zum <em>selben</em> Fixpunkt gezogen.</strong> Der Regler <b>Tiefe/Anziehung (De = Zug)</b> steuert, wie stark die Anziehung ist (je tiefer die Grube, desto stärker der Zug — bei A De, bei B der <em>Zug</em> am Zentrum maximal). Der <b>Modus</b> schaltet die <em>Dämpfung</em> um und zeigt damit die zwei Tempi desselben Fixpunkts:</p>
+  <ul style="margin:0 0 10px 20px; font-size:.96em;">
+    <li><b>Modus A — Ruhe:</b> die Teilchen sind stark gedämpft, spiralförmig hinab; sie <em>enden</em> im Fixpunkt. Der Ball ruht im Minimum (Normalform). „Ruhe erreicht."</li>
+    <li><b>Modus B — Wiederkunft:</b> die Teilchen sind (nahezu) ungedämpft und kreisen <em>ewig</em> um denselben Fixpunkt. „Ewig rollt das Rad." — derselbe Fixpunkt, die Bewegung endet nicht.</li>
+  </ul>
+  <p style="font-size:.94em; color:var(--mn-dim);">Drücke ▶ — in beiden Modi ist der Fixpunkt <em>derselbe</em>; der Unterschied ist nur, ob die Bewegung eingefroren (A) oder laufend (B) bleibt.</p>
+
+  <div class="viz">
+    <canvas id="depthCanvas" data-w="760" data-h="520"></canvas>
+    <div class="controls">
+      <label for="kSlider" class="cl">Tiefe / Anziehung (De = Zug): <b id="kLab">3.0</b></label>
+      <input type="range" id="kSlider" min="1" max="5" step="0.1" value="3">
+    </div>
+    <div class="controls">
+      <label for="cntSlider" class="cl">Teilchen / Pfade: <b id="cntLab">8</b></label>
+      <input type="range" id="cntSlider" min="2" max="16" step="1" value="8">
+      <button class="btn mode" id="modeBtn">Modus: A · Ruhe</button>
+      <button class="btn primary" id="runBtn">▶ Loslassen</button>
+      <button class="btn" id="resetBtn">↺ Bereit</button>
+    </div>
+    <div class="status" id="status">Bereit — ▶ drücken.</div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent)"></i> Teilchen / Pfade</span>
+      <span><i class="dot" style="background:var(--mn-ok)"></i> Fixpunkt = normale Form = Wiederkunft</span>
+      <span><i class="dot" style="background:var(--mn-accent2)"></i> Modus-B-Rad (Wiederkunft)</span>
+      <span><i class="dot" style="background:var(--mn-abyss)"></i> Tiefe (Grube A / Abgrund B)</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Quelle A</span>
+      <h3><a href="../n1-058.html">n1-058.html</a></h3>
+      <p><small>„Stabilität als normale Form — Chemie × Homotopietypentheorie" (Runde 1): Chemie (Morse-Potential, Elektrostatik, Oktettregel) × HoTT-Kap.1 (FIEC, abhängige Typen, Identitätstypen als Pfade). These: „Ein stabiles Molekül ist eine normale Form; eine Bindung ist ein Pfad; die Oktettregel ist eine Faserung"; der stabile Zustand als <em>kontraktibler Typ</em>.</small></p>
+    </div>
+    <div class="card">
+      <span class="tag b">Quelle B</span>
+      <h3><a href="../n1-068.html">n1-068.html</a></h3>
+      <p><small>„Das Hinübergehen — von der Rache gegen das „Es war" zum Ja der ewigen Wiederkunft" (Runde 1): Heideggers <em>Was heißt Denken?</em> × Nietzsches <em>Zarathustra</em>. These: „Denken ist das Hinübergehen" — Empfangen + Schaffen als ein Gang über die Brücke/das Seil, der Wille will seine eigene Ewigkeit.</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion N2-048 · Runde 2 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard). Alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('depthCanvas');
+  if(!canvas||!canvas.getContext){return;}
+  var ctx=canvas.getContext('2d');
+  var root=document.documentElement;
+
+  var kSlider=document.getElementById('kSlider');
+  var cntSlider=document.getElementById('cntSlider');
+  var modeBtn=document.getElementById('modeBtn');
+  var runBtn=document.getElementById('runBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var kLab=document.getElementById('kLab');
+  var cntLab=document.getElementById('cntLab');
+  var statusEl=document.getElementById('status');
+  if(!kSlider||!cntSlider||!modeBtn||!runBtn||!resetBtn){return;}
+
+  var W=+canvas.getAttribute('data-w')||760;
+  var H=+canvas.getAttribute('data-h')||520;
+  var dpr=Math.max(1, Math.min(window.devicePixelRatio||1, 2));
+  canvas.width=W*dpr; canvas.height=H*dpr;
+
+  var TAU=Math.PI*2;
+  var cx=W/2, cy=H/2-6;
+  var maxR=Math.min(W,H)/2-52;
+  var COLS=['--mn-accent','--mn-accent2','--mn-accent3','--mn-accent4','--mn-accent5'];
+  var kBase=0.0016;
+
+  var state={mode:'A', kVal:3.0, count:8, running:false, settled:false, parts:[]};
+
+  function cv(n){return getComputedStyle(root).getPropertyValue(n).trim()||'#888';}
+  function k(){return kBase*state.kVal;}
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){return 'rgba(150,150,170,'+a+')';}
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function lcg(seed){var s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+  var rng=lcg(20261011);
+
+  function initParticles(){
+    state.parts=[];
+    var kk=k();
+    for(var i=0;i<state.count;i++){
+      var ang=(i/state.count)*TAU + (rng()*0.6-0.3);
+      var r0=maxR*(0.45+0.45*rng());
+      var px=cx+Math.cos(ang)*r0, py=cy+Math.sin(ang)*r0;
+      var dx=px-cx, dy=py-cy;
+      var vcirc=Math.sqrt(Math.max(0,kk)*r0);
+      var vt=(state.mode==='A'?0.35:1.0)*vcirc;
+      var tx=-dy/r0, ty=dx/r0;
+      state.parts.push({px:px,py:py,vx:tx*vt,vy:ty*vt,trail:[],colvar:COLS[i%5]});
+    }
+    state.settled=false;
+  }
+  function release(){initParticles();state.running=true;updateChips();}
+  function ready(){initParticles();state.running=false;updateChips();render();}
+
+  function updateChips(){
+    if(kLab){kLab.textContent=state.kVal.toFixed(1);}
+    if(cntLab){cntLab.textContent=state.count;}
+    if(modeBtn){modeBtn.textContent='Modus: '+(state.mode==='A'?'A · Ruhe':'B · Wiederkunft');}
+  }
+  function updateStatus(){
+    var txt;
+    if(!state.running){txt='Bereit — ▶ drücken.';}
+    else if(state.mode==='A'){
+      txt=state.settled?'Ruhe erreicht — alle Pfade enden im Fixpunkt (A).':'Relaxation — Pfade laufen zum Fixpunkt (A).';
+    } else {
+      txt='Wiederkunft — das Rad läuft ewig um denselben Fixpunkt (B).';
+    }
+    if(statusEl){statusEl.textContent=txt;}
+  }
+
+  function integrate(){
+    var kk=k();
+    var damp=state.mode==='A'?0.90:0.9995;
+    var settled=true;
+    for(var i=0;i<state.parts.length;i++){
+      var p=state.parts[i];
+      var ax=-kk*(p.px-cx), ay=-kk*(p.py-cy);
+      p.vx=(p.vx+ax)*damp;
+      p.vy=(p.vy+ay)*damp;
+      p.px+=p.vx; p.py+=p.vy;
+      var dr=Math.sqrt((p.px-cx)*(p.px-cx)+(p.py-cy)*(p.py-cy));
+      if(state.mode==='A' && dr<6 && Math.abs(p.vx)<0.06 && Math.abs(p.vy)<0.06){
+        p.px=cx;p.py=cy;p.vx=0;p.vy=0;
+      } else if(dr>0.5 || Math.abs(p.vx)>0.02 || Math.abs(p.vy)>0.02){
+        settled=false;
+      }
+      p.trail.push([p.px,p.py]);
+      if(p.trail.length>150){p.trail.shift();}
+    }
+    state.settled=settled;
+  }
+
+  function render(){
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=cv('--mn-panel2'); ctx.fillRect(0,0,W,H);
+    var C={
+      accent:cv('--mn-accent'), accent2:cv('--mn-accent2'), accent3:cv('--mn-accent3'),
+      accent4:cv('--mn-accent4'), accent5:cv('--mn-accent5'),
+      fg:cv('--mn-fg'), dim:cv('--mn-dim'), border:cv('--mn-border'),
+      ok:cv('--mn-ok'), grid:cv('--mn-grid'), abyss:cv('--mn-abyss')
+    };
+    var t=performance.now()/1000;
+
+    ctx.fillStyle=C.fg; ctx.font='bold 14px Segoe UI, system-ui, sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Die Tiefe: ein Fixpunkt, viele Pfade, ein Rad', 14, 26);
+    ctx.fillStyle=C.dim; ctx.font='11px Segoe UI, system-ui, sans-serif';
+    ctx.fillText('Ruhe (A) = eingefrorene Wiederkunft  ·  ewige Bewegung (B) = nicht-eingefrorene Ruhe', 14, 42);
+
+    var dg=ctx.createRadialGradient(cx,cy,4,cx,cy,maxR);
+    dg.addColorStop(0,C.abyss); dg.addColorStop(0.55,C.abyss); dg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.55; ctx.fillStyle=dg;
+    ctx.beginPath(); ctx.arc(cx,cy,maxR,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    for(var m=1;m<=4;m++){ ctx.beginPath(); ctx.arc(cx,cy,maxR*m/4,0,TAU); ctx.stroke(); }
+
+    for(var i=0;i<state.parts.length;i++){
+      var p=state.parts[i]; var col=cv(p.colvar)||C.accent;
+      if(p.trail.length<2){continue;}
+      for(var s=1;s<p.trail.length;s++){
+        ctx.strokeStyle=hexToRgba(col,(s/p.trail.length)*0.8); ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(p.trail[s-1][0],p.trail[s-1][1]);
+        ctx.lineTo(p.trail[s][0],p.trail[s][1]);
+        ctx.stroke();
+      }
+    }
+
+    for(var j=0;j<state.parts.length;j++){
+      var q=state.parts[j]; var col2=cv(q.colvar)||C.accent;
+      ctx.fillStyle=col2; ctx.beginPath(); ctx.arc(q.px,q.py,6,0,TAU); ctx.fill();
+      ctx.strokeStyle=hexToRgba(C.fg,0.3); ctx.lineWidth=1; ctx.stroke();
+    }
+
+    var zg=ctx.createRadialGradient(cx,cy,2,cx,cy,74);
+    zg.addColorStop(0,C.accent2); zg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.16; ctx.fillStyle=zg;
+    ctx.beginPath(); ctx.arc(cx,cy,74,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+
+    var pr=14+Math.sin(t*2.0)*4;
+    ctx.strokeStyle=C.ok; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,pr,0,TAU); ctx.stroke();
+    ctx.fillStyle=C.ok; ctx.beginPath(); ctx.arc(cx,cy,5,0,TAU); ctx.fill();
+
+    if(state.mode==='B'){
+      var N=8; ctx.fillStyle=C.accent2;
+      for(var d=0;d<N;d++){
+        var a=t*0.6+(d/N)*TAU;
+        var rx=cx+Math.cos(a)*(pr+12), ry=cy+Math.sin(a)*(pr+12);
+        ctx.beginPath(); ctx.arc(rx,ry,3,0,TAU); ctx.fill();
+      }
+    }
+
+    ctx.fillStyle=C.fg; ctx.font='bold 12px Segoe UI, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Fixpunkt · normale Form · Wiederkunft', cx, cy+pr+22);
+    ctx.fillStyle=C.dim; ctx.font='11px Segoe UI, system-ui, sans-serif';
+    ctx.fillText('zugleich Grube (A) & Abgrund (B) — der Anzieher', cx, cy+pr+38);
+
+    updateStatus();
+  }
+
+  function loop(){
+    if(state.running){integrate();}
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  runBtn.addEventListener('click',release);
+  resetBtn.addEventListener('click',ready);
+  modeBtn.addEventListener('click',function(){
+    state.mode=(state.mode==='A')?'B':'A';
+    release();
+  });
+  kSlider.addEventListener('input',function(){
+    state.kVal=parseFloat(kSlider.value);
+    updateChips();
+    if(!state.running){render();}
+  });
+  cntSlider.addEventListener('input',function(){
+    state.count=parseInt(cntSlider.value,10);
+    updateChips();
+    initParticles();
+    if(!state.running){render();}
+  });
+
+  window.toggleTheme=function(){root.classList.toggle('dark');};
+  window.addEventListener('resize',function(){render();});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+
+  release();
+})();
+</script>
+</body>
+</html>

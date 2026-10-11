@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viel-zu-Eins, ein Gesetz: Kohärenz macht zwei Routen gleich (Fusion R2·043)</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('n2_043_theme');}catch(e){}var d=s?s==='dark':true;var el=document.documentElement;if(d){el.classList.add('dark');}else{el.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f6f5f1; --bg2:#efece5; --panel:#fdfdfb; --panel2:#f3efe7;
+  --stroke:rgba(24,30,64,.14); --stroke2:rgba(24,30,64,.32);
+  --txt:#1b2033; --dim:#3b4257; --faint:#6a7188;
+  --acc:#0b7fb0; --acc2:#c13584; --acc3:#6d4ad1; --acc4:#0f9d6b; --acc5:#b45309;
+  --warn:#c2410c; --good:#0f9d6b;
+  --shadow:rgba(24,30,64,.10); --glow:rgba(11,127,176,.28); --grid:rgba(24,30,64,.06);
+  --f1:#0b7fb0; --f2:#c13584; --f3:#6d4ad1; --f4:#0f9d6b; --f5:#b45309;
+}
+html.dark{
+  --bg:#070810; --bg2:#0c0e1a; --panel:rgba(18,21,38,.72); --panel2:#12152a;
+  --stroke:rgba(140,160,255,.15); --stroke2:rgba(150,175,255,.34);
+  --txt:#e8ecff; --dim:#a6add4; --faint:#6d7498;
+  --acc:#6ae3ff; --acc2:#ff7ad9; --acc3:#9d7bff; --acc4:#6dffb0; --acc5:#ffd166;
+  --warn:#ff8e6e; --good:#6dffb0;
+  --shadow:rgba(0,0,0,.45); --glow:rgba(106,227,255,.32); --grid:rgba(140,160,255,.08);
+  --f1:#6ae3ff; --f2:#ff7ad9; --f3:#9d7bff; --f4:#6dffb0; --f5:#ffd166;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg);color:var(--txt);line-height:1.66;font-size:15.5px;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 80% 42% at 12% -10%,var(--glow),transparent 60%),
+             radial-gradient(ellipse 70% 45% at 92% 110%,color-mix(in srgb,var(--acc3) 16%,transparent),transparent 62%);}
+article{max-width:820px;margin:0 auto;padding:40px 22px 90px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.tagline{font-family:ui-monospace,"JetBrains Mono",Consolas,monospace;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--acc);font-weight:700}
+#themebtn{font-family:inherit;font-size:12px;font-weight:650;padding:6px 12px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--stroke2);background:var(--panel);color:var(--txt)}
+#themebtn:hover{border-color:var(--acc)}
+h1{font-size:clamp(1.85rem,4.4vw,2.8rem);font-weight:840;letter-spacing:-.03em;line-height:1.07;margin:6px 0 8px;
+  background:linear-gradient(100deg,var(--acc) 4%,var(--acc3) 52%,var(--acc2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--txt-faint,var(--faint));font-size:13px;font-family:ui-monospace,monospace;margin-bottom:12px}
+.sub b{color:var(--dim);font-weight:600}
+.lede{color:var(--dim);font-size:14px;margin-bottom:26px;max-width:74ch}
+section{margin:38px 0;scroll-margin-top:20px}
+h2{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--stroke)}
+h2 .n{font-family:ui-monospace,monospace;font-size:.8em;color:var(--acc);margin-right:9px}
+h3{font-size:1.04rem;font-weight:750;margin:22px 0 9px;color:var(--txt)}
+h3 .n{font-family:ui-monospace,monospace;font-size:.82em;color:var(--acc);margin-right:7px}
+p{color:var(--dim);margin-bottom:12px;max-width:72ch}
+strong{color:var(--txt);font-weight:700}
+em{color:var(--acc5);font-style:normal;font-weight:620}
+a{color:var(--acc);text-decoration:none;border-bottom:1px solid var(--stroke2)}
+a:hover{border-bottom-color:var(--acc)}
+code{font-family:ui-monospace,monospace;font-size:.86em;background:var(--panel2);border:1px solid var(--stroke);
+  padding:1px 6px;border-radius:5px;color:var(--acc)}
+ul,ol{margin:8px 0 14px 22px;color:var(--dim);max-width:70ch}
+li{margin-bottom:7px}
+.eq{display:block;text-align:center;font-size:1.24rem;margin:16px 0;padding:12px;border-radius:12px;
+  background:var(--panel2);border:1px solid var(--stroke);color:var(--txt);
+  font-family:"Cambria Math","STIX Two Math",serif;overflow-x:auto}
+.eq small{display:block;font-family:"Inter",sans-serif;font-size:.72rem;color:var(--faint);margin-top:5px;letter-spacing:.01em}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:0 10px 30px var(--shadow)}
+.card h3{margin-top:0}
+.who{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:inline-block;
+  padding:2px 9px;border-radius:999px;margin-bottom:7px}
+.who.a{color:var(--acc3);background:color-mix(in srgb,var(--acc3) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc3) 40%,transparent)}
+.who.b{color:var(--acc2);background:color-mix(in srgb,var(--acc2) 14%,transparent);border:1px solid color-mix(in srgb,var(--acc2) 40%,transparent)}
+.who.f{color:var(--acc4);background:color-mix(in srgb,var(--acc4) 14%,transparent);border:1px solid color-mix(in srgb,var(--acc4) 40%,transparent)}
+.claim{font-size:13.7px;color:var(--dim)}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);
+  padding:12px 15px;border-radius:0 11px 11px 0;margin:15px 0;font-size:13.7px;color:var(--dim)}
+.note.key{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note .t{font-weight:760;color:var(--txt);display:block;margin-bottom:4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--stroke);vertical-align:top}
+th{color:var(--acc);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+td{color:var(--dim)} td.m{font-family:ui-monospace,monospace;color:var(--txt)}
+.vizwrap{background:var(--panel2);border:1px solid var(--stroke2);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 16px 46px var(--shadow)}
+.vizwrap .vtitle{font-weight:760;font-size:1.02rem;margin-bottom:2px}
+.vizwrap .vsub{font-size:12.4px;color:var(--faint);margin-bottom:12px;max-width:70ch}
+#cViz{display:block;width:100%;height:auto;border-radius:11px;border:1px solid var(--stroke);touch-action:none;background:var(--panel2)}
+.vgrid{display:grid;grid-template-columns:1fr 248px;gap:16px;align-items:start}
+@media(max-width:680px){.vgrid{grid-template-columns:1fr}}
+.readout{font-family:ui-monospace,monospace;font-size:12.1px;background:var(--panel);border:1px solid var(--stroke);
+  border-radius:11px;padding:12px 13px;line-height:1.85;color:var(--dim);overflow-x:auto}
+.readout .k{color:var(--acc5)} .readout .v{color:var(--txt)} .readout .g{color:var(--good)} .readout .r{color:var(--warn)}
+.ctl{margin:9px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:4px;font-weight:600}
+.ctl label b{font-family:ui-monospace,monospace;color:var(--acc);font-weight:700}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--acc),var(--acc3));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#fff;border:2.5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2.5px solid var(--acc);cursor:grab}
+.btnrow{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.btnrow button{font-family:inherit;font-size:12px;font-weight:640;padding:6px 11px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--stroke2);background:var(--panel);color:var(--txt)}
+.btnrow button:hover{border-color:var(--acc)}
+.btnrow button.on{background:linear-gradient(92deg,var(--acc),var(--acc3));color:#06101e;border-color:transparent}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:8px 0 2px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.prov{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--stroke)}
+.prov:last-child{border-bottom:0}
+.prov .badge{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;flex:0 0 auto;width:22px;height:22px;border-radius:6px;
+  display:grid;place-items:center;color:#06101e;background:var(--acc)}
+.prov .badge.b{background:var(--acc2)}
+.prov .desc{font-size:13.4px;color:var(--dim)}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--stroke);color:var(--faint);font-size:12px;font-family:ui-monospace,monospace;text-align:center}
+</style>
+</head>
+<body>
+<article>
+  <div class="top">
+    <span class="tagline">Knockout-Synthese · Runde 2 · Pair 043 · Nicht-KI-Track</span>
+    <button id="themebtn" type="button">☾ / ☀ Thema</button>
+  </div>
+  <h1>Viel-zu-Eins, ein Gesetz: Kohärenz macht zwei Routen gleich</h1>
+  <p class="sub">Fusion aus: <b>n1-003.html</b> ✕ <b>n1-072.html</b> &nbsp;(Runde 2)</p>
+  <p class="lede">Beide Ausgangspapiere sind selbst schon Synthesen — Papier A über dimensionen-reduzierende Abbildungen
+    (Ableitung, Kern, Orientierung, Stokes–Fubini) und Papier B über Dualität als Adjunktion (Σ⊣Ω, Fold/Unfold,
+    das kommutierende Quadrat). Dieser Papier fuse beide auf die <em>Metaebene</em> ab, auf der sie dieselbe Aussage sind.</p>
+
+  <!-- ============ 1 THESE ============ -->
+  <section id="these">
+    <h2><span class="n">1</span>Kernthese der Fusion</h2>
+    <p>Die beiden R1-Papiere sind <strong>dasselbe Meta-Theorem auf zwei Höhen</strong>. In beiden dreht sich alles um
+      genau eine Maschine aus zwei Teilen: <strong>(i) eine universelle viel-zu-eins-Abbildung</strong> und
+      <strong>(ii) ein einzelnes Kohärenzgesetz, das zwei verschiedene Routen zwischen denselben Eckpunkten in ein
+      und dasselbe Ziel münden lässt.</strong> „Kostenlos ableiten“ heißt in beiden: die <em>reduzierte</em> Route
+      (Rand / Wand / der ko-freie Objekt) als <em>treuen Stellvertreter</em> der <em>vollen</em> Route (Innere / Szene /
+      der freie Objekt) lesen — und das nur, weil das Gesetz die beiden Routen gleichsetzt.</p>
+    <p>Papier <span class="who a">A</span> ist diese Maschine in <em>analytischer</em> Gewandung: die universelle
+      viel-zu-eins-Abbildung ist die <strong>Ableitung <code>Df</code></strong> — eine lineare Abbildung, und eine echte
+      Dimensionsreduktion ist per Definition genau eine Abbildung, deren Differential <em>Range verliert</em>. Das
+      Kohärenzgesetz ist <strong>Stokes–Fubini</strong> (<code>∫<sub>M</sub>dω = ∫<sub>∂M</sub>ω</code>): die Route über das
+      <em>Innere</em> und die Route über den <em>Rand</em> (bzw. über die <em>Wand</em>) liefern denselben Wert.</p>
+    <p>Papier <span class="who b">B</span> ist dieselbe Maschine in <em>kategorischer</em> Gewandung: die universelle
+      viel-zu-eins-Abbildung ist die <strong>Adjunktion <code>F ⊣ G</code></strong> (frei↔ko-frei), deren Hom-Bijektion
+      <code>[ΣX,Y] ≅ [X,ΩY]</code> die „zwei Routen“ neu indiziert. Das Kohärenzgesetz ist das
+      <strong>Bialgebra-/Eckmann–Hilton-Gesetz</strong> (<code>c·a = map a · swap · map c</code>): die direkte Route und
+      die Route über das Quadrat landen im selben Ziel.</p>
+    <p><strong>Die fusionierte Position:</strong> Eine <em>universelle viel-zu-eins-Abbildung</em> <code>F : M → N</code>
+      (<code>dim N &lt; dim M</code> bzw. <code>rank Df &lt; dim M</code>) mit <em>Kern/Faser</em> <code>ker F</code> und
+      einem <em>Faser-Label</em> <code>ℓ</code> (A: Orientierung/Farbe, B: das Kohärenzgesetz selbst) plus einem
+      <em>Kohärenzgesetz</em> <code>L</code> ergibt „kostenlose Ableitung“ <strong>genau dann, wenn <code>L</code> die zwei
+      Routen gleichsetzt</strong>. Die Ableitung <em>ist</em> eine lineare Abbildung, und lineare Abbildungen <em>sind</em>
+      genau die Morphismen, über die eine Adjunktion läuft — also sind A's „lokales lineares Modell“ und B's „universeller
+      Empfänger“ <strong>zwei Gesichter desselben Objekts</strong>: einer universellen viel-zu-eins-Abbildung, deren Kern
+      exakt die Faser ist, die weggeklappt wurde, und deren überlebendes <em>Buchführungssymbol</em> (<code>ℓ</code>)
+      festhält, <em>welcher Ast</em> gewählt wurde.</p>
+  </section>
+
+  <!-- ============ 2 WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+    <p>Die beiden R1-Papiere stehen in <strong>keinem faktischen Widerspruch</strong> (unterschiedliche Teildomänen:
+      analytische Geometrie vs. kategorische Rekursionstheorie). Aber sie nehmen <strong>incompatible Standpunkte</strong>
+      zur <em>Natur der Reduction</em> ein. Drei konkrete Punkte:</p>
+
+    <div class="card"><span class="who">Punkt 1</span>
+      <h3>Verlustfrei vs. verlustbehaftet (das eigentliche Gegenteil)</h3>
+      <p class="claim"><span class="who a">A sagt</span> Die Reduction <strong>zerstört</strong>: Die Ableitung verliert
+        echten Range, der Informationsverlust ist <code>ker Df</code> — <em>real und unrettbar</em>. Ein
+        <em>diskretes Label</em> (Farbe / Orientierung, im Grunde <strong>eins Bit</strong>) rettet nur <em>einen Ast</em>
+        der Faser, nicht die ganze. Die 1D-Wand ist ein <em>verlustbehafteter</em> Stellvertreter der 2D-Szene.</p>
+      <p class="claim" style="margin-bottom:0"><span class="who b">B sagt</span> Die Adjunktion ist eine
+        <strong>Bijektion</strong> <code>[ΣX,Y] ≅ [X,ΩY]</code>: die „kostenlose Ableitung“ ist <em>exakt und verlustfrei</em> —
+        nichts geht verloren, beide Routen rekonstruieren <em>alles</em>. <code>bubbleSort = naiveInsertSort</code> ist
+        dieselbe <em>eine</em> Abbildung, zweimal benannt.</p>
+    </div>
+
+    <div class="card"><span class="who">Punkt 2</span>
+      <h3>Art der Kohärenz: numerische Wertgleichheit vs. strikte Strukturgleichheit</h3>
+      <p class="claim"><span class="who a">A sagt</span> Das Kohärenzgesetz (Stokes–Fubini) identifiziert zwei Routen als
+        <strong>gleiche reelle Zahlen</strong> — eine <em>grobe, skalare, extensionale</em> Invariante (das Integral).
+        Die Gleichheit gilt als <em>Wertgleichheit</em> einer Messgröße.</p>
+      <p class="claim" style="margin-bottom:0"><span class="who b">B sagt</span> Das Kohärenzgesetz (Bialgebra /
+        Eckmann–Hilton) identifiziert zwei Routen als <strong>gleiche Morphismen / Programme</strong> — eine <em>feine,
+        strukturelle, intensionale</em> Identität (<code>c·a = map a·swap·map c</code>, exakt, kein ε). Die Gleichheit
+        gilt als <em>Identität der Konstruktion</em>.</p>
+    </div>
+
+    <div class="card"><span class="who">Punkt 3</span>
+      <h3>Ziel der Ableitung: ein Wert (Skalar) vs. ein Objekt (Struktur)</h3>
+      <p class="claim"><span class="who a">A sagt</span> Die beiden Routen münden in einen <strong>Wert</strong> — das
+        Integral, eine Zahl (k-dimensional → (k−1)-dimensional, Antwort ist ein Skalar in <code>ℝ</code>).</p>
+      <p class="claim" style="margin-bottom:0"><span class="who b">B sagt</span> Die beiden Routen münden in ein
+        <strong>Objekt</strong> — die freie/ko-freie Konstruktion (der Algorithmus selbst), eine <em>Struktur</em> in einer
+        Kategorie. Es wird nichts „abgerechnet“ zu einer Zahl, sondern ein <em>ganzes Objekt</em> übergeben.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3 AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2><span class="n">3</span>Auflösung</h2>
+
+    <h3><span class="n">A1</span>Verlustgrad = Vollständigkeit des Labels</h3>
+    <p class="claim">Beide sind <em>dieselbe</em> viel-zu-eins-Abbildung <code>F</code> plus <em>Faser-Label</em>
+      <code>ℓ</code>. Der Unterschied ist nur, <strong>wie viel der Faser das Label wiederherstellt</strong>:
+      A's Label (Orientierung/Farbe = ein Vorzeichen) ist eine <em>partielle Sektion</em> — es rettet einen
+      Querschnitt (einen Ast) der Faser, deshalb <em>verlustbehaftet</em>. B's „Label“ (die Adjunktions-Bijektion)
+      ist eine <em>volle Sektion</em> — es rettet die <strong>ganze</strong> Faser, deshalb <em>verlustfrei</em>.</p>
+    <div class="note key"><span class="t">Fusion</span>
+      <strong>Verlust ist kein Ja/Nein, sondern eine Größe: der Anteil von <code>ker F</code>, den das Label
+      <code>ℓ</code> rekonstruiert.</strong> A ist der <em>auflösungsarme</em> Fall (1-Bit-Label → verlustbehaftet),
+      B der <em>auflösungsvolle</em> Fall (volle Bijektion → verlustfrei). Dazwischen liegen echte
+      Zwischenstufen (ein Label, das einen Teil der Faser rettet). „Verlustfrei“ und „verlustbehaftet“ sind die
+      beiden Enden <em>eines</em> Spektrums desselben Mechanismus.</div>
+
+    <h3><span class="n">A2</span>Grobe vs. feine Invariante</h3>
+    <p class="claim">Eine viel-zu-eins-Abbildung <code>F</code> ist <strong>verlustfrei genau für Invarianten, die
+      auf dem Quotienten <code>M / ker F</code> „absteigen”</strong>, und verlustbehaftet für Invarianten, die die Faser
+      <em>sehen</em>. A verfolgt eine <em>grobe skalare</em> Invariante (das Integral) — die auf dem Quotienten
+      absteigt, deshalb reicht der Rand und die Gleichheit ist <em>numerisch</em>. B verfolgt eine <em>feine</em>
+      Invariante (den konkreten Morphemus) — die die Faser sieht, weshalb das Label die ganze Faser tragen muss und
+      die Gleichheit <em>strukturell/strikt</em> ist.</p>
+    <div class="note key"><span class="t">Fusion</span>
+      <strong>A's „gleiche Zahl“ und B's „gleiche Konstruktion“ sind derselbe Kohärenzaussatz, gelesen auf
+      verschiedenen Auflösungen der Invariante</strong> — Skalar (grob, numerisch) vs. Morphemus (fein, strikt).
+      Die Gleichheitsart (Wert vs. Struktur) ist keine freie Wahl, sondern <em>folgt aus der Auflösung der
+      verfolgten Größe</em>.</div>
+
+    <h3><span class="n">A3</span>Das Ziel ist der Träger der Invariante</h3>
+    <p class="claim">Die „Zwei-Routen-ein-Ziel“-Maschine mündet dort, wo die <em>verfolgte Invariante</em> lebt.
+      Ist die Invariante eine Zahl (A: das Integral), ist das Ziel ein <em>Wert</em> in <code>ℝ</code>. Ist sie ein
+      Morphemus / eine Konstruktion (B: der Algorithmus), ist das Ziel ein <em>Objekt</em> der Kategorie.
+      <em>Wert vs. Objekt</em> wird also <strong>von der Invariante bestimmt, nicht von der Abbildung</strong>.</p>
+    <div class="note key"><span class="t">Fusion</span>
+      <strong>Die reduzierte Route berechnet die volle Route, indem sie über die Fasern summiert</strong> —
+      in A wörtlich (Fubini: Integral über das Innere = Summe der Faser-Integrale über die Wand/Basis),
+      in B strukturell (die Hom-Bijektion summiert die Faser neu zu derselben Menge). Das „Ziel“ ist der
+      Träger dieser Summe: Zahl bei skalaren Invarianten, Objekt bei strukturellen.</div>
+  </section>
+
+  <!-- ============ 4 INHALT ============ -->
+  <section id="inhalt">
+    <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+    <h3><span class="n">a</span>Die universelle viel-zu-eins-Abbildung</h3>
+    <p>Beide Papiere zentrieren ein <em>universelles</em> Objekt, das jede „Roh-Abbildung“ durchläuft. In
+      <span class="who a">A</span> ist das die <strong>Ableitung</strong> <code>Df : T<sub>a</sub>M → T<sub>f(a)</sub>N</code> —
+      die <em>universelle lineare Approximation</em>: jede glatte Abbildung hat in erster Ordnung dieses lineare
+      Schattbild, und die lineare Abbildung ist das Objekt, durch das jede lineare Approximation „läuft“. Eine
+      <em>echte</em> Dimensionsreduktion ist definiert als eine Abbildung mit <code>rank Df ≤ dim N &lt; dim M</code>
+      — also <em>genau</em> eine, deren Differential Range verliert. In <span class="who b">B</span> ist das
+      universelle Objekt die <strong>Adjunktion</strong> <code>F ⊣ G</code>: <code>F</code> ist frei/initial
+      („erzeugt“: Σ / Unfold), <code>G</code> ist ko-frei/final („konsumiert“: Ω / Fold), und die Hom-Bijektion
+      ist die universelle Neuindizierung zwischen den beiden Seiten. <em>Beide sind „freie Empfänger“: der
+      Morphemus-Raum über der freien Konstruktion steht in Bijektion zum Morphemus-Raum über der vollen.</em></p>
+
+    <h3><span class="n">b</span>Das Kohärenzgesetz (die gesamte Engine)</h3>
+    <p>Der <strong>einzig</strong> analytische Inhalt bei <span class="who a">A</span> ist
+      <strong>Fubini + der 1D-Hauptsatz</strong>, verpackt in Stokes:
+      <code>∫<sub>M</sub>dω = ∫<sub>∂M</sub>ω</code>. Der <strong>einzig</strong> algebraische Inhalt bei
+      <span class="who b">B</span> ist das <strong>Bialgebra-/Eckmann–Hilton-Gesetz</strong>:
+      <code>c·a = map a · swap · map c</code>. In beiden ist das Gesetz <em>die eine Identität, die zwei Routen
+      kommutieren lässt</em>. Und in beiden ist die „Buchführung, die die Reduction überlebt“ eine
+      <em>Faser-Sektion</em>: bei A das <strong>Vorzeichen der Determinante</strong> / die <strong>Orientierung</strong>
+      (also die <em>Farbe</em> in der Projektion), bei B die <strong><code>swap</code>-Transformation</strong> selbst
+      (der Regel, die zwei Wege zum selben Ziel führt). <em>Orientierung (A) ≅ Kohärenzgesetz (B)</em>: beides ist
+      der Mechanismus, der die reduzierte Darstellung treu macht.</p>
+    <div class="eq">Route<sub>voll</sub> &nbsp;=&nbsp; Route<sub>reduziert</sub>
+      &nbsp;&nbsp;⟺&nbsp;&nbsp; Kohärenzgesetz <code>L</code> hält
+      <small>„zwei Routen, ein Ziel“ — die Differenz der beiden Routen liegt exakt in ker F;
+         das Faser-Label ℓ ist eine (partielle/volle) Sektion davon.</small>
+    </div>
+
+    <h3><span class="n">c</span>Die zwei Routen</h3>
+    <p>Bei <span class="who a">A</span>: <strong>Innere</strong> (<code>∫<sub>M</sub>dω</code>) vs. <strong>Rand</strong>
+      (<code>∫<sub>∂M</sub>ω</code>); oder geometrisch: <strong>Szene</strong> (2D) vs. <strong>Wand</strong> (1D-Bild).
+      Bei <span class="who b">B</span>: die <strong>direkte Route</strong> (<code>c ∘ a</code>) vs. die
+      <strong>Quadrat-Route</strong> (<code>map c → swap → map a</code>); oder die Σ-Naturlichkeits-Route
+      (<code>X →f Y →Σ ΣY</code> vs. <code>X →Σ ΣX →Σf ΣY</code>). In beiden: <em>weil</em> das Gesetz hält,
+      landen beide Routen im <em>nämlichen</em> Ziel. Die „Gratis“-Ableitung ist das Recht, die <em>reduzierte</em>
+      Route als Repräsentanten der <em>vollen</em> zu benutzen.</p>
+
+    <h3><span class="n">d</span>Kostenlose Ableitung = Adjunkte Transposition / Abstieg über Fasern</h3>
+    <p>Bei <span class="who a">A</span> ist die Ableitung <em>Adjunkte Transposition in analytischer Form</em>:
+      über das Innere zu integrieren = über die Wand die Faser-Integrale zu summieren (Fubini). Bei
+      <span class="who b">B</span> ist sie <em>Adjunkte Transposition wörtlich</em> (Currying / <code>swap</code>):
+      den ko-freien Objekt zu bauen = durch den freien hindurch Unfold/Fold zu nehmen. <em>Beides ist dasselbe:</em>
+      die reduzierte Route berechnet die volle Route <strong>indem sie über die Fasern aufsummiert</strong>.
+      Der Faser-Quotient <code>M / ker F</code> ist die „Wand“ bzw. die Basis, über die summiert wird.</p>
+
+    <h3><span class="n">e</span>Das Spektrum (worauf A und B sitzen)</h3>
+    <p>A und B sind die <strong>zwei Enden eines Spektrums</strong> „wie viel Faser das Label auflöst“:</p>
+    <table>
+      <tr><th>Aspekt</th><th><span class="who a">A</span> Dimension-Reduktion</th><th><span class="who b">B</span> Adjunktion</th></tr>
+      <tr><td>Universelle Abbildung</td><td class="m">Differential Df (linear, rank &lt; dim)</td><td class="m">Adjunktion F ⊣ G (frei↔ko-frei)</td></tr>
+      <tr><td>Faser / Verlust</td><td class="m">ker Df (real, unrettbar)</td><td class="m">Hom-Faser (neu indiziert, voll)</td></tr>
+      <tr><td>Label / Buchführung</td><td>Orientierung / Farbe (1 Bit = Vorzeichen)</td><td>Kohärenzgesetz / swap (volle Bijektion)</td></tr>
+      <tr><td>Kohärenzgesetz</td><td class="m">Stokes–Fubini (∫dω = ∫ω)</td><td class="m">Bialgebra / Eckmann–Hilton</td></tr>
+      <tr><td>Zwei Routen</td><td>Innere vs. Rand · Szene vs. Wand</td><td>direkt vs. map·swap·map · Σ-Routen</td></tr>
+      <tr><td>Ziel der Ableitung</td><td>ein <strong>Wert</strong> (Integral, Skalar)</td><td>ein <strong>Objekt</strong> (Algorithmus, Struktur)</td></tr>
+      <tr><td>Gleichheitsart</td><td>numerisch (grob, extensional)</td><td>strukturiert (fein, strikt)</td></tr>
+      <tr><td>Verlust</td><td><strong>verlustbehaftet</strong> (partielle Sektion)</td><td><strong>verlustfrei</strong> (volle Bijektion)</td></tr>
+    </table>
+
+    <h3><span class="n">f</span>Die vereinheitlichte Aussage</h3>
+    <div class="eq">F universal viel-zu-eins &nbsp;+&nbsp; Kohärenzgesetz <code>L</code> &nbsp;+&nbsp; Faser-Label <code>ℓ</code>
+      &nbsp;&nbsp;⟹&nbsp;&nbsp; „Gratis“-Ableitung
+      <small>… genau dann, wenn L die zwei Routen gleichsetzt; die reduzierte Route ist der volle Route
+         gleich für jede Invariante, die auf M/ker F absteigt. A (Differential + Stokes–Fubini) ist das
+         grobe/verlustbehaftete/numerische Ende; B (Adjunktion + Bialgebra–Eckmann–Hilton) das
+         feine/verlustfreie/strukturelle Ende desselben Satzes.</small>
+    </div>
+    <div class="note"><span class="t">Zusammenfassung für die nächste Runde</span>
+      <strong>Viel-zu-Eins-Abbildung <code>F</code> (Ableitung bzw. Adjunktion) + Faser <code>ker F</code> +
+      Faser-Label <code>ℓ</code> + Kohärenzgesetz <code>L</code> ⇒ zwei Routen, ein Ziel ⇒ Gratis-Ableitung.</strong>
+      Verlustgrad = Vollständigkeit von <code>ℓ</code> (1-Bit-Label A ↔ volle Bijektion B); Gleichheitsart
+      (numerisch/strukturell) und Ziel (Wert/Objekt) folgen aus der Auflösung der verfolgten Invariante.
+      <em>Orientierung/Farbe (A)</em> und <em>swap/Kohärenzgesetz (B)</em> sind dieselbe überlebende Buchführung.
+      Das nächste Papier arbeitet von dieser einen Stelle aus.</div>
+  </section>
+
+  <!-- ============ 5 VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2><span class="n">5</span>Interaktive Visualisierung</h2>
+    <p>Das fusionierte Modell als <em>ein</em> Canvas: eine <strong>viel-zu-eins-Abbildung</strong> als Bündel von
+      <strong>Fasern</strong> (2D-Quellraum → 1D-Basis). Der Schieberegler <b>„Labelauflösung“</b> steuert, wie viel
+      der Faser das Label rettet — von <em>A</em> (1-Bit-Label, verlustbehaftet) bis <em>B</em> (volle Bijektion,
+      verlustfrei). Das <b>„Kohärenzgesetz“-Ziel</b> zeigt, wie die <em>reduzierte Route</em> (Summe über die Fasern
+      auf der Basis) bei vollem Label der <em>vollen Route</em> (Summe über alle Punkte) gleich wird — das ist
+      Fubini (A) bzw. das kommutierende Quadrat (B) in einer Figur. Klicke auf einen Basis-Punkt, um seine ganze
+      Faser (= <code>ker F</code>) zu markieren.</p>
+    <div class="vizwrap">
+      <div class="vtitle">Viel-zu-eins-Abbildung · Faser · Label · Kohärenz</div>
+      <div class="vsub">Rechts die Basis (reduzierte 1D-Dimension). Jeder Punkt links gehört zu einer Faser
+        (gleiche Farbe). Der Balken unten zeigt die <b>zwei Routen</b>: <b>Vollroute Σ</b> (alle) vs.
+        <b>Reduzierte Route Σ</b> (nur das, was das Label rettet); die Lücke dazwischen ist <b>ker F (Verlust)</b>.</div>
+      <div class="vgrid">
+        <div>
+          <canvas id="cViz" width="780" height="470"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--f1)"></i>Faser 0</span>
+            <span><i style="background:var(--f2)"></i>Faser 1</span>
+            <span><i style="background:var(--f3)"></i>Faser 2</span>
+            <span><i style="background:var(--f4)"></i>Faser 3</span>
+            <span><i style="background:var(--f5)"></i>Faser 4</span>
+            <span><i style="background:var(--faint)"></i>nicht rekonstruiert (ker F)</span>
+          </div>
+          <div class="btnrow">
+            <button id="lawBtn" type="button" class="on">Kohärenzgesetz AN</button>
+            <button id="resetBtn" type="button">Zurücksetzen</button>
+          </div>
+          <div class="ctl"><label>Labelauflösung ℓ (wie viel Faser wird rekonstruiert) <b id="vRes">100 %</b></label>
+            <input type="range" id="sRes" min="0" max="100" step="5" value="100">
+          </div>
+        </div>
+        <div>
+          <div class="readout" id="ro"></div>
+          <div class="note" style="font-size:12.5px;margin-top:12px"><span class="t">Label = Sektion der Faser</span>
+            Bei <b>tiefer Auflösung</b> (≈ <span class="who a">A</span>) rettet das Label nur <em>einen Ast</em> pro
+            Faser (ein Bit / ein Vorzeichen) — der Rest ist <code>ker F</code>. Bei <b>voller Auflösung</b> (≈
+            <span class="who b">B</span>) rettet es die <em>ganze</em> Faser (Bijektion). Dazwischen: partielles Label.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2><span class="n">6</span>Provenienz</h2>
+    <div class="card">
+      <div class="prov">
+        <span class="badge">A</span>
+        <div>
+          <a href="../n1-003.html">n1-003.html</a>
+          <div class="desc">R1-Fusion „Dimension-Reduktion: der gemeinsame Kern“ (Spivak ✕ Projektion): die
+            dimensionen-reduzierende Abbildung <code>f : M → N</code>, deren Differential Range verliert;
+            Verlust = <code>ker Df</code>; Farbe = Orientierung als überlebende Buchführung; Stokes–Fubini als
+            Kohärenzgesetz, das Innere und Rand wertgleich macht (die vier Klassiker als ein Satz).</div>
+        </div>
+      </div>
+      <div class="prov">
+        <span class="badge b">B</span>
+        <div>
+          <a href="../n1-072.html">n1-072.html</a>
+          <div class="desc">R1-Fusion „Dualität als Adjunktion — zwei Wege, ein Ziel“ (Schleifenraum ΩX ✕ Sorting
+            with Bialgebras): Dualität = Adjunktion frei↔ko-frei; die Hom-Bijektion als Currying; das
+            Bialgebra-/Eckmann–Hilton-Gesetz als kommutierendes Quadrat; „kostenlose“ Ableitung = adjunkte
+            Transposition (verlustfrei, strikt, als Struktur/Objekt).</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Fusion R2·043 · nicht-KI-Track · selbst-enthalten, alle Daten inline, themen-reaktiv</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('cViz');
+  if(!cv || !cv.getContext){ return; }
+  var ctx = cv.getContext('2d');
+  var LW = 780, LH = 470;
+  var dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
+  cv.width = LW*dpr; cv.height = LH*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var BASEX = 690;
+  var lawOn = true;
+  var res = 100;
+  var focus = -1;
+
+  // inline data: fibers (source points -> 1D base). Each fiber = one base point (same color).
+  // x,y in the 2D source region (left); v = value/charge of the point.
+  var FIBERS = [
+    [ {x:80, y:80,  v:3}, {x:150,y:110, v:2}, {x:110,y:150, v:4} ],
+    [ {x:70, y:210, v:1}, {x:135,y:200, v:5}, {x:175,y:240, v:2}, {x:100,y:265, v:3} ],
+    [ {x:90, y:335, v:4}, {x:165,y:345, v:2} ],
+    [ {x:250,y:80,  v:2}, {x:305,y:115, v:5}, {x:260,y:160, v:1} ],
+    [ {x:250,y:330, v:3}, {x:315,y:350, v:4} ]
+  ];
+
+  var nBase = FIBERS.length;
+  var baseY = function(i){ return 70 + i*70; };   // 70,140,210,280,350
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  var TH = {};
+  function readTheme(){
+    TH.grid = cssVar('--grid')||'rgba(128,128,128,.1)';
+    TH.txt  = cssVar('--txt')  ||'#1b2033';
+    TH.dim  = cssVar('--dim')  ||'#3b4257';
+    TH.faint= cssVar('--faint')||'#6a7188';
+    TH.warn = cssVar('--warn') ||'#c2410c';
+    TH.good = cssVar('--good') ||'#0f9d6b';
+    TH.panel= cssVar('--panel2')||'#f3efe7';
+    TH.stroke=cssVar('--stroke2')||'rgba(24,30,64,.3)';
+    TH.f = [ cssVar('--f1')||'#0b7fb0', cssVar('--f2')||'#c13584', cssVar('--f3')||'#6d4ad1',
+             cssVar('--f4')||'#0f9d6b', cssVar('--f5')||'#b45309' ];
+  }
+
+  function totalSum(){
+    var t=0;
+    for(var i=0;i<FIBERS.length;i++){ for(var j=0;j<FIBERS[i].length;j++){ t+=FIBERS[i][j].v; } }
+    return t;
+  }
+  function fiberRecovered(i, resPct){
+    var n = FIBERS[i].length;
+    var k = Math.round((resPct/100) * n);
+    if(k<0)k=0; if(k>n)k=n;
+    var s=0; for(var j=0;j<k;j++){ s+=FIBERS[i][j].v; }
+    return s;
+  }
+  function reducedSum(resPct){
+    var s=0; for(var i=0;i<FIBERS.length;i++){ s+=fiberRecovered(i,resPct); } return s;
+  }
+
+  function line(a,b,c,d,col,w,dash){
+    ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+    ctx.beginPath(); ctx.moveTo(a,b); ctx.lineTo(c,d); ctx.stroke(); ctx.setLineDash([]);
+  }
+  function dot(x,y,r,fill,ring){
+    ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=fill; ctx.fill();
+    if(ring){ ctx.lineWidth=2; ctx.strokeStyle=ring; ctx.stroke(); }
+  }
+  function label(s,x,y,col,f,align){
+    ctx.fillStyle=col||TH.dim; ctx.font=f||'11px ui-monospace,monospace';
+    ctx.textAlign=align||'left'; ctx.textBaseline='alphabetic'; ctx.fillText(s,x,y);
+  }
+
+  function draw(){
+    readTheme();
+    ctx.clearRect(0,0,LW,LH);
+    ctx.fillStyle=TH.panel; ctx.fillRect(0,0,LW,LH);
+
+    // source grid (subtle)
+    var g=40;
+    for(var gx=40; gx<=400; gx+=g) line(gx,40,gx,370,TH.grid,1);
+    for(var gy=40; gy<=370; gy+=g) line(40,gy,400,gy,TH.grid,1);
+
+    // base line (the reduced 1D space / "wall" / quotient M/ker F)
+    line(BASEX,40,BASEX,370,TH.stroke,3);
+    label('Basis (reduzierte 1D-Dimension = „Wand” / M / ker F)', BASEX-2, 34, TH.faint, '11px ui-monospace,monospace','center');
+
+    var rFrac = res/100;
+    var full = totalSum();
+    var reduced = reducedSum(res);
+    var loss = full - reduced;
+
+    // fibers + projection lines + source points
+    for(var i=0;i<FIBERS.length;i++){
+      var by = baseY(i);
+      var c = TH.f[i%TH.f.length];
+      var isFoc = (i===focus);
+      var n = FIBERS[i].length;
+      var k = Math.round(rFrac * n);
+      if(k<0)k=0; if(k>n)k=n;
+
+      // base point
+      if(isFoc){ ctx.lineWidth=3; ctx.strokeStyle=c; ctx.strokeRect(BASEX-13,by-13,26,26); }
+      else { dot(BASEX,by,7,c,TH.stroke); }
+      label('F'+i, BASEX+16, by+4, c, 'bold 12px ui-monospace,monospace','left');
+
+      for(var j=0;j<n;j++){
+        var p = FIBERS[i][j];
+        var recovered = (j<k);
+        var col = recovered ? c : TH.faint;
+        var alpha = recovered ? 0.9 : 0.28;
+        ctx.globalAlpha = alpha;
+        line(p.x,p.y, BASEX,by, col, isFoc?1.8:1.0);
+        ctx.globalAlpha = 1;
+        dot(p.x,p.y, recovered?8:6, recovered?c:(cssVar('--panel2')||'#f3efe7'), recovered?c:TH.faint);
+        if(recovered){ label(p.v, p.x-4, p.y+4, TH.txt, 'bold 11px ui-monospace,monospace'); }
+      }
+    }
+
+    // region label: source
+    label('Quellraum (2D, volle Dimension) — ' + full2n() + ' Punkte', 40, 26, TH.dim, '11px ui-monospace,monospace','left');
+    label('Viel-zu-eins: ' + full2n() + ' Punkte → ' + nBase + ' Basis-Punkte', 400, 26, TH.dim, '11px ui-monospace,monospace','left');
+
+    // ---- two-route bars (bottom) ----
+    var bx0=150, bMax=540, barY1=400, barY2=440;
+    label('Vollroute Σ  (alle Fasern, „Innere” / freier Objekt)', 40, barY1-8, TH.dim, '11px ui-monospace,monospace','left');
+    label('Reduzierte Route Σ  (nur rekonstruierte, „Wand” / ko-freier Objekt)', 40, barY2-8, TH.dim, '11px ui-monospace,monospace','left');
+
+    var fullW = (full>0? bMax : 0);
+    var redW  = (full>0? bMax * (reduced/full) : 0);
+    // full bar
+    ctx.globalAlpha=0.9; line(bx0,barY1,bx0+fullW,barY1,TH.f[0],12); ctx.globalAlpha=1;
+    // reduced bar (only recovered)
+    ctx.globalAlpha=0.95; line(bx0,barY2,bx0+redW,barY2,TH.f[1],12); ctx.globalAlpha=1;
+    // loss gap (ker F) on the reduced bar row
+    if(loss>0 && lawOn){
+      ctx.setLineDash([4,3]); line(bx0+redW,barY2,bx0+fullW,barY2,TH.warn,12); ctx.setLineDash([]);
+      label('ker F = '+loss, bx0+redW+4, barY2+4, TH.warn, 'bold 11px ui-monospace,monospace','left');
+    }
+    // equality tick
+    var eq = (loss<0.5 && lawOn);
+    var tickCol = eq ? TH.good : (lawOn ? TH.warn : TH.faint);
+    line(bx0+fullW+10, barY1-14, bx0+fullW+10, barY2+6, tickCol, 2);
+    label(eq ? '✓ gleich' : (lawOn ? '≠ (Verlust)' : '— kein Gesetz'), bx0+fullW+16, (barY1+barY2)/2+4, tickCol, 'bold 11px ui-monospace,monospace','left');
+
+    updateReadout(full, reduced, loss);
+  }
+
+  function full2n(){
+    var n=0; for(var i=0;i<FIBERS.length;i++){ n+=FIBERS[i].length; } return n;
+  }
+
+  function flavor(rFrac){
+    if(rFrac<=0.4) return '≈ A — 1-Bit-Label (Orientierung): verlustbehaftet, numerisch, Ziel = Wert';
+    if(rFrac>=0.9) return '≈ B — volle Bijektion: verlustfrei, strikt, Ziel = Objekt';
+    return 'Zwischenstufe — partielles Label, verlustbehaftet für die unretete Faser';
+  }
+
+  function updateReadout(full, reduced, loss){
+    var ro=document.getElementById('ro'); if(!ro) return;
+    var rFrac=res/100;
+    var verdict, vc;
+    if(lawOn){
+      if(loss<0.5){ verdict='✓ verlustfrei — reduzierte Route = Vollroute (≈ B: strikte Strukturgleichheit)'; vc='g'; }
+      else { verdict='✗ verlustbehaftet — gleich nur für abgestiegene Invariante; fehlend = ker F (≈ A: numerisch)'; vc='r'; }
+    } else {
+      verdict='— Kohärenzgesetz AUS — Quadrat kommutiert nicht, keine Gratis-Ableitung'; vc='k';
+    }
+    ro.innerHTML =
+      '<span class="k">Basis (1D, reduzierte Dim)</span> = <span class="v">'+nBase+' Punkte</span><br>'+
+      '<span class="k">Quellraum (2D, volle Dim)</span> = <span class="v">'+full2n()+' Punkte</span><br>'+
+      '<span class="k">Labelauflösung ℓ</span> = <span class="v">'+res+' %</span><br>'+
+      '<span class="k">Vollroute Σ (alle)</span> = <span class="v">'+full+'</span><br>'+
+      '<span class="k">Reduzierte Route Σ (rekonstruiert)</span> = <span class="v">'+reduced+'</span><br>'+
+      '<span class="k">Verlust = ker F</span> = <span class="'+(loss>0?'r':'g')+'">'+loss+'</span><br>'+
+      '<span class="k">Kohärenzgesetz</span> = <span class="'+(lawOn?'g':'k')+'">'+(lawOn?'AN (Stokes–Fubini / Bialgebra–EH)':'AUS')+'</span><br>'+
+      '<span class="k">Status</span> <span class="'+vc+'">'+verdict+'</span><br>'+
+      '<span class="k">Flavor</span> <span class="v">'+flavor(rFrac)+'</span>';
+  }
+
+  // ---- interaction ----
+  var sRes=document.getElementById('sRes');
+  if(sRes) sRes.addEventListener('input',function(){ res=+this.value; var v=document.getElementById('vRes'); if(v)v.textContent=res+' %'; draw(); });
+
+  var lawBtn=document.getElementById('lawBtn');
+  if(lawBtn) lawBtn.addEventListener('click',function(){
+    lawOn=!lawOn; lawBtn.classList.toggle('on',lawOn);
+    lawBtn.textContent = lawOn? 'Kohärenzgesetz AN' : 'Kohärenzgesetz AUS';
+    draw();
+  });
+  var resetBtn=document.getElementById('resetBtn');
+  if(resetBtn) resetBtn.addEventListener('click',function(){
+    res=100; lawOn=true; focus=-1;
+    if(sRes) sRes.value=100; var v=document.getElementById('vRes'); if(v)v.textContent='100 %';
+    if(lawBtn){ lawBtn.classList.add('on'); lawBtn.textContent='Kohärenzgesetz AN'; }
+    draw();
+  });
+
+  // click a base point to focus its fiber
+  function pos(e){ var r=cv.getBoundingClientRect(); var t=(e.touches?e.touches[0]:e);
+    return { x:(t.clientX-r.left)/r.width*LW, y:(t.clientY-r.top)/r.height*LH }; }
+  cv.addEventListener('click',function(e){
+    var p=pos(e); focus=-1;
+    for(var i=0;i<nBase;i++){
+      if(Math.abs(p.x-BASEX)<24 && Math.abs(p.y-baseY(i))<20){ focus=i; break; }
+    }
+    draw();
+  });
+
+  // theme
+  var tb=document.getElementById('themebtn');
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement;
+    d.classList.toggle('dark');
+    try{ localStorage.setItem('n2_043_theme', d.classList.contains('dark')?'dark':'light'); }catch(e){}
+    draw();
+  });
+  if(typeof MutationObserver!=='undefined'){
+    var mo=new MutationObserver(function(){ draw(); });
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  draw();
+})();
+</script>
+</body>
+</html>
