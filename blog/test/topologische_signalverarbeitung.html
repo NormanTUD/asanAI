@@ -2710,7 +2710,7 @@ const SPEC=(function(){
   const cls=[]; // 'harm' | 'grad' | 'curl'
   for(let k=0;k<cx.E;k++){
     const u=LA.col(cx.eigF.vectors,k);
-    const dv=LA.norm(cx.mv(cx.B1,u));
+    const dv=LA.norm(LA.mv(cx.B1,u));
     const cu=cx.T>0?LA.norm(LA.mv(LA.T(cx.B2),u)):0;
     const lam=cx.eigF.values[k];
     if(Math.abs(lam)<tolz) cls.push('harm');
