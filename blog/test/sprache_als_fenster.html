@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Sprache als Fenster — Garben, Schnitte, Welt</title>
+<script>
+MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+            svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,900&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root{
+  --bg:#07090d; --bg2:#0d1118; --ink:#eef2f8; --dim:#8b96ad;
+  --accent:#7dd3fc; --accent2:#c084fc; --warm:#fbbf24; --coral:#fb7185;
+  --emerald:#34d399; --line:rgba(125,211,252,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:4vh 6vw;
+  opacity:0;pointer-events:none;transform:translateY(24px) scale(.985);
+  transition:opacity .7s cubic-bezier(.2,.9,.2,1),transform .7s cubic-bezier(.2,.9,.2,1)}
+.slide.on{opacity:1;pointer-events:auto;transform:none}
+
+h1{font-family:Fraunces,serif;font-weight:900;font-size:clamp(2.4rem,6vw,5.2rem);
+  line-height:.98;letter-spacing:-.03em;margin-bottom:.4em;
+  background:linear-gradient(135deg,#fff 0%,var(--accent) 55%,var(--accent2) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-family:Fraunces,serif;font-weight:600;font-size:clamp(1.5rem,3.2vw,2.6rem);
+  letter-spacing:-.02em;margin-bottom:.5em;color:var(--ink)}
+h3{font-family:Fraunces,serif;font-weight:600;font-size:clamp(1.05rem,1.9vw,1.5rem);
+  color:var(--accent);margin-bottom:.4em}
+p{font-size:clamp(.95rem,1.35vw,1.2rem);line-height:1.65;color:var(--dim);
+  max-width:72ch;margin-bottom:.9em}
+p strong{color:var(--ink);font-weight:600}
+em{color:var(--warm);font-style:italic}
+.mono{font-family:'JetBrains Mono',monospace}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:1.4em;opacity:.85}
+.big{font-size:clamp(1.3rem,2.6vw,2rem);line-height:1.45;color:var(--ink);
+  max-width:60ch;font-weight:300}
+.quote{border-left:3px solid var(--accent);padding-left:1.4em;margin:1.4em 0;
+  font-family:Fraunces,serif;font-size:clamp(1.1rem,2vw,1.6rem);
+  line-height:1.4;color:var(--ink);font-weight:300;max-width:52ch}
+
+canvas{display:block;border-radius:14px;max-width:100%;
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.9),0 0 0 1px var(--line) inset}
+.wrap{display:flex;gap:3vw;align-items:center;justify-content:center;
+  flex-wrap:wrap;width:100%;max-width:1500px}
+.col{flex:1 1 380px;min-width:300px;max-width:620px}
+.full{width:100%;max-width:1400px}
+
+#hud{position:fixed;bottom:0;left:0;right:0;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2vw;background:linear-gradient(to top,rgba(7,9,13,.96),transparent);
+  z-index:100;font-family:'JetBrains Mono',monospace;font-size:.7rem;
+  letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+#bar{position:fixed;top:0;left:0;height:2px;z-index:101;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--warm));
+  transition:width .55s cubic-bezier(.2,.9,.2,1);box-shadow:0 0 14px var(--accent)}
+#chap{color:var(--accent)}
+.keyhint{display:flex;gap:.5em;align-items:center}
+kbd{background:rgba(125,211,252,.1);border:1px solid var(--line);
+  border-radius:4px;padding:.15em .45em;font-size:.68rem;color:var(--accent)}
+
+.badge{display:inline-block;padding:.22em .7em;border-radius:99px;
+  font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:1em}
+.b-math{background:rgba(125,211,252,.14);color:var(--accent)}
+.b-lang{background:rgba(192,132,252,.14);color:var(--accent2)}
+.b-warn{background:rgba(251,113,133,.14);color:var(--coral)}
+.b-ok{background:rgba(52,211,153,.14);color:var(--emerald)}
+
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:1.4rem;width:100%;max-width:1200px;margin-top:1.4em}
+.card{background:linear-gradient(160deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.4rem}
+.card h4{font-family:Fraunces,serif;font-size:1.1rem;color:var(--accent);
+  margin-bottom:.45em;font-weight:600}
+.card p{font-size:.88rem;margin:0;line-height:1.55}
+
+.ctl{display:flex;gap:1.6rem;align-items:center;justify-content:center;
+  flex-wrap:wrap;margin-top:1.2em;padding:.9rem 1.4rem;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:12px}
+.ctl label{font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  color:var(--dim);display:flex;flex-direction:column;gap:.4em;min-width:170px}
+.ctl label b{color:var(--accent);font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;
+  background:rgba(125,211,252,.22);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 12px var(--accent)}
+button.pill{background:rgba(125,211,252,.1);border:1px solid var(--line);
+  color:var(--accent);padding:.45em 1.1em;border-radius:99px;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;transition:all .22s}
+button.pill:hover{background:rgba(125,211,252,.22);transform:translateY(-1px)}
+button.pill.on{background:var(--accent);color:#07090d}
+
+.readout{font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  color:var(--emerald);background:rgba(52,211,153,.07);
+  border-left:2px solid var(--emerald);padding:.7em 1em;border-radius:0 8px 8px 0;
+  margin-top:1em;line-height:1.6;white-space:pre-wrap;max-width:70ch}
+
+.legend{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;
+  margin-top:.9em;font-size:.76rem;color:var(--dim);
+  font-family:'JetBrains Mono',monospace}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;
+  margin-right:.4em;vertical-align:middle}
+
+.fade-up{opacity:0;transform:translateY(16px);
+  transition:all .6s cubic-bezier(.2,.9,.2,1)}
+.on .fade-up{opacity:1;transform:none}
+.on .fade-up:nth-child(1){transition-delay:.1s}
+.on .fade-up:nth-child(2){transition-delay:.2s}
+.on .fade-up:nth-child(3){transition-delay:.3s}
+.on .fade-up:nth-child(4){transition-delay:.4s}
+.on .fade-up:nth-child(5){transition-delay:.5s}
+.on .fade-up:nth-child(6){transition-delay:.6s}
+
+mjx-container{color:var(--ink)!important}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"></div>
+<div id="hud">
+  <span id="chap">—</span>
+  <span class="keyhint"><kbd>←</kbd><kbd>→</kbd> navigieren · <kbd>Leertaste</kbd> weiter</span>
+  <span id="num">1 / 1</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SLIDE DEFINITIONS
+   ═══════════════════════════════════════════════════════════ */
+const S = [];
+const add = (chapter, html, init) => S.push({chapter, html, init});
+
+/* ── 0 · TITEL ───────────────────────────────────────────── */
+add('Ouvertüre', `
+<canvas id="c_title" width="1600" height="760" style="position:absolute;inset:0;width:100%;height:100%;border-radius:0;box-shadow:none;opacity:.5"></canvas>
+<div style="position:relative;z-index:2;text-align:center">
+  <div class="kicker fade-up">Garbentheorie · Semantik · Welt</div>
+  <h1 class="fade-up">Sprache als<br>Fenster</h1>
+  <p class="big fade-up" style="margin:0 auto">
+    Jede Sprache ist ein <em>Schnitt</em> über demselben Situs.<br>
+    Nicht konkurrierende Beschreibungen derselben Welt —<br>
+    sondern verschiedene Perspektiven auf dieselben Keime.
+  </p>
+</div>`, () => {
+  const cv = document.getElementById('c_title'), x = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const pts = [];
+  for (let i = 0; i < 260; i++) pts.push({
+    x: Math.random()*W, y: Math.random()*H,
+    vx: (Math.random()-.5)*.22, vy: (Math.random()-.5)*.22,
+    r: Math.random()*1.9+.5, h: Math.random()*70+180
+  });
+  let t = 0;
+  (function loop(){
+    if (!cv.isConnected) return;
+    t += .004;
+    x.clearRect(0,0,W,H);
+    // filaments
+    for (let i=0;i<pts.length;i++) for (let j=i+1;j<pts.length;j++){
+      const a=pts[i],b=pts[j], d=Math.hypot(a.x-b.x,a.y-b.y);
+      if (d<128){ x.strokeStyle=`hsla(205,80%,65%,${(1-d/128)*.13})`;
+        x.lineWidth=.6; x.beginPath(); x.moveTo(a.x,a.y); x.lineTo(b.x,b.y); x.stroke(); }
+    }
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+      const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*5);
+      g.addColorStop(0,`hsla(${p.h},85%,72%,.9)`);
+      g.addColorStop(1,`hsla(${p.h},85%,72%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(p.x,p.y,p.r*5,0,7); x.fill();
+    });
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 1 · DIE FRAGE ───────────────────────────────────────── */
+add('Ouvertüre', `
+<div style="max-width:1000px">
+  <div class="kicker fade-up">Die Frage</div>
+  <h2 class="fade-up">Warum sieht man nicht, was man nicht sagen kann?</h2>
+  <p class="fade-up"><strong>Russisch</strong> hat zwei Grundwörter für Blau:
+  <span class="mono" style="color:var(--accent)">голубой</span> (hell) und
+  <span class="mono" style="color:var(--accent2)">синий</span> (dunkel).
+  Russischsprachige unterscheiden diese Töne messbar schneller — ein Effekt von
+  Millisekunden, lateralisiert, der unter verbaler Interferenz verschwindet.</p>
+  <p class="fade-up"><strong>Deutsch</strong> hat <em>Geist</em>, <em>Gemüt</em>,
+  <em>Verstand</em>, wo Englisch <em>mind</em> hat. Nicht unübersetzbar —
+  aber nicht <em>eins zu eins</em> übersetzbar.</p>
+  <div class="quote fade-up">
+    Das sind keine verschiedenen Welten.<br>
+    Das sind verschiedene <em>Schnitte</em> über derselben.
+  </div>
+  <p class="fade-up" style="color:var(--coral);font-size:.9rem">
+    ⚠ Die starke Sapir-Whorf-These trägt nicht. Die schwache Version —
+    Sprache beeinflusst Aufmerksamkeitsallokation und Default-Partitionierung —
+    ist gut belegt. Darauf bauen wir.</p>
+</div>`);
+
+/* ── 2 · DER BASISRAUM ───────────────────────────────────── */
+add('I · Der Situs', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-math fade-up">Basisraum</div>
+    <h2 class="fade-up">Die Welt als Zustandsraum</h2>
+    <p class="fade-up">Der Basisraum $B$ ist nicht die Raumzeit. Er ist der
+    <strong>Zustandsraum aller Sachverhalte und Situationen</strong>.
+    Die Raumzeit $(x,y,z,t)$ ist einer seiner Unterräume — eine
+    <em>mögliche Faserung</em> unter vielen.</p>
+    <p class="fade-up">Jeder Punkt ist ein <strong>Keim</strong>: ein Ort, an dem
+    Messung stattfinden kann. Nicht nur Temperatur und Druck — auch leiblich
+    wahrgenommene Atmosphäre, Regelmäßigkeit, <em>Gemütlichkeit</em>.</p>
+    <div class="readout fade-up">Topologie ohne Metrik:
+  "gemütlich" ist näher an "warm" als an "kalt"
+  — ohne dass ein exakter Abstand angebbar wäre.
+  Das reicht. Eine Topologie braucht keine Zahl.</div>
+  </div>
+  <div class="col">
+    <canvas id="c_base" width="700" height="620"></canvas>
+    <div class="ctl">
+      <label>Dichte der Keime <b id="l_dens">120</b>
+        <input type="range" id="r_dens" min="30" max="400" value="120"></label>
+      <button class="pill" id="b_rot">Rotation</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_base'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let N=120, rot=true, t=0;
+  let pts=[];
+  const gen=()=>{ pts=[];
+    for(let i=0;i<N;i++){
+      const u=Math.random(), v=Math.random(), w=Math.random();
+      const r=Math.cbrt(u)*0.92;
+      const th=v*Math.PI*2, ph=Math.acos(2*w-1);
+      pts.push({
+        x:r*Math.sin(ph)*Math.cos(th),
+        y:r*Math.sin(ph)*Math.sin(th),
+        z:r*Math.cos(ph),
+        h:180+Math.random()*90,
+        s:Math.random()*1.6+.7
+      });
+    }
+  };
+  gen();
+  document.getElementById('r_dens').oninput=e=>{
+    N=+e.target.value; document.getElementById('l_dens').textContent=N; gen();
+  };
+  document.getElementById('b_rot').onclick=e=>{
+    rot=!rot; e.target.classList.toggle('on',rot);
+  };
+  document.getElementById('b_rot').classList.add('on');
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    if(rot) t+=.0042;
+    x.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, sc=Math.min(W,H)*0.40;
+
+    // soft nebula backdrop
+    const bg=x.createRadialGradient(cx,cy,0,cx,cy,sc*1.7);
+    bg.addColorStop(0,'rgba(125,211,252,.06)');
+    bg.addColorStop(.55,'rgba(192,132,252,.035)');
+    bg.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=bg; x.beginPath(); x.arc(cx,cy,sc*1.7,0,7); x.fill();
+
+    // projected points
+    const proj=pts.map(p=>{
+      const ca=Math.cos(t), sa=Math.sin(t);
+      const X= p.x*ca - p.z*sa;
+      const Z= p.x*sa + p.z*ca;
+      const cb=Math.cos(.46), sb=Math.sin(.46);
+      const Y= p.y*cb - Z*sb;
+      const Z2= p.y*sb + Z*cb;
+      const persp = 1/(1.9 - Z2*0.55);
+      return {sx:cx+X*sc*persp, sy:cy+Y*sc*persp, d:Z2, p, persp};
+    }).sort((a,b)=>a.d-b.d);
+
+    // filaments between near neighbours
+    for(let i=0;i<proj.length;i++){
+      for(let j=i+1;j<Math.min(i+7,proj.length);j++){
+        const a=proj[i], b=proj[j];
+        const dd=Math.hypot(a.sx-b.sx, a.sy-b.sy);
+        if(dd<70){
+          x.strokeStyle=`hsla(${a.p.h},80%,70%,${(1-dd/70)*.10})`;
+          x.lineWidth=.6;
+          x.beginPath(); x.moveTo(a.sx,a.sy); x.lineTo(b.sx,b.sy); x.stroke();
+        }
+      }
+    }
+
+    // keims
+    proj.forEach(q=>{
+      const al=.28+ (q.d+1)/2*.62;
+      const rr=q.p.s*q.persp*2.1;
+      const g=x.createRadialGradient(q.sx,q.sy,0,q.sx,q.sy,rr*4.5);
+      g.addColorStop(0,`hsla(${q.p.h},88%,76%,${al})`);
+      g.addColorStop(1,`hsla(${q.p.h},88%,76%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(q.sx,q.sy,rr*4.5,0,7); x.fill();
+      x.fillStyle=`hsla(${q.p.h},95%,88%,${al})`;
+      x.beginPath(); x.arc(q.sx,q.sy,rr*.55,0,7); x.fill();
+    });
+
+    // outer shell
+    x.strokeStyle='rgba(125,211,252,.16)'; x.lineWidth=1;
+    x.beginPath(); x.arc(cx,cy,sc*0.94,0,7); x.stroke();
+
+    x.font='11px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(139,150,173,.75)';
+    x.fillText('B  ·  Zustandsraum aller Sachverhalte', 18, H-18);
+
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 3 · KEIM & HALM ─────────────────────────────────────── */
+add('I · Der Situs', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-math fade-up">Keim · Halm · Schnitt</div>
+    <h2 class="fade-up">Ein Punkt, viele Messungen</h2>
+    <p class="fade-up">Über jedem <strong>Keim</strong> liegt ein <strong>Halm</strong>:
+    die Gesamtheit aller Messungen, die dort stattfinden können.
+    Temperatur, Druck, Energie — aber auch <em>Atmosphäre</em>,
+    <em>Regelmäßigkeit</em>, <em>Gemütlichkeit</em>.</p>
+    <p class="fade-up">Ein <strong>Schnitt</strong> wählt aus jedem Halm einen Wert.
+    Verschiedene Sprachen wählen verschiedene Schnitte — oder sehen
+    manche Halme gar nicht.</p>
+    <div class="readout fade-up" id="rd_halm">Halm bei Keim #—
+  warte auf Auswahl …</div>
+  </div>
+  <div class="col">
+    <canvas id="c_halm" width="700" height="620"></canvas>
+    <div class="ctl">
+      <label>Keim wählen <b id="l_germ">3</b>
+        <input type="range" id="r_germ" min="0" max="5" value="3"></label>
+      <button class="pill on" id="b_sect">Schnitt zeigen</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_halm'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const germs=[.12,.26,.40,.54,.68,.84];
+  const meas=[
+    {n:'Temperatur', h:10,  v:[.52,.61,.49,.70,.44,.58]},
+    {n:'Druck',      h:200, v:[.41,.38,.55,.62,.51,.47]},
+    {n:'Energie',    h:270, v:[.66,.58,.72,.49,.63,.55]},
+    {n:'Atmosphäre', h:330, v:[.33,.71,.44,.80,.39,.68]},
+    {n:'Regelmäßigkeit',h:150,v:[.58,.44,.66,.53,.72,.41]},
+    {n:'Gemütlichkeit',h:40, v:[.28,.52,.37,.84,.31,.60]}
+  ];
+  let sel=3, showSec=true, t=0;
+  const upd=()=>{
+    const r=document.getElementById('rd_halm');
+    r.textContent='Halm bei Keim #'+sel+'\n'+
+      meas.map(m=>'  '+m.n.padEnd(16,' ')+' = '+m.v[sel].toFixed(3)).join('\n');
+  };
+  document.getElementById('r_germ').oninput=e=>{
+    sel=+e.target.value; document.getElementById('l_germ').textContent=sel; upd();
+  };
+  document.getElementById('b_sect').onclick=e=>{
+    showSec=!showSec; e.target.classList.toggle('on',showSec);
+  };
+  upd();
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.016;
+    x.clearRect(0,0,W,H);
+    const baseY=H-90, left=70, right=W-50;
+
+    // base line (Basisraum)
+    x.strokeStyle='rgba(125,211,252,.45)'; x.lineWidth=2;
+    x.beginPath(); x.moveTo(left,baseY); x.lineTo(right,baseY); x.stroke();
+    x.font='12px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(125,211,252,.8)';
+    x.fillText('Basisraum  B', left, baseY+30);
+
+    germs.forEach((g,gi)=>{
+      const gx=left+(right-left)*g;
+      const isSel = gi===sel;
+
+      // stalk column
+      const topY = baseY - 420;
+      const grd=x.createLinearGradient(0,baseY,0,topY);
+      grd.addColorStop(0, isSel?'rgba(125,211,252,.22)':'rgba(125,211,252,.05)');
+      grd.addColorStop(1,'rgba(125,211,252,0)');
+      x.fillStyle=grd;
+      x.fillRect(gx-20, topY, 40, baseY-topY);
+
+      // measurements on stalk
+      meas.forEach((m,mi)=>{
+        const y = baseY - 60 - mi*62 - Math.sin(t+mi*.6+gi)*2;
+        const val=m.v[gi];
+        const al = isSel?.95:.22;
+        const rr = isSel? 7 : 4;
+        const g2=x.createRadialGradient(gx,y,0,gx,y,rr*4);
+        g2.addColorStop(0,`hsla(${m.h},85%,70%,${al})`);
+        g2.addColorStop(1,`hsla(${m.h},85%,70%,0)`);
+        x.fillStyle=g2; x.beginPath(); x.arc(gx,y,rr*4,0,7); x.fill();
+        x.fillStyle=`hsla(${m.h},92%,80%,${al})`;
+        x.beginPath(); x.arc(gx,y,rr,0,7); x.fill();
+
+        if(isSel){
+          x.font='11px "JetBrains Mono", monospace';
+          x.fillStyle=`hsla(${m.h},85%,78%,.95)`;
+          x.textAlign='left';
+          x.fillText(m.n+'  '+val.toFixed(2), gx+18, y+4);
+          x.textAlign='start';
+        }
+      });
+
+      // germ dot on base
+      x.fillStyle = isSel? '#fbbf24' : 'rgba(125,211,252,.55)';
+      x.beginPath(); x.arc(gx,baseY, isSel?7:4.5, 0,7); x.fill();
+      if(isSel){
+        x.strokeStyle='rgba(251,191,36,.5)'; x.lineWidth=1.4;
+        x.beginPath(); x.arc(gx,baseY, 14+Math.sin(t*2)*2, 0,7); x.stroke();
+      }
+      x.font='10px "JetBrains Mono", monospace';
+      x.fillStyle = isSel? 'rgba(251,191,36,.9)':'rgba(139,150,173,.5)';
+      x.textAlign='center';
+      x.fillText('#'+gi, gx, baseY+16);
+      x.textAlign='start';
+    });
+
+    // the section: one value per stalk, connected
+    if(showSec){
+      x.strokeStyle='rgba(52,211,153,.85)'; x.lineWidth=2.4;
+      x.setLineDash([6,5]); x.lineDashOffset=-t*18;
+      x.beginPath();
+      germs.forEach((g,gi)=>{
+        const gx=left+(right-left)*g;
+        const y = baseY - 60 - 3*62;    // choose the "Atmosphäre" row
+        if(gi===0) x.moveTo(gx,y); else x.lineTo(gx,y);
+      });
+      x.stroke(); x.setLineDash([]);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(52,211,153,.9)';
+      x.fillText('ein Schnitt  s ∈ F(U)', left, baseY-60-3*62-16);
+    }
+
+    x.font='11px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(139,150,173,.6)';
+    x.fillText('↑ Halm über dem Keim', left, 34);
+
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 4 · KOMPATIBILITÄT ──────────────────────────────────── */
+add('II · Verkleben', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-math fade-up">Kompatibilität</div>
+    <h2 class="fade-up">Nicht $x = y$, sondern $\\exists f : f(x) = y$</h2>
+    <p class="fade-up">Zwei Messungen am selben Ort widersprechen sich nicht —
+    wenn es eine <strong>Übergangsabbildung</strong> gibt, die eine in die
+    andere überführt.</p>
+    <p class="fade-up"><strong>Blitz und Donner:</strong> nicht gleichzeitig,
+    aber kompatibel. Die Laufzeitdifferenz <em>ist</em> der Übergang.</p>
+    <div class="readout fade-up" id="rd_comp">Distanz   d = 1.2 km
+Lichtzeit  t_L = 0.000004 s
+Schallzeit t_S = 3.50 s
+Δt = 3.50 s   →   f(t_Blitz) = t_Blitz + d/v_Schall</div>
+  </div>
+  <div class="col">
+    <canvas id="c_comp" width="720" height="600"></canvas>
+    <div class="ctl">
+      <label>Entfernung zum Blitz <b id="l_dist">1.2 km</b>
+        <input type="range" id="r_dist" min="2" max="60" value="12"></label>
+      <button class="pill on" id="b_play">Wiedergabe</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_comp'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let dist=1.2, play=true, t=0, flash=0;
+  document.getElementById('r_dist').oninput=e=>{
+    dist=+e.target.value/10;
+    document.getElementById('l_dist').textContent=dist.toFixed(1)+' km';
+    const ts=dist/0.343;
+    document.getElementById('rd_comp').textContent=
+`Distanz   d = ${dist.toFixed(2)} km
+Lichtzeit  t_L = ${(dist/299792.458).toExponential(2)} s
+Schallzeit t_S = ${ts.toFixed(2)} s
+Δt = ${ts.toFixed(2)} s   →   f(t_Blitz) = t_Blitz + d/v_Schall`;
+    t=0;
+  };
+  document.getElementById('b_play').onclick=e=>{
+    play=!play; e.target.classList.toggle('on',play);
+  };
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    const ts=dist/0.343;
+    if(play) t+= .018;
+    if(t> ts+2.2){ t=0; flash=1; }
+    if(flash>0) flash-=.03;
+
+    x.clearRect(0,0,W,H);
+    const groundY=H-110, srcX=100, obsX=W-110;
+
+    // sky gradient
+    const sky=x.createLinearGradient(0,0,0,groundY);
+    sky.addColorStop(0,'rgba(10,14,22,1)');
+    sky.addColorStop(1,'rgba(18,24,38,1)');
+    x.fillStyle=sky; x.fillRect(0,0,W,groundY);
+
+    // flash glow
+    if(t<0.25){
+      const a=(1-t/0.25);
+      const g=x.createRadialGradient(srcX,160,0,srcX,160,420);
+      g.addColorStop(0,`rgba(253,230,138,${a*.55})`);
+      g.addColorStop(1,'rgba(253,230,138,0)');
+      x.fillStyle=g; x.fillRect(0,0,W,groundY);
+    }
+
+    // ground
+    x.fillStyle='rgba(13,17,24,1)'; x.fillRect(0,groundY,W,H-groundY);
+    x.strokeStyle='rgba(125,211,252,.25)'; x.lineWidth=1.4;
+    x.beginPath(); x.moveTo(0,groundY); x.lineTo(W,groundY); x.stroke();
+
+    // lightning bolt
+    x.strokeStyle= t<0.3? 'rgba(253,230,138,.95)':'rgba(253,230,138,.25)';
+    x.lineWidth= t<0.3? 4:2;
+    x.beginPath();
+    x.moveTo(srcX,40); x.lineTo(srcX-16,120); x.lineTo(srcX+10,120);
+    x.lineTo(srcX-8,groundY);
+    x.stroke();
+
+    // light wavefront (near-instant)
+    const lightR = Math.min(t*2400, W*1.6);
+    x.strokeStyle=`rgba(253,230,138,${Math.max(0,.5-t*1.4)})`;
+    x.lineWidth=2;
+    x.beginPath(); x.arc(srcX,160,lightR,0,7); x.stroke();
+
+    // sound wavefront
+    const px = (obsX-srcX)/dist;         // px per km
+    const soundR = t*0.343*px;
+    x.strokeStyle='rgba(192,132,252,.7)'; x.lineWidth=2.4;
+    x.beginPath(); x.arc(srcX,160,soundR,0,7); x.stroke();
+    x.strokeStyle='rgba(192,132,252,.22)'; x.lineWidth=8;
+    x.beginPath(); x.arc(srcX,160,soundR,0,7); x.stroke();
+
+    // observer
+    x.fillStyle='rgba(52,211,153,.9)';
+    x.beginPath(); x.arc(obsX,groundY-16,9,0,7); x.fill();
+    x.strokeStyle='rgba(52,211,153,.4)'; x.lineWidth=1.4;
+    x.beginPath(); x.arc(obsX,groundY-16,18+Math.sin(t*3)*2,0,7); x.stroke();
+
+    // arrival markers
+    x.font='12px "JetBrains Mono", monospace';
+    if(t>0.002){ x.fillStyle='rgba(253,230,138,.95)';
+      x.fillText('⚡ Blitz gesehen  t = 0.00 s', obsX-250, groundY-70); }
+    if(t>=ts){ x.fillStyle='rgba(192,132,252,.95)';
+      x.fillText('🔊 Donner gehört  t = '+ts.toFixed(2)+' s', obsX-250, groundY-46); }
+
+    // timeline at the bottom
+    const tlY=H-42, tl0=90, tl1=W-90;
+    x.strokeStyle='rgba(139,150,173,.3)'; x.lineWidth=1.5;
+    x.beginPath(); x.moveTo(tl0,tlY); x.lineTo(tl1,tlY); x.stroke();
+    const maxT=ts+2;
+    const px2=(tl1-tl0)/maxT;
+    // light marker
+    x.fillStyle='rgba(253,230,138,.95)';
+    x.beginPath(); x.arc(tl0,tlY,6,0,7); x.fill();
+    // sound marker
+    x.fillStyle='rgba(192,132,252,.95)';
+    x.beginPath(); x.arc(tl0+ts*px2,tlY,6,0,7); x.fill();
+    // transition arrow
+    x.strokeStyle='rgba(52,211,153,.8)'; x.lineWidth=2;
+    x.setLineDash([5,4]); x.lineDashOffset=-t*20;
+    x.beginPath(); x.moveTo(tl0+8,tlY-18); x.lineTo(tl0+ts*px2-8,tlY-18); x.stroke();
+    x.setLineDash([]);
+    x.font='11px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(52,211,153,.9)';
+    x.textAlign='center';
+    x.fillText('f :  t ↦ t + d/v',(tl0+tl0+ts*px2)/2, tlY-26);
+    x.textAlign='start';
+    // playhead
+    x.strokeStyle='rgba(125,211,252,.9)'; x.lineWidth=2;
+    const ph=tl0+Math.min(t,maxT)*px2;
+    x.beginPath(); x.moveTo(ph,tlY-12); x.lineTo(ph,tlY+12); x.stroke();
+
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 5 · FASERUNG ────────────────────────────────────────── */
+add('II · Verkleben', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-warn fade-up">These 1</div>
+    <h2 class="fade-up">Die Faserung ist eine Wahl</h2>
+    <p class="fade-up">Ob ein Phänomen <em>strikt</em> oder nur <em>bis auf Homotopie</em>
+    verklebt, hängt nicht vom Phänomen ab — sondern davon, welche Dimension
+    man zur <strong>Basis</strong> und welche zur <strong>Faser</strong> macht.</p>
+    <p class="fade-up">Über der Minkowski-Basis: Blitz und Donner sind
+    ein Punkt. Strikt verklebbar.<br>
+    Über der räumlichen Basis mit $t$ in der Faser: zwei Punkte,
+    verbunden durch einen Übergang mit Kozykelbedingung.</p>
+    <div class="quote fade-up">
+      Dieselbe Welt.<br>Zwei Faserungen.<br>Zwei Verklebungsregime.
+    </div>
+  </div>
+  <div class="col">
+    <canvas id="c_fib" width="720" height="620"></canvas>
+    <div class="ctl">
+      <button class="pill on" id="b_f1">Basis: Minkowski</button>
+      <button class="pill" id="b_f2">Basis: Raum, t in Faser</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_fib'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let mode=0, t=0, morph=0;
+  const b1=document.getElementById('b_f1'), b2=document.getElementById('b_f2');
+  b1.onclick=()=>{mode=0;b1.classList.add('on');b2.classList.remove('on');};
+  b2.onclick=()=>{mode=1;b2.classList.add('on');b1.classList.remove('on');};
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.016;
+    morph += ((mode?1:0)-morph)*.07;
+    x.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2;
+
+    const lerp=(a,b,u)=>a+(b-a)*u;
+
+    // --- Minkowski layout: one event, two readings on one point
+    // --- Spatial layout: two separated points joined by an arrow
+
+    const ax = lerp(cx, cx-170, morph);
+    const ay = lerp(cy-10, cy-10, morph);
+    const bx = lerp(cx, cx+170, morph);
+    const by = lerp(cy-10, cy-10, morph);
+
+    // base line / plane
+    // base line / plane
+    x.strokeStyle='rgba(125,211,252,.35)'; x.lineWidth=2;
+    x.beginPath(); x.moveTo(80, cy+140); x.lineTo(W-80, cy+140); x.stroke();
+    x.font='12px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(125,211,252,.75)';
+    x.fillText(morph<0.5 ? 'Basis:  Minkowski  (x,y,z,t)' : 'Basis:  Raum  (x,y,z)   ·   Faser: t',
+               84, cy+166);
+
+    // fibre columns rising from the base
+    const drawFibre=(px,label,hue,items)=>{
+      const topY=cy-150, botY=cy+140;
+      const g=x.createLinearGradient(0,botY,0,topY);
+      g.addColorStop(0,`hsla(${hue},80%,65%,.18)`);
+      g.addColorStop(1,`hsla(${hue},80%,65%,0)`);
+      x.fillStyle=g; x.fillRect(px-26, topY, 52, botY-topY);
+      x.strokeStyle=`hsla(${hue},80%,70%,.35)`; x.lineWidth=1;
+      x.beginPath(); x.moveTo(px,botY); x.lineTo(px,topY); x.stroke();
+
+      items.forEach((it,i)=>{
+        const y = cy+40 - i*74 + Math.sin(t*1.4+i)*2.5;
+        const gg=x.createRadialGradient(px,y,0,px,y,26);
+        gg.addColorStop(0,`hsla(${it.h},88%,72%,.95)`);
+        gg.addColorStop(1,`hsla(${it.h},88%,72%,0)`);
+        x.fillStyle=gg; x.beginPath(); x.arc(px,y,26,0,7); x.fill();
+        x.fillStyle=`hsla(${it.h},95%,85%,1)`;
+        x.beginPath(); x.arc(px,y,6,0,7); x.fill();
+        x.font='11px "JetBrains Mono", monospace';
+        x.fillStyle=`hsla(${it.h},85%,80%,.95)`;
+        x.textAlign='center';
+        x.fillText(it.n, px, y-16);
+        x.textAlign='start';
+      });
+
+      // base point
+      x.fillStyle=`hsla(${hue},90%,72%,1)`;
+      x.beginPath(); x.arc(px, cy+140, 7, 0, 7); x.fill();
+      x.strokeStyle=`hsla(${hue},90%,72%,.35)`; x.lineWidth=1.3;
+      x.beginPath(); x.arc(px, cy+140, 14+Math.sin(t*2)*2, 0, 7); x.stroke();
+      x.font='12px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(238,242,248,.9)';
+      x.textAlign='center';
+      x.fillText(label, px, cy+190);
+      x.textAlign='start';
+    };
+
+    if(morph<0.5){
+      // ONE point, two readings in its fibre — strict gluing
+      const al=1-morph*2;
+      x.globalAlpha=al;
+      drawFibre(cx,'ein Keim  (x,y,z,t)',48,[
+        {n:'Blitz  (optisch)', h:48},
+        {n:'Donner (akustisch)', h:280}
+      ]);
+      // "=" between them
+      x.font='22px Fraunces, serif';
+      x.fillStyle='rgba(52,211,153,.9)';
+      x.textAlign='center';
+      x.fillText('≡', cx+70, cy+6);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillText('strikt verklebt', cx+70, cy+26);
+      x.textAlign='start';
+      x.globalAlpha=1;
+    }
+
+    if(morph>0.02){
+      const al=morph;
+      x.globalAlpha=al;
+      drawFibre(ax,'Keim A  (Ort des Blitzes)',48,[{n:'t = 0.00 s', h:48}]);
+      drawFibre(bx,'Keim B  (Ort des Hörers)',280,[{n:'t = 3.50 s', h:280}]);
+
+      // transition arrow between the two fibres
+      const ay2=cy+40, by2=cy+40;
+      x.strokeStyle='rgba(52,211,153,.9)'; x.lineWidth=2.4;
+      x.setLineDash([7,5]); x.lineDashOffset=-t*22;
+      x.beginPath();
+      x.moveTo(ax+30, ay2);
+      x.bezierCurveTo(ax+110, ay2-70, bx-110, by2-70, bx-30, by2);
+      x.stroke(); x.setLineDash([]);
+      x.font='13px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(52,211,153,.95)';
+      x.textAlign='center';
+      x.fillText('φ :  t ↦ t + d/v', (ax+bx)/2, ay2-78);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(52,211,153,.7)';
+      x.fillText('Kozykel muss auf Dreifachüberlappung schließen', (ax+bx)/2, ay2-58);
+      x.textAlign='start';
+      x.globalAlpha=1;
+    }
+
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 6 · PRÄGARBE → GARBE ────────────────────────────────── */
+add('III · Prägarbe', `
+<div style="max-width:1050px">
+  <div class="badge b-math fade-up">Prägarbe · Restriktion</div>
+  <h2 class="fade-up">Spezialisierung, nicht Abstand</h2>
+  <p class="fade-up">Zwei verschiedene Strukturen, die nicht verwechselt werden dürfen:</p>
+  <div class="grid3">
+    <div class="card fade-up">
+      <h4>Restriktion</h4>
+      <p>$U \\subseteq V \\Rightarrow \\mathcal{F}(V) \\to \\mathcal{F}(U)$ — Spezialisierung
+      des Kontexts. Die Morphismen sind <strong>Inklusionen</strong> von Regionen.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Topologie</h4>
+      <p>Welche Regionen offen sind, was „nah" heißt. <em>Hier</em> lebt
+      „gemütlich ist näher an warm als an kalt" — nicht in der Restriktion.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Konvexität</h4>
+      <p>Gärdenfors' Bedingung ist <strong>affin</strong>, nicht topologisch.
+      Lösung: als Bedingung an die Überdeckung — nur konvexe Regionen zählen als offen.</p>
+    </div>
+  </div>
+  <div class="ctl fade-up" style="margin-top:1.6em">
+    <button class="pill on" id="b_r1">Restriktion zeigen</button>
+    <button class="pill" id="b_r2">Topologie zeigen</button>
+  </div>
+  <canvas id="c_pre" width="1200" height="440" class="fade-up" style="margin-top:1.2em"></canvas>
+</div>`, () => {
+  const cv=document.getElementById('c_pre'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let mode=0, t=0;
+  const b1=document.getElementById('b_r1'), b2=document.getElementById('b_r2');
+  b1.onclick=()=>{mode=0;b1.classList.add('on');b2.classList.remove('on');};
+  b2.onclick=()=>{mode=1;b2.classList.add('on');b1.classList.remove('on');};
+
+  const regions=[
+    {n:'Behaustsein',            r:200, h:35,  terms:['gemütlich','heimelig','cosy','hygge']},
+    {n:'…im Winter',             r:132, h:35,  terms:['gemütlich','heimelig','hygge']},
+    {n:'…mit anderen Menschen',  r:76,  h:35,  terms:['gemütlich','hygge']},
+    {n:'…bei Kerzenlicht',       r:34,  h:35,  terms:['hygge']}
+  ];
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.015;
+    x.clearRect(0,0,W,H);
+    const cx=W*0.27, cy=H/2;
+
+    if(mode===0){
+      // nested regions = restriction chain
+      regions.forEach((r,i)=>{
+        const pulse=1+Math.sin(t*1.3+i*.7)*.012;
+        const rr=r.r*pulse;
+        const g=x.createRadialGradient(cx,cy,rr*.5,cx,cy,rr);
+        g.addColorStop(0,`hsla(${r.h+i*22},80%,60%,.05)`);
+        g.addColorStop(1,`hsla(${r.h+i*22},80%,60%,.14)`);
+        x.fillStyle=g; x.beginPath(); x.arc(cx,cy,rr,0,7); x.fill();
+        x.strokeStyle=`hsla(${r.h+i*22},85%,70%,.55)`; x.lineWidth=1.6;
+        x.beginPath(); x.arc(cx,cy,rr,0,7); x.stroke();
+      });
+
+      // labels + section lists to the right
+      x.font='12px "JetBrains Mono", monospace';
+      regions.forEach((r,i)=>{
+        const y=90+i*82;
+        x.fillStyle=`hsla(${r.h+i*22},85%,76%,.95)`;
+        x.fillText(`𝓕( ${r.n} )`, W*0.54, y);
+        x.fillStyle='rgba(139,150,173,.9)';
+        x.fillText('= { ' + r.terms.join(', ') + ' }', W*0.54, y+20);
+        if(i<regions.length-1){
+          x.strokeStyle='rgba(52,211,153,.55)'; x.lineWidth=1.6;
+          x.setLineDash([4,4]); x.lineDashOffset=-t*14;
+          x.beginPath();
+          x.moveTo(W*0.56, y+30); x.lineTo(W*0.56, y+58);
+          x.stroke(); x.setLineDash([]);
+          x.fillStyle='rgba(52,211,153,.8)';
+          x.fillText('res', W*0.575, y+50);
+        }
+        // connector to its circle
+        x.strokeStyle=`hsla(${r.h+i*22},80%,70%,.25)`; x.lineWidth=1;
+        x.beginPath();
+        x.moveTo(cx+r.r*Math.cos(-0.5), cy+r.r*Math.sin(-0.5));
+        x.lineTo(W*0.52, y-4); x.stroke();
+      });
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(125,211,252,.7)';
+      x.fillText('Spezialisierung ↓   immer weniger Terme bleiben anwendbar', W*0.54, 90+4*82-26);
+
+    } else {
+      // topology: nearness in the quality space
+      const pts=[
+        {n:'kalt',       X:.14, Y:.62, h:200},
+        {n:'kühl',       X:.26, Y:.55, h:190},
+        {n:'lau',        X:.42, Y:.50, h:120},
+        {n:'warm',       X:.58, Y:.44, h:40},
+        {n:'gemütlich',  X:.66, Y:.58, h:35},
+        {n:'heiß',       X:.80, Y:.36, h:10},
+        {n:'behaglich',  X:.72, Y:.68, h:30},
+        {n:'stickig',    X:.86, Y:.62, h:0}
+      ];
+      // nearness edges
+      for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+        const a=pts[i],b=pts[j];
+        const d=Math.hypot(a.X-b.X,a.Y-b.Y);
+        if(d<0.20){
+          x.strokeStyle=`rgba(125,211,252,${(1-d/0.20)*.3})`;
+          x.lineWidth=1+(1-d/0.20)*2;
+          x.beginPath();
+          x.moveTo(a.X*W,a.Y*H); x.lineTo(b.X*W,b.Y*H); x.stroke();
+        }
+      }
+      pts.forEach((p,i)=>{
+        const px=p.X*W, py=p.Y*H + Math.sin(t+i)*2;
+        const g=x.createRadialGradient(px,py,0,px,py,34);
+        g.addColorStop(0,`hsla(${p.h},85%,68%,.55)`);
+        g.addColorStop(1,`hsla(${p.h},85%,68%,0)`);
+        x.fillStyle=g; x.beginPath(); x.arc(px,py,34,0,7); x.fill();
+        x.fillStyle=`hsla(${p.h},92%,80%,1)`;
+        x.beginPath(); x.arc(px,py,6,0,7); x.fill();
+        x.font='12px "JetBrains Mono", monospace';
+        x.fillStyle='rgba(238,242,248,.92)';
+        x.textAlign='center';
+        x.fillText(p.n, px, py-18);
+        x.textAlign='start';
+      });
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(139,150,173,.75)';
+      x.fillText('Nähe ohne Metrik: Kanten, wo Nachbarschaft besteht — kein Abstandswert', 30, H-24);
+    }
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 7 · DER BASISRAUM B (VERWANDTSCHAFT) ────────────────── */
+add('IV · Die Instanz', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-ok fade-up">Instanz</div>
+    <h2 class="fade-up">Verwandtschaft: ein Basisraum, der nicht strittig ist</h2>
+    <p class="fade-up">$$B = \\{(g,\\, l,\\, s,\\, a)\\}$$
+    Generation, Linealität, Geschlecht des Referenten, Geschlecht von Ego.
+    Biologisch und sozial definiert — <strong>unabhängig von jeder Sprache</strong>.</p>
+    <p class="fade-up">Das ist das freundlichste Feld, weil der Basisraum vorgegeben ist.
+    Bei <em>Gemütlichkeit</em> oder <em>mind</em> hat man diesen Luxus nicht —
+    da ist der Basisraum selbst strittig.</p>
+    <div class="readout fade-up">Topologie:
+  MB näher an MZ   (gleiche Seite, gleiche Generation)
+  MB ferner von FF (andere Generation)
+  Nachbarschaft über Generationsabstand + Verwandtschaftsgrad.
+  Keine Metrik nötig. Eine Topologie reicht.</div>
+  </div>
+  <div class="col">
+    <canvas id="c_kin" width="720" height="620"></canvas>
+    <div class="ctl">
+      <button class="pill on" id="b_k0">Nur Basisraum</button>
+      <button class="pill" id="b_k1">Nachbarschaft</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_kin'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let mode=0, t=0;
+  const b0=document.getElementById('b_k0'), b1=document.getElementById('b_k1');
+  b0.onclick=()=>{mode=0;b0.classList.add('on');b1.classList.remove('on');};
+  b1.onclick=()=>{mode=1;b1.classList.add('on');b0.classList.remove('on');};
+
+  // kin nodes: g = generation (+1 parents, 0 ego), lineal/collateral, sex
+  const K=[
+    {id:'FF', n:'FF', g:2, c:-1.6, s:'m'},
+    {id:'FM', n:'FM', g:2, c:-0.8, s:'f'},
+    {id:'MF', n:'MF', g:2, c:0.8,  s:'m'},
+    {id:'MM', n:'MM', g:2, c:1.6,  s:'f'},
+    {id:'FB', n:'FB', g:1, c:-1.7, s:'m'},
+    {id:'FZ', n:'FZ', g:1, c:-1.1, s:'f'},
+    {id:'F',  n:'F',  g:1, c:-0.45,s:'m'},
+    {id:'M',  n:'M',  g:1, c:0.45, s:'f'},
+    {id:'MB', n:'MB', g:1, c:1.1,  s:'m'},
+    {id:'MZ', n:'MZ', g:1, c:1.7,  s:'f'},
+    {id:'B',  n:'B',  g:0, c:-0.75,s:'m'},
+    {id:'EGO',n:'EGO',g:0, c:0,    s:'·'},
+    {id:'Z',  n:'Z',  g:0, c:0.75, s:'f'}
+  ];
+  const near=[['FB','FZ'],['FZ','F'],['F','M'],['M','MB'],['MB','MZ'],
+              ['FF','FM'],['FM','MF'],['MF','MM'],
+              ['F','FB'],['M','MZ'],['B','EGO'],['EGO','Z'],
+              ['FF','FB'],['FM','FZ'],['MF','MB'],['MM','MZ'],
+              ['F','EGO'],['M','EGO']];
+
+  const pos=p=>({ px: W/2 + p.c*W*0.155, py: H-110 - p.g*160 });
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.015;
+    x.clearRect(0,0,W,H);
+
+    // generation bands
+    for(let g=0;g<=2;g++){
+      const y=H-110-g*160;
+      x.strokeStyle='rgba(125,211,252,.10)'; x.lineWidth=1;
+      x.beginPath(); x.moveTo(40,y); x.lineTo(W-40,y); x.stroke();
+      x.font='10px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(139,150,173,.5)';
+      x.fillText('g = +'+g, 42, y-8);
+    }
+
+    if(mode===1){
+      near.forEach(([a,b])=>{
+        const A=pos(K.find(k=>k.id===a)), B=pos(K.find(k=>k.id===b));
+        x.strokeStyle='rgba(52,211,153,.35)';
+        x.lineWidth=1.8;
+        x.setLineDash([5,4]); x.lineDashOffset=-t*12;
+        x.beginPath(); x.moveTo(A.px,A.py); x.lineTo(B.px,B.py); x.stroke();
+        x.setLineDash([]);
+      });
+    }
+
+    K.forEach((k,i)=>{
+      const {px,py}=pos(k);
+      const yy=py+Math.sin(t*1.2+i*.5)*2;
+      const hue = k.s==='m' ? 200 : k.s==='f' ? 330 : 48;
+      const g=x.createRadialGradient(px,yy,0,px,yy,30);
+      g.addColorStop(0,`hsla(${hue},85%,68%,.6)`);
+      g.addColorStop(1,`hsla(${hue},85%,68%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(px,yy,30,0,7); x.fill();
+      x.fillStyle = k.id==='EGO' ? '#fbbf24' : `hsla(${hue},92%,80%,1)`;
+      x.beginPath(); x.arc(px,yy, k.id==='EGO'?8:6.5, 0,7); x.fill();
+      if(k.id==='EGO'){
+        x.strokeStyle='rgba(251,191,36,.45)'; x.lineWidth=1.4;
+        x.beginPath(); x.arc(px,yy,16+Math.sin(t*2)*2,0,7); x.stroke();
+      }
+      x.font='12px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(238,242,248,.92)';
+      x.textAlign='center';
+      x.fillText(k.n, px, yy-16);
+      x.textAlign='start';
+    });
+
+    x.font='11px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(139,150,173,.65)';
+    x.fillText('B  ·  biologisch-soziale Relationen, sprachunabhängig', 36, 34);
+    x.fillStyle='rgba(125,211,252,.6)';
+    x.fillText('F=Vater  M=Mutter  B=Bruder  Z=Schwester  (FB = Vaterbruder …)', 36, 54);
+
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 8 · DREI SPRACHEN, DREI PARTITIONEN ─────────────────── */
+add('IV · Die Instanz', `
+<div style="max-width:1300px;width:100%">
+  <div class="badge b-lang fade-up">Drei Überdeckungen</div>
+  <h2 class="fade-up">Dieselbe Region, drei Partitionen</h2>
+  <p class="fade-up" style="max-width:76ch">Die Region
+  $\\{FB,\\, MB,\\, FZ,\\, MZ\\}$ — die vier Geschwister der Eltern.
+  Jede Sprache überdeckt sie anders. Das sind verschiedene Schnitte über denselben Keimen.</p>
+  <canvas id="c_part" width="1400" height="470" class="fade-up"></canvas>
+  <div class="ctl fade-up">
+    <button class="pill on" id="b_pa">Hawaiianisch</button>
+    <button class="pill on" id="b_pb">Englisch</button>
+    <button class="pill on" id="b_pc">Arabisch</button>
+  </div>
+  <div class="readout fade-up" id="rd_part">Hawaiianisch:  2 Terme  ·  Partition nach Geschlecht
+Englisch:      2 Terme  ·  Partition nach Geschlecht
+Arabisch:      4 Terme  ·  Partition nach Geschlecht UND Seite</div>
+</div>`, () => {
+  const cv=document.getElementById('c_part'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let t=0;
+  const show={a:true,b:true,c:true};
+  ['a','b','c'].forEach(k=>{
+    const el=document.getElementById('b_p'+k);
+    el.onclick=()=>{ show[k]=!show[k]; el.classList.toggle('on',show[k]); };
+  });
+
+  const cells=[
+    {n:'FB', sub:'Vaterbruder',   X:.18},
+    {n:'MB', sub:'Mutterbruder',  X:.39},
+    {n:'FZ', sub:'Vaterschwester',X:.60},
+    {n:'MZ', sub:'Mutterschwester',X:.81}
+  ];
+
+  const langs = {
+    a:{ name:'Hawaiianisch', hue:200, y:.30,
+        terms:[
+          {t:'makua kāne', span:['FB','MB'], note:'männlich, Elterngeneration'},
+          {t:'makuahine',  span:['FZ','MZ'], note:'weiblich, Elterngeneration'}
+        ]},
+    b:{ name:'Englisch', hue:150, y:.55,
+        terms:[
+          {t:'uncle', span:['FB','MB'], note:'männlich'},
+          {t:'aunt',  span:['FZ','MZ'], note:'weiblich'}
+        ]},
+    c:{ name:'Arabisch', hue:330, y:.80,
+        terms:[
+          {t:'ʿamm',  span:['FB','FB'], note:'Vaterseite, m'},
+          {t:'khāl',  span:['MB','MB'], note:'Mutterseite, m'},
+          {t:'ʿamma', span:['FZ','FZ'], note:'Vaterseite, w'},
+          {t:'khāla', span:['MZ','MZ'], note:'Mutterseite, w'}
+        ]}
+  };
+
+  const cellX = n => cells.find(c=>c.n===n).X * W;
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.015;
+    x.clearRect(0,0,W,H);
+
+    // the base cells
+    cells.forEach((c,i)=>{
+      const px=c.X*W, py=H*0.11;
+      const g=x.createRadialGradient(px,py,0,px,py,40);
+      g.addColorStop(0,'rgba(251,191,36,.35)');
+      g.addColorStop(1,'rgba(251,191,36,0)');
+      x.fillStyle=g; x.beginPath(); x.arc(px,py,40,0,7); x.fill();
+      x.fillStyle='#fbbf24';
+      x.beginPath(); x.arc(px,py,7,0,7); x.fill();
+      x.font='15px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(238,242,248,.95)';
+      x.textAlign='center';
+      x.fillText(c.n, px, py-20);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(139,150,173,.75)';
+      x.fillText(c.sub, px, py+28);
+      x.textAlign='start';
+    });
+
+    // dividing line
+    x.strokeStyle='rgba(125,211,252,.14)'; x.lineWidth=1;
+    x.beginPath(); x.moveTo(40,H*0.19); x.lineTo(W-40,H*0.19); x.stroke();
+
+    // language partitions
+    ['a','b','c'].forEach(k=>{
+      if(!show[k]) return;
+      const L=langs[k], py=H*L.y;
+
+      x.font='14px Fraunces, serif';
+      x.fillStyle=`hsla(${L.hue},80%,74%,.95)`;
+      x.fillText(L.name, 42, py+5);
+
+      L.terms.forEach((tm,ti)=>{
+        const x0=cellX(tm.span[0]), x1=cellX(tm.span[1]);
+        const pad=58;
+        const left=x0-pad, right=x1+pad, wdt=right-left;
+        const pulse=Math.sin(t*1.1+ti*.8)*1.5;
+
+        // the region
+        const g=x.createLinearGradient(left,0,right,0);
+        g.addColorStop(0,`hsla(${L.hue},80%,62%,.10)`);
+        g.addColorStop(.5,`hsla(${L.hue},80%,62%,.24)`);
+        g.addColorStop(1,`hsla(${L.hue},80%,62%,.10)`);
+        x.fillStyle=g;
+        roundRect(x,left,py-30+pulse,wdt,60,16); x.fill();
+        x.strokeStyle=`hsla(${L.hue},85%,70%,.6)`; x.lineWidth=1.6;
+        roundRect(x,left,py-30+pulse,wdt,60,16); x.stroke();
+
+        // term label
+        x.font='14px "JetBrains Mono", monospace';
+        x.fillStyle=`hsla(${L.hue},92%,84%,1)`;
+        x.textAlign='center';
+        x.fillText(tm.t, (left+right)/2, py+1+pulse);
+        x.font='10px "JetBrains Mono", monospace';
+        x.fillStyle=`hsla(${L.hue},70%,72%,.75)`;
+        x.fillText(tm.note, (left+right)/2, py+18+pulse);
+        x.textAlign='start';
+
+        // connectors up to the cells
+        tm.span.forEach(sn=>{
+          const sx=cellX(sn);
+          x.strokeStyle=`hsla(${L.hue},80%,70%,.22)`; x.lineWidth=1;
+          x.setLineDash([3,4]); x.lineDashOffset=-t*10;
+          x.beginPath(); x.moveTo(sx,H*0.11+12); x.lineTo(sx,py-30+pulse); x.stroke();
+          x.setLineDash([]);
+        });
+      });
+    });
+
+    requestAnimationFrame(loop);
+  })();
+
+  function roundRect(c,x0,y0,w,h,r){
+    c.beginPath();
+    c.moveTo(x0+r,y0);
+    c.lineTo(x0+w-r,y0); c.quadraticCurveTo(x0+w,y0,x0+w,y0+r);
+    c.lineTo(x0+w,y0+h-r); c.quadraticCurveTo(x0+w,y0+h,x0+w-r,y0+h);
+    c.lineTo(x0+r,y0+h); c.quadraticCurveTo(x0,y0+h,x0,y0+h-r);
+    c.lineTo(x0,y0+r); c.quadraticCurveTo(x0,y0,x0+r,y0);
+    c.closePath();
+  }
+});
+
+/* ── 9 · DAS GARBENAXIOM SCHEITERT ───────────────────────── */
+add('IV · Die Instanz', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-warn fade-up">Garbenaxiom</div>
+    <h2 class="fade-up">Wo die Verklebung scheitert</h2>
+    <p class="fade-up">Nimm $U = \\{FB\\}$, $V = \\{MB\\}$ und die Überdeckung
+    $\\{U, V\\}$ von $U \\cup V$.</p>
+    <p class="fade-up"><strong>Hawaiianisch:</strong> <span class="mono" style="color:var(--accent)">makua kāne</span>
+    deckt beide. Ein Term auf beiden Patches, Überlapp leer, trivial kompatibel.
+    <em>Verklebt.</em></p>
+    <p class="fade-up"><strong>Arabisch:</strong> <span class="mono" style="color:var(--coral)">ʿamm</span>
+    für FB, <span class="mono" style="color:var(--coral)">khāl</span> für MB.
+    Kein gemeinsamer Term auf der Vereinigung. <em>Verklebt nicht.</em></p>
+    <div class="readout fade-up">Das Scheitern ist kein Widerspruch.
+Es ist ein FEHLENDES ELEMENT.
+
+Die lokalen Schnitte existieren.
+Sie sind kompatibel (Überlapp = ∅).
+Aber kein globaler Schnitt existiert.
+
+→ Verstoß gegen die Existenz-Hälfte
+  des Garbenaxioms. Messbar.</div>
+  </div>
+  <div class="col">
+    <canvas id="c_glue" width="720" height="620"></canvas>
+    <div class="ctl">
+      <button class="pill on" id="b_gh">Hawaiianisch</button>
+      <button class="pill" id="b_ga">Arabisch</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_glue'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let mode=0, t=0;
+  const bh=document.getElementById('b_gh'), ba=document.getElementById('b_ga');
+  bh.onclick=()=>{mode=0;bh.classList.add('on');ba.classList.remove('on');};
+  ba.onclick=()=>{mode=1;ba.classList.add('on');bh.classList.remove('on');};
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.015;
+    x.clearRect(0,0,W,H);
+    const cx=W/2;
+    const uY=H*0.30, vY=H*0.30, gY=H*0.72;
+    const ux=cx-140, vx=cx+140;
+
+    const ok = mode===0;
+    const hue = ok?150:0;
+
+    // patch U
+    drawPatch(ux,uY,'U = {FB}', ok?'makua kāne':'ʿamm', 200);
+    drawPatch(vx,vY,'V = {MB}', ok?'makua kāne':'khāl', 280);
+
+    // arrows down
+    [[ux],[vx]].forEach(([px])=>{
+      x.strokeStyle=ok?'rgba(52,211,153,.6)':'rgba(251,113,133,.5)';
+      x.lineWidth=2; x.setLineDash([6,5]); x.lineDashOffset=-t*18;
+      x.beginPath(); x.moveTo(px, uY+58); x.lineTo(cx, gY-54); x.stroke();
+      x.setLineDash([]);
+    });
+
+    // global
+    const pulse=Math.sin(t*1.6)*2;
+    if(ok){
+      const g=x.createRadialGradient(cx,gY,0,cx,gY,110);
+      g.addColorStop(0,'rgba(52,211,153,.26)');
+      g.addColorStop(1,'rgba(52,211,153,0)');
+      x.fillStyle=g; x.beginPath(); x.arc(cx,gY,110,0,7); x.fill();
+      x.strokeStyle='rgba(52,211,153,.85)'; x.lineWidth=2.2;
+      roundRect2(x,cx-130,gY-38+pulse,260,76,18); x.stroke();
+      x.font='16px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(167,243,208,1)'; x.textAlign='center';
+      x.fillText('makua kāne', cx, gY+1+pulse);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(52,211,153,.8)';
+      x.fillText('globaler Schnitt  ∃!', cx, gY+22+pulse);
+      x.textAlign='start';
+    } else {
+      x.strokeStyle='rgba(251,113,133,.6)'; x.lineWidth=2.2;
+      x.setLineDash([9,7]);
+      roundRect2(x,cx-130,gY-38,260,76,18); x.stroke();
+      x.setLineDash([]);
+      x.font='28px Fraunces, serif';
+      x.fillStyle='rgba(251,113,133,.9)'; x.textAlign='center';
+      x.fillText('∅', cx, gY+6);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(251,113,133,.85)';
+      x.fillText('kein globaler Schnitt', cx, gY+28);
+      x.textAlign='start';
+      // the crossed arrows
+      x.strokeStyle='rgba(251,113,133,.9)'; x.lineWidth=2.4;
+      const mx=cx, my=(uY+gY)/2;
+      x.beginPath(); x.moveTo(mx-12,my-12); x.lineTo(mx+12,my+12);
+      x.moveTo(mx+12,my-12); x.lineTo(mx-12,my+12); x.stroke();
+    }
+
+    // overlap note
+    x.font='11px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(139,150,173,.6)';
+    x.textAlign='center';
+    x.fillText('U ∩ V = ∅   →   Kompatibilität trivial erfüllt', cx, uY+100);
+    x.textAlign='start';
+
+    requestAnimationFrame(loop);
+
+    function drawPatch(px,py,label,term,h){
+      const g=x.createRadialGradient(px,py,0,px,py,86);
+      g.addColorStop(0,`hsla(${h},80%,62%,.18)`);
+      g.addColorStop(1,`hsla(${h},80%,62%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(px,py,86,0,7); x.fill();
+      x.strokeStyle=`hsla(${h},82%,70%,.6)`; x.lineWidth=1.8;
+      roundRect2(x,px-100,py-34,200,68,16); x.stroke();
+      x.font='14px "JetBrains Mono", monospace';
+      x.fillStyle=`hsla(${h},90%,84%,1)`; x.textAlign='center';
+      x.fillText(term, px, py+2);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(139,150,173,.8)';
+      x.fillText(label, px, py-48);
+      x.textAlign='start';
+    }
+  })();
+
+  function roundRect2(c,x0,y0,w,h,r){
+    c.beginPath();
+    c.moveTo(x0+r,y0);
+    c.lineTo(x0+w-r,y0); c.quadraticCurveTo(x0+w,y0,x0+w,y0+r);
+    c.lineTo(x0+w,y0+h-r); c.quadraticCurveTo(x0+w,y0+h,x0+w-r,y0+h);
+    c.lineTo(x0+r,y0+h); c.quadraticCurveTo(x0,y0+h,x0,y0+h-r);
+    c.lineTo(x0,y0+r); c.quadraticCurveTo(x0,y0,x0+r,y0);
+    c.closePath();
+  }
+});
+
+/* ── 10 · DAS DREIECK ────────────────────────────────────── */
+add('V · Die Obstruktion', `
+<div class="wrap">
+  <div class="col">
+    <div class="badge b-warn fade-up">Der Kozykel</div>
+    <h2 class="fade-up">Das Dreieck schließt nicht</h2>
+    <p class="fade-up">Drei Übersetzungsfunktoren. Die Frage ist nicht,
+    ob jeder einzeln „gut" ist. Die Frage ist, ob
+    $$\\phi_{BC} \\circ \\phi_{AB} \\simeq \\phi_{AC}$$</p>
+    <p class="fade-up">Fahre die Rundreise:
+    <span class="mono" style="color:var(--coral)">ʿamm</span> →
+    <span class="mono" style="color:var(--emerald)">uncle</span> →
+    <span class="mono" style="color:var(--coral)">{ʿamm, khāl}</span>.
+    Du kommst nicht zurück.</p>
+    <div class="readout fade-up" id="rd_tri">Bereit. Starte die Rundreise.</div>
+  </div>
+  <div class="col">
+    <canvas id="c_tri" width="720" height="640"></canvas>
+    <div class="ctl">
+      <button class="pill" id="b_trip">Rundreise fahren</button>
+      <button class="pill" id="b_trir">Zurücksetzen</button>
+    </div>
+  </div>
+</div>`, () => {
+  const cv=document.getElementById('c_tri'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let t=0, prog=-1, stage=0;
+  const rd=document.getElementById('rd_tri');
+
+  const nodes=[
+    {id:'A', n:'Hawaiianisch', X:.5,  Y:.18, h:200, terms:2},
+    {id:'B', n:'Englisch',     X:.82, Y:.68, h:150, terms:2},
+    {id:'C', n:'Arabisch',     X:.18, Y:.68, h:330, terms:4}
+  ];
+  const P = id => { const n=nodes.find(k=>k.id===id); return {x:n.X*W,y:n.Y*H,h:n.h}; };
+
+  const steps=[
+    {from:'C',to:'B', lbl:'φ_CB', msg:'ʿamm  →  uncle\n  funktorial, aber nicht treu\n  (ʿamm und khāl → beide uncle)'},
+    {from:'B',to:'C', lbl:'φ_BC', msg:'uncle  →  {ʿamm, khāl}\n  NICHT funktional\n  eine Relation, keine Funktion'},
+    {from:'C',to:'C', lbl:'id?',  msg:'Rundreise beendet.\n\n  Start: ʿamm\n  Ziel:  {ʿamm, khāl}\n\n  φ_BC ∘ φ_CB  ≠  id\n  DER KOZYKEL SCHLIESST NICHT.'}
+  ];
+
+  document.getElementById('b_trip').onclick=()=>{ prog=0; stage=0; };
+  document.getElementById('b_trir').onclick=()=>{ prog=-1; stage=0;
+    rd.textContent='Bereit. Starte die Rundreise.'; };
+
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.015;
+    if(prog>=0){
+      prog+=.012;
+      const s=Math.min(2,Math.floor(prog));
+      if(s!==stage){ stage=s; rd.textContent=steps[stage].msg; }
+      if(prog>=2.9) prog=2.9;
+      if(stage===0 && prog<1) rd.textContent=steps[0].msg;
+    }
+    x.clearRect(0,0,W,H);
+
+    // the three edges
+    edge('A','B','φ_AB  voll + treu',150,true);
+    edge('B','C','φ_BC  nicht funktional',330,false);
+    edge('A','C','φ_AC  nicht funktional',270,false);
+
+    // travelling dot
+    if(prog>=0 && prog<3){
+      const si=Math.min(1,Math.floor(prog));
+      const f=prog-Math.floor(prog);
+      const st=steps[si];
+      const a=P(st.from), b=P(st.to);
+      const mx=W/2, my=H*0.52;
+      const px = qb(a.x, mx, b.x, f), py = qb(a.y, my-40, b.y, f);
+      const g=x.createRadialGradient(px,py,0,px,py,30);
+      g.addColorStop(0,'rgba(251,191,36,.9)');
+      g.addColorStop(1,'rgba(251,191,36,0)');
+      x.fillStyle=g; x.beginPath(); x.arc(px,py,30,0,7); x.fill();
+      x.fillStyle='#fde68a'; x.beginPath(); x.arc(px,py,7,0,7); x.fill();
+    }
+
+    // nodes
+    nodes.forEach(n=>{
+      const px=n.X*W, py=n.Y*H;
+      const g=x.createRadialGradient(px,py,0,px,py,72);
+      g.addColorStop(0,`hsla(${n.h},82%,62%,.26)`);
+      g.addColorStop(1,`hsla(${n.h},82%,62%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(px,py,72,0,7); x.fill();
+      x.strokeStyle=`hsla(${n.h},85%,72%,.75)`; x.lineWidth=2;
+      x.beginPath(); x.arc(px,py,42,0,7); x.stroke();
+      x.font='15px Fraunces, serif';
+      x.fillStyle=`hsla(${n.h},92%,86%,1)`; x.textAlign='center';
+      x.fillText(n.id, px, py-2);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(238,242,248,.9)';
+      x.fillText(n.n, px, py+16);
+      x.fillStyle='rgba(139,150,173,.7)';
+      x.fillText(n.terms+' Terme', px, py+62);
+      x.textAlign='start';
+    });
+
+    // verdict
+    if(prog>=2.5){
+      const a=Math.min(1,(prog-2.5)/.4);
+      x.globalAlpha=a;
+      x.font='15px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(251,113,133,.95)';
+      x.textAlign='center';
+      x.fillText('H¹ ≠ 0   ·   messbare Inkommensurabilität', W/2, H-22);
+      x.textAlign='start';
+      x.globalAlpha=1;
+    }
+
+    requestAnimationFrame(loop);
+
+    function edge(f,tt,lbl,h,solid){
+      const a=P(f), b=P(tt);
+      const mx=W/2, my=H*0.52;
+      x.strokeStyle=`hsla(${h},80%,66%,${solid?.6:.35})`;
+      x.lineWidth=solid?2.4:2;
+      if(!solid){ x.setLineDash([8,6]); x.lineDashOffset=-t*16; }
+      x.beginPath();
+      x.moveTo(a.x,a.y);
+      x.quadraticCurveTo(mx,my-40,b.x,b.y);
+      x.stroke(); x.setLineDash([]);
+      const lx=qb(a.x,mx,b.x,.5), ly=qb(a.y,my-40,b.y,.5);
+      x.font='11px "JetBrains Mono", monospace';
+      x.fillStyle=`hsla(${h},80%,76%,.9)`;
+      x.textAlign='center';
+      x.fillText(lbl, lx, ly-8);
+      x.textAlign='start';
+    }
+    function qb(p0,p1,p2,u){ const v=1-u; return v*v*p0 + 2*v*u*p1 + u*u*p2; }
+  })();
+});
+
+/* ── 11 · FUNKTORIALITÄT ─────────────────────────────────── */
+add('V · Die Obstruktion', `
+<div style="max-width:1200px;width:100%">
+  <div class="badge b-math fade-up">These 2</div>
+  <h2 class="fade-up">Übersetzung ist Funktorialität, nicht Isomorphie</h2>
+  <p class="fade-up" style="max-width:76ch">Verlustfreiheit ist nicht „es gibt eine Abbildung".
+  Verlustfreiheit ist: der Funktor ist <strong>voll</strong> und <strong>treu</strong>.</p>
+  <div class="grid3">
+    <div class="card fade-up">
+      <h4>Voll</h4>
+      <p>Jeder Term der Zielsprache wird getroffen. Surjektiv auf Morphismen.
+      <br><span class="mono" style="color:var(--emerald);font-size:.8rem">ʿamm, khāl → uncle ✓</span></p>
+    </div>
+    <div class="card fade-up">
+      <h4>Treu</h4>
+      <p>Verschiedene Terme bleiben verschieden
+ <p>Verschiedene Terme bleiben verschieden. Injektiv auf Morphismen.
+  <br><span class="mono" style="color:var(--coral);font-size:.8rem">ʿamm ≠ khāl → uncle = uncle ✗</span></p>
+</div>
+<div class="card fade-up">
+  <h4>Rechtsinvers</h4>
+  <p>Existiert nur bei voll <em>und</em> treu. Hier nicht:
+  der Rückweg ist eine Relation, keine Funktion.
+  <br><span class="mono" style="color:var(--warm);font-size:.8rem">erklärbar, nicht übersetzbar</span></p>
+</div>
+
+</div> <canvas id="c_funct" width="1300" height="400" class="fade-up" style="margin-top:1.4em"></canvas> <div class="ctl fade-up"> <button class="pill on" id="b_fwd">Vorwärts φ_CB</button> <button class="pill" id="b_bwd">Rückwärts φ_BC</button> </div> </div>`, () => { const cv=document.getElementById('c_funct'), x=cv.getContext('2d'); const W=cv.width,H=cv.height; let dir=0, t=0; const bf=document.getElementById('b_fwd'), bb=document.getElementById('b_bwd'); bf.onclick=()=>{dir=0;bf.classList.add('on');bb.classList.remove('on');}; bb.onclick=()=>{dir=1;bb.classList.add('on');bf.classList.remove('on');};const ar=[{t:'ʿamm',y:.26,h:330},{t:'khāl',y:.46,h:330}, {t:'ʿamma',y:.66,h:330},{t:'khāla',y:.86,h:330}]; const en=[{t:'uncle',y:.36,h:150},{t:'aunt',y:.76,h:150}]; const map=[[0,0],[1,0],[2,1],[3,1]];(function loop(){ if(!cv.isConnected) return; t+=.015; x.clearRect(0,0,W,H); const lx=W0.22, rx=W0.78;
+
+map.forEach(([a,b],i)=>{
+  const A={x:lx,y:ar[a].y*H}, B={x:rx,y:en[b].y*H};
+  const from = dir===0? A : B, to = dir===0? B : A;
+  const hue = dir===0? 150 : 330;
+  x.strokeStyle=`hsla(${hue},80%,66%,.5)`;
+  x.lineWidth=2.2;
+  x.setLineDash([7,5]); x.lineDashOffset=-t*20*(dir?-1:1);
+  x.beginPath();
+  x.moveTo(A.x+70,A.y);
+  x.bezierCurveTo((A.x+B.x)/2,A.y,(A.x+B.x)/2,B.y,B.x-70,B.y);
+  x.stroke(); x.setLineDash([]);
+
+  // travelling marker
+  const f=((t*0.35+i*0.22)%1);
+  const u = dir===0? f : 1-f;
+  const px = cub(A.x+70,(A.x+B.x)/2,(A.x+B.x)/2,B.x-70,u);
+  const py = cub(A.y,A.y,B.y,B.y,u);
+  const g=x.createRadialGradient(px,py,0,px,py,18);
+  g.addColorStop(0,`hsla(${hue},90%,78%,.9)`);
+  g.addColorStop(1,`hsla(${hue},90%,78%,0)`);
+  x.fillStyle=g; x.beginPath(); x.arc(px,py,18,0,7); x.fill();
+  x.fillStyle=`hsla(${hue},95%,88%,1)`;
+  x.beginPath(); x.arc(px,py,4.5,0,7); x.fill();
+});
+
+node(lx, ar, 'Arabisch (4)');
+node(rx, en, 'Englisch (2)');
+
+// verdict
+x.font='13px "JetBrains Mono", monospace';
+x.textAlign='center';
+if(dir===0){
+  x.fillStyle='rgba(52,211,153,.9)';
+  x.fillText('φ_CB : funktional, voll, NICHT treu   ·   4 → 2', W/2, H-18);
+} else {
+  x.fillStyle='rgba(251,113,133,.95)';
+  x.fillText('φ_BC : NICHT funktional   ·   uncle ↦ { ʿamm, khāl }', W/2, H-18);
+}
+x.textAlign='start';
+
+requestAnimationFrame(loop);
+
+function node(px,arr,label){
+  arr.forEach((n,i)=>{
+    const py=n.y*H + Math.sin(t*1.2+i)*2;
+    const g=x.createRadialGradient(px,py,0,px,py,54);
+    g.addColorStop(0,`hsla(${n.h},80%,62%,.22)`);
+    g.addColorStop(1,`hsla(${n.h},80%,62%,0)`);
+    x.fillStyle=g; x.beginPath(); x.arc(px,py,54,0,7); x.fill();
+    x.strokeStyle=`hsla(${n.h},85%,70%,.6)`; x.lineWidth=1.8;
+    rr(x,px-68,py-20,136,40,12); x.stroke();
+    x.font='14px "JetBrains Mono", monospace';
+    x.fillStyle=`hsla(${n.h},92%,86%,1)`; x.textAlign='center';
+    x.fillText(n.t, px, py+5);
+    x.textAlign='start';
+  });
+  x.font='12px Fraunces, serif';
+  x.fillStyle='rgba(238,242,248,.85)'; x.textAlign='center';
+  x.fillText(label, px, 34);
+  x.textAlign='start';
+}
+function cub(p0,p1,p2,p3,u){
+  const v=1-u;
+  return v*v*v*p0 + 3*v*v*u*p1 + 3*v*u*u*p2 + u*u*u*p3;
+}
+function rr(c,x0,y0,w,h,r){
+  c.beginPath(); c.moveTo(x0+r,y0);
+  c.lineTo(x0+w-r,y0); c.quadraticCurveTo(x0+w,y0,x0+w,y0+r);
+  c.lineTo(x0+w,y0+h-r); c.quadraticCurveTo(x0+w,y0+h,x0+w-r,y0+h);
+  c.lineTo(x0+r,y0+h); c.quadraticCurveTo(x0,y0+h,x0,y0+h-r);
+  c.lineTo(x0,y0+r); c.quadraticCurveTo(x0,y0,x0+r,y0);
+  c.closePath();
+}
+
+})(); });/* ── 12 · DER GARBIFIZIERUNGSDEFEKT ──────────────────────── */ add('V · Die Obstruktion', ` <div class="wrap"> <div class="col"> <div class="badge b-math fade-up">These 3</div> <h2 class="fade-up">Was eine Sprache sagen müsste,<br>aber nicht sagt</h2> <p class="fade-up">Die Prägarbe $\\mathcal{F}_L$ ist fast nie eine Garbe. Die <strong>Garbifizierung</strong> $\\mathcal{F}_L^+$ existiert immer — sie fügt die fehlenden globalen Schnitte künstlich hinzu.</p> <p class="fade-up">Der Quotient $$\\mathcal{F}_L^+ \\,/\\, \\mathcal{F}_L$$ ist exakt der <strong>Defekt</strong>: die Terme, die eine Sprache bräuchte, um global zu verkleben, und die sie nicht hat.</p> <div class="readout fade-up" id="rd_def">Sprache wählen …</div> </div> <div class="col"> <canvas id="c_def" width="720" height="620"></canvas> <div class="ctl"> <button class="pill on" id="b_dh">Hawaiianisch</button> <button class="pill" id="b_de">Englisch</button> <button class="pill" id="b_da">Arabisch</button> </div> </div> </div>`, () => { const cv=document.getElementById('c_def'), x=cv.getContext('2d'); const W=cv.width,H=cv.height; let mode=0, t=0; const btns=['b_dh','b_de','b_da'].map(id=>document.getElementById(id)); const langs=[ {n:'Hawaiianisch', have:2, need:2, hue:200, msg:'Hawaiianisch\n vorhanden: 2 Terme\n nötig: 2 Terme\n Defekt: 0\n\n Die Prägarbe IST eine Garbe.\n Alles verklebt.'}, {n:'Englisch', have:2, need:2, hue:150, msg:'Englisch\n vorhanden: 2 Terme\n nötig: 2 Terme\n Defekt: 0\n\n Auf diesem Feld: Garbe.\n Auf anderen Feldern nicht.'}, {n:'Arabisch', have:4, need:6, hue:330, msg:'Arabisch\n vorhanden: 4 Terme\n nötig: 6 Terme\n Defekt: 2\n\n Fehlend:\n * "Bruder eines Elternteils"\n * "Schwester eines Elternteils"\n\n Diese Begriffe existieren.\n Die Sprache benennt sie nicht.'} ]; btns.forEach((b,i)=>b.onclick=()=>{ mode=i; btns.forEach((o,j)=>o.classList.toggle('on',i===j)); document.getElementById('rd_def').textContent=langs[i].msg; }); document.getElementById('rd_def').textContent=langs[0].msg;(function loop(){ if(!cv.isConnected) return; t+=.015; x.clearRect(0,0,W,H); const L=langs[mode], cx=W/2, cy=H*0.42;
+
+// outer circle = F+ (garbifiziert)
+const R1=200;
+const g1=x.createRadialGradient(cx,cy,R1*.6,cx,cy,R1);
+g1.addColorStop(0,'rgba(251,191,36,.04)');
+g1.addColorStop(1,'rgba(251,191,36,.16)');
+x.fillStyle=g1; x.beginPath(); x.arc(cx,cy,R1,0,7); x.fill();
+x.strokeStyle='rgba(251,191,36,.6)'; x.lineWidth=2;
+x.setLineDash([9,6]); x.lineDashOffset=-t*14;
+x.beginPath(); x.arc(cx,cy,R1,0,7); x.stroke();
+x.setLineDash([]);
+
+// inner circle = F (tatsächlich)
+const frac = L.have / L.need;
+const R2 = R1 * Math.sqrt(frac) * (1+Math.sin(t*1.3)*.008);
+const g2=x.createRadialGradient(cx,cy,0,cx,cy,R2);
+g2.addColorStop(0,`hsla(${L.hue},82%,62%,.30)`);
+g2.addColorStop(1,`hsla(${L.hue},82%,62%,.12)`);
+x.fillStyle=g2; x.beginPath(); x.arc(cx,cy,R2,0,7); x.fill();
+x.strokeStyle=`hsla(${L.hue},85%,72%,.85)`; x.lineWidth=2.4;
+x.beginPath(); x.arc(cx,cy,R2,0,7); x.stroke();
+
+// the gap = defect
+if(L.need>L.have){
+  const n=L.need-L.have;
+  for(let i=0;i<n;i++){
+    const a = -Math.PI/2 + (i - (n-1)/2)*0.72 + Math.sin(t*0.6)*0.04;
+    const rr = (R1+R2)/2;
+    const px = cx+Math.cos(a)*rr, py = cy+Math.sin(a)*rr;
+    const g=x.createRadialGradient(px,py,0,px,py,30);
+    g.addColorStop(0,'rgba(251,113,133,.55)');
+    g.addColorStop(1,'rgba(251,113,133,0)');
+    x.fillStyle=g; x.beginPath(); x.arc(px,py,30,0,7); x.fill();
+    x.strokeStyle='rgba(251,113,133,.9)'; x.lineWidth=2;
+    x.setLineDash([4,4]);
+    x.beginPath(); x.arc(px,py,13,0,7); x.stroke();
+    x.setLineDash([]);
+    x.font='18px Fraunces, serif';
+    x.fillStyle='rgba(251,113,133,.95)'; x.textAlign='center';
+    x.fillText('?', px, py+6);
+    x.textAlign='start';
+  }
+}
+
+// labels
+x.font='13px "JetBrains Mono", monospace';
+x.fillStyle='rgba(251,191,36,.9)'; x.textAlign='center';
+x.fillText('𝓕⁺  garbifiziert', cx, cy-R1-16);
+x.fillStyle=`hsla(${L.hue},85%,80%,.95)`;
+x.fillText('𝓕  tatsächlich', cx, cy+4);
+x.font='11px "JetBrains Mono", monospace';
+x.fillStyle='rgba(139,150,173,.8)';
+x.fillText(L.have+' von '+L.need+' Termen', cx, cy+24);
+
+if(L.need>L.have){
+  x.font='12px "JetBrains Mono", monospace';
+  x.fillStyle='rgba(251,113,133,.9)';
+  x.fillText('Defekt = '+(L.need-L.have)+'   ·   was fehlt, um zu verkleben', cx, H-42);
+} else {
+  x.fillStyle='rgba(52,211,153,.9)';
+  x.font='12px "JetBrains Mono", monospace';
+  x.fillText('Defekt = 0   ·   𝓕 = 𝓕⁺   ·   ist bereits Garbe', cx, H-42);
+}
+x.textAlign='start';
+
+requestAnimationFrame(loop);
+
+})(); });/* ── 13 · DIE FASERUNG ENTSCHEIDET ───────────────────────── */ add('VI · Die Pointe', ` <div class="wrap"> <div class="col"> <div class="badge b-warn fade-up">Die Pointe</div> <h2 class="fade-up">Inkommensurabilität ist<br>keine Eigenschaft der Sprachen</h2> <p class="fade-up">Faserst du über dem <strong>vollen biologischen Raum</strong> — Generation, Geschlecht, <em>und Linealität</em> — dann scheitert das Dreieck. Arabisch sieht etwas, das Englisch nicht sieht.</p> <p class="fade-up">Faserst du über dem <strong>gröberen Raum</strong> — nur Generation und Geschlecht, Linealität in die Faser — dann kommutiert es. Die Sprachen sind kompatibel.</p> <div class="quote fade-up"> Dieselben Sprachen.<br> Zwei Faserungen.<br> Zwei Antworten auf dieselbe Frage. </div> <div class="readout fade-up" id="rd_fin">Basis: (g, s, l) — fein Dreieck kommutiert: NEIN H¹ ≠ 0 — Obstruktion</div> </div> <div class="col"> <canvas id="c_fin" width="720" height="620"></canvas> <div class="ctl"> <button class="pill on" id="b_x1">Basis: (g, s, l) fein</button> <button class="pill" id="b_x2">Basis: (g, s) grob</button> </div> </div> </div>`, () => { const cv=document.getElementById('c_fin'), x=cv.getContext('2d'); const W=cv.width,H=cv.height; let mode=0, t=0, morph=0; const b1=document.getElementById('b_x1'), b2=document.getElementById('b_x2'); const rd=document.getElementById('rd_fin'); b1.onclick=()=>{mode=0;b1.classList.add('on');b2.classList.remove('on'); rd.textContent='Basis: (g, s, l) — fein\n Dreieck kommutiert: NEIN\n H¹ ≠ 0 — Obstruktion';}; b2.onclick=()=>{mode=1;b2.classList.add('on');b1.classList.remove('on'); rd.textContent='Basis: (g, s) — grob\n Linealität l → in die Faser\n Dreieck kommutiert: JA\n H¹ = 0 — globaler Schnitt existiert';};const cells=[ {n:'FB',X:.22,Y:.30,l:'F'},{n:'MB',X:.44,Y:.30,l:'M'}, {n:'FZ',X:.66,Y:.30,l:'F'},{n:'MZ',X:.88,Y:.30,l:'M'} ];(function loop(){ if(!cv.isConnected) return; t+=.015; morph += ((mode?1:0)-morph)*.07; x.clearRect(0,0,W,H);
+
+const lerp=(a,b,u)=>a+(b-a)*u;
+
+// base cells — merge pairwise as morph → 1
+const pos = cells.map((c,i)=>{
+  const pair = i<2 ? 0 : 1;
+  const merged = pair===0 ? 0.33 : 0.72;
+  return { X: lerp(c.X, merged, morph), Y: c.Y, c };
+});
+
+// base axis
+x.strokeStyle='rgba(125,211,252,.18)'; x.lineWidth=1;
+x.beginPath(); x.moveTo(50,H*0.42); x.lineTo(W-50,H*0.42); x.stroke();
+x.font='11px "JetBrains Mono", monospace';
+x.fillStyle='rgba(125,211,252,.7)';
+x.fillText(morph<.5 ? 'Basis B = (g, s, l)' : 'Basis B = (g, s)   ·   l in der Faser', 54, H*0.42+22);
+
+pos.forEach((p,i)=>{
+  const px=p.X*W, py=p.Y*H+Math.sin(t+i*.6)*2;
+  const al = 1 - morph*0.35;
+  const g=x.createRadialGradient(px,py,0,px,py,38);
+  g.addColorStop(0,`rgba(251,191,36,${.4*al})`);
+  g.addColorStop(1,'rgba(251,191,36,0)');
+  x.fillStyle=g; x.beginPath(); x.arc(px,py,38,0,7); x.fill();
+  x.fillStyle=`rgba(251,191,36,${al})`;
+  x.beginPath(); x.arc(px,py,6.5,0,7); x.fill();
+  x.font='13px "JetBrains Mono", monospace';
+  x.fillStyle=`rgba(238,242,248,${al})`; x.textAlign='center';
+  x.fillText(p.c.n, px, py-18);
+  // lineality tag flies into the fibre
+  if(morph>.1){
+    const fy = lerp(py+22, H*0.16, morph);
+    x.font='10px "JetBrains Mono", monospace';
+    x.fillStyle=`rgba(192,132,252,${morph*.9})`;
+    x.fillText('l='+p.c.l, px, fy);
+  }
+  x.textAlign='start';
+});
+
+if(morph>.2){
+  x.font='11px "JetBrains Mono", monospace';
+  x.fillStyle=`rgba(192,132,252,${(morph-.2)*1.1})`;
+  x.textAlign='center';
+  x.fillText('↑ Faser:  Linealität', W/2, H*0.10);
+  x.textAlign='start';
+}
+
+// the triangle below
+const ty=H*0.74, A={x:W/2,y:ty-90}, B={x:W*0.80,y:ty+60}, C={x:W*0.20,y:ty+60};
+const ok = morph>.55;
+tri(A,B,'φ_AB',150,true);
+tri(B,C,'φ_BC',ok?150:330, ok);
+tri(A,C,'φ_AC',ok?150:270, ok);
+dot(A,'A',200); dot(B,'B',150); dot(C,'C',330);
+
+const cxm=(A.x+B.x+C.x)/3, cym=(A.y+B.y+C.y)/3+8;
+if(ok){
+  const a=(morph-.55)/.45;
+  x.globalAlpha=a;
+  x.font='30px Fraunces, serif';
+  x.fillStyle='rgba(52,211,153,.9)'; x.textAlign='center';
+  x.fillText('✓', cxm, cym+8);
+  x.font='11px "JetBrains Mono", monospace';
+  x.fillStyle='rgba(52,211,153,.9)';
+  x.fillText('kommutiert · H¹ = 0', cxm, cym+30);
+  x.textAlign='start'; x.globalAlpha=1;
+} else {
+  const a=1-morph/.55;
+  x.globalAlpha=Math.max(0,a);
+  x.strokeStyle='rgba(251,113,133,.9)'; x.lineWidth=2.6;
+  x.beginPath();
+  x.moveTo(cxm-13,cym-13); x.lineTo(cxm+13,cym+13);
+  x.moveTo(cxm+13,cym-13); x.lineTo(cxm-13,cym+13);
+  x.stroke();
+  x.font='11px "JetBrains Mono", monospace';
+  x.fillStyle='rgba(251,113,133,.9)'; x.textAlign='center';
+  x.fillText('Kozykel schließt nicht · H¹ ≠ 0', cxm, cym+34);
+  x.textAlign='start'; x.globalAlpha=1;
+}
+
+requestAnimationFrame(loop);
+
+function tri(p,q,lbl,h,solid){
+  x.strokeStyle=`hsla(${h},80%,66%,${solid?.7:.4})`;
+  x.lineWidth=solid?2.4:2;
+  if(!solid){ x.setLineDash([8,6]); x.lineDashOffset=-t*16; }
+  x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(q.x,q.y); x.stroke();
+  x.setLineDash([]);
+  x.font='10px "JetBrains Mono", monospace';
+  x.fillStyle=`hsla(${h},80%,78%,.85)`; x.textAlign='center';
+  x.fillText(lbl,(p.
+      x.fillText(lbl,(p.x+q.x)/2,(p.y+q.y)/2-8);
+      x.textAlign='start';
+    }
+    function dot(p,label,h){
+      const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,46);
+      g.addColorStop(0,`hsla(${h},82%,62%,.28)`);
+      g.addColorStop(1,`hsla(${h},82%,62%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(p.x,p.y,46,0,7); x.fill();
+      x.strokeStyle=`hsla(${h},85%,72%,.8)`; x.lineWidth=2;
+      x.beginPath(); x.arc(p.x,p.y,24,0,7); x.stroke();
+      x.font='14px Fraunces, serif';
+      x.fillStyle=`hsla(${h},92%,86%,1)`; x.textAlign='center';
+      x.fillText(label,p.x,p.y+5);
+      x.textAlign='start';
+    }
+  })();
+});
+
+/* ── 14 · DER GARBIFIZIERUNGSDEFEKT ALS KULTUR ───────────── */
+add('VI · Die Pointe', `
+<div style="max-width:1150px;width:100%">
+  <div class="badge b-lang fade-up">Was es bedeutet</div>
+  <h2 class="fade-up">Das Fenster ist kein Fehler</h2>
+  <div class="grid3">
+    <div class="card fade-up">
+      <h4>Was eine Sprache sieht</h4>
+      <p>Die Terme, die sie hat, sind Schnitte über Keimen, die ihr wichtig waren.
+      Arabisch unterscheidet die Seiten, weil die Patrilinearität
+      sozial trägt. Das ist <em>mehr</em> Auflösung, nicht weniger.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Was sie nicht sieht</h4>
+      <p>Der Garbifizierungsdefekt ist kein Mangel an Denkfähigkeit.
+      Es ist ein Mangel an <strong>lexikalisierter</strong> Unterscheidung.
+      Erklärbar bleibt alles — nur nicht in <em>einem Wort</em>.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Warum das zählt</h4>
+      <p>Was eine Sprache in einem Wort sagt, ist das, was sie
+      <strong>routinemäßig</strong> denkt. Die Default-Partitionierung ist
+      die Aufmerksamkeitsallokation. Das ist der belegte Whorf-Effekt.</p>
+    </div>
+  </div>
+  <canvas id="c_cult" width="1250" height="400" class="fade-up" style="margin-top:1.4em"></canvas>
+</div>`, () => {
+  const cv=document.getElementById('c_cult'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let t=0;
+  const langs=[
+    {n:'Hawaiianisch', X:.16, terms:2, h:200, note:'generational'},
+    {n:'Englisch',     X:.38, terms:2, h:150, note:'eskimo'},
+    {n:'Arabisch',     X:.60, terms:4, h:330, note:'sudanese'},
+    {n:'Ungarisch',    X:.82, terms:6, h:48,  note:'+ relatives Alter'}
+  ];
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.015;
+    x.clearRect(0,0,W,H);
+    const baseY=H*0.78;
+
+    x.strokeStyle='rgba(125,211,252,.14)'; x.lineWidth=1;
+    x.beginPath(); x.moveTo(50,baseY); x.lineTo(W-50,baseY); x.stroke();
+
+    langs.forEach((L,i)=>{
+      const px=L.X*W;
+      const maxT=6;
+      for(let k=0;k<maxT;k++){
+        const py=baseY-28-k*42;
+        const on = k < L.terms;
+        const pulse = on? Math.sin(t*1.3+k*.5+i)*1.5 : 0;
+        if(on){
+          const g=x.createRadialGradient(px,py+pulse,0,px,py+pulse,26);
+          g.addColorStop(0,`hsla(${L.h},85%,66%,.5)`);
+          g.addColorStop(1,`hsla(${L.h},85%,66%,0)`);
+          x.fillStyle=g; x.beginPath(); x.arc(px,py+pulse,26,0,7); x.fill();
+          x.fillStyle=`hsla(${L.h},92%,82%,1)`;
+          x.beginPath(); x.arc(px,py+pulse,7,0,7); x.fill();
+        } else {
+          x.strokeStyle='rgba(251,113,133,.35)'; x.lineWidth=1.4;
+          x.setLineDash([3,4]); x.lineDashOffset=-t*8;
+          x.beginPath(); x.arc(px,py,7,0,7); x.stroke();
+          x.setLineDash([]);
+        }
+      }
+      x.font='13px Fraunces, serif';
+      x.fillStyle=`hsla(${L.h},88%,82%,.95)`; x.textAlign='center';
+      x.fillText(L.n, px, baseY+26);
+      x.font='10px "JetBrains Mono", monospace';
+      x.fillStyle='rgba(139,150,173,.7)';
+      x.fillText(L.terms+' Terme · '+L.note, px, baseY+44);
+      x.textAlign='start';
+    });
+
+    x.font='11px "JetBrains Mono", monospace';
+    x.fillStyle='rgba(139,150,173,.65)';
+    x.fillText('● lexikalisiert      ○ Defekt: erklärbar, nicht benannt', 56, 34);
+
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ── 15 · DIE OFFENEN FRAGEN ─────────────────────────────── */
+add('VII · Rest', `
+<div style="max-width:1050px">
+  <div class="badge b-warn fade-up">Was offen bleibt</div>
+  <h2 class="fade-up">Die ehrliche Liste</h2>
+  <p class="fade-up">Verwandtschaft ist das <em>freundlichste</em> Feld, weil der
+  Basisraum biologisch vorgegeben ist. Die Instanz zeigt, dass der Formalismus
+  funktioniert, <strong>wenn</strong> der Basisraum gegeben ist.
+  Woher er kommt, bleibt offen.</p>
+  <div class="grid3">
+    <div class="card fade-up">
+      <h4>Basisraum</h4>
+      <p>Bei <em>Gemütlichkeit</em> oder <em>mind</em> ist der Basisraum
+      selbst strittig. Kein typologischer Datensatz hilft.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Faserungswahl</h4>
+      <p>Welche Faserung <em>wählt</em> eine Sprache, und warum?
+      Dafür gibt es noch kein Kriterium.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Evidentialität</h4>
+      <p>Quechua markiert grammatikalisch den Zugangsmodus.
+      Schnitt oder Unterobjektklassifizierer? Offen.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Konvexität</h4>
+      <p>Gärdenfors' Bedingung ist affin, nicht topologisch.
+      Lösbar über die Überdeckung — aber nicht ohne Kosten.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Restriktionen</h4>
+      <p>Ein Korpus kommt nicht mit kanonischen Restriktionen daher.
+      Ohne sie: keine Prägarbe, nur eine Kandidatin.</p>
+    </div>
+    <div class="card fade-up">
+      <h4>Topoi</h4>
+      <p>Wenn Sprachen verschiedene <em>Wahrheitswerte</em> haben,
+      braucht man mehr als Garben. Das ist der nächste Schritt.</p>
+    </div>
+  </div>
+  <div class="readout fade-up" style="margin-top:1.4em">Status: Gerüst gebaut, eine Instanz ausgeführt.
+Der Rest ist Arbeit.</div>
+</div>`);
+
+/* ── 16 · DER SCHLUSS ────────────────────────────────────── */
+add('VII · Rest', `
+<canvas id="c_end" width="1600" height="760" style="position:absolute;inset:0;width:100%;height:100%;border-radius:0;box-shadow:none;opacity:.42"></canvas>
+<div style="position:relative;z-index:2;text-align:center;max-width:1000px">
+  <div class="kicker fade-up">Die eine Aussage</div>
+  <h2 class="fade-up" style="font-weight:900;font-size:clamp(1.8rem,4vw,3.4rem);
+    background:linear-gradient(135deg,#fff,var(--accent) 50%,var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent">
+    Inkommensurabilität ist keine<br>Eigenschaft der Sprachen.
+  </h2>
+  <p class="big fade-up" style="margin:1.2em auto">
+    Sie ist eine Eigenschaft der <em>Faserung</em>, über der man sie vergleicht.<br>
+    Dieselben Sprachen. Zwei Basisräume. Zwei Antworten.
+  </p>
+  <div class="readout fade-up" style="margin:1.6em auto;text-align:left;display:inline-block">Was zu tun ist:
+  1. Basisraum explizit (Kinbank, 1200+ Sprachen)
+  2. Prägarbe konstruieren, Restriktionen angeben
+  3. Garbenaxiom prüfen: wo scheitert was
+  4. Dreieck berechnen: kommutiert es, unter welcher Faserung
+  5. Garbifizierungsdefekt messen, kulturell lesen
+
+  Fünfzehn Seiten. Keine hundert.</div>
+  <p class="fade-up" style="font-family:'JetBrains Mono',monospace;font-size:.78rem;
+    letter-spacing:.14em;color:var(--dim);margin-top:1.2em">
+    Du hast das Gerüst dreimal gebaut.<br>Bau jetzt ein Haus hinein.
+  </p>
+</div>`, () => {
+  const cv=document.getElementById('c_end'), x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const pts=[];
+  for(let i=0;i<180;i++) pts.push({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-.5)*.18, vy:(Math.random()-.5)*.18,
+    r:Math.random()*1.7+.5, h:Math.random()*90+180
+  });
+  let t=0;
+  (function loop(){
+    if(!cv.isConnected) return;
+    t+=.004;
+    x.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<140){ x.strokeStyle=`hsla(275,80%,70%,${(1-d/140)*.11})`;
+        x.lineWidth=.6; x.beginPath(); x.moveTo(a.x,a.y); x.lineTo(b.x,b.y); x.stroke(); }
+    }
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+      const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*5);
+      g.addColorStop(0,`hsla(${p.h},85%,74%,.85)`);
+      g.addColorStop(1,`hsla(${p.h},85%,74%,0)`);
+      x.fillStyle=g; x.beginPath(); x.arc(p.x,p.y,p.r*5,0,7); x.fill();
+    });
+    requestAnimationFrame(loop);
+  })();
+});
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION ENGINE
+   ═══════════════════════════════════════════════════════════ */
+const stage=document.getElementById('stage');
+const bar=document.getElementById('bar');
+const chapEl=document.getElementById('chap');
+const numEl=document.getElementById('num');
+let cur=-1;
+
+S.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.className='slide'; d.id='s'+i;
+  d.innerHTML=s.html;
+  stage.appendChild(d);
+});
+
+function go(n){
+  if(n<0||n>=S.length||n===cur) return;
+  const prev=cur; cur=n;
+  if(prev>=0) document.getElementById('s'+prev).classList.remove('on');
+  const el=document.getElementById('s'+cur);
+  el.classList.add('on');
+  bar.style.width=((cur+1)/S.length*100)+'%';
+  chapEl.textContent=S[cur].chapter;
+  numEl.textContent=(cur+1)+' / '+S.length;
+  if(S[cur].init && !el.dataset.init){
+    el.dataset.init='1';
+    setTimeout(()=>S[cur].init(),60);
+  }
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise([el]).catch(()=>{});
+  }
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); go(cur+1); }
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+  if(e.key==='Home'){ e.preventDefault(); go(0); }
+  if(e.key==='End'){ e.preventDefault(); go(S.length-1); }
+});
+
+let tsx=0;
+document.addEventListener('touchstart',e=>{ tsx=e.touches[0].clientX; },{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tsx;
+  if(Math.abs(dx)>60) go(dx<0? cur+1 : cur-1);
+},{passive:true});
+
+go(0);
+</script>
+</body>
+</html>
