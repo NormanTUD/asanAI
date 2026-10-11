@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 001 (R5): Die relationale Invariante am Rand — im Umlauf erzeugt, an einem Pivot fixiert, lasttragend durch die gelöste Faser</title>
+<script>(function(){try{var t=localStorage.getItem('n5-theme');var d=(t?t==='dark':true);document.documentElement.classList.toggle('dark',d);}catch(e){document.documentElement.classList.add('dark');}})();</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a2a; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#6d28d9; --accent2:#0e7490; --good:#16a34a; --warn:#d97706; --bad:#dc2626; --sky:#2f6fb0;
+  --viz-bg:#ffffff; --soft:#f0ece1; --grid:#e7e2d6;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#a78bfa; --accent2:#22d3ee; --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --sky:#7aa2ff;
+  --viz-bg:#0a1220; --soft:#0f172a; --grid:#1a2540;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font:16px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.14;margin:0 0 8px;letter-spacing:-.01em;}
+.subtitle{color:var(--accent);font-size:14.5px;margin:0 0 6px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 22px;}
+.lede{color:var(--muted);font-size:1.02em;margin:0 0 22px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+section{margin:20px 0;scroll-margin-top:20px;}
+h2{font-size:22px;margin:0 0 14px;color:var(--accent);}
+h2 .num{color:var(--text);font-variant-numeric:tabular-nums;}
+h3{font-size:16.5px;margin:20px 0 8px;color:var(--text);}
+p{margin:0 0 14px;} p:last-child{margin-bottom:0;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:9px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0;text-align:center;color:var(--accent);font-weight:700;overflow:auto;line-height:1.65;white-space:pre;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;}
+.card.res{border-left:4px solid var(--good);}
+.card.wc{border-left:4px solid var(--bad);}
+.card.final{border-left:4px solid var(--accent);}
+.card.res b{color:var(--good);} .card.wc b{color:var(--bad);}
+.card h3{margin-top:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.4px;padding:1px 8px;border-radius:20px;vertical-align:middle;margin-right:4px;}
+.tag.a{background:rgba(109,40,217,.16);color:var(--accent);}
+.tag.b{background:rgba(14,116,144,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.18);color:var(--muted);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);}
+th.ca{color:var(--accent);} th.cb{color:var(--accent2);}
+td.ca{color:var(--accent);font-weight:600;} td.cb{color:var(--accent2);font-weight:600;}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;}
+#fusedCv{display:block;width:100%;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;margin:14px 0;}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--muted);}
+.viz-controls b{color:var(--text);font-variant-numeric:tabular-nums;}
+input[type=range]{width:180px;accent-color:var(--accent);}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);}
+.statrow{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 4px;}
+.stat{flex:1 1 100px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;}
+.stat .n{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.25rem;font-weight:700;color:var(--accent);line-height:1.1;}
+.stat.e .n{color:var(--good);}
+.stat .l{color:var(--muted);font-size:.72rem;letter-spacing:.02em;margin-top:3px;}
+.readout{border-left:4px solid var(--accent);background:var(--panel2);border-radius:0 10px 10px 0;padding:11px 15px;font-size:.92rem;margin-top:12px;min-height:3em;color:var(--text);}
+.hint{color:var(--muted);font-size:13px;line-height:1.6;}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.prov a:hover{text-decoration:underline;}
+.prov .hint{margin-top:5px;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+@media (max-width:560px){article{padding:30px 15px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema wechseln">&#9681;</button>
+<article>
+
+<h1>Die relationale Invariante am Rand<br>im Umlauf erzeugt, an einem Pivot fixiert, lasttragend durch die gel&ouml;ste Faser</h1>
+<p class="subtitle">Fusion aus: n4-001.html &#10005; n4-004.html &nbsp;(Runde 5)</p>
+<p class="meta">Runde 5 &middot; Nicht-KI-Track &middot; Paar 001 &middot; Zwei Runde-4-Fusionen auf die Ebene ihrer Theorien gezogen</p>
+<p class="lede">Zwei Runde-4-Papiere, die beide schon Quadrupel-Synthesen sind, kreisen um denselben Gegenstand. <b>n4-001</b> sagt: das Ganze ist eine <em>relationale Invariante</em> &mdash; weder Objekt-in-der-Hand noch Summe der St&uuml;cke &mdash; lesbar nur durch einen <em>begrenzten lokalen Akt in geschlossener Form</em> (den Umlauf), und es bleibt relationell genau dadurch, dass eine <em>Faser gel&ouml;st/verworfen</em> wird (konstitutiv + postural). <b>n4-004</b> sagt: der relationale Fixpunkt und das lasttragende globale Objekt sind <em>derselbe Gegenstand</em> &mdash; die Koh&auml;renz-Invariante &mdash; und ein <em>einzelnes lokales Datum an der Grenze</em> (der Pivot) fixiert das Ganze, dessen Dimension das Objekt ist; die L&uuml;cke tr&auml;gt zwei W&auml;hrungen, umgeschaltet durch einen benannten Parameter. Die Fusion: <b>das Ganze ist die relationale Invariante, die lasttragend ist</b> &mdash; im geschlossenen Umlauf erzeugt, an einem Pivot an der Naht abgelesen, relationell gehalten, indem die gau&szlig;-abh&auml;ngige Faser gel&ouml;st wird, w&auml;hrend die gau&szlig;-invariante Dimension der L&uuml;cke als Ort des Seins bleibt.</p>
+
+<section id="these">
+<h2><span class="num">1.</span> Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> (n4-001, <em>&bdquo;Das Ganze ist eine relationale Invariante&ldquo;</em>) liest das Ganze als <strong>Relation, nicht als Substanz</strong> und als <strong>Invariante der geschlossenen Zusammensetzung, nicht als Summe</strong>: Es wird <em>nur</em> durch einen <em>begrenzten lokalen Akt, der in geschlossener Form ausgef&uuml;hrt wird</em>, lesbar. A liest diesen Akt als die durchlaufene Projektion auf einen Anker, B (in A) als den lokalen Zug <code>g_ij</code>, der um das Ganze gef&uuml;hrt wird. Was tr&auml;gt, ist die geschlossene Relation, nie ein St&uuml;ck. Und das Entscheidende: das Ganze bleibt relationell statt substanzhaft dadurch, dass <em>eine Faser gel&ouml;st</em> wird &mdash; <em>konstitutiv</em> (der Akt wirft die Faser weg, um die Invariante zu erzeugen) und <em>postural</em> (der Leser l&auml;&szlig;t seinen Griff los, um nicht zu totalisieren). Die Faser, die verworfen wird, ist genau die, die loszulassen ist. Formel: <code>Erkennen = geschlossener lokaler Akt &times; freie Referenz &divide; Faser/Selbsthaft</code>.</p>
+<p><span class="tagB">B</span> (n4-004, <em>&bdquo;Der Pivot&ldquo;</em>) liest denselben Gegenstand als <strong>das lasttragende globale Objekt, das zugleich der relationale Fixpunkt ist</strong> &mdash; die Koh&auml;renz-Invariante, die den Koh&auml;renz-/Konsistenzprozess &uuml;ber lokale Daten &uuml;berlebt. Lasttragend bedeutet: invariant unter dem Koh&auml;renzprozess = &uuml;berlebt den Konsistenztest. Ein <strong>einzelnes lokales Datum an der Grenze</strong> (die L&uuml;cke/Obstruktion/&Phi;, der Halm an der Naht) ist der <strong>Pivot</strong>: er ist die L&ouml;kus-Position, an der die Invariante fixiert ist (deren Dimension das Objekt ist), und zugleich das lokal nicht-lasttragende Datum, das die L&uuml;cke zwischen lokalen Daten und dem Ganzen misst. Die Lesart wird durch einen <strong>benannten Parameter</strong> umgeschaltet, und die ehrliche Epistemik lautet: <em>Parameter benennen, Anspruch an die Invariante kalibrieren, den Pivot nicht &uuml;ber-attribuieren</em> &mdash; der Pivot ist der <em>Weg zu</em> der Invariante, nie die Invariante selbst. Formel: <code>Sein = die relationale Invariante, die lasttragend ist</code>.</p>
+<div class="aha"><b>Die eine integrierte Position:</b> <em>Das Ganze ist die relationale Invariante, die lasttragend ist.</em> Es wird durch einen <strong>begrenzten lokalen Akt erzeugt, der in geschlossener Form um das Ganze gef&uuml;hrt wird</strong> (A: der Umlauf; B: der Halm, der das Kollimit fixiert) &mdash; und dieselbe Invariante ist <strong>an einem einzelnen Pivot an der Naht ablesbar</strong>: A sagt &bdquo;die Invariante ist Funktion nur des Umlaufs&ldquo;, B sagt &bdquo;das Ganze wird von einem einzigen lokalen Datum an der Grenze fixiert&ldquo; &mdash; beides ist dieselbe Bewegung, weil <em>der geschlossene Umlauf die Invariante erzeugt und der Pivot ihr einzelner Ablespunkt an der Naht ist</em>. Was tr&auml;gt, ist in beiden die geschlossene Relation / die Koh&auml;renz-Invariante, nie eine Substanz. Und das Ganze bleibt <strong>relationell statt substanzhaft dadurch, dass eine Faser gel&ouml;st wird</strong>: die <em>gau&szlig;-abh&auml;ngige</em> Faser (A: Self/Selbsthaft, B: der zu nicht-&uuml;ber-attribuierende Keim) wird gel&ouml;st, w&auml;hrend die <em>gau&szlig;-invariante Dimension der L&uuml;cke</em> als der positive, lasttragende Ort des Seins bleibt (B: dim(L&uuml;cke)=&Phi;). Die freie Referenz (A: Anker-Kalibrierung) <em>ist</em> B's Eich-&Auml;quivalenz / der benannte Parameter &mdash; sie kalibriert die lokalen Rahmen, &auml;ndert aber die Invariante nicht.</div>
+<p class="formula">Erkennen des Ganzen  =  (geschlossener lokaler Akt / Umlauf)  &times;  (freie Referenz = Eich-Freiheit)  &divide;  (gau&szlig;-abh. Faser / Selbsthaft)
+  &rArr;  &uuml;brig bleibt (lasttragend):  dim(L&uuml;cke) = &Phi;   &mdash;   der Pivot ist der Ablespunkt des Umlaufs an der einen Naht</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="num">2.</span> Widerspr&uuml;che zwischen A und B</h2>
+<p>Die beiden Runde-4-Papiere widerlegen einander nicht und teilen sogar den Kern &bdquo;ein Ganzes, das man nicht in der Hand hat, wird nur durch einen begrenzten lokalen Akt an der Grenze lesbar; es ist eine relationale Invariante&ldquo;. Aber sie treffen auf <b>drei grundlegenden Annahmen</b> &uuml;ber das, was ist / lasttragend ist / wie gelesen wird &mdash; und da beziehen sie inkompatible Stellungen:</p>
+
+<div class="card wc">
+<h3><span class="tag a">1</span> Ontologischer Status des Ganzen: <em>schon da / selbsttragend</em> (A) vs. <em>an der L&uuml;cke konstituiert, kein unabh&auml;ngiger Kern</em> (B)</h3>
+<p><span class="tagA">A &middot; n4-001</span> Der <strong>relationale Tr&auml;ger / die Topologie ist &bdquo;schon da&ldquo;, &bdquo;vollst&auml;ndig da&ldquo;, stabil und selbsttragend</strong> (geerbt von n3-008). Es gibt sie nicht, man erreicht sie, indem man den Griff lockert; die relationale Struktur ist komplett und <em>vordaher</em>. Die Invariante (Form/Holonomie) liest man sich erst zusammen, aber der Tr&auml;ger selbst war schon da.</p>
+<p><span class="tagB">B &middot; n4-004</span> <strong>Es gibt keinen vorausgesetzten, unabh&auml;ngigen Kern</strong> (geerbt von n3-017): &bdquo;Sein ist eine Relation, keine Wesenheit.&ldquo; Das Definite wird <em>an der L&uuml;cke durch den Konsistenz-/Koh&auml;renzprozess konstituiert</em> (Genese, asymptotische Auswahl, r&rarr;&infin;, &epsilon;&rarr;0). Das &bdquo;Sein&ldquo; ist die Position in einem System von Relationen/Bedingungen &mdash; es <em>wird</em>, es ist nicht vor-daher ein Substrat.</p>
+<p><span class="tag x">Spannung</span> A: der relationale Tr&auml;ger ist ontologisch <em>komplett und vordaher</em> (selbsttragend). B: es gibt <em>keinen</em> vordaheren, unabh&auml;ngigen Kern &mdash; Sein ist konstituiert, reine Relation/Prozess. Inkompatibel dar&uuml;ber, ob vor dem Prozess ein selbsttragendes (wenn auch relationales) Ganzt&uuml;chiges <em>ist</em> oder ob es erst <em>wird</em>.</p>
+</div>
+
+<div class="card wc">
+<h3><span class="tag b">2</span> Der Rest / die L&uuml;cke: <em>gel&ouml;st / verworfen als Kosten</em> (A) vs. <em>positiver, ontologisch echter Ort des Seins</em> (B)</h3>
+<p><span class="tagA">A &middot; n4-001</span> Die <strong>Faser (Quality/Selbsthaft) ist das, was gel&ouml;st und verworfen wird</strong>: &bdquo;Quality = die verworfene Faser, nie zur&uuml;ck&ldquo;, &bdquo;&divide; Selbsthaft&ldquo;. Die Invariante steht im <em>Divisor</em>: <code>Erkennen = &hellip; &divide; Faser</code>. Das Ganze bleibt relationell <em>genau weil</em> die Faser gel&ouml;st wird &mdash; sie ist der Preis, der bezahlt wird, der willk&uuml;rliche Rest, dessen Festhalten die Relation erstarrt (Ergreifen/Totalisierung).</p>
+<p><span class="tagB">B &middot; n4-004</span> Die <strong>L&uuml;cke / Obstruktion / &Phi; ist der positive, ontologisch echte Ort des Seins</strong> (geerbt von n3-017): &bdquo;Sein ist an der L&uuml;cke&ldquo;, &bdquo;die Dimension der L&uuml;cke <em>ist</em> die Dimension des Objekts&ldquo;, &bdquo;Kohomologie = &Phi;&ldquo;, &bdquo;das Ganze ist mehr als die Summe der lokalen Teile&ldquo;. Die L&uuml;cke wird nicht weggeworfen &mdash; sie ist die Geburtsst&auml;tte des Seins, ein permanentes, positives Merkmal (Emergenz).</p>
+<p><span class="tag x">Spannung</span> A: der Rest ist ein <em>Kostenfaktor, den man teilt heraus</em> (&divide; Faser; verworfen, nie zur&uuml;ck). B: die L&uuml;cke ist der <em>positive Konstituent</em>, dessen Dimension das Objekt <em>ist</em> (dim(L&uuml;cke)=&Phi;). Inkompatibel dar&uuml;ber, ob der Rest am Rand etwas ist, das <em>weg</em> muss, oder etwas, das das Sein <em>ausmacht</em>.</p>
+</div>
+
+<div class="card wc">
+<h3><span class="tag a">3</span> Wie das Ganze lesbar wird: <em>der geschlossene Umlauf</em> (A) vs. <em>ein einzelnes Datum an der Naht</em> (B)</h3>
+<p><span class="tagA">A &middot; n4-001</span> Die Invariante ist <strong>Funktion <em>nur</em> des Umlaufs</strong>: man muss den lokalen Zug <em>einmal um das ganze Ganze</em> f&uuml;hren (geschlossene Komposition); der nicht-triviale Inhalt (Holonomie/Twist) wohnt in keinem St&uuml;ck, sondern nur im <em>geschlossenen Kreislauf</em>. &bdquo;Nicht lokal ablesbar, nur im Umlauf.&ldquo; Zwei Lesarten: additive Form <code>w</code> (&beta;&#8321;-artig, w&auml;chst pro Umlauf) + zyklische Holonomie (mod 360&deg;).</p>
+<p><span class="tagB">B &middot; n4-004</span> Das Ganze wird von <strong>einem einzigen lokalen Datum an der Grenze fixiert</strong>: &bdquo;das Ganze wird von einem einzelnen lokalen Datum an der Grenze fixiert&ldquo;, &bdquo;ein Halm fixiert das Kollimit&ldquo;. Der Pivot (der Halm an der Naht, der Invariant-Flip <code>m=(-1)^w</code>) <em>eines einzigen</em> Punktes bestimmt das Ganze &mdash; nicht ein Umlauf, sondern ein einzelner Ablespunkt an der Naht.</p>
+<p><span class="tag x">Spannung</span> A: die Invariante entsteht erst <em>nach dem vollen Umlauf</em> (global, nur im Kreislauf). B: das Ganze ist an <em>einem einzigen Punkt</em> an der Naht fixiert/ablesbar. Inkompatibel dar&uuml;ber, ob das Erkennen das <em>ganze Herumlaufen</em> braucht oder an <em>einer einzigen Stelle</em> abgeschlossen ist.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="num">3.</span> Aufl&ouml;sung</h2>
+<p>Drei Aufl&ouml;sungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussposition. Der Schl&uuml;sselzug in allen drei: <em>derselbe Gegenstand wird auf zwei Ebenen bzw. in zwei Teilaspekten gelesen</em> &mdash; genau wie jedes der beiden Papiere intern zwei Ebenen unterscheidet.</p>
+
+<div class="card res">
+<h3>Aufl&ouml;sung 1 &mdash; vordaher <em>in Relation</em> (A), konstituiert <em>im Wert</em> (B); zwei Ebenen desselben Tr&auml;gers</h3>
+<p>Trenne <em>das relationale Beziehungsgeflecht</em> (der Tr&auml;ger) von <em>dem ablesbaren invarianten Wert/Sein</em>, das darin fixiert ist. Das <strong>Beziehungsgeflecht</strong> ist selbsttragend und vordaher (A) &mdash; es tr&auml;gt sich, h&auml;ngt von keinem einzelnen Leser ab, ist &bdquo;schon da&ldquo; <em>als Relation</em>. Der <strong>invariante Wert / das Definite</strong> wird an der L&uuml;cke durch den Koh&auml;renzprozess konstituiert (B) &mdash; Genese. B's &bdquo;kein unabh&auml;ngiger Kern&ldquo; negiert nur das <em>unabh&auml;ngige Substrat</em> (die Substanz); A's &bdquo;selbsttragend&ldquo; meint <em>selbsttragend als Relation</em>, nicht als Ding. <b>Fusion:</b> vordaher <em>in Relation</em> (das Geflecht ist, es ist keine Substanz), konstituiert <em>im Wert</em> (das Definite liest man sich erst an der L&uuml;cke zusammen). &bdquo;Das relationale Geflecht ist schon da; der invariante Wert darin wird an der L&uuml;cke konstituiert.&ldquo; Kein Widerspruch: ontologisch relational-vordaher (A), epistemisch-wertkonstituiert (B) &mdash; zwei Ebenen desselben relationalen Tr&auml;gers.</p>
+</div>
+
+<div class="card res">
+<h3>Aufl&ouml;sung 2 &mdash; die Faser/L&uuml;cke hat zwei Teile: der gau&szlig;-abh&auml;ngige Rest wird gel&ouml;st (A), die gau&szlig;-invariante Dimension bleibt (B)</h3>
+<p>Unterscheide <em>den gau&szlig;-abh&auml;ngigen, willk&uuml;rlichen Rest</em> von <em>der gau&szlig;-invarianten Dimension der L&uuml;cke</em>. Der <strong>gau&szlig;-abh&auml;ngige Rest</strong> (A: Selbsthaft/Quality, B: der zu nicht-&uuml;ber-attribuierende Keim) ist das, was von der gew&auml;hlten Referenz abh&auml;ngt und <em>gel&ouml;st/verworfen</em> wird (&divide; Selbsthaft) &mdash; ihn festzuhalten ist die Pathologie. Die <strong>gau&szlig;-invariante Dimension der L&uuml;cke</strong> (B: dim(L&uuml;cke)=&Phi;, H&sup1;) ist das, was von der Referenz <em>nicht</em> abh&auml;ngt und das Objekt <em>ausmacht</em> &mdash; ihr wird nicht &bdquo;weggeteilt&ldquo;, sie bleibt als der positive, lasttragende Ort des Seins. <b>Fusion:</b> &bdquo;Faser l&ouml;sen&ldquo; (A) = den gau&szlig;-abh&auml;ngigen Rest wegschaffen; &bdquo;Sein an der L&uuml;cke&ldquo; (B) = die gau&szlig;-invariante Dimension derselben L&uuml;cke als Objekt behalten. Gel&ouml;st und konstituierend gelten f&uuml;r <em>zwei verschiedene Teile desselben Rests</em> &mdash; komplement&auml;r, nicht gegens&auml;tzlich. Divisor (A) und Konstituent (B) treffen auf zwei gau&szlig;-Zerlegungen desselben Randes.</p>
+</div>
+
+<div class="card res">
+<h3>Aufl&ouml;sung 3 &mdash; der Umlauf erzeugt die Invariante, der Pivot ist ihr einzelner Ablespunkt an der Naht</h3>
+<p>Der <strong>geschlossene Umlauf</strong> (A) und der <strong>einzelne Pivot an der Naht</strong> (B) beschreiben dieselbe topologische Tatsache von zwei Seiten. Die Invariante <em>entsteht</em> im Umlauf (A: &bdquo;Funktion nur des Umlaufs&ldquo;, Holonomie nach dem vollen Kreislauf) &mdash; aber ihr <em>Wert</em> ist an <em>einer einzigen Naht</em> lokal ablesbar (B: der Halm/die Transition an der einen Schnittstelle, <code>m=(-1)^w</code>). Der Umlauf <em>erzeugt</em> den Twist; der Pivot ist die <em>eine Stelle</em>, an der dieser Twist als Transition auftritt. <b>Fusion:</b> der Umlauf erzeugt die Invariante (A) und <em>fixiert/ablesbar ist sie an einem einzigen lokalen Datum an der Naht</em> (B). Der Pivot ist der <em>Ablespunkt</em> des Umlaufs: man muss das Ganze einmal herumlaufen, um die Invariante zu erzeugen, aber man liest sie an einer einzigen Naht ab. &bdquo;Nicht lokal ablesbar&ldquo; (A) gilt f&uuml;r die <em>Erzeugung</em>; &bdquo;an einem Punkt fixiert&ldquo; (B) gilt f&uuml;r den <em>Ablespunkt</em>.</p>
+</div>
+
+<div class="card res final">
+<h3>Gefasste Schlussposition + die Br&uuml;cke (das Herzst&uuml;ck)</h3>
+<p><strong>Das Ganze ist die relationale Invariante, die lasttragend ist</strong> &mdash; erzeugt im geschlossenen Umlauf (A), an einem einzelnen Pivot an der Naht abgelesen (B), lasttragend, weil sie invariant unter dem Koh&auml;renzprozess ist (B = A's selbsttragende Relation). Die Parit&auml;t <code>w</code> (A's additive Form) <em>ist</em> B's Invariant <code>m=(-1)^w</code> und <em>ist</em> B's dim(L&uuml;cke): dieselbe diskrete Gr&ouml;&szlig;e, die entscheidet, ob die lokalen Daten verkleben (Ganzes = Punkt) oder blockieren (Ganzes = irreduzibles Global). Die freie Referenz (A: Anker-Kalibrierung) <em>ist</em> B's benannter Parameter / Eich-&Auml;quivalenz &mdash; sie kalibriert die lokalen Rahmen, &auml;ndert die Invariante nicht. Und das Ganze bleibt relationell, indem die <strong>gau&szlig;-abh&auml;ngige Faser gel&ouml;st</strong> wird, w&auml;hrend die <strong>gau&szlig;-invariante Dimension der L&uuml;cke</strong> lasttragend bleibt.</p>
+<p class="formula">w gerade (m=+1)  &hArr;  dim(L&uuml;cke)=0  &hArr;  H&sup1;(X,&#8493;)=0   &rArr;  Fixpunkt = EIN PUNKT (invarianter p / stabile Form, lasttragend)
+w ungerade (m=&minus;1) &hArr;  dim(L&uuml;cke)&gt;0 &hArr;  H&sup1;(X,&#8493;)&ne;0 &rArr;  Fixpunkt = irreduzibles Global (&Phi; / Emergenz)
+Eich-Freiheit:   Referenz frei w&auml;hlbar &rArr; lokale Rahmen drehen sich,  Invariante (w, Rest, m, dim) bleibt
+Erkennen = geschlossener lokaler Akt &times; freie Referenz &divide; gau&szlig;-abh. Faser  &rArr;  gau&szlig;-invar. dim(L&uuml;cke)=&Phi; bleibt lasttragend</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="num">4.</span> Fusionierter Inhalt</h2>
+<p>Beide Runde-4-Papiere gie&szlig;en sich auf die Ebene ihrer Thesen in ein gemeinsames Modell: <strong>ein Ganzes, das man nicht in der Hand hat, wird nur durch einen begrenzten lokalen Akt an der Grenze lesbar; es ist eine relationale Invariante, die lasttragend ist; der geschlossene Umlauf erzeugt sie und ein einzelner Pivot an der Naht liest sie ab; es bleibt relationell, indem die gau&szlig;-abh&auml;ngige Faser gel&ouml;st wird, w&auml;hrend die gau&szlig;-invariante Dimension der L&uuml;cke als Ort des Seins bleibt.</strong> Die Tabelle ist das Herz der Fusion &mdash; jede Zeile eine Gr&ouml;&szlig;e, bei A, bei B und fusioniert:</p>
+<table>
+<thead><tr><th>Gr&ouml;&szlig;e</th><th class="ca">A &middot; n4-001 (Umlauf / Faser / Loslassen)</th><th class="cb">B &middot; n4-004 (Pivot / L&uuml;cke / W&auml;hrungen)</th><th>Fusion</th></tr></thead>
+<tbody>
+<tr><td>Das Ganze</td><td class="ca">relationale Invariante &mdash; noch Objekt, noch Summe</td><td class="cb">derselbe Gegenstand: Koh&auml;renz-Invariante, lasttragend, = relationaler Fixpunkt</td><td>die relationale Invariante, die lasttragend ist</td></tr>
+<tr><td>Wie lesbar</td><td class="ca">geschlossener lokaler Akt / Umlauf (Invariante = f(Umlauf))</td><td class="cb">ein einzelnes lokales Datum an der Naht fixiert das Ganze</td><td>Umlauf erzeugt die Invariante, abgelesen an einer Naht</td></tr>
+<tr><td>Der lokale Akt</td><td class="ca">Projektion/Linse = Schnitt/&Uuml;bergang <code>g_ij</code></td><td class="cb">der Halm an der Naht / der Invariant-Flip</td><td>derselbe lokale Zug an der Grenze</td></tr>
+<tr><td>Der Schalter / die Referenz</td><td class="ca">freie Referenz/Anker &mdash; kalibrierbar (Eich-Freiheit)</td><td class="cb">benannter Parameter (dim(L&uuml;cke)/c/r; Frage/w im Objekt)</td><td>dieselbe freie Kalibrierung: &auml;ndert lokale Rahmen, nicht die Invariante</td></tr>
+<tr><td>Der Rest / die L&uuml;cke</td><td class="ca">Faser/Selbsthaft &mdash; gel&ouml;st &amp; verworfen (&divide;)</td><td class="cb">die L&uuml;cke/&Phi; &mdash; positiver Ort des Seins, dim = Objekt</td><td>gau&szlig;-abh. Teil gel&ouml;st; gau&szlig;-invar. Dimension bleibt = Objekt</td></tr>
+<tr><td>Parit&auml;t / Invariant</td><td class="ca">additive Form <code>w</code> + zyklische Holonomie (mod 360&deg;)</td><td class="cb"><code>m=(-1)^w</code>; dim(L&uuml;cke) 0 vs &gt;0; H&sup1;=0 vs &ne;0</td><td><code>m=(-1)^w</code> = der diskrete Invariant (w gerade/ungerade)</td></tr>
+<tr><td>W&auml;hrungen / Lesarten</td><td class="ca">(A z&auml;hlte additive/zyklische Lesart)</td><td class="cb">A: I=&minus;log&#8322;p, C=2r; B: H&sup1;-Energie, Durchsatz/Existenz</td><td>derselbe Pivot tr&auml;gt zwei W&auml;hrungen/Lesarten</td></tr>
+<tr><td>Pathologie</td><td class="ca">Ergreifen/Totalisierung (Faser festhalten)</td><td class="cb">&Uuml;ber-Attribuierung des Pivots (Illusion/Defekt)</td><td>den lokalen Rest/der Pivot zum Ganzen erheben</td></tr>
+<tr><td>Heilung / ehrliche Epistemik</td><td class="ca">Faser l&ouml;sen (&divide; Selbsthaft), Anker kalibrieren</td><td class="cb">Pivot nicht &uuml;ber-attribuieren, Parameter benennen, Anspruch kalibrieren</td><td>Faser l&ouml;sen, Referenz frei kalibrieren, Pivot als Weg (nicht Ziel)</td></tr>
+</tbody>
+</table>
+
+<h3>Was A tr&auml;gt &mdash; die These auf der Ebene des geschlossenen Akts (n4-001)</h3>
+<p>Das Ganze ist eine <strong>relationale Invariante</strong>: weder Objekt-in-der-Hand noch Summe der St&uuml;cke. Lesbar nur durch einen <em>begrenzten lokalen Akt in geschlossener Form</em> &mdash; die durchlaufene Projektion auf einen Anker (n3-008) / der lokale Zug <code>g_ij</code>, der um das Ganze gef&uuml;hrt wird (n3-001). Was tr&auml;gt, ist die geschlossene Relation, nie eine Substanz. Die Invariante hat zwei Lesarten: <strong>additiv</strong> (Form als Zahl <code>w</code>, &beta;&#8321;-artig, w&auml;chst pro Umlauf) und <strong>zyklisch</strong> (Holonomie als Twist, mod 360&deg;, lokal trivial, nicht-trivial erst im Umlauf). Die <strong>Faser</strong> (Quality/Selbsthaft) ist dieselbe Faser, erzeugt (als lokales St&uuml;ck) und verworfen (als Invariante): konstitutiv vom Akt (Quality verworfen, Form&uarr;) und postural vom Leser (&divide; Selbsthaft). <strong>Reversibel in Haltung &amp; Form, verlustbehaftet beim Eintritt.</strong> Formel: <code>Erkennen = geschlossener lokaler Akt &times; freie Referenz &divide; Faser/Selbsthaft</code>.</p>
+
+<h3>Was B tr&auml;gt &mdash; die These auf der Ebene des Pivots (n4-004)</h3>
+<p>Das Ganze ist <strong>die Koh&auml;renz-Invariante, die den Koh&auml;renzprozess &uuml;ber lokale Daten &uuml;berlebt</strong> &mdash; zugleich der relationale Fixpunkt (Sein) und das lasttragende globale Objekt (stabile Form/Kollimit). <strong>Ein einzelnes lokales Datum an der Grenze</strong> (die L&uuml;cke/&Phi;, der Halm an der Naht, der Invariant-Flip <code>m=(-1)^w</code>) ist der <strong>Pivot</strong>: L&ouml;kus-Position, an der die Invariante fixiert ist (deren Dimension das Objekt ist), und zugleich das lokal nicht-lasttragende Datum, das die L&uuml;cke misst. Die Lesart wird durch einen <strong>benannten Parameter</strong> umgeschaltet (dim(L&uuml;cke)/c/r; die Frage im Leser / der Invariant-Wert w im Objekt). Die L&uuml;cke tr&auml;gt <strong>zwei W&auml;hrungen</strong>: A (I=&minus;log&#8322;p=r, C=2r) und B (H&sup1;-Energie, Durchsatz/Existenz). <strong>Die Br&uuml;cke:</strong> dim(L&uuml;cke)=0 &hArr; H&sup1;(X,&#8493;)=0 &hArr; m=+1 (w gerade) &rArr; Punkt; dim(L&uuml;cke)&gt;0 &hArr; H&sup1;&ne;0 &hArr; m=&minus;1 (w ungerade) &rArr; irreduzibles Global. Ehrliche Epistemik: <em>Parameter benennen, Anspruch an die Invariante kalibrieren, den Pivot nicht &uuml;ber-attribuieren.</em></p>
+
+<div class="aha">
+<b>Das fusionierte Modell (sechs Komponenten).</b> Ein Ganzes wird erkannt, indem der Wahrnehmende <em>sechs</em> Dinge h&auml;lt: (1) das Ganze ist eine <strong>relationale Invariante, die lasttragend ist</strong> &mdash; weder Objekt (A) noch Substanz, sondern das, was den Koh&auml;renzprozess &uuml;berlebt; (2) er vollzieht einen <strong>begrenzten lokalen Akt</strong> (A: Projektion/Linse/Schnitt <code>g_ij</code>; B: der Halm an der Naht); (3) er f&uuml;hrt diesen Akt <strong>in geschlossener Form um das Ganze</strong> (A: der Umlauf/geschlossene Komposition erzeugt die Invariante) und liest sie <strong>an einem einzelnen Pivot an der Naht ab</strong> (B: <code>m=(-1)^w</code>, die eine Transition); (4) er h&auml;lt die <strong>Referenz frei kalibrierbar</strong> (A: Anker-Kalibrierung = B: Eich-Freiheit/benannter Parameter) &mdash; sie &auml;ndert die lokalen Rahmen, nie die Invariante; (5) er <strong>l&ouml;st die gau&szlig;-abh&auml;ngige Faser</strong> (A: &divide; Selbsthaft; B: den Keim nicht &uuml;ber-attribuieren), w&auml;hrend die <strong>gau&szlig;-invariante Dimension der L&uuml;cke</strong> lasttragend bleibt (B: dim(L&uuml;cke)=&Phi;); (6) er liest die <strong>Gr&ouml;&szlig;e des Rests in zwei W&auml;hrungen</strong> (A: Form <code>w</code>/Holonomie, Score I/C; B: H&sup1;/Durchsatz). <code>Erkennen = geschlossener lokaler Akt &times; freie Referenz &divide; gau&szlig;-abh. Faser &rArr; gau&szlig;-invar. dim(L&uuml;cke)=&Phi; bleibt.</code>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="num">5.</span> Visualisierung: der Umlauf erzeugt die Invariante, der Pivot an der Naht liest sie ab</h2>
+<p class="hint">Der <b>Ring aus 12 lokalen Akten</b> ist der geschlossene Umlauf (n4-001): jeder Patch ist der lokale Zug <code>g_ij</code>. Der <b>Regler &bdquo;Lokaler Akt&ldquo;</b> dreht die Gesamtwindung; <code>w = &lfloor;N&middot;step/360&deg;&rfloor;</code> (A's additive Form) und <code>Rest = N&middot;step mod 360&deg;</code> (A's zyklische Holonomie) entstehen <em>nur im Umlauf</em>. Die <b>hervorgehobene Naht</b> ist der <b>Pivot</b> (n4-004): dort wird die Invariante an einem <em>einzelnen</em> Punkt abgelesen &mdash; <code>m=(-1)^w</code> (w gerade &rArr; PASS/verklebt, w ungerade &rArr; DROP/Flip). Die <b>Parit&auml;t</b> ist der geteilte Schalter: sie entscheidet zugleich <em>dim(L&uuml;cke)</em> (0 = EIN PUNKT, &gt;0 = irreduzibles Global/&Phi;) und <em>H&sup1;(X,&#8493;)</em> (=0 vs &ne;0) &mdash; das Ganze in der Mitte. Die <b>Referenz (Eich-Freiheit)</b> dreht alle lokalen Pfeile, &auml;ndert aber <em>nicht</em> die Netto-Invariante (w, Rest, m, dim) &mdash; das ist A's freie Anker-Kalibrierung = B's Eich-&Auml;quivalenz/benannter Parameter. Die <b>Faser (gau&szlig;-abh. Rest)</b> leert sich, je mehr Invariante (<code>w</code>) erzeugt wird (gel&ouml;st); bei hohem <b>Selbsthaft/Griff</b> wird der Pivot reifiziert (Pfadologie: n4-001 Ergreifen, n4-004 &Uuml;ber-Attribuierung) &mdash; das Ganze erstarrt zum Total-Objekt. Rechts die <b>zwei W&auml;hrungen</b> derselben L&uuml;cke (A: I, C; B: H&sup1;-Energie, Durchsatz). Drehe &bdquo;Lokaler Akt&ldquo; zwischen gerade/ungerade: der Umlauf erzeugt die Invariante, der Pivot an der Naht liest sie um. F&uuml;hre &bdquo;Selbsthaft&ldquo; hoch: der Pivot wird zum Ganzen (Fehlschlag).</p>
+
+<div class="viz-panel">
+  <canvas id="fusedCv"></canvas>
+  <div class="viz-controls">
+    <label>Lokaler Akt / Umlauf pro Patch <b id="stepVal">60&deg;</b>
+      <input type="range" id="s-step" min="0" max="180" step="1" value="60">
+    </label>
+    <label>Referenz / Eich-Freiheit <b id="refVal">0&deg;</b>
+      <input type="range" id="s-ref" min="0" max="360" step="1" value="0">
+    </label>
+    <label>Selbsthaft / Griff (Pivot reifizieren) <b id="egoVal">25%</b>
+      <input type="range" id="s-ego" min="0" max="100" step="1" value="25">
+    </label>
+    <label>Seltenheit r (A-W&auml;hrung, p=2&#8315;&#8322;r) <b id="rVal">3</b>
+      <input type="range" id="s-r" min="1" max="6" step="1" value="3">
+    </label>
+    <label>Amplitude h (B-Energie) <b id="hVal">0.70</b>
+      <input type="range" id="s-h" min="0.2" max="1" step="0.05" value="0.7">
+    </label>
+    <button class="action" id="b-even">&#9679; w gerade &middot; Punkt (dim 0)</button>
+    <button class="action" id="b-odd">&#9679; w ungerade &middot; Global (dim &gt;0)</button>
+    <button class="action" id="b-play">&#9654; Umlauf</button>
+    <button class="action" id="b-rst">&#8634; Zur&uuml;cksetzen</button>
+  </div>
+  <div class="statrow">
+    <div class="stat"><div class="n" id="ro-w">2</div><div class="l">w &middot; Form (additiv, A)</div></div>
+    <div class="stat"><div class="n" id="ro-rest">0&deg;</div><div class="l">Rest &middot; Holonomie (zykl., A)</div></div>
+    <div class="stat"><div class="n" id="ro-m">+1</div><div class="l">m=(-1)^w (Schalter)</div></div>
+    <div class="stat"><div class="n" id="ro-dim">0</div><div class="l">dim(L&uuml;cke) (B)</div></div>
+    <div class="stat e"><div class="n" id="ro-fib">10%</div><div class="l">Faser (gau&szlig;-abh., gel&ouml;st)</div></div>
+    <div class="stat"><div class="n" id="ro-I">3.0</div><div class="l">I=&minus;log&#8322;p (A)</div></div>
+    <div class="stat"><div class="n" id="ro-C">6</div><div class="l">C=2r (A)</div></div>
+    <div class="stat e"><div class="n" id="ro-H1">1.2</div><div class="l">H&sup1;-Energie (B)</div></div>
+    <div class="stat"><div class="n" id="ro-tp">24M</div><div class="l">Durchsatz (B)</div></div>
+    <div class="stat"><div class="n" id="ro-ego">25%</div><div class="l">Selbsthaft / Griff</div></div>
+  </div>
+  <div class="readout" id="ro-state">&mdash;</div>
+  <p class="hint">Mathematischer Hinweis: didaktisches Modell. <code>&Sigma; = N&middot;step</code>; <code>w = &lfloor;&Sigma;/360&deg;&rfloor;</code> (additive Form), <code>Rest = &Sigma; mod 360&deg;</code> (zyklische Holonomie), <code>m = (-1)^w</code> (Pivot/Parit&auml;t), <code>dim(L&uuml;cke) = (m=-1) ? &gt;0 : 0</code>, <code>Faser = 100&middot;e^(-0.45&middot;w)%</code> (gel&ouml;ster gau&szlig;-abh. Rest), <code>H&sup1;-Energie = h&sup2;&middot;w&sup2;/4</code>, <code>Durchsatz = m=-1 ? 3.5 : 24</code> M pps, <code>p=2&minus;r</code>, <code>I=r</code>, <code>C=2r</code>. Die Referenz dreht nur die <em>lokalen</em> Pfeile (Eich-Freiheit), nie die Netto-Invariante. Alle Daten inline; keine externen Abfragen.</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="num">6.</span> Provenienz</h2>
+<div class="prov">
+  <a href="../n4-001.html">A &middot; n4-001.html &mdash; &bdquo;Das Ganze ist eine relationale Invariante &mdash; erkannt durch den geschlossenen Akt, gehalten durch das Loslassen der Faser&ldquo;</a><br>
+  <span class="hint">Runde-4-Fusion (n3-008 &#10005; n3-001): das Ganze ist eine relationale Invariante, weder Objekt noch Summe; lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form (Umlauf, Invariante = f(Umlauf); additive Form <code>w</code> + zyklische Holonomie); die Referenz/Anker ist frei kalibrierbar (Eich-Freiheit); das Ganze bleibt relationell, indem eine Faser (Quality/Selbsthaft) konstitutiv + postural gel&ouml;st/verworfen wird; Erkennen = geschlossener Akt &times; freie Referenz &divide; Faser. Die Quelle f&uuml;r &bdquo;den geschlossenen Umlauf, die additive/zyklische Invariante, die freie Referenz/Eich-Freiheit und die gel&ouml;ste Faser&ldquo;.</span>
+</div>
+<div class="prov">
+  <a href="../n4-004.html">B &middot; n4-004.html &mdash; &bdquo;Der Pivot &mdash; ein lokales Datum, eine relationale Invariante, zwei W&auml;hrungen&ldquo;</a><br>
+  <span class="hint">Runde-4-Fusion (n3-017 &#10005; n3-004): der relationale Fixpunkt und das lasttragende globale Objekt sind dieselbe Koh&auml;renz-Invariante; ein einzelnes lokales Datum an der Naht (die L&uuml;cke/&Phi;, der Halm, der Invariant-Flip <code>m=(-1)^w</code>) ist der Pivot, der das Ganze fixiert; <code>dim(L&uuml;cke)=0 &hArr; H&sup1;(X,&#8493;)=0 &hArr; m=+1</code> (Punkt) / <code>&gt;0 &hArr; H&sup1;&ne;0 &hArr; m=-1</code> (Global); die L&uuml;cke tr&auml;gt zwei W&auml;hrungen (I/C vs H&sup1;/Durchsatz), umgeschaltet durch einen benannten Parameter; ehrliche Epistemik: den Pivot nicht &uuml;ber-attribuieren. Die Quelle f&uuml;r &bdquo;den Pivot an der Naht, dim(L&uuml;cke)=&Phi;, die zwei W&auml;hrungen, den benannten Parameter und die Ehrlichkeit der Kalibrierung&ldquo;.</span>
+</div>
+<p class="foot">Fusion 001 &middot; Runde 5 (Nicht-KI-Track) &middot; selbstbeziegliches HTML, keine externen Datenquellen &mdash; alle Daten inline. Theme-reaktiv per CSS-Variablen (Dunkel default). Die Visualisierung ist ein didaktisches Modell der fusionierten These &mdash; &bdquo;Umlauf erzeugt die Invariante&ldquo;, &bdquo;Pivot an der Naht liest sie ab&ldquo;, &bdquo;freie Referenz (Eich-Freiheit)&ldquo;, &bdquo;gau&szlig;-abh. Faser gel&ouml;st, gau&szlig;-invar. L&uuml;cke lasttragend&ldquo; sind die S&auml;ulen.</p>
+</section>
+
+</article>
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var cv = document.getElementById('fusedCv');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var N = 12;
+  var S = { step:60, ref:0, ego:0.25, r:3, h:0.7, theta:0, playing:false, marker:-Math.PI/2 };
+  var lastT = 0;
+
+  function $(id){ return document.getElementById(id); }
+  function cssv(n, fb){ var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||fb; }
+  function parseColor(c){
+    c=(c||'').trim();
+    if(c.charAt(0)==='#'){
+      var h=c.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    var m=c.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(','); return [parseFloat(p[0]),parseFloat(p[1]),parseFloat(p[2])]; }
+    return [120,120,120];
+  }
+  function rgba(c,a){ var p=parseColor(c); return 'rgba('+(p[0]|0)+','+(p[1]|0)+','+(p[2]|0)+','+a+')'; }
+  function mix(c1,c2,t){ var a=parseColor(c1),b=parseColor(c2); t=Math.max(0,Math.min(1,t)); return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')'; }
+  function rr(x,y,wd,ht,r){ r=Math.min(r,wd/2,ht/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+wd,y,x+wd,y+ht,r); ctx.arcTo(x+wd,y+ht,x,y+ht,r); ctx.arcTo(x,y+ht,x,y,r); ctx.arcTo(x,y,x+wd,y,r); ctx.closePath(); }
+
+  function total(){ return N*S.step; }
+  function wind(){ return Math.floor(total()/360+1e-9); }
+  function residue(){ return ((total()%360)+360)%360; }
+  function isFlip(){ return (wind()%2===1); }
+  function fiber(){ return 100*Math.exp(-0.45*wind()); }
+  function h1energy(){ return S.h*S.h*wind()*wind()/4; }
+  function coherent(){ var res=residue(); return Math.min(res,360-res)<2; }
+
+  function fit(H){
+    var rect=cv.getBoundingClientRect();
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var cw=Math.max(1,Math.floor((rect.width||820)*dpr));
+    var ch=Math.max(1,Math.floor(H*dpr));
+    if(cv.width!==cw||cv.height!==ch){ cv.width=cw; cv.height=ch; cv.style.height=H+'px'; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w:(rect.width||820), h:H, ctx:ctx };
+  }
+
+  function draw(){
+    var o=fit(480), c=o.ctx, w=o.w, h=o.h;
+    if(w<10) return;
+    var INK=cssv('--text','#1a1a2a'), MUTED=cssv('--muted','#5b6270'), GRID=cssv('--grid','#e7e2d6'),
+        LINE=cssv('--line','#d9d5cc'), ACC=cssv('--accent','#6d28d9'), ACC2=cssv('--accent2','#0e7490'),
+        BAD=cssv('--bad','#dc2626'), OK=cssv('--good','#16a34a'), WARN=cssv('--warn','#d97706'),
+        SKY=cssv('--sky','#2f6fb0'), BG=cssv('--viz-bg','#ffffff'), PANEL=cssv('--panel','#ffffff'),
+        SOFT=cssv('--soft','#f0ece1');
+    c.clearRect(0,0,w,h);
+    c.fillStyle=BG; c.fillRect(0,0,w,h);
+    var wv=wind(), res=residue(), flip=isFlip(), fib=fiber(), coh=coherent();
+    var c1L=16, c1R=w*0.33, c2L=w*0.355, c2R=w*0.665, c3L=w*0.69, c3R=w-16;
+    var topT=46, gh=150;
+
+    // ---------- PANEL 1: der Umlauf (Ring) + Naht/Pivot ----------
+    c.fillStyle=ACC2; c.font='700 11px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('1 \u00B7 UMLAUF  (lokaler Akt + Naht/Pivot)', c1L, 20);
+    var cx1=(c1L+c1R)/2, cy1=topT+gh*0.52, R=Math.min(c1R-c1L, gh)*0.40;
+    var stepAng=TAU/N, i, a;
+    c.lineWidth=2; c.strokeStyle=LINE; c.beginPath(); c.arc(cx1,cy1,R,0,TAU); c.stroke();
+    var nodes=[];
+    for(i=0;i<N;i++){ a=(i/N)*TAU-Math.PI/2; nodes.push([cx1+R*Math.cos(a), cy1+R*Math.sin(a), a]); }
+    for(i=0;i<N;i++){
+      var isSeam=(i===N-1);
+      c.lineWidth=isSeam?5:2.5;
+      c.strokeStyle=isSeam?(flip?BAD:(coh?OK:WARN)):LINE;
+      c.beginPath(); c.arc(cx1,cy1,R,nodes[i][2],nodes[i][2]+stepAng,false); c.stroke();
+    }
+    for(i=0;i<N;i++){
+      var x=nodes[i][0], y=nodes[i][1];
+      var fa=((i*S.step)+S.ref)*Math.PI/180, alen=15;
+      var ex=x+alen*Math.cos(fa), ey=y+alen*Math.sin(fa);
+      c.fillStyle=PANEL; c.strokeStyle=MUTED; c.lineWidth=1.5;
+      c.beginPath(); c.arc(x,y,6,0,TAU); c.fill(); c.stroke();
+      c.strokeStyle=ACC; c.lineWidth=2.4;
+      c.beginPath(); c.moveTo(x,y); c.lineTo(ex,ey); c.stroke();
+      var ah=5; c.fillStyle=ACC; c.beginPath();
+      c.moveTo(ex,ey);
+      c.lineTo(ex-ah*Math.cos(fa-0.4),ey-ah*Math.sin(fa-0.4));
+      c.lineTo(ex-ah*Math.cos(fa+0.4),ey-ah*Math.sin(fa+0.4));
+      c.closePath(); c.fill();
+    }
+    var cr=24;
+    c.fillStyle=PANEL; c.strokeStyle=ACC2; c.lineWidth=2.4;
+    c.beginPath(); c.arc(cx1,cy1,cr,0,TAU); c.fill(); c.stroke();
+    var hr=res*Math.PI/180;
+    c.strokeStyle=ACC2; c.lineWidth=3;
+    c.beginPath(); c.moveTo(cx1,cy1); c.lineTo(cx1+(cr-4)*Math.cos(hr), cy1+(cr-4)*Math.sin(hr)); c.stroke();
+    var nodeR=5+S.ego*7;
+    c.fillStyle=mix(ACC,BAD,S.ego);
+    c.beginPath(); c.arc(cx1,cy1,nodeR,0,TAU); c.fill();
+    if(S.ego>0.12){ c.save(); c.globalAlpha=S.ego; c.strokeStyle=BAD; c.setLineDash([4,4]); c.lineWidth=1.3; c.beginPath(); c.arc(cx1,cy1,12+S.ego*10,0,TAU); c.stroke(); c.setLineDash([]); c.restore(); }
+    c.fillStyle=MUTED; c.font='10px ui-monospace,monospace'; c.textAlign='center';
+    c.fillText('Invariante = f(Umlauf)', cx1, cy1+cr+13);
+    if(S.playing){ var mx=cx1+R*Math.cos(S.marker), my=cy1+R*Math.sin(S.marker); c.fillStyle=OK; c.shadowColor=OK; c.shadowBlur=10; c.beginPath(); c.arc(mx,my,6,0,TAU); c.fill(); c.shadowBlur=0; }
+    // Naht-Label (Pivot)
+    var sa=nodes[N-1][2];
+    c.fillStyle=flip?BAD:(coh?OK:WARN); c.font='700 10px ui-monospace,monospace'; c.textAlign='center';
+    c.fillText(flip?'Naht: DROP (Flip)':'Naht: '+ (coh?'PASS (verklebt)':'Naht'), cx1+ (R+22)*Math.cos(sa), cy1+(R+22)*Math.sin(sa));
+
+    // ---------- PANEL 2: das Ganze (Fixpunkt) + Faser ----------
+    c.fillStyle=ACC; c.font='700 11px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('2 \u00B7 DAS GANZE  (Fixpunkt + Faser)', c2L, 20);
+    var cx2=(c2L+c2R)/2, cy2=topT+gh*0.50, R2=Math.min(c2R-c2L, gh)*0.30;
+    if(!flip){
+      c.strokeStyle=rgba(OK,0.5); c.lineWidth=1.4; c.beginPath(); c.arc(cx2,cy2,R2,0,TAU); c.stroke();
+      c.strokeStyle=rgba(OK,0.25); c.beginPath(); c.arc(cx2,cy2,R2*1.35,0,TAU); c.stroke();
+      var g=c.createRadialGradient(cx2,cy2,1,cx2,cy2,22); g.addColorStop(0,OK); g.addColorStop(1,rgba(OK,0));
+      c.fillStyle=g; c.beginPath(); c.arc(cx2,cy2,22,0,TAU); c.fill();
+      c.fillStyle=OK; c.beginPath(); c.arc(cx2,cy2,6,0,TAU); c.fill();
+      c.fillStyle=INK; c.font='700 12px system-ui'; c.textAlign='center';
+      c.fillText('dim 0 \u00B7 EIN PUNKT', cx2, cy2+R2*1.35+20);
+      c.fillStyle=MUTED; c.font='10px ui-monospace,monospace';
+      c.fillText('(A: \u221A2 / invarianter p / Form)', cx2, cy2+R2*1.35+34);
+      c.fillText('   = (B: stabile Form / Kollimit)', cx2, cy2+R2*1.35+48);
+    } else {
+      c.strokeStyle=rgba(BAD,0.28); c.lineWidth=1;
+      for(var k=0;k<4;k++){ var a0=k/4*TAU; c.beginPath(); c.arc(cx2,cy2,R2*1.15,a0,a0+TAU/4); c.stroke(); }
+      c.strokeStyle=BAD; c.lineWidth=2.4; c.beginPath();
+      var M=200;
+      for(i=0;i<=M;i++){ var tt=i/M*TAU; var x2=cx2+R2*1.15*Math.cos(tt); var y2=cy2+R2*0.95*Math.sin(2*tt+S.theta); i?c.lineTo(x2,y2):c.moveTo(x2,y2); }
+      c.closePath(); c.stroke();
+      c.fillStyle=INK; c.font='700 12px system-ui'; c.textAlign='center';
+      c.fillText('dim > 0 \u00B7 irreduzibles Global', cx2, cy2+R2*1.35+20);
+      c.fillStyle=MUTED; c.font='10px ui-monospace,monospace';
+      c.fillText('(A: Kohomologie = \u03A6 / Emergenz)', cx2, cy2+R2*1.35+34);
+      c.fillText('   = (B: globale Section, H\u00B9\u22600)', cx2, cy2+R2*1.35+48);
+    }
+    if(S.ego>0.4){
+      var al=(S.ego-0.4)/0.6;
+      c.save(); c.globalAlpha=al;
+      c.strokeStyle=BAD; c.lineWidth=2; c.setLineDash([7,5]);
+      var bx=c2L+4, by=topT+6, bw=(c2R-c2L)-8, bh=gh-12;
+      rr(bx,by,bw,bh,12); c.stroke(); c.setLineDash([]);
+      c.fillStyle=BAD; c.font='700 11px system-ui'; c.textAlign='center';
+      c.fillText('Pivot reifiziert (\u00DCber-Attribuierung)', cx2, by+16);
+      c.restore();
+    }
+    // Faser-Meter (gauß-abh. Rest, gelöst)
+    var fy=topT+gh+34, fw=(c2R-c2L)-24, fx=c2L+12;
+    c.fillStyle=MUTED; c.font='10px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('Faser (gau\u00DF-abh., gel\u00F6st) = '+fib.toFixed(0)+'%', fx, fy-6);
+    c.fillStyle=SOFT; c.strokeStyle=LINE; c.lineWidth=1; rr(fx,fy,fw,12,6); c.fill(); c.stroke();
+    var fwIn=fw*fib/100;
+    if(fwIn>1){ c.fillStyle=ACC2; rr(fx,fy,fwIn,12,6); c.fill(); }
+
+    // ---------- PANEL 3: zwei Währungen ----------
+    c.fillStyle=WARN; c.font='700 11px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('3 \u00B7 ZWEI W\u00C4HRUNGEN  (Pivot)', c3L, 20);
+    var baseY=topT+gh+34, maxBarH=gh*0.70, grpW=(c3R-c3L-10)/2, slotW=grpW/2-4;
+    function bar(x,frac,color){ var bh=Math.max(2,maxBarH*Math.min(1,frac)); c.fillStyle=color; c.fillRect(x,baseY-bh,slotW-6,bh); }
+    var I=S.r, C=2*S.r, H1=h1energy(), tp=flip?3.5:24;
+    bar(c3L+2, I/6, ACC); bar(c3L+2+slotW, C/12, ACC2);
+    bar(c3L+grpW+6, H1/12, WARN); bar(c3L+grpW+6+slotW, tp/24, SKY);
+    c.strokeStyle=LINE; c.lineWidth=1; c.beginPath(); c.moveTo(c3L,baseY); c.lineTo(c3R,baseY); c.stroke();
+    c.fillStyle=INK; c.font='10px ui-monospace,monospace'; c.textAlign='center';
+    c.fillText('I='+I.toFixed(0), c3L+2+(slotW-6)/2, baseY+14);
+    c.fillText('C='+C, c3L+2+slotW+(slotW-6)/2, baseY+14);
+    c.fillText('H\u00B9='+H1.toFixed(1), c3L+grpW+6+(slotW-6)/2, baseY+14);
+    c.fillText(tp+'M', c3L+grpW+6+slotW+(slotW-6)/2, baseY+14);
+    c.fillStyle=MUTED; c.font='9px ui-monospace,monospace';
+    c.fillText('A \u00B7 Score', c3L+grpW/2, baseY+28);
+    c.fillText('B \u00B7 Energie/Existenz', c3L+grpW+grpW/2, baseY+28);
+    c.textAlign='left';
+  }
+
+  function readout(){
+    var wv=wind(), res=residue(), flip=isFlip(), fib=fiber(), I=S.r, C=2*S.r, H1=h1energy(), tp=flip?3.5:24, coh=coherent();
+    function set(id,t){ var e=$(id); if(e) e.textContent=t; }
+    set('ro-w', String(wv));
+    set('ro-rest', res.toFixed(0)+'\u00B0');
+    set('ro-m', flip?'\u22121':'+1');
+    set('ro-dim', flip?'>0':'0');
+    set('ro-fib', fib.toFixed(0)+'%');
+    set('ro-I', I.toFixed(1));
+    set('ro-C', String(C));
+    set('ro-H1', H1.toFixed(1));
+    set('ro-tp', tp+'M');
+    set('ro-ego', (S.ego*100).toFixed(0)+'%');
+    set('stepVal', S.step.toFixed(0)+'\u00B0');
+    set('refVal', S.ref.toFixed(0)+'\u00B0');
+    set('egoVal', (S.ego*100).toFixed(0)+'%');
+    set('rVal', String(S.r));
+    set('hVal', S.h.toFixed(2));
+    var ro=$('ro-state');
+    if(ro){
+      if(S.ego>0.55){
+        ro.style.borderColor=cssv('--bad','#dc2626');
+        ro.textContent='Selbsthaft/Griff hoch \u2014 der Pivot wird reifiziert (n4-004: \u00DCber-Attribuierung; n4-001: Ergreifen/Totalisierung). Der gau\u00DF-abh\u00E4ngige Rest erstarrt zum Total-Objekt, die relationale Invariante wird zu Substanz. Heilung: Faser l\u00F6sen, den Griff loslassen.';
+      } else if(flip){
+        ro.style.borderColor=cssv('--warn','#d97706');
+        ro.textContent='w ungerade (m=\u22121): der Umlauf (n4-001) erzeugt die Invariante, die an der Naht/Pivot (n4-004) als Flip abgelesen wird \u2192 dim(L\u00FCcke)>0, H\u00B9(X,\u2133)\u22600. Das Ganze = irreduzibles Global (\u03A6/Emergenz). Faser (gau\u00DF-abh.) gel\u00F6st: '+fib.toFixed(0)+'% verbleibend; die gau\u00DF-invariante Dimension der L\u00FCcke bleibt als Ort des Seins. Zwei W\u00E4hrungen: A (I='+I.toFixed(0)+', C='+C+'), B (H\u00B9='+H1.toFixed(1)+', '+tp+'M pps).';
+      } else {
+        ro.style.borderColor=cssv('--good','#16a34a');
+        ro.textContent='w gerade (m=+1): der geschlossene Umlauf (n4-001) verklebt \u2014 Rest\u2248'+res.toFixed(0)+'\u00B0 \u2014 und die Invariante ist an einem einzigen Pivot an der Naht (n4-004) fixiert \u2192 dim(L\u00FCcke)=0, H\u00B9=0. Das Ganze = EIN PUNKT (invarianter p / stabile Form, lasttragend). Die Referenz (Eich-Freiheit = Anker-Kalibrierung) bleibt frei; die Faser ist gel\u00F6st. Erkennen = geschlossener Akt \u00D7 freie Referenz \u00F7 Faser.';
+      }
+    }
+  }
+
+  function frame(ts){
+    var dt=Math.min(0.05,(ts-lastT)/1000)||0; lastT=ts;
+    if(S.playing){ S.marker+=dt*0.9; if(S.marker>=TAU-Math.PI/2) S.marker-=TAU; }
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function setStep(v){ S.step=Math.max(0,Math.min(180,parseFloat(v)||0)); if($('s-step')) $('s-step').value=String(S.step); readout(); }
+  function setRef(v){ S.ref=Math.max(0,Math.min(360,parseFloat(v)||0)); if($('s-ref')) $('s-ref').value=String(S.ref); readout(); }
+  function setEgo(v){ S.ego=Math.max(0,Math.min(100,parseFloat(v)||0))/100; if($('s-ego')) $('s-ego').value=String(S.ego*100); readout(); }
+  function setR(v){ S.r=Math.max(1,Math.min(6,parseInt(v,10)||3)); if($('s-r')) $('s-r').value=String(S.r); readout(); }
+  function setH(v){ S.h=Math.max(0.2,Math.min(1,parseFloat(v)||0.7)); if($('s-h')) $('s-h').value=S.h.toFixed(2); readout(); }
+  function toggleTheme(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n5-theme', d?'dark':'light'); }catch(e){}
+    if($('themeBtn')) $('themeBtn').innerHTML = d ? '\u263E' : '\u2600';
+    draw();
+  }
+
+  function init(){
+    if($('s-step')) $('s-step').addEventListener('input', function(e){ setStep(e.target.value); });
+    if($('s-ref')) $('s-ref').addEventListener('input', function(e){ setRef(e.target.value); });
+    if($('s-ego')) $('s-ego').addEventListener('input', function(e){ setEgo(e.target.value); });
+    if($('s-r')) $('s-r').addEventListener('input', function(e){ setR(e.target.value); });
+    if($('s-h')) $('s-h').addEventListener('input', function(e){ setH(e.target.value); });
+    if($('b-even')) $('b-even').addEventListener('click', function(){ setStep(60); });
+    if($('b-odd')) $('b-odd').addEventListener('click', function(){ setStep(30); });
+    if($('b-play')) $('b-play').addEventListener('click', function(){ S.playing=!S.playing; this.textContent=S.playing?'\u23F8 Pause':'\u25B6 Umlauf'; });
+    if($('b-rst')) $('b-rst').addEventListener('click', function(){ setStep(60); S.ref=0; if($('s-ref')) $('s-ref').value='0'; S.ego=0.25; if($('s-ego')) $('s-ego').value='25'; setR(3); setH(0.7); S.theta=0; readout(); });
+    if($('themeBtn')) $('themeBtn').addEventListener('click', toggleTheme);
+    if($('themeBtn')) $('themeBtn').innerHTML = document.documentElement.classList.contains('dark') ? '\u263E' : '\u2600';
+    var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    readout();
+    draw();
+    requestAnimationFrame(frame);
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); } else { init(); }
+})();
+</script>
+</body>
+</html>

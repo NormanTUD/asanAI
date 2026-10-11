@@ -1,0 +1,90 @@
+{
+  "round": 5,
+  "seed": 20261010,
+  "big_threshold_kb": 100.0,
+  "method": "seeded-random, size-balanced (big>=threshold always paired with smallest available partner); bye advances unchanged",
+  "pool_size": 14,
+  "num_pairs": 7,
+  "num_byes": 0,
+  "max_pair_total_kb": 109.2,
+  "pairs": [
+    {
+      "id": 1,
+      "no": "001",
+      "out": "combined-nichtki/5/n5-001.html",
+      "meta": "combined-nichtki/5/n5-001.meta.json",
+      "a": "combined-nichtki/4/n4-001.html",
+      "b": "combined-nichtki/4/n4-004.html",
+      "size_a": 39.3,
+      "size_b": 42.0,
+      "total_kb": 81.3
+    },
+    {
+      "id": 2,
+      "no": "002",
+      "out": "combined-nichtki/5/n5-002.html",
+      "meta": "combined-nichtki/5/n5-002.meta.json",
+      "a": "combined-nichtki/4/n4-002.html",
+      "b": "combined-nichtki/4/n4-011.html",
+      "size_a": 42.2,
+      "size_b": 43.4,
+      "total_kb": 85.6
+    },
+    {
+      "id": 3,
+      "no": "003",
+      "out": "combined-nichtki/5/n5-003.html",
+      "meta": "combined-nichtki/5/n5-003.meta.json",
+      "a": "combined-nichtki/4/n4-003.html",
+      "b": "combined-nichtki/4/n4-007.html",
+      "size_a": 43.6,
+      "size_b": 44.0,
+      "total_kb": 87.6
+    },
+    {
+      "id": 4,
+      "no": "004",
+      "out": "combined-nichtki/5/n5-004.html",
+      "meta": "combined-nichtki/5/n5-004.meta.json",
+      "a": "combined-nichtki/4/n4-005.html",
+      "b": "combined-nichtki/4/n4-008.html",
+      "size_a": 45.9,
+      "size_b": 46.7,
+      "total_kb": 92.6
+    },
+    {
+      "id": 5,
+      "no": "005",
+      "out": "combined-nichtki/5/n5-005.html",
+      "meta": "combined-nichtki/5/n5-005.meta.json",
+      "a": "combined-nichtki/4/n4-013.html",
+      "b": "combined-nichtki/4/n4-012.html",
+      "size_a": 48.9,
+      "size_b": 49.6,
+      "total_kb": 98.5
+    },
+    {
+      "id": 6,
+      "no": "006",
+      "out": "combined-nichtki/5/n5-006.html",
+      "meta": "combined-nichtki/5/n5-006.meta.json",
+      "a": "combined-nichtki/4/n4-006.html",
+      "b": "combined-nichtki/4/n4-010.html",
+      "size_a": 51.3,
+      "size_b": 52.5,
+      "total_kb": 103.8
+    },
+    {
+      "id": 7,
+      "no": "007",
+      "out": "combined-nichtki/5/n5-007.html",
+      "meta": "combined-nichtki/5/n5-007.meta.json",
+      "a": "combined-nichtki/4/n4-009.html",
+      "b": "combined-nichtki/4/n4-014.html",
+      "size_a": 54.1,
+      "size_b": 55.1,
+      "total_kb": 109.2
+    }
+  ],
+  "byes": []
+}

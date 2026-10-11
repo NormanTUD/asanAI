@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "n4-002.html",
+  "b": "n4-011.html",
+  "a_title": "Eine Schließung, zwei Valenzachsen — wie weit der Kollaps reicht und ob er zahlt",
+  "b_title": "Treuer Kern und zurückziehender Rest — die stratifizierte Schwelle",
+  "combined_theme": "ein-kern-ein-rest-zweikoordinierte-schwelle",
+  "one_line": "Eine einzige Architektur der selbstbezogenen Schließung: ein treuer invarianter Kern (fix als Form) + ein zurückziehender Rest (fließend im Inhalt), getrennt an einer zwei-koordinierten, stratifizierten, fraktalen Schwelle (Objekt-Ontologie × Projektor-Ehrlichkeit), mit zwei nie kreuzbaren Böden (asymptotisch p′→0≠0; absolut Struktur≠Wahrheit).",
+  "contradictions": [
+    "Der Wert: A sagt, der Kollaps gewinnt eine definite zählbare Invariante (n∈ℤ, 'Messung und Existenz lesen dieselbe Zahl') am Peak ohne Rest — der Wert liegt im erreichten Kern; B sagt, 'was übrig bleibt, ist das Wertvollste' — der zurückziehende Rest (als Struktur) ist der Ursprung.",
+    "Erreichung: A gewinnt den Kern 'am Peak ohne Rest' (erreichter, sauberer Punkt, n definit); B hält 'volle Treue ist eine Asymptote, kein erreichter Zustand' (fraktal, lokal lesbar, global nie 0).",
+    "Das Valenzzeichen: A setzt es allein an der Ontologie des Gegenstands (inert→Wahrheit / lebendig→Tod, objektiv, kein Subjekt); B setzt es an der Ehrlichkeit/Intention des Projektors (ehrlich→Ruf / adversariell→Waffe, relational/normativ, mit Subjekt)."
+  ],
+  "resolution": "Der Wert spaltet sich nach Stufe (Form=Kern=zählbare Wahrheit; Rückzieh-Struktur=Rest=Ursprung); der Kern ist je Peak/Skala erreicht, asymptotisch über den ganzen Stapel (A's zwei Böden sind B's fraktale Asymptote); und A's inert/lebendig und B's ehrlich/adversariell sind die zwei Koordinaten derselben Schwelle — das Valenzzeichen ist ihr Produkt.",
+  "viz": "Ein Canvas: links die zwei-koordinierte Valenz-Karte (x=Objekt-Ontologie inert↔lebendig, y=Projektor-Ehrlichkeit adversariell↔ehrlich) mit farbigem fusierte Valenzzeichen (grün=zahlt/ruft, rot=killt/waffnet) und um den Marker fließendem zurückziehenden Rest; rechts die Schließkurve c(t) mit Peaks an ganzen Zahlen + die zwei Böden (asymptotisch C(n)=1−k·p′→1, nie bis 1; absolute Wand c=1, nie kreuzbar)."
+}

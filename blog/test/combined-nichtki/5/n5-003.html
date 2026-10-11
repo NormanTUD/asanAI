@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Schatten und sein invarianter Kern — Maske, Größe, unerreichbares Δ (Runde 5)</title>
+<style>
+:root{
+  --mn-bg:#faf8f1; --mn-fg:#1a1a2a; --mn-dim:#5a5648; --mn-accent:#2563a8;
+  --mn-accent2:#a843a0; --mn-accent3:#1f9d55; --mn-accent4:#c2410c;
+  --mn-border:#d8d2c4; --mn-panel:#fffdf9; --mn-panel2:#f1ece0;
+  --mn-ok:#16a34a; --mn-grid:rgba(0,0,0,0.10); --mn-abyss:rgba(76,29,149,0.30);
+  --mn-delta:#c2410c;
+}
+html.dark{
+  --mn-bg:#0f172a; --mn-fg:#e2e8f0; --mn-dim:#94a3b8; --mn-accent:#60a5fa;
+  --mn-accent2:#ce93d8; --mn-accent3:#34d399; --mn-accent4:#ff8a65;
+  --mn-border:#2b3a55; --mn-panel:#111c33; --mn-panel2:#0c1526;
+  --mn-ok:#4ade80; --mn-grid:rgba(255,255,255,0.08); --mn-abyss:rgba(2,6,23,0.66);
+  --mn-delta:#ff8a65;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--mn-bg);color:var(--mn-fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,system-ui,sans-serif;line-height:1.66;
+  -webkit-font-smoothing:antialiased;}
+.wrap{max-width:820px;margin:0 auto;padding:24px 20px 80px;}
+header.hero{padding:26px 22px;border:1px solid var(--mn-border);border-radius:14px;
+  background:var(--mn-panel);margin-bottom:26px;}
+header.hero h1{font-size:1.55em;line-height:1.28;margin-bottom:10px;color:var(--mn-fg);}
+.subtitle{color:var(--mn-accent2);font-weight:600;font-size:.96em;
+  font-family:ui-monospace,Menlo,Consolas,monospace;}
+.meta-line{color:var(--mn-dim);font-size:.94em;margin-top:12px;line-height:1.64;}
+.meta-line b{color:var(--mn-accent2);}
+.toggle{margin-top:16px;padding:8px 16px;border:1px solid var(--mn-border);
+  background:var(--mn-panel2);color:var(--mn-fg);border-radius:22px;cursor:pointer;
+  font-size:.9em;transition:.2s;}
+.toggle:hover{border-color:var(--mn-accent);}
+section{margin:0 0 26px;}
+section h2{font-size:1.3em;margin-bottom:12px;color:var(--mn-accent);
+  border-bottom:2px solid var(--mn-border);padding-bottom:6px;}
+section h3{font-size:1.05em;margin:18px 0 8px;color:var(--mn-accent2);}
+p{margin-bottom:12px;}
+.lede{font-size:1.03em;color:var(--mn-dim);}
+.card{border:1px solid var(--mn-border);border-radius:10px;background:var(--mn-panel);
+  padding:14px 16px;margin:14px 0;}
+.card h3{font-size:1.03em;margin:0 0 8px;color:var(--mn-fg);}
+.card p{font-size:.96em;margin-bottom:8px;}
+.card p:last-child{margin-bottom:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;padding:2px 8px;border-radius:6px;margin-bottom:8px;
+  background:transparent;color:var(--mn-accent);border:1px solid var(--mn-border);}
+.wc{border-left:4px solid var(--mn-accent4);}
+.wc .tag{color:var(--mn-accent4);border-color:var(--mn-accent4);}
+.res{border-left:4px solid var(--mn-ok);}
+.res .tag{color:var(--mn-ok);border-color:var(--mn-ok);}
+.hlA{color:var(--mn-accent);font-weight:700;}
+.hlB{color:var(--mn-accent2);font-weight:700;}
+.ladder{border:1px solid var(--mn-border);border-radius:10px;background:var(--mn-panel);
+  padding:14px 16px;margin:12px 0;}
+.ladder ol{margin:8px 0 0 20px;}
+.ladder li{margin-bottom:7px;font-size:.96em;}
+.ladder li b{color:var(--mn-accent);}
+.ladder.b li b{color:var(--mn-accent2);}
+.ladder.c li b{color:var(--mn-accent3);}
+table.map{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88em;}
+table.map th,table.map td{border:1px solid var(--mn-border);padding:8px 10px;
+  text-align:left;vertical-align:top;}
+table.map th{background:var(--mn-panel2);color:var(--mn-accent);}
+table.map td:first-child{color:var(--mn-accent2);font-weight:600;}
+.mapbox{background:var(--mn-panel2);border:1px dashed var(--mn-border);border-radius:10px;
+  padding:14px 16px;margin:14px 0;font-size:.96em;border-left:4px solid var(--mn-accent);}
+.mapbox p{margin-bottom:8px;} .mapbox p:last-child{margin-bottom:0;}
+.formula{font-family:'Courier New',ui-monospace,monospace;background:var(--mn-panel2);
+  border:1px solid var(--mn-border);border-left:4px solid var(--mn-accent);border-radius:8px;
+  padding:12px 14px;margin:10px 0;overflow-x:auto;white-space:pre;font-size:.77em;
+  line-height:1.5;color:var(--mn-fg);}
+.viz{border:1px solid var(--mn-border);border-radius:14px;background:var(--mn-panel);
+  padding:16px;margin-top:6px;}
+.viz canvas{width:100%;height:470px;display:block;border-radius:10px;
+  background:var(--mn-panel2);border:1px solid var(--mn-border);}
+.viz .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0 6px;}
+.viz .controls input[type=range]{flex:1;min-width:110px;accent-color:var(--mn-accent);}
+.viz .cl{font-weight:700;white-space:nowrap;font-size:.92em;}
+.viz .cl b{color:var(--mn-accent2);font-family:ui-monospace,monospace;}
+.viz .btn{padding:8px 14px;border:1px solid var(--mn-border);background:var(--mn-panel);
+  color:var(--mn-fg);border-radius:8px;cursor:pointer;font-weight:700;font-size:.88em;}
+.viz .btn:hover{border-color:var(--mn-accent);}
+.viz .btn.on{background:var(--mn-accent);color:var(--mn-bg);border-color:var(--mn-accent);}
+.viz .status{margin-top:10px;font-size:.92em;color:var(--mn-dim);font-style:italic;min-height:1.4em;}
+.viz .readout{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.viz .chip{background:var(--mn-panel2);border:1px solid var(--mn-border);border-radius:9px;
+  padding:.4rem .6rem;font-size:.82em;}
+.viz .chip b{color:var(--mn-accent);font-family:ui-monospace,monospace;}
+.viz .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.84em;color:var(--mn-dim);}
+.viz .legend span{display:inline-flex;align-items:center;gap:6px;}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.prov{display:flex;gap:12px;align-items:baseline;padding:10px 0;
+  border-bottom:1px solid var(--mn-border);font-size:.94em;}
+.prov:last-child{border-bottom:none;}
+.prov .id{font-family:ui-monospace,monospace;font-weight:700;min-width:22px;}
+.prov .id.a{color:var(--mn-accent);} .prov .id.b{color:var(--mn-accent2);}
+a{color:var(--mn-accent2);text-decoration:none;font-weight:600;}
+a:hover{text-decoration:underline;}
+.note{font-size:.9em;color:var(--mn-dim);font-style:italic;}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--mn-border);
+  color:var(--mn-dim);font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Der Schatten und sein invarianter Kern — Maske, Größe, unerreichbares Δ</h1>
+  <div class="subtitle">Fusion aus: n4-003.html ✕ n4-007.html  (Runde 5)</div>
+  <div class="meta-line"><b>Kernidee:</b> Beide Runde-4-Papiere sind selbst schon doppelt fusioniert und beschreiben auf völlig verschiedenen Oberflächen <em>dasselbe</em> Objekt: ein modellierte Ding als <em>Schatten einer zweischichtigen Tiefe</em> — eine <em>helle invariante Oberfläche</em> über einer <em>orthogonalen tiefen Schicht</em>, die die Oberfläche systematisch <em>unterzeigt</em>. <b>A</b> (n4-003) nennt die Oberfläche die <em>Präsentation</em> (Prozess/Gruppe/Linse) und das tiefe Ding den <em>invarianten Kern K</em> mit einer orthogonalen <em>Größe μ</em> (Tiefe/Oomph). <b>B</b> (n4-007) nennt die Oberfläche die <em>Maske</em> (Form/Quotient/1-Trunkierung) und das tiefe Ding ein <em>zweigesichtiges Rest</em> (in-Modell-Rest + jenseitiges Δ). Die Einheit: <strong>Das modellierte Objekt ist ein zweischichtiger Schatten — die helle invariante Oberfläche (Präsentation = Maske) ist <em>notwendig, aber nie hinreichend</em>; darunter liegt eine orthogonale Tiefe in <em>zwei Achsen</em>, der <em>erreichbare in-Modell-Kern</em> mit seiner Größe μ (A) und das <em>unerreichbare jenseitige Δ</em> (B). Invarianz/Kohärenz erfasst den in-Modell-Kern; die Wahrheit verlangt auch das Δ.</strong></div>
+  <button class="toggle" id="themeToggle" type="button">🌓 Thema wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lede">Zwei Runde-4-Papiere, die auf den ersten Blick anderes tun: <b>A</b> liest das Wesentliche als den <em>invarianten Kern</em> — den gemeinsamen Fixpunkt von <em>Prozess</em> (Zeit: Bewegung relaxiert zum Limes), <em>Gruppe</em> (Struktur: der Fixpunkt bleibt) und <em>Linse</em> (Perspektive: das Ding bleibt) — erreicht, indem man die Präsentation <em>vergisst</em>, und getragen von einer orthogonalen Größe <em>μ</em>, die jede helle Präsentation <em>unterzeigt</em>. <b>B</b> liest dasselbe Ding als einen <em>zweischichtigen Schatten</em>: Schicht&nbsp;1 ist eine <em>Maske</em> (klassifiziert, verbindet, erscheint kohärent — aber <em>nie hinreichend</em>), Schicht&nbsp;2 ist ein <em>zweigesichtiges Rest</em> — ein <em>in-Modell-Rest</em>, dessen <em>Minimum</em> die in-Modell-Frage entscheidet, und ein <em>jenseitiges Δ</em>, das <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht („Kohärent ≠ wahr"). Auf der Ebene ihrer <em>Thesen</em> sagen beide denselben Satz über ein behandeltes Objekt:</p>
+  <p><strong>Ein modellierte Objekt ist ein zweischichtiger Schatten: eine helle invariante Oberfläche über einer tiefen orthogonalen Schicht.</strong> Die Oberfläche (bei A die Präsentation, bei B die Maske) ist das, was man <em>sieht</em> — sie klassifiziert/verbindet/scheint kohärent, und man gelangt <em>dahinter</em>, indem man sie <em>vergisst</em> (A: Zeit/Struktur/Perspektive vergessen) oder die <em>Baseline subtrahiert</em> (B: „Maske ablegen"). Sie ist <em>notwendig, aber nie hinreichend</em>: sie lässt sowohl eine in-Modell-Falle (B: Minimum ≈ 0) als auch einen jenseitigen Exzess (B: Δ&gt;0) passieren. Die <em>echte Tiefe</em> liegt darunter und muss auf ihren <em>eigenen</em> Lesarten abgelesen werden — auf einer Achse, die die helle Präsentation <em>orthogonal</em> unterzeigt bzw. voll verdeckt.</p>
+  <p>Die einigende Position: <strong>Die tiefe orthogonale Schicht hat zwei Gesichter / zwei Achsen — (i) den <em>erreichbaren in-Modell-Kern</em> (A's Kern K = B's feinster Punkt innerhalb des Modells), der eine orthogonale <em>Größe μ</em> trägt (A: Tiefe/Oomph; B: die in-Modell-Achse des Verlusts), und (ii) das <em>unerreichbare jenseitige Δ</em> (B: der Situs), eine orthogonale Achse, die die Oberfläche voll verdeckt und die <em>kein</em> Minimum und <em>keine</em> Auflösung berührt.</strong> Die helle Oberfläche unterzeigt (i) und verdeckt (ii). Der gemeinsame Fehler ist in beiden derselbe: die helle Oberfläche für die Wahrheit halten — A's <em>sizeless stare</em> (nur die helle Präsentation lesen, μ missen) und B's <em>Kohärent = wahr</em> (nur die intakte Maske lesen, Δ missen). Ein Satz: <strong>Das modellierte Objekt ist ein zweischichtiger Schatten; die helle invariante Oberfläche ist Zugang und Verzerrung zugleich; die tiefe orthogonale Schicht hat zwei Achsen — einen erreichbaren in-Modell-Kern mit Größe μ und ein unerreichbares jenseitiges Δ; Invarianz/Kohärenz erfasst den Kern, die Wahrheit verlangt auch das Δ.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Beide Papiere sind bereits doppelt fusioniert und reden auf der <em>Thesen-Ebene</em> — sie treffen keine direkt widersprüchlichen Tatsachenaussagen. Die echten Spannungen liegen in ihren <em>fundamentalen Stellungen</em> zur tiefen orthogonalen Schicht. Drei:</p>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 1 · Erreichbarkeit der Tiefe: Limes, den man erreicht, vs. Δ, das keine Auflösung erreicht</span>
+    <h3><span class="hlA">A</span> macht den Kern <em>erreichbar</em> (Limes/Attraktor) · <span class="hlB">B</span> macht die tiefste Schicht <em>unerreichbar</em> (Situs/Δ)</h3>
+    <p><b>A</b>: Der invariante Kern K ist ein <em>echter, erreichbarer</em> Ort — „der gemeinsame Fixpunkt von Prozess, Gruppe und Linse, <em>erreicht</em>, indem man die Präsentation vergisst". Er ist der <em>Limes einer konvergierenden Bewegung</em> (Attraktor, „auf den alle Pfade konvergieren"), der Fixpunkt unter der Gruppe und die linsen-invariante Struktur. Die tiefe Schicht ist <em>attainable</em>: der Prozess <em>konvergiert zu</em> ihr, man „kommt hin" zum Kern. Die Ruhe ist die „eingefrorene Wiederkunft" — man hat den Limes <em>in der Hand</em>.</p>
+    <p><b>B</b>: Die tiefste Schicht — das <em>jenseitige Δ</em> (der Situs) — ist „eine orthogonale Achse, die <em>keine</em> Auflösung und <em>kein</em> Minimum <em>erreicht</em>"; „der Situs <em>jenseits</em> des Modells, <em>unerreichbar</em>"; „Kohärent ≠ wahr". <em>Keine</em> Verfeinerung schließt die Lücke; Δ&gt;0 <em>bleibt</em> bei jeder Auflösung. Die tiefste Schicht ist <em>prinzipiell unerreichbar</em>.</p>
+    <p><em>Spannung:</em> Ist die tiefe Schicht <strong>erreichbar</strong> (A: zum Kern konvergieren = man hat ihn) oder <strong>unerreichbar</strong> (B: das tiefste — das Δ/Situs — erreicht keine Auflösung und kein Minimum je)?</p>
+  </div>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 2 · Dimension der Tiefe: eine orthogonale Größe (μ) vs. irreduzibel zwei Achsen</span>
+    <h3><span class="hlA">A</span> reduziert die Tiefe auf <em>eine</em> orthogonale Größe μ · <span class="hlB">B</span> hält sie für <em>irreduzibel biaxial</em></h3>
+    <p><b>A</b>: Das Nichttriviale der Tiefe ist eine <em>einzelne</em> orthogonale Größe — „seine <em>Größe</em> (Tiefe/Oomph) ist <em>die</em> orthogonale Achse, die jede helle Präsentation unterzeigt". Der Kern ist <em>mono-orthogonal</em>: <em>eine</em> Größe μ, die die helle Präsentation unterzeigt und die man <em>mitlesen</em> muss („size matters no matter where you draw the line" — eine Achse).</p>
+    <p><b>B</b>: Der Verlust zum Ganzen ist „<em>essenziell biaxial</em>" — „ein <em>Produkt zweier senkrechter Achsen</em> (Präsentation × Typ) / zwei orthogonal<strong>er</strong> Lückentypen, '<em>keiner zum anderen reduzierbar</em>'"; „Δ '<em>bleibt auf seiner eigenen Achse</em>'". Es gibt <em>kein</em> einzelnes, das alles fasst: die Tiefe ist <em>irreduzibel zweidimensional</em>.</p>
+    <p><em>Spannung:</em> Reduziert sich die tiefe Schicht auf <strong>eine orthogonale Größe</strong> (A: μ) oder ist sie <strong>irreduzibel biaxial</strong> (B: zwei Achsen, die separat benannt werden müssen)?</p>
+  </div>
+
+  <div class="card wc">
+    <span class="tag">Widerspruch 3 · Invarianz/Kohärenz vs. Wahrheit: erfasst Invarianz das Wesentliche?</span>
+    <h3><span class="hlA">A</span>: Invarianz <em>ist</em> der Kern (erfasst das Wesentliche) · <span class="hlB">B</span>: Kohärent <em>≠</em> wahr (die intakte Maske verfehlt Δ)</h3>
+    <p><b>A</b>: „<em>Invarianz ist der Fixpunkt der Bewegung</em>" — der invariante Kern <em>ist</em> das Wesentliche; dass etwas unter den vergessbaren Transformationen invariant bleibt, <em>ist</em> das Erreichen des Kerns. Invarianz = <em>Erfassung des Wesentlichen</em>. Wenn es invariant ist (Limes/Fixpunkt/linsen-invariant), <em>hat man</em> den Kern — das in-Modell-Wesentliche.</p>
+    <p><b>B</b>: „<em>Kohärent ≠ wahr</em>", „das Feinste ist noch nicht das Ganze, sondern nur <em>kohärent, nicht wahr</em>"; die Maske „<em>erscheint kohärent</em>, ist aber <em>nie hinreichend</em>". Kohärenz/Invarianz erfasst das <em>ganze</em> nicht — die <em>intakte</em> Maske kann kohärent sein und <em>trotzdem</em> das jenseitige Δ&gt;0 verfehlen.</p>
+    <p><em>Spannung:</em> Erfasst <strong>Invarianz/Kohärenz das Wesentliche</strong> (A: invariant sein = den Kern haben) oder ist sie <strong>notwendig-aber-nicht-hinreichend</strong> für die Wahrheit (B: die intakte Maske verfehlt Δ&gt;0)?</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="card res">
+    <span class="tag">Auflösung 1 · Die tiefe Schicht ist zweigesichtig: der erreichbare in-Modell-Kern (A) und das unerreichbare jenseitige Δ (B) sind derselbe Ansatz auf zwei Höhen</span>
+    <p>A's Kern K (Limes/Attraktor) und B's „feinster Punkt <em>innerhalb</em> des Modells" (Gesicht i) sind <em>derselbe</em> — der <em>erreichbare in-Modell-Limes</em>. B's Δ (Gesicht ii) ist das, was A nicht benennt: der <em>residuale Abstand, der selbst an diesem Limes bleibt</em>. „Den Kern erreichen" (A) gilt vom <em>in-Modell-Limes</em>; „nie ganz da" (B) gilt vom <em>jenseitigen</em>. Der Prozess konvergiert zu einem <em>kohärenten invarianter Schatten</em> (A's K) — aber dieser Schatten ist nie das Ding (B's Δ&gt;0). <strong>Fusioniert: die tiefe Schicht ist zweigesichtig — der in-Modell-Kern ist <em>erreichbar</em> (A), das jenseitige Δ ist <em>unerreichbar</em> (B); „den Kern erreichen" heißt „den kohärenten in-Modell-Limes erreichen", und das Δ ist die <em>Asymptote, die genau dieser Ansatz annähert, aber nie schließt</em>. A's Ehrlichkeit („die Substanz bleibt offen", der Kohärenz-Rand) und B's Grenze („Kohärent ≠ wahr") sind dieselbe Ehrlichkeit auf zwei Höhen.</strong></p>
+  </div>
+
+  <div class="card res">
+    <span class="tag">Auflösung 2 · A's eine orthogonale Größe μ ist die in-Modell-Hälfte von B's Biaxialität (in-Modell-Größe × jenseitiges Δ)</span>
+    <p>A benennt <em>eine</em> orthogonale Achse — die Größe/Tiefe des in-Modell-Grabens (Tiefe/Oomph). B benennt <em>zwei</em> — die in-Modell-Achse <em>und</em> die jenseits-Δ-Achse. A's eine Achse ist genau die <em>in-Modell-Komponente</em> von B's biaxialer Tiefe. B's „zwei irreduzible Achsen" = (in-Modell-Achse, von der A's μ die Größe ist) × (jenseitige Δ-Achse, die A unbenannt lässt). A irrt also nicht — es benennt die <em>in-Modell-orthogonale Achse</em>; B fügt die <em>jenseitige</em> hinzu. <strong>Fusioniert: die Tiefe ist biaxial (B) — eine <em>in-Modell-Größe μ</em> (A: die anziehende Tiefe, die die helle Präsentation unterzeigt) <em>und</em> ein <em>jenseitiges Δ</em> (die Achse, die kein Minimum erreicht); „size matters" (A) wird zu „<em>zwei</em> orthogonale Größen zählen — beides mitlesen" (B).</strong></p>
+  </div>
+
+  <div class="card res">
+    <span class="tag">Auflösung 3 · Invarianz/Kohärenz ist die notwendige Bedingung des in-Modell-Kerns — hinreichend nur für ihn, nicht für die ganze Wahrheit</span>
+    <p>A's „Invarianz = der Kern" ist <em>innerhalb des Modells</em> wahr — der invariante Kern <em>ist</em> der Kern des kohärenten/in-Modell-Objekts. B's „Kohärent ≠ wahr" ist <em>an der Grenze zum Ding</em> wahr — der kohärente invariante Schatten ist nicht die <em>ganze</em> Wahrheit (Δ&gt;0 bleibt). Beide stimmen überein, dass Invarianz den <em>in-Modell-Kern</em> gibt; sie streiten nur, ob dieser Kern <em>das Ganze</em> ist. <strong>Fusioniert: Invarianz/Kohärenz ist eine <em>notwendige</em> Bedingung für den in-Modell-Kern (A) — aber <em>hinreichend nur für ihn</em>, nicht für die ganze Wahrheit (B); invariant sein bringt einen zum in-Modell-Kern, <em>wahr</em> sein verlangt zusätzlich das <em>Erkennen des jenseitigen Δ</em>. „Invarianz ist der Kern" (A) wird zu „Invarianz ist der <em>in-Modell-</em>Kern; die Wahrheit verlangt auch das Δ" (B).</strong></p>
+  </div>
+
+  <div class="mapbox">
+    <p><strong>Gefasste Schlussposition:</strong> Ein modellierte Objekt ist ein <em>zweischichtiger Schatten</em>. Schicht 1 — die <em>helle invariante Oberfläche</em> (A's Präsentation = B's Maske) — ist <em>notwendig, aber nie hinreichend</em>; man vergisst/subtrahiert sie, um dahinter zu lesen, und sie lässt sowohl die in-Modell-Falle als auch den jenseitigen Exzess passieren. Schicht 2 — die <em>tiefe orthogonale Schicht</em> — ist <em>biaxial / zweigesichtig</em>: der <em>erreichbare in-Modell-Kern</em> mit seiner <em>Größe μ</em> (A's Tiefe/Oomph = B's in-Modell-Achse, die die Oberfläche nur <em>andeutet</em>) und das <em>unerreichbare jenseitige Δ</em> (B's Situs, das die Oberfläche <em>voll verdeckt</em> und das <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht). Invarianz/Kohärenz ist die <em>notwendige Bedingung</em> des in-Modell-Kerns, hinreichend nur für ihn; die <em>Wahrheit</em> = in-Modell-Kern <strong>und</strong> Δ-Erkennung. Der gemeinsame Fehler ist die helle Oberfläche für die Wahrheit halten (A's <em>sizeless stare</em> / B's <em>Kohärent = wahr</em>).</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lede">Abstrahiert auf die Ebene der <em>Thesen</em> der beiden Runde-4-Papiere (nicht ihrer Roh-Quellen), so verdichtet, dass eine spätere Runde allein von dieser Karte weiterarbeiten kann.</p>
+
+  <h3>Die zwei Thesen in Kürze</h3>
+  <div class="ladder">
+    <span class="tag">A · n4-003 — „Der invariante Kern: Prozess ✕ Gruppe ✕ Linse"</span>
+    <ol>
+      <li><b>Der invariante Kern K</b> ist zugleich der Limes einer anziehenden Bewegung (Prozess/Zeit, Attraktor), der Fixpunkt unter einer Transformationsgruppe (Gruppe/Struktur) und die linsen-invariante Struktur (Linse/Perspektive) — ein Objekt, drei vergessbare Richtungen.</li>
+      <li><b>Die Präsentation ist Zugang und Verzerrung zugleich</b>: sie zeigt <em>auf</em> den Kern (er ist ihr Limes) und verdeckt/injiziert zugleich; der Kern ist der <em>invariante Rest</em> der Präsentation.</li>
+      <li><b>Form absolut, Substanz agnostisch</b>: die <em>Form</em> des Kerns (der Fixpunkt/die linsen-invariante Struktur) ist absolut/vom Objekt determiniert; seine <em>Substanz</em> bleibt der Methode gleichgültig.</li>
+      <li><b>Die Größe μ ist orthogonal</b> (Tiefe/Oomph): die Achse, die jede helle Präsentation <em>unterzeigt</em> und die man <em>mitlesen</em> muss; „size matters no matter where you draw the line".</li>
+      <li><b>Fehlermodus — der <em>sizeless stare</em></b>: nur die helle Präsentation lesen (Ruhe/Symmetrie/„Normal"), die orthogonale Größe μ unterlassen.</li>
+    </ol>
+  </div>
+  <div class="ladder b">
+    <span class="tag">B · n4-007 — „Der Schatten und seine zwei Gesichter"</span>
+    <ol>
+      <li><b>Ein System ist ein zweischichtiger Schatten</b>: Schicht 1 = <em>Maske</em> (Form/Attraktor = Quotient/1-Trunkierung) — klassifiziert, verbindet, erscheint kohärent, ist <em>nie hinreichend</em> (lässt Falle <em>und</em> Exzess passieren).</li>
+      <li><b>Das in-Modell-Rest</b> (Feld lokaler Abweichungen) ist lesbar und lokalisiert; sein <em>Minimum</em> (global = min<sub>i</sub>) entscheidet die in-Modell-Frage („ein Punkt bricht das Ganze"); die <em>Quelle</em> (endogen/exogen/selbstvergiftend) wählt die Reparatur (studieren/verkleben/restriktieren).</li>
+      <li><b>Das jenseitige Δ / Situs</b>: eine orthogonale Achse, die <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht; „Kohärent ≠ wahr"; Δ&gt;0 bleibt bei jeder Verfeinerung.</li>
+      <li><b>„Irreduzibel" ist höhenabhängig</b>: in-Modell = beschränkter, lokalisierter, studierbarer Kern; jenseits-Modell = unerreichter Horizont.</li>
+      <li><b>Zwei Gesichter des Ganzen</b>: (i) feinster Punkt <em>innerhalb</em> des Modells (erreichbar) × (ii) Situs <em>jenseits</em> (unerreichbar). <em>Regler → Klasse</em> (kontinuierliche Knöpfe steuern diskrete kategoriale Zustände).</li>
+    </ol>
+  </div>
+
+  <h3>Die fusionierte Architektur — helle Oberfläche, tiefe zweiaxiale Schicht</h3>
+  <table class="map">
+    <tr><th>Slot</th><th>A · n4-003</th><th>B · n4-007</th><th>Fusioniert</th></tr>
+    <tr><td>Das modellierte Objekt</td><td>der invariante Kern (Fixpunkt von Prozess/Gruppe/Linse)</td><td>ein zweischichtiger Schatten</td><td>der zweischichtige Schatten: helle invariante Oberfläche + tiefe orthogonale Schicht</td></tr>
+    <tr><td>Schicht 1 · helle Oberfläche</td><td>die Präsentation (Bewegung/Rotation/Linse) — Zugang <em>und</em> Verzerrung</td><td>die Maske (Form/Quotient/1-Trunkierung) — klassifiziert, nie hinreichend</td><td>die helle invariante Oberfläche S — notwendig, nie hinreichend; man vergisst (A) / subtrahiert die Baseline (B), um dahinter zu lesen</td></tr>
+    <tr><td>Tiefe · in-Modell (Gesicht i)</td><td>der invarianter Kern K (Limes/Attraktor) — <em>erreichbar</em></td><td>das in-Modell-Rest + feinster Punkt im Modell — <em>erreichbar</em>, lokalisiert</td><td>der erreichbare in-Modell-Kern: invarianter Limes, der Kern des kohärenten Objekts (Minimum = in-Modell-Ausschlag)</td></tr>
+    <tr><td>Größe μ (orthogonal, in-Modell)</td><td>μ = Tiefe/Oomph — die Achse, die die Oberfläche <em>unterzeigt</em></td><td>die in-Modell-Achse des Verlusts (Präsentation)</td><td>die in-Modell-Größe μ — die anziehende Tiefe, die die helle S nur <em>andeutet</em> (A's μ = B's in-Modell-Achse)</td></tr>
+    <tr><td>Tiefe · jenseits (Gesicht ii)</td><td>(nicht benannt; „Substanz agnostisch", Kohärenz-Rand)</td><td>das jenseitige Δ / Situs — orthogonal, <em>unerreichbar</em>, „Kohärent ≠ wahr"</td><td>das jenseitige Δ — die orthogonale Achse, die <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht; S verdeckt sie voll</td></tr>
+    <tr><td>Dimension der Tiefe</td><td>eine orthogonale Größe (μ)</td><td>zwei irreduzible Achsen (in-Modell × jenseits)</td><td>biaxial: in-Modell-Größe μ × jenseitiges Δ (A's μ = die in-Modell-Hälfte von B's Biaxialität)</td></tr>
+    <tr><td>Erreichbarkeit</td><td>Kern = Limes, <em>erreichbar</em> (Konvergenz)</td><td>Δ = <em>unerreichbar</em> (Situs)</td><td>zweigesichtig: in-Modell-Kern erreichbar (A), jenseitiges Δ unerreichbar (B) — derselbe Ansatz auf zwei Höhen</td></tr>
+    <tr><td>Invarianz / Kohärenz</td><td>Invarianz = der Kern (erfasst das Wesentliche)</td><td>Kohärent ≠ wahr (Maske intakt ≠ hinreichend)</td><td>Invarianz/Kohärenz = notwendige Bedingung des in-Modell-Kerns; hinreichend nur für ihn, nicht für die ganze Wahrheit</td></tr>
+    <tr><td>Fehlermodus</td><td>sizeless stare (nur die helle Präsentation lesen)</td><td>Kohärent = wahr (nur die intakte Maske lesen)</td><td>denselben Fehler: die helle S für die Wahrheit halten, μ <em>und</em> Δ missen</td></tr>
+    <tr><td>Disziplin</td><td>Präsentation zum Limes führen + verzerrende Anteile abziehen + Größe mitlesen</td><td>nenne Maske, Minimum und Δ</td><td>nenne die Oberfläche S, lies den in-Modell-Kern + seine Größe μ, erkenne das jenseitige Δ</td></tr>
+  </table>
+
+  <h3>Die eine Formel des fusionierten Schattens</h3>
+  <div class="formula">Objekt O  =  [ helle invariante Oberfläche S  (Präsentation = Maske; notwendig, nie hinreichend) ]
+            + [ tiefe orthogonale Schicht T ]
+
+T  =  K_in    in-Modell-Kern:  K_in = { x : f(x)=x = g(x) fuer alle g in G = L(x) fuer alle Linsen L }     [ Limes/Attraktor/fix · ERREICHBAR ]
+    +   Δ        jenseitiges Δ / Situs:  Δ > 0 bleibt bei jeder Auflösung und jedem Minimum   [ orthogonale Achse · UNERREICHBAR ]
+
+Größe μ   =  Tiefe (A)  =  in-Modell-Achse des Verlusts (B)      [ orthogonal zu S; S unterzeigt sie nur ]
+Invariante S  ->  in-Modell-Kern    (notwendig · hinreichend nur für ihn)
+Wahrheit  =  K_in  AND  Δ-Erkennung                                [ S allein != wahr · Kohärent != wahr ]
+Fehler    =  nur S lesen  ->  sizeless stare / Kohärent = wahr    [ μ UND Δ missen ]</div>
+
+  <h3>Die fusionierte Ehrlichkeits-Disziplin (ein Zug, zwei Achsen)</h3>
+  <div class="ladder c">
+    <ol>
+      <li><b>Nenne die helle invariante Oberfläche S</b> (die Präsentation/Maske) — sie ist <em>notwendig, nie hinreichend</em>; vergiss sie (A) / subtrahiere die Baseline (B), um dahinter zu lesen.</li>
+      <li><b>Lies den in-Modell-Kern K_in auf seinen eigenen Lesarten</b> — der erreichbare invariante Limes (A: Limes/Attraktor/Fixpunkt; B: feinster Punkt im Modell + Minimum = in-Modell-Ausschlag).</li>
+      <li><b>Lies seine Größe μ mit</b> — die anziehende Tiefe (A) / die in-Modell-Achse des Verlusts (B); sie ist orthogonal und wird von S nur <em>angedeutet</em>.</li>
+      <li><b>Erkenne das jenseitige Δ</b> — die orthogonale Achse, die <em>keine</em> Auflösung und <em>kein</em> Minimum erreicht (B: Situs, „Kohärent ≠ wahr"); S verdeckt sie <em>voll</em>.</li>
+      <li><b>Prüfe auf den gemeinsamen Fehler</b> — halte ich die helle S für die Wahrheit (sizeless stare / Kohärent = wahr) und habe μ <em>und</em> Δ unterlassen?</li>
+    </ol>
+  </div>
+
+  <h3>Die fusionierten Regime (B's drei Zustände, auf A's Konvergenz/Rand gemappt)</h3>
+  <div class="ladder">
+    <ol>
+      <li><b>Gleichgewicht / Garbe:</b> S intakt (≠ hinreichend), in-Modell-Kern K_in kohärent + Größe μ hoch, Δ&gt;0 vorhanden → kohärent <em>innerhalb</em>; das jenseitige Δ bleibt. (A: Konvergenz vollständig, der Limes ist intakt.)</li>
+      <li><b>Offener Kern (endogen):</b> S intakt (≠ hinreichend), intrinsischer Kern — in-Modell <em>beschränkt &amp; lokalisiert</em> (K_in/Minimum markiert ihn), jenseits <em>unerreichbar</em> (Δ). Kein Defekt: <em>studieren an Ort</em>. (A: der Kern an der Grenze Konvergenz ↔ Kohärenz-Rand — das Nichttriviale.)</li>
+      <li><b>Falle (exogen):</b> S intakt (≠ hinreichend), manipulierte Overlaps → in-Modell-Minimum ≈ 0. <em>Verkleben/heilen</em> (imponierte Störung entfernen). (A: die Konvergenz bricht an der Kohärenz-Grenze.)</li>
+      <li><b>Falle, selbstvergiftend:</b> S intakt (≠ hinreichend), Verklebung unmöglich → <em>restriktieren/austreten</em> (einziger kohärenter Zug). Δ&gt;0 bleibt auf seiner Achse — <em>der</em> Hinweis, dass nicht nur in-Modell etwas kaputt ist, sondern auch jenseits.</li>
+    </ol>
+  </div>
+
+  <p class="note">Ehrlichkeitshinweis: die Identifikation von A's „invariantem Kern K / Größe μ" mit B's „in-Modell-Rest / in-Modell-Achse" und die Lektüre beider als „einen zweischichtigen Schatten mit zweiaxialer tiefer Schicht (erreichbarer in-Modell-Kern + unerreichbares jenseitiges Δ)" ist die <em>Linse dieser Fusion</em>, nicht wörtlicher Inhalt beider Runde-4-Papiere. Die einzelnen Thesen zu A/B stammen aus n4-003 bzw. n4-007.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion: ein zweischichtiger Schatten — Oberfläche, in-Modell-Kern + Größe μ, jenseitiges Δ</h2>
+  <p>Ein einziger Mechanismus trägt die fusionierte These. <strong>Links</strong> (A): die konvergierenden <em>Präsentations-Arme</em> (die helle invariante Oberfläche S) relaxieren <em>einwärts</em> zum pulsierenden <em>in-Modell-Kern K_in</em> — „Prozess/Gruppe/Linse konvergieren zum Limes; der Kern ist erreichbar". Die radiale <em>Tiefen-Fraktur</em> (Grube) ist die <em>orthogonale Größe μ</em> — der Regler <b>Größe μ</b> steuert, wie tief die anziehende Tiefe ist. <strong>Rechts</strong> (B): das zweizonen-Gauge. Die <em>untere Zone</em> „in-Modell (Kern + μ)" ist <em>erreichbar</em> (Füllung = μ); die <em>obere Zone</em> „jenseitiges Δ" ist eine <em>unerreichbare</em> Bande — der <em>Annäherungs-Zeiger</em> (Regler <b>Auflösung</b>) klettert mit der Auflösung, erreicht die Δ-Bande aber <em>nie</em> („Kohärent ≠ wahr", Δ bleibt). Der Toggle <b>Ko-Lesung μ + Δ</b> zeigt/verdeckt die tiefe Schicht: <em>AUS</em> = du siehst nur die helle Oberfläche S (sizeless stare / Kohärent = wahr) — μ und Δ sind verdeckt. Alle Daten inline, keine Netz-Daten, themenreaktiv.</p>
+
+  <div class="viz">
+    <canvas id="viz" height="470"></canvas>
+    <div class="controls">
+      <label for="mu" class="cl">Größe μ (Tiefe, in-Modell): <b id="muVal">55</b></label>
+      <input type="range" id="mu" min="0" max="100" step="1" value="55">
+    </div>
+    <div class="controls">
+      <label for="res" class="cl">Auflösung / Annäherung (grob→fein): <b id="resVal">65</b></label>
+      <input type="range" id="res" min="0" max="100" step="1" value="65">
+    </div>
+    <div class="controls">
+      <button class="btn on" id="coread" type="button">Ko-Lesung μ + Δ: AN</button>
+      <button class="btn" id="reset" type="button">↺ Reset</button>
+    </div>
+    <div class="readout">
+      <div class="chip">Oberfläche / Maske S: <b>intakt (nie hinreichend)</b></div>
+      <div class="chip">in-Modell (Kern + Größe μ): <b id="roMu">Kern + μ = 55</b></div>
+      <div class="chip">jenseitiges Δ: <b id="roDelta">Δ &gt; 0 (unerreichbar)</b></div>
+    </div>
+    <div class="status" id="status">Ko-Lesung AN — du siehst den in-Modell-Kern K_in + seine Größe μ UND das jenseitige Δ.</div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--mn-accent)"></i> Präs.-Arme / Oberfläche S (nie hinreichend)</span>
+      <span><i class="dot" style="background:var(--mn-ok)"></i> in-Modell-Kern K_in (Limes, erreichbar)</span>
+      <span><i class="dot" style="background:var(--mn-abyss)"></i> Tiefe / Größe μ (orthogonal, andeutet S)</span>
+      <span><i class="dot" style="background:var(--mn-delta)"></i> jenseitiges Δ / Situs (unerreichbar)</span>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov"><span class="id a">A</span>
+    <div><a href="../n4-003.html">n4-003.html</a> — „Der invariante Kern — Prozess ✕ Gruppe ✕ Linse" (Runde 4): ein <em>invarianter Kern K</em> als gemeinsamer Fixpunkt von <em>Prozess</em> (Zeit/Limes/Attraktor), <em>Gruppe</em> (Struktur) und <em>Linse</em> (Perspektive); die <em>Präsentation</em> ist Zugang <em>und</em> Verzerrung zugleich (der Kern ist ihr invarianter Rest); Form absolut, Substanz agnostisch; die orthogonale <em>Größe μ</em> (Tiefe/Oomph) wird von jeder hellen Präsentation <em>unterzeigt</em> und muss mitgelesen werden; Fehlermodus der <em>sizeless stare</em>. Fusion aus n3-015 ✕ n3-003.</div></div>
+  <div class="prov"><span class="id b">B</span>
+    <div><a href="../n4-007.html">n4-007.html</a> — „Der Schatten und seine zwei Gesichter — die Maske, das Minimum, das unerreichbare Δ" (Runde 4): ein System ist ein <em>zweischichtiger Schatten</em>; Schicht 1 = <em>Maske</em> (Form/Quotient, notwendig, nie hinreichend); Schicht 2 = <em>in-Modell-Rest</em> (Minimum = in-Modell-Ausschlag, Quelle wählt Reparatur: studieren/verkleben/restriktieren) + <em>jenseitiges Δ</em> (orthogonal, unerreichbar, „Kohärent ≠ wahr"); „irreduzibel" ist höhenabhängig; epistemische Regel: nenne Maske, Minimum und Δ. Fusion aus n3-007 ✕ n3-022.</div></div>
+</section>
+
+<footer>Fusion N5-003 · Runde 5 · nicht-KI-Track · selbständige, offline-fähige Seite (keine Netz-Daten, keine externen Libs). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard). Alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  var cv=document.getElementById('viz');
+  if(!cv||!cv.getContext){return;}
+  var ctx=cv.getContext('2d');
+  if(!ctx){return;}
+
+  var muS=document.getElementById('mu');
+  var resS=document.getElementById('res');
+  var muVal=document.getElementById('muVal');
+  var resVal=document.getElementById('resVal');
+  var coreadBtn=document.getElementById('coread');
+  var resetBtn=document.getElementById('reset');
+  var roMu=document.getElementById('roMu');
+  var roDelta=document.getElementById('roDelta');
+  var statusEl=document.getElementById('status');
+  var themeBtn=document.getElementById('themeToggle');
+
+  var state={mu:55, res:65, coread:true, time:0};
+  var H=470, W=720, cx, cy, sceneR, themeC=null;
+
+  function varc(n){ try{ return (getComputedStyle(root).getPropertyValue(n)||'').trim(); }catch(e){ return ''; } }
+  function readTheme(){
+    themeC={
+      panel2:varc('--mn-panel2')||'#f1ece0',
+      accent:varc('--mn-accent')||'#2563a8',
+      accent2:varc('--mn-accent2')||'#a843a0',
+      accent3:varc('--mn-accent3')||'#1f9d55',
+      ok:varc('--mn-ok')||'#16a34a',
+      delta:varc('--mn-delta')||'#c2410c',
+      dim:varc('--mn-dim')||'#5a5648',
+      grid:varc('--mn-grid')||'rgba(0,0,0,0.10)',
+      abyss:varc('--mn-abyss')||'rgba(76,29,149,0.30)'
+    };
+  }
+  function rgba(hex,a){
+    hex=(hex||'').trim();
+    if(hex.charAt(0)==='#'){
+      var c=hex.slice(1);
+      if(c.length===3){c=c.charAt(0)+c.charAt(0)+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2);}
+      var nn=parseInt(c,16);
+      if(isNaN(nn)){return 'rgba(130,130,150,'+a+')';}
+      return 'rgba('+((nn>>16)&255)+','+((nn>>8)&255)+','+(nn&255)+','+a+')';
+    }
+    return hex;
+  }
+  function label(t,x,y,color,font,align){
+    ctx.fillStyle=color; ctx.font=font; ctx.textAlign=align||'center'; ctx.textBaseline='middle';
+    ctx.fillText(t,x,y);
+  }
+
+  function draw(){
+    var dpr=Math.max(1,Math.min(window.devicePixelRatio||1,2));
+    W=cv.clientWidth||720;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(!themeC){readTheme();}
+    var C=themeC;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.panel2; ctx.fillRect(0,0,W,H);
+
+    var font='11px "Segoe UI", system-ui, sans-serif';
+    var fontB='bold 11px "Segoe UI", system-ui, sans-serif';
+
+    var leftW=Math.round(W*0.60);
+    cx=leftW*0.5; cy=H*0.54; sceneR=Math.min(leftW,H)*0.40;
+
+    label('Ein zweischichtiger Schatten — helle invariante Oberfläche (S) über tiefer orthogonalen Schicht', W/2, 15, C.dim, font);
+
+    var muFrac=state.mu/100;
+    var wellR=sceneR*(0.24+muFrac*0.72);
+    var wg=ctx.createRadialGradient(cx,cy,2,cx,cy,Math.max(4,wellR));
+    wg.addColorStop(0,C.abyss); wg.addColorStop(0.6,C.abyss); wg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=state.coread?0.7:0.22;
+    ctx.fillStyle=wg; ctx.beginPath(); ctx.arc(cx,cy,wellR,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    for(var m=1;m<=4;m++){ ctx.beginPath(); ctx.arc(cx,cy,sceneR*m/4,0,Math.PI*2); ctx.stroke(); }
+
+    var n=8, twist=1.7, STEPS=40;
+    for(var i=0;i<n;i++){
+      var base=(i/n)*Math.PI*2 - Math.PI/2;
+      ctx.strokeStyle=rgba(C.accent,0.45); ctx.lineWidth=1.6;
+      ctx.beginPath();
+      for(var s=0;s<=STEPS;s++){
+        var t=s/STEPS, r=sceneR*(1-t), a=base+(1-t)*twist;
+        var x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r;
+        if(s===0){ctx.moveTo(x,y);}else{ctx.lineTo(x,y);}
+      }
+      ctx.stroke();
+      var p=(state.time*0.22 + i/n)%1;
+      var pr=sceneR*(1-p), pa=base+(1-p)*twist;
+      ctx.fillStyle=rgba(C.accent,0.92);
+      ctx.beginPath(); ctx.arc(cx+Math.cos(pa)*pr, cy+Math.sin(pa)*pr, 3, 0, Math.PI*2); ctx.fill();
+    }
+
+    var pulse=11+Math.sin(state.time*2)*3;
+    var zg=ctx.createRadialGradient(cx,cy,2,cx,cy,52);
+    zg.addColorStop(0,rgba(C.ok,0.4)); zg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.5; ctx.fillStyle=zg; ctx.beginPath(); ctx.arc(cx,cy,52,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=C.ok; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,pulse,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle=C.ok; ctx.beginPath(); ctx.arc(cx,cy,4,0,Math.PI*2); ctx.fill();
+    label('in-Modell-Kern K_in', cx, cy+pulse+14, C.ok, fontB);
+    label('(Limes/Attraktor · erreichbar)', cx, cy+pulse+27, C.dim, '10px "Segoe UI", sans-serif');
+
+    label('Größe μ (orthogonal)', cx, H-28, state.coread?C.accent3:C.dim, fontB);
+    label(state.coread?('Tiefe/Oomph = '+state.mu):'μ verdeckt (sizeless stare)', cx, H-13, state.coread?C.accent3:C.dim, '10px "Segoe UI", sans-serif');
+
+    var gx0=leftW+16, gx1=W-16, gw=Math.max(90,gx1-gx0);
+    var gy0=40, gy1=H-30, ghh=gy1-gy0;
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1; ctx.strokeRect(gx0,gy0,gw,ghh);
+
+    var deltaTop=gy0, deltaBot=gy0+ghh*0.20;
+    var inTop=deltaBot+10, inBot=gy1;
+
+    if(state.coread){
+      ctx.fillStyle=rgba(C.delta,0.16); ctx.fillRect(gx0,deltaTop,gw,deltaBot-deltaTop);
+      ctx.strokeStyle=C.delta; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+      ctx.strokeRect(gx0,deltaTop,gw,deltaBot-deltaTop); ctx.setLineDash([]);
+      label('jenseitiges Δ', gx0+gw/2, deltaTop+13, C.delta, fontB);
+      label('(Situs · unerreichbar)', gx0+gw/2, deltaTop+27, C.delta, '10px "Segoe UI", sans-serif');
+    } else {
+      ctx.fillStyle=rgba(C.dim,0.55);
+      ctx.font='10px "Segoe UI", sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('Δ verdeckt (nur S sichtbar)', gx0+gw/2, (deltaTop+deltaBot)/2);
+    }
+
+    var inH=(0.12+0.82*muFrac)*(inBot-inTop);
+    var inFillTop=inBot-inH;
+    ctx.fillStyle=rgba(C.accent2, state.coread?0.32:0.12);
+    ctx.fillRect(gx0+3, inFillTop, gw-6, inBot-inFillTop-3);
+
+    var resFrac=0.08+0.90*(state.res/100);
+    var approachY=inBot-3 - resFrac*((inBot-3)-(deltaBot+6));
+    if(approachY<deltaBot+6){approachY=deltaBot+6;}
+    ctx.strokeStyle=C.accent3; ctx.lineWidth=2.2;
+    ctx.beginPath(); ctx.moveTo(gx0+4, approachY); ctx.lineTo(gx1-4, approachY); ctx.stroke();
+    ctx.fillStyle=C.accent3;
+    ctx.beginPath(); ctx.arc(gx0+10, approachY, 3.5, 0, Math.PI*2); ctx.fill();
+    label('Annäherung (in-Modell)', gx0+gw/2, approachY-11, C.accent3, '10px "Segoe UI", sans-serif');
+
+    if(state.coread){
+      ctx.strokeStyle=C.delta; ctx.setLineDash([2,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(gx1-12, approachY); ctx.lineTo(gx1-12, deltaBot); ctx.stroke(); ctx.setLineDash([]);
+      ctx.save(); ctx.translate(gx1-5, (approachY+deltaBot)/2); ctx.rotate(-Math.PI/2);
+      label('Δ-Lücke (unerreichbar)', 0,0, C.delta, '9px "Segoe UI", sans-serif');
+      ctx.restore();
+    }
+
+    ctx.strokeStyle=C.accent; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(gx0+3, inBot-2); ctx.lineTo(gx1-3, inBot-2); ctx.stroke();
+    label('Oberfläche / Maske S — intakt (nie hinreichend)', gx0+gw/2, inBot+13, C.accent, '10px "Segoe UI", sans-serif');
+
+    if(roMu){ roMu.textContent=(state.coread?('Kern + μ = '+state.mu):'S allein (sizeless stare)'); }
+    if(roDelta){ roDelta.textContent= state.coread ? 'Δ > 0 (unerreichbar)' : 'Δ verdeckt'; roDelta.style.color = state.coread? C.delta : C.dim; }
+  }
+
+  function updateStatus(){
+    if(!statusEl){return;}
+    statusEl.textContent = state.coread
+      ? 'Ko-Lesung AN — du siehst den in-Modell-Kern K_in + seine Größe μ UND das jenseitige Δ (die unerreichbare Achse). Die Oberfläche S ist nur nie hinreichend.'
+      : 'Ko-Lesung AUS — du siehst nur die helle invariante Oberfläche S (sizeless stare / Kohärent = wahr): die Größe μ und das jenseitige Δ sind verdeckt.';
+  }
+
+  function refresh(){
+    draw(); updateStatus();
+    if(muVal){muVal.textContent=state.mu;}
+    if(resVal){resVal.textContent=state.res;}
+  }
+  function tick(){ state.time+=0.016; draw(); requestAnimationFrame(tick); }
+
+  if(muS){muS.addEventListener('input',function(){state.mu=+muS.value||0; refresh();});}
+  if(resS){resS.addEventListener('input',function(){state.res=+resS.value||0; refresh();});}
+  if(coreadBtn){coreadBtn.addEventListener('click',function(){
+    state.coread=!state.coread;
+    coreadBtn.textContent='Ko-Lesung μ + Δ: '+(state.coread?'AN':'AUS');
+    coreadBtn.classList.toggle('on',state.coread);
+    refresh();
+  });}
+  if(resetBtn){resetBtn.addEventListener('click',function(){
+    state.mu=55; state.res=65; state.coread=true;
+    if(muS){muS.value=55;} if(resS){resS.value=65;}
+    if(coreadBtn){coreadBtn.textContent='Ko-Lesung μ + Δ: AN'; coreadBtn.classList.add('on');}
+    refresh();
+  });}
+  if(themeBtn){themeBtn.addEventListener('click',function(){
+    root.classList.toggle('dark'); readTheme(); refresh();
+  });}
+  window.addEventListener('resize',function(){ readTheme(); refresh(); });
+
+  readTheme();
+  refresh();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

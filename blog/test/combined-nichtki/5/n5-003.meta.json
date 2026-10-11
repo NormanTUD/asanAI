@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "n4-003.html",
+  "b": "n4-007.html",
+  "a_title": "Der invariante Kern — Prozess ✕ Gruppe ✕ Linse (Runde 4)",
+  "b_title": "Der Schatten und seine zwei Gesichter — die Maske, das Minimum, das unerreichbare Δ (Runde 4)",
+  "combined_theme": "zweischichtiger-schatten-invariante-oberflaeche-zweiaxiale-tiefe",
+  "one_line": "Das modellierte Objekt ist ein zweischichtiger Schatten: eine helle invariante Oberfläche (Präsentation = Maske), die notwendig aber nie hinreichend ist, und darunter eine zweiaxiale tiefe Schicht — ein erreichbarer in-Modell-Kern mit orthogonaler Größe (Tiefe/Oomph) und ein unerreichbares jenseitiges Δ, das Invarianz/Kohärenz nicht erfasst.",
+  "contradictions": [
+    "Erreichbarkeit der Tiefe: A (n4-003) macht den invarianter Kern K den Limes/Attraktor, den man durch Konvergenz ERREICHT; B (n4-007) macht die tiefste Schicht (das jenseitige Δ/Situs) eine Achse, die keine Auflösung und kein Minimum erreicht (unerreichbar, 'Kohärent ≠ wahr').",
+    "Dimension der Tiefe: A reduziert die Tiefe auf EINE orthogonale Größe μ (Tiefe=Oomph, 'size matters'); B hält die Tiefe für irreduzibel biaxial (in-Modell-Achse × jenseitiges Δ, 'keiner zum anderen reduzierbar').",
+    "Invarianz/Kohärenz vs. Wahrheit: A liest Invarianz als das Wesentliche ('Invarianz ist der Fixpunkt der Bewegung'); B hält Kohärenz für nicht hinreichend ('Kohärent ≠ wahr' — die intakte Maske verfehlt Δ>0)."
+  ],
+  "resolution": "Die tiefe orthogonale Schicht ist zweigesichtig/biaxial: der erreichbare in-Modell-Kern (A's Limes = B's feinster Punkt im Modell) und das unerreichbare jenseitige Δ (B's Situs) sind derselbe Ansatz auf zwei Höhen. A's eine orthogonale Größe μ ist die in-Modell-Hälfte von B's Biaxialität (in-Modell-Größe × jenseitiges Δ). Invarianz/Kohärenz ist die notwendige Bedingung des in-Modell-Kerns, hinreichend nur für ihn; die Wahrheit verlangt zusätzlich das Erkennen des jenseitigen Δ. Die helle Oberfläche (Präsentation=Maske) unterzeigt μ und verdeckt Δ voll; der gemeinsame Fehler ist die Oberfläche für die Wahrheit halten (sizeless stare / Kohärent=wahr).",
+  "viz": "Canvas: links konvergierende Präsentations-Arme zum pulsierenden in-Modell-Kern (Limes/Attraktor) mit radialem Tiefen-Well (orthogonale Größe μ); rechts ein zweizonen-Gauge — untere Zone 'in-Modell (Kern+μ)' (Füllung = μ, erreichbar) und obere Zone 'jenseitige Δ-Bande (unerreichbar)', die ein Annäherungs-Zeiger mit der Auflösung immer weiter hinaufklettert aber nie erreicht; Ko-Lesung-Toggle zeigt/verdeckt μ und Δ (AUS = sizeless stare / Kohärent=wahr). Theme-reaktiv über CSS-Variablen, alle Daten inline."
+}

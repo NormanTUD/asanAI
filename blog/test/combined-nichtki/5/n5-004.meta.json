@@ -1,0 +1,16 @@
+{
+  "no": "004",
+  "a": "n4-005.html",
+  "b": "n4-008.html",
+  "a_title": "Ein Generator, zwei Lesarten, ein Spalt",
+  "b_title": "Das zentrumlose, maßtragende Fugenobjekt — zwei Adressen, ein Kippen",
+  "combined_theme": "zentrumloses-fugenobjekt-zwei-adressen-ein-spalt-ein-kippen",
+  "one_line": "Ein zentrumloses, maßtragendes, generatives Fugenobjekt mit zwei Adressen — dem erhaltenden, geschlossenen, zählbaren Wert (Zahl/Karte) und dem inexhaustiblen Spalt (Dichte/Terrain) — verbunden durch einen einzigen Kipp-Moment (Wann = Wand = σc), gesteuert von einem Regler; zugleich geschlossen (kehrt zurück) und offen (rennt aus).",
+  "contradictions": [
+    "Sitz des Realen: A lokalisiert das Ereignis an einem Punkt — das 'Wann' ist ein lokalisierbares Maximum einer lokalen Dichte (argmax, 'man zeigt auf einen Punkt'); B verweigert den Punkt/das Zentrum als Sitz des Realen (zentrumloses, verteiltes Medium O=W, 'keinen Punkt, keinen Rand, kein Zentrum als Substanz').",
+    "Priorität der zwei Adressen: A behandelt fein/grob als ko-equal, flache Lesarten eines Generators ('dieselbe Zweigeteiltheit, zwei Vantage Points', 'maschinell doppelt' — keine ontologische Priorität); B trägt eine skalenabhängige vertikale Priorität — über den Stack 'das Oben erzeugt das Unten' (die invariante Adresse begründet/erzeugt die realisierte).",
+    "Der Rest/Kern: A charakterisiert den Spalt als wohldefinierten, irreduziblen, stabilen Inhalt (Nicht-Abelschheit π₁, Monodromie, 'das Loch, das übrig bleibt' — er bleibt/übersteht); B als inexhaustible Offenheit (das Terrain 'übersteigt die Karte immer', ein konstitutiver Rest, der nie vollständig erfasst wird)."
+  ],
+  "resolution": "Das Reale ist zentrumlos als Substanz (kein Ding dahinter, Gewicht verteilt) und konzentriert als Ereignis (am Kipp-Moment σc); die zwei Adressen sind flach/ko-equal im Einzelzustand (beide Lesarten eines Generators) und vertikal begründet über den Stack (die invariante Adresse erzeugt die realisierte); der Spalt (A) ist das inexhaustible Terrain (B) — ein irreduzibler, nur global existierender Inhalt, der der diskreten/geschlossenen Adresse zugleich als konkreter Rest und als offene, ausrennende Unerschöpflichkeit durchgehend entgeht.",
+  "viz": "Canvas: das zentrumlose Fugenobjekt — geschlossene orange Kurve = invariante Adresse (Karte/Typ, der erhaltene Wert), durchgehende farbige Bahn = realisierte Adresse (Lift/Φ/Terrain), rot gestricheltes TOR = Fugenpunkt (Wann = Wand = σc). Regler Kopplung σ mit Kippen bei σc=50% (unterhalb Engung/Drift, oberhalb Weitung/Bindung = 'the same returns') plus Rausch q (Spalt/Terrain wandert in den Schwanz, der Peak bleibt bei H). Unteres Histogramm: erhaltene Gewichtsspitze bei H (Integral ∝ χ = Kohärenzpol) + inexhaustibler Terrain-Rest; Umschalter Zentrum↔Zentrumlos. Inline-Daten, themenaktiv, null Konsolenfehler."
+}

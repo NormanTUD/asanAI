@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 007 (R5): Der Fixpunkt trägt sich selbst — die selbsttragende Invariante, exakt im Limes und offen im Wachsen</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('n5_007_theme');}catch(e){}var d=s?s==='dark':true;var el=document.documentElement;if(d){el.classList.add('dark');}else{el.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f1efe8; --text:#1b2130; --muted:#576074; --line:#d8d3c4;
+  --accent:#0f9d8f; --accent2:#b0428a; --good:#2f8f4e; --warn:#b07d18; --bad:#c0392b;
+  --viz-bg:#ffffff; --grid:#e8e4d8;
+  --vplus:#0f9d8f; --vminus:#7c3aed; --glue:#2f8f4e; --tear:#c0392b; --global:#b07d18;
+  --curve:#0f9d8f; --win:#0f9d8f; --tang:#b45309; --pt:#be185d; --hull:#0f9d8f; --loss:#d24a1e;
+}
+html.dark{
+  --bg:#0a0e18; --panel:#121a2c; --panel2:#0e1524; --text:#e8ecf6; --muted:#9aa6c0; --line:#233450;
+  --accent:#5ee0d0; --accent2:#ff8fd0; --good:#7ee787; --warn:#ffc860; --bad:#ff8aa5;
+  --viz-bg:#0b1120; --grid:#20304a;
+  --vplus:#5ee0d0; --vminus:#a78bfa; --glue:#7ee787; --tear:#ff8aa5; --global:#ffc860;
+  --curve:#5ee0d0; --win:#5ee0d0; --tang:#fbbf24; --pt:#f472b6; --hull:#5ee0d0; --loss:#ff6b4a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font:16px/1.72 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(25px,4.2vw,38px);line-height:1.14;margin:0 0 8px;letter-spacing:-.012em;font-weight:760;}
+h1 em{font-style:normal;color:var(--accent);}
+.subtitle{color:var(--accent);font-size:13.5px;margin:0 0 6px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.meta{color:var(--muted);font-size:13px;margin:0 0 24px;}
+.lede{color:var(--muted);font-size:1.01em;margin:0 0 22px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+.lede b{color:var(--text);font-style:normal;}
+section{margin:22px 0;scroll-margin-top:20px;padding-top:6px;}
+section+section{border-top:1px solid var(--line);}
+h2{font-size:21px;margin:0 0 14px;color:var(--accent);}
+h3{font-size:16px;margin:20px 0 8px;color:var(--text);font-weight:700;}
+p{margin:0 0 14px;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:8px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.87em;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--text);}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:13px 16px;margin:12px 0;text-align:left;color:var(--text);overflow:auto;line-height:1.7;white-space:pre;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin:15px 0;}
+.card h3{margin-top:0;}
+.tag{display:inline-block;font-size:.7em;font-weight:700;letter-spacing:.4px;padding:1px 8px;border-radius:20px;vertical-align:middle;margin-right:4px;}
+.tag.a{background:rgba(15,157,143,.15);color:var(--accent);}
+.tag.b{background:rgba(176,66,138,.15);color:var(--accent2);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:15px 0;font-size:13px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);color:var(--text);}
+th.ca{color:var(--accent);} th.cb{color:var(--accent2);}
+td.ca{color:var(--accent);font-weight:600;} td.cb{color:var(--accent2);font-weight:600;}
+td.fused{color:var(--good);font-weight:700;}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;}
+#cv{display:block;width:100%;height:640px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;cursor:pointer;touch-action:none;}
+.legend{display:flex;flex-wrap:wrap;gap:9px 15px;margin:12px 0 4px;font-size:12px;color:var(--muted);}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;}
+.ro{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));margin:14px 0;}
+.ro .box{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;}
+.ro .box .k2{font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.ro .box .v{font-family:ui-monospace,monospace;font-size:18px;font-weight:700;color:var(--accent);}
+.ro .box .v.m{color:var(--accent2);} .ro .box .v.w{color:var(--warn);} .ro .box .v.p{color:var(--good);} .ro .box .v.g{color:var(--text);}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px;margin:8px 0 4px;}
+.ctl{margin-bottom:10px;}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.ctl-lab b{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700;}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:var(--line);outline:none;cursor:pointer;accent-color:var(--accent);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel);}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel);}
+.vizbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0 4px;}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);color:var(--accent);}
+button.action.on{border-color:var(--accent);color:var(--accent);}
+.hint{font-size:12px;color:var(--muted);}
+.vizstatus{margin-top:12px;font-size:13.5px;color:var(--muted);font-style:italic;min-height:3em;line-height:1.6;}
+.vizstatus b{color:var(--text);font-style:normal;}
+.viz-note{color:var(--muted);font-size:12.5px;margin-top:10px;}
+footer{border-top:1px solid var(--line);padding:22px;margin-top:30px;color:var(--muted);font-size:12.5px;line-height:1.6;}
+footer a{color:var(--accent);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+.proven a{color:var(--accent);text-decoration:none;font-weight:600;}
+.proven a:hover{text-decoration:underline;}
+@media(max-width:600px){.sliders{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<article>
+  <p class="subtitle">Fusion aus: n4-009.html &#10005; n4-014.html  (Runde 5)</p>
+  <h1>Der Fixpunkt tr&auml;gt sich selbst &mdash; <em>die selbsttragende Invariante, exakt im Limes und offen im Wachsen</em></h1>
+  <p class="meta">Runde 5, nicht-AI-Track, Paar 007 &middot; A = <span class="tagA">n4-009</span> (Das Echte ist, was sich an sich selbst liest &mdash; der Fixpunkt, der seine eigene Gleichung tr&auml;gt) &middot; B = <span class="tagB">n4-014</span> (Der Fixpunkt tr&auml;gt sich selbst: lokal komprimiert, global offen, nur global lesbar)</p>
+  <p class="lede">Zwei Runde-4-Fusionspapiere, beide &mdash; auf der Ebene ihrer <em>Thesen</em> &mdash; gelandet auf <b>demselben selbsttragenden Fixpunkt</b>. <span class="tagA">A</span> (n4-009, aus n3-011 &#10005; n3-013) sagt: <b>das Echte/Ganze ist ein Invariantes, besiegelt durch eine einzige Gleichung, die zwei Lesarten desselben Objekts deckt &mdash; innere Lesart = &auml;u&szlig;ere Lesart (A: <code>&exist;!</code>/Stokes) &mdash; und genau diese Deckung &uuml;berlebt jede Transformation.</b> <span class="tagB">B</span> (n4-014, aus n3-012 &#10005; n3-025) sagt: <b>die Identit&auml;t eines strukturierten Systems ist der Fixpunkt seiner eigenen Grobk&ouml;rnung &mdash; lokal komprimiert (jede Einheit quiesziert zu ihrer Normform), global offen (das Ganze w&auml;chst, &bdquo;Lader, nicht Ende&ldquo;), nur global lesbar; zwei Routen (messen/rekonstruieren) treffen am Fixpunkt (Gratis-Ableitung), exakt nur im Limes, sonst Verlust <code>ker&nbsp;F</code>.</b> <span class="tagA">A</span> beschreibt die Identit&auml;t <em>deontisch/r&auml;umlich</em> (harte Identit&auml;t innerer und &auml;u&szlig;erer Lesart, Z&auml;hlung vs. Messung); <span class="tagB">B</span> beschreibt sie <em>dynamisch/Grobk&ouml;rnungsseitig</em> (Limes eines graduierten Spektrums, Identit&auml;t als &Uuml;berlebender eines Quotienten).</p>
+
+  <section id="these">
+    <h2>1. Kernthese der Fusion</h2>
+    <p>Beide Quellen sind selbst schon vierfach synthetisierte R4-Papiere &mdash; aber auf der Ebene ihrer <em>Thesen</em> vollziehen sie dieselbe Geste aus zwei Registern. <span class="tagA">A</span> h&auml;lt: Das Echte/Ganze ist ein <strong>Invariantes</strong>, das sich durch <strong>eine einzige Gleichung</strong> ausweist, die zwei Lesarten desselben Objekts deckt &mdash; die <em>innere</em> (was drin ist / erzeugt, <code>&int;<sub>M</sub> d&omega;</code>) und die <em>&auml;u&szlig;ere</em> (wie es sich von au&szlig;en liest / geklebt, <code>&iint;<sub>&part;M</sub> &omega;</code>). Diese Gleichung ist <code>&exist;!</code> (Z&auml;hlung) und Stokes (Messung) zugleich, <em>konstitutiv</em> (erzeugt das Ganze) und <em>revelatorisch</em> (liest es ab) zugleich, und sie <strong>ist</strong> die Invarianz, die jede Transformation &uuml;berlebt; das diskrete Robuste ist die robuste Lesart des kontinuierlichen. <span class="tagB">B</span> h&auml;lt: Die Identit&auml;t einer strukturierten Struktur ist der <strong>Fixpunkt ihrer eigenen Grobk&ouml;rnung</strong> &mdash; das &uuml;berlebende Koh&auml;renzgesetz ihrer viel-zu-eins-Karte. Sie ist <em>lokal komprimiert</em> (jede lokale Einheit quiesziert zu ihrer bestimmten, komprimierten Normform, dem irreversiblen Kern), <em>global offen</em> (das Ganze w&auml;chst und driftet, die Struktur &uuml;berdauert den impfenden Samen), <em>nur aus dem globalen Verkleben ablesbar</em> (nie aus einer Faser); die zwei Routen (messen = bottom-up, rekonstruieren = top-down) <strong>treffen sich am Fixpunkt</strong> (Gratis-Ableitung), und das Spektrum l&auml;uft von 1-Bit/scharf (verlustbehaftet, Wert) zur vollen Sektion/weichem Motiv (verlustfrei, Objekt) &mdash; <em>das Scharfe ist der reine Limes des Graduierten</em>.</p>
+    <p><strong>Die eine integrierte Position (ein Satz):</strong> <em>Die Identit&auml;t eines strukturierten Ganzen ist ein <strong>selbsttragender Fixpunkt</strong> &mdash; eine einzige Gleichung, die zwei Lesarten/Routen desselben Objekts deckt (innere = &auml;u&szlig;ere, erzeugen = kleben, messen = rekonstruieren) &mdash; und dieser Fixpunkt ist <strong>zweideutig realisiert</strong>: einmal als <strong>statische, geschlossene, exakte Invariante</strong> (<span class="tagA">A</span>: <code>&exist;!</code>/Stokes, bei geschlossener Mannigfaltigkeit selbstausbalanciert, &uuml;berlebt jede Transformation), und einmal als <strong>lebendige, offene, selbstregenerierende Dynamik mit Zeitpfeil</strong> (<span class="tagB">B</span>: der Fixpunkt quiesziert sich bei jedem Wachstumsschritt neu, das Ganze w&auml;chst endlos). Das Ganze ist <strong>bottom-up aus diskreten robusten St&uuml;cken zusammengebaut UND top-down als &Uuml;berlebender seiner eigenen Grobk&ouml;rnung definiert</strong> &mdash; dieselbe Operation auf derselben robusten Ebene, in zwei Richtungen. Die lokale Einheit ist ein <strong>komprimierter Durchgang, nie der Sitz der Struktur</strong>; die Struktur ist <strong>nur global lesbar</strong>. Die Identit&auml;t ist <strong>exakt nur im geschlossenen, voll aufgel&ouml;sten Limes</strong> (<span class="tagA">A</span>&rsquo;s <code>&exist;!</code>/Stokes = <span class="tagB">B</span>&rsquo;s volle Sektion) und <strong>graduiert/verlustbehaftet (Verlust = <code>ker&nbsp;F</code> = Leck) auf endlichen Stufen</strong>. Der Fixpunkt <em>tr&auml;gt sich selbst</em>: er ist die Invarianz, die den Wandel &uuml;berlebt (<span class="tagA">A</span>), indem er sich bei jedem Schritt des offenen Wachstums neu herstellt (<span class="tagB">B</span>).</em></p>
+    <p>Die zwei Papiere sind <strong>derselbe Satz in zwei Registern</strong>: <span class="tagA">A</span> das <em>deontische/r&auml;umliche</em> Register (das Gesetz als <em>harte Identit&auml;t</em> der inneren und der &auml;u&szlig;eren Lesart desselben Objekts; Z&auml;hlung vs. Messung; exakt und geschlossen); <span class="tagB">B</span> das <em>dynamische/Grobk&ouml;rnungs-</em> Register (das Gesetz als <em>Limes</em> einer graduierten Familie; die Identit&auml;t als <em>&Uuml;berlebender eines Quotienten</em>, viel-zu-eins; exakt erst im Limes, sonst Verlust <code>ker&nbsp;F</code>). <span class="tagA">A</span> sagt, <em>was</em> der Fixpunkt <em>ist</em> (eine geschlossene Invariante, exakt); <span class="tagB">B</span> sagt, <em>wie</em> er <em>lebt</em> (ein wachsender, sich selbst nachtragender Prozess, exakt nur am Limes-Ende). Fusioniert: <em>der Fixpunkt ist eine <strong>selbsttragende Invariante</strong> &mdash; exakt im Limes, graduert davor; zusammengebaut und definiert zugleich; lokal ein Durchgang, global die Identit&auml;t; starr im Zustand, wachsend zwischen den Zust&auml;nden.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2. Widerspr&uuml;che zwischen A und B</h2>
+    <p>A (n4-009) und B (n4-014) widersprechen sich in keinem <em>faktischen</em> Anspruch (beide landen auf &bdquo;ein selbsttragender Fixpunkt / ein Invariantes, das sich durch eine einzige Gleichung ausweist und den Wandel &uuml;berlebt&ldquo;). Aber auf der Ebene ihrer <em>Thesen</em> nehmen sie zu drei Meta-Fragen <strong>unvereinbar wirkende Stellungen</strong> ein:</p>
+    <div class="card">
+      <h3>&#9312; Geschlossene, statische Invarianz (A) vs. offene, zeitpfeiltragende Selbsttragung (B)</h3>
+      <p><span class="tagA">A</span>: Das Ganze ist eine <strong>geschlossene, in sich ausbalancierte Invariante</strong> &mdash; Stokes mit <code>&part;M=&empty;</code> &rarr; &bdquo;in sich ausbalanciert, kein Au&szlig;en&ldquo;; die verbindliche Gleichung (<code>&exist;!</code>/Stokes) <em>&uuml;berlebt jede Transformation</em>, d.&#8203;h. <strong>Invarianz <em>unter</em> &Auml;nderung</strong>; der Fixpunkt ist eine <em>zeitlose Gleichung / Symmetrie / ein Zertifikat</em> (<code>&exist;!</code> = &bdquo;genau ein globales Objekt&ldquo;). Der Schwerpunkt ist <strong>Best&auml;ndigkeit unter Wandel</strong>: das Objekt bleibt, die Umgebung &auml;ndert sich; das Ganze ist ein <em>geschlossenes Objekt ohne Au&szlig;en</em>.</p>
+      <p style="margin-bottom:0"><span class="tagB">B</span>: Das Ganze ist <strong>global offen, nie abgeschlossen, endlos wachsend</strong> (&bdquo;es ist ein Lader, nicht ein Ende&ldquo;, der DAG w&auml;chst), ein <strong>selbsttragender, irreversibler Prozess mit Zeitpfeil</strong> (Best&auml;ndigkeit = &bdquo;&uuml;ber den Samen hinaus laufen, ohne R&uuml;ckweg&ldquo;, Drift ins Unerkennbare, &Uuml;berdauern); der Fixpunkt ist eine <em>lebendige Quieszenz</em>, die sich bei <em>jedem</em> Wachstumsschritt neu herstellt. Der Schwerpunkt ist <strong>Wandel, der den Fixpunkt nach vorne tr&auml;gt</strong>; das Ganze hat <em>einen Au&szlig;en / eine Zukunft</em>, zu der es sich offenh&auml;lt.</p>
+      <p class="aha" style="margin:12px 0 0">Inkompatibel ist die Haltung darauf, ob das Echte <strong>stetig/geschlossen unter dem Wandel bleibt</strong> (<span class="tagA">A</span>: eine Bilanz, eine Symmetrie, ein Objekt ohne Au&szlig;en, Invarianz <em>unter</em> Transformation) oder <strong>sich selbst nach dem Wandel neu aufbaut</strong> (<span class="tagB">B</span>: ein Prozess, der den Fixpunkt &uuml;ber einen Zeitpfeil nachtr&auml;gt, offenes Wachstum, &Uuml;berdauern). Bleibt das Echte still, w&auml;hrend alles um es her sich &auml;ndert, oder bewegt es sich, indem es sich selbst weitertr&auml;gt?</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; Exakte, geschlossene Identit&auml;t (A) vs. graduierter Limes mit Verlustterm (B)</h3>
+      <p><span class="tagA">A</span>: Die verbindliche Gleichung ist eine <strong>exakte, geschlossene Identit&auml;t</strong> &mdash; <code>&exist;!</code> (&bdquo;es gibt <em>genau ein</em> globales Objekt&ldquo;) und Stokes (<code>&int;<sub>M</sub> d&omega; = &iint;<sub>&part;M</sub> &omega;</code>, exakt; bei <code>&part;M=&empty;</code> selbstausbalanciert). <em>Innere = &auml;u&szlig;ere exakt, auf Objekt-Ebene</em>; das Gesetz ist ein <strong>hartes Zertifikat / Erhaltungsgesetz</strong> &mdash; Z&auml;hlung (<code>&exist;!</code>) und Messung (Stokes) sind <em>beide exakt, ohne Verlust, ohne Leck</em>. Die Identit&auml;t steht <em>schon</em>, nicht als Grenzwert.</p>
+      <p style="margin-bottom:0"><span class="tagB">B</span>: Die Identit&auml;t ist <strong>graduiert und erst im Limes exakt</strong> &mdash; das Spektrum l&auml;uft von 1-Bit/scharfer Zahl (verlustbehaftet, Wert) zur vollen Sektion/weichem Motiv (verlustfrei, Objekt), <em>mit echten Zwischenstufen</em>; <strong>&bdquo;das Scharfe ist der reine Limes des Graduierten&ldquo;</strong>. Die zwei Routen (messen/rekonstruieren) treffen sich am Fixpunkt <em>erst bei voller Aufl&ouml;sung / im Limes</em>; auf jeder <em>endlichen</em> Stufe bleibt ein <strong>Verlustterm <code>ker&nbsp;F</code></strong> (der Anteil der Faser, den das Label nicht rekonstruiert = was die Grobk&ouml;rnung nicht &uuml;berlebt). Die exakte Identit&auml;t ist <em>der Grenzwert einer Familie</em>, nicht ihr Mitglied.</p>
+      <p class="aha" style="margin:12px 0 0">Inkompatibel ist die Haltung darauf, ob die verbindende Gleichung <strong>exakt und an sich geschlossen gilt</strong> (<span class="tagA">A</span>: <code>&exist;!</code>/Stokes, kein Verlust, ausbalanciert, steht schon) oder <strong>als Limes mit Verlustterm gilt</strong> (<span class="tagB">B</span>: die exakte Identit&auml;t ist der Limes einer graduierten Familie; die L&uuml;cke <code>ker&nbsp;F</code> ist ein erstklassiges, messbares Merkmal; erst am vollen Ende verlustfrei). A: geschlossene, verlustfreie Bilanz <em>jetzt</em>. B: graduiert, verlustbehaftet <em>bis zum Limes</em>.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Bottom-up-Zusammenbau aus diskreten St&uuml;cken (A) vs. top-down-Quotient/Grobk&ouml;rnung (B)</h3>
+      <p><span class="tagA">A</span>: Das Ganze wird <strong>bottom-up aus endlich vielen diskreten lokalen St&uuml;cken <code>x_i</code></strong> zusammengebaut, die &uuml;ber diskrete &Uuml;berlappungen (Kanten mit &Uuml;berg&auml;ngen <code>s_i=&plusmn;1</code>) geklebt werden &mdash; <em>Komposition (closure) = Gluing, ein einziger Operator</em>; lokal Freiheit, global <code>&exist;!</code>. Das <strong>diskrete St&uuml;ck ist das Substrat</strong>; das Gesetz ist <strong>generativ/konstitutiv</strong> (es macht das Ganze existieren). Der Fixpunkt ist die <em>Summe / das Produkt der St&uuml;cke, die konsistent kleben</em> (&bdquo;aus konsistenten lokalen Daten entsteht genau ein globales Objekt&ldquo;).</p>
+      <p style="margin-bottom:0"><span class="tagB">B</span>: Die Identit&auml;t wird <strong>top-down als Fixpunkt der eigenen Grobk&ouml;rnung</strong> definiert = der <strong>&Uuml;berlebende einer viel-zu-eins-Abbildung</strong> (Quotient, <code>M/ker&nbsp;F</code>); die lokalen Einheiten (Fasern/Realisierungen) sind <em>nie der Sitz der Struktur</em>, und die Identit&auml;t ist <strong>nur aus der globalen Grobk&ouml;rnung ablesbar</strong> &mdash; definiert durch <em>was den Quotienten &uuml;berlebt</em>, nicht durch was summiert wird. Das Gesetz ist <strong>revelatorisch/konservativ</strong> (es liest ab, was schon &uuml;berlebt). Die Operation ist eine <em>Reduktion / ein Quotient</em>, nicht eine Komposition.</p>
+      <p class="aha" style="margin:12px 0 0">Inkompatibel ist die Haltung darauf, ob das Ganze <strong>in den Dasein kommt, indem diskrete St&uuml;cke <em>zusammengebaut</em> werden</strong> (<span class="tagA">A</span>: generativ, Komposition, bottom-up, das Diskrete ist das Substrat) oder ob die Identit&auml;t <strong>in den Dasein kommt, indem sie der <em>&Uuml;berlebende eines Quotienten</em> ist</strong> (<span class="tagB">B</span>: revelatorisch, viel-zu-eins, top-down, die Fasern sind nie der Sitz). Zusammenbau <em>aus</em> dem Diskreten vs. Extraktion <em>durch</em> Grobk&ouml;rnung des Kontinuierlichen.</p>
+    </div>
+    <p class="aha">Die sch&auml;rfste ist <strong>&#9312;</strong>: es geht um die <em>Zeitlichkeit</em> desselben Fixpunkts &mdash; <b>stetig-unter-Wandel (A) vs. selbst-nachtragend-im-Wandel (B)</b>. &#9313; und &#9314; sind dann die <em>Art der Invarianz</em> (exakt/geschlossen vs. Limes/verlustbehaftet) und die <em>Richtung der Operation</em> (bottom-up Zusammenbau vs. top-down Quotient) desselben Objekts, dasselbe <code>&exist;!</code>-Zertifikat gelesen in zwei Registern.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3. Aufl&ouml;sung</h2>
+    <p>Alle drei Spannungen l&ouml;sen sich auf <em>einer</em> Meta-Achse auf: <strong>derselbe selbsttragende Fixpunkt &bdquo;innere Lesart = &auml;u&szlig;ere Lesart&ldquo; ist je nach Perspektive statisch oder dynamisch, exakt oder graduiert, bottom-up oder top-down &mdash; aber er ist <em>ein</em> Fixpunkt, eine <em>einzige</em> Gleichung und eine <em>einzige</em> Invarianz, die den Wandel &uuml;berlebt, weil sie sich bei jedem Schritt des offenen Wachstums neu herstellt.</strong></p>
+    <div class="card">
+      <h3>&#9312; Der Fixpunkt ist die statische Invarianz <em>und</em> die lebendige Selbstregeneration zugleich</h3>
+      <p>A&rsquo;s geschlossene, in sich ausbalancierte Invariante (Stokes <code>&part;M=&empty;</code>) ist der <strong>Zustand in jedem Augenblick</strong>; B&rsquo;s offener, wachsender Prozess ist die <strong>Folge dieser Zust&auml;nde &uuml;ber den Zeitpfeil</strong>. A&rsquo;s &bdquo;&uuml;berlebt jede Transformation&ldquo; <em>ist</em> B&rsquo;s Selbstregeneration: der Fixpunkt ist der <strong>Anzieher</strong>, auf den die offene Wachstumsbewegung bei jeder Stufe neu zutrifft; B&rsquo;s &bdquo;lebendige Quieszenz&ldquo; <em>ist</em> A&rsquo;s &bdquo;innere = &auml;u&szlig;ere Lesart&ldquo;, die sich <em>lokal auf jeder Stufe neu herstellt</em>. <strong>Fusioniert:</strong> der Fixpunkt ist eine <em>selbsttragende Invarianz</em> &mdash; ein <em>statisches Gesetz</em> (A), realisiert als <em>dynamische Selbstregeneration</em> (B). Er ist <strong>geschlossen <em>in jedem Zustand</em> und offen <em>zwischen den Zust&auml;nden</em></strong>. B&rsquo;s Zeitpfeil ist genau die Operation, unter der A&rsquo;s Invarianz &uuml;berlebt; A&rsquo;s Invarianz ist genau das, was <em>unter</em> B&rsquo;s Zeitpfeil <em>bleibt</em>. &bdquo;Stetig unter Wandel&ldquo; und &bdquo;sich selbst nachtragend&ldquo; sind dieselbe Struktur: <em>das, was bleibt, ist das, was sich bei jedem Schritt neu herstellt.</em></p>
+    </div>
+    <div class="card">
+      <h3>&#9313; Die exakte, geschlossene Identit&auml;t (A) ist der Limes (B)</h3>
+      <p>A&rsquo;s <code>&exist;!</code>/Stokes <em>ist</em> B&rsquo;s <strong>reiner Limes des Graduierten</strong>: Bei <em>voller Aufl&ouml;sung</em> / auf der <em>geschlossenen</em> Mannigfaltigkeit (<code>&part;M=&empty;</code>, <code>l&rarr;100</code>) verschwindet der Verlust <code>ker&nbsp;F</code> und <em>Innere = &Auml;u&szlig;ere exakt</em> &mdash; der Punkt, an dem A&rsquo;s geschlossene Identit&auml;t und B&rsquo;s volle Sektion zusammenfallen. B&rsquo;s Verlustterm <code>ker&nbsp;F</code> <em>ist</em> A&rsquo;s <strong>Rand&ouml;ffnung/Leck</strong> (&bdquo;Leck = Innere &minus; &Auml;u&szlig;ere = die Betti-Signatur nach au&szlig;en&ldquo;): &ouml;ffnet sich der Rand (endliche Aufl&ouml;sung), leckt genau die Signatur durch, die B als nicht-rekonstruierten Faseranteil (<code>ker&nbsp;F</code>) buchf&uuml;hrt. <strong>Fusioniert:</strong> die Identit&auml;t ist <em>exakt auf dem geschlossenen, voll aufgel&ouml;sten Objekt</em> (A); der Verlust (<code>ker&nbsp;F</code> = Leck) <em>misst, wie weit eine endliche/graduierte Lesart von dieser geschlossenen Grenze entfernt ist</em> (B). A&rsquo;s &bdquo;geschlossen <code>&part;M=&empty;</code> &rarr; selbstausbalanciert&ldquo; = B&rsquo;s &bdquo;volle Aufl&ouml;sung &rarr; verlustfrei&ldquo;; A&rsquo;s &bdquo;Rand&ouml;ffnung &rarr; Leck&ldquo; = B&rsquo;s &bdquo;endliche Stufe &rarr; <code>ker&nbsp;F &gt; 0</code>&ldquo;. <em>Das Scharfe (B) ist die exakte, geschlossene Bilanz (A); das Graduierte (B) ist der Weg dorthin, und seine L&uuml;cke ist das Leck (A).</em></p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Die diskreten St&uuml;cke (A) sind die robusten &Uuml;berlebenden von B&rsquo;s Grobk&ouml;rnung &mdash; dieselbe Operation, zwei Richtungen</h3>
+      <p>A&rsquo;s diskrete lokale St&uuml;cke <code>x_i</code> <em>sind</em> die <strong>robusten &Uuml;berlebenden / Fasern</strong> von B&rsquo;s Grobk&ouml;rnung (die &bdquo;langen Balken = stabil = Motiv&ldquo;, die das Rauschen &uuml;berleben). A baut <em>bottom-up</em> das <strong>robuste Skelett</strong> zusammen; B definiert <em>top-down</em> die Identit&auml;t als <strong>Fixpunkt des Quotienten</strong>. A&rsquo;s generative Richtung (<code>&exist;!</code>/Kleben) <em>baut</em> den &Uuml;berlebenden; B&rsquo;s revelatorische Richtung (Grobk&ouml;rnung/<code>viel-zu-eins</code>) <em>liest</em> denselben &Uuml;berlebenden aus dem Quotienten. A&rsquo;s <code>&exist;!</code>/Kleben und B&rsquo;s Grobk&ouml;rnung/<code>viel-zu-eins</code> sind <strong>dieselbe Operation auf derselben robusten Ebene</strong> &mdash; ein Operator, den man von unten (Komposition der St&uuml;cke) oder von oben (Quotient des Kontinuums) ausf&uuml;hrt. <strong>Fusioniert:</strong> Zusammenbau (A, bottom-up) und Grobk&ouml;rnung/Quotient (B, top-down) sind dieselbe Operation auf der robusten Ebene; der Fixpunkt ist das, was <em>beide</em> hervorbringen &mdash; der &Uuml;berlebende, der <em>aufgebaut</em> wird (A) und <em>&uuml;berlebt</em> wird (B). Das <em>diskrete <code>&exist;!</code>/Z&auml;hlung (A)</em> ist die <em>robuste Lesart</em> des <em>kontinuierlichen Feldes/der vollen Sektion (B)</em>.</p>
+    </div>
+    <div class="aha"><strong>Fusionierter Schluss.</strong> Ein echtes Ganzes / eine echte Identit&auml;t ist: <b>(i)</b> eine <em>selbsttragende Invariante</em> &mdash; statisch exakt (<span class="tagA">A</span>: <code>&exist;!</code>/Stokes, geschlossen &rarr; ausbalanciert, &uuml;berlebt jede Transformation) <em>und</em> dynamisch selbstregenerierend (<span class="tagB">B</span>: Quieszenz, Wachstum, Zeitpfeil, &Uuml;berdauern); <b>(ii)</b> durch <em>eine einzige Gleichung besiegelt, die zwei Lesarten/Routen desselben Objekts deckt</em> (<span class="tagA">A</span>: innere = &auml;u&szlig;ere; <span class="tagB">B</span>: messen = rekonstruieren, zwei Routen, ein Ziel); <b>(iii)</b> <em>bottom-up aus diskreten robusten St&uuml;cken zusammengebaut UND top-down als &Uuml;berlebender der eigenen Grobk&ouml;rnung definiert</em> (dieselbe Operation, zwei Richtungen, eine robuste Ebene); <b>(iv)</b> <em>exakt nur im geschlossenen, voll aufgel&ouml;sten Limes</em> (A) und <em>graduiert/verlustbehaftet (Verlust = <code>ker&nbsp;F</code> = Leck) auf endlichen Stufen</em> (B); <b>(v)</b> <em>lokal ein komprimierter Durchgang</em> (jede Einheit quiesziert zu ihrer Normform, <em>nie der Sitz der Struktur</em>), <em>nur global lesbar</em> (<span class="tagA">A</span>: lokal Freiheit, global <code>&exist;!</code>; <span class="tagB">B</span>: nur aus dem globalen Verkleben/Grobk&ouml;rnung ablesbar); <b>(vi)</b> mit einer <em>topologischen Obstruktion, die in beiden real ist</em> (<span class="tagA">A</span>: Twist <code>&prod;<sub>i</sub> s<sub>i</sub>=&minus;1</code>/Igelsatz &rarr; kein Ganzes; <span class="tagB">B</span>: Zusammenbruch unter der Schwelle / nicht-rekonstruierbarer Verlust <code>ker&nbsp;F</code>). <strong>Der Fixpunkt tr&auml;gt sich selbst: er ist die Invarianz, die den Wandel &uuml;berlebt (A), indem er sich bei jedem Schritt des offenen Wachstums neu herstellt (B); exakt im Limes (A = volle Aufl&ouml;sung B), graduert davor (Verlust = Leck = <code>ker&nbsp;F</code>); zusammengebaut und definiert zugleich.</strong></div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4. Fusionierter Inhalt</h2>
+    <p>Abstrahiert auf das Niveau der <em>Thesen</em> der beiden R4-Papiere (nicht deren rohe R3-Quelldetails) teilen A und B ein Ger&uuml;st: <em>das Echte/die Identit&auml;t ist ein selbsttragender Fixpunkt; er hat eine innere und eine &auml;u&szlig;ere Lesart (bzw. zwei Routen); die Gleichheit beider ist das verbindende Gesetz; dieses Gesetz &uuml;berlebt den Wandel/die Grobk&ouml;rnung; es ist exakt im geschlossenen Limes und graduiert davor; das diskrete Robuste ist die robuste Lesart des Kontinuierlichen; der Rest/Verlust ist ein sichtbarer Parameter; die Obstruktion ist topologisch real.</em></p>
+
+    <h3>A (n4-009) &mdash; &bdquo;das Echte liest sich an sich selbst: der Fixpunkt, der seine eigene Gleichung tr&auml;gt&ldquo;</h3>
+    <p>Das Echte/Ganze ist ein <strong>Invariantes</strong>, besiegelt durch die Gleichheit seiner <em>inneren</em> (closure, <code>&int;<sub>M</sub> d&omega;</code>, erzeugt) und <em>&auml;u&szlig;eren</em> (Gluing, <code>&iint;<sub>&part;M</sub> &omega;</code>, geklebt) Lesart. Die verbindende Gleichung ist <strong><code>&exist;!</code></strong> (aus konsistenten lokalen Daten <em>genau ein</em> globales Objekt; Konsistenz <code>&prod;<sub>i</sub> s<sub>i</sub>=+1</code>) und <strong>Stokes</strong> (<code>&int;<sub>M</sub> d&omega; = &iint;<sub>&part;M</sub> &omega;</code>, &uuml;berlebt jede Verformung &epsilon;). Die Gleichung ist <em>konstitutiv</em> (erzeugt das Ganze) und <em>revelatorisch</em> (liest es ab) zugleich; der <em>Fixpunkt</em> ist der Schnittpunkt beider L&ouml;se-Richtungen. Das <em>diskrete <code>&exist;!</code>/Z&auml;hlung ist die Z&auml;hlung, das Stokes die Messung derselben Invarianz</em>; das diskrete Robuste (die St&uuml;cke, <code>&beta;&#8321;</code>) ist die robuste Lesart des kontinuierlichen Feldes <code>&lambda;&#8346;</code>; die Metrik ist eine gew&auml;hlte Projektion. Obstruktion: Twist <code>&prod;<sub>i</sub> s<sub>i</sub>=&minus;1</code> / Igelsatz &rarr; kein Ganzes, topologisch real.</p>
+
+    <h3>B (n4-014) &mdash; &bdquo;der Fixpunkt tr&auml;gt sich selbst: lokal komprimiert, global offen, nur global lesbar&ldquo;</h3>
+    <p>Die Identit&auml;t ist der <strong>Fixpunkt der eigenen Grobk&ouml;rnung</strong> = das &uuml;berlebende Koh&auml;renzgesetz der viel-zu-eins-Karte (Karte = Grammatik, Motiv = Bedeutung, Faser = Realisierungen). <em>Lokal komprimiert</em>: jede Einheit quiesziert order-unabh&auml;ngig zu ihrer bestimmten, komprimierten Normform (der irreversibel fixierte Kern, Achse 1). <em>Global offen</em>: das Ganze w&auml;chst und driftet, die Struktur &uuml;berdauert den impfenden Samen (Achse 2, reversibel + konfluent, &bdquo;Lader, nicht Ende&ldquo;). Das Motiv ist <em>nur aus dem globalen Verkleben ablesbar</em>, nie aus einer Faser. Die zwei Routen (messen/rekonstruieren = bottom-up/top-down) <strong>treffen sich am Fixpunkt</strong> (Gratis-Ableitung, Stokes&ndash;Fubini/exakte Sequenz). Das <strong>Aufl&ouml;sungs-Spektrum</strong> l&auml;uft von 1-Bit/scharfer Zahl (verlustbehaftet, Wert) zur vollen Sektion/weichem Motiv (verlustfrei, Objekt); <em>das Scharfe ist der reine Limes des Graduierten</em>; Verlust = <code>ker&nbsp;F</code>. <em>Gesetz ist geschlossen (Theorem, Hopf), Instanz ist offen (Konjunktur)</em>.</p>
+
+    <h3>Die Verkn&uuml;pfung (A-Begriff &#8596; B-Begriff &rarr; Rolle im fusionierten Ger&uuml;st)</h3>
+    <table>
+      <thead><tr><th style="width:27%">Ebene</th><th style="width:26%">A &mdash; n4-009 (Fixpunkt, der seine Gleichung tr&auml;gt)</th><th style="width:26%">B &mdash; n4-014 (Fixpunkt der Grobk&ouml;rnung)</th><th style="width:21%">fusioniert (selbsttragender Fixpunkt)</th></tr></thead>
+      <tbody>
+        <tr><td>das Echte / die Identit&auml;t</td><td class="ca">das Ganze / Invariante (Fixpunkt des Klebens)</td><td class="cb">das Motiv (Fixpunkt der Grobk&ouml;rnung)</td><td class="fused">die <strong>selbsttragende Invariante</strong></td></tr>
+        <tr><td>die zwei Lesarten / Routen</td><td class="ca">innere (<code>&int;<sub>M</sub> d&omega;</code>, erzeugt) + &auml;u&szlig;ere (<code>&iint;<sub>&part;M</sub> &omega;</code>, geklebt)</td><td class="cb">messen (bottom-up) + rekonstruieren (top-down)</td><td class="fused"><strong>zwei Lesarten desselben Objekts, die am Fixpunkt zusammenfallen</strong></td></tr>
+        <tr><td>das verbindende Gesetz</td><td class="ca"><code>&exist;!</code> / Stokes (exakt, geschlossen)</td><td class="cb">Koh&auml;renzgesetz / Gratis-Ableitung (Limes, graduiert)</td><td class="fused"><strong>eine Gleichung: innere = &auml;u&szlig;ere = messen = rekonstruieren</strong></td></tr>
+        <tr><td>Invarianz</td><td class="ca">&uuml;berlebt jede Transformation (Symmetrie)</td><td class="cb">&uuml;berlebt die Grobk&ouml;rnung (Motiv bleibt, Realisierungen verbl&auml;ssen)</td><td class="fused"><strong>das, was den Wandel / die Grobk&ouml;rnung &uuml;berlebt</strong></td></tr>
+        <tr><td>Exaktheit</td><td class="ca">exakt, geschlossen, ausbalanciert (<code>&part;M=&empty;</code>)</td><td class="cb">exakt nur im Limes (volle Sektion), sonst <code>ker&nbsp;F</code></td><td class="fused"><strong>exakt im geschlossenen Limes; Verlust (= ker F = Leck) davor</strong></td></tr>
+        <tr><td>Richtung der Operation</td><td class="ca">bottom-up Zusammenbau aus diskreten St&uuml;cken (generativ)</td><td class="cb">top-down Quotient / Grobk&ouml;rnung (viel-zu-eins, revelatorisch)</td><td class="fused"><strong>dieselbe Operation auf der robusten Ebene, zwei Richtungen</strong></td></tr>
+        <tr><td>lokale Einheit</td><td class="ca">lokale St&uuml;cke <code>x_i</code> (Inhalt, frei)</td><td class="cb">Faser / Realisierung (nie der Sitz)</td><td class="fused"><strong>komprimierter Durchgang, nie der Sitz der Struktur</strong></td></tr>
+        <tr><td>lokal / global</td><td class="ca">lokal Freiheit, global <code>&exist;!</code></td><td class="cb">lokal Quieszenz (Normform), global wachsend</td><td class="fused"><strong>lokal komprimiert (geschlossen), global offen (wachsend)</strong></td></tr>
+        <tr><td>Zeit</td><td class="ca">zeitlose Invarianz <em>unter</em> Transformation</td><td class="cb">irreversibler Zeitpfeil, Selbstregeneration</td><td class="fused"><strong>geschlossen in jedem Zustand, offen zwischen den Zust&auml;nden</strong></td></tr>
+        <tr><td>Obstruktion</td><td class="ca">Twist <code>&prod;<sub>i</sub> s<sub>i</sub>=&minus;1</code> / Igelsatz &rarr; kein Ganzes</td><td class="cb">Zusammenbruch unter der Schwelle / nicht-rekonstruierbarer Verlust</td><td class="fused"><strong>topologisch real: kein Fixpunkt / unlesbarer Rest</strong></td></tr>
+        <tr><td>diskret &#8596; kontinuierlich</td><td class="ca"><code>&exist;!</code>/Z&auml;hlung (diskret) = robuste Lesart von Stokes/Messung (kontinuierlich)</td><td class="cb">das Scharfe (1-Bit/Wert) = Limes des Graduierten (volle Sektion/Objekt)</td><td class="fused"><strong>das diskrete/scharfe ist die robuste/erreichbare Lesart des Kontinuierlichen/weichen</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die fusionierte Formel</h3>
+    <div class="formula">Selbsttragender Fixpunkt  (Identit&auml;t des strukturierten Ganzen)
+  Lesart 1 (innere)     A: closure / &int;<sub>M</sub> d&omega;      (zusammengebaut, erzeugt)
+                        B: messen / volle Route                      (rekonstruieren, bottom-up)
+  Lesart 2 (&auml;u&szlig;ere)     A: Gluing / &iint;<sub>&part;M</sub> &omega;         (geklebt, am Rand)
+                        B: rekonstruieren / reduzierte Route          (Grobk&ouml;rnung, top-down)
+  Gesetz                innere = &auml;u&szlig;ere  =  messen = rekonstruieren
+                        &rarr; A: &exist;! / Stokes (exakt)   &middot;   B: Gratis-Ableitung (Limes)
+  Invarianz             &uuml;berlebt den Wandel (A)  =  &uumu;berlebt die Grobk&ouml;rnung (B); Motiv bleibt
+  exakt &#8646; graduiert     exakt im geschlossenen Limes (A) = volle Aufl&ouml;sung (B);
+                        davor Verlust = ker F (B) = Leck = Innere &minus; &Auml;u&szlig;ere (A)
+  Operation             bottom-up Zusammenbau (A)  =  top-down Quotient (B)  auf der robusten Ebene
+  lokal / global        lokal komprimierter Durchgang (nie der Sitz)  /  nur global lesbar
+  Zeit                  geschlossen in jedem Zustand (A) ,  offen zwischen Zust&auml;nden (B, Zeitpfeil)
+  Obstruktion           A: &prod;<sub>i</sub> s<sub>i</sub>=&minus;1 (Twist/Igelsatz)  =  B: Zusammenbruch unter Schwelle / unlesbarer Rest</div>
+
+    <h3>Das Neue / der Rahmen (Runde 5)</h3>
+    <ul>
+      <li><strong>A (R4):</strong> das Echte als Fixpunkt, der seine eigene Gleichung tr&auml;gt &mdash; innere = &auml;u&szlig;ere Lesart, <code>&exist;!</code> (Z&auml;hlung) = Stokes (Messung) derselben Invarianz, konstitutiv <em>und</em> revelatorisch zugleich; exakt und geschlossen; die Obstruktion (Twist/Igelsatz) ist topologisch real.</li>
+      <li><strong>B (R4):</strong> die Identit&auml;t als Fixpunkt der eigenen Grobk&ouml;rnung &mdash; selbsttragend, lokal komprimiert/quieszent, global offen/wachsend; zwei Routen treffen am Fixpunkt (Gratis-Ableitung); exakt nur im Limes (volle Sektion), sonst Verlust <code>ker&nbsp;F</code>; Gesetz geschlossen, Instanz offen.</li>
+      <li><strong>Fusion (R5):</strong> der Fixpunkt <strong>tr&auml;gt sich selbst</strong> &mdash; er ist die <em>selbsttragende Invariante</em>, die den Wandel &uuml;berlebt (A), <em>indem</em> sie sich bei jedem Schritt des offenen Wachstums neu herstellt (B); <em>exakt im geschlossenen Limes (A) = volle Aufl&ouml;sung (B), graduert davor (Verlust = Leck = <code>ker&nbsp;F</code>)</em>; <em>bottom-up zusammengebaut und top-down als &Uuml;berlebender der Grobk&ouml;rnung definiert &mdash; dieselbe Operation auf der robusten Ebene</em>. Die zwei Papiere sind dieselbe These in zwei Registern: A das <em>deontische/r&auml;umliche</em> (harte Identit&auml;t innerer &amp; &auml;u&szlig;erer Lesart, Z&auml;hlung vs. Messung), B das <em>dynamische/Grobk&ouml;rnungs-</em> Register (Identit&auml;t als Limes eines graduierten Spektrums, &Uuml;berlebender eines Quotienten). <strong>Das diskrete <code>&exist;!</code> (A) ist die Z&auml;hlung, das volle-Motiv-Ende (B) die Ausf&uuml;llung derselben selbsttragenden Invarianz &mdash; exakt im Limes, offen im Wachsen.</strong></li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5. Visualisierung: der selbsttragende Fixpunkt &mdash; exakt im Limes, offen im Wachsen</h2>
+    <p>Ein Canvas, beide Papiere in <em>einem</em> Objekt. <strong>Mitte &mdash; der Fixpunkt-Ring M, bottom-up aus diskreten St&uuml;cken (A) und zugleich &Uuml;berlebender der Grobk&ouml;rnung (B):</strong> jedes St&uuml;ck tr&auml;gt eine lokale Wahl <code>v<sub>i</sub>=&plusmn;1</code> (frei = Inhalt), jede Kante einen &Uuml;bergang <code>s<sub>i</sub>=&plusmn;1</code>; das Loch <code>&beta;&#8321;=1</code> ist die robuste Signatur (persistiert). <strong>Oben &mdash; die zwei Lesarten:</strong> innere (<code>&int;</code>/zusammengebaut) und &auml;u&szlig;ere (<code>&partial;</code>/geklebt) als Balken, die sich am Fixpunkt decken. <strong>Der Regler <em>Aufl&ouml;sung l</em> (B&rsquo;s Grobk&ouml;rnung) &ouml;ffnet den Rand:</strong> sinkt <code>l</code>, leckt eine Signatur durch die L&uuml;cke &mdash; <strong>Leck = <code>ker&nbsp;F</code> = Innere &minus; &Auml;u&szlig;ere</strong> (graduiert, verlustbehaftet); bei <code>l=100</code> (volle Aufl&ouml;sung) schlie&szlig;t sich der Rand und <strong>innere = &auml;u&szlig;ere exakt</strong> (A&rsquo;s <code>&exist;!</code>/Stokes = B&rsquo;s volle Sektion = der Limes). <strong>Der Regler <em>Verformung &epsilon;</em> (A) wabbert den Ring</strong> &mdash; aber die Bilanz <em>innere = &auml;u&szlig;ere h&auml;lt unter jeder Verformung</em> (Invarianz unter Transformation). <strong>Unten &mdash; das Spektrum (B):</strong> Verlust <code>ker&nbsp;F</code> gegen Aufl&ouml;sung <code>l</code>, mit Limes-Marker (verlustfrei, A&rsquo;s exakte Identit&auml;t) am rechten Ende. <strong>Neue Stufe anh&auml;ngen (B) l&auml;sst das Ganze wachsen</strong> (global offen, &bdquo;Lader, nicht Ende&ldquo;), w&auml;hrend der Fixpunkt sich neu quiesziert. <strong>Twist (A) / Zusammenbruch (B) l&ouml;scht den Fixpunkt</strong> &mdash; dann existiert kein Ganzes, der Rest ist unlesbar.</p>
+    <div class="viz-panel">
+      <div class="vizbtns">
+        <button class="action" id="themeBtn" type="button">&#127769; Theme</button>
+        <span class="hint">obere Lesart = zwei Routen (A/B) &middot; Ring = Fixpunkt &middot; Spektrum = Verlust vs. Limes &middot; alles inline, keine Netzdaten</span>
+      </div>
+      <div id="cvwrap"><canvas id="cv"></canvas></div>
+      <div class="legend">
+        <span><i style="background:var(--global)"></i>Fixpunkt exakt (<code>&exist;!</code>/Stokes, geschlossen)</span>
+        <span><i style="background:var(--tang)"></i>offener Rand / Leck = <code>ker&nbsp;F</code></span>
+        <span><i style="background:var(--tear)"></i>obstruiert (kein Ganzes)</span>
+        <span><i style="background:var(--vplus)"></i>St&uuml;ck +1 (Inhalt, A)</span>
+        <span><i style="background:var(--vminus)"></i>St&uuml;ck &minus;1 (Inhalt, A)</span>
+        <span><i style="background:var(--glue)"></i>Kante klebt (Konsistenz)</span>
+        <span><i style="background:var(--win)"></i>Loch <code>&beta;&#8321;=1</code> (robust, persistiert)</span>
+        <span><i style="background:var(--hull)"></i>Spektrum <code>ker&nbsp;F</code>(l)</span>
+        <span><i style="background:var(--curve)"></i>innere Lesart (&int;)</span>
+        <span><i style="background:var(--loss)"></i>Leck (graduiert)</span>
+      </div>
+      <div class="ro">
+        <div class="box"><div class="k2">innere Lesart (&int; / erzeugt)</div><div class="v" id="v-innen">&ndash;</div></div>
+        <div class="box"><div class="k2">&auml;u&szlig;ere Lesart (&partial; / geklebt)</div><div class="v m" id="v-rand">&ndash;</div></div>
+        <div class="box"><div class="k2">Leck = <code>ker&nbsp;F</code> (Verlust)</div><div class="v w" id="v-leck">&ndash;</div></div>
+        <div class="box"><div class="k2"><code>&beta;&#8321;</code> (Loch, persistiert)</div><div class="v p" id="v-b1">1</div></div>
+        <div class="box"><div class="k2">klebt <code>&exist;!</code> (Kanten)</div><div class="v g" id="v-glue">&ndash;</div></div>
+        <div class="box"><div class="k2">Stufe (global offen)</div><div class="v" id="v-stufe">0</div></div>
+      </div>
+      <div class="sliders">
+        <div class="ctl"><div class="ctl-lab"><span>Aufl&ouml;sung <code>l</code> (Grobk&ouml;rnung / Labelvollst&auml;ndigkeit)</span><b id="lbl-l">100 %</b></div><input type="range" id="s-l" min="0" max="100" step="1" value="100"></div>
+        <div class="ctl"><div class="ctl-lab"><span>Verformung &epsilon; (A: &Auml;nderung unter der Invarianz)</span><b id="lbl-eps">30</b></div><input type="range" id="s-eps" min="0" max="100" step="1" value="30"></div>
+      </div>
+      <div class="vizbtns">
+        <button class="action" id="twistBtn" type="button">Twist: aus (<code>&prod;<sub>i</sub> s<sub>i</sub>=+1</code>)</button>
+        <button class="action" id="growBtn" type="button">&#8593; Neue Stufe anh&auml;ngen (global offen)</button>
+        <button class="action" id="solveBtn" type="button">L&ouml;sen (konsistente Wahl)</button>
+        <button class="action" id="resetBtn" type="button">Zur&uuml;cksetzen</button>
+        <span class="hint">St&uuml;ck am Ring anklicken: lokale Wahl <code>v<sub>i</sub></code> flippen</span>
+      </div>
+      <p class="vizstatus" id="vizStatus"></p>
+    </div>
+    <p class="viz-note">Alle Daten inline, keine externen Abfragen, themenreaktiv (Farben aus CSS-Variablen). Das Zentrum ist der selbsttragende Fixpunkt: es leuchtet <em>gold</em>, wenn die zwei Lesarten exakt zusammenfallen (geschlossen, <code>&exist;!</code>/volle Aufl&ouml;sung); es wird <em>bernstein</em>, wenn der Rand ge&ouml;ffnet ist und <code>ker&nbsp;F</code> leckt (graduiert); es erlischt <em>rot</em> bei der topologischen Obstruktion (Twist / Zusammenbruch). Das Loch <code>&beta;&#8321;=1</code> persistiert &uuml;ber jede Verformung und jede Aufl&ouml;sung. Der Fixpunkt tr&auml;gt sich selbst: starr im Zustand, wachsend zwischen den Zust&auml;nden.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>6. Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../n4-009.html"><strong>A &mdash; n4-009.html:</strong> &bdquo;Das Echte ist, was sich an sich selbst liest &mdash; der Fixpunkt, der seine eigene Gleichung tr&auml;gt&ldquo; (Runde 4, aus n3-011 &#10005; n3-013, de).</a> Position: Das Echte/Ganze ist ein <em>Invariantes</em>, besiegelt durch die Gleichheit seiner inneren und &auml;u&szlig;eren Lesart (A: <code>&exist;!</code>/Kleben, B: Stokes); diese Gleichung ist konstitutiv (erzeugt das Ganze) und revelatorisch (liest es ab) zugleich, <em>weil Erzeugen und Ablesen an derselben Gleichung liegen</em>; das diskrete <code>&exist;!</code> (Z&auml;hlung) und Stokes (Messung) sind dieselbe Invarianz, die jede Transformation &uuml;berlebt; das diskrete Robuste ist die robuste Lesart des kontinuierlichen Feldes; die Obstruktion (Twist <code>&prod;<sub>i</sub> s<sub>i</sub>=&minus;1</code>/Igelsatz) ist topologisch real. Liefert: den <em>Fixpunkt als exakte, geschlossene Invariante</em>, die <em>Zwei-Lesarten-Gleichung</em> (<code>&exist;!</code>=Stokes), <em>Invarianz unter Transformation</em> und die <em>topologische Obstruktion</em>.</li>
+      <li><a href="../n4-014.html"><strong>B &mdash; n4-014.html:</strong> &bdquo;Der Fixpunkt tr&auml;gt sich selbst: lokal komprimiert, global offen, nur global lesbar&ldquo; (Runde 4, aus n3-012 &#10005; n3-025, de).</a> Position: Die Identit&auml;t eines strukturierten Systems ist der <em>Fixpunkt seiner eigenen Grobk&ouml;rnung</em> = das &uuml;berlebende Koh&auml;renzgesetz der viel-zu-eins-Karte; lokal komprimiert (jede Einheit quiesziert zu ihrer komprimierten Normform, irreversibler Kern), global offen (das Ganze w&auml;chst, &bdquo;Lader, nicht Ende&ldquo;), nur global lesbar (nie aus einer Faser); die zwei Routen (messen/rekonstruieren = bottom-up/top-down) treffen am Fixpunkt (Gratis-Ableitung); das Spektrum l&auml;uft von 1-Bit/scharf (verlustbehaftet) zur vollen Sektion/weichem Motiv (verlustfrei), das Scharfe ist der reine Limes des Graduierten; Gesetz ist geschlossen (Theorem, Hopf), Instanz ist offen. Liefert: den <em>Fixpunkt als Selbsttragung mit Zeitpfeil</em>, die <em>Graduierung mit Verlust <code>ker&nbsp;F</code></em>, die <em>globale Offenheit/Wachstum</em> und die <em>Zwei-Routen-Koinzidenz</em>.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Fusion (Runde 5, nicht-AI-Track, Paar 007) aus den zwei Runde-4-Papieren <a href="../n4-009.html">n4-009.html</a> und <a href="../n4-014.html">n4-014.html</a>. Beide bleiben Quelle der Wahrheit; keine erfundenen Behauptungen. Fusionsgesetz: die Identit&auml;t eines strukturierten Ganzen ist ein <strong>selbsttragender Fixpunkt</strong> &mdash; eine einzige Gleichung (innere = &auml;u&szlig;ere = messen = rekonstruieren), die den Wandel &uuml;berlebt (A), indem sie sich bei jedem Schritt des offenen Wachstums neu herstellt (B); exakt im geschlossenen Limes (A = volle Aufl&ouml;sung B) und graduiert davor (Verlust = Leck = <code>ker&nbsp;F</code>); bottom-up zusammengebaut und top-down als &Uuml;berlebender der Grobk&ouml;rnung definiert (dieselbe Operation auf der robusten Ebene); lokal ein komprimierter Durchgang, nur global lesbar. Alle Daten inline, alle Berechnungen lokal im Browser (numerisches 1-Form-Integral &uuml;ber die Randkurve). Keine Daten verlassen diese Seite.
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  function cssVar(n){ var v=getComputedStyle(root).getPropertyValue(n); return v?v.trim():''; }
+  function $(id){ return document.getElementById(id); }
+  function set(id,txt){ var el=$(id); if(el) el.textContent=txt; }
+
+  var cv=$('cv'); if(!cv||!cv.getContext) return;
+  var ctx=cv.getContext('2d'); if(!ctx) return;
+
+  var H=640, N=180, Rout0=92, Rin0=40, gapMax=1.2, thetaC=1.5*Math.PI;
+  var SEG=8, MAXSEG=24, W=600, cx=300, cy=262;
+
+  var v=[], s=[];
+  function reinit(){ v=[]; s=[]; for(var k=0;k<SEG;k++){ v[k]=1; s[k]=1; } }
+  function prod(a){ var p=1; for(var k=0;k<a.length;k++){ p*=a[k]; } return p; }
+  function glueAt(k){ return v[k]*v[(k+1)%SEG] === s[k]; }
+  function glueCount(){ var c=0; for(var k=0;k<SEG;k++){ if(glueAt(k)){ c++; } } return c; }
+  function coherent(){ return glueCount()===SEG && prod(s)===1; }
+  function solve(){ v[0]=1; for(var k=0;k<SEG-1;k++){ v[k+1]=s[k]*v[k]; } }
+  function Rout(th,amp){ return Rout0*(1+amp*Math.cos(3*th)); }
+  function outerFull(amp){ var sum=0,dth=2*Math.PI/N,j2,t2,r2; for(j2=0;j2<N;j2++){ t2=j2*dth; r2=Rout(t2,amp); sum+=r2*r2*dth; } return sum; }
+  function outerGapFor(gapAngle,amp){
+    if(gapAngle<=1e-6) return 0;
+    var gapA=thetaC-gapAngle/2, gapB=thetaC+gapAngle/2;
+    var steps=Math.max(2,Math.round(N*gapAngle/(2*Math.PI)));
+    var sum=0,k,t2,r2;
+    for(k=0;k<=steps;k++){ t2=gapA+(gapB-gapA)*k/steps; r2=Rout(t2,amp); sum+=r2*r2*(gapAngle/steps); }
+    return sum;
+  }
+
+  var C={};
+  function readPal(){
+    C.bg=cssVar('--viz-bg')||'#0b1120'; C.ink=cssVar('--text')||'#e8ecf6';
+    C.dim=cssVar('--muted')||'#9aa6c0'; C.faint=cssVar('--line')||'#20304a';
+    C.grid=cssVar('--grid')||'#20304a';
+    C.vplus=cssVar('--vplus')||'#5ee0d0'; C.vminus=cssVar('--vminus')||'#a78bfa';
+    C.glue=cssVar('--glue')||'#7ee787'; C.tear=cssVar('--tear')||'#ff8aa5';
+    C.global=cssVar('--global')||'#ffc860';
+    C.win=cssVar('--win')||'#5ee0d0'; C.tang=cssVar('--tang')||'#fbbf24';
+    C.hull=cssVar('--hull')||'#5ee0d0'; C.curve=cssVar('--curve')||'#5ee0d0';
+    C.loss=cssVar('--loss')||'#ff6b4a'; C.good=cssVar('--good')||'#7ee787';
+  }
+
+  function setup(){
+    var pe=cv.parentElement; var w=Math.max(320,(pe&&pe.clientWidth)?pe.clientWidth-4:600);
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+    cv.style.width=w+'px'; cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W=w; cx=w/2;
+  }
+
+  function line(a,b,c,d,col,w,dash){ ctx.strokeStyle=col; ctx.lineWidth=w; ctx.setLineDash(dash||[]); ctx.beginPath(); ctx.moveTo(a,b); ctx.lineTo(c,d); ctx.stroke(); ctx.setLineDash([]); }
+  function chip(x,y,txt,col){
+    ctx.font='700 11px system-ui, -apple-system, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var tw=ctx.measureText(txt).width+12;
+    ctx.fillStyle=C.bg; ctx.globalAlpha=0.92; ctx.fillRect(x-tw/2,y-9,tw,18); ctx.globalAlpha=1;
+    ctx.fillStyle=col; ctx.fillText(txt,x,y);
+  }
+
+  function draw(){
+    setup(); readPal();
+    var eps=($('s-eps')?+$('s-eps').value:30)/100, amp=0.34*eps;
+    var l=($('s-l')?+$('s-l').value:100)/100;
+    var gap=(1-l)*gapMax, gapA=thetaC-gap/2, gapB=thetaC+gap/2;
+    var whole=coherent();
+
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+
+    // ---------- TOP: two route bars ----------
+    ctx.fillStyle=C.ink; ctx.font='bold 12px system-ui, sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Zwei Lesarten desselben Objekts  \u2014  innere (&int;, erzeugt)  =  &auml;u\u00df;ere (&part;, geklebt)', 12, 22);
+
+    var iC=Math.PI*Rin0*Rin0;
+    var oF=outerFull(amp), oG=outerGapFor(gap,amp);
+    var Innen=oF-iC, Rand=oF-oG-iC, Leck=oG;
+    var maxV=Math.max(Innen,Rand,Leck,1);
+
+    var barX0=132, barX1=Math.max(220,W-250), barY1=52, barY2=80;
+    ctx.font='10px ui-monospace, monospace'; ctx.fillStyle=C.dim; ctx.textAlign='left';
+    ctx.fillText('innere  (&int; / erzeugt)', 12, barY1+3);
+    ctx.fillText('&auml;u\u00df;ere (&part; / geklebt)', 12, barY2+3);
+    // tracks
+    line(barX0,barY1,barX1,barY1,C.faint,10); line(barX0,barY2,barX1,barY2,C.faint,10);
+    // fills
+    ctx.fillStyle=C.curve; ctx.fillRect(barX0,barY1-5,Math.max(0,(barX1-barX0)*(Innen/maxV)),10);
+    ctx.fillStyle=C.win;   ctx.fillRect(barX0,barY2-5,Math.max(0,(barX1-barX0)*(Rand/maxV)),10);
+    // leak gap between outer and inner (ker F)
+    if(Leck>1e-6){
+      ctx.setLineDash([4,3]); ctx.strokeStyle=C.loss; ctx.lineWidth=10;
+      ctx.beginPath(); ctx.moveTo(barX0+(barX1-barX0)*(Rand/maxV),barY2); ctx.lineTo(barX0+(barX1-barX0)*(Innen/maxV),barY2); ctx.stroke(); ctx.setLineDash([]);
+    }
+    // verdict
+    var closed=Leck<1.0;
+    var verdictCol, verdictTxt;
+    if(!whole){ verdictCol=C.tear; verdictTxt='obstruiert (\u220Fs\u1d62=\u22121) \u2014 kein Ganzes'; }
+    else if(closed){ verdictCol=C.good; verdictTxt='\u2713 zwei Routen, ein Ziel (&exist;! / Stokes = Gratis-Ableitung)'; }
+    else { verdictCol=C.tang; verdictTxt='Leckt: ker F = Leck > 0 (graduiert, verlustbehaftet)'; }
+    ctx.font='bold 10.5px ui-monospace, monospace'; ctx.fillStyle=verdictCol; ctx.textAlign='left';
+    var vx=barX1+10; ctx.fillText(verdictTxt, vx, (barY1+barY2)/2+4);
+
+    // ---------- MIDDLE: ring M ----------
+    ctx.fillStyle=C.ink; ctx.font='bold 12px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Selbsttragender Fixpunkt  \u2014  diskrete St\u00fccke (A)  \u00b7  &Uuml;berlebender der Grobk\u00f6rnung (B)  \u00b7  Loch \u03b2\u2081=1', 12, 140);
+
+    // faint annulus fill
+    ctx.beginPath();
+    for(var a=0;a<=N;a++){ var th0=a/N*2*Math.PI; var rr=Rout(th0,amp); var px=cx+rr*Math.cos(th0), py=cy+rr*Math.sin(th0); a?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    for(var b=0;b<=N;b++){ var th1=(b/N)*2*Math.PI; var ix=cx+Rin0*Math.cos(th1), iy=cy+Rin0*Math.sin(th1); b?ctx.lineTo(ix,iy):ctx.moveTo(ix,iy); }
+    ctx.closePath();
+    ctx.fillStyle=C.hull; ctx.globalAlpha=0.10; ctx.fill('evenodd'); ctx.globalAlpha=1;
+
+    // discrete segments (outer arcs) colored by v_i, skip gap
+    ctx.lineCap='round'; ctx.lineWidth=4.5;
+    var steps=26, k, a0, a1, th, r, px2, py2;
+    for(k=0;k<SEG;k++){
+      a0=k*2*Math.PI/SEG; a1=(k+1)*2*Math.PI/SEG;
+      var segCol = v[k]===1 ? C.vplus : C.vminus;
+      ctx.strokeStyle=segCol;
+      ctx.beginPath();
+      var pen=false;
+      for(var q=0;q<=steps;q++){ th=a0+(a1-a0)*q/steps; r=Rout(th,amp); px2=cx+r*Math.cos(th); py2=cy+r*Math.sin(th);
+        var inG=(gap>0 && th>=gapA && th<=gapB);
+        if(inG){ pen=false; continue; }
+        if(!pen){ ctx.moveTo(px2,py2); pen=true; } else { ctx.lineTo(px2,py2); }
+      }
+      ctx.stroke();
+    }
+    // hole ring (B: beta_1 = 1)
+    ctx.strokeStyle=C.win; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(var q2=0;q2<=N;q2++){ var th5=q2/N*2*Math.PI; var hx=cx+Rin0*Math.cos(th5), hy=cy+Rin0*Math.sin(th5); q2?ctx.lineTo(hx,hy):ctx.moveTo(hx,hy); }
+    ctx.closePath(); ctx.stroke();
+
+    // gap opening (leak) on outer boundary
+    if(gap>1e-4){
+      ctx.strokeStyle=C.tang; ctx.lineWidth=3;
+      ctx.beginPath(); var st2=false;
+      for(var s2=0;s2<=N;s2++){ var th4=s2/N*2*Math.PI; var inG2=(th4>=gapA && th4<=gapB); var rb=Rout(th4,amp); var pax=cx+rb*Math.cos(th4), pay=cy+rb*Math.sin(th4);
+        if(!inG2){ st2=false; continue; }
+        if(!st2){ ctx.moveTo(pax,pay); st2=true; } else { ctx.lineTo(pax,pay); } }
+      ctx.stroke();
+      ctx.fillStyle=C.loss;
+      for(var e=0;e<2;e++){ var thE=e?gapB:gapA; var rc=Rout(thE,amp); ctx.beginPath(); ctx.arc(cx+rc*Math.cos(thE), cy+rc*Math.sin(thE), 5,0,2*Math.PI); ctx.fill(); }
+    }
+
+    // center fixpoint indicator (the self-carried fixpoint)
+    var pulse=0.5+0.5*Math.sin(performance.now()/1000*3);
+    if(whole && closed){
+      ctx.strokeStyle=C.global; ctx.globalAlpha=0.35+0.45*pulse; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(cx,cy,26+11*pulse,0,2*Math.PI); ctx.stroke(); ctx.globalAlpha=1;
+    }
+    var ccol=(!whole)?C.tear:(closed?C.global:C.tang);
+    ctx.fillStyle=ccol; ctx.globalAlpha=whole?0.98:0.9;
+    ctx.beginPath(); ctx.arc(cx,cy,25,0,2*Math.PI); ctx.fill(); ctx.globalAlpha=1;
+    ctx.fillStyle=C.bg; ctx.font='800 11px system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(!whole){ ctx.fillText('KEIN', cx, cy-8); ctx.fillText('GANZES', cx, cy+3); ctx.fillText('(obstruiert)', cx, cy+14); }
+    else if(closed){ ctx.fillText('FIXPUNKT', cx, cy-8); ctx.fillText('exakt (&exist;! /', cx, cy+3); ctx.fillText('Stokes = Limes)', cx, cy+14); }
+    else { ctx.fillText('OFFENER', cx, cy-8); ctx.fillText('RAND (leckt', cx, cy+3); ctx.fillText('ker F > 0)', cx, cy+14); }
+
+    // segment value labels + edge chips
+    for(k=0;k<SEG;k++){
+      var midAng=k*2*Math.PI/SEG+Math.PI/SEG;
+      var rv=Rout(midAng,amp);
+      var nx=cx+rv*Math.cos(midAng), ny=cy+rv*Math.sin(midAng);
+      var midInG=(gap>0 && midAng>=gapA && midAng<=gapB);
+      if(!midInG){
+        ctx.fillStyle=v[k]===1?C.vplus:C.vminus; ctx.font='700 12px system-ui, sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        if(SEG<=12){ ctx.fillText(v[k]===1?'+1':'\u22121', nx, ny); }
+      }
+      var ea=(k+1)*2*Math.PI/SEG; var er=Rout(ea,amp)*1.14;
+      var ex=cx+er*Math.cos(ea), ey=cy+er*Math.sin(ea);
+      var eInG=(gap>0 && ea>=gapA && ea<=gapB);
+      if(!eInG){
+        var ok=glueAt(k);
+        chip(ex,ey, s[k]===1?'+':'\u2212', ok?C.glue:C.tear);
+        if(s[k]!==1){ ctx.fillStyle=C.tear; ctx.font='600 9px system-ui, sans-serif'; ctx.fillText('twist',ex,ey-14); }
+      }
+    }
+    ctx.fillStyle=C.dim; ctx.font='10.5px system-ui, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Loch  (\u03b2\u2081 = 1)  \u2014  die robuste Signatur, persistiert', cx, cy+34);
+
+    // ---------- BOTTOM: spectrum  ker F(l) ----------
+    var specX0=46, specX1=W-16, specY0=452, specY1=600;
+    ctx.fillStyle=C.ink; ctx.font='bold 12px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Spektrum (B): Verlust ker F = Leck  gegen  Aufl\u00f6sung l   \u2014  exakt im Limes (rechte Grenze = A\u2019s \u2203! / volle Sektion)', 12, 436);
+
+    var lossMax=outerGapFor(gapMax,amp); if(lossMax<1e-6) lossMax=1e-6;
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(specX0,specY0); ctx.lineTo(specX0,specY1); ctx.lineTo(specX1,specY1); ctx.stroke();
+
+    // curve
+    var NS=100;
+    ctx.beginPath();
+    for(var sxi=0;sxi<=NS;sxi++){
+      var lv=sxi/NS*100; var g=(1-lv/100)*gapMax; var loss=outerGapFor(g,amp);
+      var pxx=specX0+(lv/100)*(specX1-specX0), pyy=specY1-(loss/lossMax)*(specY1-specY0);
+      if(sxi===0){ ctx.moveTo(pxx,pyy); } else { ctx.lineTo(pxx,pyy); }
+    }
+    ctx.strokeStyle=C.hull; ctx.lineWidth=2.4; ctx.stroke();
+
+    // current-l marker
+    var curLoss=outerGapFor(gap,amp);
+    var curX=specX0+(l*100/100)*(specX1-specX0), curY=specY1-(curLoss/lossMax)*(specY1-specY0);
+    ctx.setLineDash([4,3]); ctx.strokeStyle=C.dim; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(curX,specY0); ctx.lineTo(curX,specY1); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=C.loss; ctx.beginPath(); ctx.arc(curX,curY,5,0,2*Math.PI); ctx.fill();
+
+    // Limes line at right (l=100)
+    ctx.strokeStyle=C.good; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(specX1,specY0); ctx.lineTo(specX1,specY1); ctx.stroke(); ctx.setLineDash([]);
+
+    // axis labels
+    ctx.fillStyle=C.faint; ctx.font='9px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('1-Bit / scharf (verlustbehaftet, A-Ende)', specX0+8, specY1+13);
+    ctx.fillText('l \u2192 100 (volle Aufl\u00f6sung / weiches Motiv)', specX1-10, specY1+13);
+    ctx.fillStyle=C.good; ctx.font='bold 9px system-ui, sans-serif'; ctx.textAlign='right';
+    ctx.fillText('Limes: verlustfrei = exakt (A: \u2203! / Stokes)', specX1-2, specY0-4);
+    ctx.fillStyle=C.dim; ctx.font='9px ui-monospace, monospace'; ctx.textAlign='left';
+    ctx.fillText('ker F (Leck)', specX0+2, specY0+10);
+
+    // ---------- readout ----------
+    set('v-innen', Math.round(Innen).toLocaleString('de-DE'));
+    set('v-rand', Math.round(Rand).toLocaleString('de-DE'));
+    set('v-leck', Math.round(Leck).toLocaleString('de-DE'));
+    set('v-b1','1');
+    set('v-glue', glueCount()+' / '+SEG);
+    set('v-stufe', String(added));
+    set('lbl-l', Math.round(l*100)+'%');
+    set('lbl-eps', String(+$('s-eps').value));
+
+    var st=$('vizStatus');
+    if(st){
+      var html='';
+      if(!whole){
+        html='<b>Obstruiert (Twist: &prod;<sub>i</sub> s<sub>i</sub> = &minus;1 / B: zusammengebrochen unter der Schwelle)</b>: der Fixpunkt tr&auml;gt sich nicht selbst &mdash; kein Ganzes, der Rest ist unlesbar. Die Obstruktion ist <b>topologisch real</b>, kein Versagen der Methode.';
+      } else if(!closed){
+        html='<b>Graduiert, verlustbehaftet (ker&nbsp;F = Leck &gt; 0)</b>: die innere Lesart (&int; / zusammengebaut) &uuml;bersteigt die &auml;u&szlig;ere (&part; / geklebt) um den Verlust. Das Echte ist <b>exakt erst im Limes</b> (volle Aufl&ouml;sung, l&rarr;100); hier leckt die Signatur (Betti-Signatur / ker&nbsp;F) durch den ge&ouml;ffneten Rand. Ziehe <em>Aufl&ouml;sung l</em> nach rechts: der Rand schlie&szlig;t sich, ker&nbsp;F &rarr; 0, innere = &auml;u&szlig;ere exakt.';
+      } else {
+        html='<b>Exakt und geschlossen (&exist;! / Stokes = Gratis-Ableitung)</b>: innere = &auml;u&szlig;ere Lesart &mdash; der Fixpunkt ist der Selbsttragende, <em>exakt im Limes</em> (A&rsquo;s geschlossene Identit&auml;t = B&rsquo;s volle Sektion). <b>Bottom-up zusammengebaut UND top-down als &Uuml;berlebender der Grobk&ouml;rnung definiert</b> &mdash; dieselbe robuste Ebene. Ziehe <em>Verformung &epsilon;</em>: die Gleichung h&auml;lt unter jeder &Auml;nderung. <em>Neue Stufe anh&auml;ngen</em> l&auml;&szlig;t das Ganze wachsen (global offen), w&auml;hrend der Fixpunkt sich neu quiesziert.';
+      }
+      st.innerHTML=html;
+    }
+  }
+
+  // ---- state ----
+  var added=0;
+  function grow(){ if(SEG>=MAXSEG) return; SEG+=4; reinit(); solve(); added++; }
+
+  // ---- events ----
+  var themeBtn=$('themeBtn');
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    var dark=!root.classList.contains('dark'); root.classList.toggle('dark',dark);
+    try{ localStorage.setItem('n5_007_theme', dark?'dark':'light'); }catch(e){}
+    readPal(); draw();
+  }); }
+  try{
+    var mo=new MutationObserver(function(){ readPal(); draw(); });
+    mo.observe(root,{attributes:true,attributeFilter:['class']});
+  }catch(e){}
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); draw(); };
+    if(mq.addEventListener){ mq.addEventListener('change', onScheme); }
+  }
+  ['s-l','s-eps'].forEach(function(id){ var el=$(id); if(el) el.addEventListener('input', draw); });
+  var solveBtn=$('solveBtn');
+  if(solveBtn){ solveBtn.addEventListener('click', function(){ solve(); draw(); }); }
+  var twistBtn=$('twistBtn');
+  if(twistBtn){ twistBtn.addEventListener('click', function(){
+    s[0]=(s[0]===1)?-1:1;
+    if(s[0]===1){ solve(); }
+    this.innerHTML='Twist: '+(s[0]===1?'aus (<code>&prod;<sub>i</sub> s<sub>i</sub>=+1</code>)':'AN (<code>&prod;<sub>i</sub> s<sub>i</sub>=&minus;1</code>)');
+    draw();
+  }); }
+  var growBtn=$('growBtn');
+  if(growBtn){ growBtn.addEventListener('click', function(){ grow(); draw(); }); }
+  var resetBtn=$('resetBtn');
+  if(resetBtn){ resetBtn.addEventListener('click', function(){
+    SEG=8; added=0; reinit(); solve();
+    if(twistBtn){ twistBtn.innerHTML='Twist: aus (<code>&prod;<sub>i</sub> s<sub>i</sub>=+1</code>)'; }
+    draw();
+  }); }
+  cv.addEventListener('click', function(e){
+    var rct=cv.getBoundingClientRect();
+    var mx=e.clientX-rct.left, my=e.clientY-rct.top;
+    var eps=($('s-eps')?+$('s-eps').value:30)/100, amp=0.34*eps;
+    var dx=mx-cx, dy=my-cy, dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<Rin0+3 && dist<Rout0+42){
+      var ang=Math.atan2(dy,dx); if(ang<0){ ang+=2*Math.PI; }
+      var idx=Math.floor(ang/(2*Math.PI/SEG)); if(idx>=SEG){ idx=SEG-1; }
+      v[idx]*=-1; draw();
+    }
+  });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+
+  readPal(); reinit(); solve(); draw();
+  function loop(){ draw(); requestAnimationFrame(loop); }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

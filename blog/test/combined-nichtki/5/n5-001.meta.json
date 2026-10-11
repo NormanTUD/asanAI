@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "n4-001.html",
+  "b": "n4-004.html",
+  "a_title": "Das Ganze ist eine relationale Invariante — erkannt durch den geschlossenen Akt, gehalten durch das Loslassen der Faser",
+  "b_title": "Der Pivot — ein lokales Datum, eine relationale Invariante, zwei Währungen",
+  "combined_theme": "relationale-invariante-am-rand",
+  "one_line": "Das Ganze ist die relationale Invariante, die lasttragend ist: im geschlossenen Umlauf erzeugt, an einem einzelnen Pivot an der Naht abgelesen, und relationell gehalten, indem die gauß-abhängige Faser gelöst wird, während die gauß-invariante Dimension der Lücke als Ort des Seins lasttragend bleibt.",
+  "contradictions": [
+    "Ontologischer Status: A (n4-001) hält den relationalen Träger/Topologie für 'schon da' und selbsttragend (vordaher, ontologisch komplett); B (n4-004) sagt, es gebe keinen vorausgesetzten unabhängigen Kern — Sein wird an der Lücke durch den Konsistenzprozess konstituiert (Genese, 'Sein ist Relation, keine Wesenheit').",
+    "Der Rest/die Lücke: A (n4-001) löst/verwirft die Faser (÷ Selbsthaft, 'verworfene Faser, nie zurück') — das Ganze bleibt relationell WEIL die Faser gelöst wird (Kosten/Divisor); B (n4-004) hält die Lücke für den positiven, ontologisch echten Ort des Seins (dim(Lücke) IST das Objekt, 'Sein ist an der Lücke', Φ/Emergenz).",
+    "Wie das Ganze lesbar wird: A (n4-001) — die Invariante ist Funktion NUR des geschlossenen Umlaufs (man muss das Ganze einmal herumlaufen, Holonomie nach dem vollen Kreislauf); B (n4-004) — das Ganze wird von EINEM einzelnen lokalen Datum an der Grenze/Naht fixiert ('ein Halm fixiert das Kollimit')."
+  ],
+  "resolution": "Drei Ebenen-Zugriffe auf dasselbe: (1) das relationale Beziehungsgeflecht ist 'schon da' als selbsttragende Relation (A), aber der ablesbare invariante Wert/Sein wird an der Lücke durch den Kohärenzprozess konstituiert (B) — vordaher in Relation, konstituiert im Wert. (2) Die Faser/Lücke hat zwei Teile: der gauß-abhängige Rest wird gelöst (A, ÷ Selbsthaft) und die gauß-invariante Dimension der Lücke bleibt als positiver Ort des Seins (B, dim(Lücke)=Φ); 'Faser lösen' und 'Sein an der Lücke' gelten für zwei Teile desselben Rests. (3) Der geschlossene Umlauf (A) erzeugt die Invariante und liest sie an der einzelnen Naht ab (B): der Pivot ist der Ablespunkt des Umlaufs, m=(−1)^w die Transition an der einen Naht. Fusion: Erkennen = geschlossener lokaler Akt × freie Referenz (Eich-Freiheit) ÷ gauß-abh. Faser, wobei die gauß-invariante Lücken-Dimension lasttragend bleibt; w gerade (m=+1) ⟺ dim(Lücke)=0 ⟺ H¹=0 ⟹ Punkt, w ungerade (m=−1) ⟺ dim(Lücke)>0 ⟺ H¹≠0 ⟹ irreduzibles Global.",
+  "viz": "Ring aus 12 lokalen Akten (der geschlossene Umlauf) mit hervorgehobener Naht/Pivot; der Regler 'Lokaler Akt' erzeugt w (additive Form) + Rest (zyklische Holonomie); die Parität w gerade/ungerade (m=±1) schaltet dim(Lücke) 0 vs >0 um (Punkt vs irreduzibles Global/Φ in der Mitte) und die Naht (PASS/verklebt vs DROP/Flip); die Referenz (Eich-Freiheit = Anker-Kalibrierung) dreht die lokalen Pfeile ohne die Invariante zu ändern; die gauß-abhängige Faser leert sich (gelöst), bei hohem Selbsthaft wird der Pivot reifiziert (Pfadologie); rechts werden die zwei Währungen derselben Lücke abgelesen (A: I, C; B: H¹-Energie, Durchsatz)."
+}

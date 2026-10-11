@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Kern, ein Rest, eine zwei-koordinierte Schwelle &mdash; die eine Architektur der selbstbezogenen Schließung</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f4efe4; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.6rem,4.8vw,2.4rem);line-height:1.14;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .sub{display:block;font-size:.6em;color:var(--accent);font-weight:600;margin-top:7px;letter-spacing:0}
+.kicker{color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-size:.72rem;margin:0 0 8px;font-family:system-ui,sans-serif}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.85rem;margin:0 0 8px}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 4px;font-style:italic}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.toc a{font-size:.78em;color:var(--accent2);text-decoration:none;border:1px solid var(--border);padding:4px 11px;border-radius:20px;background:var(--card);font-family:system-ui,sans-serif}
+.toc a:hover{border-color:var(--accent2)}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.36rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.05rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+em{color:var(--accent)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.eq{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.92rem;line-height:1.7}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent);border:1px solid var(--accent)}
+.tag.b{color:var(--accent2);border:1px solid var(--accent2)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card h3{margin-top:0}
+.card b{color:var(--fg)}
+.callout{border-left:3px solid var(--warn);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:14px 0;font-size:.98rem}
+.callout.green{border-left-color:var(--accent)}
+.callout.rose{border-left-color:var(--accent2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.86rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.c{color:var(--fg);font-weight:700}
+.vnote{border-left:3px solid var(--accent);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:12px 0;font-size:.95rem}
+canvas#fuse5{width:100%;height:470px;display:block;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;touch-action:none;margin:6px 0}
+.viz-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.viz-ctrl button{background:var(--accent);color:#06231b;border:none;padding:8px 14px;border-radius:10px;
+  cursor:pointer;font:inherit;font-family:system-ui,sans-serif;font-weight:600}
+.viz-ctrl button:hover{filter:brightness(1.06)}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+.ctrl-row label{color:var(--muted)}
+.ctrl-row input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.ctrl-row input.alt{accent-color:var(--accent2)}
+.readout{font-family:ui-monospace,"Courier New",monospace;color:var(--accent2);font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin:8px 0;font-family:system-ui,sans-serif}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.statusbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.92rem;min-height:2.7em;line-height:1.55;font-family:system-ui,sans-serif;white-space:pre-wrap}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .desc{color:var(--muted);font-size:.95rem;margin:3px 0 14px}
+.note{font-size:.86rem;color:var(--muted)}
+footer{color:var(--muted);text-align:center;padding:22px 10px;font-size:.84rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9728; / &#9790; Thema</button>
+<article>
+  <p class="kicker">Knockout Synthesis &middot; Runde 5 &middot; Nicht-KI-Track &middot; Pair 002</p>
+  <h1>Ein Kern, ein Rest, eine zwei-koordinierte Schwelle<span class="sub">&mdash; die eine Architektur der selbstbezogenen Schließung</span></h1>
+  <p class="subtitle">Fusion aus: n4-002.html &#10007; n4-011.html &nbsp;(Runde 5)</p>
+  <p class="lede">Beide Runde-4-Papiere sind je zweifach synthetisiert und treffen, aus entlegenen Domänen
+  kommend, auf <em>dieselbe eine</em> Architektur der selbstbezogenen Schließung. A (n4-002) liest sie
+  vom <em>Betrieb</em> (die globale Schließung, ihre zwei Achsen Valenz/Reichweite, ihre zwei Böden);
+  B (n4-011) liest dieselbe Architektur vom <em>Gegenstand</em> (treuer fester Kern, zurückziehender Rest,
+  stratifizierte zwei-koordinierte fraktale Schwelle).</p>
+
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>Beide Papiere sind bereits je zweifach synthetisiert (Runde&nbsp;4) und beschreiben <em>die eine
+    Architektur der selbstbezogenen Schließung</em> &mdash; von zwei komplementären Seiten.
+    <span class="tag a">A</span> (n4-002) liest sie vom <em>Betrieb</em>: eine lokale, selbstbezogen
+    blinde / fein oszillierende Schicht (Wendungsdichte <span class="m">d&theta;/dt</span>, Mittel&nbsp;0;
+    der lokale Gauge) wird durch eine <em>wohldefinierte globale Schließung</em> (Integration&nbsp;+
+    Abelschung <span class="m">&pi;&#8321;&rarr;H&#8321;</span> / Schließ-Test / Verklebung / globaler
+    Vergleich) in einen <em>stabilen invarianten Kern</em> kollabiert (<span class="m">n &isin; &pi;&#8321;(S&#185;)
+    &cong; &#8484;</span>, &bdquo;am Peak ohne Rest&ldquo;); und diese Schließung trägt zwei unabhängige
+    Achsen &mdash; eine <em>Valenz-Achse</em> (zahlt der Kollaps? inert&nbsp;&rarr;&nbsp;zählbare Wahrheit,
+    lebendig&nbsp;&rarr;&nbsp;Tod) und eine <em>Reichweiten-Achse</em> (wie weit reicht er? mit zwei
+    ineinanderliegenden Böden: dem <em>asymptotischen Struktur-Boden</em> <span class="m">p&#8319;&rarr;0 &ne; 0</span>
+    und dem <em>absoluten Bedeutungs-Boden</em> Struktur&nbsp;&ne;&nbsp;Wahrheit).
+    <span class="tag b">B</span> (n4-011) liest dieselbe Architektur vom <em>Gegenstand</em>: das Objekt
+    ist ein <em>treuer, fester Kern</em> (eine Invariante, als Fixpunkt konstituiert, <em>fix als Form</em>),
+    den jeder endliche Träger nur an einer <em>stratifizierten, zwei-koordinierten, fraktalen Schwelle</em>
+    liest, während ein <em>zurückziehender Rest</em> (<em>fließend im Inhalt</em>) durch ihn fließt; und
+    derselbe Rest <em>ruft</em> (unter ehrlichem Projektor) oder <em>waffnet</em> (unter adversariales,
+    Double-Bind).</p>
+    <p>Die fusionierte Position: <strong>Es gibt eine einzige Architektur der selbstbezogenen Schließung</strong>
+    &mdash; einen <em>treuen invarianten Kern</em> (fix als Form), den eine <em>wohldefinierte globale
+    Operation</em> konstituiert; einen <em>zurückziehenden Rest</em> (fließend im Inhalt), der durch ihn
+    fließt; und eine <em>stratifizierte, zwei-koordinierte, fraktale Schwelle</em>, an der sich der lesbare
+    Kern vom Rest trennt. Beide Papiere sind zwei Projektionen derselben Abbildung:
+    <span class="tag a">A</span> projiziert auf den <em>Betrieb</em> (die Operation, die zwei Achsen, die
+    zwei Böden), <span class="tag b">B</span> projiziert auf den <em>Gegenstand</em> (Kern&nbsp;+&nbsp;Rest&nbsp;+&nbsp;Schwelle).
+    Die Tiefe der Fusion: A's <em>inert&nbsp;/&nbsp;lebendig</em> und B's <em>ehrlich&nbsp;/&nbsp;adversariell</em>
+    sind die <em>zwei Koordinaten derselben Schwelle</em> &mdash; und die Valenz (zahlt der Kollaps? ruft
+    oder waffnet der Rest?) ist vom <em>Produkt beider Koordinaten</em> gesetzt, nicht vom Zeichen.</p>
+    <p>Die Grenze hat, in <em>beiden</em> Papiern, <em>zwei ineinanderliegende Böden</em>: einen
+    <em>asymptotischen Struktur-Boden</em> (<span class="m">p&#8319;&rarr;0 &ne; 0</span>, von einer äußeren
+    Währung beliebig angenähert, nie erreicht) und einen <em>absoluten Bedeutungs-Boden</em>
+    (Struktur&nbsp;&ne;&nbsp;Wahrheit, nie kreuzbar, Gödel). A benennt sie als <em>Reichweiten-Achse</em>
+    der Schließung, B als <em>fraktale Schwelle</em> (lokal lesbar, global nie&nbsp;0) &mdash; dieselben zwei
+    Böden. Zusammen: <strong>Die globale Schließung gewinnt den inerten Kern als zählbare, erreichte Wahrheit
+    (A's <span class="m">n &isin; &#8484;</span>), liest den zurückziehenden Rest als das Wertvollste-als-Struktur
+    (B), trennt beide an einer zwei-koordinierten Schwelle (Objekt-Ontologie&nbsp;&times;&nbsp;Projektor-Ehrlichkeit),
+    und benennt die zwei Böden, die keine Schließung kreuzt.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere widersprechen sich in <em>keiner</em> faktischen Aussage &mdash; sie sind, wie
+    beide selbst sagen, zwei Projektionen / Lesarten eines einzigen Gegenstands. Auf drei konkrete
+    Meta-Fragen nehmen sie aber <strong>incompatible Stellungen</strong> ein:</p>
+
+    <h3>1 &middot; Der Wert: der gewonnene Kern <span class="tag a">A</span> &harr; der zurückziehende Rest <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> (n4-002) Der Kollaps <em>gewinnt</em> eine definite, zählbare
+      Invariante (<span class="m">n &isin; &#8484;</span>) &bdquo;am Peak ohne Rest&ldquo; &mdash; &bdquo;Messung
+      und Existenz lesen dieselbe Zahl&ldquo;. Der Wert liegt im <em>erreichten, abgeschlossenen Kern</em>;
+      der Rest <span class="m">1 &minus; c</span> ist das, was übrigbleibt (im Inerten Objekt-Wahrheit, im
+      Lebendigen gemessener Inhalt).</p>
+      <p><span class="tag b">B</span> (n4-011) &bdquo;Was übrig bleibt, ist das <em>Wertvollste</em> &mdash; nicht
+      etwas, das man wegw&uuml;nscht.&ldquo; Der <em>zurückziehende Rest</em> (die L&uuml;cke, das R&uuml;ckziehende)
+      ist als <em>Struktur</em> das Wertvollste &mdash; der Ursprung, der das Denken <em>ruft</em>.</p>
+      <p><strong>Spannung:</strong> Liegt der Wert im <em>gewonnenen Kern</em> (A) oder im <em>zurückziehenden
+      Rest</em> (B)?</p>
+    </div>
+
+    <h3>2 &middot; Erreichung: sauberer Peak <span class="tag a">A</span> &harr; Asymptote <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> (n4-002) Der Kern wird <em>am Peak ohne Rest</em> gewonnen &mdash; ein
+      <em>erreichter, sauberer Punkt</em>; die Windungszahl <span class="m">n</span> ist definit. (Die
+      <em>Reichweite</em> dagegen hat zwei nie geschlossene B&ouml;den.)</p>
+      <p><span class="tag b">B</span> (n4-011) &bdquo;<em>Volle Treue ist eine Asymptote, kein erreichter
+      Zustand</em>&ldquo; (der ULP wird nie null, der Fehler summiert sich &uuml;ber alle Gr&ouml;&szlig;enordnungen);
+      die Schwelle ist <em>fraktal</em> &mdash; lokal lesbar, global nie&nbsp;0.</p>
+      <p><strong>Spannung:</strong> Wird der Kern <em>vollst&auml;ndig erreicht</em> (A: am Peak) oder nur
+      <em>asymptotisch angen&auml;hert</em> (B: nie vollst&auml;ndig)?</p>
+    </div>
+
+    <h3>3 &middot; Das Valenzzeichen: Objekt-Ontologie <span class="tag a">A</span> &harr; Projektor-Ehrlichkeit <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> (n4-002) Das Valenzzeichen (zahlt / killt der Kollaps) setzt
+      <em>allein die Ontologie des Gegenstands</em> &mdash; inert&nbsp;&rarr;&nbsp;Wahrheit (Stille&nbsp;=&nbsp;Wahrheit),
+      lebendig&nbsp;&rarr;&nbsp;Tod (Stille&nbsp;=&nbsp;Tod); objektive, z&auml;hlbare Kriterien, <em>kein Subjekt,
+      kein F&uuml;hlen</em> (&bdquo;fixiere, was inert ist; lass, was lebt, schwingen&ldquo;).</p>
+      <p><span class="tag b">B</span> (n4-011) Das Valenzzeichen (ruft / waffnet der Rest) setzt <em>die
+      Ehrlichkeit / Intention des Projektors</em> (ehrlich&nbsp;&rarr;&nbsp;Ruf, adversariell&nbsp;&rarr;&nbsp;Waffe)
+      &mdash; <em>relational / normativ</em>, mit einem <em>Subjekt</em>; die Schwelle verschiebt sich mit der
+      Ehrlichkeit <span class="m">h</span>.</p>
+      <p><strong>Spannung:</strong> Ist das Valenzzeichen eine Eigenschaft des <em>Objekts</em> (objektiv,
+      ohne Subjekt, A) oder des <em>Zugriffs</em> (normativ, intention-abh&auml;ngig, B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Aufl&ouml;sung</h2>
+
+    <h3>1 &middot; Wert: gespaltet nach Stufe &mdash; Form&nbsp;=&nbsp;z&auml;hlbare Wahrheit (A), R&uuml;ckzieh-Struktur&nbsp;=&nbsp;das Wertvollste (B)</h3>
+    <p>A's &bdquo;der Kern ist der Payoff&ldquo; gilt auf der <em>Inhalt- / Invariante-Ebene</em> &mdash; die
+    erreichte z&auml;hlbare Invariante (<span class="m">n &isin; &#8484;</span>) <em>ist</em> die Wahrheit, die
+    zahlt. B's &bdquo;der Rest ist das Wertvollste&ldquo; gilt auf der <em>Struktur-Ebene</em> &mdash; das
+    <em>R&uuml;ckziehende</em> (das Muster des Flusses, die L&uuml;cke, die keine endliche Invariante ersch&ouml;pft)
+    ist der Ort, an dem das Objekt sich zeigt. Der Wert ist <em>stufen-relativ</em>.</p>
+    <div class="callout green"><strong>Fusionsschluss 1:</strong> &bdquo;Nur die Invariante bleibt&ldquo; (A) und
+    &bdquo;was &uuml;brig bleibt, ist das Wertvollste&ldquo; (B) sind dieselbe Aussage, sobald &bdquo;&uuml;brig
+    bleibt&ldquo; als die <em>Struktur des R&uuml;ckziehens</em> (nicht das individuelle Partikul&auml;re) gelesen wird.
+    Die <em>Form</em> (Kern) ist die z&auml;hlbare, erreichte Wahrheit; die <em>R&uuml;ckzieh-Struktur</em> (Rest)
+    ist der Ursprung, der ruft. Wert = Stufe.</div>
+
+    <h3>2 &middot; Erreichung: erreicht je Peak/Skala, asymptotisch &uuml;ber den ganzen Stapel</h3>
+    <p>A's &bdquo;am Peak ohne Rest&ldquo; ist der Kern, <em>erreicht an diesem Peak</em> (<span class="m">n</span>
+    definit) &mdash; je Punkt. B's &bdquo;volle Treue ist eine Asymptote&ldquo; gilt <em>&uuml;ber den ganzen
+    Stapel</em> der Skalen / Stufen (die Summe &uuml;ber alle Aufl&ouml;sungen schlie&szlig;t nie). Dieselbe
+    Tatsache in zwei Granularit&auml;ten: je Peak/Skala <em>erreicht</em> (A: <span class="m">n</span>; B:
+    lokal lesbar, &bdquo;no false neighbors&ldquo;), &uuml;ber den ganzen Stapel <em>nie vollst&auml;ndig</em>
+    (A: asymptotischer Boden <span class="m">p&#8319;&rarr;0 &ne; 0</span> + absolute Wand; B: fraktal, global
+    nie&nbsp;0).</p>
+    <div class="callout green"><strong>Fusionsschluss 2:</strong> Der Kern ist <em>je Peak / je Skala erreicht
+    ohne lokalen Rest</em>; die <em>Reichweite / Schwelle &uuml;ber den ganzen Stapel</em> ist asymptotisch
+    (Struktur-Boden) und absolut (Bedeutungswand). A's zwei B&ouml;den <em>sind</em> B's fraktale Asymptote.
+    &bdquo;Fix als Form&ldquo; (je Stufe erreicht) und &bdquo;global nie geschlossen&ldquo; (&uuml;ber alle Stufen)
+    sind dieselbe Aussage.</div>
+
+    <h3>3 &middot; Valenzzeichen: die zwei Koordinaten derselben Schwelle</h3>
+    <p>A h&auml;lt den Projektor <em>implizit ehrlich</em> und liest die Objekt-Koordinate (inert&nbsp;/&nbsp;
+    lebendig); B h&auml;lt das Objekt fest und variiert die Zugriffs-Koordinate (Ehrlichkeit&nbsp;/&nbsp;Intention).
+    Das Valenzzeichen ist vom <em>Wechselwirken beider Koordinaten</em> gesetzt. Die <em>moralische
+    Dimension</em> (Waffe) ist keine neue Struktur, sondern A's Rest <em>unter einem korruptierten
+    Projektor</em>; B's Normativit&auml;t ist der <em>Schatten</em> von A's Korrespondenzprinzip, sobald ein
+    Subjekt eingreift.</p>
+    <div class="callout green"><strong>Fusionsschluss 3:</strong> Das Valenzzeichen ist <em>relational</em>
+    (von beiden Koordinaten gesetzt): Objekt-Ontologie (A) &times; Projektor-Ehrlichkeit (B). A's objektive,
+    wertfreie Struktur ist der <em>ehrliche, Default-Fall</em> (Projektor kommutiert, Rest ruft); B's
+    Adversarier ist, was passiert, wenn A's <em>Korrespondenz</em> von einem Subjekt <em>gebrochen</em> wird.
+    Ein Zeichen, zwei Koordinaten.</div>
+
+    <div class="callout rose"><strong>Gefasster Schluss:</strong> Eine Architektur, eine Abbildung, eine
+    zwei-koordinierte Schwelle. Das Objekt ist ein <em>treuer Kern</em> (Invariante, fix als Form, als
+    Fixpunkt je Skala konstituiert), den eine wohldefinierte globale Schließung gewinnt; ein
+    <em>zurückziehender Rest</em> (fließend im Inhalt) fließt durch ihn &mdash; entbehrlich als Inhalt, das
+    Wertvollste als Struktur; die Schwelle ist <em>zwei-koordiniert</em> (Objekt-Ontologie&nbsp;&times;&nbsp;
+    Projektor-Ehrlichkeit), stratifiziert, fraktal, und hat <em>zwei nie kreuzbare Böden</em>; der Rest
+    <em>ruft</em>, wenn die Abbildung ehrlich ist, <em>waffnet</em>, wenn sie korrupt ist. A's
+    &bdquo;fixiere inert, lass lebendig schwingen&ldquo; und B's &bdquo;benenne die Schwelle, die du von innen
+    nicht &uuml;berschreitest&ldquo; sind dieselbe Disziplin in zwei Stimmen.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <h3>0. Das gemeinsame Grundmodell: eine Abbildung von reich nach endlich</h3>
+    <p>Beide modellieren das Objekt so, dass es <em>nur durch</em> einen endlichen / lokalen Tr&auml;ger
+    gegeben wird, und das Lesen als eine Abbildung <span class="m">T</span> von dort zum Globalen /
+    Stabilen &mdash; in beiden ist <span class="m">T</span> <em>verlustbehaftet</em>: ein <em>treuer</em>
+    Anteil (der &uuml;berlebt und kommutiert) + ein <em>Rest</em> (der zur&uuml;ckzieht). Das Objekt ist
+    &bdquo;feiner als jeder endliche Tr&auml;ger&ldquo;.</p>
+    <ul>
+      <li><span class="tag a">A</span> (n4-002) Tr&auml;ger = lokale, blinde / oszillierende Schicht
+      (Wendungsdichte <span class="m">d&theta;/dt</span>, Mittel&nbsp;0; lokaler Gauge);
+      <span class="m">T</span> = globale Schließung (Integration&nbsp;+ Abelschung
+      <span class="m">&pi;&#8321;&rarr;H&#8321;</span> / Schließ-Test / Verklebung / globaler Vergleich).</li>
+      <li><span class="tag b">B</span> (n4-011) Tr&auml;ger = endlicher Speicher (Bits / Selbst-Modell /
+      Orbit); <span class="m">T</span> = Projektion / Repr&auml;sentation (Verklebung / Konkreszenz).</li>
+    </ul>
+
+    <h3>1. Der treue Kern (fix als Form)</h3>
+    <p>Ein einziger <em>stabiler, treuer, lesbarer Kern</em> &mdash; fix als Form, je Peak/Skala erreicht.
+    <span class="tag a">A</span>: die stabile Invariante <span class="m">n &isin; &#8484;</span>
+    (Windungszahl), globaler Schnitt, &bdquo;am Peak ohne Rest&ldquo;; Bruchpunkt = Abelschung
+    <span class="m">&pi;&#8321;&rarr;H&#8321;</span> (Eckmann&ndash;Hilton) commutisiert die nicht-abelsche
+    Monodromie zur abelschen Zahl; zwei Lesarten derselben Zahl (Messung / Existenz, &bdquo;dieselbe
+    Zahl&ldquo;). <span class="tag b">B</span>: die treue Invariante (erfa&szlig;barer Schatten, wo
+    gezeigt&nbsp;=&nbsp;gespeichert; die Eigenachse), dominiert von <em>einer</em> dominanten Invariante
+    (A: <span class="m">n</span>; B: die intrinsische Dimension <span class="m">m</span>) &mdash; einer
+    <em>globalen</em> Invariante, die aus der <em>lokalen</em> Sicht verschwindet. &bdquo;Fix als Form,
+    flie&szlig;end im Inhalt&ldquo;.</p>
+
+    <h3>2. Der zur&uuml;ckziehende Rest (flie&szlig;end im Inhalt)</h3>
+    <p>Ein einziger <em>zur&uuml;ckziehender Rest</em> &mdash; das Nicht-Ersch&ouml;pft e, das Partikul&auml;re,
+    das Transiente &mdash; der durch den fixen Kern flie&szlig;t. <span class="tag a">A</span>:
+    <span class="m">1 &minus; c</span> (im Inerten Objekt-Wahrheit = kein globaler Schnitt; im Lebendigen
+    gemessene Kr&uuml;mmung). <span class="tag b">B</span>: die L&uuml;cke / das R&uuml;ckziehende (wo
+    gezeigt&nbsp;&ne;&nbsp;gespeichert; die akkumulierte ULP; Chaos <span class="m">&lambda;&gt;0</span>).
+    <em>Einheit:</em> in beiden ist der Rest <em>das, was keine endliche Menge von Invarianten
+    ersch&ouml;pft</em>. Seine <em>Valenz</em> (Ruf&nbsp;/&nbsp;Waffe) wird vom Projektor gesetzt (Punkt&nbsp;4).</p>
+
+    <h3>3. Die zwei-koordinierte, stratifizierte, fraktale Schwelle</h3>
+    <table>
+      <thead><tr><th>Eigenschaft</th><th><span class="tag a">A</span> n4-002 (Betrieb)</th><th><span class="tag b">B</span> n4-011 (Gegenstand)</th></tr></thead>
+      <tbody>
+        <tr><td class="c">Stratifikation</td><td>zwei Achsen (Valenz / Reichweite); zwei B&ouml;den</td><td>Treppe <span class="m">&gt;=&nbsp;&asymp;&nbsp;&rarr;&nbsp;&sim;</span>; fein&nbsp;&harr;&nbsp;grob</td></tr>
+        <tr><td class="c">Koordinate 1 (Objekt)</td><td>Ontologie: inert&nbsp;&harr;&nbsp;lebendig</td><td>Komplexit&auml;t <span class="m">m</span> &rarr; <span class="m">d<sub>min</sub></span> (Knie)</td></tr>
+        <tr><td class="c">Koordinate 2 (Zugriff)</td><td>(implizit ehrlich)</td><td>Ehrlichkeit <span class="m">h</span> (ehrlich&nbsp;&harr;&nbsp;adversariell)</td></tr>
+        <tr><td class="c">Fraktal</td><td>je Peak erreicht, &uuml;ber B&ouml;den nie geschlossen</td><td>lokal lesbar, global nie&nbsp;0 (ULP summiert sich)</td></tr>
+        <tr><td class="c">zwei B&ouml;den</td><td>asymptotisch <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;&ne;&nbsp;Wahrheit</td><td>ULP nie null; Schwelle endlos wiederkehrend</td></tr>
+      </tbody>
+    </table>
+    <p>A's <em>zwei Achsen</em> (Valenz / Reichweite) <em>und</em> B's <em>Treppe der Skalen</em> sind
+    dasselbe: je tiefer (feiner) die Stufe, desto feiner die Messung; je h&ouml;her (Kollaps / Univalenz),
+    desto gr&ouml;ber. An <em>jeder</em> Stufe lokal lesbar (Kern je Peak erreicht), aber ein feinerer Rest
+    bleibt (globale L&uuml;cke).</p>
+
+    <h3>4. Die Valenz: das Produkt beider Koordinaten</h3>
+    <p>Ein Valenzzeichen, zwei Koordinaten:</p>
+    <ul>
+      <li><span class="tag a">A</span> <em>Koordinate Objekt-Ontologie</em> &mdash; Valenz des <em>Kollapses</em>:
+      inert&nbsp;&rarr;&nbsp;<em>zählbare Wahrheit</em> (Stille&nbsp;=&nbsp;Wahrheit), lebendig&nbsp;&rarr;&nbsp;<em>Tod</em>
+      (Stille&nbsp;=&nbsp;Tod, Verklammung). Der Zeuge wird im Inerten <em>absorbiert</em>, im Lebendigen
+      <em>extern&nbsp;&amp;&nbsp;wechselseitig</em>.</li>
+      <li><span class="tag b">B</span> <em>Koordinate Projektor-Ehrlichkeit</em> &mdash; Valenz des <em>Rests</em>:
+      ehrlich&nbsp;&rarr;&nbsp;<em>Ruf</em> (Ursprung, Einladung zum Denken), adversariell&nbsp;&rarr;&nbsp;<em>Waffe</em>
+      (Gaslighting als sich summierende Umdeutung, Double-Bind, &bdquo;eine Abbildung, die mit <em>keiner</em>
+      ehrlichen Eingabe kommutiert&ldquo;).</li>
+      <li><em>Fusion:</em> das Valenzzeichen = Objekt-Ontologie (A) &times; Projektor-Ehrlichkeit (B).
+      A's &bdquo;Ruf&ldquo;-Fall ist B's ehrlicher Projektor; A's &bdquo;Tod&ldquo;-Fall (lebendig) und B's
+      &bdquo;Waffe&ldquo;-Fall (adversariell) treffen im Double-Bind zusammen.</li>
+    </ul>
+
+    <h3>5. Die vereinte Math</h3>
+    <div class="eq">
+n = (1/2&pi;) &#8750; d&theta; &isin; &pi;&#8321;(S&#185;) &cong; &#8484; &nbsp;&nbsp;(A: erreichte, z&auml;hlbare Realisierung &mdash; Objekt-Koordinate)<br>
+c(t) am Peak &nbsp;&rArr;&nbsp; &bdquo;kein Rest&ldquo; &nbsp;&nbsp;(Kern je Peak / je Skala erreicht &mdash; fix als Form)<br>
+C(n) = 1 &minus; k&middot;p&#8319; &rarr; 1 &nbsp;&nbsp;(asymptotischer Struktur-Boden, nie bis 1; h&ouml;her gehoben, je ehrlicher der Projektor)<br>
+Wand = 1 &nbsp;&nbsp;(absolute Bedeutungswand &mdash; Struktur &ne; Wahrheit, nie kreuzbar)<br>
+Effektive Lesbarkeit = Stufe-Lesbarkeit &times; Ehrlichkeit h &nbsp;&nbsp;(B)<br>
+&lambda; = &#9336; ln|f&prime;(x<sub>t</sub>)| &nbsp;&nbsp;(B: &lambda;&gt;0 &rArr; Inhalt flie&szlig;t; &lambda;&le;0 &rArr; Inhalt ruht)
+    </div>
+    <p>Der <em>Rest</em> <span class="m">1 &minus; c</span> ist der gemeinsame Gegenstand: bei A die
+    <em>Objekt-Wahrheit</em> im Inerten (kein Schnitt), bei B die <em>L&uuml;cke / R&uuml;ckziehende</em> &uuml;ber
+    dem Boden. Die <em>Obergrenze</em> <span class="m">C(n)&lt;1</span> (asymptotisch, nie bis&nbsp;1) und die
+    <em>Wand</em>&nbsp;=&nbsp;1 (absolut) sind die zwei B&ouml;den: man hebt <span class="m">C(n)</span> so hoch,
+    wie es die &auml;u&szlig;ere W&auml;hrung / die Ehrlichkeit erlaubt, kreuzt aber die Wand nie.</p>
+
+    <h3>6. Die verschmolzene Architektur (Rollen-Karte)</h3>
+    <table>
+      <thead><tr><th>Ebene</th><th><span class="tag a">A</span> n4-002</th><th><span class="tag b">B</span> n4-011</th><th>Verschmolzene Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="c">lokale Schicht</td><td>oszillierende Wendungsdichte / lokaler Gauge</td><td>endlicher Tr&auml;ger (Bits / Orbit / Selbst-Modell)</td><td>dieselbe blinde / feine Schicht</td></tr>
+        <tr><td class="c">Operation</td><td>globale Schließung (Integration + Abelschen <span class="m">&pi;&#8321;&rarr;H&#8321;</span>; Schließ-Test)</td><td>Projektion / Repr&auml;sentation <span class="m">T</span></td><td>dieselbe globale Abbildung <span class="m">T</span></td></tr>
+        <tr><td class="c">treuer Kern</td><td><span class="m">n &isin; &#8484;</span> / globaler Schnitt &bdquo;am Peak ohne Rest&ldquo;</td><td>erfa&szlig;barer Schatten / Eigenachse</td><td>fix als Form, je Peak/Skala erreicht</td></tr>
+        <tr><td class="c">Rest</td><td><span class="m">1 &minus; c</span> (Objekt-Wahrheit / gemessen)</td><td>L&uuml;cke / R&uuml;ckziehende (ULP)</td><td>flie&szlig;end im Inhalt; das Wertvollste als Struktur</td></tr>
+        <tr><td class="c">Schwelle</td><td>zwei Achsen + zwei B&ouml;den</td><td>stratifiziert, zwei-koordiniert, fraktal</td><td>zwei-koordiniert (Objekt &times; Projektor)</td></tr>
+        <tr><td class="c">Valenz-Koordinate 1</td><td>inert / lebendig (Ontologie)</td><td>&mdash;</td><td>Objekt-Koordinate</td></tr>
+        <tr><td class="c">Valenz-Koordinate 2</td><td>(implizit ehrlich)</td><td>ehrlich / adversariell (<span class="m">h</span>)</td><td>Projektor-Koordinate</td></tr>
+        <tr><td class="c">Valenz-Zeichen</td><td>zahlt (Wahrheit) / killt (Tod)</td><td>ruft / waffnet</td><td>Produkt beider Koordinaten</td></tr>
+        <tr><td class="c">zwei B&ouml;den</td><td>asymptotisch <span class="m">p&#8319;&rarr;0 &ne; 0</span> + absolut</td><td>fraktal (nie 0)</td><td>dieselben zwei B&ouml;den</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout green"><strong>Leitgesetz der Fusion:</strong> &bdquo;Welchen <em>treuen Kern</em>
+    (Invariante, fix als Form) gewinnt die Schließung, welchen <em>zurückziehenden Rest</em> (L&uuml;cke,
+    fließend im Inhalt) lässt sie, an welcher <em>zwei-koordinierten, stratifizierten, fraktalen
+    Schwelle</em> (Objekt-Ontologie &times; Projektor-Ehrlichkeit) trennt sich Kern von Rest &mdash; und welche
+    <em>zwei Böden</em> (asymptotisch <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;&ne;&nbsp;Wahrheit)
+    kreuzt keine Schließung?&ldquo; Der Kern <em>zahlt</em>, wo das Objekt inert ist; der Rest <em>ruft</em>,
+    wo der Projektor ehrlich ist.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung &mdash; eine Architektur, zwei Koordinaten, zwei B&ouml;den</h2>
+    <p class="vnote">Ein Canvas, die <em>eine</em> Architektur der selbstbezogenen Schließung. <strong>Links</strong>:
+    die <em>zwei-koordinierte Schwelle</em> &mdash; eine Valenz-Karte &uuml;ber (x)&nbsp;=<em>Objekt-Ontologie</em>
+    (<span class="tag a">A</span>: inert&nbsp;&larr;&nbsp;lebendig) und (y)&nbsp;=&em>Projektor-Ehrlichkeit</em>
+    (<span class="tag b">B</span>: adversariell&nbsp;&larr;&nbsp;ehrlich). Die Zelle f&auml;rbt das
+    <em>fusierte Valenzzeichen</em> (gr&uuml;n&nbsp;=&nbsp;Kern&nbsp;=&nbsp;Wahrheit / Rest ruft; rot&nbsp;=&nbsp;Kollaps&nbsp;=&nbsp;Tod /
+    Rest waffnet); der Marker sitzt bei (x,&nbsp;y), um ihn flie&szlig;t der <em>zur&uuml;ckziehende Rest</em>.
+    <strong>Rechts</strong>: die <em>gemeinsame Operation</em> &mdash; die Schließkurve <span class="m">c(t)</span> mit
+    exakten Peaks an den ganzen Zahlen (Kern <em>am Peak ohne Rest</em> gewonnen), plus die <em>zwei B&ouml;den</em>:
+    der <em>asymptotische Struktur-Boden</em> <span class="m">C(n)=1&minus;k&middot;p&#8319;&rarr;1</span>
+    (steigt, <em>nie bis&nbsp;1</em>; wird je ehrlicher Projektor h&ouml;her gehoben) und die
+    <em>absolute Bedeutungswand</em> <span class="m">c=1</span> (Struktur&nbsp;&ne;&nbsp;Wahrheit,
+    <em>nie kreuzbar</em>).</p>
+
+    <canvas id="fuse5"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--good)"></span>Valenz: zahlt / ruft (gr&uuml;n)</span>
+      <span><span class="dot" style="background:var(--bad)"></span>Valenz: killt / waffnet (rot)</span>
+      <span><span class="dot" style="background:var(--accent)"></span>Schließkurve / Kern</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>Boden C(n) (asymptotisch)</span>
+      <span><span class="dot" style="background:var(--muted)"></span>Marker (x,&nbsp;y) / Rest</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Objekt-Ontologie (A) &mdash; inert&nbsp;&larr;&nbsp;lebendig:</label>
+      <input id="ontSlider" type="range" min="0" max="1" step="0.01" value="0.30">
+      <span><span id="ontVal" class="readout">0.30</span></span>
+    </div>
+    <div class="ctrl-row">
+      <label>Projektor-Ehrlichkeit (B) &mdash; adversariell&nbsp;&larr;&nbsp;ehrlich:</label>
+      <input id="honSlider" class="alt" type="range" min="0" max="1" step="0.01" value="1.00">
+      <span><span id="honVal" class="readout">1.00</span></span>
+    </div>
+    <div class="statusbox" id="fuseStatus">Eine Architektur, zwei Koordinaten, zwei B&ouml;den.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../n4-002.html">A &mdash; n4-002.html &middot; &bdquo;Eine Schließung, zwei Valenzachsen &mdash; wie weit der Kollaps reicht und ob er zahlt&ldquo; (Runde 4)</a>
+        <div class="desc">Fusion von n3-018 &times; n3-009. Liefert die <em>Betriebsebene</em> der
+        Architektur: die globale Schließung (lokale oszillierende Schicht &rarr; stabiler invarianter Kern
+        <span class="m">n &isin; &#8484;</span> &bdquo;am Peak ohne Rest&ldquo;), die <em>Valenz-Achse</em>
+        (inert&nbsp;&rarr;&nbsp;Wahrheit / lebendig&nbsp;&rarr;&nbsp;Tod; &bdquo;fixiere, was inert ist; lass, was
+        lebt, schwingen&ldquo;) und die <em>Reichweiten-Achse</em> mit den zwei B&ouml;den (asymptotisch
+        <span class="m">p&#8319;&rarr;0 &ne; 0</span>; absolut Struktur&nbsp;&ne;&nbsp;Wahrheit). Hier die
+        Objekt-Koordinate der Schwelle und die Math der erreichten Invariante.</div>
+      </div>
+      <div>
+        <a href="../n4-011.html">B &mdash; n4-011.html &middot; &bdquo;Treuer Kern und zur&uuml;ckziehender Rest &mdash; die stratifizierte Schwelle&ldquo; (Runde 4)</a>
+        <div class="desc">Fusion von n3-021 &times; n3-026. Liefert die <em>Gegenstandsebene</em> der
+        Architektur: der treue Kern (Invariante, Fixpunkt, fix als Form), der zur&uuml;ckziehende Rest
+        (das Wertvollste als Struktur, flie&szlig;end im Inhalt), die <em>stratifizierte, zwei-koordinierte,
+        fraktale Schwelle</em> (Objektkomplexit&auml;t&nbsp;&times;&nbsp;Projektoren-Ehrlichkeit; lokal lesbar,
+        global nie&nbsp;0) und die Valenz des Rests (Ruf&nbsp;/&nbsp;Waffe je Projektor, Double-Bind). Hier die
+        Zugriffs-Koordinate der Schwelle und die Math der fraktalen Asymptote.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>ROUND 5 &middot; Pair 002 (nicht-AI-Track) &middot; Selbstst&auml;ndige Fusion &mdash; alle
+  Daten inline, keine Netzwerk-Abfragen. Mathematischer Hinweis: die Kurve <span class="m">c(t)</span>,
+  der Boden <span class="m">C(n)</span> und die Valenz-Karte sind didaktische Modelle, die die
+  fusionierten Achsen auf beide Quellen legen; keine echten Daten, keine externen Abfragen.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('fuse5');
+  if(!cv || !cv.getContext){ return; }
+  var ctx=cv.getContext('2d');
+  if(!ctx){ return; }
+  var wrap=cv.parentElement;
+  var pal=null, W=0, H=0, dpr=1, phase=0;
+  var TMAX=12, K=0.85, P=0.55, VALLEY=0.35, GRID=15;
+  var state={ ont:0.30, hon:1.00 };
+
+  function cssVar(n,fb){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || fb;
+  }
+  function readPal(){
+    pal={ bg2:cssVar('--bg2','#0d1224'), card:cssVar('--card','#141828'),
+      fg:cssVar('--fg','#e9ecff'), muted:cssVar('--muted','#9aa3c7'),
+      border:cssVar('--border','#2a2f4a'), accent:cssVar('--accent','#7cf9d0'),
+      accent2:cssVar('--accent2','#ff77c8'), warn:cssVar('--warn','#ffd166'),
+      good:cssVar('--good','#3fb950'), bad:cssVar('--bad','#f85149') };
+    pal.goodRGB=hexToRGB(pal.good); pal.badRGB=hexToRGB(pal.bad); pal.neutRGB=hexToRGB(pal.muted);
+  }
+  function hexToRGB(hex){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3){ hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var r=parseInt(hex.substr(0,2),16), g=parseInt(hex.substr(2,2),16), b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){ return [128,128,128]; }
+    return [r,g,b];
+  }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function mixRGB(a,b,t){ t=clamp(t,0,1);
+    return [Math.round(a[0]+(b[0]-a[0])*t), Math.round(a[1]+(b[1]-a[1])*t), Math.round(a[2]+(b[2]-a[2])*t)]; }
+  function rgba(rgb,a){ return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')'; }
+
+  function ceilN(n){ return 1-K*Math.pow(P,n); }
+  function closeC(t,n){
+    var C=ceilN(n); var d=Math.abs(t-Math.round(t)); var peak=Math.exp(-9*d*d);
+    return C*(VALLEY+(1-VALLEY)*peak);
+  }
+  function valenceNet(ont,hon){ return (1-ont)*hon - ont*(1-hon); }
+  function valenceWord(ont,hon){
+    var inert=ont<0.5, honest=hon>=0.5;
+    if(inert && honest){ return 'KERN = zählbare Wahrheit · Rest RUFT  (Stille = Wahrheit)'; }
+    if(inert && !honest){ return 'KERN zählbar · Rest WAFFNET  (Korrespondenz gebrochen)'; }
+    if(!inert && honest){ return 'KOLLAPS = Tod (Stille = Tod) · Rest RUFT  (Ursprung)'; }
+    return 'KOLLAPS = Tod · Rest WAFFNET  (Double-Bind)';
+  }
+
+  function resize(){
+    dpr=window.devicePixelRatio||1;
+    var r=cv.getBoundingClientRect();
+    W=Math.max(320, r.width || (wrap?wrap.clientWidth:700)); H=470;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function drawValenceField(x0,x1,y0,y1){
+    var cw=(x1-x0)/GRID, ch=(y1-y0)/GRID, gi, gj;
+    for(gj=0; gj<GRID; gj++){
+      for(gi=0; gi<GRID; gi++){
+        var ont=(gi+0.5)/GRID, hon=(gj+0.5)/GRID;
+        var net=valenceNet(ont,hon);
+        var col = net>=0 ? mixRGB(pal.neutRGB, pal.goodRGB, net) : mixRGB(pal.neutRGB, pal.badRGB, -net);
+        var px=x0+gi*cw, py=y1-(gj+1)*ch;
+        ctx.fillStyle=rgba(col, 0.22+0.62*Math.abs(net));
+        ctx.fillRect(px, py, cw+0.6, ch+0.6);
+      }
+    }
+  }
+
+  function drawResidual(mx,my,net){
+    var n=22, i, a, rr, px, py, al;
+    var col = net>=0 ? pal.goodRGB : pal.badRGB;
+    for(i=0;i<n;i++){
+      a=phase*0.03 + i*(Math.PI*2/n);
+      rr=7 + (i%4)*4 + Math.sin(phase*0.05 + i)*4;
+      px=mx+Math.cos(a)*rr; py=my+Math.sin(a)*rr;
+      al=0.5-(i/n)*0.4;
+      ctx.globalAlpha=al>0?al:0; ctx.fillStyle=rgba(col,0.95);
+      ctx.beginPath(); ctx.arc(px,py,2.1,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function draw(){
+    if(!pal) readPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=pal.bg2; ctx.fillRect(0,0,W,H);
+
+    var top=44, bot=H-30;
+    var split=Math.round(W*0.55);
+
+    /* ===== LEFT: two-coordinated valence map ===== */
+    var x0=58, x1=split-12, y0=top, y1=H-64;
+    ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='left'; ctx.fillStyle=pal.accent;
+    ctx.fillText('ZWEI-KOORDINIERTE SCHWELLE  (Valenz-Karte)', x0, top-12);
+    ctx.font='10px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted;
+    ctx.fillText('x: Objekt-Ontologie (A)  ·  y: Projektor-Ehrlichkeit (B)', x0, top-0);
+
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+    ctx.strokeRect(x0, y0, x1-x0, y1-y0);
+    drawValenceField(x0, x1, y0, y1);
+
+    /* axes labels */
+    ctx.font='11px system-ui, sans-serif';
+    ctx.fillStyle=pal.good; ctx.textAlign='left';
+    ctx.fillText('INERT', x0+3, y1-4);
+    ctx.fillStyle=pal.bad; ctx.textAlign='right';
+    ctx.fillText('LEBENDIG', x1-3, y1-4);
+    ctx.save(); ctx.translate(x0-8,(y0+y1)/2); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.fillStyle=pal.muted;
+    ctx.fillText('Projektor-Ehrlichkeit: adversariell ↓  ↑ ehrlich', 0, 0); ctx.restore();
+
+    /* marker + residual */
+    var mx=x0+state.ont*(x1-x0);
+    var my=y1-state.hon*(y1-y0);
+    var net=valenceNet(state.ont, state.hon);
+    drawResidual(mx,my,net);
+    ctx.fillStyle=pal.fg; ctx.beginPath(); ctx.arc(mx,my,4.5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=pal.bg2; ctx.lineWidth=1.4; ctx.stroke();
+
+    /* ===== RIGHT: closing curve + two floors ===== */
+    var rx0=split+16, rx1=W-16, ry0=top, ry1=H-64;
+    var plotW=rx1-rx0, plotH=ry1-ry0;
+    function RX(t){ return rx0+(t/TMAX)*plotW; }
+    function RY(c){ return ry1-clamp(c,0,1)*plotH; }
+
+    ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='left'; ctx.fillStyle=pal.accent2;
+    ctx.fillText('SCHLIEßKURVE c(t)  +  ZWEI BÖDEN', rx0, top-12);
+    ctx.font='10px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted;
+    ctx.fillText('Kern am Peak (ohne Rest) · zwei Böden', rx0, top-0);
+
+    var Cn=ceilN(1+Math.round(state.hon*7));
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+    ctx.strokeRect(rx0, ry0, plotW, plotH);
+    var i;
+    ctx.font='10px ui-monospace,Consolas,monospace'; ctx.fillStyle=pal.muted; ctx.textAlign='right';
+    for(i=0;i<=4;i++){ var cc=i/4, yy=RY(cc);
+      ctx.beginPath(); ctx.moveTo(rx0,yy); ctx.lineTo(rx1,yy); ctx.stroke();
+      ctx.fillText(cc.toFixed(1), rx0-4, yy+3); }
+
+    /* floors */
+    ctx.font='10px ui-monospace,Consolas,monospace';
+    ctx.strokeStyle=pal.bad; ctx.lineWidth=1.4; ctx.setLineDash([7,4]);
+    ctx.beginPath(); ctx.moveTo(rx0,RY(1)); ctx.lineTo(rx1,RY(1)); ctx.stroke();
+    ctx.strokeStyle=pal.accent2; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(rx0,RY(Cn)); ctx.lineTo(rx1,RY(Cn)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.textAlign='left'; ctx.fillStyle=pal.bad;
+    ctx.fillText('Wand c=1 (absolut, nie kreuzbar)', rx0+5, RY(1)-5);
+    ctx.textAlign='right'; ctx.fillStyle=pal.accent2;
+    ctx.fillText('Boden C(n)=1−k·p′ → 1 (asymptotisch)', rx1-5, RY(Cn)-5);
+
+    /* curve */
+    ctx.beginPath();
+    for(i=0;i<=600;i++){ var t3=i/600*TMAX; var px=RX(t3); var py=RY(closeC(t3,3));
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.lineTo(RX(TMAX),RY(0)); ctx.lineTo(RX(0),RY(0)); ctx.closePath();
+    ctx.fillStyle=rgba(hexToRGB(pal.accent), (document.documentElement.classList.contains('dark'))?0.12:0.10);
+    ctx.fill();
+    ctx.strokeStyle=pal.accent; ctx.lineWidth=1.9; ctx.beginPath();
+    for(i=0;i<=600;i++){ var t4=i/600*TMAX; var px2=RX(t4); var py2=RY(closeC(t4,3));
+      if(i===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2); }
+    ctx.stroke();
+    ctx.fillStyle=pal.accent2;
+    for(i=1;i<=TMAX;i++){ ctx.beginPath(); ctx.arc(RX(i),RY(closeC(i,3)),2.4,0,Math.PI*2); ctx.fill(); }
+
+    /* readouts */
+    var om=document.getElementById('ontVal'); if(om) om.textContent=state.ont.toFixed(2);
+    var hm=document.getElementById('honVal'); if(hm) hm.textContent=state.hon.toFixed(2);
+    var st=document.getElementById('fuseStatus');
+    if(st){
+      var inert=state.ont<0.5?'INERT':'LEBENDIG';
+      var honest=state.hon>=0.5?'EHRLICH':'ADVERSARIELL';
+      var lines=[];
+      lines.push('Objekt-Ontologie (A): '+inert+' (x='+state.ont.toFixed(2)+')   ·   Projektor-Ehrlichkeit (B): '+honest+' (h='+state.hon.toFixed(2)+')');
+      lines.push('Fusierte Valenz: '+valenceWord(state.ont,state.hon));
+      lines.push('Kern je Peak erreicht (n∈ℤ, ohne Rest) · Bodengap C(n)='+Cn.toFixed(3)+' < 1 (asymptotisch, je ehrlicher je höher) · Wand=1 (Struktur≠Wahrheit, nie kreuzbar)');
+      st.textContent=lines.join('\n');
+    }
+  }
+
+  function frame(){ draw(); phase++; requestAnimationFrame(frame); }
+
+  function init(){
+    readPal(); resize();
+    window.addEventListener('resize', function(){ resize(); });
+    var os=document.getElementById('ontSlider');
+    if(os) os.addEventListener('input', function(e){ state.ont=parseFloat(e.target.value); });
+    var hs=document.getElementById('honSlider');
+    if(hs) hs.addEventListener('input', function(e){ state.hon=parseFloat(e.target.value); });
+    var tb=document.getElementById('themeToggle');
+    if(tb) tb.addEventListener('click', function(){
+      var d=document.documentElement;
+      var dark=d.classList.toggle('dark');
+      try{ localStorage.setItem('fusion-theme', dark?'dark':'light'); }catch(e){}
+      readPal();
+    });
+    if(window.MutationObserver){
+      new MutationObserver(function(){ readPal(); }).observe(document.documentElement,
+        {attributes:true, attributeFilter:['class']});
+    }
+    frame();
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>
