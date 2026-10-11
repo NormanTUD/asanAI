@@ -72,6 +72,7 @@ nav i.on::after{content:'';position:absolute;inset:0;border-radius:2px;
 <div id="num">01 / 12</div>
 <div id="hint"></div>
 <div id="cap"><div id="t1"></div><div id="t2"></div></div>
+<nav></nav>
 <div class="ar" id="pv"><svg viewBox="0 0 24 24"><polyline points="15 4 7 12 15 20"/></svg></div>
 <div class="ar" id="nx"><svg viewBox="0 0 24 24"><polyline points="9 4 17 12 9 20"/></svg></div>
 
@@ -578,4 +579,445 @@ S.push((()=>{let fd=[],wn=[];
    x.globalCompositeOperation='source-over';
    lbl(w.n,w.cx*W,py-16,w.hue,ap,'center');});
   const sh=C((T-1.8)/1.6,0,1);
-  if(sh>0)for(let i=0;i<2
+  if(sh>0)for(let i=0;i<2;i++){
+   const a=wn[i],b=wn[i+1];
+   const x1=a.cx*W+WW/2,x2=b.cx*W-WW/2,yy=H*.40+Math.sin(T*.7+i)*10;
+   const g=x.createLinearGradient(x1,yy,x2,yy);
+   const pu=.3+.35*Math.sin(T*1.9+i*1.4);
+   g.addColorStop(0,'rgba(255,255,255,0)');
+   g.addColorStop(.5,`rgba(255,255,255,${pu*sh*.5})`);
+   g.addColorStop(1,'rgba(255,255,255,0)');
+   x.strokeStyle=g;x.lineWidth=1;
+   x.beginPath();x.moveTo(x1,yy);x.lineTo(x2,yy);x.stroke();
+   lbl('GEMEINSAM',(x1+x2)/2,yy-13,0,pu*sh*.85,'center');}
+ }
+ return{init,draw};
+})());
+
+/*═══ 08 · ANDERER SCHNITT (INTERAKTIV) ═══*/
+S.push((()=>{let fb=[],lv=[.32,.56,.80],drag=-1;
+ function init(){const r=R(137);fb=[];
+  for(let i=0;i<10;i++)fb.push({h:M[i%6].h,o:r()*TAU,a:13+r()*17,s:.35+r()*.5});
+  lv=[.32,.56,.80];drag=-1;}
+ function draw(t){const T=t/1000;
+  const cx=W/2,by=H*.80,ty=H*.08;
+  const ap=eo(C(T/1,0,1));
+  const hc=[206,44,286],nm=['SPRACHE A','SPRACHE B','SPRACHE C'];
+  // Ziehen
+  if(m.on){
+   const my=C((by-m.y)/(by-ty),0,1);
+   if(m.dn){
+    if(drag<0){let bd=.09;lv.forEach((p,i)=>{const d=Math.abs(p-my);if(d<bd){bd=d;drag=i;}});}
+    if(drag>=0)lv[drag]=C(my,.08,.96);
+   }else drag=-1;}else drag=-1;
+  x.globalCompositeOperation='lighter';
+  const pos=[];
+  fb.forEach((f,i)=>{
+   const sp=(i-4.5)/4.5;
+   const g=x.createLinearGradient(0,by,0,ty);
+   g.addColorStop(0,hs(f.h,92,72,0));
+   g.addColorStop(.08,hs(f.h,92,72,.5*ap));
+   g.addColorStop(1,hs(f.h,95,80,.05*ap));
+   x.strokeStyle=g;x.lineWidth=1.4;
+   x.beginPath();const pts=[];
+   for(let s=0;s<=96;s++){const p=s/96,y=L(by,ty,p);
+    const tw=Math.sin(T*f.s+f.o+p*3.6)*f.a*p;
+    const px=cx+sp*p*W*.30+tw;
+    pts.push([px,y,p]);s?x.lineTo(px,y):x.moveTo(px,y);}
+   x.stroke();pos.push(pts);});
+  lv.forEach((lp,li)=>{
+   const show=eo(C((T-.6-li*.4)/1.1,0,1));if(show<=0)return;
+   const yy=L(by,ty,lp);
+   const act=drag===li?1:0;
+   const g=x.createLinearGradient(0,yy-3,0,yy+3);
+   g.addColorStop(0,hs(hc[li],80,72,0));
+   g.addColorStop(.5,hs(hc[li],85,78,(.28+act*.3)*show));
+   g.addColorStop(1,hs(hc[li],80,72,0));
+   x.fillStyle=g;x.fillRect(W*.08,yy-3,W*.84,6);
+   x.strokeStyle=hs(hc[li],85,80,(.24+act*.3)*show);x.lineWidth=1;
+   x.beginPath();x.ellipse(cx,yy,W*.40*show,13,0,0,TAU);x.stroke();
+   pos.forEach((pts,fi)=>{
+    let best=pts[0],bd=1e9;
+    for(const p of pts){const d=Math.abs(p[1]-yy);if(d<bd){bd=d;best=p;}}
+    const bl=.4+.4*Math.sin(T*2+fi*.7+li);
+    glow(best[0],best[1],16+act*8,fb[fi].h,96,82,bl*show);
+    x.fillStyle=hs(fb[fi].h,98,94,(bl+.3)*show);
+    x.beginPath();x.arc(best[0],best[1],2.2,0,TAU);x.fill();});
+   lbl(nm[li],W*.085,yy-13,hc[li],show*(.7+act*.3),'left');});
+  x.globalCompositeOperation='source-over';
+  star(cx,by,60*ap,.75);
+  x.fillStyle='#fff';x.beginPath();x.arc(cx,by,3,0,TAU);x.fill();
+  lbl('EIN UND DERSELBE HALM',cx,by+28,205,ap*.75,'center');
+ }
+ return{init,draw};
+})());
+
+/*═══ 09 · FARBRAUM OHNE SCHARFE GRENZE ═══*/
+S.push((()=>{let bl2=[];
+ function init(){const r=R(311);bl2=[];
+  for(let i=0;i<34;i++)bl2.push({p:r(),f:r()*TAU,s:.3+r()*.5,y:r()});}
+ function draw(t){const T=t/1000;
+  const ap=eo(C(T/1.1,0,1));
+  const bw=Math.min(W*.74,920),bx=W/2-bw/2,byy=H*.34,bh=Math.min(H*.17,120);
+  // kontinuierliches Spektrum
+  const g=x.createLinearGradient(bx,0,bx+bw,0);
+  for(let i=0;i<=24;i++)g.addColorStop(i/24,hs(200+(i/24)*160,78,56,.82*ap));
+  x.fillStyle=g;x.fillRect(bx,byy,bw,bh);
+  const sh=x.createLinearGradient(0,byy,0,byy+bh);
+  sh.addColorStop(0,'rgba(4,5,10,.42)');
+  sh.addColorStop(.5,'rgba(4,5,10,0)');
+  sh.addColorStop(1,'rgba(4,5,10,.52)');
+  x.fillStyle=sh;x.fillRect(bx,byy,bw,bh);
+  // Sprache 1: zwei Wörter
+  const a1=eo(C((T-.8)/1.2,0,1));
+  const cuts1=[.52];
+  const nm1=['SINIJ','GOLUBOJ'];
+  // Sprache 2: ein Wort
+  const a2=eo(C((T-2.1)/1.2,0,1));
+  const cuts2=[];
+  function band(yy,cuts,names,al,tag){
+   if(al<=0)return;
+   x.strokeStyle=`rgba(236,244,255,${.3*al})`;x.lineWidth=1;
+   x.beginPath();x.moveTo(bx,yy);x.lineTo(bx+bw,yy);x.stroke();
+   const edges=[0,...cuts,1];
+   for(let i=0;i<edges.length-1;i++){
+    const x1=bx+edges[i]*bw,x2=bx+edges[i+1]*bw;
+    x.strokeStyle=`rgba(236,244,255,${.45*al})`;
+    x.beginPath();x.moveTo(x1+2,yy-6);x.lineTo(x1+2,yy+6);
+    x.moveTo(x2-2,yy-6);x.lineTo(x2-2,yy+6);x.stroke();
+    lbl(names[i],(x1+x2)/2,yy+18,205,al,'center');}
+   // unscharfe Grenze
+   cuts.forEach(cp=>{
+    const px=bx+cp*bw;
+    const bg=x.createLinearGradient(px-34,0,px+34,0);
+    bg.addColorStop(0,'rgba(255,255,255,0)');
+    bg.addColorStop(.5,`rgba(255,255,255,${.26*al*(.6+.4*Math.sin(T*2))})`);
+    bg.addColorStop(1,'rgba(255,255,255,0)');
+    x.fillStyle=bg;x.fillRect(px-34,byy,68,bh);
+    x.setLineDash([2,4]);
+    x.strokeStyle=`rgba(255,255,255,${.35*al})`;x.lineWidth=1;
+    x.beginPath();x.moveTo(px,byy);x.lineTo(px,byy+bh);x.stroke();
+    x.setLineDash([]);});
+   lbl(tag,bx-16,yy,205,al*.8,'right');}
+  band(byy+bh+40,cuts1,nm1,a1,'RU');
+  band(byy+bh+104,cuts2,['BLAU'],a2,'DE');
+  // Messpunkt wandert
+  const mp=m.on?C((m.x-bx)/bw,0,1):(.5+.42*Math.sin(T*.42));
+  const px=bx+mp*bw;
+  x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=1;
+  x.beginPath();x.moveTo(px,byy-22);x.lineTo(px,byy+bh+124);x.stroke();
+  star(px,byy+bh/2,30,.5);
+  lbl('EIN FARBREIZ',px,byy-32,205,ap,'center');
+ }
+ return{init,draw};
+})());
+
+/*═══ 10 · KOHÄRENZ ALLEIN GENÜGT NICHT ═══*/
+S.push((()=>{let nd=[],eg=[];
+ function init(){const r=R(503);nd=[];eg=[];
+  const n=40,RX=Math.min(W,H)*.34,RY=Math.min(W,H)*.24;
+  for(let i=0;i<n;i++){const a=r()*TAU,d=Math.pow(r(),.58);
+   nd.push({hx:W/2+Math.cos(a)*RX*d*1.4,hy:H*.40+Math.sin(a)*RY*d,
+    f:r()*TAU,s:.25+r()*.6,h:M[(r()*6)|0].h});}
+  for(let i=0;i<n;i++){
+   const d=nd.map((q,j)=>({j,d:Math.hypot(q.hx-nd[i].hx,q.hy-nd[i].hy)}))
+    .filter(o=>o.j!==i).sort((a,b)=>a.d-b.d).slice(0,3);
+   d.forEach(o=>{if(!eg.some(e=>e[0]===o.j&&e[1]===i))eg.push([i,o.j]);});}}
+ function draw(t){const T=t/1000;
+  const dft=Math.sin(T*.3)*W*.05;
+  const br=Math.sin(T*.42)*11;
+  nd.forEach(q=>{
+   q.x=q.hx+Math.sin(T*q.s+q.f)*15+dft;
+   q.y=q.hy+Math.cos(T*q.s*.8+q.f)*13+br;});
+  x.lineWidth=.85;
+  eg.forEach(([i,j])=>{const a=nd[i],b=nd[j];
+   const g=x.createLinearGradient(a.x,a.y,b.x,b.y);
+   g.addColorStop(0,hs(a.h,80,74,.2));
+   g.addColorStop(1,hs(b.h,80,74,.2));
+   x.strokeStyle=g;
+   x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();});
+  x.globalCompositeOperation='lighter';
+  nd.forEach(q=>{const bl=.32+.3*Math.sin(T*1.5+q.f*2);
+   glow(q.x,q.y,13,q.h,95,82,.42*bl+.12);
+   x.fillStyle=hs(q.h,98,93,.5);
+   x.beginPath();x.arc(q.x,q.y,1.4,0,TAU);x.fill();});
+  x.globalCompositeOperation='source-over';
+  // Weltlinie unten, unberührt
+  const wy=H*.82;
+  const g=x.createLinearGradient(0,wy-40,0,wy+40);
+  g.addColorStop(0,'rgba(120,162,232,0)');
+  g.addColorStop(.5,'rgba(152,192,255,.15)');
+  g.addColorStop(1,'rgba(120,162,232,0)');
+  x.fillStyle=g;x.fillRect(0,wy-40,W,80);
+  x.strokeStyle='rgba(182,212,255,.2)';x.lineWidth=1;
+  x.beginPath();
+  for(let i=0;i<=W;i+=5){
+   const y=wy+Math.sin(i*.007+T*.45)*4.5+Math.sin(i*.019-T*.28)*2.2;
+   i?x.lineTo(i,y):x.moveTo(i,y);}x.stroke();
+  // Lücke zwischen Netz und Welt
+  const ga=eo(C((T-1.4)/1.4,0,1));
+  if(ga>0){
+   let lo=1e9;nd.forEach(q=>{if(q.y>lo)return;});
+   nd.forEach(q=>{lo=Math.min(lo,q.y);});
+   let bot=-1e9;nd.forEach(q=>{bot=Math.max(bot,q.y);});
+   x.setLineDash([2,7]);
+   x.strokeStyle=`rgba(236,244,255,${.16*ga})`;x.lineWidth=1;
+   x.beginPath();x.moveTo(W*.1,bot+18);x.lineTo(W*.9,bot+18);x.stroke();
+   x.setLineDash([]);
+   const mid=(bot+18+wy)/2;
+   x.strokeStyle=`rgba(236,244,255,${.3*ga})`;x.lineWidth=1;
+   x.beginPath();
+   x.moveTo(W*.5,bot+26);x.lineTo(W*.5,wy-10);
+   x.moveTo(W*.5-5,bot+26+6);x.lineTo(W*.5,bot+26);x.lineTo(W*.5+5,bot+26+6);
+   x.moveTo(W*.5-5,wy-16);x.lineTo(W*.5,wy-10);x.lineTo(W*.5+5,wy-16);
+   x.stroke();
+   lbl('KEIN KONTAKT',W*.5+16,mid,358,ga*.8,'left');}
+  lbl('IN SICH STIMMIG',W/2+dft,H*.13,205,eo(C(T/1.2,0,1))*.8,'center');
+  lbl('WELT',W*.04,wy,205,.6,'left');
+ }
+ return{init,draw};
+})());
+
+/*═══ 11 · KONTAKTPUNKTE ═══*/
+S.push((()=>{let nd=[],eg=[],an=[];
+ function init(){const r=R(233);nd=[];eg=[];an=[];
+  const n=46,RX=Math.min(W,H)*.36,RY=Math.min(W,H)*.25;
+  for(let i=0;i<n;i++){const a=r()*TAU,d=Math.pow(r(),.58);
+   nd.push({hx:W/2+Math.cos(a)*RX*d*1.4,hy:H*.36+Math.sin(a)*RY*d,
+    f:r()*TAU,s:.25+r()*.6,h:M[(r()*6)|0].h,an:false,x:0,y:0});}
+  for(let i=0;i<n;i++){
+   const d=nd.map((q,j)=>({j,d:Math.hypot(q.hx-nd[i].hx,q.hy-nd[i].hy)}))
+    .filter(o=>o.j!==i).sort((a,b)=>a.d-b.d).slice(0,3);
+   d.forEach(o=>{if(!eg.some(e=>e[0]===o.j&&e[1]===i))eg.push([i,o.j]);});}
+  [2,8,15,22,30,39].forEach((ix,q)=>{if(ix<n){nd[ix].an=true;
+   an.push({n:ix,wx:W*(.13+q*(.74/5)),wy:H*.84,b:.4+q*.42});}});}
+ function draw(t){const T=t/1000;
+  const wy=H*.84;
+  const g=x.createLinearGradient(0,wy-44,0,wy+44);
+  g.addColorStop(0,'rgba(120,162,232,0)');
+  g.addColorStop(.5,'rgba(152,192,255,.18)');
+  g.addColorStop(1,'rgba(120,162,232,0)');
+  x.fillStyle=g;x.fillRect(0,wy-44,W,88);
+  x.strokeStyle='rgba(182,212,255,.26)';x.lineWidth=1;
+  x.beginPath();
+  for(let i=0;i<=W;i+=5){
+   const y=wy+Math.sin(i*.007+T*.45)*4.5+Math.sin(i*.019-T*.28)*2.2;
+   i?x.lineTo(i,y):x.moveTo(i,y);}x.stroke();
+  const br=Math.sin(T*.42)*9;
+  nd.forEach(q=>{
+   q.x=q.hx+Math.sin(T*q.s+q.f)*15;
+   q.y=q.hy+Math.cos(T*q.s*.8+q.f)*13+br;
+   if(m.on){const dx=q.x-m.x,dy=q.y-m.y,d=Math.hypot(dx,dy);
+    if(d<180&&d>1){const fo=(1-d/180)*28;q.x+=dx/d*fo;q.y+=dy/d*fo;}}});
+  x.lineWidth=.85;
+  eg.forEach(([i,j])=>{const a=nd[i],b=nd[j];
+   const gg=x.createLinearGradient(a.x,a.y,b.x,b.y);
+   gg.addColorStop(0,hs(a.h,80,74,.18));
+   gg.addColorStop(1,hs(b.h,80,74,.18));
+   x.strokeStyle=gg;
+   x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();});
+  x.globalCompositeOperation='lighter';
+  nd.forEach(q=>{const bl=.32+.3*Math.sin(T*1.5+q.f*2);
+   glow(q.x,q.y,q.an?24:12,q.h,95,82,(q.an?.75:.42)*bl+.12);
+   x.fillStyle=hs(q.h,98,93,q.an?.95:.5);
+   x.beginPath();x.arc(q.x,q.y,q.an?2.6:1.4,0,TAU);x.fill();});
+  an.forEach(a=>{const q=nd[a.n],ap=eo(C((T-a.b)/1.4,0,1));if(ap<=0)return;
+   const tx=L(q.x,a.wx,ap),ty=L(q.y,a.wy,ap);
+   const gg=x.createLinearGradient(q.x,q.y,tx,ty);
+   gg.addColorStop(0,hs(q.h,92,82,0));
+   gg.addColorStop(.35,hs(q.h,92,82,.26*ap));
+   gg.addColorStop(1,`rgba(255,255,255,${.5*ap})`);
+   x.strokeStyle=gg;x.lineWidth=1.2;
+   x.beginPath();x.moveTo(q.x,q.y);
+   x.quadraticCurveTo((q.x+tx)/2+Math.sin(T*.55+a.b)*16,(q.y+ty)/2,tx,ty);
+   x.stroke();
+   if(ap>.94){
+    star(a.wx,a.wy,38,(.5+.5*Math.sin(T*2.1+a.b*3))*.8);
+    for(let i=0;i<2;i++){const rp=((T*.45+a.b*.3+i*.5)%1);
+     x.strokeStyle=`rgba(255,255,255,${(1-rp)*.2})`;x.lineWidth=1;
+     x.beginPath();x.ellipse(a.wx,a.wy,rp*120,rp*24,0,0,TAU);x.stroke();}}});
+  x.globalCompositeOperation='source-over';
+  an.forEach(a=>{if(eo(C((T-a.b)/1.4,0,1))<.92)return;
+   x.setLineDash([2,7]);x.strokeStyle='rgba(200,226,255,.11)';
+   x.beginPath();x.ellipse(a.wx,a.wy,50,15,0,0,TAU);x.stroke();x.setLineDash([]);});
+  const la=eo(C((T-2.6)/1.3,0,1));
+  lbl('»x« gdw. x',an.length?an[2].wx:W/2,wy+34,205,la*.8,'center');
+ }
+ return{init,draw};
+})());
+
+/*═══ 12 · VERKLEBUNG ═══*/
+S.push((()=>{let pc=[];
+ function init(){const r=R(181);pc=[];
+  const n=9,RR=Math.min(W,H)*.29;
+  for(let i=0;i<n;i++){const a=(i/n)*TAU-Math.PI/2;
+   pc.push({a,h:M[i%6].h,
+    sx:W/2+Math.cos(a)*Math.min(W,H)*.46,
+    sy:H*.44+Math.sin(a)*Math.min(W,H)*.44,
+    tx:W/2+Math.cos(a)*RR*.52,
+    ty:H*.44+Math.sin(a)*RR*.52,
+    r:28+r()*13,f:r()*TAU,
+    pt:Array.from({length:22},()=>({a:r()*TAU,d:Math.pow(r(),.5),f:r()*TAU,s:.4+r()*.7}))});}}
+ function draw(t){const T=t/1000;
+  const cx=W/2,cy=H*.44,RR=Math.min(W,H)*.29;
+  const gl=eo(C((T-.6)/3,0,1)),bn=eo(C((T-2)/2.6,0,1));
+  x.globalCompositeOperation='lighter';
+  if(bn>0){const rr2=RR*.95*bn;
+   star(cx,cy,rr2,.14*bn);
+   for(let i=1;i<9;i++){const p=i/9,ry=rr2*Math.sin(p*Math.PI);
+    const yy=cy-Math.cos(p*Math.PI)*rr2;
+    x.strokeStyle=hs(M[i%6].h,85,76,.15*bn);x.lineWidth=.9;
+    x.beginPath();x.ellipse(cx,yy,ry,ry*.24,0,0,TAU);x.stroke();}
+   for(let i=0;i<9;i++){const an2=(i/9)*Math.PI+T*.1;
+    x.strokeStyle=hs(M[i%6].h,85,78,.12*bn);
+    x.beginPath();x.ellipse(cx,cy,rr2*Math.abs(Math.cos(an2)),rr2,0,0,TAU);x.stroke();}}
+  pc.forEach((p,i)=>{
+   const e=eo(C(gl*1.5-i*.05,0,1));
+   const px=L(p.sx,p.tx,e),py=L(p.sy,p.ty,e);
+   const rd=L(p.r,p.r*.5,e),fa=1-e*.5;
+   glow(px,py,rd*2,p.h,88,66,.24*fa);
+   x.strokeStyle=hs(p.h,92,76,.34*fa);x.lineWidth=1;
+   x.beginPath();x.arc(px,py,rd,0,TAU);x.stroke();
+   for(const q of p.pt){
+    const qx=px+Math.cos(q.a+Math.sin(T*q.s+q.f)*.1)*q.d*rd*.9;
+    const qy=py+Math.sin(q.a+Math.cos(T*q.s+q.f)*.1)*q.d*rd*.9;
+    x.fillStyle=hs(p.h,95,86,(.22+.35*Math.sin(T*1.8+q.f*3))*fa);
+    x.beginPath();x.arc(qx,qy,1.2,0,TAU);x.fill();}
+   const nb=pc[(i+1)%pc.length];
+   const ne=eo(C(gl*1.5-((i+1)%pc.length)*.05,0,1));
+   const nx2=L(nb.sx,nb.tx,ne),ny2=L(nb.sy,nb.ty,ne);
+   const w=C(gl*1.7-.2,0,1);
+   if(w>0){
+    const g=x.createLinearGradient(px,py,nx2,ny2);
+    g.addColorStop(0,'rgba(255,255,255,0)');
+    g.addColorStop(.5,`rgba(255,255,255,${.26*w})`);
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    x.strokeStyle=g;x.lineWidth=1;
+    x.beginPath();x.moveTo(px,py);x.quadraticCurveTo(cx,cy,nx2,ny2);x.stroke();}
+   if(bn>0){
+    const ph=(T*.33+i/pc.length)%1;
+    const sx2=L(px,cx,ph),sy2=L(py,cy,ph);
+    glow(sx2,sy2,11,p.h,98,88,Math.sin(ph*Math.PI)*bn*.9);}});
+  if(bn>0)star(cx,cy,78*bn,(.5+.4*Math.sin(T*1.5))*bn);
+  x.globalCompositeOperation='source-over';
+  const la=eo(C((T-1)/1.3,0,1));
+  lbl('LOKALE SCHNITTE',W/2,H*.09,205,la*(1-bn*.6),'center');
+  if(bn>.5)lbl('EIN GLOBALER SCHNITT',cx,cy+RR+34,205,(bn-.5)*2*.85,'center');
+ }
+ return{init,draw};
+})());
+
+/*════════ TEXTE ════════*/
+const TXT=[
+ ['Die Welt ist ein zusammenhängender Raum von Orten, an denen sich <em>messen</em> lässt.',
+  'Nicht nur Raum und Zeit — auch Farbe, Klang oder Stimmung bilden solche Räume, in denen <b>Nähe</b> ohne exakte Metrik gilt.'],
+ ['Über jedem Ort steht ein Halm: <em>alles</em>, was sich dort überhaupt feststellen ließe.',
+  'Temperatur, Druck, Klang, Atmosphäre — der Ort selbst heißt <b>Keim</b>, die Fülle seiner möglichen Werte <b>Halm</b>.'],
+ ['Was auf einem Gebiet gilt, gilt auch auf jedem kleineren Stück davon.',
+  'Diese Einschränkung <b>ρ</b> ist der eigentliche Motor: Eine Prägarbe ist nichts anderes als die Kunst, konsistent zu vergessen.'],
+ ['Zwei Messungen am selben Ort widersprechen einander nie — sie zeigen auf <em>dasselbe</em>.',
+  'Im Überlapp <b>U ∩ V</b> müssen Druck und Temperatur dieselbe Lage beschreiben, weil die Welt eine einzige ist.'],
+ ['Tun sie es doch, ist nicht die Welt zerrissen, sondern das <em>Modell</em> falsch.',
+  'Inkompatible Daten lassen sich nicht verkleben — das Scheitern ist die <b>Korrektur</b>, nicht der Defekt.'],
+ ['Blitz und Donner treffen getrennt ein und sind doch <em>ineinander überführbar</em>.',
+  'Verträglichkeit heißt nicht Gleichheit: Es genügt ein <b>f</b>, das die eine Messung in die andere übersetzt.'],
+ ['Jede Sprache ist ein Fenster: Sie lässt manches durch und anderes <em>nicht</em>.',
+  '<b>Mind</b> und <b>Geist</b> greifen verschiedene Bänder desselben Feldes ab — und überlappen dort, wo Übersetzung gelingt.'],
+ ['Oder sie legt einen anderen <em>Schnitt</em> durch denselben Halm.',
+  'Zieh die Ebenen mit der Maus: Derselbe Ort liefert andere Werte, je nachdem auf welcher Höhe man ihn abliest.'],
+ ['Wo eine Sprache zwei Wörter hat, hat eine andere <em>eines</em>.',
+  'Das Spektrum bleibt stetig — nur die <b>Zerlegung</b> ändert sich, und ihre Grenzen bleiben unscharf.'],
+ ['Ein Weltbild kann vollkommen stimmig sein und trotzdem <em>nichts</em> treffen.',
+  'Kohärenz allein lässt das Netz frei schweben; ihm fehlt die <b>Berührung</b> mit dem, wovon es handelt.'],
+ ['Dort aber, wo das Gewebe die Welt berührt, hat es <em>recht</em>.',
+  'Jeder Anker ist eine Vorhersage, die eintrifft — innerhalb eines <b>ε</b>, nicht auf den Punkt genau.'],
+ ['Passen die lokalen Stücke überall zusammen, verkleben sie zu <em>einem</em> Ganzen.',
+  'Genau das ist das Garbenaxiom — und zugleich die Hoffnung, die jede <b>Übersetzung</b> trägt.']
+];
+const HINTS=['','','','','','','','ZIEHEN','BEWEGEN','','',''];
+
+/*════════ STEUERUNG ════════*/
+let k=0,t0=performance.now();
+const nav=document.querySelector('nav');
+const t1=document.getElementById('t1'),t2=document.getElementById('t2');
+const num=document.getElementById('num'),fade=document.getElementById('fade');
+const hint=document.getElementById('hint');
+
+S.forEach((_,i)=>{
+  const b=document.createElement('i');
+  b.addEventListener('click',()=>go(i));
+  nav.appendChild(b);
+});
+const dots=[...nav.children];
+
+function paint(){
+  dots.forEach((d,i)=>d.classList.toggle('on',i===k));
+  num.textContent=String(k+1).padStart(2,'0')+' / '+String(S.length).padStart(2,'0');
+  t1.classList.remove('in');t2.classList.remove('in');
+  hint.classList.remove('on');
+  setTimeout(()=>{
+    t1.innerHTML=TXT[k][0];t2.innerHTML=TXT[k][1];
+    t1.classList.add('in');t2.classList.add('in');
+    if(HINTS[k]){hint.textContent=HINTS[k];hint.classList.add('on');}
+  },250);
+}
+
+let busy=false;
+function go(i){
+  if(busy||i<0||i>=S.length||i===k)return;
+  busy=true;
+  fade.classList.add('on');
+  t1.classList.remove('in');t2.classList.remove('in');
+  hint.classList.remove('on');
+  setTimeout(()=>{
+    k=i;t0=performance.now();
+    x.setTransform(1,0,0,1,0,0);
+    x.clearRect(0,0,cv.width,cv.height);
+    x.setTransform(D,0,0,D,0,0);
+    if(S[k].init)S[k].init();
+    paint();
+    fade.classList.remove('on');
+    setTimeout(()=>{busy=false;},400);
+  },520);
+}
+
+document.getElementById('nx').addEventListener('click',()=>go(k+1));
+document.getElementById('pv').addEventListener('click',()=>go(k-1));
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(k+1);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();go(k-1);}
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(S.length-1);
+});
+addEventListener('wheel',(()=>{let lk=0;return e=>{
+  const n=performance.now();
+  if(n-lk<950||Math.abs(e.deltaY)<20)return;
+  lk=n;go(k+(e.deltaY>0?1:-1));
+};})(),{passive:true});
+(()=>{let sx=0,sy=0;
+  addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;m.dn=true;},{passive:true});
+  addEventListener('touchend',e=>{
+    m.dn=false;
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>58&&Math.abs(dx)>Math.abs(dy))go(k+(dx<0?1:-1));
+  },{passive:true});
+  addEventListener('touchmove',e=>{
+    m.x=e.touches[0].clientX;m.y=e.touches[0].clientY;m.on=true;
+  },{passive:true});
+})();
+
+size();
+if(S[0].init)S[0].init();
+paint();
+
+function loop(now){
+  x.globalCompositeOperation='source-over';
+  x.fillStyle='rgba(4,5,10,0.19)';
+  x.fillRect(0,0,W,H);
+  S[k].draw(now-t0);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
