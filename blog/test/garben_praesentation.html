@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Garben · Schnitte · Welt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700&family=JetBrains+Mono:wght@400&display=swap');
+:root{--bg:#06070a;--ink:#f0f4fa;--dim:#7d89a3;--a:#7dd3fc;--b:#c084fc;--w:#fbbf24;--g:#34d399;--r:#fb7185}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Fraunces,serif}
+#stage{position:fixed;inset:0}
+.s{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .9s}
+.s.on{opacity:1;pointer-events:auto}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+.cap{position:absolute;left:0;right:0;bottom:12vh;text-align:center;padding:0 8vw;z-index:5}
+.cap h2{font-weight:300;font-size:clamp(1.3rem,3.4vw,2.9rem);line-height:1.25;letter-spacing:-.02em;
+  text-shadow:0 2px 40px rgba(0,0,0,.95)}
+.cap em{font-style:normal;color:var(--a)}
+.cap b{font-weight:700;color:var(--w)}
+.tag{position:absolute;top:5vh;left:0;right:0;text-align:center;font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);z-index:5}
+#bar{position:fixed;top:0;left:0;height:2px;z-index:50;background:linear-gradient(90deg,var(--a),var(--b),var(--w));transition:width .6s}
+#nav{position:fixed;bottom:3vh;left:0;right:0;text-align:center;font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;letter-spacing:.2em;color:#39414f;z-index:50}
+</style>
+</head>
+<body>
+<div id="bar"></div><div id="stage"></div><div id="nav">← →</div>
+<script>
+const S=[],add=(t,c,f)=>S.push({t,c,f});
+const TAU=Math.PI*2;
+
+/* 1 */add('','<em>Die Welt</em> ist ein Raum aus Messpunkten.',(x,W,H,t)=>{
+ const P=[];for(let i=0;i<300;i++){const r=Math.cbrt(Math.random())*.9,th=Math.random()*TAU,ph=Math.acos(2*Math.random()-1);
+  P.push([r*Math.sin(ph)*Math.cos(th),r*Math.sin(ph)*Math.sin(th),r*Math.cos(ph),180+Math.random()*100])}
+ return()=>{const c=[W/2,H/2],s=Math.min(W,H)*.34,a=t()*.25;
+ const q=P.map(p=>{const X=p[0]*Math.cos(a)-p[2]*Math.sin(a),Z=p[0]*Math.sin(a)+p[2]*Math.cos(a);
+  const Y=p[1]*.9-Z*.42,Z2=p[1]*.42+Z*.9,k=1/(1.9-Z2*.55);
+  return[c[0]+X*s*k,c[1]+Y*s*k,Z2,p[3],k]}).sort((m,n)=>m[2]-n[2]);
+ for(let i=0;i<q.length;i++)for(let j=i+1;j<Math.min(i+6,q.length);j++){
+  const d=Math.hypot(q[i][0]-q[j][0],q[i][1]-q[j][1]);if(d<62){
+  x.strokeStyle=`hsla(${q[i][3]},80%,70%,${(1-d/62)*.1})`;x.lineWidth=.6;
+  x.beginPath();x.moveTo(q[i][0],q[i][1]);x.lineTo(q[j][0],q[j][1]);x.stroke()}}
+ q.forEach(p=>{const al=.3+(p[2]+1)/2*.6,r=p[4]*4;
+  const g=x.createRadialGradient(p[0],p[1],0,p[0],p[1],r*3.5);
+  g.addColorStop(0,`hsla(${p[3]},88%,76%,${al})`);g.addColorStop(1,'transparent');
+  x.fillStyle=g;x.beginPath();x.arc(p[0],p[1],r*3.5,0,TAU);x.fill();
+  x.fillStyle=`hsla(${p[3]},95%,90%,${al})`;x.beginPath();x.arc(p[0],p[1],r*.5,0,TAU);x.fill()})}});
+
+/* 2 */add('','Über jedem Punkt liegen <em>alle möglichen Messungen</em>.',(x,W,H,t)=>{
+ const G=[.14,.3,.46,.62,.78],M=[[10,'Temperatur'],[200,'Druck'],[275,'Energie'],[330,'Atmosphäre'],[150,'Rhythmus'],[42,'Gemütlichkeit']];
+ return()=>{const bY=H*.78,L=W*.12,R=W*.88,T=t();
+ x.strokeStyle='rgba(125,211,252,.35)';x.lineWidth=2;
+ x.beginPath();x.moveTo(L,bY);x.lineTo(R,bY);x.stroke();
+ G.forEach((gp,gi)=>{const gx=L+(R-L)*gp,sel=gi===2;
+  const gr=x.createLinearGradient(0,bY,0,bY-H*.58);
+  gr.addColorStop(0,sel?'rgba(125,211,252,.20)':'rgba(125,211,252,.04)');gr.addColorStop(1,'transparent');
+  x.fillStyle=gr;x.fillRect(gx-W*.022,bY-H*.58,W*.044,H*.58);
+  M.forEach((m,mi)=>{const y=bY-H*.09-mi*H*.098+Math.sin(T*1.1+mi*.6+gi)*2.5;
+   const al=sel?.95:.18,rr=sel?7:4;
+   const g2=x.createRadialGradient(gx,y,0,gx,y,rr*4);
+   g2.addColorStop(0,`hsla(${m[0]},85%,72%,${al})`);g2.addColorStop(1,'transparent');
+   x.fillStyle=g2;x.beginPath();x.arc(gx,y,rr*4,0,TAU);x.fill();
+   x.fillStyle=`hsla(${m[0]},92%,84%,${al})`;x.beginPath();x.arc(gx,y,rr,0,TAU);x.fill();
+   if(sel){x.font='12px "JetBrains Mono",monospace';x.fillStyle=`hsla(${m[0]},85%,80%,.9)`;
+    x.fillText(m[1],gx+22,y+4)}});
+  x.fillStyle=sel?'#fbbf24':'rgba(125,211,252,.5)';
+  x.beginPath();x.arc(gx,bY,sel?8:5,0,TAU);x.fill();
+  if(sel){x.strokeStyle='rgba(251,191,36,.4)';x.lineWidth=1.4;
+   x.beginPath();x.arc(gx,bY,16+Math.sin(T*2)*3,0,TAU);x.stroke()}})}});
+
+/* 3 */add('','Ein <b>Schnitt</b> wählt aus jedem Halm einen Wert.',(x,W,H,t)=>{
+ const G=[.14,.3,.46,.62,.78],M=[[10,0],[200,1],[275,2],[330,3],[150,4],[42,5]];
+ const pick=[3,1,4,2,3];
+ return()=>{const bY=H*.78,L=W*.12,R=W*.88,T=t();
+ x.strokeStyle='rgba(125,211,252,.3)';x.lineWidth=2;
+ x.beginPath();x.moveTo(L,bY);x.lineTo(R,bY);x.stroke();
+ const pts=[];
+ G.forEach((gp,gi)=>{const gx=L+(R-L)*gp;
+  M.forEach((m,mi)=>{const y=bY-H*.09-mi*H*.098+Math.sin(T*1.1+mi*.6+gi)*2.5;
+   const on=pick[gi]===mi,al=on?1:.14,rr=on?8:3.5;
+   const g=x.createRadialGradient(gx,y,0,gx,y,rr*4);
+   g.addColorStop(0,`hsla(${m[0]},85%,72%,${al})`);g.addColorStop(1,'transparent');
+   x.fillStyle=g;x.beginPath();x.arc(gx,y,rr*4,0,TAU);x.fill();
+   x.fillStyle=`hsla(${m[0]},92%,86%,${al})`;x.beginPath();x.arc(gx,y,rr,0,TAU);x.fill();
+   if(on)pts.push([gx,y])});
+  x.fillStyle='rgba(125,211,252,.55)';x.beginPath();x.arc(gx,bY,5,0,TAU);x.fill()});
+ x.strokeStyle='rgba(52,211,153,.9)';x.lineWidth=3;x.setLineDash([8,6]);x.lineDashOffset=-T*22;
+ x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.stroke();x.setLineDash([])}});
+
+/* 4 */add('','Zwei Messungen widersprechen sich nicht — sie sind <em>ineinander überführbar</em>.',(x,W,H,t)=>{
+ return()=>{const T=(t()*.42)%6,gY=H*.76,sx=W*.14,ox=W*.84,ts=3.5;
+ const sky=x.createLinearGradient(0,0,0,gY);
+ sky.addColorStop(0,'#080b12');sky.addColorStop(1,'#141b2c');x.fillStyle=sky;x.fillRect(0,0,W,gY);
+ if(T<.3){const a=(1-T/.3)*.5;const g=x.createRadialGradient(sx,H*.22,0,sx,H*.22,W*.5);
+  g.addColorStop(0,`rgba(253,230,138,${a})`);g.addColorStop(1,'transparent');x.fillStyle=g;x.fillRect(0,0,W,gY)}
+ x.fillStyle='#0a0d14';x.fillRect(0,gY,W,H-gY);
+ x.strokeStyle='rgba(125,211,252,.22)';x.lineWidth=1.5;x.beginPath();x.moveTo(0,gY);x.lineTo(W,gY);x.stroke();
+ x.strokeStyle=T<.35?'rgba(253,230,138,.95)':'rgba(253,230,138,.18)';x.lineWidth=T<.35?5:2;
+ x.beginPath();x.moveTo(sx,H*.06);x.lineTo(sx-W*.018,H*.3);x.lineTo(sx+W*.012,H*.3);x.lineTo(sx-W*.008,gY);x.stroke();
+ const lr=Math.min(T*W*2.4,W*2);
+ x.strokeStyle=`rgba(253,230,138,${Math.max(0,.45-T*1.3)})`;x.lineWidth=2.5;
+ x.beginPath();x.arc(sx,H*.22,lr,0,TAU);x.stroke();
+ const px=(ox-sx)/1.2,sr=T*.343*px;
+ x.strokeStyle='rgba(192,132,252,.25)';x.lineWidth=12;x.beginPath();x.arc(sx,H*.22,sr,0,TAU);x.stroke();
+ x.strokeStyle='rgba(192,132,252,.8)';x.lineWidth=2.5;x.beginPath();x.arc(sx,H*.22,sr,0,TAU);x.stroke();
+ x.fillStyle='rgba(52,211,153,.9)';x.beginPath();x.arc(ox,gY-18,11,0,TAU);x.fill();
+ x.strokeStyle='rgba(52,211,153,.35)';x.lineWidth=1.5;
+ x.beginPath();x.arc(ox,gY-18,22+Math.sin(T*3)*3,0,TAU);x.stroke();
+ const tY=H*.9,t0=W*.14,t1=W*.86,mx=ts+2,sc=(t1-t0)/mx;
+ x.strokeStyle='rgba(125,211,252,.2)';x.lineWidth=1.5;x.beginPath();x.moveTo(t0,tY);x.lineTo(t1,tY);x.stroke();
+ x.fillStyle='#fde68a';x.beginPath();x.arc(t0,tY,8,0,TAU);x.fill();
+ x.fillStyle='#c084fc';x.beginPath();x.arc(t0+ts*sc,tY,8,0,TAU);x.fill();
+ x.strokeStyle='rgba(52,211,153,.9)';x.lineWidth=2.5;x.setLineDash([7,5]);x.lineDashOffset=-T*24;
+ x.beginPath();x.moveTo(t0+12,tY-26);x.lineTo(t0+ts*sc-12,tY-26);x.stroke();x.setLineDash([]);
+ x.font='15px "JetBrains Mono",monospace';x.fillStyle='rgba(52,211,153,.95)';x.textAlign='center';
+ x.fillText('f : t ↦ t + d/v',(t0*2+ts*sc)/2,tY-38);x.textAlign='start';
+ x.strokeStyle='rgba(125,211,252,.9)';x.lineWidth=2.5;
+ const ph=t0+Math.min(T,mx)*sc;x.beginPath();x.moveTo(ph,tY-14);x.lineTo(ph,tY+14);x.stroke()}});
+
+/* 5 */add('','Welche Dimension <b>Basis</b> wird und welche <b>Faser</b> — ist eine Wahl.',(x,W,H,t)=>{
+ let m=0;return()=>{const T=t();m=(Math.sin(T*.35)+1)/2;const c=[W/2,H*.44];
+ const lp=(a,b,u)=>a+(b-a)*u,ax=lp(c[0],c[0]-W*.19,m),bx=lp(c[0],c[0]+W*.19,m);
+ x.strokeStyle='rgba(125,211,252,.22)';x.lineWidth=2;
+ x.beginPath();x.moveTo(W*.1,H*.74);x.lineTo(W*.9,H*.74);x.stroke();
+ x.font='13px "JetBrains Mono",monospace';x.fillStyle='rgba(125,211,252,.6)';x.textAlign='center';
+ x.fillText(m<.5?'Basis:  (x, y, z, t)':'Basis:  (x, y, z)      Faser:  t',W/2,H*.79);x.textAlign='start';
+ const fib=(px,items,hue)=>{
+  const g=x.createLinearGradient(0,H*.74,0,H*.14);
+  g.addColorStop(0,`hsla(${hue},80%,66%,.18)`);g.addColorStop(1,'transparent');
+  x.fillStyle=g;x.fillRect(px-W*.025,H*.14,W*.05,H*.6);
+  items.forEach((it,i)=>{const y=c[1]+H*.08-i*H*.13+Math.sin(T*1.3+i)*3;
+   const g2=x.createRadialGradient(px,y,0,px,y,34);
+   g2.addColorStop(0,`hsla(${it[1]},88%,74%,.95)`);g2.addColorStop(1,'transparent');
+   x.fillStyle=g2;x.beginPath();x.arc(px,y,34,0,TAU);x.fill();
+   x.fillStyle=`hsla(${it[1]},95%,88%,1)`;x.beginPath();x.arc(px,y,7,0,TAU);x.fill();
+   x.font='13px "JetBrains Mono",monospace';x.fillStyle=`hsla(${it[1]},85%,82%,.95)`;x.textAlign='center';
+   x.fillText(it[0],px,y-22);x.textAlign='start'});
+  x.fillStyle=`hsla(${hue},90%,74%,1)`;x.beginPath();x.arc(px,H*.74,8,0,TAU);x.fill()};
+ if(m<.55){x.globalAlpha=1-m/.55;fib(c[0],[['⚡ Blitz',48],['🔊 Donner',280]],48);
+  x.font='30px Fraunces,serif';x.fillStyle='rgba(52,211,153,.9)';x.textAlign='center';
+  x.fillText('≡',c[0]+W*.1,c[1]+8);x.textAlign='start';x.globalAlpha=1}
+ if(m>.05){x.globalAlpha=m;fib(ax,[['t = 0.00',48]],48);fib(bx,[['t = 3.50',280]],280);
+  const y=c[1]+H*.08;x.strokeStyle='rgba(52,211,153,.9)';x.lineWidth=3;
+  x.setLineDash([8,6]);x.lineDashOffset=-T*24;x.beginPath();x.moveTo(ax+40,y);
+  x.bezierCurveTo(ax+W*.1,y-H*.14,bx-W*.1,y-H*.14,bx-40,y);x.stroke();x.setLineDash([]);
+  x.font='16px "JetBrains Mono",monospace';x.fillStyle='rgba(52,211,153,.95)';x.textAlign='center';
+  x.fillText('φ',(ax+bx)/2,y-H*.16);x.textAlign='start';x.globalAlpha=1}}});
+
+/* 6 */add('','Jede Sprache <em>überdeckt dieselben Punkte anders</em>.',(x,W,H,t)=>{
+ const C=[['FB',.2],['MB',.4],['FZ',.6],['MZ',.8]];
+ const LG=[[200,'Hawaiianisch',.36,[['makua kāne',0,1],['makuahine',2,3]]],
+           [150,'Englisch',.56,[['uncle',0,1],['aunt',2,3]]],
+           [330,'Arabisch',.76,[['ʿamm',0,0],['khāl',1,1],['ʿamma',2,2],['khāla',3,3]]]];
+ return()=>{const T=t();
+ C.forEach(c=>{const px=c[1]*W,py=H*.14;
+  const g=x.createRadialGradient(px,py,0,px,py,46);
+  g.addColorStop(0,'rgba(251,191,36,.4)');g.addColorStop(1,'transparent');
+  x.fillStyle=g;x.beginPath();x.arc(px,py,46,0,TAU);x.fill();
+  x.fillStyle='#fbbf24';x.beginPath();x.arc(px,py,8,0,TAU);x.fill();
+  x.font='17px "JetBrains Mono",monospace';x.fillStyle='rgba(240,244,250,.95)';x.textAlign='center';
+  x.fillText(c[0],px,py-24);x.textAlign='start'});
+ LG.forEach((L,li)=>{const py=L[2]*H;
+  L[3].forEach((tm,ti)=>{const l=C[tm[1]][1]*W-W*.065,r=C[tm[2]][1]*W+W*.065;
+   const p=Math.sin(T*1.1+ti*.7+li)*2;
+   const g=x.createLinearGradient(l,0,r,0);
+   g.addColorStop(0,`hsla(${L[0]},80%,62%,.1)`);g.addColorStop(.5,`hsla(${L[0]},80%,62%,.26)`);
+   g.addColorStop(1,`hsla(${L[0]},80%,62%,.1)`);
+   const rr=(xx,yy,w,h,rd)=>{x.beginPath();x.moveTo(xx+rd,yy);x.lineTo(xx+w-rd,yy);
+    x.quadraticCurveTo(xx+w,yy,xx+w,yy+rd);x.lineTo(xx+w,yy+h-rd);
+    x.quadraticCurveTo(xx+w,yy+h,xx+w-rd,yy+h);x.lineTo(xx+rd,yy+h);
+    x.quadraticCurveTo(xx,yy+h,xx,yy+h-rd);x.lineTo(xx,yy+rd);x.quadraticCurveTo(xx,yy,xx+rd,yy);x.closePath()};
+   x.fillStyle=g;rr(l,py-26+p,r-l,52,16);x.fill();
+   x.strokeStyle=`hsla(${L[0]},85%,72%,.65)`;x.lineWidth=2;rr(l,py-26+p,r-l,52,16);x.stroke();
+   x.font='16px "JetBrains Mono",monospace';x.fillStyle=`hsla(${L[0]},92%,86%,1)`;x.textAlign='center';
+   x.fillText(tm[0],(l+r)/2,py+6+p);x.textAlign='start';
+   [tm[1],tm[2]].forEach(ci=>{const cx=C[ci][1]*W;
+    x.strokeStyle=`hsla(${L[0]},80%,70%,.2)`;x.lineWidth=1;x.setLineDash([3,4]);x.lineDashOffset=-T*10;
+    x.beginPath();x.moveTo(cx,H*.14+14);x.lineTo(cx,py-26+p);x.stroke();x.setLineDash([])})})})}});
+
+/* 7 */add('','Manchmal gibt es <em>kein Wort</em> für das Ganze.',(x,W,H,t)=>{
+ let md=0;return()=>{const T=t();md=T%8>4?1:0;const c=[W/2,H*.3],gY=H*.68;
+ const ux=c[0]-W*.17,vx=c[0]+W*.17,ok=md===0;
+ const rr=(xx,yy,w,h,rd)=>{x.beginPath();x.moveTo(xx+rd,yy);x.lineTo(xx+w-rd,yy);
+  x.quadraticCurveTo(xx+w,yy,xx+w,yy+rd);x.lineTo(xx+w,yy+h-rd);
+  x.quadraticCurveTo(xx+w,yy+h,xx+w-rd,yy+h);x.lineTo(xx+rd
