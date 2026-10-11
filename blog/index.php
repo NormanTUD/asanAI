@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
-	<title>From Big Bang to ChatGPT</title>
+	<title>From Nothing to ChatGPT</title>
 	<script>
 	function toggleTheme() {
 		var html = document.documentElement;
@@ -61,7 +61,7 @@
 <?php render_drawer(); ?>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
-	<?php render_loader_title('From Big Bang to ChatGPT', 'A Peek inside the Black Box', $themeClass === 'dark'); ?>
+	<?php render_loader_title('From Nothing to ChatGPT', 'A Peek inside the Black Box', $themeClass === 'dark'); ?>
 	<p id="loader-status">Initializing AI Course...</p>
 	<div id="loader-checklist" aria-hidden="true"></div>
 </div>
@@ -78,7 +78,7 @@ setTimeout(function () {
 
 <div class="course-hero">
 	<?php render_constellation(); ?>
-	<h1>From Big Bang to ChatGPT</h1>
+	<h1>From Nothing to ChatGPT</h1>
 	<a class="course-jump" href="#course-overview">Jump to the course list&nbsp;&darr;</a>
 </div>
 
