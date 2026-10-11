@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lokal &harr; Global — Quer durch beide Spuren (KI &times; nicht-KI)</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('them04-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}
+else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f4f1e8; --stroke:#e6e1d2; --stroke2:#d8d2c0;
+  --txt:#1c1a17; --dim:#57524a; --accent:#0a6ea8; --accent2:#b45309; --accent3:#be185d;
+  --good:#15803d; --bad:#b91c1c; --gold:#9a6b00; --ring:#7c3aed; --fold:#b45309;
+  --viz-bg:#fbfaf4; --grid:rgba(20,40,80,.07);
+  --mono:ui-monospace,Menlo,Consolas,monospace; --shadow:0 10px 30px rgba(30,50,90,.10);
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141d31; --panel2:#1a2439; --stroke:#26314f; --stroke2:#33405f;
+  --txt:#e8ecff; --dim:#a8b3d9; --accent:#58a6ff; --accent2:#ffb86b; --accent3:#ff7ab6;
+  --good:#4ade80; --bad:#ff9b9b; --gold:#ffd700; --ring:#c4a7ff; --fold:#ffb86b;
+  --viz-bg:#0d1526; --grid:rgba(120,160,255,.07);
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Iowan Old Style',Georgia,'Times New Roman',system-ui,-apple-system,sans-serif;line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease}
+.article{max-width:860px;margin:0 auto;padding:0 22px 92px}
+.theme-toggle{position:fixed;top:16px;right:16px;z-index:50;background:var(--panel);color:var(--txt);border:1px solid var(--stroke);border-radius:999px;padding:8px 15px;font-size:.82rem;cursor:pointer;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+/* hero */
+header.hero{padding:58px 0 20px;text-align:center}
+.hero .idx{font-family:var(--mono);font-size:clamp(2.6rem,9vw,4.4rem);font-weight:800;line-height:1;color:var(--accent);letter-spacing:-.03em}
+.hero .idx small{font-size:.34em;color:var(--dim);letter-spacing:.28em;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:700}
+h1{font-size:clamp(1.9rem,5.4vw,3.05rem);line-height:1.08;margin:14px 0 10px;font-weight:800;letter-spacing:-.02em}
+h1 .em{color:var(--accent)}h1 .em2{color:var(--accent2)}
+.tagline{color:var(--dim);font-size:1.05rem;margin:0 auto;max-width:660px}
+.tagline code{font-family:var(--mono);background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:6px;font-size:.86em;color:var(--accent)}
+.badge{display:inline-block;margin-top:18px;font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:7px 16px;background:var(--panel)}
+.badge .x{color:var(--accent2)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 4px}
+.toc a{font-size:.78rem;color:var(--accent2);text-decoration:none;border:1px solid var(--stroke);padding:5px 13px;border-radius:22px;background:var(--panel);font-family:system-ui,sans-serif;transition:.15s}
+.toc a:hover{border-color:var(--accent2)}
+
+/* sections */
+section{margin:46px 0;scroll-margin-top:20px}
+h2{font-size:clamp(1.35rem,3.4vw,1.75rem);margin:0 0 14px;font-weight:800;letter-spacing:-.01em;padding-bottom:9px;border-bottom:1px solid var(--stroke)}
+h2 .num{font-family:var(--mono);font-size:.62em;color:var(--accent);margin-right:10px;border:1px solid var(--stroke2);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.08rem;margin:22px 0 8px;font-weight:720;color:var(--accent2)}
+p{margin:11px 0}
+p.dim,.dim{color:var(--dim)}
+b,strong{font-weight:700}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}.hl3{color:var(--accent3);font-weight:700}
+code,.mono{font-family:var(--mono);font-size:.88em;background:var(--panel2);border:1px solid var(--stroke);border-radius:5px;padding:0 6px}
+
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px 20px;box-shadow:var(--shadow);margin:16px 0}
+.card.tight{padding:14px 16px}
+.card.a{border-left:4px solid var(--accent)}
+.card.b{border-left:4px solid var(--accent2)}
+.callout{border-left:4px solid var(--accent3);background:var(--panel2);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0}
+.callout .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent3);display:block;margin-bottom:6px;font-weight:700}
+.callout b{color:var(--txt)}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--panel2);border-left:3px solid var(--accent3);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:1rem;overflow-x:auto;line-height:1.75}
+
+table{width:100%;border-collapse:collapse;font-size:.84rem;margin:14px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--stroke);vertical-align:top;font-family:system-ui,sans-serif}
+th{color:var(--accent);font-weight:700;font-size:.7rem;letter-spacing:.03em;text-transform:uppercase}
+td:first-child{font-weight:700;color:var(--txt)}
+tr.hl td{background:var(--panel2)}
+
+/* viz */
+.vizwrap{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin:16px 0}
+#cv{display:block;width:100%;height:520px;border-radius:12px;border:1px solid var(--stroke);background:var(--viz-bg);touch-action:none;cursor:default}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:.74rem;color:var(--dim);margin:9px 0;font-family:system-ui,sans-serif}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.controls{display:flex;flex-wrap:wrap;gap:13px 20px;align-items:center;justify-content:center;margin:12px 0;font-size:.84rem}
+.controls label{color:var(--dim);display:inline-flex;align-items:center;gap:8px;font-family:system-ui,sans-serif}
+.controls input[type=range]{width:120px;accent-color:var(--accent)}
+.controls .val{color:var(--gold);font-weight:700;min-width:24px;text-align:center;font-family:var(--mono)}
+.controls .chk{color:var(--txt);cursor:pointer;font-family:system-ui,sans-serif}
+.controls button{padding:7px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:8px;cursor:pointer;font-family:system-ui,sans-serif;font-size:.82rem;font-weight:600}
+.controls button:hover{background:var(--accent);color:var(--bg)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:9px 13px;min-width:112px;flex:1}
+.stat .k{color:var(--dim);font-size:.63rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:4px}
+.stat .v{font-family:var(--mono);font-weight:700;font-size:1.05rem}
+.verdict{font-weight:700;font-size:.94rem;padding:12px 15px;border-radius:11px;margin-top:12px;border:1px solid var(--stroke);line-height:1.55}
+.verdict.good{color:var(--good);background:rgba(74,222,128,.10);border-color:var(--good)}
+.verdict.warn{color:var(--accent2);background:rgba(255,208,102,.10);border-color:var(--accent2)}
+.verdict.bad{color:var(--bad);background:rgba(255,95,126,.10);border-color:var(--bad)}
+.hint{font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px;line-height:1.6}
+
+/* sources */
+.prov{padding:14px 0;border-bottom:1px solid var(--stroke)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;font-family:var(--mono);word-break:break-all}
+.prov a:hover{text-decoration:underline}
+.prov .track{display:inline-block;font-size:.68rem;font-weight:700;color:var(--dim);border:1px solid var(--stroke);border-radius:999px;padding:1px 9px;margin-right:9px;font-family:system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.prov .track.ki{color:var(--accent);border-color:var(--accent)}
+.prov .track.nki{color:var(--accent2);border-color:var(--accent2)}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:5px;line-height:1.6}
+footer{text-align:center;padding:44px 0 10px;color:var(--dim);font-size:.82rem;border-top:1px solid var(--stroke);margin-top:42px;font-family:system-ui,sans-serif;line-height:1.7}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790;&#65039; Dunkel</button>
+<div class="article">
+
+<header class="hero">
+  <div class="idx"><small>Themenkomplex</small>04</div>
+  <h1><span class="em">Lokal</span> &harr; <span class="em2">Global</span></h1>
+  <p class="tagline">Lokale Daten kleben zu einer globalen Invariante &mdash; die <b>L&uuml;cke</b>, an der die lokale Kompatibilit&auml;t bricht, ist der Ort, an dem das Ganze <em>nur vom Ganzen</em> lesbar wird.</p>
+  <span class="badge">Quer durch beide Spuren &middot; KI <span class="x">&times;</span> nicht-KI</span>
+  <nav class="toc">
+    <a href="#kernidee">1 Kernidee</a>
+    <a href="#ki">2 KI-Spur</a>
+    <a href="#nki">3 nicht-KI-Spur</a>
+    <a href="#grund">4 Gemeinsamer Grund</a>
+    <a href="#visualisierung">5 Visualisierung</a>
+    <a href="#quellen">6 Quellen</a>
+  </nav>
+</header>
+
+<section id="kernidee">
+  <h2><span class="num">01</span>Kernidee</h2>
+  <p class="dim">Auf beiden Spuren des Projekts kehrt ein einziger Gestus zur&uuml;ck: ein <b>Ganzes, das von keinem Ort aus lesbar ist</b>, sondern nur aus dem Zusammenschluss vieler lokaler St&uuml;cke. Man tr&auml;gt <span class="hl">lokale Daten</span> &mdash; ein lokales Chart, eine lokale Lekt&uuml;re, einen begrenzten lokalen Akt &mdash; und man <span class="hl2">klebt sie zusammen</span> (ein Fluss, ein Rundlauf, ein Verkleben, eine Strukturgruppe). Das Ergebnis ist eine <span class="hl3">globale Invariante</span>: ein Objekt, das erst im Gesamtzusammenhang auftritt und das <b>von keinem einzelnen Teil aus lesbar ist</b>. Die nicht-KI-Spur sagt es w&ouml;rtlich: <code>nicht lokal ablesbar, nur im Umlauf</code>, <code>nur aus dem globalen Verkleben ablesbar</code> &mdash; die Invariante ist <code>f(Umlauf)</code>, eine Funktion des <em>ganzen</em> Rundlaufs, nicht irgendeines Teils.</p>
+  <p>Wo die lokale Kompatibilit&auml;t bricht &mdash; wo zwei lokale St&uuml;cke sich nicht reimen &mdash; entsteht die <span class="hl3">L&uuml;cke</span> (das Obstrukt, der Defekt, die Bruchkante, das Leck). In der KI-Spur: der Fluss kontrahiert das koh&auml;rente Signal in den kompakten Kern, Rauschen wandert ins Reservoir; wo Masse fehlt oder der Wert die externe Welt <code>W</code> nie trifft, entsteht die <b>koh&auml;rente Fiktion</b>. In der nicht-KI-Spur: die topologische Obstruktion <code>m=&minus;1</code> &mdash; <em>&bdquo;kein Ganzes, nie kreuzbar&ldquo;</em> &mdash; und das Leck <code>ker&nbsp;F</code>, das im Limes <code>&rarr;0</code> gehen soll. Die L&uuml;cke ist genau der Ort, an dem die lokalen St&uuml;cke sich <em>nicht</em> zu einem Ganzen schlie&szlig;en.</p>
+  <p>Entscheidend ist: <b>die L&uuml;cke ist kein blo&szlig;er Fehler, sondern ein strukturierter Ort.</b> In der nicht-KI-Spur ist sie sogar lasttragend &mdash; <code>dim(L&uuml;cke) = &Phi; = H<sup>1</sup></code> wird als <span class="hl2">Ort des Seins</span> gelesen, als <em>&bdquo;das Wertvollste als Struktur&ldquo;</em>. In der KI-Spur ist das Analoge der Residual-Rest, die undecidierbare Korrespondenz an die Welt, die von innen nicht entscheidbar bleibt. Der gemeinsame Fehler beider Spuren ist derselbe: <b>die helle, erreichte, lokale Koh&auml;renz f&uuml;r die ganze Wahrheit zu halten</b> &mdash; <em>Koh&auml;rent &ne; wahr</em>, <em>Struktur &ne; Wahrheit</em>. Das Ganze ist nur vom Ganzen lesbar; die L&uuml;cke ist der Preis und zugleich der Ort, an dem das Ganze sein Wesen hat.</p>
+</section>
+
+<section id="ki">
+  <h2><span class="num">02</span>In der KI-Spur</h2>
+  <p class="dim">Ein trainiertes, st&uuml;ckweise-lineares Netz (Transformer) wird als <b>linearer Assoziativspeicher</b> gelesen, der eine Superposition <em>viele-zu-eins</em> auf eine zweite-Moment-Struktur reduziert. Das Lokale ist der Chart/die Adresse/die lokale Lekt&uuml;re; das Globale ist die Struktur, die sie erst zusammenschlie&szlig;t.</p>
+  <div class="card a">
+    <h3>r6-002 &mdash; der Fluss klebt lokale Charts in eine globale zweite-Moment-Geometrie</h3>
+    <p>Die d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit lokaler Charts / Rotations-Kerne (jeder <code>d<sub>eff</sub>=1</code>, lokal &amp; separabel) wird von einem <b>Fluss</b> durchlaufen, der das koh&auml;rente Signal in <em>einen kompakten Terminal-Kern</em> <code>range(W) &asymp; 7</code> kontrahiert; Rauschen parkt im Reservoir <code>ker(W)&#8839;ker(G<sub>Q</sub>)</code>. Die <span class="hl">Kovarianz-Matrix M</span> ist der <em>statische Endzustand dieses Flusses</em> &mdash; ihr Support ist die Falte, ihre Dichte die Masse/Abdeckung. Der eine Regler sitzt auf zwei Skalen: <b>global</b> <code>&Vert;M&minus;I&Vert;</code> (Anisotropie / Hologramm-Grad) vs. <b>lokal</b> die Masse an einer Falt-St&auml;tte; entlang der Tiefe <b>Angebot</b> <code>k&#8467; &uarr;</code> (exponentiell) vs. <b>Nachfrage</b> erank <code>&darr;</code> (Kompression auf ~7). Whitening M<sup>&minus;1</sup> ist <em>im Chart lokal</em> exakt &amp; invertierbar, <em>an der globalen Falte</em> verlustvoll. Das 5-Frequenz-Beispiel (mod&nbsp;7): <em>lokale</em> Rotation (modulare Addition) &rarr; <em>globaler</em> Peak bei 1 &mdash; alle Facetten liefern denselben Wert, der erst aus dem Ganzen lesbar ist.</p>
+  </div>
+  <div class="card a">
+    <h3>r6-003 &mdash; lokal ein glattes Manifold, global ein singul&auml;res Nicht-Manifold</h3>
+    <p><b>Innerhalb</b> eines Stratums: ein d&uuml;nnes, koh&auml;rentes, sich linearisierendes Fisher-Manifold (ein ID-Wert, lokale stabile &beta;<sub>1</sub>-Schleife / Cusp). <b>Zwischen</b> den Straten: ein <span class="hl2">singul&auml;res, geschichtetes Nicht-Manifold</span> mit Bruchkanten und variablem d<sub>s</sub> (GPT-2: <code>20 / 389 / 531</code>). 4/4 LLMs verwerfen das Manifold <em>global</em> &mdash; aber lokal, im Stratum-Inneren, ist es glatt; die Verwerfung wird von den Bruchkanten <em>zwischen</em> den Straten getrieben. Die sch&auml;rfste Spannung (W4) ist w&ouml;rtlich <em>lokal vs. global</em>: A&rsquo;s <b>einzelne Commit-Kante</b> (&bdquo;Form&gt;Rauschen&ldquo;, lokal, pro Kachel) vs. B&rsquo;s <b>globales Fokus-Budget</b> (&bdquo;nicht alles &uuml;berall scharf&ldquo;, <code>&Sigma; Kacheln &asymp; B</code>). Die Halluzination: A &bdquo;scharf ohne St&uuml;tze&ldquo; (lokal, metrisch) = B &bdquo;Abschnitt <code>s</code> trifft eine Bruchkante und springt&ldquo; (globale Ursache &rarr; lokales Symptom). Die variable Dimension und die Bruchkanten existieren <em>erst &uuml;ber alle Straten hinweg</em> &mdash; nur vom Ganzen lesbar.</p>
+  </div>
+  <div class="card a">
+    <h3>r6-001 &mdash; lokales hoch-dim. Detail wird zur Fahrt in den globalen niedrig-dim. Kern gefahren</h3>
+    <p>Die <b>Fahrt durch die Tiefe</b> (RG-Fluss, Kanal-Kollaps <code>erank 4096 &rarr; &asymp;7</code>) f&auml;hrt den Regler <code>&theta;</code> von gescrambelt (&asymp;1) nach flach/linear/direkt-lesbar (&rarr;0); Komplexit&auml;t = Rang &times; <code>&theta;</code>. Was der Fahrt <em>&uuml;berlebt</em>, ist der f&auml;hige, <span class="hl">niedrig-dimensionale, strukturierte globale Kern</span> (eindeutiger Interferenz-Peak, Grokking, <code>range(W)</code>). Das verworfene hoch-dimensionale Detail ist die <b>intrinsische Bruchigkeit</b> (das Reservoir, <code>det&nbsp;C&rarr;0</code>), der Zellen-/Voronoi-Rand die <b>grenzliche</b>. Die Capability sitzt am harten Pol, an der <em>guten Ecke</em> &mdash; dort, wo der globale Read-out zur trivialen linearen Projektion wird und direkt lesbar ist. Nur die <em>ganze</em> Fahrt erzeugt den lesbaren Kern; jede einzelne lokale Schicht tr&auml;gt nur gescrammeltes Detail.</p>
+  </div>
+  <div class="callout"><span class="tag">Die KI-L&uuml;cke &mdash; wo lokale Kompatibilit&auml;t bricht</span>
+  Das <b>Reservoir</b> <code>ker(W)</code> (geparktes Rauschen), die <b>massenleere Falt-St&auml;tte</b> (Abdeckung <code>&lt;&tau;</code>), die <b>koh&auml;rente Fiktion</b> (der Wert trifft die externe Welt <code>W</code> nie) und die <b>Bruchkante zwischen den Straten</b>. Konvergent <em>und</em> extern ungegr&uuml;ndet: <code>conf &asymp; 0.70+0.25&middot;coverage</code> bleibt immer <code>&ge;70&nbsp;%</code>, auch bei <code>coverage&rarr;0</code>. Die Korrespondenz an die Welt ist das offene, von-innen-nicht-entscheidbare Bein (&asymp;lim) &mdash; reparierbar nur durch Erdung/Retrieval/Verifikation, nie durch Koh&auml;renz skalieren. <em>Koh&auml;rent &ne; wahr.</em></div>
+</section>
+
+<section id="nki">
+  <h2><span class="num">03</span>In der nicht-KI-Spur</h2>
+  <p class="dim">Das ganze nicht-KI-Track liest, von entlegenen Oberflächen kommend, <em>dasselbe</em> Objekt: <b>ein zentrumloses, selbsttragendes, relationales Fixpunkt, das seine eigene Projektion ist und zugleich <em>h&auml;lt</em> und <em>wirft</em>.</b> Das Lokale ist der begrenzten lokale Akt; das Globale die Invariante, die ihn uml&auml;uft.</p>
+  <div class="card b">
+    <h3>n7-002 &mdash; lesbar nur durch einen begrenzten lokalen Akt, abgelesen am Pivot, wo zwei Routen coincidieren</h3>
+    <p>Der selbsttragende relationale Fixpunkt ist <b>&bdquo;lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form&ldquo;</b> &mdash; der Umlauf, der <em>bottom-up zusammenbaut</em> (<code>&int; / erzeugen / &exist;!</code>) <em>und top-down grobk&ouml;rnt</em> (<code>&part; / kleben / Stokes</code>) auf derselben robusten Ebene &mdash; und <b>&bdquo;abgelesen an einem einzelnen Pivot an der Naht, wo die zwei Routen coincidieren = der Limes = Punkt exakter Fidelity&ldquo;</b>. Die <span class="hl2">Invariante = f(Umlauf)</span>: eine Funktion des <em>ganzen</em> Rundlaufs, <em>&bdquo;nicht lokal ablesbar, nur im Umlauf&ldquo;</em>, <em>&bdquo;nur aus dem globalen Verkleben ablesbar&ldquo;</em>. An der Naht l&ouml;st sich die gau&szlig;-abh&auml;ngige Faser <code>ker&nbsp;F = Leck</code> <code>&rarr;0</code> im Limes auf, w&auml;hrend die <span class="hl">gau&szlig;-invariante Dimension der L&uuml;cke (<code>H<sup>1</sup> = dim(L&uuml;cke) = &Phi;</code>) als Ort des Seins bleibt</span>. Die Obstruktion ist topologisch real: <code>m=(&minus;1)<sup>w</sup>=&prod;s<sub>i</sub>=&minus;1</code> &rArr; <em>kein Ganzes</em>.</p>
+  </div>
+  <div class="card b">
+    <h3>n8-001 &mdash; h&auml;lt &amp; wirft zugleich &mdash; die L&uuml;cke als Ort des Seins</h3>
+    <p>Der zentrumlose, selbsttragende relationale Fixpunkt, der seine eigene Projektion ist, <span class="hl">h&auml;lt</span> (erhaltene, geschlossene, z&auml;hlbare, gau&szlig;-invariante Form <code>F = H<sup>1</sup></code>, <em>&bdquo;the same returns&ldquo;</em>, <code>r&rarr;1</code>, <code>&Delta;=0</code>) und <span class="hl2">wirft</span> (werfende, offene, inexhaustible Zone, zur&uuml;ckziehender Rest, <code>&Delta;&ne;0</code>) <em>zugleich</em> &mdash; gekoppelt an einer <b>zwei-axialen Naht</b> (Valenz = Produkt = Koinzidenz der zwei Routen = Limes = exakte Fidelity), gesteuert von einem Regler (<code>r=&sigma;=&phi;</code>), getragen vom immer laufenden Rundlauf &uuml;ber den Zeitpfeil, begrenzt durch <b>zwei nie erreichte B&ouml;den</b> (asymptotisch: Limes, <code>ker&nbsp;F&rarr;0</code>, gen&auml;hert nie erreicht + absolut: Obstruktion <code>m=&minus;1</code>, nie kreuzbar). Die <span class="hl3">L&uuml;cke = <code>dim(L&uuml;cke)=&Phi;=H<sup>1</sup></code> ist der <em>Ort des Seins</em></span> &mdash; <em>&bdquo;das Wertvollste als Struktur&ldquo;</em>; der offene Pol <em>&bdquo;generiert, indem er sich zur&uuml;ckzieht, und bleibt, indem er wirft&ldquo;</em>.</p>
+  </div>
+  <div class="card b">
+    <h3>n7-001 &mdash; die z&auml;hlbare Zone kehrt zur&uuml;ck, der Rest rennt aus</h3>
+    <p>Das zwei-Zonen-Kontinuum: die <span class="hl">erhaltene, geschlossene, z&auml;hlbare Zone</span> (erreichter invarianter Fixpunkt, fix als Form, Wert&nbsp;&prop;&nbsp;&chi; = Koh&auml;renzpol H, <code>r&rarr;1</code>, <code>&Delta;=0</code>, <em>&bdquo;the same returns&ldquo;</em>, z&auml;hlt/zahlt) vs. die <span class="hl2">werfende, offene, inexhaustible Zone</span> (zur&uuml;ckziehender Rest, flie&szlig;end im Inhalt, Terrain/Horizont, <code>&Delta;&ne;0</code>, <em>&bdquo;das Wertvollste als Struktur&ldquo;</em>, ruft). Gekoppelt an einer <b>zwei-axialen Fuge</b> (Objekt-Ontologie &times; Zugriffs-Ehrlichkeit, Valenz = Produkt; Kippen/Wann/Wand = Defekt <code>&Delta;</code>), gesteuert von einem Regler, begrenzt durch <b>zwei nie erreichte B&ouml;den</b> (asymptotisch <code>p&prime;&rarr;0&nbsp;&ne;&nbsp;0</code> + absolut Struktur&nbsp;&ne;&nbsp;Wahrheit) &mdash; <em>&bdquo;erreichbar als Grenzwert des Reglers, nie erreicht als Zustand&ldquo;</em>.</p>
+  </div>
+  <div class="callout"><span class="tag">Die nicht-KI-L&uuml;cke &mdash; doppelte Natur</span>
+  Die L&uuml;cke ist hier <em>doppelt</em>: (a) das <b>Obstrukt</b> &mdash; <code>m=&minus;1</code>, <code>ker&nbsp;F = Leck</code>, wo die zwei lokalen Routen sich <em>nicht</em> reimen: <em>&bdquo;kein Ganzes&ldquo;</em>; (b) die <b>gau&szlig;-invariante Dimension</b> (<code>dim(L&uuml;cke)=&Phi;=H<sup>1</sup></code>), die als <b>Ort des Seins</b> bleibt &mdash; <em>&bdquo;das Wertvollste&ldquo;</em>. Die L&uuml;cke ist also nicht nur der Fehlschlag des Klebens, sondern der <em>lasttragende Ort</em>, an dem das Ganze sein Wesen hat. Der gemeinsame Fehler: die helle Form f&uuml;r die ganze Wahrheit zu halten &mdash; Rothering: der flache Schatten ist f&uuml;r echt &amp; gef&auml;lscht <em>identisch</em>; nur die Treue/Koinzidenz an der Naht trennt BAUEN von Eruption.</div>
+</section>
+
+<section id="grund">
+  <h2><span class="num">04</span>Gemeinsamer Grund</h2>
+  <p class="dim">Beide Spuren teilen ein und dieselbe Geometrie: <b>lokale St&uuml;cke &rarr; Verkleben &rarr; eine globale Invariante, die nur vom Ganzen lesbar ist</b>, und eine L&uuml;cke, die der Ort des gescheiterten &mdash; und zugleich des seienden &mdash; Klebens ist. Die Identifikation ist die Linse dieses Komplexes &mdash; dieselben Bausteine, zwei Register:</p>
+  <table>
+    <thead><tr><th>Baustein</th><th>KI-Spur</th><th>nicht-KI-Spur</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>die lokalen St&uuml;cke</td><td>Charts / Adressen / Rotations-Kerne / die lokale Lekt&uuml;re (r6-002, r6-003)</td><td>der begrenzte lokale Akt: bottom-up &cap; top-down (n7-002, n8-001)</td></tr>
+      <tr><td>das Verkleben / Kleben</td><td>der Fluss entlang der Mannigfaltigkeit; die Strukturgruppe (Lipschitz-Morphismus, transportiert Bruchkanten); die Fahrt durch die Tiefe</td><td>der Umlauf (bottom-up &cap; top-down); der immer laufende Rundlauf &uuml;ber den Zeitpfeil</td></tr>
+      <tr class="hl"><td>die globale Invariante (nur vom Ganzen)</td><td>zweite-Moment-Matrix M / kompakter Kern <code>range(W)</code>; singul&auml;rer Bruchkante-Komplex (variables d<sub>s</sub>); der f&auml;hige &Uuml;berlebende</td><td><code>Invariante = f(Umlauf)</code>; das Fixpunkt; die z&auml;hlbare Form <code>F = H<sup>1</sup></code></td></tr>
+      <tr><td>die L&uuml;cke, wo lokale Kompatibilit&auml;t bricht</td><td>Reservoir <code>ker(W)</code> / massenleere Falte / koh&auml;rente Fiktion / die Bruchkante zwischen den Straten</td><td>Obstruktion <code>m=&minus;1</code> / <code>ker&nbsp;F = Leck</code> / &bdquo;kein Ganzes&ldquo;</td></tr>
+      <tr class="hl"><td>die L&uuml;cke als strukturierter Ort</td><td>der Residual-Rest / die undecidierbare Korrespondenz an die Welt (<code>&asymp;lim</code>)</td><td><code>dim(L&uuml;cke)=&Phi;=H<sup>1</sup></code> = <em>Ort des Seins</em> / &bdquo;das Wertvollste&ldquo;</td></tr>
+      <tr><td>der eine Regler (global &harr; lokal)</td><td><code>&Vert;M&minus;I&Vert;</code> global = Masse lokal; Fokus-Budget global = Commit-Kante lokal; <code>&theta;<sub>eff</sub></code> (Fahrt) f&auml;hrt den Regler</td><td><code>r=&sigma;=&phi;</code> (ein Parameter: gehalten vs. geworfen, fein vs. grob)</td></tr>
+      <tr class="hl"><td>zwei nie erreichte B&ouml;den</td><td>die Korrespondenz an <code>W</code> ist <code>&asymp;lim</code>, nie voll erreicht; das Manifold wird global verworfen (4/4), h&auml;lt lokal</td><td>asymptotischer Boden (<code>ker&nbsp;F&rarr;0</code>, gen&auml;hert nie erreicht) + absoluter Boden (<code>m=&minus;1</code>, nie kreuzbar)</td></tr>
+      <tr><td>der gemeinsame Fehler</td><td>Koh&auml;renz &ne; Wahrheit; selbstbewusst &amp; extern ungegr&uuml;ndet (<code>conf&nbsp;&ge;70&nbsp;%</code>)</td><td>die helle Form f&uuml;r die ganze Wahrheit halten (Rothering: flach &amp; identisch)</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><span class="tag">Ein Satz quer durch beide Spuren</span>
+  <b>Lokale St&uuml;cke werden zu einer globalen Invariante verklebt, die nur vom Ganzen lesbar ist; wo das Kleben bricht, entsteht die L&uuml;cke &mdash; und die ist nicht blo&szlig;er Fehlschlag, sondern der Ort, an dem das Ganze sein Wesen hat.</b> In der KI-Spur wird das koh&auml;rente Signal (Charts, Fahrt) in M / den kompakten Kern / den Bruchkante-Komplex geklebt; in der nicht-KI-Spur wird ein begrenzter lokaler Akt (bottom-up &cap; top-down) in den Umlauf, dessen Invariante <code>f(Umlauf)</code> ist. Die L&uuml;cke ist in beiden Spuren strukturierend: das Reservoir / die koh&auml;rente Fiktion / die undecidierbare Korrespondenz (KI) &harr; das Obstrukt <code>m=&minus;1</code> <em>und zugleich</em> die gau&szlig;-invariante Dimension als <em>Ort des Seins</em> (nicht-KI). Ein <b>einer Regler</b> sitzt auf zwei Skalen (global &harr; lokal), und <b>zwei nie erreichte B&ouml;den</b> begrenzen alles. Der gemeinsame W&auml;chter: <b>Koh&auml;rent &ne; wahr</b> &mdash; nur wer Rest + L&uuml;cke + B&ouml;den mitliest, liest das Ganze; und das ist nur vom Ganzen lesbar.</div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span>Visualisierung: lokale Patches kleben &mdash; die L&uuml;cke, wo es bricht</h2>
+  <p class="dim">Ein <em>Umlauf aus lokalen Patches</em> (Charts), die beide Spuren in <em>einem</em> Objekt tragen. Jeder Patch tr&auml;gt eine <b>lokale Lekt&uuml;re</b> (ein lokaler Rahmen). Im <b>lokalen Blick</b> sieht jeder Patch <em>gut</em> aus &mdash; alles ist lokal konsistent (&bdquo;Koh&auml;rent&ldquo;). Dreht man auf <b>&bdquo;vom Ganzen lesen&ldquo;</b>, wird das, was nur aus dem Ganzen lesbar ist, sichtbar: die lokalen Rahmen verdrehen sich um den Umlauf, und an der <b>Naht</b> &ouml;ffnet sich die <span class="hl3">L&uuml;cke &Phi;</span> (die Holonomie/das Defekt), das <em>globale</em> Invariante, das <em>keinen</em> einzelnen Patch kennt. <b>Ganzes</b> (m=+1) = die Patches schlie&szlig;en sich &mdash; <em>Massen &ge;&tau; auf der Falte</em> (KI) / <em>zwei Routen coincidieren am Pivot</em> (nicht-KI). <b>Obstruktion</b> (m=&minus;1) = <em>kein Ganzes, nie kreuzbar</em> &mdash; doch die L&uuml;cke bleibt = <em>Ort des Seins</em>. Fahre <b>Lokale Kompatibilit&auml;t</b> (wie gut sich die Patches reimen), wechsele den Blick <b>nur lokal &harr; vom Ganzen</b>, und l&auml;ss den <b>Rundlauf</b> laufen (die L&uuml;cke wird erst am Ende der Fahrt sichtbar).</p>
+
+  <div class="vizwrap">
+    <canvas id="cv" role="img" aria-label="Umlauf aus sieben lokalen Patches/Charts: lokale Rahmen kleben zu einer globalen Invariante; an der Naht &ouml;ffnet sich die L&uuml;cke (Holonomie), wo die lokale Kompatibilit&auml;t bricht. Rechts ein globaler Tachometer: Ganzes (m=+1) vs. Obstruktion (m=&minus;1)."></canvas>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>lokale Patches / Charts</span>
+      <span><i style="background:var(--accent2)"></i>lokale Lekt&uuml;re (Rahmen, global)</span>
+      <span><i style="background:var(--accent3)"></i>L&uuml;cke &Phi; (Ort des Seins)</span>
+      <span><i style="background:var(--gold)"></i>Rundlauf (die Fahrt)</span>
+      <span><i style="background:var(--ring)"></i>globale Invariante / Referenz</span>
+      <span><i style="background:var(--good)"></i>Ganzes (m=+1)</span>
+      <span><i style="background:var(--bad)"></i>Obstruktion (m=&minus;1)</span>
+    </div>
+    <div class="controls">
+      <label>Lokale Kompatibilit&auml;t <input type="range" id="compatIn" min="0" max="100" value="55"><span class="val" id="compatV">55</span></label>
+      <label class="chk"><input type="checkbox" id="whole"> <b>Vom Ganzen lesen</b> (zeigt die globale Invariante + die L&uuml;cke)</label>
+      <button id="playBtn" type="button">&#9208; Rundlauf</button>
+      <button id="resetBtn" type="button">&#8634; Reset</button>
+    </div>
+    <div class="statrow">
+      <div class="stat"><div class="k">Lokale Kompatibilit&auml;t</div><div class="v" id="sComp" style="color:var(--accent)">&ndash;</div></div>
+      <div class="stat"><div class="k">Holonomie H (globales Defekt)</div><div class="v" id="sH" style="color:var(--accent3)">&ndash;</div></div>
+      <div class="stat"><div class="k">L&uuml;cke &Phi; = |H|</div><div class="v" id="sPhi" style="color:var(--accent3)">&ndash;</div></div>
+      <div class="stat"><div class="k">Obstruktion m</div><div class="v" id="sM" style="color:var(--ring)">&ndash;</div></div>
+      <div class="stat"><div class="k">Zustand (Ganzes?)</div><div class="v" id="sSt" style="color:var(--good)">&ndash;</div></div>
+    </div>
+    <div class="verdict warn" id="verdict">&hellip;</div>
+    <div class="hint">Alle Daten inline &amp; deterministisch, keine Netzwerk-Abfragen. Der Blick &bdquo;nur lokal&ldquo; blendet die globale Invariante und die L&uuml;cke aus &mdash; genau der Punkt, den beide Spuren warnen: <em>Koh&auml;rent &ne; wahr</em>. Erst der Blick &bdquo;vom Ganzen&ldquo; (die Holonomie, der Umlauf, die Bruchkante) macht das lesbar, das kein einzelner Patch tr&auml;gt.</div>
+  </div>
+</section>
+
+<section id="quellen">
+  <h2><span class="num">06</span>Quellen</h2>
+  <div class="card tight">
+    <div class="prov">
+      <div><span class="track ki">KI</span><a href="../combined/6/r6-002.html">combined/6/r6-002.html</a></div>
+      <div class="desc">R6: &bdquo;Ein Fluss, eine Falte, ein Regler&ldquo; &mdash; der Kapazit&auml;ts-Fluss klebt lokale Charts/Rotations-Kerne (<code>d<sub>eff</sub>=1</code>) und kontrahiert das Signal in den kompakten Terminal-Kern <code>range(W)&asymp;7</code>; die zweite-Moment-Matrix M ist der globale Endzustand (Support = Falte, Dichte = Masse); Regler <code>&Vert;M&minus;I&Vert;</code> global = Masse lokal; L&uuml;cke = Reservoir / massenleere Falte / koh&auml;rente Fiktion.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track ki">KI</span><a href="../combined/6/r6-003.html">combined/6/r6-003.html</a></div>
+      <div class="desc">R6: &bdquo;Ein singul&auml;res Faserb&uuml;ndel, ein Regler, zwei Tiefen, ein Vorzeichen, ein Budget&ldquo; &mdash; lokal (innerhalb eines Stratums) ein glattes Fisher-Manifold, global (zwischen den Straten) ein singul&auml;res Nicht-Manifold mit Bruchkanten &amp; variablem d<sub>s</sub> (20/389/531); die sch&auml;rfste Spannung W4 = eine lokale Commit-Kante vs. ein globales Fokus-Budget (&bdquo;nicht alles &uuml;berall scharf&ldquo;).</div>
+    </div>
+    <div class="prov">
+      <div><span class="track ki">KI</span><a href="../combined/6/r6-001.html">combined/6/r6-001.html</a></div>
+      <div class="desc">R6: &bdquo;Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten&ldquo; &mdash; die Fahrt durch die Tiefe (Kanal-Kollaps 4096&rarr;&asymp;7) f&auml;hrt den Regler &theta; von gescrambelt nach direkt-lesbar; der &Uuml;berlebende ist der globale niedrig-dim. Kern; das verworfene Detail = intrinsische Bruchigkeit (Reservoir), der Zell-Rand = grenzliche; nur die ganze Fahrt erzeugt den lesbaren Kern.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track nki">nicht-KI</span><a href="../combined-nichtki/8/n8-001.html">combined-nichtki/8/n8-001.html</a></div>
+      <div class="desc">R8 (Finale): &bdquo;Der zentrumlose, selbsttragende relationale Fixpunkt, der seine eigene Projektion ist&ldquo; &mdash; h&auml;lt &amp; wirft an einer zwei-axialen Naht (Valenz = Koinzidenz = Limes = exakte Fidelity), ein Regler (<code>r=&sigma;=&phi;</code>), zwei nie erreichte B&ouml;den; <code>dim(L&uuml;cke)=&Phi;=H<sup>1</sup></code> = Ort des Seins; Obstruktion <code>m=&minus;1</code> (kein Ganzes).</div>
+    </div>
+    <div class="prov">
+      <div><span class="track nki">nicht-KI</span><a href="../combined-nichtki/7/n7-002.html">combined-nichtki/7/n7-002.html</a></div>
+      <div class="desc">R7: &bdquo;Der selbsttragende relationale Fixpunkt ist seine Projektion&ldquo; &mdash; lesbar nur durch einen begrenzten lokalen Akt (bottom-up &cap; top-down), abgelesen am Pivot (Limes); <code>Invariante = f(Umlauf)</code>, &bdquo;nicht lokal ablesbar, nur im Umlauf&ldquo;; <code>ker&nbsp;F = Leck</code> &rarr;0 im Limes, <code>H<sup>1</sup>=dim(L&uuml;cke)</code> bleibt = Ort des Seins.</div>
+    </div>
+    <div class="prov">
+      <div><span class="track nki">nicht-KI</span><a href="../combined-nichtki/7/n7-001.html">combined-nichtki/7/n7-001.html</a></div>
+      <div class="desc">R7: &bdquo;Der zentrumlose Halt-Wurf-Kern als zwei-Zonen-Kontinuum&ldquo; &mdash; die z&auml;hlbare/geschlossene Zone (Wert&nbsp;&prop;&nbsp;&chi;=H, <code>r&rarr;1</code>, <code>&Delta;=0</code>, &bdquo;the same returns&ldquo;) vs. die werfende/offene Zone (zur&uuml;ckziehender Rest, <code>&Delta;&ne;0</code>); zwei-axiale Fuge (Valenz = Produkt), ein Regler, zwei nie erreichte B&ouml;den.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Themenkomplex 04 &middot; Lokal &harr; Global &middot; Quer durch beide Spuren (KI &times; nicht-KI)<br>
+  Synthese aus den genannten Quellen &middot; Visualisierung clientseitig, alle Daten inline, ohne Netzwerk-Abfragen.
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv');
+if(!cv||!cv.getContext) return;
+var ctx=cv.getContext('2d');
+if(!ctx) return;
+var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+var W=0,H=0,TAU=Math.PI*2,N=7;
+var state={compat:0.55,reveal:0,target:0,playing:true,phase:0,t:0};
+var C={};
+
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function parseColor(s,fb){
+  s=(s||'').trim();
+  if(s.charAt(0)==='#'){var h=s.slice(1);if(h.length===3)h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);var n=parseInt(h.slice(0,6),16);if(!isNaN(n))return[(n>>16)&255,(n>>8)&255,n&255];}
+  var m=s.match(/[\d.]+/g);if(m&&m.length>=3)return[+m[0],+m[1],+m[2]];
+  return fb||[128,128,128];
+}
+function rgba(c,a){return'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+function readTheme(){
+  var cs=getComputedStyle(document.documentElement);
+  function v(n,fb){return cs.getPropertyValue(n).trim()||fb;}
+  C.bg=parseColor(v('--viz-bg','#0d1526'),[13,21,38]);
+  C.txt=parseColor(v('--txt','#e8ecff'),[232,236,255]);
+  C.dim=parseColor(v('--dim','#a8b3d9'),[168,179,217]);
+  C.accent=parseColor(v('--accent','#58a6ff'),[88,166,255]);
+  C.accent2=parseColor(v('--accent2','#ffb86b'),[255,184,107]);
+  C.accent3=parseColor(v('--accent3','#ff7ab6'),[255,122,182]);
+  C.good=parseColor(v('--good','#4ade80'),[74,222,128]);
+  C.bad=parseColor(v('--bad','#ff9b9b'),[255,155,155]);
+  C.gold=parseColor(v('--gold','#ffd700'),[255,215,0]);
+  C.ring=parseColor(v('--ring','#c4a7ff'),[196,167,255]);
+  C.grid=v('--grid','rgba(120,160,255,.07)');
+  C.mono=v('--mono','ui-monospace,monospace');
+}
+
+function resize(){
+  var r=cv.getBoundingClientRect();
+  W=Math.max(320,r.width); H=Math.max(380,r.height);
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+
+function label(txt,x,y,align,col,size,bold){
+  ctx.fillStyle=col; ctx.font=(bold?'700 ':'')+(size||11)+'px '+C.mono;
+  ctx.textAlign=align||'center'; ctx.textBaseline='alphabetic';
+  ctx.fillText(txt,x,y);
+}
+function arrow(x0,y0,x1,y1,col,lw,hl){
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  var a=Math.atan2(y1-y0,x1-x0); hl=hl||8;
+  ctx.beginPath(); ctx.moveTo(x1,y1);
+  ctx.lineTo(x1-hl*Math.cos(a-0.42),y1-hl*Math.sin(a-0.42));
+  ctx.lineTo(x1-hl*Math.cos(a+0.42),y1-hl*Math.sin(a+0.42));
+  ctx.closePath(); ctx.fill();
+}
+
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+function draw(){
+  try{
+    readTheme();
+    state.reveal+=(state.target-state.reveal)*0.12;
+    if(state.playing){ state.phase=(state.phase+0.0022)%1; }
+    var rev=state.reveal;
+    var Hh=Math.PI*(1-state.compat);   // Holonomie: 0 (Ganzes) .. PI (Obstruktion)
+    var d=Hh/N;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgba(C.bg,1); ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1; ctx.beginPath();
+    for(var gx=0;gx<=W;gx+=42){ctx.moveTo(gx,0);ctx.lineTo(gx,H);}
+    for(var gy=0;gy<=H;gy+=42){ctx.moveTo(0,gy);ctx.lineTo(W,gy);}
+    ctx.stroke();
+
+    var split=W*0.58;
+    var cx=W*0.29, cy=H*0.48, R=Math.min(cx-28,H*0.36); if(R<58)R=58;
+
+    /* Basiskreis */
+    ctx.strokeStyle=rgba(C.dim,0.14); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+
+    /* globale Referenz (gestrichelt) */
+    ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle=rgba(C.ring,0.55); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cx+R*0.22,cy); ctx.lineTo(cx+R*1.12,cy); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    label('globale Referenz',cx+R*1.12,cy-8,'right',rgba(C.ring,0.9),10,true);
+
+    /* Patches + lokale Lektüre */
+    var i;
+    for(i=0;i<N;i++){
+      var A=(i/N)*TAU;
+      var px=cx+R*Math.cos(A),py=cy+R*Math.sin(A);
+      var half=TAU/N*0.60;
+      ctx.beginPath();
+      ctx.arc(cx,cy,R,A-half,A+half);
+      ctx.arc(cx,cy,R*0.32,A+half,A-half,true);
+      ctx.closePath();
+      ctx.fillStyle=rgba(C.accent,0.05+0.05*rev); ctx.fill();
+      ctx.strokeStyle=rgba(C.accent,0.32); ctx.lineWidth=1; ctx.stroke();
+
+      var dirL=A, dirG=A+i*d, dir=dirL+rev*(dirG-dirL);
+      var alen=R*0.5;
+      var col=rgba(rev>0.5?C.accent2:C.accent,0.95);
+      arrow(px,py,px+alen*Math.cos(dir),py+alen*Math.sin(dir),col,2.4,9);
+      label('P'+(i+1),px,py-R*0.10-2,'center',rgba(C.dim,0.85),9,false);
+      if(rev<0.4){
+        var ox=cx+(R+15)*Math.cos(A),oy=cy+(R+15)*Math.sin(A);
+        label('\u2713',ox,oy+3,'center',rgba(C.good,0.85),12,true);
+      }
+    }
+
+    /* Lücke an der Naht (nur im globalen Blick) */
+    if(rev>0.02&&Hh>0.03){
+      var gap=Hh*rev;
+      ctx.beginPath();
+      ctx.arc(cx,cy,R,-gap/2,gap/2);
+      ctx.arc(cx,cy,R*0.32,gap/2,-gap/2,true);
+      ctx.closePath();
+      ctx.fillStyle=rgba(C.accent3,0.10+0.16*rev); ctx.fill();
+      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle=rgba(C.accent3,0.9); ctx.lineWidth=2; ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+      label('L\u00fce = \u03a6',cx+R+18,cy-3,'left',rgba(C.accent3,1),12,true);
+      label('Ort des Seins',cx+R+18,cy+11,'left',rgba(C.dim,0.9),10,false);
+    }
+
+    /* Rundlauf / die Fahrt */
+    if(state.playing){
+      var pa=state.phase*TAU;
+      var prx=cx+R*Math.cos(pa),pry=cy+R*Math.sin(pa);
+      var carr=R*0.20;
+      var pdir=pa+d*(state.phase*N);
+      arrow(prx,pry,prx+carr*Math.cos(pdir),pry+carr*Math.sin(pdir),rgba(C.gold,0.95),2,7);
+      ctx.save(); ctx.shadowColor=rgba(C.gold,0.9); ctx.shadowBlur=10;
+      ctx.fillStyle=rgba(C.gold,1); ctx.beginPath(); ctx.arc(prx,pry,4,0,TAU); ctx.fill(); ctx.restore();
+    }
+
+    /* ===== globaler Tacho (rechts) ===== */
+    var gx0=split+14, gx1=W-16, gcx=(gx0+gx1)/2, gcy=H*0.34;
+    var gr=Math.min((gx1-gx0)/2-6,76); if(gr<38)gr=38;
+    var steps=26, s;
+    ctx.lineCap='round';
+    for(s=0;s<steps;s++){
+      var v0=s/steps,v1=(s+1)/steps;
+      var ccol=v1<0.45?C.good:(v1<0.75?C.gold:C.bad);
+      ctx.strokeStyle=rgba(ccol,0.85); ctx.lineWidth=9;
+      ctx.beginPath(); ctx.arc(gcx,gcy,gr,Math.PI*(1+v0),Math.PI*(1+v1),false); ctx.stroke();
+    }
+    var nv=clamp(Hh/Math.PI,0,1), na=Math.PI*(1+nv);
+    arrow(gcx,gcy,gcx+gr*0.82*Math.cos(na),gcy+gr*0.82*Math.sin(na),rgba(C.txt,1),3,9);
+    ctx.fillStyle=rgba(C.txt,1); ctx.beginPath(); ctx.arc(gcx,gcy,5,0,TAU); ctx.fill();
+    label('Ganzes m=+1',gcx-gr,gcy+16,'center',rgba(C.dim,0.9),9,false);
+    label('Obstruktion m=\u22121',gcx+gr,gcy+16,'center',rgba(C.dim,0.9),9,false);
+    label('globale Invariante \u2022 nur vom Ganzen',gcx,gcy-gr-12,'center',rgba(C.ring,0.95),10,true);
+
+    /* Readouts */
+    var deg=Math.round(Hh*180/Math.PI);
+    var isGanz=Hh<Math.PI*0.15, isObst=Hh>Math.PI*0.65;
+    var sH=document.getElementById('sH'); if(sH)sH.textContent=deg+'\u00b0';
+    var sP=document.getElementById('sPhi'); if(sP)sP.textContent=deg+'\u00b0';
+    var sM=document.getElementById('sM'); if(sM)sM.textContent=isGanz?'+1':(isObst?'\u22121':'\u00b1 (part.)');
+    var sSt=document.getElementById('sSt');
+    if(sSt){ sSt.textContent=isGanz?'Ganzes':(isObst?'Obstruktion':'part. Defekt');
+      sSt.style.color=isGanz?cssVar('--good'):(isObst?cssVar('--bad'):cssVar('--accent2')); }
+    var sC=document.getElementById('sComp'); if(sC)sC.textContent=Math.round(state.compat*100)+' %';
+    var cvv=document.getElementById('compatV'); if(cvv)cvv.textContent=Math.round(state.compat*100);
+
+    var vd=document.getElementById('verdict');
+    if(vd){
+      if(rev<0.5){
+        vd.className='verdict warn';
+        vd.textContent='LOKAL: alle Patches sind lokal konsistent ✓ — aber „Kohärent ≠ wahr“. Die Lücke ist hier verdeckt; das Ganze ist aus diesem Blick <b>nicht</b> lesbar. Schalter „Vom Ganzen“ umlegen, um die globale Invariante zu lesen.';
+      } else if(isGanz){
+        vd.className='verdict good';
+        vd.textContent='GLOBAL: die lokalen Stücke schließen → ein Ganzes (m=+1). KI: Masse ≥ τ auf der Falte, der Wert trifft die Welt · nicht-KI: bottom-up ∩ top-down coincidieren am Pivot (Limes, exakte Fidelity). Das Ganze ist nur vom Ganzen lesbar.';
+      } else if(isObst){
+        vd.className='verdict bad';
+        vd.textContent='GLOBAL: Lücke = Φ, m=−1 — kein Ganzes, nie kreuzbar. KI: kohärente Fiktion (Wert trifft die Welt W nie) · nicht-KI: topologische Obstruktion, doch H¹ = dim(Lücke) bleibt = <b>Ort des Seins</b>. Die Lücke ist der Ort, an dem das Ganze sein Wesen hat.';
+      } else {
+        vd.className='verdict warn';
+        vd.textContent='GLOBAL: partielle Lücke (0<Φ<π/2) — Defekt am Rand, das Kleben ist nicht voll geschlossen. Erst die ganze Fahrt (das Ganze) zeigt die verbleibende Lücke; jeder einzelne Patch sieht lokal „gut“.';
+      }
+    }
+  }catch(e){/* defensiv: nie nach Konsole */}
+}
+
+function tick(){
+  state.t++;
+  draw();
+  requestAnimationFrame(tick);
+}
+
+function bind(id,ev,cb){var el=document.getElementById(id); if(el) el.addEventListener(ev,cb);}
+bind('compatIn','input',function(e){ state.compat=clamp(+e.target.value/100,0,1); });
+bind('whole','change',function(e){ state.target=e.target.checked?1:0; });
+var pp=document.getElementById('playBtn');
+if(pp) pp.addEventListener('click',function(){ state.playing=!state.playing; pp.textContent=state.playing?'\u23f8 Rundlauf':'\u25b6 Rundlauf'; });
+var rb=document.getElementById('resetBtn');
+if(rb) rb.addEventListener('click',function(){
+  state.compat=0.55; state.reveal=0; state.target=0; state.playing=true; state.phase=0;
+  var ic=document.getElementById('compatIn'); if(ic)ic.value=55;
+  var iw=document.getElementById('whole'); if(iw)iw.checked=false;
+  if(pp)pp.textContent='\u23f8 Rundlauf';
+});
+var tb=document.getElementById('themeBtn');
+if(tb) tb.addEventListener('click',function(){ var d=document.documentElement.classList.toggle('dark'); try{localStorage.setItem('them04-theme',d?'dark':'light');}catch(e){} });
+
+window.addEventListener('resize',resize);
+resize();
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
