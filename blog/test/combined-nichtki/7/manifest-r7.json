@@ -1,0 +1,35 @@
+{
+  "round": 7,
+  "seed": 20261010,
+  "big_threshold_kb": 100.0,
+  "method": "seeded-random, size-balanced (big>=threshold always paired with smallest available partner); bye advances unchanged",
+  "pool_size": 4,
+  "num_pairs": 2,
+  "num_byes": 0,
+  "max_pair_total_kb": 129.9,
+  "pairs": [
+    {
+      "id": 1,
+      "no": "001",
+      "out": "combined-nichtki/7/n7-001.html",
+      "meta": "combined-nichtki/7/n7-001.meta.json",
+      "a": "combined-nichtki/6/n6-002.html",
+      "b": "combined-nichtki/6/n6-001.html",
+      "size_a": 44.2,
+      "size_b": 48.4,
+      "total_kb": 92.6
+    },
+    {
+      "id": 2,
+      "no": "002",
+      "out": "combined-nichtki/7/n7-002.html",
+      "meta": "combined-nichtki/7/n7-002.meta.json",
+      "a": "combined-nichtki/5/n5-005.html",
+      "b": "combined-nichtki/6/n6-003.html",
+      "size_a": 64.7,
+      "size_b": 65.2,
+      "total_kb": 129.9
+    }
+  ],
+  "byes": []
+}

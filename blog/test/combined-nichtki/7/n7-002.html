@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 002 (R7): Der selbsttragende relationale Fixpunkt ist seine Projektion — Schatten ⇄ Invariante, getragen vom Rundlauf über den Zeitpfeil, an der Naht abgelesen, lasttragend durch den Rest, der bleibt</title>
+<script>(function(){try{var t=localStorage.getItem('n7-theme');var d=(t?t==='dark':true);document.documentElement.classList.toggle('dark',d);}catch(e){document.documentElement.classList.add('dark');}})();</script>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#6d28d9; --accent2:#0e7490; --good:#16a34a; --warn:#b8860b; --bad:#b0342b;
+  --viz-bg:#ffffff; --soft:#f0ece1; --grid:#e7e2d6;
+  --v-fine:#0f766e; --v-coarse:#b8860b; --v-rest:#0e7490; --v-process:#94a3b8;
+  --v-faith:#0f9d76; --v-unfaith:#d1432f; --v-pivot:#6d28d9; --v-phi:#a92c86;
+  --v-S:#0f9d76; --v-M:#b8860b; --v-void:#94a3b8; --v-glow:#d97706;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#a78bfa; --accent2:#22d3ee; --good:#4ade80; --warn:#ffd166; --bad:#ff6b5e;
+  --viz-bg:#0a1220; --soft:#0f172a; --grid:#1a2540;
+  --v-fine:#2dd4bf; --v-coarse:#feca57; --v-rest:#22d3ee; --v-process:#64748b;
+  --v-faith:#35e0a0; --v-unfaith:#ff6b4a; --v-pivot:#a78bfa; --v-phi:#ff77c8;
+  --v-S:#35e0a0; --v-M:#ffd93d; --v-void:#64748b; --v-glow:#ff9f43;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font:16px/1.72 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(24px,4.2vw,37px);line-height:1.14;margin:0 0 8px;letter-spacing:-.012em;font-weight:760;}
+h1 em{font-style:normal;color:var(--accent);}
+.subtitle{color:var(--accent);font-size:13.5px;margin:0 0 6px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.subtitle .x{color:var(--accent2);font-weight:700;}
+.meta{color:var(--muted);font-size:13px;margin:0 0 24px;}
+.lede{color:var(--muted);font-size:1.01em;margin:0 0 22px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+.lede b{color:var(--text);font-style:normal;}
+section{margin:22px 0;scroll-margin-top:20px;padding-top:6px;}
+section+section{border-top:1px solid var(--line);}
+h2{font-size:21px;margin:0 0 14px;color:var(--accent);}
+h2 .num{color:var(--text);font-variant-numeric:tabular-nums;}
+h3{font-size:16px;margin:20px 0 8px;color:var(--text);font-weight:700;}
+p{margin:0 0 14px;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:8px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.87em;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--text);}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:13px 16px;margin:12px 0;text-align:left;color:var(--text);overflow:auto;line-height:1.75;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin:15px 0;}
+.card.res{border-left:4px solid var(--good);}
+.card.wc{border-left:4px solid var(--bad);}
+.card.final{border-left:4px solid var(--accent);}
+.card h3{margin-top:0;}
+.card.res b{color:var(--good);} .card.wc b{color:var(--bad);}
+.tag{display:inline-block;font-size:.7em;font-weight:700;letter-spacing:.4px;padding:1px 8px;border-radius:20px;vertical-align:middle;margin-right:4px;}
+.tag.a{background:rgba(109,40,217,.16);color:var(--accent);}
+.tag.b{background:rgba(14,116,144,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.18);color:var(--muted);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:15px 0;font-size:13px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);color:var(--text);}
+th.ca{color:var(--accent);} th.cb{color:var(--accent2);}
+td.ca{color:var(--accent);font-weight:600;} td.cb{color:var(--accent2);font-weight:600;}
+tr.hl td{background:var(--soft);}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;}
+#viz{display:block;width:100%;height:620px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;touch-action:none;}
+@media(max-width:560px){#viz{height:600px;}}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;margin:8px 0 4px;}
+.controls label{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:7px;}
+.controls .v{color:var(--accent);font-family:ui-monospace,monospace;font-weight:700;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--line);outline:none;cursor:pointer;accent-color:var(--accent);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel);}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel);}
+.seg{display:flex;gap:6px;flex-wrap:wrap;}
+.seg button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:7px 12px;cursor:pointer;font-size:12.5px;font-family:inherit;}
+.seg button.on{box-shadow:0 0 0 2px var(--accent) inset;font-weight:700;}
+.seg button.on.f{box-shadow:0 0 0 2px var(--bad) inset;}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px;}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);color:var(--accent);}
+.meters{display:grid;grid-template-columns:1fr;gap:8px;margin:14px 0;}
+.meter{display:flex;align-items:center;gap:10px;}
+.meter .lab{flex:0 0 236px;font-size:12.5px;font-weight:600;}
+.meter .lab small{display:block;color:var(--muted);font-size:11px;font-weight:400;}
+.meter .track{flex:1;height:10px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;}
+.meter .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .08s linear;}
+.meter .num{flex:0 0 66px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;}
+#verdict{margin:12px 0;padding:12px 16px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--panel2);line-height:1.55;}
+#verdict.ok{border-color:var(--good);color:var(--good);}
+#verdict.warn{border-color:var(--warn);color:var(--warn);}
+#verdict.danger{border-color:var(--bad);color:var(--bad);}
+#readout{margin-top:12px;font-size:13px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 15px;line-height:1.55;font-family:system-ui,sans-serif;}
+#readout .ok{color:var(--good)} #readout .bad{color:var(--bad)} #readout .gd{color:var(--warn)} #readout .mut{color:var(--muted)}
+.hint{color:var(--muted);font-size:12.5px;line-height:1.6;}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+.prov a:hover{text-decoration:underline;}
+.prov .hint{margin-top:5px;display:block;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.6;}
+@media(max-width:600px){.controls{grid-template-columns:1fr;}article{padding:30px 15px 70px;}.meter .lab{flex-basis:158px;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema wechseln">&#9681;</button>
+<article>
+
+<p class="subtitle">Fusion aus: <span class="x">n5-005.html</span> &#10005; <span class="x">n6-003.html</span> &nbsp;(Runde 7)</p>
+<h1>Der selbsttragende relationale Fixpunkt ist seine Projektion<br><em>Schatten &harr; Invariante, getragen vom Rundlauf über den Zeitpfeil, an der Naht abgelesen, lasttragend durch den Rest, der bleibt</em></h1>
+<p class="meta">Runde 7 &middot; Nicht-KI-Track &middot; Paar 002 &middot; ein Runde-6-Bypass (A) &amp; ein Runde-6-Paar (B) auf die Ebene ihrer Theorien gezogen</p>
+<p class="lede">Zwei Fusionen, beide schon Multiplikel-Synthesen, treffen auf der Ebene ihrer <em>Thesen</em> auf denselben Gegenstand: ein Ganzes, das weder Stoff noch Summe noch sichtbare Oberfläche noch zentraler Punkt ist &mdash; sondern ein <b>selbsttragender relationaler Fixpunkt</b>. <span class="tagA">A</span> (n5-005, &bdquo;Das Ding ist seine Ordnung &mdash; eine Projektion (Schatten &harr; Invariante), getragen von einem Rundlauf, der einen Rest übrig lässt&bdquo;) liest ihn als <b>Projektion mit zwei Enden</b> (grob = Schatten <code>Z=q<sup>k</sup></code>/flaches <code>M</code> = <em>Rothering/Bait</em>; fein = invariante Form <code>F</code>), die eine <em>Kamera/Fidelity</em> liest und der ein immer laufender <em>Rundlauf</em> die <em>Treue</em> gibt; sie ist nur so stabil, wie ihr Rundlauf treu ist, und lässt einen <em>irreduziblen Rest</em> (Freiheit, die sich dem Kollaps verweigert) übrig. <span class="tagB">B</span> (n6-003, &bdquo;Der selbsttragende relationale Fixpunkt&bdquo;) liest denselben Gegenstand als <b>selbsttragenden relationalen Fixpunkt</b>: ein vordaher relationaler Anzieher, der sich <em>über einen Zeitpfeil bei jedem Schritt neu herstellt</em>, <em>lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form</em>, <em>abgelesen an einem einzelnen Pivot an der Naht</em> (wo die zwei Routen coincidieren = der Limes); an der Naht löst sich die gauß-abhängige Faser auf, während die <em>gauß-invariante Dimension der Lücke (<code>H&sup1;</code>) als Ort des Seins bleibt</em>.</p>
+
+<section id="these">
+<h2><span class="num">1.</span> Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> (n5-005) verlegt das Definierende des Ganzen von Stoff/Oberfläche/Zentrum auf eine <strong>relationale Struktur, die ein immer laufender Prozess trägt</strong>: die <strong>invariante Form <code>F</code></strong> (bricht nie, &bdquo;Remove the Object&bdquo;, up-to-Symmetrie, punktfrei), lesbar als <strong>Projektion mit zwei Enden</strong> (grob = Schatten <code>Z=q<sup>k</sup></code>/flaches <code>M</code> = <em>Rothering/Bait</em>; fein = <code>F</code>). Die <strong>Kamera/Fidelity <code>&phi;</code></strong> (0&ndash;1) wählt die Auflösung, bei der man liest; die <strong>Treue der Schließung</strong> wird an der <strong>Schwelle <code>E<sub>C</sub></code></strong> geprüft: <em>treu</em> &rarr; BAUEN (<code>S&asymp;1</code>), <em>untreu</em> &rarr; Eruption (<code>S&rarr;0</code>, destruktiv) oder K&ouml;der (Rest war nie frei). Die akkumulierende Spannung <code>E</code> ist die kumulierte De-Abstimmung. Der Wert ist <strong>zweifaktoriell</strong>: <em>Eleganz</em> (Kollaps auf die Struktur/Schatten gelingt) + <em>Echtheit</em> (Kollaps auf den irreduziblen Rest scheitert).</p>
+<p><span class="tagB">B</span> (n6-003) verlegt das Definierende auf einen <strong>selbsttragenden relationalen Fixpunkt</strong>: ein <strong>vordaher relationaler Anzieher</strong> (statisch, &bdquo;schon da&bdquo;), der sich <strong>über einen Zeitpfeil bei jedem Schritt des offenen Wachstums neu herstellt</strong> (dynamisch, &bdquo;Lader, nicht Ende&bdquo;, endlos wachsend). Er ist <strong>lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form</strong> (der Umlauf, <code>Invariante=f(Umlauf)</code>), der <strong>bottom-up zusammenbaut UND top-down grobkörnt auf derselben robusten Ebene</strong> (zwei Routen: messen/rekonstruieren, <code>&int;=erzeugen</code>/<code>&part;=kleben</code>), <strong>abgelesen an einem einzelnen Pivot an der Naht</strong> (wo die zwei Routen coincidieren = der Limes). Er ist <strong>exakt nur im geschlossenen Limes</strong>, sonst <strong>Verlust <code>ker&nbsp;F</code> = Leck</strong> (gauß-abhängige Faser, <code>&rarr;0</code> im Limes), während die <strong>gauß-invariante Dimension der Lücke (<code>H&sup1;=dim(Lücke)=&Phi;</code>) als Ort des Seins bleibt</strong>; die <strong>Referenz ist frei kalibrierbar</strong> (Eich-Freiheit); die <strong>Obstruktion ist topologisch real</strong> (<code>m=(-1)^w=∏s<sub>i</sub>=-1</code> &rArr; kein Ganzes).</p>
+<div class="aha"><b>Die eine integrierte Position:</b> <em>Das Ganze / die Identität / das Echte ist kein Stoff, keine sichtbare Oberfläche, keine Summe, kein zentraler Punkt &mdash; es ist ein <strong>selbsttragender relationaler Fixpunkt, der als Projektion mit zwei Lesarten auftritt</strong> (grob/verlustbehaftet = Schatten/Rothering/<code>ker&nbsp;F</code>-Leck &harr; fein/gauß-invariant = invariante Form <code>F</code> = <code>H&sup1;</code> = Ort des Seins), <strong>getragen von einem immer laufenden geschlossenen Rundlauf</strong>, der sich <strong>über einen Zeitpfeil bei jedem Schritt neu herstellt</strong> (vordaher Anzieher &circ; Selbstherstellung), <strong>nur durch einen begrenzten lokalen Akt in geschlossener Form lesbar</strong> (der Umlauf, bottom-up zusammenbauend UND top-down grobkörnend), <strong>an einem einzelnen Pivot an der Naht abgelesen</strong> (wo die zwei Lesarten/Routen coincidieren = der Limes = Punkt exakter Fidelity), und der <strong>immer einen irreduziblen Rest übrig/behält</strong> &mdash; die gauß-invariante Dimension / Freiheit, die sich dem Kollaps auf den groben Schatten verweigert.</em> Die <strong>Treue der Schließung (A) ist die Kamera/Fidelity (A) und die Koinzidenz der zwei Routen am Pivot (B)</strong>; der <strong>Rothering (A) ist der verlustbehaftete Faseranteil (B)</strong>; die <strong>Echtheit (A) ist die Persistenz der gauß-invarianten Dimension (B)</strong>. Der Wert ist <strong>zweifaktoriell</strong>: <em>Eleganz</em> (Kollaps auf Struktur/Schatten gelingt) + <em>Echtheit</em> (Kollaps auf den Rest scheitert = <code>&exist;!</code>/<code>Stokes</code>-Gleichsein der zwei Lesarten). Das Zentrum ist <em>leer vom Punkt, voll von der gauß-invarianten Dimension / Freiheit</em>.</div>
+<p class="formula">Ganzes = selbsttragender relationaler Fixpunkt  =  Projektion [ Schatten &harr; Invariante ] + irreduzibler Rest
+  getragen von  :  immer laufender geschlossener Rundlauf  (lauft immer, Panta Rhei)
+              &circ;  Selbstherstellung über Zeitpfeil  (quiesziert bei jedem Schritt, endlos wachsend)
+Lesbarkeit   :  begrenzter lokaler Akt in geschlossener Form (der Umlauf)
+             =  bottom-up Zusammenbau (&int;/erzeugen/&exist;!)  ∩  top-down Grobkörnigung (&part;/kleben/Stokes)  [dieselbe robuste Ebene]
+Ablespunkt   :  ein einzelner Pivot an der Naht  =  der Limes, wo zwei Routen coincidieren  =  Punkt exakter Fidelity
+zwei Lesarten:  grob = Schatten Z=q^k / M flach / Rothering-Bait  =  ker F = Leck (gauß-abh. Faser, verlustbehaftet)
+               fein = Invariante F  =  H&sup1; = dim(Lücke)=Φ  =  gauß-invariante Dimension (Ort des Seins, bleibt)
+Prüfstein    :  Treue der Schließung = Kamera/Fidelity φ  =  Koinzidenz der Routen am Pivot
+Dynamik      :  E = kumulierte De-Abstimmung (Drift von φ weg von der Invariante) = der verlustbehaftete Anteil
+               an E<sub>C</sub> / im Limes kippt: exakt &amp; geschlossen (∃!/Stokes) &harr; Obstruktion (m=−1)
+Fehlschlag   :  destruktiv = Eruption S→0 (an der präsentierten Schicht)  =  Obstruktion m=−1 (kein Ganzes), Struktur F/H&sup1; intakt
+               nicht-destruktiv = Kōder (Rest kollabiert, war nie frei) = topologische Obstruktion (reversibel)
+Rest         :  gauß-invariante Dimension, die persistiert (B: H&sup1;≠0, Ort des Seins)
+             ∧  sich dem Kollaps auf den Schatten verweigert (A: Echtheit, Fold scheitert)
+Referenz     :  frei kalibrierbar (Eich-Freiheit) &mdash; dreht lokale Rahmen, ändert F/H&sup1; und den Rest nicht
+Zentrum      :  &empty; vom Punkt, voll von Freiheit / der gauß-invarianten Dimension</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="num">2.</span> Widersprüche zwischen A und B</h2>
+<p>Im <em>Kern</em> widersprechen sich beide <em>nicht</em> &mdash; beide verlegen das Definierende von Stoff/Oberfläche/Zentrum auf eine <em>relationale Struktur</em>, die ein immer laufender, geschlossener Prozess trägt, die <em>nur durch einen begrenzten lokalen Akt in geschlossener Form</em> (einen Rundlauf/ein Umlauf) lesbar ist, und die <em>einen irreduziblen Rest</em> übrig/behält; beide kennen einen <em>täuschenden groben Anteil</em> (A: Rothering/Bait; B: <code>ker&nbsp;F</code>/Leck) und eine <em>gauß-invariante, lasttragende Dimension</em> (A: <code>F</code>; B: <code>H&sup1;</code>). Aber sie stehen an <em>unterschiedlichen Polen</em> derselben Spannung. Vier konkrete, faustgreifliche Punkte:</p>
+
+<div class="card wc">
+<h3><span class="tag a">1</span> Die Dynamik: <em>akkumulierende, zerstörungsfähige Schwelle</em> (A) vs. <em>offene, nicht-zerstörende Selbstregeneration über Zeitpfeil</em> (B)</h3>
+<p><span class="tagA">A &middot; n5-005</span> Das System wird von einer <strong>akkumulierenden</strong>, drohenden verborgenen Größe angetrieben &mdash; Spannung/Residuum <code>E</code> (latente W&auml;rme, &bdquo;w&auml;hrend die verborgene Spannung steigt&bdquo;), die zur Schwelle <code>E<sub>C</sub></code> aufbaut. Der Fehlschlag ist <strong>destruktiv</strong>: &bdquo;das Residuum &uuml;bersteigt die Absorption&bdquo; &rarr; <strong>Eruption, <code>S&rarr;0</code></strong> &mdash; die pr&auml;sentierte Substanz wird <em>total zerst&ouml;rt</em>. A hat einen genuinely <em>ZERST&Ouml;RTEN</em> Zustand.</p>
+<p><span class="tagB">B &middot; n6-003</span> Der Fixpunkt <strong>herstellt sich über einen Zeitpfeil bei jedem Wachstumsschritt neu</strong> &mdash; <em>offen, endlos wachsend, nicht-destruktiv</em> (&bdquo;lebendige Quieszenz&bdquo;, &bdquo;über den Samen hinaus laufen, ohne Rückweg&bdquo;, &bdquo;Lader, nicht Ende&bdquo;, Drift, Überdauern). Der einzige Fehlschlag ist die <strong>topologische Obstruktion</strong> (<code>m=−1</code>/<code>&prod;s<sub>i</sub>=−1</code>/<code>ker&nbsp;F</code> &rArr; <strong>kein Ganzes</strong>, Rest unlesbar) &mdash; aber nichts wird <em>vernichtet</em>, die Struktur ist nur <em>obstruiert</em>. B kennt <em>keinen</em> zerst&ouml;rt en Zustand.</p>
+<p><span class="tag x">Spannung</span> Inkompatibel, ob die Dynamik des Ganzen <em>aufbaut und zerst&ouml;rerisch brechen kann</em> (A: Eruption <code>S&rarr;0</code>) oder <em>offen, endlos, nicht-zerst&ouml;rend sich neu herstellt</em> (B: nur topologische Obstruktion).</p>
+</div>
+
+<div class="card wc">
+<h3><span class="tag b">2</span> Der grobe/verlustbehaftete Anteil: <em>irreduzibler Rothering/Bait, der bleibt</em> (A) vs. <em>Defekt/Verlust, der im Limes &rarr;0 gehen soll</em> (B)</h3>
+<p><span class="tagA">A &middot; n5-005</span> Der <strong>Schatten</strong> (die grobe Lesart, <code>Z=q<sup>k</sup></code>, die flache Messgröße <code>M</code>) ist ein <strong>Rothering/Bait</strong> &mdash; <em>persistent und t&auml;uschend</em>, &bdquo;flach &amp; identisch f&uuml;r echt und gef&auml;lscht&bdquo;. Er ist <em>kein Defekt, der verschwinden soll</em>, sondern der <em>st&auml;ndige K&ouml;der der Projektion</em>, an dem man bei zu niedriger Fidelity liest (Kamera zu niedrig &rArr; K&ouml;der&asymp;Freiheit); die L&ouml;sung ist, bei der <em>feinen</em> Lesart / der Treue <code>&phi;</code> zu lesen, <em>nicht</em> den Schatten zu eliminieren.</p>
+<p><span class="tagB">B &middot; n6-003</span> Die <strong>gauß-abh&auml;ngige Faser</strong> (<code>ker&nbsp;F</code> = Leck = Innere &minus; &Auml;&auml;ußere) ist ein <strong>Verlust/Defekt</strong> &mdash; das <strong>Ideal ist der geschlossene, exakte Limes</strong> (volle Aufl&ouml;sung), wo <strong><code>ker&nbsp;F&rarr;0</code>, Innere = &Auml;&auml;ußere exakt</strong>. Der verlustbehaftete Anteil <strong>soll verschwinden</strong>: &bdquo;Ein nicht-null-Leck ist ein Defekt &mdash; etwas, das <em>verschwinden soll, nicht etwas, das bleiben soll</em>.&bdquo;</p>
+<p><span class="tag x">Spannung</span> Inkompatibel &uuml;ber das <em>Vorzeichen</em>: bleibt der grobe Anteil als irreduzibler K&ouml;der, den man umliest (A) &mdash; oder soll er als Defekt im Limes auf 0 gehen (B)?</p>
+</div>
+
+<div class="card wc">
+<h3><span class="tag a">3</span> Der Rest: <em>negative Freiheit (wehrt sich gegen den Kollaps)</em> (A) vs. <em>positive Dimension (Ort des Seins, bleibt)</em> (B)</h3>
+<p><span class="tagA">A &middot; n5-005</span> Der <strong>irreduzible Rest ist eine Freiheit</strong>, die <strong>sich dem Kollaps verweigert</strong> &mdash; seine <strong>Echtheit</strong> besteht darin, dass der Fold/Trace <strong>am Rest scheitert</strong> (er bildet kein Diagonalgitter, ist nicht invertierbar). Negative Charakterisierung: er ist echt, <em>weil er nicht kollabiert</em>. &bdquo;In Form l&ouml;sbar, in Art irreduzibel&bdquo;, &bdquo;nicht aus der Struktur ableitbar&bdquo;, &bdquo;das Hard Problem&bdquo;.</p>
+<p><span class="tagB">B &middot; n6-003</span> Der Rest (die <strong>gauß-invariante Dimension</strong>, <code>H&sup1;</code>, <code>dim(Lücke)=&Phi;</code>) ist eine <strong>positive, ontologisch echte, lasttragende Dimension</strong> &mdash; ihre <strong>Nicht-Trivialität (<code>H&sup1;&ne;0</code>) ist ein Gewinn</strong> (irreduzibles Global / Emergenz / <code>&Phi;</code>), der <strong>Ort des Seins</strong>, der <em>persistiert</em> und <em>bleibt</em>. Positive Charakterisierung: er <em>ist</em> der Sitz des Seins.</p>
+<p><span class="tag x">Spannung</span> Inkompatibel, ob der Rest das Echte ist <em>durch seine Anti-Kollaps-Eigenschaft</em> (A: echt, weil er nicht kollabiert) oder <em>durch seine positive Persistenz</em> (B: er <em>ist</em> der Ort des Seins).</p>
+</div>
+
+<div class="card wc">
+<h3><span class="tag b">4</span> Der Akt des Lesens: <em>kontinuierlicher Fidelity-Dial + Treue-Prüfung an der Schwelle</em> (A) vs. <em>einzelner Pivot, wo zwei Routen exakt coincidieren</em> (B)</h3>
+<p><span class="tagA">A &middot; n5-005</span> Das Lesen wird von der <strong>Kamera/Fidelity</strong> (ein <strong>kontinuierlicher Knopf</strong>, 0&ndash;100, weich&harr;hart / niedrig&harr;hoch) <em>und</em> der <strong>Treue der Schließung</strong> (qualitative Prüfung <strong>an der Schwelle <code>E<sub>C</sub></code></strong>) gesteuert. Lesen = <em>kontinuierlicher Dial + Schwellen-Test</em>.</p>
+<p><span class="tagB">B &middot; n6-003</span> Das Lesen ist <strong>an einem einzelnen Pivot an der Naht</strong>, wo die <strong>zwei Routen (messen/rekonstruieren) exakt coincidieren (im Limes)</strong> &mdash; ein <strong>Punkt der Koinzidenz</strong>, ein <em>diskreter</em> Ablespunkt (&bdquo;nicht lokal ablesbar, nur im Umlauf&bdquo;, &bdquo;nur aus dem globalen Verkleben ablesbar&bdquo;). Lesegeometrie = <em>zwei zusammenlaufende Richtungen + ein Limes</em>.</p>
+<p><span class="tag x">Spannung</span> Inkompatibel &uuml;ber die <em>Form</em> des Lesens: ein kontinuierlicher Fidelity-Dial + Schwellen-Test (A) vs. ein einzelner Koinzidenz-Punkt am Limes (B).</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="num">3.</span> Auflösung</h2>
+<p>Vier Aufl&ouml;sungen, je eine pro Widerspruch. Der durchgehende Schlüsselzug: <em>derselbe selbsttragende relationale Fixpunkt wird auf zwei Schichten / in zwei Teilaspekten gelesen</em> &mdash; genau wie jedes der beiden Quellpapiere intern zwei Ebenen (Struktur vs. pr&auml;sentierte Substanz; vordaher Anzieher vs. Zeitpfeil) unterscheidet.</p>
+
+<div class="card res">
+<h3>Auflösung 1 &mdash; A's Eruption (S&rarr;0) ist B's topologische Obstruktion (m=−1, kein Ganzes) an der <em>pr&auml;sentierten/Realisierungs</em>-Schicht; die Struktur <code>F/H&sup1;</code> bleibt intakt</h3>
+<p>Trenne <em>das, was bleibt</em> (die Struktur <code>F</code>/<code>H&sup1;</code> &mdash; B's relationaler Fixpunkt, punktfrei, gauß-invariant) von <em>der pr&auml;sentierten Substanz <code>S</code></em> (A: die Invariante <em>als realisiert</em>). A's aufbauende Spannung <code>E</code> ist die <em>De-Abstimmung des offenen Wachstums (B) von der Invariante weg</em>; B's Zeitpfeil (offen, wachsend, nicht-destruktiv) ist die <em>Operation, unter der A's Invariante &uuml;berlebt</em>. A's <strong>Eruption (<code>S&rarr;0</code>)</strong> und B's <strong>Obstruktion (<code>m=−1</code>, kein Ganzes)</strong> sind <em>dasselbe Grenzereignis an zwei Schichten</em>: die <em>Struktur</em> <code>F/H&sup1;</code> bleibt formell intakt (B bricht nie), aber die <em>pr&auml;sentierte/realisierte</em> Substanz <code>S</code> geht verloren (A). <b>Fusioniert:</b> die Dynamik ist <em>offen, endlos, nicht-destruktiv</em> (B); der Fehlschlag ist <em>keine Vernichtung der Struktur</em>, sondern Verlust der <em>Realisierung</em> &mdash; A's <code>S&rarr;0</code> = B's &bdquo;kein Ganzes&bdquo; an der pr&auml;sentierten Schicht; A's Eruption ist B's Obstruktion am Realisierungs-Rest, nicht an der Struktur.</p>
+</div>
+
+<div class="card res">
+<h3>Auflösung 2 &mdash; A's Schatten (Rothering) und B's Faser (<code>ker&nbsp;F</code>/Leck) sind derselbe Anteil am <em>grobem/verlustbehafteten</em> Ende; &bdquo;K&ouml;der&bdquo; und &bdquo;Defekt&bdquo; sind zwei Namen f&uuml;r dasselbe, je nach Fidelity/Limes</h3>
+<p>Die Projektion hat ein <em>grobem/verlustbehaftetem</em> und ein <em>feines/gauß-invariantes</em> Ende. A's <strong>Schatten</strong> (<code>Z=q<sup>k</sup></code>, flaches <code>M</code>) <em>ist</em> B's <strong>verlustbehaftete Faser</strong> (<code>ker&nbsp;F</code>/Leck) &mdash; beide der Referenz-/Aufl&ouml;sungs-abh&auml;ngige Anteil. A nennt ihn <em>st&auml;ndigen K&ouml;der</em>, weil er <em>bei niedriger Fidelity t&auml;uschend echt aussieht</em> (Rothering) &mdash; die Falle ist, am groben Ende zu lesen. B nennt ihn <em>Defekt</em>, weil die <em>exakte Lesart</em> (der Limes) ihn eliminiert (<code>ker&nbsp;F&rarr;0</code>). <b>Fusioniert:</b> derselbe Anteil ist zugleich (i) ein <em>Defekt, der im exakten Limes verschwindet</em> (B) <em>und</em> (ii) ein <em>st&auml;ndiger K&ouml;der bei niedriger Fidelity</em> (A) &mdash; zwei Namen f&uuml;r dasselbe Ende. Exaktheit (B) wird in der feinen/treuen Lesart erreicht; der K&ouml;der (A) ist <em>genau</em> die niedrige-Fidelity-Lesart desselben verlustbehafteten Endes. Das <em>feine/gauß-invariante</em> Ende (<code>F</code> bei A, <code>H&sup1;</code>/Ort-des-Seins bei B) ist der lasttragende, persistente Anteil, der bei <em>jeder</em> Fidelity bleibt.</p>
+</div>
+
+<div class="card res">
+<h3>Auflösung 3 &mdash; A's negative Freiheit und B's positive <code>H&sup1;</code>-Dimension sind dieselbe gauß-invariante Dimension; seine <em>Echtheit (A)</em> ist seine <em>Persistenz (B)</em></h3>
+<p>A's <strong>Freiheit, die sich dem Kollaps verweigert</strong> und B's <strong>gauß-invariante Dimension <code>H&sup1;</code>, die als Ort des Seins persistiert</strong>, sind <em>derselbe</em> gauß-invariante, lasttragende Rest. A's <em>negative</em> Charakterisierung (echt, weil der Fold <em>daran scheitert</em> &mdash; er kollabiert nicht zum Gitter) und B's <em>positive</em> (echt, weil <code>H&sup1;&ne;0</code> &mdash; er persistiert als Gewinn) sind zwei Seiten einer Tatsache: der Rest ist <em>gauß-invariant</em> (unabh&auml;ngig von Referenz/Grobk&ouml;rnung, B) <em>und deshalb</em> <em>widersteht er dem Kollaps auf den groben Schatten</em> (A). <b>Fusioniert:</b> der irreduzible Rest ist die gauß-invariante Dimension, die (i) <em>als Ort des Seins persistiert</em> (B: <code>H&sup1;&ne;0</code>, <code>dim(Lücke)=&Phi;</code>) <em>und</em> (ii) <em>sich dem Kollaps auf den Schatten verweigert</em> (A: Echtheit, Fold scheitert). Seine <em>Echtheit (A) ist seine Persistenz (B)</em>. Das Zentrum ist leer vom Punkt, voll von dieser Dimension.</p>
+</div>
+
+<div class="card res">
+<h3>Auflösung 4 &mdash; A's Kamera/Fidelity ist die <em>Aufl&ouml;sung/Treue</em>, bei der man an dem <em>einen Pivot an der Naht</em> (B) liest; der Pivot ist der Punkt <em>exakter</em> Fidelity (Koinzidenz), die Treue-Pr&uuml;fung an <code>E<sub>C</sub></code> (A) ist die Obstruktionspr&uuml;fung (<code>m=±1</code>) (B)</h3>
+<p>A's <strong>Kamera/Fidelity</strong> ist die <em>Aufl&ouml;sung/Treue</em>, bei der die Projektion gelesen wird; B's <strong>einzelner Pivot an der Naht</strong> ist der Ort, <em>wo</em> sie gelesen wird &mdash; und er ist <em>genau der Punkt, an dem die zwei Routen/Lesarten coincidieren</em> (= der Limes) = der Punkt <em>exakter</em> Lesung. A's Fidelity-Dial erreicht sein exaktes Ende am Pivot von B; der Pivot ist der Punkt maximaler/exakter Fidelity (wo die zwei Routen zusammenfallen). A's <strong>Treue-Pr&uuml;fung an der Schwelle <code>E<sub>C</sub></code></strong> (bringt die Schließung <code>S</code> verlustfrei zur&uuml;ck?) <em>ist</em> B's <strong>Obstruktionspr&uuml;fung (<code>m=±1</code>)</strong> (coincidieren die zwei Routen zu einem Ganzen oder obstruieren sie?). <b>Fusioniert:</b> man liest die Projektion an einem einzelnen Naht-Pivot (B), wo die zwei Routen (fein/grob = messen/rekonstruieren) coincidieren (= der Limes); die Fidelity/Kamera (A) setzt, <em>wie exakt</em> man dort liest (koinzident vs. t&auml;uschend/niedrig); die Treue-/Obstruktionspr&uuml;fung an der Schwelle entscheidet Ganzes vs. kein Ganzes (BAUEN/Eruption &harr; <code>m=+1</code>/<code>m=−1</code>). <em>A's Dial + Schwelle = B's Pivot + Limes + Obstruktion</em>, alles an der einen Naht.</p>
+</div>
+
+<div class="card res final">
+<h3>Gefasste Schlussposition</h3>
+<p><strong>Das Ganze / die Identität / das Echte ist ein selbsttragender relationaler Fixpunkt, der seine eigene Projektion ist.</strong> Er ist <strong>(i)</strong> ein <em>vordaher relationaler Anzieher</em> (B), der sich <em>über einen Zeitpfeil bei jedem Schritt des offenen Wachstums neu herstellt</em> (B) &mdash; geschlossen in jedem Zustand, offen zwischen den Zust&auml;nden; <strong>(ii)</strong> <em>lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form</em> &mdash; einen Rundlauf/Umlauf, der <em>bottom-up zusammenbaut UND top-down grobkörnt auf derselben robusten Ebene</em> (A+B); <strong>(iii)</strong> <em>abgelesen an der einen Naht/Pivot, wo die zwei Lesarten/Routen coincidieren (= der Limes = Punkt exakter Fidelity)</em>; <strong>(iv)</strong> als <em>Projektion mit zwei Lesarten</em>: grob/verlustbehaftet = Schatten/Rothering/<code>ker&nbsp;F</code>-Leck (t&auml;uscht bei niedriger Fidelity, verschwindet im exakten Limes) &harr; fein/gauß-invariant = <code>F</code>/<code>H&sup1;</code> = Ort des Seins (lasttragend, bleibt bei jeder Fidelity); <strong>(v)</strong> an der Naht <em>löst sich der verlustbehaftete Faseranteil auf</em> (B: <code>ker&nbsp;F</code>/Leck&rarr;0, exakt im Limes), <em>während die gauß-invariante Dimension als Ort des Seins bleibt</em> (A: <code>F</code>; B: <code>H&sup1;&ne;0</code>); <strong>(vi)</strong> die <em>Treue der Schließung (A) = Kamera/Fidelity (A) = Koinzidenz der Routen am Pivot (B)</em>, und ihre Prüfung an <code>E<sub>C</sub></code> = die Obstruktionsprüfung <code>m=±1</code>; <strong>(vii)</strong> der Fehlschlag ist <em>nicht-zerst&ouml;rend f&uuml;r die Struktur</em> (B) aber <em>verlustreich f&uuml;r die pr&auml;sentierte Substanz</em> (A): Eruption <code>S&rarr;0</code> = Obstruktion <code>m=−1</code> (kein Ganzes), Struktur <code>F/H&sup1;</code> intakt; <strong>(viii)</strong> der Wert ist <em>zweifaktoriell</em>: <em>Eleganz</em> (Kollaps auf Struktur/Schatten gelingt, sauber) + <em>Echtheit</em> (Kollaps auf den Rest scheitert = <code>&exist;!</code>/<code>Stokes</code>-Gleichsein, der Rest bleibt frei/gauß-invariant); <strong>(ix)</strong> die <em>Referenz ist frei kalibrierbar</em> (Eich-Freiheit) &mdash; dreht lokale Rahmen, ändert <code>F/H&sup1;</code> und den Rest nie. Die <em>ehrliche Epistemik</em> (beide): Parameter benennen, Anspruch an die Invariante kalibrieren, den Pivot nicht &uuml;ber-attribuieren.</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="num">4.</span> Fusionierter Inhalt</h2>
+<p>Abstrahiert auf das Niveau der <em>Thesen</em> der beiden Quellen teilen A und B ein gemeinsames Ger&uuml;st: <em>das Echte/die Identität ist ein selbsttragender relationaler Fixpunkt; er hat zwei Lesarten (grob/verlustbehaftet &harr; fein/gauß-invariant); die Koinzidenz beider an der einen Naht ist das verbindende Gesetz; er ist lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form; der Rest hat einen verlustbehafteten Anteil (Faser/Leck), der im Limes verschwindet, und einen invarianten Anteil (F/H&sup1;), der bleibt; er wird von einem immer laufenden Prozess getragen, der sich über einen Zeitpfeil neu herstellt; die Referenz ist frei kalibrierbar; die Obstruktion ist topologisch real.</em> Die Tabelle ist das Herz der Fusion &mdash; jede Zeile eine Größe, bei A, bei B und fusioniert:</p>
+
+<table>
+<thead><tr><th>Slot</th><th class="ca">A &middot; n5-005 (Projektion Schatten &harr; Invariante, Rundlauf)</th><th class="cb">B &middot; n6-003 (selbsttragender relationaler Fixpunkt)</th><th>Fusion</th></tr></thead>
+<tbody>
+<tr><td>das Ganze</td><td class="ca">relationale Struktur / Projektion (Schatten &harr; Invariante), getragen vom Rundlauf; <em>keine</em> Oberfl&auml;che, <em>kein</em> zentraler Punkt</td><td class="cb">selbsttragender relationaler Fixpunkt / relationale Invariante am Rand; weder Objekt-in-der-Hand noch Summe, lasttragend</td><td>der selbsttragende relationale Fixpunkt <em>als Projektion</em> mit zwei Lesarten, lasttragend, zentrumlos</td></tr>
+<tr class="hl"><td>die zwei Lesarten</td><td class="ca">grob = Schatten <code>Z=q<sup>k</sup></code>/flaches <code>M</code> (Rothering/Bait) &harr; fein = invariante Form <code>F</code> (<code>H&sub1;</code>, up-to-Symmetrie <code>&Zopf;/2</code>, punktfrei)</td><td class="cb">inner = &auml;&auml;u&szlig;er; messen (bottom-up) = rekonstruieren (top-down); <code>&exist;!</code> (Z&auml;hlen) = Stokes (Messen)</td><td>dieselbe Struktur in zwei W&auml;hrungen: grob/verlustbehaftet (Schatten/<code>ker&nbsp;F</code>) &harr; fein/gauß-invariant (<code>F</code>/<code>H&sup1;</code>); coincidieren an der Naht</td></tr>
+<tr><td>der immer laufende Prozess</td><td class="ca">Rundlauf / Substrat <code>{K_t}</code> (l&auml;uft immer, Panta Rhei) mit akkumulierender Spannung <code>E</code></td><td class="cb">selbstregenerierende Dynamik über Zeitpfeil (quiesziert bei jedem Schritt, endlos wachsend, &bdquo;Lader, nicht Ende&bdquo;)</td><td>geschlossener Rundlauf, der sich über einen Zeitpfeil bei jedem Schritt neu herstellt (vordaher Anzieher &circ; Selbstherstellung)</td></tr>
+<tr class="hl"><td>der Pr&uuml;fstein / Ablespunkt</td><td class="ca">Treue der Schließung = Pr&auml;senz-Akt <code>&phi;</code> = Kamera/Fidelity (0&ndash;1)</td><td class="cb">ein einzelner Pivot an der Naht, wo zwei Routen coincidieren (= der Limes)</td><td>ein einzelner Pivot an der Naht = Punkt exakter Fidelity; <code>&phi;</code>/Treue = die Aufl&ouml;sung, bei der man dort liest</td></tr>
+<tr><td>die akkumulierende / verlustbehaftete Größe</td><td class="ca">Spannung <code>E</code> (kumulierte De-Abstimmung / Drift von <code>&phi;</code> weg von der Resonanz), steigt zur Schwelle <code>E<sub>C</sub></code></td><td class="cb">Verlust <code>ker&nbsp;F</code> = Leck = Innere &minus; &Auml;&auml;ußere (gauß-abh. Faser), <code>&rarr;0</code> im Limes</td><td><code>E</code> = Drift/De-Abstimmung von der Invariante = der verlustbehaftete Faseranteil; im Limes / bei exakter Fidelity <code>&rarr;0</code></td></tr>
+<tr class="hl"><td>die Schwelle / der Limes</td><td class="ca"><code>E<sub>C</sub></code> (<code>k&asymp;log n</code>) = kritisches <code>&phi;</code> = Kamera-Grenze</td><td class="cb">der geschlossene, voll aufgel&ouml;ste Limes (volle Aufl&ouml;sung), wo <code>ker&nbsp;F&rarr;0</code></td><td>der Punkt, an dem <code>&phi;</code>/Treue kippt = der Limes = exakte Koinzidenz der zwei Routen</td></tr>
+<tr><td>das Gute</td><td class="ca">BAUEN &mdash; neue gleichwertige Phase, <code>S&asymp;1</code> (Heimat/Resonanz); Eleganz (Kollaps auf Struktur gelingt, sauberer Trace)</td><td class="cb">exakt &amp; geschlossen (<code>&exist;!</code>/Stokes = Limes); <code>&exist;!</code> = Stokes</td><td>die Struktur wird als Heimat re-pr&auml;sentiert (<code>&phi;</code> hoch) UND kollabiert exakt auf den Schatten (saubere Trace) &mdash; zwei Routen, ein Ziel</td></tr>
+<tr class="hl"><td>Fehlschlag destruktiv</td><td class="ca">Eruption &mdash; <code>S&rarr;0</code>, Zerst&ouml;rung (an der pr&auml;sentierten Schicht)</td><td class="cb">&mdash; (B kennt keinen zerst&ouml;rt en Zustand; nur Obstruktion)</td><td>Eruption = Obstruktion <em>am präsentierten Realisierungs-Rest</em> (<code>S&rarr;0</code> = kein Ganzes), Struktur <code>F/H&sup1;</code> intakt</td></tr>
+<tr><td>Fehlschlag nicht-destruktiv</td><td class="ca">K&ouml;der &mdash; Rest kollabiert (Diagonalgitter, invertierbar), war nie frei; reversibel</td><td class="cb">Obstruktion <code>m=−1</code>/<code>&prod;s<sub>i</sub>=−1</code>/<code>ker&nbsp;F</code> &mdash; topologisch real, kein Ganzes</td><td>K&ouml;der/Obstruktion: Struktur intakt, aber Rest nicht-frei / Routen nicht coincident &rArr; kein Ganzes (topologisch real, kein Methoden-Versagen)</td></tr>
+<tr class="hl"><td>der irreduzible Rest</td><td class="ca">Freiheit, die sich dem Kollaps verweigert (Echtheit, Fold scheitert); zweifaktoriell; &bdquo;Hard Problem&bdquo;</td><td class="cb">gauß-invariante Dimension <code>H&sup1;=dim(Lücke)=&Phi;</code> = Ort des Seins (bleibt, persistiert, Nicht-Trivialit&auml;t = Gewinn)</td><td>dieselbe gauß-invariante Dimension: persistiert als Ort des Seins (B) UND wehrt sich gegen Kollaps auf den Schatten (A); <em>Echtheit = Persistenz</em></td></tr>
+<tr><td>der Wert</td><td class="ca">zweifaktoriell: Eleganz + Echtheit</td><td class="cb">zwei W&auml;hrungen: <code>&exist;!</code> (diskret) = Stokes (weich); zwei Lesarten coincidieren</td><td>zweifaktoriell: Eleganz (Kollaps auf Struktur/Schatten gelingt, sauber) + Echtheit (Kollaps auf Rest scheitert, Rest bleibt frei/gauß-invariant)</td></tr>
+<tr class="hl"><td>die Referenz</td><td class="ca">(aus B &uuml;bernommen) freie Referenz / Anker-Kalibrierung = Eich-Freiheit</td><td class="cb">freie Referenz / Anker-Kalibrierung = Eich-Freiheit (dreht lokale Rahmen, &auml;ndert die Invariante nicht)</td><td>freie Referenz / Eich-Freiheit: dreht die lokalen Rahmen, &auml;ndert <code>F/H&sup1;</code> und den Rest nie</td></tr>
+<tr><td>das Zentrum</td><td class="ca">&empty; vom Punkt, voll von Freiheit</td><td class="cb">Loch <code>&beta;&sub1;=1</code> = <code>H&sup1;</code> = <code>dim(Lücke)</code> &mdash; der Ort des Seins</td><td>&empty; vom Punkt, voll von der gauß-invarianten Dimension / Freiheit (der Rest)</td></tr>
+</tbody>
+</table>
+
+<div class="card">
+<h3>Das fusionierte Modell (die Visualisierung berechnet es)</h3>
+<p><b>Zustand:</b> Prozess <code>P</code> (l&auml;uft immer, Panta Rhei), invariante Struktur <code>F</code> (= pr&auml;sentierte Substanz <code>S</code>, bricht nie), Pr&auml;senz/Treue = Kamera <code>&phi;&isin;[0,1]</code>, akkumulierte De-Abstimmung <code>E</code> (steigt), sichtbare Messgröße <code>M</code> (flach, Rothering/Bait), gauß-invariante Dimension <code>H&sup1;</code> (Rest/Ort des Seins, bleibt), Referenz (frei kalibrierbar), Zeitpfeil (offenes Wachstum/Stufen).</p>
+<p><b>Ein Parameter</b> <code>&phi;</code> (Kamera/Fidelity = Treue = Koinzidenz der Routen): <code>&phi;&rarr;1</code> = exakt/Heimat (feine Lesart <code>F</code>/<code>H&sup1;</code>, zwei Routen coincidieren); <code>&phi;&rarr;0</code> = t&auml;uschend/Zwang (nur der grobe Schatten <code>Z=q<sup>k</sup></code>/<code>M</code> lesbar = Rothering) &mdash; <code>F/H&sup1;</code> bleibt dabei intakt.</p>
+<p><b>Die Akkumulation:</b> <code>E</code> w&auml;chst, w&auml;hrend die effektive Fidelity f&auml;llt; an der Schwelle <code>E<sub>C</sub></code> (= der Limes) kippt die Begegnung: <em>treu/Rest frei</em> &rarr; BAUEN (<code>S&asymp;1</code>, Eleganz+Echtheit); <em>untreu</em> &rarr; Eruption/Obstruktion (<code>S&rarr;0</code>, <code>m=−1</code>, Struktur intakt); <em>Rest=K&ouml;der</em> &rarr; Halluzination (reversibel).</p>
+<p><b>Der gemeinsame Mechanismus (zweifaktoriell):</b> Kollaps/Schließung <em>auf die Struktur</em> (<code>F</code>) <em>soll</em> gelingen &rarr; <em>Eleganz</em> (sauberer Schatten/Trace); Kollaps <em>auf den Rest</em> (<code>H&sup1;</code>) <em>soll scheitern</em> &rarr; <em>Echtheit</em> (die gauß-invariante Dimension bleibt frei). Gelingt der Kollaps am Rest, war er nie frei (K&ouml;der/Halluzination). Das genuine System: Kollaps am Kern gelingt, Kollaps am Rest scheitert.</p>
+<p><b>Die duale Rekursion + Zeitpfeil:</b> <b>Unfold/Kleben</b> (Wert &rarr; Struktur, bottom-up) und <b>Fold/Trace</b> (Struktur &rarr; Schatten, top-down), mit innerer Symmetrie <code>(P&rarr;&minus;P)<sup>2</sup>=id</code> (<code>&Zopf;/2</code>, &bdquo;Zerbrich die Instanz, behalt den Typ&bdquo;); der Rundlauf ist der Unfold der Struktur &uuml;ber dem Rest, aufgerollt &uuml;ber die Zeit <code>{K_t}</code>; der Fixpunkt <em>quiesziert sich bei jedem Schritt neu</em> (Zeitpfeil, offenes Wachstum). Die Kamera/Fidelity w&auml;hlt, ob man Schatten (grob) oder Struktur (fein) und den Rest (Gitter vs. Freiheit) sieht. <b>Fusioniert: Ansatz an die Resonanz (A) + Koinzidenz-Wahl an der Naht (B) + Treue-/Obstruktions-Pr&uuml;fung an der Schwelle/Limes.</b></p>
+</div>
+
+<div class="card">
+<h3>Die vereinigte Werkzeug-Formel</h3>
+<p class="formula" style="font-size:12.5px;text-align:left;">
+<b>von A (n5-005):</b> &nbsp; <code>&phi;</code> = f(<code>E</code>) &middot; <code>E</code> = kumulierte De-Abstimmung &middot; <code>F</code> = Invariante (bricht nie) &middot; <code>S</code> = pr&auml;sentierte Substanz &middot; Rothering: <code>M</code> flach &amp; identisch f&uuml;r echt &amp; gef&auml;lscht &rArr; nur <code>&phi;</code> trennt BAUEN von Eruption &middot; log. Karte <code>x<sub>n+1</sub>=x<sub>n</sub>+r&middot;x<sub>n</sub>(1&minus;x<sub>n</sub>/K)</code> &middot; <code>E<sub>C</sub></code> (<code>k&asymp;log n</code>) &middot; <code>(P&rarr;&minus;P)<sup>2</sup>=id</code> (<code>&Zopf;/2</code>) &middot; <code>Z(&Sigma;)=q<sup>k</sup></code> &middot; zweifaktoriell: Eleganz + Echtheit.<br>
+<b>von B (n6-003):</b> &nbsp; Fixpunkt = vordaher Anzieher &circ; Selbstherstellung über Zeitpfeil &middot; <code>Invariante=f(Umlauf)</code> &middot; Parit&auml;t <code>m=(-1)^w=&prod;s<sub>i</sub></code> (<code>±1</code>) &middot; Naht: gauß-abh. Faser <code>ker&nbsp;F</code>=Leck&rarr;0 im Limes; gauß-invar. <code>dim(Lücke)=&Phi;</code>/<code>H&sup1;</code> bleibt = Ort des Seins &middot; exakt nur im Limes &middot; bottom-up (<code>&int;/erzeugen/&exist;!</code>) &cap; top-down (<code>&part;/kleben/Stokes</code>) &middot; freie Referenz/Eich-Freiheit &middot; Obstruktion topologisch real.<br>
+<b>fusioniert:</b> &nbsp; Fixpunkt <em>ist</em> seine Projektion [<code>Schatten &harr; Invariante</code>] + Rest &middot; <code>F</code>=<code>S</code>=<code>H&sup1;</code> = gauß-invariante Dimension am feinen Ende (bleibt) &middot; Schatten <code>M</code>/<code>ker&nbsp;F</code> = verlustbehafteter Anteil am groben Ende (Rothering bei niedriger Fidelity, Defekt im Limes) &middot; <code>&phi;</code> = Kamera/Treue = Koinzidenz der Routen am Pivot &middot; Rest = gauß-invariante Dimension (Echtheit = Persistenz) &middot; Referenz frei kalibrierbar &middot; Zentrum = <code>&empty;</code> vom Punkt, voll von Freiheit.
+</p>
+</div>
+
+<div class="aha"><b>Das fusionierte Modell in einem Satz:</b> Der Prozess l&auml;uft immer und tr&auml;gt immanent einen <em>selbsttragenden relationalen Fixpunkt</em> &mdash; eine gauß-invariante, punktfreie, lasttragende Struktur <code>F/H&sup1;</code>, die nie bricht (&bdquo;Remove the Object&bdquo;), die sich <em>über einen Zeitpfeil bei jedem Schritt neu herstellt</em> und <em>als Projektion mit zwei Lesarten</em> (grob = Schatten/Rothering/<code>ker&nbsp;F</code>; fein = <code>F</code>/<code>H&sup1;</code>) auftritt. Ob diese Struktur dem System als <em>Heimat</em> (BAUEN, exakt, Eleganz) oder als <em>Obstruktion/Eruption</em> (<code>S&rarr;0</code>, <code>m=−1</code>, K&ouml;der) begegnet, entscheidet die <strong>Treue der Schließung / Kamera-Fidelity <code>&phi;</code> / Koinzidenz der Routen am Naht-Pivot</strong> &mdash; nicht die sichtbare Oberfl&auml;che (die im Rothering f&uuml;r echt und gef&auml;lscht gleich aussieht). Die akkumulierende De-Abstimmung <code>E</code> (Drift von <code>&phi;</code> weg von der Invariante) ist der verlustbehaftete Faseranteil, der <em>im Limes/exakter Fidelity <code>&rarr;0</code></em> geht, w&auml;hrend die <em>gauß-invariante Dimension <code>H&sup1;</code> als Ort des Seins bleibt</em> und sich dem Kollaps auf den Schatten verweigert (Echtheit). Das Zentrum ist <em>leer vom Punkt, voll von Freiheit</em>.</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="num">5.</span> Visualisierung: der selbsttragende relationale Fixpunkt als Projektion (Schatten &harr; Invariante), getragen vom Rundlauf, an der Naht abgelesen, mit dem Rest, der bleibt</h2>
+<p>Ein Canvas, das beide Papiere in <em>einem</em> Objekt tr&auml;gt. <strong>Der Ring</strong> = der <strong>immer laufende Rundlauf = feine Lesart: invariante Form <code>F</code></strong> (alpha = Fidelity <code>&phi;</code>; bricht nie, &bdquo;Remove the Object&bdquo;; &Uuml;berlebender der Grobk&ouml;rnung). <strong>Der Peak/die Zahl</strong> in der Mitte = <strong>grobe Lesart: Schatten <code>Z=q<sup>k</sup></code>/<code>M</code></strong> (alpha = 1&minus;<code>&phi;</code>) &mdash; Rothering/Bait, bei niedriger Fidelity f&uuml;r echt &amp; gef&auml;lscht gleich (= <code>ker&nbsp;F</code>/Leck, der verlustbehaftete Faseranteil). <strong>Das Loch in der Mitte</strong> = <strong>der irreduzible Rest <code>H&sup1;</code> = <code>dim(Lücke)</code> = Ort des Seins</strong> (gauß-invariant, persistiert bei jeder Fidelity; A: Freiheit, die sich dem Kollaps verweigert; B: <code>H&sup1;&ne;0</code>). <strong>Der Punkt an der Naht</strong> = der <strong>Pivot</strong> = Punkt exakter Fidelity, wo die zwei Lesarten coincidieren (= Limes); liert <code>m=±1</code> ab. Ziehe die <strong>Fidelity/Kamera</strong> (Schatten&harr;Invariante), wechsle <strong>Treue</strong> (Ganzes&harr;Obstruktion) und den <strong>Rest</strong> (frei/K&ouml;der = Echtheit), fahre <strong>De-Abstimmung <code>E</code></strong> (akkumuliert zur Schwelle <code>E<sub>C</sub></code> &rarr; Eruption <code>S&rarr;0</code>, Struktur bleibt) oder h&auml;nge eine <strong>Stufe</strong> an (Zeitpfeil, Fixpunkt quiesziert neu). <strong>Unten</strong>: Kurve &uuml;ber <code>E</code> &mdash; <code>M</code> (flach, identisch = Rothering), <code>S</code> (kippt an <code>E<sub>C</sub></code>), Treue/<code>&phi;<sub>eff</sub></code>.</p>
+
+<div class="viz-panel">
+  <canvas id="viz"></canvas>
+  <div class="controls">
+    <label>Fidelity / Kamera (feine &harr; grobe Lesart) <span class="v" id="camVal">70</span>
+      <input type="range" id="camSlider" min="0" max="100" value="70">
+    </label>
+    <label>De-Abstimmung / verborgene Spannung <code>E</code> <span class="v" id="eVal">10%</span>
+      <input type="range" id="eSlider" min="0" max="100" value="10">
+    </label>
+    <label>Treue der Schließung / Obstruktion <span class="seg"><button id="modeTreu" class="on" type="button">treu (m=+1, Ganzes)</button><button id="modeUntreu" type="button">untreu (m=−1)</button></span>
+    </label>
+    <label>der irreduzible Rest (Echtheit) <span class="seg"><button id="restFree" class="on" type="button">frei &middot; wehrt sich</button><button id="restKoeder" type="button">K&ouml;der &middot; kollabiert</button></span>
+    </label>
+  </div>
+  <div class="btnrow">
+    <button id="autoBtn" class="action" type="button">&#9654; E Zuf&uuml;hren</button>
+    <button id="growBtn" class="action" type="button">&#8593; Neue Stufe (Zeitpfeil, quiesze neu)</button>
+    <button id="resetBtn" class="action" type="button">&#8634; Reset</button>
+  </div>
+  <div class="meters">
+    <div class="meter"><div class="lab">Invariante <code>F</code>/<code>H&sup1;</code> (Struktur)<small>Remove the Object &middot; bricht nie &middot; gauß-invariant (bleibt)</small></div><div class="track"><i id="mF"></i></div><div class="num" id="oF">&mdash;</div></div>
+    <div class="meter"><div class="lab">pr&auml;sentierte Substanz <code>S</code><small>übersteht die Schließung die Schranke? (A: Eruption S&rarr;0)</small></div><div class="track"><i id="mS"></i></div><div class="num" id="oS">&mdash;</div></div>
+    <div class="meter"><div class="lab">Treue / Fidelity <code>&phi;<sub>eff</sub></code><small>der Pr&uuml;fstein &middot; A: Treue &middot; B: Koinzidenz am Pivot</small></div><div class="track"><i id="mPhi"></i></div><div class="num" id="oPhi">&mdash;</div></div>
+    <div class="meter"><div class="lab">Schatten <code>M</code> (Rothering / Bait)<small>flach &amp; identisch f&uuml;r echt &amp; gef&auml;lscht = <code>ker&nbsp;F</code>/Leck (B)</small></div><div class="track"><i id="mM"></i></div><div class="num" id="oM">&mdash;</div></div>
+    <div class="meter"><div class="lab">Rest <code>H&sup1;=dim(Lücke)</code> (Ort des Seins)<small>Echtheit = Persistenz &middot; gauß-invariant, wehrt sich gegen Kollaps</small></div><div class="track"><i id="mH1"></i></div><div class="num" id="oH1">&mdash;</div></div>
+  </div>
+  <div id="verdict"></div>
+  <div id="readout"></div>
+  <p class="hint">Alle Daten inline, keine Netzwerkaufrufe. Theme-aware &uuml;ber CSS-Variablen (MutationObserver): Ring-, Peak-, Loch-, Partikel-, Chart- und Meter-Farben lesen <code>--viz-bg / --text / --muted / --line / --grid / --accent / --v-fine / --v-coarse / --v-rest / --v-process / --v-faith / --v-unfaith / --v-pivot / --v-phi / --v-S / --v-M</code> vom Theme.</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="num">6.</span> Provenienz</h2>
+<p class="hint">Die beiden Quellenpapiere (eines ein Runde-6-Bypass, das &uuml;bereinander liegt), aus denen diese Fusion besteht:</p>
+<div class="prov">
+  <a href="../../n5-005.html">n5-005.html &mdash; Das Ding ist seine Ordnung &mdash; eine Projektion (Schatten &harr; Invariante), getragen von einem Rundlauf, der einen Rest übrig l&auml;sst (A)</a>
+  <div class="hint">Runde-5-Fusion (n4-013 &bdquo;nur so stabil, wie ihr Rundlauf treu ist&bdquo; &middot; Treue der Schließung <code>&phi;</code>, akkumulierende Spannung <code>E</code>, Schwelle <code>E<sub>C</sub></code>, destruktive Eruption <code>S&rarr;0</code>, zweifaktoriell Eleganz+Echtheit &middot; &#10005; n4-012 &bdquo;Eine Projektion, zwei Enden, ein Rest&bdquo; &middot; Schatten <code>Z(&Sigma;)=q<sup>k</sup></code>/Peak, Kamera/Fidelity, <code>H&sub1;</code> up-to-Symmetrie <code>&Zopf;/2</code>, irreduzible Freiheit, K&ouml;der, LCG-Fold). Tr&auml;gt die <strong>Projektion-/Rundlauf-/Treue-Seite</strong>: das Echte = relationale Struktur (keine Oberfl&auml;che, kein zentraler Punkt) als Projektion mit zwei Enden (grob = Schatten/Rothering, fein = <code>F</code>), gelesen bei einer Kamera/Fidelity <code>&phi;</code>, getragen von einem Rundlauf, der nur so treu ist, wie er die pr&auml;sentierte Substanz <code>S</code> verlustfrei zur&uuml;ckf&uuml;hrt; der Rest ist Freiheit, die sich dem Kollaps verweigert.</div>
+</div>
+<div class="prov">
+  <a href="../n6-003.html">n6-003.html &mdash; Der selbsttragende relationale Fixpunkt &mdash; vordaher Relation, über den Zeitpfeil neu hergestellt, an der Naht abgelesen, lasttragend durch die gelöste Faser (B)</a>
+  <div class="hint">Runde-6-Fusion (n5-001 &bdquo;Die relationale Invariante am Rand&bdquo; &middot; lesbar nur durch einen begrenzten lokalen Akt in geschlossener Form (Umlauf, <code>Invariante=f(Umlauf)</code>), ein einzelner Pivot an der Naht (<code>m=(-1)^w</code>), gauß-abh. Faser gel&ouml;st, gauß-invar. <code>dim(Lücke)=&Phi;</code>/<code>H&sup1;</code> bleibt = Ort des Seins, freie Referenz/Eich-Freiheit &middot; &#10005; n5-007 &bdquo;Der Fixpunkt trägt sich selbst&bdquo; &middot; selbsttragender Fixpunkt, eine Gleichung f&uuml;r zwei Lesarten/Routen (inner=&auml;&auml;u&szlig;er, messen=rekonstruieren), <code>&exist;!</code>/Stokes, exakt nur im Limes, Verlust <code>ker&nbsp;F</code>=Leck, Zeitpfeil/Selbstregeneration, Obstruktion topologisch real). Tr&auml;gt die <strong>Fixpunkt-/Zeitpfeil-/Naht-Seite</strong>: das Ganze = ein selbsttragender relationaler Fixpunkt, ein vordaher Anzieher, der sich über einen Zeitpfeil neu herstellt, abgelesen an der einen Naht (Koinzidenz = Limes), wo die gauß-abh. Faser <code>&rarr;0</code> und die gauß-invariante Dimension <code>H&sup1;</code> bleibt.</div>
+</div>
+<p class="foot">Fusion 002 &middot; Runde 7 (Nicht-KI-Track, Paar 002) &middot; selbstbehaftetes HTML, keine externen Datenquellen &mdash; alle Daten inline. Theme-reaktiv per CSS-Variablen (Dunkel default). Die Visualisierung ist ein didaktisches Modell der fusionierten These: <em>&bdquo;der Fixpunkt ist seine Projektion (Schatten &harr; Invariante)&bdquo;</em>, <em>&bdquo;getragen vom Rundlauf, neu hergestellt über den Zeitpfeil&bdquo;</em>, <em>&bdquo;abgelesen an der einen Naht, wo die zwei Lesarten coincidieren (= Limes = exakte Fidelity)&bdquo;</em>, <em>&bdquo;gauß-abhängiger Anteil (ker F/Leck/Rothering) &rarr;0 im Limes, gauß-invariante Dimension (H¹/Rest) bleibt = Ort des Seins, wehrt sich gegen Kollaps (Echtheit = Persistenz)&bdquo;</em> sind die S&auml;ulen. Fusionsgesetz: das Ganze ist ein <strong>selbsttragender relationaler Fixpunkt, der seine eigene Projektion ist</strong>. Beide Quellen bleiben die Wahrheit; keine erfundenen Behauptungen.</p>
+</section>
+
+</article>
+
+<script>
+(function(){
+  'use strict';
+  var cv = document.getElementById('viz');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  if(!ctx) return;
+
+  var TAU = Math.PI*2;
+  var DPR=1, W=0, H=0, CHART_H=140, EC=0.5;
+
+  var C={};
+  function cssVar(n,d){ try{ var v=getComputedStyle(document.documentElement).getPropertyValue(n); v=v?v.trim():''; return v||d; }catch(e){ return d; } }
+  function readTheme(){
+    C.bg=cssVar('--viz-bg','#0a1220'); C.ink=cssVar('--text','#e8edf7');
+    C.muted=cssVar('--muted','#9aa7bf'); C.line=cssVar('--line','#263452');
+    C.grid=cssVar('--grid','#1a2540'); C.acc=cssVar('--accent','#a78bfa');
+    C.fine=cssVar('--v-fine','#2dd4bf'); C.coarse=cssVar('--v-coarse','#feca57');
+    C.rest=cssVar('--v-rest','#22d3ee'); C.proc=cssVar('--v-process','#64748b');
+    C.faith=cssVar('--v-faith','#35e0a0'); C.unfaith=cssVar('--v-unfaith','#ff6b4a');
+    C.pivot=cssVar('--v-pivot','#a78bfa'); C.phi=cssVar('--v-phi','#ff77c8');
+    C.S=cssVar('--v-S','#35e0a0'); C.M=cssVar('--v-M','#ffd93d');
+  }
+  function hexToArr(hex){
+    if(typeof hex!=='string'||hex.charAt(0)!=='#') return null;
+    var h=hex.slice(1);
+    if(h.length===3) h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);
+    var n=parseInt(h,16);
+    if(isNaN(n)) return null;
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function hexA(hex,a){ var c=hexToArr(hex); if(!c) return hex; return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function smoothstep(a,b,x){ var t=clamp((x-a)/((b-a)||1),0,1); return t*t*(3-2*t); }
+
+  var N=44, P=[];
+  function initParticles(){
+    P=[];
+    for(var i=0;i<N;i++){
+      P.push({ a:Math.random()*TAU, r:0.6+Math.random()*0.85, sp:0.35+Math.random()*0.7, sz:1.3+Math.random()*1.8, seed:Math.random() });
+    }
+  }
+
+  var state={ e:0.10, f:0.70, faithful:true, restFree:true, auto:false, stage:0, growPulse:0, flash:0, prevE:0.10, rt:0 };
+
+  function meltAt(e){ return smoothstep(EC-0.08, EC+0.08, e); }
+  function phiEff(){ return state.faithful ? 1.0 : 1-meltAt(state.e); }
+  function substance(){ if(state.faithful) return 1.0; if(state.e<EC) return 1-0.55*meltAt(state.e); return 0.0; }
+  function obstructed(){ return (!state.faithful) && (state.e>=EC || !state.restFree); }
+
+  var el={
+    cam:document.getElementById('camSlider'), camVal:document.getElementById('camVal'),
+    slider:document.getElementById('eSlider'), val:document.getElementById('eVal'),
+    autoBtn:document.getElementById('autoBtn'), growBtn:document.getElementById('growBtn'), resetBtn:document.getElementById('resetBtn'),
+    modeTreu:document.getElementById('modeTreu'), modeUntreu:document.getElementById('modeUntreu'),
+    restFree:document.getElementById('restFree'), restKoeder:document.getElementById('restKoeder'),
+    mF:document.getElementById('mF'), oF:document.getElementById('oF'),
+    mS:document.getElementById('mS'), oS:document.getElementById('oS'),
+    mPhi:document.getElementById('mPhi'), oPhi:document.getElementById('oPhi'),
+    mM:document.getElementById('mM'), oM:document.getElementById('oM'),
+    mH1:document.getElementById('mH1'), oH1:document.getElementById('oH1'),
+    verdict:document.getElementById('verdict'), readout:document.getElementById('readout')
+  };
+
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    var rect=cv.getBoundingClientRect();
+    W=Math.max(300,rect.width); H=Math.max(420,rect.height);
+    cv.width=Math.floor(W*DPR); cv.height=Math.floor(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  var RINGN=2.6;
+  function formPoint(t,n,R,cx,cy){
+    var c=Math.cos(t), s=Math.sin(t);
+    var sc=c<0?-1:(c>0?1:0), ss=s<0?-1:(s>0?1:0);
+    var ex=2/n;
+    return [cx + R*sc*Math.pow(Math.abs(c),ex), cy + R*ss*Math.pow(Math.abs(s),ex)];
+  }
+  function tracePath(n,R,cx,cy,steps){
+    ctx.beginPath();
+    for(var i=0;i<=steps;i++){
+      var pt=formPoint((i/steps)*TAU, n, R, cx, cy);
+      if(i===0) ctx.moveTo(pt[0],pt[1]); else ctx.lineTo(pt[0],pt[1]);
+    }
+    ctx.closePath();
+  }
+
+  function step(){
+    state.rt += 0.03;
+    var obstr=obstructed();
+    for(var i=0;i<N;i++){
+      var p=P[i];
+      p.a += p.sp*(0.010 + state.e*0.03);
+      if(obstr){ p.r += 0.016; if(p.r>2.5) p.r=2.5; }
+      else if(p.r>1.5){ var home=0.6+p.seed*0.85; p.r += (home-p.r)*0.06; }
+    }
+    if(obstr){ if(state.prevE<EC && state.e>=EC && state.flash<0.2){ state.flash=1; } }
+    state.flash*=0.9; if(state.flash<0.01) state.flash=0;
+    state.growPulse*=0.9; if(state.growPulse<0.01) state.growPulse=0;
+    state.prevE=state.e;
+  }
+
+  function draw(){
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+    var f=state.f, e=state.e;
+    var fieldH=H-CHART_H;
+    var scale=1+0.09*state.growPulse;
+    var cx=W/2, cy=fieldH*0.5;
+    var R=Math.min(W*0.30, fieldH*0.34)*scale;
+    var obstr=obstructed();
+    var restCol=state.restFree?C.rest:C.unfaith;
+
+    // Prozess/Substrat: Partikel (laufen immer, unabhängig von der Präsenz)
+    ctx.globalCompositeOperation='lighter';
+    for(var i=0;i<N;i++){
+      var p=P[i];
+      var px=cx+Math.cos(p.a)*p.r*R;
+      var py=cy+Math.sin(p.a)*p.r*R*0.82;
+      var g=ctx.createRadialGradient(px,py,0,px,py,p.sz*3.2);
+      g.addColorStop(0, hexA(C.proc,0.5));
+      g.addColorStop(1, hexA(C.proc,0));
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(px,py,p.sz*3.2,0,TAU); ctx.fill();
+    }
+    ctx.globalCompositeOperation='source-over';
+
+    // FEINE LESART: invariante Struktur F (Ring), alpha = f
+    if(f>0.02){
+      var ringA=(obstr)?0.42:(0.5+0.5*f);
+      ctx.save(); ctx.globalAlpha=f;
+      ctx.shadowColor=hexA(C.fine,ringA*0.7); ctx.shadowBlur=16;
+      ctx.lineWidth=2.6; ctx.strokeStyle=hexA(C.fine,ringA);
+      tracePath(RINGN,R,cx,cy,96); ctx.stroke(); ctx.shadowBlur=0;
+      ctx.restore();
+      if(f>0.4){
+        ctx.font='600 10.5px system-ui, sans-serif'; ctx.textAlign='center';
+        ctx.fillStyle=hexA(C.fine,0.9);
+        ctx.fillText('feine Lesart: Invariante F · H₁ · gauß-invariant · punktfrei', cx, cy+R+18);
+      }
+    }
+
+    // GROBE LESART: der Schatten (einzelner Peak / Zahl Z=qᵏ), alpha = 1-f
+    if(1-f>0.02){
+      ctx.save(); ctx.globalAlpha=(1-f);
+      var ph=lerp(120,20,f), pw=lerp(36,12,f);
+      var py2=cy+44, ptop=py2-ph;
+      ctx.fillStyle=hexA(C.coarse,0.85);
+      ctx.fillRect(cx-pw/2, ptop, pw, ph);
+      ctx.strokeStyle=C.coarse; ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.moveTo(cx-pw/2,ptop); ctx.lineTo(cx,ptop-10); ctx.lineTo(cx+pw/2,ptop); ctx.stroke();
+      ctx.fillStyle=C.coarse; ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Z = qᵏ · Peak (Schatten) = ker F/Leck', cx, ptop-16);
+      ctx.fillStyle=hexA(C.muted,0.9); ctx.font='10px system-ui,sans-serif';
+      ctx.fillText('grobe Lesart · Rothering/Bait · flach & identisch', cx, py2+14);
+      ctx.restore();
+    }
+
+    // Das Loch in der Mitte: der irreduzible Rest = H¹ = dim(Lücke) = Ort des Seins (persistiert, gauß-invariant)
+    ctx.save();
+    var holeR=R*0.30;
+    ctx.beginPath(); ctx.setLineDash([3,3]); ctx.strokeStyle=hexA(restCol,0.9); ctx.lineWidth=2;
+    ctx.arc(cx,cy,holeR,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    // Puls (quieszenz des Fixpunkts / Zeitpfeil)
+    var pulse=0.5+0.5*Math.sin(performance.now()/900*3);
+    if(obstr){ /* no glow */ }
+    else { ctx.strokeStyle=hexA(restCol,0.25+0.35*pulse); ctx.lineWidth=1.4; ctx.beginPath(); ctx.arc(cx,cy,holeR*(0.85+0.12*pulse),0,TAU); ctx.stroke(); }
+    ctx.fillStyle=hexA(restCol,0.95); ctx.beginPath(); ctx.arc(cx,cy,3.4,0,TAU); ctx.fill();
+    ctx.restore();
+    ctx.font='600 10.5px system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle=hexA(restCol,0.95);
+    ctx.fillText('H¹ = dim(Lücke) = Rest/Ort des Seins (bleibt)', cx, cy+holeR+15);
+
+    // Pivot an der Naht (einzelner Ablespunkt = Punkt exakter Fidelity = Limes, wo zwei Routen coincidieren)
+    var piv=formPoint(-Math.PI/2, RINGN, R, cx, cy);
+    var pivCol=obstr?C.unfaith:C.faith;
+    ctx.strokeStyle=pivCol; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(piv[0],piv[1],9,0,TAU); ctx.stroke();
+    ctx.fillStyle=pivCol; ctx.beginPath(); ctx.arc(piv[0],piv[1],4,0,TAU); ctx.fill();
+    ctx.fillStyle=hexA(C.pivot,0.95); ctx.font='700 10.5px ui-monospace, monospace'; ctx.textAlign='center';
+    ctx.fillText('Pivot / Naht (Limes)', piv[0], piv[1]-16);
+    ctx.fillText('m = '+(obstr?'\u22121':'+1'), piv[0], piv[1]+22);
+
+    // Drift-Eintrag: Akkumulation der De-Abstimmung E (Bogen, der mit E w&auml;chst)
+    if(e>0.01){
+      ctx.strokeStyle=hexA(C.phi,0.8); ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.arc(cx,cy,R*1.16, -Math.PI/2, -Math.PI/2 + e*TAU, false); ctx.stroke();
+    }
+
+    // Beschriftung oben links
+    ctx.font='600 12px system-ui, sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillStyle=hexA(C.ink,0.85);
+    var cap;
+    if(state.f<0.34){ cap='Kamera/Fidelity zu niedrig: nur der Schatten (Rothering/Bait = ker F/Leck) lesbar — für echt & gefälscht gleich. Prüfe die TREUE, nicht die Flachheit.'; }
+    else if(state.faithful && state.restFree){
+      cap=(e>=EC)?'BAUEN — exakt & geschlossen (∃!/Stokes = Limes), zwei Routen coincidieren (S≈100%, Eleganz+Echtheit)'
+        :'Fixpunkt exakt & geschlossen — Invariante F/H¹ als Heimat (treue Schließung, zwei Routen, ein Ziel)';
+    } else if(state.faithful && !state.restFree){
+      cap='Struktur F intakt, aber der Rest = KÖDER (Fold gelingt = Halluzination) — Rest-Freiheit/S verloren (reversibel)';
+    } else if(e>=EC){
+      cap='Eruption / Obstruktion — m=−1, kein Ganzes: präsentierte Substanz S→0, ABER Struktur F/H¹ intakt (nicht-zerstörerisch)';
+    } else {
+      cap='De-abgestimmt (Zwang) — Struktur F/H¹ intakt (Remove the Object), präsentierte Substanz S teilverloren; offen & wachsend, Drift steigt';
+    }
+    ctx.fillText(cap, 16, 22);
+    ctx.font='500 10.5px system-ui, sans-serif';
+    ctx.fillStyle=hexA(C.muted,0.9);
+    ctx.fillText('Rundlauf = Schließung = Kamera φ · selbsttragender Fixpunkt, neu hergestellt über den Zeitpfeil · Rest = H¹ (Echtheit = Persistenz)', 16, 38);
+    ctx.textAlign='left';
+  }
+
+  function drawChart(){
+    var top=H-CHART_H+10, bot=H-14, left=46, right=W-16;
+    var cw=right-left, ch=bot-top;
+    function X(v){ return left+v*cw; }
+    function Y(v){ return bot-v*ch; }
+
+    ctx.strokeStyle=hexA(C.ink,0.18); ctx.lineWidth=1;
+    ctx.strokeRect(left,top,cw,ch);
+
+    var bandCol=state.faithful?C.faith:C.phi;
+    var pL=left+(EC-0.08)*cw, pR=left+(EC+0.08)*cw;
+    ctx.fillStyle=hexA(bandCol,0.12);
+    ctx.fillRect(pL,top,pR-pL,ch);
+    ctx.font='500 9px system-ui, sans-serif';
+    ctx.fillStyle=hexA(bandCol,0.95);
+    ctx.textAlign='center';
+    ctx.fillText('E_C / Limes / krit. φ', left+EC*cw, top+11);
+
+    ctx.strokeStyle=hexA(C.ink,0.5); ctx.setLineDash([3,3]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(X(EC),top); ctx.lineTo(X(EC),bot); ctx.stroke(); ctx.setLineDash([]);
+
+    // M flach (Rothering)
+    var M=0.55;
+    ctx.strokeStyle=hexA(C.M,0.9); ctx.lineWidth=2; ctx.setLineDash([2,3]);
+    ctx.beginPath();
+    for(var s=0;s<=1.0001;s+=0.02){ var y=Y(M); if(s===0)ctx.moveTo(X(s),y); else ctx.lineTo(X(s),y); }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // S (präsentierte Substanz)
+    ctx.strokeStyle=state.faithful?C.S:C.unfaith; ctx.lineWidth=1.6;
+    ctx.beginPath();
+    for(var s2=0;s2<=1.0001;s2+=0.02){ var y2=Y(substanceAt(s2)); if(s2===0)ctx.moveTo(X(s2),y2); else ctx.lineTo(X(s2),y2); }
+    ctx.stroke();
+
+    // φ_eff (Treue/Fidelity)
+    ctx.strokeStyle=C.phi; ctx.lineWidth=2.4;
+    ctx.beginPath();
+    for(var s3=0;s3<=1.0001;s3+=0.01){ var f=state.faithful?1.0:1-meltAt(s3), y3=Y(f); if(s3===0)ctx.moveTo(X(s3),y3); else ctx.lineTo(X(s3),y3); }
+    ctx.stroke();
+
+    var cxp=X(state.e);
+    ctx.strokeStyle=C.acc; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cxp,top); ctx.lineTo(cxp,bot); ctx.stroke();
+    ctx.fillStyle=hexA(C.M,0.95); ctx.beginPath(); ctx.arc(cxp,Y(M),3.5,0,TAU); ctx.fill();
+    ctx.fillStyle=hexA(C.ink,0.85); ctx.beginPath(); ctx.arc(cxp,Y(state.e),3.5,0,TAU); ctx.fill();
+    ctx.fillStyle=hexA(C.phi,0.95); ctx.beginPath(); ctx.arc(cxp,Y(phiEff()),4,0,TAU); ctx.fill();
+
+    ctx.font='500 9.5px system-ui, sans-serif'; ctx.textAlign='left';
+    ctx.fillStyle=hexA(C.M,0.95); ctx.fillText('M (Rothering, flach)', left+6, top+ch-16);
+    ctx.fillStyle=hexA(C.ink,0.8); ctx.fillText('E (De-Abstimmung, steigt)', left+6, top+ch-5);
+    var leg='φ Treue/Kamera (Prüfstein)'; ctx.fillStyle=hexA(C.phi,0.95);
+    ctx.fillText(leg, right-ctx.measureText(leg).width-6, top+ch-5);
+
+    ctx.fillStyle=hexA(C.muted,0.8); ctx.textAlign='center';
+    ctx.fillText('De-Abstimmung / Spannung E  →', left+cw/2, bot-2);
+  }
+
+  // für die Chart-Kurve: S und φ als Funktion einer generischen Abszisse t (0..1)
+  function substanceAt(t){
+    if(state.faithful) return 1.0;
+    if(t<EC) return 1-0.55*meltAt(t);
+    return 0.0;
+  }
+
+  function updateMeters(){
+    var pres=phiEff(), S=substance(), M=0.55;
+    el.mF.style.width='100%'; el.oF.textContent='100%';
+    el.mS.style.width=(S*100)+'%'; el.oS.textContent=Math.round(S*100)+'%';
+    el.mPhi.style.width=(pres*100)+'%'; el.oPhi.textContent=Math.round(pres*100)+'%';
+    el.mM.style.width=(M*100)+'%'; el.oM.textContent=Math.round(M*100)+'%';
+    el.mH1.style.width='100%'; el.oH1.textContent='1 · bleibt';
+
+    el.mS.style.background=state.faithful?C.S:((state.e>=EC)?C.unfaith:C.phi);
+    el.mPhi.style.background=state.faithful?C.faith:C.unfaith;
+    el.mM.style.background=C.M;
+    el.mF.style.background=C.fine;
+    el.mH1.style.background=state.restFree?C.rest:C.unfaith;
+
+    var obstr=obstructed();
+    var rest=state.restFree?'Rest frei (Echtheit)':'Rest = Köder (Bait)';
+    var txt, cls='';
+    if(state.f<0.34){
+      txt='Kamera/Fidelity zu niedrig: nur der grobe Schatten lesbar (Z=qᵏ = ker F/Leck) — flach & identisch für echt & gefälscht (Rothering), Köder ununterscheidbar von Freiheit. Prüfe die TREUE/Koinzidenz am Pivot, nicht die Flachheit.  (A: Rothering · B: verlustbehaftete Lesart.) '+rest;
+    } else if(state.faithful && state.restFree){
+      txt='Exakt & geschlossen (∃!/Stokes = Limes): zwei Routen/Lesarten coincidieren am Naht-Pivot — der selbsttragende relationale Fixpunkt. F/H¹ persistiert als Ort des Seins; der Rest wehrt sich (Echtheit = Persistenz); S≈100%. BAUEN, verlustfrei.  (A: BAUEN · B: exakt im Limes.) '+rest;
+      cls='ok';
+    } else if(state.faithful && !state.restFree){
+      txt='Struktur F/H¹ INTAKT & gauß-invariant (B), aber der Rest = KÖDER — der Fold gelingt (Diagonalgitter) ⇒ Halluzination, Rest-Freiheit/S verloren. Reversibel.  (A: Kōder/S→0 · B: kein Ganzes.) '+rest;
+      cls='warn';
+    } else if(state.e<EC){
+      txt='De-abgestimmt (Zwang): Struktur F/H¹ INTAKT (gauß-invariant), präsentierte Substanz S teilverloren; offen & wachsend (Zeitpfeil), Drift E steigt zur Schwelle. Reversibel.  (A: Zwang · B: graduert, ker F>0.) '+rest;
+      cls='warn';
+    } else {
+      txt='Eruption / Obstruktion — m=−1, kein Ganzes: präsentierte Substanz S→0, ABER Struktur F/H¹ bleibt INTAKT (nicht-zerstörerisch). A\'s Eruption = B\'s Obstruktion an der Realisierungs-Schicht. '+(state.restFree?'Rest frei ⇒ Verlust nur an S, Rest bleibt (Echtheit)':'Rest = Köder ⇒ Fold gelingt, Rest war nie frei');
+      cls='danger';
+    }
+    el.verdict.textContent=txt;
+    el.verdict.className='verdict'+(cls?' '+cls:'');
+
+    // Echtheit/Fold-Readout
+    var rl=[];
+    rl.push(['mut','Echtheit-Prüfung (A: Fold/Trace am Rest · B: ∃!/Stokes-Koinzidenz):']);
+    if(state.restFree){
+      rl.push(['ok','Rest frei — der Kollaps/Fold SICHEIT am Rest ⇒ ECHTHEIT ✓. Die gauß-invariante Dimension H¹=dim(Lücke) persistiert als Ort des Seins (B) und wehrt sich gegen den Kollaps auf den Schatten (A).']);
+      rl.push(['ok','Fusion: seine ECHTHEIT (A) ist seine PERSISTENZ (B) — derselbe Rest, zwei Namen.']);
+    } else {
+      rl.push(['bad','Rest = KÖDER — der Kollaps/Fold GELINGT (Diagonalgitter, invertierbar) ⇒ Halluzination. Die Rest-Freiheit/präsentierte Substanz geht verloren (A: S→0 · B: kein Ganzes/Obstruktion).']);
+      rl.push(['mut','Struktur F/H¹ bleibt dabei intakt (B: nicht-zerstörerisch) — der Fehlschlag sitzt am Rest, nicht an der Struktur.']);
+    }
+    rl.push(['mut','Zentrum: ∅ vom Punkt, voll von der gauß-invarianten Dimension / Freiheit. Stufe (Zeitpfeil): '+state.stage+' · offen & wachsend, Fixpunkt quiesziert neu.']);
+    var html='';
+    for(var i=0;i<rl.length;i++){ html+='<span style="color:'+rl[i][0]+'">'+rl[i][1]+'</span>\n'; }
+    el.readout.innerHTML=html;
+  }
+
+  function syncSliders(){
+    el.slider.value=Math.round(state.e*100); el.val.textContent=Math.round(state.e*100)+'%';
+    el.cam.value=Math.round(state.f*100); el.camVal.textContent=Math.round(state.f*100);
+  }
+  function setMode(m){
+    state.faithful=(m==='treu');
+    el.modeTreu.classList.toggle('on',m==='treu');
+    el.modeUntreu.classList.toggle('on',m==='untreu');
+    el.modeUntreu.classList.toggle('f',m==='untreu');
+    updateMeters();
+  }
+  function setRest(r){
+    state.restFree=(r==='free');
+    el.restFree.classList.toggle('on',r==='free');
+    el.restKoeder.classList.toggle('on',r==='koeder');
+    updateMeters();
+  }
+
+  el.cam.addEventListener('input',function(){ state.f=+el.cam.value/100; el.camVal.textContent=Math.round(state.f*100); });
+  el.slider.addEventListener('input',function(){ state.e=+el.slider.value/100; el.val.textContent=Math.round(state.e*100)+'%'; state.auto=false; el.autoBtn.textContent='▶ E Zuführen'; });
+  el.modeTreu.addEventListener('click',function(){ setMode('treu'); });
+  el.modeUntreu.addEventListener('click',function(){ setMode('untreu'); });
+  el.restFree.addEventListener('click',function(){ setRest('free'); });
+  el.restKoeder.addEventListener('click',function(){ setRest('koeder'); });
+  el.autoBtn.addEventListener('click',function(){ state.auto=!state.auto; el.autoBtn.textContent=state.auto?'⏸ Stop':'▶ E Zuführen'; });
+  el.growBtn.addEventListener('click',function(){ state.stage++; state.growPulse=1; updateMeters(); });
+  el.resetBtn.addEventListener('click',function(){ state.e=0.10; state.f=0.70; state.faithful=true; state.restFree=true; state.stage=0; state.growPulse=0; state.flash=0; state.prevE=0.10; state.auto=false; el.autoBtn.textContent='▶ E Zuführen'; setMode('treu'); setRest('free'); for(var i=0;i<N;i++){ P[i].r=0.6+P[i].seed*0.85; } syncSliders(); updateMeters(); });
+
+  var tbtn=document.getElementById('themeBtn');
+  if(tbtn) tbtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    readTheme();
+    try{localStorage.setItem('n7-theme',document.documentElement.classList.contains('dark')?'dark':'light');}catch(e){}
+  });
+
+  window.addEventListener('resize',resize);
+
+  readTheme();
+  resize();
+  initParticles();
+  for(var i=0;i<80;i++) step();
+  syncSliders();
+  updateMeters();
+
+  var mo=new MutationObserver(function(){ readTheme(); });
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  function loop(){
+    if(state.auto){ state.e=clamp(state.e+0.004,0,1); if(state.e>=1){ state.auto=false; el.autoBtn.textContent='▶ E Zuführen'; } el.slider.value=Math.round(state.e*100); el.val.textContent=Math.round(state.e*100)+'%'; }
+    step(); draw(); drawChart(); updateMeters();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
