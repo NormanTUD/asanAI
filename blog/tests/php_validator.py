@@ -66,7 +66,7 @@ console = Console()
 # Directories to skip when recursing
 SKIP_DIRS = {
     ".git", "node_modules", "vendor", ".svn", "__pycache__",
-    ".idea", ".vscode", "storage", "cache",
+    ".idea", ".vscode", "storage", "cache", "test"
 }
 
 # Files where HTML tag balance checking should be skipped.
