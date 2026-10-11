@@ -221,7 +221,7 @@ class GPT:
 
 if __name__ == "__main__":
     # A tiny GPT: 4 "words", 8-D vectors, 2 heads, 2 layers, block of 8.
-    vocab = ["<pad>", "the", "cat", "sat"]
+    vocab = ["(pad)", "the", "cat", "sat"]
     tok2id = {t: i for i, t in enumerate(vocab)}
     model = GPT(vocab_size=4, n_embd=8, n_head=2, n_layer=2, block_size=8, seed=7)
 
