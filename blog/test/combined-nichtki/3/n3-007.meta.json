@@ -1,0 +1,16 @@
+{
+  "no": "007",
+  "a": "n2-015.html",
+  "b": "n2-011.html",
+  "a_title": "Geometrie des Attraktors und sein Residual",
+  "b_title": "Zweischichtige Kohärenz — Form ist notwendig, Inhalt entscheidet (skaleninvariant)",
+  "combined_theme": "form-maske-residual-minimum",
+  "one_line": "Form/Attraktor ist nur die notwendige Basisschicht (eine Maske); das Residual/Inhalt allein entscheidet — und zwar skaleninvariant als Minimum über alle lokalen Overlaps; die Quelle der Abweichung (endogen/exogen/selbstvergiftend) wählt die Reparatur (studieren/verkleben/restriktieren).",
+  "contradictions": [
+    "Offener, irreduzibler Kern (A: endogenes Residual ohne Urheber, ehrlich unexplizierbar) vs. vollständig entscheidbarer Test (B: global = min über lokale Overlaps, bivalent, garantiert kohärentes Teilsystem).",
+    "Graduelles, verteiltes Residual-Feld als Gegenstand (A: das ganze Residual studieren) vs. extremale Minimax-Schwelle (B: ein einziger kollidierender Overlap senkt das Minimum auf ≈ 0 und bricht das Ganze).",
+    "Residual als Schatz an Ort studieren (A: der endogene offene Kern ist der eigentliche Gegenstand) vs. Abweichung als Störung beseitigen (B: verkleben oder auf den gesunden Teilbereich restriktieren/austreten)."
+  ],
+  "resolution": "Das Minimum (B) lokalisiert und misst genau den offenen Kern (A): die Form/der Attraktor ist entscheidbar-intakt (Hülle), das Inhalt-Minimum ist der ehrlich-irreduzible Kern (Mitte); das Residual-Feld (A) und die Inhalt-Linie (B) sind dasselbe Feld mit zwei Ablesungen (volles Feld studieren / Minimum als Kriterium); und A's Endogen/Exogen-Dichotomie fördert B's Zwei-Operationen-Toolkit zu einer dreiteiligen, an der Quelle der Abweichung orientierten Entscheidung (imponiert→verkleben/heilen, selbstvergiftend→restriktieren/austreten, intrinsisch→studieren).",
+  "viz": "Canvas: flache Form-/Attraktor-Linie (Maske, immer intakt) über einem Feld lokaler Abweichungen; die globale Entscheidung = Minimum über die Overlaps (gestrichelt); ein scharfer Kollisions-Punkt (Falle) bzw. ein breites Tal (endogener offener Kern) senkt das Minimum; Regime (Gleichgewicht/Endogen/Exogen), Selbstvergiftung und Reparaturen (verkleben i / restriktion ii) veranschaulichen die dreiteilige, an der Quelle orientierte Logik. Theme-aware, inline data, zero network fetches."
+}

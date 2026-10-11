@@ -1,0 +1,16 @@
+{
+  "no": "013",
+  "a": "n2-034.html",
+  "b": "n2-039.html",
+  "a_title": "Das Invariante Feld — Gauge-Punkt, robuster Rest, harte Schwelle",
+  "b_title": "Struktur aus dem Grund, Invarianz am Rand",
+  "combined_theme": "invarianz-am-rand-des-feldes",
+  "one_line": "Das Echte ist ein invariantes Feld (A), das sich ganz an seinem Rand bzw. seiner führenden Projektion abliest (B) — Innen = Rand (Stokes) bleibt unter jeder Gauge-Wechsel/Verformung erhalten; das diskrete Loch β₁ ist die persistente Lesart des kontinuierlichen Feldes.",
+  "contradictions": [
+    "A: Das Reale ist ein kontinuierliches invariantes Feld, das der Atomisierung in Punkte widersteht; B: das Stabile ist eine diskrete, zählbare Einheit (Mannigfaltigkeit mit β₁=1, zählbare Betti-Signatur).",
+    "A: der realste Bereich (der Leib) lebt in einem 'flächenlosen Raum' und widersteht metrischer/digitaler Erfassung; B: Stabilität ist genau am scharfen Rand ∂M (dem Interface) ablesbar.",
+    "A: die Metrik ist 'keine Basis, sondern eine gewählte Projektion auf einen flächenlosen Untergrund'; B: die eine Zeile ist selbst eine differential-/metrische Identität (∫_M dω = ∮_{∂M} ω) — die Metrik ist das Gewebe, in dem sich das Echte zeigt."
+  ],
+  "resolution": "Beide sagen ein Stokes-artiges Gesetz: Das Echte ist das Innere (Feld/Ganzes/stabile Einheit), bestimmt durch seine äußere Lesart (Projektion λ₁ bei A, Rand ∂M bei B); die Gleichung Innen = Rand bleibt unter jeder Transformation (Gauge/Verformung) erhalten. Das diskrete β₁ ist die persistente (Quanten-)Lesart des kontinuierlichen Feldes (β₁>0 ↔ λ₁ bleibt über ein ε-Intervall oberhalb der Diagonale); der flächenlose Untergrund ist der regelfreie Grund, aus dem sich die Struktur differenziert; die Metrik ist diejenige gewählte Projektion, die das Innere am Rand lesbar und die Invarianz prüfbar macht — keine Basis, aber die entscheidungsrelevanteste Lesart.",
+  "viz": "Ein deformierender Ring (Mannigfaltigkeit M mit Loch, β₁=1): das Innen-Integral ∫_M dω und das Rand-Integral ∮_{∂M} ω sind unter jeder Verformung ε gleich (Stokes) und öffnen sich am Rand zu einem Interface-Leck; daneben das Persistenz-Feld λ₁(t), in dem das Loch die robuste persistierende Lesart (β₁) ist, die harte Schwelle dagegen nur Rauschen wegstreicht."
+}

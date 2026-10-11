@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Kern und seine Grenze — Pullback und Fluss als ein Transport</title>
+<script>
+(function(){
+  var d=document.documentElement;
+  var saved=null; try{saved=localStorage.getItem('n3_023_theme');}catch(e){}
+  if(saved==='light'){ d.classList.remove('dark'); }
+  else { d.classList.add('dark'); }
+})();
+</script>
+<style>
+  :root{
+    --bg:#f6f4ee; --fg:#1e2530; --muted:#5b6575; --panel:#fbfaf6; --panel2:#f1eee4;
+    --border:#dcd6c6; --accent:#4f46e5; --accent2:#b8860b; --accent3:#2f6f4f;
+    --accent-soft:rgba(79,70,229,.10);
+    --code:#eef1f6; --code-fg:#1e2530;
+    --viz-bg:#f1eee4; --viz-grid:#e6e0d0; --viz-text:#1e2530; --viz-muted:#8a7f6f;
+    --viz-core:#8b0a1a; --viz-faint:#d9d2bd; --viz-trail:#6e5a3f; --viz-person:#9a5a1a;
+    --viz-field:#2a4a6e; --viz-need:#5a3a7a; --viz-bound:#4f46e5; --viz-fg:#1e2530;
+  }
+  html.dark{
+    --bg:#0a0a16; --fg:#e2e8f0; --muted:#94a3b8; --panel:#101024; --panel2:#15152e;
+    --border:#282846; --accent:#8b5cf6; --accent2:#e5b769; --accent3:#7a9a5a;
+    --accent-soft:rgba(139,92,246,.13);
+    --code:#0c1526; --code-fg:#c9d4e6;
+    --viz-bg:#0c0816; --viz-grid:#1a1430; --viz-text:#e2e8f0; --viz-muted:#8a7f88;
+    --viz-core:#d81e2e; --viz-faint:#241c3a; --viz-trail:#b8843f; --viz-person:#f5a623;
+    --viz-field:#3f6f9e; --viz-need:#a06ae0; --viz-bound:#c084fc; --viz-fg:#e2e8f0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:Georgia,"Times New Roman",serif;
+    line-height:1.72; -webkit-font-smoothing:antialiased; transition:background .3s,color .3s;
+  }
+  #article{max-width:820px;margin:0 auto;padding:3rem 1.4rem 5rem;}
+  header{border-bottom:1px solid var(--border);padding-bottom:1.4rem;margin-bottom:2.2rem;}
+  h1{font-size:clamp(1.8rem,4.6vw,2.6rem);line-height:1.13;letter-spacing:.01em;margin:0 0 .55rem;}
+  h1 .star{color:var(--accent);}
+  .subtitle{color:var(--muted);font-style:italic;font-size:1rem;margin:0;}
+  .subtitle code{font-style:normal;}
+  .kicker{color:var(--muted);text-transform:uppercase;letter-spacing:.2em;font-size:.72rem;margin-bottom:.9rem;}
+  section{margin:0 0 1.1rem;}
+  h2{font-size:1.5rem;margin:2.5rem 0 .7rem;border-left:3px solid var(--accent);padding-left:.7rem;line-height:1.25;}
+  h3{font-size:1.1rem;margin:1.5rem 0 .35rem;color:var(--accent2);}
+  p{margin:.75rem 0;}
+  .lead{color:var(--muted);font-size:1.02rem;}
+  .a{color:var(--accent2);font-weight:600;}
+  .b{color:var(--accent3);font-weight:600;}
+  em{color:var(--accent);}
+  strong{color:var(--fg);}
+  code{background:var(--code);border:1px solid var(--border);border-radius:4px;padding:.05rem .35rem;font-size:.86em;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--code-fg);}
+  .formula{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.93rem;line-height:1.9;
+    background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);
+    border-radius:8px;padding:.9rem 1.1rem;margin:.9rem 0;overflow-x:auto;white-space:pre;
+  }
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1.05rem 1.2rem;margin:1rem 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;}
+  .card h4{margin:0 0 .35rem;font-size:.98rem;}
+  .card .tag{display:inline-block;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:.1rem .45rem;margin-bottom:.5rem;}
+  .card p{margin:.4rem 0;font-size:.94rem;}
+  .card .who{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.2rem;}
+  .card.w1{border-top:3px solid var(--accent);}
+  .card.w2{border-top:3px solid var(--accent2);}
+  .card.w3{border-top:3px solid var(--accent3);}
+  .note{border-left:3px solid var(--accent);padding:.4rem 0 .4rem 1rem;margin:.9rem 0;color:var(--muted);font-size:.95rem;}
+  ul,ol{padding-left:1.3rem;}
+  li{margin:.4rem 0;}
+  .loop{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1.1rem 0;}
+  @media(max-width:680px){.loop{grid-template-columns:repeat(2,1fr);}}
+  .loop .step{background:var(--panel);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:6px;padding:.7rem .8rem;}
+  .loop .step .n{font-family:ui-monospace,monospace;color:var(--accent2);font-size:.8rem;}
+  .loop .step h4{margin:.2rem 0;font-size:.93rem;color:var(--fg);}
+  .loop .step p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.5;}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);}
+  a:hover{border-bottom-style:solid;}
+  .vizwrap{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin:1.2rem 0;}
+  #coreCanvas{display:block;width:100%;height:440px;border-radius:8px;background:var(--viz-bg);border:1px solid var(--border);}
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;margin:.9rem 0;align-items:flex-end;}
+  .control{display:flex;flex-direction:column;min-width:150px;flex:1;}
+  .control label{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent2);margin-bottom:.35rem;}
+  .control input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:3px;outline:none;width:100%;}
+  .control input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;}
+  .control input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;}
+  .control .val{font-size:.82rem;color:var(--fg);margin-top:.3rem;font-family:ui-monospace,monospace;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end;}
+  button.ctl{font:inherit;font-size:.85rem;color:var(--fg);background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:.5rem .8rem;cursor:pointer;}
+  button.ctl:hover{border-color:var(--accent);}
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.9rem;}
+  .chip{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:.4rem .7rem;font-size:.84rem;}
+  .chip b{font-family:ui-monospace,monospace;color:var(--accent);}
+  .chip.rg b{color:var(--accent2);}
+  .legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.7rem;font-size:.79rem;color:var(--muted);}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:.35rem;vertical-align:middle;}
+  .theme-toggle{position:fixed;top:1rem;right:1rem;z-index:50;background:var(--panel);border:1px solid var(--border);color:var(--fg);border-radius:20px;padding:.4rem .8rem;cursor:pointer;font-size:.78rem;font-family:inherit;}
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;font-style:italic;text-align:center;}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9790; / &#9728; Thema</button>
+<article id="article">
+  <header>
+    <div class="kicker">Knockout-Synthese &middot; Runde 3 &middot; Paar 023 &middot; nicht-KI-Track</div>
+    <h1>Der <span class="star">Kern</span> und seine Grenze &mdash; Pullback und Fluss als ein Transport</h1>
+    <p class="subtitle">Fusion aus: <code>n2-017.html</code> &times; <code>n2-036.html</code> &nbsp;(Runde 3)</p>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Runde-2-Papiere reduzieren ihr Ph&auml;nomen auf <em>einen</em> Prozess &mdash; nicht auf einen Zustand, den man besitzt. <span class="a">A (n2-017)</span> reduziert eine <strong>Rekonstruktion</strong> auf einen <strong>Pullback</strong>: die Struktur <code>g</code> wird entlang einer Karte <code>f</code> in die Zielwelt transportiert, <em>treu erhalten</em> innerhalb ihrer Exaktheits-Dom&auml;ne <code>{ E &ge; G }</code>, und <em>generiert</em> jenseits des Frontier. <span class="b">B (n2-036)</span> reduziert <strong>Verstehen/Verhalten</strong> auf einen <strong>Fluss</strong> <code>&zdot;x = P + U(x)</code> durch einen Zustandsraum, der an einem <strong>Kern/Attraktor</strong> ruht (und dort seinen Tangentialvektor, den <em>Keim</em>, speichert) und sich regeneriert, wenn die Nicht-Vertauschbarkeit <code>[P,U] &ne; 0</code> den Ruhepunkt bricht.</p>
+    <p>Die integrierte Position: <strong>Beide sind derselbe Transport &mdash; ein Transport mit einem stabilen <em>Kern</em> und einer <em>Generierungsgrenze</em>.</strong> Der <em>Kern</em> ist der Ort, an dem Struktur <strong>erhalten</strong> wird: A&rsquo;s Exaktheits-Dom&auml;ne <code>{ E &ge; G }</code> (das Label reitet mit, Invarianz, 0 neue Information) <em>ist</em> B&rsquo;s Kern/Attraktor <code>P + U(x*) = 0</code> (der Ruhepunkt, der seinen Tangentialvektor speichert, <code>r &rarr; 1</code> = komprimiert). Die <em>Grenze</em> ist der Ort, an dem die Erhaltung endet und die Generierung beginnt: A&rsquo;s Frontier <code>E = G</code> <em>ist</em> B&rsquo;s Rand des Attraktor-Beckens (der &bdquo;Ruhe&nbsp;&harr;&nbsp;Regeneration&ldquo;-Umschalt). Jenseits der Grenze produziert ein <strong>Generator</strong> neue Struktur &mdash; und die <em>Menge und Art</em> dieser neuen Struktur wird von der <strong>Komplexit&auml;t / Konzentration des Generators</strong> bestimmt: A&rsquo;s Prior (flach&rarr;Brei, strukturiert&rarr;Formkonstanten) <em>ist</em> B&rsquo;s gespeicherter Tangentialvektor plus Antrieb (schwach&rarr;Flut, scharf&rarr;growing from the ground).</p>
+    <p>Damit sind <strong>A&rsquo;s &bdquo;Halluzination&ldquo; und B&rsquo;s &bdquo;Regeneration&ldquo; derselbe Akt</strong>: der Moment, in dem der Kern keine Erhaltung mehr liefert und ein Generator neue Struktur nach au&szlig;en wirft. In einem Satz: <em>Verstehen (B) ist der Fluss, Rekonstruktion (A) ist der Pullback &mdash; und beide sind ein einziger Transport: ein stabiler Kern, in dem die Struktur erhalten wird (Invarianz/Keim, <code>r&rarr;1</code>), und eine Generierungsgrenze, jenseits derer die neue Struktur von der Komplexit&auml;t eines Generators bestimmt wird (flach&rarr;Brei/Flut, strukturiert&rarr;Formkonstanten/growing from the ground).</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p class="lead">Die zwei Runde-2-Papiere widersprechen sich in keiner einzelnen Tatsache, aber an drei Stellen nehmen sie <em>genuin unterschiedliche, teils entgegengesetzte</em> Stellungen ein (je Behauptung der Quelle zugeordnet, Paraphrase, keine Erfindung).</p>
+    <div class="grid2">
+      <div class="card w1">
+        <span class="tag">Widerspruch 1 &mdash; Topologie der Grenze</span>
+        <h4>Einmaliger, zeitloser Grenz&uuml;bertritt&nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">n2-017</span>: Das Frontier <code>E = G</code> ist eine <em>statische Linie</em> in Welt&nbsp;A. Jeder Punkt wird <em>einmal</em> klassifiziert (drinnen&rarr;erhalten, au&szlig;en&rarr;generiert); der Pullback ist eine <em>zeitlose, einmalige</em> Auswertung. Es gibt keine Wiederkehr, keinen Zyklus.</p>
+        <h4>Wiederkehrender Zyklus&nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">n2-036</span>: Der Kern ist ein <em>dynamischer Attraktor</em>, den der Fluss <em>wiederholt</em> &uuml;berschreitet (Kompression&rarr;Ruhe&rarr;Regeneration&rarr;Kompression&hellip;). Verstehen ist eine <em>Spirale</em>, die die &bdquo;Ruhe&nbsp;&harr;&nbsp;Generierung&ldquo;-Grenze <em>unendlich oft</em> &uuml;berschreitet.</p>
+      </div>
+      <div class="card w2">
+        <span class="tag">Widerspruch 2 &mdash; die generierende Instanz</span>
+        <h4>Ein Prior &mdash; eine <em>Verteilung</em>&nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">n2-017</span>: Jenseits des Frontier f&uuml;llt ein <em>Prior <code>G</code></em> die L&uuml;cke; neue Struktur = die <em>Komplexit&auml;t von <code>G</code></em> (flach&rarr;Brei, symmetrisch&rarr;Formkonstanten &mdash; <em>Auswahl aus vielen M&ouml;glichkeiten</em> via Symmetrie). Der Generator ist eine <em>Verteilung</em> &uuml;ber Vervollst&auml;ndigungen.</p>
+        <h4>Ein gespeicherter <em>Tangentialvektor</em>&nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">n2-036</span>: Jenseits des Kerns wird der Fluss entlang des <em>gespeicherten Tangentialvektors</em> (der Zeigarnik-Keim, <em>eine einzige</em> gemerkte Richtung) herausgeschleudert, wenn <code>[P,U] &ne; 0</code> den Ruhepunkt bricht. Der Generator ist ein <em>einzelner Vektor</em> (eine spezifische Fortsetzung), keine Verteilung.</p>
+      </div>
+      <div class="card w3">
+        <span class="tag">Widerspruch 3 &mdash; Fehlzustand des Generationsregimes</span>
+        <h4>Neutral / niedrig-Info (kein Fehlzustand)&nbsp;<span class="a">(A)</span></h4>
+        <p><span class="a">n2-017</span>: Generierung ist ein <em>normales, stabiles</em> Regime. Der flache Prior&rarr;Brei ist ein <em>neutraler niedrig-Info-Zustand</em> (&bdquo;der Pullback reitet fast weiter&ldquo;). Es gibt <em>keine</em> Flut, keine Ersch&ouml;pfung, keinen Pfeil der Zeit.</p>
+        <h4>Die Flut &mdash; dissipativer Fehlzustand&nbsp;<span class="b">(B)</span></h4>
+        <p><span class="b">n2-036</span>: Es <em>gibt</em> einen Fehlzustand: die <strong>Flut</strong> (<code>|P| &rarr; 0 &rArr; r &rarr; 0</code>), in der die Generierung ihre Richtung verliert und in Rauschen dissipiert (&bdquo;Why is it still raining?&ldquo;). Es gibt einen <em>Pfeil der Zeit</em> und <em>Ersch&ouml;pfung</em>.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Zusammengefasst</span>
+        <h4>Die drei echten Spannungen</h4>
+        <p style="font-size:.9rem;margin:.3rem 0;"><strong>1.</strong> Ist der Generierungsakt ein <em>einmaliger</em> Grenz&uuml;bertritt einer fixen Linie (A) oder ein <em>wiederkehrender</em> Zyklus (B)? &mdash; <strong>2.</strong> Ist die generierende Instanz eine <em>Verteilung</em> (A: Auswahl aus vielen) oder ein <em>einzelner gemerkter Vektor</em> (B: eine Fortsetzung)? &mdash; <strong>3.</strong> Ist das degenerative Generationsregime ein <em>neutraler</em> niedrig-Info-Zustand (A) oder ein <em>pathologischer</em> Fehlzustand mit Zeitpfeil (B: die Flut)?</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <p class="lead">Keiner der drei Widerspr&uuml;che ist ein echter Logikbruch &mdash; jeder ist derselbe Transport auf einer anderen Lesart. So fassen sie sich.</p>
+
+    <h3>1. Einmalig vs. wiederkehrend &mdash; derselbe Zustand, zwei Zeitauflosungen</h3>
+    <p>A&rsquo;s Frontier und B&rsquo;s Kern-Beckenrand sind <em>die selbe Menge von Zust&auml;nden</em>. A liest sie als <em>statische Partition</em> von Welt&nbsp;A (ein Punkt ist drinnen oder au&szlig;en &mdash; eine Frage nach dem <em>Ort</em>); B liest sie als <em>dynamische Schwelle</em>, die der Fluss durchl&auml;uft (eine Frage nach der <em>Bewegung</em>). A&rsquo;s &bdquo;einmaliger Grenz&uuml;bertritt&ldquo; ist eine <strong>Querschnitts-Einfrierung</strong> von B&rsquo;s &bdquo;unendlichem Zyklus&ldquo;: friert man B&rsquo;s Spirale in dem Augenblick ein, in dem der Fluss den Kern verl&auml;sst, erh&auml;lt man exakt A&rsquo;s einmalige Frontier-Klassifikation. <strong>Fusion:</strong> A ist das Stillbild (wo bist du, drinnen/au&szlig;en?), B ist der Film (wie bewegst du dich durch dieselbe Grenze?). Beide stimmen &uuml;ber <em>Wo</em> die Grenze ist &uuml;berein; sie unterscheiden sich nur, <em>wie</em> sie gelesen wird (Partition vs. Trajektorie). Das eingefrorene Spiral = die statische Frontier.</p>
+
+    <h3>2. Verteilung vs. Tangentialvektor &mdash; die charakteristische Richtung des Priors</h3>
+    <p>A&rsquo;s Prior <code>G</code> ist eine <em>Wahrscheinlichkeitswolke</em> &uuml;ber Vervollst&auml;ndigungen. Hat <code>G</code> einen <em>charakteristischen Peak / eine charakteristische Richtung</em> (der strukturierte, symmetrie-selektierende Fall), <em>ist</em> diese Richtung B&rsquo;s <em>gespeicherter Tangentialvektor</em>. A&rsquo;s &bdquo;flacher Prior&rarr;Brei&ldquo; = ein Prior <em>ohne</em> bevorzugte Richtung = B&rsquo;s Kern <em>ohne</em> gespeicherten Vektor (reine Ruhe, keine Regeneration). A&rsquo;s &bdquo;strukturierter Prior&rarr;Formkonstanten&ldquo; = ein Prior <em>mit</em> scharfer bevorzugter Richtung = B&rsquo;s Kern <em>mit</em> gespeichertem Vektor, der den Fluss entlang genau dieser Richtung auswirft. <strong>Fusion:</strong> Generierung = entlang der <em>charakteristischen Richtung</em> des Priors laufen; neue Struktur = die <em>Konzentration</em> des Priors = die <em>Sch&auml;rfe</em> dieser Richtung. Damit fallen A&rsquo;s &bdquo;neue Info = Prior-Komplexit&auml;t&ldquo; und B&rsquo;s &bdquo;Regeneration entlang des gespeicherten Vektors&ldquo; <em>zusammen</em>: ein konzentrierter Prior hat eine scharfe charakteristische Richtung (Formkonstante) und liefert eine scharfe Regenerationsrichtung; ein flacher Prior hat keine (Brei/Flut).</p>
+
+    <h3>3. Neutral vs. Flut &mdash; ein Spektrum der Generationsqualit&auml;t</h3>
+    <p>A&rsquo;s Brei (flacher Prior, niedrig-Info) und B&rsquo;s Flut (<code>|P|&rarr;0</code>, Dissipation) sind <em>dasselbe degenerative Regime</em> an entgegengesetzten Enden der Einordnung. A nennt es einen <em>neutralen</em> niedrig-Info-Zustand (&bdquo;reitet fast weiter&ldquo;); B nennt es einen <em>pathologischen</em> Fehlzustand (Flut, <code>r&rarr;0</code>, Ersch&ouml;pfung). <strong>Fusion:</strong> Es gibt ein <em>Spektrum der Generationsqualit&auml;t</em>, parametrisiert durch <em>Prior-Komplexit&auml;t &times; Antrieb <code>|P|</code></em>: sinken beide, degeneriert die Generierung von <em>strukturierter Regeneration</em> (Formkonstanten / growing from the ground) &uuml;ber <em>Brei</em> (A&rsquo;s niedrig-Info-&bdquo;reitet fast weiter&ldquo;) bis zur <em>Flut</em> (B&rsquo;s katastrophale Dissipation). A sitzt am milden Ende (flach = Brei, kein Fehlzustand), B am katastrophalen Ende (<code>P&rarr;0</code> = Flut, ein Fehlzustand). Der vereinte Transport kennt also nicht zwei diskrete Regime, sondern ein <em>kontinuierliches Spektrum</em> &mdash; und die Zeit, die B erz&auml;hlt (Ersch&ouml;pfung, Pfeil der Zeit), ist A&rsquo;s flache Achse, auf der die Prior-Komplexit&auml;t abflacht.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="lead">Das zusammengef&uuml;hrte Modell auf der Ebene der Thesen &mdash; aus dem eine sp&auml;tere Runde allein weiterarbeiten kann. Der Name: <strong>der attraktor-basierte Transport mit Generierungsgrenze</strong>.</p>
+
+    <h3>(1) Das Ph&auml;nomen ist ein Prozess, kein Zustand</h3>
+    <p>A: die Rekonstruktion <em>ist</em> der Pullback (ein Transport), nicht ein Wert, den man hat. B: Verstehen <em>ist</em> der Fluss, nicht eine Position, die man einnimmt. Fusion: <strong>Bedeutung / Rekonstruktion = der Transport selbst</strong> &mdash; man <em>ist</em> der Fluss/Pullback, man besitzt ihn nicht. Genau deshalb bestehen beide Quellen auf dem <em>Tun</em> (B: &bdquo;You just experienced understanding by doing&ldquo;; A: die Rekonstruktion entsteht <em>im</em> Abziehen).</p>
+
+    <h3>(2) Zwei Welten + Abbildung / Fluss</h3>
+    <p>A: Welt&nbsp;B (auf der die Struktur <code>g</code> lebt) + Welt&nbsp;A (die Rekonstruktion) + Karte <code>f : A &rarr; B</code> (vorw&auml;rts, ggf. nichtlinear/Warp). B: Zustandsraum (Mannigfaltigkeit) + Fluss <code>V(x) = P + U(x)</code> (<code>P</code> konstanter Antrieb, <code>U(x)</code> ortsabh&auml;ngiges Feld). Fusion: ein <em>Strukturraum</em> (A&rsquo;s Welt&nbsp;B / B&rsquo;s Zustandsraum) und ein <em>Transport</em> (A&rsquo;s <code>f</code> / B&rsquo;s Fluss), der die Gr&ouml;ße zum Kern bringt und sie dort liest.</p>
+
+    <h3>(3) Der Kern = Erhaltung</h3>
+    <div class="loop">
+      <div class="step"><div class="n">A</div><h4>Exaktheits-Dom&auml;ne</h4><p><code>{ x : E(x) &ge; G(x) }</code> &mdash; der Pullback ist exakt, das Label reitet mit, Invarianz, 0 neue Info.</p></div>
+      <div class="step"><div class="n">B</div><h4>Attraktor</h4><p><code>P + U(x*) = 0</code> &mdash; der Fluss ruht, speichert seinen Tangentialvektor (Zeigarnik = Keim), <code>r &rarr; 1</code> (komprimiert).</p></div>
+      <div class="step"><div class="n">=</div><h4>Erhaltungs-Kern</h4><p>Derselbe Gegenstand: der Ort maximaler Treue / minimaler neuer Information. Innen &bdquo;reitet das Merkmal mit&ldquo; (A) &harr; &bdquo;der Fluss ruht und parkt den Keim&ldquo; (B).</p></div>
+      <div class="step"><div class="n">r</div><h4>Grad</h4><p><code>r = 1 &minus; K(x*)/K(x)</code> (B) mi&szlig;t die N&auml;he zum Kern; A&rsquo;s Abdeckung <code>E/G</code> ist derselbe Messstab (drinnen <code>&ge;1</code>, au&szlig;en <code>&lt;1</code>).</p></div>
+    </div>
+
+    <h3>(4) Die Grenze = die Generierungs-Schwelle</h3>
+    <p>A&rsquo;s Frontier <code>E = G</code> und B&rsquo;s Rand des Attraktor-Beckens (Ruhe&nbsp;&harr;&nbsp;Regeneration) sind <em>dieselbe Menge von Zust&auml;nden</em>. A liest sie als statische Partition (Snapshot), B als dynamische Schwelle (Trajektorie). Die Grenze ist der Ort, an dem die Erhaltung <em>endet</em> und die Generierung <em>beginnt</em>.</p>
+
+    <h3>(5) Jenseits der Grenze = Generierung, getrieben von einem Generator</h3>
+    <p>Jenseits der Grenze f&uuml;llt ein <strong>Generator</strong> die L&uuml;cke. Er hat zwei Gesichter: (i) A&rsquo;s <em>Prior-Verteilung</em> <code>G</code>, die unter Vervollst&auml;ndigungen ausw&auml;hlt (flach&rarr;Brei, strukturiert&rarr;Formkonstanten); (ii) B&rsquo;s <em>gespeicherter Tangentialvektor + Antrieb <code>P</code></em>, der den Fluss entlang seiner charakteristischen Richtung auswirft (Regeneration / growing from the ground). <strong>Die neue Struktur = die Komplexit&auml;t / Konzentration des Generators</strong> &mdash; A&rsquo;s &bdquo;neue Info = Prior-Komplexit&auml;t&ldquo; <em>ist</em> B&rsquo;s &bdquo;Sch&auml;rfe der Regenerationsrichtung&ldquo;.</p>
+
+    <h3>(6) Das dynamische Regime: A = Snapshot, B = Film</h3>
+    <p>A: einmalige Auswertung pro Punkt (drinnen&rarr;erhalten, au&szlig;en&rarr;generiert), zeitlos. B: der Zyklus Kompression&nbsp;&rarr;&nbsp;Ruhe&nbsp;&rarr;&nbsp;Regeneration, der die Grenze unendlich oft &uuml;berschreitet (die Spirale). Fusion: A ist das <em>Stillbild</em>, B der <em>Film</em>; das eingefrorene Spiral <em>ist</em> die statische Frontier.</p>
+
+    <h3>(7) Das degenerative Regime: Brei &harr; Flut</h3>
+    <p>A&rsquo;s Brei (flacher Prior, niedrig-Info, &bdquo;reitet fast weiter&ldquo;) und B&rsquo;s Flut (<code>|P|&rarr;0 &rArr; r&rarr;0</code>, Dissipation in Rauschen) sind <em>das</em> degenerierte Ende des Spektrums. Fusion: ein <em>Spektrum der Generationsqualit&auml;t</em> (Flut&nbsp;&rarr;&nbsp;Brei&nbsp;&rarr;&nbsp;strukturierte Regeneration), parametrisiert durch Prior-Komplexit&auml;t &times; Antrieb <code>|P|</code>.</p>
+
+    <h3>(8) Agency / Offenlegung: die Valenz liegt an der Offenlegung</h3>
+    <p>B: Agency ist das Verh&auml;lnis <code>|P| / |U(x)|</code>; &bdquo;Benennen&ldquo; (SLEUTH) liest das Feld <code>U(x)</code> und holt die Agency vom Zwang zur&uuml;ck. A: die Valenz der generierten Region (Defekt vs. Signatur) liegt an der <em>Offenlegung</em>, nicht an der Ausgabe. Fusion: die generierende Region ist <em>valenz-neutral</em>; ihre Valenz wird von der <em>Offenlegung</em> gesetzt (B: liest/benennt das Subjekt das Feld; A: wird die Generierung als Evidenz oder als Eigendynamik hingestellt).</p>
+
+    <h3>Die vereinte Mathematik</h3>
+    <div class="formula">Transport (Rekonstruktion = Verstehen):
+  A:  (f*g)(a) = g(f(a))                    B:  x&#775; = V(x) = P + U(x)
+  [g wird entlang f in A transportiert]       [P konstanter Antrieb, U(x) ortsabh&auml;ngig]
+
+Kern (Erhaltungs-Dom&auml;ne):
+  A:  { x : E(x) &ge; G(x) }  &rarr; Invarianz, Label reitet, 0 neue Info
+  B:  P + U(x*) = 0          &rarr; Ruhepunkt, speichert Tangentialvektor, r &rarr; 1
+  r  = 1 &minus; K(x*)/K(x),  K(x) = min |p| : U(p) = x     [A&rsquo;s E/G-Abdeckung &harr; B&rsquo;s r]
+
+Grenze (Generierungs-Schwelle):
+  A:  &part;{ E &ge; G }   (Frontier, statisch)      B:  Beckenrand / Ruhe&harr;Regeneration (dynamisch)
+  &rarr; dieselbe Menge von Zust&auml;nden; A = Partition, B = Trajektorie
+
+Generierung (jenseits der Grenze):
+  A:  Ausgabe = G(x) (Prior)                B:  Ausstoß entlang gespeichertem Vektor, wenn [P,U] &ne; 0
+  Neue Struktur = Komplexit&auml;t(G) [A] = Sch&auml;rfe der charakteristischen Richtung [B]
+    flach / P&rarr;0    &rarr; Brei / Flut  (r &rarr; 0, keine neue Struktur)
+    strukturiert / [P,U]&ne;0 + scharfer Keim &rarr; Formkonstanten / growing from the ground
+
+Spektrum der Generationsqualit&auml;t:
+  Flut (B) &larr;&mdash;&mdash; Brei (A) &mdash;&mdash;&rarr; strukturierte Regeneration (B)
+        (P&darr;, Prior flach)                     (P&uarr;, Prior konzentriert)</div>
+
+    <div class="note">Faithfulness-Check: A (n2-017) liefert den Pullback (Komposition <code>g&circum;f</code>, Invarianz, Exaktheits-Dom&auml;ne <code>{E&ge;G}</code>, Frontier, Prior, Prior-Komplexit&auml;t = generierte Struktur, Brei/Flach, Formkonstanten via Turing/E(2), Valenz = Offenlegung). B (n2-036) liefert den Fluss (<code>P+U(x)</code>, Attraktor <code>P+U(x*)=0</code>, Zeigarnik = gespeicherter Tangentialvektor = Keim, <code>r=1&minus;K(x*)/K(x)</code>, Regeneration <code>[P,U]&ne;0</code>, Tanzwut/Kaskade, Flut <code>|P|&rarr;0</code>, Agency <code>|P|/|U(x)|</code>). Der vereinte &bdquo;attraktor-basierte Transport mit Generierungsgrenze&ldquo; ist die gemeinsame Abstraktion auf Thesen-Ebene, keine neue Behauptung &uuml;ber die Quellen.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung &mdash; der Transport mit Generierungsgrenze</h2>
+    <p class="lead">Ein Partikel (der Fluss / die Person&nbsp;<code>P</code>) spiralt in einen pulsierenden <strong>Kern</strong> (den VOIDSTAR = den Erhaltungs-Kern) hinein (<em>Kompression</em>, Struktur wird erhalten, <code>r</code> steigt), ruht dort (speichert den Keim) und wird &uuml;ber eine gestrichelte <strong>Generierungsgrenze</strong> (A&rsquo;s Frontier) in die <em>generierende Zone</em> hinausgeschleudert (<em>Regeneration</em> = growing from the ground). Die Textur der generierenden Zone ist von der <strong>Prior-Komplexit&auml;t</strong> gesteuert: flach&rarr;Brei (niedrig-Info, glatt), strukturiert&rarr;Formkonstanten (Rollen/Quadrate/Hexagone). Hebt die <strong>Flut/Ersch&ouml;pfung</strong> den Antrieb&nbsp;<code>P</code> auf, so degradiert das Ganze zum degenerativen Ende: der Fluss findet keinen Kern mehr (<code>r&rarr;0</code>, B&rsquo;s Flut) und die generierende Zone wird zum Brei (A&rsquo;s flacher Prior). Das ist das fusionierte Spektrum &mdash; Flut&nbsp;&harr;&nbsp;Brei&nbsp;&harr;&nbsp;strukturierte Regeneration.</p>
+    <div class="vizwrap">
+      <canvas id="coreCanvas"></canvas>
+      <div class="controls">
+        <div class="control"><label>Prior-Komplexit&auml;t (A: flach&rarr;strukturiert)</label><input type="range" id="slP" min="0" max="100" value="70"><span class="val" id="vP">70%</span></div>
+        <div class="control"><label>Antrieb P / Kompression (B)</label><input type="range" id="slA" min="0" max="100" value="62"><span class="val" id="vA">62%</span></div>
+        <div class="control"><label>Regeneration [P,U] (Keim-Spannung, B)</label><input type="range" id="slR" min="0" max="100" value="55"><span class="val" id="vR">55%</span></div>
+        <div class="control"><label>Flut / Ersch&ouml;pfung (Fehlzustand, B+A)</label><input type="range" id="slF" min="0" max="100" value="8"><span class="val" id="vF">8%</span></div>
+        <div class="btnrow">
+          <button class="ctl" id="btnReset" type="button">&#8634; Neustart</button>
+          <button class="ctl" id="btnTheme" type="button">&#9790; / &#9728; Thema</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="chip">Verstehensgrad r&nbsp;<b id="roR">0%</b></div>
+        <div class="chip">Neue Info (Prior) &nbsp;<b id="roInfo">0</b></div>
+        <div class="chip">Keime (Zyklen)&nbsp;<b id="roCycles">0</b></div>
+        <div class="chip rg">Regime:&nbsp;<b id="roPhase">&mdash;</b></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--viz-core)"></span>Kern / Attraktor (VOIDSTAR, geladen)</span>
+        <span><span class="dot" style="background:var(--viz-bound)"></span>Generierungsgrenze (A&rsquo;s Frontier)</span>
+        <span><span class="dot" style="background:var(--viz-person)"></span>Fluss / Person P (Partikel)</span>
+        <span><span class="dot" style="background:var(--viz-trail)"></span>Trajektorie (Spirale)</span>
+        <span><span class="dot" style="background:var(--viz-need)"></span>neue Struktur = Prior-Komplexit&auml;t</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="grid2">
+      <div class="card">
+        <span class="tag">Quelle A</span>
+        <h4 style="color:var(--accent2);margin:.2rem 0 .4rem;"><a href="../n2-017.html">n2-017.html</a></h4>
+        <p><em>&bdquo;Der unvollendete Pullback: Invarianz im Inneren, Generierung im &Auml;&auml;&szlig;eren&ldquo;</em> (Fusion n1-011 &times; n1-037, Runde 2). Liefert den <strong>Pullback als Erhaltungs-Kern</strong>: Komposition <code>g&circum;f</code>, Invarianz (&bdquo;Label reitet mit, reißt nicht&ldquo;), die Exaktheits-Dom&auml;ne <code>{E&ge;G}</code>, das Frontier als Grenze, den Prior und die Prior-Komplexit&auml;t = generierte Struktur (flach&rarr;Brei, symmetrisch&rarr;Formkonstanten via Turing/E(2)) und die Valenz = Offenlegung. <em>A</em> liefert die <strong>Erhaltung</strong>, die <strong>Grenze</strong> und den <strong>Prior</strong>.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Quelle B</span>
+        <h4 style="color:var(--accent3);margin:.2rem 0 .4rem;"><a href="../n2-036.html">n2-036.html</a></h4>
+        <p><em>&bdquo;Der Fluss des Verstehens &mdash; Zyklus und Kraftfeld vereint&ldquo;</em> (Fusion n1-086 &times; n1-062, Runde 2). Liefert den <strong>Fluss als Transport</strong>: <code>x&#775; = P + U(x)</code>, den Attraktor <code>P+U(x*)=0</code> als Ruhe- und Keimpunkt, Zeigarnik = gespeicherter Tangentialvektor, <code>r = 1&minus;K(x*)/K(x)</code>, Regeneration <code>[P,U]&ne;0</code>, die Tanzwut/Kaskade, die Flut <code>|P|&rarr;0</code> als Fehlzustand und Agency <code>|P|/|U(x)|</code>. <em>B</em> liefert die <strong>Dynamik</strong>, den <strong>Keim</strong> und die <strong>Flut</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Fusion 023 &middot; Runde 3 &middot; nicht-KI-Track &mdash; n2-017.html &times; n2-036.html<br>
+    Alle Daten inline; die Visualisierung ist selbstgeschrieben (Canvas, ohne externe Abfragen).
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('coreCanvas');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var H = 440;
+  var W = 0, cx = 0, cy = 0, dmax = 1, coreR = 22, boundaryR = 120;
+
+  function cssVar(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n);
+    v = v ? v.trim() : '';
+    return v || fb;
+  }
+  function hex2rgb(h){ h=h.trim(); if(h[0]==='#') h=h.slice(1);
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function parseCol(s, fb){
+    s=(s||'').trim();
+    if(!s) return fb;
+    if(s[0]==='#') return hex2rgb(s);
+    var m=s.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2]]; }
+    return fb;
+  }
+  var pal = null;
+  function refreshPal(){
+    pal = {
+      bg: cssVar('--viz-bg','#0c0816'),
+      grid: cssVar('--viz-grid','#1a1430'),
+      core: parseCol(cssVar('--viz-core'),[216,30,46]),
+      faint: parseCol(cssVar('--viz-faint'),[36,28,58]),
+      trail: parseCol(cssVar('--viz-trail'),[184,132,63]),
+      person: parseCol(cssVar('--viz-person'),[245,166,35]),
+      field: parseCol(cssVar('--viz-field'),[63,111,158]),
+      need: parseCol(cssVar('--viz-need'),[160,106,224]),
+      bound: parseCol(cssVar('--viz-bound'),[192,132,252]),
+      fg: parseCol(cssVar('--viz-fg'),[226,232,240]),
+      muted: parseCol(cssVar('--viz-muted'),[138,127,136])
+    };
+  }
+
+  function mix(a,b,t){ t=t<0?0:(t>1?1:t);
+    return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+(a==null?1:a)+')'; }
+
+  function size(){
+    var rect = cv.getBoundingClientRect();
+    W = Math.max(320, rect.width);
+    var dpr = window.devicePixelRatio || 1;
+    var nw = Math.round(W*dpr), nh = Math.round(H*dpr);
+    if(cv.width !== nw) cv.width = nw;
+    if(cv.height !== nh) cv.height = nh;
+    cv.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx = W/2; cy = H/2; dmax = Math.min(W,H)*0.47;
+    coreR = 22; boundaryR = dmax*0.52;
+  }
+
+  // ---- generated-zone pattern (A: flat prior -> mush, structured -> form constants) ----
+  var PS = 160;
+  var patCv = document.createElement('canvas');
+  patCv.width = PS; patCv.height = PS;
+  var pctx = patCv.getContext('2d');
+  var patNeed = null, patFaint = null;
+  function mush(nx,ny){ return 0.5 + 0.11*Math.sin(nx*Math.PI*2*1.2)*Math.cos(ny*Math.PI*2*1.0); }
+  function turingVal(nx,ny,q){
+    var X = nx*Math.PI*2*(q/3), Y = ny*Math.PI*2*(q/3);
+    // mix rolls + squares + hexagon for a rich form-constant texture
+    var rolls = Math.cos(Y);
+    var squares = (Math.cos(X)+Math.cos(Y))/2;
+    var hex = (Math.cos(X)+Math.cos(-0.5*X+0.866*Y)+Math.cos(-0.5*X-0.866*Y))/3;
+    return (rolls+squares+hex)/3;
+  }
+  function buildPattern(k){
+    if(!pal) refreshPal();
+    var img = pctx.createImageData(PS,PS);
+    var d = img.data;
+    var q = 3 + Math.round(k*9);
+    for (var y=0;y<PS;y++){
+      for (var x=0;x<PS;x++){
+        var nx=(x+0.5)/PS, ny=(y+0.5)/PS;
+        var m = mush(nx,ny);
+        var t = turingVal(nx,ny,q)*0.5+0.5;
+        var v = (1-k)*m + k*t;
+        var col = mix(pal.faint, pal.need, v);
+        var idx=(y*PS+x)*4;
+        d[idx]=col[0]; d[idx+1]=col[1]; d[idx+2]=col[2]; d[idx+3]=255;
+      }
+    }
+    pctx.putImageData(img,0,0);
+  }
+
+  var P0 = {x:1.3, y:-0.9};
+  var state = {
+    x:0, y:0, vx:0, vy:0,
+    trail:[], r:0.1, cycles:0, flash:0,
+    prior:0.7, drive:0.62, reg:0.55, flut:0.08
+  };
+  function spawn(){
+    state.x = cx - dmax*0.82;
+    state.y = cy + dmax*0.20;
+    state.vx = 0; state.vy = 0;
+    state.trail = [];
+    state.r = 0.1; state.cycles = 0; state.flash = 0;
+  }
+
+  var slP=document.getElementById('slP'), slA=document.getElementById('slA'),
+      slR=document.getElementById('slR'), slF=document.getElementById('slF');
+  var vP=document.getElementById('vP'), vA=document.getElementById('vA'),
+      vR=document.getElementById('vR'), vF=document.getElementById('vF');
+  var roR=document.getElementById('roR'), roInfo=document.getElementById('roInfo'),
+      roCycles=document.getElementById('roCycles'), roPhase=document.getElementById('roPhase');
+  var patDirty = true;
+
+  function readSliders(){
+    if(slP) state.prior = (+slP.value)/100;
+    if(slA) state.drive = (+slA.value)/100;
+    if(slR) state.reg = (+slR.value)/100;
+    if(slF) state.flut = (+slF.value)/100;
+    if(vP) vP.textContent = Math.round(state.prior*100)+'%';
+    if(vA) vA.textContent = Math.round(state.drive*100)+'%';
+    if(vR) vR.textContent = Math.round(state.reg*100)+'%';
+    if(vF) vF.textContent = Math.round(state.flut*100)+'%';
+  }
+
+  function step(){
+    var drive=state.drive, reg=state.reg, flut=state.flut;
+    var d = Math.hypot(state.x-cx, state.y-cy); if(d<1) d=1;
+    var ux=(state.x-cx)/d, uy=(state.y-cy)/d;
+    var tx=-uy, ty=ux;
+    var aR = -drive*3.6/(0.3 + d/dmax);          // nach innen (Kompression)
+    var aT = 0.7 + drive*2.0;                     // Wirbel (Spirale)
+    var Ux = aR*ux + aT*tx + P0.x;
+    var Uy = aR*uy + aT*ty + P0.y;
+    var drag = 1 - flut*0.06;                     // Flut bremst den Antrieb aus
+    state.vx = (state.vx + Ux*0.02) * drag;
+    state.vy = (state.vy + Uy*0.02) * drag;
+    state.x += state.vx;
+    state.y += state.vy;
+
+    if(!(isFinite(state.x)) || !(isFinite(state.y)) ||
+       state.x<4 || state.x>W-4 || state.y<4 || state.y>H-4){ spawn(); }
+
+    var d2 = Math.hypot(state.x-cx, state.y-cy);
+    var ux2=(state.x-cx)/(d2||1), uy2=(state.y-cy)/(d2||1);
+    var tx2=-uy2, ty2=ux2;
+    if(d2 < coreR && state.flash<=0){
+      state.cycles++; state.flash = 26;
+      if(reg > 0.04){
+        var kick = 1.2 + reg*4.2 + drive*1.2;     // Regeneration: herausgeschleudert
+        state.vx = ux2*kick + tx2*(0.8+reg*1.8);
+        state.vy = uy2*kick + ty2*(0.8+reg*1.8);
+      } else {
+        state.vx *= 0.15; state.vy *= 0.15;        // Ruhepunkt: nur geladen
+      }
+    }
+    if(state.flash>0) state.flash--;
+
+    var dnow = Math.hypot(state.x-cx, state.y-cy);
+    state.r = Math.max(0, Math.min(1, (1 - dnow/dmax)*(1 - flut*0.9)));
+
+    state.trail.push([state.x,state.y]);
+    if(state.trail.length>360) state.trail.shift();
+
+    return {Ux:Ux, Uy:Uy, ux:ux2, uy:uy2, d:d2};
+  }
+
+  function drawArrow(x1,y1,x2,y2,color,w){
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w||1.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var ang=Math.atan2(y2-y1,x2-x1), h=6+(w||1.5);
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(ang-0.42), y2-h*Math.sin(ang-0.42));
+    ctx.lineTo(x2-h*Math.cos(ang+0.42), y2-h*Math.sin(ang+0.42));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function regime(){
+    var d = Math.hypot(state.x-cx, state.y-cy);
+    var dot = state.vx*(state.x-cx)/(d||1) + state.vy*(state.y-cy)/(d||1);
+    if(state.flut>0.62 && state.r<0.18) return 'FLUT / RAUSCHEN (r \u2192 0, Prior flach)';
+    if(state.flash>0) return 'REGENERATION \u00b7 growing from the ground';
+    if(d < coreR*1.6) return 'KERN (VOIDSTAR) \u00b7 Keim geladen \u00b7 Erhaltung';
+    if(d > boundaryR) return 'GENERIERUNG \u00b7 neue Info = Prior-Komplexit\u00e4t';
+    if(dot < 0) return 'KOMPRESSION \u00b7 Verfall (r steigt)';
+    if(dot > 0) return 'AUFWIND \u00b7 Regeneration';
+    return 'Fluss \u00b7 auf der Spirale';
+  }
+
+  function draw(info){
+    if(!pal) refreshPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = rgba(pal.bg,1); ctx.fillRect(0,0,W,H);
+
+    // grid
+    ctx.strokeStyle = rgba(pal.grid,1); ctx.lineWidth = 1;
+    var g;
+    for(g=0; g<W; g+=44){ ctx.beginPath(); ctx.moveTo(g,0); ctx.lineTo(g,H); ctx.stroke(); }
+    for(g=0; g<H; g+=44){ ctx.beginPath(); ctx.moveTo(0,g); ctx.lineTo(W,g); ctx.stroke(); }
+
+    // generative zone (outside the boundary) filled with the prior pattern, slowly rotating
+    if(patDirty){ buildPattern(state.prior); patDirty=false; }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0,0,W,H);
+    ctx.arc(cx,cy,boundaryR,0,Math.PI*2,true);
+    ctx.clip('evenodd');
+    ctx.translate(cx,cy);
+    ctx.rotate((performance.now()||0)*0.00006 + state.cycles*0.5);
+    var s = Math.max(W,H)*1.45;
+    ctx.globalAlpha = 0.55;
+    ctx.drawImage(patCv, -s/2, -s/2, s, s);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+
+    // faithful zone (inside boundary): calm radial gradient = preserved structure
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,boundaryR,0,Math.PI*2); ctx.clip();
+    var grad = ctx.createRadialGradient(cx,cy,coreR*0.3, cx,cy,boundaryR);
+    grad.addColorStop(0, rgba(mix(pal.core,pal.bg,0.55),0.55));
+    grad.addColorStop(1, rgba(pal.faint,0.85));
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    ctx.restore();
+
+    // boundary circle (A's frontier)
+    ctx.setLineDash([7,6]);
+    ctx.strokeStyle = rgba(pal.bound,0.9); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx,cy,boundaryR,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // core (VOIDSTAR)
+    var pulse = 1 + 0.18*Math.sin((performance.now()||0)*0.003) + (state.flash/26)*0.6;
+    ctx.save();
+    ctx.shadowColor = rgba(pal.core,1); ctx.shadowBlur = 28*(0.5 + state.flash/26);
+    ctx.fillStyle = rgba(pal.core,0.9);
+    ctx.beginPath();
+    for(var ss=0; ss<12; ss++){
+      var aa=(ss/12)*Math.PI*2 - Math.PI/2;
+      var rr=coreR*0.62*(ss%2===0?1:0.44)*pulse;
+      var px=cx+Math.cos(aa)*rr, py=cy+Math.sin(aa)*rr;
+      if(ss===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // labels
+    ctx.font = '600 12px ui-monospace, monospace';
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.fillStyle = rgba(pal.fg,0.85);
+    ctx.fillText('KERN = Erhaltung (r \u2192 1)', 12, 12);
+    ctx.fillStyle = rgba(pal.bound,0.9);
+    ctx.fillText('GENERIERUNGSGRENZE (A Frontier)', 12, 30);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = rgba(pal.need,0.9);
+    ctx.fillText('GENERIERUNG = neue Info = Prior-Komplexit\u00e4t', W-12, 12);
+    ctx.textAlign = 'left';
+
+    // trajectory (spiral)
+    if(state.trail.length>1){
+      ctx.beginPath(); ctx.moveTo(state.trail[0][0], state.trail[0][1]);
+      for(var t=1;t<state.trail.length;t++){ ctx.lineTo(state.trail[t][0], state.trail[t][1]); }
+      ctx.strokeStyle = rgba(pal.trail,0.55); ctx.lineWidth = 1.8; ctx.stroke();
+    }
+
+    // particle + vectors
+    var pxp=state.x, pyp=state.y;
+    var disp = 7.5;
+    drawArrow(pxp,pyp, pxp+P0.x*disp, pyp+P0.y*disp, rgba(pal.need,0.9), 2);    // P (konstant)
+    drawArrow(pxp,pyp, pxp+info.Ux*disp, pyp+info.Uy*disp, rgba(pal.field,0.9), 2); // U(x)
+    drawArrow(pxp,pyp, pxp+info.Ux*disp*0.9, pyp+info.Uy*disp*0.9, rgba(pal.person,0.95), 3); // V
+    ctx.beginPath(); ctx.arc(pxp,pyp,9,0,Math.PI*2);
+    ctx.fillStyle = rgba(pal.person, 1 - state.flut*0.45);
+    ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle = rgba(pal.bg,1); ctx.stroke();
+
+    // inset: r bar
+    var bw=Math.min(180, W*0.4), bx=12, by=46, bh=13;
+    ctx.fillStyle = rgba(pal.faint,0.5); ctx.fillRect(bx,by,bw,bh);
+    ctx.strokeStyle = rgba(pal.bound,0.7); ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle = rgba(pal.core,0.9); ctx.fillRect(bx+2,by+2,(bw-4)*state.r,bh-4);
+    ctx.fillStyle = rgba(pal.fg,0.9); ctx.font='11px ui-monospace, monospace';
+    ctx.fillText('r = 1 - K(x*)/K(x) = '+state.r.toFixed(2), bx, by+bh+6);
+    ctx.fillStyle = rgba(pal.muted,0.9);
+    ctx.fillText('Keime (Zyklen): '+state.cycles, bx, by+bh+22);
+
+    if(roR) roR.textContent = Math.round(state.r*100)+'%';
+    if(roInfo) roInfo.textContent = Math.round(state.prior*100);
+    if(roCycles) roCycles.textContent = String(state.cycles);
+    if(roPhase) roPhase.textContent = regime();
+  }
+
+  function frame(){
+    readSliders();
+    var info = step();
+    draw(info);
+    requestAnimationFrame(frame);
+  }
+
+  function onTheme(){ refreshPal(); patDirty = true; }
+  if(slP) slP.addEventListener('input', function(){ patDirty=true; });
+  if(slA) slA.addEventListener('input', readSliders);
+  if(slR) slR.addEventListener('input', readSliders);
+  if(slF) slF.addEventListener('input', readSliders);
+  var btnReset = document.getElementById('btnReset');
+  if(btnReset) btnReset.addEventListener('click', function(){ spawn(); });
+  function toggleTheme(){
+    document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n3_023_theme',
+      document.documentElement.classList.contains('dark')?'dark':'light'); }catch(_){}
+    onTheme();
+  }
+  var tg = document.getElementById('themeToggle');
+  if(tg) tg.addEventListener('click', toggleTheme);
+  var bt = document.getElementById('btnTheme');
+  if(bt) bt.addEventListener('click', toggleTheme);
+  window.addEventListener('resize', function(){ size(); onTheme(); });
+
+  size();
+  refreshPal();
+  readSliders();
+  buildPattern(state.prior);
+  spawn();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

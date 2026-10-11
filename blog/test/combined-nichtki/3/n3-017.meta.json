@@ -1,0 +1,16 @@
+{
+  "no": "017",
+  "a": "n2-045.html",
+  "b": "n2-046.html",
+  "a_title": "Bestimmung durch Konsistenz an der Lücke — Vervollständigung als Auswahl ✕ Garbe als Gehirn",
+  "b_title": "Ein Gegenstand, viele Lesarten — Objektivität zwischen Sein und Score",
+  "combined_theme": "sein-als-relation-fixpunkt",
+  "one_line": "Sein ist eine Relation: das Definite ist der relationale Fixpunkt eines Konsistenz-/Lese-Prozesses zwischen festem Kern (Sein, verstandsunabhängig) und offener Lücke (Obstruktion) — zugleich erzeugt durch Auswahl an der Lücke (A) und gegeben als invarianter Wert (B); der Lücken-Rest ist ontologisch echt (Φ/Kohomologie/Emergenz) und trägt eine agentenbezogene Größe (Information = Commitment = −log₂p = Seltenheit).",
+  "contradictions": [
+    "Herkunft der Bestimmtheit: A sagt, das Definite ist das PRODUKT eines Konsistenz-/Auswahlprozesses (asymptotisch, 'Vervollständigung = Auswahl an der Obstruktion', am Rand r→∞); B sagt, es ist ein FESTES, verstandsunabhängiges GEGEBENES, das die Lesarten nur lesen (Hume/Kolmogorov, statisch/logisch, 'der Wert p bleibt exakt derselbe').",
+    "Substrat: A sagt, das Substrat ist LÖCHRIG/unvollständig und wird VOLLSTÄNDIGT (die Lücke wird gefüllt, z. B. ℚ→ℝ); B sagt, das Substrat (Sein: Karte/Seed, Kardinalzahlen, Wert p) ist BEREITS fest und abgeschlossen und wird nur GELESEN ('die Karte ist inertes Material', 'Bedeutung lebt im Objekt, nicht im Kopf').",
+    "Der Rest/Surplus: A sagt, der irreduzible Rest ist ECHTE Emergenz (Kohomologie = Φ, 'globale Form > Summe der lokalen Teile', ontologisch neu); B sagt, die interpretierende Schicht (Score/Bedeutsamkeit) wird am Objekt KONSTITUIERT, ändert es aber NICHT ('der Wert p bleibt exakt derselbe') — sie ist perspektivisch/agentenbezogen."
+  ],
+  "resolution": "Das 'Gegebene' (B) ist der FIXPUNKT/die Invariante des 'Produkts' (A): der Konsistenzprozess läuft zum Rand (ε→0, r→∞) und ergibt den verstandsunabhängigen, invarianten Wert. Das Substrat hat einen festen KERN (B: Sein) + eine offene LÜCKE (A: Obstruktion); die Lektüre liest den Kern, die Vervollständigung füllt die Lücke, und die Lücke wächst zum Kern. Der Rest hat zwei Ordnungen: ontologisch echt (A: Φ/Kohomologie/Emergenz) UND eine agentenbezogene Projektion (B: Score/Information/Commitment = −log₂p = Seltenheit) — dieselbe Lücke, zwei Messgrößen. Sein ist eine Relation, keine Wesenheit.",
+  "viz": "Canvas: Substrat (fester Kern 'Sein' + offene Lücke/Obstruktion, getrennt durch gestrichelte Grenze, Konsistenzfeld fließt darüber) → Der Fixpunkt/Überlebende (bei Konsistenz c→1: dim 0 = EIN Punkt √2/die 3/invarianter p; bei c→0: dim > 0 = Kohomologie Φ/Emergenz) → die agentenbezogene Größe (I = −log₂p = r, C = 2r). Regler: Konsistenz c (Lückenmaß, A) und Seltenheit r (Substrat/Seltenheit, p=2^−r, B); themenreaktiv, rein inline, keine Netzdaten."
+}

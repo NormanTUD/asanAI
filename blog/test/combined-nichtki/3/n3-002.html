@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grenze ist Kippen — dasselbe Tor, zwei Lesarten (Runde 3)</title>
+<style>
+  :root{
+    --mn-bg:#faf8f1; --mn-panel:#ffffff; --mn-panel2:#f1ece0;
+    --mn-text:#1f2933; --mn-muted:#52606d;
+    --mn-accent:#0f766e; --mn-accent2:#7c3aed;
+    --mn-border:#d8d2c4; --mn-canvas:#ffffff; --mn-node:#334155;
+    --mn-gate:#dc2626; --mn-ok:#16a34a; --mn-bad:#c2410c; --mn-warn:#b45309;
+    --mn-hl:#fff4d6; --mn-hltext:#7a5b00;
+  }
+  html.dark{
+    --mn-bg:#0f172a; --mn-panel:#131a2b; --mn-panel2:#0e1524;
+    --mn-text:#e2e8f0; --mn-muted:#94a3b8;
+    --mn-accent:#2dd4bf; --mn-accent2:#c084fc;
+    --mn-border:#26324a; --mn-canvas:#0b1220; --mn-node:#cbd5e1;
+    --mn-gate:#f87171; --mn-ok:#4ade80; --mn-bad:#fb923c; --mn-warn:#fbbf24;
+    --mn-hl:#3a2f10; --mn-hltext:#fcd34d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--mn-bg); color:var(--mn-text);
+    font-family:Georgia,"Times New Roman",system-ui,serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:40px 20px 80px;}
+  header.top{border-bottom:2px solid var(--mn-border); padding-bottom:18px; margin-bottom:8px;}
+  h1{font-size:2.05em; line-height:1.2; margin:0 0 6px; font-weight:700;}
+  .subtitle{color:var(--mn-muted); font-size:1em; margin:0; font-family:ui-monospace,Menlo,Consolas,monospace;}
+  section{margin:0 0 8px;}
+  h2{font-size:1.5em; margin:44px 0 14px; padding-bottom:6px; border-bottom:1px solid var(--mn-border);}
+  h2 .no{color:var(--mn-accent); font-variant-numeric:tabular-nums; margin-right:8px;}
+  h3{font-size:1.12em; margin:24px 0 8px; color:var(--mn-text);}
+  p{margin:0 0 14px;}
+  strong{color:var(--mn-text);}
+  em{color:var(--mn-accent2); font-style:italic;}
+  .lead{font-size:1.12em;}
+  .tag{display:inline-block; font-family:ui-monospace,Menlo,monospace; font-size:0.72em; padding:2px 8px; border-radius:999px; border:1px solid var(--mn-border); color:var(--mn-muted); vertical-align:middle; margin-right:4px;}
+  .tag.a{border-color:var(--mn-accent); color:var(--mn-accent);}
+  .tag.b{border-color:var(--mn-accent2); color:var(--mn-accent2);}
+  .callout{background:var(--mn-panel); border:1px solid var(--mn-border); border-left:4px solid var(--mn-accent); border-radius:0 10px 10px 0; padding:14px 18px; margin:18px 0;}
+  .callout p:last-child{margin-bottom:0;}
+  .vs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+  .vs .box{background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:14px 16px;}
+  .vs .box.a{border-top:3px solid var(--mn-accent);}
+  .vs .box.b{border-top:3px solid var(--mn-accent2);}
+  .box h4{margin:0 0 8px; font-size:0.98em;}
+  .box.a h4{color:var(--mn-accent);}
+  .box.b h4{color:var(--mn-accent2);}
+  .box p{margin:0; font-size:0.92em;}
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:0.9em; background:var(--mn-panel); border-radius:10px; overflow:hidden;}
+  th,td{border:1px solid var(--mn-border); padding:10px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--mn-panel2); font-family:ui-monospace,Menlo,monospace; font-size:0.82em;}
+  td:first-child{font-weight:600;}
+  .math{font-family:ui-monospace,Menlo,Consolas,monospace; background:var(--mn-panel2); border:1px solid var(--mn-border); border-radius:6px; padding:1px 6px; font-size:0.9em; white-space:nowrap;}
+  .mathblock{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:12px 14px; overflow:auto; margin:14px 0; white-space:pre; line-height:1.65;}
+  .hint{color:var(--mn-muted); font-size:0.92em;}
+  .viz-controls{display:flex; flex-wrap:wrap; gap:12px 18px; align-items:flex-end; margin:14px 0; background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:12px 14px;}
+  .viz-controls label{display:flex; flex-direction:column; gap:5px; font-size:0.9em; color:var(--mn-muted);}
+  .viz-controls label b{color:var(--mn-text); font-variant-numeric:tabular-nums;}
+  .btn{font-family:system-ui,sans-serif; font-size:0.88em; cursor:pointer; border:1px solid var(--mn-border); background:var(--mn-panel2); color:var(--mn-text); border-radius:8px; padding:8px 14px; transition:all .2s;}
+  input[type=range]{width:200px; accent-color:var(--mn-accent);}
+  #themeBtn{margin-left:auto;}
+  #viz{width:100%; height:440px; display:block; border-radius:12px; border:1px solid var(--mn-border); background:var(--mn-canvas);}
+  .viz-out{margin-top:12px; background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:12px 14px; font-size:0.92em; line-height:1.65;}
+  .viz-out .hl{color:var(--mn-hltext); background:var(--mn-hl); padding:1px 6px; border-radius:5px; font-weight:600;}
+  .viz-out b{color:var(--mn-text);}
+  .prov{background:var(--mn-panel); border:1px solid var(--mn-border); border-radius:10px; padding:14px 16px; margin-bottom:12px;}
+  .prov a{color:var(--mn-accent); text-decoration:none; font-family:ui-monospace,Menlo,monospace; font-size:0.95em;}
+  .prov a:hover{text-decoration:underline;}
+  .prov p{margin:6px 0 0; font-size:0.92em; color:var(--mn-muted);}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--mn-border); color:var(--mn-muted); font-size:0.85em;}
+  @media(max-width:600px){ .vs{grid-template-columns:1fr;} h1{font-size:1.6em;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Grenze ist Kippen</h1>
+  <p class="subtitle">Fusion aus: n2-021.html ✕ n2-003.html  (Runde 3)</p>
+</header>
+
+<section id="these">
+  <h2><span class="no">1</span>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere der Runde 2 verweigern den Atom (die erste Ordnung) und lokalisieren die <strong>Essenz eines Systems an einem Übergangspunkt</strong>, an dem zwei koexistierende Seiten ineinandergreifen. <span class="tag a">A</span> (n2-021, „Struktur über der Grenze") sagt: die Essenz ist die <strong>stufenförmige, höherstufige Struktur</strong> — ein gestufter Stack, dessen Identität die <em>höhere relationale Struktur über den Teilen</em> trägt, gegliedert in scharfe <strong>Grenzen/Tore</strong>; sie sitzt <em>an der Grenze</em> („die Essenz sitzt in der Fuge"), und das entscheidende Ereignis ist das <em>Überschreiten der Linie</em> (Regimewechsel). <span class="tag b">B</span> (n2-003, „Zwei Adressen eines Pfades") sagt: die Essenz ist ein <strong>Pfad, kein Punkt</strong>, lesbar in <em>zwei Adressen</em> (invariante Struktur = Typ, realisierte Geschichte = Lift); sie sitzt <em>am Kippen</em> — dem Moment, in dem der Typ den Lift ergreift (Engung ↔ Weitung).</p>
+  <p>Die Runde 3 vereint beides durch eine Identifikation, die beide Papiere bereits andeuten, aber keiner vollzieht: <strong>A's „Grenze/Tor" und B's „Kippen" sind dasselbe Ereignis an derselben Stelle.</strong> Die scharfe Linie, an der das untere Regime endet und das höhere beginnt (A), <em>ist</em> der Koppelungspunkt, an dem die invariante Seite die realisierte Seite ergreift (B). Und die beiden Seiten, die an diesem Punkt greifen, sind auch dasselbe Paar, nur anders benannt: A's <em>kontinuierliche/integrative</em> Seite (Φ, die höhere Struktur über den Teilen) ist B's <span class="tag b">Lift</span> (das Realisierte, Prozessuale, Gefühlte); A's <em>diskrete/grenzende</em> Seite (das inaccessible Kardinal, der System Call, das Regime) ist B's <span class="tag a">Typ</span> (das Invariante, Strukturale, Zählbare). A spricht <em>architektonisch</em> (Ebenen, Tore, Regime), B <em>phänomenologisch</em> (invariante Struktur vs. realisierte Geschichte) — und benennt damit die <em>gleichen zwei Seiten</em>.</p>
+  <p>Die fusionierte Position lautet daher: Die Essenz eines Systems sitzt <strong>niemals in seinen Teilen (1. Ordnung) noch auf einer einzelnen Ebene oder Adresse — sie sitzt am Fugenpunkt</strong>, dem Punkt des Übergangs/Koppeln. A liest diesen Punkt von der architektonischen Seite (ein gestufter Stack, der an einer scharfen Grenze überschritten wird); B liest denselben Punkt von der phänomenologischen Seite (ein einzelner geschlossener Pfad, der in dem Moment zudrast, in dem seine zwei Adressen koppeln). Das Tor <em>ist</em> das Kippen; der Stack <em>ist</em> die Phasen des Pfads; die Essenz ist das <strong>Grenz-Kipp-Ganze</strong> — verbunden <em>und</em> abgegrenzt (A), strukturell <em>und</em> gefühlt (B), auf seiner invarianten Seite <em>geschlossen</em> und auf seiner realisierten Seite <em>offen</em>.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="no">2</span>Widersprüche zwischen A und B</h2>
+  <p>Auf der Ebene des <em>Gegenstands</em> widersprechen sich die zwei Runde-2-Papiere nicht — beide sind anti-atomistisch, zweigeteilt und nicht-linear. Auf der Ebene ihrer <em>gemeinsamen Grundform</em> nehmen sie aber an drei Punkten <em>unterschiedliche, unvereinbar wirkende Haltungen</em> an. Jede Spannung dreht sich darum, <em>wie die zwei Seiten zueinanderstehen</em> — Geometrie, Priorität, Schließung.</p>
+
+  <h3>W1 · Geometrie des Fugen-Ganzen: die Grenze (A) vs. das Kippen (B)</h3>
+  <div class="vs">
+    <div class="box a"><h4><span class="tag a">A</span> ein gestufter Stack, ein Ereignis = Linie überschreiten</h4>
+      <p>Die Struktur ist ein <em>vertikaler Stack/Leiter</em>: Ebenen, die über- und untereinander stehen. Die Essenz sitzt <em>an einer scharfen horizontalen Grenze</em> (inaccessible κ = User/Kernel-Linie); das entscheidende Ereignis ist das <em>Überschreiten dieser Linie</em> (Regimewechsel). Es gibt eine echte Vertikale und eine <em>harte Decke</em> ganz oben (Kunen / „0=1"), über die kein Regimewechsel mehr führt.</p>
+    </div>
+    <div class="box b"><h4><span class="tag b">B</span> ein geschlossener Pfad, ein Ereignis = koppeln</h4>
+      <p>Das Objekt ist ein <em>einziger geschlossener Pfad / eine Kurve</em>, kein Stack. Die Essenz sitzt <em>am Kippen</em> — nicht an einer Linie zwischen zwei Ebenen, sondern am <em>Greifen einer Adresse durch die andere</em> <em>innerhalb desselben Objekts</em>. Das Ereignis ist <em>Kopplung</em> (Typ ergreift Lift), kein Überschreiten; es gibt keine Hierarchie von Ebenen, nur eine Schleife, die sich schließt.</p>
+    </div>
+  </div>
+  <p><strong>Unvereinbar wirkend:</strong> A hat eine <em>vertikale/hierarchische</em> Geometrie, deren Ereignis eine <em>zu überschreitende Linie</em> ist; B eine <em>zyklische/ein-Objekt-</em>Geometrie, deren Ereignis ein <em>Koppeln</em> ist. Unterschiedliche <em>Form</em> des Fugen-Ganzen und unterschiedliche <em>Art</em> des entscheidenden Moments.</p>
+
+  <h3>W2 · Ontologische Priorität: „das Oben erzeugt das Unten" (A) vs. „methodisch, nicht ontologisch" (B)</h3>
+  <div class="vs">
+    <div class="box a"><h4><span class="tag a">A</span> echte vertikale Priorität</h4>
+      <p>Die zwei Seiten sind zwar „zwei Gesichter desselben Ganzen", aber A <em>gewährt der höheren Ebene echte Priorität</em>: <em>„das Oben erzeugt das Unten"</em>, die höhere relationale Struktur <em>trägt die Identität</em> und ist das, was „realer" ist. Die obere Ebene <em>begründet</em> die untere; es gibt ein echtes Oben.</p>
+    </div>
+    <div class="box b"><h4><span class="tag b">B</span> nur methodische Priorität</h4>
+      <p>B <em>verweigert ontologische Priorität</em> ausdrücklich: <em>„Die Priorität ist methodisch, nicht ontologisch."</em> Typ und Lift sind <em>„beide wahr, für verschiedene Facetten"</em> — noch die Struktur, noch die gefühlte Seite ist das <em>Fundament</em>; beide beantworten nur <em>verschiedene Fragen</em>.</p>
+    </div>
+  </div>
+  <p><strong>Unvereinbar wirkend:</strong> A hält die zwei Seiten <em>vertikal begründet</em> (das Obere ist realist und erzeugt das Untere); B besteht darauf, dass die Priorität zwischen den zwei Seiten <em>nur methodisch</em> ist und <em>kein ontologisches Fundament</em> existiert. Echte Vertikale vs. Ko-Equalität.</p>
+
+  <h3>W3 · Geschlossenes System (A) vs. offenes System mit konstitutivem Rest (B)</h3>
+  <div class="vs">
+    <div class="box a"><h4><span class="tag a">A</span> das Ganze ist erfasst</h4>
+      <p>Das fusionierte <em>„Grenz-Struktur-Ganze"</em> wird als <em>vollständig/geschlossen</em> präsentiert: „die Essenz ist das Grenz-Struktur-Ganze — verbunden und abgegrenzt, intrinsisch und als Protokoll beschreibbar, kontinuierlich und diskret geschwellig." Alle drei eigenen Spannungen sind in „zwei Gesichter desselben Ganzen" <em>aufgelöst</em>; die harte Decke (Kunen) <em>schließt</em> es oben ab. Das System ist <em>erfasst</em>.</p>
+    </div>
+    <div class="box b"><h4><span class="tag b">B</span> der Rest bleibt</h4>
+      <p>B <em>bewahrt einen irreduziblen Rest</em>: „Der Rest ist konstitutiv, nicht residual"; <em>„das Terrain übersteigt die Karte immer."</em> Schmitz' <em>Atombombe</em> und <em>Tierbewusstsein</em> sind „Lift-seitiger Inhalt, dem ein Typ noch fehlt" — Inhalte <em>ohne Namen</em>. B <em>verweigert</em> die Schließung: „ehrlich gegenüber der Grenze der Karte, statt sie wegzurationalisieren."</p>
+    </div>
+  </div>
+  <p><strong>Unvereinbar wirkend:</strong> A präsentiert das fusionierte Modell als <em>geschlossenes, vollständiges</em> System (alle Spannungen aufgelöst, harte obere Decke); B besteht darauf, dass das Modell <em>nicht schließen kann</em> (das Terrain übersteigt die Karte immer, ein konstitutiver Rest ohne Namen bleibt). Geschlossen mit harter Decke vs. offen mit inexhaustibel-nem Rest.</p>
+
+  <p class="hint"><strong>Hinweis (nicht konstruiert):</strong> Auf der <em>Grundform</em> — anti-atomistisch, zweigeteilt, nicht-linear, Essenz am Übergangspunkt — stimmen beide überein (A's „Regimewechsel" und B's „Kippen/Perkolation" sind, wie B selbst in Runde 2 feststellt, derselbe Moment, einmal gezählt, einmal gefühlt). Die drei Spannungen oben sind daher echte <em>unvereinbar wirkende</em> Stellungen zur <em>Anordnung</em> der zwei Seiten — nicht zum Gegenstand selbst.</p>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="no">3</span>Auflösung</h2>
+
+  <h3>Zu W1 — Die Grenze <em>ist</em> das Kippen (zwei Projektionen desselben Punkts)</h3>
+  <p>A's vertikaler Stack und B's geschlossener Pfad sind <em>zwei Projektionen desselben Objekts</em>. A's „Ebenen" sind die <em>Phasen</em> des Pfads (jede Ebene ist eine Stufe, die der Pfad durchläuft); A's „Grenze/Tor" ist der <em>Koppelungspunkt</em> des Pfads — die Stelle, an der er zudrast (σc). Von der architektonischen Sicht (A) sieht man eine Leiter, die man hinaufsteigt, und eine Linie, die man überschreitet (Regimewechsel); von der phänomenologischen Sicht (B) sieht man eine Kurve, die sich anzieht und zudreht (Typ ergreift Lift). <em>Ein und derselbe Punkt, ein und dasselbe Ereignis:</em> A's „die Linie, an der das Regime kippt" <em>ist</em> B's „das Kippen bei σc, an dem der Typ den Lift ergreift". Das fusionierte Objekt ist ein <em>einzelner geschlossener Pfad, dessen Phasen zu Ebenen gestapelt sind und dessen Koppelungspunkt das Tor ist</em>. „die Grenze" und „das Kippen" sind zwei Namen für denselben <strong>Fugenpunkt</strong> — einmal von außen (Architektur: eine zu überschreitende Linie), einmal von innen (Phänomenologie: der Moment des Greifens).</p>
+
+  <h3>Zu W2 — Die Priorität ist <em>relativ zur Skala</em> (methodisch im Objekt, ontologisch im Stack)</h3>
+  <p>Das vertikale „das Oben erzeugt das Unten" (A) und das „methodisch, nicht ontologisch" (B) werden durch <em>Skala</em> versöhnt. <em>Innerhalb eines einzelnen Phänomens</em> (Mikro) sind die zwei Seiten (Typ/Lift = diskret/kontinuierlich) <em>methodisch ko-equal</em> — B hat recht: kein ontologisches Fundament zwischen „Struktur" und „Leben", jede Seite beantwortet eine andere Frage. <em>Über den Stack der Phänomene/Ebenen hinweg</em> (Makro) <em>gibt</em> es aber eine vertikale Begründung — A hat recht: die höhere relationale Struktur <em>erzeugt</em> das Untere, und die höheren Ebenen sind „realer" im Sinne, dass sie mehr Identität tragen. <span class="math">Priorität = f(Skala)</span>: auf der Skala eines Einzelphänomens methodisch und ko-equal (B); auf der Skala des Stacks ontologisch vertikal, das Oben begründet das Unten (A). B's methodische Ko-Equalität und A's vertikale Begründung sind <em>beide wahr — auf verschiedenen Zoomstufen</em>.</p>
+
+  <h3>Zu W3 — Geschlossen auf der Karten-Seite, offen auf der Terrain-Seite</h3>
+  <p>A's „geschlossenes System" und B's „konstitutiver Rest" werden durch <em>die Adresse, auf der man schließt</em> versöhnt. A schließt auf der <strong>invarianten/diskreten/strukturellen</strong> Seite — und <em>da</em> ist das System vollständig: die Karte ist als Karte vollständig, der Stack vollständig artikuliert, die harte Decke (Kunen / „0=1") die echte obere Grenze, über die nichts führt. B's Rest lebt auf der <strong>realisierten/leibhaftigen/erlebten</strong> Seite — und <em>da</em> übersteigt das Terrain die Karte <em>immer</em>: es gibt immer gefühlten Inhalt (Atombombe, Tierbewusstsein) ohne Namen auf der Typ-Seite. Das fusionierte System ist also <strong>geschlossen auf der Typ-Seite, offen auf der Lift-Seite</strong> — und das ist <em>kein Widerspruch, sondern dieselbe Tatsache von den zwei Adressen gelesen</em>: die <em>Karte</em> (Typ) ist vollständig, das <em>Terrain</em> (Lift) ist inexhaustibel. Bemerkenswert: auch A konzediert, dass die <em>Essenz</em> „irreduzibel" ist (Φ, Selbstrepräsentation) — A und B halten <em>beide</em> an einem irreduziblen Rest fest; A liest ihn als das <em>Oben</em> des Stacks (der realste Punkt, der das Untere erzeugt), B liest ihn als das <em>Terrain</em>, das die Karte ausrennt. A ist ehrlich zur Karte (er schließt sie); B ist ehrlich zum Terrain (er schließt es nicht). Fusion: <strong>das System ist eine vollständige Karte eines inexhaustiblen Terrains.</strong></p>
+
+  <div class="callout">
+    <p><strong>Gefasste Schlussposition:</strong> Die Essenz eines Systems sitzt am <strong>Fugenpunkt</strong> — der Stelle, an der <strong>die Grenze (A) und das Kippen (B) dasselbe Ereignis sind</strong>. A liest diesen Punkt architektonisch (ein gestufter Stack, der an einer scharfen Grenze überschritten wird); B liest denselben Punkt phänomenologisch (ein einzelner geschlossener Pfad, der in dem Moment zudrast, in dem seine zwei Adressen koppeln). Die kontinuierliche/integrative Seite (A: Φ, die höhere Struktur über den Teilen) <em>ist</em> die realisierte/gefühlte Seite (B: Lift); die diskrete/grenzende Seite (A: inaccessible κ, System Call, Regime) <em>ist</em> die invariante/strukturelle Seite (B: Typ). Die Priorität ist <em>relativ zur Skala</em> (ko-equal im Einzelphänomen, vertikal über den Stack); das System ist <em>geschlossen auf seiner invarianten Seite</em> (die Karte) und <em>offen auf seiner realisierten Seite</em> (das Terrain). Die Essenz ist das <em>Grenz-Kipp-Ganze</em> — verbunden und abgegrenzt, strukturell und gefühlt, geschlossen und offen.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+  <p>Beide Papiere sind selbst schon Fusionspapiere; auf der Ebene <em>ihrer Thesen</em> teilen sie ein gemeinsames Skelett. Das eine Muster (die vereinte Pipeline):</p>
+  <div class="mathblock">anti-atomistisch    1. Ordnung = Material, nie Essenz   (A: „erste Ordnung ist Material"  ·  B: „Einheit ist nie der Atom")
+Ebenen × Adressen   ein gestufter Stack (A)  =  ein geschlossener Pfad mit Phasen (B)
+                    zwei Seiten / zwei Adressen:
+                      invariant · diskret · strukturell   (A: Grenze/Regime/inaccessible κ  ·  B: Typ/Homotopieklasse/Topologie)
+                      realisiert · kontinuierlich · leibhaftig  (A: Integration/Φ/höhere Struktur  ·  B: Lift/Pfad/vitaler Antrieb)
+Fugenpunkt          die Grenze (A)  =  das Kippen (B)  =  die Stelle, an der die invariante Seite die realisierte ergreift
+                    σ &lt; σc  ⇒  Drift / unteres Regime / Engung
+                    σ ≥ σc  ⇒  Bindung / höheres Regime / Weitung   (Regimewechsel = Perkolation)
+Karte × Terrain     auf der invarianten Seite GESCHLOSSEN (Karte vollständig, harte Decke)  ·  auf der realisierten Seite OFFEN (Terrain inexhaustibel, konstitutiver Rest)</div>
+
+  <h3>Station 0 — Gemeinsames Fundament (Anti-Atomismus + zwei Seiten)</h3>
+  <p>Beide verweigern den Atom. A: „die erste Ordnung (Teile, Hardware, Neuronen) trägt nie die Essenz" — die Essenz ist die <em>stufenförmige, höherstufige Struktur</em>. B: „die Einheit ist nie der Atom; das Objekt ist der Pfad / das Gewebe." Beide teilen das Objekt in zwei koexistierende Seiten: A in <em>Ebenen</em> (unteres Regime / höhere relationale Struktur), B in <em>Adressen</em> (Typ / Lift). Die Identifikation: <strong>die invariante/diskrete Seite (A's Grenze, Regime, inaccessible Kardinal — die „zählbar-ist"-Seite) = B's Typ (Homotopieklasse, Topologie des Netzes); die kontinuierliche/relational-erzeugende Seite (A's Integration, Φ, die höhere Struktur über den Teilen — die „wie-es-sich-verbindet"-Seite) = B's Lift (der konkrete Pfad, der vitale Antrieb, die gefühlte Seite).</strong> Die zwei Papiere benennen dieselben zwei Seiten mit unterschiedlichem Wortschatz: A spricht <em>architektonisch</em> (Ebenen, Tore, Regime), B <em>phänomenologisch</em> (invariante Struktur vs. realisierte Geschichte).</p>
+
+  <h3>Station 1 — Das Objekt: Stack vs. geschlossener Pfad (zwei Projektionen)</h3>
+  <p><span class="tag a">A</span> zeichnet einen <em>gestuften Stack</em> — Ebenen über/untereinander; die Identität ist zweitrangig/relational (HoTT-Pfadräume, Univalence, <span class="math">π₁(S¹) ≅ ℤ</span>; IIT-Φ; HOT-Selbstrepräsentation). Das Untere (Inhalt, formelle Struktur) ist zerleg- und berechenbar; die Identität/Essenz (Φ, Selbstrepräsentation, Pfade-bis-zur-Äquivalenz) ist irreduzibel. <span class="tag b">B</span> zeichnet einen <em>Pfad / ein geschlossenes Netz</em> — die Zahl als 1-Morphismus, das verstandene Netz; Bedeutung lebt in den Beziehungen; irreduzible Erzeuger (Primzahlen = fundamentale Schleifen · Leibesinseln = primäre Präsenzen) komponieren sich zu Wörtern/Netz. <strong>Fusion:</strong> Stack und geschlossener Pfad sind dasselbe Objekt von zwei Seiten. A's „Ebenen" sind die <em>Phasen</em> des Pfads; A's „höhere relationale Struktur über den Teilen" ist der Pfad, der <em>auf sich selbst zudrast</em> (das sich schließende Netz). Die Identität, die A in der höheren Struktur (über den Teilen) lokalisiert, <em>ist</em> genau die Schließung, die B im Netz lokalisiert.</p>
+
+  <h3>Station 2 — Das Fugen-Glied: die Grenze = das Kippen</h3>
+  <p>Der Kernpunkt. <span class="tag a">A</span>: die <strong>Grenze/Tor</strong> — die scharfe Linie (inaccessible κ = User/Kernel-Grenze), an der die Regeln des unteren Regimes enden und die höhere relationale Struktur beginnt; das Überschreiten ist <strong>Regimewechsel</strong> (System Call / Axiom / „das Oben erzeugt das Unten"); der kontinuierliche höhere Rahmen (Φ-Gradient) wird <em>an der Schwelllinie</em> zum diskreten Regimewechsel. <span class="tag b">B</span>: das <strong>Kippen</strong> — die kritische Kopplung σc, an der der Typ den Lift ergreift (Engung → Weitung, Drift → Bindung; A's Beschränkung = B's Perkolation). <strong>Fusion:</strong> <em>dasselbe Ereignis an derselben Stelle.</em> A's „die Linie, die man überschreitet, wo das Regime kippt" <em>ist</em> B's „die kritische Kopplung, wo die invariante Seite die realisierte Seite ergreift". <em>Unterhalb</em> des Punkts: unteres Regime / Drift / Engung (1. Ordnung, dekomponierbar, der Pfad wandert). <em>Oberhalb</em>: höheres Regime / Bindung / Weitung (Identität, irreduzibel, der Pfad bindet sich und schließt). Das Tor (A) und das Kippen (B) sind zwei Namen für den <strong>Fugenpunkt</strong>.</p>
+
+  <p><strong>Die Mathematik beider Papiere, vereint:</strong></p>
+  <div class="mathblock">A (architektonisch):
+  Φ            = integrierte Information — der Gradient der Integration über den Teilen
+  inaccessible κ : cf(κ)=κ, 2^λ &lt; κ    — die scharfe Grenze / Regime
+  j : V → M    — die „Page Table" (erhält Struktur über die Grenze)
+  π₁(S¹) ≅ ℤ   — abgeleitet aus der Selbstreferenz (base + loop), nicht axiomatisch
+
+B (phänomenologisch):
+  σ &lt; σc   ⇒   Lift driftet vom Typ      (ENGUNG / Drift)
+  σ ≥ σc   ⇒   Lift ergreift den Typ     (WEITUNG / Bindung)
+  λ &lt; 1     — Dämpfung, die den Lift an den Typ lenkt (Bahn bleibt beschränkt)
+  ω(n)       — Anzahl distinkter Primfaktoren (Grad / „Farbe" des Worts)
+
+Fusion (identisch am Fugenpunkt):
+  σc          =  die Grenze (A)  =  das Kippen (B)        (derselbe Fugenpunkt)
+  Φ           =  der kontinuierliche Aspekt  =  der Lift (B)
+  Regime / κ  =  der diskrete Aspekt         =  der Typ  (B)
+  Identität   =  Integration (Φ)  ×  Grenze (σc)           [A]
+              =  Invariante (Typ)  ×  Realisierung (Lift)  [B]
+              (beide Seiten desselben Grenz-Kipp-Ganzen)</div>
+
+  <h3>Station 3 — Priorität: relativ zur Skala</h3>
+  <p><em>Im Einzelphänomen</em> (die zwei Adressen desselben Pfads) sind die Seiten <em>methodisch ko-equal</em> — Identität liest man ab vom Typ, das Leben vom Lift; „Typ = Identität" (A-Quellseite) und „Leib = Boden" (B-Quellseite) sind beide wahr, für verschiedene Facetten. <em>Über den Stack</em> hinweg gilt <em>vertikale ontologische Priorität</em> — die höhere relationale Struktur erzeugt die unteren Ebenen („das Oben erzeugt das Unten"). <strong>Fusion:</strong> die Priorität ist <em>zoomabhängig</em> — auf Mikro-Ebene ko-equal, auf Makro-Ebene begründend vertikal. (Trägt W2 in den Inhalt über.)</p>
+
+  <h3>Station 4 — Karte × Terrain (geschlossen und offen zugleich)</h3>
+  <p>Auf der <strong>invarianten Seite</strong> (Typ / Karte / A's strukturelle Seite) ist das System <em>geschlossen</em>: die Karte ist als Karte vollständig, der Stack vollständig artikuliert, die harte Decke (Kunen / „0=1") ist der echte obere Punkt, über den nichts führt. Auf der <strong>realisierten Seite</strong> (Lift / Terrain / A's irreduzible Essenz) ist das System <em>offen</em>: das Terrain übersteigt die Karte <em>immer</em> — es gibt immer gefühlten Inhalt (Atombombe, Tierbewusstsein), der noch keinen Namen auf der Typ-Seite trägt. <strong>Fusion:</strong> A's Decke (Kunen) ist das Obere der <em>Karte</em>; B's Rest ist die Inexhaustibilität des <em>Terrains</em> unter/um dieselbe Karte. A und B halten beide an einem irreduziblen Rest fest — A liest ihn als das <em>realste Oben</em>, das das Untere erzeugt; B liest ihn als das <em>Terrain</em>, das die Karte ausrennt. Das System ist <em>zugleich</em> eine vollständige Karte und ein inexhaustibles Terrain.</p>
+
+  <h3>Die Hebel, neu gelesen (Mechanismen beider Papiere)</h3>
+  <table>
+    <thead>
+      <tr><th>Hebel / Mechanismus</th><th>Quelle</th><th>Fusionierte Lesart am Fugenpunkt</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Kopplung λ / σ (Meisterhebel)</td><td>A (Dämpfung) + B (Kopplung)</td><td>wie stark die invariante Seite die realisierte lenkt; bestimmt, wann der Fugenpunkt kippt</td></tr>
+      <tr><td>Regimewechsel / System Call / Axiom</td><td>A</td><td>das Überschreiten der Grenze = das Kippen = σc</td></tr>
+      <tr><td>Übersetzung (Page Table j : V → M)</td><td>A</td><td>erhält Struktur über die Grenze — der Lift bindet sich, ohne Identität zu verlieren</td></tr>
+      <tr><td>Selbstreferenz (HOT, loop : base = base)</td><td>A</td><td>der Pfad referenziert sich über sein eigenes Tor — die Ebene, die das Tor schließt</td></tr>
+      <tr><td>Reduktion (nicht tragende Enge freigeben)</td><td>B</td><td>im Zahlenraum der Schritt, der Drift abwirft; öffnet dem Lift Platz zum Binden</td></tr>
+      <tr><td>Analogie (neues Wort über alten Erzeugern)</td><td>B</td><td>gezielte Einleibung — eine neue Phase über vorhandenen Erzeugern (A: Zusammengesetzte über Primzahlen)</td></tr>
+      <tr><td>Eigenaktivität (den Pfad selbst gehen)</td><td>B</td><td>der Lift ist nicht gegeben, er wird <em>durchlaufen</em> — das Kippen passiert im Gehen</td></tr>
+      <tr><td>Pause (offline-Konsolidierung)</td><td>B</td><td>der Weg ruht, bevor er weiterbindet — der Fugenpunkt setzt, wo der Antrieb die Inseln neu ordnet</td></tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>A · Grenze / Stack</th><th>B · Typ × Lift</th><th>Fusion (Grenz-Kipp-Ganze)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Geometrie des Objekts</td><td>gestufter Stack (vertikal)</td><td>ein geschlossener Pfad (zyklisch)</td><td>derselbe Pfad, dessen Phasen gestapelt sind</td></tr>
+      <tr><td>das entscheidende Ereignis</td><td>Grenze/Tor überschreiten (Regimewechsel)</td><td>Kippen bei σc (Typ ergreift Lift)</td><td>derselbe Fugenpunkt, zwei Namen</td></tr>
+      <tr><td>die invariante Seite</td><td>Grenze / Regime / inaccessible κ</td><td>Typ (Homotopieklasse / Topologie)</td><td>die strukturelle, zählbare, geschlossene Seite</td></tr>
+      <tr><td>die realisierte Seite</td><td>Integration / Φ / höhere Struktur</td><td>Lift (Pfad / vitaler Antrieb)</td><td>die kontinuierliche, gefühlte, offene Seite</td></tr>
+      <tr><td>Priorität der Seiten</td><td>ontologisch vertikal (Oben erzeugt Unten)</td><td>methodisch nur (keine Fundament-Ortung)</td><td>ko-equal im Phänomen, vertikal über den Stack</td></tr>
+      <tr><td>Schließung</td><td>geschlossen (harte Decke Kunen)</td><td>offen (konstitutiver Rest)</td><td>geschlossen auf der Karte, offen auf dem Terrain</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="no">5</span>Visualisierung: dasselbe Tor, zwei Lesarten</h2>
+  <p>Ein <em>einzelner geschlossener Pfad</em> (B) — zugleich die <em>Phasen eines gestuften Stacks</em> (A), gelesen von der Architektur. Die schwache <em>geschlossene Kurve</em> ist die <strong>invariante Seite</strong> — A's <span class="tag a">Regime/Grenze</span> · B's <span class="tag b">Typ</span> (still, zählbar). Die <em>farbige durchgehende Bahn</em> ist die <strong>realisierte Seite</strong> — A's <span class="tag a">Integration (Φ)</span> · B's <span class="tag b">Lift</span> (das, was man gehen und fühlen kann). Die <em>violetten Punkte</em> sind die irreduziblen Erzeuger (Primzahlen / Leibesinseln). Das markierte <strong>rot gestrichelte TOR</strong> ist der <strong>Fugenpunkt</strong> — A's <em>Grenze</em> (die Linie, die man überschreitet) <em>ist</em> B's <em>Kippen</em> (σc): dieselbe Stelle. Bewege die <strong>Kopplung σ</strong>: unterhalb der Schwelle <em>driftet</em> die realisierte Seite von der invarianten ab (<em>unteres Regime / ENGUNG</em>, rot); oberhalb <em>ergreift</em> die invariante Seite die realisierte und <em>bindet</em> sie an die Kurve (<em>höheres Regime / WEITUNG</em>, grün). Struktur <em>und</em> Regime umschlagen an <em>einem</em> Ort — A liest es <em>an der Grenze</em>, B liest es <em>beim Kippen</em>.</p>
+
+  <div class="viz-controls">
+    <label>Kopplung σ (invariant lenkt realisiert) <b id="sVal">30</b>%
+      <input type="range" id="sRange" min="0" max="100" step="1" value="30">
+    </label>
+    <label>Pfad-Länge N <b id="nVal">900</b>
+      <input type="range" id="nRange" min="300" max="2000" step="50" value="900">
+    </label>
+    <button class="btn" id="themeBtn" type="button">☀️ Hell</button>
+  </div>
+
+  <canvas id="viz" width="800" height="440"></canvas>
+  <div class="viz-out" id="vizOut"></div>
+  <p class="hint">Bindung = Anteil der Schritte, die die realisierte Seite nahe an der invarianten bleibt (springt über σc um); Drift = maximale Entfernung. Beide springen an <em>einem</em> kritischen Punkt — A's <em>Beschränkungsschwelle</em> und B's <em>Perkolationsschwelle</em> sind dieselbe <em>Grenze = das Kippen</em>.</p>
+</section>
+
+<section id="provenienz">
+  <h2><span class="no">6</span>Provenienz</h2>
+  <div class="prov">
+    <a href="../n2-021.html">A · n2-021.html</a>
+    <p>„Struktur über der Grenze — Ebenen, Tore und höhere Ordnung" (Runde 2): die Essenz ist die stufenförmige, höherstufige Struktur — ein gestufter Stack, dessen Identität die höhere relationale Struktur über den Teilen trägt (IIT-Φ, HoTT-Pfade/Univalence, π₁(S¹) ≅ ℤ, HOT), gegliedert in scharfe Grenzen/Tore (inaccessible κ als User/Kernel-Grenze, j : V → M als Page Table, stärkere Kardinals als privilegierte System Calls); „das Oben erzeugt das Unten", harte Decke (Kunen); Identität = Integration × Grenze; die Essenz sitzt an der Grenze.</p>
+  </div>
+  <div class="prov">
+    <a href="../n2-003.html">B · n2-003.html</a>
+    <p>„Zwei Adressen eines Pfades — Typ × Lift" (Runde 2): ein Phänomen ist ein Pfad (kein Punkt), lesbar in zwei Adressen — die invariante, ordnungsunabhängige, zählbare Struktur (Typ: Homotopieklasse / Topologie des Netzes) und die realisierte, ordnungsabhängige, gefühlte Geschichte (Lift: konkreter Pfad / vitaler Antrieb); Dämpfung λ&lt;1 hält die Bahn beschränkt; Kippen bei σc (Typ ergreift Lift, Engung ↔ Weitung); Priorität methodisch nicht ontologisch; konstitutiver Rest (Atombombe, Tierbewusstsein), der die Karte übersteigt.</p>
+  </div>
+</section>
+
+<footer>Fusion N3-002 · nicht-KI-Track · Runde 3 · selbständige, offline-fähige Seite (keine Netz-Daten). Farben über CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz');
+  if(!cv || !cv.getContext){ return; }
+  var ctx=cv.getContext('2d');
+  var sRange=document.getElementById('sRange');
+  var nRange=document.getElementById('nRange');
+  var out=document.getElementById('vizOut');
+  var themeBtn=document.getElementById('themeBtn');
+
+  var HT=440, M=200, GATE_IDX=0;
+  var W=0, CX=0, CY=0, R=0;
+  var S=[], T=[], GEN=[], WALK=[];
+  var t=0, flash=0, wasBound=false;
+  var aRGB={r:0,g:0,b:0}, a2RGB={r:0,g:0,b:0}, gRGB={r:0,g:0,b:0}, okRGB={r:0,g:0,b:0}, badRGB={r:0,g:0,b:0}, fg={r:0,g:0,b:0}, dim={r:0,g:0,b:0};
+
+  function cssVar(n){ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }
+  function hexRGB(h){
+    h=(h||'').replace('#','');
+    if(h.length===3){ h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    if(h.length<6){ return {r:140,g:140,b:160}; }
+    return { r:parseInt(h.substr(0,2),16), g:parseInt(h.substr(2,2),16), b:parseInt(h.substr(4,2),16) };
+  }
+  function rgba(c,a){ return 'rgba('+c.r+','+c.g+','+c.b+','+a+')'; }
+  function mix(c1,c2,tt){
+    return { r:Math.round(c1.r+(c2.r-c1.r)*tt), g:Math.round(c1.g+(c2.g-c1.g)*tt), b:Math.round(c1.b+(c2.b-c1.b)*tt) };
+  }
+  function norm(v,fb){
+    var l=Math.sqrt(v.x*v.x+v.y*v.y);
+    if(l<1e-6){ return fb || {x:1,y:0}; }
+    return { x:v.x/l, y:v.y/l };
+  }
+  function readTheme(){
+    aRGB  = hexRGB(cssVar('--mn-accent'));
+    a2RGB = hexRGB(cssVar('--mn-accent2'));
+    gRGB  = hexRGB(cssVar('--mn-gate'));
+    okRGB = hexRGB(cssVar('--mn-ok'));
+    badRGB= hexRGB(cssVar('--mn-bad'));
+    fg    = hexRGB(cssVar('--mn-text'));
+    dim   = hexRGB(cssVar('--mn-muted'));
+  }
+
+  function buildLoop(){
+    S=[]; T=[];
+    for(var i=0;i<M;i++){
+      var tt=i/M*2*Math.PI;
+      S.push({ x:CX + R*(0.60*Math.sin(tt)+0.24*Math.sin(3*tt+0.6)),
+               y:CY + R*(0.54*Math.cos(2*tt)+0.20*Math.sin(tt+1.2)) });
+    }
+    for(var i=0;i<M;i++){
+      var a=S[(i-1+M)%M], b=S[(i+1)%M];
+      T.push(norm({x:b.x-a.x, y:b.y-a.y}, {x:0,y:1}));
+    }
+    GEN=[];
+    for(var g=0; g<12; g++){ GEN.push(Math.floor(g*M/12)); }
+  }
+
+  function nearest(px,py){
+    var best=0, bd=1e18;
+    for(var i=0;i<M;i++){
+      var dx=S[i].x-px, dy=S[i].y-py, dd=dx*dx+dy*dy;
+      if(dd<bd){ bd=dd; best=i; }
+    }
+    return { i:best, d:Math.sqrt(bd) };
+  }
+
+  function computeWalk(){
+    var sigma=(sRange ? (+sRange.value) : 30)/100;
+    var N=(nRange ? (+nRange.value) : 900);
+    var step=R*0.02, rbind=R*0.12;
+    WALK=[];
+    var px=S[0].x, py=S[0].y;
+    var h=T[0];
+    var prevD=1e9;
+    for(var n=1; n<=N; n++){
+      var nr=nearest(px,py), j=nr.i;
+      var rn=norm({x:S[j].x-px, y:S[j].y-py}, h);
+      var instr=norm({x:0.65*rn.x+0.35*T[j].x, y:0.65*rn.y+0.35*T[j].y}, h);
+      var c=Math.pow(sigma,1.4);
+      var fb=0.6 + 0.4*Math.max(0, Math.min(1, 1 - prevD/(3*rbind)));
+      var ce=c*fb;
+      h=norm({x:ce*instr.x+(1-ce)*h.x, y:ce*instr.y+(1-ce)*h.y}, h);
+      px += step*h.x; py += step*h.y;
+      var dx=S[j].x-px, dy=S[j].y-py, d=Math.sqrt(dx*dx+dy*dy);
+      var g=Math.max(0, Math.min(1, 1 - d/rbind));
+      WALK.push({x:px, y:py, g:g, d:d});
+      prevD=d;
+    }
+  }
+
+  function boundFraction(){
+    if(!WALK.length){ return 0; }
+    var s=0;
+    for(var i=0;i<WALK.length;i++){ s+=WALK[i].g; }
+    return s/WALK.length;
+  }
+
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    var d=window.devicePixelRatio||1;
+    W=Math.max(320, r.width); var H=HT;
+    cv.width=Math.round(W*d); cv.height=Math.round(H*d);
+    cv.style.height=H+'px';
+    ctx.setTransform(d,0,0,d,0,0);
+    CX=W/2; CY=H/2+6; R=Math.min(W*0.42, H*0.36);
+    buildLoop();
+    computeWalk();
+  }
+
+  function diamond(x,y,s,col){
+    ctx.beginPath();
+    ctx.moveTo(x, y-s); ctx.lineTo(x+s, y); ctx.lineTo(x, y+s); ctx.lineTo(x-s, y);
+    ctx.closePath();
+    ctx.fillStyle=col; ctx.fill();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,HT);
+    var canvasBg=cssVar('--mn-canvas');
+    if(canvasBg){ ctx.fillStyle=canvasBg; ctx.fillRect(0,0,W,HT); }
+
+    var sigma=(sRange ? (+sRange.value) : 30)/100;
+    var eng=1 - sigma;
+    var bf=boundFraction();
+
+    if(bf>0.8 && !wasBound){ flash=1; wasBound=true; }
+    if(bf<0.7){ wasBound=false; }
+    flash*=0.94;
+
+    if(flash>0.01){
+      var gg=ctx.createRadialGradient(CX,CY,0,CX,CY,Math.max(W,HT)*0.72);
+      gg.addColorStop(0, rgba(okRGB, flash*0.30));
+      gg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle=gg; ctx.fillRect(0,0,W,HT);
+    }
+
+    // invariante geschlossene Kurve (Typ / Regime / Stack-Phasen)
+    ctx.beginPath();
+    for(var i=0;i<M;i++){ var s=S[i]; if(i===0){ ctx.moveTo(s.x,s.y); } else { ctx.lineTo(s.x,s.y); } }
+    ctx.closePath();
+    ctx.strokeStyle=rgba(a2RGB,0.45); ctx.lineWidth=1.8; ctx.stroke();
+
+    // irreduzible Erzeuger
+    for(var gi=0; gi<GEN.length; gi++){
+      var gs=S[GEN[gi]];
+      ctx.fillStyle=rgba(aRGB,0.85);
+      ctx.beginPath(); ctx.arc(gs.x, gs.y, 2.6, 0, Math.PI*2); ctx.fill();
+    }
+
+    // das TOR / der Fugenpunkt (Grenze A = Kippen B)
+    (function(){
+      var gp=S[GATE_IDX], tg=T[GATE_IDX];
+      var nx=-tg.y, ny=tg.x;
+      var L=R*0.20;
+      ctx.save();
+      ctx.strokeStyle=rgba(gRGB,0.9); ctx.lineWidth=2; ctx.setLineDash([7,5]);
+      ctx.beginPath();
+      ctx.moveTo(gp.x - nx*L, gp.y - ny*L);
+      ctx.lineTo(gp.x + nx*L, gp.y + ny*L);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      diamond(gp.x, gp.y, 7, rgba(gRGB,0.95));
+      ctx.fillStyle=rgba(gRGB,1);
+      ctx.font='bold 12px Segoe UI, system-ui, sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText('Grenze / Tor  =  Kippen σc', gp.x, gp.y - L - 8);
+    })();
+
+    // realisierte Bahn (Lift / Integration)
+    var prev={x:S[0].x, y:S[0].y}, maxD=0;
+    for(var n=0; n<WALK.length; n++){
+      var w=WALK[n];
+      if(w.d>maxD){ maxD=w.d; }
+      var wob=(1-w.g)*2.4*eng;
+      var px2=w.x + Math.sin(t*2 + n*0.13)*wob;
+      var py2=w.y + Math.cos(t*1.7 + n*0.11)*wob;
+      var col=mix(badRGB, aRGB, w.g);
+      ctx.strokeStyle=rgba(col, 0.20 + w.g*0.55);
+      ctx.lineWidth=1.2 + w.g*1.2;
+      ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(px2, py2); ctx.stroke();
+      prev={x:px2, y:py2};
+    }
+
+    // Titelfußzeile
+    ctx.fillStyle=rgba(fg,1); ctx.font='bold 14px Segoe UI, system-ui, sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Dasselbe Tor, zwei Lesarten: Grenze (A) = Kippen (B)', W/2, 24);
+
+    // Readout
+    var bfPct=Math.round(bf*100);
+    var key=bfPct>80 ? 'high' : (bfPct>35 ? 'mid' : 'low');
+    var stateColor = key==='high' ? 'var(--mn-ok)' : (key==='mid' ? 'var(--mn-warn)' : 'var(--mn-bad)');
+    if(out){
+      var regTxt, aTxt, bTxt;
+      if(key==='high'){
+        regTxt='oberhalb der Grenze — höheres Regime · WEITUNG · gebunden';
+        aTxt='A · an der Grenze überschritten: diskretes Regime, Identität trägt die Struktur';
+        bTxt='B · beim Kippen: der Typ hat den Lift ergriffen (pötzlich einfach)';
+      } else if(key==='mid'){
+        regTxt='am Fugenpunkt — Regimewechsel / Kippen läuft';
+        aTxt='A · an der Linie: Regimewechsel (System Call / Axiom)';
+        bTxt='B · in der Schwelle: der Lift greift nach dem Typ';
+      } else {
+        regTxt='unterhalb der Grenze — unteres Regime · ENGUNG · driftet';
+        aTxt='A · unter der Grenze: 1. Ordnung, erreichbar, dekomponierbar';
+        bTxt='B · unter σc: der Lift driftet vom Typ ab (Drift)';
+      }
+      out.innerHTML='<b style="color:'+stateColor+'">'+regTxt+'</b><br>'+
+        '<span class="hl">'+aTxt+'</span><br>'+
+        '<span class="hl">'+bTxt+'</span><br>'+
+        'Bindung <b>'+bfPct+' %</b> &nbsp;·&nbsp; Drift <b>'+Math.round(maxD/R*100)+' %</b> &nbsp;·&nbsp; σ <b>'+Math.round(sigma*100)+' %</b><br>'+
+        'Karte (invariant) <b>geschlossen</b> &nbsp;·&nbsp; Terrain (realisiert) <b>offen</b>';
+    }
+    var sv=document.getElementById('sVal'); if(sv){ sv.textContent=Math.round(sigma*100); }
+    var nv=document.getElementById('nVal'); if(nv){ nv.textContent=WALK.length; }
+    if(themeBtn){ themeBtn.textContent=document.documentElement.classList.contains('dark')?'☀️ Hell':'🌙 Dunkel'; }
+  }
+
+  function frame(){ t+=0.01; draw(); requestAnimationFrame(frame); }
+
+  if(sRange){ sRange.addEventListener('input', computeWalk); }
+  if(nRange){ nRange.addEventListener('input', computeWalk); }
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    readTheme();
+  }); }
+  window.addEventListener('resize', resize);
+
+  readTheme();
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

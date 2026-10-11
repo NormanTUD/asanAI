@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein lokales Merkmal, zwei Medien — bezahlt oder geschaltet, lasttragend oder fragil</title>
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#1c2230; --dim:#5b6472;
+  --grid:#d8d5cc; --line:#e4e1d8; --acc:#0f9d7a; --bad:#c0303f;
+  --warn:#b57d12; --sky:#2f6fb0; --fill:rgba(15,157,122,.09);
+}
+html.dark{
+  --bg:#0b0e14; --card:#11151d; --ink:#e7ecf6; --dim:#8b93a9;
+  --grid:#232a38; --line:#1c2331; --acc:#64ffda; --bad:#ff6f6f;
+  --warn:#ffd166; --sky:#7aa2ff; --fill:rgba(100,255,218,.09);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(100,255,218,.05) 0%, transparent 60%),
+    radial-gradient(800px 500px at 95% 4%, rgba(122,162,255,.05) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink); line-height:1.68; font-size:16px;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:38px 22px 90px;}
+a{color:var(--sky);text-underline-offset:2px;}
+h1{font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.12;letter-spacing:-.02em;margin:.2em 0 .1em;font-weight:800;}
+h2{font-size:clamp(1.25rem,3vw,1.7rem);letter-spacing:-.01em;margin:0 0 .6em;font-weight:750;color:var(--ink);}
+h3{font-size:1.03rem;font-weight:650;color:var(--acc);margin:1.4em 0 .4em;}
+p{margin:.7em 0;max-width:76ch;}
+.sub{color:var(--dim);font-size:.95rem;letter-spacing:.01em;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:6px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;}
+header{margin-bottom:6px;}
+section{padding:30px 0;border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:0;}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;background:var(--fill);}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.92em;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin:14px 0;}
+.note{font-size:.9rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:12px 0;}
+.lane{background:var(--fill);border-left:3px solid var(--acc);padding:13px 16px;border-radius:0 10px 10px 0;margin:16px 0;}
+.lane b{color:var(--acc);}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:14px 0;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{color:var(--acc);font-weight:650;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;}
+td:first-child{color:var(--sky);font-weight:600;white-space:nowrap;}
+ul{margin:.6em 0 .6em 1.2em;} li{margin:.4em 0;}
+.k{color:var(--acc);} .b{color:var(--sky);} .bad{color:var(--bad);} .ok{color:var(--acc);}
+.tA{color:var(--acc);} .tB{color:var(--sky);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
+@media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+.cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;}
+.cell h4{margin:0 0 6px;font-size:.98em;color:var(--acc);}
+.vizbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px;}
+canvas{display:block;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;}
+.ctrl .c{flex:1 1 160px;min-width:150px;}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:5px;}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab;}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card);}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;
+  background:var(--fill);color:var(--acc);border:1px solid var(--line);}
+button:hover{filter:brightness(1.06);}
+button.alt{background:transparent;color:var(--dim);}
+.stat{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.85rem;margin-top:14px;}
+.stat span{color:var(--dim);}
+.stat b{font-family:ui-monospace,monospace;color:var(--ink);}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px;}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+.faces{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+@media(max-width:640px){.faces{grid-template-columns:1fr;}}
+.face{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+.ft{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;}
+.fv{font-size:.9rem;line-height:1.5;color:var(--ink);}
+.fv.ok{color:var(--acc);} .fv.bad{color:var(--bad);}
+.ro{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;}
+.ro .box{border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:120px;flex:1 1 120px;}
+.ro .kk{font-size:.76rem;color:var(--dim);}
+.ro .vv{font-size:1.25em;font-weight:700;font-family:ui-monospace,monospace;margin-top:2px;}
+.bar{height:8px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px;}
+.bar > i{display:block;height:100%;background:var(--warn);transition:width .2s;}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;padding:6px 12px;border-radius:20px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:.85em;}
+footer{text-align:center;color:var(--dim);font-size:.85em;margin-top:28px;}
+</style>
+<script>(function(){try{var t=localStorage.getItem('n3-theme');if(!t){t='dark';}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button" aria-label="Theme wechseln">🌗</button>
+<article>
+
+<header>
+  <h1>Ein lokales Merkmal, zwei Medien<br>Bezahlt oder geschaltet, lasttragend oder fragil</h1>
+  <p class="sub">Fusion aus: n2-010.html ✕ n2-035.html  (Runde 3)</p>
+  <p class="note">Beide Runde-2-Papiere sind selbst „ein Ding, zwei Seiten/Gesichter"-Fusionen.
+  <span class="tA">A</span> (Skala, lasttragend/fragil) liest <em>ein Merkmal über eine Skala</em> und
+  trennt Lasttragendes vom Fragilen — in zwei Medien (Objekt/Geist).
+  <span class="tB">B</span> (Garbenmaschine, zwei Gesichter) liest <em>einen lokalen Invariant, der
+  lokale Daten in ein globales Objekt verklebt</em> — mit zwei Gesichtern (Blockade/Bestimmung).
+  Dieses Papier hebt die beiden auf die Ebene <em>ihrer Thesen</em>: beide sind Instanzen eines einzigen
+  Meta-Zugs. Ein <strong>lokales, nicht-lasttragendes Merkmal</strong> wird in zwei Medien gelesen und
+  durch einen <strong>benannten Parameter</strong> umgeschaltet; die ehrliche Epistemik ist in beiden
+  dieselbe — den Parameter benennen, den Anspruch kalibrieren, die Peripherie nicht über-attribuieren.</p>
+</header>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <div class="tag">01 · Kernthese der Fusion</div>
+  <h2>Ein Merkmal, zwei Medien, eine Kalibrierung</h2>
+  <p>
+    <span class="tA">A (n2-010)</span> und <span class="tB">B (n2-035)</span> sind keine zwei Theorien,
+    sondern <em>dasselbe Meta-Muster, zweimal auf eine andere Skala gelegt</em>. In A ist der Zug:
+    <em>einer Struktur eine Signatur über eine Skala ablesen und den lasttragenden Teil vom fragilen
+    trennen</em> — ausgeführt am <strong>Objekt</strong> (Daten = Funktion, zwei orthogonale Signaturen
+    über ε bzw. k; der Stabilitätssatz macht das <em>Grobe</em> lasttragend, das <em>Feine</em> real-aber-bezahlt)
+    und am <strong>Geist</strong> (Wissen = Ebenen-Hierarchie; der IOED-Einbruch macht die grobe Prozedur
+    ehrlich-lasttragend, die tiefe Mechanistik gefühlt-abwesend). In B ist der Zug:
+    <em>lokale Daten unter einer Kohärenzregel zu einem globalen Objekt verkleben, wobei ein einzelner
+    lokaler Invariant das Ganze entweder frei assemblieren lässt oder blockiert/fixiert</em> — ausgeführt
+    als <strong>Blockade-Gesicht</strong> (Monodromie (−1)^w blockiert eine globale Section) und als
+    <strong>Bestimmungs-Gesicht</strong> (ein lokaler Halm/Drop fixiert das Kollimit).
+  </p>
+  <p>
+    Beide haben damit <em>ein</em> peripheres Merkmal, das <em>zwei scheinbar entgegengesetzte Valenzen</em>
+    trägt, und <em>einen benannten Parameter</em>, der die Leseart umschaltet. In A trägt die <em>fragile
+    Schicht</em> die Valenzen <span class="k">real-aber-bezahlt</span> vs. <span class="bad">gefühlt-aber-abwesend</span>
+    (und, für den Readout: treu vs. täuschend; für das Grobe: letzte Wahrheit vs. ehrliche Decke), umgeschaltet
+    von der <strong>Frage</strong> (welche Skala ist lasttragend? — Funktions- vs. Mechanismusfrage). In B trägt
+    der <em>lokale Invariant-Flip</em> die Valenzen <span class="bad">Defekt/Blockade</span> vs.
+    <span class="k">Zertifikat/Kurzschluss</span> (und: kontinuierlich-beobachten vs. diskret-kurzschließen),
+    umgeschaltet von der <strong>Objekt-Eigenschaft</strong> (Invariant-Wert w gerade/ungerade plus
+    Darstellung).
+  </p>
+  <p>
+    <strong>Die fusionierte Position (eine einzige, beide vereinigende These):</strong> Es gibt
+    <em>einen</em> höheren Betrieb — <em>lies ein lokales Merkmal, erkenne, dass es nicht der lasttragende
+    Kern ist, und kalibriere deinen Anspruch, indem du die Lücke zwischen den lokalen Daten und dem
+    globalen Objekt misst, das sie tragen</em>. A und B sind zwei <strong>Medien</strong> dieses Betriebs
+    mit zwei <strong>Währungen</strong> der Lücke und zwei <strong>Schalter-Stellen</strong>:
+    A's Medium ist <em>energetisch/analytisch</em> (die Lücke wird in H¹-Energie und Konfidenz gemessen;
+    der Schalter sitzt im <strong>Leser</strong> — der Frage), B's Medium ist
+    <em>algebraisch/strukturell</em> (die Lücke wird in Invariant-Wert und Existenz/Durchsatz gemessen;
+    der Schalter sitzt im <strong>Objekt</strong> — dem Invariant). <strong>Die Pathologie ist in beiden
+    dieselbe und hat denselben Namen: das periphere Merkmal, über-attribuiert.</strong> „Die Illusion ist
+    der Geist-Schatten des Rauschens" (A) und „Defekt = Zertifikat" (B) sind <em>dieselbe Aussage in zwei
+    Medien</em>: benannt und kalibriert, ist das Merkmal der <em>Weg zum lasttragenden Objekt</em>;
+    über-attribuiert, ist es die <em>Täuschung</em>.
+  </p>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <div class="tag">02 · Widersprüche zwischen A und B</div>
+  <h2>Kein harter Widerspruch — drei echte Spannungen</h2>
+  <p>
+    A und B sind beide abstrakte Runde-2-Positionen und teilen sogar den
+    „ein Merkmal, zwei Lesarten"-Kern; im strengen Sinn widersprechen sie sich <b>nicht</b>.
+    Sie treffen an drei Stellen aufeinander — jeweils konkret benannt:
+  </p>
+  <div class="card">
+    <h3 style="margin-top:0">(T1) Die periphere Schicht: reale, bezahlte Präsenz (A) vs. wert-geschalteter Parameter (B)</h3>
+    <p>
+      <span class="tA">A</span> behauptet, die fragile Schicht <em>existiert</em> und <em>kostet</em>
+      echte Energie: Wildheit ist eine reale H¹-Größe (<span class="mono">‖f′‖<sub>L²</sub> ~ ω</span>),
+      die man <em>bezahlt</em>/<em>umschließt</em>. Ontologie: <b>reale Präsenz mit Preis</b>.
+      <span class="tB">B</span> behandelt das entscheidende Merkmal dagegen als <em>Wert eines Invariants</em>
+      (<span class="mono">m=(−1)^w</span>, Drop/kein Drop) — einen <em>Parameter, der das Gesicht auswählt</em>;
+      er „kostet" keine Energie, er <em>schaltet Regime</em>. Ontologie: <b>ein Wert, den man abliest</b>.
+      — <em>Spannung:</em> A's Peripherie ist ein <b>Ding, das da ist und bezahlt wird</b>; B's ist ein
+      <b>Schalter, dessen Wert man abliest</b>. A bepreist das Merkmal, B liest seinen Wert ab.
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">(T2) Was die Leseart umschaltet: eine (subjektive) Frage (A) vs. ein (objektiver) Wert (B)</h3>
+    <p>
+      <span class="tA">A</span> trennt die zwei Lesarten des Groben (letzte Wahrheit vs. ehrliche Decke) durch
+      die <em>Frage</em> — Funktions- vs. Mechanismusfrage. Das ist ein <em>epistemisches, subjektives</em>
+      Parameter; der Schalter sitzt <b>im Leser</b>: „nenne die Frage, bevor du die Schicht liest."
+      <span class="tB">B</span> trennt die zwei Gesichter (Blockade vs. Bestimmung/Kurzschluss) durch den
+      <em>Wert des Invariants</em> (w gerade/ungerade) plus die <em>Darstellung</em> (kontinuierliche Section
+      vs. diskrete Entscheide). Das ist eine <em>objektive</em> Eigenschaft des Objekts; der Schalter sitzt
+      <b>im Objekt</b>. — <em>Spannung:</em> A's Dualität ist <b>frage-relativ</b> (hängt vom Leser-Frame ab),
+      B's ist <b>objekt-relativ</b> (hängt vom Invariant ab). A lokalisert den Schalter im <strong>Leser</strong>,
+      B im <strong>Objekt</strong>.
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">(T3) Die Pathologie: epistemische Täuschung (A) vs. strukturelle Blockade/Fixierung (B)</h3>
+    <p>
+      <span class="tA">A</span> hat eine <em>epistemische</em> Pathologie: Illusion, Überkonfidenz, der
+      täuschende Readout (Umwelt↔Kopf). Die Sorge lautet <em>„werde ich getäuscht / über-attribuieren?"</em>;
+      die Lücke wird in <b>Konfidenz</b> gemessen (<span class="mono">Δ = geglaubt − wirklich</span>).
+      <span class="tB">B</span> hat eine <em>strukturelle/operationale</em> Pathologie: Nicht-Existenz einer
+      globalen Section (Blockade, <span class="mono">H¹(X,ℱ)≠0</span>) oder vorzeitige Fixierung
+      (Kurzschluss). Die Sorge lautet <em>„existiert das globale Objekt / wann ist es fixiert / ist es effizient?"</em>;
+      die Lücke wird in <b>Existenz/Durchsatz</b> gemessen (H¹; 24M vs. ~3,5M pps).
+      — <em>Spannung:</em> A misst die Lücke als <b>kognitiven Überschuss</b> (Glaube − Getragenes);
+      B als <b>strukturelle Obstruktion</b> (eine Section, die nicht kleben kann) oder <b>Effizienzgewinn</b>.
+      Unterschiedliche <em>Währung</em> derselben Lücke.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <div class="tag">03 · Auflösung</div>
+  <h2>Derselbe Kalibrierungs-Zug, zwei Medien</h2>
+  <div class="grid2">
+    <div class="cell"><h4>T1 → bezahlt vs. geschaltet</h4>
+      <p>Beides ist eine <em>nicht-lasttragende Peripherie</em>; sie manifestiert sich unterschiedlich, weil das
+      <strong>Medium andere Währungen</strong> hat. A's Medium ist energetisch/analytisch (Funktion auf einem
+      Gebiet, Energie = H¹) → die Peripherie ist reale Präsenz mit Preis. B's Medium ist algebraisch/strukturell
+      (Garbe über einem Raum, Verkleben) → die Peripherie ist ein Wert, der das Gesicht bestimmt.
+      <strong>Fusion:</strong> das periphere Merkmal ist in beiden „nicht lasttragend"; seine Erscheinungsform
+      (real-bezahlt vs. wert-geschaltet) ist durch die <em>Währung des Mediums</em> festgelegt.
+      Gemeinsame Regel: <em>erkenne das Merkmal, attribuier es dem Kern nicht.</em></p></div>
+    <div class="cell"><h4>T2 → Schalter im Leser vs. im Objekt</h4>
+      <p>Der Schalter sitzt an unterschiedlicher Stelle, weil die <strong>Fragetypen</strong> unterschiedlich
+      sind. A fragt „was ist lasttragend <em>für deine Frage</em>?" → Schalter = Frage (subjektiv). B fragt
+      „existiert das globale Objekt / ist es fixiert?" → Schalter = Invariant-Wert (objektiv).
+      <strong>Fusion:</strong> es gibt immer einen Schalter, und er kann auf <em>beiden Seiten der
+      Subjekt–Objekt-Grenze</em> sitzen; der ehrliche Zug ist in beiden derselbe — <em>den Schalter benennen,
+      bevor man das Merkmal liest</em> (A: die Frage benennen; B: den Invariant-Wert ablesen).
+      „Lasttragend" (A) und „Gesicht" (B) sind beides <em>relativ zu einem benannten Parameter</em>.</p></div>
+  </div>
+  <div class="grid2">
+    <div class="cell"><h4>T3 → Konfidenz-Lücke vs. Struktur-Lücke</h4>
+      <p>Beides hat eine <em>Lücke</em>, gemessen in <strong>unterschiedlichen Währungen</strong>, mit derselben
+      Funktion. A's Lücke = geglaubt − wirklich (Konfidenz-Überschuss, bezahlt durch Überkonfidenz). B's Lücke =
+      Nicht-Existenz / vorzeitige Fixierung (strukturelle Obstruktion, gemessen in H¹ oder Durchsatz).
+      <strong>Fusion:</strong> die Lücke ist immer <em>„der Abstand zwischen dem, was die lokalen Daten dir
+      behaupten lassen, und dem, was das lasttragende globale Objekt tatsächlich trägt."</em>
+      A's Lücke ist dieser Abstand im <b>Geist</b> (Überkonfidenz); B's ist dieser Abstand im <b>Raum</b>
+      (eine Section, die nicht kleben kann). Die Pathologie ist dieselbe: <em>mehr behaupten, als das globale
+      Objekt trägt.</em></p></div>
+    <div class="cell"><h4>Die Brücke (ein Kalibrierungssatz)</h4>
+      <p>A: <span class="mono">‖f−g‖<sub>L∞</sub> ≥ d<sub>bottleneck</sub>(Pers(f), Pers(g))</span> —
+      eine <em>analytische</em> Metrik umschließt eine <em>topologische</em>, bezahlt in H¹. B:
+      <span class="mono">H¹(X,ℱ)</span> misst, wie sehr sich lokale Daten <em>nicht</em> zu einer globalen
+      Section verkleben lassen — oder ein einziger Halm fixiert das Kollimit. Beide sind
+      <strong>Kalibrierungen für ein globales Objekt</strong>: das lasttragende Objekt ist durch die Messung
+      der Lücke zum peripheren Merkmal <em>umschlossen bzw. enthüllt</em>. Dieselbe Logik, zwei Medien,
+      zwei Währungen (Energie/Konfidenz vs. Wert/Existenz).</p></div>
+  </div>
+  <div class="lane">
+    <b>Fusioniertes Fazit:</b> Der eine gemeinsame Betrieb lautet: <em>lies ein lokales Merkmal (fragile Schicht /
+    Invariant-Flip), erkenne, dass es nicht der lasttragende Kern ist, und kalibriere deinen Anspruch, indem du
+    die Lücke zwischen den lokalen Daten und dem globalen Objekt misst, das sie tragen.</em> Bezahle/umschließe
+    das Reale-und-Fragile (A, in Energie), verweigere das Gefühlte-und-Abwesende (A, im Geist) bzw. benenne den
+    Invariant-Wert und lies das Objekt ab (B, in Existenz). <strong>Die Illusion (A) und der Defekt (B) sind
+    dasselbe Merkmal, über-attribuiert</strong> — in beiden Fällen trägt das periphere Merkmal nicht, was ihm
+    zugesprochen wird. Der ehrliche Zug ist in beiden identisch: <em>Parameter benennen, Anspruch kalibrieren,
+    Peripherie nicht über-attribuieren.</em>
+  </div>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <div class="tag">04 · Fusionierter Inhalt</div>
+  <h2>Beide Papiere auf Thesen-Ebene, verschmolzen</h2>
+
+  <h3>4.1 Das gemeinsame Meta-Schema — „ein Merkmal, zwei Lesarten, ein Schalter"</h3>
+  <p>Beide Modelle sind Instanzen eines einzigen Schemas mit sieben Fächern:
+  (i) das <em>lokale Merkmal / die periphere Schicht</em>, (ii) das <em>Medium / die Währung</em>,
+  (iii) das <em>lasttragende globale Objekt</em>, (iv) der <em>Schalter</em> (benannter Parameter),
+  (v) die <em>zwei Lesarten</em> (scheinbar entgegengesetzte Valenzen), (vi) die <em>Lücke / Kalibrierung</em>
+  und (vii) die <em>Pathologie</em> (Über-Attribuierung der Peripherie).</p>
+
+  <h3>4.2 A — das energetische/analytische Medium (Skala: lasttragend &amp; fragil)</h3>
+  <ul>
+    <li><b>Objekt-Seite (Regelmäßigkeit &amp; Form):</b> Daten = Funktion auf Ω;
+      <span class="mono">W<sup>k,p</sup></span>, <span class="mono">‖u‖<sub>H¹</sub></span>; Preis für
+      Oszillation <span class="mono">‖f′‖<sub>L²</sub> ~ ω</span>; Topologie als Invariante
+      (<span class="mono">β₀, β₁</span> über ε); Stabilitätssatz
+      <span class="mono">‖f−g‖<sub>L∞</sub> ≥ d<sub>bottleneck</sub>(Pers(f),Pers(g))</span>.
+      Grobe Form = lasttragend/stabil; feine Wildheit = real-aber-bezahlt; Readout = treue Projektion.</li>
+    <li><b>Geist-Seite (IOED × Wein):</b> Wissen als Ebenen-Hierarchie (Prozedur → Funktion → Mechanismus →
+      Tiefe); T1→T2-Einbruch (Rozenblit &amp; Keil 2002, η²≈0,54); grobe Prozedur ehrlich-lasttragend, tiefe
+      Mechanistik gefühlt-abwesend; Killer-Prädiktor Sichtbar:Versteckt (R²≈.47); Readout im Tool =
+      Täuschungs­generator (Umwelt↔Kopf).</li>
+    <li><b>Währung der Lücke:</b> Energie (H¹) + Konfidenz (geglaubt − wirklich).
+      <b>Schalter:</b> die Frage (Funktions- vs. Mechanismusfrage) — sitzt im Leser.
+      <b>Pathologie:</b> Überkonfidenz / Illusion.</li>
+  </ul>
+
+  <h3>4.3 B — das algebraische/strukturelle Medium (Garbenmaschine: Blockade &amp; Kurzschluss)</h3>
+  <ul>
+    <li><b>Geometrie (Faserbündel × Sheaving):</b> Faserbündel <span class="mono">π:E→B</span>, Monodromie
+      <span class="mono">m=(−1)^w</span>, Möbius/Nicht-Existenz einer globalen nicht-verschwindenden Section;
+      „konstante" Section <span class="mono">v(θ)=h·cos((w/2)θ)</span>, periodisch ⇔ w gerade; Kohomologie
+      <span class="mono">H¹(X,ℱ)</span> misst die Obstruktion; Sheaf-Axiome S1/S2, Halm <span class="mono">ℱₓ</span>,
+      Garbifizierung <span class="mono">θ: ℱ→ℱ⁺</span>.</li>
+    <li><b>Systeme (Firewall als Garbe):</b> Halm = PASS/DROP am Hook; Urteil
+      <span class="mono">verdict(γ)=colim<sub>h∈γ</sub> v<sub>h</sub></span>; ein Drop = fixierender Keim
+      (XDP ≈ 24M pps vs. iptables ≈ 3,5M); Stratifizierung <span class="mono">f:X→P</span>, Exodromie;
+      Halm-Kriterium (φ Iso ⇔ φₓ Iso für alle x).</li>
+    <li><b>Währung der Lücke:</b> Invariant-Wert (<span class="mono">m=(−1)^w</span>) + Existenz/Durchsatz.
+      <b>Schalter:</b> der Invariant-Wert (w gerade/ungerade) plus Darstellung (Section vs. Entscheid) — sitzt
+      im Objekt. <b>Pathologie:</b> Nicht-Existenz behaupten / vorzeitige Fixierung.</li>
+  </ul>
+
+  <h3>4.4 Die Fusion — die Entsprechung (das Herzstück)</h3>
+  <p>Die beiden Medien stehen sich fach-für-fach gegenüber; die Fusion <em>ist</em> diese Entsprechung:</p>
+  <table>
+    <thead><tr><th>Fach</th><th>A — energetisch/analytisch (Objekt &amp; Geist)</th><th>B — algebraisch/strukturell (Geometrie &amp; Systeme)</th></tr></thead>
+    <tbody>
+      <tr><td>lokales Merkmal / Peripherie</td><td>fragile/hohe­nergetische Schicht (Wildheit)</td><td>Invariant-Flip an der Naht / ein einziger Halm</td></tr>
+      <tr><td>Medium / Währung</td><td>Energie (H¹) + Konfidenz</td><td>Invariant-Wert (m) + Existenz/Durchsatz</td></tr>
+      <tr><td>lasttragendes globales Objekt</td><td>grobe topologische Form (β₀, β₁), stabil</td><td>Kollimit / globale Section</td></tr>
+      <tr><td>der Schalter (Parameter)</td><td>die Frage (Funktions- vs. Mechanismus) — im Leser</td><td>Invariant-Wert w gerade/ungerade + Darstellung — im Objekt</td></tr>
+      <tr><td>die zwei Lesarten</td><td>real-bezahlt vs. gefühlt-abwesend; treu vs. täuschend; Wahrheit vs. Decke</td><td>Defekt/Blockade vs. Zertifikat/Kurzschluss; beobachten vs. kurzschließen</td></tr>
+      <tr><td>Lücke / Kalibrierung</td><td>‖f−g‖↦d<sub>bottleneck</sub>, bezahlt in H¹; Δ = geglaubt−wirklich</td><td>Obstruktion H¹(X,ℱ)≠0 / fixierender Halm (24M vs. 3,5M pps)</td></tr>
+      <tr><td>Pathologie</td><td>Illusion / Überkonfidenz / Umwelt↔Kopf</td><td>Nicht-Existenz behaupten / vorzeitige Fixierung</td></tr>
+    </tbody>
+  </table>
+  <div class="lane">
+    <b>Fusionierter Satz:</b> Ein <em>lasttragendes globales Objekt</em> (A: die stabile topologische Form; B: das
+    Kollimit / die globale Section) ist durch seine <em>lokalen Daten</em> bestimmt, die sich unter einer
+    Kohärenzregel verkleben. Ein <em>einzelnes lokales, nicht-lasttragendes Merkmal</em> — in A die
+    fragile/hohe­nergetische Schicht, in B der Invariant-Flip an der Naht (ein einziger Halm) — ist der
+    <em>entscheidende lokale Keim</em>: er misst die <em>Lücke</em> zwischen den lokalen Daten und dem globalen
+    Objekt (A: <span class="mono">‖f−g‖↦d<sub>bottleneck</sub></span>, bezahlt in H¹-Energie; B: Obstruktion
+    <span class="mono">H¹(X,ℱ)≠0</span> oder fixierender Halm). Die <em>Leseart</em> dieses Keims —
+    real-bezahlt vs. wert-geschaltet; Defekt vs. Zertifikat; treu vs. täuschend; Wahrheit vs. Decke;
+    Blockade vs. Kurzschluss — wird durch einen <em>benannten Parameter</em> umgeschaltet: in A die
+    <strong>Frage</strong> (welche Skala ist lasttragend?), in B der <strong>Invariant-Wert</strong> (w
+    gerade/ungerade) plus <strong>Darstellung</strong> (Section vs. Entscheid). <b>Ein Merkmal, zwei Medien
+    (Energie vs. Wert), ein Schalter, eine Lücke: die ehrliche Epistemik ist in beiden dieselbe — Parameter
+    benennen, Anspruch kalibrieren, Peripherie nicht über-attribuieren.</b> Ein späterer Arbeitsgang kann
+    allein von dieser Entsprechung ausgehen: Merkmal, Medium, Globales, Schalter, Lesarten, Lücke, Pathologie —
+    sieben Fächer, zwei gefüllte Medien, ein Schema.
+  </div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <div class="tag">05 · Visualisierung</div>
+  <h2>Ein verdrilltes Merkmal, in zwei Medien gelesen</h2>
+  <p>
+    <b>Oben (kontinuierlich — das geteilte Merkmal):</b> die „konstante" Section
+    <span class="mono">v(θ)=h·cos((w/2)θ)</span> des <span class="mono">w</span>-Halbwindungs-Bündels über
+    <span class="mono">S¹</span>. <b>Der Slider w ist der geteilte Schalter:</b> er ist zugleich A's Fein-Frequenz
+    <span class="mono">ω=w/2</span> (je höher, desto mehr H¹-Energie kostet die fragile Schicht) <em>und</em> B's
+    Invariant <span class="mono">m=(−1)^w</span> (Parität = das Gesicht). <b>Unten (diskret — B's Halm-Kette):</b>
+    dieselbe Datenmenge als 7 Regionen + 1 Naht; <b>die Naht ist in beiden Medien das „entscheidende lokale
+    Datum"</b> — zugleich Defekt (blockiert die globale Section, A-Bild: verdrillt) und Short-Circuit (fixiert das
+    Kollimit, B-Bild: DROP). w gerade → Medien verkleben (A: Form lasttragend, B: Kollimit fixiert);
+    w ungerade → Medien flippen (A: H¹ steigt, Form verdrillt; B: Naht = Defekt = Zertifikat).
+  </p>
+  <div class="vizbox">
+    <div class="ctrl">
+      <div class="c"><label>Invariant / Halbwindungen w <b id="v-w">1</b></label><input type="range" id="s-w" min="0" max="4" step="1" value="1"></div>
+      <div class="c"><label>Sectionshöhe h (Medium-A-Amplitude) <b id="v-h">0.70</b></label><input type="range" id="s-h" min="0.2" max="1" step="0.05" value="0.7"></div>
+    </div>
+    <div class="btnrow">
+      <button id="b-play" type="button">Naht umrunden animieren</button>
+      <button id="b-rst" type="button" class="alt">Zurücksetzen</button>
+    </div>
+    <canvas id="cvFused" width="820" height="470"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--acc)"></i>Section v(θ) / verklebtes Medium</span>
+      <span><i style="background:var(--sky)"></i>Nahtstart θ=0</span>
+      <span><i style="background:var(--warn)"></i>Naht θ=0≈2π / Position θ</span>
+      <span><i style="background:var(--bad)"></i>0-Schnitte / Naht-DROP (Flip)</span>
+    </div>
+    <div class="ro">
+      <div class="box"><div class="kk">Invariant m=(−1)^w (Schalter)</div><div class="vv" id="ro-m">—</div></div>
+      <div class="box"><div class="kk">ω = w/2 (Fein-Schicht A)</div><div class="vv" id="ro-om">—</div></div>
+      <div class="box" style="min-width:150px;flex:1.6 1 150px;"><div class="kk">H¹ (fragil, real, bezahlt)</div><div class="vv" id="ro-h1">—</div>
+        <div class="bar"><i id="ro-h1bar" style="width:0%"></i></div></div>
+    </div>
+    <div class="faces">
+      <div class="face"><div class="ft">Medium A · energetisch (Skala)</div><div class="fv" id="faceA">—</div></div>
+      <div class="face"><div class="ft">Medium B · algebraisch (Garben)</div><div class="fv" id="faceB">—</div></div>
+    </div>
+    <div class="stat">
+      <span>Entscheidendes lokales Datum: <b id="r-key">—</b></span>
+      <span>Lücke / Kalibrierung: <b id="r-gap">—</b></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <div class="tag">06 · Provenienz</div>
+  <h2>Die beiden Runde-2-Quellen</h2>
+  <div class="card">
+    <b>A — <a href="../n2-010.html">n2-010.html</a></b> · „Eine Skala, zwei Seiten — das Lasttragende und das
+    Fragile"
+    <p class="note">Energetisches/analytisches Medium: eine Signatur über eine Skala, getrennt in lasttragendes
+    Grobes (stabil, topologisch / prozedural) und fragiles Feines (real-bezahlt im Objekt, gefühlt-abwesend im
+    Geist); Stabilitätssatz + IOED-Einbruch als zwei Kalibrierungen. Liefert das Merkmal (fragile Schicht), die
+    Währung (Energie/Konfidenz) und den Schalter in der Frage.</p>
+  </div>
+  <div class="card">
+    <b>B — <a href="../n2-035.html">n2-035.html</a></b> · „Eine Garbenmaschine, zwei Gesichter: Blockade und
+    Kurzschluss"
+    <p class="note">Algebraisches/strukturelles Medium: lokale Halm-Daten verkleben unter einer Kohärenzregel zu
+    einem globalen Objekt (Kollimit/Section), umgeschaltet durch einen lokalen Invariant m=(−1)^w — Blockade-Gesicht
+    (verdrillt, H¹≠0) und Bestimmungs-Gesicht (ein Halm fixiert das Kollimit). Liefert das Merkmal (Invariant-Flip),
+    die Währung (Wert/Existenz) und den Schalter im Objekt.</p>
+  </div>
+</section>
+
+<footer>Selbstständige Fusion (Runde 3, Paar 004, nicht-AI-Track) — keine externen Datenabrufe, alle Daten inline.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  var cv = document.getElementById('cvFused');
+  var S = { w:1, h:0.7, theta:0, playing:false };
+  function $(id){ return document.getElementById(id); }
+  function cssv(n, fb){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || fb; }
+  function parseColor(c){
+    c=(c||'').trim();
+    if(c.charAt(0)==='#'){
+      var h=c.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    var m=c.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(','); return [parseFloat(p[0]), parseFloat(p[1]), parseFloat(p[2])]; }
+    return [120,120,120];
+  }
+  function rgba(c,a){ var p=parseColor(c); return 'rgba('+(p[0]|0)+','+(p[1]|0)+','+(p[2]|0)+','+a+')'; }
+  function vOf(t){ return S.h*Math.cos((S.w/2)*t); }
+  function fit(H){
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var cw = Math.max(1, Math.floor(r.width*dpr));
+    var ch = Math.max(1, Math.floor(H*dpr));
+    if(cv.width!==cw || cv.height!==ch){ cv.width=cw; cv.height=ch; cv.style.height=H+'px'; }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { w:r.width, h:H, ctx:ctx };
+  }
+  var NSEC = 7;
+  function draw(){
+    var o=fit(470), ctx=o.ctx, w=o.w, h=o.h;
+    if(w<10) return;
+    var INK=cssv('--ink','#1c2230'), DIM=cssv('--dim','#8b93a9'), GRID=cssv('--grid','#232a38'),
+        ACC=cssv('--acc','#64ffda'), SKY=cssv('--sky','#7aa2ff'), BAD=cssv('--bad','#ff6f6f'),
+        WARN=cssv('--warn','#ffd166'), BG=cssv('--bg','#0b0e14');
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=BG; ctx.fillRect(0,0,w,h);
+    var flip=(S.w%2===1);
+    var padL=48, padR=30, padT=40, padB=210;
+    var gw=w-padL-padR, gh=h-padT-padB;
+    var vMax=Math.max(S.h,0.25)*1.35;
+    function X(t){ return padL+(t/TAU)*gw; }
+    function Y(v){ return padT+gh/2-(v/vMax)*(gh/2); }
+    // frame + zero line
+    ctx.strokeStyle=GRID; ctx.lineWidth=1; ctx.strokeRect(padL,padT,gw,gh);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=rgba(DIM,0.6);
+    ctx.beginPath(); ctx.moveTo(padL,Y(0)); ctx.lineTo(padL+gw,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+    // top title
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('Merkmal: Section v(\u03B8)=h\u00B7cos((w/2)\u03B8)  \u00B7  w='+S.w, padL, 18);
+    // curve
+    ctx.strokeStyle=ACC; ctx.lineWidth=3; ctx.beginPath();
+    var M=240, i;
+    for(i=0;i<=M;i++){ var t=i/M*TAU; var x=X(t), y=Y(vOf(t)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke();
+    // zero crossings (red) for w>0
+    if(S.w>0){
+      for(var k=0;;k++){
+        var tz=(Math.PI+2*k*Math.PI)/S.w;
+        if(tz>TAU-1e-6) break;
+        if(tz<0) continue;
+        ctx.fillStyle=BAD; ctx.beginPath(); ctx.arc(X(tz),Y(0),4,0,TAU); ctx.fill();
+      }
+    }
+    // seam endpoints
+    var v0=vOf(0), vE=vOf(TAU);
+    ctx.fillStyle=SKY; ctx.beginPath(); ctx.arc(X(0),Y(v0),6,0,TAU); ctx.fill();
+    ctx.fillStyle=flip?BAD:ACC; ctx.beginPath(); ctx.arc(X(TAU),Y(vE),6,0,TAU); ctx.fill();
+    ctx.fillStyle=DIM; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('\u03B8=0', X(0), padT+gh+18);
+    ctx.fillText('\u03B8=2\u03C0', X(TAU), padT+gh+18);
+    ctx.textAlign='left'; ctx.fillStyle=SKY; ctx.fillText('v(0)=+'+S.h.toFixed(2), X(0)+9, Y(v0)-9);
+    ctx.textAlign=flip?'right':'left'; ctx.fillStyle=flip?BAD:ACC;
+    ctx.fillText('v(2\u03C0)='+(flip?'\u2212':'+')+S.h.toFixed(2), flip?X(TAU)-9:X(TAU)+9, Y(vE)-9);
+    ctx.textAlign='center'; ctx.fillStyle=WARN; ctx.font='9px ui-monospace,monospace';
+    ctx.fillText('Naht \u03B8=0\u22482\u03C0  (entscheidendes lokales Datum)', (X(0)+X(TAU))/2, padT+gh+33);
+    // moving marker
+    var xM=X(S.theta), yM=Y(vOf(S.theta));
+    ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(WARN,0.85); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(xM,padT); ctx.lineTo(xM,padT+gh); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=WARN; ctx.beginPath(); ctx.arc(xM,yM,5,0,TAU); ctx.fill();
+    // discrete strip (B): NSEC regions + 1 seam
+    var stripY=padT+gh+46, stripH=34, cellW=gw/(NSEC+1), s;
+    ctx.fillStyle=DIM; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('Medium B (diskret): 7 Halm-Regionen + 1 Naht', padL, stripY-6);
+    for(s=0;s<=NSEC;s++){
+      var isSeam=(s===NSEC);
+      var pass=isSeam?!flip:true;
+      var x0=padL+s*cellW+2, ww=cellW-4;
+      ctx.fillStyle=pass?rgba(ACC,0.22):rgba(BAD,0.28);
+      ctx.strokeStyle=pass?ACC:BAD; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.rect(x0,stripY,ww,stripH); ctx.fill(); ctx.stroke();
+      var cx=x0+ww/2;
+      ctx.fillStyle=pass?ACC:BAD; ctx.font='bold 12px ui-monospace,monospace'; ctx.textAlign='center';
+      ctx.fillText(isSeam?(pass?'PASS':'DROP'):(pass?'\u2713':'\u2717'), cx, stripY+stripH/2+4);
+      if(isSeam){ ctx.fillStyle=WARN; ctx.font='9px ui-monospace,monospace'; ctx.fillText('Naht', cx, stripY-4); }
+    }
+  }
+  function readout(){
+    var flip=(S.w%2===1);
+    var fa=$('faceA'), fb=$('faceB');
+    var rm=$('ro-m'), rom=$('ro-om'), rh=$('ro-h1');
+    var h1=S.h*S.h*S.w*S.w/4;
+    rm.textContent= flip?('m=\u22121 (nicht-trivial)'):('m=+1 (trivial)');
+    rom.textContent=(S.w/2).toFixed(1);
+    rh.textContent=h1.toFixed(2);
+    $('ro-h1bar').style.width=Math.min(100,h1/4*100).toFixed(1)+'%';
+    if(flip){
+      fa.className='fv bad';
+      fa.innerHTML='<b>fragil, bezahlt</b> — \u03C9=w/2, H\u00B9\u2248'+h1.toFixed(2)+' (real, steigt mit w). Die <b>Form bleibt verdrillt, lasttragend &amp; stabil</b>; die Fein-Schicht kostet Energie, trägt die Form nicht. Schalter (Frage): Mechanismusfrage \u2192 das Grobe ist nur eine Decke.';
+      fb.className='fv bad';
+      fb.innerHTML='<b>Blockade / Kurzschluss</b> — w ungerade, m=\u22121: die Naht flippt, keine globale nicht-verschwindende Section (H\u00B9\u22600). Dieselbe Naht ist der <b>Short-Circuit</b>, der das Kollimit an einem einzigen Halm fixiert — <b>Defekt = Zertifikat</b>.';
+      $('r-key').textContent='Naht \u03B8=0\u22482\u03C0 (Flip) — gleicher Keim, zwei Lesarten';
+      $('r-gap').textContent='L\u00FCcke \u2260 0: Naht blockiert (H\u00B9\u22600) / fixiert (Short-Circuit)';
+    } else {
+      fa.className='fv ok';
+      fa.innerHTML='<b>lasttragend</b> — \u03C9=w/2, H\u00B9\u2248'+h1.toFixed(2)+'. Die <b>Form (geschlossen) ist die stabile, lasttragende Invariante</b>; die Fein-Schicht ist real aber geringwertig. Schalter (Frage): Funktionsfrage \u2192 das Grobe ist die (robuste) Antwort.';
+      fb.className='fv ok';
+      fb.innerHTML='<b>Bestimmung</b> — w gerade, m=+1: die Naht verklebt, H\u00B9=0; Kollimit der H\u00E4lme = globale Section, <b>freie Assemblierung</b>, das Lokale bestimmt das Ganze (kein fixierender Keim n\u00F6tig).';
+      $('r-key').textContent='\u2014 (kein einziger fixierender Keim; Naht verklebt)';
+      $('r-gap').textContent='L\u00FCcke = 0: verklebt (H\u00B9=0, Form stabil)';
+    }
+  }
+  function refresh(){ draw(); readout(); }
+  function wire(id,set){ $(id).addEventListener('input',function(e){ set(e.target); refresh(); }); }
+  function toggleTheme(){
+    var d=document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('n3-theme', d?'dark':'light'); }catch(e){}
+    $('themeBtn').textContent = d ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    draw();
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    wire('s-w',function(el){ S.w=parseInt(el.value,10); $('v-w').textContent=S.w; });
+    wire('s-h',function(el){ S.h=parseFloat(el.value); $('v-h').textContent=S.h.toFixed(2); });
+    $('b-play').addEventListener('click',function(){ S.playing=!S.playing; this.textContent=S.playing?'Pause':'Naht umrunden animieren'; });
+    $('b-rst').addEventListener('click',function(){
+      S.w=1; S.h=0.7; S.theta=0; S.playing=false;
+      $('s-w').value=1; $('v-w').textContent='1'; $('s-h').value=0.7; $('v-h').textContent='0.70';
+      $('b-play').textContent='Naht umrunden animieren';
+      refresh();
+    });
+    $('themeBtn').addEventListener('click', toggleTheme);
+    $('themeBtn').textContent=document.documentElement.classList.contains('dark')?'\u2600\uFE0F':'\uD83C\uDF19';
+    var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+    readout(); draw();
+    (function loop(){ if(S.playing){ S.theta=(S.theta+0.02)%TAU; } draw(); requestAnimationFrame(loop); })();
+  });
+})();
+</script>
+</body>
+</html>

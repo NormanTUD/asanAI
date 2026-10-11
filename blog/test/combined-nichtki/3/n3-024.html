@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Schatten trägt sie nicht — die Invariante als globale Signatur im höheren Objekt</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f6f2e9; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --viz-bg:#f3f1ea; --viz-line:#d9d3c6;
+  --glow:rgba(15,157,118,0.10);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --viz-bg:#0e1322; --viz-line:#283050;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.7;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:36px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+h1{font-size:clamp(1.7rem,4.6vw,2.6rem);line-height:1.14;margin:4px 0 12px;letter-spacing:-.015em}
+.subtitle{color:var(--accent);font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;
+  font-size:.84rem;margin:0 0 4px}
+.subtitle .x{color:var(--accent2);font-weight:700}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 6px;font-style:italic}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:18px 0}
+h2{font-size:1.42rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:.4em}
+h3{font-size:1.06rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:.78em 0;max-width:74ch}
+.ab{color:var(--accent);font-weight:700}
+.nab{color:var(--accent2);font-weight:700}
+.fuse{color:var(--accent);font-weight:700}
+ul{margin:.6em 0;padding-left:1.25em}
+li{margin:.42em 0}
+code{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:.86em;
+  background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:.07em .38em}
+.callout{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--accent);
+  border-radius:10px;padding:12px 18px;margin:12px 0}
+.callout.a2{border-left-color:var(--accent2)}
+.callout.a3{border-left-color:var(--warn)}
+.callout .t{display:block;font-size:.72em;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--accent);margin-bottom:.4em;font-family:system-ui,sans-serif}
+.callout.a2 .t{color:var(--accent2)}
+.callout.a3 .t{color:var(--warn)}
+.callout .note{margin:.6em 0 0;font-size:.9em;color:var(--muted);font-style:italic}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.86rem}
+th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent);font-size:.7em;letter-spacing:.05em;text-transform:uppercase;font-family:system-ui,sans-serif}
+td.a{color:var(--accent)} td.b{color:var(--accent2)}
+tr.hl td{background:var(--glow)}
+.math{font-family:"Cambria Math","Times New Roman",serif;background:var(--bg2);
+  border:1px solid var(--border);border-radius:9px;padding:11px 15px;margin:12px 0;overflow-x:auto;font-size:.98em}
+.math b{color:var(--fg)}
+.sub{color:var(--muted);font-size:.9em;font-style:italic}
+.fz-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:14px}
+.fz-ctrl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 22px;margin-bottom:14px}
+.fz-ctrl label{font-size:.82em;color:var(--muted);display:flex;flex-direction:column;gap:6px;font-family:system-ui,sans-serif}
+.fz-ctrl .v{color:var(--accent);font-family:ui-monospace,monospace;font-weight:700}
+input[type=range]{-webkit-appearance:none;appearance:none;width:210px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--fg);box-shadow:0 0 0 4px var(--glow);cursor:grab}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;border-radius:50%;background:var(--fg);cursor:grab}
+.btn{background:transparent;border:1px solid var(--border);color:var(--fg);padding:7px 13px;
+  border-radius:9px;cursor:pointer;font-size:.83em;font-family:system-ui,sans-serif}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btn.active.alt{background:var(--accent2);border-color:var(--accent2)}
+.btn.fate-p.active{background:var(--good);border-color:var(--good)}
+.btn.fate-d.active{background:var(--muted);border-color:var(--muted)}
+.btn.fate-n.active{background:var(--warn);border-color:var(--warn)}
+.fz-legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:10px;font-size:.8em;color:var(--muted);font-family:system-ui,sans-serif}
+.fz-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:middle}
+#fv-cv{width:100%;display:block;border-radius:11px;background:var(--viz-bg);border:1px solid var(--border);touch-action:none}
+.fz-readout{margin-top:14px;font-size:.92em;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:12px 15px}
+.fz-readout .ro-fuse{margin-top:.7em;border-top:1px dashed var(--border);padding-top:.7em;
+  border-left:3px solid var(--accent2);padding-left:12px;font-size:.95em}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.stat{flex:1 1 118px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 11px;text-align:center}
+.stat .n{font-size:1.3rem;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat .l{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.prov{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.prov .item{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:13px 16px}
+.prov .item .tag{font-size:.7em;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--accent);font-family:system-ui,sans-serif}
+.prov .item.b .tag{color:var(--accent2)}
+.prov .item b a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.prov .item b a:hover{color:var(--accent2);border-color:var(--accent2)}
+.prov .item p{margin:.5em 0 0;color:var(--muted);font-size:.9em}
+footer{margin-top:22px;padding-top:1em;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem}
+</style>
+</head>
+<body>
+<article>
+  <button id="op-theme" class="theme-toggle">🌙 Dunkel</button>
+
+  <h1>Der Schatten trägt sie nicht: die Invariante als globale Signatur im höheren Objekt</h1>
+  <p class="subtitle">Fusion aus: <span class="x">n2-047.html</span> ✕ <span class="x">n2-029.html</span>
+    &nbsp;·&nbsp; Runde 3 · Pair 024 (nicht-KI-Track)</p>
+  <p class="lede">Ein Schema, zwei Auflösungen: die weiche, verlustfreie Filtration (persistent Homology) und
+    der harte, verlustbehaftete Kollaps (Transform) lesen dieselbe globale Signatur aus demselben flachen Schatten.</p>
+
+  <section id="these">
+    <h2><span class="num">1</span>Kernthese der Fusion</h2>
+    <p>Beide Round-2-Papiere tragen ganz verschiedene Titel und Domains —
+    <b>A</b> (n2-047, „Form &amp; Substanz: der universale Trennungsoperator der persistenten Topologie“)
+    und <b>B</b> (n2-029, „Die Invariante lebt im höheren Objekt — der flache Schatten trägt sie nicht“) —
+    aber unter der Oberfläche vollziehen sie <b>dieselbe Geste</b>. <b>A</b> sagt: ein System ist eine
+    gewichtete Punktwolke mit Relationen; eine <em>Filtration</em> lässt die Struktur über eine Skalenreihe
+    wachsen; was <span class="ab">lange überlebt</span> ist die <span class="ab">Form</span> (die Invariante),
+    was nur flackert, ist die <span class="nab">Substanz</span> (das Kontingente, das Private). Persistent
+    Homology ist der Operator, der die invariante Form von der kontingenten Substanz abtrennt.
+    <b>B</b> sagt: die verdeckte Antwort — die Invariante — ist <em>nie</em> aus den rohen,
+    niedrigdimensionalen Daten (dem „flachen Schatten“) lesbar; sie wird erst lesbar, wenn eine
+    struktur-erhellende Operation — ein Lift zu einem höheren Objekt oder ein Transform — die Redundanz auf
+    eine einzige <em>globale Signatur</em> zusammenstößt. Die rohe Beschreibung ist der verlustbehaftete
+    Schatten dieser Signatur.</p>
+    <p>Da liegen sie exakt überein. Beide haben: (i) eine <b>flache, niedrige Beschreibung, die trügt</b>
+    (A: die Substanz — die konkreten Punkte + Ereignisse; B: der Schatten — die Matrix <code>Q</code> / die
+    einzelnen Operationswerte); (ii) eine <b>struktur-erhellende Operation</b>, die sie in einen höheren /
+    transformierten Raum abbildet (A: Filtration → Persistenzdiagramm; B: Transform/Lift → Spektrum /
+    Modulraum / <code>∞</code>-Topos); (iii) eine <b>globale Signatur, die die Invariante ist</b>
+    (A: das langlebige Merkmal weit über der Diagonalen, die Form; B: der einzelne Peak bei
+    <code>k = N/r</code>, die Periode / Diagonalisierbarkeit); und (iv) die rohe Datenlage als
+    <b>verlustbehafteter Schatten</b> genau dieser Signatur.</p>
+    <p>Der einzige echte Unterschied ist die <em>Art der Operation</em> und das <em>Schicksal des Restes</em>.
+    A’s Operation ist <b>weich, kontinuierlich und verlustfrei</b> (eine schwellenwertfreie Filtration, die den
+    ganzen Gradienten sichtbar lässt; die Lektüre ist eine weiche Interpretation). B’s Operation ist
+    <b>hart, diskret und verlustbehaftet</b> (ein entscheidender Kollaps, der verbietet / wegwirft, um zu
+    extrahieren). Und der Rest — das, was nicht als Invariante überlebt — wird bei A entweder als
+    <em>Geheimnis geschützt</em> (oder als Rauschen verstanden), bei B als <em>reiner Defekt</em>
+    (zu reich oder zu arm) abgetan. <span class="fuse">Integrierte Position: Die Invariante ist immer eine
+    globale Signatur in einem höheren / transformierten Objekt; die rohe Datenlage ist ihr verlustbehafteter
+    Schatten. A und B sind zwei Realisierungen desselben Extrakts — weich/verlustfrei (persistent Homology)
+    und hart/verlustbehaftet (Transform-Kollaps) — und das Schicksal des Restes ist eine Zweckwahl, die
+    außerhalb der Extraktion liegt.</span></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span>Widersprüche zwischen A und B</h2>
+    <p>Auf dem <b>Kern</b> widersprechen sich beide <em>nicht</em> — sie <b>einigen</b> sich auf genau dem,
+    was die Fusion trägt: Die Invariante sitzt nicht in der rohen Datenlage, sondern ist eine <em>globale
+    Signatur im höheren Objekt</em>; die rohe Datenlage ist der verlustbehaftete Schatten. Drei
+    <em>echte</em> Spannungen bleiben, die aus dem <em>Unterschied der Operationen und der Rest-Verfugung</em>
+    folgen:</p>
+    <div class="callout a2">
+      <span class="t">Spannung 1 — Das Schicksal des Restes: geschütztes Gut (A) vs. reiner Defekt (B)</span>
+      <p><b>A</b> verleiht dem Abgetrennten — der Substanz — eine <em>würdige, zweckvolle</em> Behandlung.
+      In der <em>privativen</em> Disposition ist sie ein <span class="nab">wertvolles Geheimnis, das geschützt
+      werden muss</span> (verschlüsselt, „opak“, „verifizierbare Privatsphäre“); in der <em>epistemischen</em>
+      Disposition ist sie Rauschen, das man als <em>nicht-strukturell</em> versteht. In beiden Fällen baut A
+      eine ganze Disposition darum auf, <em>den Rest gezielt zu behandeln</em> (schützen oder als Rauschen
+      entlarven). <b>B</b> dagegen schreibt dem Abgetrennten — dem Schatten, der die Invariante nicht trägt —
+      nur <em>Mangel</em> zu: er ist „<span class="nab">zu reich</span>“ (Phantom-Objekte, <code>E&#8328;</code>)
+      oder „<span class="nab">zu arm</span>“ (verlorene Morphismen) — ein Fehlerterm, der verworfen /
+      korrigiert wird, nie ein Schatz, der bewahrt wird. B kennt <em>keine</em> Schutz-Disposition.</p>
+      <p class="note">Gegenpol: A behandelt den Rest mit Würde (schützen / verstehen); B schreibt ihm nur Verlust zu (verwerfen).</p>
+    </div>
+    <div class="callout a3">
+      <span class="t">Spannung 2 — Die Art der Operation: verlustfreie Lektüre (A) vs. verlustbehafteter Kollaps (B)</span>
+      <p><b>A</b>’s Operation ist eine <em>schwellenwertfreie Filtration</em>, die die <span class="ab">ganze</span>
+      Struktur über alle Skalen <em>sichtbar</em> lässt; die Lektüre ist ein <em>weiches, interpretierendes</em>
+      Lesen eines kontinuierlichen Gradienten („weit über der Diagonalen = Form, an ihr = Rauschen“) —
+      „alle Daten liegen sichtbar da“, nichts wird abgeschnitten oder durchgesetzt. <b>B</b>’s Transform ist
+      eine <em>verlustbehaftete Projektion</em>, die die Redundanz <span class="nab">kollabiert</span> auf einen
+      einzelnen Peak und <em>verbietet</em> (das höhere Objekt als Filter streicht Möglichkeiten) — es wird
+      tatsächlich <em>weggeworfen</em>, um zu extrahieren. A’s Methode ist das bewusste Gegenteil: alles offen
+      halten und weich lesen.</p>
+      <p class="note">Gegenpol: A hält alles offen und liest weich (verlustfrei); B wirft weg und kollabiert hart auf einen Peak (verlustbehaftet).</p>
+    </div>
+    <div class="callout">
+      <span class="t">Spannung 3 — Der Bruch: weiche kontinuierliche Grenze (A) vs. diskreter Phasenübergang (B)</span>
+      <p><b>A</b> kennt <em>keinen</em> harten Bruch. Die Form/Substanz-Grenze wird <em>kontinuierlich</em>
+      entlang des Persistenz-Gradienten gelesen; die einzige „Grenze“ ist die Diagonale (<code>p = 0</code>) —
+      eine Konvention, kein Phasenübergang. <b>B</b> dagegen hat einen expliziten, <em>diskreten
+      Bruchpunkt</em>: Dimension&nbsp;4 als <em>Phasenübergang</em> (bzw. der „imaginäre“ Wert, der die
+      reelle/binäre Linie verlässt) — an der der flache Schatten <span class="nab">aufhört, die höhere
+      Struktur zu tragen</span>. Der Ausfall ist ein scharfes Struktur-Ereignis, kein Gradient.</p>
+      <p class="note">Gegenpol: A kennt keinen harten Bruch (nur die weiche Diagonale); B hat einen scharfen Phasenübergang, an dem der Schatten scheitert.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span>Auflösung</h2>
+    <p>Alle drei Spannungen lösen sich, sobald man erkennt, dass A und B <b>dieselbe Projektion in zwei
+    Auflösungen</b> sind — und dass das Schicksal des Restes eine <em>Zweckwahl</em> ist, kein Teil der
+    Extraktion.</p>
+    <div class="callout">
+      <span class="t">Auflösung 1 — Dasselbe Residuum, drei Zwecke</span>
+      <p>Beide einigen sich darauf, dass der Rest <em>nicht die Invariante</em> ist. Ob man ihn
+      <em>schützt</em> (A-privativ), als <em>Rauschen</em> liest (A-epistemisch) oder als <em>Defekt verwirft</em>
+      (B), ist eine <span class="fuse">Zweckwahl, die außerhalb der Extraktion liegt</span> — exakt die
+      Auflösung, die A bereits für seine eigene innere A/B-Spannung gegeben hat („Zweckwahl, kein Teil der
+      Topologie“). Die <em>Extraktion</em> (die globale Signatur im höheren Objekt finden) ist
+      zweckunabhängig; die <em>Rest-Verwaltung</em> ist zweckabhängig. „Schützen“, „Rauschen“ und
+      „Defekt/verwerfen“ sind drei <em>legitime Dispositionen desselben nicht-invarianten Restes</em>.</p>
+    </div>
+    <div class="callout a2">
+      <span class="t">Auflösung 2 — Verlustfrei vs. verlustbehaftet = dieselbe Projektion, zwei Auflösungen</span>
+      <p>A’s Filtration ist die <em>kontinuierliche, verlustfreie</em> Version von B’s Kollaps. Lässt man die
+      Filtration laufen und <em>kollabiert</em> das Diagramm dann auf sein global-dominantes Merkmal, erhält man
+      B’s einzelnen Peak. A hält den <em>ganzen</em> Gradienten (weich, verlustfrei, „weich beim Messen“); B
+      vollzieht den entscheidenden Schritt des Kollabierens auf den Peak (hart, verlustbehaftet,
+      „hart beim Kollabieren“). <span class="fuse">Die Invariante ist in beiden die gleiche
+      global-dominante Signatur; verlustfrei vs. verlustbehaftet ist eine <em>Auflösungs-Wahl auf derselben
+      Projektion</em>, kein Widerspruch.</span> (Das ist B’s eigene Auflösung (a) — „Filter und Dekodierer sind
+      derselbe Kollaps, von zwei Seiten gelesen“ — auf die Operation angewandt.)</p>
+    </div>
+    <div class="callout a3">
+      <span class="t">Auflösung 3 — Diagonale (A) und Phasenübergang (B) sind derselbe Punkt in zwei Koordinaten</span>
+      <p>Beide markieren <em>den Ort, an dem die flache / niedrige Beschreibung sich von der Invariante
+      entkoppelt</em>. A liest ihn als <em>Überlebens-Auswahl auf einem Gradienten</em>: an der Diagonalen
+      sterben die meisten Merkmale; die Invariante ist das <em>Überlebende</em>, das nicht stirbt. B liest ihn
+      als <em>den Schatten, der aufhört, gültiges Encoding zu sein</em>: in Dimension&nbsp;4 trägt der flache
+      Schatten die höhere Struktur nicht mehr, der Wert entkommt. <span class="fuse">Fusion: Der „Bruch“ ist
+      der Punkt, an dem die rohe Beschreibung nicht mehr ausreicht und das höhere Objekt erzwungen wird —
+      gelesen als weiche Auswahl (A) oder als scharfes Struktur-Ereignis (B). Derselbe Punkt, zwei
+      Koordinaten.</span></p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span>Fusionierter Inhalt</h2>
+    <p class="lead">Auf die Ebene der Thesen abstrahiert: ein einstückiges Schema mit zwei Realisierungen —
+    die <b>weiche / verlustfreie</b> (A, persistent Homology) und die <b>harte / verlustbehaftete</b>
+    (B, Transform-Kollaps).</p>
+
+    <h3>Das Master-Schema (beide Realisierungen gegenüber)</h3>
+    <table>
+      <tr><th>Rolle im Schema</th><th>A · n2-047 (weich, verlustfrei)</th><th>B · n2-029 (hart, verlustbehaftet)</th></tr>
+      <tr><td>Flache / niedrige Beschreibung (der Schatten)</td>
+          <td class="a">die konkreten Punkte + Ereignisse (die Substanz)</td>
+          <td class="b">der flache Schatten (Matrix <code>Q</code> / einzelne Operationswerte)</td></tr>
+      <tr class="hl"><td>Struktur-erhellende Operation</td>
+          <td class="a">Vietoris-Rips-Filtration + persistent Homology (kontinuierlich, schwellenwertfrei)</td>
+          <td class="b">Transform / Lift (QFT / Lift zum höheren Objekt) — entscheidender Kollaps</td></tr>
+      <tr><td>Höheres / transformiertes Objekt</td>
+          <td class="a">das Persistenzdiagramm / der Filtrationsraum</td>
+          <td class="b">Spektrum / Modulraum <code>M</code> / <code>∞</code>-Topos</td></tr>
+      <tr class="hl"><td>Globale Signatur</td>
+          <td class="a">das langlebige Merkmal weit über der Diagonalen (die Form, H<sub>1</sub>)</td>
+          <td class="b">der einzelne Peak bei <code>k = N/r</code></td></tr>
+      <tr><td>Invariante</td>
+          <td class="a">Form (<em>longue durée</em>, auditierbare Struktur)</td>
+          <td class="b">Periode <code>r</code> / Diagonalisierbarkeit</td></tr>
+      <tr><td>Rest (was nicht überlebt)</td>
+          <td class="a">Substanz (Rauschen an der Diagonalen / das Geheimnis)</td>
+          <td class="b">der Schatten (zu reich: Phantom <code>E&#8328;</code> / zu arm: verlorene Morphismen)</td></tr>
+      <tr><td>Skalen-/Komplexitätsachse</td>
+          <td class="a"><code>ε</code> / Persistenz <code>p</code></td>
+          <td class="b">Periode <code>r</code> / Dimension <code>n</code> (<code>r=2</code> frei, groß teuer; Dim&nbsp;4 = Phasenübergang)</td></tr>
+      <tr><td>Bruchpunkt</td>
+          <td class="a">die Diagonale (<code>p=0</code>), weiche Grenze</td>
+          <td class="b">diskreter Phasenübergang (Dim&nbsp;4 / der „imaginäre“ Wert)</td></tr>
+      <tr><td>Ergebnis-Ton</td>
+          <td class="a">Verstehen (Form transparent) + Privatsphäre (Substanz geschützt)</td>
+          <td class="b">Exaktheit (Theorem) + Hardness (großes <code>r</code>, probabilistisch)</td></tr>
+    </table>
+
+    <h3>Der gemeinsame Mechanismus — verlustbehaftete, entscheidende Projektion in zwei Auflösungen</h3>
+    <p>Beide sind <b>derselbe Typ von Abbildung</b>: eine struktur-erhellende Projektion von einem
+    <em>redundanten, flachen</em> Raum in einen <em>dünnere Raum der Invarianten</em>, in dem die Invariante
+    als <b>globale Signatur</b> auftritt. „Nur den Schatten ablesen“ — bei A das Rauschen an der Diagonalen,
+    bei B der einzelne Operationswert / die Matrix <code>Q</code> — ist in beiden <em>verlustbehaftet</em>.
+    Die Invariante überlebt genau dann, wenn sie eine <b>stabile, wahlunabhängige Struktur</b> trägt
+    (A: das max-Persistenz-Merkmal; B: der Peak / Signatur &amp; Rang von <code>Q</code>). A vollzieht diese
+    Projektion <em>verlustfrei und kontinuierlich</em> (der ganze Gradient bleibt lesbar — „weich beim
+    Messen“); B vollzieht sie <em>verlustbehaftet und entscheidend</em> (Kollaps auf den Peak, den Rest
+    verbieten — „hart beim Kollabieren“).</p>
+
+    <h3>Die zwei Realisierungen (auf der Ebene ihrer Thesen)</h3>
+    <p><b>A (weich)</b> — persistent Homology auf Geschichte / Gehirn / HPC-Cluster: Die Form (der Zyklus,
+    die <em>longue durée</em>, die auditierbare Struktur) wird von den <em>Überlebenden</em> eines
+    schwellenwertfreien Sweeps gelesen; die Substanz ist entweder Rauschen (epistemisch) oder Geheimnis
+    (privativ). <em>Robustheit als Topologie:</em> Zyklen = redundant/robust, Gelenkpunkte =
+    einzige-Fehlerquelle. <em>Das Signal liegt in der Form, nicht in der lokalen Substanz</em>: die
+    Persistenzverteilung unterscheidet sich hochsignifikant (Kolmogorow–Smirnow <code>p &lt; 10⁻¹⁰</code>),
+    das lokale Frequenzgerüst nicht (<code>p = 0.72</code>); die Kosten sind trivial (≈ 2.5 s/GB).</p>
+    <p><b>B (hart)</b> — der Transform/Lift stößt die Redundanz auf eine globale Signatur zusammen: den
+    Modulraum <code>M</code> (<code>dim M = 8k − 3(1 − b₁ + b₁⁺)</code>, für <code>k=1</code> also
+    <code>dim M = 5</code>; <code>σ(X) = rang(Q) = n(Q)</code>; <code>Q</code> diagonalisierbar; exotische
+    <code>ℝ⁴</code>; Rekonstruktion im <code>∞</code>-Topos; Grothendieck-Verschwinden) oder den QFT-Peak bei
+    <code>k = N/r</code> (<code>GCD(a^{r/2} ∓ 1, N)</code>; konkret <code>N=15, a=7 → r=4 → 3,5</code>;
+    <code>O((log N)³)</code> statt ≈ 10³⁰⁰). Die Invariante ist <em>exakt</em>, wenn das höhere Objekt
+    vollständig in Hand ist (Theorem), und <em>geschätzt / probabilistisch</em>, wenn nur Proben vorliegen
+    (Statistik).</p>
+
+    <h3>Die vereinigte Werkzeug-Formel</h3>
+    <div class="math">
+      <b>von A (weich):</b> &nbsp; Filtration <code>K<sub>ε₁</sub> ⊆ K<sub>ε₂</sub> ⊆ ⋯</code>; &nbsp;
+      <code>p = d − b</code>; &nbsp; <code>H<sub>k</sub> = Z<sub>k</sub>/B<sub>k</sub></code>,
+      <code>β<sub>k</sub> = dim H<sub>k</sub></code>; &nbsp; <code>χ = V − E + F = Σ (−1)<sup>k</sup> β<sub>k</sub></code>
+      (Kugel χ=2, Torus χ=0)<br>
+      <b>von B (hart):</b> &nbsp; <code>QFT|x&gt; = (1/√N) Σ<sub>x</sub> e<sup>2πixk/N</sup>|x&gt;</code>,
+      Peak bei <code>k = N/r</code>; &nbsp; <code>σ(X) = rang(Q) = n(Q)</code>, <code>Q</code> diagonalisierbar<br>
+      <b>fusioniert:</b> &nbsp; <span class="ab">Invariante</span> = globale Signatur (max-<code>p</code>-Merkmal
+      / der einzelne Peak) im höheren Objekt &nbsp;·&nbsp;
+      <span class="nab">Schatten</span> = verlustbehaftete niedrige Lage (Rauschen / <code>Q</code>)<br>
+      &nbsp;&nbsp; Rest → Zweck: <em>schützen</em> (privativ) &nbsp;|&nbsp; <em>Rauschen lesen</em> (epistemisch)
+      &nbsp;|&nbsp; <em>als Defekt verwerfen</em> (B)
+    </div>
+    <div class="callout">
+      <span class="t">Fusionierte Schlussfolgerung</span>
+      <p>Die Invariante ist <em>nie</em> in der rohen Datenlage. Sie ist eine <b>globale Signatur in einem
+      höheren / transformierten Objekt</b>; die rohe Datenlage ist ihr <b>verlustbehafteter Schatten</b>. Die
+      struktur-erhellende Operation macht die Invariante <em>lesbar</em>: A liest sie <span class="ab">weich
+      und verlustfrei</span> von einem kontinuierlichen Skalen-Sweep ab (das Überlebende weit über der
+      Diagonalen), B liest sie <span class="nab">hart und verlustbehaftet</span> von einem entscheidenden
+      Kollaps ab (der einzelne Peak). Das Schicksal des Restes (schützen / als Rauschen lesen / als Defekt
+      verwerfen) ist eine <b>Zweckwahl</b> außerhalb der Extraktion. Eine einzige Idee, zwei Auflösungen:
+      <span class="fuse">weich beim Messen, hart beim Kollabieren; der Rest ist Zweck, nicht Topologie.</span></p>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span>Interaktive Visualisierung</h2>
+    <p class="lead">Ein und dasselbe System — ein <b>langlebiger Zyklus</b> (die Form, ein persistentes
+    H<sub>1</sub>-Loch) umgeben von <b>verstreuter Substanz</b> — durchlaufen mit der Filtration.
+    <b>Links</b> die niedrige Beschreibung (der Schatten) im wachsenden <code>ε</code>. <b>Rechts</b> das
+    höhere Objekt → die Signatur: im Modus <b>A (weich, verlustfrei)</b> das vollständige
+    Persistenzdiagramm (der ganze Gradient, die Form weit über der Diagonalen, der Rest an ihr); im Modus
+    <b>B (hart, verlustbehaftet)</b> derselbe Inhalt <em>kollabiert</em> auf eine Signatur-Spalte (Balken =
+    Persistenz, die einzelne hohe Spalte = die Invariante, das breite niedrige Band = der Defekt/Schatten).
+    Der <em>Rest-Regime</em>-Schalter zeigt die Spannung 1: derselbe nicht-invariante Rest, drei Zwecke —
+    <em>Schützen</em> (grün, Geheimnis), <em>Verwerfen</em> (grau, Defekt), <em>Rauschen</em> (bernstein,
+    oberflächlich). Dieselbe Topologie, zwei Auflösungen (weich/hart), drei Zwecke.</p>
+
+    <div class="fz-card">
+      <div class="fz-ctrl">
+        <label>Filtrations-Skala ε <span class="v" id="fv-eps-out">0.000</span>
+          <input type="range" id="fv-eps" min="0" max="1000" value="320">
+        </label>
+        <button class="btn" id="fv-play">▶ Filtration</button>
+        <label>Operation (Auflösung)
+          <span style="display:flex;gap:6px;">
+            <button class="btn active" id="fv-soft">A · weich / verlustfrei</button>
+            <button class="btn alt" id="fv-hard">B · hart / verlustbehaftet</button>
+          </span>
+        </label>
+        <label>Rest-Regime (Zweck)
+          <span style="display:flex;gap:6px;">
+            <button class="btn fate-p active" id="fv-protect">Schützen</button>
+            <button class="btn fate-d" id="fv-discard">Verwerfen</button>
+            <button class="btn fate-n" id="fv-noise">Rauschen</button>
+          </span>
+        </label>
+      </div>
+      <div class="fz-legend">
+        <span><i style="background:var(--accent)"></i> Form: langlebiger Zyklus</span>
+        <span><i style="background:var(--warn)"></i> die Invariante (Signatur / Peak)</span>
+        <span><i id="lg-res" style="background:var(--good)"></i> der Rest (Regime: Schützen)</span>
+        <span><i style="background:var(--muted)"></i> H₀-Merkmale</span>
+        <span><i style="background:var(--accent2)"></i> ε-Linie / Diagonale</span>
+      </div>
+      <canvas id="fv-cv" width="780" height="460"></canvas>
+      <div class="stats">
+        <div class="stat"><div class="n" id="st-b0">–</div><div class="l">β₀ Komponenten</div></div>
+        <div class="stat"><div class="n" id="st-b1">–</div><div class="l">β₁ Löcher jetzt</div></div>
+        <div class="stat"><div class="n" id="st-eps">–</div><div class="l">Skala ε</div></div>
+        <div class="stat"><div class="n" id="st-form">–</div><div class="l">Persistenz der Form</div></div>
+      </div>
+      <div class="fz-readout" id="fv-ro"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span>Provenienz</h2>
+    <div class="prov">
+      <div class="item a">
+        <span class="tag">Quelle A</span>
+        <p style="margin-top:.4em"><b><a href="../n2-047.html">n2-047.html — Form &amp; Substanz: der universale Trennungsoperator der persistenten Topologie</a></b></p>
+        <p>Round-2-Fusion (n1-066 × n1-105). Liefert die <em>weiche / verlustfreie</em> Seite: persistent
+        Homology als Form/Substanz-Trenner, schwellenwertfreie Filtration, Persistenzdiagramm; die Substanz
+        wird entweder als Rauschen verstanden (epistemisch) oder als Geheimnis geschützt (privativ,
+        „verifizierbare Privatsphäre“); Robustheit als Topologie (Zyklen vs. Gelenkpunkte); das Signal liegt in
+        der Form, nicht in der lokalen Substanz (KS <code>p&lt;10⁻¹⁰</code> vs. <code>p=0.72</code>).</p>
+      </div>
+      <div class="item b">
+        <span class="tag">Quelle B</span>
+        <p style="margin-top:.4em"><b><a href="../n2-029.html">n2-029.html — Die Invariante lebt im höheren Objekt — der flache Schatten trägt sie nicht</a></b></p>
+        <p>Round-2-Fusion (n1-078 × n1-024). Liefert die <em>harte / verlustbehaftete</em> Seite: die
+        Invariante als globale Signatur im höheren Objekt (Modulraum <code>M</code> / <code>∞</code>-Topos /
+        QFT-Peak bei <code>k=N/r</code>), der Schatten als verlustbehafteter Defekt („zu reich“: Phantom
+        <code>E&#8328;</code> / „zu arm“: verlorene Morphismen), die Skalenachse (Periode <code>r</code> /
+        Dimension <code>n</code>) und der diskrete Bruchpunkt (Dim&nbsp;4 / der „imaginäre“ Wert).</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion n3-024 · Runde 3 (nicht-KI-Track) · n2-047.html ✕ n2-029.html · selbstständig, themenreaktiv, alle Daten inline, keine externen Abrufe.</footer>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('fv-cv');
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var slider = document.getElementById('fv-eps');
+  var epsOut = document.getElementById('fv-eps-out');
+  var playBtn = document.getElementById('fv-play');
+  var modeSoft = document.getElementById('fv-soft');
+  var modeHard = document.getElementById('fv-hard');
+  var fateP = document.getElementById('fv-protect');
+  var fateD = document.getElementById('fv-discard');
+  var fateN = document.getElementById('fv-noise');
+  var themeBtn = document.getElementById('op-theme');
+  var ro = document.getElementById('fv-ro');
+  var lgRes = document.getElementById('lg-res');
+  var stB0 = document.getElementById('st-b0'), stB1 = document.getElementById('st-b1'),
+      stEps = document.getElementById('st-eps'), stForm = document.getElementById('st-form');
+
+  var MAXEPS = 0.62, NC = 40, NN = 24, NBINS = 24;
+  var mode = 'soft', fate = 'protect';
+  var W = 0, H = 0;
+  var pts = [], pairs = [], N = 0, feat0 = [], feat1 = [], maxF = null, maxP = 0, bins = [], binPeak = 0;
+
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v; }
+  var P = {};
+  function readPal(){
+    P = {
+      bg: cssVar('--viz-bg') || '#0e1322', card: cssVar('--card') || '#141828',
+      fg: cssVar('--fg') || '#e9ecff', muted: cssVar('--muted') || '#9aa3c7',
+      border: cssVar('--border') || '#283050', acc: cssVar('--accent') || '#7cf9d0',
+      acc2: cssVar('--accent2') || '#ff77c8', warn: cssVar('--warn') || '#ffd166',
+      good: cssVar('--good') || '#3fb950', bad: cssVar('--bad') || '#f85149'
+    };
+  }
+  function fateColor(){ return fate==='protect' ? P.good : (fate==='discard' ? P.muted : P.warn); }
+  function fateLabel(){ return fate==='protect' ? 'Schützen' : (fate==='discard' ? 'Verwerfen' : 'Rauschen'); }
+
+  function hexA(hex, a){
+    hex = String(hex).replace('#','').trim();
+    if (hex.length===3) hex = hex.split('').map(function(c){return c+c;}).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) hex = '7cf9d0';
+    var n = parseInt(hex,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  }
+
+  function genData(seed){
+    var rng = mulberry32(seed);
+    pts = [];
+    for (var i=0;i<NC;i++){
+      var ang = i/NC*Math.PI*2 + (rng()-0.5)*0.08;
+      var r = 1.0 + (rng()-0.5)*0.10;
+      pts.push({x:Math.cos(ang)*r, y:Math.sin(ang)*r, cyc:true});
+    }
+    for (var j=0;j<NN;j++){
+      pts.push({x:(rng()-0.5)*2.7, y:(rng()-0.5)*2.7, cyc:false});
+    }
+    N = pts.length;
+    pairs = [];
+    for (var a=0;a<N;a++) for (var b=a+1;b<N;b++){
+      var d = Math.hypot(pts[a].x-pts[b].x, pts[a].y-pts[b].y);
+      pairs.push([d,a,b]);
+    }
+    pairs.sort(function(p,q){ return p[0]-q[0]; });
+  }
+
+  function computeState(eps){
+    var adj=[]; for (var i=0;i<N;i++) adj.push({});
+    var E=0, edges=[];
+    for (var k=0;k<pairs.length;k++){
+      var p=pairs[k];
+      if (p[0] <= 2*eps){ adj[p[1]][p[2]]=1; adj[p[2]][p[1]]=1; E++; edges.push([p[1],p[2]]); }
+    }
+    var uf=[]; for (var u=0;u<N;u++) uf.push(u);
+    function find(x){ while(uf[x]!==x){ uf[x]=uf[uf[x]]; x=uf[x]; } return x; }
+    function un(i,j){ var ra=find(i), rb=find(j); if (ra!==rb) uf[ra]=rb; }
+    for (var e=0;e<edges.length;e++) un(edges[e][0], edges[e][1]);
+    var roots={}; for (var r=0;r<N;r++) roots[find(r)]=1;
+    var b0=0; for (var kk in roots) b0++;
+    var T=0;
+    for (var i2=0;i2<N;i2++){
+      var ai=adj[i2];
+      for (var jj in ai){
+        if (+jj <= i2) continue;
+        var aj=adj[jj];
+        for (var q in aj){ if (+q > +jj && ai[q]) T++; }
+      }
+    }
+    var b1=Math.max(0, E - N + b0 - T);
+    return {b0:b0, b1:b1, edges:edges};
+  }
+
+  function runSweep(){
+    feat0=[]; feat1=[];
+    var uf=[]; for (var i=0;i<N;i++) uf.push(i);
+    function find(x){ while(uf[x]!==x){ uf[x]=uf[uf[x]]; x=uf[x]; } return x; }
+    for (var k=0;k<pairs.length;k++){
+      var p=pairs[k]; var eps=p[0]/2;
+      if (eps>MAXEPS) break;
+      var ri=find(p[1]), rj=find(p[2]);
+      if (ri!==rj){ uf[ri]=rj; feat0.push({b:0, d:eps}); }
+    }
+    var surv={}; for (var s=0;s<N;s++) surv[find(s)]=1;
+    var cnt=0; for (var m in surv) cnt++;
+    for (var z=0;z<cnt;z++) feat0.push({b:0, d:MAXEPS});
+
+    var K=150, alive=[];
+    for (var kk=1;kk<=K;kk++){
+      var e2=kk/K*MAXEPS;
+      var b1=computeState(e2).b1;
+      while (alive.length<b1) alive.push(e2);
+      while (alive.length>b1) feat1.push({b:alive.pop(), d:e2});
+    }
+    for (var q=0;q<alive.length;q++) feat1.push({b:alive[q], d:MAXEPS});
+
+    maxF=null; var best=-1;
+    for (var f=0;f<feat1.length;f++){
+      var per=feat1[f].d-feat1[f].b;
+      if (per>best){ best=per; maxF=feat1[f]; }
+    }
+    maxP = maxF ? (maxF.d-maxF.b) : 0;
+
+    bins=[]; for (var bi=0;bi<NBINS;bi++) bins.push(0);
+    for (var g=0;g<feat1.length;g++){
+      var pg=feat1[g].d-feat1[g].b;
+      var bx=Math.min(NBINS-1, Math.max(0, Math.floor(feat1[g].b/MAXEPS*NBINS)));
+      bins[bx]+=pg;
+    }
+    binPeak=0;
+    for (var bp=0;bp<NBINS;bp++){ if (bins[bp]>bins[binPeak]) binPeak=bp; }
+  }
+
+  function setup(){
+    var dpr = window.devicePixelRatio || 1;
+    W = cv.clientWidth || 780; H = Math.max(360, Math.min(500, Math.round(W*0.58)));
+    cv.width = Math.max(1, Math.round(W*dpr));
+    cv.height = Math.max(1, Math.round(H*dpr));
+    cv.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function areas(){
+    var pad=10;
+    var left  = {x:pad, y:pad, w:W*0.50 - pad, h:H - 2*pad};
+    var right = {x:W*0.54, y:pad, w:W*0.46 - pad, h:H - 2*pad};
+    return {left:left, right:right};
+  }
+  function curEps(){ return (+slider.value)/1000*MAXEPS; }
+
+  function drawSystem(area, st, eps){
+    var fc = fateColor();
+    ctx.fillStyle = hexA(P.card,0.5); roundRect(area.x,area.y,area.w,area.h,12); ctx.fill();
+    ctx.strokeStyle = P.border; ctx.lineWidth=1; roundRect(area.x,area.y,area.w,area.h,12); ctx.stroke();
+
+    var lo=-1.45, hi=1.45;
+    function mx(x){ return area.x + 26 + (x-lo)/(hi-lo)*(area.w-52); }
+    function my(y){ return area.y + 26 + (y-lo)/(hi-lo)*(area.h-52); }
+
+    for (var e=0;e<st.edges.length;e++){
+      var ea=pts[st.edges[e][0]], eb=pts[st.edges[e][1]];
+      var bothCyc = ea.cyc && eb.cyc;
+      ctx.strokeStyle = bothCyc ? hexA(P.acc,0.35) : hexA(fc,0.16);
+      ctx.lineWidth = bothCyc ? 1.3 : 0.8;
+      ctx.beginPath(); ctx.moveTo(mx(ea.x),my(ea.y)); ctx.lineTo(mx(eb.x),my(eb.y)); ctx.stroke();
+    }
+    for (var i=0;i<N;i++){
+      var pt=pts[i];
+      ctx.fillStyle = pt.cyc ? hexA(P.acc,0.95) : hexA(fc,0.9);
+      ctx.beginPath(); ctx.arc(mx(pt.x),my(pt.y), pt.cyc?4:3, 0, Math.PI*2); ctx.fill();
+    }
+
+    ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+    ctx.fillStyle = P.muted; ctx.font='11px system-ui,monospace';
+    ctx.fillText('niedrige Beschreibung (der Schatten)', area.x+12, area.y+16);
+    ctx.fillStyle = P.acc; ctx.font='700 11px system-ui,monospace';
+    ctx.fillText('Form = langlebiger Zyklus (H\u2081)', area.x+12, area.y+area.h-12);
+    ctx.textAlign='right'; ctx.fillStyle = hexA(fc,0.95);
+    ctx.fillText('Rest = Substanz ('+fateLabel()+')', area.x+area.w-12, area.y+area.h-12);
+    ctx.textAlign='left';
+  }
+
+  function axis(area, eps){
+    var m=34;
+    var px=area.x+m, py=area.y+m+8, pw=area.w-2*m, ph=area.h-2*m-22;
+    ctx.fillStyle = hexA(P.card,0.6); ctx.fillRect(px,py,pw,ph);
+    ctx.strokeStyle = P.border; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py+ph); ctx.lineTo(px+pw,py+ph); ctx.stroke();
+    ctx.fillStyle = P.muted; ctx.font='9px monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    for (var v=0; v<=1.0001; v+=0.5){
+      ctx.fillText(v.toFixed(2), px+v*pw, py+ph+12);
+    }
+    ctx.fillText('Skala / Persistenz', px+pw/2, area.y+area.h-2);
+    var ex = px + (eps/MAXEPS)*pw;
+    if (ex>px && ex<px+pw){ ctx.strokeStyle = hexA(P.acc2,0.7); ctx.setLineDash([4,3]); ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(ex,py); ctx.lineTo(ex,py+ph); ctx.stroke(); ctx.setLineDash([]); }
+    return {px:px,py:py,pw:pw,ph:ph};
+  }
+
+  function drawDiagram(area, eps){
+    var fc = fateColor();
+    ctx.save();
+    var f = axis(area, eps);
+    var px=f.px, py=f.py, pw=f.pw, ph=f.ph;
+    ctx.strokeStyle = hexA(P.warn,0.6); ctx.setLineDash([5,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,py+ph); ctx.lineTo(px+pw,py); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = hexA(P.warn,0.5); ctx.font='9px monospace'; ctx.textAlign='left';
+    ctx.fillText('Diagonale (p=0)', px+pw-70, py+ph-6);
+
+    function X(b){ return px + (b/MAXEPS)*pw; }
+    function Y(d){ return py + ph - (d/MAXEPS)*ph; }
+    for (var i=0;i<feat0.length;i++){
+      var f0=feat0[i];
+      var alive0 = (eps >= f0.b && eps <= f0.d);
+      ctx.globalAlpha = alive0 ? 0.75 : 0.22;
+      ctx.fillStyle = hexA(P.muted,1);
+      ctx.beginPath(); ctx.arc(X(f0.b),Y(f0.d),3,0,Math.PI*2); ctx.fill();
+    }
+    for (var j=0;j<feat1.length;j++){
+      var f1=feat1[j];
+      var alive1 = (eps >= f1.b && eps <= f1.d);
+      var isMax = (maxF && f1.b===maxF.b && f1.d===maxF.d);
+      ctx.globalAlpha = alive1 ? 1 : 0.3;
+      ctx.fillStyle = isMax ? P.warn : hexA(fc,1);
+      ctx.beginPath(); ctx.arc(X(f1.b),Y(f1.d), isMax?5:3.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (maxF){
+      ctx.strokeStyle = P.warn; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(X(maxF.b),Y(maxF.d),11,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle = P.warn; ctx.font='700 11px system-ui,monospace'; ctx.textAlign='left';
+      ctx.fillText('die Form (weit \u00fcber der Diagonalen)', Math.min(px+pw-150, X(maxF.b)+10), Math.max(py+12, Y(maxF.d)-12));
+    }
+    ctx.fillStyle = P.muted; ctx.font='600 11px system-ui,monospace'; ctx.textAlign='center';
+    ctx.fillText('A \u00b7 Persistenzdiagramm (weich, verlustfrei)', area.x+area.w/2, area.y+14);
+    ctx.restore();
+  }
+
+  function drawSpectrum(area, eps){
+    var fc = fateColor();
+    ctx.save();
+    var f = axis(area, eps);
+    var px=f.px, py=f.py, pw=f.pw, ph=f.ph;
+    var scale = (bins[binPeak] > 0) ? bins[binPeak] : 1;
+    var bw = pw/NBINS;
+    for (var b=0;b<NBINS;b++){
+      var h = (bins[b]/scale)*ph;
+      if (h < 0.5) continue;
+      var bx = px + b*bw + bw*0.12, bwid = bw*0.76, by = py + ph - h;
+      var isPeak = (b===binPeak);
+      ctx.fillStyle = isPeak ? hexA(P.warn,0.9) : hexA(fc, isPeak?0.5:0.7);
+      ctx.fillRect(bx, by, bwid, h);
+    }
+    var peakX = px + ((binPeak+0.5)/NBINS)*pw;
+    var peakH = (bins[binPeak]/scale)*ph;
+    ctx.strokeStyle = P.warn; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(peakX, py+ph-peakH-8); ctx.lineTo(peakX, py+ph-peakH); ctx.stroke();
+    ctx.fillStyle = P.warn; ctx.font='700 11px system-ui,monospace'; ctx.textAlign='left';
+    ctx.fillText('die Invariante (Peak)', Math.min(px+pw-96, peakX-4), Math.max(py+12, py+ph-peakH-12));
+    ctx.fillStyle = P.muted; ctx.font='600 11px system-ui,monospace'; ctx.textAlign='center';
+    ctx.fillText('B \u00b7 Signatur-Spalte (hart, Kollaps)', area.x+area.w/2, area.y+14);
+    ctx.restore();
+  }
+
+  function updateReadout(eps, st){
+    var fateTxt = fate==='protect'
+      ? 'Der Rest wird <b>geschützt</b> (geheim, opak) — A-privativ: „verifizierbare Privatsphäre“.'
+      : (fate==='discard'
+        ? 'Der Rest wird als <b>Defekt verworfen</b> (zu reich / zu arm) — B: „der Schatten trägt die Invariante nicht“.'
+        : 'Der Rest wird als <b>Rauschen</b> gelesen (oberflächlich, nicht-strukturell) — A-epistemisch.');
+    var modeTxt = mode==='soft'
+      ? '<b>Auflösung A (weich, verlustfrei):</b> Die Operation liest den <i>ganzen</i> Gradienten (Persistenzdiagramm); die Invariante ist das <span style="color:var(--accent)">Überlebende</span> weit über der Diagonalen.'
+      : '<b>Auflösung B (hart, verlustbehaftet):</b> Die Operation <i>kollabiert</i> dieselbe Struktur auf eine Signatur-Spalte; die Invariante ist die <span style="color:var(--warn)">einzelne hohe Spalte</span>, der breite niedrige Rest ist der Defekt.';
+    ro.innerHTML = modeTxt + '<div class="ro-fuse"><b>Rest-Regime (Spannung 1):</b> ' + fateTxt
+      + '<br><span style="color:var(--muted)">Dasselbe nicht-invariante Residuum, drei Zwecke — die Extraktion (die globale Signatur) bleibt davon unberührt.</span></div>';
+    stB0.textContent = st.b0; stB1.textContent = st.b1;
+    stEps.textContent = eps.toFixed(3);
+    stForm.textContent = maxF ? (maxF.d-maxF.b).toFixed(3) : '\u2013';
+    if (epsOut) epsOut.textContent = eps.toFixed(3);
+  }
+
+  function draw(){
+    readPal();
+    var eps = curEps();
+    var L = areas();
+    var st = computeState(eps);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = P.bg; ctx.fillRect(0,0,W,H);
+    drawSystem(L.left, st, eps);
+    if (mode==='soft') drawDiagram(L.right, eps); else drawSpectrum(L.right, eps);
+    updateReadout(eps, st);
+  }
+
+  function setFate(f){
+    fate=f;
+    fateP.classList.toggle('active', f==='protect');
+    fateD.classList.toggle('active', f==='discard');
+    fateN.classList.toggle('active', f==='noise');
+    if (lgRes) lgRes.style.background = fateColor();
+    draw();
+  }
+  function setMode(m){
+    mode=m;
+    modeSoft.classList.toggle('active', m==='soft');
+    modeHard.classList.toggle('active', m==='hard');
+    draw();
+  }
+
+  var animId=null;
+  function stopAnim(){ if (animId){ cancelAnimationFrame(animId); animId=null; } playBtn.innerHTML='\u25B6 Filtration'; }
+  function play(){
+    if (animId){ stopAnim(); return; }
+    playBtn.innerHTML='\u25A0 Pause';
+    (function step(){
+      var v=+slider.value; v+=6;
+      if (v>1000){ slider.value=1000; draw(); stopAnim(); return; }
+      slider.value=v; draw();
+      animId=requestAnimationFrame(step);
+    })();
+  }
+
+  themeBtn.addEventListener('click', function(){
+    var dark=document.documentElement.classList.toggle('dark');
+    themeBtn.innerHTML = dark ? '\u{1F319} Dunkel' : '\u2600\uFE0F Hell';
+    try{ localStorage.setItem('fusion-theme', dark?'dark':'light'); }catch(e){}
+    draw();
+  });
+  slider.addEventListener('input', function(){ stopAnim(); draw(); });
+  playBtn.addEventListener('click', play);
+  modeSoft.addEventListener('click', function(){ setMode('soft'); });
+  modeHard.addEventListener('click', function(){ setMode('hard'); });
+  fateP.addEventListener('click', function(){ setFate('protect'); });
+  fateD.addEventListener('click', function(){ setFate('discard'); });
+  fateN.addEventListener('click', function(){ setFate('noise'); });
+  window.addEventListener('resize', function(){ setup(); draw(); });
+  new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+
+  genData(20261011);
+  runSweep();
+  if (lgRes) lgRes.style.background = fateColor();
+  setup();
+  draw();
+})();
+</script>
+</body>
+</html>

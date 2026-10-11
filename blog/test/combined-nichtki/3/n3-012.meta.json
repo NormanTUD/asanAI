@@ -1,0 +1,16 @@
+{
+  "no": "012",
+  "a": "n2-004.html",
+  "b": "n2-038.html",
+  "a_title": "Der Knoten tr\u00e4gt seine eigene Struktur nicht",
+  "b_title": "Wissen als reversible, konfluente Komposition",
+  "combined_theme": "self-sustaining-nonlocal-structure",
+  "one_line": "Der lokale Knoten ist ein komprimierter, bestimmter Durchgang \u2014 nie der Sitz der Struktur; die Struktur ist nicht-lokal, lokal geschlossen, global offen und zweischichtig (irreversibler, fixierter Kern + reversible, konfluente, wachsende H\u00fclle) und tr\u00e4gt sich selbst \u00fcber den impfenden Samen hinaus.",
+  "contradictions": [
+    "Das Ganze: A (n2-004) will es fix und vollst\u00e4ndig \u2014 eine abgeschlossene, bestimmte Wahrheit (die komplette Karte, der \u221e-Beobachter, 'Wahrheit ist determiniert'); B (n2-038) verweigert dem Ganzen jede endg\u00fcltige Bestimmtheit (der DAG w\u00e4chst endlos, 'es ist ein Lader, nicht ein Ende', 'global offen', 'der Fixpunkt ist pro Modul, nicht absolut').",
+    "Schicksal des Knotens: A rettet ihn durch vertikal-teleologischen Aufstieg zu einer wahreren, vollendeteren, h\u00f6heren Ebene (eine privilegierte Richtung: aufw\u00e4rts/unendlich); B l\u00f6st ihn in einen seitlichen, order-unabh\u00e4ngigen, wert-freien kanonischen Zustand auf (Konfluenz, keine privilegierte Richtung, keine h\u00f6here Wahrheit).",
+    "Reversibilit\u00e4t des Ganzen: A's Offenheit ist irreversibel (Ausbreitung \u00fcberdauert den Samen, Wahrheit driftet, Aufstieg \u2014 ein Zeitpfeil, kein Zur\u00fcck); B's ist reversibel und order-unabh\u00e4ngig (LIFO, 'fully retractable', jeder Pfad zum selben kanonischen Zustand \u2014 kein Zeitpfeil, Symmetrie)."
+  ],
+  "resolution": "Drei Aufl\u00f6sungen: (a) zwei Skalen der Bestimmtheit \u2014 bestimmt pro Stufe/Tal/Modul (A's 'fixe Karte' = B's 'kanonischer Zustand pro Modul'), offen f\u00fcr das Ganze (A's 'offener Vorgang' = B's 'global offener DAG'); Ganzheit = der Grenzprozess, nicht der erreichte Punkt. (b) derselbe Verlust der Selbstst\u00e4ndigkeit \u2014 A's 'Aufstieg zur wahreren Ebene' ist B's 'Quieszenz in den kanonischen Zustand'; 'wahrer' = 'kanonisch'; A benennt Richtung+Wert (Teleologie), B klammert sie ein \u2014 kompatibel, nicht identisch. (c) zwei Achsen + Zeitpfeil \u2014 ein irreversibler, bestimmter Kern (fixierte Form / komprimierte Invariante, \u00fcberdauernd, driftend, der impfende Samen) in einer reversiblen, konfluenten, order-unabh\u00e4ngigen H\u00fclle (Montage / Abh\u00e4ngigkeitsgraph / Blickstufen); A betont den Kern (Best\u00e4ndigkeit/Aufstieg), B die H\u00fclle (Konfluenz).",
+  "viz": "Interaktiver Abh\u00e4ngigkeitsgraph auf Canvas: ein zentraler Samen-Knoten impft; \u00fcber einen Feedback-Regler (R\u2080) lachen aktive Knoten und tragen sich selbst \u2014 'Kern entfernen' zeigt, dass die Struktur \u00fcber den Knoten/Samen hinaus l\u00e4uft (A's Best\u00e4ndigkeit). Undo (LIFO-Invers) + Shuffle (Konfluenz) zeigen die reversible, order-unabh\u00e4ngige Montage (B); 'Neue Stufe anh\u00e4ngen' zeigt das globale Offen/Wachsen (A's Aufstieg = B's wachsender DAG). Jeder aktive Knoten animiert die irreversible Kompression (Rohfeld-Blob friert zu kompakten Invarianten). Vier Zust\u00e4nde AKTIV/SELBST/WARTET/ABSENT. Theme-aware, nur inline Daten."
+}

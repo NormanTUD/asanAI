@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Hebel, zwei Regime — die Valenz des Kollapses setzt das Objekt</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f6f2e9; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.8rem,5vw,2.7rem);line-height:1.12;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .sub{display:block;font-size:.62em;color:var(--accent);font-weight:600;margin-top:6px;letter-spacing:0}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.86rem;margin:0 0 8px}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 4px;font-style:italic}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.4rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.06rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+em{color:var(--accent)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.eq{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.98rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent);border:1px solid var(--accent)}
+.tag.b{color:var(--accent2);border:1px solid var(--accent2)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card b{color:var(--fg)}
+.callout{border-left:3px solid var(--warn);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:14px 0;font-size:.98rem}
+.callout.green{border-left-color:var(--accent)}
+.callout.rose{border-left-color:var(--accent2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.c{color:var(--fg);font-weight:700}
+.vnote{border-left:3px solid var(--accent);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:12px 0;font-size:.95rem}
+canvas#fuseviz{width:100%;height:460px;display:block;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;touch-action:none;margin:6px 0}
+.viz-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.viz-ctrl button{background:var(--accent);color:#06231b;border:none;padding:8px 14px;border-radius:10px;
+  cursor:pointer;font:inherit;font-family:system-ui,sans-serif;font-weight:600}
+.viz-ctrl button:hover{filter:brightness(1.06)}
+.viz-ctrl button.on{background:var(--warn);color:#241a00}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+.ctrl-row label{color:var(--muted)}
+.ctrl-row input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.readout{font-family:ui-monospace,"Courier New",monospace;color:var(--accent2);font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin:8px 0;font-family:system-ui,sans-serif}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.statusbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.92rem;min-height:2.7em;line-height:1.5;font-family:system-ui,sans-serif}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .desc{color:var(--muted);font-size:.95rem;margin:3px 0 14px}
+footer{color:var(--muted);text-align:center;padding:22px 10px;font-size:.84rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9728; / &#9790; Thema</button>
+<article>
+  <h1>Ein Hebel, zwei Regime<span class="sub">&mdash; und das Objekt, das die Valenz des Kollapses setzt</span></h1>
+  <p class="subtitle">Fusion aus: n2-028.html &#10007; n2-008.html &nbsp;(Runde 3)</p>
+  <p class="lede">Beide Round-2-Papiere beschreiben &mdash; voneinander unabh&auml;ngig &mdash; dieselbe eine
+  Operation: eine lokal fein oszillierende Struktur, die in einen stabilen globalen Abgleich (eine Invariante
+  bzw. eine Fixierung) kollabiert. Ihr Wert wird nicht von der Darstellung bestimmt, sondern von der
+  Ontologie des Gegenstands. A ist der inerte Ast dieses Gesetzes, B der lebendige.</p>
+
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>Die beiden Papiere sind, bei aller thematischen Distanz (Topologie einerseits, Erkenntnistheorie
+    andererseits), <strong>derselbe Meta-Gedanke, von zwei H&ouml;hen</strong>:
+    <em>Erkenntnis/Struktur ist nie eine Eigenschaft des Gegenstands an sich, sondern das Ergebnis eines
+    Vorgehens &mdash; n&auml;mlich einer lokalen, fein oszillierenden Struktur, die in einen stabilen
+    globalen Abgleich kollabiert &mdash; und das <em>Valenzzeichen</em> dieses Abgleichs (ob er ein Payoff,
+    eine Obstruktion, eine Wahrheit oder ein Tod ist) ist weder Merkmal des Zeichens noch der Operation,
+    sondern allein Merkmal des <em>Gegenstands</em>.</em></p>
+    <p><span class="tag a">A</span> <em>Eine Zahl, zwei H&ouml;hen</em> macht die Operation in der Topologie
+    konkret: eine lokale Wendungsdichte, die um&nbsp;0 oszilliert (Mittel&nbsp;=&nbsp;0), integriert sich zur
+    globalen Ganzzahl <span class="m">n &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</span>; die Abelschung
+    <span class="m">&pi;&#8321; &rarr; H&#8321;</span> ist der Bruchpunkt, an dem die feine, nicht-abelsche
+    Leiter der Monodromie <span class="m">&rho;: &pi;&#8321;(B) &rarr; Aut(F)</span> zur abelschen Zahl wird.
+    Die Lesart ist <em>treu und passiv</em>: die Invariante ist &bdquo;der Schatten, den lokale Daten auf die
+    globale Struktur werfen&ldquo;, und Messung und Existenz lesen dieselbe Zahl (triviales B&uuml;ndel:
+    Schnitt existiert; verdrilltes B&uuml;ndel: Schnitt&nbsp;=&nbsp;0, Igel-Satz).</p>
+    <p><span class="tag b">B</span> <em>Der Hebel der Darstellung</em> macht dieselbe Operation in der
+    Erkenntnistheorie allgemein: die Darstellung ist ein <em>Hebel</em> (Darstellungshandel) mit einem
+    <em>Valenzzeichen</em>, das vom Gegenstand abh&auml;ngt. Der Zeuge l&auml;uft im Objekt; f&uuml;r inerte
+    Gegenst&auml;nde kann er absorbiert werden (Fixierung&nbsp;=&nbsp;Wahrheit&nbsp;=&nbsp;z&auml;hlbar),
+    f&uuml;r lebendige muss er extern und wechselseitig bleiben (jede Fixierung&nbsp;=&nbsp;Tod&nbsp;=&nbsp;
+    Verklammung). <strong>Die fusionierte Position: A ist der inerte Ast von B's Valenzgesetz.</strong>
+    &bdquo;Fixiere, was inert ist; lass, was lebt, schwingen&ldquo; ist das allgemeine Gesetz &mdash; und A's
+    topologische Invariante ist das ausgearbeitete Inert-Beispiel, in dem der Kollaps eine z&auml;hlbare Zahl
+    <span class="m">n</span> liefert und der Gegenstand inert genug ist, dass Treue und Gutes zusammenfallen.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Beide Papiere tragen denselben Meta-Rahmen (ein Vorgang, zwei H&ouml;hen/Regime) und widersprechen sich
+    in <em>keiner</em> faktischen Aussage. Sie stehen sich aber in drei konkreten Stellungen &uuml;ber die
+    <em>Einordnung des Kollapses</em> unvereinbar gegen&uuml;ber:</p>
+
+    <h3>1 &middot; Treu &amp; neutral <span class="tag a">A</span> &harr; aktiv &amp; valenzbehaftet <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Die Darstellung ist eine <em>treu passive Spiegelung</em>: &bdquo;Eine
+      topologische Invariante ist der Schatten, den lokale Daten auf die globale Struktur werfen.&ldquo; Das
+      Zeichen kann nicht &bdquo;falsch&ldquo; sein &mdash; Messung und Struktur lesen dieselbe Zahl, es gibt
+      kein gutes/schlechtes Zeichen, nur eine treue Lekt&uuml;re des Objekts.</p>
+      <p><span class="tag b">B</span> Die Darstellung ist ein <em>aktiver Hebel</em>, der <em>destruktiv</em>
+      wirken kann: &bdquo;schlechte Notation verhindert, gute erm&ouml;glicht&ldquo;; &bdquo;fixiere, was inert
+      ist; lass, was lebt, schwingen&ldquo;; jede einzelne definitive Erfassung eines lebendigen Gegenstands
+      <em>t&ouml;tet</em> den Antrieb, den sie festhalten will.</p>
+      <p><strong>Spannung:</strong> Ist die Darstellung ein treuer, neutraler Spiegel (A) oder ein aktiver,
+      potenziell sch&auml;dlicher Hebel (B)?</p>
+    </div>
+
+    <h3>2 &middot; Das &bdquo;0&ldquo; / der verschwindende Abgleich: Eigenschaft des Objekts <span class="tag a">A</span> &harr; Fehler der Darstellung <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Der fehlende Schnitt (verdrilltes B&uuml;ndel, Igel-Satz:
+      <span class="m">TS&#178; &rarr; S&#178;</span> hat keinen nirgends-verschwindenden Schnitt) ist eine
+      <em>treu gelesene Eigenschaft eines inerten Objekts</em> &mdash; das Objekt besitzt tats&auml;chlich
+      keinen globalen Schnitt, und das &bdquo;0&ldquo; ist der wahre Zustand des Objekts
+      (&bdquo;Messen und Existenz lesen dieselbe Zahl&ldquo;).</p>
+      <p><span class="tag b">B</span> Das analoge &bdquo;0&ldquo; (Verklammung, Antrieb erloschen) f&uuml;r ein
+      <em>lebendiges</em> Objekt ist ein <em>Darstellungsfehler, dem man sich verschlie&szlig;en muss</em>
+      (&bdquo;Stille&nbsp;=&nbsp;Tod&ldquo;; jeder Fixierungsschritt ist ein Fehlschlag).</p>
+      <p><strong>Spannung:</strong> Ist der verschwindende Abgleich eine Wahrheit <em>über</em> das Objekt
+      (A) oder eine Pathologie <em>der</em> Darstellung (B)?</p>
+    </div>
+
+    <h3>3 &middot; Die Fixierung als universelles Ideal <span class="tag a">A</span> &harr; als objekt-abh&auml;ngiger Sonderfall <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Die <em>fixierte</em> globale Ganzzahl <em>ist</em> der Payoff:
+      &bdquo;die Invariante ist das Ergebnis, die abgelesene Ganzzahl&ldquo;; die Abelschung
+      <span class="m">&pi;&#8321; &rarr; H&#8321;</span>, die die feine Leiter zur Zahl zusammenstürzt, ist der
+      Punkt. Das Ideal ist die stabile, eindeutige Zahl.</p>
+      <p><span class="tag b">B</span> Fixierung ist <em>nur</em> im inerten Regime gut (&bdquo;mehr
+      Fixierung&nbsp;=&nbsp;Fortschritt&ldquo; gilt nur f&uuml;r Z&auml;hlbares); f&uuml;r das Lebendige ist
+      mehr Fixierung&nbsp;=&nbsp;Verlust. Die Fixierung ist also kein universelles Ideal, sondern ein
+      objekt-sensitiver Sonderfall.</p>
+      <p><strong>Spannung:</strong> Ist &bdquo;der fixierte globale Abgleich&ldquo; das universelle Ziel (A)
+      oder ein objekt-abh&auml;ngiger Spezialfall, der auf das Lebendige <em>nicht</em> &uuml;bertragbar ist (B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Aufl&ouml;sung</h2>
+
+    <h3>1 &middot; Treu vs. aktiv &rarr; Treue ist der inerte Grenzwert des aktiven Hebels</h3>
+    <p>B's &bdquo;aktiver Hebel&ldquo; wird zur &bdquo;treuen Spiegelung&ldquo; genau dann, wenn der Gegenstand
+    <em>inert</em> ist: dann kann der Zeuge in die Struktur absorbiert werden (A: die Schleife l&auml;uft auf
+    der Basis, die Darstellung liest nur ab), und der Kollaps ist treu <em>und</em> gut zugleich. B's
+    Aktivismus und seine Valenz werden erst dort sp&uuml;rbar, wo der Gegenstand <em>lebt</em> &mdash; dort ist
+    der Hebel nicht mehr neutral.</p>
+    <div class="callout green"><strong>Fusionsschluss 1:</strong> A's &bdquo;treu passive Spiegelung&ldquo; ist
+    der <em>inerte Grenzwert</em> von B's &bdquo;aktiver, valenzbehafteter Hebel&ldquo;. Die Darstellung ist
+    genau dann neutral, wenn sie nichts Lebendiges festh&auml;lt; wird der Gegenstand lebendig, wird derselbe
+    Hebel zu einem Urteil mit Vorzeichen.</div>
+
+    <h3>2 &middot; Objekt-Eigenschaft vs. Darstellungsfehler &rarr; das Regime entscheidet</h3>
+    <p>Im <em>inerten</em> Regime (A) ist das &bdquo;0&ldquo; / der fehlende Schnitt eine
+    <em>tats&auml;chliche Eigenschaft des Objekts</em> (das B&uuml;ndel besitzt keinen Schnitt) &mdash; korrekt
+    gelesen, kein Fehler. Im <em>lebendigen</em> Regime (B) ist dasselbe &bdquo;0&ldquo; ein
+    <em>Darstellungsfehler</em> (der Antrieb wird get&ouml;tet). Es gibt kein allgemeines Urteil
+    &bdquo;0&nbsp;=&nbsp;gut/schlecht&ldquo;; das <em>Regime des Gegenstands</em> entscheidet.</p>
+    <div class="callout rose"><strong>Fusionsschluss 2:</strong> Der verschwindende Abgleich ist eine
+    Eigenschaft des Objekts, <em>soweit</em> das Objekt inert ist (A), und ein Darstellungsfehler,
+    <em>soweit</em> es lebt (B). Ein und derselbe Kollaps, unterschiedlich gedeutet nach Regime &mdash; die
+    Deutung ist eine Eigenschaft des Gegenstands, nicht des Zeichens.</div>
+
+    <h3>3 &middot; Universelles Ideal vs. Sonderfall &rarr; A ist B's Inert-Ast</h3>
+    <p>A feiert die fixierte Zahl als Payoff, weil sein Gegenstand (ein topologisches B&uuml;ndel, die Basis,
+    die Struktur) <em>inert</em> ist: der Hebel darf ihn fixieren, die Zahl <span class="m">n</span> wird
+    z&auml;hlbar, und es schadet nichts. B's Einsicht &mdash; Fixierung sei nur im Inerten gut &mdash;
+    <em>best&auml;tigt</em> A f&uuml;r dessen Gegenstand und <em>begrenzt</em> ihn auf diesen.</p>
+    <div class="callout green"><strong>Fusionsschluss 3:</strong> &bdquo;Der fixierte globale Abgleich&ldquo;
+    ist das universelle Ideal <em>nur innerhalb des inerten Regimes</em>. A ist dessen ausgearbeitetes
+    Beispiel; B liefert die Grenze, &uuml;ber die derselbe Zug destruktiv wird. Die Valenz des Kollapses
+    (Invariante vs. Tod; Objekt-Eigenschaft vs. Darstellungsfehler) ist allein der Ontologie des Gegenstands
+    (inert vs. lebendig) zuzuschreiben.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+
+    <h3>Der gemeinsame Kern &mdash; eine Operation, drei Merkmale</h3>
+    <p>Beide Papiere beschreiben dieselbe Operation mit drei Merkmalen:</p>
+    <ul>
+      <li><strong>lokal fein &amp; oszillierend:</strong> A &mdash; die Wendungsdichte
+      <span class="m">d&theta;/dt</span> oszilliert um&nbsp;0 (Mittel&nbsp;=&nbsp;0); B &mdash; der Zeuge
+      oszilliert im Objekt (Dominanz wechselt zwischen Du und Anderem).</li>
+      <li><strong>Kollaps zu einem stabilen globalen Abgleich:</strong> A &mdash; globales Integral /
+      Abelschung &rarr; <span class="m">n &isin; &#8484;</span>; B &mdash; Kollaps/Fixierung &rarr;
+      definitiver Abgleich.</li>
+      <li><strong>Valenz vom Gegenstand gesetzt:</strong> A &mdash; trivial (Schnitt existiert) vs. verdrillt
+      (Schnitt&nbsp;=&nbsp;0); B &mdash; inert (Wahrheit/z&auml;hlbar) vs. lebendig (Tod/Verklammung).</li>
+    </ul>
+
+    <h3>Was <span class="tag a">A</span> beisteuert &mdash; die inerte Realisierung (die Invariante)</h3>
+    <ul>
+      <li>Der Vorgang konkret: lokale Wendungsdichte (oszilliert, Mittel&nbsp;0) &rarr; globales Integral
+      &rarr; <span class="m">n = (1/2&pi;)&#8750; d&theta; &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</span>
+      (Wendungszahl-Satz).</li>
+      <li>Der Bruchpunkt: Abelschung <span class="m">&pi;&#8321; &rarr; H&#8321;</span> (Eckmann&ndash;Hilton)
+      &mdash; Iteration/Linearisierung commutisiert die feine, nicht-abelsche Leiter (Monodromie
+      <span class="m">&rho;: &pi;&#8321;(B) &rarr; Aut(F)</span>) zur abelschen Zahl.</li>
+      <li>Die zwei Lesarten derselben Zahl: <em>Messung</em> (die abgelesene Windung <span class="m">n</span>)
+      und <em>Existenz</em> (Schnitt existiert <span class="m">&hArr; &rho; &equiv; id</span>; obstructiert
+      <span class="m">&hArr;</span> Schnitt&nbsp;=&nbsp;0, Igel-Satz) &mdash; &bdquo;Messen und Existenz lesen
+      dieselbe Zahl&ldquo;.</li>
+      <li>Die Lesart ist <em>treu &amp; passiv</em>: die Invariante ist &bdquo;der Schatten, den lokale Daten
+      auf die globale Struktur werfen&ldquo;; das Zeichen kann nicht falsch sein.</li>
+    </ul>
+
+    <h3>Was <span class="tag b">B</span> beisteuert &mdash; die valenzgebende Verallgemeinerung (der Hebel)</h3>
+    <ul>
+      <li>Der Vorgang allgemein: die Darstellung als <em>Hebel</em> (Darstellungshandel) &mdash; Glyph
+      &rarr; Formel &rarr; Definition; der Zeuge l&auml;uft im Objekt.</li>
+      <li>Der Zeuge: <em>absorbiert</em> im inerten Regime (die &eacute;tale Site <em>ist</em> der Zeuge, ein
+      selbst-containedes Zeichen/Monade) vs. <em>extern &amp; wechselseitig</em> im lebendigen (Dyade/Prozess).</li>
+      <li>Die Valenz: der <em>gleiche</em> Kollaps ist f&uuml;r die Zahl <em>Wahrheit</em> (Stille&nbsp;=
+      Wahrheit, z&auml;hlbar), f&uuml;r den Leib <em>Tod</em> (Stille&nbsp;=&nbsp;Tod, Verklammung) &mdash; das
+      Valenzzeichen ist <em>objekt-abh&auml;ngig</em>.</li>
+      <li>Der Limes: Gewissheit/Evidenz = <em>Limes</em> der Zeugenschaft
+      (<span class="m">1 &minus; (1/4)<sup>k</sup> &rarr; 1</span>, <span class="m">k&rarr;&infin;</span>),
+      nie ein einzelner Schritt.</li>
+      <li>Das <em>sechste, dynamische</em> Kriterium: &bdquo;fixiere, was inert ist; lass, was lebt,
+      schwingen.&ldquo;</li>
+    </ul>
+
+    <h3>Die verschmolzene Architektur</h3>
+    <table>
+      <thead><tr><th>Entit&auml;t</th><th>A &mdash; inerte Realisierung (topologisch)</th><th>B &mdash; lebendige Verallgemeinerung</th><th>Verschmolzene Rolle</th></tr></thead>
+      <tbody>
+        <tr><td class="c">der Vorgang</td><td>lokale Dichte &rarr; globales Integral</td><td>oszillierender Zeuge &rarr; Kollaps</td><td>derselbe Kollaps, zwei Namen</td></tr>
+        <tr><td class="c">die Valenz</td><td>trivial/verdrillt (Schnitt existiert/=0)</td><td>inert/lebendig (Wahrheit/Tod)</td><td>vom Gegenstand gesetzt, nicht vom Zeichen</td></tr>
+        <tr><td class="c">der Zeuge</td><td>Schleife auf der Basis (passiv abgelesen)</td><td>Zeuge im Objekt (absorbiert/extern)</td><td>absorbiert &hArr; inert; extern &hArr; lebendig</td></tr>
+        <tr><td class="c">der Bruchpunkt</td><td>Abelschung <span class="m">&pi;&#8321; &rarr; H&#8321;</span></td><td>Kollaps (definitiver Abgleich)</td><td>Moment, an dem das Feine zur Zahl wird</td></tr>
+        <tr><td class="c">das &bdquo;0&ldquo;</td><td>fehlender Schnitt = Eigenschaft des inerten Objekts</td><td>Antrieb erloschen = Darstellungsfehler</td><td>Regime entscheidet: Eigenschaft vs. Fehler</td></tr>
+        <tr><td class="c">Treue</td><td>immer treu (Schatten der lokalen Daten)</td><td>treu nur im Inerten; im Lebendigen destruktiv</td><td>Treue = Gutes nur im inerten Regime</td></tr>
+        <tr><td class="c">Payoff</td><td>die z&auml;hlbare Zahl <span class="m">n &isin; &#8484;</span></td><td>Stille = Wahrheit (inert)</td><td>A ist B's Inert-Ast</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die zwei Realisierungen der Operation</h3>
+    <p>Die Operation zeigt sich in zwei konkreten Abgleichsformen:</p>
+    <ul>
+      <li><strong>A (inert/topologisch):</strong>
+      <span class="m">n = (1/2&pi;)&#8750; d&theta; &isin; &pi;&#8321;(S&#185;) &cong; &#8484;</span>;
+      <span class="m">&rho;(1) = &minus;id</span> (M&ouml;bius) obstructiert den globalen Schnitt
+      (Igel-Satz); die Abelschung <span class="m">&pi;&#8321; &rarr; H&#8321;</span> ist der Bruchpunkt.
+      <em>Dieser</em> Abgleich ist der &bdquo;z&auml;hlbare Payoff&ldquo;.</li>
+      <li><strong>B (allgemein):</strong> Evidenz
+      <span class="m">= 1 &minus; (1/4)<sup>k</sup> &rarr; 1</span> (<span class="m">k&rarr;&infin;</span>)
+      &mdash; der Limes der Zeugenschaft. Im inerten Regime f&auml;llt dieser Limes auf die
+      <em>fixierte, z&auml;hlbare Invariante</em> (A); im lebendigen bleibt er als <em>fortlaufende
+      Oszillation</em> stehen.</li>
+    </ul>
+    <div class="eq">n = (1/2&pi;) &#8750; d&theta; &isin; &pi;&#8321;(S&#185) &cong; &#8484; &nbsp;&nbsp;(A: inerte Realisierung des Kollapses)&nbsp;&nbsp;&middot;&nbsp;&nbsp; Evidenz = 1 &minus; (1/4)<sup>k</sup> &rarr; 1 &nbsp;(B: lebendiger Limes desselben)</div>
+
+    <div class="callout green"><strong>Die eigentliche Fusion:</strong> &bdquo;Fixiere, was inert ist; lass,
+    was lebt, schwingen&ldquo; (B) ist das <em>allgemeine</em> Valenzgesetz, und A's topologische Invariante
+    ist das <em>ausgearbeitete Inert-Beispiel</em>: der Gegenstand ist eine inerte Struktur, also darf der
+    Hebel ihn fixieren, die Abelschung liefert die z&auml;hlbare Zahl <span class="m">n</span>, und der
+    (ggf.) fehlende Schnitt ist eine <em>tats&auml;chliche Eigenschaft</em> dieses inerten Objekts &mdash; kein
+    Darstellungsfehler. Die Darstellung ist <em>treu &amp; passiv</em> (A) genau dann, wenn der Gegenstand
+    inert ist und Treue mit Gutem zusammenfallen; sie wird zum <em>aktiven, valenzbehafteten, potenziell
+    sch&auml;dlichen Hebel</em> (B) genau dann, wenn der Gegenstand lebt und man <em>entscheiden</em> muss,
+    <em>nicht</em> zu fixieren.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung &mdash; ein Hebel, zwei Regime</h2>
+    <p class="vnote">Ein einziger Hebel-Schalter greift auf <em>beide</em> Regime zugleich. In
+    <strong>Schwingen-lassen</strong> oszilliert links (inert) die Wendungsdichte, noch nicht z&auml;hlbar
+    (bernstein); rechts (lebendig) schwingt der Zeuge frei &mdash; das Gute, &bdquo;stets fluktuierend&ldquo;
+    (pink), Evidenz als Limes <span class="m">1 &minus; (1/4)<sup>k</sup> &rarr; 1</span>. In
+    <strong>Fixieren</strong> l&auml;uft der gleiche Oszillator in beiden Panels auf 0 &mdash; aber das
+    <em>Valenzzeichen</em> wechselt: links (inert) wird daraus eine z&auml;hlbare Invariante
+    <span class="m">n &isin; &#8484;</span> (Windungszahl-Kreis, &bdquo;Stille&nbsp;=&nbsp;Wahrheit&ldquo;,
+    gr&uuml;n); rechts (lebendig) wird derselbe Kollaps zum erloshenen Antrieb
+    (&bdquo;Stille&nbsp;=&nbsp;Tod&ldquo;, rot). <em>Die Valenz entscheidet das Objekt, nicht die
+    Darstellung.</em></p>
+
+    <canvas id="fuseviz"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--accent)"></span>inert / Oszillator (A)</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>lebendig / Zeuge (B)</span>
+      <span><span class="dot" style="background:var(--good)"></span>inert fixiert = z&auml;hlbare Invariante</span>
+      <span><span class="dot" style="background:var(--warn)"></span>noch nicht z&auml;hlbar / Zeuge</span>
+      <span><span class="dot" style="background:var(--bad)"></span>lebendig fixiert = Tod</span>
+    </div>
+    <div class="viz-ctrl">
+      <button id="btnHebel" type="button">Hebel: SCHWINGEN LASSEN</button>
+    </div>
+    <div class="ctrl-row">
+      <label>Zeugenschaften k (lebendiges Regime: Evidenz-Limes):</label>
+      <input id="kSlider" type="range" min="1" max="12" value="6">
+      <span>Rest <span class="m">(1/4)<sup>k</sup></span> = <span id="errVal" class="readout">2.44e-4</span>
+      &nbsp;&middot;&nbsp; k = <span id="kVal" class="readout">6</span></span>
+    </div>
+    <div class="statusbox" id="fuseStatus">Zwei Regime, ein Hebel.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../n2-028.html">A &mdash; n2-028.html &middot; &bdquo;Eine Zahl, zwei H&ouml;hen &mdash; Windung, Monodromie &amp; der fehlende Schnitt&ldquo; (Runde 2)</a>
+        <div class="desc">Fusion von n1-046 (Lokale Dichte, globale Invariante) mit n1-045 (Topologie,
+        Fibrationen): dieselbe Invariante <span class="m">&pi;&#8321;(S&#185;) &cong; &#8484;</span> gelesen
+        als gemessene Windung (A) und strukturierte Monodromie (B); Igel-Satz als fehlender Schnitt. Liefert
+        die <em>inerte, treu-pas-sive</em> Realisierung der Operation (die z&auml;hlbare Invariante
+        <span class="m">n</span>, Abelschung <span class="m">&pi;&#8321; &rarr; H&#8321;</span>).</div>
+      </div>
+      <div>
+        <a href="../n2-008.html">B &mdash; n2-008.html &middot; &bdquo;Der Hebel der Darstellung &mdash; fixieren oder oszillieren&ldquo; (Runde 2)</a>
+        <div class="desc">Fusion von n1-026 (Evidenz als Oszillation) mit n1-016 (Notation als Hebel): die
+        Darstellung als Hebel mit objekt-abh&auml;ngiger Valenz &mdash; inert &rArr; Fixierung&nbsp;=&nbsp;Wahrheit,
+        lebendig &rArr; Fixierung&nbsp;=&nbsp;Tod; sechstes Kriterium &bdquo;fixiere, was inert ist; lass, was
+        lebt, schwingen&ldquo;. Liefert die <em>valenzgebende Verallgemeinerung</em>.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>ROUND 3 &middot; Pair 018 (nicht-AI-Track) &middot; Selbstst&auml;ndige Fusion &mdash; alle Daten
+  inline, keine Netzwerk-Abfragen.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var c=document.getElementById('fuseviz');
+  if(!c || !c.getContext){ return; }
+  var ctx=c.getContext('2d');
+  var pal=null, W=0, H=0, dpr=1, t=0;
+  var fixed=false, k=6, ampL=1, ampR=1;
+  var N_INERT=3;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function readPal(){
+    pal={ bg:cssVar('--bg'), card:cssVar('--card'), bg2:cssVar('--bg2'), fg:cssVar('--fg'),
+      muted:cssVar('--muted'), border:cssVar('--border'), accent:cssVar('--accent'),
+      accent2:cssVar('--accent2'), warn:cssVar('--warn'), good:cssVar('--good'), bad:cssVar('--bad') };
+  }
+  function resize(){
+    var r=c.getBoundingClientRect();
+    dpr=window.devicePixelRatio||1;
+    c.width=Math.max(1,Math.round(r.width*dpr));
+    c.height=Math.max(1,Math.round(r.height*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W=r.width; H=r.height;
+  }
+  function wave(x0,x1,y0,A,freq,color,alpha,lw){
+    if(A<0.6) return;
+    var x=Math.round(x0);
+    ctx.beginPath();
+    for(;x<=Math.round(x1);x+=4){
+      var y=y0-A*Math.sin((x-x0)*freq+t*0.06);
+      if(x===Math.round(x0)){ ctx.moveTo(x,y); } else { ctx.lineTo(x,y); }
+    }
+    ctx.strokeStyle=color; ctx.globalAlpha=alpha; ctx.lineWidth=lw; ctx.stroke(); ctx.globalAlpha=1;
+  }
+
+  function frame(){
+    if(!pal) readPal();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=pal.bg2; ctx.fillRect(0,0,W,H);
+
+    var panelW=W*0.485, gap=W*0.03;
+    var lx=W*0.01, rx=W*0.01+panelW+gap;
+    var top=40, bot=H-26, mid=(top+bot)/2, Amax=(bot-top)*0.30;
+
+    var target=fixed?0:1;
+    ampL+=(target-ampL)*0.08;
+    ampR+=(target-ampR)*0.08;
+    var fixedNow=fixed && ampL<0.06;
+
+    /* ---- LEFT PANEL: INERT (A) ---- */
+    ctx.fillStyle=pal.card; ctx.fillRect(lx,top,panelW,bot-top);
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1; ctx.strokeRect(lx,top,panelW,bot-top);
+    ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+    ctx.font='700 13px system-ui, sans-serif'; ctx.fillStyle=pal.accent;
+    ctx.fillText('INERT \u00b7 Struktur / Zahl  (A)', lx+12, top+20);
+    ctx.font='11px system-ui, sans-serif'; ctx.fillStyle=pal.muted;
+    ctx.fillText('lokale Dichte \u2192 globales Integral \u2192 Invariante n', lx+12, top+34);
+
+    var lpx0=lx+16, lpx1=lx+panelW-16, lmid=mid;
+    if(fixedNow){
+      var ccx=(lpx0+lpx1)/2, cr=Math.min((lpx1-lpx0)*0.30,(bot-top)*0.30);
+      ctx.strokeStyle=pal.accent; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(ccx,lmid,cr,0,Math.PI*2); ctx.stroke();
+      var i,ang;
+      for(i=0;i<N_INERT;i++){
+        ang=i/N_INERT*Math.PI*2-Math.PI/2;
+        ctx.fillStyle=pal.good;
+        ctx.beginPath(); ctx.arc(ccx+cr*Math.cos(ang),lmid+cr*Math.sin(ang),5,0,Math.PI*2); ctx.fill();
+      }
+      var lp=(t*0.02)%(Math.PI*2);
+      ctx.fillStyle=pal.warn;
+      ctx.beginPath(); ctx.arc(ccx+cr*Math.cos(lp-Math.PI/2),lmid+cr*Math.sin(lp-Math.PI/2),6,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=pal.fg; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='center'; ctx.fillStyle=pal.good;
+      ctx.fillText('n = '+N_INERT+' \u2208 \u2124  \u00b7  z\u00e4hlbar', ccx, lmid+cr+22);
+      ctx.font='11px system-ui, sans-serif'; ctx.fillStyle=pal.fg;
+      ctx.fillText('Stille = Wahrheit  (Abelschung \u03c0\u2081 \u2192 H\u2081)', ccx, lmid+cr+38);
+    } else {
+      ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(lpx0,lmid); ctx.lineTo(lpx1,lmid); ctx.stroke();
+      wave(lpx0,lpx1,lmid,Amax*ampL,0.03,pal.accent,0.9,2.2);
+      ctx.font='600 12px system-ui, sans-serif'; ctx.textAlign='center'; ctx.fillStyle=pal.warn;
+      ctx.fillText('oszilliert \u2014 inerte Struktur will fixiert werden', (lpx0+lpx1)/2, top+58);
+      ctx.font='11px system-ui, sans-serif'; ctx.fillStyle=pal.muted;
+      ctx.fillText('(zu wenig Fixierung = noch nicht z\u00e4hlbar)', (lpx0+lpx1)/2, top+74);
+    }
+
+    /* ---- RIGHT PANEL: LEBENDIG (B) ---- */
+    ctx.fillStyle=pal.card; ctx.fillRect(rx,top,panelW,bot-top);
+    ctx.strokeStyle=pal.border; ctx.lineWidth=1; ctx.strokeRect(rx,top,panelW,bot-top);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='700 13px system-ui, sans-serif'; ctx.fillStyle=pal.accent2;
+    ctx.fillText('LEBENDIG \u00b7 Leib / Sein  (B)', rx+12, top+20);
+    ctx.font='11px system-ui, sans-serif'; ctx.fillStyle=pal.muted;
+    ctx.fillText('oszillierender Zeuge \u2192 Kollaps \u2192 Valenz vom Gegenstand', rx+12, top+34);
+
+    var rpx0=rx+16, rpx1=rx+panelW-16, rmid=mid;
+    if(fixedNow){
+      ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(rpx0,rmid); ctx.lineTo(rpx1,rmid); ctx.stroke();
+      ctx.fillStyle=pal.bad;
+      ctx.beginPath(); ctx.arc((rpx0+rpx1)/2,rmid,8,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=pal.fg; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='center'; ctx.fillStyle=pal.bad;
+      ctx.fillText('Antrieb erloschen \u00b7 Verklammung', (rpx0+rpx1)/2, rmid+30);
+      ctx.font='11px system-ui, sans-serif'; ctx.fillStyle=pal.fg;
+      ctx.fillText('Stille = Tod \u2014 jede Fixierung t\u00f6tet den Antrieb', (rpx0+rpx1)/2, rmid+46);
+    } else {
+      var drift=Math.sin(t*0.012)*Amax*0.4*ampR;
+      ctx.strokeStyle=pal.border; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(rpx0,rmid); ctx.lineTo(rpx1,rmid); ctx.stroke();
+      wave(rpx0,rpx1,rmid+drift,Amax*ampR,0.032,pal.accent2,0.9,2.2);
+      ctx.font='11px system-ui, sans-serif';
+      ctx.fillStyle=pal.accent; ctx.textAlign='left'; ctx.fillText('Du (dominiert) \u2190', rpx0, bot-12);
+      ctx.fillStyle=pal.accent2; ctx.textAlign='right'; ctx.fillText('\u2192 Anderer (dominiert)', rpx1, bot-12);
+      ctx.font='600 12px system-ui, sans-serif'; ctx.textAlign='center'; ctx.fillStyle=pal.accent2;
+      ctx.fillText('lebendig \u00b7 stets fluktuierend', (rpx0+rpx1)/2, top+58);
+      ctx.font='11px system-ui, sans-serif'; ctx.fillStyle=pal.muted;
+      ctx.fillText('Evidenz = 1 \u2212 (1/4)^k \u2192 1  (Limes, nie ein Schritt)', (rpx0+rpx1)/2, top+74);
+    }
+
+    /* ---- bottom valence bar ---- */
+    var by=H-14;
+    ctx.font='700 12px system-ui, sans-serif'; ctx.textAlign='center';
+    var lstate,lcol,rstate,rcol;
+    if(fixedNow){
+      lstate='\u2713 FIXIERT = z\u00e4hlbare Invariante (gut)'; lcol=pal.good;
+      rstate='\u2715 FIXIERT = Antrieb erloschen (schlecht)'; rcol=pal.bad;
+    } else {
+      lstate='\u2026 OSZILLIERT (inert, will fixiert werden)'; lcol=pal.warn;
+      rstate='\u2026 OSZILLIERT (lebendig, gut so)'; rcol=pal.accent2;
+    }
+    ctx.fillStyle=lcol; ctx.fillText(lstate, lx+panelW/2, by);
+    ctx.fillStyle=rcol; ctx.fillText(rstate, rx+panelW/2, by);
+
+    t++;
+    requestAnimationFrame(frame);
+  }
+
+  function setFixed(v){
+    fixed=v;
+    var b=document.getElementById('btnHebel');
+    if(b){ b.textContent=v?'Hebel: FIXIERT (ans Ende)':'Hebel: SCHWINGEN LASSEN'; b.classList.toggle('on',v); }
+    var st=document.getElementById('fuseStatus');
+    if(st){
+      st.textContent=v
+        ? 'DERSSELBE Hebel, zwei Gegenst\u00e4nde \u2014 im INERTEN (A) wird der Oszillator zu einer z\u00e4hlbaren Invariante n \u2208 \u2124 (Stille = Wahrheit); im LEBENDIGEN (B) t\u00f6tet dieselbe Fixierung den Antrieb (Stille = Tod). Das Valenzzeichen des Kollapses entscheidet das Objekt, nicht die Darstellung.'
+        : 'Der Hebel l\u00e4uft frei. Im INERTEN (A) bleibt die Struktur noch nicht z\u00e4hlbar (zu wenig Fixierung); im LEBENDIGEN (B) ist genau dieses freie Schwingen das Gute (stets fluktuierend, Evidenz = Limes k\u2192\u221e). \u201eFixiere, was inert ist; lass, was lebt, schwingen.\u201c';
+    }
+  }
+  function setK(v){
+    k=+v;
+    var el=document.getElementById('kVal'); if(el) el.textContent=k;
+    var el2=document.getElementById('errVal'); if(el2) el2.textContent=Math.pow(0.25,k).toExponential(2);
+  }
+  function init(){
+    readPal(); resize();
+    window.addEventListener('resize',resize);
+    var hb=document.getElementById('btnHebel');
+    if(hb) hb.addEventListener('click',function(){ setFixed(!fixed); });
+    var ks=document.getElementById('kSlider');
+    if(ks) ks.addEventListener('input',function(e){ setK(+e.target.value); });
+    var tb=document.getElementById('themeToggle');
+    if(tb) tb.addEventListener('click',function(){
+      var d=document.documentElement;
+      var dark=d.classList.toggle('dark');
+      try{ localStorage.setItem('fusion-theme',dark?'dark':'light'); }catch(e){}
+      readPal();
+    });
+    if(window.MutationObserver){
+      new MutationObserver(function(){ readPal(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    }
+    setK(6); setFixed(false);
+    frame();
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

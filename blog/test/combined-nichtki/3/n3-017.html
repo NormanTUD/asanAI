@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Fixpunkt — Sein als Relation zwischen Substrat, Konsistenz und Lektüre</title>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --ink:#1a1a2a; --dim:#5a5648;
+  --line:#d8d2c4; --grid:#e6e0d2;
+  --acc:#6d28d9; --acc2:#0e7490; --ok:#16a34a; --bad:#dc2626;
+  --warn:#b45309; --sky:#2f6fb0;
+}
+html.dark{
+  --bg:#0f172a; --card:#111c33; --ink:#e2e8f0; --dim:#94a3b8;
+  --line:#2b3a55; --grid:#1c2740;
+  --acc:#a78bfa; --acc2:#22d3ee; --ok:#4ade80; --bad:#f87171;
+  --warn:#fbbf24; --sky:#7aa2ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  line-height:1.68; -webkit-font-smoothing:antialiased; transition:background .25s,color .25s;
+}
+article{max-width:820px;margin:0 auto;padding:28px 20px 90px;}
+a{color:var(--acc2);}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--acc);border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin-bottom:12px;
+  background:color-mix(in srgb,var(--acc) 9%,transparent);}
+h1{font-size:clamp(1.7rem,5vw,2.55rem);line-height:1.14;letter-spacing:-.02em;font-weight:800;margin:.15em 0 .1em;}
+.sub{color:var(--dim);font-size:.96rem;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:10px;}
+.sub .mono{font-family:ui-monospace,Menlo,Consolas,monospace;}
+section{padding:28px 0;border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:0;}
+h2{font-size:1.32em;color:var(--acc);margin-bottom:12px;letter-spacing:-.01em;}
+h3{font-size:1.04em;font-weight:650;color:var(--ink);margin:1em 0 .35em;}
+p{margin-bottom:12px;}
+.lede{font-size:1.05em;}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;}
+.card.wc{border-left:4px solid var(--bad);}
+.card.res{border-left:4px solid var(--ok);}
+.card.wc b{color:var(--bad);} .card.res b{color:var(--ok);}
+.card.final{border-left:4px solid var(--acc);}
+.note{font-size:.87rem;color:var(--dim);border-left:2px solid var(--acc);padding:2px 0 2px 12px;margin:10px 0;}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;background:color-mix(in srgb,var(--acc) 7%,transparent);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;
+  white-space:pre;font-size:.82em;color:var(--ink);line-height:1.55;}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:14px 0;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{color:var(--acc);font-weight:700;font-size:.72em;letter-spacing:.04em;text-transform:uppercase;}
+td:first-child{color:var(--ink);font-weight:650;}
+ol,ul{margin:.5em 0 .5em 1.2em;} li{margin:.35em 0;font-size:.95em;}
+li b{color:var(--acc);}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px;}
+canvas{display:block;width:100%;height:auto;border-radius:10px;background:var(--card);border:1px solid var(--line);}
+.ctrl{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 8px;}
+.ctrl .c{flex:1 1 220px;min-width:170px;}
+.ctrl label{display:flex;justify-content:space-between;font-size:.8rem;color:var(--dim);margin-bottom:5px;}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,monospace;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--grid);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--card);cursor:grab;}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card);}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+button{font:inherit;font-size:.82rem;padding:8px 14px;border-radius:10px;cursor:pointer;
+  background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 35%,transparent);}
+button:hover{background:color-mix(in srgb,var(--acc) 22%,transparent);}
+button.primary{background:var(--acc);color:var(--bg);border-color:var(--acc);}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.stat{flex:1 1 120px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;}
+.stat .n{font-family:ui-monospace,monospace;font-size:1.35rem;font-weight:700;color:var(--acc);line-height:1.1;}
+.stat.e .n{color:var(--ok);}
+.stat .l{color:var(--dim);font-size:.72rem;letter-spacing:.03em;margin-top:2px;}
+.readout{border-left:4px solid var(--acc);background:color-mix(in srgb,var(--card) 60%,transparent);
+  border-radius:0 10px 10px 0;padding:10px 14px;font-size:.9rem;margin-top:12px;min-height:3em;color:var(--ink);}
+.legend{display:flex;gap:12px 18px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px;}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:10;font-size:.8rem;padding:7px 12px;}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:560px){.prov{grid-template-columns:1fr;}}
+.prov .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+.prov .k{font-size:.7em;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);font-weight:700;}
+.prov a{text-decoration:none;font-weight:650;border-bottom:1px solid var(--line);}
+.prov a:hover{border-bottom-color:var(--acc);}
+.prov .d{display:block;color:var(--dim);font-size:.87rem;margin-top:8px;}
+footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--dim);font-size:.82em;}
+</style>
+</head>
+<body>
+<article>
+  <button id="themeToggle" class="themetoggle" title="Thema wechseln">&#9790; / &#9788;</button>
+  <div class="tag">Runde 3 &middot; Nicht-KI-Track &middot; Pair 017</div>
+  <h1>Der Fixpunkt &mdash; Sein als Relation</h1>
+  <p class="sub">Zwischen Substrat, Konsistenz und Lekt&uuml;re &middot; Fusion aus: <span class="mono">n2-045.html</span> &#10005; <span class="mono">n2-046.html</span> &nbsp;(Runde 3)</p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lede">Beide Runde-2-Papiere sind selbst schon Doppel-Synthesen und kreisen um dieselbe tiefere Struktur. <b>A</b> (n2-045, &bdquo;Bestimmung durch Konsistenz an der L&uuml;cke&ldquo;) sagt: das Definite ist der <em>&Uuml;berlebende / Fixpunkt einer Konsistenz- oder Vervollst&auml;ndigungsbedingung</em>, die man &uuml;ber ein l&ouml;chriges Substrat legt &mdash; lokalisiert genau an der L&uuml;cke/Obstruktion, die das Substrat nicht f&uuml;llt; 0-dimensional (eindeutiger Punkt: &radic;2, die 3) oder &gt;0-dimensional (irreduzible Kohomologie = &Phi;). <b>B</b> (n2-046, &bdquo;Ein Gegenstand, viele Lesarten&ldquo;) sagt: es gibt ein <em>festes, verstandsunabh&auml;ngiges Substrat (Sein)</em> und eine <em>interpretierende Schicht (Meinen)</em>; der Wert bleibt unter allen Lesarten derselbe, und <em>Objektivit&auml;t ist die Struktur, die Sein von Meinen trennt</em>.</p>
+    <p>Die eine integrierte Position: <strong>Das Definite ist keine Wesenheit, sondern ein <em>relationaler Fixpunkt</em> &mdash; die Position, die ein Objekt in einem System von Beziehungen/Bedingungen einnimmt; sein &bdquo;Sein&ldquo; ist, die Konsistenz- / Lesebedingung an der L&uuml;cke zu &uuml;berleben.</strong> A liefert die <em>dynamische / genetische</em> H&auml;lfte: das Definite wird von einem Konsistenzprozess <em>produziert</em> (Auswahl an der Obstruktion, asymptotisch am Rand). B liefert die <em>statische / ontologische</em> H&auml;lfte: das Definite ist ein <em>verstandsunabh&auml;ngiger, invarianter Wert</em>, den die Lesarten nur lesen (relationale Festlegung via Hume / Kolmogorov / Score-Rolle). Zusammen: <strong>das Objekt ist der Fixpunkt eines Konsistenz-/Lese-Prozesses &mdash; seine Bestimmtheit ist zugleich erzeugt (asymptotische Auswahl, A) und gegeben (Invariante, B); sein &bdquo;Sein&ldquo; und &bdquo;Bedeutsamkeit&ldquo; entstehen an der Schnittstelle von festem Kern (Sein) und offener L&uuml;cke (Obstruktion/Lekt&uuml;re).</strong></p>
+    <p>Der verbindende Zug beider Papiere ist derselbe: <em>Definition &uuml;ber Relationen, nicht &uuml;ber Wesen</em>. A: Yoneda &bdquo;ein Objekt ist, was es tut&ldquo;, der Dedekind-Schnitt (&radic;2 = die L&uuml;cke zwischen L und R, definiert durch seine Lage). B: Humesches Prinzip, Kolmogorov-Axiome, Score-Rolle (die inferentielle Rolle eines Tokens). &bdquo;Sein&ldquo; wird in beiden zu einer Relation &mdash; zum &Uuml;berleben einer Bedingung, nicht zum Besitz eines inneren Kernels.</p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere widerlegen einander nicht (andere Dom&auml;nen: Vervollst&auml;ndigung/Auswahl vs. Objektivit&auml;t/Lekt&uuml;re). Aber sie treffen auf drei <b>grundlegenden Annahmen</b> &uuml;ber das, was den fixierten Gegenstand ausmacht &mdash; und da sind sie inkompatibel.</p>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(1) Herkunft der Bestimmtheit: Produkt vs. gegeben</h3>
+      <p><b>A:</b> Das Definite ist das <b>Produkt</b> eines Konsistenz-/Auswahlprozesses. &bdquo;Vervollst&auml;ndigung = Auswahl an der Obstruktion&ldquo;; &epsilon;&rarr;0 zieht das &epsilon;-Band auf <em>einen</em> Punkt zusammen; die Wellengleichung <em>sieht</em> die Dimension n=1 und n=3 aus; die Fixierung ist dynamisch/asymptotisch (&bdquo;am Rand r&rarr;&infin;&ldquo;, &bdquo;dynamisches, asymptotisches Residuum&ldquo;). Die Bestimmtheit ist das <em>Ergebnis eines Prozesses</em>.</p>
+      <p><b>B:</b> Das Definite ist <b>gegeben</b>: ein objektiver, verstandsunabh&auml;ngiger logischer Gegenstand, den die Lesarten nur lesen. &bdquo;Nur der Kontext wechselt &mdash; der Wert p bleibt exakt derselbe&ldquo;; die Fixierung ist statisch/logisch (Humesches Prinzip, Kolmogorov-Axiome). Die Bestimmtheit ist eine <em>Eigenschaft des Objekts selbst</em>.</p>
+      <p class="note"><b>Spannung:</b> Bestimmtheit als <em>Produkt eines ausw&auml;hlenden Prozesses</em> (A) vs. als <em>statisches Gegebenes</em> (B).</p>
+    </div>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(2) Substrat: offen/l&ouml;chrig (wird vervollst&auml;ndigt) vs. fest/abgeschlossen (wird gelesen)</h3>
+      <p><b>A:</b> Das Substrat ist <b>unbestimmt, &bdquo;l&ouml;chrig&ldquo;</b> (&Qopf; dicht aber unvollst&auml;ndig; die diskrete Menge, in der &bdquo;der Welt etwas fehlt&ldquo;; eine offene &Uuml;berdeckung mit echten L&uuml;cken) und wird von der Bedingung <b>vervollst&auml;ndigt</b> &mdash; die L&uuml;cke wird <em>gefillt</em> (z. B. &Qopf;&rarr;&Ropf;). Das Substrat ist unvollst&auml;ndig und wird konstruktiv geschlossen.</p>
+      <p><b>B:</b> Das Substrat (Sein: die Karte/der Seed, die Kardinalzahlen, der Wert p) ist <b>bereits fest und abgeschlossen</b>; &bdquo;die Karte (Sein) ist inertes Material&ldquo;, &bdquo;Bedeutung lebt im Objekt, nicht im Kopf&ldquo;. Die Lekt&uuml;re f&uuml;llt nichts, sie <em>liest</em>, was schon da ist.</p>
+      <p class="note"><b>Spannung:</b> Substrat ist <em>unvollst&auml;ndig und wird vervollst&auml;ndigt</em> (A) vs. <em>abgeschlossen und wird gelesen</em> (B).</p>
+    </div>
+
+    <div class="card wc">
+      <h3 style="margin-top:0">(3) Der Rest: echte Emergenz (&Phi;) vs. perspektivische, objektneutrale Bedeutsamkeit</h3>
+      <p><b>A:</b> Der irreduzible Rest ist <b>echte Emergenz</b> &mdash; &bdquo;irreduzibles Global&ldquo;, &bdquo;Kohomologie = &Phi;&ldquo;, &bdquo;globale Form &gt; Summe der lokalen Teile&ldquo;. Das Ganze ist <em>mehr</em> als die Summe der Teile; der Rest ist ontologisch real und produktiv.</p>
+      <p><b>B:</b> Die interpretierende Schicht (Score / Bedeutsamkeit) wird an der Schnittstelle <b>konstituiert</b>, &auml;ndert das Objekt aber <b>nicht</b>: &bdquo;der Wert p bleibt exakt derselbe&ldquo;. Die Bedeutsamkeit gilt &bdquo;f&uuml;r einen Agenten&ldquo; (Commitment / Information) und ist perspektivisch, h&auml;ngt am Objekt ab.</p>
+      <p class="note"><b>Spannung:</b> der L&uuml;cken-Rest ist <em>ontologisch echter Surplus</em> (Emergenz, &Phi;) (A) vs. <em>perspektivische Lesart</em>, die das Objekt unber&uuml;hrt l&auml;sst (B).</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (1): Das Gegebene (B) ist der Fixpunkt / die Invariante des Produkts (A)</h3>
+      <p>Ein Konsistenzprozess (A), der zu seinem Rand l&auml;uft (&epsilon;&rarr;0, r&rarr;&infin;), <em>produziert</em> einen verstandsunabh&auml;ngigen, invarianten Wert (B). B's statische, relationale, verstandsunabh&auml;ngige Bestimmtheit <em>ist</em> das <b>asymptotische Residuum / der Fixpunkt</b> von A's dynamischer Auswahl. Beide beschreiben dasselbe Objekt auf zwei Zeitpunkte: A = Genesis (wie das Definite durch Auswahl an der L&uuml;cke entsteht), B = Zustand (was es ist, sobald es da ist: verstandsunabh&auml;ngig, invariant, relational). <strong>Fusion:</strong> das Objekt ist der Fixpunkt eines Konsistenzprozesses &mdash; seine Bestimmtheit ist zugleich <em>erzeugt</em> (asymptotische Auswahl) und <em>gegeben</em> (Invariante, relational).</p>
+    </div>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (2): Das Substrat hat einen festen Kern (B) + eine offene L&uuml;cke (A)</h3>
+      <p>Das Substrat ist weder blo&szlig; l&ouml;chrig-unvollst&auml;ndig (A) noch blo&szlig; fest-abgeschlossen (B) &mdash; es hat <b>zwei Regionen</b>. Den <em>festen Kern</em> (B's Sein: Karte / Kardinalzahlen / Wert p, schon da) und die <em>offene L&uuml;cke / Fringe</em> (A's Obstruktion, wo der Kern noch nicht fixiert ist und Vervollst&auml;ndigung/Lekt&uuml;re wirken muss). A's &bdquo;Vervollst&auml;ndigung&ldquo; f&uuml;llt die L&uuml;cke; B's &bdquo;Lekt&uuml;re&ldquo; liest den Kern. Die L&uuml;cke wird, sobald sie fixiert ist, Teil des Kernels &mdash; das Sein w&auml;chst. Was B als &bdquo;schon fest&ldquo; sieht, ist der (bisherige) Kern von A's laufender Vervollst&auml;ndigung. <strong>Fusion:</strong> Substrat = fester Kern + offene L&uuml;cke; der Konsistenz-/Lese-Prozess fixiert die L&uuml;cke und vergr&ouml;&szlig;ert den Kern.</p>
+    </div>
+
+    <div class="card res">
+      <h3 style="margin-top:0">Zu (3): Der Rest hat zwei Ordnungen &mdash; ontologisch echt + agentenbezogene Projektion</h3>
+      <p>A's &Phi;/Kohomologie ist der <b>genuin irreduzible, ontologisch neue</b> Surplus (die globale Form, die kein lokales St&uuml;ck tr&auml;gt). B's Score/Commitment/Information ist die <b>agentenbezogene Gr&ouml;&szlig;e / Projektion</b> auf denselben Surplus &mdash; wie das irreduzible Global auf einen Leser zur&uuml;ckwirkt. Derselbe Rest, auf zwei Ebenen: kohomologisch/ontologisch (A) und deontisch/interpretierend (B). Dass B's Bedeutsamkeit das Objekt &bdquo;nicht &auml;ndert&ldquo;, liegt daran, dass sie eine <em>Projektion auf den Agenten</em> ist, keine Hinzuf&uuml;gung zum Sein des Objekts &mdash; aber der Surplus, den sie projiziert (die L&uuml;cke / Obstruktion / &Phi;), ist genau A's echte Emergenz. <strong>Fusion:</strong> der L&uuml;cken-Rest ist ontologisch real (A: &Phi; / Emergenz) <em>und</em> tr&auml;gt eine agentenbezogene Gr&ouml;&szlig;e (B: Information / Commitment = &minus;log&#8322;p = Seltenheit) &mdash; dieselbe L&uuml;cke, zwei Messgr&ouml;&szlig;en.</p>
+    </div>
+
+    <div class="card res final">
+      <h3 style="margin-top:0">Gefasste Schlussposition</h3>
+      <p><strong>Das Definite ist der relationale Fixpunkt eines Konsistenz-/Lese-Prozesses, der zwischen einem festen Kern (Sein, verstandsunabh&auml;ngig) und einer offenen L&uuml;cke (Obstruktion) steht.</strong> Seine Bestimmtheit ist zugleich erzeugt (asymptotische Auswahl an der L&uuml;cke, A) und gegeben (verstandsunabh&auml;ngig, relational, B). Sein &bdquo;Sein&ldquo; = seine Position in einem System von Relationen/Bedingungen (Yoneda &times; Hume &times; Kolmogorov &times; Score-Rolle); seine &bdquo;Bedeutsamkeit / sein Gewicht&ldquo; = der Score / die Information, die er an der Schnittstelle erzeugt. Der L&uuml;cken-Rest ist ontologisch real (Kohomologie &Phi;, Emergenz) und hat eine agentenbezogene Gr&ouml;&szlig;e (Information = Commitment = &minus;log&#8322;p = Seltenheit). <em>Sein ist eine Relation, keine Wesenheit.</em></p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="lede">Abstrahiert auf die Ebene der Thesen/Positionen beider Runde-2-Papiere &mdash; genug Substanz, damit eine sp&auml;tere Runde allein davon arbeitet.</p>
+
+    <h3>4.1 Gemeinsamer Meta-Zug: relationaler Anti-Essentialismus</h3>
+    <p>Beide Papiere definieren den Gegenstand <b>nicht durch ein Wesen, sondern durch seine Beziehungen</b>. A: Yoneda &bdquo;Objekt = was es tut&ldquo; (Objekt = seine Morphismen/Relationen); der Dedekind-Schnitt (&radic;2 = die L&uuml;cke, definiert durch seine Lage zwischen L und R); die 3 = &Uuml;berlebende in der Dimensionslinie. B: Humesches Prinzip (#F = #G &hArr; Bijektion F&rarr;G), Kolmogorov-Axiome, Score-Rolle (Rolle(t) = die (C,E)-Paare, die mit t stehen und fallen). <em>Fixiert wird der Gegenstand &uuml;ber seine Beziehungen</em> &mdash; nicht &uuml;ber &bdquo;Hingewiesenes&ldquo; (mentales Bild, physischer Haufen, inneres Wesen). Das ist der gemeinsame Kern der Fusion.</p>
+    <div class="formula">Objekt O  =  relationaler Kern  =  { Relationen / Bedingungen R }
+  &bdquo;Wesen&ldquo; wird ersetzt durch &bdquo;Position in einem System von Relationen&ldquo;
+  A: O = Fixpunkt der Konsistenzbedingung an der L&uuml;cke (Yoneda / Dedekind)
+  B: O = verstandsunabh&auml;ngiger Wert, invariant &uuml;ber alle Lesarten (Hume / Kolmogorov / Rolle)</div>
+
+    <h3>4.2 Das vereinte Schema &mdash; f&uuml;nf Slots (A) &times; zwei Ebenen (B)</h3>
+    <table>
+      <thead><tr><th>Slot</th><th>A (n2-045)</th><th>B (n2-046)</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td>Substrat</td><td>l&ouml;chrig: &Qopf; dicht/unvollst&auml;ndig, {1,2,3,&hellip;} diskret, offene &Uuml;berdeckung</td><td>fest (Sein): Karte/Seed, Kardinalzahlen, der Wert p</td><td>Substrat = fester <b>Kern</b> (B) + offene <b>L&uuml;cke/Fringe</b> (A)</td></tr>
+        <tr><td>Bedingung / Lekt&uuml;re</td><td>Konsistenz-/Vervollst&auml;ndigungsbedingung (Cauchy-Limit, Dedekind-Schnitt, Verklebung, Rand r&rarr;&infin;)</td><td>die Lesarten (Laplace, von Mises, Bayes, Shannon, Born, Kolmogorov) + der Score</td><td>Konsistenz-/Lese-Prozess, der auf der L&uuml;cke wirkt und den Kern liest</td></tr>
+        <tr><td>L&uuml;cke / Obstruktion</td><td>der Schnitt, das kohomologische Loch (&beta;<sub>k</sub>); n=2,4,5: keine L&ouml;sung</td><td>die Schnittstelle Sein &perp; Meinen (truth(t)=seed(t) vs believed(t)=S(t))</td><td>das, wo der Kern noch nicht fixiert ist; das Objekt definiert sich daran</td></tr>
+        <tr><td>Fixpunkt / &Uuml;berlebender</td><td>0-dim: EIN Punkt (&radic;2, die 3); &gt;0-dim: Kohomologie = &Phi;</td><td>der objektive Wert p (verstandsunabh&auml;ngig, &bdquo;dein p = mein p&ldquo;)</td><td>der <b>relationale Fixpunkt</b>: der invariante Wert (B) = der 0-dim. &Uuml;berlebende (A) oder der &gt;0-dim. Rest (A)</td></tr>
+        <tr><td>Objektivit&auml;t / Struktur</td><td>die Konsistenzbedingung selbst (selektiert den &Uuml;berlebenden an der L&uuml;cke)</td><td>die Struktur, die Sein &perp; Meinen trennt</td><td>Objektivit&auml;t = die Konsistenzbedingung = die Trennstruktur, die den Kern unter allen Lekt&uuml;ren fix h&auml;lt</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.3 Zwei Gesichter = zwei Momente</h3>
+    <p>A trennt das <em>exakte/statische</em> Gesicht (Dedekind-Schnitt, Garbe, globale Sektion) vom <em>dynamischen/asymptotischen</em> (Cauchy-Limit, Trajektorie, Kohomologie). B trennt <em>Sein</em> (fest, inert) von <em>Meinen</em> (konstituiert, produktiv, der Score). <b>Fusion:</b> jedes definitive Objekt hat ein <em>statisches Gesicht</em> = seinen relationalen/invarianten Kern (B's Sein = A's exakter Schnitt/Garbe/globale Sektion) und ein <em>dynamisches Gesicht</em> = den Konsistenz-/Lese-Prozess, der es fixiert (A's asymptotischer Lauf = B's wachsender Score). A's &bdquo;zwei Gesichter&ldquo; und B's &bdquo;zwei Ebenen&ldquo; sind dasselbe: der invariante Kern + der fixierende Prozess.</p>
+
+    <h3>4.4 Der Dimensionsparameter (A) + die Lekt&uuml;re-Symmetrie (B) &mdash; und die Br&uuml;cke</h3>
+    <p>A: dim(L&ouml;sungsraum) = 0 &rarr; eindeutiger Punkt; &gt;0 &rarr; Kohomologie &Phi;. B: die Lesarten sind auf der Objekt-Ebene <em>symmetrisch</em> (keine &auml;ndert p), auf der Bedeutungs-Ebene <em>asymmetrisch</em> (nur der Score erzeugt Bedeutsamkeit). <b>Fusion:</b> die Dimension der L&uuml;cke = der Spielraum, den die Lesarten haben = die Gr&ouml;&szlig;e des Surplus. Die <b>Br&uuml;cke</b>: Seltenheit = Wahrscheinlichkeit = Information = Commitment (B) ist die <em>agentenbezogene Messgr&ouml;&szlig;e</em> der L&uuml;cken-Dimension (A). Mit p = 2<sup>&minus;r</sup>: I = &minus;log&#8322;p = r und C = 2r. Ein seltenerer Fund (kleineres p, gr&ouml;&szlig;eres r) = gr&ouml;&szlig;ere L&uuml;cke = gr&ouml;&szlig;erer kohomologischer Rest = mehr Information/Commitment.</p>
+
+    <h3>4.5 Die Formeln &mdash; aus beiden zusammen</h3>
+    <div class="formula">A (n2-045)  &middot;  n-dim. Wellengleichung:  v_rr + (n-1)/r &middot; v_r = (1/c^2) &middot; v_tt
+  Ansatz v = &alpha;(r) f(t - r/c),  &alpha; = K r^&beta;  &rArr;  &beta;(&beta;+n-2)=0  und  &beta;=(n-1)/2  &rArr;  nur n=1 (&beta;=0), n=3 (&beta;=-1);  v(r,t)=(1/r) f(t-r/c)
+  Dedekind-Schnitt:  L &lt; R,  L &cup; R = &Qopf;,  L maxlos;   &radic;2:  L={q&isin;&Qopf; : q^2 &lt; 2},  R={q : q^2 &ge; 2}
+  Cauchy:  &forall;&epsilon;&gt;0 &exists;N &forall;m,n&ge;N  |a_m - a_n| &lt; &epsilon;     Yoneda:  Nat(h_A,F) &cong; F(A)     &beta;_k,  &chi;=V-E+F
+
+B (n2-046)  &middot;  p = |A|/|&Omega;|  (Laplace / normierte Z&auml;hlung)   I = -log_2 p  (Shannon)   C = 2r
+  Humesches Prinzip:  #F = #G  &hArr;  Bijektion F &rarr; G     Kolmogorov:  P(A)&ge;0, P(&Omega;)=1, &sigma;-additiv
+  Score-Rolle:  Rolle(t) = { (C,E)-Paare, die mit t stehen und fallen }
+  Objektivit&aadt = { p(r_i) = p  &forall; i }  &and;  Struktur( Sein &perp; Meinen )
+
+Fusion  &middot;  p = 2^(-r)  &rArr;  I = -log_2 p = r = Commitment/2  &middot;  dim(L&uuml;cke)=0 &rArr; Punkt,  dim(L&uuml;cke)&gt;0 &rArr; &Phi;</div>
+
+    <h3>4.6 Das wiederverwendbare Schema (Fusion, final)</h3>
+    <p>Gegeben ein unbestimmtes Substrat mit <b>festem Kern</b> (Sein) und <b>offener L&uuml;cke</b> (Obstruktion): ein <b>Konsistenz-/Lese-Prozess</b> wirkt auf der L&uuml;cke. Das <b>Objekt = der Fixpunkt = der &Uuml;berlebende = der relationale Kern</b>. <b>Objektivit&auml;t</b> = die Bedingung/Trennstruktur, die den Kern unter allen Lekt&uuml;ren fix h&auml;lt <em>und</em> den &Uuml;berlebenden an der L&uuml;cke ausw&auml;hlt. Der <b>Rest (L&uuml;cke / Kohomologie / &Phi;)</b> ist ontologisch real und tr&auml;gt eine agentenbezogene Gr&ouml;&szlig;e (Information / Commitment / Bedeutsamkeit = &minus;log&#8322;p = der Score). <b>dim(L&uuml;cke) = 0</b> &rarr; eindeutiger Punkt (A: &radic;2 / die 3; B: invarianter p); <b>dim(L&uuml;cke) &gt; 0</b> &rarr; Kohomologie/Emergenz (A: &Phi;) mit agentenbezogenem Gewicht (B: I / C). <em>Sein ist eine Relation.</em></p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung &mdash; der Fixpunkt zwischen Kern und L&uuml;cke</h2>
+    <p>Links das <b>Substrat</b>: der feste <b>Kern</b> (Sein, verstandsunabh&auml;ngig &mdash; B) und die <b>offene L&uuml;cke</b> (Obstruktion, &bdquo;l&ouml;chrig&ldquo; &mdash; A), durch eine gestrichelte Grenze getrennt; das Konsistenzfeld flie&szlig;t dar&uuml;ber hinweg. Mitte der <b>Fixpunkt / &Uuml;berlebende</b>: bei <b>Konsistenz c&rarr;1</b> kollabiert er auf <b>dim 0 = EINEN Punkt</b> (&radic;2 / die 3, A = invarianter p, B); bei <b>c&rarr;0</b> bleibt ein <b>&gt;0-dimensionales, irreduzibles Global</b> (Kohomologie = &Phi;, A). Rechts die <b>agentenbezogene Ma&szlig;zahl</b> desselben Rests: <b>I = &minus;log&#8322;p</b> (Information, B) und <b>C = 2r</b> (Commitment, A) &mdash; sie wachsen mit der Seltenheit r. Ziehe an den beiden Reglern: derselbe Rest wird einmal als <em>Dimension des Fixpunkts</em> (A) und einmal als <em>Ma&szlig; auf dem Agenten</em> (B) gemessen.</p>
+
+    <div class="viz">
+      <div class="ctrl">
+        <div class="c">
+          <label>Konsistenz c (Vervollst&auml;ndigung, A) <b id="c-val">0.50</b></label>
+          <input type="range" id="cslider" min="0" max="1" step="0.01" value="0.50"/>
+        </div>
+        <div class="c">
+          <label>Seltenheit r (Substrat / p=2&#8315;&#8322;r, B) <b id="r-val">3</b></label>
+          <input type="range" id="rslider" min="1" max="6" step="1" value="3"/>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="btnA">dim 0 &middot; eindeutig (c&rarr;1)</button>
+        <button id="btnB">dim &gt; 0 &middot; emergent (c&rarr;0.12)</button>
+        <button id="btnNew">Neues Substrat</button>
+      </div>
+      <canvas id="viz" width="760" height="430"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--acc)"></i> Kern &middot; Sein (verstandsunabh&auml;ngig, B)</span>
+        <span><i style="background:var(--bad)"></i> L&uuml;cke &middot; Obstruktion (A)</span>
+        <span><i style="background:var(--acc2)"></i> Konsistenzfeld (Prozess)</span>
+        <span><i style="background:var(--warn)"></i> Ma&szlig; auf dem Agenten (I / C)</span>
+      </div>
+      <div class="statrow">
+        <div class="stat"><div class="n" id="s-p">0.1250</div><div class="l">invarianter Wert p = 2&#8315;&#8322;r (B)</div></div>
+        <div class="stat"><div class="n" id="s-d">0.50</div><div class="l">L&uuml;cke / dim (1&minus;c) (A)</div></div>
+        <div class="stat e"><div class="n" id="s-i">3.00</div><div class="l">I = &minus;log&#8322;p (B)</div></div>
+        <div class="stat"><div class="n" id="s-c">6</div><div class="l">C = 2r Commitment (A)</div></div>
+      </div>
+      <div class="readout" id="readout"></div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="box">
+        <span class="k">A &middot; n2-045.html</span>
+        <p><a href="../n2-045.html">n2-045.html</a></p>
+        <span class="d">&bdquo;Bestimmung durch Konsistenz an der L&uuml;cke &mdash; Vervollst&auml;ndigung als Auswahl &times; Garbe als Gehirn&ldquo; (Runde 2): das Definite ist der &Uuml;berlebende/Fixpunkt einer Konsistenzbedingung, lokalisiert an der L&uuml;cke; 0-dim (ein Punkt: &radic;2, die 3) oder &gt;0-dim (Kohomologie = &Phi;); zwei Gesichter (exakt/statisch + dynamisch/asymptotisch). Yoneda &times; Dedekind &times; Morley &times; Garbe.</span>
+      </div>
+      <div class="box">
+        <span class="k">B &middot; n2-046.html</span>
+        <p><a href="../n2-046.html">n2-046.html</a></p>
+        <span class="d">&bdquo;Ein Gegenstand, viele Lesarten &mdash; Objektivit&auml;t zwischen Sein und Score&ldquo; (Runde 2): festes, verstandsunabh&auml;ngiges Substrat (Sein) + interpretierende Schicht (Meinen); der Wert bleibt unter allen Lesarten gleich; Objektivit&auml;t = die Struktur, die Sein &perp; Meinen trennt; Seltenheit = Wahrscheinlichkeit = Information = Commitment. Frege/Laplace &times; Brandom/Score &times; Kolmogorov/Shannon.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion N3-017 &middot; nicht-KI-Track &middot; Runde 3 &middot; selbst&auml;ndige, offline-f&auml;hige Seite (keine Netz-Daten, keine externen Libs, reines Canvas). Farben &uuml;ber CSS-Variablen, themenreaktiv (Dunkel als Standard).</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  var ctx=canvas?canvas.getContext('2d'):null;
+  var cSlider=document.getElementById('cslider');
+  var cValEl=document.getElementById('c-val');
+  var rSlider=document.getElementById('rslider');
+  var rValEl=document.getElementById('r-val');
+  var pEl=document.getElementById('s-p');
+  var dEl=document.getElementById('s-d');
+  var iEl=document.getElementById('s-i');
+  var cEl=document.getElementById('s-c');
+  var readout=document.getElementById('readout');
+
+  var H=430;
+  var state={c:0.5, r:3, phase:0};
+
+  function cssVar(n){var v=getComputedStyle(document.documentElement).getPropertyValue(n);return v&&v.trim()?v.trim():null;}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function hexParse(h){h=(h||'').replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+    return isNaN(r)?[150,150,170]:[r,g,b];}
+  function rgba(hex,a){var c=hexParse(hex);return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+  function mix(hx,hy,t){var a=hexParse(hx),b=hexParse(hy);t=clamp(t,0,1);
+    return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')';}
+  function roundRect(x,y,w,h,rad){
+    rad=Math.min(rad,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rad,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rad);
+    ctx.arcTo(x+w,y+h,x,y+h,rad);
+    ctx.arcTo(x,y+h,x,y,rad);
+    ctx.arcTo(x,y,x+w,y,rad);
+    ctx.closePath();
+  }
+
+  function render(){
+    if(!ctx||!canvas)return;
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth||760;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    var card=cssVar('--card')||'#111c33';
+    ctx.fillStyle=card;ctx.fillRect(0,0,W,H);
+
+    var col={bg:card,line:cssVar('--line')||'#2b3a55',grid:cssVar('--grid')||'#1c2740',
+      ink:cssVar('--ink')||'#e2e8f0',dim:cssVar('--dim')||'#94a3b8',acc:cssVar('--acc')||'#a78bfa',
+      acc2:cssVar('--acc2')||'#22d3ee',ok:cssVar('--ok')||'#4ade80',bad:cssVar('--bad')||'#f87171',
+      warn:cssVar('--warn')||'#fbbf24'};
+
+    var c=state.c, r=state.r;
+    if(cValEl)cValEl.textContent=c.toFixed(2);
+    if(rValEl)rValEl.textContent=String(r);
+
+    var p=Math.pow(2,-r);
+    var I=-Math.log2(p);
+    var C=2*r;
+    var gap=1-c;
+    var dimPt=gap<0.06;
+
+    if(pEl)pEl.textContent=p.toFixed(4);
+    if(dEl)dEl.textContent=gap.toFixed(2);
+    if(iEl)iEl.textContent=I.toFixed(2);
+    if(cEl)cEl.textContent=String(C);
+
+    var padL=30,padR=16,padT=30,padB=14;
+    var topY=padT+6, botY=H-padB, plotH=botY-topY;
+    var p1L=padL, p1R=W*0.375;
+    var p2L=W*0.42, p2R=W*0.635;
+    var p3L=W*0.675, p3R=W-padR;
+
+    ctx.textBaseline='alphabetic';
+    ctx.font='700 11px ui-sans-serif,system-ui';
+    ctx.fillStyle=col.acc2;ctx.textAlign='left';
+    ctx.fillText('1 · SUBSTRAT  (Sein + Lücke)',p1L,topY-14);
+    ctx.fillStyle=col.acc;
+    ctx.fillText('2 · DER FIXPUNKT  (Überlebender)',p2L,topY-14);
+    ctx.fillStyle=col.warn;
+    ctx.fillText('3 · DIE MAßZAHL  (für den Agenten)',p3L,topY-14);
+
+    // ---- PANEL 1: substrate (core + fringe) ----
+    var sbL=p1L, sbR=p1R, sbW=sbR-sbL;
+    var sbY=topY+16, sbH=plotH*0.5;
+    var coreFrac=0.55, coreW=sbW*coreFrac;
+    ctx.fillStyle=rgba(col.acc,0.85);
+    ctx.fillRect(sbL,sbY,coreW,sbH);
+    var frL=sbL+coreW, frW=sbW-coreW;
+    ctx.fillStyle=rgba(col.bad,0.12+0.45*gap);
+    ctx.fillRect(frL,sbY,frW,sbH);
+    ctx.strokeStyle=rgba(col.bad,0.5+0.4*gap);ctx.lineWidth=1.2;
+    var nHoles=3,hh;
+    for(hh=0;hh<nHoles;hh++){
+      var hx=frL+frW*(0.22+0.56*hh/(nHoles-1));
+      var hr=(3+7*gap)*(0.6+0.4*((hh*7)%3)/2);
+      ctx.beginPath();ctx.arc(hx,sbY+sbH/2,Math.max(2,hr),0,Math.PI*2);ctx.stroke();
+    }
+    ctx.strokeStyle=col.ink;ctx.lineWidth=1.4;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(frL,sbY-6);ctx.lineTo(frL,sbY+sbH+6);ctx.stroke();ctx.setLineDash([]);
+    // consistency field wave
+    ctx.strokeStyle=col.acc2;ctx.lineWidth=2;ctx.beginPath();
+    var Nw=64,k,tt,xx,yy;
+    for(k=0;k<=Nw;k++){tt=k/Nw;xx=sbL+tt*sbW;
+      var amp=(tt<coreFrac?0.05:0.05+0.32*gap);
+      yy=sbY+sbH/2+amp*sbH*0.5*Math.sin(tt*20+state.phase);
+      if(k===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}
+    ctx.stroke();
+    ctx.fillStyle=col.ink;ctx.font='700 11px ui-sans-serif,system-ui';ctx.textAlign='left';
+    ctx.fillText('Sein · verstandsunabhängig',sbL+2,sbY+sbH+18);
+    ctx.fillStyle=col.dim;ctx.font='10px ui-sans-serif,system-ui';
+    ctx.fillText('(B: Kern)  +  Lücke · Obstruktion (A)',sbL+2,sbY+sbH+32);
+    ctx.fillText('Kern fix  →  Lücke offen (gap = '+gap.toFixed(2)+')',sbL+2,sbY+sbH+46);
+    ctx.fillStyle=col.acc2;ctx.font='10px ui-sans-serif,system-ui';
+    ctx.fillText('Konsistenzfeld fließt über die Lücke',sbL+2,sbY+sbH+62);
+
+    // ---- PANEL 2: fixed point (survivor) ----
+    var trackL=p2L, trackR=p2R, trackW=trackR-trackL;
+    var trackY=topY+34, trackH=16;
+    var spL=trackL, spR=trackR, spY=trackY-24;
+    var grad=ctx.createLinearGradient(spL,0,spR,0);grad.addColorStop(0,col.ok);grad.addColorStop(1,col.bad);
+    ctx.fillStyle=grad;ctx.fillRect(spL,spY-3,spR-spL,6);
+    ctx.fillStyle=col.dim;ctx.font='10px ui-sans-serif,system-ui';ctx.textAlign='left';
+    ctx.fillText('dim 0',spL,spY+16);ctx.textAlign='right';ctx.fillText('dim > 0',spR,spY+16);ctx.textAlign='left';
+    var tickX=spL+gap*(spR-spL);
+    ctx.strokeStyle=col.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(tickX,spY-7);ctx.lineTo(tickX,spY+7);ctx.stroke();
+    ctx.fillStyle=rgba(col.ink,0.08);roundRect(trackL,trackY,trackW,trackH,8);ctx.fill();
+    var survCol=mix(col.ok,col.bad,gap);
+    var midCX=(trackL+trackR)/2;
+    if(dimPt){
+      ctx.globalAlpha=0.25;ctx.beginPath();ctx.arc(midCX,trackY+trackH/2,20,0,Math.PI*2);ctx.fillStyle=survCol;ctx.fill();ctx.globalAlpha=1;
+      ctx.beginPath();ctx.arc(midCX,trackY+trackH/2,9,0,Math.PI*2);ctx.fillStyle=survCol;ctx.fill();
+      ctx.fillStyle=col.ink;ctx.font='700 12px ui-sans-serif,system-ui';ctx.textAlign='center';
+      ctx.fillText('dim 0 · EIN Punkt',midCX,trackY+trackH+28);
+      ctx.fillStyle=col.dim;ctx.font='10px ui-sans-serif,system-ui';
+      ctx.fillText('(A: √2 / die 3)  =  (B: invariant p)',midCX,trackY+trackH+42);
+      ctx.textAlign='left';
+    }else{
+      var fillW=trackW*clamp(gap,0.05,1);
+      ctx.globalAlpha=0.25;ctx.fillStyle=survCol;roundRect(trackL,trackY-5,fillW+10,trackH+10,10);ctx.fill();ctx.globalAlpha=1;
+      ctx.fillStyle=survCol;roundRect(trackL,trackY,fillW,trackH,8);ctx.fill();
+      ctx.fillStyle=col.ink;ctx.font='700 12px ui-sans-serif,system-ui';ctx.textAlign='center';
+      ctx.fillText('dim > 0 · irreduzibles Global',midCX,trackY+trackH+28);
+      ctx.fillStyle=col.dim;ctx.font='10px ui-sans-serif,system-ui';
+      ctx.fillText('(A: Kohomologie = Φ, Emergenz)',midCX,trackY+trackH+42);
+      ctx.textAlign='left';
+    }
+
+    // ---- PANEL 3: agent-facing magnitude (I, C) ----
+    var barL=p3L, barR=p3R, barW=barR-barL;
+    var baseY=botY-6, maxBarH=plotH*0.6;
+    var barSlot=barW/2-8;
+    var iH=maxBarH*clamp(I/6,0,1);
+    ctx.fillStyle=rgba(col.acc2,0.9);ctx.fillRect(barL,baseY-iH,barSlot,iH);
+    var cH=maxBarH*clamp(C/12,0,1);
+    ctx.fillStyle=rgba(col.warn,0.9);ctx.fillRect(barL+barW/2+8,baseY-cH,barSlot,cH);
+    ctx.strokeStyle=col.line;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(barL,baseY);ctx.lineTo(barR,baseY);ctx.stroke();
+    ctx.fillStyle=col.ink;ctx.font='700 11px ui-sans-serif,system-ui';ctx.textAlign='center';
+    ctx.fillText('I = −log₂p = '+I.toFixed(1),barL+barSlot/2,baseY+16);
+    ctx.fillText('C = 2r = '+C,barL+barW/2+8+barSlot/2,baseY+16);
+    ctx.fillStyle=col.dim;ctx.font='10px ui-sans-serif,system-ui';
+    ctx.fillText('(B: Information)',barL+barSlot/2,baseY+30);
+    ctx.fillText('(A: Commitment)',barL+barW/2+8+barSlot/2,baseY+30);
+    ctx.textAlign='left';
+
+    if(readout){
+      if(dimPt){
+        readout.textContent='Konsistenz vollständig (c→1): die Lücke schließt sich → der Fixpunkt ist 0-dimensional = EIN Punkt (A: √2 / die 3); der Wert p bleibt verstandsunabhängig (B: „dein p = mein p"). Die Maßzahl I = −log₂p = '+I.toFixed(1)+' und C = 2r = '+C+' trägt die (verschlossene) Lücke.';
+        readout.style.borderColor=col.ok;
+      }else if(gap<0.5){
+        readout.textContent='Mittlere Lücke (c = '+c.toFixed(2)+'): der Fixpunkt ist >0-dimensional — ein irreduzibles Global (A: Kohomologie = Φ, Emergenz) wächst über den festen Kern (B: Sein) hinaus. Dieselbe Lücke trägt die agentenbezogene Maßzahl I = '+I.toFixed(1)+' (B) und C = '+C+' (A).';
+        readout.style.borderColor=col.warn;
+      }else{
+        readout.textContent='Lücke weit offen (c→0): der Fixpunkt ist stark >0-dimensional (A: Φ, Emergenz — das Global > Summe der lokalen Teile). Die agentenbezogene Maßzahl (B) wächst mit der Seltenheit: I = −log₂p = '+I.toFixed(1)+', C = 2r = '+C+'. Seltenheit = Information = Commitment.';
+        readout.style.borderColor=col.bad;
+      }
+    }
+  }
+
+  function animate(){
+    state.phase+=0.03;
+    render();
+    requestAnimationFrame(animate);
+  }
+
+  function init(){
+    if(cSlider)cSlider.addEventListener('input',function(){state.c=parseFloat(this.value)||0;render();});
+    if(rSlider)rSlider.addEventListener('input',function(){var v=parseInt(this.value,10);state.r=isNaN(v)?3:clamp(v,1,6);render();});
+    var bA=document.getElementById('btnA');if(bA)bA.addEventListener('click',function(){state.c=1;if(cSlider)cSlider.value=1;render();});
+    var bB=document.getElementById('btnB');if(bB)bB.addEventListener('click',function(){state.c=0.12;if(cSlider)cSlider.value=0.12;render();});
+    var bN=document.getElementById('btnNew');if(bN)bN.addEventListener('click',function(){state.phase=Math.random()*6;render();});
+    var tt=document.getElementById('themeToggle');if(tt)tt.addEventListener('click',function(){document.documentElement.classList.toggle('dark');});
+    window.addEventListener('resize',render);
+    if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){render();});}
+    render();
+    requestAnimationFrame(animate);
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+})();
+</script>
+</body>
+</html>

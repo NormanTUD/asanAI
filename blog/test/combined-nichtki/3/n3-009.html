@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gewissheit als geprüfte Schließung: der erreichbare Kern und die benannte Grenze</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#a92c86; --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --viz-bg:#ffffff; --viz-line:#c9c4b8; --viz-grid:#eee9dd;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#ff7cc4; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e;
+  --viz-bg:#0a1220; --viz-line:#263452; --viz-grid:#141d33;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.12;margin:0 0 8px}
+.subtitle{color:var(--accent2);font-family:ui-monospace,Consolas,monospace;font-size:14px;margin:0 0 6px}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 26px}
+hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+h2{font-size:22px;margin:0 0 12px;color:var(--accent)}
+h3{font-size:16.5px;margin:20px 0 8px;color:var(--text)}
+p{margin:0 0 14px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--text)}
+em{color:var(--muted);font-style:italic}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.65}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.aha b{color:var(--accent2)}
+.tagA{color:var(--accent);font-weight:700}
+.tagB{color:var(--accent2);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+.card{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--accent2);border-radius:0 12px 12px 0;padding:14px 18px;margin:15px 0}
+.card h3{margin-top:0}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0}
+#closeCanvas{display:block;width:100%;height:470px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+input[type=range]{width:170px;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.readout-row{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;font-size:14px}
+.readout-row b{color:var(--accent)}
+.coh-read{font-weight:700}
+#verdict{font-size:14px;margin:10px 0 0;line-height:1.6}
+.hint{color:var(--muted);font-size:13.5px}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700}
+.prov a:hover{text-decoration:underline}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+.theme-toggle:hover{border-color:var(--accent)}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">☀ / ☾</button>
+<article>
+<h1>Gewissheit als geprüfte Schließung: der erreichbare Kern und die benannte Grenze</h1>
+<p class="subtitle">Fusion aus: <code>n2-005.html</code> ✕ <code>n2-030.html</code>  (Runde 3)</p>
+<p class="meta">Runde 3 · Nicht-KI-Track · Paar 009 · „Ordnung als geprüfte Schließung" trifft „Gauge und Grenze"</p>
+<hr>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Runde-2-Papiere beschreiben <b>dasselbe Phänomen aus zwei Registern</b>: ein
+<b>selbstbezügliches System, das seinen eigenen Grund nicht ablesen, sondern <em>prüfen</em> muss</b>,
+und das bei dieser Prüfung <b>ehrlich über die Grenze</b> sprechen muss, die es von innen nicht
+überschreiten kann. <span class="tagA">A</span> (n2-005, „Ordnung als geprüfte Schließung") sagt es im
+Register des <em>Schließ-Tests</em>: Ordnung/Gleichheit ist keine Eigenschaft, die man von einem Objekt
+abliest, sondern etwas, das ein Test auf seinen lokalen/endlichen Daten <em>zertifiziert</em> (A's
+Verklebung = B's Schließung der Runde 2); man graduiert, wie weit sich die Daten schließen, und
+benennt die ehrliche Grenze zwischen dem Zertifizierten und dem Offenen. <span class="tagB">B</span>
+(n2-030, „Gauge und Grenze") sagt es im Register des <em>selbstbezüglichen Instruments</em>: ein
+Instrument ist lokal präzise und blind für seinen eigenen Grund; dieser Grund hat zwei Schichten —
+eine <em>geschlossene, erreichbare</em> Invariante (der gauge-unabhängige Kern, gewonnen durch eine
+wohldefinierte globale Operation) und eine <em>offene, unabschließbare</em> Fundament-Grenze
+(Restrisiko pⁿ→0, ≠0, das Ding an sich).</p>
+<p><b>Die einzelne integrierte Position:</b> <span class="tagA">A</span>'s
+<em>Schließ-Test/Verklebung</em> und <span class="tagB">B</span>'s <em>globaler Vergleich/Transport</em>
+sind <b>ein und derselbe Zug</b> — lokale, blinde Daten werden durch eine <em>wohldefinierte globale
+Operation</em> zu einem <b>stabilen, gauge-/Schließungs-unabhängigen Kern</b> erhoben. Und die
+<em>ehrliche Grenze</em>, die beide danach benennen, ist <b>dieselbe Grenzstruktur, doppelt gelesen</b>:
+<span class="tagA">A</span> spaltet sie in eine <em>überbrückbare Präzisionsgrenze</em> (endlich↔
+infinitesimal, per Limes) und eine <em>irreduzible Bedeutungsgrenze</em> (Struktur ≠ Wahrheit, Gödel);
+<span class="tagB">B</span> spaltet sie in einen <em>geschlossenen inneren Grund</em> (die Invariante,
+immer erreichbar bei richtigem globalen Vergleich) und einen <em>offenen äußeren Grund</em> (das
+Fundament der Struktur selbst, von keiner inneren Sicht erreicht, nur asymptotisch von einer äußeren
+Währung angedingt). <b>Gewissheit = der gewonnene, stabile Kern (geschlossen, kein Rest) + die ehrlich
+benannte, unüberschreitbare Grenze — wobei der <em>Struktur-Seite</em> der Grenze (B) man asymptotisch
+von außen nahkommt (pⁿ→0) und der <em>Bedeutungs-Seite</em> (A) nie.</b></p>
+<p>Die Fusion ist damit eine <b>dreistufige Architektur jeder Gewissheit</b>: <b>(0)</b> die lokale,
+präzise <em>blinde</em> Schicht (lokale Prinzipien / der lokale Gauge); <b>(1)</b> der
+<em>geschlossene Kern</em> — das, was die globale Operation als stabil gewinnt (Spalten / globaler
+Schnitt / flache Verbindung bei A, Effektgröße μ / Holonomie bei B): erreichbar, zertifiziert,
+<em>kein Rest</em>; <b>(2)</b> die <em>Grenze</em> — zwei ineinanderliegende Böden: ein
+<em>asymptotisch angedingter Struktur-Boden</em> (B: Fundament, pⁿ→0 ≠0) und ein
+<em>absoluter Bedeutungs-Boden</em> (A: Struktur ≠ Wahrheit, nie kreuzbar). Der ehrliche Gang ist:
+<em>den Gauge erkennen, den Kern gewinnen, und die Grenze benennen, die du von innen nicht
+überschreitest.</em></p>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+<p class="hint">Ehrliche Einordnung: Auf der Meta-Ebene sind beide einig — ein selbstbezügliches
+System ist für seinen eigenen Grund blind und muss ihn <em>prüfen</em>, nicht ablesen; und es gibt
+eine ehrliche Grenze, die man benennen muss. Es gibt <b>keinen</b> logischen Widerspruch in den
+Fakten. Hier sind drei <em>echte</em> Spannungen, an denen die beiden inkompatible Stellungen
+beziehen, jede mit der konkreten Position.</p>
+
+<div class="card">
+<h3>1. Status des Kernels — test-<em>konstituiert</em> (<span class="tagA">A</span>) vs. gauge-unabhängig <em>entdeckt</em> (<span class="tagB">B</span>)</h3>
+<p><span class="tagA">A</span>: der geschlossene Kern <em>entsteht</em> aus lokalen Regeln
+(„Ordnung = Emergenz aus lokalen Regeln"); er „existiert" <em>genau dann</em>, wenn der
+Schließ-Test durchläuft („the alignment ist real iff the test passes"). Der Kern ist also
+<b>konstituiert</b> durch das Bestehen des Tests — ohne Test gibt es ihn nicht als Objekt. Die
+Primzahlen „schließen" in Spalten <em>wegen</em> der modular projizierenden Regel.</p>
+<p><span class="tagB">B</span>: die Invariante (μ, Holonomie) ist ein <em>Fakt über die Welt / den
+Raum</em>, das <em>unabhängig</em> vom Instrument existiert und der lokale Gauge nur <em>verfehlt</em>.
+B teilt sie gar in eine <em>ontische</em> Invariante (Krümmung/Flip, ein Raum-Fakt) und eine
+<em>epistemische</em> (die wahre Effektgröße, ein Welt-Fakt). Der Kern wird also <b>entdeckt</b>
+(„da draußen, relativ zum Gauge"), nicht vom Test erzeugt.</p>
+<p class="hint">Inkompatibilität: Für A <em>produziert</em> der Test den Kern (besteht er nicht, gibt
+es ihn nicht); für B <em>deckt</em> der Test einen unabhängigen Kern auf (er existiert, ob man ihn
+sichtet oder nicht). Zwei unterschiedliche <em>Ontologien</em> für dasselbe Objekt.</p>
+</div>
+
+<div class="card">
+<h3>2. Die Grenze — irreduzible Wand (<span class="tagA">A</span>) vs. asymptotisch angedingter Boden (<span class="tagB">B</span>)</h3>
+<p><span class="tagA">A</span>: die Bedeutungsgrenze (Struktur ↔ Wahrheit/Bedeutung) ist
+<b>irreduzibel</b> — „values are chosen, not proved", Gödel (ein System kann seine eigene Konsistenz
+nicht beweisen). <em>Keine</em> Menge an Präzision, <em>keine</em> Methode — auch keine äußere —
+übersetzt Struktur in Wahrheit. Die Grenze ist ein <b>harter, absoluter Stopp</b>.</p>
+<p><span class="tagB">B</span>: der Grund der Struktur selbst (das Fundament) ist zwar <em>von innen
+nie erreicht</em> — aber er wird <b>asymptotisch von einer äußeren Währung angedingt</b>: unabhängige
+Querverifizierung, n unabhängige Systeme, Restrisiko pⁿ→0. Man kommt der Grenze <em>beliebig nah</em>
+(nur nie gleich). Die Grenze ist ein <b>offener Korridor</b>, kein starrer Stopp.</p>
+<p class="hint">Inkompatibilität: Für A ist die Grenze <em>absolut</em> (nichts, auch nicht Äußeres,
+dringt vor); für B ist sie <em>asymptotisch</em> (eine äußere Währung nähert sich endlos, pⁿ→0).
+Zwei unterschiedliche <em>Geometrien</em> derselben Grenze.</p>
+</div>
+
+<div class="card">
+<h3>3. Graduierung des Schließens — kontinuierlicher Score mit Schwellwert (<span class="tagA">A</span>) vs. geschlossene Ein-Operation „ohne Rest" (<span class="tagB">B</span>)</h3>
+<p><span class="tagA">A</span>: Schließen ist ein <b>kontinuierlicher</b> Score c(Präzision),
+zertifiziert durch einen <b>scharfen Schwellwert θ</b> (c ≥ θ ⇒ „ausreichend geschlossen"). Es gibt
+graduelle Zwischenstufen zwischen „nicht geschlossen" und „geschlossen"; der Rest 1−c ist
+gemessener Inhalt.</p>
+<p><span class="tagB">B</span>: die erste Schicht (die Invariante) wird durch <b>eine abgeschlossene
+Operation</b> gewonnen — und zwar <em>ohne Rest</em>: die Holonomie <em>ist</em> die Krümmung, μ
+<em>ist</em> t·SE, „kein Rest". Es gibt <b>keine</b> graduelle Zwischenstufe zwischen „Gauge" und
+„Invariante" — entweder der Vergleich ist vollzogen (man <em>besitzt</em> die Invariante) oder nicht.</p>
+<p class="hint">Inkompatibilität: A insistiert auf einer <em>graduerten</em> Schließung mit
+Zwischenstufen und Schwellwert; B's erste Schicht ist <em>all-or-nothing</em> und lässt keinen Rest.
+Zwei unterschiedliche <em>Formen</em> für „wie geschlossen muss es sein, um zu zählen".</p>
+</div>
+
+<div class="aha">
+<b>Der Konvergenzspunkt (wo sie zustimmen):</b> Beide lösen <em>Existenz/Ordnung/Gewissheit</em> auf
+„<em>es gilt, wenn die erzeugende globale Operation den Kern stabil gewinnt</em>" — A: „the alignment
+is real iff the test passes"; B: „die Invariante ist bestimmt, gegeben Gauge + Verbindung". Und beide
+bestehen auf <em>zwei</em> ehrlichen Ebenen: dem, was die Operation <em>zertifiziert</em>, und dem,
+was sie <em>nicht</em> stützt. Diese gemeinsame Wurzel macht die Fusion erst möglich; die drei
+Spannungen oben sind die echten Reibungspunkte.
+</div>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+<p><b>(1) Konstituiert vs. entdeckt → konstituiert im Zugriff, objektiv im Inhalt.</b> Man muss
+zwischen dem <em>Zugang</em> und dem <em>Inhalt</em> trennen. <em>Zugang</em> ist konstituiert (A hat
+recht): ohne die globale Operation (Schließ-Test / globaler Vergleich) ist der Kern nicht
+<em>zugänglich</em> — man kann ihn nicht ablesen, er wird erst durch den Akt des Schließens/
+Vergleichens zum Objekt. <em>Inhalt</em> ist objektiv (B hat recht): <em>einmal</em> die Operation
+vollzogen, ist der gewonnene Kern <b>invariant</b> — er hängt nicht von der willkürlichen lokalen
+Schicht ab (nicht vom Gauge, nicht vom gewählten lokalen Prinzip). Dasselbe wohldefinierte Verfahren
+angewendet auf <em>jeden</em> Gauge liefert denselben Kern. <em>Fusionierter Schluss:</em>
+<b>der Kern ist konstituiert <em>im Zugriff</em> (die Operation wählt ihn aus — A) und objektiv
+<em>im Inhalt</em> (die Auswahl-Kriterien sind invariant — B). Die Operation ist die Konstitution;
+ihre Invarianz ist die Entdeckung.</b> „Ordnung entsteht aus lokalen Regeln" (A) und „die Invariante
+ist ein Raum-/Welt-Fakt, den der Gauge verfehlt" (B) sind dieselbe Sache: die lokale Schicht ist
+willkürlich, der Kern, den die globale Operation übrig lässt, ist es nicht.</p>
+<p><b>(2) Irreduzibel vs. asymptotisch → zwei Böden, dieselbe Ehrlichkeit.</b> Die „Grenze" ist
+keine, sondern <b>zwei ineinanderliegende Böden</b>, und die beiden Papiere benennen je den
+anderen. Der <em>Bedeutungs-Boden</em> (A) ist <em>absolut</em>: keine Währung — inner oder äußer —
+übersetzt Struktur in Wahrheit/Bedeutung (Gödel). Der <em>Struktur-Boden</em> (B) ist
+<em>asymptotisch</em>: eine <em>äußere</em> Währung (unabhängige Querverifizierung, n Systeme)
+nähert sich dem Fundament beliebig (pⁿ→0) und erreicht es nie. <em>Fusionierter Schluss:</em>
+<b>die asymptotische Annäherung (B) läuft <em>bis zu</em> der irreduziblen Wand (A), aber nie
+<em>durch</em> sie hindurch.</b> Man darf die <em>Struktur</em> (das Fundament) von außen auf
+beliebige Präzision verifizieren (B: pⁿ→0) — aber man darf nie behaupten, die
+<em>Bedeutung</em>/Wahrheit erreicht zu haben (A: nie kreuzbar). Der Korridor (B) endet an der Wand
+(A); beides ist Ehrlichkeit, an unterschiedlichen Böden.</p>
+<p><b>(3) Graduierung vs. Ein-Operation → dieselbe Schließkurve, zwei Lesarten.</b> Modelliere
+Schließen als eine <em>Function c(Präzision)</em> des Anteils, der den stabilen Kern gewinnt. B's
+„geschlossene Ein-Operation, kein Rest" ist der <em>exakte Peak</em> dieser Kurve — die Stufe, an
+der die Schließung <em>perfekt</em> ist (c an der Spitze = Obergrenze, Rest = 0): das ist, wo B die
+Invariante „ohne Rest" besitzt. A's Schwellwert θ ist die <em>Zertifizierungs-Stelle</em> auf derselben
+Kurve (c ≥ θ ⇒ „ausreichend geschlossen"). Die <em>zwischen</em> den Peaks liegenden Täler sind A's
+graduelle Zwischenstufen (Rest 1−c = gemessene Abweichung/Krümmung). <em>Fusionierter Schluss:</em>
+<b>„Ein-Operation ohne Rest" (B) ist das Supremum/der Peak der Schließkurve (c→Obergrenze, Rest→0);
+der Schwellwert (A) ist, wo man sie „genug" zählt; die Täler sind gemessener Inhalt.</b> B liest den
+Peak, A liest den Schwellwert und den Rest — zwei Lesarten einer Kurve, keine Rivalen. (Dies ist
+exakt die Auflösung, die A in Runde 2 schon für Schwellwert-vs.-Limes gefundene — hier auf B's
+Ein-Operation ausgeweitet.)</p>
+
+<div class="aha">
+<b>Ein Schließ-Test, ein globaler Vergleich, ein Kern, zwei Böden.</b> Der lokale, blinde Blick
+(lukale Prinzipien / der Gauge) wird durch <em>eine</em> wohldefinierte globale Operation (Schließ-
+/ Verklebung = Transport / globaler Vergleich) zum <b>stabilen, invarianten Kern</b> erhoben —
+konstituiert im Zugriff, objektiv im Inhalt, am Peak ohne Rest. Darüber liegt die <b>Grenze</b>,
+doppelt: ein <em>asymptotischer Struktur-Boden</em> (B: pⁿ→0, von außen angedingt) und ein
+<em>absoluter Bedeutungs-Boden</em> (A: Struktur ≠ Wahrheit, nie kreuzbar). Die ehrliche Architektur
+<em>gewinnt</em> den Kern <em>und benennt</em> beide Böden.
+</div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine Gesetz.</b>
+<div class="mathblock">lokale, blinde Daten  +  wohldefinierte globale Operation   ⇒   stabiler, invarianter Kern (kein Rest am Peak)
+Graduierung c(Präzision)  +  Schwellwert θ (A) / Peak (B)
+zwei Böden der Grenze:  asymptotisch (B: pⁿ→0 ≠0)   +   absolut (A: Struktur ≠ Wahrheit)</div>
+Jedes der beiden R2-Papiere ist eine Instanz: links die blinde lokale Schicht, in der Mitte eine
+invariante globale Operation, rechts der stabile Kern — plus eine Graduierung, wie weit er gewonnen
+ist, plus die ehrliche Grenze (was die Operation stützt, was sie nie stützt).</p>
+
+<p><b>Der eine Zug — Schließen = globaler Vergleich.</b>
+<div class="mathblock">A:  lokale Prinzipien schließen auf Überlappungen        ⇒  globales Objekt (Spalten / Schnitt / flache Verbindung)
+B:  lokaler Gauge wird global verglichen / transportiert  ⇒  Invariante (μ / Holonomie)
+Gemeinsam:  der stabile Kern  existiert  gdw  die lokale Schicht durch die globale Operation invariant gewonnen wird</div>
+Bei A ist der Kern das <em>geschlossene Objekt</em> (die φ(m) Spalten, der globale Schnitt, die
+flache Verbindung); bei B die <em>Invariante</em> (Effektgröße μ, die Holonomie). Das „Schließversagen"
+ist bei A <em>Rauschen/kein globaler Schnitt</em>, bei B <em>die willkürliche Gauge-Schicht, die man
+streift</em>.</p>
+
+<div class="card">
+<h3><span class="tagA">A · Ordnung als geprüfte Schließung (n2-005)</span> — die Prüf-/Zertifizierungsseite</h3>
+<ul>
+<li><b>Kern = Emergenz aus lokalen Regeln:</b> Ordnung/Gleichheit wird nicht abgelesen, sondern durch Schließen/Verklebung <em>konstituiert</em>; „existiert gdw der Test durchläuft".</li>
+<li><b>Graduierung:</b> kontinuierlicher Score c(Präzision) + <b>scharfer Schwellwert θ</b> (c ≥ θ ⇒ zertifiziert); exakte Peaks an den ganzzahligen Stufen (φ(m) Spalten).</li>
+<li><b>Rest = Inhalt:</b> 1−c ist nicht Abfall, sondern gemessene Abweichung (Rauschen / Krümmung) — „lokalisierter Kern + gemessene Abweichung".</li>
+<li><b>Zwei Grenzen:</b> <em>Präzisionsgrenze</em> (endlich↔infinitesimal, per Limes <em>überbrückbar</em>) + <em>Bedeutungsgrenze</em> (Struktur↔Wahrheit, <em>irreduzibel</em>, Gödel).</li>
+</ul>
+</div>
+
+<div class="card">
+<h3><span class="tagB">B · Gauge und Grenze (n2-030)</span> — die Instrument-/Grenzenseite</h3>
+<ul>
+<li><b>Instrument lokal präzise, blind für den Grund:</b> der lokale Gauge (t-Wert / lokale Trivialisierung) verfehlt die globale Invariante (μ, Holonomie) — „sizeless stare".</li>
+<li><b>Geschlossener Gewinn (1. Schicht):</b> eine wohldefinierte globale Operation (Transport / Größen-Bericht) gewinnt die Invariante <em>ohne Rest</em>; sie ist gauge-unabhängig = objektiv.</li>
+<li><b>Offener Grund (2. Schicht):</b> das Fundament der Struktur ist von jeder inneren Sicht blind; Restrisiko <code>pⁿ→0, ≠0</code>, die letzte Rechtfertigung wechselt die Währung (äußere, unabhängige Systeme).</li>
+<li><b>Disziplin:</b> „Erkenne deinen Gauge, gewinne die Invariante — und nenne die Grenze, die du von innen nicht überschreitest."</li>
+</ul>
+</div>
+
+<p><b>Die Gegenüberstellung.</b>
+<table>
+<tr><th>Ebene</th><th><span class="tagA">A</span> · geprüfte Schließung (n2-005)</th><th><span class="tagB">B</span> · Gauge und Grenze (n2-030)</th></tr>
+<tr><td>lokale, blinde Schicht</td><td>lokales Prinzip / Primzahl (modular projiziert)</td><td>lokaler Gauge (t / lokale Trivialisierung)</td></tr>
+<tr><td>globale Operation</td><td>Schließ-Test / Verklebung</td><td>globaler Vergleich / Transport / μ berichten</td></tr>
+<tr><td>stabiler Kern (1. Stufe)</td><td>φ(m) Spalten / globaler Schnitt / flache Verbindung</td><td>Invariante (μ / Holonomie) — gauge-unabhängig</td></tr>
+<tr><td>Graduierung des Gewinns</td><td>Score c(Präzision) + Schwellwert θ</td><td>all-or-nothing am Peak („kein Rest")</td></tr>
+<tr><td>Rest / Abweichung</td><td>1−c = Rauschen = gemessene Krümmung (Inhalt)</td><td>die gestreifte willkürliche Gauge-Schicht</td></tr>
+<tr><td>Grenze — Struktur-Seite</td><td>Präzisionsgrenze (per Limes überbrückbar)</td><td>Fundament, pⁿ→0 ≠0 (asymptotisch von außen)</td></tr>
+<tr><td>Grenze — Bedeutung-Seite</td><td>Bedeutungsgrenze: Struktur ≠ Wahrheit (absolut)</td><td>Ding an sich / Antinomie (konstitutiv unerreichbar)</td></tr>
+<tr><td>Ehrliche Regel</td><td>benenne, was der Test stützt und was nicht</td><td>benenne, was die Struktur von innen nicht erreicht</td></tr>
+</table></p>
+
+<p><b>Die vereinte Math.</b> A liefert die <em>graduerten</em> Größen — den kontinuierlichen Score
+c(Präzision), den Schwellwert θ und die exakte Stufenzahl (φ(m), Euler) —; B liefert den
+<em>asymptotischen Boden</em> pⁿ→0 und die Feststellung, dass der Gewinn am Peak <em>ohne Rest</em>
+ist. Die Fusion setzt beides auf <em>eine</em> Schließkurve c(Präzision):
+<div class="mathblock">c(Präzision) = Anteil, der den stabilen, invarianten Kern gewinnt
+A liest:   c ≥ θ        ⇒  „ausreichend geschlossen"  (binär, an der Kurve abgelesen)
+B liest:   c an Peak    ⇒  „vollständig, kein Rest"   (der Peak = die Invariante; Rest 1−c = Krümmung)
+Obergrenze C(n) = 1 − k·pⁿ   (B: jede unabhängige äußere Währung hebt den Boden, nie bis 1)
+Wand      = 1            (A: Bedeutung/Wahrheit — nie kreuzbar, auch nicht asymptotisch)</div>
+Der <em>Rest</em> <code>1 − c</code> ist der gemeinsame Gegenstand: bei A das <em>Rauschen</em>
+(zum Filtern), bei B die <em>Krümmung</em> (zum Messen) — in der Fusion beides:
+<em>lokalisierter Kern plus gemessene Abweichung</em>. Die <em>Obergrenze</em> C(n)&lt;1 (B) und die
+<em>Wand</em> =1 (A) sind die zwei Böden: man hebt C(n) so hoch wie die äußeren Währung erlauben,
+überschreitet aber die Wand nie.</p>
+
+<div class="aha">
+<b>Die Methode für jede „Gewissheits-Architektur":</b>
+(1) die <em>lokale, blinde Schicht</em> benennen (das lokale Prinzip / der Gauge) — nicht für den
+Grund halten;
+(2) die <em>globale Operation</em> bei einer benannten Präzision laufen lassen (Schließ-Test /
+globaler Vergleich);
+(3) ablesen, <em>was sich schließt / invariant bleibt</em> (der stabile Kern — Spalten, flache
+Verbindung, μ, Holonomie) <b>und</b> den Rest messen (1−c = Krümmung) — der Rest ist Inhalt, kein
+Abfall;
+(4) die <b>zwei Böden</b> benennen: die <em>asymptotische Struktur-Grenze</em> (B: pⁿ→0, von außen
+angedingt) <em>und</em> die <em>absolute Bedeutungs-Grenze</em> (A: Struktur ≠ Wahrheit, nie
+kreuzbar) — der Korridor endet an der Wand.
+</div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Prüfstand der Gewissheit</h2>
+<p class="hint">Ein Canvas, eine Schließkurve, zwei Böden. Die x-Achse ist die <em>Tiefe /
+Präzision der Prüfung</em> (vereint A's Präzisionsparameter und B's Prüf-Tiefe). Die Kurve c(t) hat
+<b>exakte Peaks an den ganzen Zahlen</b> — dort ist der Kern <em>ohne Rest</em> gewonnen (B's
+Invariante, A's φ(m) Spalten); dazwischen liegen die <em>Täler</em> (A's graduelle Zwischenstufen,
+Rest = gemessene Abweichung). Die <b>gestrichelte Obergrenze C(n)=1−k·pⁿ</b> (B) zeigt, wie
+jedes <em>n unabhängige äußere System</em> den angedingten Boden <em>aufwärts</em> drückt — gegen 1,
+aber <em>nie bis 1</em>. Die <b>Wand bei c=1</b> (A) ist die <em>Bedeutungsgrenze</em>, die keine
+Währung kreuzt. A's <b>Schwellwert θ</b> ist die Zertifizierungs-Linie („c ≥ θ ⇒ geschlossen").
+Das <b>Ehrlichkeits-Overlay</b> schattiert die ehrliche Lücke zwischen Obergrenze und Wand.</p>
+
+<div class="viz-panel">
+  <canvas id="closeCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Tiefe der Prüfung t <span id="tVal">6.00</span>
+      <input type="range" id="cTt" min="0" max="12" step="0.02" value="6">
+    </label>
+    <label>Schwellwert θ (A's Zertifizierung) <span id="thVal">0.55</span>
+      <input type="range" id="cTh" min="0.05" max="0.95" step="0.01" value="0.55">
+    </label>
+    <label>n unabhängige äußere Systeme (B's Annäherung) <span id="nVal">3</span>
+      <input type="range" id="cN" min="1" max="8" step="1" value="3">
+    </label>
+    <label>Ehrlichkeits-Overlay (beide Böden)
+      <input type="checkbox" id="cH" checked>
+    </label>
+  </div>
+  <div class="readout-row">
+    <span>c(t): <b id="scoreRead">—</b></span>
+    <span>A: c ≥ θ? <span class="coh-read" id="closedRead">—</span></span>
+    <span>Obergrenze C(n): <b id="ceilRead">—</b></span>
+    <span>Rest 1−c: <b id="resRead">—</b></span>
+  </div>
+  <p id="verdict">—</p>
+  <p class="hint">Schiebe <em>t</em>: an den ganzen Zahlen riegelt der Kern ein (Peak, „kein Rest",
+  <span class="tagB">B</span>), dazwischen streut (Tal, gemessene Abweichung, <span class="tagA">A</span>).
+  <span class="tagA">A</span> zertifiziert „geschlossen" bei c ≥ θ; <span class="tagB">B</span> liest
+  denselben Peak als die exakte, restlose Invariante. Hebe <em>n</em>: die Obergrenze C(n) steigt gegen
+  1 — der <em>asymptotische Struktur-Boden</em> (B) — bleibt aber unter der <em>Wand</em> c=1, der
+  <em>absoluten Bedeutungs-Grenze</em> (A). Der Korridor endet an der Wand.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov">
+  <a href="../n2-005.html">A · n2-005.html</a> — <em>„Ordnung als geprüfte Schließung: das Ganze,
+  das sich erst im Test schließt"</em>: Fusion aus formell verifizierter Ethik × harmonischem
+  Primzahlsieb × Jet-Bündel/Euklid. Ordnung/Gleichheit ist kein Ablesbares, sondern wird durch einen
+  Schließ-Test auf lokalen/endlichen Daten zertifiziert; Graduierung per Score c(Präzision) +
+  Schwellwert θ bzw. diskreter Turmleiter gegen den Limes; ehrliche Grenze = überbrückbare
+  Präzisionsgrenze (B) + irreduzible Bedeutungsgrenze (A, Gödel); Rest 1−c = gemessene Krümmung,
+  kein Abfall.
+</div>
+<div class="prov">
+  <a href="../n2-030.html">B · n2-030.html</a> — <em>„Gauge und Grenze"</em>: Fusion aus
+  Signifikanzkult/Faserbündel (Gauge→Invariante) × Kritik der reinen Vernunft/formalem Beweis
+  (Architektur der Gewissheit). Ein selbstbezügliches Instrument ist lokal präzise und blind für den
+  eigenen Grund: 1. Schicht (geschlossen) = die gauge-unabhängige Invariante (μ/Holonomie), per
+  globalem Vergleich <em>ohne Rest</em> erreichbar; 2. Schicht (offen) = das Fundament, Restrisiko
+  pⁿ→0 ≠0, die letzte Rechtfertigung wechselt die Währung. Gewissheit = erreichbarer Kern + ehrlich
+  benannte offene Grenze.
+</div>
+</section>
+
+<div class="foot">Mathematischer Hinweis: Die Visualisierung ist ein didaktisches Modell, das die
+fusionierte Schließkurve auf beide Quellen legt. c(t) = Obergrenze C(n)·[valley+(1−valley)·e^(−9·d²)]
+mit d = Abstand zum nächsten Ganzzahl-Peak (ganze Zahlen = exakte Schließstufen, „kein Rest",
+<span> B</span>); C(n) = 1−k·pⁿ modelliert B's asymptotische Annäherung des Fundaments durch n
+unabhängige äußere Systeme (pⁿ→0, ≠0); die Wand c=1 ist A's absolute Bedeutungsgrenze (Struktur ≠
+Wahrheit). Alle Daten inline; keine externen Abfragen. Kein echtes Primzahlsieb — die Peaks stehen
+für die exakten Schließstufen beider Quellen.</div>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('closeCanvas');
+  if(!cv){ return; }
+  var ctx = cv.getContext('2d');
+  if(!ctx){ return; }
+  var cw = 0, ch = 0;
+  var TMAX = 12, VALLEY = 0.35, K = 0.85, P = 0.55;
+
+  function ceilN(n){ return 1 - K*Math.pow(P, n); }
+  function closeC(t, n){
+    var C = ceilN(n);
+    var d = Math.abs(t - Math.round(t));
+    var peak = Math.exp(-9*d*d);
+    var v = VALLEY + (1-VALLEY)*peak;
+    return C*v;
+  }
+
+  var state = { t:6, theta:0.55, n:3, honesty:true };
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || '#888';
+  }
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+  function clamp(v,a,b){ return Math.min(b,Math.max(a,v)); }
+
+  function resize(){
+    var r = cv.getBoundingClientRect();
+    var d = window.devicePixelRatio || 1;
+    cw = Math.max(320, r.width);
+    ch = 470;
+    cv.width = Math.round(cw*d);
+    cv.height = Math.round(ch*d);
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,cw,ch);
+    var bg = cssVar('--viz-bg');
+    var line = cssVar('--line');
+    var grid = cssVar('--viz-grid');
+    var muted = cssVar('--muted');
+    var accent = cssVar('--accent');
+    var accent2 = cssVar('--accent2');
+    var textCol = cssVar('--text');
+    var goodCol = cssVar('--good');
+    var warnCol = cssVar('--warn');
+    var badCol = cssVar('--bad');
+
+    ctx.fillStyle = bg; ctx.fillRect(0,0,cw,ch);
+
+    var ml=54, mr=18, mt=34, mb=48;
+    var plotW = cw-ml-mr, plotH = ch-mt-mb;
+    var yTop=mt, yBot=ch-mb;
+    function X(t){ return ml + (t/TMAX)*plotW; }
+    function Y(c){ return yBot - clamp(c,0,1)*plotH; }
+
+    var i, x, y;
+    ctx.strokeStyle = grid; ctx.lineWidth=1;
+    ctx.font='11px ui-monospace,Consolas,monospace'; ctx.fillStyle=muted; ctx.textAlign='right';
+    for(i=0;i<=4;i++){
+      var cc=i/4; var yy=Y(cc);
+      ctx.beginPath(); ctx.moveTo(ml,yy); ctx.lineTo(ml+plotW,yy); ctx.stroke();
+      ctx.fillText(cc.toFixed(1), ml-6, yy+4);
+    }
+    ctx.textAlign='center';
+    for(i=0;i<=12;i+=2){ ctx.fillText(String(i), X(i), yBot+16); }
+    ctx.save(); ctx.translate(14, yTop+plotH/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('c(t) — gewonnener Kern', 0,0); ctx.restore();
+    ctx.textAlign='center'; ctx.fillText('Tiefe / Präzision der Prüfung  t →', ml+plotW/2, yBot+34);
+
+    var Cn = ceilN(state.n);
+    var i2, px, py;
+
+    if(state.honesty){
+      ctx.beginPath();
+      ctx.moveTo(X(0), Y(1));
+      for(i2=0;i2<=400;i2++){ var tt=i2/400*TMAX; ctx.lineTo(X(tt), Y(1)); }
+      for(i2=400;i2>=0;i2--){ var tt2=i2/400*TMAX; ctx.lineTo(X(tt2), Y(Cn)); }
+      ctx.closePath();
+      ctx.fillStyle = isDark()?'rgba(255,107,94,.10)':'rgba(176,52,43,.08)';
+      ctx.fill();
+      ctx.strokeStyle = badCol; ctx.lineWidth=1.6; ctx.setLineDash([7,4]);
+      ctx.beginPath(); ctx.moveTo(ml, Y(1)); ctx.lineTo(ml+plotW, Y(1)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ml, Y(Cn)); ctx.lineTo(ml+plotW, Y(Cn)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font='11px ui-monospace,Consolas,monospace';
+      ctx.textAlign='left'; ctx.fillStyle=badCol;
+      ctx.fillText('Wand c=1 (A): Bedeutung — Struktur ≠ Wahrheit, nie kreuzbar', ml+6, Y(1)-6);
+      ctx.textAlign='right'; ctx.fillStyle=accent2;
+      ctx.fillText('Obergrenze C(n)=1−k·pⁿ (B): asymptotisch, ≠1', ml+plotW-6, Y(Cn)-6);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(0));
+    for(i=0;i<=600;i++){ var t3=i/600*TMAX; ctx.lineTo(X(t3), Y(closeC(t3,state.n))); }
+    ctx.lineTo(X(TMAX), Y(0)); ctx.closePath();
+    ctx.fillStyle = isDark()?'rgba(125,211,252,.10)':'rgba(79,70,229,.08)';
+    ctx.fill();
+
+    ctx.strokeStyle = accent; ctx.lineWidth=1.9;
+    ctx.beginPath();
+    for(i=0;i<=600;i++){ var t4=i/600*TMAX; px=X(t4); py=Y(closeC(t4,state.n)); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+
+    ctx.fillStyle = accent2;
+    for(i=1;i<=12;i++){ ctx.beginPath(); ctx.arc(X(i), Y(closeC(i,state.n)), 2.5, 0, Math.PI*2); ctx.fill(); }
+
+    if(state.honesty){
+      ctx.strokeStyle = accent2; ctx.lineWidth=1.3; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(ml, Y(state.theta)); ctx.lineTo(ml+plotW, Y(state.theta)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = accent2; ctx.font='11px ui-monospace,Consolas,monospace'; ctx.textAlign='right';
+      ctx.fillText('θ (A):  c ≥ θ  ⇒  „geschlossen / zertifiziert"', ml+plotW-4, Y(state.theta)-5);
+    }
+
+    var tCur = state.t;
+    var cCur = closeC(tCur, state.n);
+    var mx = X(tCur);
+    ctx.strokeStyle = textCol; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(mx, yTop); ctx.lineTo(mx, yBot); ctx.stroke();
+    ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(mx, Y(cCur), 4.5, 0, Math.PI*2); ctx.fill();
+
+    var nNear = Math.round(tCur);
+    var isNear = Math.abs(tCur-nNear) < 0.12 && nNear>=1 && nNear<=12;
+    var closed = cCur >= state.theta;
+    var residual = 1 - cCur;
+    var gap = 1 - Cn;
+    var msg;
+    if(isNear){
+      msg = 'exakte Schließstufe (Peak, <span style="color:' + accent2 + '">kein Rest</span>): Kern gauge-/Schließ-stabil — <b>' + (closed ? 'c ≥ θ, zertifiziert (A)' : 'c='+cCur.toFixed(2)+' &lt; θ, viele dünne Stufen, A\'s Score bleibt unter θ') + '</b> · Rest 1−c=' + residual.toFixed(2) + ' · Obergrenze C(n)=' + Cn.toFixed(3) + ' &lt; 1: Fundament asymptotisch (B), Bedeutung nie (A)';
+    } else if(closed){
+      msg = 'c(t)=' + cCur.toFixed(3) + ' ≥ θ: geschlossener Kern sichtbar → <b>Struktur (≠ „Wahrheit", A)</b> · Rest=' + residual.toFixed(2) + ' = gemessene Abweichung · Lücke zur Wand = ' + gap.toFixed(2) + ' (asymptotisch B, absolut A)';
+    } else {
+      msg = 'c(t)=' + cCur.toFixed(3) + ' &lt; θ: kein geschlossenes Objekt (Rest streut) · Rest=' + residual.toFixed(2) + ' · Obergrenze C(n)=' + Cn.toFixed(3) + ' — der Korridor (B) endet an der Wand (A)';
+    }
+    var v = document.getElementById('verdict'); if(v) v.innerHTML = msg;
+    var sr = document.getElementById('scoreRead'); if(sr) sr.textContent = cCur.toFixed(3);
+    var cr = document.getElementById('closedRead'); if(cr){ cr.textContent = closed ? 'ja' : 'nein'; cr.style.color = closed ? goodCol : warnCol; }
+    var crl = document.getElementById('ceilRead'); if(crl) crl.textContent = Cn.toFixed(3);
+    var rr = document.getElementById('resRead'); if(rr) rr.textContent = residual.toFixed(3);
+    var tv = document.getElementById('tVal'); if(tv) tv.textContent = tCur.toFixed(2);
+    var thv = document.getElementById('thVal'); if(thv) thv.textContent = state.theta.toFixed(2);
+    var nv = document.getElementById('nVal'); if(nv) nv.textContent = String(state.n);
+  }
+
+  function refresh(){
+    state.t = parseFloat(document.getElementById('cTt').value);
+    state.theta = parseFloat(document.getElementById('cTh').value);
+    state.n = parseInt(document.getElementById('cN').value, 10);
+    state.honesty = document.getElementById('cH').checked;
+    draw();
+  }
+  document.getElementById('cTt').addEventListener('input', refresh);
+  document.getElementById('cTh').addEventListener('input', refresh);
+  document.getElementById('cN').addEventListener('input', refresh);
+  document.getElementById('cH').addEventListener('change', refresh);
+
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  window.addEventListener('resize', function(){ resize(); draw(); });
+  if(typeof MutationObserver!=='undefined'){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,
+      {attributes:true, attributeFilter:['class']});
+  }
+
+  resize();
+  draw();
+})();
+</script>
+</body>
+</html>

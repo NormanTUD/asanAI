@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Eine ist das Dazwischen — maßtragend und zentrumlos</title>
+<script>try{if(localStorage.getItem('n3005theme')==='light')document.documentElement.classList.remove('dark');}catch(e){}</script>
+<style>
+:root{
+  --bg:#f6f3ea; --panel:#ffffff; --panel2:#f0ecdf; --ink:#20242e; --dim:#5c6472;
+  --accent:#2f5fe0; --accent2:#c46a1c; --good:#0a8f63; --coral:#be123c;
+  --border:#e0dac9; --shadow:rgba(60,45,20,.10);
+  --viz-panel:#ffffff; --viz-panel2:#f0ecdf; --viz-accent:#2f5fe0; --viz-accent2:#c46a1c;
+  --viz-good:#0a8f63; --viz-ink:#20242e; --viz-dim:#5c6472; --viz-border:#e0dac9;
+  --viz-band:rgba(196,106,28,.10); --viz-halo:rgba(47,95,224,.10); --viz-halo-stroke:rgba(47,95,224,.40);
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141b30; --panel2:#1a2340; --ink:#e7ecff; --dim:#8892b8;
+  --accent:#7c9cff; --accent2:#f0a35e; --good:#6ee7b7; --coral:#fb7185;
+  --border:#2a3358; --shadow:rgba(0,0,0,.5);
+  --viz-panel:#141b30; --viz-panel2:#1a2340; --viz-accent:#7c9cff; --viz-accent2:#f0a35e;
+  --viz-good:#6ee7b7; --viz-ink:#e7ecff; --viz-dim:#8892b8; --viz-border:#2a3358;
+  --viz-band:rgba(240,163,94,.12); --viz-halo:rgba(124,156,255,.12); --viz-halo-stroke:rgba(124,156,255,.42);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+h1{font-size:clamp(1.9rem,4.6vw,2.6rem);line-height:1.16;letter-spacing:-.015em;font-weight:800;margin-bottom:.35rem}
+.subtitle{color:var(--dim);font-style:italic;font-size:1.02rem;margin-bottom:.3rem}
+.subtitle .x{color:var(--accent2);font-style:normal;font-weight:700}
+.subtitle.provline{font-style:normal;font-size:.82rem;letter-spacing:.01em}
+.lede{color:var(--ink);font-size:1.02rem;margin:14px 0 8px;border-left:3px solid var(--accent);padding-left:14px}
+h2{font-size:1.42rem;margin:46px 0 14px;padding-left:12px;border-left:4px solid var(--accent);line-height:1.22;color:var(--ink)}
+h2 .tag{display:inline-block;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;background:var(--panel2);border:1px solid var(--border);color:var(--dim);padding:2px 9px;border-radius:20px;vertical-align:middle;margin-left:10px;font-family:system-ui,sans-serif}
+h3{font-size:1.12rem;margin:22px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+section{scroll-margin-top:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:0 6px 22px var(--shadow)}
+blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--accent2);background:var(--panel2);border-radius:0 8px 8px 0;font-style:italic}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel2);padding:1px 5px;border-radius:4px}
+.tagpill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.03em;font-family:system-ui,sans-serif}
+.tagA{background:rgba(124,156,255,.18);color:var(--accent)}
+.tagB{background:rgba(240,163,94,.20);color:var(--accent2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.whoA{color:var(--accent);font-weight:700}
+.whoB{color:var(--accent2);font-weight:700}
+.claim{background:var(--panel2);border-left:3px solid var(--border);padding:8px 14px;margin:8px 0;border-radius:0 8px 8px 0;font-size:.95rem}
+.claimA{border-left-color:var(--accent)}
+.claimB{border-left-color:var(--accent2)}
+.resbox{background:var(--panel);border:1px dashed var(--border);border-radius:12px;padding:14px 16px;margin:14px 0}
+.resbox h3{margin:0 0 8px}
+.fused{background:linear-gradient(90deg,rgba(196,106,28,.12),transparent);border-left:3px solid var(--accent2);padding:12px 16px;border-radius:0 8px 8px 0;margin-top:14px;font-weight:500}
+.math{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.95rem;line-height:1.9;overflow-x:auto}
+.math .sym{color:var(--accent);font-family:'Cambria Math','STIX Two Math',Georgia,serif;font-style:italic}
+.math .lbl{color:var(--dim);font-size:.85rem}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent2);font-weight:700}
+tr:last-child td{border-bottom:none}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:14px 0}
+.ctrl{display:flex;flex-direction:column;gap:6px;min-width:210px;flex:1}
+.ctrl label{font-size:.74rem;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-family:system-ui,sans-serif}
+.ctrl label .val{color:var(--ink);font-weight:700;font-family:ui-monospace,monospace;text-transform:none;float:right}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:600;font-family:system-ui,sans-serif;transition:.18s}
+button:hover{border-color:var(--accent)}
+button.active{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50;width:42px;height:42px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--border);cursor:pointer;font-size:1.15rem;box-shadow:0 4px 16px var(--shadow)}
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;min-width:140px;flex:1}
+.stat .k{color:var(--dim);font-size:.7rem;text-transform:uppercase;letter-spacing:.03em;font-family:system-ui,sans-serif;display:block;margin-bottom:3px}
+.stat .v{font-family:ui-monospace,monospace;font-weight:700;font-size:1.02rem}
+.viz-wrap{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 8px 30px var(--shadow)}
+#viz{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:10px;background:var(--viz-panel)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;margin:10px 0 2px;font-family:system-ui,sans-serif}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.readout{margin-top:12px;min-height:3rem;text-align:center;font-style:italic;color:var(--accent);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-size:.95rem}
+.prov{padding:14px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent);font-weight:700;text-decoration:none;word-break:break-all;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--dim);border:1px solid var(--border);border-radius:999px;padding:1px 8px;margin-right:8px;font-family:system-ui,sans-serif}
+.prov .desc{color:var(--dim);font-size:.92rem;margin-top:4px}
+.note{font-size:.88rem;color:var(--dim)}
+footer{margin-top:3rem;color:var(--dim);font-size:.85rem;text-align:center;border-top:1px solid var(--border);padding-top:1.4rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Farbschema umschalten" aria-label="Theme wechseln">🌙</button>
+<article>
+
+<h1>Das Eine ist das Dazwischen</h1>
+<p class="subtitle">Das Substantielle: maßtragend, zentrumlos, laufend <span class="x">✕</span> Lesbar durch Trennung, gehalten durch Kohärenz</p>
+<p class="subtitle provline">Fusion aus: n2-019.html ✕ n2-012.html  (Runde 3)</p>
+
+<p class="lede">
+  Zwei Rund-2-Papiere, die auf der Oberfläche über <em>andere</em> Dinge schreiben — das eine über
+  <em>Identität als Prozess</em> (der Rand ist der Schatten, das Medium <em>W</em> ist die Substanz),
+  das andere über <em>das Eine im Rauschkanal</em> (der maßtragende, zentrumlose Kohärenzkern) — stellen
+  aber <strong>dieselbe tiefere Frage</strong> und antworten mit demselben Satz:
+  <strong>Das Substantielle ist kein Punkt, kein Rand, kein Zentrum und kein Ding — es ist das laufende,
+  das <em>Dazwischen</em>. Es trägt Gewicht (maßtragend / Invariante), besitzt aber kein Zentrum
+  (zentrumlos / Relation), und die Form, die man sieht, ist nur sein Schatten.</strong>
+  „Identität" (A) und „das Eine" (B) sind <em>derselbe Begriff aus zwei Seiten</em>: die Relation, die
+  durch das Medium läuft, nicht eine Eigenschaft an einem Ort.
+</p>
+
+<section id="these">
+  <h2>Kernthese der Fusion <span class="tag">A ∩ B</span></h2>
+  <p>
+    <span class="whoA">A</span> (n2-019, „Das Dazwischen ist die Substanz") sagt: Die Form — Punkt, Rand
+    <code>M</code>, Zustand — ist der <em>Schatten</em>; die Substanz ist das <em>Dazwischen</em>, das
+    Medium <em>W</em>, an dessen Rand <code>M = ∂W</code> liegt. Identität und „Wohldefiniertsein" sind
+    keine Eigenschaft der Form selbst, sondern eine <em>Relation durch dieses Medium</em>: zwei Ränder sind
+    „dasselbe", weil ein gemeinsames <em>W</em> zwischen ihnen läuft. Das Medium wird <em>lesbar</em> durch
+    Trennung (A's Topologie, T₂ ⇒ eindeutige Grenzwerte) und <em>gehalten</em> durch seine eigene Bewegung
+    (Bordismus: das Dazwischen tut die Arbeit). Leben ist <em>Invariante + Bewegung</em>.
+  </p>
+  <p>
+    <span class="whoB">B</span> (n2-012, „Das Eine: maßtragend und zentrumlos") sagt: „Das Eine" ist kein
+    Ding, keine Substanz, kein Zentrum — es ist ein <em>maße­tragendes, zentrumloses Kohärenzkern</em>: die
+    typische Menge (≈ die Garbe), in der alle Elemente auf einer Statistik <em>übereinstimmen</em>,
+    zusammengeklebt zu einem globalen Objekt <em>ohne</em> zusätzliches Zentrum. Es hat <em>Gewicht</em>
+    (P → 1, der Peak bleibt bei H), aber <em>kein Zentrum</em> (H ist das Maß der Kohärenz, kein Ding dahinter).
+    „The same returns": Kohärenz, die im Rauschkanal überleben muss, manifestiert sich als Redundanz.
+  </p>
+  <p>
+    Die <strong>einteilige, fusionierte Position</strong>: <em>Das Substantielle ist ein maßtragendes,
+    zentrumloses Medium.</em> A's Medium <em>W</em> <em>ist</em> B's Kohärenzkern <em>O</em>; B's „das Eine"
+    <em>ist</em> A's „das Dazwischen". Beides ist
+    <span class="mono">O = W</span>, lokal geschnitten. Das Gewicht kommt von derselben Tatsache, die beide
+    benennen: <strong>eine Invariante, die das Überleben sichert</strong> — bei A die geschlossene
+    Struktur (eindeutige Grenzwerte / Bordismengruppe), bei B der Kohärenzpol H (P → 1). Und beide verneinen
+    das Gleiche: <strong>keinen Punkt, keinen Rand, kein Zentrum als Substanz</strong> — der Punkt ist der
+    Schatten, der Rand der Schatten, das Zentrum „verschwindet". Identität und das Eine sind
+    <em>Relation durch das Dazwischen</em>, und das Dazwischen tut die Arbeit.
+  </p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B <span class="tag">Haltung / Mechanismus</span></h2>
+  <p class="note">
+    Beide sind selbst schon Fusionen und machen über eine gemeinsame Sache keine widersprüchlichen
+    <em>faktischen</em> Behauptungen. Auf der Ebene von <strong>Haltung und Mechanismus</strong> stehen sie
+    aber an drei Punkten in einer echten, scharfen Spannung — dieselbe Struktur aus entgegengesetzten
+    Positionen betrachtet:
+  </p>
+
+  <h3>1. Was trägt das Gewicht und überlebt — ein Fixum (A) oder ein zentrumloser Pol (B)?</h3>
+  <div class="grid2">
+    <div class="claim claimA"><span class="whoA">A:</span> „die Invariante — bei A eindeutige Grenzwerte,
+      bei B die <em>geschlossene Gruppe</em> — ist das, was die Bewegung überlebt"; B's „Sieg" ist „der Satz,
+      dass die Invariante bleibt". Das Persistierende wird als <em>geschlossene, feste Struktur</em>
+      behauptet — etwas, das <em>ist</em> und bleibt (ein wohldefiniertes, geschlossenes Ding der Mathematik).</div>
+    <div class="claim claimB"><span class="whoB">B:</span> „H ist <em>nicht Substanz</em>, sondern das
+      <em>Maß der Kohärenz</em> (= Kohärenzpol)", „der stabilste Punkt, an den sich alles ergodisch
+      'wieder zurück' bewegt, <em>ohne selbst ein Zentrum / das Ding zu sein</em>". B verdinglicht den
+      stabilen Punkt <em>explizit</em>: er ist ein zentrumloses <em>Maß/Relation im Netz</em>, keine geschlossene
+      Substanz.</div>
+  </div>
+  <p class="note"><strong>Unvereinbare Stance:</strong> A reifiziert das Überlebende als <em>geschlossene
+    Invariante</em> (ein Ding, das ist und bleibt); B ent-reifiziert exakt denselben Pol zu einem
+    <em>zentrumlosen Kohärenzpol</em> (Maß, nicht Ding). Ist das, was bleibt, eine fixe Struktur (A) oder ein
+    zentrumloses Maß (B)?</p>
+
+  <h3>2. Wie wird das Substantielle festgelegt — durch Trennung/Distinktion (A) oder durch Kohärenz bei erhaltener Verschiedenheit (B)?</h3>
+  <div class="grid2">
+    <div class="claim claimA"><span class="whoA">A:</span> „Lesbarkeit relativ zur <em>Trennung</em>" —
+      „Trennung (A) macht jeden Zustand des Mediums <em>lesbar</em>" (T₂: disjunkte Umgebungen, eindeutige
+      Grenzwerte). A feiert <em>Distinktion</em>: das Substantielle wird dadurch erfasst, dass man Punkte
+      <em>unterscheidbar</em> macht (tellable apart). Der operative Mechanismus ist <em>Trennung</em>.</div>
+    <div class="claim claimB"><span class="whoB">B:</span> „Das Eine wird durch <em>Kohärenz</em>
+      (Übereinstimmung auf Überlappungen) zusammengehalten, und die <em>Verschiedenheit bleibt erhalten</em> —
+      'Verschiedenheit muss nicht aufgehoben werden, um Einheit zu erzeugen'." Der Mechanismus ist
+      <em>Übereinstimmung/Kleben</em>, <em>keine</em> Distinktion, <em>kein</em> Kollaps auf das Gleiche.</div>
+  </div>
+  <p class="note"><strong>Unvereinbare Stance:</strong> A <em>liest</em> das Substantielle durch
+    <em>Trennung/Distinktion</em> (punkte auseinanderhalten); B <em>hält</em> es durch
+    <em>Kohärenz/Übereinstimmung</em>, während die Verschiedenheit <em>bleibt</em>. Zwei entgegengesetzte
+    epistemische Mechanismen für „was zusammenhält / was real ist".</p>
+
+  <h3>3. Was ist das Generative — Umformung/Differenz (A) oder Wiederholung/Gleichheit (B)?</h3>
+  <p>
+    <span class="whoA">A:</span> „die Mitte ist <em>generativ</em>" — Bifurkation, Selbstorganisation,
+    „das Medium <em>umformt</em> sich"; der Wert liegt in einer <em>dynamischen Zone</em>, wo der Rand
+    <em>neue</em> Formen erzeugt. Das Wertvolle ist die <em>Differenz/Umformung</em>.
+    <span class="whoB">B:</span> „the <em>same</em> returns", „Redundanz ist Fehlerkorrektur", „das Gleiche
+    kehrt durch das <em>Wiederholte</em> zurück", „ein einziges <em>selbstähnliches, wiederkehrendes</em>
+    Muster". Das Robuste ist die <em>Wiederholung/Gleichheit</em>, die durch den Rausch recirculiert.
+    <strong>Spannung:</strong> A's Generativität erzeugt <em>Differenz durch Umformung</em> (Neues); B's
+    Robustheit trägt <em>Gleichheit durch Wiederholung</em> (das Gleiche kehrt zurück).
+  </p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung <span class="tag">für jeden Punkt</span></h2>
+
+  <div class="resbox">
+    <h3>1. Die Invariante ist der Kohärenzpol — dieselbe Struktur, zwei Lesarten</h3>
+    <p>
+      A's „geschlossene Invariante" (eindeutige Grenzwerte / Bordismengruppe) und B's „zentrumloser
+      Kohärenzpol" (H) sind <em>derselbe Gegenstand von zwei Seiten</em>. Von <em>innen</em> gelesen ist die
+      Invariante eine geschlossene, wohldefinierte Struktur — gerade deshalb laufen die Grenzwerte/Pfade
+      <em>eindeutig</em> in ihr (A). Von <em>außen</em> gelesen ist derselbe Pol nur das <em>Maß der
+      Übereinstimmung</em> zwischen den Elementen, kein Ding dahinter (B).
+      <em>Fusion:</em> <strong>Die Invariante (A) ist der Kohärenzpol (B) — eine geschlossene Struktur, die
+      als zentrumloses Maß der Übereinstimmung auftritt.</strong> Sie „bleibt" (A) <em>genau weil</em> sie
+      keine Substanz ist, sondern eine <em>Relation</em> (B): Relationen überleben die Bewegung, Punkte nicht.
+      Das Überlebende trägt Gewicht (A: die Struktur ist geschlossen) <em>und</em> hat kein Zentrum (B: sie ist
+      Übereinstimmung, kein Ding).
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>2. Trennung liest den Zustand von innen; Kohärenz hält die Zustände zum Eine zusammen</h3>
+    <p>
+      A's Trennung und B's Kohärenz arbeiten auf <em>verschiedenen Ebenen desselben Mediums</em> und schließen
+      sich nicht aus, sie <em>ergänzen</em> sich. A's Trennung ist <em>lokal / intra-state</em>: innerhalb eines
+      Querschnitts macht T₂ die Punkte/Grenzwerte unterscheidbar, damit der Zustand <em>lesbar</em> ist. B's
+      Kohärenz ist <em>global / cross-state</em>: die verschiedenen Querschnitte/Elemente stimmen auf der
+      Statistik überein, ohne zu kollabieren.
+      <em>Fusion:</em> <strong>Trennung (A) liest den einzelnen Zustand; Kohärenz (B) hält die Zustände zum
+      Einen zusammen.</strong> „Verschiedenheit bleibt" (B) und „Trennung" (A) sind kompatibel: Trennung
+      macht die Verschiedenheit erst <em>lesbar</em>, Kohärenz hält sie davon ab, <em>auseinanderzufallen</em>.
+      A's T₂ (disjunkte Umgebungen) ist die <em>lokale Form</em> von B's „auf der Statistik übereinstimmend,
+      aber verschieden". Ohne Trennung gibt es keinen lesbaren Querschnitt; ohne Kohärenz keine Einheit.
+    </p>
+  </div>
+
+  <div class="resbox">
+    <h3>3. Die Umformung ist selbstähnlich/ergodisch — „the same returns" ist die Form der Bewegung</h3>
+    <p>
+      A's Bifurkation (das Medium <em>umformt</em> sich, Differenz entsteht) und B's selbstähnliche Wiederholung
+      („the same returns", ergodisch) sind zwei Seiten <em>einer</em> Bewegung. A's „die Mitte ist generativ"
+      bedeutet nicht <em>beliebiges</em> Neuwerden, sondern Umformung <em>innerhalb einer Invariante</em>. B
+      zeigt, dass genau diese Invariante <em>selbstähnlich/ergodisch</em> ist: das Muster kehrt auf allen
+      Skalen und in allen Domänen zurück (Isomorphie-Familie; „every figure is every other figure" — ein Satz,
+      den <em>beide</em> Papiere über die Ergodizität tragen).
+      <em>Fusion:</em> <strong>Die Umformung (A) ist selbstähnlich/ergodisch (B): das Neue wiederholt die Form,
+      das Wiederholte umformt die Stelle.</strong> Bifurkation erzeugt Differenz, aber die Differenz besteht aus
+      demselben selbstähnlichen Kern, der wiederkehrt — „the same returns" <em>ist</em> die Gestalt der
+      generativen Bewegung. Das Gleiche kehrt zurück, <em>weil</em> die Umformung ergodisch an den Kohärenzpol
+      gebunden ist.
+    </p>
+  </div>
+
+  <p class="fused">
+    <strong>Fusionierter Schluss:</strong> <em>Das Substantielle ist ein maßtragendes, zentrumloses Medium
+    (O = W). Es trägt Gewicht — eine Invariante, die das Überleben sichert, die als Kohärenzpol H (P → 1)
+    auftritt und zugleich eine geschlossene Struktur ist. Es hat kein Zentrum — die Form (Punkt, Rand, Zustand,
+    Zentrum, Ding) ist der Schatten, das Dazwischen tut die Arbeit. Identität (A) und das Eine (B) sind
+    dieselbe Relation durch das Medium. Lesbarkeit kommt von Trennung (innerhalb eines Zustands), Kohärenz/Halte
+    von Übereinstimmung (über Zustände/Elemente), und das Generative ist die selbstähnliche/ergodische
+    Umformung des Mediums: „the same returns" ist die Form der Bewegung. Leben/Eine = Invariante + Bewegung,
+    zentrumlos und maßtragend.</em>
+  </p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt <span class="tag">auf der Ebene der Thesen</span></h2>
+
+  <p>
+    Beide Papiere sind bereits Synthesen; hier wird auf der Ebene <em>ihrer Positionen</em> abstrahiert. Der
+    gemeinsame Kern ist eine <strong>Medium-Ontologie mit Gewicht</strong>: das Substantielle ist eine Form,
+    die <em>Gewicht trägt</em> und <em>kein Zentrum besitzt</em>; Identität/das Eine ist Relation durch das
+    Dazwischen, Lesbarkeit kommt von Trennung, Kohärenz von Übereinstimmung, und das Überlebende ist eine
+    selbstähnliche Invariante. Das Korrespondenzraster fasst beides zusammen:
+  </p>
+
+  <table>
+    <thead><tr><th>Ebene</th><th>A — n2-019 (Medium / Identität als Prozess)</th><th>B — n2-012 (das Eine im Rausch)</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td>Form / Schatten</td><td>Punkt, Rand <code>M</code>, Zustand</td><td>Zentrum / „das Ding", die einzelne Sequenz</td><td>die sichtbare Form zu einem Zeitpunkt</td></tr>
+      <tr><td>Substanz / Medium</td><td>das Medium <code>W</code> (<code>∂W = M</code>, Topologie)</td><td>der Kohärenzkern <code>O</code> (typische Menge = Garbe)</td><td>das Dazwischen — <code>O = W</code>, trägt Identität/das Eine</td></tr>
+      <tr><td>Gewicht / Maß</td><td>die Invariante überlebt (eindeutige Grenzwerte / geschlossene Gruppe)</td><td><code>P → 1</code>; Peak bleibt bei H</td><td>maßtragend: Gewicht ohne Zentrum</td></tr>
+      <tr><td>„Gleich" / das Eine</td><td>bordant = gemeinsames <em>W</em></td><td>Übereinstimmung auf einer Statistik (≈ H)</td><td>Identität = Relation durch Medium, nie Eigenschaft an sich</td></tr>
+      <tr><td>Lese-Mechanismus</td><td>Trennung (T₂, disjunkt, eindeutige Grenzwerte)</td><td>Kohärenz (Overlap), Verschiedenheit bleibt</td><td>Trennung liest den Zustand, Kohärenz hält zum Eine</td></tr>
+      <tr><td>Generativ</td><td>die umformende, differenzierende Mitte (Bifurkation)</td><td>die selbstähnliche Wiederholung („the same returns")</td><td>ergodische Umformung — das Neue wiederholt die Form</td></tr>
+      <tr><td>Regler</td><td>Trennungsgrad <code>s</code> (indiscret → metrisch)</td><td>Rauschtoleranz (Rate-Distortion: H ↔ Redundanz)</td><td>ein Regler: derselbe Kern bei variabler Rauschtoleranz/Trennung</td></tr>
+    </tbody>
+  </table>
+
+  <h3>① Die eine Frage, die beide stellen</h3>
+  <p>
+    Beide verneinen <em>doppelt</em>. <em>Negation I — kein flacher Raum unabhängiger Elemente:</em> A's
+    indiscret Raum, in dem nichts unterscheidbar ist (kein lesbarer Zustand); B's <code>2ⁿ</code>-Scheinwelt
+    (die verschiedenen Fächer/Perspektiven), die <em>existiert</em> aber fast <em>keine Masse</em> trägt.
+    <em>Negation II — kein Zentrum / kein Ding dahinter:</em> A's Punkt/Rand ist Schatten, keine Substanz;
+    B's „das Zentrum verschwindet". Was beide bejahen, ist <strong>ein kleines, selbstähnliches Muster, das
+    das ganze Gewicht trägt und kein Zentrum besitzt</strong> — A nennt es „das Dazwischen", B „das Eine".
+  </p>
+
+  <h3>② Das verschmolzene Objekt: O = W, maßtragend und zentrumlos</h3>
+  <div class="math">
+    <b>Medium (A) = Kohärenzkern (B):</b> die Form ist der Rand/Schatten; die Substanz ist das Dazwischen —<br>
+    <span class="sym">O = W</span>, lokal geschnitten  ·  <span class="sym">M = ∂W</span>  ·  <span class="sym">O</span> = { Elemente, die auf einer Statistik übereinstimmen } — <b>ohne Zentrum</b><br>
+    <span class="lbl">Gewicht: A's Invariante (überlebt) = B's Kohärenzpol H (P → 1)  ·  Zentrum: A's Punkt = B's „Zentrum" = beides Schatten, keine Substanz</span><br><br>
+    <b>Fusionsformel:</b> <span class="sym">Identität ≡ das Eine ≡ Relation durch das Medium</span>  ·  <span class="sym">Gewicht</span> ohne <span class="sym">Zentrum</span>  ·  <span class="lbl">das Dazwischen tut die Arbeit</span>
+  </div>
+
+  <h3>③ Die Mathematik aus beiden, integriert</h3>
+  <p>
+    <span class="whoA">A</span> liefert die <em>Trennungs-/Invarianz-Achse</em>:
+    <code>Indiscret → T₀ &lt; T₁ &lt; T₂ &lt; T₃ &lt; T₄</code>, mit <code>T₂ ⇒ eindeutige Grenzwerte</code>
+    und <code>Metrisierbar ⇒ T₄ + 1st-countable + parakompakt + normal</code> — die geschlossene Struktur, in
+    der das Medium lesbar wird. Dazu die <em>Identitätsachse</em> (Bordismus):
+    <code>∂W = M₁ ⊔ M₂</code>, <code>Ω₁^O = 0 ⇒ S¹ = 0</code>, <code>[S¹]·[S¹] = [S²]</code>; die
+    <em>Schließung</em> dieser Gruppe ist A's Invariante.
+  </p>
+  <p>
+    <span class="whoB">B</span> liefert die <em>Kohärenz-/Maß-Achse</em>:
+    <code>A_ε⁽ⁿ⁾ = { x : |−(1/n)·log₂ p(x) − H| &lt; ε }</code> mit <code>P → 1</code> und
+    <code>|A| ≤ 2ⁿ⁽ᴴ⁺ᵋ⁾</code>; große Abweichungen <code>P(atypisch) ~ e^{−n·D}</code> (die atypische
+    Masse = die Scheinwelt: existiert, trägt keine Masse, ist nicht das Eine); <em>Ergodizität</em> (ein Pfad
+    trägt die ganze Statistik); und die Isomorphie-Familie
+    <code>sim(u,v) = cos(w_u, w_v)</code>, <code>a ≃ b</code> als Pfadraum.
+  </p>
+  <span class="math">
+    A: T₂ ⇒ eindeutige Grenzwerte  ·  Metrisierbar ⇒ T₄ + parakompakt + normal  ·  [S¹]·[S¹] = [S²]  ·  Schließung = Invariante<br>
+    B: P(A_ε⁽ⁿ⁾) → 1  ·  P(atypisch) ~ e^{−n·D}  ·  Ergodizität  ·  sim(u,v) = cos(w_u, w_v)<br>
+    Fusion: Gewicht = Invariante = Kohärenzpol H (was überlebt)  ·  Zentrum = Relation, kein Ding  ·  Lesbarkeit = Trennung (intra-state)  ·  Halte = Kohärenz (cross-state)  ·  Generativ = selbstähnliche/ergodische Umformung
+  </span>
+
+  <h3>④ Der Regler: Rauschtoleranz ↔ Trennungsgrad</h3>
+  <p>
+    Beide Papiere haben <em>einen Regler mit zwei Enden</em>. Bei B ist es die <em>Rauschtoleranz</em>
+    (Rate-Distortion): ein Ende ist das <em>minimal, verlustfrei komprimierte</em> Kern (Shannons H, das reine
+    Signal), das andere das <em>maximal-redundante, maximal-verschiedene, maximal-schöne</em> Text —
+    derselbe Kern bei unterschiedlicher Rauschtoleranz. Bei A ist es der <em>Trennungsgrad s</em>: ein Ende
+    indiscret (alles verschmilzt, max. Identität, min. Lesbarkeit), das andere metrisch/T₄ (alles disjunkt,
+    max. Lesbarkeit, eindeutige Grenzwerte).
+    <em>Fusion:</em> <strong>Ein einziger Regler — die Rauschtoleranz des Mediums = die Trennung seiner
+    Querschnitte.</strong> Am einen Pol: rein komprimierter, disjunger, lesbarer Kern (H / T₂); am anderen:
+    maximal-redundanter, maximal-differenzierter, umformender Zustand (Joyce / Bifurkation). Dazwischen liegt
+    dasselbe Medium bei variabler Rauschtoleranz <em>und</em> variabler Trennung.
+  </p>
+
+  <h3>⑤ Das Überleben: Ergodizität + Invariante</h3>
+  <p>
+    Beide erklären, <em>warum</em> das Substantielle den Rausch/die Bewegung überlebt. Bei A: die Invariante
+    (eindeutige Grenzwerte / geschlossene Gruppe) ist definiert als <em>das, was die Bewegung überlebt</em>.
+    Bei B: „the same returns" — ergodisch, selbstähnlich über Skalen und Domänen; der Peak <em>bleibt bei H</em>,
+    während die atypische Masse in den Schwand wandert.
+    <em>Fusion:</em> <strong>Das Substantielle überlebt, weil es (a) invariant/geschlossen ist (A) <em>und</em>
+    (b) zentrumlos/ergodisch selbstähnlich (B).</strong> „The same returns" ist die konkrete Gestalt, in der
+    A's Invariante B's Rausch übersteht: die Form kehrt zurück, weil die Umformung an den Kohärenzpol gebunden
+    ist. Identität und das Eine sind dasselbe: die Relation, die durch das Dazwischen läuft und das Rauschen
+    überlebt.
+  </p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion: Das maßtragende, zentrumlose Medium <span class="tag">Canvas, inline, themenaktiv</span></h2>
+  <p class="note">
+    Ein Feld, ein Kern, ein (verlorenes) Zentrum. Die <i>hellen</i> Punkte sind die Scheinwelt — die
+    <code>2ⁿ</code>-Möglichkeiten / die verschiedenen Perspektiven, die fast keine Masse tragen. Der
+    <b>blaue Ring-Kern</b> ist das Substantielle: ein <b>maße­tragender</b> Kohärenzkern in einem
+    <b>Übereinstimmungs-Band</b> (typische Menge = Garbe = Medium <em>W</em>; alle Punkte teilen dieselbe
+    Statistik ≈ H). Schiebt ihr das <b>Rausch q</b> (B), wandert die atypische Masse in den Schwanz, aber der
+    <b>Peak bleibt bei H</b> — „the same returns"; das Medium überlebt, weil Kohärenz im Rausch als Redundanz
+    auftritt. Schiebt ihr die <b>Trennung s</b> (A), werdet ihr, wie unterscheidbar die Punkte
+    <em>innerhalb des Kerns</em> sind: bei <code>s=0</code> verschmelzen die Umgebungen (indistinguiert), bei
+    <code>s=1</code> sind sie disjunkt (T₂, eindeutige Grenzwerte) — das Medium wird <em>lesbar</em>.
+    Umschaltet ihr auf <b>Zentrum</b>, seht ihr das <em>naive Ding dahinter</em>, das beide Papiere verwerfen;
+    in der <b>Fusion</b> (Zentrumlos) ist es weg — Gewicht ohne Zentrum.
+  </p>
+
+  <div class="viz-wrap">
+    <div class="controls">
+      <button id="btnCenter" type="button">Zentrum (naiv / „das Ding")</button>
+      <button id="btnFusion" class="active" type="button">Zentrumlos — Medium + Kohärenz (Fusion)</button>
+      <button id="btnReseed" type="button">Neu würfeln</button>
+    </div>
+    <div class="controls">
+      <div class="ctrl"><label>Rausch q — Kanal / „harte Probleme" (B) <span class="val" id="valQ">0.15</span></label>
+        <input type="range" id="vizQ" min="0" max="0.6" step="0.01" value="0.15"></div>
+      <div class="ctrl"><label>Trennung s — lesbarer Querschnitt (A) <span class="val" id="valS">0.50</span></label>
+        <input type="range" id="vizS" min="0" max="1" step="0.01" value="0.5"></div>
+    </div>
+    <canvas id="viz" width="860" height="520" role="img"
+      aria-label="Das Substantielle als maßtragender, zentrumloser Kohärenzkern im Rauschfeld, lesbar durch Trennung"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--viz-accent)"></span>Kern / das Eine (maßtragend, O = W)</span>
+      <span><span class="sw" style="background:var(--viz-accent);opacity:.3"></span>Scheinwelt (2ⁿ / Perspektiven, keine Masse)</span>
+      <span><span class="sw" style="background:var(--viz-band);border:1px solid var(--viz-border)"></span>Übereinstimmungs-Band / Kohärenz</span>
+      <span><span class="sw" style="background:var(--viz-halo);border:1px solid var(--viz-halo-stroke)"></span>Umgebung U(x) — Trennung s</span>
+      <span><span class="sw" style="background:var(--viz-good)"></span>H — Kohärenzpol / Invariante (bleibt)</span>
+    </div>
+    <div class="readout" id="vizReadout"></div>
+    <div class="statrow">
+      <div class="stat"><span class="k">Masse im Kern-Band (±ε um H)</span><span class="v" id="stCore" style="color:var(--viz-accent)">—</span></div>
+      <div class="stat"><span class="k">Trennungsstufe (A)</span><span class="v" id="stAx" style="color:var(--viz-accent2)">—</span></div>
+      <div class="stat"><span class="k">Kohärenzpol H / Invariante</span><span class="v" id="stH" style="color:var(--viz-good)">—</span></div>
+      <div class="stat"><span class="k">Zentrum</span><span class="v" id="stC" style="color:var(--viz-dim)">—</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz <span class="tag">Rund-2-Quellen</span></h2>
+  <div class="card">
+    <div class="prov">
+      <div><span class="tag">A</span><a href="../n2-019.html">n2-019.html</a></div>
+      <div class="desc">„Das Dazwischen ist die Substanz — Struktur als Medium, Identität als Prozess" (Rund-2-Fusion aus Topologie/Trennungsaxiomen ✕ Bordismus/Nervenfeld): der Rand ist der Schatten, das Medium <em>W</em> die Substanz; Identität ist Relation durch das Medium; Struktur = Zeitschnitte des Prozesses; Leben = Invariante + Bewegung.</div>
+    </div>
+    <div class="prov">
+      <div><span class="tag">B</span><a href="../n2-012.html">n2-012.html</a></div>
+      <div class="desc">„Das Eine: maßtragend und zentrumlos — Kohärenzkern im Rausch" (Rund-2-Fusion aus Shannons typischer Menge ✕ Philosophie ohne Zentrum): das Eine ist ein maßtragendes, zentrumloses Kohärenzkern (typische Menge = Garbe); H = Kohärenzpol, nicht Substanz; Redundanz = rauschfeste Kohärenz; „the same returns".</div>
+    </div>
+  </div>
+</section>
+
+<footer>Fusion · Runde 3 · Paar 005 · nicht-künstlerische Sparte</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); return (v || '').trim(); }
+  function binaryEntropy(p){ if(p<=0||p>=1) return 0; return -(p*Math.log(p)+(1-p)*Math.log(1-p))/Math.LN2; }
+  function mulberry32(a){ return function(){ a|=0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a>>>15, 1|a); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14) >>> 0) / 4294967296; }; }
+  function gauss(rng){ var u=0,v=0; while(u===0)u=rng(); while(v===0)v=rng(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  /* ---- theme toggle ---- */
+  var tbtn = $('themeToggle');
+  if(tbtn){
+    function syncT(){ tbtn.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀'; }
+    tbtn.addEventListener('click', function(){
+      document.documentElement.classList.toggle('dark');
+      try{ localStorage.setItem('n3005theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); }catch(e){}
+      syncT();
+    });
+    syncT();
+  }
+
+  /* ---- viz ---- */
+  var canvas = $('viz');
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var readout = $('vizReadout');
+  var qSlider = $('vizQ'), sSlider = $('vizS');
+  var valQ = $('valQ'), valS = $('valS');
+  var stCore = $('stCore'), stAx = $('stAx'), stH = $('stH'), stC = $('stC');
+  var bCenter = $('btnCenter'), bFusion = $('btnFusion'), bRes = $('btnReseed');
+  if(!ctx || !qSlider || !sSlider) return;
+
+  var pSource = 0.30;
+  var Hval = binaryEntropy(pSource);
+  var N_CORE = 40, N_SCHEIN = 300;
+  var mode = 'fusion';
+  var rng = mulberry32(20261011);
+  var core = [], schein = [];
+  var W = 860, H = 520;
+  var fieldTop = 22, histH = 140;
+  var fieldBottom = H - histH;
+  var histBins = [], refBins = [];
+  var C = {};
+  var rafId = null;
+
+  function readColors(){
+    C.panel   = cssVar('--viz-panel')   || '#141b30';
+    C.panel2  = cssVar('--viz-panel2')  || '#1a2340';
+    C.accent  = cssVar('--viz-accent')  || '#7c9cff';
+    C.accent2 = cssVar('--viz-accent2') || '#f0a35e';
+    C.good    = cssVar('--viz-good')    || '#6ee7b7';
+    C.ink     = cssVar('--viz-ink')     || '#e7ecff';
+    C.dim     = cssVar('--viz-dim')     || '#8892b8';
+    C.border  = cssVar('--viz-border')  || '#2a3358';
+    C.band    = cssVar('--viz-band')    || 'rgba(240,163,94,.12)';
+    C.halo    = cssVar('--viz-halo')    || 'rgba(124,156,255,.12)';
+    C.haloSt  = cssVar('--viz-halo-stroke') || 'rgba(124,156,255,.42)';
+  }
+
+  function seed(){
+    rng = mulberry32((Math.random()*1e9)|0);
+    core = [];
+    for(var i=0;i<N_CORE;i++){
+      core.push({ fa: i/N_CORE*6.2832 + (rng()-0.5)*0.06, fr: rng(), ph: rng()*6.2832 });
+    }
+    schein = [];
+    for(var j=0;j<N_SCHEIN;j++){
+      var a = rng()*6.2832, r = Math.sqrt(rng());
+      schein.push({ fx: Math.cos(a)*r, fy: Math.sin(a)*r });
+    }
+  }
+
+  function genHist(){
+    var q = +qSlider.value;
+    var s = +sSlider.value;
+    valQ.textContent = q.toFixed(2);
+    valS.textContent = s.toFixed(2);
+    var nb = 30, M = 1600, samples = [];
+    for(var i=0;i<M;i++){
+      var v;
+      if(rng() < (1 - q*0.95)){
+        v = Hval + gauss(rng)*(0.03 + 0.13*q);
+      } else {
+        v = (rng()<0.5) ? rng()*Hval*0.8 : (Hval + rng()*(1.05-Hval)*1.6);
+      }
+      if(v<0)v=0; if(v>1.0)v=1.0;
+      samples.push(v);
+    }
+    histBins = new Array(nb).fill(0);
+    var c = 0;
+    for(var j=0;j<samples.length;j++){
+      var b = Math.floor(samples[j]*nb); if(b<0)b=0; if(b>=nb)b=nb-1; histBins[b]++;
+      if(Math.abs(samples[j]-Hval)<=0.09) c++;
+    }
+    stCore.textContent = (c/samples.length*100).toFixed(0)+' %';
+    stH.textContent = Hval.toFixed(3)+' bit';
+    var M2 = 1600; refBins = new Array(nb).fill(0);
+    for(var k=0;k<M2;k++){
+      var v2 = Hval + gauss(rng)*0.03; if(v2<0)v2=0; if(v2>1.0)v2=1.0;
+      var b2 = Math.floor(v2*nb); if(b2<0)b2=0; if(b2>=nb)b2=nb-1; refBins[b2]++;
+    }
+    stAx.textContent = axiomLabel(s);
+  }
+
+  function axiomLabel(s){
+    if(s < 0.14) return 'Indiscret';
+    if(s < 0.40) return 'T₀';
+    if(s < 0.62) return 'T₁';
+    if(s < 0.82) return 'T₂ (disjunkt)';
+    return 'T₄ / metrisch';
+  }
+
+  function refresh(){
+    bCenter.classList.toggle('active', mode==='center');
+    bFusion.classList.toggle('active', mode==='fusion');
+    stC.textContent = mode==='center' ? 'naives Ding' : 'keines (Fusion)';
+    if(readout){
+      if(mode==='center'){
+        readout.textContent = 'Naives Zentrum: ein Punkt/„Ding" dahinter trägt das Gewicht — die Reifikation, die A\'s Invariante als Fixum und B\'s „Zentrum" beide verwerfen. Der Punkt ist nur der Schatten des Mediums.';
+      } else {
+        readout.textContent = 'Fusion: kein Zentrum. Das Substantielle ist das maßtragende Medium (O = W): Gewicht (Invariante / Kohärenzpol H) ohne Ding dahinter. Lesbar durch Trennung (s), gehalten durch Kohärenz, „the same returns" unter Rausch (q).';
+      }
+    }
+  }
+
+  function drawHist(){
+    var hx0 = 30, hx1 = W-30, hy0 = fieldBottom + 34, hy1 = H - 24;
+    if(hy1 - hy0 < 20) return;
+    var maxv = 1, i;
+    for(i=0;i<histBins.length;i++){ if(histBins[i]>maxv)maxv=histBins[i]; if(refBins[i]>maxv)maxv=refBins[i]; }
+    var nb = histBins.length, bw = (hx1-hx0)/nb;
+    ctx.strokeStyle = C.border; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(hx0,hy1); ctx.lineTo(hx1,hy1); ctx.stroke();
+    ctx.globalAlpha = 0.40; ctx.fillStyle = C.accent2;
+    for(i=0;i<nb;i++){ var h=(refBins[i]/maxv)*(hy1-hy0); if(h>0) ctx.fillRect(hx0+i*bw+1, hy1-h, bw-2, h); }
+    ctx.globalAlpha = 0.88; ctx.fillStyle = C.accent;
+    for(i=0;i<nb;i++){ var h2=(histBins[i]/maxv)*(hy1-hy0); if(h2>0) ctx.fillRect(hx0+i*bw+1, hy1-h2, bw-2, h2); }
+    ctx.globalAlpha = 1;
+    var hx = hx0 + Hval*(hx1-hx0);
+    ctx.strokeStyle = C.good; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(hx,hy0-4); ctx.lineTo(hx,hy1); ctx.stroke();
+    ctx.fillStyle = C.good; ctx.font = '11px system-ui, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('H = '+Hval.toFixed(3)+' (Kohärenzpol / Invariante)', hx, hy0-8);
+    ctx.fillStyle = C.dim; ctx.font = '10px system-ui, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('s = −(1/n)·log₂ p(x)  ·  Peak bleibt bei H — „the same returns"', hx0, hy1+15);
+  }
+
+  function frame(){
+    var t = performance.now()/1000;
+    var q = +qSlider.value;
+    var s = +sSlider.value;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = C.panel; ctx.fillRect(0,0,W,H);
+    var cx = W/2, cyField = (fieldTop + fieldBottom)/2;
+    var Rbig = Math.min(cx-40, (fieldBottom-fieldTop)/2 - 12);
+    var R0 = Rbig*0.38, R1 = Rbig*0.66, Rmid = (R0+R1)/2;
+
+    /* Scheinwelt (no mass) */
+    ctx.globalAlpha = 0.13; ctx.fillStyle = C.accent;
+    for(var sc=0; sc<schein.length; sc++){
+      var p = schein[sc];
+      ctx.beginPath(); ctx.arc(cx + p.fx*Rbig, cyField + p.fy*Rbig, 1.6, 0, 6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    /* Übereinstimmungs-Band / Kohärenz (the invariant ring that persists) */
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(cx,cyField,R1,0,6.2832); ctx.arc(cx,cyField,R0,0,6.2832,true);
+    ctx.fillStyle = C.band; ctx.fill();
+    ctx.setLineDash([6,5]); ctx.strokeStyle = C.good; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(cx,cyField,Rmid,0,6.2832); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = C.good; ctx.font = '11px system-ui, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('Kohärenzpol / Invariante — bleibt', cx + Rmid*0.72, cyField - Rmid*0.72 - 6);
+
+    /* Kern (O = W): neighborhoods (A) on the coherence band (B) */
+    var spacing = (2*Math.PI*Rmid)/N_CORE;
+    var rSmall = Math.max(3.5, spacing/2 - 1);
+    var rBig = Math.max(spacing*1.4, 14);
+    var rHalo = lerp(rBig, rSmall, s);
+    for(var c=0; c<core.length; c++){
+      var pt = core[c];
+      var ang = pt.fa + 0.10*q*Math.sin(t*0.8 + pt.ph);
+      var rr  = R0 + pt.fr*(R1-R0) + (R1-R0)*0.18*q*Math.sin(t*0.6 + pt.ph*1.7);
+      var x = cx + rr*Math.cos(ang), y = cyField + rr*Math.sin(ang);
+      ctx.beginPath(); ctx.arc(x,y,rHalo,0,6.2832);
+      ctx.fillStyle = C.halo; ctx.fill();
+      ctx.lineWidth = 1; ctx.strokeStyle = C.haloSt; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x,y,3.2,0,6.2832);
+      ctx.fillStyle = C.accent; ctx.fill();
+    }
+
+    /* Zentrum vs. zentrumlos */
+    if(mode==='center'){
+      ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(cx,cyField,11,0,6.2832); ctx.fill();
+      ctx.fillStyle = C.ink; ctx.font = '600 15px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('Zentrum', cx, cyField-18);
+      ctx.fillStyle = C.dim; ctx.font = '12px system-ui, sans-serif';
+      ctx.fillText('„das Ding" (verworfen)', cx, cyField+28);
+    } else {
+      ctx.globalAlpha = 0.16; ctx.fillStyle = C.accent2;
+      ctx.beginPath(); ctx.arc(cx,cyField,10,0,6.2832); ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.setLineDash([3,3]); ctx.strokeStyle = C.accent2; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx,cyField,13,0,6.2832); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = C.accent2; ctx.font = '600 14px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('≃ Kohärenz', cx, cyField-18);
+      ctx.fillStyle = C.dim; ctx.font = '12px system-ui, sans-serif';
+      ctx.fillText('kein Zentrum (Fusion)', cx, cyField+28);
+    }
+
+    drawHist();
+    rafId = window.requestAnimationFrame(frame);
+  }
+
+  function start(){
+    if(rafId) window.cancelAnimationFrame(rafId);
+    readColors();
+    genHist();
+    refresh();
+    rafId = window.requestAnimationFrame(frame);
+  }
+
+  if(bCenter) bCenter.addEventListener('click', function(){ mode='center'; refresh(); });
+  if(bFusion) bFusion.addEventListener('click', function(){ mode='fusion'; refresh(); });
+  if(bRes)    bRes.addEventListener('click', function(){ seed(); genHist(); });
+  qSlider.addEventListener('input', genHist);
+  sSlider.addEventListener('input', genHist);
+  window.addEventListener('resize', function(){ /* fixed canvas, CSS scales it */ });
+
+  readColors();
+  seed();
+  genHist();
+  refresh();
+  rafId = window.requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

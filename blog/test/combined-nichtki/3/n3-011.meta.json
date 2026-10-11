@@ -1,0 +1,16 @@
+{
+  "no": "011",
+  "a": "n2-042.html",
+  "b": "n2-037.html",
+  "a_title": "Closure & Invarianz — die funktoriale Sprache der übertragbaren Struktur",
+  "b_title": "Das Ganze aus dem Lokalen",
+  "combined_theme": "closure-gluing-fixpunkt",
+  "one_line": "Treue (strukturerhaltender Funktor) und Kohärenz (Kleben lokaler Sektionen) sind ein einziger ∃!-Operator: Closure unter Komposition = Gluing über Überlappungen, und beides liefert genau ein globales Ganzes, dessen Existenz und Eindeutigkeit derselbe Fixpunkt sind.",
+  "contradictions": [
+    "Was trägt das Ganze: A verortet es im bewahrten Fixpunkt (die universelle Eigenschaft, die der strukturerhaltende Funktor bewahrt — das Ganze existiert als Invariante, die getragen wird); B verortet es im erzeugten Produkt (das Ganze entsteht erst durch das Kleben kompatibler lokaler Sektionen — es wird produziert, nicht bewahrt).",
+    "Mehrfachheit: A macht ∃! zum Axiom und behandelt Mehrdeutigkeit/Nicht-Determinismus als Defekt, den es eindeutig aufzulösen gilt (treuer Funktor = eindeutig); B behält die Mehrfachheit der lokalen Wahlen (v_i=±1) als Inhalt-Freiheit und macht nur die globale Signatur-Inkonsistenz (Twist, ∏s_i=−1) zur Obstruktion. A löst die Verzweigung in Eindeutigkeit auf, B hält sie lokal frei und prüft nur globale Kohärenz.",
+    "Status des Zertifikats: A ist durchgehend instrumentell — die formale Struktur (Funktor/universelle Eigenschaft) ist nur Werkzeug zum Übertragen und wird nie für die Realität selbst ausgegeben; B lässt das Zertifikat in der geometrischen Instanz substantiv werden (Stokes IST die Antwort, Form und Inhalt fallen zusammen) und ist nur in der Ethik formal. A lässt das formale Objekt nie zur Sache selbst werden, B schon."
+  ],
+  "resolution": "Alle drei Spannungen lösen sich auf, indem man zwei Granularitäten trennt und den Instanz-Status zulässt: (1) Fixpunkt und Produkt sind dasselbe von zwei Seiten — das Ganze ist zugleich Produkt des Klebens (es entsteht) und Invarianz-Fixpunkt (sein ∃! macht es zu dem Eindeutigen, das der Funktor trägt); Bewahren setzt Erzeugen voraus, Erzeugens Eindeutigkeit IST das Bewahren. (2) ∃! gilt für das globale Ergebnis, nicht für die lokalen Stücke: lokal ist Mehrfachheit Inhalt (frei erzeugt/gefüllt), global gilt ∃! — der treue Funktor (A) und das eindeutige globale Kleben (B) sind dasselbe ∃! auf dem Ergebnis; scheitert es (Twist ∏s_i=−1 / nicht auflösbare Mehrdeutigkeit), existiert das Ganze nicht. (3) Der Status (formal/substantiv) ist Eigenschaft der Instanz/des Ziels, nicht der Sprache: dieselbe ∃!-Garantie, deren Substanz vom Ziel abhängt.",
+  "viz": "Interaktive Canvas: 6 lokale Stücke (Fasern) in einem Ring (offenes Cover/Basis) mit je einer lokalen Wahl v=±1 (Inhalt-Freiheit) und Überlappungs-Übergängen s=±1 (Twist/Quotient); das Zentrum leuchtet 'GANZES existiert (∃!)' nur wenn alle Überlappungen kleben (∏s=+1, Kohärenz=Treue). Modus 'Entdeckt' (Struktur erzwingt die eindeutige Lösung, ∃!) vs 'Erdacht' (freie lokale Wahlen), Twist-Schalter erzeugt die topologische Obstruktion (Igelsatz/kein treuer Funktor), 'Lösen' findet die konsistente Wahl. Themenreaktiv (CSS-Variablen), alle Daten inline, keine externen Abfragen."
+}

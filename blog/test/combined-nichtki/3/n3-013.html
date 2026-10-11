@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Echte liest sich am Rand — ein invariantes Feld, ein stabiles Loch, ein Gesetz</title>
+<script>
+(function(){try{
+  var s=null; try{s=localStorage.getItem('n3-013-theme');}catch(e){}
+  var dark = s ? s==='dark' : true;
+  document.documentElement.classList.toggle('dark', dark);
+}catch(e){ document.documentElement.classList.add('dark'); }
+})();
+</script>
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --panel2:#f1f0ea;
+  --ink:#1c2230; --dim:#4a5468; --faint:#8a93a6;
+  --stroke:rgba(20,26,40,.14); --stroke-hi:rgba(20,26,40,.30);
+  --acc:#7c3aed; --acc2:#d24a1e; --acc3:#0f9d8f;
+  --koerper:#1d4ed8; --leib:#047857;
+  --warn:#a9760a; --good:#2f8f4e; --bad:#c0392b;
+  --curve:#7c3aed; --tang:#b45309; --win:#0f9d8f; --pt:#be185d;
+  --canvas-bg:#ffffff; --grid:#e8e4d8;
+  --fd:rgba(124,58,237,.10); --fdS:rgba(124,58,237,.45);
+}
+html.dark{
+  --bg:#0a0e18; --panel:#121a2c; --panel2:#0e1524;
+  --ink:#e8ecf6; --dim:#9aa6c0; --faint:#64708c;
+  --stroke:rgba(255,255,255,.10); --stroke-hi:rgba(255,255,255,.22);
+  --acc:#a78bfa; --acc2:#ff6b4a; --acc3:#5ee0d0;
+  --koerper:#60a5fa; --leib:#34d399;
+  --warn:#ffc860; --good:#7ee787; --bad:#ff8aa5;
+  --curve:#a78bfa; --tang:#fbbf24; --win:#5ee0d0; --pt:#f472b6;
+  --canvas-bg:#0d1019; --grid:#232b3d;
+  --fd:rgba(167,139,250,.12); --fdS:rgba(167,139,250,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:38px 20px 84px}
+h1{font-size:clamp(25px,4.4vw,39px);line-height:1.12;letter-spacing:-.02em;font-weight:770;margin-bottom:12px}
+h1 em{font-style:normal;color:var(--acc)}
+.subtitle{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;color:var(--faint);
+  border:1px solid var(--stroke);border-radius:99px;padding:6px 12px;display:inline-block;margin:0 0 16px}
+p{color:var(--dim);margin:0 0 14px;max-width:76ch}
+p.lead{font-size:16.5px;color:var(--ink)}
+strong{color:var(--ink);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+section{padding:34px 0}
+section+section{border-top:1px solid var(--stroke)}
+h2{font-size:clamp(20px,2.9vw,27px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:15.5px;font-weight:670;margin:20px 0 8px;color:var(--ink)}
+.k{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.9em;background:rgba(127,127,127,.16);
+  padding:1px 6px;border-radius:5px;color:var(--ink)}
+.tag{display:inline-block;font-family:ui-monospace,monospace;font-size:11px;font-weight:700;padding:1px 7px;
+  border-radius:5px;border:1px solid var(--stroke-hi)}
+.tag.a{color:var(--acc)} .tag.b{color:var(--acc2)}
+.note{border-left:3px solid var(--acc);background:var(--fd);padding:13px 16px;border-radius:0 11px 11px 0;
+  margin:18px 0;font-size:14px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note .h{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:6px;display:block;font-weight:700}
+.note.t{border-color:var(--acc3);background:rgba(15,157,143,.09)}
+.note.t .h{color:var(--acc3)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border:1px solid var(--stroke);vertical-align:top}
+th{background:var(--panel2);color:var(--ink);font-weight:670;font-size:12.5px;letter-spacing:.02em}
+td{color:var(--dim)}
+td .a{color:var(--acc);font-weight:600}
+td .b{color:var(--acc2);font-weight:600}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke-hi);border-radius:14px;padding:10px;margin:16px 0}
+canvas{display:block;width:100%;border-radius:8px}
+.vizbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.vizbar .hint{font-size:12px;color:var(--faint)}
+button{font-family:inherit;font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;
+  border:1px solid var(--stroke-hi);background:var(--panel2);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--acc)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin:10px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:14px 0}
+.ro .box{background:var(--panel2);border:1px solid var(--stroke);border-radius:10px;padding:9px 12px}
+.ro .box .k2{font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:4px}
+.ro .box .v{font-family:ui-monospace,monospace;font-size:18px;font-weight:670;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.p{color:var(--acc3)} .ro .box .v.w{color:var(--warn)}
+.sliders{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 22px;margin:6px 0 4px}
+.ctl{margin-bottom:12px}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:ui-monospace,monospace;color:var(--acc);font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--panel)}
+.bars{margin:8px 0 2px;font:600 12px/1 system-ui,sans-serif;color:var(--dim)}
+.bar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bar span{width:64px;text-align:right;font-family:system-ui,sans-serif}
+.track{flex:1;height:13px;background:var(--panel2);border:1px solid var(--stroke);border-radius:7px;overflow:hidden}
+.fill{height:100%;width:0;transition:width .1s linear}
+.fill.i{background:var(--curve)} .fill.r{background:var(--acc2)} .fill.l{background:var(--tang)}
+.vizstatus{margin-top:12px;font-size:14px;color:var(--dim);font-style:italic;min-height:2.6em}
+.takeaway{background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:12px 15px;margin-bottom:10px;font-size:14px;color:var(--dim);display:flex;gap:12px}
+.takeaway .num{font-family:ui-monospace,monospace;font-weight:700;color:var(--acc2);font-size:15px;flex:none}
+.takeaway a{color:var(--acc);text-decoration:none}
+.takeaway a:hover{text-decoration:underline}
+footer{border-top:1px solid var(--stroke);padding:24px 20px;max-width:820px;margin:0 auto;color:var(--faint);font-size:12.5px}
+footer a{color:var(--acc);text-decoration:none}
+@media(max-width:600px){.sliders{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <span class="subtitle">Fusion aus: n2-034.html &#10007; n2-039.html  (Runde 3)</span>
+  <h1>Das Echte liest sich am <em>Rand</em><br>&#8212; ein invariantes Feld, ein stabiles Loch, ein Gesetz</h1>
+  <p class="lead">Zwei Fusionspapiere aus Runde&nbsp;2 treffen aufeinander. <span class="tag a">A &#183; n2-034</span> sagt: <strong>Das Reale ist ein <em>kontinuierliches invariantes Feld</em> &#8212; ein Persistent-Spektrum echter Lücken; jede einzelne Zahl ist nur eine <em>Projektion</em> dieses Feldes auf einen Skalar</strong>, und die Metrik ist keine Basis, sondern eine <em>gew&#228;hlte Projektion</em> auf einen fl&#228;chenlosen Untergrund. <span class="tag b">B &#183; n2-039</span> sagt: <strong>Das Invariante einer stabilen Einheit ist durch ihren <em>Rand</em> bestimmt</strong>; ein einziges Gesetz &#8212; <span class="k">&#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;</span> (Stokes) &#8212; liest das Innere am Rand ab, und diese Gleichheit <em>Innen=Rand</em> gilt f&#252;r jede Verformung. Beide sprechen dieselbe <em>Stokes-artige Invarianz</em>: das Echte ist das <strong>Innere</strong> (Feld, Ganzes, stabile Einheit), das sich vollst&#228;ndig an seiner <strong>&#228;u&#223;eren Lesart</strong> abliest (seine Projektion &#955;&#8321; bei A, sein Rand &#8706;M bei B).</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p><span class="tag a">A &#183; n2-034</span> (Fusion aus n1-083 &#215; n1-063) ist eine <em>Meta-Position &#252;ber Projektion und Feld</em>: Das Reale ist <strong>kein</strong> roher, konventionsgebundener Primitiv (ein fester Koordinatenpunkt &#964;, ein nackter Quotient t, ein atomisierter Punkt (b,d)) <em>und</em> <strong>keine</strong> harte Schwelle (die 5%-Linie, die Diagonale, der &#955;&#8321;-Abschnitt). Es ist ein <strong>kontinuierliches invariantes Feld</strong> &#955;&#8346;(t); die Invariante ist das <em>ganze</em> Persistent-Feld, und A's einzelne optimierte Zahl d = &#189; ln(min&nbsp;K) ist nur dessen <em>f&#252;hrende Projektion</em> &#955;&#8321;. Die Metrik ist explizit <em>keine Basis</em>, sondern eine gew&#228;hlte Projektion auf den fl&#228;chenlosen Untergrund (den Moduli-Raum). <span class="tag b">B &#183; n2-039</span> (Fusion aus n1-064 &#215; n1-048) ist eine <em>Meta-Position &#252;ber Einheit und Rand</em>: eine stabile Einheit (Modul, &#8220;Loch&#8221; mit &#947;&#8321;&gt;0, Mannigfaltigkeit M) wird <em>aus einem regelfreien, lokal flachen Grund</em> differenziert, und ihr Invariante wird <em>am Rand &#8706;M abgelesen</em>. A's <strong>Interface</strong> (Betti-Signatur) <em>ist</em> B's <strong>Rand &#8706;M</strong>; und die Gleichung Innen=Rand &#8212; was A &#252;ber <em>Persistenz</em> &#252;ber &#949; <em>messen</em> kann und B als <em>Stokes-Identit&#228;t</em> <em>beweist</em> &#8212; bleibt unter jeder Verformung erhalten.</p>
+    <p>Die eine integrierte Position lautet: <strong>Das Echte ist das Innere, und es ist durch seine &#228;u&#223;ere Lesart bestimmt; diese Gleichung Innen&nbsp;=&nbsp;Rand &#8212; die <em>Stokes-artige Invarianz</em> &#8212; &#252;berlebt jede Transformation.</strong> A's Satz &#8220;der Skalar ist nur die f&#252;hrende Projektion des Feldes&#8221; und B's Satz &#8220;das Innere wird am Rand abgelesen&#8221; sind <em>dieselbe</em> Aussage in zwei Gewandung: <em>das Ganze ist an seinem &#228;u&#223;eren Abdruck ablesbar.</em> A liest das Feld &#955;&#8346; &#252;ber seine Projektionen (d = &#8747;&#955;&#8321; = f&#252;hrende Invariante); B liest das Innere &#8747;<sub>M</sub> d&#969; &#252;ber seinen Rand &#8750;<sub>&#8706;M</sub> &#969;. In beiden F&#228;llen ist der Skalar/die Rand-Integral-Lesart <em>nicht</em> das Fundament, sondern der <em>Abdruck</em> eines gr&#246;&#223;eren, invarianten Ganzen &#8212; und der Abdruck bleibt, w&#228;hrend sich das Ganze &#228;ndert (Gauge-Wechsel bei A, Verformung &#949; bei B). Das ist die gemeinsame Invarianz: <em>Invarianz unter &#220;nderung, ge&#228;u&#223;ert als eine Gleichung Innen&nbsp;=&nbsp;Rand.</em></p>
+    <p>Dazu tr&#228;gt die Fusion die komplement&#228;re Klammer beider Papiere: Das Echte <em>differenziert sich aus einem regelfreien, lokal flachen Grund</em> (B: Jocaxian Nothingness / Tangentialraum; A: der Moduli-Raum als fl&#228;chenloser, vor-metrischer Untergrund) &#8212; das <em>Stabile</em> ist lokal der Grund und global die differenzierte Struktur. Und der <em>Rest</em> jeder Vereinfachung ist ein <em>sichtbarer Parameter</em>, kein Gesetz: das <em>Konventionelle/Neutrale</em> (A's Gauge, B's objektive H&#252;lle) geht weg, das <em>Invariante/Entscheidungsrelevante</em> (A's volles Feld &#955;&#8346;, B's Betti-Signatur) bleibt. Die Metrik ist <em>diejenige</em> gew&#228;hlte Projektion, die das Echte <em>am Rand lesbar macht</em> &#8212; keine Basis, aber die entscheidungsrelevanteste Lesart. <em>Kurz: F&#252;r beide ist das Echte ein Invariantes; A nennt es Feld und liest es als Projektion, B nennt es stabile Einheit und liest es am Rand &#8212; beides ist die eine Gleichung Innen&nbsp;=&nbsp;Rand, die &#252;ber jede Verformung und jeden Gauge-Wechsel hinweg h&#228;lt.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&#252;che zwischen A und B</h2>
+    <p>A und B teilen dieselbe <em>Richtung</em> (das Echte ist ein Invariantes, das sich &#252;ber die &#220;nderung hinweg an einem Abdruck abliest), stehen sich aber in drei konkreten, an den Thesen verankerten Stancen gegen&#252;ber:</p>
+    <h3>&#9312; Kontinuierliches Feld (A) vs. diskrete, z&#228;hlbare Einheit (B)</h3>
+    <p><span class="tag a">A</span> verortet das Reale in einem <em>kontinuierlichen Feld</em>: &#8220;Das Reale ist ein <strong>kontinuierliches invariantes Feld</strong> &#8212; ein Persistent-Spektrum&#8221;, und die Atomisierung in neutrale Punkte (die (b,d)-Punkte, die &#8220;Kite&#8221;) ist gerade der <em>Primitiv/Gauge, den man durchdringen muss</em> &#8212; &#8220;das Ganze ist prim&#228;r&#8221;, das Feld widersteht der Aufspaltung in Atome.<br>
+    <span class="tag b">B</span> verortet das Stabile in einer <em>diskreten, z&#228;hlbaren Einheit</em>: einer Mannigfaltigkeit mit <em>einem</em> Loch, &#947;&#8321; = 1, einer <em>z&#228;hlbaren Betti-Signatur</em>. Das Stabile ist hier das <em>diskrete Objekt</em> (die Zahl &#947;&#8321;, die z&#228;hlbare Einheit), nicht das Feld.<br>
+    &#8594; A durchdringt die Atome hinauf zum <em>kontinuierlichen Feld</em>; B macht das <em>diskrete, z&#228;hlbare</em> (Loch, Betti-Zahl) zum Stablen. Kontinuierliches Feld vs. diskrete Z&#228;hl-Einheit.</p>
+    <h3>&#9313; Das Echte widersteht Rand/Metrik-Erfassung (A) vs. das Echte ist am Rand ablesbar (B)</h3>
+    <p><span class="tag a">A</span> lokalisiert den realsten Bereich gerade <em>dort nicht</em>: der <em>Leib</em> lebt in einem &#8220;<strong>fl&#228;chenlosen Raum</strong>&#8221;, einem &#8220;Gewoge verschwommener Inseln&#8221; &#8212; ausdr&#252;cklich <em>keine</em> metrische, fl&#228;chenhaltige Fl&#228;che &#8212; und A verkn&#252;pft diese Nicht-Metrik mit der <em>Unm&#246;glichkeit, die Situation restlos zu digitalisieren</em>. Das Echte ist das diffuse Feld, nicht eine scharfe Kante.<br>
+    <span class="tag b">B</span> sagt fast das Gegenteil: <strong>&#8220;Stabilit&#228;t ist am Rand ablesbar&#8221;</strong>. Der scharfe Rand &#8706;M (das Interface) ist <em>genau</em> die Stelle, an der die Signatur lesbar wird.<br>
+    &#8594; A's realster Bereich <em>widersteht</em> der Erfassung an einem scharfen Rand/ einer Metrik; B's realster Bereich ist <em>am scharfen Rand lesbar</em>.</p>
+    <h3>&#9314; Die Metrik ist eine verzichtbare Projektion (A) vs. die Metrik ist das Gewebe des Echten (B)</h3>
+    <p><span class="tag a">A</span> subordiniert die Metrik explizit: &#8220;<strong>Die Metrik ist keine Basis, sondern eine gew&#228;hlte Projektion</strong> auf einen fl&#228;chenlosen Untergrund&#8221;. Die Invariante lebt im fl&#228;chenlosen Feld; die Metrik (d, Wasserstein, Effektgr&#246;&#223;e) ist nur <em>eine</em> Lesart, die man auch anders w&#228;hlen k&#246;nnte.<br>
+    <span class="tag b">B</span> l&#228;uft genau <em>auf</em> der Metrik/differentialen Struktur: Die eine Zeile <em>ist</em> eine differential-/metrische Identit&#228;t (<span class="k">&#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;</span>, mit dem 1-Form-&#8747; und der Randkurve), und &#8220;Manigfaltig-Sein&#8221; (differential-geometrisch) ist die <em>pr&#252;fbare Eigenschaft</em>. Das Echte zeigt sich <em>als</em> differential-metrische Gleichheit.<br>
+    &#8594; A nennt die Metrik <em>verzichtbar</em> (nur eine Projektion); B liest das Echte <em>als</em> metrisch-differentialen Abdruck &#8212; die Metrik ist dort nicht nur eine Lesart, sondern das Gewebe, in dem sich das Echte zeigt.</p>
+  </section>
+  <section id="aufloesung">
+    <h2>Aufl&#246;sung</h2>
+    <p>Alle drei Spannungen l&#246;sen sich auf <em>einer</em> Meta-Achse auf: <strong>das Innere (Feld / Ganzes / stabile Einheit) vs. seine &#228;u&#223;ere Lesart (Projektion / Rand)</strong> &#8212; plus die Regel, dass <em>die Gleichung Innen&nbsp;=&nbsp;Rand die Invarianz ist, die &#252;ber jede Transformation h&#228;lt</em>.</p>
+    <p><strong>Aufl&#246;sung &#9312; &#8212; Das diskrete Loch ist die persistente (Quanten-)Lesart des kontinuierlichen Feldes.</strong> A's Feld &#955;&#8346; und B's z&#228;hlbare Einheit &#947;&#8321; sind <em>zwei Aufl&#246;sungen desselben Objekts</em>. Betti-Zahlen und Persistent-Feld sind durch das <em>Persistenz-Spektrum</em> verbunden: Ein Loch &#947;&#8321;&gt;0 bedeutet genau, dass &#955;&#8321; &#252;ber ein Intervall &#949; <em>oberhalb der Diagonale bleibt</em> &#8212; die diskrete Z&#228;hl (&#8220;ein Loch&#8221;) ist die <em>Z&#228;hl der persistierenden Niveaus</em> des kontinuierlichen Feldes. A sagt: das Feld ist prim&#228;r (richtig, es ist das Feld); B sagt: die z&#228;hlbare Einheit ist das Stabile (richtig, sie ist der robuste Knochenaufbau des Feldes). <em>Das diskrete &#947;&#8321; ist die persistente Lesart des kontinuierlichen &#955;&#8346;; das Feld ist das Fleisch, die Einheit der Knochen.</em> Man liest das Echte als weiches Feld (A) <em>oder</em> als die diskreten Invarianten, die es tragen (B) &#8212; Letztere sind die persistenten Niveau-Linien des Ersteren.</p>
+    <p><strong>Aufl&#246;sung &#9313; &#8212; Der Rand ist der lesbare Abdruck des fl&#228;chenlosen Feldes, nicht das Feld selbst.</strong> A's &#8220;fl&#228;chenloses Feld&#8221; ist das <em>Innere</em> (M, das Ganze); B's &#8220;am Rand ablesbar&#8221; ist <em>Stokes</em>: das Innere wird am Rand abgelesen (<span class="k">&#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;</span>). Das Echte <em>widersteht</em> der direkten Erfassung (A: fl&#228;chenlos, nicht restlos digitalisierbar) &#8212; und ist <em>gerade deshalb</em> nur <em>indirekt, &#252;ber seinen Rand / seine Projektion</em>, lesbar (B: &#8706;M; A: d = &#8747;&#955;&#8321;). <em>Das diffuse Feld (A) ist durch seinen Rand-Abdruck (B) bestimmt &#8212; der Rand ist die lesbare Spur des Widerstands, nicht der Widerstand selbst.</em> Beide sagen dasselbe: Das Echte ist das Innere; man erreicht es nur &#252;ber seine &#228;u&#223;ere Lesart.</p>
+    <p><strong>Aufl&#246;sung &#9314; &#8212; Die Metrik ist eine gew&#228;hlte Projektion &#8212; n&#228;mlich die, die das Echte am Rand lesbar macht.</strong> A hat recht: die Metrik ist <em>keine Basis</em>, sondern eine gew&#228;hlte Projektion auf den fl&#228;chenlosen Untergrund. B hat recht: <em>diese</em> Projektion &#8212; die differential-/metrische &#8212; ist diejenige, die das Echte <em>am Rand lesbar</em> und die Invarianz <em>pr&#252;fbar</em> macht (&#8220;Manigfaltig-Sein&#8221;, die Stokes-Gleichheit). <em>Fusioniert: Die Metrik ist eine Projektion (A), und ihre Sonderstellung liegt darin, dass sie die Projektion ist, die das Innere am Rand abliest und so die Frage &#8220;&#252;berlebt die Invariante die &#220;nderung?&#8221; beantwortet (B).</em> Sie ist nicht das Fundament (A), aber die <em>entscheidungsrelevanteste</em> Lesart (B).</p>
+    <div class="note t"><span class="h">Fusionierter Schluss</span>
+    Ein gutes Objekt der &#8220;echten Struktur&#8221; ist <b>(i)</b> ein <em>Invariantes</em> (ein Feld &#955;&#8346; bei A, eine stabile Einheit M mit &#947;&#8321;&gt;0 bei B), <b>(ii)</b> durch seine <em>&#228;u&#223;ere Lesart</em> bestimmt (Projektion d = &#8747;&#955;&#8321; bei A, Rand &#8706;M bei B), <b>(iii)</b> so, dass die Gleichung <em>Innen&nbsp;=&nbsp;Rand</em> unter jeder <em>Gauge-&#214;nderung / Verformung &#949;</em> h&#228;lt (die Invarianz), und <b>(iv)</b> aus einem <em>regelfreien, lokal flachen Grund</em> differenziert, wobei der <em>Rest</em> jeder Vereinfachung ein <em>sichtbarer Parameter</em> ist (Konventionelles/Neutrales weg, Invariantes/Entscheidungsrelevantes behalten). <b>&#955;&#8346;</b> ist das <em>Feld</em>; <b>das Loch &#947;&#8321;</b> seine <em>persistente (diskrete) Lesart</em>; <b>&#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;</b> ist das <em>Stokes-Gesetz</em>, das das Innere am Rand abliest; <b>die Metrik</b> ist die <em>entscheidungsrelevanteste Projektion</em> darauf. Fishers 5%-Linie (A) und der harte &#8220;faithful core&#8221;-Abschnitt (A) sind dieselbe Falle: <em>ein roher, gauge-abh&#228;ngiger/neutraler Wert, eingefroren in eine starre Linie</em> &#8212; anstatt das Feld zu lesen und die Invarianz am Rand abzunehmen.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Abstrahiert auf das Niveau der <em>Thesen</em> der beiden Runde-2-Papiere (nicht deren rohe Quellsdetails) tragen A und B ein gemeinsames Ger&#252;st: <em>das Echte ist ein Invariantes; es ist das Innere; es wird an seiner &#228;u&#223;eren Lesart (Projektion / Rand) abgelesen; die Gleichung Innen&nbsp;=&nbsp;Rand &#252;berlebt jede Transformation; und es differenziert sich aus einem regelfreien Grund.</em></p>
+    <h3>A (n2-034) &#8212; &#8220;Das Invariante Feld&#8221;: Projektion, Rest, Schwelle</h3>
+    <p>Das Reale ist ein <strong>kontinuierliches invariantes Feld</strong> &#955;&#8346;(t) &#8212; das Persistent-Spektrum echter Lücken; jede Zahl ist nur eine <em>Projektion</em> auf einen Skalar. <em>Geometrie:</em> die Invariante ist die Moduli-Klasse &#964;/SL(2,Z) (nicht ein &#964; in fester Basis); die Teichm&#252;ller-Distanz d = &#189; ln(min&nbsp;K) = arccosh(1 + |&#916;&#964;|&#178;/(2&#183;Im&#964;&#8321;&#183;Im&#964;&#8322;)) ist die f&#252;hrende, gauge-invariante Projektion des Feldes; Geod&#228;ten = minimierende Wege. <em>Persistenz:</em> ein Persistenzdiagramm ist ein Multi-Set von Zelt-Funktionen <span class="k">tent(b,d,t)</span>; die Landschaft &#955;&#8346;(t) ist die k-te gr&#246;&#223;te Zelt-H&#246;he (&#955;&#8321; = obere H&#252;lle = &#8220;das Ganze&#8221;); Persistenzmasse = (d&#8722;b)&#178;/4; Wasserstein-1 = minimale Arbeit; Landschafts-L&#185; = &#8747;|&#955;&#187;&#8304;(t)&#8722;&#955;&#187;&#8305;(t)|dt (ein <em>Feld-Integral</em>). <em>Statistik/Ph&#228;nomenologie:</em> &#963; &#8800; SE; t ist ein &#8220;sizeless stare&#8221;; die 5%-Linie ist arbitrar &#8212; die richtige Gr&#246;&#223;e ist <strong>Effektgr&#246;&#223;e + Verlustfunktion</strong>. Der <em>Rest</em> jeder Vereinfachung ist ein <em>Parameter</em>: A's Rest (Gauge-Eliminierung) = Rauschen, <em>wegzuwerfen</em>; B's Rest (Neutralisierung) = Essenz, <em>behalten</em>. Der Leib lebt fl&#228;chenlos; die Metrik ist nur eine gew&#228;hlte Projektion auf den fl&#228;chenlosen Untergrund.</p>
+    <h3>B (n2-039) &#8212; &#8220;Struktur aus dem Grund, Invarianz am Rand&#8221;</h3>
+    <p>Die stabile Einheit wird <em>aus einem regelfreien, lokal flachen Grund</em> differenziert und ihre Invarianz wird <em>am Rand abgelesen</em>. <em>Topologie:</em> Betti-Zahlen &#947;<sub>k</sub> = rank H<sub>k</sub> (&#947;&#8321; = L&#246;cher/Schleifen); Poincar&#233;-Polynom P(t)=&#931;&#947;<sub>k</sub>t<sup>k</sup>; &#947;&#8321;&gt;0 &#252;ber &#949; ist ein <em>echtes, persistierendes Loch</em>. <em>Parnas (1972):</em> jedes Modul versteckt eine Design-Entscheidung, die sich <em>wahrscheinlich &#228;ndern wird</em>; das <em>Interface</em> eines Moduls ist dessen <em>Betti-Signatur</em> (grobe, &#228;nderungsresistente Beschreibung, die zwei Implementierungen teilen). <em>Struktur aus dem Grund:</em> Jocaxian Nothingness (JN) &#8212; &#8220;das Nichts, das existiert&#8221;, regelfrei; Kette P1&#8211;P5 &#8594; <em>Existenz ist der Normalzustand</em>. <em>Mannigfaltigkeit</em> (Spivak): lokal flach (wie &#8477;<sup>n</sup>), global krumm; Tangentialraum. <em>Ein Satz:</em> <span class="k">&#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;</span> (verallgemeinerter Stokes) vereint HDI/Green/Divergenz/Stokes; <strong>geschlossen</strong> (&#8706;M=&#8709;) &#8594; &#8747;<sub>M</sub> d&#969; = 0 (in sich ausbalanciert, kein Au&#223;en). <em>Br&#252;cke:</em> lokaler flacher Zustand (JN) = Tangentialraum; zwangsl&#228;ufige Emergenz = globale Kr&#252;mmung. Offener Rand = Signatur nach au&#223;en (Interface/Leck); geschlossener Rand = in sich ausbalanciert.</p>
+    <h3>Die Karte der Verkn&#252;pfung (A-Begriff &#8596; B-Begriff &#8594; Rolle im Ger&#252;st)</h3>
+    <table>
+      <thead><tr><th>Begriff aus A (n2-034)</th><th>Begriff aus B (n2-039)</th><th>Rolle im Ger&#252;st</th></tr></thead>
+      <tbody>
+        <tr><td>das volle <span class="a">&#955;&#8346;-Feld</span> (Persistent-Spektrum)</td><td>die stabile Einheit <span class="b">M</span> (Mannigfaltigkeit mit Loch)</td><td>das <strong>Innere / das Echte</strong> (das Ganze, das Invariante)</td></tr>
+        <tr><td>f&#252;hrende Projektion <span class="a">&#955;&#8321;</span> / d = &#8747;&#955;&#8321;</td><td>der <span class="b">Rand &#8706;M</span> / Interface</td><td>die <strong>&#228;u&#223;ere Lesart</strong>, an der das Innere abgelesen wird</td></tr>
+        <tr><td>die <span class="a">Teichm&#252;ller-Distanz d = &#189; ln(min&nbsp;K)</span></td><td>die <span class="b">Stokes-Gleichheit &#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969;</span></td><td>die <strong>Invarianz</strong>: Innen&nbsp;=&nbsp;Rand (A messen, B beweisen)</td></tr>
+        <tr><td>Gauge-&#214;nderung <span class="a">&#964;/SL(2,Z)</span></td><td>Verformung <span class="b">&#949;</span> (Persistenz &#252;ber &#949;)</td><td>die <strong>Transformation</strong>, die das Invariante &#252;berlebt</td></tr>
+        <tr><td>das <span class="a">Loch &#947;&#8321; im Diagramm</span> (persistierende L&#252;cke)</td><td>das <span class="b">Loch &#947;&#8321; = 1</span> (z&#228;hlbare Betti-Signatur)</td><td>das <strong>Invariante</strong> in zwei Aufl&#246;sungen (Feld-Lesart / diskrete Z&#228;hl)</td></tr>
+        <tr><td>der <span class="a">Moduli-Raum</span> (fl&#228;chenlos, vor-metrisch)</td><td>der <span class="b">regelfreie Grund</span> (JN / Tangentialraum)</td><td>der <strong>Grund</strong>, aus dem sich Struktur differenziert</td></tr>
+        <tr><td>Rest der <span class="a">Gauge-Eliminierung</span> (Markierung)</td><td>das <span class="b">Fl&#252;chtige</span> (Geometrie/Ablauf, das man wegl&#224;sst)</td><td>der <strong>Rest</strong>: Konventionelles/Neutrales &#8594; <em>weg</em></td></tr>
+        <tr><td>Effektgr&#246;&#223;e + Verlustfunktion</td><td>das <span class="b">pr&#252;fbare</span> &#8220;Manigfaltig-Sein&#8221;</td><td>die <strong>entscheidungsrelevante</strong> Projektion</td></tr>
+        <tr><td>die <span class="a">5%-Linie</span> / der harte &#8220;faithful core&#8221;</td><td>der <span class="b">harte Abschnitt</span> / Diagonale</td><td>die <strong>harte Schwelle</strong> (die Falle in beiden Papieren)</td></tr>
+      </tbody>
+    </table>
+    <p>Der entscheidende Fusionspunkt: A's <em>f&#252;hrende Projektion</em> (d = &#8747;&#955;&#8321;) und B's <em>Rand</em> (&#8706;M) sind <strong>derselbe &#228;u&#223;ere Abdruck desselben Inneren</strong> &#8212; und A's Satz &#8220;der Skalar ist die f&#252;hrende Projektion des Feldes&#8221; ist B's Satz &#8220;das Innere wird am Rand abgelesen&#8221; in anderer Sprache. Die <em>Invarianz</em>, die beide meinen, ist dieselbe: <em>die Gleichung Innen&nbsp;=&nbsp;Rand &#252;berlebt jede Transformation.</em> Das <em>diskrete</em> Loch &#947;&#8321; (B) ist die <em>persistente Lesart</em> des <em>kontinuierlichen</em> Feldes &#955;&#8346; (A) &#8212; &#947;&#8321;&gt;0 bedeutet, dass &#955;&#8321; &#252;ber ein &#949;-Intervall oberhalb der Diagonale bleibt. Und die Metrik, die A als <em>verzichtbare Projektion</em> und B als <em>Gewebe des Echten</em> beschreibt, ist <em>diejenige</em> gew&#228;hlte Projektion, die das Innere am Rand lesbar und die Invarianz pr&#252;fbar macht.</p>
+  </section>
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung &#8212; das Innere liest sich am Rand, invariant unter jeder Verformung</h2>
+    <p>Ein Canvas, zwei Ebenen des Arguments &#8212; beide Papiere in einem Objekt. <strong>Oben (B):</strong> die stabile Einheit <em>M</em>, ein Ring mit einem <em>Loch</em> (&#947;&#8321; = 1). Ein 1-Form-&#8747; wird &#252;ber das <em>Innere</em> (&#8747;<sub>M</sub> d&#969; = 2&#183;Fl&#228;che) und &#252;ber den <em>Rand</em> (&#8750;<sub>&#8706;M</sub> &#969;) ausgerechnet &#8212; und sie sind <em>immer gleich</em> (Stokes, <em>die eine Zeile</em>). Ziehe <em>Verformung &#949;</em>: der Ring wabert, aber <em>Innen&nbsp;=&nbsp;Rand bleibt unter jeder Verformung erhalten</em> (Invarianz) und das <em>Loch &#947;&#8321;=1 persistiert</em>. Ziehe <em>Rand&#246;ffnung g</em>: &#246;ffnet sich der Rand, <em>leckt</em> eine Signatur durch die L&#252;cke (Leck = Innen &#8722; Rand) &#8212; das ist die <em>Interface-Signatur</em>; bei g=0 ist die Einheit in sich ausbalanciert. <strong>Unten (A):</strong> das <em>invariante Feld</em> &#955;&#8321;(t) &#8212; das Loch ist die <em>robuste, persistierende</em> Lesart (die hohe Stange), das Rauschen die kurzen. Ziehe <em>Schwelle</em>: die harte Linie streicht Rauschen weg &#8212; aber das Loch &#252;berlebt jede vern&#252;nftige Schwelle. <em>Das diskrete &#947;&#8321; (oben) ist die persistente Lesart des kontinuierlichen &#955;&#8321; (unten).</em></p>
+    <div class="vizbar">
+      <button id="theme">&#127769; Thema umschalten</button>
+      <span class="hint">oben = stabile Einheit M (B) &middot; unten = invariantes Feld &#955;&#8321; (A) &middot; alles Inline, keine Netzdaten</span>
+    </div>
+    <div class="vizwrap"><canvas id="cv" width="600" height="540"></canvas></div>
+    <div class="legend">
+      <span><i style="background:var(--curve)"></i>Rand &#8706;M (B) = Interface</span>
+      <span><i style="background:var(--win)"></i>Loch-Kante (&#947;&#8321;=1, persistiert)</span>
+      <span><i style="background:var(--tang)"></i>Rand&#246;ffnung / Leck (offenes Interface)</span>
+      <span><i style="background:var(--acc)"></i>Feld-H&#252;lle &#955;&#8321; (A)</span>
+      <span><i style="background:var(--koerper)"></i>robust (&#252;ber der Schwelle)</span>
+      <span><i style="background:var(--acc2)"></i>Rauschen / Kite (unter der Schwelle)</span>
+    </div>
+    <div class="ro">
+      <div class="box"><div class="k2">&#8747;<sub>M</sub> d&#969; (Innen)</div><div class="v" id="v-innen">&#8211;</div></div>
+      <div class="box"><div class="k2">&#8750;<sub>&#8706;M</sub> &#969; (Rand)</div><div class="v m" id="v-rand">&#8211;</div></div>
+      <div class="box"><div class="k2">Leck = Innen &#8722; Rand</div><div class="v w" id="v-leck">&#8211;</div></div>
+      <div class="box"><div class="k2">&#947;&#8321; (Loch, persistiert)</div><div class="v p" id="v-b1">1</div></div>
+      <div class="box"><div class="k2">robust &#252;ber Schwelle (A)</div><div class="v" id="v-rob">&#8211;</div></div>
+    </div>
+    <div class="bars">
+      <div class="bar"><span>Innen</span><div class="track"><div id="bar-in" class="fill i"></div></div></div>
+      <div class="bar"><span>Rand</span><div class="track"><div id="bar-rd" class="fill r"></div></div></div>
+      <div class="bar"><span>Leck</span><div class="track"><div id="bar-lk" class="fill l"></div></div></div>
+    </div>
+    <div class="sliders">
+      <div class="ctl"><div class="ctl-lab"><span>Verformung &#949; (B: &#220;nderung)</span><b id="lbl-eps">30</b></div><input type="range" id="s-eps" min="0" max="100" step="1" value="30"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Rand&#246;ffnung g (B: Interface)</span><b id="lbl-gap">0</b></div><input type="range" id="s-gap" min="0" max="100" step="1" value="0"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Schwelle (A: harte Linie)</span><b id="lbl-th">30%</b></div><input type="range" id="s-th" min="0" max="100" step="1" value="30"></div>
+    </div>
+    <p class="vizstatus" id="vizStatus"></p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="takeaway"><span class="num">A</span><div><a href="../n2-034.html">n2-034.html</a> &#8212; &#8220;Das Invariante Feld &#8212; Gauge-Punkt, robuster Rest, harte Schwelle&#8221; (Runde 2, Fusion aus n1-083 &#215; n1-063, de): das Reale ist ein <em>kontinuierliches invariantes Feld</em> &#955;&#8346;; jede Zahl ist nur eine Projektion auf einen Skalar (d = &#8747;&#955;&#8321; = f&#252;hrende Invariante); die Metrik ist keine Basis, sondern eine gew&#228;hlte Projektion auf einen fl&#228;chenlosen Untergrund; der Rest ist ein Parameter (Konventionelles weg, Invariantes behalten).</div></div>
+    <div class="takeaway"><span class="num">B</span><div><a href="../n2-039.html">n2-039.html</a> &#8212; &#8220;Struktur aus dem Grund, Invarianz am Rand&#8221; (Runde 2, Fusion aus n1-064 &#215; n1-048, de): eine stabile Einheit wird <em>aus einem regelfreien Grund</em> differenziert, und ihr Invariante wird <em>am Rand abgelesen</em>; Interface (Betti-Signatur) = Rand &#8706;M; die Stokes-Gleichheit &#8747;<sub>M</sub> d&#969; = &#8750;<sub>&#8706;M</sub> &#969; h&#228;lt unter jeder Verformung; offener Rand = Leck, geschlossener Rand = in sich ausbalanciert.</div></div>
+  </section>
+</main>
+<footer>
+  <p>Fusion (Runde 3, Paar 013, nicht-KI-Track) aus den zwei Runde-2-Papieren <a href="../n2-034.html">n2-034.html</a> und <a href="../n2-039.html">n2-039.html</a>. Beide bleiben Quelle der Wahrheit; keine erfundenen Behauptungen. Fusionsgesetz: das Echte ist das Innere (Feld/Ganzes/stabile Einheit), bestimmt durch seine &#228;u&#223;ere Lesart (Projektion &#955;&#8321; bei A, Rand &#8706;M bei B); die Gleichung Innen = Rand (Stokes) &#252;berlebt jede Gauge-&#214;nderung / Verformung &#949;; das diskrete &#947;&#8321; ist die persistente Lesart des kontinuierlichen Feldes. Alle Daten inline, alle Berechnungen lokal im Browser (numerisches 1-Form-&#8747; &#252;ber die Randkurve). Keine Daten verlassen diese Seite.</p>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  function cssVar(n){ var v=getComputedStyle(root).getPropertyValue(n); return v?v.trim():''; }
+  function $(id){ return document.getElementById(id); }
+  function set(id,txt){ var el=$(id); if(el) el.textContent=txt; }
+
+  var cv=$('cv'); if(!cv) return;
+  var ctx=cv.getContext('2d'); if(!ctx) return;
+
+  var H=540, N=240, cx=300, cy=185, Rout0=105, Rin0=42;
+  var BARS=[{b:2.0,d:8.2},{b:4.6,d:5.4},{b:6.8,d:7.4},{b:0.8,d:1.5}];
+  var tMax=10, peaks=[], i;
+  for(i=0;i<BARS.length;i++){ peaks.push((BARS[i].d-BARS[i].b)/2); }
+  var pMax=0; for(i=0;i<peaks.length;i++){ if(peaks[i]>pMax) pMax=peaks[i]; }
+
+  function tent(b,d,t){ var m=(b+d)/2; if(t<=b||t>=d) return 0; if(t<=m) return t-b; return d-t; }
+  function lam1(t){ var v=0,j; for(j=0;j<BARS.length;j++){ var h=tent(BARS[j].b,BARS[j].d,t); if(h>v) v=h; } return v; }
+  function Rout(th,amp){ return Rout0*(1+amp*Math.cos(3*th)); }
+
+  var themeBtn=$('theme');
+  if(themeBtn) themeBtn.addEventListener('click', function(){
+    var dark=!root.classList.contains('dark');
+    root.classList.toggle('dark',dark);
+    try{ localStorage.setItem('n3-013-theme', dark?'dark':'light'); }catch(e){}
+    draw();
+  });
+  try{
+    var mo=new MutationObserver(function(){ draw(); });
+    mo.observe(root,{attributes:true,attributeFilter:['class']});
+  }catch(e){}
+
+  function setup(){
+    var pe=cv.parentElement; var w=Math.max(320, (pe&&pe.clientWidth)?pe.clientWidth-20:600);
+    var dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+    cv.style.width=w+'px'; cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx=w/2; cy=185;
+  }
+
+  function draw(){
+    setup();
+    var w=cv.width/(window.devicePixelRatio||1);
+    var C={
+      bg:cssVar('--canvas-bg')||'#0d1019', ink:cssVar('--ink')||'#e8ecf6',
+      dim:cssVar('--dim')||'#9aa6c0', faint:cssVar('--faint')||'#64708c',
+      grid:cssVar('--grid')||'#232b3d', curve:cssVar('--curve')||'#a78bfa',
+      tang:cssVar('--tang')||'#fbbf24', win:cssVar('--win')||'#5ee0d0',
+      pt:cssVar('--pt')||'#f472b6', acc:cssVar('--acc')||'#a78bfa',
+      koerper:cssVar('--koerper')||'#60a5fa', acc2:cssVar('--acc2')||'#ff6b4a'
+    };
+    var eps=(+$('s-eps').value)/100, amp=0.42*eps;
+    var g=(+$('s-gap').value)/100, thr=(+$('s-th').value)/100;
+    var gap=0.9*g, thetaC=1.5*Math.PI, gapA=thetaC-gap/2, gapB=thetaC+gap/2;
+
+    ctx.clearRect(0,0,w,H);
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,H);
+
+    // ---- TOP: annulus M (B) ----
+    ctx.fillStyle=C.ink; ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('B: stabile Einheit M  (Loch \u03b2\u2081=1, Rand \u2202M)', 12, 20);
+
+    ctx.beginPath();
+    for(var i=0;i<=N;i++){ var th0=i/N*2*Math.PI; var rr=Rout(th0,amp); var px=cx+rr*Math.cos(th0), py=cy+rr*Math.sin(th0); i?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    ctx.closePath();
+    for(var j=0;j<=N;j++){ var th1=j/N*2*Math.PI; var ix=cx+Rin0*Math.cos(th1), iy=cy+Rin0*Math.sin(th1); j?ctx.lineTo(ix,iy):ctx.moveTo(ix,iy); }
+    ctx.closePath();
+    ctx.fillStyle=C.curve; ctx.globalAlpha=0.12; ctx.fill('evenodd'); ctx.globalAlpha=1;
+
+    ctx.strokeStyle=C.faint; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(i=0;i<=N;i++){ var thg=i/N*2*Math.PI; var rg=Rout(thg,amp); var gx=cx+rg*Math.cos(thg), gy=cy+rg*Math.sin(thg); i?ctx.lineTo(gx,gy):ctx.moveTo(gx,gy); }
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.strokeStyle=C.curve; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath();
+    var started=false, s, th3;
+    for(s=0;s<=N;s++){ th3=s/N*2*Math.PI; var inGap=(gap>0 && th3>=gapA && th3<=gapB); var ra=Rout(th3,amp); var ea=cx+ra*Math.cos(th3), eb=cy+ra*Math.sin(th3);
+      if(inGap){ started=false; continue; }
+      if(!started){ ctx.moveTo(ea,eb); started=true; } else { ctx.lineTo(ea,eb); } }
+    ctx.stroke();
+
+    if(gap>0){
+      ctx.strokeStyle=C.tang; ctx.lineWidth=3;
+      ctx.beginPath();
+      var started2=false;
+      for(s=0;s<=N;s++){ var th4=s/N*2*Math.PI; var inGap2=(th4>=gapA && th4<=gapB); var rb=Rout(th4,amp); var pa=cx+rb*Math.cos(th4), pb=cy+rb*Math.sin(th4);
+        if(!inGap2){ started2=false; continue; }
+        if(!started2){ ctx.moveTo(pa,pb); started2=true; } else { ctx.lineTo(pa,pb); } }
+      ctx.stroke();
+      ctx.fillStyle=C.pt;
+      for(var e=0;e<2;e++){ var thE=e?gapB:gapA; var rc=Rout(thE,amp); ctx.beginPath(); ctx.arc(cx+rc*Math.cos(thE), cy+rc*Math.sin(thE), 5,0,2*Math.PI); ctx.fill(); }
+    }
+
+    ctx.strokeStyle=C.win; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(var q=0;q<=N;q++){ var th5=q/N*2*Math.PI; var hi=cx+Rin0*Math.cos(th5), hj=cy+Rin0*Math.sin(th5); q?ctx.lineTo(hi,hj):ctx.moveTo(hi,hj); }
+    ctx.closePath(); ctx.stroke();
+
+    ctx.fillStyle=C.ink; ctx.font='12px Georgia'; ctx.textAlign='center';
+    ctx.fillText('Loch  (\u03b2\u2081 = 1)', cx, cy-4);
+    ctx.fillStyle=C.dim; ctx.font='10.5px Georgia';
+    ctx.fillText('der Grund / das Nichts', cx, cy+12);
+
+    // ---- BOTTOM: landscape lambda_1 (A) ----
+    var lpX0=44, lpX1=w-16, lpY0=360, lpY1=H-26, mx=pMax*1.25;
+    function toX(t){ return lpX0+(t/tMax)*(lpX1-lpX0); }
+    function toY(v){ return lpY1-(v/mx)*(lpY1-lpY0); }
+
+    ctx.fillStyle=C.ink; ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('A: invariantes Feld \u03bb\u2081(t)  \u2014  das Loch ist die robuste Lesart', 12, 348);
+
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(lpX0,lpY0); ctx.lineTo(lpX0,lpY1); ctx.lineTo(lpX1,lpY1); ctx.stroke();
+
+    var NS=160;
+    ctx.beginPath(); ctx.moveTo(toX(0), toY(0));
+    for(var s2=0;s2<=NS;s2++){ var tt=s2/NS*tMax; ctx.lineTo(toX(tt), toY(lam1(tt))); }
+    ctx.lineTo(toX(tMax), toY(0)); ctx.closePath();
+    ctx.fillStyle=C.acc; ctx.globalAlpha=0.14; ctx.fill(); ctx.globalAlpha=1;
+
+    var thrVal=thr*pMax, robust=0;
+    for(i=0;i<BARS.length;i++){
+      var b=BARS[i], isRob=(peaks[i]>=thrVal-1e-9);
+      if(isRob) robust++;
+      ctx.beginPath();
+      for(s2=0;s2<=NS;s2++){ tt=s2/NS*tMax; var hv=tent(b.b,b.d,tt); var XX=toX(tt), YY=toY(hv); s2?ctx.lineTo(XX,YY):ctx.moveTo(XX,YY); }
+      ctx.strokeStyle=isRob?C.koerper:C.acc2; ctx.lineWidth=(i===0?2.4:1.3);
+      if(!isRob) ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    ctx.beginPath();
+    for(s2=0;s2<=NS;s2++){ tt=s2/NS*tMax; var YV=toY(lam1(tt)), XV=toX(tt); s2?ctx.lineTo(XV,YV):ctx.moveTo(XV,YV); }
+    ctx.strokeStyle=C.acc; ctx.lineWidth=2.4; ctx.stroke();
+
+    if(thrVal>0.0001){
+      ctx.strokeStyle=C.tang; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(lpX0,toY(thrVal)); ctx.lineTo(lpX1,toY(thrVal)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.tang; ctx.font='10px sans-serif'; ctx.textAlign='right';
+      ctx.fillText('harte Schwelle', lpX1-2, toY(thrVal)-5);
+    }
+
+    ctx.fillStyle=C.faint; ctx.font='9px sans-serif'; ctx.textAlign='center';
+    for(var gv=0; gv<=5; gv++){ var gval=gv/5*tMax; ctx.fillText(String(gval), toX(gval), lpY1+13); }
+    ctx.fillText('\u03b5 / Skala', (lpX0+lpX1)/2, lpY1+13);
+
+    // ---- Stokes computation (B) ----
+    function outerFull(){ var sum=0,dth=2*Math.PI/N,k; for(k=0;k<N;k++){ var t2=k*dth; var r2=Rout(t2,amp); sum+=r2*r2*dth; } return sum; }
+    function outerGap(){ if(gap<=0) return 0; var sum=0,dth=2*Math.PI/N; for(var t3=gapA;t3<gapB;t3+=dth){ var r3=Rout(t3,amp); sum+=r3*r3*dth; } return sum; }
+    var iC=2*Math.PI*Rin0*Rin0;
+    var oF=outerFull(), oG=outerGap();
+    var Innen=oF-iC, Rand=oF-oG-iC, Leck=oG;
+
+    set('v-innen', Math.round(Innen).toLocaleString('de-DE'));
+    set('v-rand', Math.round(Rand).toLocaleString('de-DE'));
+    set('v-leck', Math.round(Leck).toLocaleString('de-DE'));
+    set('v-b1', '1');
+    set('v-rob', robust+' / '+BARS.length);
+    set('lbl-eps', String(+$('s-eps').value));
+    set('lbl-gap', String(+$('s-gap').value));
+    set('lbl-th', Math.round(thr*100)+'%');
+
+    var barI=$('bar-in'), barR=$('bar-rd'), barL=$('bar-lk');
+    var maxV=Math.max(Innen,Rand,Leck,1);
+    if(barI) barI.style.width=(Math.max(0,Innen)/maxV*100).toFixed(1)+'%';
+    if(barR) barR.style.width=(Math.max(0,Rand)/maxV*100).toFixed(1)+'%';
+    if(barL) barL.style.width=(Math.max(0,Leck)/maxV*100).toFixed(1)+'%';
+
+    var st=$('vizStatus');
+    if(st){
+      if(gap<=1e-6){
+        st.textContent='Geschlossener Rand (Leck=0): Innen = Rand \u2014 die Stokes-Gleichheit h\u00e4lt unter jeder Verformung \u03b5 (Invarianz), und das Loch \u03b2\u2081=1 persistiert. Das diskrete \u03b2\u2081 (oben) ist die persistente Lesart des Feldes \u03bb\u2081 (unten).';
+      } else {
+        st.textContent='Offener Rand (Interface): es leckt eine Signatur durch die L\u00fccke (Leck = Innen \u2212 Rand = die Interface/Betti-Signatur nach au\u00dfen). W\u00e4re der Rand geschlossen, bliebe die Einheit in sich ausbalanciert. \u03b2\u2081=1 persistiert \u00fcber \u03b5.';
+      }
+    }
+  }
+
+  ['s-eps','s-gap','s-th'].forEach(function(id){
+    var el=$(id); if(el) el.addEventListener('input', draw);
+  });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+  draw();
+})();
+</script>
+</body>
+</html>

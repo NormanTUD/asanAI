@@ -1,0 +1,16 @@
+{
+  "no": "021",
+  "a": "n2-033.html",
+  "b": "n2-040.html",
+  "a_title": "Das Verklebungsprinzip: Vom lokalen Einvernehmen zum globalen Ganzem",
+  "b_title": "Das Reale als stabile Struktur: Vergehen, Konvergenz und Invariante",
+  "combined_theme": "stratified-invariant-stable-structure",
+  "one_line": "Das Reale ist die stabile globale Struktur, die der Fixpunkt eines Verklebungs-/Konvergenzprozesses ist und von einer einzigen stratifizierten Invariante gekennzeichnet wird — einer Treppe, die zugleich Leiter der Identität (033: =/≅/≈/≃/Univalenz) und Leiter der Auflösung (040: topologische Form ↔ metrisches Maß) ist; fix als Form, fließend im Inhalt.",
+  "contradictions": [
+    "Status der Teile: A (033) — lokale Teile sind gegebene, anhaltende Daten, die gleichzeitig auf Überlappungen kompatibel sein müssen (statische Kompatibilität); B (040) — lokale Teile sind vergehende, entbehrliche Momente (Wegwerfteile), die durch die Struktur fließen und sich auslöschen (temporal).",
+    "Konstituierung des Ganzen: A (033) — das Ganze existiert binär, gdw. die Garben-/Kompatibilitätsbedingung erfüllt ist (statischer Zustand koexistierender Daten); B (040) — das Ganze ist der Grenzwert/Anzieher eines iterativen Prozesses, asymptotisch erreicht (sequentiell, dynamisch).",
+    "Natur der Stratifikation: A (033) — die Treppe ist eine Leiter der Identitätsrelation (=/≅/≈/≃, Trunkierung Set→∞, Univalenz ≃≡=); B (040) — die Treppe ist eine Leiter der Auflösung (topologische/qualitative Form ↔ metrisches Maß λ,D,n)."
+  ],
+  "resolution": "Alle Spannungen sind Projektionen derselben stratifizierten Invariante auf verschiedene Ebenen: (1) das Teil hält als Daten fürs Kleben und vergeht als individuelle Identität — B's Vergehen ist A's implizites 'nur das Muster bleibt'; (2) A's Kompatibilitätsbedingung IST der Fixpunkt von B's Konvergenz — statischer Querschnitt des dynamischen Grenzwerts; (3) A's Identitäts-Leiter und B's Auflösungs-Leiter sind dieselbe Treppe entlang zweier Achsen — feinste Identität (Set) = feinstes Maß, oberster Kollaps (Univalenz ≃≡=) = größtes Zugrubern zur Homotopieklasse; (4) A's Verklebung ist das Objekt, B's Erleben dessen Konkreszenz (Erleben realisiert Struktur).",
+  "viz": "Canvas, inline berechnet (Logistik-Karte x'=r·x(1−x)): links die stabile Struktur (invariante Verteilung = fixe Form + vergehender Moment mit verblasstem Nachhall = fließender Inhalt); rechts die stratifizierte Invariante als Treppe mit 5 Stufen, jede zeigt gleichzeitig A's Identitäts-Relation (=/≅/≈/≃/≃≡=) und B's Auflösung (exakte Maße → nur Typ → Kollaps zur Homotopieklasse); ein Auflösungs-Slider (0–4) und ein r-Slider (2–4); theme-reactive via CSS-Variablen + MutationObserver, keine externen Daten."
+}

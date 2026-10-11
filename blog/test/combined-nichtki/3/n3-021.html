@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die stratifizierte Invariante: stabile Struktur als Fixpunkt des Verklebens (Runde 3)</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --mn-bg:#f6f4ee; --mn-fg:#1c1a16; --mn-dim:#6f6a5e;
+  --mn-accent:#c0452f; --mn-accent2:#0f766e; --mn-accent3:#b45309;
+  --mn-border:#d8d2c4; --mn-card:#fbfaf5; --mn-card2:#efece2;
+  --mn-ok:#16a34a; --mn-warn:#c0392b;
+  --mn-viz-bg:#f3f1ea; --mn-viz-fg:#1c1a16; --mn-viz-dim:#6f6a5e;
+  --mn-viz-struct:#0f766e; --mn-viz-dot:#c0452f; --mn-viz-past:#b45309; --mn-viz-border:#d8d2c4;
+}
+html.dark{
+  --mn-bg:#0a0a18; --mn-fg:#eceaf2; --mn-dim:#8b8aa0;
+  --mn-accent:#ff7a6a; --mn-accent2:#2dd4bf; --mn-accent3:#fbbf24;
+  --mn-border:#26264a; --mn-card:#12122a; --mn-card2:#0e0e24;
+  --mn-ok:#34d39b; --mn-warn:#f87171;
+  --mn-viz-bg:#0b0b1e; --mn-viz-fg:#eceaf2; --mn-viz-dim:#8b8aa0;
+  --mn-viz-struct:#2dd4bf; --mn-viz-dot:#ff7a6a; --mn-viz-past:#fbbf24; --mn-viz-border:#26264a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--mn-bg);color:var(--mn-fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.66;font-size:16px;transition:background .3s,color .3s;}
+article{max-width:820px;margin:0 auto;padding:30px 20px 80px;}
+h1{font-size:1.82em;line-height:1.2;margin-bottom:8px;letter-spacing:-.01em;}
+.subtitle{color:var(--mn-accent);font-weight:600;font-size:.95em;margin-bottom:10px;}
+.subtitle code{font-size:.82em;background:var(--mn-card);border:1px solid var(--mn-border);padding:1px 6px;border-radius:5px;color:var(--mn-fg);font-weight:600;}
+.kicker{color:var(--mn-dim);letter-spacing:.12em;text-transform:uppercase;font-size:.7rem;margin-bottom:12px;}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px;}
+.toc a{font-size:.78em;color:var(--mn-accent2);text-decoration:none;border:1px solid var(--mn-border);padding:4px 11px;border-radius:20px;background:var(--mn-card);}
+.toc a:hover{border-color:var(--mn-accent2);}
+section{background:var(--mn-card);border:1px solid var(--mn-border);border-radius:14px;padding:22px 24px;margin:18px 0;transition:background .3s,border-color .3s;}
+h2{font-size:1.26em;margin-bottom:12px;color:var(--mn-accent);line-height:1.25;}
+h3{font-size:1.03em;margin:18px 0 6px;color:var(--mn-fg);}
+p{margin:10px 0;}
+strong{color:var(--mn-fg);}
+a{color:var(--mn-accent2);}
+.math{font-family:"Times New Roman",Times,serif;font-style:italic;font-weight:600;white-space:nowrap;}
+.A{color:var(--mn-accent);font-weight:700;}
+.B{color:var(--mn-accent2);font-weight:700;}
+ul,ol{margin:10px 0 10px 22px;}
+li{margin:7px 0;}
+.tag{display:inline-block;font-size:.72em;padding:2px 9px;border-radius:12px;margin:2px 2px 2px 0;border:1px solid var(--mn-border);color:var(--mn-dim);background:var(--mn-bg);}
+.wc{border:1px solid var(--mn-border);border-left:4px solid var(--mn-warn);border-radius:10px;padding:13px 16px;margin:14px 0;background:var(--mn-card2);}
+.wc h3{margin-top:0;color:var(--mn-fg);}
+.res{border:1px solid var(--mn-border);border-left:4px solid var(--mn-ok);border-radius:10px;padding:13px 16px;margin:14px 0;background:var(--mn-card2);}
+.res h3{margin-top:0;}
+.callout{border:1px solid var(--mn-border);border-left:3px solid var(--mn-warn);border-radius:10px;padding:11px 15px;margin:12px 0;background:var(--mn-bg);}
+.callout b{color:var(--mn-warn);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;background:var(--mn-card2);border:1px solid var(--mn-border);border-radius:8px;overflow:hidden;}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--mn-border);vertical-align:top;}
+th{background:var(--mn-card);font-weight:700;}
+tr:last-child td{border-bottom:none;}
+td.a{color:var(--mn-accent);font-weight:700;}
+td.b{color:var(--mn-accent2);font-weight:700;}
+.formal{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.8em;line-height:1.55;background:var(--mn-card2);border:1px solid var(--mn-border);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:pre;color:var(--mn-fg);}
+.note{font-size:.86rem;color:var(--mn-dim);}
+.prov{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--mn-border);}
+.prov:last-child{border-bottom:none;}
+.prov .badge{flex:0 0 auto;font-weight:700;font-size:.85em;color:#fff;background:var(--mn-accent);border-radius:8px;padding:4px 9px;}
+.prov.b .badge{background:var(--mn-accent2);}
+.prov a{color:var(--mn-accent2);text-decoration:none;font-weight:600;word-break:break-all;}
+.prov a:hover{text-decoration:underline;}
+.prov p{margin-top:4px;color:var(--mn-dim);font-size:.92em;}
+.themebtn{float:right;background:var(--mn-card2);color:var(--mn-fg);border:1px solid var(--mn-border);border-radius:20px;padding:5px 14px;font-size:.82rem;cursor:pointer;}
+#vizwrap{position:relative;margin-top:14px;}
+#viz{width:100%;display:block;border-radius:12px;border:1px solid var(--mn-border);background:var(--mn-viz-bg);}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:12px;}
+.controls .sliderbox{display:flex;flex-direction:column;font-size:.76em;color:var(--mn-dim);flex:1 1 240px;min-width:200px;}
+.controls .sliderbox input{width:100%;margin-top:4px;accent-color:var(--mn-accent);}
+.controls .sliderbox input.alt{accent-color:var(--mn-accent2);}
+.vizreadout{font-family:"SFMono-Regular",Consolas,monospace;font-size:.84em;line-height:1.6;background:var(--mn-card2);border:1px solid var(--mn-border);border-radius:10px;padding:12px 14px;margin-top:14px;white-space:pre-wrap;color:var(--mn-fg);}
+footer{color:var(--mn-dim);font-size:.82em;text-align:center;margin-top:22px;}
+</style>
+</head>
+<body>
+<article>
+  <button class="themebtn" id="themeBtn" type="button">☀ Licht</button>
+  <p class="kicker">Knockout Synthesis &middot; Runde 3 &middot; Nicht-KI-Track &middot; Pair 021</p>
+  <h1>Die stratifizierte Invariante: stabile Struktur als Fixpunkt des Verklebens</h1>
+  <p class="subtitle">Fusion aus: <code>n2-033.html</code> &times; <code>n2-040.html</code> &nbsp;(Runde 3)</p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widersprüche</a>
+    <a href="#aufloesung">Auflösung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Quellen sind selbst schon Runden-2-Fusionen und sind, aus entgegengesetzten Richtungen kommend, auf <em>dasselbe</em> Grundobjekt gestoßen: <strong>das Reale ist eine stabile globale Struktur, die aus den vergehenden bzw. lokalen Teilen hervorgeht, diese Teile überdauert und von einer einzigen <em>stratifizierten Invariante</em> gekennzeichnet wird.</strong> <span class="A">A</span> (n2-033) sagt: Ein kohärentes globales Ganzes existiert genau dann, wenn die lokalen Teile auf allen Überlappungen übereinstimmen &ndash; und diese Übereinstimmung macht das Ganze <em>eindeutig</em>; die Relation, die das Verkleben vollzieht, ist selbst keine primitive Gleichheit, sondern eine <em>stratifizierte, höherdimensionale</em> Struktur (<span class="math">=&gt;\cong&gt;\approx&gt;\simeq</span>, Trunkierung <span class="math">Set&rArr;\infty</span>, Univalenz). <span class="B">B</span> (n2-040) sagt: Was bleibt, wenn man das Momentarische hinter sich lässt, ist die stabile Struktur, auf die der Prozess (Konkreszenz / Iteration) der <em>entbehrlichen</em> Einzel-Momente <em>konvergiert</em>; die Identität dieser Struktur ist eine Invariante, die <em>in Ebenen</em> kommt (qualitative Form &harr; metrisches Maß) &ndash; <em>fix als Form, fließend im Inhalt</em>.</p>
+    <p>Die fusionierte Position: <strong>Das Reale ist die stabile globale Struktur &ndash; der Fixpunkt eines Verklebungs-/Konvergenzprozesses &ndash; die die lokalen/vergehenden Teile überdauert und von einer einzigen stratifizierten Invariante gekennzeichnet ist. Diese Invariante ist eine Treppe, die zwei Lesarten trägt: (I) A's Leiter der <em>Identität</em> (<span class="math">=&gt;\cong&gt;\approx&gt;\simeq</span>) und (II) B's Leiter der <em>Auflösung</em> (topologische Form &harr; metrisches Maß). Beide Leiter sind dasselbe: je <em>feiner</em> die Identität geklebt wird (A, tief in der Trunkierung), desto <em>feiner</em> das Maß (B); je stärker die Identität <em>kollabiert</em> (A, Univalenz <span class="math">\simeq\equiv=</span>), desto <em>gröber</em> wird das Maß (B, alles fällt auf den Typ). Am oberen Ende fallen beide Lesarten zusammen.</strong></p>
+    <p>„Lokal kompatibel <span class="math">&rArr;</span> global eindeutig" (A) und „Generator <span class="math">&rArr;</span> Prozess <span class="math">&rArr;</span> stabile Struktur <span class="math">&rArr;</span> Invariante" (B) sind damit <em>dasselbe Gesetz</em>; „fixe Form, fließender Inhalt" (B) ist seine innere Dynamik &ndash; und „Erleben realisiert Struktur" (B) / „Koh&auml;renz &times; Korrespondenz" (A) bestimmen, wann diese Struktur <em>wahr/real</em> ist.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Papiere sind „Vettern": beide ablehnend gegen eine statische Dingen-Ontologie, beide einig, dass das Momentarische/Lokale <em>entbehrlich</em> ist und die <em>fortbestehende Struktur</em> das eigentliche Objekt ist, und beide tragen eine „stratifizierte Invariante" (eine Leiter). An vier konkreten Punkten nehmen sie aber <strong>incompatible Stellungen</strong> ein:</p>
+
+    <div class="wc">
+      <span class="tag">W1 &middot; Der ontologische Status der Teile</span>
+      <h3>Sind die lokalen Teile <em>gegebene, anhaltende Daten</em> (A) oder <em>vergehende, entbehrliche Momente</em> (B)?</h3>
+      <p><strong>A (n2-033):</strong> Die lokalen Teile (Primzahlen, Fasern, Schnitte <span class="math">s\in F(U_i)</span>) sind das <em>gegebene, anhaltende Datum</em>, das das Ganze organisiert. Sie sind gleichzeitig da und müssen auf den Überlappungen <em>kompatibel sein</em>. Das Verkleben ist eine <em>statische Kompatibilitätsbeziehung</em> zwischen koexistierenden, dauerhaften Daten; das Ganze ist die <em>Lektüre</em> dieses gegebenen Bestands.</p>
+      <p><strong>B (n2-040):</strong> Die lokalen Teile (Occasions, Punkte <span class="math">x_t</span>) <em>vergehen</em> (perpetual perishing) und sind <em>Wegwerfteile</em>; das Ganze <em>überdauert</em> sie. Der Prozess ist <em>zeitlich</em> &ndash; die Teile fließen und löschen sich aus, nur ihr <em>Inhalt</em> wird „objektiv unsterblich" weitergegeben. Das Ganze steht unterhalb des <em>Vergehens</em>.</p>
+      <div class="callout"><b>Spannung:</b> A's Teile sind <em>anhaltende Daten, die gleichzeitig zusammenpassen müssen</em>; B's Teile sind <em>entbehrliche, vergehende Transiente, die durch die Struktur fließen</em>. A verklebt, was schon da ist; B's Teile <em>hören auf zu sein</em>, während sie das Ganze bilden.</div>
+    </div>
+
+    <div class="wc">
+      <span class="tag">W2 &middot; Die Konstituierung des Ganzen</span>
+      <h3>Entsteht das Ganze als <em>binärer Kompatibilitätszustand</em> (A, gleichzeitig) oder als <em>Grenzwert eines Prozesses</em> (B, sequentiell)?</h3>
+      <p><strong>A (n2-033):</strong> Das globale Ganze <em>existiert oder existiert nicht</em> &ndash; eine saubere Existenzschwelle: Garbenbedingung erfüllt <span class="math">&rArr;</span> eindeutiges globales Objekt; nicht erfüllt <span class="math">&rArr;</span> kein globales Objekt (Pr&auml;garbe). Das Ganze ist ein <em>all-or-nothing Zustand der Kompatibilität</em> koexistierender Daten.</p>
+      <p><strong>B (n2-040):</strong> Das Ganze <em>ist</em> der <em>Grenzwert/Anzieher</em> eines iterativen Prozesses &ndash; er wird <em>asymptotisch</em> erreicht, „der Orbit vergisst seinen Startwert <span class="math">x_0</span> und landet auf einem Anzieher". Das Ganze ist ein <em>dynamisches Endziel</em>, ein Grenzwert, nicht ein Zustand.</p>
+      <div class="callout"><b>Spannung:</b> A's Ganzes ist ein <em>kristallisierter Gegenstand</em> (existiert gdw. kompatibel &ndash; ein statischer Fakt); B's Ganzes ist ein <em>Prozess-Limit</em> (erreicht nur im Limes der Iteration &ndash; ein dynamischer Fakt).</div>
+    </div>
+
+    <div class="wc">
+      <span class="tag">W3 &middot; Die Natur der Stratifikation</span>
+      <h3>Ist die Treppe eine Leiter der <em>Identität</em> (A) oder eine Leiter der <em>Auflösung</em> (B)?</h3>
+      <p><strong>A (n2-033):</strong> Die Stratifikation (<span class="math">=&gt;\cong&gt;\approx&gt;\simeq</span>; <span class="math">Set&rArr;Gruppoid&rArr;\infty</span>; Univalenz) ist eine Hierarchie von <em>Identitätsrelationen</em> &ndash; sie bestimmt, <em>wie fein das Einvernehmen sein muss / in welcher Dimension von Pfaden</em> die Teile „gleich" zählen. Sie klebt auf unterschiedlichen <em>Dimensionen</em>.</p>
+      <p><strong>B (n2-040):</strong> Die Stratifikation (topologische/qualitative Form &harr; metrische/algebraische Maße) ist eine Hierarchie von <em>beschreibenden Auflösungen</em> &ndash; sie bestimmt, <em>in welcher Auflösung</em> man die Invariante desselben Objekts liest (die <em>Art</em> vs. das <em>Maß</em>).</p>
+      <div class="callout"><b>Spannung:</b> A's Leiter ist eine Leiter der <em>Identität</em> (was zählt als „dasselbe"); B's Leiter ist eine Leiter der <em>Auflösung</em> (wie fein gemessen). Beide sind „Leitern", aber zu <em>unterschiedlichen</em> Zwecken.</div>
+    </div>
+
+    <div class="wc">
+      <span class="tag">W4 &middot; Der Grund der Wirklichkeit (zusätzlich)</span>
+      <h3>Ist das Ganze <em>reine objektive Struktur ohne Subjekt</em> (A) oder <em>erlebnisgegründet, von Erleben realisiert</em> (B)?</h3>
+      <p><strong>A (n2-033):</strong> Das Ganze braucht keinen Erfahrenden &ndash; es ist <em>reines, objektives Verkleben</em> (Garbe + HoTT + Primzahlen). Kein Subjekt, kein Fühlen; die Primzahlen „erleben" ihre Organisation nicht.</p>
+      <p><strong>B (n2-040):</strong> Trägt die panerlebnis-hafte Strähne (aus n1-010): das Reale ist <em>erlebnisgegründet</em>; die stabile Struktur (das ewige Objekt) wird <em>realisiert</em> von der erlebenden Occasion (Konkreszenz). „Selbst ein Elektron fühlt seine Umgebung."</p>
+      <div class="callout"><b>Spannung:</b> Ist das Reale in (objektive) Kompatibilität <em>ohne Subjekt</em> begründet (A) oder in (subjektive) Erfahrung, die die Struktur <em>realisiert</em> (B)?</div>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <p>Alle vier Spannungen lösen sich auf, sobald man erkennt, dass sie Projektionen <em>einer</em> stratifizierten Invariante auf verschiedene Ebenen sind &ndash; genau die Ebenen, die beide Papiere selbst benennen (A via HoTTs Trunkierungshierarchie, B via der Invariante-Treppe).</p>
+
+    <div class="res">
+      <h3>R1 (f&uuml;r W1) &mdash; Das Teil hält als Daten fürs Kleben und vergeht als individuelle Identität.</h3>
+      <p>Die Teile sind <em>sowohl</em> anhaltend <em>als auch</em> vergehend &ndash; je nach Ebene. Auf der Ebene der <em>Klebe-/Kompatibilitäts-Relation</em> müssen die lokalen Teile <em>dauern</em> (gut definiert, auf Überlappungen vergleichbar &ndash; A). Auf der Ebene der <em>stabilen Struktur</em> sind sie <em>entbehrlich</em> (ihre individuelle Identität wird verworfen, nur die Invariante bleibt &ndash; B). <strong>B's „Vergehen" ist A's implizites „nur das Muster bleibt":</strong> A's Spirale <em>vergisst, welche Primzahl welche ist</em> und behält nur die Arme &ndash; die individuelle Identität des Teils vergeht, seine Rolle in der Kompatibilität bleibt. Das „Objektiv-unsterbliche" (B) ist das „auf der Überlappung Übereinstimmende" (A): beides ist der Teil, der als <em>Inhalt</em> weiterwirkt, nachdem seine <em>Individuation</em> aufgelöst wurde.</p>
+    </div>
+
+    <div class="res">
+      <h3>R2 (f&uuml;r W2) &mdash; A's Kompatibilitätsbedingung ist der Fixpunkt von B's Konvergenz.</h3>
+      <p>A's „existiert gdw. kompatibel" <em>ist</em> B's „der Orbit hat <span class="math">x_0</span> vergessen und ist auf dem Anzieher gelandet". Die <em>gleichzeitige</em> Kompatibilität (A) ist der <em>Querschnitt</em> der <em>sequentiellen</em> Konvergenz (B) im Punkt der Stabilität. <strong>Fusioniert:</strong> das Ganze ist <em>als Grenzwert konstituiert</em> (B, dynamisch) <em>und</em> <em>als Zustand der Kompatibilität abgelesen</em> (A, statisch) &ndash; dasselbe Objekt, in Bewegung (konvergierend) vs. in Ruhe (Fixpunkt). „Fixe Form" (B) = der Fixpunkt der Iteration; die Garbenbedingung (A) ist genau die Bedingung, dass dieser Fixpunkt <em>wohldefiniert und eindeutig</em> ist (Kontrahierbarkeit des Gesamt-Raums). A's „Existenzschwelle" = B's „Erreichen des Anziehers".</p>
+    </div>
+
+    <div class="res">
+      <h3>R3 (f&uuml;r W3) &mdash; A's Identitäts-Leiter und B's Auflösungs-Leiter sind dieselbe Treppe entlang zweier Achsen.</h3>
+      <p>Die beiden Leiter sind <em>dual</em>: A's „Dimension der Pfade" (<span class="math">Set&rArr;\infty</span>) &harr; B's „Auflösung" (Maß&rArr;Typ). Je <em>tiefer</em> man in A's Trunkierung hinabsteigt (Set, feinste, diskrete Identität), desto <em>feiner</em> ist B's Maß (die exakte Zahl <span class="math">\lambda</span>, <span class="math">D</span>, <span class="math">n</span>). Je <em>höher</em> man steigt und A's Identität <em>kollabiert</em> lässt (Univalenz <span class="math">\simeq\equiv=</span>), desto <em>gröber</em> wird B's Maß (alle Maße fallen auf den <em>topologischen Typ</em>). <strong>A's Univalenz-Kollaps <em>ist</em> B's Zugrubern zur Homotopieklasse.</strong> Es gibt also <em>eine</em> stratifizierte Invariante; A liest sie als <em>Hierarchie der Identitätsrelationen</em> (wie fein das Einvernehmen sein muss), B als <em>Hierarchie der Auflösungen</em> (wie fein das Maß ist). Am unteren Ende: feinste Identität (Set) = feinstes Maß. Am oberen Ende: oberster Kollaps (Univalenz) = gröbster Typ.</p>
+    </div>
+
+    <div class="res">
+      <h3>R4 (f&uuml;r W4) &mdash; A's Verklebung ist das Objekt, B's Erleben dessen Konkreszenz.</h3>
+      <p>A arbeitet auf der <em>Objekt-Ebene</em> (die gegebene Struktur); B's erlebnishafte Strähne ist die <em>Subjekt-Ebene</em>, die diese Struktur <em>realisiert</em>. <strong>Fusioniert (B's „Erleben realisiert Struktur"):</strong> A's Verklebung ist das <em>Objekt</em> (die Form, das Arm-Bild, der Garbenschnitt); B's Erleben ist die <em>Konkreszenz</em>, die diese Form in einem Moment <em>annimmt</em>. Struktur ohne Realisierung bleibt bloßes Potential (nicht-aktualisiertes ewiges Objekt / Pr&auml;garbe ohne globalen Schnitt); Erleben ohne Form bleibt protopathisches Rauschen. A liefert das <em>objektive Gerüst</em>, B die <em>erlebnis-hafte Realisierung</em> &ndash; die beiden sind komplementäre Ebenen desselben Ganzen.</p>
+    </div>
+
+    <div class="res" style="border-left-color:var(--mn-accent);">
+      <h3>Gefasster Schluss</h3>
+      <p>Ein organisierendes Gesetz, zwei Stimmen. <strong>Das Reale ist der Fixpunkt eines Verklebungs-/Konvergenzprozesses, von einer einzigen stratifizierten Invariante gekennzeichnet, fix als Form, fließend im Inhalt</strong> &ndash; abgelesen als Zustand der Kompatibilität (A) oder als Prozess-Grenzwert (B), in Identitäts-Ebenen (A) oder Auflösungs-Ebenen (B), und &ndash; je nach Ebene &ndash; objektiv gegebene Struktur (A) bzw. vom Erleben realisierte Struktur (B). „Lokal kompatibel <span class="math">&rArr;</span> global eindeutig" und „Prozess <span class="math">&rArr;</span> stabile Struktur <span class="math">&rArr;</span> Invariante" sind dieselbe Aussage in zwei Stimmen.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Beide Papiere sind bereits zweifach synthetisiert; auf der Ebene ihrer Thesen teilen sie ein und dasselbe Skelett. Der fusionierte Inhalt ist dieses Skelett, mit der Karte zwischen A's und B's Ausfüllung.</p>
+
+    <h3>1. Das gemeinsame Skelett: Generator &rarr; Prozess &rarr; stabile Struktur &rarr; Invariante</h3>
+    <table>
+      <thead><tr><th>Slot</th><th class="a">A (n2-033)</th><th class="b">B (n2-040)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Generator / Gegebenes</strong></td><td>lokale Schnitte <span class="math">s\in F(U_i)</span>, Primzahlen (gegebene Daten)</td><td>einfache Regel / ewige Objekte + erfassene Vergangenheit</td></tr>
+        <tr><td><strong>Prozess</strong></td><td><em>Verklebung</em> (lokale Kompatibilität &rArr; globales Objekt)</td><td><em>Konkreszenz / Iteration</em> („die Vielen werden eins")</td></tr>
+        <tr><td><strong>Stabile Struktur</strong></td><td>globaler Schnitt / Arm-Bild / Weltbild</td><td>anhaltender Leib / Anzieher / Homotopieklasse</td></tr>
+        <tr><td><strong>Invariante</strong></td><td>stratifizierte Klebe-/Identitätsrelation <span class="math">=&gt;\cong&gt;\approx&gt;\simeq</span></td><td><span class="math">\lambda</span>, <span class="math">D</span>, <span class="math">n</span> (fein) / leibliche Richtung (grob)</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Die Verklebung (A) <em>ist</em> die Konkreszenz (B).</strong> „Die Vielen werden eins und werden um eins vermehrt" (B's Kreativität) ist exakt das Verkleben lokaler, kompatibler Schnitte zu einem globalen (A's Garbenbedingung). Beide Operationen nehmen <em>viele und machen eins</em> &ndash; A räumlich-topologisch (Patches &rArr; Schnitt), B zeitlich-dynamisch (Momente/Iterationen &rArr; Struktur).</p>
+
+    <h3>2. Die stabile Struktur als Fixpunkt (W1 + W2 aufgelöst)</h3>
+    <p>Die stabile Struktur ist der <em>Fixpunkt</em> des Prozesses. A liest ihn als <em>Zustand der Kompatibilität</em> (statisch: die Garbenbedingung ist erfüllt <span class="math">&rArr;</span> eindeutiger globaler Schnitt); B liest ihn als <em>Grenzwert</em> (dynamisch: der Orbit landet auf dem Anzieher und „vergisst" <span class="math">x_0</span>). <strong>Fix als Form, fließend im Inhalt:</strong> die Struktur (Form) ist als Ganzes invariant; ihr Inhalt (Occasions / Orbit / <em>welche</em> Primzahl) fließt bzw. wird verworfen. Der Teil hält <em>als Daten fürs Kleben</em>, vergeht <em>als individuelle Identität</em>.</p>
+
+    <h3>3. Die stratifizierte Invariante &mdash; eine Treppe, zwei Lesarten (W3 aufgelöst)</h3>
+    <table>
+      <thead><tr><th>Stufe</th><th class="a">A: Identitäts-Relation</th><th class="a">A: Trunkierung</th><th class="b">B: Auflösung</th><th class="b">B: Invariante</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td><span class="math">=</span> (binär, diskret)</td><td>Set (0)</td><td>fein &middot; exakte Maße</td><td><span class="math">\lambda,\ D,\ n</span> exakt</td></tr>
+        <tr><td>1</td><td><span class="math">\cong</span> (Pfade)</td><td>Gruppoid (1)</td><td>fein &middot; Typ + Maß</td><td>Typ + <span class="math">\lambda</span></td></tr>
+        <tr><td>2</td><td><span class="math">\approx</span></td><td>2-trunkiert</td><td>mittel &middot; nur Typ</td><td>Typ (Fixpunkt/Zyklus/Chaos)</td></tr>
+        <tr><td>3</td><td><span class="math">\simeq</span> (Pfade-zu-Pfaden)</td><td><span class="math">\infty</span>-Gruppoid</td><td>grob &middot; nur Typ</td><td>nur Typ</td></tr>
+        <tr><td>4</td><td><span class="math">\simeq\equiv=</span> (Univalenz)</td><td><span class="math">\infty</span> + Univalenz</td><td>kollabiert</td><td>Homotopieklasse (Maße fallen zusammen)</td></tr>
+      </tbody>
+    </table>
+    <p>Die Fusion: A's Stufe &harr; B's Auflösung. A's Set-Ebene (feinste, diskrete Identität „schließt es sich? Periode <span class="math">q</span>") = B's feinstes Maß (die exakte Zahl). A's oberer Kollaps (Univalenz, <span class="math">\simeq\equiv=</span>) = B's oberstes Zugrubern (alle Maße fallen auf den topologischen Typ). <em>Die Treppe ist eine; sie wird von A entlang der Identitäts-Achse, von B entlang der Auflösungs-Achse gelesen.</em></p>
+
+    <h3>4. Die Register der stabilen Struktur</h3>
+    <p>Je nach Register ist dasselbe „Ganze" eine andere Instanz der stabilen Struktur:</p>
+    <ul>
+      <li><strong>Garbenschnitt</strong> (A, topologisch-statisch) &ndash; Unizität + Verklebbarkeit.</li>
+      <li><strong>Arm-Bild der Primzahlschnecke</strong> (A, arithmetisch-geometrisch) &ndash; schließt <span class="math">k/\pi</span> sich zu klein rationaler Größe, bilden sich Arme; Periode <span class="math">q</span>.</li>
+      <li><strong>Anzieher / invariante Verteilung</strong> (B, dynamisch) &ndash; <span class="math">\lambda&gt;0</span> chaotisch (Inhalt fließt), <span class="math">\lambda\le0</span> stabil (Inhalt ruht).</li>
+      <li><strong>Homotopieklasse</strong> (A + B, via HoTT) &ndash; <span class="math">\Omega(S^1)\cong\mathbb{Z}</span>, Windungszahl <span class="math">n\in\mathbb{Z}</span>; Pfadverkettung = Addition.</li>
+      <li><strong>Weltbild</strong> (A, erkenntnistheoretisch) &ndash; Koh&auml;renz &times; Korrespondenz zu W, Blinderschleife.</li>
+      <li><strong>Anhaltender Leib</strong> (B, erlebnis-haft) &ndash; Kette vergehender Occasions, objektive Unsterblichkeit.</li>
+    </ul>
+
+    <h3>5. Wahrheit / Realität = Koh&auml;renz &times; Korrespondenz (A) + was das Vergehen übersteht (B)</h3>
+    <p>Die stabile Struktur ist „wahr"/„real" genau dann, wenn sie (a) <em>koh&auml;rent</em> ist (A: das Kleben ist konsistent / die Garbenbedingung erfüllt; B: die Invariante ist wohldefiniert) <em>und</em> (b) <em>korrespondiert / realisiert</em> wird (A: trifft die echten Primzahlen W; B: wird vom echten Orbit / der echten Konkreszenz realisiert). Die <em>Blinderschleife</em> (A: Äquivalenz darf nur auf dem Teil von W behauptet werden, den man sieht &ndash; das endliche Sieb) = B's endliche Iteration (die Invariante wird nur auf den <em>berechneten</em> Orbits geltend gemacht). A's „Fantasy" (koh&auml;rent, aber kein Kontakt zu W) ist B's Anzieher aus <em>falscher</em> Regel &ndash; stabile Struktur, die der Wirklichkeit nicht entspricht.</p>
+
+    <h3>6. Zwei Pole, ein Spannungs-Feld (B) &harr; lokal/global (A)</h3>
+    <p>Beide Papiere erklären das <em>Entstehen</em> der stabilen Struktur als Auflösung einer <em>stabilen Spannung</em> zweier komplementärer Pole. B: die <em>vitale Spannung</em> zwischen <em>diffus-gegeben</em> und <em>reich-gerichtet</em>. A: die <em>lokal-global</em> Duale zwischen <em>lokalen Daten</em> und <em>globalem Ganzem</em>. <em>Fusioniert:</em> dieselbe Spannung &ndash; die Verklebung (A) / Konkreszenz-Iteration (B) ist die Operation, die die Spannung in die formhafte Struktur überführt. Die Invariante ist das, was diese Spannung <em>auflöst</em>.</p>
+
+    <h3>7. Formales Modell (Skizze beider)</h3>
+    <div class="formal">Generator/Gegebenes  &rarr;  Prozess  &rarr;  Stabile Struktur  &rarr;  Invariante
+A: lokale Schnitte        Verklebung     Garbenschnitt /      stratifizierte Klebe-/
+   + Primzahlen           (lokal&rArr;global) Arm-Bild /              Identitätsrelation
+                                             Weltbild            (= / &#8773; / &#8776; / &#8773;)
+B: Regel / ewige Objekte  Konkreszenz/   Leib / Anzieher /     &#955;, D, n  (fein)
+                             Iteration    Homotopieklasse       leibliche Richtung
+                            (viele&rArr;eins)                    (grob: Typ)
+
+Eine Treppe, zwei Lesarten (W3 aufgelöst):
+   A: Identitäts-Relation   =  &rarr;  &#8773;  &rarr;  &#8776;  &rarr;  &#8771;  &rarr;  (&#8771;&#8801;=)
+   B: Auflösung             fein  &rarr;  fein  &rarr;  mittel &rarr;  grob  &rarr;  kollabiert
+   Fusion:  feinste Identität (Set) = feinstes Maß
+            oberster Kollaps (Univalenz &#8771;&#8801;=) = gröbster Typ (Homotopieklasse)
+
+Fixe Form + fließender Inhalt (W1/W2 aufgelöst):
+   Struktur = invariant als Ganzes (Form)
+   Inhalt   = vergeht / fließt (Occasions, Orbit, welche Primzahl)
+              A: Kompatibilitätszustand (statisch)  =  B: Grenzwert (dynamisch)
+
+Wahrheit/Realität:  Koh&auml;renz (wohldefiniert)  &times;  Korrespondenz (realisiert/treffer W)</div>
+
+    <p><strong>Leitsatz der Fusion:</strong> „Was ist dieses Objekt?" wird in beiden Papieren &ndash; und in ihrer Verschmelzung &ndash; durch „Welche stabile Struktur gehört es an, und wie lautet deren <em>stratifizierte</em> Invariante (in ihrer <em>Identität</em> <em>und</em> ihrer <em>Auflösung</em>)?" beantwortet. Das Lokale/Momentarische ist der <em>Wegwerfteil</em>; das Reale ist die <em>stabile Struktur, die über das Vergehen / Divergieren fortdauert</em> &ndash; fix als Form, fließend im Inhalt, objektiv abgelesene Struktur (A) bzw. vom Erleben realisierte Struktur (B).</p>
+    <p>
+      <span class="tag">Stabile Struktur</span><span class="tag">Stratifizierte Invariante</span><span class="tag">Verklebung</span><span class="tag">Konkreszenz</span><span class="tag">Iteration</span><span class="tag">Fixpunkt</span><span class="tag">Identitäts-Leiter</span><span class="tag">Auflösungs-Leiter</span><span class="tag">Univalenz</span><span class="tag">Fixe Form + Fließender Inhalt</span><span class="tag">Koh&auml;renz &times; Korrespondenz</span><span class="tag">Ewiges Objekt</span><span class="tag">Leib</span><span class="tag">Anzieher</span>
+    </p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung &mdash; eine stabile Struktur, eine stratifizierte Invariante, zwei Lesarten</h2>
+    <p>Links unten läuft der <em>jetzte Moment</em> (B: der Punkt <span class="math">x_t</span> / A: der lokale Schnitt) auf der Strecke [0,1] &ndash; er <em>vergeht</em> und hinterlässt einen verblassten Nachhall; die invariante Verteilung (die <strong>stabile Struktur</strong>: fix als Form) steht oben und ist, bei Chaos, ein Anzieher, auf dem der Inhalt <em>fließt</em> (fixe Form + fließender Inhalt). Rechts wird dieselbe Struktur als <strong>stratifizierte Invariante</strong> auf einer Treppe gelesen: ein <em>Auflösungs-Slider</em> wählt die Stufe, und jede Stufe zeigt <em>gleichzeitig</em> A's <em>Identitäts-Relation</em> (<span class="math">=&gt;\cong&gt;\approx&gt;\simeq&gt;\simeq\equiv=</span>) und B's <em>Auflösung</em> (exakte Maße <span class="math">\lambda,D,n</span> &rarr; nur Typ). Der <em>r-Regler</em> wandert durch die Bifurkationskaskade: bei kleinem r kollabiert die Struktur zu einem Punkt (Form fix, Inhalt ruht), bei großem r wird sie ein breiter Anzieher (Form fix, Inhalt fließt) &ndash; während die <em>grobe</em> Invariante (Typ) sich nur diskret ändert und die <em>feine</em> (<span class="math">\lambda</span>) kontinuierlich. Am obersten Treppenstufen kollabiert alles zur Homotopieklasse (Univalenz &harr; alle Maße fallen zusammen).</p>
+    <div id="vizwrap">
+      <canvas id="viz"></canvas>
+      <div class="controls">
+        <div class="sliderbox">
+          <span>Auflösungs-Stufe der Invariante: <b id="stLab">0</b> &nbsp;(0 = fein/exakt &rarr; 4 = kollabiert zur Typ)</span>
+          <input id="stSlider" type="range" min="0" max="4" step="1" value="0">
+        </div>
+        <div class="sliderbox">
+          <span>Regel-Komplexität r: <b id="rLab">3.99</b> &nbsp;(klein &rarr; Fixpunkt, groß &rarr; Chaos)</span>
+          <input id="rSlider" type="range" class="alt" min="2" max="4" step="0.01" value="3.99">
+        </div>
+        <button id="themeBtn2" type="button" style="cursor:pointer;font-size:.85em;padding:7px 14px;border-radius:9px;border:1px solid var(--mn-border);background:var(--mn-card2);color:var(--mn-fg);">↺ Reset</button>
+      </div>
+      <div class="vizreadout" id="vizReadout"></div>
+    </div>
+    <p class="note">Alle Daten (Logistik-Karte <span class="math">x_{t+1}=r\,x_t(1-x_t)</span>, invariante Verteilung, <span class="math">\lambda</span>) werden inline berechnet; keine externen Abfragen, keine externen Bibliotheken. <span class="math">\lambda</span> = mittleres <span class="math">\ln|f'(x_t)|</span>; <span class="math">\lambda&gt;0</span> &rArr; chaotisch (Inhalt fließt), <span class="math">\lambda\le0</span> &rArr; stabil/periodisch (Inhalt ruht).</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov a">
+      <span class="badge">A</span>
+      <div>
+        <a href="../n2-033.html">n2-033.html</a>
+        <p>„Das Verklebungsprinzip: Vom lokalen Einvernehmen zum globalen Ganzem" (Runde 2): lokales Einvernehmen <span class="math">&rArr;</span> globales, eindeutiges Ganzes via einer <em>stratifizierten Klebe-/Identitätsrelation</em> (Garbenbedingung, Primzahlschnecke, HoTT/Univalenz, Koh&auml;renz &times; Korrespondenz); vier Register, Treppe <span class="math">=&gt;\cong&gt;\approx&gt;\simeq</span>.</p>
+      </div>
+    </div>
+    <div class="prov b">
+      <span class="badge">B</span>
+      <div>
+        <a href="../n2-040.html">n2-040.html</a>
+        <p>„Das Reale als stabile Struktur: Vergehen, Konvergenz und Invariante" (Runde 2): Prozess (Konkreszenz/Iteration) <span class="math">&rArr;</span> stabile Struktur (Leib/Anzieher/Homotopieklasse) <span class="math">&rArr;</span> Invariante in Ebenen (<span class="math">\lambda,D,n</span> / leibliche Richtung); fix als Form, fließend im Inhalt; Erleben realisiert Struktur.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Fusion (Runde 3, Paar 021) &ndash; nicht-KI-Track. Standalone, themenreaktiv, ohne externe Datenabrufe.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var wrap = document.getElementById('vizwrap');
+  var stSlider = document.getElementById('stSlider');
+  var stLab = document.getElementById('stLab');
+  var rSlider = document.getElementById('rSlider');
+  var rLab = document.getElementById('rLab');
+  var themeBtn = document.getElementById('themeBtn');
+  var resetBtn = document.getElementById('themeBtn2');
+  var readout = document.getElementById('vizReadout');
+
+  var NB = 72;
+  var DPR = Math.max(1, window.devicePixelRatio || 1);
+  var W = 0, H = 400;
+
+  var state = { r: 3.99, x: 0.2, trail: [], running: true, raf: null };
+  var hist = new Array(NB).fill(0), histMax = 1, lambda = 0, typ = 'CHAOTISCH';
+
+  var RUNGS = [
+    { id:0, aId:'=  (Identität)', aTrunc:'Set (0)', bRes:'fein · exakte Maße', bInv:'λ, D, n exakt' },
+    { id:1, aId:'≅  (Isomorphie)', aTrunc:'Gruppoid (1)', bRes:'fein · Typ + Maß', bInv:'Typ + λ' },
+    { id:2, aId:'≈  (Äquivalenz)', aTrunc:'2-trunkiert', bRes:'mittel · nur Typ', bInv:'Typ (Fixpunkt/Zyklus/Chaos)' },
+    { id:3, aId:'≃  (∞)', aTrunc:'∞-Gruppoid', bRes:'grob · nur Typ', bInv:'nur Typ' },
+    { id:4, aId:'≃≡= (Univalenz)', aTrunc:'∞ + Univalenz', bRes:'kollabiert', bInv:'Homotopieklasse' }
+  ];
+
+  function cssVar(n, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || fb;
+  }
+  function hexToRgba(hex, a){
+    hex = (hex||'').replace('#','');
+    if(hex.length===3){ hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var r = parseInt(hex.substr(0,2),16), g = parseInt(hex.substr(2,2),16), b = parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){ return 'rgba(150,150,170,'+a+')'; }
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+
+  function resize(){
+    W = wrap.clientWidth || 700;
+    canvas.width = Math.round(W*DPR);
+    canvas.height = Math.round(H*DPR);
+    canvas.style.width = W+'px';
+    canvas.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function classify(r){
+    if(lambda > 0.02){ return 'CHAOTISCH'; }
+    var x = 0.5, i, q;
+    for(i=0;i<400;i++) x = r*x*(1-x);
+    var vals = {};
+    for(i=0;i<400;i++){ x = r*x*(1-x); vals[Math.round(x*2000)] = 1; }
+    var n = 0; for(q in vals) n++;
+    if(n<=1) return 'FIXPUNKT';
+    if(n<=2) return '2ER-ZYKLUS';
+    if(n<=8) return n+'-Zyklus';
+    return 'PERIODISCH';
+  }
+
+  function recompute(){
+    var r = state.r, x = 0.5, i, bi;
+    hist = new Array(NB).fill(0);
+    for(i=0;i<400;i++) x = r*x*(1-x);
+    for(i=0;i<6000;i++){ x = r*x*(1-x); bi = clamp(Math.floor(x*NB),0,NB-1); hist[bi]++; }
+    histMax = 1; for(i=0;i<NB;i++) if(hist[i]>histMax) histMax = hist[i];
+    var xx = 0.5, s = 0, d;
+    for(i=0;i<500;i++) xx = r*xx*(1-xx);
+    for(i=0;i<4000;i++){ xx = r*xx*(1-xx); d = Math.abs(r*(1-2*xx)); if(d>1e-9) s += Math.log(d); }
+    lambda = s/4000;
+    typ = classify(r);
+  }
+
+  function render(){
+    if(!ctx) return;
+    ctx.clearRect(0,0,W,H);
+    var dim = cssVar('--mn-viz-dim','#8b8aa0');
+    var struct = cssVar('--mn-viz-struct','#2dd4bf');
+    var dotC = cssVar('--mn-viz-dot','#ff7a6a');
+    var pastC = cssVar('--mn-viz-past','#fbbf24');
+    var accent = cssVar('--mn-accent','#ff7a6a');
+    var accent2 = cssVar('--mn-accent2','#2dd4bf');
+    var warn = cssVar('--mn-warn','#f87171');
+    var border = cssVar('--mn-viz-border','#26264a');
+    var card2 = cssVar('--mn-card2','#0e0e24');
+
+    var st = (stSlider && stSlider.value !== undefined) ? parseInt(stSlider.value,10) : 0;
+    st = clamp(st,0,4);
+
+    var split = Math.round(W*0.47);
+
+    /* ===== LEFT: stable structure (fixed form, flowing content) ===== */
+    var lx0 = 30, lx1 = split - 10;
+    var innerW = lx1 - lx0;
+    ctx.fillStyle = dim; ctx.font = '12px system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('STABILE STRUKTUR  (fix als Form, fließend im Inhalt)', lx0 + innerW/2, 24);
+    ctx.fillStyle = accent; ctx.font = '10px system-ui, sans-serif';
+    ctx.fillText('A: Leib / Schnitt   ·   B: Anzieher / invariante Verteilung', lx0 + innerW/2, 40);
+
+    var histBase = 250, histH = 110;
+    var barW = innerW/NB, i, h;
+    for(i=0;i<NB;i++){
+      h = (hist[i]/histMax)*histH;
+      if(h < 0.5) continue;
+      ctx.globalAlpha = 0.32;
+      ctx.fillStyle = struct;
+      ctx.fillRect(lx0 + i*barW + 0.5, histBase - h, barW - 1, h);
+    }
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = hexToRgba(struct, 0.6); ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    var started = false;
+    for(i=0;i<NB;i++){
+      h = (hist[i]/histMax)*histH;
+      var bx = lx0 + (i+0.5)*barW, by = histBase - h;
+      if(!started){ ctx.moveTo(bx, by); started = true; } else { ctx.lineTo(bx, by); }
+    }
+    ctx.stroke();
+    ctx.fillStyle = dim; ctx.textAlign = 'left'; ctx.font = '10px system-ui, sans-serif';
+    ctx.fillText('invariante Verteilung', lx0, histBase - histH - 8);
+
+    var trackY = 300;
+    ctx.strokeStyle = border; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(lx0, trackY); ctx.lineTo(lx1, trackY); ctx.stroke();
+    ctx.fillStyle = dim; ctx.textAlign = 'left';
+    ctx.fillText('0', lx0 - 4, trackY + 16);
+    ctx.textAlign = 'right';
+    ctx.fillText('1', lx1 + 4, trackY + 16);
+
+    var n = state.trail.length, k;
+    for(k=0;k<n;k++){
+      var tx = lx0 + clamp(state.trail[k],0,1)*innerW;
+      var age = k / Math.max(1, n-1);
+      ctx.globalAlpha = 0.05 + age*0.3;
+      ctx.fillStyle = pastC;
+      ctx.beginPath(); ctx.arc(tx, trackY, 2.2 + age*1.6, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    var cx = lx0 + clamp(state.x,0,1)*innerW;
+    ctx.save();
+    ctx.shadowColor = dotC; ctx.shadowBlur = 14;
+    ctx.fillStyle = dotC;
+    ctx.beginPath(); ctx.arc(cx, trackY, 6, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = dotC; ctx.textAlign = 'center'; ctx.font = '600 10px system-ui, sans-serif';
+    ctx.fillText('jetzer Moment (vergeht → objektiv unsterblich)', cx, trackY - 12);
+    ctx.fillStyle = dim; ctx.textAlign = 'center'; ctx.font = '11px system-ui, sans-serif';
+    ctx.fillText(lambda > 0.02 ? 'Form fix · Inhalt fließt' : 'Form fix · Inhalt ruht', lx0 + innerW/2, H - 16);
+
+    /* ===== RIGHT: stratified invariant ladder (two readings) ===== */
+    var rpX = split + 10, rpW = W - 10 - rpX;
+    ctx.fillStyle = dim; ctx.font = '12px system-ui, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('STRATIFIZIERTE INVARIANTE  (eine Treppe, zwei Lesarten)', rpX + rpW/2, 24);
+    ctx.fillStyle = accent; ctx.font = '10px system-ui, sans-serif';
+    ctx.fillText('A: Identitäts-Relation  ⟷  B: Auflösung', rpX + rpW/2, 40);
+
+    var top = 52, ch = 50, gap = 7, step = ch + gap;
+    for(var i2=0;i2<5;i2++){
+      var y = top + i2*step;
+      var active = (i2 === st);
+      var isTop = (i2 === 4);
+      var fill = active ? (isTop ? hexToRgba(warn,0.28) : hexToRgba(accent2,0.22)) : hexToRgba(dim,0.06);
+      ctx.fillStyle = fill;
+      ctx.fillRect(rpX, y, rpW, ch);
+      ctx.strokeStyle = active ? (isTop ? warn : accent2) : border;
+      ctx.lineWidth = active ? 2.5 : 1;
+      ctx.strokeRect(rpX, y, rpW, ch);
+
+      var rx = rpX + 12;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = active ? accent : dim;
+      ctx.font = (active?'700 13px':'12px') + ' system-ui, sans-serif';
+      ctx.fillText('Stufe ' + i2 + '  ·  ' + RUNGS[i2].aId, rx, y + 20);
+      ctx.fillStyle = active ? accent : dim;
+      ctx.font = '10px system-ui, sans-serif';
+      ctx.fillText('Trunkierung: ' + RUNGS[i2].aTrunc, rx, y + 35);
+
+      var bx = rpX + Math.round(rpW*0.5);
+      ctx.fillStyle = active ? accent2 : dim;
+      ctx.font = (active?'700 12px':'11px') + ' system-ui, sans-serif';
+      ctx.fillText('Auflösung: ' + RUNGS[i2].bRes, bx, y + 20);
+      ctx.font = '10px system-ui, sans-serif';
+      ctx.fillText('Invariante: ' + RUNGS[i2].bInv, bx, y + 35);
+    }
+    if(st === 4){
+      ctx.fillStyle = warn; ctx.font = '700 11px system-ui, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('▼ KOLLAPS: alle Maße fallen auf die Homotopieklasse ▼', rpX + rpW/2, top + 5*step - gap + 16);
+    }
+    ctx.fillStyle = dim; ctx.font = '10px system-ui, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('fein (unten-links)  ⟷  grob/Kollaps (oben-rechts)  ·  feinste Identität = feinstes Maß', rpX + rpW/2, top + 5*step - gap + 32);
+  }
+
+  function readoutText(){
+    var st = (stSlider && stSlider.value !== undefined) ? parseInt(stSlider.value,10) : 0;
+    st = clamp(st,0,4);
+    var rung = RUNGS[st];
+    var lam = (lambda>=0?'+':'') + lambda.toFixed(3);
+    var flux = (lambda > 0.02) ? 'fließt (chaotisch)' : 'ruht (fix/periodisch)';
+    var note;
+    if(st===0){ note = 'FEINST: die Invariante als exakte Zahl gelesen (B) / als diskrete Identität „schließt es sich?" (A).'; }
+    else if(st===1){ note = 'Typ + Maß: die Art der Struktur und ihre Größe (λ).'; }
+    else if(st===2){ note = 'Nur noch der Typ: das Maß weicht der Form (A: Äquivalenz ≈, B: nur Typ).'; }
+    else if(st===3){ note = '∞: Pfade-zu-Pfaden (A) — das Maß ist fast nur noch Typ (B).'; }
+    else { note = 'KOLLAPS: Univalenz ≃≡= (A) — alle Maße λ, D, n fallen auf die Homotopieklasse (B).'; }
+    return 'Invariante auf Stufe ' + st + '  [' + rung.aId + '  ·  ' + rung.aTrunc + ']  ⟷  Auflösung: ' + rung.bRes +
+      '\nInvariante auf dieser Stufe: ' + rung.bInv +
+      '\nGrunddaten:  λ = ' + lam + '   ·   Typ = ' + typ + '   ·   Inhalt: ' + flux +
+      '\n' + note;
+  }
+  function updateReadout(){ if(readout){ readout.textContent = readoutText(); } }
+
+  function step(){
+    var sub = 3, k;
+    for(k=0;k<sub;k++){
+      state.x = state.r*state.x*(1-state.x);
+      state.trail.push(state.x);
+      if(state.trail.length > 48) state.trail.shift();
+    }
+    render();
+    if(state.running) state.raf = requestAnimationFrame(step);
+  }
+  function stop(){ if(state.raf) cancelAnimationFrame(state.raf); state.raf = null; }
+  function start(){ stop(); state.running = true; state.raf = requestAnimationFrame(step); }
+  function reseed(){ state.x = 0.2 + Math.random()*0.2; state.trail = []; }
+
+  function onControl(){ reseed(); recompute(); render(); updateReadout(); }
+
+  if(themeBtn){ themeBtn.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    themeBtn.textContent = document.documentElement.classList.contains('dark') ? '\u2600 Licht' : '\u263e Dunkel';
+    render();
+  }); }
+  if(resetBtn){ resetBtn.addEventListener('click', onControl); }
+  if(stSlider){ stSlider.addEventListener('input', function(){
+    if(stLab) stLab.textContent = stSlider.value;
+    render(); updateReadout();
+  }); }
+  if(rSlider){ rSlider.addEventListener('input', function(){
+    state.r = parseFloat(rSlider.value);
+    if(rLab) rLab.textContent = state.r.toFixed(2);
+    onControl();
+  }); }
+  window.addEventListener('resize', function(){ resize(); render(); });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  if(stLab) stLab.textContent = stSlider ? stSlider.value : '0';
+  if(rLab) rLab.textContent = state.r.toFixed(2);
+  resize();
+  recompute();
+  reseed();
+  render();
+  updateReadout();
+  start();
+})();
+</script>
+</body>
+</html>

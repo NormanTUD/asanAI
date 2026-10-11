@@ -1,0 +1,16 @@
+{
+  "no": "004",
+  "a": "n2-010.html",
+  "b": "n2-035.html",
+  "a_title": "Eine Skala, zwei Seiten — das Lasttragende und das Fragile",
+  "b_title": "Eine Garbenmaschine, zwei Gesichter: Blockade und Kurzschluss",
+  "combined_theme": "ein-merkmal-zwei-medien",
+  "one_line": "Ein lokales, nicht-lasttragendes Merkmal (fragile Schicht / Invariant-Flip) wird in zwei Medien (energetisch/analytisch mit Währung Energie+Konfidenz vs. algebraisch/strukturell mit Währung Wert+Existenz) gelesen und durch einen benannten Parameter umgeschaltet — in A die Frage (Schalter im Leser), in B der Invariant-Wert (Schalter im Objekt); die ehrliche Epistemik ist in beiden dieselbe: Parameter benennen, Anspruch kalibrieren, Peripherie nicht über-attribuieren.",
+  "contradictions": [
+    "T1 — Die periphere Schicht ist in A eine reale, bezahlte Präsenz (H¹-Energie ‖f′‖~ω, man bezahlt/umschließt sie), in B ein wert-geschalteter Parameter (Invariant m=(−1)^w, Drop/kein Drop, man liest seinen Wert ab): A bepreist das Merkmal, B liest es ab — unterschiedliche Ontologie der Peripherie (reale Präsenz mit Preis vs. Schalter-Wert ohne Preis).",
+    "T2 — Die Leseart wird in A durch eine (subjektive) Frage umgeschaltet (Funktions- vs. Mechanismusfrage, Schalter sitzt im Leser), in B durch einen (objektiven) Invariant-Wert plus Darstellung (w gerade/ungerade, Section vs. Entscheid, Schalter sitzt im Objekt): A's Dualität ist frage-relativ, B's objekt-relativ.",
+    "T3 — Die Pathologie/Lücke ist in A epistemisch (Illusion/Überkonfidenz, gemessen als Konfidenz-Überschuss geglaubt−wirklich), in B strukturell/operational (Nicht-Existenz einer globalen Section, H¹≠0, oder vorzeitige Fixierung, gemessen in Existenz/Durchsatz 24M vs. 3,5M pps): unterschiedliche Währung derselben Lücke (kognitiver Überschuss vs. strukturelle Obstruktion/Effizienz)."
+  ],
+  "resolution": "Beides ist eine nicht-lasttragende Peripherie, die nach der Währung des Mediums auftritt (energetisch/analytisch: reale Präsenz mit H¹-Preis vs. algebraisch/strukturell: ein Invariant-Wert, der das Gesicht bestimmt); der Schalter kann auf beiden Seiten der Subjekt–Objekt-Grenze sitzen (Frage im Leser / Invariant-Wert im Objekt), aber der ehrliche Zug ist identisch — den Parameter benennen, bevor man das Merkmal liest; die Lücke ist in beiden 'der Abstand zwischen dem, was die lokalen Daten behaupten lassen, und dem, was das lasttragende globale Objekt trägt' (A im Geist/Überkonfidenz, B im Raum/eine Section, die nicht kleben kann); die Pathologie ist in beiden dieselbe — das periphere Merkmal, über-attribuiert (Illusion = Geist-Schatten des Rauschens; Defekt = Zertifikat).",
+  "viz": "Ein verdrilltes Bündel über S¹ (Section v(θ)=h·cos((w/2)θ)) plus 7 diskrete Halm-Regionen + 1 Naht; der Slider w (0..4) ist der geteilte Schalter — zugleich A's Fein-Frequenz ω=w/2 (H¹-Energie der fragilen Schicht) und B's Invariant m=(−1)^w (Parität = Gesicht): w gerade → Medien verkleben (A: Form lasttragend/stabil, B: Kollimit fixiert, freie Assemblierung), w ungerade → Medien flippen (A: H¹ steigt, Form verdrillt, B: Naht-Flip = Defekt = Zertifikat, Short-Circuit fixiert das Kollimit). Naht = entscheidendes lokales Datum in beiden Medien."
+}

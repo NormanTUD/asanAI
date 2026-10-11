@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Attraktor als Fixpunkt der Self-Referenz — Wiederkunft ist Aggregation</title>
+<style>
+:root{
+  --bg:#f6f3ec; --bg2:#efe9dd; --card:#ffffff; --text:#1c2530; --muted:#5f6b78;
+  --border:#d9d2c4; --accent:#0369a1; --accent2:#a21caf; --accent3:#b45309;
+  --good:#15803d; --bad:#b91c1c; --viz-bg:#ffffff; --grid:#e7e1d4; --panel:#fbfaf6;
+  --code:#eef1f6; --code-fg:#1c2530;
+  --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#0e1424; --card:#141b30; --text:#e2e8f0; --muted:#94a3b8;
+  --border:#2a3556; --accent:#7dd3fc; --accent2:#f0abfc; --accent3:#fde047;
+  --good:#4ade80; --bad:#ff6b6b; --viz-bg:#0a0e1a; --grid:#1a2340; --panel:#111829;
+  --code:#0c1526; --code-fg:#c9d4e6;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Georgia,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+header.top{padding:1.5rem 0 2rem;border-bottom:2px solid var(--border);margin-bottom:2.2rem}
+h1{font-size:clamp(1.85rem,4.4vw,2.5rem);font-weight:800;line-height:1.16;margin-bottom:.6rem;letter-spacing:-.01em}
+h1 .acc{color:var(--accent)}
+.sub{color:var(--muted);font-size:1rem;font-style:italic}
+.sub code{font-style:normal;background:var(--code);color:var(--code-fg);padding:1px 6px;border-radius:5px;font-size:.9em}
+.themebtn{margin-top:1rem;background:var(--card);color:var(--text);border:1px solid var(--border);
+  border-radius:8px;padding:.4rem .9rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+.themebtn:hover{border-color:var(--accent)}
+section{margin:2.4rem 0}
+h2{font-size:1.5rem;font-weight:750;margin-bottom:.9rem;color:var(--accent);
+  padding-bottom:.35rem;border-bottom:1px solid var(--border)}
+h3{font-size:1.12rem;font-weight:650;margin:1.4rem 0 .5rem;color:var(--accent2)}
+p{margin:0 0 1rem}
+.lead{color:var(--muted);font-style:italic;margin-bottom:1.2rem}
+ul{margin:0 0 1rem 1.3rem;color:var(--text)}
+li{margin:.4rem 0}
+strong{color:var(--text)}
+em.k{color:var(--accent3);font-style:normal;font-weight:650}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.callout{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+  padding:.9rem 1.1rem;margin:1.1rem 0;box-shadow:var(--shadow)}
+.callout.warn{border-color:var(--accent2)}
+.callout.win{border-color:var(--accent3)}
+.callout b{color:var(--text)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+@media (max-width:600px){.pair{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:var(--shadow)}
+.card h4{font-size:.98rem;margin-bottom:.5rem;color:var(--accent)}
+.card.b h4{color:var(--accent2)}
+.card p{font-size:.92rem;margin:0;color:var(--muted)}
+.math{font-family:'Cambria Math','Times New Roman',serif;background:var(--panel);
+  border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:.7rem 1rem;margin:.8rem 0;
+  font-size:1rem;overflow-x:auto;line-height:1.85}
+.math sub,.math sup{font-size:.72em}
+.math .op{color:var(--accent3);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.88rem}
+th,td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--accent);font-weight:650}
+td.a{color:var(--accent)} td.b{color:var(--accent2)}
+.viz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem;margin-top:.5rem;box-shadow:var(--shadow)}
+.viz-ctrl{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:.9rem}
+.viz-ctrl label{font-size:.82rem;color:var(--muted);display:block;margin-bottom:.2rem}
+.viz-ctrl .val{color:var(--accent3);font-variant-numeric:tabular-nums;font-weight:600}
+input[type=range]{-webkit-appearance:none;width:150px;height:6px;background:var(--grid);border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:none}
+button.vbtn{background:var(--accent);color:var(--bg);border:none;padding:.5rem 1rem;border-radius:8px;font-weight:650;cursor:pointer;font-family:inherit;font-size:.85rem}
+button.vbtn:hover{filter:brightness(1.1)}
+button.vbtn.alt{background:var(--accent2)}
+canvas#viz{display:block;width:100%;height:460px;border-radius:8px;background:var(--viz-bg)}
+.cap{font-size:.8rem;color:var(--muted);margin-top:.5rem;font-style:italic}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:.6rem;margin-top:1rem}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:8px;text-align:center;padding:.6rem}
+.stat .n{font-size:1.25rem;font-weight:800;color:var(--accent3);font-variant-numeric:tabular-nums}
+.stat .l{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.7rem;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.prov a{color:var(--accent);font-weight:650;text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.prov p{margin:.35rem 0 0;color:var(--muted);font-size:.92rem}
+footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Der Attraktor als Fixpunkt der <span class="acc">Self-Referenz</span>: Wiederkunft ist Aggregation</h1>
+  <p class="sub">Fusion aus: <code>n2-049.html</code> &#10005; <code>n2-032.html</code>&nbsp; (Runde 3)</p>
+  <button class="themebtn" id="themeBtn">&#9790; Theme wechseln</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Runden-2-Papiere sind selbst schon Synthesen &mdash; und sie m&uuml;nden, eine Ebene h&ouml;her, in dieselbe Menge.</p>
+  <p><strong>A (n2-049, &bdquo;Wiederkunft ist Invarianz&ldquo;)</strong> sagt: eine <em>selbstreferenzielle Form</em>
+  (Output&nbsp;=&nbsp;Eingabe, <span class="math" style="display:inline;padding:.1rem .4rem">x<sub>t+1</sub> = f(x<sub>t</sub>)</span>) bleibt in ihren
+  messbaren Invarianten fest und betrachterunabh&auml;ngig, w&auml;hrend sie sich der einen Regel/Beschreibung
+  entzieht, die sie definiert. Wiederkunft &uuml;ber die <em>Zeit</em> (Periode, Attraktor, das Rad) und
+  Invarianz &uuml;ber die <em>Beschreibung</em> (geheimer Vektor <code>s</code>, Gitter, die Form hinter den Gesichtern)
+  sind ein und dasselbe Ph&auml;nenomen auf zwei Achsen: <em class="k">das Unver&auml;nderte im Ver&auml;ndernden</em>.
+  Das Wiederkommende ist das Invariante.</p>
+  <p><strong>B (n2-032, &bdquo;Vom einzelnen Bild zur invarianten Struktur&ldquo;)</strong> sagt: ein Objekt ist erst auf
+  der Ebene <em>&uuml;ber der einzelnen Instanz</em> lesbar. Der einzelne Standpunkt/die einzelne Bahn ist keine Sache,
+  sondern eine <em>Probe</em>; das System selbst ist die invariante Struktur, zu der die Probe geh&ouml;rt. Und
+  <em>der Attraktor ist eine Invariante</em> &mdash; die Menge, die die Wirkung (die Karte) auf sich selbst abbildet.</p>
+  <p><strong>Die Fusion sieht, dass beide dieselbe Menge meinen: den Attraktor als Fixpunkt der Self-Referenz</strong> &mdash;
+  die einzige Teilmenge, auf die das System seine Karte f abbildet. A erreicht ihn durch die
+  <em>Zeit</em> (die Bahn kehrt zur&uuml;ck &mdash; Wiederkunft); B erreicht ihn durch den <em>Zugang</em>
+  (vom Element zur Menge &mdash; Aggregation). Und der entscheidende fusionierende Zug:
+  <em class="k">Wiederkunft (A, Zeit) und Aggregation (B, Menge) sind dieselbe Operation auf zwei Achsen.</em>
+  Die einzelne Bahn/der einzelne Standpunkt ist zugleich A&rsquo;s <em>wiederkommendes Gesicht</em> der proteischen Form und
+  B&rsquo;s <em>Probe</em>; ihre Wiederkunft in der Zeit <em>f&uuml;llt</em> die Menge, und das Lesen der Menge statt der Probe
+  <em>macht</em> die Wiederkunft sichtbar.</p>
+  <div class="callout"><b>Vereinigte These:</b> Die Self-Referenz erzeugt den Attraktor (die invariante Menge); die Instanz ist
+  nur eine Probe davon, und ihre Wiederkunft ist die Lesart, durch die die Probe zur invarianten Struktur wird.
+  <em>Wiederkunft ist Aggregation</em> &mdash; und das Wiederkommende ist die invariante Menge, auf die sich das System selbst abbildet.</div>
+</section>
+
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p class="lead">Widersprechen tut sich keiner der beiden in einer faktischen Rechnung &mdash; aber auf der Ebene ihrer Positionen stehen drei echte, benennbare Spannungen gegen&uuml;ber.</p>
+
+  <div class="pair">
+    <div class="card"><h4>A &mdash; n2-049</h4><p><strong>Der Rest ist der Wert.</strong> Die Form entzieht sich <em>in ihrem Grund</em> der sie definierenden Regel: &bdquo;zu gro&szlig;, um von der Regel erfasst zu werden&ldquo;, &bdquo;Bedeutung weicht, wenn man greift&ldquo;. Dieser <em>Entzug ist der Wert</em> (Offenheit ist das Produktive); selbst die Invarianten sind ein &bdquo;versteckter globaler Schnitt&ldquo;, der der lokalen Sicht entgeht.</p></div>
+    <div class="card b"><h4>B &mdash; n2-032</h4><p><strong>Der Rest ist die falsche Ebene.</strong> Die invariante Struktur (Gruppe/Attraktor) ist <em>exakt und vollst&auml;ndig kenntlich</em>: &bdquo;wer die Gruppe kennt, kennt alles&ldquo;, &bdquo;immer die Struktur lesen&ldquo;. Der einzige irreduzierbare Rest sitzt in der <em>einzelnen Bahn</em> (sensitive Abh&auml;ngigkeit, &bdquo;f&uuml;r immer halb verdeckt&ldquo;) &mdash; und genau die Ebene sagt B: wegfahren.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 1 &mdash; Wert vs. vermeidbare Instanz-Ebene.</b> A feiert das <em>Ungreifbare</em>: die Form entzieht sich, und darin liegt ihr Wert. B begreift das Ungreifbare als <em>vermeidbare Instanz-Ebene</em>: die Struktur ist vollst&auml;ndig fassbar, nur die Probe bleibt verdeckt. Wo sitzt der irreduzierbare Rest &mdash; in der Form selbst (A) oder nur in der Probe (B)?</div>
+
+  <div class="pair">
+    <div class="card"><h4>A &mdash; n2-049</h4><p><strong>Die Form wird erzeugt.</strong> Die Form <em>entsteht</em> durch Self-Referenz &mdash; der geschlossene Kreislauf (Output&nbsp;=&nbsp;Eingabe) ist &bdquo;der Motor der Wiederkunft&ldquo;; die Invarianten sind <em>Produkte</em> der Dynamik (bottom-up, in der Zeit erzeugt).</p></div>
+    <div class="card b"><h4>B &mdash; n2-032</h4><p><strong>Die Struktur wird erkannt.</strong> Die invariante Struktur <em>wird abgelesen</em> &mdash; der &bdquo;Zoom&ldquo; vom Element zur Menge, &bdquo;man liest die 8&ldquo;. Die Symmetriegruppe ist eine Beschreibung, die der <em>Beobachter</em> anlegt, nicht etwas, das das System erzeugt (top-down, durch Aggregation gelesen).</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 2 &mdash; Generierung vs. Erkennung.</b> Wird die invariante Struktur von der Self-Referenz <em>erzeugt</em> (A: die Wiederkunft <em>ist</em> das Hinzukommen der Form) oder vom Beobachter <em>erkannt</em> (B: die Struktur ist da, und man liest sie durch Aggregation)?</div>
+
+  <div class="pair">
+    <div class="card"><h4>A &mdash; n2-049</h4><p><strong>Die Schwelle wird zur&uuml;ck&uuml;berschritten.</strong> Die Kante des Chaos wird <em>regenerativ</em> durchquert: &bdquo;abbrennen, nachwachsen, wieder kritisch&ldquo;, &bdquo;das Ende wird zum Anfang&ldquo;. Das System kehrt von selbst zum kritischen Zustand zur&uuml;ck &mdash; das Schwierige gibt durch <em>R&uuml;ckkehr</em> nach (Tod&nbsp;&rarr;&nbsp;Leben).</p></div>
+    <div class="card b"><h4>B &mdash; n2-032</h4><p><strong>Die Schwelle wird ferngehalten.</strong> Der Kipppunkt ist eine <em>gef&auml;hrliche Bifurkation</em>: &bdquo;den Parameter fern vom Kipppunkt halten&ldquo;, &bdquo;nicht ins Chaos kippen&ldquo;, &bdquo;Erwachsenwerden&ldquo;&nbsp;=&nbsp;auf einem nachhaltigen Attraktor leben. Das Schwierige (Chaos) ist eine <em>H&uuml;rde</em>, der man sich durch Parametersteuerung fernh&auml;lt.</p></div>
+  </div>
+  <div class="callout warn"><b>Spannung 3 &mdash; zur&uuml;ckkehren vs. fernhalten.</b> A liest den Kipppunkt als <em>regenerative Schwelle, die das System von selbst zur&uuml;ck&uuml;berschreitet</em> (Ende&nbsp;=&nbsp;Anfang); B liest ihn als <em>gef&auml;hrliche Bifurkation, der man durch Steuerung fernbleibt</em>.</div>
+</section>
+
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+  <p class="lead">Alle drei Spannungen fallen zusammen, sobald man sieht, dass beide Papiere dieselbe Menge meinen &mdash; den Attraktor als Fixpunkt der Self-Referenz &mdash; und ihre Gegens&auml;tze nur die <em>Aufstellung</em> (Zeit vs. Menge) und die <em>Valenz</em> (Wert vs. Kosten, erzeugen vs. lesen, zur&uuml;ckkehren vs. fernhalten) derselben Struktur sind.</p>
+
+  <h3>1. Wert vs. vermeidbar &mdash; ein irreduzierbarer Rest, zwei Lesarten</h3>
+  <p>Der irreduzierbare Rest ist <em>ein einziger</em>: die invariante Menge l&auml;sst sich weder auf ihre lokale erzeugende Regel (A&rsquo;s Entzug) noch auf ihre einzelnen Bahnen (B&rsquo;s verdecktes Detail) zur&uuml;ckf&uuml;hren. A sagt, die Form entzieht sich ihrer <em>Regel</em> (man kann die Invariante nicht in eine lokale Gesetzlichkeit einkochen); B sagt, die <em>Instanz</em> entzieht sich (man kann die einzelne Bahn nicht vorhersagen). <strong>Fusionsschluss:</strong> Die Menge ist <em>als Menge kenntlich</em> (B&rsquo;s &bdquo;wer die Gruppe kennt, kennt alles&ldquo; gilt f&uuml;r die Struktur), aber <em>irreduzibel</em> auf eine Regel (A) und auf eine Probe (B). A&rsquo;s &bdquo;Entzug als Wert&ldquo; und B&rsquo;s &bdquo;Entzug als falsche Ebene&ldquo; sind derselbe Rest, gesehen von zwei Seiten: Was invariant bleibt, ist die <em>Menge</em> &mdash; fassbar in ihren Invarianten (B&rsquo;s Kenntlichkeit), doch eben deshalb in keine einzelne Beschreibung oder eine einzelne Probe einkochbar (A&rsquo;s Entzug). Wert und Kosten sind zwei Gesichter derselben Irreduzibilit&auml;t.</p>
+
+  <h3>2. Erzeugen vs. Lesen &mdash; dieselbe Operation, zwei Richtungen</h3>
+  <p>Generierung (A) und Erkennung (B) sind dieselbe Operation, von ihren beiden Enden aus betrachtet. Die Self-Referenz f(x) <em>erzeugt</em> den Attraktor (die Menge, die f auf sich selbst abbildet); der <em>Zoom</em> des Beobachters (Instanz&nbsp;&rarr;&nbsp;Menge) ist genau der Akt, <em>die</em> so erzeugte Menge abzulesen. A&rsquo;s &bdquo;Motor&ldquo; (Wiederkunft) und B&rsquo;s &bdquo;Zoom&ldquo; (Aggregation) laufen beide entlang desselben Pfeils: von der einzelnen Probe zur invarianten Menge. <strong>Fusionsschluss:</strong> Die Form wird durch die Dynamik <em>erzeugt</em> und vom Beobachter <em>erkannt</em> &mdash; aber es ist dieselbe Menge, erzeugt-durch-Recurrence und gelesen-durch-Aggregation. Wiederkunft (A) ist die Menge, die sich selbst in der Zeit erzeugt; Aggregation (B) ist die Menge, die aus ihren Proben gelesen wird. Gleiche Menge, zwei Richtungen desselben Pfeils.</p>
+
+  <h3>3. Zur&uuml;ckkehren vs. fernhalten &mdash; eine Schwelle, zwei Regierungen</h3>
+  <p>Der Kipppunkt (Bifurkation, wo der Lyapunov-Exponent 0 kreuzt und die invariante Menge ihren Namen wechselt) ist <em>ein einziges Objekt</em>. A (selbstorganisierte Kritikalit&auml;t) lebt <em>auf</em> ihm: das System kehrt zur Schwelle zur&uuml;ck (Ende&nbsp;=&nbsp;Anfang, Tod&nbsp;&rarr;&nbsp;Leben) und <em>regeneriert</em> den kritischen Zustand. B (Steuerung) lebt <em>neben</em> ihm: man h&auml;lt den Parameter auf einem nachhaltigen Attraktor und bewahrt Distanz. <strong>Fusionsschluss:</strong> Die Schwelle ist dieselbe <em>Grenze im Parameterraum</em>, an der die invariante Menge ausgetauscht wird. A liest sie als <em>Zustand, den das System von neuem bewohnt</em> (Zeit-Achse: es kehrt zu ihr zur&uuml;ck); B liest sie als <em>Schwelle, die zu verwalten ist</em> (Parameter-Achse: man steuert sie um). Beides stimmt: sie ist die Stelle, an der die invariante Menge ihren Namen &auml;ndert &mdash; und ob das Heimkehr (A) oder Gefahr (B) ist, h&auml;ngt davon ab, ob man das System ist (lebt auf ihr) oder der Steuerer (meidet sie). In beiden F&auml;llen gilt: <em>man steuert &uuml;ber den Parameter, nie &uuml;ber die Instanz.</em></p>
+
+  <div class="callout win"><b>Fusionierte Schlussfolgerung:</b> Der Attraktor ist der Fixpunkt der Self-Referenz: die Menge, die das System auf sich selbst abbildet. Er ist zugleich das <em>Wiederkommende</em> (A, Zeit) und das <em>Gelesene</em> (B, Menge) &mdash; Wiederkunft ist Aggregation. Die Instanz ist eine Probe, die Menge die Struktur; der Rest ist irreduzibel (weder Regel noch Probe), aber <em>als Menge</em> kenntlich. Die Struktur wird erzeugt (Recurrence) und gelesen (Aggregation); der Kipppunkt tauscht sie aus; und man steuert sie &uuml;ber den Parameter, nie &uuml;ber die Instanz. <em>Das Wiederkommende ist die invariante Struktur, die die Probe zu ihr zur&uuml;ckf&uuml;hrt.</em></div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Abstrahiert auf die Ebene ihrer Thesen: die invariante Menge als Fixpunkt der Self-Referenz, gelesen auf zwei Achsen &mdash; Zeit (Wiederkunft) und Menge (Aggregation).</p>
+
+  <div class="callout"><b>Gemeinsame Leitfrage.</b> Beide Texte antworten auf <em>Was bleibt, wenn sich X &auml;ndert?</em> A setzt X = <em>Zeit</em> und <em>Beschreibung</em> (die Bahn kehrt zur&uuml;ck; die Form &uuml;bersteht den Wechsel &RBB;&nbsp;&rarr;&nbsp;&F;<sub>p</sub>); B setzt X = <em>die einzelne Instanz</em> (Standpunkt, Bahn) und fragt, was &uuml;brigbleibt, wenn man sie verwirft. Gemeinsame Antwort: <strong>die invariante Menge (Attraktor)</strong>, die die Karte f auf sich selbst abbildet &mdash; und der <strong>Hebel</strong>, der sie wechselt: der Parameter am Kipppunkt.</div>
+
+  <h3>1. Das fusionierte Objekt: der Attraktor als Fixpunkt der Self-Referenz</h3>
+  <ul>
+    <li><strong>A (Wiederkunft/Zeit):</strong> geschlossener Kreislauf <span class="math" style="display:inline;padding:.1rem .4rem">x<sub>t+1</sub>=f(x<sub>t</sub>)</span>; Oszillatoren (Blinker Periode&nbsp;2, Pulsar, Vicos Rad); Attraktor am eigenen Ursprung (selbstorganisierte Kritikalit&auml;t, Waldbrand, Potenzgesetz). Invarianten: Periode <code>r</code>, geheimer Vektor <code>s</code>, das Gitter (LWE <code>b = A&middot;s + e</code>; SVP klassisch <code>2<sup>0,298&middot;n</sup></code>, quanten <code>2<sup>0,268&middot;n</sup></code>, nur ~11&nbsp;% schneller).</li>
+    <li><strong>B (Instanz/Struktur):</strong> der Attraktor = die Menge, auf die der Phasenraum unter der Iteration abbildet und die sie auf sich selbst zur&uuml;ckf&uuml;hrt; die Symmetriegruppe <code>D&#8324;</code> (8 selbstbewahrende Transformationen); &bdquo;Der Attraktor ist eine Invariante&ldquo;.</li>
+    <li><strong>Fusion:</strong> der Attraktor ist der Fixpunkt der Selbstkarte f: die Menge mit <span class="math" style="display:inline;padding:.1rem .4rem">f(Attraktor) = Attraktor</span>. Er ist A&rsquo;s <em>invariante Form</em> (Gitter, <code>s</code>, Periode) <em>und</em> B&rsquo;s <em>invariante Menge</em> (<code>D&#8324;</code>, Attraktor) &mdash; beides &bdquo;die Menge, die die Wirkung bewahrt&ldquo;.</li>
+  </ul>
+
+  <h3>2. Die Probe und die Menge (Instanz &harr; Struktur)</h3>
+  <ul>
+    <li>Beide entwerten die einzelne Instanz: A&rsquo;s &bdquo;eine umgekippte Zelle&ldquo; (sensitive Abh&auml;ngigkeit, Hamming-&Delta;) und eines der &bdquo;proteischen Gesichter&ldquo;; B&rsquo;s &bdquo;Standpunkt/Bahn&ldquo; als &bdquo;stumm&ldquo; (Abwesenheit) bzw. &bdquo;Rauschen&ldquo; (St&ouml;rsignal), eine einzige <em>Probe</em>.</li>
+    <li>Die Struktur lebt in der <em>Menge</em>, nicht in der Instanz. A&rsquo;s sensitive Abh&auml;ngigkeit (eine Zelle kippt, die Bahn &auml;ndert sich) ist B&rsquo;s &bdquo;eine Bahn ist Rauschen&ldquo;: die Probe tr&auml;gt die Struktur nicht.</li>
+  </ul>
+
+  <h3>3. Die zwei Achsen der Invarianz (A), gelesen als Instanz&ndash;Mengen-Operation (B)</h3>
+  <ul>
+    <li><strong>A:</strong> Invarianz &uuml;ber die <em>Zeit</em> (Wiederkunft: Periode, Attraktor) <em>und</em> &uuml;ber die <em>Beschreibung</em> (die Form &uuml;bersteht &RBB;&nbsp;&rarr;&nbsp;&F;<sub>p</sub>, Ciphertext vs. <code>s</code>).</li>
+    <li><strong>B:</strong> Invarianz <em>unter der Gruppenwirkung</em> (Betti-Zahlen, &bdquo;dieselbe Tonart&ldquo;) <em>vs.</em> Divergenz (Lyapunov <code>&lambda;&gt;0</code>).</li>
+    <li><strong>Fusion:</strong> Die Invarianten des Attraktors werden zweifach gelesen &mdash; (a) die Bahn kehrt in der Zeit zur&uuml;ck (A-Zeit = B&rsquo;s orbitale Wiederkunft), (b) die Struktur bleibt unter Beschreibungs-/Wirkungswechsel (A-Beschreibung = B&rsquo;s Gruppen-Invarianten). Und der <em>Frame-Indikator</em> (&bdquo;in welcher invariante Menge bin ich?&ldquo;): A nutzt die Shannon-Entropie <span class="math" style="display:inline;padding:.1rem .4rem">H = &minus;&Sigma;<sub>i</sub> p<sub>i</sub> log<sub>2</sub> p<sub>i</sub></span> (Ordnung 0&ndash;1); B nutzt den Lyapunov-Exponenten <span class="math" style="display:inline;padding:.1rem .4rem">&lambda; = lim<sub>N&rarr;&infin;</sub> (1/N)&middot;&Sigma;<sub>n</sub> ln |f&prime;(x<sub>n</sub>)|</span> (<code>&lambda;&lt;0</code> konvergent, <code>&lambda;&gt;0</code> chaotisch). Zwei Linsen auf dieselbe Frage.</li>
+  </ul>
+
+  <h3>4. Der Kipppunkt: Strukturwechsel &uuml;ber einen Parameter (beide)</h3>
+  <ul>
+    <li><strong>A:</strong> die Kante des Chaos, selbstorganisierte Kritikalit&auml;t &mdash; das System kehrt von selbst zum kritischen Zustand zur&uuml;ck (abbrennen, nachwachsen, wieder kritisch; Ende&nbsp;=&nbsp;Anfang).</li>
+    <li><strong>B:</strong> die Bifurkation/Kipppunkt (Feigenbaum <code>r &asymp; 3,5699</code>, universelle Konstante <code>&delta; &asymp; 4,6692</code>, subkritische Hopf, CO&#8322;-Kipppunkt); dort kreuzt <code>&lambda;</code> die 0 und die invariante Menge wird ausgetauscht.</li>
+    <li><strong>Fusion:</strong> Beide orten den Strukturwechsel an einer kritischen Parameterstelle, an der die invariante Menge ihren Namen wechselt. A: das System <em>kehrt</em> zur Schwelle zur&uuml;ck (Zeit); B: das Regime <em>wechselt</em> dort (Parameter). Die Kante des Chaos (A) <em>ist</em> der Kipppunkt (B).</li>
+  </ul>
+
+  <h3>5. Der Hebel: Parameter statt Instanz (beide enden hier)</h3>
+  <ul>
+    <li><strong>A:</strong> die Form w&iuml;rdigt sich der Reduktion auf eine Regel; man arbeitet mit der Wiederkunft, nicht mit den Zellen.</li>
+    <li><strong>B:</strong> &bdquo;Man steuert ein System &uuml;ber seinen Parameter/durch seine Struktur &mdash; niemals &uuml;ber seine einzelnen Instanzen&ldquo; (Cap&nbsp;&amp;&nbsp;Share: den Upstream-Hahn drehen statt tausend Downstream-Ventile).</li>
+    <li><strong>Fusion:</strong> Man steuert nie die Instanzen &mdash; man steuert den Parameter, der die invariante Menge ausw&auml;hlt.</li>
+  </ul>
+
+  <h3>Die Faltung &mdash; jede Struktur von A bekommt den Gegenpart von B</h3>
+  <table>
+    <tr><th>A (n2-049 &middot; Wiederkunft/Invarianz)</th><th>B (n2-032 &middot; Instanz/Struktur)</th><th>Fusion</th></tr>
+    <tr><td class="a">geschlossener Kreislauf Output&nbsp;=&nbsp;Eingabe (Self-Referenz)</td><td class="b">die Karte x<sub>n+1</sub>=f(x<sub>n</sub>) (Dynamik)</td><td>dieselbe Abbildung f auf den Zustandsraum</td></tr>
+    <tr><td class="a">Attraktor am eigenen Ursprung (Ende&nbsp;=&nbsp;Anfang)</td><td class="b">Attraktor = Menge, die f auf sich selbst abbildet</td><td>der Fixpunkt der Self-Referenz</td></tr>
+    <tr><td class="a">invariante Form: Gitter, geheimer Vektor s, Periode r</td><td class="b">invariante Menge: Symmetriegruppe D&#8324;, Attraktor</td><td>dieselbe invariante Struktur</td></tr>
+    <tr><td class="a">Wiederkunft (Zeit: die Bahn kehrt zur&uuml;ck)</td><td class="b">Aggregation (Menge: Probe &rarr; Struktur)</td><td>eine Operation, zwei Achsen</td></tr>
+    <tr><td class="a">eine umgekippte Zelle / ein Gesicht (sensitive Abh&auml;ngigkeit)</td><td class="b">ein Standpunkt / eine Bahn (stumm / Rauschen)</td><td>die Instanz als Probe</td></tr>
+    <tr><td class="a">Shannon-Entropie H (Ordnung 0&ndash;1)</td><td class="b">Lyapunov &lambda; (Frame-Indikator, kreuzt 0)</td><td>zwei Linsen auf &bdquo;in welchem Frame?&ldquo;</td></tr>
+    <tr><td class="a">Kante des Chaos (regenerativ zur&uuml;ck&uuml;berschritten)</td><td class="b">Kipppunkt/Bifurkation (&lambda; kreuzt 0, fernzuhalten)</td><td>derselbe Austausch der invarianten Menge</td></tr>
+    <tr><td class="a">&bdquo;zu gro&szlig;, um von der Regel erfasst zu werden&ldquo;</td><td class="b">&bdquo;wer die Gruppe kennt, kennt alles&ldquo;</td><td>kenntlich als Menge, irreduzibel auf eine Regel</td></tr>
+    <tr><td class="a">&bdquo;bestehen&ldquo; = wiederkommen (Zeit) + &uuml;bersteigen (Beschreibung)</td><td class="b">Steuerung = Parameter, nie die Instanz</td><td>die invariante Menge &uuml;ber den Parameter w&auml;hlen</td></tr>
+  </table>
+
+  <h3>Die vereinigte Formel</h3>
+  <div class="math">
+    Attraktor = Fixpunkt der Self-Referenz <span class="op">:</span> f(Attraktor) = Attraktor<br>
+    Probe (Instanz: Bahn / Standpunkt) <span class="op">&rarr;</span> Menge (Struktur: Attraktor / Gruppe)<br>
+    Wiederkunft (Zeit, A) <span class="op">&equiv;</span> Aggregation (Menge, B) <span class="op">&mdash;</span> eine Operation, zwei Achsen<br>
+    invariante Menge: fest &amp; kenntlich (B) <span class="op">&and;</span> irreduzibel auf eine Regel (A) und auf eine Probe (B)<br>
+    Kipppunkt: &lambda; kreuzt 0 (Feigenbaum r &asymp; 3,5699) <span class="op">=</span> Austausch der invarianten Menge<br>
+    Steuerung: &uuml;ber den Parameter (die Struktur) <span class="op">&mdash;</span> nie &uuml;ber die Instanz<br>
+    <b>Das Wiederkommende ist die invariante Struktur, die die Probe zu ihr zur&uuml;ckf&uuml;hrt.</b>
+  </div>
+  <div class="callout"><b>Kurz:</b> A liefert das <em>RAD</em> (die Zeit-Achse: die Bahn kehrt zur&uuml;ck) und die <em>Form, die jede Beschreibung &uuml;bersteht</em>; B liefert die <em>Menge, die die Probe zu ihr zur&uuml;ckf&uuml;hrt</em>. Das Rad, das die Menge f&uuml;llt: was in der Zeit wiederkommt, ist das, was man erh&auml;lt, wenn man die Probe f&uuml;r die Menge ver&auml;sst. Wiederkunft ist Aggregation.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Fusion &mdash; der Attraktor, erzeugt und gelesen</h2>
+  <p class="lead">Eine einzige logistische Karte <span class="math" style="display:inline;padding:.1rem .4rem">x<sub>n+1</sub> = r&middot;x<sub>n</sub>(1&minus;x<sub>n</sub>)</span> treibt beide H&auml;lften zugleich. <strong>Links (A &middot; Zeit):</strong> die Bahn kehrt auf die invariante Menge zur&uuml;ck &mdash; Wiederkunft. <strong>Rechts (B &middot; Menge):</strong> die Proben formen die invariante Dichte &mdash; Aggregation. Der Parameter <code>r</code> ist der <strong>Kipppunkt</strong>: an den Bifurkationen (Fixpunkt&nbsp;&rarr;&nbsp;Periode&nbsp;2&nbsp;&rarr;&nbsp;Periode&nbsp;4&nbsp;&rarr;&nbsp;Chaos) <em>tauscht die invariante Menge ihren Namen</em>, und der Lyapunov-Exponent <code>&lambda;</code> kreuzt dort die 0. Eine Probe, zwei Achsen &mdash; das Wiederkommende ist die invariante Struktur.</p>
+
+  <div class="viz">
+    <div class="viz-ctrl">
+      <div>
+        <label>Kipppunkt (Parameter r): <span class="val" id="rVal">3.20</span></label>
+        <input type="range" id="rRange" min="2.5" max="3.99" step="0.01" value="3.20">
+      </div>
+      <div>
+        <label>Aggregation (Proben): <span class="val" id="probenVal">50</span>%</label>
+        <input type="range" id="probenRange" min="0" max="100" step="1" value="50">
+      </div>
+      <div><button class="vbtn" id="playBtn">&#10074;&#10074; Pause</button></div>
+      <div><button class="vbtn alt" id="resetBtn">&#8635; Neu</button></div>
+    </div>
+
+    <canvas id="viz" width="820" height="460"></canvas>
+    <div class="cap">Links: die live laufende Bahn (hell) kehrt auf die Attraktor-Menge (dunkle Punkte auf der Parabel) zur&uuml;ck &mdash; der gelbe Puls markiert jeden Umlauf (Wiederkunft). Rechts: dasselbe System als Dichte &mdash; wenige Proben = Rauschen, viele Proben = die glatte invariante Struktur. R&uuml;ckschlag bei <code>r &rarr; 3,5699</code> (Feigenbaum): die Menge wird zur dichten Bande, &lambda; wird positiv.</div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent)"></i> Bahn / invariante Menge (A, Zeit)</span>
+      <span><i class="dot" style="background:var(--accent2)"></i> invariante Dichte (B, Menge)</span>
+      <span><i class="dot" style="background:var(--accent3)"></i> Live-Marker / Umlauf-Puls</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="sRev">0</div><div class="l">Uml&auml;ufe (Wiederkunft)</div></div>
+      <div class="stat"><div class="n" id="sPer">2</div><div class="l">Periode der Menge</div></div>
+      <div class="stat"><div class="n" id="sLam">0</div><div class="l">Lyapunov &lambda; (kreuzt 0 am Kipppunkt)</div></div>
+      <div class="stat"><div class="n" id="sSmp">1420</div><div class="l">Proben (Aggregation)</div></div>
+      <div class="stat"><div class="n" id="sStat" style="font-size:.9rem;line-height:1.3">Periode 2</div><div class="l">Regime / Status</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../n2-049.html">n2-049.html</a> &mdash; <em>&bdquo;Wiederkunft ist Invarianz: die Form, die wiederkommt und bleibt&ldquo;</em>
+    <p>Runde-2-Fusion (n1-071 zellul&auml;re Automaten &times; Finnegans Wake &#10005; n1-106 Post-Quantum-Krypto &times; Grothendieck): die selbstreferenzielle Form (Output&nbsp;=&nbsp;Eingabe) bleibt in ihren Invarianten fest (Periode, geheimer Vektor <code>s</code>, Gitter) und entzieht sich zugleich der sie definierenden Regel; Wiederkunft &uuml;ber die Zeit = Invarianz &uuml;ber die Beschreibung.</p>
+  </div>
+  <div class="prov">
+    <a href="../n2-032.html">n2-032.html</a> &mdash; <em>&bdquo;Vom einzelnen Bild zur invarianten Struktur&ldquo;</em>
+    <p>Runde-2-Fusion (n1-028 R&eacute;coltes et Semailles &times; Gruppentheorie &#10005; n1-095 Chaos-Theorie &times; Framespotting): die einzelne Instanz (Standpunkt/Bahn) ist nur eine Probe; das System ist die invariante Struktur, zu der die Probe geh&ouml;rt &mdash; der Attraktor ist die Invariante (die Menge, die die Wirkung auf sich selbst abbildet); man liest die Struktur &uuml;ber den Zoom von der Instanz zur Menge.</p>
+  </div>
+</section>
+
+<footer>Fusion n3-010 &middot; Runde 3 (non-AI track) &middot; n2-049.html &#10005; n2-032.html &middot; Wiederkunft &equiv; Aggregation, der Attraktor als Fixpunkt der Self-Referenz &middot; selbstst&auml;ndig, alle Daten inline.</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  if(!cv || !cv.getContext){ return; }
+  var ctx = cv.getContext('2d');
+  var TAU = Math.PI*2;
+  var H = 460;
+
+  var elR = document.getElementById('rRange');
+  var elProben = document.getElementById('probenRange');
+  var rVal = document.getElementById('rVal');
+  var probenVal = document.getElementById('probenVal');
+  var playBtn = document.getElementById('playBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var themeBtn = document.getElementById('themeBtn');
+  var sRev = document.getElementById('sRev');
+  var sPer = document.getElementById('sPer');
+  var sLam = document.getElementById('sLam');
+  var sSmp = document.getElementById('sSmp');
+  var sStat = document.getElementById('sStat');
+
+  var state = {
+    r: 3.20, proben: 50,
+    idx: 0, revs: 0, pulseT: -99,
+    running: true
+  };
+  var orbitBuf = [];
+  var lyap = 0, period = 1;
+
+  var pal = {};
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n); v=(v||'').trim(); return v||''; }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [128,140,170];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg: toRgb(cssVar('--viz-bg')),
+      grid: toRgb(cssVar('--grid')),
+      text: toRgb(cssVar('--text')),
+      muted: toRgb(cssVar('--muted')),
+      a: toRgb(cssVar('--accent')),
+      b: toRgb(cssVar('--accent2')),
+      marker: toRgb(cssVar('--accent3')),
+      good: toRgb(cssVar('--good')),
+      bad: toRgb(cssVar('--bad'))
+    };
+  }
+
+  function logi(x, r){ return r*x*(1-x); }
+  function computeLyap(r){
+    var N=5000, burn=1000, x=0.5, s=0, i, d;
+    for(i=0;i<burn;i++){ x=logi(x,r); if(!(x>0&&x<1)) x=0.5; }
+    for(i=0;i<N;i++){ x=logi(x,r); d=Math.abs(r*(1-2*x)); if(d<1e-12) d=1e-12; s+=Math.log(d); }
+    return s/N;
+  }
+  function detectPeriod(r){
+    var x=0.5, i, win=[], wlen=300;
+    for(i=0;i<1500;i++) x=logi(x,r);
+    for(i=0;i<wlen;i++){ x=logi(x,r); win.push(x); }
+    for(var p=1;p<=24;p++){
+      var ok=true;
+      for(i=wlen-p-1;i<wlen;i++){ if(Math.abs(win[i+p]-win[i])>6e-3){ ok=false; break; } }
+      if(ok) return p;
+    }
+    return Infinity;
+  }
+  function rebuild(r){
+    var x=0.5, i; orbitBuf.length=0;
+    for(i=0;i<1500;i++){ x=logi(x,r); if(!(x>0&&x<1)) x=0.5; orbitBuf.push(x); }
+    lyap = computeLyap(r);
+    period = detectPeriod(r);
+    state.idx = 0;
+  }
+  function computeDensity(r, S){
+    var BINS=48, counts=new Array(BINS), k;
+    for(k=0;k<BINS;k++) counts[k]=0;
+    var x=0.5, i, b;
+    for(i=0;i<1000;i++) x=logi(x,r);
+    for(i=0;i<S;i++){ x=logi(x,r); b=Math.floor(x*BINS); if(b<0)b=0; if(b>=BINS)b=BINS-1; counts[b]++; }
+    return counts;
+  }
+
+  function loop(now){
+    if(state.running){
+      state.idx += 2;
+      if(state.idx >= orbitBuf.length){ state.idx = state.idx - orbitBuf.length; state.revs++; state.pulseT = now/1000; }
+    }
+    draw(now/1000);
+    requestAnimationFrame(loop);
+  }
+
+  function draw(tNow){
+    var w = cv.clientWidth || 820;
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var pw=Math.round(w*dpr), ph=Math.round(H*dpr);
+    if(cv.width!==pw || cv.height!==ph){ cv.width=pw; cv.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,H);
+
+    var midX = Math.round(w*0.42);
+    ctx.strokeStyle=rgba(pal.grid,0.6); ctx.lineWidth=1; ctx.setLineDash([4,5]);
+    ctx.beginPath(); ctx.moveTo(midX, 20); ctx.lineTo(midX, H-20); ctx.stroke(); ctx.setLineDash([]);
+
+    var xL0=34, xL1=midX-22, xR0=midX+22, xR1=w-26, yTop=86, yBot=H-64;
+    function pxL(x){ return xL0 + x*(xL1-xL0); }
+    function pxR(x){ return xR0 + x*(xR1-xR0); }
+    function py(v){ return yBot - v*(yBot-yTop); }
+    var r = state.r;
+
+    ctx.strokeStyle=rgba(pal.grid,0.5); ctx.lineWidth=1;
+    ctx.beginPath();
+    var gv;
+    for(gv=0; gv<=3; gv++){
+      var gx=gv/3;
+      ctx.moveTo(pxL(gx), yTop); ctx.lineTo(pxL(gx), yBot);
+      ctx.moveTo(pxL(0), py(gx)); ctx.lineTo(pxL(1), py(gx));
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle=rgba(pal.muted,0.45); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pxL(0),py(0)); ctx.lineTo(pxL(1),py(1)); ctx.stroke();
+
+    ctx.strokeStyle=rgba(pal.a,0.85); ctx.lineWidth=1.6;
+    ctx.beginPath();
+    var i;
+    for(i=0;i<=120;i++){ var xx=i/120, yy=r*xx*(1-xx); if(i===0)ctx.moveTo(pxL(xx),py(yy)); else ctx.lineTo(pxL(xx),py(yy)); }
+    ctx.stroke();
+
+    var n=orbitBuf.length;
+    ctx.fillStyle=rgba(pal.a,0.5);
+    var j;
+    for(j=0;j<n;j+=3){ var ax=orbitBuf[j], ay=r*ax*(1-ax); ctx.beginPath(); ctx.arc(pxL(ax),py(ay),1.6,0,TAU); ctx.fill(); }
+
+    var winLen=60, startI=state.idx-winLen, k;
+    for(k=0;k<winLen;k++){
+      var ii=((startI+k)%n+n)%n;
+      var bx=orbitBuf[ii], by=r*bx*(1-bx);
+      var a=(k+1)/winLen;
+      ctx.strokeStyle=rgba(pal.a,0.08+0.55*a); ctx.lineWidth=1.0+1.4*a;
+      if(k>0){ var ii2=((startI+k-1)%n+n)%n; var qx=orbitBuf[ii2], qy=r*qx*(1-qx); ctx.beginPath(); ctx.moveTo(pxL(qx),py(qy)); ctx.lineTo(pxL(bx),py(by)); ctx.stroke(); }
+    }
+
+    var li=state.idx%n, lx=orbitBuf[li], lyv=r*lx*(1-lx);
+    ctx.fillStyle=rgba(pal.marker,1); ctx.beginPath(); ctx.arc(pxL(lx),py(lyv),4.5,0,TAU); ctx.fill();
+    var age=tNow-state.pulseT;
+    if(age>=0 && age<1.0){ var pr=age/1.0; ctx.strokeStyle=rgba(pal.marker,(1-pr)*0.7); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(pxL(lx),py(lyv),6+pr*34,0,TAU); ctx.stroke(); }
+
+    ctx.fillStyle=rgba(pal.muted,0.95); ctx.font='600 13px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('A · Wiederkunft — die Bahn kehrt auf die invariante Menge zurück', 14, 16);
+    ctx.fillStyle=rgba(pal.muted,0.8); ctx.font='italic 12px system-ui,sans-serif'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Zeit-Achse: Orbit → Attraktor (das Rad dreht sich)', 14, H-16);
+
+    var S = 40 + Math.round((state.proben/100)*(2800-40));
+    var counts = computeDensity(r, S);
+    var BINS=counts.length, maxc=1, k2;
+    for(k2=0;k2<BINS;k2++) if(counts[k2]>maxc) maxc=counts[k2];
+    var bw=(xR1-xR0)/BINS;
+    ctx.strokeStyle=rgba(pal.muted,0.45); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(xR0,yBot); ctx.lineTo(xR1,yBot); ctx.stroke();
+    for(k2=0;k2<BINS;k2++){
+      var bh=(counts[k2]/maxc)*(yBot-yTop);
+      ctx.fillStyle=rgba(pal.b,0.72);
+      ctx.fillRect(xR0+k2*bw+1, yBot-bh, Math.max(1,bw-2), bh);
+    }
+    ctx.fillStyle=rgba(pal.muted,0.95); ctx.font='600 13px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('B · Aggregation — die Proben formen die invariante Dichte', midX+16, 16);
+    ctx.fillStyle=rgba(pal.muted,0.8); ctx.font='italic 12px system-ui,sans-serif'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Mengen-Achse: wenig Probe = Rauschen · viel = Struktur', midX+16, H-16);
+
+    if(sRev){
+      sRev.textContent = state.revs;
+      sPer.textContent = (period===Infinity ? '∞' : String(period));
+      sLam.textContent = (lyap>0?'+':'')+lyap.toFixed(3);
+      sLam.style.color = lyap>0 ? 'var(--bad)' : 'var(--good)';
+      sSmp.textContent = S;
+      var stat;
+      if(state.proben<22){ stat='wenige Proben → Rauschen (die Probe ist stumm)'; }
+      else if(r<2.999){ stat='Fixpunkt — Menge = 1 Punkt'; }
+      else if(r<3.449){ stat='Periode 2 — Menge = 2 Punkte'; }
+      else if(r<3.544){ stat='Periode 4 — Menge = 4 Punkte'; }
+      else if(r<3.5699){ stat='Kaskade (Periode 8+) — nahe dem Kipppunkt'; }
+      else { stat='Chaos (λ>0) — Menge = dichte Bande'; }
+      sStat.textContent = stat;
+    }
+  }
+
+  function onR(){ state.r=+elR.value; rVal.textContent=(+elR.value).toFixed(2); rebuild(state.r); }
+  function onProben(){ state.proben=+elProben.value; probenVal.textContent=elProben.value; }
+
+  if(elR) elR.addEventListener('input', onR);
+  if(elProben) elProben.addEventListener('input', onProben);
+  if(playBtn) playBtn.addEventListener('click', function(){ state.running=!state.running; playBtn.innerHTML = state.running ? '&#10074;&#10074; Pause' : '&#9654; Los'; });
+  if(resetBtn) resetBtn.addEventListener('click', function(){ state.idx=0; state.revs=0; state.pulseT=-99; });
+  if(themeBtn) themeBtn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); readPal(); });
+  if(window.matchMedia){ var mq=window.matchMedia('(prefers-color-scheme: light)'); if(mq.addEventListener){ mq.addEventListener('change', readPal); } }
+  if(window.addEventListener){ window.addEventListener('resize', function(){ readPal(); }); }
+
+  readPal();
+  onR();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

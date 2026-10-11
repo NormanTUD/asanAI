@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Ding ist seine Ordnung — invariante Form im fließenden Prozess</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --text:#1b1a17; --muted:#5b574d; --card:#fffdf8;
+    --line:rgba(0,0,0,0.12); --accent:#7c3aed; --accent2:#0e8f86;
+    --code-bg:rgba(0,0,0,0.05); --link:#0e8f86;
+    --coral:#d64545; --gold:#b8860b; --sky:#2b7fc0; --violet:#7c3aed;
+    --viz-bg:#f3f0e8; --viz-text:#1b1a17; --viz-sub:#5b574d;
+    --viz-kernel:#0e8f86; --viz-arrow:#7c3aed; --viz-void:#94a3b8;
+    --viz-window:#d64545; --viz-form:#b8860b;
+  }
+  html.dark{
+    --bg:#0a0e27; --text:#e8ecf1; --muted:#94a3b8; --card:#111936;
+    --line:rgba(148,163,184,0.18); --accent:#a78bfa; --accent2:#4ecdc4;
+    --code-bg:rgba(255,255,255,0.06); --link:#4ecdc4;
+    --coral:#ff6b6b; --gold:#feca57; --sky:#54a0ff; --violet:#a970ff;
+    --viz-bg:#0d1230; --viz-text:#e8ecf1; --viz-sub:#94a3b8;
+    --viz-kernel:#4ecdc4; --viz-arrow:#a970ff; --viz-void:#64748b;
+    --viz-window:#ff6b6b; --viz-form:#feca57;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,'Segoe UI',Georgia,system-ui,sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 90px;}
+  header.hero{padding:60px 22px 26px;text-align:center;}
+  header.hero .eyebrow{
+    text-transform:uppercase;letter-spacing:3px;font-size:0.72rem;color:var(--accent2);
+    font-weight:700;margin-bottom:14px;
+  }
+  h1{
+    font-size:clamp(2rem,5.5vw,3rem);line-height:1.12;font-weight:800;letter-spacing:-0.5px;
+    background:linear-gradient(120deg,var(--accent2),var(--accent) 55%,var(--coral));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  }
+  .tagline{margin-top:14px;color:var(--text);font-size:1.06rem;font-weight:600;}
+  .tagline .fa{color:var(--coral);}
+  .tagline .fb{color:var(--accent2);}
+  .tagline .fk{color:var(--gold);}
+  .subtitle{margin-top:12px;color:var(--muted);font-size:0.98rem;}
+  .subtitle .x{color:var(--accent);font-weight:700;}
+  .theme-btn{
+    margin-top:20px;background:var(--card);color:var(--text);border:1px solid var(--line);
+    padding:8px 16px;border-radius:22px;cursor:pointer;font-size:0.85rem;font-weight:600;
+  }
+  .theme-btn:hover{border-color:var(--accent);}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px auto 4px;}
+  nav.toc a{font-size:0.8rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+    border-radius:8px;padding:5px 11px;background:var(--card);transition:.2s;}
+  nav.toc a:hover{border-color:var(--accent2);color:var(--accent2);}
+  article{margin-top:8px;}
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:28px 30px;margin:24px 0;box-shadow:0 8px 30px rgba(0,0,0,0.06);
+    scroll-margin-top:20px;
+  }
+  section h2{
+    font-size:1.5rem;font-weight:800;margin-bottom:16px;color:var(--text);
+    display:flex;align-items:center;gap:10px;
+  }
+  section h2 .num{
+    color:var(--accent2);font-size:0.8rem;font-weight:700;letter-spacing:2px;
+    background:var(--code-bg);padding:3px 10px;border-radius:20px;
+  }
+  h3{font-size:1.05rem;margin:22px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+  p{margin-bottom:14px;color:var(--text);}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--text);}
+  em{color:var(--accent);font-style:italic;}
+  .lead{font-size:1.08rem;color:var(--muted);}
+  code{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.86em;
+    background:var(--code-bg);padding:2px 6px;border-radius:5px;
+  }
+  pre{
+    background:var(--code-bg);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;overflow-x:auto;font-size:0.8rem;line-height:1.65;margin:14px 0;
+  }
+  pre code{background:none;padding:0;font-size:inherit;color:var(--text);}
+  .paper-tag{
+    display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 9px;border-radius:12px;
+    margin-right:6px;vertical-align:middle;
+  }
+  .tag-a{background:rgba(214,69,69,0.14);color:var(--coral);}
+  .tag-b{background:rgba(43,127,192,0.16);color:var(--sky);}
+  ul{margin:6px 0 14px 22px;}
+  li{margin-bottom:9px;}
+  .tension{
+    border-left:4px solid var(--accent);background:var(--code-bg);
+    padding:16px 18px;border-radius:0 12px 12px 0;margin:16px 0;
+  }
+  .tension h4{font-size:1.02rem;margin-bottom:8px;color:var(--text);}
+  .tension .a{color:var(--coral);font-weight:700;}
+  .tension .b{color:var(--sky);font-weight:700;}
+  .tension .note{margin-top:12px;font-size:0.92rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px;}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.9rem;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{color:var(--muted);font-size:0.76rem;text-transform:uppercase;letter-spacing:1px;}
+  td:first-child{color:var(--muted);}
+  td .k{color:var(--accent2);font-weight:650;}
+  .keybox{
+    background:linear-gradient(135deg,rgba(124,58,237,0.10),rgba(14,143,134,0.10));
+    border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0;font-size:1.02rem;
+  }
+  .keybox .k{color:var(--accent);font-weight:700;}
+  .fusebox{
+    background:linear-gradient(180deg,var(--card),var(--code-bg));
+    border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 18px;margin:14px 0;
+  }
+  .fusebox .tag{font-size:0.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+  .viz-box{
+    background:var(--viz-bg);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0;
+  }
+  .viz-box canvas{width:100%;display:block;height:460px;background:transparent;touch-action:none;}
+  .viz-ctrl{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:6px 0 14px;}
+  .viz-ctrl label{font-size:0.9rem;color:var(--muted);font-weight:600;}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:220px;max-width:50vw;height:6px;border-radius:3px;
+    background:var(--line);outline:none;accent-color:var(--accent2);
+  }
+  .viz-level{font-weight:800;color:var(--accent2);font-variant-numeric:tabular-nums;}
+  button.vbtn{
+    background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:9px;
+    padding:7px 13px;cursor:pointer;font:inherit;font-size:0.82rem;font-weight:600;
+  }
+  button.vbtn:hover{border-color:var(--accent);}
+  button.vbtn.on{border-color:var(--coral);color:var(--coral);}
+  .ro{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 6px;}
+  @media(max-width:560px){.ro{grid-template-columns:1fr;}}
+  .ro .box{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 14px;text-align:center;}
+  .ro .box .l{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5em;color:var(--muted);}
+  .ro .box .l{letter-spacing:0.5px;}
+  .ro .box .v{font-family:ui-monospace,Menlo,monospace;font-size:1.12rem;font-weight:700;color:var(--accent2);margin-top:4px;}
+  #fuz-ro{
+    border-left:4px solid var(--accent);background:var(--code-bg);border-radius:0 10px 10px 0;
+    padding:13px 15px;font-size:0.95rem;margin-top:12px;min-height:56px;line-height:1.55;
+  }
+  .viz-cap{font-size:0.86rem;color:var(--muted);margin-top:12px;}
+  .prov{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;}
+  .prov a{
+    flex:1;min-width:240px;display:block;text-decoration:none;color:var(--text);
+    background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    transition:border-color .2s,transform .2s;
+  }
+  .prov a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+  .prov a .t{font-weight:700;color:var(--link);margin-bottom:6px;font-size:1.02rem;}
+  .prov a .d{font-size:0.9rem;color:var(--muted);}
+  footer{text-align:center;color:var(--muted);font-size:0.82rem;padding:30px 22px;border-top:1px solid var(--line);margin-top:30px;}
+  @media (max-width:560px){ section{padding:22px 18px;} }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="eyebrow">Fusion &middot; Runde 3 &middot; Paar 014 &middot; nicht-KI-Track</div>
+  <h1>Das Ding ist seine Ordnung</h1>
+  <p class="tagline">Eine <span class="fk">invariante Form</span> im <span class="fb">fließenden Prozess</span> &mdash; Identit&auml;t als <span class="fa">Schicht/Pr&auml;senz</span>, die je nach Fixierung &amp; Abstimmung als Heimat oder Zwang begegnet</p>
+  <p class="subtitle">Fusion aus: <span class="x">n2-013.html</span> <span class="x">&#10006;</span> <span class="x">n2-014.html</span> &nbsp;(Runde 3)</p>
+  <button class="theme-btn" id="theme-toggle">&#9680; Thema wechseln</button>
+  <nav class="toc">
+    <a href="#these">These</a>
+    <a href="#widersprueche">Widerspr&uuml;che</a>
+    <a href="#aufloesung">Aufl&ouml;sung</a>
+    <a href="#inhalt">Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+</header>
+
+<article class="wrap">
+
+<section id="these">
+  <h2><span class="num">01</span> Kernthese der Fusion</h2>
+  <p class="lead">Beide Vorl&auml;ufer sind selbst schon Runde-2-Fusionen, und sie treffen sich auf einer &uuml;berraschend tiefen Stelle. <strong>A (n2-013 &mdash; &ldquo;Das Ding ist seine Schicht&rdquo;)</strong> sagt: die <em>Identit&auml;t</em> eines Dings findet sich nicht im Substrat darunter, sondern in der <em>relationen, pr&auml;sentierenden Schicht</em> &mdash; ein <em>Fenster</em> (Qualia/Erleben) &uuml;ber einem immer laufenden <em>Kernel</em>, voll bestimmt durch seine Pfeile (Yoneda: <code>Hom(&ndash;,A)</code>), in drei Ebenen <em>Substrat &rarr; Schnitt/Broadcast &rarr; Fenster</em>. <strong>B (n2-014 &mdash; &ldquo;Immanente Ordnung&rdquo;)</strong> sagt: die <em>Ordnung</em> eines Systems ist <em>immanent</em> in einem sich total ver&auml;ndernden Prozess &mdash; weder ein starrer Anker <em>dar&uuml;ber</em> noch formloses Werden, sondern das <em>wiederkehrende Ma&szlig;</em>, das der Wandel selbst annimmt (invariante Form: $s^2$, $c$, Sollwert); und wie diese <em>eine</em> Ordnung einem konkreten System begegnet (befreiende Harmonie oder erpressende Kompulsion) entscheidet die <em>Abstimmlage</em> (Resonanz &harr; &Uuml;bersteuerung).</p>
+  <p>Die integrierte These lautet: <strong>Das Ding ist seine Ordnung.</strong> Beide machen auf h&ouml;herer Stufe <em>den selben Grundschritt</em>: Das, was ein System <em>ausmacht</em> &mdash; seine Identit&auml;t (A) oder seine Ordnung (B) &mdash; ist <strong>keine bare Substanz und kein &auml;u&szlig;erer Anker</strong>, sondern eine <strong>relationale / invariante Form, die im laufenden Prozess immanent ist</strong>, aus dessen <em>eigenen</em> Relationen/Ma&szlig; konstituiert &mdash; nicht von au&szlig;en hinzugef&uuml;gt, nicht eine zweite Substanz. Und beide geben dieser immanenten Form eine <strong>zweigeteilte Struktur</strong>: eine <strong>objektive, formale Seite</strong> (fix, bestimmt, im Inhalt substratunabh&auml;ngig) &mdash; A&rsquo;s Hom-Menge/Fenster (Yoneda), B&rsquo;s Invariante/Ma&szlig; ($s^2$, $c$, Sollwert); und eine <strong>pr&auml;sentierende, erlebte Seite</strong> (die <em>Begegnungsform</em>, gesetzt durch den Akt/die Lage des Systems) &mdash; A&rsquo;s Schnitt/Broadcast/<em>Fixierung</em>, B&rsquo;s <em>Abstimmlage</em>/Resonanz.</p>
+  <p>Die immanente Form begegnet dem System je nach Lage als <strong>Identit&auml;t/Heimat</strong> (fixiert/abgestimmt, in Resonanz) oder als <strong>Zwang/dunkel</strong> (nicht fixiert/de-abgestimmt, &uuml;bersteuert). <em>Invarianz</em> (B&rsquo;s objektive Form) und <em>Schicht/Pr&auml;senz</em> (A&rsquo;s relationale Pr&auml;sentation) sind <strong>eine und dieselbe immanente Ordnung</strong>; die <em>Fixierung/Abstimmung</em> ist der Akt, der entscheidet, ob diese Ordnung als <em>Identit&auml;t</em> des Dings oder als dessen <em>Kompulsion</em> erscheint. Sogar der scheinbare Widerspruch &mdash; A&rsquo;s &ldquo;Schicht <em>dar&uuml;ber</em>&rdquo; vs. B&rsquo;s &ldquo;immanent, kein Anker <em>dar&uuml;ber</em>&rdquo; &mdash; l&ouml;st sich auf, sobald man sieht, dass das Substrat/der Prozess nicht ein <em>drittes Ding unter</em> der Ordnung ist, sondern die Ordnung <em>in ihrem nicht-pr&auml;sentierten Zustand</em>.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span> Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden Runde-2-Papiere widersprechen sich auf der Hauptachse nicht &mdash; beide verlegen das Definierende (Identit&auml;t/Ordnung) von der Substanz auf eine relationale/invariante Form. Aber sie stehen an <em>unterschiedlichen Polen</em> derselben Spannung. Drei konkrete, faustgreifliche Punkte:</p>
+
+  <div class="tension">
+    <h4>&#9312; &ldquo;Schicht &uuml;ber dem Substrat&rdquo; (A) vs. &ldquo;immanent im Prozess, kein Anker &uuml;ber dem Wandel&rdquo; (B) &mdash; r&auml;umlich-ontologische Orientierung</h4>
+    <p><span class="tag-a paper-tag">A &middot; n2-013</span><span class="a">Die Schicht liegt dar&uuml;ber, auf einem unabh&auml;ngig laufenden Substrat.</span> Der Titel lautet w&ouml;rtlich &ldquo;ein Fenster aus Pfeilen <em>dar&uuml;ber</em> einem laufenden Kernel&rdquo;. Es gibt einen <em>realen, ontologisch fr&uuml;hen</em> Substrat-Knoten, der &ldquo;l&auml;uft immer&rdquo; und unabh&auml;ngig von der Schicht weiterl&auml;uft (Zombie: Kernel voll, Fenster dunkel). Die Identit&auml;t ist in einer Pr&auml;sentationsschicht, die <em>auf</em> dem Substrat liegt &mdash; eine echte Zwei-Ebenen-Stapelung, in der das Substrat &auml;lter/prim&auml;r ist.</p>
+    <p style="margin-top:12px"><span class="tag-b paper-tag">B &middot; n2-014</span><span class="b">Kein Anker dar&uuml;ber &mdash; die Ordnung ist immanent <em>in</em> dem Prozess.</span> B verneint ausdr&uuml;cklich das Bild, das A tr&auml;gt: &ldquo;weder ein starrer Anker <em>&uuml;ber</em> dem Wandel noch blo&szlig;es Werden ohne Form&rdquo;. Es gibt <em>kein</em> unabh&auml;ngiges Substrat, &uuml;ber dem die Ordnung sitzt; die Ordnung <em>ist</em> die Form, die der Prozess selbst annimmt (&ldquo;diese Weltordnung hat kein Gott und kein Mensch geschaffen&rdquo; &mdash; sie liegt in der Substanz). &ldquo;Dar&uuml;ber&rdquo; ist hier exakt das abgelehnte Bild.</p>
+    <p class="note">Konflikt 1 &mdash; <strong>Schicht <em>dar&uuml;ber</em> auf einem fr&uuml;heren Substrat (A) vs. Ordnung <em>immanent in</em> dem Prozess, ausdr&uuml;cklich kein &uuml;bergeordnetes Ger&uuml;st (B)</strong>. Gleiche Folgerung (Form, keine Substanz), entgegengesetzte r&auml;umlich-ontologische Ausrichtung.</p>
+  </div>
+
+  <div class="tension">
+    <h4>&#9313; Irreduzible Grenze (A) vs. voll regulierbarer Zustand (B) &mdash; bleibt ein prinzipieller Rest?</h4>
+    <p><span class="tag-a paper-tag">A &middot; n2-013</span><span class="a">Das Hard Problem ist eine (m&ouml;gliche) Grenze &mdash; &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo;.</span> Die Abstraktionsgrenze zwischen Substrat und Schicht ist real und <em>in ihrer Art</em> aufl&ouml;sungsresistent. Der Mystizianismus (McGinn) h&auml;lt es f&uuml;r m&ouml;glich, dass das Gehirn schlicht nicht f&auml;hig ist, Bewusstsein zu verstehen, &ldquo;wie eine Katze keine Quantenphysik versteht&rdquo;. Der Schicht-Charakter ist &ldquo;kein Defekt, sondern die Natur jeder Abstraktionsschicht&rdquo; &mdash; ein <em>in-prinzipieller Rest</em>, der sich nicht wie ein Bug wegl&ouml;sen l&auml;sst.</p>
+    <p style="margin-top:12px"><span class="tag-b paper-tag">B &middot; n2-014</span><span class="b">Alles ist ein regulierbarer System-Zustand &mdash; kein irreduzibler Rest.</span> Die &ldquo;Pathologie&rdquo; (Regelungsversagen, Denkzwang) ist <em>keine</em> Grenze der Ordnung, sondern eine <em>De-Abstimmung</em> &mdash; ein <em>prinzipiell nachstellbarer</em> Zustand des Systems. Die Ordnung &ldquo;bleibt intakt und voll real&rdquo;; nur die Kopplung des Systems an sie versagt. Es gibt keinen in-prinzipiellen Rest &mdash; alles, auch der &ldquo;Fehlschlag&rdquo;, ist eine Frage von Kopplung/Abstimmung, die man (im Prinzip) zur&uuml;ckdrehen k&ouml;nnte.</p>
+    <p class="note">Konflikt 2 &mdash; <strong>in-prinzipiell irreduzible Grenze in der Art (A) vs. kein irreduzibler Rest, alles ein nachstellbarer Abstimmpunkt (B)</strong>.</p>
+  </div>
+
+  <div class="tension">
+    <h4>&#9314; Wo die Bestimmung wohnt &mdash; in der Form/Relationen (A) vs. in der Lage des Systems (B) <em>(n&auml;herliegende Spannung)</em></h4>
+    <p><span class="tag-a paper-tag">A &middot; n2-013</span><span class="a">Die Bestimmung wohnt in der relationalen Form selbst &mdash; der Knoten ist &uuml;berfl&uuml;ssig.</span> &ldquo;Remove the Object &mdash; the hom-sets remain, and they still define it completely.&rdquo; &ldquo;Objects have no internal structure.&rdquo; Die Identit&auml;t ist in der <em>Form</em> (den Pfeilen/Relationen) selbst; der Substrat-Knoten, die konkrete Position des Dings, ist f&uuml;r die Identit&auml;t <em>entbehrlich</em>. Die Bestimmung ist selbst&auml;ndig in der Schicht, unabh&auml;ngig von jeglicher Beobachter-Lage.</p>
+    <p style="margin-top:12px"><span class="tag-b paper-tag">B &middot; n2-014</span><span class="b">Die Bestimmung der Begegnung wohnt in der Lage des Systems &mdash; &ldquo;der einzige Regler&rdquo;.</span> &ldquo;Die Abstimmlage ist der <em>einzige</em> Regler, der die Begegnungsform setzt.&rdquo; Dieselbe, an sich objektive Ordnung begegnet als Harmonie <em>oder</em> als Kompulsion &mdash; und das entscheidet allein die <em>Position/Abstimmung des Aufnahmesystems</em>, nicht die Ordnung an sich. Die Lage des Systems ist hier <em>der</em> bestimmende Faktor.</p>
+    <p class="note">Spannung 3 &mdash; <strong>das Definierende in der <em>Form</em> (Knoten/Lage entbehrlich, A) vs. in der <em>Lage des Systems</em> zur Form (Lage = der einzige Regler, B)</strong>. Streng genommen bestimmen beide unterschiedliche Pr&auml;dikate (Identit&auml;t vs. Begegnungsform) &mdash; die Spannung liegt im <em>Gewicht</em>: A entlastet die Lage, B macht sie zum Ausschlagenden.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span> Aufl&ouml;sung</h2>
+  <p>Alle drei Punkte fallen weg, wenn man <em>Schicht</em> (A) und <em>immanente Ordnung</em> (B) nicht als zwei verschiedene Dinge, sondern als <em>zwei Pr&auml;sentationszust&auml;nde ein und derselben relationalen/invarianten Form</em> liest. Zu jedem:</p>
+
+  <div class="fusebox"><span class="tag">Aufl&ouml;sung &#9312; &middot; &ldquo;&uuml;ber&rdquo; wird zu &ldquo;Pr&auml;sentation von&rdquo;</span>
+    <p>Der scheinbare Widerspruch l&ouml;st sich, sobald das <em>Substrat/der Prozess</em> (A&rsquo;s Kernel, B&rsquo;s sich ver&auml;ndernder Zustand) nicht ein <em>drittes Ding <em>unter</em></em> der Ordnung, sondern die Ordnung <em>in ihrem nicht-pr&auml;sentierten Zustand</em> gelesen wird. A&rsquo;s Kernel, der &ldquo;l&auml;uft immer&rdquo; &mdash; auch dunkel, im Zombie &mdash; <em>ist</em> B&rsquo;s Prozess, der in seinem <em>de-abgestimmten</em> Modus l&auml;uft. &ldquo;Dar&uuml;ber&rdquo; ist dann kein ontologisches <em>Oben</em> (zwei gestapelte Substanzen), sondern ein <em>pr&auml;sentatives</em> Oben: dieselbe Struktur, <em>jetzt fixiert/angeleuchtet</em> vs. <em>jetzt unfixiert/dunkel</em>. Damit sind A&rsquo;s &ldquo;Schicht &uuml;ber dem Substrat&rdquo; und B&rsquo;s &ldquo;Ordnung immanent im Prozess&rdquo; <em>identisch</em> &mdash; das Substrat <em>ist</em> die Ordnung in Form-losem Zustand, die Schicht dieselbe Ordnung in pr&auml;sentierter Form.</p>
+  </div>
+
+  <div class="fusebox"><span class="tag">Aufl&ouml;sung &#9313; &middot; die Form ist regulierbar, der <em>Akt</em> der Pr&auml;senz ist der Rest</span>
+    <p>A&rsquo;s &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo; <em>ist</em> B&rsquo;s &ldquo;Ordnung intakt, nur die Kopplung versagt&rdquo;, auf zwei Skalen gelesen. Die <em>Form</em> (welche Relationen / welches Ma&szlig; die Ordnung hat) ist <em>voll bestimme- und regulierbar</em>: die Hom-Menge bleibt (A), die Invariante gilt (B) &mdash; hier hat B recht. Aber <em>der Akt, in dem diese Form einem System <em>gegenw&auml;rtig</em> wird</em> (A&rsquo;s Fixierung/Schnitt, B&rsquo;s Resonanz) ist <em>nicht</em> eine Form, die sich auf die Form zur&uuml;ckf&uuml;hren lie&szlig;e &mdash; er ist die <em>Lage</em> des Systems <em>zu</em> der Form, und diese Lage ist nicht aus der Form ableitbar. Hier hat A recht: der irreduzible Rest ist <em>die Art</em> der Pr&auml;senz/Begegnung, nicht die Form. Das <em>Hard Problem</em> wird damit pr&auml;zise: Es ist die Irreduzibilit&auml;t des <em>Pr&auml;senz-Akts</em> (Fixierung/Resonanz) <em>gegen&uuml;ber der Form</em>, nicht gegen&uuml;ber dem Substrat &mdash; und genau deshalb ist es &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo;.</p>
+  </div>
+
+  <div class="fusebox"><span class="tag">Aufl&ouml;sung &#9314; &middot; zwei Pr&auml;dikate, kein Wettstreit</span>
+    <p>Die beiden <em>bestimmen</em> etwas anderes &mdash; und deshalb widersprechen sie sich nicht, sondern teilen sich die Arbeit. Die <em>Identit&auml;t/der Inhalt</em> des Dings wohnt in der <em>Form</em> (A&rsquo;s Hom-Menge, B&rsquo;s Invariante) &mdash; fix, bestimmt, <em>ohne</em> R&uuml;cksicht auf jegliche Beobachter-Lage (&ldquo;Remove the Object&rdquo; gilt, weil die Identit&auml;t in der Form und nicht im Knoten liegt). Die <em>Begegnungsform</em> (wie sie einem konkreten System erscheint: als Heimat oder als Zwang, als leuchtendes Fenster oder als dunkles Potenzial) wohnt in der <em>Lage des Systems</em> (B&rsquo;s Abstimmlage, A&rsquo;s Fixierung). <strong>Die Form tr&auml;gt die Identit&auml;t (objektiv); die Lage tr&auml;gt die Begegnung (subjektiv).</strong> &ldquo;Remove the Object&rdquo; (A) und &ldquo;die Abstimmlage ist der einzige Regler&rdquo; (B) gelten nebeneinander, weil sie verschiedene Pr&auml;dikate regieren: das <em>Was-es-ist</em> (Form) vs. das <em>Wie-es-begegnet</em> (Lage).</p>
+  </div>
+
+  <div class="keybox">
+    <span class="k">Fusionierte Schlussposition:</span> <strong>Das Ding ist seine Ordnung.</strong> Ein Ding/ein System ist ein sich wandelnder Prozess, der eine <em>relationale/invariante Form</em> in sich tr&auml;gt &mdash; nicht von au&szlig;en, nicht eine zweite Substanz, sondern die Form, die der Prozess selbst annimmt (A&rsquo;s Hom-Menge/Fenster &harr; B&rsquo;s Invariante/Ma&szlig;). Diese Form ist <em>objektiv</em> fix und bestimmt (Identit&auml;t, &ldquo;Remove the Object&rdquo;, die Invariante gilt). Sie wird einem System <em>gegenw&auml;rtig</em> durch einen <em>Pr&auml;senz-Akt</em> (A&rsquo;s Fixierung/Schnitt &harr; B&rsquo;s Abstimmlage/Resonanz) &mdash; und je nach Lage begegnet dieselbe Form als <em>Identit&auml;t/Heimat</em> (fixiert, in Resonanz) oder als <em>Zwang/dunkel</em> (de-fixiert, &uuml;bersteuert). Der <em>in-prinzipielle Rest</em> (A&rsquo;s Hard Problem) ist nicht die Form (die ist regulierbar, B) und nicht das Substrat, sondern <em>der Pr&auml;senz-Akt selbst</em> &mdash; &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo;: <em>das Ma&szlig; der Begegnung ist nicht aus der Form ableitbar.</em>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span> Fusionierter Inhalt</h2>
+  <p>Der konsolidierte Stoff beider Runde-2-Papiere, abstrahiert auf die Ebene ihrer Thesen/Positionen und ihrer n&uuml;tzlichen Mathematik &mdash; integriert statt hintergestellt. Sp&auml;tere Runden k&ouml;nnen allein von hier arbeiten.</p>
+
+  <h3>4.1 Das eine Modell in vier Schichten</h3>
+  <ul>
+    <li><strong>Prozess / Substrat (l&auml;uft immer, unabh&auml;ngig von der Pr&auml;senz):</strong> A&rsquo;s neuronaler <em>Kernel</em> (Zugangsbewusstsein, die &ldquo;leichten Probleme&rdquo;, feuert auch beim Zombie) &harr; B&rsquo;s sich total umwandelnder <em>Zustand</em> / ewiges Feuer / Gottesnerven (Panta Rhei, &ldquo;Wert bleibt, Form wechselt&rdquo;). Die immer laufende Basis &mdash; zugleich der Raum aller m&ouml;glichen Relationen/Pr&auml;senzen (reines Potenzial).</li>
+    <li><strong>Invariante Form / Ma&szlig; (objektiv, immanent in dem Prozess):</strong> A&rsquo;s <em>Hom-Menge</em> <code>Hom(&ndash;,A)</code> / das <em>Fenster</em> (Yoneda: die Identit&auml;t als Totalit&auml;t der Relationen, &ldquo;Objects have no internal structure&rdquo;) &harr; B&rsquo;s <em>Invariante</em> (<code>s^2</code>, <code>c</code>, <code>m_0</code>, Sollwert) / Logos / &ldquo;Ma&szlig;&rdquo; des Feuers &mdash; ein Ordnungsprinzip, das <em>in</em> dem Prozess liegt und ihn von innen ordnet; bleibt unter jeder Transformation/Perspektive <em>unver&auml;ndert</em>.</li>
+    <li><strong>Pr&auml;senz-Akt / Abstimmlage (subjektiv, vom System gesetzt):</strong> A&rsquo;s <em>Schnitt / Broadcast / Fixierung</em> (Globaler Arbeitsraum = der &ldquo;XP-Merge&rdquo;, der ein konkretes Fenster anleuchtet) &harr; B&rsquo;s <em>Abstimmlage / Resonanz</em> (Wachen &harr; Nervenanhang, &ldquo;auf sie hinh&ouml;rend&rdquo;). Der eine <em>Regler</em>, der die Begegnungsform setzt: fixiert/abgestimmt &rarr; die Form als Identit&auml;t/Heimat; de-fixiert/de-abgestimmt &rarr; dieselbe Form als Zwang/dunkel.</li>
+    <li><strong>Pr&auml;sentierte Identit&auml;t / gelebte Ordnung:</strong> A&rsquo;s <em>angeleuchtetes Fenster</em> (das erlebte Objekt-als-Pfeile) &harr; B&rsquo;s <em>in Resonanz realisiertes Ma&szlig;</em> (die Ordnung als befreiende Harmonie). Der Zustand, in dem die Form f&uuml;r das System <em>da</em> ist.</li>
+  </ul>
+
+  <h3>4.2 Die drei Ebenen, fusioniert (A&rsquo;s Ebenen &harr; B&rsquo;s Regime)</h3>
+  <table>
+    <thead><tr><th>Ebene / Regime</th><th>A &mdash; n2-013 (Schicht/Pr&auml;senz)</th><th>B &mdash; n2-014 (immanente Ordnung)</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td><strong>(0) Substrat / dunkler Prozess</strong></td>
+        <td>neuronaler Kernel, l&auml;uft immer, feuert auch beim Zombie; Leere = Raum aller m&ouml;glichen Fenster</td>
+        <td>sich ver&auml;ndernder Zustand / ewiges Feuer in de-abgestimmtem Modus; Ordnung noch nicht realisiert</td>
+        <td class="k">der Prozess in Form-losem Zustand (reines Potenzial, l&auml;uft immer)</td></tr>
+      <tr><td><strong>(1) Pr&auml;senz-Akt</strong></td>
+        <td>Schnitt / Broadcast / Globaler Arbeitsraum (&ldquo;XP-Merge&rdquo;) &mdash; fixiert ein konkretes Fenster</td>
+        <td>Abstimmlage / Resonanz &mdash; stellt das System auf das Ma&szlig; ein (&gamma;&asymp;1, kleine Abweichung)</td>
+        <td class="k">der Fixierungs-/Abstimm-Parameter &phi; (Leere&rarr;Fenster &harr; Resonanz&rarr;Kompulsion)</td></tr>
+      <tr><td><strong>(2) Pr&auml;sentierte Form</strong></td>
+        <td>angeleuchtetes Fenster / Objekt-als-Pfeile; Identit&auml;t voll bestimmt (Yoneda)</td>
+        <td>in Resonanz realisiertes Ma&szlig; / Logos; Ordnung als befreiende Harmonie</td>
+        <td class="k">die immanente Form, einem System als Identit&auml;t/Heimat gegenw&auml;rtig</td></tr>
+      <tr><td><strong>Invariante Form (objektiv)</strong></td>
+        <td>Hom(&ndash;,A); &ldquo;Remove the Object&rdquo; &mdash; die Relationen bleiben und bestimmen A</td>
+        <td><code>s^2</code>, <code>c</code>, <code>m_0</code>, Sollwert; &ldquo;bleibt unter Lorentz unver&auml;ndert&rdquo;; &ldquo;intakt und voll real&rdquo;</td>
+        <td class="k">die objektive Form: fix, bestimmt, substrat-/beobachterunabh&auml;ngig im Inhalt</td></tr>
+      <tr><td><strong>Pathologie / Grenzfall</strong></td>
+        <td>Zombie: Kernel l&auml;uft voll, Fenster dunkel, physisch identisch, null Erleben</td>
+        <td>De-Abstimmung / &Uuml;bersteuerung: Ordnung intakt, System in Kompulsion (Denkzwang), Hitzschlag</td>
+        <td class="k">der Prozess l&auml;uft, die Form ist dem System nicht (als Heimat) gegenw&auml;rtig &mdash; Form bleibt intakt, nur Pr&auml;senz/Lage fehlt</td></tr>
+      <tr><td><strong>Der irreduzible Rest</strong></td>
+        <td>Hard Problem: &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo; (Mystizianismus)</td>
+        <td>(kein Rest in der Ordnung selbst &mdash; die Invariante gilt immer)</td>
+        <td class="k">der Pr&auml;senz-Akt/Resonanz (der Akt des Gegenw&auml;rtig-Werdens) &mdash; nicht aus der Form ableitbar</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3 Die fusionierte Mathematik (B&rsquo;s Ma&szlig; als objektive Form, A&rsquo;s Yoneda als relationale Form, &phi; als gemeinsamer Regler)</h3>
+  <p>Alles, was beide Papiere brauchen, steckt in diesen wenigen Regeln &mdash; A <em>erlebt</em> die Pr&auml;senz, B <em>messen</em> die Invarianz:</p>
+  <pre><code>Das Ding als Ordnung:   ein Prozess P (l&auml;uft immer: A's Kernel, B's Feuer/Zustand)
+                        tr&auml;gt eine invariante relationale Form F:
+                          A:  F = Hom(&ndash;,A)      (Yoneda: Identit&auml;t = Totalit&auml;t der Relationen;
+                                                    &ldquo;Objects have no internal structure&rdquo;)
+                          B:  F = Invariante      (s&sup2; = -(c&Delta;t)&sup2; + &Delta;x&sup2;+&Delta;y&sup2;+&Delta;z&sup2; bleibt
+                                                    unter Lorentz unver&auml;ndert; c, m_0, Sollwert)
+
+Der Pr&auml;senz-/Abstimm-Parameter   &phi; &isin; [0,1]:
+                          A:  &phi; = Broadcast-Fraktion (Leere &rarr; Fenster; Globaler Arbeitsraum)
+                          B:  &phi; = Abstimmlage (Resonanz &rarr; Kompulsion;  &gamma;&asymp;1 bei &phi;&rarr;1)
+
+  &phi; &rarr; 1  (abgestimmt / fixiert):   die Form als Identit&auml;t / Heimat
+                                      (Fenster leuchtet &middot; Hom&ouml;ostase h&auml;lt &middot; Resonanz)
+  &phi; &rarr; 0  (de-abgestimmt / dunkel): dieselbe Form als Zwang / dunkel
+                                      (Zombie &middot; Denkzwang &middot; &Uuml;bersteuerung)
+                                      &mdash; F bleibt dabei INTAKT (Yoneda: Pfeile bleiben; B: Invariante gilt)
+
+Der irreduzible Rest:   F ist voll bestimmt &amp; regulierbar (B: Invariante bleibt; A: Hom-Menge bleibt)
+                        aber der AKT der Pr&auml;senz &phi; (Leere&rarr;Fenster, Resonanz)
+                        ist nicht aus F ableitbar   =&gt;  Hard Problem = der AKT, nicht die Form
+                        (A: &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo;)
+
+Adjunktion (A's Schatten):   Free &#8989; Forgetful
+                          Free    = die Fixierung f&uuml;gt Struktur hinzu   (Leere &rarr; Fenster)
+                          Forgetful = die R&uuml;ckkehr zur Leere              (dunkler Zombie)</code></pre>
+  <div class="keybox">
+    <span class="k">Das fusionierte Modell in einem Satz:</span> Der Prozess l&auml;uft in Form-losem Zustand (Zombie/dunkel) &mdash; und tr&auml;gt dabei <em>von innen</em> eine invariante relationale Form F (Yoneda-Identit&auml;t &harr; Invariante/Ma&szlig;), die in ihrem Inhalt fix und bestimmt ist (&ldquo;Remove the Object&rdquo;). Aus dem Potenzial w&auml;hlt der Pr&auml;senz-Akt &phi; (Schnitt/Fixierung &harr; Resonanz/Abstimmung) eine konkrete Pr&auml;senz; je nach Lage begegnet dieselbe Form F als <em>Identit&auml;t/Heimat</em> (fixiert, &gamma;&asymp;1) oder als <em>Zwang/dunkel</em> (&uuml;bersteuert, de-abgestimmt) &mdash; <em>ohne dass F selbst w&auml;re</em>. Und das Hard Problem ist genau die Tatsache, dass dieser Pr&auml;senz-Akt &phi; nicht auf die Form F zur&uuml;ckf&uuml;hrbar ist: man kann sich <em>auf</em> eine Form abstimmen, aber man kann <em>auf ihr</em> nicht ableiten, warum sie einem System <em>gegenw&auml;rtig</em> wird.
+  </div>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span> Visualisierung: Die invariante Form, der Pr&auml;senz-Akt &amp; die Begegnung</h2>
+  <p>Ein einzelnes Feld, das beide Papiere tr&auml;gt. <strong>Unten</strong> l&auml;uft &mdash; unabh&auml;ngig von allem &mdash; der <strong>Prozess/Substrat</strong> (Partikel, immer in Bewegung; A&rsquo;s Kernel, B&rsquo;s Panta Rhei). <strong>Die goldene Linie</strong> ist die <strong>invariante Form</strong> F (A&rsquo;s Hom-Menge/Fenster, B&rsquo;s Ma&szlig;/Logos/&ldquo;s&sup2;&rdquo;): sie bleibt <em>immer gleich</em>, nur fortflie&szlig;end (&ldquo;intakt und voll real&rdquo;). <strong>Der Knoten &ldquo;A / Ding&rdquo;</strong> im Zentrum mit seinen <strong>Relationen-Pfeilen</strong> (Satteliten) ist die <strong>Pr&auml;sentation/Schicht</strong>: <em>durchgezogen</em> = fixierte Relation, <em>gestrichelt</em> = m&ouml;gliche Relation (die Leere). Der Regler <strong>Pr&auml;senz &phi;</strong> fixiert/abstimmt: ganz rechts leuchtet der Knoten als <em>Heimat</em> (Fenster an, Resonanz, kleine Verzerrung zur Form); ganz links wird er <em>dunkel</em> (Zombie/denkzwanghaft, gro&szlig;e Verzerrung &mdash; aber die goldene Form und die Pfeile bleiben). <strong>&ldquo;Ding/Anker entfernen (Yoneda)&rdquo;</strong> l&ouml;scht den Knoten &mdash; die Form und die Pfeile bleiben und tragen die Identit&auml;t trotzdem.</p>
+
+  <div class="viz-box">
+    <div class="viz-ctrl">
+      <label for="phi">Pr&auml;senz / Abstimmung (Leere &rarr; Fenster &middot; Resonanz &rarr; Kompulsion):</label>
+      <input type="range" id="phi" min="0" max="100" value="70">
+      <span class="viz-level" id="phi-val">70%</span>
+      <button class="vbtn" id="remove">Ding/Anker entfernen (Yoneda)</button>
+    </div>
+    <canvas id="fuz-canvas"></canvas>
+    <div class="ro">
+      <div class="box"><div class="l">Form (invariant)</div><div class="v" id="ro-form">fix &middot; bleibt</div></div>
+      <div class="box"><div class="l">Pr&auml;senz &phi;</div><div class="v" id="ro-phi">70 %</div></div>
+      <div class="box"><div class="l">Begegnungsform</div><div class="v" id="ro-regime">Heimat</div></div>
+    </div>
+    <div id="fuz-ro"></div>
+    <p class="viz-cap">Wie DOS- und NT-Kernel 2001 in XP zusammenliefen, vereinen sich hier <em>Pr&auml;senz</em> (Fixierung, A) und <em>Abstimmung</em> (Resonanz, B) in einem Akt &phi;. Der Prozess pulsiert unten unabh&auml;ngig von der Pr&auml;senz &mdash; genau das macht den Zombie denkbar (0%): laufender Substrat, dunkles Fenster, intakte Form.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span> Provenienz</h2>
+  <div class="prov">
+    <a href="../n2-013.html">
+      <div class="t">n2-013.html &mdash; Das Ding ist seine Schicht (A)</div>
+      <div class="d">Runde-2-Fusion (n1-050 &middot; Bewusstsein als Fenster &uuml;ber dem Kernel &#10006; n1-042 &middot; Das Objekt ist seine Pfeile/Yoneda). Tr&auml;gt die <strong>relationale/Pr&auml;sentations-Seite</strong>: Identit&auml;t als Schicht/Fenster, in drei Ebenen (Substrat&rarr;Schnitt&rarr;Fenster), Yoneda &amp; &ldquo;Remove the Object&rdquo;, das Hard Problem als &ldquo;in Form l&ouml;sbar, in Art irreduzibel&rdquo;.</div>
+    </a>
+    <a href="../n2-014.html">
+      <div class="t">n2-014.html &mdash; Immanente Ordnung: Invarianz, Fluss &amp; Abstimmung (B)</div>
+      <div class="d">Runde-2-Fusion (n1-103 &middot; Invarianz: K&ouml;rper=Raumzeit &#10006; n1-039 &middot; Fluss &amp; Nerven: Heraklit&times;Schreber). Tr&auml;gt die <strong>invariante/Abstimmlagen-Seite</strong>: Ordnung immanent in einem Wandelprozess, Invariante (s&sup2;, c, Sollwert) als objektive Form, Abstimmlage (Resonanz&harr;Kompulsion) als erlebte Begegnungsform.</div>
+    </a>
+  </div>
+</section>
+
+</article>
+
+<footer>
+  Fusion aus n2-013.html &#10006; n2-014.html &middot; Runde 3 &middot; Paar 014 &middot; nicht-KI-Track &middot; selbstenthalten, ohne Netzwerk-Datenzugriffe
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('fuz-canvas');
+  var wrap = canvas ? canvas.parentElement : null;
+  var roEl = document.getElementById('fuz-ro');
+  var roForm = document.getElementById('ro-form');
+  var roPhi  = document.getElementById('ro-phi');
+  var roRegime = document.getElementById('ro-regime');
+  var slider = document.getElementById('phi');
+  var fval = document.getElementById('phi-val');
+  var removeBtn = document.getElementById('remove');
+  var themeBtn = document.getElementById('theme-toggle');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  if(!ctx) return;
+
+  var TAU = Math.PI*2;
+  var counts=[3,2,4,2,3,3];
+  var labels=['X','Y','Z','W','V','U'];
+  var slots=[];
+  for(var i=0;i<counts.length;i++){ for(var k=0;k<counts[i];k++){ slots.push({i:i,k:k}); } }
+  var total=slots.length;
+  var state={phi:0.70, removed:false, t:0};
+  var pal={};
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [124,58,237];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [ +m[0], +m[1], +m[2] ]; }
+    return [124,58,237];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    pal = {
+      bg:     toRgb(cssVar('--viz-bg') || cssVar('--bg')),
+      text:   toRgb(cssVar('--viz-text') || cssVar('--text')),
+      sub:    toRgb(cssVar('--viz-sub') || cssVar('--muted')),
+      kernel: toRgb(cssVar('--viz-kernel')),
+      arrow:  toRgb(cssVar('--viz-arrow')),
+      void:   toRgb(cssVar('--viz-void')),
+      win:    toRgb(cssVar('--viz-window')),
+      form:   toRgb(cssVar('--viz-form'))
+    };
+  }
+
+  function roundRect(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function arrowTo(x1,y1,x2,y2,col,lw,head){
+    var dx=x2-x1, dy=y2-y1, l=Math.sqrt(dx*dx+dy*dy);
+    if(l<1){ return; }
+    var a=Math.atan2(dy,dx), hs=head||7;
+    ctx.strokeStyle=col; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.fillStyle=col;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.42), y2-hs*Math.sin(a-0.42));
+    ctx.lineTo(x2-hs*Math.cos(a+0.42), y2-hs*Math.sin(a+0.42));
+    ctx.closePath(); ctx.fill();
+  }
+  function satPos(i,cx,cy,R){
+    var ang=-Math.PI/2 + i*(TAU/counts.length);
+    return { x:cx+R*Math.cos(ang), y:cy+R*Math.sin(ang) };
+  }
+  function drawArrow(sl,S,cx,cy,aR,sR,col,lw,dashed){
+    var s=S[sl.i];
+    var ux=cx-s.x, uy=cy-s.y, L=Math.sqrt(ux*ux+uy*uy)||1;
+    ux=ux/L; uy=uy/L;
+    var px=-uy, py=ux;
+    var c=counts[sl.i], off=(sl.k-(c-1)/2)*7;
+    var x1=s.x+ux*(sR+2)+px*off, y1=s.y+uy*(sR+2)+py*off;
+    var x2=cx-ux*(aR+2)+px*off, y2=cy-uy*(aR+2)+py*off;
+    if(dashed){ ctx.setLineDash([4,5]); }
+    arrowTo(x1,y1,x2,y2,col,lw,6);
+    if(dashed){ ctx.setLineDash([]); }
+  }
+
+  var REGIMES = ['Zwang / dunkel','&Uuml;bergang','Identit&auml;t / Heimat'];
+  function regimeLabel(pct){ return pct<33 ? REGIMES[0] : (pct<66 ? REGIMES[1] : REGIMES[2]); }
+
+  function updateReadout(realized,frac){
+    var pct=Math.round(frac*100), msg;
+    if(state.removed){
+      msg='Ding/Anker entfernt (Yoneda): die Pfeile (Hom(&ndash;,A)) und die goldene Form bleiben und tragen die Identit&auml;t &mdash; die Ordnung bleibt <b>intakt</b>. Die Identit&auml;t liegt in der relationalen/invarianten Form, nicht im Substrat-Knoten (&ldquo;Remove the Object&rdquo;).';
+    } else if(pct<33){
+      msg='<b>Dunkel / de-abgestimmt:</b> Der Prozess l&auml;uft unten weiter, aber die Form ist nicht fixiert/abgestimmt &mdash; reines Potenzial (A: Zombie &mdash; Substrat l&auml;uft, Fenster dunkel; B: &Uuml;bersteuerung/Denkzwang). Die Ordnung begegnet als <em>Zwang</em>. Die Form selbst bleibt intakt (Yoneda: die Pfeile bleiben; B: die Invariante gilt).';
+    } else if(pct<66){
+      msg='<b>&Uuml;bergang:</b> Aus der Leere kristallisiert die Form; Fixierung (A) und Abstimmung (B) lockern. Je mehr fixiert, desto klarer begegnet dieselbe Form als Identit&auml;t.';
+    } else {
+      msg='<b>Abgestimmt / fixiert:</b> Die Form ist als <em>Identit&auml;t/Heimat</em> pr&auml;sent (A: Fenster leuchtet; B: Hom&ouml;ostase h&auml;lt, Resonanz, &gamma;&asymp;1). In <em>Form</em> voll bestimmt (Yoneda; die Invariante gilt) &mdash; aber der <em>Akt</em> der Pr&auml;senz/Resonanz bleibt in <em>Art</em> irreduzibel (Hard Problem): das Ma&szlig; der Begegnung ist nicht aus der Form ableitbar.';
+    }
+    if(roEl){
+      roEl.innerHTML='Pr&auml;senz <b>'+pct+'%</b> fixiert/abgestimmt &middot; '+realized+'/'+total+' Relationen fixiert &middot; '
+        +(state.removed?'<b>Ding entfernt</b> &middot; ':'')+'<b>Form: intakt &middot; Prozess: l&auml;uft immer</b>. '+msg;
+    }
+    if(roPhi){ roPhi.textContent = pct+'%'; }
+    if(roRegime){ roRegime.textContent = state.removed ? 'Form bleibt' : regimeLabel(pct); }
+  }
+
+  function draw(){
+    var w = (wrap && wrap.clientWidth) ? wrap.clientWidth : 720;
+    if(w<2){ w=2; }
+    var h=460, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var bandH=56, bandTop=h-bandH-14;
+    var cy=bandTop*0.50, cx=w/2;
+    var R=Math.min(w,bandTop)*0.33, aR=30, sR=20;
+    var frac=state.phi, realized=Math.round(frac*total);
+    var pulse=0.5+0.5*Math.sin(state.t*1.6);
+
+    // Gitter
+    ctx.lineWidth=1; ctx.strokeStyle=rgba(pal.sub,0.10);
+    var gx,gy;
+    for(gx=40; gx<w; gx+=40){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,bandTop); ctx.stroke(); }
+    for(gy=40; gy<bandTop; gy+=40){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+
+    // Invariante Form F: goldene, fortflie&szlig;ende Linie (bleibt immer gleich)
+    var invAmp = Math.min(64, bandTop*0.16);
+    var lambda = Math.max(140, w*0.62);
+    ctx.beginPath();
+    for(var fx=0; fx<=w+4; fx+=4){
+      var phz = (fx/lambda)*Math.PI*2 - state.t*0.9;
+      var fy = cy + invAmp*Math.sin(phz);
+      if(fx===0){ ctx.moveTo(fx,fy); } else { ctx.lineTo(fx,fy); }
+    }
+    ctx.strokeStyle=rgba(pal.form,0.9); ctx.lineWidth=2.2; ctx.stroke();
+
+    // Leere-Glow hinter Zentrum (verblasst mit Fixierung)
+    var vg=(1-frac)*0.24;
+    if(vg>0.01){
+      var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*0.85);
+      g.addColorStop(0,rgba(pal.void,vg)); g.addColorStop(1,rgba(pal.void,0));
+      ctx.fillStyle=g; ctx.fillRect(0,0,w,bandTop);
+    }
+    // Fenster-Glow hinter Zentrum (leuchtet mit Fixierung)
+    if(!state.removed && frac>0.02){
+      var wg=ctx.createRadialGradient(cx,cy,2,cx,cy,R*0.7);
+      wg.addColorStop(0,rgba(pal.win,0.12+0.5*frac)); wg.addColorStop(1,rgba(pal.win,0));
+      ctx.fillStyle=wg; ctx.fillRect(0,0,w,bandTop);
+    }
+
+    // Satteliten-Positionen
+    var S=[],ii;
+    for(ii=0; ii<counts.length; ii++){ S.push(satPos(ii,cx,cy,R)); }
+
+    // Gestrichelte (Leere/m&ouml;glich) + durchgezogene (fixierte) Relationen-Pfeile
+    for(var s=0; s<slots.length; s++){
+      drawArrow(slots[s],S,cx,cy,aR,sR,rgba(pal.void,0.28+0.16*pulse),1,true);
+    }
+    for(var r=0; r<realized; r++){
+      drawArrow(slots[r],S,cx,cy,aR,sR,rgba(pal.arrow,0.55+0.35*pulse),1.9,false);
+    }
+
+    // Satteliten-Knoten
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(ii=0; ii<S.length; ii++){
+      var p=S[ii];
+      ctx.beginPath(); ctx.arc(p.x,p.y,sR,0,TAU); ctx.fillStyle=rgba(pal.bg,1); ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle=rgba(pal.arrow,0.85); ctx.stroke();
+      ctx.fillStyle=rgba(pal.text,0.95); ctx.font='bold 15px sans-serif'; ctx.fillText(labels[ii],p.x,p.y);
+    }
+
+    // Zentrales Ding A (Fenster / pr&auml;sentierte Form)
+    if(state.removed){
+      ctx.beginPath(); ctx.arc(cx,cy,aR,0,TAU); ctx.setLineDash([5,5]);
+      ctx.strokeStyle=rgba(pal.win,0.5); ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=rgba(pal.win,0.6); ctx.font='bold 15px sans-serif'; ctx.fillText('A?',cx,cy);
+    } else {
+      if(frac>0.6){
+        ctx.beginPath(); ctx.arc(cx,cy,aR+8+6*pulse,0,TAU);
+        ctx.strokeStyle=rgba(pal.win,(frac-0.6)*0.5); ctx.lineWidth=1.5; ctx.stroke();
+      }
+      var al=0.22+0.78*frac;
+      ctx.beginPath(); ctx.arc(cx,cy,aR,0,TAU); ctx.fillStyle=rgba(pal.bg,1); ctx.fill();
+      ctx.lineWidth=3; ctx.strokeStyle=rgba(pal.win,al); ctx.stroke();
+      ctx.fillStyle=rgba(pal.win,al); ctx.beginPath(); ctx.arc(cx,cy,aR*0.55,0,TAU); ctx.fill();
+      ctx.fillStyle=rgba(pal.text,al); ctx.font='bold 16px sans-serif'; ctx.fillText('A',cx,cy);
+    }
+
+    // Prozess-/Substrat-Band (l&auml;uft IMMER, unabh&auml;ngig von der Pr&auml;senz)
+    roundRect(14,bandTop,w-28,bandH-14,10);
+    ctx.fillStyle=rgba(pal.kernel,0.10); ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle=rgba(pal.kernel,0.40); ctx.stroke();
+    var n=12, span=(w-28), sp=span/n, kbY=bandTop+(bandH-14)/2;
+    for(var q=0;q<n;q++){
+      var kx=14+((state.t*46 + q*sp) % span);
+      var kb=0.35+0.5*(0.5+0.5*Math.sin(state.t*2.2 + q*0.9));
+      ctx.fillStyle=rgba(pal.kernel,0.35+0.55*kb);
+      ctx.beginPath(); ctx.arc(kx,kbY,2.2+kb*2.4,0,TAU); ctx.fill();
+    }
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillStyle=rgba(pal.kernel,0.95); ctx.font='bold 12px sans-serif';
+    ctx.fillText('PROZESS / Substrat &mdash; l&auml;uft immer (auch bei dunklem Fenster: Zombie &middot; de-abgestimmt)', 20, bandTop+bandH-40);
+
+    // Beschriftung der invarianten Form
+    ctx.fillStyle=rgba(pal.form,0.8); ctx.font='italic 12px sans-serif';
+    ctx.fillText('invariante Form F &mdash; bleibt gleich, nur fortflie&szlig;end (Hom(&ndash;,A) / s&sup2;, Ma&szlig;, Logos)', 20, 16);
+
+    updateReadout(realized,frac);
+  }
+
+  if(slider){
+    slider.addEventListener('input',function(){
+      state.phi=parseInt(this.value,10)/100;
+      if(fval){ fval.textContent=this.value+'%'; }
+    });
+  }
+  if(removeBtn){
+    removeBtn.addEventListener('click',function(){
+      state.removed=!state.removed;
+      this.classList.toggle('on',state.removed);
+      this.textContent=state.removed?'Ding/Anker wiederherstellen':'Ding/Anker entfernen (Yoneda)';
+    });
+  }
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      document.documentElement.classList.toggle('dark');
+      readPal();
+    });
+  }
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change',onScheme); }
+  }
+
+  readPal();
+  var last=performance.now();
+  function loop(now){
+    var dt=(now-last)/1000; last=now; if(dt>0.1){ dt=0.1; }
+    state.t+=dt; draw(); requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

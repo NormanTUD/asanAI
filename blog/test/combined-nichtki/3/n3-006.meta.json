@@ -1,0 +1,16 @@
+{
+  "no": "006",
+  "a": "n2-026.html",
+  "b": "n2-022.html",
+  "a_title": "Offene Form — fixer Kreis, unendlicher Turm (Runde 2)",
+  "b_title": "Die graduierte Garbe mit Krümmung — Höhere Struktur als globale Sektion (Runde 2)",
+  "combined_theme": "offene-graduierte-garbe",
+  "one_line": "Ein kohärentes Ganzes ist eine graduierte Garbe mit offenem Faser-Turm (Tiefe, A: keine letzte Ebene, Selbstreferenz) und gekrümmtem Kleben (Breite, B: messbarer Defekt Δ); geschlossen je Faser, offen über dem Turm.",
+  "contradictions": [
+    "Primäre Achse: A macht den offenen vertikalen Ebenen-Turm (Selbstreferenz, keine Spitze) zum generativen Motor; B macht die horizontale Klebung/Kohärenz (globale Sektion) zum definiierenden Inhalt — wo 'höhere Struktur' wohnt, streiten sie.",
+    "Offen vs. geschlossen: A — das Ganze hat keine letzte Ebene (nie vollendet, ein Prozess); B — das kohärente Objekt ist eine definite, bei voller Tiefe auf fester Basis eindeutige globale Sektion (abgeschlossen, kategorial).",
+    "Defekt: A — die Lücke/Offenheit (Karte ≠ Gebiet) ist irreduzibel, ewig und ontologisch (nie auflösbar); B — der Kohärenz-Defekt Δ ist messbar und im Prinzip beseitigbar (das flache Modell Δ=0 ist das erreichbare Ideal)."
+  ],
+  "resolution": "Tiefe und Breite sind die orthogonalen Achsen EINES Objekts (der graduierten Garbe): A = offener Faser-Turm (Tiefe), B = Klebung (Breite); das Objekt ist ihr Produkt. 'Keine Spitze' (A) und 'eindeutige Sektion' (B) gelten auf zwei Skalen — geschlossen/definitiv je Faser, offen/ohne Spitze über dem Turm. Der Defekt ist doppelt: je Faser messbar und im Prinzip flach/beseitigbar (B), über dem Turm irreduzibel und generativ (A).",
+  "viz": "Canvas: Basis mit Keimen, deren Faser-Türme (Tiefe, A) offene (pulsierend, Pfeil nach oben) oder erstarrte Spitzen tragen; darüber das flache Ideal (Δ=0, gestrichelt) und eine globale Sektion (Kleben, B), deren Krümmung der Defekt-Slider steuert, mit roten Defekt-Markern an den Nähten. Slider: Tiefe (steuert zugleich die Zahl kompatibler globaler Sektionen — Bestimmung ist geschichtet), Offenheit/Selbstreferenz, Defekt Δ. Theme-aware (CSS-Variablen, MutationObserver), alle Daten inline, keine Netz-Abfragen, keine Console-Errors."
+}

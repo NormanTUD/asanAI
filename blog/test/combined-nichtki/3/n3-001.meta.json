@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "n2-001.html",
+  "b": "n2-002.html",
+  "a_title": "Topologie der Unterscheidung — Form als Invariante des Schnitts",
+  "b_title": "Fusion 002: Glokale Kohärenz — das Ganze aus lokalen Teilen",
+  "combined_theme": "invariante-geschlossener-zusammensetzung",
+  "one_line": "Das invariante Ganze ist die Invariante der geschlossenen lokalen Zusammensetzung — gelesen in zwei Lesarten (additive Form vs. zyklische Holonomie) mit einer gemeinsamen Faser, die A verwirft (Quality) und B als lokal trivial behält.",
+  "contradictions": [
+    "Art der Invariante: A liest Form als additive/kommutative Zählung (Betti-Zahl βᵢ, χ = V−E+F = 2−2g — zählt Regionen/Löcher, wächst monoton mit jedem Schnitt); B liest die Invariante als (möglicherweise nicht-abelschen) Gruppen-Kozykulus (Holonomie Hol(γ)=exp(i∮A) ∈ U(1)/SU(n) — geordnete Komposition, addiert sich nicht).",
+    "Verlust vs. exakte Umkehr: A ist das Vergrössern (Ungeteiltes → Schnitt-Raum) verlustbehaftet & irreversibel (Many-to-One-Komprimierung, Quality/Verbundenheit wird verworfen, 'der Schnitt ist ein Verlust', Homotopietyp ändert sich in eine Richtung); B ist es exakt & eichreversibel (Kohärenzbedingung = Gleichung g_ij·g_jk·g_ki = e, Eich-Äquivalenz wechselt lokale Trivialisierungen ohne das Bündel zu ändern, das Lokal bestimmt das Global vollständig).",
+    "Extensiv vs. zyklisch: A's 'Ganze' ist eine extensive, kumulative Zählung (Form↑ monoton, β₀/χ wächst, 2ⁿ-Möglichkeiten unbeschränkt); B's 'Ganze' ist die zyklische, beschränkte Netto-Rückkehr (Holonomie = Phase auf dem Einheitskreis, mod 360°, Kohärenz nur bei exakt 0°/360°/720° — ein zweiter Umlauf 'vergrößert' nicht, er doppelt nur die Phase)."
+  ],
+  "resolution": "Beide lesen dieselbe Invariante der geschlossenen lokalen Zusammensetzung in komplementären Registern: A's additive Betti-Zahl β₁ ist der abelsche Schatten (Rank der abelschen Abbildung von π₁) von B's vollen (allg. nicht-abelschen) Holonomie-Darstellung π₁(X)→G. Das Vergrössern ist INNERHALB des formalen Objekts exakt & eichreversibel (B), aber der eine Urakt, der das Ungeteilte in die Formalität schneidet, ist verlustbehaftet & irreversibel (A) — und B's lokal-triviale 'Faser' ist exakt A's 'Quality = verworfene Faser' (dasselbe Objekt, gehalten vs. verworfen). Der Gesamtzwist um den Ring zerfällt eindeutig als N·step = 360°·w + (N·step mod 360°) in A's additive Windungszahl w (Form↑) und B's zyklischen Rest (Holonomie/Gedächtnis); B's Kohärenzmoment (Rest=0°/360°) ist exakt A's Moment, in dem eine ganze Invariante abgeschlossen wird. Dieselbe Faser wird vom globalen Akt zugleich erzeugt und verworfen.",
+  "viz": "Interaktiver Canvas-Ring aus 12 lokalen Patches: der Übergang pro Patch (der Zusammenhang) treibt zugleich eine zentrale 'Netto-Holonomie'-Uhr (B, zyklischer Rest mod 360°) und eine additive Form-Zählung w (A, Windungszahl, β₁-artig). Die Faser-Uhr an jedem Knoten ist die gemeinsame, lokal triviale Faser (= A's Quality, sinkt mit w per Q=100·e^(−0.45·w)). Der Gesamtzwist N·step zerfällt sichtbar in 360°·w (A, additiv) + Rest (B, zyklisch); bei 30°/60°/… schließt der Ring kohärent (B) und A schließt eine ganze Invariante ab (w springt, Quality↓). Theme-aware, inline data, zero network fetches."
+}

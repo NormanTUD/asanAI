@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 016 (Runde 3): Der eine Operator, der das Übrigbleibende bestimmt</title>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#a92c86; --accent3:#0e8fc4; --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --inv-lo:#eef1f6; --inv-hi:#d97706; --ellipse:#0f766e; --grad:#b45309; --base:#7c3aed;
+  --txt:#1a1a24; --grid:rgba(20,20,40,0.10); --viz-bg:#ffffff; --viz-line:#d9d5cc;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#ff7cc4; --accent3:#38bdf8; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e;
+  --inv-lo:#0f1626; --inv-hi:#f59e0b; --ellipse:#2dd4bf; --grad:#fbbf24; --base:#c4b5fd;
+  --txt:#f1f5f9; --grid:rgba(255,255,255,0.10); --viz-bg:#0a1220; --viz-line:#263452;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.62 Georgia,'Iowan Old Style','Times New Roman',serif}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px}
+h1{font-size:clamp(26px,4.2vw,38px);line-height:1.12;margin:0 0 8px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 6px;font-style:italic}
+.subtitle.req{color:var(--accent);font-style:normal;font-weight:700}
+h2{font-size:22px;margin:42px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line);color:var(--accent)}
+h3{font-size:16.5px;margin:24px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:0 0 8px}
+b,strong{color:var(--text)}
+em{color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.7}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0}
+.card h3{margin-top:0}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+.aha b{color:var(--accent2)}
+.tagA{color:var(--accent);font-weight:700}
+.tagB{color:var(--accent2);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2)}
+canvas#viz{display:block;width:100%;height:460px;background:var(--viz-bg);border:1px solid var(--viz-line);border-radius:12px;margin:6px 0;touch-action:none;cursor:crosshair}
+.viz-cap{font-size:12.5px;color:var(--muted);margin-top:6px}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:14px 0}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}
+select,input[type=range]{padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-size:14px}
+input[type=range]{width:180px;padding:0;accent-color:var(--accent)}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit}
+button.action.active{border-color:var(--accent);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+button.action:hover{border-color:var(--accent)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0;font-size:13px}
+.ro{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.ro .k{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.ro .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;color:var(--accent2);font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700}
+.prov a:hover{text-decoration:underline}
+.hint{color:var(--muted);font-size:13.5px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728; / &#9790;</button>
+<article>
+<h1>Der eine Operator, der das &Uuml;brigbleibende bestimmt</h1>
+<p class="subtitle">exakt im Raum, verlustreich in der Zeit &mdash; die Invariante hat eine globale Z&auml;hlung und eine lokale Dichte, und das &bdquo;Wann&ldquo; zeigt genau dorthin, wo sie konzentriert ist</p>
+<p class="subtitle req">Fusion aus: n2-009.html &#10005; n2-006.html &nbsp;(Runde 3)</p>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p>Beide Runde-2-Papiere sind &Auml;ußerungen &uuml;berr <b>ein und derselben Reduktionsgesetze</b> und
+&uuml;ber <b>das, was diese Reduktion &uuml;bersteht</b>. <span class="tagA">A</span> (n2-009) h&auml;lt:
+Das Lokale wird zu einem Globalen zusammengesetzt durch eine <b>zweiachsige Maschine</b> &mdash; eine
+<b>exakte, umkehrbare Raumachse</b> (Transport/Verklebung; Univalence ist deren <em>Identit&auml;ts-Limit</em>,
+&bdquo;&auml;quivalent &rArr; w&ouml;rtlich gleich&ldquo;) und eine <b>verlustreiche, projektische Zeitachse</b>
+(der Fluss; er gl&auml;ttert die Varianz weg und h&auml;lt nur das Mittel/die Invariante) &mdash; und die
+<b>einzige Gr&ouml;&szlig;e, die beide Achsen &uuml;berlebt, ist die topologisch-homotopische Invariante</b>
+(&pi;&sub1;(S&sup1;) &cong; &Zopf;, &int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;(M)).
+<span class="tagB">B</span> (n2-006) h&auml;lt: Alles dreht sich um <b>einen einzigen Operator &mdash; die
+Ableitung (&part; = d)</b> &mdash; die jede Struktur in drei Schicksale sortiert: <b>Rand</b> (transient, hebt
+sich auf, weil &part;&part; = 0), <b>Ererbtes/Abgeleitetes</b> (ein Pullback, sieht &bdquo;gegeben&ldquo; aus, ist
+aber abgeleitet) und <b>Invariante</b> (geschlossen-nicht-exakt &mdash; ein Loch, eine echte Kr&uuml;mmung) &mdash;
+und diese Invariante tr&auml;gt <b>zwei Gesichter</b>: eine <b>globale Z&auml;hlung</b> (Betti) und eine
+<b>lokale Dichte</b> (Kr&uuml;mmung &Gamma;), wobei das praktische <b>&bdquo;Wann&ldquo;</b> (die Pause) exakt
+dort lokalisiert, wo die Dichte am gr&ouml;&szlig;ten ist.</p>
+
+<p><b style="color:var(--accent)">Die eine integrierte Position.</b> Es gibt <b>eine</b> beherrschende
+Operation: <span class="tagA">A</span>s Transport/Verklebung und <span class="tagB">B</span>s &part; = d sind
+derselbe Motor (die &Auml;u&szlig;ere Ableitung <em>ist</em> der Randoperator; Descent/Verklebung ist sein
+algebraisches Duale). Unter ihr ist jede Struktur genau <b>eines von drei</b>: <em>transient</em>
+(Rand, hebt sich auf), <em>ererbtes</em> (Pullback, Pseudo-Gegebenes) oder <em>invariant</em>
+(geschlossen-nicht-exakt, der topologisch-homotopische Rest). Die Invariante ist
+<b>ein Objekt mit zwei Gesichtern</b> &mdash; eine <b>globale, diskrete Z&auml;hlung</b>
+(&chi;/&pi;&sub1; bei A, Betti bei B) und eine <b>lokale, kontinuierliche Dichte</b> (Kr&uuml;mmung bei A,
+&Gamma; bei B); <b>Gauss&ndash;Bonnet</b> (&int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;) ist die Br&uuml;cke, die
+aus der lokalen Dichte durch Integration die globale Z&auml;hlung macht. Es gibt <b>zwei Achsen</b>: eine
+<b>exakte/umkehrbare</b> (A&rsquo;s Raum; B&rsquo;s &part; mit &part;&part; = 0 &mdash; das Identit&auml;ts-Limit
+/ Univalence, nichts geht verloren) und eine <b>verlustreiche/projektische</b> (A&rsquo;s Zeit/Fluss;
+B&rsquo;s Ableitungskette &mdash; offen, nicht-fundamental, &bdquo;alles nach dem ersten Pfeil ist
+abgeleitet&ldquo;). Was <b>beide</b> &uuml;bersteht, ist die topologische Invariante &mdash;
+&bdquo;space is what you can observe on it&ldquo; (A) / &bdquo;das Loch, das &uuml;brig bleibt&ldquo; (B) =
+&bdquo;die Kr&uuml;mmung, die in Wahrheit die Ableitung eines Pullbacks ist&ldquo;. Und das <b>&bdquo;Wann&ldquo;</b>
+(B&rsquo;s Pause, wo/ob handeln) ist kein Zuschlag, sondern die <b>Lokalisierung der Invariante</b>: handele
+genau dort, wo ihre Dichte peakte (B&rsquo;s maximale Steigung = dort, wo A&rsquo;s Invariante
+&pi;&sub1;/&chi; &ne; 0 konzentriert ist).</p>
+</section>
+
+<section id="widersprueche">
+<h2>2. Widerspr&uuml;che zwischen A und B</h2>
+<p class="hint">In keiner harten Faktenbehauptung widersprechen sich die beiden Runde-2-Papiere &mdash; sie
+sind komplement&auml;r (zwei Lesarten desselben Operators / derselben Invariante). Auf der Ebene ihrer
+<b>Thesen/Stellungen</b> nehmen sie an drei Punkten jedoch inkompatible, teils entgegengesetzte Stellungen
+ein:</p>
+
+<div class="card">
+<h3>1 &middot; Starrer globaler Z&auml;hler (A) vs. weiche lokale Dichte (B)</h3>
+<p><span class="tagA">A</span>: Das &Uuml;brigbleibende ist <b>topologisch-homotopisch, global, diskret und
+starr</b> &mdash; &pi;&sub1;(S&sup1;) &cong; &Zopf;, &chi;, &int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;(M). Diese
+Gr&ouml;&szlig;e ist <em>stiff</em>: sie &auml;ndert sich weder unter stetiger Verformung noch unter dem Fluss
+(&chi;(S&sup1;) = 0 bleibt 0; die Windungszahl bleibt in &Zopf;). A&rsquo;s Kernanspruch: genau diese
+Gr&ouml;&szlig;e ist <em>topologisch fixiert</em> und &uuml;berlebt alles.</p>
+<p><span class="tagB">B</span>: Das &Uuml;brigbleibende ist <b>Kr&uuml;mmung &Gamma; &mdash; lokal,
+kontinuierlich, punktuell berechnet und verformbar</b> (&bdquo;flach &rArr; &Gamma;&approx;0, schief &rArr;
+&Gamma; w&auml;chst&ldquo;). Diese Gr&ouml;&szlig;e ist <em>weich</em>: sie ver&auml;ndert sich stetig und
+<em>verschwindet</em> dort, wo die Fl&auml;che abflacht &mdash; sie l&auml;sst sich umverteilen.</p>
+<p class="hint"><b>Kern des Streits:</b> A sagt, das &Uuml;brigbleibende sei ein <em>starrer globaler
+Z&auml;hler</em>; B sagt, es sei eine <em>weiche lokale Dichte</em>. Entgegengesetzte Charakterisierungen
+davon, was der Operator &uuml;brig l&auml;sst.</p>
+</div>
+
+<div class="card">
+<h3>2 &middot; Geschlossene Identit&auml;t (A) vs. offener nicht-fundamentaler Abstieg (B)</h3>
+<p><span class="tagA">A</span> (via Univalence): &bdquo;&Auml;quivalent &rArr; w&ouml;rtlich gleich&ldquo; &mdash;
+die exakte Achse ist ein <b>Identit&auml;ts-Limit</b>; der HIT-Kreis <em>ist</em> der topologische Kreis,
+nichts geht verloren, das System <b>schlie&szlig;t sich</b> in die Identit&auml;t der &Auml;quivalenten.</p>
+<p><span class="tagB">B</span>: &bdquo;nichts ist fundamental&ldquo;, &bdquo;alles nach dem ersten Pfeil ist
+abgeleitet&ldquo; &mdash; die Ableitungskette ist <b>offen</b>, ein unendlicher Abstieg in immer flachere
+Umgebungsfelder g<sub>E</sub>; es gibt <b>keine</b> terminale Identit&auml;t, nur &bdquo;alles ist
+abgeleitet&ldquo;.</p>
+<p class="hint"><b>Kern des Streits:</b> A findet am exakten Ende <b>Schlie&szlig;ung/Identit&auml;t</b>; B
+verneint <b>jeden</b> fundamentalen/geschlossenen Grund (offene Kette). Schlie&szlig;t die Reduktion in eine
+Identit&auml;t ab (A) oder ist sie ein offener Abstieg ohne Boden (B)?</p>
+</div>
+
+<div class="card">
+<h3>3 &middot; Deskriptive Gesetzm&auml;&szlig;igkeit (A) vs. konstitutives &bdquo;Wann&ldquo; (B)</h3>
+<p><span class="tagA">A</span>&rsquo;s fusionierte Position ist <b>strukturiell/deskriptiv</b>: die
+exakt-gegen-verlustreich-Dichotomie und die &uuml;berlebende Invariante <em>sind</em> der Inhalt; A tr&auml;gt
+keine normative Entscheidungsebene (seine Quellen sind HoTT und Ricci/Garben &mdash; kein &bdquo;wann
+handeln&ldquo;).</p>
+<p><span class="tagB">B</span> macht die <b>Entscheidung &mdash; das &bdquo;Wann&ldquo;/die Pause &mdash;
+konstitutiv</b>: &bdquo;Weisheit = das 'when'&ldquo;, nur auf dem Invarianten handeln; die Pause <em>ist</em>
+Kern des Inhalts und lokalisiert an maximaler Steigung.</p>
+<p class="hint"><b>Kern des Streits:</b> A: das Gesetz <em>ist</em> der Inhalt (die Invariante &uuml;berlebt &mdash;
+das allein). B: die <em>Wahl, wo/wann zu handeln</em>, ist selbst Teil des Inhalts (das &bdquo;Wann&ldquo; ist
+konstitutiv, nicht blo&szlig; das Gesetz).</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>3. Aufl&ouml;sung</h2>
+
+<p><b>(1) Starrer Z&auml;hler vs. weiche Dichte &rarr;</b> zwei Gesichter <em>ein und derselben</em>
+Invariante, vereinigt durch <b>Gauss&ndash;Bonnet</b>. A&rsquo;s Z&auml;hlung (&chi;) ist das <em>Integral</em>
+von B&rsquo;s Dichte (K/&Gamma;): &int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;(M). Die lokale Dichte (B) ist die
+Ableitung, die globale Z&auml;hlung (A) das Integral. Unter der verlustreichen Achse (Fluss) verteilt sich die
+Dichte neu und ihre <em>Varianz</em> &rarr; 0, aber ihr <em>Integral</em> (die Z&auml;hlung) bleibt erhalten
+&mdash; das ist exakt A&rsquo;s Anspruch, dass die topologische Invariante den Fluss &uuml;bersteht.
+<b>Fusion:</b> die Invariante ist zugleich <em>globale Z&auml;hlung</em> (A) und <em>lokale Dichte</b> (B);
+Z&auml;hlung = &int; Dichte, und sie ist der <em>einzige</em> Teil der Dichte, der die verlustreiche Achse
+&uuml;berlebt.</p>
+
+<p><b>(2) Geschlossene Identit&auml;t vs. offener Abstieg &rarr;</b> die zwei Achsen. A&rsquo;s
+&bdquo;geschlossene Identit&auml;t&ldquo; (Univalence, &auml;quivalent &Harr; identisch, nichts verloren)
+geh&ouml;rt zur <b>exakten/umkehrbaren Achse</b> (Raum/Verklebung; B&rsquo;s &part; mit &part;&part; = 0 &mdash;
+eine <em>lokale</em> algebraische Schlie&szlig;ung). B&rsquo;s &bdquo;offener Abstieg&ldquo; (nichts
+fundamental, Pullback-Kette in flachere Umgebung) geh&ouml;rt zur <b>verlustreichen/abgeleiteten Achse</b>
+(Zeit/Pipeline). A&rsquo;s Schlie&szlig;ung ist <em>lokal</em> (&part;&part; = 0) und <em>pro-Achse</em>
+(die exakte Achse schlie&szlig;t in die Identit&auml;t der &Auml;quivalenten); B&rsquo;s Offenheit gilt auf
+der <em>abgeleiteten</em> Achse. <b>Fusion:</b> die exakte Achse <em>schlie&szlig;t</em> (Identit&auml;t der
+&Auml;quivalenten / &part;&part; = 0); die abgeleitete Achse ist <em>offen</em> (Pullback-Abstieg). Kein
+Widerspruch &mdash; zwei Achsen derselben Maschine.</p>
+
+<p><b>(3) Deskriptive Gesetzm&auml;&szlig;igkeit vs. konstitutives &bdquo;Wann&ldquo; &rarr;</b> das
+&bdquo;Wann&ldquo; ist die <b>Lokalisierung der Invariante</b>. B&rsquo;s Pause/&bdquo;Wann&ldquo; ist kein
+Zuschlag; es ist die Ableitung der Z&auml;hlung &mdash; es <em>zeigt hin</em> zu dem Punkt, an dem die Dichte
+der Invariante peakte (B&rsquo;s maximale Steigung = dort, wo A&rsquo;s Invariante &pi;&sub1;/&chi; &ne; 0
+konzentriert ist). A&rsquo;s Invariante sagt <em>was</em> &uuml;berlebt; B&rsquo;s &bdquo;Wann&ldquo; sagt
+<em>wohin sehen</em> und <em>wann darauf handeln</em>. <b>Fusion:</b> Gesetz (A: was &uuml;berlebt) und
+Praxis (B: wo/wann handeln) sind zwei Lesarten derselben Invariante &mdash; das &bdquo;Wann&ldquo; = argmax
+der Invariante-Dichte.</p>
+
+<div class="aha">
+<b>Fusion in einer Aussage:</b>
+Ein einziger Operator (&part; = d; seine exakte Seite = Transport/Verklebung, seine verlustreiche Seite =
+der Fluss) sortiert alles in <b>Rand</b> (hebt sich auf, &part;&part; = 0), <b>Ererbes</b> (Pullback,
+Pseudo-Gegebenes) und <b>Invariante</b> (geschlossen-nicht-exakt). Die Invariante ist
+<b>globale Z&auml;hlung</b> (&chi;/Betti) zugleich <b>lokale Dichte</b> (K/&Gamma;), verbunden durch
+Gauss&ndash;Bonnet. Auf der <b>exakten</b> Achse schlie&szlig;t sich das System (Identit&auml;t der
+&Auml;quivalenten / Univalence); auf der <b>verlustreichen</b> Achse stirbt das Detail (Varianz &rarr; 0),
+aber die Z&auml;hlung &uuml;berlebt. <b>&bdquo;Space is what you can observe on it&ldquo; &uuml;bersteht den
+Fluss; &bdquo;das Loch, das &uuml;brig bleibt&ldquo;, ist &bdquo;die Kr&uuml;mmung, die in Wahrheit die
+Ableitung eines Pullbacks ist&ldquo;.</b>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Der eine Motor (exakt = &Auml;u&szlig;ere Ableitung, verlustreich = Fluss).</b>
+<span class="tagA">A</span>: der Transport <code>p_*</code> entlang eines Pfads (Bijektion der Fasern, eine
+&Auml;quivalenz; der HIT-Kreis &cong; dem topologischen Kreis) ist die exakte Seite; der Ricci-Fluss
+<code>&part;g/&part;t = &minus;2&thinsp;Ric(g)</code> ist die verlustreiche Seite. <span class="tagB">B</span>:
+dieselbe Operation als <code>&part;</code> auf Ketten / &auml;u&szlig;ere Ableitung <code>d</code>; der
+Pullback <code>&phi;*&omega;</code> kommutiert mit d (<code>&phi;*(d&omega;) = d(&phi;*&omega;)</code>);
+die Pipeline g<sub>E</sub> &rarr; &iota;* &rarr; g &rarr; &part;g &rarr; &Gamma; &rarr; Transport/Geod&auml;ten.
+Unter ihr &mdash; drei Schicksale:</p>
+<div class="mathblock">TRANSIENT (Rand / Bild von d):      im &part;      &mdash; hebt sich auf, weil &part;&part; = d&sup2; = 0
+                                                        (A: lokales Detail, das sich verklebt/kompensiert)
+                                                        (B: flacher Pullback-Anteil, g &approx; &delta;, &Gamma; = 0)
+
+ERERBT / ABGELEITET (Pullback):     g = &iota;*g_E   &mdash; sieht &bdquo;gegeben&ldquo; aus, ist aber abgeleitet
+                                                        (A: Daten, die entlang Pfad transportiert werden, umkehrbar)
+
+INVARIANT (geschlossen-nicht-exakt): ker &part; \ im &part;   &mdash; &uuml;berlebt den Operator
+                                                        (A: &pi;&sub1;(S&sup1;) &cong; &Zopf;, &chi;, &int; K dA = 2&pi;&chi;)
+                                                        (B: ein Loch (Betti &gt; 0) / echte Kr&uuml;mmung (&Gamma; &ne; 0))</div>
+
+<h3>Die Invariante in zwei Aufl&ouml;sungen (das eigentliche Fusionsprodukt)</h3>
+<table>
+<tr><th></th><th><span class="tagA">A</span> &middot; globale Z&auml;hlung</th><th><span class="tagB">B</span> &middot; lokale Dichte</th></tr>
+<tr><td>Gr&ouml;&szlig;e</td><td>&pi;&sub1;(S&sup1;) &cong; &Zopf; / &chi;(M)</td><td>Kr&uuml;mmung &Gamma; am Punkt</td></tr>
+<tr><td>Definition</td><td>Windungszahl; Euler-Charakteristik</td><td>&Gamma; = &part;g (Ableitung der Metrik)</td></tr>
+<tr><td>Sagt</td><td><b>wie viele</b> Invarianten &uuml;brig bleiben</td><td><b>wo &amp; wie stark</b> sie konzentriert sind</td></tr>
+<tr><td>Charakter</td><td>diskret, topologisch starr</td><td>kontinuierlich, verschwindet bei Flachheit</td></tr>
+<tr><td>Formel</td><td>&int;<sub>M</sub> K&thinsp;dA = 2&pi;&chi;(M)</td><td>flach &rArr; g&approx;&delta;, &Gamma;&approx;0; schief &rArr; &Gamma; w&auml;chst</td></tr>
+</table>
+<p><b>Die Br&uuml;cke (Gauss&ndash;Bonnet):</b> die lokale Dichte (B&rsquo;s &Gamma;/K) <em>integriert</em>
+zur globalen Z&auml;hlung (A&rsquo;s &chi;). Die Z&auml;hlung sagt, <em>an wie vielen Stellen</em> sich zu
+handeln lohnt; die Dichte sagt, <em>genau wo</em>. Beide sind derselben Invariante &mdash; &bdquo;space is
+what you can observe on it&ldquo; (A) &mdash; &bdquo;das Loch, das &uuml;brig bleibt&ldquo; (B).</p>
+
+<h3>Die zwei Achsen</h3>
+<ul>
+<li><b>Exakt / umkehrbar (Raum):</b> A&rsquo;s Transport <code>p_*</code> (Bijektion der Fasern; HIT &cong;
+topologisch) und Univalence <code>(A = B) &cong; (A &cong; B)</code> = das Identit&auml;ts-Limit
+(&auml;quivalent &rArr; w&ouml;rtlich gleich); B&rsquo;s <code>&part;&part; = 0</code> als lokale algebraische
+Schlie&szlig;ung. Nichts geht verloren.</li>
+<li><b>Verlustreich / projektisch (Zeit):</b> A&rsquo;s Ricci-Fluss (Varianz &rarr; 0, Mittel/Invariante
+bleibt); B&rsquo;s Ableitungskette (offen, nicht-fundamental, Abstieg in flachere Umgebung). Das Detail stirbt,
+die Invariante bleibt.</li>
+</ul>
+
+<h3>Das &bdquo;Wann&ldquo; (die fusionierte Praxis)</h3>
+<ul>
+<li><b>ein St&uuml;ck der Situation</b> &harr; <b>ein Punkt/Zelle auf der Fl&auml;che</b>.</li>
+<li><b>das Transiente/Reaktive</b> (hebt sich auf) &harr; <b>der flache Pullback-Anteil</b> (g&approx;&delta;, &Gamma;=0).</li>
+<li><b>die Invariante/die echte Struktur</b> &harr; <b>die echte Kr&uuml;mmung &Gamma;&ne;0</b> / das Loch (kein flacher Pullback).</li>
+<li><b>&bdquo;eine Reaktion auf eine Reaktion&ldquo;</b> &harr; <b>&part;&part; = 0 / d&sup2; = 0</b> (reine Reaktivit&auml;t hat keinen Inhalt).</li>
+<li><b>&bdquo;das Wann/die Pause&ldquo;</b> &harr; <b>der Punkt maximaler |&part;g| (Steigung)</b> / wo die Invariante konzentriert ist.</li>
+<li><b>&bdquo;Komfort mit Unsicherheit&ldquo;</b> &harr; <b>das nicht-triviale Invariante</b>, das sich nicht zu einem flachen Pullback abflachen l&auml;sst.</li>
+<li><b>&bdquo;wie viele Dinge lohnen sich zum Handeln&ldquo;</b> &harr; <b>die Betti-artige Z&auml;hlung</b> = Anzahl der Peaks/Inseln mit Invariante-Dichte &uuml;ber Schwellwert.</li>
+</ul>
+
+<div class="aha">
+<b>One-line carry-forward (f&uuml;r die n&auml;chste Runde):</b>
+Behandle jede Struktur als Produkt eines einzigen Operators (&part; = d; exakte Seite = Transport/Verklebung,
+verlustreiche Seite = Fluss). F&uuml;hre ihn aus: der <b>Rand</b> hebt sich auf (&part;&part; = 0), das
+<b>Ererbte</b> ist Pseudo-Gegebenes (Pullback), und die <b>Invariante</b> &mdash; eine globale Z&auml;hlung
+(&chi;/Betti), die das Integral einer lokalen Dichte (&Gamma;/Kr&uuml;mmung) ist &mdash; ist das <b>einzig
+&Uuml;brigbleibende</b> auf beiden Achsen. <b>Handle</b> (das &bdquo;Wann&ldquo;) genau dort, wo die Dichte
+peakte. Auf der <b>exakten</b> Achse schlie&szlig;t sich das System (Identit&auml;t der &Auml;quivalenten);
+auf der <b>verlustreichen</b> stirbt das Detail (Varianz &rarr; 0), aber die Z&auml;hlung &uuml;berlebt.
+</div>
+</section>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Operator, die zwei Gesichter der Invariante und das &bdquo;Wann&ldquo;</h2>
+<p class="hint">Eine Graphfl&auml;che <i>z = h(x,y)</i> in flachem &Ropf;&sup3;. Das <b>Farbfeld</b> ist die
+<b>lokale Dichte der Invariante</b> |&Gamma;| (B&rsquo;s Kr&uuml;mmung = A&rsquo;s Kr&uuml;mmung). Der
+<b>ziehbarer Punkt</b> tr&auml;gt die <b>Ellipse</b> (Einheitskreis der induzierten Metrik g = &iota;*g<sub>E</sub>
+= das <em>Ererbte/Pullback</em>) und den <b>Gradienten</b> (Steigung &mdash; das Signal f&uuml;r das
+&bdquo;Wann&ldquo;). Die <b>blauen Rahmen</b> markieren Zellen &uuml;ber dem Schwellwert: zusammengez&auml;hlt
+als <b>Peaks/Inseln</b> ist das die <b>globale Z&auml;hlung</b> (Betti-artig, A). Der Button <b>&#9654;
+Fluss</b> (A&rsquo;s verlustreiche Zeitachse) gl&auml;ttert die Dichte diskret: die <b>Varianz</b> (das lokale
+Detail) klingt aus &mdash; aber das <b>Integral</b> (&prop; &chi;, die topologische Invariante) und die
+<b>Peak-Z&auml;hlung</b> bleiben erhalten. Das ist genau die Fusion: <em>lokal weiche Dichte</em> (B)
+&times; <em>globale starr Z&auml;hlung</em> (A), verbunden durch das erhaltene Integral; das &bdquo;Wann&ldquo;
+steht dort, wo die Dichte peakte (&#9733;).</p>
+
+<canvas id="viz" height="460"></canvas>
+<div class="viz-controls">
+  <label>Fl&auml;che
+    <select id="surfSel">
+      <option value="wavy" selected>wellenf&ouml;rmig (cos&middot;sin)</option>
+      <option value="bump">Gau&szlig;-Wulst</option>
+      <option value="flat">flach</option>
+    </select>
+  </label>
+  <label>Amplitude <span class="hint" id="ampVal">0.90</span>
+    <input type="range" id="ampSlider" min="0" max="1.5" step="0.05" value="0.9">
+  </label>
+  <label>Schwellwert (Z&auml;hlung) <span class="hint" id="thrVal">30 %</span>
+    <input type="range" id="thrSlider" min="0" max="0.9" step="0.05" value="0.3">
+  </label>
+  <button class="action" id="flowBtn" type="button">&#9654; Fluss (verlustreich)</button>
+  <button class="action" id="resetBtn" type="button">&#8634; Reset</button>
+</div>
+<div class="readout">
+  <div class="ro"><span class="k">Invariante &middot; topologisch (Integral, &prop; &chi; &mdash; erhalten)</span><span class="v" id="rInt">&ndash;</span></div>
+  <div class="ro"><span class="k">Invariante &middot; globale Z&auml;hlung (Peaks &uuml;ber Schwelle, Betti)</span><span class="v" id="rCount">&ndash;</span></div>
+  <div class="ro"><span class="k">Invariante &middot; lokale Dichte |&Gamma;| am Punkt</span><span class="v" id="rLocal">&ndash;</span></div>
+  <div class="ro"><span class="k">Varianz (Detail, &rarr;0 unter Fluss)</span><span class="v" id="rVar">&ndash;</span></div>
+  <div class="ro"><span class="k">Gradient &nabla;h am Punkt (das &bdquo;Wann&ldquo;-Signal)</span><span class="v" id="rSlope">&ndash;</span></div>
+  <div class="ro"><span class="k">Metrik g&#8321;&#8321;, g&#8322;&#8322;, g&#8321;&#8322; (Pullback/Ererbes)</span><span class="v" id="rG">&ndash;</span></div>
+</div>
+<div class="legend">
+  <span><i class="dot" style="background:var(--inv-lo)"></i> |&Gamma;| niedrig (flach = reiner Pullback, &Gamma;&approx;0)</span>
+  <span><i class="dot" style="background:var(--inv-hi)"></i> |&Gamma;| hoch (Invariante konzentriert)</span>
+  <span><i class="dot" style="background:var(--accent)"></i> Zellen &uuml;ber Schwellwert &rarr; Peak-Z&auml;hlung (Betti, A)</span>
+  <span><i class="dot" style="background:var(--ellipse)"></i> Ellipse = Einheitskreis der Metrik (Ererbes/Pullback)</span>
+  <span><i class="dot" style="background:var(--grad)"></i> Gradient &nabla;h (das &bdquo;Wann&ldquo;)</span>
+  <span><i class="dot" style="background:var(--warn)"></i> &#9733; Punkt maximaler Dichte (das &bdquo;Wann&ldquo;)</span>
+</div>
+<p class="viz-cap">Farbfeld = lokale Dichte der Invariante (B&rsquo;s &Gamma; = A&rsquo;s Kr&uuml;mmung). Rahmen/Peaks = globale
+Z&auml;hlung (Betti-artig, A). Integral = die topologische Invariante, die den verlustreichen Fluss &uuml;bersteht
+(&int; K dA = 2&pi;&chi;, A). Gradient/&#9733; = dort verbringe die Pause (B&rsquo;s &bdquo;Wann&ldquo;). Alle Daten inline,
+themebewusst, ohne Netzwerk.</p>
+</section>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov"><a href="../n2-009.html">A &middot; n2-009.html &mdash; &bdquo;Lokales bestimmt Globales:
+Univalence, Gluing und die &uuml;berlebende Invariante&ldquo;</a>
+<br><span class="hint">Runde 2: HoTT (Typen als R&auml;ume, Kreis S&sup1;, &pi;&sub1;&cong;&Zopf;, Univalence) trifft
+Ricci-Fluss &times; Garben/Topoi. Zweiachse Maschine &mdash; exakt/umkehrbar im Raum (Transport/Verklebung,
+Identit&auml;ts-Limit via Univalence) vs. verlustreich/projektisch in der Zeit (Fluss); die &uuml;berlebende
+topologisch-homotopische Invariante (&pi;&sub1;, &chi;, &int; K dA = 2&pi;&chi;).</span></div>
+<div class="prov"><a href="../n2-006.html">B &middot; n2-006.html &mdash; &bdquo;Was vom Operator &uuml;brig bleibt&ldquo;</a>
+<br><span class="hint">Runde 2: Rand-/Ableitungsoperator &part; = d (Betti-Zahlen, die Pause/&bdquo;Wann&ldquo;) trifft
+Pullback &times; Christoffel. Der eine Operator sortiert in Rand / Ererbes (Pullback) / Invariante (Loch, Kr&uuml;mmung
+&Gamma;); die Invariante als globale Z&auml;hlung (Betti) und lokale Dichte (&Gamma;); das &bdquo;Wann&ldquo;
+lokalisiert an maximaler Steigung.</span></div>
+<p class="foot">Fusion 016 &middot; Runde 3 (non-AI-Track) &middot; autonom, keine Netzwerte &mdash; alle Daten inline.
+Die Visualisierung ist ein didaktisches Modell: Der Fluss ist ein diskreter Laplace-Schritt (periodische R&auml;nder,
+daher exakt Integral-erhaltend), der die Dichte-Varianz bei konstanter Summe reduziert &mdash; ein Standbild-Modell
+f&uuml;r A&rsquo;s verlustreiche Zeitachse, w&auml;hrend die topologische Invariante (Integral &prop; &chi;) und die
+Peak-Z&auml;hlung erhalten bleiben.</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('viz');
+  if(!canvas){ return; }
+  var ctx=canvas.getContext('2d');
+  var surfSel=document.getElementById('surfSel');
+  var ampSlider=document.getElementById('ampSlider');
+  var ampVal=document.getElementById('ampVal');
+  var thrSlider=document.getElementById('thrSlider');
+  var thrVal=document.getElementById('thrVal');
+  var flowBtn=document.getElementById('flowBtn');
+  var resetBtn=document.getElementById('resetBtn');
+
+  var cssW=0, cssH=460;
+  var point={x:0.6,y:0.3};
+  var dragging=false, flowing=false;
+  var XMIN=-2, XMAX=2, YMIN=-1.5, YMAX=1.5;
+  var GX=48, GY=32;
+  var field=null, baseField=null, maxNorm=0, baseIntegral=0;
+
+  function fit(){
+    var d=window.devicePixelRatio||1;
+    cssW=canvas.clientWidth||720; cssH=460;
+    canvas.width=Math.round(cssW*d); canvas.height=Math.round(cssH*d);
+    ctx.setTransform(d,0,0,d,0,0);
+  }
+  function cssVar(n){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||'#888';}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function curAmp(){var a=parseFloat(ampSlider.value);return isNaN(a)?0:a;}
+  function curThr(){var t=parseFloat(thrSlider.value);return isNaN(t)?0:t;}
+
+  function hAt(x,y){
+    var A=curAmp(), s=surfSel.value;
+    if(s==='flat') return 0;
+    if(s==='wavy') return A*Math.cos(x*1.3)*Math.sin(y*1.3);
+    var w=1.2; return A*Math.exp(-(x*x+y*y)/(w*w));
+  }
+  function metricAt(x,y){
+    var e=1e-3;
+    var hx=(hAt(x+e,y)-hAt(x-e,y))/(2*e);
+    var hy=(hAt(x,y+e)-hAt(x,y-e))/(2*e);
+    return {g11:1+hx*hx, g12:hx*hy, g22:1+hy*hy, hx:hx, hy:hy};
+  }
+  function make3(){return [[[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]]];}
+  function christoffelAt(x,y){
+    var e=1e-2;
+    var c=metricAt(x,y);
+    var gR=metricAt(x+e,y), gL=metricAt(x-e,y);
+    var hU=metricAt(x,y+e), hD=metricAt(x,y-e);
+    var dg=make3();
+    dg[1][1][1]=(gR.g11-gL.g11)/(2*e); dg[1][1][2]=(hU.g11-hD.g11)/(2*e);
+    dg[1][2][1]=(gR.g12-gL.g12)/(2*e); dg[1][2][2]=(hU.g12-hD.g12)/(2*e);
+    dg[2][2][1]=(gR.g22-gL.g22)/(2*e); dg[2][2][2]=(hU.g22-hD.g22)/(2*e);
+    dg[2][1][1]=dg[1][2][1]; dg[2][1][2]=dg[1][2][2];
+    var det=c.g11*c.g22-c.g12*c.g12;
+    if(Math.abs(det)<1e-9) return null;
+    var inv=make3();
+    inv[1][1]=c.g22/det; inv[1][2]=-c.g12/det;
+    inv[2][1]=-c.g12/det; inv[2][2]=c.g11/det;
+    var C=make3();
+    for(var k=1;k<=2;k++)for(var i=1;i<=2;i++)for(var j=1;j<=2;j++){
+      var s=0;
+      for(var l=1;l<=2;l++){ s+=inv[k][l]*(dg[j][l][i]+dg[i][l][j]-dg[i][j][l]); }
+      C[k][i][j]=0.5*s;
+    }
+    return C;
+  }
+  function normGamma(x,y){
+    var C=christoffelAt(x,y);
+    if(!C) return 0;
+    var s=0;
+    for(var k=1;k<=2;k++)for(var i=1;i<=2;i++)for(var j=1;j<=2;j++){ s+=C[k][i][j]*C[k][i][j]; }
+    return Math.sqrt(s);
+  }
+
+  function recomputeDensity(){
+    baseField=[]; field=[]; maxNorm=0;
+    for(var gy=0; gy<GY; gy++){
+      var row=[], rowB=[];
+      var yy=YMIN+(gy+0.5)/GY*(YMAX-YMIN);
+      for(var gx=0; gx<GX; gx++){
+        var xx=XMIN+(gx+0.5)/GX*(XMAX-XMIN);
+        var n=normGamma(xx,yy);
+        row.push(n); rowB.push(n);
+        if(n>maxNorm) maxNorm=n;
+      }
+      field.push(row); baseField.push(rowB);
+    }
+    baseIntegral=integralOf(baseField);
+  }
+
+  function integralOf(f){
+    var s=0;
+    for(var j=0;j<GY;j++)for(var i=0;i<GX;i++){ s+=f[j][i]; }
+    return s;
+  }
+  function integral(){ return integralOf(field); }
+
+  function variance(){
+    var m=0,i,j;
+    for(j=0;j<GY;j++)for(i=0;i<GX;i++){ m+=field[j][i]; }
+    m/=(GX*GY);
+    var v=0;
+    for(j=0;j<GY;j++)for(i=0;i<GX;i++){ var d=field[j][i]-m; v+=d*d; }
+    v/=(GX*GY);
+    return v;
+  }
+
+  function argmax(){
+    var bi=0,bj=0,bv=-1;
+    for(var j=0;j<GY;j++)for(var i=0;i<GX;i++){
+      if(field[j][i]>bv){ bv=field[j][i]; bi=i; bj=j; }
+    }
+    return {i:bi,j:bj};
+  }
+
+  function flowStep(dt){
+    var nf=[];
+    for(var j=0;j<GY;j++){
+      var row=[];
+      var jm=(j-1+GY)%GY, jp=(j+1)%GY;
+      for(var i=0;i<GX;i++){
+        var im=(i-1+GX)%GX, ip=(i+1)%GX;
+        var avg=(field[jm][i]+field[jp][i]+field[j][im]+field[j][ip])/4;
+        row.push(field[j][i] + dt*(avg-field[j][i]));
+      }
+      nf.push(row);
+    }
+    field=nf;
+  }
+
+  function countPeaks(thr){
+    var seen=[];
+    for(var j=0;j<GY;j++){ seen.push([]); for(var i=0;i<GX;i++) seen[j].push(false); }
+    function ok(i,j){ return maxNorm>0 && field[j][i]/maxNorm>=thr; }
+    var cnt=0;
+    for(var j0=0;j0<GY;j0++)for(var i0=0;i0<GX;i0++){
+      if(ok(i0,j0) && !seen[j0][i0]){
+        cnt++;
+        var st=[[i0,j0]];
+        seen[j0][i0]=true;
+        while(st.length){
+          var c=st.pop(); var ci=c[0], cj=c[1];
+          for(var dj=-1;dj<=1;dj++)for(var di=-1;di<=1;di++){
+            if(!di&&!dj) continue;
+            var ni=ci+di, nj=cj+dj;
+            if(ni<0||ni>=GX||nj<0||nj>=GY) continue;
+            if(!seen[nj][ni] && ok(ni,nj)){ seen[nj][ni]=true; st.push([ni,nj]); }
+          }
+        }
+      }
+    }
+    return cnt;
+  }
+
+  function sx(x){return (x-XMIN)/(XMAX-XMIN)*cssW;}
+  function sy(y){return (YMAX-y)/(YMAX-YMIN)*cssH;}
+  function invX(px){return XMIN+px/cssW*(XMAX-XMIN);}
+  function invY(py){return YMAX-py/cssH*(YMAX-YMIN);}
+  function scalePX(){return cssW/(XMAX-XMIN);}
+
+  function arrow(x1,y1,x2,y2,color,lw){
+    var a=Math.atan2(y2-y1,x2-x1), hl=10;
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hl*Math.cos(a-0.4), y2-hl*Math.sin(a-0.4));
+    ctx.lineTo(x2-hl*Math.cos(a+0.4), y2-hl*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+  function star(x,y,r,color){
+    ctx.fillStyle=color; ctx.strokeStyle=color; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(var k=0;k<10;k++){
+      var ang=-Math.PI/2 + k*Math.PI/5;
+      var rr=(k%2===0)?r:r*0.45;
+      var px=x+rr*Math.cos(ang), py=y+rr*Math.sin(ang);
+      if(k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+  function hexToRgb(str){
+    str=(str||'').trim();
+    if(str.charAt(0)==='#'){
+      var h=str.slice(1);
+      if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=str.match(/\d+/g);
+    return m?[+m[0],+m[1],+m[2]]:[0,0,0];
+  }
+
+  function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+
+  function updateReadouts(){
+    var thr=curThr();
+    var localN=normGamma(point.x,point.y);
+    var local01=maxNorm>0? localN/maxNorm:0;
+    var cnt=countPeaks(thr);
+    var integ=baseIntegral>0? integral()/baseIntegral:0;
+    var v=variance();
+    var m=metricAt(point.x,point.y);
+    set('rInt', integ.toFixed(3)+'  (∝ χ, erhalten)');
+    set('rCount', cnt+'  Peaks');
+    set('rLocal', local01.toFixed(2)+'  (|Γ|='+localN.toFixed(3)+')');
+    set('rVar', v.toFixed(4)+'  →0');
+    set('rSlope', m.hx.toFixed(3)+' , '+m.hy.toFixed(3));
+    set('rG', m.g11.toFixed(3)+' , '+m.g22.toFixed(3)+' , '+m.g12.toFixed(3));
+  }
+
+  function draw(){
+    if(!field) recomputeDensity();
+    var lo=hexToRgb(cssVar('--inv-lo'));
+    var hi=hexToRgb(cssVar('--inv-hi'));
+    var grid=cssVar('--grid'), ell=cssVar('--ellipse'), grad=cssVar('--grad');
+    var base=cssVar('--base'), txt=cssVar('--txt'), hi2=cssVar('--accent'), warn=cssVar('--warn');
+    var thr=curThr();
+    ctx.clearRect(0,0,cssW,cssH);
+
+    var cw=cssW/GX, ch=cssH/GY;
+    for(var gy=0; gy<GY; gy++){
+      for(var gx=0; gx<GX; gx++){
+        var n=maxNorm>0? field[gy][gx]/maxNorm:0;
+        var r=Math.round(lo[0]+(hi[0]-lo[0])*n);
+        var g2=Math.round(lo[1]+(hi[1]-lo[1])*n);
+        var b=Math.round(lo[2]+(hi[2]-lo[2])*n);
+        ctx.fillStyle='rgb('+r+','+g2+','+b+')';
+        ctx.fillRect(gx*cw, gy*ch, cw+0.6, ch+0.6);
+      }
+    }
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var gxx=XMIN; gxx<=XMAX+1e-9; gxx+=1){ ctx.beginPath(); ctx.moveTo(sx(gxx),0); ctx.lineTo(sx(gxx),cssH); ctx.stroke(); }
+    for(var gyy=-1.5; gyy<=YMAX+1e-9; gyy+=0.5){ ctx.beginPath(); ctx.moveTo(0,sy(gyy)); ctx.lineTo(cssW,sy(gyy)); ctx.stroke(); }
+
+    ctx.strokeStyle=hi2; ctx.lineWidth=1.5; ctx.globalAlpha=0.85;
+    for(var hgy=0; hgy<GY; hgy++){
+      for(var hgx=0; hgx<GX; hgx++){
+        var n2=maxNorm>0? field[hgy][hgx]/maxNorm:0;
+        if(n2>=thr){ ctx.strokeRect(hgx*cw+1, hgy*ch+1, Math.max(2,cw-2), Math.max(2,ch-2)); }
+      }
+    }
+    ctx.globalAlpha=1;
+
+    var pk=argmax();
+    var pkx=sx(XMIN+(pk.i+0.5)/GX*(XMAX-XMIN));
+    var pky=sy(YMAX-(pk.j+0.5)/GY*(YMAX-YMIN));
+    star(pkx,pky,10,warn);
+
+    var p=point, pxx=sx(p.x), pyy=sy(p.y);
+    var m=metricAt(p.x,p.y);
+
+    ctx.strokeStyle=ell; ctx.lineWidth=2; ctx.beginPath();
+    var s0=null;
+    for(var a=0;a<=Math.PI*2+0.02;a+=0.05){
+      var c=Math.cos(a), s=Math.sin(a);
+      var rad=1/Math.sqrt(Math.max(1e-9, m.g11*c*c + 2*m.g12*c*s + m.g22*s*s));
+      var ex=pxx+scalePX()*rad*c, ey=pyy-scalePX()*rad*s;
+      if(s0===null){ctx.moveTo(ex,ey);s0=1;} else ctx.lineTo(ex,ey);
+    }
+    ctx.closePath(); ctx.stroke();
+
+    var bl=scalePX()*0.55;
+    arrow(pxx,pyy,pxx+bl,pyy,base,2);
+    arrow(pxx,pyy,pxx,pyy-bl,base,2);
+
+    var gl=Math.hypot(m.hx,m.hy);
+    if(gl>1e-6){
+      var L=48;
+      arrow(pxx,pyy,pxx+scalePX()*m.hx/gl*L,pyy-scalePX()*m.hy/gl*L,grad,3);
+    }
+
+    ctx.beginPath(); ctx.arc(pxx,pyy,5,0,Math.PI*2); ctx.fillStyle=txt; ctx.fill();
+
+    updateReadouts();
+  }
+
+  function move(e){
+    var r=canvas.getBoundingClientRect();
+    if(r.width<=0||r.height<=0) return;
+    var px=(e.clientX-r.left)*(cssW/r.width);
+    var py=(e.clientY-r.top)*(cssH/r.height);
+    point.x=clamp(invX(px),XMIN,XMAX);
+    point.y=clamp(invY(py),YMIN,YMAX);
+    draw();
+  }
+  canvas.addEventListener('pointerdown',function(e){dragging=true;try{canvas.setPointerCapture(e.pointerId);}catch(_){}move(e);});
+  canvas.addEventListener('pointermove',function(e){if(dragging)move(e);});
+  canvas.addEventListener('pointerup',function(){dragging=false;});
+  canvas.addEventListener('pointercancel',function(){dragging=false;});
+
+  function recompute(){ recomputeDensity(); draw(); }
+  if(ampSlider) ampSlider.addEventListener('input',function(){ampVal.textContent=curAmp().toFixed(2);recompute();});
+  if(surfSel) surfSel.addEventListener('change',function(){recompute();});
+  if(thrSlider) thrSlider.addEventListener('input',function(){thrVal.textContent=(curThr()*100).toFixed(0)+' %';draw();});
+
+  function frame(){
+    if(flowing){ flowStep(0.15); flowStep(0.15); flowStep(0.15); draw(); }
+    requestAnimationFrame(frame);
+  }
+  if(flowBtn) flowBtn.addEventListener('click',function(){
+    flowing=!flowing;
+    flowBtn.classList.toggle('active',flowing);
+    flowBtn.textContent = flowing ? '⏸ Fluss läuft' : '▶ Fluss (verlustreich)';
+  });
+  if(resetBtn) resetBtn.addEventListener('click',function(){
+    flowing=false;
+    if(flowBtn){ flowBtn.classList.remove('active'); flowBtn.textContent='▶ Fluss (verlustreich)'; }
+    recompute();
+  });
+
+  var tb=document.getElementById('themeBtn');
+  if(tb) tb.addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+  var mo=new MutationObserver(function(){draw();});
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',function(){fit();draw();});
+
+  if(ampVal) ampVal.textContent=curAmp().toFixed(2);
+  if(thrVal) thrVal.textContent=(curThr()*100).toFixed(0)+' %';
+  fit(); recompute();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

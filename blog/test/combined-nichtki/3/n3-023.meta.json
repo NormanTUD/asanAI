@@ -1,0 +1,16 @@
+{
+  "no": "023",
+  "a": "n2-017.html",
+  "b": "n2-036.html",
+  "a_title": "Der unvollendete Pullback: Invarianz im Inneren, Generierung im Äußeren",
+  "b_title": "Der Fluss des Verstehens — Zyklus und Kraftfeld vereint",
+  "combined_theme": "kern-und-generierungsgrenze",
+  "one_line": "Verstehen (B) und Rekonstruktion (A) sind derselbe Transport: ein stabiler Kern, in dem Struktur erhalten wird (Invarianz/Keim, r→1), und eine Generierungsgrenze, jenseits derer die neue Struktur von der Komplexität eines Generators bestimmt wird (flach→Brei/Flut, strukturiert→Formkonstanten/growing from the ground).",
+  "contradictions": [
+    "Topologie der Grenze: A (Pullback) liest die Frontier E=G als statische Linie — jeder Punkt wird einmal klassifiziert (drinnen→erhalten, außen→generiert), zeitlos/einmalig; B (Fluss) liest den Kern als dynamischen Attraktor, den der Fluss wiederholt überschreitet (Kompression→Ruhe→Regeneration), ein wiederkehrender Zyklus/Spirale.",
+    "Die generierende Instanz: A generiert über eine Prior-Verteilung G (neue Struktur = Komplexität von G, flach→Brei, symmetrisch→Formkonstanten durch Auswahl aus vielen Möglichkeiten); B generiert über den gespeicherten Tangentialvektor (Zeigarnik-Keim, eine einzige gemerkte Richtung, Ausstoß wenn [P,U]≠0). Verteilung (A) vs. einzelner Vektor (B).",
+    "Fehlzustand des Generationsregimes: A hat keinen — Generierung ist normales, stabiles Regime, flacher Prior→Brei ist ein neutraler niedrig-Info-Zustand, keine Zeit, keine Erschöpfung; B hat einen — die Flut (|P|→0 ⇒ r→0, Dissipation in Rauschen, 'Why is it still raining?') als Fehlzustand mit Pfeil der Zeit und Erschöpfung."
+  ],
+  "resolution": "Die Grenze ist dieselbe Menge von Zuständen: A's Frontier E=G ist B's Rand des Attraktor-Beckens — A liest sie statisch (Partition, Snapshot), B dynamisch (Trajektorie, Film); A's 'einmaliger Grenzübertritt' ist eine Querschnitts-Einfrierung von B's 'unendlichem Zyklus'. Der Prior (A) ist die Wahrscheinlichkeitswolke, sein charakteristisches Maximum (seine charakteristische Richtung) ist B's gespeicherter Tangentialvektor (Zeigarnik-Keim) — flacher Prior (keine Richtung) = B ohne Keim, strukturierter Prior (Formkonstante) = B's scharfer Ausstoß; 'neue Info = Prior-Komplexität' (A) und 'Regeneration entlang des Vektors' (B) fallen zusammen. Die Flut (B) ist der flache Prior / erschöpfte Antrieb (A) — ein kontinuierliches Spektrum der Generationsqualität (Flut→Brei→strukturierte Regeneration), parametrisiert durch Prior-Komplexität × Antrieb |P|.",
+  "viz": "Canvas: ein Partikel (der Fluss P) spiralt in einen pulsierenden Kern (VOIDSTAR, Erhaltungs-Kern) hinein (Kompression, r steigt), ruht (speichert den Keim) und wird über eine gestrichelte Generierungsgrenze (A's Frontier) in eine generierende Zone hinausgeschleudert (Regeneration = growing from the ground); deren Textur wird von der Prior-Komplexität gesteuert (flach→Brei, strukturiert→Turing-Formkonstanten); Regler für Prior-Komplexität, Antrieb P, Regeneration [P,U] und Flut/Erschöpfung; Readouts für r (Verstehensgrad), neue Info und Regime; themenreaktiv, rein inline, keine Netzdaten."
+}

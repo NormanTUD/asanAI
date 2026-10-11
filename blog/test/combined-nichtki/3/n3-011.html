@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closure trifft Gluing &mdash; das Ganze als Fixpunkt (Runde 3)</title>
+<style>
+  :root {
+    --bg:#faf8f1; --fg:#1e2530; --muted:#5b6575; --panel:#ffffff; --border:#d8d3c4;
+    --accent:#0d9488; --accent-soft:rgba(13,148,136,.12);
+    --accent2:#2f6fd0; --accent3:#c0457f;
+    --glue:#2f8f5b; --tear:#c0392b; --global:#b07d18;
+    --code:#eef1f6; --code-fg:#1e2530;
+    --shadow:0 1px 2px rgba(20,20,20,.06),0 6px 24px rgba(20,20,20,.06);
+    --viz-canvas-bg:#f4f6fa; --viz-text:#1e2530;
+  }
+  html.dark {
+    --bg:#0b1220; --fg:#e6ecf5; --muted:#93a0b6; --panel:#111a2e; --border:#233450;
+    --accent:#64ffda; --accent-soft:rgba(100,255,218,.12);
+    --accent2:#7aa2ff; --accent3:#ff8fd0;
+    --glue:#6fe39a; --tear:#ff8577; --global:#ffcc6a;
+    --code:#0c1526; --code-fg:#c9d4e6;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);
+    --viz-canvas-bg:#0a1120; --viz-text:#e6ecf5;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Lingua Franca","Segoe UI",Georgia,system-ui,sans-serif;
+    line-height:1.65; font-size:16px; -webkit-font-smoothing:antialiased; }
+  article { max-width:820px; margin:0 auto; padding:40px 24px 90px; }
+  header { border-bottom:2px solid var(--border); padding-bottom:18px; margin-bottom:8px; position:relative; }
+  h1 { font-size:2.05rem; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em; color:var(--fg); }
+  .subtitle { color:var(--muted); font-size:1rem; margin:0; font-style:italic; }
+  .subtitle code { font-style:normal; }
+  .lede { color:var(--muted); font-size:1em; margin:12px 0 0; }
+  .theme-toggle { position:absolute; top:0; right:0; background:var(--panel); color:var(--fg);
+    border:1px solid var(--border); border-radius:20px; padding:6px 14px; cursor:pointer; font-size:.82em; }
+  section { margin-top:36px; }
+  section > h2 { font-size:1.4rem; margin:0 0 14px; color:var(--fg);
+    border-bottom:2px solid var(--accent-soft); padding-bottom:6px; }
+  section#widersprueche h2 { color:var(--accent2); }
+  section#aufloesung h2 { color:var(--accent3); }
+  h3 { font-size:1.06em; color:var(--accent); margin:18px 0 8px; }
+  p { margin:0 0 13px; }
+  em { color:var(--accent); font-style:italic; }
+  strong { color:var(--fg); }
+  ul, ol { margin:0 0 13px; padding-left:22px; }
+  li { margin-bottom:7px; }
+  code, .mono { font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+    background:var(--code); color:var(--code-fg); padding:1px 6px; border-radius:5px; font-size:.88em; }
+  pre { background:var(--code); color:var(--code-fg); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; overflow-x:auto; font-size:.84rem; line-height:1.55; }
+  pre code { background:none; padding:0; color:inherit; }
+  .mathblock { display:block; text-align:center; font-size:1.02em; background:var(--code);
+    border-left:3px solid var(--accent); padding:10px 14px; border-radius:0 8px 8px 0; margin:12px 0; overflow-x:auto;
+    font-family:"SFMono-Regular",Consolas,monospace; color:var(--code-fg); }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:16px 18px; margin:14px 0; box-shadow:var(--shadow); }
+  .card h3 { margin:0 0 8px; }
+  .tagA { color:var(--accent2); font-weight:700; }
+  .tagB { color:var(--accent3); font-weight:700; }
+  table.map { width:100%; border-collapse:collapse; font-size:.85rem; margin:8px 0 16px; }
+  table.map th, table.map td { border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top; }
+  table.map th { background:var(--panel); color:var(--fg); }
+  table.map td b { color:var(--accent); }
+  .kv { color:var(--accent2); font-weight:700; }
+  .note { border-left:3px solid var(--accent); padding:8px 0 8px 14px; margin:14px 0; color:var(--muted); }
+  .note b { color:var(--fg); }
+  #vizwrap { position:relative; border:1px solid var(--border); border-radius:14px;
+    overflow:hidden; background:var(--panel); box-shadow:var(--shadow); }
+  #viz { display:block; width:100%; height:460px; touch-action:none; cursor:pointer; }
+  .legend { display:flex; flex-wrap:wrap; gap:10px 16px; padding:10px 14px 2px; font-size:.76rem; color:var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .legend .sw { width:12px; height:12px; border-radius:3px; display:inline-block; }
+  .viz-controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    padding:12px 14px; border-top:1px solid var(--border); }
+  .viz-controls .hint { margin-left:auto; font-size:.74rem; color:var(--muted); }
+  button.ctl { background:var(--panel); color:var(--fg); border:1px solid var(--border)
+    ; border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.82rem; }
+  button.ctl:hover { border-color:var(--accent); color:var(--accent); }
+  button.ctl.on { border-color:var(--accent); color:var(--accent); }
+  #readout { margin:0 0 12px; color:var(--muted); font-size:.9rem; min-height:1.2em; }
+  #readout b { color:var(--fg); }
+  .viz-note { color:var(--muted); font-size:.85em; margin-top:12px; }
+  .proven a { color:var(--accent); text-decoration:none; font-weight:600; }
+  .proven a:hover { text-decoration:underline; }
+  footer { margin-top:40px; padding-top:18px; border-top:1px solid var(--border); color:var(--muted); font-size:.86rem; }
+</style>
+</head>
+<body>
+<article>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle" type="button">&#9790; / &#9788;</button>
+    <h1>Closure trifft Gluing &mdash; das Ganze als Fixpunkt</h1>
+    <p class="subtitle">Fusion aus: <code>n2-042.html</code> &#10005; <code>n2-037.html</code>&nbsp; (Runde 3)</p>
+    <p class="lede">Zwei Runde-2-Fusionspapiere, eine gemeinsame Wette: <strong>Das Ganze / die &bdquo;Struktur, die bleibt&ldquo; ist der Fixpunkt eines einzigen Operators &mdash; der <em>Komposition</em> (A: closure unter Komposition) = des <em>Klebens</em> (B: Gluing &#252;ber &#xdcberlappungen).</strong> <em>Treue</em> (A: strukturerhaltender Funktor) und <em>Koh&auml;renz</em> (B: keine &#xdcberlappung rei&szlig;t) sind dasselbe <code>&exist;!</code> &mdash; aus konsistenten lokalen Daten entsteht <em>genau ein</em> globales Objekt, und genau diese Eindeutigkeit ist der Fixpunkt, den der Funktor tr&auml;gt.</p>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Quellen sind selbst schon Fusionspapiere &mdash; aber auf der Ebene ihrer <em>Thesen</em> vollziehen sie dieselbe Geste. <span class="tagA">A</span> (n2-042, &bdquo;Closure &amp; Invarianz&ldquo;) sagt: Das, was zwischen Dom&auml;nen wandert, ist nicht der Inhalt, sondern die <strong>Struktur</strong> &mdash; und Struktur ist beides zugleich: auf der Generierungsseite die <em>closure</em> weniger lokaler Erzeuger unter Komposition, auf der Invarianzseite deren <em>Fixpunkt</em>, die universelle Eigenschaft (Produkt/Koprodukt, Limit/Kolimit). Ein <em>treues</em> &Uuml;bertragen ist genau ein <strong>strukturerhaltender Funktor</strong>: bijektiv zwischen den Ebenen, quotientiert innerhalb einer. <span class="tagB">B</span> (n2-037, &bdquo;Das Ganze aus dem Lokalen&ldquo;) sagt: Ein <strong>Ganzes</strong> ist keine Eigenschaft irgendeines Teils, sondern das, was entsteht, wenn <em>kompatible lokale St&#252;cke</em> darauf zertifiziert werden, auf <em>allen</em> &#xdcberlappungen &#252;bereinzustimmen &mdash; das Gluing-/Konsistenz-Theorem liefert genau <em>eines</em> globalen Objekts, und &bdquo;koh&auml;rent&ldquo; hei&szlig;t &bdquo;keine &#xdcberlappung rei&szlig;t&ldquo;.</p>
+    <p><strong>Die fusionierte Position (ein Satz):</strong> <em>Treue</em> (A) und <em>Koh&auml;renz</em> (B) sind <strong>ein einziger Operator</strong>. Die &bdquo;Closure unter Komposition&ldquo; (A) und das &bdquo;Kleben &#252;ber &#xdcberlappungen&ldquo; (B) sind <strong>dieselbe Operation</strong>; die &bdquo;universelle Eigenschaft / Fixpunkt&ldquo; (A) und das &bdquo;Gluing-Theorem / eindeutige globale Sektion&ldquo; (B) sind <strong>dasselbe Zertifikat</strong>; und <code>&exist;!</code> ist in beiden <strong>dieselbe Bedingung</strong> &mdash; aus konsistenten lokalen Daten entsteht <em>genau ein</em> globales Objekt. Und genau diese Eindeutigkeit <em>ist</em> das, was A &bdquo;Invarianz / Fixpunkt&ldquo; und B &bdquo;Koh&auml;renz / Treue&ldquo; nennen: <strong>das Ganze ist der Fixpunkt des Klebens.</strong> Es entsteht durch die Komposition lokaler St&#252;cke (closure, A) und wird dadurch eindeutig (<code>&exist;!</code>), wodurch es zum Fixpunkt wird, den der strukturerhaltende Funktor (A) &mdash; derselbe wie die Klebe-Abbildung (B) &mdash; tr&auml;gt.</p>
+    <p>Und beide tragen dieselben drei Dialektiken auf der These-Ebene &mdash; <em>Form entdeckt vs. Inhalt erzeugt</em>, <em>Zertifikat substantiv vs. formal</em>, <em>lokaler Bogen (Faser) vs. globales Cover (Basis)</em>. A's drei interne Spannungen (Invarianz vs. Generierung, <code>&exist;!</code> vs. Quotient, instrumentell vs. ontisch) sind B's drei Dialektiken (entdeckt vs. erdacht, substantiv vs. formal, geschlossener Bogen vs. offenes Cover) <em>neu benannt</em>. Die Fusion ist daher nicht eine Addition zweier Inhalte, sondern die Feststellung, dass <strong>zwei scheinbar verschiedene Sprachen (Kategorientheorie/Funktoren vs. Sheaf-/Gluing-Theorie) denselben Fixpunkt beschreiben</strong>. Scheitert die Konsistenz &mdash; A's nicht aufl&ouml;sbares Nicht-Determinismus, B's Twist (<code>&prod;_i s_i = &minus;1</code>) &mdash; ist das Ganze <em>obstruiert</em> und existiert nicht; die Obstruktion ist topologisch real (Igelsatz / kein treuer Funktor / keine eindeutige universelle Abbildung), kein Versagen der Methode.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden Runden-2-Papiere widersprechen sich in keinem <em>faktischen</em> Anspruch &mdash; sie arbeiten auf getrennten Feldern (kategoriale Analogie/Funktoren einerseits, Mannigfaltigkeiten/verifizierte Ethik andererseits). Aber auf der Ebene ihrer <em>Thesen</em> nehmen sie zu drei Meta-Fragen <strong>unvereinbar wirkende Stellungen</strong> ein:</p>
+    <div class="card">
+      <h3>&#9312; Was tr&auml;gt das Ganze &mdash; bewahrter Fixpunkt (A) vs. erzeugtes Produkt (B)?</h3>
+      <p><span class="tagA">A</span> verortet das Ganze im <strong>bewahrten Fixpunkt</strong>: die universelle Eigenschaft (Produkt/Koprodukt, Limit/Kolimit) <em>ist</em> der Fixpunkt der Closure; der Funktor <em>bewahrt</em> sie. Das Ganze existiert als <em>Invariante, die getragen wird</em> &mdash; es ist da, bevor der Transport es &#252;berf&uuml;hrt; die Kraft liegt im <em>Behalten</em>. <span class="tagB">B</span> verortet das Ganze im <strong>erzeugten Produkt</strong>: das Ganze <em>entsteht erst</em>, wenn kompatible lokale Sektionen &#252;ber &#xdcberlappungen verklebt werden; die Kraft liegt im <em>Produzieren</em> (Gluing). Inkompatibel ist die Haltung darauf, ob das Ganze ein <em>vorhandenes Invariantes, das getragen wird</em> (A) ist oder ein <em>Ergebnis, das durch das Kleben ins Dasein kommt</em> (B).</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; Mehrfachheit &mdash; <code>&exist;!</code>-Defekt (A) vs. lokale Freiheit (B)?</h3>
+      <p><span class="tagA">A</span> macht <strong><code>&exist;!</code> zum Axiom</strong> und behandelt Mehrdeutigkeit/Nicht-Determinismus (ein Protein faltet in mehrere Konformationen; zwei verschiedene Pfade) als <em>Bedrohung, die eindeutig aufzul&ouml;sen</em> ist: ein treuer Funktor ist <em>eindeutig</em> (jeder Begriff geht auf genau einen). Die Verzweigung ist ein <em>Defekt</em>; Richtung <code>&exist;!</code> (die Form-Ebene macht sie verlustfrei eindeutig). <span class="tagB">B</span> <strong>beh&auml;lt</strong> die Mehrfachheit der lokalen Wahlen (<code>v_i = &plusmn;1</code>, das Subjekt f&uuml;llt sie frei) als <em>Inhalt-Freiheit</em> &mdash; und macht nur die <em>globale</em> Signatur-Inkonsistenz (den <em>Twist</em>, <code>&prod;_i s_i = &minus;1</code>) zur Obstruktion. Inkompatibel ist der Zug auf derselben Verzweigung: A <em>l&ouml;st sie in Eindeutigkeit auf</em> (<code>&exist;!</code>, Defekt abbauen), B <em>h&auml;lt sie lokal frei</em> und pr&#252;ft nur die <em>globale</em> Koh&auml;renz.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Status des Zertifikats &mdash; durchgehend instrumentell (A) vs. teils substantiv (B)?</h3>
+      <p><span class="tagA">A</span> ist <strong>durchgehend instrumentell</strong>: der Funktor / die universelle Eigenschaft ist ein <em>Werkzeug</em>, um eine konkrete Analogie (Seide&#8596;Musik) formell zu beweisen und Materiomics zu gr&#252;nden; A <em>kennt nur die instrumentelle Lesart</em> &mdash; die formale Struktur wird nie f&uuml;r die Realit&auml;t selbst ausgegeben. <span class="tagB">B</span> <strong>l&auml;sst das Zertifikat in einer Instanz substantiv werden</strong>: in der Geometrie <em>ist</em> Stokes &bdquo;das Herzst&#252;ck, das die ganze Messung tr&auml;gt&ldquo; &mdash; das Theorem <em>ist</em> zugleich die Antwort, Form und Inhalt fallen zusammen; nur in der Ethik ist es formal (es sichert nur die Form). Inkompatibel ist die Haltung darauf, ob das formale Objekt (Funktor/Zertifikat) je zur Sache selbst werden <em>kann</em>: A sagt nein (nur Werkzeug), B sagt ja (in der Messungs-Instanz).</p>
+    </div>
+    <p class="note"><strong>Kein harter Widerspruch in den Fakten</strong> (getrennte Felder), aber drei unvereinbar wirkende Gesten auf der These-Ebene: bewahrter Fixpunkt vs. erzeugtes Produkt, <code>&exist;!</code>-Defekt vs. lokale Freiheit, durchgehend instrumentell vs. teils substantiv. Die sch&auml;rfste ist &#9313;: <em>Stellt man eine mehrdeutige/verzweigte Struktur vor &mdash; baut man sie in Eindeutigkeit ab (A, <code>&exist;!</code>) oder h&auml;lt man sie lokal frei und zertifiziert nur global (B)?</em> &mdash; A und B greifen mit entgegengesetzten Werkzeugen an denselben Gegenstand.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <div class="card">
+      <h3>&#9312; Fixpunkt und Produkt sind dasselbe, von zwei Seiten gesehen</h3>
+      <p>Die universelle Eigenschaft (A's Fixpunkt) ist <em>definiert durch</em> die Klebe-Bedingung (B): &bdquo;die lokalen Daten, auf den R&auml;ndern konsistent gemacht, ergeben <em>genau ein</em> globales Objekt&ldquo;. Das Ganze ist <em>zugleich</em> Produkt des Klebens (es entsteht, B) <em>und</em> Invarianz-Fixpunkt (sein <code>&exist;!</code> macht es zu dem Eindeutigen, das der Funktor bewahrt, A). <strong>Der Funktor (A) <em>ist</em> die Klebe-Abbildung (B)</strong>: sie bildet das lokale closure-System auf das globale Objekt ab, indem sie den Fixpunkt erh&auml;lt. <em>Bewahren setzt Erzeugen voraus</em> (was getragen wird, muss erst existieren); <em>Erzeugens Eindeutigkeit <em>ist</em> das Bewahren</em>. Das Ganze wird <em>erzeugt und dadurch fixiert</em> &mdash; Fixpunkt und Produkt fallen zusammen.</p>
+    </div>
+    <div class="card">
+      <h3>&#9313; <code>&exist;!</code> des Ergebnisses, Freiheit der St&#252;cke &mdash; zwei Granularit&auml;ten</h3>
+      <p>Die <em>lokale</em> Mehrfachheit (viele Wahlen <code>v_i</code>, viele Pfade, viele Konformationen) ist der <em>Inhalt</em> &mdash; frei erzeugt (A's closure) bzw. frei gef&#252;llt (B's Subjekt). <code>&exist;!</code> gilt f&#252;r das <em>globale Ergebnis</em>, nicht f&#252;r die lokalen St&#252;cke: A's <code>&exist;!</code> (der treue Funktor: jeder Begriff &#8594; genau einer) <em>ist</em> B's Gluing-Eindeutigkeit (kompatible lokale Sektionen &#8594; genau eine globale Sektion). A's &bdquo;Nicht-Determinismus-Bedrohung&ldquo; und B's &bdquo;Twist&ldquo; sind <em>dieselbe</em> globale Inkonsistenz auf zwei Skalen: A aufl&ouml;st sie auf der Form-Ebene (<code>&exist;!</code>), B erkennt sie als topologische Obstruktion an (<code>&prod;_i s_i = &minus;1</code>). <strong>Fusioniert:</strong> lokal Freiheit, global <code>&exist;!</code>; scheitert das globale <code>&exist;!</code> (Twist / nicht aufl&ouml;sbare Mehrdeutigkeit), existiert das Ganze nicht &mdash; und dann ist beides (kein treuer Funktor / keine globale Sektion) dieselbe Aussage.</p>
+    </div>
+    <div class="card">
+      <h3>&#9314; Der Status ist eine Eigenschaft der Instanz, nicht der Sprache</h3>
+      <p>A's Funktor und B's Theorem sind in beiden F&auml;llen <em>dieselbe Notation</em> (kategoriale Klebe-/&#220;bereinstimmungs-Garantie). Ob das <em>Tradierte</em> eine Karte (Werkzeug) oder Karte&nbsp;=&nbsp;Territorium (die Sache selbst) ist, ist eine Eigenschaft der <em>Instanz / des Ziels</em>: Ist das Ziel eine <em>Messung</em> (B-Geometrie: Stokes) oder der <em>Transfer einer konkreten Struktur</em> (A: Seide&#8596;Musik beweisen), wird das Zertifikat <em>substantiv</em> &mdash; es liefert den Inhalt. Ist das Ziel ein <em>Sinn</em> oder ein <em>&Uuml;bertragungs-Werkzeug</em> (B-Ethik, A's instrumentelle Lesart), bleibt es <em>formal</em> &mdash; es sichert nur die Form. <strong>Fusioniert:</strong> dieselbe <code>&exist;!</code>-Garantie; A's &bdquo;rein instrumentell&ldquo; und B's &bdquo;substantiv in der Geometrie&ldquo; sind zwei Sonderf&auml;lle von &bdquo;der Status entscheidet sich am Ziel, nie an der Sprache&ldquo;.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p>Der zusammengef&#252;hrte, auf der Ebene der Thesen/Positionen abstrahierte Stoff &mdash; so, dass eine sp&auml;tere Runde allein von hier weiterarbeiten kann.</p>
+
+    <h3>Das fusionierte Objekt: der Fixpunkt des Klebens</h3>
+    <p>Ein <strong>lokales St&#252;ck</strong> (A: Erzeuger/Typ/Box; B: Karte/Domain/Stimmung) wird durch <strong>einen einzigen Operator</strong> zu einem Ganzen: die <strong>Komposition</strong> (A: closure unter Komposition) = das <strong>Kleben</strong> (B: Gluing &#252;ber &#xdcberlappungen). Die Struktur des Ganzen ist <em>Abgeschlossenheit</em> (A) / <em>Konsistenz auf allen &#xdcberlappungen</em> (B). Das <strong>globale Zertifikat</strong> &mdash; A's universelle Eigenschaft, B's Gluing-/Konsistenz-Theorem &mdash; garantiert, dass die konsistenten lokalen Daten in <em>genau ein</em> globales Objekt zusammenklappen: <strong>das Ganze ist der Fixpunkt</strong>, und seine <em>Eindeutigkeit</em> (<code>&exist;!</code>) ist gleichzeitig (a) die Invarianz, die der strukturerhaltende Funktor tr&auml;gt (A), und (b) die Koh&auml;renz, die kein Rei&szlig;en zul&auml;sst (B). Scheitert die Konsistenz, ist das Ganze <em>obstruiert</em> (A: keine eindeutige universelle Abbildung; B: Twist <code>&prod;_i s_i = &minus;1</code> / Igelsatz / &bdquo;die globale Sektion existiert nicht&ldquo;).</p>
+
+    <h3>Das dreiteilige Schema (beide, ein Satz)</h3>
+    <ul>
+      <li><strong>(1) Lokale Zerlegung / Generierung</strong> &mdash; das Ganze wird von wenigen lokalen St&#252;cken erzeugt: A: wenige lokale Erzeuger (Boxen/Types + Pfeile/Aspects), deren Struktur die closure unter Komposition ist; B: lokale St&#252;cke <code>x_i</code> (Karten / Lebens-Dom&auml;nen Self, Other, Community), die jeweils wie ein vertrauter Raum aussehen. <em>Fusioniert:</em> eine kleine Menge lokaler Erzeuger/St&#252;cke.</li>
+      <li><strong>(2) Kompatibilit&auml;t auf R&auml;ndern / &#xdcberlappungen</strong> &mdash; die St&#252;cke m&uuml;ssen dort &#252;bereinstimmen, wo sie aufeinandertreffen: A: Quotient innerhalb einer Ebene (Pfad-&#196;quivalenz, 2 Pfade = 1 Morphismus) + Funktor bijektiv zwischen den Ebenen; B: &#220;bergang <code>s_i = &plusmn;1</code> auf der &#xdcberlappung, klebt gdw. <code>v_i &middot; v_{i+1} = s_i</code>; C<sup>k</sup>-Kartenwechsel / Sheaf-Lokalit&auml;t. <em>Fusioniert:</em> eine Rand-/&#xdcberlappungs-Konsistenzbedingung (ein &#220;bergang / Quotient).</li>
+      <li><strong>(3) Das globale Zertifikat</strong> &mdash; ein Theorem macht die konsistenten lokalen Daten zu genau einem globalen Objekt: A: universelle Eigenschaft <code>&exist;!</code> (Produkt/Koprodukt, Limit/Kolimit = Fixpunkt); B: Gluing- + Konsistenz-Theorem &#8594; eindeutige globale Sektion <code>good_life</code>; m&ouml;glich gdw. <code>&prod;_i s_i = +1</code>. <em>Fusioniert:</em> die <code>&exist;!</code>-Garantie &mdash; &bdquo;das Ganze existiert und ist eindeutig&ldquo;.</li>
+    </ul>
+
+    <h3>Die drei geteilten Dialektiken</h3>
+    <ul>
+      <li><strong>Form entdeckt, Inhalt erzeugt</strong> (A: Invarianz fix = entdeckt / Generierung frei; B: Struktur erzwingt die Form, das Subjekt f&uuml;llt den Inhalt): Die <em>Form</em> des Ganzen (Existenz + Eindeutigkeit) ist ein Theorem, also <em>entdeckt/gezwungen</em>; der <em>Inhalt</em> (welche lokalen Werte <code>v_i</code>, welches Feld, welche Prinzipien) ist frei erzeugt/gef&#252;llt. <em>Ein Ganzes ist eine Form, deren Existenz man beweisen kann, gef&#252;llt mit Inhalt, den man w&auml;hlen muss.</em></li>
+      <li><strong>Zertifikat formal oder substantiv je nach Ziel</strong> (A: universelle Eigenschaft als Invariante vs. Funktor als Transport; B: Theorem <em>ist</em> die Antwort vs. sichert nur die Form): Das Zertifikat garantiert immer dasselbe &mdash; &bdquo;konsistente lokale Daten &#8594; genau ein globales Ganzes&ldquo; (Koh&auml;renz, kein Rei&szlig;en) &mdash; aber ob es <em>ist</em> der Gewinn (Ziel = Messung/Transfer) oder nur die Voraussetzung (Ziel = Sinn), h&auml;ngt vom <em>Ziel der Instanz</em> ab. Substanz ist Input, nie Output, des Klebens.</li>
+      <li><strong>Lokaler Bogen (Faser) vs. globales Cover (Basis)</strong> (A: Quotient innerhalb einer Ebene / lokaler Bogen vs. Funktor zwischen Ebenen; B: geschlossener Bogen vs. offenes Cover): A's <em>lokaler</em> Bogen / Pfad-&#196;quivalenz ist die <strong>Faser</strong>; A's Funktor / B's offenes Cover ist die <strong>Basis</strong>; die Komposition / das Kleben ist die <strong>Projektion</strong>. Das Ganze ist eine Hierarchie: der lokale Bogen sitzt in einem offenen Cover &#252;berlappender Dom&auml;nen, und das globale Objekt ist ihr Kleben. Ist die Basis so verdreht, dass kein Schnitt existiert (Igelsatz / <code>&prod;_i s_i = &minus;1</code>), ist die Obstruktion real.</li>
+    </ul>
+
+    <h3>Zusammenfassungstabelle (A-042 / B-037 / fusioniert)</h3>
+    <table class="map">
+      <thead><tr><th style="width:24%">Aspekt</th><th style="width:26%">A &mdash; n2-042 (Closure &amp; Invarianz)</th><th style="width:26%">B &mdash; n2-037 (Das Ganze aus dem Lokalen)</th><th style="width:24%">Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td class="kv">Das Ganze</td><td>die &uuml;bertragbare <em>Struktur</em> (Fixpunkt der Closure)</td><td>das <em>globale Objekt</em> (Sektion/Mannigfaltigkeit), Ergebnis des Klebens</td><td>der <em>Fixpunkt des Klebens</em> &mdash; erzeugt und dadurch eindeutig.</td></tr>
+        <tr><td class="kv">Lokale St&#252;cke</td><td>wenige Erzeuger (Boxen/Types + Pfeile/Aspects)</td><td>lokale St&#252;cke <code>x_i</code> (Karten / Dom&auml;nen)</td><td>kleine Menge lokaler Erzeuger/St&#252;cke.</td></tr>
+        <tr><td class="kv">Operator</td><td>Closure unter <em>Komposition</em></td><td><em>Kleben</em> &#252;ber &#xdcberlappungen (Gluing)</td><td>dieselbe Operation: Komposition = Gluing.</td></tr>
+        <tr><td class="kv">Konsistenzbedingung</td><td>Quotient innerhalb einer Ebene (2 Pfade = 1 Morphismus); Funktor bijektiv zwischen Ebenen</td><td>&#220;bergang <code>s_i=&plusmn;1</code>; klebt gdw. <code>v_i&middot;v_{i+1}=s_i</code>; C<sup>k</sup>/Lokalit&auml;t</td><td>Rand-/&#xdcberlappungs-Konsistenz (ein &#220;bergang/Quotient).</td></tr>
+        <tr><td class="kv">Zertifikat</td><td>universelle Eigenschaft <code>&exist;!</code> (Produkt/Koprodukt, Limit/Kolimit)</td><td>Gluing- + Konsistenz-Theorem &#8594; eindeutige <code>good_life</code></td><td>dasselbe <code>&exist;!</code>-Zertifikat: konsistent &#8594; genau ein Ganzes.</td></tr>
+        <tr><td class="kv">Was tr&auml;gt es</td><td>strukturerhaltender <em>Funktor</em> (Analogie/&#220;bersetzung)</td><td>die <em>Klebe-Abbildung</em> (Projektion Faser&#8594;Basis)</td><td>Funktor = Klebe-Abbildung: tr&auml;gt den Fixpunkt.</td></tr>
+        <tr><td class="kv">Mehrfachheit</td><td><code>&exist;!</code>-Axiom; Mehrdeutigkeit = Defekt</td><td>lokale Freiheit <code>v_i=&plusmn;1</code>; nur globaler Twist = Obstruktion</td><td>lokal frei, global <code>&exist;!</code>; &bdquo;Defekt&ldquo; und &bdquo;Twist&ldquo; sind dieselbe globale Inkonsistenz.</td></tr>
+        <tr><td class="kv">Obstruktion</td><td>keine eindeutige universelle Abbildung (Nicht-Determinismus)</td><td>Twist <code>&prod;_i s_i=&minus;1</code> / Igelsatz / keine globale Sektion</td><td>topologisch reelle Obstruktion: das Ganze existiert nicht.</td></tr>
+        <tr><td class="kv">Status des Zertifikats</td><td>rein instrumentell (Werkzeug zum &Uuml;bertragen)</td><td>substantiv (Geometrie: Stokes IST die Antwort) / formal (Ethik)</td><td>Status = Eigenschaft der Instanz/des Ziels, nicht der Sprache.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die fusionierte Formel</h3>
+    <pre><code>x_i        lokales St&#252;ck / Erzeuger   (Box/Type in A  &#183;  Karte/Domain in B)
+s_i = &plusmn;1  &#220;bergang auf der &#xdcberlappung x_i &#8745; x_{i+1}   (&minus;1 = Twist / Quotient)
+klebt      gdw.  v_i &#183; v_{i+1} = s_i           (lokale Wahl v_i = &plusmn;1: frei = Inhalt)
+GANZES     existiert  &#10233;  &exist;! v  mit  &#8704;i  v_i &#183; v_{i+1} = s_i     (treu / koh&auml;rent)
+m&ouml;glich    &#10233;  &prod;_i s_i = +1            (sonst: topologische Obstruktion &mdash; Igelsatz / kein Funktor)</code></pre>
+
+    <h3>Die Formeln (beide, fusioniert)</h3>
+    <span class="mathblock">Closure (A): &nbsp;closure(Generatoren, Komposition) &nbsp;&mdash;&nbsp; wenige lokale Regeln &#8594; reiches Ganzes</span>
+    <span class="mathblock">Quotient (A/B): &nbsp;2 konsistente lokale Daten &#8594; 1 globales Objekt &nbsp;(Pfad-&#196;quivalenz / Kleben auf &#xdcberlappung)</span>
+    <span class="mathblock">Produkt: &nbsp;&forall; X, f:X&#8594;A, g:X&#8594;B &nbsp;&#8658;&nbsp; &exist;! &lt;f,g&gt;:X&#8594;A&#215;B &nbsp;(Fixpunkt, bewahrt vom Funktor)</span>
+    <span class="mathblock">Koprodukt: &nbsp;&forall; X, f:A&#8594;X, g:B&#8594;X &nbsp;&#8658;&nbsp; &exist;! [f,g]:A+B&#8594;X &nbsp;&#183;&nbsp; Dualit&auml;t: Produkt in C = Koprodukt in C<sup>op</sup></span>
+    <span class="mathblock">Kleben (B): &nbsp;Ganzes existiert &#10233; &exist;! (v_i): &#8704;i v_i&middot;v_{i+1}=s_i &nbsp;&#183;&nbsp; m&ouml;glich &#10233; &prod;_i s_i=+1</span>
+    <span class="mathblock">Invarianz = Fixpunkt: &nbsp;Struktur = closure(Generatoren, Komposition); &nbsp;die universelle Eigenschaft ist der Fixpunkt dieser Abgeschlossenheit</span>
+
+    <h3>Das Neue / der Rahmen (Runde 3)</h3>
+    <ul>
+      <li><strong>A (R2):</strong> die Analogie als formaler Beweis und die funktoriale Invarianz als die Kraft, die zwischen Dom&auml;nen tr&auml;gt &mdash; Struktur = closure, deren Fixpunkt die universelle Eigenschaft ist.</li>
+      <li><strong>B (R2):</strong> das Ganze als Ergebnis des Klebens kompatibler lokaler St&#252;cke &mdash; Gluing als universelles &bdquo;das Ganze existiert&ldquo;-Zertifikat; der lokale Bogen = Faser, das offene Cover = Basis.</li>
+      <li><strong>Fusion (R3):</strong> die <em>Komposition</em> (closure, A) und das <em>Kleben</em> (Gluing, B) sind <strong>ein Operator</strong>; die <em>universelle Eigenschaft</em> (A) und das <em>Gluing-Theorem</em> (B) sind <strong>ein <code>&exist;!</code>-Zertifikat</strong>; <em>Treue</em> und <em>Koh&auml;renz</em> sind <strong>die selbe Eindeutigkeit</strong>. Das Ganze ist der <em>Fixpunkt</em>, der durch die Komposition lokaler St&#252;cke entsteht und dadurch eindeutig wird &mdash; und genau diese Eindeutigkeit ist das, was der strukturerhaltende Funktor (= die Klebe-Abbildung) tr&auml;gt. Lokal Freiheit, global <code>&exist;!</code>; Form entdeckt, Inhalt erzeugt; der Status des Zertifikats ist eine Eigenschaft der Instanz. Scheitert die globale Konsistenz, existiert das Ganze nicht &mdash; die Obstruktion ist topologisch real, kein Versagen der Methode.</li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung: der Fixpunkt des Klebens</h2>
+    <p>Sechs lokale St&#252;cke (je ein kleiner geschlossener Bogen / <em>Faser</em>) bilden ein offenes Cover (&#252;m ein Zentrum = die <em>Basis</em>). Jede &#xdcberlappung (Kante) tr&auml;gt einen &#220;bergang <code>s = &plusmn;1</code> (&plusmn; = passt / klebt, &minus; = Twist / Quotient, wie <code>det d&psi;&lt;0</code> im Sph&auml;ren-Atlas bzw. A's Mehrdeutigkeit). Ein St&#252;ck klebt an seinem Nachbarn, wenn ihre lokalen Wahlen auf der &#xdcberlappung &#252;bereinstimmen &mdash; sonst rei&szlig;t es. Das Zentrum leuchtet <strong>gold: &bdquo;GANZES existiert (<code>&exist;!</code>)&ldquo;</strong> &mdash; das globale, eindeutige Objekt ist erzeugt <em>und</em> fixiert &mdash; nur wenn alle sechs &#xdcberlappungen kleben (<code>&prod;_i s_i=+1</code>, Koh&auml;renz = Treue). Der Modus <strong>Entdeckt</strong> l&auml;sst die Struktur die <em>einzige</em> konsistente Wahl erzwingen (A: die Form ist gegeben, <code>&exist;!</code>); <strong>Erdacht</strong> l&auml;sst dich jede lokale Wahl frei tippen (B: Inhalt frei, Koh&auml;renz wird gepr&#252;ft). <strong>Twist</strong> erzeugt die topologische Obstruktion &mdash; dann existiert kein Ganzes (Igelsatz / kein treuer Funktor / keine eindeutige universelle Abbildung).</p>
+    <div class="note" id="readout"></div>
+    <div id="vizwrap">
+      <canvas id="viz"></canvas>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--accent)"></span>lokale Wahl +1 (Inhalt)</span>
+        <span><span class="sw" style="background:var(--accent3)"></span>lokale Wahl &minus;1</span>
+        <span><span class="sw" style="background:var(--glue)"></span>&#xdcberlappung klebt (Konsistenz)</span>
+        <span><span class="sw" style="background:var(--tear)"></span>reißt / Twist (Obstruktion)</span>
+        <span><span class="sw" style="background:var(--global)"></span>Ganzes existiert (<code>&exist;!</code> Fixpunkt)</span>
+      </div>
+      <div class="viz-controls">
+        <button class="ctl on" id="modeDisc" type="button">Entdeckt (Struktur erzwingt <code>&exist;!</code>)</button>
+        <button class="ctl" id="modeAuth" type="button">Erdacht (freie Wahlen)</button>
+        <button class="ctl" id="twistBtn" type="button">Twist: aus</button>
+        <button class="ctl" id="solveBtn" type="button">L&ouml;sen (konsistente Wahl)</button>
+        <button class="ctl" id="themeBtn" type="button">Theme</button>
+        <div class="hint">St&#252;ck anklicken: lokale Wahl flippen (nur im Modus &bdquo;Erdacht&ldquo;)</div>
+      </div>
+    </div>
+    <p class="viz-note">Alle Daten inline, keine externen Abfragen, themenreaktiv (Farben aus CSS-Variablen). Das Zentrum ist der Fixpunkt: es leuchtet nur, wenn die lokale Freiheit (Inhalt) sich global zu genau einem (<code>&exist;!</code>) Objekt zusammenklappt.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="proven">
+      <li><a href="../n2-042.html"><strong>A &mdash; n2-042.html:</strong> &bdquo;Closure &amp; Invarianz &mdash; die funktoriale Sprache der &#252;bertragbaren Struktur&ldquo; (Runde 2).</a> &mdash; fusioniert <em>Power of Analogy</em> (Giesa/Spivak/Buehler: Seide&#8596;Musik, Produkt &amp; Koprodukt, universelle Eigenschaften <code>&exist;!</code>, Dualit&auml;t) mit <em>Struktur, die bleibt</em> (IIT &#215; Ologs: closure unter Komposition, Pfad-&#196;quivalenz/Quotient, Limits/Kolimits). Position: was zwischen Dom&auml;nen wandert, ist die <em>Struktur</em> (closure, deren Fixpunkt die universelle Eigenschaft ist), getragen von einem strukturerhaltenden, zwischen Ebenen bijektiven und innerhalb einer Ebene quotientierenden Funktor &mdash; die &bdquo;Macht der Analogie&ldquo; ist funktoriale Invarianz.</li>
+      <li><a href="../n2-037.html"><strong>B &mdash; n2-037.html:</strong> &bdquo;Das Ganze aus dem Lokalen&ldquo; (Runde 2).</a> &mdash; fusioniert <em>Mannigfaltigkeiten/Black&nbsp;Box</em> (Karten/Differentialformen, Stokes als Herzst&#252;ck, Igelsatz, geschlossener Bogen) mit <em>The Examined Life, Proved Coherent</em> (Prinzipien als Sektionen eines Sheaf &#252;ber Self/Other/Community, Gluing- + Konsistenz-Theorem, offenes Cover). Position: ein Ganzes ist das Ergebnis des Klebens kompatibler lokaler St&#252;cke, die auf <em>allen</em> &#xdcberlappungen &#252;bereinstimmen; das Kleben (Stokes / Sheaf) zertifiziert die <em>Form</em>, Struktur und Subjekt liefern den <em>Inhalt</em>.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Fusion (Runde 3, nicht-AI-Track, Paar 011) &mdash; n2-042 &#10005; n2-037 &middot; Closure trifft Gluing: das Ganze ist der Fixpunkt des Klebens &mdash; Komposition (closure, A) und Gluing (B) sind ein Operator, die universelle Eigenschaft (A) und das Klebe-Theorem (B) sind ein <code>&exist;!</code>-Zertifikat; lokal Freiheit, global <code>&exist;!</code>; Form entdeckt, Inhalt erzeugt; der Status des Zertifikats ist eine Eigenschaft der Instanz.
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var wrap = document.getElementById('vizwrap');
+  var readout = document.getElementById('readout');
+  if(!canvas || !wrap || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var TAU = Math.PI*2, N = 6;
+  var NAMES = ['S0','S1','S2','S3','S4','S5'];
+  var val = [], sgn = [];
+  var mode = 'disc';
+  var obstructed = false;
+
+  function init(){ for(var i=0;i<N;i++){ val[i]=1; sgn[i]=1; } }
+  function prod(a){ var p=1,i; for(i=0;i<a.length;i++){ p*=a[i]; } return p; }
+  function twistParity(){ return prod(sgn); }
+  function glueAt(i){ return val[i]*val[(i+1)%N] === sgn[i]; }
+  function glueCount(){ var c=0,i; for(i=0;i<N;i++){ if(glueAt(i)){ c++; } } return c; }
+  function solve(){
+    val[0]=1;
+    for(var i=0;i<N-1;i++){ val[i+1] = sgn[i]*val[i]; }
+    obstructed = (twistParity() !== 1);
+  }
+
+  var pal = {};
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function toRgb(str){
+    str=(str||'').trim();
+    if(str.charAt(0)==='#'){
+      var h=str.slice(1);
+      if(h.length===3){ h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2); }
+      var n=parseInt(h,16);
+      if(isNaN(n)){ return [128,140,170]; }
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=str.match(/[\d.]+/g);
+    if(m && m.length>=3){ return [+m[0],+m[1],+m[2]]; }
+    return [128,140,170];
+  }
+  function rgba(c,a){ return 'rgba('+((c[0]|0))+','+((c[1]|0))+','+((c[2]|0))+','+a+')'; }
+  function readPal(){
+    var g=function(n){ return cssVar(n); };
+    pal = {
+      bg:toRgb(g('--bg')), fg:toRgb(g('--fg')), muted:toRgb(g('--muted')), panel:toRgb(g('--panel')),
+      accent:toRgb(g('--accent')), accent3:toRgb(g('--accent3')),
+      glue:toRgb(g('--glue')), tear:toRgb(g('--tear')), global:toRgb(g('--global')),
+      text:toRgb(g('--viz-text'))
+    };
+  }
+
+  function geom(){
+    var w = wrap.clientWidth; if(w<10){ w=10; }
+    var Rp = Math.min(w,460)*0.34;
+    return { w:w, h:460, cx:w/2, cy:230, Rp:Rp, pr:30 };
+  }
+  function nodePos(i,g){
+    var a = (-90 + i*60)*Math.PI/180;
+    return { x:g.cx + g.Rp*Math.cos(a), y:g.cy + g.Rp*Math.sin(a) };
+  }
+  function chip(x,y,txt,col){
+    ctx.font='700 12px system-ui, -apple-system, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    var tw = ctx.measureText(txt).width + 12;
+    ctx.fillStyle=rgba(pal.panel,0.9); ctx.fillRect(x-tw/2,y-10,tw,20);
+    ctx.fillStyle=col; ctx.fillText(txt,x,y);
+  }
+  function drawLoop(x,y,r,col){
+    ctx.strokeStyle=col; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.stroke();
+    var a=-Math.PI/4, ex=x+r*Math.cos(a), ey=y+r*Math.sin(a);
+    var tx=-Math.sin(a), ty=Math.cos(a), px=-ty, py=tx, hs=6;
+    ctx.fillStyle=col; ctx.beginPath();
+    ctx.moveTo(ex+tx*hs, ey+ty*hs);
+    ctx.lineTo(ex+px*hs*0.6, ey+py*hs*0.6);
+    ctx.lineTo(ex-px*hs*0.6, ey-py*hs*0.6);
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(t){
+    var g=geom(), w=g.w, h=g.h, dpr=Math.min(window.devicePixelRatio||1,2);
+    var pw=Math.round(w*dpr), ph=Math.round(h*dpr);
+    if(canvas.width!==pw || canvas.height!==ph){ canvas.width=pw; canvas.height=ph; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=rgba(pal.bg,1); ctx.fillRect(0,0,w,h);
+
+    var gc=glueCount(), whole=(gc===6), i, A, B, ok;
+    for(i=0;i<N;i++){
+      A=nodePos(i,g); B=nodePos((i+1)%N,g); ok=glueAt(i);
+      var midx=(A.x+B.x)/2, midy=(A.y+B.y)/2;
+      ctx.strokeStyle=rgba(ok?pal.glue:pal.tear, ok?0.85:0.9);
+      ctx.lineWidth= ok?3.4:2.6;
+      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+      var sTxt = sgn[i]===1 ? '+' : '\u2212';
+      chip(midx, midy, sTxt, sgn[i]===1?pal.accent:pal.tear);
+      if(sgn[i]!==1){
+        ctx.fillStyle=rgba(pal.tear,0.9); ctx.font='600 9px system-ui, sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('twist', midx, midy-15);
+      }
+    }
+    var pulse=0.5+0.5*Math.sin(t*3);
+    if(whole){
+      ctx.strokeStyle=rgba(pal.global,0.35+0.5*pulse); ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(g.cx,g.cy,28+12*pulse,0,TAU); ctx.stroke();
+    }
+    var ccol = whole?pal.global : (obstructed?pal.tear:pal.muted);
+    ctx.fillStyle=rgba(ccol, whole||obstructed?0.98:0.5);
+    ctx.beginPath(); ctx.arc(g.cx,g.cy,26,0,TAU); ctx.fill();
+    ctx.fillStyle=rgba((whole||obstructed)?pal.bg:pal.text,0.95);
+    ctx.font='800 11px system-ui, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(whole){ ctx.fillText('GANZES', g.cx, g.cy-5); ctx.fillText('existiert (\u2203!)', g.cx, g.cy+8); }
+    else if(obstructed){ ctx.fillText('KEIN', g.cx, g.cy-8); ctx.fillText('GANZES', g.cx, g.cy+3); ctx.fillText('(obstruiert)', g.cx, g.cy+14); }
+    else { ctx.fillText('noch', g.cx, g.cy-5); ctx.fillText('nicht ganz', g.cx, g.cy+8); }
+
+    for(i=0;i<N;i++){
+      var P=nodePos(i,g);
+      var ring = val[i]===1 ? pal.accent : pal.accent3;
+      ctx.fillStyle=rgba(pal.panel,0.96); ctx.beginPath(); ctx.arc(P.x,P.y,g.pr,0,TAU); ctx.fill();
+      drawLoop(P.x,P.y,g.pr-2, ring);
+      ctx.fillStyle=rgba(pal.text,0.95); ctx.font='700 13px system-ui, sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(val[i]===1?'+1':'\u22121', P.x, P.y);
+      ctx.fillStyle=rgba(pal.muted,0.95); ctx.font='600 11px system-ui, sans-serif';
+      ctx.fillText(NAMES[i], P.x, P.y - g.pr - 11);
+    }
+  }
+
+  function setReadout(){
+    var gc=glueCount(), whole=(gc===6), obs=obstructed;
+    var html='';
+    if(obs){
+      html='Obstruiert (Twist-Produkt = \u22121): <b>keine</b> Zuordnung der lokalen W&auml;hle kann alle sechs '
+        + '&Uuml;berlappungen zum Kleben bringen &mdash; mindestens eine reißt notgedrungen. Das ist A&rsquo;s '
+        + 'Nicht-Determinismus und B&rsquo;s Igelsatz zugleich: die Obstruktion ist topologisch real, kein '
+        + 'Versagen des Klebens. <b>Kein globales Ganzes</b> (kein treuer Funktor, keine eindeutige globale Sektion).';
+      html += (mode==='disc')
+        ? ' Die Struktur kann es nicht erzwingen &mdash; sie ist blockiert.'
+        : ' Auch frei gew&auml;hlt scheitert es &mdash; der Twist l&auml;sst sich nicht wegklicken.';
+    } else if(whole){
+      html='Koh&auml;rent: alle 6 &Uuml;berlappungen kleben &mdash; das <b>Ganze existiert und ist eindeutig</b> '
+        + '(&bdquo;Fixpunkt des Klebens&ldquo;: erzeugt und dadurch fixiert). ';
+      html += (mode==='disc')
+        ? 'Die Struktur hat die einzige konsistente Wahl gezwungen <em>(entdeckt)</em>: die Form ist gegeben, <b>&exist;!</b>.'
+        : 'Du hast die lokalen W&auml;hle frei gew&auml;hlt und zum Kleben gebracht <em>(erz&auml;hlt)</em>: der '
+        + 'Inhalt ist von dir, die Eindeutigkeit vom Kleben garantiert.';
+    } else {
+      html='Noch nicht koh&auml;rent: <b>'+gc+'/6</b> &Uuml;berlappungen kleben. ';
+      html += (mode==='auth')
+        ? 'Klicke ein St&uuml;ck an, um seine lokale Wahl zu flippen, bis alle kleben (oder &bdquo;L&ouml;sen&ldquo;).'
+        : 'Im Modus &bdquo;Entdeckt&ldquo; l&ouml;st die Struktur automatisch &mdash; nutze &bdquo;Twist&ldquo;, um die '
+        + 'Obstruktion zu sehen, oder wechsle zu &bdquo;Erdacht&ldquo; zum freien Experimentieren.';
+    }
+    if(readout){ readout.innerHTML = html; }
+  }
+
+  function setMode(m){
+    mode=m;
+    var d=document.getElementById('modeDisc'), a=document.getElementById('modeAuth');
+    if(d){ d.classList.toggle('on', m==='disc'); }
+    if(a){ a.classList.toggle('on', m==='auth'); }
+    if(m==='disc'){ solve(); }
+    setReadout();
+  }
+
+  canvas.addEventListener('click', function(e){
+    if(mode!=='auth'){ setReadout(); return; }
+    var r=canvas.getBoundingClientRect();
+    var mx=e.clientX-r.left, my=e.clientY-r.top;
+    var g=geom();
+    for(var i=0;i<N;i++){
+      var P=nodePos(i,g); var dx=mx-P.x, dy=my-P.y;
+      if(dx*dx+dy*dy <= (g.pr+6)*(g.pr+6)){ val[i]*=-1; setReadout(); break; }
+    }
+  });
+  var dEl=document.getElementById('modeDisc');
+  var aEl=document.getElementById('modeAuth');
+  var tEl=document.getElementById('twistBtn');
+  var sEl=document.getElementById('solveBtn');
+  var thEl=document.getElementById('themeBtn');
+  var ttEl=document.getElementById('themeToggle');
+  if(dEl){ dEl.addEventListener('click', function(){ setMode('disc'); }); }
+  if(aEl){ aEl.addEventListener('click', function(){ setMode('auth'); }); }
+  if(tEl){ tEl.addEventListener('click', function(){
+    sgn[0] = (sgn[0]===1)?-1:1;
+    this.textContent = 'Twist: '+(sgn[0]===1?'aus':'an');
+    if(mode==='disc'){ solve(); }
+    setReadout();
+  }); }
+  if(sEl){ sEl.addEventListener('click', function(){ solve(); setReadout(); }); }
+  if(thEl){ thEl.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); readPal();
+  }); }
+  if(ttEl){ ttEl.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark'); readPal();
+  }); }
+  if(window.matchMedia){
+    var mq=window.matchMedia('(prefers-color-scheme: light)');
+    var onScheme=function(){ readPal(); };
+    if(mq.addEventListener){ mq.addEventListener('change', onScheme); }
+  }
+
+  readPal();
+  init();
+  solve();
+  setReadout();
+  var last=performance.now();
+  function loop(now){
+    var t=(now-last)/1000; if(t>0.1){ t=0.1; } last=now;
+    draw(now/1000);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

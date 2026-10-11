@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Ganze als Quotient und seine zwei Lücken — Auflösung (A) ✕ Wahrheitsschicht (B)</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --bg-alt:#efece3; --surface:#ffffff;
+    --text:#1e2233; --muted:#5b5f70; --border:#ddd7c9;
+    --accent:#2f5aa8; --accent2:#a92c86;
+    --c-domain:#c92f98; --c-truth:#b07000; --c-fine:#3f56d6; --c-quotient:#2f855a;
+    --viz-bg:#f6f4ec; --viz-void:#efe9dc;
+    --shadow:0 10px 30px rgba(20,20,40,.08);
+  }
+  html.dark{
+    --bg:#0b0d16; --bg-alt:#0e1220; --surface:#141a2b;
+    --text:#e7e9f2; --muted:#9aa1b5; --border:#2a3145;
+    --accent:#8492ff; --accent2:#f07ad0;
+    --c-domain:#f07ad0; --c-truth:#ffb02e; --c-fine:#6f8bff; --c-quotient:#4ade80;
+    --viz-bg:#0f1526; --viz-void:#141b30;
+    --shadow:0 12px 34px rgba(0,0,0,.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Georgia','Iowan Old Style',serif;
+    background:var(--bg); color:var(--text);
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+    transition:background .3s ease,color .3s ease; overflow-x:hidden;
+  }
+  article{max-width:820px;margin:0 auto;padding:46px 22px 90px;}
+  header{text-align:center;margin-bottom:30px;position:relative;}
+  h1{font-size:1.95rem;line-height:1.2;letter-spacing:-.5px;margin-bottom:10px;}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;}
+  .lede{color:var(--muted);font-size:1.02rem;margin-top:12px;font-style:italic;}
+  .theme-btn{
+    position:absolute;top:0;right:0;cursor:pointer;
+    background:transparent;border:1px solid var(--border);color:var(--muted);
+    padding:6px 12px;border-radius:20px;font-size:.8rem;font-family:inherit;transition:all .2s;
+  }
+  .theme-btn:hover{border-color:var(--accent);color:var(--accent);}
+  section{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:24px 26px;margin-bottom:22px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  section::before{
+    content:'';position:absolute;inset:0 0 auto 0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.6;
+  }
+  h2{font-size:1.32rem;margin-bottom:14px;color:var(--accent);letter-spacing:-.3px;}
+  html.dark h2{color:var(--accent2);}
+  h3{font-size:1.06rem;margin:20px 0 8px;color:var(--text);}
+  p{margin-bottom:12px;}
+  p:last-child{margin-bottom:0;}
+  .lead{font-size:1.05rem;}
+  .muted{color:var(--muted);}
+  .hl{color:var(--accent);font-weight:600;}
+  html.dark .hl{color:var(--accent2);}
+  .slogan{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.96rem;color:var(--accent);letter-spacing:.3px;}
+  html.dark .slogan{color:var(--accent2);}
+  .tag{
+    display:inline-block;font-size:.72rem;font-family:ui-monospace,monospace;font-weight:700;
+    border:1px solid var(--border);border-radius:6px;padding:1px 7px;
+    color:var(--muted);margin-right:6px;vertical-align:middle;
+  }
+  .tag.A{color:var(--accent);border-color:var(--accent);}
+  .tag.B{color:var(--accent2);border-color:var(--accent2);}
+  .claim{
+    border-left:3px solid var(--border);padding:10px 16px;margin:14px 0;
+    background:var(--bg-alt);border-radius:0 8px 8px 0;font-size:.96rem;
+  }
+  .claim.A{border-left-color:var(--accent);}
+  .claim.B{border-left-color:var(--accent2);}
+  .claim .who{font-weight:bold;display:block;margin-bottom:5px;font-size:.85rem;}
+  .claim.A .who{color:var(--accent);}
+  .claim.B .who{color:var(--accent2);}
+  .bridge{
+    border-left:3px solid var(--accent2);padding:10px 16px;margin:14px 0;
+    background:var(--bg-alt);border-radius:0 8px 8px 0;font-size:.96rem;
+  }
+  .bridge .who{font-weight:bold;color:var(--accent2);display:block;margin-bottom:5px;font-size:.85rem;}
+  .math{text-align:center;margin:16px 0;overflow-x:auto;color:var(--text);font-size:1.05rem;}
+  .note{font-size:.86rem;color:var(--muted);margin-top:6px;}
+  ul{margin:8px 0 12px 22px;}
+  li{margin-bottom:7px;}
+  table{width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:.9rem;}
+  th,td{border:1px solid var(--border);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--bg-alt);font-weight:600;}
+  code{background:var(--bg-alt);padding:1px 5px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;}
+  .prov a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+  .prov a:hover{border-bottom-style:solid;}
+  .prov li{margin-bottom:14px;}
+  /* viz */
+  .viz-wrap{margin-top:16px;}
+  #vizCanvas{
+    display:block;width:100%;border:1px solid var(--border);
+    border-radius:10px;background:var(--viz-bg);
+  }
+  .viz-controls{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:14px;}
+  .viz-controls label{font-size:.9rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+  .viz-controls input[type=range]{accent-color:var(--accent);width:150px;vertical-align:middle;}
+  .viz-controls input[type=checkbox]{accent-color:var(--accent2);width:16px;height:16px;}
+  .viz-controls .val{font-family:ui-monospace,monospace;color:var(--accent);min-width:24px;display:inline-block;}
+  .readout{display:grid;gap:8px;margin-top:14px;}
+  .ro{display:flex;gap:10px;align-items:baseline;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.9rem;background:var(--bg-alt);}
+  .ro .rol{flex:0 0 150px;font-weight:600;color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.4px;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--muted);margin-top:10px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+  .caption{font-size:.86rem;color:var(--muted);margin-top:10px;}
+  @media(max-width:560px){.ro{flex-direction:column;gap:4px;}.ro .rol{flex:none;}}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Das Ganze als Quotient und seine zwei L&uuml;cken</h1>
+    <p class="subtitle">Fusion aus: n2-023.html &#10021; n2-027.html &nbsp;(Runde 3)</p>
+    <p class="lede">Zwei Runde-2-Papiere, ein Strukturmerkmal: das <em>behandelte Objekt</em> (grobe
+      Invariante, eindeutig verklebter Schnitt) ist eine <em>verlustbehaftete Reduktion des Ganzen</em> &mdash;
+      und der Verlust ist <em>kategoriale Struktur</em>, keine blo&szlig;e Unvollst&auml;ndigkeit.
+      <span class="tag A">A</span> liefert die <strong>Aufl&ouml;sungsachse</strong> (grob&nbsp;=&nbsp;Quotient
+      des Feinen, &bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&bdquo;); <span class="tag B">B</span> liefert die
+      <strong>Wahrheitsschicht</strong> (zwei L&uuml;cken: Dom&auml;ne&nbsp;/&nbsp;Situs,
+      &bdquo;Koh&auml;rent&nbsp;&ne;&nbsp;wahr&bdquo;). Die Fusion: <em>zwei orthogonale Achsen des Verlusts</em>.</p>
+    <button class="theme-btn" id="themeToggle" type="button">Theme umschalten</button>
+  </header>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Runde-2-Papiere beschreiben, auf die Ebene ihrer Thesen abstrahiert,
+      <em>dasselbe Strukturmerkmal</em>: <span class="hl">Ein behandeltes globales Objekt ist eine
+      verlustbehaftete Reduktion eines fundamentaleren Ganzen &mdash; und der Verlust ist
+      <em>kategoriale / strukturelle</em> Information, nicht &bdquo;unvollst&auml;ndige Information auf einer
+      groben Skala&bdquo;.</span> <span class="tag A">A</span> pr&auml;sentiert es als
+      <strong>Aufl&ouml;sungshierarchie</strong>: die grobe Invariante <em>klassifiziert</em> und ist ein
+      <em>Quotient, der die Feinstruktur vergisst</em>; die Feinstruktur ist das <em>allgemeine</em> Objekt
+      (diskret, kategoriale, nicht-wegzudeformierend), kontinuierliche Regler steuern diskrete
+      kategoriale Zust&auml;nde. <span class="tag B">B</span> pr&auml;sentiert es als
+      <strong>Verklebung mit L&uuml;cken</strong>: der eindeutig verklebte Schnitt ist der
+      <em>1-trunkierte Schatten</em> der koh&auml;renten &Auml;quivalenz und tr&auml;gt <em>zwei
+      orthogonale L&uuml;cken zum Ganzen</em> &mdash; eine <em>Dom&auml;nen</em>-L&uuml;cke (Fovea, lokal,
+      &bdquo;nicht definiert hier&bdquo;) und eine <em>Wahrheits</em>-L&uuml;cke (Situs, global,
+      &bdquo;definiert &uuml;berall, aber nicht das Ganze&bdquo;, &Delta;&gt;0).</p>
+    <p><strong>Die eine integrierte Position:</strong> <span class="hl">&bdquo;Das Ganze&bdquo;, das man
+      behandelt, ist immer eine Projektion / Trunkierung, die etwas Strukturelles vergisst &mdash; und das
+      Vergessene ist eine <em>andere Art</em> von Information auf einer <em>anderen Achse</em>.</span>
+      <span class="tag A">A</span> liefert Achse&nbsp;1 &mdash; <strong>Aufl&ouml;sung</strong>
+      (grob&nbsp;&harr;&nbsp;fein: <em>ein</em> Ding, das sich lokal (Kegel-Punkt) oder global (Twist)
+      pr&auml;sentieren kann). <span class="tag B">B</span> liefert Achse&nbsp;2 &mdash;
+      <strong>Wahrheitsschicht</strong> (Objekt&nbsp;&harr;&nbsp;Situs: <em>zwei verschiedene Arten</em> von
+      L&uuml;cke). Der feinste Punkt von A's Hierarchie ist nur ein Punkt <em>auf</em> der Achse &mdash; er ist
+      selbst wieder ein koh&auml;rentes Objekt, das einen Situs jenseits von sich tr&auml;gt. Damit hat
+      &bdquo;das Ganze&bdquo; zwei Gesichter: <strong>(i)</strong> das feinste Objekt <em>innerhalb</em> des
+      Modells (A &mdash; vollst&auml;ndig, erreichbar durch Verfeinerung der Aufl&ouml;sung) und
+      <strong>(ii)</strong> das Ding <em>jenseits</em> des Modells (B &mdash; der Situs, unerreichbar,
+      &Delta;&gt;0).</p>
+    <p>Der fusionierte Leitsatz: <span class="slogan">Grob ist der Quotient, der das Feine vergisst (A)
+      &mdash; und das Feinste ist noch nicht das Ganze, sondern nur koh&auml;rent, nicht wahr (B).</span>
+      Zwei orthogonale Achsen des Verlusts: <strong>Aufl&ouml;sung</strong> (A, innerhalb des Modells)
+      &times; <strong>Wahrheitsschicht</strong> (B, vom Modell zum Ding). Die gemeinsame epistemische Regel,
+      nun auf zwei Achsen erweitert: <span class="hl">Nenne deine Aufl&ouml;sung <em>und</em> deine
+      Wahrheitsschicht</span> &mdash; genau dort lebt die Antwort auf die eigene Frage.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p class="muted">A und B arbeiten in <strong>unterschiedlichen Dom&auml;nen</strong> (geometrische
+      Gruppenquotienten / exotische Sph&auml;ren / Ern&auml;hrungsphysiologie vs. Garben &amp; Topoi /
+      visueller Kortex / epistemische Wahrheitsschichten) und treffen <em>keine direkt
+      widerspr&uuml;chlichen Tatsachenaussagen</em> &mdash; einen faktischen Konflikt w&uuml;rdem wir nicht
+      erfinden. Es gibt aber <strong>zwei echte, nicht konstruierte Spannungen in der Haltung</strong> dazu,
+      was &bdquo;das Ganze&bdquo; und der Verlust zu ihm <em>sind</em>:</p>
+
+    <p><strong>Widerspruch&nbsp;1 &mdash; Vollst&auml;ndig &amp; prinzipiell erreichbar (A) vs.
+    irreduzibel teilhaftig (B)</strong></p>
+    <div class="claim A">
+      <span class="who">A (n2-023) &mdash; das feine Objekt ist komplett, die Aufl&ouml;sung w&auml;hlt</span>
+      &bdquo;Fein ist general, grob ist der Quotient.&rdquo; Die Feinstruktur <em>ist</em> das
+      vollst&auml;ndige Objekt; die grobe Schicht vergisst sie nur. Das Ganze <em>innerhalb des Modells</em>
+      ist also <strong>vollst&auml;ndig</strong>; die Antwort liegt nur auf der <em>richtigen
+      Aufl&ouml;sung</em>. A's epistemische Demut besteht aus <em>konkreten offenen Problemen</em>
+      (4-dimensionales Smooth-Poincar&eacute;-Problem) und <em>N&auml;herungen</em>
+      (Mifflin-St-Jeor-Grundumsatz, &bdquo;age&nbsp;~30&rdquo;) &mdash; also &bdquo;ich habe diesen Wert /
+      diese Aufl&ouml;sung noch nicht&rdquo;, ein <em>l&ouml;sbares</em> Problem, keine strukturelle Grenze.
+    </div>
+    <div class="claim B">
+      <span class="who">B (n2-027) &mdash; das Ganze ist strukturell teilhaftig</span>
+      &bdquo;Koh&auml;rent &ne; wahr.&rdquo; Das Ganze (der <em>Situs</em>) ist <strong>strukturell,
+      irreduzibel teilhaftig</strong>: der &Uuml;berschuss &Delta;&gt;0 bleibt auch bei einer
+      <em>totalen, voll koh&auml;renten</em> Welt &uuml;brig. G&ouml;del / Turing / Heisenberg werden als
+      <em>strukturelle Grenzen</em> zitiert, wo Schicht&nbsp;3 den Schichten&nbsp;1&ndash;2 <em>entkommt</em>
+      &mdash; nicht als l&ouml;sbares Unbekanntes, sondern als prinzipielle Unerreichbarkeit des Ganzen
+      <em>von der eigenen Ebene aus</em>.
+    </div>
+    <p><strong>Die Spannung:</strong> Ist &bdquo;das Ganze&bdquo; <em>vollst&auml;ndig und prinzipiell durch
+      Verfeinerung erreichbar</em> (A &mdash; der Verlust ist in-Prinzip-r&uuml;ckgewinnbar, man w&auml;hlt nur
+      die feine Aufl&ouml;sung) oder <em>prinzipiell teilhaftig und unerreichbar</em> (B &mdash; der Situs
+      ist durch <em>keine</em> Verfeinerung erreichbar, &Delta;&gt;0 bleibt)? Inkompatibel dar&uuml;ber, ob der
+      Verlust zum Ganzen <em>r&uuml;ckholbar</em> oder <em>prinzipiell offen</em> ist.</p>
+
+    <p><strong>Widerspruch&nbsp;2 &mdash; Ein Spektrum einer Invariante (A) vs. zwei orthogonale
+    L&uuml;cken-Typen (B)</strong></p>
+    <div class="claim A">
+      <span class="who">A (n2-023) &mdash; lokal vs. global ist nur Pr&auml;sentation</span>
+      Der Unterschied &bdquo;lokal sichtbar&rdquo; (Kegel-Punkt) vs. &bdquo;global unsichtbar&rdquo; (Twist)
+      ist eine <em>Pr&auml;sentation</em> von <strong>einer</strong> kategorischen Invariante &mdash;
+      &bdquo;nur ein Spektrum, in dem dieselbe Invariante auftritt&rdquo;. Die <em>definierende</em>
+      Eigenschaft der Feinstruktur ist nicht die lokale Sichtbarkeit, sondern: (a) diskret/kategorisch,
+      (b) von den groben Daten <em>nicht r&uuml;ckgewinnbar</em>, (c) <em>nicht deformierbar</em>
+      (&bdquo;baked in&rdquo;, &bdquo;a theorem, not a choice&rdquo;).
+    </div>
+    <div class="claim B">
+      <span class="who">B (n2-027) &mdash; zwei L&uuml;cken sind verschiedene Arten</span>
+      Die zwei L&uuml;cken (Fovea&nbsp;=&nbsp;Dom&auml;ne/<em>lokal</em>, Situs&nbsp;=&nbsp;Wahrheit/
+      <em>global</em>) sind <strong>verschiedene Arten</strong> desselben Strukturmerkmals
+      (&bdquo;das Lokal verklebte ist nicht automatisch das Ganze&rdquo;) &mdash; explizit
+      <em>orthogonal</em>: die eine &bdquo;nicht definiert <em>hier</em>&rdquo; (ein Punkt im Raum), die
+      andere &bdquo;definiert &uuml;berall, aber nicht das Ganze&rdquo; (eine Schicht der Wahrheit,
+      &uuml;berall verfehlbar).
+    </div>
+    <p><strong>Die Spannung:</strong> Ist der Verlust zum Ganzen <em>ein Ding</em>, das sich lokal oder global
+      pr&auml;sentieren kann (A &mdash; ein <strong>Spektrum</strong> einer Invariante) oder <em>zwei
+      orthogonale Arten</em> von L&uuml;cke (B &mdash; eine <strong>Dichotomie</strong> unterschiedlicher
+      Typen)? Inkompatibel dar&uuml;ber, wie die &bdquo;L&uuml;cke&rdquo; <em>geschnitten</em> wird.</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+
+    <h3>1. Zwei H&ouml;hen von &bdquo;Ganz&bdquo;: innerhalb des Modells (A) vs. vom Modell zum Ding (B)</h3>
+    <div class="bridge"><span class="who">Aufl&ouml;sung zu Widerspruch&nbsp;1</span>
+    A und B sprechen &uuml;ber <em>zwei verschiedene &bdquo;Ganze&bdquo;</em>. A's vollst&auml;ndiges,
+    feines Objekt (Orbifold, Glattstruktur) ist das Ganze <em>innerhalb eines festen Modells</em> &mdash;
+    vollst&auml;ndig und durch Verfeinerung der Aufl&ouml;sung (De-Quotientierung) erreichbar. B's
+    &bdquo;Ganze&bdquo; (der Situs) ist das Ganze <em>in der Korrespondenz zwischen Modell und Ding</em>
+    &mdash; die L&uuml;cke <em>zwischen</em> <em>jedem</em> Modell (noch so fein) und der Wirklichkeit.
+    Der Br&uuml;ckenschlag: <strong>A's Aufl&ouml;sungshierarchie lebt <em>im</em> Modell; B's Situs lebt
+    <em>au&szlig;erhalb</em> des Modells.</strong> Das feinste Objekt von A ist aus B's H&ouml;he
+    betrachtet selbst nur ein <em>koh&auml;rentes</em> Objekt &mdash; und <em>es</em> tr&auml;gt einen Situs
+    jenseits von sich. Die zwei Demutshaltungen sind damit <em>dieselbe Demut auf zwei H&ouml;hen</em>:
+    A's &bdquo;nenne deine Aufl&ouml;sung und dein offenes Problem&rdquo; ist ein Punkt <em>auf</em> Achse&nbsp;(i)
+    (ein konkretes, l&ouml;sbares Unbekanntes); B's &bdquo;Koh&auml;rent &ne; wahr&rdquo; ist die L&uuml;cke
+    <em>abseits</em> aller Achsen (eine strukturelle Grenze).
+    <strong>Fusion:</strong> &bdquo;Das Ganze&bdquo; hat zwei Gesichter &mdash; (i) das feinste Objekt
+    <em>innerhalb</em> des Modells (A, vollst&auml;ndig durch Aufl&ouml;sung erreichbar) und (ii) das Ding
+    jenseits des Modells (B, Situs, &Delta;&gt;0, unerreichbar). Die feinste Aufl&ouml;sung von A ist selbst
+    nur <em>eine koh&auml;rente Ebene</em> &mdash; nicht der Situs.</div>
+
+    <h3>2. Zwei orthogonale Achsen des Verlusts: Pr&auml;sentation (A) &times; Typ (B)</h3>
+    <div class="bridge"><span class="who">Aufl&ouml;sung zu Widerspruch&nbsp;2</span>
+    A's lokal&nbsp;&harr;&nbsp;global und B's Dom&auml;ne&nbsp;&harr;&nbsp;Wahrheit sind <em>nicht
+    konkurrierende</em> Lesarten &mdash; sie sind <strong>zwei senkrechte Achsen</strong>. A schneidet den
+    Verlust nach <em>Pr&auml;sentation</em> (<strong>welche</strong> Sichtbarkeit hat der Verlust &mdash; lokal
+    einsehbar oder global nur durch eine Invariante). B schneidet ihn nach <em>Typ</em>
+    (<strong>was</strong> f&uuml;r eine Unvollst&auml;ndigkeit ist es &mdash; Dom&auml;ne-L&uuml;cke oder
+    Korrespondenz-L&uuml;cke). Das Fusionsmodell ist ihr <strong>Produkt</strong>:
+    2&nbsp;Typen&nbsp;(B) &times; 2&nbsp;Pr&auml;sentationen&nbsp;(A). Konkret: B's <em>Fovea</em> =
+    Dom&auml;nen-L&uuml;cke, <em>lokal</em> pr&auml;sentiert (ein Punkt <code>r=0</code>); B's <em>Situs</em> =
+    Wahrheitss-L&uuml;cke, <em>global</em> pr&auml;sentiert (&Delta;&gt;0 &uuml;berall); A's Kegel-Punkt vs.
+    Twist = die <em>Pr&auml;sentationsachse</em> angewandt <em>innerhalb</em> des objektbezogenen (Dom&auml;nen-)Lochs.
+    &bdquo;Spektrum&rdquo; (A) und &bdquo;Dichotomie&rdquo; (B) sind also zwei Achsen eines
+    2-dimensionalen <em>Verlustraums</em>, nicht zwei widerspr&uuml;chliche Theorien.</div>
+
+    <div class="bridge"><span class="who">Fusions-Schlussfolgerung</span>
+    <span class="hl">Ein System = (grobe Invariante, feine Struktur, Aufl&ouml;sung)
+    &times; (Objekt-Ebene, Wahrheitsschicht).</span> Die grobe Invariante ist ein <em>Quotient der
+    feinen</em> (A); das Feinste ist noch <em>nicht</em> das Ganze, sondern nur <em>koh&auml;rent, nicht
+    wahr</em> (B). Kontinuierliche Regler steuern <em>kategoriale</em> Zust&auml;nde auf der
+    Aufl&ouml;sungsachse (&bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&bdquo;, A); orthogonal dazu steht die
+    Wahrheitsschicht (&bdquo;Koh&auml;rent&nbsp;&ne;&nbsp;wahr&rdquo;, B). Man benennt seine
+    <em>Aufl&ouml;sung</em> (innerhalb des Modells) <em>und</em> seine <em>Wahrheitsschicht</em>
+    (vom Modell zum Ding) &mdash; genau auf dem Schnittpunkt dieser zwei Achsen lebt die Antwort auf die
+    eigene Frage.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p class="muted">Abstrahiert auf die Ebene der <em>Thesen</em> der beiden Runde-2-Papiere &mdash;
+    genug, damit eine sp&auml;tere Runde allein davon weiterarbeiten kann.</p>
+
+    <h3>0. Das gemeinsame Tiefenmuster (gemeinsames R&uuml;ckgrat)</h3>
+    <p>Beide Papiere lesen &bdquo;das Behandelte&rdquo; als <em>Reduktion, die etwas vergisst</em> &mdash;
+    und beides ist <em>kategoriale</em>, nicht-metrische Information. <span class="tag A">A</span>:
+    Reduktion per <em>Quotient</em> (<code>X/G</code> &mdash; den Stabilisator / die Glattstruktur /
+    GI+Fett <em>vergessen</em>). <span class="tag B">B</span>: Reduktion per <em>Trunkierung</em>
+    (die 1-Garbe ist der 1-trunkierte Schatten der &infin;-Garbe, der die Transformation <code>f</code>
+    vergisst) plus zwei <em>orthogonale L&uuml;cken</em> zum Ganzen. In beiden F&auml;llen: die grobe /
+    behandelte Ebene <em>klassifiziert</em>, aber sie <em>erinnert nicht</em>; das Vergessene ist
+    <em>nicht-wegzudeformierend</em> und von den groben Daten <em>nicht zur&uuml;ckgewinnbar</em>.
+    <span class="slogan">das Behandelte = ein Schatten, der eine kategoriale Schicht vergisst.</span></p>
+
+    <h3>1. Achse&nbsp;1 &mdash; Aufl&ouml;sung (A)</h3>
+    <p>Ein System ist eine <em>Hierarchie von Invarianten &uuml;ber Aufl&ouml;sungsstufen</em>. Auf der
+    <em>grob</em>en Ebene sieht das System <em>identisch</em> aus &mdash; die grobe Invariante
+    <strong>klassifiziert</strong> und ist ein <em>Quotient, der die Feinstruktur vergisst</em>
+    (freie Wirkung &rarr; glatte Mannigfaltigkeit; exotische Sph&auml;re &rarr; nackte Topologie;
+    GI-Modell &rarr; Kalorienbilanz). Auf der <em>feiner</em>en Ebene ist es <em>grundlegend,
+    nicht-wegzudeformierbar</em> verschieden. <strong>Fein ist general, grob ist der Quotient</strong>:
+    das Feine ist das allgemeine Objekt, die grobe Ebene der Spezialfall, in dem die kategoriale Invariante
+    quotientiert wurde. Die Feinstruktur ist (a) <em>diskret/kategorisch</em>, (b) von den groben Daten
+    <em>nicht r&uuml;ckgewinnbar</em>, (c) <em>nicht deformierbar</em>. <strong>&bdquo;Regler&nbsp;&rarr;
+    Klasse&rdquo;</strong>: kontinuierliche Kn&ouml;pfe (Winkel, Verklebung, kcal/GI) steuern diskrete
+    kategoriale Zust&auml;nde (Ordnung <code>n</code>, Glattklasse, Impact-Einstufung); die <em>Karte
+    dazwischen</em> ist der Ort der Information. Pr&auml;sentation: dieselbe Invariante zeigt sich
+    <em>lokal</em> (Kegel-Punkt, einsehbarer Defekt <code>2&pi;/n</code>) oder <em>global</em> (Twist,
+    keine einzelne Karte offenbart sie) &mdash; ein <em>Spektrum</em>. Konkretes Emblem: der
+    <em>Orbifold</em> &mdash; nicht-freie Wirkung, Fixpunkt = Kegel-Punkt = Stabilisator
+    <code>C<sub>n</sub></code>, Kegelwinkel <code>2&pi;/n</code>; die fraktionale Invariante
+    (Orbifold-Euler-Kennzahl) verfeinert das ganze <code>&chi;=2</code> zum rationalen Wert. A's epische
+    Demut: 4-dim. Smooth-Poincar&eacute; <em>offen</em>; Mifflin-St-Jeor <em>N&auml;herung</em>
+    (&bdquo;age&nbsp;~30&rdquo;).</p>
+    <p class="math">&chi;<sub>orb</sub> = 2 &minus; &Sigma;<sub>i=1</sub><sup>k</sup> (1 &minus; 1/n<sub>i</sub>)
+      &nbsp;&rArr;&nbsp; Teardrop S&sup2;(n): 1 + 1/n; &nbsp; Football S&sup2;(2,3): 5/6; &nbsp;
+      Pillow: 0</p>
+    <p class="note">A's konkrete Zahlen (als Realisierung der These): genau 28 glatte Strukturen auf
+      S&sup7; (Milnor 1956, 1 standard + 27 exotisch); Dimension 4 = offenes Smooth-Poincar&eacute;-Problem;
+      &bdquo;There are exactly 17 wallpaper groups &mdash; this is a theorem, not a choice.&rdquo;</p>
+
+    <h3>2. Achse&nbsp;2 &mdash; Wahrheitsschicht (B)</h3>
+    <p>Ein <em>verklebtes Objekt</em> (Schnitt / Topos) wird aus lokalen, auf &Uuml;berlappungen
+    &uuml;bereinstimmenden Daten zu einem globalen Objekt gebaut (Garbenbedingung:
+    <code>s<sub>i</sub>|&frasl; = s<sub>j</sub>|&frasl;</code> &rarr; genau ein globales
+    <code>s</code>). Aber &bdquo;eindeutig gebildet&rdquo; ist nur die <em>erste von drei
+    Wahrheitsschichten</em>:</p>
+    <ul>
+      <li><strong>Schicht&nbsp;1 &mdash; Koh&auml;renz / Verklebung</strong> (lokal&rarr;global): das
+      Objekt ist <em>rekonstruierbar</em>.</li>
+      <li><strong>Schicht&nbsp;2 &mdash; interne logische Konsistenz</strong>: &Omega; tr&auml;gt eine
+      Heyting-Algebra; <code>U &cup; &not;U = X \ &part;U &ne; X</code> &mdash; der Rand
+      <code>&part;U</code> geh&ouml;rt zu keiner Seite, daher scheitern LEM <code>p&or;&not;p=&top;</code>
+      und DNE <code>&not;&not;p=p</code> (intuitionistisch).</li>
+      <li><strong>Schicht&nbsp;3 &mdash; Korrespondenz mit dem Situs</strong> (die offene Dimension):
+      G&ouml;del / Turing / Heisenberg + Heraklit markieren, wo Schicht&nbsp;3 den Schichten 1&ndash;2
+      <em>entkommt</em>. Eine <em>voll</em> koh&auml;rente, totale Welt hat doch einen &Uuml;berschuss
+      <code>&Delta;&gt;0</code> zum Ding, den keine Koh&auml;renz verschlie&szlig;t &mdash;
+      <span class="slogan">Koh&auml;rent &ne; wahr.</span></li>
+    </ul>
+    <p>Die zwei L&uuml;cken: <em>Dom&auml;ne</em> (Fovea, lokal, <code>r=0</code>, Chart nicht definiert)
+    und <em>Wahrheit</em> (Situs, global, &Delta;&gt;0, &bdquo;definiert &uuml;berall, doch nicht das
+    Ganze&bdquo;). Die Gleichheitsstufe: A's <em>strikte Eindeutigkeit</em> (1-Garbe, Equalizer als
+    Punktmenge, <code>f</code> vergessen, Gauge fixiert) ist der <strong>1-trunkierte Schatten</strong>
+    von B's <em>koh&auml;renter &Auml;quivalenz</em> (&infin;-Garbe, <code>s<sub>1</sub> &equiv;
+    s<sub>2</sub> via f</code>, <code>f</code> erhalten) &mdash; A = der Kristall (eingefroren),
+    B = die Schmelze (<code>f</code> flie&szlig;t). Yoneda: ein Ding = das koh&auml;rende Netzwerk seiner
+    Erscheinungen.</p>
+
+    <h3>3. Das Fusionsmodell: zwei Achsen des Verlusts (die eigentliche Fusion)</h3>
+    <p>Beide Papiere sind dieselbe Architektur &mdash; ein behandeltes Objekt als verlustbehaftete Reduktion
+    des Ganzen &mdash; gelesen auf zwei <em>senkrechten</em> Achsen. Der Verlustraum ist ihr
+    <strong>Produkt</strong>:</p>
+    <table>
+      <tr><th>Ebene des Verlusts</th>
+        <th>Achse&nbsp;1 &middot; <span class="tag A">A</span> Aufl&ouml;sung (innerhalb des Modells)</th>
+        <th>Achse&nbsp;2 &middot; <span class="tag B">B</span> Wahrheitsschicht (vom Modell zum Ding)</th></tr>
+      <tr><td><b>Typ der L&uuml;cke</b> (B)</td>
+        <td>Objekt-/Dom&auml;nen-L&uuml;cke (was vergessen wird: Stabilisator, Glattstruktur, GI/Fett)</td>
+        <td>zwei Typen: Dom&auml;ne-L&uuml;cke (Fovea) &amp; Korrespondenz-L&uuml;cke (Situs)</td></tr>
+      <tr><td><b>Pr&auml;sentation</b> (A)</td>
+        <td>lokal (Kegel-Punkt, Winkel <code>2&pi;/n</code>) &harr; global (Twist) &mdash; ein Spektrum</td>
+        <td>Dom&auml;ne <em>lokal</em> (ein Punkt) &times; Wahrheit <em>global</em> (&Delta;&gt;0 &uuml;berall)</td></tr>
+      <tr><td><b>Gleichheitsstufe</b></td>
+        <td>grob = Quotient (feine Invariante vergessen)</td>
+        <td>1-Garbe = 1-trunkierter Schatten der &infin;-Garbe (<code>f</code> vergessen / erhalten)</td></tr>
+      <tr><td><b>Erreichbarkeit des Ganzen</b></td>
+        <td>vollst&auml;ndig <em>innerhalb</em> des Modells, durch feine Aufl&ouml;sung erreichbar</td>
+        <td>der Situs <em>jenseits</em> des Modells, unerreichbar (&Delta;&gt;0, Koh&auml;rent &ne; wahr)</td></tr>
+      <tr><td><b>Beobachtbarer Zustand</b></td>
+        <td>Ordnung <code>n</code>, <code>&chi;<sub>orb</sub></code>, Glattklasse (Regler&nbsp;&rarr;&nbsp;Klasse)</td>
+        <td>Impact-/Wahrheits-Einstufung; &Delta;&gt;0 bleibt bei jeder Aufl&ouml;sung</td></tr>
+    </table>
+    <div class="bridge"><span class="who">Fusionierter Grundsatz</span>
+    Der Verlust zum Ganzen hat zwei senkrechte Achsen: <strong>Pr&auml;sentation</strong> (A: lokal
+    &harr; global &mdash; <em>wo</em> der Verlust sichtbar ist) und <strong>Typ / Wahrheitsschicht</strong>
+    (B: Dom&auml;ne &harr; Korrespondenz &mdash; <em>was</em> f&uuml;r eine Unvollst&auml;ndigkeit).
+    Die grobe Invariante ist ein Quotient des Feinen (A); das Feinste ist noch nicht das Ganze,
+    sondern nur koh&auml;rent, nicht wahr (B). Dazu die erweiterte epistemische Regel:
+    <em>benenne deine Aufl&ouml;sung <em>und</em> deine Wahrheitsschicht</em>.</div>
+
+    <h3>4. Die drei Wahrheitsschichten, angereichert durch A</h3>
+    <p><span class="tag A">A</span> angreichert B's Schichten doppelt: (a) Schicht&nbsp;1
+    (Koh&auml;renz/Verklebung) ist in A <em>kein blo&szlig;es Axiom</em>, sondern ein <em>Kriterium, das ein
+    Mechanismus erfullt</em> &mdash; und (b) <em>schon Schicht&nbsp;1 hat ein Loch</em>: die
+    Dom&auml;nen-Singularit&auml;t (Fovea). A's Aufl&ouml;sungshierarchie <em>liegt &uuml;ber</em> den
+    Schichten: jede grobere Ebene ist eine Trunkierung der feineren (die grobe Invariante
+    &bdquo;vergisst&rdquo; gerade die h&ouml;here Schicht). Der Situs (Schicht&nbsp;3) ist die
+    <em>einzige</em> Schicht, die A's Aufl&ouml;sungsachse <em>prinzipiell nicht erreicht</em> &mdash;
+    er ist &bdquo;die Aufl&ouml;sung&rdquo;, die &uuml;ber alle Aufl&ouml;sungen hinausliegt.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktiv: das Ganze und seine zwei L&uuml;cken &mdash; zwei orthogonale Achsen</h2>
+    <p class="muted">Ein Disk ist das Modell / &bdquo;das Ganze&bdquo;. Der <strong>Aufl&ouml;sungs-Regler
+    (A)</strong> enth&uuml;lt die <em>Dom&auml;nen-L&uuml;cke</em> (Fovea-artiges Zentrum, <strong>lokal</strong>,
+    <code>&part;U</code>-Ring) &mdash; bei grober Aufl&ouml;sung ist sie vergessen (das Objekt wirkt wie ein
+    vollst&auml;ndiger Quotient), bei feiner sichtbar; die Feinstruktur erscheint dabei als
+    <em>diskrete</em> Kegel-Klasse <code>n</code> (kontinuierlicher Regler &rarr; diskrete Klasse,
+    &bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&bdquo;). Der <strong>Situs-Toggle (B)</strong> zeigt die
+    <em>Wahrheits-L&uuml;cke</em> (Situs, <strong>global</strong>, &Delta;&gt;0) &mdash; sie bleibt bei
+    <em>jeder</em> Aufl&ouml;sung, weil sie auf der orthogonalen Achse liegt
+    (&bdquo;Koh&auml;rent&nbsp;&ne;&nbsp;wahr&bdquo;). Alle Daten inline, kein Netzwerk.</p>
+    <div class="viz-wrap">
+      <div class="viz-controls">
+        <label>Aufl&ouml;sung (grob&larr;fein, A):
+          <input type="range" id="vRes" min="0" max="100" value="70" step="1">
+          <span class="val" id="vResVal">70</span>
+        </label>
+        <label><input type="checkbox" id="vSitus" checked>
+          Situs-&Uuml;berschuss &Delta; (B, Schicht&nbsp;3, global) zeigen</label>
+      </div>
+      <canvas id="vizCanvas" aria-label="Das Ganze mit zwei orthogonalen Luecken: Domae (lokal) und Situs (global)"></canvas>
+      <div class="readout">
+        <div class="ro"><span class="rol">Aufl&ouml;sung (A)</span><div id="ro-res"></div></div>
+        <div class="ro"><span class="rol">Klasse (Regler&rarr;Klasse)</span><div id="ro-class"></div></div>
+        <div class="ro"><span class="rol">Wahrheitsschicht (B)</span><div id="ro-situs"></div></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--c-quotient)"></span> Objekt / Quotient (das Behandelte)</span>
+        <span><span class="dot" style="background:var(--c-domain)"></span> Dom&auml;nen-L&uuml;cke (A &middot; lokal, Fovea)</span>
+        <span><span class="dot" style="background:var(--c-fine)"></span> Feinstruktur (diskrete Klasse n)</span>
+        <span><span class="dot" style="background:var(--c-truth)"></span> Situs-L&uuml;cke (B &middot; global, &Delta;&gt;0)</span>
+      </div>
+      <p class="caption">Zwei senkrechte Achsen des Verlusts: <strong>Pr&auml;sentation</strong> (A &mdash; die
+      Dom&auml;nen-L&uuml;cke ist lokal, die Situs-L&uuml;cke global) und <strong>Typ / Wahrheitsschicht</strong>
+      (B &mdash; Dom&auml;ne vs. Korrespondenz). Die Aufl&ouml;sung steuert nur die <em>Dom&auml;nen</em>-L&uuml;cke;
+      die Situs-L&uuml;cke &Delta;&gt;0 bleibt auf ihrer eigenen Achse. Alle Daten inline.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../n2-023.html"><strong>A &mdash; n2-023.html</strong></a> &middot;
+        <em>&bdquo;Grob klassifiziert, fein unterschieden &mdash; Invarianten &uuml;ber
+        Aufl&ouml;sungsstufen&rdquo;</em> (Runde 2, n1-085 &times; n1-088): das System als
+        Aufl&ouml;sungshierarchie; die grobe Invariante klassifiziert und ist ein <em>Quotient, der die
+        Feinstruktur vergisst</em>; Fein = general, diskret/kategorisch/nicht-wegzudeformierend;
+        &bdquo;Regler&nbsp;&rarr;&nbsp;Klasse&bdquo;; lokal (Kegel-Punkt) &harr; global (Twist) als
+        <em>Pr&auml;sentations-Spektrum</em> einer Invariante; Orbifold / <code>&chi;<sub>orb</sub></code>;
+        28 Glattstrukturen (Milnor 1956), 4D offen; &bdquo;Nenne deine Aufl&ouml;sung und dein offenes
+        Problem&rdquo;. Die Feinstruktur pr&auml;sentiert sich lokal oder global.</li>
+      <li><a href="../n2-027.html"><strong>B &mdash; n2-027.html</strong></a> &middot;
+        <em>&bdquo;Die Garbenwelt und ihre zwei L&uuml;cken: Fovea (Dom&auml;ne) &times; Situs
+        (Wahrheit)&rdquo;</em> (Runde 2, n1-022 &times; n1-074): ein verklebtes Objekt tr&auml;gt
+        <em>zwei orthogonale L&uuml;cken</em> zum Ganzen &mdash; Dom&auml;ne (Fovea, lokal) &amp; Wahrheit
+        (Situs, global, &Delta;&gt;0); drei Wahrheitsschichten (Koh&auml;renz / interne Konsistenz
+        &Omega;/Heyting / Situs); strikte Eindeutigkeit = <em>1-trunkierter Schatten</em> der koh&auml;renten
+        &Auml;quivalenz (<code>s<sub>1</sub>&equiv;s<sub>2</sub> via f</code>); &bdquo;Koh&auml;rent
+        &ne; wahr&rdquo;; Yoneda; G&ouml;del/Turing/Heisenberg/Heraklit. Die Feinstruktur pr&auml;sentiert sich
+        lokal (Fovea) oder global (Situs) &mdash; und <em>verschiedene Arten</em>.</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var htmlEl = document.documentElement;
+  var tBtn = document.getElementById('themeToggle');
+  if (tBtn){ tBtn.addEventListener('click', function(){ htmlEl.classList.toggle('dark'); }); }
+
+  var canvas = document.getElementById('vizCanvas');
+  if (!(canvas && canvas.getContext)){ return; }
+  var ctx = canvas.getContext('2d');
+
+  var resSlider = document.getElementById('vRes');
+  var resValEl  = document.getElementById('vResVal');
+  var situsTgl  = document.getElementById('vSitus');
+  var roRes     = document.getElementById('ro-res');
+  var roClass   = document.getElementById('ro-class');
+  var roSitus   = document.getElementById('ro-situs');
+
+  var res = 70;
+  var situs = true;
+
+  // reprasentativer Situs-Uberschuss (inline Feld, lokal berechnet)
+  var DELTA = (function(){
+    var s = 0, n = 0;
+    for (var i = 0; i < 240; i++){
+      var th = i / 240 * 2 * Math.PI;
+      var v = 0.52 + 0.16 * Math.cos(2 * th) + 0.09 * Math.cos(3 * th);
+      s += v * v; n++;
+    }
+    return Math.sqrt(s / n);
+  })();
+
+  function readPalette(){
+    var cs = getComputedStyle(htmlEl);
+    return {
+      text:     cs.getPropertyValue('--text').trim()      || '#e7e9f2',
+      muted:    cs.getPropertyValue('--muted').trim()     || '#9aa1b5',
+      border:   cs.getPropertyValue('--border').trim()    || '#2a3145',
+      vizBg:    cs.getPropertyValue('--viz-bg').trim()    || '#0f1526',
+      voidc:    cs.getPropertyValue('--viz-void').trim()  || '#141b30',
+      domain:   cs.getPropertyValue('--c-domain').trim()  || '#f07ad0',
+      truth:    cs.getPropertyValue('--c-truth').trim()   || '#ffb02e',
+      fine:     cs.getPropertyValue('--c-fine').trim()    || '#6f8bff',
+      quotient: cs.getPropertyValue('--c-quotient').trim()|| '#4ade80'
+    };
+  }
+
+  function rgba(hex, a){
+    hex = (hex || '').trim();
+    if (hex.charAt(0) === '#'){
+      var c = hex.slice(1);
+      if (c.length === 3){ c = c.charAt(0)+c.charAt(0)+c.charAt(1)+c.charAt(1)+c.charAt(2)+c.charAt(2); }
+      var nn = parseInt(c, 16);
+      if (isNaN(nn)){ return hex; }
+      return 'rgba('+((nn>>16)&255)+','+((nn>>8)&255)+','+(nn&255)+','+a+')';
+    }
+    return hex;
+  }
+
+  function nClass(r){ return 2 + Math.floor(r * 6); }  // 2..8: kontinuierlicher Regler -> diskrete Klasse
+
+  function resize(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = canvas.parentElement ? canvas.parentElement.clientWidth : 700;
+    var h = Math.max(340, Math.min(480, Math.round(w * 0.62)));
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.width  = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function draw(){
+    var t = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    var W = canvas.clientWidth, H = canvas.clientHeight;
+    if (W < 2 || H < 2){ requestAnimationFrame(draw); return; }
+    var c = readPalette();
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = c.vizBg;
+    ctx.fillRect(0, 0, W, H);
+
+    var cx = W / 2, cy = H / 2;
+    var R  = Math.min(W, H) * 0.40;
+    var r  = Math.max(0, Math.min(1, res / 100));
+    var pulse = 0.5 + 0.5 * Math.sin(t * 0.0035);
+    var holeR = R * 0.34 * r;           // Domae-Luecke eroffnet mit der Aufluesung
+    var reveal = r;                     // Feinstruktur wird sichtbar
+
+    // 1) Objekt / Quotient (das Behandelte)
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(c.quotient, 0.10); ctx.fill();
+    ctx.strokeStyle = c.border; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // 2) Situs-Ueberschuss (GLOBAL, B): ueber das ganze Objekt, unabhaengig von der Aufluesung
+    if (situs){
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fillStyle = rgba(c.truth, 0.05 + 0.06 * pulse);
+      ctx.fill();
+      // globaler Situs-Ring am Rand (ueberall, &Delta;>0)
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.92, 0, Math.PI * 2);
+      ctx.strokeStyle = rgba(c.truth, 0.5 + 0.3 * pulse);
+      ctx.lineWidth = 2; ctx.setLineDash([4, 5]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // 3) Feinstruktur (A): n radiale Faltlinien, diskrete Klasse, wird mit der Aufluesung sichtbar
+    var n = nClass(r);
+    if (reveal > 0.03){
+      ctx.strokeStyle = rgba(c.fine, reveal * 0.75);
+      ctx.lineWidth = 1.4;
+      for (var i = 0; i < n; i++){
+        var a = (2 * Math.PI * i) / n - Math.PI / 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + holeR * Math.cos(a), cy + holeR * Math.sin(a));
+        ctx.lineTo(cx + R * 0.97 * Math.cos(a), cy + R * 0.97 * Math.sin(a));
+        ctx.stroke();
+      }
+      // kleine kategoriale Invarianten-Scheibe (Faltwinkel 2 pi / n)
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.20, 0, Math.PI * 2);
+      ctx.strokeStyle = rgba(c.fine, reveal * 0.55);
+      ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // 4) Domae-Luecke (A, LOKAL): Fovea-artiges Zentrum, &part;U-Ring, Kegel-Punkt
+    if (holeR > 1.5){
+      // Void-Fuellung
+      ctx.beginPath(); ctx.arc(cx, cy, holeR, 0, Math.PI * 2);
+      ctx.fillStyle = c.voidc; ctx.fill();
+      // Schraffur
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, holeR, 0, Math.PI * 2); ctx.clip();
+      ctx.strokeStyle = rgba(c.domain, 0.5); ctx.lineWidth = 1.2;
+      for (var hx = -holeR; hx < holeR; hx += 9){
+        ctx.beginPath();
+        ctx.moveTo(cx + hx, cy - holeR); ctx.lineTo(cx + hx + 2 * holeR, cy + holeR);
+        ctx.stroke();
+      }
+      ctx.restore();
+      // &part;U-Rand (gestrichelt, domain-farben)
+      ctx.beginPath(); ctx.arc(cx, cy, holeR, 0, Math.PI * 2);
+      ctx.strokeStyle = rgba(c.domain, 0.6 + 0.3 * pulse);
+      ctx.lineWidth = 2.5; ctx.setLineDash([6, 5]); ctx.stroke(); ctx.setLineDash([]);
+      // Kegel-Punkt (Puls)
+      ctx.beginPath(); ctx.arc(cx, cy, 4 + 3 * pulse, 0, Math.PI * 2);
+      ctx.fillStyle = rgba(c.domain, reveal);
+      ctx.fill();
+    }
+
+    // 5) Labels
+    ctx.textAlign = 'left';
+    ctx.font = '12px Georgia, serif';
+    ctx.fillStyle = c.muted;
+    var resLabel = reveal < 0.34 ? 'grob' : (reveal < 0.7 ? 'mittel' : 'fein');
+    ctx.fillText('Aufl\u00f6sung (A): ' + resLabel, 14, 24);
+    ctx.fillStyle = c.domain;
+    ctx.fillText('Dom\u00e4nen-L\u00fccke (A \u00b7 lokal): \u2202U / Fovea, Kegelordnung ' + n, 14, 42);
+    if (situs){
+      ctx.fillStyle = c.truth;
+      ctx.fillText('Situs-L\u00fccke (B \u00b7 global): \u0394 \u2248 ' + DELTA.toFixed(2) + ' > 0, jede Aufl\u00f6sung', 14, 60);
+    }
+    ctx.fillStyle = c.muted; ctx.font = '11px Georgia, serif';
+    ctx.fillText('zwei senkrechte Achsen: Pr\u00e4sentation (A) \u00d7 Wahrheitsschicht (B)', 14, H - 14);
+    requestAnimationFrame(draw);
+  }
+
+  function updateReadout(){
+    if (!roRes || !roClass || !roSitus) return;
+    var r = res / 100;
+    var n = nClass(r);
+    var deg = 360 / n;
+    var degStr = (deg % 1 === 0) ? deg.toFixed(0) : deg.toFixed(2);
+    if (r < 0.05){
+      roRes.textContent = 'grob (r=' + res + '%): die Dom\u00e4nen-L\u00fccke ist vergessen \u2014 das Objekt wirkt wie ein vollst\u00e4ndiger Quotient.';
+    } else if (r < 0.7){
+      roRes.textContent = 'mittel (r=' + res + '%): die Dom\u00e4nen-L\u00fccke wird sichtbar (\u2202U, lokal, Fovea-A) \u2014 der Quotient zeigt sein Loch.';
+    } else {
+      roRes.textContent = 'fein (r=' + res + '%): die Dom\u00e4nen-L\u00fccke ist voll sichtbar (lokal) \u2014 kategoriale Invariante, nicht deformierbar.';
+    }
+    roClass.textContent = 'kontinuierlicher Regler \u2192 diskrete Klasse: Ordnung n=' + n +
+      ' (Kegelwinkel 360\u00b0/n = ' + degStr + '\u00b0). \u201eRegler \u2192 Klasse\u201c (A).';
+    if (situs){
+      roSitus.textContent = '\u0394 \u2248 ' + DELTA.toFixed(2) + ' > 0 bleibt bei JEDER Aufl\u00f6sung \u2014 Koh\u00e4rent \u2260 wahr (B, global). Keine Aufl\u00f6sung schlie\u00dft diese L\u00fccke.';
+    } else {
+      roSitus.textContent = 'ausgeblendet \u2014 der Situs-\u00dcberschuss \u0394 > 0 ist vorhanden (Schicht 3), hier nur nicht gezeichnet.';
+    }
+  }
+
+  if (resSlider){
+    resSlider.addEventListener('input', function(){
+      res = Math.max(0, Math.min(100, parseInt(resSlider.value, 10) || 0));
+      if (resValEl) resValEl.textContent = String(res);
+      updateReadout();
+    });
+  }
+  if (situsTgl){
+    situsTgl.addEventListener('change', function(){ situs = situsTgl.checked; updateReadout(); });
+  }
+  window.addEventListener('resize', resize);
+
+  resize();
+  updateReadout();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

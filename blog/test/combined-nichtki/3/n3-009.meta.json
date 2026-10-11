@@ -1,0 +1,16 @@
+{
+  "no": "009",
+  "a": "n2-005.html",
+  "b": "n2-030.html",
+  "a_title": "Ordnung als geprüfte Schließung: das Ganze, das sich erst im Test schließt",
+  "b_title": "Gauge und Grenze",
+  "combined_theme": "gewissheit-als-geprufte-schliessung",
+  "one_line": "Der Grund eines selbstbezüglichen Systems ist ein Schließungs-/Gauge-stabiler Kern, den eine wohldefinierte globale Operation gewinnt (A's Schließ-Test = B's globaler Vergleich), plus eine ehrlich benannte, unüberschreitbare Grenze — deren Struktur-Seite asymptotisch von außen angedingt wird (B: pⁿ→0) und deren Bedeutung-Seite absolut ist (A: Struktur ≠ Wahrheit).",
+  "contradictions": [
+    "Status des Kernels: A test-konstituiert (Ordnung entsteht aus lokalen Regeln, 'existiert gdw der Test durchläuft'), B entdeckt (Invariante/μ/Holonomie ist ein unabhängiger Welt-/Raum-Fakt, den der Gauge nur verfehlt).",
+    "Geometrie der Grenze: A irreduzible absolute Wand (Bedeutungsgrenze, Gödel, nichts — auch nicht Äußeres — kreuzt sie), B asymptotischer Korridor (Fundament wird von einer äußeren Währung angedingt, pⁿ→0, beliebig nah aber nie gleich).",
+    "Graduierung des Schließens: A kontinuierlicher Score c(Präzision) mit scharfem Schwellwert θ und graduellen Zwischenstufen, B geschlossene Ein-Operation 'ohne Rest' (Holonomie = Krümmung, all-or-nothing, keine Zwischenstufe)."
+  ],
+  "resolution": "Der Kern ist konstituiert im Zugriff (A) und objektiv im Inhalt (B) — dieselbe Operation ist die Konstitution, ihre Invarianz die Entdeckung. Die Grenze ist zwei ineinanderliegende Böden: der asymptotische Struktur-Boden (B) läuft bis zur, aber nie durch die, absolute Bedeutungs-Wand (A). 'Ein-Operation ohne Rest' (B) ist der exakte Peak der Schließkurve, der Schwellwert (A) die Zertifizierungs-Stelle auf derselben Kurve — zwei Lesarten, keine Rivalen.",
+  "viz": "Canvas-Schließkurve c(t) über 'Tiefe der Prüfung': exakte Peaks an ganzen Zahlen (Kern ohne Rest, B) + Täler (gemessene Abweichung, A); gestrichelte Obergrenze C(n)=1−k·pⁿ (B, asymptotisch, nie bis 1); Wand c=1 (A, Bedeutung, nie kreuzbar); θ-Schwellwert-Linie (A); Ehrlichkeits-Overlay schattiert die ehrliche Lücke. Slider: t, θ, n unabhängige Systeme, Overlay."
+}

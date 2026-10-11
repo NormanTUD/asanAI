@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 008: Das Unfaßbare liest man — Projektion, Anker, Loslassen</title>
+<style>
+:root{
+  --bg:#f5f4ef; --panel:#ffffff; --bg2:#fbfaf7; --ink:#1a1a24; --dim:#5b6270;
+  --line:#ddd8cc; --grid:rgba(0,0,0,.06); --canvas:#fbfaf7;
+  --acc:#1f8f6a; --acc2:#0e7fb0; --bad:#d9483a; --warn:#c98a1b;
+  --shadow:0 10px 30px rgba(20,30,60,.07);
+}
+html.dark{
+  --bg:#0a0e0d; --panel:#101715; --bg2:#0c1311; --ink:#e8edf7; --dim:#93a1b6;
+  --line:#24312b; --grid:rgba(255,255,255,.06); --canvas:#0c1311;
+  --acc:#5fd6a4; --acc2:#7dd3fc; --bad:#ff7a6e; --warn:#ffd166;
+  --shadow:0 12px 34px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.66;
+  font:16px/1.66 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px}
+.theme-toggle:hover{border-color:var(--acc)}
+h1{font-size:clamp(25px,4.2vw,38px);line-height:1.12;margin:6px 0 8px;letter-spacing:-.01em}
+.subtitle{color:var(--acc);font-size:14.5px;margin:0 0 8px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.lede{color:var(--dim);font-size:15px;margin:0 0 8px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:22px 24px;margin:20px 0;box-shadow:var(--shadow)}
+h2{font-size:21px;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);letter-spacing:-.01em}
+h2 .num{color:var(--acc);font-variant-numeric:tabular-nums}
+h3{font-size:15.5px;margin:22px 0 8px;color:var(--acc)}
+p{margin:0 0 13px} p:last-child{margin-bottom:0}
+ul{margin:0 0 13px;padding-left:22px} li{margin:0 0 9px}
+b,strong{color:var(--ink)} em{color:var(--dim)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg2);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.card{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--acc);
+  border-radius:11px;padding:14px 16px;margin:14px 0}
+.card b,.card strong{color:var(--acc)}
+.card.warn{border-left-color:var(--bad)} .card.warn b,.card.warn strong{color:var(--bad)}
+.card.ok{border-left-color:var(--acc2)} .card.ok b,.card.ok strong{color:var(--acc2)}
+.tagA{display:inline-block;font-size:.72em;font-weight:700;color:var(--acc2);border:1px solid var(--acc2);border-radius:5px;padding:1px 6px;margin-right:5px}
+.tagB{display:inline-block;font-size:.72em;font-weight:700;color:var(--bad);border:1px solid var(--bad);border-radius:5px;padding:1px 6px;margin-right:5px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--dim);font-weight:600;font-size:.76em;text-transform:uppercase;letter-spacing:.04em}
+td:first-child{font-weight:700;color:var(--ink)}
+td.ca{color:var(--acc2);font-weight:600} td.cb{color:var(--bad);font-weight:600}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;background:var(--bg2);
+  border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;text-align:center;
+  color:var(--acc);font-weight:600;overflow:auto}
+.viz-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:6px 0 14px}
+.vc{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+.vc label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);font-weight:600;margin-bottom:8px}
+.vc label span{color:var(--acc);font-variant-numeric:tabular-nums}
+.vc input[type=range]{width:100%;accent-color:var(--acc)}
+.vizwrap{width:100%}
+canvas#viz{width:100%;display:block;background:var(--canvas);border:1px solid var(--line);border-radius:12px}
+.status{font-size:13.5px;color:var(--dim);margin:12px 0 4px;line-height:1.55}
+.status.warn{color:var(--bad)}
+.vnote{font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.6}
+.dot{font-style:normal}
+.prov{border-left:3px solid var(--acc);padding-left:16px;margin:16px 0}
+.prov a{color:var(--acc);text-decoration:none;font-weight:600;font-family:ui-monospace,monospace}
+.prov a:hover{text-decoration:underline}
+.prov .hint{color:var(--dim);font-size:13.5px}
+.foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn">&#9728; / &#9790; Theme</button>
+<article>
+<h1>Das Unfaßbare liest man, man hält es nicht — Projektion, Anker, Loslassen</h1>
+<p class="subtitle">Fusion aus: n2-024.html &#10005; n2-007.html &nbsp;(Runde 3)</p>
+<p class="lede">Zwei Runde-2-Fusionen, eine höhere Ebene: A sagt, das <em>Unfaßbare Ganze</em> ist nie ein Objekt, sondern eine Relation, die man durchläuft und bei der man den Griff losläßt; B sagt, <em>Wahrnehmung ist Projektion auf einen Anker</em> über einem bedeutungsfreien Feld. Die Fusion hebt auf die Ebene ihrer <strong>Theorien</strong>: beide sind Theorien darüber, wie ein Wahrnehmender auf ein Unfaßbares bezogen ist.</p>
+
+<section id="these">
+<h2><span class="num">1.</span> Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> (n2-024 — „Das Unfaßbare Ganze", S&#10005;HoTT &#10005; Watts/Spaß) behauptet: ein <em>selbst-schließendes, totalisierendes Objekt existiert nicht</em>. Weder „die Menge/die Typ aller Dinge" (Stratifizierung, <code>V&#8320;&#8868;V&#8321;&#8868;…</code>, keine Oberstufe) noch „das separate Selbst" (Möbiusband ohne Kante, „du bist ES"). Was trägt, ist <strong>relational, nicht substanziell</strong>: das Ganze ist nie ein Objekt, das man hält, sondern eine <em>Beziehung, die man durchläuft</em> — über Stufen (offener Turm ohne Dach) oder als geschlossener Ring ohne Rand. Der eine Fehler ist <em>das Ganze ergreifen</em>; die eine Heilung ist <em>loslassen</em> (÷ Selbstbewusstsein).</p>
+<p><span class="tagB">B</span> (n2-007 — „Wahrnehmung = Projektion auf einen Anker", lokale Berechnung &#10005; Primzahlen/Manipulation) behauptet: was ein System „sieht", ist <em>keine</em> Eigenschaft des Rohsignals, sondern wird durch zwei mitgebrachte Dinge bestimmt — (1) die <strong>Projektion</strong> (ein Satz lokaler Regeln/Linsen, der Rohes in Interpretiertes überführt) und (2) den <strong>Anker</strong> (die Referenz-Baseline, an die das Gelesene angelegt wird; robust als Linse, fragil als Baseline). Die Struktur ist zweischichtig: irreduzible Mikrodynamik reitet auf einer driftenden Makro-Baseline (Trend + Periode); das Zeichen des Drifts trennt „Gesetz zu meistern" von „Falle, aus der man aussteigt".</p>
+<p><strong>Die eine integrierte Position:</strong> <em>Das, worauf der Wahrnehmende bezogen ist (das „Alles" bei A, das Rohfeld bei B), ist nie ein Objekt in der Hand — es wird nur lesbar, wenn der Wahrnehmende einen begrenzten, relationalen Akt auf es wirft</em> (A: das Durchlaufen der Ebenen-Relation; B: die Projektion auf den Anker). Was trägt, ist immer die <strong>Relation</strong> (der Akt + der Bezugspunkt), nie das Ganze als Substanz. Und der eine Fehler, den beide benennen, ist derselbe: <em>das Ganze ergreifen wollen</em> (A: Totalisierung; B: den Anker/die Diagnose als Festes behaupten). Die eine Heilung ist dieselbe: <em>loslassen / ÷ Selbsthaft</em> — so bleibt das Gelesene eine Relation, die man durchläuft, statt ein Objekt, das man hält.</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="num">2.</span> Widersprüche zwischen A und B</h2>
+<p>Kein Widerspruch ist erfunden; sie liegen in den <em>Thesen</em> der beiden Runde-2-Papiere, die inkompatible Stellungen beziehen.</p>
+<div class="card warn">
+<b>1 &middot; Ontologie des Beobachters: nicht-dual vs. dual.</b><br>
+<span class="tagA">A</span> sagt, der Beobachter <strong>IST das Ganze</strong>: das separate Ego ist eine Halluzination, „du bist ES", „Ich BIN die Welle" — es gibt <em>kein</em> Subjekt, das auf ein Objekt blickt; der Beobachter ist das Durchlaufen der Struktur selbst.<br>
+<span class="tagB">B</span> sagt, der Beobachter ist ein <strong>distinkter Projektierer</strong>, der <em>über</em> einem bedeutungsfreien Feld steht und eine Linse wählt — es gibt einen klaren Subjekt-/Objekt-Spalte (der Analyst wirft eine Projektion auf die Primzahlen/das Feld).<br>
+&rarr; A <em>löst</em> den Wahrnehmenden in das Feld auf; B <em>braucht</em> einen getrennten Wahrnehmenden, der die Projektion vollzieht. Direkt inkompatible Stellung dazu, ob der Wahrnehmende mit dem Feld identisch ist oder davon getrennt.
+</div>
+<div class="card">
+<b>2 &middot; Stabilität der Struktur: selbsttragend vs. angreifbar.</b><br>
+<span class="tagA">A</span>: die relationale Struktur ist <strong>stabil und selbsttragend</strong>; das Ganze ist „schon da" (vollständig da). Der einzige Fehler ist <em>intern</em> — der Griff/das Vergessen des Ego. Die Heilung ist <em>Loslassen</em>; die Struktur selbst braucht keinen Schutz.<br>
+<span class="tagB">B</span>: die Referenz/der Anker ist <strong>fragil und angreifbar</strong> — Gaslighting vergiftet sie systematisch, und die <em>Wiederherstellung</em> ist eine Voraussetzung, um überhaupt zu sehen. Die Heilung ist <em>Reparatur/Kalibrierung</em>; die Struktur <em>muss</em> aktiv verteidigt werden.<br>
+&rarr; A: die Relation trägt sich selbst, der Fehler ist innen (Greifen). B: der Anker ist angreifbar, der Fehler kann von außen kommen, und er verlangt aktiven Pflegeaufwand.
+</div>
+<div class="card">
+<b>3 &middot; Methode: uniformes Nicht-Ergreifen vs. diagnostische Fallunterscheidung.</b><br>
+<span class="tagA">A</span> kennt <strong>ein</strong> Ganzes und <strong>ein</strong> Fehler (Totalisierung/Ergreifen); die Haltung ist durchgehend dieselbe — <em>durchlaufen, nie ergreifen</em> — ohne Bewertung, ohne Fallunterscheidung.<br>
+<span class="tagB">B</span> ist im Kern <strong>diagnostisch/evaluiend</strong>: das Zeichen des Makro-Drifts &#215; die Anker-Integrität <em>trennt</em> ein Muster, das man <em>meistert</em> (harmlos, stationär) von einem, aus dem man <em>austeigt</em> (feindlich, negativer Drift). Es gibt also gute und schlechte Muster.<br>
+&rarr; A: ein einzelner, uniformer Zug (Loslassen). B: ein Diskriminator, der Muster in „meistern" und „aussteigen" sortiert.
+</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="num">3.</span> Auflösung</h2>
+<p>Drei Auflösungen, je eine pro Widerspruch; daraus folgt die fusionierte Schlussfolgerung.</p>
+<div class="card">
+<b>Auflösung 1 &mdash; Der Beobachter ist auf Level-Ebene ein Projektierer und auf Ganzen-Ebene ein Knoten der Relation.</b>
+B braucht die Subjekt-/Objekt-Spalte, um überhaupt eine Projektion zu vollziehen; A sagt, jede solche <em>begrenzte</em> Spalte ist selbst ein Knoten in der Struktur, kein externes Subjekt. Die „gewählte Linse" (B) ist ein <em>lokaler Akt innerhalb einer Ebene</em> (A); der Projektierer ist ein Knoten des Ganzen, nicht ein Gott darüber. <strong>Fusion:</strong> die Beobachter-/Feld-Spalte ist eine <em>Grenze</em> — real als funktionale Relation (B braucht sie zum Projizieren), Schein als Substanz (A löst sie auf: „du bist ES"). Man <em>nutzt</em> den Spalt zum Projizieren (B), hält ihn aber nicht als getrenntes Selbst (A). Dieselbe Aussage auf zwei Ebenen: dual unten, nicht-dual oben.
+</div>
+<div class="card">
+<b>Auflösung 2 &mdash; Der Anker hat zwei Teile: eine stabile Topologie und eine kalibrierbare Referenz.</b>
+A hat recht, dass die <strong>Struktur/Topologie</strong> (die Ebenen-Relation, die Welle) stabil und „schon da" ist; B hat recht, dass die <strong>Referenz/das Gespür für „was zählt als normal/real"</strong> driftet und vergiftet wird. Das „schon da" (A) bezeichnet die <em>Struktur</em>; das „muss wiederhergestellt werden" (B) bezeichnet <em>deinen Anker auf ihr</em>. <strong>Fusion:</strong> man <em>verteidigt</em> die Struktur nicht (sie ist ganz), man <em>kalibriert</em> seinen Anker auf ihr. Loslassen (A) gilt für die Struktur (sie ist komplett), Wiederherstellen (B) gilt für den Anker (er ist deins zu pflegen). Zwei Ziele, dieselbe Zugfamilie: falschen Griff auf der Struktur loslassen, wahre Referenz darauf kalibrieren.
+</div>
+<div class="card">
+<b>Auflösung 3 &mdash; Diagnose ist ein lokaler Akt; Nicht-Ergreifen ist die Meta-Haltung darüber.</b>
+B's Diskriminator (Drift-Vorzeichen &#215; Anker) arbeitet <em>innerhalb einer Ebene</em> — eine lokale Lese-Entscheidung über <em>dieses</em> Muster. A's uniformes „durchlaufen, nie ergreifen" ist die <em>Meta-Haltung über alle Ebenen</em>. <strong>Fusion:</strong> man <em>diagnostiziert</em> (B) — das ist ein legitimer lokaler Projektions-Akt eines Knotens —, aber man <em>erfasst</em> das Ergebnis nie als Total (A): man macht „das ist ein Gesetz" oder „das ist eine Falle" nicht zur totalisierenden Selbstposition. Die Erzeuger-/Drift-Frage (B) wird relational gelesen und dann <em>losgelassen</em> (A). Das ÷ Selbsthaft (A) ist genau das, was die Diagnose verhindert, zur neuen Totalisierung zu erstarren.
+</div>
+<p class="formula">Sehen &nbsp;=&nbsp; (Projektion auf ein Level) &nbsp;&#215;&nbsp; (kalibrierter Anker) &nbsp;&#247;&nbsp; (Selbsthaft)</p>
+<p><strong>Fusionierte Schlussfolgerung:</strong> Das Unfaßbare wird <em>gelesen, nie gehalten</em>. Der Wahrnehmende ist ein Knoten (kein externes Subjekt), der eine begrenzten Projektions-Akt auf einen kalibrierbaren Anker wirft; die Struktur, auf die er wirft, ist stabil und „schon da" (A), aber seine Referenz darauf ist fragil und zu kalibrieren (B); und die Meta-Haltung über all dem ist — <em>lesen, handeln, loslassen, nie ergreifen</em> (A) —, was B's Diagnose (meistern/aussteigen) davon abhält, zur Total-Position zu verhärten. B's <code>Sehen = (Linse passt) &amp; (Anker intakt) &amp; (Trend gemessen)</code> und A's <code>Totalisierung = Fehlschlag, Beziehung = trägt</code> werden zu einer Formel: <em>Projektion &#215; Anker &#247; Selbsthaft.</em></p>
+</section>
+
+<section id="inhalt">
+<h2><span class="num">4.</span> Fusionierter Inhalt</h2>
+<p>Beide Runde-2-Papiere lassen sich auf die Ebene ihrer Thesen in ein gemeinsames Modell gießen: ein Wahrnehmender ist auf ein Unfaßbares bezogen, das er <em>nicht</em> als Objekt in der Hand hat; es wird nur durch einen <strong>begrenzten, relationalen Akt</strong> lesbar, den er <strong>ankert</strong> (Bezugspunkt) und <strong>lässt</strong> (hält es nicht fest). Die Tabelle ist das Herz der Fusion — jede Zeile eine Größe, bei A, bei B und fusioniert:</p>
+<table>
+<thead><tr><th>Größe</th><th class="ca">A &middot; das Unfaßbare Ganze</th><th class="cb">B &middot; Projektion auf Anker</th><th>Fusion</th></tr></thead>
+<tbody>
+<tr><td>Das Unfaßbare</td><td class="ca">das „Alles" — nie Objekt, nur Relation/Durchlaufen</td><td class="cb">das Rohsignal-Feld — bedeutungsfrei, lesbar nur durch Projektion</td><td>die Struktur, auf die der begrenzte Akt geworfen wird</td></tr>
+<tr><td>Lesbarkeit entsteht</td><td class="ca">Durchlaufen der Ebenen-Relation (Stufe&#8596;Stufe, Figur&#8596;Grund)</td><td class="cb">Projektion (selektierte/gewählte Linse) auf einen Anker</td><td>ein begrenzter Projektions-Akt auf einem Level</td></tr>
+<tr><td>Anker / Referenz</td><td class="ca">die Eben-Indexierung der Identität (relational, nichts absolut)</td><td class="cb">Baseline = Trend + Periode (robuste Linse + fragile Referenz)</td><td>der kalibrierbare Bezugspunkt <em>innerhalb</em> der stabilen Struktur</td></tr>
+<tr><td>Was trägt</td><td class="ca">die Relation, nicht die Substanz</td><td class="cb">intakte Linse &#215; intakter Anker</td><td>stabile Struktur &#215; kalibrierter Anker &#247; Selbsthaft</td></tr>
+<tr><td>Fehler / Pathologie</td><td class="ca">Totalisierung / Ergreifen (÷ Selbstbewusstsein fehlt)</td><td class="cb">vergifteter Anker / falsche Linse (Fehlwahrnehmung)</td><td>Selbsthaft auf das Ergebnis — die Relation erstarrt zu Substanz</td></tr>
+<tr><td>Heilung</td><td class="ca">Loslassen (÷ Selbstbewusstsein)</td><td class="cb">Wiederherstellen / Rekalibrieren des Ankers</td><td>den Griff loslassen <em>und</em> den Anker kalibrieren</td></tr>
+<tr><td>Methode</td><td class="ca">uniform: durchlaufen, nie ergreifen (ein Ganzes, ein Fehler)</td><td class="cb">diagnostisch: Master vs. Exit (Drift-Vorzeichen &#215; Anker-Integrität)</td><td>lokal diagnostizieren, total <em>nicht</em> ergreifen</td></tr>
+<tr><td>Der Beobachter</td><td class="ca">IST das Ganze (nicht-dual, „du bist ES")</td><td class="cb">distinkter Projektierer (dual, wählt Linse)</td><td>Knoten der Relation: auf Level-Ebene Projektierer, auf Ganzen-Ebene in der Welle</td></tr>
+</tbody>
+</table>
+
+<h3>Was A trägt — die These auf der Ebene des Unfaßbaren</h3>
+<p>Zwei Fluchten aus der Totalisierung, dieselbe topologische Tatsache: <strong>kein abgeschlossener Grenzknoten</strong>. <em>Offen nach oben</em> (Stratifizierung <code>V&#8320;&#8868;V&#8321;&#8868;…</code>, kein Typ aller Typen — das Ganze ist immer eine Ebene höher, nie ein Objekt) und <em>geschlossen nach innen</em> (Möbiusband ohne Kante, Innen = Außen, „das Universum, das sich selbst erlebt" — das Ganze ist schon da, man erreicht es, indem man den Griff lockert). Ebenen sind real <em>als Beziehung</em>, nicht als Substanz: die Beziehung (Stufe&#8596;Stufe, Figur&#8596;Grund) trägt, die vermeintlich trennende Substanz täuscht. Identität ist relational/geschichtet, nicht absolut. Der Mechanismus ist domänen-neutral und trägt zwei Logiken (klassisch/konstruktiv; Empirie/Metaphysik). Der gemeinsame Fehler: <em>das Ganze ergreifen</em> (naive Komprehension; Festhalten/Doppelbindung). Heilung: ÷ Selbstbewusstsein.</p>
+
+<h3>Was B trägt — die These auf der Ebene des Gelesenen</h3>
+<p>Wahrnehmung ist <strong>Projektion auf einen Anker</strong> über einem bedeutungsfreien Feld. Die Struktur ist <strong>zweischichtig</strong>: irreduzible Mikrodynamik (computational Irreducibility, lokal, „muss ausgeführt werden") reitet auf einer langsam driftenden Makro-Baseline, die sich in <strong>Trend + Periode</strong> zerlegt (aggregiert, beschreibbar). Die <strong>Integrität des Ankers</strong> zählt: souverän (intakt) vs. manipultiert (vergiftet, Erholung = Kalibrierungsschritt). Der <strong>einzige Diskriminator</strong> zwischen „Gesetz zu meistern" (harmlos, stationär) und „Falle, aus der man aussteigt" (feindlich, negativer Drift) ist das <em>Zeichen des Makro-Drifts</em> &#215; die Anker-Integrität. Die Schlüsselfrage: <em>Wer erzeugt dieses Muster, und was will es?</em> Antwort „niemand" &#8594; Gesetz (Mastery); Antwort „jemand, der von deiner Fehlwahrnehmung profitiert" &#8594; Manipulation (Exit, beginnend mit der Anker-Wiederherstellung).</p>
+
+<div class="card ok">
+<b>Fusioniertes Modell (fünf Komponenten).</b> Ein Unfaßbares (das Ganze / das Rohfeld) wird lesbar, indem der Wahrnehmende <em>fünf</em> Dinge hält: (1) er ist ein <strong>Knoten</strong> der Relation (kein externes Subjekt — A), (2) er vollzieht einen <strong>begrenzten Projektions-Akt</strong> auf einem Level (B), (3) er legt das Gelesene an einen <strong>Anker</strong> — eine stabile Topologie, auf der seine eigene Referenz sitzt (A + B), (4) er <strong>diagnostiziert</strong> lokal: Zeichen des Drifts &#215; Anker-Integrität &#8594; meistern oder aussteigen (B), (5) er <strong>lässt los</strong> (&#247; Selbsthaft), damit das Ergebnis eine durchlaufene Relation bleibt und nicht zur Substanz erstarrt (A). Die Formel: <code>Sehen = Projektion &#215; Anker &#247; Selbsthaft</code>.
+</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="num">5.</span> Visualisierung: der Projektions-Knoten auf dem unfaßbaren Feld</h2>
+<p>Ein <b>unfaßbares, driftendes Feld</b> (das „Alles" bei A &#10005; das Rohsignal bei B — nie ein Objekt, nur Struktur) wird durch eine <b>Linse/Projektion</b> lesbar (B: die Projektion bestimmt die Sichtbarkeit), ruht auf einer <b>kalibrierbaren Referenz (Anker)</b> (B: intakt = gerade Linie, vergiftet = wackelnd) und trägt einen <b>Beobachter-Knoten</b> (A: bei <em>hoher</em> Selbsthaft ein separates Ego + eine Totalisierungs-Box, bei <em>gelassenem</em> Griff taucht er in das Feld/die Welle ein: „du bist ES"). Das eingeblendete <b>Gelesene</b> (oben rechts) zeigt, was die Linse &#215; Anker liest; die <b>Drift-Richtung</b> liefert B's Master/Exit-Diskriminator, und das <b>÷ Selbsthaft</b> hält das Ergebnis relational statt total. Führe „Selbsthaft" hinunter und „Anker" hoch: das Ego löst sich auf, die Box öffnet sich, das Feld bleibt als durchlaufene Relation.</p>
+
+<div class="viz-controls">
+  <div class="vc"><label>Linse / Projektion (B) <span id="projV"></span></label>
+    <input type="range" id="proj" min="0" max="100" value="100" step="1"></div>
+  <div class="vc"><label>Anker / Integrität (B) <span id="anchorV"></span></label>
+    <input type="range" id="anchor" min="0" max="100" value="100" step="1"></div>
+  <div class="vc"><label>Selbsthaft / Ego (A) <span id="egoV"></span></label>
+    <input type="range" id="ego" min="0" max="100" value="25" step="1"></div>
+  <div class="vc"><label>Drift (Trend-Richtung, B) <span id="driftV"></span></label>
+    <input type="range" id="drift" min="-100" max="100" value="-55" step="1"></div>
+</div>
+
+<div class="vizwrap"><canvas id="viz"></canvas></div>
+<p class="status" id="rStatus"></p>
+<p class="vnote">
+  <span class="dot" style="color:var(--acc)">&#9679;</span> unfaßbares Rohfeld (fahl) &nbsp;
+  <span class="dot" style="color:var(--acc2)">&#9679;</span> gelesenes (in der Linse) &nbsp;
+  <span class="dot" style="color:var(--warn)">&#9679;</span> Anker/Referenz (gestrichelt) &nbsp;
+  <span class="dot" style="color:var(--bad)">&#9679;</span> Ego / Totalisierungs-Box &nbsp;
+  <span class="dot" style="color:var(--acc2)">&#9679;</span> Knoten in der Welle.<br>
+  <em>A liefert das ÷ Selbsthaft (Loslassen, nicht-dual); B liefert Projektion &#215; Anker + Drift-Diskriminator.</em>
+  Bei <em>Linse&nbsp;=&nbsp;0</em> bleibt das Feld bedeutungsfrei (B). Bei <em>Anker&nbsp;&lt;&nbsp;50</em> weicht das Gelesene (oben rechts, rot) vom Feld ab (B: Gaslighting). Bei <em>Selbsthaft&nbsp;hoch</em> erstarrt der Akt zum Total-Objekt (A: Fehlschlag); bei <em>Selbsthaft&nbsp;niedrig</em> löst sich der Knoten in die Welle auf (A: du bist ES).
+</p>
+</section>
+
+<section id="provenienz">
+<h2><span class="num">6.</span> Provenienz</h2>
+<div class="prov"><a href="../n2-024.html">A &middot; n2-024.html &mdash; „Das Unfaßbare Ganze: keine Ebene nach oben, keine Kante im Kreis"</a><br>
+<span class="hint">Runde-2-Fusion (S&#10005;HoTT &#10005; Spaß/Watts): ein selbst-schließendes Total-Objekt existiert nicht; das Ganze ist eine Relation, die man durchläuft (Stratifizierung ohne Oberstufe, Möbiusband ohne Kante); der Fehler ist Ergreifen, die Heilung ist Loslassen (÷ Selbstbewusstsein). Die Quelle für „das Unfaßbare, der nicht-duale Beobachter, das ÷ Selbsthaft und die stabile, selbsttragende Struktur".</span></div>
+<div class="prov"><a href="../n2-007.html">B &middot; n2-007.html &mdash; „Wahrnehmung = Projektion auf einen Anker"</a><br>
+<span class="hint">Runde-2-Fusion (lokale Berechnung &#10005; Primzahlen/Manipulation): Wahrnehmung ist Projektion (Linse) auf einen Anker (Referenz = Trend + Periode) über einem bedeutungsfreien Feld; zweischichtige Struktur (irreduzibel &#215; dekomponierbar); der Drift-Diskriminator trennt Meistern von Aussteigen; der Anker ist robust als Linse, fragil als Referenz. Die Quelle für „Projektion, der dual Projektierer, den kalibrierbaren/angreifbaren Anker und die diagnostische Fallunterscheidung".</span></div>
+<p class="foot">Fusion 008 &middot; Runde 3 (non-AI-Track) &middot; selbstbezügliches HTML, keine externen Datenquellen &mdash; alle Daten inline. Theme-reaktiv per CSS-Variablen (Dunkel default).</p>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext){ return; }
+  var ctx = canvas.getContext('2d');
+  var elProj  = document.getElementById('proj');
+  var elAnchor= document.getElementById('anchor');
+  var elEgo   = document.getElementById('ego');
+  var elDrift = document.getElementById('drift');
+  var vProj   = document.getElementById('projV');
+  var vAnchor = document.getElementById('anchorV');
+  var vEgo    = document.getElementById('egoV');
+  var vDrift  = document.getElementById('driftV');
+  var rStatus = document.getElementById('rStatus');
+  var themeBtn= document.getElementById('themeBtn');
+
+  var TAU = Math.PI*2;
+  var H = 480, phase = 0;
+
+  function cssVar(n,fb){ var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||fb; }
+  function hexA(hex,a){
+    if(hex && hex.charAt(0)==='#'){
+      var h=hex.slice(1);
+      if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+      var n=parseInt(h,16);
+      return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+    }
+    return hex;
+  }
+  function ch(c){var h=c.slice(1);if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];var n=parseInt(h,16);return [(n>>16)&255,(n>>8)&255,n&255];}
+  function mixCol(c1,c2,t){var a=ch(c1),b=ch(c2);return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')';}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function rnd(i){var x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);}
+
+  function fit(){
+    var wrap=canvas.parentElement;
+    var w=wrap?wrap.clientWidth:720; if(w<300)w=300;
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(H*dpr);
+    canvas.style.width=w+'px'; canvas.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return w;
+  }
+
+  function rr(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function draw(){
+    var W=fit();
+    var INK=cssVar('--ink','#e8edf7'), ACC=cssVar('--acc','#5fd6a4'), ACC2=cssVar('--acc2','#7dd3fc'),
+        BAD=cssVar('--bad','#ff7a6e'), WARN=cssVar('--warn','#ffd166'), DIM=cssVar('--dim','#93a1b6'),
+        PANEL=cssVar('--panel','#101715'), CANVAS=cssVar('--canvas','#0c1311'), LINE=cssVar('--line','#24312b');
+    ctx.fillStyle=CANVAS||PANEL; ctx.fillRect(0,0,W,H);
+
+    var p=(+elProj.value)/100, a=(+elAnchor.value)/100, e=(+elEgo.value)/100, d=(+elDrift.value)/100;
+    var padL=46, padR=16, padT=44, padB=40;
+    var plotW=W-padL-padR, plotH=H-padT-padB;
+    if(plotW<=0||plotH<=0) return;
+    var N=120, L=7, cyc=4;
+    var driftVis=d*70;
+    var lineAmp=plotH/L*0.42;
+
+    function fieldY(k,i){
+      var t=i/N;
+      var period=Math.sin(TAU*cyc*t + phase + k*(TAU/L)*0.5);
+      var micro=(rnd(i*1.31 + k*29.73)-0.5)*0.5;
+      var tilt=driftVis*(t-0.5);
+      return (padT + plotH*(k+0.5)/L) + (period+micro)*lineAmp - tilt;
+    }
+
+    var k,i;
+    ctx.lineWidth=1.1;
+    for(k=0;k<L;k++){
+      ctx.strokeStyle=hexA(ACC,0.26);
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ var x=padL+(i/N)*plotW; var y=fieldY(k,i); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+      ctx.stroke();
+    }
+
+    var cx=padL+plotW*0.5, cy=padT+plotH*0.5;
+    var lensR=lerp(plotW*0.06, plotW*0.34, p);
+    if(p>0.02){
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx,cy,lensR,0,TAU); ctx.clip();
+      for(k=0;k<L;k++){
+        ctx.strokeStyle=hexA(ACC2,0.9); ctx.lineWidth=1.6;
+        ctx.beginPath();
+        for(i=0;i<=N;i++){ var x2=padL+(i/N)*plotW; var y2=fieldY(k,i); if(i===0)ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2); }
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.strokeStyle=hexA(ACC2,0.9); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx,cy,lensR,0,TAU); ctx.stroke();
+    }
+
+    var corr=1-a;
+    var aY=padT+plotH*0.5;
+    ctx.strokeStyle=hexA(WARN,0.85); ctx.lineWidth=1.4; ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    for(i=0;i<=N;i++){ var t3=i/N; var wob=corr*(Math.sin(TAU*9*t3+phase*1.7)*10 + (rnd(i*7.7)-0.5)*14); var xx=padL+t3*plotW; var yy=aY+wob; if(i===0)ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    var iw=Math.min(170, W*0.30), ih=70;
+    var ix=W-padR-iw-14, iy=padT+14;
+    ctx.fillStyle=hexA(PANEL,0.92); ctx.strokeStyle=LINE; ctx.lineWidth=1;
+    ctx.fillRect(ix,iy,iw,ih); ctx.strokeRect(ix,iy,iw,ih);
+    var M=70, arr=new Array(M+1), m, tt;
+    for(m=0;m<=M;m++){ tt=m/M; var truth=0.5 + (d*0.35)*(tt-0.5) + 0.22*Math.sin(TAU*cyc*tt+phase); var read=p*truth+(1-p)*0.5; read += corr*(-0.25 - 0.45*tt) + corr*(rnd(m*5.3+1)-0.5)*0.4; arr[m]=read; }
+    var rmin=Infinity, rmax=-Infinity;
+    for(m=0;m<=M;m++){ if(arr[m]<rmin)rmin=arr[m]; if(arr[m]>rmax)rmax=arr[m]; }
+    var rng=(rmax-rmin); if(rng<0.05)rng=0.05; rmin-=rng*0.15; rmax+=rng*0.15;
+    ctx.strokeStyle=BAD; ctx.lineWidth=1.6; ctx.beginPath();
+    for(m=0;m<=M;m++){ var px=ix+8+(m/M)*(iw-16); var py=iy+ih-8-((arr[m]-rmin)/(rmax-rmin))*(ih-16); if(m===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+    ctx.fillStyle=DIM; ctx.font='10px system-ui, sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Gelesenes (Linse × Anker)', ix+8, iy+12);
+
+    if(e>0.04){
+      ctx.save();
+      ctx.globalAlpha=Math.min(1,e);
+      ctx.strokeStyle=BAD; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+      rr(ix-5, iy-5, iw+10, ih+10, 8); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=BAD; ctx.font='10px system-ui, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Total-Objekt (verboten · A)', ix+iw/2, iy+ih+13);
+      ctx.restore();
+    }
+
+    var s=e;
+    var nodeX=cx, nodeTopY=padT+12, nodeY=lerp(cy, nodeTopY, s);
+    var nodeCol=mixCol(ACC, BAD, s);
+    var nodeR=5 + s*9;
+    ctx.save();
+    if(s>0.1){
+      ctx.globalAlpha=s; ctx.strokeStyle=BAD; ctx.setLineDash([4,4]); ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.arc(nodeX,nodeY,nodeR+14,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.globalAlpha=1;
+    ctx.fillStyle=nodeCol; ctx.beginPath(); ctx.arc(nodeX,nodeY,nodeR,0,TAU); ctx.fill();
+    ctx.fillStyle=INK; ctx.font='11px system-ui, sans-serif'; ctx.textAlign='center';
+    var lbl = (s>0.5?'Beobachter · Ego (separat · B)':(s>0.18?'Knoten ↔ Welle':'du bist ES · A'));
+    ctx.fillText(lbl, nodeX, nodeY-nodeR-8);
+    ctx.restore();
+
+    ctx.fillStyle=hexA(ACC,0.9); ctx.font='11px system-ui, sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('das Unfaßbare: Feld ohne Objekt (A) · Rohsignal (B)', padL, H-24);
+    ctx.fillStyle=hexA(ACC2,0.9); ctx.textAlign='right';
+    ctx.fillText('Projektion macht lesbar (B) · Loslassen hält es relational (A)', W-padR, H-24);
+
+    var status;
+    if(p<0.3){ status='Falsche/fehlende Linse — das Feld bleibt bedeutungsfrei (B: die Projektion bestimmt die Sichtbarkeit).'; }
+    else if(a<0.5){ status='Anker vergiftet — das Gelesene weicht vom Feld ab (B: Gaslighting; den Anker wiederherstellen).'; }
+    else if(e>0.66){ status='Selbsthaft hoch — der Projektions-Akt erstarrt zum Total-Objekt (A: Ergreifen = Fehlschlag). Loslassen: ÷ Selbsthaft.'; }
+    else if(e>0.33){ status='Übergang — der Knoten ist noch distinkter Projektierer (B) und löst sich zugleich in das Feld auf (A: du bist ES).'; }
+    else { status='Beziehung, nicht Substanz — der Knoten IST die Welle (A), der Anker ist kalibriert (B): Sehen = Relation, die man durchläuft.'; }
+    status += ' · Drift ' + (d>0.05?'positiv (aufbauend)':(d<-0.05?'negativ → aussteigen (B)':'≈ 0 stationär → zu meistern (B)')) + '.';
+    if(rStatus){ rStatus.textContent=status; rStatus.classList.toggle('warn', (p<0.3||a<0.5||e>0.66)); }
+    phase += 0.03;
+  }
+
+  function sync(){
+    if(vProj)vProj.textContent=elProj.value+' %';
+    if(vAnchor)vAnchor.textContent=elAnchor.value+' %';
+    if(vEgo)vEgo.textContent=elEgo.value+' %';
+    if(vDrift)vDrift.textContent=elDrift.value;
+  }
+  function loop(){ draw(); requestAnimationFrame(loop); }
+
+  var els=[elProj,elAnchor,elEgo,elDrift];
+  for(var i=0;i<els.length;i++){ if(els[i]) els[i].addEventListener('input', sync); }
+  if(themeBtn){ themeBtn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); }); }
+  if(window.addEventListener){ window.addEventListener('resize', sync); }
+  if(window.MutationObserver){
+    var mo=new MutationObserver(function(){ /* theme handled via cssVar each frame */ });
+    mo.observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+  sync();
+  loop();
+})();
+</script>
+</body>
+</html>

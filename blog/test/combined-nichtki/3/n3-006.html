@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die graduierte Garbe mit offenem Turm und gekrümmtem Kleben</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}var d=s?s==='dark':true;var el=document.documentElement;if(d){el.classList.add('dark');}else{el.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#b5651d; --accent2:#4338ca; --good:#2e7d4f; --warn:#a8620a; --bad:#b0342b;
+  --viz-bg:#ffffff; --soft:#f0ece1; --grid:#e7e2d6;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#f0b429; --accent2:#a5b4fc; --good:#34d399; --warn:#ffa657; --bad:#ff7b72;
+  --viz-bg:#0a1220; --soft:#0f172a; --grid:#1a2540;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(26px,4.2vw,38px);line-height:1.14;margin:0 0 8px;}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 8px;font-style:italic;}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 30px;}
+.lede{color:var(--muted);font-size:1.03em;margin:0 0 26px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0;}
+section{margin:8px 0;scroll-margin-top:20px;}
+h2{font-size:22px;margin:0 0 14px;color:var(--accent);}
+h3{font-size:16.5px;margin:22px 0 8px;color:var(--text);}
+p{margin:0 0 14px;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:9px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.65;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;}
+.card h3{margin-top:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;vertical-align:middle;}
+.tag.a{background:rgba(181,101,29,.16);color:var(--accent);}
+.tag.b{background:rgba(67,56,202,.16);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;}
+#sheafCanvas{display:block;width:100%;height:440px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:flex-end;margin:14px 0;}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);}
+input[type=range]{width:190px;accent-color:var(--accent);}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);}
+button.action.active{border-color:var(--accent);color:var(--accent);}
+.readout-row{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;font-size:14px;margin:6px 0;}
+.readout-row b{font-weight:700;}
+.ra{color:var(--accent);} .rb{color:var(--accent2);}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0;font-size:12.5px;color:var(--muted);}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+#verdict{font-size:14px;margin:10px 0 4px;}
+.hint{color:var(--muted);font-size:13.5px;}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.prov.a{border-left-color:var(--accent);}
+.prov.b{border-left-color:var(--accent2);}
+.prov a{color:var(--accent2);text-decoration:none;font-weight:700;}
+.prov a:hover{text-decoration:underline;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+@media (max-width:560px){article{padding:30px 15px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema wechseln">&#9681;</button>
+<article>
+
+<h1>Die graduierte Garbe mit offenem Turm<br>und gekrümmtem Kleben</h1>
+<p class="subtitle">Fusion aus: n2-026.html &#10005; n2-022.html &nbsp;(Runde 3)</p>
+<p class="meta">Runde 3 &middot; Nicht-KI-Track &middot; Paar 006 &middot; offener Ebenen-Turm (A) trifft graduierte Garbe mit Krümmung (B)</p>
+<p class="lede">Beide Runde-2-Papiere beantworten dieselbe Grundfrage &mdash; <em>Was ist &bdquo;höhere Struktur&bdquo;?</em> &mdash; und beide beantworten sie mit einer Struktur, die <strong>zwei Richtungen</strong> hat. <span class="tagA">A</span> (n2-026, <em>Offene Form &mdash; fixer Kreis, unendlicher Turm</em>) nennt sie die <strong>vertikale</strong>: ein &bdquo;Ganzes&bdquo; ist zugleich eine fixe, sich selbst betreffende Form und der Moment eines <em>offenen</em> Turms von Ebenen (Schatten/Invariante &rarr; Struktur &rarr; höhere Struktur &rarr; Selbstreferenz), der <em>keine Spitze</em> hat. <span class="tagB">B</span> (n2-022, <em>Die graduierte Garbe mit Krümmung</em>) nennt sie eine Struktur mit <strong>zwei orthogonalen Achsen</strong>: <em>Tiefe</em> (der gestufte Faser-/Momenten-Turm an jedem Keim) und <em>Breite</em> (das Klebungs-/Kohärenzgesetz, das die lokalen Turme zu einer globalen Sektion zusammenfügt) &mdash; getragen von einem <em>messenbaren Kohärenz-Defekt</em>. Die Fusion vereint beide zu einem einzigen Objekt: einer <strong>graduierten Garbe, deren Faser-Türme offen sind</strong> (keine letzte Ebene &mdash; A) <strong>und deren Kleben gekrümmt ist</strong> (nicht flach &mdash; B).</p>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> sagt: die fixe, geschlossene, grobe Beschreibung eines Ganzen (die <em>Invariante</em>, der <em>Schatten</em>) ist immer nur der verlustbehaftete, überschrittene Schatten einer <em>offenen, strukturierten, sich selbst erzeugenden</em> Realität; der generative Motor ist genau die Lücke zwischen Karte (fixe Beschreibung) und Gebiet (offene Struktur). Das Ganze ist ein <em>offener Turm</em> von Ebenen ohne Spitze, in dessen jeder Ebene die grobe Beschreibung ein <em>exakt rückgewinnbarer</em> Schatten der reicheren Struktur ist (Exaktheit <em>in</em> der Ebene) &mdash; und über dem Turm bleibt alles <em>irreduzibel offen</em> (Selbstreferenz erzeugt die nächste Ebene). <span class="tagB">B</span> sagt: ein kohärentes Objekt ist eine <em>globale Sektion einer graduierten Garbe</em>; &bdquo;höhere Struktur&bdquo; = (gestufte Faser am Keim = <em>Tiefe</em>) &times; (Klebungsstruktur zwischen Keimen = <em>Breite</em>) + ein (möglicherweise nicht verschwindender) <em>Kohärenz-Defekt</em>, der die Krümmung des Klebens misst; exakte Kohärenz (Defekt 0) ist das flache, ideale Modell, und Bestimmung ist geschichtet (eindeutig nur bei voller Tiefe auf fester Basis, sonst viele globale Sektionen).</p>
+<p>Das Entscheidende: <strong>die zwei Papiere beschreiben ein und dasselbe Objekt aus zwei komplementären Facetten.</strong> A&rsquo;s <em>offener Ebenen-Turm</em> ist genau der <strong>Faser-/Keim-Gehalt</strong> (die <em>Tiefe</em>) der graduierten Garbe, die B beschreibt; A&rsquo;s <em>Lücke zwischen Karte und Gebiet</em> ist die <strong>Krümmung / der Defekt</strong>, den B misst. B&rsquo;s <em>globale Sektion / Kleben</em> (die <em>Breite</em>) ist das, was A&rsquo;s einzelnen Ebenen zu einem <em>ganzen</em> Objekt zusammenhält; und B&rsquo;s <em>geschichtete Bestimmung</em> (viele Sektionen bei endlicher Tiefe &rarr; eindeutig bei voller Tiefe) ist exakt A&rsquo;s Satz, dass die grobe Ebene ein exakt rückgewinnbarer Schatten der reicheren ist. Beide Seiten brauchen die andere, um vollständig zu sein: ohne Breite bleibt A ein einzelner, nicht zusammengeklebter Turm; ohne Offenheit (Tiefe) bleibt B eine flache, abgeschlossene Garbe, die keine Ebene weiter erzeugt.</p>
+<div class="aha"><b>Ein kohärentes, &bdquo;höher strukturiertes&bdquo; Ganzes ist eine <em>graduierte Garbe mit offenem Faser-Turm und gekrümmtem Kleben</em>. Es hat zwei orthogonalen Achsen &mdash; die <em>Tiefe</em> (der gestufte, und bei A <em>offene</em> Turm abgeleiteter Ebenen am Keim) und die <em>Breite</em> (das Klebungs-/Kohärenzgesetz, das die lokalen Turme zu einer globalen Sektion zusammenfügt) &mdash; und jede dieser Achsen trägt einen <em>Defekt</em>: die Tiefe bleibt <em>offen</em> (keine letzte Ebene, Selbstreferenz erzeugt die nächste &mdash; A), und das Kleben ist <em>gekrümmt</em> (nicht flach; der Defekt &Delta; misst die Abweichung von der exakten Idee &mdash; B). Die exakte, flache, geschlossene Beschreibung (Invariante &mdash; A; flaches Modell &Delta;=0 &mdash; B) ist der verlustbehaftete Idealfall; der Defekt / die Offenheit / die Krümmung ist <em>kein Fehler, sondern der generative Inhalt</em>. A liefert die Tiefe und die Offenheit; B liefert die Breite und den Defekt.</b></div>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widersprüche zwischen A und B</h2>
+<p>Die zwei Runde-2-Papiere negieren einander nicht &mdash; sie sind eher komplementäre Hälften eines Objekts. Aber an drei Stellen treffen <em>inkompatible Grundhaltungen</em> aufeinander; jeweils ein namentlich benannter Anspruch in den Quellen.</p>
+
+<div class="card">
+<h3>1. Welche Achse trägt das Objekt &mdash; der offene Turm (A) oder die Klebung (B)?</h3>
+<p><span class="tag a">A &middot; n2-026</span> Der Held ist der <strong>vertikale, offene Turm</strong> von Ebenen: Schatten &rarr; Struktur &rarr; höhere Struktur &rarr; Selbstreferenz, der in jeder Ebene die nächste <em>erzeugt</em> und keine Spitze hat. Die generative Kraft liegt in der <em>Selbstreferenz der Tiefe</em> (jede Ebene überschreitet sich in die nächste); die horizontale &bdquo;Zusammenfügung&bdquo; zu einem Ganzen spielt in A praktisch keine Rolle.</p>
+<p><span class="tag b">B &middot; n2-022</span> Der Held ist die <strong>horizontale Klebung / Kohärenz</strong>: das eigentliche, definiierende Resultat ist, dass viele lokale Turme sich zu <em>einer</em> globalen Sektion zusammenfügen (Garben-Struktur, gemeinsame Wahrheit). Die <em>Tiefe</em> (der Faser-Turm) ist dort eine <em>gegebene Eingabe</em>; der &bdquo;höhere&bdquo; Inhalt ist das <em>Zusammenfügen</em> (Breite), nicht das <em>Tiefer-Graben</em>.</p>
+<p><span class="tag x">Spannung</span> A verortet den generativen Motor in der <em>vertikalen Tiefe</em> (offener Turm, Selbstreferenz); B verortet den definiierenden Inhalt in der <em>horizontalen Breite</em> (Kleben zur globalen Sektion). Wo &bdquo;höhere Struktur&bdquo; wohnt, sagt das eine, streitet das andere.</p>
+</div>
+
+<div class="card">
+<h3>2. Ist das Ganze offen (ohne Spitze) oder geschlossen (eine definite Sektion)?</h3>
+<p><span class="tag a">A &middot; n2-026</span> Das Ganze ist <strong>nie vollendet</strong>: der Turm hat <em>keine letzte Ebene</em> (&bdquo;offenes, endloses Abenteuer&bdquo;, Kreativität unerschöpflich). Es gibt <em>keinen</em> letzten, abgeschlossenen Gegenstand &mdash; das Objekt ist ein fortwährender Prozess des Sich-Überschreitens.</p>
+<p><span class="tag b">B &middot; n2-022</span> Ein kohärentes Objekt <strong>ist</strong> eine <em>definite</em> globale Sektion der Garbe; bei voller Tiefe auf fester Basis ist sie <em>eindeutig</em> (kategorial) &mdash; ein <em>abgeschlossener, bestimmter</em> Gegenstand. Die Garbe ist eine <em>fixe</em> Struktur auf einer <em>fixen</em> Basis X.</p>
+<p><span class="tag x">Spannung</span> A: offen, nie zu Ende, <em>Prozess</em> (keine Spitze). B: geschlossen, definitiv, eindeutig &mdash; ein <em>Gegenstand</em> (ein abgeschlossenes Modell auf fester Basis). Offen/Prozess gegen geschlossen/Gegenstand.</p>
+</div>
+
+<div class="card">
+<h3>3. Ist der Defekt irreduzibel (ontologisch) oder messbar &amp; im Prinzip beseitigbar?</h3>
+<p><span class="tag a">A &middot; n2-026</span> Die &bdquo;Lücke&bdquo; (Karte &ne; Gebiet) ist <strong>irreduzibel und dauerhaft</strong>: keine fixe Beschreibung ist je vollständig, die Offenheit ist eine <em>ewige, ontologische</em> Eigenschaft des Seins &mdash; nie auflösbar, nicht einmal im Prinzip. Sie ist der Motor selbst.</p>
+<p><span class="tag b">B &middot; n2-022</span> Der Kohärenz-Defekt &Delta; ist eine <strong>messbare Größe</strong>, und der <em>exakte/flache</em> Fall &Delta;=0 (das &bdquo;gültige Modell&bdquo;) ist <em>erreichbar</em> und das <em>Ideal</em>. Inkohärenz ist binär (eine globale Sektion existiert oder nicht), und die Krümmung kann im Prinzip verschwinden (flache Verbindung). Der Defekt ist etwas, das man misst und wegbekommt.</p>
+<p><span class="tag x">Spannung</span> A: der fundamentale Defekt ist <em>ewig, generativ, nicht beseitigbar</em>. B: der Defekt ist <em>messen, idealisiert (Null-Defekt) und im Prinzip eliminierbar</em>. Ewig-Offen gegen messbar-Flach.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Auflösung</h2>
+
+<p><b>(1) Tiefe und Breite sind zwei orthogonale Achsen EINES Objekts &mdash; keine trägt es allein.</b> A&rsquo;s <em>offener Turm</em> ist der <strong>Faser-/Keim-Gehalt</strong> (die <em>Tiefe</em>) der Graduierten Garbe, die B beschreibt; B&rsquo;s <em>Kleben</em> ist die <strong>Garben-/Übergangsstruktur</strong> (die <em>Breite</em>). Das Objekt ist das <strong>Produkt</strong> (Tiefe &times; Breite) = die graduierte Garbe, deren Werte selbst gestufte (und bei A offene) Türme sind. A ist ein Faktor, B der andere; <em>beide</em> sind nötig. Die Selbstreferenz, die A zur Tiefe macht (keine letzte Ebene), macht die Faser <em>generativ</em>; das Kleben, das B zur Breite macht, macht die lokalen Turme <em>global</em> (ein Ganzes). <b>Fusioniert:</b> &bdquo;höhere Struktur&bdquo; ist weder Tiefe allein noch Breite allein, sondern <em>(gestufter, offener Faser-Turm) &times; (Kohärenzgesetz)</em> &mdash; die Primär-Einheit ist das Produkt, und jede Achse ist ein Faktor davon.</p>
+
+<p><b>(2) &bdquo;Keine Spitze&bdquo; (A) und &bdquo;eindeutige Sektion&bdquo; (B) gelten auf zwei verschiedenen Skalen.</b> Dies ist der <em>selbe</em> Schachzug wie A&rsquo;s eigene Runde-2-Auflösung (exakt in der Ebene, offen über dem Turm). B&rsquo;s &bdquo;eindeutige globale Sektion bei voller Tiefe auf fester Basis&bdquo; ist eine Aussage <em>je Faser / je Ebene / je Basis</em>: dort ist das Objekt tatsächlich <em>abgeschlossen und bestimmt</em> (kategorial). A&rsquo;s &bdquo;keine Spitze&bdquo; ist eine Aussage <em>über die Familie</em> aller Basen und aller Tiefen: die Selbstreferenz erzeugt <em>neue Ebenen/Basen</em>, die nie aufhören. <b>Fusioniert:</b> das Objekt ist zugleich ein <em>abgeschlossener</em> globaler Schnitt <em>pro Ebene</em> (B) und ein <em>offener, nie fertiger</em> Turm <em>über den Ebenen</em> (A): <strong>geschlossen je Ebene, offen über dem Turm</strong> &mdash; ein Prozess aus abgeschlossenen Gegenständen, die sich jeweils in den nächsten übergeben.</p>
+
+<p><b>(3) Der Defekt ist doppelt: je Faser messbar &amp; beseitigbar (B), über dem Turm irreduzibel generativ (A).</b> B&rsquo;s messbare Krümmung &Delta; ist der Defekt <em>innerhalb eines fixen Klebens / einer fixen Basis</em> &mdash; und dort kann sie verschwinden (flache Verbindung, exaktes Modell, &Delta;=0). A&rsquo;s generative Offenheit ist die Tatsache, dass der <em>Turm der Ebenen/Basen keine letzte</em> hat &mdash; eine Aussage über die <em>Familie</em>, nicht über eine einzelne Faser, die <em>nicht</em> verschwinden kann, weil es keine &bdquo;letzte Basis/Ebene&bdquo; gibt, an der man flach machen könnte. <b>Fusioniert:</b> <em>innerhalb</em> eines kohärenten Klebens ist der Defekt eine <em>Krümmung, die man misst und auf null stellen kann</em> (B&rsquo;s flaches Modell); <em>über alle</em> Klebungen/Ebenen hinweg ist der &bdquo;Defekt&bdquo; die <em>unerschöpfliche Erzeugung des nächsten</em> (A). Das flache Ideal (B) existiert je Ebene; die Offenheit (A) ist, dass der <em>Turm der flachen Ebenen keine Spitze</em> hat.</p>
+
+<div class="aha"><b>Fusion in einer Aussage:</b> Das kohärente Ganze ist eine <em>graduierte Garbe, deren jede Faser ein offener, selbstreferenzieller Turm ist</em> (Tiefe, A: keine letzte Ebene, exakt je Ebene) <em>und deren Kleben zwischen den Fasern gekrümmt ist</em> (Breite, B: messbarer Defekt &Delta;, flach im Ideal). <em>Geschlossen je Faser, offen über dem Turm; exakt im Kleben, gekrümmt in der Familie.</em> Die Lücke zwischen der exakten, flachen, geschlossenen Beschreibung (Invariante &mdash; A; flaches Modell &mdash; B) und der offenen, gekrümmten, sich überschreitenden Struktur ist der <strong>eine generative Motor</strong> &mdash; von A als ewige Offenheit, von B als messbare Krümmung abgelesen.</div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine gemeinsame Objekt (beide Papiere sind Facetten davon):</b></p>
+<div class="mathblock">kohärentes Ganzes  =  globale Sektion  einer  GRADUIERTEN GARBE
+                              (B: Breite = Kleben, &Delta;, Modell)
+                       deren Faser  =  gestufter, (bei A) OFFENER Turm
+                              (A: Tiefe = Ebenen, Selbstreferenz, keine Spitze)
+
+  höhere Struktur  =  Tiefe (Faser)  &times;  Breite (Kleben)  +  Defekt &Delta; (Krümmung)
+                       |A|                 |B|                    |A + B|</div>
+<p>Links die <em>Tiefe</em> (A&rsquo;s offener Ebenen-Turm / B&rsquo;s Momenten- bzw. Morphismen-Turm als Faser), rechts die <em>Breite</em> (B&rsquo;s Kleben zur globalen Sektion; bei A die Basis/Familie, über die der Turm verläuft), in der Mitte das Objekt &mdash; eine graduierte Garbe. Der <em>Defekt &Delta;</em> ist der gemeinsame Inhalt: A liest ihn als <em>Offenheit</em> (Karte &ne; Gebiet, keine Spitze), B liest ihn als <em>Krümmung</em> (messbare Abweichung vom flachen Ideal).</p>
+
+<h3>Die vier fusionierten Sätze</h3>
+<ul>
+<li><strong>Tiefe ist der offene Faser-Turm.</strong> An jedem Keim steht ein gestufter Turm abgeleiteter Ebenen. A&rsquo;s Leiter: <em>Schatten/Invariante &rarr; Struktur (exakt) &rarr; höhere Struktur &rarr; Selbstreferenz</em>; B&rsquo;s Turm: <em>Masse, Mittel &mu;&sub1;, Varianz &sigma;&sup2;, Schiefe &gamma;, &hellip;</em> (oder höhere Morphismen). Beide: der Inhalt wird durch <em>mehr Ebenen</em> abgelesen; der <em>vollständige, unendliche</em> Turm <em>bestimmt</em> das Objekt (B&rsquo;s Momentenproblem / Kategorialität) und bleibt bei A <em>offen</em> (Selbstreferenz erzeugt die nächste Ebene, keine Spitze).</li>
+<li><strong>Breite ist das Kleben zur globalen Sektion.</strong> B&rsquo;s Garben-Struktur: Restriktions-/Übergangsmabbildungen auf Überlappungen, gemeinsame Wahrheit, &bdquo;globale Sektion = Modell&bdquo;, eindeutig bei voller Tiefe auf fester Basis. A&rsquo;s Entsprechung: die <em>Basis/Familie</em>, über die der offene Turm verläuft, und die Kohärenz, dass jede Ebene ihre grobe Beschreibung (Schatten) in die reichere <em>exakt</em> zurückgewinnt. Die Breite macht aus vielen lokalen Turmen <em>ein</em> Ganzes.</li>
+<li><strong>Der Defekt ist Krümmung, offen je Ebene, beseitigbar im Kleben.</strong> B&rsquo;s &Delta;=0 ist das flache, exakte Modell (die &bdquo;Karte&bdquo;); &Delta;&ne;0 die gekrümmte, reale Verbindung (das &bdquo;Gebiet&bdquo;). A&rsquo;s &bdquo;Lücke&bdquo; ist derselbe Defekt, aber als <em>ontologische Offenheit</em>: je Faser ist die exakte Beschreibung ein verlustbehafteter, aber exakt rückgewinnbarer Schatten (B); über dem Turm bleibt der Defekt ewig (A), weil es keine letzte Ebene gibt, an der er flach wäre. <em>Geschlossen je Faser, offen über dem Turm.</em></li>
+<li><strong>Bestimmung ist geschichtet (Tiefe steuert die Breite).</strong> Bei <em>endlicher</em> Trunkation (wenigen Ebenen) und/oder <em>geänderter Basis</em> sind <em>viele</em> globale Sektionen kompatibel (B: &Qopf;, &Reals;); bei <em>voller</em> Tiefe auf <em>fester</em> Basis ist die globale Sektion <em>eindeutig</em> (B&rsquo;s Kategorialität, A&rsquo;s Momentenproblem). Die Tiefe (wie viele Ebenen man abliest) <em>bestimmt</em>, wie &bdquo;eng&bdquo; die Breite (die Menge der kompatiblen globalen Sektionen) wird &mdash; die zwei Achsen sind nicht unabhängig, sondern <em>gekoppelt</em>.</li>
+</ul>
+
+<h3>Das geteilte Emblem: der Kreis S&sup1; als prototypische Faser</h3>
+<p><span class="tagA">A</span>&rsquo;s Emblem &mdash; der Kreis S&sup1; &mdash; wird in der Fusion zur <strong>prototypischen Faser</strong> der Garbe: er ist der <em>offene, selbstreferenzielle Turm</em>, dessen grobe Beschreibung &beta;&sub1;=1 (der <em>Schatten</em>, die Invariante) verlustbehaftet ist und dessen exakte Struktur <code>&Omega;(S&sup1;,base) &cong; &#8484;</code> (der Pfadraum, die Integers) die reichere Ebene ist &mdash; <code>&#8750; d&theta; = 2&pi; n</code> misst, wie weit jede Windung <em>n</em> über die fixierte Ebene hinausweist (der generative Überschuss). <span class="tagB">B</span>&rsquo;s Garben-Rahmen macht aus <em>viele</em> solchen Fasern (jeder Keim ein eigenes S&sup1;-artiger Turm) <em>ein</em> kohärentes Ganzes &mdash; und das Kleben zwischen diesen Fasern trägt die Krümmung &Delta;. Der Kreis ist also <em>beides</em>: A&rsquo;s offen sich überschreitende Faser <em>und</em> B&rsquo;s Element, das die Garbe am Keim &bdquo;wenn&bdquo; ausfüllt. Die messbare Größe &bdquo;wie viel&bdquo; die Faser über ihre Schatten-Ebene hinausweist (A: <code>2&pi;n</code>; B: der Momentenwert auf Ebene k) ist der gemeinsame <em>Defekt/Überschuss</em>.</p>
+
+<table>
+<tr><th>Register</th><th><span class="tag a">A</span> &middot; Offene Form / unendlicher Turm</th><th><span class="tag b">B</span> &middot; graduierte Garbe / Krümmung</th><th>Fusioniert</th></tr>
+<tr><td>Tiefe (Faser)</td><td>Ebenen-Leiter: Schatten &rarr; Struktur &rarr; höhere Struktur &rarr; Selbstreferenz (S&sup1;, &Omega;&cong;&#8484;)</td><td>Momenten-/Morphismen-Turm: Masse, &mu;&sub1;, &sigma;&sup2;, &gamma;, &hellip;</td><td>gestufter Faser-Turm am Keim &mdash; bei A offen (keine Spitze)</td></tr>
+<tr><td>Breite (Kleben)</td><td>Basis/Familie, über die der Turm verläuft; exakte Rückgewinnung Schatten&rarr;Struktur</td><td>Garben-Struktur, Kleben auf U&cap;V, gemeinsame Wahrheit, globale Sektion = Modell</td><td>Garben-/Übergangsstruktur, die lokale Turme zu einem Ganzen klebt</td></tr>
+<tr><td>Defekt</td><td>Offenheit: Karte &ne; Gebiet, keine letzte Ebene (ewig, generativ)</td><td>Kohärenz-Defekt &Delta; (Krümmung des Klebens; &Delta;=0 flach/exakt)</td><td>eine Größe: messbar (B) <em>und</em> generativ (A) &mdash; je Faser beseitigbar, über dem Turm nicht</td></tr>
+<tr><td>Bestimmung</td><td>je Ebene exakt rückgewinnbar; über dem Turm offen</td><td>eindeutig bei voller Tiefe auf fester Basis; sonst viele (Kategorialität)</td><td>Tiefe steuert Breite: endliche Trunkation &rArr; viele, volle Tiefe &rArr; eindeutig</td></tr>
+<tr><td>Offen vs. geschlossen</td><td>nie vollendet, Prozess, keine Spitze</td><td>definitive, (eindeutige) globale Sektion auf fester Basis</td><td>geschlossen je Ebene, offen über dem Turm</td></tr>
+</table>
+
+<div class="aha"><b>Der fusionierte Schluss:</b> Ein &bdquo;Ganzes&bdquo; ist eine <em>graduierte Garbe</em>, deren jeder Faser ein <em>offener, selbstreferenzieller Turm</em> abgeleiteter Ebenen ist (A: exakt je Ebene, keine Spitze über dem Turm) und deren Kleben zwischen den Fasern <em>gekrümmt</em> ist (B: messbarer Defekt &Delta;, flach im Ideal). In jeder Ebene/Faser ist die grobe, exakte, geschlossene Beschreibung ein verlustbehafteter, exakt rückgewinnbarer <em>Schatten</em> der reicheren Struktur (A/B); über dem Turm/die Familie bleibt das Ganze <em>offen und generativ</em> (A), weil es keine letzte Ebene gibt, an der der Defekt flach wäre. <strong>Die Lücke zwischen Karte (fixe, flache, geschlossene Beschreibung) und Gebiet (offene, gekrümmte, sich überschreitende Struktur) ist kein Defekt, sondern der eine generative Motor &mdash; von A als ewige Offenheit, von B als messbare Krümmung abgelesen.</strong></div>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: die graduierte Garbe &mdash; offener Faser-Turm (A) &times; gekrümmtes Kleben (B)</h2>
+<p class="hint">Auf der <strong>Basis</strong> (den Keimen/Kontexten) stehen <em>Keime</em>, von denen <strong>Faser-Türme</strong> aufsteigen &mdash; die <em>Tiefe</em>. Der <strong>Tiefen-Slider</strong> trunciert diese Türme (bei Tiefe 0 nur die Silhouette, bei Tiefe 4 der volle Turm) und steuert zugleich, wie viele <em>globale Sektionen</em> kompatibel sind (Tiefe &le;1 &rArr; &bdquo;viele&bdquo;, Tiefe &ge;3 &rArr; &bdquo;eindeutig&bdquo; &mdash; Bestimmung ist geschichtet, A+B). Der <strong>Offenheits-Slider</strong> (A) bestimmt, ob die Turmspitzen <em>offen</em> bleiben (gestrichelt, pulsend, Pfeil nach oben &mdash; Selbstreferenz erzeugt Ebene +1, keine Spitze) oder <em>erstarrt</em> sind (feste Kappe, &bdquo;Buch&bdquo;). Über den Turmen verläuft das <strong>Kleben</strong> (die <em>Breite</em>, B): die <em>gestrichelte Linie</em> ist das <em>flache Ideal</em> (&Delta;=0, exakt), die <em>volle Linie</em> die <em>echte globale Sektion</em>, deren <em>Krümmung</em> der <strong>Defekt-Slider</strong> (B) steuert &mdash; bei &Delta;=0 flach, bei &Delta;&gt;0 gewellt, mit <em>roten Defekt-Markern</em> an den Nähten (die messbare Abweichung vom flachen Ideal). Alle Daten werden inline erzeugt &mdash; keine Netz-Daten.</p>
+
+<div class="viz-panel">
+  <canvas id="sheafCanvas"></canvas>
+  <div class="viz-controls">
+    <label>Tiefe / Faser (Turm) <b id="depthVal">Tiefe 2 &middot; + Varianz</b>
+      <input type="range" id="depthR" min="0" max="4" step="1" value="2">
+    </label>
+    <label>Offenheit / Selbstreferenz (A) <b id="openVal">70%</b>
+      <input type="range" id="openR" min="0" max="100" step="1" value="70">
+    </label>
+    <label>Defekt &Delta; / Krümmung (B) <b id="defVal">&Delta; = 35%</b>
+      <input type="range" id="defR" min="0" max="100" step="1" value="35">
+    </label>
+    <button class="action" id="playBtn">&#9654; Umlauf</button>
+    <button class="action" id="resetBtn">&#8634; Reset</button>
+  </div>
+  <div class="readout-row">
+    <span class="ra">A &middot; Tiefe (Faser-Turm): <b id="depthRead">2</b></span>
+    <span class="ra">A &middot; Offenheit: <b id="openRead">offen (keine Spitze)</b></span>
+    <span class="rb">B &middot; Defekt &Delta;: <b id="defRead">35% (gekrümmt)</b></span>
+    <span>B &middot; globale Sektionen: <b id="secRead">2</b></span>
+  </div>
+  <div class="legend">
+    <span><span class="sw" style="background:#7eb4ff"></span>Ebene 0 &middot; Masse/Silhouette</span>
+    <span><span class="sw" style="background:#f472b6"></span>Ebene 1 &middot; Mittel</span>
+    <span><span class="sw" style="background:#facc15"></span>Ebene 2 &middot; Varianz</span>
+    <span><span class="sw" style="background:#34d399"></span>Ebene 3 &middot; Schiefe</span>
+    <span><span class="sw" style="background:#c084fc"></span>Ebene 4 &middot; volle Momente</span>
+    <span><span class="sw" style="background:var(--accent2)"></span>flaches Ideal &Delta;=0 (exakt, B)</span>
+    <span><span class="sw" style="background:var(--good)"></span>globale Sektion / Kleben (B)</span>
+    <span><span class="sw" style="background:var(--bad)"></span>Defekt &Delta; (Krümmung)</span>
+  </div>
+  <p id="verdict">&mdash;</p>
+  <p class="hint">Didaktisches Modell der fusionierten These. <em>Tiefe</em> = A&rsquo;s offener Faser-Turm (Tiefe, keine Spitze); <em>Breite</em> = B&rsquo;s Kleben &amp; die globalen Sektionen; <em>Defekt</em> = die messbare Krümmung des Klebens (B), die bei A als Offenheit (keine letzte Ebene) gelesen wird. Bestimmung ist geschichtet: die Tiefe (wie viele Ebenen abgelesen werden) steuert, wie &bdquo;eng&bdquo; die Breite (Menge kompatibler globaler Sektionen) wird. Alle Daten inline; keine externen Abfragen.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov a">
+  <a href="../n2-026.html">A &middot; n2-026.html</a> &mdash; <em>&bdquo;Offene Form &mdash; fixer Kreis, unendlicher Turm&bdquo;</em> (Runde 2, n1-018.html &times; n1-093.html): ein &bdquo;Ganzes&bdquo; ist zugleich fixe, sich selbst betreffende Form (Cohomologie/HoTT) und Moment eines <em>offenen</em> Turms von Ebenen (Gödel/Whitehead: Wahrheit &gt; Beweisbarkeit, Kreativität, keine letzte Occasion) &mdash; Schatten/Invariante &rarr; Struktur &rarr; Selbstreferenz, ohne Spitze. In jeder Ebene ist die grobe Beschreibung ein verlustbehafteter, <em>exakt</em> rückgewinnbarer Schatten; die Lücke zwischen Karte (Invariante) und Gebiet (offene Struktur) ist der generative Motor. Emblem S&sup1; (<code>&Omega;(S&sup1;,base)&cong;&#8484;</code>, <code>&#8750;d&theta;=2&pi;n</code>).
+</div>
+<div class="prov b">
+  <a href="../n2-022.html">B &middot; n2-022.html</a> &mdash; <em>&bdquo;Die graduierte Garbe mit Krümmung &mdash; Höhere Struktur als globale Sektion&bdquo;</em> (Runde 2, n1-009.html &times; n1-031.html): ein kohärentes Objekt ist eine <em>globale Sektion einer graduierten Garbe</em>; &bdquo;höhere Struktur&bdquo; = <em>Tiefe</em> (gestufte Faser / Momenten-Turm am Keim) &times; <em>Breite</em> (Klebungs-/Kohärenzgesetz zwischen Keimen) + ein messbarer <em>Kohärenz-Defekt</em> &Delta; (Krümmung des Klebens). Exakte Kohärenz (&Delta;=0) ist das flache, ideale Modell; Bestimmung ist geschichtet (eindeutig/kategorial nur bei voller Tiefe auf fester Basis, sonst viele globale Sektionen).
+</div>
+</section>
+
+<div class="foot">Fusion (Runde 3) der zwei Runde-2-Papiere n2-026 und n2-022. Alle Daten inline; keine externen Abfragen. Die Visualisierung ist ein didaktisches Modell der fusionierten These &mdash; die <em>graduierte Garbe mit offenem Faser-Turm (A) und gekrümmtem Kleben (B)</em>: geschlossen je Faser, offen über dem Turm; exakt im Kleben, gekrümmt in der Familie.</div>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function toggleTheme(){
+    var d=document.documentElement;
+    var dark=d.classList.toggle('dark');
+    try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+  }
+  window.toggleTheme=toggleTheme;
+
+  (function(){
+    var cv=document.getElementById('sheafCanvas');
+    if(!cv || !cv.getContext) return;
+    var ctx=cv.getContext('2d');
+    var cw=0, ch=440, dpr=1;
+    var K=5;
+    var LEVEL_COLORS=['#7eb4ff','#f472b6','#facc15','#34d399','#c084fc'];
+    var DEPTH_NAMES=['Tiefe 0 \u00b7 Silhouette','Tiefe 1 \u00b7 + Mittel','Tiefe 2 \u00b7 + Varianz','Tiefe 3 \u00b7 + Schiefe','Tiefe 4 \u00b7 volle Momente'];
+    var BASE=[0.62,0.46,0.34,0.26,0.40];
+    var BASE_SUM=BASE[0]+BASE[1]+BASE[2]+BASE[3]+BASE[4];
+    var state={depth:2,defect:35,open:70,playing:false,clock:0};
+    var lastT=0;
+
+    function cssVar(n){ var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||'#888'; }
+    function prof(i){ var t=i/(K-1); return Math.exp(-((t-0.5)*(t-0.5))/0.11); }
+
+    function resize(){
+      dpr=window.devicePixelRatio||1;
+      var r=cv.getBoundingClientRect();
+      cw=Math.max(320, r.width);
+      ch=440;
+      cv.width=Math.round(cw*dpr);
+      cv.height=Math.round(ch*dpr);
+      cv.style.height=ch+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      draw();
+    }
+    function validCount(){ return state.depth<2?3:(state.depth===2?2:1); }
+
+    function draw(){
+      ctx.clearRect(0,0,cw,ch);
+      var bg=cssVar('--viz-bg'), line=cssVar('--line'), muted=cssVar('--muted');
+      var accent=cssVar('--accent'), accent2=cssVar('--accent2');
+      var good=cssVar('--good'), warn=cssVar('--warn'), bad=cssVar('--bad');
+      ctx.fillStyle=bg; ctx.fillRect(0,0,cw,ch);
+
+      var x0=64, x1=cw-44, gap=(x1-x0)/(K-1);
+      var baseY=ch*0.86, maxTowerPx=ch*0.36;
+      var segW=Math.min(gap*0.30,22);
+      var yBand=ch*0.64;
+      var amp=(state.defect/100)*(maxTowerPx*0.40);
+
+      ctx.strokeStyle=muted; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x0,baseY); ctx.lineTo(x1,baseY); ctx.stroke();
+      ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+      ctx.fillText('Basis = Keime / Kontexte  (Breite \u00b7 Kleben, B)', x0, baseY+16);
+
+      ctx.save(); ctx.globalAlpha=0.18; ctx.fillStyle=warn;
+      for(var k=0;k<K-1;k++){ var mx=x0+k*gap+gap/2; ctx.fillRect(mx-gap*0.15, baseY-6, gap*0.30, 12); }
+      ctx.restore();
+
+      var i,L,x,yCur,hv,tops=[];
+      for(i=0;i<K;i++){
+        x=x0+i*gap; yCur=baseY;
+        for(L=0;L<=state.depth;L++){
+          hv=prof(i)*BASE[L]*(maxTowerPx/BASE_SUM);
+          if(hv<0.5)hv=0.5;
+          ctx.fillStyle=LEVEL_COLORS[L%LEVEL_COLORS.length];
+          ctx.globalAlpha=0.9;
+          ctx.fillRect(x-segW/2, yCur-hv, segW, hv-1);
+          yCur-=hv;
+        }
+        ctx.globalAlpha=1;
+        tops.push(yCur);
+        ctx.fillStyle=accent; ctx.beginPath(); ctx.arc(x,baseY,4,0,6.2832); ctx.fill();
+
+        var selfPct=state.open/100;
+        if(selfPct>0.02){
+          var pulse=0.45+0.35*Math.sin(state.clock/450 + i*0.9);
+          ctx.save(); ctx.globalAlpha=Math.max(0.2,pulse);
+          ctx.strokeStyle=accent; ctx.setLineDash([4,4]); ctx.lineWidth=2;
+          ctx.beginPath(); ctx.moveTo(x-segW*0.7,yCur); ctx.lineTo(x+segW*0.7,yCur); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle=accent;
+          var ay=yCur-6;
+          ctx.beginPath(); ctx.moveTo(x,ay-7); ctx.lineTo(x-5,ay); ctx.lineTo(x+5,ay); ctx.closePath(); ctx.fill();
+          ctx.restore();
+        } else {
+          ctx.strokeStyle=muted; ctx.setLineDash([]); ctx.lineWidth=3;
+          ctx.beginPath(); ctx.moveTo(x-segW*0.75,yCur); ctx.lineTo(x+segW*0.75,yCur); ctx.stroke();
+        }
+      }
+
+      function ribY(t){ return yBand + amp*Math.sin(t*Math.PI*3 + state.clock/900); }
+
+      ctx.strokeStyle=accent2; ctx.setLineDash([6,5]); ctx.lineWidth=1.5; ctx.globalAlpha=0.85;
+      ctx.beginPath(); ctx.moveTo(x0,yBand); ctx.lineTo(x1,yBand); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1;
+      ctx.fillStyle=accent2; ctx.font='10.5px system-ui,sans-serif'; ctx.textAlign='right'; ctx.textBaseline='bottom';
+      ctx.fillText('flach \u00b7 \u0394=0 (exakt, B)', x1, yBand-5);
+
+      ctx.strokeStyle=good; ctx.lineWidth=3; ctx.globalAlpha=0.95;
+      ctx.beginPath();
+      var STEPS=60, s,t,rx,ry;
+      for(s=0;s<=STEPS;s++){ t=s/STEPS; rx=x0+t*(x1-x0); ry=ribY(t); if(s===0)ctx.moveTo(rx,ry); else ctx.lineTo(rx,ry); }
+      ctx.stroke(); ctx.globalAlpha=1;
+
+      if(amp>2){
+        ctx.fillStyle=bad; ctx.strokeStyle=bad; ctx.lineWidth=1.5;
+        for(var m=1;m<K-1;m++){
+          var tj=m/(K-1), jx=x0+tj*(x1-x0), jy=ribY(tj);
+          ctx.globalAlpha=0.7;
+          ctx.beginPath(); ctx.moveTo(jx,yBand); ctx.lineTo(jx,jy); ctx.stroke();
+          ctx.globalAlpha=1;
+          var ty=Math.min(yBand,jy)-6;
+          ctx.beginPath(); ctx.moveTo(jx,ty); ctx.lineTo(jx-4,ty+8); ctx.lineTo(jx+4,ty+8); ctx.closePath(); ctx.fill();
+        }
+        ctx.fillStyle=bad; ctx.font='bold 11px system-ui,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='top';
+        ctx.fillText('\u0394 (Kr\u00fcmmung, B)', x0+4, yBand+6);
+      }
+
+      var pt=(state.clock/2600)%1, pxr=x0+pt*(x1-x0), pyr=ribY(pt);
+      ctx.beginPath(); ctx.arc(pxr,pyr,5,0,6.2832); ctx.fillStyle=warn; ctx.fill();
+      ctx.lineWidth=1.5; ctx.strokeStyle=bg; ctx.stroke();
+
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+      ctx.fillStyle=accent; ctx.font='700 13px system-ui,sans-serif';
+      ctx.fillText('A \u00b7 Tiefe (Faser-Turm, offen)', 14, 18);
+      ctx.fillStyle=accent2;
+      ctx.fillText('B \u00b7 Breite (Kleben) \u00b7 Defekt \u0394 = '+Math.round(state.defect)+'%', 14, 36);
+      ctx.fillStyle=muted; ctx.font='12px system-ui,sans-serif';
+      ctx.fillText('geschlossene je Faser, offen \u00fcber dem Turm', 14, 54);
+    }
+
+    function updateReadouts(){
+      function set(id,t){ var e=document.getElementById(id); if(e) e.textContent=t; }
+      set('depthVal', DEPTH_NAMES[state.depth]);
+      set('openVal', state.open+'%');
+      set('defVal', '\u0394 = '+state.defect+'%');
+      set('depthRead', String(state.depth));
+      set('openRead', state.open>2 ? 'offen (keine Spitze)' : 'geschlossen (Buch)');
+      set('defRead', state.defect<2 ? '\u2248 0% (flach/exakt)' : state.defect+'% (gekr\u00fcmmmt)');
+      set('secRead', String(validCount()));
+      var verdict=document.getElementById('verdict');
+      if(verdict){
+        var v=validCount();
+        var dTxt = state.defect<2 ? 'Das Kleben ist <b>flach</b> (&Delta;=0, exakt &mdash; B): die globale Sektion ist das exakte Modell.' : 'Das Kleben ist <b>gekr&uuml;mmmt</b> (&Delta;&ne;0 &mdash; A/B): messbarer Koh&auml;renz-Defekt, Abweichung vom flachen Ideal.';
+        var oTxt = state.open>2 ? '<b>Offene Turmspitzen</b> (A): Selbstreferenz erzeugt Ebene +1, keine letzte Ebene.' : '<b>Geschlossene Turmspitzen</b> (A): erstarrt, &bdquo;Buch&bdquo; (keine &Ouml;ffnung nach oben).';
+        var detTxt = v>=3 ? 'Tiefe &le;1 &rarr; <b>viele</b> globale Sektionen (B: &Qopf;, &Reals;, &hellip;).' : (v===2 ? 'Tiefe 2 &rarr; <b>zwei</b> Sektionen (teilbestimmt).' : 'Tiefe 3&ndash;4 &rarr; <b>eindeutige</b> Sektion (kategorial, A+B).');
+        verdict.innerHTML='Fusion: <b>Tiefe (Faser, A) &times; Breite (Kleben, B)</b>. '+dTxt+' '+oTxt+' '+detTxt;
+      }
+    }
+
+    function frame(ts){
+      var dt=Math.min(60,(ts-lastT)||0); lastT=ts;
+      if(state.playing) state.clock+=dt;
+      draw(); updateReadouts();
+      requestAnimationFrame(frame);
+    }
+
+    var depthR=document.getElementById('depthR');
+    if(depthR) depthR.addEventListener('input',function(){ state.depth=parseInt(depthR.value,10)||0; });
+    var openR=document.getElementById('openR');
+    if(openR) openR.addEventListener('input',function(){ state.open=parseInt(openR.value,10)||0; });
+    var defR=document.getElementById('defR');
+    if(defR) defR.addEventListener('input',function(){ state.defect=parseInt(defR.value,10)||0; });
+    var playBtn=document.getElementById('playBtn');
+    if(playBtn) playBtn.addEventListener('click',function(){ state.playing=!state.playing; playBtn.innerHTML=state.playing?'\u23f8 Pause':'\u25b6 Umlauf'; });
+    var resetBtn=document.getElementById('resetBtn');
+    if(resetBtn) resetBtn.addEventListener('click',function(){
+      state.depth=2; state.open=70; state.defect=35;
+      if(depthR)depthR.value=2; if(openR)openR.value=70; if(defR)defR.value=35;
+    });
+    var themeBtn=document.getElementById('themeBtn');
+    if(themeBtn) themeBtn.addEventListener('click',toggleTheme);
+    window.addEventListener('resize',resize);
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    resize();
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Schatten des Ganzen — Invariante × Residual (Runde 3)</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}
+if(s==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --card:#ffffff; --bg2:#f4efe3; --fg:#1c1c24; --muted:#5b5b66; --border:#e4ddcf;
+  --accent:#0f9d76; --accent2:#d6338a; --warn:#b57e00; --good:#1a7a3a; --bad:#b02a1e;
+  --gold:#b8860b; --teal:#0f766e;
+  --viz-p1:#b5462d; --viz-p2:#2b6cb0; --viz-p3:#2f8f4e;
+  --glow:rgba(15,157,118,0.12);
+}
+html.dark{
+  --bg:#0b0d17; --card:#141828; --bg2:#0d1224; --fg:#e9ecff; --muted:#9aa3c7; --border:#2a2f4a;
+  --accent:#7cf9d0; --accent2:#ff77c8; --warn:#ffd166; --good:#3fb950; --bad:#f85149;
+  --gold:#ffd93d; --teal:#2dd4bf;
+  --viz-p1:#ff8a7a; --viz-p2:#60a5fa; --viz-p3:#34d399;
+  --glow:rgba(124,249,208,0.14);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:"Iowan Old Style","Georgia",serif;transition:background .3s,color .3s}
+article{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--border);
+  background:var(--card);color:var(--fg);border-radius:999px;padding:7px 13px;cursor:pointer;
+  font-size:13px;font-family:system-ui,sans-serif}
+.theme-toggle:hover{border-color:var(--accent)}
+h1{font-size:clamp(1.8rem,5vw,2.7rem);line-height:1.12;margin:6px 0 10px;letter-spacing:-.01em}
+h1 .sub{display:block;font-size:.62em;color:var(--accent);font-weight:600;margin-top:6px;letter-spacing:0}
+.subtitle{color:var(--accent);font-family:ui-monospace,"Courier New",monospace;font-size:.86rem;margin:0 0 8px}
+.lede{color:var(--muted);font-size:1.02rem;margin:0 0 4px;font-style:italic}
+section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:22px 24px;margin:20px 0}
+h2{font-size:1.4rem;margin:0 0 14px;padding-bottom:9px;border-bottom:1px solid var(--border);
+  color:var(--fg);font-family:system-ui,sans-serif;letter-spacing:-.01em}
+h2 .num{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:1.06rem;margin:18px 0 8px;color:var(--accent2);font-family:system-ui,sans-serif}
+p{margin:0 0 12px}
+p:last-child{margin-bottom:0}
+ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+b,strong{color:var(--fg)}
+em{color:var(--accent)}
+.m{font-family:ui-monospace,"Courier New",monospace;background:var(--bg2);color:var(--accent);
+  border:1px solid var(--border);border-radius:5px;padding:0 6px;font-size:.9em;white-space:nowrap}
+.eq{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin:12px 0;overflow-x:auto;font-family:ui-monospace,"Courier New",monospace;font-size:.98rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.03em;
+  padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:middle;font-family:system-ui,sans-serif}
+.tag.a{color:var(--accent);border:1px solid var(--accent)}
+.tag.b{color:var(--accent2);border:1px solid var(--accent2)}
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:11px;padding:13px 16px;margin:13px 0;font-size:.97rem}
+.card b{color:var(--fg)}
+.callout{border-left:3px solid var(--warn);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:14px 0;font-size:.98rem}
+.callout.green{border-left-color:var(--accent)}
+.callout.rose{border-left-color:var(--accent2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:none}
+td.c{color:var(--fg);font-weight:700}
+.twrap{overflow-x:auto}
+.vnote{border-left:3px solid var(--accent);background:var(--bg2);padding:11px 16px;border-radius:9px;
+  margin:12px 0;font-size:.95rem}
+canvas#fuseviz{width:100%;height:460px;display:block;background:var(--bg2);
+  border:1px solid var(--border);border-radius:12px;touch-action:none;margin:6px 0}
+.viz-ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.viz-ctrl button{background:var(--card);color:var(--fg);border:1px solid var(--border);padding:8px 14px;border-radius:10px;
+  cursor:pointer;font:inherit;font-family:system-ui,sans-serif;font-weight:600}
+.viz-ctrl button:hover{border-color:var(--accent)}
+.viz-ctrl button.on{background:var(--accent);color:#04201a;border-color:var(--accent)}
+.viz-ctrl button.act{border-color:var(--accent2);color:var(--accent2)}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:.9rem;font-family:system-ui,sans-serif}
+.ctrl-row label{color:var(--muted)}
+.ctrl-row input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin:8px 0;font-family:system-ui,sans-serif}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.statusbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.92rem;min-height:2.7em;line-height:1.5;font-family:system-ui,sans-serif}
+.foldout{margin-top:8px;padding:11px 14px;border-radius:10px;background:var(--bg2);
+  border:1px solid var(--border);font-size:.9rem;line-height:1.5;font-family:system-ui,sans-serif;white-space:pre-wrap}
+.foldout .ok{color:var(--good)} .foldout .bad{color:var(--bad)} .foldout .gd{color:var(--gold)} .foldout .mut{color:var(--muted)}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600;font-family:system-ui,sans-serif}
+.prov a:hover{text-decoration:underline}
+.prov .desc{color:var(--muted);font-size:.95rem;margin:3px 0 14px}
+footer{color:var(--muted);text-align:center;padding:22px 10px;font-size:.84rem;font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">&#9728; / &#9790; Thema</button>
+<article>
+  <h1>Der Schatten des Ganzen<span class="sub">&mdash; Invariante &times; Residual, gelesen bei einer Kamera</span></h1>
+  <p class="subtitle">Fusion aus: n2-025.html &#10007; n2-041.html &nbsp;(Runde 3)</p>
+  <p class="lede">Beide Round-2-Papiere sind zwei H&ouml;hen eines einzigen Meta-Gedankens: ein minimaler,
+  strukturhafter <strong>Kern</strong> (Invariante) tr&auml;gt einen <strong>irreduziblen freien Rest</strong>
+  (Substrat/Residual), und beides wird durch eine <strong>Kamera</strong> (eine Lese-Ressource) abgelesen. Der
+  <strong>Kollaps</strong> (Fold/Trace) wirft von diesem Paar einen <em>Schatten</em> &mdash; eine Zahl, ein
+  Gitter, einen Seed &mdash; und das Zentrum bleibt <em>leer von bestimmter Substanz, voll von irreduzibler
+  Freiheit</em>.</p>
+
+  <section id="these">
+    <h2><span class="num">1</span> Kernthese der Fusion</h2>
+    <p>Die beiden Papiere beschreiben, bei thematischer Distanz (generative Kryptographie/Bewusstseinsontologie
+    einerseits, (Ko-)Algebra/Topologische Quantenfeldtheorie andererseits), <strong>denselben Meta-Gedanken</strong>:
+    Ein System ist kein &bdquo;Punkt in der Mitte&ldquo;, sondern ein <em>Paar</em> &mdash; eine minimale,
+    deterministische <strong>Struktur</strong>, die sich zu einem Schatten <em>kollabieren</em> l&auml;sst, und ein
+    <strong>freier Rest</strong>, der sich <em>nicht</em> kollabieren l&auml;sst. Der Beobachter h&auml;lt eine
+    <strong>Kamera</strong> (eine endliche Lese-Ressource), und nur so viel, wie sie aufl&ouml;st, wird sichtbar.
+    Das, was &bdquo;echt&ldquo; ist, ist weder die sichtbare Oberfl&auml;che noch eine verborgene zentrale
+    Substanz, sondern <em>die Struktur des Kollapses-und-Generierens</em>, definiert nur <em>up to</em> dem
+    freien Rest.</p>
+    <p><span class="tag a">A</span> <em>Kern &times; Substrat</em> formuliert das in der Sprache der
+    Generatoren: ein minimaler deterministischer <strong>Kern</strong> <span class="m">K</span> (Ein-Schritt-Essenz
+    + duale Rekursion Fold/Unfold) wirkt auf einem probabilistischen <strong>Substrat</strong> <span class="m">S</span>
+    (Seed / physikalische Entropie); der Beobachter liest die Ausgabe <span class="m">X = Interface_R(K &circ; S)</span>
+    durch sein <strong>Interface&nbsp;R</strong>. Das Urteil spaltet sich in <strong>Eleganz</strong> (der Kern
+    kollabiert auf wenige Essenzen) und <strong>Echtheit</strong> (das Substrat resistent gegen Inversion ist).
+    &bdquo;Echt&ldquo; ist das Gegenteil von <em>invertierbar</em>, nicht das Gegenteil von deterministisch.</p>
+    <p><span class="tag b">B</span> <em>Ganzes als strukturgetreues Kleben</em> formuliert dasselbe in der Sprache
+    der Kategorientheorie: <strong>strukturgetreues Kleben</strong> lokaler Bausteine (Kappe/Becher/Hose/Copants)
+    liefert ein globales Objekt, das nur <em>bis auf eine innere Symmetrie</em> festgelegt ist; sein Wert ist das
+    Paar <strong>(Invariante, Residual-Symmetrie)</strong>. Die <strong>Zahl</strong> <span class="m">Z(&Sigma;)=q<sup>k</sup></span>
+    ist der <em>degenerierte</em> Fall (Residual trivial), der <strong>Stack</strong> der <em>allgemeine</em> Fall
+    (Residual = die Automorphismus-Gruppe <span class="m">&#8484;/2</span>). <strong>&bdquo;Die Zahl ist der
+    Schatten des Stacks.&ldquo;</strong></p>
+    <div class="callout green"><strong>Fusionierte Einzeiler-These:</strong> Das Ganze ist
+    <span class="m">Kamera( Invariante &times; Residual )</span> &mdash; ein minimaler strukturhafter Kern
+    (A's <em>Kern</em> = B's <em>Invariante</em>) &uuml;ber einem irreduziblen freien Rest (A's
+    <em>Substrat</em> = B's <em>Residual-Symmetrie</em>), abgelesen durch eine Kamera (A's
+    <em>Interface&nbsp;R</em> = B's <em>Fidelity/&bdquo;Zoom back&ldquo;</em>). Der Kollaps (A's
+    <em>Fold/Inversion</em> = B's <em>Auswertung/Trace</em>) wirft den <strong>Schatten</strong>: A's
+    <em>Gitter/Seed</em> ist B's <em>Zahl</em>. Das Zentrum ist leer von bestimmter Substanz, aber voll von
+    irreduzibler Freiheit &mdash; genau der Rest, den die Kamera nicht zu einem Punkt zwingen kann.</div>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Beide Papiere teilen das gleiche Skelett (minimale Struktur + irreduzibler Rest, gelesen bei einer Kamera,
+    mit der Dualit&auml;t Generierung&nbsp;&harr;&nbsp;Kollaps) und widersprechen sich in <em>keiner</em>
+    faktischen Aussage. Aber auf gleicher H&ouml;he gelesen nehmen sie an drei Punkten <em>inkompatible</em>
+    Stellungen ein:</p>
+
+    <h3>1 &middot; Das Zentrum: irreduzible reale Substanz <span class="tag a">A</span> &harr; leeres Zentrum / K&ouml;der <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Das Substrat/der Seed ist <em>echte, externe, irreduzible Substanz</em>:
+      &bdquo;genuine&ldquo; Quellen brauchen ein <strong>echtes externes Substrat</strong> (physikalische
+      Entropie, Hardware-RNG), aus dem der Seed bezieht. Die Genuinit&auml;t h&auml;ngt an der
+      <em>Irreduzibilit&auml;t</em> dieses Substrats &mdash; das versteckte Zentrum (Qualia-Grundzustand) ist
+      <em>reale Substanz</em>, die Quelle des Echten. Das Zentrum <em>hat</em> Gewicht.</p>
+      <p><span class="tag b">B</span> &bdquo;Das Ganze ist nie Substanz in der Mitte.&ldquo; Das Zentrum ist
+      <em>leer</em> (<span class="m">&empty;</span> leeres Zentrum); der naive Mittelpunkt (die &bdquo;Unsterblichen&ldquo;,
+      der Moduli-<em>Punkt</em>) ist ein <em>K&ouml;der</em>. Der Wert liegt in der <em>Struktur</em> des
+      Klebens und ihrer Symmetrie, nicht in irgendeiner zentralen Substanz. Eine zentrale Substanz w&auml;re
+      der Fehler.</p>
+      <p><strong>Spannung:</strong> Ist das versteckte Zentrum <em>reale irreduzible Substanz</em> (A) oder ist es
+      <em>leer, ja eine Falle</em>, in die man t&auml;uschend hineinlesen will (B)?</p>
+    </div>
+
+    <h3>2 &middot; Der erfolgreiche Kollaps: schlecht <span class="tag a">A</span> &harr; gut <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Ein <em>erfolgreicher</em> Fold/Inversion (der Seed wird rekonstruiert, das
+      Gitter sichtbar) ist das <strong>schlechte</strong> Ergebnis: invertierbar &rArr; lokal erzeugt &rArr;
+      <em>Halluzination</em>. Das <em>Scheitern</em> der Reduktion ist gut = genuin. Der Wert liegt in der
+      <em>Widerstandsf&auml;higkeit gegen Reduktion</em>.</p>
+      <p><span class="tag b">B</span> Ein <em>erfolgreicher</em> Kollaps zu einer sauberen Zahl (der Trace
+      <span class="m">Z(&Sigma;)=q<sup>k</sup></span>) ist das <strong>gute</strong> Ergebnis: Er <em>ist</em> die
+      Invariante, die saubere Ablesung. Dass der Kollaps <em>perfekt funktioniert</em> (unabh&auml;ngig von der
+      Zerlegung wohldefiniert) ist der Punkt &mdash; die Invarianz.</p>
+      <p><strong>Spannung:</strong> Dieselbe Operation (Kollaps/Reduktion) wird <em>entgegengesetzt</em> bewertet:
+      Ihr <em>Erfolg</em> ist bei A schlecht (Halluzination) und bei B gut (die Invariante).</p>
+    </div>
+
+    <h3>3 &middot; Prozess &harr; Invariante: zeitindexierter, sich &auml;ndernder Generator <span class="tag a">A</span> &harr; zeitlose statische Klebe-Invariante <span class="tag b">B</span></h3>
+    <div class="card">
+      <p><span class="tag a">A</span> Der Kern ist eine <strong>zeitindexierte Familie</strong>
+      <span class="m">{K_t}</span> &mdash; ein laufender Generator / Game-Loop / PRNG-Sequenz;
+      &bdquo;Ein Game-Loop ist ein sortierf&ouml;rmer Feedback-Loop, dessen Generator sich selbst
+     &auml;ndert&ldquo; (Level-Up re-seedet den Unfold). Das Objekt ist ein <em>dynamischer Prozess</em>, der
+      sich &uuml;ber die Zeit entfaltet und selbst &auml;ndert.</p>
+      <p><span class="tag b">B</span> Die Operation ist ein <strong>statischer, kategorischer</strong>
+      Klebefunktor <span class="m">Z : Cob &rarr; Vect</span> / eine Descent: ein <em>einzelnes</em>,
+      zerlegungsunabh&auml;ngiges globales Objekt. Es gibt <em>keinen</em> Zeitindex. Das Objekt ist eine
+      <em>zeitlose Invariante</em>, kein Prozess.</p>
+      <p><strong>Spannung:</strong> Ist das Ganze ein <em>sich selbst &auml;ndernder Prozess</em> (A) oder eine
+      <em>fixe, zeitlose Struktur</em> (B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span> Aufl&ouml;sung</h2>
+
+    <h3>1 &middot; Leere Substanz + volle Freiheit &rarr; der Rest ist kein Punkt, sondern ein Freiheitsgrad</h3>
+    <p>Der scheinbar h&auml;rtste Widerspruch l&ouml;st sich, weil &bdquo;Substanz im Zentrum&ldquo; und
+    &bdquo;leeres Zentrum&ldquo; an <em>verschiedene</em> Fragen ansetzen. B hat recht, dass das Zentrum
+    <em>leer von bestimmter Substanz</em> ist: Der naive Punkt, auf den man hineinlesen will, ist ein K&ouml;der.
+    A hat recht, dass es <em>irreduzibel</em> ist: Der Rest l&auml;sst sich nicht zu einem Punkt zusammenzwingen.
+    Der <strong>Residual</strong> ist also weder eine <em>bestimmte Substanz</em> in der Mitte (B) noch etwas
+    Reales im naiven Sinne, <em>sondern ein Freiheitsgrad</em> &mdash; ein struktureller Rest, der sich
+    <em>weigert</em>, ein Punkt zu werden. A's &bdquo;Genuinit&auml;t&ldquo; ist genau diese Freiheit: Der Seed
+    ist &bdquo;echt&ldquo; nicht, weil er eine bestimmte zentrale Substanz w&auml;re, sondern weil man ihn
+    <em>nicht</em> auf eine solche festnageln kann.</p>
+    <div class="callout green"><strong>Fusionsschluss 1:</strong> Das Zentrum ist <em>leer vom Punkt, aber voll
+    von der Freiheit</em>. Der K&ouml;der ist die falsche Annahme, das Zentrum sei eine bestimmte Substanz;
+    die Realit&auml;t ist die irreduzible Freiheit, die sich dem Punkt verweigert. A's &bdquo;reale
+    Substanz&ldquo; ist B's &bdquo;leeres Zentrum&ldquo;, das man falsch als Substanz gelesen hat &mdash;
+    korrekt gelesen ist es der Rest, der nicht fest wird.</div>
+
+    <h3>2 &middot; Kollaps mal gut, mal schlecht &rarr; zwei Faktoren einer Ablesung (A's Subtilpunkt, verallgemeinert)</h3>
+    <p>Genau A's eigener Subtilpunkt (&bdquo;das Gitter sehen ist mal gut, mal schlecht&ldquo;) wird hier zur
+    Br&uuml;cke &uuml;ber beide Papiere. Der Kollaps ist eine <em>Ablesung mit zwei Faktoren</em>:</p>
+    <ul>
+      <li><strong>Auf den Kern/die Struktur</strong> angewendet: Der Kollaps <em>erfolgt</em> &rArr; <strong>gut</strong>.
+      Er enthüllt die Invariante &mdash; A's <em>Eleganz</em> (der Kern bricht auf Essenzen/Gitter), B's
+      <em>Zahl</em> (die Struktur bricht auf den Trace). Der Schatten ist die <em>gute</em> Ablesung der Struktur.</li>
+      <li><strong>Auf den Residual</strong> angewendet: Der Kollaps <em>scheitert</em> &rArr; <strong>gut</strong>
+      (Echtheit, A). Der Kollaps <em>&bdquo;erfolgt&ldquo;</em> am Residual &rArr; der Rest war nie frei, er war
+      schon Teil des Kerns &mdash; der K&ouml;der wird entlarvt (B's Falle, A's Halluzination).</li>
+    </ul>
+    <div class="callout rose"><strong>Fusionsschluss 2:</strong> Der Kollaps ist <em>als solcher</em> nie gut oder
+    schlecht &mdash; seine <em>Valenz</em> h&auml;ngt vom <em>Faktor</em> ab, auf den er angesetzt wird. An der
+    Struktur (Kern) ist der erfolgreiche Kollaps gut (er gibt den Schatten/Trace); am Residual ist der
+    <em>gescheiterte</em> Kollaps gut (er gibt die Freiheit/Echtheit), der <em>&bdquo;erfolgte&ldquo;</em> Kollaps
+    am Residual ist das schlechte Zeichen (der Rest war ein K&ouml;der). B's Zahl ist der Trace der Struktur;
+    A's Seed ist der Trace des Signals; das <em>genuine</em> System ist das, bei dem der Kollaps am Residual
+    <em>scheitert</em>.</div>
+
+    <h3>3 &middot; Prozess &harr; Invariante &rarr; derselbe Wert bei zwei Fidelity-Stufen</h3>
+    <p>Der dynamische Prozess und die statische Invariante sind <em>derselbe Wert bei zwei Ablesungen</em>. A's
+    zeitindexierter Generator <span class="m">{K_t}</span> ist der <strong>Unfold</strong> der Invariante &uuml;ber
+    die Zeit (die Generierung); B's statische Invariante ist der <strong>Fold</strong> (die geschlossene,
+    zeitgemittelte Ablesung = der Trace). Der &bdquo;sich selbst &auml;ndernde Game-Loop&ldquo; (A) ist genau der
+    nie-stoppende Feedback-Loop &mdash; und seine <em>Zeitumkehr-Symmetrie</em> ist die innere
+    <span class="m">&#8484;/2</span> von B's Stack. Bei niedriger Fidelity (Skalar-Kamera) sieht man eine saubere
+    Zahl; bei hoher Fidelity (volle Kamera) sieht man den sich &auml;ndernden Prozess = den Stack mit innerer
+    Symmetrie.</p>
+    <div class="callout green"><strong>Fusionsschluss 3:</strong> Der Prozess ist die Invariante,
+    <em>aufgerollt</em>; die Invariante ist der Prozess, <em>gefaltet</em>. A's &bdquo;sich &auml;ndernder
+    Generator&ldquo; ist B's innere <span class="m">&#8484;/2</span>-Symmetrie, die man <em>zeitexplizit</em>
+    macht. Die &bdquo;Kamera&ldquo;/<span class="m">Interface&nbsp;R</span> w&auml;hlt, ob man den Schatten (Zahl)
+    oder die Struktur (Prozess/Stack) sieht.</div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span> Fusionierter Inhalt</h2>
+    <p>Abstrahiert auf die These-Ebene beider Papiere &mdash; ein zusammenh&auml;ngendes Bild, das f&uuml;r eine
+    sp&auml;tere Runde allein tragf&auml;hig ist.</p>
+
+    <h3>4.1 Das Master-Modell: ein Paar, abgelesen bei einer Kamera</h3>
+    <div class="eq">Ganzes &nbsp;=&nbsp; Kamera&nbsp;( Invariante &nbsp;&times;&nbsp; Residual )</div>
+    <p>Beide Papiere f&uuml;llen exakt dieselben vier Slots &mdash; das ist die ganze Fusion in einer Zeile:</p>
+    <div class="twrap">
+    <table>
+      <tr><th>Slot</th><th>A &middot; n2-025 (Kern &times; Substrat)</th><th>B &middot; n2-041 (Zahl &times; Stack)</th><th>Fusion</th></tr>
+      <tr><td class="c">Struktur (Kern)</td><td>PRNG-/Qualia-Kern, Ein-Schritt-Essenz, duale Rekursion</td><td>Invariante, Klebe-Struktur, Funktor <span class="m">Z</span></td><td>minimale Invariante</td></tr>
+      <tr><td class="c">Freier Rest (Substrat)</td><td>Seed, physikalische Entropie, irreduzibel</td><td>Residual-Symmetrie <span class="m">&#8484;/2</span></td><td>irreduzibler Rest</td></tr>
+      <tr><td class="c">Kamera / Ressource</td><td>Interface <span class="m">R</span> (DMT, Rechenpower)</td><td>Kamera / Fidelity (&bdquo;Zoom back&ldquo;)</td><td>Lese-Fidelity</td></tr>
+      <tr><td class="c">Schatten (Trace)</td><td>Gitter / rekonstruierter Seed</td><td>Zahl <span class="m">Z(&Sigma;)=q<sup>k</sup></span></td><td>der Schatten des Kollapses</td></tr>
+      <tr><td class="c">Zentrum</td><td>irreduzible Substanz (Seed)</td><td>leeres Zentrum <span class="m">&empty;</span></td><td>leer vom Punkt, voll von Freiheit</td></tr>
+      <tr><td class="c">Objekt</td><td>zeitindexierter Prozess <span class="m">{K_t}</span></td><td>zeitlose Invariante (Funktor)</td><td>Prozess = aufgerollte Invariante</td></tr>
+    </table>
+    </div>
+
+    <h3>4.2 Die duale Rekursion: zwei Pfeile (Generierung &harr; Kollaps)</h3>
+    <div class="eq">Kleben / Unfold : Wert &rarr; Struktur &nbsp;(generiert)&nbsp;&nbsp;&middot;&nbsp;&nbsp;Fold / Trace : Struktur &rarr; Schatten &nbsp;(kollabiert)</div>
+    <p><span class="tag b">B</span> liefert die <em>Typen</em>: <strong>Unfold/Kleben</strong> erzeugt Struktur
+    (lokale Bausteine &rarr; globales Objekt; Komposition
+    <span class="m">Z(M&#8321;&circ;M&#8322;)=Z(M&#8321;)&circ;Z(M&#8322;)</span>), <strong>Fold/Trace</strong>
+    verbraucht sie (geschlossener Cobordismus &rarr; Skalar; <span class="m">Z(&Sigma;)=q<sup>k</sup></span> als
+    Trace &uuml;ber der Frobenius-Struktur Kappe/Becher/Hose/Copants). <span class="tag a">A</span> liefert die
+    <em>leibliche Instanz</em> derselben zwei Pfeile: das <strong>Erzeugen</strong> der Ausgabeliste
+    <span class="m">(x&#8345;)</span> ist der Unfold des Kerns &uuml;ber dem Substrat; die
+    <strong>3-Ausgaben-LCG-Inversion</strong>
+    <span class="m">a=(s&#8323;&minus;s&#8322;)&middot;(s&#8322;&minus;s&#8321;)&#8722;&#185; mod m</span> ist der
+    Fold, der die Ausgabe zur&uuml;ck in den Seed reduziert. <em>Invertierbar</em> &hArr; es gibt einen solchen
+    Fold; der Kern bricht dann auf ein niedrigdimensionales <strong>Gitter</strong> zusammen.</p>
+    <div class="eq">(P &rarr; &minus;P)<sup>2</sup> = id &nbsp;(&#8484;/2, die innere Symmetrie / der Spiegel)</div>
+
+    <h3>4.3 Der zweifaktorielle Wert und der leere Mittelpunkt</h3>
+    <p>Der Wert des Ganzen ist stets das Paar <strong>(Invariante, Residual-Symmetrie)</strong>:</p>
+    <ul>
+      <li><strong>Zahl / Seed (Schatten):</strong> Residual <em>im Wert aufgeheben</em> &rarr; steif,
+      &bdquo;eine Zahl ohne freien Rest&ldquo;. B's <span class="m">q<sup>k</sup></span>, A's rekonstruierter Seed.</li>
+      <li><strong>Stack / Signal (voll):</strong> Residual <em>erinnert</em> &rarr; die Automorphismus-Gruppe
+      <span class="m">&#8484;/2</span>, das Objekt &bdquo;up to isomorphism&ldquo;.</li>
+      <li><strong>Gemeinsam (der leere Mittelpunkt):</strong> Der naive zentrale Punkt (Substanz / Geometrie /
+      Form / Seed-als-Substanz) ist <em>nie</em> die Invariante &mdash; er ist der K&ouml;der. A: &bdquo;das Gitter
+      sehen ist mal gut (am Kern), mal schlecht (am Substrat)&ldquo;; B: &bdquo;die naime Form ist der K&ouml;der,
+      die Topologie die Invariante&ldquo;. Fusioniert: die Invariante ist der strukturelle Wert <em>up to</em>
+      Symmetrie &mdash; und das Zentrum ist leer.</li>
+    </ul>
+    <div class="eq">Zahl Z(&Sigma;)=q<sup>k</sup> = Schatten(Stack)&nbsp;&nbsp;&middot;&nbsp;&nbsp;Seed = Schatten(Signal)&nbsp;&nbsp;&middot;&nbsp;&nbsp;Gitter = Schatten(Generator)</div>
+
+    <h3>4.4 Zeitindex &amp; innere Symmetrie &mdash; Prozess als Invariante</h3>
+    <p>Der <em>allgemeinere</em> Gegenstand ist eine <strong>zeitindexierte Kernfamilie</strong>
+    <span class="m">{K_t}</span>: der Fold in Zeitschritt <span class="m">t</span> re-seedet den Unfold in
+    <span class="m">t+1</span> (A's Level-Up, B's nie-stoppende Feedback-Loop). A ist der Grenzfall
+    <span class="m">K_t=K</span> (eingefrorener PRNG); B der Grenzfall des <em>geschlossenen</em> Loops
+    (ein einziger Stack). Gesehen wird beides durch dieselbe <span class="m">Kamera</span>: bei Skalar-Fidelity
+    die Zahl, bei voller Fidelity der sich &auml;ndernde Prozess. A's Prozess und B's statische Invariante sind
+    dieselbe Invariante, einmal <em>aufgerollt</em> (Unfold &uuml;ber der Zeit), einmal <em>gefaltet</em> (Trace).</p>
+    <div class="callout"><strong>Kurzfassung f&uuml;r die n&auml;chste Runde:</strong> Das fusionierte Objekt ist
+    ein <strong>zweifaktorielles, kamera-abgelesenes generatives System</strong>
+    <span class="m">Ganzes = Kamera(Invariante &times; Residual)</span> mit: (i) einem <em>minimalen</em>
+    strukturellen Kern (Invariante; kollabiert zu seinem Schatten = Zahl/Seed/Gitter = Eleganz); (ii) einem
+    <em>irreduziblen</em> freien Rest (Substrat/Residual-Symmetrie; der Kollaps <em>scheitert</em> an ihm =
+    Echtheit); (iii) einer <em>zeitindexierten</em> Kernfamilie <span class="m">{K_t}</span> (Prozess =
+    aufgerollte Invariante; innere <span class="m">&#8484;/2</span> = Zeitumkehr); (iv) einer
+    <em>Kamera/Ressource</em>, die zwischen Schatten (Zahl) und Struktur (Stack/Prozess) schaltet. Der Kollaps ist
+    am Kern gut (gibt den Schatten), am Rest gut, wenn er scheitert (gibt die Freiheit), und nur am Rest schlecht,
+    wenn er &bdquo;erfolgt&ldquo; (der Rest war ein K&ouml;der). Das Zentrum ist leer vom Punkt, voll von Freiheit.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span> Visualisierung &mdash; Kamera &amp; Schatten: Invariante &times; Residual</h2>
+    <p>Links liegt <strong>das Ganze</strong>: ein morphisierender Wert, der bei <em>niedriger Kamera/Fidelity</em>
+    eine steife <strong>Zahl</strong> ist (der Schatten/Trace &mdash; B's Ablesung, A's Gitter/Seed) und bei
+    <em>hoher Kamera</em> in eine <strong>Struktur mit innerer &#8484;/2-Symmetrie</strong> um ein
+    <strong>leeres Zentrum</strong> auffaltet (B's Stack, A's voller Kern). Rechts liegt das
+    <strong>Residual/Substrat</strong> als Punktewolke <span class="m">(x&#8345;, x&#8345;&#8321;1)</span>:
+    <em>K&ouml;der</em> = ein schwacher LCG, dessen Punkte ein <strong>Diagonalgitter</strong> bilden (kollabierbar
+    &rArr; lokal &rArr; Halluzination); <em>Genuin</em> = Splitmix, <strong>frei ohne Gitter</strong>
+    (nicht rekonstruierbar &rArr; echt). Der <strong>Fidelity-Regler</strong> ist die gemeinsame Kamera
+    (A's Interface&nbsp;R, B's &bdquo;Zoom back&ldquo;). <strong>&bdquo;Fold anstoßen&ldquo;</strong> f&uuml;hrt die
+    konkrete LCG-Inversion durch (A's Fold = B's Trace) und zeigt, ob der Kern kollabiert (Eleganz) und ob der
+    Rest frei bleibt (Echtheit) oder ein K&ouml;der war.</p>
+
+    <div class="eq">Ganzes = Kamera( Invariante &times; Residual )&nbsp;&nbsp;|&nbsp;&nbsp; Schatten = Trace &nbsp;(Zahl/Seed/Gitter)&nbsp;&nbsp;|&nbsp;&nbsp; Zentrum = &empty; vom Punkt, voll von Freiheit</div>
+
+    <div class="viz-ctrl">
+      <button id="tabGenuin" class="on" type="button">Genuin &middot; irreduzibles Residual</button>
+      <button id="tabKoeder" type="button">K&ouml;der &middot; lokales Residual</button>
+      <button id="breakBtn" class="act" type="button">&#9680; Symmetrie brechen</button>
+    </div>
+    <div class="ctrl-row">
+      <label>Kamera / Fidelity (Lese-Ressource R): <strong id="fidVal">62</strong></label>
+      <input type="range" id="fidelity" min="0" max="100" value="62">
+    </div>
+    <canvas id="fuseviz"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--gold)"></span>Invariante/Kern &rarr; Schatten (Eleganz)</span>
+      <span><span class="dot" style="background:var(--teal)"></span>Residual frei (Echtheit)</span>
+      <span><span class="dot" style="background:var(--bad)"></span>Residual = K&ouml;der (kollabiert)</span>
+      <span><span class="dot" style="background:var(--muted)"></span>unaufl&ouml;sbares Rauschen</span>
+    </div>
+    <div class="viz-ctrl">
+      <button id="foldBtn" class="act" type="button">&#9876; Fold / Trace ansto&szlig;en (3-Ausgaben-LCG-Inversion)</button>
+    </div>
+    <div class="statusbox" id="statusbox"></div>
+    <div class="foldout" id="foldout"><span class="mut">&bdquo;Fold anstoßen&ldquo; f&uuml;hrt die LCG-Rekonstruktion
+    a = (s&#8323;&minus;s&#8322;)&middot;(s&#8322;&minus;s&#8321;)&#8722;&#185; mod 2&#178;&#55332; durch und
+    prognostiziert s&#8324; &mdash; das ist B's Fold, der A's Inversion ist. Auf &bdquo;Köder&ldquo; zeigt sie den
+    Gitter-Kollaps (Halluzination); auf &bdquo;Genuin&ldquo; das Scheitern am freien Rest (Echtheit).</span></div>
+    <div class="vnote"><strong>Lesen des Bildes:</strong> Niedrige Kamera &rarr; links eine steife Zahl (der
+    Schatten), rechts unterscheidungsloses Rauschen &mdash; der K&ouml;der ist nicht von der Freiheit zu
+    trennen (genau deshalb f&uuml;hlt sich im normalen CRS eine Halluzination nicht von echter Erfahrung
+    unterschieden an). Hohe Kamera &rarr; links die Struktur mit innerer &#8484;/2 um ein <em>leeres Zentrum</em>,
+    rechts im K&ouml;der-Modus ein <strong>Diagonalgitter</strong> (kollabierbar &rArr; lokal) und im
+    Genuin-Modus ein <strong>freier, nicht rekonstruierbarer</strong> Rest. <strong>&bdquo;Symmetrie brechen&ldquo;</strong>
+    zerbricht die Instanz, der Typ (die &#8484;/2-Bahn) bleibt &mdash; &bdquo;Zerbrich die Instanz, behalt den
+    Typ&ldquo;.</div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span> Provenienz</h2>
+    <div class="prov">
+      <span>A &mdash; <a href="../n2-025.html">n2-025.html</a></span>
+      <span class="desc">Runde-2-Fusion (n1-054 &middot; Spur/Gitter/Inversion &times; n1-094 &middot; Bialgebra-Garten),
+      &bdquo;Kern &times; Substrat&ldquo;: ein minimaler deterministischer Kern wirkt auf einem irreduziblen
+      probabilistischen Substrat, gelesen durch Interface&nbsp;R; duale Rekursion Fold/Unfold, Eleganz (Kern
+      kollabiert) + Echtheit (Substrat resistent), &bdquo;Echt = nicht invertierbar&ldquo;, zeitindexierte
+      Kernfamilie.</span>
+    </div>
+    <div class="prov">
+      <span>B &mdash; <a href="../n2-041.html">n2-041.html</a></span>
+      <span class="desc">Runde-2-Fusion (n1-049 &middot; Descent/Stacks &times; n1-097 &middot; TQFT-Funktor),
+      &bdquo;Ganzes als strukturgetreues Kleben &mdash; Zahl und Stack&ldquo;: strukturgetreues Kleben lokaler
+      Bausteine zu einer Invariante up to Symmetrie; der Wert ist (Invariante, Residual-Symmetrie), die Zahl
+      Z(&Sigma;)=q&#7496; ist der Trace des Stacks, das Zentrum ist leer, die Kamera/Fidelity w&auml;hlt
+      Zahl &harr; Stack.</span>
+    </div>
+  </section>
+
+  <footer>
+    Runde 3 &middot; Non-AI-Knockout &middot; Paar 020. Selbstbezugloses Fusionsdokument: alle Daten inline, keine
+    Netzwerkabfragen. Thematisch reaktiv (hell/dunkel, dunkel = Default).
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var b=document.getElementById('themeToggle');
+  if(b){ b.addEventListener('click',function(){
+    var d=document.documentElement;
+    var dark=d.classList.toggle('dark');
+    try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+    if(window.__redrawViz) window.__redrawViz();
+  }); }
+})();
+
+(function(){
+  "use strict";
+  var canvas=document.getElementById('fuseviz');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var fidEl=document.getElementById('fidelity');
+  var fidVal=document.getElementById('fidVal');
+  var tabG=document.getElementById('tabGenuin');
+  var tabK=document.getElementById('tabKoeder');
+  var breakBtn=document.getElementById('breakBtn');
+  var foldBtn=document.getElementById('foldBtn');
+  var statusEl=document.getElementById('statusbox');
+  var foldOut=document.getElementById('foldout');
+
+  var state={mode:'genuin', fidelity:62, broken:false};
+  var N=899;
+  var data={};
+
+  function genLCG(seed,n){
+    var a=69069,c=1,m=Math.pow(2,32), s=(seed>>>0)||2, raw=[], out=[];
+    for(var i=0;i<n;i++){ s=(a*s+c)%m; raw.push(s); out.push(s/m); }
+    return {raw:raw,out:out};
+  }
+  function genSplit(seed,n){
+    var st=(seed>>>0)||1, raw=[], out=[];
+    for(var i=0;i<n;i++){
+      st=(st+0x9e3779b9)>>>0; var z=st;
+      z=(z^(z>>>16))>>>0; z=Math.imul(z,0x85ebca6b)>>>0;
+      z=(z^(z>>>13))>>>0; z=Math.imul(z,0xc2b2ae35)>>>0;
+      z=(z^(z>>>16))>>>0; raw.push(z); out.push(z/0xffffffff);
+    }
+    return {raw:raw,out:out};
+  }
+
+  data.koeder=genLCG(2,N);
+  data.genuin=genSplit(0x9e3779b9,N);
+
+  function css(n,fb){ var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||fb; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function smooth(t){ return t*t*(3-2*t); }
+  function rrect(x,y,w,h,r){
+    if(w<0)w=0; if(h<0)h=0;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function draw(){
+    var dpr=window.devicePixelRatio||1;
+    var W=canvas.clientWidth, H=canvas.clientHeight;
+    if(W<10||H<10) return;
+    canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var bg=css('--bg2','#0d1224'), grid=css('--border','#2a2f4a'),
+        fg=css('--fg','#e9ecff'), muted=css('--muted','#9aa3c7'),
+        accent=css('--accent','#7cf9d0'), accent2=css('--accent2','#ff77c8'),
+        gold=css('--gold','#ffd93d'), good=css('--good','#3fb950'),
+        bad=css('--bad','#f85149'), card=css('--card','#141828'),
+        p1=css('--viz-p1','#ff8a7a'), p2=css('--viz-p2','#60a5fa'), p3=css('--viz-p3','#34d399');
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+    var f=smooth(state.fidelity/100);
+    var koeder=(state.mode==='koeder');
+
+    /* ---- top region divider labels ---- */
+    ctx.textBaseline='alphabetic';
+    ctx.font='700 13px system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.fillStyle=accent;
+    ctx.fillText('Das Ganze  ·  Kamera( Invariante × Residual )', W*0.04, 26);
+    ctx.textAlign='right'; ctx.fillStyle=accent2;
+    ctx.fillText('Residual / Substrat', W*0.96, 26);
+    ctx.textAlign='center'; ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif';
+    ctx.fillText('Kamera:  Schatten/Zahl   ↔   Struktur/Stack (innere ℤ/2, leeres Zentrum)', W*0.25, 44);
+
+    /* ================= LEFT: the whole (number <-> stack) ================= */
+    var cx=W*0.25, cy=H*0.30;
+    // number card (shadow) alpha = 1-f
+    var numA=1-f;
+    if(numA>0.02){
+      ctx.save(); ctx.globalAlpha=numA;
+      var nw=lerp(150,54,f), nh=lerp(56,54,f);
+      rrect(cx-nw/2, cy-nh/2, nw, nh, 12);
+      ctx.fillStyle=card; ctx.fill(); ctx.strokeStyle=good; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle=good; ctx.font='700 15px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Z = qᵏ', cx, cy-2);
+      ctx.fillStyle=muted; ctx.font='10px system-ui,sans-serif';
+      ctx.fillText('Schatten (Trace) · steif · Rest trivial', cx, cy+16);
+      ctx.restore();
+    }
+    // structure (stack) alpha = f
+    var structA=f;
+    if(structA>0.02){
+      ctx.save(); ctx.globalAlpha=structA;
+      var R=lerp(18,62,f);
+      // mirror twin (Z/2)
+      if(!state.broken){
+        ctx.save(); ctx.globalAlpha=structA*0.4;
+        ctx.beginPath(); ctx.strokeStyle=accent; ctx.lineWidth=2;
+        ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+        var nodes=[p1,p2,p3];
+        for(var i0=0;i0<3;i0++){
+          var a2=-Math.PI/2+i0*(2*Math.PI/3);
+          ctx.beginPath(); ctx.fillStyle=nodes[i0];
+          ctx.arc(cx+Math.cos(a2)*R, cy+Math.sin(a2)*R, 7, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+      }
+      // main ring
+      ctx.beginPath(); ctx.strokeStyle=accent; ctx.lineWidth=2.5;
+      ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+      var nodes2=[p1,p2,p3];
+      for(var i1=0;i1<3;i1++){
+        var a1=-Math.PI/2+i1*(2*Math.PI/3);
+        ctx.beginPath(); ctx.fillStyle=nodes2[i1];
+        ctx.arc(cx+Math.cos(a1)*R, cy+Math.sin(a1)*R, 7, 0, Math.PI*2); ctx.fill();
+      }
+      if(state.broken){
+        ctx.strokeStyle=bad; ctx.lineWidth=1.5;
+        for(var kk=0;kk<10;kk++){ var aa=kk/10*Math.PI*2+0.3;
+          ctx.beginPath(); ctx.moveTo(cx+Math.cos(aa)*6, cy+Math.sin(aa)*6);
+          ctx.lineTo(cx+Math.cos(aa)*20, cy+Math.sin(aa)*20); ctx.stroke(); }
+        ctx.fillStyle=bad; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+        ctx.fillText('Instanz gebrochen · Typ (ℤ/2) bleibt', cx, cy-R-12);
+      } else {
+        ctx.fillStyle=accent; ctx.font='700 16px system-ui,sans-serif'; ctx.textAlign='center';
+        ctx.fillText('≅', cx, cy-R-12);
+      }
+      // empty center
+      ctx.beginPath(); ctx.setLineDash([3,3]); ctx.strokeStyle=muted; ctx.lineWidth=1.5;
+      ctx.arc(cx, cy, 8, 0, Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.fillStyle=fg; ctx.arc(cx, cy, 3, 0, Math.PI*2); ctx.fill();
+      if(f>0.5){
+        ctx.fillStyle=muted; ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='center';
+        ctx.fillText('∅ leeres Zentrum', cx, cy-R-30);
+      }
+      ctx.restore();
+    }
+    if(state.fidelity<8){
+      ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('(Kamera ≈ 0: nur Schatten, keine Struktur)', cx, cy+ (lerp(56,54,0)/2)+16);
+    }
+
+    /* ================= RIGHT: residual scatter (x_n, x_{n+1}) ================= */
+    var x0=W*0.55, x1=W*0.96, y0=H*0.11, y1=H*0.46;
+    var pw=x1-x0, ph=y1-y0;
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var g=0;g<=4;g++){
+      var gx=x0+pw/4*g, gy=y0+ph/4*g;
+      ctx.beginPath(); ctx.moveTo(gx,y0); ctx.lineTo(gx,y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0,gy); ctx.lineTo(x1,gy); ctx.stroke();
+    }
+    var d=data[state.mode];
+    var dotc= koeder? accent2 : p3;
+    ctx.fillStyle=dotc;
+    var step=Math.max(1,Math.floor((d.out.length-1)/420));
+    for(var k=0;k<d.out.length-1;k+=step){
+      var px=x0+d.out[k]*pw, py=y1-d.out[k+1]*ph;
+      ctx.globalAlpha=0.6; ctx.fillRect(px,py,2,2);
+    }
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=grid; ctx.strokeRect(x0,y0,pw,ph);
+    ctx.fillStyle=muted; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('(xₙ, xₙ₊₁)', x0, y1+14);
+    ctx.textAlign='right';
+    if(koeder){ ctx.fillStyle=accent2; ctx.font='11px system-ui,sans-serif';
+      ctx.fillText('Köder: Diagonalgitter (kollabierbar)', x1, y0-6); }
+    else { ctx.fillStyle=good; ctx.font='11px system-ui,sans-serif';
+      ctx.fillText('Genuin: frei, kein Gitter', x1, y0-6); }
+
+    /* ================= divider ================= */
+    var midY=H*0.52;
+    ctx.strokeStyle=grid; ctx.setLineDash([5,5]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(14,midY); ctx.lineTo(W-14,midY); ctx.stroke(); ctx.setLineDash([]);
+
+    /* ================= BOTTOM: fold bar + readout ================= */
+    var by=midY+22;
+    ctx.fillStyle=muted; ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('FOLD — reduziert / invertiert   (Kamera R = '+state.fidelity+'%)', 16, by+8);
+
+    var bx=24, bw=Math.round(W*0.56), bh=24, byy=by+22;
+    var wCore=f*0.5*bw;
+    var wRes=f*0.5*bw;
+    var wNoise=(1-f)*bw;
+    var xcur=bx;
+    ctx.fillStyle=gold; ctx.fillRect(xcur,byy,wCore,bh); xcur+=wCore;
+    ctx.fillStyle=(koeder?bad:good); ctx.fillRect(xcur,byy,wRes,bh); xcur+=wRes;
+    ctx.fillStyle=(koeder?bad:muted); ctx.globalAlpha=0.4; ctx.fillRect(xcur,byy,wNoise,bh); ctx.globalAlpha=1;
+    ctx.strokeStyle=grid; ctx.strokeRect(bx,byy,bw,bh);
+
+    ctx.font='11px system-ui,sans-serif';
+    if(wCore>0.02*bw){ ctx.fillStyle=gold; ctx.textAlign='left';
+      ctx.fillText('Invariante/Kern (Eleganz)', bx, byy-4); }
+    if(wRes>0.02*bw){ ctx.fillStyle=(koeder?bad:good); ctx.textAlign='left';
+      ctx.fillText(koeder?'Residual = Köder':'Residual (Echtheit)', bx+bw*0.5, byy-4); }
+    ctx.fillStyle=muted; ctx.textAlign='right'; ctx.fillText('Rauschen', bx+bw, byy+bh+14);
+
+    // readout
+    var rx=bx+bw+22;
+    ctx.textAlign='left'; ctx.font='12px system-ui,sans-serif';
+    var lines;
+    if(state.fidelity<34){
+      lines=[
+        [muted,'Kamera zu niedrig.'],
+        [muted,'Der Fold löst weder Struktur'],
+        [muted,'noch Rest — alles Rauschen.'],
+        [gold,'(Köder nicht von Freiheit']
+      ];
+      lines.push([gold,'unterscheidbar.)']);
+    } else if(koeder){
+      lines=[
+        [gold,'Invariante/Kern: kollabiert'],
+        [gold,'zu Zahl/Gitter (Eleganz) ✓'],
+        [accent2,'Residual: KOLLABIERT → es'],
+        [bad,'war ein Köder (Halluzination).']
+      ];
+    } else {
+      lines=[
+        [gold,'Invariante/Kern: kollabiert'],
+        [gold,'zu Zahl (Trace) (Eleganz) ✓'],
+        [good,'Residual: NICHT rekonstruierbar'],
+        [good,'→ frei / echt (Echtheit) ✓']
+      ];
+    }
+    var ly=byy;
+    for(var q=0;q<lines.length;q++){ ctx.fillStyle=lines[q][0]; ctx.fillText(lines[q][1], rx, ly+14); ly+=17; }
+  }
+
+  function updateStatus(){
+    if(!statusEl) return;
+    var msg;
+    if(state.fidelity<34){
+      msg='Kamera zu niedrig: links nur der Schatten (steife Zahl), rechts unterscheidungsloses Rauschen. Bei null Lese-Ressource ist der Köder nicht von der Freiheit trennbar — der Grund, warum im normalen CRS Halluzination und echte Erfahrung sich gleich anfühlen.';
+    } else if(state.mode==='koeder'){
+      msg='Hohe Kamera + KÖDER: links die Struktur mit innerer ℤ/2 um ein leeres Zentrum; rechts ein Diagonalgitter — das Residual ist lokal erzeugt (schwacher LCG). Der Fold (unten) bricht es auf a,c zusammen: Eleganz ja, aber der Rest war ein Köder ⇒ Halluzination.';
+    } else {
+      msg='Hohe Kamera + GENUIN: links die Struktur (Stack) mit innerer ℤ/2 um ein leeres Zentrum; rechts ein freier Rest ohne Gitter. Der Fold bricht nur den Kern ab (seine Zahl/Trace), am freien Rest scheitert er ⇒ Echtheit. Das Zentrum ist leer vom Punkt, voll von Freiheit.';
+    }
+    if(state.broken) msg+='  ·  „Symmetrie brechen": die Instanz ist gebrochen, der Typ (ℤ/2-Bahn) bleibt.';
+    statusEl.textContent=msg;
+  }
+
+  /* ---- LCG inversion (BigInt, exact) ---- */
+  function modB(a,m){ var r=a%m; return r<0n? r+m : r; }
+  function egcd(a,b){ if(b===0n) return [a,(a>=0n?1n:-1n),0n]; var g=egcd(b,a%b); return [g[0],g[2],g[1]-(a/b)*g[2]]; }
+  function modInv(a,m){ a=modB(a,m); if(a===0n) return null; var g=egcd(a,m); if(g[0]!==1n) return null; return modB(g[1],m); }
+
+  function runFold(){
+    if(!foldOut) return;
+    if(state.mode!=='koeder'){
+      foldOut.innerHTML='<span class="mut">Fold auf GENUINER Quelle:</span> die Punkte (xₙ,xₙ₊₁) bilden <b>kein lineares Gitter</b> (Splitmix).\n'+
+        '<span class="ok">Kern:</span> keine Kollaps-Essenz im Rest gefunden → Residual NICHT rekonstruierbar ⇒ frei / echt (Echtheit ✓). Der leere Zentrum bleibt frei.\n'+
+        '<span class="mut">→ genau das ist die Genuine-Seite: der Fold scheitert am Rest.</span>';
+      return;
+    }
+    var MB=1n<<32n;
+    var rr=data.koeder.raw;
+    var s1=BigInt(rr[0]>>>0), s2=BigInt(rr[1]>>>0), s3=BigInt(rr[2]>>>0), s4=BigInt(rr[3]>>>0);
+    var d1=modB(s2-s1,MB), d2=modB(s3-s2,MB);
+    var inv=modInv(d1,MB);
+    if(inv===null){ foldOut.innerHTML='<span class="mut">(s₂−s₁) nicht invertierbar → kein LCG-Kern.</span>'; return; }
+    var ra=modB(d2*inv,MB), rc=modB(s2-ra*s1,MB), pred=modB(ra*s3+rc,MB);
+    var ok=(pred===s4);
+    foldOut.innerHTML='<span class="mut">Fold (A: Inversion, B: Trace) auf KÖDER:</span>\n'+
+      '<span class="gd">Kern (Invariante):</span> reduzierbar auf <b>a='+ra+' , c='+rc+'</b> (nur 3 Parameter, m=2³²) → ELEGANZ ✓\n'+
+      '<span class="gd">Residual (Substrat):</span> INVERTIERBAR → es war ein <b>KÖDER</b> (lokal erzeugt).\n'+
+      (ok
+        ? '<span class="bad">Prognose s₄='+pred+' = tatsächlich '+s4+'  ✓ MATCH → Substrat INVERTIERBAR ⇒ Halluzination.</span>'
+        : '<span class="gd">Prognose s₄='+pred+' ≠ '+s4+' → kein reiner LCG-Kern.</span>');
+  }
+
+  function setMode(m){
+    state.mode=m;
+    if(tabG) tabG.classList.toggle('on', m==='genuin');
+    if(tabK) tabK.classList.toggle('on', m==='koeder');
+    draw(); updateStatus();
+    if(foldOut) foldOut.innerHTML='<span class="mut">&bdquo;Fold anstoßen&bdquo; führt die LCG-Rekonstruktion durch (A\'s Fold = B\'s Trace). Auf „Köder“ zeigt sie den Gitter-Kollaps; auf „Genuin“ das Scheitern am freien Rest.</span>';
+  }
+
+  if(tabG) tabG.addEventListener('click',function(){ setMode('genuin'); });
+  if(tabK) tabK.addEventListener('click',function(){ setMode('koeder'); });
+  if(breakBtn) breakBtn.addEventListener('click',function(){
+    state.broken=!state.broken;
+    breakBtn.classList.toggle('on', state.broken);
+    draw(); updateStatus();
+  });
+  if(foldBtn) foldBtn.addEventListener('click',runFold);
+  if(fidEl) fidEl.addEventListener('input',function(){
+    state.fidelity=parseInt(fidEl.value,10)||0;
+    if(fidVal) fidVal.textContent=state.fidelity;
+    draw(); updateStatus();
+  });
+  window.addEventListener('resize',function(){ draw(); });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+  window.__redrawViz=function(){ draw(); updateStatus(); };
+
+  draw(); updateStatus();
+})();
+</script>
+</body>
+</html>

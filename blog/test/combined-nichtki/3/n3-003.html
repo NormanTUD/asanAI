@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Das Ding hinter dem Zeichen — Kern × Fenster × Maske (Runde 3)</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ede2; --fg:#1c2230; --muted:#5a6478;
+  --panel:#fffdf8; --border:rgba(0,0,0,.12); --line:rgba(0,0,0,.12);
+  --accent:#0f7ea8; --accent2:#6d4fc0; --prime:#0d8a99; --env:#b5651d;
+  --ok:#15803d; --bad:#b23a3a; --track:#e7e1d3;
+  --code:#eef1f6; --code-fg:#1c2230;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+}
+html.dark{
+  --bg:#0a0e16; --bg2:#10151f; --fg:#e8edf7; --muted:#8c97ad;
+  --panel:#0e131d; --border:rgba(255,255,255,.10); --line:rgba(255,255,255,.10);
+  --accent:#6ee7ff; --accent2:#a78bfa; --prime:#34e0f0; --env:#ffb86b;
+  --ok:#4ade80; --bad:#ff8a8a; --track:#1e293b;
+  --code:#0b1220; --code-fg:#c9d4e6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);
+  line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+article{max-width:820px;margin:0 auto;padding:clamp(2rem,6vw,4.5rem) 1.4rem 6rem}
+h1{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;
+  font-size:clamp(2rem,5.6vw,3.1rem);line-height:1.1}
+.kicker{font:700 .72rem/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent2);margin-bottom:.9rem}
+.subtitle{font-size:.82rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-top:1rem}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.6vw,2.05rem);
+  line-height:1.15;margin:0 0 1.1rem}
+section{margin-top:clamp(2.6rem,7vw,4rem);scroll-margin-top:1rem}
+p{max-width:74ch;font-size:1.04rem}
+p+p{margin-top:1rem}
+ul,ol{margin:.4rem 0 1rem 1.2rem}li{margin-bottom:.5rem;font-size:1rem}
+li::marker{color:var(--accent2)}
+.hl{font-style:normal;
+  background:linear-gradient(transparent 62%,color-mix(in srgb,var(--accent) 28%,transparent) 62%)}
+.k{color:var(--accent);font-weight:600}
+.k2{color:var(--accent2);font-weight:600}
+.pr{color:var(--prime);font-weight:600}
+.env{color:var(--env);font-weight:600}
+.m{font-family:var(--serif);font-style:italic;white-space:nowrap}
+.m sub,.m sup{font-size:.68em}
+code{font-family:"SFMono-Regular",Consolas,monospace;background:var(--code);
+  color:var(--code-fg);padding:1px 6px;border-radius:5px;font-size:.86em}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:1.1rem 1.2rem;margin:1.1rem 0}
+.card h3{font-family:var(--serif);font-weight:400;font-size:1.14rem;margin-bottom:.5rem}
+.card p+p{margin-top:.7rem}
+.card.fuse{border-left:4px solid var(--accent)}
+.who{display:block;font:700 .68rem/1 var(--sans);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--accent2);margin-bottom:.4rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.12rem .5rem;border-radius:6px;border:1px solid var(--border);color:var(--muted);margin-right:.4rem;vertical-align:middle}
+.tag.a{color:var(--accent)} .tag.b{color:var(--accent2)}
+.tension{margin:0 0 1rem;padding:12px 16px;border:1px solid var(--border);
+  border-left:3px solid var(--accent2);border-radius:10px;background:var(--panel)}
+.tension b{color:var(--fg)}
+.who2{display:inline-block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-right:6px}
+.eq{font-family:"SFMono-Regular",Consolas,monospace;font-size:.88rem;
+  background:var(--code);color:var(--code-fg);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto;display:block;white-space:pre}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+th,td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:700 .7rem/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td:first-child{color:var(--muted);font-weight:600;width:22%}
+.viz-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;margin:0 0 12px;font-size:.9rem}
+.viz-controls label{display:flex;align-items:center;gap:8px;color:var(--muted);
+  font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.viz-controls input[type=range]{accent-color:var(--accent);cursor:pointer;width:120px}
+.viz-controls select{background:var(--code);color:var(--code-fg);border:1px solid var(--border);
+  border-radius:6px;padding:3px 6px;font-family:monospace}
+.viz-controls .val{color:var(--accent);font-family:monospace;min-width:30px;text-align:right}
+.viz-controls button{background:var(--code);color:var(--code-fg);border:1px solid var(--border);
+  border-radius:6px;padding:5px 12px;cursor:pointer;font-size:.82rem;font-weight:700}
+.viz-controls button:hover{border-color:var(--accent);color:var(--accent)}
+.readout{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 12px}
+.readout .chip{background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:.45rem .7rem;font:600 .8rem/1.4 "SFMono-Regular",Consolas,monospace}
+.readout .chip b{color:var(--accent)}
+.chip.c0 b{color:var(--ok)} .chip.c1 b{color:var(--bad)}
+.chip.c2 b{color:var(--env)} .chip.ci b{color:var(--accent2)}
+.verdict{font-size:.94rem;background:var(--bg2);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:.7rem .9rem;margin:10px 0}
+#viz{position:relative;width:100%;height:520px;border:1px solid var(--border);
+  border-radius:12px;background:var(--bg2);overflow:hidden;
+  box-shadow:0 24px 50px -34px rgba(0,0,0,.5)}
+#fused-canvas{width:100%;height:100%;display:block;cursor:crosshair}
+#fhud{position:absolute;display:none;pointer-events:none;z-index:20;background:var(--panel);
+  border:1px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:.78rem;
+  line-height:1.5;width:216px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#fhud .big{font-size:1.02rem;font-weight:800;font-family:monospace;color:var(--accent)}
+#fhud .k{color:var(--muted);font-weight:400}
+.viz-hint{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+.toggle{position:fixed;top:12px;right:12px;z-index:50;background:var(--panel);
+  border:1px solid var(--border);color:var(--muted);border-radius:20px;
+  padding:.35rem .8rem;font-size:.72rem;cursor:pointer;letter-spacing:.08em}
+footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);
+  color:var(--muted);font-size:.8rem}
+.prov{display:flex;gap:.8rem;align-items:baseline;padding:.7rem 0;border-bottom:1px dashed var(--border)}
+.prov a{color:var(--accent);text-decoration:none;font-weight:600}
+.prov span{color:var(--muted);font-size:.92rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" aria-label="Farbschema wechseln">☾ / ☀</button>
+<article>
+
+<div class="kicker">Fusion · Runde 3 · Nicht-KI-Track · Paar 003</div>
+<h1>Das Ding hinter dem Zeichen</h1>
+<div class="subtitle">Fusion aus: n2-018.html ✕ n2-053.html&nbsp;&nbsp;(Runde 3)</div>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Die beiden Runde-2-Papiere tun auf den ersten Blick anderes — A (n2-018,
+„Der native Kern, das Fenster und die Ehrlichkeit“) liest ein <span class="k">strukturiertes
+Objekt</span> durch ein gewähltes <em>Fenster</em> und trennt den
+<span class="pr">nativen, datenbestimmten Kern</span> von der nur fensterabhängigen
+<em>Umgebung</em>; B (n2-053, „Das Zeichen ist nicht das Ding“) sagt, ein
+<span class="k2">Oberflächen-Zeichen</span> (Homöostase-Lesung, p-Wert, Icon, Tor) sei
+nie das Ding, sondern das Ding liege <em>orthogonal</em> dahinter, und selbstregulierende
+Systeme <em>und</em> Kulturen <span class="env">maskieren</span> es systematisch. Auf der
+Ebene ihrer <em>Thesen</em> sind sie aber dasselbe.</p>
+<p>Die einigende Position: <span class="hl">Jede Lektüre eines strukturierten Objekts
+läuft durch eine Linse — Fenster, Maske oder Zeichen — die zugleich <em>verdeckt</em>
+und <em>injiziert</em>; das „Ding“ ist die linsen-invariante, minimal-komplexe
+relationale Struktur plus ihre <em>Größe</em> (Oomph / Komplexität), und Ehrlichkeit
+ist die Disziplin, diese Struktur gegen die Linse zu lesen und die orthogonale Achse
+mitzulesen, statt nur auf die helle Oberfläche zu starren.</span></p>
+<p>A's <em>Fenster</em> und B's <em>Maske/Zeichen</em> sind ein und dasselbe: das
+Präsentations-Gerät zwischen Beobachter und Objekt. A's <em>nativ invariante
+Kern</em> und B's <em>orthogonale relationale Struktur</em> sind dasselbe Ding.
+A's „Ehrlichkeit“ (Kern-Anteil messen, Fenster-Abhängiges flaggen) und B's
+„Struktur gegen Maske lesen“ sind dieselbe Disziplin — nur benennen sie die zwei
+Gesichter der Linse getrennt: <span class="k">A fürchtet, die Linse <em>erfinde</em>
+Falsches</span> (Außerband-Prior → „Halluzination“); <span class="k2">B fürchtet,
+sie <em>verberge</em> Wahres</span> (Homöostase → kaputt sieht normal aus).</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Zuerst der ehrliche Hinweis: beide Papiere sind selbst schon zweifach fusioniert
+und reden über abstrakte <em>Thesen</em> (nicht mehr über konkrete Signale bzw.
+p-Werte), also faktisch an keiner Stelle. Die <em>echten Spannungslinien</em> zwischen
+ihren Positionen — dort, wo die „Ehrlichkeits-Ideen“ unvereinbare Annahmen tragen —
+sind drei:</p>
+
+<div class="tension"><b>1 · Was die Linse anrichtet — Injektion vs. Verdeckung.</b><br>
+<span class="who2">A / n2-018</span>Die Hauptgefahr liegt im <em>Fenster</em>, das
+<em>in</em>jektiert: der Außerband-Anteil „steckt in den Daten nicht“, er kommt nur
+aus einem Prior und ist als „⚠ HALLUCINATION“ zu flaggen. Die Linse <em>fügt hinzu</em>,
+und die Sünde ist, das Hinzugefügte für real zu halten.<br>
+<span class="who2">B / n2-053</span>Die Hauptgefahr liegt in der <em>Maske</em>, die
+<em>ver</em>deckt: Homöostase schiebt die Anzeige zu „Normal“, während der strukturelle
+Fehler aktiv bleibt — kaputt sieht gesund aus. Die Linse <em>hält weg</em>, und die
+Sünde ist, das <em>Angezeigte</em> (das des Objekts selbst, nur verzerrt) für den
+wahren Zustand zu halten. → A: die Linse erfindet Falsches; B: die Linse versteckt
+Wahres.</div>
+
+<div class="tension"><b>2 · Der Status des Dinges — absolute Kern-Form vs. ontologischer Agnostik.</b><br>
+<span class="who2">A / n2-018</span>A behauptet einen <em>harten, absoluten,
+objekt-internen</em> nativen Kern: die Spektralkante <span class="m">f<sub>max</sub>=S/2</span>
+liegt „absolut, beobachterunabhängig“, die Primsektion <span class="m">ω(n)=1</span> ist
+das „Rückgrat“ des Zahlenraums. Das ist ein <em>Struktur-Realismus um die Form</em>
+des Kerns — er ist eine intrinsische, determinierte Eigenschaft des Objekts.<br>
+<span class="who2">B / n2-053</span>B weigert sich <em>grundsätzlich</em>, zu sagen,
+<em>was</em> die Substanz <em>ist</em>; die Methode (orthogonale Struktur lesen, beide
+Proxy ignorieren) ist <em>ontologie-neutral</em> (Materialismus, Idealismus, Dualismus
+alle erlaubt). Nur die Trennung Zeichen ≠ Ding ist real; die Substanz des Dings bleibt
+offen. → A: der Kern ist ein absolutes, intrinsisches Objekt-Feature; B: nur die
+Trennung ist real, die Substanz ist nicht unser Geschäft.</div>
+
+<div class="tension"><b>3 · Die Therapie für die Linse — für immer messen vs. abschaffen und ersetzen.</b><br>
+<span class="who2">A / n2-018</span>A <em>behält</em> das Fenster permanent und
+<em>quanti-fiziert</em> seinen Beitrag: <span class="m">H=E<sub>out</sub>/(E<sub>in</sub>+E<sub>out</sub>)</span>,
+Umgebung-Anteil <span class="m">1−|C|/|O|</span>. Das Fenster geht nicht weg — man
+macht seinen Anteil sichtbar und wählt den <em>minimal-verpflichtenden</em>
+Prior (sinc, <span class="m">H≈0</span>), um Injektion zu <em>minimieren</em>. Die Linse
+ist eine permanente Bedingung der Lektüre.<br>
+<span class="who2">B / n2-053</span>B will <em>konventionelle</em> Masken (p&lt;0,05,
+das Tor) <em>abschaffen</em> und durch eine verlustfunktionsabgeleitete Schwelle
+<span class="m">α*</span> <em>ersetzen</em> („Das Tor ist grundsätzlich abzuschaffen“);
+<em>natürliche</em> Masken (Homöostase) dagegen durchinvertieren. → A: Linsen-Beitrag
+für immer messen + minimieren; B: willkürliche Linse vernichten und ersetzen.</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p>Die drei Spannungen fallen in eine einzige, sobald man erkennt, dass „Fenster /
+Maske / Zeichen“ dieselbe <em>Linse</em> ist und dass Linsen <em>zwei Arten</em> haben
+(nach Herkunft) — und dass ein Ding aus <em>Form</em> und <em>Substanz</em> besteht.</p>
+
+<div class="card fuse">
+<h3>1 · Injektion und Verdeckung sind die zwei Seiten von „Präsentation ≠ Objekt“</h3>
+<p>Ein und dieselbe Linse tut beides: Sie <em>verdeckt</em> (B: Homöostase drückt die
+Anzeige zu Normal; A: der Außerband-Anteil, der in den Daten nicht sichtbar ist, wird
+als Halluzination geflaggt) und sie <em>injiziert</em> (A: der Prior fügt Außerband-
+Inhalt hinzu; B: der √n-Hebel hebt winzige Effekte auf „signifikant“). Der ehrliche
+Leser macht daher <em>beide</em> Operationen: er <span class="k2">invertiert die
+Verdeckung</span> (Read-through, <span class="m">wahr=(Anzeige−Normal·k)/(1−k)</span>,
+B's Inversion) <em>und</em> er <span class="k">subtrahiert die injizierte Portion</span>
+(De-inject, <span class="m">H</span> ausweisen, A's Zerlegung). A's <span class="m">H</span>
+misst die <em>Injektion</em>, B's <span class="m">(1−k)</span>-Inversion das
+<em>Verdeckte</em>. Zusammen = die vollständige Ehrlichkeits-Report-Karte. Die
+„Halluzination“ (A) ist der <em>injizierte</em> Teil, das „Normal“-Mentgenügende (B)
+der <em>verdeckte</em>; ein ehrliches Read-out weist <em>sowohl</em> den einen
+sowohl den anderen aus.</p>
+</div>
+
+<div class="card fuse">
+<h3>2 · Die Form des Kerns ist absolut, seine Substanz ist agnostisch</h3>
+<p>Man trenne <em>Form</em> von <em>Substanz</em> des Dings. Beider Papiere stimmen
+über die <em>Form</em> absolut überein: das Ding ist der <em>invariante,
+minimal-komplexe</em> Teil, der den Wechsel der Linse überlebt — bei A die
+Spektralkante / die <span class="m">ω=1</span>-Sektion, bei B die relationale Struktur.
+Dass diese Form „absolut / beobachterunabhängig“ ist, ist eine <em>epistemische</em>
+Aussage (sie ist der stabilste, determinierteste Teil) und kollidiert nicht mit B.
+B's Agnostik betrifft nur die <em>Substanz</em> (Woraus besteht diese Struktur —
+Materie, Feld, Idee?). A's Struktur-Realismus gilt also <em>nur der Form</em>; die
+Substanz bleibt, mit B, offen. Fusioniert: <span class="hl">Die Form des Kerns ist
+determiniert und absolut; seine Substanz ist keine Frage der Methode.</span> Genau so
+hat B selbst intern die substanz-neutrale Topologie den Idealismus nur als
+<em>Optionale Interpretation</em> absorbiert.</p>
+</div>
+
+<div class="card fuse">
+<h3>3 · Zwei Linse-Arten nach Herkunft — zwei Therapien, dieselbe Operation</h3>
+<p>Typisiere jede Linse nach <em>Herkunft</em>. Eine <em>intrinsisch / funktionale</em>
+Linse ist <em>konstitutiv</em> für das Objekt (A: die Nyquist-Grenze aus dem Sampling,
+die ω-Struktur der Zahlen; B: die Homöostase eines lebenden Systems) — man kann sie
+nicht „weg-abschaffen“ (man kann nicht anders gesampelt haben). Therapie:
+<em>quanti-fizieren + Injektion minimieren + durchinvertieren</em>, <strong>nie
+abschaffen</strong>. Eine <em>konventionelle / gewählte</em> Linse ist willkürlich
+aufgesetzt (A: der <em>gewählte</em> Prior / die Zoom-Stufe; B: p&lt;0,05, das
+Geheimnis-Tor). Therapie: <em>durch das minimal-verpflichtende Prinzip-Default
+ersetzen</em>. Und jetzt der Schlüssel: <span class="k">A's „bester Prior =
+bandbegrenztes sinc (minimal-verpflichtend, <span class="m">H≈0</span>)“</span> und
+<span class="k2">B's „willkürliche Schwelle durch verlustfunktions-α* ersetzen“</span>
+sind <em>derselbe Zug</em> — beide ersetzen das Arbiträre durch das
+minimal-verpflichtende, principient abgeleitete Default. Und <em>A's „<span class="m">H</span>
+ausweisen“</em> <em>ist</em> B's „Maske benennen / hindurchlesen“. Die beiden
+Therapien sind also dieselbe Operation, auf zwei Linse-Arten angewandt:
+<span class="hl">intrinsisch → messen + minimieren + Read-through; konventionell →
+ersetzen durch das minimal-verpflichtende Default.</span></p>
+</div>
+
+<div class="card fuse" style="margin-top:1.3rem">
+<span class="who">Fusionierte Schlussposition</span>
+<p>Das Kriterium ist nie das Zeichen — weder die Homöostase-Lesung, noch der p-Wert,
+noch das Read-out, noch das Icon — sondern die <em>linsen-invariante,
+minimal-komplexe relationale Struktur</em> und ihre <em>Größe</em>. Jede Linse
+verdeckt und injiziert; Ehrlichkeit ist die zweigeteilte Disziplin, die Verdeckung zu
+invertieren und die Injektion auszuweisen — und die Linse nach Herkunft zu
+diagnostizieren (intrinsisch: messen/minimieren; konventionell: ersetzen). Der
+Fehlermodus bleibt in beiden derselbe: der <span class="env">„sizeless stare“</span> —
+man beachtet nur die helle Präsentation und lässt die orthogonale Achse (Kern-Form /
+Oomph / Komplexität) ungelesen.</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p>Das konsolidierte Modell auf der <em>Thesen-Ebene</em> beider Runde-2-Papiere —
+eine spätere Runde kann von hier allein weiterarbeiten. Der gemeinsame Bauplan ist ein
+sechsteiliges Schema, in das beide als Spezialfälle einsetzen.</p>
+
+<div class="card">
+<h3>Das gemeinsame Schema (Vokabular-Brücke)</h3>
+<table>
+<tr><th>Rolle</th><th>A · n2-018</th><th>B · n2-053</th></tr>
+<tr><td>Objekt</td><td>bandbegrenztes Signal in nativen Abtastwerten · Zahlenraum n≥2</td><td>selbstregulierendes System · kulturelle Behauptung</td></tr>
+<tr><td>Linse</td><td>Fenster: Zoom-Stufe + gewählter Prior</td><td>Maske (Homöostase/Filter) + Tor (p&lt;0,05)</td></tr>
+<tr><td>Präsentation</td><td>dekodiertes Read-out (in-/außerband)</td><td>oberflächliches Zeichen (Anzeige, p-Wert, Icon)</td></tr>
+<tr><td>das Ding (Kern)</td><td>in-Band-Signal f≤f<sub>max</sub> · Primsektion ω=1</td><td>orthogonale relationale Struktur + Oomph</td></tr>
+<tr><td>Linsen-Artefakt</td><td>Außerband-Anteil (aus einem Prior)</td><td>Schwelle-Signifikanz · Anzeige ≠ wahrer Zustand</td></tr>
+<tr><td>Ehrlichkeit</td><td>Kern-Anteil messen · Injiziertes flaggen · invariant/abhängig trennen</td><td>Struktur gegen Maske lesen · Maske benennen + therapieren</td></tr>
+<tr><td>Fehlermodus</td><td>Außerband als Daten lesen („Halluzination“)</td><td>„sizeless stare“: nur Zeichen, nicht die orthogonale Achse</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>Das Ding — invariante Form + Größe, agnostische Substanz</h3>
+<p>Das Ding ist das, was den Linsenwechsel <em>überlebt</em>: eine
+<span class="pr">minimal-komplexe, invariante relationale Struktur</span>, gemessen in
+ihrer <em>Größe</em> (bei A die In-Band-Energie, bei B Oomph / Erreichbarkeit
+<span class="m">D(a)</span>). Seine <em>Form</em> ist absolut und vom Objekt
+determiniert; seine <em>Substanz</em> ist der Methode gleichgültig. „Kleine
+Bausteine“ strukturieren in beiden dasselbe: bei A die unteren Frequenzen und die
+kleinen Primfaktoren 2·3·5 (die <span class="m">φ(30)=8</span> koprimen Restklassen),
+bei B die <em>kleine aber reale</em> Effektgröße, die der sizeless stare übersieht.
+„Size matters no matter where you draw the line“ — die Größe des Dings ist die
+orthogonale Achse, die man <em>mitlesen</em> muss.</p>
+</div>
+
+<div class="card">
+<h3>Die zwei Gesichter der Linse — Verdecken &amp; Injizieren</h3>
+<ul>
+<li><strong>Verdecken (natürliche Maske, B):</strong>
+<span class="eq">Anzeige_i = lerp(wahr_i, Normal, k)      k∈[0,1]
+k→1  ⇒  Anzeige_i → Normal   (obwohl wahr_i ≠ Normal)
+Read-through:  wahr_i = (Anzeige_i − Normal·k) / (1 − k)</span>
+Senkt man den Filter (Psilocybin / Nahtod), sinkt die Anzeige, während das Erleben
+<em>steigt</em> (das Inverse) — die Struktur verrät, die Anzeige lügt.</li>
+<li><strong>Injizieren (Fenster/Prior, A):</strong>
+<span class="eq">H = E_out / (E_in + E_out)   (Außerband-Anteil der Präsentation)
+bestes Fenster: bandbegrenzt/sinc  ⇒  H ≈ 0  (minimal-verpflichtend)
+schlechtes Fenster: verrauschter Prior  ⇒  H ↑  (züchtet Artefakte)</span>
+Dasselbe Objekt, entgegengesetzte Wertung: Schätzung (sinc) vs. Halluzination (rauschend).</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Zwei Linse-Arten, zwei Therapien (nach Herkunft)</h3>
+<ul>
+<li><strong>Intrinsisch / funktional</strong> (Nyquist-Grenze, ω-Struktur, Homöostase):
+konstitutiv, unvermeidbar → <span class="k">quanti-fizieren + Injektion minimieren
+(sinc-Prior) + durchinvertieren</span>. Nie abschaffen — das Objekt lebt gerade, weil
+es kompensiert.</li>
+<li><strong>Konventionell / gewählt</strong> (gewählter Prior, p&lt;0,05, Geheimnis):
+willkürlich, aufgesetzt → <span class="k2">abschaffen und durch das
+minimal-verpflichtende, principient abgeleitete Default ersetzen</span>
+(<span class="m">α*</span> aus der Verlustfunktion, Minimax: Oomph dominiert
+Präzision).</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Die fusionierte Prüflogik (fünf Schritte)</h3>
+<ol>
+<li><strong>Was ist die Linse, was das Ding, was die Präsentation?</strong> Trenne
+Oberflächen-Zeichen, Linsen-Artefakt und invariante Kern-Form — verwechsle sie nicht.</li>
+<li><strong>Verdeckt oder injiziert — oder beides?</strong> Bestimme, was die Linse
+weghält (Read-through nötig) und was sie hinzufügt (<span class="m">H</span> ausweisen).</li>
+<li><strong>Welcher Herkunft ist die Linse?</strong> Intrinsisch → messen/minimieren;
+konventionell → ersetzen durch das minimal-verpflichtende Default.</li>
+<li><strong>Wie groß ist die orthogonale Struktur / der Effekt?</strong> Die Oomph,
+die Erreichbarkeit <span class="m">D(a)</span>, die Komplexität <span class="m">ω(n)</span>
+— <em>size matters</em>.</li>
+<li><strong>Halte ich nur das helle Zeichen fest (sizeless stare)?</strong> Prüfe, dass
+die orthogonale Achse mitgelesen wurde, nicht nur die Präsentation.</li>
+</ol>
+</div>
+
+<div class="card">
+<h3>Die fusionierte Ehrlichkeits-Report-Karte (gemeinsame Metrik)</h3>
+<span class="eq">Kern-Anteil        = |C| / |O|            (datenbestimmter / invarianter Anteil)
+Umgebung / Injiziert = 1 − |C|/|O|  ≙  H = E_out/(E_in+E_out)   (Linsen-Anteil)
+Verdeckt             = |Anzeige − wahr|  über das Objekt (Read-through-Fehler)
+Oomph / Größe        = orthogonale Achse (D(a) · ω(n) · Effektgröße)
+Faustregel:  je näher ein Element am Kern (klein ω / in-band / groß Oomph), desto
+datenbestimmter; je weiter, desto stärker linsen-abhängig — und genau diesen Anteil
+muss die ehrliche Linse anzeigen.</span>
+<p>Das ist die Verallgemeinerung von A's <span class="m">H</span> + <span class="m">|C|/|O|</span>
+und B's ω-Distanz / Oomph zu <em>einer</em> Report-Karte, die beide Objekte bedient:
+sie benennt den Linsen-Anteil, misst das Verdeckte, liest die Größe — und verhindert
+den sizeless stare.</p>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung: eine Linse — verdeckt &amp; injiziert, das Ding bleibt</h2>
+<p>Ein Objekt auf zwei <em>orthogonalen</em> Achsen: <strong>x = wahre Struktur /
+Oomph / Komplexität</strong> (das Ding, invariant) und <strong>y = Zeichen / Read-out /
+Anzeige</strong> (die Oberfläche, die die Linse erzeugt). Die <em>reale</em> Punkte
+(x fest) werden von der <strong>naturlichen Maske k</strong> (Homöostase) gegen
+<em>Normal</em> gezogen — <span class="env">Verdeckung</span>: kappte Strukturen sehen
+normal aus, und die dünnen Striche zeigen den Read-through zurück auf die Diagonale
+(„keine Maske = Zeichen = Ding“). Die <span class="k2">hollow Geisterpunkte</span> sind
+der <strong>injizierte</strong> Außerband-Anteil (A's „Halluzination“), erzeugt von
+Fensterstärke <strong>P</strong> + Prior-Typ. Die <strong>native Linie</strong>
+(x=50, cyan) trennt Kern von Umgebung; das <strong>Tor</strong> (blau) + der
+<strong>√n-Hebel n</strong> verlegen die Schwelle. Drehe: nur die
+<em>Präsentation</em> (y) bewegt sich — das Ding (x) bleibt. <strong>De-inject</strong>
+subtrahiert den injizierten Anteil und lässt den wahren Kern-Anteil
+<span class="m">|C|/|O|</span> sichtbar werden. Hover-HUD, themenreaktiv, reine
+Inline-Daten.</p>
+
+<div class="viz-controls">
+  <label>Natürliche Maske k <span class="val" id="ro-k">0</span>
+    <input type="range" id="f-k" min="0" max="100" value="0"></label>
+  <label>Inject P <span class="val" id="ro-p">30</span>
+    <input type="range" id="f-p" min="0" max="100" value="30"></label>
+  <label>Prior
+    <select id="f-prior"><option value="sinc">minimal (sinc, H≈0)</option>
+      <option value="noise">verrauscht (injiziert)</option></select></label>
+  <label>Tor g <span class="val" id="ro-g">50</span>
+    <input type="range" id="f-g" min="0" max="100" value="50"></label>
+  <label>√n n <span class="val" id="ro-n">10</span>
+    <input type="range" id="f-n" min="10" max="100" value="10"></label>
+  <label><input type="checkbox" id="f-deinject"> De-inject</label>
+  <label><input type="checkbox" id="f-names"> Namen</label>
+  <button id="f-reset" type="button">Zurücksetzen</button>
+</div>
+
+<div class="readout">
+  <span class="chip c0">Kern korrekt: <b id="r-f0">0</b></span>
+  <span class="chip c1">Verdeckt (Maske): <b id="r-f1">0</b></span>
+  <span class="chip c2">Unter dem Tor: <b id="r-f2">0</b></span>
+  <span class="chip ci">Injiziert &amp; akzept.: <b id="r-cinj">0</b></span>
+  <span class="chip">Kern-Anteil |C|/|O|: <b id="r-core">—</b></span>
+  <span class="chip">Injiziert H: <b id="r-h">—</b></span>
+  <span class="chip">Maskiert Ø|Δ|: <b id="r-mask">—</b></span>
+</div>
+
+<div id="viz">
+  <canvas id="fused-canvas"></canvas>
+  <div id="fhud"></div>
+</div>
+<p class="verdict" id="fverdict"></p>
+<p class="viz-hint">„Verdeckt (Maske)“ = kaputt, aber zeigt normal (natürliche Maske, A's Halluzination als Daten). „Unter dem Tor“ = groß, aber in-signifikant (konventionelle Maske, Vioxx). „Injiziert &amp; akzept.“ = Fenster-Artefakt über der Schwelle (A's Außerband). Drehe k hoch: die Maske gleicht alles nach Normal — die Struktur (x) verrät den wahren Zustand, die Anzeige (y) nicht. Drehe n hoch: das Tor fällt, winzige Effekte kippen auf „signifikant“ — Signifikanz misst dein Budget, nicht die Größe. Prior „verrauscht“ züchtet mehr Geister (H↑).</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<div class="prov"><a href="../n2-018.html">n2-018.html</a>
+<span>— „Der native Kern, das Fenster und die Ehrlichkeit“ (Runde 2): jedes
+strukturierte Objekt hat einen nativen, datenbestimmten, invariante Kern (in-Band /
+ω=1) und eine nur über ein Fenster erreichbare Umgebung (Außerband / zusammengesetzt);
+Ehrlichkeit = Kern-Anteil messen, Fenster-injiziertes (H) flaggen, Fenster-invarianten
+von Fenster-abhängigem trennen; zwei „rivalisierende“ Achsen sind orthogonale
+Projektionen desselben Objekts.</span></div>
+<div class="prov"><a href="../n2-053.html">n2-053.html</a>
+<span>— „Das Zeichen ist nicht das Ding“ (Runde 2): ein Oberflächen-Zeichen
+(Homöostase-Lesung, p-Wert, Tor) ist nie das Ding; das Ding ist die orthogonale
+relationale Struktur + Oomph, die selbstregulierende Systeme und Kulturen systematisch
+maskieren; zwei Maske-Arten (natürlich → hindurchlesen, konventionell → abschaffen und
+ersetzen); gemeinsamer Fehlermodus der „sizeless stare“.</span></div>
+</section>
+
+<footer>Fusion n3-003 · Runde 3 · Nicht-KI-Track · self-contained, no external data.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  function onToggle(){ root.classList.toggle('dark'); }
+  var tt=document.getElementById('themeToggle');
+  if(tt) tt.addEventListener('click',onToggle);
+
+  var canvas=document.getElementById('fused-canvas');
+  if(!canvas||!canvas.getContext) return;
+  var ctx=canvas.getContext('2d');
+  var hud=document.getElementById('fhud');
+  var dpr=Math.max(1,window.devicePixelRatio||1);
+  var W=0,H=0;
+  function resize(){
+    var r=canvas.getBoundingClientRect();
+    if(r.width<10||r.height<10) return;
+    canvas.width=Math.round(r.width*dpr); canvas.height=Math.round(r.height*dpr);
+    W=r.width; H=r.height; ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize',resize); resize();
+
+  var P={};
+  function readTheme(){
+    var s=getComputedStyle(root);
+    function g(n,fb){ var v=(s.getPropertyValue(n)||'').trim(); return v||fb; }
+    P.text=g('--fg','#e8edf7'); P.sub=g('--muted','#8c97ad');
+    P.grid=g('--line','rgba(128,128,128,.1)');
+    P.core=g('--accent','#6ee7ff'); P.artifact=g('--accent2','#a78bfa');
+    P.ok=g('--ok','#4ade80'); P.fa=g('--bad','#ff8a8a');
+    P.fr=g('--env','#ffb86b'); P.cr=g('--muted','#8c97ad');
+    P.gate=g('--accent','#6ee7ff'); P.normal=g('--accent2','#a78bfa');
+  }
+  readTheme();
+  if(window.MutationObserver){
+    new MutationObserver(readTheme).observe(root,{attributes:true,attributeFilter:['class']});
+  }
+
+  var REAL=[96,92,85,78,71,64,58,52,46,40,34,28,22,16,10];
+  var INJ_X=[4,8,12,18,6,10,14,9,5,13,7,11];
+  var INJ_Y=[70,78,62,84,55,74,66,80,60,72,58,82];
+  var CORE_LINE=50, NORMAL=50;
+  var state={k:0,P:30,prior:'sinc',g:50,n:10,deinject:false,names:false};
+
+  function injCount(){
+    var f=state.prior==='sinc'?0.4:1.0;
+    return Math.round(state.P/100*INJ_X.length*f);
+  }
+  function gateEff(){ return Math.max(5,Math.min(95,state.g-0.35*(state.n-10))); }
+  function displayOf(real){ return real+(NORMAL-real)*(state.k/100); }
+  function fate(real,disp,ge){
+    var isCore=real>=CORE_LINE, acc=disp>=ge;
+    if(isCore&&acc) return 0;
+    if(!isCore&&acc) return 1;
+    if(isCore&&!acc) return 2;
+    return 3;
+  }
+
+  var M={l:56,r:18,t:24,b:46};
+  function px(v){ return M.l+(v/100)*(W-M.l-M.r); }
+  function py(v){ return (H-M.b)-(v/100)*((H-M.b)-M.t); }
+  var pts=[];
+
+  function set(id,txt){ var e=document.getElementById(id); if(e) e.textContent=txt; }
+  function readout(ic,cinj,ge){
+    var c=[0,0,0,0],i;
+    for(i=0;i<REAL.length;i++){ c[fate(REAL[i],displayOf(REAL[i]),ge)]++; }
+    var realE=0; for(i=0;i<REAL.length;i++){ realE+=REAL[i]/100; }
+    var injE=ic*0.6;
+    var Hh=(realE+injE)>0?injE/(realE+injE):0;
+    var visInj=state.deinject?0:ic;
+    var coreFrac=(REAL.length+visInj)>0?REAL.length/(REAL.length+visInj):1;
+    var mask=0; for(i=0;i<REAL.length;i++){ mask+=Math.abs(displayOf(REAL[i])-REAL[i]); }
+    mask=mask/REAL.length;
+    set('r-f0',c[0]); set('r-f1',c[1]); set('r-f2',c[2]); set('r-cinj',cinj);
+    set('r-core',(coreFrac*100).toFixed(0)+' %');
+    set('r-h',(Hh*100).toFixed(0)+' %');
+    set('r-mask',mask.toFixed(1));
+    var vd=document.getElementById('fverdict');
+    if(vd){
+      var errs=c[1]+c[2]+cinj;
+      if(errs===0){ vd.innerHTML='Keine Maske, kein injizierter Anteil, Tor an der Linie: <b>Präsentation = Ding</b> — keine Irrtümer.'; }
+      else { vd.innerHTML='<b>'+c[1]+'</b> verdeckt (kaputt, zeigt „normal“ — natürliche Maske), <b>'+c[2]+'</b> unter dem Tor (groß, aber „in-signifikant“ — konventionelle Maske), <b>'+cinj+'</b> injiziert &amp; akzeptiert (Halluzination als Daten). Drehe k, P, g, n — nur die <em>Präsentation</em> (y) bewegt sich, das Ding (x) bleibt.'; }
+    }
+  }
+
+  function draw(now){
+    var pulse=0.5+0.5*Math.sin((now||0)*0.004);
+    ctx.clearRect(0,0,W,H);
+    if(W<20||H<20){ requestAnimationFrame(draw); return; }
+    var v,i,j;
+    ctx.lineWidth=1; ctx.strokeStyle=P.grid;
+    for(v=0;v<=100;v+=25){
+      ctx.beginPath(); ctx.moveTo(px(v),py(0)); ctx.lineTo(px(v),py(100)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px(0),py(v)); ctx.lineTo(px(100),py(v)); ctx.stroke();
+    }
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle=P.sub; ctx.globalAlpha=.5;
+    ctx.beginPath(); ctx.moveTo(px(0),py(0)); ctx.lineTo(px(100),py(100)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.setLineDash([2,4]); ctx.strokeStyle=P.normal; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(px(0),py(NORMAL)); ctx.lineTo(px(100),py(NORMAL)); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.setLineDash([7,4]); ctx.strokeStyle=P.core; ctx.lineWidth=1.5; ctx.globalAlpha=.7;
+    ctx.beginPath(); ctx.moveTo(px(CORE_LINE),py(0)); ctx.lineTo(px(CORE_LINE),py(100)); ctx.stroke(); ctx.restore();
+    var ge=gateEff();
+    ctx.save(); ctx.strokeStyle=P.gate; ctx.lineWidth=2; ctx.globalAlpha=.55+.45*pulse;
+    ctx.beginPath(); ctx.moveTo(px(0),py(ge)); ctx.lineTo(px(100),py(ge)); ctx.stroke(); ctx.restore();
+
+    pts=[];
+    for(i=0;i<REAL.length;i++){
+      var real=REAL[i], disp=displayOf(real), f=fate(real,disp,ge);
+      var col=f===0?P.ok:f===1?P.fa:f===2?P.fr:P.cr;
+      var x=px(real), y=py(disp);
+      ctx.save(); ctx.setLineDash([2,3]); ctx.strokeStyle=P.sub; ctx.globalAlpha=.35; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,py(real)); ctx.stroke(); ctx.restore();
+      var rad=6+((f===1||f===2)?2.2*pulse:0);
+      ctx.beginPath(); ctx.arc(x,y,rad,0,Math.PI*2); ctx.fillStyle=col; ctx.fill();
+      if(state.names){ ctx.fillStyle=P.text; ctx.font='600 10px ui-monospace,monospace';
+        ctx.textAlign='left'; ctx.textBaseline='bottom'; ctx.fillText('S'+(i+1),x+8,y-6); }
+      pts.push({x:x,y:y,real:real,disp:disp,f:f,core:real>=CORE_LINE,type:'real'});
+    }
+    var ic=injCount(), cinj=0;
+    for(j=0;j<ic;j++){
+      var ix=INJ_X[j%INJ_X.length], iy=INJ_Y[j%INJ_Y.length];
+      var xj=px(ix), yj=py(iy), acc=iy>=ge; if(acc) cinj++;
+      ctx.save();
+      ctx.globalAlpha=state.deinject?0.28:0.85;
+      ctx.strokeStyle=P.artifact; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(xj,yj,5,0,Math.PI*2); ctx.stroke();
+      if(state.deinject){
+        ctx.beginPath(); ctx.moveTo(xj-4,yj-4); ctx.lineTo(xj+4,yj+4);
+        ctx.moveTo(xj+4,yj-4); ctx.lineTo(xj-4,yj+4); ctx.stroke();
+      }
+      ctx.restore();
+      pts.push({x:xj,y:yj,real:ix,disp:iy,acc:acc,type:'inj'});
+    }
+
+    ctx.fillStyle=P.sub; ctx.font='600 11px system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='bottom';
+    ctx.fillText('Wahre Struktur / Oomph / Komplexität  (das Ding, invariant)  →', px(50), H-8);
+    ctx.save(); ctx.translate(15,py(50)); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText('Zeichen / Read-out / Anzeige  (Oberfläche)  →', 0, 0); ctx.restore();
+    ctx.fillStyle=P.gate; ctx.font='600 10px system-ui,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='bottom';
+    ctx.fillText('Tor', px(2), py(ge)-4);
+    ctx.fillStyle=P.normal; ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('Normal', px(100)-2, py(NORMAL)+4);
+    ctx.fillStyle=P.core; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('native Linie', px(CORE_LINE)+4, py(100)+4);
+
+    readout(ic,cinj,ge);
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  canvas.addEventListener('mousemove',function(e){
+    if(!hud) return;
+    var rect=canvas.getBoundingClientRect();
+    var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    var found=null, best=160, i;
+    for(i=0;i<pts.length;i++){
+      var p=pts[i], d=(p.x-mx)*(p.x-mx)+(p.y-my)*(p.y-my);
+      if(d<best){ best=d; found=p; }
+    }
+    if(found){
+      hud.style.display='block';
+      var vz=canvas.getBoundingClientRect();
+      var hx=e.clientX-vz.left+14, hy=e.clientY-vz.top-10;
+      if(hx+230>vz.width) hx=e.clientX-vz.left-244;
+      hud.style.left=hx+'px'; hud.style.top=hy+'px';
+      var typeStr;
+      if(found.type==='inj') typeStr='Injiziert (Fenster-Anteil, kein Objekt)';
+      else typeStr=(found.real>=CORE_LINE?'Kern (datenbestimmt / invariant)':'Umgebung (Fenster-abhängig)');
+      var html='<div class="big">'+(found.type==='inj'?'⊘ injiziert':'n = '+found.real)+'</div>'+
+        '<span class="k">Ort:</span> '+typeStr+
+        '<br><span class="k">Wahr (x, Ding):</span> '+found.real+
+        '<br><span class="k">Präsentation (y):</span> '+Math.round(found.disp);
+      if(found.type==='real'){
+        var truth=(100-state.k)>0?(found.disp-NORMAL*(state.k/100))/(1-state.k/100):found.disp;
+        html+='<br><span class="k">Read-through →</span> '+Math.round(truth);
+      }
+      hud.innerHTML=html;
+    } else { hud.style.display='none'; }
+  });
+  canvas.addEventListener('mouseleave',function(){ if(hud) hud.style.display='none'; });
+
+  function bind(id,fn){ var e=document.getElementById(id); if(e) e.addEventListener('input',fn); }
+  bind('f-k',function(){ state.k=+this.value; set('ro-k',this.value); });
+  bind('f-p',function(){ state.P=+this.value; set('ro-p',this.value); });
+  bind('f-g',function(){ state.g=+this.value; set('ro-g',this.value); });
+  bind('f-n',function(){ state.n=+this.value; set('ro-n',this.value); });
+  var fp=document.getElementById('f-prior');
+  if(fp) fp.addEventListener('change',function(){ state.prior=this.value; });
+  var fd=document.getElementById('f-deinject');
+  if(fd) fd.addEventListener('change',function(){ state.deinject=this.checked; });
+  var fnm=document.getElementById('f-names');
+  if(fnm) fnm.addEventListener('change',function(){ state.names=this.checked; });
+  var frb=document.getElementById('f-reset');
+  if(frb) frb.addEventListener('click',function(){
+    state={k:0,P:30,prior:'sinc',g:50,n:10,deinject:false,names:state.names};
+    var ek=document.getElementById('f-k'); if(ek) ek.value=0;
+    var ep=document.getElementById('f-p'); if(ep) ep.value=30;
+    var eg=document.getElementById('f-g'); if(eg) eg.value=50;
+    var en=document.getElementById('f-n'); if(en) en.value=10;
+    if(fp) fp.value='sinc'; if(fd) fd.checked=false;
+    set('ro-k','0'); set('ro-p','30'); set('ro-g','50'); set('ro-n','10');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Invariante der geschlossenen Zusammensetzung — additiv und zyklisch</title>
+<script>
+(function(){try{var s=null;try{s=localStorage.getItem('fusion-theme');}catch(e){}var d=s?s==='dark':true;var el=document.documentElement;if(d){el.classList.add('dark');}else{el.classList.remove('dark');}}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --panel2:#f1ede3; --text:#1a1a24; --muted:#5b6270; --line:#d9d5cc;
+  --accent:#4f46e5; --accent2:#a92c86; --good:#16a34a; --warn:#d97706; --bad:#b0342b;
+  --viz-bg:#ffffff; --soft:#f0ece1; --grid:#e7e2d6;
+}
+html.dark{
+  --bg:#0b1020; --panel:#121a2d; --panel2:#0f172a; --text:#e8edf7; --muted:#9aa7bf; --line:#263452;
+  --accent:#7dd3fc; --accent2:#ff7cc4; --good:#86efac; --warn:#fbbf24; --bad:#ff6b5e;
+  --viz-bg:#0a1220; --soft:#0f172a; --grid:#1a2540;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden;}
+article{max-width:820px;margin:0 auto;padding:44px 22px 90px;}
+h1{font-size:clamp(26px,4.2vw,40px);line-height:1.14;margin:0 0 8px;}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 8px;font-style:italic;}
+.meta{color:var(--muted);font-size:13.5px;margin:0 0 30px;}
+.lede{color:var(--muted);font-size:1.03em;margin:0 0 26px;font-style:italic;border-left:3px solid var(--accent2);padding-left:16px;}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0;}
+section{margin:8px 0;scroll-margin-top:20px;}
+h2{font-size:22px;margin:0 0 14px;color:var(--accent);}
+h3{font-size:16.5px;margin:22px 0 8px;color:var(--text);}
+p{margin:0 0 14px;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{margin-bottom:9px;}
+b,strong{color:var(--text);}
+em{color:var(--muted);font-style:italic;}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+.mathblock{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;margin:12px 0;white-space:pre;line-height:1.65;}
+.aha{background:var(--panel2);border-left:4px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+.aha b{color:var(--accent2);}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;}
+.card h3{margin-top:0;}
+.tag{display:inline-block;font-size:.72em;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;vertical-align:middle;}
+.tag.a{background:rgba(79,70,229,.14);color:var(--accent);}
+.tag.b{background:rgba(169,44,134,.14);color:var(--accent2);}
+.tag.x{background:rgba(120,120,140,.16);color:var(--muted);}
+.tagA{color:var(--accent);font-weight:700;}
+.tagB{color:var(--accent2);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:var(--panel2);}
+.viz-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;}
+#ringCanvas{display:block;width:100%;height:380px;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:flex-end;margin:14px 0;}
+.viz-controls label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);}
+input[type=range]{width:200px;accent-color:var(--accent);}
+button.action{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+button.action:hover{border-color:var(--accent);}
+button.action.active{border-color:var(--accent);color:var(--accent);}
+.readout-row{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;font-size:14px;margin:6px 0;}
+.readout-row b{font-weight:700;}
+.ra{color:var(--accent);} .rb{color:var(--accent2);}
+.meter{height:10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:8px 0;}
+.meter>div{height:100%;width:0;background:var(--good);transition:width .12s linear;}
+#verdict{font-size:14px;margin:8px 0 0;}
+.hint{color:var(--muted);font-size:13.5px;}
+.prov{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.prov a{color:var(--accent);text-decoration:none;font-weight:700;}
+.prov a:hover{text-decoration:underline;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:20;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13px;font-family:inherit;}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+@media (max-width:560px){article{padding:30px 15px 70px;}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Farbschema wechseln">&#9681;</button>
+<article>
+
+<h1>Die Invariante der geschlossenen Zusammensetzung<br>additiv und zyklisch, mit einer gemeinsamen Faser</h1>
+<p class="subtitle">Fusion aus: n2-001.html &#10005; n2-002.html &nbsp;(Runde 3)</p>
+<p class="meta">Runde 3 &middot; Nicht-KI-Track &middot; Paar 001 &middot; Topologie der Unterscheidung trifft glokale Koh&auml;renz</p>
+<p class="lede">Beide Runde-2-Papiere sagen im Kern dasselbe: ein globales, invarientes Ganze ist nicht die Summe seiner lokalen St&uuml;cke, sondern die <em>Invariante ihrer geschlossenen Zusammensetzung</em> &mdash; und genau diese Invariante wird lokal nicht ablesbar, sondern entsteht erst, wenn die lokalen Z&uuml;ge um ein Ganzes gef&uuml;hrt werden. Dabei hat jede Seite dieselbe Invariante in einem anderen Register abgelesen und dabei dieselbe Faser je nach Standpunkt verworfen (A) oder als lokal trivial gehalten (B).</p>
+
+<section id="these">
+<h2>1. Kernthese der Fusion</h2>
+<p><span class="tagA">A</span> (n2-001, <em>Topologie der Unterscheidung</em>) sagt: der Urakt ist ein <strong>Schnitt</strong> (Mark/Linie) auf dem Ungeteilten; er ist ein <strong>topologischer Operator</strong>, und &bdquo;Form&bdquo; ist <em>genau</em> die Menge der Invarianten, die er zur&uuml;ckl&auml;sst (Betti-Zahlen &beta;&subi;, der Eulersche Charakteristik &chi;, &pi;&sub1;). Der Schnitt ist einweg: Er <em>erzeugt</em> Invariante (Form&uarr;) und <em>kostet</em> dabei die Verbundenheit des Ungeteilten (Quality&darr;) &mdash; Quality ist die <em>verworfene Faser</em> der Many-to-One-Komprimierung, die die Form hervorbringt. <span class="tagB">B</span> (n2-002, <em>Glokale Koh&auml;renz</em>) sagt: ein globales Objekt entsteht aus <strong>lokal trivialen</strong> St&uuml;cken, die durch <strong>eine</strong> invariante Koh&auml;renz-/Kozykulus-Bedingung auf ihren &Uuml;berlappungen zusammengehalten werden; der nicht-triviale Inhalt (die <strong>Holonomie</strong>, der Twist nach einem Umlauf) wohnt in <em>keinem</em> St&uuml;ck, sondern in der geschlossenen Zusammensetzung &mdash; selbst wenn lokal alles flach ist (<code>F=0</code>).</p>
+<p>Das ist <strong>derselbe Satz, zweimal gelesen</strong>. A&rsquo;s &bdquo;Schnitt&bdquo; und B&rsquo;s &bdquo;lokale &Uuml;bergangsfunktion&bdquo; (<code>g_ij</code>) sind dieselbe lokale Operation; A&rsquo;s Invariante und B&rsquo;s Holonomie sind dieselbe <em>geschlossene</em> Invariante; und das Entscheidende: <strong>A&rsquo;s &bdquo;Quality = verworfene Faser&bdquo; ist exakt B&rsquo;s &bdquo;Faser&bdquo;</strong> &mdash; derselbe Gegenstand, den A aus der Invariante wirft und B als lokal-trivialen Bestandteil des B&uuml;ndels beh&auml;lt. Die fusionierte Position lautet:</p>
+<div class="aha"><b>Ein globales, invarientes Objekt ist die Invariante der geschlossenen lokalen Zusammensetzung. Sie hat zwei komplement&auml;re Lesarten &mdash; die <em>additive/extensive</em> (A: die Form als Zahl, die mit jedem lokalen Zug w&auml;chst und dabei die Faser verliert) und die <em>gruppen-theoretische/zyklische</em> (B: die Holonomie als Kozyklus, lokal trivial und eichreversibel, nicht-trivial erst im Umlauf). Dieselbe Faser wird vom globalen Akt zugleich <em>erzeugt</em> (als lokales St&uuml;ck) und <em>verworfen</em> (als Invariante).</b></div>
+</section>
+
+<hr>
+
+<section id="widersprueche">
+<h2>2. Widerspr&uuml;che zwischen A und B</h2>
+
+<div class="card">
+<h3>1. Art der Invariante: additive Zahl vs. (nicht-abelsche) Gruppen-Komposition</h3>
+<p><span class="tag a">A &middot; n2-001</span> Die Invariante (&bdquo;Form&bdquo;) ist eine <strong>Zahl</strong> &mdash; eine Betti-Zahl &beta;&subi; oder &chi; = V &minus; E + F = 2 &minus; 2g. Sie <em;z&auml;hlt</em> (Regionen, L&ouml;cher), ist <strong>kommutativ/additiv</strong>, und sie <em>w&auml;chst</em> mit jedem zus&auml;tzlichen Schnitt (Form&uarr;, monoton nicht-fallend).</p>
+<p><span class="tag b">B &middot; n2-002</span> Die Invariante (Holonomie) ist ein <strong>Gruppenelement</strong> &mdash; <code>Hol(&gamma;) = exp(i&#8750;A) &isin; U(1)</code>, allgemein SU(2)/SU(3). Sie wird durch <em>geordnete Komposition</em> um die Schleife gelesen; die Reihenfolge z&auml;hlt, sie kann <strong>nicht-abelsch</strong> sein und <em>addiert sich nicht</em>.</p>
+<p><span class="tag x">Spannung</span> A liest die Invariante als <em>additive, kommutative Z&auml;hlung</em>; B als <em>geordnete, m&ouml;glicherweise nicht-abelsche Komposition</em>. Das ist eine echte Divergenz &uuml;ber die <em>Art</em> derselben Invariante &mdash; Zahl gegen Gruppenelement.</p>
+</div>
+
+<div class="card">
+<h3>2. Verlust vs. exakte Umkehr: ist das Vergr&ouml;&szlig;ern irreversibel oder eichreversibel?</h3>
+<p><span class="tag a">A &middot; n2-001</span> Das Vergr&ouml;&szlig;ern (Ungeteiltes &rarr; Schnitt-Raum) ist <strong>verlustbehaftet und irreversibel</strong>: eine Many-to-One-Komprimierung, bei der Quality (die Verbundenheit) <em>verworfen</em> wird und &bdquo;nie zur&uuml;ckkommt&bdquo;; &bdquo;der Schnitt ist ein Verlust&bdquo;, &bdquo;Abfall vom Echten&bdquo;. Der Homotopietyp &auml;ndert sich in eine Richtung.</p>
+<p><span class="tag b">B &middot; n2-002</span> Das Vergr&ouml;&szlig;ern (lokale Trivialisierungen &rarr; globales B&uuml;ndel) ist <strong>exakt und eichreversibel</strong>: die Koh&auml;renzbedingung ist eine <em>Gleichung</em> (<code>g_ij&middot;g_jk&middot;g_ki = e</code>), und die <em>Eich-&Auml;quivalenz</em> erlaubt, lokale Rahmen (Trivialisierungen) zu wechseln, <em>ohne</em> das B&uuml;ndel zu &auml;ndern. Das Lokal bestimmt das Global vollst&auml;ndig; <em>keine</em> Information geht verloren.</p>
+<p><span class="tag x">Spannung</span> A: Lokal&rarr;Global <em>destroiert</em> (Quality wird verworfen, einweg). B: Lokal&rarr;Global ist <em>exakt &amp; frame-unabh&auml;ngig</em> (Eich-&Auml;quivalenz, reversible Koordinatenwechsel). Echte, nicht nur scheinbare Divergenz &uuml;ber die <em>Richtungslosigkeit</em> des Ubergangs.</p>
+</div>
+
+<div class="card">
+<h3>3. Extensiv vs. zyklisch: w&auml;chst das Ganze oder schlie&szlig;t es?</h3>
+<p><span class="tag a">A &middot; n2-001</span> Das &bdquo;Ganze&bdquo; wird abgelesen als <strong>Z&auml;hlen/Summieren</strong> &uuml;ber den Raum (&beta;&sub0; Regionen, &chi;). Es ist <em>extensiv und kumulativ</em>: jeder zus&auml;tzliche Schnitt <em>vergr&ouml;&szlig;ert</em> die invariante Struktur monoton (Form&uarr;, Q&darr;); die 2&supn;-M&ouml;glichkeiten wachsen unbeschr&auml;nkt.</p>
+<p><span class="tag b">B &middot; n2-002</span> Das &bdquo;Ganze&bdquo; wird abgelesen als <strong>geschlossene R&uuml;ckkehr</strong> (der Netto-Twist nach genau einem Umlauf). Es ist <em>zyklisch und beschr&auml;nkt</em>: eine Phase auf dem Einheitskreis, <em>mod 360&deg;</em>; Koh&auml;renz gilt nur bei exakt 0&deg;/360&deg;/720&deg;. Ein zweiter Umlauf macht das Ganze nicht &bdquo;gr&ouml;&szlig;er&bdquo;, er <em>doppelt</em> nur die Phase.</p>
+<p><span class="tag x">Spannung</span> A&rsquo;s Invariante <em>akkumuliert</em> (unbeschr&auml;nkt, additiv); B&rsquo;s Invariante <em>schie&szlig;t</em> (mod 360&deg;, zyklisch). Extensiv gegen zyklisch &mdash; zwei unvereinbare Ablesungslogiken &uuml;ber &bdquo;wie viel&bdquo; das Ganze ist.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="aufloesung">
+<h2>3. Aufl&ouml;sung</h2>
+
+<p><b>(1) Zahl vs. Gruppen-Komposition &rarr; die Betti-Zahl ist der abelsche Schatten der Holonomie.</b> F&uuml;r ein flaches B&uuml;ndel (<code>F=0</code>) ist die Holonomie eine <em>Darstellung</em> der Fundamentalgruppe <code>&pi;&sub1;(X) &rarr; G</code>. Die abelsche <em>Abbildung</em> dieser Darstellung auf <code>H&sub1;</code> ist genau das, was die Betti-Zahl &beta;&sub1; z&auml;hlt. A&rsquo;s &beta;&subi; (abelsches, additives Z&auml;hlen) ist also der <strong>abelsche Schatten</strong> von B&rsquo;s vollst&auml;ndiger (m&ouml;glicherweise nicht-abelscher) Holonomie-Darstellung. <b>Fusioniert:</b> &bdquo;Form = Invariante&bdquo; (A) und &bdquo;Invariante = Holonomie&bdquo; (B) sind <em>derselbe &pi;&sub1;-Inhalt</em>, abgelesen auf zwei Schichten &mdash; A die <em>abelsche/additive</em> Komponente (wie viel Struktur), B die <em>vollst&auml;ndige gruppen-theoretische</em> Komponente (welcher Twist, welche Reihenfolge). Die Invariante ist &pi;&sub1;/Holonomie; A liest ihren abelschen Teil, B den nicht-abelschen Rest.</p>
+
+<p><b>(2) Verlust vs. exakte Umkehr &rarr; zwei Ebenen; die Faser ist der Sch&uuml;ssel.</b> A&rsquo;s Verlust (Quality) ist der &Uuml;bergang vom <em>Ungeteilten Kontinuum</em> in das <em>formale Schnitt-Objekt</em> &mdash; der eine, irreversiblere Urakt. B&rsquo;s Exaktheit/Reversibilit&auml;t gilt <em>innerhalb</em> des B&uuml;ndels (Faser + Zusammenhang): das formale Objekt ist vollst&auml;ndig durch seine lokalen Kozykulus-Daten bestimmt, und Eich-&Auml;quivalenz macht lokale Rahmenwechsel gratis. Der Knackpunkt: <strong>B&rsquo;s &bdquo;Faser&bdquo; (lokal trivial, aber Bestandteil des B&uuml;ndels) und A&rsquo;s &bdquo;Quality = verworfene Faser&bdquo; sind ein und derselbe Gegenstand.</strong> B h&auml;lt ihn als Faser, A wirft ihn als Faser der Invariante weg. <b>Fusioniert:</b> <em>innerhalb</em> des formalen Objekts ist alles exakt &amp; eichreversibel (B); der unausweichlich <em>verlustbehaftete</em>, einweg Schritt ist der <em>eine</em> Urakt, der das Ungeteilte &uuml;berhaupt erst in die Formalit&auml;t schneidet (A). Reversibel <em>in</em> der Form, verlustbehaftet <em>beim Eintritt in</em> die Form.</p>
+
+<p><b>(3) Extensiv vs. zyklisch &rarr; additiver und multiplikativer Parameter desselben geschlossenen Akts.</b> Die totale Zusammensetzung um den Ring ist <code>N &middot; step</code>. Sie zerf&auml;llt eindeutig in</p>
+<div class="mathblock">N&middot;step  =  360&deg; &middot; w  +  (N&middot;step mod 360&deg;)
+              &larr;additiv (A)&rarr;  &larr;  zyklisch (B) &rarr;</div>
+<p>Die Windungszahl <code>w = &#8970;N&middot;step/360&deg;&#8971;</code> ist A&rsquo;s <em>additive</em> Form-Z&auml;hlung (ein &beta;&sub1;-artiges Z&auml;hlen, w&auml;chst mit der Gesamt-Zusammensetzung); der Rest <code>N&middot;step mod 360&deg;</code> ist B&rsquo;s <em>zyklische</em> Holonomie (Phase auf dem Einheitskreis, beschr&auml;nkt, &bdquo;Ged&auml;chtnis&bdquo;). <b>Fusioniert:</b> A summiert die <em>erzeugten</em> Invarianten (Form&uarr;); B multipliziert die <em>mitgenommenen</em> &Uuml;berg&auml;nge (&#8750;A). B&rsquo;s Koh&auml;renzmoment (Rest = 0&deg;/360&deg;) ist exakt der Punkt, an dem A eine <em>ganz</em> Invariante abschlie&szlig;t (w springt um 1, Quality&darr;). Derselbe geschlossene Akt &mdash; einmal als Zahl addiert, einmal als Phase multipliziert.</p>
+
+<div class="aha"><b>Fusion in einer Aussage:</b> Die Invariante des globalen Objekts ist <code>&pi;&sub1;</code>/Holonomie &mdash; lokal nicht ablesbar, auf zwei Schichten projiziert (additive Betti-Zahl / zyklischer Twist) und mit einer <em>einen</em> Faser, die A verwirft (Quality) und B als lokal trivial beh&auml;lt. <em>Reversibel in der Form, verlustbehaftet beim Eintritt in die Form; additiv gezaunt, zyklisch getwistet &mdash; dieselbe Faser.</em></div>
+</section>
+
+<hr>
+
+<section id="inhalt">
+<h2>4. Fusionierter Inhalt</h2>
+
+<p><b>Das eine gemeinsame Gesetz (beide Papiere sind Instanzen):</b></p>
+<div class="mathblock">lokale Operation  +  geschlossene Koh&auml;renz-Zusammensetzung   &#8658;   globale Invariante
+  (Schnitt A /           (Komposition der lokalen Z&uuml;ge,          (nicht in einem
+   lokale Karte B)        mod 360&deg; bzw. &#8750; um das Ganze)            einzelnen St&uuml;ck lesbar)</div>
+<p>Links der lokale Zug (A&rsquo;s Mark, B&rsquo;s Trivialisierung/Übergang <code>g_ij</code>), in der Mitte die invariante geschlossene Zusammensetzung, rechts das globale Objekt, dessen nicht-trivialer Anteil nur durch den <em>Umlauf</em> sichtbar wird. A und B sind dieselbe Instanz: A schneidet das Ungeteilte und z&auml;hlt die Invarianten des Ergebnisses; B klebt lokale Karten und liest den Twist, den die geschlossene Schleife mitnimmt.</p>
+
+<p><b>Seite A &mdash; der Schnitt als topologischer Operator (These-Ebene, n2-001).</b> Die Mark/der Schnitt zieht eine Grenze; die Grenzen sind die elementaren topologischen Objekte. <strong>Form = Invariante</strong> (&beta;&sub0; verbundene Komponenten, &beta;&sub1; L&ouml;cher, &chi; = V&minus;E+F = 2&minus;2g, &pi;&sub1;). Das <strong>Ungeteilte</strong> ist der kontrahierbare Raum (&beta;&sub0;=1, &chi;=1): formal ohne Struktur, erfahrungsm&auml;&szlig;ig voll. Der Schnitt ist <em>monoton irreversibel</em> (Homotopietyp &auml;ndert sich in eine Richtung). Erfahrungsmodell: <code>Q = Q&sub0;&middot;e^(&minus;k&middot;C)</code> (sinkt), <code>F = 100&middot;(1 &minus; e^(&minus;k&prime;&middot;C))</code> (steigt), plus das 2&supn;-Wachstum der Kategorien. <strong>Quality = die verworfene Faser</strong> der Many-to-One-Komprimierung &mdash; &bdquo;vollst&auml;ndig &amp; entscheidbar &uuml;ber die Form, stumm &uuml;ber Quality&bdquo;. <strong>Persistente Homologie</strong> (TDA) operationalisiert das Programm: bei wachsender Aufl&ouml;sung &epsilon; entstehen und sterben Merkmale; das Persistente = echte Invariante (Form), das Kurzlebig-Wegfalle = willk&uuml;rlicher Schnitt (Quality).</p>
+
+<p><b>Seite B &mdash; glokale Koh&auml;renz / Holonomie (These-Ebene, n2-002).</b> Lokale Trivialisierungen <code>E &asymp; U_i&times;F</code>, deren &Uuml;bergangsfunktionen der Kozykulusbedingung <code>g_ij&middot;g_jk&middot;g_ki = e</code> gen&uuml;gen, definieren ein B&uuml;ndel bis auf Isomorphie. Der Inhalt zerlegt in <strong>Faser</strong> (lokaler Wert) + <strong>Zusammenhang</strong> (&Uuml;bergangsregel). Die <strong>Holonomie</strong> <code>Hol(&gamma;) = exp(i&#8750;_&gamma; A) &isin; U(1)</code> ist der Netto-Twist nach einem Umlauf und &mdash; Aharonov&ndash;Bohm &mdash; <em>nicht-trivial, selbst wenn <code>F = dA = 0</code></em>. Die Struktur kann nicht-abelsch sein (SU(2), SU(3)). Statik (A: globales Schnitt als Zustand) vs. Dynamik (B: Holonomie als mitgenommenes Ged&auml;chtnis) sind zwei Projektionen desselben Koh&auml;renzobjekts; &bdquo;entdeckt&bdquo; (A) und &bdquo;verfasst&bdquo; (B, Shem the Penman / Finnegans Wake) sind zwei Seiten desselben konstitutiven Zusammensetzens.</p>
+
+<h3>Die fusionierte Verkn&uuml;pfung (die eigentliche Synthese)</h3>
+<ul>
+<li><strong>Dieselbe lokale Operation.</strong> A&rsquo;s &bdquo;Schnitt&bdquo; und B&rsquo;s &bdquo;lokale &Uuml;bergangsfunktion&bdquo; <code>g_ij</code> sind derselbe Zug: beide setzen lokal eine Grenze/Regel, die &mdash; allein gelesen &mdash; noch keine Invariante tr&auml;gt.</li>
+<li><strong>Dieselbe geschlossene Invariante.</strong> A z&auml;hlt die Betti-Zahlen des zusammengesetzten Schnitt-Raums; B liest den Twist der zusammengesetzten Schleife. Beide sind Funktionen <em>nur</em> der <em>geschlossenen</em> Zusammensetzung, nicht eines St&uuml;cks.</li>
+<li><strong>Die Faser-Identit&auml;t.</strong> A&rsquo;s &bdquo;Quality = verworfene Faser&bdquo; <em>ist</em> B&rsquo;s &bdquo;Faser&bdquo;: derselbe lokal-triviale Gegenstand, von A aus der Invariante geworfen, von B als Bestandteil des B&uuml;ndels gehalten (Faser &times; Zusammenhang). Die Spaltung ist die Faser/Zusammenhang-Spaltung des B&uuml;ndels selbst.</li>
+<li><strong>Additiv &harr; zyklisch.</strong> <code>N&middot;step = 360&deg;&middot;w + (N&middot;step mod 360&deg;)</code>: A liest <code>w</code> (additive Windung, Form&uarr;), B liest den Rest (zyklische Holonomie, Ged&auml;chtnis). B&rsquo;s Koh&auml;renzmoment = A&rsquo;s Invariante-Abschluss-Moment.</li>
+<li><strong>Abelsch &harr; nicht-abelsch.</strong> &beta;&sub1; = Rangk der abelschen Abbildung von &pi;&sub1; = der abelsche Schatten der Holonomie-Darstellung. A liest den abelschen Teil, B den vollen (m&ouml;glich nicht-abelschen) Rest.</li>
+<li><strong>Reversibel &harr; verlustbehaftet.</strong> In der Form eichreversibel (B, Kozykulus-Gleichung, Eich-&Auml;quivalenz); beim Eintritt in die Form einweg &amp; verlustbehaftet (A, Quality = verworfene Faser, Q&darr; monoton).</li>
+<li><strong>Operationalisierung.</strong> A&rsquo;s persistente Homologie und B&rsquo;s Holonomie sind zwei Algorithmen, die aus lokalen Z&uuml;gen das <em>Persistente/Geschlossene</em> vom <em>Willk&uuml;rlichen/Flachen</em> trennen: persistente Merkmale (A) &harr; nicht-triviale Holonomie bei <code>F=0</code> (B).</li>
+</ul>
+
+<table>
+<tr><th>Register</th><th><span class="tag a">A</span> &middot; Topologie der Unterscheidung</th><th><span class="tag b">B</span> &middot; Glokale Koh&auml;renz</th><th>Fusioniert</th></tr>
+<tr><td>Lokale Operation</td><td>Schnitt / Mark (Grenze ziehen)</td><td>lokale Trivialisierung / &Uuml;bergang g_ij</td><td>derselbe lokale Zug</td></tr>
+<tr><td>Geschlossene Invariante</td><td>Betti &beta;&subi;, &chi; (Z&auml;hlen)</td><td>Holonomie exp(i&#8750;A) (Twist)</td><td>&pi;&sub1;-Inhalt, 2 Lesarten</td></tr>
+<tr><td>Art der Invariante</td><td>additive / abelsche Zahl</td><td>Gruppen-Komposition (allg. nicht-abelsch)</td><td>abelscher Schatten vs. volle Darstellung</td></tr>
+<tr><td>Die Faser</td><td>Quality = verworfene Faser</td><td>Faser (lokal trivial, Bestandteil)</td><td>dasselbe Objekt: erzeugt + verworfen</td></tr>
+<tr><td>Vergr&ouml;&szlig;ern</td><td>verlustbehaftet, irreversibel (Many-to-One)</td><td>exakt, eichreversibel (Kozykulus)</td><td>verlustbehaftet beim Eintritt, reversibel in der Form</td></tr>
+<tr><td>Ablesung des Ganzen</td><td>extensiv / kumulativ (Form&uarr;)</td><td>zyklisch / beschr&auml;nkt (mod 360&deg;)</td><td>additiver + zyklischer Parameter desselben Akts</td></tr>
+<tr><td>Operationalisierung</td><td>persistente Homologie (TDA)</td><td>flache nicht-triviale Holonomie (Aharonov&ndash;Bohm)</td><td>Persistentes/Geschlossenes vom Willk&uuml;rlichen/Flachen trennen</td></tr>
+</table>
+</section>
+
+<hr>
+
+<section id="visualisierung">
+<h2>5. Visualisierung: der Ring &mdash; additive Form (A) &times; zyklische Holonomie (B), dieselbe Faser</h2>
+<p class="hint">Der Ring aus 12 lokalen Patches ist <em>beides zugleich</em>: <span class="tagB">B</span>&rsquo;s Schleife, deren &Uuml;bergang pro Patch (der Zusammenhang) die Faser-Uhr von Knoten zu Knoten dreht, und <span class="tagA">A</span>&rsquo;s komposition, die die erzeugten Invarianten z&auml;hlt. Der <strong>&Uuml;bergang pro Patch</strong> ist der lokale Zug. Die mittige Uhr zeigt die <strong>Netto-Holonomie</strong> (B, zyklischer Rest, mod 360&deg;). Links oben die <strong>additive Form-Z&auml;hlung</strong> <code>w</code> (A, Windungszahl, &beta;&sub1;-artig). Die <strong>Faser-Uhr</strong> an jedem Knoten ist die gemeinsame, lokal triviale Faser (= A&rsquo;s Quality). Die Gesamtwinkel <code>N&middot;step</code> zerf&auml;llt sichtbar in <code>360&deg;&middot;w</code> (A, additiv) + Rest (B, zyklisch). Drehe den Regler: bei 30&deg;/60&deg;/90&deg;... schlie&szlig;t der Ring koh&auml;rent (Rest = 0&deg;, B), genau dann &bdquo;abschlie&szlig;t&bdquo; A eine ganze Invariante (w springt, Quality&darr;). Der Quality-Balken (A) leert sich, je mehr Invarianten (w) erzeugt werden &mdash; dieselbe Faser, erzeugt und verworfen.</p>
+
+<div class="viz-panel">
+  <canvas id="ringCanvas"></canvas>
+  <div class="viz-controls">
+    <label>&Uuml;bergang pro Patch (Zusammenhang) <b id="stepVal">30&deg;</b>
+      <input type="range" id="stepR" min="0" max="360" step="1" value="30">
+    </label>
+    <button class="action" id="playBtn">&#9654; Umlauf</button>
+    <button class="action" id="resetBtn">&#8634; 0&deg;</button>
+  </div>
+  <div class="readout-row">
+    <span class="ra">A &middot; Form (additiv, &beta;&sub1;-artig): <b id="wRead">1</b></span>
+    <span class="rb">B &middot; Holonomie (zyklisch): <b id="holoRead">0&deg;</b></span>
+    <span>Quality (A): <b id="qRead">64%</b></span>
+    <span>Koh&auml;renz (B): <b id="cohRead">100%</b></span>
+  </div>
+  <div class="meter"><div id="qMeter"></div></div>
+  <p id="verdict">&mdash;</p>
+  <p class="hint">Mathematischer Hinweis: didaktisches Modell. <code>w = &#8970;N&middot;step/360&deg;&#8971;</code> (A&rsquo;s additive Form-Z&auml;hlung), <code>Rest = N&middot;step mod 360&deg;</code> (B&rsquo;s zyklische Holonomie), <code>Quality = 100&middot;e^(&minus;0.45&middot;w)</code> (A&rsquo;s Q&darr;). &bdquo;Koh&auml;rent&bdquo; heißt: Rest &asymp; 0&deg;/360&deg; &mdash; genau dann schlie&szlig;t der Ring nahtlos (B) und hat A eine ganze Invariante abgeschlossen. Alle Daten inline; keine externen Abfragen.</p>
+</div>
+</section>
+
+<hr>
+
+<section id="provenienz">
+<h2>6. Provenienz</h2>
+<div class="prov">
+  <a href="../n2-001.html">A &middot; n2-001.html</a> &mdash; <em>&bdquo;Topologie der Unterscheidung &mdash; Form als Invariante des Schnitts&bdquo;</em> (Runde 2, topology.html &times; n1-044.html): der Schnitt als topologischer Operator, Form = Invariante (&beta;&subi;, &chi;, &pi;&sub1;), das Ungeteilte als kontrahierbarer Raum, Quality = die verworfene Faser, Q&darr;/F&uarr;, 2&supn; vs. &beta;, persistente Homologie als Operationalisierung.
+</div>
+<div class="prov">
+  <a href="../n2-002.html">B &middot; n2-002.html</a> &mdash; <em>&bdquo;Glokale Koh&auml;renz &mdash; das Ganze aus lokalen Teilen&bdquo;</em> (Runde 2, n1-013.html &times; n1-070.html): Garben-Gluing = B&uuml;ndel-Kozykulus, Faser + Zusammenhang, Holonomie Hol(&gamma;)=exp(i&#8750;A) nicht-trivial bei <code>F=0</code> (Aharonov&ndash;Bohm), statik vs. dynamik, Gruppen-Kozykulus (allg. nicht-abelsch), Eich-&Auml;quivalenz.
+</div>
+</section>
+
+<div class="foot">Fusion (Runde 3) der zwei Runde-2-Papiere n2-001 und n2-002. Alle Daten inline; keine externen Abfragen. Die Visualisierung ist ein didaktisches Modell der fusionierten These &mdash; &bdquo;additive Form&bdquo; und &bdquo;zyklische Holonomie&bdquo; sind die zwei Lesarten derselben geschlossenen Invariante mit einer gemeinsamen Faser.</div>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function toggleTheme(){
+    var d=document.documentElement;
+    var dark=d.classList.toggle('dark');
+    try{localStorage.setItem('fusion-theme',dark?'dark':'light');}catch(e){}
+  }
+  window.toggleTheme=toggleTheme;
+
+  (function(){
+    var cv=document.getElementById('ringCanvas');
+    if(!cv) return;
+    var ctx=cv.getContext('2d');
+    var cw=0, ch=380, dpr=1;
+    var N=12;
+    var step=30;
+    var playing=false;
+    var markerA=-Math.PI/2;
+    var lastT=0;
+
+    function cssVar(n){
+      var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      return v||'#888';
+    }
+    function resize(){
+      dpr=window.devicePixelRatio||1;
+      var r=cv.getBoundingClientRect();
+      cw=Math.max(300,r.width);
+      ch=380;
+      cv.width=Math.round(cw*dpr);
+      cv.height=Math.round(ch*dpr);
+      cv.style.height=ch+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      draw();
+    }
+    function total(){ return N*step; }
+    function wind(){ return Math.floor(total()/360+1e-9); }
+    function residue(){ return ((total()%360)+360)%360; }
+    function coherence(){ var w=Math.min(residue(),360-residue()); return 1-w/180; }
+    function quality(){ return 100*Math.exp(-0.45*wind()); }
+
+    function draw(){
+      ctx.clearRect(0,0,cw,ch);
+      var bg=cssVar('--viz-bg'), line=cssVar('--line'), muted=cssVar('--muted');
+      var accent=cssVar('--accent'), accent2=cssVar('--accent2');
+      var panel=cssVar('--panel'), good=cssVar('--good'), warn=cssVar('--warn');
+      ctx.fillStyle=bg; ctx.fillRect(0,0,cw,ch);
+
+      var cx=cw*0.5, cy=ch*0.52, R=Math.min(cw,ch)*0.33;
+      var stepAng=Math.PI*2/N;
+      var w=wind(), res=residue(), coh=coherence();
+      var coherent=(Math.min(res,360-res)<2);
+
+      ctx.lineWidth=2; ctx.strokeStyle=line;
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+
+      var i,a,x,y,nodes=[];
+      for(i=0;i<N;i++){ a=(i/N)*Math.PI*2-Math.PI/2; nodes.push([cx+R*Math.cos(a),cy+R*Math.sin(a),a]); }
+      for(i=0;i<N;i++){
+        var isSeam=(i===N-1);
+        ctx.lineWidth=isSeam?5:2.5;
+        ctx.strokeStyle=isSeam?(coherent?good:warn):line;
+        ctx.beginPath(); ctx.arc(cx,cy,R,nodes[i][2],nodes[i][2]+stepAng,false); ctx.stroke();
+      }
+      for(i=0;i<N;i++){
+        x=nodes[i][0]; y=nodes[i][1];
+        var fa=(i*step)*Math.PI/180, alen=18;
+        var ex=x+alen*Math.cos(fa), ey=y+alen*Math.sin(fa);
+        ctx.fillStyle=panel; ctx.strokeStyle=muted; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.arc(x,y,8,0,Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle=accent; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(ex,ey); ctx.stroke();
+        var ah=5; ctx.fillStyle=accent; ctx.beginPath();
+        ctx.moveTo(ex,ey);
+        ctx.lineTo(ex-ah*Math.cos(fa-0.4),ey-ah*Math.sin(fa-0.4));
+        ctx.lineTo(ex-ah*Math.cos(fa+0.4),ey-ah*Math.sin(fa+0.4));
+        ctx.closePath(); ctx.fill();
+      }
+
+      var cr=30;
+      ctx.fillStyle=panel; ctx.strokeStyle=accent2; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.arc(cx,cy,cr,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      var hr=res*Math.PI/180;
+      ctx.strokeStyle=accent2; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+(cr-4)*Math.cos(hr),cy+(cr-4)*Math.sin(hr)); ctx.stroke();
+      ctx.fillStyle=accent2; ctx.beginPath(); ctx.arc(cx,cy,3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=muted; ctx.beginPath(); ctx.arc(cx+cr,cy,2,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=muted; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('Netto-Holonomie (B)',cx,cy+cr+13);
+
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+      ctx.fillStyle=accent; ctx.font='700 13px system-ui,sans-serif';
+      ctx.fillText('A · Form (additiv):  w = '+w,14,20);
+      ctx.fillStyle=accent2;
+      ctx.fillText('B · Holonomie (zyklisch):  '+res.toFixed(0)+'°',14,38);
+      ctx.fillStyle=muted; ctx.font='12px system-ui,sans-serif';
+      ctx.fillText('Σ = N·step = '+(N*step).toFixed(0)+'°  =  360°·w  +  Rest',14,56);
+      ctx.fillText('Quality (A) = '+quality().toFixed(0)+'%',14,74);
+
+      if(playing){
+        var mx=cx+R*Math.cos(markerA), my=cy+R*Math.sin(markerA);
+        ctx.fillStyle=good; ctx.shadowColor=good; ctx.shadowBlur=12;
+        ctx.beginPath(); ctx.arc(mx,my,7,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+      }
+    }
+
+    function updateReadouts(){
+      var w=wind(), res=residue(), q=quality(), coh=coherence();
+      function set(id,t){ var e=document.getElementById(id); if(e) e.textContent=t; }
+      set('wRead', w);
+      set('holoRead', res.toFixed(0)+'°');
+      set('qRead', q.toFixed(0)+'%');
+      set('cohRead', Math.round(coh*100)+'%');
+      var meter=document.getElementById('qMeter'); if(meter) meter.style.width=q.toFixed(0)+'%';
+      var stepEl=document.getElementById('stepVal'); if(stepEl) stepEl.textContent=step.toFixed(0)+'°';
+      var verdict=document.getElementById('verdict');
+      if(verdict){
+        var coherent=(Math.min(res,360-res)<2);
+        if(coherent){
+          verdict.textContent='kohärent (B): Rest = 0°/360° — der Umlauf schließt nahtlos. Genau dann "abschließt" A eine ganze Invariante (w ist ein ganzer Windungszahl-Schritt; Quality sinkt). Dieselbe geschlossene Zusammensetzung, zwei Lesarten.';
+          verdict.style.color=cssVar('--good');
+        }else{
+          verdict.textContent='nicht-trivial (B): Rest ≠ 0° — die Schleife trägt Gedächtnis. A liest denselben Gesamtzwist als w Windungen + Rest. Additive Zählung (A) und zyklischer Twist (B) sind die zwei Projektionen desselben geschlossenen Akts.';
+          verdict.style.color=cssVar('--warn');
+        }
+      }
+    }
+
+    function frame(ts){
+      var dt=Math.min(0.05,(ts-lastT)/1000)||0; lastT=ts;
+      if(playing){ markerA+=dt*0.9; if(markerA>=Math.PI*2-Math.PI/2) markerA-=Math.PI*2; }
+      draw(); updateReadouts();
+      requestAnimationFrame(frame);
+    }
+
+    var stepR=document.getElementById('stepR');
+    if(stepR) stepR.addEventListener('input',function(){ step=parseFloat(stepR.value)||0; });
+    var playBtn=document.getElementById('playBtn');
+    if(playBtn) playBtn.addEventListener('click',function(){ playing=!playing; playBtn.textContent=playing?'⏸ Pause':'▶ Umlauf'; });
+    var resetBtn=document.getElementById('resetBtn');
+    if(resetBtn) resetBtn.addEventListener('click',function(){ step=0; if(stepR) stepR.value=0; });
+    var themeBtn=document.getElementById('themeBtn');
+    if(themeBtn) themeBtn.addEventListener('click',toggleTheme);
+    window.addEventListener('resize',resize);
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    resize();
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body>
+</html>

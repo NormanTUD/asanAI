@@ -1,0 +1,16 @@
+{
+  "no": "010",
+  "a": "n2-049.html",
+  "b": "n2-032.html",
+  "a_title": "Wiederkunft ist Invarianz — die Form, die wiederkommt und bleibt",
+  "b_title": "Vom einzelnen Bild zur invarianten Struktur",
+  "combined_theme": "attraktor-als-fixpunkt-der-self-referenz",
+  "one_line": "Die Self-Referenz (x ↦ f(x)) erzeugt den Attraktor — die einzige Menge, die das System auf sich selbst abbildet; die einzelne Bahn/der einzelne Standpunkt ist nur eine Probe davon, und ihre Wiederkunft ist die Lesart, durch die die Probe zur invarianten Struktur wird: Wiederkunft ist Aggregation.",
+  "contradictions": [
+    "Irreduzierbarer Rest — Wert vs. vermeidbare Instanz-Ebene: A sagt, die Form entzieht sich in ihrem Grund der sie definierenden Regel ('zu groß, um von der Regel erfasst zu werden') und dieser Entzug ist ihr Wert (Offenheit); B sagt, die invariante Struktur (Gruppe/Attraktor) ist exakt und vollständig kenntlich ('wer die Gruppe kennt, kennt alles'), nur die einzelne Bahn bleibt verdeckt — A feiert das Ungreifbare als Wert, B begreift es als die wegzulesende falsche Ebene.",
+    "Generierung vs. Erkennung: A entsteht die Form durch Self-Referenz (der geschlossene Kreislauf Output=Eingabe ist 'der Motor der Wiederkunft', die Invarianten sind Produkte der Dynamik, bottom-up in der Zeit erzeugt); B wird die invariante Struktur vom Beobachter erkannt/abgelesen (der Zoom vom Element zur Menge, 'man liest die 8', top-down durch Aggregation) — erzeugt die Dynamik die Struktur oder liest sie der Beobachter?",
+    "Kipppunkt — regenerativ zurücküberschritten vs. gefährlich fernzuhalten: A liest die Kante des Chaos als Schwelle, die das System von selbst zurücküberschreitet (selbstorganisierte Kritikalität, 'abbrennen, nachwachsen, wieder kritisch', Ende=Anfang — das Schwierige gibt durch Rückkehr nach); B liest den Kipppunkt als gefährliche Bifurkation, der man durch Parametersteuerung fernbleibt ('nicht ins Chaos kippen', 'Erwachsenwerden = auf einem nachhaltigen Attraktor leben')."
+  ],
+  "resolution": "Der eine irreduzierbare Rest ist derselbe: die invariante Menge (Attraktor) ist als Menge exakt kenntlich (B), aber weder auf eine lokale Regel (A's Entzug) noch auf ihre einzelnen Bahnen (B's verdecktes Detail) reduzierbar — A's 'Entzug als Wert' und B's 'Entzug als falsche Ebene' sind ein Rest, zwei Seiten. Erzeugen (A) und Lesen (B) sind dieselbe Operation auf zwei Enden desselben Pfeils (von der Probe zur invarianten Menge). Der Kipppunkt ist eine einzige Grenze im Parameterraum, an der die invariante Menge ihren Namen wechselt (λ kreuzt 0): A lebt auf ihr (Zeit — kehrt zu ihr zurück), B meidet sie (Parameter — steuert sie um). In beiden Fällen: man steuert über den Parameter, nie über die Instanz.",
+  "viz": "Logistische Karte x_{n+1}=r·x_n(1−x_n) als ein System, das beide Hälften treibt: links (A/Zeit) die live laufende Bahn kehrt auf die invariante Menge zurück (Wiederkunft, gelber Umlauf-Puls), rechts (B/Menge) formt die Aggregation der Proben die invariante Dichte (wenig=Rauschen, viel=Struktur). Der Parameter-Regler r ist der Kipppunkt: an den Bifurkationen (Fixpunkt→Periode 2→Periode 4→Chaos bei r≈3,5699/Feigenbaum) tauscht die invariante Menge ihren Namen und der Lyapunov-Exponent λ kreuzt 0. Theme-aware (CSS-Variablen), inline data, zero network fetches, zero console errors."
+}
