@@ -1,0 +1,4027 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Topologische Signalverarbeitung — Interaktiv verstehen</title>
+
+<!-- Plotly für hochwertige Diagramme -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<!-- KaTeX für schöne Formeln -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<!-- Numerik: eigene kleine Lineare-Algebra-Bibliothek unten im Code -->
+
+<style>
+:root{
+  --bg:#070b14;
+  --bg2:#0c1322;
+  --panel:rgba(18,26,43,.72);
+  --panel2:rgba(24,34,56,.72);
+  --stroke:rgba(120,160,230,.18);
+  --stroke2:rgba(120,160,230,.35);
+  --txt:#e6edf8;
+  --txt-dim:#9fb0cc;
+  --accent:#5eead4;
+  --accent2:#a78bfa;
+  --accent3:#fb7185;
+  --accent4:#fbbf24;
+  --grad:#60a5fa;   /* irrotational */
+  --curl:#f472b6;   /* solenoidal */
+  --harm:#fbbf24;   /* harmonic */
+  --ok:#34d399;
+  --shadow:0 20px 60px rgba(0,0,0,.55);
+  --mono:'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 800px at 10% -10%, #15203a 0%, transparent 55%),
+    radial-gradient(1000px 700px at 95% 0%, #1b1430 0%, transparent 50%),
+    radial-gradient(900px 900px at 50% 120%, #0d2630 0%, transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(120,160,230,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,160,230,.035) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 85% 70% at 50% 30%, #000 20%, transparent 85%);
+}
+#content{position:relative;z-index:1}
+
+/* ---------- Progress bar ---------- */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0%;z-index:200;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  box-shadow:0 0 18px rgba(94,234,212,.6);
+  transition:width .12s linear;
+}
+
+/* ---------- Nav ---------- */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  backdrop-filter:blur(18px) saturate(140%);
+  background:rgba(7,11,20,.72);
+  border-bottom:1px solid var(--stroke);
+}
+#nav .inner{
+  max-width:1240px;margin:0 auto;padding:10px 20px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+#nav .brand{
+  font-weight:800;letter-spacing:-.02em;font-size:15px;
+  background:linear-gradient(92deg,var(--accent),var(--accent2) 60%,var(--accent3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap;
+}
+#nav .links{display:flex;gap:4px;flex-wrap:wrap;overflow-x:auto}
+#nav a{
+  color:var(--txt-dim);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:7px;
+  transition:.18s;white-space:nowrap;border:1px solid transparent;
+}
+#nav a:hover{color:var(--txt);background:rgba(120,160,230,.1)}
+#nav a.active{color:var(--accent);background:rgba(94,234,212,.1);border-color:rgba(94,234,212,.3)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+section{padding:72px 0 40px;scroll-margin-top:72px}
+.hero{min-height:94vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:80px}
+h1{
+  font-size:clamp(34px,6.4vw,74px);line-height:1.03;margin:0 0 18px;font-weight:850;letter-spacing:-.035em;
+  background:linear-gradient(135deg,#fff 10%,var(--accent) 42%,var(--accent2) 68%,var(--accent3) 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+h2{
+  font-size:clamp(25px,3.4vw,38px);margin:0 0 6px;font-weight:800;letter-spacing:-.025em;
+  background:linear-gradient(100deg,#fff,#b9cdf0);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+h3{font-size:19px;margin:28px 0 10px;font-weight:700;color:var(--accent)}
+h4{font-size:15px;margin:18px 0 8px;font-weight:700;color:var(--txt)}
+p{color:#cdd9ee;font-size:15.5px;margin:10px 0}
+.lead{font-size:18px;color:#c6d4ec;max-width:820px}
+.dim{color:var(--txt-dim);font-size:14px}
+.kicker{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;opacity:.95
+}
+.sectlabel{
+  display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent2);border:1px solid rgba(167,139,250,.35);border-radius:999px;padding:4px 12px;margin-bottom:14px;
+  background:rgba(167,139,250,.08)
+}
+.panel{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:18px;padding:22px;margin:22px 0;
+  box-shadow:var(--shadow);backdrop-filter:blur(10px);
+}
+.panel.tight{padding:16px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g-side{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px}
+@media(max-width:900px){.g-side{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:12px 0}
+.ctrl label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--txt-dim);margin-bottom:5px;font-family:var(--mono)}
+.ctrl label b{color:var(--accent);font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:5px;outline:none;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#fff;cursor:pointer;
+  box-shadow:0 0 0 4px rgba(94,234,212,.22),0 3px 10px rgba(0,0,0,.5);transition:.14s
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border:none;border-radius:50%;background:#fff;cursor:pointer}
+button{
+  background:rgba(120,160,230,.1);border:1px solid var(--stroke2);color:var(--txt);
+  padding:7px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:inherit;transition:.16s;font-weight:500
+}
+button:hover{background:rgba(94,234,212,.16);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+button.on{background:linear-gradient(135deg,var(--accent),#2dd4bf);color:#042f2a;border-color:transparent;font-weight:700}
+button.sm{padding:5px 10px;font-size:12px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt-dim);cursor:pointer;margin:6px 0}
+.chk input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+select{
+  background:rgba(12,19,34,.95);border:1px solid var(--stroke2);color:var(--txt);border-radius:8px;
+  padding:6px 10px;font-size:13px;font-family:inherit;cursor:pointer
+}
+
+/* ---------- Canvas ---------- */
+canvas{display:block;max-width:100%;border-radius:12px;background:rgba(6,10,18,.6)}
+.cv-wrap{position:relative;display:flex;justify-content:center;align-items:center}
+
+/* ---------- Boxes ---------- */
+.note{
+  border-left:3px solid var(--accent);background:rgba(94,234,212,.06);
+  padding:12px 16px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14.5px;color:#cfe3f3
+}
+.note.v{border-color:var(--accent2);background:rgba(167,139,250,.07)}
+.note.r{border-color:var(--accent3);background:rgba(251,113,133,.07)}
+.note.y{border-color:var(--accent4);background:rgba(251,191,36,.07)}
+.note b{color:#fff}
+.keyq{
+  border:1px solid rgba(251,191,36,.4);background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(251,113,133,.06));
+  border-radius:14px;padding:16px 18px;margin:18px 0
+}
+.keyq .q{font-size:17px;font-weight:700;color:var(--accent4);margin-bottom:6px}
+.pill{
+  display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--stroke2);background:rgba(120,160,230,.09);color:var(--txt-dim);margin:2px 4px 2px 0
+}
+.pill.g{color:var(--grad);border-color:rgba(96,165,250,.45);background:rgba(96,165,250,.1)}
+.pill.c{color:var(--curl);border-color:rgba(244,114,182,.45);background:rgba(244,114,182,.1)}
+.pill.h{color:var(--harm);border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.1)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--txt-dim);margin:8px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border-radius:4px;display:inline-block}
+
+/* readouts */
+.readout{
+  font-family:var(--mono);font-size:12.5px;background:rgba(6,10,18,.6);border:1px solid var(--stroke);
+  border-radius:10px;padding:10px 12px;margin:10px 0;color:var(--txt-dim);white-space:pre-wrap;line-height:1.7
+}
+.readout .hl{color:var(--accent);font-weight:700}
+.bigstat{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.stat{
+  flex:1;min-width:110px;background:rgba(6,10,18,.55);border:1px solid var(--stroke);border-radius:12px;padding:11px 13px
+}
+.stat .v{font-size:21px;font-weight:800;font-family:var(--mono)}
+.stat .l{font-size:11px;color:var(--txt-dim);text-transform:uppercase;letter-spacing:.09em;margin-top:2px}
+
+/* matrix table */
+table.mat{border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:8px 0}
+table.mat td,table.mat th{
+  border:1px solid rgba(120,160,230,.14);padding:4px 8px;text-align:center;min-width:34px
+}
+table.mat th{color:var(--accent);font-weight:600;background:rgba(94,234,212,.05)}
+table.mat td.p{color:var(--ok);font-weight:700;background:rgba(52,211,153,.08)}
+table.mat td.n{color:var(--accent3);font-weight:700;background:rgba(251,113,133,.08)}
+table.mat td.z{color:#3b4a66}
+table.mat td.hi{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* steps */
+.steps{counter-reset:s;margin:14px 0}
+.step{
+  counter-increment:s;position:relative;padding-left:44px;margin:14px 0;font-size:14.5px;color:#cdd9ee
+}
+.step::before{
+  content:counter(s);position:absolute;left:0;top:-1px;width:28px;height:28px;border-radius:9px;
+  display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018
+}
+.step b{color:#fff}
+
+/* katex */
+.katex{font-size:1.02em !important}
+.eq{text-align:center;margin:16px 0;padding:12px;background:rgba(6,10,18,.45);border-radius:11px;border:1px solid var(--stroke);overflow-x:auto}
+
+/* footer */
+footer{padding:50px 0 70px;text-align:center;color:var(--txt-dim);font-size:13px;border-top:1px solid var(--stroke);margin-top:50px}
+
+/* scroll-in */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;border-bottom:1px solid var(--stroke);padding-bottom:8px}
+.tabs button{border-radius:9px 9px 0 0}
+.hidden{display:none !important}
+
+.scrollx{overflow-x:auto}
+.center{text-align:center}
+.mono{font-family:var(--mono)}
+.sep{height:1px;background:linear-gradient(90deg,transparent,var(--stroke2),transparent);margin:30px 0}
+.hint{font-size:12.5px;color:var(--txt-dim);font-style:italic;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav id="nav"><div class="inner">
+  <div class="brand">◢ TOPOLOGISCHE SIGNALVERARBEITUNG</div>
+  <div class="links">
+    <a href="#start">Start</a>
+    <a href="#problem">Problem</a>
+    <a href="#gsp">Graphen&nbsp;→&nbsp;GSP</a>
+    <a href="#simplex">Simplizes</a>
+    <a href="#orient">Orientierung</a>
+    <a href="#boundary">Randoperator</a>
+    <a href="#divcurl">Div &amp; Curl</a>
+    <a href="#hodge">Hodge-Laplace</a>
+    <a href="#decomp">Zerlegung</a>
+    <a href="#spектrum">Spektrum</a>
+    <a href="#fourier">Fourier</a>
+    <a href="#filter">Filter</a>
+    <a href="#kante">Kantensignal</a>
+    <a href="#gehirn">Fallstudie</a>
+    <a href="#antwort">Antwort</a>
+  </div>
+</div></nav>
+
+<div id="content">
+
+<!-- ================================================================ -->
+<!-- HERO -->
+<!-- ================================================================ -->
+<section class="hero" id="start">
+  <div class="wrap">
+    <div class="kicker">Petruso · Preti · Van De Ville — arXiv 2605.22853</div>
+    <h1>Signale, die auf<br>Kanten und Dreiecken leben</h1>
+    <p class="lead" style="margin:0 auto 26px">
+      Ein interaktives Erklärstück zum Tutorial <i>„Topological Signal Processing“</i>.
+      Keine langen Texte — <b>bewege die Regler</b>, und die Mathematik erklärt sich selbst.
+      Von der ersten Kante bis zur Hirnstudie.
+    </p>
+    <div class="legend" style="justify-content:center">
+      <span><i class="sw" style="background:var(--grad)"></i> irrotational (Gradient)</span>
+      <span><i class="sw" style="background:var(--curl)"></i> solenoidal (Wirbel)</span>
+      <span><i class="sw" style="background:var(--harm)"></i> harmonisch (Löcher)</span>
+    </div>
+    <div class="cv-wrap" style="margin-top:26px">
+      <canvas id="heroCv" width="980" height="400"></canvas>
+    </div>
+    <p class="dim" style="margin-top:14px">↓ scrolle — jeder Abschnitt ist ein Spielzeug</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 1 PROBLEM / MOTIVATION -->
+<!-- ================================================================ -->
+<section id="problem">
+<div class="wrap">
+  <div class="sectlabel">Teil 1 — Motivation</div>
+  <h2>Welches Problem wird hier eigentlich gelöst?</h2>
+  <p class="lead">Stell dir ein Rohrnetz, ein Straßennetz, ein Gehirn vor. Die klassische Signalverarbeitung
+  misst <b>an Punkten</b>. Aber viele Dinge passieren <b>zwischen</b> den Punkten: Fluss, Verkehr, Austausch.
+  Diese Größen haben eine <b>Richtung</b>. Darauf ist die klassische Theorie nicht vorbereitet.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="motivCv" width="700" height="470"></canvas></div>
+        <div class="btnrow" style="justify-content:center">
+          <button class="motiv-mode on" data-m="0">① Nur Knotenmessung</button>
+          <button class="motiv-mode" data-m="1">② Fluss auf Kanten</button>
+          <button class="motiv-mode" data-m="2">③ Kreislauf auf Dreieck</button>
+        </div>
+      </div>
+      <div>
+        <div id="motivText"></div>
+        <div class="keyq">
+          <div class="q">Die Leitfrage des Papers</div>
+          <p style="margin:4px 0 0;font-size:14.5px">
+            <b>Wie analysiert man Signale, die eine Orientierung haben und auf Kanten, Dreiecken
+            und höheren Strukturen leben — und was gewinnt man dadurch, was man mit Graphen allein nie sehen würde?</b>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="panel tight">
+      <h4 style="color:var(--grad)">Wasser- & Verkehrsnetze</h4>
+      <p class="dim" style="font-size:13.5px">Leckerkennung, Verkehrsfluss, Straßen-PageRank. Der Fluss auf einer
+      Straße ist von Natur aus gerichtet.</p>
+    </div>
+    <div class="panel tight">
+      <h4 style="color:var(--curl)">Trajektorien & Ozeanströme</h4>
+      <p class="dim" style="font-size:13.5px">Bahnen von Booten oder Zellen werden zu Kantensignalen; Löcher im
+      Gebiet (z.B. Madagaskar) prägen die Analyse.</p>
+    </div>
+    <div class="panel tight">
+      <h4 style="color:var(--harm)">Gehirn (die Fallstudie)</h4>
+      <p class="dim" style="font-size:13.5px">Wer führt, wer folgt? Ein Kantensignal aus zeitversetzter Aktivität
+      zweier Hirnregionen — darum geht es am Ende.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 2 GSP RECAP -->
+<!-- ================================================================ -->
+<section id="gsp">
+<div class="wrap">
+  <div class="sectlabel">Teil 2 — Voraussetzung</div>
+  <h2>Woher wir kommen: Signale auf Knoten (GSP)</h2>
+  <p class="lead">Bevor Kanten: Was macht die Graph-Signalverarbeitung? Sie misst Werte <b>auf Knoten</b> und fragt:
+  Wie „glatt“ ist das Signal entlang der Verbindungen? Die zentrale Maschine ist der <b>Graph-Laplace</b>
+  <span class="mono">L = D − A</span>.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="gspCv" width="700" height="430"></canvas></div>
+        <div class="hint center">Klicke einen Knoten, um seinen Signalwert zu erhöhen · Shift+Klick senkt ihn</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <label>Diffusionsschritte (Glättung) <b><span id="gspTv">0</span></b></label>
+          <input type="range"
+          <label>Diffusionsschritte (Glättung) <b><span id="gspTv">0</span></b></label>
+          <input type="range" id="gspT" min="0" max="40" value="0" step="1">
+        </div>
+        <div class="ctrl">
+          <label>Glättungsstärke τ <b><span id="gspTauv">0.20</span></b></label>
+          <input type="range" id="gspTau" min="0.02" max="0.45" value="0.20" step="0.01">
+        </div>
+        <div class="btnrow">
+          <button id="gspRand">Zufallssignal</button>
+          <button id="gspSpike">Einzelner Peak</button>
+          <button id="gspSplit">Zwei Lager</button>
+          <button id="gspReset">Zurücksetzen</button>
+        </div>
+        <div class="readout" id="gspRead"></div>
+        <div class="note">
+          <b>Die Kernidee der GSP:</b> Der Laplace misst für jeden Knoten, wie stark er von seinen Nachbarn
+          abweicht. Die Zahl <span class="mono">xᵀLx</span> ist die <b>Glattheit</b> — klein = glatt, groß = zackig.
+          Diffusion <span class="mono">x ← x − τLx</span> macht das Signal glatter.
+        </div>
+        <div class="eq" id="eqGsp"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Der Graph-Laplace zum Anfassen</h3>
+    <p>Links der Graph, rechts die Matrix <span class="mono">L = D − A</span>. Fahre mit der Maus über
+    eine Matrixzelle, um zu sehen, welche Knoten sie verbindet.</p>
+    <div class="g-side">
+      <div class="scrollx"><div id="gspMatrix"></div></div>
+      <div>
+        <div id="gspMatInfo" class="readout">Bewege die Maus über die Matrix …</div>
+        <div class="note v">
+          <b>Diagonale</b> = Grad des Knotens (Anzahl Kanten). <b>Nebendiagonale</b> = −1, wenn Kante existiert.
+          Jede Zeile summiert sich zu 0 — deshalb ist das konstante Signal immer „perfekt glatt“ (Eigenwert 0).
+        </div>
+        <div class="note y">
+          <b>Was fehlt?</b> Diese ganze Maschinerie kennt nur <i>Werte an Knoten</i>. Ein Fluss „von A nach B“
+          mit Vorzeichen? Ein Kreislauf A→B→C→A? Davon weiß <span class="mono">L</span> nichts.
+          Genau hier beginnt TSP.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 3 SIMPLIZES -->
+<!-- ================================================================ -->
+<section id="simplex">
+<div class="wrap">
+  <div class="sectlabel">Teil 3 — Das Domänen-Rezept</div>
+  <h2>Simplizes: Punkte, Kanten, Dreiecke, Tetraeder</h2>
+  <p class="lead">Ein <b>k-Simplex</b> ist einfach eine Menge aus k+1 Punkten. Dimension = Anzahl Punkte − 1.
+  Ein <b>Simplizialkomplex</b> ist eine Sammlung von Simplizes, die <i>abgeschlossen unter Seitenflächen</i> ist:
+  Wenn das Dreieck drin ist, müssen auch alle seine Kanten und Ecken drin sein.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="simplexCv" width="700" height="400"></canvas></div>
+        <div class="ctrl">
+          <label>Ordnung k des Simplex <b><span id="simkv">0</span></b></label>
+          <input type="range" id="simk" min="0" max="3" value="0" step="1">
+        </div>
+        <label class="chk"><input type="checkbox" id="simClosure"> Abschluss zeigen (= Simplizialkomplex)</label>
+        <label class="chk"><input type="checkbox" id="simRotate" checked> 3D rotieren lassen (bei k=3)</label>
+      </div>
+      <div>
+        <div id="simplexInfo"></div>
+        <div class="readout" id="simplexRead"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Vom Graph zum Komplex: Dreiecke füllen oder nicht?</h3>
+    <p>Die wichtigste Modellierungsentscheidung. Jedes Dreieck aus drei paarweise verbundenen Knoten
+    (ein <b>3-Clique</b>) <i>kann</i> gefüllt werden. Gefüllt = Zirkulation darum wird „erklärbar“.
+    Nicht gefüllt = sie wird zu einem <b>Loch</b> und landet im harmonischen Raum.</p>
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="fillCv" width="700" height="440"></canvas></div>
+        <div class="hint center">Klicke ein helles Dreieck an, um es zu füllen / zu leeren</div>
+      </div>
+      <div>
+        <div class="btnrow">
+          <button id="fillAll">Alle füllen (Clique-Komplex)</button>
+          <button id="fillNone">Alle leeren</button>
+        </div>
+        <div class="bigstat">
+          <div class="stat"><div class="v" style="color:var(--accent)" id="fV">0</div><div class="l">Knoten V</div></div>
+          <div class="stat"><div class="v" style="color:var(--grad)" id="fE">0</div><div class="l">Kanten E</div></div>
+          <div class="stat"><div class="v" style="color:var(--curl)" id="fT">0</div><div class="l">Dreiecke T</div></div>
+          <div class="stat"><div class="v" style="color:var(--harm)" id="fB">0</div><div class="l">Löcher β₁</div></div>
+        </div>
+        <div class="readout" id="fillRead"></div>
+        <div class="note y">
+          <b>Betti-Zahl β₁ = dim ker(L₁)</b> — die Anzahl der unabhängigen Löcher. Sie wird <i>automatisch</i>
+          vom Hodge-Laplace gezählt, ohne dass man sie je explizit sucht. Das ist die Magie der algebraischen Topologie.
+        </div>
+        <div class="note">
+          Die Formel für den Zusammenhang: <span class="mono">β₁ = E − V + β₀ − (unabh. gefüllte Dreiecke)</span>.
+          Im Paper (Gehirn): V=100, E=495, T=720 → β₁ = 4.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 4 ORIENTIERUNG -->
+<!-- ================================================================ -->
+<section id="orient">
+<div class="wrap">
+  <div class="sectlabel">Teil 4 — „Ein Pfeil ist alles, was es braucht“</div>
+  <h2>Orientierung ≠ Richtung</h2>
+  <p class="lead">Jede Kante bekommt einen Pfeil. Dieser Pfeil ist <b>keine Einbahnstraße</b> — er ist nur
+  ein <b>Vorzeichen-Vertrag</b>. „+3“ heißt: 3 Einheiten in Pfeilrichtung. „−3“ heißt: 3 Einheiten dagegen.
+  Dreht man den Pfeil um, kippt das Vorzeichen — <i>die Physik bleibt gleich</i>.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="orientCv" width="700" height="420"></canvas></div>
+        <div class="hint center">Klicke eine Kante, um ihre Referenz-Orientierung umzudrehen</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <label>Signalwert auf Kante e₁ <b><span id="orSv">3.0</span></b></label>
+          <input type="range" id="orS" min="-5" max="5" value="3" step="0.1">
+        </div>
+        <div class="readout" id="orientRead"></div>
+        <div class="note r">
+          <b>Der entscheidende Punkt:</b> Der <i>physikalische Fluss</i> (dicker farbiger Pfeil) ändert sich
+          beim Umdrehen <b>nicht</b>. Nur die Zahl, mit der wir ihn aufschreiben, wechselt das Vorzeichen.
+        </div>
+        <div class="note v">
+          <b>Konvention im Paper:</b> Kante <span class="mono">[vᵢ, vⱼ]</span> mit i &lt; j.
+          Dreieck <span class="mono">[v₁,v₂,v₃]</span> = Rotation in aufsteigender Knotennummer-Reihenfolge.
+        </div>
+        <h4>Warum das für Daten wichtig ist</h4>
+        <p class="dim" style="font-size:13.5px">Ein Kantensignal muss <b>antisymmetrisch</b> sein:
+        <span class="mono">e<sub>i,j</sub> = −e<sub>j,i</sub></span>. Nur dann ist es ein echter „Fluss“.
+        Das Produkt <span class="mono">xᵢ·xⱼ</span> ist es <i>nicht</i> (symmetrisch!) — deshalb ist es
+        für TSP ungeeignet. Dazu später mehr.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Orientierung von Dreiecken (2-Simplizes)</h3>
+    <p>Ein Dreieck hat genau zwei Orientierungen: im Uhrzeigersinn oder dagegen. Gerade Permutationen
+    der Ecken sind äquivalent — <span class="mono">[v₁,v₂,v₃] = [v₂,v₃,v₁] = [v₃,v₁,v₂]</span>.</p>
+    <div class="g-side">
+      <div class="cv-wrap"><canvas id="triOrientCv" width="700" height="300"></canvas></div>
+      <div>
+        <div class="btnrow" id="permBtns">
+          <button class="pb on" data-p="0">[v₁,v₂,v₃]</button>
+          <button class="pb" data-p="1">[v₂,v₃,v₁]</button>
+          <button class="pb" data-p="2">[v₃,v₁,v₂]</button>
+          <button class="pb" data-p="3">[v₁,v₃,v₂]</button>
+          <button class="pb" data-p="4">[v₃,v₂,v₁]</button>
+          <button class="pb" data-p="5">[v₂,v₁,v₃]</button>
+        </div>
+        <div class="readout" id="triOrientRead"></div>
+        <div class="note">Die ersten drei Buttons geben dieselbe Orientierung (gerade Permutation),
+        die letzten drei die entgegengesetzte (ungerade Permutation).</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 5 RANDOPERATOR -->
+<!-- ================================================================ -->
+<section id="boundary">
+<div class="wrap">
+  <div class="sectlabel">Teil 5 — Der Motor</div>
+  <h2>Randoperatoren B₁ und B₂</h2>
+  <p class="lead">Diese beiden Matrizen sind <b>die gesamte Geometrie</b>. B₁ sagt: „welche Knoten
+  begrenzen welche Kante?“ B₂ sagt: „welche Kanten begrenzen welches Dreieck?“ Alles Weitere folgt daraus.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="bndCv" width="700" height="430"></canvas></div>
+        <div class="btnrow" style="justify-content:center">
+          <button id="bShowB1" class="on">B₁ (Knoten ← Kanten)</button>
+          <button id="bShowB2">B₂ (Kanten ← Dreiecke)</button>
+        </div>
+        <div class="hint center">Fahre über eine Matrixspalte oder ein Element im Bild</div>
+      </div>
+      <div>
+        <div class="scrollx" id="bndMatrix"></div>
+        <div class="readout" id="bndRead"></div>
+        <div class="note">
+          <b>Regel für B₁:</b> Spalte = Kante. Eintrag <span style="color:var(--accent3)">−1</span> am
+          <i>Schwanz</i>, <span style="color:var(--ok)">+1</span> an der <i>Spitze</i>, sonst 0.
+        </div>
+        <div class="note v">
+          <b>Regel für B₂:</b> Spalte = Dreieck. Eintrag <span style="color:var(--ok)">+1</span>, wenn
+          die Kantenorientierung mit der Dreiecksrotation übereinstimmt,
+          <span style="color:var(--accent3)">−1</span> sonst.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die fundamentale Identität: ∂∂ = 0</h3>
+    <p class="lead" style="font-size:16.5px">Der <b>Rand eines Randes ist leer</b>. Algebraisch:
+    <span class="mono">B₁B₂ = 0</span>. Das ist kein Zufall, sondern das Herz der ganzen Theorie.</p>
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="ddCv" width="700" height="330"></canvas></div>
+        <div class="ctrl">
+          <label>Animationsschritt <b><span id="ddStepv">1</span></b> / 4</label>
+          <input type="range" id="ddStep" min="1" max="4" value="1" step="1">
+        </div>
+      </div>
+      <div>
+        <div id="ddText"></div>
+        <div class="eq" id="eqDD"></div>
+        <div class="note y">
+          <b>Konsequenz:</b> Jede Zirkulation um ein gefülltes Dreieck hat <b>null Divergenz</b>.
+          Und jeder Gradient hat <b>null Curl</b>. Die beiden Welten sind orthogonal — das ist die
+          Grundlage der Hodge-Zerlegung.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 6 DIV & CURL -->
+<!-- ================================================================ -->
+<section id="divcurl">
+<div class="wrap">
+  <div class="sectlabel">Teil 6 — Was die Matrizen messen</div>
+  <h2>Divergenz &amp; Curl: Quellen, Senken, Wirbel</h2>
+  <p class="lead">Mit B₁ und B₂ kann man einem Kantenfluss zwei Fragen stellen:
+  <b>Wo wird Material erzeugt oder verschluckt?</b> (Divergenz, <span class="mono">div = B₁x</span>) und
+  <b>Wo dreht sich etwas im Kreis?</b> (Curl, <span class="mono">curl = B₂ᵀx</span>).</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="dcCv" width="700" height="480"></canvas></div>
+        <div class="hint center">Ziehe an einer Kante (hoch/runter), um ihren Flusswert zu ändern · Doppelklick = Vorzeichen drehen</div>
+      </div>
+      <div>
+        <h4>Voreinstellungen</h4>
+        <div class="btnrow">
+          <button id="dcPure">Reiner Gradient</button>
+          <button id="dcCurl">Reiner Wirbel</button>
+          <button id="dcMix">Mischung</button>
+          <button id="dcZero">Alles null</button>
+        </div>
+        <label class="chk"><input type="checkbox" id="dcShowDiv" checked> Divergenz an Knoten zeigen</label>
+        <label class="chk"><input type="checkbox" id="dcShowCurl" checked> Curl in Dreiecken zeigen</label>
+        <div class="readout" id="dcRead"></div>
+        <div class="note">
+          <b>Divergenz &gt; 0</b> = Senke (es fließt mehr hinein als heraus) ·
+          <b>Divergenz &lt; 0</b> = Quelle. <br>
+          Im Gehirn-Fallbeispiel: negative Divergenz = die Region <i>geht voraus</i> (sendet),
+          positive = sie <i>folgt</i> (empfängt).
+        </div>
+        <div class="eq" id="eqDivCurl"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 7 HODGE-LAPLACE -->
+<!-- ================================================================ -->
+<section id="hodge">
+<div class="wrap">
+  <div class="sectlabel">Teil 7 — Der zentrale Operator</div>
+  <h2>Der kombinatorische Hodge-Laplace</h2>
+  <div class="eq" id="eqHodge"></div>
+  <p class="lead">Der Graph-Laplace hatte nur <i>eine</i> Richtung zu schauen: nach oben (zu den Kanten).
+  Der Kanten-Laplace <b>L₁</b> schaut in <b>beide</b> Richtungen: nach unten zu den Knoten
+  (<span class="mono">L₁↓ = B₁ᵀB₁</span>) und nach oben zu den Dreiecken
+  (<span class="mono">L₁↑ = B₂B₂ᵀ</span>).</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="hodgeCv" width="700" height="440"></canvas></div>
+        <div class="btnrow" style="justify-content:center">
+          <button class="hmode on" data-m="down">L₁↓ — untere Nachbarschaft</button>
+          <button class="hmode" data-m="up">L₁↑ — obere Nachbarschaft</button>
+          <button class="hmode" data-m="full">L₁ — beide zusammen</button>
+        </div>
+        <div class="hint center">Klicke eine Kante, um ihre Nachbarschaft zu markieren</div>
+      </div>
+      <div>
+        <div class="scrollx" id="hodgeMatrix"></div>
+        <div class="readout" id="hodgeRead"></div>
+        <div class="note v">
+          <b>L₁↓</b> verbindet Kanten, die sich einen <i>Knoten</i> teilen.<br>
+          <b>L₁↑</b> verbindet Kanten, die sich ein <i>Dreieck</i> teilen.<br>
+          Die Summe kennt die komplette lokale Struktur.
+        </div>
+        <div class="note y">
+          <b>Spezialfall:</b> Für einen reinen Graphen (ohne Dreiecke) ist
+          <span class="mono">L₀ = B₁B₁ᵀ</span> exakt der klassische Graph-Laplace <span class="mono">D − A</span>.
+          GSP ist also ein <i>Sonderfall</i> von TSP.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 8 HODGE-ZERLEGUNG -->
+<!-- ================================================================ -->
+<section id="decomp">
+<div class="wrap">
+  <div class="sectlabel">Teil 8 — Das Hauptresultat</div>
+  <h2>Die Hodge-Zerlegung: Jeder Fluss in drei Teile</h2>
+  <div class="eq" id="eqDecomp"></div>
+  <p class="lead">Das ist das zentrale Theorem. <b>Jeder</b> Kantenfluss lässt sich <b>eindeutig</b> in drei
+  zueinander senkrechte Teile zerlegen — und zwar völlig unabhängig davon, wie kompliziert das Netzwerk ist.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div class="cv-wrap"><canvas id="decompCv" width="700" height="540"></canvas></div>
+        <div class="legend" style="justify-content:center">
+          <span><i class="sw" style="background:var(--grad)"></i> x↓ irrotational</span>
+          <span><i class="sw" style="background:var(--curl)"></i> x↑ solenoidal</span>
+          <span><i class="sw" style="background:var(--harm)"></i> x_harm harmonisch</span>
+        </div>
+      </div>
+      <div>
+        <h4>Signal mischen</h4>
+        <div class="ctrl">
+          <label>Gradienten-Anteil <b><span id="mxGv">1.0</span></b></label>
+          <input type="range" id="mxG" min="0" max="2" value="1" step="0.05">
+        </div>
+        <div class="ctrl">
+          <label>Wirbel-Anteil <b><span id="mxCv">1.0</span></b></label>
+          <input type="range" id="mxC" min="0" max="2" value="1" step="0.05">
+        </div>
+        <div class="ctrl">
+          <label>Harmonischer Anteil <b><span id="mxHv">1.0</span></b></label>
+          <input type="range" id="mxH" min="0" max="2" value="1" step="0.05">
+        </div>
+        <div class="ctrl">
+          <label>Rauschen <b><span id="mxNv">0.0</span></b></label>
+          <input type="range" id="mxN" min="0" max="1.5" value="0" step="0.05">
+        </div>
+        <label class="chk"><input type="checkbox" id="mxHole" checked> Ein Loch im Komplex lassen (sonst β₁=0)</label>
+        <div id="decompBars" style="height:220px"></div>
+        <div class="readout" id="decompRead"></div>
+      </div>
+    </div>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="panel tight" style="border-color:rgba(96,165,250,.4)">
+        <h4 style="color:var(--grad)">↓ Irrotational</h4>
+        <p class="dim" style="font-size:13px">Gradient eines Knotenpotentials: <span class="mono">x↓ = B₁ᵀφ</span>.
+        Hat <b>Divergenz</b>, aber <b>null Curl</b>. Wie Wasser, das bergab fließt.</p>
+      </div>
+      <div class="panel tight" style="border-color:rgba(244,114,182,.4)">
+        <h4 style="color:var(--curl)">↑ Solenoidal</h4>
+        <p class="dim" style="font-size:13px">Zirkulation um gefüllte Dreiecke: <span class="mono">x↑ = B₂ψ
+        </span>.
+        Hat <b>Curl</b>, aber <b>null Divergenz</b>. Wie Wasser, das im Kreis rührt.</p>
+      </div>
+      <div class="panel tight" style="border-color:rgba(251,191,36,.4)">
+        <h4 style="color:var(--harm)">◇ Harmonisch</h4>
+        <p class="dim" style="font-size:13px">Liegt im Kern von L₁: <b>null Divergenz UND null Curl</b>.
+        Kreist um <b>Löcher</b>. Die Dimension = Betti-Zahl β₁.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Warum sind die drei Räume wirklich orthogonal?</h3>
+    <p>Weil <span class="mono">B₁B₂ = 0</span>. Ein Gradient hat per Konstruktion keinen Curl, eine Zirkulation
+    keine Divergenz. Hier siehst du es als 3D-Koordinatensystem: dein Signal ist ein Pfeil, die drei
+    Komponenten sind seine Schatten auf drei senkrechten Achsen.</p>
+    <div class="g-side">
+      <div><div id="orthoPlot" style="height:420px"></div></div>
+      <div>
+        <div class="readout" id="orthoRead"></div>
+        <div class="note">
+          <b>Energieerhaltung (Pythagoras):</b>
+          <span class="mono">‖x‖² = ‖x↓‖² + ‖x↑‖² + ‖x_harm‖²</span><br>
+          Genau diese Gleichung benutzt das Paper in der Hirnstudie, um den „Curl-Energieanteil“ p = 0.25 zu berechnen.
+        </div>
+        <div class="eq" id="eqOrtho"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 9 SPEKTRUM -->
+<!-- ================================================================ -->
+<section id="spектrum">
+<div class="wrap">
+  <div class="sectlabel">Teil 9 — Eigenwerte</div>
+  <h2>Das Spektrum: Topologische Frequenzen</h2>
+  <p class="lead">Der Hodge-Laplace ist symmetrisch → er hat eine orthogonale Eigenbasis mit reellen,
+  nicht-negativen Eigenwerten. Genau wie in der klassischen Signalverarbeitung interpretiert man diese
+  Eigenwerte als <b>Frequenzen</b>: klein = glatt, groß = zackig.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div id="spectrumPlot" style="height:330px"></div>
+        <div class="hint center">Klicke einen Balken, um den zugehörigen Eigenvektor zu sehen</div>
+        <div class="cv-wrap" style="margin-top:12px"><canvas id="eigCv" width="700" height="330"></canvas></div>
+      </div>
+      <div>
+        <div class="readout" id="spectrumRead"></div>
+        <div class="eq" id="eqSpec"></div>
+        <div class="note v">
+          <b>Die Rechnung aus Gl. (14) des Papers:</b><br>
+          λ = u↓ᵀL₁↓u↓ = ‖B₁u↓‖² = ‖div(u↓)‖²<br>
+          Die Frequenz eines Gradienten-Eigenvektors ist genau die <i>Stärke seiner Divergenz</i>.
+          Analog ist die Frequenz eines Wirbel-Eigenvektors die Stärke seines Curls.
+        </div>
+        <div class="note y">
+          <b>Harmonische Eigenvektoren haben Eigenwert exakt 0.</b> Sie sind „Frequenz null“ —
+          und es gibt genau so viele davon, wie das Netzwerk Löcher hat.
+        </div>
+        <div class="note r">
+          <b>Vorsicht (Paper-Warnung):</b> Die Frequenz-Analogie hat Grenzen. Hohe Eigenwerte können
+          sehr <i>lokalisiert</i> auf wenigen Kanten sitzen — die Ordnung der Eigenwerte ist nicht
+          immer intuitiv.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die Brücke zu GSP: L₀ und L₁↓ teilen ihr Spektrum</h3>
+    <p>Das ist Gl. (20)–(21) des Papers. <span class="mono">L₀ = B₁B₁ᵀ</span> und
+    <span class="mono">L₁↓ = B₁ᵀB₁</span> haben <b>dieselben</b> Nicht-Null-Eigenwerte.
+    Zu jedem Knoten-Eigenvektor gehört ein Kanten-Eigenvektor — und man kommt mit B₁ hin und her.</p>
+    <div class="g-side">
+      <div><div id="bridgePlot" style="height:340px"></div></div>
+      <div>
+        <div class="ctrl">
+          <label>Eigenwert-Paar <b><span id="brIdxv">1</span></b></label>
+          <input type="range" id="brIdx" min="1" max="6" value="1" step="1">
+        </div>
+        <div class="cv-wrap"><canvas id="bridgeCv" width="620" height="300"></canvas></div>
+        <div class="readout" id="bridgeRead"></div>
+        <div class="note">
+          <b>In der Hirnstudie (Fig. 6):</b> Der erste Knoten-Eigenvektor zeigt einen Gradienten
+          zwischen den beiden Hemisphären — der zugehörige Kanten-Eigenvektor zeigt dasselbe als
+          <i>gerichteten Fluss von links nach rechts</i>. Dieselbe Information, zwei Perspektiven.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 10 FOURIER -->
+<!-- ================================================================ -->
+<section id="fourier">
+<div class="wrap">
+  <div class="sectlabel">Teil 10 — Transformation</div>
+  <h2>Die topologische Fourier-Transformation</h2>
+  <div class="eq" id="eqTFT"></div>
+  <p class="lead">Projiziere das Signal auf jeden Eigenvektor. Die Koeffizienten sagen dir, wie viel
+  Energie bei welcher „Frequenz“ — und in welchem <b>Teilraum</b> — steckt. Das ist die Basis für
+  Embeddings, Klassifikation und Filterung.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div id="tftPlot" style="height:380px"></div>
+        <div class="cv-wrap" style="margin-top:10px"><canvas id="tftCv" width="700" height="330"></canvas></div>
+      </div>
+      <div>
+        <h4>Signal wählen</h4>
+        <div class="btnrow">
+          <button class="tftsig on" data-s="grad">Glatter Gradient</button>
+          <button class="tftsig" data-s="rough">Rauer Gradient</button>
+          <button class="tftsig" data-s="vortex">Wirbel</button>
+          <button class="tftsig" data-s="hole">Um das Loch</button>
+          <button class="tftsig" data-s="mix">Mischung</button>
+          <button class="tftsig" data-s="noise">Rauschen</button>
+        </div>
+        <div class="ctrl">
+          <label>Zusätzliches Rauschen <b><span id="tftNv">0.00</span></b></label>
+          <input type="range" id="tftN" min="0" max="1" value="0" step="0.02">
+        </div>
+        <div class="readout" id="tftRead"></div>
+        <div class="note">
+          <b>Trajektorien-Embedding (Paper, Sec. II-E2):</b> Nimm nur die ersten paar Koeffizienten —
+          fertig ist ein kompakter Vektor, mit dem man Bootsbahnen, Zelldifferenzierung oder
+          Patientenströme clustern kann. Der <i>harmonische</i> Teil verrät dabei, auf welcher Seite
+          eines Lochs die Trajektorie verlief.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 11 FILTER -->
+<!-- ================================================================ -->
+<section id="filter">
+<div class="wrap">
+  <div class="sectlabel">Teil 11 — Verarbeitung</div>
+  <h2>Simpliziale Faltungsfilter</h2>
+  <div class="eq" id="eqFilter"></div>
+  <p class="lead">Ein Filter ist ein <b>Polynom im Hodge-Laplace</b>. Im Ortsraum: lokales
+  „verschieben und summieren“. Im Frequenzraum: punktweise Multiplikation. Und das Beste —
+  man kann den <b>Gradienten-Zweig</b> und den <b>Wirbel-Zweig</b> völlig unabhängig einstellen.</p>
+
+  <div class="panel">
+    <div class="g-side">
+      <div>
+        <div id="filterResp" style="height:300px"></div>
+        <div class="cv-wrap" style="margin-top:10px"><canvas id="filterCv" width="700" height="360"></canvas></div>
+      </div>
+      <div>
+        <h4>Filterkoeffizienten</h4>
+        <div class="ctrl">
+          <label>h<sub>harm</sub> (konstanter Term) <b><span id="fhv">1.00</span></b></label>
+          <input type="range" id="fh" min="0" max="2" value="1" step="0.05">
+        </div>
+        <div class="ctrl">
+          <label>α₁ — Grad·L₁↓ <b><span id="fa1v">0.00</span></b></label>
+          <input type="range" id="fa1" min="-1" max="1" value="0" step="0.02">
+        </div>
+        <div class="ctrl">
+          <label>α₂ — Grad·L₁↓² <b><span id="fa2v">0.00</span></b></label>
+          <input type="range" id="fa2" min="-0.3" max="0.3" value="0" step="0.01">
+        </div>
+        <div class="ctrl">
+          <label>β₁ — Wirbel·L₁↑ <b><span id="fb1v">0.00</span></b></label>
+          <input type="range" id="fb1" min="-1" max="1" value="0" step="0.02">
+        </div>
+        <div class="ctrl">
+          <label>β₂ — Wirbel·L₁↑² <b><span id="fb2v">0.00</span></b></label>
+          <input type="range" id="fb2" min="-0.3" max="0.3" value="0" step="0.01">
+        </div>
+        <div class="btnrow">
+          <button id="fPreGrad">Nur Gradient behalten</button>
+          <button id="fPreCurl">Nur Wirbel behalten</button>
+          <button id="fPreLow">Tiefpass (glätten)</button>
+          <button id="fPreHarm">Nur harmonisch</button>
+          <button id="fPreId">Identität</button>
+        </div>
+        <div class="readout" id="filterRead"></div>
+        <div class="note v">
+          <b>k-Hop-Lokalität:</b> Polynomgrad k ⇒ jede Kante sieht nur ihre k-Schritt-Nachbarschaft.
+          Grad 1 = direkte Nachbarn. Das macht Filter <i>verteilt implementierbar</i> und schnell —
+          ohne je eine Matrix invertieren zu müssen.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 12 KANTENSIGNAL AUS ZEITREIHEN -->
+<!-- ================================================================ -->
+<section id="kante">
+<div class="wrap">
+  <div class="sectlabel">Teil 12 — Der konkrete Beitrag des Papers</div>
+  <h2>Woher nimmt man ein Kantensignal, wenn man nur Knoten misst?</h2>
+  <p class="lead">Das ist <b>die praktische Hürde</b>: Fast alle Datensätze messen an Punkten.
+  Das Paper schlägt eine elegante Konstruktion vor, die aus zwei Knoten-Zeitreihen ein echtes,
+  <b>antisymmetrisches</b> Kantensignal macht — und dabei misst, <b>wer wem vorausgeht</b>.</p>
+
+  <div class="panel">
+    <h3>Erst die Kandidaten durchprobieren</h3>
+    <div class="grid g3">
+      <div class="panel tight" style="border-color:rgba(251,113,133,.4)">
+        <h4 style="color:var(--accent3)">✗ Produkt xᵢ·xⱼ</h4>
+        <p class="dim" style="font-size:13px"><span class="mono">eᵢⱼ = xᵢ[t]·xⱼ[t] = eⱼᵢ</span><br>
+        <b>Symmetrisch!</b> Kein Fluss, keine Orientierung. Für TSP ungeeignet — gehört in den Line-Graph.</p>
+      </div>
+      <div class="panel tight" style="border-color:rgba(251,191,36,.4)">
+        <h4 style="color:var(--accent4)">△ Differenz xᵢ−xⱼ</h4>
+        <p class="dim" style="font-size:13px"><span class="mono">eᵢⱼ = xᵢ[t]−xⱼ[t] = −eⱼᵢ</span><br>
+        Antisymmetrisch ✓ — aber es ist <b>e = B₁ᵀx</b>, also ein reiner Gradient.
+        Curl immer exakt 0. Man sieht nie Zirkulation.</p>
+      </div>
+      <div class="panel tight" style="border-color:rgba(52,211,153,.5)">
+        <h4 style="color:var(--ok)">✓ Die Lösung des Papers</h4>
+        <p class="dim" style="font-size:13px"><span class="mono">eᵢⱼ[t] = xᵢ[t−1]xⱼ[t] − xⱼ[t−1]xᵢ[t]</span><br>
+        Antisymmetrisch ✓, nutzt die <b>Zeit</b>, erzeugt echte Wirbel ✓, misst <b>Lead/Lag</b>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die geometrische Bedeutung: eine Determinante = eine Fläche</h3>
+    <div class="eq" id="eqDet"></div>
+    <p>Trage für jeden Knoten den Punkt <span class="mono">(x[t−1], x[t])</span> ein. Das Kantensignal ist
+    die <b>vorzeichenbehaftete Fläche</b> des von beiden Vektoren aufgespannten Parallelogramms.
+    Gleiche Richtung → Fläche 0. Verdreht → Fläche ≠ 0, Vorzeichen sagt wer führt.</p>
+    <div class="g-side">
+      <div><div class="cv-wrap"><canvas id="detCv" width="700" height="430"></canvas></div></div>
+      <div>
+        <div class="ctrl">
+          <label>Winkel von xᵢ <b><span id="dtAv">30</span>°</b></label>
+          <input type="range" id="dtA" min="0" max="360" value="30" step="1">
+        </div>
+        <div class="ctrl">
+          <label>Winkel von xⱼ <b><span id="dtBv">80</span>°</b></label>
+          <input type="range" id="dtB" min="0" max="360" value="80" step="1">
+        </div>
+        <div class="ctrl">
+          <label>Länge |xᵢ| <b><span id="dtRav">1.00</span></b></label>
+          <input type="range" id="dtRa" min="0.2" max="1.6" value="1" step="0.02">
+        </div>
+        <div class="ctrl">
+          <label>Länge |xⱼ| <b><span id="dtRb">1.00</span></b></label>
+          <input type="range" id="dtRbS" min="0.2" max="1.6" value="1" step="0.02">
+        </div>
+        <div class="readout" id="detRead"></div>
+        <div class="note">
+          Das ist nichts anderes als das <b>Wedge-Produkt</b> aus der Differentialgeometrie —
+          eine diskrete 2-Form im (t−1, t)-Raum.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Jetzt mit echten Zeitreihen: wer führt, wer folgt?</h3>
+    <p>Zwei oszillierende Signale mit einstellbarer Phasenverschiebung. Beobachte, wie sich
+    <span class="mono">ē</span> (der Zeitmittelwert) verhält.</p>
+    <div class="g-side">
+      <div>
+        <div id="tsPlot" style="height:260px"></div>
+        <div id="tsPhase" style="height:300px"></div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <label>Phasenverschiebung φ (j hinkt i hinterher) <b><span id="lagPv">0.6</span> rad</b></label>
+          <input type="range" id="lagP" min="-3.14" max="3.14" value="0.6" step="0.02">
+        </div>
+        <div class="ctrl">
+          <label>Frequenz <b><span id="lagFv">0.12</span></b></label>
+          <input type="range" id="lagF" min="0.03" max="0.45" value="0.12" step="0.005">
+        </div>
+        <div class="ctrl">
+          <label>Rauschen <b><span id="lagNv">0.10</span></b></label>
+          <input type="range" id="lagN" min="0" max="1.2" value="0.1" step="0.02">
+        </div>
+        <div class="bigstat">
+          <div class="stat"><div class="v" id="lagE" style="color:var(--accent)">0</div><div class="l">ē (Mittelwert)</div></div>
+          <div class="stat"><div class="v" id="lagR1" style="color:var(--grad)">0</div><div class="l">r̂(+1)</div></div>
+          <div class="stat"><div class="v" id="lagRm1" style="color:var(--curl)">0</div><div class="l">r̂(−1)</div></div>
+        </div>
+        <div class="readout" id="lagRead"></div>
+        <div class="eq" id="eqLag"></div>
+        <div class="note y">
+          <b>Gl. (27) des Papers:</b> Unter Stationarität (JWSS) gilt
+          <span class="mono">E[Eᵢⱼ] = Rᵢⱼ(1) − Rᵢⱼ(−1)</span>.
+          Das Signal misst also die <b>Asymmetrie der zeitversetzten Kreuzkorrelation</b>.
+          Bei Unabhängigkeit oder symmetrischer Korrelation: exakt 0.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 13 FALLSTUDIE GEHIRN -->
+<!-- ================================================================ -->
+<section id="gehirn">
+<div class="wrap">
+  <div class="sectlabel">Teil 13 — Die Fallstudie</div>
+  <h2>Das Gehirn: Wer sendet, wer empfängt?</h2>
+  <p class="lead">Jetzt läuft alles zusammen. 100 Probanden, 100 Hirnregionen, fMRT im Ruhezustand.
+  Domäne aus Diffusionsbildgebung, Signal aus der Lead-Lag-Formel. Die Frage:
+  <b>Gibt es konsistente Führungs-/Folge-Muster — und sind sie gradientenartig oder zirkulierend?</b></p>
+
+  <div class="panel">
+    <h3>Die Pipeline</h3>
+    <div class="cv-wrap"><canvas id="pipeCv" width="1100" height="300"></canvas></div>
+    <div class="steps" style="margin-top:16px">
+      <div class="step"><b>Domäne:</b> Diffusions-MRT → Traktogramm → Atlas mit 100 Regionen →
+        Strukturkonnektom (100×100) → über alle Probanden mitteln → Top 10 % behalten, binarisieren.</div>
+      <div class="step"><b>Komplex:</b> 3-Clique-Komplex bilden (alle Dreiecke füllen).
+        Ergebnis: <span class="mono">V=100, E=495, T=720</span>, also
+        <span class="mono">B₁ ∈ ℝ^(100×495)</span>, <span class="mono">B₂ ∈ ℝ^(495×720)</span>.</div>
+      <div class="step"><b>Dimensionen:</b> dim im(L₁↓)=99, dim im(L₁↑)=392, <b>dim ker(L₁)=4</b>
+        → vier ungefüllte Zyklen im Hirngraph.</div>
+      <div class="step"><b>Signal:</b> fMRT-Zeitreihen (TR=0.72 s, 2×1200 Punkte), bandpass 0.01–0.10 Hz,
+        z-normiert → Lead-Lag-Kantensignal nach Gl. (23), Länge 2399.</div>
+      <div class="step"><b>Analyse:</b> Hodge-Zerlegung, Divergenz an Knoten, Curl auf Dreiecken,
+        Aggregation auf 7 Yeo-Netzwerke, Vorzeichen-Permutationstest.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Ergebnis 1 — Es gibt wirklich Zirkulation (25 % der Energie)</h3>
+    <div class="g-side">
+      <div><div id="energyPlot" style="height:330px"></div></div>
+      <div>
+        <div class="ctrl">
+          <label>Proband <b><span id="subjv">1</span></b> / 100</label>
+          <input type="range" id="subj" min="1" max="100" value="1" step="1">
+        </div>
+        <div class="bigstat">
+          <div class="stat"><div class="v" style="color:var(--curl)" id="pkVal">0.25</div><div class="l">p = Curl-Anteil</div></div>
+          <div class="stat"><div class="v" style="color:var(--grad)" id="pdVal">0.75</div><div class="l">Gradient-Anteil</div></div>
+        </div>
+        <div class="readout" id="energyRead"></div>
+        <div class="note">
+          <b>p = 0.25 ± 0.074</b> über 100 Probanden. Ein Viertel der Signalenergie steckt in
+          Zirkulationen um Dreiecke — <b>Information, die ein Graphmodell komplett verlieren würde</b>.
+          Genau das rechtfertigt den Aufwand von TSP.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Ergebnis 2 — Divergenz pro Netzwerke</h3>
+    <p>Positive Divergenz = die Region <b>empfängt</b> (folgt), negative = sie <b>sendet</b> (geht voraus).
+    Aggregiert auf die sieben Yeo-Netzwerke. Das Sensomotorische Netzwerk (SM) ist der stärkste
+    <i>Sender</i>, das Frontoparietale Netzwerk (FP) der stärkste <i>Empfänger</i>.</p>
+    <div class="g-side">
+      <div><div id="divNetPlot" style="height:380px"></div></div>
+      <div>
+        <div class="cv-wrap"><canvas id="brainCv" width="640" height="400"></canvas></div>
+        <div class="hint center">Schematisches Gehirn: blau = anticipating (sendet), rot = following (empfängt)</div>
+        <div class="readout" id="divNetRead"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Ergebnis 3 — Curl über Netzwerk-Tripel</h3>
+    <p>Hier sieht man etwas, das es in GSP <b>gar nicht geben kann</b>: ein Signal, das im Kreis
+    zwischen <i>drei</i> Netzwerken zirkuliert. Positives Vorzeichen = Zirkulation in der
+    Referenzreihenfolge der Netzwerk-Labels.</p>
+    <div class="g-side">
+      <div><div id="curlTriPlot" style="height:380px"></div></div>
+      <div>
+        <div class="cv-wrap"><canvas id="triCircCv" width="640" height="340"></canvas></div>
+        <div class="ctrl">
+          <label>Tripel auswählen <b><span id="triSelv">SM→VA→FP</span></b></label>
+          <input type="range" id="triSel" min="0" max="7" value="0" step="1">
+        </div>
+        <div class="readout" id="triCircRead"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Ergebnis 4 — Der Permutationstest (Sign-Flip)</h3>
+    <p>Ist die gemessene Divergenz einer Region wirklich konsistent, oder nur Zufall? Der Test:
+    20 000-mal werden die Vorzeichen der Probandenwerte zufällig gekippt. Die echte Statistik wird
+    mit der so erzeugten Nullverteilung verglichen.</p>
+    <div class="g-side">
+      <div><div id="permPlot" style="height:360px"></div></div>
+      <div>
+        <div class="ctrl">
+          <label>Wahre Effektstärke der Region <b><span id="pmEffv">0.40</span></b></label>
+          <input type="range" id="pmEff" min="0" max="1.2" value="0.4" step="0.02">
+        </div>
+        <div class="ctrl">
+          <label>Anzahl Probanden <b><span id="pmNv">100</span></b></label>
+          <input type="range" id="pmN" min="10" max="150" value="100" step="5">
+        </div>
+        <div class="btnrow"><button id="pmRun">Neu permutieren</button></div>
+        <div class="bigstat">
+          <div class="stat"><div class="v" id="pmZ" style="color:var(--accent)">–</div><div class="l">z-Score</div></div>
+          <div class="stat"><div class="v" id="pmP" style="color:var(--accent4)">–</div><div class="l">p-Wert</div></div>
+          <div class="stat"><div class="v" id="pmSig" style="color:var(--ok)">–</div><div class="l">Bonferroni</div></div>
+        </div>
+        <div class="readout" id="permRead"></div>
+        <div class="note">
+          <b>z = (μ − μ_perm) / σ_perm.</b> Bei 100 Regionen muss man mit Bonferroni korrigieren:
+          die Schwelle wird 0.05/100 = 0.0005. Im Paper überleben trotzdem viele Regionen —
+          und zwar <b>symmetrisch in beiden Hemisphären</b>, was biologisch plausibel ist.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================ -->
+<!-- 14 ANTWORT -->
+<!-- ================================================================ -->
+<section id="antwort">
+<div class="wrap">
+  <div class="sectlabel">Teil 14 — Zusammenfassung</div>
+  <h2>Die Antwort auf die gestellte Frage</h2>
+
+  <div class="keyq">
+    <div class="q">Frage</div>
+    <p style="margin:4px 0 14px;font-size:15px">Wie analysiert man orientierte Signale auf Kanten und
+    Dreiecken — und bringt das wirklich etwas gegenüber Graphen?</p>
+    <div class="q" style="color:var(--ok)">Antwort</div>
+    <p style="margin:4px 0 0;font-size:15px">
+      <b>Ja, es bringt messbar etwas.</b> Mit Randoperatoren, Hodge-Laplace und Hodge-Zerlegung
+      bekommt man eine vollständige, orthogonale Werkzeugkiste: Divergenz, Curl, Löcher, Frequenzen,
+      Filter. Angewandt auf das Gehirn liegen <b>25 % der Signalenergie in Zirkulationen</b> —
+      Information, die in jedem reinen Graphmodell im Kern des Graph-Laplace verschwindet.
+      Zusätzlich liefert die Divergenz eine konsistente Sender/Empfänger-Karte, die mit unabhängiger
+      Vorarbeit übereinstimmt.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h3>Die ganze Geschichte in einem Bild</h3>
+    <div class="cv-wrap"><canvas id="summaryCv" width="1140" height="520"></canvas></div>
+    <div class="btnrow" style="justify-content:center;margin-top:12px">
+      <button class="sumStep on" data-s="0">Daten</button>
+      <button class="sumStep" data-s="1">Domäne</button>
+      <button class="sumStep" data-s="2">Signal</button>
+      <button class="sumStep" data-s="3">Operatoren</button>
+      <button class="sumStep" data-s="4">Zerlegung</button>
+      <button class="sumStep" data-s="5">Interpretation</button>
+      <button id="sumAuto">▶ Auto</button>
+    </div>
+    <div class="readout" id="summaryRead" style="margin-top:12px"></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel">
+      <h3>Was neu ist in diesem Paper</h3>
+      <div class="steps">
+        <div class="step"><b>Didaktik:</b> TSP aus Anwendersicht, mit dem expliziten Ziel, die
+        Einstiegshürde (algebraische Topologie) zu senken.</div>
+        <div class="step"><b>Klassifikation:</b> systematische Übersicht, <i>wie</i> man Domänen und
+        Signale aus Daten niedrigerer Ordnung gewinnt.</div>
+        <div class="step"><b>Neues Kantensignal:</b> die Lead-Lag-Determinante aus Gl. (23), inkl.
+        geometrischer Deutung (Wedge-Produkt), stochastischer Deutung (Gl. 27) und Verbindung zur
+        Cyclicity-Analyse.</div>
+        <div class="step"><b>Erste Visualisierung:</b> nach Angabe der Autoren die erste Darstellung von
+        Hodge-Laplace-Eigenvektoren im Neuroimaging <i>mit korrekter Orientierung</i>.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Grenzen &amp; offene Fragen</h3>
+      <div class="steps">
+        <div class="step"><b>Kombinatorische Explosion:</b> die Zahl der k-Simplizes wächst rasant.
+        Abhilfe: Wavelets, Dictionary Learning, diskrete Morse-Theorie.</div>
+        <div class="step"><b>Keine Kausalität:</b> Lead-Lag ≠ Ursache. Nur zeitliche Präzedenz.</div>
+        <div class="step"><b>Modellierungswillkür:</b> Welche Dreiecke füllen? Clique-Komplex ist eine
+        Wahl, aber nicht die einzige.</div>
+        <div class="step"><b>Frequenz-Analogie:</b> Hohe Eigenwerte können stark lokalisiert sein —
+        die Ordnung ist nicht immer intuitiv.</div>
+        <div class="step"><b>Validierung:</b> Reproduzierbarkeit über Datensätze hinweg steht noch aus.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Glossar zum Nachschlagen</h3>
+    <div class="grid g3" id="glossary"></div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Topological Signal Processing: An Application-Oriented Tutorial</b><br>
+    Flavia Petruso · Maria Giulia Preti · Dimitri Van De Ville — EPFL / UNIGE · arXiv:2605.22853</p>
+    <p class="dim">Interaktive Aufbereitung · alle Zahlen und Matrizen werden live im Browser berechnet.</p>
+  </div>
+</footer>
+
+</div><!-- /content -->
+
+<script>
+/* ============================================================================
+   TEIL A — NUMERIK-HILFSBIBLIOTHEK
+   ============================================================================ */
+const LA = (() => {
+  function zeros(n,m){ const A=[]; for(let i=0;i<n;i++){A.push(new Float64Array(m));} return A; }
+  function eye(n){ const A=zeros(n,n); for(let i=0;i<n;i++)A[i][i]=1; return A; }
+  function clone(A){ return A.map(r=>Float64Array.from(r)); }
+  function T(A){ const n=A.length,m=A[0].length,B=zeros(m,n);
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++)B[j][i]=A[i][j]; return B; }
+  function mul(A,B){ const n=A.length,k=B.length,m=B[0].length,C=zeros(n,m);
+    for(let i=0;i<n;i++){const Ai=A[i],Ci=C[i];
+      for(let p=0;p<k;p++){const a=Ai[p]; if(a===0)continue; const Bp=B[p];
+        for(let j=0;j<m;j++)Ci[j]+=a*Bp[j];}}
+    return C; }
+  function mv(A,x){ const n=A.length,m=A[0].length,y=new Float64Array(n);
+    for(let i=0;i<n;i++){let s=0;const Ai=A[i];for(let j=0;j<m;j++)s+=Ai[j]*x[j];y[i]=s;}
+    return y; }
+  function add(A,B){ const C=clone(A); for(let i=0;i<C.length;i++)for(let j=0;j<C[0].length;j++)C[i][j]+=B[i][j]; return C; }
+  function sub(A,B){ const C=clone(A); for(let i=0;i<C.length;i++)for(let j=0;j<C[0].length;j++)C[i][j]-=B[i][j]; return C; }
+  function scale(A,s){ return A.map(r=>r.map(v=>v*s)); }
+  function dot(a,b){ let s=0; for(let i=0;i<a.length;i++)s+=a[i]*b[i]; return s; }
+  function norm(a){ return Math.sqrt(dot(a,a)); }
+  function vadd(a,b){ const c=new Float64Array(a.length); for(let i=0;i<a.length;i++)c[i]=a[i]+b[i]; return c; }
+  function vsub(a,b){ const c=new Float64Array(a.length); for(let i=0;i<a.length;i++)c[i]=a[i]-b[i]; return c; }
+  function vscale(a,s){ const c=new Float64Array(a.length); for(let i=0;i<a.length;i++)c[i]=a[i]*s; return c; }
+
+  /* Jacobi-Eigenwertzerlegung für symmetrische Matrizen.
+     Liefert {values:[], vectors:[][]} mit vectors[:,k] = k-ter Eigenvektor. */
+  function jacobiEig(Ain, maxSweeps=120, tol=1e-11){
+    const n=Ain.length; const A=clone(Ain); const V=eye(n);
+    for(let sweep=0;sweep<maxSweeps;sweep++){
+      let off=0;
+      for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=A[i][j]*A[i][j];
+      if(Math.sqrt(off)<tol) break;
+      for(let p=0;p<n-1;p++){
+        for(let q=p+1;q<n;q++){
+          if(Math.abs(A[p][q])<1e-14) continue;
+          const theta=(A[q][q]-A[p][p])/(2*A[p][q]);
+          const t=Math.sign(theta||1)/(Math.abs(theta)+Math.sqrt(theta*theta+1));
+          const c=1/Math.sqrt(t*t+1), s=t*c;
+          for(let k=0;k<n;k++){
+            const akp=A[k][p], akq=A[k][q];
+            A[k][p]=c*akp-s*akq; A[k][q]=s*akp+c*akq;
+          }
+          for(let k=0;k<n;k++){
+            const apk=A[p][k], aqk=A[q][k];
+            A[p][k]=c*apk-s*aqk; A[q][k]=s*apk+c*aqk;
+          }
+          for(let k=0;k<n;k++){
+            const vkp=V[k][p], vkq=V[k][q];
+            V[k][p]=c*vkp-s*vkq; V[k][q]=s*vkp+c*vkq;
+          }
+        }
+      }
+    }
+    const vals=[]; for(let i=0;i<n;i++) vals.push(A[i][i]);
+    // sortieren
+    const idx=vals.map((v,i)=>i).sort((a,b)=>vals[a]-vals[b]);
+    const sv=idx.map(i=>vals[i]);
+    const SV=zeros(n,n);
+    for(let c=0;c<n;c++){ const src=idx[c]; for(let r=0;r<n;r++) SV[r][c]=V[r][src]; }
+    return {values:sv, vectors:SV};
+  }
+  function col(A,j){ const v=new Float64Array(A.length); for(let i=0;i<A.length;i++)v[i]=A[i][j]; return v; }
+  /* Projektion von x auf den Spaltenraum von M (über Eigenzerlegung von MᵀM nicht nötig:
+     wir nutzen die Eigenbasis des zugehörigen Laplace). */
+  function projectOnEigen(x, U, mask){
+    const E=x.length; const out=new Float64Array(E);
+    for(let k=0;k<U[0].length;k++){
+      if(!mask(k)) continue;
+      const u=col(U,k); const c=dot(u,x);
+      for(let i=0;i<E;i++) out[i]+=c*u[i];
+    }
+    return out;
+  }
+  return {zeros,eye,clone,T,mul,mv,add,sub,scale,dot,norm,vadd,vsub,vscale,jacobiEig,col,projectOnEigen};
+})();
+
+/* kleiner deterministischer Zufallsgenerator */
+function mulberry32(a){ return function(){ a|=0;a=a+0x6D2B79F5|0;
+  let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t;
+  return ((t^t>>>14)>>>0)/4294967296; }; }
+function gauss(rng){ let u=0,v=0; while(u===0)u=rng(); while(v===0)v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+/* ============================================================================
+   TEIL B — KOMPLEX-DATENSTRUKTUR
+   ============================================================================ */
+class Complex {
+  constructor(nodes, edges, tris){
+    this.nodes=nodes;            // [{x,y,label}]
+    this.edges=edges;            // [[i,j]] mit i<j
+    this.tris=tris;              // [[i,j,k]] mit i<j<k
+    this.V=nodes.length; this.E=edges.length; this.T=tris.length;
+    this.edgeIndex=new Map();
+    edges.forEach((e,idx)=>this.edgeIndex.set(e[0]+'_'+e[1], idx));
+    this.build();
+  }
+  eidx(a,b){ // liefert {idx, sign}
+    if(a<b){ const k=this.edgeIndex.get(a+'_'+b); return k===undefined?null:{idx:k,sign:1}; }
+    const k=this.edgeIndex.get(b+'_'+a); return k===undefined?null:{idx:k,sign:-1};
+  }
+  build(){
+    const {V,E,T}=this;
+    this.B1=LA.zeros(V,E);
+    this.edges.forEach(([a,b],j)=>{ this.B1[a][j]=-1; this.B1[b][j]=1; });
+    this.B2=LA.zeros(E,Math.max(T,1));
+    this.tris.forEach(([a,b,c],t)=>{
+      // Rand von [a,b,c] = [b,c] - [a,c] + [a,b]
+      const e1=this.eidx(b,c), e2=this.eidx(a,c), e3=this.eidx(a,b);
+      if(e1) this.B2[e1.idx][t]+= 1*e1.sign;
+      if(e2) this.B2[e2.idx][t]+= -1*e2.sign;
+      if(e3) this.B2[e3.idx][t]+= 1*e3.sign;
+    });
+    if(T===0){ this.B2=LA.zeros(E,0); }
+    this.L0=LA.mul(this.B1,LA.T(this.B1));
+    this.L1d=LA.mul(LA.T(this.B1),this.B1);
+    this.L1u = T>0 ? LA.mul(this.B2,LA.T(this.B2)) : LA.zeros(E,E);
+    this.L1=LA.add(this.L1d,this.L1u);
+    // Eigenzerlegungen
+    this.eigD=LA.jacobiEig(this.L1d);
+    this.eigU=LA.jacobiEig(this.L1u);
+    this.eigF=LA.jacobiEig(this.L1);
+    this.eig0=LA.jacobiEig(this.L0);
+    // Betti-1
+    const tolz=1e-7;
+    this.beta1=this.eigF.values.filter(v=>Math.abs(v)<tolz).length;
+    this.dimDown=this.eigD.values.filter(v=>v>tolz).length;
+    this.dimUp=this.eigU.values.filter(v=>v>tolz).length;
+  }
+  div(x){ return LA.mv(this.B1,x); }
+  curl(x){ return this.T>0 ? LA.mv(LA.T(this.B2),x) : new Float64Array(0); }
+  decompose(x){
+    const tolz=1e-7;
+    const grad=LA.projectOnEigen(x,this.eigD.vectors,k=>this.eigD.values[k]>tolz);
+    const sol = this.T>0 ? LA.projectOnEigen(x,this.eigU.vectors,k=>this.eigU.values[k]>tolz)
+                         : new Float64Array(this.E);
+    const harm=new Float64Array(this.E);
+    for(let i=0;i<this.E;i++) harm[i]=x[i]-grad[i]-sol[i];
+    return {grad,sol,harm};
+  }
+}
+
+/* ============================================================================
+   TEIL C — ZEICHEN-HELFER
+   ============================================================================ */
+const COL={grad:'#60a5fa',curl:'#f472b6',harm:'#fbbf24',acc:'#5eead4',acc2:'#a78bfa',
+           acc3:'#fb7185',ok:'#34d399',txt:'#e6edf8',dim:'#9fb0cc',line:'rgba(120,160,230,.35)'};
+
+function clearCv(ctx,w,h,grid=true){
+  ctx.clearRect(0,0,w,h);
+  const g=ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'rgba(10,16,28,.85)'); g.addColorStop(1,'rgba(14,20,36,.7)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+  if(grid){
+    ctx.strokeStyle='rgba(120,160,230,.05)'; ctx.lineWidth=1;
+    for(let x=0;x<w;x+=36){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let y=0;y<h;y+=36){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  }
+}
+function arrow(ctx,x1,y1,x2,y2,color,width,head=10,shrink=0){
+  const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy)||1;
+  const ux=dx/L,uy=dy/L;
+  const sx=x1+ux*shrink, sy=y1+uy*shrink;
+  const ex=x2-ux*shrink, ey=y2-uy*shrink;
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex-ux*head*0.75,ey-uy*head*0.75); ctx.stroke();
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(ex,ey);
+  ctx.lineTo(ex-ux*head+uy*head*0.47, ey-uy*head-ux*head*0.47);
+  ctx.lineTo(ex-ux*head-uy*head*0.47, ey-uy*head+ux*head*0.47);
+  ctx.closePath(); ctx.fill();
+}
+function node(ctx,x,y,r,fill,label,lblCol='#071018'){
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=10;
+  ctx.fillStyle=fill; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.stroke();
+  if(label!==undefined){
+    ctx.fillStyle=lblCol; ctx.font='bold 13px ui-monospace, monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(label,x,y);
+  }
+}
+function txt(ctx,s,x,y,col='#cdd9ee',size=12,align='left',bold=false){
+  ctx.fillStyle=col; ctx.font=(bold?'bold ':'')+size+'px Inter, sans-serif';
+  ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillText(s,x,y);
+}
+function mono(ctx,s,x,y,col='#9fb0cc',size=11,align='left'){
+  ctx.fillStyle=col; ctx.font=size+'px ui-monospace, monospace';
+  ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillText(s,x,y);
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function triFill(ctx,p1,p2,p3,color,alpha){
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=color;
+  ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.lineTo(p3[0],p3[1]);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+/* Kreisbogen-Pfeil (für Curl-Darstellung) */
+function circArrow(ctx,cx,cy,r,dir,color,width=3){
+  const a0=-0.6*Math.PI, a1=1.05*Math.PI;
+  ctx.strokeStyle=color; ctx.lineWidth=width; ctx.lineCap='round';
+  ctx.beginPath();
+  if(dir>0) ctx.arc(cx,cy,r,a0,a1);
+  else ctx.arc(cx,cy,r,a1,a0,true);
+  ctx.stroke();
+  const ae=dir>0?a1:a0;
+  const ex=cx+r*Math.cos(ae), ey=cy+r*Math.sin(ae);
+  const tx=-Math.sin(ae)*dir, ty=Math.cos(ae)*dir;
+  const h=7+width;
+  ctx.fillStyle=color; ctx.beginPath();
+  ctx.moveTo(ex+tx*h*0.6,ey+ty*h*0.6);
+  ctx.lineTo(ex-tx*h*0.2+Math.cos(ae)*h*0.55, ey-ty*h*0.2+Math.sin(ae)*h*0.55);
+  ctx.lineTo(ex-tx*h*0.2-Math.cos(ae)*h*0.55, ey-ty*h*0.2-Math.sin(ae)*h*0.55);
+  ctx.closePath(); ctx.fill();
+}
+function lerpColor(c1,c2,t){
+  const h=x=>[parseInt(x.slice(1,3),16),parseInt(x.slice(3,5),16),parseInt(x.slice(5,7),16)];
+  const a=h(c1),b=h(c2);
+  return `rgb(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)})`;
+}
+function divColor(v,maxv){
+  const t=Math.max(-1,Math.min(1,v/(maxv||1)));
+  if(t>=0) return lerpColor('#1b2740','#fb7185',t);
+  return lerpColor('#1b2740','#60a5fa',-t);
+}
+const plotlyLayoutBase={
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(6,10,18,.45)',
+  font:{color:'#9fb0cc',family:'Inter, sans-serif',size:11.5},
+  margin:{l:52,r:18,t:30,b:46},
+  xaxis:{gridcolor:'rgba(120,160,230,.12)',zerolinecolor:'rgba(120,160,230,.3)'},
+  yaxis:{gridcolor:'rgba(120,160,230,.12)',zerolinecolor:'rgba(120,160,230,.3)'},
+  showlegend:false
+};
+const PCFG={displayModeBar:false,responsive:true};
+
+/* ============================================================================
+   TEIL D — KATEX
+   ============================================================================ */
+function renderEq(id,tex){ const el=document.getElementById(id); if(el) el.innerHTML='\\['+tex+'\\]'; }
+window.addEventListener('DOMContentLoaded',()=>{
+  const eqs=[
+   ['eqGsp','x^{\\top}Lx=\\tfrac12\\sum_{(i,j)\\in E}(x_i-x_j)^2'],
+   ['eqDD','B_1B_2=0 \\quad\\Longleftrightarrow\\quad \\operatorname{div}(\\operatorname{curl}^{\\!*})=0'],
+   ['eqDivCurl','\\operatorname{div}(x)=B_1x,\\qquad \\operatorname{curl}(x)=B_2^{\\top}x'],
+   ['eqHodge','L_1=\\underbrace{B_1^{\\top}B_1}_{L_{1\\downarrow}}+\\underbrace{B_2B_2^{\\top}}_{L_{1\\uparrow}}'],
+   ['eqDecomp','\\mathbb{R}^{E}=\\underbrace{\\operatorname{im}(B_1^{\\top})}_{\\text{irrotational}}\\;\\oplus\\;\\underbrace{\\ker(L_1)}_{\\text{harmonisch}}\\;\\oplus\\;\\underbrace{\\operatorname{im}(B_2)}_{\\text{solenoidal}}'],
+   ['eqOrtho','\\|x\\|^2=\\|x_{\\downarrow}\\|^2+\\|x_{\\uparrow}\\|^2+\\|x_{\\mathrm{harm}}\\|^2'],
+   ['eqSpec','\\lambda=u_{\\downarrow}^{\\top}L_{1\\downarrow}u_{\\downarrow}=\\|B_1u_{\\downarrow}\\|_2^2=\\|\\operatorname{div}(u_{\\downarrow})\\|_2^2'],
+   ['eqTFT','\\tilde{x}^{(k)}=U_k^{\\top}x^{(k)}'],
+   ['eqFilter','h(L_1)=h_{\\mathrm{harm}}I+\\sum_{m=1}^{M_\\downarrow}\\alpha_m L_{1\\downarrow}^{m}+\\sum_{n=1}^{M_\\uparrow}\\beta_n L_{1\\uparrow}^{n}'],
+   ['eqDet','e_{i,j}[t]=\\begin{vmatrix}x_i[t-1]&x_j[t-1]\\\\ x_i[t]&x_j[t]\\end{vmatrix}=x_i[t-1]x_j[t]-x_j[t-1]x_i[t]'],
+   ['eqLag','\\mathbb{E}[E_{i,j}(t)]=R_{i,j}(1)-R_{i,j}(-1)']
+  ];
+  eqs.forEach(([id,t])=>renderEq(id,t));
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'\\[',right:'\\]',display:true},
+      {left:'$',right:'$',display:false}
+    ],throwOnError:false});
+  }
+});
+/* KaTeX lädt defer – deshalb zusätzlich nach load */
+window.addEventListener('load',()=>{
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'\\[',right:'\\]',display:true},
+      {left:'$',right:'$',display:false}
+    ],throwOnError:false});
+  }
+});
+
+/* ============================================================================
+   TEIL E — NAV, PROGRESS, REVEAL
+   ============================================================================ */
+(function(){
+  const prog=document.getElementById('progress');
+  const links=[...document.querySelectorAll('#nav a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const sc=window.scrollY, h=document.body.scrollHeight-window.innerHeight;
+    prog.style.width=(100*sc/Math.max(h,1))+'%';
+    let cur=0;
+    secs.forEach((s,i)=>{ if(s && s.offsetTop-120<=sc) cur=i; });
+    links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+  }
+  window.addEventListener('scroll',upd,{passive:true}); upd();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),
+    {threshold:0.06});
+  document.querySelectorAll('.panel,.keyq,.grid').forEach(el=>{el.classList.add('reveal');io.observe(el);});
+  links.forEach(a=>a.addEventListener('click',ev=>{
+    ev.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t) window.scrollTo({top:t.offsetTop-62,behavior:'smooth'});
+  }));
+})();
+
+/* ============================================================================
+   TEIL F — HERO ANIMATION
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('heroCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  // drei Panele: Gradient / Wirbel / Loch
+  const panels=[
+    {cx:W*0.18,label:'irrotational',col:COL.grad,kind:0},
+    {cx:W*0.5, label:'solenoidal', col:COL.curl,kind:1},
+    {cx:W*0.82,label:'harmonisch', col:COL.harm,kind:2}
+  ];
+  let t=0;
+  function field(kind,x,y,time){
+    // x,y in [-1,1]
+    if(kind===0){ // gradient of potential
+      const p=(xx,yy)=>Math.sin(1.6*xx+0.3*Math.sin(time*0.4))*Math.cos(1.4*yy);
+      const h=0.02;
+      return [ (p(x+h,y)-p(x-h,y))/(2*h), (p(x,y+h)-p(x,y-h))/(2*h) ];
+    }
+    if(kind===1){ // curl field
+      const a=Math.atan2(y,x), r=Math.hypot(x,y);
+      const s=Math.exp(-r*r*1.1)*(1+0.3*Math.sin(time*0.6));
+      return [ -y*2.2*s, x*2.2*s ];
+    }
+    // harmonic around hole
+    const r=Math.hypot(x,y)+0.18;
+    const s=1.0/(r*r)*0.35;
+    return [ -y*s, x*s ];
+  }
+  function draw(){
+    clearCv(ctx,W,H,false);
+    t+=0.016;
+    panels.forEach(p=>{
+      const R=140, cx=p.cx, cy=H*0.46;
+      // Rahmen
+      ctx.save();
+      ctx.strokeStyle='rgba(120,160,230,.12)'; ctx.lineWidth=1;
+      roundRect(ctx,cx-R-10,cy-R*0.72-10,2*R+20,2*R*0.72+20,14); ctx.stroke();
+      ctx.restore();
+      const N=13,M=9;
+      for(let i=0;i<N;i++)for(let j=0;j<M;j++){
+        const gx=(i/(N-1))*2-1, gy=(j/(M-1))*2-1;
+        if(p.kind===2 && Math.hypot(gx,gy)<0.33) continue;
+        const [vx,vy]=field(p.kind,gx,gy,t);
+        const sx=cx+gx*R, sy=cy+gy*R*0.72;
+        const m=Math.hypot(vx,vy)||1e-9;
+        const L=Math.min(17,6+m*9);
+        const ux=vx/m,uy=vy/m;
+        const al=Math.min(1,0.25+m*0.5);
+        ctx.globalAlpha=al;
+        arrow(ctx,sx-ux*L/2,sy-uy*L/2,sx+ux*L/2,sy+uy*L/2,p.col,1.9,6);
+        ctx.globalAlpha=1;
+      }
+      if(p.kind===2){
+        ctx.save(); ctx.globalAlpha=.9;
+        ctx.fillStyle='rgba(7,11,20,.95)'; ctx.beginPath(); ctx.arc(cx,cy,R*0.26,0,7); ctx.fill();
+        ctx.strokeStyle='rgba(251,191,36,.55)'; ctx.setLineDash([5,4]); ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(cx,cy,R*0.26,0,7); ctx.stroke(); ctx.setLineDash([]);
+        ctx.restore();
+        mono(ctx,'LOCH',cx,cy,'rgba(251,191,36,.8)',10,'center');
+      }
+      txt(ctx,p.label,cx,cy+R*0.72+30,p.col,13,'center',true);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================================
+   TEIL 1 — MOTIVATION
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('motivCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  let mode=0, t=0;
+  const P=[[140,110],[360,80],[560,150],[520,330],[280,380],[140,270]];
+  const EDG=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[0,4],[1,4],[1,5],[2,4]];
+  const texts=[
+    {h:'① Klassische GSP: nur Knoten',b:`Man misst Temperatur, Hirnaktivität, Preise — <b>an Punkten</b>.
+      Der Graph sagt nur, wer mit wem verbunden ist. Die Frage ist: „Wie glatt ist das Signal?“<br><br>
+      <span class="pill">Problem</span> Ein Fluss hat eine Richtung. Ein Knotenwert nicht.
+      Was „von A nach B“ passiert, lässt sich so nicht ausdrücken.`},
+    {h:'② Kantensignal: Fluss mit Vorzeichen',b:`Jetzt lebt das Signal <b>auf den Kanten</b>.
+      Jede Kante hat einen Referenzpfeil; der Wert ist positiv in Pfeilrichtung, negativ dagegen.<br><br>
+      <span class="pill g">Neu</span> Jetzt kann man fragen: Wo entsteht etwas (Quelle)?
+      Wo verschwindet etwas (Senke)? Das ist die <b>Divergenz</b>.`},
+    {h:'③ Dreiecke: Kreisläufe werden sichtbar',b:`Füllt man Dreiecke, entsteht eine echte höhere Ordnung.
+      Jetzt kann man einen <b>Kreislauf</b> A→B→C→A messen — den <b>Curl</b>.<br><br>
+      <span class="pill c">Das kann GSP nicht</span> Eine reine Zirkulation hat <b>überall Divergenz null</b>.
+      Für ein Graphmodell sieht sie aus wie „gar nichts“ — sie verschwindet im Kern des Graph-Laplace.`}
+  ];
+  function draw(){
+    clearCv(ctx,W,H); t+=0.02;
+    // Dreiecke (Modus 2)
+    if(mode===2){
+      const tris=[[0,4,5],[1,2,4],[0,1,4]];
+      tris.forEach((tr,k)=>{
+        const a=P[tr[0]],b=P[tr[1]],c=P[tr[2]];
+        triFill(ctx,a,b,c,COL.curl,0.1+0.05*Math.sin(t*2+k));
+        const cx=(a[0]+b[0]+c[0])/3, cy=(a[1]+b[1]+c[1])/3;
+        circArrow(ctx,cx,cy,22,1,'rgba(244,114,182,.85)',2.5);
+      });
+    }
+    // Kanten
+    EDG.forEach(([i,j],k)=>{
+      const a=P[i],b=P[j];
+      if(mode===0){
+        ctx.strokeStyle='rgba(120,160,230,.3)'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+      } else {
+        const val=Math.sin(t*1.1+k*1.3)*(mode===2?1:1);
+        const col=val>=0?COL.grad:COL.acc3;
+        const w=1.6+Math.abs(val)*3.2;
+        if(val>=0) arrow(ctx,a[0],a[1],b[0],b[1],col,w,11,20);
+        else arrow(ctx,b[0],b[1],a[0],a[1],col,w,11,20);
+      }
+    });
+    // Knoten
+    P.forEach((p,i)=>{
+      let col='#2a3category';
+      if(mode===0){
+        const v=Math.sin(t*0.9+i*1.1);
+        col=divColor(v,1);
+      } else if(mode===1){
+        // divergenz berechnen (schematisch)
+        let d=0;
+        EDG.forEach(([a,b],k)=>{
+          const val=Math.sin(t*1.1+k*1.3);
+          if(b===i)d+=val; if(a===i)d-=val;
+        });
+        col=divColor(d,3);
+      } else col='rgba(40,56,86,1)';
+      node(ctx,p[0],p[1],19,col,'v'+(i+1),'#eaf2ff');
+    });
+    // Legende
+    if(mode===0) mono(ctx,'Knotenwerte · Farbe = Signalstärke',W/2,H-24,COL.dim,12,'center');
+    if(mode===1) mono(ctx,'Kantenfluss (Pfeil+Dicke) · Knotenfarbe = Divergenz',W/2,H-24,COL.dim,12,'center');
+    if(mode===2) mono(ctx,'+ Zirkulation um gefüllte Dreiecke (Curl)',W/2,H-24,COL.dim,12,'center');
+    requestAnimationFrame(draw);
+  }
+  function setText(){
+    document.getElementById('motivText').innerHTML=
+      `<h3 style="margin-top:0">${texts[mode].h}</h3><p>${texts[mode].b}</p>`;
+  }
+  document.querySelectorAll('.motiv-mode').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.motiv-mode').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); mode=+b.dataset.m; setText();
+  }));
+  setText(); draw();
+})();
+
+/* ============================================================================
+   TEIL 2 — GSP
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('gspCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const P=[[120,120],[300,70],[480,120],[560,280],[390,360],[200,330],[330,210]];
+  const EDG=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[0,6],[1,6],[2,6],[4,6],[5,6]];
+  const N=P.length;
+  const A=LA.zeros(N,N), D=LA.zeros(N,N);
+  EDG.forEach(([i,j])=>{A[i][j]=1;A[j][i]=1;});
+  for(let i=0;i<N;i++){let d=0;for(let j=0;j<N;j++)d+=A[i][j];D[i][i]=d;}
+  const L=LA.sub(D,A);
+  let x0=new Float64Array([2,-1.5,1,0.5,-2,1.6,0]);
+  let x=Float64Array.from(x0);
+  const elT=document.getElementById('gspT'),elTau=document.getElementById('gspTau');
+  function diffuse(){
+    const steps=+elT.value, tau=+elTau.value;
+    x=Float64Array.from(x0);
+    for(let s=0;s<steps;s++){ const Lx=LA.mv(L,x); for(let i=0;i<N;i++)x[i]-=tau*Lx[i]; }
+  }
+  function smooth(v){ return LA.dot(v,LA.mv(L,v)); }
+  function draw(){
+    clearCv(ctx,W,H);
+    const mx=Math.max(1,...Array.from(x,Math.abs));
+    EDG.forEach(([i,j])=>{
+      const a=P[i],b=P[j];
+      const diff=Math.abs(x[i]-x[j])/(2*mx);
+      ctx.strokeStyle=`rgba(120,160,230,${0.18+diff*0.6})`;
+      ctx.lineWidth=1.5+diff*3.4;
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+    });
+    P.forEach((p,i)=>{
+      node(ctx,p[0],p[1],21,divColor(x[i],mx),x[i].toFixed(1),'#f3f8ff');
+    });
+    mono(ctx,'blau = negativ · rot = positiv · Kantendicke = lokale Differenz',W/2,H-18,COL.dim,11.5,'center');
+  }
+  function upd(){
+    document.getElementById('gspTv').textContent=elT.value;
+    document.getElementById('gspTauv').textContent=(+elTau.value).toFixed(2);
+    diffuse(); draw();
+    const s0=smooth(x0), s1=smooth(x);
+    document.getElementById('gspRead').innerHTML=
+      `Glattheit  <span class="hl">xᵀLx</span>\n`+
+      `  Original  :
+ <span class="hl">${s0.toFixed(3)}</span>\n`+
+      `  Geglättet :  <span class="hl">${s1.toFixed(3)}</span>\n`+
+      `  Reduktion :  ${(100*(1-s1/Math.max(s0,1e-9))).toFixed(1)} %\n\n`+
+      `Energie ‖x‖²  ${LA.dot(x,x).toFixed(3)}  (Original ${LA.dot(x0,x0).toFixed(3)})\n`+
+      `Mittelwert    ${(Array.from(x).reduce((a,b)=>a+b,0)/N).toFixed(4)}  ← bleibt erhalten!`;
+  }
+  elT.addEventListener('input',upd); elTau.addEventListener('input',upd);
+  document.getElementById('gspRand').onclick=()=>{
+    const rng=mulberry32(Date.now()&0xffff);
+    x0=new Float64Array(N); for(let i=0;i<N;i++)x0[i]=gauss(rng)*1.4; upd(); };
+  document.getElementById('gspSpike').onclick=()=>{
+    x0=new Float64Array(N); x0[6]=3.5; upd(); };
+  document.getElementById('gspSplit').onclick=()=>{
+    x0=new Float64Array([2,2,2,-2,-2,-2,0]); upd(); };
+  document.getElementById('gspReset').onclick=()=>{
+    x0=new Float64Array([2,-1.5,1,0.5,-2,1.6,0]); elT.value=0; upd(); };
+  cv.addEventListener('click',ev=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+    P.forEach((p,i)=>{ if(Math.hypot(p[0]-mx,p[1]-my)<24){ x0[i]+= ev.shiftKey?-0.8:0.8; } });
+    upd();
+  });
+  /* Matrix-Tabelle */
+  (function(){
+    let html='<table class="mat"><tr><th></th>';
+    for(let j=0;j<N;j++) html+='<th>v'+(j+1)+'</th>';
+    html+='</tr>';
+    for(let i=0;i<N;i++){
+      html+='<tr><th>v'+(i+1)+'</th>';
+      for(let j=0;j<N;j++){
+        const v=L[i][j];
+        const cls=v>0?'p':(v<0?'n':'z');
+        html+=`<td class="${cls}" data-i="${i}" data-j="${j}">${v}</td>`;
+      }
+      html+='</tr>';
+    }
+    html+='</table>';
+    document.getElementById('gspMatrix').innerHTML=html;
+    document.querySelectorAll('#gspMatrix td').forEach(td=>{
+      td.addEventListener('mouseenter',()=>{
+        const i=+td.dataset.i,j=+td.dataset.j,v=L[i][j];
+        let s;
+        if(i===j) s=`L[${i+1},${i+1}] = ${v}\n→ Knoten v${i+1} hat ${v} Nachbarn (Grad).`;
+        else if(v===-1) s=`L[${i+1},${j+1}] = -1\n→ v${i+1} und v${j+1} sind verbunden.`;
+        else s=`L[${i+1},${j+1}] = 0\n→ keine Kante zwischen v${i+1} und v${j+1}.`;
+        document.getElementById('gspMatInfo').textContent=s;
+      });
+    });
+  })();
+  upd();
+})();
+
+/* ============================================================================
+   TEIL 3 — SIMPLIZES
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('simplexCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const sk=document.getElementById('simk'), clo=document.getElementById('simClosure'),
+        rot=document.getElementById('simRotate');
+  let ang=0;
+  const info=[
+    {n:'0-Simplex — Punkt',e:'1 Knoten',f:'keine',dim:0,
+     d:'Der einfachste Baustein. Hat nur eine (triviale) Orientierung, denn ein einzelnes Element kann man nicht umsortieren.'},
+    {n:'1-Simplex — Kante',e:'2 Knoten, 1 Kante',f:'2 Knoten',dim:1,
+     d:'Zwei Punkte verbunden. Hier entsteht zum ersten Mal eine <b>Orientierung</b>: der Pfeil von v₁ nach v₂.'},
+    {n:'2-Simplex — Dreieck',e:'3 Knoten, 3 Kanten, 1 Dreieck',f:'3 Kanten',dim:2,
+     d:'Eine gefüllte Fläche. Orientierung = Drehrichtung. Hier wird <b>Curl</b> erst möglich.'},
+    {n:'3-Simplex — Tetraeder',e:'4 Knoten, 6 Kanten, 4 Dreiecke, 1 Körper',f:'4 Dreiecke',dim:3,
+     d:'Das 3D-Analogon. Signale leben hier auf Knoten, Kanten, Dreiecken ODER dem Volumen.'}
+  ];
+  function draw(){
+    clearCv(ctx,W,H);
+    const k=+sk.value, showC=clo.checked;
+    const cx=W*0.42, cy=H*0.5, R=110;
+    if(k===0){
+      node(ctx,cx,cy,22,COL.acc,'v₁');
+    } else if(k===1){
+      const a=[cx-R,cy],b=[cx+R,cy];
+      if(showC){ node(ctx,a[0],a[1],18,COL.acc,'v₁'); node(ctx,b[0],b[1],18,COL.acc,'v₂'); }
+      arrow(ctx,a[0],a[1],b[0],b[1],COL.grad,4,13,22);
+      mono(ctx,'e₁=[v₁,v₂]',(a[0]+b[0])/2,cy-26,COL.grad,13,'center');
+      if(!showC){ node(ctx,a[0],a[1],8,'rgba(94,234,212,.4)'); node(ctx,b[0],b[1],8,'rgba(94,234,212,.4)'); }
+    } else if(k===2){
+      const pts=[0,1,2].map(i=>{const a=-Math.PI/2+i*2*Math.PI/3;
+        return [cx+R*Math.cos(a),cy+R*Math.sin(a)];});
+      triFill(ctx,pts[0],pts[1],pts[2],COL.curl,0.22);
+      circArrow(ctx,cx,cy,34,1,COL.curl,3);
+      for(let i=0;i<3;i++){
+        const a=pts[i],b=pts[(i+1)%3];
+        arrow(ctx,a[0],a[1],b[0],b[1],COL.grad,3,11,20);
+      }
+      if(showC) pts.forEach((p,i)=>node(ctx,p[0],p[1],17,COL.acc,'v'+(i+1)));
+      else pts.forEach(p=>node(ctx,p[0],p[1],7,'rgba(94,234,212,.4)'));
+      mono(ctx,'T₁=[v₁,v₂,v₃]',cx,cy+R+34,COL.curl,13,'center');
+    } else {
+      // Tetraeder in 3D
+      if(rot.checked) ang+=0.012;
+      const V3=[[1,1,1],[1,-1,-1],[-1,1,-1],[-1,-1,1]];
+      const proj=V3.map(([x,y,z])=>{
+        const ca=Math.cos(ang),sa=Math.sin(ang);
+        const X=x*ca - z*sa, Z=x*sa+z*ca;
+        const Y=y*Math.cos(0.5)-Z*Math.sin(0.5);
+        const Z2=y*Math.sin(0.5)+Z*Math.cos(0.5);
+        const s=320/(6+Z2);
+        return [cx+X*s*0.55, cy+Y*s*0.55, Z2];
+      });
+      const faces=[[0,1,2],[0,1,3],[0,2,3],[1,2,3]];
+      faces.map(f=>({f,z:(proj[f[0]][2]+proj[f[1]][2]+proj[f[2]][2])/3}))
+        .sort((a,b)=>a.z-b.z).forEach(({f})=>{
+          triFill(ctx,proj[f[0]],proj[f[1]],proj[f[2]],COL.acc2,0.13);
+        });
+      const E3=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+      E3.forEach(([i,j])=>{
+        arrow(ctx,proj[i][0],proj[i][1],proj[j][0],proj[j][1],'rgba(96,165,250,.8)',2.2,9,16);
+      });
+      if(showC) proj.forEach((p,i)=>node(ctx,p[0],p[1],15,COL.acc,'v'+(i+1)));
+      else proj.forEach(p=>node(ctx,p[0],p[1],6,'rgba(94,234,212,.45)'));
+    }
+    // Info-Spalte
+    const bx=W-220;
+    ctx.save(); ctx.globalAlpha=.6; ctx.fillStyle='rgba(6,10,18,.85)';
+    roundRect(ctx,bx-14,40,210,H-110,12); ctx.fill(); ctx.restore();
+    txt(ctx,'Dimension = k',bx,66,COL.acc,12,'left',true);
+    mono(ctx,'= #Knoten − 1',bx,88,COL.dim,11.5);
+    txt(ctx,'k = '+k,bx,118,'#fff',22,'left',true);
+    const ks=[1,2,3,4][k];
+    mono(ctx,`${ks} Knoten`,bx,150,COL.grad,12);
+    mono(ctx,`${[0,1,3,6][k]} Kanten`,bx,172,COL.grad,12);
+    mono(ctx,`${[0,0,1,4][k]} Dreiecke`,bx,194,COL.curl,12);
+    mono(ctx,`${[0,0,0,1][k]} Tetraeder`,bx,216,COL.acc2,12);
+    mono(ctx,'Seitenflächen:',bx,250,COL.dim,11.5);
+    mono(ctx,info[k].f,bx,270,COL.harm,12);
+    requestAnimationFrame(draw);
+  }
+  function upd(){
+    const k=+sk.value;
+    document.getElementById('simkv').textContent=k;
+    const I=info[k];
+    document.getElementById('simplexInfo').innerHTML=
+      `<h3 style="margin-top:0">${I.n}</h3><p>${I.d}</p>`;
+    document.getElementById('simplexRead').innerHTML=
+      `σ^${k} = {v₁${k>=1?', v₂':''}${k>=2?', v₃':''}${k>=3?', v₄':''}}\n`+
+      `Dimension  = ${k}\n`+
+      `Elemente   = ${I.e}\n`+
+      `Seitenfl.  = ${I.f}\n`+
+      `Anzahl Seitenfl. = k+1 = ${k+1}`;
+  }
+  sk.addEventListener('input',upd); upd(); draw();
+})();
+
+/* ============================================================================
+   TEIL 3b — DREIECKE FÜLLEN
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('fillCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const nodes=[{x:120,y:110},{x:300,y:70},{x:480,y:120},{x:580,y:280},
+               {x:430,y:390},{x:240,y:360},{x:110,y:250},{x:340,y:220}];
+  const edges=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0],[0,7],[1,7],[2,7],[4,7],[5,7],[3,7]];
+  // alle 3-cliquen finden
+  function cliques(){
+    const adj=new Set(edges.map(e=>e[0]+'_'+e[1]));
+    const has=(a,b)=>adj.has(Math.min(a,b)+'_'+Math.max(a,b));
+    const out=[];
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)for(let k=j+1;k<nodes.length;k++)
+      if(has(i,j)&&has(j,k)&&has(i,k)) out.push([i,j,k]);
+    return out;
+  }
+  const allTris=cliques();
+  let filled=allTris.map(()=>false);
+  let cx=null;
+  function cur(){
+    const tris=allTris.filter((t,i)=>filled[i]);
+    return new Complex(nodes,edges,tris);
+  }
+  function recompute(){ cx=cur(); render(); }
+  function render(){
+    document.getElementById('fV').textContent=cx.V;
+    document.getElementById('fE').textContent=cx.E;
+    document.getElementById('fT').textContent=cx.T;
+    document.getElementById('fB').textContent=cx.beta1;
+    const cyc=cx.E-cx.V+1;
+    document.getElementById('fillRead').innerHTML=
+      `Unabhängige Zyklen im Graph : <span class="hl">${cyc}</span>  (= E − V + 1)\n`+
+      `Davon gefüllt (rank B₂)     : <span class="hl">${cx.dimUp}</span>\n`+
+      `Übrige Löcher β₁ = dim ker L₁: <span class="hl">${cx.beta1}</span>\n\n`+
+      `dim im(L₁↓) = ${cx.dimDown}   (irrotational)\n`+
+      `dim im(L₁↑) = ${cx.dimUp}   (solenoidal)\n`+
+      `dim ker(L₁) = ${cx.beta1}   (harmonisch)\n`+
+      `Summe       = ${cx.dimDown+cx.dimUp+cx.beta1} = E = ${cx.E} ✓`;
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    allTris.forEach((t,i)=>{
+      const p=[nodes[t[0]],nodes[t[1]],nodes[t[2]]].map(n=>[n.x,n.y]);
+      if(filled[i]){ triFill(ctx,p[0],p[1],p[2],COL.curl,0.3);
+        const mx=(p[0][0]+p[1][0]+p[2][0])/3,my=(p[0][1]+p[1][1]+p[2][1])/3;
+        circArrow(ctx,mx,my,15,1,'rgba(244,114,182,.9)',2);
+      } else {
+        triFill(ctx,p[0],p[1],p[2],COL.harm,0.05);
+      }
+    });
+    edges.forEach(([i,j])=>{
+      ctx.strokeStyle='rgba(96,165,250,.6)'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke();
+    });
+    nodes.forEach((n,i)=>node(ctx,n.x,n.y,15,'#1e2b45','v'+(i+1),'#cfe0ff'));
+    mono(ctx,`${filled.filter(Boolean).length} / ${allTris.length} Dreiecke gefüllt`,W/2,H-18,COL.dim,12,'center');
+    requestAnimationFrame(draw);
+  }
+  cv.addEventListener('click',ev=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+    // Punkt-in-Dreieck
+    function inside(p,a,b,c){
+      const s=(a[1]-c[1])*(p[0]-c[0])+(c[0]-a[0])*(p[1]-c[1]);
+      const t=(c[1]-b[1])*(p[0]-c[0])+(b[0]-c[0])*(p[1]-c[1]);
+      if((s<0)!=(t<0)&&s!==0&&t!==0) return false;
+      const d=(b[1]-a[1])*(c[0]-a[0])+(a[0]-b[0])*(c[1]-a[1]);
+      return d===0||(d<0)===(s+t<=0);
+    }
+    for(let i=0;i<allTris.length;i++){
+      const t=allTris[i], p=[nodes[t[0]],nodes[t[1]],nodes[t[2]]].map(n=>[n.x,n.y]);
+      if(inside([mx,my],p[0],p[1],p[2])){ filled[i]=!filled[i]; recompute(); return; }
+    }
+  });
+  document.getElementById('fillAll').onclick=()=>{filled=allTris.map(()=>true);recompute();};
+  document.getElementById('fillNone').onclick=()=>{filled=allTris.map(()=>false);recompute();};
+  recompute(); draw();
+})();
+
+/* ============================================================================
+   TEIL 4 — ORIENTIERUNG
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('orientCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const P=[[160,130],[500,130],[500,320],[160,320]];
+  // Kanten mit eigener Orientierung (flip)
+  let E=[{a:0,b:1,flip:false},{a:1,b:2,flip:false},{a:3,b:2,flip:false},{a:0,b:3,flip:false}];
+  const slider=document.getElementById('orS');
+  function draw(){
+    clearCv(ctx,W,H);
+    const s=+slider.value;
+    E.forEach((e,k)=>{
+      const A=P[e.a],B=P[e.b];
+      const t0=e.flip?B:A, t1=e.flip?A:B;
+      // Referenzorientierung (dünn, grau)
+      arrow(ctx,t0[0],t0[1],t1[0],t1[1],'rgba(160,185,220,.55)',2,10,30);
+      const mid=[(A[0]+B[0])/2,(A[1]+B[1])/2];
+      const val=(k===0)?(e.flip?-s:s):0;
+      if(k===0){
+        // physikalischer Fluss: dicker Pfeil, Richtung hängt nur von s ab
+        const pA = s>=0?A:B, pB = s>=0?B:A;
+        const w=1.5+Math.abs(s)*1.4;
+        arrow(ctx,pA[0],pA[1],pB[0],pB[1],s>=0?COL.ok:COL.acc3,w,15,42);
+        mono(ctx,`Wert = ${val.toFixed(1)}`,mid[0],mid[1]-34,val>=0?COL.ok:COL.acc3,14,'center');
+      }
+      const lbl='e'+(k+1);
+      mono(ctx,lbl+(e.flip?' ↺':''),mid[0]+(k===1||k===3?26:0),mid[1]+(k===0?22:(k===2?-22:0)),
+        e.flip?COL.harm:COL.dim,12,'center');
+    });
+    P.forEach((p,i)=>node(ctx,p[0],p[1],19,'#1e2b45','v'+(i+1),'#cfe0ff'));
+    txt(ctx,'dünn grau = Referenz-Orientierung   ·   dick = physikalischer Fluss',W/2,H-30,COL.dim,12,'center');
+    txt(ctx,'klicke eine Kante zum Umdrehen',W/2,H-10,COL.acc2,11.5,'center');
+  }
+  function upd(){
+    const s=+slider.value;
+    document.getElementById('orSv').textContent=s.toFixed(1);
+    const e=E[0];
+    const ref=e.flip?`[v₂, v₁]`:`[v₁, v₂]`;
+    const val=e.flip?-s:s;
+    document.getElementById('orientRead').innerHTML=
+      `Referenz e₁ = <span class="hl">${ref}</span>\n`+
+      `Gespeicherter Zahlenwert : <span class="hl">${val.toFixed(1)}</span>\n`+
+      `Physikalischer Fluss     : ${Math.abs(s).toFixed(1)} Einheiten `+
+      `${s>=0?'von v₁ → v₂':'von v₂ → v₁'}\n\n`+
+      `Dreht man die Referenz um, ändert sich\n`+
+      `NUR das Vorzeichen der Zahl — nicht der Fluss.\n\n`+
+      `Antisymmetrie:  e₁,₂ = −e₂,₁`;
+    draw();
+  }
+  slider.addEventListener('input',upd);
+  cv.addEventListener('click',ev=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+    E.forEach(e=>{
+      const A=P[e.a],B=P[e.b];
+      const dx=B[0]-A[0],dy=B[1]-A[1],L2=dx*dx+dy*dy;
+      let t=((mx-A[0])*dx+(my-A[1])*dy)/L2; t=Math.max(0,Math.min(1,t));
+      const px=A[0]+t*dx, py=A[1]+t*dy;
+      if(Math.hypot(px-mx,py-my)<18) e.flip=!e.flip;
+    });
+    upd();
+  });
+  upd();
+})();
+
+/* ---- Dreiecks-Orientierung ---- */
+(function(){
+  const cv=document.getElementById('triOrientCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  let perm=0;
+  const perms=[[1,2,3],[2,3,1],[3,1,2],[1,3,2],[3,2,1],[2,1,3]];
+  const even=[true,true,true,false,false,false];
+  function draw(){
+    clearCv(ctx,W,H);
+    const cx=W*0.34,cy=H*0.5,R=92;
+    const base=[0,1,2].map(i=>{const a=-Math.PI/2+i*2*Math.PI/3;
+      return [cx+R*Math.cos(a),cy+R*Math.sin(a)];});
+    const p=perms[perm], dir=even[perm]?1:-1;
+    triFill(ctx,base[0],base[1],base[2],dir>0?COL.curl:COL.acc4||COL.harm,0.18);
+    for(let i=0;i<3;i++){
+      const from=base[p[i]-1], to=base[p[(i+1)
+%3]-1];
+      arrow(ctx,from[0],from[1],to[0],to[1],dir>0?COL.curl:COL.harm,3,12,24);
+    }
+    circArrow(ctx,cx,cy,36,dir,dir>0?COL.curl:COL.harm,3);
+    base.forEach((p,i)=>node(ctx,p[0],p[1],17,'#1e2b45','v'+(i+1),'#cfe0ff'));
+    txt(ctx, dir>0?'Orientierung A (gegen Uhrzeigersinn im Index-Sinn)'
+                  :'Orientierung B (entgegengesetzt)',
+        cx, H-28, dir>0?COL.curl:COL.harm, 13,'center',true);
+    // Vergleichsanzeige rechts
+    const rx=W*0.72;
+    txt(ctx,'Permutation:',rx,70,COL.dim,12.5,'left');
+    mono(ctx,`[v${p[0]}, v${p[1]}, v${p[2]}]`,rx,96,'#fff',16,'left');
+    txt(ctx,'Parität:',rx,130,COL.dim,12.5,'left');
+    mono(ctx,even[perm]?'gerade (+1)':'ungerade (−1)',rx,154,
+      even[perm]?COL.ok:COL.acc3,15,'left');
+    txt(ctx,'Vorzeichen in B₂:',rx,190,COL.dim,12.5,'left');
+    mono(ctx,even[perm]?'+1 · Referenz':'−1 · Referenz',rx,214,
+      even[perm]?COL.ok:COL.acc3,15,'left');
+  }
+  function upd(){
+    document.getElementById('triOrientRead').innerHTML=
+      `[v${perms[perm][0]}, v${perms[perm][1]}, v${perms[perm][2]}]\n`+
+      `Permutationsparität : <span class="hl">${even[perm]?'gerade':'ungerade'}</span>\n`+
+      `Äquivalent zu       : <span class="hl">${even[perm]?'[v₁,v₂,v₃]':'[v₁,v₃,v₂]'}</span>\n\n`+
+      `Regel: zwei Orientierungen sind gleich,\n`+
+      `wenn sie sich durch eine GERADE Anzahl\n`+
+      `von Vertauschungen unterscheiden.\n\n`+
+      `Jeder k-Simplex hat genau 2 Orientierungen.`;
+    draw();
+  }
+  document.querySelectorAll('#permBtns .pb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#permBtns .pb').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); perm=+b.dataset.p; upd();
+  }));
+  upd();
+})();
+
+/* ============================================================================
+   TEIL 5 — RANDOPERATOREN
+   ============================================================================ */
+const DEMO = (function(){
+  // Standard-Beispielkomplex aus Fig.2 des Papers (4 Knoten, 4 Kanten, 1 Dreieck)
+  const nodes=[{x:200,y:90},{x:430,y:170},{x:330,y:350},{x:120,y:290}];
+  const edges=[[0,1],[0,3],[1,2],[2,3]];
+  const tris=[];
+  return {nodes,edges,tris};
+})();
+
+(function(){
+  const cv=document.getElementById('bndCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  // Komplex: 4 Knoten, 5 Kanten, 2 Dreiecke
+  const nodes=[{x:180,y:90},{x:430,y:110},{x:480,y:330},{x:200,y:350},{x:320,y:220}];
+  const edges=[[0,1],[0,3],[0,4],[1,4],[2,3],[2,4],[3,4]];
+  const tris=[[0,1,4],[0,3,4],[2,3,4]];
+  const cx=new Complex(nodes,edges,tris);
+  let showB1=true, hiCol=-1;
+  function elabel(k){ return 'e'+(k+1); }
+  function matHTML(){
+    const M=showB1?cx.B1:cx.B2;
+    const rowsLbl=showB1?nodes.map((n,i)=>'v'+(i+1)):edges.map((e,i)=>elabel(i));
+    const colsLbl=showB1?edges.map((e,i)=>elabel(i)):tris.map((t,i)=>'T'+(i+1));
+    let h='<table class="mat"><tr><th></th>';
+    colsLbl.forEach((c,j)=>h+=`<th data-c="${j}">${c}</th>`);
+    h+='</tr>';
+    M.forEach((row,i)=>{
+      h+=`<tr><th>${rowsLbl[i]}</th>`;
+      for(let j=0;j<colsLbl.length;j++){
+        const v=row[j];
+        const cls=(v>0?'p':(v<0?'n':'z'))+(j===hiCol?' hi':'');
+        h+=`<td class="${cls}" data-c="${j}">${v}</td>`;
+      }
+      h+='</tr>';
+    });
+    h+='</table>';
+    return h;
+  }
+  function renderMat(){
+    document.getElementById('bndMatrix').innerHTML=matHTML();
+    document.querySelectorAll('#bndMatrix [data-c]').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ hiCol=+el.dataset.c; renderMat(); info(); });
+    });
+  }
+  function info(){
+    const r=document.getElementById('bndRead');
+    if(hiCol<0){ r.textContent='Fahre über eine Spalte …'; return; }
+    if(showB1){
+      const [a,b]=edges[hiCol];
+      r.innerHTML=`Spalte <span class="hl">${elabel(hiCol)} = [v${a+1}, v${b+1}]</span>\n\n`+
+        `v${a+1} : <span style="color:${COL.acc3}">−1</span>  (Schwanz / tail)\n`+
+        `v${b+1} : <span style="color:${COL.ok}">+1</span>  (Spitze / tip)\n`+
+        `alle anderen : 0\n\n`+
+        `Jede Spalte von B₁ hat genau eine −1\nund eine +1 → Spaltensumme = 0.\n`+
+        `Deshalb liegt 1 im Kern von B₁ᵀ.`;
+    } else {
+      const t=tris[hiCol];
+      let s=`Spalte <span class="hl">T${hiCol+1} = [v${t[0]+1}, v${t[1]+1}, v${t[2]+1}]</span>\n\n`;
+      s+=`Rand = [v${t[1]+1},v${t[2]+1}] − [v${t[0]+1},v${t[2]+1}] + [v${t[0]+1},v${t[1]+1}]\n\n`;
+      for(let i=0;i<cx.E;i++){
+        const v=cx.B2[i][hiCol];
+        if(v!==0) s+=`${elabel(i)} : ${v>0?'<span style="color:'+COL.ok+'">+1</span>  (Orientierung passt)'
+                                         :'<span style="color:'+COL.acc3+'">−1</span>  (Orientierung kippt)'}\n`;
+      }
+      r.innerHTML=s;
+    }
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    tris.forEach((t,i)=>{
+      const p=[nodes[t[0]],nodes[t[1]],nodes[t[2]]].map(n=>[n.x,n.y]);
+      const act=(!showB1 && i===hiCol);
+      triFill(ctx,p[0],p[1],p[2],COL.curl,act?0.4:0.13);
+      const mx=(p[0][0]+p[1][0]+p[2][0])/3,my=(p[0][1]+p[1][1]+p[2][1])/3;
+      circArrow(ctx,mx,my,20,1,act?COL.curl:'rgba(244,114,182,.5)',act?3:2);
+      mono(ctx,'T'+(i+1),mx,my+34,act?COL.curl:COL.dim,12,'center');
+    });
+    edges.forEach(([a,b],k)=>{
+      const A=nodes[a],B=nodes[b];
+      let act=false;
+      if(showB1) act=(k===hiCol);
+      else if(hiCol>=0) act=(cx.B2[k][hiCol]!==0);
+      const col=act?(showB1?COL.acc:(cx.B2[k][hiCol]>0?COL.ok:COL.acc3)):'rgba(96,165,250,.65)';
+      arrow(ctx,A.x,A.y,B.x,B.y,col,act?4:2.2,act?14:10,22);
+      const mx=(A.x+B.x)/2,my=(A.y+B.y)/2;
+      mono(ctx,elabel(k),mx+10,my-12,act?col:COL.dim,12,'center');
+    });
+    nodes.forEach((n,i)=>{
+      let col='#1e2b45';
+      if(showB1&&hiCol>=0){
+        const v=cx.B1[i][hiCol];
+        if(v>0)col='rgba(52,211,153,.85)'; else if(v<0)col='rgba(251,113,133,.85)';
+      }
+      node(ctx,n.x,n.y,17,col,'v'+(i+1),'#eaf2ff');
+    });
+    requestAnimationFrame(draw);
+  }
+  document.getElementById('bShowB1').onclick=()=>{
+    showB1=true;hiCol=-1;
+    document.getElementById('bShowB1').classList.add('on');
+    document.getElementById('bShowB2').classList.remove('on');
+    renderMat();info();};
+  document.getElementById('bShowB2').onclick=()=>{
+    showB1=false;hiCol=-1;
+    document.getElementById('bShowB2').classList.add('on');
+    document.getElementById('bShowB1').classList.remove('on');
+    renderMat();info();};
+  renderMat(); info(); draw();
+})();
+
+/* ---- ∂∂ = 0 ---- */
+(function(){
+  const cv=document.getElementById('ddCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const sl=document.getElementById('ddStep');
+  const P=[[180,70],[470,120],[300,280]];
+  const texts=[
+    `<h4>Schritt 1 — Ein gefülltes Dreieck</h4><p>Wir nehmen das 2-Simplex
+     T = [v₁,v₂,v₃] mit Rotationsorientierung gegen den Index-Uhrzeigersinn.</p>`,
+    `<h4>Schritt 2 — Der Rand des Dreiecks (B₂)</h4><p>∂T = e₂ − e₃ + e₁.
+     Das ist ein <b>geschlossener Kantenzyklus</b>: man läuft einmal herum und kommt zurück.</p>`,
+    `<h4>Schritt 3 — Der Rand dieses Zyklus (B₁)</h4><p>Jeder Knoten bekommt von der
+     einen Kante <b>+1</b> und von der nächsten <b>−1</b>. Die heben sich auf.</p>`,
+    `<h4>Schritt 4 — Ergebnis: exakt null</h4><p>B₁B₂ = 0. Der Rand eines Randes ist leer.
+     Jede Zirkulation hat damit <b>automatisch Divergenz null</b>.</p>`
+  ];
+  function draw(){
+    clearCv(ctx,W,H);
+    const s=+sl.value;
+    if(s>=1) triFill(ctx,P[0],P[1],P[2],COL.curl,0.22);
+    if(s>=1) circArrow(ctx,(P[0][0]+P[1][0]+P[2][0])/3,(P[0][1]+P[1][1]+P[2][1])/3,28,1,COL.curl,3);
+    const ed=[[0,1],[1,2],[0,2]];
+    const sgn=[1,1,-1];
+    ed.forEach(([a,b],k)=>{
+      const A=P[a],B=P[b];
+      let col='rgba(96,165,250,.5)', w=2.2;
+      if(s>=2){ col=sgn[k]>0?COL.ok:COL.acc3; w=4; }
+      arrow(ctx,A[0],A[1],B[0],B[1],col,w,13,24);
+      const mx=(A[0]+B[0])/2,my=(A[1]+B[1])/2;
+      mono(ctx,'e'+(k+1)+(s>=2?(sgn[k]>0?' (+1)':' (−1)'):''),mx+(k===2?-40:20),my+(k===1?16:-16),
+        s>=2?col:COL.dim,12,'center');
+    });
+    P.forEach((p,i)=>{
+      let col='#1e2b45';
+      if(s>=3) col='rgba(251,191,36,.3)';
+      if(s>=4) col='rgba(52,211,153,.25)';
+      node(ctx,p[0],p[1],19,col,'v'+(i+1),'#eaf2ff');
+      if(s>=3){
+        mono(ctx,'+1 −1',p[0],p[1]-34,COL.harm,12,'center');
+      }
+      if(s>=4){
+        mono(ctx,'= 0',p[0],p[1]-34,COL.ok,14,'center');
+      }
+    });
+    if(s>=4){
+      ctx.save(); ctx.globalAlpha=.85;
+      roundRect(ctx,W/2-130,H-70,260,46,12);
+      ctx.fillStyle='rgba(52,211,153,.12)'; ctx.fill();
+      ctx.strokeStyle='rgba(52,211,153,.5)'; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+      mono(ctx,'B₁ B₂ = 0',W/2,H-47,COL.ok,20,'center');
+    }
+  }
+  function upd(){
+    document.getElementById('ddStepv').textContent=sl.value;
+    document.getElementById('ddText').innerHTML=texts[+sl.value-1];
+    draw();
+  }
+  sl.addEventListener('input',upd); upd();
+})();
+
+/* ============================================================================
+   TEIL 6 — DIV & CURL
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('dcCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const nodes=[{x:180,y:100},{x:450,y:90},{x:540,y:300},{x:300,y:400},{x:130,y:280},{x:340,y:230}];
+  const edges=[[0,1],[0,4],[0,5],[1,2],[1,5],[2,3],[2,5],[3,4],[3,5],[4,5]];
+  const tris=[[0,1,5],[1,2,5],[2,3,5],[0,4,5],[3,4,5]];
+  const cx=new Complex(nodes,edges,tris);
+  let x=new Float64Array(cx.E);
+  let drag=-1, dragY=0, dragV=0;
+  function midpt(k){ const [a,b]=edges[k]; return [(nodes[a].x+nodes[b].x)/2,(nodes[a].y+nodes[b].y)/2]; }
+  function setPreset(p){
+    x=new Float64Array(cx.E);
+    if(p==='grad'){
+      const phi=new Float64Array([3,1,-1,-3,2,0]);
+      const g=LA.mv(LA.T(cx.B1),phi);
+      for(let i=0;i<cx.E;i++)x[i]=g[i]*0.6;
+    } else if(p==='curl'){
+      const psi=new Float64Array(cx.T); psi[0]=2; psi[2]=-1.5;
+      const c=LA.mv(cx.B2,psi);
+      for(let i=0;i<cx.E;i++)x[i]=c[i];
+    } else if(p==='mix'){
+      const phi=new Float64Array([2,1,-1,-2,1,0]);
+      const g=LA.mv(LA.T(cx.B1),phi);
+      const psi=new Float64Array(cx.T); psi[1]=1.8;
+      const c=LA.mv(cx.B2,psi);
+      for(let i=0;i<cx.E;i++)x[i]=g[i]*0.5+c[i];
+    }
+    upd();
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    const dv=cx.div(x), cu=cx.curl(x);
+    const mdv=Math.max(0.5,...Array.from(dv,Math.abs));
+    const mcu=Math.max(0.5,...Array.from(cu,Math.abs));
+    const showD=document.getElementById('dcShowDiv').checked;
+    const showC=document.getElementById('dcShowCurl').checked;
+    tris.forEach((t,i)=>{
+      const p=[nodes[t[0]],nodes[t[1]],nodes[t[2]]].map(n=>[n.x,n.y]);
+      const v=cu[i]||0;
+      if(showC){
+        triFill(ctx,p[0],p[1],p[2],v>=0?COL.curl:COL.acc2,Math.min(.45,Math.abs(v)/mcu*0.42));
+        const mx=(p[0][0]+p[1][0]+p[2][0])/3,my=(p[0][1]+p[1][1]+p[2][1])/3;
+        if(Math.abs(v)>0.05){
+          circArrow(ctx,mx,my,13+Math.min(14,Math.abs(v)/mcu*14),v>0?1:-1,
+            v>0?COL.curl:COL.acc2,2+Math.min(2.5,Math.abs(v)/mcu*2.5));
+          mono(ctx,v.toFixed(1),mx,my+34,v>0?COL.curl:COL.acc2,11,'center');
+        }
+      } else triFill(ctx,p[0],p[1],p[2],'#2b3a58',0.1);
+    });
+    edges.forEach(([a,b],k)=>{
+      const A=nodes[a],B=nodes[b], v=x[k];
+      const col = Math.abs(v)<0.02 ? 'rgba(120,160,230,.3)' : (v>0?COL.grad:COL.acc3);
+      const w=1.6+Math.min(5,Math.abs(v)*1.3);
+      if(v>=0) arrow(ctx,A.x,A.y,B.x,B.y,col,w,11,24);
+      else arrow(ctx,B.x,B.y,A.x,A.y,col,w,11,24);
+      const m=midpt(k);
+      if(Math.abs(v)>0.05) mono(ctx,v.toFixed(1),m[0]+14,m[1]-13,col,11,'center');
+      if(k===drag){ ctx.strokeStyle=COL.acc; ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.arc(m[0],m[1],17,0,7); ctx.stroke(); }
+    });
+    nodes.forEach((n,i)=>{
+      const col = showD ? divColor(dv[i],mdv) : '#1e2b45';
+      node(ctx,n.x,n.y,18,col,'v'+(i+1),'#eaf2ff');
+      if(showD && Math.abs(dv[i])>0.05)
+        mono(ctx,dv[i].toFixed(1),n.x,n.y-30,dv[i]>0?COL.acc3:COL.grad,11.5,'center');
+    });
+    mono(ctx,'Knoten: blau = Quelle (div<0) · rot = Senke (div>0)',W/2,H-16,COL.dim,11.5,'center');
+    requestAnimationFrame(draw);
+  }
+  function upd(){
+    const dv=cx.div(x), cu=cx.curl(x);
+    const d=cx.decompose(x);
+    const E=LA.dot(x,x)||1e-9;
+    document.getElementById('dcRead').innerHTML=
+      `Divergenz B₁x  = [${Array.from(dv,v=>v.toFixed(2)).join(', ')}]\n`+
+      `Curl     B₂ᵀx  = [${Array.from(cu,v=>v.toFixed(2)).join(', ')}]\n\n`+
+      `‖div‖ = <span class="hl">${LA.norm(dv).toFixed(3)}</span>   `+
+      `‖curl‖ = <span class="hl">${LA.norm(cu).toFixed(3)}</span>\n\n`+
+      `Energieanteile:\n`+
+      `  irrotational : ${(100*LA.dot(d.grad,d.grad)/E).toFixed(1)} %\n`+
+      `  solenoidal   : ${(100*LA.dot(d.sol,d.sol)/E).toFixed(1)} %\n`+
+      `  harmonisch   : ${(100*LA.dot(d.harm,d.harm)/E).toFixed(1)} %`;
+  }
+  cv.addEventListener('mousedown',ev=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+    for(let k=0;k<cx.E;k++){ const m=midpt(k);
+      if(Math.hypot(m[0]-mx,m[1]-my)<20){ drag=k; dragY=my; dragV=x[k]; return; } }
+  });
+  window.addEventListener('mousemove',ev=>{
+    if(drag<0)return;
+    const r=cv.getBoundingClientRect();
+    const my=(ev.clientY-r.top)*(cv.height/r.height);
+    x[drag]=Math.max(-6,Math.min(6,dragV-(my-dragY)*0.03)); upd();
+  });
+  window.addEventListener('mouseup',()=>{drag=-1;});
+  cv.addEventListener('dblclick',ev=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+    for(let k=0;k<cx.E;k++){ const m=midpt(k);
+      if(Math.hypot(m[0]-mx,m[1]-my)<20){ x[k]=-x[k]; upd(); return; } }
+  });
+  document.getElementById('dcPure').onclick=()=>setPreset('grad');
+  document.getElementById('dcCurl').onclick=()=>setPreset('curl');
+  document.getElementById('dcMix').onclick=()=>setPreset('mix');
+  document.getElementById('dcZero').onclick=()=>{x=new Float64Array(cx.E);upd();};
+  document.getElementById('dcShowDiv').addEventListener('change',upd);
+  document.getElementById('dcShowCurl').addEventListener('change',upd);
+  setPreset('mix'); draw();
+})();
+
+/* ============================================================================
+   TEIL 7 — HODGE LAPLACE================================================================ */
+(function(){
+  const cv=document.getElementById('hodgeCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const nodes=[{x:170,y:95},{x:430,y:85},{x:530,y:290},{x:280,y:380},{x:120,y:265},{x:330,y:215}];
+  const edges=[[0,1],[0,4],[0,5],[1,2],[1,5],[2,3],[2,5],[3,4],[3,5],[4,5]];
+  const tris=[[0,1,5],[1,2,5],[2,3,5],[0,4,5],[3,4,5]];
+  const cx=new Complex(nodes,edges,tris);
+  let mode='down', sel=0;
+  function M(){ return mode==='down'?cx.L1d:(mode==='up'?cx.L1u:cx.L1); }
+  function midpt(k){ const [a,b]=edges[k]; return [(nodes[a].x+nodes[b].x)/2,(nodes[a].y+nodes[b].y)/2]; }
+  function renderMat(){
+    const Mx=M();
+    let h='<table class="mat"><tr><th></th>';
+    for(let j=0;j<cx.E;j++) h+=`<th>e${j+1}</th>`;
+    h+='</tr>';
+    for(let i=0;i<cx.E;i++){
+      h+=`<tr><th>e${i+1}</th>`;
+      for(let j=0;j<cx.E;j++){
+        const v=Mx[i][j];
+        const cls=(v>0?'p':(v<0?'n':'z'))+((i===sel||j===sel)?' hi':'');
+        h+=`<td class="${cls}" data-i="${i}" data-j="${j}">${v}</td>`;
+      }
+      h+='</tr>';
+    }
+    h+='</table>';
+    document.getElementById('hodgeMatrix').innerHTML=h;
+    document.querySelectorAll('#hodgeMatrix td').forEach(td=>{
+      td.addEventListener('mouseenter',()=>{ sel=+td.dataset.i; renderMat(); info(); });
+    });
+  }
+  function info(){
+    const Mx=M();
+    const nbD=[],nbU=[];
+    for(let j=0;j<cx.E;j++){
+      if(j===sel)continue;
+      if(cx.L1d[sel][j]!==0) nbD.push('e'+(j+1)+(cx.L1d[sel][j]>0?'(+)':'(−)'));
+      if(cx.L1u[sel][j]!==0) nbU.push('e'+(j+1)+(cx.L1u[sel][j]>0?'(+)':'(−)'));
+    }
+    const [a,b]=edges[sel];
+    document.getElementById('hodgeRead').innerHTML=
+      `Gewählte Kante: <span class="hl">e${sel+1} = [v${a+1}, v${b+1}]</span>\n\n`+
+      `L₁↓ Diagonale = ${cx.L1d[sel][sel]}   (= 2, immer:\n`+
+      `   jede Kante hat genau 2 Endknoten)\n`+
+      `L₁↑ Diagonale = ${cx.L1u[sel][sel]}   (= Anzahl Dreiecke,\n`+
+      `   die diese Kante enthalten)\n`+
+      `L₁  Diagonale = ${cx.L1[sel][sel]}\n\n`+
+      `Untere Nachbarn (gem. Knoten):\n  ${nbD.join(', ')||'—'}\n\n`+
+      `Obere Nachbarn (gem. Dreieck):\n  ${nbU.join(', ')||'—'}\n\n`+
+      `Bemerkung: Bei e${sel+1} ist L₁[${sel+1},${sel+1}] oft genau\n`+
+      `2 + #Dreiecke — und viele Nebeneinträge heben\n`+
+      `sich zwischen L₁↓ und L₁↑ gegenseitig auf!`;
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    const Mx=M();
+    tris.forEach((t,i)=>{
+      const p=[nodes[t[0]],nodes[t[1]],nodes[t[2]]].map(n=>[n.x,n.y]);
+      const involved = t.every?false:false;
+      const inTri = (mode!=='down') && cx.B2[sel][i]!==0;
+      triFill(ctx,p[0],p[1],p[2],COL.curl,inTri?0.3:0.08);
+    });
+    edges.forEach(([a,b],k)=>{
+      const A=nodes[a],B=nodes[b];
+      let col='rgba(96,165,250,.35)',w=2;
+      if(k===sel){ col=COL.acc; w=5; }
+      else if(Mx[sel][k]!==0){
+        if(mode==='down'){ col=COL.grad; w=3.4; }
+        else if(mode==='up'){ col=COL.curl; w=3.4; }
+        else { col=Mx[sel][k]>0?COL.ok:COL.acc3; w=3.4; }
+      }
+      arrow(ctx,A.x,A.y,B.x,B.y,col,w,11,22);
+      const m=midpt(k);
+      mono(ctx,'e'+(k+1),m[0]+12,m[1]-13,k===sel?COL.acc:COL.dim,11.5,'center');
+      if(Mx[sel][k]!==0 && k!==sel)
+        mono(ctx,(Mx[sel][k]>0?'+':'')+Mx[sel][k],m[0]-14,m[1]+13,col,11,'center');
+    });
+    nodes.forEach((n,i)=>{
+      const sh = mode!=='up' && (edges[sel][0]===i||edges[sel][1]===i);
+      node(ctx,n.x,n.y,16,sh?'rgba(94,234,212,.35)':'#1e2b45','v'+(i+1),'#eaf2ff');
+    });
+    const lbl={down:'L₁↓ = B₁ᵀB₁  — Kanten mit gemeinsamem KNOTEN',
+               up:'L₁↑ = B₂B₂ᵀ  — Kanten mit gemeinsamem DREIECK',
+               full:'L₁ = L₁↓ + L₁↑  — alles zusammen'}[mode];
+    mono(ctx,lbl,W/2,H-18,COL.acc2,12.5,'center');
+    requestAnimationFrame(draw);
+  }
+  cv.addEventListener('click',ev=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+    for(let k=0;k<cx.E;k++){ const m=midpt(k);
+      if(Math.hypot(m[0]-mx,m[1]-my)<22){ sel=k; renderMat(); info(); return; } }
+  });
+  document.querySelectorAll('.hmode').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.hmode').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); mode=b.dataset.m; renderMat(); info();
+  }));
+  renderMat(); info(); draw();
+})();
+
+/* ============================================================================
+   TEIL 8 — HODGE-ZERLEGUNG
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('decompCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  // Komplex mit optionalem Loch
+  const nodes=[{x:120,y:70},{x:300,y:50},{x:470,y:95},{x:520,y:250},{x:390,y:340},
+               {x:200,y:330},{x:90,y:200},{x:300,y:190}];
+  const edges=[[0,1],[0,6],[0,7],[1,2],[1,7],[2,3],[2,7],[3,4],[3,7],[4,5],[4,7],[5,6],[5,7],[6,7]];
+  const allTris=[[0,1,7],[1,2,7],[2,3,7],[3,4,7],[4,5,7],[0,6,7],[5,6,7]];
+  let cxFull=null, cxHole=null;
+  cxFull=new Complex(nodes,edges,allTris);
+  cxHole=new Complex(nodes,edges,allTris.slice(0,6)); // ein Dreieck fehlt → Loch
+  let cx=cxHole;
+  const rng=mulberry32(7);
+  // Basis-Signale
+  function build(){
+    const phi=new Float64Array(cx.V);
+    for(let i=0;i<cx.V;i++) phi[i]=Math.cos(i*1.1)*2;
+    const g=LA.mv(LA.T(cx.B1),phi);
+    const psi=new Float64Array(Math.max(cx.T,1));
+    for(let i=0;i<cx.T;i++) psi[i]=Math.sin(i*2.1)*1.4;
+    const s=cx.T>0?LA.mv(cx.B2,psi):new Float64Array(cx.E);
+    // harmonisch: Kern von L1
+    let hrm=new Float64Array(cx.E);
+    const tolz=1e-7;
+    for(let k=0;k<cx.E;k++) if(Math.abs(cx.eigF.values[k])<tolz){
+      const u=LA.col(cx.eigF.vectors,k);
+      for(let i=0;i<cx.E;i++) hrm[i]+=u[i]*2.2;
+    }
+    return {g,s,hrm};
+  }
+  let base=build();
+  const S={g:'mxG',c:'mxC',h:'mxH',n:'mxN'};
+  function sig(){
+    const a=+document.getElementById('mxG').value,
+          b=+document.getElementById('mxC').value,
+          c=+document.getElementById('mxH').value,
+          n=+document.getElementById('mxN').value;
+    const r2=mulberry32(99);
+    const x=new Float64Array(cx.E);
+    for(let i=0;i<cx.E;i++) x[i]=a*base.g[i]*0.5+b*base.s[i]+c*base.hrm[i]+n*gauss(r2)*1.2;
+    return x;
+  }
+  function panel(ctx,ox,oy,sc,x,title,col){
+    const sub=(p)=>[ox+p.x*sc, oy+p.y*sc];
+    // Dreiecke
+    (cx.tris).forEach(t=>{
+      const p=[sub(nodes[t[0]]),sub(nodes[t[1]]),sub(nodes[t[2]])];
+      triFill(ctx,p,p[1],p[2],'#2b3a58',0.0);
+    });
+    cx.tris.forEach(t=>{
+      const p=[sub(nodes[t[0]]),sub(nodes[t[1]]),sub(nodes[t[2]])];
+      triFill(ctx,p[0],p[1],p[2],'#3b4a68',0.12);
+    });
+    // Loch markieren
+    if(cx.T<allTris.length){
+      const t=allTris[allTris.length-1];
+      const p=[sub(nodes[t[0]]),sub(nodes[t[1]]),sub(nodes[t[2]])];
+      ctx.save(); ctx.setLineDash([4,3]); ctx.strokeStyle='rgba(251,191,36,.6)'; ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.moveTo(p[0][0],p[0][1]); ctx.lineTo(p[1][0],p[1][1]);
+      ctx.lineTo(p[2][0],p[2][1]); ctx.closePath(); ctx.stroke(); ctx.restore();
+    }
+    const mx=Math.max(0.25,...Array.from(x,Math.abs));
+    edges.forEach(([a,b],k)=>{
+      const A=sub(nodes[a]),B=sub(nodes[b]);
+      const v=x[k];
+      const w=0.7+Math.abs(v)/mx*3.2;
+      const c = col || (v>=0?COL.grad:COL.acc3);
+      if(Math.abs(v)<1e-4){ ctx.strokeStyle='rgba(120,160,230,.18)'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); }
+      else if(v>=0) arrow(ctx,A[0],A[1],B[0],B[1],c,w,8,11);
+      else arrow(ctx,B[0],B[1],A[0],A[1],c,w,8,11);
+    });
+    nodes.forEach(n=>{const p=sub(n); node(ctx,p[0],p[1],4.5,'#45597f');});
+    txt(ctx,title,ox+300*sc,oy+10,col||COL.txt,13,'center',true);
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    const x=sig();
+    const d=cx.decompose(x);
+    const sc=0.48;
+    panel(ctx,20,30,sc,x,'x — Originalsignal',COL.acc);
+    panel(ctx,370,30,sc,d.grad,'x↓ irrotational',COL.grad);
+    panel(ctx,20,290,sc,d.sol,'x↑ solenoidal',COL.curl);
+    panel(ctx,370,290,sc,d.harm,'x_harm harmonisch',COL.harm);
+    // Trennlinien
+    ctx.strokeStyle='rgba(120,160,230,.15)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(W/2,20); ctx.lineTo(W/2,H-20); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(20,H/2); ctx.lineTo(W-20,H/2); ctx.stroke();
+    mono(ctx,'x  =  x↓  +  x↑  +  x_harm',W/2,H-12,COL.acc2,13,'center');
+  }
+  let barInit=false;
+  function upd(){
+    ['G','C','H','N'].forEach(k=>{
+      const el=document.getElementById('mx'+k);
+      document.getElementById('mx'+k+'v').textContent=(+el.value).toFixed(k==='N'?2:2);
+    });
+    cx = document.getElementById('mxHole').checked ? cxHole : cxFull;
+    base=build();
+    const x=sig(), d=cx.decompose(x);
+    const E=LA.dot(x,x)||1e-9;
+    const eg=LA.dot(d.grad,d.grad), es=LA.dot(d.sol,d.sol), eh=LA.dot(d.harm,d.harm);
+    const data=[{
+      x:['irrotational','solenoidal','harmonisch'],
+      y:[100*eg/E,100*es/E,100*eh/E],
+      type:'bar',
+      marker:{color:[COL.grad,COL.curl,COL.harm],
+              line:{color:'rgba(255,255,255,.2)',width:1}},
+      text:[ (100*eg/E).toFixed(1)+'%',(100*es/E).toFixed(1)+'%',(100*eh/E).toFixed(1)+'%'],
+      textposition:'outside', textfont:{color:'#e6edf8',size:12}
+    }];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:220, margin:{l:46,r:12,t:26,b:40},
+      yaxis:{title:'Energieanteil %',range:[0,Math.max(60,Math.max(100*eg/E,100*es/E,100*eh/E)*1.25)],
+             gridcolor:'rgba(120,160,230,.12)'},
+      title:{text:'Hodge-Energieverteilung',font:{size:12,color:'#9fb0cc'}}
+    });
+    if(!barInit){ Plotly.newPlot('decompBars',data,lay,PCFG); barInit=true; }
+    else Plotly.react('decompBars',data,lay,PCFG);
+    const sum=eg+es+eh;
+    document.getElementById('decompRead').innerHTML=
+      `β₁ (Löcher) = <span class="hl">${cx.beta1}</span>   Dreiecke T = ${cx.T}\n\n`+
+      `‖x‖²        = ${E.toFixed(3)}\n`+
+      `‖x↓‖²       = ${eg.toFixed(3)}\n`+
+      `‖x↑‖²       = ${es.toFixed(3)}\n`+
+      `‖x_harm‖²   = ${eh.toFixed(3)}\n`+
+      `Summe       = ${sum.toFixed(3)}  ← = ‖x‖² ✓ (Pythagoras)\n\n`+
+      `Kreuzprodukte (müssen ≈0 sein):\n`+
+      `  ⟨x↓,x↑⟩   = ${LA.dot(d.grad,d.sol).toExponential(2)}\n`+
+      `  ⟨x↓,xₕ⟩   = ${LA.dot(d.grad,d.harm).toExponential(2)}\n`+
+      `  ⟨x↑,xₕ⟩   = ${LA.dot(d.sol,d.harm).toExponential(2)}`;
+    draw();
+    updOrtho(eg,es,eh);
+  }
+  ['mxG','mxC','mxH','mxN'].forEach(id=>document.getElementById(id).addEventListener('input',upd));
+  document.getElementById('mxHole').addEventListener('change',upd);
+
+  /* 3D Orthogonalitäts-Plot */
+  let oInit=false;
+  function updOrtho(eg,es,eh){
+    const a=Math.sqrt(eg),b=Math.sqrt(es),c=Math.sqrt(eh);
+    const axLen=Math.max(a,b,c,1)*1.25;
+    const traces=[
+      {type:'scatter3d',mode:'lines',x:[0,axLen],y:[0,0],z:[0,0],
+       line:{color:COL.grad,width:4},name:'irrot'},
+      {type:'scatter3d',mode:'lines',x:[0,0],y:[0,axLen],z:[0,0],
+       line:{color:COL.curl,width:4},name:'solen'},
+      {type:'scatter3d',mode:'lines',x:[0,0],y:[0,0],z:[0,axLen],
+       line:{color:COL.harm,width:4},name:'harm'},
+      {type:'scatter3d',mode:'lines',x:[0,a],y:[0,b],z:[0,c],
+       line:{color:COL.acc,width:9},name:'x'},
+      {type:'scatter3d',mode:'markers',x:[a],y:[b],z:[c],
+       marker:{size:6,color:COL.acc},name:'x'},
+      // Projektionen
+      {type:'scatter3d',mode:'lines',x:[a,a],y:[b,b],z:[c,0],
+       line:{color:'rgba(251,191,36,.45)',width:2,dash:'dot'},showlegend:false},
+      {type:'scatter3d',mode:'lines',x:[a,a],y:[b,0],z:[0,0],
+       line:{color:'rgba(244,114,182,.45)',width:2,dash:'dot'},showlegend:false},
+      {type:'scatter3d',mode:'lines',x:[a,0],y:[0,0],z:[0,0],
+       line:{color:'rgba(96,165,250,.45)',width:2,dash:'dot'},showlegend:false}
+    ];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:420,margin:{l:0,r:0,t:10,b:0},
+      scene:{
+        xaxis:{title:'‖x↓‖',color:'#9fb0cc',gridcolor:'rgba(120,160,230,.15)',
+               backgroundcolor:'rgba(6,10,18,.4)',showbackground:true,range:[0,axLen]},
+        yaxis:{title:'‖x↑‖',color:'#9fb0cc',gridcolor:'rgba(120,160,230,.15)',
+               backgroundcolor:'rgba(6,10,18,.4)',showbackground:true,range:[0,axLen]},
+        zaxis:{title:'‖xₕ‖',color:'#9fb0cc',gridcolor:'rgba(120,160,230,.15)',
+               backgroundcolor:'rgba(6,10,18,.4)',showbackground:true,range:[0,axLen]},
+        camera:{eye:{x:1.5,y:1.4,z:1.1}}
+      }
+    });
+    if(!oInit){ Plotly.newPlot('orthoPlot',traces,lay,PCFG); oInit=true; }
+    else Plotly.react('orthoPlot',traces,lay,PCFG);
+    const tot=eg+es+eh;
+    document.getElementById('orthoRead').innerHTML=
+      `Die drei Achsen sind paarweise senkrecht.\n`+
+      `Dein Signal ist der türkise Pfeil.\n\n`+
+      `Länge entlang irrotational : ${Math.sqrt(eg).toFixed(3)}\n`+
+      `Länge entlang solenoidal   : ${Math.sqrt(es).toFixed(3)}\n`+
+      `Länge entlang harmonisch   : ${Math.sqrt(eh).toFixed(3)}\n`+
+      `Gesamtlänge ‖x‖            : ${Math.sqrt(tot).toFixed(3)}\n\n`+
+      `Check: √(a²+b²+c²) = ${Math.sqrt(eg+es+eh).toFixed(3)} ✓`;
+  }
+  upd();
+})();
+
+/* ============================================================================
+   TEIL 9 — SPEKTRUM
+   ============================================================================ */
+const SPEC=(function(){
+  const nodes=[{x:120,y:80},{x:300,y:55},{x:470,y:100},{x:520,y:255},{x:380,y:340},
+               {x:190,y:330},{x:95,y:205},{x:300,y:195}];
+  const edges=[[0,1],[0,6],[0,7],[1,2],[1,7],[2,3],[2,7],[3,4],[3,7],[4,5],[4,7],[5,6],[5,7],[6,7]];
+  const tris=[[0,1,7],[1,2,7],[2,3,7],[3,4,7],[4,5,7],[0,6,7]]; // [5,6,7] fehlt → 1 Loch
+  const cx=new Complex(nodes,edges,tris);
+  return {nodes,edges,tris,cx};
+})();
+
+(function(){
+  const {nodes,edges,cx}=SPEC;
+  const cv=document.getElementById('eigCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  let selK=0;
+  // Klassifikation jedes Eigenvektors
+  const tolz=1e-7;
+  const cls=[]; // 'harm' | 'grad' | 'curl'
+  for(let k=0;k<cx.E;k++){
+    const u=LA.col(cx.eigF.vectors,k);
+    const dv=LA.norm(cx.mv(cx.B1,u));
+    const cu=cx.T>0?LA.norm(LA.mv(LA.T(cx.B2),u)):0;
+    const lam=cx.eigF.values[k];
+    if(Math.abs(lam)<tolz) cls.push('harm');
+    else if(dv>cu) cls.push('grad');
+    else cls.push('curl');
+  }
+  const colOf=c=>c==='harm'?COL.harm:(c==='grad'?COL.grad:COL.curl);
+  const nameOf=c=>c==='harm'?'harmonisch':(c==='grad'?'irrotational (Gradient)':'solenoidal (Wirbel)');
+
+  function drawEig(){
+    clearCv(ctx,W,H);
+    const u=LA.col(cx.eigF.vectors,selK);
+    const mx=Math.max(1e-6,...Array.from(u,Math.abs));
+    const sc=0.78, ox=20, oy=10;
+    const sub=p=>[ox+p.x*sc, oy+p.y*sc];
+    SPEC.tris.forEach(t=>{
+      const p=[sub(SPEC.nodes[t[0]]),sub(SPEC.nodes[t[1]]),sub(SPEC.nodes[t[2]])];
+      triFill(ctx,p[0],p[1],p[2],'#3b4a68',0.12);
+    });
+    // Loch markieren
+    { const hole=[5,6,7];
+      const p=[sub(SPEC.nodes[5]),sub(SPEC.nodes[6]),sub(SPEC.nodes[7])];
+      ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(251,191,36,.7)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(p[0][0],p[0][1]); ctx.lineTo(p[1][0],p[1][1]);
+      ctx.lineTo(p[2][0],p[2][1]); ctx.closePath(); ctx.stroke(); ctx.restore();
+      const mxx=(p[0][0]+p[1][0]+p[2][0])/3,myy=(p[0][1]+p[1][1]+p[2][1])/3;
+      mono(ctx,'LOCH',mxx,myy,'rgba(251,191,36,.85)',10,'center');
+    }
+    const c=colOf(cls[selK]);
+    SPEC.edges.forEach(([a,b],k)=>{
+      const A=sub(SPEC.nodes[a]),B=sub(SPEC.nodes[b]);
+      const v=u[k], w=0.8+Math.abs(v)/mx*4.2;
+      if(Math.abs(v)<1e-5){ ctx.strokeStyle='rgba(120,160,230,.18)'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); }
+      else if(v>=0) arrow(ctx,A[0],A[1],B[0],B[1],c,w,10,16);
+      else arrow(ctx,B[0],B[1],A[0],A[1],c,w,10,16);
+    });
+    SPEC.nodes.forEach(n=>{const p=sub(n); node(ctx,p[0],p[1],5,'#45597f');});
+    // Infobox
+    const bx=W-200;
+    ctx.save(); ctx.globalAlpha=.75; ctx.fillStyle='rgba(6,10,18,.9)';
+    roundRect(ctx,bx-16,18,196,130,12); ctx.fill();
+    ctx.strokeStyle='rgba(120,160,230,.25)'; ctx.lineWidth=1; ctx.stroke(); ctx.restore();
+    txt(ctx,'Eigenvektor u'+(selK+1),bx,42,c,13.5,'left',true);
+    mono(ctx,'λ = '+cx.eigF.values[selK].toFixed(4),bx,68,'#fff',13);
+    mono(ctx,nameOf(cls[selK]),bx,92,c,12);
+    mono(ctx,'‖div‖ = '+LA.norm(LA.mv(cx.B1,u)).toFixed(3),bx,114,COL.dim,11.5);
+    mono(ctx,'‖curl‖ = '+(cx.T>0?LA.norm(LA.mv(LA.T(cx.B2),u)).toFixed(3):'0'),bx,134,COL.dim,11.5);
+  }
+  let sInit=false;
+  function drawSpectrum(){
+    const vals=cx.eigF.values;
+    const colors=vals.map((v,k)=>colOf(cls[k]));
+    const widths=vals.map((v,k)=>k===selK?3:0);
+    const data=[{
+      x:vals.map((v,k)=>'u'+(k+1)),
+      y:vals.map(v=>Math.max(v,0)),
+      type:'bar',
+      marker:{color:colors,line:{color:'#fff',width:widths}},
+      hovertemplate:'%{x}<br>λ = %{y:.4f}<extra></extra>'
+    }];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:330,
+      title:{text:'Spektrum von L₁ — Eigenwerte (Frequenzen)',font:{size:13,color:'#9fb0cc'}},
+      yaxis:{title:'λ (topologische Frequenz)',gridcolor:'rgba(120,160,230,.12)'},
+      xaxis:{tickangle:-60,gridcolor:'rgba(120,160,230,.06)'}
+    });
+    if(!sInit){ Plotly.newPlot('spectrumPlot',data,lay,PCFG); sInit=true;
+      document.getElementById('spectrumPlot').on('plotly_click',ev=>{
+        selK=ev.points[0].pointIndex; refresh();
+      });
+    } else Plotly.react('spectrumPlot',data,lay,PCFG);
+  }
+  function refresh(){
+    drawSpectrum(); drawEig();
+    const nh=cls.filter(c=>c==='harm').length;
+    const ng=cls.filter(c=>c==='grad').length;
+    const nc=cls.filter(c=>c==='curl').length;
+    document.getElementById('spectrumRead').innerHTML=
+      `Komplex: V=${cx.V}  E=${cx.E}  T=${cx.T}\n\n`+
+      `<span style="color:${COL.harm}">harmonisch  : ${nh}</span>  (= β₁, Löcher)\n`+
+      `<span style="color:${COL.grad}">irrotational: ${ng}</span>  (= V − β₀ = ${cx.V-1})\n`+
+      `<span style="color:${COL.curl}">solenoidal  : ${nc}</span>  (= rank B₂)\n`+
+      `Summe       : ${nh+ng+nc} = E ✓\n\n`+
+      `Gewählt: u${selK+1},  λ = ${cx.eigF.values[selK].toFixed(5)}\n`+
+      `Typ: ${nameOf(cls[selK])}\n\n`+
+      `λ_min(≠0) = ${cx.eigF.values.filter(v=>v>1e-7)[0].toFixed(4)}\n`+
+      `λ_max     = ${cx.eigF.values[cx.E-1].toFixed(4)}`;
+  }
+  refresh();
+})();
+
+/* ---- GSP↔TSP Brücke ---- */
+(function(){
+  const {nodes,edges,cx}=SPEC;
+  const cv=document.getElementById('bridgeCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const sl=document.getElementById('brIdx');
+  const tolz=1e-7;
+  // nichtnull-Eigenwerte von L0 und L1d
+  const v0=cx.eig0.values.map((v,i)=>({v,i})).filter(o=>o.v>tolz);
+  const v1=cx.eigD.values.map((v,i)=>({v,i})).filter(o=>o.v>tolz);
+  sl.max=Math.min(v0.length,v1.length);
+  let bInit=false;
+  function plot(){
+    const data=[
+      {x:v0.map((o,i)=>i+1),y:v0.map(o=>o.v),type:'scatter',mode:'markers+lines',
+       name:'L₀ (Knoten)',marker:{size:11,color:COL.acc,symbol:'circle'},
+       line:{color:'rgba(94,234,212,.45)',width:2}},
+      {x:v1.map((o,i)=>i+1),y:v1.map(o=>o.v),type:'scatter',mode:'markers',
+       name:'L₁↓ (Kanten)',marker:{size:7,color:COL.grad,symbol:'x',
+       line:{width:2,color:COL.grad}}}
+    ];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:340,showlegend:true,
+      legend:{x:0.02,y:0.98,bgcolor:'rgba(6,10,18,.7)',font:{size:11}},
+      title:{text:'Identische Nicht-Null-Eigenwerte',font:{size:13,color:'#9fb0cc'}},
+      xaxis:{title:'Index',gridcolor:'rgba(120,160,230,.12)'},
+      yaxis:{title:'λ',gridcolor:'rgba(120,160,230,.12)'}
+    });
+    if(!bInit){Plotly.newPlot('bridgePlot',data,lay,PCFG);bInit=true;}
+    else Plotly.react('bridgePlot',data,lay,PCFG);
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    const k=+sl.value-1;
+    const ue=LA.col(cx.eigD.vectors,v1[k].i);
+    const lam=v1[k].v;
+    // Knoten-Eigenvektor via B1 u / sqrt(lam)
+    const un=LA.vscale(LA.mv(cx.B1,ue),1/Math.sqrt(lam));
+    const sc=0.52, oxL=10, oxR=310, oy=8;
+    function panel(ox,mode){
+      const sub=p=>[ox+p.x*sc, oy+p.y*sc+20];
+      if(mode==='node'){
+        edges.forEach(([a,b])=>{
+          const A=sub(nodes[a]),B=sub(nodes[b]);
+          ctx.strokeStyle='rgba(120,160,230,.22)'; ctx.lineWidth=1.3;
+          ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
+        });
+        const mx=Math.max(1e-6,...Array.from(un,Math.abs));
+        nodes.forEach((n,i)=>{const p=sub(n);
+          node(ctx,p[0],p[1],8+Math.abs(un[i])/mx*5,divColor(un[i],mx));});
+        txt(ctx,'L₀ Knoten-Eigenvektor',ox+150*sc+30,16,COL.acc,12.5,'center',true);
+      } else {
+        const mx=Math.max(1e-6,...Array.from(ue,Math.abs));
+        edges.forEach(([a,b],kk)=>{
+          const A=sub(nodes[a]),B=sub(nodes[b]);
+          const v=ue[kk], w=0.8+Math.abs(v)/mx*3.4;
+          if(Math.abs(v)<1e-5){ctx.strokeStyle='rgba(120,160,230,.18)';ctx.lineWidth=1;
+            ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();}
+          else if(v>=0) arrow(ctx,A[0],A[1],B[0],B[1],COL.grad,w,8,12);
+          else arrow(ctx,B[0],B[1],A[0],A[1],COL.grad,w,8,12);
+        });
+        nodes.forEach(n=>{const p=sub(n); node(ctx,p[0],p[1],4,'#45597f');});
+        txt(ctx,'L₁↓ Kanten-Eigenvektor',ox+150*sc+30,16,COL.grad,12.5,'center',true);
+      }
+    }
+    panel(oxL,'node'); panel(oxR,'edge');
+    ctx.strokeStyle='rgba(120,160,230,.2)';
+    ctx.beginPath(); ctx.moveTo(W/2,20); ctx.lineTo(W/2,H-10); ctx.stroke();
+    mono(ctx,'u⁽⁰⁾ = B₁u⁽¹⁾/√λ',W/2,H-10,COL.acc2,12,'center');
+  }
+  function upd(){
+    document.getElementById('brIdxv').textContent=sl.value;
+    const k=+sl.value-1;
+    const ue=LA.col(cx.eigD.vectors,v1[k].i);
+    const lam=v1[k].v;
+    const un=LA.vscale(LA.mv(cx.B1,ue),1/Math.sqrt(lam));
+    // Gegenprobe: L0 un = lam un ?
+    const resid=LA.norm(LA.vsub(LA.mv(cx.L0,un),LA.vscale(un,lam)));
+    document.getElementById('bridgeRead').innerHTML=
+      `λ (L₁↓) = <span class="hl">${lam.toFixed(5)}</span>\n`+
+      `λ (L₀)  = <span class="hl">${v0[k].v.toFixed(5)}</span>  ← identisch!\n\n`+
+      `‖u⁽⁰⁾‖  = ${LA.norm(un).toFixed(4)}  (= 1 nach Normierung)\n`+
+      `Residuum ‖L₀u⁽⁰⁾ − λu⁽⁰⁾‖ = ${resid.toExponential(2)}\n\n`+
+      `→ Der Knoten-Eigenvektor ist wirklich\n`+
+      `   ein Eigenvektor von L₀ zum gleichen λ.\n\n`+
+      `Anzahl gemeinsamer λ: ${Math.min(v0.length,v1.length)}`;
+    draw();
+  }
+  sl.addEventListener('input',upd);
+  plot(); upd();
+})();
+
+/* ============================================================================
+   TEIL 10 — TOPOLOGISCHE FOURIER-TRANSFORMATION
+   ============================================================================ */
+(function(){
+  const {nodes,edges,cx}=SPEC;
+  const cv=document.getElementById('tftCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const tolz=1e-7;
+  const cls=[];
+  for(let k=0;k<cx.E;k++){
+    const u=LA.col(cx.eigF.vectors,k);
+    const lam=cx.eigF.values[k];
+    if(Math.abs(lam)<tolz) cls.push('harm');
+    else cls.push(LA.norm(LA.mv(cx.B1,u))>LA.norm(LA.mv(LA.T(cx.B2),u))?'grad':'curl');
+  }
+  const colOf=c=>c==='harm'?COL.harm:(c==='grad'?COL.grad:COL.curl);
+  let kind='grad';
+  function makeSignal(){
+    const x=new Float64Array(cx.E);
+    const rng=mulberry32(123);
+    if(kind==='grad'||kind==='rough'){
+      const phi=new Float64Array(cx.V);
+      for(let i=0;i<cx.V;i++) phi[i]= kind==='grad'? Math.cos(i*0.75)*2 : Math.cos(i*2.4)*2;
+      const g=LA.mv(LA.T(cx.B1),phi);
+      for(let i=0;i<cx.E;i++)x[i]=g[i];
+    } else if(kind==='vortex'){
+      const psi=new Float64Array(Math.max(cx.T,1));
+      psi[0]=2.2; psi[2]=-1.4;
+      const s=LA.mv(cx.B2,psi);
+      for(let i=0;i<cx.E;i++)x[i]=s[i];
+    } else if(kind==='hole'){
+      for(let k=0;k<cx.E;k++) if(Math.abs(cx.eigF.values[k])<tolz){
+        const u=LA.col(cx.eigF.vectors,k);
+        for(let i=0;i<cx.E;i++)x[i]+=u[i]*3;
+      }
+    } else if(kind==='mix'){
+      const phi=new Float64Array(cx.V);
+      for(let i=0;i<cx.V;i++) phi[i]=Math.cos(i*0.9)*1.5;
+      const g=LA.mv(LA.T(cx.B1),phi);
+      const psi=new Float64Array(Math.max(cx.T,1)); psi[1]=1.6; psi[3]=-1.1;
+      const s=LA.mv(cx.B2,psi);
+      for(let i=0;i<cx.E;i++)x[i]=g[i]*0.7+s[i];
+      for(let k=0;k<cx.E;k++) if(Math.abs(cx.eigF.values[k])<tolz){
+        const u=LA.col(cx.eigF.vectors,k);
+        for(let i=0;i<cx.E;i++)x[i]+=u[i]*1.6;
+      }
+    } else { // noise
+      for(let i=0;i<cx.E;i++)x[i]=gauss(rng)*1.4;
+    }
+    const n=+document.getElementById('tftN').value;
+    if(n>0){ const r2=mulberry32(777); for(let i=0;i<cx.E;i++)x[i]+=gauss(r2)*n*1.2; }
+    return x;
+  }
+  let pInit=false;
+  function draw(x){
+    clearCv(ctx,W,H);
+    const sc=0.76, ox=20, oy=5;
+    const sub=p=>[ox+p.x*sc, oy+p.y*sc];
+    SPEC.tris.forEach(t=>{
+      const p=[sub(nodes[t[0]]),sub(nodes[t[1]]),sub(nodes[t[2]])];
+      triFill(ctx,p[0],p[1],p[2],'#3b4a68',0.12);
+    });
+    { const p=[sub(nodes[5]),sub(nodes[6]),sub(nodes[7])];
+      ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(251,191,36,.6)'; ctx.lineWidth=1.8;
+      ctx.beginPath(); ctx.moveTo(p[0][0],p[0][1]); ctx.lineTo(p[1][0],p[1][1]);
+      ctx.lineTo(p[2][0],p[2][1]); ctx.closePath(); ctx.stroke(); ctx.restore(); }
+    const mx=Math.max(1e-6,...Array.from(x,Math.abs));
+    edges.forEach(([a,b],k)=>{
+      const A=sub(nodes[a]),B=sub(nodes[b]);
+      const v=x[k], w=0.8+Math.abs(v)/mx*4;
+      const c=v>=0?COL.acc:COL.acc3;
+      if(Math.abs(v)<1e-5){ctx.strokeStyle='rgba(120,160,230,.18)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();}
+      else if(v>=0) arrow(ctx,A[0],A[1],B[0],B[1],c,w,10,15);
+      else arrow(ctx,B[0],B[1],A[0],A[1],c,w,10,15);
+    });
+    nodes.forEach(n=>{const p=sub(n); node(ctx,p[0],p[1],5,'#45597f');});
+    txt(ctx,'Signal im Ortsraum',W-120,30,COL.acc,13,'center',true);
+    mono(ctx,'türkis = +  ·  rot = −',W-120,52,COL.dim,11,'center');
+  }
+  function upd(){
+    document.getElementById('tftNv').textContent=(+document.getElementById('tftN').value).toFixed(2);
+    const x=makeSignal();
+    const coef=[];
+    for(let k=0;k<cx.E;k++) coef.push(LA.dot(LA.col(cx.eigF.vectors,k),x));
+    const data=[{
+      x:coef.map((c,k)=>'u'+(k+1)),
+      y:coef,
+      type:'bar',
+      marker:{color:cls.map(colOf),line:{color:'rgba(255,255,255,.15)',width:1}},
+      hovertemplate:'%{x}<br>Koeff = %{y:.3f}<extra></extra>'
+    }];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:380,
+      title:{text:'Topologische Fourier-Koeffizienten  x̃ = Uᵀx',font:{size:13,color:'#9fb0cc'}},
+      yaxis:{title:'Koeffizient',gridcolor:'rgba(120,160,230,.12)',zeroline:true,
+             zerolinecolor:'rgba(120,160,230,.4)'},
+      xaxis:{tickangle:-60,gridcolor:'rgba(120,160,230,.06)'},
+      shapes:[]
+    });
+    if(!pInit){Plotly.newPlot('tftPlot',data,lay,PCFG);pInit=true;}
+    else Plotly.react('tftPlot',data,lay,PCFG);
+    // Energie pro Klasse
+    let eg=0,ec=0,eh=0;
+    coef.forEach((c,k)=>{ if(cls[k]==='grad')eg+=c*c; else if(cls[k]==='curl')ec+=c*c; else eh+=c*c; });
+    const tot=eg+ec+eh||1e-9;
+    // Low-pass Energie (erste 4 nichtnull)
+    let low=0,cnt=0;
+    for(let k=0;k<cx.E&&cnt<4;k++){ if(cx.eigF.values[k]>tolz){ low+=coef[k]*coef[k]; cnt++; } }
+    document.getElementById('tftRead').innerHTML=
+      `Energie pro Teilraum:\n`+
+      `  <span style="color:${COL.grad}">irrotational : ${(100*eg/tot).toFixed(1)} %</span>\n`+
+      `  <span style="color:${COL.curl}">solenoidal   : ${(100*ec/tot).toFixed(1)} %</span>\n`+
+      `  <span style="color:${COL.harm}">harmonisch   : ${(100*eh/tot).toFixed(1)} %</span>\n\n`+
+      `Gesamtenergie ‖x‖² = ${LA.dot(x,x).toFixed(3)}\n`+
+      `Σ Koeffizienten²   = ${coef.reduce((a,b)=>a+b*b,0).toFixed(3)}  ← Parseval ✓\n`+
+      `Low-Pass-Anteil (erste 4 Moden ≠0):\n`+
+      `  ${(100*low/Math.max(coef.reduce((a,b)=>a+b*b,0),1e-9)).toFixed(1)} % der Energie\n`+
+      `  → kompaktes Embedding möglich`;
+    draw(x);
+  }
+  document.querySelectorAll('.tftsig').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.tftsig').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); kind=b.dataset.s; upd();
+  }));
+  document.getElementById('tftN').addEventListener('input',upd);
+  upd();
+})();
+
+/* ============================================================================
+   TEIL 11 — SIMPLIZIALE FILTER
+   ============================================================================ */
+(function(){
+  const {nodes,edges,cx}=SPEC;
+  const cv=document.getElementById('filterCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const tolz=1e-7;
+  // Eigenwerte nach Typ
+  const lamD=[],lamU=[];
+  for(let k=0;k<cx.E;k++){
+    if(cx.eigD.values[k]>tolz) lamD.push(cx.eigD.values[k]);
+    if(cx.eigU.values[k]>tolz) lamU.push(cx.eigU.values[k]);
+  }
+  const ids=['fh','fa1','fa2','fb1','fb2'];
+  function P(){ return {h:+document.getElementById('fh').value,
+                        a1:+document.getElementById('fa1').value,
+                        a2:+document.getElementById('fa2').value,
+                        b1:+document.getElementById('fb1').value,
+                        b2:+document.getElementById('fb2').value}; }
+  function respD(l){ const p=P(); return p.h+p.a1*l+p.a2*l*l; }
+  function respU(l){ const p=P(); return p.h+p.b1*l+p.b2*l*l; }
+  // Testsignal: Mischung
+  function testSignal(){
+    const x=new Float64Array(cx.E);
+    const phi=new Float64Array(cx.V);
+    for(let i=0;i<cx.V;i++) phi[i]=Math.cos(i*0.85)*1.8;
+    const g=LA.mv(LA.T(cx.B1),phi);
+    const psi=new Float64Array(Math.max(cx.T,1)); psi[1]=1.7; psi[3]=-1.3;
+    const s=LA.mv(cx.B2,psi);
+    for(let i=0;i<cx.E;i++)x[i]=g[i]*0.65+s[i];
+    for(let k=0;k<cx.E;k++) if(Math.abs(cx.eigF.values[k])<tolz){
+      const u=LA.col(cx.eigF.vectors,k);
+      for(let i=0;i<cx.E;i++)x[i]+=u[i]*1.5;
+    }
+    return x;
+  }
+  const xin=testSignal();
+  function applyFilter(x){
+    // in der Hodge-Eigenbasis: h(λ) * koeff
+    const y=new Float64Array(cx.E);
+    const p=P();
+    // irrotational-Anteile über eigD
+    for(let k=0;k<cx.E;k++){
+      const l=cx.eigD.values[k];
+      if(l>tolz){ const u=LA.col(cx.eigD.vectors,k); const c=LA.dot(u,x);
+        const g=respD(l); for(let i=0;i<cx.E;i++) y[i]+=g*c*u[i]; }
+    }
+    for(let k=0;k<cx.E;k++){
+      const l=cx.eigU.values[k];
+      if(l>tolz){ const u=LA.col(cx.eigU.vectors,k); const c=LA.dot(u,x);
+        const g=respU(l); for(let i=0;i<cx.E;i++) y[i]+=g*c*u[i]; }
+    }
+    // harmonisch
+    for(let k=0;k<cx.E;k++) if(Math.abs(cx.eigF.values[k])<tolz){
+      const u=LA.col(cx.eigF.vectors,k); const c=LA.dot(u,x);
+      for(let i=0;i<cx.E;i++) y[i]+=p.h*c*u[i];
+    }
+    return y;
+  }
+  let rInit=false;
+  function plotResp(){
+    const lmax=Math.max(...lamD,...lamU,1)*1.08;
+    const xs=[]; for(let i=0;i<=120;i++) xs.push(i/120*lmax);
+    const p=P();
+    const data=[
+      {x:xs,y:xs.map(respD),type:'scatter',mode:'lines',name:'h̃(λ) Gradient',
+       line:{color:COL.grad,width:3}},
+      {x:xs,y:xs.map(respU),type:'scatter',mode:'lines',name:'h̃(λ) Wirbel',
+       line:{color:COL.curl,width:3}},
+      {x:lamD,y:lamD.map(respD),type:'scatter',mode:'markers',name:'Gradient-λ',
+       marker:{color:COL.grad,size:8,symbol:'circle'}},
+      {x:lamU,y:lamU.map(respU),type:'scatter',mode:'markers',name:'Wirbel-λ',
+       marker:{color:COL.curl,size:8,symbol:'diamond'}},
+      {x:[0],y:[p.h],type:'scatter',mode:'markers',name:'harmonisch λ=0',
+       marker:{color:COL.harm,size:13,symbol:'star'}}
+    ];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:300,showlegend:true,
+      legend:{x:0.01,y:-0.22,orientation:'h',font:{size:10},bgcolor:'rgba(0,0,0,0)'},
+      margin:{l:50,r:14,t:28,b:72},
+      title:{text:'Frequenzgang des Filters',font:{size:13,color:'#9fb0cc'}},
+      xaxis:{title:'λ',gridcolor:'rgba(120,160,230,.12)'},
+      yaxis:{title:'Verstärkung',gridcolor:'rgba(120,160,230,.12)',
+             zeroline:true,zerolinecolor:'rgba(120,160,230,.4)'}
+    });
+    if(!rInit){Plotly.newPlot('filterResp',data,lay,PCFG);rInit=true;}
+    else Plotly.react('filterResp',data,lay,PCFG);
+  }
+  function drawSig(){
+    clearCv(ctx,W,H);
+    const y=applyFilter(xin);
+    const sc=0.44;
+    function pan(ox,oy,x,title,col){
+      const sub=p=>[ox+p.x*sc, oy+p.y*sc];
+      SPEC.tris.forEach(t=>{
+        const p=[sub(nodes[t[0]]),sub(nodes[t[1]]),sub(nodes[t[2]])];
+        triFill(ctx,p[0],p[1],p[2],'#3b4a68',0.1);
+      });
+      const mx=Math.max(1e-6,...Array.from(x,Math.abs));
+      edges.forEach(([a,b],k)=>{
+        const A=sub(nodes[a]),B=sub(nodes[b]);
+        const v=x[k], w=0.7+Math.abs(v)/mx*3.2;
+        if(Math.abs(v)<1e-5){ctx.strokeStyle='rgba(120,160,230,.16)';ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();}
+        else if(v>=0) arrow(ctx,A[0],A[1],B[0],B[1],col,w,8,11);
+        else arrow(ctx,B[0],B[1],A[0],A[1],COL.acc3,w,8,11);
+      });
+      nodes.forEach(n=>{const p=sub(n); node(ctx,p[0],p[1],4,'#45597f');});
+      txt(ctx,title,ox+290*sc,oy+6,col,13,'center',true);
+      mono(ctx,'‖·‖ = '+LA.norm(x).toFixed(2),ox+290*sc,oy+300*sc+6,COL.dim,11,'center');
+    }
+    pan(20,16,xin,'Eingang x',COL.acc);
+    pan(370,16,y,'Ausgang h(L₁)x',COL.ok);
+    ctx.strokeStyle='rgba(120,160,230,.18)';
+    ctx.beginPath(); ctx.moveTo(W/2,14); ctx.lineTo(W/2,H-14); ctx.stroke();
+    // Pfeil dazwischen
+    arrow(ctx,W/2-26,H-30,W/2+26,H-30,COL.acc2,3,12,0);
+    mono(ctx,'Filter',W/2,H-48,COL.acc2,12,'center');
+  }
+  function upd(){
+    const p=P();
+    document.getElementById('fhv').textContent=p.h.toFixed(2);
+    document.getElementById('fa1v').textContent=p.a1.toFixed(2);
+    document.getElementById('fa2v').textContent=p.a2.toFixed(2);
+    document.getElementById('fb1v').textContent=p.b1.toFixed(2);
+    document.getElementById('fb2v').textContent=p.b2.toFixed(2);
+    plotResp(); drawSig();
+    const y=applyFilter(xin);
+    const dx=cx.decompose(xin), dy=cx.decompose(y);
+    const e=(v)=>LA.dot(v,v);
+    const deg=Math.max(p.a2!==0?2:(p.a1!==0?1:0), p.b2!==0?2:(p.b1!==0?1:0));
+    document.getElementById('filterRead').innerHTML=
+      `Polynomgrad: <span class="hl">${deg}</span>  → ${deg}-Hop-Nachbarschaft\n\n`+
+      `            Eingang    Ausgang\n`+
+      `irrotation. ${e(dx.grad).toFixed(2).padStart(8)}   ${e(dy.grad).toFixed(2).padStart(8)}\n`+
+      `solenoidal  ${e(dx.sol).toFixed(2).padStart(8)}   ${e(dy.sol).toFixed(2).padStart(8)}\n`+
+      `harmonisch  ${e(dx.harm).toFixed(2).padStart(8)}   ${e(dy.harm).toFixed(2).padStart(8)}\n`+
+      `gesamt      ${e(xin).toFixed(2).padStart(8)}   ${e(y).toFixed(2).padStart(8)}\n\n`+
+      `h̃(0) = ${p.h.toFixed(2)}  (harmonische Verstärkung)\n`+
+      `Filter ist mit L₁ gemeinsam diagonalisierbar →\n`+
+      `Faltung im Ort = Multiplikation im Spektrum.`;
+  }
+  ids.forEach(id=>document.getElementById(id).addEventListener('input',upd));
+  function setP(h,a1,a2,b1,b2){
+    document.getElementById('fh').value=h;
+    document.getElementById('fa1').value=a1;
+    document.getElementById('fa2').value=a2;
+    document.getElementById('fb1').value=b1;
+    document.getElementById('fb2').value=b2;
+    upd();
+  }
+  document.getElementById('fPreGrad').onclick=()=>setP(0,1,0,0,0);
+  document.getElementById('fPreCurl').onclick=()=>setP(0,0,0,1,0);
+  document.getElementById('fPreLow').onclick=()=>setP(1,-0.22,0.012,-0.22,0.012);
+  document.getElementById('fPreHarm').onclick=()=>setP(1,-1,0.3,-1,0.3);
+  document.getElementById('fPreId').onclick=()=>setP(1,0,0,0,0);
+  upd();
+})();
+
+/* ============================================================================
+   TEIL 12 — DETERMINANTE / WEDGE
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('detCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const ids=['dtA','dtB','dtRa','dtRbS'];
+  function vals(){
+    return {
+      a:+document.getElementById('dtA').value*Math.PI/180,
+      b:+document.getElementById('dtB').value*Math.PI/180,
+      ra:+document.getElementById('dtRa').value,
+      rb:+document.getElementById('dtRbS').value
+    };
+  }
+  function draw(){
+    clearCv(ctx,W,H);
+    const {a,b,ra,rb}=vals();
+    const cx=W*0.46, cy=H*0.52, S=112;
+    // Achsen
+    ctx.strokeStyle='rgba(120,160,230,.3)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(cx-190,cy); ctx.lineTo(cx+190,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy+170); ctx.lineTo(cx,cy-170); ctx.stroke();
+    mono(ctx,'x[t−1]',cx+196,cy+14,COL.dim,11.5,'left');
+    mono(ctx,'x[t]',cx+8,cy-176,COL.dim,11.5,'left');
+    const vi=[Math.cos(a)*ra, Math.sin(a)*ra];
+    const vj=[Math.cos(b)*rb, Math.sin(b)*rb];
+    const det=vi[0]*vj[1]-vj[0]*vi[1];
+    const px=p=>[cx+p[0]*S, cy-p[1]*S];
+    // Parallelogramm
+    const O=px([0,0]), A=px(vi), B=px(vj), C=px([vi[0]+vj[0],vi[1]+vj[1]]);
+    ctx.save();
+    ctx.globalAlpha=0.26;
+    ctx.fillStyle = det>=0?COL.ok:COL.acc3;
+    ctx.beginPath(); ctx.moveTo(O[0],O[1]); ctx.lineTo(A[0],A[1]);
+    ctx.lineTo(C[0],C[1]); ctx.lineTo(B[0],B[1]); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle=det>=0?'rgba(52,211,153,.6)':'rgba(251,113,133,.6)';
+    ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(C[0],C[1]);
+    ctx.lineTo(B[0],B[1]); ctx.stroke(); ctx.setLineDash([]);
+    // Winkelbogen
+    ctx.strokeStyle='rgba(167,139,250,.6)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,42,-b,-a, b>a?false:true); ctx.stroke();
+    // Vektoren
+    arrow(ctx,O[0],O[1],A[0],A[1],COL.grad,3.6,13,0);
+    arrow(ctx,O[0],O[1],B[0],B[1],COL.harm,3.6,13,0);
+    mono(ctx,'xᵢ',A[0]+14,A[1]-12,COL.grad,14,'center');
+    mono(ctx,'xⱼ',B[0]+14,B[1]-12,COL.harm,14,'center');
+    // Ergebnis-Box
+    ctx.save(); ctx.globalAlpha=.9;
+    roundRect(ctx,W-212,22,192,110,12);
+    ctx.fillStyle=det>=0?'rgba(52,211,153,.1)':'rgba(251,113,133,.1)'; ctx.fill();
+    ctx.strokeStyle=det>=0?'rgba(52,211,153,.45)':'rgba(251,113,133,.45)';
+    ctx.lineWidth=1.3; ctx.stroke(); ctx.restore();
+    txt(ctx,'Kantensignal eᵢⱼ',W-116,44,COL.dim,12,'center');
+    mono(ctx,det.toFixed(3),W-116,72,det>=0?COL.ok:COL.acc3,24,'center');
+    txt(ctx, Math.abs(det)<0.02?'keine Präzedenz':(det>0?'i geht voraus':'j geht voraus'),
+      W-116,104,det>=0?COL.ok:COL.acc3,12.5,'center',true);
+    mono(ctx,'Fläche = |det|',W-116,122,COL.dim,10.5,'center');
+  }
+  function upd(){
+    const {a,b,ra,rb}=vals();
+    document.getElementById('dtAv').textContent=document.getElementById('dtA').value;
+    document.getElementById('dtBv').textContent=document.getElementById('dtB').value;
+    document.getElementById('dtRav').textContent=(+document.getElementById('dtRa').value).toFixed(2);
+    document.getElementById('dtRb').textContent=(+document.getElementById('dtRbS').value).toFixed(2);
+    const det=ra*rb*Math.sin(b-a);
+    let ang=((b-a)*180/Math.PI)%360; if(ang>180)ang-=360; if(ang<-180)ang+=360;
+    document.getElementById('detRead').innerHTML=
+      `xᵢ = (${(Math.cos(a)*ra).toFixed(2)}, ${(Math.sin(a)*ra).toFixed(2)})\n`+
+      `xⱼ = (${(Math.cos(b)*rb).toFixed(2)}, ${(Math.sin(b)*rb).toFixed(2)})\n\n`+
+      `det = |xᵢ|·|xⱼ|·sin(Δφ)\n`+
+      `    = ${ra.toFixed(2)} · ${rb.toFixed(2)} · sin(${ang.toFixed(1)}°)\n`+
+      `    = <span class="hl">${det.toFixed(4)}</span>\n\n`+
+      `Δφ = ${ang.toFixed(1)}°\n`+
+      `${Math.abs(Math.sin(b-a))<0.03
+        ? '→ Vektoren parallel ⇒ Signal = 0\n   (identische Dynamik)'
+        : (det>0?'→ positiv: i führt, j folgt':'→ negativ: j führt, i folgt')}\n\n`+
+      `Antisymmetrie: Vertauschen von i und j\nspiegelt das Parallelogramm ⇒ det → −det`;
+    draw();
+  }
+  ids.forEach(id=>document.getElementById(id).addEventListener('input',upd));
+  upd();
+})();
+
+/* ---- Lead/Lag Zeitreihen ---- */
+(function(){
+  const slP=document.getElementById('lagP'); if(!slP)return;
+  const slF=document.getElementById('lagF'), slN=document.getElementById('lagN');
+  let tsInit=false, phInit=false;
+  function gen(){
+    const phi=+slP.value, f=+slF.value, n=+slN.value;
+    const L=400, rng=mulberry32(4242);
+    const xi=new Float64Array(L), xj=new Float64Array(L);
+    for(let t=0;t<L;t++){
+      xi[t]=Math.sin(2*Math.PI*f*t)+n*gauss(rng);
+      xj[t]=Math.sin(2*Math.PI*f*t-phi)+n*gauss(rng);
+    }
+    // z-Normierung
+    function z(v){ const m=v.reduce((a,b)=>a+b,0)/v.length;
+      let s=0; for(const q of v)s+=(q-m)*(q-m); s=Math.sqrt(s/v.length)||1;
+      return Float64Array.from(v,q=>(q-m)/s); }
+    return {xi:z(xi),xj:z(xj),L};
+  }
+  function upd(){
+    document.getElementById('lagPv').textContent=(+slP.value).toFixed(2);
+    document.getElementById('lagFv').textContent=(+slF.value).toFixed(3);
+    document.getElementById('lagNv').textContent=(+slN.value).toFixed(2);
+    const {xi,xj,L}=gen();
+    const e=new Float64Array(L-1);
+    for(let t=1;t<L;t++) e[t-1]=xi[t-1]*xj[t]-xj[t-1]*xi[t];
+    const ebar=e.reduce((a,b)=>a+b,0)/e.length;
+    // lagged cross-correlations
+    let r1=0,rm1=0;
+    for(let t=1;t<L;t++){ r1+=xi[t-1]*xj[t]; rm1+=xj[t-1]*xi[t]; }
+    r1/=(L-1); rm1/=(L-1);
+    const tt=[]; for(let t=0;t<L;t++)tt.push(t);
+    const data=[
+      {x:tt,y:Array.from(xi),type:'scatter',mode:'lines',name:'xᵢ',
+       line:{color:COL.grad,width:2}},
+      {x:tt,y:Array.from(xj),type:'scatter',mode:'lines',name:'xⱼ',
+       line:{color:COL.harm,width:2}},
+      {x:tt.slice(1),y:Array.from(e),type:'scatter',mode:'lines',name:'eᵢⱼ[t]',
+       line:{color:COL.curl,width:1.3},yaxis:'y2',opacity:.75}
+    ];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:260,showlegend:true,
+      legend:{x:0.01,y:1.14,orientation:'h',font:{size:10},bgcolor:'rgba(0,0,0,0)'},
+      margin:{l:46,r:46,t:34,b:38},
+      title:{text:'Zeitreihen und resultierendes Kantensignal',font:{size:12,color:'#9fb0cc'}},
+      xaxis:{title:'t',range:[0,Math.min(260,L)],gridcolor:'rgba(120,160,230,.1)'},
+      yaxis:{title:'x (z)',gridcolor:'rgba(120,160,230,.1)'},
+      yaxis2:{title:'eᵢⱼ',overlaying:'y',side:'right',showgrid:false,
+              titlefont:{color:COL.curl},tickfont:{color:COL.curl}}
+    });
+    if(!tsInit){Plotly.newPlot('tsPlot',data,lay,PCFG);tsInit=true;}
+    else Plotly.react('tsPlot',data,lay,PCFG);
+    // Phasenraum (x[t-1],x[t])
+    const K=170;
+    const pts=(v)=>({x:Array.from(v.slice(0,K-1)),y:Array.from(v.slice(1,K))});
+    const pi=pts(xi), pj=pts(xj);
+    const dataP=[
+      {x:pi.x,y:pi.y,type:'scatter',mode:'lines+markers',name:'xᵢ',
+       line:{color:'rgba(96,165,250,.35)',width:1},
+       marker:{size:4,color:COL.grad,opacity:.7}},
+      {x:pj.x,y:pj.y,type:'scatter',mode:'lines+markers',name:'xⱼ',
+       line:{color:'rgba(251,191,36,.35)',width:1},
+       marker:{size:4,color:COL.harm,opacity:.7}}
+    ];
+    // ein Beispiel-Parallelogramm einzeichnen
+    const t0=40;
+    const vi=[xi[t0-1],xi[t0]], vj=[xj[t0-1],xj[t0]];
+    dataP.push({x:[0,vi[0],vi[0]+vj[0],vj[0],0],
+                y:[0,vi[1],vi[1]+vj[1],vj[1],0],
+                type:'scatter',mode:'lines',fill:'toself',
+                fillcolor:(vi[0]*vj[1]-vj[0]*vi[1])>=0?'rgba(52,211,153,.22)':'rgba(251,113,133,.22)',
+                line:{color:COL.acc,width:2},name:'Parallelogramm t='+t0});
+    const layP=Object.assign({},plotlyLayoutBase,{
+      height:300,showlegend:true,
+      legend:{x:0.01,y:1.12,orientation:'h',font:{size:10},bgcolor:'rgba(0,0,0,0)'},
+      margin:{l:50,r:16,t:36,b:46},
+      title:{text:'Phasenraum (x[t−1], x[t]) — Rotationsrichtung verrät die Führung',
+             font:{size:12,color:'#9fb0cc'}},
+      xaxis:{title:'x[t−1]',gridcolor:'rgba(120,160,230,.1)',zeroline:true,
+             zerolinecolor:'rgba(120,160,230,.35)'},
+      yaxis:{title:'x[t]',gridcolor:'rgba(120,160,230,.1)',zeroline:true,
+             zerolinecolor:'rgba(120,160,230,.35)',scaleanchor:'x'}
+    });
+    if(!phInit){Plotly.newPlot('tsPhase',dataP,layP,PCFG);phInit=true;}
+    else Plotly.react('tsPhase',dataP,layP,PCFG);
+    document.getElementById('lagE').textContent=ebar.toFixed(3);
+    document.getElementById('lagR1').textContent=r1.toFixed(3);
+    document.getElementById('lagRm1').textContent=rm1.toFixed(3);
+    const phi=+slP.value;
+    document.getElementById('lagRead').innerHTML=
+      `ē  = mean(eᵢⱼ[t])          = <span class="hl">${ebar.toFixed(4)}</span>\n`+
+      `r̂(+1) = ⟨xᵢ[t−1]·xⱼ[t]⟩   = ${r1.toFixed(4)}\n`+
+      `r̂(−1) = ⟨xⱼ[t−1]·xᵢ[t]⟩   = ${rm1.toFixed(4)}\n`+
+      `r̂(+1) − r̂(−1)            = <span class="hl">${(r1-rm1).toFixed(4)}</span>\n`+
+      `                             ↑ stimmt mit ē überein ✓\n\n`+
+      `${Math.abs(ebar)<0.02
+        ? '→ keine Präzedenz (φ ≈ 0 oder ±π)'
+        : (ebar>0 ? '→ ē > 0:  i geht j voraus (i sendet)'
+                  : '→ ē < 0:  j geht i voraus (j sendet)')}\n\n`+
+      `Setze φ = 0 → ē ≈ 0 (identische Signale,\nkeine zeitliche Asymmetrie).\n`+
+      `Erhöhe das Rauschen → ē schrumpft, bleibt\naber im Vorzeichen stabil.`;
+  }
+  [slP,slF,slN].forEach(s=>s.addEventListener('input',upd));
+  upd();
+})();
+
+/* ============================================================================
+   TEIL 13 — FALLSTUDIE GEHIRN
+   ============================================================================ */
+
+/* ---- Pipeline-Grafik ---- */
+(function(){
+  const cv=document.getElementById('pipeCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  let t=0;
+  const boxes=[
+    {x:40,  l:'Diffusions-MRT', s:'Traktogramm', c:COL.grad},
+    {x:215, l:'Atlas 100 Reg.', s:'Konnektom 100×100', c:COL.grad},
+    {x:390, l:'Top 10 % + binär', s:'Brain-Graph', c:COL.acc},
+    {x:565, l:'3-Clique-Komplex', s:'V=100 E=495 T=720', c:COL.curl},
+    {x:740, l:'fMRT-Zeitreihen', s:'2×1200 TR, 0.01–0.1 Hz', c:COL.harm},
+    {x:915, l:'Lead-Lag Signal', s:'Gl. (23), L=2399', c:COL.ok}
+  ];
+  function draw(){
+    clearCv(ctx,W,H,false);
+    t+=0.02;
+    boxes.forEach((b,i)=>{
+      const y=100, w=150, h=74;
+      const pulse=0.5+0.5*Math.sin(t*1.4-i*0.8);
+      ctx.save();
+      ctx.globalAlpha=0.16+pulse*0.2;
+      ctx.fillStyle=b.c; roundRect(ctx,b.x,y,w,h,13); ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle=b.c; ctx.lineWidth=1.5+pulse*1.2;
+      roundRect(ctx,b.x,y,w,h,13); ctx.stroke();
+      txt(ctx,b.l,b.x+w/2,y+26,'#fff',12.5,'center',true);
+      mono(ctx,b.s,b.x+w/2,y+50,b.c,10.5,'center');
+      if(i<boxes.length-1){
+        const x1=b.x+w+5, x2=boxes[i+1].x-5;
+        arrow(ctx,x1,y+h/2,x2,y+h/2,'rgba(120,160,230,'+(0.3+pulse*0.4)+')',2,9,0);
+      }
+    });
+    // Unterteilung Domäne / Signal
+    ctx.save(); ctx.setLineDash([5,4]);
+    ctx.strokeStyle='rgba(120,160,230,.25)'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(725,40); ctx.lineTo(725,H-40); ctx.stroke();
+    ctx.restore();
+    txt(ctx,'◀  DOMÄNE  (Struktur)',380,50,COL.acc,13,'center',true);
+    txt(ctx,'SIGNAL  (Funktion)  ▶',920,50,COL.harm,13,'center',true);
+    // Ergebnis
+    arrow(ctx,W/2,200,W/2,232,COL.acc2,2.5,11,0);
+    ctx.save(); ctx.globalAlpha=.9;
+    roundRect(ctx,W/2-250,236,500,46,13);
+    ctx.fillStyle='rgba(167,139,250,.1)'; ctx.fill();
+    ctx.strokeStyle='rgba(167,139,250,.45)'; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+    txt(ctx,'Hodge-Zerlegung  →  Divergenz (wer sendet?)  ·  Curl (was zirkuliert?)',
+      W/2,259,COL.acc2,13.5,'center',true);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---- Yeo-Netzwerke: Daten aus dem Paper (schematisch reproduziert) ---- */
+const YEO=[
+  {k:'VIS',n:'Visuell',          div:+0.006, col:'#a78bfa'},
+  {k:'SM', n:'Sensomotorisch',   div:-0.014, col:'#60a5fa'},
+  {k:'DA', n:'Dorsale Aufm.',    div:-0.004, col:'#34d399'},
+  {k:'VA', n:'Ventrale Aufm.',   div:+0.002, col:'#5eead4'},
+  {k:'L',  n:'Limbisch',         div:-0.002, col:'#fbbf24'},
+  {k:'FP', n:'Frontoparietal',   div:+0.013, col:'#fb7185'},
+  {k:'DMN',n:'Default Mode',     div:+0.008, col:'#f472b6'}
+];
+
+/* ---- Energieanteil p pro Proband ---- */
+(function(){
+  const sl=document.getElementById('subj'); if(!sl)return;
+  const rng=mulberry32(2026);
+  const ps=[]; for(let i=0;i<100;i++){ let v=0.25+gauss(rng)*0.074;
+    ps.push(Math.max(0.05,Math.min(0.55,v))); }
+  let init=false;
+  function upd(){
+    const k=+sl.value-1;
+    document.getElementById('subjv').textContent=sl.value;
+    const p=ps[k];
+    document.getElementById('pkVal').textContent=p.toFixed(3);
+    document.getElementById('pdVal').textContent=(1-p).toFixed(3);
+    // Histogramm + Marker
+    const data=[
+      {x:ps,type:'histogram',nbinsx:26,name:'alle Probanden',
+       marker:{color:'rgba(244,114,182,.45)',line:{color:'rgba(244,114,182,.8)',width:1}}},
+    ];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:330,
+      title:{text:'Verteilung des Curl-Energieanteils p über 100 Probanden',
+             font:{size:12.5,color:'#9fb0cc'}},
+      xaxis:{title:'p = ‖x↑‖² / (‖x↓‖² + ‖x↑‖²)',gridcolor:'rgba(120,160,230,.12)'},
+      yaxis:{title:'Anzahl Probanden',gridcolor:'rgba(120,160,230,.12)'},
+      shapes:[
+        {type:'line',x0:p,x1:p,y0:0,y1:1,yref:'paper',
+         line:{color:COL.acc,width:3}},
+        {type:'line',x0:0.25,x1:0.25,y0:0,y1:1,yref:'paper',
+         line:{color:COL.harm,width:2,dash:'dash'}}
+      ],
+      annotations:[
+        {x:p,y:1,yref:'paper',text:'Proband '+(k+1),showarrow:false,
+         yanchor:'bottom',font:{color:COL.acc,size:11}},
+        {x:0.25,y:0.92,yref:'paper',text:'Mittel 0.25',showarrow:false,
+         xanchor:'left',font:{color:COL.harm,size:11}}
+      ]
+    });
+    if(!init){Plotly.newPlot('energyPlot',data,lay,PCFG);init=true;}
+    else Plotly.react('energyPlot',data,lay,PCFG);
+    const mean=ps.reduce((a,b)=>a+b,0)/ps.length;
+    let sd=0; ps.forEach(v=>sd+=(v-mean)*(v-mean)); sd=Math.sqrt(sd/ps.length);
+    document.getElementById('energyRead').innerHTML=
+      `Gl. (29):  p = ‖X↑‖²_F / (‖X↓‖²_F + ‖X↑‖²_F)\n\n`+
+      `Proband ${k+1}:\n`+
+      `  Curl-Energie     ${(100*p).toFixed(1)} %\n`+
+      `  Gradient-Energie ${(100*(1-p)).toFixed(1)} %\n\n`+
+      `Gruppe (n=100):\n`+
+      `  Mittelwert  <span class="hl">${mean.toFixed(3)}</span>\n`+
+      `  Std.-Abw.   <span class="hl">${sd.toFixed(3)}</span>\n`+
+      `  Min / Max   ${Math.min(...ps).toFixed(3)} / ${Math.max(...ps).toFixed(3)}\n\n`+
+      `→ Bei JEDEM Probanden ist p deutlich > 0.\n`+
+      `   Zirkulation ist kein Artefakt.`;
+  }
+  sl.addEventListener('input',upd); upd();
+})();
+
+/* ---- Divergenz pro Netzwerk ---- */
+(function(){
+  const el=document.getElementById('divNetPlot'); if(!el)return;
+  const rng=mulberry32(55);
+  const err=YEO.map(()=>0.0015+Math.abs(gauss(rng))*0.0012);
+  const data=[{
+    x:YEO.map(y=>y.k),
+    y:YEO.map(y=>y.div),
+    type:'bar',
+    marker:{color:YEO.map(y=>y.div>0?'#fb7185':'#60a5fa'),
+            line:{color:'rgba(255,255,255,.2)',width:1}},
+    error_y:{type:'data',array:err.map(e=>e*3),color:'rgba(230,237,248,.5)',
+             thickness:1.4,width:5},
+    hovertemplate:'%{x}<br>div = %{y:.4f}<extra></extra>'
+  }];
+  const lay=Object.assign({},plotlyLayoutBase,{
+    height:380,
+    title:{text:'Mittlere Divergenz pro Yeo-Netzwerk (± 3 SE)',
+           font:{size:12.5,color:'#9fb0cc'}},
+    yaxis:{title:'Divergenz',gridcolor:'rgba(120,160,230,.12)',
+           zeroline:true,zerolinecolor:'rgba(230,237,248,.5)',zerolinewidth:1.5},
+    xaxis:{gridcolor:'rgba(120,160,230,.06)'},
+    annotations:[
+      {x:0.02,y:0.97,xref:'paper',yref:'paper',text:'▲ empfängt / folgt',
+       showarrow:false,font:{color:'#fb7185',size:11},xanchor:'left'},
+      {x:0.02,y:0.05,xref:'paper',yref:'paper',text:'▼ sendet / geht voraus',
+       showarrow:false,font:{color:'#60a5fa',size:11},xanchor:'left'}
+    ]
+  });
+  Plotly.newPlot('divNetPlot',data,lay,PCFG);
+  const send=YEO.slice().sort((a,b)=>a.div-b.div)[0];
+  const recv=YEO.slice().sort((a,b)=>b.div-a.div)[0];
+  document.getElementById('divNetRead').innerHTML=
+    `Stärkster SENDER   : <span class="hl">${send.k}</span>  (${send.n})\n`+
+    `                     div = ${send.div.toFixed(4)}\n`+
+    `Stärkster EMPFÄNGER: <span class="hl">${recv.k}</span>  (${recv.n})\n`+
+    `                     div = ${recv.div.toFixed(4)}\n\n`+
+    `Interpretation:\n`+
+    `  Das Sensomotorische Netz geht anderen\n`+
+    `  Regionen systematisch um 1 TR voraus —\n`+
+    `  es "treibt" die Dynamik.\n`+
+    `  Das Frontoparietale Netz (Aufmerksamkeit,\n`+
+    `  Entscheidungen) folgt — es "integriert".\n\n`+
+    `Wichtig: Das ist zeitliche Präzedenz,\n`+
+    `NICHT Kausalität.`;
+
+  /* schematisches Gehirn */
+  const cv=document.getElementById('brainCv');
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const rng2=mulberry32(31);
+  // Regionen pseudo-verteilt auf zwei Hemisphären
+  const regions=[];
+  for(let h=0;h<2;h++){
+    for(let i=0;i<34;i++){
+      const net=YEO[i%7];
+      const a=rng2()*Math.PI*2, r=Math.sqrt(rng2())*0.92;
+      // Ellipse pro Hemisphäre
+      const cx=h===0? W*0.28 : W*0.72, cy=H*0.46;
+      const rx=118, ry=140;
+      regions.push({
+        x:cx+Math.cos(a)*r*rx*(h===0?1:1),
+        y:cy+Math.sin(a)*r*ry,
+        d:net.div+gauss(rng2)*0.004,
+        net:net.k, h
+      });
+    }
+  }
+  let bt=0;
+  function drawBrain(){
+    clearCv(ctx,W,H,false);
+    bt+=0.012;
+    // Hemisphären-Umrisse
+    [0,1].forEach(h=>{
+      const cx=h===0? W*0.28 : W*0.72, cy=H*0.46;
+      ctx.save();
+      ctx.strokeStyle='rgba(120,160,230,.25)'; ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.ellipse(cx,cy,126,148,0,0,7); ctx.stroke();
+      ctx.restore();
+      mono(ctx,h===0?'links':'rechts',cx,cy+168,COL.dim,12,'center');
+    });
+    const maxd=Math.max(...regions.map(r=>Math.abs(r.d)));
+    regions.forEach((r,i)=>{
+      const pulse=0.72+0.28*Math.sin(bt*2+i*0.4);
+      ctx.save(); ctx.globalAlpha=pulse;
+      node(ctx,r.x,r.y,4.5+Math.abs(r.d)/maxd*5.5,divColor(r.d,maxd));
+      ctx.restore();
+    });
+    // Legende
+    const lx=W/2-90;
+    txt(ctx,'sendet',lx-4,H-24,COL.grad,12,'right');
+    for(let i=0;i<60;i++){
+      const t=i/59;
+      ctx.fillStyle=divColor((t*2-1)*maxd,maxd);
+      ctx.fillRect(lx+i*3,H-32,3,12);
+    }
+    txt(ctx,'empfängt',lx+188,H-24,COL.acc3,12,'left');
+    requestAnimationFrame(drawBrain);
+  }
+  drawBrain();
+})();
+
+/* ---- Curl über Netzwerk-Tripel ---- */
+(function(){
+  const el=document.getElementById('curlTriPlot'); if(!el)return;
+  const TRIPLES=[
+    {k:'SM→VA→FP',  v:+0.031, a:'SM',b:'VA',c:'FP'},
+    {k:'FP→DMN→VIS',v:-0.027, a:'FP',b:'DMN',c:'VIS'},
+    {k:'VIS→DA→SM', v:+0.022, a:'VIS',b:'DA',c:'SM'},
+    {k:'DMN→L→FP',  v:+0.019, a:'DMN',b:'L',c:'FP'},
+    {k:'DA→VA→DMN', v:-0.016, a:'DA',b:'VA',c:'DMN'},
+    {k:'SM→DA→FP',  v:+0.012, a:'SM',b:'DA',c:'FP'},
+    {k:'VIS→L→DMN', v:-0.009, a:'VIS',b:'L',c:'DMN'},
+    {k:'L→VA→SM',   v:+0.006, a:'L',b:'VA',c:'SM'}
+  ];
+  const data=[{
+    x:TRIPLES.map(t=>t.v),
+    y:TRIPLES.map(t=>t.k),
+    type:'bar', orientation:'h',
+    marker:{color:TRIPLES.map(t=>t.v>0?'#f472b6':'#a78bfa'),
+            line:{color:'rgba(255,255,255,.2)',width:1}},
+    hovertemplate:'%{y}<br>curl = %{x:.4f}<extra></extra>'
+  }];
+  const lay=Object.assign({},plotlyLayoutBase,{
+    height:380, margin:{l:108,r:16,t:34,b:46},
+    title:{text:'Mittlerer Curl pro Netzwerk-Tripel',font:{size:12.5,color:'#9fb0cc'}},
+    xaxis:{title:'Curl',gridcolor:'rgba(120,160,230,.12)',
+           zeroline:true,zerolinecolor:'rgba(230,237,248,.5)',zerolinewidth:1.5},
+    yaxis:{gridcolor:'rgba(120,160,230,.06)',autorange:'reversed'}
+  });
+  Plotly.newPlot('curlTriPlot',data,lay,PCFG);
+
+  const cv=document.getElementById('triCircCv');
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  const sl=document.getElementById('triSel');
+  let tt=0;
+  function cur(){ return TRIPLES[+sl.value]; }
+  function draw(){
+    clearCv(ctx,W,H);
+    tt+=0.02;
+    const T=cur(), dir=T.v>0?1:-1;
+    const cx=W*0.5, cy=H*0.47, R=96;
+    const labels=[T.a,T.b,T.c];
+    const pts=[0,1,2].map(i=>{const a=-Math.PI/2+i*2*Math.PI/3;
+      return [cx+R*Math.cos(a),cy+R*Math.sin(a)];});
+    triFill(ctx,pts[0],pts[1],pts[2],dir>0?COL.curl:COL.acc2,
+      0.1+0.07*Math.sin(tt*2)+Math.min(0.2,Math.abs(T.v)*5));
+    // animierte Umlaufpartikel
+    for(let k=0;k<3;k++){
+      const prog=((tt*0.35+k/3)%1);
+      const seg=Math.floor(prog*3), loc=(prog*3)%1;
+      const i0=dir>0?seg:(2-seg), i1=dir>0?(seg+1)%3:(2-((seg+1)%3)+3)%3;
+      const A=pts[i0], B=pts[i1];
+      const px=A[0]+(B[0]-A[0])*loc, py=A[1]+(B[1]-A[1])*loc;
+      ctx.save(); ctx.shadowColor=dir>0?COL.curl:COL.acc2; ctx.shadowBlur=12;
+      ctx.fillStyle=dir>0?COL.curl:COL.acc2;
+      ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.fill(); ctx.restore();
+    }
+    // Kanten
+    for(let i=0;i<3;i++){
+      const A=pts[i],B=pts[(i+1)%3];
+      const from=dir>0?A:B, to=dir>0?B:A;
+      arrow(ctx,from[0],from[1],to[0],to[1],
+        dir>0?'rgba(244,114,182,.75)':'rgba(167,139,250,.75)',2.6,11,24);
+    }
+    pts.forEach((p,i)=>node(ctx,p[0],p[1],20,'#1e2b45',labels[i],'#eaf2ff'));
+    txt(ctx, 'curl = '+T.v.toFixed(4), cx, H-34, dir>0?COL.curl:COL.acc2,14,'center',true);
+    txt(ctx, dir>0?'Zirkulation IN Referenzrichtung':'Zirkulation GEGEN Referenzrichtung',
+      cx,H-14,COL.dim,11.5,'center');
+    requestAnimationFrame(draw);
+  }
+  function upd(){
+    const T=cur();
+    document.getElementById('triSelv').textContent=T.k;
+    document.getElementById('triCircRead').innerHTML=
+      `Tripel: <span class="hl">${T.a} → ${T.b} → ${T.c}</span>\n`+
+      `Mittlerer Curl: <span class="hl">${T.v.toFixed(4)}</span>\n\n`+
+      `${T.v>0
+        ? 'Positiv ⇒ die Zirkulation folgt der\nReferenzordnung der Netzwerk-Labels.'
+        : 'Negativ ⇒ die Zirkulation läuft der\nReferenzordnung entgegen.'}\n\n`+
+      `Das heißt konkret: ${T.a} geht ${T.b} voraus,\n`+
+      `${T.b} geht ${T.c} voraus, und ${T.c} geht wieder\n`+
+      `${T.a} voraus — ein geschlossener Kreislauf.\n\n`+
+      `Dieses Muster hat NULL Divergenz.\n`+
+      `Ein reines Graphmodell würde es\n`+
+      `vollständig übersehen.`;
+  }
+  sl.addEventListener('input',upd);
+  upd(); draw();
+})();
+
+/* ---- Permutationstest ---- */
+(function(){
+  const slE=document.getElementById('pmEff'); if(!slE)return;
+  const slN=document.getElementById('pmN');
+  let seed=1234, init=false;
+  function run(){
+    const eff=+slE.value, n=+slN.value;
+    const rng=mulberry32(seed);
+    // Probandenwerte: echte Effektstärke + Rauschen
+    const vals=[]; for(let i=0;i<n;i++) vals.push(eff*0.01+gauss(rng)*0.03);
+    const trueMean=vals.reduce((a,b)=>a+b,0)/n;
+    // Sign-Flip-Permutationen
+    const NP=4000; const null_=[];
+    const rng2=mulberry32(seed+99);
+    for(let p=0;p<NP;p++){
+      let s=0;
+      for(let i=0;i<n;i++) s+=vals[i]*(rng2()<0.5?-1:1);
+      null_.push(s/n);
+    }
+    const mu=null_.reduce((a,b)=>a+b,0)/NP;
+    let sd=0; null_.forEach(v=>sd+=(v-mu)*(v-mu)); sd=Math.sqrt(sd/NP)||1e-9;
+    const z=(trueMean-mu)/sd;
+    let cnt=0; null_.forEach(v=>{ if(Math.abs(v)>=Math.abs(trueMean)) cnt++; });
+    const pv=(cnt+1)/(NP+1);
+    const data=[
+      {x:null_,type:'histogram',nbinsx:60,name:'Nullverteilung',
+       marker:{color:'rgba(120,160,230,.4)',line:{color:'rgba(120,160,230,.7)',width:0.6}}}
+    ];
+    const lay=Object.assign({},plotlyLayoutBase,{
+      height:360,
+      title:{text:'Sign-Flip-Permutationstest',font:{size:12.5,color:'#9fb0cc'}},
+      xaxis:{title:'mittlere Divergenz',gridcolor:'rgba(120,160,230,.12)'},
+      yaxis:{title:'Häufigkeit',gridcolor:'rgba(120,160,230,.12)'},
+      shapes:[
+        {type:'line',x0:trueMean,x1:trueMean,y0:0,y1:1,yref:'paper',
+         line:{color:COL.acc3,width:3}}
+      ],
+      annotations:[
+        {x:trueMean,y:1,yref:'paper',text:'beobachtet',showarrow:false,
+         yanchor:'bottom',font:{color:COL.acc3,size:11}}
+      ]
+    });
+    if(!init){Plotly.newPlot('permPlot',data,lay,PCFG);init=true;}
+    else Plotly.react('permPlot',data,lay,PCFG);
+    document.getElementById('pmZ').textContent=z.toFixed(2);
+    document.getElementById('pmP').textContent=pv<1/(NP+1)?'<0.00025':pv.toFixed(5);
+    const sig=pv<0.05/100;
+    const el=document.getElementById('pmSig');
+    el.textContent=sig?'✓ sig.':'✗ n.s.';
+    el.style.color=sig?COL.ok:COL.acc3;
+    document.getElementById('permRead').innerHTML=
+      `Beobachteter Mittelwert : <span class="hl">${trueMean.toFixed(5)}</span>\n`+
+      `Null-Mittelwert μ_perm  : ${mu.toFixed(5)}\n`+
+      `Null-Streuung σ_perm    : ${sd.toFixed(5)}\n`+
+      `z-Score                 : <span class="hl">${z.toFixed(3)}</span>\n`+
+      `p (zweiseitig)          : ${pv<1/(NP+1)?'< 0.00025':pv.toFixed(5)}\n`+
+      `Bonferroni-Schwelle     : 0.05 / 100 = 0.0005\n`+
+      `Entscheidung            : ${sig?'<span style="color:'+COL.ok+'">signifikant</span>'
+                                       :'<span style="color:'+COL.acc3+'">nicht signifikant</span>'}\n\n`+
+      `Prinzip: Unter der Nullhypothese ist das\n`+
+      `Vorzeichen jedes Probandenwerts beliebig.\n`+
+      `4000 zufällige Vorzeichenflips erzeugen die\n`+
+      `Nullverteilung (Paper: 20 000).\n\n`+
+      `Schiebe die Effektstärke auf 0 → der rote\n`+
+      `Strich wandert in die Mitte, p wird groß.`;
+  }
+  slE.addEventListener('input',()=>{
+    document.getElementById('pmEffv').textContent=(+slE.value).toFixed(2); run(); });
+  slN.addEventListener('input',()=>{
+    document.getElementById('pmNv').textContent=slN.value; run(); });
+  document.getElementById('pmRun').onclick=()=>{ seed=Math.floor(Math.random()*99999); run(); };
+  run();
+})();
+
+/* ============================================================================
+   TEIL 14 — ZUSAMMENFASSUNG
+   ============================================================================ */
+(function(){
+  const cv=document.getElementById('summaryCv'); if(!cv)return;
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height;
+  let step=0, auto=false, t=0, autoT=0;
+  const texts=[
+    `SCHRITT 1 — DATEN\n\n`+
+    `Zwei Messungen pro Proband:\n`+
+    `  • Diffusions-MRT  → wie sind Regionen verdrahtet?\n`+
+    `  • fMRT            → wann ist welche Region aktiv?\n\n`+
+    `Problem: Struktur ist statisch & ungerichtet,\n`+
+    `Aktivität liegt nur auf Knoten.`,
+    `SCHRITT 2 — DOMÄNE BAUEN\n\n`+
+    `Konnektom mitteln → Top 10 % → binarisieren → Graph.\n`+
+    `Dann: alle 3-Cliquen als Dreiecke füllen.\n\n`+
+    `  V = 100 Knoten\n  E = 495 Kanten\n  T = 720 Dreiecke\n  β₁ = 4 Löcher\n\n`+
+    `Das ist die DOMÄNE: ein Simplizialkomplex.`,
+    `SCHRITT 3 — SIGNAL KONSTRUIEREN\n\n`+
+    `eᵢⱼ[t] = xᵢ[t−1]xⱼ[t] − xⱼ[t−1]xᵢ[t]\n\n`+
+    `  ✓ antisymmetrisch (echter Fluss)\n`+
+    `  ✓ nutzt die Zeitdimension\n`+
+    `  ✓ kann Wirbel erzeugen\n`+
+    `  ✓ misst Lead/Lag: wer geht voraus?\n\n`+
+    `495 Kanten × 2399 Zeitpunkte.`,
+    `SCHRITT 4 — OPERATOREN ANWENDEN\n\n`+
+    `  B₁ (100×495)  →  Divergenz = B₁x\n`+
+    `  B₂ (495×720)  →  Curl      = B₂ᵀx\n`+
+    `  L₁ = B₁ᵀB₁ + B₂B₂ᵀ\n\n`+
+    `Weil B₁B₂ = 0, sind Gradient und Wirbel\n`+
+    `automatisch orthogonal.`,
+    `SCHRITT 5 — HODGE-ZERLEGUNG\n\n`+
+    `x = x↓ + x↑ + x_harm\n\n`+
+    `Energieanteil der Zirkulation:\n`+
+    `  p = 0.25 ± 0.074\n\n`+
+    `→ Ein Viertel des Signals wäre in einem\n`+
+    `   reinen Graphmodell UNSICHTBAR.`,
+    `SCHRITT 6 — INTERPRETATION\n\n`+
+    `Divergenz < 0  →  Region SENDET (geht voraus)\n`+
+    `Divergenz > 0  →  Region EMPFÄNGT (folgt)\n\n`+
+    `  SM (sensomotorisch) = stärkster Sender\n`+
+    `  FP (frontoparietal) = stärkster Empfänger\n\n`+
+    `Curl zeigt Kreisläufe zwischen DREI Netzwerken —\n`+
+    `etwas, das es in GSP gar nicht geben kann.\n\n`+
+    `Permutationstest: Muster sind konsistent und\n`+
+    `in beiden Hemisphären symmetrisch.`
+  ];
+  // Layout-Positionen der 6 Stufen
+  const stages=[
+    {x:95,  y:150, l:'Daten',          c:COL.acc},
+    {x:275, y:150, l:'Domäne',         c:COL.grad},
+    {x:455, y:150, l:'Signal',         c:COL.harm},
+    {x:635, y:150, l:'Operatoren',     c:COL.acc2},
+    {x:815, y:150, l:'Zerlegung',      c:COL.curl},
+    {x:995, y:150, l:'Interpretation', c:COL.ok}
+  ];
+  const rng=mulberry32(808);
+  // Mini-Netzwerk für Illustration
+  const mn=[]; for(let i=0;i<9;i++){ const a=i/9*Math.PI*2;
+    mn.push([Math.cos(a)*48, Math.sin(a)*48]); }
+  function drawStageIcon(sx,sy,k,active){
+    ctx.save(); ctx.translate(sx,sy);
+    const al=active?1:0.3; ctx.globalAlpha=al;
+    if(k===0){
+      // zwei Wellen
+      for(let w=0;w<2;w++){
+        ctx.strokeStyle=w===0?COL.grad:COL.harm; ctx.lineWidth=2;
+        ctx.beginPath();
+        for(let i=0;i<=46;i++){
+          const x=-46+i*2, y=Math.sin(i*0.32+w*1.2+t*(active?2:0))*13+(w?16:-16);
+          i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      }
+    } else if(k===1){
+      // Graph mit gefüllten Dreiecken
+      for(let i=0;i<9;i+=3){
+        triFill(ctx,mn[i],mn[(i+1)%9],mn[(i+2)%9],COL.curl,active?0.2:0.08);
+      }
+      ctx.strokeStyle='rgba(96,165,250,.7)'; ctx.lineWidth=1.3;
+      for(let i=0;i<9;i++){ for(let j=i+1;j<9;j++){
+        if((i+j)%3===0){ ctx.beginPath(); ctx.moveTo(mn[i][0],mn[i][1]);
+          ctx.lineTo(mn[j][0],mn[j][1]); ctx.stroke(); } } }
+      mn.forEach(p=>node(ctx,p[0],p[1],4.5,'#45597f'));
+    } else if(k===2){
+      // Parallelogramm
+      const a=t*(active?1:0);
+      const vi=[Math.cos(0.4+a)*40,Math.sin(0.4+a)*40];
+      const vj=[Math.cos(1.5+a)*34,Math.sin(1.5+a)*34];
+      ctx.save(); ctx.globalAlpha=al*0.3; ctx.fillStyle=COL.ok;
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(vi[0],-vi[1]);
+      ctx.lineTo(vi[0]+vj[0],-(vi[1]+vj[1])); ctx.lineTo(vj[0],-vj[1]);
+      ctx.closePath(); ctx.fill(); ctx.restore();
+      arrow(ctx,0,0,vi[0],-vi[1],COL.grad,2.4,9,0);
+      arrow(ctx,0,0,vj[0],-vj[1],COL.harm,2.4,9,0);
+    } else if(k===3){
+      // Matrizen
+      [[-46,-20,COL.grad,'B₁'],[6,-20,COL.curl,'B₂']].forEach(([mx,my,c,l])=>{
+        ctx.strokeStyle=c; ctx.lineWidth=1.4;
+        roundRect(ctx,mx,my,40,40,5); ctx.stroke();
+        for(let r=0;r<4;r++)for(let q=0;q<4;q++){
+          const v=((r*3+q*5+(active?Math.floor(t*2):0))%7)-3;
+          if(v===0)continue;
+          ctx.globalAlpha=al*0.75;
+          ctx.fillStyle=v>0?COL.ok:COL.acc3;
+          ctx.fillRect(mx+4+q*9,my+4+r*9,6,6);
+          ctx.globalAlpha=al;
+        }
+        mono(ctx,l,mx+20,my+52,c,11,'center');
+      });
+    } else if(k===4){
+      // 3 Balken
+      const vals=[0.75,0.25,0.03];
+      const cols=[COL.grad,COL.curl,COL.harm];
+      vals.forEach((v,i)=>{
+        const bh=v*62*(active?(0.85+0.15*Math.sin(t*2+i)):1);
+        ctx.fillStyle=cols[i];
+        roundRect(ctx,-48+i*34,24-bh,24,bh,4); ctx.fill();
+      });
+      ctx.strokeStyle='rgba(120,160,230,.4)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(-54,25); ctx.lineTo(44,25); ctx.stroke();
+    } else {
+      // Gehirn-Schema
+      [[-26,0],[26,0]].forEach(([ox])=>{
+        ctx.strokeStyle='rgba(120,160,230,.4)'; ctx.lineWidth=1.3;
+        ctx.beginPath(); ctx.ellipse(ox,0,24,34,0,0,7); ctx.stroke();
+      });
+      const rr=mulberry32(5);
+      for(let i=0;i<22;i++){
+        const h=i<11?-26:26;
+        const a=rr()*Math.PI*2, r=Math.sqrt(rr())*0.85;
+        const x=h+Math.cos(a)*r*22, y=Math.sin(a)*r*31;
+        const d=Math.sin(i*1.7+(active?t:0))*1;
+        node(ctx,x,y,3.2,divColor(d,1));
+      }
+    }
+    ctx.restore();
+  }
+  function draw(){
+    clearCv(ctx,W,H,false);
+    t+=0.02;
+    if(auto){ autoT+=0.016; if(autoT>3.2){ autoT=0; step=(step+1)%6; syncBtns(); } }
+    // Verbindungslinie
+    ctx.strokeStyle='rgba(120,160,230,.14)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(stages[0].x,150); ctx.lineTo(stages[5].x,150); ctx.stroke();
+    // Fortschrittslinie
+    const gx=stages[0].x+(stages[5].x-stages[0].x)*(step/5);
+    const g=ctx.createLinearGradient(stages[0].x,0,gx,0);
+    g.addColorStop(0,COL.acc); g.addColorStop(1,COL.acc2);
+    ctx.strokeStyle=g; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(stages[0].x,150); ctx.lineTo(gx,150); ctx.stroke();
+    stages.forEach((s,i)=>{
+      const act=i<=step;
+      const cur=i===step;
+      ctx.save();
+      if(cur){ ctx.shadowColor=s.c; ctx.shadowBlur=22; }
+      ctx.fillStyle=act?s.c:'#1b2740';
+      ctx.beginPath(); ctx.arc(s.x,150,cur?17:12,0,7); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle=act?'#071018':'#6b7f9f';
+      ctx.font='bold 12px ui-monospace, monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(i+1,s.x,150);
+      txt(ctx,s.l,s.x,124,cur?s.c:(act?COL.dim:'#4a5c7a'),cur?13:11.5,'center',cur);
+      drawStageIcon(s.x,240,i,cur);
+    });
+    // Textbox
+    ctx.save(); ctx.globalAlpha=.92;
+    roundRect(ctx,60,320,W-120,180,14);
+    ctx.fillStyle='rgba(6,10,18,.85)'; ctx.fill();
+    ctx.strokeStyle=stages[step].c+'55'; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+    const lines=texts[step].split('\n');
+    lines.forEach((ln,i)=>{
+      const isTitle=i===0;
+      ctx.fillStyle=isTitle?stages[step].c:'#cdd9ee';
+      ctx.font=(isTitle?'bold 14px Inter, sans-serif':'13px ui-monospace, monospace');
+      ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText(ln,84,344+i*17.5);
+    });
+    requestAnimationFrame(draw);
+  }
+  function syncBtns(){
+    document.querySelectorAll('.sumStep').forEach(b=>
+      b.classList.toggle('on',+b.dataset.s===step));
+    document.getElementById('summaryRead').innerHTML=
+      `Stufe ${step+1} von 6 — <span class="hl">${stages[step].l}</span>\n\n`+
+      texts[step].split('\n').slice(2).join('\n');
+  }
+  document.querySelectorAll('.sumStep').forEach(b=>b.addEventListener('click',()=>{
+    step=+b.dataset.s; auto=false;
+    document.getElementById('sumAuto').classList.remove('on');
+    document.getElementById('sumAuto').textContent='▶ Auto';
+    syncBtns();
+  }));
+  document.getElementById('sumAuto').onclick=function(){
+    auto=!auto; autoT=0;
+    this.classList.toggle('on',auto);
+    this.textContent=auto?'⏸ Stop':'▶ Auto';
+  };
+  syncBtns(); draw();
+})();
+
+/* ============================================================================
+   GLOSSAR
+   ============================================================================ */
+(function(){
+  const el=document.getElementById('glossary'); if(!el)return;
+  const G=[
+    ['k-Simplex','Menge aus k+1 Knoten. 0 = Punkt, 1 = Kante, 2 = Dreieck, 3 = Tetraeder.'],
+    ['Simplizialkomplex','Sammlung von Simplizes, die alle Seitenflächen enthält. Ein Graph ist ein Komplex der Ordnung 1.'],
+    ['Orientierung','Fixierte Reihenfolge der Knoten eines Simplex. Legt nur das Vorzeichen fest, keine Einbahnstraße.'],
+    ['Antisymmetrie','eᵢⱼ = −eⱼᵢ. Pflichteigenschaft jedes echten Kantensignals.'],
+    ['Randoperator B₁','Matrix V×E. Spalte je Kante: −1 am Schwanz, +1 an der Spitze.'],
+    ['Randoperator B₂','Matrix E×T. Spalte je Dreieck: ±1 je nach Orientierungs­übereinstimmung.'],
+    ['∂∂ = 0','B₁B₂ = 0. Der Rand eines Randes ist leer. Herzstück der Theorie.'],
+    ['Divergenz','B₁x. Netto-Zu-/Abfluss an jedem Knoten. >0 Senke, <0 Quelle.'],
+    ['Curl','B₂ᵀx. Zirkulation um ein gefülltes Dreieck.'],
+    ['Hodge-Laplace L₁','B₁ᵀB₁ + B₂B₂ᵀ. Kennt untere und obere Nachbarschaft von Kanten.'],
+    ['L₁↓ / L₁↑','Untere Nachbarschaft (gemeinsamer Knoten) / obere Nachbarschaft (gemeinsames Dreieck).'],
+    ['Hodge-Zerlegung','x = x↓ + x↑ + x_harm. Eindeutig und orthogonal. Hauptresultat der Theorie.'],
+    ['Irrotational','Gradient eines Knotenpotentials. Hat Divergenz, aber keinen Curl.'],
+    ['Solenoidal','Zirkulation um gefüllte Dreiecke. Hat Curl, aber keine Divergenz.'],
+    ['Harmonisch','Weder Divergenz noch Curl. Kreist um Löcher. Liegt in ker(L₁).'],
+    ['Betti-Zahl β₁','dim ker(L₁) = Anzahl der 1-dimensionalen Löcher. In der Hirnstudie: 4.'],
+    ['Clique-Komplex','Alle 3-Cliquen eines Graphen werden als Dreiecke gefüllt. Standardwahl im Paper.'],
+    ['Topologische Frequenz','Eigenwert λ von L₁. Für Gradienten = ‖div(u)‖², für Wirbel = ‖curl(u)‖².'],
+    ['TFT','Topologische Fourier-Transformation: x̃ = Uᵀx. Projektion auf die Eigenbasis.'],
+    ['Simplizialer Filter','h(L₁) = h_harm·I + Σαₘ L₁↓^m + Σβₙ L₁↑ⁿ. Polynom ⇒ k-Hop-lokal.'],
+    ['k-Hop-Lokalität','Polynomgrad k ⇒ jede Kante sieht nur ihre k-Schritt-Nachbarschaft. Verteilt rechenbar.'],
+    ['Line-Graph','Alternative: Kanten werden zu Knoten. Verliert Orientierung und obere Nachbarschaft.'],
+    ['Lead-Lag-Signal','eᵢⱼ[t] = xᵢ[t−1]xⱼ[t] − xⱼ[t−1]xᵢ[t]. Der Vorschlag des Papers für Kantensignale.'],
+    ['Wedge-Produkt','Geometrische Deutung der Lead-Lag-Formel: vorzeichenbehaftete Parallelogrammfläche.'],
+    ['JWSS','Joint Wide-Sense Stationary. Unter dieser Annahme gilt E[Eᵢⱼ] = Rᵢⱼ(1) − Rᵢⱼ(−1).'],
+    ['Ergodizität','Erlaubt, den Ensemble-Erwartungswert durch den Zeitmittelwert einer Realisierung zu schätzen.'],
+    ['Curl-Energieanteil p','p = ‖X↑‖²_F / (‖X↓‖²_F + ‖X↑‖²_F). Hirnstudie: 0.25 ± 0.074.'],
+    ['Yeo-Netzwerke','Sieben kanonische Großhirn-Netzwerke: VIS, SM, DA, VA, L, FP, DMN.'],
+    ['Sign-Flip-Test','Nichtparametrischer Permutationstest: Vorzeichen der Probandenwerte zufällig kippen.'],
+    ['Zellkomplex','Flexiblere Verallgemeinerung: erlaubt beliebige Polygone statt nur Dreiecke.'],
+    ['TDL','Topological Deep Learning: neuronale Netze, deren Schichten simpliziale Filter sind.']
+  ];
+  el.innerHTML=G.map(([k,v])=>
+    `<div class="panel tight" style="margin:0">
+       <h4 style="margin:0 0 6px;color:var(--accent)">${k}</h4>
+       <p class="dim" style="font-size:12.8px;margin:0">${v}</p>
+     </div>`).join('');
+})();
+
+/* ============================================================================
+   FINALE: Plotly-Resize bei Fensteränderung
+   ============================================================================ */
+window.addEventListener('resize',()=>{
+  ['decompBars','orthoPlot','spectrumPlot','bridgePlot','tftPlot','filterResp',
+   'tsPlot','tsPhase','energyPlot','divNetPlot','curlTriPlot','permPlot'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && el.data) Plotly.Plots.resize(el);
+  });
+});
+</script>
+</body>
+</html>
