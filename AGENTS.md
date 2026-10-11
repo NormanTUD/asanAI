@@ -111,7 +111,12 @@ citation_graph, jquery, plotly, tf, marked, toc, fcnn_visualization
 anchors, TOC scroll-spy, keyboard shortcuts), layout_guardrail,
 math_guardrail, typography_fix, helper, master_vis, loader, three, search,
 topics, keypoint, progress_tracker, then everything in `blog/modules/*.js`
-(directory currently empty — dropping a file there makes it a base module).
+(dropping a file there makes it a base module). Current modules: `intro.js`
+(cosmic loader sequence), `chapter_switcher.js` (margin dock + sub-TOC spy),
+`link_preview.js` (Wikipedia-style hover previews on course links — fetches
+the target lesson, shows its first content image + title above the link;
+`window.__LKP_FORCE__ = true` bypasses the fine-pointer gate for headless
+tests, where `hover:hover` reports false).
 A new cross-lesson helper belongs in one of these, not copied into lessons.
 
 ## The Blog: lesson authoring contract
