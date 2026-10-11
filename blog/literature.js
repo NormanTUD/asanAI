@@ -6462,11 +6462,13 @@ window.bibData = {
 		year: 1924,
 		author: "Harry Nyquist",
 		title: "Certain Factors Affecting Telegraph Speed",
+		url: "https://en.wikipedia.org/wiki/Harry_Nyquist",
 	},
 	"hartley1928transmission": {
 		year: 1928,
 		author: "Ralph Hartley",
 		title: "Transmission of Information",
+		url: "https://en.wikipedia.org/wiki/Ralph_Hartley",
 	},
 
 	// --- The Missing Links in Neural Networks ---
@@ -17669,5 +17671,480 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Cretaceous_paleogene_iridium_anomaly_3.png",
 		license: "CC BY-SA 4.0",
 		alternativetitle: "K–Pg boundary iridium anomaly"
+	},
+
+	/* Memory as a technology — mnemonics / the memory palace (memorypalace.php) */
+	"methodofloci": {
+		title: "Method of loci (memory palace)",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Method_of_loci",
+		alternativetitle: "Method of loci"
+	},
+	"simonidesofceos": {
+		title: "Simonides of Ceos",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Simonides_of_Ceos",
+		alternativetitle: "Simonides of Ceos"
+	},
+	"artofmemoryyates": {
+		title: "The Art of Memory",
+		author: "Frances A. Yates",
+		year: 1966,
+		url: "https://en.wikipedia.org/wiki/The_Art_of_Memory",
+		alternativetitle: "Yates, The Art of Memory (1966)"
+	},
+	"brunodeumbris1582": {
+		title: "De umbris idearum (On the Shadows of Ideas)",
+		author: "Giordano Bruno",
+		year: 1582,
+		url: "https://en.wikipedia.org/wiki/De_umbris_idearum",
+		alternativetitle: "Bruno, De umbris idearum (1582)"
+	},
+	"giordanobruno": {
+		title: "Giordano Bruno",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Giordano_Bruno",
+		alternativetitle: "Giordano Bruno"
+	},
+
+	/* The algorithm as a concept (algorithm_concept.php) */
+	"euclideanalgorithm": {
+		title: "Euclidean algorithm (greatest common divisor)",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Euclidean_algorithm",
+		alternativetitle: "Euclidean algorithm"
+	},
+	"sieveoferatosthenes": {
+		title: "Sieve of Eratosthenes",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes",
+		alternativetitle: "Sieve of Eratosthenes"
+	},
+	"churchturing1936": {
+		title: "The Church–Turing Thesis",
+		author: "Jack Copeland (Stanford Encyclopedia of Philosophy)",
+		year: "1997 (rev. 2023)",
+		url: "https://plato.stanford.edu/entries/church-turing/",
+		alternativetitle: "Church–Turing Thesis (SEP)"
+	},
+
+	/* The market for information (information_market.php) */
+	"fuggernews": {
+		title: "News — early news networks in Europe (the Augsburg / Fugger information market)",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/News",
+		alternativetitle: "The Fugger news market (Augsburg)"
+	},
+	"habermaspublicsphere": {
+		title: "The Structural Transformation of the Public Sphere",
+		author: "Jürgen Habermas",
+		year: 1962,
+		url: "https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere",
+		alternativetitle: "Habermas, Strukturwandel der Öffentlichen (1962)"
+	},
+	"encyclopedie": {
+		title: "Encyclopédie, ou dictionnaire raisonné des sciences, des arts et des métiers",
+		author: "Denis Diderot & Jean le Rond d'Alembert",
+		year: "1751–1772",
+		url: "https://en.wikipedia.org/wiki/Encyclop%C3%A9die",
+		alternativetitle: "The Encyclopédie (1751–1772)"
+	},
+	"paulotlet": {
+		title: "Paul Otlet",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Paul_Otlet",
+		alternativetitle: "Paul Otlet"
+	},
+	"mundaneum": {
+		title: "Mundaneum",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Mundaneum",
+		alternativetitle: "The Mundaneum"
+	},
+	"traitededocumentation": {
+		title: "Traité de Documentation (Treatise on Documentation)",
+		author: "Paul Otlet",
+		year: 1934,
+		url: "https://en.wikipedia.org/wiki/Trait%C3%A9_de_Documentation",
+		alternativetitle: "Otlet, Traité de Documentation (1934)"
+	},
+	"catalogingtheworld": {
+		title: "Cataloging the World: Paul Otlet and the Birth of the Information Age",
+		author: "Alex Wright",
+		year: 2014,
+		url: "https://www.catalogingtheworld.com/",
+		alternativetitle: "Wright, Cataloging the World (2014)"
+	},
+
+	/* Vannevar Bush & the Memex chain (untold_history.php) */
+	"aswemaythink": {
+		title: "As We May Think",
+		author: "Vannevar Bush",
+		year: 1945,
+		url: "https://en.wikipedia.org/wiki/As_We_May_Think",
+		alternativetitle: "Bush, As We May Think (1945)"
+	},
+	"memex": {
+		title: "Memex",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Memex",
+		alternativetitle: "The Memex"
+	},
+	"augmentinghumanintellect": {
+		title: "Augmenting Human Intellect: A Conceptual Framework",
+		author: "Douglas C. Engelbart",
+		year: 1962,
+		url: "https://www.dougengelbart.org/Fieldguide",
+		alternativetitle: "Engelbart, Augmenting Human Intellect (1962)"
+	},
+	"motherofalldemos": {
+		title: "The Mother of All Demos",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/The_Mother_of_All_Demos",
+		alternativetitle: "The Mother of All Demos (1968)"
+	},
+	"tednelsonhypertext": {
+		title: "Hypertext (term coined by Ted Nelson, 1965)",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Hypertext",
+		alternativetitle: "Hypertext (Nelson, 1965)"
+	},
+	"tednelson": {
+		title: "Ted Nelson",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Ted_Nelson",
+		alternativetitle: "Ted Nelson"
+	},
+
+	/* The controlled experiment (statistics_i.php) */
+	"lind1747scurvy": {
+		title: "A Treatise of the Scurvy",
+		author: "James Lind",
+		year: 1753,
+		url: "https://en.wikipedia.org/wiki/James_Lind",
+		alternativetitle: "Lind, Treatise of the Scurvy (1753; the 1747 trial)"
+	},
+	"fisher1935design": {
+		title: "The Design of Experiments",
+		author: "Ronald A. Fisher",
+		year: 1935,
+		url: "https://en.wikipedia.org/wiki/The_Design_of_Experiments",
+		alternativetitle: "Fisher, The Design of Experiments (1935)"
+	},
+	"doubleblind": {
+		title: "Blinded (double-blind) experiment",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Blinded_experiment",
+		alternativetitle: "Double-blind study"
+	},
+	"rct1948": {
+		title: "Randomized controlled trial",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Randomized_controlled_trial",
+		alternativetitle: "Randomized controlled trial"
+	},
+
+	/* Statistics as a state technique (statistics_i.php) */
+	"graunt1662": {
+		title: "Natural and Political Observations Made upon the Bills of Mortality",
+		author: "John Graunt",
+		year: 1662,
+		url: "https://en.wikipedia.org/wiki/John_Graunt",
+		alternativetitle: "Graunt, Bills of Mortality (1662)"
+	},
+	"quetelet1835": {
+		title: "Essay on Social Physics (Sur l'homme et le développement de ses facultés)",
+		author: "Adolphe Quetelet",
+		year: 1835,
+		url: "https://en.wikipedia.org/wiki/Adolphe_Quetelet",
+		alternativetitle: "Quetelet, social physics / l'homme moyen (1835)"
+	},
+	"galton_eugenics": {
+		title: "Francis Galton (eugenics and the origin of regression)",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Francis_Galton",
+		alternativetitle: "Francis Galton"
+	},
+
+	/* Cognitive evolution (human_mind.php) */
+	"shepardmetzler1971": {
+		title: "Mental rotation of three-dimensional objects",
+		author: "Roger N. Shepard & Jacqueline Metzler",
+		year: 1971,
+		url: "https://en.wikipedia.org/wiki/Mental_rotation",
+		alternativetitle: "Shepard & Metzler, 1971"
+	},
+	"subitizing": {
+		title: "Subitizing",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Subitizing",
+		alternativetitle: "Subitizing"
+	},
+	"piraha2004": {
+		title: "Pirahã language (no exact number words)",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Pirah%C3%A3_language",
+		alternativetitle: "Pirahã (Gordon, 2004)"
+	},
+	"picamundurucu2004": {
+		title: "Exact and Approximate Arithmetic in an Amazonian Indigene Group",
+		author: "Pica, Lemer, Izard & Dehaene",
+		year: 2004,
+		url: "https://doi.org/10.1126/science.1102085",
+		alternativetitle: "Pica et al., 2004 (Mundurucú)"
+	},
+
+	/* Institutions that make knowledge cumulative (human_mind.php) */
+	"libraryofpergamum": {
+		title: "Library of Pergamum",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Library_of_Pergamum",
+		alternativetitle: "Library of Pergamum"
+	},
+	"universityofbologna": {
+		title: "University of Bologna",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/University_of_Bologna",
+		alternativetitle: "University of Bologna (1088)"
+	},
+	"philtrans1665": {
+		title: "Philosophical Transactions of the Royal Society",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Philosophical_Transactions_of_the_Royal_Society",
+		alternativetitle: "Philosophical Transactions (1665)"
+	},
+	"venicepatent1474": {
+		title: "Venetian Patent Statute",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Venetian_Patent_Statute",
+		alternativetitle: "Venetian patent statute (1474)"
+	},
+
+	/* Information before Shannon (statistics_ii.php) */
+	"szilard1929entropy": {
+		title: "Über die Entropieverminderung in einem thermodynamischen System bei Eingriffen intelligenter Wesen",
+		author: "Leo Szilard",
+		year: 1929,
+		url: "https://en.wikipedia.org/wiki/Leo_Szilard",
+		alternativetitle: "Szilard, 1929 (the bit and entropy)"
+	},
+
+	/* Training dynamics (trainingdynamicslab.php) */
+	"lamb2019": {
+		title: "Large Batch Optimization for Deep Learning: Training BERT in 76 Minutes",
+		author: "You et al.",
+		year: 2019,
+		url: "https://arxiv.org/abs/1904.00962",
+		alternativetitle: "LAMB (2019)"
+	},
+	"batchscaling2018": {
+		title: "An Empirical Model of Large-Batch Training",
+		author: "McCandlish, Kaplan & Amodei (OpenAI Dota team)",
+		year: 2018,
+		url: "https://arxiv.org/abs/1812.06162",
+		alternativetitle: "Batch-size scaling (2018)"
+	},
+	"zclip2025": {
+		title: "ZClip: Adaptive Spike Mitigation for LLM Pre-Training",
+		author: "Kumar et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2504.02507",
+		alternativetitle: "ZClip (2025)"
+	},
+	"mup2022": {
+		title: "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+		author: "Yang et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2203.03466",
+		alternativetitle: "μP (2022)"
+	},
+	"wsd2025": {
+		title: "A Multi-Power Law for Loss Curve Prediction Across Learning Rate Schedules",
+		author: "Wang et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2503.12811",
+		alternativetitle: "WSD schedule dynamics (2025)"
+	},
+
+	/* Mixture of Experts (mixture_of_experts.php) */
+	"switchtransformers2022": {
+		title: "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+		author: "Fedus, Zoph & Shazeer",
+		year: 2022,
+		url: "https://arxiv.org/abs/2101.03961",
+		alternativetitle: "Switch Transformers (2022)"
+	},
+	"mixtral2024": {
+		title: "Mixtral of Experts",
+		author: "Jiang et al. (Mistral AI)",
+		year: 2024,
+		url: "https://arxiv.org/abs/2401.04088",
+		alternativetitle: "Mixtral 8x7B (2024)"
+	},
+
+	/* Inference regimes / KV-cache (inference_regimes.php) */
+	"vllm2023": {
+		title: "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+		author: "Kwon et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2309.06180",
+		alternativetitle: "vLLM / PagedAttention (2023)"
+	},
+	"pope2022scaling": {
+		title: "Efficiently Scaling Transformer Inference",
+		author: "Pope et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2211.05102",
+		alternativetitle: "Scaling transformer inference (2022)"
+	},
+	"flashattention2022": {
+		title: "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+		author: "Dao, Fu, Ermon, Rudra & Ré",
+		year: 2022,
+		url: "https://arxiv.org/abs/2205.14135",
+		alternativetitle: "FlashAttention (2022)"
+	},
+
+	/* Tokenizer pathologies (tokenizer_pathologies.php) */
+	"kudo2018unigram": {
+		title: "Subword Regularization to Improve Neural Machine Translation",
+		author: "Taku Kudo",
+		year: 2018,
+		url: "https://arxiv.org/abs/1804.10959",
+		alternativetitle: "Unigram / SentencePiece (2018)"
+	},
+	"byt52022": {
+		title: "ByT5: Towards a Token-free Future with Pre-trained Byte-to-byte Models",
+		author: "Xue et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2105.13626",
+		alternativetitle: "ByT5 (2022)"
+	},
+	"tokenbias2025": {
+		title: "Tokenization Disparities as Infrastructure Bias",
+		author: "Teklehaymanot & Nejdl",
+		year: 2025,
+		url: "https://arxiv.org/abs/2510.12389",
+		alternativetitle: "Tokenization disparity (2025)"
+	},
+
+	/* Evaluation as a discipline (evaluation_methodology.php) */
+	"llmjudge2023": {
+		title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+		author: "Zheng et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2306.05685",
+		alternativetitle: "LLM-as-a-judge (2023)"
+	},
+	"cohenkappa": {
+		title: "Cohen's kappa",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Cohen%27s_kappa",
+		alternativetitle: "Cohen's kappa"
+	},
+	"helm2022": {
+		title: "Holistic Evaluation of Language Models",
+		author: "Liang et al. (CRFM)",
+		year: 2022,
+		url: "https://arxiv.org/abs/2211.09110",
+		alternativetitle: "HELM (2022)"
+	},
+
+	/* The economic layer (economic_layer.php) */
+	"promptcaching": {
+		title: "Prompt caching",
+		author: "Anthropic",
+		year: "accessed 2026",
+		url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching",
+		alternativetitle: "Prompt caching (Anthropic)"
+	},
+
+	/* Retrieval beyond RAG (advanced_retrieval.php) */
+	"rag2020": {
+		title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+		author: "Lewis et al.",
+		year: 2020,
+		url: "https://arxiv.org/abs/2005.11401",
+		alternativetitle: "RAG (2020)"
+	},
+	"bm25": {
+		title: "Okapi BM25",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Okapi_BM25",
+		alternativetitle: "BM25 (Robertson & Zaragoza, 2009)"
+	},
+	"beir2021": {
+		title: "BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
+		author: "Thakur et al.",
+		year: 2021,
+		url: "https://arxiv.org/abs/2104.08663",
+		alternativetitle: "BEIR (2021)"
+	},
+	"contextualretrieval2024": {
+		title: "Introducing Contextual Retrieval",
+		author: "Daniel Ford (Anthropic)",
+		year: 2024,
+		url: "https://www.anthropic.com/news/contextual-retrieval",
+		alternativetitle: "Contextual Retrieval (2024)"
+	},
+	"ragsurvey2023": {
+		title: "Retrieval-Augmented Generation for Large Language Models: A Survey",
+		author: "Gao et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2312.10997",
+		alternativetitle: "RAG survey (2023)"
+	},
+
+	/* Model to system (model_to_system.php) */
+	"react2022": {
+		title: "ReAct: Synergizing Reasoning and Acting in Language Models",
+		author: "Yao et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2210.03629",
+		alternativetitle: "ReAct (2022)"
+	},
+	"nemocguardrails": {
+		title: "NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications with Programmable Rails",
+		author: "Rebedea et al. (NVIDIA)",
+		year: 2023,
+		url: "https://aclanthology.org/2023.emnlp-demo.40",
+		alternativetitle: "NeMo Guardrails (2023)"
+	},
+	"otelgenai": {
+		title: "OpenTelemetry GenAI Semantic Conventions",
+		author: "OpenTelemetry (CNCF)",
+		year: "accessed 2026",
+		url: "https://github.com/open-telemetry/semantic-conventions-genai",
+		alternativetitle: "OpenTelemetry GenAI"
+	},
+	"routellm2024": {
+		title: "RouteLLM: Learning to Route LLMs with Preference Data",
+		author: "Ong et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2406.18665",
+		alternativetitle: "RouteLLM (2024)"
 	}
 };
