@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: From Big Bang to ChatGPT: A Peek inside the Black Box
+title: From Nothing to ChatGPT: A Peek inside the Black Box
 description: The big picture: what this course is about and how it connects human history to modern AI.
 icon: &#127758;
 part: 0
@@ -33,7 +33,7 @@ Most discussions of Artificial Intelligence start with what the systems can do t
 
 ## A Synthesis of Science and History
 
-To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. The [Brief History of AI](history.php) traces the direct intellectual lineage; [The Untold History of AI](untold_history.php) collects the displaced prerequisites that made all of it physically possible. The most consequential sidetracks:
+To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models. [The Untold History of AI](untold_history.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life. The most consequential sidetracks:
 
 * **Astronomy and Precision:** Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.
 * **The Technical and The Philosophical:** We do not just look at code. Concepts of logic, language, and "Geist" migrate from philosophical debates into billions of trainable parameters — and we follow them the whole way.
