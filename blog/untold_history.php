@@ -1903,8 +1903,40 @@ All these developments, even though they were focussed for the normal user, are 
 <div class="md" data-depth="20">
 ## The Internet and the Web: The Training Corpus
 
+### The pre-history: the Memex and hypertext (1945–1968)
+
+Before there was an *internet*, there was a **vision** of what a linked, machine-augmented information system should be — drawn, not built, for two decades. It is the direct prehistory of the web, and of the training corpus the web made.
+
+**Vannevar Bush — "As We May Think" (1945).** In July 1945 the American engineer and science administrator Vannevar Bush published \cite[As We May Think (1945)]{aswemaythink} in *The Atlantic Monthly*. Its central image was the **\cite[Memex]{memex}**: a desk-sized device holding the *entire record* of a person's books, letters, and notes as microfilm — plus, the crucial part, a way to **link** any one item to any other by laying down a "trail" through them. You did not merely find a document; you could follow the associative trail you had previously laid, exactly the way you follow a hyperlink today. The Memex was not a search engine; it was a *library that remembered your paths through it* \cite[As We May Think (1945)]{aswemaythink}.
+
+<figure>
+	<img style="width: 100%; height: auto; display: block;" src="memex_diagram.jpg" alt="The Memex: microfilm banks holding a person's complete record, with a desk and a way to lay down 'trails' linking items" />
+	<figcaption class="md">The Memex, as illustrated in *Life* magazine (September 10, 1945): microfilm banks holding a person's complete record, with a desk and a mechanism for laying down "trails" that link one item to another. Public domain (Life / Time Inc. illustration).</figcaption>
+</figure>
+
+<figure style="float: right; width: 24%; max-width: 210px; margin: 0 0 1em 1em;">
+	<img style="width: 100%; height: auto; display: block;" src="vannevar_bush_portrait.jpg" alt="Vannevar Bush, 1940s" />
+	<figcaption class="md">Vannevar Bush (1890–1974). Public domain (U.S. Treasury / Library of Congress).</figcaption>
+</figure>
+
+**Douglas Engelbart — "Augmenting Human Intellect" (1962), and the "Mother of All Demos" (1968).** Bush wrote a vision; Engelbart proposed a *science* of it. In \cite[Augmenting Human Intellect (1962)]{augmentinghumanintellect} he argued the computer's purpose was to **augment** human problem-solving — to extend the mind, not replace it — and sketched the tools (hypertext, shared displays, collaborative editing) to do it. On **December 9, 1968**, his team's ninety-minute demonstration, now called the \cite["Mother of All Demos" (1968)]{motherofalldemos}, showed most of it *working*: the computer **mouse**, **hypertext** documents, a **shared screen**, a **real-time collaborative text editor**, and videoconferencing — two decades before any of it was ordinary.
+
+<figure style="float: right; width: 28%; max-width: 240px; margin: 0 0 1em 1em;">
+	<img style="width: 100%; height: auto; display: block;" src="sri_computer_mouse_1968.jpg" alt="The computer mouse, demonstrated at the Mother of All Demos (1968)" />
+	<figcaption class="md">The computer mouse, demonstrated at the "Mother of All Demos" (December 9, 1968). CC BY-SA 3.0, SRI International.</figcaption>
+</figure>
+
+**Ted Nelson — the word "hypertext" (1965).** The name came from **\cite[Ted Nelson]{tednelson}**, who coined the word **"hypertext"** in his 1965 paper *Complex Information Processing* and spent the next decades chasing the vision he called **Xanadu**: information you can **access randomly** (not just in reading order), **link** in both directions, and **version** over time \cite[hypertext, coined by Nelson (1965)]{tednelsonhypertext}.
+
+<figure style="float: right; width: 22%; max-width: 200px; margin: 0 0 1em 1em;">
+	<img style="width: 100%; height: auto; display: block;" src="ted_nelson.jpg" alt="Ted Nelson" />
+	<figcaption class="md">Ted Nelson (b. 1937), who coined the word "hypertext" (1965). CC BY-SA 3.0, Dgies.</figcaption>
+</figure>
+
+**The thread.** Read in order, the three are a single idea: **information as a linked, traversable space that augments the mind** — Bush's *Memex* (the vision), Engelbart's *demo* (the working proof), Nelson's *hypertext* (the name and the ambition). It is the same idea \cite[Licklider's man–computer symbiosis (1960)]{licklider} gave a phrase to — *extend the mind, don't replace it* — which this course returns to in [Software](software.php). The web is what this thread eventually became: the next step is where the chain stops being a drawing and becomes a machine.
 
 ### ARPANET: Connecting the First Nodes
+
 
 In 1969, the **Advanced Research Projects Agency Network (ARPANET)** transmitted its first message between UCLA and the Stanford Research Institute, the machine crashed after sending the letters “LO” (of an intended “LOGIN”). The network's purpose was military resilience and academic resource-sharing, documented in \citetitle{rfc1} by **Steve Crocker**. By 1971, ARPANET connected 15 nodes. By 1973, it had crossed the Atlantic. The foundational idea, that heterogeneous computers could exchange data through a shared, decentralized protocol, was radical, but it was *not* about making information public. ARPANET was a closed network for researchers and defense contractors.
 
