@@ -1,7 +1,7 @@
 # Atlas Entity Extraction — Worker Brief
 
 You are extracting **named real-world entities** from lessons of the course
-"From Big Bang to ChatGPT" (a textbook about the history of AI). These entities
+"From Nothing to ChatGPT" (a textbook about the history of AI). These entities
 will be placed as dots on an interactive world map (the "Atlas").
 
 ## Your job

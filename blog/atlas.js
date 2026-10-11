@@ -1,5 +1,5 @@
 /* ============================================================
-   THE ATLAS — From Big Bang to ChatGPT
+   THE ATLAS — From Nothing to ChatGPT
    A single continuous camera: from a street on Earth, out past
    the Moon, the solar system, the galaxies, to the CMB backdrop.
    Every named person, place, institution, author and event in
