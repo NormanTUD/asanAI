@@ -36,7 +36,7 @@ class TestDotMatmul(unittest.TestCase):
     def test_matmul(self):
         A = [[1, 2], [3, 4]]
         B = [[5, 6], [7, 8]]
-        self.assertEqual(matmul(A, B), [[19, 22], [43, 46]])
+        self.assertEqual(matmul(A, B), [[19, 22], [43, 50]])
 
     def test_matmul_identity(self):
         A = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]

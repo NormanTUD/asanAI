@@ -57,8 +57,10 @@ class TestGelu(unittest.TestCase):
     def test_positive_is_almost_identity(self):
         self.assertGreater(gelu(10.0), 9.9)
 
-    def test_is_monotone(self):
-        xs = [-3.0, -1.0, 0.0, 1.0, 3.0]
+    def test_is_monotone_on_nonnegative(self):
+        # GELU is monotone increasing for x >= 0 (it has a small local dip in
+        # the negative region, so we only assert monotonicity where it holds).
+        xs = [0.0, 0.5, 1.0, 2.0, 3.0]
         ys = [gelu(x) for x in xs]
         self.assertTrue(all(a <= b + 1e-12 for a, b in zip(ys, ys[1:])))
 
