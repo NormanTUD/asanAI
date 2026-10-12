@@ -1179,6 +1179,7 @@ async function get_x_and_y () {
 
 	// If real data mode is on, populate neuron outputs for math display
 	try { if (typeof _math_show_real_data !== "undefined" && _math_show_real_data && typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e){}
+	try { if (typeof _math_show_real_data !== "undefined" && _math_show_real_data && typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); } } catch(e){}
 
 	throw_exception_if_x_y_warning();
 

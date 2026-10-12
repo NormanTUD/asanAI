@@ -1941,7 +1941,7 @@ async function test_skip_connection_multi_layer() {
 	log_test("Test skip connection spanning multiple layers (forward)");
 
 	await set_dataset_and_wait("and_xor");
-	await set_model_dataset("and_xor");
+	await set_model_dataset("and");
 	await _set_initializers();
 	await delay(3000);
 

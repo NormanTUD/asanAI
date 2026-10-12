@@ -1985,6 +1985,7 @@ function toggle_math_pin_input() {
 function toggle_math_show_real_data() {
 	_math_show_real_data = !_math_show_real_data;
 	try { console.log("toggle_math_show_real_data:", _math_show_real_data); if (_math_show_real_data && typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e){console.warn(e);}
+	try { if (_math_show_real_data && typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); } } catch(e){console.warn(e);}
 	write_model_to_latex_to_page(1); // await not possible, force
 }
 

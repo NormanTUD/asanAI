@@ -198,6 +198,7 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 	}
 
 	if (latex) {
+		try { $("#math_tab_code").empty(); } catch(e) {}
 		$("#math_tab_code").html(latex);
 
 		try {
@@ -1140,74 +1141,106 @@ function get_layer_output_shape_as_string (layer_idx) {
 
 }
 
-function _get_h (layer_idx) {
-	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
-		try {
-			var comp = null;
-			if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx] && neuron_outputs[layer_idx].output) {
-				var oo = neuron_outputs[layer_idx].output;
-				if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
-			}
-			if (!comp) comp = _get_intermediate_activation(layer_idx);
-			if (comp !== null && comp !== undefined) {
-				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
-				var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
-				var vals = "";
-				if (typeof comp === "number") {
-					vals = isFinite(comp) ? comp.toFixed(dp) : "?";
-					vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
-				} else if (Array.isArray(comp) && comp.length > 0) {
-					if (Array.isArray(comp[0]) && Array.isArray(comp[0][0])) {
-						var flat3d = [];
-						for (var fi = 0; fi < comp.length && flat3d.length < maxVals; fi++) {
-							if (Array.isArray(comp[fi])) {
-								for (var fj = 0; fj < comp[fi].length && flat3d.length < maxVals; fj++) {
-									if (Array.isArray(comp[fi][fj])) {
-										for (var fk = 0; fk < comp[fi][fj].length && flat3d.length < maxVals; fk++) {
-											flat3d.push(comp[fi][fj][fk]);
-										}
-									} else {
-										flat3d.push(comp[fi][fj]);
-									}
+function _get_h_symbol (layer_idx) {
+	var shape_str = get_layer_output_shape_as_string(layer_idx);
+	return "h_" + layer_idx + "^{\\mathrm{" + shape_str + "}}";
+}
+
+function _get_h_matrix_values (layer_idx) {
+	try {
+		var comp = null;
+		if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx] && neuron_outputs[layer_idx].output) {
+			var oo = neuron_outputs[layer_idx].output;
+			if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
+		}
+		if (!comp && window._real_data_cache && window._real_data_cache[layer_idx]) {
+			comp = window._real_data_cache[layer_idx];
+		}
+		if (!comp) comp = _get_intermediate_activation(layer_idx);
+		if (comp === null || comp === undefined) return null;
+		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+		var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+		var vals = "";
+		if (typeof comp === "number") {
+			vals = isFinite(comp) ? comp.toFixed(dp) : "?";
+			vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+		} else if (Array.isArray(comp) && comp.length > 0) {
+			if (Array.isArray(comp[0]) && Array.isArray(comp[0][0])) {
+				var flat3d = [];
+				for (var fi = 0; fi < comp.length && flat3d.length < maxVals; fi++) {
+					if (Array.isArray(comp[fi])) {
+						for (var fj = 0; fj < comp[fi].length && flat3d.length < maxVals; fj++) {
+							if (Array.isArray(comp[fi][fj])) {
+								for (var fk = 0; fk < comp[fi][fj].length && flat3d.length < maxVals; fk++) {
+									flat3d.push(comp[fi][fj][fk]);
 								}
+							} else {
+								flat3d.push(comp[fi][fj]);
 							}
 						}
-						vals = flat3d.slice(0, maxVals).map(function(v) {
-							if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
-							return Number(v).toFixed(dp);
-						}).join(" & ");
-						vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
-					} else if (Array.isArray(comp[0])) {
-						var rows2 = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
-							if (Array.isArray(r)) {
-								return r.slice(0, Math.min(r.length, 3)).map(function(v) {
-									if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
-									return Number(v).toFixed(dp);
-								}).join(" & ");
-							}
-							return "?";
-						});
-						vals = "\\begin{pmatrix}" + rows2.join(" \\\\ ") + "\\end{pmatrix}";
-					} else {
-						vals = comp.slice(0, maxVals).map(function(v) {
-							if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
-							return Number(v).toFixed(dp);
-						}).join(" & ");
-						vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
 					}
-				} else {
-					vals = "";
 				}
-				if (vals) {
-					var shape_str_rd = get_layer_output_shape_as_string(layer_idx);
-					return "\\class{mv-h-L" + layer_idx + "}{" + vals + "}^{\\mathrm{" + shape_str_rd + "}}";
-				}
+				vals = flat3d.slice(0, maxVals).map(function(v) {
+					if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+					return Number(v).toFixed(dp);
+				}).join(" & ");
+				vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+			} else if (Array.isArray(comp[0])) {
+				var rows2 = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
+					if (Array.isArray(r)) {
+						return r.slice(0, Math.min(r.length, 3)).map(function(v) {
+							if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+							return Number(v).toFixed(dp);
+						}).join(" & ");
+					}
+					return "?";
+				});
+				vals = "\\begin{pmatrix}" + rows2.join(" \\\\ ") + "\\end{pmatrix}";
+			} else {
+				vals = comp.slice(0, maxVals).map(function(v) {
+					if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+					return Number(v).toFixed(dp);
+				}).join(" & ");
+				vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
 			}
-		} catch(e) { console.warn("_get_h:", e); }
+		} else {
+			vals = "";
+		}
+		return vals || null;
+	} catch(e) { console.warn("_get_h_matrix_values:", e); }
+	return null;
+}
+
+function _get_h (layer_idx) {
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		var matrix = _get_h_matrix_values(layer_idx);
+		if (matrix) {
+			return "\\underbrace{" + matrix + "}_{h_" + layer_idx + "}";
+		}
 	}
-	var shape_str = get_layer_output_shape_as_string(layer_idx);
-	var res = "h_" + layer_idx + "^{\\mathrm{" + shape_str + "}}";
-	return res;
+	return _get_h_symbol(layer_idx);
+}
+
+function _get_result_matrix (layer_idx) {
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		return _get_h_matrix_values(layer_idx);
+	}
+	return null;
+}
+
+// --- Real-data cache (survives across renders) ---
+window._real_data_cache = window._real_data_cache || {};
+
+function _populate_real_data_cache() {
+	try {
+		if (!model || !model.layers) return;
+		var cache = {};
+		for (var i = 0; i < model.layers.length; i++) {
+			var vals = _get_intermediate_activation(i);
+			if (vals) cache[i] = vals;
+		}
+		window._real_data_cache = cache;
+	} catch(e) { console.warn("_populate_real_data_cache:", e); }
 }
 
 
@@ -2253,8 +2286,12 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 
 		if (interactive_info) {
 			var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
-			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
+			var result_mx = _get_result_matrix(layer_idx);
+			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h_symbol(layer_idx) + " = </div>";
 			str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div>";
+			if (result_mx) {
+				str += "<div class='temml_me'> = " + result_mx + " </div>";
+			}
 
 			var has_skip_in_marker = layer_str.indexOf("%%SKIP_ENABLED_") !== -1;
 			var skip_container_id = "math_skip_" + interactive_info.type + "_L" + layer_idx;
@@ -2274,7 +2311,27 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 				}, 0);
 			})(container_id, skip_container_id, layer_idx, layer_data, colors, input_layer, y_layer, interactive_info.type, has_skip_in_marker, gui_layer_idx, this_layer_type);
 		} else {
-			str += "<div class='temml_me'> " + layer_str + " </div><br>";
+			var _sym_only = _get_h_symbol(layer_idx);
+			var _comp_part = layer_str;
+			if (_comp_part.indexOf(_sym_only) === 0) {
+				_comp_part = _comp_part.substring(_sym_only.length);
+				while (_comp_part.length > 0 && (_comp_part[0] === " " || _comp_part[0] === "=")) { _comp_part = _comp_part.substring(1); }
+			}
+			var _rm_split = _get_result_matrix(layer_idx);
+			var _sym_valid = _latex_is_balanced(_sym_only);
+			var _comp_valid = _latex_is_balanced(_sym_only + " = " + _comp_part);
+			var _rm_valid = (!_rm_split) || _latex_is_balanced(_rm_split);
+			if (_sym_valid && _comp_valid && _rm_valid) {
+				str += "<div class='temml_me' data-eq-part='computation'>" + _sym_only + " = " + _comp_part + "</div>";
+				if (_rm_split) {
+					str += "<div class='temml_me' data-eq-part='result'> = " + _rm_split + "</div>";
+				}
+			} else {
+				var _fallback = _sym_only + " = \\mathrm{f}(\\cdot)";
+				str += "<div class='temml_me' data-eq-part='computation'>" + _fallback + "</div>";
+				console.warn("math_mode: unbalanced LaTeX for layer " + layer_idx + ", using fallback. sym_valid=" + _sym_valid + " comp_valid=" + _comp_valid + " rm_valid=" + _rm_valid);
+			}
+			str += "<br>";
 		}
 
 
@@ -2577,9 +2634,56 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 		layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
 	}
 
-	layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
+	layer_str = `${_get_h_symbol(layer_idx)} = ${layer_str}`;
+	var _rm = _get_result_matrix(layer_idx);
+	if (_rm) { layer_str += " = " + _rm; }
 
 	return layer_str;
+}
+
+/**
+ * Builds a layer equation as SEPARATE temml_me divs so a parse failure in one
+ * part can never leak raw LaTeX into the next part.
+ * Returns HTML string with three divs: symbol, computation, optional result.
+ */
+function _build_layer_equation_split(layer_idx, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {
+	var this_layer_type = (typeof layer_data !== "undefined" && layer_data[layer_idx]) ? (layer_data[layer_idx].layer_type || "dense") : "dense";
+
+	var sym = _get_h_symbol(layer_idx);
+	var comp = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
+	// comp currently starts with _get_h_symbol = ...; strip that prefix to avoid duplicate "h = h ="
+	if (comp.indexOf(sym) === 0) {
+		comp = comp.substring(sym.length);
+		while (comp.length > 0 && (comp[0] === " " || comp[0] === "=")) { comp = comp.substring(1); }
+	}
+
+	var html = "";
+	html += "<div class='temml_me' data-eq-part='symbol'>" + sym + "</div>";
+	html += "<div class='temml_me' data-eq-part='computation'>" + sym + " = " + comp + "</div>";
+	var _rm = _get_result_matrix(layer_idx);
+	if (_rm) {
+		html += "<div class='temml_me' data-eq-part='result'> = " + _rm + "</div>";
+	}
+	return html;
+}
+
+/**
+ * Validates LaTeX brace balance. Returns true if balanced.
+ * Skips escaped braces and string literals.
+ */
+function _latex_is_balanced(latex) {
+	if (typeof latex !== "string") return false;
+	var depth = 0;
+	var inCmd = false;
+	var prevBackslash = false;
+	for (var i = 0; i < latex.length; i++) {
+		var ch = latex[i];
+		if (prevBackslash) { prevBackslash = false; continue; }
+		if (ch === "\\") { prevBackslash = true; continue; }
+		if (ch === "{") depth++;
+		else if (ch === "}") { depth--; if (depth < 0) return false; }
+	}
+	return depth === 0;
 }
 
 /**
@@ -4105,80 +4209,147 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 function _get_intermediate_activation(layer_idx, sampleIndex) {
 	if (!model) return null;
 	try {
-		if (typeof xy_data_global === "undefined" || !xy_data_global || !xy_data_global.x) return null;
-		var x_data = xy_data_global.x;
-		if (!x_data.arraySync) return null;
-		var x_arr = x_data.arraySync();
-		if (x_arr.length === 0) return null;
+		var x_data = null;
+		if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
+			x_data = xy_data_global.x;
+		}
+		if (!x_data) return null;
+		var x_arr = null;
+		if (typeof x_data.arraySync === "function") {
+			try { x_arr = x_data.arraySync(); } catch(e) { return null; }
+		} else if (Array.isArray(x_data)) {
+			x_arr = x_data;
+		}
+		if (!x_arr || !Array.isArray(x_arr) || x_arr.length === 0) return null;
 		sampleIndex = sampleIndex || 0;
 		if (sampleIndex >= x_arr.length) sampleIndex = 0;
 		var first = x_arr[sampleIndex];
-		var input = tf.tensor(first);
-		// adjust shape
-		if (model.layers[0] && model.layers[0].inputShape) {
-			var inShape = model.layers[0].inputShape.slice();
-			if (inShape[0] === null) inShape.shift();
-			if (input.shape.length !== inShape.length) {
-				try { input = input.reshape(inShape); } catch(e) {}
-			}
-		}
-		var inp = input.expandDims(0);
-		// compute layer by layer up to layer_idx
 		if (layer_idx >= model.layers.length) layer_idx = model.layers.length - 1;
-		var current = inp;
-		var res = null;
-		for (var li = 0; li <= layer_idx; li++) {
-			if (li > 0) current.dispose();
-			current = model.layers[li].apply(current);
+
+		// Build input tensor matching model input shape
+		var modelInputShape = null;
+		try { modelInputShape = model.inputShape; } catch(e) {}
+		if (!modelInputShape && model.layers && model.layers[0]) {
+			try { modelInputShape = model.layers[0].inputShape; } catch(e) {}
 		}
-		var arr = current.arraySync();
-		res = arr[0];
-		inp.dispose(); input.dispose(); current.dispose();
+		var inShape = [];
+		if (Array.isArray(modelInputShape)) {
+			inShape = modelInputShape.slice();
+			if (inShape[0] === null || inShape[0] === undefined) inShape.shift();
+			inShape = inShape.filter(function(s) { return s !== null && s !== undefined; });
+		}
+		var inp = null;
+		try {
+			if (inShape.length > 0 && first && Array.isArray(first)) {
+				var flat = [];
+				function _flatten2(a) { for (var i = 0; i < a.length; i++) { if (Array.isArray(a[i])) _flatten2(a[i]); else flat.push(a[i]); } }
+				_flatten2(first);
+				inp = tf.tensor(flat).reshape(inShape).expandDims(0);
+			} else {
+				inp = tf.tensor(first).expandDims(0);
+			}
+		} catch(e1) {
+			try { inp = tf.tensor(first).expandDims(0); } catch(e2) { return null; }
+		}
+
+		// Sub-model predict (robust for functional-API models)
+		var targetLayer = model.layers[layer_idx];
+		var outTensor = null;
+		try {
+			if (targetLayer.output && model.inputs) {
+				var sm = tf.model({ inputs: model.inputs, outputs: targetLayer.output });
+				outTensor = sm.predict(inp);
+				try { sm.dispose && sm.dispose(); } catch(e) {}
+			}
+		} catch(eSub) { outTensor = null; }
+		if (outTensor == null) {
+			try { outTensor = targetLayer.apply(inp); } catch(eApp) { try { inp.dispose(); } catch(e) {} return null; }
+		}
+
+		var arr = outTensor.arraySync();
+		var res = arr[0];
+		try { inp.dispose(); } catch(e) {}
+		try { outTensor.dispose(); } catch(e) {}
 		return res;
-	} catch(e) { console.warn("_get_intermediate_activation:", e); }
+	} catch(e) { console.warn("_get_intermediate_activation:", e.message || e); }
 	return null;
 }
 
 
 function populate_neuron_outputs_from_current() {
 	try {
-		if (!model) { console.log("populate_neuron_outputs: no model"); return; }
+		if (!model) { console.warn("populate_neuron_outputs: no model"); return; }
 		reset_neuron_outputs();
-		console.log("populate_neuron_outputs: starting");
-		if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
-			var x_data = xy_data_global.x;
-			if (x_data.arraySync) {
-				var x_arr = x_data.arraySync();
-				if (x_arr.length === 0) return;
-				var first = x_arr[0];
-				var input = tf.tensor(first);
-				if (model.layers[0] && model.layers[0].inputShape) {
-					var inShape = model.layers[0].inputShape.slice();
-					if (inShape[0] === null) inShape.shift();
-					if (input.shape.length !== inShape.length) {
-						try { input = input.reshape(inShape); } catch(e) {}
-					}
-				}
-				var inp = input.expandDims(0);
-				// compute layer by layer
-				var current = inp;
-				for (var i = 0; i < model.layers.length; i++) {
-					var layer = model.layers[i];
-					// skip some internal layers? keep simple
-					try {
-						current = layer.apply(current);
-						var outArr = current.arraySync();
-						neuron_outputs[i] = { output: [outArr[0]] };
-					} catch(e) { break; }
-				}
-				inp.dispose(); input.dispose();
-				if (current && !current.isDisposed) current.dispose();
-				console.log("populate_neuron_outputs: done, layers:", Object.keys(neuron_outputs).length);
-			}
-		} else {
-			console.log("populate_neuron_outputs: no xy_data_global");
+		if (typeof xy_data_global === "undefined" || !xy_data_global || !xy_data_global.x) {
+			console.warn("populate_neuron_outputs: no xy_data_global.x");
+			return;
 		}
-	} catch(e) { console.warn("populate error:", e); }
+		var x_data = xy_data_global.x;
+		var x_arr = null;
+		if (typeof x_data.arraySync === "function") {
+			try { x_arr = x_data.arraySync(); } catch(e) {}
+		} else if (Array.isArray(x_data)) {
+			x_arr = x_data;
+		} else if (x_data.data) {
+			try { x_arr = x_data.data.arraySync ? x_data.data.arraySync() : null; } catch(e) {}
+		}
+		if (!x_arr || !Array.isArray(x_arr) || x_arr.length === 0) return;
+		var first = x_arr[0];
+
+		// --- Sub-model approach (robust for functional-API models) ---
+		var modelInputShape = null;
+		try { modelInputShape = model.inputShape; } catch(e) {}
+		if (!modelInputShape && model.layers && model.layers[0]) {
+			try { modelInputShape = model.layers[0].inputShape; } catch(e) {}
+		}
+		var inShape = [];
+		if (Array.isArray(modelInputShape)) {
+			inShape = modelInputShape.slice();
+			if (inShape[0] === null || inShape[0] === undefined) inShape.shift();
+			inShape = inShape.filter(function(s) { return s !== null && s !== undefined; });
+		}
+		var inp = null;
+		try {
+			if (inShape.length > 0 && first && Array.isArray(first)) {
+				var flat = [];
+				function _flatten(a) { for (var i = 0; i < a.length; i++) { if (Array.isArray(a[i])) _flatten(a[i]); else flat.push(a[i]); } }
+				_flatten(first);
+				inp = tf.tensor(flat).reshape(inShape).expandDims(0);
+			} else {
+				inp = tf.tensor(first).expandDims(0);
+			}
+		} catch(e1) {
+			try { inp = tf.tensor(first).expandDims(0); } catch(e2) { return; }
+		}
+
+		var count = 0;
+		for (var i = 0; i < model.layers.length; i++) {
+			var layer = model.layers[i];
+			var outTensor = null;
+			try {
+				// Try sub-model predict (most reliable)
+				if (layer.output && model.inputs) {
+					var sm = tf.model({ inputs: model.inputs, outputs: layer.output });
+					outTensor = sm.predict(inp);
+					try { sm.dispose && sm.dispose(); } catch(e) {}
+				}
+			} catch(eSub) {
+				outTensor = null;
+			}
+			if (outTensor == null) {
+				// Fallback: direct apply
+				try { outTensor = layer.apply(inp); } catch(eApp) { break; }
+			}
+			try {
+				var outArr = outTensor.arraySync();
+				neuron_outputs[i] = { input: null, output: [outArr[0]] };
+				count++;
+			} catch(eSync) { break; }
+			finally { try { if (outTensor && outTensor.dispose) outTensor.dispose(); } catch(e) {} }
+		}
+		try { inp.dispose(); } catch(e) {}
+		console.log("populate_neuron_outputs: done, layers populated:", count);
+	} catch(e) { console.warn("populate_neuron_outputs error:", e); }
 }
 
 

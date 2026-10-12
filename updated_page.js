@@ -109,6 +109,8 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	await _compile_model_or_throw();
 
+	try { if (typeof _populate_real_data_cache === "function" && typeof _math_show_real_data !== "undefined" && _math_show_real_data) { _populate_real_data_cache(); } } catch(e){}
+
 	await _update_python_and_restart_graph(no_graph_restart);
 
 	_reset_prev_layer_data();
