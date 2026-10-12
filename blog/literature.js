@@ -17792,7 +17792,7 @@ window.bibData = {
 		title: "Etymologiae (Etymologies / Origines)",
 		author: "Isidore of Seville",
 		year: "c. 625",
-		url: "https://en.wikipedia.org/wiki/Etymologiae",
+		url: "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Isidore/home.html",
 		alternativetitle: "Isidore of Seville, Etymologiae (c. 625)"
 	},
 	"isidoreofseville": {
