@@ -12,7 +12,7 @@ tags: logic-heavy
 -->
 
 <div class="md" data-mathlevel="40" data-optionaltitle="A note on scope">
-This chapter is the curated companion to the deep-structure material scattered through the course: **grokking** (memorization-to-generalization, now in the <a href="algorithms">How Transformers Execute Algorithms</a> lesson), the **wave geometry of transformer layers**, the **isosurface / “truth tunnel”** picture of how probability collapses as context tightens (now in <a href="foam_of_meaning">The Foam of Meaning</a>), and the **group structure of positional embeddings** (<a href="math_iv">Basic Math IV</a> and <a href="positionalembeddingslab">Positional Embeddings</a>). It catalogues the most striking discoveries researchers did not anticipate from next-token prediction, emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
+This chapter is the curated companion to the deep-structure material scattered through the course: **grokking** (memorization-to-generalization, now in the <a href="algorithms">How Algorithms Work</a> lesson), the **wave geometry of transformer layers**, the **isosurface / “truth tunnel”** picture of how probability collapses as context tightens (now in <a href="foam_of_meaning">The Foam of Meaning</a>), and the **group structure of positional embeddings** (<a href="math_iv">Basic Math IV</a> and <a href="positionalembeddingslab">Positional Embeddings</a>). It catalogues the most striking discoveries researchers did not anticipate from next-token prediction, emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
 </div>
 
 <div class="md">
