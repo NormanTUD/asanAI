@@ -40,9 +40,19 @@ Notice what is new. The authority is not in any single person's rank, title, or 
 </div>
 
 <div class="md">
-## The Encyclopédie: the first attempt to compile everything
+## Before the Encyclopédie: Isidore of Seville
 
-If the coffee house was where information was *discussed*, the Encyclopédie was the first attempt to **collect** it. Between 1751 and 1772, \citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls "a kind of precursor to the hyperlink" \cite[the Encyclopédie, Wikipedia]{encyclopedie}.
+The urge to gather *all* knowledge into one place is far older than the Enlightenment. Nearly eleven centuries before Diderot, in Visigothic Spain, the archbishop \cite[Isidore of Seville]{isidoreofseville} (c. 560–636) compiled the *\citetitle{etymologiae}* — a twenty-book encyclopedia that tried to capture the whole of ancient learning in a single ordered work. Its modern translators call it "arguably the most influential book, after the Bible, in the learned world of the Latin West for nearly a thousand years" \cite{etymologiae}.
+
+Isidore did not merely store the classics; he reorganized them. Drawing on hundreds of earlier authors — Pliny, Solinus, Servius, the church fathers — he sorted everything from grammar, rhetoric, and the mathematical *quadrivium* to medicine, law, animals, geography, and the making of furniture into twenty books, each a folder in one universal filing cabinet \cite{etymologiae}. The *Etymologiae* became *the* textbook of the Middle Ages, copied in nearly a thousand surviving manuscripts; so completely did it stand in for the originals that some classical works stopped being copied and were lost, surviving only as his excerpts \cite{etymologiae}.
+
+It is a fitting accident of history, then, that the Catholic Church has come to regard Isidore as the patron saint of the internet — and of computer users and programmers. The attribution traces to Pope John Paul II, who around 1997 proposed the compiler of the first great encyclopedia as a guardian for the network of all knowledge; the sources disagree over whether the gesture was ever made a formal decree, which is itself a very Isidorean sort of uncertainty (\cite[Isidore of Seville, Wikipedia]{isidoreofseville}). A seventh-century bishop who tried to put the whole world into twenty books is, at the very least, the right ancestor for the thing this chapter is about.
+</div>
+
+<div class="md">
+## The Encyclopédie: compiling everything at once
+
+If the coffee house was where information was *discussed*, the Encyclopédie was the great eighteenth-century attempt to **collect** it. Between 1751 and 1772, \citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls "a kind of precursor to the hyperlink" \cite[the Encyclopédie, Wikipedia]{encyclopedie}.
 
 The ambition was not merely to *store* knowledge but to *connect* it — and in doing so, to change how people thought. This is the **corpus** in its first systematic form: a body of text, organized and internally linked, large enough that it becomes an object in its own right. You can now point at "the Encyclopédie" the way you later point at "the web" — as a single, structured, interlinked thing. Two centuries after Diderot, that object has a new name: the *training corpus* \cite[the Encyclopédie, Wikipedia]{encyclopedie}.
 
@@ -77,7 +87,7 @@ Step back, and this whole chapter is the slow construction of a **system for inf
 
 * **A market** — news as a priced, shipped commodity (the Fugger network, 16th c.).
 * **A public** — a venue where the commodity is shared and argued (the coffee house, 17th–18th c.).
-* **A corpus** — the attempt to collect and cross-link all of it (the Encyclopédie, 1751–72).
+* **A corpus** — the attempt to collect and cross-link all of it (Isidore's *Etymologiae*, 7th c.; the Encyclopédie, 1751–72).
 * **A network** — the attempt to make the whole of it retrievable on demand (Otlet's paper internet, 1934).
 
 The mapping onto the present is not decoration. A search engine is the coffee house made global. A [vector database](vectorsearch.php) is the Mundaneum's twelve million cards, now floating in a metric space and retrieved by similarity instead of by drawer. And the [training corpus](training_data.php) — the entire crawlable web that modern models are trained on — is the Encyclopédie's dream of *all knowledge, cross-referenced*, finally achieved at a scale Diderot could not have imagined. The next chapter, [The Untold History of AI](untold_history.php), follows this arc to its end: Vannevar Bush, whose *Memex* of 1945 carried Otlet's "read the world from your armchair" vision into the age of electronics, and the chain that became the web.

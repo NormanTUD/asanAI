@@ -1517,6 +1517,7 @@
   ],
   "cited_in": [
    "ai_existential_risk",
+   "algorithms",
    "history",
    "myths",
    "philosophy"
@@ -1742,6 +1743,7 @@
   ],
   "cited_in": [
    "ai_and_society",
+   "ai_economics",
    "beyond_llms",
    "computer_vision",
    "history",
@@ -1751,6 +1753,8 @@
    "music_video_generation",
    "philosophy",
    "positionalembeddingslab",
+   "tokenizerlab",
+   "trainingdynamics",
    "transformer"
   ]
  },
@@ -4325,6 +4329,7 @@
    "autodiff",
    "beyond_llms",
    "history",
+   "mixture_of_experts",
    "transformer"
   ]
  },
@@ -5012,13 +5017,15 @@
   "city": "San Francisco, United States",
   "year": 2025.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "anthropic2025websearch",
    "anthropic2024funding",
-   "anthropic2025shutdown"
+   "anthropic2025shutdown",
+   "promptcaching"
   ],
   "cited_in": [
+   "ai_economics",
    "ai_existential_risk",
    "websearch"
   ]
@@ -5719,10 +5726,12 @@
    "hoffmann2022chinchilla"
   ],
   "cited_in": [
+   "ai_economics",
    "history",
    "hyperparameters",
    "losslab",
-   "training_data"
+   "training_data",
+   "trainingdynamics"
   ]
  },
  {
@@ -6007,14 +6016,9 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "liu2023lostmiddle"
-  ],
-  "cited_in": [
-   "contextwindows",
-   "rag"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Asli Celikyilmaz",
@@ -6300,6 +6304,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "transformer"
   ]
  },
@@ -6883,7 +6888,9 @@
    "kaplan2020scaling"
   ],
   "cited_in": [
-   "hyperparameters"
+   "ai_economics",
+   "hyperparameters",
+   "trainingdynamics"
   ]
  },
  {
@@ -6988,6 +6995,7 @@
   "cited_in": [
    "history",
    "philosophy",
+   "trainingdynamics",
    "unexpected_capabilities"
   ]
  },
@@ -17430,6 +17438,7 @@
    "ai_safety_debate"
   ],
   "cited_in": [
+   "ai_economics",
    "alignment",
    "beyond_llms",
    "fact_lookup",
@@ -17440,6 +17449,8 @@
    "positionalembeddingslab",
    "promptengineering",
    "reliability",
+   "tokenizerlab",
+   "trainingdynamics",
    "transformer",
    "unexpected_capabilities"
   ]
@@ -18072,6 +18083,7 @@
    "hilbert1928entscheidung"
   ],
   "cited_in": [
+   "algorithms",
    "embeddinglab",
    "geometry_i"
   ]
@@ -18128,6 +18140,7 @@
    "hume1779dialogues"
   ],
   "cited_in": [
+   "beyond_llms",
    "philosophy"
   ]
  },
@@ -18376,6 +18389,7 @@
    "history",
    "philosophy",
    "positionalembeddingslab",
+   "tokenizerlab",
    "transformer",
    "unexpected_capabilities"
   ]
@@ -18907,7 +18921,8 @@
    "deepseekv3tech2024"
   ],
   "cited_in": [
-   "global_ai_ecosystem"
+   "global_ai_ecosystem",
+   "mixture_of_experts"
   ]
  },
  {
@@ -20529,8 +20544,9 @@
   "city": "Redmond, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "yang2022mup",
    "hu2021lora",
    "yang_hu_feature_learning"
   ],
@@ -20538,7 +20554,8 @@
    "diffusion",
    "finetuninglab",
    "geometry_ii",
-   "running_locally"
+   "running_locally",
+   "trainingdynamics"
   ]
  },
  {
@@ -21845,6 +21862,7 @@
    "euclidelements"
   ],
   "cited_in": [
+   "algorithms",
    "geometry_i"
   ]
  },
@@ -22117,13 +22135,11 @@
   "city": "Cambridge, United Kingdom",
   "year": 2020.0,
   "conf": 1,
-  "works": 2,
+  "works": 1,
   "keys": [
-   "lewis2020rag",
-   "liu2023lostmiddle"
+   "lewis2020rag"
   ],
   "cited_in": [
-   "contextwindows",
    "rag",
    "websearch"
   ]
@@ -24119,6 +24135,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "optimizerlab",
    "production_serving",
    "transformer"
@@ -25279,11 +25296,14 @@
   "city": "Princeton, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "yang2022mup",
    "yang_hu_feature_learning"
   ],
-  "cited_in": []
+  "cited_in": [
+   "trainingdynamics"
+  ]
  },
  {
   "name": "Gregorio Ricci-Curbastro; Tullio Levi-Civita",
@@ -26650,7 +26670,9 @@
   "keys": [
    "nyquist1924certain"
   ],
-  "cited_in": []
+  "cited_in": [
+   "statistics_ii"
+  ]
  },
  {
   "name": "Harsh Kohli",
@@ -28432,16 +28454,18 @@
   "city": "Princeton, United States",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "power2022grokking",
+   "yang2022mup",
    "grokking"
   ],
   "cited_in": [
    "algorithms",
    "deeplearninglab",
    "loss_landscape",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "trainingdynamics"
   ]
  },
  {
@@ -28633,6 +28657,7 @@
    "kant1785groundwork"
   ],
   "cited_in": [
+   "beyond_llms",
    "coherent_world_models",
    "philosophy",
    "untold_history"
@@ -29286,7 +29311,8 @@
    "licklider"
   ],
   "cited_in": [
-   "software"
+   "software",
+   "untold_history"
   ]
  },
  {
@@ -30877,6 +30903,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "ai_economics",
    "ai_existential_risk",
    "alignment",
    "embeddinglab",
@@ -30887,6 +30914,7 @@
    "promptengineering",
    "reliability",
    "security_inference",
+   "trainingdynamics",
    "transformer",
    "unexpected_capabilities"
   ]
@@ -31525,6 +31553,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "production_serving",
    "transformer",
    "unexpected_capabilities"
@@ -31712,11 +31741,14 @@
    "radford2019language"
   ],
   "cited_in": [
+   "ai_economics",
    "beyond_llms",
    "history",
    "hyperparameters",
    "philosophy",
    "positionalembeddingslab",
+   "tokenizerlab",
+   "trainingdynamics",
    "transformer"
   ]
  },
@@ -33161,15 +33193,12 @@
   "city": "Palo Alto, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 2,
+  "works": 1,
   "keys": [
-   "liu2023lostmiddle",
    "hewitt2019structural"
   ],
   "cited_in": [
-   "contextwindows",
-   "mechanistic_interpretability",
-   "rag"
+   "mechanistic_interpretability"
   ]
  },
  {
@@ -34183,10 +34212,12 @@
    "hoffmann2022chinchilla"
   ],
   "cited_in": [
+   "ai_economics",
    "history",
    "hyperparameters",
    "losslab",
-   "training_data"
+   "training_data",
+   "trainingdynamics"
   ]
  },
  {
@@ -36355,14 +36386,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "liu2023lostmiddle"
-  ],
-  "cited_in": [
-   "contextwindows",
-   "rag"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Kevin Maik Jablonka",
@@ -36775,6 +36801,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "transformer"
   ]
  },
@@ -36882,7 +36909,9 @@
    "godel1930completeness",
    "godel1931incompleteness"
   ],
-  "cited_in": []
+  "cited_in": [
+   "algorithms"
+  ]
  },
  {
   "name": "Kurt Hornik",
@@ -41640,6 +41669,7 @@
   "cited_in": [
    "history",
    "philosophy",
+   "trainingdynamics",
    "unexpected_capabilities"
   ]
  },
@@ -42520,14 +42550,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "liu2023lostmiddle"
-  ],
-  "cited_in": [
-   "contextwindows",
-   "rag"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Michele L. Jain",
@@ -44333,14 +44358,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "liu2023lostmiddle"
-  ],
-  "cited_in": [
-   "contextwindows",
-   "rag"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Nelson Goodman",
@@ -44718,6 +44738,7 @@
   "cited_in": [
    "history",
    "philosophy",
+   "trainingdynamics",
    "unexpected_capabilities"
   ]
  },
@@ -45450,6 +45471,7 @@
    "inference_optimization",
    "intuition",
    "math_iv",
+   "mixture_of_experts",
    "music_video_generation",
    "origami",
    "philosophy",
@@ -46986,18 +47008,15 @@
   "city": "Palo Alto, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 4,
+  "works": 3,
   "keys": [
    "park2023generativeagents",
-   "liu2023lostmiddle",
    "garg2022incontext",
    "liang2023helm"
   ],
   "cited_in": [
    "algorithms",
-   "contextwindows",
    "evaluation",
-   "rag",
    "unexpected_capabilities"
   ]
  },
@@ -47958,13 +47977,15 @@
   "city": "San Diego, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "goyal2017largebatch",
    "he2017maskrcnn",
    "he2021mae"
   ],
   "cited_in": [
-   "computer_vision"
+   "computer_vision",
+   "trainingdynamics"
   ]
  },
  {
@@ -48481,6 +48502,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "mixture_of_experts",
    "symbolic_ai",
    "transformer",
    "unexpected_capabilities"
@@ -49065,7 +49087,9 @@
   "keys": [
    "hartley1928transmission"
   ],
-  "cited_in": []
+  "cited_in": [
+   "statistics_ii"
+  ]
  },
  {
   "name": "Ram Pasunuru",
@@ -49524,11 +49548,14 @@
    "radford2019language"
   ],
   "cited_in": [
+   "ai_economics",
    "beyond_llms",
    "history",
    "hyperparameters",
    "philosophy",
    "positionalembeddingslab",
+   "tokenizerlab",
+   "trainingdynamics",
    "transformer"
   ]
  },
@@ -51064,12 +51091,14 @@
   "city": "Cambridge, UK",
   "year": 1936.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "fisher1936lda"
+   "fisher1936lda",
+   "fisher1935design"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "statistics_i"
   ]
  },
  {
@@ -51295,8 +51324,9 @@
   "city": "Palo Alto, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
+   "goyal2017largebatch",
    "girshick2014rcnn",
    "ren2015faster",
    "redmon2016yolo",
@@ -51304,7 +51334,8 @@
    "he2021mae"
   ],
   "cited_in": [
-   "computer_vision"
+   "computer_vision",
+   "trainingdynamics"
   ]
  },
  {
@@ -52107,11 +52138,13 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "ai_economics",
    "alignment",
    "fact_lookup",
    "hyperparameters",
    "mechanistic_interpretability",
    "reliability",
+   "trainingdynamics",
    "transformer",
    "unexpected_capabilities"
   ]
@@ -52525,7 +52558,8 @@
    "arora2022edgeofstability"
   ],
   "cited_in": [
-   "optimizerlab"
+   "optimizerlab",
+   "trainingdynamics"
   ]
  },
  {
@@ -52898,7 +52932,9 @@
    "kaplan2020scaling"
   ],
   "cited_in": [
-   "hyperparameters"
+   "ai_economics",
+   "hyperparameters",
+   "trainingdynamics"
   ]
  },
  {
@@ -53059,10 +53095,12 @@
    "rae2021gopher"
   ],
   "cited_in": [
+   "ai_economics",
    "history",
    "hyperparameters",
    "losslab",
-   "training_data"
+   "training_data",
+   "trainingdynamics"
   ]
  },
  {
@@ -57979,10 +58017,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "monte_carlo_animation_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -58077,6 +58115,7 @@
    "brown2020scaling"
   ],
   "cited_in": [
+   "ai_economics",
    "alignment",
    "fact_lookup",
    "history",
@@ -58084,6 +58123,7 @@
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
+   "trainingdynamics",
    "unexpected_capabilities"
   ]
  },
@@ -58217,6 +58257,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "ai_economics",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -58224,6 +58265,7 @@
    "mechanistic_interpretability",
    "promptengineering",
    "reliability",
+   "trainingdynamics",
    "transformer",
    "unexpected_capabilities"
   ]
@@ -59885,10 +59927,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_astronaut_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -60688,7 +60730,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 245,
+  "works": 269,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -60934,15 +60976,43 @@
    "goe_wiki",
    "paleontology_history_wiki",
    "continental_drift_wiki",
-   "chicxulub_wiki"
+   "chicxulub_wiki",
+   "methodofloci",
+   "simonidesofceos",
+   "giordanobruno",
+   "euclideanalgorithm",
+   "sieveoferatosthenes",
+   "fuggernews",
+   "isidoreofseville",
+   "paulotlet",
+   "mundaneum",
+   "memex",
+   "motherofalldemos",
+   "tednelsonhypertext",
+   "tednelson",
+   "doubleblind",
+   "rct1948",
+   "galton_eugenics",
+   "subitizing",
+   "piraha2004",
+   "libraryofpergamum",
+   "universityofbologna",
+   "philtrans1665",
+   "venicepatent1474",
+   "cohenkappa",
+   "bm25"
   ],
   "cited_in": [
    "ai_and_society",
+   "algorithms",
    "autodiff",
    "coherent_difference",
+   "evaluation",
    "foam_of_meaning",
    "geometry_i",
    "history",
+   "human_mind",
+   "information_market",
    "language",
    "math_iv",
    "mirror_in_machine",
@@ -60951,6 +61021,7 @@
    "origami",
    "philosophy",
    "promptengineering",
+   "rag",
    "statistics_i",
    "topology",
    "untold_history",
@@ -61007,7 +61078,9 @@
   "keys": [
    "hilbert1928entscheidung"
   ],
-  "cited_in": []
+  "cited_in": [
+   "algorithms"
+  ]
  },
  {
   "name": "Wilhelm Kubitschek",
@@ -66185,7 +66258,8 @@
    "arora2022edgeofstability"
   ],
   "cited_in": [
-   "optimizerlab"
+   "optimizerlab",
+   "trainingdynamics"
   ]
  },
  {
@@ -66611,7 +66685,8 @@
    "arora2022edgeofstability"
   ],
   "cited_in": [
-   "optimizerlab"
+   "optimizerlab",
+   "trainingdynamics"
   ]
  },
  {

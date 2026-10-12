@@ -1496,7 +1496,7 @@
   },
   "liu2023lostmiddle": {
    "title": "Lost in the Middle: How Language Models Use Long Contexts",
-   "author": "Nelson F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua, Fabio Petroni, Percy Liang",
+   "author": "Nelson Liu et al.",
    "year": "",
    "url": "https://arxiv.org/abs/2307.03172"
   },
@@ -2604,6 +2604,18 @@
    "year": "",
    "url": "https://arxiv.org/abs/2203.15556"
   },
+  "goyal2017largebatch": {
+   "title": "Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour",
+   "author": "Priya Goyal, Piotr Dollár, Ross Girshick, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/1706.02677"
+  },
+  "yang2022mup": {
+   "title": "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+   "author": "Greg Yang, Edward J. Hu, Igor Babuschkin, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2203.03466"
+  },
   "kapp1877grundlinien": {
    "title": "Grundlinien einer Philosophie der Technik",
    "author": "Ernst Kapp",
@@ -3227,6 +3239,24 @@
    "author": "Aristotle",
    "year": "ca. 350 BCE",
    "url": "https://archive.org/details/aristotle-categories-and-de-interpretatione"
+  },
+  "humboldt1836sprachbau": {
+   "title": "Über die Verschiedenheit des menschlichen Sprachbaues und ihren Einfluss auf die geistige Entwickelung des Menschengeschlechts",
+   "author": "Wilhelm von Humboldt",
+   "year": "",
+   "url": "https://archive.org/details/berdieverschied00humbgoog"
+  },
+  "evanslevinson2009myth": {
+   "title": "The Myth of Language Universals: Language Diversity and Its Importance for Cognitive Science",
+   "author": "Nicholas Evans and Stephen C. Levinson",
+   "year": "",
+   "url": "https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/myth-of-language-universals-language-diversity-and-its-importance-for-cognitive-science/25D362A6566FCA4F51054D1C41104654"
+  },
+  "winawer2007russianblues": {
+   "title": "Russian Blues Reveal Effects of Language on Color Discrimination",
+   "author": "Jonathan Winawer et al.",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1876524/"
   },
   "kempelen_speaking_machine": {
    "title": "Mechanismus der menschlichen Sprache nebst der Beschreibung seiner sprechenden Maschine",
@@ -5650,13 +5680,13 @@
    "title": "Certain Factors Affecting Telegraph Speed",
    "author": "Harry Nyquist",
    "year": "",
-   "url": ""
+   "url": "https://en.wikipedia.org/wiki/Harry_Nyquist"
   },
   "hartley1928transmission": {
    "title": "Transmission of Information",
    "author": "Ralph Hartley",
    "year": "",
-   "url": ""
+   "url": "https://en.wikipedia.org/wiki/Ralph_Hartley"
   },
   "widrow1960adaline": {
    "title": "Adaptive Switching Circuits",
@@ -14543,118 +14573,473 @@
    "author": "Merikanto",
    "year": "n.d.",
    "url": "https://commons.wikimedia.org/wiki/File:Cretaceous_paleogene_iridium_anomaly_3.png"
+  },
+  "methodofloci": {
+   "title": "Method of loci (memory palace)",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Method_of_loci"
+  },
+  "simonidesofceos": {
+   "title": "Simonides of Ceos",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Simonides_of_Ceos"
+  },
+  "artofmemoryyates": {
+   "title": "The Art of Memory",
+   "author": "Frances A. Yates",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/The_Art_of_Memory"
+  },
+  "brunodeumbris1582": {
+   "title": "De umbris idearum (On the Shadows of Ideas)",
+   "author": "Giordano Bruno",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/De_umbris_idearum"
+  },
+  "giordanobruno": {
+   "title": "Giordano Bruno",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Giordano_Bruno"
+  },
+  "euclideanalgorithm": {
+   "title": "Euclidean algorithm (greatest common divisor)",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Euclidean_algorithm"
+  },
+  "sieveoferatosthenes": {
+   "title": "Sieve of Eratosthenes",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes"
+  },
+  "churchturing1936": {
+   "title": "The Church–Turing Thesis",
+   "author": "Jack Copeland (Stanford Encyclopedia of Philosophy)",
+   "year": "1997 (rev. 2023)",
+   "url": "https://plato.stanford.edu/entries/church-turing/"
+  },
+  "fuggernews": {
+   "title": "News — early news networks in Europe (the Augsburg / Fugger information market)",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/News"
+  },
+  "habermaspublicsphere": {
+   "title": "The Structural Transformation of the Public Sphere",
+   "author": "Jürgen Habermas",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere"
+  },
+  "encyclopedie": {
+   "title": "Encyclopédie, ou dictionnaire raisonné des sciences, des arts et des métiers",
+   "author": "Denis Diderot & Jean le Rond d'Alembert",
+   "year": "1751–1772",
+   "url": "https://en.wikipedia.org/wiki/Encyclop%C3%A9die"
+  },
+  "etymologiae": {
+   "title": "Etymologiae (Etymologies / Origines)",
+   "author": "Isidore of Seville",
+   "year": "c. 625",
+   "url": "https://en.wikipedia.org/wiki/Etymologiae"
+  },
+  "isidoreofseville": {
+   "title": "Isidore of Seville",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Isidore_of_Seville"
+  },
+  "paulotlet": {
+   "title": "Paul Otlet",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Paul_Otlet"
+  },
+  "mundaneum": {
+   "title": "Mundaneum",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Mundaneum"
+  },
+  "traitededocumentation": {
+   "title": "Traité de Documentation (Treatise on Documentation)",
+   "author": "Paul Otlet",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Trait%C3%A9_de_Documentation"
+  },
+  "catalogingtheworld": {
+   "title": "Cataloging the World: Paul Otlet and the Birth of the Information Age",
+   "author": "Alex Wright",
+   "year": "",
+   "url": "https://www.catalogingtheworld.com/"
+  },
+  "aswemaythink": {
+   "title": "As We May Think",
+   "author": "Vannevar Bush",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/As_We_May_Think"
+  },
+  "memex": {
+   "title": "Memex",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Memex"
+  },
+  "augmentinghumanintellect": {
+   "title": "Augmenting Human Intellect: A Conceptual Framework",
+   "author": "Douglas C. Engelbart",
+   "year": "",
+   "url": "https://www.dougengelbart.org/Fieldguide"
+  },
+  "motherofalldemos": {
+   "title": "The Mother of All Demos",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/The_Mother_of_All_Demos"
+  },
+  "tednelsonhypertext": {
+   "title": "Hypertext (term coined by Ted Nelson, 1965)",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Hypertext"
+  },
+  "tednelson": {
+   "title": "Ted Nelson",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Ted_Nelson"
+  },
+  "lind1747scurvy": {
+   "title": "A Treatise of the Scurvy",
+   "author": "James Lind",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/James_Lind"
+  },
+  "fisher1935design": {
+   "title": "The Design of Experiments",
+   "author": "Ronald A. Fisher",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/The_Design_of_Experiments"
+  },
+  "doubleblind": {
+   "title": "Blinded (double-blind) experiment",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Blinded_experiment"
+  },
+  "rct1948": {
+   "title": "Randomized controlled trial",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Randomized_controlled_trial"
+  },
+  "graunt1662": {
+   "title": "Natural and Political Observations Made upon the Bills of Mortality",
+   "author": "John Graunt",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/John_Graunt"
+  },
+  "quetelet1835": {
+   "title": "Essay on Social Physics (Sur l'homme et le développement de ses facultés)",
+   "author": "Adolphe Quetelet",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Adolphe_Quetelet"
+  },
+  "galton_eugenics": {
+   "title": "Francis Galton (eugenics and the origin of regression)",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Francis_Galton"
+  },
+  "shepardmetzler1971": {
+   "title": "Mental rotation of three-dimensional objects",
+   "author": "Roger N. Shepard & Jacqueline Metzler",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Mental_rotation"
+  },
+  "subitizing": {
+   "title": "Subitizing",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Subitizing"
+  },
+  "piraha2004": {
+   "title": "Pirahã language (no exact number words)",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Pirah%C3%A3_language"
+  },
+  "picamundurucu2004": {
+   "title": "Exact and Approximate Arithmetic in an Amazonian Indigene Group",
+   "author": "Pica, Lemer, Izard & Dehaene",
+   "year": "",
+   "url": "https://doi.org/10.1126/science.1102085"
+  },
+  "libraryofpergamum": {
+   "title": "Library of Pergamum",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Library_of_Pergamum"
+  },
+  "universityofbologna": {
+   "title": "University of Bologna",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/University_of_Bologna"
+  },
+  "philtrans1665": {
+   "title": "Philosophical Transactions of the Royal Society",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Philosophical_Transactions_of_the_Royal_Society"
+  },
+  "venicepatent1474": {
+   "title": "Venetian Patent Statute",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Venetian_Patent_Statute"
+  },
+  "szilard1929entropy": {
+   "title": "Über die Entropieverminderung in einem thermodynamischen System bei Eingriffen intelligenter Wesen",
+   "author": "Leo Szilard",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Leo_Szilard"
+  },
+  "lamb2019": {
+   "title": "Large Batch Optimization for Deep Learning: Training BERT in 76 Minutes",
+   "author": "You et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/1904.00962"
+  },
+  "batchscaling2018": {
+   "title": "An Empirical Model of Large-Batch Training",
+   "author": "McCandlish, Kaplan & Amodei (OpenAI Dota team)",
+   "year": "",
+   "url": "https://arxiv.org/abs/1812.06162"
+  },
+  "zclip2025": {
+   "title": "ZClip: Adaptive Spike Mitigation for LLM Pre-Training",
+   "author": "Kumar et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2504.02507"
+  },
+  "mup2022": {
+   "title": "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+   "author": "Yang et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2203.03466"
+  },
+  "wsd2025": {
+   "title": "A Multi-Power Law for Loss Curve Prediction Across Learning Rate Schedules",
+   "author": "Wang et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2503.12811"
+  },
+  "switchtransformers2022": {
+   "title": "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+   "author": "Fedus, Zoph & Shazeer",
+   "year": "",
+   "url": "https://arxiv.org/abs/2101.03961"
+  },
+  "mixtral2024": {
+   "title": "Mixtral of Experts",
+   "author": "Jiang et al. (Mistral AI)",
+   "year": "",
+   "url": "https://arxiv.org/abs/2401.04088"
+  },
+  "vllm2023": {
+   "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+   "author": "Kwon et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2309.06180"
+  },
+  "pope2022scaling": {
+   "title": "Efficiently Scaling Transformer Inference",
+   "author": "Pope et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2211.05102"
+  },
+  "flashattention2022": {
+   "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+   "author": "Dao, Fu, Ermon, Rudra & Ré",
+   "year": "",
+   "url": "https://arxiv.org/abs/2205.14135"
+  },
+  "kudo2018unigram": {
+   "title": "Subword Regularization to Improve Neural Machine Translation",
+   "author": "Taku Kudo",
+   "year": "",
+   "url": "https://arxiv.org/abs/1804.10959"
+  },
+  "byt52022": {
+   "title": "ByT5: Towards a Token-free Future with Pre-trained Byte-to-byte Models",
+   "author": "Xue et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2105.13626"
+  },
+  "tokenbias2025": {
+   "title": "Tokenization Disparities as Infrastructure Bias",
+   "author": "Teklehaymanot & Nejdl",
+   "year": "",
+   "url": "https://arxiv.org/abs/2510.12389"
+  },
+  "llmjudge2023": {
+   "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+   "author": "Zheng et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2306.05685"
+  },
+  "cohenkappa": {
+   "title": "Cohen's kappa",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Cohen%27s_kappa"
+  },
+  "helm2022": {
+   "title": "Holistic Evaluation of Language Models",
+   "author": "Liang et al. (CRFM)",
+   "year": "",
+   "url": "https://arxiv.org/abs/2211.09110"
+  },
+  "promptcaching": {
+   "title": "Prompt caching",
+   "author": "Anthropic",
+   "year": "accessed 2026",
+   "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching"
+  },
+  "rag2020": {
+   "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+   "author": "Lewis et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2005.11401"
+  },
+  "bm25": {
+   "title": "Okapi BM25",
+   "author": "Wikipedia contributors",
+   "year": "accessed 2026",
+   "url": "https://en.wikipedia.org/wiki/Okapi_BM25"
+  },
+  "beir2021": {
+   "title": "BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
+   "author": "Thakur et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2104.08663"
+  },
+  "contextualretrieval2024": {
+   "title": "Introducing Contextual Retrieval",
+   "author": "Daniel Ford (Anthropic)",
+   "year": "",
+   "url": "https://www.anthropic.com/news/contextual-retrieval"
+  },
+  "ragsurvey2023": {
+   "title": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+   "author": "Gao et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2312.10997"
+  },
+  "react2022": {
+   "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+   "author": "Yao et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2210.03629"
+  },
+  "nemocguardrails": {
+   "title": "NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications with Programmable Rails",
+   "author": "Rebedea et al. (NVIDIA)",
+   "year": "",
+   "url": "https://aclanthology.org/2023.emnlp-demo.40"
+  },
+  "otelgenai": {
+   "title": "OpenTelemetry GenAI Semantic Conventions",
+   "author": "OpenTelemetry (CNCF)",
+   "year": "accessed 2026",
+   "url": "https://github.com/open-telemetry/semantic-conventions-genai"
+  },
+  "routellm2024": {
+   "title": "RouteLLM: Learning to Route LLMs with Preference Data",
+   "author": "Ong et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2406.18665"
   }
  },
  "cites": {
-  "bayes1763essay": [
-   "statistics",
-   "statistics_ii",
-   "untold_history"
+  "deepseekv3tech2024": [
+   "global_ai_ecosystem",
+   "mixture_of_experts"
   ],
-  "shannon1948communication": [
-   "history",
-   "statistics",
-   "statistics_ii",
-   "tokenizerlab",
-   "transformer",
-   "untold_history"
+  "qwen2024": [
+   "global_ai_ecosystem"
   ],
-  "nietzsche1883zarathustra": [
-   "statistics",
-   "statistics_i",
-   "statistics_ii"
+  "ai4bharat2024": [
+   "global_ai_ecosystem"
   ],
-  "boltzmann": [
-   "samplinglab",
-   "statistics",
-   "statistics_ii"
+  "masakhane2024": [
+   "global_ai_ecosystem"
   ],
-  "fisher1922": [
-   "statistics",
-   "statistics_ii"
+  "guo2025deepseekr1": [
+   "global_ai_ecosystem",
+   "inference_optimization"
   ],
-  "kolmogorov1933": [
-   "statistics",
-   "statistics_ii"
+  "glm2024": [
+   "global_ai_ecosystem"
   ],
-  "leiblerkullback": [
-   "statistics",
-   "statistics_ii"
+  "moonshot2024kimi": [
+   "global_ai_ecosystem"
   ],
-  "colah2015visualinfo": [
-   "losslab",
-   "statistics_ii"
+  "deepseek2024v3": [
+   "global_ai_ecosystem"
   ],
-  "zelligharris": [
-   "statistics",
-   "statistics_ii"
+  "china2023algorithmic": [
+   "global_ai_ecosystem"
   ],
-  "ba2016layernorm": [
+  "insta2023": [
+   "global_ai_ecosystem"
+  ],
+  "technologyinnovation2024": [
+   "global_ai_ecosystem"
+  ],
+  "lieber2024jamba": [
+   "global_ai_ecosystem"
+  ],
+  "euaiact2024": [
+   "global_ai_ecosystem"
+  ],
+  "vaswani2017attention": [
    "autodiff",
-   "normalizationlab"
-  ],
-  "wu2018groupnorm": [
-   "normalizationlab"
-  ],
-  "scholkopf2002learning": [
-   "beyond_llms",
-   "geometry_ii"
-  ],
-  "svd_wiki": [
-   "geometry_ii"
-  ],
-  "cauchy1847": [
-   "autodiff",
-   "differentiation",
-   "geometry_ii",
-   "optimizerlab"
-  ],
-  "fourier1822": [
-   "geometry_ii"
-  ],
-  "cooley1965fft": [
-   "geometry_ii"
-  ],
-  "zaheer2017deepsets": [
-   "geometry_ii"
-  ],
-  "boyd2018appliedlinearalgebra": [
-   "geometry_ii",
-   "math_ii"
-  ],
-  "mikolov2013word2vec": [
-   "attentionlab",
+   "contextwindows",
    "embeddinglab",
-   "geometry_ii",
-   "history"
+   "fact_lookup",
+   "history",
+   "intuition",
+   "math_iv",
+   "music_video_generation",
+   "origami",
+   "philosophy",
+   "positionalembeddingslab",
+   "transformer"
   ],
-  "axler2024linearalgebra": [
-   "geometry_ii",
-   "math_ii"
+  "dao2022flashattention": [
+   "contextwindows",
+   "inference_optimization"
   ],
-  "mercerno1909": [
-   "geometry_ii"
+  "ainslie2023gqa": [
+   "contextwindows",
+   "inference_optimization",
+   "production_serving"
   ],
-  "legendre1805": [
-   "geometry_ii",
-   "losslab",
-   "statistics",
-   "statistics_i"
+  "shazeer2019mqa": [
+   "contextwindows",
+   "inference_optimization"
   ],
-  "gauss1809": [
-   "geometry_ii",
-   "losslab",
-   "statistics",
-   "statistics_i"
+  "liu2023ringattention": [
+   "contextwindows"
   ],
-  "jacobi1842": [
-   "geometry_ii"
-  ],
-  "hu2021lora": [
-   "diffusion",
-   "finetuninglab",
-   "geometry_ii",
-   "running_locally"
+  "liu2023lostmiddle": [
+   "contextwindows",
+   "rag"
   ],
   "merullo2024talkingheads": [
    "algorithms",
@@ -14664,10 +15049,14 @@
    "geometry_ii",
    "mechanistic_interpretability"
   ],
-  "bronstein2021geometric": [
-   "embeddinglab",
-   "geometry_i",
-   "geometry_ii"
+  "kwon2023vllm": [
+   "contextwindows",
+   "inference_optimization",
+   "production_serving"
+  ],
+  "gu2023mamba": [
+   "alternative_architectures",
+   "contextwindows"
   ],
   "hochreiter1991vanishing": [
    "autodiff",
@@ -14710,168 +15099,42 @@
    "statistics_i",
    "transformer"
   ],
-  "ouyang2022instructgpt": [
-   "alignment",
-   "beyond_llms",
-   "finetuninglab",
-   "frontier",
+  "cuevadelasmanos_image": [
+   "human_mind",
+   "intro"
+  ],
+  "perceptronimagewiring": [
    "history",
-   "reasoning"
+   "intro"
   ],
-  "anthropic2024goldengate": [
-   "frontier"
+  "twocultures": [
+   "intro"
   ],
-  "redman2024causalscrubbing": [
-   "frontier"
+  "hayakawa": [
+   "intro"
   ],
-  "zou2023repeng": [
-   "frontier"
+  "zipf1949human": [
+   "foam_of_meaning",
+   "language",
+   "optimizerlab",
+   "tokenizerlab"
   ],
-  "zhang2024mathshepherd": [
-   "frontier",
-   "reasoning"
+  "markov1913ngram": [
+   "tokenizerlab"
   ],
-  "sun2024ttt": [
-   "frontier"
-  ],
-  "su2021rope": [
-   "frontier"
-  ],
-  "peng2023yarn": [
-   "frontier"
-  ],
-  "press2022alibi": [
-   "frontier"
-  ],
-  "li2023seqparallel": [
-   "frontier"
-  ],
-  "ma2024bitnet": [
-   "frontier",
-   "inference_optimization",
-   "production_serving"
-  ],
-  "mohtashami2023landmark": [
-   "frontier"
-  ],
-  "bubeck2023moeoverview": [
-   "frontier",
-   "training_infrastructure"
-  ],
-  "elhoushi2024early": [
-   "frontier"
-  ],
-  "fedus2022switch": [
-   "frontier"
-  ],
-  "sakurai2024skrr": [
-   "frontier"
-  ],
-  "du2023multiagent": [
-   "frontier",
-   "law_regulation",
-   "reinforcement_learning"
-  ],
-  "schick2023toolformer": [
-   "frontier",
-   "symbolic_ai",
-   "unexpected_capabilities",
-   "websearch"
-  ],
-  "patil2023gorilla": [
-   "frontier"
-  ],
-  "hafner2023dreamer": [
-   "frontier"
-  ],
-  "keup2022origami": [
-   "math_iv",
-   "origami",
-   "topology"
-  ],
-  "colah2014manifolds": [
-   "origami",
-   "topology"
-  ],
-  "morris2007topology": [
-   "geometry_i",
-   "geometry_iii",
-   "math_iv",
-   "topology"
-  ],
-  "karpathy2015convnetjs": [
-   "topology"
-  ],
-  "manifold_wiki": [
-   "coherent_difference",
-   "geometry_i",
-   "topology"
-  ],
-  "frantar2022gptq": [
-   "inference_optimization",
-   "production_serving"
-  ],
-  "lin2023awq": [
-   "inference_optimization",
-   "production_serving"
-  ],
-  "xiao2022smoothquant": [
-   "inference_optimization"
-  ],
-  "dettmers2022llmint8": [
-   "inference_optimization",
-   "mechanistic_interpretability"
-  ],
-  "che2024quip": [
-   "inference_optimization"
-  ],
-  "shazeer2019mqa": [
-   "contextwindows",
-   "inference_optimization"
-  ],
-  "ainslie2023gqa": [
-   "contextwindows",
-   "inference_optimization",
-   "production_serving"
-  ],
-  "beltagy2020longformer": [
-   "inference_optimization"
-  ],
-  "dao2022flashattention": [
-   "contextwindows",
-   "inference_optimization"
-  ],
-  "kwon2023vllm": [
-   "contextwindows",
-   "inference_optimization",
-   "production_serving"
-  ],
-  "leviathan2023speculative": [
-   "inference_optimization",
-   "production_serving"
-  ],
-  "cai2024medusa": [
-   "inference_optimization"
-  ],
-  "li2024eagle": [
-   "inference_optimization"
-  ],
-  "guo2025deepseekr1": [
-   "global_ai_ecosystem",
-   "inference_optimization"
-  ],
-  "goodhartslaw": [
-   "evaluation",
-   "losslab"
-  ],
-  "hoffmann2022chinchilla": [
+  "shannon1948communication": [
    "history",
-   "hyperparameters",
-   "losslab",
-   "training_data"
+   "statistics",
+   "statistics_ii",
+   "tokenizerlab",
+   "transformer",
+   "untold_history"
   ],
-  "hutter2006universal": [
-   "losslab"
+  "shannon1951communication": [
+   "tokenizerlab"
+  ],
+  "sutskever2011generating": [
+   "tokenizerlab"
   ],
   "gage1994bpe": [
    "attentionlab",
@@ -14882,24 +15145,269 @@
    "training_data",
    "transformer"
   ],
-  "pytorch": [
-   "autodiff",
-   "history",
-   "transformer"
-  ],
-  "vaswani2017attention": [
-   "autodiff",
-   "contextwindows",
+  "sennrich2016subword": [
    "embeddinglab",
-   "fact_lookup",
    "history",
-   "intuition",
-   "math_iv",
-   "music_video_generation",
-   "origami",
+   "tokenizerlab"
+  ],
+  "kudo2018unigram": [
+   "tokenizerlab"
+  ],
+  "gpt2": [
+   "history",
    "philosophy",
    "positionalembeddingslab",
+   "tokenizerlab",
    "transformer"
+  ],
+  "tokenbias2025": [
+   "tokenizerlab"
+  ],
+  "byt52022": [
+   "tokenizerlab"
+  ],
+  "kleinetymology": [
+   "history",
+   "math_iii",
+   "untold_history"
+  ],
+  "cybenko1989": [
+   "deeplearninglab",
+   "math_iii",
+   "origami"
+  ],
+  "hornik1989": [
+   "math_iii"
+  ],
+  "historyofmathematicalnotation": [
+   "derivativelab",
+   "differentiation",
+   "geometry_iii",
+   "math_i",
+   "math_iii"
+  ],
+  "lang2005basicmath": [
+   "math_i",
+   "math_iii",
+   "math_iv"
+  ],
+  "hottbook": [
+   "coherent_difference",
+   "geometry_iii",
+   "math_iii"
+  ],
+  "youvan2024": [
+   "geometry_iii",
+   "math_iii"
+  ],
+  "colah2015lstm": [
+   "alternative_architectures",
+   "attentionlab",
+   "recurrent_networks"
+  ],
+  "firth1957distributive": [
+   "attentionlab",
+   "coherent_difference",
+   "embeddinglab"
+  ],
+  "mikolov2013word2vec": [
+   "attentionlab",
+   "embeddinglab",
+   "geometry_ii",
+   "history"
+  ],
+  "cuturi2013sinkhorn": [
+   "attentionlab"
+  ],
+  "litman2025sdpaot": [
+   "attentionlab",
+   "reinforcement_learning"
+  ],
+  "neuralturingmachines": [
+   "attentionlab"
+  ],
+  "ramsauer2021hopfield": [
+   "attentionlab"
+  ],
+  "xiao2023streaming": [
+   "attentionlab"
+  ],
+  "darcet2024registers": [
+   "attentionlab",
+   "computer_vision"
+  ],
+  "cancedda2024sinks": [
+   "attentionlab"
+  ],
+  "wong2025sinks": [
+   "attentionlab"
+  ],
+  "rozenblit2002ioed": [
+   "myths"
+  ],
+  "weizenbaum1966eliza": [
+   "myths"
+  ],
+  "aiindex2025": [
+   "myths"
+  ],
+  "brednich1990spinne": [
+   "myths"
+  ],
+  "brednich1991maus": [
+   "myths"
+  ],
+  "brednich1993huhn": [
+   "myths"
+  ],
+  "brednich_wiki": [
+   "myths"
+  ],
+  "urbanlegends_wiki": [
+   "myths"
+  ],
+  "turing1950computing": [
+   "ai_existential_risk",
+   "history",
+   "myths",
+   "philosophy"
+  ],
+  "septruringtest": [
+   "myths"
+  ],
+  "computational_theory_of_mind": [
+   "myths"
+  ],
+  "clark2013surfing": [
+   "myths"
+  ],
+  "predictive_coding_wiki": [
+   "myths"
+  ],
+  "vinge1993singularity": [
+   "myths"
+  ],
+  "kurzweil2005singularity": [
+   "myths"
+  ],
+  "golem_wiki": [
+   "myths"
+  ],
+  "bostrom2014superintelligence": [
+   "ai_existential_risk",
+   "myths"
+  ],
+  "bostrom2012orthogonal": [
+   "ai_existential_risk",
+   "alignment",
+   "myths",
+   "philosophy"
+  ],
+  "luddite_wiki": [
+   "myths"
+  ],
+  "brynjolfsson2014secondmachine": [
+   "myths"
+  ],
+  "techunemployment_wiki": [
+   "myths"
+  ],
+  "ioed_wiki": [
+   "myths"
+  ],
+  "sutton2019bitterlesson": [
+   "myths"
+  ],
+  "algofairness_wiki": [
+   "myths"
+  ],
+  "gfactor_wiki": [
+   "myths"
+  ],
+  "heidegger1927beingandtime": [
+   "human_mind",
+   "myths",
+   "philosophy"
+  ],
+  "korzybski_mapterritory": [
+   "myths"
+  ],
+  "box1976allmodels": [
+   "myths"
+  ],
+  "cnn2024deepfake": [
+   "myths"
+  ],
+  "aiincident634": [
+   "myths"
+  ],
+  "mataavianca_wiki": [
+   "myths"
+  ],
+  "hallucination_ai_wiki": [
+   "myths"
+  ],
+  "theatreopera_wiki": [
+   "myths"
+  ],
+  "midjourney_wiki": [
+   "myths"
+  ],
+  "ai_music_wiki": [
+   "myths"
+  ],
+  "deathschatbots_wiki": [
+   "myths"
+  ],
+  "guardian2024sewell": [
+   "myths"
+  ],
+  "aislop_wiki": [
+   "myths"
+  ],
+  "deadinternet_wiki": [
+   "myths"
+  ],
+  "agi_wiki": [
+   "myths"
+  ],
+  "aiwinter_wiki": [
+   "myths"
+  ],
+  "radford2021clip": [
+   "computer_vision",
+   "multimodal",
+   "music_video_generation"
+  ],
+  "dosovitskiy2021vit": [
+   "computer_vision",
+   "multimodal"
+  ],
+  "liu2023llava": [
+   "multimodal"
+  ],
+  "alayrac2022flamingo": [
+   "multimodal"
+  ],
+  "neocognitron": [
+   "activationlab",
+   "computer_vision",
+   "history",
+   "mirror_in_machine"
+  ],
+  "hubelwiesel": [
+   "computer_vision",
+   "history",
+   "mirror_in_machine"
+  ],
+  "lecun1989backpropagation": [
+   "computer_vision",
+   "history",
+   "mirror_in_machine"
+  ],
+  "colah2014conv": [
+   "computer_vision",
+   "recurrent_networks"
   ],
   "colah2015types": [
    "alternative_architectures",
@@ -14908,560 +15416,44 @@
    "math_ii",
    "transformer"
   ],
-  "nanogpt": [
-   "transformer"
+  "stopsignimage": [
+   "computer_vision"
   ],
-  "gpt2": [
-   "history",
-   "philosophy",
-   "positionalembeddingslab",
-   "transformer"
-  ],
-  "xiong2020": [
-   "transformer"
-  ],
-  "elhage2021mathematical": [
-   "embeddinglab",
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "transformer"
-  ],
-  "tishby2000informationbottleneck": [
-   "beyond_llms",
-   "transformer"
-  ],
-  "analyzingmultiheads": [
-   "transformer"
-  ],
-  "incontextlearninghead": [
-   "transformer"
-  ],
-  "successorheads": [
-   "transformer"
-  ],
-  "interpretabilityinwild": [
-   "transformer"
-  ],
-  "copysuppression": [
-   "transformer"
-  ],
-  "safetyheads": [
-   "transformer"
-  ],
-  "htu2019dependencies": [
-   "transformer"
-  ],
-  "wang2022interpretability": [
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "transformer"
-  ],
-  "someya2025derivational": [
-   "transformer"
-  ],
-  "shen2021structformer": [
-   "transformer"
-  ],
-  "keyvalmem": [
-   "fact_lookup",
-   "intuition",
-   "origami",
-   "transformer"
-  ],
-  "jacobs1991moe": [
-   "beyond_llms",
-   "transformer"
-  ],
-  "shazeer2017moe": [
-   "beyond_llms",
-   "transformer"
-  ],
-  "sutton2019bitter": [
-   "history",
-   "music_video_generation",
-   "statistics",
-   "statistics_i",
-   "transformer",
-   "untold_history"
-  ],
-  "logitorigin": [
-   "transformer"
-  ],
-  "probitorigin": [
-   "transformer"
-  ],
-  "generalizedlinearmodels": [
-   "transformer"
-  ],
-  "statisticsofextremes": [
-   "foam_of_meaning",
-   "transformer"
-  ],
-  "parametriclinks": [
-   "transformer"
-  ],
-  "glmsecondedition": [
-   "transformer"
-  ],
-  "dong2025planning": [
-   "transformer"
-  ],
-  "merzouk2026remaining": [
-   "transformer"
-  ],
-  "baghaei2026collapse": [
-   "transformer"
-  ],
-  "moya2026spurious": [
-   "transformer"
-  ],
-  "xiao2026length": [
-   "transformer"
-  ],
-  "vonoswald2022indc": [
-   "algorithms",
-   "transformer"
-  ],
-  "olson2018metaphysics": [
-   "metaphysics_of_ai"
-  ],
-  "chalmers2016singularity": [
-   "metaphysics_of_ai"
-  ],
-  "putnam1967functionalism": [
-   "metaphysics_of_ai",
-   "philosophy"
-  ],
-  "sep_multiple_realizability": [
-   "metaphysics_of_ai"
-  ],
-  "sep_computational_mind": [
-   "metaphysics_of_ai"
-  ],
-  "floridi2011information": [
-   "metaphysics_of_ai"
-  ],
-  "piccinini2015computation": [
-   "metaphysics_of_ai"
-  ],
-  "parfit1984reasons": [
-   "metaphysics_of_ai"
-  ],
-  "nanda2023grokking": [
-   "algorithms",
-   "deeplearninglab",
-   "mechanistic_interpretability"
-  ],
-  "power2022grokking": [
-   "algorithms",
-   "mechanistic_interpretability"
-  ],
-  "garg2022incontext": [
-   "algorithms",
-   "unexpected_capabilities"
-  ],
-  "olsson2022induction": [
-   "algorithms",
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "unexpected_capabilities"
-  ],
-  "zhou2022algorithmic": [
-   "algorithms",
-   "unexpected_capabilities"
-  ],
-  "levy2024numbers": [
-   "algorithms"
-  ],
-  "cacioli2026weber": [
-   "algorithms"
-  ],
-  "fu2024count": [
-   "algorithms"
-  ],
-  "conde2025count": [
-   "algorithms"
-  ],
-  "ding2024fittest": [
-   "algorithms"
-  ],
-  "engels2024multidim": [
-   "algorithms"
-  ],
-  "hahn2020limitations": [
-   "algorithms",
-   "fact_lookup"
-  ],
-  "katharopoulos2020linear": [
-   "algorithms"
-  ],
-  "adriaensen2024moore": [
-   "algorithms"
-  ],
-  "rajbhandari2019zero": [
-   "training_infrastructure"
-  ],
-  "shoeybi2019megatron": [
-   "training_infrastructure"
-  ],
-  "huang2018gpipe": [
-   "training_infrastructure"
-  ],
-  "liu2023ring": [
-   "training_infrastructure"
-  ],
-  "bordes2013transe": [
-   "beyond_llms",
-   "symbolic_ai"
-  ],
-  "ning2016distmult": [
-   "symbolic_ai"
-  ],
-  "sun2019rotate": [
-   "symbolic_ai"
-  ],
-  "hamilton2017graphsage": [
-   "beyond_llms",
-   "symbolic_ai"
-  ],
-  "schlichtkrull2018rgcn": [
-   "beyond_llms",
-   "symbolic_ai"
-  ],
-  "deepmind2024alphaproof": [
-   "symbolic_ai"
-  ],
-  "trinh2024alphageometry": [
-   "symbolic_ai"
-  ],
-  "yao2023react": [
-   "agents",
-   "promptengineering",
-   "reasoning",
-   "symbolic_ai",
-   "unexpected_capabilities",
-   "websearch"
-  ],
-  "manhaeve2018deepproblog": [
-   "symbolic_ai"
-  ],
-  "guo2017calibration": [
-   "reliability"
-  ],
-  "kadavath2022selfknowledge": [
-   "alignment",
-   "mechanistic_interpretability",
-   "reliability",
-   "unexpected_capabilities"
-  ],
-  "kendall2017uncertainties": [
-   "reliability"
-  ],
-  "lakshminarayanan2017ensembles": [
-   "reliability"
-  ],
-  "angelopoulos2021conformal": [
-   "reliability"
-  ],
-  "rosenblatt1958perceptron": [
-   "activationlab",
-   "history",
-   "minimalneuron",
-   "untold_history"
-  ],
-  "steadystates": [
-   "activationlab",
-   "history"
-  ],
-  "relufirst": [
-   "activationlab"
-  ],
-  "relupaper": [
-   "activationlab",
-   "autodiff"
-  ],
-  "bridle1989probabilistic": [
-   "activationlab"
-  ],
-  "lecun1998gradientbased": [
-   "activationlab",
-   "history"
-  ],
-  "glorot2011deep": [
-   "activationlab"
-  ],
-  "neocognitron": [
-   "activationlab",
+  "krizhevsky2012imagenet": [
    "computer_vision",
-   "history",
-   "mirror_in_machine"
+   "history"
   ],
-  "frankle2019lottery": [
-   "activationlab"
+  "girshick2014rcnn": [
+   "computer_vision"
   ],
-  "hendrycks2016gelu": [
-   "activationlab",
-   "origami"
+  "ren2015faster": [
+   "computer_vision"
   ],
-  "ramachandran2017swish": [
-   "activationlab",
-   "origami"
+  "redmon2016yolo": [
+   "computer_vision"
   ],
-  "mccarthy1956dartmouth": [
-   "ai_and_society"
+  "ronneberger2015unet": [
+   "computer_vision"
   ],
-  "ai_winter_wiki": [
-   "ai_and_society"
+  "he2017maskrcnn": [
+   "computer_vision"
   ],
-  "deepblue_wiki": [
-   "ai_and_society"
+  "kirillov2023sam": [
+   "computer_vision"
   ],
-  "silver2016alphago": [
-   "ai_and_society",
-   "untold_history"
+  "sam_demo_img": [
+   "computer_vision"
   ],
-  "openai2022chatgpt": [
-   "ai_and_society"
+  "he2021mae": [
+   "computer_vision"
   ],
-  "chatgpt_wiki": [
-   "ai_and_society"
+  "goh2021multimodal": [
+   "computer_vision",
+   "mechanistic_interpretability"
   ],
-  "audio_deepfake_wiki": [
-   "ai_and_society"
-  ],
-  "ai_and_elections_wiki": [
-   "ai_and_society"
-  ],
-  "deepfake_wiki": [
-   "ai_and_society"
-  ],
-  "romance_scam_wiki": [
-   "ai_and_society"
-  ],
-  "laion2022blog": [
-   "ai_and_society"
-  ],
-  "stable_diffusion_wiki": [
-   "ai_and_society"
-  ],
-  "edmond_belamy_wiki": [
-   "ai_and_society"
-  ],
-  "theatre_dopera_wiki": [
-   "ai_and_society"
-  ],
-  "heart_on_my_sleeve_wiki": [
-   "ai_and_society"
-  ],
-  "wga2023strike_wiki": [
-   "ai_and_society"
-  ],
-  "bartz2025anthropic": [
-   "ai_and_society"
-  ],
-  "jumper2021alphafold": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history"
-  ],
-  "alphafold_wiki": [
-   "ai_and_society",
-   "untold_history"
-  ],
-  "nobel2024chemistry": [
-   "ai_and_society",
-   "untold_history"
-  ],
-  "merchant2023gnome": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history"
-  ],
-  "romera2023funsearch": [
-   "ai_and_society"
-  ],
-  "erdos_problems_wiki": [
-   "ai_and_society"
-  ],
-  "alpha_geometry_wiki": [
-   "ai_and_society"
-  ],
-  "bi2023pangu": [
-   "ai_and_society"
-  ],
-  "rentosertib_wiki": [
-   "ai_and_society"
-  ],
-  "insilico_wiki": [
-   "ai_and_society"
-  ],
-  "becker2025metr": [
-   "ai_and_society"
-  ],
-  "peng2023copilot": [
-   "ai_and_society"
-  ],
-  "brynjolfsson2023genai": [
-   "ai_and_society"
-  ],
-  "speedup_illusion2025": [
-   "ai_and_society"
-  ],
-  "stackoverflow2024ai": [
-   "ai_and_society"
-  ],
-  "ward2014googleeffect": [
-   "ai_and_society"
-  ],
-  "caosun2026augmentation": [
-   "ai_and_society"
-  ],
-  "parasuraman1997automation": [
-   "ai_and_society"
-  ],
-  "idan2026complementarity": [
-   "ai_and_society"
-  ],
-  "learnlm2025rct": [
-   "ai_and_society"
-  ],
-  "khanacademy_wiki": [
-   "ai_and_society"
-  ],
-  "prather2023copilot": [
-   "ai_and_society"
-  ],
-  "georgiou2025lazy": [
-   "ai_and_society"
-  ],
-  "huti2026jagged": [
-   "ai_and_society"
-  ],
-  "vibe_coding_wiki": [
-   "ai_and_society"
-  ],
-  "calculator_wiki": [
-   "ai_and_society"
-  ],
-  "duolingo_wiki": [
-   "ai_and_society"
-  ],
-  "popel2020cubitt": [
-   "ai_and_society"
-  ],
-  "kokkas2026evidence": [
-   "ai_and_society"
-  ],
-  "kubota2026replication": [
-   "ai_and_society"
-  ],
-  "pew2026ai": [
-   "ai_and_society"
-  ],
-  "rand2016firehose": [
-   "ai_and_society"
-  ],
-  "ira_wiki": [
-   "ai_and_society"
-  ],
-  "bellingcat2025india": [
-   "ai_and_society"
-  ],
-  "cambridge_analytica_wiki": [
-   "ai_and_society"
-  ],
-  "bellingcat2026bjp": [
-   "ai_and_society"
-  ],
-  "synthetic_media_wiki": [
-   "ai_and_society"
-  ],
-  "c2pa_wiki": [
-   "ai_and_society"
-  ],
-  "eu_ai_act_wiki": [
-   "ai_and_society"
-  ],
-  "beemyeyes2023": [
-   "ai_and_society"
-  ],
-  "beemyeyes_site": [
-   "ai_and_society"
-  ],
-  "whisper2022": [
-   "ai_and_society"
-  ],
-  "google_translate_wiki": [
-   "ai_and_society"
-  ],
-  "deepl_wiki": [
-   "ai_and_society"
-  ],
-  "replika_wiki": [
-   "ai_and_society"
-  ],
-  "characterai_wiki": [
-   "ai_and_society"
-  ],
-  "cbs2024characterai": [
-   "ai_and_society"
-  ],
-  "colah2015lstm": [
-   "alternative_architectures",
-   "attentionlab",
-   "recurrent_networks"
-  ],
-  "lstm": [
-   "alternative_architectures",
-   "history",
-   "positionalembeddingslab",
-   "recurrent_networks"
-  ],
-  "gu2021s4": [
-   "alternative_architectures"
-  ],
-  "gu2023mamba": [
-   "alternative_architectures",
-   "contextwindows"
-  ],
-  "dao2024mamba2": [
-   "alternative_architectures"
-  ],
-  "choromanski2021performer": [
-   "alternative_architectures"
-  ],
-  "peng2023rwkv": [
-   "alternative_architectures"
-  ],
-  "poli2023hyena": [
-   "alternative_architectures"
-  ],
-  "ma2022mega": [
-   "alternative_architectures"
-  ],
-  "raposo2024mod": [
-   "alternative_architectures"
-  ],
-  "robertson2009bm25": [
-   "vectorsearch",
-   "websearch"
-  ],
-  "malkov2018hnsw": [
-   "rag",
-   "vectorsearch"
-  ],
-  "jegou2011pq": [
-   "rag",
-   "vectorsearch"
-  ],
-  "johnson2017faiss": [
-   "vectorsearch"
-  ],
-  "kusupati2022matryoshka": [
-   "vectorsearch"
-  ],
-  "khattab2020colbert": [
-   "vectorsearch"
+  "mordvintsev2015inceptionism": [
+   "computer_vision",
+   "inceptionism"
   ],
   "cajal1888": [
    "mirror_in_machine",
@@ -15474,11 +15466,6 @@
   "waldeyer1891": [
    "mirror_in_machine",
    "untold_history"
-  ],
-  "hubelwiesel": [
-   "computer_vision",
-   "history",
-   "mirror_in_machine"
   ],
   "adrian1922allornothing": [
    "mirror_in_machine"
@@ -15502,11 +15489,6 @@
    "mirror_in_machine"
   ],
   "winner_take_all_wiki": [
-   "mirror_in_machine"
-  ],
-  "lecun1989backpropagation": [
-   "computer_vision",
-   "history",
    "mirror_in_machine"
   ],
   "hebb1949organizationofbehaviour": [
@@ -15606,2025 +15588,200 @@
    "mirror_in_machine",
    "philosophy"
   ],
-  "gerganov2023llamacpp": [
-   "running_locally"
+  "rgb_color_cube": [
+   "math_ii"
   ],
-  "ollama2024": [
-   "running_locally"
+  "axler2024linearalgebra": [
+   "geometry_ii",
+   "math_ii"
   ],
-  "lmstudio2024": [
-   "running_locally"
+  "numpy_broadcasting": [
+   "math_ii"
   ],
-  "dettmers2023qlora": [
-   "finetuninglab",
-   "running_locally"
+  "einstein1916annalen": [
+   "math_ii"
   ],
-  "liu2024dora": [
-   "finetuninglab",
-   "running_locally"
+  "boyd2018appliedlinearalgebra": [
+   "geometry_ii",
+   "math_ii"
   ],
-  "watkins1989qlearning": [
-   "reinforcement_learning"
+  "etymonline_matrix": [
+   "math_ii"
   ],
-  "mnih2013dqn": [
-   "reinforcement_learning"
+  "sylvester1850matrix": [
+   "math_ii"
   ],
-  "sutton2018reinforcement": [
-   "reinforcement_learning"
-  ],
-  "williams1992reinforce": [
-   "beyond_llms",
-   "reinforcement_learning"
-  ],
-  "litman2025sdpaot": [
-   "attentionlab",
-   "reinforcement_learning"
-  ],
-  "mnih2016a3c": [
-   "reinforcement_learning"
-  ],
-  "schulman2017ppo": [
-   "beyond_llms",
-   "reinforcement_learning"
-  ],
-  "rafailov2023dpo": [
-   "alignment",
-   "finetuninglab",
-   "reinforcement_learning"
-  ],
-  "azar2023ipo": [
-   "reinforcement_learning"
-  ],
-  "ethayarajh2024kto": [
-   "reinforcement_learning"
-  ],
-  "hong2024orpo": [
-   "reinforcement_learning"
-  ],
-  "meng2024simpo": [
-   "reinforcement_learning"
-  ],
-  "shao2024grpo": [
-   "finetuninglab",
-   "reasoning",
-   "reinforcement_learning"
-  ],
-  "firth1957distributive": [
-   "attentionlab",
-   "coherent_difference",
-   "embeddinglab"
-  ],
-  "cuturi2013sinkhorn": [
-   "attentionlab"
-  ],
-  "neuralturingmachines": [
-   "attentionlab"
-  ],
-  "ramsauer2021hopfield": [
-   "attentionlab"
-  ],
-  "xiao2023streaming": [
-   "attentionlab"
-  ],
-  "darcet2024registers": [
-   "attentionlab",
-   "computer_vision"
-  ],
-  "cancedda2024sinks": [
-   "attentionlab"
-  ],
-  "wong2025sinks": [
-   "attentionlab"
-  ],
-  "indianastronomer": [
-   "positionalembeddingslab"
-  ],
-  "indianastronomerconstruction": [
-   "positionalembeddingslab"
-  ],
-  "chester1145": [
-   "positionalembeddingslab"
-  ],
-  "alkwarizma": [
-   "positionalembeddingslab",
+  "cayleymemoirmatrices": [
+   "math_ii",
    "untold_history"
   ],
-  "gunter1620": [
-   "positionalembeddingslab"
+  "etymonline_vector": [
+   "math_ii"
   ],
-  "elman1990finding": [
-   "positionalembeddingslab"
+  "hamiltonextensionsquaternions": [
+   "math_ii"
   ],
-  "gehring2017convs2s": [
-   "positionalembeddingslab"
+  "etymonline_scalar": [
+   "math_ii"
   ],
-  "firstgpt": [
-   "history",
-   "positionalembeddingslab"
+  "etymonline_tensor": [
+   "math_ii"
   ],
-  "bert": [
-   "history",
-   "positionalembeddingslab"
+  "voigt1898krystalle": [
+   "math_ii"
   ],
-  "shaw2018relative": [
-   "positionalembeddingslab"
+  "riccilevicivita1900": [
+   "math_ii"
   ],
-  "bahdanau2014": [
-   "history",
-   "positionalembeddingslab"
+  "hadamardproduct": [
+   "math_ii"
   ],
-  "rope2021": [
-   "positionalembeddingslab"
+  "robertson2009bm25": [
+   "vectorsearch",
+   "websearch"
   ],
-  "alibi2022": [
-   "positionalembeddingslab"
+  "malkov2018hnsw": [
+   "rag",
+   "vectorsearch"
   ],
-  "kant_critique_pure_reason": [
-   "coherent_world_models",
-   "philosophy"
+  "jegou2011pq": [
+   "rag",
+   "vectorsearch"
   ],
-  "cartwright1983laws": [
-   "coherent_world_models"
+  "johnson2017faiss": [
+   "vectorsearch"
   ],
-  "cartwright1999dappled": [
-   "coherent_world_models"
+  "kusupati2022matryoshka": [
+   "vectorsearch"
   ],
-  "brandom1994making": [
-   "coherent_difference",
-   "coherent_world_models"
+  "khattab2020colbert": [
+   "vectorsearch"
   ],
-  "brandom2000articulating": [
-   "coherent_world_models"
-  ],
-  "spivak2012ologs": [
-   "coherent_world_models"
-  ],
-  "spivak2014cts": [
-   "coherent_world_models"
-  ],
-  "sellars1956empiricism": [
-   "coherent_difference",
-   "coherent_world_models"
-  ],
-  "hacking1983representing": [
-   "coherent_world_models"
-  ],
-  "caramello2017theories": [
-   "coherent_difference",
-   "coherent_world_models"
-  ],
-  "worrall1989structural": [
-   "coherent_world_models"
-  ],
-  "ladyman1998what": [
-   "coherent_world_models"
-  ],
-  "ladymanross2007everything": [
-   "coherent_world_models"
-  ],
-  "goodman1978ways": [
-   "coherent_world_models"
-  ],
-  "tarski1935wahrheitsbegriff": [
-   "coherent_world_models",
-   "foam_of_meaning"
-  ],
-  "tarski1944semantic": [
-   "coherent_world_models"
-  ],
-  "tarski1956logic": [
-   "coherent_world_models"
-  ],
-  "naturanonfacitsaltus": [
-   "coherent_difference",
-   "coherent_world_models"
-  ],
-  "bradley1893appearance": [
-   "coherent_world_models"
-  ],
-  "blanshard1939nature": [
-   "coherent_world_models"
-  ],
-  "walker2019coherence": [
-   "coherent_world_models"
-  ],
-  "joachim1906nature": [
-   "coherent_world_models"
-  ],
-  "bonjour1985structure": [
-   "coherent_world_models"
-  ],
-  "einstein1916foundation": [
-   "coherent_world_models"
-  ],
-  "popper1963conjectures": [
-   "coherent_world_models"
-  ],
-  "bertot2013coq": [
-   "beyond_llms",
-   "coherent_world_models"
-  ],
-  "moura2015lean": [
-   "beyond_llms",
-   "coherent_world_models"
-  ],
-  "schmitz_neo_phenomenology": [
-   "coherent_difference",
-   "coherent_world_models",
-   "human_mind"
-  ],
-  "prakash2021fitness": [
-   "coherent_world_models",
-   "hallucinations"
-  ],
-  "fan2018topk": [
-   "music_video_generation",
-   "samplinglab"
-  ],
-  "holtzman2020nucleus": [
-   "samplinglab"
-  ],
-  "nguyen2025minp": [
-   "samplinglab"
-  ],
-  "keskar2019ctrl": [
-   "samplinglab"
-  ],
-  "basu2020mirostat": [
-   "samplinglab"
-  ],
-  "wang2024entropy": [
-   "samplinglab"
-  ],
-  "flammarion": [
-   "statistics",
-   "statistics_i"
-  ],
-  "arsconjectandi": [
-   "statistics",
-   "statistics_i"
-  ],
-  "devetula": [
-   "statistics",
-   "statistics_i"
-  ],
-  "liberludo": [
-   "statistics",
-   "statistics_i"
-  ],
-  "oevresdeformat": [
-   "differentiation",
-   "statistics",
-   "statistics_i"
-  ],
-  "ceresimage": [
-   "statistics",
-   "statistics_i"
-  ],
-  "ceresdiscovery": [
-   "statistics",
-   "statistics_i"
-  ],
-  "cerespath": [
-   "statistics",
-   "statistics_i"
-  ],
-  "buolamwini2018gender": [
-   "statistics",
-   "statistics_i"
-  ],
-  "vapnik": [
-   "statistics",
-   "statistics_i"
-  ],
-  "boxmueller": [
-   "statistics",
-   "statistics_i"
-  ],
-  "laplace1810clt": [
-   "statistics",
-   "statistics_i"
-  ],
-  "poisson": [
-   "statistics",
-   "statistics_i"
-  ],
-  "gesetzderkleinenzahlen": [
-   "statistics",
-   "statistics_i"
-  ],
-  "pearson1895correlation": [
-   "statistics",
-   "statistics_i"
-  ],
-  "galton": [
-   "minimalneuron",
-   "statistics",
-   "statistics_i"
-  ],
-  "pearson1894zscore": [
-   "statistics"
-  ],
-  "sgd": [
-   "optimizerlab"
-  ],
-  "momentum": [
-   "optimizerlab"
-  ],
-  "adam": [
-   "optimizerlab",
-   "overandunderfittinglab"
-  ],
-  "ruder2016overview": [
-   "deeplearninglab",
-   "hyperparameters",
-   "optimizerlab",
-   "overandunderfittinglab"
-  ],
-  "nesterov2004introductory": [
-   "optimizerlab"
-  ],
-  "duchi2011adagrad": [
-   "optimizerlab"
-  ],
-  "hinton2012rmsprop": [
-   "optimizerlab"
-  ],
-  "zeiler2012adadelta": [
-   "optimizerlab"
-  ],
-  "dozat2016nadam": [
-   "optimizerlab"
-  ],
-  "reddi2018amsgrad": [
-   "optimizerlab"
-  ],
-  "loshchilov2019adamw": [
-   "optimizerlab"
-  ],
-  "werbos1974": [
-   "autodiff",
-   "optimizerlab"
-  ],
-  "rumelhart1986": [
-   "autodiff",
-   "backproplab",
-   "differentiation",
-   "history",
-   "optimizerlab"
-  ],
-  "zipf1949human": [
-   "foam_of_meaning",
-   "language",
-   "optimizerlab",
-   "tokenizerlab"
-  ],
-  "arora2022edgeofstability": [
-   "optimizerlab"
-  ],
-  "markov1913ngram": [
-   "tokenizerlab"
-  ],
-  "shannon1951communication": [
-   "tokenizerlab"
-  ],
-  "sutskever2011generating": [
-   "tokenizerlab"
-  ],
-  "sennrich2016subword": [
+  "elhage2021mathematical": [
    "embeddinglab",
-   "history",
-   "tokenizerlab"
-  ],
-  "deepseekv3tech2024": [
-   "global_ai_ecosystem"
-  ],
-  "qwen2024": [
-   "global_ai_ecosystem"
-  ],
-  "ai4bharat2024": [
-   "global_ai_ecosystem"
-  ],
-  "masakhane2024": [
-   "global_ai_ecosystem"
-  ],
-  "glm2024": [
-   "global_ai_ecosystem"
-  ],
-  "moonshot2024kimi": [
-   "global_ai_ecosystem"
-  ],
-  "deepseek2024v3": [
-   "global_ai_ecosystem"
-  ],
-  "china2023algorithmic": [
-   "global_ai_ecosystem"
-  ],
-  "insta2023": [
-   "global_ai_ecosystem"
-  ],
-  "technologyinnovation2024": [
-   "global_ai_ecosystem"
-  ],
-  "lieber2024jamba": [
-   "global_ai_ecosystem"
-  ],
-  "euaiact2024": [
-   "global_ai_ecosystem"
-  ],
-  "bostrom2012orthogonal": [
-   "ai_existential_risk",
-   "alignment",
-   "myths",
-   "philosophy"
-  ],
-  "bostrom2003ethical": [
-   "ai_existential_risk",
-   "alignment",
-   "philosophy"
-  ],
-  "christiano2017rlhf": [
-   "alignment",
-   "history"
-  ],
-  "rlaif": [
-   "alignment"
-  ],
-  "bai2022constitutional": [
-   "alignment",
-   "training_data",
-   "unexpected_capabilities"
-  ],
-  "orpo": [
-   "alignment",
-   "finetuninglab"
-  ],
-  "mesa_optimization": [
-   "alignment"
-  ],
-  "hubinger2024sleeperagents": [
-   "ai_existential_risk",
-   "alignment",
+   "fact_lookup",
    "mechanistic_interpretability",
-   "philosophy",
-   "security_inference"
+   "transformer"
   ],
-  "alignment_faking": [
-   "ai_existential_risk",
-   "alignment"
-  ],
-  "thought_crime": [
-   "ai_existential_risk",
-   "alignment",
+  "elhage2023privileged": [
+   "fact_lookup",
    "mechanistic_interpretability"
   ],
-  "reward_tampering": [
-   "ai_existential_risk",
-   "alignment"
-  ],
-  "rogue_agents": [
-   "alignment"
-  ],
-  "treacherous_turn": [
-   "ai_existential_risk",
-   "alignment"
-  ],
-  "ai_safety_debate": [
-   "alignment"
-  ],
-  "weak_to_strong": [
-   "alignment"
-  ],
-  "verify_step_by_step": [
-   "alignment"
-  ],
-  "ai_control": [
-   "alignment"
-  ],
-  "mech_interp_alignment": [
-   "alignment"
-  ],
-  "cosmic_web_image": [
-   "atlas",
-   "foam_of_meaning"
-  ],
-  "budassi_universe_image": [
-   "atlas",
-   "untold_history"
-  ],
-  "transformer_attention_figure": [
-   "atlas"
-  ],
-  "starfield_eso_image": [
-   "atlas"
-  ],
-  "solsys_planet_textures": [
-   "atlas"
-  ],
-  "earth_moon_cc_textures": [
-   "atlas"
-  ],
-  "earth_night_lights": [
-   "atlas"
-  ],
-  "m87_blackhole_image": [
-   "atlas"
-  ],
-  "crab_nebula_image": [
-   "atlas"
-  ],
-  "hendrycks2021mmlu": [
-   "evaluation"
-  ],
-  "chen2021humaneval": [
-   "evaluation",
+  "olsson2022induction": [
+   "algorithms",
+   "fact_lookup",
+   "mechanistic_interpretability",
    "unexpected_capabilities"
   ],
-  "zheng2023lmsys": [
-   "evaluation"
+  "keyvalmem": [
+   "fact_lookup",
+   "intuition",
+   "origami",
+   "transformer"
   ],
-  "zellers2019hellaswag": [
-   "evaluation",
-   "philosophy"
+  "dai2022knowledgeneurons": [
+   "fact_lookup"
   ],
-  "clark2018arc": [
-   "evaluation"
+  "meng2022locating": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "cobbe2021gsm8k": [
-   "evaluation"
+  "meng2022memit": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "hendrycks2021math": [
-   "evaluation",
-   "reasoning",
-   "training_data"
+  "park2024linear": [
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "philosophy",
+   "promptengineering"
   ],
-  "austin2021mbpp": [
-   "evaluation"
+  "todd2024functionvectors": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "srivastava2022bigbench": [
-   "evaluation"
+  "templeton2024scaling": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "carlini2021extracting": [
-   "evaluation",
+  "nostalgebraist2020logitlens": [
+   "fact_lookup"
+  ],
+  "belrose2023tunedlens": [
+   "fact_lookup",
+   "mechanistic_interpretability"
+  ],
+  "ramsauer2020hopfield": [
+   "fact_lookup"
+  ],
+  "hopfield1982": [
+   "fact_lookup",
+   "loss_landscape"
+  ],
+  "elhage2022superposition": [
+   "embeddinglab",
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "philosophy",
    "unexpected_capabilities"
   ],
-  "liang2023helm": [
-   "evaluation"
+  "cunningham2023sparse": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "diffusion_astronaut_img": [
-   "diffusion",
-   "music_video_generation"
+  "bricken2023monosemanticity": [
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "promptengineering"
   ],
-  "ho2020ddpm": [
-   "beyond_llms",
-   "diffusion",
-   "music_video_generation"
+  "elhage2022solu": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "song2019score": [
-   "beyond_llms",
-   "diffusion"
+  "lindsey2025biology": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "ho2022cfg": [
-   "diffusion",
-   "music_video_generation"
+  "ameisen2025circuit": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "diffusion_architecture_img": [
-   "diffusion"
+  "li2022othello_iclr": [
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
   ],
-  "zhang2023controlnet": [
-   "diffusion"
+  "wang2022interpretability": [
+   "fact_lookup",
+   "mechanistic_interpretability",
+   "transformer"
   ],
-  "rombach2022ldm": [
-   "diffusion",
-   "music_video_generation"
+  "kohli2026loop": [
+   "fact_lookup"
   ],
-  "diffusion_ddim_img": [
-   "diffusion"
+  "lakretz2020nested": [
+   "fact_lookup"
   ],
-  "lipman2023flow": [
-   "diffusion"
+  "lasri2022agree": [
+   "fact_lookup"
   ],
-  "peebles2023dit": [
-   "diffusion",
-   "music_video_generation"
+  "hahn2020limitations": [
+   "algorithms",
+   "fact_lookup"
   ],
-  "sohl2015deep": [
-   "beyond_llms",
-   "diffusion"
+  "anthropic2023mapping": [
+   "fact_lookup",
+   "mechanistic_interpretability"
   ],
-  "kaplan2020scaling": [
-   "hyperparameters"
+  "odena2016deconvolution": [
+   "deconvolution"
   ],
-  "bergstra2010random": [
-   "hyperparameters"
-  ],
-  "snoek2012practical": [
-   "hyperparameters"
-  ],
-  "bergstra2013science": [
-   "hyperparameters"
-  ],
-  "hyperopt": [
-   "hyperparameters"
-  ],
-  "omniopt": [
-   "hyperparameters"
-  ],
-  "olson2025ax": [
-   "hyperparameters"
-  ],
-  "balandat2020botorch": [
-   "hyperparameters"
-  ],
-  "akiba2019optuna": [
-   "hyperparameters"
-  ],
-  "lang2005basicmath": [
-   "math_i",
-   "math_iii",
-   "math_iv"
-  ],
-  "descartesgeometrie": [
-   "geometry_i",
-   "math_iv",
-   "untold_history"
-  ],
-  "mobiusband": [
-   "geometry_i",
-   "math_iv"
-  ],
-  "riemann1854raum": [
-   "math_iv"
-  ],
-  "affine_geometry_wiki": [
-   "math_iv"
-  ],
-  "euler1748introductio": [
-   "math_iv"
-  ],
-  "klein1948geometry": [
-   "math_iv"
-  ],
-  "projective_transformation_wiki": [
-   "math_iv"
-  ],
-  "homography_cv_wiki": [
-   "math_iv"
-  ],
-  "albertidepictura": [
-   "geometry_i",
-   "math_iv"
-  ],
-  "desarguesbrouillon": [
-   "geometry_i",
-   "math_iv"
-  ],
-  "projective_geometry_wiki": [
-   "math_iv"
-  ],
-  "poncelet1822traite": [
-   "math_iv"
-  ],
-  "mobius_transformation_wiki": [
-   "math_iv"
-  ],
-  "nlab_homeomorphism": [
-   "math_iv"
-  ],
-  "nlab_invariance_of_domain": [
-   "math_iv"
-  ],
-  "nlab_hopf_link": [
-   "math_iv"
-  ],
-  "hopf_link_wiki": [
-   "math_iv"
-  ],
-  "nlab_knot": [
-   "math_iv"
-  ],
-  "nlab_link": [
-   "math_iv"
-  ],
-  "nlab_isotopy": [
-   "math_iv"
-  ],
-  "nlab_unknot": [
-   "math_iv"
-  ],
-  "nlab_linking_number": [
-   "math_iv"
-  ],
-  "linking_number_wiki": [
-   "math_iv"
-  ],
-  "nlab_topological_property": [
-   "math_iv"
-  ],
-  "homeomorphism_wiki": [
-   "math_iv"
-  ],
-  "montufar2014regions": [
-   "deeplearninglab",
-   "math_iv",
-   "origami"
-  ],
-  "amrami2021depth": [
-   "math_iv",
-   "origami"
-  ],
-  "lewandowski2025spacefolds": [
-   "math_iv",
-   "origami"
-  ],
-  "listingtopologie": [
-   "geometry_i",
-   "math_iv"
-  ],
-  "poincareanalysissitus": [
-   "geometry_i",
-   "geometry_iii",
-   "math_iv"
-  ],
-  "foldandcut_wiki": [
-   "math_iv",
-   "origami"
-  ],
-  "galoisgroup": [
-   "math_iv"
-  ],
-  "cayleygroups": [
-   "math_iv"
-  ],
-  "mordvintsev2015inceptionism": [
-   "computer_vision",
-   "inceptionism"
-  ],
-  "alphafold3": [
-   "ai_for_science"
-  ],
-  "alphamissense": [
-   "ai_for_science"
-  ],
-  "alphafold_db": [
-   "ai_for_science",
-   "untold_history"
-  ],
-  "alphafold_protein_img": [
-   "ai_for_science"
-  ],
-  "navier_stokes_openai": [
-   "ai_for_science"
-  ],
-  "navier_stokes_priority": [
-   "ai_for_science"
-  ],
-  "alphatensor": [
-   "ai_for_science"
-  ],
-  "funsearch": [
-   "ai_for_science"
-  ],
-  "deletion_codes": [
-   "ai_for_science"
-  ],
-  "alphaevolve": [
-   "ai_for_science"
-  ],
-  "imo_wiki": [
-   "ai_for_science"
-  ],
-  "alphageometry2": [
-   "ai_for_science"
-  ],
-  "pathak2022fourcastnet": [
-   "ai_for_science"
-  ],
-  "silver2016go": [
-   "ai_for_science",
+  "hinton1995wakesleep": [
    "beyond_llms"
-  ],
-  "silver2018zero": [
-   "ai_for_science",
-   "beyond_llms"
-  ],
-  "lecun2022jepa": [
-   "ai_for_science"
-  ],
-  "coherent_difference": [
-   "ai_for_science"
-  ],
-  "brooks2024sora": [
-   "music_video_generation"
-  ],
-  "panharmonicon": [
-   "music_video_generation"
-  ],
-  "strachey1952": [
-   "history",
-   "music_video_generation"
-  ],
-  "illiac_suite": [
-   "music_video_generation"
-  ],
-  "max_mathews": [
-   "music_video_generation"
-  ],
-  "music_theory": [
-   "music_video_generation"
-  ],
-  "midi": [
-   "music_video_generation"
-  ],
-  "midi_keyboard_img": [
-   "music_video_generation"
-  ],
-  "pcm": [
-   "music_video_generation"
-  ],
-  "nyquist_sampling": [
-   "music_video_generation"
-  ],
-  "cd_digital_audio": [
-   "music_video_generation"
-  ],
-  "oscilloscope_waveform_img": [
-   "music_video_generation"
-  ],
-  "vinyl_lp_record_img": [
-   "music_video_generation"
-  ],
-  "cd_compact_disc_img": [
-   "music_video_generation"
-  ],
-  "mp3": [
-   "music_video_generation"
-  ],
-  "mdct": [
-   "music_video_generation"
-  ],
-  "audio_spectrogram_img": [
-   "music_video_generation"
-  ],
-  "zeghidour2021soundstream": [
-   "music_video_generation"
-  ],
-  "defossez2022encodec": [
-   "music_video_generation"
-  ],
-  "radford2021clip": [
-   "computer_vision",
-   "multimodal",
-   "music_video_generation"
-  ],
-  "oord2016wavenet": [
-   "beyond_llms",
-   "music_video_generation"
-  ],
-  "holtzman2019nucleus": [
-   "hallucinations",
-   "music_video_generation"
-  ],
-  "borsos2023audiolm": [
-   "music_video_generation"
-  ],
-  "agostinelli2023musiqlm": [
-   "music_video_generation"
-  ],
-  "copet2023musicgen": [
-   "music_video_generation"
   ],
   "kingma2014vae": [
    "beyond_llms",
    "music_video_generation"
-  ],
-  "film_strip_35mm_img": [
-   "music_video_generation"
-  ],
-  "vhs_cassette_img": [
-   "music_video_generation"
-  ],
-  "video_compression": [
-   "music_video_generation"
-  ],
-  "dct": [
-   "music_video_generation"
-  ],
-  "h264_coding_structure_img": [
-   "music_video_generation"
-  ],
-  "h264": [
-   "music_video_generation"
-  ],
-  "av1": [
-   "music_video_generation"
-  ],
-  "yan2021videogpt": [
-   "music_video_generation"
-  ],
-  "vq_vae": [
-   "music_video_generation"
-  ],
-  "bain2021webvid": [
-   "music_video_generation"
-  ],
-  "ha2018worldmodels": [
-   "music_video_generation"
-  ],
-  "liu2023audioldm": [
-   "music_video_generation"
-  ],
-  "deeplearningfirstuse": [
-   "deeplearninglab"
-  ],
-  "aizenberg2000": [
-   "deeplearninglab"
-  ],
-  "hinton2006": [
-   "deeplearninglab",
-   "geometry_i"
-  ],
-  "cybenko1989": [
-   "deeplearninglab",
-   "math_iii",
-   "origami"
-  ],
-  "hornik1989universal": [
-   "deeplearninglab",
-   "origami",
-   "overandunderfittinglab"
-  ],
-  "telgarsky2016wars": [
-   "deeplearninglab",
-   "loss_landscape"
-  ],
-  "elhage2021framework": [
-   "deeplearninglab"
-  ],
-  "li2018losslandscape": [
-   "deeplearninglab",
-   "loss_landscape"
-  ],
-  "dauphin2014saddle": [
-   "deeplearninglab",
-   "loss_landscape"
-  ],
-  "grokking": [
-   "deeplearninglab",
-   "loss_landscape"
-  ],
-  "davies2023unifying": [
-   "deeplearninglab"
-  ],
-  "belkin2019reconciling": [
-   "deeplearninglab"
-  ],
-  "earlylanguage": [
-   "language",
-   "untold_history"
-  ],
-  "blombosochre": [
-   "geometry_i",
-   "language"
-  ],
-  "sushruta": [
-   "language"
-  ],
-  "alcmaeon": [
-   "language"
-  ],
-  "davinci_anatomical": [
-   "language"
-  ],
-  "lebombobone": [
-   "geometry_i",
-   "history",
-   "language"
-  ],
-  "panini_ashtadhyayi": [
-   "history",
-   "language"
-  ],
-  "aristotle_categories": [
-   "language"
-  ],
-  "ishangobone": [
-   "geometry_i",
-   "history",
-   "language"
-  ],
-  "prehistoriccounting": [
-   "language"
-  ],
-  "ancientnumeralsystems": [
-   "language"
-  ],
-  "brahmagupta628": [
-   "history",
-   "language",
-   "untold_history"
-  ],
-  "shannon1937switching": [
-   "history",
-   "language"
-  ],
-  "wilkins_real_character": [
-   "language"
-  ],
-  "kempelen_speaking_machine": [
-   "language"
-  ],
-  "nilsson1984qai": [
-   "history",
-   "language",
-   "untold_history"
-  ],
-  "firth_context": [
-   "language"
-  ],
-  "cuevadelasmanos": [
-   "language"
-  ],
-  "kishtablet": [
-   "language"
-  ],
-  "vincasymbols": [
-   "language"
-  ],
-  "rebusprinciple": [
-   "language"
-  ],
-  "cuneiform": [
-   "language"
-  ],
-  "acrophonic": [
-   "language"
-  ],
-  "dualitypattern": [
-   "language"
-  ],
-  "ueberwahrheitundluege": [
-   "embeddinglab",
-   "language"
-  ],
-  "saussure1916": [
-   "coherent_difference",
-   "embeddinglab",
-   "language"
-  ],
-  "wadielholinscription_i": [
-   "language"
-  ],
-  "wadielholinscription_ii": [
-   "language"
-  ],
-  "earliestalphabet": [
-   "language"
-  ],
-  "history_of_a": [
-   "language"
-  ],
-  "hieroglyphsdeciphered": [
-   "language"
-  ],
-  "zhao2023survey": [
-   "language"
-  ],
-  "kleinetymology": [
-   "history",
-   "math_iii",
-   "untold_history"
-  ],
-  "lomekwi": [
-   "history",
-   "untold_history"
-  ],
-  "livingdolls": [
-   "history"
-  ],
-  "sharkey2007hero": [
-   "history"
-  ],
-  "lebomboboneoriginal": [
-   "history"
-  ],
-  "wolfbonephoto": [
-   "history"
-  ],
-  "wolfbone": [
-   "history",
-   "untold_history"
-  ],
-  "vogelsang2010apollo11": [
-   "history",
-   "untold_history"
-  ],
-  "historyofmath_wikipedia": [
-   "geometry_i",
-   "history"
-  ],
-  "henshilwood2018blombos": [
-   "history",
-   "untold_history"
-  ],
-  "aubert2018borneo": [
-   "history"
-  ],
-  "brumm2021sulawesi": [
-   "history"
-  ],
-  "aubert2019sulawesi": [
-   "history"
-  ],
-  "hoffmann2018iberia": [
-   "history"
-  ],
-  "ishangobonephoto": [
-   "geometry_i",
-   "history"
-  ],
-  "marshackishango": [
-   "history"
-  ],
-  "ishango12": [
-   "history"
-  ],
-  "salamictablet": [
-   "history"
-  ],
-  "earliestabacusphoto": [
-   "history"
-  ],
-  "salminictablesource": [
-   "history"
-  ],
-  "jiuzhangsuanshu": [
-   "geometry_i",
-   "history"
-  ],
-  "stevin": [
-   "history"
-  ],
-  "leibniz1686calculus": [
-   "history",
-   "software",
-   "untold_history"
-  ],
-  "aristotleandplato": [
-   "history",
-   "human_mind"
-  ],
-  "aristotleanalytics": [
-   "history"
-  ],
-  "bochenski": [
-   "history"
-  ],
-  "antikytheraimage": [
-   "history"
-  ],
-  "antikytherasciam": [
-   "history"
-  ],
-  "brazenheadimage": [
-   "history"
-  ],
-  "brazenheadwiki": [
-   "history"
-  ],
-  "brownepseudodoxia": [
-   "history"
-  ],
-  "brazenheadpubimage": [
-   "history"
-  ],
-  "pygmalionimage": [
-   "history"
-  ],
-  "pygmalionmyth": [
-   "history"
-  ],
-  "zhanghengseismoscopeimage": [
-   "history"
-  ],
-  "zhanghengseismoscope": [
-   "history"
-  ],
-  "tractatusdespheara": [
-   "history"
-  ],
-  "volvelles": [
-   "history"
-  ],
-  "arsmagnavolvelle": [
-   "history"
-  ],
-  "arsmagna": [
-   "history"
-  ],
-  "artandlogicofllull": [
-   "history"
-  ],
-  "blanquerna": [
-   "history"
-  ],
-  "zhao2025thinkingmachine": [
-   "history"
-  ],
-  "leibnizcc": [
-   "history",
-   "software"
-  ],
-  "turing1950computing": [
-   "ai_existential_risk",
-   "history",
-   "myths",
-   "philosophy"
-  ],
-  "babbage": [
-   "history",
-   "software"
-  ],
-  "lovelacequote": [
-   "history",
-   "software",
-   "untold_history"
-  ],
-  "bool1854": [
-   "history",
-   "untold_history"
-  ],
-  "zusez1": [
-   "history",
-   "software"
-  ],
-  "zusebook": [
-   "history",
-   "software",
-   "untold_history"
-  ],
-  "cajaltextura": [
-   "history",
-   "untold_history"
-  ],
-  "uebersinnundbedeutung": [
-   "history"
-  ],
-  "wienerajedrecista": [
-   "history"
-  ],
-  "torres1914": [
-   "history"
-  ],
-  "ieeespectrum2023chess": [
-   "history"
-  ],
-  "thomas2008torres": [
-   "history"
-  ],
-  "mechanicalturkimage": [
-   "history"
-  ],
-  "mechanicalturk": [
-   "history"
-  ],
-  "abbott1999lapicque": [
-   "history"
-  ],
-  "lenz1920": [
-   "history",
-   "untold_history"
-  ],
-  "ising1925": [
-   "history",
-   "untold_history"
-  ],
-  "amari1972": [
-   "history"
-  ],
-  "mccullochpittsimage": [
-   "history"
-  ],
-  "darthmouthartificialintelligence": [
-   "history"
-  ],
-  "pittsfirstpaper": [
-   "history"
-  ],
-  "wiener1948cybernetics": [
-   "history",
-   "untold_history"
-  ],
-  "piccini": [
-   "history"
-  ],
-  "img_walter_tortoise": [
-   "history"
-  ],
-  "snarcphoto": [
-   "history"
-  ],
-  "minsky1954": [
-   "history"
-  ],
-  "wienerphoto": [
-   "history"
-  ],
-  "vonneumannphoto": [
-   "history"
-  ],
-  "macyconferences": [
-   "history"
-  ],
-  "heims1991cyberneticsgroup": [
-   "history"
-  ],
-  "ratioclub": [
-   "history"
-  ],
-  "behaviorpurpose1943": [
-   "history"
-  ],
-  "homeostatphoto": [
-   "history"
-  ],
-  "ashbyphoto": [
-   "history"
-  ],
-  "ashbyintrocybernetics1956": [
-   "history",
-   "minimalneuron"
-  ],
-  "ashbyhomeostat1948": [
-   "history"
-  ],
-  "ashbydesigndbrain1952": [
-   "history"
-  ],
-  "wienerhumaneuse1950": [
-   "history"
-  ],
-  "conantashby1970": [
-   "history",
-   "minimalneuron"
-  ],
-  "turing1937": [
-   "history"
-  ],
-  "batesonphoto": [
-   "history"
-  ],
-  "batesonesteps1972": [
-   "history"
-  ],
-  "batesondoublebind1956": [
-   "history"
-  ],
-  "shannonphoto": [
-   "history"
-  ],
-  "shannonratphoto": [
-   "history"
-  ],
-  "shannonchess1950": [
-   "history"
-  ],
-  "wienergodandgolem1937": [
-   "history"
-  ],
-  "aikenphoto": [
-   "history"
-  ],
-  "aiken": [
-   "history"
-  ],
-  "vonneumann": [
-   "history",
-   "software",
-   "untold_history"
-  ],
-  "turingimage": [
-   "history"
-  ],
-  "ibm702image": [
-   "history"
-  ],
-  "ibm702": [
-   "history"
-  ],
-  "edroberts": [
-   "history"
-  ],
-  "altair8800": [
-   "history"
-  ],
-  "edroberts_bbc": [
-   "history"
-  ],
-  "historyofpc": [
-   "history"
-  ],
-  "commodorepet": [
-   "history"
-  ],
-  "chuckpeddle": [
-   "history"
-  ],
-  "mos6502": [
-   "history"
-  ],
-  "micral": [
-   "history"
-  ],
-  "visicalc": [
-   "history",
-   "untold_history"
-  ],
-  "ibmpc": [
-   "history"
-  ],
-  "tomayko1988spaceflight": [
-   "history",
-   "untold_history"
-  ],
-  "russell2021aima": [
-   "history"
-  ],
-  "toosi2021history": [
-   "history"
-  ],
-  "russell1910principia": [
-   "history",
-   "untold_history"
-  ],
-  "newell1956logictheorist": [
-   "history"
-  ],
-  "samuel1959checkers": [
-   "history"
-  ],
-  "newell1957gps": [
-   "history"
-  ],
-  "poirier2025neat": [
-   "history"
-  ],
-  "perceptronimagewiring": [
-   "history",
-   "intro"
-  ],
-  "bain": [
-   "history"
-  ],
-  "rosenblattad": [
-   "history"
-  ],
-  "rosenblattperceptron": [
-   "history"
-  ],
-  "perceptronimagecables": [
-   "history"
-  ],
-  "perceptronimagedetection": [
-   "history"
-  ],
-  "ronkowitz2017perceptron": [
-   "history"
-  ],
-  "jensen2026perceptron": [
-   "history"
-  ],
-  "lindquist2026weirdai": [
-   "history"
-  ],
-  "minskyperceptrons": [
-   "history"
-  ],
-  "newyorktimesperceptron": [
-   "history",
-   "untold_history"
-  ],
-  "perceptronresults": [
-   "history"
-  ],
-  "rosenblattperceptronresults": [
-   "history"
-  ],
-  "farleyclark1954": [
-   "history"
-  ],
-  "joseph1961perceptron": [
-   "history"
-  ],
-  "markkac": [
-   "history"
-  ],
-  "widrow1960adaline": [
-   "history"
-  ],
-  "img_widrow_adaline": [
-   "history"
-  ],
-  "sleepingbeauty": [
-   "history"
-  ],
-  "ivakhnenko1965": [
-   "history"
-  ],
-  "ivakhnenko1971": [
-   "history"
-  ],
-  "adaptivepattern": [
-   "history"
-  ],
-  "schmidhuber2022deep": [
-   "history"
-  ],
-  "rosenblattbackprop": [
-   "history"
-  ],
-  "linnainmaa1970": [
-   "autodiff",
-   "history"
-  ],
-  "lighthillreport": [
-   "history"
-  ],
-  "dreyfus1972what": [
-   "history",
-   "philosophy"
-  ],
-  "kelley": [
-   "history"
-  ],
-  "mooreslaw": [
-   "history",
-   "untold_history"
-  ],
-  "weizenbaum1976computer": [
-   "history"
-  ],
-  "lane2025eliza": [
-   "history"
-  ],
-  "img_warren_weaver": [
-   "history"
-  ],
-  "deepblue": [
-   "history"
-  ],
-  "lstm_vanilla": [
-   "history"
-  ],
-  "ctc2006": [
-   "history"
-  ],
-  "schmidhuber2025cnn": [
-   "history"
-  ],
-  "fukushima1969relu": [
-   "history"
-  ],
-  "waibel1987tdnn": [
-   "history"
-  ],
-  "zhang1988cnn": [
-   "history"
-  ],
-  "neuralprobabilistic": [
-   "history"
-  ],
-  "rumelhart1986pdp": [
-   "history"
-  ],
-  "collobert2002": [
-   "history"
-  ],
-  "tensorflow2016": [
-   "autodiff",
-   "history"
-  ],
-  "jelinek": [
-   "history"
-  ],
-  "karpathy2019recipe": [
-   "history"
-  ],
-  "krizhevsky2012imagenet": [
-   "computer_vision",
-   "history"
-  ],
-  "socher2011": [
-   "history"
-  ],
-  "hooker2020": [
-   "history"
-  ],
-  "oh2004gpu": [
-   "history"
-  ],
-  "raina2009large": [
-   "history"
-  ],
-  "ciresan2011flexible": [
-   "history"
-  ],
-  "weatherfactory": [
-   "history"
-  ],
-  "cuda": [
-   "history",
-   "untold_history"
-  ],
-  "alkindi_cryptanalysis": [
-   "history"
-  ],
-  "elmo": [
-   "history"
-  ],
-  "schmidhuber1996nplm": [
-   "history"
-  ],
-  "brown2020gpt3": [
-   "history",
-   "philosophy",
-   "unexpected_capabilities"
-  ],
-  "touvron2023llama": [
-   "history"
-  ],
-  "racter1984": [
-   "history"
-  ],
-  "lutzobituary": [
-   "history"
-  ],
-  "lutz1959": [
-   "history"
-  ],
-  "searle1980minds": [
-   "history",
-   "philosophy"
-  ],
-  "sharma2023sycophancy": [
-   "hallucinations"
-  ],
-  "berglund2023reversal": [
-   "hallucinations"
-  ],
-  "hoffman2015interface": [
-   "hallucinations",
-   "philosophy"
-  ],
-  "unfinishablemap2026fbt": [
-   "hallucinations"
-  ],
-  "wei2022cot": [
-   "hallucinations",
-   "promptengineering",
-   "reasoning"
-  ],
-  "bender2021stochasticparrots": [
-   "ai_existential_risk",
-   "hallucinations",
-   "philosophy"
-  ],
-  "clark1998extended": [
-   "hallucinations"
-  ],
-  "leibnizrechenmaschine": [
-   "software"
-  ],
-  "chm": [
-   "human_mind",
-   "software"
-  ],
-  "zusetoolazy": [
-   "software"
-  ],
-  "edvac_os": [
-   "software"
-  ],
-  "ctss_annals": [
-   "software"
-  ],
-  "licklider": [
-   "software"
-  ],
-  "multics_plan9": [
-   "software"
-  ],
-  "unix_ts": [
-   "software"
-  ],
-  "bell_labs": [
-   "software"
-  ],
-  "plan9_9front": [
-   "software"
-  ],
-  "windows_ms": [
-   "software"
-  ],
-  "mach": [
-   "software"
-  ],
-  "gnu_hurd": [
-   "software"
-  ],
-  "minix3": [
-   "software"
-  ],
-  "mars_pathfinder": [
-   "software"
-  ],
-  "fortran2": [
-   "software"
-  ],
-  "lispworks": [
-   "software"
-  ],
-  "algol60": [
-   "software"
-  ],
-  "goto_harmful": [
-   "software"
-  ],
-  "isocpp": [
-   "software"
-  ],
-  "pascal": [
-   "software"
-  ],
-  "smalltalk": [
-   "software"
-  ],
-  "haskell": [
-   "software"
-  ],
-  "prolog": [
-   "software"
-  ],
-  "apl_j": [
-   "software"
-  ],
-  "dartmouth": [
-   "software"
-  ],
-  "codd1970": [
-   "software"
-  ],
-  "garmisch1968": [
-   "software"
-  ],
-  "java_oracle": [
-   "software"
-  ],
-  "python": [
-   "software"
-  ],
-  "python_zen": [
-   "software"
-  ],
-  "javascript_mdn": [
-   "software"
-  ],
-  "csharp_ms": [
-   "software"
-  ],
-  "go_lang": [
-   "software"
-  ],
-  "rust_lang": [
-   "software"
-  ],
-  "gnu_make": [
-   "software"
-  ],
-  "git": [
-   "software"
-  ],
-  "hinton2015distilling": [
-   "production_serving"
-  ],
-  "continuous_delivery_wiki": [
-   "production_serving"
-  ],
-  "mccarthy1969some": [
-   "agents"
-  ],
-  "shrdlu_image": [
-   "agents"
-  ],
-  "alphago_leesedol_image": [
-   "agents"
-  ],
-  "abboud2025opencode": [
-   "agents"
-  ],
-  "wang2023planandexecute": [
-   "agents",
-   "promptengineering"
-  ],
-  "shinn2023reflexion": [
-   "agents",
-   "promptengineering"
-  ],
-  "colah2015backprop": [
-   "autodiff",
-   "origami",
-   "recurrent_networks"
-  ],
-  "wengert1964": [
-   "autodiff"
-  ],
-  "differenceengine": [
-   "autodiff"
-  ],
-  "aiello1995expensivetissue": [
-   "human_mind"
-  ],
-  "wrangham2009catching": [
-   "human_mind",
-   "untold_history"
-  ],
-  "flames_image": [
-   "human_mind"
-  ],
-  "dunbar2012socialbrain": [
-   "human_mind"
-  ],
-  "friston2010freeenergy": [
-   "human_mind",
-   "philosophy",
-   "untold_history"
-  ],
-  "chasesimon1973chess": [
-   "human_mind"
-  ],
-  "rosch1975familyresemblance": [
-   "human_mind"
-  ],
-  "gentner1983structuremapping": [
-   "foam_of_meaning",
-   "human_mind"
-  ],
-  "lakoff1993metaphor": [
-   "foam_of_meaning",
-   "human_mind"
-  ],
-  "flavell1979metacognition": [
-   "human_mind"
-  ],
-  "dehaene1997numbersense": [
-   "human_mind"
-  ],
-  "mehta2020play": [
-   "human_mind"
-  ],
-  "loewenstein1994curiosity": [
-   "human_mind"
-  ],
-  "mednick1962creative": [
-   "human_mind"
-  ],
-  "tomasello2014thinking": [
-   "human_mind"
-  ],
-  "emergenceofmodernhumanbehaviour": [
-   "geometry_i",
-   "human_mind",
-   "untold_history"
-  ],
-  "cuevadelasmanos_image": [
-   "human_mind",
-   "intro"
-  ],
-  "aristotlemetaphysics": [
-   "human_mind"
-  ],
-  "daston1988probability": [
-   "human_mind"
-  ],
-  "galileodialogue1632": [
-   "human_mind"
-  ],
-  "galilei_image": [
-   "human_mind"
-  ],
-  "poincare1910creation": [
-   "human_mind"
-  ],
-  "poincare_image": [
-   "human_mind"
-  ],
-  "polya1945solve": [
-   "human_mind"
-  ],
-  "chomsky1959review": [
-   "human_mind"
-  ],
-  "newellsimon1972problemsolving": [
-   "human_mind"
-  ],
-  "minsky1986society": [
-   "human_mind"
-  ],
-  "simonnewell_image": [
-   "human_mind"
-  ],
-  "henrich2016secret": [
-   "human_mind"
-  ],
-  "clarkchalmers1998extended": [
-   "human_mind"
-  ],
-  "premackwoodruff1978tom": [
-   "human_mind"
-  ],
-  "merton1973norms": [
-   "human_mind"
-  ],
-  "axelrod1984cooperation": [
-   "human_mind"
-  ],
-  "raymond1999cathedral": [
-   "human_mind"
-  ],
-  "ietf_open": [
-   "human_mind"
-  ],
-  "benkler2006wealth": [
-   "human_mind"
-  ],
-  "huggingface": [
-   "human_mind"
-  ],
-  "slotmachine_image": [
-   "human_mind"
-  ],
-  "barrett2011religion": [
-   "human_mind"
-  ],
-  "chalmers1995consciousmind": [
-   "human_mind"
-  ],
-  "nagel1974bat": [
-   "human_mind",
-   "philosophy"
-  ],
-  "churchland1981eliminative": [
-   "human_mind"
-  ],
-  "dennett2017bacteria": [
-   "human_mind"
-  ],
-  "descartesmeditations": [
-   "human_mind"
-  ],
-  "kastrup2019ideaworld": [
-   "human_mind"
-  ],
-  "freud1900dreams": [
-   "human_mind"
-  ],
-  "freud_image": [
-   "human_mind"
-  ],
-  "jungpsychologyandreligion": [
-   "human_mind"
-  ],
-  "jung_image": [
-   "human_mind"
-  ],
-  "heidegger1927beingandtime": [
-   "human_mind",
-   "myths",
-   "philosophy"
-  ],
-  "heidegger_image": [
-   "human_mind"
-  ],
-  "schmitz_image": [
-   "human_mind"
-  ],
-  "suarezgallup1981mirror": [
-   "human_mind"
-  ],
-  "mirrorselfrecognition_image": [
-   "human_mind"
-  ],
-  "maturavarela1980autopoiesis": [
-   "human_mind"
-  ],
-  "dawkins1976selfishgene": [
-   "human_mind"
-  ],
-  "dawkins_image": [
-   "human_mind"
-  ],
-  "hinton1995wakesleep": [
-   "beyond_llms"
   ],
   "neal1998wake": [
    "beyond_llms"
@@ -17637,6 +15794,11 @@
   ],
   "goodfellow2014gan": [
    "beyond_llms"
+  ],
+  "ho2020ddpm": [
+   "beyond_llms",
+   "diffusion",
+   "music_video_generation"
   ],
   "devlin2019bert": [
    "beyond_llms"
@@ -17809,6 +15971,10 @@
   "cortes1995svm": [
    "beyond_llms"
   ],
+  "scholkopf2002learning": [
+   "beyond_llms",
+   "geometry_ii"
+  ],
   "jacot2018ntk": [
    "beyond_llms",
    "origami"
@@ -17969,6 +16135,14 @@
   "tesauro1995tdgammon": [
    "beyond_llms"
   ],
+  "silver2016go": [
+   "ai_for_science",
+   "beyond_llms"
+  ],
+  "silver2018zero": [
+   "ai_for_science",
+   "beyond_llms"
+  ],
   "mnih2015dqn": [
    "beyond_llms"
   ],
@@ -17999,8 +16173,16 @@
   "sutton1988td": [
    "beyond_llms"
   ],
+  "williams1992reinforce": [
+   "beyond_llms",
+   "reinforcement_learning"
+  ],
   "konda2000ac": [
    "beyond_llms"
+  ],
+  "schulman2017ppo": [
+   "beyond_llms",
+   "reinforcement_learning"
   ],
   "schulman2015trpo": [
    "beyond_llms"
@@ -18025,6 +16207,14 @@
   ],
   "abbeel2004irl": [
    "beyond_llms"
+  ],
+  "ouyang2022instructgpt": [
+   "alignment",
+   "beyond_llms",
+   "finetuninglab",
+   "frontier",
+   "history",
+   "reasoning"
   ],
   "frege1879begriffsschrift": [
    "beyond_llms"
@@ -18075,6 +16265,14 @@
   "robinson1965resolution": [
    "beyond_llms"
   ],
+  "moura2015lean": [
+   "beyond_llms",
+   "coherent_world_models"
+  ],
+  "bertot2013coq": [
+   "beyond_llms",
+   "coherent_world_models"
+  ],
   "berners2001sw": [
    "beyond_llms"
   ],
@@ -18087,8 +16285,16 @@
   "miller1995wordnet": [
    "beyond_llms"
   ],
+  "bordes2013transe": [
+   "beyond_llms",
+   "symbolic_ai"
+  ],
   "trouillon2016complex": [
    "beyond_llms"
+  ],
+  "schlichtkrull2018rgcn": [
+   "beyond_llms",
+   "symbolic_ai"
   ],
   "koren2009mf": [
    "beyond_llms"
@@ -18161,6 +16367,10 @@
   ],
   "kipf2017gcn": [
    "beyond_llms"
+  ],
+  "hamilton2017graphsage": [
+   "beyond_llms",
+   "symbolic_ai"
   ],
   "velickovic2018gat": [
    "beyond_llms"
@@ -18260,6 +16470,18 @@
   "rezende2015nf": [
    "beyond_llms"
   ],
+  "sohl2015deep": [
+   "beyond_llms",
+   "diffusion"
+  ],
+  "song2019score": [
+   "beyond_llms",
+   "diffusion"
+  ],
+  "oord2016wavenet": [
+   "beyond_llms",
+   "music_video_generation"
+  ],
   "edelsbrunner2002persistent": [
    "beyond_llms",
    "foam_of_meaning",
@@ -18285,10 +16507,19 @@
   "singh2007mapper": [
    "beyond_llms"
   ],
-  "pearl1995book": [
-   "beyond_llms"
+  "hume_treatise": [
+   "beyond_llms",
+   "philosophy"
+  ],
+  "kant_critique_pure_reason": [
+   "beyond_llms",
+   "coherent_world_models",
+   "philosophy"
   ],
   "pearl2009book": [
+   "beyond_llms"
+  ],
+  "pearl1995book": [
    "beyond_llms"
   ],
   "pearl1995do": [
@@ -18324,6 +16555,10 @@
   "gong2019memoryae": [
    "beyond_llms"
   ],
+  "tishby2000informationbottleneck": [
+   "beyond_llms",
+   "transformer"
+  ],
   "shwartz2017opening": [
    "beyond_llms"
   ],
@@ -18348,6 +16583,15 @@
   "wolpert1992stacking": [
    "beyond_llms"
   ],
+  "jacobs1991moe": [
+   "beyond_llms",
+   "transformer"
+  ],
+  "shazeer2017moe": [
+   "beyond_llms",
+   "mixture_of_experts",
+   "transformer"
+  ],
   "wang2024ensemble": [
    "beyond_llms"
   ],
@@ -18370,239 +16614,18 @@
   "russell2010aima": [
    "beyond_llms"
   ],
-  "rozenblit2002ioed": [
-   "myths"
-  ],
-  "weizenbaum1966eliza": [
-   "myths"
-  ],
-  "aiindex2025": [
-   "myths"
-  ],
-  "brednich1990spinne": [
-   "myths"
-  ],
-  "brednich1991maus": [
-   "myths"
-  ],
-  "brednich1993huhn": [
-   "myths"
-  ],
-  "brednich_wiki": [
-   "myths"
-  ],
-  "urbanlegends_wiki": [
-   "myths"
-  ],
-  "septruringtest": [
-   "myths"
-  ],
-  "computational_theory_of_mind": [
-   "myths"
-  ],
-  "clark2013surfing": [
-   "myths"
-  ],
-  "predictive_coding_wiki": [
-   "myths"
-  ],
-  "vinge1993singularity": [
-   "myths"
-  ],
-  "kurzweil2005singularity": [
-   "myths"
-  ],
-  "golem_wiki": [
-   "myths"
-  ],
-  "bostrom2014superintelligence": [
-   "ai_existential_risk",
-   "myths"
-  ],
-  "luddite_wiki": [
-   "myths"
-  ],
-  "brynjolfsson2014secondmachine": [
-   "myths"
-  ],
-  "techunemployment_wiki": [
-   "myths"
-  ],
-  "ioed_wiki": [
-   "myths"
-  ],
-  "sutton2019bitterlesson": [
-   "myths"
-  ],
-  "algofairness_wiki": [
-   "myths"
-  ],
-  "gfactor_wiki": [
-   "myths"
-  ],
-  "korzybski_mapterritory": [
-   "myths"
-  ],
-  "box1976allmodels": [
-   "myths"
-  ],
-  "cnn2024deepfake": [
-   "myths"
-  ],
-  "aiincident634": [
-   "myths"
-  ],
-  "mataavianca_wiki": [
-   "myths"
-  ],
-  "hallucination_ai_wiki": [
-   "myths"
-  ],
-  "theatreopera_wiki": [
-   "myths"
-  ],
-  "midjourney_wiki": [
-   "myths"
-  ],
-  "ai_music_wiki": [
-   "myths"
-  ],
-  "deathschatbots_wiki": [
-   "myths"
-  ],
-  "guardian2024sewell": [
-   "myths"
-  ],
-  "aislop_wiki": [
-   "myths"
-  ],
-  "deadinternet_wiki": [
-   "myths"
-  ],
-  "agi_wiki": [
-   "myths"
-  ],
-  "aiwinter_wiki": [
-   "myths"
-  ],
-  "condorcet1770": [
-   "derivativelab",
-   "differentiation",
-   "geometry_iii"
-  ],
-  "legendre1786": [
-   "derivativelab",
-   "differentiation",
-   "geometry_iii"
-  ],
-  "historyofmathematicalnotation": [
-   "derivativelab",
-   "differentiation",
-   "geometry_iii",
-   "math_i",
-   "math_iii"
-  ],
-  "lageometrie": [
-   "math_i"
-  ],
-  "euler1755": [
-   "differentiation",
-   "math_i"
-  ],
-  "kramp1808": [
-   "math_i"
-  ],
-  "euler_portrait": [
-   "math_i"
-  ],
-  "madhava": [
-   "geometry_i",
-   "math_i"
-  ],
-  "gregoryachievements": [
-   "math_i"
-  ],
-  "newtonquadratura": [
-   "math_i"
-  ],
-  "taylor1715": [
-   "math_i"
-  ],
-  "maclaurin": [
-   "math_i"
-  ],
-  "napier1614": [
-   "math_i"
-  ],
-  "napier_portrait": [
-   "math_i"
-  ],
-  "laplace1821": [
-   "math_i"
-  ],
-  "mercator1668": [
-   "math_i"
-  ],
-  "wallis1655": [
-   "differentiation",
-   "math_i"
-  ],
-  "chung2022flan": [
-   "unexpected_capabilities"
-  ],
-  "nye2021scratchpad": [
-   "unexpected_capabilities"
-  ],
-  "wei2022chainofthought": [
-   "unexpected_capabilities"
-  ],
   "kojima2022zeroshot": [
    "reasoning",
    "unexpected_capabilities"
   ],
-  "wang2022selfconsistency": [
-   "reasoning",
-   "unexpected_capabilities"
+  "wei2022cot": [
+   "hallucinations",
+   "promptengineering",
+   "reasoning"
   ],
   "yao2023tot": [
    "promptengineering",
    "reasoning",
-   "unexpected_capabilities"
-  ],
-  "press2022compositionality": [
-   "unexpected_capabilities"
-  ],
-  "udrescu2020aifeynman": [
-   "unexpected_capabilities"
-  ],
-  "li2022othello_iclr": [
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "unexpected_capabilities"
-  ],
-  "huh2024platonic": [
-   "embeddinglab",
-   "geometry_i",
-   "unexpected_capabilities"
-  ],
-  "shi2023cottransfer": [
-   "unexpected_capabilities"
-  ],
-  "burns2022ccs": [
-   "mechanistic_interpretability",
-   "unexpected_capabilities"
-  ],
-  "elhage2022superposition": [
-   "embeddinglab",
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "philosophy",
-   "unexpected_capabilities"
-  ],
-  "monosemanticity": [
-   "unexpected_capabilities"
-  ],
-  "kosinski2023tom": [
    "unexpected_capabilities"
   ],
   "madaan2023selfrefine": [
@@ -18610,65 +16633,372 @@
    "reasoning",
    "unexpected_capabilities"
   ],
-  "huang2022selfimprove": [
+  "yao2023react": [
+   "agents",
+   "promptengineering",
+   "reasoning",
+   "symbolic_ai",
+   "unexpected_capabilities",
+   "websearch"
+  ],
+  "wang2022selfconsistency": [
+   "reasoning",
    "unexpected_capabilities"
   ],
-  "lin2021truthful": [
+  "shao2024grpo": [
+   "finetuninglab",
+   "reasoning",
+   "reinforcement_learning"
+  ],
+  "zhang2024mathshepherd": [
+   "frontier",
+   "reasoning"
+  ],
+  "snell2024testtime": [
+   "reasoning"
+  ],
+  "hendrycks2021math": [
+   "evaluation",
+   "reasoning",
+   "training_data"
+  ],
+  "bostrom2003ethical": [
+   "ai_existential_risk",
+   "alignment",
+   "philosophy"
+  ],
+  "christiano2017rlhf": [
+   "alignment",
+   "history"
+  ],
+  "rlaif": [
+   "alignment"
+  ],
+  "bai2022constitutional": [
+   "alignment",
+   "training_data",
    "unexpected_capabilities"
   ],
-  "mckenzie2023inverse": [
+  "rafailov2023dpo": [
+   "alignment",
+   "finetuninglab",
+   "reinforcement_learning"
+  ],
+  "orpo": [
+   "alignment",
+   "finetuninglab"
+  ],
+  "kadavath2022selfknowledge": [
+   "alignment",
+   "mechanistic_interpretability",
+   "reliability",
    "unexpected_capabilities"
   ],
-  "bubeck2023sparks": [
-   "unexpected_capabilities"
+  "mesa_optimization": [
+   "alignment"
   ],
-  "odena2016deconvolution": [
-   "deconvolution"
-  ],
-  "emergentmind_latent_space_steering": [
-   "promptengineering"
-  ],
-  "emergentmind_steering_vectors": [
-   "promptengineering"
-  ],
-  "emergentmind_representation_steering": [
+  "hubinger2024sleeperagents": [
+   "ai_existential_risk",
+   "alignment",
+   "mechanistic_interpretability",
    "philosophy",
-   "promptengineering"
+   "security_inference"
   ],
-  "emergentmind_latent_steering": [
-   "promptengineering"
+  "alignment_faking": [
+   "ai_existential_risk",
+   "alignment"
   ],
-  "coherent_difference_chapter": [
-   "promptengineering"
+  "thought_crime": [
+   "ai_existential_risk",
+   "alignment",
+   "mechanistic_interpretability"
   ],
-  "spencerbrown1969form": [
-   "coherent_difference",
+  "reward_tampering": [
+   "ai_existential_risk",
+   "alignment"
+  ],
+  "rogue_agents": [
+   "alignment"
+  ],
+  "treacherous_turn": [
+   "ai_existential_risk",
+   "alignment"
+  ],
+  "ai_safety_debate": [
+   "alignment"
+  ],
+  "weak_to_strong": [
+   "alignment"
+  ],
+  "verify_step_by_step": [
+   "alignment"
+  ],
+  "ai_control": [
+   "alignment"
+  ],
+  "mech_interp_alignment": [
+   "alignment"
+  ],
+  "anthropic2024goldengate": [
+   "frontier"
+  ],
+  "redman2024causalscrubbing": [
+   "frontier"
+  ],
+  "zou2023repeng": [
+   "frontier"
+  ],
+  "sun2024ttt": [
+   "frontier"
+  ],
+  "su2021rope": [
+   "frontier"
+  ],
+  "peng2023yarn": [
+   "frontier"
+  ],
+  "press2022alibi": [
+   "frontier"
+  ],
+  "li2023seqparallel": [
+   "frontier"
+  ],
+  "ma2024bitnet": [
+   "frontier",
+   "inference_optimization",
+   "production_serving"
+  ],
+  "mohtashami2023landmark": [
+   "frontier"
+  ],
+  "bubeck2023moeoverview": [
+   "frontier",
+   "training_infrastructure"
+  ],
+  "elhoushi2024early": [
+   "frontier"
+  ],
+  "fedus2022switch": [
+   "frontier"
+  ],
+  "sakurai2024skrr": [
+   "frontier"
+  ],
+  "du2023multiagent": [
+   "frontier",
+   "law_regulation",
+   "reinforcement_learning"
+  ],
+  "schick2023toolformer": [
+   "frontier",
+   "symbolic_ai",
+   "unexpected_capabilities",
+   "websearch"
+  ],
+  "patil2023gorilla": [
+   "frontier"
+  ],
+  "hafner2023dreamer": [
+   "frontier"
+  ],
+  "descartesgeometrie": [
+   "geometry_i",
+   "math_iv",
+   "untold_history"
+  ],
+  "mobiusband": [
+   "geometry_i",
+   "math_iv"
+  ],
+  "riemann1854raum": [
+   "math_iv"
+  ],
+  "affine_geometry_wiki": [
+   "math_iv"
+  ],
+  "euler1748introductio": [
+   "math_iv"
+  ],
+  "klein1948geometry": [
+   "math_iv"
+  ],
+  "projective_transformation_wiki": [
+   "math_iv"
+  ],
+  "homography_cv_wiki": [
+   "math_iv"
+  ],
+  "albertidepictura": [
+   "geometry_i",
+   "math_iv"
+  ],
+  "desarguesbrouillon": [
+   "geometry_i",
+   "math_iv"
+  ],
+  "projective_geometry_wiki": [
+   "math_iv"
+  ],
+  "poncelet1822traite": [
+   "math_iv"
+  ],
+  "mobius_transformation_wiki": [
+   "math_iv"
+  ],
+  "nlab_homeomorphism": [
+   "math_iv"
+  ],
+  "morris2007topology": [
+   "geometry_i",
+   "geometry_iii",
+   "math_iv",
+   "topology"
+  ],
+  "nlab_invariance_of_domain": [
+   "math_iv"
+  ],
+  "keup2022origami": [
+   "math_iv",
    "origami",
+   "topology"
+  ],
+  "nlab_hopf_link": [
+   "math_iv"
+  ],
+  "hopf_link_wiki": [
+   "math_iv"
+  ],
+  "nlab_knot": [
+   "math_iv"
+  ],
+  "nlab_link": [
+   "math_iv"
+  ],
+  "nlab_isotopy": [
+   "math_iv"
+  ],
+  "nlab_unknot": [
+   "math_iv"
+  ],
+  "nlab_linking_number": [
+   "math_iv"
+  ],
+  "linking_number_wiki": [
+   "math_iv"
+  ],
+  "nlab_topological_property": [
+   "math_iv"
+  ],
+  "homeomorphism_wiki": [
+   "math_iv"
+  ],
+  "montufar2014regions": [
+   "deeplearninglab",
+   "math_iv",
+   "origami"
+  ],
+  "amrami2021depth": [
+   "math_iv",
+   "origami"
+  ],
+  "lewandowski2025spacefolds": [
+   "math_iv",
+   "origami"
+  ],
+  "listingtopologie": [
+   "geometry_i",
+   "math_iv"
+  ],
+  "poincareanalysissitus": [
+   "geometry_i",
+   "geometry_iii",
+   "math_iv"
+  ],
+  "foldandcut_wiki": [
+   "math_iv",
+   "origami"
+  ],
+  "galoisgroup": [
+   "math_iv"
+  ],
+  "cayleygroups": [
+   "math_iv"
+  ],
+  "mccarthy1969some": [
+   "agents"
+  ],
+  "shrdlu_image": [
+   "agents"
+  ],
+  "alphago_leesedol_image": [
+   "agents"
+  ],
+  "abboud2025opencode": [
+   "agents"
+  ],
+  "wang2023planandexecute": [
+   "agents",
    "promptengineering"
   ],
-  "topology_wiki": [
-   "coherent_difference",
-   "philosophy",
+  "shinn2023reflexion": [
+   "agents",
    "promptengineering"
   ],
-  "sheaf_mathematics": [
-   "coherent_difference",
-   "promptengineering"
+  "deeplearningfirstuse": [
+   "deeplearninglab"
   ],
-  "park2024linear": [
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "philosophy",
-   "promptengineering"
+  "aizenberg2000": [
+   "deeplearninglab"
   ],
-  "marks2023geometry": [
-   "mechanistic_interpretability",
-   "promptengineering"
+  "hinton2006": [
+   "deeplearninglab",
+   "geometry_i"
   ],
-  "bricken2023monosemanticity": [
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "promptengineering"
+  "hornik1989universal": [
+   "deeplearninglab",
+   "origami",
+   "overandunderfittinglab"
+  ],
+  "telgarsky2016wars": [
+   "deeplearninglab",
+   "loss_landscape"
+  ],
+  "elhage2021framework": [
+   "deeplearninglab"
+  ],
+  "li2018losslandscape": [
+   "deeplearninglab",
+   "loss_landscape"
+  ],
+  "dauphin2014saddle": [
+   "deeplearninglab",
+   "loss_landscape"
+  ],
+  "ruder2016overview": [
+   "deeplearninglab",
+   "hyperparameters",
+   "optimizerlab",
+   "overandunderfittinglab"
+  ],
+  "grokking": [
+   "deeplearninglab",
+   "loss_landscape"
+  ],
+  "nanda2023grokking": [
+   "algorithms",
+   "deeplearninglab",
+   "mechanistic_interpretability"
+  ],
+  "davies2023unifying": [
+   "deeplearninglab"
+  ],
+  "belkin2019reconciling": [
+   "deeplearninglab"
+  ],
+  "leibniz1686calculus": [
+   "history",
+   "software",
+   "untold_history"
   ],
   "leibniz1666combinatoria": [
    "untold_history"
@@ -18686,6 +17016,10 @@
    "untold_history"
   ],
   "wmap_cmb": [
+   "untold_history"
+  ],
+  "budassi_universe_image": [
+   "atlas",
    "untold_history"
   ],
   "alperbethegamow1948": [
@@ -19000,6 +17334,10 @@
   "white2009ardipithecus": [
    "untold_history"
   ],
+  "lomekwi": [
+   "history",
+   "untold_history"
+  ],
   "oldowan": [
    "untold_history"
   ],
@@ -19009,7 +17347,20 @@
   "controlleduseoffire": [
    "untold_history"
   ],
+  "wrangham2009catching": [
+   "human_mind",
+   "untold_history"
+  ],
   "hublin2017jebel": [
+   "untold_history"
+  ],
+  "earlylanguage": [
+   "language",
+   "untold_history"
+  ],
+  "emergenceofmodernhumanbehaviour": [
+   "geometry_i",
+   "human_mind",
    "untold_history"
   ],
   "conard2009hohlefels": [
@@ -19092,6 +17443,11 @@
   "huygens1657ratiociniis": [
    "untold_history"
   ],
+  "bayes1763essay": [
+   "statistics",
+   "statistics_ii",
+   "untold_history"
+  ],
   "laplace1812analytic": [
    "untold_history"
   ],
@@ -19143,7 +17499,17 @@
   "neuron_doctrine_wiki": [
    "untold_history"
   ],
+  "cajaltextura": [
+   "history",
+   "untold_history"
+  ],
   "img_cajal_cerebellum": [
+   "untold_history"
+  ],
+  "rosenblatt1958perceptron": [
+   "activationlab",
+   "history",
+   "minimalneuron",
    "untold_history"
   ],
   "olaha2020zoomin": [
@@ -19185,6 +17551,11 @@
   "deremetallica": [
    "untold_history"
   ],
+  "vonneumann": [
+   "history",
+   "software",
+   "untold_history"
+  ],
   "bessemerpatent": [
    "untold_history"
   ],
@@ -19215,6 +17586,18 @@
   "mendeleev_periodic_table": [
    "untold_history"
   ],
+  "wolfbone": [
+   "history",
+   "untold_history"
+  ],
+  "vogelsang2010apollo11": [
+   "history",
+   "untold_history"
+  ],
+  "henshilwood2018blombos": [
+   "history",
+   "untold_history"
+  ],
   "ifrah2000": [
    "untold_history"
   ],
@@ -19240,6 +17623,15 @@
    "untold_history"
   ],
   "fibonaccihistory": [
+   "untold_history"
+  ],
+  "brahmagupta628": [
+   "history",
+   "language",
+   "untold_history"
+  ],
+  "alkwarizma": [
+   "positionalembeddingslab",
    "untold_history"
   ],
   "fibonacciseq": [
@@ -19317,6 +17709,11 @@
   "jacquard_loom": [
    "untold_history"
   ],
+  "lovelacequote": [
+   "history",
+   "software",
+   "untold_history"
+  ],
   "taocp3": [
    "untold_history"
   ],
@@ -19344,7 +17741,16 @@
   "gordon2015indecent": [
    "untold_history"
   ],
+  "nilsson1984qai": [
+   "history",
+   "language",
+   "untold_history"
+  ],
   "img_kirsch_baby": [
+   "untold_history"
+  ],
+  "tomayko1988spaceflight": [
+   "history",
    "untold_history"
   ],
   "img_ranger7_moon": [
@@ -19455,7 +17861,20 @@
   "boltzmannlearning": [
    "untold_history"
   ],
+  "lenz1920": [
+   "history",
+   "untold_history"
+  ],
+  "ising1925": [
+   "history",
+   "untold_history"
+  ],
   "lecun2006": [
+   "untold_history"
+  ],
+  "friston2010freeenergy": [
+   "human_mind",
+   "philosophy",
    "untold_history"
   ],
   "img_merlin_enchanteur": [
@@ -19587,6 +18006,28 @@
   "img_flaming_heart": [
    "untold_history"
   ],
+  "jumper2021alphafold": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
+  ],
+  "alphafold_db": [
+   "ai_for_science",
+   "untold_history"
+  ],
+  "alphafold_wiki": [
+   "ai_and_society",
+   "untold_history"
+  ],
+  "nobel2024chemistry": [
+   "ai_and_society",
+   "untold_history"
+  ],
+  "merchant2023gnome": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
+  ],
   "icecorewiki": [
    "untold_history"
   ],
@@ -19621,6 +18062,10 @@
    "untold_history"
   ],
   "eniac_image": [
+   "untold_history"
+  ],
+  "mooreslaw": [
+   "history",
    "untold_history"
   ],
   "tomasulo1967": [
@@ -19692,6 +18137,10 @@
   "ibmpgc": [
    "untold_history"
   ],
+  "cuda": [
+   "history",
+   "untold_history"
+  ],
   "jouppi2017tpu": [
    "untold_history"
   ],
@@ -19711,6 +18160,10 @@
    "untold_history"
   ],
   "eniac1946_image": [
+   "untold_history"
+  ],
+  "wiener1948cybernetics": [
+   "history",
    "untold_history"
   ],
   "good1959statistics": [
@@ -19762,6 +18215,10 @@
    "untold_history"
   ],
   "metropolis_hastings_image": [
+   "untold_history"
+  ],
+  "silver2016alphago": [
+   "ai_and_society",
    "untold_history"
   ],
   "backusfortran": [
@@ -19839,6 +18296,10 @@
   "perseverance_selfie_image": [
    "untold_history"
   ],
+  "newyorktimesperceptron": [
+   "history",
+   "untold_history"
+  ],
   "reed1960polynomial": [
    "untold_history"
   ],
@@ -19896,6 +18357,14 @@
   "img_mice_galaxies": [
    "untold_history"
   ],
+  "sutton2019bitter": [
+   "history",
+   "music_video_generation",
+   "statistics",
+   "statistics_i",
+   "transformer",
+   "untold_history"
+  ],
   "wiki_richardson_lucy": [
    "untold_history"
   ],
@@ -19905,7 +18374,16 @@
   "wiki_diffusion_model": [
    "untold_history"
   ],
+  "zusebook": [
+   "history",
+   "software",
+   "untold_history"
+  ],
   "algol60report": [
+   "untold_history"
+  ],
+  "bool1854": [
+   "history",
    "untold_history"
   ],
   "ieee754_1985": [
@@ -19923,6 +18401,10 @@
   "pep285": [
    "untold_history"
   ],
+  "russell1910principia": [
+   "history",
+   "untold_history"
+  ],
   "churchsimplytyped": [
    "untold_history"
   ],
@@ -19935,11 +18417,33 @@
   "martinloeftypetheory": [
    "untold_history"
   ],
-  "cayleymemoirmatrices": [
-   "math_ii",
+  "summaarithmetica": [
    "untold_history"
   ],
-  "summaarithmetica": [
+  "visicalc": [
+   "history",
+   "untold_history"
+  ],
+  "aswemaythink": [
+   "untold_history"
+  ],
+  "memex": [
+   "untold_history"
+  ],
+  "augmentinghumanintellect": [
+   "untold_history"
+  ],
+  "motherofalldemos": [
+   "untold_history"
+  ],
+  "tednelson": [
+   "untold_history"
+  ],
+  "tednelsonhypertext": [
+   "untold_history"
+  ],
+  "licklider": [
+   "software",
    "untold_history"
   ],
   "arpanet_map": [
@@ -19957,8 +18461,15 @@
   "wikimediadumps": [
    "untold_history"
   ],
-  "colah2014conv": [
-   "computer_vision",
+  "colah2015backprop": [
+   "autodiff",
+   "origami",
+   "recurrent_networks"
+  ],
+  "lstm": [
+   "alternative_architectures",
+   "history",
+   "positionalembeddingslab",
    "recurrent_networks"
   ],
   "cho2014gru": [
@@ -19967,24 +18478,2698 @@
   "greff2015lstm": [
    "recurrent_networks"
   ],
-  "dosovitskiy2021vit": [
-   "computer_vision",
-   "multimodal"
+  "hoffmann2022chinchilla": [
+   "ai_economics",
+   "history",
+   "hyperparameters",
+   "losslab",
+   "training_data",
+   "trainingdynamics"
   ],
-  "liu2023llava": [
-   "multimodal"
+  "kaplan2020scaling": [
+   "ai_economics",
+   "hyperparameters",
+   "trainingdynamics"
   ],
-  "alayrac2022flamingo": [
-   "multimodal"
+  "promptcaching": [
+   "ai_economics"
   ],
-  "houlsby2019adapters": [
-   "finetuninglab"
+  "aiello1995expensivetissue": [
+   "human_mind"
   ],
-  "lester2021prompttuning": [
-   "finetuninglab"
+  "flames_image": [
+   "human_mind"
   ],
-  "liu2022ia3": [
-   "finetuninglab"
+  "dunbar2012socialbrain": [
+   "human_mind"
+  ],
+  "chasesimon1973chess": [
+   "human_mind"
+  ],
+  "rosch1975familyresemblance": [
+   "human_mind"
+  ],
+  "gentner1983structuremapping": [
+   "foam_of_meaning",
+   "human_mind"
+  ],
+  "lakoff1993metaphor": [
+   "foam_of_meaning",
+   "human_mind"
+  ],
+  "shepardmetzler1971": [
+   "human_mind"
+  ],
+  "flavell1979metacognition": [
+   "human_mind"
+  ],
+  "dehaene1997numbersense": [
+   "human_mind"
+  ],
+  "subitizing": [
+   "human_mind"
+  ],
+  "piraha2004": [
+   "human_mind"
+  ],
+  "picamundurucu2004": [
+   "human_mind"
+  ],
+  "mehta2020play": [
+   "human_mind"
+  ],
+  "loewenstein1994curiosity": [
+   "human_mind"
+  ],
+  "mednick1962creative": [
+   "human_mind"
+  ],
+  "tomasello2014thinking": [
+   "human_mind"
+  ],
+  "aristotlemetaphysics": [
+   "human_mind"
+  ],
+  "aristotleandplato": [
+   "history",
+   "human_mind"
+  ],
+  "daston1988probability": [
+   "human_mind"
+  ],
+  "galileodialogue1632": [
+   "human_mind"
+  ],
+  "galilei_image": [
+   "human_mind"
+  ],
+  "poincare1910creation": [
+   "human_mind"
+  ],
+  "poincare_image": [
+   "human_mind"
+  ],
+  "polya1945solve": [
+   "human_mind"
+  ],
+  "chomsky1959review": [
+   "human_mind"
+  ],
+  "newellsimon1972problemsolving": [
+   "human_mind"
+  ],
+  "minsky1986society": [
+   "human_mind"
+  ],
+  "simonnewell_image": [
+   "human_mind"
+  ],
+  "henrich2016secret": [
+   "human_mind"
+  ],
+  "clarkchalmers1998extended": [
+   "human_mind"
+  ],
+  "simonidesofceos": [
+   "human_mind"
+  ],
+  "methodofloci": [
+   "human_mind"
+  ],
+  "giordanobruno": [
+   "human_mind"
+  ],
+  "brunodeumbris1582": [
+   "human_mind"
+  ],
+  "artofmemoryyates": [
+   "human_mind"
+  ],
+  "libraryofpergamum": [
+   "human_mind"
+  ],
+  "universityofbologna": [
+   "human_mind"
+  ],
+  "philtrans1665": [
+   "human_mind"
+  ],
+  "venicepatent1474": [
+   "human_mind"
+  ],
+  "premackwoodruff1978tom": [
+   "human_mind"
+  ],
+  "chm": [
+   "human_mind",
+   "software"
+  ],
+  "merton1973norms": [
+   "human_mind"
+  ],
+  "axelrod1984cooperation": [
+   "human_mind"
+  ],
+  "raymond1999cathedral": [
+   "human_mind"
+  ],
+  "ietf_open": [
+   "human_mind"
+  ],
+  "benkler2006wealth": [
+   "human_mind"
+  ],
+  "huggingface": [
+   "human_mind"
+  ],
+  "slotmachine_image": [
+   "human_mind"
+  ],
+  "barrett2011religion": [
+   "human_mind"
+  ],
+  "chalmers1995consciousmind": [
+   "human_mind"
+  ],
+  "nagel1974bat": [
+   "human_mind",
+   "philosophy"
+  ],
+  "churchland1981eliminative": [
+   "human_mind"
+  ],
+  "dennett2017bacteria": [
+   "human_mind"
+  ],
+  "descartesmeditations": [
+   "human_mind"
+  ],
+  "kastrup2019ideaworld": [
+   "human_mind"
+  ],
+  "freud1900dreams": [
+   "human_mind"
+  ],
+  "freud_image": [
+   "human_mind"
+  ],
+  "jungpsychologyandreligion": [
+   "human_mind"
+  ],
+  "jung_image": [
+   "human_mind"
+  ],
+  "heidegger_image": [
+   "human_mind"
+  ],
+  "schmitz_neo_phenomenology": [
+   "coherent_difference",
+   "coherent_world_models",
+   "human_mind"
+  ],
+  "schmitz_image": [
+   "human_mind"
+  ],
+  "suarezgallup1981mirror": [
+   "human_mind"
+  ],
+  "mirrorselfrecognition_image": [
+   "human_mind"
+  ],
+  "maturavarela1980autopoiesis": [
+   "human_mind"
+  ],
+  "dawkins1976selfishgene": [
+   "human_mind"
+  ],
+  "dawkins_image": [
+   "human_mind"
+  ],
+  "spencerbrown1969form": [
+   "coherent_difference",
+   "origami",
+   "promptengineering"
+  ],
+  "whitehead_process": [
+   "coherent_difference"
+  ],
+  "bergson1889essai": [
+   "coherent_difference"
+  ],
+  "lawvere1993categories": [
+   "coherent_difference"
+  ],
+  "lawvere2007taking": [
+   "coherent_difference"
+  ],
+  "topology_wiki": [
+   "coherent_difference",
+   "philosophy",
+   "promptengineering"
+  ],
+  "sheaf_mathematics": [
+   "coherent_difference",
+   "promptengineering"
+  ],
+  "higher_category_wiki": [
+   "coherent_difference"
+  ],
+  "sellars1956empiricism": [
+   "coherent_difference",
+   "coherent_world_models"
+  ],
+  "brandom1994making": [
+   "coherent_difference",
+   "coherent_world_models"
+  ],
+  "fiber_bundle_wiki": [
+   "coherent_difference",
+   "foam_of_meaning"
+  ],
+  "gunther1978idee": [
+   "coherent_difference"
+  ],
+  "gunther2002bewusstsein": [
+   "coherent_difference"
+  ],
+  "distinction_philosophy": [
+   "coherent_difference"
+  ],
+  "laozi400taoteching": [
+   "coherent_difference",
+   "philosophy"
+  ],
+  "typespaces_wiki": [
+   "coherent_difference"
+  ],
+  "category_diagram_image": [
+   "coherent_difference"
+  ],
+  "sheaf_sections_image": [
+   "coherent_difference"
+  ],
+  "sheaf_gluing_image": [
+   "coherent_difference"
+  ],
+  "anaxagoras450fragments": [
+   "coherent_difference"
+  ],
+  "spinoza1677ethics": [
+   "coherent_difference",
+   "philosophy"
+  ],
+  "leray1948calcul": [
+   "coherent_difference"
+  ],
+  "grothendieck_sheaf": [
+   "coherent_difference"
+  ],
+  "manifold_wiki": [
+   "coherent_difference",
+   "geometry_i",
+   "topology"
+  ],
+  "naturanonfacitsaltus": [
+   "coherent_difference",
+   "coherent_world_models"
+  ],
+  "heraclitus500fragments": [
+   "coherent_difference",
+   "philosophy"
+  ],
+  "awodey2010category": [
+   "coherent_difference"
+  ],
+  "maclane1998categories": [
+   "coherent_difference",
+   "geometry_iii"
+  ],
+  "category_theory_wiki": [
+   "coherent_difference"
+  ],
+  "eilenberglane1945": [
+   "coherent_difference",
+   "geometry_iii"
+  ],
+  "topos_wiki": [
+   "coherent_difference"
+  ],
+  "goldblatt1979topoi": [
+   "coherent_difference"
+  ],
+  "johnstone_elephant": [
+   "coherent_difference"
+  ],
+  "maclanemoerdijk1992": [
+   "coherent_difference"
+  ],
+  "caramello2017theories": [
+   "coherent_difference",
+   "coherent_world_models"
+  ],
+  "nlab_topos": [
+   "coherent_difference"
+  ],
+  "internal_logic_wiki": [
+   "coherent_difference"
+  ],
+  "tarski1938topos": [
+   "coherent_difference"
+  ],
+  "elementary_topos_wiki": [
+   "coherent_difference"
+  ],
+  "giraud1964descente": [
+   "coherent_difference"
+  ],
+  "subobject_classifier_wiki": [
+   "coherent_difference"
+  ],
+  "heyting_algebra_wiki": [
+   "coherent_difference"
+  ],
+  "diaconescu1975": [
+   "coherent_difference"
+  ],
+  "geometric_morphism_wiki": [
+   "coherent_difference"
+  ],
+  "barr1974toposes": [
+   "coherent_difference"
+  ],
+  "merleauponty1945phenomenologie": [
+   "coherent_difference"
+  ],
+  "saussure1916": [
+   "coherent_difference",
+   "embeddinglab",
+   "language"
+  ],
+  "leibniz1714monadology": [
+   "coherent_difference",
+   "philosophy"
+  ],
+  "hypothesengeometrie": [
+   "coherent_difference",
+   "embeddinglab",
+   "geometry_i"
+  ],
+  "distributional_hypothesis": [
+   "coherent_difference"
+  ],
+  "nagarjuna150mmk": [
+   "coherent_difference"
+  ],
+  "deleuze1968difference": [
+   "coherent_difference"
+  ],
+  "lumpschool": [
+   "coherent_difference"
+  ],
+  "heraclitus_unity": [
+   "coherent_difference"
+  ],
+  "parmenides480fragments": [
+   "coherent_difference"
+  ],
+  "aristotle_metaphysics": [
+   "coherent_difference"
+  ],
+  "plotinus250enneads": [
+   "coherent_difference"
+  ],
+  "cusanus1440docta": [
+   "coherent_difference"
+  ],
+  "wittgenstein1953investigations": [
+   "coherent_difference"
+  ],
+  "eulerbridges": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "eulersolids": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "perelmanpoincare": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "mclarty2006noether": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "condorcet1770": [
+   "derivativelab",
+   "differentiation",
+   "geometry_iii"
+  ],
+  "legendre1786": [
+   "derivativelab",
+   "differentiation",
+   "geometry_iii"
+  ],
+  "hatcher": [
+   "foam_of_meaning",
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "derham1931": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "eilenbergmaclane1942": [
+   "geometry_iii"
+  ],
+  "eilenbergsteenrod1952": [
+   "geometry_iii"
+  ],
+  "mayer1929": [
+   "geometry_iii"
+  ],
+  "vietoris1930": [
+   "geometry_iii"
+  ],
+  "vietorisbio2002": [
+   "geometry_iii"
+  ],
+  "seifert1931": [
+   "geometry_iii"
+  ],
+  "vankampen1933": [
+   "geometry_iii"
+  ],
+  "brown1967": [
+   "geometry_iii"
+  ],
+  "hurewicz1935": [
+   "geometry_iii"
+  ],
+  "hopf1931fibration": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "freudenthal1937": [
+   "geometry_iii"
+  ],
+  "serre1951": [
+   "geometry_iii"
+  ],
+  "serre1953": [
+   "geometry_iii"
+  ],
+  "whitehead1949": [
+   "geometry_iii"
+  ],
+  "milnor1962additivity": [
+   "geometry_iii"
+  ],
+  "leray1946": [
+   "geometry_iii"
+  ],
+  "steenrod1947": [
+   "geometry_iii"
+  ],
+  "adams1960": [
+   "geometry_iii"
+  ],
+  "bott1959": [
+   "geometry_iii"
+  ],
+  "reidemeister1935": [
+   "geometry_iii"
+  ],
+  "milnor1966torsion": [
+   "geometry_iii"
+  ],
+  "zomorodian2005": [
+   "geometry_iii"
+  ],
+  "cohensteiner2007": [
+   "foam_of_meaning",
+   "geometry_iii"
+  ],
+  "riek2019neural": [
+   "geometry_iii"
+  ],
+  "brouwer1911fixed": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "svd_wiki": [
+   "geometry_ii"
+  ],
+  "cauchy1847": [
+   "autodiff",
+   "differentiation",
+   "geometry_ii",
+   "optimizerlab"
+  ],
+  "fourier1822": [
+   "geometry_ii"
+  ],
+  "cooley1965fft": [
+   "geometry_ii"
+  ],
+  "zaheer2017deepsets": [
+   "geometry_ii"
+  ],
+  "mercerno1909": [
+   "geometry_ii"
+  ],
+  "legendre1805": [
+   "geometry_ii",
+   "losslab",
+   "statistics",
+   "statistics_i"
+  ],
+  "gauss1809": [
+   "geometry_ii",
+   "losslab",
+   "statistics",
+   "statistics_i"
+  ],
+  "jacobi1842": [
+   "geometry_ii"
+  ],
+  "hu2021lora": [
+   "diffusion",
+   "finetuninglab",
+   "geometry_ii",
+   "running_locally"
+  ],
+  "bronstein2021geometric": [
+   "embeddinglab",
+   "geometry_i",
+   "geometry_ii"
+  ],
+  "brown2020gpt3": [
+   "history",
+   "philosophy",
+   "trainingdynamics",
+   "unexpected_capabilities"
+  ],
+  "goyal2017largebatch": [
+   "trainingdynamics"
+  ],
+  "arora2022edgeofstability": [
+   "optimizerlab",
+   "trainingdynamics"
+  ],
+  "yang2022mup": [
+   "trainingdynamics"
+  ],
+  "blombosochre": [
+   "geometry_i",
+   "language"
+  ],
+  "sushruta": [
+   "language"
+  ],
+  "alcmaeon": [
+   "language"
+  ],
+  "davinci_anatomical": [
+   "language"
+  ],
+  "lebombobone": [
+   "geometry_i",
+   "history",
+   "language"
+  ],
+  "panini_ashtadhyayi": [
+   "history",
+   "language"
+  ],
+  "aristotle_categories": [
+   "language"
+  ],
+  "humboldt1836sprachbau": [
+   "language"
+  ],
+  "winawer2007russianblues": [
+   "language"
+  ],
+  "evanslevinson2009myth": [
+   "language"
+  ],
+  "ishangobone": [
+   "geometry_i",
+   "history",
+   "language"
+  ],
+  "prehistoriccounting": [
+   "language"
+  ],
+  "ancientnumeralsystems": [
+   "language"
+  ],
+  "shannon1937switching": [
+   "history",
+   "language"
+  ],
+  "wilkins_real_character": [
+   "language"
+  ],
+  "kempelen_speaking_machine": [
+   "language"
+  ],
+  "firth_context": [
+   "language"
+  ],
+  "cuevadelasmanos": [
+   "language"
+  ],
+  "kishtablet": [
+   "language"
+  ],
+  "vincasymbols": [
+   "language"
+  ],
+  "rebusprinciple": [
+   "language"
+  ],
+  "cuneiform": [
+   "language"
+  ],
+  "acrophonic": [
+   "language"
+  ],
+  "dualitypattern": [
+   "language"
+  ],
+  "ueberwahrheitundluege": [
+   "embeddinglab",
+   "language"
+  ],
+  "wadielholinscription_i": [
+   "language"
+  ],
+  "wadielholinscription_ii": [
+   "language"
+  ],
+  "earliestalphabet": [
+   "language"
+  ],
+  "history_of_a": [
+   "language"
+  ],
+  "hieroglyphsdeciphered": [
+   "language"
+  ],
+  "zhao2023survey": [
+   "language"
+  ],
+  "mialon2023augmented": [
+   "websearch"
+  ],
+  "ma2023queryrewriting": [
+   "websearch"
+  ],
+  "reuters2023chatgptbrowsing": [
+   "websearch"
+  ],
+  "google2025grounding": [
+   "websearch"
+  ],
+  "anthropic2025websearch": [
+   "websearch"
+  ],
+  "perplexityai": [
+   "websearch"
+  ],
+  "youcom": [
+   "websearch"
+  ],
+  "searxng": [
+   "websearch"
+  ],
+  "bravesearchapi": [
+   "websearch"
+  ],
+  "googlecustomsearch": [
+   "websearch"
+  ],
+  "serper": [
+   "websearch"
+  ],
+  "tavily": [
+   "websearch"
+  ],
+  "mozillareadability": [
+   "websearch"
+  ],
+  "barbaresi2021trafilatura": [
+   "websearch"
+  ],
+  "beautifulsoup": [
+   "websearch"
+  ],
+  "playwright": [
+   "websearch"
+  ],
+  "puppeteer": [
+   "websearch"
+  ],
+  "jinareader": [
+   "websearch"
+  ],
+  "reimers2019sentencebert": [
+   "websearch"
+  ],
+  "lewis2020rag": [
+   "rag",
+   "websearch"
+  ],
+  "openai2023functioncalling": [
+   "websearch"
+  ],
+  "greshake2023injection": [
+   "security_inference",
+   "websearch"
+  ],
+  "ba2016layernorm": [
+   "autodiff",
+   "normalizationlab"
+  ],
+  "wu2018groupnorm": [
+   "normalizationlab"
+  ],
+  "sharma2023sycophancy": [
+   "hallucinations"
+  ],
+  "berglund2023reversal": [
+   "hallucinations"
+  ],
+  "prakash2021fitness": [
+   "coherent_world_models",
+   "hallucinations"
+  ],
+  "hoffman2015interface": [
+   "hallucinations",
+   "philosophy"
+  ],
+  "unfinishablemap2026fbt": [
+   "hallucinations"
+  ],
+  "holtzman2019nucleus": [
+   "hallucinations",
+   "music_video_generation"
+  ],
+  "bender2021stochasticparrots": [
+   "ai_existential_risk",
+   "hallucinations",
+   "philosophy"
+  ],
+  "clark1998extended": [
+   "hallucinations"
+  ],
+  "ning2016distmult": [
+   "symbolic_ai"
+  ],
+  "sun2019rotate": [
+   "symbolic_ai"
+  ],
+  "deepmind2024alphaproof": [
+   "symbolic_ai"
+  ],
+  "trinh2024alphageometry": [
+   "symbolic_ai"
+  ],
+  "manhaeve2018deepproblog": [
+   "symbolic_ai"
+  ],
+  "rumelhart1986learning": [
+   "loss_landscape"
+  ],
+  "dinh2017sharpness": [
+   "loss_landscape"
+  ],
+  "ioffe2015batchnorm": [
+   "loss_landscape"
+  ],
+  "saxe2014deep": [
+   "loss_landscape"
+  ],
+  "kawaguchi2016deep": [
+   "loss_landscape"
+  ],
+  "lu2017expressive": [
+   "loss_landscape"
+  ],
+  "smithle2018bayesian": [
+   "loss_landscape"
+  ],
+  "mandt2017variational": [
+   "loss_landscape"
+  ],
+  "hyperbolic_paraboloid_saddle": [
+   "loss_landscape"
+  ],
+  "keskar2016largebatch": [
+   "loss_landscape"
+  ],
+  "foret2021sam": [
+   "loss_landscape"
+  ],
+  "he2016identity": [
+   "loss_landscape"
+  ],
+  "choromanska2015loss": [
+   "loss_landscape"
+  ],
+  "nguyen2017loss": [
+   "loss_landscape"
+  ],
+  "garipov2018mode": [
+   "loss_landscape"
+  ],
+  "amit1989modeling": [
+   "loss_landscape"
+  ],
+  "chaudhari2016entropysgd": [
+   "loss_landscape"
+  ],
+  "wales2003energy": [
+   "loss_landscape"
+  ],
+  "fuggernews": [
+   "information_market"
+  ],
+  "habermaspublicsphere": [
+   "information_market"
+  ],
+  "isidoreofseville": [
+   "information_market"
+  ],
+  "etymologiae": [
+   "information_market"
+  ],
+  "encyclopedie": [
+   "information_market"
+  ],
+  "paulotlet": [
+   "information_market"
+  ],
+  "mundaneum": [
+   "information_market"
+  ],
+  "traitededocumentation": [
+   "information_market"
+  ],
+  "catalogingtheworld": [
+   "information_market"
+  ],
+  "rajbhandari2019zero": [
+   "training_infrastructure"
+  ],
+  "shoeybi2019megatron": [
+   "training_infrastructure"
+  ],
+  "huang2018gpipe": [
+   "training_infrastructure"
+  ],
+  "liu2023ring": [
+   "training_infrastructure"
+  ],
+  "guo2017calibration": [
+   "reliability"
+  ],
+  "kendall2017uncertainties": [
+   "reliability"
+  ],
+  "lakshminarayanan2017ensembles": [
+   "reliability"
+  ],
+  "angelopoulos2021conformal": [
+   "reliability"
+  ],
+  "mccarthy1956dartmouth": [
+   "ai_and_society"
+  ],
+  "ai_winter_wiki": [
+   "ai_and_society"
+  ],
+  "deepblue_wiki": [
+   "ai_and_society"
+  ],
+  "openai2022chatgpt": [
+   "ai_and_society"
+  ],
+  "chatgpt_wiki": [
+   "ai_and_society"
+  ],
+  "audio_deepfake_wiki": [
+   "ai_and_society"
+  ],
+  "ai_and_elections_wiki": [
+   "ai_and_society"
+  ],
+  "deepfake_wiki": [
+   "ai_and_society"
+  ],
+  "romance_scam_wiki": [
+   "ai_and_society"
+  ],
+  "laion2022blog": [
+   "ai_and_society"
+  ],
+  "stable_diffusion_wiki": [
+   "ai_and_society"
+  ],
+  "edmond_belamy_wiki": [
+   "ai_and_society"
+  ],
+  "theatre_dopera_wiki": [
+   "ai_and_society"
+  ],
+  "heart_on_my_sleeve_wiki": [
+   "ai_and_society"
+  ],
+  "wga2023strike_wiki": [
+   "ai_and_society"
+  ],
+  "bartz2025anthropic": [
+   "ai_and_society"
+  ],
+  "romera2023funsearch": [
+   "ai_and_society"
+  ],
+  "erdos_problems_wiki": [
+   "ai_and_society"
+  ],
+  "alpha_geometry_wiki": [
+   "ai_and_society"
+  ],
+  "bi2023pangu": [
+   "ai_and_society"
+  ],
+  "rentosertib_wiki": [
+   "ai_and_society"
+  ],
+  "insilico_wiki": [
+   "ai_and_society"
+  ],
+  "becker2025metr": [
+   "ai_and_society"
+  ],
+  "peng2023copilot": [
+   "ai_and_society"
+  ],
+  "brynjolfsson2023genai": [
+   "ai_and_society"
+  ],
+  "speedup_illusion2025": [
+   "ai_and_society"
+  ],
+  "stackoverflow2024ai": [
+   "ai_and_society"
+  ],
+  "ward2014googleeffect": [
+   "ai_and_society"
+  ],
+  "caosun2026augmentation": [
+   "ai_and_society"
+  ],
+  "parasuraman1997automation": [
+   "ai_and_society"
+  ],
+  "idan2026complementarity": [
+   "ai_and_society"
+  ],
+  "learnlm2025rct": [
+   "ai_and_society"
+  ],
+  "khanacademy_wiki": [
+   "ai_and_society"
+  ],
+  "prather2023copilot": [
+   "ai_and_society"
+  ],
+  "georgiou2025lazy": [
+   "ai_and_society"
+  ],
+  "huti2026jagged": [
+   "ai_and_society"
+  ],
+  "vibe_coding_wiki": [
+   "ai_and_society"
+  ],
+  "calculator_wiki": [
+   "ai_and_society"
+  ],
+  "duolingo_wiki": [
+   "ai_and_society"
+  ],
+  "popel2020cubitt": [
+   "ai_and_society"
+  ],
+  "kokkas2026evidence": [
+   "ai_and_society"
+  ],
+  "kubota2026replication": [
+   "ai_and_society"
+  ],
+  "pew2026ai": [
+   "ai_and_society"
+  ],
+  "rand2016firehose": [
+   "ai_and_society"
+  ],
+  "ira_wiki": [
+   "ai_and_society"
+  ],
+  "bellingcat2025india": [
+   "ai_and_society"
+  ],
+  "cambridge_analytica_wiki": [
+   "ai_and_society"
+  ],
+  "bellingcat2026bjp": [
+   "ai_and_society"
+  ],
+  "synthetic_media_wiki": [
+   "ai_and_society"
+  ],
+  "c2pa_wiki": [
+   "ai_and_society"
+  ],
+  "eu_ai_act_wiki": [
+   "ai_and_society"
+  ],
+  "beemyeyes2023": [
+   "ai_and_society"
+  ],
+  "beemyeyes_site": [
+   "ai_and_society"
+  ],
+  "whisper2022": [
+   "ai_and_society"
+  ],
+  "google_translate_wiki": [
+   "ai_and_society"
+  ],
+  "deepl_wiki": [
+   "ai_and_society"
+  ],
+  "replika_wiki": [
+   "ai_and_society"
+  ],
+  "characterai_wiki": [
+   "ai_and_society"
+  ],
+  "cbs2024characterai": [
+   "ai_and_society"
+  ],
+  "wikipedia_reason": [
+   "philosophy"
+  ],
+  "aristotle_nicomachean_ethics": [
+   "philosophy"
+  ],
+  "ockham": [
+   "philosophy"
+  ],
+  "levesque2012winograd": [
+   "philosophy"
+  ],
+  "winograd1972understanding": [
+   "philosophy"
+  ],
+  "levesque2014bestbehaviour": [
+   "philosophy"
+  ],
+  "kocijan2020review": [
+   "philosophy"
+  ],
+  "trinh2018commonsense": [
+   "philosophy"
+  ],
+  "sakaguchi2019winogrande": [
+   "philosophy"
+  ],
+  "hendrycks2020winograd": [
+   "philosophy"
+  ],
+  "kocijan2023defeat": [
+   "philosophy"
+  ],
+  "dreyfus1972what": [
+   "history",
+   "philosophy"
+  ],
+  "searle1980minds": [
+   "history",
+   "philosophy"
+  ],
+  "moravec1988mindchildren": [
+   "philosophy"
+  ],
+  "wimmer1983belief": [
+   "philosophy"
+  ],
+  "weston2015babi": [
+   "philosophy"
+  ],
+  "johnson2017clevr": [
+   "philosophy"
+  ],
+  "talmor2018commonsenseqa": [
+   "philosophy"
+  ],
+  "zellers2019hellaswag": [
+   "evaluation",
+   "philosophy"
+  ],
+  "chollet2019measure": [
+   "philosophy"
+  ],
+  "plato399apology": [
+   "philosophy"
+  ],
+  "socraticmethod": [
+   "philosophy"
+  ],
+  "rawls1971theoryofjustice": [
+   "philosophy"
+  ],
+  "aurelius180meditations": [
+   "philosophy"
+  ],
+  "nietzsche1882gayscience": [
+   "philosophy"
+  ],
+  "buddha400dhammapada": [
+   "philosophy"
+  ],
+  "kant1785groundwork": [
+   "philosophy"
+  ],
+  "camus1942mythofsisyphus": [
+   "philosophy"
+  ],
+  "sartre1943beingandnothingness": [
+   "philosophy"
+  ],
+  "james1897willtobelieve": [
+   "philosophy"
+  ],
+  "harris2012freewill": [
+   "philosophy"
+  ],
+  "hume1739treatise": [
+   "philosophy"
+  ],
+  "frankfurt1969alternatepossibilities": [
+   "philosophy"
+  ],
+  "dennett1984elbowroom": [
+   "philosophy"
+  ],
+  "plato380republic": [
+   "philosophy"
+  ],
+  "harris2010morallandscape": [
+   "philosophy"
+  ],
+  "nietzsche1886beyondgoodandevil": [
+   "philosophy"
+  ],
+  "mackie1977inventingrightandwrong": [
+   "philosophy"
+  ],
+  "scanlon1998whatweowtoeachother": [
+   "philosophy"
+  ],
+  "aquinas1274summa": [
+   "philosophy"
+  ],
+  "russell1927whyiamnotachristian": [
+   "philosophy"
+  ],
+  "dawkins2006goddelusion": [
+   "philosophy"
+  ],
+  "hume1779dialogues": [
+   "philosophy"
+  ],
+  "jackson1982epiphenomenal": [
+   "philosophy"
+  ],
+  "uexkull1934": [
+   "philosophy"
+  ],
+  "penrose1989emperor": [
+   "philosophy"
+  ],
+  "li2022othello": [
+   "philosophy"
+  ],
+  "vanhoucke2024closeencounters": [
+   "philosophy"
+  ],
+  "emergentmind_representation_steering": [
+   "philosophy",
+   "promptengineering"
+  ],
+  "pierucci2026xenointerpretability": [
+   "philosophy"
+  ],
+  "thetacitdimension": [
+   "philosophy"
+  ],
+  "geometryoftruth": [
+   "philosophy"
+  ],
+  "breakingsoftmaxbottleneck": [
+   "philosophy"
+  ],
+  "kapp1877grundlinien": [
+   "philosophy"
+  ],
+  "putnam1967functionalism": [
+   "metaphysics_of_ai",
+   "philosophy"
+  ],
+  "chalmers1996conscious": [
+   "philosophy"
+  ],
+  "chalmers1995hard": [
+   "philosophy"
+  ],
+  "tononi2004iit": [
+   "philosophy"
+  ],
+  "rosenthal2005hot": [
+   "philosophy"
+  ],
+  "lamme2000rpt": [
+   "philosophy"
+  ],
+  "lamme2006rpt": [
+   "philosophy"
+  ],
+  "seth2021pp": [
+   "philosophy"
+  ],
+  "hohwy2020pp": [
+   "philosophy"
+  ],
+  "dehaene2017c0c1c2": [
+   "philosophy"
+  ],
+  "graziano2013ast": [
+   "philosophy"
+  ],
+  "hameroff1996orch": [
+   "philosophy"
+  ],
+  "penrose1994shadows": [
+   "philosophy"
+  ],
+  "damasio1999feeling": [
+   "philosophy"
+  ],
+  "damasio2010selfcomestomind": [
+   "philosophy"
+  ],
+  "edelman1989remembered": [
+   "philosophy"
+  ],
+  "edelman2000universe": [
+   "philosophy"
+  ],
+  "cleeremans2011radical": [
+   "philosophy"
+  ],
+  "metzinger2003being": [
+   "philosophy"
+  ],
+  "block1995confusion": [
+   "philosophy"
+  ],
+  "taylor2014sensorimotor": [
+   "philosophy"
+  ],
+  "prinz2012conscious": [
+   "philosophy"
+  ],
+  "seneca64letters": [
+   "philosophy"
+  ],
+  "rumi": [
+   "philosophy"
+  ],
+  "frost1914northofboston": [
+   "philosophy"
+  ],
+  "kierkegaard1849sicknessuntodeath": [
+   "philosophy"
+  ],
+  "epicurus300lettertomenoeceus": [
+   "philosophy"
+  ],
+  "nietzsche1889twilightofidols": [
+   "philosophy"
+  ],
+  "pascal1670pensees": [
+   "philosophy"
+  ],
+  "heidegger1954whatiscalledthinking": [
+   "philosophy"
+  ],
+  "sartre1946existentialismishumanism": [
+   "philosophy"
+  ],
+  "kierkegaard1844conceptofanxiety": [
+   "philosophy"
+  ],
+  "waluigi": [
+   "philosophy"
+  ],
+  "perez2022emergent": [
+   "philosophy"
+  ],
+  "simulatorstheory": [
+   "philosophy"
+  ],
+  "reflectionstrustingtrust": [
+   "philosophy"
+  ],
+  "rokosbasilisk": [
+   "philosophy"
+  ],
+  "crawford2021atlas": [
+   "ai_existential_risk",
+   "philosophy"
+  ],
+  "preaiinternet": [
+   "philosophy"
+  ],
+  "shumailov2023modelcollapse": [
+   "philosophy",
+   "training_data"
+  ],
+  "truthdecay": [
+   "philosophy"
+  ],
+  "chesney2019deepfakes": [
+   "philosophy"
+  ],
+  "bansal2025syntheticself": [
+   "philosophy"
+  ],
+  "strubell2019energy": [
+   "philosophy"
+  ],
+  "watergpt3": [
+   "philosophy"
+  ],
+  "li2023thirsty": [
+   "philosophy"
+  ],
+  "oneil2016weapons": [
+   "philosophy"
+  ],
+  "fakeblackstrump": [
+   "philosophy"
+  ],
+  "fakebidenrobocall": [
+   "philosophy"
+  ],
+  "confucius500analects": [
+   "philosophy"
+  ],
+  "epictetus108enchiridion": [
+   "philosophy"
+  ],
+  "frankl1946manssearch": [
+   "philosophy"
+  ],
+  "tillich1952couragetobe": [
+   "philosophy"
+  ],
+  "macintyre1981aftervirtue": [
+   "philosophy"
+  ],
+  "brooks2015roadtocharacter": [
+   "philosophy"
+  ],
+  "singer2009lifeyoucansave": [
+   "philosophy"
+  ],
+  "mill1863utilitarianism": [
+   "philosophy"
+  ],
+  "macaskill2015doinggoodbetter": [
+   "philosophy"
+  ],
+  "singer1981expandingcircle": [
+   "philosophy"
+  ],
+  "zhuangzi300zhuangzi": [
+   "philosophy"
+  ],
+  "suzuki1970zenmind": [
+   "philosophy"
+  ],
+  "hoff1982taoofpooh": [
+   "philosophy"
+  ],
+  "sandel2009justice": [
+   "philosophy"
+  ],
+  "lucretius50rerumnatura": [
+   "philosophy"
+  ],
+  "wilson2019howtobeanepicurean": [
+   "philosophy"
+  ],
+  "greenblatt2011swerve": [
+   "philosophy"
+  ],
+  "newton_portrait": [
+   "differentiation"
+  ],
+  "leibniz_portrait": [
+   "differentiation"
+  ],
+  "leibniz1684nova": [
+   "differentiation"
+  ],
+  "oevresdeformat": [
+   "differentiation",
+   "statistics",
+   "statistics_i"
+  ],
+  "wallis1655": [
+   "differentiation",
+   "math_i"
+  ],
+  "lagrange1797theorie": [
+   "differentiation"
+  ],
+  "lagrange_portrait": [
+   "differentiation"
+  ],
+  "euler1755": [
+   "differentiation",
+   "math_i"
+  ],
+  "rumelhart1986": [
+   "autodiff",
+   "backproplab",
+   "differentiation",
+   "history",
+   "optimizerlab"
+  ],
+  "bergstra2010random": [
+   "hyperparameters"
+  ],
+  "snoek2012practical": [
+   "hyperparameters"
+  ],
+  "bergstra2013science": [
+   "hyperparameters"
+  ],
+  "hyperopt": [
+   "hyperparameters"
+  ],
+  "omniopt": [
+   "hyperparameters"
+  ],
+  "olson2025ax": [
+   "hyperparameters"
+  ],
+  "balandat2020botorch": [
+   "hyperparameters"
+  ],
+  "akiba2019optuna": [
+   "hyperparameters"
+  ],
+  "rae2021gopher": [
+   "training_data"
+  ],
+  "raffel2020t5": [
+   "training_data"
+  ],
+  "penedo2024fineweb": [
+   "training_data"
+  ],
+  "abbas2023semdedup": [
+   "training_data"
+  ],
+  "chollet2024arcagi": [
+   "training_data"
+  ],
+  "gao2020pile": [
+   "training_data"
+  ],
+  "together2024redpajama": [
+   "training_data"
+  ],
+  "chen2021codex": [
+   "training_data"
+  ],
+  "li2022alphacode": [
+   "training_data"
+  ],
+  "ma2023codereasoning": [
+   "training_data"
+  ],
+  "waheed2025codeinduced": [
+   "training_data"
+  ],
+  "gao2022pal": [
+   "training_data"
+  ],
+  "wang2024codeact": [
+   "training_data"
+  ],
+  "roziere2023codellama": [
+   "training_data"
+  ],
+  "guo2024deepseekcoder": [
+   "training_data"
+  ],
+  "jimenez2024swebench": [
+   "training_data"
+  ],
+  "leviathan2023speculative": [
+   "inference_optimization",
+   "production_serving"
+  ],
+  "lin2023awq": [
+   "inference_optimization",
+   "production_serving"
+  ],
+  "frantar2022gptq": [
+   "inference_optimization",
+   "production_serving"
+  ],
+  "hinton2015distilling": [
+   "production_serving"
+  ],
+  "routellm2024": [
+   "production_serving"
+  ],
+  "nemocguardrails": [
+   "production_serving"
+  ],
+  "react2022": [
+   "production_serving"
+  ],
+  "otelgenai": [
+   "production_serving"
+  ],
+  "continuous_delivery_wiki": [
+   "production_serving"
+  ],
+  "livingdolls": [
+   "history"
+  ],
+  "sharkey2007hero": [
+   "history"
+  ],
+  "lebomboboneoriginal": [
+   "history"
+  ],
+  "wolfbonephoto": [
+   "history"
+  ],
+  "historyofmath_wikipedia": [
+   "algorithms",
+   "geometry_i",
+   "history"
+  ],
+  "aubert2018borneo": [
+   "history"
+  ],
+  "brumm2021sulawesi": [
+   "history"
+  ],
+  "aubert2019sulawesi": [
+   "history"
+  ],
+  "hoffmann2018iberia": [
+   "history"
+  ],
+  "ishangobonephoto": [
+   "geometry_i",
+   "history"
+  ],
+  "marshackishango": [
+   "history"
+  ],
+  "ishango12": [
+   "history"
+  ],
+  "salamictablet": [
+   "history"
+  ],
+  "earliestabacusphoto": [
+   "history"
+  ],
+  "salminictablesource": [
+   "history"
+  ],
+  "jiuzhangsuanshu": [
+   "geometry_i",
+   "history"
+  ],
+  "stevin": [
+   "history"
+  ],
+  "aristotleanalytics": [
+   "history"
+  ],
+  "bochenski": [
+   "history"
+  ],
+  "antikytheraimage": [
+   "history"
+  ],
+  "antikytherasciam": [
+   "history"
+  ],
+  "brazenheadimage": [
+   "history"
+  ],
+  "brazenheadwiki": [
+   "history"
+  ],
+  "brownepseudodoxia": [
+   "history"
+  ],
+  "brazenheadpubimage": [
+   "history"
+  ],
+  "pygmalionimage": [
+   "history"
+  ],
+  "pygmalionmyth": [
+   "history"
+  ],
+  "zhanghengseismoscopeimage": [
+   "history"
+  ],
+  "zhanghengseismoscope": [
+   "history"
+  ],
+  "tractatusdespheara": [
+   "history"
+  ],
+  "volvelles": [
+   "history"
+  ],
+  "arsmagnavolvelle": [
+   "history"
+  ],
+  "arsmagna": [
+   "history"
+  ],
+  "artandlogicofllull": [
+   "history"
+  ],
+  "blanquerna": [
+   "history"
+  ],
+  "zhao2025thinkingmachine": [
+   "history"
+  ],
+  "leibnizcc": [
+   "history",
+   "software"
+  ],
+  "babbage": [
+   "history",
+   "software"
+  ],
+  "zusez1": [
+   "history",
+   "software"
+  ],
+  "uebersinnundbedeutung": [
+   "history"
+  ],
+  "wienerajedrecista": [
+   "history"
+  ],
+  "torres1914": [
+   "history"
+  ],
+  "ieeespectrum2023chess": [
+   "history"
+  ],
+  "thomas2008torres": [
+   "history"
+  ],
+  "mechanicalturkimage": [
+   "history"
+  ],
+  "mechanicalturk": [
+   "history"
+  ],
+  "abbott1999lapicque": [
+   "history"
+  ],
+  "amari1972": [
+   "history"
+  ],
+  "mccullochpittsimage": [
+   "history"
+  ],
+  "darthmouthartificialintelligence": [
+   "history"
+  ],
+  "steadystates": [
+   "activationlab",
+   "history"
+  ],
+  "pittsfirstpaper": [
+   "history"
+  ],
+  "piccini": [
+   "history"
+  ],
+  "img_walter_tortoise": [
+   "history"
+  ],
+  "snarcphoto": [
+   "history"
+  ],
+  "minsky1954": [
+   "history"
+  ],
+  "wienerphoto": [
+   "history"
+  ],
+  "vonneumannphoto": [
+   "history"
+  ],
+  "macyconferences": [
+   "history"
+  ],
+  "heims1991cyberneticsgroup": [
+   "history"
+  ],
+  "ratioclub": [
+   "history"
+  ],
+  "behaviorpurpose1943": [
+   "history"
+  ],
+  "homeostatphoto": [
+   "history"
+  ],
+  "ashbyphoto": [
+   "history"
+  ],
+  "ashbyintrocybernetics1956": [
+   "history",
+   "minimalneuron"
+  ],
+  "ashbyhomeostat1948": [
+   "history"
+  ],
+  "ashbydesigndbrain1952": [
+   "history"
+  ],
+  "wienerhumaneuse1950": [
+   "history"
+  ],
+  "conantashby1970": [
+   "history",
+   "minimalneuron"
+  ],
+  "turing1937": [
+   "algorithms",
+   "history"
+  ],
+  "batesonphoto": [
+   "history"
+  ],
+  "batesonesteps1972": [
+   "history"
+  ],
+  "batesondoublebind1956": [
+   "history"
+  ],
+  "shannonphoto": [
+   "history"
+  ],
+  "shannonratphoto": [
+   "history"
+  ],
+  "shannonchess1950": [
+   "history"
+  ],
+  "wienergodandgolem1937": [
+   "history"
+  ],
+  "aikenphoto": [
+   "history"
+  ],
+  "aiken": [
+   "history"
+  ],
+  "turingimage": [
+   "history"
+  ],
+  "ibm702image": [
+   "history"
+  ],
+  "ibm702": [
+   "history"
+  ],
+  "edroberts": [
+   "history"
+  ],
+  "altair8800": [
+   "history"
+  ],
+  "edroberts_bbc": [
+   "history"
+  ],
+  "historyofpc": [
+   "history"
+  ],
+  "commodorepet": [
+   "history"
+  ],
+  "chuckpeddle": [
+   "history"
+  ],
+  "mos6502": [
+   "history"
+  ],
+  "micral": [
+   "history"
+  ],
+  "ibmpc": [
+   "history"
+  ],
+  "russell2021aima": [
+   "history"
+  ],
+  "toosi2021history": [
+   "history"
+  ],
+  "newell1956logictheorist": [
+   "history"
+  ],
+  "samuel1959checkers": [
+   "history"
+  ],
+  "newell1957gps": [
+   "history"
+  ],
+  "poirier2025neat": [
+   "history"
+  ],
+  "bain": [
+   "history"
+  ],
+  "rosenblattad": [
+   "history"
+  ],
+  "rosenblattperceptron": [
+   "history"
+  ],
+  "perceptronimagecables": [
+   "history"
+  ],
+  "perceptronimagedetection": [
+   "history"
+  ],
+  "ronkowitz2017perceptron": [
+   "history"
+  ],
+  "jensen2026perceptron": [
+   "history"
+  ],
+  "lindquist2026weirdai": [
+   "history"
+  ],
+  "minskyperceptrons": [
+   "history"
+  ],
+  "perceptronresults": [
+   "history"
+  ],
+  "rosenblattperceptronresults": [
+   "history"
+  ],
+  "farleyclark1954": [
+   "history"
+  ],
+  "joseph1961perceptron": [
+   "history"
+  ],
+  "markkac": [
+   "history"
+  ],
+  "widrow1960adaline": [
+   "history"
+  ],
+  "img_widrow_adaline": [
+   "history"
+  ],
+  "sleepingbeauty": [
+   "history"
+  ],
+  "ivakhnenko1965": [
+   "history"
+  ],
+  "ivakhnenko1971": [
+   "history"
+  ],
+  "adaptivepattern": [
+   "history"
+  ],
+  "schmidhuber2022deep": [
+   "history"
+  ],
+  "rosenblattbackprop": [
+   "history"
+  ],
+  "linnainmaa1970": [
+   "autodiff",
+   "history"
+  ],
+  "lighthillreport": [
+   "history"
+  ],
+  "kelley": [
+   "history"
+  ],
+  "weizenbaum1976computer": [
+   "history"
+  ],
+  "lane2025eliza": [
+   "history"
+  ],
+  "img_warren_weaver": [
+   "history"
+  ],
+  "deepblue": [
+   "history"
+  ],
+  "lstm_vanilla": [
+   "history"
+  ],
+  "ctc2006": [
+   "history"
+  ],
+  "lecun1998gradientbased": [
+   "activationlab",
+   "history"
+  ],
+  "schmidhuber2025cnn": [
+   "history"
+  ],
+  "fukushima1969relu": [
+   "history"
+  ],
+  "waibel1987tdnn": [
+   "history"
+  ],
+  "zhang1988cnn": [
+   "history"
+  ],
+  "neuralprobabilistic": [
+   "history"
+  ],
+  "rumelhart1986pdp": [
+   "history"
+  ],
+  "collobert2002": [
+   "history"
+  ],
+  "tensorflow2016": [
+   "autodiff",
+   "history"
+  ],
+  "pytorch": [
+   "autodiff",
+   "history",
+   "transformer"
+  ],
+  "jelinek": [
+   "history"
+  ],
+  "karpathy2019recipe": [
+   "history"
+  ],
+  "socher2011": [
+   "history"
+  ],
+  "hooker2020": [
+   "history"
+  ],
+  "oh2004gpu": [
+   "history"
+  ],
+  "raina2009large": [
+   "history"
+  ],
+  "ciresan2011flexible": [
+   "history"
+  ],
+  "weatherfactory": [
+   "history"
+  ],
+  "bahdanau2014": [
+   "history",
+   "positionalembeddingslab"
+  ],
+  "alkindi_cryptanalysis": [
+   "history"
+  ],
+  "elmo": [
+   "history"
+  ],
+  "schmidhuber1996nplm": [
+   "history"
+  ],
+  "bert": [
+   "history",
+   "positionalembeddingslab"
+  ],
+  "firstgpt": [
+   "history",
+   "positionalembeddingslab"
+  ],
+  "touvron2023llama": [
+   "history"
+  ],
+  "racter1984": [
+   "history"
+  ],
+  "strachey1952": [
+   "history",
+   "music_video_generation"
+  ],
+  "lutzobituary": [
+   "history"
+  ],
+  "lutz1959": [
+   "history"
+  ],
+  "pope2022scaling": [
+   "inference_vs_training"
+  ],
+  "flashattention2022": [
+   "inference_vs_training"
+  ],
+  "vllm2023": [
+   "inference_vs_training"
+  ],
+  "sgd": [
+   "optimizerlab"
+  ],
+  "momentum": [
+   "optimizerlab"
+  ],
+  "adam": [
+   "optimizerlab",
+   "overandunderfittinglab"
+  ],
+  "nesterov2004introductory": [
+   "optimizerlab"
+  ],
+  "duchi2011adagrad": [
+   "optimizerlab"
+  ],
+  "hinton2012rmsprop": [
+   "optimizerlab"
+  ],
+  "zeiler2012adadelta": [
+   "optimizerlab"
+  ],
+  "dozat2016nadam": [
+   "optimizerlab"
+  ],
+  "reddi2018amsgrad": [
+   "optimizerlab"
+  ],
+  "loshchilov2019adamw": [
+   "optimizerlab"
+  ],
+  "werbos1974": [
+   "autodiff",
+   "optimizerlab"
+  ],
+  "shelley1818frankenstein": [
+   "ai_existential_risk"
+  ],
+  "butler1863machines": [
+   "ai_existential_risk"
+  ],
+  "asimov1942runaround": [
+   "ai_existential_risk"
+  ],
+  "good1965explosion": [
+   "ai_existential_risk"
+  ],
+  "joy2000future": [
+   "ai_existential_risk"
+  ],
+  "bostrom2013xrisk": [
+   "ai_existential_risk"
+  ],
+  "bales2024catastrophic": [
+   "ai_existential_risk"
+  ],
+  "tien2026rogue": [
+   "ai_existential_risk"
+  ],
+  "anthropic2025shutdown": [
+   "ai_existential_risk"
+  ],
+  "statement_on_ai_risk_2023": [
+   "ai_existential_risk"
+  ],
+  "fli2023pause": [
+   "ai_existential_risk"
+  ],
+  "openai2023superintelligence": [
+   "ai_existential_risk"
+  ],
+  "hinton2023caution": [
+   "ai_existential_risk"
+  ],
+  "lecun2022autonomous": [
+   "ai_existential_risk"
+  ],
+  "fli2025ban": [
+   "ai_existential_risk"
+  ],
+  "christian2020alignment": [
+   "ai_existential_risk"
+  ],
+  "kokotajlo2016takeoff": [
+   "ai_existential_risk"
+  ],
+  "ord2020precipice": [
+   "ai_existential_risk"
+  ],
+  "riemann_portrait": [
+   "embeddinglab"
+  ],
+  "hypothesengeometrieenglish": [
+   "embeddinglab"
+  ],
+  "gauscurvas": [
+   "embeddinglab"
+  ],
+  "hilbert1903grundlagen": [
+   "embeddinglab",
+   "geometry_i"
+  ],
+  "weylriemann": [
+   "embeddinglab"
+  ],
+  "whitney1936manifolds": [
+   "embeddinglab",
+   "geometry_i"
+  ],
+  "ehresmann1950connexions": [
+   "embeddinglab"
+  ],
+  "salton1975vectorspace": [
+   "embeddinglab",
+   "geometry_i"
+  ],
+  "colah2014nlp": [
+   "embeddinglab"
+  ],
+  "glitchtokens": [
+   "embeddinglab"
+  ],
+  "smith2017orthogonal": [
+   "embeddinglab"
+  ],
+  "mikolov2013exploiting": [
+   "embeddinglab"
+  ],
+  "conneau2018word": [
+   "embeddinglab"
+  ],
+  "sogaard2018limitations": [
+   "embeddinglab"
+  ],
+  "bengio2013representation": [
+   "embeddinglab"
+  ],
+  "huh2024platonic": [
+   "embeddinglab",
+   "geometry_i",
+   "unexpected_capabilities"
+  ],
+  "ethayarajh2019contextual": [
+   "embeddinglab"
+  ],
+  "grandmotherneuron": [
+   "embeddinglab"
+  ],
+  "goldengateclaude": [
+   "embeddinglab"
+  ],
+  "sparseautoencoders": [
+   "embeddinglab"
+  ],
+  "hendel2023incontext": [
+   "embeddinglab"
+  ],
+  "belkin2019": [
+   "embeddinglab"
+  ],
+  "kassner2020negated": [
+   "embeddinglab"
+  ],
+  "nickel2017poincare": [
+   "embeddinglab"
+  ],
+  "poincareembeddings": [
+   "embeddinglab"
+  ],
+  "flammarion": [
+   "statistics",
+   "statistics_i"
+  ],
+  "arsconjectandi": [
+   "statistics",
+   "statistics_i"
+  ],
+  "devetula": [
+   "statistics",
+   "statistics_i"
+  ],
+  "liberludo": [
+   "statistics",
+   "statistics_i"
+  ],
+  "ceresimage": [
+   "statistics",
+   "statistics_i"
+  ],
+  "ceresdiscovery": [
+   "statistics",
+   "statistics_i"
+  ],
+  "cerespath": [
+   "statistics",
+   "statistics_i"
+  ],
+  "buolamwini2018gender": [
+   "statistics",
+   "statistics_i"
+  ],
+  "vapnik": [
+   "statistics",
+   "statistics_i"
+  ],
+  "boxmueller": [
+   "statistics",
+   "statistics_i"
+  ],
+  "laplace1810clt": [
+   "statistics",
+   "statistics_i"
+  ],
+  "poisson": [
+   "statistics",
+   "statistics_i"
+  ],
+  "gesetzderkleinenzahlen": [
+   "statistics",
+   "statistics_i"
+  ],
+  "pearson1895correlation": [
+   "statistics",
+   "statistics_i"
+  ],
+  "galton": [
+   "minimalneuron",
+   "statistics",
+   "statistics_i"
+  ],
+  "pearson1894zscore": [
+   "statistics"
+  ],
+  "nietzsche1883zarathustra": [
+   "statistics",
+   "statistics_i",
+   "statistics_ii"
+  ],
+  "boltzmann": [
+   "samplinglab",
+   "statistics",
+   "statistics_ii"
+  ],
+  "fisher1922": [
+   "statistics",
+   "statistics_ii"
+  ],
+  "kolmogorov1933": [
+   "statistics",
+   "statistics_ii"
+  ],
+  "leiblerkullback": [
+   "statistics",
+   "statistics_ii"
+  ],
+  "zelligharris": [
+   "statistics",
+   "statistics_ii"
+  ],
+  "diffusion_astronaut_img": [
+   "diffusion",
+   "music_video_generation"
+  ],
+  "ho2022cfg": [
+   "diffusion",
+   "music_video_generation"
+  ],
+  "diffusion_architecture_img": [
+   "diffusion"
+  ],
+  "zhang2023controlnet": [
+   "diffusion"
+  ],
+  "rombach2022ldm": [
+   "diffusion",
+   "music_video_generation"
+  ],
+  "diffusion_ddim_img": [
+   "diffusion"
+  ],
+  "lipman2023flow": [
+   "diffusion"
+  ],
+  "peebles2023dit": [
+   "diffusion",
+   "music_video_generation"
+  ],
+  "gu2021s4": [
+   "alternative_architectures"
+  ],
+  "dao2024mamba2": [
+   "alternative_architectures"
+  ],
+  "choromanski2021performer": [
+   "alternative_architectures"
+  ],
+  "peng2023rwkv": [
+   "alternative_architectures"
+  ],
+  "poli2023hyena": [
+   "alternative_architectures"
+  ],
+  "ma2022mega": [
+   "alternative_architectures"
+  ],
+  "raposo2024mod": [
+   "alternative_architectures"
+  ],
+  "relufirst": [
+   "activationlab"
+  ],
+  "relupaper": [
+   "activationlab",
+   "autodiff"
+  ],
+  "bridle1989probabilistic": [
+   "activationlab"
+  ],
+  "glorot2011deep": [
+   "activationlab"
+  ],
+  "frankle2019lottery": [
+   "activationlab"
+  ],
+  "hendrycks2016gelu": [
+   "activationlab",
+   "origami"
+  ],
+  "ramachandran2017swish": [
+   "activationlab",
+   "origami"
+  ],
+  "cartwright1983laws": [
+   "coherent_world_models"
+  ],
+  "cartwright1999dappled": [
+   "coherent_world_models"
+  ],
+  "brandom2000articulating": [
+   "coherent_world_models"
+  ],
+  "spivak2012ologs": [
+   "coherent_world_models"
+  ],
+  "spivak2014cts": [
+   "coherent_world_models"
+  ],
+  "hacking1983representing": [
+   "coherent_world_models"
+  ],
+  "worrall1989structural": [
+   "coherent_world_models"
+  ],
+  "ladyman1998what": [
+   "coherent_world_models"
+  ],
+  "ladymanross2007everything": [
+   "coherent_world_models"
+  ],
+  "goodman1978ways": [
+   "coherent_world_models"
+  ],
+  "tarski1935wahrheitsbegriff": [
+   "coherent_world_models",
+   "foam_of_meaning"
+  ],
+  "tarski1944semantic": [
+   "coherent_world_models"
+  ],
+  "tarski1956logic": [
+   "coherent_world_models"
+  ],
+  "bradley1893appearance": [
+   "coherent_world_models"
+  ],
+  "blanshard1939nature": [
+   "coherent_world_models"
+  ],
+  "walker2019coherence": [
+   "coherent_world_models"
+  ],
+  "joachim1906nature": [
+   "coherent_world_models"
+  ],
+  "bonjour1985structure": [
+   "coherent_world_models"
+  ],
+  "einstein1916foundation": [
+   "coherent_world_models"
+  ],
+  "popper1963conjectures": [
+   "coherent_world_models"
+  ],
+  "wengert1964": [
+   "autodiff"
+  ],
+  "differenceengine": [
+   "autodiff"
+  ],
+  "cosmic_web_image": [
+   "atlas",
+   "foam_of_meaning"
+  ],
+  "greatwallpaper": [
+   "foam_of_meaning"
+  ],
+  "cosmologicalprinciple": [
+   "foam_of_meaning"
+  ],
+  "lymanalphaforest": [
+   "foam_of_meaning"
+  ],
+  "mabrok2026latent": [
+   "foam_of_meaning"
+  ],
+  "gardenfors2000conceptual": [
+   "foam_of_meaning"
+  ],
+  "shepard1987universal": [
+   "foam_of_meaning"
+  ],
+  "he2023sideeffects": [
+   "foam_of_meaning"
+  ],
+  "jablonka2025geometry": [
+   "foam_of_meaning"
+  ],
+  "vyshnyvetska2025infogravity": [
+   "foam_of_meaning"
+  ],
+  "hodges1993modeltheory": [
+   "foam_of_meaning"
+  ],
+  "statisticsofextremes": [
+   "foam_of_meaning",
+   "transformer"
+  ],
+  "lageometrie": [
+   "math_i"
+  ],
+  "kramp1808": [
+   "math_i"
+  ],
+  "euler_portrait": [
+   "math_i"
+  ],
+  "madhava": [
+   "geometry_i",
+   "math_i"
+  ],
+  "gregoryachievements": [
+   "math_i"
+  ],
+  "newtonquadratura": [
+   "math_i"
+  ],
+  "taylor1715": [
+   "math_i"
+  ],
+  "maclaurin": [
+   "math_i"
+  ],
+  "napier1614": [
+   "math_i"
+  ],
+  "napier_portrait": [
+   "math_i"
+  ],
+  "laplace1821": [
+   "math_i"
+  ],
+  "mercator1668": [
+   "math_i"
+  ],
+  "bm25": [
+   "rag"
+  ],
+  "beir2021": [
+   "rag"
+  ],
+  "contextualretrieval2024": [
+   "rag"
+  ],
+  "ragsurvey2023": [
+   "rag"
+  ],
+  "xiao2022smoothquant": [
+   "inference_optimization"
+  ],
+  "dettmers2022llmint8": [
+   "inference_optimization",
+   "mechanistic_interpretability"
+  ],
+  "che2024quip": [
+   "inference_optimization"
+  ],
+  "beltagy2020longformer": [
+   "inference_optimization"
+  ],
+  "cai2024medusa": [
+   "inference_optimization"
+  ],
+  "li2024eagle": [
+   "inference_optimization"
+  ],
+  "goodhartslaw": [
+   "evaluation",
+   "losslab"
+  ],
+  "colah2015visualinfo": [
+   "losslab",
+   "statistics_ii"
+  ],
+  "hutter2006universal": [
+   "losslab"
+  ],
+  "indianastronomer": [
+   "positionalembeddingslab"
+  ],
+  "indianastronomerconstruction": [
+   "positionalembeddingslab"
+  ],
+  "chester1145": [
+   "positionalembeddingslab"
+  ],
+  "gunter1620": [
+   "positionalembeddingslab"
+  ],
+  "elman1990finding": [
+   "positionalembeddingslab"
+  ],
+  "gehring2017convs2s": [
+   "positionalembeddingslab"
+  ],
+  "shaw2018relative": [
+   "positionalembeddingslab"
+  ],
+  "rope2021": [
+   "positionalembeddingslab"
+  ],
+  "alibi2022": [
+   "positionalembeddingslab"
+  ],
+  "alphafold3": [
+   "ai_for_science"
+  ],
+  "alphamissense": [
+   "ai_for_science"
+  ],
+  "alphafold_protein_img": [
+   "ai_for_science"
+  ],
+  "navier_stokes_openai": [
+   "ai_for_science"
+  ],
+  "navier_stokes_priority": [
+   "ai_for_science"
+  ],
+  "alphatensor": [
+   "ai_for_science"
+  ],
+  "funsearch": [
+   "ai_for_science"
+  ],
+  "deletion_codes": [
+   "ai_for_science"
+  ],
+  "alphaevolve": [
+   "ai_for_science"
+  ],
+  "imo_wiki": [
+   "ai_for_science"
+  ],
+  "alphageometry2": [
+   "ai_for_science"
+  ],
+  "pathak2022fourcastnet": [
+   "ai_for_science"
+  ],
+  "lecun2022jepa": [
+   "ai_for_science"
+  ],
+  "coherent_difference": [
+   "ai_for_science"
   ],
   "origami_cranes_img": [
    "origami"
@@ -20000,6 +21185,10 @@
   ],
   "convex_hull_wiki": [
    "origami"
+  ],
+  "colah2014manifolds": [
+   "origami",
+   "topology"
   ],
   "naitzat2020topology": [
    "origami"
@@ -20157,433 +21346,418 @@
   "wu2024linguisticcollapse": [
    "origami"
   ],
-  "conmy2023automated": [
-   "mechanistic_interpretability"
+  "nyquist1924certain": [
+   "statistics_ii"
   ],
-  "cunningham2023sparse": [
-   "fact_lookup",
-   "mechanistic_interpretability"
+  "hartley1928transmission": [
+   "statistics_ii"
   ],
-  "black2022polytopelens": [
-   "mechanistic_interpretability"
+  "szilard1929entropy": [
+   "statistics_ii"
   ],
-  "meng2022locating": [
-   "fact_lookup",
-   "mechanistic_interpretability"
+  "euclideanalgorithm": [
+   "algorithms"
   ],
-  "belrose2023tunedlens": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "meng2022memit": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "zou2023representation": [
-   "mechanistic_interpretability"
-  ],
-  "hewitt2019structural": [
-   "mechanistic_interpretability"
-  ],
-  "lu2023doublehelix": [
-   "mechanistic_interpretability"
-  ],
-  "todd2024functionvectors": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "kissane2024attention": [
-   "mechanistic_interpretability"
-  ],
-  "azizian2025geometries": [
-   "mechanistic_interpretability"
-  ],
-  "arditi2024refusal": [
-   "mechanistic_interpretability"
-  ],
-  "lindsey2025biology": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "ackerman2024representationtuning": [
-   "mechanistic_interpretability"
-  ],
-  "huang2026insecure": [
-   "mechanistic_interpretability"
-  ],
-  "turner2023activation": [
-   "mechanistic_interpretability"
-  ],
-  "kone2024style": [
-   "mechanistic_interpretability"
-  ],
-  "gurnee2023spacetime": [
-   "mechanistic_interpretability"
-  ],
-  "giannou2023looped": [
-   "mechanistic_interpretability"
-  ],
-  "templeton2024scaling": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "anthropic2023mapping": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "marks2024featurecircuits": [
-   "mechanistic_interpretability"
-  ],
-  "ameisen2025circuit": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "elhage2022solu": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "elhage2023privileged": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ],
-  "zelikman2024quietstar": [
-   "mechanistic_interpretability"
-  ],
-  "hao2025coconut": [
-   "mechanistic_interpretability"
-  ],
-  "fedorenko2024nature": [
-   "mechanistic_interpretability"
-  ],
-  "fedorenko2011language": [
-   "mechanistic_interpretability"
-  ],
-  "amalric2019neuroimage": [
-   "mechanistic_interpretability"
-  ],
-  "monti2007neuroimage": [
-   "mechanistic_interpretability"
-  ],
-  "rizvimartel2026illusion": [
-   "mechanistic_interpretability"
-  ],
-  "ameisen2025circuittracing": [
-   "mechanistic_interpretability"
-  ],
-  "zhou2026negation": [
-   "mechanistic_interpretability"
-  ],
-  "saraipour2025syllogisms": [
-   "mechanistic_interpretability"
-  ],
-  "chaturvedi2022faithfulness": [
-   "mechanistic_interpretability"
-  ],
-  "langedijk2025propositional": [
-   "mechanistic_interpretability"
-  ],
-  "saha2020conjnli": [
-   "mechanistic_interpretability"
-  ],
-  "lin2022uncertainty": [
-   "mechanistic_interpretability"
-  ],
-  "tian2023calibration": [
-   "mechanistic_interpretability"
-  ],
-  "cheang2025recall": [
-   "mechanistic_interpretability"
-  ],
-  "manakul2023selfcheck": [
-   "mechanistic_interpretability"
-  ],
-  "goh2021multimodal": [
-   "computer_vision",
-   "mechanistic_interpretability"
-  ],
-  "newton_portrait": [
-   "differentiation"
-  ],
-  "leibniz_portrait": [
-   "differentiation"
-  ],
-  "leibniz1684nova": [
-   "differentiation"
-  ],
-  "lagrange1797theorie": [
-   "differentiation"
-  ],
-  "lagrange_portrait": [
-   "differentiation"
-  ],
-  "liu2023ringattention": [
-   "contextwindows"
-  ],
-  "liu2023lostmiddle": [
-   "contextwindows",
-   "rag"
-  ],
-  "eulerbridges": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "eulersolids": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "perelmanpoincare": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "mclarty2006noether": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "hatcher": [
-   "foam_of_meaning",
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "derham1931": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "hottbook": [
-   "coherent_difference",
-   "geometry_iii",
-   "math_iii"
-  ],
-  "youvan2024": [
-   "geometry_iii",
-   "math_iii"
-  ],
-  "eilenbergmaclane1942": [
-   "geometry_iii"
-  ],
-  "eilenbergsteenrod1952": [
-   "geometry_iii"
-  ],
-  "maclane1998categories": [
-   "coherent_difference",
-   "geometry_iii"
-  ],
-  "mayer1929": [
-   "geometry_iii"
-  ],
-  "vietoris1930": [
-   "geometry_iii"
-  ],
-  "vietorisbio2002": [
-   "geometry_iii"
-  ],
-  "seifert1931": [
-   "geometry_iii"
-  ],
-  "vankampen1933": [
-   "geometry_iii"
-  ],
-  "brown1967": [
-   "geometry_iii"
-  ],
-  "hurewicz1935": [
-   "geometry_iii"
-  ],
-  "eilenberglane1945": [
-   "coherent_difference",
-   "geometry_iii"
-  ],
-  "hopf1931fibration": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "freudenthal1937": [
-   "geometry_iii"
-  ],
-  "serre1951": [
-   "geometry_iii"
-  ],
-  "serre1953": [
-   "geometry_iii"
-  ],
-  "whitehead1949": [
-   "geometry_iii"
-  ],
-  "milnor1962additivity": [
-   "geometry_iii"
-  ],
-  "leray1946": [
-   "geometry_iii"
-  ],
-  "steenrod1947": [
-   "geometry_iii"
-  ],
-  "adams1960": [
-   "geometry_iii"
-  ],
-  "bott1959": [
-   "geometry_iii"
-  ],
-  "reidemeister1935": [
-   "geometry_iii"
-  ],
-  "milnor1966torsion": [
-   "geometry_iii"
-  ],
-  "zomorodian2005": [
-   "geometry_iii"
-  ],
-  "cohensteiner2007": [
-   "foam_of_meaning",
-   "geometry_iii"
-  ],
-  "riek2019neural": [
-   "geometry_iii"
-  ],
-  "brouwer1911fixed": [
-   "geometry_i",
-   "geometry_iii"
-  ],
-  "lewis2020rag": [
-   "rag",
-   "websearch"
-  ],
-  "rae2021gopher": [
-   "training_data"
-  ],
-  "raffel2020t5": [
-   "training_data"
-  ],
-  "penedo2024fineweb": [
-   "training_data"
-  ],
-  "abbas2023semdedup": [
-   "training_data"
-  ],
-  "chollet2024arcagi": [
-   "training_data"
-  ],
-  "gao2020pile": [
-   "training_data"
-  ],
-  "together2024redpajama": [
-   "training_data"
-  ],
-  "chen2021codex": [
-   "training_data"
-  ],
-  "li2022alphacode": [
-   "training_data"
-  ],
-  "ma2023codereasoning": [
-   "training_data"
-  ],
-  "waheed2025codeinduced": [
-   "training_data"
-  ],
-  "gao2022pal": [
-   "training_data"
-  ],
-  "wang2024codeact": [
-   "training_data"
-  ],
-  "roziere2023codellama": [
-   "training_data"
-  ],
-  "guo2024deepseekcoder": [
-   "training_data"
-  ],
-  "jimenez2024swebench": [
-   "training_data"
-  ],
-  "shumailov2023modelcollapse": [
-   "philosophy",
-   "training_data"
-  ],
-  "riemann_portrait": [
-   "embeddinglab"
-  ],
-  "hypothesengeometrie": [
-   "coherent_difference",
-   "embeddinglab",
+  "euclidelements": [
+   "algorithms",
    "geometry_i"
   ],
-  "hypothesengeometrieenglish": [
-   "embeddinglab"
+  "sieveoferatosthenes": [
+   "algorithms"
   ],
-  "gauscurvas": [
-   "embeddinglab"
+  "hilbert1928entscheidung": [
+   "algorithms"
   ],
-  "hilbert1903grundlagen": [
-   "embeddinglab",
-   "geometry_i"
+  "godel1931incompleteness": [
+   "algorithms"
   ],
-  "weylriemann": [
-   "embeddinglab"
+  "churchturing1936": [
+   "algorithms"
   ],
-  "whitney1936manifolds": [
-   "embeddinglab",
-   "geometry_i"
+  "power2022grokking": [
+   "algorithms",
+   "mechanistic_interpretability"
   ],
-  "ehresmann1950connexions": [
-   "embeddinglab"
+  "garg2022incontext": [
+   "algorithms",
+   "unexpected_capabilities"
   ],
-  "salton1975vectorspace": [
-   "embeddinglab",
-   "geometry_i"
+  "zhou2022algorithmic": [
+   "algorithms",
+   "unexpected_capabilities"
   ],
-  "colah2014nlp": [
-   "embeddinglab"
+  "levy2024numbers": [
+   "algorithms"
   ],
-  "glitchtokens": [
-   "embeddinglab"
+  "cacioli2026weber": [
+   "algorithms"
   ],
-  "smith2017orthogonal": [
-   "embeddinglab"
+  "fu2024count": [
+   "algorithms"
   ],
-  "mikolov2013exploiting": [
-   "embeddinglab"
+  "conde2025count": [
+   "algorithms"
   ],
-  "conneau2018word": [
-   "embeddinglab"
+  "ding2024fittest": [
+   "algorithms"
   ],
-  "sogaard2018limitations": [
-   "embeddinglab"
+  "engels2024multidim": [
+   "algorithms"
   ],
-  "bengio2013representation": [
-   "embeddinglab"
+  "katharopoulos2020linear": [
+   "algorithms"
   ],
-  "ethayarajh2019contextual": [
-   "embeddinglab"
+  "adriaensen2024moore": [
+   "algorithms"
   ],
-  "grandmotherneuron": [
-   "embeddinglab"
+  "vonoswald2022indc": [
+   "algorithms",
+   "transformer"
   ],
-  "goldengateclaude": [
-   "embeddinglab"
+  "nanogpt": [
+   "transformer"
   ],
-  "sparseautoencoders": [
-   "embeddinglab"
+  "xiong2020": [
+   "transformer"
   ],
-  "hendel2023incontext": [
-   "embeddinglab"
+  "analyzingmultiheads": [
+   "transformer"
   ],
-  "belkin2019": [
-   "embeddinglab"
+  "incontextlearninghead": [
+   "transformer"
   ],
-  "kassner2020negated": [
-   "embeddinglab"
+  "successorheads": [
+   "transformer"
   ],
-  "nickel2017poincare": [
-   "embeddinglab"
+  "interpretabilityinwild": [
+   "transformer"
   ],
-  "poincareembeddings": [
-   "embeddinglab"
+  "copysuppression": [
+   "transformer"
   ],
-  "twocultures": [
-   "intro"
+  "safetyheads": [
+   "transformer"
   ],
-  "hayakawa": [
-   "intro"
+  "htu2019dependencies": [
+   "transformer"
+  ],
+  "someya2025derivational": [
+   "transformer"
+  ],
+  "shen2021structformer": [
+   "transformer"
+  ],
+  "logitorigin": [
+   "transformer"
+  ],
+  "probitorigin": [
+   "transformer"
+  ],
+  "generalizedlinearmodels": [
+   "transformer"
+  ],
+  "parametriclinks": [
+   "transformer"
+  ],
+  "glmsecondedition": [
+   "transformer"
+  ],
+  "dong2025planning": [
+   "transformer"
+  ],
+  "merzouk2026remaining": [
+   "transformer"
+  ],
+  "baghaei2026collapse": [
+   "transformer"
+  ],
+  "moya2026spurious": [
+   "transformer"
+  ],
+  "xiao2026length": [
+   "transformer"
+  ],
+  "liu2024formalizing": [
+   "security_inference"
+  ],
+  "wei2024jailbroken": [
+   "security_inference"
+  ],
+  "jain2023baseline": [
+   "security_inference"
+  ],
+  "wallace2024hierarchy": [
+   "security_inference"
+  ],
+  "mazeika2024harmbench": [
+   "security_inference"
+  ],
+  "chen2024ibprotector": [
+   "security_inference"
+  ],
+  "gerganov2023llamacpp": [
+   "running_locally"
+  ],
+  "ollama2024": [
+   "running_locally"
+  ],
+  "lmstudio2024": [
+   "running_locally"
+  ],
+  "dettmers2023qlora": [
+   "finetuninglab",
+   "running_locally"
+  ],
+  "liu2024dora": [
+   "finetuninglab",
+   "running_locally"
+  ],
+  "houlsby2019adapters": [
+   "finetuninglab"
+  ],
+  "lester2021prompttuning": [
+   "finetuninglab"
+  ],
+  "liu2022ia3": [
+   "finetuninglab"
+  ],
+  "karpathy2015convnetjs": [
+   "topology"
+  ],
+  "fan2018topk": [
+   "music_video_generation",
+   "samplinglab"
+  ],
+  "holtzman2020nucleus": [
+   "samplinglab"
+  ],
+  "nguyen2025minp": [
+   "samplinglab"
+  ],
+  "keskar2019ctrl": [
+   "samplinglab"
+  ],
+  "basu2020mirostat": [
+   "samplinglab"
+  ],
+  "wang2024entropy": [
+   "samplinglab"
+  ],
+  "hornik": [
+   "overandunderfittinglab"
+  ],
+  "rungesphenomenon": [
+   "overandunderfittinglab"
+  ],
+  "tibshirani1996lasso": [
+   "overandunderfittinglab"
+  ],
+  "hoerl1970ridge": [
+   "overandunderfittinglab"
+  ],
+  "earlyl2": [
+   "overandunderfittinglab"
+  ],
+  "srivastava2014dropout": [
+   "overandunderfittinglab"
+  ],
+  "transformer_attention_figure": [
+   "atlas"
+  ],
+  "starfield_eso_image": [
+   "atlas"
+  ],
+  "solsys_planet_textures": [
+   "atlas"
+  ],
+  "earth_moon_cc_textures": [
+   "atlas"
+  ],
+  "earth_night_lights": [
+   "atlas"
+  ],
+  "m87_blackhole_image": [
+   "atlas"
+  ],
+  "crab_nebula_image": [
+   "atlas"
+  ],
+  "watkins1989qlearning": [
+   "reinforcement_learning"
+  ],
+  "mnih2013dqn": [
+   "reinforcement_learning"
+  ],
+  "sutton2018reinforcement": [
+   "reinforcement_learning"
+  ],
+  "mnih2016a3c": [
+   "reinforcement_learning"
+  ],
+  "azar2023ipo": [
+   "reinforcement_learning"
+  ],
+  "ethayarajh2024kto": [
+   "reinforcement_learning"
+  ],
+  "hong2024orpo": [
+   "reinforcement_learning"
+  ],
+  "meng2024simpo": [
+   "reinforcement_learning"
+  ],
+  "emergentmind_latent_space_steering": [
+   "promptengineering"
+  ],
+  "emergentmind_steering_vectors": [
+   "promptengineering"
+  ],
+  "emergentmind_latent_steering": [
+   "promptengineering"
+  ],
+  "coherent_difference_chapter": [
+   "promptengineering"
+  ],
+  "marks2023geometry": [
+   "mechanistic_interpretability",
+   "promptengineering"
+  ],
+  "hendrycks2021mmlu": [
+   "evaluation"
+  ],
+  "chen2021humaneval": [
+   "evaluation",
+   "unexpected_capabilities"
+  ],
+  "zheng2023lmsys": [
+   "evaluation"
+  ],
+  "clark2018arc": [
+   "evaluation"
+  ],
+  "cobbe2021gsm8k": [
+   "evaluation"
+  ],
+  "austin2021mbpp": [
+   "evaluation"
+  ],
+  "srivastava2022bigbench": [
+   "evaluation"
+  ],
+  "carlini2021extracting": [
+   "evaluation",
+   "unexpected_capabilities"
+  ],
+  "liang2023helm": [
+   "evaluation"
+  ],
+  "cohenkappa": [
+   "evaluation"
+  ],
+  "llmjudge2023": [
+   "evaluation"
+  ],
+  "helm2022": [
+   "evaluation"
+  ],
+  "brooks2024sora": [
+   "music_video_generation"
+  ],
+  "panharmonicon": [
+   "music_video_generation"
+  ],
+  "illiac_suite": [
+   "music_video_generation"
+  ],
+  "max_mathews": [
+   "music_video_generation"
+  ],
+  "music_theory": [
+   "music_video_generation"
+  ],
+  "midi": [
+   "music_video_generation"
+  ],
+  "midi_keyboard_img": [
+   "music_video_generation"
+  ],
+  "pcm": [
+   "music_video_generation"
+  ],
+  "nyquist_sampling": [
+   "music_video_generation"
+  ],
+  "cd_digital_audio": [
+   "music_video_generation"
+  ],
+  "oscilloscope_waveform_img": [
+   "music_video_generation"
+  ],
+  "vinyl_lp_record_img": [
+   "music_video_generation"
+  ],
+  "cd_compact_disc_img": [
+   "music_video_generation"
+  ],
+  "mp3": [
+   "music_video_generation"
+  ],
+  "mdct": [
+   "music_video_generation"
+  ],
+  "audio_spectrogram_img": [
+   "music_video_generation"
+  ],
+  "zeghidour2021soundstream": [
+   "music_video_generation"
+  ],
+  "defossez2022encodec": [
+   "music_video_generation"
+  ],
+  "borsos2023audiolm": [
+   "music_video_generation"
+  ],
+  "agostinelli2023musiqlm": [
+   "music_video_generation"
+  ],
+  "copet2023musicgen": [
+   "music_video_generation"
+  ],
+  "film_strip_35mm_img": [
+   "music_video_generation"
+  ],
+  "vhs_cassette_img": [
+   "music_video_generation"
+  ],
+  "video_compression": [
+   "music_video_generation"
+  ],
+  "dct": [
+   "music_video_generation"
+  ],
+  "h264_coding_structure_img": [
+   "music_video_generation"
+  ],
+  "h264": [
+   "music_video_generation"
+  ],
+  "av1": [
+   "music_video_generation"
+  ],
+  "yan2021videogpt": [
+   "music_video_generation"
+  ],
+  "vq_vae": [
+   "music_video_generation"
+  ],
+  "bain2021webvid": [
+   "music_video_generation"
+  ],
+  "ha2018worldmodels": [
+   "music_video_generation"
+  ],
+  "liu2023audioldm": [
+   "music_video_generation"
   ],
   "weeksshapespace": [
    "geometry_i"
@@ -20649,9 +21823,6 @@
    "geometry_i"
   ],
   "aristotlephysics": [
-   "geometry_i"
-  ],
-  "euclidelements": [
    "geometry_i"
   ],
   "euclidelements_heath": [
@@ -20759,727 +21930,282 @@
   "weil1949numbers": [
    "geometry_i"
   ],
-  "mialon2023augmented": [
-   "websearch"
+  "chung2022flan": [
+   "unexpected_capabilities"
   ],
-  "ma2023queryrewriting": [
-   "websearch"
+  "nye2021scratchpad": [
+   "unexpected_capabilities"
   ],
-  "reuters2023chatgptbrowsing": [
-   "websearch"
+  "wei2022chainofthought": [
+   "unexpected_capabilities"
   ],
-  "google2025grounding": [
-   "websearch"
+  "press2022compositionality": [
+   "unexpected_capabilities"
   ],
-  "anthropic2025websearch": [
-   "websearch"
+  "udrescu2020aifeynman": [
+   "unexpected_capabilities"
   ],
-  "perplexityai": [
-   "websearch"
+  "shi2023cottransfer": [
+   "unexpected_capabilities"
   ],
-  "youcom": [
-   "websearch"
+  "burns2022ccs": [
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
   ],
-  "searxng": [
-   "websearch"
+  "monosemanticity": [
+   "unexpected_capabilities"
   ],
-  "bravesearchapi": [
-   "websearch"
+  "kosinski2023tom": [
+   "unexpected_capabilities"
   ],
-  "googlecustomsearch": [
-   "websearch"
+  "huang2022selfimprove": [
+   "unexpected_capabilities"
   ],
-  "serper": [
-   "websearch"
+  "lin2021truthful": [
+   "unexpected_capabilities"
   ],
-  "tavily": [
-   "websearch"
+  "mckenzie2023inverse": [
+   "unexpected_capabilities"
   ],
-  "mozillareadability": [
-   "websearch"
+  "bubeck2023sparks": [
+   "unexpected_capabilities"
   ],
-  "barbaresi2021trafilatura": [
-   "websearch"
+  "mixtral2024": [
+   "mixture_of_experts"
   ],
-  "beautifulsoup": [
-   "websearch"
+  "switchtransformers2022": [
+   "mixture_of_experts"
   ],
-  "playwright": [
-   "websearch"
+  "conmy2023automated": [
+   "mechanistic_interpretability"
   ],
-  "puppeteer": [
-   "websearch"
+  "black2022polytopelens": [
+   "mechanistic_interpretability"
   ],
-  "jinareader": [
-   "websearch"
+  "zou2023representation": [
+   "mechanistic_interpretability"
   ],
-  "reimers2019sentencebert": [
-   "websearch"
+  "hewitt2019structural": [
+   "mechanistic_interpretability"
   ],
-  "openai2023functioncalling": [
-   "websearch"
+  "lu2023doublehelix": [
+   "mechanistic_interpretability"
   ],
-  "greshake2023injection": [
-   "security_inference",
-   "websearch"
+  "kissane2024attention": [
+   "mechanistic_interpretability"
   ],
-  "rumelhart1986learning": [
-   "loss_landscape"
+  "azizian2025geometries": [
+   "mechanistic_interpretability"
   ],
-  "dinh2017sharpness": [
-   "loss_landscape"
+  "arditi2024refusal": [
+   "mechanistic_interpretability"
   ],
-  "ioffe2015batchnorm": [
-   "loss_landscape"
+  "ackerman2024representationtuning": [
+   "mechanistic_interpretability"
   ],
-  "saxe2014deep": [
-   "loss_landscape"
+  "huang2026insecure": [
+   "mechanistic_interpretability"
   ],
-  "kawaguchi2016deep": [
-   "loss_landscape"
+  "turner2023activation": [
+   "mechanistic_interpretability"
   ],
-  "lu2017expressive": [
-   "loss_landscape"
+  "kone2024style": [
+   "mechanistic_interpretability"
   ],
-  "smithle2018bayesian": [
-   "loss_landscape"
+  "gurnee2023spacetime": [
+   "mechanistic_interpretability"
   ],
-  "mandt2017variational": [
-   "loss_landscape"
+  "giannou2023looped": [
+   "mechanistic_interpretability"
   ],
-  "hyperbolic_paraboloid_saddle": [
-   "loss_landscape"
+  "marks2024featurecircuits": [
+   "mechanistic_interpretability"
   ],
-  "keskar2016largebatch": [
-   "loss_landscape"
+  "zelikman2024quietstar": [
+   "mechanistic_interpretability"
   ],
-  "foret2021sam": [
-   "loss_landscape"
+  "hao2025coconut": [
+   "mechanistic_interpretability"
   ],
-  "he2016identity": [
-   "loss_landscape"
+  "fedorenko2024nature": [
+   "mechanistic_interpretability"
   ],
-  "choromanska2015loss": [
-   "loss_landscape"
+  "fedorenko2011language": [
+   "mechanistic_interpretability"
   ],
-  "nguyen2017loss": [
-   "loss_landscape"
+  "amalric2019neuroimage": [
+   "mechanistic_interpretability"
   ],
-  "garipov2018mode": [
-   "loss_landscape"
+  "monti2007neuroimage": [
+   "mechanistic_interpretability"
   ],
-  "amit1989modeling": [
-   "loss_landscape"
+  "rizvimartel2026illusion": [
+   "mechanistic_interpretability"
   ],
-  "chaudhari2016entropysgd": [
-   "loss_landscape"
+  "ameisen2025circuittracing": [
+   "mechanistic_interpretability"
   ],
-  "wales2003energy": [
-   "loss_landscape"
+  "zhou2026negation": [
+   "mechanistic_interpretability"
   ],
-  "hopfield1982": [
-   "fact_lookup",
-   "loss_landscape"
+  "saraipour2025syllogisms": [
+   "mechanistic_interpretability"
   ],
-  "snell2024testtime": [
-   "reasoning"
+  "chaturvedi2022faithfulness": [
+   "mechanistic_interpretability"
   ],
-  "wikipedia_reason": [
-   "philosophy"
+  "langedijk2025propositional": [
+   "mechanistic_interpretability"
   ],
-  "aristotle_nicomachean_ethics": [
-   "philosophy"
+  "saha2020conjnli": [
+   "mechanistic_interpretability"
   ],
-  "hume_treatise": [
-   "philosophy"
+  "lin2022uncertainty": [
+   "mechanistic_interpretability"
   ],
-  "ockham": [
-   "philosophy"
+  "tian2023calibration": [
+   "mechanistic_interpretability"
   ],
-  "levesque2012winograd": [
-   "philosophy"
+  "cheang2025recall": [
+   "mechanistic_interpretability"
   ],
-  "winograd1972understanding": [
-   "philosophy"
+  "manakul2023selfcheck": [
+   "mechanistic_interpretability"
   ],
-  "levesque2014bestbehaviour": [
-   "philosophy"
+  "leibnizrechenmaschine": [
+   "software"
   ],
-  "kocijan2020review": [
-   "philosophy"
+  "zusetoolazy": [
+   "software"
   ],
-  "trinh2018commonsense": [
-   "philosophy"
+  "edvac_os": [
+   "software"
   ],
-  "sakaguchi2019winogrande": [
-   "philosophy"
+  "ctss_annals": [
+   "software"
   ],
-  "hendrycks2020winograd": [
-   "philosophy"
+  "multics_plan9": [
+   "software"
   ],
-  "kocijan2023defeat": [
-   "philosophy"
+  "unix_ts": [
+   "software"
   ],
-  "moravec1988mindchildren": [
-   "philosophy"
+  "bell_labs": [
+   "software"
   ],
-  "wimmer1983belief": [
-   "philosophy"
+  "plan9_9front": [
+   "software"
   ],
-  "weston2015babi": [
-   "philosophy"
+  "windows_ms": [
+   "software"
   ],
-  "johnson2017clevr": [
-   "philosophy"
+  "mach": [
+   "software"
   ],
-  "talmor2018commonsenseqa": [
-   "philosophy"
+  "gnu_hurd": [
+   "software"
   ],
-  "chollet2019measure": [
-   "philosophy"
+  "minix3": [
+   "software"
   ],
-  "plato399apology": [
-   "philosophy"
+  "mars_pathfinder": [
+   "software"
   ],
-  "socraticmethod": [
-   "philosophy"
+  "fortran2": [
+   "software"
   ],
-  "rawls1971theoryofjustice": [
-   "philosophy"
+  "lispworks": [
+   "software"
   ],
-  "aurelius180meditations": [
-   "philosophy"
+  "algol60": [
+   "software"
   ],
-  "nietzsche1882gayscience": [
-   "philosophy"
+  "goto_harmful": [
+   "software"
   ],
-  "buddha400dhammapada": [
-   "philosophy"
+  "isocpp": [
+   "software"
   ],
-  "kant1785groundwork": [
-   "philosophy"
+  "pascal": [
+   "software"
   ],
-  "camus1942mythofsisyphus": [
-   "philosophy"
+  "smalltalk": [
+   "software"
   ],
-  "sartre1943beingandnothingness": [
-   "philosophy"
+  "haskell": [
+   "software"
   ],
-  "james1897willtobelieve": [
-   "philosophy"
+  "prolog": [
+   "software"
   ],
-  "spinoza1677ethics": [
-   "coherent_difference",
-   "philosophy"
+  "apl_j": [
+   "software"
   ],
-  "harris2012freewill": [
-   "philosophy"
+  "dartmouth": [
+   "software"
   ],
-  "hume1739treatise": [
-   "philosophy"
+  "codd1970": [
+   "software"
   ],
-  "frankfurt1969alternatepossibilities": [
-   "philosophy"
+  "garmisch1968": [
+   "software"
   ],
-  "dennett1984elbowroom": [
-   "philosophy"
+  "java_oracle": [
+   "software"
   ],
-  "plato380republic": [
-   "philosophy"
+  "python": [
+   "software"
   ],
-  "harris2010morallandscape": [
-   "philosophy"
+  "python_zen": [
+   "software"
   ],
-  "nietzsche1886beyondgoodandevil": [
-   "philosophy"
+  "javascript_mdn": [
+   "software"
   ],
-  "mackie1977inventingrightandwrong": [
-   "philosophy"
+  "csharp_ms": [
+   "software"
   ],
-  "scanlon1998whatweowtoeachother": [
-   "philosophy"
+  "go_lang": [
+   "software"
   ],
-  "aquinas1274summa": [
-   "philosophy"
+  "rust_lang": [
+   "software"
   ],
-  "leibniz1714monadology": [
-   "coherent_difference",
-   "philosophy"
+  "gnu_make": [
+   "software"
   ],
-  "russell1927whyiamnotachristian": [
-   "philosophy"
+  "git": [
+   "software"
   ],
-  "dawkins2006goddelusion": [
-   "philosophy"
+  "olson2018metaphysics": [
+   "metaphysics_of_ai"
   ],
-  "hume1779dialogues": [
-   "philosophy"
+  "chalmers2016singularity": [
+   "metaphysics_of_ai"
   ],
-  "jackson1982epiphenomenal": [
-   "philosophy"
+  "sep_multiple_realizability": [
+   "metaphysics_of_ai"
   ],
-  "uexkull1934": [
-   "philosophy"
+  "sep_computational_mind": [
+   "metaphysics_of_ai"
   ],
-  "penrose1989emperor": [
-   "philosophy"
+  "floridi2011information": [
+   "metaphysics_of_ai"
   ],
-  "li2022othello": [
-   "philosophy"
+  "piccinini2015computation": [
+   "metaphysics_of_ai"
   ],
-  "vanhoucke2024closeencounters": [
-   "philosophy"
+  "parfit1984reasons": [
+   "metaphysics_of_ai"
   ],
-  "pierucci2026xenointerpretability": [
-   "philosophy"
+  "graunt1662": [
+   "statistics_i"
   ],
-  "thetacitdimension": [
-   "philosophy"
+  "quetelet1835": [
+   "statistics_i"
   ],
-  "geometryoftruth": [
-   "philosophy"
-  ],
-  "breakingsoftmaxbottleneck": [
-   "philosophy"
-  ],
-  "kapp1877grundlinien": [
-   "philosophy"
-  ],
-  "chalmers1996conscious": [
-   "philosophy"
-  ],
-  "chalmers1995hard": [
-   "philosophy"
-  ],
-  "tononi2004iit": [
-   "philosophy"
-  ],
-  "rosenthal2005hot": [
-   "philosophy"
-  ],
-  "lamme2000rpt": [
-   "philosophy"
-  ],
-  "lamme2006rpt": [
-   "philosophy"
-  ],
-  "seth2021pp": [
-   "philosophy"
-  ],
-  "hohwy2020pp": [
-   "philosophy"
-  ],
-  "dehaene2017c0c1c2": [
-   "philosophy"
-  ],
-  "graziano2013ast": [
-   "philosophy"
-  ],
-  "hameroff1996orch": [
-   "philosophy"
-  ],
-  "penrose1994shadows": [
-   "philosophy"
-  ],
-  "damasio1999feeling": [
-   "philosophy"
-  ],
-  "damasio2010selfcomestomind": [
-   "philosophy"
-  ],
-  "edelman1989remembered": [
-   "philosophy"
-  ],
-  "edelman2000universe": [
-   "philosophy"
-  ],
-  "cleeremans2011radical": [
-   "philosophy"
-  ],
-  "metzinger2003being": [
-   "philosophy"
-  ],
-  "block1995confusion": [
-   "philosophy"
-  ],
-  "taylor2014sensorimotor": [
-   "philosophy"
-  ],
-  "prinz2012conscious": [
-   "philosophy"
-  ],
-  "seneca64letters": [
-   "philosophy"
-  ],
-  "rumi": [
-   "philosophy"
-  ],
-  "frost1914northofboston": [
-   "philosophy"
-  ],
-  "kierkegaard1849sicknessuntodeath": [
-   "philosophy"
-  ],
-  "epicurus300lettertomenoeceus": [
-   "philosophy"
-  ],
-  "nietzsche1889twilightofidols": [
-   "philosophy"
-  ],
-  "laozi400taoteching": [
-   "coherent_difference",
-   "philosophy"
-  ],
-  "pascal1670pensees": [
-   "philosophy"
-  ],
-  "heidegger1954whatiscalledthinking": [
-   "philosophy"
-  ],
-  "sartre1946existentialismishumanism": [
-   "philosophy"
-  ],
-  "heraclitus500fragments": [
-   "coherent_difference",
-   "philosophy"
-  ],
-  "kierkegaard1844conceptofanxiety": [
-   "philosophy"
-  ],
-  "waluigi": [
-   "philosophy"
-  ],
-  "perez2022emergent": [
-   "philosophy"
-  ],
-  "simulatorstheory": [
-   "philosophy"
-  ],
-  "reflectionstrustingtrust": [
-   "philosophy"
-  ],
-  "rokosbasilisk": [
-   "philosophy"
-  ],
-  "crawford2021atlas": [
-   "ai_existential_risk",
-   "philosophy"
-  ],
-  "preaiinternet": [
-   "philosophy"
-  ],
-  "truthdecay": [
-   "philosophy"
-  ],
-  "chesney2019deepfakes": [
-   "philosophy"
-  ],
-  "bansal2025syntheticself": [
-   "philosophy"
-  ],
-  "strubell2019energy": [
-   "philosophy"
-  ],
-  "watergpt3": [
-   "philosophy"
-  ],
-  "li2023thirsty": [
-   "philosophy"
-  ],
-  "oneil2016weapons": [
-   "philosophy"
-  ],
-  "fakeblackstrump": [
-   "philosophy"
-  ],
-  "fakebidenrobocall": [
-   "philosophy"
-  ],
-  "confucius500analects": [
-   "philosophy"
-  ],
-  "epictetus108enchiridion": [
-   "philosophy"
-  ],
-  "frankl1946manssearch": [
-   "philosophy"
-  ],
-  "tillich1952couragetobe": [
-   "philosophy"
-  ],
-  "macintyre1981aftervirtue": [
-   "philosophy"
-  ],
-  "brooks2015roadtocharacter": [
-   "philosophy"
-  ],
-  "singer2009lifeyoucansave": [
-   "philosophy"
-  ],
-  "mill1863utilitarianism": [
-   "philosophy"
-  ],
-  "macaskill2015doinggoodbetter": [
-   "philosophy"
-  ],
-  "singer1981expandingcircle": [
-   "philosophy"
-  ],
-  "zhuangzi300zhuangzi": [
-   "philosophy"
-  ],
-  "suzuki1970zenmind": [
-   "philosophy"
-  ],
-  "hoff1982taoofpooh": [
-   "philosophy"
-  ],
-  "sandel2009justice": [
-   "philosophy"
-  ],
-  "lucretius50rerumnatura": [
-   "philosophy"
-  ],
-  "wilson2019howtobeanepicurean": [
-   "philosophy"
-  ],
-  "greenblatt2011swerve": [
-   "philosophy"
-  ],
-  "greatwallpaper": [
-   "foam_of_meaning"
-  ],
-  "cosmologicalprinciple": [
-   "foam_of_meaning"
-  ],
-  "lymanalphaforest": [
-   "foam_of_meaning"
-  ],
-  "mabrok2026latent": [
-   "foam_of_meaning"
-  ],
-  "gardenfors2000conceptual": [
-   "foam_of_meaning"
-  ],
-  "shepard1987universal": [
-   "foam_of_meaning"
-  ],
-  "he2023sideeffects": [
-   "foam_of_meaning"
-  ],
-  "jablonka2025geometry": [
-   "foam_of_meaning"
-  ],
-  "vyshnyvetska2025infogravity": [
-   "foam_of_meaning"
-  ],
-  "hodges1993modeltheory": [
-   "foam_of_meaning"
-  ],
-  "fiber_bundle_wiki": [
-   "coherent_difference",
-   "foam_of_meaning"
-  ],
-  "hornik": [
-   "overandunderfittinglab"
-  ],
-  "rungesphenomenon": [
-   "overandunderfittinglab"
-  ],
-  "tibshirani1996lasso": [
-   "overandunderfittinglab"
-  ],
-  "hoerl1970ridge": [
-   "overandunderfittinglab"
-  ],
-  "earlyl2": [
-   "overandunderfittinglab"
-  ],
-  "srivastava2014dropout": [
-   "overandunderfittinglab"
-  ],
-  "shelley1818frankenstein": [
-   "ai_existential_risk"
-  ],
-  "butler1863machines": [
-   "ai_existential_risk"
-  ],
-  "asimov1942runaround": [
-   "ai_existential_risk"
-  ],
-  "good1965explosion": [
-   "ai_existential_risk"
-  ],
-  "joy2000future": [
-   "ai_existential_risk"
-  ],
-  "bostrom2013xrisk": [
-   "ai_existential_risk"
-  ],
-  "bales2024catastrophic": [
-   "ai_existential_risk"
-  ],
-  "tien2026rogue": [
-   "ai_existential_risk"
-  ],
-  "anthropic2025shutdown": [
-   "ai_existential_risk"
-  ],
-  "statement_on_ai_risk_2023": [
-   "ai_existential_risk"
-  ],
-  "fli2023pause": [
-   "ai_existential_risk"
-  ],
-  "openai2023superintelligence": [
-   "ai_existential_risk"
-  ],
-  "hinton2023caution": [
-   "ai_existential_risk"
-  ],
-  "lecun2022autonomous": [
-   "ai_existential_risk"
-  ],
-  "fli2025ban": [
-   "ai_existential_risk"
-  ],
-  "christian2020alignment": [
-   "ai_existential_risk"
-  ],
-  "kokotajlo2016takeoff": [
-   "ai_existential_risk"
-  ],
-  "ord2020precipice": [
-   "ai_existential_risk"
-  ],
-  "hornik1989": [
-   "math_iii"
-  ],
-  "whitehead_process": [
-   "coherent_difference"
-  ],
-  "bergson1889essai": [
-   "coherent_difference"
-  ],
-  "lawvere1993categories": [
-   "coherent_difference"
-  ],
-  "lawvere2007taking": [
-   "coherent_difference"
-  ],
-  "higher_category_wiki": [
-   "coherent_difference"
-  ],
-  "gunther1978idee": [
-   "coherent_difference"
-  ],
-  "gunther2002bewusstsein": [
-   "coherent_difference"
-  ],
-  "distinction_philosophy": [
-   "coherent_difference"
-  ],
-  "typespaces_wiki": [
-   "coherent_difference"
-  ],
-  "category_diagram_image": [
-   "coherent_difference"
-  ],
-  "sheaf_sections_image": [
-   "coherent_difference"
-  ],
-  "sheaf_gluing_image": [
-   "coherent_difference"
-  ],
-  "anaxagoras450fragments": [
-   "coherent_difference"
-  ],
-  "leray1948calcul": [
-   "coherent_difference"
-  ],
-  "grothendieck_sheaf": [
-   "coherent_difference"
-  ],
-  "awodey2010category": [
-   "coherent_difference"
-  ],
-  "category_theory_wiki": [
-   "coherent_difference"
-  ],
-  "topos_wiki": [
-   "coherent_difference"
-  ],
-  "goldblatt1979topoi": [
-   "coherent_difference"
-  ],
-  "johnstone_elephant": [
-   "coherent_difference"
-  ],
-  "maclanemoerdijk1992": [
-   "coherent_difference"
-  ],
-  "nlab_topos": [
-   "coherent_difference"
-  ],
-  "internal_logic_wiki": [
-   "coherent_difference"
-  ],
-  "tarski1938topos": [
-   "coherent_difference"
-  ],
-  "elementary_topos_wiki": [
-   "coherent_difference"
-  ],
-  "giraud1964descente": [
-   "coherent_difference"
-  ],
-  "subobject_classifier_wiki": [
-   "coherent_difference"
-  ],
-  "heyting_algebra_wiki": [
-   "coherent_difference"
-  ],
-  "diaconescu1975": [
-   "coherent_difference"
-  ],
-  "geometric_morphism_wiki": [
-   "coherent_difference"
-  ],
-  "barr1974toposes": [
-   "coherent_difference"
-  ],
-  "merleauponty1945phenomenologie": [
-   "coherent_difference"
-  ],
-  "distributional_hypothesis": [
-   "coherent_difference"
-  ],
-  "nagarjuna150mmk": [
-   "coherent_difference"
-  ],
-  "deleuze1968difference": [
-   "coherent_difference"
-  ],
-  "lumpschool": [
-   "coherent_difference"
-  ],
-  "heraclitus_unity": [
-   "coherent_difference"
-  ],
-  "parmenides480fragments": [
-   "coherent_difference"
-  ],
-  "aristotle_metaphysics": [
-   "coherent_difference"
-  ],
-  "plotinus250enneads": [
-   "coherent_difference"
-  ],
-  "cusanus1440docta": [
-   "coherent_difference"
-  ],
-  "wittgenstein1953investigations": [
-   "coherent_difference"
+  "galton_eugenics": [
+   "statistics_i"
   ],
   "student1908probableerror": [
    "statistics_i"
@@ -21499,104 +22225,17 @@
   "student1907haemocytometer": [
    "statistics_i"
   ],
-  "stopsignimage": [
-   "computer_vision"
+  "lind1747scurvy": [
+   "statistics_i"
   ],
-  "girshick2014rcnn": [
-   "computer_vision"
+  "fisher1935design": [
+   "statistics_i"
   ],
-  "ren2015faster": [
-   "computer_vision"
+  "doubleblind": [
+   "statistics_i"
   ],
-  "redmon2016yolo": [
-   "computer_vision"
-  ],
-  "ronneberger2015unet": [
-   "computer_vision"
-  ],
-  "he2017maskrcnn": [
-   "computer_vision"
-  ],
-  "kirillov2023sam": [
-   "computer_vision"
-  ],
-  "sam_demo_img": [
-   "computer_vision"
-  ],
-  "he2021mae": [
-   "computer_vision"
-  ],
-  "rgb_color_cube": [
-   "math_ii"
-  ],
-  "numpy_broadcasting": [
-   "math_ii"
-  ],
-  "einstein1916annalen": [
-   "math_ii"
-  ],
-  "etymonline_matrix": [
-   "math_ii"
-  ],
-  "sylvester1850matrix": [
-   "math_ii"
-  ],
-  "etymonline_vector": [
-   "math_ii"
-  ],
-  "hamiltonextensionsquaternions": [
-   "math_ii"
-  ],
-  "etymonline_scalar": [
-   "math_ii"
-  ],
-  "etymonline_tensor": [
-   "math_ii"
-  ],
-  "voigt1898krystalle": [
-   "math_ii"
-  ],
-  "riccilevicivita1900": [
-   "math_ii"
-  ],
-  "hadamardproduct": [
-   "math_ii"
-  ],
-  "dai2022knowledgeneurons": [
-   "fact_lookup"
-  ],
-  "nostalgebraist2020logitlens": [
-   "fact_lookup"
-  ],
-  "ramsauer2020hopfield": [
-   "fact_lookup"
-  ],
-  "kohli2026loop": [
-   "fact_lookup"
-  ],
-  "lakretz2020nested": [
-   "fact_lookup"
-  ],
-  "lasri2022agree": [
-   "fact_lookup"
-  ],
-  "liu2024formalizing": [
-   "security_inference"
-  ],
-  "wei2024jailbroken": [
-   "security_inference"
-  ],
-  "jain2023baseline": [
-   "security_inference"
-  ],
-  "wallace2024hierarchy": [
-   "security_inference"
-  ],
-  "mazeika2024harmbench": [
-   "security_inference"
-  ],
-  "chen2024ibprotector": [
-   "security_inference"
+  "rct1948": [
+   "statistics_i"
   ]
  },
  "authors": {
@@ -21895,7 +22534,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 245,
+   "count": 269,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -22143,7 +22782,31 @@
     "goe_wiki",
     "paleontology_history_wiki",
     "continental_drift_wiki",
-    "chicxulub_wiki"
+    "chicxulub_wiki",
+    "methodofloci",
+    "simonidesofceos",
+    "giordanobruno",
+    "euclideanalgorithm",
+    "sieveoferatosthenes",
+    "fuggernews",
+    "isidoreofseville",
+    "paulotlet",
+    "mundaneum",
+    "memex",
+    "motherofalldemos",
+    "tednelsonhypertext",
+    "tednelson",
+    "doubleblind",
+    "rct1948",
+    "galton_eugenics",
+    "subitizing",
+    "piraha2004",
+    "libraryofpergamum",
+    "universityofbologna",
+    "philtrans1665",
+    "venicepatent1474",
+    "cohenkappa",
+    "bm25"
    ]
   },
   "Thomas C. Hull": {
@@ -22537,7 +23200,7 @@
    ]
   },
   "et al.": {
-   "count": 147,
+   "count": 149,
    "minyear": 2017,
    "maxyear": 2020,
    "keys": [
@@ -22551,6 +23214,8 @@
     "jouppi2017tpu",
     "wallace2024hierarchy",
     "hoffmann2022chinchilla",
+    "goyal2017largebatch",
+    "yang2022mup",
     "perez2022emergent",
     "elhage2022superposition",
     "hendrycks2020winograd",
@@ -24945,12 +25610,11 @@
    ]
   },
   "Percy Liang": {
-   "count": 4,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "park2023generativeagents",
-    "liu2023lostmiddle",
     "garg2022incontext",
     "liang2023helm"
    ]
@@ -25379,12 +26043,11 @@
    ]
   },
   "Fabio Petroni": {
-   "count": 2,
+   "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "lewis2020rag",
-    "liu2023lostmiddle"
+    "lewis2020rag"
    ]
   },
   "Vladimir Karpukhin": {
@@ -25480,40 +26143,7 @@
     "malkov2018hnsw"
    ]
   },
-  "Nelson F. Liu": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "liu2023lostmiddle"
-   ]
-  },
-  "Kevin Lin": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "liu2023lostmiddle"
-   ]
-  },
-  "John Hewitt": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "liu2023lostmiddle",
-    "hewitt2019structural"
-   ]
-  },
-  "Ashwin Paranjape": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "liu2023lostmiddle"
-   ]
-  },
-  "Michele Bevilacqua": {
+  "Nelson Liu et al.": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
@@ -25845,13 +26475,14 @@
    ]
   },
   "Anthropic": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "anthropic2025websearch",
     "anthropic2024funding",
-    "anthropic2025shutdown"
+    "anthropic2025shutdown",
+    "promptcaching"
    ]
   },
   "OpenAI": {
@@ -26659,11 +27290,12 @@
    ]
   },
   "Igor Babuschkin": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "power2022grokking",
+    "yang2022mup",
     "grokking"
    ]
   },
@@ -29531,6 +30163,56 @@
     "hoffmann2022chinchilla"
    ]
   },
+  "Priya Goyal": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "goyal2017largebatch"
+   ]
+  },
+  "Piotr Dollár": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "goyal2017largebatch",
+    "he2017maskrcnn",
+    "he2021mae"
+   ]
+  },
+  "Ross Girshick": {
+   "count": 6,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "goyal2017largebatch",
+    "girshick2014rcnn",
+    "ren2015faster",
+    "redmon2016yolo",
+    "he2017maskrcnn",
+    "he2021mae"
+   ]
+  },
+  "Greg Yang": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "yang2022mup",
+    "yang_hu_feature_learning"
+   ]
+  },
+  "Edward J. Hu": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "yang2022mup",
+    "hu2021lora",
+    "yang_hu_feature_learning"
+   ]
+  },
   "Ernst Kapp": {
    "count": 1,
    "minyear": null,
@@ -30706,6 +31388,30 @@
    "maxyear": null,
    "keys": [
     "panini_ashtadhyayi"
+   ]
+  },
+  "Wilhelm von Humboldt": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "humboldt1836sprachbau"
+   ]
+  },
+  "Nicholas Evans and Stephen C. Levinson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "evanslevinson2009myth"
+   ]
+  },
+  "Jonathan Winawer et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "winawer2007russianblues"
    ]
   },
   "Wolfgang von Kempelen": {
@@ -36845,6 +37551,14 @@
     "bubeck2023sparks"
    ]
   },
+  "John Hewitt": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hewitt2019structural"
+   ]
+  },
   "Can Rager": {
    "count": 1,
    "minyear": null,
@@ -39036,15 +39750,6 @@
    "maxyear": null,
    "keys": [
     "dettmers2023qlora"
-   ]
-  },
-  "Edward J. Hu": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "hu2021lora",
-    "yang_hu_feature_learning"
    ]
   },
   "Yelong Shen": {
@@ -45972,11 +46677,12 @@
    ]
   },
   "Ronald A. Fisher": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "fisher1936lda"
+    "fisher1936lda",
+    "fisher1935design"
    ]
   },
   "H. Sebastian Seung": {
@@ -49198,18 +49904,6 @@
     "petersen2024mathdl"
    ]
   },
-  "Ross Girshick": {
-   "count": 5,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "girshick2014rcnn",
-    "ren2015faster",
-    "redmon2016yolo",
-    "he2017maskrcnn",
-    "he2021mae"
-   ]
-  },
   "Joseph Redmon": {
    "count": 1,
    "minyear": null,
@@ -49256,15 +49950,6 @@
    "maxyear": null,
    "keys": [
     "he2017maskrcnn"
-   ]
-  },
-  "Piotr Dollár": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "he2017maskrcnn",
-    "he2021mae"
    ]
   },
   "Alexander Kirillov": {
@@ -49635,14 +50320,6 @@
    "maxyear": null,
    "keys": [
     "principles_dl_theory"
-   ]
-  },
-  "Greg Yang": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "yang_hu_feature_learning"
    ]
   },
   "Peter L. Bartlett": {
@@ -54034,6 +54711,374 @@
    "maxyear": null,
    "keys": [
     "img_kpge_iridium_anomaly"
+   ]
+  },
+  "Frances A. Yates": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "artofmemoryyates"
+   ]
+  },
+  "Giordano Bruno": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "brunodeumbris1582"
+   ]
+  },
+  "Jack Copeland (Stanford Encyclopedia of Philosophy)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "churchturing1936"
+   ]
+  },
+  "Jürgen Habermas": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "habermaspublicsphere"
+   ]
+  },
+  "Denis Diderot & Jean le Rond d'Alembert": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "encyclopedie"
+   ]
+  },
+  "Isidore of Seville": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "etymologiae"
+   ]
+  },
+  "Paul Otlet": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "traitededocumentation"
+   ]
+  },
+  "Alex Wright": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "catalogingtheworld"
+   ]
+  },
+  "Vannevar Bush": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "aswemaythink"
+   ]
+  },
+  "Douglas C. Engelbart": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "augmentinghumanintellect"
+   ]
+  },
+  "James Lind": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lind1747scurvy"
+   ]
+  },
+  "John Graunt": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "graunt1662"
+   ]
+  },
+  "Adolphe Quetelet": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "quetelet1835"
+   ]
+  },
+  "Roger N. Shepard & Jacqueline Metzler": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "shepardmetzler1971"
+   ]
+  },
+  "Pica": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "picamundurucu2004"
+   ]
+  },
+  "Lemer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "picamundurucu2004"
+   ]
+  },
+  "Izard & Dehaene": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "picamundurucu2004"
+   ]
+  },
+  "Leo Szilard": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "szilard1929entropy"
+   ]
+  },
+  "You et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lamb2019"
+   ]
+  },
+  "McCandlish": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "batchscaling2018"
+   ]
+  },
+  "Kaplan & Amodei (OpenAI Dota team)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "batchscaling2018"
+   ]
+  },
+  "Kumar et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zclip2025"
+   ]
+  },
+  "Yang et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mup2022"
+   ]
+  },
+  "Wang et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wsd2025"
+   ]
+  },
+  "Fedus": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "switchtransformers2022"
+   ]
+  },
+  "Zoph & Shazeer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "switchtransformers2022"
+   ]
+  },
+  "Jiang et al. (Mistral AI)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mixtral2024"
+   ]
+  },
+  "Kwon et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "vllm2023"
+   ]
+  },
+  "Pope et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pope2022scaling"
+   ]
+  },
+  "Dao": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "flashattention2022"
+   ]
+  },
+  "Fu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "flashattention2022"
+   ]
+  },
+  "Ermon": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "flashattention2022"
+   ]
+  },
+  "Rudra & Ré": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "flashattention2022"
+   ]
+  },
+  "Taku Kudo": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kudo2018unigram"
+   ]
+  },
+  "Xue et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "byt52022"
+   ]
+  },
+  "Teklehaymanot & Nejdl": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tokenbias2025"
+   ]
+  },
+  "Zheng et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "llmjudge2023"
+   ]
+  },
+  "Liang et al. (CRFM)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "helm2022"
+   ]
+  },
+  "Lewis et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rag2020"
+   ]
+  },
+  "Thakur et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "beir2021"
+   ]
+  },
+  "Daniel Ford (Anthropic)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "contextualretrieval2024"
+   ]
+  },
+  "Gao et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ragsurvey2023"
+   ]
+  },
+  "Yao et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "react2022"
+   ]
+  },
+  "Rebedea et al. (NVIDIA)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nemocguardrails"
+   ]
+  },
+  "OpenTelemetry (CNCF)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "otelgenai"
+   ]
+  },
+  "Ong et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "routellm2024"
    ]
   }
  }

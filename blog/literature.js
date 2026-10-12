@@ -17788,6 +17788,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Encyclop%C3%A9die",
 		alternativetitle: "The Encyclopédie (1751–1772)"
 	},
+	"etymologiae": {
+		title: "Etymologiae (Etymologies / Origines)",
+		author: "Isidore of Seville",
+		year: "c. 625",
+		url: "https://en.wikipedia.org/wiki/Etymologiae",
+		alternativetitle: "Isidore of Seville, Etymologiae (c. 625)"
+	},
+	"isidoreofseville": {
+		title: "Isidore of Seville",
+		author: "Wikipedia contributors",
+		year: "accessed 2026",
+		url: "https://en.wikipedia.org/wiki/Isidore_of_Seville",
+		alternativetitle: "Isidore of Seville"
+	},
 	"paulotlet": {
 		title: "Paul Otlet",
 		author: "Wikipedia contributors",
