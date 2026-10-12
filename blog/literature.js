@@ -3141,6 +3141,18 @@ window.bibData = {
 		year: 2022,
 		url: "https://arxiv.org/abs/2203.15556"
 	},
+	"goyal2017largebatch": {
+		title: "Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour",
+		author: "Priya Goyal, Piotr Dollár, Ross Girshick, et al.",
+		year: 2017,
+		url: "https://arxiv.org/abs/1706.02677"
+	},
+	"yang2022mup": {
+		title: "Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer",
+		author: "Greg Yang, Edward J. Hu, Igor Babuschkin, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2203.03466"
+	},
 	"kapp1877grundlinien": {
 		title: "Grundlinien einer Philosophie der Technik",
 		author: "Ernst Kapp",
