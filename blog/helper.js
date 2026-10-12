@@ -3134,9 +3134,17 @@ window.__MN_DARK = {
 		api._subscribers = api._subscribers || [];
 		api._subscribers.push(callback);
 		if (api._observer) return api._observer;
+		if (api._lastDark === undefined) api._lastDark = api.isDark();
 		const dispatch = () => {
 			api._pending = false;
 			const dark = api.isDark();
+			// Only re-run subscribers on a real dark<->light flip. The
+			// <html> class attribute also changes for unrelated UI state
+			// (effects-on, reader-mode, fonts-loaded); re-rendering charts
+			// on those made the global Plotly observer re-swap colours it
+			// had already themed.
+			if (dark === api._lastDark) return;
+			api._lastDark = dark;
 			api._subscribers.forEach((cb) => {
 				try { cb(dark); } catch (e) { /* ignore */ }
 			});
@@ -3166,6 +3174,11 @@ window.__MN_DARK = {
 		'#f9fafb': '#0f172a',
 		'#f0f0f0': '#334155', // plotly/echarts gridline light -> dark raised
 		'#f4f4f5': '#334155',
+		'#f3f4f6': '#334155', // table header bg -> dark raised
+		'#e3f2fd': '#082f49', // material light blue 50 -> deep blue
+		'#1565c0': '#90caf9', // material blue 800 -> light blue
+		'#a5d6a7': '#065f46', // material green 200 -> deep green
+		'#666':    '#94a3b8', // mid text -> muted light
 		'#1e293b': '#e2e8f0', // dark text -> light text
 		'#0f172a': '#f1f5f9',
 		'#475569': '#cbd5e1',
@@ -3194,6 +3207,11 @@ window.__MN_DARK = {
 		'#fef9c3': '#422006',
 		'#fef9c3': '#422006',
 		'#fffbeb': '#422006',
+		'#fefce8': '#422006', // light yellow bg (progress boxes)
+		'#eff6ff': '#1e3a8a', // light blue info bg
+		'#fce7f3': '#500724', // light pink bg
+		'#ede9fe': '#2e1065', // light violet bg
+		'#fff7ed': '#431407', // light orange bg
 		'#fffef0': '#1e293b', // cream -> dark surface
 		'#fffef7': '#1e293b',
 		'#f8f6f0': '#1e293b',
@@ -3318,6 +3336,7 @@ const cssVar = (name) => window.__MN_DARK.themeVar(name);
 		if (typeof val !== 'string') return val;
 		return window.__MN_DARK.color(val);
 	};
+	const originals = new WeakMap();
 	const patchLayout = (gd) => {
 		try {
 			// Charts that render themselves with themeColor() and re-render on
@@ -3326,9 +3345,23 @@ const cssVar = (name) => window.__MN_DARK.themeVar(name);
 			// data attribute on the plot container.
 			if (gd.closest && gd.closest('[data-plot-theme="self"]')) return;
 			const layout = gd._fullLayout || gd.layout || {};
+			// Remember the authored (light-mode) colours once, then always
+			// recompute from them. This keeps the patch idempotent and lets a
+			// light toggle restore the original colours (color() is a no-op in
+			// light mode, so a one-way swap could never come back).
+			let base = originals.get(gd);
+			if (!base) {
+				base = {};
+				for (const key of PATCH_KEYS) {
+					if (layout[key] !== undefined) base[key] = layout[key];
+				}
+				originals.set(gd, base);
+			}
+			const dark = window.__MN_DARK.isDark();
 			const update = {};
 			for (const key of PATCH_KEYS) {
-				if (layout[key] !== undefined) update[key] = swap(layout[key]);
+				if (base[key] === undefined) continue;
+				update[key] = dark ? swap(base[key]) : base[key];
 			}
 			if (Object.keys(update).length === 0) return;
 			if (typeof Plotly !== 'undefined' && Plotly.relayout) {

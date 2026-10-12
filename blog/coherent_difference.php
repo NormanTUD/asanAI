@@ -116,22 +116,18 @@ Every mathematical theory we will touch on in this course sits somewhere on this
 <div class="md">
 ### Where the chain shows up in this textbook
 
-$$
-\begin{array}{c|c}
-\text{Theory} & \text{Where it lands on the chain} \\
-\hline
-\text{Sets} & \text{Distinction, Relation} \\
-\text{Type theory} & \text{Relation, Transformation, with type-level structure} \\
-\text{Category theory} & \text{Transformation, Coherence} \\
-\text{Topology} & \text{Locality} \\
-\text{Sheaves} & \text{Compatibility} \to \text{Gluing} \to \text{Globality} \\
-\infty\text{-Sheaves, HoTT} & \text{Compatibility as higher Coherence} \\
-\text{Fiber bundles, manifolds} & \text{Globality + Invariance} \\
-\text{Embedding spaces} & \text{All of the above, applied to meaning} \\
-\text{Transformer architecture} & \text{Gluing local token data into a global sequence meaning} \\
-\text{Deep ReLU net (Origami)} & \text{Crease = Distinction; regions = Locality; continuity on the crease = Compatibility}
-\end{array}
-$$
+| Theory | Where it lands on the chain |
+|---|---|
+| Sets | Distinction, Relation |
+| Type theory | Relation, Transformation, with type-level structure |
+| Category theory | Transformation, Coherence |
+| Topology | Locality |
+| Sheaves | Compatibility → Gluing → Globality |
+| ∞-Sheaves, HoTT | Compatibility as higher Coherence |
+| Fiber bundles, manifolds | Globality + Invariance |
+| Embedding spaces | All of the above, applied to meaning |
+| Transformer architecture | Gluing local token data into a global sequence meaning |
+| Deep ReLU net (Origami) | Crease = Distinction; regions = Locality; continuity on the crease = Compatibility |
 </div>
 
 <div class="optional md" data-headline="A note on what this chapter is, and is not">

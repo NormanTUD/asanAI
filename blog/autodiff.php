@@ -227,7 +227,7 @@ The interactive demo below shows gradient descent on a simple 2D loss landscape 
 
     <div id="gd-equation" style="text-align: center; font-size: 1.1em; margin-bottom: 10px; min-height: 40px;"></div>
 
-    <div id="plot-gd-landscape" class="plot-container" style="width:100%; height:450px;"></div>
+    <div id="plot-gd-landscape" class="plot-container" data-plot-theme="self" style="width:100%; height:450px;"></div>
 
     <div id="gd-loss-readout" style="margin-top: 10px; text-align: center; font-family: monospace; font-size: 1rem; color: #475569;"></div>
 </div>
@@ -361,7 +361,7 @@ You can explore the vanishing gradient problem interactively below. Adjust the n
 
     <div id="vg-formula" style="text-align: center; font-size: 1.1em; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 8px; min-height: 40px;"></div>
 
-    <div id="plot-vg-gradient" class="plot-container" style="width:100%; height:350px;"></div>
+    <div id="plot-vg-gradient" class="plot-container" data-plot-theme="self" style="width:100%; height:350px;"></div>
 
     <div id="vg-verdict" style="margin-top: 10px; text-align: center; font-size: 1rem; padding: 10px; border-radius: 8px; min-height: 40px;"></div>
 </div>

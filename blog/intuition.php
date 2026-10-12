@@ -10,7 +10,42 @@ color: accent
 topics: history, philosophy, society
 tags: interested-layman
 -->
-<div class="md">
+<style>
+#autoregressive-viz .ar-sentence { padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap; }
+#autoregressive-viz .ar-word { padding:1px 4px; border-radius:3px; margin-right:6px; }
+#autoregressive-viz .ar-orig { color:#b45309; background:#fef3c7; font-weight:bold; }
+#autoregressive-viz .ar-added { color:#16a34a; background:#dcfce7; font-weight:bold; }
+#autoregressive-viz .ar-ctx { color:#1e293b; }
+#autoregressive-viz .ar-row { display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6; }
+#autoregressive-viz .ar-label { color:#64748b; }
+#autoregressive-viz .ar-prob { color:#94a3b8; font-size:0.8em; margin-left:auto; }
+#autoregressive-viz .ar-pill { padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer; }
+#autoregressive-viz .ar-pred { background:#dbeafe; color:#1e40af; transition: background 0.15s; }
+#autoregressive-viz .ar-pred:hover { background:#bfdbfe; }
+#autoregressive-viz .ar-stop { background:#fee2e2; color:#dc2626; }
+#autoregressive-viz .ar-legend { display:flex; align-items:center; margin-top:10px; padding:0 4px; }
+#autoregressive-viz .ar-legend-items { display:flex; gap:14px; font-size:0.75em; color:#64748b; }
+#autoregressive-viz .ar-swatch { padding:0 3px; border-radius:2px; }
+#autoregressive-viz .ar-swatch-input { color:#b45309; background:#fef3c7; }
+#autoregressive-viz .ar-swatch-gen { color:#1e293b; }
+#autoregressive-viz .ar-swatch-added { color:#16a34a; background:#dcfce7; }
+#autoregressive-viz .ar-swatch-next { color:#1e40af; background:#dbeafe; }
+html.dark #autoregressive-viz .ar-sentence { background:var(--mn-bg-subtle); border-color:var(--mn-border); }
+html.dark #autoregressive-viz .ar-ctx { color:var(--mn-text); }
+html.dark #autoregressive-viz .ar-orig { color:#fcd34d; background:#422006; }
+html.dark #autoregressive-viz .ar-added { color:#86efac; background:#022c22; }
+html.dark #autoregressive-viz .ar-row { background:#1e3a8a; }
+html.dark #autoregressive-viz .ar-label,
+html.dark #autoregressive-viz .ar-prob,
+html.dark #autoregressive-viz .ar-legend-items { color:var(--mn-text-muted); }
+html.dark #autoregressive-viz .ar-pred { background:#1e3a8a; color:#bfdbfe; }
+html.dark #autoregressive-viz .ar-pred:hover { background:#1e40af; }
+html.dark #autoregressive-viz .ar-stop { background:#450a0a; color:#fca5a5; }
+html.dark #autoregressive-viz .ar-swatch-input { color:#fcd34d; background:#422006; }
+html.dark #autoregressive-viz .ar-swatch-gen { color:var(--mn-text); }
+html.dark #autoregressive-viz .ar-swatch-added { color:#86efac; background:#022c22; }
+html.dark #autoregressive-viz .ar-swatch-next { color:#bfdbfe; background:#1e3a8a; }
+</style><div class="md">
 We can think of LLMs as machines that predict the next most likely word, given a context. Only one word at a time. That word is appended to the input and fed back in, repeating until a special `|endoftext|` token signals the end. In this example, the user enters the text “Once upon a” and lets the LLM continue.
 
 **Step 1:** The text the user has entered is inputted into the LLM:
@@ -135,7 +170,7 @@ Real networks don't just use 2 or 3 dimensional Embedding Spaces, but thousands 
 	   style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:8px;"
 	   placeholder="Type words to highlight (e.g., king queen man woman)"
 	   value="king queen man woman">
-    <div id="embedding-viz-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+    <div id="embedding-viz-plot" data-plot-theme="self" style="height:400px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
 
     <!-- Vector Arithmetic -->
     <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
@@ -182,11 +217,11 @@ This is required, because the embedding and attention operations have no built-i
     </div>
 
     <!-- Sine/Cosine wave plot -->
-    <div id="positional-encoding-plot" style="height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
+    <div id="positional-encoding-plot" data-plot-theme="self" style="height:300px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
 
     <!-- Heatmap -->
     <div style="font-weight:bold; color:#1e293b; margin-bottom:6px;">Positional Encoding Heatmap</div>
-    <div id="positional-encoding-heatmap" style="height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
+    <div id="positional-encoding-heatmap" data-plot-theme="self" style="height:300px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
 
     <!-- Same word, different positions demo -->
     <div style="font-weight:bold; color:#1e293b; margin-bottom:6px;">Same Word, Different Positions</div>
@@ -387,7 +422,7 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
               style="font-size:0.9em; font-weight:bold; color:#1e293b; min-width:120px; text-align:right;">1.00 (balanced)</span>
     </div>
 
-    <div id="prediction-plot" style="height:350px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+    <div id="prediction-plot" data-plot-theme="self" style="height:350px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
     <div id="prediction-info"></div>
 
     <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">

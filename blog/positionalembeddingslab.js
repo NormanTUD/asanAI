@@ -172,26 +172,29 @@ const PositionalLab = {
 
 	renderComparison: function(pos, peVec, combined) {
 		const container = document.getElementById('pe-viz-container');
+		const border = themeColor('#ddd');
+		const headBg = themeColor('#f3f4f6');
+		const resultBg = themeColor('#eff6ff');
 		container.innerHTML = `
 	    <table style="width:100%; border-collapse: collapse; font-family: monospace; font-size: 13px;">
-		<tr style="background: #f3f4f6;">
-		    <th style="padding:10px; border:1px solid #ddd;">Component</th>
-		    <th style="border:1px solid #ddd;">Dim 0</th>
-		    <th style="border:1px solid #ddd;">Dim 1</th>
-		    <th style="border:1px solid #ddd;">Dim 2</th>
-		    <th style="border:1px solid #ddd;">Dim 3</th>
+		<tr style="background: ${headBg};">
+		    <th style="padding:10px; border:1px solid ${border};">Component</th>
+		    <th style="border:1px solid ${border};">Dim 0</th>
+		    <th style="border:1px solid ${border};">Dim 1</th>
+		    <th style="border:1px solid ${border};">Dim 2</th>
+		    <th style="border:1px solid ${border};">Dim 3</th>
 		</tr>
 		<tr>
-		    <td style="padding:10px; border:1px solid #ddd;"><b>Static "king"</b></td>
-		    ${this.baseVector.map(v => `<td style="border:1px solid #ddd;">${v.toFixed(3)}</td>`).join('')}
+		    <td style="padding:10px; border:1px solid ${border};"><b>Static "king"</b></td>
+		    ${this.baseVector.map(v => `<td style="border:1px solid ${border};">${v.toFixed(3)}</td>`).join('')}
 		</tr>
 		<tr style="color: #2563eb;">
-		    <td style="padding:10px; border:1px solid #ddd;"><b>+ PE (Pos ${pos})</b></td>
-		    ${peVec.map(v => `<td style="border:1px solid #ddd;">${v.toFixed(3)}</td>`).join('')}
+		    <td style="padding:10px; border:1px solid ${border};"><b>+ PE (Pos ${pos})</b></td>
+		    ${peVec.map(v => `<td style="border:1px solid ${border};">${v.toFixed(3)}</td>`).join('')}
 		</tr>
-		<tr style="background: #eff6ff; font-weight: bold;">
-		    <td style="padding:10px; border:1px solid #ddd;"><b>= Contextual "king"</b></td>
-		    ${combined.map(v => `<td style="border:1px solid #ddd;">${v.toFixed(3)}</td>`).join('')}
+		<tr style="background: ${resultBg}; font-weight: bold;">
+		    <td style="padding:10px; border:1px solid ${border};"><b>= Contextual "king"</b></td>
+		    ${combined.map(v => `<td style="border:1px solid ${border};">${v.toFixed(3)}</td>`).join('')}
 		</tr>
 	    </table>`;
 	},

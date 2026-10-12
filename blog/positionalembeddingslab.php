@@ -52,7 +52,7 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
         <strong>Angle $\theta$:</strong>
         <input type="range" id="slider-sc-theta" min="0" max="6.2832" step="0.01" value="0.78" style="width:300px;">
         <span id="disp-sc-theta" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.78</span> rad
-        (<span id=“disp-sc-deg” style=“font-family:monospace;”>44.7°</span>)
+        (<span id="disp-sc-deg" style="font-family:monospace;">44.7°</span>)
     </div>
 
     <div id="sc-equation-display" style="text-align:center; font-size:1.2em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;"></div>

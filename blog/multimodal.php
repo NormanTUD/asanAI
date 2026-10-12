@@ -62,7 +62,7 @@ Each patch is linearly projected to a $d$-dimensional vector (the patch embeddin
 For a $224 \times 224$ image with $P=16$: $n = 196$ patches. ViT-L/14 processes this with 24 layers, 16 heads, $d=1024$, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to $P=14$ patches on $448 \times 448$ inputs, yielding $>1000$ tokens per image.
 </div>
 
-<div id="vit-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
+<div id="vit-viz" data-plot-theme="self" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
 This is the deep conceptual shift: **an image is no longer “a grid to be convolved”; it is a sequence to be attended to**. The same Transformer block that processes word tokens now processes visual tokens. The architecture becomes modality-agnostic.
@@ -197,21 +197,31 @@ The hard parts are data (curating trillions of matched image-text-audio samples,
 	for (let i = 0; i <= W/P; i++) { xLines.push({ x0: i*P, x1: i*P, y0: 0, y1: H, line: { color: 'rgba(59,130,246,0.4)', width: 1 }, type: 'line' }); }
 	for (let i = 0; i <= H/P; i++) { yLines.push({ x0: 0, x1: W, y0: i*P, y1: i*P, line: { color: 'rgba(59,130,246,0.4)', width: 1 }, type: 'line' }); }
 
-	const layout = {
-		title: { text: 'ViT patchification: 224×224 → ' + n + ' patches of 16×16', font: { size: 13 } },
-		xaxis: { range: [0, W], showticklabels: false, zeroline: false, showgrid: false },
-		yaxis: { range: [0, H], showticklabels: false, zeroline: false, showgrid: false, autorange: 'reversed', scaleanchor: 'x' },
-		shapes: [...xLines, ...yLines],
-		margin: { t: 50, b: 20, l: 20, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		annotations: [{
-			x: W + 8, y: H/2, text: '→ flattened into a sequence of ' + n + ' tokens',
-			showarrow: false, font: { size: 11 }, textangle: -90
-		}]
-	};
+	function buildLayout() {
+		return {
+			title: { text: 'ViT patchification: 224×224 → ' + n + ' patches of 16×16', font: { size: 13, color: themeColor('#334155') } },
+			xaxis: { range: [0, W], showticklabels: false, zeroline: false, showgrid: false },
+			yaxis: { range: [0, H], showticklabels: false, zeroline: false, showgrid: false, autorange: 'reversed', scaleanchor: 'x' },
+			shapes: [...xLines, ...yLines],
+			margin: { t: 50, b: 20, l: 20, r: 20 },
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			plot_bgcolor: 'rgba(0,0,0,0)',
+			annotations: [{
+				x: W + 8, y: H/2, text: '→ flattened into a sequence of ' + n + ' tokens',
+				showarrow: false, font: { size: 11, color: themeColor('#334155') }, textangle: -90
+			}]
+		};
+	}
 
-	Plotly.newPlot('vit-viz', data, layout, { responsive: true });
+	function draw() {
+		Plotly.newPlot('vit-viz', data, buildLayout(), { responsive: true, staticPlot: true, displayModeBar: false });
+	}
+
+	draw();
+
+	if (window.__MN_DARK) {
+		window.__MN_DARK.onChange(() => { try { draw(); } catch (e) { /* ignore */ } });
+	}
 })();
 
 async function loadMultimodalModule() {

@@ -2380,7 +2380,8 @@
 		for (const fn of themeRedraws) { try { fn(); } catch (e) { console.error(e); } }
 	};
 	if (typeof window !== 'undefined') {
-		window.addEventListener('mn:theme', themeHook);
+		if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(themeHook);
+		else window.addEventListener('mn:theme', themeHook);
 		if (window.matchMedia) {
 			const mq = window.matchMedia('(prefers-color-scheme: dark)');
 			(mq.addEventListener || mq.addListener).call(mq, 'change', themeHook);
@@ -2570,7 +2571,8 @@
 	}
 
 	if (typeof window !== 'undefined') {
-		window.addEventListener('mn:theme', redraw);
+		if (window.__MN_DARK && window.__MN_DARK.onChange) window.__MN_DARK.onChange(redraw);
+		else window.addEventListener('mn:theme', redraw);
 	}
 
 	if (document.readyState === 'loading') {

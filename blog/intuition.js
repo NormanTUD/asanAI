@@ -1442,15 +1442,15 @@ const AutoregressiveViz = {
 	// ── Word HTML rendering ──
 
 	renderOriginalWord: function(word) {
-		return `<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+		return `<span class="ar-word ar-orig">${word}</span>`;
 	},
 
 	renderJustAddedWord: function(word) {
-		return `<span style="color:#16a34a; font-weight:bold; background:#dcfce7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+		return `<span class="ar-word ar-added">${word}</span>`;
 	},
 
 	renderContextWord: function(word) {
-		return `<span style="color:#1e293b; margin-right:6px;">${word}</span>`;
+		return `<span class="ar-word ar-ctx">${word}</span>`;
 	},
 
 	renderWordSpan: function(word, index, totalWords, originalCount, step) {
@@ -1482,15 +1482,13 @@ const AutoregressiveViz = {
 	// In AutoregressiveViz, replace these three methods:
 
 	renderStopPrediction: function() {
-		return `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer;"
+		return `<span class="ar-pill ar-stop"
 		  onclick="AutoregressiveViz.clickAdvance()"
 	    >⏹ STOP</span>`;
 	},
 
 	renderWordPrediction: function(output) {
-		return `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer; transition: background 0.15s;"
-		  onmouseover="this.style.background='#bfdbfe'"
-		  onmouseout="this.style.background='#dbeafe'"
+		return `<span class="ar-pill ar-pred"
 		  onclick="AutoregressiveViz.clickAdvance()"
 		  title="Click to add this word and continue"
 	    >${output}</span>`;
@@ -1524,28 +1522,28 @@ const AutoregressiveViz = {
 
 	buildSentenceDisplayHtml: function(sentenceHtml) {
 		return `
-	    <div style="padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap;">
+	    <div class="ar-sentence">
 		${sentenceHtml}
 	    </div>`;
 	},
 
 	buildPredictionRowHtml: function(predictionHtml, prob) {
 		return `
-	    <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
-		<span style="color:#64748b;">→ Predicts:</span>
+	    <div class="ar-row">
+		<span class="ar-label">→ Predicts:</span>
 		${predictionHtml}
-		<span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${prob.toFixed(2)})</span>
+		<span class="ar-prob">(p=${prob.toFixed(2)})</span>
 	    </div>`;
 	},
 
 	buildLegendHtml: function() {
 		return `
-	    <div style="display:flex; align-items:center; margin-top:10px; padding:0 4px;">
-		<div style="display:flex; gap:14px; font-size:0.75em; color:#64748b;">
-		    <span><span style="color:#b45309; background:#fef3c7; padding:0 3px; border-radius:2px;">■</span> user input</span>
-		    <span><span style="color:#1e293b;">■</span> generated</span>
-		    <span><span style="color:#16a34a; background:#dcfce7; padding:0 3px; border-radius:2px;">■</span> just added</span>
-		    <span><span style="color:#1e40af; background:#dbeafe; padding:0 3px; border-radius:2px;">■</span> next prediction</span>
+	    <div class="ar-legend">
+		<div class="ar-legend-items">
+		    <span><span class="ar-swatch ar-swatch-input">■</span> user input</span>
+		    <span><span class="ar-swatch ar-swatch-gen">■</span> generated</span>
+		    <span><span class="ar-swatch ar-swatch-added">■</span> just added</span>
+		    <span><span class="ar-swatch ar-swatch-next">■</span> next prediction</span>
 		</div>
 	    </div>`;
 	},
@@ -2127,7 +2125,7 @@ function loadIntuitionModule() {
     // so that themeColor() picks up the new palette on the next call.
     if (window.__MN_DARK) {
         window.__MN_DARK.onChange(() => {
-            _lazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+            _lazyInitRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
         });
     }
 }

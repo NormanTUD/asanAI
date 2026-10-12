@@ -607,6 +607,7 @@ const VGDemo = {
             title: { text: `Gradient Flow: ${act.label} (max σ′ = ${act.maxDeriv})`, font: { size: 14 } },
             showlegend: false,
             plot_bgcolor: themeColor('#f8fafc'),
+            paper_bgcolor: themeColor('#fff'),
         };
 
         const config = { displayModeBar: false, responsive: true };

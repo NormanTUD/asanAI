@@ -1231,6 +1231,8 @@ function renderDotProductLab() {
 			yaxis: { range: [-1.2, 1.2], zeroline: true, fixedrange: true },
 			margin: { l: 20, r: 20, b: 20, t: 20 },
 			showlegend: false,
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 			shapes: [
 				{
 					type: 'path',

@@ -250,7 +250,7 @@ In a Transformer (like ChatGPT), this is the “Handshake.” When a word “loo
 </div>
 
 <div class="lab-container">
-    <div id="dot-product-plot" style="width:100%; max-width:500px; height:400px; margin: 0 auto;"></div>
+    <div id="dot-product-plot" data-plot-theme="self" style="width:100%; max-width:500px; height:400px; margin: 0 auto;"></div>
     <div class="controls" style="text-align: center; padding: 20px;">
         <label>Vector A: <input type="range" id="angle-a" min="0" max="360" value="45"> <span id="val-a">45</span>°</label><br>
         <label>Vector B: <input type="range" id="angle-b" min="0" max="360" value="90"> <span id="val-b">90</span>°</label>

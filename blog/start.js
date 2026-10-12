@@ -1810,16 +1810,22 @@ function initGlossary() {
 		if (!p || p.classList.contains('cl-dc-pending')) return; // not sized yet
 		var vw = window.innerWidth, vh = window.innerHeight;
 		if (!dcCanary.settled) {
+			var csInit = window.getComputedStyle(p);
+			var varsInit = {
+				lines: csInit.getPropertyValue('--cl-dc-lines'),
+				size: csInit.getPropertyValue('--cl-dc-size')
+			};
+			// Not measured yet — polish.js has not written the cap size
+			// (e.g. right after renderMarkdown swapped the paragraph in).
+			// Wait for a real measurement before baselining, otherwise the
+			// later write looks like a spurious drift.
+			if (!varsInit.lines && !varsInit.size) return;
 			dcCanary.p = p;
 			dcCanary.w = p.offsetWidth;
 			dcCanary.h = p.offsetHeight;
 			dcCanary.vw = vw;
 			dcCanary.vh = vh;
-			var cs = window.getComputedStyle(p);
-			dcCanary.vars = {
-				lines: cs.getPropertyValue('--cl-dc-lines'),
-				size: cs.getPropertyValue('--cl-dc-size')
-			};
+			dcCanary.vars = varsInit;
 			dcCanary.key = dcKeyOf(p);
 			dcCanary.settled = true;
 			return;
@@ -1874,8 +1880,12 @@ function initGlossary() {
 			size: csNow.getPropertyValue('--cl-dc-size')
 		};
 		if (JSON.stringify(varsNow) !== JSON.stringify(dcCanary.vars)) {
+			// An empty baseline means we captured the paragraph before
+			// polish.js measured it — this is the first real value, not a
+			// drift. Re-baseline quietly.
+			var baseEmpty = !dcCanary.vars || (!dcCanary.vars.lines && !dcCanary.vars.size);
 			var keyNow = dcKeyOf(p);
-			if (keyNow && dcCanary.key && keyNow !== dcCanary.key) {
+			if (baseEmpty || (keyNow && dcCanary.key && keyNow !== dcCanary.key)) {
 				dcCanary.vars = varsNow;
 				dcCanary.key = keyNow;
 			} else {

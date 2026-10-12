@@ -1307,28 +1307,38 @@ function initLoopedTFDemo() {
         codeBox.innerHTML = codeHTML;
 
         // State display
+        const pcBg = themeColor('#e3f2fd');
+        const pcFg = themeColor('#1565c0');
+        const scratchBg = themeColor('#fff3e0');
+        const scratchFg = themeColor('#e65100');
+        const memBg = themeColor('#e8f5e9');
+        const memFg = themeColor('#2e7d32');
+        const memChipBorder = themeColor('#a5d6a7');
+        const cycleBg = themeColor('#f5f0ff');
+        const cycleBorder = themeColor('#7e57c2');
+        const captionFg = themeColor('#666');
         stateBox.innerHTML = `
             <div style="margin-bottom:8px;"><strong>Cycle ${currentStep + 1}</strong> of ${prog.steps.length}</div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
                 <div>
-                    <div style="font-weight:bold; color:#1565c0; margin-bottom:4px;">📋 Program Counter</div>
-                    <div style="font-family:monospace; background:#e3f2fd; padding:4px 8px; border-radius:4px;">PC = ${step.pc}</div>
+                    <div style="font-weight:bold; color:${pcFg}; margin-bottom:4px;">📋 Program Counter</div>
+                    <div style="font-family:monospace; background:${pcBg}; color:${themeColor('#1e293b')}; padding:4px 8px; border-radius:4px;">PC = ${step.pc}</div>
                 </div>
                 <div>
-                    <div style="font-weight:bold; color:#e65100; margin-bottom:4px;">📝 Scratchpad</div>
-                    <div style="font-family:monospace; background:#fff3e0; padding:4px 8px; border-radius:4px;">[${step.scratch.join(', ')}]</div>
+                    <div style="font-weight:bold; color:${scratchFg}; margin-bottom:4px;">📝 Scratchpad</div>
+                    <div style="font-family:monospace; background:${scratchBg}; color:${themeColor('#1e293b')}; padding:4px 8px; border-radius:4px;">[${step.scratch.join(', ')}]</div>
                 </div>
                 <div style="grid-column: span 2;">
-                    <div style="font-weight:bold; color:#2e7d32; margin-bottom:4px;">💾 Memory</div>
-                    <div style="font-family:monospace; background:#e8f5e9; padding:4px 8px; border-radius:4px; display:flex; gap:6px;">
-                        ${step.mem.map((v, i) => `<span style="border:1px solid #a5d6a7; padding:2px 6px; border-radius:3px;">m[${i}]=${v}</span>`).join('')}
+                    <div style="font-weight:bold; color:${memFg}; margin-bottom:4px;">💾 Memory</div>
+                    <div style="font-family:monospace; background:${memBg}; color:${themeColor('#1e293b')}; padding:4px 8px; border-radius:4px; display:flex; gap:6px;">
+                        ${step.mem.map((v, i) => `<span style="border:1px solid ${memChipBorder}; padding:2px 6px; border-radius:3px;">m[${i}]=${v}</span>`).join('')}
                     </div>
                 </div>
             </div>
-            <div style="margin-top:10px; padding:8px; background:#f5f0ff; border-radius:4px; font-size:12px; border-left:3px solid #7e57c2;">
+            <div style="margin-top:10px; padding:8px; background:${cycleBg}; border-radius:4px; font-size:12px; border-left:3px solid ${cycleBorder};">
                 <strong>🔁 This cycle:</strong> ${step.desc}
             </div>
-            <div style="margin-top:8px; font-size:11px; color:#666;">
+            <div style="margin-top:8px; font-size:11px; color:${captionFg};">
                 The <strong>same 13-layer Transformer</strong> executes each cycle. The loop feeds output → input, just like a CPU clock tick.
                 Depth does NOT scale with program length — only with single-instruction complexity.
             </div>
@@ -1336,6 +1346,9 @@ function initLoopedTFDemo() {
     }
 
     drawState();
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => { try { drawState(); } catch (e) { /* ignore */ } });
+    }
 }
 
 

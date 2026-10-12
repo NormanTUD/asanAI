@@ -447,12 +447,12 @@ The simplest everyday example is **clock arithmetic**: the 12 hours form a group
         </div>
     </div>
 </div>
-<div id="group-axioms-chart" style="width:100%; height:460px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
+<div id="group-axioms-chart" data-plot-theme="self" style="width:100%; height:460px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="The Cayley Table">
 **\cite[Cayley Table]{cayleygroups}** — the group multiplication (Cayley) table for $\mathbb{Z}_{12}$, showing every possible composition at a glance.
 </div>
-<div id="group-cayley-chart" style="width:100%; max-width:600px; height:520px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
+<div id="group-cayley-chart" data-plot-theme="self" style="width:100%; max-width:600px; height:520px; background:var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="Reading the Cayley Table">
 ### Reading the Cayley Table

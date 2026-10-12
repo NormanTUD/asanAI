@@ -213,7 +213,10 @@ Drawbacks: tends to produce generic, “averaged” outputs in open-ended genera
 A generalization of speculative decoding: the draft model samples tokens probabilistically, the target model verifies, and corrections are sampled from the target's adjusted distribution:
 
 $$
-\text{accept } x \text{ with probability } \min\!\left(1,\, \frac{P_{\text{target}}(x)}{P_{\text{draft}}(x)}\right);\; \text{on rejection, resample from } \frac{\max\!\left(0,\, P_{\text{target}}(x) - P_{\text{draft}}(x)\right)}{\sum_{x'} \max\!\left(0,\, P_{\text{target}}(x') - P_{\text{draft}}(x')\right)}
+\begin{aligned}
+&\text{accept } x \text{ with probability } \min\!\left(1,\, \frac{P_{\text{target}}(x)}{P_{\text{draft}}(x)}\right); \\[4pt]
+&\text{on rejection, resample from } \frac{\max\!\left(0,\, P_{\text{target}}(x) - P_{\text{draft}}(x)\right)}{\sum_{x'} \max\!\left(0,\, P_{\text{target}}(x') - P_{\text{draft}}(x')\right)}
+\end{aligned}
 $$
 
 This guarantees the output distribution exactly matches the target model's distribution, while achieving speedup.

@@ -15,7 +15,7 @@ math: 60
 <div class="md" data-mathlevel="55" data-optionaltitle="The Loop">
 ## The Loop
 
-A feedforward network answers one question and forgets it. The token that left the model's mind is gone — the next token is produced without the first one having made a mark. But language is *sequential*: the meaning of “was” arrives only with what came before. \citeauthor{colah2015lstm}'s classic walkthrough \footcite{colah2015lstm} puts it simply:
+A feedforward network answers one question and forgets it. The token that left the model's mind is gone — the next token is produced without the first one having made a mark. But language is *sequential*: the meaning of “was” arrives only with what came before. \citeauthor{colah2015lstm}'s classic walkthrough (\citeyear{colah2015lstm}) puts it simply:
 
 > Humans don't start their thinking from scratch every second. … You don't throw everything away and start thinking from scratch again. Your thoughts have persistence.
 

@@ -387,10 +387,10 @@ function makeTokenizerViz(containerId) {
 	}
 	html += '</div>';
 	html += '<div style="margin-bottom:10px;"><strong>Step 2 · embed</strong> — each token is mapped to a vector of numbers (here ' + dim + '-dim for display; CLIP uses 768, T5 uses 4096).</div>';
-	html += '<div style="display:grid; grid-template-columns:repeat(' + tokens.length + ', 1fr); gap:4px; margin-bottom:14px;">';
+	html += '<div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:14px; max-width:100%; overflow-x:auto;">';
 	for (const t of tokens) {
 		const emb = embeddings[t];
-		html += '<div style="display:flex; flex-direction:column; align-items:center;">';
+		html += '<div style="display:flex; flex-direction:column; align-items:center; flex:0 0 auto;">';
 		html += '<div style="font-family:Menlo,Consolas,monospace; font-size:10px; margin-bottom:3px; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:48px;">' + t + '</div>';
 		html += '<div style="display:flex; align-items:center; gap:1px; height:' + (maxBar * 2 + 4) + 'px;">';
 		for (let i = 0; i < dim; i++) {
