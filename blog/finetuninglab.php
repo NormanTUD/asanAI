@@ -42,7 +42,7 @@ SFT trains the base model on **instruction–response pairs**:
 The loss is the standard cross-entropy on the response tokens (the instruction tokens contribute zero loss):
 
 $$
-\mathcal{L}_{\text{SFT}}(\theta) = -\sum_{(x, y) \in \mathcal{D}} \sum_{t=1}^{|y|} \log \pi_\theta(y_t \mid x, y_{<t})
+\mathcal{L}_{\text{SFT}}(\theta) = -\sum_{(x, y) \in \mathcal{D}} \sum_{t=1}^{|y|} \log \pi_\theta(y_t \mid x, y_{\lt t})
 $$
 
 where $x$ is the instruction and $y$ is the response.
