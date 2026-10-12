@@ -731,9 +731,211 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Status: OK - Public Domain (PD-Art)
 
 65. img_zhang_heng_seismoscope
-   URL: https://commons.wikimedia.org/wiki/File:PSM_V29_D320_Ancient_chinese_choko_seismoscope_from_136_a_d.jpg
-   Lizenz: Public domain (PD-US, 1886)
-   Autor: Illustration aus Popular Science Monthly, Vol. 29 (1886)
-   Lokal: zhang_heng_seismoscope.jpg (600x716)
-   Genutzt in: history.php § "Zhang Heng's seismoscope: the first instrument that sensed the world (132 CE)"
-   Status: OK - Public Domain (1886 Illustration)
+    URL: https://commons.wikimedia.org/wiki/File:PSM_V29_D320_Ancient_chinese_choko_seismoscope_from_136_a_d.jpg
+    Lizenz: Public domain (PD-US, 1886)
+    Autor: Illustration aus Popular Science Monthly, Vol. 29 (1886)
+    Lokal: zhang_heng_seismoscope.jpg (600x716)
+    Genutzt in: history.php § "Zhang Heng's seismoscope: the first instrument that sensed the world (132 CE)"
+    Status: OK - Public Domain (1886 Illustration)
+
+=== MEMORY PALACE / MNEMONICS (memorypalace.php, Stand: Oktober 2026) ===
+================================================================================
+
+66. giordano_bruno_mnemonic
+    URL: https://commons.wikimedia.org/wiki/File:GiordanoBrunomnemonic.gif
+    Lizenz: Public domain (PD-Art / PD-old-100, aus Cantus Circæus, Paris 1582)
+    Autor: Diagramm aus Giordano Brunos Cantus Circæus (Paris, 1582)
+    Lokal: giordano_bruno_mnemonic.gif (496x685)
+    Genutzt in: memorypalace.php § "The method of loci"
+    Status: OK - Public Domain (1582 Diagramm)
+
+67. giordano_bruno_portrait
+    URL: https://commons.wikimedia.org/wiki/File:Earlierbruno.jpg
+    Lizenz: Public domain (PD-Art / PDM, 1715 Stich)
+    Autor: Stich aus N. H. Gundling, Neue Bibliothec (Frankfurt & Leipzig, 1715), Fig. 38
+    Lokal: giordano_bruno_portrait.jpg (383x503)
+    Genutzt in: memorypalace.php § "Giordano Bruno: memory made three-dimensional"
+    Status: OK - Public Domain (1715 Stich)
+
+68. frances_yates
+    URL: https://commons.wikimedia.org/wiki/File:Frances_Yates_1924.jpg
+    Lizenz: Public domain (PD-UK, Foto 1924)
+    Autor: unbekannter Fotograf (1924)
+    Lokal: frances_yates.jpg (474x465)
+    Genutzt in: memorypalace.php § "Frances Yates: the scholarly spine"
+    Status: OK - Public Domain (1924 Foto)
+
+=== ALGORITHM AS A CONCEPT (algorithm_concept.php, Stand: Oktober 2026) ===
+================================================================================
+
+69. euclid_thevet
+    URL: https://commons.wikimedia.org/wiki/File:Euclid_by_Andre_Thevet_1584.webp
+    Lizenz: Public domain (PD-Art / PD-old-70, 1584 Zeichnung)
+    Autor: André Thevet (1584)
+    Lokal: euclid_thevet.webp (1039x1600)
+    Genutzt in: algorithm_concept.php § "The first non-trivial algorithm: Euclid (c. 300 BC)"
+    Status: OK - Public Domain (1584 Zeichnung)
+
+70. eratosthenes
+    URL: https://commons.wikimedia.org/wiki/File:Eratosthenes.jpg
+    Lizenz: Public domain (PD-Art / PD-old-70, laterer Stich)
+    Autor: unbekannter Stichkünstler
+    Lokal: eratosthenes.jpg (2495x3614)
+    Genutzt in: algorithm_concept.php § "Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)"
+    Status: OK - Public Domain (Stich)
+
+71. hilbert_1907
+    URL: https://commons.wikimedia.org/wiki/File:David_Hilbert,_1907.jpg
+    Lizenz: Public domain (Foto, aus Amer. J. of Math. 1907)
+    Autor: unbekannter Fotograf (1907)
+    Lokal: hilbert_1907.jpg (1185x1695)
+    Genutzt in: algorithm_concept.php § "The question that built everything: the Entscheidungsproblem (1928)"
+    Status: OK - Public Domain (1907 Foto)
+
+72. turing_machine_2a
+    URL: https://commons.wikimedia.org/wiki/File:Turing_machine_2a.svg
+    Lizenz: Public domain (Diagramm, nach Kleene 1952)
+    Autor: User:Nynexman4464 (en.wikipedia), abgeleitet von Kleene (1952)
+    Lokal: turing_machine_2a.svg (vektor)
+    Genutzt in: algorithm_concept.php § "1936: two machines, one answer"
+    Status: OK - Public Domain (Diagramm)
+
+=== MARKET FOR INFORMATION (information_market.php, Stand: Oktober 2026) ===
+================================================================================
+
+73. relation_1609
+    URL: https://commons.wikimedia.org/wiki/File:Relation_Aller_Fuernemmen_und_gedenckwuerdigen_Historien_(1609).jpg
+    Lizenz: Public domain (PD-old, Scan der Universitätsbibliothek Heidelberg)
+    Autor: Original Johann Carolus (Straßburg, 1605/1609); Scan UB Heidelberg
+    Lokal: relation_1609.jpg (1024x1235)
+    Genutzt in: information_market.php § "News becomes a commodity: the Fugger network (16th c.)"
+    Status: OK - Public Domain (Anmerkung: Straßburger Relation 1609, nicht selbst ein Fugger-Blatt — im Text als "das Genre" benannt)
+
+74. coffee_house_1674
+    URL: https://commons.wikimedia.org/wiki/File:A_coffee_house_in_the_time_of_Charles_II,_1474.png
+    Lizenz: Public domain (PD-old-70, Stich 1674)
+    Autor: unbekannter Stichkünstler (1674)
+    Lokal: coffee_house_1674.png (900x600)
+    Genutzt in: information_market.php § "The coffee-house public sphere"
+    Status: OK - Public Domain (1674 Stich)
+
+75. encyclopedie_title
+    URL: https://commons.wikimedia.org/wiki/File:Encyclopedie_de_D'Alembert_et_Diderot_-_Premiere_Page_-_ENC_1-NA5.jpg
+    Lizenz: Public domain (PD-old-100, Scan)
+    Autor: Diderot & d'Alembert (Hrsg.); Beiträger
+    Lokal: encyclopedie_title.jpg (3133x5120)
+    Genutzt in: information_market.php § "The Encyclopédie: the first attempt to compile everything"
+    Status: OK - Public Domain (1751 Titelblatt)
+
+76. paul_otlet
+    URL: https://commons.wikimedia.org/wiki/File:Paul_Otlet_à_son_bureau.jpg
+    Lizenz: Public domain (PD-old, Foto 1937)
+    Autor: Mundaneum
+    Lokal: paul_otlet.jpg (1353x905)
+    Genutzt in: information_market.php § "Paul Otlet and the Mundaneum: the library that wanted to be the world"
+    Status: OK - Public Domain (1937 Foto)
+
+77. palais_mondial_1930
+    URL: https://commons.wikimedia.org/wiki/File:Paul_Otlet_et_Henri_La_Fontaine_devant_les_portes_du_Palais_Mondial.jpg
+    Lizenz: Public domain (PD-Art, Foto 1930)
+    Autor: Mundaneum
+    Lokal: palais_mondial_1930.jpg (847x1194)
+    Genutzt in: information_market.php § "1934: the paper internet"
+    Status: OK - Public Domain (1930 Foto)
+
+=== MEMEX CHAIN (untold_history.php § "The pre-history: the Memex and hypertext (1945–1968)", Stand: Oktober 2026) ===
+================================================================================
+
+78. memex_diagram
+    URL: https://commons.wikimedia.org/wiki/File:The_Memex_(3002477109).jpg
+    Lizenz: Public domain (PD, laut Commons File-Page; Life-Magazin-Illustration, Sept 1945)
+    Autor: Time Inc. (Illustration für Life, Vol. 19 No. 11, p. 112, 1945)
+    Lokal: memex_diagram.jpg (2697x2241)
+    Genutzt in: untold_history.php § "The pre-history: the Memex and hypertext (1945–1968)"
+    Status: OK - PD laut File-Page (Anmerkung: 1945er Life/Time-Inc.-Illustration, PD-Tag stammt vom Commons-File-Page; bei striktem Audit ggf. nachprüfen)
+
+79. vannevar_bush_portrait
+    URL: https://commons.wikimedia.org/wiki/File:Vannevar_Bush_portrait.jpg
+    Lizenz: Public domain (PD-US, US-Treasury / Library of Congress)
+    Autor: unbekannt (1940–1944)
+    Lokal: vannevar_bush_portrait.jpg (3333x2667)
+    Genutzt in: untold_history.php § "The pre-history: the Memex and hypertext (1945–1968)"
+    Status: OK - Public Domain (US-Treasury/LoC)
+
+80. sri_computer_mouse_1968
+    URL: https://commons.wikimedia.org/wiki/File:SRI_Computer_Mouse.jpg
+    Lizenz: CC BY-SA 3.0
+    Autor: SRI International
+    Lokal: sri_computer_mouse_1968.jpg (600x360)
+    Genutzt in: untold_history.php § "The pre-history: the Memex and hypertext (1945–1968)"
+    Status: OK - CC BY-SA 3.0 (Attribution: SRI International, in Caption)
+
+81. ted_nelson
+    URL: https://commons.wikimedia.org/wiki/File:Ted_Nelson_cropped.jpg
+    Lizenz: CC BY-SA 3.0
+    Autor: Dgies (Eigenes Werk, 2011, "Präsentation über Project Xanadu")
+    Lokal: ted_nelson.jpg (2108x2526)
+    Genutzt in: untold_history.php § "The pre-history: the Memex and hypertext (1945–1968)"
+    Status: OK - CC BY-SA 3.0 (Attribution: Dgies, in Caption)
+
+=== STATE-TECHNIK + EXPERIMENT (statistics_i.php, Stand: Oktober 2026) ===
+================================================================================
+
+82. john_graunt
+    URL: https://commons.wikimedia.org/wiki/File:JohnGraunt.png
+    Lizenz: Public domain (PD-anon-auto; Illustration aus einem 1936er Buch)
+    Autor: T. O'Donnell, History of Life Insurance in its Formative Years (Chicago, 1936)
+    Lokal: john_graunt.png (530x770)
+    Genutzt in: statistics_i.php § "Statistics as a state technique"
+    Status: OK - Public Domain (Anmerkung: 20.-Jh.-Illustration, kein authentisches Porträt; einziger nutzbarer Kandidat)
+
+83. adolphe_quetelet
+    URL: https://commons.wikimedia.org/wiki/File:Adolphe_Quételet_by_Joseph-Arnold_Demannez.jpg
+    Lizenz: Public domain (PD-old-100, Stahlstich 1875)
+    Autor: Joseph-Arnold Demannez (1825–1902)
+    Lokal: adolphe_quetelet.jpg (937x1517)
+    Genutzt in: statistics_i.php § "Statistics as a state technique"
+    Status: OK - Public Domain (1875er Stahlstich)
+
+84. sir_francis_galton
+    URL: https://commons.wikimedia.org/wiki/File:Sir_Francis_Galton_by_Octavius_Oakley.jpg
+    Lizenz: Public domain (PD-Old; Aquarell 1840, National Portrait Gallery)
+    Autor: Octavius Oakley
+    Lokal: sir_francis_galton.jpg (1205x1536)
+    Genutzt in: statistics_i.php § "Statistics as a state technique"
+    Status: OK - Public Domain (NPG Aquarell)
+
+85. james_lind
+    URL: https://commons.wikimedia.org/wiki/File:James_Lind_by_Chalmers.jpg
+    Lizenz: Public domain (PD-Old; Gemälde 1783)
+    Autor: George Chalmers (1720–1791)
+    Lokal: james_lind.jpg (468x551)
+    Genutzt in: statistics_i.php § "The controlled experiment: from scurvy to ablation"
+    Status: OK - Public Domain (1783er Gemälde)
+
+=== KOGNITIVE EVOLUTION + INSTITUTIONEN (human_mind.php, Stand: Oktober 2026) ===
+================================================================================
+
+86. mental_rotation
+    URL: https://commons.wikimedia.org/wiki/File:Mental_rotation_task_(diagram)_(cropped).jpg
+    Lizenz: Public domain (PD-author; vom Uploader freigegeben)
+    Autor: Jennifer Oneske (TeamMentalRotation), für Wikipedia erstellt
+    Lokal: mental_rotation.jpg (289x157)
+    Genutzt in: human_mind.php § "Mental Imagery: Turning Things in the Head"
+    Status: OK - Public Domain (Wikipedia-Diagramm)
+
+87. ancient_pergamon
+    URL: https://commons.wikimedia.org/wiki/File:View_of_ancient_Pergamon.jpg
+    Lizenz: Public domain (PD-old + CC PD-Mark; 19.-Jh.-Zeichnung)
+    Autor: deutsche Archäologen (19. Jh.), gescannt aus Pergamon-Museum-Heft
+    Lokal: ancient_pergamon.jpg (1024x514)
+    Genutzt in: human_mind.php § "Institutions that outlive their founders"
+    Status: OK - Public Domain (19.-Jh.-Rekonstruktion)
+
+88. university_of_bologna
+    URL: https://commons.wikimedia.org/wiki/File:Universität_Bologna_Deutsche_Nation.jpg
+    Lizenz: Public domain (PD-old-100-expired; 1497 Miniatur)
+    Autor: anonym, Miniatur 1497 (Natio Germanica Bononiae)
+    Lokal: university_of_bologna.jpg (574x550)
+    Genutzt in: human_mind.php § "Institutions that outlive their founders"
+    Status: OK - Public Domain (1497 Miniatur)
