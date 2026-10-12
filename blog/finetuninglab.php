@@ -231,51 +231,23 @@ Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\cite[
 ## Practical Fine-Tuning Recipe
 
 For a 7B–13B model with QLoRA on a single consumer GPU (24 GB):
+</div>
 
-```python
-from peft import LoraConfig, get_peft_model
-from transformers import AutoModelForCausalLM, BitsAndBytesConfig
-import torch
+<pre><code class="language-python"><?php print get_string_of_file_or_die("py/finetuninglab/qlora.py"); ?></code></pre>
 
-# 4-bit base model
-bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
-                          bnb_4bit_compute_dtype=torch.bfloat16)
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B",
-                                              quantization_config=bnb)
-
-# LoRA adapter
-lora = LoraConfig(r=16, lora_alpha=32, target_modules=["q_proj", "v_proj"],
-                   lora_dropout=0.05, task_type="CAUSAL_LM")
-model = get_peft_model(model, lora)
-model.print_trainable_parameters()  # ~0.1% of params
-
-# Train
-trainer = Trainer(model=model, args=TrainingArguments(...), train_dataset=ds)
-trainer.train()
-```
-
+<div class="md">
 Merge the adapter back:
+</div>
 
-```python
-merged = model.merge_and_unload()
-merged.save_pretrained("my-fine-tuned-model")
-```
+<pre><code class="language-python"><?php print get_string_of_file_or_die("py/finetuninglab/merge.py"); ?></code></pre>
 
+<div class="md">
 For DPO:
+</div>
 
-```python
-from trl import DPOTrainer, DPOConfig
+<pre><code class="language-python"><?php print get_string_of_file_or_die("py/finetuninglab/dpo.py"); ?></code></pre>
 
-trainer = DPOTrainer(
-    model=model,
-    ref_model=None,  # uses LoRA-disabled copy automatically
-    args=DPOConfig(output_dir="dpo-out", beta=0.1, ...),
-    train_dataset=preference_dataset,
-    tokenizer=tokenizer
-)
-trainer.train()
-```
-
+<div class="md">
 Training time: ~2-6 hours for a 7B model with QLoRA on ~10K examples. Cost: on the order of $10-30 of compute on a rented H100 (~$2-5 per GPU-hour).
 </div>
 
