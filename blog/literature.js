@@ -18117,6 +18117,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2312.10997",
 		alternativetitle: "RAG survey (2023)"
 	},
+	"liu2023lostmiddle": {
+		title: "Lost in the Middle: How Language Models Use Long Contexts",
+		author: "Nelson Liu et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2307.03172",
+		alternativetitle: "Lost in the Middle (2023)"
+	},
 
 	/* Model to system (model_to_system.php) */
 	"react2022": {

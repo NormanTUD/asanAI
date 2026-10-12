@@ -90,7 +90,7 @@ chosen to read well in the drawer; adjust if they collide.
 ## The ten items
 
 ### H1 — Cognitive evolution: from object-recognition to symbol
-`[ ]`
+`[x]` done 2026-10-11 — `human_mind.php`: added "Mental Imagery: Turning Things in the Head" (Shepard–Metzler 1971 + figure) and extended "The Number Sense" (subitizing ≤4 + Pirahã/Mundurucú numberless-peoples). ToM already covered by "Shared Intentionality." Keys: shepardmetzler1971, subitizing, piraha2004, picamundurucu2004 (Mundurucú via Pica/Lemer/Izard/Dehaene 2004, not the unverifiable Pica/Noveck/Correia).
 - **Gap.** The course shows artefacts (handaxe, shell, bone) but not the cognitive
   bridge: how a brain that *recognises objects* becomes one that *uses symbols*.
 - **Cover to add**
@@ -123,7 +123,7 @@ chosen to read well in the drawer; adjust if they collide.
   license issue); a Pirahã/Mundurucú ethnographic photo (verify CC license).
 
 ### H2 — The emergence of causality as a concept
-`[ ]`
+`[x]` done 2026-10-11 — `beyond_llms.php`: prepended "The long history of the word *cause*" (Hume 1739 → Kant 1781 → Pearl) to the existing Causal Inference section. Reused keys hume_treatise, kant_critique_pure_reason, pearl2009book.
 - **Gap.** The narrative jumps from *mythos* to *logos* without treating causality
   itself (A causes B) as an acquired concept. This is load-bearing because the later
   claim "LLMs have correlation, not causality" needs its own prehistory.
@@ -148,7 +148,7 @@ chosen to read well in the drawer; adjust if they collide.
   Hume/Kant causality as stable URLs.
 
 ### H3 — Memory as technology: the mnemotechnique (NEW LESSON `memorypalace.php`)
-`[ ]`
+`[x]` done 2026-10-11 — `memorypalace.php` (Part 1, order 12) + Palace-recall interactive + 3 images. Origin story corrected to the banquet-hall/Dioscuri version (Simonides, Larissa/Thessaly), **not** "Battle of Cunaxa." Keys: methodofloci, simonidesofceos, artoffemoryyates, brunodeumbris1582, giordanobruno.
 - **Gap.** The course has external stores (bone, tablet, paper) but not the *internal*
   storage technology: mnemonics. This is relevant because it is the **first technique
   that used spatial structure for semantic storage — exactly what an embedding space
@@ -186,7 +186,7 @@ chosen to read well in the drawer; adjust if they collide.
   lightweight; a `.js` module is fine.
 
 ### H4 — Institutions that make knowledge cumulative
-`[ ]`
+`[x]` done 2026-10-11 — `human_mind.php` §V: added "Institutions that outlive their founders" (Pergamon, Bologna 1088, Phil. Trans. 1665, Venice patent 1474) + 2 figures. Phil. Trans. corrected to **longest-running** (2nd science-only journal), not "first." Keys: libraryofpergamum, universityofbologna, philtrans1665, venicepatent1474.
 - **Gap.** The course has settlement + writing, but not the **institutions** that let
   knowledge outlive the individual. "A displaced prerequisite of the first rank":
   without institutions there is no cumulative science.
@@ -213,7 +213,7 @@ chosen to read well in the drawer; adjust if they collide.
   statute 1474 (SEP / Wikipedia / institutional pages).
 
 ### H5 — The emergence of the controlled experiment
-`[ ]`
+`[x]` done 2026-10-11 — `statistics_i.php`: added "The controlled experiment: from scurvy to ablation" (Lind 1747/1753, Fisher 1935 *Design of Experiments*, double-blind, A/B + ablation payoff) + Lind portrait. Lind born **1716** (not 1736). Kitchiner 1948 pneumonia trial not verifiable → used the *Randomized controlled trial* page for the 1948 anchor. Keys: lind1747scurvy, fisher1935design, doubleblind, rct1948.
 - **Gap.** The course has Ibn al-Haytham (good) and Bacon, but the *invention of the
   controlled experiment as a method* is missing as its own step.
 - **Cover to add**
@@ -238,7 +238,7 @@ chosen to read well in the drawer; adjust if they collide.
   / Fisher–Student context is already in `statistics_i.php`).
 
 ### H6 — The emergence of the market for information (NEW LESSON `information_market.php`)
-`[ ]`
+`[x]` done 2026-10-11 — `information_market.php` (Part 1, order 14) + 5 images. Fugger news market, Habermas coffee-house, Encyclopédie, Otlet/Mundaneum + the 1934 "paper internet." Otlet's vision framed as **prefiguring** Bush's Memex (precursor), not "Bush read Otlet." "Imperia-Blatt" term dropped (unverifiable). Keys: fuggernews, habermaspublicsphere, encyclopedie, paulotlet, mundaneum, traitededocumentation, catalogingtheworld.
 - **Gap.** The course gestures at newspapers and the Encyclopédie but never treats the
   **market and infrastructure for information** as a system — and **Otlet is missing
   entirely**, which is the single most painful omission here.
@@ -266,7 +266,7 @@ chosen to read well in the drawer; adjust if they collide.
   title page; the Mundaneum / Otlet (verify CC licenses).
 
 ### H7 — Vannevar Bush & the Memex chain
-`[ ]`
+`[x]` done 2026-10-11 — `untold_history.php`: added "The pre-history: the Memex and hypertext (1945–1968)" (Bush *As We May Think* 1945 → Engelbart *Augmenting Human Intellect* 1962 + 1968 demo → Nelson "hypertext" 1965), inserted before ARPANET so it flows into the existing Berners-Lee section. 4 images. Nelson's paper is **"Complex Information Processing" (1965)**, not "Coherent Systems." Keys: aswemaythink, memex, augmentinghumanintellect, motherofalldemos, tednelsonhypertext, tednelson.
 - **Gap.** Bush is absent entirely, and the hypertext chain that leads to the web — and
   thus to the **training corpus** — is missing its front half.
 - **Cover to add** (the chain, in order, each a short block)
@@ -293,7 +293,7 @@ chosen to read well in the drawer; adjust if they collide.
   the 1968 Engelbart demo still; the 1989 Berners-Lee memo (already present).
 
 ### H8 — Statistics as state technique (not just probability)
-`[ ]`
+`[x]` done 2026-10-11 — `statistics_i.php`: added "Statistics as a state technique: from mortality tables to the average man" (Graunt 1662, Quetelet 1835, Galton/eugenics as the dark origin of regression) before the existing Galton/Pearson section + 3 portraits. Quetelet dated 1835 (not 1833). Keys: graunt1662, quetelet1835, galton_eugenics (reused galton for the regression paper).
 - **Gap.** The course has probability (Pascal/Fermat/Bayes/Laplace — good) but not
   statistics as a **Herrschaftsinstrument** — a technique of the state. And the dark
   origin of regression (eugenics) is present only as a footnote.
@@ -314,7 +314,7 @@ chosen to read well in the drawer; adjust if they collide.
   (1869) / "eugenics" (1883) and the regression-to-the-mean papers (1885/1889).
 
 ### H9 — The algorithm as a concept (NEW LESSON `algorithm_concept.php`)
-`[ ]`
+`[x]` done 2026-10-11 — `algorithm_concept.php` (Part 1, order 13) + Euclid-gcd "watch it terminate" interactive + 4 images. Euclid gcd → Sieve of Eratosthenes → the verb/object gap → Hilbert Entscheidungsproblem 1928 → Church & Turing 1936; added a short, accurate Gödel-1931 bridge. Keys: euclideanalgorithm, sieveoferatosthenes, churchturing1936 (reused euclidelements, hilbert1928entscheidung, turing1937, godel1931incompleteness).
 - **Gap.** The course has al-Khwarizmi (the *word*) but not the path from a *procedure*
   to the **algorithm as a mathematical object**.
 - **Cover to add**
@@ -348,7 +348,7 @@ chosen to read well in the drawer; adjust if they collide.
   counter shows *why it must stop*). Reinforces the termination-invariant point.
 
 ### H10 — Information as a measurable quantity, before Shannon
-`[ ]`
+`[x]` done 2026-10-11 — `statistics_ii.php`: added "The birth of information: from Boltzmann to Shannon" (Nyquist 1924, Hartley 1928, Szilard 1929, the Boltzmann→Shannon bridge) before the Entropy section. It is **Harry** Nyquist (not Harold). Attached URLs to the pre-existing url-less keys nyquist1924certain + hartley1928transmission; added szilard1929entropy.
 - **Gap.** The course has Shannon and (at the formula level) Boltzmann, but not the
   *pre-Shannon* lineage and not the **thermodynamic bridge** that makes "information"
   a physical quantity.
