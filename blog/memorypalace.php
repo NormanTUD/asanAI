@@ -83,10 +83,7 @@ The most radical practitioner was \cite[Giordano Bruno]{giordanobruno} (1548–1
 
 Bruno used it the way we would use a database: to hold *whole books* in his head, and to generate arguments by recombining what was stored. He claimed the system let him remember "innumerable" things, and he performed memory feats before kings that read, to a modern audience, like a live demo of a key-value store \cite[Giordano Bruno]{giordanobruno}.
 
-<figure style="float: right; width: 26%; max-width: 220px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="giordano_bruno_portrait.jpg" alt="Engraving portrait of Giordano Bruno" />
-	<figcaption class="md">\cite[Giordano Bruno (1548–1600)]{giordanobruno}, from an 18th-century engraving (N. H. Gundling, *Neue Bibliothec*, 1715). Public domain.</figcaption>
-</figure>
+\marginfig{giordano_bruno_portrait.jpg}{\cite[Giordano Bruno (1548–1600)]{giordanobruno}, from an 18th-century engraving (N. H. Gundling, *Neue Bibliothec*, 1715). Public domain.}
 </div>
 
 <div class="md">
@@ -100,10 +97,7 @@ The art also travelled as a **teaching technology**. In the late 1500s the Jesui
 
 The thread was not seriously studied until 1966, when the historian \citeauthor{artofmemoryyates} (\citeyear{artofmemoryyates}) published \cite[The Art of Memory]{artofmemoryyates}. Yates traced the art from the classical *loci* of Simonides, through the medieval *ars memoriae*, to the Renaissance — and showed that its flowering in the hands of Bruno and others was bound up with the Hermetic and magical image of the imagination as a *creative, world-generating* power. The memory palace was not, for the Renaissance mind, a dry mnemonic trick; it was a model of how the mind holds and *produces* the world. That book is still the place to start, and it is what turned the parlor trick back into a subject of study.
 
-<figure style="float: right; width: 22%; max-width: 200px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="frances_yates.jpg" alt="Frances Yates, 1924" />
-	<figcaption class="md">Frances A. Yates (1926–1981), 1924. Public domain.</figcaption>
-</figure>
+\marginfig{frances_yates.jpg}{Frances A. Yates (1926–1981), 1924. Public domain.}
 </div>
 
 <div class="md">
