@@ -63,9 +63,9 @@ body {
 @media (max-width: 900px) {
 
 	/* Raise the root so phones held in landscape and tablets never dip
-	   below the phone body size. 1.3rem ≈ 20.8 px. */
+	   below the phone body size. 1.34rem ≈ 21.4 px. */
 	html {
-		font-size: clamp(1.18rem, 1.1rem + 0.5vw, 1.3rem);
+		font-size: clamp(1.28rem, 1.18rem + 0.5vw, 1.34rem);
 	}
 
 	/* Hero shrinks slightly, but still feels like a hero. */
@@ -123,14 +123,14 @@ body {
 @media (max-width: 600px) {
 
 	/* ── 3a. Root typography ────────────────────────────────
-	   At least 20 px, and 128 % of the reader's own default so a
-	   larger OS/browser font setting scales the whole lesson. On the
-	   usual 16 px default that is ≈ 20.5 px — a firm step up from
-	   the old hard-coded 17.5 px. max() guarantees the floor even
-	   for readers who set a smaller default; stays above the iOS
-	   input-zoom threshold (16 px). */
+	   The lesson body is the thing people actually read — make it
+	   unambiguous. At least 21 px, and 131 % of the reader's own
+	   default so a larger OS/browser font setting scales the whole
+	   lesson. max() guarantees the floor on every engine (iOS
+	   Safari, Android Chrome); stays well above the iOS input-zoom
+	   threshold (16 px). */
 	html {
-		font-size: max(20px, 128%);
+		font-size: max(21px, 131%);
 	}
 
 	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
@@ -161,7 +161,7 @@ body {
 		margin-top: 1.2em;
 	}
 	#contents h4 {
-		font-size: 0.98rem;
+		font-size: 1.02rem;
 	}
 
 	/* Tighter paragraph rhythm on phones for better thumb-scroll. */
@@ -609,7 +609,7 @@ body {
 
 	#contents h1 { font-size: 1.4rem; }
 	#contents h2 { font-size: 1.12rem; }
-	#contents h3 { font-size: 0.98rem; }
+	#contents h3 { font-size: 1.04rem; }
 
 	#contents a.course-tile,
 	#contents .course-tile {
