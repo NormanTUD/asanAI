@@ -62,8 +62,10 @@ body {
    ────────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
 
+	/* Raise the root so phones held in landscape and tablets never dip
+	   below the phone body size. 1.2rem ≈ 19.2 px. */
 	html {
-		font-size: clamp(0.97rem, 0.88rem + 0.5vw, 1.06rem);
+		font-size: clamp(1.08rem, 1rem + 0.55vw, 1.2rem);
 	}
 
 	/* Hero shrinks slightly, but still feels like a hero. */
@@ -121,11 +123,13 @@ body {
 @media (max-width: 600px) {
 
 	/* ── 3a. Root typography ────────────────────────────────
-	   17.5 px: on phones the old 16.75 px read as a touch small.
-	   This scales every rem-based phone rule below by ~4.5 % and
-	   stays on the iOS input-zoom safe side (≥ 16 px). */
+	   120% of the reader's default size. On the usual 16 px default
+	   that is ≈ 19.2 px — comfortably larger than the old hard-coded
+	   17.5 px. Expressed as a percentage (not px) so it scales with
+	   the reader's own OS/browser font-size preference instead of
+	   overriding it, and stays on the iOS input-zoom safe side. */
 	html {
-		font-size: 17.5px;
+		font-size: 120%;
 	}
 
 	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
