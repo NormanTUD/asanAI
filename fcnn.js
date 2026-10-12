@@ -2452,9 +2452,13 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		var isOutputLayer = (target_draw_idx === layers.length - 1);
 
 		var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
+		var targetTopY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
 
-		// Calculate top of the target layer
-		var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
+		var srcNumNeurons = layers[layer_idx];
+		var srcMeta = meta_infos[layer_idx] || {};
+		var srcType = srcMeta.layer_type || "";
+		var srcSpacing = compute_spacing(srcType, srcNumNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, layer_idx === layers.length - 1, font_size);
+		var sourceTopY = layerY - ((srcNumNeurons - 1) / 2) * srcSpacing - 15;
 
 		// Draw the skip connection arc
 		var strength = skip_info.strength;
@@ -2472,10 +2476,11 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		var startX = sourceX + maxRadius + 5;
 		var endX = targetX - maxRadius - 5;
 		var midX = (startX + endX) / 2;
+		var endY = targetTopY;
 
 		ctx.beginPath();
-		ctx.moveTo(startX, topY);
-		ctx.quadraticCurveTo(midX, topY - arcHeight, endX, topY);
+		ctx.moveTo(startX, sourceTopY);
+		ctx.quadraticCurveTo(midX, Math.min(sourceTopY, endY) - arcHeight, endX, endY);
 		ctx.stroke();
 
 		// Draw small "+" symbol at the connection point (left of target)
@@ -2483,13 +2488,14 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
 		ctx.font = "bold " + (font_size + 2) + "px Arial";
 		ctx.textAlign = "center";
-		ctx.fillText("+", endX - 10, topY - 2);
+		ctx.fillText("+", endX - 10, endY - 2);
 
 		// Draw label (with the number of spanned layers when > 1)
 		ctx.font = (font_size - 2) + "px Arial";
 		ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
 		var skip_label = language[lang]["skip_connection"] + (skip_n > 1 ? " (" + skip_n + ")" : "");
-		ctx.fillText(skip_label, midX, topY - arcHeight - 5);
+		var labelY = Math.min(sourceTopY, endY) - arcHeight - 5;
+		ctx.fillText(skip_label, midX, labelY);
 
 		ctx.restore();
 
@@ -2497,7 +2503,7 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 			type: "skip_connection",
 			shape: "rect",
 			x: startX - 10,
-			y: topY - arcHeight - 15,
+			y: Math.min(sourceTopY, endY) - arcHeight - 15,
 			w: endX - startX + 30,
 			h: arcHeight + 20,
 			layer_idx: target_draw_idx,

@@ -2579,14 +2579,24 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 	var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
 
 	if (has_add) {
-		return _build_identity_matrix_latex(layer_idx);
+		// Only show identity if source and target dims match
+		var src_dim = _get_layer_output_dim(gui_layer_idx);
+		var tgt_dim = _get_layer_output_dim(layer_idx);
+		if (src_dim && tgt_dim && src_dim === tgt_dim) {
+			return _build_identity_matrix_latex(layer_idx);
+		}
+		return "W_{\\text{skip}}";
 	}
 
 	// Last resort: check if the skip connection is enabled but uses identity (same dimensions)
-	// In this case, show the identity matrix based on the layer's output shape
 	var skip_info = get_skip_connection_info(gui_layer_idx);
 	if (skip_info.enabled) {
-		return _build_identity_matrix_latex(layer_idx);
+		var src_dim2 = _get_layer_output_dim(gui_layer_idx);
+		var tgt_dim2 = _get_layer_output_dim(layer_idx);
+		if (src_dim2 && tgt_dim2 && src_dim2 === tgt_dim2) {
+			return _build_identity_matrix_latex(layer_idx);
+		}
+		return "W_{\\text{skip}}";
 	}
 
 	return "W_{\\text{skip}}";
@@ -2598,10 +2608,14 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 function _get_all_model_layers() {
 	if (!model) return null;
 
-	// For functional models, _stateChanges or getLayer() might be needed
-	// Try multiple approaches to get ALL layers including internal ones
+	// For functional models, _allLayers includes skip-connection internals
+	try {
+		if (model._allLayers && Array.isArray(model._allLayers) && model._allLayers.length > 0) {
+			return model._allLayers;
+		}
+	} catch (e) {}
 
-	// Approach 1: model._layers (internal, includes all)
+	// Approach 2: model._layers (internal, includes all)
 	try {
 		if (model._layers && Array.isArray(model._layers) && model._layers.length > 0) {
 			return model._layers;
@@ -2805,6 +2819,21 @@ function _get_skip_identity_dimension(layer_idx) {
  * is the model.layers index at creation time, NOT the gui_layer_idx.
  * We need to convert between the two.
  */
+function _get_layer_output_dim(layer_idx) {
+	try {
+		if (!model || !model.layers || !model.layers[layer_idx]) return null;
+		var shape = model.layers[layer_idx].outputShape;
+		if (Array.isArray(shape)) {
+			for (var si = shape.length - 1; si >= 0; si--) {
+				if (shape[si] !== null && typeof shape[si] === "number") {
+					return shape[si];
+				}
+			}
+		}
+	} catch (e) {}
+	return null;
+}
+
 function _skip_proj_belongs_to_layer(layer_name, gui_layer_idx) {
 	// Extract the number from the layer name
 	var patterns = [
