@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚔️ Der Krieg: Frequentisten vs. Bayesianer</title>
+<style>
+:root{
+  --freq:#ff4d6d; --freq-dim:#7a1026;
+  --bayes:#4dc9ff; --bayes-dim:#0b3f5c;
+  --bg:#07080d; --panel:#11131d; --ink:#e8ecf5; --muted:#8d98b3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 600px at 15% -10%, #2a0a18 0%, transparent 60%),
+    radial-gradient(1200px 600px at 85% -10%, #06283d 0%, transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  overflow-x:hidden;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px 120px}
+
+/* ---------- HERO ---------- */
+header{position:relative;padding:90px 0 60px;text-align:center}
+h1{
+  font-size:clamp(2.4rem,7vw,5rem);margin:0;font-weight:900;letter-spacing:-.03em;
+  background:linear-gradient(100deg,var(--freq) 0%,#ffffff 50%,var(--bayes) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmer 7s ease-in-out infinite;background-size:200% auto;
+}
+@keyframes shimmer{0%,100%{background-position:0% center}50%{background-position:100% center}}
+.sub{color:var(--muted);font-size:1.15rem;max-width:620px;margin:18px auto 0;line-height:1.6}
+.swords{font-size:3rem;animation:clash 2.4s ease-in-out infinite}
+@keyframes clash{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.12)}}
+
+/* ---------- GENERIC PANELS ---------- */
+section{margin-top:70px}
+h2{font-size:clamp(1.5rem,3.5vw,2.2rem);margin:0 0 10px;font-weight:800;letter-spacing:-.02em}
+.lede{color:var(--muted);line-height:1.7;max-width:760px}
+.panel{background:var(--panel);border:1px solid #20243a;border-radius:18px;padding:24px;margin-top:22px}
+
+/* ---------- FACTION CARDS ---------- */
+.factions{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px}
+@media(max-width:780px){.factions{grid-template-columns:1fr}}
+.card{
+  position:relative;border-radius:20px;padding:26px;overflow:hidden;cursor:pointer;
+  border:1px solid #23283f;background:var(--panel);transition:.35s cubic-bezier(.2,.8,.2,1);
+}
+.card:hover{transform:translateY(-6px) scale(1.015)}
+.card.f{box-shadow:0 0 0 0 var(--freq)}
+.card.f:hover{box-shadow:0 18px 50px -18px var(--freq);border-color:var(--freq)}
+.card.b:hover{box-shadow:0 18px 50px -18px var(--bayes);border-color:var(--bayes)}
+.card h3{margin:0 0 6px;font-size:1.5rem}
+.card.f h3{color:var(--freq)} .card.b h3{color:var(--bayes)}
+.motto{font-style:italic;color:var(--muted);margin:0 0 16px;font-size:.95rem}
+.card ul{margin:0;padding-left:18px;line-height:1.75;font-size:.95rem}
+.card .emoji{font-size:2.4rem;display:block;margin-bottom:8px}
+.badge{display:inline-block;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;margin-bottom:12px;font-weight:700}
+.card.f .badge{background:var(--freq-dim);color:#ffd3dc}
+.card.b .badge{background:var(--bayes-dim);color:#cfefff}
+
+/* ---------- COIN SIM ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:16px 0}
+button{
+  background:#1a1f33;color:var(--ink);border:1px solid #2c3350;padding:10px 18px;
+  border-radius:11px;font-weight:700;cursor:pointer;font-size:.92rem;transition:.2s
+}
+button:hover{background:#242b45;transform:translateY(-2px)}
+button.primary{background:linear-gradient(90deg,var(--freq),#ff8a5b);border:none;color:#1a0008}
+button.ghost{background:transparent}
+input[type=range]{accent-color:var(--bayes);width:190px}
+label{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.vals{font-family:ui-monospace,Menlo,monospace;color:var(--ink);font-size:.95rem}
+canvas{width:100%;border-radius:14px;background:#0b0d16;border:1px solid #1d2135;display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:780px){.two{grid-template-columns:1fr}}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+.stat{background:#0c0f19;border:1px solid #1e2338;border-radius:12px;padding:12px 14px}
+.stat .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.stat .v{font-size:1.4rem;font-weight:800;font-family:ui-monospace,monospace}
+.vF{color:var(--freq)} .vB{color:var(--bayes)}
+
+/* ---------- P-HACK GARDEN ---------- */
+.garden{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px;margin-top:16px}
+.plot{aspect-ratio:1;border-radius:9px;background:#141828;border:1px solid #222842;
+  display:grid;place-items:center;font-size:.72rem;font-family:ui-monospace,monospace;
+  cursor:pointer;transition:.18s;color:var(--muted)}
+.plot:hover{transform:scale(1.12);border-color:#3a4268}
+.plot.sig{background:linear-gradient(135deg,#1f7a3d,#2fbf63);color:#eaffef;border-color:#3fe07c;
+  box-shadow:0 0 18px -4px #2fbf63}
+.plot.tested{border-color:#3a4268;color:#cfd6ea}
+
+/* ---------- COURTROOM ---------- */
+.quote{border-left:3px solid var(--bayes);padding:10px 0 10px 18px;color:#c9d3ea;font-style:italic;line-height:1.7}
+.quote.f{border-color:var(--freq)}
+table{width:100%;border-collapse:collapse;font-size:.93rem;margin-top:10px}
+th,td{padding:12px 10px;text-align:left;border-bottom:1px solid #1e2338;vertical-align:top}
+th{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em}
+td.f{color:#ffc2cf} td.b{color:#bfe9ff}
+.peace{background:linear-gradient(135deg,#120d1f,#0d1a24);border:1px solid #2a2f4d}
+.kbd{font-family:ui-monospace,monospace;background:#1a1f33;padding:2px 7px;border-radius:6px;font-size:.85em}
+footer{text-align:center;color:var(--muted);margin-top:80px;font-size:.88rem;line-height:1.8}
+.hr{height:1px;background:linear-gradient(90deg,transparent,#2a3050,transparent);margin:60px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="swords">🗡️⚔️🛡️</div>
+  <h1>Frequentisten vs.<br>Bayesianer</h1>
+  <p class="sub">Der längste Glaubenskrieg der Wissenschaft. Zwei Lager, eine Frage:
+  <b>Was zur Hölle bedeutet eigentlich „Wahrscheinlichkeit“?</b><br>
+  Scroll runter. Spiel rum. Wechsle die Seiten.</p>
+</header>
+
+<!-- ============ FACTIONS ============ -->
+<section>
+  <h2>Die Kriegsparteien</h2>
+  <p class="lede">Beide rechnen mit denselben Zahlen. Beide kommen oft zum selben Ergebnis.
+  Und trotzdem hassen sie sich seit ca. 1920 herzlich. Warum? Weil sie über <i>Metaphysik</i> streiten, nicht über Mathe.</p>
+
+  <div class="factions">
+    <div class="card f">
+      <span class="emoji">🎲</span>
+      <span class="badge">Team Langzeit-Frequenz</span>
+      <h3>Die Frequentisten</h3>
+      <p class="motto">„Wahrscheinlichkeit ist die Grenzfrequenz bei unendlich vielen Wiederholungen.“</p>
+      <ul>
+        <li><b>Parameter sind fix</b>, aber unbekannt. Die Münze <i>hat</i> ein wahres θ.</li>
+        <li><b>Die Daten sind zufällig</b> — sie hätten anders ausfallen können.</li>
+        <li>Waffen: <span class="kbd">p-Wert</span>, <span class="kbd">Konfidenzintervall</span>, <span class="kbd">Nullhypothese</span>, <span class="kbd">Power</span>.</li>
+        <li>Generäle: <b>Ronald A. Fisher</b>, <b>Jerzy Neyman</b>, <b>Egon Pearson</b>.</li>
+        <li>Stärke: braucht keine Annahmen über deinen Glauben. <b>Objektiv-ish.</b></li>
+        <li>Schwäche: beantwortet eine Frage, die niemand gestellt hat.</li>
+      </ul>
+    </div>
+
+    <div class="card b">
+      <span class="emoji">🧠</span>
+      <span class="badge">Team Grad des Glaubens</span>
+      <h3>Die Bayesianer</h3>
+      <p class="motto">„Wahrscheinlichkeit ist der rationale Grad der Überzeugung angesichts der Evidenz.“</p>
+      <ul>
+        <li><b>Parameter sind zufällig</b> — also: unser Wissen darüber ist unsicher.</li>
+        <li><b>Die Daten sind fix</b>. Du hast sie ja. Konditioniere drauf.</li>
+        <li>Waffen: <span class="kbd">Prior</span>, <span class="kbd">Likelihood</span>, <span class="kbd">Posterior</span>, <span class="kbd">Bayes-Faktor</span>, <span class="kbd">MCMC</span>.</li>
+        <li>Generäle: <b>Thomas Bayes</b>, <b>Pierre-Simon Laplace</b>, <b>Harold Jeffreys</b>, <b>E. T. Jaynes</b>.</li>
+        <li>Stärke: sagt dir direkt, was du wissen willst — P(Hypothese | Daten).</li>
+        <li>Schwäche: Woher kommt der Prior? „Aus dem Bauch“, schreit der Gegner.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ THE CORE DISAGREEMENT ============ -->
+<section>
+  <h2>Der Kern des Streits in einer Zeile</h2>
+  <div class="panel">
+    <table>
+      <tr><th>Frage</th><th>Frequentist sagt</th><th>Bayesianer sagt</th></tr>
+      <tr>
+        <td>Was ist zufällig?</td>
+        <td class="f">Die Daten. θ ist fix.</td>
+        <td class="b">Dein Wissen über θ. Die Daten sind gegeben.</td>
+      </tr>
+      <tr>
+        <td>Was liefert die Analyse?</td>
+        <td class="f">P(Daten so extrem | H₀ wahr)</td>
+        <td class="b">P(θ | Daten)</td>
+      </tr>
+      <tr>
+        <td>„95 %“ bedeutet…</td>
+        <td class="f">95 % der so konstruierten Intervalle enthalten θ — <i>über viele Wiederholungen</i>. Über <b>dieses</b> Intervall: keine Aussage.</td>
+        <td class="b">Gegeben Prior und Daten: 95 % Glaubensmasse liegt in diesem Intervall. Fertig.</td>
+      </tr>
+      <tr>
+        <td>Vorwissen?</td>
+        <td class="f">Gefährlich, subjektiv, raus damit.</td>
+        <td class="b">Unvermeidlich — also lieber explizit machen.</td>
+      </tr>
+      <tr>
+        <td>Lieblingsvorwurf</td>
+        <td class="f">„Ihr erfindet eure Ergebnisse mit euren Priors!“</td>
+        <td class="b">„Euer p-Wert hängt davon ab, was ihr <i>gemessen hättet</i>, wenn ihr es getan hättet!“</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ COIN BATTLE ============ -->
+<section>
+  <h2>🪙 Schlachtfeld 1: Die verdächtige Münze</h2>
+  <p class="lede">Eine Münze landet auffällig oft auf Kopf. Beide Lager dürfen ran.
+  Dreh an den Reglern, wirf die Münze — und sieh zu, wie Frequentist und Bayesianer unterschiedlich reagieren.</p>
+
+  <div class="panel">
+    <div class="ctrls">
+      <label>Wahres θ (geheim für die Statistiker!)
+        <input id="trueP" type="range" min="0" max="1" step="0.01" value="0.65">
+        <span class="vals" id="truePv">0.65</span>
+      </label>
+      <label>Prior: Beta(a, b) — a
+        <input id="pa" type="range" min="0.5" max="40" step="0.5" value="2">
+        <span class="vals" id="pav">2</span>
+      </label>
+      <label>Prior: Beta(a, b) — b
+        <input id="pb" type="range" min="0.5" max="40" step="0.5" value="2">
+        <span class="vals" id="pbv">2</span>
+      </label>
+    </div>
+    <div class="ctrls">
+      <button class="primary" id="flip1">Wirf 1×</button>
+      <button id="flip10">Wirf 10×</button>
+      <button id="flip100">Wirf 100×</button>
+      <button class="ghost" id="reset">↺ Reset</button>
+    </div>
+
+    <div class="two">
+      <div>
+        <canvas id="cvF" width="520" height="300"></canvas>
+        <p class="lede" style="font-size:.85rem;margin-top:10px">
+          <b style="color:var(--freq)">Frequentist:</b> Sampling-Verteilung von θ̂ unter H₀ (θ=0.5).
+          Der rote Strich ist dein beobachtetes θ̂. Je weiter draußen, desto kleiner der p-Wert.
+        </p>
+      </div>
+      <div>
+        <canvas id="cvB" width="520" height="300"></canvas>
+        <p class="lede" style="font-size:.85rem;margin-top:10px">
+          <b style="color:var(--bayes)">Bayesianer:</b> Prior (gestrichelt) → Posterior (gefüllt).
+          Posterior = Beta(a + Kopf, b + Zahl). Konjugiert, elegant, sofort interpretierbar.
+        </p>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div class="stat"><div class="k">Würfe</div><div class="v" id="sN">0</div></div>
+      <div class="stat"><div class="k">Kopf</div><div class="v" id="sH">0</div></div>
+      <div class="stat"><div class="k">θ̂ (MLE)</div><div class="v vF" id="sMLE">–</div></div>
+      <div class="stat"><div class="k">p-Wert (2-seitig)</div><div class="v vF" id="sP">–</div></div>
+      <div class="stat"><div class="k">95 % Konfidenz-Intervall</div><div class="v vF" id="sCI" style="font-size:1rem">–</div></div>
+      <div class="stat"><div class="k">Posterior-Mittel</div><div class="v vB" id="sPM">–</div></div>
+      <div class="stat"><div class="k">95 % Credible-Intervall</div><div class="v vB" id="sCrI" style="font-size:1rem">–</div></div>
+      <div class="stat"><div class="k">P(θ &gt; 0.5 | Daten)</div><div class="v vB" id="sPost">–</div></div>
+    </div>
+
+    <div class="panel" style="margin-top:18px;background:#0c0f19">
+      <p style="margin:0;line-height:1.7"><b>🔥 Beachte:</b> Der Frequentist kann <b>niemals</b> sagen
+      „die Münze ist zu 97 % gezinkt“ — das ist für ihn eine sinnlose Aussage, denn θ ist fix.
+      Der Bayesianer sagt genau das, direkt, ohne Umweg. <b>Dafür</b> muss er zugeben, dass sein Ergebnis
+      von seinem Prior abhängt. Schieb mal <span class="kbd">a</span> auf 40 und <span class="kbd">b</span> auf 2 —
+      und sieh zu, wie ein sturer Prior die Evidenz erstickt. Das ist der ganze Krieg in einem Regler.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ P-HACKING GARDEN ============ -->
+<section>
+  <h2>🌱 Schlachtfeld 2: Der Garten der sich gabelnden Pfade</h2>
+  <p class="lede">Der schärfste Vorwurf gegen naives Frequentismus: Wenn du lange genug suchst,
+  findest du <b>immer</b> p &lt; 0.05 — auch wenn <i>absolut nichts</i> da ist.
+  Hier gibt es <b>keinen einzigen echten Effekt</b>. Klick auf die Beete und teste drauflos.</p>
+
+  <div class="panel">
+    <div class="ctrls">
+      <button class="primary" id="testOne">1 Hypothese testen</button>
+      <button id="testAll">Alle 60 testen (p-hacken!)</button>
+      <button class="ghost" id="resetG">↺ Neuer Garten</button>
+    </div>
+    <div class="garden" id="garden"></div>
+    <div class="readout">
+      <div class="stat"><div class="k">Getestet</div><div class="v" id="gT">0</div></div>
+      <div class="stat"><div class="k">„Signifikant“ (p&lt;.05)</div><div class="v" style="color:#2fbf63" id="gS">0</div></div>
+      <div class="stat"><div class="k">Echte Effekte</div><div class="v" style="color:#ff4d6d">0</div></div>
+      <div class="stat"><div class="k">Falsch-Positiv-Rate</div><div class="v" id="gR">–</div></div>
+    </div>
+    <p class="lede" style="margin-top:16px">
+      <b style="color:var(--freq)">Frequentist-Verteidigung:</b> „Das ist kein Fehler der Theorie, sondern des Anwenders!
+      Korrigiere für multiples Testen (Bonferroni, Benjamini–Hochberg), präregistriere deine Hypothese — dann stimmt die Fehlerrate.“<br><br>
+      <b style="color:var(--bayes)">Bayesianischer Konter:</b> „Mit einem vernünftigen Prior wären 55 von 60 dieser Effekte
+      von vornherein unplausibel gewesen. Und der Bayes-Faktor interessiert sich nicht dafür,
+      wie oft du geschaut hast — nur dafür, welche Hypothese die Daten besser vorhersagt.“
+    </p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ BASE RATE ============ -->
+<section>
+  <h2>🏥 Schlachtfeld 3: Der Basisraten-Hinterhalt</h2>
+  <p class="lede">Hier gewinnt Bayes haushoch — und zwar so deutlich, dass selbst Ärzte reihenweise danebenliegen.
+  Ein Test ist zu 99 % sensitiv und zu 99 % spezifisch. Du bist positiv. Bist du krank?</p>
+
+  <div class="panel">
+    <div class="ctrls">
+      <label>Prävalenz (wie häufig ist die Krankheit?)
+        <input id="prev" type="range" min="0.0001" max="0.2" step="0.0001" value="0.001">
+        <span class="vals" id="prevv">0.10 %</span>
+      </label>
+      <label>Sensitivität P(+|krank)
+        <input id="sens" type="range" min="0.5" max="0.9999" step="0.0001" value="0.99">
+        <span class="vals" id="sensv">99.00 %</span>
+      </label>
+      <label>Spezifität P(−|gesund)
+        <input id="spec" type="range" min="0.5" max="0.9999" step="0.0001" value="0.99">
+        <span class="vals" id="specv">99.00 %</span>
+      </label>
+    </div>
+    <canvas id="cvBR" width="1040" height="220"></canvas>
+    <div class="readout">
+      <div class="stat"><div class="k">P(krank | positiv)</div><div class="v vB" id="ppv">–</div></div>
+      <div class="stat"><div class="k">Von 100 000 Menschen: echte Positive</div><div class="v" id="tp">–</div></div>
+      <div class="stat"><div class="k">… falsche Positive</div><div class="v" id="fp">–</div></div>
+      <div class="stat"><div class="k">Odds "krank : gesund" nach dem Test</div><div class="v" id="odds" style="font-size:1rem">–</div></div>
+    </div>
+
+    <div class="panel" style="margin-top:18px;background:#0c0f19">
+      <p style="margin:0;line-height:1.7"><b>💡 Der Hinterhalt:</b> Bei 0.1 % Prävalenz und einem
+      „99 %-Test“ bist du nach einem positiven Ergebnis trotzdem nur zu rund <b>9 %</b> krank.
+      Nicht 99 %. Der Grund: Es gibt schlicht viel mehr Gesunde, und 1 % von sehr vielen
+      ist mehr als 99 % von sehr wenigen. <b>Die Basisrate ist der Prior.</b>
+      Wer sie ignoriert, begeht den <i>Prosecutor's Fallacy</i> — die Verwechslung von
+      P(positiv | krank) mit P(krank | positiv).</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ STOPPING RULE ============ -->
+<section>
+  <h2>🛑 Schlachtfeld 4: Die Abbruchregel (der fieseste Schlag)</h2>
+  <p class="lede">Zwei Forscher beobachten exakt dieselben Daten: <b>9 Köpfe in 12 Würfen</b>.
+  Forscherin A hatte vorher beschlossen: „Ich werfe genau 12 Mal.“
+  Forscher B hatte beschlossen: „Ich werfe, bis 3 Mal Zahl kommt.“</p>
+
+  <div class="panel">
+    <div class="two">
+      <div>
+        <h3 style="color:var(--freq);margin-top:0">Frequentistisch</h3>
+        <div class="quote f">A rechnet mit der <b>Binomialverteilung</b>: p ≈ <b>0.073</b> → nicht signifikant. 😐<br><br>
+        B rechnet mit der <b>negativen Binomialverteilung</b>: p ≈ <b>0.033</b> → signifikant! 🎉</div>
+        <p class="lede" style="font-size:.9rem">Gleiche Daten. Gegensätzliche Schlussfolgerung.
+        Der Unterschied liegt allein in der <b>Absicht</b> des Forschers — also in Daten,
+        die <i>nie erhoben wurden</i>. Die Sampling-Verteilung hängt davon ab, was du
+        <i>gemessen hättest</i>, wäre die Welt anders gelaufen.</p>
+      </div>
+      <div>
+        <h3 style="color:var(--bayes);margin-top:0">Bayesianisch</h3>
+        <div class="quote">Die Likelihood ist in beiden Fällen proportional zu
+        θ⁹(1−θ)³. Der Normierungsfaktor kürzt sich raus.<br><br>
+        → <b>Identischer Posterior. Identische Schlussfolgerung.</b> 🤝</div>
+        <p class="lede" style="font-size:.9rem">Das ist das <b>Likelihood-Prinzip</b>:
+        Alle Evidenz über θ steckt in der Likelihood-Funktion.
+        Bayes erfüllt es automatisch — p-Werte verletzen es.
+        Für viele ist das der stärkste philosophische Treffer des Krieges.</p>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:18px">
+      <b style="color:var(--freq)">Frequentist-Konter:</b> „Das ist kein Bug, das ist ein Feature!
+      Wenn du heimlich weiterwirfst, bis es signifikant wird (<i>optional stopping</i>),
+      muss die Methode das bestrafen — sonst explodiert deine Fehlerrate.
+      Fehlerkontrolle ist kein Luxus, sie ist die Geschäftsgrundlage der Wissenschaft.“</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ HISTORY ============ -->
+<section>
+  <h2>📜 Die Kriegschronik</h2>
+  <div class="panel">
+    <table>
+      <tr><th style="width:110px">Jahr</th><th>Ereignis</th></tr>
+      <tr><td class="b">1763</td><td><b>Bayes' Essay</b> wird posthum von Richard Price veröffentlicht. Kaum jemand merkt's.</td></tr>
+      <tr><td class="b">1812</td><td><b>Laplace</b> entwickelt die Theorie unabhängig und viel weiter — und berechnet damit die Masse des Saturn. Er nennt es „Wahrscheinlichkeit der Ursachen“.</td></tr>
+      <tr><td class="f">1922–25</td><td><b>Fisher</b> greift die „inverse Wahrscheinlichkeit“ frontal an, erfindet Likelihood, Signifikanztests und die 0.05-Konvention. Der Krieg beginnt.</td></tr>
+      <tr><td class="f">1933</td><td><b>Neyman & Pearson</b> formalisieren Fehler 1. und 2. Art, Power, Konfidenzintervalle. Fisher hasst auch <i>sie</i> — es gibt also eigentlich <b>drei</b> Lager.</td></tr>
+      <tr><td class="b">1939</td><td><b>Jeffreys</b> („Theory of Probability“) hält die bayesianische Fahne hoch. Fisher und Jeffreys streiten sich jahrelang öffentlich.</td></tr>
+      <tr><td class="b">1946</td><td><b>Cox' Theorem</b>: Wer konsistent mit Graden des Glaubens rechnen will, landet zwangsläufig bei den Wahrscheinlichkeitsaxiomen.</td></tr>
+      <tr><td class="f">1950er–80er</td><td>Frequentismus dominiert die Lehrbücher. Bayes ist praktisch nicht rechenbar — die Integrale sind brutal.</td></tr>
+      <tr><td class="b">1990</td><td><b>Gelfand & Smith</b> popularisieren <b>MCMC/Gibbs-Sampling</b>. Plötzlich ist Bayes <i>berechenbar</i>. Die Gegenoffensive rollt.</td></tr>
+      <tr><td>2005</td><td><b>Ioannidis:</b> „Why Most Published Research Findings Are False“ — ein Basisraten-Argument gegen naive p-Werte.</td></tr>
+      <tr><td>2011–15</td><td><b>Replikationskrise.</b> p-Hacking, Garden of Forking Paths, Preregistration. Beide Lager finden plötzlich einen gemeinsamen Feind: schlampige Methodik.</td></tr>
+      <tr><td>2016</td><td>Die <b>ASA</b> veröffentlicht ein offizielles Statement zu p-Werten: Sie messen <i>nicht</i> die Wahrscheinlichkeit, dass die Hypothese wahr ist.</td></tr>
+      <tr><td>Heute</td><td>Waffenstillstand im Alltag: Stan, PyMC, brms für Bayes; Preregistration und Effektgrößen für Frequentisten. Geschossen wird nur noch auf Twitter.</td></tr>
+    </table>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============ PEACE ============ -->
+<section>
+  <h2>🕊️ Der Friedensvertrag</h2>
+  <div class="panel peace">
+    <p class="lede" style="max-width:none">
+      Die ehrliche Antwort nach 100 Jahren Krieg: <b>Beide haben recht — über verschiedene Fragen.</b></p>
+    <ul style="line-height:1.9;color:#c9d3ea">
+      <li><b>Willst du wissen, wie oft deine Methode auf Dauer falsch liegt?</b> → Das ist eine frequentistische Frage. Qualitätskontrolle, Zulassungsstudien, Teilchenphysik (5σ!), A/B-Tests mit Fehlerbudget.</li>
+      <li><b>Willst du wissen, was du angesichts <i>dieser</i> Daten glauben sollst?</b> → Das ist eine bayesianische Frage. Diagnostik, Forecasting, Entscheidung unter Unsicherheit, kleine Stichproben mit viel Vorwissen.</li>
+      <li><b>Mit viel Daten konvergieren beide</b> (Bernstein–von-Mises): Der Prior wird irrelevant, Posterior und Sampling-Verteilung fallen zusammen. Der Streit zerfällt genau dort, wo die Daten knapp sind — und genau dort ist er wichtig.</li>
+      <li><b>Beide sind manipulierbar.</b> Frequentisten durch p-Hacking, Bayesianer durch Prior-Shopping. Die Lösung heißt in beiden Fällen: <b>Transparenz, Präregistrierung, Sensitivitätsanalyse.</b></li>
+      <li><b>Der eigentliche Feind</b> ist nicht das andere Lager, sondern: dichotomes Denken, fehlende Effektgrößen, unveröffentlichte Nullresultate und Modelle, die niemand geprüft hat.</li>
+    </ul>
+    <p class="lede" style="max-width:none;margin-top:16px">
+      <b>Merksatz:</b> Ein p-Wert sagt dir, wie überrascht du wärst, <i>wenn nichts los wäre</i>.
+      Ein Posterior sagt dir, <i>was du jetzt glauben solltest</i>.
+      Wer das verwechselt, hat den Krieg nicht verstanden — egal auf welcher Seite er kämpft.</p>
+  </div>
+</section>
+
+<footer>
+  ⚔️ Gebaut mit reinem HTML/CSS/JS — keine Libraries, keine Priors versteckt.<br>
+  „Alle Modelle sind falsch, aber manche sind nützlich.“ — George Box (der übrigens beides benutzte)
+</footer>
+
+</div>
+
+<script>
+/* =========================================================
+   MATHE-HILFSFUNKTIONEN
+   ========================================================= */
+function logGamma(x){
+  const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,
+    -176.61502916214059,12.507343278686905,-0.13857109526572012,
+    9.9843695780195716e-6,1.5056327351493116e-7];
+  if(x<0.5) return Math.log(Math.PI/Math.sin(Math.PI*x))-logGamma(1-x);
+  x-=1; let a=0.99999999999980993, t=x+7.5;
+  for(let i=0;i<8;i++) a+=g[i]/(x+i+1);
+  return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+}
+function logBeta(a,b){ return logGamma(a)+logGamma(b)-logGamma(a+b); }
+function betaPDF(x,a,b){
+  if(x<=0||x>=1) return 0;
+  return Math.exp((a-1)*Math.log(x)+(b-1)*Math.log(1-x)-logBeta(a,b));
+}
+/* Regularisierte unvollständige Betafunktion via Kettenbruch */
+function betacf(a,b,x){
+  const FPMIN=1e-300, EPS=3e-12;
+  let qab=a+b, qap=a+1, qam=a-1, c=1, d=1-qab*x/qap;
+  if(Math.abs(d)<FPMIN) d=FPMIN;
+  d=1/d; let h=d;
+  for(let m=1;m<=300;m++){
+    const m2=2*m;
+    let aa=m*(b-m)*x/((qam+m2)*(a+m2));
+    d=1+aa*d; if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c; if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d; h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
+    d=1+aa*d; if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c; if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d; const del=d*c; h*=del;
+    if(Math.abs(del-1)<EPS) break;
+  }
+  return h;
+}
+function betaInc(a,b,x){ // P(X <= x) für Beta(a,b)
+  if(x<=0) return 0; if(x>=1) return 1;
+  const bt=Math.exp(logGamma(a+b)-logGamma(a)-logGamma(b)+a*Math.log(x)+b*Math.log(1-x));
+  return x<(a+1)/(a+b+2) ? bt*betacf(a,b,x)/a : 1-bt*betacf(b,a,1-x)/b;
+}
+function betaQuantile(a,b,p){ // Bisektion – robust und schnell genug
+  let lo=0, hi=1;
+  for(let i=0;i<80;i++){ const mid=(lo+hi)/2; (betaInc(a,b,mid)<p) ? lo=mid : hi=mid; }
+  return (lo+hi)/2;
+}
+function normCDF(z){ // Abramowitz–Stegun
+  const t=1/(1+0.2316419*Math.abs(z));
+  const d=0.3989422804014327*Math.exp(-z*z/2);
+  let p=d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  return z>0 ? 1-p : p;
+}
+function randn(){ // Box–Muller
+  let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+
+/* =========================================================
+   CANVAS-HELFER
+   ========================================================= */
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  cv.width=r.width*dpr; cv.height=(cv.getAttribute('height')||300)*dpr;
+  cv.style.height=(cv.getAttribute('height')||300)+'px';
+  const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,W:r.width,H:+(cv.getAttribute('height')||300)};
+}
+function axis(ctx,W,H,pad,label){
+  ctx.strokeStyle='#2a3050'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-8,H-pad); ctx.stroke();
+  ctx.fillStyle='#6b7694'; ctx.font='11px ui-monospace,monospace';
+  for(let i=0;i<=5;i++){
+    const x=pad+(W-pad-8)*i/5;
+    ctx.beginPath(); ctx.moveTo(x,H-pad); ctx.lineTo(x,H-pad+4); ctx.stroke();
+    ctx.fillText((i/5).toFixed(1),x-9,H-pad+17);
+  }
+  ctx.fillStyle='#8d98b3'; ctx.font='12px Inter,sans-serif';
+  ctx.fillText(label,pad,16);
+}
+
+/* =========================================================
+   SCHLACHTFELD 1 — MÜNZE
+   ========================================================= */
+const S={n:0,h:0};
+const el=id=>document.getElementById(id);
+const trueP=el('trueP'), pa=el('pa'), pb=el('pb');
+
+function flip(k){
+  const p=+trueP.value;
+  for(let i=0;i<k;i++){ S.n++; if(Math.random()<p) S.h++; }
+  render();
+}
+el('flip1').onclick=()=>flip(1);
+el('flip10').onclick=()=>flip(10);
+el('flip100').onclick=()=>flip(100);
+el('reset').onclick=()=>{S.n=0;S.h=0;render();};
+[trueP,pa,pb].forEach(s=>s.oninput=render);
+
+function drawFreq(){
+  const {ctx,W,H}=setupCanvas(el('cvF'));
+  const pad=34;
+  ctx.clearRect(0,0,W,H);
+  axis(ctx,W,H,pad,'Frequentist · Sampling-Verteilung unter H₀: θ = 0.5');
+  if(S.n===0){
+    ctx.fillStyle='#4a5370'; ctx.font='13px Inter,sans-serif';
+    ctx.fillText('Wirf die Münze, um die Schlacht zu beginnen…',pad,H/2);
+    return;
+  }
+  const se=Math.sqrt(0.25/S.n), phat=S.h/S.n;
+  const px=x=>pad+(W-pad-8)*x;
+  const peak=1/(se*Math.sqrt(2*Math.PI));
+  const py=y=>H-pad-(H-pad-28)*(y/peak);
+  // Normalapproximation
+  ctx.beginPath();
+  for(let i=0;i<=400;i++){
+    const x=i/400;
+    const d=Math.exp(-0.5*((x-0.5)/se)**2)/(se*Math.sqrt(2*Math.PI));
+    i?ctx.lineTo(px(x),py(d)):ctx.moveTo(px(x),py(d));
+  }
+  ctx.lineTo(px(1),H-pad); ctx.lineTo(px(0),H-pad); ctx.closePath();
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgba(255,77,109,.38)'); g.addColorStop(1,'rgba(255,77,109,.03)');
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle='#ff4d6d'; ctx.lineWidth=2; ctx.stroke();
+  // Ablehnungsbereiche
+  const z=1.959964, lo=0.5-z*se, hi=0.5+z*se;
+  ctx.fillStyle='rgba(255,77,109,.18)';
+  ctx.fillRect(px(0),28,Math.max(0,px(lo)-px(0)),H-pad-28);
+  ctx.fillRect(px(hi),28,Math.max(0,px(1)-px(hi)),H-pad-28);
+  // θ̂
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(px(phat),26); ctx.lineTo(px(phat),H-pad); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#fff'; ctx.font='bold 12px ui-monospace,monospace';
+  ctx.fillText('θ̂='+phat.toFixed(3),Math.min(W-78,px(phat)+6),38);
+}
+
+function drawBayes(){
+  const {ctx,W,H}=setupCanvas(el('cvB'));
+  const pad=34;
+  ctx.clearRect(0,0,W,H);
+  axis(ctx,W,H,pad,'Bayesianer · Prior (gestrichelt) → Posterior (gefüllt)');
+  const a0=+pa.value, b0=+pb.value;
+  const a1=a0+S.h, b1=b0+(S.n-S.h);
+  let mx=0;
+  for(let i=1;i<400;i++){ mx=Math.max(mx,betaPDF(i/400,a1,b1),betaPDF(i/400,a0,b0)); }
+  const px=x=>pad+(W-pad-8)*x, py=y=>H-pad-(H-pad-28)*(y/mx);
+  // Prior
+  ctx.setLineDash([5,4]); ctx.strokeStyle='#6b7694'; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  for(let i=1;i<400;i++){ const x=i/400,d=betaPDF(x,a0,b0); i===1?ctx.moveTo(px(x),py(d)):ctx.lineTo(px(x),py(d)); }
+  ctx.stroke(); ctx.setLineDash([]);
+  // Posterior
+  ctx.beginPath();
+  for(let i=1;i<400;i++){ const x=i/400,d=betaPDF(x,a1,b1); i===1?ctx.moveTo(px(x),py(d)):ctx.lineTo(px(x),py(d)); }
+  ctx.lineTo(px(1),H-pad); ctx.lineTo(px(0),H-pad); ctx.closePath();
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgba(77,201,255,.42)'); g.addColorStop(1,'rgba(77,201,255,.03)');
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle='#4dc9ff'; ctx.lineWidth=2.2; ctx.stroke();
+  // Credible-Intervall
+  const cl=betaQuantile(a1,b1,0.025), ch=betaQuantile(a1,b1,0.975);
+  ctx.strokeStyle='#4dc9ff'; ctx.lineWidth=4; ctx.globalAlpha=.75;
+  ctx.beginPath(); ctx.moveTo(px(cl),H-pad-5); ctx.lineTo(px(ch),H-pad-5); ctx.stroke();
+  ctx.globalAlpha=1;
+  // θ = 0.5 Referenz
+  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1; ctx.setLineDash([2,4]);
+  ctx.beginPath(); ctx.moveTo(px(0.5),26); ctx.lineTo(px(0.5),H-pad); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function render(){
+  el('truePv').textContent=(+trueP.value).toFixed(2);
+  el('pav').textContent=(+pa.value).toFixed(1);
+  el('pbv').textContent=(+pb.value).toFixed(1);
+  el('sN').textContent=S.n; el('sH').textContent=S.h;
+
+  if(S.n>0){
+    const phat=S.h/S.n;
+    el('sMLE').textContent=phat.toFixed(4);
+    const z=(phat-0.5)/Math.sqrt(0.25/S.n);
+    const p=2*(1-normCDF(Math.abs(z)));
+    el('sP').textContent = p<0.0001 ? '< 0.0001' : p.toFixed(4);
+    el('sP').style.color = p<0.05 ? '#2fbf63' : '#ff4d6d';
+
+    // Wald-Konfidenzintervall (frequentistisch)
+    const seHat=Math.sqrt(phat*(1-phat)/S.n);
+    const ciLo=Math.max(0,phat-1.959964*seHat), ciHi=Math.min(1,phat+1.959964*seHat);
+    el('sCI').textContent='['+ciLo.toFixed(3)+', '+ciHi.toFixed(3)+']';
+
+    // Bayesianische Größen
+    const a0=+pa.value, b0=+pb.value;
+    const a1=a0+S.h, b1=b0+(S.n-S.h);
+    el('sPM').textContent=(a1/(a1+b1)).toFixed(4);
+    const crLo=betaQuantile(a1,b1,0.025), crHi=betaQuantile(a1,b1,0.975);
+    el('sCrI').textContent='['+crLo.toFixed(3)+', '+crHi.toFixed(3)+']';
+    const pGt=1-betaInc(a1,b1,0.5);
+    el('sPost').textContent=(pGt*100).toFixed(2)+' %';
+    el('sPost').style.color = pGt>0.95||pGt<0.05 ? '#2fbf63' : '#4dc9ff';
+  } else {
+    ['sMLE','sP','sCI','sPM','sCrI','sPost'].forEach(id=>{
+      el(id).textContent='–'; el(id).style.color='';
+    });
+    el('sP').style.color=''; el('sPost').style.color='';
+  }
+  drawFreq(); drawBayes();
+}
+
+/* =========================================================
+   SCHLACHTFELD 2 — DER GARTEN DER SICH GABELNDEN PFADE
+   ========================================================= */
+const N_PLOTS=60;
+let gardenData=[], tested=0, sig=0;
+
+function buildGarden(){
+  gardenData=[]; tested=0; sig=0;
+  const g=el('garden'); g.innerHTML='';
+  for(let i=0;i<N_PLOTS;i++){
+    const d=document.createElement('div');
+    d.className='plot'; d.textContent='?'; d.dataset.i=i;
+    d.title='Hypothese '+(i+1)+' — hier ist garantiert KEIN echter Effekt';
+    d.onclick=()=>testPlot(i);
+    g.appendChild(d);
+    gardenData.push({p:null,done:false,node:d});
+  }
+  updateGardenStats();
+}
+
+function testPlot(i){
+  const d=gardenData[i];
+  if(d.done) return;
+  // Reine Nullhypothese: n=30 pro Gruppe, identische Verteilungen
+  const n=30; let s1=0,s2=0,q1=0,q2=0;
+  for(let k=0;k<n;k++){
+    const x=randn(), y=randn();
+    s1+=x; q1+=x*x; s2+=y; q2+=y*y;
+  }
+  const m1=s1/n, m2=s2/n;
+  const v1=(q1-n*m1*m1)/(n-1), v2=(q2-n*m2*m2)/(n-1);
+  const se=Math.sqrt(v1/n+v2/n);
+  const t=(m1-m2)/se;
+  // Normalapproximation reicht bei df≈58
+  const p=2*(1-normCDF(Math.abs(t)));
+  d.p=p; d.done=true; tested++;
+  d.node.textContent=p<0.001?'<.001':p.toFixed(3).slice(1);
+  d.node.classList.add('tested');
+  if(p<0.05){ d.node.classList.add('sig'); sig++; d.node.title='p='+p.toFixed(4)+' — „signifikant“! Und trotzdem reines Rauschen.'; }
+  else d.node.title='p='+p.toFixed(4)+' — nichts gefunden.';
+  updateGardenStats();
+}
+
+function updateGardenStats(){
+  el('gT').textContent=tested;
+  el('gS').textContent=sig;
+  el('gR').textContent = tested ? ((sig/tested)*100).toFixed(1)+' %' : '–';
+}
+
+el('testOne').onclick=()=>{
+  const open=gardenData.map((d,i)=>d.done?-1:i).filter(i=>i>=0);
+  if(open.length) testPlot(open[Math.floor(Math.random()*open.length)]);
+};
+el('testAll').onclick=()=>{
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i>=N_PLOTS){ clearInterval(iv); return; }
+    testPlot(i++);
+  },28);
+};
+el('resetG').onclick=buildGarden;
+
+/* =========================================================
+   SCHLACHTFELD 3 — BASISRATEN-HINTERHALT
+   ========================================================= */
+const prev=el('prev'), sens=el('sens'), spec=el('spec');
+[prev,sens,spec].forEach(s=>s.oninput=drawBaseRate);
+
+function drawBaseRate(){
+  const pr=+prev.value, se=+sens.value, sp=+spec.value;
+  el('prevv').textContent=(pr*100).toFixed(2)+' %';
+  el('sensv').textContent=(se*100).toFixed(2)+' %';
+  el('specv').textContent=(sp*100).toFixed(2)+' %';
+
+  const POP=100000;
+  const sick=pr*POP, healthy=POP-sick;
+  const TP=sick*se, FN=sick*(1-se);
+  const FP=healthy*(1-sp), TN=healthy*sp;
+  const ppv=TP/(TP+FP);
+
+  el('ppv').textContent=(ppv*100).toFixed(2)+' %';
+  el('tp').textContent=Math.round(TP).toLocaleString('de-DE');
+  el('fp').textContent=Math.round(FP).toLocaleString('de-DE');
+  const o=TP/Math.max(FP,1e-9);
+  el('odds').textContent = o>=1 ? o.toFixed(2)+' : 1' : '1 : '+(1/o).toFixed(2);
+
+  // Visualisierung: Balken der positiven Tests
+  const {ctx,W,H}=setupCanvas(el('cvBR'));
+  ctx.clearRect(0,0,W,H);
+  const pad=16, barY=54, barH=74;
+  const total=TP+FP;
+  const wTP=(TP/total)*(W-2*pad), wFP=(FP/total)*(W-2*pad);
+
+  ctx.fillStyle='#8d98b3'; ctx.font='13px Inter,sans-serif';
+  ctx.fillText('Alle Menschen mit POSITIVEM Testergebnis (von 100 000):',pad,28);
+
+  // Echte Positive
+  const g1=ctx.createLinearGradient(0,barY,0,barY+barH);
+  g1.addColorStop(0,'#4dc9ff'); g1.addColorStop(1,'#2a8fc0');
+  ctx.fillStyle=g1;
+  roundRect(ctx,pad,barY,Math.max(wTP,1),barH,8); ctx.fill();
+
+  // Falsch Positive
+  const g2=ctx.createLinearGradient(0,barY,0,barY+barH);
+  g2.addColorStop(0,'#ff4d6d'); g2.addColorStop(1,'#a81f3c');
+  ctx.fillStyle=g2;
+  roundRect(ctx,pad+wTP,barY,Math.max(wFP,1),barH,8); ctx.fill();
+
+  // Beschriftung
+  ctx.font='bold 13px Inter,sans-serif';
+  ctx.fillStyle='#061018';
+  if(wTP>110) ctx.fillText('KRANK: '+Math.round(TP).toLocaleString('de-DE'),pad+10,barY+barH/2+5);
+  ctx.fillStyle='#fff';
+  if(wFP>130) ctx.fillText('GESUND (Fehlalarm): '+Math.round(FP).toLocaleString('de-DE'),pad+wTP+10,barY+barH/2+5);
+
+  // Prozentanzeige darunter
+  ctx.font='11px ui-monospace,monospace'; ctx.fillStyle='#6b7694';
+  ctx.fillText('→ P(krank | positiv) = '+(ppv*100).toFixed(2)+' %   ·   Prior war '+(pr*100).toFixed(2)+' %   ·   Bayes-Faktor = '+(se/(1-sp)).toFixed(1)+'×',
+    pad,barY+barH+26);
+
+  // Mini-Pfeil Prior → Posterior
+  ctx.strokeStyle='#2a3050'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,barY+barH+40); ctx.lineTo(W-pad,barY+barH+40); ctx.stroke();
+  const xPrior=pad+(W-2*pad)*pr, xPost=pad+(W-2*pad)*ppv;
+  dot(ctx,xPrior,barY+barH+40,'#6b7694','Prior');
+  dot(ctx,xPost,barY+barH+40,'#4dc9ff','Posterior');
+}
+function dot(ctx,x,y,c,label){
+  ctx.fillStyle=c; ctx.beginPath(); ctx.arc(x,y,5,0,7); ctx.fill();
+  ctx.font='10px Inter,sans-serif'; ctx.fillText(label,x-14,y-10);
+}
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+/* =========================================================
+   KARTEN-FLIP-EFFEKT (kleine Spielerei)
+   ========================================================= */
+document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    const dx=(e.clientX-r.left)/r.width-0.5, dy=(e.clientY-r.top)/r.height-0.5;
+    c.style.transform=`translateY(-6px) rotateX(${-dy*6}deg) rotateY(${dx*6}deg) scale(1.015)`;
+  });
+  c.addEventListener('mouseleave',()=>{ c.style.transform=''; });
+});
+
+/* =========================================================
+   START
+   ========================================================= */
+window.addEventListener('resize',()=>{ render(); drawBaseRate(); });
+buildGarden();
+drawBaseRate();
+render();
+</script>
+</body>
+</html>
