@@ -4123,19 +4123,14 @@ function _math_pre_render_real_data_fix(latex) {
 		// APPROACH 10: Direct replacement of x as a variable
 		latex = latex.replace(/\bx\b(?=[^}]*Input)/g, formatted.split(" & ")[0]);
 
-		// APPROACH 11-20: Very aggressive replacements
-		// Replace any standalone x in pmatrix
-		latex = latex.replace(/\\begin\{pmatrix\}[\s\S]*?x[\s\S]*?\\end\{pmatrix\}/g, matrix);
-		// Replace x in underbrace with Input
-		latex = latex.replace(/(\\underbrace\{[^}]*?)(\s*)x(\s*\})/g, "$1$2" + formatted + "$3");
-		// Replace x followed by \end{pmatrix}
-		latex = latex.replace(/(\s)x(\s*\\end)/g, "$1" + formatted + "$2");
-		// Replace x at start of pmatrix content
-		latex = latex.replace(/(\\begin\{pmatrix\}\s*)x/gi, "$1" + formatted);
-		// Replace x with first value if it's the only thing
-		latex = latex.replace(/\\begin\{pmatrix\}\s*\\end\{pmatrix\}/g, matrix);
-		// Replace x in matrix with all values
-		latex = latex.replace(/\\begin\{pmatrix\}(\s*)x(\s*)\\end\{pmatrix\}/g, matrix);
+		// APPROACH 11-20: SAFE replacements (only in Input underbrace context)
+		// Pattern: \\underbrace{...x...}_{Input} or _{\\mathrm{Input}}
+		// Only target x that is between underbrace braces followed by Input label
+		latex = latex.replace(/(\\underbrace\{[^}]*?)(\s*)x(\s*)\}_\{\\mathrm\{Input\}\}/g, "$1$2" + formatted + "$3\}_\{\\mathrm{Input}\}");
+		latex = latex.replace(/(\\underbrace\{[^}]*?)(\s*)x(\s*)\}_\{Input\}/g, "$1$2" + formatted + "$3\}_\{Input\}");
+		// Also handle case where x is the ONLY content in the pmatrix inside underbrace
+		latex = latex.replace(/(\\underbrace\{\\begin\{pmatrix\})(\s*)x(\s*)(\\end\{pmatrix\}\}_\{\\mathrm\{Input\}\})/g, "$1$2" + formatted + "$3$4");
+		latex = latex.replace(/(\\underbrace\{\\begin\{pmatrix\})(\s*)x(\s*)(\\end\{pmatrix\}\}_\{Input\})/g, "$1$2" + formatted + "$3$4");
 
 		return latex;
 	} catch(e) { console.warn("pre_render:", e); return latex; }
@@ -4271,8 +4266,8 @@ function _math_dom_fix_real_data() {
 			var walker2 = document.createTreeWalker(firstXDiv, NodeFilter.SHOW_TEXT, null, false);
 			var node2;
 			var replaced = false;
-			while (node2 = walker2.nextNode() && !replaced) {
-				if (node2.textContent.trim() === "x") {
+			while (!replaced && (node2 = walker2.nextNode())) {
+				if (node2 && node2.textContent && node2.textContent.trim() === "x") {
 					node2.textContent = formatted.split(" ").slice(0, 8).join(" ");
 					replaced = true;
 				}
