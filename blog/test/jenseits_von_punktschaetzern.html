@@ -2494,7 +2494,7 @@ function renderMath(){
     const padT={l:50,r:20,t:24,b:28};
     axes(ctx,W,topH,padT,'','Rang i',[lo,hi],[0.5,n+0.5],
       {nx:6,ny:Math.min(n,8),xfmt:()=>'',yfmt:v=>Math.round(v)});
-    const mT=mk(padT,topH,[lo,hi],[0.5,n+0.5]);
+    const mT=mk(padT,W,topH,[lo,hi],[0.5,n+0.5]);
     for(let i=0;i<n;i++){
       const y=mT.y(i+1);
       ctx.strokeStyle='rgba(36,49,80,.9)';ctx.lineWidth=1;
@@ -2520,7 +2520,7 @@ function renderMath(){
     dmax*=1.2;
     axes(ctx,W,H,padB,'Wert','Dichte von X₍ₖ₎',[lo,hi],[0,dmax],
       {nx:6,ny:4,xfmt:v=>v.toFixed(2),yfmt:v=>v.toFixed(0)});
-    const mB=mk(padB,H,[lo,hi],[0,dmax]);
+    const mB=mk(padB,W,H,[lo,hi],[0,dmax]);
     // Referenz: Gesamtverteilung (klein)
     const tot=[];
     for(let i=0;i<=NP;i++){
