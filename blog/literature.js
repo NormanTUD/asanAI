@@ -3803,6 +3803,27 @@ window.bibData = {
 		year: "ca. 350 BCE",
 		url: "https://archive.org/details/aristotle-categories-and-de-interpretatione"
 	},
+	"humboldt1836sprachbau": {
+		title: "Über die Verschiedenheit des menschlichen Sprachbaues und ihren Einfluss auf die geistige Entwickelung des Menschengeschlechts",
+		author: "Wilhelm von Humboldt",
+		year: 1836,
+		url: "https://archive.org/details/berdieverschied00humbgoog",
+		alternativetitle: "Humboldt, 1836"
+	},
+	"evanslevinson2009myth": {
+		title: "The Myth of Language Universals: Language Diversity and Its Importance for Cognitive Science",
+		author: "Nicholas Evans and Stephen C. Levinson",
+		year: 2009,
+		url: "https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/myth-of-language-universals-language-diversity-and-its-importance-for-cognitive-science/25D362A6566FCA4F51054D1C41104654",
+		alternativetitle: "Evans and Levinson, 2009"
+	},
+	"winawer2007russianblues": {
+		title: "Russian Blues Reveal Effects of Language on Color Discrimination",
+		author: "Jonathan Winawer et al.",
+		year: 2007,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC1876524/",
+		alternativetitle: "Winawer et al., 2007"
+	},
 	"kempelen_speaking_machine": {
 		title: "Mechanismus der menschlichen Sprache nebst der Beschreibung seiner sprechenden Maschine",
 		author: "Wolfgang von Kempelen",
