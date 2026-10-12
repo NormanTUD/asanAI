@@ -36,10 +36,7 @@ A commodity needs a **public**. In the seventeenth and eighteenth centuries the 
 
 Notice what is new. The authority is not in any single person's rank, title, or lineage. It is in the **forum**: you argued a point, but you argued it to a public that had *read the same paper*. Information stopped being a private possession in the head of the Fugger banker and became the raw material of a collective, argument-generating public. The news sheet (the commodity) and the coffee house (the venue) are two halves of the same invention: a way for a *society* to share and contest what it knows.
 
-<figure style="float: right; width: 30%; max-width: 280px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="coffee_house_1674.png" alt="A London coffee house, 1674" />
-	<figcaption class="md">A London coffee house, 1674 — the physical venue of the early public sphere. Public domain engraving.</figcaption>
-</figure>
+\marginfig{coffee_house_1674.png}{A London coffee house, 1674 — the physical venue of the early public sphere. Public domain engraving.}
 </div>
 
 <div class="md">
@@ -60,10 +57,7 @@ The ambition was not merely to *store* knowledge but to *connect* it — and in 
 
 The final layer is the one that was missing from the story for a hundred years, because it was almost lost. In 1910 two Belgian lawyers — \cite[Paul Otlet]{paulotlet} and Henri La Fontaine — built the **Mundaneum** in Brussels \cite[the Mundaneum, Wikipedia]{mundaneum}. It was a *documentation of the world*: every book, article, and fact they could collect reduced to a standardized index card, classified by the Universal Decimal Classification and **cross-indexed**, so that a single fact sat in many drawers at once. At its height the building held more than twelve million cards — a physical model of the whole of human knowledge, *networked by index* \cite[the Mundaneum, Wikipedia]{mundaneum}.
 
-<figure style="float: right; width: 28%; max-width: 260px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="paul_otlet.jpg" alt="Paul Otlet at his office" />
-	<figcaption class="md">\cite[Paul Otlet (1868–1944)]{paulotlet} at his office, 1937. Public domain (Mundaneum).</figcaption>
-</figure>
+\marginfig{paul_otlet.jpg}{\cite[Paul Otlet (1868–1944)]{paulotlet} at his office, 1937. Public domain (Mundaneum).}
 </div>
 
 <div class="md">
@@ -73,10 +67,7 @@ In 1934 Otlet published the \cite[Traité de Documentation]{traitededocumentatio
 
 Read that again: a network of linked documents, *retrievable by query, from a distance, on demand*. In 1934, with paper cards and telegraph lines, Otlet was describing a **paper internet** — before the word "internet" was ever applied to a network of computers. His 1934 vision directly prefigured the *Memex* that Vannevar Bush would make famous a decade later, and the [World Wide Web](untold_history.php) that came after that. This is the hinge the course has been building toward: the moment the *corpus* stops being a thing you read in a room and becomes a thing you **query from anywhere**.
 
-<figure>
-	<img style="max-width: 300px; width: 100%; height: auto; display: block; margin: 0 auto;" src="palais_mondial_1930.jpg" alt="Otlet and La Fontaine at the Palais Mondial, 1930" />
-	<figcaption class="md">Otlet and Henri La Fontaine at the gates of the Palais Mondial, 1930 — the physical home of the Mundaneum's twelve million cross-indexed cards. Public domain (Mundaneum).</figcaption>
-</figure>
+\marginfig{palais_mondial_1930.jpg}{Otlet and Henri La Fontaine at the gates of the Palais Mondial, 1930 — the physical home of the Mundaneum's twelve million cross-indexed cards. Public domain (Mundaneum).}
 </div>
 
 <div class="md">
