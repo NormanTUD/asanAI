@@ -1986,6 +1986,24 @@ function toggle_math_show_real_data() {
 	_math_show_real_data = !_math_show_real_data;
 	try { console.log("toggle_math_show_real_data:", _math_show_real_data); if (_math_show_real_data && typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e){console.warn(e);}
 	try { if (_math_show_real_data && typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); } } catch(e){console.warn(e);}
+	// Watchdog: keep trying to populate for 5 seconds
+	if (_math_show_real_data) {
+		if (window._real_data_watchdog) { try { clearInterval(window._real_data_watchdog); } catch(e){} }
+		var attempts = 0;
+		window._real_data_watchdog = setInterval(function() {
+			attempts++;
+			try {
+				var hasData = false;
+				if (window._real_data_cache) { for (var k in window._real_data_cache) { if (window._real_data_cache[k]) { hasData = true; break; } } }
+				if (!hasData && typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); }
+				if (hasData || attempts >= 10) {
+					clearInterval(window._real_data_watchdog);
+					window._real_data_watchdog = null;
+					try { write_model_to_latex_to_page(1); } catch(e) {}
+				}
+			} catch(e) { clearInterval(window._real_data_watchdog); window._real_data_watchdog = null; }
+		}, 500);
+	}
 	write_model_to_latex_to_page(1); // await not possible, force
 }
 

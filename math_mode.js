@@ -197,6 +197,36 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 		latex = _math_pre_render_real_data_fix(latex);
 	}
 
+	// === GLOBAL LATEX SANITIZER (nuclear option) ===
+	// Replaces any remaining \text{[N]} patterns with \mathrm{[N]}
+	// regardless of source (stale cache, other code paths, etc.)
+	if (latex && typeof latex === "string") {
+		latex = latex.replace(/\\text\{(\[[^\]]*\])\}/g, "\\mathrm{$1}");
+		latex = latex.replace(/\\text\{Shape:\s*([^\}]*)\}/g, "\\mathrm{Shape: $1}");
+	}
+
+	// === REPLACE h_N SYMBOLS WITH REAL DATA ===
+	if (latex && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		try {
+			latex = _math_replace_h_with_real_data(latex);
+		} catch(e) { console.warn("replace_h:", e); }
+	}
+
+	// === AGGRESSIVE CACHE POPULATION ===
+	if (latex && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		try {
+			if (window._real_data_cache && Object.keys(window._real_data_cache).length === 0) {
+				if (typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); }
+			}
+			if (typeof populate_neuron_outputs_from_current === "function") {
+				var no = (typeof neuron_outputs !== "undefined") ? neuron_outputs : {};
+				var hasAny = false;
+				for (var k in no) { if (no[k] && no[k].output && no[k].output.length > 0) { hasAny = true; break; } }
+				if (!hasAny) { populate_neuron_outputs_from_current(); }
+			}
+		} catch(e) {}
+	}
+
 	if (latex) {
 		try { $("#math_tab_code").empty(); } catch(e) {}
 		$("#math_tab_code").html(latex);
@@ -1149,13 +1179,20 @@ function _get_h_symbol (layer_idx) {
 function _get_h_matrix_values (layer_idx) {
 	try {
 		var comp = null;
+		// Strategy 1: neuron_outputs (from training)
 		if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx] && neuron_outputs[layer_idx].output) {
 			var oo = neuron_outputs[layer_idx].output;
 			if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
 		}
+		// Strategy 2: _real_data_cache
 		if (!comp && window._real_data_cache && window._real_data_cache[layer_idx]) {
 			comp = window._real_data_cache[layer_idx];
 		}
+		// Strategy 3: manual forward pass (most reliable for Dense-only models)
+		if (!comp && window._manual_cache && window._manual_cache[layer_idx]) {
+			comp = window._manual_cache[layer_idx];
+		}
+		// Strategy 4: on-demand sub-model predict
 		if (!comp) comp = _get_intermediate_activation(layer_idx);
 		if (comp === null || comp === undefined) return null;
 		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
@@ -1234,12 +1271,26 @@ window._real_data_cache = window._real_data_cache || {};
 function _populate_real_data_cache() {
 	try {
 		if (!model || !model.layers) return;
+		// Also try to populate neuron_outputs
+		try { if (typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e) {}
 		var cache = {};
+		// Manual forward pass (most reliable for Dense-only)
+		var manualResults = _manual_forward_pass_dense(0);
+		if (manualResults && Array.isArray(manualResults)) {
+			window._manual_cache = {};
+			for (var mi = 0; mi < manualResults.length; mi++) {
+				window._manual_cache[mi] = manualResults[mi];
+			}
+		}
+		// Sub-model predict for each layer
 		for (var i = 0; i < model.layers.length; i++) {
 			var vals = _get_intermediate_activation(i);
 			if (vals) cache[i] = vals;
 		}
 		window._real_data_cache = cache;
+		if (Object.keys(cache).length > 0 || (window._manual_cache && Object.keys(window._manual_cache).length > 0)) {
+			console.log("_populate_real_data_cache: populated", Object.keys(cache).length, "submodel +", window._manual_cache ? Object.keys(window._manual_cache).length : 0, "manual");
+		}
 	} catch(e) { console.warn("_populate_real_data_cache:", e); }
 }
 
@@ -4275,6 +4326,126 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 	return null;
 }
 
+/**
+ * MANUAL FORWARD PASS for Dense-only models — bypasses model's graph entirely.
+ * Most reliable approach: compute output = activation(W * x + b) using raw weights.
+ * Returns array of activations for each visible Dense layer, or null if model
+ * has non-Dense layers or weights can't be read.
+ */
+function _manual_forward_pass_dense(sampleIndex) {
+	if (!model || !model.layers || !Array.isArray(model.layers)) return null;
+	try {
+		var x_data = (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) ? xy_data_global.x : null;
+		if (!x_data) return null;
+		var x_arr = null;
+		if (typeof x_data.arraySync === "function") { try { x_arr = x_data.arraySync(); } catch(e) {} }
+		else if (Array.isArray(x_data)) x_arr = x_data;
+		if (!x_arr || !Array.isArray(x_arr) || x_arr.length === 0) return null;
+		sampleIndex = sampleIndex || 0;
+		if (sampleIndex >= x_arr.length) sampleIndex = 0;
+		var first = x_arr[sampleIndex];
+
+		// Flatten input to 1D
+		var inputVec = [];
+		function _flatf(a) { for (var i = 0; i < a.length; i++) { if (Array.isArray(a[i])) _flatf(a[i]); else inputVec.push(a[i]); } }
+		_flatf(first);
+
+		var results = [];
+		var currentVec = inputVec.slice();
+
+		for (var li = 0; li < model.layers.length; li++) {
+			var layer = model.layers[li];
+			var cls = layer.getClassName ? layer.getClassName() : "";
+
+			// Skip non-Dense layers (let sub-model handle them)
+			if (cls !== "Dense") return null;
+
+			// Get kernel and bias weights
+			var weights = layer.weights || [];
+			if (!weights || weights.length < 1) return null;
+
+			var kernelArr = null, biasArr = null;
+			try {
+				if (weights[0] && weights[0].val && !weights[0].val.isDisposed) {
+					kernelArr = Array.from(weights[0].val.dataSync());
+				}
+			} catch(e) {}
+			try {
+				if (weights[1] && weights[1].val && !weights[1].val.isDisposed) {
+					biasArr = Array.from(weights[1].val.dataSync());
+				} else if (weights[1] && typeof weights[1].name === "string" && weights[1].name.indexOf("bias") >= 0) {
+					biasArr = [];
+				}
+			} catch(e) {}
+
+			if (!kernelArr) return null;
+
+			// Reshape kernel: TF.js Dense stores kernel as [inputDim, units] in outputShape [units]
+			// outputShape for Dense is [null, units]. Kernel tensor shape is [inputDim, units].
+			var kernelShape = null;
+			try { kernelShape = weights[0].val.shape; } catch(e) {}
+			var inputDim = currentVec.length;
+			var units = 0;
+			if (kernelShape && Array.isArray(kernelShape) && kernelShape.length >= 2) {
+				inputDim = kernelShape[0];
+				units = kernelShape[1];
+			} else {
+				units = kernelArr.length / inputDim;
+			}
+			units = Math.floor(units);
+			if (units <= 0 || inputDim <= 0) return null;
+
+			// Compute output = W^T * x + b  (TF.js Dense: output = activation(x * W + b), kernel stored as [in, out])
+			var outVec = new Array(units).fill(0);
+			for (var u = 0; u < units; u++) {
+				var sum = 0;
+				for (var ii = 0; ii < inputDim; ii++) {
+					sum += currentVec[ii] * kernelArr[ii * units + u];
+				}
+				if (biasArr && u < biasArr.length) sum += biasArr[u];
+				outVec[u] = sum;
+			}
+
+			// Apply activation if layer has one
+			var activationName = null;
+			try {
+				if (layer.activation && layer.activation.getClassName) {
+					activationName = layer.activation.getClassName();
+				}
+			} catch(e) {}
+
+			if (activationName && activationName !== "Linear") {
+				for (var u2 = 0; u2 < outVec.length; u2++) {
+					var v = outVec[u2];
+					if (activationName === "Relu" || activationName === "ReLU") {
+						outVec[u2] = Math.max(0, v);
+					} else if (activationName === "Sigmoid") {
+						outVec[u2] = 1 / (1 + Math.exp(-v));
+					} else if (activationName === "Tanh") {
+						outVec[u2] = Math.tanh(v);
+					} else if (activationName === "Softmax") {
+						// Apply softmax across the vector
+						var maxV = outVec[0];
+						for (var m = 1; m < outVec.length; m++) if (outVec[m] > maxV) maxV = outVec[m];
+						var sumExp = 0;
+						for (var s = 0; s < outVec.length; s++) { outVec[s] = Math.exp(outVec[s] - maxV); sumExp += outVec[s]; }
+						for (var s2 = 0; s2 < outVec.length; s2++) outVec[s2] /= sumExp;
+						break; // softmax applied to all at once
+					} else if (activationName === "LeakyRelu") {
+						outVec[u2] = v > 0 ? v : 0.01 * v;
+					} else if (activationName === "Elu") {
+						outVec[u2] = v >= 0 ? v : Math.exp(v) - 1;
+					}
+				}
+			}
+
+			results.push(outVec.slice());
+			currentVec = outVec;
+		}
+		return results;
+	} catch(e) { console.warn("_manual_forward_pass_dense:", e); return null; }
+}
+
 
 function populate_neuron_outputs_from_current() {
 	try {
@@ -4398,6 +4569,28 @@ function _math_pre_render_real_data_fix(latex) {
 
 		return latex;
 	} catch(e) { console.warn("pre_render:", e); return latex; }
+}
+
+/**
+ * Replaces h_N^{\mathrm{[shape]}} symbols with real-data underbraces.
+ * This is the post-processing step that actually makes h_0 → matrix.
+ * Tries multiple data sources: neuron_outputs → _real_data_cache → on-demand.
+ */
+function _math_replace_h_with_real_data(latex) {
+	if (!latex || typeof latex !== "string") return latex;
+	if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return latex;
+
+	// For each layer index N, check if we have real data
+	for (var N = 0; N < 20; N++) {
+		var matrix = _get_h_matrix_values(N);
+		if (!matrix) continue;
+		// Replace h_N^{\mathrm{[shape]}} with \underbrace{matrix}_{h_N}
+		var replacement = "\\underbrace{" + matrix + "}_{h_" + N + "}";
+		// Match h_N^{\mathrm{[...]}} pattern
+		var re = new RegExp("h_" + N + "\\^\\{\\\\mathrm\\{\\[[^\\]]*\\]\\}\\}", "g");
+		latex = latex.replace(re, replacement);
+	}
+	return latex;
 }
 
 

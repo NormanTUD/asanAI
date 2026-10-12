@@ -17,14 +17,59 @@ function _temml() {
 			const batch = elements.slice(i, i + batch_size);
 			for (const e of batch) render_temml_quick(e);
 			i += batch_size;
-			if (i < elements.length)
+			if (i < elements.length) {
 				setTimeout(render_batch, 0);
+			} else {
+				setTimeout(_math_dom_sanitize, 50);
+			}
 		}
 
 		render_batch();
 	} catch (e) {
 		console.error("temml:", e);
 	}
+}
+
+/**
+ * Post-render DOM sanitizer: finds .temml_me elements that contain
+ * raw LaTeX patterns (indicating temml failed to parse them) and
+ * sanitizes the content so stray text doesn't appear.
+ */
+function _math_dom_sanitize() {
+	try {
+		var containers = document.querySelectorAll("#math_tab_code .temml_me");
+		for (var ci = 0; ci < containers.length; ci++) {
+			var el = containers[ci];
+			if (!el || !el.textContent) continue;
+			var txt = el.textContent;
+			// Check for raw LaTeX patterns that indicate failed parsing
+			var hasRawLatex = /\\text\{|\]|\\underbrace|\\mathrm/.test(txt);
+			if (!hasRawLatex) continue;
+			// If the element was marked as rendered but still contains raw LaTeX,
+			// it means temml failed. Replace with a safe indicator.
+			if (el.dataset.rendered === "1" && /\\text\{/.test(txt) && el.querySelector("math") === null) {
+				// Sanitize: replace \text{...} with \mathrm{...} and re-render
+				var sanitized = txt.replace(/\\text\{([^\}]*)\}/g, "\\mathrm{$1}");
+				el.textContent = sanitized;
+				delete el.dataset.rendered;
+				render_temml_quick(el);
+			}
+		}
+		// Also check for stray text nodes outside .temml_me that look like LaTeX
+		var mathContainer = document.getElementById("math_tab_code");
+		if (mathContainer) {
+			var stray = mathContainer.querySelectorAll(":not(.temml_me)");
+			for (var si = 0; si < stray.length; si++) {
+				var s = stray[si];
+				if (s.childNodes.length === 1 && s.childNodes[0].nodeType === 3) {
+					var st = s.textContent;
+					if (/\\[a-zA-Z]+\{|\\text\{/.test(st)) {
+						s.textContent = st.replace(/\\text\{([^\}]*)\}/g, "\\mathrm{$1}");
+					}
+				}
+			}
+		}
+	} catch(e) { console.warn("_math_dom_sanitize:", e); }
 }
 
 function render_temml_quick(e) {
