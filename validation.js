@@ -39,7 +39,7 @@ function check_number_values() {
 				}
 			}
 		} else { // val === ""
-			if (!field.classList.contains("no_red_on_error")) {
+			if (field !== document.activeElement && !field.classList.contains("no_red_on_error")) {
 				field.style.backgroundColor = "red";
 			}
 		}
@@ -139,6 +139,10 @@ function check_if_val_is_integer (classname, name) {
 		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
 
 		if (this_element.length) {
+			if (this_element.get(0) === document.activeElement) {
+				continue;
+			}
+
 			var this_dilation_rate_val = this_element.val();
 			var this_layer_type = layer_types[layer_idx];
 
@@ -174,6 +178,10 @@ function check_if_val_is_float_or_integer (classname, name) {
 		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
 
 		if (this_element.length) {
+			if (this_element.get(0) === document.activeElement) {
+				continue;
+			}
+
 			var this_dilation_rate_val = this_element.val();
 			var this_layer_type = layer_types[layer_idx];
 

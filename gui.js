@@ -296,7 +296,29 @@ function hide_no_conv_stuff() {
 	return any_conv_visualizations;
 }
 
+function _focused_layer_number_input_is_empty () {
+	var ae = document.activeElement;
+
+	if (!ae || ae.tagName !== "INPUT" || ae.type !== "number") {
+		return false;
+	}
+
+	if (!$(ae).closest(".layer_setting").length) {
+		return false;
+	}
+
+	if ($(ae).hasClass("no_red_bg_when_empty")) {
+		return false;
+	}
+
+	return $(ae).val() === "";
+}
+
 function _has_any_warning () {
+	if(_focused_layer_number_input_is_empty()) {
+		return true;
+	}
+
 	if($("#width").val() == "" || $("#height").val() == "") {
 		//wrn("[_has_any_warning] Width or height is empty string, returning from updated_page");
 		return true;

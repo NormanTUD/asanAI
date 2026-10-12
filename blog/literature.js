@@ -18038,10 +18038,10 @@ window.bibData = {
 	},
 	"wsd2025": {
 		title: "A Multi-Power Law for Loss Curve Prediction Across Learning Rate Schedules",
-		author: "Wang et al.",
+		author: "Kairong Luo et al.",
 		year: 2025,
 		url: "https://arxiv.org/abs/2503.12811",
-		alternativetitle: "WSD schedule dynamics (2025)"
+		alternativetitle: "Luo et al., 2025"
 	},
 
 	/* Mixture of Experts (mixture_of_experts.php) */

@@ -17001,8 +17001,8 @@
   "cited_in": []
  },
  {
-  "name": "Wang et al.",
-  "canon": "Wang",
+  "name": "Kairong Luo et al.",
+  "canon": "Kairong Luo",
   "alias": null,
   "lat": null,
   "lng": null,
@@ -17013,7 +17013,9 @@
   "keys": [
    "wsd2025"
   ],
-  "cited_in": []
+  "cited_in": [
+   "trainingdynamics"
+  ]
  },
  {
   "name": "Fedus",
