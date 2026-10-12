@@ -17,8 +17,8 @@ def occluded(P,C):
 def slerpdir(a3,b3,ang,tt):
     s1=math.sin((1-tt)*ang)/math.sin(ang or 1e-6); s2=math.sin(tt*ang)/math.sin(ang or 1e-6)
     return norm(tuple(a3[j]*s1+b3[j]*s2 for j in range(3)))
-ents={e['id']:e for e in json.load(open('atlas/entities.json')) if e.get('lat') is not None}
-thrs=json.load(open('atlas/threads.json'))
+ents={e['id']:e for e in json.load(open('atlas_data/entities.json')) if e.get('lat') is not None}
+thrs=json.load(open('atlas_data/threads.json'))
 SEG=[]
 for t in thrs:
     L=(0.9 if t.get('kind','influence')=='signal' else 0.5)

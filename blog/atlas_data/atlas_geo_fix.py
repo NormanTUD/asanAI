@@ -12,9 +12,9 @@ out_part*.json coordinates in place; the merge then carries the corrected
 coordinates through unchanged.
 
 Usage (from blog/):
-    python3 atlas/atlas_geo_fix.py geocode   # geocode every distinct loc (cached)
-    python3 atlas/atlas_geo_fix.py apply     # patch raw out_part*.json from the cache
-    python3 atlas/atlas_geo_fix.py report    # summarise how many dots moved
+    python3 atlas_data/atlas_geo_fix.py geocode   # geocode every distinct loc (cached)
+    python3 atlas_data/atlas_geo_fix.py apply     # patch raw out_part*.json from the cache
+    python3 atlas_data/atlas_geo_fix.py report    # summarise how many dots moved
 
 The geocoder is a polite Nominatim client: 1 request/second, a descriptive
 User-Agent, per-request timeout, and retries with backoff on 429/5xx.

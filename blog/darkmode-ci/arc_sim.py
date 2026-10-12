@@ -77,8 +77,8 @@ def occluded(P, C):
     return 0 < s_enter < 1
 
 def load():
-    ents = {e['id']: e for e in json.load(open('atlas/entities.json')) if e.get('lat') is not None}
-    thrs = json.load(open('atlas/threads.json'))
+    ents = {e['id']: e for e in json.load(open('atlas_data/entities.json')) if e.get('lat') is not None}
+    thrs = json.load(open('atlas_data/threads.json'))
     return ents, thrs
 
 _TH = []
