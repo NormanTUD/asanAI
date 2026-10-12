@@ -112,14 +112,16 @@ To solve this, we use **Random Initialization**. By scattering the starting valu
 By starting with “noise,” we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
 
 ## Python implementation
-Here are two example scripts, the first one using TensorFlow, the second one using PyTorch, that train a one-layer neural network in Python on the 'and' dataset.
+Here are scripts that train a small network in Python. The **From Scratch** tab is pure Python with no framework at all — one weight $a$, one bias $b$, the mean-squared-error loss, and plain gradient descent: the very same neuron as the live demo above, and it checks its own analytic gradient against a numerical one. The other two build a network with TensorFlow and PyTorch.
 </div>
 
 <?php
 $pytorch = get_string_of_file_or_die("py/minimalneuron/pytorch.py");
 $tensorflow = get_string_of_file_or_die("py/minimalneuron/tensorflow.py");
+$custom = get_string_of_file_or_die("py/minimalneuron/custom.py");
 
 $minimalneuroncodetabs = array(
+	"From Scratch" => '<div class="md">No framework at all — pure Python. This is the same neuron as the live demo above: $y = ax + b$, the mean-squared-error loss, the analytic gradient, and plain gradient descent. It even verifies the gradient against a finite-difference one.</div><pre><code class="language-python">'.$custom.'</code></pre>',
 	"TensorFlow" => '<pre><code class="language-python">'.$tensorflow.'</code></pre>',
 	"PyTorch"    => '<pre><code class="language-python">'.$pytorch.'</code></pre>'
 );
