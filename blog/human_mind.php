@@ -93,10 +93,7 @@ This "embodiment" of the abstract is a quiet prerequisite of the whole enterpris
 
 A mind that can only *look at* a representation is limited to the views it has already been given. The human mind can **manipulate** a representation — and the cleanest proof came in 1971, when \citeauthorlastnameand{shepardmetzler1971} showed that people can *rotate* a three-dimensional object in their heads. The experiment: subjects were shown two 3-D assemblies of cubes, drawn in different orientations, and asked only "same or different?" They answered quickly when the two were identical or obvious mirror-images — but when the two differed by a *rotation*, their response time increased **linearly with the angle** between them \cite[Shepard & Metzler, mental rotation (1971)]{shepardmetzler1971}. You cannot answer that in constant time by "looking"; you answer the way a *simulation* does, by turning the object bit by bit until the orientations match. The mind was caught running an animation, at a rate — a few dozen degrees a second — that matches, eerily, the rate a person can turn a real object in their hands.
 
-<figure>
-	<img style="width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto;" src="mental_rotation.jpg" alt="Two cube assemblies in different orientations, from the mental-rotation task" />
-	<figcaption class="md">The Shepard–Metzler "mental rotation task": two cube assemblies, seen from different angles. Judging "same or different" takes longer the larger the rotation between them — the signature of a simulation, not a lookup. Public domain (Wikipedia diagram).</figcaption>
-</figure>
+\marginfig{mental_rotation.jpg}{The Shepard–Metzler "mental rotation task": two cube assemblies, seen from different angles. Judging "same or different" takes longer the larger the rotation between them — the signature of a simulation, not a lookup. Public domain (Wikipedia diagram).}
 
 This is load-bearing for this course, because it is the first clean demonstration that human cognition is **computation on a model**: the mind does not store a fixed answer for every orientation of every object; it runs a *procedure* over an internal representation, and the procedure's cost is visible in the timing. The same shape of move underlies the "chain of thought" you will meet in the model chapters: instead of answering directly, the mind (and later the model) *works through the intermediate states*, and the number of intermediate states is what takes the time. Mental rotation is the ancestor, in a human subject, of a transformer's intermediate layers: a representation, transformed step by step, until it reaches the answer.
 
@@ -250,10 +247,7 @@ Externalized memory is only as good as the institution that *keeps* it. A scribb
 
 **The university.** The **University of Bologna** (1088), the oldest still in operation \cite[University of Bologna (1088)]{universityofbologna}, was the invention of the **institution that outlives its members**: a body that certifies that someone has learned, and transmits that certification across centuries. A university is not a building; it is a *protocol* — a way for knowledge to change hands with a guarantee, from one generation of teachers to the next, independent of any single teacher's death. It is the ancestor of every credential, every standard, every "this is now *how we do it*."
 
-<figure style="float: right; width: 24%; max-width: 210px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="university_of_bologna.jpg" alt="Medieval miniature of students at the University of Bologna" />
-	<figcaption class="md">A 1497 miniature of students at the **University of Bologna** — the oldest university in continuous operation, and the institution that outlived its founders. Public domain.</figcaption>
-</figure>
+\marginfig{university_of_bologna.jpg}{A 1497 miniature of students at the **University of Bologna** — the oldest university in continuous operation, and the institution that outlived its founders. Public domain.}
 
 **The journal.** In 1665 the Royal Society began publishing the *Philosophical Transactions*, and with it the first rules of the scientific game: **register a result to establish priority**, and **submit it to the judgment of other experts** before it is believed \cite[Philosophical Transactions (1665)]{philtrans1665}. Priority and peer review are not natural facts; they are *institutions* — a date-stamp so one mind cannot steal another's discovery, and a check so one mind's enthusiasm is not mistaken for another's. The preprint, the review, the citation, and the "published date" are all still running that 1665 protocol, at the scale of millions of papers a year.
 
