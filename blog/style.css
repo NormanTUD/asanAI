@@ -401,6 +401,8 @@ html.dark [style*="background: #f0fdf4"],
 html.dark [style*="background:#f0fdf4"],
 html.dark [style*="background: #f0f9ff"],
 html.dark [style*="background:#f0f9ff"],
+html.dark [style*="background: #eff6ff"],
+html.dark [style*="background:#eff6ff"],
 html.dark [style*="background: #dcfce7"],
 html.dark [style*="background:#dcfce7"],
 html.dark [style*="background: #e0e7ff"],
@@ -525,6 +527,177 @@ html.dark [style*="background: white"],
 html.dark [style*="background:white"] {
 	background: var(--mn-surface) !important;
 }
+
+/* Named light tint swatches → matching dark tints */
+html.dark [style*="background: #fee2e2"],
+html.dark [style*="background:#fee2e2"],
+html.dark [style*="background: #fef2f2"],
+html.dark [style*="background:#fef2f2"] {
+	background: #450a0a !important;
+}
+html.dark [style*="background: #dbeafe"],
+html.dark [style*="background:#dbeafe"] {
+	background: #1e3a8a !important;
+}
+html.dark [style*="background: #fef3c7"],
+html.dark [style*="background:#fef3c7"] {
+	background: #422006 !important;
+}
+html.dark [style*="background: #fafafa"],
+html.dark [style*="background:#fafafa"] {
+	background: var(--mn-bg-subtle) !important;
+}
+html.dark [style*="background: #fce7f3"],
+html.dark [style*="background:#fce7f3"] {
+	background: #500724 !important;
+}
+html.dark [style*="background: #ede9fe"],
+html.dark [style*="background:#ede9fe"] {
+	background: #2e1065 !important;
+}
+html.dark [style*="background: #fff7ed"],
+html.dark [style*="background:#fff7ed"] {
+	background: #431407 !important;
+}
+html.dark [style*="border: 1px solid #bbf7d0"],
+html.dark [style*="border:1px solid #bbf7d0"],
+html.dark [style*="border: 1px solid #bfdbfe"],
+html.dark [style*="border:1px solid #bfdbfe"],
+html.dark [style*="border: 1px solid #fecaca"],
+html.dark [style*="border:1px solid #fecaca"],
+html.dark [style*="border: 1px solid #fde68a"],
+html.dark [style*="border:1px solid #fde68a"] {
+	border-color: var(--mn-border) !important;
+}
+
+/* JS-set inline styles are serialized by the CSSOM as rgb(…) (not hex),
+   so the hex attribute selectors above miss them. Cover the common light
+   swatches in their rgb form as well — this fixes the JS-generated widget
+   panels (algorithms.js, intuition.js, transformer.js, …). */
+html.dark [style*="background: rgb(255, 255, 255)"],
+html.dark [style*="background:rgb(255, 255, 255)"],
+html.dark [style*="background-color: rgb(255, 255, 255)"],
+html.dark [style*="background: rgb(248, 250, 252)"],
+html.dark [style*="background:rgb(248, 250, 252)"],
+html.dark [style*="background: rgb(250, 250, 250)"],
+html.dark [style*="background:rgb(250, 250, 250)"],
+html.dark [style*="background: rgb(249, 250, 251)"],
+html.dark [style*="background:rgb(249, 250, 251)"],
+html.dark [style*="background: rgb(255, 254, 240)"],
+html.dark [style*="background:rgb(255, 254, 240)"],
+html.dark [style*="background: rgb(255, 254, 247)"],
+html.dark [style*="background:rgb(255, 254, 247)"],
+html.dark [style*="background: rgb(248, 246, 240)"],
+html.dark [style*="background:rgb(248, 246, 240)"] {
+	background: var(--mn-surface) !important;
+}
+html.dark [style*="background: rgb(241, 245, 249)"],
+html.dark [style*="background:rgb(241, 245, 249)"],
+html.dark [style*="background-color: rgb(241, 245, 249)"] {
+	background: var(--mn-bg-subtle) !important;
+}
+html.dark [style*="background: rgb(240, 253, 244)"],
+html.dark [style*="background:rgb(240, 253, 244)"],
+html.dark [style*="background: rgb(236, 253, 245)"],
+html.dark [style*="background:rgb(236, 253, 245)"],
+html.dark [style*="background: rgb(232, 245, 233)"],
+html.dark [style*="background:rgb(232, 245, 233)"],
+html.dark [style*="background: rgb(220, 252, 231)"],
+html.dark [style*="background:rgb(220, 252, 231)"] {
+	background: #022c22 !important;
+}
+html.dark [style*="background: rgb(240, 249, 255)"],
+html.dark [style*="background:rgb(240, 249, 255)"],
+html.dark [style*="background: rgb(224, 242, 254)"],
+html.dark [style*="background:rgb(224, 242, 254)"] {
+	background: #082f49 !important;
+}
+html.dark [style*="background: rgb(239, 246, 255)"],
+html.dark [style*="background:rgb(239, 246, 255)"],
+html.dark [style*="background: rgb(219, 234, 254)"],
+html.dark [style*="background:rgb(219, 234, 254)"] {
+	background: #1e3a8a !important;
+}
+html.dark [style*="background: rgb(238, 242, 255)"],
+html.dark [style*="background:rgb(238, 242, 255)"],
+html.dark [style*="background: rgb(224, 231, 255)"],
+html.dark [style*="background:rgb(224, 231, 255)"],
+html.dark [style*="background: rgb(237, 233, 254)"],
+html.dark [style*="background:rgb(237, 233, 254)"],
+html.dark [style*="background: rgb(245, 243, 255)"],
+html.dark [style*="background:rgb(245, 243, 255)"],
+html.dark [style*="background: rgb(249, 240, 255)"],
+html.dark [style*="background:rgb(249, 240, 255)"] {
+	background: #1e1b4b !important;
+}
+html.dark [style*="background: rgb(254, 249, 195)"],
+html.dark [style*="background:rgb(254, 249, 195)"],
+html.dark [style*="background: rgb(254, 252, 232)"],
+html.dark [style*="background:rgb(254, 252, 232)"],
+html.dark [style*="background: rgb(254, 243, 199)"],
+html.dark [style*="background:rgb(254, 243, 199)"],
+html.dark [style*="background: rgb(255, 251, 235)"],
+html.dark [style*="background:rgb(255, 251, 235)"] {
+	background: #422006 !important;
+}
+html.dark [style*="background: rgb(254, 242, 242)"],
+html.dark [style*="background:rgb(254, 242, 242)"],
+html.dark [style*="background: rgb(254, 226, 226)"],
+html.dark [style*="background:rgb(254, 226, 226)"] {
+	background: #450a0a !important;
+}
+html.dark [style*="background: rgb(255, 243, 224)"],
+html.dark [style*="background:rgb(255, 243, 224)"],
+html.dark [style*="background: rgb(255, 247, 237)"],
+html.dark [style*="background:rgb(255, 247, 237)"] {
+	background: #431407 !important;
+}
+html.dark [style*="background: rgb(252, 231, 243)"],
+html.dark [style*="background:rgb(252, 231, 243)"] {
+	background: #500724 !important;
+}
+
+/* JS-set dark text colours → light (rgb form) */
+html.dark [style*="color: rgb(30, 41, 59)"],
+html.dark [style*="color:rgb(30, 41, 59)"] { color: #e2e8f0 !important; }
+html.dark [style*="color: rgb(15, 23, 42)"],
+html.dark [style*="color:rgb(15, 23, 42)"] { color: #f1f5f9 !important; }
+html.dark [style*="color: rgb(51, 65, 85)"],
+html.dark [style*="color:rgb(51, 65, 85)"] { color: #cbd5e1 !important; }
+html.dark [style*="color: rgb(71, 85, 105)"],
+html.dark [style*="color:rgb(71, 85, 105)"] { color: #cbd5e1 !important; }
+html.dark [style*="color: rgb(100, 116, 139)"],
+html.dark [style*="color:rgb(100, 116, 139)"] { color: #cbd5e1 !important; }
+html.dark [style*="color: rgb(148, 163, 184)"],
+html.dark [style*="color:rgb(148, 163, 184)"] { color: #cbd5e1 !important; }
+html.dark [style*="color: rgb(153, 27, 27)"],
+html.dark [style*="color:rgb(153, 27, 27)"] { color: #fca5a5 !important; }
+html.dark [style*="color: rgb(22, 101, 52)"],
+html.dark [style*="color:rgb(22, 101, 52)"] { color: #86efac !important; }
+html.dark [style*="color: rgb(30, 64, 175)"],
+html.dark [style*="color:rgb(30, 64, 175)"] { color: #93c5fd !important; }
+html.dark [style*="color: rgb(124, 58, 237)"],
+html.dark [style*="color:rgb(124, 58, 237)"] { color: #c4b5fd !important; }
+html.dark [style*="color: rgb(5, 150, 105)"],
+html.dark [style*="color:rgb(5, 150, 105)"] { color: #6ee7b7 !important; }
+html.dark [style*="color: rgb(133, 77, 14)"],
+html.dark [style*="color:rgb(133, 77, 14)"] { color: #fde047 !important; }
+html.dark [style*="color: rgb(146, 64, 14)"],
+html.dark [style*="color:rgb(146, 64, 14)"] { color: #fde68a !important; }
+html.dark [style*="color: rgb(69, 26, 3)"],
+html.dark [style*="color:rgb(69, 26, 3)"] { color: #fde68a !important; }
+html.dark [style*="color: rgb(6, 95, 70)"],
+html.dark [style*="color:rgb(6, 95, 70)"] { color: #6ee7b7 !important; }
+html.dark [style*="color: rgb(49, 46, 129)"],
+html.dark [style*="color:rgb(49, 46, 129)"] { color: #a5b4fc !important; }
+html.dark [style*="color: rgb(20, 83, 45)"],
+html.dark [style*="color:rgb(20, 83, 45)"] { color: #86efac !important; }
+html.dark [style*="color: rgb(180, 83, 9)"],
+html.dark [style*="color:rgb(180, 83, 9)"] { color: #fcd34d !important; }
+html.dark [style*="color: rgb(220, 38, 38)"],
+html.dark [style*="color:rgb(220, 38, 38)"] { color: #fca5a5 !important; }
+html.dark [style*="color: rgb(22, 163, 74)"],
+html.dark [style*="color:rgb(22, 163, 74)"] { color: #86efac !important; }
 
 /* Borders on white-ish backgrounds → dark border */
 html.dark [style*="background:#fff"][style*="border"],
@@ -770,6 +943,13 @@ html.dark .js-plotly-plot .main-svg .zerolinelayer path {
 }
 html.dark .js-plotly-plot .modebar-btn path {
 	fill: var(--mn-text-muted) !important;
+}
+
+/* Heatmap cell labels sit on saturated green→red cells, where the muted
+   global text colour above is unreadable. Force a near-black label that
+   reads on every step of the colour scale (id beats the class rule). */
+#pe-injection-heatmap .heatmaplayer text {
+	fill: #0b1220 !important;
 }
 
 /* ECharts: theme the legend, axis labels and tooltip backgrounds */
