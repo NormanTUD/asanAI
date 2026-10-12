@@ -18,7 +18,7 @@ Statuses: `[ ]` pending · `[~]` in progress · `[x]` done (validators green) ·
 | 5 | Evaluation as a discipline | `evaluation.php` (benchmarks; "build your own eval" in 6 lines) | **New lesson** | `building_evals.php`, Part 5, order 20 |
 | 6 | The economic layer | absent | **New lesson** | `ai_economics.php`, Part 5, order 21 |
 | 7 | Retrieval depth (beyond "RAG works") | `rag.php`, `vectorsearch.php` | **Merged into `rag.php`** | § "Retrieval, in Depth" in `rag.php` (Part 5, order 3) |
-| 8 | Model → System | `agents.php`, `production_serving.php` | **New lesson** | `from_model_to_product.php`, Part 5, order 23 |
+| 8 | Model → System | `agents.php`, `production_serving.php` | **Merged into `production_serving.php`** | § "From Model to Product" in `production_serving.php` (Part 5, order 14) |
 
 These close the gap between Part 4 (architecture) and Part 5 (making AI useful) and
 give the "engineering craft" half of the course a through-line it currently lacks.
@@ -257,8 +257,8 @@ give the "engineering craft" half of the course a through-line it currently lack
   the BM25 top-k, the dense top-k, the fused list, and the cross-encoder rescoring —
   make the two-stage design visible.
 
-### T8 — From model to system (NEW LESSON `from_model_to_product.php`)
-`[ ]`
+### T8 — From model to system (merged into `production_serving.php`)
+`[x]`
 - **Gap.** The biggest structural hole. The course has `agents.php` and
   `production_serving.php`, but a modern LLM product is a **pipeline** — router,
   guardrails, tool-calling schema, retry logic, fallback models, observability,
@@ -283,9 +283,10 @@ give the "engineering craft" half of the course a through-line it currently lack
     latency, cost, success); without it you cannot debug a 1-in-200 failure.
   - **Cost tracking** — per-request and per-user token accounting as a first-class
     feature; the bridge to [The economic layer](ai_economics).
-- **Home.** New lesson `from_model_to_product.php`, Part 5, order 23 — the capstone of
-  the engineering-craft half, sitting after [Production serving](production_serving)
-  and [Agents](agents).
+- **Home.** Merged into `production_serving.php` as § "From Model to Product: the
+  pipeline around the model" (Part 5, order 14), between "Hardware" and
+  "Observability"; the two Observability sections were merged into one, and
+  `from_model_to_product.php` deleted.
 - **Sources to verify.** a stable reference for LLM-gateway / guardrail patterns
   (e.g. the OpenAI/Anthropic platform docs, or a well-known systems write-up); the
   tool-calling / function-calling spec. Reuse the existing `agents.php` and
