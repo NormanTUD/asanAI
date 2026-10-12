@@ -57,10 +57,7 @@ A little later, and a little further east, the same two millennia-old craft prod
 
 Where Euclid's algorithm *reduces* a problem step by step, the sieve **filters** a finite set. It is still an algorithm, for the same two reasons: it *terminates* (once the smallest number you have not crossed off, $p$, satisfies $p^2 > n$, nothing below $n$ can still be composite, so you are done), and it is *correct by construction* (a number survives the sieve only if none of the primes below it divide it, which is precisely what being prime means). Two algorithms, separated by a few decades and a city, both defined long before the word *computer* existed, both pinned down by the identical pair: **it stops, and it is right.**
 
-<figure style="float: right; width: 24%; max-width: 220px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="eratosthenes.jpg" alt="Engraving of Eratosthenes of Cyrene" />
-	<figcaption class="md">Eratosthenes of Cyrene (c. 276–194 BC), from a later engraving. Public domain.</figcaption>
-</figure>
+\marginfig{eratosthenes.jpg}{Eratosthenes of Cyrene (c. 276–194 BC), from a later engraving. Public domain.}
 </div>
 
 <div class="md">
@@ -86,10 +83,7 @@ This is exactly the question Euclid's two properties had been pointing at all al
 
 The answer, delivered two years later by two independent mathematicians wielding two tools that looked nothing alike, was **no**.
 
-<figure style="float: right; width: 24%; max-width: 220px; margin: 0 0 1em 1em;">
-	<img style="width: 100%; height: auto; display: block;" src="hilbert_1907.jpg" alt="David Hilbert, 1907" />
-	<figcaption class="md">David Hilbert (1862–1943), 1907. Public domain.</figcaption>
-</figure>
+\marginfig{hilbert_1907.jpg}{David Hilbert (1862–1943), 1907. Public domain.}
 </div>
 
 <div class="md">
@@ -108,7 +102,7 @@ And the upshot for the 1928 question: within this shared class of "what a machin
 
 <figure>
 	<img style="max-width: 100%; width: 100%; height: auto; display: block; margin: 0 auto;" src="turing_machine_2a.svg" alt="A Turing machine: states reading and writing symbols on a tape" />
-	<figcaption class="md">A Turing machine: a finite set of states reading and writing symbols on an infinite tape, moving left or right. Public domain diagram (after Kleene).</figcaption>
+	<figcaption class="md">A Turing machine: a finite set of states reading and writing symbols on an infinite tape, moving left or right. Public domain diagram.</figcaption>
 </figure>
 </div>
 
