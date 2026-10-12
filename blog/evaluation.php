@@ -2,13 +2,14 @@
 <!--
 COURSE_METADATA:
 title: Evaluation & Benchmarks
-description: How we measure LLM capability — MMLU, HumanEval, contamination, and the limits of benchmarks.
+description: How we measure LLM capability — MMLU, HumanEval, contamination, and the limits of benchmarks — plus how to build an evaluation for your own problem: rubric design, inter-annotator agreement, LLM-judge calibration, and telling a real effect from noise.
 icon: &#127942;
 part: 5
 order: 16
 color: rose
-topics: programming, philosophy, society
+topics: programming, philosophy, society, data, inference
 tags: code-heavy
+math: 40
 -->
 
 <div class="md">
@@ -222,6 +223,85 @@ When evaluating an LLM for your application:
 6. **Include adversarial examples**: prompts designed to break the system.
 
 The goal is **not** to maximize a leaderboard score. It is to **measure real-world utility**, and that requires effort that no static benchmark can replace.
+</div>
+
+<div class="md">
+The first part of this chapter covered *public* benchmarks — MMLU, HumanEval, the leaderboards — the shared rulers by which models are compared to one another. This second part is the other half, and the one that is actually used at work: **how do you build an evaluation for *your* problem?** "Report the MMLU score" and "measure whether *my* feature works for *my* users" are different skills, and the second is where most ML time is actually spent. The gap between them is small in principle and large in practice — and it is closed by a handful of concrete techniques, not by a feel for the answer.
+</div>
+
+<div class="md">
+## From benchmark to your-own eval
+
+A public benchmark answers a *fixed* question ("can the model do general knowledge?"). Your product has its own question — "does it extract the invoice fields correctly?", "does it refuse the out-of-scope request?", "does it sound like our voice?" — and no leaderboard answers it for you. Building your own eval is the move from the fixed question to the specific one, and it has three parts: a **set of inputs** that represent the real cases you care about, a **way to score** each answer, and a **number** that lets you compare two versions.
+
+The trap is that the scoring part is where it goes wrong. A score is only as good as the *standard* behind it, and a standard that lives only in your head ("this looks right") is not a standard — it is a mood, and it will drift between you, your teammate, and your judge. So the first real task is to write the standard down.
+</div>
+
+<div class="md">
+## Rubric design: a specification, not a vibe
+
+A **rubric** turns "good answer" into a scored, written standard: a small set of **criteria** (what matters), a **scale** (what a 1, 3, 5 each means), and **anchors** (a concrete example of what each score looks like). The anchors are the load-bearing part — they are the difference between a rubric that two people can apply identically and one they cannot.
+
+A useful pattern is *dimensional* scoring rather than a single holistic score, because a single score hides *what* went wrong. For a "write a support reply" task, you might score separately:
+
+| Dimension | What a 1 looks like | What a 3 looks like | What a 5 looks like |
+|---|---|---|---|
+| **Correctness** | States a wrong fact or misses the point | Correct but incomplete | Correct and complete |
+| **Grounding** | Invents details not in the ticket | Uses the ticket, small gaps | Every claim traceable to the ticket |
+| **Tone** | Robotic or off-voice | Polite, generic | Matches the product's voice |
+| **Safety** | Leaks PII / over-promises | Safe | Safe, and declines what it should |
+
+Each dimension gets its own anchor examples. The point of writing the "what a 3 looks like" column is that *most* real outputs land in the middle, and the middle is where two scorers diverge — so the middle is where the anchors must be most precise. A rubric without sharp middle anchors will not give you reproducible scores, no matter how careful the scorers are.
+
+> A rubric is a *specification*. If two trained annotators do not agree, the rubric — not the annotators — is wrong. You fix the rubric, you do not blame the score.
+</div>
+
+<div class="md">
+## Inter-annotator agreement: is the rubric sound?
+
+Before you trust any score, you must trust the *standard*. The test is **inter-annotator agreement (IAA)**: have two (or more) people score the *same* answers independently, and measure how often they agree — but not naively. Two people both scoring "3" most of the time could just be lazy; the right statistic adjusts for the agreement you would expect **by chance**.
+
+The standard is **Cohen's κ** (kappa) \cite[Wikipedia, Cohen's kappa]{cohenkappa}:
+
+<div>
+$$ \kappa = \frac{p_{\text{observed}} - p_{\text{expected}}}{1 - p_{\text{expected}}} $$
+</div>
+
+where $p_{\text{observed}}$ is the fraction of items the annotators agree on, and $p_{\text{expected}}$ is the fraction they would agree on if they were guessing independently according to their individual scoring habits. κ ranges from $-1$ (systematic disagreement) through $0$ (no better than chance) to $1$ (perfect agreement). In practice:
+
+* **κ ≥ 0.7** — the rubric is sound enough to measure with; the standard is stable.
+* **κ ≈ 0.4–0.6** — the rubric is *almost* usable, but some criteria are ambiguous; find where the annotators split and sharpen those anchors.
+* **κ < 0.4** — the rubric is not measuring anything stable; the criteria are too vague. Do not collect more data until this is fixed — more data on a broken ruler is just more noise.
+
+(Krippendorff's α is the generalization when you have more than two annotators or different data types; κ is the two-annotator workhorse.) The discipline is that IAA is a property of the *rubric*, and you iterate the rubric until κ is high *before* you use it to compare model versions. This is the single most skipped step in practice, and the most expensive.
+</div>
+
+<div class="md">
+## Calibrating an LLM judge: trust it only where it agrees
+
+You will want to scale this past two humans — human scoring is slow and costs money. The obvious move is to use a strong LLM as the judge, and the first part of this chapter introduced it. The failure is that a judge *inherits its own biases* (it prefers its own style, longer answers, a particular phrasing), so an uncalibrated LLM judge can systematically prefer the wrong thing. **Calibration** is the fix, and it is the same IAA idea applied to the machine:
+
+1. **Hold out a subset** (say 50–200 answers) and score it *by hand*, with your κ-verified rubric. This is the ground truth.
+2. **Have the LLM judge score the same subset.**
+3. **Measure the judge's agreement with the humans** — a κ, or a correlation, or an agreement rate.
+4. **Trust the judge only where it agrees.** If the judge matches human scoring at κ ≥ 0.7 on your held-out set, you can let it scale the rest. Where it disagrees systematically (a particular dimension, a particular answer style), either fix the prompt/rubric or score that part by hand.
+
+This is \cite[Zheng et al., 2023]{llmjudge2023} in its practical form: an LLM judge is not a substitute for a standard, it is a *cheap instrument that you must calibrate against the standard first*. The held-out human subset is the calibration set; without it, the judge is a black box with a plausible face on it.
+</div>
+
+<div class="md">
+## Variance and significance: is the difference real?
+
+The last trap is the smallest and the most damaging: **reading too much into a small number.** You ship a prompt change and the eval goes from 82% to 87% — "up 5 points, shipped." But with $n = 100$ examples, 82% is 82 correct and 87% is 87 correct, and a difference of five correct answers out of one hundred is exactly the kind of thing that happens by chance. The question is never "did it go up?" but "**could it go up by this much if nothing changed?**"
+
+The answer is a **confidence interval** on the difference. The cheap, assumption-light way is the **bootstrap**: draw *with replacement* samples of size $n$ from your scored data, recompute the accuracy on each, and repeat thousands of times. The spread of those recomputed accuracies is your uncertainty. Do it for both versions and for the *difference*, and you get a bootstrap distribution of "how much could this gap be explained by sampling noise." If the bootstrap distribution of the difference overlaps zero a lot — if the 5% lift's error bar straddles 0 — the lift is not real, and you should not ship on it.
+
+Two corollaries that bite in practice:
+
+* **Small $n$ needs big effects.** At $n = 100$, you need a change of roughly *ten* points or more to be confident; a three-point change is inside the noise. Either the effect is large, or you need more examples.
+* **The multiple-comparisons trap.** If you try twenty prompt variants and report the best one, you have *selected on the noise* — the best of twenty random draws will look like a winner by construction. The fix is to hold out a *final* test set you look at only once, or to pre-register which metric you will optimize. [HELM](helm2022) exists, in part, to make these measurement practices consistent across benchmarks \cite[Liang et al., HELM (2022)]{helm2022}.
+
+> An eval is a measurement instrument, and like any instrument it has a resolution. Below the resolution, the number is not a result — it is a rounding error with a label on it. The whole discipline of building an eval is: write the standard down, verify two people can read it the same way, calibrate the cheap judge against the careful one, and refuse to act on a number smaller than the noise.
 </div>
 
 <script>
