@@ -2548,6 +2548,36 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
  * and returns its kernel weights as a LaTeX matrix.
  * If no projection layer is found (identity skip), returns the actual identity matrix.
  */
+function _extract_skip_weight_by_model_getweights(layer_name, layer_idx) {
+	try {
+		if (!model || typeof model.getWeights !== "function") return null;
+		var all_weights = model.getWeights();
+		if (!all_weights || !all_weights.length) return null;
+
+		var prefix = (layer_name || "").toLowerCase();
+		if (!prefix) return null;
+
+		for (var w = 0; w < all_weights.length; w++) {
+			var wname = (all_weights[w].name || "").toLowerCase();
+			if (wname.indexOf(prefix) !== -1) {
+				if (!all_weights[w].isDisposed) {
+					var synced = array_sync(all_weights[w], true);
+					if (synced) {
+						synced = replace_non_numbers_with_matching_latex(synced);
+						synced = array_to_fixed(synced, get_dec_points_math_mode());
+						var kshape = get_shape_from_array(synced);
+						var shape_str = kshape.join(" \\times ");
+						return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced, { kind: "skip", layer: layer_idx || 0, weight_name: wname }) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+					}
+				}
+			}
+		}
+	} catch (e) {
+		dbg("[_extract_skip_weight_by_model_getweights] Error: " + e);
+	}
+	return null;
+}
+
 function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 	var all_layers = _get_all_model_layers();
 
@@ -2571,32 +2601,22 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 	}
 
 	if (skip_proj_layer) {
-		// Projection layer found — extract its current kernel weights
-		return _extract_skip_kernel_latex(skip_proj_layer, layer_idx);
+		var result = _extract_skip_kernel_latex(skip_proj_layer, layer_idx);
+		if (result !== "W_{\\text{skip}}") {
+			return result;
+		}
+		// Extraction failed — try model.getWeights() by name
+		var by_name = _extract_skip_weight_by_model_getweights(skip_proj_layer.name, layer_idx);
+		if (by_name) return by_name;
 	}
 
-	// No projection layer found — check if there's a skip_add (identity skip)
+	// No projection layer found or extraction failed — check shapes
 	var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
+	var src_dim = _get_layer_output_dim(gui_layer_idx);
+	var tgt_dim = _get_layer_output_dim(layer_idx);
 
-	if (has_add) {
-		// Only show identity if source and target dims match
-		var src_dim = _get_layer_output_dim(gui_layer_idx);
-		var tgt_dim = _get_layer_output_dim(layer_idx);
-		if (src_dim && tgt_dim && src_dim === tgt_dim) {
-			return _build_identity_matrix_latex(layer_idx);
-		}
-		return "W_{\\text{skip}}";
-	}
-
-	// Last resort: check if the skip connection is enabled but uses identity (same dimensions)
-	var skip_info = get_skip_connection_info(gui_layer_idx);
-	if (skip_info.enabled) {
-		var src_dim2 = _get_layer_output_dim(gui_layer_idx);
-		var tgt_dim2 = _get_layer_output_dim(layer_idx);
-		if (src_dim2 && tgt_dim2 && src_dim2 === tgt_dim2) {
-			return _build_identity_matrix_latex(layer_idx);
-		}
-		return "W_{\\text{skip}}";
+	if (has_add && src_dim && tgt_dim && src_dim === tgt_dim) {
+		return _build_identity_matrix_latex(layer_idx);
 	}
 
 	return "W_{\\text{skip}}";

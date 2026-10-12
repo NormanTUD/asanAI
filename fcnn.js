@@ -2483,13 +2483,6 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.quadraticCurveTo(midX, Math.min(sourceTopY, endY) - arcHeight, endX, endY);
 		ctx.stroke();
 
-		// Draw small "+" symbol at the connection point (left of target)
-		ctx.setLineDash([]);
-		ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
-		ctx.font = "bold " + (font_size + 2) + "px Arial";
-		ctx.textAlign = "center";
-		ctx.fillText("+", endX - 10, endY - 2);
-
 		// Draw label (with the number of spanned layers when > 1)
 		ctx.font = (font_size - 2) + "px Arial";
 		ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
