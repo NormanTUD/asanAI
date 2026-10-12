@@ -63,7 +63,7 @@ The deeper problem: any scalar reward function is an **incomplete specification*
 </div>
 
 <section class="sa-callout sa-callout-info" style="margin-top: 1.5em;">
-<h4 style="margin: 0 0 0.4em 0; font-size: 1em;">Defenses in Practice</h4>
+<div style="margin: 0 0 0.4em 0; font-size: 1em;">Defenses in Practice</div>
 <p style="margin: 0; font-size: 0.92em;">
 No single defense is bulletproof. Real-world deployments layer <em>defense in depth</em>:
 input filtering catches obvious attacks, instruction hierarchy enforces privilege levels,
@@ -74,7 +74,7 @@ attack high enough that adversaries move on to easier targets.
 </section>
 
 <section class="sa-callout sa-callout-warn" style="margin-top: 1em;">
-<h4 style="margin: 0 0 0.4em 0; font-size: 1em;">Quantization &amp; Inference Cost</h4>
+<div style="margin: 0 0 0.4em 0; font-size: 1em;">Quantization &amp; Inference Cost</div>
 <p style="margin: 0 0 0.5em 0; font-size: 0.92em;">
 Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory. Lowering
 precision to 16 bits halves that to ~14 GB with virtually no quality loss;
