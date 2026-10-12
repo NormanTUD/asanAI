@@ -753,8 +753,14 @@ function _add_layer_debugger_hook (layer_idx) {
 		layer_states_saved["${layer_idx}"] = this_layer_data;
 
 		if(started_training) {
-			if(!Object.keys(neuron_outputs).includes("${layer_idx}")) {
-				neuron_outputs["${layer_idx}"] = {input: [], output: []};
+			if(!neuron_outputs["${layer_idx}"]) {
+				neuron_outputs["${layer_idx}"] = {};
+			}
+			if(!Array.isArray(neuron_outputs["${layer_idx}"].input)) {
+				neuron_outputs["${layer_idx}"].input = [];
+			}
+			if(!Array.isArray(neuron_outputs["${layer_idx}"].output)) {
+				neuron_outputs["${layer_idx}"].output = [];
 			}
 
 			neuron_outputs["${layer_idx}"]["input"].push(synced_input);

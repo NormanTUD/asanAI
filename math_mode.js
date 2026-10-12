@@ -1149,54 +1149,64 @@ function _get_h (layer_idx) {
 				if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
 			}
 			if (!comp) comp = _get_intermediate_activation(layer_idx);
-			if (comp && Array.isArray(comp) && comp.length > 0) {
+			if (comp !== null && comp !== undefined) {
 				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
 				var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
 				var vals = "";
-				if (Array.isArray(comp[0]) && Array.isArray(comp[0][0])) {
-					var flat3d = [];
-					for (var fi = 0; fi < comp.length && flat3d.length < maxVals; fi++) {
-						if (Array.isArray(comp[fi])) {
-							for (var fj = 0; fj < comp[fi].length && flat3d.length < maxVals; fj++) {
-								if (Array.isArray(comp[fi][fj])) {
-									for (var fk = 0; fk < comp[fi][fj].length && flat3d.length < maxVals; fk++) {
-										flat3d.push(comp[fi][fj][fk]);
+				if (typeof comp === "number") {
+					vals = isFinite(comp) ? comp.toFixed(dp) : "?";
+					vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+				} else if (Array.isArray(comp) && comp.length > 0) {
+					if (Array.isArray(comp[0]) && Array.isArray(comp[0][0])) {
+						var flat3d = [];
+						for (var fi = 0; fi < comp.length && flat3d.length < maxVals; fi++) {
+							if (Array.isArray(comp[fi])) {
+								for (var fj = 0; fj < comp[fi].length && flat3d.length < maxVals; fj++) {
+									if (Array.isArray(comp[fi][fj])) {
+										for (var fk = 0; fk < comp[fi][fj].length && flat3d.length < maxVals; fk++) {
+											flat3d.push(comp[fi][fj][fk]);
+										}
+									} else {
+										flat3d.push(comp[fi][fj]);
 									}
-								} else {
-									flat3d.push(comp[fi][fj]);
 								}
 							}
 						}
+						vals = flat3d.slice(0, maxVals).map(function(v) {
+							if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+							return Number(v).toFixed(dp);
+						}).join(" & ");
+						vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+					} else if (Array.isArray(comp[0])) {
+						var rows2 = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
+							if (Array.isArray(r)) {
+								return r.slice(0, Math.min(r.length, 3)).map(function(v) {
+									if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+									return Number(v).toFixed(dp);
+								}).join(" & ");
+							}
+							return "?";
+						});
+						vals = "\\begin{pmatrix}" + rows2.join(" \\\\ ") + "\\end{pmatrix}";
+					} else {
+						vals = comp.slice(0, maxVals).map(function(v) {
+							if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+							return Number(v).toFixed(dp);
+						}).join(" & ");
+						vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
 					}
-					vals = flat3d.slice(0, maxVals).map(function(v) {
-						if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
-						return Number(v).toFixed(dp);
-					}).join(" & ");
-					vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
-				} else if (Array.isArray(comp[0])) {
-					var rows2 = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
-						if (Array.isArray(r)) {
-							return r.slice(0, Math.min(r.length, 3)).map(function(v) {
-								if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
-								return Number(v).toFixed(dp);
-							}).join(" & ");
-						}
-						return "?";
-					});
-					vals = "\\begin{pmatrix}" + rows2.join(" \\\\ ") + "\\end{pmatrix}";
 				} else {
-					vals = comp.slice(0, maxVals).map(function(v) {
-						if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
-						return Number(v).toFixed(dp);
-					}).join(" & ");
-					vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+					vals = "";
 				}
-				var primes = "'".repeat(layer_idx);
-				return "\\class{mv-h-L" + layer_idx + "}{" + vals + "}_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + primes;
+				if (vals) {
+					var shape_str_rd = get_layer_output_shape_as_string(layer_idx);
+					return "\\class{mv-h-L" + layer_idx + "}{" + vals + "}^{\\mathrm{" + shape_str_rd + "}}";
+				}
 			}
 		} catch(e) { console.warn("_get_h:", e); }
 	}
-	var res = "\\class{mv-h-L" + layer_idx + "}{h}_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + "'".repeat(layer_idx);
+	var shape_str = get_layer_output_shape_as_string(layer_idx);
+	var res = "h_" + layer_idx + "^{\\mathrm{" + shape_str + "}}";
 	return res;
 }
 
@@ -2442,7 +2452,7 @@ function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, 
 				return (typeof v === "number" && isFinite(v)) ? v.toFixed(dp) : "?";
 			}).join(" & ");
 			var shape_hint = real_vals.length > maxV ? " \\cdots " : "";
-			return "\\underbrace{" + "\\begin{pmatrix}" + display + shape_hint + "\\end{pmatrix}" + "}_{\\text{output of }h_" + source_idx + "}";
+			return "\\begin{pmatrix}" + display + shape_hint + "\\end{pmatrix}";
 		}
 	}
 
@@ -2456,10 +2466,7 @@ function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, 
 			var kernel_shape = get_shape_from_array(source_kernel);
 			var shape_str = kernel_shape.join(" \\times ");
 
-			var result_str = "\\underbrace{";
-			result_str += "h_" + source_idx;
-			result_str += "}_{\\text{Shape: } " + shape_str + "}";
-
+			var result_str = "h_" + source_idx + "^{\\mathrm{" + shape_str + "}}";
 			return result_str;
 		}
 	}
