@@ -19,6 +19,32 @@ coherent_difference: "\begin{array}{c|c}
 \end{array}" diese tabele nach markdown konvertieren. 
 embeddinglab: "In a Transformer (like ChatGPT), this is the “Handshake.” When a word “looks” at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related. This will be explained in more detail later on." derp lot der danach kommt mit den 2 vektoren ist im dark mode mit weißem background und häßlich
 recurrent_networks: entferne die footnote, mach daraus n normales cite.
+samplinglab: in "# Speculative Sampling" ist die formel \text{accept } x \text{ with probability } \min\!\left(1,\, \frac{P_{\text{target}}(x)}{P_{\text{draft}}(x)}\right);\; \text{on rejection, resample from } \frac{\max\!\left(0,\, P_{\text{target}}(x) - P_{\text{draft}}(x)\right)}{\sum_{x'} \max\!\left(0,\, P_{\text{target}}(x') - P_{\text{draft}}(x')\right)} zu breit über den rechten rand raus
+diffusion: der plot in "style="display:flex; align-items:center; gap:1px; height:60px;"" nach dem §"Step 2 · embed — each token is mapped to a vector of numbers (here 16-dim for display; CLIP uses 768, T5 uses 4096)." geht rechts aus dem bildschirm raus. außerdem kommt die fehlermeldung "[glossary] DROP-CAP DRIFT: --cl-dc-* changed {"lines":"","size":""} -> {"lines":"","size":"208.7px"} without a viewport resize. Re-pinning last known good values. start.js:1883:14
+    dropcapCanary http://localhost/asanai/blog/start.js?v=1791188584:1883
+    periodicSweep http://localhost/asanai/blog/start.js?v=1791188584:1917
+[glossary] DROP-CAP DRIFT: paragraph geometry 763x173 -> 763x202"
+multimodal: wenn ich auf den plot in "For a 224×224 image with P=16: n=196 patches. ViT-L/14 processes this with 24 layers, 16 heads, d=1024, yielding ~304M parameters. Modern ViTs (EVA-02, SigLIP) push to P=14 patches on 448×448 inputs, yielding >1000 tokens per image." klicke wird der ganze bildschirm dunkel und es passiert nix.
+algorithms: der plot nach "The residual after this approximation has Frobenius norm under 0.55% of the norm of WL." ist weiß im dark mode. auch der plot bei "Interactive Exploration" beim "function call" ist im dark mode weiß. genauso wie " Click “Add Example” to see how ambiguity decreases as you provide more detailed examples. With few-shot prompting, even many examples leave room for wrong rules. " nicht an den dark mode angepasst ist der plot
+mechanistic_interpretability: 🔁 Interactive: Looped Transformer as a Computer auch da ist ads " 🔁 This cycle: Load 3 into scratchpad " "PC = 0" im dark mode ugly. 
+positionalembeddingslab: das scheitert aktuell.  start.js:107:10
+[glossary] DROP-CAP DRIFT: --cl-dc-* changed {"lines":"","size":""} -> {"lines":"","size":"208.7px"} without a viewport resize. Re-pinning last known good values. start.js:1883:14
+[glossary] DROP-CAP DRIFT: paragraph geometry 763x115 -> 763x148 start.js:1890:14
+[glossary] DROP-CAP DRIFT: --cl-dc-* changed {"lines":"","size":""} -> {"lines":"","size":"208.7px"} without a viewport resize. Re-pinning last known good values. start.js:1883:14
+[glossary] DROP-CAP DRIFT: paragraph geometry 763x148 -> 763x152 start.js:1890:14
+Uncaught TypeError: can't access property "textContent", document.getElementById(...) is null
+    updateUnitCircle http://localhost/asanai/blog/positionalembeddingslab.js?v=1791188584:15
+    initSineCosine http://localhost/asanai/blog/positionalembeddingslab.js?v=1791188584:93
+    loadPositionalEmbeddingsModule http://localhost/asanai/blog/positionalembeddingslab.js?v=1791188584:577
+    _peLazyObserver http://localhost/asanai/blog/positionalembeddingslab.js?v=1791188584:554
+    _peLazyObserver http://localhost/asanai/blog/positionalembeddingslab.js?v=1791188584:547
+positionalembeddingslab.js:15:12
+Uncaught TypeError: can't access property "textContent", document.getElementById(...) is null
+    updateUnitCircle http://localhost/asanai/blog/positionalembeddingslab.js?v=1791188584:15
+12 positionalembeddingslab.js:15:12, fixe das. und die überschriftenzeile "Component 	Dim 0 	Dim 1 	Dim 2 	Dim 3" ist ugly in weißem bg.
+
+promptengineering: die fonts im plot bei "# Prompt Injection Defense" sind auf dem hellen grünen oder roten background schwer lesbar
+
 
 
 always cite original publications when you can, add them to literature.js and link where you got infos from. read them thoroughly.
