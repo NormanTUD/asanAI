@@ -1979,7 +1979,7 @@ function toggle_math_pin_input() {
 			return;
 		}
 	}
-	write_model_to_latex_to_page(1);
+	write_model_to_latex_to_page(1); // await not possible
 }
 
 function toggle_math_show_real_data() {

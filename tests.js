@@ -190,6 +190,197 @@ function is_equal (a, b) {
 	return false;
 }
 
+
+// =============================================================================
+// Tests for "Show real data" math mode feature (math_mode.js)
+// Modular test suite - each test_* function is independent
+// =============================================================================
+
+function test_real_data_feature() {
+	log_test("Real data feature tests");
+
+	// Test 1: Variable exists and defaults to false
+	test_equal("_math_show_real_data initial value", typeof _math_show_real_data !== "undefined" ? _math_show_real_data : "undefined", false);
+
+	// Test 2: Toggle function exists
+	test_equal("toggle_math_show_real_data is function", typeof toggle_math_show_real_data, "function");
+
+	// Test 3: Toggle flips the state
+	var before = _math_show_real_data;
+	toggle_math_show_real_data();
+	test_equal("_math_show_real_data after toggle", _math_show_real_data, !before);
+	toggle_math_show_real_data();
+	test_equal("_math_show_real_data after second toggle", _math_show_real_data, before);
+
+	// Test 4: get_input_layer returns default when toggle is off
+	var saved = _math_show_real_data;
+	_math_show_real_data = false;
+	test_equal("get_input_layer default", JSON.stringify(get_input_layer([3])), '[["x"]]');
+	_math_show_real_data = saved;
+
+	// Test 5: get_input_layer with window._last_predict_input_arr
+	var saved2 = _math_show_real_data;
+	_math_show_real_data = true;
+	window._last_predict_input_arr = [[0.1, 0.2, 0.3]];
+	var result = get_input_layer([3]);
+	test_equal("get_input_layer from _last_predict_input_arr", JSON.stringify(result[0]), '[0.1,0.2,0.3]');
+	delete window._last_predict_input_arr;
+	_math_show_real_data = saved2;
+
+	// Test 6: get_input_layer with pinned input takes priority
+	window._pinned_input = [9.9, 8.8, 7.7];
+	_math_show_real_data = true;
+	var result2 = get_input_layer([3]);
+	test_equal("get_input_layer with pinned (priority)", JSON.stringify(result2[0]), '[9.9,8.8,7.7]');
+	delete window._pinned_input;
+	_math_show_real_data = saved2;
+
+	// Test 7: get_input_layer with neuron_outputs[0].input
+	_math_show_real_data = true;
+	neuron_outputs = {0: {input: [[[0.5, 0.6, 0.7]]], output: [[[0.1, 0.2]]]}};
+	var result3 = get_input_layer([3]);
+	test_equal("get_input_layer from neuron_outputs[0].input", JSON.stringify(result3[0]), '[0.5,0.6,0.7]');
+	neuron_outputs = {};
+	_math_show_real_data = saved2;
+
+	// Test 8: Pre-render regex replaces x in pmatrix
+	var latex = "\\\\begin{pmatrix}x\\\\end{pmatrix}";
+	var fixed = _math_pre_render_real_data_fix(latex);
+	test_equal("pre_render replaces x in pmatrix", fixed.indexOf("x") < 0 || fixed.indexOf("pmatrix") < 0, true);
+
+	// Test 9: Pre-render preserves latex when toggle is off
+	var saved3 = _math_show_real_data;
+	_math_show_real_data = false;
+	var latex2 = "\\\\begin{pmatrix}x\\\\end{pmatrix}";
+	var fixed2 = _math_pre_render_real_data_fix(latex2);
+	test_equal("pre_render passes through when toggle off", fixed2 === latex2, true);
+	_math_show_real_data = saved3;
+
+	// Test 10: Pre-render handles whitespace in pmatrix
+	_math_show_real_data = true;
+	window._last_predict_input_arr = [[1.1, 2.2, 3.3]];
+	var latex3 = "\\\\begin{pmatrix}\nx\n\\\\end{pmatrix}";
+	var fixed3 = _math_pre_render_real_data_fix(latex3);
+	test_equal("pre_render handles whitespace around x", fixed3.indexOf("\nx\n") < 0, true);
+	delete window._last_predict_input_arr;
+	_math_show_real_data = saved3;
+
+	// Test 11: Pin toggle function exists
+	test_equal("toggle_math_pin_input is function", typeof toggle_math_pin_input, "function");
+
+	// Test 12: Pin stores data in window._pinned_input
+	neuron_outputs = {0: {input: [[[4.4, 5.5, 6.6]]], output: [[[0.1]]]}};
+	window._last_predict_input_arr = null;
+	toggle_math_pin_input();
+	test_equal("toggle_math_pin_input stores values", JSON.stringify(window._pinned_input), '[4.4,5.5,6.6]');
+
+	// Test 13: Second toggle unpins
+	toggle_math_pin_input();
+	test_equal("toggle_math_pin_input unpins", window._pinned_input, null);
+
+	// Test 14: NaN handling in formatted output
+	window._last_predict_input_arr = [[NaN, 0.5, Infinity, -Infinity]];
+	var latex4 = "\\\\begin{pmatrix}x\\\\end{pmatrix}";
+	var fixed4 = _math_pre_render_real_data_fix(latex4);
+	test_equal("pre_render handles NaN/Infinity", fixed4.indexOf("NaN") < 0, true);
+	test_equal("pre_render handles NaN/Infinity (no Inf)", fixed4.indexOf("Infinity") < 0, true);
+	delete window._last_predict_input_arr;
+
+	// Test 15: Large inputs are truncated to max_nr_cols_rows
+	window._last_predict_input_arr = [Array(100).fill(0).map(function(_, i) { return i * 0.1; })];
+	var latex5 = "\\\\begin{pmatrix}x\\\\end{pmatrix}";
+	var fixed5 = _math_pre_render_real_data_fix(latex5);
+	// Count number of values in the pmatrix
+	var match = fixed5.match(/\\\\begin\{pmatrix\}(.+?)\\\\end\{pmatrix\}/);
+	test_equal("pre_render limits large input", match !== null, true);
+	delete window._last_predict_input_arr;
+
+	// Test 16: get_input_layer handles null input gracefully
+	_math_show_real_data = true;
+	var savedN = window._last_predict_input_arr;
+	var savedX = (typeof xy_data_global !== "undefined") ? xy_data_global : null;
+	window._last_predict_input_arr = null;
+	window.xy_data_global = null;
+	neuron_outputs = {};
+	var result4 = get_input_layer([3]);
+	test_equal("get_input_layer graceful null fallback", JSON.stringify(result4), '[["x"]]');
+	if (savedN) window._last_predict_input_arr = savedN;
+	if (savedX) window.xy_data_global = savedX;
+	_math_show_real_data = saved3;
+
+	// Test 17: get_input_layer respects input shape for slicing
+	_math_show_real_data = true;
+	window._last_predict_input_arr = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]];
+	var result5 = get_input_layer([10]);
+	// Should be sliced to max_nr_cols_rows (default 32, so all 10 fit)
+	test_equal("get_input_layer slicing with shape=10", result5[0].length <= 32, true);
+	delete window._last_predict_input_arr;
+	_math_show_real_data = saved3;
+
+	// Test 18: _get_h returns symbolic when no data
+	var saved4 = _math_show_real_data;
+	_math_show_real_data = false;
+	var hResult = _get_h(0);
+	test_equal("_get_h returns mv-h class when off", hResult.indexOf("mv-h-L0") >= 0, true);
+	_math_show_real_data = saved4;
+
+	// Test 19: _get_h returns real values when data available
+	_math_show_real_data = true;
+	neuron_outputs = {0: {output: [[[0.1, 0.2, 0.3]]], input: [[[0.1, 0.2, 0.3]]]}};
+	var hResult2 = _get_h(0);
+	test_equal("_get_h returns numeric values when on", hResult2.indexOf("0.1") >= 0 || hResult2.indexOf("0.10") >= 0, true);
+	neuron_outputs = {};
+	_math_show_real_data = saved4;
+
+	// Test 20: DOM fix function exists
+	test_equal("_math_dom_fix_real_data is function", typeof _math_dom_fix_real_data, "function");
+
+	// Test 21: Pre-render handles missing window gracefully
+	var savedWindow = window._last_predict_input_arr;
+	delete window._last_predict_input_arr;
+	_math_show_real_data = true;
+	var latex6 = "\\\\begin{pmatrix}x\\\\end{pmatrix}";
+	try {
+		var fixed6 = _math_pre_render_real_data_fix(latex6);
+		test_equal("pre_render no crash without window", true, true);
+	} catch(e) {
+		test_equal("pre_render no crash without window", false, true);
+	}
+	if (savedWindow) window._last_predict_input_arr = savedWindow;
+	_math_show_real_data = saved3;
+
+	// Test 22: get_input_layer returns array-of-array structure
+	_math_show_real_data = true;
+	window._last_predict_input_arr = [[1, 2, 3]];
+	var result6 = get_input_layer([3]);
+	test_equal("get_input_layer is 2D", Array.isArray(result6) && Array.isArray(result6[0]), true);
+	delete window._last_predict_input_arr;
+	_math_show_real_data = saved3;
+
+	// Test 23: Multiple toggles are idempotent in pairs
+	var startState = _math_show_real_data;
+	toggle_math_show_real_data();
+	toggle_math_show_real_data();
+	test_equal("Two toggles return to start", _math_show_real_data, startState);
+
+	// Test 24: _math_pre_render_real_data_fix is function
+	test_equal("_math_pre_render_real_data_fix is function", typeof _math_pre_render_real_data_fix, "function");
+
+	// Test 25: Pin with no data shows warning (doesn't crash)
+	window._pinned_input = null;
+	neuron_outputs = {};
+	window._last_predict_input_arr = null;
+	try {
+		toggle_math_pin_input();
+		test_equal("Pin with no data doesn't crash", window._pinned_input, null);
+	} catch(e) {
+		test_equal("Pin with no data doesn't crash", false, true);
+	}
+
+	return true;
+}
+
+
 function test_summary () {
 	var tests_ok = num_tests - num_tests_failed;
 

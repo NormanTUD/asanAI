@@ -1655,41 +1655,86 @@ function get_optimizer_equations() {
 
 function get_input_layer(input_shape) {
 	var input_layer = [["x"]];
-	// Only return real data when explicitly showing it
 	if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return input_layer;
 
-	// Get values from multiple sources
 	var values = null;
-	try {
-		if (typeof window !== "undefined" && window._pinned_input && Array.isArray(window._pinned_input)) {
-			values = window._pinned_input;
+	var source = "none";
+
+	// Source 1: window._pinned_input
+	if (!values && typeof window !== "undefined" && window._pinned_input && Array.isArray(window._pinned_input) && window._pinned_input.length > 0) {
+		values = window._pinned_input;
+		source = "pinned";
+	}
+
+	// Source 2: window._last_input_flat (pre-flattened)
+	if (!values && typeof window !== "undefined" && Array.isArray(window._last_input_flat) && window._last_input_flat.length > 0) {
+		values = window._last_input_flat;
+		source = "last_input_flat";
+	}
+
+	// Source 2b: window._last_predict_input_arr (synced array)
+	if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+		var f = window._last_predict_input_arr[0];
+		if (Array.isArray(f) && f.length > 0) {
+			values = f;
+			source = "last_predict";
 		}
-	} catch(e) {}
-	if (!values) {
+	}
+
+	// Source 3: neuron_outputs[0].input (from explain wrapper)
+	if (!values && typeof neuron_outputs !== "undefined" && neuron_outputs[0]) {
 		try {
-			if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
-				var inp = neuron_outputs[0].input;
+			var inp = neuron_outputs[0].input;
+			if (Array.isArray(inp)) {
 				for (var i = inp.length - 1; i >= 0; i--) {
 					var c = inp[i];
 					if (Array.isArray(c) && c.length > 0) {
 						var flat = c[0];
-						if (Array.isArray(flat) && flat.length > 0) { values = flat; break; }
-						}
+						if (Array.isArray(flat) && flat.length > 0) { values = flat; source = "neuron_outputs"; break; }
+					}
 				}
 			}
 		} catch(e) {}
 	}
-	if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
-		var f = window._last_predict_input_arr[0];
-		if (Array.isArray(f) && f.length > 0) values = f;
+
+	// Source 4: neuron_outputs[0].output as fallback (compute input from output is hard, but we can show layer 0 output as proxy)
+	if (!values && typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].output) && neuron_outputs[0].output.length > 0) {
+		// Can't easily invert, but at least show something
+		var lastOut = neuron_outputs[0].output[neuron_outputs[0].output.length - 1];
+		if (Array.isArray(lastOut)) {
+			var flatOut = Array.isArray(lastOut[0]) ? lastOut[0] : lastOut;
+			if (Array.isArray(flatOut) && flatOut.length > 0) {
+				// Use h_L0 as fallback (not ideal but better than x)
+				values = flatOut;
+				source = "layer0_output_fallback";
+			}
+		}
 	}
 
-	if (!values || !Array.isArray(values) || values.length === 0) return input_layer;
+	// Source 5: xy_data_global.x
+	if (!values && typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
+		try {
+			var xt = xy_data_global.x;
+			if (xt && typeof xt.arraySync === "function" && (typeof xt.isDisposed === "undefined" || !xt.isDisposed)) {
+				var arr = xt.arraySync();
+				if (Array.isArray(arr) && arr.length > 0 && Array.isArray(arr[0]) && arr[0].length > 0) {
+					values = arr[0];
+					source = "xy_data_global";
+				}
+			}
+		} catch(e) {}
+	}
 
-	// Format for display - respect max_nr_vals setting
+	if (!values || !Array.isArray(values) || values.length === 0) {
+		console.warn("get_input_layer: no data found from any source");
+		return input_layer;
+	}
+
+	console.log("get_input_layer: using source:", source, "values length:", values.length);
+
 	var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
 	var displayValues = values.slice(0, maxVals);
-	var input_layer = [displayValues];
+	input_layer = [displayValues];
 
 	return input_layer;
 }

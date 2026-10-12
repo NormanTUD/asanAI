@@ -67,32 +67,31 @@ async function get_model_predict (data, __model = model, recursion = 0) {
 	try {
 		var res = await __model.predict(data);
 
-		// Capture intermediate activations for math mode "show real data"
+		// Capture prediction input for math mode "show real data"
+		// (explain wrapper already populates neuron_outputs during the predict above)
 		try {
-			if (typeof reset_neuron_outputs === "function" && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
-				reset_neuron_outputs();
-				var current = data;
-				for (var li = 0; li < __model.layers.length; li++) {
-					try {
-						var next = __model.layers[li].apply(current);
-						if (next && typeof next.arraySync === "function") {
-							var syncArr = next.arraySync();
-							neuron_outputs[li] = { output: [syncArr[0]] };
-							current = next;
-						} else {
-							if (current && typeof current.dispose === "function" && current !== data) current.dispose();
-							break;
+			if (data && typeof data.arraySync === "function" && (typeof data.isDisposed === "undefined" || !data.isDisposed)) {
+				try {
+					var synced = data.arraySync();
+					window._last_predict_input_arr = synced;
+					if (Array.isArray(synced) && synced.length > 0) {
+						var firstSample = synced[0];
+						if (Array.isArray(firstSample) && firstSample.length > 0) {
+							if (Array.isArray(firstSample[0])) {
+								window._last_input_flat = firstSample[0];
+							} else {
+								window._last_input_flat = firstSample;
+							}
 						}
-					} catch(inner_e) {
-						if (current && typeof current.dispose === "function" && current !== data) current.dispose();
-						break;
 					}
-				}
-				if (typeof write_model_to_latex_to_page === "function") {
-					write_model_to_latex_to_page();
-				}
+				} catch(e) { console.warn("predict capture sync:", e); }
 			}
-		} catch(capture_e) { console.warn("predict capture:", capture_e); }
+		} catch(e) {}
+
+		// Trigger math re-render if real data mode is on
+		if (typeof _math_show_real_data !== "undefined" && _math_show_real_data && typeof write_model_to_latex_to_page === "function") { // await not possible here
+			try { await write_model_to_latex_to_page(1); } catch(e) {}
+		}
 
 		renderLayerIOStats("health_status");
 
