@@ -2432,6 +2432,20 @@ function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, 
 		return array_to_latex(input_layer, "Input");
 	}
 
+	// Real data mode: try to show actual output values instead of h_ symbol
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		var real_vals = _get_skip_source_real_values(source_idx);
+		if (real_vals && real_vals.length > 0) {
+			var dp = get_dec_points_math_mode();
+			var maxV = get_max_nr_cols_rows();
+			var display = real_vals.slice(0, maxV).map(function(v) {
+				return (typeof v === "number" && isFinite(v)) ? v.toFixed(dp) : "?";
+			}).join(" & ");
+			var shape_hint = real_vals.length > maxV ? " \\cdots " : "";
+			return "\\underbrace{" + "\\begin{pmatrix}" + display + shape_hint + "\\end{pmatrix}" + "}_{\\text{output of }h_" + source_idx + "}";
+		}
+	}
+
 	if (source_idx < layer_data.length) {
 		var source_data = layer_data[source_idx];
 
@@ -2451,6 +2465,24 @@ function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, 
 	}
 
 	return _get_h(Math.max(0, source_idx));
+}
+
+function _get_skip_source_real_values(source_idx) {
+	try {
+		if (typeof neuron_outputs !== "undefined" && neuron_outputs[source_idx]) {
+			var out = neuron_outputs[source_idx].output;
+			if (out && Array.isArray(out) && out.length > 0) {
+				for (var i = out.length - 1; i >= 0; i--) {
+					var c = out[i];
+					if (Array.isArray(c) && c.length > 0) {
+						var flat = c[0];
+						if (Array.isArray(flat) && flat.length > 0) return flat;
+					}
+				}
+			}
+		}
+	} catch (e) {}
+	return null;
 }
 
 function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {

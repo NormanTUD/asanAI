@@ -48,7 +48,7 @@
 		</table>
 		<button onclick="toggle_math_interactive_mode()" class="TRANSLATEME_toggle_editable_math_mode"></button>
 		<button onclick="toggle_math_show_real_data()" class="TRANSLATEME_show_real_data">Show real data</button>
-		<button onclick="toggle_math_pin_input()" id="math_pin_input_btn">Pin current x</button>
+		<button onclick="toggle_math_pin_input()" id="math_pin_input_btn" class="TRANSLATEME_pin_current_x">Pin current x</button>
 
 		<div class="typeset_me" id="math_history_slider"></div>
 		<div class="typeset_me" id="math_tab_code">
