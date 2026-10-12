@@ -8394,6 +8394,12 @@
    "year": "",
    "url": "https://en.wikipedia.org/wiki/Topos"
   },
+  "tarski1938topos": {
+   "title": "Der Aussagenkalkül und die Topologie",
+   "author": "Alfred Tarski",
+   "year": "",
+   "url": "https://www.impan.pl/en/publishing-house/journals-and-series/fundamenta-mathematicae/all/31/0/111972/der-aussagenkalkul-und-die-topologie"
+  },
   "higher_category_wiki": {
    "title": "Higher category theory",
    "author": "Wikipedia contributors",
@@ -43036,6 +43042,16 @@
     "awodey2010category"
    ]
   },
+  "Alfred Tarski": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tarski1938topos",
+    "tarski1935wahrheitsbegriff",
+    "tarski1944semantic"
+   ]
+  },
   "Hermann Schmitz": {
    "count": 1,
    "minyear": null,
@@ -48440,15 +48456,6 @@
    "keys": [
     "img_magdeburg_hemispheres",
     "img_morse_telegraph"
-   ]
-  },
-  "Alfred Tarski": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "tarski1935wahrheitsbegriff",
-    "tarski1944semantic"
    ]
   },
   "Alfred Tarski (trans. J. H. Woodger)": {

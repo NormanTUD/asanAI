@@ -9891,6 +9891,16 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Topos"
 	},
+	"tarski1938topos": {
+		title: "Der Aussagenkalkül und die Topologie",
+		author: "Alfred Tarski",
+		year: 1938,
+		journal: "Fundamenta Mathematicae",
+		volume: 31,
+		pages: "103–134",
+		url: "https://www.impan.pl/en/publishing-house/journals-and-series/fundamenta-mathematicae/all/31/0/111972/der-aussagenkalkul-und-die-topologie",
+		alternativetitle: "Tarski, 1938"
+	},
 	"higher_category_wiki": {
 		title: "Higher category theory",
 		author: "Wikipedia contributors",

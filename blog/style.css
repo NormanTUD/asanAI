@@ -6746,7 +6746,7 @@ html.dark pre.wslab-code-block {
 	margin: 1em 0;
 	box-shadow: var(--mn-shadow-sm);
 }
-.agent-loop-diagram h4 {
+.agent-loop-diagram .agent-loop-title {
 	margin: 0 0 1em 0;
 	font-size: 0.95em;
 	font-weight: 700;
@@ -6805,7 +6805,7 @@ html.dark pre.wslab-code-block {
 	border-top: 1px dashed var(--mn-border);
 	padding-top: 0.9em;
 }
-.agent-loop-termination h5 {
+.agent-loop-termination .agent-loop-termination-title {
 	margin: 0 0 0.5em 0;
 	font-size: 0.85em;
 	font-weight: 700;
@@ -6821,9 +6821,9 @@ html.dark pre.wslab-code-block {
 html.dark .agent-loop-diagram {
 	background: var(--mn-bg-subtle);
 }
-html.dark .agent-loop-diagram h4,
+html.dark .agent-loop-diagram .agent-loop-title,
 html.dark .agent-loop-step .step-title,
-html.dark .agent-loop-termination h5 {
+html.dark .agent-loop-termination .agent-loop-termination-title {
 	color: var(--mn-text);
 }
 html.dark .agent-loop-step {

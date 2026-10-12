@@ -148,11 +148,11 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 
 <div class="agent-loop-diagram" role="region" aria-label="Agent loop overview">
-<h4>The Agent Loop</h4>
+<div class="agent-loop-title">The Agent Loop</div>
 <div class="agent-loop-grid">
 <div class="agent-loop-step">
 <div class="step-number">1</div>
-<h5 class="step-title">PERCEIVE</h5>
+<div class="step-title">PERCEIVE</div>
 <ul>
 <li>Read user goal + conversation history</li>
 <li>Read observations from previous tool calls</li>
@@ -161,7 +161,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 <div class="agent-loop-step">
 <div class="step-number">2</div>
-<h5 class="step-title">REASON</h5>
+<div class="step-title">REASON</div>
 <ul>
 <li>System prompt sets persona, tools &amp; constraints</li>
 <li>LLM generates chain-of-thought</li>
@@ -170,7 +170,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 <div class="agent-loop-step">
 <div class="step-number">3</div>
-<h5 class="step-title">ACT</h5>
+<div class="step-title">ACT</div>
 <ul>
 <li>If done → emit final answer</li>
 <li>If not → emit structured tool call</li>
@@ -179,7 +179,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 <div class="agent-loop-step">
 <div class="step-number">4</div>
-<h5 class="step-title">OBSERVE</h5>
+<div class="step-title">OBSERVE</div>
 <ul>
 <li>Tool executes in sandbox</li>
 <li>Result injected as “Observation”</li>
@@ -188,7 +188,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 </div>
 <div class="agent-loop-termination">
-<h5>Termination Conditions</h5>
+<div class="agent-loop-termination-title">Termination Conditions</div>
 <ul>
 <li>LLM emits a “Finish” action</li>
 <li>Maximum iterations reached (safety bound)</li>

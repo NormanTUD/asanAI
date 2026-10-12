@@ -2723,13 +2723,15 @@
   "variants": [
    "trans. J. H. Woodger"
   ],
-  "works": 3,
+  "works": 4,
   "keys": [
+   "tarski1938topos",
    "tarski1935wahrheitsbegriff",
    "tarski1944semantic",
    "tarski1956logic"
   ],
   "cited_in": [
+   "coherent_difference",
    "coherent_world_models",
    "foam_of_meaning"
   ]
@@ -4831,8 +4833,8 @@
   "conf": 0,
   "works": 3,
   "keys": [
-   "moscowpapyrus",
    "img_flaming_heart",
+   "moscowpapyrus",
    "brazenheadimage"
   ],
   "cited_in": [
@@ -7010,10 +7012,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_ddim_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -30026,10 +30028,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "eisgalgen_mittenwald"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -58952,9 +58954,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "go_lang",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "go_lang"
   ],
   "cited_in": [
    "software",
@@ -60172,10 +60174,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "monte_carlo_animation_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -68249,9 +68251,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
+   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch",
-   "transformer_attention_figure"
+   "googlecustomsearch"
   ],
   "cited_in": [
    "atlas",

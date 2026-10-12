@@ -431,7 +431,7 @@ def merge_authors(rows, bib, report):
         # ('Robert Hooke (engraving...)', 'Hooke'); match raw and canonical.
         matched = []
         seen = set()
-        for v in variants:
+        for v in sorted(variants):
             for bdata in bib_by_raw.get(v, []) + bib_by_canon.get(v, []):
                 if id(bdata) not in seen:
                     seen.add(id(bdata))
