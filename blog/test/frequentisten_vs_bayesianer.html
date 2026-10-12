@@ -493,7 +493,8 @@ function randn(){ // Box–Muller
    ========================================================= */
 function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
-  const H=+(cv.getAttribute('height')||300);
+  const H=+(cv.dataset.h || cv.getAttribute('height') || 300);
+  cv.dataset.h=H;
   const parent=cv.parentElement;
   let W = (parent ? parent.clientWidth : cv.getBoundingClientRect().width) || cv.getBoundingClientRect().width;
   cv.style.width='100%'; cv.style.height=H+'px';
