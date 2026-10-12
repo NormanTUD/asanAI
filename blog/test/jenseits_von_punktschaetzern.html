@@ -1,0 +1,4034 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jenseits von Punktschätzern — Verteilungs-Unsicherheit in der ML-Evaluation</title>
+
+<!-- ============ CDNs ============ -->
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg0:#070a12;
+  --bg1:#0c111d;
+  --bg2:#121a2b;
+  --bg3:#18223a;
+  --line:#243150;
+  --line2:#2f3f66;
+  --txt:#e8edf8;
+  --txt2:#a8b6d4;
+  --txt3:#6f7fa3;
+  --acc:#5ad1ff;
+  --acc2:#8b7dff;
+  --acc3:#ff7ab8;
+  --good:#3ee8a8;
+  --warn:#ffc85a;
+  --bad:#ff6b6b;
+  --c-exact:#5ad1ff;
+  --c-boot:#ffc85a;
+  --c-asym:#3ee8a8;
+  --c-tmean:#ff7ab8;
+  --shadow:0 18px 50px rgba(0,0,0,.55);
+  --radius:18px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 700px at 12% -5%, #16224a 0%, transparent 60%),
+    radial-gradient(1000px 600px at 92% 8%, #3a1a4d 0%, transparent 55%),
+    radial-gradient(900px 900px at 50% 110%, #0d2b3a 0%, transparent 60%),
+    var(--bg0);
+  color:var(--txt);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* subtle grain */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 22px 140px;}
+
+/* ---------- Progress & Nav ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));
+  box-shadow:0 0 18px rgba(90,209,255,.8);}
+#topnav{
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  background:rgba(7,10,18,.78); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-110%); transition:transform .35s cubic-bezier(.2,.8,.2,1);
+}
+#topnav.show{transform:translateY(0);}
+#topnav .inner{max-width:1180px;margin:0 auto;padding:9px 22px;display:flex;gap:6px;align-items:center;overflow-x:auto;}
+#topnav a{
+  color:var(--txt2); text-decoration:none; font-size:12.5px; font-weight:600;
+  padding:6px 11px; border-radius:999px; white-space:nowrap; transition:.18s;
+  border:1px solid transparent;
+}
+#topnav a:hover{color:var(--txt); background:var(--bg2); border-color:var(--line);}
+#topnav a.active{color:#06121c; background:linear-gradient(135deg,var(--acc),var(--acc2)); border-color:transparent;}
+#topnav .brand{font-weight:800;font-size:13px;color:var(--acc);margin-right:10px;letter-spacing:.04em;white-space:nowrap;}
+
+/* ---------- Hero ---------- */
+header.hero{padding:118px 0 54px; text-align:center;}
+.kicker{
+  display:inline-block; font-size:11.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--acc); border:1px solid var(--line2); border-radius:999px; padding:6px 16px;
+  background:rgba(90,209,255,.07); margin-bottom:22px; font-weight:600;
+}
+h1.title{
+  font-size:clamp(2.1rem,5.6vw,4rem); line-height:1.08; font-weight:800; margin:0 0 16px;
+  background:linear-gradient(135deg,#ffffff 0%,#b9d9ff 42%,#8b7dff 78%,#ff7ab8 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  letter-spacing:-.02em;
+}
+.sub{font-size:clamp(1rem,2vw,1.2rem); color:var(--txt2); max-width:820px; margin:0 auto 26px;}
+.meta{color:var(--txt3); font-size:13.5px; font-family:'JetBrains Mono',monospace;}
+
+/* ---------- Sections ---------- */
+section{margin:92px 0 0; scroll-margin-top:72px;}
+.sechead{display:flex; align-items:center; gap:16px; margin-bottom:10px;}
+.secnum{
+  flex:0 0 auto; width:46px;height:46px;border-radius:14px;
+  display:grid;place-items:center; font-weight:800; font-size:17px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#06121c;
+  box-shadow:0 8px 24px rgba(90,209,255,.28);
+}
+h2{font-size:clamp(1.5rem,3.1vw,2.15rem); margin:0; font-weight:700; letter-spacing:-.015em;}
+h3{font-size:1.18rem; margin:34px 0 10px; color:var(--acc); font-weight:650;}
+h4{font-size:1rem;margin:22px 0 8px;color:var(--txt);font-weight:650;}
+p{color:var(--txt2); margin:12px 0;}
+.lead{font-size:1.06rem;color:var(--txt);}
+strong{color:var(--txt); font-weight:650;}
+em.hl{color:var(--acc); font-style:normal; font-weight:600;}
+em.hl2{color:var(--acc3); font-style:normal; font-weight:600;}
+a{color:var(--acc);}
+
+/* ---------- Cards / Panels ---------- */
+.card{
+  background:linear-gradient(180deg,rgba(18,26,43,.92),rgba(12,17,29,.92));
+  border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px; box-shadow:var(--shadow); margin:22px 0;
+}
+.card.tight{padding:18px;}
+.glass{
+  background:linear-gradient(180deg,rgba(90,209,255,.06),rgba(139,125,255,.03));
+  border:1px solid var(--line2);
+}
+.panel-title{
+  font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt3);
+  font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:9px;
+}
+.panel-title::before{content:"";width:16px;height:2px;background:linear-gradient(90deg,var(--acc),transparent);border-radius:2px;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gridc{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start;}
+.gridc.rev{grid-template-columns:1fr 320px;}
+@media(max-width:900px){.grid2,.grid3,.gridc,.gridc.rev{grid-template-columns:1fr;}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:14px 0;}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--txt2);margin-bottom:7px;font-weight:550;}
+.ctrl label .val{font-family:'JetBrains Mono',monospace;color:var(--acc);font-weight:600;font-size:13px;
+  background:rgba(90,209,255,.1);padding:1px 8px;border-radius:6px;border:1px solid rgba(90,209,255,.22);}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;
+  background:linear-gradient(90deg,var(--acc) 0%,var(--acc2) 100%); outline:none; cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:#fff;border:3px solid var(--acc);cursor:grab;
+  box-shadow:0 2px 10px rgba(0,0,0,.6);transition:transform .12s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--acc);cursor:grab;}
+select,input[type=number]{
+  background:var(--bg2);border:1px solid var(--line2);color:var(--txt);
+  border-radius:9px;padding:7px 11px;font-family:'Inter',sans-serif;font-size:13.5px;width:100%;
+}
+.btn{
+  background:linear-gradient(135deg,var(--acc),var(--acc2));color:#06121c;border:none;
+  padding:9px 16px;border-radius:10px;font-weight:700;font-size:13.5px;cursor:pointer;
+  box-shadow:0 6px 18px rgba(90,209,255,.22);transition:.16s; font-family:'Inter',sans-serif;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(90,209,255,.34);}
+.btn:active{transform:translateY(0);}
+.btn.ghost{background:transparent;color:var(--txt2);border:1px solid var(--line2);box-shadow:none;}
+.btn.ghost:hover{color:var(--txt);border-color:var(--acc);background:rgba(90,209,255,.07);}
+.btn.sm{padding:6px 12px;font-size:12.5px;}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0;}
+.seg{display:flex;gap:0;border:1px solid var(--line2);border-radius:10px;overflow:hidden;}
+.seg button{
+  flex:1;background:transparent;border:none;color:var(--txt2);padding:8px 10px;
+  font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif;
+}
+.seg button:hover{background:var(--bg3);color:var(--txt);}
+.seg button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#06121c;}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt2);cursor:pointer;margin:7px 0;}
+.chk input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer;}
+
+/* ---------- Canvas ---------- */
+canvas{display:block;width:100%;border-radius:12px;background:#080d17;border:1px solid var(--line);}
+.plot{width:100%;}
+
+/* ---------- Stats / KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:14px 0;}
+.kpi{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+.kpi .k{font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--txt3);font-weight:700;}
+.kpi .v{font-size:1.35rem;font-weight:750;font-family:'JetBrains Mono',monospace;color:var(--acc);margin-top:3px;line-height:1.2;}
+.kpi.g .v{color:var(--good);} .kpi.w .v{color:var(--warn);} .kpi.b .v{color:var(--bad);} .kpi.p .v{color:var(--acc3);}
+
+/* ---------- Callouts ---------- */
+.callout{border-left:3px solid var(--acc);background:rgba(90,209,255,.055);padding:14px 18px;border-radius:0 12px 12px 0;margin:18px 0;}
+.callout.q{border-color:var(--acc3);background:rgba(255,122,184,.055);}
+.callout.w{border-color:var(--warn);background:rgba(255,200,90,.055);}
+.callout.g{border-color:var(--good);background:rgba(62,232,168,.055);}
+.callout .ttl{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;}
+.callout.q .ttl{color:var(--acc3);} .callout.w .ttl{color:var(--warn);} .callout.g .ttl{color:var(--good);}
+.callout p{margin:5px 0;color:var(--txt2);}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0;}
+th,td{padding:8px 11px;text-align:center;border-bottom:1px solid var(--line);}
+th{color:var(--txt3);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+td{font-family:'JetBrains Mono',monospace;color:var(--txt2);}
+td.lbl{font-family:'Inter',sans-serif;text-align:left;color:var(--txt);font-weight:600;}
+tr:hover td{background:rgba(90,209,255,.04);}
+td.ok{color:var(--good);} td.no{color:var(--bad);opacity:.6;}
+
+/* ---------- Legend chips ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;font-size:12.5px;color:var(--txt2);}
+.lg{display:flex;align-items:center;gap:6px;}
+.sw{width:13px;height:13px;border-radius:4px;}
+
+/* ---------- Math ---------- */
+.mathbox{background:var(--bg1);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;overflow-x:auto;text-align:center;}
+math{font-size:1.06em;}
+.mathbox .cap{font-size:12px;color:var(--txt3);margin-top:8px;text-align:center;}
+
+/* ---------- Step flow ---------- */
+.steps{display:flex;flex-direction:column;gap:10px;}
+.step{display:flex;gap:13px;align-items:flex-start;padding:11px 13px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);transition:.2s;}
+.step.on{border-color:var(--acc);background:rgba(90,209,255,.07);box-shadow:0 0 0 1px rgba(90,209,255,.2);}
+.step .n{flex:0 0 26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--bg3);color:var(--txt3);font-weight:700;font-size:12.5px;}
+.step.on .n{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#06121c;}
+.step .t{font-size:13.5px;color:var(--txt2);}
+.step.on .t{color:var(--txt);}
+
+/* ---------- misc ---------- */
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:650;
+  background:var(--bg3);color:var(--txt2);border:1px solid var(--line2);margin:2px 3px;}
+.pill.a{background:rgba(90,209,255,.12);color:var(--acc);border-color:rgba(90,209,255,.3);}
+.pill.p{background:rgba(255,122,184,.12);color:var(--acc3);border-color:rgba(255,122,184,.3);}
+.pill.g{background:rgba(62,232,168,.12);color:var(--good);border-color:rgba(62,232,168,.3);}
+.hr{height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);margin:34px 0;}
+.tiny{font-size:12px;color:var(--txt3);}
+ul.clean{list-style:none;padding:0;margin:12px 0;}
+ul.clean li{padding-left:22px;position:relative;margin:8px 0;color:var(--txt2);}
+ul.clean li::before{content:"▸";position:absolute;left:4px;color:var(--acc);font-weight:700;}
+.scroll-x{overflow-x:auto;}
+footer{margin-top:110px;padding-top:34px;border-top:1px solid var(--line);color:var(--txt3);font-size:13px;text-align:center;}
+.fadein{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);}
+.fadein.vis{opacity:1;transform:none;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0;}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<nav id="topnav"><div class="inner">
+  <span class="brand">◈ VERTEILUNGS-UNSICHERHEIT</span>
+  <a href="#s0">Problem</a>
+  <a href="#s1">Zufall im Training</a>
+  <a href="#s2">Verteilung</a>
+  <a href="#s3">Quantile</a>
+  <a href="#s4">Schätzen</a>
+  <a href="#s5">Ordnungsstat.</a>
+  <a href="#s6">Konfidenz</a>
+  <a href="#s7">Exakt</a>
+  <a href="#s8">Asymptotisch</a>
+  <a href="#s9">Bootstrap</a>
+  <a href="#s10">t-Intervall</a>
+  <a href="#s11">Experiment</a>
+  <a href="#s12">Ergebnisse</a>
+  <a href="#s13">Validierung</a>
+  <a href="#s14">Antwort</a>
+  <a href="#s15">Labor</a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ====================================================== HERO -->
+<header class="hero">
+  <div class="kicker">arXiv:2501.16931v2 · ScaDS.AI Dresden/Leipzig</div>
+  <h1 class="title">Jenseits von Punktschätzern</h1>
+  <p class="sub">Dein Modell hat <strong>87,4 % Accuracy</strong>. Aber was heißt das eigentlich?<br>
+  Eine interaktive Reise durch die Verteilung, die hinter dieser einen Zahl steckt — und wie man sie
+  mit nur 10–25 Trainingsläufen statistisch in den Griff bekommt.</p>
+  <div class="meta">Christoph Lehmann · Yahor Paromau — TU Dresden</div>
+  <div class="badge-row" style="justify-content:center">
+    <span class="pill a">Quantile</span><span class="pill a">Konfidenzintervalle</span>
+    <span class="pill p">Bootstrap</span><span class="pill g">Ordnungsstatistiken</span>
+    <span class="pill">19 000 GPU-Stunden</span>
+  </div>
+  <p class="tiny" style="margin-top:26px">⟶ Alles hier ist anfassbar. Schieb die Regler. Klick die Knöpfe. Lies wenig.</p>
+</header>
+
+<!-- ====================================================== 0 PROBLEM -->
+<section id="s0">
+  <div class="sechead"><div class="secnum">0</div><h2>Das Problem in 20 Sekunden</h2></div>
+  <p class="lead">Zwei Teams melden ihr Modell. Beide sagen: „87 % Accuracy". Drück auf <em class="hl">Trainiere nochmal</em> und schau, was wirklich passiert.</p>
+
+  <div class="card">
+    <div class="panel-title">Live-Demo · Zwei Modelle, scheinbar gleich gut</div>
+    <div class="btnrow">
+      <button class="btn" id="p0-run">▶ Trainiere beide Modelle nochmal</button>
+      <button class="btn ghost" id="p0-run10">▶▶ 10× hintereinander</button>
+      <button class="btn ghost sm" id="p0-reset">↻ Zurücksetzen</button>
+    </div>
+    <canvas id="p0-canvas" height="330"></canvas>
+    <div class="grid2" style="margin-top:16px">
+      <div class="kpis" style="margin:0">
+        <div class="kpi"><div class="k">Modell A · Mittel</div><div class="v" id="p0-ma">–</div></div>
+        <div class="kpi w"><div class="k">A · schlechtester Lauf</div><div class="v" id="p0-mina">–</div></div>
+      </div>
+      <div class="kpis" style="margin:0">
+        <div class="kpi p"><div class="k">Modell B · Mittel</div><div class="v" id="p0-mb">–</div></div>
+        <div class="kpi b"><div class="k">B · schlechtester Lauf</div><div class="v" id="p0-minb">–</div></div>
+      </div>
+    </div>
+    <div class="callout q" style="margin-top:14px">
+      <div class="ttl">Der Kern des Papers</div>
+      <p>Die <strong>Mittelwerte</strong> sind fast identisch. Aber Modell B kippt gelegentlich weit nach unten.
+      Wer nur den      Mittelwert meldet, versteckt genau diese Information. <strong>Die Frage des Papers:</strong>
+      Wie bekommen wir die <em class="hl2">ganze Verteilung</em> statistisch in den Griff — und zwar mit
+      so wenigen Trainingsläufen, dass es bezahlbar bleibt?</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card tight">
+      <div class="panel-title">Motivation</div>
+      <p style="margin:0;font-size:14px">ML-Training ist ein <strong>Zufallsexperiment</strong>: Train-Test-Split,
+      Initialgewichte, Datenaugmentierung, Dropout, Datenreihenfolge, Hyperparameter-Suche — alles enthält
+      Zufall. Eine einzige Zahl kann das nicht abbilden.</p>
+    </div>
+    <div class="card tight">
+      <div class="panel-title">Idee</div>
+      <p style="margin:0;font-size:14px">Behandle die Metrik (Accuracy, RMSE …) als <strong>Zufallsvariable</strong>.
+      Beschreibe ihre Verteilung mit <strong>Quantilen</strong> statt nur mit dem Mittelwert — das erlaubt
+      <em class="hl">risikoorientierte</em> Aussagen.</p>
+    </div>
+    <div class="card tight">
+      <div class="panel-title">Hürde</div>
+      <p style="margin:0;font-size:14px">Jeder Lauf kostet GPU-Stunden. Realistisch sind
+      <strong>n = 10 … 25</strong> Läufe. Reicht das für belastbare Statistik? Genau das wird hier
+      durchgerechnet — mit 19 000 GPU-Stunden Referenzdaten.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="ttl">Wie du diese Seite liest</div>
+    <p>Links der Reihe nach: erst die <strong>Vorkenntnisse</strong> (Abschnitte 1–6, alles über Abi-Mathe hinaus
+    wird interaktiv erklärt), dann die <strong>drei Methoden</strong> des Papers (7–10), dann das
+    <strong>Experiment</strong> und die <strong>Ergebnisse</strong> (11–14), zum Schluss ein
+    <strong>freies Labor</strong> (15). Jeder Abschnitt baut auf dem vorigen auf.</p>
+  </div>
+</section>
+
+<!-- ====================================================== 1 ZUFALL IM TRAINING -->
+<section id="s1">
+  <div class="sechead"><div class="secnum">1</div><h2>Woher kommt der Zufall? — Quellen der Variation</h2></div>
+  <p class="lead">Das Paper nennt sie <em class="hl">sources of variation</em> (Variationsquellen) bzw.
+  Confounding-Faktoren. Schalte sie einzeln an und sieh, wie stark jede für sich streut.</p>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Welche Quelle variierst du?</div>
+      <div id="p1-sources"></div>
+      <div class="hr" style="margin:16px 0"></div>
+      <div class="ctrl">
+        <label>Anzahl Läufe <span class="val" id="p1-nv">60</span></label>
+        <input type="range" id="p1-n" min="5" max="300" value="60" step="5">
+      </div>
+      <div class="btnrow">
+        <button class="btn" id="p1-go">▶ Experiment laufen lassen</button>
+      </div>
+      <p class="tiny">Prinzip: alle anderen Faktoren werden per <strong>Seed</strong> festgehalten,
+      nur einer wird variiert. So lässt sich der Effekt <em>einer</em> Quelle isolieren —
+      und die Läufe sind i.i.d. (unabhängig, gleichverteilt).</p>
+    </div>
+    <div class="card">
+      <div class="panel-title">Resultierende Accuracy-Werte</div>
+      <div id="p1-plot" class="plot" style="height:400px"></div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Mittelwert</div><div class="v" id="p1-mean">–</div></div>
+        <div class="kpi w"><div class="k">Std.-Abw.</div><div class="v" id="p1-sd">–</div></div>
+        <div class="kpi g"><div class="k">Spannweite</div><div class="v" id="p1-range">–</div></div>
+        <div class="kpi p"><div class="k">10 %-Quantil</div><div class="v" id="p1-q10">–</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout w">
+    <div class="ttl">Wichtige Unterscheidung</div>
+    <p>Das <strong>n</strong> hier ist die <em class="hl">Anzahl der Trainingswiederholungen</em> —
+    <u>nicht</u> die Größe des Trainings- oder Testdatensatzes! Verwandte Arbeiten (z.&nbsp;B. zu Konfidenzintervallen
+    für den F1-Score) betrachten meist die Testdatenmenge. Hier geht es um das Experiment
+    „Training" als Ganzes.</p>
+  </div>
+</section>
+
+<!-- ====================================================== 2 VERTEILUNG -->
+<section id="s2">
+  <div class="sechead"><div class="secnum">2</div><h2>Von Einzelwerten zur Verteilung</h2></div>
+  <p class="lead">Viele Läufe → ein Histogramm → eine geglättete Dichtekurve. Das Paper nutzt dafür
+  <em class="hl">Kernel-Dichteschätzung</em> (KDE). Spiel mit der Glättung und sieh, wie aus Punkten eine Kurve wird.</p>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">KDE verstehen</div>
+      <div class="ctrl">
+        <label>Anzahl Beobachtungen <span class="val" id="p2-nv">30</span></label>
+        <input type="range" id="p2-n" min="5" max="400" value="30" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Bandbreite (Glättung) <span class="val" id="p2-hv">0.010</span></label>
+        <input type="range" id="p2-h" min="2" max="80" value="20" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Anzahl Histogramm-Balken <span class="val" id="p2-bv">22</span></label>
+        <input type="range" id="p2-b" min="5" max="60" value="22" step="1">
+      </div>
+      <div class="seg" style="margin:14px 0">
+        <button class="on" data-p2d="uni">Unimodal</button>
+        <button data-p2d="skew">Linksschief</button>
+        <button data-p2d="bi">Bimodal</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="p2-bumps" checked> Einzel-Kerne (Hügelchen) zeigen</label>
+      <label class="chk"><input type="checkbox" id="p2-true" checked> Wahre Dichte zeigen</label>
+      <button class="btn ghost sm" id="p2-new">↻ Neue Stichprobe</button>
+    </div>
+    <div class="card">
+      <div class="panel-title">Histogramm + KDE</div>
+      <canvas id="p2-canvas" height="400"></canvas>
+      <div class="legend">
+        <div class="lg"><div class="sw" style="background:#2a3a5c"></div>Histogramm</div>
+        <div class="lg"><div class="sw" style="background:var(--acc)"></div>KDE-Schätzung</div>
+        <div class="lg"><div class="sw" style="background:var(--acc3)"></div>Wahre Dichte</div>
+        <div class="lg"><div class="sw" style="background:rgba(139,125,255,.5)"></div>Einzelne Kerne</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="callout">
+      <div class="ttl">Was passiert hier?</div>
+      <p>Über jede Beobachtung wird eine kleine Glockenkurve gelegt. Alle Glocken werden aufsummiert
+      und normiert → glatte Dichte. Die <strong>Bandbreite</strong> steuert, wie breit jede Glocke ist:
+      zu klein = zackig, zu groß = alles verschmiert.</p>
+    </div>
+    <div class="callout w">
+      <div class="ttl">Der Realitäts-Check</div>
+      <p>Zieh n auf <strong>10</strong>. Die glatten Kurven aus dem Paper (Abb. 1) basieren auf
+      ~1000 Läufen. In der Praxis hast du 10–25 — und dann sieht nichts mehr glatt aus.
+      <em class="hl2">Genau deshalb braucht man Inferenzstatistik.</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 3 QUANTILE -->
+<section id="s3">
+  <div class="sechead"><div class="secnum">3</div><h2>Quantile — die Sprache des Risikos</h2></div>
+  <p class="lead">Ein Quantil beantwortet: „Welcher Wert wird in u·100 % der Fälle nicht überschritten?"
+  Das ist die Brücke von „Durchschnitt" zu <em class="hl">Risiko</em>.</p>
+
+  <div class="mathbox">
+    <div id="m-quantile"></div>
+    <div class="cap">Definition (Gl. 1): das u-Quantil ist der kleinste Wert x, bei dem die kumulierte
+    Wahrscheinlichkeit mindestens u erreicht.</div>
+  </div>
+
+  <div class="gridc rev">
+    <div class="card">
+      <div class="panel-title">Dichte, Verteilungsfunktion und Quantil</div>
+      <canvas id="p3-canvas" height="430"></canvas>
+    </div>
+    <div class="card">
+      <div class="panel-title">Steuerung</div>
+      <div class="ctrl">
+        <label>Quantil-Level u <span class="val" id="p3-uv">0.10</span></label>
+        <input type="range" id="p3-u" min="1" max="99" value="10" step="1">
+      </div>
+      <div class="seg" style="margin:14px 0">
+        <button class="on" data-p3m="acc">Accuracy (höher=besser)</button>
+        <button data-p3m="rmse">RMSE (niedriger=besser)</button>
+      </div>
+      <div class="ctrl">
+        <label>Schiefe der Verteilung <span class="val" id="p3-sv">0.0</span></label>
+        <input type="range" id="p3-s" min="-10" max="10" value="0" step="1">
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Quantilwert</div><div class="v" id="p3-q">–</div></div>
+        <div class="kpi p"><div class="k">Mittelwert</div><div class="v" id="p3-mu">–</div></div>
+      </div>
+      <div class="callout q" style="margin-top:10px">
+        <div class="ttl">Aussage</div>
+        <p id="p3-stmt" style="font-size:14px">…</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Der Vorzeichen-Trick (Gl. 3)</h3>
+  <p>Bei Accuracy will man sagen „<em>höchstens</em> 10 % der Läufe sind schlechter als x" — die Definition
+  liefert aber „<em>mindestens</em>". Das Paper transformiert dafür einfach X → −X. Dann gilt
+  <span class="pill a">x̃<sub>u</sub> = −x̃<sub>1−u</sub></span> — aus einem 10 %-Quantil wird ein 90 %-Quantil.
+  Das ist nicht nur Kosmetik: <strong>obere Quantile brauchen deutlich kleinere Stichproben</strong>
+  (siehe Abschnitt 8 — von n=42 auf n=25!).</p>
+
+  <div class="card">
+    <div class="panel-title">Interaktiv: Vorzeichen-Transformation</div>
+    <div class="grid2">
+      <div>
+        <div class="ctrl">
+          <label>Quantil-Level u <span class="val" id="p3t-uv">0.10</span></label>
+          <input type="range" id="p3t-u" min="1" max="49" value="10" step="1">
+        </div>
+        <button class="btn" id="p3t-flip">⇄ Transformation X → −X anwenden</button>
+        <p class="tiny" id="p3t-txt" style="margin-top:12px"></p>
+      </div>
+      <div><canvas id="p3t-canvas" height="230"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 4 SCHÄTZEN -->
+<section id="s4">
+  <div class="sechead"><div class="secnum">4</div><h2>Schätzen: vom Stichproben-Quantil zur Interpolation</h2></div>
+  <p class="lead">Die wahre Verteilung kennen wir nie. Wir haben nur n Werte. Daraus muss das Quantil
+  <em class="hl">geschätzt</em> werden — und dafür gibt es zwei Kandidaten.</p>
+
+  <h3>Die empirische Verteilungsfunktion</h3>
+  <p>Sortiere alle Beobachtungen. Jede trägt 1/n Wahrscheinlichkeitsmasse bei → eine <strong>Treppenfunktion</strong>.
+  Ihre „Umkehrung" ist der einfachste Quantilschätzer.</p>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Steuerung</div>
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p4-nv">12</span></label>
+        <input type="range" id="p4-n" min="4" max="60" value="12" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Quantil-Level u <span class="val" id="p4-uv">0.25</span></label>
+        <input type="range" id="p4-u" min="1" max="99" value="25" step="1">
+      </div>
+      <button class="btn ghost sm" id="p4-new">↻ Neue Stichprobe ziehen</button>
+      <div class="kpis" style="margin-top:14px">
+        <div class="kpi"><div class="k">Q̂ (Stichprobenq.)</div><div class="v" id="p4-qs">–</div></div>
+        <div class="kpi p"><div class="k">Q̂<sub>L</sub> (interpoliert)</div><div class="v" id="p4-ql">–</div></div>
+        <div class="kpi g"><div class="k">Wahres Quantil</div><div class="v" id="p4-qt">–</div></div>
+      </div>
+      <p class="tiny">Q̂<sub>L</sub> ist der <strong>Standard</strong> in <code>numpy.quantile()</code>
+      und R's <code>quantile()</code> (type 7).</p>
+    </div>
+    <div class="card">
+      <div class="panel-title">Empirische Verteilungsfunktion & beide Schätzer</div>
+      <canvas id="p4-canvas" height="420"></canvas>
+      <div class="legend">
+        <div class="lg"><div class="sw" style="background:var(--acc)"></div>Treppe F̂<sub>n</sub></div>
+        <div class="lg"><div class="sw" style="background:var(--acc3)"></div>lineare Interpolation</div>
+        <div class="lg"><div class="sw" style="background:var(--good)"></div>wahre Verteilungsfunktion F</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="mathbox">
+      <div id="m-Q"></div>
+      <div class="cap">Gl. 5 — Stichproben-Quantil: Sprung zur i-ten Ordnungsstatistik</div>
+    </div>
+    <div class="mathbox">
+      <div id="m-QL"></div>
+      <div class="cap">Gl. 6 — linear interpolierter Schätzer (ε = Nachkommaanteil, n′ = n+1)</div>
+    </div>
+  </div>
+
+  <h3>Wie gut sind die Schätzer? Bias und RMSE</h3>
+  <p>Das Paper simuliert 2000-mal: Stichprobe ziehen → Quantil schätzen → mit Wahrheit vergleichen.
+  <strong>Bias</strong> = mittlerer Fehler (systematische Verzerrung), <strong>RMSE</strong> = Bias + Streuung.</p>
+
+  <div class="card">
+    <div class="panel-title">Live-Simulation: Verzerrung & Fehler über Quantil-Levels</div>
+    <div class="grid2" style="align-items:end">
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p4b-nv">10</span></label>
+        <input type="range" id="p4b-n" min="5" max="60" value="10" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Simulationsläufe <span class="val" id="p4b-rv">600</span></label>
+        <input type="range" id="p4b-r" min="100" max="3000" value="600" step="100">
+      </div>
+    </div>
+    <div class="seg" style="margin:4px 0 14px;max-width:460px">
+      <button class="on" data-p4d="normal">Normal</button>
+      <button data-p4d="beta">Beta (linksschief)</button>
+      <button data-p4d="mix">Normal-Mischung</button>
+    </div>
+    <button class="btn" id="p4b-go">▶ Simulation starten</button>
+    <div id="p4b-plot" class="plot" style="height:400px;margin-top:14px"></div>
+    <div class="callout g">
+      <div class="ttl">Die U-Form — das zentrale Resultat</div>
+      <p>Quantile in der <strong>Mitte</strong> (25 %, 50 %, 75 %) sind leicht zu schätzen. In den
+      <strong>Rändern</strong> (5 %, 95 %) explodiert der Fehler. Größeres n drückt alles nach unten.
+      Beide Schätzer sind praktisch gleichwertig — das Paper findet maximal ~1 % relativen Bias
+      bei echten Daten.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 5 ORDNUNGSSTATISTIKEN -->
+<section id="s5">
+  <div class="sechead"><div class="secnum">5</div><h2>Ordnungsstatistiken — das Fundament</h2></div>
+  <p class="lead">Sortiere die Stichprobe: X<sub>(1)</sub> ≤ X<sub>(2)</sub> ≤ … ≤ X<sub>(n)</sub>.
+  Jede dieser sortierten Positionen ist selbst eine Zufallsvariable mit eigener Verteilung.
+  <em class="hl">Das ist der Schlüssel zu exakten Konfidenzintervallen.</em></p>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Steuerung</div>
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p5-nv">9</span></label>
+        <input type="range" id="p5-n" min="3" max="25" value="9" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Welche Ordnungsstatistik? X<sub>(k)</sub> <span class="val" id="p5-kv">3</span></label>
+        <input type="range" id="p5-k" min="1" max="9" value="3" step="1">
+      </div>
+      <div class="btnrow">
+        <button class="btn" id="p5-draw">▶ Eine Stichprobe ziehen</button>
+        <button class="btn ghost sm" id="p5-many">▶▶ 2000 Stichproben</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Position k/(n+1)</div><div class="v" id="p5-pos">–</div></div>
+        <div class="kpi p"><div class="k">E[X<sub>(k)</sub>] empirisch</div><div class="v" id="p5-ev">–</div></div>
+      </div>
+      <p class="tiny">X<sub>(k)</sub> ist ungefähr das k/(n+1)-Quantil der Verteilung. Die kleinste und
+      größte Ordnungsstatistik streuen am stärksten — deshalb sind Rand-Quantile so schwer.</p>
+    </div>
+    <div class="card">
+      <div class="panel-title">Sortierte Stichprobe & Verteilung von X<sub>(k)</sub></div>
+      <canvas id="p5-canvas" height="430"></canvas>
+    </div>
+  </div>
+
+  <h3>Der Binomial-Trick</h3>
+  <p>Wie viele der n Beobachtungen liegen <strong>unter</strong> dem wahren Quantil x̃<sub>u</sub>?
+  Jede Beobachtung liegt mit Wahrscheinlichkeit u darunter — unabhängig voneinander.
+  Also: diese Anzahl ist <span class="pill a">Binomial(n, u)</span>-verteilt. Mehr braucht man nicht
+  für exakte Konfidenzintervalle!</p>
+
+  <div class="card">
+    <div class="panel-title">Binomialverteilung: „Wie viele Punkte liegen links vom Quantil?"</div>
+    <div class="grid2" style="align-items:end">
+      <div class="ctrl">
+        <label>n <span class="val" id="p5b-nv">20</span></label>
+        <input type="range" id="p5b-n" min="5" max="60" value="20" step="1">
+      </div>
+      <div class="ctrl">
+        <label>u <span class="val" id="p5b-uv">0.25</span></label>
+        <input type="range" id="p5b-u" min="2" max="98" value="25" step="1">
+      </div>
+    </div>
+    <canvas id="p5b-canvas" height="280"></canvas>
+    <p class="tiny" id="p5b-txt"></p>
+  </div>
+</section>
+
+<!-- ====================================================== 6 KONFIDENZ -->
+<section id="s6">
+  <div class="sechead"><div class="secnum">6</div><h2>Was ist ein Konfidenzintervall wirklich?</h2></div>
+  <p class="lead">Das meistmissverstandene Konzept der Statistik — in einer Animation geklärt.
+  <em class="hl">Nicht</em> „der wahre Wert liegt mit 90 % Wahrscheinlichkeit im Intervall".
+  Sondern: <em class="hl2">90 % aller so konstruierten Intervalle treffen den wahren Wert.</em></p>
+
+  <div class="card">
+    <div class="panel-title">Frequentistische Interpretation — live</div>
+    <div class="grid3" style="align-items:end">
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p6-nv">15</span></label>
+        <input type="range" id="p6-n" min="5" max="60" value="15" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau 1−α <span class="val" id="p6-cv">0.90</span></label>
+        <input type="range" id="p6-c" min="50" max="99" value="90" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Anzahl Intervalle <span class="val" id="p6-rv">60</span></label>
+        <input type="range" id="p6-r" min="20" max="200" value="60" step="10">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="p6-go">▶ Intervalle erzeugen</button>
+      <button class="btn ghost" id="p6-anim">⏵ Langsam animieren</button>
+    </div>
+    <canvas id="p6-canvas" height="400"></canvas>
+    <div class="kpis">
+      <div class="kpi g"><div class="k">Treffer</div><div class="v" id="p6-hit">–</div></div>
+      <div class="kpi b"><div class="k">Fehlschüsse</div><div class="v" id="p6-miss">–</div></div>
+      <div class="kpi"><div class="k">Empirische Abdeckung</div><div class="v" id="p6-cov">–</div></div>
+      <div class="kpi p"><div class="k">Soll (nominal)</div><div class="v" id="p6-nom">–</div></div>
+    </div>
+    <div class="callout g">
+      <div class="ttl">Das ist das Bewertungskriterium des Papers</div>
+      <p><strong>Empirische Abdeckung</strong> („empirical confidence level") = Anteil der Intervalle,
+      die den wahren Wert enthalten. Sie sollte nahe am <strong>nominalen</strong> Niveau liegen.
+      Zweites Kriterium: <strong>Intervall-Länge</strong> — kürzer ist besser, solange die Abdeckung stimmt.
+      Beide Ziele sind <em class="hl2">gegenläufig</em>.</p>
+    </div>
+  </div>
+
+  <div class="card glass">
+    <div class="panel-title">Der Zielkonflikt — zum Anfassen</div>
+    <div class="grid2">
+      <div>
+        <div class="ctrl">
+          <label>Konfidenzniveau <span class="val" id="p6t-cv">0.90</span></label>
+          <input type="range" id="p6t-c" min="50" max="99" value="90" step="1">
+        </div>
+        <div class="ctrl">
+          <label>Stichprobengröße n <span class="val" id="p6t-nv">15</span></label>
+          <input type="range" id="p6t-n" min="5" max="60" value="15" step="1">
+        </div>
+        <p class="tiny">Fazit des Papers: Für n ≤ 25 ist <strong>1−α = 0,90</strong> die vernünftige
+        Obergrenze. Bei 0,99 werden die Intervalle bis zu <em>doppelt so breit wie der Interdezilbereich</em> —
+        praktisch nutzlos. Bei 0,80 schwankt die Abdeckung zu stark, ohne nennenswert kürzer zu sein.</p>
+      </div>
+      <div id="p6t-plot" class="plot" style="height:300px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 7 EXAKT -->
+<section id="s7">
+  <div class="sechead"><div class="secnum">7</div><h2>Methode 1: Exakte nichtparametrische KIs</h2></div>
+  <p class="lead">Die erste der drei Methoden. Idee: Nimm zwei Ordnungsstatistiken X<sub>(k)</sub> und X<sub>(l)</sub>
+  als Intervallgrenzen. Die Trefferwahrscheinlichkeit lässt sich <em class="hl">exakt</em> über die
+  Binomialverteilung ausrechnen — ganz ohne Verteilungsannahme.</p>
+
+  <div class="mathbox">
+    <div id="m-exact"></div>
+    <div class="cap">Gl. 8 — Die Wahrscheinlichkeit, dass das wahre Quantil zwischen der k-ten und l-ten
+    sortierten Beobachtung liegt, ist eine Summe von Binomialwahrscheinlichkeiten.</div>
+  </div>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Baue dein eigenes exaktes KI</div>
+      <div class="ctrl">
+        <label>n <span class="val" id="p7-nv">20</span></label>
+        <input type="range" id="p7-n" min="4" max="60" value="20" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Quantil-Level u <span class="val" id="p7-uv">0.50</span></label>
+        <input type="range" id="p7-u" min="2" max="98" value="50" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Untere Grenze k <span class="val" id="p7-kv">6</span></label>
+        <input type="range" id="p7-k" min="1" max="19" value="6" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Obere Grenze l <span class="val" id="p7-lv">15</span></label>
+        <input type="range" id="p7-l" min="2" max="20" value="15" step="1">
+      </div>
+      <button class="btn ghost sm" id="p7-opt">⚡ Optimal wählen (1−α = 0,90)</button>
+      <div class="kpis" style="margin-top:14px">
+        <div class="kpi g"><div class="k">Exakte Abdeckung r</div><div class="v" id="p7-r">–</div></div>
+        <div class="kpi"><div class="k">Intervall [X<sub>(k)</sub>, X<sub>(l)</sub>]</div><div class="v" id="p7-iv" style="font-size:1rem">–</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="panel-title">Binomialmasse & die gewählte Summe</div>
+      <canvas id="p7-canvas" height="300"></canvas>
+      <div class="panel-title" style="margin-top:18px">Stichprobe & Intervall</div>
+      <canvas id="p7-canvas2" height="150"></canvas>
+    </div>
+  </div>
+
+  <h3>Die Existenzbedingung — warum kleine Stichproben scheitern</h3>
+  <p>Ein solches Intervall existiert überhaupt nur, wenn
+  <span class="pill a">u<sup>n</sup> + (1−u)<sup>n</sup> ≤ α</span> (Gl. 9).
+  Anschaulich: Es muss unwahrscheinlich genug sein, dass <em>alle</em> Punkte auf derselben Seite
+  des Quantils landen. Daraus folgt eine <strong>Mindeststichprobengröße</strong>.</p>
+
+  <div class="card">
+    <div class="panel-title">Tabelle 1 — Mindest-n für exakte KIs (interaktiv)</div>
+    <div class="grid2" style="align-items:start">
+      <div>
+        <div class="ctrl">
+          <label>Konfidenzniveau 1−α <span class="val" id="p7m-cv">0.90</span></label>
+          <input type="range" id="p7m-c" min="80" max="99" value="90" step="1">
+        </div>
+        <div class="scroll-x">
+          <table id="p7m-table"></table>
+        </div>
+        <p class="tiny">Die Tabelle ist symmetrisch um u = 0,5. <strong>Lies es so:</strong> Für ein
+        90 %-KI des 5 %-Quantils brauchst du mindestens 45 Läufe — das ist für ML meist unbezahlbar.
+        Für das 25 %-Quantil reichen 9.</p>
+      </div>
+      <div id="p7m-plot" class="plot" style="height:340px"></div>
+    </div>
+  </div>
+
+  <div class="callout w">
+    <div class="ttl">Konservativ durch Diskretheit</div>
+    <p>Weil die Binomialverteilung <strong>Sprünge</strong> macht, trifft man das Niveau 1−α fast nie genau —
+    man landet darüber. Folge: <em class="hl2">zu breite Intervalle</em>. Das Paper verwendet deshalb die
+    optimierte Konstruktion von Zieliński &amp; Zieliński (2005), die bei gleicher Abdeckung kürzere
+    Intervalle liefert.</p>
+  </div>
+</section>
+
+<!-- ====================================================== 8 ASYMPTOTISCH -->
+<section id="s8">
+  <div class="sechead"><div class="secnum">8</div><h2>Methode 2: Asymptotische nichtparametrische KIs</h2></div>
+  <p class="lead">Statt exakt zu rechnen, nutzt man die <em class="hl">asymptotische Normalität</em> der
+  Stichprobenquantile: Man berechnet die Indizes k und l direkt aus einer Normalverteilungs-Formel.
+  Schnell, einfach — und laut Paper die <strong>beste Default-Wahl</strong>.</p>
+
+  <div class="mathbox">
+    <div id="m-asym"></div>
+    <div class="cap">Gl. 11 — die Indizes ergeben sich aus u ± z·√(u(1−u)/n), skaliert mit n.</div>
+  </div>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Index-Rechner</div>
+      <div class="ctrl">
+        <label>n <span class="val" id="p8-nv">25</span></label>
+        <input type="range" id="p8-n" min="5" max="200" value="25" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Quantil-Level u <span class="val" id="p8-uv">0.90</span></label>
+        <input type="range" id="p8-u" min="1" max="99" value="90" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau <span class="val" id="p8-cv">0.90</span></label>
+        <input type="range" id="p8-c" min="80" max="99" value="90" step="1">
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Index k</div><div class="v" id="p8-k">–</div></div>
+        <div class="kpi"><div class="k">Index l</div><div class="v" id="p8-l">–</div></div>
+      </div>
+      <div id="p8-valid" class="callout" style="margin-top:8px"><div class="ttl">Status</div><p id="p8-vtxt">–</p></div>
+    </div>
+    <div class="card">
+      <div class="panel-title">Visualisierung der Indexlage</div>
+      <canvas id="p8-canvas" height="260"></canvas>
+      <p class="tiny">k und l sind reellwertig. Liegt k unter 1 oder l über n, existiert kein gültiges
+      Intervall → <strong>Mindest-n</strong>. Zwischen Ordnungsstatistiken wird mit Q̂<sub>L</sub> interpoliert.</p>
+    </div>
+  </div>
+
+  <h3>Die Asymmetrie — und der Trick, sie loszuwerden</h3>
+  <p>Tabelle 2 des Papers ist <strong>nicht symmetrisch</strong>: untere Quantile brauchen viel größere
+  Stichproben als obere. Das liegt an der Nebenbedingung 1 ≤ k < l ≤ n — nicht an der Verteilung selbst.
+  Und genau hier zahlt sich der Vorzeichen-Trick aus Abschnitt 3 aus.</p>
+
+  <div class="card">
+    <div class="panel-title">Tabelle 2 — Mindest-n (asymptotisch) · mit Spiegel-Overlay</div>
+    <div class="grid2" style="align-items:start">
+      <div>
+        <div class="ctrl">
+          <label>Konfidenzniveau 1−α <span class="val" id="p8m-cv">0.90</span></label>
+          <input type="range" id="p8m-c" min="80" max="99" value="90" step="1">
+        </div>
+        <label class="chk"><input type="checkbox" id="p8m-flip"> Vorzeichen-Transformation anwenden (X → −X)</label>
+        <div class="scroll-x"><table id="p8m-table"></table></div>
+      </div>
+      <div id="p8m-plot" class="plot" style="height:360px"></div>
+    </div>
+    <div class="callout g">
+      <div class="ttl">Das konkrete Beispiel aus dem Paper</div>
+      <p>10 %-Quantil, 1−α = 0,90 → <strong>n = 42</strong> nötig. Transformiert man X → −X,
+      wird daraus ein 90 %-Quantil → <strong>n = 25</strong> genügt.
+      <em class="hl">Eine reine Umbenennung spart 40 % der GPU-Stunden.</em> Schalte den Haken um und sieh es.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 9 BOOTSTRAP -->
+<section id="s9">
+  <div class="sechead"><div class="secnum">9</div><h2>Methode 3: Semiparametrischer Bootstrap</h2></div>
+  <p class="lead">Wenn n so klein ist, dass die anderen Methoden gar nicht erst existieren — was dann?
+  Bootstrap. Aber der <em class="hl2">normale</em> Bootstrap versagt bei Quantilen. Das Paper nutzt daher
+  die Variante von Hutson (2002), die in die Verteilungs-Ränder <em class="hl">extrapoliert</em>.</p>
+
+  <h3>Warum der Standard-Bootstrap scheitert</h3>
+  <div class="card">
+    <div class="panel-title">Vergleich: klassischer vs. semiparametrischer Bootstrap</div>
+    <div class="grid2" style="align-items:end">
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p9-nv">12</span></label>
+        <input type="range" id="p9-n" min="5" max="40" value="12" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Quantil-Level u <span class="val" id="p9-uv">0.90</span></label>
+        <input type="range" id="p9-u" min="2" max="98" value="90" step="1">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="p9-go">▶ 2000 Bootstrap-Stichproben</button>
+      <button class="btn ghost sm" id="p9-new">↻ Neue Originalstichprobe</button>
+    </div>
+    <div id="p9-plot" class="plot" style="height:360px"></div>
+    <div class="grid2">
+      <div class="kpis" style="margin:0">
+        <div class="kpi w"><div class="k">Klassisch · KI</div><div class="v" id="p9-cl" style="font-size:.95rem">–</div></div>
+        <div class="kpi w"><div class="k">Klassisch · versch. Werte</div><div class="v" id="p9-cu">–</div></div>
+      </div>
+      <div class="kpis" style="margin:0">
+        <div class="kpi g"><div class="k">Semiparam. · KI</div><div class="v" id="p9-sl" style="font-size:.95rem">–</div></div>
+        <div class="kpi g"><div class="k">Semiparam. · versch. Werte</div><div class="v" id="p9-su">–</div></div>
+      </div>
+    </div>
+    <div class="callout w">
+      <div class="ttl">Das Problem im Bild</div>
+      <p>Der klassische Bootstrap zieht <strong>mit Zurücklegen aus den n Originalwerten</strong>.
+      Die Bootstrap-Verteilung eines Randquantils kann daher nur ganz wenige verschiedene Werte annehmen
+      (siehe „versch. Werte") — ein <em class="hl2">zerhackter Kamm</em> statt einer glatten Verteilung.
+      Und sie kann <strong>nie über das beobachtete Maximum hinaus</strong>. Bei n = 12 und u = 0,95
+      ist das fatal.</p>
+    </div>
+  </div>
+
+  <h3>Die Lösung: Q̂<sub>T</sub> — ein Quantilschätzer mit Schwänzen</h3>
+  <div class="mathbox">
+    <div id="m-QT"></div>
+    <div class="cap">Gl. 12 — in der Mitte lineare Interpolation, in den Rändern logarithmische Extrapolation
+    über das Minimum/Maximum hinaus.</div>
+  </div>
+
+  <div class="gridc rev">
+    <div class="card">
+      <div class="panel-title">Q̂<sub>T</sub> live: die drei Zonen</div>
+      <canvas id="p9b-canvas" height="380"></canvas>
+      <div class="legend">
+        <div class="lg"><div class="sw" style="background:var(--acc3)"></div>linker Extrapolations-Schwanz</div>
+        <div class="lg"><div class="sw" style="background:var(--acc)"></div>Q̂<sub>L</sub> (lineare Mitte)</div>
+        <div class="lg"><div class="sw" style="background:var(--warn)"></div>rechter Extrapolations-Schwanz</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="panel-title">Steuerung</div>
+      <div class="ctrl">
+        <label>n <span class="val" id="p9b-nv">10</span></label>
+        <input type="range" id="p9b-n" min="4" max="30" value="10" step="1">
+      </div>
+      <div class="ctrl">
+        <label>u (Cursor) <span class="val" id="p9b-uv">0.50</span></label>
+        <input type="range" id="p9b-u" min="1" max="999" value="500" step="1">
+      </div>
+      <button class="btn ghost sm" id="p9b-new">↻ Neue Stichprobe</button>
+      <div class="kpis" style="margin-top:12px">
+        <div class="kpi"><div class="k">Q̂<sub>T</sub>(u)</div><div class="v" id="p9b-q">–</div></div>
+        <div class="kpi p"><div class="k">Zone</div><div class="v" id="p9b-z" style="font-size:.95rem">–</div></div>
+      </div>
+      <p class="tiny">Die Grenzen liegen bei u = 1/(n+1) und u = n/(n+1). Außerhalb wird der
+      Abstand der beiden äußersten Punkte mit log(n′u) skaliert — so entstehen Werte
+      <strong>jenseits</strong> der beobachteten Daten.</p>
+    </div>
+  </div>
+
+  <h3>Das Bootstrap-Verfahren in 3 Schritten</h3>
+  <div class="card">
+    <div class="grid2">
+      <div class="steps" id="p9c-steps">
+        <div class="step" data-s="0"><div class="n">1</div><div class="t">Ziehe n Zufallszahlen aus der
+          <strong>Gleichverteilung auf (0,1)</strong> — das sind „Quantil-Levels".</div></div>
+        <div class="step" data-s="1"><div class="n">2</div><div class="t">Transformiere jede davon mit
+          <strong>Q̂<sub>T</sub></strong> → eine Bootstrap-Stichprobe im Wertebereich der Metrik.</div></div>
+        <div class="step" data-s="2"><div class="n">3</div><div class="t">Berechne daraus das
+          <strong>Quantil</strong>. Wiederhole 2000×, nimm die 5 %- und 95 %-Perzentile als KI-Grenzen.</div></div>
+      </div>
+      <div>
+        <canvas id="p9c-canvas" height="260"></canvas>
+        <div class="btnrow">
+          <button class="btn sm" id="p9c-step">▶ Nächster Schritt</button>
+          <button class="btn ghost sm" id="p9c-auto">⏵ Auto</button>
+          <button class="btn ghost sm" id="p9c-reset">↻</button>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="ttl">Warum ist das legitim?</div>
+      <p>Die einzige nötige Annahme ist, dass <strong>F(X) gleichverteilt auf (0,1)</strong> ist —
+      das ist die <em class="hl">Wahrscheinlichkeitsintegral-Transformation</em>, ein beweisbares Resultat,
+      keine Annahme. Im Gegensatz zum „generalized bootstrap", der eine konkrete Verteilungsfamilie
+      (z.&nbsp;B. generalisierte Laplace) unterstellt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 10 T-INTERVALL -->
+<section id="s10">
+  <div class="sechead"><div class="secnum">10</div><h2>Die Referenz: das t-Intervall für den Mittelwert</h2></div>
+  <p class="lead">Der Klassiker — und genau das, was in ML-Papers (wenn überhaupt) berichtet wird.
+  Hier dient es als <em class="hl">Maßstab</em>: Quantil-KIs sollten ungefähr so kurz sein.</p>
+
+  <div class="mathbox">
+    <div id="m-t"></div>
+    <div class="cap">Gl. 7 — Mittelwert ± t-Quantil mal Standardfehler.</div>
+  </div>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">t-Verteilung vs. Normalverteilung</div>
+      <div class="ctrl">
+        <label>Freiheitsgrade n−1 <span class="val" id="p10-dv">9</span></label>
+        <input type="range" id="p10-d" min="1" max="60" value="9" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau <span class="val" id="p10-cv">0.90</span></label>
+        <input type="range" id="p10-c" min="80" max="99" value="90" step="1">
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">t-Quantil</div><div class="v" id="p10-t">–</div></div>
+        <div class="kpi g"><div class="k">z-Quantil</div><div class="v" id="p10-z">–</div></div>
+      </div>
+      <p class="tiny">Bei kleinem n hat die t-Verteilung <strong>schwerere Schwänze</strong> — sie bestraft
+      die Unsicherheit über σ. Ab n ≈ 30 ist der Unterschied vernachlässigbar.</p>
+    </div>
+    <div class="card">
+      <div class="panel-title">Dichtevergleich</div>
+      <canvas id="p10-canvas" height="330"></canvas>
+    </div>
+  </div>
+
+  <div class="callout w">
+    <div class="ttl">Die Normalitäts-Falle (und warum sie hier mild ist)</div>
+    <p>Das t-Intervall setzt Normalverteilung voraus — die bei Accuracy/RMSE oft verletzt ist.    Das Paper testet das mit <strong>Lilliefors</strong> und <strong>Shapiro-Wilk</strong>: Bei n = 10–15
+    liefern die Tests p-Werte von 0,2–0,8 — <em class="hl">Normalität kann nicht verworfen werden</em>.
+    Nicht weil die Daten normal sind, sondern weil kleine Stichproben zu <em>vielen</em> Verteilungen passen.
+    Ab n ≈ 25 greift ohnehin der Zentrale Grenzwertsatz. Einzige Ausnahme im Paper: die linksschiefe
+    CIFAR10-Verteilung (SGD + Hyperparameteroptimierung), dort sinken die p-Werte unter 0,1 und gehen
+    bei n = 25, 50 gegen null.</p>
+  </div>
+
+  <div class="card">
+    <div class="panel-title">Normalitätstest bei kleinem n — selbst ausprobieren</div>
+    <div class="grid2" style="align-items:end">
+      <div>
+        <div class="ctrl">
+          <label>Stichprobengröße n <span class="val" id="p10b-nv">12</span></label>
+          <input type="range" id="p10b-n" min="5" max="120" value="12" step="1">
+        </div>
+        <div class="seg" style="margin:10px 0">
+          <button class="on" data-p10d="normal">Normal</button>
+          <button data-p10d="beta">Beta (linksschief)</button>
+          <button data-p10d="mix">Mischung (bimodal)</button>
+        </div>
+        <button class="btn" id="p10b-go">▶ 400 Stichproben testen</button>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Median p-Wert</div><div class="v" id="p10b-p">–</div></div>
+          <div class="kpi b"><div class="k">Anteil p &lt; 0,05</div><div class="v" id="p10b-rej">–</div></div>
+        </div>
+      </div>
+      <div><canvas id="p10b-canvas" height="300"></canvas></div>
+    </div>
+    <p class="tiny">Ein vereinfachter Shapiro-Wilk-artiger Test (Korrelation der sortierten Werte mit den
+    Normal-Scores im QQ-Plot). Zieh n hoch: erst dann wird die Nicht-Normalität sichtbar.
+    <strong>Kleines n ist blind.</strong></p>
+  </div>
+</section>
+
+<!-- ====================================================== 11 EXPERIMENT -->
+<section id="s11">
+  <div class="sechead"><div class="secnum">11</div><h2>Das Experiment: was konkret gemacht wurde</h2></div>
+  <p class="lead">Drei echte ML-Anwendungen, 42 Experimente, je 500–1000 seed-kontrollierte Trainingsläufe.
+  Gesamtkosten: <em class="hl">ca. 19 000 GPU-Stunden</em> auf A100/H100.</p>
+
+  <div class="card">
+    <div class="panel-title">Die drei Use Cases</div>
+    <div id="p11-cards" class="grid3"></div>
+  </div>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Versuchsaufbau wählen</div>
+      <div class="ctrl">
+        <label>Use Case</label>
+        <select id="p11-uc">
+          <option value="simpsons">Simpsons characters (Klassifikation)</option>
+          <option value="cifar">CIFAR10 (Klassifikation)</option>
+          <option value="super">Superconductors (Regression)</option>
+        </select>
+      </div>
+      <div class="ctrl" style="margin-top:12px">
+        <label>Variationsquelle (SoV)</label>
+        <select id="p11-sov"></select>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">TMoI</div><div class="v" id="p11-tmoi" style="font-size:1rem">–</div></div>
+        <div class="kpi p"><div class="k">Wiederholungen</div><div class="v" id="p11-rep">–</div></div>
+      </div>
+      <p class="tiny">Prinzip: Alle anderen Faktoren fix, nur <em>eine</em> Quelle per Seed variiert.
+      Jeder Lauf startet von Null — keine Beeinflussung untereinander → i.i.d.</p>
+      <div class="callout w" style="margin-top:12px">
+        <div class="ttl">Seed-Kontrolle ist tückisch</div>
+        <p>Im Paper sind <strong>sieben verschiedene Zufallsgeneratoren</strong> im Spiel:
+        NumPy (<code>RandomState</code>), PyTorch (<code>torch.Generator</code>), Pythons
+        <code>random</code>, CUDA-Generatoren … Zusätzlich muss
+        <code>torch.use_deterministic_algorithms</code> gesetzt werden, sonst streuen selbst
+        identische Seeds.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="panel-title">Resultierende empirische Verteilung (≈1000 Läufe)</div>
+      <div id="p11-plot" class="plot" style="height:420px"></div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Mittelwert</div><div class="v" id="p11-mean">–</div></div>
+        <div class="kpi p"><div class="k">10 %-Quantil</div><div class="v" id="p11-q10">–</div></div>
+        <div class="kpi"><div class="k">Median</div><div class="v" id="p11-q50">–</div></div>
+        <div class="kpi w"><div class="k">90 %-Quantil</div><div class="v" id="p11-q90">–</div></div>
+        <div class="kpi g"><div class="k">Interdezilbereich</div><div class="v" id="p11-idr">–</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card glass">
+    <div class="panel-title">Das Schlüsselbeispiel aus der Einleitung des Papers</div>
+    <p>Klassifikation, Simpsons: <strong>Hyperparameteroptimierung (HO)</strong> vs.
+    <strong>Datenaugmentierung (DA)</strong>. Mittlere Accuracy 0,874 vs. 0,872 — scheinbar identisch.
+    Schau dir die KIs für das 10 %-Quantil an (n = 25, 1−α = 0,90):</p>
+    <div id="p11b-plot" class="plot" style="height:270px"></div>
+    <div class="grid2">
+      <div class="callout">
+        <div class="ttl">HO · 10 %-Quantil</div>
+        <p>KI = <strong>[0,870 ; 0,873]</strong> — Länge 0,003. Sehr stabil.</p>
+      </div>
+      <div class="callout q">
+        <div class="ttl">DA · 10 %-Quantil</div>
+        <p>KI = <strong>[0,860 ; 0,868]</strong> — Länge 0,008. <em class="hl2">Fast 3× länger</em> →
+        deutlich höhere Variabilität. Aus den Mittelwerten allein nicht erkennbar.</p>
+      </div>
+    </div>
+    <p class="tiny">Analog Regression (Superconductors, 90 %-Quantil des RMSE, n = 25):
+    DNN [10,8 ; 11,2], GBT [9,8 ; 10,2]. GBT besser im Niveau, <em>vergleichbare</em> Intervall-Länge →
+    ähnliche Variabilität.</p>
+  </div>
+</section>
+
+<!-- ====================================================== 12 ERGEBNISSE -->
+<section id="s12">
+  <div class="sechead"><div class="secnum">12</div><h2>Die Ergebnisse: Methoden-Duell</h2></div>
+  <p class="lead">Jetzt alles zusammen. Vier Methoden, zwei Kriterien
+  (<em class="hl">Abdeckung</em> & <em class="hl">Länge</em>), alle Quantil-Levels, alle n.
+  Das ist die interaktive Version der Abbildungen 4, 5, 8 und 9 des Papers.</p>
+
+  <div class="card">
+    <div class="panel-title">Großes Vergleichs-Experiment</div>
+    <div class="grid3" style="align-items:end">
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p12-nv">15</span></label>
+        <input type="range" id="p12-n" min="10" max="50" value="15" step="5">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau <span class="val" id="p12-cv">0.90</span></label>
+        <input type="range" id="p12-c" min="80" max="99" value="90" step="5">
+      </div>
+      <div class="ctrl">
+        <label>Simulationsläufe <span class="val" id="p12-rv">500</span></label>
+        <input type="range" id="p12-r" min="200" max="2000" value="500" step="100">
+      </div>
+    </div>
+    <div class="seg" style="margin:6px 0 14px;max-width:520px">
+      <button class="on" data-p12d="normal">Normal(0.87, 0.04²)</button>
+      <button data-p12d="beta">Beta(20,3) linksschief</button>
+      <button data-p12d="mix">Normal-Mischung</button>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="p12-go">▶ Simulation starten</button>
+      <span class="tiny" id="p12-status" style="align-self:center"></span>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <div><div class="panel-title">Empirische Abdeckung</div><div id="p12-cov" class="plot" style="height:430px"></div></div>
+      <div><div class="panel-title">Normierte Intervall-Länge</div><div id="p12-len" class="plot" style="height:430px"></div></div>
+    </div>
+    <div class="legend" style="justify-content:center">
+      <div class="lg"><div class="sw" style="background:var(--c-exact)"></div>np_exact</div>
+      <div class="lg"><div class="sw" style="background:var(--c-boot)"></div>bootstrap</div>
+      <div class="lg"><div class="sw" style="background:var(--c-asym)"></div>np_asymptotic</div>
+      <div class="lg"><div class="sw" style="background:var(--c-tmean)"></div>t_mean</div>
+    </div>
+    <div class="scroll-x"><table id="p12-table"></table></div>
+  </div>
+
+  <div class="grid2">
+    <div class="callout g">
+      <div class="ttl">Was du sehen solltest — Abdeckung</div>
+      <p>Bei <strong>n = 50</strong> liegen alle Methoden fast exakt auf der roten Linie.
+      Bei <strong>n = 10</strong> trifft nur die Mitte (25 %, 50 %, 75 %); die Ränder (5 %, 95 %)
+      fallen ab oder existieren gar nicht. Bootstrap ist die einzige Methode <em>ohne</em>
+      Mindest-n — rutscht dort aber auf ~0,85 Abdeckung.</p>
+    </div>
+    <div class="callout w">
+      <div class="ttl">Was du sehen solltest — Länge</div>
+      <p>Normiert auf den <strong>Interdezilbereich</strong> (90%-Q − 10%-Q). Die schwarze Linie ist
+      das t-Intervall für den Mittelwert — der Maßstab. Quantil-KIs sind nie kürzer. Bootstrap
+      ist meist am längsten. Bei 1−α = 0,99 explodieren alle auf <em class="hl2">bis zum Doppelten
+      des Interdezilbereichs</em> → unbrauchbar.</p>
+    </div>
+  </div>
+
+  <h3>Verteilungsform lesen aus Intervall-Längen</h3>
+  <p>Ein überraschender Nebeneffekt: Die Längen verraten die <em class="hl">Form</em> der Verteilung.</p>
+  <div class="card">
+    <div class="grid3">
+      <div class="card tight" style="margin:0">
+        <div class="panel-title">Linksschief</div>
+        <p style="font-size:13.5px;margin:0">Lange KIs bei <strong>unteren</strong> Quantilen —
+        dort liegt der lange Schwanz. Schiefe <em>verstärkt</em> die ohnehin höhere Rand-Unsicherheit.</p>
+      </div>
+      <div class="card tight" style="margin:0">
+        <div class="panel-title">Rechtsschief</div>
+        <p style="font-size:13.5px;margin:0">Spiegelbildlich: lange KIs bei <strong>oberen</strong> Quantilen.
+        Risikorelevant, wenn der Schwanz genau dort liegt, wo man misst.</p>
+      </div>
+      <div class="card tight" style="margin:0">
+        <div class="panel-title">Bimodal</div>
+        <p style="font-size:13.5px;margin:0">Das KI für den <strong>Median</strong> ist länger als
+        die für 25 % und 75 %! Weil in der Mitte kaum Masse liegt. Ab n ≥ 15 klar sichtbar.</p>
+      </div>
+    </div>
+    <div id="p12b-plot" class="plot" style="height:330px;margin-top:12px"></div>
+    <div class="seg" style="max-width:520px;margin-top:10px">
+      <button class="on" data-p12b="beta">Linksschief</button>
+      <button data-p12b="rskew">Rechtsschief</button>
+      <button data-p12b="mix">Bimodal</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== 13 VALIDIERUNG -->
+<section id="s13">
+  <div class="sechead"><div class="secnum">13</div><h2>Validierung: Simulation mit bekannter Wahrheit</h2></div>
+  <p class="lead">Bei echten Daten ist die „Wahrheit" nur geschätzt (aus den ~1000 Läufen).
+  Deshalb wiederholt das Paper alles mit <em class="hl">drei künstlichen Verteilungen</em>,
+  bei denen die wahren Quantile exakt bekannt sind.</p>
+
+  <div class="card">
+    <div class="panel-title">Die drei Validierungs-Verteilungen (Abb. 6 des Papers)</div>
+    <div id="p13-plot" class="plot" style="height:340px"></div>
+    <div class="grid3">
+      <div class="card tight" style="margin:0">
+        <div class="panel-title">Normal(0,87 · 0,04²)</div>
+        <p class="tiny" style="margin:0">Einfache Baseline. Masse liegt praktisch im Einheitsintervall —
+        so wie Accuracy in der Praxis aussieht.</p>
+      </div>
+      <div class="card tight" style="margin:0">
+        <div class="panel-title">Beta(20, 3)</div>
+        <p class="tiny" style="margin:0">Linksschief, <strong>beschränkter Träger</strong> [0,1].
+        Genau das, was existierende Literatur (Hutson) <em>nicht</em> abdeckt.</p>
+      </div>
+      <div class="card tight" style="margin:0">
+        <div class="panel-title">0,5·N(0,80) + 0,5·N(0,90)</div>
+        <p class="tiny" style="margin:0">Bimodal — tritt real auf, z. B. bei Unregelmäßigkeiten
+        in den Trainingsdaten.</p>
+      </div>
+    </div>
+    <label class="chk"><input type="checkbox" id="p13-idr" checked> Interdezilbereich (10 %–90 %) einzeichnen</label>
+  </div>
+
+  <div class="gridc">
+    <div class="card">
+      <div class="panel-title">Punktschätzer-Validierung (Abb. 7)</div>
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="p13b-nv">10</span></label>
+        <input type="range" id="p13b-n" min="10" max="50" value="10" step="5">
+      </div>
+      <div class="ctrl">
+        <label>Simulationsläufe <span class="val" id="p13b-rv">800</span></label>
+        <input type="range" id="p13b-r" min="200" max="3000" value="800" step="200">
+      </div>
+      <button class="btn" id="p13b-go">▶ Bias & RMSE berechnen</button>
+      <div class="callout" style="margin-top:12px">
+        <div class="ttl">Erwartung</div>
+        <p style="font-size:13.5px">U-Form über die Quantil-Levels. <strong>Ausnahme: die Mischung</strong> —
+        dort ist das <em class="hl2">mittlere</em> Quantil schwer, weil in der Mitte kaum Masse liegt.
+        Die schwarze Linie markiert 5 % relativen Fehler.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="panel-title">Relativer Bias (Balken) & relativer RMSE (Punkte)</div>
+      <div id="p13b-plot" class="plot" style="height:440px"></div>
+    </div>
+  </div>
+
+  <div class="callout g">
+    <div class="ttl">Fazit der Validierung</div>
+    <p>Qualitativ identisch zu den echten Daten — nur die absoluten Fehler sind <strong>höher</strong>,
+    weil die Simulationsverteilungen bewusst schwieriger gewählt wurden (starke Schiefe, Bimodalität).
+    Die Validierung ist damit eine <em class="hl">konservative</em> Abschätzung. Vergleiche mit
+    Wang et al. (generalized bootstrap) und Nagaraja &amp; Nagaraja zeigen: vergleichbare Größenordnung,
+    <strong>wenig Verbesserungspotenzial</strong> durch exotischere Verfahren.</p>
+  </div>
+</section>
+
+<!-- ====================================================== 14 ANTWORT -->
+<section id="s14">
+  <div class="sechead"><div class="secnum">14</div><h2>Die Antwort auf die gestellte Frage</h2></div>
+
+  <div class="callout q">
+    <div class="ttl">Die Frage war</div>
+    <p style="font-size:1.05rem">„Ist sinnvolle statistische Inferenz über die Performance-Verteilung
+    eines ML-Modells möglich, wenn man sich nur 10–25 Trainingsläufe leisten kann?"</p>
+  </div>
+
+  <div class="card glass">
+    <div class="panel-title">Die Antwort — und zwar differenziert</div>
+    <div class="grid3">
+      <div class="card tight" style="margin:0;border-color:rgba(62,232,168,.4)">
+        <div class="kpi g" style="background:transparent;border:none;padding:0">
+          <div class="k">n = 15 … 25</div><div class="v" style="font-size:1.1rem">JA ✓</div>
+        </div>
+        <p style="font-size:13.5px;margin:8px 0 0">Aussagekräftige KIs für zentrale <em>und</em>
+        moderat extreme Quantile (bis ca. 10 % / 90 %). <strong>Das ist der Sweet Spot.</strong></p>
+      </div>
+      <div class="card tight" style="margin:0;border-color:rgba(255,200,90,.4)">
+        <div class="kpi w" style="background:transparent;border:none;padding:0">
+          <div class="k">n ≈ 10</div><div class="v" style="font-size:1.1rem">TEILWEISE</div>
+        </div>
+        <p style="font-size:13.5px;margin:8px 0 0">Nur zentrale Quantile (Quartile, Median).
+        Trotzdem schon mehr als ein Mittelwert: erster Eindruck von Stabilität und Rand-Verhalten.</p>
+      </div>
+      <div class="card tight" style="margin:0;border-color:rgba(255,107,107,.4)">
+        <div class="kpi b" style="background:transparent;border:none;padding:0">
+          <div class="k">Extreme (1 %, 5 %)</div><div class="v" style="font-size:1.1rem">NEIN ✗</div>
+        </div>
+        <p style="font-size:13.5px;margin:8px 0 0">Braucht n = 45 … 460. Für die meisten
+        ML-Anwendungen unbezahlbar. Ehrliche Grenze statt Scheingenauigkeit.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die konkreten Handlungsempfehlungen</h3>
+  <div class="card">
+    <div class="panel-title">Entscheidungshelfer — stell dein Szenario ein</div>
+    <div class="grid3" style="align-items:end">
+      <div class="ctrl">
+        <label>Budget: Anzahl Läufe n <span class="val" id="p14-nv">20</span></label>
+        <input type="range" id="p14-n" min="5" max="100" value="20" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Gewünschtes Quantil u <span class="val" id="p14-uv">0.10</span></label>
+        <input type="range" id="p14-u" min="1" max="99" value="10" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau <span class="val" id="p14-cv">0.90</span></label>
+        <input type="range" id="p14-c" min="80" max="99" value="90" step="1">
+      </div>
+    </div>
+    <label class="chk"><input type="checkbox" id="p14-flip"> Vorzeichen-Trick erlauben (X → −X)</label>
+    <div id="p14-rec"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="panel-title">Die 7 Kernaussagen</div>
+      <ul class="clean">
+        <li><strong>Default-Methode:</strong> das <em class="hl">nichtparametrische asymptotische KI</em> —
+        bester Kompromiss aus Anwendbarkeit, Qualität und Einfachheit.</li>
+        <li><strong>Konfidenzniveau 0,90</strong> für n ≤ 25. Nicht 0,95, erst recht nicht 0,99.</li>
+        <li><strong>Vorzeichen-Trick</strong> nutzen: 10 %-Quantil → 90 %-Quantil spart von n=42 auf n=25.</li>
+        <li><strong>Bootstrap</strong> nur als Notnagel, wenn kein anderes Verfahren existiert —
+        dann aber brauchbar (Abdeckung ~0,85).</li>
+        <li><strong>Punktschätzer egal:</strong> Q̂ und Q̂<sub>L</sub> unterscheiden sich praktisch nicht
+        (max. ~1 % relativer Bias bei echten Daten).</li>
+        <li><strong>t-Intervall für den Mittelwert</strong> ist bei kleinem n erstaunlich robust und
+        sollte immer mitberichtet werden.</li>
+        <li><strong>Intervall-Längen lesen:</strong> sie verraten Schiefe und        Bimodalität der unbekannten Verteilung.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="panel-title">Grenzen & weitere Forschung</div>
+      <ul class="clean">
+        <li><strong>n ≤ 10 und extreme Quantile</strong> bleiben problematisch — hier hilft nur mehr Rechenzeit.</li>
+        <li><strong>Geglätteter Bootstrap mit Tail-Extrapolation</strong> (Wei, Wang &amp; Hutson 2015)
+        ist vielversprechend, aber technisch anspruchsvoll und noch nicht für beschränkte Träger geprüft.</li>
+        <li><strong>Importance Sampling</strong> (Hu &amp; Su 2008) könnte Bootstrap-Grenzen verbessern.</li>
+        <li><strong>Simultane Konfidenzintervalle</strong> für mehrere Quantile gleichzeitig (Hayter 2014) —
+        denn Quantile sind voneinander abhängig.</li>
+        <li><strong>Stichprobenplanung:</strong> Wenn man vorab eine Genauigkeit fordert, kann man
+        daraus n berechnen — in den Naturwissenschaften Standard, in ML praktisch unbekannt.</li>
+      </ul>
+      <div class="callout q" style="margin-top:14px">
+        <div class="ttl">Der Satz, der alles zusammenfasst</div>
+        <p style="font-size:1rem">„Die Accuracy fällt mit höchstens 10 % Wahrscheinlichkeit unter 0,86 —
+        und diese Schwelle kennen wir auf ±0,004 genau."<br>
+        <span class="tiny">Das ist eine <strong>überprüfbare Anforderung</strong>. „87,4 % Accuracy" ist es nicht.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Vorher / Nachher</h3>
+  <div class="card">
+    <div class="panel-title">Was ein Report-Eintrag vorher und nachher aussagt</div>
+    <div class="grid2">
+      <div class="card tight" style="margin:0;border-color:rgba(255,107,107,.35)">
+        <div class="panel-title" style="color:var(--bad)">Klassisch</div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:15px;margin:8px 0">Accuracy = 0.874</p>
+        <p class="tiny" style="margin:0">Keine Information über Streuung, Risiko, Tail-Verhalten,
+        Schätzunsicherheit oder Reproduzierbarkeit.</p>
+      </div>
+      <div class="card tight" style="margin:0;border-color:rgba(62,232,168,.35)">
+        <div class="panel-title" style="color:var(--good)">Distributional</div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:13.5px;margin:8px 0;line-height:1.9">
+        n = 25 Läufe (SoV: Augmentierung)<br>
+        Mittel&nbsp; 0.874 &nbsp;KI<sub>t</sub> [0.872, 0.876]<br>
+        q<sub>0.10</sub> 0.864 &nbsp;KI [0.860, 0.868]<br>
+        q<sub>0.50</sub> 0.874 &nbsp;KI [0.872, 0.876]<br>
+        q<sub>0.90</sub> 0.883 &nbsp;KI [0.880, 0.886]</p>
+        <p class="tiny" style="margin:0">Niveau <em>und</em> Risiko <em>und</em> Präzision — in fünf Zeilen.</p>
+      </div>
+    </div>
+    <div id="p14b-plot" class="plot" style="height:300px;margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- ====================================================== 15 LABOR -->
+<section id="s15">
+  <div class="sechead"><div class="secnum">15</div><h2>Das freie Labor</h2></div>
+  <p class="lead">Alles zusammen in einem Werkzeug. Wähle eine Verteilung, ziehe eine Stichprobe,
+  und sieh alle vier Methoden gleichzeitig am Werk — so wie du es in deinem eigenen Projekt tun würdest.</p>
+
+  <div class="card">
+    <div class="panel-title">Quantil-KI-Rechner</div>
+    <div class="grid3" style="align-items:end">
+      <div class="ctrl">
+        <label>Wahre Verteilung</label>
+        <select id="lab-dist">
+          <option value="normal">Normal(0.87, 0.04²)</option>
+          <option value="beta">Beta(20,3) — linksschief</option>
+          <option value="mix">Normal-Mischung — bimodal</option>
+          <option value="rskew">Rechtsschief (gespiegelte Beta)</option>
+        </select>
+      </div>
+      <div class="ctrl">
+        <label>Stichprobengröße n <span class="val" id="lab-nv">25</span></label>
+        <input type="range" id="lab-n" min="5" max="100" value="25" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau <span class="val" id="lab-cv">0.90</span></label>
+        <input type="range" id="lab-c" min="80" max="99" value="90" step="1">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="lab-draw">↻ Neue Stichprobe ziehen</button>
+      <button class="btn ghost" id="lab-100">▶▶ 100× ziehen (Abdeckung messen)</button>
+    </div>
+    <div id="lab-plot" class="plot" style="height:480px"></div>
+    <div class="scroll-x"><table id="lab-table"></table></div>
+    <p class="tiny">„—" bedeutet: Für diese Kombination aus n, u und Konfidenzniveau
+    <strong>existiert kein gültiges Intervall</strong>. Genau das ist die praktische Grenze,
+    die das Paper quantifiziert.</p>
+  </div>
+
+  <div class="card glass">
+    <div class="panel-title">Kostenrechner: Was kostet mich Gewissheit?</div>
+    <div class="grid3" style="align-items:end">
+      <div class="ctrl">
+        <label>Dauer pro Trainingslauf (min) <span class="val" id="cost-tv">45</span></label>
+        <input type="range" id="cost-t" min="1" max="600" value="45" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Quantil-Level u <span class="val" id="cost-uv">0.10</span></label>
+        <input type="range" id="cost-u" min="1" max="99" value="10" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Konfidenzniveau <span class="val" id="cost-cv">0.90</span></label>
+        <input type="range" id="cost-c" min="80" max="99" value="90" step="1">
+      </div>
+    </div>
+    <div id="cost-out" class="kpis"></div>
+    <div id="cost-plot" class="plot" style="height:300px"></div>
+    <p class="tiny">Zum Vergleich: Das Paper investierte <strong>≈ 19 000 GPU-Stunden</strong> für
+    42 Experimente mit je 500–1000 Läufen — damit man selbst mit 25 Läufen auskommt.</p>
+  </div>
+
+  <div class="callout g" style="margin-top:34px">
+    <div class="ttl">Dein Takeaway in einem Satz</div>
+    <p style="font-size:1.06rem">Trainiere <strong>15–25 mal</strong> mit kontrollierten Seeds,
+    berichte <strong>Mittelwert + t-KI</strong> und das <strong>10 %- bzw. 90 %-Quantil mit
+    nichtparametrischem asymptotischem KI bei 1−α = 0,90</strong> — und du weißt zum ersten Mal
+    wirklich, wie gut dein Modell ist.</p>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Beyond Point Estimates: Distributional Uncertainty in Machine Learning Performance Evaluation</strong><br>
+  Christoph Lehmann &amp; Yahor Paromau · ScaDS.AI Dresden/Leipzig, TU Dresden · arXiv:2501.16931v2</p>
+  <p class="tiny">Interaktive Aufbereitung. Alle Simulationen laufen live im Browser mit eigenen
+  Zufallszahlen — die Zahlen reproduzieren die <em>Struktur</em> der Paper-Ergebnisse, nicht deren
+  exakte Werte. Die Verteilungen der Use Cases sind nach den Abbildungen 1 und 2 des Papers modelliert.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ============================================================================
+   ===============  TEIL 1: MATHEMATISCHE HILFSFUNKTIONEN  ====================
+   ============================================================================ */
+
+/* ---- Zufallszahlen ---- */
+let _spare=null;
+function randn(){
+  if(_spare!==null){const s=_spare;_spare=null;return s;}
+  let u,v,s;
+  do{u=Math.random()*2-1;v=Math.random()*2-1;s=u*u+v*v;}while(s>=1||s===0);
+  const m=Math.sqrt(-2*Math.log(s)/s);
+  _spare=v*m;return u*m;
+}
+function randGamma(k){
+  if(k<1){const u=Math.random();return randGamma(1+k)*Math.pow(u,1/k);}
+  const d=k-1/3,c=1/Math.sqrt(9*d);
+  for(;;){
+    let x,v;
+    do{x=randn();v=1+c*x;}while(v<=0);
+    v=v*v*v;const u=Math.random();
+    if(u<1-0.0331*x*x*x*x)return d*v;
+    if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;
+  }
+}
+function randBeta(a,b){const x=randGamma(a),y=randGamma(b);return x/(x+y);}
+
+/* ---- Normalverteilung ---- */
+function erf(x){
+  const s=x<0?-1:1;x=Math.abs(x);
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const t=1/(1+p*x);
+  const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return s*y;
+}
+function normCDF(x,mu=0,sd=1){return 0.5*(1+erf((x-mu)/(sd*Math.SQRT2)));}
+function normPDF(x,mu=0,sd=1){return Math.exp(-0.5*Math.pow((x-mu)/sd,2))/(sd*Math.sqrt(2*Math.PI));}
+function normInv(p,mu=0,sd=1){
+  if(p<=0)return -Infinity; if(p>=1)return Infinity;
+  const a=[-39.69683028665376,220.9460984245205,-275.9285104469687,138.3577518672690,-30.66479806614716,2.506628277459239];
+  const b=[-54.47609879822406,161.5858368580409,-155.6989798598866,66.80131188771972,-13.28068155288572];
+  const c=[-0.007784894002430293,-0.3223964580411365,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783];
+  const d=[0.007784695709041462,0.3224671290700398,2.445134137142996,3.754408661907416];
+  const pl=0.02425;let q,r,x;
+  if(p<pl){q=Math.sqrt(-2*Math.log(p));
+    x=(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  else if(p<=1-pl){q=p-0.5;r=q*q;
+    x=(((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);}
+  else{q=Math.sqrt(-2*Math.log(1-p));
+    x=-(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  return mu+sd*x;
+}
+
+/* ---- Gamma / Beta Funktionen ---- */
+function logGamma(x){
+  const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(x<0.5)return Math.log(Math.PI/Math.sin(Math.PI*x))-logGamma(1-x);
+  x-=1;let a=0.99999999999980993;const t=x+7.5;
+  for(let i=0;i<8;i++)a+=g[i]/(x+i+1);
+  return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+}
+function logBinom(n,k){return logGamma(n+1)-logGamma(k+1)-logGamma(n-k+1);}
+function binomPMF(k,n,p){
+  if(k<0||k>n)return 0;
+  if(p<=0)return k===0?1:0; if(p>=1)return k===n?1:0;
+  return Math.exp(logBinom(n,k)+k*Math.log(p)+(n-k)*Math.log(1-p));
+}
+/* regularisierte unvollständige Beta-Funktion */
+function betacf(a,b,x){
+  const MAXIT=200,EPS=3e-12,FPMIN=1e-300;
+  const qab=a+b,qap=a+1,qam=a-1;
+  let c=1,d=1-qab*x/qap;
+  if(Math.abs(d)<FPMIN)d=FPMIN; d=1/d;let h=d;
+  for(let m=1;m<=MAXIT;m++){
+    const m2=2*m;
+    let aa=m*(b-m)*x/((qam+m2)*(a+m2));
+    d=1+aa*d; if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c; if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d;h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
+    d=1+aa*d; if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c; if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d;const del=d*c;h*=del;
+    if(Math.abs(del-1)<EPS)break;
+  }
+  return h;
+}
+function betaInc(a,b,x){
+  if(x<=0)return 0; if(x>=1)return 1;
+  const bt=Math.exp(logGamma(a+b)-logGamma(a)-logGamma(b)+a*Math.log(x)+b*Math.log(1-x));
+  if(x<(a+1)/(a+b+2))return bt*betacf(a,b,x)/a;
+  return 1-bt*betacf(b,a,1-x)/b;
+}
+function betaPDF(x,a,b){
+  if(x<=0||x>=1)return 0;
+  return Math.exp(logGamma(a+b)-logGamma(a)-logGamma(b)+(a-1)*Math.log(x)+(b-1)*Math.log(1-x));
+}
+function betaInv(p,a,b){
+  let lo=0,hi=1;
+  for(let i=0;i<80;i++){const m=(lo+hi)/2; if(betaInc(a,b,m)<p)lo=m;else hi=m;}
+  return (lo+hi)/2;
+}
+/* t-Verteilung */
+function tCDF(t,df){
+  const x=df/(df+t*t);
+  const p=0.5*betaInc(df/2,0.5,x);
+  return t>0?1-p:p;
+}
+function tInv(p,df){
+  let lo=-100,hi=100;
+  for(let i=0;i<120;i++){const m=(lo+hi)/2; if(tCDF(m,df)<p)lo=m;else hi=m;}
+  return (lo+hi)/2;
+}
+
+/* ---- Stichproben-Statistik ---- */
+function mean(a){let s=0;for(const v of a)s+=v;return s/a.length;}
+function sd(a){const m=mean(a);let s=0;for(const v of a)s+=(v-m)*(v-m);return Math.sqrt(s/(a.length-1));}
+function sortedCopy(a){return a.slice().sort((x,y)=>x-y);}
+/* Q-Dach_L: lineare Interpolation (numpy type 7 Variante mit n'=n+1 wie im Paper, Gl. 6) */
+function QL(sorted,u){
+  const n=sorted.length,np=n+1;
+  const pos=np*u;
+  if(pos<=1)return sorted[0];
+  if(pos>=n)return sorted[n-1];
+  const j=Math.floor(pos),eps=pos-j;
+  return (1-eps)*sorted[j-1]+eps*sorted[j];
+}
+/* Q-Dach: Stichprobenquantil (Treppe, Gl. 5) */
+function Qhat(sorted,u){
+  const n=sorted.length;
+  let i=Math.ceil(n*u);
+  if(i<1)i=1; if(i>n)i=n;
+  return sorted[i-1];
+}
+/* Q-Dach_T: semiparametrisch mit Tail-Extrapolation (Gl. 12) */
+function QT(sorted,u){
+  const n=sorted.length,np=n+1;
+  if(u<=1/np) return sorted[0]+(sorted[1]-sorted[0])*Math.log(np*u);
+  if(u>=n/np) return sorted[n-1]-(sorted[n-1]-sorted[n-2])*Math.log(np*(1-u));
+  return QL(sorted,u);
+}
+function percentile(arr,p){
+  const s=sortedCopy(arr),n=s.length;
+  const pos=(n-1)*p,lo=Math.floor(pos),hi=Math.ceil(pos);
+  if(lo===hi)return s[lo];
+  return s[lo]+(pos-lo)*(s[hi]-s[lo]);
+}
+
+/* ============================================================================
+   ===============  TEIL 2: VERTEILUNGSMODELLE  ===============================
+   ============================================================================ */
+const DISTS={
+  normal:{
+    name:'Normal(0,87 · 0,04²)', lo:0.70, hi:1.02,
+    samp:()=>0.87+0.04*randn(),
+    pdf:x=>normPDF(x,0.87,0.04),
+    q:u=>normInv(u,0.87,0.04)
+  },
+  beta:{
+    name:'Beta(20, 3) linksschief', lo:0.55, hi:1.0,
+    samp:()=>randBeta(20,3),
+    pdf:x=>betaPDF(x,20,3),
+    q:u=>betaInv(u,20,3)
+  },
+  mix:{
+    name:'0,5·N(0,80; 0,03²) + 0,5·N(0,90; 0,02²)', lo:0.68, hi:1.0,
+    samp:()=>Math.random()<0.5?0.80+0.03*randn():0.90+0.02*randn(),
+    pdf:x=>0.5*normPDF(x,0.80,0.03)+0.5*normPDF(x,0.90,0.02),
+    q:u=>{let lo=0.5,hi=1.1;for(let i=0;i<70;i++){const m=(lo+hi)/2;
+      const c=0.5*normCDF(m,0.80,0.03)+0.5*normCDF(m,0.90,0.02);
+      if(c<u)lo=m;else hi=m;}return (lo+hi)/2;}
+  },
+  rskew:{
+    name:'Rechtsschief (1 − Beta(20,3))', lo:0.0, hi:0.45,
+    samp:()=>1-randBeta(20,3),
+    pdf:x=>betaPDF(1-x,20,3),
+    q:u=>1-betaInv(1-u,20,3)
+  }
+};
+
+/* ============================================================================
+   ===============  TEIL 3: KONFIDENZINTERVALL-METHODEN  ======================
+   ============================================================================ */
+
+/* --- exakte Abdeckung r(k,l,n,u), Gl. 8 --- */
+function rCover(k,l,n,u){
+  let s=0;
+  for(let i=k;i<=l-1;i++)s+=binomPMF(i,n,u);
+  return s;
+}
+/* --- Existenzbedingung Gl. 9 --- */
+function exactExists(n,u,alpha){
+  return Math.pow(u,n)+Math.pow(1-u,n)<=alpha;
+}
+function minNExact(u,alpha){
+  for(let n=2;n<=3000;n++) if(exactExists(n,u,alpha))return n;
+  return null;
+}
+/* --- bestes exaktes KI: kürzeste Indexspanne mit r>=1-alpha (Zieliński-Idee) --- */
+function exactCI(sorted,u,alpha){
+  const n=sorted.length;
+  if(!exactExists(n,u,alpha))return null;
+  let best=null;
+  for(let k=1;k<=n-1;k++){
+    for(let l=k+1;l<=n;l++){
+      const r=rCover(k,l,n,u);
+      if(r>=1-alpha){
+        const span=l-k;
+        if(best===null||span<best.span||(span===best.span&&Math.abs(r-(1-alpha))<Math.abs(best.r-(1-alpha)))){
+          best={k,l,r,span};
+        }
+        break; // kleinstes l für dieses k
+      }
+    }
+  }
+  if(!best)return null;
+  return {lo:sorted[best.k-1],hi:sorted[best.l-1],k:best.k,l:best.l,r:best.r};
+}
+/* --- asymptotisches KI, Gl. 10/11 --- */
+function asymIdx(n,u,alpha){
+  const z=normInv(1-alpha/2);
+  const se=Math.sqrt(u*(1-u)/n);
+  return {k:n*(u-z*se), l:n*(u+z*se)};
+}
+function asymExists(n,u,alpha){
+  const {k,l}=asymIdx(n,u,alpha);
+  return k>=1 && l<=n && k<l;
+}
+function minNAsym(u,alpha){
+  for(let n=2;n<=3000;n++) if(asymExists(n,u,alpha))return n;
+  return null;
+}
+function asymCI(sorted,u,alpha){
+  const n=sorted.length;
+  if(!asymExists(n,u,alpha))return null;
+  const {k,l}=asymIdx(n,u,alpha);
+  return {lo:QL(sorted,k/n),hi:QL(sorted,l/n),k,l};
+}
+/* --- semiparametrischer Bootstrap (Hutson 2002) --- */
+function bootCI(sorted,u,alpha,B=1200){
+  const n=sorted.length,out=new Array(B);
+  for(let b=0;b<B;b++){
+    const bs=new Array(n);
+    for(let i=0;i<n;i++) bs[i]=QT(sorted,Math.random());
+    bs.sort((a,c)=>a-c);
+    out[b]=Qhat(bs,u);
+  }
+  return {lo:percentile(out,alpha/2),hi:percentile(out,1-alpha/2),dist:out};
+}
+/* --- klassischer nichtparametrischer Bootstrap (zum Vergleich) --- */
+function bootClassic(sorted,u,alpha,B=1200){
+  const n=sorted.length,out=new Array(B);
+  for(let b=0;b<B;b++){
+    const bs=new Array(n);
+    for(let i=0;i<n;i++) bs[i]=sorted[(Math.random()*n)|0];
+    bs.sort((a,c)=>a-c);
+    out[b]=Qhat(bs,u);
+  }
+  return {lo:percentile(out,alpha/2),hi:percentile(out,1-alpha/2),dist:out};
+}
+/* --- t-Intervall für den Mittelwert, Gl. 7 --- */
+function tCI(sample,alpha){
+  const n=sample.length,m=mean(sample),s=sd(sample);
+  const t=tInv(1-alpha/2,n-1);
+  const h=t*s/Math.sqrt(n);
+  return {lo:m-h,hi:m+h,m};
+}
+
+/* ============================================================================
+   ===============  TEIL 4: CANVAS-WERKZEUGKASTEN  ============================
+   ============================================================================ */
+const CSS=getComputedStyle(document.documentElement);
+const C={
+  acc:CSS.getPropertyValue('--acc').trim(),
+  acc2:CSS.getPropertyValue('--acc2').trim(),
+  acc3:CSS.getPropertyValue('--acc3').trim(),
+  good:CSS.getPropertyValue('--good').trim(),
+  warn:CSS.getPropertyValue('--warn').trim(),
+  bad:CSS.getPropertyValue('--bad').trim(),
+  txt:CSS.getPropertyValue('--txt').trim(),
+  txt2:CSS.getPropertyValue('--txt2').trim(),
+  txt3:CSS.getPropertyValue('--txt3').trim(),
+  line:CSS.getPropertyValue('--line').trim(),
+  bg:'#080d17'
+};
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  const w=r.width||cv.parentElement.clientWidth||600;
+  const h=parseInt(cv.getAttribute('height'))||300;
+  cv.width=w*dpr; cv.height=h*dpr;
+  cv.style.height=h+'px';
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,w,h);
+  return {ctx,W:w,H:h};
+}
+function axes(ctx,W,H,pad,xlab,ylab,xr,yr,opt={}){
+  const nx=opt.nx||6, ny=opt.ny||5;
+  ctx.strokeStyle=C.line; ctx.lineWidth=1;
+  ctx.fillStyle=C.txt3; ctx.font='11px Inter,sans-serif';
+  // grid
+  ctx.save();
+  ctx.setLineDash([2,4]);
+  for(let i=0;i<=ny;i++){
+    const y=pad.t+(H-pad.t-pad.b)*i/ny;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    const v=yr[1]-(yr[1]-yr[0])*i/ny;
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.fillText(opt.yfmt?opt.yfmt(v):v.toFixed(2),pad.l-7,y);
+  }
+  for(let i=0;i<=nx;i++){
+    const x=pad.l+(W-pad.l-pad.r)*i/nx;
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();
+    const v=xr[0]+(xr[1]-xr[0])*i/nx;
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(opt.xfmt?opt.xfmt(v):v.toFixed(2),x,H-pad.b+7);
+  }
+  ctx.restore();
+  // frame
+  ctx.strokeStyle=C.line;ctx.lineWidth=1.3;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,H-pad.b);ctx.lineTo(W-pad.r,H-pad.b);ctx.stroke();
+  // labels
+  ctx.fillStyle=C.txt2;ctx.font='600 11.5px Inter,sans-serif';
+  if(xlab){ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(xlab,(pad.l+W-pad.r)/2,H-4);}
+  if(ylab){ctx.save();ctx.translate(13,(pad.t+H-pad.b)/2);ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(ylab,0,0);ctx.restore();}
+}
+function mk(pad,W,H,xr,yr){
+  return {
+    x:v=>pad.l+(W-pad.l-pad.r)*(v-xr[0])/(xr[1]-xr[0]),
+    y:v=>H-pad.b-(H-pad.t-pad.b)*(v-yr[0])/(yr[1]-yr[0])
+  };
+}
+function polyline(ctx,pts,color,lw=2,dash=null){
+  if(!pts.length)return;
+  ctx.save();
+  if(dash)ctx.setLineDash(dash);
+  ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineJoin='round';
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.stroke();ctx.restore();
+}
+function fillArea(ctx,pts,baseY,color){
+  if(!pts.length)return;
+  ctx.save();ctx.fillStyle=color;
+  ctx.beginPath();ctx.moveTo(pts[0][0],baseY);
+  for(const p of pts)ctx.lineTo(p[0],p[1]);
+  ctx.lineTo(pts[pts.length-1][0],baseY);ctx.closePath();ctx.fill();ctx.restore();
+}
+function dot(ctx,x,y,r,color,stroke=null){
+  ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=color;ctx.fill();
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}
+}
+function vline(ctx,x,y0,y1,color,lw=1.6,dash=[5,4]){
+  ctx.save();ctx.setLineDash(dash);ctx.strokeStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1);ctx.stroke();ctx.restore();
+}
+function tag(ctx,x,y,text,color,align='center'){
+  ctx.font='600 11px Inter,sans-serif';
+  const w=ctx.measureText(text).width+10;
+  let tx=x-w/2;
+  if(align==='left')tx=x+4; if(align==='right')tx=x-w-4;
+  ctx.fillStyle='rgba(8,13,23,.92)';
+  ctx.strokeStyle=color;ctx.lineWidth=1;
+  ctx.beginPath();ctx.roundRect(tx,y-9,w,18,5);ctx.fill();ctx.stroke();
+  ctx.fillStyle=color;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(text,tx+w/2,y);
+}
+function histo(data,bins,lo,hi){
+  const c=new Array(bins).fill(0);
+  for(const v of data){
+    let i=Math.floor((v-lo)/(hi-lo)*bins);
+    if(i<0)i=0; if(i>=bins)i=bins-1;
+    c[i]++;
+  }
+  return c;
+}
+
+/* --- Plotly Standard-Layout --- */
+const PLY={responsive:true,displayModeBar:false};
+function lay(extra={}){
+  return Object.assign({
+    paper_bgcolor:'rgba(0,0,0,0)',
+    plot_bgcolor:'rgba(8,13,23,.6)',
+    font:{color:C.txt2,family:'Inter, sans-serif',size:11.5},
+    margin:{l:58,r:20,t:28,b:50},
+    xaxis:{gridcolor:'rgba(36,49,80,.75)',zerolinecolor:'rgba(47,63,102,.9)',linecolor:C.line},
+    yaxis:{gridcolor:'rgba(36,49,80,.75)',zerolinecolor:'rgba(47,63,102,.9)',linecolor:C.line},
+    legend:{orientation:'h',y:-0.2,font:{size:11}},
+    hoverlabel:{bgcolor:'#121a2b',bordercolor:C.line,font:{color:C.txt}}
+  },extra);
+}
+
+/* ============================================================================
+   ===============  TEIL 5: NAVIGATION / UI-GERÜST  ===========================
+   ============================================================================ */
+(function nav(){
+  const bar=document.getElementById('progress');
+  const top=document.getElementById('topnav');
+  const links=[...document.querySelectorAll('#topnav a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function upd(){
+    const sc=window.scrollY;
+    const h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(100*sc/Math.max(h,1))+'%';
+    top.classList.toggle('show',sc>340);
+    let cur=0;
+    secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<160)cur=i;});
+    links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('resize',upd);
+  upd();
+})();
+
+/* Fade-in */
+(function fade(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});
+  },{threshold:0.06});
+  document.querySelectorAll('section > .card, section > .grid2, section > .grid3, section > .gridc, section > .callout, section > .mathbox')
+    .forEach(el=>{el.classList.add('fadein');io.observe(el);});
+})();
+
+/* Segment-Buttons generisch */
+function segInit(sel,cb){
+  document.querySelectorAll(sel).forEach(b=>{
+    b.addEventListener('click',()=>{
+      [...b.parentElement.children].forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      cb(b.dataset[Object.keys(b.dataset)[0]]);
+    });
+  });
+}
+
+/* Temml-Formeln */
+function renderMath(){
+  if(typeof temml==='undefined')return;
+  const F=[
+    ['m-quantile',String.raw`\tilde{x}_u \;=\; F^{-1}(u) \;=\; \inf\{\, x : P(X \le x) \ge u \,\},\qquad u\in\,]0,1[`],
+    ['m-Q',String.raw`\hat{Q}(u) \;=\; \hat{F}_n^{-1}(u) \;=\; X_{(i)},\qquad u\in\left(\tfrac{i-1}{n},\tfrac{i}{n}\right]`],
+    ['m-QL',String.raw`\hat{Q}_L(u) \;=\; (1-\epsilon)\,X_{(\lfloor n'u\rfloor)} \;+\; \epsilon\,X_{(\lfloor n'u\rfloor+1)}`],
+    ['m-exact',String.raw`P\!\left(X_{(k)} \le F^{-1}(u) \le X_{(l)}\right) \;=\; \sum_{s=k}^{l-1}\binom{n}{s}u^{s}(1-u)^{\,n-s} \;=\; r(k,l,n,u)`],
+    ['m-asym',String.raw`k,\,l \;=\; n\left(u \pm z_{\alpha/2}\sqrt{\tfrac{u(1-u)}{n}}\,\right)`],
+    ['m-QT',String.raw`\hat{Q}_T(u)=\begin{cases} X_{(1)}+(X_{(2)}-X_{(1)})\log(n'u), & 0<u\le \tfrac{1}{n+1}\\[4pt] \hat{Q}_L(u), & \tfrac{1}{n+1}<u<\tfrac{n}{n+1}\\[4pt] X_{(n)}-(X_{(n)}-X_{(n-1)})\log(n'(1-u)), & \tfrac{n}{n+1}\le u<1\end{cases}`],
+    ['m-t',String.raw`I_t \;=\; \left[\;\bar{X} \;\pm\; t_{\,n-1,\,1-\alpha/2}\cdot \frac{S}{\sqrt{n}}\;\right]`]
+  ];
+  F.forEach(([id,tex])=>{
+    const el=document.getElementById(id);
+    if(el)try{temml.render(tex,el,{displayMode:true});}catch(e){el.textContent=tex;}
+  });
+}
+
+/* ============================================================================
+   ===============  DEMO 0: ZWEI MODELLE  =====================================
+   ============================================================================ */
+(function demo0(){
+  const cv=document.getElementById('p0-canvas');
+  let A=[],B=[];
+  // A: stabil; B: gleicher Mittelwert, gelegentliche Ausreißer nach unten
+  function runOnce(){
+    A.push(0.874+0.0045*randn());
+    B.push(Math.random()<0.16 ? 0.874-0.018-0.010*Math.abs(randn()) : 0.874+0.0035+0.0040*randn());
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:62,r:18,t:22,b:46};
+    const all=A.concat(B);
+    const lo=all.length?Math.min(0.835,Math.min(...all)-0.004):0.835;
+    const hi=all.length?Math.max(0.890,Math.max(...all)+0.004):0.890;
+    const maxN=Math.max(12,A.length);
+    axes(ctx,W,H,pad,'Trainingslauf Nr.','Accuracy',[1,maxN],[lo,hi],
+      {nx:Math.min(maxN-1,10),ny:5,xfmt:v=>Math.round(v),yfmt:v=>v.toFixed(3)});
+    const m=mk(pad,W,H,[1,maxN],[lo,hi]);
+    if(!A.length){
+      ctx.fillStyle=C.txt3;ctx.font='13px Inter,sans-serif';ctx.textAlign='center';
+      ctx.fillText('Klick auf „Trainiere beide Modelle nochmal"',W/2,H/2);
+      return;
+    }
+    // Mittelwertlinien
+    const mA=mean(A),mB=mean(B);
+    ctx.save();ctx.setLineDash([6,5]);
+    ctx.strokeStyle='rgba(90,209,255,.5)';ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(pad.l,m.y(mA));ctx.lineTo(W-pad.r,m.y(mA));ctx.stroke();
+    ctx.strokeStyle='rgba(255,122,184,.5)';
+    ctx.beginPath();ctx.moveTo(pad.l,m.y(mB));ctx.lineTo(W-pad.r,m.y(mB));ctx.stroke();
+    ctx.restore();
+    // Linien
+    polyline(ctx,A.map((v,i)=>[m.x(i+1),m.y(v)]),'rgba(90,209,255,.55)',1.8);
+    polyline(ctx,B.map((v,i)=>[m.x(i+1),m.y(v)]),'rgba(255,122,184,.55)',1.8);
+    A.forEach((v,i)=>dot(ctx,m.x(i+1),m.y(v),4.5,C.acc));
+    B.forEach((v,i)=>dot(ctx,m.x(i+1),m.y(v),4.5,C.acc3));
+    // Labels
+    ctx.font='600 11.5px Inter,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillStyle=C.acc;ctx.fillText('Modell A',pad.l+6,m.y(mA)-12);
+    ctx.fillStyle=C.acc3;ctx.fillText('Modell B',pad.l+6,m.y(mB)+13);
+    upd();
+  }
+  function upd(){
+    const f=x=>x.toFixed(4).replace('.',',');
+    document.getElementById('p0-ma').textContent=A.length?f(mean(A)):'–';
+    document.getElementById('p0-mb').textContent=B.length?f(mean(B)):'–';
+    document.getElementById('p0-mina').textContent=A.length?f(Math.min(...A)):'–';
+    document.getElementById('p0-minb').textContent=B.length?f(Math.min(...B)):'–';
+  }
+  document.getElementById('p0-run').onclick=()=>{runOnce();draw();};
+  document.getElementById('p0-run10').onclick=()=>{
+    let i=0;const t=setInterval(()=>{runOnce();draw();if(++i>=10)clearInterval(t);},90);
+  };
+  document.getElementById('p0-reset').onclick=()=>{A=[];B=[];draw();};
+  window.addEventListener('resize',()=>draw());
+  // Startwerte
+  for(let i=0;i<6;i++)runOnce();
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 1: VARIATIONSQUELLEN  ================================
+   ============================================================================ */
+(function demo1(){
+  const SRC=[
+    {id:'split', n:'Train-Test-Split', sd:0.0075, bias:0, on:true,
+     d:'Welche Daten landen im Training, welche im Test?'},
+    {id:'init', n:'Initialgewichte', sd:0.0040, bias:0, on:false,
+     d:'Zufällige Startwerte der Netzwerkgewichte.'},
+    {id:'aug', n:'Datenaugmentierung', sd:0.0062, bias:-0.0005, on:false, skew:true,
+     d:'Zufällige Bildtransformationen (Rotation, Spiegelung …).'},
+    {id:'drop', n:'Dropout', sd:0.0035, bias:0, on:false,
+     d:'Welche Neuronen pro Schritt deaktiviert werden.'},
+    {id:'order', n:'Datenreihenfolge', sd:0.0028, bias:0, on:false,
+     d:'Reihenfolge der Mini-Batches im Training.'},
+    {id:'hpo', n:'Hyperparameter-Opt.', sd:0.0030, bias:+0.0015, on:false,
+     d:'Seed der Tree-Structured-Parzen-Estimator-Suche.'}
+  ];
+  const box=document.getElementById('p1-sources');
+  box.innerHTML=SRC.map((s,i)=>`
+    <label class="chk" style="align-items:flex-start">
+      <input type="radio" name="p1src" value="${i}" ${s.on?'checked':''} style="margin-top:4px">
+      <span><strong style="color:var(--txt)">${s.n}</strong><br>
+      <span class="tiny">${s.d}</span></span>
+    </label>`).join('');
+  const nEl=document.getElementById('p1-n'),nV=document.getElementById('p1-nv');
+  let data=[];
+  function gen(){
+    const i=+document.querySelector('input[name=p1src]:checked').value;
+    const s=SRC[i],n=+nEl.value;
+    data=[];
+    for(let k=0;k<n;k++){
+      let v;
+      if(s.skew){ v=0.874+s.bias - s.sd*1.1*Math.abs(randn())*(Math.random()<0.3?1.6:0.55) + s.sd*0.5*randn(); }
+      else { v=0.874+s.bias+s.sd*randn(); }
+      data.push(v);
+    }
+    plot(s);
+  }
+  function plot(s){
+    const srt=sortedCopy(data);
+    const q10=QL(srt,0.1);
+    Plotly.react('p1-plot',[
+      {x:data,type:'histogram',name:'Häufigkeit',
+       marker:{color:'rgba(90,209,255,.42)',line:{color:'rgba(90,209,255,.85)',width:1}},
+       nbinsx:Math.min(35,Math.max(8,Math.round(Math.sqrt(data.length)*2.2)))},
+      {x:data,y:data.map(()=>0),type:'scatter',mode:'markers',name:'Einzelläufe',
+       yaxis:'y2',marker:{color:C.acc3,size:6,opacity:.6,symbol:'line-ns-open',
+       line:{width:1.5,color:C.acc3}}}
+    ],lay({
+      xaxis:{title:'Accuracy',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,tickformat:'.3f'},
+      yaxis:{title:'Anzahl Läufe',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis2:{overlaying:'y',side:'right',showgrid:false,showticklabels:false,range:[-1,10]},
+      showlegend:false,
+      shapes:[
+        {type:'line',x0:mean(data),x1:mean(data),y0:0,y1:1,yref:'paper',
+         line:{color:C.acc,width:2,dash:'dash'}},
+        {type:'line',x0:q10,x1:q10,y0:0,y1:1,yref:'paper',
+         line:{color:C.acc3,width:2,dash:'dot'}}
+      ],
+      annotations:[
+        {x:mean(data),y:1,yref:'paper',text:'Mittelwert',showarrow:false,
+         font:{color:C.acc,size:11},yanchor:'bottom'},
+        {x:q10,y:1,yref:'paper',text:'10%-Quantil',showarrow:false,
+         font:{color:C.acc3,size:11},yanchor:'bottom',xshift:-26}
+      ]
+    }),PLY);
+    const f=x=>x.toFixed(4).replace('.',',');
+    document.getElementById('p1-mean').textContent=f(mean(data));
+    document.getElementById('p1-sd').textContent=sd(data).toFixed(5).replace('.',',');
+    document.getElementById('p1-range').textContent=(Math.max(...data)-Math.min(...data)).toFixed(4).replace('.',',');
+    document.getElementById('p1-q10').textContent=f(q10);
+  }
+  nEl.oninput=()=>{nV.textContent=nEl.value;};
+  document.getElementById('p1-go').onclick=gen;
+  box.querySelectorAll('input').forEach(r=>r.onchange=gen);
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 2: HISTOGRAMM + KDE  =================================
+   ============================================================================ */
+(function demo2(){
+  const cv=document.getElementById('p2-canvas');
+  const nE=document.getElementById('p2-n'),hE=document.getElementById('p2-h'),bE=document.getElementById('p2-b');
+  let mode='uni',data=[];
+  const M={
+    uni:{samp:()=>0.87+0.025*randn(),pdf:x=>normPDF(x,0.87,0.025),lo:0.78,hi:0.96},
+    skew:{samp:()=>randBeta(22,3.2),pdf:x=>betaPDF(x,22,3.2),lo:0.68,hi:1.0},
+    bi:{samp:()=>Math.random()<0.5?0.82+0.018*randn():0.90+0.016*randn(),
+        pdf:x=>0.5*normPDF(x,0.82,0.018)+0.5*normPDF(x,0.90,0.016),lo:0.75,hi:0.97}
+  };
+  function gen(){
+    const n=+nE.value;data=[];
+    for(let i=0;i<n;i++)data.push(M[mode].samp());
+    draw();
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:60,r:18,t:20,b:48};
+    const m0=M[mode];
+    const lo=m0.lo,hi=m0.hi;
+    const bins=+bE.value;
+    const bw=0.0005*(+hE.value);
+    const counts=histo(data,bins,lo,hi);
+    const binW=(hi-lo)/bins;
+    // dichten
+    const NP=260;
+    const kde=[],truth=[];
+    let ymax=0;
+    for(let i=0;i<=NP;i++){
+      const x=lo+(hi-lo)*i/NP;
+      let s=0;
+      for(const v of data)s+=normPDF(x,v,bw);
+      s/=data.length;
+      kde.push([x,s]);
+      const t=m0.pdf(x);
+      truth.push([x,t]);
+      ymax=Math.max(ymax,s,document.getElementById('p2-true').checked?t:0);
+    }
+    const histMax=Math.max(...counts)/(data.length*binW);
+    ymax=Math.max(ymax,histMax)*1.14;
+    axes(ctx,W,H,pad,'Wert der Metrik','Dichte',[lo,hi],[0,ymax],
+      {nx:6,ny:5,xfmt:v=>v.toFixed(2),yfmt:v=>v.toFixed(0)});
+    const m=mk(pad,W,H,[lo,hi],[0,ymax]);
+    // Histogramm
+    for(let i=0;i<bins;i++){
+      if(!counts[i])continue;
+      const x0=m.x(lo+i*binW),x1=m.x(lo+(i+1)*binW);
+      const d=counts[i]/(data.length*binW);
+      const y=m.y(d);
+      ctx.fillStyle='rgba(42,58,92,.85)';
+      ctx.fillRect(x0+0.5,y,Math.max(1,x1-x0-1),H-pad.b-y);
+      ctx.strokeStyle='rgba(70,95,150,.9)';ctx.lineWidth=1;
+      ctx.strokeRect(x0+0.5,y,Math.max(1,x1-x0-1),H-pad.b-y);
+    }
+    // Einzelkerne
+    if(document.getElementById('p2-bumps').checked&&data.length<=120){
+      ctx.save();ctx.globalAlpha=.55;
+      for(const v of data){
+        const pts=[];
+        for(let i=0;i<=40;i++){
+          const x=v-4*bw+8*bw*i/40;
+          if(x<lo||x>hi)continue;
+          pts.push([m.x(x),m.y(normPDF(x,v,bw)/data.length)]);
+        }
+        polyline(ctx,pts,'rgba(139,125,255,.75)',1.2);
+      }
+      ctx.restore();
+    }
+    // wahre Dichte
+    if(document.getElementById('p2-true').checked)
+      polyline(ctx,truth.map(p=>[m.x(p[0]),m.y(p[1])]),C.acc3,2,[6,4]);
+    // KDE
+    fillArea(ctx,kde.map(p=>[m.x(p[0]),m.y(p[1])]),H-pad.b,'rgba(90,209,255,.14)');
+    polyline(ctx,kde.map(p=>[m.x(p[0]),m.y(p[1])]),C.acc,2.6);
+    // Rug
+    for(const v of data){
+      const x=m.x(v);
+      ctx.strokeStyle='rgba(255,122,184,.8)';ctx.lineWidth=1.3;
+      ctx.beginPath();ctx.moveTo(x,H-pad.b);ctx.lineTo(x,H-pad.b-9);ctx.stroke();
+    }
+    if(data.length<=25){
+      ctx.fillStyle=C.warn;ctx.font='600 12px Inter,sans-serif';ctx.textAlign='right';ctx.textBaseline='top';
+      ctx.fillText('⚠ realistische Stichprobengröße — nichts ist glatt',W-pad.r-4,pad.t+2);
+    }
+  }
+  nE.oninput=()=>{document.getElementById('p2-nv').textContent=nE.value;gen();};
+  hE.oninput=()=>{document.getElementById('p2-hv').textContent=(0.0005*hE.value).toFixed(4).replace('.',',');draw();};
+  bE.oninput=()=>{document.getElementById('p2-bv').textContent=bE.value;draw();};
+  document.getElementById('p2-bumps').onchange=draw;
+  document.getElementById('p2-true').onchange=draw;
+  document.getElementById('p2-new').onclick=gen;
+  segInit('[data-p2d]',v=>{mode=v;gen();});
+  window.addEventListener('resize',draw);
+  document.getElementById('p2-hv').textContent='0,0100';
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 3: QUANTILE  =========================================
+   ============================================================================ */
+(function demo3(){
+  const cv=document.getElementById('p3-canvas');
+  const uE=document.getElementById('p3-u'),sE=document.getElementById('p3-s');
+  let metric='acc';
+  function params(){
+    const sk=+sE.value/10;
+    if(metric==='acc'){
+      return {lo:0.74,hi:1.0,
+        pdf:x=>{ // Normal mit Schiefe via skew-normal Approximation
+          const mu=0.87,sg=0.03;
+          const z=(x-mu)/sg;
+          return 2/sg*normPDF(z)*normCDF(-sk*5*z);
+        },
+        name:'Accuracy'};
+    } else {
+      return {lo:7.5,hi:13,
+        pdf:x=>{
+          const mu=10.2,sg=0.75;
+          const z=(x-mu)/sg;
+          return 2/sg*normPDF(z)*normCDF(-sk*5*z);
+        },
+        name:'RMSE'};
+    }
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const P=params();
+    const u=+uE.value/100;
+    const NP=420;
+    const xs=[],pd=[];
+    let tot=0;
+    for(let i=0;i<=NP;i++){
+      const x=P.lo+(P.hi-P.lo)*i/NP;
+      const d=Math.max(0,P.pdf(x));
+      xs.push(x);pd.push(d);tot+=d;
+    }
+    const step=(P.hi-P.lo)/NP;
+    tot*=step;
+    for(let i=0;i<pd.length;i++)pd[i]/=tot;
+    const cdf=[];let acc=0;
+    for(let i=0;i<pd.length;i++){acc+=pd[i]*step;cdf.push(Math.min(1,acc));}
+    // Quantil finden
+    let qi=0;while(qi<cdf.length-1&&cdf[qi]<u)qi++;
+    const qx=xs[qi];
+    // Mittelwert
+    let mu=0;for(let i=0;i<pd.length;i++)mu+=xs[i]*pd[i]*step;
+    const pmax=Math.max(...pd)*1.18;
+    // Zwei Panels
+    const topH=Math.round(H*0.56);
+    const padT={l:62,r:18,t:16,b:26};
+    const padB={l:62,r:18,t:topH+16,b:46};
+    // --- oben: Dichte
+    axes(ctx,W,topH+10,padT,'','Dichte',[P.lo,P.hi],[0,pmax],{nx:6,ny:4,
+      xfmt:()=>'',yfmt:v=>v.toFixed(0)});
+    const mT=mk(padT,topH+10,[P.lo,P.hi],[0,pmax]);
+    // Fläche links vom Quantil
+    const left=[],right=[];
+    for(let i=0;i<xs.length;i++){
+      const p=[mT.x(xs[i]),mT.y(pd[i])];
+      if(i<=qi)left.push(p); else right.push(p);
+    }
+    fillArea(ctx,left,topH+10-padT.b,'rgba(90,209,255,.3)');
+    fillArea(ctx,right,topH+10-padT.b,'rgba(255,122,184,.16)');
+    polyline(ctx,xs.map((x,i)=>[mT.x(x),mT.y(pd[i])]),C.acc,2.6);
+    vline(ctx,mT.x(qx),padT.t,topH+10-padT.b,C.warn,2);
+    vline(ctx,mT.x(mu),padT.t,topH+10-padT.b,'rgba(255,122,184,.75)',1.6,[3,3]);
+    // Beschriftung Flächen
+    ctx.font='600 12px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(90,209,255,.95)';
+    if(qi>12)ctx.fillText((u*100).toFixed(0)+' %',(padT.l+mT.x(qx))/2,topH-padT.b-20);
+    ctx.fillStyle='rgba(255,122,184,.9)';
+    if(qi<xs.length-14)ctx.fillText(((1-u)*100).toFixed(0)+' %',(mT.x(qx)+W-padT.r)/2,topH-padT.b-20);
+    tag(ctx,mT.x(qx),padT.t+10,'x̃ = '+(metric==='acc'?qx.toFixed(4):qx.toFixed(2)).replace('.',','),C.warn);
+    // --- unten: CDF
+    const subH=H;
+    ctx.save();
+    axes(ctx,W,subH,padB,P.name,'F(x) = P(X ≤ x)',[P.lo,P.hi],[0,1],{nx:6,ny:4,
+      xfmt:v=>metric==='acc'?v.toFixed(2):v.toFixed(1),yfmt:v=>v.toFixed(1)});
+    const mB=mk(padB,subH,[P.lo,P.hi],[0,1]);
+    polyline(ctx,xs.map((x,i)=>[mB.x(x),mB.y(cdf[i])]),C.good,2.6);
+    // Konstruktion u -> q
+    ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle=C.warn;ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.moveTo(padB.l,mB.y(u));ctx.lineTo(mB.x(qx),mB.y(u));
+    ctx.lineTo(mB.x(qx),subH-padB.b);ctx.stroke();ctx.restore();
+    dot(ctx,mB.x(qx),mB.y(u),5,C.warn,'#fff');
+    ctx.fillStyle=C.warn;ctx.font='600 11px Inter,sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.fillText('u = '+u.toFixed(2).replace('.',','),padB.l+6,mB.y(u)-4);
+    ctx.restore();
+    // KPIs
+    document.getElementById('p3-q').textContent=(metric==='acc'?qx.toFixed(4):qx.toFixed(2)).replace('.',',');
+    document.getElementById('p3-mu').textContent=(metric==='acc'?mu.toFixed(4):mu.toFixed(2)).replace('.',',');
+    const qf=(metric==='acc'?qx.toFixed(4):qx.toFixed(2)).replace('.',',');
+    document.getElementById('p3-stmt').innerHTML = metric==='acc'
+      ? `In <strong>${(u*100).toFixed(0)} %</strong> der Trainingsläufe liegt die Accuracy <strong>unter ${qf}</strong>.<br>
+         <span class="tiny">Oder: mit Wahrscheinlichkeit ${(100-u*100).toFixed(0)} % ist sie besser als ${qf}.</span>`
+      : `Ein RMSE von <strong>${qf}</strong> wird in weniger als <strong>${(100-u*100).toFixed(0)} %</strong> der Läufe überschritten.<br>
+         <span class="tiny">Das ist genau die Formulierung, die bei Fehlermaßen Sinn ergibt.</span>`;
+  }
+  uE.oninput=()=>{document.getElementById('p3-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  sE.oninput=()=>{document.getElementById('p3-sv').textContent=(sE.value/10).toFixed(1).replace('.',',');draw();};
+  segInit('[data-p3m]',v=>{metric=v;draw();});
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 3b: VORZEICHEN-TRICK  ================================
+   ============================================================================ */
+(function demo3t(){
+  const cv=document.getElementById('p3t-canvas');
+  const uE=document.getElementById('p3t-u');
+  let flipped=false;
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const u=+uE.value/100;
+    const pad={l:40,r:24,t:26,b:40};
+    const mu=0.87,sg=0.03;
+    const lo=flipped?-1.0:0.74, hi=flipped?-0.74:1.0;
+    axes(ctx,W,H,pad,flipped?'−X (transformiert)':'X (Accuracy)','',[lo,hi],[0,16],
+      {nx:5,ny:3,xfmt:v=>v.toFixed(2),yfmt:()=>''});
+    const m=mk(pad,W,H,[lo,hi],[0,16]);
+    const pts=[];
+    for(let i=0;i<=200;i++){
+      const x=lo+(hi-lo)*i/200;
+      const d=flipped?normPDF(-x,mu,sg):normPDF(x,mu,sg);
+      pts.push([m.x(x),m.y(d)]);
+    }
+    const qOrig=normInv(u,mu,sg);
+    const qShown=flipped?-normInv(1-(1-u),mu,sg):qOrig;
+    const qq=flipped?-qOrig:qOrig;
+    // Fläche
+    const idx=pts.findIndex(p=>p[0]>=m.x(qq));
+    const seg=flipped?pts.slice(Math.max(idx,0)):pts.slice(0,Math.max(idx,1));
+    fillArea(ctx,seg,H-pad.b,'rgba(90,209,255,.26)');
+    polyline(ctx,pts,C.acc,2.4);
+    vline(ctx,m.x(qq),pad.t,H-pad.b,C.warn,2);
+    const lbl=flipped?('−x̃ ₀,'+(100-u*100).toFixed(0)):('x̃ ₀,'+(u*100).toFixed(0).padStart(2,'0'));
+    tag(ctx,m.x(qq),pad.t+8,lbl,C.warn);
+    document.getElementById('p3t-txt').innerHTML = flipped
+      ? `Nach der Transformation ist das <strong>${(u*100).toFixed(0)} %-Quantil von X</strong> das
+         <em class="hl">${(100-u*100).toFixed(0)} %-Quantil von −X</em>. Aussage: „−X überschreitet
+         −x̃ in weniger als ${(u*100).toFixed(0)} % der Fälle." Mindest-n fällt von
+         <strong>${minNAsym(u,0.1)}</strong> auf <strong>${minNAsym(1-u,0.1)}</strong>.`
+      : `Aktuell: <strong>${(u*100).toFixed(0)} %-Quantil von X</strong>. Benötigte Mindeststichprobe
+         (asymptotisch, 1−α = 0,90): <strong>n = ${minNAsym(u,0.1)}</strong>.
+         Drück den Knopf und sieh, was die Transformation bringt.`;
+  }
+  uE.oninput=()=>{document.getElementById('p3t-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  document.getElementById('p3t-flip').onclick=()=>{flipped=!flipped;draw();};
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 4: EMPIRISCHE VERTEILUNGSFUNKTION  ===================
+   ============================================================================ */
+(function demo4(){
+  const cv=document.getElementById('p4-canvas');
+  const nE=document.getElementById('p4-n'),uE=document.getElementById('p4-u');
+  let data=[];
+  const D=DISTS.normal;
+  function gen(){
+    const n=+nE.value;data=[];
+    for(let i=0;i<n;i++)data.push(D.samp());
+    draw();
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:62,r:20,t:22,b:48};
+    const srt=sortedCopy(data),n=srt.length;
+    const u=+uE.value/100;
+    const lo=Math.min(0.75,srt[0]-0.012),hi=Math.max(0.99,srt[n-1]+0.012);
+    axes(ctx,W,H,pad,'Wert x','kumulierte Wahrscheinlichkeit',[lo,hi],[0,1.02],
+      {nx:6,ny:5,xfmt:v=>v.toFixed(2),yfmt:v=>v.toFixed(1)});
+    const m=mk(pad,W,H,[lo,hi],[0,1.02]);
+    // wahre CDF
+    const tp=[];
+    for(let i=0;i<=200;i++){const x=lo+(hi-lo)*i/200;tp.push([m.x(x),m.y(normCDF(x,0.87,0.04))]);}
+    polyline(ctx,tp,'rgba(62,232,168,.75)',2,[6,4]);
+    // Treppe
+    ctx.strokeStyle=C.acc;ctx.lineWidth=2.4;ctx.beginPath();
+    ctx.moveTo(pad.l,m.y(0));
+    for(let i=0;i<n;i++){
+      ctx.lineTo(m.x(srt[i]),m.y(i/n));
+      ctx.lineTo(m.x(srt[i]),m.y((i+1)/n));
+    }
+    ctx.lineTo(W-pad.r,m.y(1));ctx.stroke();
+    // lineare Interpolation (Q_L)
+    const ip=[];
+    for(let i=1;i<=199;i++){
+      const uu=i/200;
+      ip.push([m.x(QL(srt,uu)),m.y(uu)]);
+    }
+    polyline(ctx,ip,'rgba(255,122,184,.85)',2,[2,3]);
+    // Punkte
+    for(let i=0;i<n;i++)dot(ctx,m.x(srt[i]),m.y((i+1)/n),3.6,C.acc);
+    // Schätzer
+    const qs=Qhat(srt,u),ql=QL(srt,u),qt=D.q(u);
+    ctx.save();ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(168,182,212,.55)';ctx.lineWidth=1.3;
+    ctx.beginPath();ctx.moveTo(pad.l,m.y(u));ctx.lineTo(W-pad.r,m.y(u));ctx.stroke();ctx.restore();
+    ctx.fillStyle=C.txt3;ctx.font='11px Inter,sans-serif';ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.fillText('u = '+u.toFixed(2).replace('.',','),pad.l+4,m.y(u)-3);
+    vline(ctx,m.x(qs),pad.t,H-pad.b,C.acc,2);
+    vline(ctx,m.x(ql),pad.t,H-pad.b,C.acc3,2);
+    vline(ctx,m.x(qt),pad.t,H-pad.b,C.good,2,[2,2]);
+    tag(ctx,m.x(qs),pad.t+10,'Q̂',C.acc);
+    tag(ctx,m.x(ql),pad.t+30,'Q̂ₗ',C.acc3);
+    tag(ctx,m.x(qt),pad.t+50,'wahr',C.good);
+    document.getElementById('p4-qs').textContent=qs.toFixed(4).replace('.',',');
+    document.getElementById('p4-ql').textContent=ql.toFixed(4).replace('.',',');
+    document.getElementById('p4-qt').textContent=qt.toFixed(4).replace('.',',');
+  }
+  nE.oninput=()=>{document.getElementById('p4-nv').textContent=nE.value;gen();};
+  uE.oninput=()=>{document.getElementById('p4-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  document.getElementById('p4-new').onclick=gen;
+  window.addEventListener('resize',draw);
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 4b: BIAS & RMSE SIMULATION  ==========================
+   ============================================================================ */
+(function demo4b(){
+  const nE=document.getElementById('p4b-n'),rE=document.getElementById('p4b-r');
+  let dist='normal';
+  const LEVELS=[0.05,0.10,0.25,0.50,0.75,0.90,0.95];
+  function run(){
+    const n=+nE.value,R=+rE.value,D=DISTS[dist];
+    const trueQ=LEVELS.map(u=>D.q(u));
+    const biasQ=LEVELS.map(()=>0),biasL=LEVELS.map(()=>0);
+    const mseQ=LEVELS.map(()=>0),mseL=LEVELS.map(()=>0);
+    for(let r=0;r<R;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+      s.sort((a,b)=>a-b);
+      LEVELS.forEach((u,j)=>{
+        const a=Qhat(s,u)-trueQ[j], b=QL(s,u)-trueQ[j];
+        biasQ[j]+=a; biasL[j]+=b; mseQ[j]+=a*a; mseL[j]+=b*b;
+      });
+    }
+    const rbQ=LEVELS.map((u,j)=>Math.abs(biasQ[j]/R)/Math.abs(trueQ[j]));
+    const rbL=LEVELS.map((u,j)=>Math.abs(biasL[j]/R)/Math.abs(trueQ[j]));
+    const rrQ=LEVELS.map((u,j)=>Math.sqrt(mseQ[j]/R)/Math.abs(trueQ[j]));
+    const rrL=LEVELS.map((u,j)=>Math.sqrt(mseL[j]/R)/Math.abs(trueQ[j]));
+    const xl=LEVELS.map(u=>(u*100).toFixed(0)+' %');
+    Plotly.react('p4b-plot',[
+      {x:xl,y:rbQ,type:'bar',name:'|rel. Bias| · Q̂',marker:{color:'rgba(90,209,255,.75)'}},
+      {x:xl,y:rbL,type:'bar',name:'|rel. Bias| · Q̂ₗ',marker:{color:'rgba(255,122,184,.75)'}},
+      {x:xl,y:rrQ,type:'scatter',mode:'markers+lines',name:'rel. RMSE · Q̂',
+       marker:{color:C.acc,size:10,symbol:'circle'},line:{color:'rgba(90,209,255,.45)',dash:'dot'}},
+      {x:xl,y:rrL,type:'scatter',mode:'markers+lines',name:'rel. RMSE · Q̂ₗ',
+       marker:{color:C.acc3,size:10,symbol:'diamond'},line:{color:'rgba(255,122,184,.45)',dash:'dot'}}
+    ],lay({
+      barmode:'group',
+      xaxis:{title:'Quantil-Level',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'relativer Fehler',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,rangemode:'tozero'},
+      shapes:[{type:'line',x0:-0.5,x1:6.5,y0:0.05,y1:0.05,
+               line:{color:'rgba(232,237,248,.55)',width:1.5,dash:'dash'}}],
+      annotations:[{x:6.3,y:0.05,text:'5 %-Schwelle',showarrow:false,
+                    font:{color:C.txt3,size:10},yanchor:'bottom'}]
+    }),PLY);
+  }
+  nE.oninput=()=>{document.getElementById('p4b-nv').textContent=nE.value;};
+  rE.oninput=()=>{document.getElementById('p4b-rv').textContent=rE.value;};
+  document.getElementById('p4b-go').onclick=run;
+  segInit('[data-p4d]',v=>{dist=v;run();});
+  run();
+})();
+
+/* ============================================================================
+   ===============  DEMO 5: ORDNUNGSSTATISTIKEN  ==============================
+   ============================================================================ */
+(function demo5(){
+  const cv=document.getElementById('p5-canvas');
+  const nE=document.getElementById('p5-n'),kE=document.getElementById('p5-k');
+  const D=DISTS.normal;
+  let sample=[],many=null;
+  function gen(){
+    const n=+nE.value;
+    kE.max=n; if(+kE.value>n)kE.value=n;
+    document.getElementById('p5-kv').textContent=kE.value;
+    sample=[];for(let i=0;i<n;i++)sample.push(D.samp());
+    sample.sort((a,b)=>a-b);
+    draw();
+  }
+  function runMany(){
+    const n=+nE.value,k=+kE.value,R=2000;
+    many=[];
+    for(let r=0;r<R;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+      s.sort((a,b)=>a-b);
+      many.push(s[k-1]);
+    }
+    draw();
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const n=+nE.value,k=+kE.value;
+    const lo=0.74,hi=1.0;
+    const topH=Math.round(H*0.40);
+    // --- oben: sortierte Stichprobe
+    const padT={l:50,r:20,t:24,b:28};
+    axes(ctx,W,topH,padT,'','Rang i',[lo,hi],[0.5,n+0.5],
+      {nx:6,ny:Math.min(n,8),xfmt:()=>'',yfmt:v=>Math.round(v)});
+    const mT=mk(padT,topH,[lo,hi],[0.5,n+0.5]);
+    for(let i=0;i<n;i++){
+      const y=mT.y(i+1);
+      ctx.strokeStyle='rgba(36,49,80,.9)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(padT.l,y);ctx.lineTo(W-padT.r,y);ctx.stroke();
+      const isK=(i+1)===k;
+      dot(ctx,mT.x(sample[i]),y,isK?7:4.5,isK?C.warn:C.acc,isK?'#fff':null);
+    }
+    ctx.fillStyle=C.warn;ctx.font='600 11.5px Inter,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('X('+k+')',W-padT.r-46,mT.y(k)-14);
+    // --- unten: Verteilung von X_(k)
+    const padB={l:50,r:20,t:topH+22,b:46};
+    // theoretische Dichte von X_(k): n!/((k-1)!(n-k)!) F^(k-1)(1-F)^(n-k) f
+    const NP=240,dens=[];let dmax=0;
+    const logc=logGamma(n+1)-logGamma(k)-logGamma(n-k+1);
+    for(let i=0;i<=NP;i++){
+      const x=lo+(hi-lo)*i/NP;
+      const F=normCDF(x,0.87,0.04),f=normPDF(x,0.87,0.04);
+      let d=0;
+      if(F>0&&F<1)d=Math.exp(logc+(k-1)*Math.log(F)+(n-k)*Math.log(1-F))*f;
+      dens.push([x,d]);dmax=Math.max(dmax,d);
+    }
+    dmax*=1.2;
+    axes(ctx,W,H,padB,'Wert','Dichte von X₍ₖ₎',[lo,hi],[0,dmax],
+      {nx:6,ny:4,xfmt:v=>v.toFixed(2),yfmt:v=>v.toFixed(0)});
+    const mB=mk(padB,H,[lo,hi],[0,dmax]);
+    // Referenz: Gesamtverteilung (klein)
+    const tot=[];
+    for(let i=0;i<=NP;i++){
+      const x=lo+(hi-lo)*i/NP;
+      tot.push([mB.x(x),mB.y(normPDF(x,0.87,0.04)*0.9)]);
+    }
+    polyline(ctx,tot,'rgba(168,182,212,.35)',1.6,[5,4]);
+    // Empirisches Histogramm
+    if(many&&many.length){
+      const bins=34,cnt=histo(many,bins,lo,hi),bw=(hi-lo)/bins;
+      for(let i=0;i<bins;i++){
+        if(!cnt[i])continue;
+        const d=cnt[i]/(many.length*bw);
+        const x0=mB.x(lo+i*bw),x1=mB.x(lo+(i+1)*bw);
+        ctx.fillStyle='rgba(255,200,90,.3)';
+        ctx.fillRect(x0,mB.y(d),Math.max(1,x1-x0-1),H-padB.b-mB.y(d));
+      }
+    }
+    fillArea(ctx,dens.map(p=>[mB.x(p[0]),mB.y(p[1])]),H-padB.b,'rgba(255,200,90,.16)');
+    polyline(ctx,dens.map(p=>[mB.x(p[0]),mB.y(p[1])]),C.warn,2.6);
+    // aktuelle Realisierung
+    vline(ctx,mB.x(sample[k-1]),padB.t,H-padB.b,C.acc,2);
+    tag(ctx,mB.x(sample[k-1]),padB.t+10,'aktuell',C.acc);
+    ctx.fillStyle=C.txt3;ctx.font='10.5px Inter,sans-serif';ctx.textAlign='left';
+    ctx.fillText('— — Gesamtverteilung von X',padB.l+6,padB.t+2);
+    document.getElementById('p5-pos').textContent=(k/(n+1)).toFixed(3).replace('.',',');
+    document.getElementById('p5-ev').textContent=many&&many.length?mean(many).toFixed(4).replace('.',','):'–';
+  }
+  nE.oninput=()=>{document.getElementById('p5-nv').textContent=nE.value;many=null;gen();};
+  kE.oninput=()=>{document.getElementById('p5-kv').textContent=kE.value;many=null;draw();};
+  document.getElementById('p5-draw').onclick=gen;
+  document.getElementById('p5-many').onclick=runMany;
+  window.addEventListener('resize',draw);
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 5b: BINOMIALVERTEILUNG  ==============================
+   ============================================================================ */
+(function demo5b(){
+  const cv=document.getElementById('p5b-canvas');
+  const nE=document.getElementById('p5b-n'),uE=document.getElementById('p5b-u');
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const n=+nE.value,u=+uE.value/100;
+    const pad={l:52,r:18,t:20,b:46};
+    const pm=[];let pmax=0;
+    for(let s=0;s<=n;s++){const p=binomPMF(s,n,u);pm.push(p);pmax=Math.max(pmax,p);}
+    pmax*=1.18;
+    axes(ctx,W,H,pad,'Anzahl Beobachtungen unter dem Quantil','Wahrscheinlichkeit',[-0.5,n+0.5],[0,pmax],
+      {nx:Math.min(n,10),ny:4,xfmt:v=>Math.round(v),yfmt:v=>v.toFixed(2)});
+    const m=mk(pad,W,H,[-0.5,n+0.5],[0,pmax]);
+    const bw=(W-pad.l-pad.r)/(n+1);
+    for(let s=0;s<=n;s++){
+      const x=m.x(s),y=m.y(pm[s]);
+      const grad=ctx.createLinearGradient(0,y,0,H-pad.b);
+      grad.addColorStop(0,'rgba(90,209,255,.95)');
+      grad.addColorStop(1,'rgba(90,209,255,.25)');
+      ctx.fillStyle=grad;
+      ctx.fillRect(x-bw*0.38,y,bw*0.76,H-pad.b-y);
+    }
+    // Erwartungswert
+    vline(ctx,m.x(n*u),pad.t,H-pad.b,C.warn,2);
+    tag(ctx,m.x(n*u),pad.t+10,'E = n·u = '+(n*u).toFixed(1).replace('.',','),C.warn);
+    document.getElementById('p5b-txt').innerHTML=
+      `Mit n = ${n} und u = ${u.toFixed(2).replace('.',',')} liegen im Mittel
+       <strong>${(n*u).toFixed(1).replace('.',',')}</strong> Beobachtungen unter dem wahren Quantil —
+       aber mit einer Standardabweichung von
+       <strong>${Math.sqrt(n*u*(1-u)).toFixed(2).replace('.',',')}</strong>.
+       Genau diese Streuung ist die Unsicherheit, die das Konfidenzintervall abbilden muss.`;
+  }
+  nE.oninput=()=>{document.getElementById('p5b-nv').textContent=nE.value;draw();};
+  uE.oninput=()=>{document.getElementById('p5b-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 6: KONFIDENZINTERVALL-INTERPRETATION  ================
+   ============================================================================ */
+(function demo6(){
+  const cv=document.getElementById('p6-canvas');
+  const nE=document.getElementById('p6-n'),cE=document.getElementById('p6-c'),rE=document.getElementById('p6-r');
+  const D=DISTS.normal;
+  let ivs=[],shown=0,timer=null;
+  function build(){
+    const n=+nE.value,alpha=1-(+cE.value/100),R=+rE.value;
+    ivs=[];
+    const trueMu=0.87;
+    for(let r=0;r<R;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+      const ci=tCI(s,alpha);
+      ivs.push({lo:ci.lo,hi:ci.hi,m:ci.m,hit:ci.lo<=trueMu&&trueMu<=ci.hi});
+    }
+    shown=ivs.length;draw();
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:62,r:20,t:20,b:46};
+    const R=ivs.length||1;
+    let lo=0.83,hi=0.91;
+    ivs.forEach(v=>{lo=Math.min(lo,v.lo);hi=Math.max(hi,v.hi);});
+    axes(ctx,W,H,pad,'Accuracy','Experiment Nr.',[lo,hi],[0,R],
+      {nx:6,ny:5,xfmt:v=>v.toFixed(3),yfmt:v=>Math.round(v)});
+    const m=mk(pad,W,H,[lo,hi],[0,R]);
+    // wahre Linie
+    ctx.save();ctx.strokeStyle=C.acc3;ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(m.x(0.87),pad.t);ctx.lineTo(m.x(0.87),H-pad.b);ctx.stroke();ctx.restore();
+    const vis=ivs.slice(0,shown);
+    vis.forEach((v,i)=>{
+      const y=m.y(i+0.5);
+      ctx.strokeStyle=v.hit?'rgba(62,232,168,.8)':'rgba(255,107,107,.95)';
+      ctx.lineWidth=v.hit?1.8:2.6;
+      ctx.beginPath();ctx.moveTo(m.x(v.lo),y);ctx.lineTo(m.x(v.hi),y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(m.x(v.lo),y-3);ctx.lineTo(m.x(v.lo),y+3);
+      ctx.moveTo(m.x(v.hi),y-3);ctx.lineTo(m.x(v.hi),y+3);ctx.stroke();
+      dot(ctx,m.x(v.m),y,2.1,v.hit?C.good:C.bad);
+    });
+    ctx.fillStyle=C.acc3;ctx.font='600 11.5px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('wahrer Wert μ = 0,87',m.x(0.87),pad.t-3);
+    const hits=vis.filter(v=>v.hit).length;
+    document.getElementById('p6-hit').textContent=hits;
+    document.getElementById('p6-miss').textContent=vis.length-hits;
+    document.getElementById('p6-cov').textContent=vis.length?(hits/vis.length).toFixed(3).replace('.',','):'–';
+    document.getElementById('p6-nom').textContent=(+cE.value/100).toFixed(2).replace('.',',');
+  }
+  function anim(){
+    if(timer)clearInterval(timer);
+    build();shown=0;
+    timer=setInterval(()=>{shown++;draw();if(shown>=ivs.length)clearInterval(timer);},28);
+  }
+  nE.oninput=()=>{document.getElementById('p6-nv').textContent=nE.value;build();};
+  cE.oninput=()=>{document.getElementById('p6-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');build();};
+  rE.oninput=()=>{document.getElementById('p6-rv').textContent=rE.value;build();};
+  document.getElementById('p6-go').onclick=build;
+  document.getElementById('p6-anim').onclick=anim;
+  window.addEventListener('resize',draw);
+  build();
+})();
+
+/* ============================================================================
+   ===============  DEMO 6b: ZIELKONFLIKT  ====================================
+   ============================================================================ */
+(function demo6t(){
+  const cE=document.getElementById('p6t-c'),nE=document.getElementById('p6t-n');
+  function draw(){
+    const conf=+cE.value/100,n=+nE.value;
+    const levels=[];
+    for(let c=0.50;c<=0.995;c+=0.01)levels.push(c);
+    const len=levels.map(c=>2*tInv(1-(1-c)/2,n-1)*0.04/Math.sqrt(n));
+    const cur=2*tInv(1-(1-conf)/2,n-1)*0.04/Math.sqrt(n);
+    Plotly.react('p6t-plot',[
+      {x:levels,y:len,type:'scatter',mode:'lines',name:'Intervall-Länge',
+       line:{color:C.acc,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.12)'},
+      {x:[conf],y:[cur],type:'scatter',mode:'markers',name:'aktuell',
+       marker:{color:C.acc3,size:13,line:{color:'#fff',width:2}}}
+    ],lay({
+      xaxis:{title:'Konfidenzniveau 1−α',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'Länge des Intervalls',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,rangemode:'tozero'},
+      showlegend:false,
+      shapes:[{type:'line',x0:0.9,x1:0.9,y0:0,y1:1,yref:'paper',
+               line:{color:'rgba(62,232,168,.6)',width:2,dash:'dash'}}],
+      annotations:[{x:0.9,y:1,yref:'paper',text:'Empfehlung 0,90',showarrow:false,
+                    font:{color:C.good,size:11},yanchor:'bottom'}],
+      margin:{l:58,r:20,t:28,b:48}
+    }),PLY);
+  }
+  cE.oninput=()=>{document.getElementById('p6t-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  nE.oninput=()=>{document.getElementById('p6t-nv').textContent=nE.value;draw();};
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 7: EXAKTE KIs  =======================================
+   ============================================================================ */
+(function demo7(){
+  const cv=document.getElementById('p7-canvas'),cv2=document.getElementById('p7-canvas2');
+  const nE=document.getElementById('p7-n'),uE=document.getElementById('p7-u'),
+        kE=document.getElementById('p7-k'),lE=document.getElementById('p7-l');
+  const D=DISTS.normal;
+  let sample=[];
+  function gen(){
+    const n=+nE.value;
+    kE.max=n-1;lE.max=n;
+    if(+kE.value>n-1)kE.value=n-1;
+    if(+lE.value>n)lE.value=n;
+    if(+lE.value<=+kE.value)lE.value=+kE.value+1;
+    sample=[];for(let i=0;i<n;i++)sample.push(D.samp());
+    sample.sort((a,b)=>a-b);
+    draw();
+  }
+  function draw(){
+    const n=+nE.value,u=+uE.value/100,k=+kE.value,l=+lE.value;
+    document.getElementById('p7-kv').textContent=k;
+    document.getElementById('p7-lv').textContent=l;
+    const r=rCover(k,l,n,u);
+    document.getElementById('p7-r').textContent=r.toFixed(4).replace('.',',');
+    document.getElementById('p7-iv').textContent=
+      '['+sample[k-1].toFixed(3).replace('.',',')+' ; '+sample[l-1].toFixed(3).replace('.',',')+']';
+    // --- Binomialmasse
+    {
+      const {ctx,W,H}=setupCanvas(cv);
+      
+      const pad={l:52,r:18,t:18,b:42};
+      const pm=[];let pmax=0;
+      for(let s=0;s<=n;s++){const p=binomPMF(s,n,u);pm.push(p);pmax=Math.max(pmax,p);}
+      pmax*=1.18;
+      axes(ctx,W,H,pad,'Index s (Anzahl Beobachtungen < Quantil)','P(s)',[-0.5,n+0.5],[0,pmax],
+        {nx:Math.min(n,10),ny:4,xfmt:v=>Math.round(v),yfmt:v=>v.toFixed(2)});
+      const m=mk(pad,W,H,[-0.5,n+0.5],[0,pmax]);
+      const bw=(W-pad.l-pad.r)/(n+1);
+      for(let s=0;s<=n;s++){
+        const inside=(s>=k&&s<=l-1);
+        const x=m.x(s),y=m.y(pm[s]);
+        if(inside){
+          const g=ctx.createLinearGradient(0,y,0,H-pad.b);
+          g.addColorStop(0,'rgba(90,209,255,.95)');g.addColorStop(1,'rgba(90,209,255,.3)');
+          ctx.fillStyle=g;
+        } else ctx.fillStyle='rgba(60,76,112,.55)';
+        ctx.fillRect(x-bw*0.38,y,bw*0.76,H-pad.b-y);
+      }
+      vline(ctx,m.x(k-0.5),pad.t,H-pad.b,C.good,2,[4,3]);
+      vline(ctx,m.x(l-0.5),pad.t,H-pad.b,C.good,2,[4,3]);
+      ctx.fillStyle=C.good;ctx.font='600 11px Inter,sans-serif';
+      ctx.textAlign='center';ctx.textBaseline='top';
+      ctx.fillText('Summe = r = '+r.toFixed(3).replace('.',','),(m.x(k-0.5)+m.x(l-0.5))/2,pad.t+2);
+      // Niveau-Hinweis
+      const ok=r>=0.90;
+      ctx.fillStyle=ok?C.good:C.bad;ctx.textAlign='right';
+      ctx.fillText(ok?'✓ ≥ 0,90':'✗ < 0,90',W-pad.r,pad.t+2);
+    }
+    // --- Stichprobe mit Intervall
+    {
+      const {ctx,W,H}=setupCanvas(cv2);
+      const pad={l:52,r:18,t:28,b:34};
+      const lo=Math.min(0.75,sample[0]-0.01),hi=Math.max(0.99,sample[n-1]+0.01);
+      axes(ctx,W,H,pad,'Accuracy','',[lo,hi],[0,1],{nx:6,ny:1,xfmt:v=>v.toFixed(2),yfmt:()=>''});
+      const m=mk(pad,W,H,[lo,hi],[0,1]);
+      const yc=(pad.t+H-pad.b)/2;
+      // Intervallband
+      ctx.fillStyle='rgba(90,209,255,.16)';
+      ctx.fillRect(m.x(sample[k-1]),pad.t,m.x(sample[l-1])-m.x(sample[k-1]),H-pad.b-pad.t);
+      ctx.strokeStyle=C.acc;ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(m.x(sample[k-1]),yc);ctx.lineTo(m.x(sample[l-1]),yc);ctx.stroke();
+      // Punkte
+      sample.forEach((v,i)=>{
+        const hiL=(i+1)===k||(i+1)===l;
+        dot(ctx,m.x(v),yc,hiL?6.5:4,hiL?C.acc:'rgba(168,182,212,.6)',hiL?'#fff':null);
+      });
+      // wahres Quantil
+      const qt=DISTS.normal.q(u);
+      vline(ctx,m.x(qt),pad.t,H-pad.b,C.acc3,2);
+      tag(ctx,m.x(qt),pad.t+2,'wahres Quantil',C.acc3);
+      ctx.fillStyle=C.txt3;ctx.font='10.5px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+      ctx.fillText('X('+k+')',m.x(sample[k-1]),yc+10);
+      ctx.fillText('X('+l+')',m.x(sample[l-1]),yc+10);
+    }
+  }
+  function optimal(){
+    const n=+nE.value,u=+uE.value/100;
+    const ci=exactCI(sample,u,0.10);
+    if(ci){kE.value=ci.k;lE.value=ci.l;}
+    else{
+      alert('Für n = '+n+' und u = '+u.toFixed(2)+' existiert bei 1−α = 0,90 kein exaktes Intervall.\n'+
+            'Mindest-n wäre '+minNExact(u,0.10)+'.');
+    }
+    draw();
+  }
+  nE.oninput=()=>{document.getElementById('p7-nv').textContent=nE.value;gen();};
+  uE.oninput=()=>{document.getElementById('p7-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  kE.oninput=()=>{if(+lE.value<=+kE.value)lE.value=+kE.value+1;draw();};
+  lE.oninput=()=>{if(+lE.value<=+kE.value)kE.value=Math.max(1,+lE.value-1);draw();};
+  document.getElementById('p7-opt').onclick=optimal;
+  window.addEventListener('resize',draw);
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 7b: TABELLE 1 (MINDEST-n EXAKT)  =====================
+   ============================================================================ */
+(function demo7m(){
+  const cE=document.getElementById('p7m-c');
+  const LV=[0.01,0.025,0.05,0.10,0.25,0.50,0.75,0.90,0.95,0.975,0.99];
+  function draw(){
+    const alpha=1-(+cE.value/100);
+    const rows=LV.map(u=>({u,n:minNExact(u,alpha)}));
+    let html='<tr><th>Quantil-Level u</th>'+LV.map(u=>'<th>'+(u*100).toFixed(u<0.05||u>0.95?1:0)+' %</th>').join('')+'</tr>';
+    html+='<tr><td class="lbl">Mindest-n</td>'+rows.map(r=>{
+      const cls=r.n<=25?'ok':(r.n<=50?'':'no');
+      return '<td class="'+cls+'">'+(r.n?r.n:'—')+'</td>';
+    }).join('')+'</tr>';
+    document.getElementById('p7m-table').innerHTML=html;
+    Plotly.react('p7m-plot',[
+      {x:LV.map(u=>u*100),y:rows.map(r=>r.n),type:'scatter',mode:'lines+markers',
+       name:'exakt',line:{color:C.acc,width:3,shape:'spline'},
+       marker:{color:C.acc,size:9}},
+      {x:LV.map(u=>u*100),y:LV.map(u=>minNAsym(u,alpha)),type:'scatter',mode:'lines+markers',
+       name:'asymptotisch',line:{color:C.good,width:2.4,dash:'dot',shape:'spline'},
+       marker:{color:C.good,size:7,symbol:'diamond'}}
+    ],lay({
+      xaxis:{title:'Quantil-Level u (%)',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'benötigte Mindeststichprobe n',type:'log',
+             gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      shapes:[{type:'rect',x0:0,x1:100,y0:Math.log10(1),y1:Math.log10(25),
+               fillcolor:'rgba(62,232,168,.08)',line:{width:0}}],
+      annotations:[{x:50,y:Math.log10(20),text:'realistisches ML-Budget (n ≤ 25)',
+                    showarrow:false,font:{color:C.good,size:11}}]
+    }),PLY);
+  }
+  cE.oninput=()=>{document.getElementById('p7m-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 8: ASYMPTOTISCHE KIs  ================================
+   ============================================================================ */
+(function demo8(){
+  const cv=document.getElementById('p8-canvas');
+  const nE=document.getElementById('p8-n'),uE=document.getElementById('p8-u'),cE=document.getElementById('p8-c');
+  function draw(){
+    const n=+nE.value,u=+uE.value/100,alpha=1-(+cE.value/100);
+    const {k,l}=asymIdx(n,u,alpha);
+    document.getElementById('p8-k').textContent=k.toFixed(2).replace('.',',');
+    document.getElementById('p8-l').textContent=l.toFixed(2).replace('.',',');
+    const valid=k>=1&&l<=n&&k<l;
+    const box=document.getElementById('p8-valid'),txt=document.getElementById('p8-vtxt');
+    box.className='callout '+(valid?'g':'w');
+    txt.innerHTML=valid
+      ? `✓ <strong>Gültig.</strong> Das Intervall ist [Q̂ₗ(${(k/n).toFixed(3).replace('.',',')}),
+         Q̂ₗ(${(l/n).toFixed(3).replace('.',',')})]. Beide Indizes liegen im zulässigen Bereich [1, ${n}].`
+      : `✗ <strong>Ungültig.</strong> ${k<1?'k = '+k.toFixed(2).replace('.',',')+' liegt unter 1':'l = '+l.toFixed(2).replace('.',',')+' liegt über n'}.
+         Mindest-n für diese Kombination: <strong>${minNAsym(u,alpha)}</strong>.`;
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:40,r:24,t:40,b:48};
+    axes(ctx,W,H,pad,'Index (Rang der Ordnungsstatistik)','',[0,n+1],[0,1],
+      {nx:Math.min(n+1,10),ny:1,xfmt:v=>Math.round(v),yfmt:()=>''});
+    const m=mk(pad,W,H,[0,n+1],[0,1]);
+    const yc=(pad.t+H-pad.b)/2;
+    // zulässiger Bereich
+    ctx.fillStyle='rgba(62,232,168,.08)';
+    ctx.fillRect(m.x(1),pad.t,m.x(n)-m.x(1),H-pad.b-pad.t);
+    ctx.strokeStyle='rgba(62,232,168,.4)';ctx.lineWidth=1.4;ctx.setLineDash([4,4]);
+    ctx.strokeRect(m.x(1),pad.t,m.x(n)-m.x(1),H-pad.b-pad.t);ctx.setLineDash([]);
+    ctx.fillStyle=C.good;ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('zulässig: 1 … n',(m.x(1)+m.x(n))/2,pad.t+3);
+    // Ordnungsstatistiken
+    for(let i=1;i<=n;i++){
+      if(n<=60||i%Math.ceil(n/60)===0)
+        dot(ctx,m.x(i),yc,3,'rgba(168,182,212,.45)');
+    }
+    // k, l
+    const col=valid?C.acc:C.bad;
+    ctx.strokeStyle=col;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(m.x(Math.max(0,k)),yc);ctx.lineTo(m.x(Math.min(n+1,l)),yc);ctx.stroke();
+    dot(ctx,m.x(k),yc,8,col,'#fff');
+    dot(ctx,m.x(l),yc,8,col,'#fff');
+    tag(ctx,m.x(k),yc-24,'k = '+k.toFixed(1).replace('.',','),col);
+    tag(ctx,m.x(l),yc+24,'l = '+l.toFixed(1).replace('.',','),col);
+    // n*u Mittelpunkt
+    vline(ctx,m.x(n*u),pad.t,H-pad.b,C.warn,1.8);
+    ctx.fillStyle=C.warn;ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('n·u = '+(n*u).toFixed(1).replace('.',','),m.x(n*u),pad.t-6);
+  }
+  nE.oninput=()=>{document.getElementById('p8-nv').textContent=nE.value;draw();};
+  uE.oninput=()=>{document.getElementById('p8-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  cE.oninput=()=>{document.getElementById('p8-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 8b: TABELLE 2 + SPIEGELUNG  ==========================
+   ============================================================================ */
+(function demo8m(){
+  const cE=document.getElementById('p8m-c'),fE=document.getElementById('p8m-flip');
+  const LV=[0.01,0.05,0.10,0.25,0.50,0.75,0.90,0.95,0.99];
+  function draw(){
+    const alpha=1-(+cE.value/100),flip=fE.checked;
+    const base=LV.map(u=>minNAsym(u,alpha));
+    const eff=LV.map(u=>{
+      const a=minNAsym(u,alpha),b=minNAsym(1-u,alpha);
+      return flip?Math.min(a,b):a;
+    });
+    let h='<tr><th>Quantil u</th>'+LV.map(u=>'<th>'+(u*100).toFixed(0)+' %</th>').join('')+'</tr>';
+    h+='<tr><td class="lbl">Mindest-n</td>'+eff.map(v=>{
+      const cls=v<=25?'ok':(v<=60?'':'no');
+      return '<td class="'+cls+'">'+v+'</td>';}).join('')+'</tr>';
+    if(flip){
+      h+='<tr><td class="lbl tiny">ohne Trick</td>'+base.map(v=>'<td style="opacity:.45">'+v+'</td>').join('')+'</tr>';
+      h+='<tr><td class="lbl tiny">Ersparnis</td>'+base.map((v,i)=>{
+        const s=v-eff[i];
+        return '<td class="'+(s>0?'ok':'')+'">'+(s>0?('−'+s):'–')+'</td>';}).join('')+'</tr>';
+    }
+    document.getElementById('p8m-table').innerHTML=h;
+    const tr=[
+      {x:LV.map(u=>u*100),y:base,type:'bar',name:'ohne Vorzeichen-Trick',
+       marker:{color:flip?'rgba(90,209,255,.3)':'rgba(90,209,255,.8)'}}
+    ];
+    if(flip)tr.push({x:LV.map(u=>u*100),y:eff,type:'bar',name:'mit Vorzeichen-Trick',
+       marker:{color:'rgba(62,232,168,.85)'}});
+    Plotly.react('p8m-plot',tr,lay({
+      barmode:'overlay',
+      xaxis:{title:'Quantil-Level u (%)',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'Mindest-n',type:'log',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      shapes:[{type:'line',x0:0,x1:100,y0:Math.log10(25),y1:Math.log10(25),
+               line:{color:C.warn,width:2,dash:'dash'}}],
+      annotations:[{x:88,y:Math.log10(25),text:'n = 25',showarrow:false,
+                    font:{color:C.warn,size:11},yanchor:'bottom'}]
+    }),PLY);
+  }
+  cE.oninput=()=>{document.getElementById('p8m-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  fE.onchange=draw;
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 9: BOOTSTRAP-VERGLEICH  ==============================
+   ============================================================================ */
+(function demo9(){
+  const nE=document.getElementById('p9-n'),uE=document.getElementById('p9-u');
+  const D=DISTS.normal;
+  let sample=[];
+  function gen(){
+    const n=+nE.value;sample=[];
+    for(let i=0;i<n;i++)sample.push(D.samp());
+    sample.sort((a,b)=>a-b);
+    run();
+  }
+  function run(){
+    if(!sample.length)return gen();
+    const u=+uE.value/100;
+    const cl=bootClassic(sample,u,0.10,2000);
+    const sp=bootCI(sample,u,0.10,2000);
+    const uniqC=new Set(cl.dist.map(v=>v.toFixed(8))).size;
+    const uniqS=new Set(sp.dist.map(v=>v.toFixed(8))).size;
+    Plotly.react('p9-plot',[
+      {x:cl.dist,type:'histogram',name:'klassischer Bootstrap',
+       marker:{color:'rgba(255,200,90,.6)',line:{color:'rgba(255,200,90,.95)',width:1}},
+       nbinsx:60,opacity:.75},
+      {x:sp.dist,type:'histogram',name:'semiparametrisch (Hutson)',
+       marker:{color:'rgba(62,232,168,.5)',line:{color:'rgba(62,232,168,.95)',width:1}},
+       nbinsx:60,opacity:.75}
+    ],lay({
+      barmode:'overlay',
+      xaxis:{title:'Bootstrap-Schätzung des '+(u*100).toFixed(0)+'%-Quantils',
+             gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'Häufigkeit',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      shapes:[
+        {type:'line',x0:D.q(u),x1:D.q(u),y0:0,y1:1,yref:'paper',
+         line:{color:C.acc3,width:2.5,dash:'dash'}},
+        {type:'line',x0:sample[sample.length-1],x1:sample[sample.length-1],y0:0,y1:1,yref:'paper',
+         line:{color:'rgba(168,182,212,.6)',width:1.6,dash:'dot'}}
+      ],
+      annotations:[
+        {x:D.q(u),y:1,yref:'paper',text:'wahres Quantil',showarrow:false,
+         font:{color:C.acc3,size:11},yanchor:'bottom'},
+        {x:sample[sample.length-1],y:0.9,yref:'paper',text:'beob. Maximum',showarrow:false,
+         font:{color:C.txt3,size:10},yanchor:'bottom',xshift:34}
+      ]
+    }),PLY);
+    const f=(a,b)=>'['+a.toFixed(3).replace('.',',')+' ; '+b.toFixed(3).replace('.',',')+']';
+    document.getElementById('p9-cl').textContent=f(cl.lo,cl.hi);
+    document.getElementById('p9-sl').textContent=f(sp.lo,sp.hi);
+    document.getElementById('p9-cu').textContent=uniqC;
+    document.getElementById('p9-su').textContent=uniqS;
+  }
+  nE.oninput=()=>{document.getElementById('p9-nv').textContent=nE.value;gen();};
+  uE.oninput=()=>{document.getElementById('p9-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');run();};
+  document.getElementById('p9-go').onclick=run;
+  document.getElementById('p9-new').onclick=gen;
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 9b: Q_T DREI ZONEN  ==================================
+   ============================================================================ */
+(function demo9b(){
+  const cv=document.getElementById('p9b-canvas');
+  const nE=document.getElementById('p9b-n'),uE=document.getElementById('p9b-u');
+  const D=DISTS.normal;
+  let sample=[];
+  function gen(){
+    const n=+nE.value;sample=[];
+    for(let i=0;i<n;i++)sample.push(D.samp());
+    sample.sort((a,b)=>a-b);
+    draw();
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const n=sample.length,np=n+1;
+    const pad={l:62,r:20,t:24,b:50};
+    const u=+uE.value/1000;
+    const b1=1/np,b2=n/np;
+    // Wertebereich
+    let vmin=sample[0],vmax=sample[n-1];
+    const ext1=QT(sample,0.001),ext2=QT(sample,0.999);
+    vmin=Math.min(vmin,ext1);vmax=Math.max(vmax,ext2);
+    const pad2=(vmax-vmin)*0.08;
+    const lo=vmin-pad2,hi=vmax+pad2;
+    axes(ctx,W,H,pad,'Quantil-Level u','geschätzter Wert Q̂ᴛ(u)',[0,1],[lo,hi],
+      {nx:5,ny:5,xfmt:v=>v.toFixed(2),yfmt:v=>v.toFixed(3)});
+    const m=mk(pad,W,H,[0,1],[lo,hi]);
+    // Zonen-Hintergrund
+    ctx.fillStyle='rgba(255,122,184,.07)';
+    ctx.fillRect(m.x(0),pad.t,m.x(b1)-m.x(0),H-pad.b-pad.t);
+    ctx.fillStyle='rgba(255,200,90,.07)';
+    ctx.fillRect(m.x(b2),pad.t,m.x(1)-m.x(b2),H-pad.b-pad.t);
+    // Kurve in 3 Segmenten
+    const segL=[],segM=[],segR=[];
+    for(let i=1;i<1000;i++){
+      const uu=i/1000;
+      const y=QT(sample,uu);
+      const p=[m.x(uu),m.y(y)];
+      if(uu<=b1)segL.push(p);
+      else if(uu>=b2)segR.push(p);
+      else segM.push(p);
+    }
+    // Verbindungsstücke sauber anschließen
+    if(segL.length&&segM.length)segL.push(segM[0]);
+    if(segM.length&&segR.length)segM.push(segR[0]);
+    polyline(ctx,segL,C.acc3,3);
+    polyline(ctx,segM,C.acc,3);
+    polyline(ctx,segR,C.warn,3);
+    // Beobachtungen als Punkte bei k/(n+1)
+    for(let i=1;i<=n;i++)
+      dot(ctx,m.x(i/np),m.y(sample[i-1]),4.5,'rgba(168,182,212,.85)');
+    // Grenzen
+    vline(ctx,m.x(b1),pad.t,H-pad.b,'rgba(255,122,184,.5)',1.4,[3,3]);
+    vline(ctx,m.x(b2),pad.t,H-pad.b,'rgba(255,200,90,.5)',1.4,[3,3]);
+    // Min/Max Referenzlinien
+    ctx.save();ctx.setLineDash([2,4]);ctx.strokeStyle='rgba(168,182,212,.35)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.l,m.y(sample[0]));ctx.lineTo(W-pad.r,m.y(sample[0]));
+    ctx.moveTo(pad.l,m.y(sample[n-1]));ctx.lineTo(W-pad.r,m.y(sample[n-1]));ctx.stroke();ctx.restore();
+    ctx.fillStyle=C.txt3;ctx.font='10.5px Inter,sans-serif';ctx.textAlign='right';ctx.textBaseline='bottom';
+    ctx.fillText('beob. Maximum',W-pad.r-3,m.y(sample[n-1])-3);
+    ctx.textBaseline='top';
+    ctx.fillText('beob. Minimum',W-pad.r-3,m.y(sample[0])+3);
+    // Cursor
+    const qv=QT(sample,u);
+    vline(ctx,m.x(u),pad.t,H-pad.b,'#fff',1.6,[4,3]);
+    dot(ctx,m.x(u),m.y(qv),6,'#fff','#000');
+    let zone='Mitte (Q̂ₗ)';
+    if(u<=b1)zone='links extrapoliert'; else if(u>=b2)zone='rechts extrapoliert';
+    document.getElementById('p9b-q').textContent=qv.toFixed(4).replace('.',',');
+    document.getElementById('p9b-z').textContent=zone;
+  }
+  nE.oninput=()=>{document.getElementById('p9b-nv').textContent=nE.value;gen();};
+  uE.oninput=()=>{document.getElementById('p9b-uv').textContent=(uE.value/1000).toFixed(3).replace('.',',');draw();};
+  document.getElementById('p9b-new').onclick=gen;
+  window.addEventListener('resize',draw);
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 9c: BOOTSTRAP-SCHRITTE  ==============================
+   ============================================================================ */
+(function demo9c(){
+  const cv=document.getElementById('p9c-canvas');
+  const steps=[...document.querySelectorAll('#p9c-steps .step')];
+  const D=DISTS.normal;
+  let sample=[],uni=[],bs=[],stage=0,timer=null,quantiles=[];
+  function init(){
+    sample=[];for(let i=0;i<12;i++)sample.push(D.samp());
+    sample.sort((a,b)=>a-b);
+    uni=[];bs=[];quantiles=[];stage=0;draw();
+  }
+  function next(){
+    stage++;
+    if(stage===1){uni=[];for(let i=0;i<12;i++)uni.push(Math.random());}
+    if(stage===2){bs=uni.map(u=>QT(sample,u)).sort((a,b)=>a-b);}
+    if(stage===3){
+      quantiles=[];
+      for(let r=0;r<400;r++){
+        const t=[];for(let i=0;i<12;i++)t.push(QT(sample,Math.random()));
+        t.sort((a,b)=>a-b);
+        quantiles.push(Qhat(t,0.9));
+      }
+      stage=3;
+    }
+    if(stage>3){stage=0;uni=[];bs=[];quantiles=[];}
+    draw();
+  }
+  function draw(){
+    steps.forEach((s,i)=>s.classList.toggle('on',i===Math.min(stage-1,2)&&stage>0));
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:46,r:18,t:22,b:40};
+    if(stage===0){
+      axes(ctx,W,H,pad,'Originalstichprobe','',[0.74,1.0],[0,1],{nx:5,ny:1,xfmt:v=>v.toFixed(2),yfmt:()=>''});
+      const m=mk(pad,W,H,[0.74,1.0],[0,1]);
+      const yc=(pad.t+H-pad.b)/2;
+      sample.forEach(v=>dot(ctx,m.x(v),yc,5,C.acc));
+      ctx.fillStyle=C.txt3;ctx.font='12px Inter,sans-serif';ctx.textAlign='center';
+      ctx.fillText('n = 12 beobachtete Accuracy-Werte',W/2,pad.t+6);
+      return;
+    }
+    if(stage===1){
+      axes(ctx,W,H,pad,'Quantil-Level u ~ U(0,1)','',[0,1],[0,1],{nx:5,ny:1,xfmt:v=>v.toFixed(1),yfmt:()=>''});
+      const m=mk(pad,W,H,[0,1],[0,1]);
+      const yc=(pad.t+H-pad.b)/2;
+      ctx.fillStyle='rgba(139,125,255,.12)';
+      ctx.fillRect(m.x(0),pad.t+14,m.x(1)-m.x(0),H-pad.b-pad.t-28);
+      uni.forEach(u=>dot(ctx,m.x(u),yc,5.5,C.acc2));
+      ctx.fillStyle=C.acc2;ctx.font='600 12px Inter,sans-serif';ctx.textAlign='center';
+      ctx.fillText('Schritt 1: n gleichverteilte Zufallszahlen',W/2,pad.t+2);
+      return;
+    }
+    if(stage===2){
+      const lo=Math.min(0.74,Math.min(...bs)-0.01),hi=Math.max(1.0,Math.max(...bs)+0.01);
+      axes(ctx,W,H,pad,'Wert','',[lo,hi],[0,1],{nx:5,ny:1,xfmt:v=>v.toFixed(2),yfmt:()=>''});
+      const m=mk(pad,W,H,[lo,hi],[0,1]);
+      const y1=pad.t+36,y2=H-pad.b-26;
+      sample.forEach(v=>dot(ctx,m.x(v),y1,4.5,'rgba(168,182,212,.5)'));
+      bs.forEach((v,i)=>{
+        dot(ctx,m.x(v),y2,5.5,C.good);
+        ctx.strokeStyle='rgba(62,232,168,.2)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(m.x(sample[i]),y1+5);ctx.lineTo(m.x(v),y2-5);ctx.stroke();
+      });
+      ctx.fillStyle=C.txt3;ctx.font='11px Inter,sans-serif';ctx.textAlign='left';
+      ctx.fillText('Original',pad.l,y1-14);
+      ctx.fillStyle=C.good;ctx.fillText('Bootstrap-Stichprobe via Q̂ᴛ',pad.l,y2+18);
+      return;
+    }
+    // stage 3
+    const lo=Math.min(...quantiles)-0.004,hi=Math.max(...quantiles)+0.004;
+    const bins=30,cnt=histo(quantiles,bins,lo,hi);
+    const cmax=Math.max(...cnt)*1.2;
+    axes(ctx,W,H,pad,'Bootstrap-Schätzungen des 90%-Quantils','',[lo,hi],[0,cmax],
+      {nx:5,ny:3,xfmt:v=>v.toFixed(3),yfmt:v=>v.toFixed(0)});
+    const m=mk(pad,W,H,[lo,hi],[0,cmax]);
+    const bw=(hi-lo)/bins;
+    for(let i=0;i<bins;i++){
+      if(!cnt[i])continue;
+      const x0=m.x(lo+i*bw),x1=m.x(lo+(i+1)*bw),y=m.y(cnt[i]);
+      const g=ctx.createLinearGradient(0,y,0,H-pad.b);
+      g.addColorStop(0,'rgba(62,232,168,.9)');g.addColorStop(1,'rgba(62,232,168,.2)');
+      ctx.fillStyle=g;ctx.fillRect(x0,y,Math.max(1,x1-x0-1),H-pad.b-y);
+    }
+    const l5=percentile(quantiles,0.05),h95=percentile(quantiles,0.95);
+    vline(ctx,m.x(l5),pad.t,H-pad.b,C.acc,2);
+    vline(ctx,m.x(h95),pad.t,H-pad.b,C.acc,2);
+    ctx.fillStyle=C.acc;ctx.font='600 11px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('90 %-KI: ['+l5.toFixed(3).replace('.',',')+' ; '+h95.toFixed(3).replace('.',',')+']',
+      (m.x(l5)+m.x(h95))/2,pad.t+2);
+  }
+  document.getElementById('p9c-step').onclick=next;
+  document.getElementById('p9c-reset').onclick=()=>{if(timer)clearInterval(timer);init();};
+  document.getElementById('p9c-auto').onclick=()=>{
+    if(timer){clearInterval(timer);timer=null;return;}
+    timer=setInterval(next,1400);
+  };
+  window.addEventListener('resize',draw);
+  init();
+})();
+
+/* ============================================================================
+   ===============  DEMO 10: t-VERTEILUNG  ====================================
+   ============================================================================ */
+(function demo10(){
+  const cv=document.getElementById('p10-canvas');
+  const dE=document.getElementById('p10-d'),cE=document.getElementById('p10-c');
+  function tPDF(x,df){
+    return Math.exp(logGamma((df+1)/2)-logGamma(df/2))/Math.sqrt(df*Math.PI)
+           *Math.pow(1+x*x/df,-(df+1)/2);
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const df=+dE.value,conf=+cE.value/100,alpha=1-conf;
+    const pad={l:54,r:20,t:22,b:46};
+    const lo=-5,hi=5,ymax=0.45;
+    axes(ctx,W,H,pad,'standardisierte Abweichung','Dichte',[lo,hi],[0,ymax],
+      {nx:5,ny:4,xfmt:v=>v.toFixed(0),yfmt:v=>v.toFixed(2)});
+    const m=mk(pad,W,H,[lo,hi],[0,ymax]);
+    const tq=tInv(1-alpha/2,df),zq=normInv(1-alpha/2);
+    // Schwänze markieren
+    const tp=[],np_=[];
+    for(let i=0;i<=400;i++){
+      const x=lo+(hi-lo)*i/400;
+      tp.push([m.x(x),m.y(tPDF(x,df))]);
+      np_.push([m.x(x),m.y(normPDF(x))]);
+    }
+    // Tail-Flächen t
+    const tl=tp.filter((p,i)=>lo+(hi-lo)*i/400<=-tq);
+    const tr=tp.filter((p,i)=>lo+(hi-lo)*i/400>=tq);
+    fillArea(ctx,tl,H-pad.b,'rgba(255,122,184,.25)');
+    fillArea(ctx,tr,H-pad.b,'rgba(255,122,184,.25)');
+    polyline(ctx,np_,'rgba(62,232,168,.85)',2.2,[6,4]);
+    polyline(ctx,tp,C.acc,3);
+    vline(ctx,m.x(tq),pad.t,H-pad.b,C.acc3,2);
+    vline(ctx,m.x(-tq),pad.t,H-pad.b,C.acc3,2);
+    vline(ctx,m.x(zq),pad.t,H-pad.b,'rgba(62,232,168,.6)',1.5,[3,3]);
+    vline(ctx,m.x(-zq),pad.t,H-pad.b,'rgba(62,232,168,.6)',1.5,[3,3]);
+    tag(ctx,m.x(tq),pad.t+12,'t = '+tq.toFixed(2).replace('.',','),C.acc3);
+    ctx.fillStyle=C.good;ctx.font='600 11px Inter,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('— — Normalverteilung',pad.l+8,pad.t+12);
+    ctx.fillStyle=C.acc;
+    ctx.fillText('—— t-Verteilung (df = '+df+')',pad.l+8,pad.t+28);
+    document.getElementById('p10-t').textContent=tq.toFixed(3).replace('.',',');
+    document.getElementById('p10-z').textContent=zq.toFixed(3).replace('.',',');
+  }
+  dE.oninput=()=>{document.getElementById('p10-dv').textContent=dE.value;draw();};
+  cE.oninput=()=>{document.getElementById('p10-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ============================================================================
+   ===============  DEMO 10b: NORMALITÄTSTEST  ================================
+   ============================================================================ */
+(function demo10b(){
+  const cv=document.getElementById('p10b-canvas');
+  const nE=document.getElementById('p10b-n');
+  let dist='normal',lastSample=[],pvals=[];
+  /* Shapiro-Wilk-artig: Korrelation zwischen sortierten Werten und Normal-Scores.
+     p-Wert über eine kalibrierte Näherung (Monte-Carlo-Referenz light). */
+  function wStat(s){
+    const n=s.length;
+    const scores=[];
+    for(let i=1;i<=n;i++)scores.push(normInv((i-0.375)/(n+0.25)));
+    const ms=mean(s),mz=mean(scores);
+    let num=0,d1=0,d2=0;
+    for(let i=0;i<n;i++){num+=(s[i]-ms)*(scores[i]-mz);d1+=(s[i]-ms)**2;d2+=(scores[i]-mz)**2;}
+    const r=num/Math.sqrt(d1*d2);
+    return r*r;
+  }
+  /* Referenzverteilung von W unter H0 (einmalig pro n simuliert) */
+  const refCache={};
+  function refDist(n){
+    if(refCache[n])return refCache[n];
+    const arr=[];
+    for(let r=0;r<600;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(randn());
+      s.sort((a,b)=>a-b);
+      arr.push(wStat(s));
+    }
+    arr.sort((a,b)=>a-b);
+    refCache[n]=arr;return arr;
+  }
+  function pValue(w,n){
+    const ref=refDist(n);
+    let i=0;while(i<ref.length&&ref[i]<w)i++;
+    return Math.max(1/ref.length,i/ref.length); // P(W_H0 < w)
+  }
+  function run(){
+    const n=+nE.value,D=DISTS[dist];
+    pvals=[];
+    for(let r=0;r<400;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+      s.sort((a,b)=>a-b);
+      if(r===0)lastSample=s;
+      pvals.push(pValue(wStat(s),n));
+    }
+    const med=percentile(pvals,0.5);
+    const rej=pvals.filter(p=>p<0.05).length/pvals.length;
+    document.getElementById('p10b-p').textContent=med.toFixed(3).replace('.',',');
+    document.getElementById('p10b-rej').textContent=(rej*100).toFixed(1).replace('.',',')+' %';
+    draw();
+  }
+  function draw(){
+    const {ctx,W,H}=setupCanvas(cv);
+    const pad={l:52,r:20,t:22,b:46};
+    if(!lastSample.length)return;
+    const n=lastSample.length;
+    const scores=[];for(let i=1;i<=n;i++)scores.push(normInv((i-0.375)/(n+0.25)));
+    const sx=[Math.min(...scores)-0.4,Math.max(...scores)+0.4];
+    const sy=[Math.min(...lastSample),Math.max(...lastSample)];
+    const dy=(sy[1]-sy[0])*0.12;
+    axes(ctx,W,H,pad,'theoretische Normal-Quantile','beobachtete Werte',sx,[sy[0]-dy,sy[1]+dy],
+      {nx:5,ny:4,xfmt:v=>v.toFixed(1),yfmt:v=>v.toFixed(2)});
+    const m=mk(pad,W,H,sx,[sy[0]-dy,sy[1]+dy]);
+    // Regressionsgerade
+    const ms=mean(lastSample),mz=mean(scores);
+    let num=0,den=0;
+    for(let i=0;i<n;i++){num+=(scores[i]-mz)*(lastSample[i]-ms);den+=(scores[i]-mz)**2;}
+    const b=num/den,a=ms-b*mz;
+    polyline(ctx,[[m.x(sx[0]),m.y(a+b*sx[0])],[m.x(sx[1]),m.y(a+b*sx[1])]],'rgba(62,232,168,.8)',2,[6,4]);
+    for(let i=0;i<n;i++)dot(ctx,m.x(scores[i]),m.y(lastSample[i]),4.5,C.acc);
+    ctx.fillStyle=C.txt3;ctx.font='11px Inter,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText('QQ-Plot · je gerader, desto „normaler"',pad.l+6,pad.t+2);
+  }
+  nE.oninput=()=>{document.getElementById('p10b-nv').textContent=nE.value;};
+  document.getElementById('p10b-go').onclick=run;
+  segInit('[data-p10d]',v=>{dist=v;run();});
+  window.addEventListener('resize',draw);
+  run();
+})();
+
+/* ============================================================================
+   ===============  DEMO 11: USE CASES  =======================================
+   ============================================================================ */
+const USECASES={
+  simpsons:{
+    title:'Simpsons characters',
+    tmoi:'Accuracy', metric:'acc',
+    data:'20 Figuren, ≈200–4000 Bilder je Klasse',
+    method:'CNN (einfach), VGG16',
+    nsov:5, nexp:23, reps:'500 (2×), 1000 (21×)',
+    sov:{
+      'hyperparameter':{n:'Hyperparameter-Opt. (TPE)',mu:0.874,sd:0.0035,shape:'normal',rep:1000},
+      'augmentation':{n:'Datenaugmentierung (VGG16)',mu:0.872,sd:0.0075,shape:'lskew',rep:1000},
+      'split':{n:'Train-Test-Split',mu:0.868,sd:0.0090,shape:'normal',rep:1000},
+      'init':{n:'Initialgewichte',mu:0.876,sd:0.0045,shape:'normal',rep:1000},
+      'dropout':{n:'Dropout',mu:0.871,sd:0.0040,shape:'normal',rep:1000},
+      'optsgd':{n:'Optimierer SGD',mu:0.858,sd:0.0120,shape:'lskew',rep:500}
+    }
+  },
+  cifar:{
+    title:'CIFAR10',
+    tmoi:'Accuracy', metric:'acc',
+    data:'60 000 Bilder, 10 Klassen',
+    method:'CNN (VGG11)',
+    nsov:6, nexp:6, reps:'500 (1×), 1000 (5×)',
+    sov:{
+      'split':{n:'Train-Test-Split (Bootstrap)',mu:0.8925,sd:0.0028,shape:'normal',rep:1000},
+      'order':{n:'Datenreihenfolge',mu:0.8955,sd:0.0020,shape:'normal',rep:1000},
+      'sgdhopt':{n:'SGD + Hyperparameter-Opt.',mu:0.8880,sd:0.0045,shape:'lskew',rep:1000},
+      'init':{n:'Initialgewichte',mu:0.8940,sd:0.0024,shape:'normal',rep:1000},
+      'aug':{n:'Datenaugmentierung',mu:0.8910,sd:0.0035,shape:'normal',rep:500},
+      'dropout':{n:'Dropout',mu:0.8930,sd:0.0026,shape:'normal',rep:1000}
+    }
+  },
+  super:{
+    title:'Superconductors',
+    tmoi:'RMSE', metric:'rmse',
+    data:'≈21 000 Beobachtungen, 81 Merkmale',
+    method:'DNN (fully connected), GBT',
+    nsov:6, nexp:13, reps:'500 (1×), 1000 (12×)',
+    sov:{
+      'splitdnn':{n:'Train-Test-Split · DNN',mu:11.0,sd:0.30,shape:'normal',rep:1000},
+      'splitgbt':{n:'Train-Test-Split · GBT',mu:10.0,sd:0.28,shape:'normal',rep:1000},
+      'initdnn':{n:'Initialgewichte · DNN',mu:10.6,sd:0.22,shape:'normal',rep:1000},
+      'cvgbt':{n:'Kreuzvalidierung · GBT',mu:9.3,sd:0.18,shape:'normal',rep:1000},
+      'hoptdnn':{n:'Hyperparameter-Opt. · DNN',mu:10.4,sd:0.26,shape:'normal',rep:1000},
+      'subgbt':{n:'Row-Subsampling · GBT',mu:9.6,sd:0.20,shape:'normal',rep:500}
+    }
+  }
+};
+
+(function demo11(){
+  const ucE=document.getElementById('p11-uc'),sovE=document.getElementById('p11-sov');
+  // Karten
+  document.getElementById('p11-cards').innerHTML=Object.keys(USECASES).map(k=>{
+    const u=USECASES[k];
+    return `<div class="card tight" style="margin:0">
+      <div class="panel-title">${u.title}</div>
+      <p style="font-size:13px;margin:4px 0"><strong>TMoI:</strong> ${u.tmoi}</p>
+      <p class="tiny" style="margin:4px 0">${u.data}</p>
+      <p class="tiny" style="margin:4px 0"><strong>Methode:</strong> ${u.method}</p>
+      <div class="badge-row">
+        <span class="pill a">${u.nsov} Variationsquellen</span>
+        <span class="pill">${u.nexp} Experimente</span>
+      </div>
+      <p class="tiny" style="margin:6px 0 0">Wiederholungen: ${u.reps}</p>
+    </div>`;
+  }).join('');
+  function fillSov(){
+    const u=USECASES[ucE.value];
+    sovE.innerHTML=Object.keys(u.sov).map(k=>`<option value="${k}">${u.sov[k].n}</option>`).join('');
+  }
+  function sampleFrom(s){
+    if(s.shape==='lskew'){
+      // linksschief: Mittel beibehalten, langer unterer Schwanz
+      const b=randBeta(9,2.2);
+      const z=(b-9/11.2)/0.126;
+      return s.mu+s.sd*z;
+    }
+    return s.mu+s.sd*randn();
+  }
+  function draw(){
+    const uc=USECASES[ucE.value];
+    const s=uc.sov[sovE.value];
+    const N=s.rep;
+    const data=[];
+    for(let i=0;i<N;i++)data.push(sampleFrom(s));
+    const srt=sortedCopy(data);
+    const q10=QL(srt,0.1),q50=QL(srt,0.5),q90=QL(srt,0.9);
+    const isAcc=uc.metric==='acc';
+    // KDE
+    const lo=Math.min(...data),hi=Math.max(...data);
+    const bw=1.06*sd(data)*Math.pow(N,-0.2);
+    const xs=[],ys=[];
+    for(let i=0;i<=220;i++){
+      const x=lo-(hi-lo)*0.08+(hi-lo)*1.16*i/220;
+      let v=0;for(const d of data)v+=normPDF(x,d,bw);
+      xs.push(x);ys.push(v/N);
+    }
+    Plotly.react('p11-plot',[
+      {x:data,type:'histogram',name:'Läufe',histnorm:'probability density',
+       marker:{color:'rgba(90,209,255,.25)',line:{color:'rgba(90,209,255,.55)',width:1}},
+       nbinsx:45},
+      {x:xs,y:ys,type:'scatter',mode:'lines',name:'Kerndichteschätzung',
+       line:{color:C.acc,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.12)'}
+    ],lay({
+      xaxis:{title:uc.tmoi,gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,
+             tickformat:isAcc?'.3f':'.1f'},
+      yaxis:{title:'Dichte',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      showlegend:false,
+      shapes:[
+        {type:'rect',x0:q10,x1:q90,y0:0,y1:1,yref:'paper',
+         fillcolor:'rgba(62,232,168,.07)',line:{width:0}},
+        {type:'line',x0:q10,x1:q10,y0:0,y1:1,yref:'paper',line:{color:C.acc3,width:2,dash:'dot'}},
+        {type:'line',x0:q50,x1:q50,y0:0,y1:1,yref:'paper',line:{color:C.acc,width:2,dash:'dash'}},
+        {type:'line',x0:q90,x1:q90,y0:0,y1:1,yref:'paper',line:{color:C.warn,width:2,dash:'dot'}}
+      ],
+      annotations:[
+        {x:q10,y:1,yref:'paper',text:'10 %',showarrow:false,font:{color:C.acc3,size:10},yanchor:'bottom'},
+        {x:q50,y:1,yref:'paper',text:'Median',showarrow:false,font:{color:C.acc,size:10},yanchor:'bottom'},
+        {x:q90,y:1,yref:'paper',text:'90 %',showarrow:false,font:{color:C.warn,size:10},yanchor:'bottom'}
+      ]
+    }),PLY);
+    const f=v=>isAcc?v.toFixed(4).replace('.',','):v.toFixed(2).replace('.',',');
+    document.getElementById('p11-tmoi').textContent=uc.tmoi;
+    document.getElementById('p11-rep').textContent=N;
+    document.getElementById('p11-mean').textContent=f(mean(data));
+    document.getElementById('p11-q10').textContent=f(q10);
+    document.getElementById('p11-q50').textContent=f(q50);
+    document.getElementById('p11-q90').textContent=f(q90);
+    document.getElementById('p11-idr').textContent=f(q90-q10);
+  }
+  ucE.onchange=()=>{fillSov();draw();};
+  sovE.onchange=draw;
+  fillSov();draw();
+})();
+
+/* --- Demo 11b: HO vs DA Schlüsselbeispiel --- */
+(function demo11b(){
+  const items=[
+    {n:'HO · Mittelwert',lo:0.8725,hi:0.8755,p:0.874,c:C.acc},
+    {n:'DA · Mittelwert',lo:0.8700,hi:0.8740,p:0.872,c:C.acc3},
+    {n:'HO · 10 %-Quantil',lo:0.870,hi:0.873,p:0.8715,c:C.acc},
+    {n:'DA · 10 %-Quantil',lo:0.860,hi:0.868,p:0.864,c:C.acc3}
+  ];
+  Plotly.react('p11b-plot',items.map((it,i)=>({
+    x:[it.lo,it.hi],y:[it.n,it.n],type:'scatter',mode:'lines+markers',
+    line:{color:it.c,width:7},marker:{color:it.c,size:11,symbol:'line-ns',
+      line:{color:it.c,width:3}},
+    name:it.n,showlegend:false,
+    hovertemplate:'%{x:.4f}<extra>'+it.n+'</extra>'
+  })).concat(items.map(it=>({
+    x:[it.p],y:[it.n],type:'scatter',mode:'markers',
+    marker:{color:'#fff',size:9,line:{color:it.c,width:2}},showlegend:false,
+    hovertemplate:'Punktschätzer %{x:.4f}<extra></extra>'
+  }))),lay({
+    xaxis:{title:'Accuracy',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,tickformat:'.3f'},
+    yaxis:{gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,automargin:true},
+    margin:{l:150,r:24,t:18,b:46}
+  }),PLY);
+})();
+
+/* ============================================================================
+   ===============  DEMO 12: METHODEN-DUELL  ==================================
+   ============================================================================ */
+(function demo12(){
+  const nE=document.getElementById('p12-n'),cE=document.getElementById('p12-c'),rE=document.getElementById('p12-r');
+  let dist='normal';
+  const LEVELS=[0.05,0.10,0.25,0.50,0.75,0.90,0.95];
+  const LBL=LEVELS.map(u=>(u*100).toFixed(0)+' %');
+  function run(){
+    const n=+nE.value,conf=+cE.value/100,alpha=1-conf,R=+rE.value;
+    const D=DISTS[dist];
+    const status=document.getElementById('p12-status');
+    status.textContent='rechne …';
+    setTimeout(()=>{
+      const trueQ=LEVELS.map(u=>D.q(u));
+      const idr=D.q(0.9)-D.q(0.1);
+      const res={
+        exact:{cov:LEVELS.map(()=>0),len:LEVELS.map(()=>0),ok:LEVELS.map(()=>0)},
+        asym:{cov:LEVELS.map(()=>0),len:LEVELS.map(()=>0),ok:LEVELS.map(()=>0)},
+        boot:{cov:LEVELS.map(()=>0),len:LEVELS.map(()=>0),ok:LEVELS.map(()=>0)}
+      };
+      let tcov=0,tlen=0;
+      const trueMean=(()=>{let s=0;for(let i=0;i<20000;i++)s+=D.samp();return s/20000;})();
+      for(let r=0;r<R;r++){
+        const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+        s.sort((a,b)=>a-b);
+        // t-Intervall
+        const t=tCI(s,alpha);
+        if(t.lo<=trueMean&&trueMean<=t.hi)tcov++;
+        tlen+=(t.hi-t.lo);
+        LEVELS.forEach((u,j)=>{
+          const e=exactCI(s,u,alpha);
+          if(e){res.exact.ok[j]++;res.exact.len[j]+=(e.hi-e.lo);
+            if(e.lo<=trueQ[j]&&trueQ[j]<=e.hi)res.exact.cov[j]++;}
+          const a=asymCI(s,u,alpha);
+          if(a){res.asym.ok[j]++;res.asym.len[j]+=(a.hi-a.lo);
+            if(a.lo<=trueQ[j]&&trueQ[j]<=a.hi)res.asym.cov[j]++;}
+          const b=bootCI(s,u,alpha,300);
+          res.boot.ok[j]++;res.boot.len[j]+=(b.hi-b.lo);
+          if(b.lo<=trueQ[j]&&trueQ[j]<=b.hi)res.boot.cov[j]++;
+        });
+      }
+      const cv=o=>LEVELS.map((u,j)=>o.ok[j]?o.cov[j]/o.ok[j]:null);
+      const ln=o=>LEVELS.map((u,j)=>o.ok[j]?(o.len[j]/o.ok[j])/idr:null);
+      const tc=tcov/R, tl=(tlen/R)/idr;
+      // --- Abdeckungs-Plot
+      Plotly.react('p12-cov',[
+        {x:LBL,y:cv(res.exact),name:'np_exact',type:'scatter',mode:'lines+markers',
+         line:{color:CSS.getPropertyValue('--c-exact').trim(),width:3},marker:{size:10}},
+        {x:LBL,y:cv(res.boot),name:'bootstrap',type:'scatter',mode:'lines+markers',
+         line:{color:CSS.getPropertyValue('--c-boot').trim(),width:3},marker:{size:10,symbol:'square'}},
+        {x:LBL,y:cv(res.asym),name:'np_asymptotic',type:'scatter',mode:'lines+markers',
+         line:{color:CSS.getPropertyValue('--c-asym').trim(),width:3},marker:{size:10,symbol:'diamond'}},
+        {x:LBL,y:LBL.map(()=>tc),name:'t_mean (Referenz)',type:'scatter',mode:'lines',
+         line:{color:CSS.getPropertyValue('--c-tmean').trim(),width:2,dash:'dot'}}
+      ],lay({
+        xaxis:{title:'Quantil-Level',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+        yaxis:{title:'empirische Abdeckung',range:[0.6,1.02],
+               gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+        shapes:[{type:'line',x0:-0.5,x1:6.5,y0:conf,y1:conf,
+                 line:{color:'rgba(255,107,107,.9)',width:2.5,dash:'dash'}}],
+        annotations:[{x:6.2,y:conf,text:'nominal '+conf.toFixed(2).replace('.',','),
+                      showarrow:false,font:{color:C.bad,size:11},yanchor:'bottom'}]
+      }),PLY);
+      // --- Längen-Plot
+      Plotly.react('p12-len',[
+        {x:LBL,y:ln(res.exact),name:'np_exact',type:'scatter',mode:'lines+markers',
+         line:{color:CSS.getPropertyValue('--c-exact').trim(),width:3},marker:{size:10}},
+        {x:LBL,y:ln(res.boot),name:'bootstrap',type:'scatter',mode:'lines+markers',
+         line:{color:CSS.getPropertyValue('--c-boot').trim(),width:3},marker:{size:10,symbol:'square'}},
+        {x:LBL,y:ln(res.asym),name:'np_asymptotic',type:'scatter',mode:'lines+markers',
+         line:{color:CSS.getPropertyValue('--c-asym').trim(),width:3},marker:{size:10,symbol:'diamond'}}
+      ],lay({
+        xaxis:{title:'Quantil-Level',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+        yaxis:{title:'Länge / Interdezilbereich',rangemode:'tozero',
+               gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+        shapes:[{type:'line',x0:-0.5,x1:6.5,y0:tl,y1:tl,
+                 line:{color:'rgba(232,237,248,.8)',width:2,dash:'dash'}}],
+        annotations:[{x:0.2,y:tl,text:'t-Intervall (Mittelwert)',showarrow:false,
+                      font:{color:C.txt,size:11},yanchor:'bottom',xanchor:'left'}]
+      }),PLY);
+      // --- Tabelle
+      const fmt=v=>v===null?'<span style="opacity:.4">—</span>':v.toFixed(3).replace('.',',');
+      let h='<tr><th>Methode</th>'+LBL.map(l=>'<th>'+l+'</th>').join('')+'</tr>';
+      const rows=[['np_exact',res.exact],['np_asymptotic',res.asym],['bootstrap',res.boot]];
+      rows.forEach(([nm,o])=>{
+        h+='<tr><td class="lbl">'+nm+' · Abdeckung</td>'+cv(o).map(v=>{
+          const cls=v===null?'no':(Math.abs(v-conf)<0.03?'ok':'');
+          return '<td class="'+cls+'">'+fmt(v)+'</td>';}).join('')+'</tr>';
+      });
+      rows.forEach(([nm,o])=>{
+        h+='<tr><td class="lbl tiny">'+nm+' · Länge</td>'+ln(o).map(v=>'<td>'+fmt(v)+'</td>').join('')+'</tr>';
+      });
+      h+='<tr><td class="lbl">t_mean</td><td colspan="7">Abdeckung '+tc.toFixed(3).replace('.',',')+
+         ' · normierte Länge '+tl.toFixed(3).replace('.',',')+'</td></tr>';
+      document.getElementById('p12-table').innerHTML=h;
+      status.textContent='fertig · '+R+' Läufe, n = '+n;
+    },30);
+  }
+  nE.oninput=()=>{document.getElementById('p12-nv').textContent=nE.value;};
+  cE.oninput=()=>{document.getElementById('p12-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');};
+  rE.oninput=()=>{document.getElementById('p12-rv').textContent=rE.value;};
+  document.getElementById('p12-go').onclick=run;
+  segInit('[data-p12d]',v=>{dist=v;run();});
+  run();
+})();
+
+/* --- Demo 12b: Form aus Längen ablesen --- */
+(function demo12b(){
+  let shape='beta';
+  const LEVELS=[0.05,0.10,0.25,0.50,0.75,0.90,0.95];
+  const LBL=LEVELS.map(u=>(u*100).toFixed(0)+' %');
+  function run(){
+    const D=DISTS[shape==='beta'?'beta':(shape==='rskew'?'rskew':'mix')];
+    const n=25,alpha=0.10,R=300;
+    const idr=D.q(0.9)-D.q(0.1);
+    const len=LEVELS.map(()=>0),cnt=LEVELS.map(()=>0);
+    for(let r=0;r<R;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+      s.sort((a,b)=>a-b);
+      LEVELS.forEach((u,j)=>{
+        const a=asymCI(s,u,alpha);
+        if(a){len[j]+=(a.hi-a.lo);cnt[j]++;}
+      });
+    }
+    const y=LEVELS.map((u,j)=>cnt[j]?(len[j]/cnt[j])/idr:null);
+    // Dichte für Referenz
+    const xs=[],ys=[];
+    for(let i=0;i<=200;i++){
+      const x=D.lo+(D.hi-D.lo)*i/200;
+      xs.push(x);ys.push(D.pdf(x));
+    }
+    Plotly.react('p12b-plot',[
+      {x:LBL,y:y,type:'bar',name:'normierte KI-Länge',
+       marker:{color:y.map(v=>v===null?'rgba(0,0,0,0)':'rgba(90,209,255,.75)'),
+               line:{color:C.acc,width:1.5}}},
+      {x:xs,y:ys,xaxis:'x2',yaxis:'y2',type:'scatter',mode:'lines',name:'Dichte',
+       line:{color:C.acc3,width:2.5},fill:'tozeroy',fillcolor:'rgba(255,122,184,.14)'}
+    ],lay({
+      xaxis:{title:'Quantil-Level',domain:[0,0.62],gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'Länge / Interdezilbereich',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,rangemode:'tozero'},
+      xaxis2:{title:'Wert',domain:[0.72,1],gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis2:{anchor:'x2',title:'',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,showticklabels:false},
+      showlegend:false,
+      margin:{l:58,r:20,t:26,b:50}
+    }),PLY);
+  }
+  segInit('[data-p12b]',v=>{shape=v;run();});
+  run();
+})();
+
+/* ============================================================================
+   ===============  DEMO 13: VALIDIERUNGSVERTEILUNGEN  ========================
+   ============================================================================ */
+(function demo13(){
+  const idrE=document.getElementById('p13-idr');
+  function draw(){
+    const keys=['normal','beta','mix'];
+    const traces=[];const shapes=[];const anns=[];
+    keys.forEach((k,i)=>{
+      const D=DISTS[k];
+      const xs=[],ys=[];
+      for(let j=0;j<=300;j++){
+        const x=0.5+0.5*j/300;
+        xs.push(x);ys.push(D.pdf(x));
+      }
+      const ax=i===0?'x':'x'+(i+1), ay=i===0?'y':'y'+(i+1);
+      traces.push({x:xs,y:ys,xaxis:ax,yaxis:ay,type:'scatter',mode:'lines',
+        name:D.name,line:{color:[C.acc,C.acc3,C.good][i],width:3},
+        fill:'tozeroy',fillcolor:['rgba(90,209,255,.14)','rgba(255,122,184,.14)','rgba(62,232,168,.14)'][i],
+        showlegend:false});
+      if(idrE.checked){
+        const q1=D.q(0.1),q9=D.q(0.9);
+        shapes.push({type:'rect',xref:ax,yref:ay+' domain',x0:q1,x1:q9,y0:0,y1:1,
+          fillcolor:'rgba(255,200,90,.10)',line:{width:0}});
+        shapes.push({type:'line',xref:ax,yref:ay+' domain',x0:q1,x1:q1,y0:0,y1:1,
+          line:{color:'rgba(255,107,107,.8)',width:1.6,dash:'dash'}});
+        shapes.push({type:'line',xref:ax,yref:ay+' domain',x0:q9,x1:q9,y0:0,y1:1,
+          line:{color:'rgba(255,107,107,.8)',width:1.6,dash:'dash'}});
+      }
+      anns.push({x:0.75,y:1.06,xref:ax,yref:ay+' domain',text:D.name,
+        showarrow:false,font:{color:[C.acc,C.acc3,C.good][i],size:11.5}});
+    });
+    Plotly.react('p13-plot',traces,lay({
+      grid:{rows:1,columns:3,pattern:'independent'},
+      xaxis:{domain:[0,0.3],title:'',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      xaxis2:{domain:[0.35,0.65],title:'',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      xaxis3:{domain:[0.7,1],title:'',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'Dichte',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis2:{anchor:'x2',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis3:{anchor:'x3',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      shapes,annotations:anns,
+      margin:{l:52,r:16,t:40,b:42}
+    
+    }),PLY);
+  }
+  idrE.onchange=draw;
+  draw();
+})();
+
+/* --- Demo 13b: Punktschätzer-Validierung über alle drei Verteilungen --- */
+(function demo13b(){
+  const nE=document.getElementById('p13b-n'),rE=document.getElementById('p13b-r');
+  const LEVELS=[0.05,0.10,0.25,0.50,0.75,0.90,0.95];
+  const LBL=LEVELS.map(u=>(u*100).toFixed(0)+' %');
+  const KEYS=['normal','beta','mix'];
+  const NAMES={normal:'Normal',beta:'Beta linksschief',mix:'Normal-Mischung'};
+  const COL={normal:C.acc,beta:C.acc3,mix:C.good};
+  function run(){
+    const n=+nE.value,R=+rE.value;
+    const traces=[];
+    KEYS.forEach(k=>{
+      const D=DISTS[k];
+      const trueQ=LEVELS.map(u=>D.q(u));
+      const bias=LEVELS.map(()=>0),mse=LEVELS.map(()=>0);
+      for(let r=0;r<R;r++){
+        const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+        s.sort((a,b)=>a-b);
+        LEVELS.forEach((u,j)=>{
+          const e=QL(s,u)-trueQ[j];
+          bias[j]+=e;mse[j]+=e*e;
+        });
+      }
+      const rb=LEVELS.map((u,j)=>Math.abs(bias[j]/R)/Math.abs(trueQ[j]));
+      const rr=LEVELS.map((u,j)=>Math.sqrt(mse[j]/R)/Math.abs(trueQ[j]));
+      traces.push({x:LBL,y:rb,type:'bar',name:NAMES[k]+' · |Bias|',
+        marker:{color:COL[k],opacity:.72}});
+      traces.push({x:LBL,y:rr,type:'scatter',mode:'markers',name:NAMES[k]+' · RMSE',
+        marker:{color:COL[k],size:11,symbol:'diamond',line:{color:'#fff',width:1}}});
+    });
+    Plotly.react('p13b-plot',traces,lay({
+      barmode:'group',
+      xaxis:{title:'Quantil-Level',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'relativer Fehler (zum wahren Quantil)',rangemode:'tozero',
+             gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      shapes:[{type:'line',x0:-0.5,x1:6.5,y0:0.05,y1:0.05,
+               line:{color:'rgba(232,237,248,.8)',width:2,dash:'dash'}}],
+      annotations:[{x:6.3,y:0.05,text:'5 %',showarrow:false,
+                    font:{color:C.txt,size:11},yanchor:'bottom'}],
+      legend:{orientation:'h',y:-0.22,font:{size:10}},
+      margin:{l:60,r:20,t:24,b:92}
+    }),PLY);
+  }
+  nE.oninput=()=>{document.getElementById('p13b-nv').textContent=nE.value;};
+  rE.oninput=()=>{document.getElementById('p13b-rv').textContent=rE.value;};
+  document.getElementById('p13b-go').onclick=run;
+  run();
+})();
+
+/* ============================================================================
+   ===============  DEMO 14: ENTSCHEIDUNGSHELFER  =============================
+   ============================================================================ */
+(function demo14(){
+  const nE=document.getElementById('p14-n'),uE=document.getElementById('p14-u'),
+        cE=document.getElementById('p14-c'),fE=document.getElementById('p14-flip');
+  function draw(){
+    const n=+nE.value,u=+uE.value/100,conf=+cE.value/100,alpha=1-conf,flip=fE.checked;
+    const uEff=(flip&&u<0.5)?1-u:u;
+    const mnE=minNExact(uEff,alpha),mnA=minNAsym(uEff,alpha);
+    const okE=n>=mnE,okA=n>=mnA;
+    const confOK=conf<=0.90||n>25;
+    const centralish=uEff>=0.2&&uEff<=0.8;
+    let verdict,vclass,vtext;
+    if(okA&&okE){
+      verdict='✓ EMPFOHLEN';vclass='g';
+      vtext=`Nutze das <strong>nichtparametrische asymptotische KI</strong> — es ist der
+             Default des Papers. Das exakte KI funktioniert ebenfalls und ist etwas konservativer
+             (leicht breiter). Berichte zusätzlich Mittelwert + t-Intervall.`;
+    } else if(okA||okE){
+      verdict='✓ MÖGLICH';vclass='g';
+      vtext=`Es existiert ${okA?'ein <strong>asymptotisches</strong>':'ein <strong>exaktes</strong>'}
+             KI. ${okA?'':'Das asymptotische Verfahren bräuchte n = '+mnA+'.'}
+             ${okE?'':'Das exakte Verfahren bräuchte n = '+mnE+'.'}`;
+    } else if(centralish){
+      verdict='⚠ NUR BOOTSTRAP';vclass='w';
+      vtext=`Kein nichtparametrisches KI existiert (nötig: exakt n = ${mnE}, asymptotisch n = ${mnA}).
+             Der <strong>semiparametrische Bootstrap</strong> liefert trotzdem ein Intervall —
+             mit reduzierter Abdeckung (~0,85) und größerer Länge. Als Indikation brauchbar.`;
+    } else {
+      verdict='✗ NICHT EMPFOHLEN';vclass='b';
+      vtext=`Dieses Quantil ist bei n = ${n} nicht seriös schätzbar. Benötigt würden
+             <strong>n = ${mnA}</strong> (asymptotisch) bzw. <strong>n = ${mnE}</strong> (exakt).
+             Weiche auf ein zentraleres Quantil aus oder erhöhe das Budget.`;
+    }
+    const chips=[];
+    chips.push(`<span class="pill ${okE?'g':''}" ${okE?'':'style="opacity:.45"'}>exakt: n ≥ ${mnE}</span>`);
+    chips.push(`<span class="pill ${okA?'g':''}" ${okA?'':'style="opacity:.45"'}>asymptotisch: n ≥ ${mnA}</span>`);
+    chips.push(`<span class="pill g">Bootstrap: immer möglich</span>`);
+    chips.push(`<span class="pill ${confOK?'g':'p'}">Konfidenzniveau ${conf.toFixed(2).replace('.',',')}${confOK?'':' — zu hoch für n ≤ 25'}</span>`);
+    if(flip&&u<0.5)chips.push(`<span class="pill a">Vorzeichen-Trick aktiv: u = ${u.toFixed(2).replace('.',',')} → ${uEff.toFixed(2).replace('.',',')}</span>`);
+    document.getElementById('p14-rec').innerHTML=`
+      <div class="callout ${vclass}" style="margin-top:16px">
+        <div class="ttl">${verdict}</div>
+        <p>${vtext}</p>
+        <div class="badge-row">${chips.join('')}</div>
+      </div>
+      <div class="kpis">
+        <div class="kpi ${okA?'g':'b'}"><div class="k">Dein n</div><div class="v">${n}</div></div>
+        <div class="kpi"><div class="k">Nötig (asympt.)</div><div class="v">${mnA}</div></div>
+        <div class="kpi"><div class="k">Nötig (exakt)</div><div class="v">${mnE}</div></div>
+        <div class="kpi p"><div class="k">Effektives u</div><div class="v">${uEff.toFixed(2).replace('.',',')}</div></div>
+      </div>`;
+  }
+  nE.oninput=()=>{document.getElementById('p14-nv').textContent=nE.value;draw();};
+  uE.oninput=()=>{document.getElementById('p14-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  cE.oninput=()=>{document.getElementById('p14-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  fE.onchange=draw;
+  draw();
+})();
+
+/* --- Demo 14b: Vorher/Nachher Visualisierung --- */
+(function demo14b(){
+  const D=DISTS.normal;
+  const xs=[],ys=[];
+  for(let i=0;i<=300;i++){const x=0.74+0.26*i/300;xs.push(x);ys.push(D.pdf(x));}
+  const q10=D.q(0.1),q50=D.q(0.5),q90=D.q(0.9),mu=0.87;
+  Plotly.react('p14b-plot',[
+    {x:xs,y:ys,type:'scatter',mode:'lines',name:'wahre Verteilung',
+     line:{color:C.acc,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.1)'},
+    {x:[mu],y:[D.pdf(mu)],type:'scatter',mode:'markers+text',name:'Punktschätzer',
+     marker:{color:C.bad,size:16,symbol:'x',line:{width:2}},
+     text:['„Accuracy = 0,874"'],textposition:'top center',
+     textfont:{color:C.bad,size:12}}
+  ],lay({
+    xaxis:{title:'Accuracy',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line,tickformat:'.2f'},
+    yaxis:{title:'Dichte',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+    showlegend:false,
+    shapes:[
+      {type:'rect',x0:q10,x1:q90,y0:0,y1:1,yref:'paper',
+       fillcolor:'rgba(62,232,168,.08)',line:{width:0}},
+      {type:'line',x0:q10,x1:q10,y0:0,y1:1,yref:'paper',line:{color:C.acc3,width:2,dash:'dot'}},
+      {type:'line',x0:q50,x1:q50,y0:0,y1:1,yref:'paper',line:{color:C.acc,width:2,dash:'dash'}},
+      {type:'line',x0:q90,x1:q90,y0:0,y1:1,yref:'paper',line:{color:C.warn,width:2,dash:'dot'}},
+      // KI-Bänder
+      {type:'rect',x0:q10-0.004,x1:q10+0.004,y0:0,y1:0.14,yref:'paper',
+       fillcolor:'rgba(255,122,184,.4)',line:{width:0}},
+      {type:'rect',x0:q90-0.003,x1:q90+0.003,y0:0,y1:0.14,yref:'paper',
+       fillcolor:'rgba(255,200,90,.4)',line:{width:0}}
+    ],
+    annotations:[
+      {x:q10,y:1,yref:'paper',text:'q₀.₁₀ + KI',showarrow:false,font:{color:C.acc3,size:11},yanchor:'bottom'},
+      {x:q50,y:1,yref:'paper',text:'Median',showarrow:false,font:{color:C.acc,size:11},yanchor:'bottom'},
+      {x:q90,y:1,yref:'paper',text:'q₀.₉₀ + KI',showarrow:false,font:{color:C.warn,size:11},yanchor:'bottom'},
+      {x:(q10+q90)/2,y:0.3,yref:'paper',text:'Interdezilbereich — 80 % aller Läufe',
+       showarrow:false,font:{color:C.good,size:11}}
+    ],
+    margin:{l:58,r:20,t:40,b:48}
+  }),PLY);
+})();
+
+/* ============================================================================
+   ===============  DEMO 15: FREIES LABOR  ====================================
+   ============================================================================ */
+(function lab(){
+  const dE=document.getElementById('lab-dist'),nE=document.getElementById('lab-n'),cE=document.getElementById('lab-c');
+  const LEVELS=[0.05,0.10,0.25,0.50,0.75,0.90,0.95];
+  let sample=[],coverage=null;
+  function gen(){
+    const D=DISTS[dE.value],n=+nE.value;
+    sample=[];for(let i=0;i<n;i++)sample.push(D.samp());
+    sample.sort((a,b)=>a-b);
+    coverage=null;
+    render();
+  }
+  function measure(){
+    const D=DISTS[dE.value],n=+nE.value,alpha=1-(+cE.value/100);
+    const trueQ=LEVELS.map(u=>D.q(u));
+    const hit={exact:LEVELS.map(()=>0),asym:LEVELS.map(()=>0),boot:LEVELS.map(()=>0)};
+    const tot={exact:LEVELS.map(()=>0),asym:LEVELS.map(()=>0),boot:LEVELS.map(()=>0)};
+    for(let r=0;r<100;r++){
+      const s=[];for(let i=0;i<n;i++)s.push(D.samp());
+      s.sort((a,b)=>a-b);
+      LEVELS.forEach((u,j)=>{
+        const e=exactCI(s,u,alpha);
+        if(e){tot.exact[j]++;if(e.lo<=trueQ[j]&&trueQ[j]<=e.hi)hit.exact[j]++;}
+        const a=asymCI(s,u,alpha);
+        if(a){tot.asym[j]++;if(a.lo<=trueQ[j]&&trueQ[j]<=a.hi)hit.asym[j]++;}
+        const b=bootCI(s,u,alpha,250);
+        tot.boot[j]++;if(b.lo<=trueQ[j]&&trueQ[j]<=b.hi)hit.boot[j]++;
+      });
+    }
+    coverage={hit,tot};
+    render();
+  }
+  function render(){
+    const D=DISTS[dE.value],n=sample.length,alpha=1-(+cE.value/100);
+    const conf=+cE.value/100;
+    // Dichte
+    const xs=[],ys=[];
+    for(let i=0;i<=300;i++){const x=D.lo+(D.hi-D.lo)*i/300;xs.push(x);ys.push(D.pdf(x));}
+    const traces=[
+      {x:xs,y:ys,type:'scatter',mode:'lines',name:'wahre Dichte',
+       line:{color:'rgba(168,182,212,.75)',width:2.5,dash:'dot'},
+       fill:'tozeroy',fillcolor:'rgba(168,182,212,.06)',yaxis:'y'},
+      {x:sample,y:sample.map(()=>0),type:'scatter',mode:'markers',name:'Stichprobe',
+       marker:{color:C.acc,size:9,symbol:'line-ns-open',line:{width:2,color:C.acc}},yaxis:'y'}
+    ];
+    // KI-Balken in zweiter Achse
+    const METH=[
+      {key:'exact',nm:'np_exact',col:CSS.getPropertyValue('--c-exact').trim(),fn:(s,u)=>exactCI(s,u,alpha)},
+      {key:'asym',nm:'np_asymptotic',col:CSS.getPropertyValue('--c-asym').trim(),fn:(s,u)=>asymCI(s,u,alpha)},
+      {key:'boot',nm:'bootstrap',col:CSS.getPropertyValue('--c-boot').trim(),fn:(s,u)=>bootCI(s,u,alpha,800)}
+    ];
+    const rows=[];
+    let yi=0;
+    const shapes=[],anns=[];
+    const ymaxD=Math.max(...ys);
+    LEVELS.forEach((u,j)=>{
+      METH.forEach((M,mi)=>{
+        const ci=M.fn(sample,u);
+        const label=(u*100).toFixed(0)+'% · '+M.nm;
+        const yv=-(yi+1)*ymaxD*0.085;
+        if(ci){
+          traces.push({x:[ci.lo,ci.hi],y:[yv,yv],type:'scatter',mode:'lines',
+            line:{color:M.col,width:6},showlegend:false,
+            hovertemplate:label+': %{x:.4f}<extra></extra>'});
+          traces.push({x:[QL(sample,u)],y:[yv],type:'scatter',mode:'markers',
+            marker:{color:'#fff',size:7,line:{color:M.col,width:2}},showlegend:false,
+            hovertemplate:'Punktschätzer %{x:.4f}<extra></extra>'});
+        }
+        yi++;
+      });
+      // Trenner + wahres Quantil
+      shapes.push({type:'line',x0:D.q(u),x1:D.q(u),y0:-(yi)*ymaxD*0.085-ymaxD*0.04,
+        y1:-(yi-3)*ymaxD*0.085+ymaxD*0.02,
+        line:{color:C.acc3,width:2,dash:'dash'}});
+      anns.push({x:D.lo,y:-(yi-2)*ymaxD*0.085,text:(u*100).toFixed(0)+' %',
+        showarrow:false,font:{color:C.txt2,size:10},xanchor:'left'});
+    });
+    Plotly.react('lab-plot',traces,lay({
+      xaxis:{title:'Wert der Metrik',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'Dichte  ←→  Konfidenzintervalle',gridcolor:'rgba(36,49,80,.4)',
+             linecolor:C.line,zeroline:true,zerolinecolor:'rgba(47,63,102,.9)'},
+      shapes,annotations:anns,
+      showlegend:false,
+      margin:{l:66,r:20,t:24,b:50}
+    }),PLY);
+    // Tabelle
+    let h='<tr><th>Quantil</th><th>wahr</th><th>Q̂ₗ</th>'+
+          METH.map(M=>'<th>'+M.nm+'</th>').join('')+
+          (coverage?'<th>Abd. exakt</th><th>Abd. asym</th><th>Abd. boot</th>':'')+'</tr>';
+    LEVELS.forEach((u,j)=>{
+      h+='<tr><td class="lbl">'+(u*100).toFixed(0)+' %</td>';
+      h+='<td>'+D.q(u).toFixed(4).replace('.',',')+'</td>';
+      h+='<td style="color:var(--acc)">'+QL(sample,u).toFixed(4).replace('.',',')+'</td>';
+      METH.forEach(M=>{
+        const ci=M.fn(sample,u);
+        if(ci){
+          const covers=ci.lo<=D.q(u)&&D.q(u)<=ci.hi;
+          h+='<td class="'+(covers?'ok':'')+'">['+ci.lo.toFixed(3).replace('.',',')+
+             ' ; '+ci.hi.toFixed(3).replace('.',',')+']</td>';
+        } else h+='<td class="no">—</td>';
+      });
+      if(coverage){
+        ['exact','asym','boot'].forEach(k=>{
+          const t=coverage.tot[k][j];
+          if(t){
+            const v=coverage.hit[k][j]/t;
+            h+='<td class="'+(Math.abs(v-conf)<0.05?'ok':'')+'">'+v.toFixed(2).replace('.',',')+'</td>';
+          } else h+='<td class="no">—</td>';
+        });
+      }
+      h+='</tr>';
+    });
+    // t-Intervall-Zeile
+    const t=tCI(sample,alpha);
+    h+='<tr><td class="lbl">Mittelwert</td><td>–</td><td style="color:var(--acc)">'+
+       mean(sample).toFixed(4).replace('.',',')+'</td>'+
+       '<td colspan="'+(coverage?6:3)+'" style="color:var(--c-tmean)">t-Intervall: ['+
+       t.lo.toFixed(4).replace('.',',')+' ; '+t.hi.toFixed(4).replace('.',',')+
+       ']  ·  Länge '+(t.hi-t.lo).toFixed(4).replace('.',',')+'</td></tr>';
+    document.getElementById('lab-table').innerHTML=h;
+  }
+  dE.onchange=gen;
+  nE.oninput=()=>{document.getElementById('lab-nv').textContent=nE.value;gen();};
+  cE.oninput=()=>{document.getElementById('lab-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');render();};
+  document.getElementById('lab-draw').onclick=gen;
+  document.getElementById('lab-100').onclick=measure;
+  gen();
+})();
+
+/* ============================================================================
+   ===============  DEMO 15b: KOSTENRECHNER  ==================================
+   ============================================================================ */
+(function cost(){
+  const tE=document.getElementById('cost-t'),uE=document.getElementById('cost-u'),cE=document.getElementById('cost-c');
+  function fmtTime(min){
+    if(min<60)return min.toFixed(0)+' min';
+    if(min<60*48)return (min/60).toFixed(1).replace('.',',')+' h';
+    return (min/1440).toFixed(1).replace('.',',')+' Tage';
+  }
+  function draw(){
+    const t=+tE.value,u=+uE.value/100,conf=+cE.value/100,alpha=1-conf;
+    const nA=minNAsym(u,alpha),nE_=minNExact(u,alpha);
+    const nAflip=minNAsym(Math.max(u,1-u),alpha);
+    const items=[
+      {k:'Bootstrap (Notnagel)',n:10,cls:'w'},
+      {k:'exakt · nötig',n:nE_,cls:''},
+      {k:'asymptotisch · nötig',n:nA,cls:''},
+      {k:'asympt. + Vorz.-Trick',n:nAflip,cls:'g'}
+    ];
+    document.getElementById('cost-out').innerHTML=items.map(i=>
+      `<div class="kpi ${i.cls}"><div class="k">${i.k}</div>
+       <div class="v" style="font-size:1.05rem">${i.n} Läufe<br>
+       <span style="font-size:.78rem;opacity:.8">${fmtTime(i.n*t)}</span></div></div>`).join('');
+    // Kurve n vs. u
+    const us=[],cA=[],cE2=[],cF=[];
+    for(let p=2;p<=98;p+=2){
+      const uu=p/100;
+      us.push(p);
+      cA.push(minNAsym(uu,alpha));
+      cE2.push(minNExact(uu,alpha));
+      cF.push(minNAsym(Math.max(uu,1-uu),alpha));
+    }
+    Plotly.react('cost-plot',[
+      {x:us,y:cE2.map(v=>v*t/60),type:'scatter',mode:'lines',name:'exakt',
+       line:{color:CSS.getPropertyValue('--c-exact').trim(),width:2.6}},
+      {x:us,y:cA.map(v=>v*t/60),type:'scatter',mode:'lines',name:'asymptotisch',
+       line:{color:CSS.getPropertyValue('--c-asym').trim(),width:3}},
+      {x:us,y:cF.map(v=>v*t/60),type:'scatter',mode:'lines',name:'asympt. + Vorzeichen-Trick',
+       line:{color:C.acc3,width:3,dash:'dot'}},
+      {x:[u*100],y:[nA*t/60],type:'scatter',mode:'markers',name:'dein Punkt',
+       marker:{color:'#fff',size:13,line:{color:C.acc,width:3}}}
+    ],lay({
+      xaxis:{title:'Quantil-Level u (%)',gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      yaxis:{title:'benötigte GPU-Stunden',type:'log',
+             gridcolor:'rgba(36,49,80,.75)',linecolor:C.line},
+      shapes:[{type:'line',x0:2,x1:98,y0:Math.log10(25*t/60),y1:Math.log10(25*t/60),
+               line:{color:C.warn,width:2,dash:'dash'}}],
+      annotations:[{x:50,y:Math.log10(25*t/60),text:'Budget für n = 25',showarrow:false,
+                    font:{color:C.warn,size:11},yanchor:'bottom'}],
+      margin:{l:64,r:20,t:26,b:48}
+    }),PLY);
+  }
+  tE.oninput=()=>{document.getElementById('cost-tv').textContent=tE.value;draw();};
+  uE.oninput=()=>{document.getElementById('cost-uv').textContent=(uE.value/100).toFixed(2).replace('.',',');draw();};
+  cE.oninput=()=>{document.getElementById('cost-cv').textContent=(cE.value/100).toFixed(2).replace('.',',');draw();};
+  draw();
+})();
+
+/* ============================================================================
+   ===============  FINALE INITIALISIERUNG  ===================================
+   ============================================================================ */
+renderMath();
+window.addEventListener('load',()=>{
+  renderMath();
+  // Canvas-Neuzeichnung nach vollständigem Layout
+  window.dispatchEvent(new Event('resize'));
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),240);
+});
+
+/* Plotly-Resize bei Fensteränderung */
+let _rt=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(_rt);
+  _rt=setTimeout(()=>{
+    document.querySelectorAll('.plot').forEach(el=>{
+      if(el.data)try{Plotly.Plots.resize(el);}catch(e){}
+    });
+  },180);
+});
+</script>
+</body>
+</html>
