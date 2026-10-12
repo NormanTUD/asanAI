@@ -1612,6 +1612,30 @@ In matrix form, the entire operation for the sequence is computed efficiently as
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 </div>
 
+<div class="md">
+## The Same, in Code
+
+That single line is a whole program. Here it is three ways, in the tabs below: written out in pure Python with no framework at all, and built with PyTorch and TensorFlow. They are the same function, so every line maps back to the equation above.
+</div>
+
+<?php
+$custom = get_string_of_file_or_die("py/attention/custom.py");
+$pytorch = get_string_of_file_or_die("py/attention/pytorch.py");
+$tensorflow = get_string_of_file_or_die("py/attention/tf.py");
+
+$attentioncodetabs = array(
+	"From Scratch" => '<div class="md">No framework at all — pure Python. The dot products, the $1/\sqrt{d_k}$ scaling, the numerically-stable softmax, and the causal mask are all built by hand; the only import is the standard library `math` (for `sqrt` and `exp`). Run it and it returns the attention weights for every token and the contextualized value vectors.</div><pre><code class="language-python">'.$custom.'</code></pre>',
+	"PyTorch" => '<div class="md">The same function with the matrix products and the softmax done by torch: `Q @ K.T` is the score, `F.softmax` the probabilities, `weights @ V` the blend.</div><pre><code class="language-python">'.$pytorch.'</code></pre>',
+	"TensorFlow" => '<div class="md">The same function with `tf.matmul` and `tf.nn.softmax` — structurally identical to the PyTorch version.</div><pre><code class="language-python">'.$tensorflow.'</code></pre>'
+);
+
+render_gem_tabs($attentioncodetabs, "attention");
+?>
+
+<div class="md">
+Every row of the printed weights is one token's distribution over the whole sequence, summing to $1$. Watch the causal mask at work: token $0$ attends fully to itself (its row is $[1, 0, 0]$), while the later tokens split their attention across everything they can see — exactly the "weighted average of the values" described above.
+</div>
+
 <div class="topic-block" data-mathlevel="70" data-optionaltitle="Softmax is also a transport plan">
 <div class="md">
 ## A hidden identity: the softmax is the Sinkhorn iteration
