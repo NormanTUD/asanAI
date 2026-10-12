@@ -46,15 +46,19 @@ function get_input_shape() {
 	}
 	var match = code.match(/^\s*\[\s*(?:(?:\s*\d+\s*,\s*)*\d+)?\s*\]\s*$/);
 	if(match) {
-		var res = eval(code);
-		return res;
-	} else {
-		if(model && typeof(model?.input?.shape) == "object") {
-			return model?.input?.shape.filter(n => n);
-		} else {
-			return [];
-		}
+		try {
+			var res = eval(code);
+			// Filter out undefined/null/non-positive values to prevent [1,3,,] shapes
+			if (Array.isArray(res)) {
+				res = res.filter(function(n) { return typeof n === "number" && n > 0 && isFinite(n); });
+			}
+			return res;
+		} catch(e) { console.warn("get_input_shape eval:", e); }
 	}
+	if(model && typeof(model?.input?.shape) == "object") {
+		return model?.input?.shape.filter(function(n) { return typeof n === "number" && n > 0 && isFinite(n); });
+	}
+	return [];
 }
 
 async function update_input_shape() {

@@ -1037,10 +1037,16 @@ function _apply_scale_jitter(data, scaleFactor, origH, origW) {
 }
 
 function _create_init_image(shape, useColorDecorrelation) {
+	// Sanitize shape: filter out undefined/null/non-positive values
+	var cleanShape = (shape || []).filter(function(n) { return typeof n === "number" && n > 0 && isFinite(n); });
+	if (cleanShape.length < 3) {
+		console.warn("_create_init_image: invalid shape", shape, "-> using fallback [1, 8, 8, 3]");
+		cleanShape = [1, 8, 8, 3];
+	}
 	return tidy(() => {
-		var h = shape[0];
-		var w = shape[1];
-		var c = shape[2];
+		var h = cleanShape[cleanShape.length - 3];
+		var w = cleanShape[cleanShape.length - 2];
+		var c = cleanShape[cleanShape.length - 1];
 
 		if (useColorDecorrelation && c === 3) {
 			if (h <= 32 || w <= 32) {
@@ -1525,6 +1531,12 @@ function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_sha
 function _prepare_ascent(layer_idx, neuron, iterations, start_image) {
     var new_input_shape = get_input_shape_with_batch_size();
     new_input_shape.shift();
+    // Sanitize: filter undefined/null/zero
+    new_input_shape = new_input_shape.filter(function(n) { return typeof n === "number" && n > 0 && isFinite(n); });
+    if (new_input_shape.length < 3) {
+        console.warn("_prepare_ascent: invalid input shape, using fallback");
+        new_input_shape = [8, 8, 3];
+    }
 
     var fullH = new_input_shape[0];
     var fullW = new_input_shape[1];
