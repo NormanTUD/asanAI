@@ -88,6 +88,20 @@ This behavior can be pictured as **Bayesian inference**, the method named after 
 </div>
 
 <div class="md">
+## The birth of information: from Boltzmann to Shannon
+
+Before Claude Shannon made "information" a precise quantity in 1948, the idea was already circling the edge of physics, one engineer and one physicist at a time. The bridge from the thermal world to the communication world is the piece this chapter has been missing, and it is worth building in order.
+
+**Nyquist (1924).** In telephony, Harry Nyquist asked how fast you can sample a signal before you lose it: a signal with no frequencies above $B$ hertz is completely determined by samples taken at or faster than **$2B$ per second** \cite[Nyquist (1924)]{nyquist1924certain}. The number of *distinct values* a signal can carry per unit time is therefore not a matter of opinion; it is a number, fixed by its bandwidth. "How much can pass?" had become a computable question.
+
+**Hartley (1928).** Two years later, Ralph Hartley made the first information-theoretic paper, *Transmission of Information*, and did what Shannon would later do rigorously: he measured the number of **decimal digits** a message of a given length could carry, treating information as a countable quantity with a unit (the *hartley*) \cite[Hartley, *Transmission of Information* (1928)]{hartley1928transmission}. The concept of "a quantity of information" now existed, with a name and a unit.
+
+**Szilard (1929).** The decisive turn came from physics. Leo Szilard asked what a *single* yes/no measurement is worth, in the language of thermodynamics: for a particle in a two-state box, knowing which half it is in reduces the entropy by exactly **$k \ln 2$** \cite[Szilard (1929), the bit and entropy]{szilard1929entropy}. One bit of information and one unit of entropy had been made to *balance*. This is the hinge of the whole bridge: **information is a physical quantity**, and the unit of information (the bit) is the unit of a *reduction in entropy*.
+
+**The bridge.** Boltzmann's entropy, the "messiness" of a physical system, and Shannon's entropy, the "surprise" of a message, are the *same* formula in two guises. The difference is only what you count as a "microstate": for Boltzmann it is the arrangements of molecules; for Shannon it is the possible messages. When you measure which message arrived, you have performed a Szilard measurement, and you have *lowered* the entropy of your uncertainty by exactly the number of bits the message carried. Shannon did not invent a new kind of entropy; he *imported* the physical one into a new domain — communication — and found that the bit, the smallest unit of a digital signal, is the smallest unit of a reduction in disorder. The "messiness scale" in the next section is, in this light, not an analogy to thermodynamics; it is the *same mathematics*, wearing a different costume.
+</div>
+
+<div class="md">
 ## Entropy (The Messiness Scale)
 
 While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify “Information” itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.

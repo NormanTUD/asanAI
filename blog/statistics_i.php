@@ -686,6 +686,26 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 </div>
 
+<div class="md">
+## Statistics as a state technique: from mortality tables to the average man
+
+Before statistics was a neutral tool in a mathematician's hand, it was an instrument of the **state** — a way to know a population well enough to tax it, mobilize it, and govern it. Its origins are less mathematical than you might expect.
+
+The first step was to *count* people. In 1662, the London haberdasher John Graunt took the city's weekly Bills of Mortality — the death records the churches kept for burial fees — and turned them into a model. From a handful of parish records he estimated the size of the whole city, separated plague deaths from ordinary causes, and built what we would now call a **life table**: the probability of surviving to each age \cite[Graunt, *Bills of Mortality* (1662)]{graunt1662}. This was the birth of **demography**, then known as *political arithmetic* — using numbers to understand a political body, not a probability.
+
+\marginfig{john_graunt.png}{John Graunt (1620–1674), father of demography. Public domain (book illustration).}
+
+The second step was to find the *average*. \citeauthor{quetelet1835} (\citeyear{quetelet1835}), a Belgian astronomer turned statistician, argued that human behavior obeys **social physics** as surely as weather does: crime rates, marriage ages, even suicide counts fluctuate around a stable mean. His device was the **l'homme moyen**, the *average man* — a hypothetical person defined by the mean value of every measured trait \cite[Quetelet, *social physics* (1835)]{quetelet1835}. The average man was a **model of the population**, and once you have one, you can sort everyone by their deviation from it. (That machinery now underlies every "typical user" assumption and every outlier-detection step in a data pipeline.)
+
+\marginfig{adolphe_quetelet.jpg}{Adolphe Quetelet (1796–1874), inventor of the "average man". Public domain (Demannez engraving).}
+
+Here is the part most textbooks skip. The man who carried the average-man idea into its most consequential — and most troubling — application was \cite[Francis Galton]{galton_eugenics}, and the data that produced your linear regression was a question of *breeding*. Galton, an inventor, an explorer, and Darwin's cousin, asked how strongly traits like height are **passed from parent to child**. Measuring hundreds of families, he found that tall parents' children tend to be shorter than them, and short parents' taller: offspring **regress toward the mean** \cite[regression to the mean, from Galton's height data]{galton}. He coined the word **eugenics** in 1883, and he built this machinery to study hereditary variation with the explicit aim of *improving* — and later *controlling* — the human stock \cite[Francis Galton (eugenics)]{galton_eugenics}. Linear regression was, in origin, a tool for measuring the transmission of traits across generations.
+
+\marginfig{sir_francis_galton.jpg}{Francis Galton (1822–1911): origin of regression — and of eugenics. Public domain (Oakley, NPG).}
+
+That history does not invalidate the mathematics — least squares is least squares regardless of who first applied it — but it belongs in the prehistory, not a footnote: **statistics was invented, in part, as a state technique for ranking populations**. The next section is that same data in Pearson's hands: parent-and-child heights, turned into a correlation coefficient.
+</div>
+
 <div class="md" data-mathlevel="50" data-optionaltitle="Pearson's Biological Link: The Father-Son Study">
 ## Pearson's Biological Link: The Father-Son Study
 
@@ -842,6 +862,22 @@ The result is the **t-distribution**: bell-shaped like the Normal, but with **he
 The pseudonym had a commercial reason: after one of the lab's papers revealed details that might serve competitors, Guinness forbade its staff from mentioning beer, the brewery, or their real names in print \cite{ziliak2008guinnessometrics}. The method therefore carried a false name for a century. It stayed obscure until **Ronald Fisher** — whom Gosset corresponded with in more than 150 letters between 1912 and 1934 — recognized what he had done: in a 1912 letter he pointed out that the scaling should use degrees of freedom, the corrected **Student's t** tables appeared in a 1925 special issue of *Metron*, and Fisher's applications of the test to regression appeared in the same volume \cite{studentstest_wiki}. Fisher called it a "logical revolution"; Gosset's dry reply to an admirer was: "Fisher would have discovered it all anyway." The brewery's barley trials also seeded the field's first great design debate — Gosset's **balanced** layouts (matching plots by soil and climate) against Fisher's **randomization**, a rivalry that shaped experimental design for decades \cite{ziliak2008guinnessometrics}.
 
 **Why it matters for AI:** the t-test (and Welch's variant for unequal variances) is the workhorse of **model comparison** — "is variant A really better than B, or is the difference noise?" — and of testing whether individual regression coefficients are significant. Every time a team compares two models on a holdout set, or decides whether a new feature "helps", this is the arithmetic doing the accounting, a century after it was invented to judge a handful of barley samples \cite{murtagh2024guinness}. And the Poisson connection is not coincidental: in 1907, "Student" had already published a counting-paper that unknowingly **rediscovered the Poisson distribution** you met earlier in this chapter \cite{student1907haemocytometer}.
+</div>
+
+<div class="md">
+## The controlled experiment: from scurvy to ablation
+
+Testing a difference is only half the discipline. The other half — the one that actually *creates* trustworthy evidence — is **designing an experiment** that produces a difference you can trust. That design was invented in three stages, and each is a direct ancestor of something you do in ML.
+
+The first stage was the **control group**. In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day. Within days, one of them was fit for duty and the other "almost recovered"; the other pairs, on less promising remedies, improved far more slowly \cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy}. Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.
+
+\marginfig{james_lind.jpg}{James Lind (1716–1794), whose 1747 scurvy trial was among the first controlled trials. Public domain (Chalmers, 1783).}
+
+The second stage, and the one that matters most, was **randomization**, and it came from \cite[Ronald Fisher, *The Design of Experiments* (1935)]{fisher1935design}. The problem Lind faced but could not fully solve: even with pairs, the two patients might differ in age, diet, or constitution, so *who* receives which treatment leaks into the comparison. Fisher's answer was to **assign treatments by chance**. Randomization does not remove hidden confounders; it *distributes* them across the groups on average, so the only systematic difference between the groups is the treatment itself. In the same book he introduced the null hypothesis, replication, and factorial designs — the entire grammar of the modern experiment.
+
+The third stage was the **double-blind** procedure: neither the person giving the treatment nor the one receiving it knows who is in the control group, so that expectation — the experimenter's *or* the subject's — cannot tint the result \cite[the double-blind study]{doubleblind}. It matured alongside the first large **randomized controlled trials**, the 1948 streptomycin studies that set the template for medical evidence \cite[randomized controlled trial]{rct1948}.
+
+Now map it onto what you do. An **A/B test** — ship variant A of a page to half your users, variant B to the other half, compare the metric — is Fisher's randomization applied to software. And an **ablation study** — remove one component of the model and measure what the metric does — is Lind's control group applied to architecture: the full model is the control, the ablated model is the "treatment", and the question *is the drop from removing this layer real, or noise?* is answered by the t-test from the last section. The whole discipline of judging a model by **deliberately breaking it and measuring** descends, step for step, from a surgeon pairing up scurvy sailors on a warship.
 </div>
 
 <div class="md">
