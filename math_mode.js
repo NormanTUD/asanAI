@@ -4108,29 +4108,15 @@ function _math_pre_render_real_data_fix(latex) {
 		}).join(" & ");
 		var matrix = "\\begin{pmatrix}" + formatted + "\\end{pmatrix}";
 
-		// APPROACH 7: Multiple regex patterns
-		latex = latex.replace(/\\begin\{pmatrix\}\s*x\s*\\end\{pmatrix\}/g, matrix);
-		latex = latex.replace(/\\begin\{pmatrix\}\s*\\text\{x\}\s*\\end\{pmatrix\}/g, matrix);
-		latex = latex.replace(/\\begin\{pmatrix\}\s*\bvarx\b\s*\\end\{pmatrix\}/g, matrix);
-		latex = latex.replace(/\(\s*x\s*\)/g, matrix);
+				// SINGLE SAFE PATTERN: only replace "x" when it's the ONLY content in pmatrix
+		// This avoids breaking matrix blocks that have actual numeric content
+		latex = latex.replace(/(\\begin\{pmatrix\}\s*)x(\s*\\end\{pmatrix\})/g, "$1" + formatted + "$2");
+		// Also handle case with just "x" surrounded by whitespace including newlines
+		latex = latex.replace(/(\\begin\{pmatrix\}[\s\n]*)x([\s\n]*\\end\{pmatrix\})/g, "$1" + formatted + "$2");
+		// Handle x in underbrace input context (most common case)
+		latex = latex.replace(/(\\underbrace\{[^}]*\\begin\{pmatrix\}[\s\n]*)x([\s\n]*\\end\{pmatrix\}[^}]*\}_\{\\mathrm\{Input\}\})/g, "$1" + formatted + "$2");
+		latex = latex.replace(/(\\underbrace\{[^}]*\\begin\{pmatrix\}[\s\n]*)x([\s\n]*\\end\{pmatrix\}[^}]*\}_\{Input\})/g, "$1" + formatted + "$2");
 
-		// APPROACH 8: Replace standalone x followed by Input label
-		latex = latex.replace(/(\}[^}]*_\{[^}]*Input)/g, function(match) { return "}" + formatted + match.substring(1); });
-
-		// APPROACH 9: Replace in underbrace context
-		latex = latex.replace(/\\underbrace\{([^}]*?)x([^}]*?)\}\}_\{Input\}/g, "\\underbrace{$1" + formatted + "$2\\}}\}_\{Input\}");
-
-		// APPROACH 10: Direct replacement of x as a variable
-		latex = latex.replace(/\bx\b(?=[^}]*Input)/g, formatted.split(" & ")[0]);
-
-		// APPROACH 11-20: SAFE replacements (only in Input underbrace context)
-		// Pattern: \\underbrace{...x...}_{Input} or _{\\mathrm{Input}}
-		// Only target x that is between underbrace braces followed by Input label
-		latex = latex.replace(/(\\underbrace\{[^}]*?)(\s*)x(\s*)\}_\{\\mathrm\{Input\}\}/g, "$1$2" + formatted + "$3\}_\{\\mathrm{Input}\}");
-		latex = latex.replace(/(\\underbrace\{[^}]*?)(\s*)x(\s*)\}_\{Input\}/g, "$1$2" + formatted + "$3\}_\{Input\}");
-		// Also handle case where x is the ONLY content in the pmatrix inside underbrace
-		latex = latex.replace(/(\\underbrace\{\\begin\{pmatrix\})(\s*)x(\s*)(\\end\{pmatrix\}\}_\{\\mathrm\{Input\}\})/g, "$1$2" + formatted + "$3$4");
-		latex = latex.replace(/(\\underbrace\{\\begin\{pmatrix\})(\s*)x(\s*)(\\end\{pmatrix\}\}_\{Input\})/g, "$1$2" + formatted + "$3$4");
 
 		return latex;
 	} catch(e) { console.warn("pre_render:", e); return latex; }
