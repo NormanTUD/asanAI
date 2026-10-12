@@ -2,15 +2,15 @@
 """Atlas data merge — turns raw subworker outputs into clean, deduplicated JSON.
 
 Pipeline (run in this order from blog/):
-  python3 atlas/atlas_parse_bib.py          literature.js -> raw/bib_parsed.json
-  python3 atlas/atlas_merge.py --merge      raw/ -> entities.json, authors.json,
+  python3 atlas_data/atlas_parse_bib.py          literature.js -> raw/bib_parsed.json
+  python3 atlas_data/atlas_merge.py --merge      raw/ -> entities.json, authors.json,
                                             bibliography.json, world.json
-  python3 atlas/atlas_threads.py --build    entities.json -> threads.json
-  python3 atlas/atlas_check.py             independent audit (must pass)
+  python3 atlas_data/atlas_threads.py --build    entities.json -> threads.json
+  python3 atlas_data/atlas_check.py             independent audit (must pass)
 
 Usage:
   python3 atlas_merge.py --test    run the self-test suite (fixtures + asserts)
-  python3 atlas_merge.py --merge   read raw/ (or /tmp/opencode/atlas), merge,
+  python3 atlas_merge.py --merge   read raw/ (or /tmp/opencode/atlas_data), merge,
                                    validate, and write entities.json, authors.json,
                                    bibliography.json and world.json next to this file.
 
@@ -44,7 +44,7 @@ import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW_LOCAL = os.path.join(HERE, "raw")
-RAW_FALLBACK = "/tmp/opencode/atlas"
+RAW_FALLBACK = "/tmp/opencode/atlas_data"
 
 # lesson slugs that exist in blog/ (computed at merge time, see valid_slugs())
 
