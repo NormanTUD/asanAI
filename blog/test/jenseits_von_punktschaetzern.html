@@ -1779,7 +1779,8 @@ function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
   const w=r.width||cv.parentElement.clientWidth||600;
-  const h=parseInt(cv.getAttribute('height'))||300;
+  if(!cv.dataset.baseH)cv.dataset.baseH=cv.getAttribute('height')||300;
+  const h=parseInt(cv.dataset.baseH)||300;
   cv.width=w*dpr; cv.height=h*dpr;
   cv.style.height=h+'px';
   const ctx=cv.getContext('2d');
@@ -2244,7 +2245,7 @@ function renderMath(){
     // --- oben: Dichte
     axes(ctx,W,topH+10,padT,'','Dichte',[P.lo,P.hi],[0,pmax],{nx:6,ny:4,
       xfmt:()=>'',yfmt:v=>v.toFixed(0)});
-    const mT=mk(padT,topH+10,[P.lo,P.hi],[0,pmax]);
+    const mT=mk(padT,W,topH+10,[P.lo,P.hi],[0,pmax]);
     // Fläche links vom Quantil
     const left=[],right=[];
     for(let i=0;i<xs.length;i++){
@@ -2268,7 +2269,7 @@ function renderMath(){
     ctx.save();
     axes(ctx,W,subH,padB,P.name,'F(x) = P(X ≤ x)',[P.lo,P.hi],[0,1],{nx:6,ny:4,
       xfmt:v=>metric==='acc'?v.toFixed(2):v.toFixed(1),yfmt:v=>v.toFixed(1)});
-    const mB=mk(padB,subH,[P.lo,P.hi],[0,1]);
+    const mB=mk(padB,W,subH,[P.lo,P.hi],[0,1]);
     polyline(ctx,xs.map((x,i)=>[mB.x(x),mB.y(cdf[i])]),C.good,2.6);
     // Konstruktion u -> q
     ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle=C.warn;ctx.lineWidth=1.8;
