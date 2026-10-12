@@ -77,6 +77,7 @@ label{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap
 .vals{font-family:ui-monospace,Menlo,monospace;color:var(--ink);font-size:.95rem}
 canvas{width:100%;border-radius:14px;background:#0b0d16;border:1px solid #1d2135;display:block}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.two>div{min-width:0}
 @media(max-width:780px){.two{grid-template-columns:1fr}}
 .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
 .stat{background:#0c0f19;border:1px solid #1e2338;border-radius:12px;padding:12px 14px}
@@ -492,11 +493,14 @@ function randn(){ // Box–Muller
    ========================================================= */
 function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
-  const r=cv.getBoundingClientRect();
-  cv.width=r.width*dpr; cv.height=(cv.getAttribute('height')||300)*dpr;
-  cv.style.height=(cv.getAttribute('height')||300)+'px';
+  const H=+(cv.getAttribute('height')||300);
+  const parent=cv.parentElement;
+  let W = (parent ? parent.clientWidth : cv.getBoundingClientRect().width) || cv.getBoundingClientRect().width;
+  cv.style.width='100%'; cv.style.height=H+'px';
+  cv.width=Math.max(1,Math.round(W*dpr));
+  cv.height=Math.max(1,Math.round(H*dpr));
   const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
-  return {ctx,W:r.width,H:+(cv.getAttribute('height')||300)};
+  return {ctx,W,H};
 }
 function axis(ctx,W,H,pad,label){
   ctx.strokeStyle='#2a3050'; ctx.lineWidth=1;

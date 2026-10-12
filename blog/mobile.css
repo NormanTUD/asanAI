@@ -63,9 +63,9 @@ body {
 @media (max-width: 900px) {
 
 	/* Raise the root so phones held in landscape and tablets never dip
-	   below the phone body size. 1.2rem ≈ 19.2 px. */
+	   below the phone body size. 1.3rem ≈ 20.8 px. */
 	html {
-		font-size: clamp(1.08rem, 1rem + 0.55vw, 1.2rem);
+		font-size: clamp(1.18rem, 1.1rem + 0.5vw, 1.3rem);
 	}
 
 	/* Hero shrinks slightly, but still feels like a hero. */
@@ -123,13 +123,14 @@ body {
 @media (max-width: 600px) {
 
 	/* ── 3a. Root typography ────────────────────────────────
-	   120% of the reader's default size. On the usual 16 px default
-	   that is ≈ 19.2 px — comfortably larger than the old hard-coded
-	   17.5 px. Expressed as a percentage (not px) so it scales with
-	   the reader's own OS/browser font-size preference instead of
-	   overriding it, and stays on the iOS input-zoom safe side. */
+	   At least 20 px, and 128 % of the reader's own default so a
+	   larger OS/browser font setting scales the whole lesson. On the
+	   usual 16 px default that is ≈ 20.5 px — a firm step up from
+	   the old hard-coded 17.5 px. max() guarantees the floor even
+	   for readers who set a smaller default; stays above the iOS
+	   input-zoom threshold (16 px). */
 	html {
-		font-size: 120%;
+		font-size: max(20px, 128%);
 	}
 
 	/* Tighter gutters than desktop: on a 4-inch screen 14 px of empty
