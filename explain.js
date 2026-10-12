@@ -740,9 +740,9 @@ function _add_layer_debugger_hook (layer_idx) {
 			$("#layer_visualizations_tab").hide();
 		}
 
-		const synced_output = array_sync(output);
+		const synced_output = (output && typeof array_sync === "function") ? array_sync(output) : null;
 
-		const synced_input = array_sync(inputs[0]);
+		const synced_input = (inputs && inputs[0] && typeof array_sync === "function") ? array_sync(inputs[0]) : null;
 
 		var this_layer_data = {
 			input: synced_input,

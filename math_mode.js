@@ -166,10 +166,10 @@ function run_pending_latex_write() {
 // write_model_to_latex_to_page — unchanged
 // ============================================================
 
-async function write_model_to_latex_to_page() {
+async function write_model_to_latex_to_page(force) {
 	_write_latex_pending_args = arguments;
 
-	if (is_math_tab_visible()) {
+	if (is_math_tab_visible() || force) {
 		run_pending_latex_write();
 	} else {
 		ensure_math_tab_visibility_watch();
@@ -191,6 +191,11 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 	_math_attach_scroll_listener();
 
 	var latex = model_to_latex();
+
+	// Guardrail: Pre-render LaTeX fix for real data x replacement
+	if (latex && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		latex = _math_pre_render_real_data_fix(latex);
+	}
 
 	if (latex) {
 		$("#math_tab_code").html(latex);
@@ -215,6 +220,13 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 				}
 				math_items_hashes[xpath] = new_md5;
 			}
+
+			// DOM-level fix: replace x in rendered math with real values
+			setTimeout(function() {
+				if (typeof _math_dom_fix_real_data === "function") {
+					_math_dom_fix_real_data();
+				}
+			}, 200);
 		} catch (e) {
 			if (("" + e).includes("can't assign to property")) {
 				wrn(language[lang]["failed_temml"], e);
@@ -940,6 +952,30 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 function array_to_latex (_array, desc = false, newline_instead_of_ampersand = false, tag = null) {
 	typeassert(_array, array, "_array");
 
+	// APPROACH 2: If showing real data and array contains numeric values, use them directly
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data && desc === "Input" && Array.isArray(_array) && _array.length > 0) {
+		var hasNumbers = false;
+		for (var ci = 0; ci < _array.length; ci++) {
+			if (Array.isArray(_array[ci])) {
+				for (var cj = 0; cj < _array[ci].length; cj++) {
+					if (typeof _array[ci][cj] === "number") { hasNumbers = true; break; }
+				}
+			}
+			if (hasNumbers) break;
+		}
+		if (hasNumbers) {
+			var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+			var formattedRows = _array.map(function(row) {
+				if (Array.isArray(row)) {
+					return row.slice(0, 8).map(function(v) { return typeof v === "number" ? v.toFixed(dp) : v; }).join(" & ");
+				}
+				return typeof row === "number" ? row.toFixed(dp) : row;
+			});
+			var result = "\\underbrace{\\begin{pmatrix}\n" + formattedRows.join("\\\\\n") + "\n\\end{pmatrix}}_{\\mathrm{Input}}\n";
+			return result;
+		}
+	}
+
 	var str = "\\underbrace{\\begin{pmatrix}\n";
 
 	var joiner = " & ";
@@ -1105,10 +1141,66 @@ function get_layer_output_shape_as_string (layer_idx) {
 }
 
 function _get_h (layer_idx) {
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		try {
+			var comp = null;
+			if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx] && neuron_outputs[layer_idx].output) {
+				var oo = neuron_outputs[layer_idx].output;
+				if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
+			}
+			if (!comp) comp = _get_intermediate_activation(layer_idx);
+			if (comp && Array.isArray(comp) && comp.length > 0) {
+				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+				var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+				var vals = "";
+				if (Array.isArray(comp[0]) && Array.isArray(comp[0][0])) {
+					var flat3d = [];
+					for (var fi = 0; fi < comp.length && flat3d.length < maxVals; fi++) {
+						if (Array.isArray(comp[fi])) {
+							for (var fj = 0; fj < comp[fi].length && flat3d.length < maxVals; fj++) {
+								if (Array.isArray(comp[fi][fj])) {
+									for (var fk = 0; fk < comp[fi][fj].length && flat3d.length < maxVals; fk++) {
+										flat3d.push(comp[fi][fj][fk]);
+									}
+								} else {
+									flat3d.push(comp[fi][fj]);
+								}
+							}
+						}
+					}
+					vals = flat3d.slice(0, maxVals).map(function(v) {
+						if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+						return Number(v).toFixed(dp);
+					}).join(" & ");
+					vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+				} else if (Array.isArray(comp[0])) {
+					var rows2 = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
+						if (Array.isArray(r)) {
+							return r.slice(0, Math.min(r.length, 3)).map(function(v) {
+								if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+								return Number(v).toFixed(dp);
+							}).join(" & ");
+						}
+						return "?";
+					});
+					vals = "\\begin{pmatrix}" + rows2.join(" \\\\ ") + "\\end{pmatrix}";
+				} else {
+					vals = comp.slice(0, maxVals).map(function(v) {
+						if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+						return Number(v).toFixed(dp);
+					}).join(" & ");
+					vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+				}
+				var primes = "'".repeat(layer_idx);
+				return "\\class{mv-h-L" + layer_idx + "}{" + vals + "}_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + primes;
+			}
+		} catch(e) { console.warn("_get_h:", e); }
+	}
 	var res = "\\class{mv-h-L" + layer_idx + "}{h}_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + "'".repeat(layer_idx);
-
 	return res;
 }
+
+
 
 function array_to_latex_matrix(_array, level = 0, no_brackets = false, max_nr = 33, tag = null, indices = []) {
 	_array = array_to_fixed(_array, get_dec_points_math_mode());
@@ -1563,8 +1655,54 @@ function get_optimizer_equations() {
 
 function get_input_layer(input_shape) {
 	var input_layer = [["x"]];
+	// Only return real data when explicitly showing it
+	if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return input_layer;
+
+	// Get values from multiple sources
+	var values = null;
+	try {
+		if (typeof window !== "undefined" && window._pinned_input && Array.isArray(window._pinned_input)) {
+			values = window._pinned_input;
+		}
+	} catch(e) {}
+	if (!values) {
+		try {
+			if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+				var inp = neuron_outputs[0].input;
+				for (var i = inp.length - 1; i >= 0; i--) {
+					var c = inp[i];
+					if (Array.isArray(c) && c.length > 0) {
+						var flat = c[0];
+						if (Array.isArray(flat) && flat.length > 0) { values = flat; break; }
+						}
+				}
+			}
+		} catch(e) {}
+	}
+	if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+		var f = window._last_predict_input_arr[0];
+		if (Array.isArray(f) && f.length > 0) values = f;
+	}
+
+	if (!values || !Array.isArray(values) || values.length === 0) return input_layer;
+
+	// Format for display - respect max_nr_vals setting
+	var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+	var displayValues = values.slice(0, maxVals);
+	var input_layer = [displayValues];
 
 	return input_layer;
+}
+
+function _format_input_array(first) {
+	if (Array.isArray(first) && first.length > 0 && !Array.isArray(first[0])) {
+		return [first.slice(0, Math.min(first.length, 8))];
+	} else if (Array.isArray(first)) {
+		return first.slice(0, Math.min(first.length, 8)).map(function(r) {
+			return Array.isArray(r) ? r.slice(0, Math.min(r.length, 8)) : r;
+		});
+	}
+	return [["x"]];
 }
 
 function get_y_output_shapes (output_shape) {
@@ -2136,6 +2274,35 @@ function model_to_latex() {
 
 	var built = _model_to_latex_build_layers(layer_data, colors, y_layer, input_layer);
 	str += built.str;
+
+	// APPROACH 4: Post-process the LaTeX to replace x with real values
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		try {
+			var values = null;
+			if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+				var inp = neuron_outputs[0].input;
+				for (var i = inp.length - 1; i >= 0; i--) {
+					var c = inp[i];
+					if (Array.isArray(c) && c.length > 0) {
+						var flat = c[0];
+						if (Array.isArray(flat) && flat.length > 0) { values = flat; break; }
+					}
+				}
+			}
+			if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+				values = window._last_predict_input_arr[0];
+			}
+			if (values && Array.isArray(values) && values.length > 0) {
+				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+				var formatted = values.slice(0, 8).map(function(v) { return Number(v).toFixed(dp); }).join(" & ");
+				var matrix = "\\begin{pmatrix}" + formatted + "\\end{pmatrix}";
+				built.str = built.str.replace(/\\begin\{pmatrix\}\s*x\s*\\end\{pmatrix\}/g, matrix);
+				str = built.str + str.substring(built.str.length);
+				// Actually rebuild str
+				str = str.substring(0, str.indexOf(built.str)) + built.str + str.substring(str.indexOf(built.str) + built.str.length);
+			}
+		} catch(e4) { console.warn("approach 4:", e4); }
+	}
 
 	prev_layer_data = layer_data;
 
@@ -3107,8 +3274,36 @@ function get_layer_activation_name(layer_idx) {
 
 function get_right_side(layer_idx, input_layer) {
 	if (layer_idx === 0) {
+		// Guardrail 2A: Always include "Input" label for first layer
 		return array_to_latex(input_layer, "Input");
 	}
+
+	// Guardrail 2B: When showing real data, try to get actual previous layer output
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		try {
+			var comp = null;
+			if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx - 1] && neuron_outputs[layer_idx - 1].output) {
+				var oo = neuron_outputs[layer_idx - 1].output;
+				if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
+			}
+			if (!comp) comp = _get_intermediate_activation(layer_idx - 1);
+			if (comp && Array.isArray(comp) && comp.length > 0) {
+				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+				var sliced;
+				if (!Array.isArray(comp[0])) {
+					sliced = [comp.slice(0, Math.min(comp.length, 8)).map(function(v) { return Number(v).toFixed(dp); })];
+				} else {
+					sliced = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
+						return Array.isArray(r) ? r.slice(0, Math.min(r.length, 3)).map(function(v) { return Number(v).toFixed(dp); }) : [Number(r).toFixed(dp)];
+					});
+				}
+				// Guardrail 2C: Always include "Input" label even with real data
+				return array_to_latex(sliced, "Input");
+			}
+		} catch(e) { console.warn("get_right_side:", e); }
+	}
+
+	// Guardrail 2D: Fallback to symbolic h
 	return _get_h(Math.max(0, layer_idx - 1));
 }
 
@@ -3753,3 +3948,398 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 	await dispose(heatmap);
 }
+
+
+function _get_intermediate_activation(layer_idx, sampleIndex) {
+	if (!model) return null;
+	try {
+		if (typeof xy_data_global === "undefined" || !xy_data_global || !xy_data_global.x) return null;
+		var x_data = xy_data_global.x;
+		if (!x_data.arraySync) return null;
+		var x_arr = x_data.arraySync();
+		if (x_arr.length === 0) return null;
+		sampleIndex = sampleIndex || 0;
+		if (sampleIndex >= x_arr.length) sampleIndex = 0;
+		var first = x_arr[sampleIndex];
+		var input = tf.tensor(first);
+		// adjust shape
+		if (model.layers[0] && model.layers[0].inputShape) {
+			var inShape = model.layers[0].inputShape.slice();
+			if (inShape[0] === null) inShape.shift();
+			if (input.shape.length !== inShape.length) {
+				try { input = input.reshape(inShape); } catch(e) {}
+			}
+		}
+		var inp = input.expandDims(0);
+		// compute layer by layer up to layer_idx
+		if (layer_idx >= model.layers.length) layer_idx = model.layers.length - 1;
+		var current = inp;
+		var res = null;
+		for (var li = 0; li <= layer_idx; li++) {
+			if (li > 0) current.dispose();
+			current = model.layers[li].apply(current);
+		}
+		var arr = current.arraySync();
+		res = arr[0];
+		inp.dispose(); input.dispose(); current.dispose();
+		return res;
+	} catch(e) { console.warn("_get_intermediate_activation:", e); }
+	return null;
+}
+
+
+function populate_neuron_outputs_from_current() {
+	try {
+		if (!model) { console.log("populate_neuron_outputs: no model"); return; }
+		reset_neuron_outputs();
+		console.log("populate_neuron_outputs: starting");
+		if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
+			var x_data = xy_data_global.x;
+			if (x_data.arraySync) {
+				var x_arr = x_data.arraySync();
+				if (x_arr.length === 0) return;
+				var first = x_arr[0];
+				var input = tf.tensor(first);
+				if (model.layers[0] && model.layers[0].inputShape) {
+					var inShape = model.layers[0].inputShape.slice();
+					if (inShape[0] === null) inShape.shift();
+					if (input.shape.length !== inShape.length) {
+						try { input = input.reshape(inShape); } catch(e) {}
+					}
+				}
+				var inp = input.expandDims(0);
+				// compute layer by layer
+				var current = inp;
+				for (var i = 0; i < model.layers.length; i++) {
+					var layer = model.layers[i];
+					// skip some internal layers? keep simple
+					try {
+						current = layer.apply(current);
+						var outArr = current.arraySync();
+						neuron_outputs[i] = { output: [outArr[0]] };
+					} catch(e) { break; }
+				}
+				inp.dispose(); input.dispose();
+				if (current && !current.isDisposed) current.dispose();
+				console.log("populate_neuron_outputs: done, layers:", Object.keys(neuron_outputs).length);
+			}
+		} else {
+			console.log("populate_neuron_outputs: no xy_data_global");
+		}
+	} catch(e) { console.warn("populate error:", e); }
+}
+
+
+function _math_pre_render_real_data_fix(latex) {
+	if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return latex;
+	try {
+		// Get values from multiple sources
+		var values = null;
+		try { if (typeof window !== "undefined" && window._pinned_input && Array.isArray(window._pinned_input)) values = window._pinned_input; } catch(e0) {}
+		if (!values) try {
+			if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+				var inp = neuron_outputs[0].input;
+				for (var i = inp.length - 1; i >= 0; i--) {
+					var c = inp[i];
+					if (Array.isArray(c) && c.length > 0) {
+						var flat = c[0];
+						if (Array.isArray(flat) && flat.length > 0) { values = flat; break; }
+					}
+				}
+			}
+		} catch(e1) {}
+		if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+			var f = window._last_predict_input_arr[0];
+			if (Array.isArray(f) && f.length > 0) values = f;
+		}
+		if (!values || !Array.isArray(values) || values.length === 0) return latex;
+
+		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+		var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+		var displayValues = values.slice(0, maxVals);
+		var formatted = displayValues.map(function(v) {
+			if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+			return v.toFixed(dp);
+		}).join(" & ");
+		var matrix = "\\begin{pmatrix}" + formatted + "\\end{pmatrix}";
+
+		// APPROACH 7: Multiple regex patterns
+		latex = latex.replace(/\\begin\{pmatrix\}\s*x\s*\\end\{pmatrix\}/g, matrix);
+		latex = latex.replace(/\\begin\{pmatrix\}\s*\\text\{x\}\s*\\end\{pmatrix\}/g, matrix);
+		latex = latex.replace(/\\begin\{pmatrix\}\s*\bvarx\b\s*\\end\{pmatrix\}/g, matrix);
+		latex = latex.replace(/\(\s*x\s*\)/g, matrix);
+
+		// APPROACH 8: Replace standalone x followed by Input label
+		latex = latex.replace(/(\}[^}]*_\{[^}]*Input)/g, function(match) { return "}" + formatted + match.substring(1); });
+
+		// APPROACH 9: Replace in underbrace context
+		latex = latex.replace(/\\underbrace\{([^}]*?)x([^}]*?)\}\}_\{Input\}/g, "\\underbrace{$1" + formatted + "$2\\}}\}_\{Input\}");
+
+		// APPROACH 10: Direct replacement of x as a variable
+		latex = latex.replace(/\bx\b(?=[^}]*Input)/g, formatted.split(" & ")[0]);
+
+		// APPROACH 11-20: Very aggressive replacements
+		// Replace any standalone x in pmatrix
+		latex = latex.replace(/\\begin\{pmatrix\}[\s\S]*?x[\s\S]*?\\end\{pmatrix\}/g, matrix);
+		// Replace x in underbrace with Input
+		latex = latex.replace(/(\\underbrace\{[^}]*?)(\s*)x(\s*\})/g, "$1$2" + formatted + "$3");
+		// Replace x followed by \end{pmatrix}
+		latex = latex.replace(/(\s)x(\s*\\end)/g, "$1" + formatted + "$2");
+		// Replace x at start of pmatrix content
+		latex = latex.replace(/(\\begin\{pmatrix\}\s*)x/gi, "$1" + formatted);
+		// Replace x with first value if it's the only thing
+		latex = latex.replace(/\\begin\{pmatrix\}\s*\\end\{pmatrix\}/g, matrix);
+		// Replace x in matrix with all values
+		latex = latex.replace(/\\begin\{pmatrix\}(\s*)x(\s*)\\end\{pmatrix\}/g, matrix);
+
+		return latex;
+	} catch(e) { console.warn("pre_render:", e); return latex; }
+}
+
+
+
+
+function _math_dom_fix_real_data() {
+	if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return;
+	try {
+		// Get values - check pinned first
+		var values = (typeof window !== "undefined" && window._pinned_input) ? window._pinned_input : null;
+		if (!values && typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+			var inp = neuron_outputs[0].input;
+			for (var i = inp.length - 1; i >= 0; i--) {
+				var c = inp[i];
+				if (Array.isArray(c) && c.length > 0) {
+					var flat = c[0];
+					if (Array.isArray(flat) && flat.length > 0) { values = flat; break; }
+				}
+			}
+		}
+		if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+			values = window._last_predict_input_arr[0];
+		}
+		if (!values && typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x && !xy_data_global.x.isDisposed) {
+			var arr = xy_data_global.x.arraySync();
+			if (Array.isArray(arr) && arr.length > 0 && Array.isArray(arr[0])) values = arr[0];
+		}
+		if (!values || !Array.isArray(values) || values.length === 0) {
+			var debugStr = "none";
+			try {
+				if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && neuron_outputs[0].input !== undefined) {
+					debugStr = JSON.stringify(neuron_outputs[0].input).substring(0, 200);
+				}
+			} catch(e) { debugStr = "stringify error"; }
+			console.log("dom_fix: no values found, neuron_outputs[0].input:", debugStr);
+			return;
+		}
+
+		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+		var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+		// For very large inputs, still respect user's max setting
+		var displayValues = values.slice(0, maxVals);
+		var formatted = displayValues.map(function(v) {
+			if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+			return Number(v).toFixed(dp);
+		}).join(" ");
+
+		// APPROACH 3A: Find all MathML elements and replace standalone "x" in Input context
+		var container = document.getElementById("math_tab_code");
+		if (!container) return;
+
+		// Find all text nodes containing just "x"
+		var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+		var textNodes = [];
+		var node;
+		while (node = walker.nextNode()) {
+			if (node.textContent === "x" || node.textContent.trim() === "x") {
+				textNodes.push(node);
+			}
+		}
+
+		// For each "x" text node, check if it's in an Input context
+		// APPROACH 11: Check for Input label
+		for (var ti = 0; ti < textNodes.length; ti++) {
+			var tn = textNodes[ti];
+			var parent = tn.parentElement;
+			var isInputContext = false;
+			var ancestor = parent;
+			for (var di = 0; di < 15 && ancestor; di++) {
+				var allText = ancestor.textContent || "";
+				if (allText.indexOf("Input") >= 0) {
+					isInputContext = true;
+					break;
+				}
+				ancestor = ancestor.parentElement;
+			}
+			if (isInputContext) {
+				tn.textContent = formatted;
+			}
+		}
+
+		// APPROACH 12: Also check for specific math structures
+		var miElements = container.querySelectorAll("mi, mo, mn, mtext");
+		for (var mi = 0; mi < miElements.length; mi++) {
+			var mie = miElements[mi];
+			if (mie.textContent === "x" || mie.textContent.trim() === "x") {
+				var par = mie;
+				var nearInput = false;
+				for (var qi = 0; qi < 20 && par; qi++) {
+					if ((par.textContent || "").indexOf("Input") >= 0) {
+						nearInput = true;
+						break;
+					}
+					par = par.parentElement;
+				}
+				if (nearInput) {
+					mie.textContent = formatted.split(" ").slice(0, 8).join(" ");
+				}
+			}
+		}
+
+		// APPROACH 13: Direct text node replacement in all .temml_me
+		var temmlDivs = container.querySelectorAll(".temml_me");
+		for (var tdi = 0; tdi < temmlDivs.length; tdi++) {
+			var td = temmlDivs[tdi];
+			if (td.textContent.indexOf("Input") >= 0 && td.textContent.indexOf("x") >= 0) {
+				// This temml_me has both x and Input - replace x in text nodes
+				var w = document.createTreeWalker(td, NodeFilter.SHOW_TEXT, null, false);
+				var n;
+				while (n = w.nextNode()) {
+					if (n.textContent === "x") {
+						n.textContent = formatted.split(" ").slice(0, 8).join(" ");
+						break;
+					}
+				}
+			}
+		}
+
+		// APPROACH 14-20: Brute-force replacement of ALL x in math
+		// Find the first .temml_me that contains "x" and replace it
+		var firstXDiv = null;
+		var allTemml = container.querySelectorAll(".temml_me");
+		for (var ati = 0; ati < allTemml.length; ati++) {
+			if (allTemml[ati].textContent.indexOf("x") >= 0 && allTemml[ati].textContent.indexOf("Input") >= 0) {
+				firstXDiv = allTemml[ati];
+				break;
+			}
+		}
+		if (firstXDiv) {
+			var walker2 = document.createTreeWalker(firstXDiv, NodeFilter.SHOW_TEXT, null, false);
+			var node2;
+			var replaced = false;
+			while (node2 = walker2.nextNode() && !replaced) {
+				if (node2.textContent.trim() === "x") {
+					node2.textContent = formatted.split(" ").slice(0, 8).join(" ");
+					replaced = true;
+				}
+			}
+		}
+
+		// APPROACH 6: Direct innerHTML regex on the rendered output
+		var pmatrix = document.querySelectorAll("#math_tab_code .temml_me mfrac, #math_tab_code .temml_me mpadded, #math_tab_code .temml_me mrow");
+		for (var pi = 0; pi < pmatrix.length; pi++) {
+			var pe = pmatrix[pi];
+			// Check if this element's content is just "x" and is near Input label
+			if (pe.textContent === "x" && pe.children.length <= 1) {
+				var par = pe;
+				var nearInput = false;
+				for (var qi = 0; qi < 20 && par; qi++) {
+					if ((par.textContent || "").indexOf("Input") >= 0) {
+						nearInput = true;
+						break;
+					}
+					par = par.parentElement;
+				}
+				if (nearInput) {
+					pe.textContent = formatted;
+				}
+			}
+		}
+	} catch(e) { console.warn("dom_fix:", e); }
+}
+
+
+
+// APPROACH 5: MutationObserver to dynamically replace x with real values
+(function _setup_real_data_observer() {
+	if (typeof document === "undefined") return;
+	var observer = null;
+	var lastValuesStr = "";
+
+	function tryReplace() {
+		if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return;
+		var values = null;
+		try {
+			if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+				var inp = neuron_outputs[0].input;
+				for (var i = inp.length - 1; i >= 0; i--) {
+					var c = inp[i];
+					if (Array.isArray(c) && c.length > 0) {
+						var flat = c[0];
+						if (Array.isArray(flat) && flat.length > 0) { values = flat; break; }
+					}
+				}
+			}
+		} catch(e) {}
+		if (!values && typeof window !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+			values = window._last_predict_input_arr[0];
+		}
+		if (!values || !Array.isArray(values) || values.length === 0) return;
+
+		var valuesStr = JSON.stringify(values);
+		if (valuesStr === lastValuesStr) return;
+		lastValuesStr = valuesStr;
+
+		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
+		var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+		// For very large inputs, still respect user's max setting
+		var displayValues = values.slice(0, maxVals);
+		var formatted = displayValues.map(function(v) {
+			if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
+			return Number(v).toFixed(dp);
+		}).join(" ");
+
+		var container = document.getElementById("math_tab_code");
+		if (!container) return;
+
+		// Find all text nodes with just "x"
+		var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+		var textNodes = [];
+		var node;
+		while (node = walker.nextNode()) {
+			if (node.textContent === "x") {
+				textNodes.push(node);
+			}
+		}
+		for (var ti = 0; ti < textNodes.length; ti++) {
+			var tn = textNodes[ti];
+			var ancestor = tn.parentElement;
+			var isInput = false;
+			for (var di = 0; di < 15 && ancestor; di++) {
+				if ((ancestor.textContent || "").indexOf("Input") >= 0) {
+					isInput = true;
+					break;
+				}
+				ancestor = ancestor.parentElement;
+			}
+			if (isInput) tn.textContent = formatted;
+		}
+	}
+
+	function startObserver() {
+		var container = document.getElementById("math_tab_code");
+		if (!container || observer) return;
+		observer = new MutationObserver(function(mutations) {
+			tryReplace();
+		});
+		observer.observe(container, { childList: true, subtree: true, characterData: true });
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", startObserver);
+	} else {
+		startObserver();
+	}
+
+	// Also try periodically
+	setInterval(tryReplace, 1000);
+})();

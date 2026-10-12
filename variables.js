@@ -1943,10 +1943,49 @@ var shown_activation_equations = [];
 
 var _math_interactive_mode = false;
 var _math_interactive_mode_before = false;
+var _math_show_real_data = false;
 
 function toggle_math_interactive_mode() {
 	_math_interactive_mode = !_math_interactive_mode;
 	write_model_to_latex_to_page(); // await not possible
+}
+
+function toggle_math_pin_input() {
+	if (typeof window === "undefined") return;
+	if (window._pinned_input) {
+		window._pinned_input = null;
+		console.log("Unpinned input");
+	} else {
+		// Pin current input data
+		var values = null;
+		if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+			var inp = neuron_outputs[0].input;
+			for (var i = inp.length - 1; i >= 0; i--) {
+				var c = inp[i];
+				if (Array.isArray(c) && c.length > 0) {
+					var flat = c[0];
+					if (Array.isArray(flat) && flat.length > 0) { values = flat.slice(); break; }
+				}
+			}
+		}
+		if (!values && typeof window._last_predict_input_arr !== "undefined" && Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+			values = window._last_predict_input_arr[0].slice();
+		}
+		if (values) {
+			window._pinned_input = values;
+			console.log("Pinned input:", values);
+		} else {
+			console.warn("No input data to pin. Predict first.");
+			return;
+		}
+	}
+	write_model_to_latex_to_page(1);
+}
+
+function toggle_math_show_real_data() {
+	_math_show_real_data = !_math_show_real_data;
+	try { console.log("toggle_math_show_real_data:", _math_show_real_data); if (_math_show_real_data && typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e){console.warn(e);}
+	write_model_to_latex_to_page(1); // await not possible, force
 }
 
 var CONNECTION_CANVAS_CACHE = new Map();

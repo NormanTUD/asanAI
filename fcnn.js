@@ -1640,6 +1640,9 @@ function _try_draw_first_layer_input_image(ctx, layer_idx, font_size) {
 	if (
 		!Object.keys(layer_states_saved).length ||
 		!Object.keys(layer_states_saved).includes("0") ||
+		!layer_states_saved["0"] ||
+		!layer_states_saved["0"]["input"] ||
+		!Array.isArray(layer_states_saved["0"]["input"]) ||
 		get_shape_from_array(layer_states_saved["0"]["input"]).length !== 4 ||
 		get_shape_from_array(layer_states_saved["0"]["input"])[3] !== 3 ||
 		layer_idx !== 0

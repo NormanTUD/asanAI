@@ -67,6 +67,33 @@ async function get_model_predict (data, __model = model, recursion = 0) {
 	try {
 		var res = await __model.predict(data);
 
+		// Capture intermediate activations for math mode "show real data"
+		try {
+			if (typeof reset_neuron_outputs === "function" && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+				reset_neuron_outputs();
+				var current = data;
+				for (var li = 0; li < __model.layers.length; li++) {
+					try {
+						var next = __model.layers[li].apply(current);
+						if (next && typeof next.arraySync === "function") {
+							var syncArr = next.arraySync();
+							neuron_outputs[li] = { output: [syncArr[0]] };
+							current = next;
+						} else {
+							if (current && typeof current.dispose === "function" && current !== data) current.dispose();
+							break;
+						}
+					} catch(inner_e) {
+						if (current && typeof current.dispose === "function" && current !== data) current.dispose();
+						break;
+					}
+				}
+				if (typeof write_model_to_latex_to_page === "function") {
+					write_model_to_latex_to_page();
+				}
+			}
+		} catch(capture_e) { console.warn("predict capture:", capture_e); }
+
 		renderLayerIOStats("health_status");
 
 		// CNN3D guardrail (G1): monotonically bump the data revision so any

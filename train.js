@@ -600,6 +600,7 @@ async function _train_neural_network () {
 	}
 
 	await write_descriptions();
+	try { if (typeof _math_show_real_data !== "undefined" && _math_show_real_data && typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e){}
 	await write_model_to_latex_to_page();
 
 	await sleep(1000);
