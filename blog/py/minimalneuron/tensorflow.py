@@ -15,6 +15,8 @@ picks up the real package rather than this file:
 import numpy as np
 import tensorflow as tf
 
+tf.random.set_seed(0)
+
 # --- THE DATA: the four corners of the XOR rule ---
 X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=np.float32)
 Y = np.array([[0], [1], [1], [0]], dtype=np.float32)
@@ -23,7 +25,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(4, activation="relu", input_shape=(2,)),
     tf.keras.layers.Dense(1, activation="sigmoid"),
 ])
-model.compile(optimizer="adam", loss="binary_crossentropy")
+model.compile(optimizer=tf.keras.optimizers.Adam(0.05), loss="binary_crossentropy")
 model.fit(X, Y, epochs=500, verbose=0)
 
 print("XOR predictions:")
