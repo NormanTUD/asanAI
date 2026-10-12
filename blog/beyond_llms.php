@@ -712,9 +712,7 @@ TDA has been applied to neuronal morphology \cite{li2017tda}, to viral evolution
 Machine learning models are *correlational*: they predict $Y$ from $X$ given that they co-vary in the training data. They are not *causal*: they do not tell you what would happen if you intervened on $X$. **Causal inference** is the discipline of answering interventional and counterfactual questions from observational and experimental data.
 </div>
 
-<div class="md">
-### The long history of the word *cause*
-
+<div class="optional md" data-headline="The long history of the word cause">
 Before there was a do-calculus, there was a *word*, and the word fought a two-hundred-year civil war. The first modern attack came from **David Hume**. He took the concept of causation apart and found no *imprint* of it in experience: you never observe a "necessary connection" between cause and effect; you only observe that one event is *constantly conjoined* with another, until the mind, by **habit**, comes to *expect* the second when it sees the first \cite[Hume, *A Treatise of Human Nature* (1739)]{hume_treatise}. On Hume's reading, "A causes B" is not a fact about the world but a description of a *regularity* plus a *felt expectation* — and that is almost exactly what a correlational model has. This is the philosophical root of the "correlation is not causation" line you will keep hearing.
 
 Two centuries later, **Immanuel Kant** answered the attack from the opposite direction: causality is not *learned* from experience at all, but is an **a priori category of the understanding** — one of the forms the mind *imposes* on experience in order to make it intelligible, a law the mind brings to the data, not one read off it \cite[Kant, *Critique of Pure Reason* (1781)]{kant_critique_pure_reason}. Between Hume and Kant the concept was torn between "it is a regularity we expect" and "it is a rule we impose."
