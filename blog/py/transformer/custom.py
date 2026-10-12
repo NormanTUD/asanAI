@@ -1,22 +1,39 @@
 """
-A transformer, from scratch.
+A transformer, from scratch -- and step by step.
 
 Pure Python. The only imports are the standard library ``math`` (for sqrt and
 exp) and ``random`` (for reproducible weight initialisation). No numpy, no
 torch, no tensorflow -- every matrix product, the numerically-stable softmax,
 the causal mask and the whole stack of layers are written by hand.
 
-The structure follows nanoGPT: a stack of ``Block``s, each of which is the
-two-line residual recurrence
+How a forward pass works, in three steps:
 
-    z = x + CausalSelfAttention( LayerNorm(x) )
-    h = z + MLP( LayerNorm(z) )
+    Step 1 -- EMBED   Look up one learned vector per token, add the learned
+                      vector for its position, and you have one input vector
+                      per token (this is "h_0" in the equations above).
+    Step 2 -- BLOCKS  Run each of the N identical blocks. A block is the
+                      two-line residual recurrence
+                          z = x + CausalSelfAttention( LayerNorm(x) )
+                          h = z + MLP( LayerNorm(z) )
+                      which moves every token's vector through the feature
+                      space a little further.
+    Step 3 -- SCORE   A final LayerNorm, then one linear projection that turns
+                      each final vector into a score (a "logit") for every
+                      token in the vocabulary. The last row predicts the next
+                      token.
 
-fed by a token embedding + a positional embedding, and finished by a final
-LayerNorm and a linear projection that turns the last hidden vector into a
-logit for every token in the vocabulary.
+Step 1, the embeddings, made concrete. They are just two lookup tables --
+lists of learned vectors:
+    * tok_emb[t]  -- the learned vector for token t. Every "word" has its own
+                     fixed n_embd-dimensional vector; looking up tok_emb[t]
+                     gives it. This is the model's "dictionary of meanings".
+    * pos_emb[p]  -- the learned vector for position p (0th, 1st, 2nd, ...).
+                     Attention is blind to order, so the position vector tells
+                     the model *where* in the sequence a token sits.
+    Their sum, tok_emb[t] + pos_emb[p], is the input vector for "token t at
+    position p" -- that sum is exactly what Step 1 (GPT.embed) computes.
 
-Run it directly:
+The structure follows nanoGPT. Run it directly:
     python3 custom.py
 """
 
@@ -25,10 +42,10 @@ import random
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1. Vectors and matrices, built by hand
+# Step 0. The linear-algebra primitives, built by hand
 # ─────────────────────────────────────────────────────────────────────────────
 def dot(u, v):
-    """Dot product of two equal-length vectors."""
+    """Dot product of two equal-length vectors: the sum of the products."""
     return sum(a * b for a, b in zip(u, v))
 
 
@@ -60,15 +77,23 @@ def causal_mask(n):
 
 def attention(Q, K, V, mask=None):
     """
-    Attention(Q, K, V) = Softmax( Q K^T / sqrt(d_k) ) V.
+    Attention(Q, K, V) = Softmax( Q K^T / sqrt(d_k) ) V, in four sub-steps:
+      1. score   every (query, key) pair by a scaled dot product
+      2. mask    forbid looking at future tokens (set them to -inf)
+      3. weights softmax each row -> a probability over the keys
+      4. mix     each output is the weighted average of the values
     Returns (out, weights); each row of weights is one query's probabilities.
     """
+    # 1. scores: S[i][j] = <q_i, k_j> / sqrt(d)
     scale = 1.0 / math.sqrt(len(Q[0]))
     S = [[dot(q_i, k_j) * scale for k_j in K] for q_i in Q]
+    # 2. mask: where the mask is 0, set the score to -inf so softmax gives 0
     if mask is not None:
         S = [[s if m else float("-inf") for m, s in zip(m_row, s_row)]
              for m_row, s_row in zip(mask, S)]
+    # 3. weights: a probability distribution per query (each row sums to 1)
     weights = [softmax(row) for row in S]
+    # 4. mix: out_i = sum_j weights[i][j] * v_j  (a weighted average of values)
     out = []
     for w in weights:
         acc = [0.0] * len(V[0])
@@ -80,7 +105,7 @@ def attention(Q, K, V, mask=None):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2. The layers
+# Step 1. The layers, each a small reusable piece
 # ─────────────────────────────────────────────────────────────────────────────
 class Linear:
     """A learned linear map  y = W x + b, with W (out_dim x in_dim)."""
@@ -133,6 +158,7 @@ class CausalSelfAttention:
         self.Wo = Linear(dim, dim, seed + 4)
 
     def __call__(self, xs, return_weights=False):
+        # Project every token into its own Q, K, and V vectors
         q = [self.Wq(x) for x in xs]
         k = [self.Wk(x) for x in xs]
         v = [self.Wv(x) for x in xs]
@@ -180,12 +206,18 @@ class Block:
         return xs
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Step 2. The model: three steps, EMBED -> BLOCKS -> SCORE
+# ─────────────────────────────────────────────────────────────────────────────
 class GPT:
     """Embed tokens, run every block, normalise, and score the vocabulary."""
 
     def __init__(self, vocab_size, n_embd, n_head, n_layer, block_size, seed=1):
         rng = random.Random(seed)
         scale = 1.0 / math.sqrt(n_embd)
+        # Two lookup tables (the "embeddings"), each a list of learned vectors:
+        #   tok_emb[t] -- one vector per token in the vocabulary
+        #   pos_emb[p] -- one vector per position in the sequence
         self.tok_emb = [[rng.uniform(-scale, scale) for _ in range(n_embd)]
                         for _ in range(vocab_size)]
         self.pos_emb = [[rng.uniform(-scale, scale) for _ in range(n_embd)]
@@ -195,25 +227,45 @@ class GPT:
         self.ln_f = LayerNorm(n_embd)
         self.lm_head = Linear(n_embd, vocab_size, seed + 100)
 
+    def embed(self, ids):
+        """
+        Step 1 -- EMBED: turn a list of token ids into a list of input vectors.
+
+        For the token at position p, the input vector is the *sum* of two
+        learned vectors -- the token's own vector tok_emb[t] and the vector for
+        its position pos_emb[p]. That sum is what the rest of the network sees.
+        """
+        assert len(ids) <= len(self.pos_emb)
+        return [add_vectors(self.tok_emb[t], self.pos_emb[p])
+                for p, t in enumerate(ids)]
+
+    def score(self, xs):
+        """
+        Step 3 -- SCORE: turn the final vectors into a score for every token.
+
+        A final LayerNorm, then one linear projection (the "lm_head") that maps
+        each vector to one number per token -- a score (logit) for each.
+        """
+        xs = [self.ln_f(x) for x in xs]
+        return [self.lm_head(x) for x in xs]
+
     def forward(self, ids, return_weights=False):
         """
+        Run the three steps in order and return the logits.
+
         ids: a list of token ints (the prompt).
         Returns ``logits``: one row per position, each row a score for every
         token in the vocabulary (the last row predicts the next token).
         """
-        dim = len(self.tok_emb[0])
-        assert len(ids) <= len(self.pos_emb)
-        xs = [[self.tok_emb[t][c] + self.pos_emb[p][c] for c in range(dim)]
-              for p, t in enumerate(ids)]
-        weights_by_layer = []
+        xs = self.embed(ids)                 # Step 1: the embeddings
+        weights_by_layer = []                # Step 2: run the N blocks
         for block in self.blocks:
             if return_weights:
                 xs, weights = block(xs, return_weights=True)
                 weights_by_layer.append(weights)
             else:
                 xs = block(xs)
-        xs = [self.ln_f(x) for x in xs]
-        logits = [self.lm_head(x) for x in xs]
+        logits = self.score(xs)              # Step 3: score the vocabulary
         if return_weights:
             return logits, weights_by_layer
         return logits

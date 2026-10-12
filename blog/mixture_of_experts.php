@@ -19,7 +19,7 @@ The transformer you have been building all this chapter passes every token throu
 <div class="md">
 ## The core idea: swap the FFN for a bank of routed experts
 
-Recall the per-layer structure from [The Transformer](transformer.php): an attention block, then a feed-forward (FFN) block. The FFN is where most parameters live — roughly two of the three parameters in a layer sit in it. The MoE move, introduced by \cite[Shazeer et al., 2017]{shazeer2017moe}, is to replace that single FFN with a **bank of $E$ experts** — a set of smaller FFNs — plus a tiny **router** (a.k.a. the gating network) that decides, for each token, which experts to use.
+Recall the per-layer structure from [The Transformer](transformer.php): an attention block, then a feed-forward (FFN) block. The FFN is where most parameters live — roughly two of the three parameters in a layer sit in it. The MoE move, introduced by \cite[Shazeer et al. (2017)]{shazeer2017moe}, is to replace that single FFN with a **bank of $E$ experts** — a set of smaller FFNs — plus a tiny **router** (a.k.a. the gating network) that decides, for each token, which experts to use.
 
 Given a token's hidden state $h$, the router computes a score for each expert and the model keeps only the **top-$k$** (often $k=1$ or $k=2$):
 

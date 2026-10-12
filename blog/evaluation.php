@@ -286,7 +286,7 @@ You will want to scale this past two humans — human scoring is slow and costs 
 3. **Measure the judge's agreement with the humans** — a κ, or a correlation, or an agreement rate.
 4. **Trust the judge only where it agrees.** If the judge matches human scoring at κ ≥ 0.7 on your held-out set, you can let it scale the rest. Where it disagrees systematically (a particular dimension, a particular answer style), either fix the prompt/rubric or score that part by hand.
 
-This is \cite[Zheng et al., 2023]{llmjudge2023} in its practical form: an LLM judge is not a substitute for a standard, it is a *cheap instrument that you must calibrate against the standard first*. The held-out human subset is the calibration set; without it, the judge is a black box with a plausible face on it.
+This is the LLM-as-judge method of \cite[Zheng et al. (2023)]{llmjudge2023} in its practical form: an LLM judge is not a substitute for a standard, it is a *cheap instrument that you must calibrate against the standard first*. The held-out human subset is the calibration set; without it, the judge is a black box with a plausible face on it.
 </div>
 
 <div class="md">
