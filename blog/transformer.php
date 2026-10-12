@@ -631,6 +631,30 @@ $$
 As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move from being near “fruit” to being near “tech company” based on the contextual “nudges” received in the Feature Space during each Attention and FFN cycle.
 </div>
 
+<div class="md">
+## The Same, in Code: A Transformer You Can Run
+
+Everything above — the embeddings, the residual blocks, the attention, the final projection — is a lot of structure. Here is that exact structure as executable code, three ways, in the tabs below: a complete transformer written in pure Python with no framework at all, modelled on nanoGPT, plus the same model built with PyTorch and TensorFlow. Read any of them top to bottom and every line maps back to one of the equations on this page.
+</div>
+
+<?php
+$custom = get_string_of_file_or_die("py/transformer/custom.py");
+$pytorch = get_string_of_file_or_die("py/transformer/pytorch.py");
+$tensorflow = get_string_of_file_or_die("py/transformer/tf.py");
+
+$transformercodetabs = array(
+	"From Scratch" => '<div class="md">No framework at all — pure Python. The only imports are the standard library `math` (for `sqrt` and `exp`) and `random`. `Linear` is the matrix product $W x + b$; `LayerNorm` the per-token renormalization; `CausalSelfAttention` is $\text{Attention}(Q, K, V)$ with the causal mask; `MLP` the feed-forward network; and `Block` the residual recurrence. Every operation is built by hand.</div><pre><code class="language-python">'.$custom.'</code></pre>',
+	"PyTorch" => '<div class="md">The same model the nanoGPT way, with torch doing the heavy lifting. `nn.Linear` is the matrix product, `nn.LayerNorm` the renormalization, `CausalSelfAttention` the masked attention, `MLP` the feed-forward network, and `Block` the two-line residual recurrence.</div><pre><code class="language-python">'.$pytorch.'</code></pre>',
+	"TensorFlow" => '<div class="md">The same model built with Keras layers — `Dense`, `LayerNormalization`, and `tf.matmul` — structurally identical to the PyTorch version.</div><pre><code class="language-python">'.$tensorflow.'</code></pre>'
+);
+
+render_gem_tabs($transformercodetabs, "transformer");
+?>
+
+<div class="md">
+`GPT.forward` (in every tab) chains the embedding, the `n_layer` blocks, the final `LayerNorm`, and the `lm_head` projection, and returns the logits — a score for every token in the vocabulary. Run any of the files and it walks a two-token prompt through the machine and prints the logits and the predicted next token.
+</div>
+
 <div id="ffn-equations-container"></div>
 
 <div id="transformer-migration-plots-container"></div>
