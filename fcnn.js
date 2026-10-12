@@ -2437,23 +2437,23 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 
 		var skip_n = skip_info.skip_count || 1;
 
-		// The skip spans from the input of layer (model_idx - skip_n + 1) to the
-		// output of layer model_idx. Convert the source to a drawing index.
-		var source_model_idx = Math.max(0, model_idx - skip_n + 1);
-		var source_draw_idx = source_model_idx + fcnn_input_layer_offset;
+		// Forward skip: source is this layer, target is (model_idx + skip_n)
+		var target_model_idx = model_idx + skip_n;
+		if (target_model_idx >= layers.length - fcnn_input_layer_offset) continue;
+		var target_draw_idx = target_model_idx + fcnn_input_layer_offset;
 
-		// Destination (output) and source (input) layer center X positions
-		var layerX = (layer_idx + 1) * layerSpacing;
-		var sourceX = (source_draw_idx + 1) * layerSpacing;
+		// Source (this layer) and target (future layer) center X positions
+		var sourceX = (layer_idx + 1) * layerSpacing;
+		var targetX = (target_draw_idx + 1) * layerSpacing;
 
-		var numNeurons = layers[layer_idx];
-		var meta_info = meta_infos[layer_idx] || {};
+		var numNeurons = layers[target_draw_idx];
+		var meta_info = meta_infos[target_draw_idx] || {};
 		var layer_type = meta_info.layer_type || "";
-		var isOutputLayer = (layer_idx === layers.length - 1);
+		var isOutputLayer = (target_draw_idx === layers.length - 1);
 
 		var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
 
-		// Calculate top of the destination layer
+		// Calculate top of the target layer
 		var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
 
 		// Draw the skip connection arc
@@ -2466,13 +2466,11 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.lineWidth = lineWidth;
 		ctx.setLineDash([6, 4]);
 
-		// Arc from the left edge of the source layer to the right edge of the
-		// destination layer, arching over the layers in between. The arc grows
-		// taller with the number of spanned layers so it stays above them.
-		var span = layer_idx - source_draw_idx;
+		// Arc from the source layer to the target layer
+		var span = target_draw_idx - layer_idx;
 		var arcHeight = 25 + strength * 15 + span * 18;
 		var startX = sourceX - maxRadius - 5;
-		var endX = layerX + maxRadius + 5;
+		var endX = targetX + maxRadius + 5;
 		var midX = (startX + endX) / 2;
 
 		ctx.beginPath();
@@ -2502,7 +2500,7 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 			y: topY - arcHeight - 15,
 			w: endX - startX + 20,
 			h: arcHeight + 20,
-			layer_idx: layer_idx,
+			layer_idx: target_draw_idx,
 			strength: strength,
 			layer_type: layer_type,
 			skip_count: skip_n
@@ -2523,14 +2521,11 @@ function _build_skip_connection_tooltip_html(region) {
 	};
 
 	var skip_n = region.skip_count || 1;
-	parts.push(row("Layer", region.layer_idx));
+	var src_idx = region.layer_idx - skip_n;
+	parts.push(row("Source → Target", src_idx + " → " + region.layer_idx));
 	parts.push(row("Layer Type", region.layer_type || "Unknown"));
 	parts.push(row("Span", skip_n + (skip_n > 1 ? " layers" : " layer")));
-	if (skip_n > 1) {
-		parts.push(row("Operation", "output = f(…) + W·h<sub>" + (region.layer_idx - skip_n) + "</sub>"));
-	} else {
-		parts.push(row("Operation", "output = f(x) + W·x"));
-	}
+	parts.push(row("Operation", "h<sub>" + region.layer_idx + "</sub> = f(…) + W·h<sub>" + src_idx + "</sub>"));
 	parts.push(row("Projection", "1×1 Conv / Dense (learned)"));
 	parts.push(row("Info", "Strength is computed from weight norms (skip / (skip + main))"));
 

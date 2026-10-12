@@ -1077,8 +1077,6 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 		_set_layer_gui(data, fake_model_structure, model_structure_idx);
 
 		try {
-			var skip_info = get_skip_connection_info(model_structure_idx);
-
 			var result = await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid);
 
 			if (result === false) {
@@ -1090,26 +1088,27 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 				return null;
 			}
 
-			// === SKIP CONNECTION LOGIC ===
-			// The skip may span N layers: its source is the tensor that feeds
-			// into layer (i - N + 1). N=1 is the classic single-layer skip
-			// (source = input of this layer).
-			if (skip_info.enabled && !skip_connection_excluded_types.includes(type)) {
-				try {
-					var skip_n = skip_info.skip_count || 1;
-					if (skip_n > model_structure_idx + 1) {
-						skip_n = model_structure_idx + 1;
+			currentOutput = result;
+
+			// === SKIP CONNECTION LOGIC (forward) ===
+			// A skip enabled on layer j with count n targets layer (j + n).
+			// If this layer is the target, add the source layer's tensor to the output.
+			for (var j = 0; j < model_structure_idx; j++) {
+				var skip_info_j = get_skip_connection_info(j);
+				if (skip_info_j.enabled && !skip_connection_excluded_types.includes(type)) {
+					var skip_n_j = skip_info_j.skip_count || 1;
+					if (j + skip_n_j === model_structure_idx) {
+						try {
+							var skip_source = tensor_history[j];
+							currentOutput = apply_skip_connection(skip_source, currentOutput, skip_info_j.strength, type, j);
+						} catch (skip_err) {
+							var skip_msg = skip_err.message || skip_err;
+							wrn(`[_add_layers_to_model] Skip failed: layer ${j} -> layer ${model_structure_idx}: ${skip_msg}. Continuing without skip.`);
+						}
 					}
-					var source_idx = Math.max(0, model_structure_idx - skip_n + 1);
-					var skip_source = tensor_history[source_idx];
-					result = apply_skip_connection(skip_source, result, skip_info.strength, type, model_structure_idx);
-				} catch (skip_err) {
-					var skip_msg = skip_err.message || skip_err;
-					wrn(`[_add_layers_to_model] Skip connection failed at layer ${model_structure_idx}: ${skip_msg}. Continuing without skip.`);
 				}
 			}
 
-			currentOutput = result;
 			tensor_history.push(currentOutput);
 		} catch (e) {
 			var msg = "" + e;

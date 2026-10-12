@@ -2232,8 +2232,8 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 			str += "\n<h2>Layers:</h2>\n";
 		}
 
-		var skip_info_check = get_skip_connection_info(gui_layer_idx);
-		if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+		var skip_target_check = _get_skip_source_for_target(gui_layer_idx);
+		if (skip_target_check && !skip_connection_excluded_types.includes(this_layer_type)) {
 			has_any_skip_connection = true;
 		}
 
@@ -2405,14 +2405,28 @@ function get_activation_layer_names() {
 	});
 }
 
-function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors) {
-	var skip_info = get_skip_connection_info(layer_idx);
-	var skip_n = (skip_info && skip_info.skip_count) || 1;
+function _get_skip_source_for_target(target_idx) {
+	for (var j = 0; j < target_idx; j++) {
+		var info = get_skip_connection_info(j);
+		if (info.enabled) {
+			var n = info.skip_count || 1;
+			if (j + n === target_idx) {
+				return { source_idx: j, skip_info: info };
+			}
+		}
+	}
+	return null;
+}
 
-	// The skip source is the tensor feeding into layer (layer_idx - skip_n + 1),
-	// i.e. the output of layer (layer_idx - skip_n). For skip_n=1 this is the
-	// classic immediate-previous layer; a larger skip_n reaches further back.
-	var source_idx = layer_idx - skip_n;
+function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, source_idx_override) {
+	var source_idx;
+	if (source_idx_override !== undefined) {
+		source_idx = source_idx_override;
+	} else {
+		var skip_info = get_skip_connection_info(layer_idx);
+		var skip_n = (skip_info && skip_info.skip_count) || 1;
+		source_idx = layer_idx - skip_n;
+	}
 
 	if (source_idx < 0) {
 		return array_to_latex(input_layer, "Input");
@@ -2505,10 +2519,9 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 	// Check for interactive marker
 	if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
 		// Encode skip connection info into the marker so _dispatch_interactive_inject can use it
-		var skip_info = get_skip_connection_info(effective_gui_idx);
-		if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
-			// Append skip metadata to the marker string
-			layer_str = layer_str + "%%SKIP_ENABLED_" + effective_gui_idx + "%%";
+		var skip_target = _get_skip_source_for_target(effective_gui_idx);
+		if (skip_target && !skip_connection_excluded_types.includes(this_layer_type)) {
+			layer_str = layer_str + "%%SKIP_ENABLED_" + skip_target.source_idx + "%%";
 		}
 		return layer_str;
 	}
@@ -2517,11 +2530,11 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 		layer_str = wrap_with_activation_function(layer_idx, layer_str);
 	}
 
-	// === SKIP CONNECTION ANNOTATION ===
-	var skip_info = get_skip_connection_info(effective_gui_idx);
-	if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
-		var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx, effective_gui_idx);
-		var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+	// === SKIP CONNECTION ANNOTATION (forward: show on target layer) ===
+	var skip_target = _get_skip_source_for_target(effective_gui_idx);
+	if (skip_target && !skip_connection_excluded_types.includes(this_layer_type)) {
+		var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx, skip_target.source_idx);
+		var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, skip_target.source_idx);
 		layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
 	}
 

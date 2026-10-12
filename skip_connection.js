@@ -105,11 +105,8 @@ function toggle_skip_connection(layer_nr, elem) {
 	if (typeof skip_connection_settings[layer_nr].skip_count !== "number" || skip_connection_settings[layer_nr].skip_count < 1) {
 		skip_connection_settings[layer_nr].skip_count = 1;
 	}
-	var max_skip = layer_nr + 1;
 	var total_layers = get_number_of_layers();
-	if (total_layers !== null && total_layers < max_skip) {
-		max_skip = total_layers;
-	}
+	var max_skip = (total_layers !== null) ? Math.max(1, total_layers - layer_nr - 1) : 1;
 	if (skip_connection_settings[layer_nr].skip_count > max_skip) {
 		skip_connection_settings[layer_nr].skip_count = max_skip;
 	}
@@ -250,14 +247,12 @@ function add_skip_connection_option(type, nr) {
 	// Rows hidden when skip is disabled
 	var init_display = checked_attr ? "" : "display:none;";
 
-	// Layers-to-skip count (how many layers the skip connection spans)
+	// Layers-to-skip count (how many layers the skip connection spans forward)
+	// Skip on layer nr with count n targets layer (nr + n).
+	// Max n = total_layers - nr - 1 (can't target past the last layer).
 	var current_skip_count = (skip_connection_settings[nr] && skip_connection_settings[nr].skip_count) ? skip_connection_settings[nr].skip_count : 1;
 	var total_layers = get_number_of_layers();
-	var max_skip_count = total_layers !== null ? total_layers : nr + 1;
-	if (current_skip_count > max_skip_count) {
-		current_skip_count = max_skip_count;
-	}
-	wrn("[add_skip_connection_option] nr=" + nr + " skip_count=" + current_skip_count + " max=" + max_skip_count + " settings=" + JSON.stringify(skip_connection_settings[nr] || null));
+	var max_skip_count = (total_layers !== null) ? Math.max(1, total_layers - nr - 1) : 1;
 	if (current_skip_count > max_skip_count) {
 		current_skip_count = max_skip_count;
 	}
@@ -306,11 +301,8 @@ function get_skip_connection_info(layer_nr) {
         skip_count = 1;
     }
 
-    var max_skip = layer_nr + 1;
     var total_layers = get_number_of_layers();
-    if (total_layers !== null && total_layers < max_skip) {
-        max_skip = total_layers;
-    }
+    var max_skip = (total_layers !== null) ? Math.max(1, total_layers - layer_nr - 1) : 1;
     if (skip_count > max_skip) {
         skip_count = max_skip;
     }
@@ -323,17 +315,13 @@ function get_skip_connection_info(layer_nr) {
 }
 
 function update_skip_connection_count(layer_nr, elem) {
-	if (layer_nr === null || layer_nr === undefined) {
-		wrn("[update_skip_connection_count] layer_nr is null/undefined, ignoring");
-		return;
-	}
+	if (layer_nr === null || layer_nr === undefined) return;
 
 	var val = parseInt($(elem).val(), 10);
-	wrn("[update_skip_connection_count] layer_nr=" + layer_nr + " raw_val=" + $(elem).val() + " parsed_val=" + val);
 	if (isNaN(val) || val < 1) val = 1;
 
 	var total_layers = get_number_of_layers();
-	var max_count = total_layers !== null ? total_layers : layer_nr + 1;
+	var max_count = (total_layers !== null) ? Math.max(1, total_layers - layer_nr - 1) : 1;
 	if (val > max_count) val = max_count;
 
 	if (!skip_connection_settings[layer_nr]) {
@@ -342,16 +330,10 @@ function update_skip_connection_count(layer_nr, elem) {
 
 	skip_connection_settings[layer_nr].skip_count = val;
 
-	// Force model recreation
 	model_config_hash = null;
 
-	// no_update_initializers=1 so update_initializers() does not re-render the
-	// layer option rows (which would re-create this input and reset its value)
 	updated_page(null, null, elem, null, 1); // await not possible here
 
-	// Guardrail: aggressively re-assert DOM value for 5 seconds after the change.
-	// Something re-renders the layer options and resets the input to 1.
-	// This interval catches it regardless of when the re-render happens.
 	var expected_val = val;
 	var guardrail_checks = 0;
 	var guardrail_interval = setInterval(function() {
@@ -360,14 +342,11 @@ function update_skip_connection_count(layer_nr, elem) {
 		if ($input.length) {
 			var current = parseInt($input.val(), 10);
 			if (current !== expected_val) {
-				wrn("[skip_count_guardrail] check#" + guardrail_checks + " layer=" + layer_nr + " DOM=" + current + " expected=" + expected_val + " settings=" + JSON.stringify(skip_connection_settings[layer_nr] || null));
 				$input.val(expected_val);
 				if (skip_connection_settings[layer_nr]) {
 					skip_connection_settings[layer_nr].skip_count = expected_val;
 				}
 			}
-		} else {
-			wrn("[skip_count_guardrail] check#" + guardrail_checks + " layer=" + layer_nr + " input not found in DOM");
 		}
 		if (guardrail_checks >= 50) {
 			clearInterval(guardrail_interval);
