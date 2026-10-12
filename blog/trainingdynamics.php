@@ -34,7 +34,7 @@ Each term is a power law with a *small* exponent ($\alpha_N \approx 0.076$, $\al
 $$N \;\approx\; \frac{D}{20} \qquad\text{(roughly 20 tokens per parameter)}$$
 </div>
 
-That is the **Chinchilla** result, and it is the reason the field moved, in the space of a few papers, from small over-trained models (\cite[Brown et al. (2020)]{brown2020gpt3}) to large under-trained ones: for a given budget, spend it on a *smaller* model trained on *far more* data. Turn the $N$ and $D$ sliders in the simulator and you will see the floor drop, and the readout tell you whether your choice is under-trained, optimal, or over-trained.
+That is the **Chinchilla** result, and it is the reason the field moved, in the space of a few papers, from small over-trained models (\cite[Brown et al. (2020)]{brown2020gpt3}) to large under-trained ones: for a given budget, spend it on a *smaller* model trained on *far more* data. Turn the $N$ and $D$ sliders in the simulator and you will see the floor drop, and the readout will tell you whether your choice is under-trained, optimal, or over-trained.
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 20px; background: var(--mn-bg-subtle, #f1f5f9); padding: 20px; border-radius: 12px; border: 1px solid var(--mn-border, #cbd5e1);">

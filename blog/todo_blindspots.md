@@ -28,7 +28,7 @@ give the "engineering craft" half of the course a through-line it currently lack
 ## The eight items
 
 ### T1 — The training run as a phenomenon (NEW LAB `trainingdynamics.php` + `trainingdynamics.js`)
-`[ ]`
+`[x]`
 - **Gap.** Scaling laws are only *mentioned* (`training_data`, `math_iii`); there is no
   chapter that says *"here is the power-law curve, here is why, here is how you go
   compute-optimal."* Missing as *lived practice*: warmup, LR schedules (cosine, WSD),
@@ -66,7 +66,7 @@ give the "engineering craft" half of the course a through-line it currently lack
   Plotly; lazy-init.
 
 ### T2 — Mixture of Experts (NEW LESSON `mixture_of_experts.php`)
-`[ ]`
+`[x]`
 - **Gap.** MoE is one optional box in `transformer.php`, but the frontier in 2026 is
   largely MoE (DeepSeek-V3, Mixtral, Qwen, and very likely GPT-4). A whole
   architecture block is being given a single paragraph.
@@ -95,7 +95,7 @@ give the "engineering craft" half of the course a through-line it currently lack
 - **Images.** a router→top-k experts diagram (draw it; no license needed).
 
 ### T3 — The KV-cache: why inference is a different animal than training (NEW LESSON `inference_vs_training.php`)
-`[ ]`
+`[x]`
 - **Gap.** The KV-cache is mentioned in `attentionlab`, `inference_optimization` and
   `production_serving`, but the *concept* — that inference and training are different
   forms of computation, that **prefill** and **decode** are different regimes
@@ -126,7 +126,7 @@ give the "engineering craft" half of the course a through-line it currently lack
   two regimes visible.
 
 ### T4 — Tokenizer pathologies as a system (NEW LESSON `tokenizer_pathologies.php`)
-`[ ]`
+`[x]`
 - **Gap.** `tokenizerlab` + the Strawberry demo show *how* BPE works, but not the
   *pathologies*: why multilinguality suffers, why the same information costs more in
   some scripts, byte-level vs BPE vs unigram, and the frontier move to
@@ -161,7 +161,7 @@ give the "engineering craft" half of the course a through-line it currently lack
   API cost vs English.
 
 ### T5 — Evaluation as a discipline (NEW LESSON `building_evals.php`)
-`[ ]`
+`[x]`
 - **Gap.** `evaluation.php` is good but is about *public* benchmarks; the #1 practical
   skill — **how do you build an eval for your own problem?** — is given six lines.
 - **Cover to add**
@@ -191,7 +191,7 @@ give the "engineering craft" half of the course a through-line it currently lack
   noise.
 
 ### T6 — The economic layer (NEW LESSON `ai_economics.php`)
-`[ ]`
+`[x]`
 - **Gap.** The course has society but not the *price* layer: what does training cost as
   a function of params and tokens, the **6ND** FLOPs rule, inference cost per token,
   why **caching saves ~10×**, and why a 7B model on a laptop is economically a
