@@ -1,0 +1,2768 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warum die meisten publizierten Forschungsergebnisse falsch sind — Interaktiv</title>
+
+<!-- Plotly für Diagramme -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0c1120;
+  --panel:rgba(18,24,42,.72);
+  --panel-solid:#121a2e;
+  --stroke:rgba(255,255,255,.09);
+  --stroke-bright:rgba(255,255,255,.18);
+  --txt:#e8ecf7;
+  --txt-dim:#9aa6c4;
+  --txt-faint:#66728f;
+  --true:#2ee6a8;       /* wahr / echte Entdeckung */
+  --false:#ff5c7a;      /* falsch / Fehlalarm */
+  --accent:#6ea8ff;
+  --accent2:#b89bff;
+  --warn:#ffc658;
+  --bias:#ff8a3d;
+  --glow:0 0 40px rgba(110,168,255,.18);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(110,168,255,.10), transparent 60%),
+    radial-gradient(900px 700px at 85% 10%, rgba(184,155,255,.08), transparent 60%),
+    radial-gradient(1000px 900px at 50% 100%, rgba(46,230,168,.05), transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============ NAVIGATION ============ */
+#progressbar{
+  position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--true));
+  z-index:1000;transition:width .1s linear;
+  box-shadow:0 0 12px rgba(110,168,255,.6);
+}
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  background:rgba(7,10,18,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--stroke);
+  padding:10px 0;
+}
+#navinner{
+  max-width:1180px;margin:0 auto;padding:0 20px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+#navinner .brand{
+  font-weight:800;font-size:13px;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;
+}
+#navlinks{display:flex;gap:4px;flex-wrap:wrap;font-size:11.5px}
+#navlinks a{
+  color:var(--txt-faint);text-decoration:none;padding:4px 9px;border-radius:7px;
+  transition:all .2s;white-space:nowrap;
+}
+#navlinks a:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+#navlinks a.active{color:var(--accent);background:rgba(110,168,255,.13)}
+
+/* ============ LAYOUT ============ */
+main{max-width:1180px;margin:0 auto;padding:92px 20px 140px}
+section{margin:0 0 100px;scroll-margin-top:84px}
+
+.kicker{
+  font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:10px;
+}
+.kicker::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--stroke-bright),transparent)}
+
+h1{
+  font-size:clamp(34px,6.2vw,66px);font-weight:800;line-height:1.05;
+  letter-spacing:-1.8px;margin-bottom:18px;
+  background:linear-gradient(135deg,#fff 10%,#b9c8ef 50%,#7f94c9 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+h2{
+  font-size:clamp(24px,3.6vw,38px);font-weight:750;letter-spacing:-.9px;
+  margin-bottom:14px;line-height:1.15;
+}
+h3{font-size:19px;font-weight:650;margin:28px 0 10px;letter-spacing:-.3px;color:#dde5fa}
+h4{font-size:14.5px;font-weight:650;margin:18px 0 7px;color:var(--accent);letter-spacing:.2px}
+p{color:var(--txt-dim);margin-bottom:13px;font-size:15px;max-width:76ch}
+p.lead{font-size:17.5px;color:#c4d0ec;max-width:72ch}
+strong{color:var(--txt);font-weight:620}
+em{color:#c9d4f0;font-style:italic}
+code{font-family:'JetBrains Mono',monospace;font-size:.88em;background:rgba(110,168,255,.1);
+  padding:1.5px 6px;border-radius:5px;color:#a8c6ff}
+
+/* ============ CARDS / PANELS ============ */
+.card{
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  border-radius:18px;padding:24px;margin:22px 0;
+  backdrop-filter:blur(14px);
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),transparent 42%);
+}
+.card>*{position:relative;z-index:1}
+.card.tight{padding:18px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-side{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+.grid-side-rev{display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start}
+@media(max-width:900px){
+  .grid2,.grid3,.grid-side,.grid-side-rev{grid-template-columns:1fr}
+}
+
+/* ============ CONTROLS ============ */
+.ctrl{margin:15px 0}
+.ctrl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;gap:10px}
+.ctrl-label{font-size:12.5px;font-weight:600;color:#c3cfeb;letter-spacing:.1px}
+.ctrl-val{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(110,168,255,.12);padding:2px 9px;border-radius:6px;min-width:62px;text-align:center;
+}
+.ctrl-val.true{color:var(--true);background:rgba(46,230,168,.12)}
+.ctrl-val.false{color:var(--false);background:rgba(255,92,122,.12)}
+.ctrl-val.bias{color:var(--bias);background:rgba(255,138,61,.12)}
+.ctrl-note{font-size:11px;color:var(--txt-faint);margin-top:4px;line-height:1.45}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:4px;
+  background:linear-gradient(90deg,rgba(110,168,255,.55),rgba(184,155,255,.3));
+  outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:linear-gradient(145deg,#fff,#c3d6ff);cursor:pointer;
+  box-shadow:0 0 0 3px rgba(110,168,255,.28),0 3px 10px rgba(0,0,0,.5);
+  transition:transform .12s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border-radius:50%;border:none;
+  background:linear-gradient(145deg,#fff,#c3d6ff);cursor:pointer;
+  box-shadow:0 0 0 3px rgba(110,168,255,.28);
+}
+input[type=range].r-bias{background:linear-gradient(90deg,rgba(255,138,61,.5),rgba(255,92,122,.35))}
+input[type=range].r-bias::-webkit-slider-thumb{box-shadow:0 0 0 3px rgba(255,138,61,.3),0 3px 10px rgba(0,0,0,.5)}
+input[type=range].r-true{background:linear-gradient(90deg,rgba(46,230,168,.5),rgba(110,168,255,.3))}
+input[type=range].r-true::-webkit-slider-thumb{box-shadow:0 0 0 3px rgba(46,230,168,.3),0 3px 10px rgba(0,0,0,.5)}
+
+button{
+  font-family:inherit;font-size:12.5px;font-weight:600;
+  background:rgba(110,168,255,.13);color:#cfe0ff;
+  border:1px solid rgba(110,168,255,.3);
+  padding:8px 15px;border-radius:9px;cursor:pointer;transition:all .18s;
+}
+button:hover{background:rgba(110,168,255,.24);transform:translateY(-1px);border-color:rgba(110,168,255,.5)}
+button:active{transform:translateY(0)}
+button.primary{background:linear-gradient(135deg,rgba(110,168,255,.3),rgba(184,155,255,.25));color:#fff}
+button.ghost{background:transparent;color:var(--txt-faint);border-color:var(--stroke)}
+button.ghost:hover{color:var(--txt);background:rgba(255,255,255,.05)}
+button.on{background:linear-gradient(135deg,rgba(46,230,168,.28),rgba(110,168,255,.2));color:#fff;border-color:rgba(46,230,168,.45)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+
+select{
+  font-family:inherit;font-size:12.5px;background:var(--panel-solid);color:var(--txt);
+  border:1px solid var(--stroke-bright);padding:8px 11px;border-radius:9px;cursor:pointer;width:100%;
+}
+
+/* ============ READOUTS ============ */
+.readout{
+  display:grid;gap:10px;margin:16px 0;
+}
+.stat{
+  background:rgba(255,255,255,.035);border:1px solid var(--stroke);
+  border-radius:13px;padding:13px 15px;text-align:center;
+}
+.stat .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--txt-faint);margin-bottom:5px}
+.stat .num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;line-height:1.1}
+.stat .sub{font-size:11px;color:var(--txt-faint);margin-top:3px}
+.stat.big .num{font-size:36px}
+
+.bigppv{
+  background:linear-gradient(135deg,rgba(46,230,168,.09),rgba(255,92,122,.07));
+  border:1px solid var(--stroke-bright);border-radius:16px;padding:20px;text-align:center;
+}
+.bigppv .num{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:800;line-height:1}
+.bigppv .lbl{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--txt-faint);margin-bottom:6px}
+
+/* ============ CANVAS ============ */
+canvas{display:block;width:100%;border-radius:13px}
+.canvas-wrap{
+  background:rgba(4,7,14,.6);border:1px solid var(--stroke);border-radius:13px;
+  padding:10px;position:relative;
+}
+.canvas-cap{font-size:11.5px;color:var(--txt-faint);text-align:center;margin-top:8px;line-height:1.4}
+
+.plot{width:100%;border-radius:13px;overflow:hidden}
+
+/* ============ TABLE ============ */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+th,td{padding:9px 11px;text-align:center;border:1px solid var(--stroke)}
+th{background:rgba(110,168,255,.1);font-weight:650;color:#cfdcff;font-size:11.5px;letter-spacing:.3px}
+td{color:var(--txt-dim);font-family:'JetBrains Mono',monospace;font-size:12px}
+td.lbl{font-family:'Inter',sans-serif;font-weight:600;color:var(--txt);background:rgba(255,255,255,.03)}
+tr.hl td{background:rgba(110,168,255,.08)}
+.cell-tp{background:rgba(46,230,168,.14)!important;color:#7fffd4!important}
+.cell-fp{background:rgba(255,92,122,.16)!important;color:#ffa7b8!important}
+.cell-fn{background:rgba(255,198,88,.1)!important;color:#ffd98a!important}
+.cell-tn{background:rgba(110,168,255,.08)!important;color:#aac7ff!important}
+
+/* ============ MISC ============ */
+.callout{
+  border-left:3px solid var(--accent);background:rgba(110,168,255,.07);
+  padding:14px 18px;border-radius:0 12px 12px 0;margin:18px 0;
+}
+.callout.warn{border-color:var(--warn);background:rgba(255,198,88,.07)}
+.callout.danger{border-color:var(--false);background:rgba(255,92,122,.07)}
+.callout.good{border-color:var(--true);background:rgba(46,230,168,.07)}
+.callout h4{margin-top:0}
+.callout p:last-child{margin-bottom:0}
+
+.formula{
+  background:rgba(4,7,14,.55);border:1px solid var(--stroke);border-radius:12px;
+  padding:16px;margin:14px 0;overflow-x:auto;text-align:center;
+}
+.formula .tag{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--txt-faint);margin-bottom:8px}
+math{font-size:1.05em;color:#dfe8ff}
+
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.chip{
+  font-size:11.5px;padding:5px 11px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid var(--stroke);color:var(--txt-dim);
+  cursor:pointer;transition:all .18s;
+}
+.chip:hover{background:rgba(110,168,255,.15);color:var(--txt);border-color:rgba(110,168,255,.35)}
+.chip.on{background:rgba(110,168,255,.22);border-color:rgba(110,168,255,.5);color:#fff}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+.corollary{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:15px;
+  padding:0;margin:12px 0;overflow:hidden;transition:all .22s;
+}
+.corollary.open{border-color:rgba(110,168,255,.4);box-shadow:var(--glow)}
+.cor-head{
+  padding:15px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;
+  transition:background .18s;
+}
+.cor-head:hover{background:rgba(255,255,255,.035)}
+.cor-num{
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+  width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(110,168,255,.28),rgba(184,155,255,.2));color:#fff;
+}
+.cor-title{font-size:14.5px;font-weight:620;color:var(--txt);flex:1;line-height:1.4}
+.cor-arrow{color:var(--txt-faint);transition:transform .25s;font-size:13px}
+.corollary.open .cor-arrow{transform:rotate(90deg)}
+.cor-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.corollary.open .cor-body{max-height:1400px}
+.cor-inner{padding:0 18px 18px;border-top:1px solid var(--stroke)}
+.cor-inner p{font-size:14px}
+
+.step-nav{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0;align-items:center}
+.step-dot{
+  width:30px;height:30px;border-radius:9px;display:grid;place-items:center;cursor:pointer;
+  font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;
+  background:rgba(255,255,255,.05);border:1px solid var(--stroke);color:var(--txt-faint);
+  transition:all .2s;
+}
+.step-dot:hover{background:rgba(110,168,255,.15);color:var(--txt)}
+.step-dot.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018;border-color:transparent}
+.step-dot.done{color:var(--true);border-color:rgba(46,230,168,.3)}
+
+.hr{height:1px;background:linear-gradient(90deg,transparent,var(--stroke-bright),transparent);margin:34px 0}
+
+.tooltip-term{
+  border-bottom:1px dashed var(--accent);cursor:help;color:#bdd2ff;
+}
+
+footer{
+  text-align:center;padding:50px 20px;color:var(--txt-faint);font-size:12.5px;
+  border-top:1px solid var(--stroke);margin-top:60px;
+}
+
+.scroll-x{overflow-x:auto}
+.mini{font-size:12px;color:var(--txt-faint)}
+
+.hero-canvas-wrap{
+  position:relative;border-radius:20px;overflow:hidden;
+  border:1px solid var(--stroke);margin:28px 0;
+  background:radial-gradient(ellipse at 50% 50%,rgba(110,168,255,.07),transparent 70%),rgba(4,7,14,.5);
+}
+
+.badge{
+  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 9px;border-radius:6px;margin-right:7px;
+}
+.badge.pre{background:rgba(184,155,255,.18);color:#d4c2ff}
+.badge.core{background:rgba(110,168,255,.18);color:#b3d0ff}
+.badge.res{background:rgba(46,230,168,.16);color:#8bf0cc}
+
+.toggle-row{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:12.5px;color:var(--txt-dim)}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{
+  position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.12);
+  transition:.25s;border-radius:22px;
+}
+.slider-sw:before{
+  position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;
+  background:#fff;transition:.25s;border-radius:50%;
+}
+.switch input:checked+.slider-sw{background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.switch input:checked+.slider-sw:before{transform:translateX(18px)}
+</style>
+</head>
+<body>
+
+<div id="progressbar"></div>
+
+<nav id="nav">
+  <div id="navinner">
+    <div class="brand">IOANNIDIS 2005 · INTERAKTIV</div>
+    <div id="navlinks">
+      <a href="#start">Start</a>
+      <a href="#problem">Das Problem</a>
+      <a href="#prereq1">Zufall</a>
+      <a href="#prereq2">Test &amp; Fehler</a>
+      <a href="#prereq3">Power</a>
+      <a href="#prereq4">Bayes</a>
+      <a href="#idee">Die Idee</a>
+      <a href="#ppv">PPV</a>
+      <a href="#bias">Bias</a>
+      <a href="#teams">Teams</a>
+      <a href="#korollare">Korollare</a>
+      <a href="#tabelle4">Simulation</a>
+      <a href="#box1">Beispiel</a>
+      <a href="#nullfeld">Nullfeld</a>
+      <a href="#antwort">Antwort</a>
+      <a href="#loesung">Was tun?</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ================================================================ -->
+<!-- START -->
+<!-- ================================================================ -->
+<section id="start">
+  <div class="kicker">PLoS Medicine · 2005 · John P. A. Ioannidis</div>
+  <h1>Warum die meisten publizierten<br>Forschungsergebnisse falsch sind</h1>
+  <p class="lead">
+    Ein Forschungsergebnis ist statistisch signifikant — <em>p &lt; 0,05</em>. Die Zeitung titelt. Die Studie wird zitiert.
+    Und trotzdem ist die Wahrscheinlichkeit, dass das Ergebnis <strong>wahr</strong> ist, oft kleiner als die,
+    dass es <strong>falsch</strong> ist. Diese Seite erklärt — ohne viel Text, nur durch Spielen —
+    warum das kein Skandal ist, sondern simple Wahrscheinlichkeitsrechnung.
+  </p>
+
+  <div class="hero-canvas-wrap">
+    <canvas id="heroCanvas" height="340"></canvas>
+    <div style="padding:0 16px 16px">
+      <div class="legend" style="justify-content:center">
+        <span><i class="dot" style="background:var(--true)"></i> echte Entdeckung (wahr positiv)</span>
+        <span><i class="dot" style="background:var(--false)"></i> Fehlalarm (falsch positiv)</span>
+        <span><i class="dot" style="background:#2a3454"></i> nicht publiziert</span>
+      </div>
+      <div class="canvas-cap">
+        Jeder Punkt = eine getestete Hypothese. Nur die hellen Punkte werden publiziert.
+        Bewege den Regler und sieh, wie sich die Literatur füllt.
+      </div>
+      <div class="ctrl" style="max-width:520px;margin:14px auto 0">
+        <div class="ctrl-head">
+          <span class="ctrl-label">Wie viele der getesteten Hypothesen sind überhaupt wahr?</span>
+          <span class="ctrl-val" id="heroRval">50 %</span>
+        </div>
+        <input type="range" id="heroR" min="0.2" max="50" step="0.2" value="50">
+        <div class="ctrl-note" id="heroNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="stat"><div class="lbl">Erschienen</div><div class="num" style="color:var(--accent)">2005</div><div class="sub">PLoS Medicine 2(8): e124</div></div>
+    <div class="stat"><div class="lbl">Zitationen</div><div class="num" style="color:var(--accent2)">&gt;10 000</div><div class="sub">meistgelesenes PLoS-Paper</div></div>
+    <div class="stat"><div class="lbl">Mathematik</div><div class="num" style="color:var(--true)">Abi</div><div class="sub">nur bedingte Wahrscheinlichkeit</div></div>
+  </div>
+
+  <div class="callout">
+    <h4>Wie du diese Seite benutzt</h4>
+    <p>Alles ist interaktiv. Regler bewegen, Knöpfe drücken, Grafiken anschauen. Der Text ist nur Beiwerk.
+    Die Seite läuft in <strong>einer durchgehenden Linie</strong>: erst die Frage, dann die Werkzeuge
+    (Zufall → Test → Fehler → Power → Bayes), dann das Modell des Papers, dann die Folgerungen,
+    dann das echte Beispiel, dann die Antwort.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<!-- PROBLEM -->
+<!-- ================================================================ -->
+<section id="problem">
+  <div class="kicker">Teil 0 · Die Motivation</div>
+  <h2>Welches Problem löst dieses Paper?</h2>
+  <p class="lead">
+    Beobachtung: Ergebnisse werden veröffentlicht, gefeiert — und dann von späteren Studien
+    <strong>widerlegt</strong>. In der Genetik, der Ernährungsforschung, der Epidemiologie, bei Medikamenten.
+    Immer wieder. Die Frage des Papers ist nicht „wer hat betrogen?“, sondern:
+  </p>
+
+  <div class="card" style="border-color:rgba(110,168,255,.35);box-shadow:var(--glow)">
+    <h3 style="margin-top:0">Die eigentliche Forschungsfrage</h3>
+    <p style="font-size:17px;color:#d8e2fb;max-width:none">
+      „Wenn eine Studie ein signifikantes Ergebnis meldet — <strong>wie wahrscheinlich ist es dann,
+      dass dieses Ergebnis tatsächlich stimmt?</strong>“
+    </p>
+    <p>
+      Das klingt banal. Es ist aber <em>nicht</em> das, was ein p-Wert beantwortet. Das ist der ganze Kern.
+      Ioannidis baut ein kleines Wahrscheinlichkeitsmodell, das diese Frage beantwortet —
+      und das Ergebnis ist unangenehm.
+    </p>
+  </div>
+
+  <h3>Was passiert in echt?</h3>
+  <p>Klick auf ein Feld, um ein reales Muster zu sehen:</p>
+  <div class="chips" id="replChips">
+    <div class="chip on" data-k="gen">Genetische Assoziationen</div>
+    <div class="chip" data-k="nut">Ernährungsepidemiologie</div>
+    <div class="chip" data-k="rct">Große klinische Studien</div>
+    <div class="chip" data-k="psy">Psychologie</div>
+  </div>
+  <div class="card tight" id="replBox"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Was dieses Paper NICHT behauptet</h4>
+      <p class="mini">• Nicht: „Wissenschaftler lügen.“<br>
+      • Nicht: „Wissenschaft funktioniert nicht.“<br>
+      • Nicht: „p-Werte sind falsch berechnet.“<br>
+      • Nicht: „Man kann nichts wissen.“</p>
+    </div>
+    <div class="card">
+      <h4>Was es behauptet</h4>
+      <p class="mini">• Die <strong>Struktur</strong> des Forschungsbetriebs (viele Hypothesen, kleine Studien,
+      Freiheitsgrade, viele Teams) führt mathematisch dazu, dass die Mehrheit der publizierten
+      „Entdeckungen“ falsch ist — <strong>auch bei völlig ehrlichen Forschern</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- PREREQ 1 : ZUFALL -->
+<!-- ================================================================ -->
+<section id="prereq1">
+  <div class="kicker"><span class="badge pre">Werkzeug 1</span> Zufall erzeugt Muster</div>
+  <h2>Zufall sieht erstaunlich oft nach „Signal“ aus</h2>
+  <p class="lead">
+    Bevor wir über Fehler reden, müssen wir fühlen, wie <em>launisch</em> Zufall ist.
+    Unten wirfst du Münzen. Keine der Münzen ist gezinkt. Trotzdem gibt es Ausreißer.
+  </p>
+
+  <div class="grid-side">
+    <div class="card">
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Münzwürfe pro Person</span><span class="ctrl-val" id="coinNv">20</span></div>
+        <input type="range" id="coinN" min="10" max="200" step="10" value="20">
+        <div class="ctrl-note">= „Stichprobengröße“ einer Mini-Studie</div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Anzahl Personen</span><span class="ctrl-val" id="coinPv">40</span></div>
+        <input type="range" id="coinP" min="1" max="400" step="1" value="40">
+        <div class="ctrl-note">= wie viele unabhängige Studien laufen</div>
+      </div>
+      <div class="btnrow">
+        <button class="primary" id="coinRoll">Neu würfeln</button>
+        <button class="ghost" id="coinAuto">Auto ▶</button>
+      </div>
+      <div class="readout grid3" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="lbl">„Auffällig“</div><div class="num" id="coinHits" style="color:var(--false)">0</div><div class="sub">p &lt; 0,05</div></div>
+        <div class="stat"><div class="lbl">Anteil</div><div class="num" id="coinRate" style="color:var(--warn)">0 %</div><div class="sub">erwartet ≈ 5 %</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="canvas-wrap"><canvas id="coinCanvas" height="300"></canvas></div>
+      <div class="canvas-cap">Jeder Balken = eine Person. Rot = „signifikant mehr Kopf oder Zahl als Zufall erlaubt“ (p&nbsp;&lt;&nbsp;0,05).
+      Und <strong>alle Münzen sind fair.</strong></div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <h4>Die erste Lektion</h4>
+    <p>Wenn 400 Leute eine faire Münze werfen, finden ca. <strong>20</strong> ein „signifikantes“ Ergebnis.
+    Nicht weil die Münzen gezinkt sind, sondern weil <code>α = 0,05</code> bedeutet:
+    <em>5 % der Nullfälle werden fälschlich als Fund gewertet.</em>
+    Wenn nur diese 20 publiziert werden, sieht die Literatur aus, als gäbe es magische Münzen.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- PREREQ 2 : HYPOTHESENTEST -->
+<!-- ================================================================ -->
+<section id="prereq2">
+  <div class="kicker"><span class="badge pre">Werkzeug 2</span> Signifikanztest &amp; die zwei Fehler</div>
+  <h2>Was ein p-Wert ist — und was er <em>nicht</em> ist</h2>
+
+  <p>Eine Studie vergleicht zwei Welten:</p>
+  <div class="grid2">
+    <div class="card tight"><h4 style="color:var(--txt-dim)">H₀ — Nullhypothese</h4>
+      <p class="mini" style="margin:0">„Es gibt <strong>keinen</strong> Effekt.“ Das Medikament wirkt nicht, das Gen tut nichts.</p></div>
+    <div class="card tight"><h4 style="color:var(--true)">H₁ — Alternativhypothese</h4>
+      <p class="mini" style="margin:0">„Es gibt <strong>einen</strong> Effekt.“ Das ist, was der Forscher hofft.</p></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Spiel: verschiebe die Wahrheit und die Schwelle</h3>
+    <div class="grid-side-rev">
+      <div>
+        <div class="canvas-wrap"><canvas id="distCanvas" height="340"></canvas></div>
+        <div class="legend" style="justify-content:center">
+          <span><i class="dot" style="background:#7f8db3"></i> Welt ohne Effekt (H₀)</span>
+          <span><i class="dot" style="background:var(--true)"></i> Welt mit Effekt (H₁)</span>
+          <span><i class="dot" style="background:var(--false)"></i> α — Fehlalarm</span>
+          <span><i class="dot" style="background:var(--warn)"></i> β — Übersehen</span>
+        </div>
+        <div class="canvas-cap">Die Kurven zeigen: welches Messergebnis ist wie wahrscheinlich.
+        Rechts der gestrichelten Linie ruft die Studie „signifikant!“.</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Wahre Effektstärke</span><span class="ctrl-val true" id="dEffv">2,0</span></div>
+          <input type="range" class="r-true" id="dEff" min="0" max="5" step="0.05" value="2">
+          <div class="ctrl-note">Wie stark wirkt das Medikament wirklich? (0 = gar nicht)</div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Signifikanzniveau α</span><span class="ctrl-val false" id="dAlv">0,050</span></div>
+          <input type="range" id="dAl" min="0.001" max="0.30" step="0.001" value="0.05">
+          <div class="ctrl-note">Die berühmten 5 %. Die Schwelle, ab der man „Fund!“ ruft.</div>
+        </div>
+        <div class="readout">
+          <div class="stat"><div class="lbl">Power 1−β</div><div class="num" id="dPow" style="color:var(--true)">—</div>
+            <div class="sub">Chance, einen echten Effekt zu finden</div></div>
+          <div class="stat"><div class="lbl">β — Typ-II-Fehler</div><div class="num" id="dBeta" style="color:var(--warn)">—</div>
+            <div class="sub">echter Effekt übersehen</div></div>
+          <div class="stat"><div class="lbl">α — Typ-I-Fehler</div><div class="num" id="dAlpha" style="color:var(--false)">—</div>
+            <div class="sub">Fehlalarm ohne Effekt</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="callout danger">
+      <h4>Der entscheidende Denkfehler</h4>
+      <p>Ein p-Wert von 0,03 heißt:<br>
+      <code>P(solche Daten | kein Effekt) = 3 %</code></p>
+      <p>Er heißt <strong>nicht</strong>:<br>
+      <code>P(kein Effekt | solche Daten) = 3 %</code></p>
+      <p>Das sind zwei völlig verschiedene Dinge — und genau diese Verwechslung ist das Thema des Papers.</p>
+    </div>
+    <div class="card">
+      <h4>Analogie zum Mitnehmen</h4>
+      <p class="mini">P(vier Beine | Hund) ≈ 100 %.<br>
+      P(Hund | vier Beine) ≈ klein — es gibt Katzen, Kühe, Tische.</p>
+      <p class="mini">Der p-Wert ist die erste Richtung. Du willst aber die zweite.
+      Um umzudrehen, brauchst du <strong>Bayes</strong> — und dafür brauchst du zu wissen,
+      wie viele Hunde es überhaupt gibt.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- PREREQ 3 : POWER -->
+<!-- ================================================================ -->
+<section id="prereq3">
+  <div class="kicker"><span class="badge pre">Werkzeug 3</span> Power (Teststärke)</div>
+  <h2>Kleine Studien sind blind — und das hat Folgen</h2>
+  <p class="lead">
+    <strong>Power = 1 − β</strong> ist die Wahrscheinlichkeit, einen <em>echt vorhandenen</em> Effekt auch zu finden.
+    Sie hängt an drei Dingen: Stichprobengröße, Effektstärke und α.
+  </p>
+
+  <div class="grid-side">
+    <div class="card">
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Stichprobengröße n (pro Gruppe)</span><span class="ctrl-val" id="pwNv">50</span></div>
+        <input type="range" id="pwN" min="5" max="2000" step="5" value="50">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Wahre Effektstärke d</span><span class="ctrl-val true" id="pwDv">0,30</span></div>
+        <input type="range" class="r-true" id="pwD" min="0.02" max="1.5" step="0.01" value="0.30">
+        <div class="ctrl-note">d≈0,2 klein · 0,5 mittel · 0,8 groß · Genetik oft d&lt;0,1</div>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">α</span><span class="ctrl-val false" id="pwAv">0,050</span></div>
+        <input type="range" id="pwA" min="0.0000001" max="0.1" step="0.0000001" value="0.05">
+        <div class="ctrl-note">Bei Genomstudien korrigiert man auf z.B. 5·10⁻⁸</div>
+      </div>
+      <div class="bigppv" style="background:linear-gradient(135deg,rgba(46,230,168,.1),rgba(110,168,255,.06))">
+        <div class="lbl">Power</div>
+        <div class="num" id="pwOut" style="color:var(--true)">—</div>
+        <div class="sub" id="pwMsg" style="font-size:12px;color:var(--txt-faint)"></div>
+      </div>
+      <div class="chips">
+        <div class="chip" data-pw="cardio">Kardiologie-RCT</div>
+        <div class="chip" data-pw="pilot">Pilotstudie</div>
+        <div class="chip" data-pw="gwas">GWAS-Gen</div>
+        <div class="chip" data-pw="nutri">Ernährungsstudie</div>
+      </div>
+    </div>
+    <div>
+      <div id="pwPlot" class="plot" style="height:400px"></div>
+      <div class="canvas-cap">Power-Kurven: Je kleiner der wahre Effekt, desto brutaler steigt die nötige Stichprobe.
+      Die graue Linie markiert die konventionelle Zielmarke 80 %.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <h4>Merke für später</h4>
+    <p>In der Medizin liegt die <em>tatsächliche</em> mittlere Power vieler Felder bei <strong>20–40 %</strong>, nicht bei 80 %.
+    Das ist die Zutat, die im Modell gleich alles kippt.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- PREREQ 4 : BAYES -->
+<!-- ================================================================ -->
+<section id="prereq4">
+  <div class="kicker"><span class="badge pre">Werkzeug 4</span> Bedingte Wahrscheinlichkeit &amp; Basisrate</div>
+  <h2>Der Umkehr-Trick: von <em>p</em> zu „stimmt es?“</h2>
+  <p class="lead">
+    Das klassische Aha-Erlebnis: ein Test mit 99 % Treffsicherheit, eine seltene Krankheit —
+    und ein positives Ergebnis bedeutet trotzdem fast nichts. Spiel es durch.
+  </p>
+
+  <div class="card">
+    <div class="grid-side-rev">
+      <div>
+        <div class="canvas-wrap"><canvas id="bayesCanvas" height="330"></canvas></div>
+        <div class="legend" style="justify-content:center">
+          <span><i class="dot" style="background:var(--true)"></i> krank &amp; positiv</span>
+          <span><i class="dot" style="background:var(--false)"></i> gesund &amp; positiv</span>
+          <span><i class="dot" style="background:rgba(255,198,88,.55)"></i> krank &amp; negativ</span>
+          <span><i class="dot" style="background:#232c47"></i> gesund &amp; negativ</span>
+        </div>
+        <div class="canvas-cap">10 000 Menschen. Nur die hellen Kästchen bekommen einen positiven Befund.
+        Frage: Wie viele davon sind wirklich krank?</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Basisrate (Prävalenz)</span><span class="ctrl-val" id="byPv">1,0 %</span></div>
+          <input type="range" id="byP" min="0.05" max="50" step="0.05" value="1">
+          <div class="ctrl-note">Wie häufig ist die Krankheit? ↔ im Paper: <code>R/(R+1)</code></div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Sensitivität</span><span class="ctrl-val true" id="bySv">99 %</span></div>
+          <input type="range" class="r-true" id="byS" min="20" max="100" step="1" value="99">
+          <div class="ctrl-note">Kranke werden erkannt ↔ <code>Power 1−β</code></div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Falsch-Positiv-Rate</span><span class="ctrl-val false" id="byFv">5 %</span></div>
+          <input type="range" id="byF" min="0.1" max="30" step="0.1" value="5">
+          <div class="ctrl-note">Gesunde fälschlich positiv ↔ <code>α</code></div>
+        </div>
+        <div class="bigppv">
+          <div class="lbl">Positiver Vorhersagewert</div>
+          <div class="num" id="byPPV">—</div>
+          <div class="sub" id="byMsg" style="margin-top:8px;font-size:12.5px;color:var(--txt-dim)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula">
+      <div class="tag">Satz von Bayes, in der Form die wir brauchen</div>
+      <div id="fBayes"></div>
+    </div>
+  </div>
+
+  <div class="callout good">
+    <h4>Das ist bereits das ganze Paper</h4>
+    <p>Tausche die Wörter aus:
+    <strong>Krankheit → wahre Hypothese</strong>,
+    <strong>Test positiv → p &lt; 0,05</strong>,
+    <strong>Sensitivität → Power</strong>,
+    <strong>Falsch-Positiv-Rate → α</strong>,
+    <strong>Prävalenz → Vorab-Chance R/(R+1)</strong>.
+    Fertig. Ab hier geht es nur noch darum, realistische Zahlen einzusetzen und zwei Zutaten
+    (Bias und viele Teams) zu ergänzen.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- IDEE -->
+<!-- ================================================================ -->
+<section id="idee">
+  <div class="kicker">Teil 1 · Die Idee</div>
+  <h2>Ein Forschungsfeld als 2×2-Tabelle</h2>
+  <p class="lead">
+    Ioannidis’ Trick: Betrachte nicht eine Studie, sondern     ein ganzes <strong>Forschungsfeld</strong>. In diesem Feld werden <code>c</code> Beziehungen getestet.
+    Manche davon existieren wirklich, die meisten nicht. Jede Studie liefert „Fund“ oder „kein Fund“.
+    Daraus entsteht eine Vierfeldertafel — genau wie beim medizinischen Test oben.
+  </p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Tabelle 1 des Papers — anfassbar</h3>
+    <div class="grid-side-rev">
+      <div>
+        <div class="scroll-x">
+          <table id="t1">
+            <thead>
+              <tr><th rowspan="2" style="vertical-align:bottom">Forschungs-<br>ergebnis</th><th colspan="3">Wahre Beziehung</th></tr>
+              <tr><th>Ja</th><th>Nein</th><th>Summe</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="lbl">„Ja“ — signifikant,<br>wird publiziert</td>
+                <td class="cell-tp" id="t1_tp">—</td>
+                <td class="cell-fp" id="t1_fp">—</td>
+                <td id="t1_rowY">—</td>
+              </tr>
+              <tr>
+                <td class="lbl">„Nein“ — nicht<br>signifikant</td>
+                <td class="cell-fn" id="t1_fn">—</td>
+                <td class="cell-tn" id="t1_tn">—</td>
+                <td id="t1_rowN">—</td>
+              </tr>
+              <tr>
+                <td class="lbl">Summe</td>
+                <td id="t1_colY">—</td>
+                <td id="t1_colN">—</td>
+                <td id="t1_c">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="formula">
+          <div class="tag">Allgemeine Zellbesetzung (Paper, Tabelle 1)</div>
+          <div id="fTable1"></div>
+        </div>
+        <div class="canvas-wrap" style="margin-top:14px"><canvas id="t1Canvas" height="250"></canvas></div>
+        <div class="canvas-cap">Fläche = Anzahl. Nur die beiden oberen Felder kommen je in eine Zeitschrift.
+        Der PPV ist der grüne Anteil der <em>oberen Zeile</em>.</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">R — wahre : falsche Hypothesen</span><span class="ctrl-val" id="t1Rv">1 : 1</span></div>
+          <input type="range" id="t1R" min="-3" max="1" step="0.01" value="0">
+          <div class="ctrl-note">Vorab-Chance <code>R/(R+1)</code> = <span id="t1Prior">50 %</span>.
+          Konfirmatorisch ≈ 1:1, Explorativ ≈ 1:10, Genomweit ≈ 1:10 000</div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Power 1−β</span><span class="ctrl-val true" id="t1Pv">0,80</span></div>
+          <input type="range" class="r-true" id="t1P" min="0.05" max="0.99" step="0.01" value="0.8">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">α</span><span class="ctrl-val false" id="t1Av">0,050</span></div>
+          <input type="range" id="t1A" min="0.001" max="0.2" step="0.001" value="0.05">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">c — getestete Beziehungen</span><span class="ctrl-val" id="t1Cv">1000</span></div>
+          <input type="range" id="t1C" min="100" max="100000" step="100" value="1000">
+        </div>
+        <div class="bigppv">
+          <div class="lbl">PPV = P(wahr | publiziert)</div>
+          <div class="num" id="t1PPV">—</div>
+          <div class="sub" id="t1Msg" style="margin-top:6px;font-size:12.5px;color:var(--txt-dim)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout good">
+    <h4>Die Faustformel des Papers</h4>
+    <p>Ein Ergebnis ist eher wahr als falsch, wenn <code>(1−β)·R &gt; α</code>, also bei α = 0,05:
+    <strong>(1−β)·R &gt; 0,05</strong>. Mehr steckt im ersten Teil nicht drin. Prüfe es mit den Reglern:
+    <span id="t1Rule" style="font-family:'JetBrains Mono',monospace;color:var(--accent)"></span></p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- PPV FORMEL -->
+<!-- ================================================================ -->
+<section id="ppv">
+  <div class="kicker">Teil 2 · Die Lösung, Schritt 1</div>
+  <h2>Die PPV-Formel — hergeleitet, nicht vom Himmel gefallen</h2>
+
+  <div class="card">
+    <div class="step-nav" id="derivNav"></div>
+    <div id="derivBox" style="min-height:230px"></div>
+    <div class="btnrow">
+      <button class="ghost" id="derivPrev">← zurück</button>
+      <button class="primary" id="derivNext">weiter →</button>
+    </div>
+  </div>
+
+  <h3>Was die Formel sagt — als Landkarte</h3>
+  <div class="grid-side">
+    <div class="card">
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">α (fixiert für die Karte)</span><span class="ctrl-val false" id="hmAv">0,050</span></div>
+        <input type="range" id="hmA" min="0.001" max="0.2" step="0.001" value="0.05">
+      </div>
+      <div class="legend" style="flex-direction:column;gap:7px">
+        <span><i class="dot" style="background:var(--false)"></i> PPV &lt; 50 % — eher falsch</span>
+        <span><i class="dot" style="background:var(--warn)"></i> PPV ≈ 50 %</span>
+        <span><i class="dot" style="background:var(--true)"></i> PPV &gt; 50 % — eher wahr</span>
+      </div>
+      <p class="mini" style="margin-top:12px">Die weiße Linie ist die Schwelle PPV = 50 %, also
+      <code>(1−β)R = α</code>. Alles links/unten davon ist das Reich der falschen Entdeckungen.
+      Beachte: die x-Achse ist <strong>logarithmisch</strong> — der blaue Bereich ist winzig.</p>
+      <div class="btnrow">
+        <button class="ghost" id="hmMark">Typische Felder einblenden</button>
+      </div>
+    </div>
+    <div>
+      <div id="hmPlot" class="plot" style="height:430px"></div>
+      <div class="canvas-cap">Heatmap des PPV über Vorab-Chance R (x, log) und Power (y). Ohne Bias, eine Studie.</div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- BIAS -->
+<!-- ================================================================ -->
+<section id="bias">
+  <div class="kicker">Teil 2 · Die Lösung, Schritt 2</div>
+  <h2>Zutat „Bias“ — der Anteil <em>u</em></h2>
+  <p class="lead">
+    Ioannidis definiert Bias nicht als Betrug, sondern als <strong>u</strong> = der Anteil der Analysen,
+    die <em>eigentlich</em> kein Ergebnis gewesen wären, aber trotzdem als Ergebnis berichtet werden.
+    Ursachen: Ausreißer rauswerfen, Endpunkt wechseln, Subgruppen durchprobieren, nur das Schönste berichten.
+  </p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Wo Bias entsteht: die „Garden of Forking Paths“-Maschine</h3>
+    <div class="grid-side-rev">
+      <div>
+        <div class="canvas-wrap"><canvas id="forkCanvas" height="300"></canvas></div>
+        <div class="canvas-cap">Eine Studie, viele legitime Analysewege. Wenn man am Ende nur den grünen Pfad berichtet,
+        ist das Ergebnis „p &lt; 0,05“ — aber die wahre Fehlalarmrate ist viel größer als 5 %.</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Analytische Freiheitsgrade</span><span class="ctrl-val bias" id="forkKv">3</span></div>
+          <input type="range" class="r-bias" id="forkK" min="1" max="7" step="1" value="3">
+          <div class="ctrl-note">Jede Verzweigung = eine Wahl (Endpunkt, Ausschluss, Kovariate …)</div>
+        </div>
+        <div class="readout">
+          <div class="stat"><div class="lbl">Analysewege</div><div class="num" id="forkPaths" style="color:var(--accent2)">8</div></div>
+          <div class="stat"><div class="lbl">Reale Chance auf „p&lt;0,05“<br>bei <em>null</em> Effekt</div>
+            <div class="num" id="forkRate" style="color:var(--false)">—</div>
+            <div class="sub">statt der versprochenen 5 %</div></div>
+        </div>
+        <div class="btnrow"><button class="primary" id="forkRun">Analyse durchlaufen lassen</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Abbildung 1 des Papers, interaktiv</h3>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Bias u</span><span class="ctrl-val bias" id="bsUv">0,10</span></div>
+          <input type="range" class="r-bias" id="bsU" min="0" max="0.8" step="0.01" value="0.10">
+          <div class="ctrl-note">u = 0 perfekt · 0,1 normal · 0,3 unsauber · 0,8 katastrophal</div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Power 1−β</span><span class="ctrl-val true" id="bsPv">0,80</span></div>
+          <input type="range" class="r-true" id="bsP" min="0.05" max="0.99" step="0.01" value="0.8">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Vorab-Chance R</span><span class="ctrl-val" id="bsRv">1 : 1</span></div>
+          <input type="range" id="bsR" min="-3" max="1" step="0.01" value="0">
+        </div>
+        <div class="bigppv">
+          <div class="lbl">PPV mit Bias</div>
+          <div class="num" id="bsPPV">—</div>
+          <div class="sub" id="bsDrop" style="font-size:12.5px;color:var(--bias);margin-top:6px"></div>
+        </div>
+        <div class="formula" style="text-align:left">
+          <div class="tag">PPV mit Bias (Paper, Tabelle 2)</div>
+          <div id="fBias" style="text-align:center"></div>
+        </div>
+      </div>
+      <div>
+        <div id="biasPlot" class="plot" style="height:420px"></div>
+        <div class="canvas-cap">Nachbau von Figure 1: PPV über Vorab-Chance, je Kurve ein Bias-Niveau.
+        Der Regler „Power“ wechselt zwischen den Panels des Originals (0,20 / 0,50 / 0,80).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <h4>Die unheimliche Eigenschaft von Bias</h4>
+    <p>Mehr Daten helfen nicht. Zufallsrauschen mittelt sich mit wachsender Stichprobe weg — <strong>Bias nicht</strong>.
+    Eine riesige, aber verzerrte Studie liefert einen sehr präzisen Schätzwert… des Bias.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- TEAMS -->
+<!-- ================================================================ -->
+<section id="teams">
+  <div class="kicker">Teil 2 · Die Lösung, Schritt 3</div>
+  <h2>Zutat „viele Teams“ — das paradoxe Ergebnis</h2>
+  <p class="lead">
+    Weltweit arbeiten oft Dutzende Gruppen an derselben Frage. Berichtet wird aber nur,
+    <em>wer zuerst etwas Signifikantes findet</em>. Dadurch wird aus „eine Studie, α = 5 %“
+    effektiv „<strong>mindestens eine von n</strong>“ — und das ist viel mehr als 5 %.
+  </p>
+
+  <div class="card">
+    <div class="grid-side-rev">
+      <div>
+        <div class="canvas-wrap"><canvas id="teamCanvas" height="300"></canvas></div>
+        <div class="canvas-cap">n Labore testen dieselbe Hypothese. Jedes Labor würfelt. Es genügt ein Treffer,
+        damit „die Entdeckung“ in der Welt ist.</div>
+        <div id="teamPlot" class="plot" style="height:330px;margin-top:16px"></div>
+        <div class="canvas-cap">Nachbau von Figure 2: PPV über Vorab-Chance für verschiedene Teamzahlen n.</div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Anzahl Teams n</span><span class="ctrl-val" id="tmNv">1</span></div>
+          <input type="range" id="tmN" min="1" max="50" step="1" value="1">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Power je Team</span><span class="ctrl-val true" id="tmPv">0,50</span></div>
+          <input type="range" class="r-true" id="tmP" min="0.05" max="0.99" step="0.01" value="0.5">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Vorab-Chance R</span><span class="ctrl-val" id="tmRv">1 : 1</span></div>
+          <input type="range" id="tmR" min="-4" max="1" step="0.01" value="0">
+        </div>
+        <div class="readout grid3" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="lbl">Fehlalarm-Chance</div><div class="num" id="tmAlphaEff" style="color:var(--false);font-size:21px">5,0 %</div>
+            <div class="sub">1−(1−α)ⁿ</div></div>
+          <div class="stat"><div class="lbl">Entdeckungs-Chance</div><div class="num" id="tmPowEff" style="color:var(--true);font-size:21px">50 %</div>
+            <div class="sub">1−βⁿ</div></div>
+        </div>
+        <div class="bigppv">
+          <div class="lbl">PPV bei n Teams</div>
+          <div class="num" id="tmPPV">—</div>
+          <div class="sub" id="tmMsg" style="font-size:12.5px;color:var(--txt-dim);margin-top:6px"></div>
+        </div>
+        <div class="formula" style="text-align:left">
+          <div class="tag">PPV bei n Teams (Paper, Tabelle 3)</div>
+          <div id="fTeams" style="text-align:center"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <h4>Korollar 6 in einem Satz</h4>
+    <p>„<strong>Je heißer ein Feld, desto unzuverlässiger seine Einzelergebnisse.</strong>“
+    Das klingt verrückt, folgt aber zwingend: Mehr Teams erhöhen die Chance auf einen echten Fund nur
+    bis zur Sättigung, die Chance auf mindestens einen Fehlalarm aber fast linear.
+    Der Paper-Begriff dafür: das <em>Proteus-Phänomen</em> — schnelle Abfolge extremer Behauptungen und Gegenbehauptungen.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- KOROLLARE -->
+<!-- ================================================================ -->
+<section id="korollare">
+  <div class="kicker">Teil 3 · Die Folgerungen</div>
+  <h2>Die sechs Korollare — jedes mit eigenem Regler</h2>
+  <p>Klick ein Korollar auf. Jedes ist nur eine andere Stellschraube in derselben Formel.</p>
+
+  <div id="corWrap"></div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- TABELLE 4 -->
+<!-- ================================================================ -->
+<section id="tabelle4">
+  <div class="kicker">Teil 4 · Die Simulation</div>
+  <h2>Tabelle 4: neun reale Forschungssituationen</h2>
+  <p class="lead">
+    Das ist das Herzstück des Papers. Keine Fantasiewerte — sondern typische Konstellationen aus der
+    echten biomedizinischen Forschung. Klick eine Zeile an.
+  </p>
+
+  <div class="grid-side-rev">
+    <div>
+      <div class="scroll-x">
+        <table id="t4">
+          <thead><tr><th>Situation</th><th>1−β</th><th>R</th><th>u</th><th>PPV</th><th>Verlässlich?</th></tr></thead>
+          <tbody id="t4body"></tbody>
+        </table>
+      </div>
+      <div class="canvas-cap">α = 0,05 für eine einzelne Studie. Werte wie im Original-Paper.</div>
+    </div>
+    <div>
+      <div class="card">
+        <h4 style="margin-top:0" id="t4Title">Wähle eine Zeile</h4>
+        <p class="mini" id="t4Desc" style="min-height:70px"></p>
+        <div class="canvas-wrap"><canvas id="t4Canvas" height="210"></canvas></div>
+        <div class="canvas-cap">100 publizierte Behauptungen aus diesem Setting — grün = wahr, rot = falsch.</div>
+        <div class="bigppv" style="margin-top:14px">
+          <div class="lbl">PPV</div>
+          <div class="num" id="t4PPV">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="t4Plot" class="plot" style="height:380px;margin-top:22px"></div>
+  <div class="canvas-cap">Alle neun Settings im Vergleich. Die gestrichelte Linie bei 50 % ist die Grenze
+  „eher wahr als falsch“. Nur zwei Settings liegen darüber.</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- BOX 1 -->
+<!-- ================================================================ -->
+<section id="box1">
+  <div class="kicker">Teil 5 · Das konkrete Beispiel</div>
+  <h2>Box 1: die Schizophrenie-Genomstudie</h2>
+  <p class="lead">
+    Jetzt rechnen wir das Beispiel des Papers Schritt für Schritt durch. Es ist das Beispiel,
+    an dem Ioannidis zeigt, wie dramatisch die Zahlen in echten Hochdurchsatz-Feldern werden.
+  </p>
+
+  <div class="card">
+    <div class="step-nav" id="boxNav"></div>
+    <div class="grid-side-rev">
+      <div>
+        <div class="canvas-wrap"><canvas id="boxCanvas" height="340"></canvas></div>
+        <div class="canvas-cap" id="boxCap"></div>
+      </div>
+      <div>
+        <div id="boxText" style="min-height:260px"></div>
+        <div class="bigppv">
+          <div class="lbl" id="boxLbl">Nachher-Wahrscheinlichkeit</div>
+          <div class="num" id="boxVal" style="font-size:38px">—</div>
+          <div class="sub" id="boxSub" style="font-size:12px;color:var(--txt-faint);margin-top:6px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="btnrow">
+      <button class="ghost" id="boxPrev">← zurück</button>
+      <button class="primary" id="boxNext">weiter →</button>
+    </div>
+  </div>
+
+  <div id="boxPlot" class="plot" style="height:340px"></div>
+  <div class="canvas-cap">Die Reise der Wahrscheinlichkeit: Start bei 10⁻⁴, kurzer Sprung nach oben durch
+  das signifikante Ergebnis, dann Absturz durch Bias und Teamkonkurrenz.</div>
+
+  <div class="callout danger">
+    <h4>Der Schlusssatz von Box 1</h4>
+    <p>Nach all diesem Aufwand — 100 000 getestete Polymorphismen, zehn Teams weltweit — ist die
+    Wahrscheinlichkeit, dass ein gemeldeter Fund stimmt, <strong>1,5 × 10⁻⁴</strong>:
+    „kaum höher als die Wahrscheinlichkeit, die wir hatten, <em>bevor</em> irgendetwas davon unternommen wurde.“</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- NULLFELD -->
+<!-- ================================================================ -->
+<section id="nullfeld">
+  <div class="kicker">Teil 6 · Die radikalste These</div>
+  <h2>Nullfelder: Wenn Effektstärken nur noch den Bias messen</h2>
+  <p class="lead">
+    Angenommen, in einem Feld gibt es <strong>gar keine</strong> wahren Zusammenhänge. Ohne Bias müssten alle
+    gemessenen Effekte zufällig um null streuen. Tun sie das nicht, misst die Literatur nichts anderes
+    als — den Bias selbst.
+  </p>
+
+  <div class="card">
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Anzahl untersuchter „Nährstoffe“</span><span class="ctrl-val" id="nfNv">60</span></div>
+          <input type="range" id="nfN" min="10" max="120" step="1" value="60">
+          <div class="ctrl-note">Im Paper-Beispiel: 60 Nährstoffe und ein bestimmter Tumor</div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Netto-Bias (verschiebt alle Schätzer)</span><span class="ctrl-val bias" id="nfBv">0,25</span></div>
+          <input type="range" class="r-bias" id="nfB" min="0" max="0.45" step="0.01" value="0.25">
+          <div class="ctrl-note">In log-Risiko-Einheiten. 0 = saubere Literatur</div>
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label">Mess-Streuung je Studie</span><span class="ctrl-val" id="nfSv">0,10</span></div>
+          <input type="range" id="nfS" min="0.03" max="0.25" step="0.01" value="0.10">
+        </div>
+        <div class="toggle-row">
+          <label class="switch"><input type="checkbox" id="nfReal"><span class="slider-sw"></span></label>
+          <span>Ein paar <em>echte</em> Effekte zulassen (statt reines Nullfeld)</span>
+        </div>
+        <div class="btnrow"><button class="primary" id="nfRoll">Literatur neu erzeugen</button></div>
+        <div class="readout grid3" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="lbl">Berichtete RRs</div><div class="num" id="nfRange" style="font-size:19px;color:var(--warn)">—</div><div class="sub">Spannweite</div></div>
+          <div class="stat"><div class="lbl">Gemessener Bias</div><div class="num" id="nfEst" style="font-size:19px;color:var(--bias)">—</div><div class="sub">= Mittelwert der Funde</div></div>
+        </div>
+      </div>
+      <div>
+        <div id="nullPlot" class="plot" style="height:400px"></div>
+        <div class="canvas-cap">Jeder Punkt ist ein publiziertes relatives Risiko. Ohne Bias müssten alle
+        symmetrisch um 1,0 streuen. Mit Bias wandert die ganze Wolke nach rechts — und genau
+        <strong>diese Verschiebung</strong> ist das, was die Literatur in Wahrheit misst.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <h4>Die Umkehrung des Denkens</h4>
+    <p>Traditionell gilt: großer, hochsignifikanter Effekt = wichtige Entdeckung.
+    Ioannidis dreht das um: In Feldern mit sehr kleinem PPV sind <strong>zu große und zu signifikante Effekte
+    eher ein Zeichen für starken Bias</strong>. Und zwischen zwei Nullfeldern ist dasjenige mit den
+    spektakuläreren Behauptungen schlicht das mit den schlimmsten Verzerrungen.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- ANTWORT -->
+<!-- ================================================================ -->
+<section id="antwort">
+  <div class="kicker">Teil 7 · Die Antwort</div>
+  <h2>Die Antwort auf die gestellte Frage</h2>
+
+  <div class="card" style="border-color:rgba(255,92,122,.3)">
+    <p style="font-size:18px;color:#e4ebfc;max-width:none">
+      Frage war: <em>„Wenn eine Studie ein signifikantes Ergebnis meldet — wie wahrscheinlich ist es, dass es stimmt?“</em>
+    </p>
+    <p style="font-size:18px;color:#e4ebfc;max-width:none;margin-top:14px">
+      Antwort: <strong style="color:var(--false)">Meistens unter 50 %.</strong> Bei den allermeisten
+      Studiendesigns und in den allermeisten Feldern ist eine publizierte Behauptung
+      eher falsch als wahr — nicht wegen Betrug, sondern weil
+      <code>R</code> klein, <code>1−β</code> klein, <code>u</code> größer als null und <code>n</code> größer als eins ist.
+    </p>
+  </div>
+
+  <h3>Der komplette Rechner: alle vier Zutaten gleichzeitig</h3>
+  <div class="grid-side">
+    <div class="card">
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Vorab-Chance R</span><span class="ctrl-val" id="allRv">1 : 1</span></div>
+        <input type="range" id="allR" min="-4" max="1" step="0.01" value="0">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Power 1−β</span><span class="ctrl-val true" id="allPv">0,80</span></div>
+        <input type="range" class="r-true" id="allP" min="0.05" max="0.99" step="0.01" value="0.8">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Bias u</span><span class="ctrl-val bias" id="allUv">0,10</span></div>
+        <input type="range" class="r-bias" id="allU" min="0" max="0.8" step="0.01" value="0.10">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Teams n</span><span class="ctrl-val" id="allNv">1</span></div>
+        <input type="range" id="allN" min="1" max="30" step="1" value="1">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">α</span><span class="ctrl-val false" id="allAv">0,050</span></div>
+        <input type="range" id="allA" min="0.0001" max="0.2" step="0.0001" value="0.05">
+      </div>
+      <div class="btnrow">
+        <button class="ghost" id="allReset">Zurücksetzen</button>
+        <button class="ghost" id="allWorst">Worst Case</button>
+        <button class="ghost" id="allBest">Best Case</button>
+      </div>
+    </div>
+    <div>
+      <div class="bigppv" style="margin-top:0">
+        <div class="lbl">Wahrscheinlichkeit, dass ein publizierter Fund stimmt</div>
+        <div class="num" id="allPPV" style="font-size:62px">—</div>
+        <div class="sub" id="allVerdict" style="font-size:14px;margin-top:10px"></div>
+      </div>
+      <div class="canvas-wrap" style="margin-top:16px"><canvas id="allCanvas" height="230"></canvas></div>
+      <div class="canvas-cap">1000 publizierte Behauptungen in diesem Szenario.</div>
+      <div id="waterfall" class="plot" style="height:300px;margin-top:16px"></div>
+      <div class="canvas-cap">Wasserfall: wie jede Zutat den PPV von links nach rechts verschiebt.</div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ================================================================ -->
+<!-- LÖSUNG -->
+<!-- ================================================================ -->
+<section id="loesung">
+  <div class="kicker">Teil 8 · Wie wird es besser?</div>
+  <h2>Die Vorschläge — und was sie wirklich bringen</h2>
+  <p class="lead">
+    Ioannidis endet nicht im Nihilismus. Er nennt vier Hebel. Schalte sie einzeln zu und beobachte,
+    was mit dem PPV eines typischen explorativen Feldes passiert.
+  </p>
+
+  <div class="grid-side-rev">
+    <div>
+      <div id="fixPlot" class="plot" style="height:400px"></div>
+      <div class="canvas-cap">Ausgangslage: exploratives epidemiologisches Feld (R = 1:10, Power 0,20, u = 0,30, 10 Teams).</div>
+    </div>
+    <div>
+      <div class="card" style="padding:16px">
+        <div id="fixList"></div>
+        <div class="bigppv" style="margin-top:14px">
+          <div class="lbl">PPV nach Maßnahmen</div>
+          <div class="num" id="fixPPV" style="font-size:42px">—</div>
+          <div class="sub" id="fixFactor" style="font-size:12.5px;color:var(--true);margin-top:6px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:24px">
+    <div class="callout good">
+      <h4>Was Ioannidis konkret fordert</h4>
+      <p class="mini">
+      1. <strong>Größere, besser gepowerte Evidenz</strong> — aber gezielt dort, wo R schon hoch ist.<br>
+      2. <strong>Gesamtheit der Evidenz</strong> statt Einzelergebnis eines Teams betrachten.<br>
+      3. <strong>Bias senken</strong>: Standards, Protokolle, Präregistrierung (CONSORT, Studienregister).<br>
+      4. <strong>R ernst nehmen</strong>: Vor dem Experiment überlegen, wie plausibel die Hypothese ist —
+      statt Signifikanz zu jagen.</p>
+    </div>
+    <div class="callout warn">
+      <h4>Und die Einschränkungen, die er selbst nennt</h4>
+      <p class="mini">
+      • Große Studien können ebenfalls verzerrt sein — Größe allein heilt nichts.<br>
+      • Riesige Studien finden signifikante, aber <em>belanglose</em> Effekte (Lindley-Paradox).<br>
+      • Präregistrierung passt schlecht zu hypothesengenerierender Forschung.<br>
+      • R ist nie exakt bekannt; man muss schätzen. Subjektiv — aber besser als es zu ignorieren.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px;border-color:rgba(46,230,168,.3)">
+    <h3 style="margin-top:0">Die Essenz in sieben Zeilen</h3>
+    <p class="mini" style="font-size:13.5px;line-height:1.9">
+      <strong style="color:var(--accent)">1.</strong> Ein p-Wert beantwortet nicht die Frage, die dich interessiert.<br>
+      <strong style="color:var(--accent)">2.</strong> Um sie zu beantworten, brauchst du die Vorab-Chance R.<br>
+      <strong style="color:var(--accent)">3.</strong> PPV = (1−β)R / (R − βR + α). Fund eher wahr ⟺ (1−β)·R &gt; α.<br>
+      <strong style="color:var(--accent)">4.</strong> Kleine Studien, kleine Effekte, viele Hypothesen → R und Power winzig → PPV winzig.<br>
+      <strong style="color:var(--accent)">5.</strong> Bias u senkt den PPV zusätzlich — und mehr Daten helfen dagegen nicht.<br>
+      <strong style="color:var(--accent)">6.</strong> Viele Teams senken ihn ebenfalls: je heißer das Feld, desto unzuverlässiger der Einzelfund.<br>
+      <strong style="color:var(--accent)">7.</strong> In Nullfeldern misst die berichtete Effektstärke nur noch den Bias.
+    </p>
+  </div>
+</section>
+
+<footer>
+  Interaktive Aufbereitung von <strong>Ioannidis JPA (2005) „Why Most Published Research Findings Are False“</strong>,
+  PLoS Medicine 2(8): e124 · CC-BY.<br>
+  Alle Formeln, Tabellen (1–4) und Box 1 entstammen dem Originaltext; die Visualisierungen sind Rekonstruktionen.
+</footer>
+
+</main>
+
+<script>
+/* =================================================================
+   HILFSFUNKTIONEN
+   ================================================================= */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp = (a,b,t)=>a+(b-a)*t;
+const fmtP = x => (x*100).toFixed(1).replace('.',',')+' %';
+const fmtP2 = x => {
+  if(x<0.0001) return x.toExponential(1).replace('.',',');
+  if(x<0.01) return (x*100).toFixed(3).replace('.',',')+' %';
+  return (x*100).toFixed(1).replace('.',',')+' %';
+};
+const fmtN = (x,d=2) => x.toFixed(d).replace('.',',');
+
+// Normalverteilung
+function pdf(x,mu=0,s=1){return Math.exp(-0.5*((x-mu)/s)**2)/(s*Math.sqrt(2*Math.PI));}
+function erf(x){
+  const s=Math.sign(x);x=Math.abs(x);
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const t=1/(1+p*x);
+  const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return s*y;
+}
+function cdf(x,mu=0,s=1){return 0.5*(1+erf((x-mu)/(s*Math.SQRT2)));}
+function invNorm(p){
+  if(p<=0)return -8; if(p>=1)return 8;
+  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+  const pl=0.02425;let q,r;
+  if(p<pl){q=Math.sqrt(-2*Math.log(p));
+    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p>1-pl){q=Math.sqrt(-2*Math.log(1-p));
+    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  q=p-0.5;r=q*q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+function randn(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* ---- Kernformeln des Papers ---- */
+const PPV_basic = (R,pow,a) => { const b=1-pow; return (pow*R)/(R - b*R + a); };
+const PPV_bias  = (R,pow,a,u) => { const b=1-pow;
+  return ((1-b)*R + u*b*R) / (R + a - b*R + u - u*a + u*b*R); };
+const PPV_teams = (R,pow,a,n) => { const b=1-pow;
+  return R*(1-Math.pow(b,n)) / (R + 1 - Math.pow(1-a,n) - R*Math.pow(b,n)); };
+function PPV_all(R,pow,a,u,n){
+  const b=1-pow;
+  const aE = 1-Math.pow(1-a,n);
+  const bE = Math.pow(b,n);
+  const powE = 1-bE;
+  return ((powE)*R + u*bE*R) / (R + aE - bE*R + u - u*aE + u*bE*R);
+}
+
+// Temml Rendering
+function tex(el, s, dis=true){
+  if(!el) return;
+  try{ el.innerHTML = temml.renderToString(s,{displayMode:dis}); }
+  catch(e){ el.textContent = s; }
+}
+
+const PLOTLY_LAYOUT = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(4,7,14,0.45)',
+  font:{color:'#9aa6c4',family:'Inter, sans-serif',size:11.5},
+  margin:{l:58,r:22,t:34,b:52},
+  xaxis:{gridcolor:'rgba(255,255,255,.06)',zerolinecolor:'rgba(255,255,255,.12)',linecolor:'rgba(255,255,255,.14)'},
+  yaxis:{gridcolor:'rgba(255,255,255,.06)',zerolinecolor:'rgba(255,255,255,.12)',linecolor:'rgba(255,255,255,.14)'},
+  legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+  hoverlabel:{bgcolor:'#121a2e',bordercolor:'rgba(255,255,255,.18)',font:{color:'#e8ecf7',size:11.5}}
+};
+const PCONF = {displayModeLog:false, displaylogo:false, responsive:true,
+  modeBarButtonsToRemove:['lasso2d','select2d','autoScale2d','toggleSpikelines']};
+function L(extra){ return Object.assign({}, JSON.parse(JSON.stringify(PLOTLY_LAYOUT)), extra||{}); }
+
+// HiDPI canvas
+function fitCanvas(c){
+  const dpr = window.devicePixelRatio||1;
+  const r = c.getBoundingClientRect();
+  const h = parseInt(c.getAttribute('height'))||300;
+  c.width = Math.max(300,Math.round(r.width*dpr));
+  c.height = Math.round(h*dpr);
+  c.style.height = h+'px';
+  const ctx = c.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w:r.width||600, h};
+}
+
+/* =================================================================
+   NAVIGATION / PROGRESS
+   ================================================================= */
+window.addEventListener('scroll',()=>{
+  const sc = document.documentElement.scrollTop;
+  const mx = document.documentElement.scrollHeight - window.innerHeight;
+  $('#progressbar').style.width = (mx>0? sc/mx*100 : 0)+'%';
+  let cur='';
+  $$('section').forEach(s=>{ if(s.getBoundingClientRect().top<140) cur=s.id; });
+  $$('#navlinks a').forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+});
+
+/* =================================================================
+   HERO ANIMATION
+   ================================================================= */
+(function(){
+  const c = $('#heroCanvas');
+  let pts=[], t0=performance.now();
+  const COLS=60, ROWS=18;
+
+  function build(){
+    const R = parseFloat($('#heroR').value)/100;  // prior probability
+    const pow=0.5, a=0.05;
+    pts=[];
+    for(let i=0;i<COLS*ROWS;i++){
+      const isTrue = Math.random()<R;
+      const sig = isTrue ? Math.random()<pow : Math.random()<a;
+      pts.push({isTrue,sig,ph:Math.random()*Math.PI*2});
+    }
+    const ppv = PPV_basic(R/(1-R||1e-9), pow, a);
+    const prior = R;
+    const odds = prior/(1-prior);
+    const p = PPV_basic(odds,pow,a);
+    $('#heroRval').textContent = (prior*100).toFixed(1).replace('.',',')+' %';
+    $('#heroNote').innerHTML = `Bei Power 0,50 und α = 0,05 sind dann <strong style="color:${p<0.5?'var(--false)':'var(--true)'}">${fmtP(p)}</strong> der publizierten Funde wahr.`;
+  }
+
+  function draw(){
+    const {ctx,w,h} = fitCanvas(c);
+    const t = (performance.now()-t0)/1000;
+    ctx.clearRect(0,0,w,h);
+    const padX=24, padY=22;
+    const cw=(w-2*padX)/COLS, ch=(h-2*padY)/ROWS;
+    const r = Math.min(cw,ch)*0.33;
+    pts.forEach((p,i)=>{
+      const cx = padX + (i%COLS)*cw + cw/2;
+      const cy = padY + Math.floor(i/COLS)*ch + ch/2;
+      const pulse = 0.5+0.5*Math.sin(t*1.3+p.ph);
+      if(p.sig){
+        ctx.fillStyle = p.isTrue ? `rgba(46,230,168,${0.55+0.45*pulse})` : `rgba(255,92,122,${0.55+0.45*pulse})`;
+        ctx.shadowBlur = 9*pulse+3;
+        ctx.shadowColor = p.isTrue?'rgba(46,230,168,.75)':'rgba(255,92,122,.75)';
+        ctx.beginPath(); ctx.arc(cx,cy,r*1.35,0,7); ctx.fill();
+        ctx.shadowBlur=0;
+      }else{
+        ctx.fillStyle='rgba(42,52,84,.75)';
+        ctx.beginPath(); ctx.arc(cx,cy,r*0.72,0,7); ctx.fill();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  $('#heroR').addEventListener('input',build);
+  build(); draw();
+  window.addEventListener('resize',()=>{});
+})();
+
+/* =================================================================
+   REPLIKATIONS-BEISPIELE
+   ================================================================= */
+(function(){
+  const data = {
+    gen:{t:'Genetische Assoziationsstudien',
+      b:'Ioannidis et al. untersuchten 1998–2001 veröffentlichte genetische Assoziationen. Von den anfänglich gemeldeten Zusammenhängen ließ sich nur ein kleiner Teil in Folgestudien bestätigen — die Replikationsvalidität genetischer Assoziationsstudien ist notorisch niedrig. Typische Effektstärken: relative Risiken 1,1–1,5 — winzig, also auch die Power winzig.',
+      ppv:0.02, pow:0.20, R:'1 : 1000'},
+    nut:{t:'Ernährungsepidemiologie',
+      b:'Fast jeder Nährstoff wurde irgendwann mit fast jedem Tumor in Verbindung gebracht — mit relativen Risiken von 1,2 bis 1,4. Ioannidis nennt das den Prototyp eines möglichen „Nullfeldes“: Die berichteten Effektstärken messen dann vor allem den vorherrschenden Bias.',
+      ppv:0.08, pow:0.30, R:'1 : 60'},
+    rct:{t:'Große randomisierte Studien',
+      b:'Hier sieht es gut aus: Mehrere tausend randomisierte Teilnehmer, ein vorab festgelegter Endpunkt, hohe Power, und eine Vorab-Chance von etwa 1:1 (man testet nur, was plausibel ist). Das ist der Goldstandard — PPV ≈ 0,85.',
+      ppv:0.85, pow:0.80, R:'1 : 1'},
+    psy:{t:'Psychologie / Sozialwissenschaft',
+      b:'Viele Freiheitsgrade bei Design, Messung und Auswertung (Korollar 4), kleine Stichproben (Korollar 1) und kleine Effekte (Korollar 2). Genau die Kombination, die das Modell als unzuverlässig vorhersagt.',
+      ppv:0.25, pow:0.35, R:'1 : 5'}
+  };
+  function show(k){
+    const d = data[k];
+    $('#replBox').innerHTML = `
+      <h4 style="margin-top:0">${d.t}</h4>
+      <p class="mini" style="margin-bottom:12px">${d.b}</p>
+      <div class="grid3">
+        <div class="stat"><div class="lbl">typ. Power</div><div class="num" style="font-size:20px;color:var(--true)">${fmtN(d.pow,2)}</div></div>
+        <div class="stat"><div class="lbl">typ. R</div><div class="num" style="font-size:20px;color:var(--accent)">${d.R}</div></div>
+        <div class="stat"><div class="lbl">PPV ≈</div><div class="num" style="font-size:20px;color:${d.ppv<0.5?'var(--false)':'var(--true)'}">${fmtP2(d.ppv)}</div></div>
+      </div>`;
+  }
+  $$('#replChips .chip').forEach(ch=>ch.addEventListener('click',()=>{
+    $$('#replChips .chip').forEach(x=>x.classList.remove('on'));
+    ch.classList.add('on'); show(ch.dataset.k);
+  }));
+  show('gen');
+})();
+
+/* =================================================================
+   WERKZEUG 1 : MÜNZEN
+   ================================================================= */
+(function(){
+  const c=$('#coinCanvas'); let results=[], auto=null;
+
+  function run(){
+    const n=+$('#coinN').value, P=+$('#coinP').value;
+    $('#coinNv').textContent=n; $('#coinPv').textContent=P;
+    results=[];
+    for(let i=0;i<P;i++){
+      let heads=0;
+      for(let j=0;j<n;j++) if(Math.random()<0.5) heads++;
+      // zweiseitiger Normalapproximations-Test
+      const z = (heads - n/2)/Math.sqrt(n*0.25);
+      const p = 2*(1-cdf(Math.abs(z)));
+      results.push({heads,n,z,p,sig:p<0.05});
+    }
+    const hits=results.filter(r=>r.sig).length;
+    $('#coinHits').textContent=hits;
+    $('#coinRate').textContent=(hits/P*100).toFixed(1).replace('.',',')+' %';
+    draw();
+  }
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const P=results.length; if(!P) return;
+    const padL=38,padR=12,padT=16,padB=26;
+    const iw=w-padL-padR, ih=h-padT-padB;
+    const bw=Math.max(1.2, iw/P);
+    // Achse: Anteil Kopf
+    ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,padT+ih/2);ctx.lineTo(w-padR,padT+ih/2);ctx.stroke();
+    ctx.fillStyle='#66728f';ctx.font='10px JetBrains Mono';
+    ctx.fillText('50%',6,padT+ih/2+3);
+    ctx.fillText('100%',4,padT+8); ctx.fillText('0%',10,padT+ih-2);
+    results.forEach((r,i)=>{
+      const frac=r.heads/r.n;
+      const x=padL+i*bw;
+      const y0=padT+ih/2;
+      const y1=padT+ih*(1-frac);
+      ctx.fillStyle=r.sig?'rgba(255,92,122,.9)':'rgba(110,168,255,.45)';
+      if(r.sig){ctx.shadowBlur=7;ctx.shadowColor='rgba(255,92,122,.8)';}
+      ctx.fillRect(x, Math.min(y0,y1), Math.max(1,bw*0.8), Math.abs(y1-y0));
+      ctx.shadowBlur=0;
+    });
+    // 5%-Referenz
+    ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,198,88,.35)';
+    const n=results[0].n, crit=1.96*Math.sqrt(0.25/n);
+    [0.5+crit,0.5-crit].forEach(v=>{
+      const y=padT+ih*(1-v);
+      ctx.beginPath();ctx.moveTo(padL,y);ctx.lineTo(w-padR,y);ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+  ['coinN','coinP'].forEach(id=>$('#'+id).addEventListener('input',run));
+  $('#coinRoll').addEventListener('click',run);
+  $('#coinAuto').addEventListener('click',e=>{
+    if(auto){clearInterval(auto);auto=null;e.target.textContent='Auto ▶';e.target.classList.remove('on');}
+    else{auto=setInterval(run,700);e.target.textContent='Auto ⏸';e.target.classList.add('on');}
+  });
+  run();
+})();
+
+/* =================================================================
+   WERKZEUG 2 : VERTEILUNGEN
+   ================================================================= */
+(function(){
+  const c=$('#distCanvas');
+  function draw(){
+    const eff=+$('#dEff').value, al=+$('#dAl').value;
+    $('#dEffv').textContent=fmtN(eff,2);
+    $('#dAlv').textContent=fmtN(al,3);
+    const crit=invNorm(1-al);
+    const pow=1-cdf(crit,eff,1);
+    $('#dPow').textContent=fmtN(pow,2);
+    $('#dBeta').textContent=fmtN(1-pow,2);
+    $('#dAlpha').textContent=fmtN(al,3);
+
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const padL=30,padR=20,padT=18,padB=30;
+    const iw=w-padL-padR, ih=h-padT-padB;
+    const xmin=-4, xmax=8;
+    const X=x=>padL+(x-xmin)/(xmax-xmin)*iw;
+    const maxY=pdf(0);
+    const Y=y=>padT+ih*(1-y/(maxY*1.12));
+
+    function area(mu,from,to,fill){
+      ctx.beginPath(); ctx.moveTo(X(from),Y(0));
+      for(let x=from;x<=to;x+=0.02) ctx.lineTo(X(x),Y(pdf(x,mu)));
+      ctx.lineTo(X(to),Y(0)); ctx.closePath();
+      ctx.fillStyle=fill; ctx.fill();
+    }
+    function curve(mu,stroke){
+      ctx.beginPath();
+      for(let x=xmin;x<=xmax;x+=0.02){const p=pdf(x,mu); if(x===xmin)ctx.moveTo(X(x),Y(p));else ctx.lineTo(X(x),Y(p));}
+      ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();
+    }
+    // Flächen
+    area(0,crit,xmax,'rgba(255,92,122,.42)');          // alpha
+    area(eff,xmin,crit,'rgba(255,198,88,.30)');        // beta
+    area(eff,crit,xmax,'rgba(46,230,168,.22)');        // power
+    curve(0,'rgba(127,141,179,.95)');
+    curve(eff,'rgba(46,230,168,.95)');
+    // Schwelle
+    ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(X(crit),padT);ctx.lineTo(X(crit),padT+ih);ctx.stroke();ctx.setLineDash([]);
+    // Achse
+    ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,Y(0));ctx.lineTo(w-padR,Y(0));ctx.stroke();
+    ctx.fillStyle='#8792b3';ctx.font='10.5px Inter';
+    ctx.fillText('Signifikanz-Schwelle', X(crit)+6, padT+12);
+    ctx.fillText('H₀', X(0)-8, Y(maxY)-7);
+    ctx.fillStyle='#2ee6a8';ctx.fillText('H₁', X(eff)-8, Y(maxY)-7);
+  }
+  ['dEff','dAl'].forEach(id=>$('#'+id).addEventListener('input',draw));
+  draw();
+})();
+
+/* =================================================================
+   WERKZEUG 3 : POWER
+   ================================================================= */
+(function(){
+  function power(n,d,a){
+    const ncp = d*Math.sqrt(n/2);
+    const crit = invNorm(1-a/2);
+    return (1-cdf(crit,ncp,1)) + cdf(-crit,ncp,1);
+  }
+  function upd(){
+    const n=+$('#pwN').value, d=+$('#pwD').value, a=+$('#pwA').value;
+    $('#pwNv').textContent=n;
+    $('#pwDv').textContent=fmtN(d,2);
+    $('#pwAv').textContent = a<0.001? a.toExponential(1) : fmtN(a,3);
+    const p=power(n,d,a);
+    $('#pwOut').textContent=fmtP2(p);
+    $('#pwOut').style.color = p>0.8?'var(--true)': p>0.5?'var(--warn)':'var(--false)';
+    let m;
+    if(p>0.8) m='Solide. So sollte Forschung aussehen.';
+    else if(p>0.5) m='Grenzwertig — jede zweite echte Entdeckung geht verloren.';
+    else if(p>0.2) m='Unterpowert. Typisch für reale Medizin.';
+    else m='Praktisch blind. Ein Fund hier ist meist Rauschen.';
+    $('#pwMsg').textContent=m;
+    plot(d,a);
+  }
+  function plot(dSel,a){
+    const ds=[0.1,0.2,0.3,0.5,0.8];
+    const cols=['#ff5c7a','#ff8a3d','#ffc658','#6ea8ff','#2ee6a8'];
+    const ns=[];for(let n=5;n<=2000;n*=1.06)ns.push(Math.round(n));
+    const traces=ds.map((d,i)=>({
+      x:ns, y:ns.map(n=>power(n,d,a)), type:'scatter', mode:'lines',
+      name:'d = '+fmtN(d,1), line:{color:cols[i],width:2.2}
+    }));
+    traces.push({x:ns,y:ns.map(n=>power(n,dSel,a)),type:'scatter',mode:'lines',
+      name:'dein d',line:{color:'#fff',width:3,dash:'dot'}});
+    Plotly.react('pwPlot',traces,L({
+      xaxis:{title:'Stichprobengröße n pro Gruppe',type:'log',gridcolor:'rgba(255,255,255,.06)'},
+      yaxis:{title:'Power',range:[0,1],gridcolor:'rgba(255,255,255,.06)'},
+      shapes:[{type:'line',x0:5,x1:2000,y0:0.8,y1:0.8,line:{color:'rgba(255,255,255,.3)',dash:'dash',width:1}}],
+      legend:{x:0.02,y:0.98}
+    }),PCONF);
+  }
+  const presets={cardio:[1200,0.25,0.05],pilot:[25,0.4,0.05],gwas:[1000,0.08,5e-8],nutri:[400,0.12,0.05]};
+  $$('[data-pw]').forEach(ch=>ch.addEventListener('click',()=>{
+    const p=presets[ch.dataset.pw];
+    $('#pwN').value=p[0];$('#pwD').value=p[1];$('#pwA').value=p[2];
+    $$('[data-pw]').forEach(x=>x.classList.remove('on'));ch.classList.add('on');
+    upd();
+  }));
+  ['pwN','pwD','pwA'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  upd();
+})();
+
+/* =================================================================
+   WERKZEUG 4 : BAYES
+   ================================================================= */
+(function(){
+  const c=$('#bayesCanvas');
+  tex($('#fBayes'),
+    'PPV=\\frac{\\text{Prävalenz}\\cdot\\text{Sensitivität}}{\\text{Prävalenz}\\cdot\\text{Sensitivität}+(1-\\text{Prävalenz})\\cdot\\alpha}');
+  function upd(){
+    const pr=+$('#byP').value/100, se=+$('#byS').value/100, fp=+$('#byF').value/100;
+    $('#byPv').textContent=fmtN(pr*100,2)+' %';
+    $('#bySv').textContent=(se*100).toFixed(0)+' %';
+    $('#byFv').textContent=fmtN(fp*100,1)+' %';
+    const tp=pr*se, fpr=(1-pr)*fp;
+    const ppv=tp/(tp+fpr);
+    $('#byPPV').textContent=fmtP2(ppv);
+    $('#byPPV').style.color = ppv<0.5?'var(--false)':'var(--true)';
+    const N=10000;
+    $('#byMsg').innerHTML=`Von <strong>${Math.round((tp+fpr)*N).toLocaleString('de')}</strong> positiven Befunden
+      sind nur <strong style="color:var(--true)">${Math.round(tp*N).toLocaleString('de')}</strong> echt krank —
+      <strong style="color:var(--false)">${Math.round(fpr*N).toLocaleString('de')}</strong> sind Fehlalarme.`;
+    draw(pr,se,fp);
+  }
+  function draw(pr,se,fp){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const COLS=100, ROWS=100, N=COLS*ROWS;
+    const pad=8;
+    const cw=(w-2*pad)/COLS, ch=(h-2*pad)/ROWS;
+    const nSick=Math.round(pr*N);
+    const nSickPos=Math.round(nSick*se);
+    const nWell=N-nSick;
+    const nWellPos=Math.round(nWell*fp);
+    for(let i=0;i<N;i++){
+      let col;
+      if(i<nSickPos) col='rgba(46,230,168,.95)';
+      else if(i<nSick) col='rgba(255,198,88,.5)';
+      else if(i<nSick+nWellPos) col='rgba(255,92,122,.92)';
+      else col='rgba(35,44,71,.85)';
+      const x=pad+(i%COLS)*cw, y=pad+Math.floor(i/COLS)*ch;
+      ctx.fillStyle=col;
+      ctx.fillRect(x,y,Math.max(0.8,cw-0.6),Math.max(0.8,ch-0.6));
+    }
+  }
+  ['byP','byS','byF'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  upd();
+})();
+
+/* =================================================================
+   TEIL 1 : TABELLE 1
+   ================================================================= */
+(function(){
+  const c=$('#t1Canvas');
+  tex($('#fTable1'),
+    '\\begin{array}{l|cc}'+
+    ' & \\text{wahr} & \\text{nicht wahr}\\\\\\hline'+
+    '\\text{signifikant} & \\dfrac{c(1-\\beta)R}{R+1} & \\dfrac{c\\alpha}{R+1}\\\\[6pt]'+
+    '\\text{n. signifikant} & \\dfrac{c\\beta R}{R+1} & \\dfrac{c(1-\\alpha)}{R+1}'+
+    '\\end{array}');
+  function upd(){
+    const R=Math.pow(10,+$('#t1R').value);
+    const pow=+$('#t1P').value, a=+$('#t1A').value, cN=+$('#t1C').value;
+    const b=1-pow;
+    const tp=cN*pow*R/(R+1), fp=cN*a/(R+1);
+    const fn=cN*b*R/(R+1), tn=cN*(1-a)/(R+1);
+    const f=x=>Math.round(x).toLocaleString('de');
+    $('#t1_tp').textContent=f(tp); $('#t1_fp').textContent=f(fp);
+    $('#t1_fn').textContent=f(fn); $('#t1_tn').textContent=f(tn);
+    $('#t1_rowY').textContent=f(tp+fp); $('#t1_rowN').textContent=f(fn+tn);
+    $('#t1_colY').textContent=f(tp+fn); $('#t1_colN').textContent=f(fp+tn);
+    $('#t1_c').textContent=f(cN);
+    $('#t1Rv').textContent = R>=1? '1 : '+fmtN(1/R,1).replace(',0','') : '1 : '+Math.round(1/R).toLocaleString('de');
+    if(R>=1) $('#t1Rv').textContent = fmtN(R,2)+' : 1';
+    $('#t1Prior').textContent=fmtP2(R/(R+1));
+    $('#t1Pv').textContent=fmtN(pow,2);
+    $('#t1Av').textContent=fmtN(a,3);
+    $('#t1Cv').textContent=cN.toLocaleString('de');
+    const ppv=tp/(tp+fp);
+    $('#t1PPV').textContent=fmtP2(ppv);
+    $('#t1PPV').style.color=ppv<0.5?'var(--false)':'var(--true)';
+    $('#t1Msg').innerHTML=`Von <strong>${f(tp+fp)}</strong> publizierten Funden sind
+      <strong style="color:var(--true)">${f(tp)}</strong> echt und
+      <strong style="color:var(--false)">${f(fp)}</strong> falsch.`;
+    const lhs=pow*R;
+    $('#t1Rule').innerHTML = `(1−β)·R = ${lhs.toFixed(4).replace('.',',')} ${lhs>a?'>':'≤'} α = ${fmtN(a,3)} → ${lhs>a?'<span style="color:var(--true)">eher wahr</span>':'<span style="color:var(--false)">eher falsch</span>'}`;
+    draw(tp,fp,fn,tn);
+  }
+  function draw(tp,fp,fn,tn){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const tot=tp+fp+fn+tn;
+    const pad=14;
+    const iw=w-2*pad, ih=h-2*pad-18;
+    const colY=(tp+fn)/tot, colN=1-colY;
+    const wY=iw*colY, wN=iw*colN;
+    const hTPy=(tp+fn)>0? tp/(tp+fn):0;
+    const hFPy=(fp+tn)>0? fp/(fp+tn):0;
+    // linke Spalte (wahr)
+    ctx.fillStyle='rgba(46,230,168,.75)'; ctx.fillRect(pad,pad,wY,ih*hTPy);
+    ctx.fillStyle='rgba(255,198,88,.28)'; ctx.fillRect(pad,pad+ih*hTPy,wY,ih*(1-hTPy));
+    // rechte Spalte (nicht wahr)
+    ctx.fillStyle='rgba(255,92,122,.8)'; ctx.fillRect(pad+wY,pad,wN,ih*hFPy);
+    ctx.fillStyle='rgba(110,168,255,.2)'; ctx.fillRect(pad+wY,pad+ih*hFPy,wN,ih*(1-hFPy));
+    // Trennlinien
+    ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=1.2;
+    ctx.strokeRect(pad,pad,wY,ih); ctx.strokeRect(pad+wY,pad,wN,ih);
+    // Publikationslinie
+    ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(255,255,255,.5)';
+    ctx.beginPath();ctx.moveTo(pad,pad);ctx.lineTo(pad+iw,pad);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#9aa6c4';ctx.font='10.5px Inter';
+    ctx.fillText('wahre Hypothesen',pad+2,h-5);
+    ctx.textAlign='right';ctx.fillText('falsche Hypothesen',pad+iw-2,h-5);ctx.textAlign='left';
+    // Labels in Feldern
+    ctx.font='bold 11px Inter';
+    if(ih*hTPy>16){ctx.fillStyle='#04120c';ctx.fillText('wahr positiv',pad+6,pad+14);}
+    if(ih*hFPy>16){ctx.fillStyle='#2b0710';ctx.fillText('falsch positiv',pad+wY+6,pad+14);}
+  }
+  ['t1R','t1P','t1A','t1C'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  upd();
+})();
+
+/* =================================================================
+   TEIL 2 : HERLEITUNG DER PPV-FORMEL (Schritt für Schritt)
+   ================================================================= */
+(function(){
+  const steps = [
+    {t:'Schritt 1 — Das Feld aufteilen',
+     body:`<p>Im Feld werden <code>c</code> Beziehungen getestet. Das Verhältnis wahr : nicht-wahr nennen wir
+     <strong>R</strong>. Also sind <code>cR/(R+1)</code> Hypothesen wahr und <code>c/(R+1)</code> sind es nicht.</p>
+     <p class="mini">Die Vorab-Wahrscheinlichkeit, dass eine zufällig herausgegriffene getestete Hypothese wahr ist,
+     ist damit <code>R/(R+1)</code> — im Paper: <em>pre-study probability</em>.</p>`,
+     f:'c_{\\text{wahr}}=\\frac{cR}{R+1}\\qquad c_{\\text{falsch}}=\\frac{c}{R+1}'},
+    {t:'Schritt 2 — Die wahren Hypothesen aufteilen',
+     body:`<p>Von den wahren Hypothesen wird der Anteil <strong>1−β</strong> (die Power) gefunden,
+     der Rest <strong>β</strong> wird übersehen.</p>`,
+     f:'\\underbrace{\\frac{c(1-\\beta)R}{R+1}}_{\\text{wahr positiv}}\\qquad\\underbrace{\\frac{c\\beta R}{R+1}}_{\\text{falsch negativ}}'},
+    {t:'Schritt 3 — Die falschen Hypothesen aufteilen',
+     body:`<p>Von den nicht-wahren Hypothesen werden <strong>α</strong> fälschlich signifikant —
+     das ist genau die Definition des Signifikanzniveaus.</p>`,
+     f:'\\underbrace{\\frac{c\\alpha}{R+1}}_{\\text{falsch positiv}}\\qquad\\underbrace{\\frac{c(1-\\alpha)}{R+1}}_{\\text{richtig negativ}}'},
+    {t:'Schritt 4 — Nur die obere Zeile wird publiziert',
+     body:`<p>Eine Zeitschrift sieht nur das, was signifikant wurde. Also interessiert uns der Anteil
+     „wahr positiv“ an allen Positiven. Das ist der <strong>PPV</strong>.</p>`,
+     f:'PPV=\\frac{\\text{wahr positiv}}{\\text{wahr positiv}+\\text{falsch positiv}}=\\frac{\\frac{c(1-\\beta)R}{R+1}}{\\frac{c(1-\\beta)R}{R+1}+\\frac{c\\alpha}{R+1}}'},
+    {t:'Schritt 5 — Kürzen',
+     body:`<p><code>c</code> und <code>(R+1)</code> kürzen sich komplett weg. <strong>Die Anzahl der getesteten
+     Beziehungen spielt keine Rolle</strong> — nur ihr Verhältnis R.</p>`,
+     f:'PPV=\\frac{(1-\\beta)R}{(1-\\beta)R+\\alpha}=\\frac{(1-\\beta)R}{R-\\beta R+\\alpha}'},
+    {t:'Schritt 6 — Die Entscheidungsregel',
+     body:`<p>Wann ist PPV &gt; 0,5? Genau dann, wenn der Zähler größer ist als die Hälfte des Nenners —
+     also wenn die wahr-positiven die falsch-positiven überwiegen:</p>
+     <p class="mini">Mit α = 0,05 heißt das: <code>(1−β)·R &gt; 0,05</code>. Bei Power 0,20 brauchst du also
+     mindestens R = 1:4. Bei Power 0,80 reicht R = 1:16.</p>`,
+     f:'PPV>\\tfrac12\\iff(1-\\beta)R>\\alpha'}
+  ];
+  let i=0;
+  const nav=$('#derivNav');
+  steps.forEach((s,k)=>{
+    const d=document.createElement('div');
+    d.className='step-dot'; d.textContent=k+1;
+    d.addEventListener('click',()=>{i=k;render();});
+    nav.appendChild(d);
+  });
+  function render(){
+    $$('#derivNav .step-dot').forEach((d,k)=>{
+      d.classList.toggle('on',k===i);
+      d.classList.toggle('done',k<i);
+    });
+    const s=steps[i];
+    $('#derivBox').innerHTML=`<h3 style="margin-top:4px">${s.t}</h3>${s.body}
+      <div class="formula"><div id="dfx"></div></div>`;
+    tex($('#dfx'),s.f);
+    $('#derivPrev').disabled = i===0;
+    $('#derivNext').textContent = i===steps.length-1? 'fertig ✓' : 'weiter →';
+  }
+  $('#derivPrev').addEventListener('click',()=>{if(i>0){i--;render();}});
+  $('#derivNext').addEventListener('click',()=>{if(i<steps.length-1){i++;render();}});
+  render();
+})();
+
+/* =================================================================
+   PPV-HEATMAP
+   ================================================================= */
+(function(){
+  let showMarks=false;
+  const marks=[
+    {x:1, y:0.80, n:'Großer RCT'},
+    {x:2, y:0.95, n:'Meta-Analyse'},
+    {x:1/5, y:0.20, n:'Phase I/II'},
+    {x:1/10,y:0.80, n:'Epi (gut gepowert)'},
+    {x:1/10,y:0.20, n:'Epi (unterpowert)'},
+    {x:1/1000,y:0.20,n:'Massen-Screening'}
+  ];
+  function upd(){
+    const a=+$('#hmA').value;
+    $('#hmAv').textContent=fmtN(a,3);
+    const xs=[],ys=[],z=[];
+    for(let e=-4;e<=1.001;e+=0.05) xs.push(Math.pow(10,e));
+    for(let p=0.05;p<=0.99;p+=0.02) ys.push(p);
+    ys.forEach(p=>{
+      const row=[];
+      xs.forEach(R=>row.push(PPV_basic(R,p,a)));
+      z.push(row);
+    });
+    const traces=[{
+      x:xs,y:ys,z:z,type:'heatmap',
+      colorscale:[[0,'#2a0a16'],[0.2,'#ff5c7a'],[0.45,'#ff8a3d'],[0.5,'#ffc658'],[0.7,'#6ea8ff'],[1,'#2ee6a8']],
+      zmin:0,zmax:1,
+      colorbar:{title:{text:'PPV',side:'right'},thickness:12,len:0.9,outlinewidth:0},
+      hovertemplate:'R = %{x:.4f}<br>Power = %{y:.2f}<br><b>PPV = %{z:.3f}</b><extra></extra>'
+    },{
+      x:xs, y:xs.map(R=>clamp(a/R,0,1.2)), type:'scatter',mode:'lines',
+      line:{color:'#fff',width:2.2,dash:'dash'}, name:'PPV = 50 %', hoverinfo:'skip'
+    }];
+    if(showMarks){
+      traces.push({x:marks.map(m=>m.x),y:marks.map(m=>m.y),type:'scatter',mode:'markers+text',
+        text:marks.map(m=>m.n),textposition:'top center',
+        textfont:{size:9.5,color:'#fff'},
+        marker:{size:9,color:'#fff',line:{color:'#0a0e1a',width:1.5}},
+        name:'Felder',hovertemplate:'%{text}<extra></extra>'});
+    }
+    Plotly.react('hmPlot',traces,L({
+      xaxis:{title:'Vorab-Chance R (log)',type:'log',dtick:1},
+      yaxis:{title:'Power 1−β',range:[0.05,0.99]},
+      showlegend:false
+    }),PCONF);
+  }
+  $('#hmA').addEventListener('input',upd);
+  $('#hmMark').addEventListener('click',e=>{
+    showMarks=!showMarks; e.target.classList.toggle('on',showMarks); upd();
+  });
+  upd();
+})();
+
+/* =================================================================
+   BIAS : GARDEN OF FORKING PATHS
+   ================================================================= */
+(function(){
+  const c=$('#forkCanvas');
+  let anim=0, chosen=[];
+  function upd(){
+    const k=+$('#forkK').value;
+    $('#forkKv').textContent=k;
+    const paths=Math.pow(2,k);
+    $('#forkPaths').textContent=paths;
+    const rate=1-Math.pow(0.95,paths);
+    $('#forkRate').textContent=fmtP(rate);
+    chosen=[];for(let i=0;i<k;i++)chosen.push(Math.random()<0.5?0:1);
+    draw();
+  }
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const k=+$('#forkK').value;
+    const padL=24,padR=24,padT=20,padB=20;
+    const iw=w-padL-padR, ih=h-padT-padB;
+    const levels=k+1;
+    // Knoten rekursiv
+    function node(level,idx,count){
+      const x=padL+(levels>1? level/(levels-1)*iw : iw/2);
+      const y=padT+(count>1? (idx+0.5)/count*ih : ih/2);
+      return [x,y];
+    }
+    // Kanten
+    for(let lv=0;lv<k;lv++){
+      const cnt=Math.pow(2,lv), cnt2=Math.pow(2,lv+1);
+      for(let i=0;i<cnt;i++){
+        const [x0,y0]=node(lv,i,cnt);
+        for(let b=0;b<2;b++){
+          const j=i*2+b;
+          const [x1,y1]=node(lv+1,j,cnt2);
+          // ist dieser Pfad der "gewählte"?
+          let onPath=true, idx=0;
+          for(let m=0;m<=lv;m++){ const bit = m===lv? b : ((i>>(lv-1-m))&1);
+            if(bit!==chosen[m]){onPath=false;break;} }
+          ctx.beginPath();
+          ctx.moveTo(x0,y0);
+          ctx.bezierCurveTo((x0+x1)/2,y0,(x0+x1)/2,y1,x1,y1);
+          ctx.strokeStyle = onPath? 'rgba(46,230,168,.9)':'rgba(110,168,255,.16)';
+          ctx.lineWidth = onPath? 2.4 : 1;
+          if(onPath){ctx.shadowBlur=8;ctx.shadowColor='rgba(46,230,168,.6)';}
+          ctx.stroke(); ctx.shadowBlur=0;
+        }
+      }
+    }
+    // Knoten
+    for(let lv=0;lv<=k;lv++){
+      const cnt=Math.pow(2,lv);
+      for(let i=0;i<cnt;i++){
+        const [x,y]=node(lv,i,cnt);
+        let onPath=true;
+        for(let m=0;m<lv;m++){ if(((i>>(lv-1-m))&1)!==chosen[m]){onPath=false;break;} }
+        ctx.beginPath();ctx.arc(x,y,onPath?4.5:2.6,0,7);
+        ctx.fillStyle=onPath?'#2ee6a8':'rgba(110,168,255,.45)';
+        ctx.fill();
+      }
+    }
+    ctx.fillStyle='#66728f';ctx.font='10px Inter';
+    ctx.fillText('Rohdaten',padL-14,padT-6);
+    ctx.textAlign='right';ctx.fillText('Ergebnisse',w-padR+10,padT-6);ctx.textAlign='left';
+  }
+  $('#forkK').addEventListener('input',upd);
+  $('#forkRun').addEventListener('click',upd);
+  upd();
+})();
+
+/* =================================================================
+   BIAS : FIGURE 1
+   ================================================================= */
+(function(){
+  tex($('#fBias'),'PPV=\\frac{(1-\\beta)R+u\\beta R}{R+\\alpha-\\beta R+u-u\\alpha+u\\beta R}');
+  function upd(){
+    const u=+$('#bsU').value, pow=+$('#bsP').value, R=Math.pow(10,+$('#bsR').value);
+    $('#bsUv').textContent=fmtN(u,2);
+    $('#bsPv').textContent=fmtN(pow,2);
+    $('#bsRv').textContent = R>=1? fmtN(R,2)+' : 1' : '1 : '+Math.round(1/R).toLocaleString('de');
+    const p=PPV_bias(R,pow,0.05,u);
+    const p0=PPV_bias(R,pow,0.05,0);
+    $('#bsPPV').textContent=fmtP2(p);
+    $('#bsPPV').style.color=p<0.5?'var(--false)':'var(--true)';
+    $('#bsDrop').innerHTML = u>0
+      ? `ohne Bias wären es ${fmtP2(p0)} — Bias frisst <strong>${fmtP2(p0-p)}</strong> weg`
+      : 'kein Bias — das ist der Idealfall';
+    plot(pow,u,R);
+  }
+  function plot(pow,uSel,Rsel){
+    const us=[0,0.05,0.2,0.4,0.6,0.8];
+    const cols=['#2ee6a8','#6ea8ff','#b89bff','#ffc658','#ff8a3d','#ff5c7a'];
+    const xs=[];for(let e=-3;e<=1.001;e+=0.03)xs.push(Math.pow(10,e));
+    const traces=us.map((u,i)=>({
+      x:xs,y:xs.map(R=>PPV_bias(R,pow,0.05,u)),type:'scatter',mode:'lines',
+      name:'u = '+fmtN(u,2),line:{color:cols[i],width:2.2}
+    }));
+    traces.push({x:[Rsel],y:[PPV_bias(Rsel,pow,0.05,uSel)],type:'scatter',mode:'markers',
+      marker:{size:13,color:'#fff',line:{color:'#0a0e1a',width:2}},name:'du',
+      hovertemplate:'R=%{x:.4f}<br>PPV=%{y:.3f}<extra></extra>'});
+    Plotly.react('biasPlot',traces,L({
+      title:{text:'Power = '+fmtN(pow,2),font:{size:12.5,color:'#9aa6c4'},x:0.03,y:0.97},
+      xaxis:{title:'Vorab-Chance R (log)',type:'log',dtick:1},
+      yaxis:{title:'PPV',range:[0,1]},
+      shapes:[{type:'line',x0:0.001,x1:10,y0:0.5,y1:0.5,line:{color:'rgba(255,255,255,.25)',dash:'dot',width:1}}],
+      legend:{x:0.02,y:0.98}
+    }),PCONF);
+  }
+  ['bsU','bsP','bsR'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  upd();
+})();
+
+/* =================================================================
+   TEAMS : FIGURE 2
+   ================================================================= */
+(function(){
+  tex($('#fTeams'),'PPV=\\frac{R\\,(1-\\beta^{\\,n})}{R+1-(1-\\alpha)^{n}-R\\beta^{\\,n}}');
+  const c=$('#teamCanvas');
+  let labs=[];
+  function upd(){
+    const n=+$('#tmN').value, pow=+$('#tmP').value, R=Math.pow(10,+$('#tmR').value);
+    $('#tmNv').textContent=n;
+    $('#tmPv').textContent=fmtN(pow,2);
+    $('#tmRv').textContent = R>=1? fmtN(R,2)+' : 1' : '1 : '+Math.round(1/R).toLocaleString('de');
+    const aE=1-Math.pow(0.95,n), pE=1-Math.pow(1-pow,n);
+    $('#tmAlphaEff').textContent=fmtP(aE);
+    $('#tmPowEff').textContent=fmtP(pE);
+    const p=PPV_teams(R,pow,0.05,n);
+    const p1=PPV_teams(R,pow,0.05,1);
+    $('#tmPPV').textContent=fmtP2(p);
+    $('#tmPPV').style.color=p<0.5?'var(--false)':'var(--true)';
+    $('#tmMsg').innerHTML = n===1
+      ? 'Ein einzelnes Team — die Basislinie.'
+      : `Mit ${n} Teams ist die Fehlalarmrate von 5 % auf <strong style="color:var(--false)">${fmtP(aE)}</strong> gestiegen.
+         PPV fällt von ${fmtP2(p1)} auf <strong>${fmtP2(p)}</strong>.`;
+    // Labore würfeln
+    labs=[];
+    for(let i=0;i<n;i++) labs.push({sig:Math.random()<0.05, ph:Math.random()*6.28});
+    draw();
+    plot(pow,n,R);
+  }
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const n=labs.length;
+    const cols=Math.ceil(Math.sqrt(n*w/h));
+    const rows=Math.ceil(n/cols);
+    const padX=20,padY=20;
+    const cw=(w-2*padX)/cols, ch=(h-2*padY-26)/rows;
+    const anySig=labs.some(l=>l.sig);
+    labs.forEach((l,i)=>{
+      const x=padX+(i%cols)*cw+cw/2, y=padY+Math.floor(i/cols)*ch+ch/2;
+      const r=Math.min(cw,ch)*0.3;
+      ctx.beginPath();ctx.arc(x,y,r,0,7);
+      if(l.sig){
+        ctx.fillStyle='rgba(255,92,122,.9)';ctx.shadowBlur=14;ctx.shadowColor='rgba(255,92,122,.8)';
+      }else{ ctx.fillStyle='rgba(110,168,255,.22)';ctx.shadowBlur=0; }
+      ctx.fill();ctx.shadowBlur=0;
+      ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;ctx.stroke();
+      if(r>9){
+        ctx.fillStyle=l.sig?'#2b0710':'rgba(200,214,245,.6)';
+        ctx.font='bold '+Math.min(11,r*0.75)+'px JetBrains Mono';
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('L'+(i+1),x,y);ctx.textAlign='left';ctx.textBaseline='alphabetic';
+      }
+    });
+    ctx.fillStyle=anySig?'#ff5c7a':'#66728f';
+    ctx.font='12px Inter';ctx.textAlign='center';
+    ctx.fillText(anySig? '→ „Entdeckung!“ wird publiziert (obwohl H₀ wahr ist)'
+                       : '→ niemand findet etwas, nichts wird publiziert', w/2, h-8);
+    ctx.textAlign='left';
+  }
+  function plot(pow,nSel,Rsel){
+    const ns=[1,2,5,10,20,50];
+    const cols=['#2ee6a8','#6ea8ff','#b89bff','#ffc658','#ff8a3d','#ff5c7a'];
+    const xs=[];for(let e=-4;e<=1.001;e+=0.04)xs.push(Math.pow(10,e));
+    const traces=ns.map((n,i)=>({
+      x:xs,y:xs.map(R=>PPV_teams(R,pow,0.05,n)),type:'scatter',mode:'lines',
+      name:'n = '+n,line:{color:cols[i],width:2.2}
+    }));
+    traces.push({x:[Rsel],y:[PPV_teams(Rsel,pow,0.05,nSel)],type:'scatter',mode:'markers',
+      marker:{size:13,color:'#fff',line:{color:'#0a0e1a',width:2}},name:'du'});
+    Plotly.react('teamPlot',traces,L({
+      title:{text:'Power je Team = '+fmtN(pow,2),font:{size:12.5,color:'#9aa6c4'},x:0.03,y:0.97},
+      xaxis:{title:'Vorab-Chance R (log)',type:'log',dtick:1},
+      yaxis:{title:'PPV',range:[0,1]},
+      shapes:[{type:'line',x0:0.0001,x1:10,y0:0.5,y1:0.5,line:{color:'rgba(255,255,255,.25)',dash:'dot',width:1}}],
+      legend:{x:0.02,y:0.98}
+    }),PCONF);
+  }
+  ['tmN','tmP','tmR'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  upd();
+})();
+
+/* =================================================================
+   KOROLLARE
+   ================================================================= */
+(function(){
+  const cors=[
+    {n:1,t:'Je kleiner die Studien in einem Feld, desto unwahrscheinlicher sind die Ergebnisse wahr.',
+     body:`<p>Kleine Stichprobe → kleine Power → PPV sinkt, bis er bei 1−β ≈ α völlig kollabiert.
+     Vergleich im Paper: kardiologische RCTs mit mehreren tausend Randomisierten vs. Studien zu molekularen
+     Prädiktoren mit 100-fach kleineren Stichproben.</p>`,
+     demo:'n'},
+    {n:2,t:'Je kleiner die Effektstärken, desto unwahrscheinlicher sind die Ergebnisse wahr.',
+     body:`<p>Power hängt an der Effektstärke. Rauchen → Krebs hat relative Risiken von 3–20.
+     Genetische Risikofaktoren multigenetischer Krankheiten: 1,1–1,5. Die moderne Epidemiologie ist
+     zunehmend gezwungen, immer kleinere Effekte zu jagen — und wird dadurch unzuverlässiger.</p>
+     <p class="mini">Ioannidis’ Zuspitzung: Wenn die meisten wahren genetischen oder Ernährungs-Determinanten
+     relative Risiken unter 1,05 liegen, wären genetische und Ernährungsepidemiologie „weitgehend utopische Unternehmungen“.</p>`,
+     demo:'d'},
+    {n:3,t:'Je mehr und je unselektierter die getesteten Beziehungen, desto unwahrscheinlicher sind die Ergebnisse wahr.',
+     body:`<p>Der PPV hängt stark an der Vorab-Chance R. Konfirmatorische Designs (große Phase-III-RCTs,
+     Meta-Analysen daraus) haben hohe R-Werte. Hypothesen-generierende Experimente nicht.</p>
+     <p class="mini">Ioannidis’ Pointe: Felder, die als besonders informativ und kreativ <em>gelten</em>, weil sie so
+     riesige Informationsmengen testen — Microarrays und andere Hochdurchsatz-Forschung — haben
+     gerade deshalb einen <strong>extrem niedrigen</strong> PPV.</p>`,
+     demo:'R'},
+    {n:4,t:'Je größer die Flexibilität bei Design, Definitionen, Endpunkten und Analysemethoden, desto unwahrscheinlicher sind die Ergebnisse wahr.',
+     body:`<p>Flexibilität erhöht die Chance, aus einem „negativen“ ein „positives“ Ergebnis zu machen — also genau den Bias <code>u</code>.</p>
+     <p class="mini">Gegenmittel laut Paper: gemeinsame Standards (CONSORT, QUOROM/MOOSE), eindeutige
+     Endpunkte (Tod statt selbstgebastelter Schizophrenie-Skalen) und etablierte Analysemethoden
+     (Kaplan-Meier + Log-Rank statt „KI-Verfahren, von denen nur das beste Ergebnis berichtet wird“).
+     Aber: Selbst in den strengsten Designs ist selektives Endpunkt-Reporting nachweislich häufig —
+     Publikationsbias abzuschaffen allein würde das Problem nicht lösen.</p>`,
+     demo:'u'},
+    {n:5,t:'Je größer die finanziellen und sonstigen Interessen und Vorurteile, desto unwahrscheinlicher sind die Ergebnisse wahr.',
+     body:`<p>Interessenkonflikte erhöhen <code>u</code>. Sie sind in der Biomedizin sehr häufig und werden
+     typischerweise unzureichend berichtet.</p>
+     <p class="mini">Wichtig: Vorurteile müssen keine finanziellen Wurzeln haben. Glaube an die eigene Theorie,
+     Bindung an eigene frühere Befunde, Studien, die nur für Habilitation oder Tenure laufen —
+     all das verzerrt ebenso. Und: Prominente Forscher können über den Peer-Review-Prozess
+     widersprechende Befunde unterdrücken und so ein Feld auf ein falsches Dogma festnageln.
+     Empirisch ist Expertenmeinung „äußerst unzuverlässig“.</p>`,
+     demo:'u'},
+    {n:6,t:'Je „heißer“ ein Feld (je mehr Teams beteiligt), desto unwahrscheinlicher sind die Ergebnisse wahr.',
+     body:`<p>Scheinbar paradox, folgt aber direkt aus Tabelle 3: Der PPV isolierter Funde sinkt, wenn viele
+     Teams dasselbe untersuchen.</p>
+     <p class="mini">Das erklärt, warum man in Feldern mit viel Aufmerksamkeit große Begeisterung sieht, der schnell
+     schwere Enttäuschung folgt. Zeitdruck im Wettlauf führt dazu, dass jedes Team seine eindrucksvollsten
+     „positiven“ Resultate priorisiert. „Negative“ Ergebnisse werden erst dann attraktiv, wenn ein anderes
+     Team etwas Positives behauptet hat — dann lohnt sich die Widerlegung in einem prestigeträchtigen
+     Journal. Name dafür: <strong>Proteus-Phänomen</strong>, empirisch sehr häufig in der Molekulargenetik.</p>`,
+     demo:'n'}
+  ];
+
+  const wrap=$('#corWrap');
+  cors.forEach((cr,k)=>{
+    const d=document.createElement('div');
+    d.className='corollary';
+    d.innerHTML=`
+      <div class="cor-head">
+        <div class="cor-num">${cr.n}</div>
+        <div class="cor-title">${cr.t}</div>
+        <div class="cor-arrow">▶</div>
+      </div>
+      <div class="cor-body"><div class="cor-inner">
+        ${cr.body}
+        <div class="grid2" style="margin-top:14px">
+          <div>
+            <div class="ctrl" style="margin-top:6px">
+              <div class="ctrl-head"><span class="ctrl-label" id="cl${k}"></span><span class="ctrl-val" id="cv${k}"></span></div>
+              <input type="range" id="cs${k}" min="0" max="100" step="1" value="50">
+              <div class="ctrl-note" id="cn${k}"></div>
+            </div>
+            <div class="bigppv" style="padding:14px">
+              <div class="lbl">PPV</div>
+              <div class="num" id="cp${k}" style="font-size:34px">—</div>
+            </div>
+          </div>
+          <div class="canvas-wrap"><canvas id="cc${k}" height="180"></canvas></div>
+        </div>
+      </div></div>`;
+    wrap.appendChild(d);
+    d.querySelector('.cor-head').addEventListener('click',()=>{
+      d.classList.toggle('open');
+      if(d.classList.contains('open')) setTimeout(()=>updCor(k),60);
+    });
+    $('#cs'+k).addEventListener('input',()=>updCor(k));
+  });
+
+  // Konfiguration je Demo-Typ
+  const cfg={
+    n:{lbl:'Stichprobengröße n',note:'Power wächst mit n — PPV folgt',
+       map:v=>Math.round(10*Math.pow(10,v/100*2.4)),
+       disp:v=>Math.round(10*Math.pow(10,v/100*2.4)).toLocaleString('de'),
+       calc:(v)=>{const n=10*Math.pow(10,v/100*2.4);
+         const pow=clamp(1-cdf(1.96, 0.3*Math.sqrt(n/2),1),0.025,0.999);
+         return {pow,R:1/10,u:0.2,n:1};}},
+    d:{lbl:'Effektstärke (relatives Risiko)',note:'RR 1,05 = utopisch · RR 3+ = Rauchen & Krebs',
+       disp:v=>fmtN(1.02+v/100*3,2),
+       calc:(v)=>{const rr=1.02+v/100*3; const d=Math.log(rr)*1.4;
+         const pow=clamp(1-cdf(1.96, d*Math.sqrt(400/2),1),0.025,0.999);
+         return {pow,R:1/10,u:0.2,n:1};}},
+    R:{lbl:'Zahl getesteter Hypothesen',note:'1 wahre Beziehung unter … Kandidaten',
+       disp:v=>Math.round(Math.pow(10,v/100*4)).toLocaleString('de'),
+       calc:(v)=>{const c=Math.pow(10,v/100*4);
+         return {pow:0.6,R:1/Math.max(1,c),u:0.1,n:1};}},
+    u:{lbl:'Bias u (Flexibilität / Interessen)',note:'0 = Protokoll streng befolgt · 0,8 = alles gebogen',
+       disp:v=>fmtN(v/100*0.8,2),
+       calc:(v)=>({pow:0.5,R:1/5,u:v/100*0.8,n:1})},
+  };
+  cfg.n2=cfg.n;
+
+  function updCor(k){
+    const cr=cors[k];
+    let conf;
+    if(cr.demo==='n'&&cr.n===6){
+      conf={lbl:'Anzahl konkurrierender Teams',note:'Nur der erste Treffer wird zur „Entdeckung“',
+        disp:v=>Math.max(1,Math.round(v/100*29+1)),
+        calc:v=>({pow:0.5,R:1/5,u:0,n:Math.max(1,Math.round(v/100*29+1))})};
+    } else conf=cfg[cr.demo];
+    const v=+$('#cs'+k).value;
+    const p=conf.calc(v);
+    $('#cl'+k).textContent=conf.lbl;
+    $('#cn'+k).textContent=conf.note;
+    $('#cv'+k).textContent=conf.disp(v);
+    const ppv=PPV_all(p.R,p.pow,0.05,p.u,p.n);
+    $('#cp'+k).textContent=fmtP2(ppv);
+    $('#cp'+k).style.color=ppv<0.5?'var(--false)':'var(--true)';
+    // kleines Balkendiagramm
+    const c=$('#cc'+k); const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const N=200, nTrue=Math.round(N*ppv);
+    const cols=20,rows=10,pad=10;
+    const cw=(w-2*pad)/cols, ch=(h-2*pad)/rows;
+    for(let i=0;i<N;i++){
+      const x=pad+(i%cols)*cw, y=pad+Math.floor(i/cols)*ch;
+      ctx.fillStyle = i<nTrue? 'rgba(46,230,168,.9)':'rgba(255,92,122,.85)';
+      ctx.beginPath();
+      ctx.arc(x+cw/2,y+ch/2,Math.min(cw,ch)*0.3,0,7);ctx.fill();
+    }
+    ctx.fillStyle='#66728f';ctx.font='10px Inter';
+    ctx.fillText('200 publizierte Funde · grün = wahr',pad,h-2);
+  }
+})();
+
+/* =================================================================
+   TABELLE 4
+   ================================================================= */
+const T4 = [
+  {pow:0.80,Rs:'1:1',R:1,u:0.10,ppv:0.85,n:'Gut gepowerter RCT, wenig Bias, 1:1 Vorab-Chance',
+   d:'Der Goldstandard. Mehrere tausend Randomisierte, vorab festgelegter Endpunkt, und man testet nur plausible Interventionen. Ein Fund stimmt in etwa 85 % der Fälle.'},
+  {pow:0.95,Rs:'2:1',R:2,u:0.30,ppv:0.85,n:'Konfirmatorische Meta-Analyse guter RCTs',
+   d:'Ähnlich gut: Der potenzielle Bias steigt zwar, aber Power und Vorab-Chancen sind höher als bei einer Einzelstudie.'},
+  {pow:0.80,Rs:'1:3',R:1/3,u:0.40,ppv:0.41,n:'Meta-Analyse kleiner, nicht-konklusiver Studien',
+   d:'Hier wird Poolen benutzt, um die niedrige Power von Einzelstudien zu „reparieren“. Das Ergebnis ist vermutlich falsch, sobald R ≤ 1:3.'},
+  {pow:0.20,Rs:'1:5',R:1/5,u:0.20,ppv:0.23,n:'Unterpowerter, aber gut durchgeführter Phase-I/II-RCT',
+   d:'Etwa jedes vierte Ergebnis stimmt — und das ist schon der gut durchgeführte Fall.'},
+  {pow:0.20,Rs:'1:5',R:1/5,u:0.80,ppv:0.17,n:'Unterpowerter, schlecht durchgeführter Phase-I/II-RCT',
+   d:'Derselbe Aufbau, aber mit massivem Bias. Der PPV fällt weiter.'},
+  {pow:0.80,Rs:'1:10',R:1/10,u:0.30,ppv:0.20,n:'Gut gepowerte explorative epidemiologische Studie',
+   d:'Selbst mit guter Power: Wenn nur eine von elf getesteten Beziehungen wahr ist, stimmt nur jeder fünfte Fund.'},
+  {pow:0.20,Rs:'1:10',R:1/10,u:0.30,ppv:0.12,n:'Unterpowerte explorative epidemiologische Studie',
+   d:'Die vermutlich häufigste Situation in der beobachtenden Epidemiologie.'},
+  {pow:0.20,Rs:'1:1000',R:1/1000,u:0.80,ppv:0.0010,n:'Entdeckungsorientierte Forschung mit Massentestung',
+   d:'30 000 Gene getestet, vielleicht 30 davon echte Übeltäter. Ein Promille der Behauptungen stimmt.'},
+  {pow:0.20,Rs:'1:1000',R:1/1000,u:0.20,ppv:0.0015,n:'Wie oben, aber mit begrenzterem Bias (standardisierter)',
+   d:'Selbst mit erheblicher Standardisierung von Labor- und Statistikmethoden bleibt der PPV extrem niedrig.'}
+];
+
+(function(){
+  const tb=$('#t4body');
+  let sel=0;
+  T4.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="lbl" style="text-align:left;font-size:12px">${r.n}</td>
+      <td>${fmtN(r.pow,2)}</td><td>${r.Rs}</td><td>${fmtN(r.u,2)}</td>
+      <td style="color:${r.ppv<0.5?'#ffa7b8':'#7fffd4'};font-weight:700">${r.ppv<0.01? r.ppv.toFixed(4).replace('.',','):fmtN(r.ppv,2)}</td>
+      <td>${r.ppv>=0.5?'<span style="color:var(--true)">✓ ja</span>':'<span style="color:var(--false)">✗ nein</span>'}</td>`;
+    tr.style.cursor='pointer';
+    tr.addEventListener('click',()=>{sel=i;show();});
+    tb.appendChild(tr);
+  });
+  function show(){
+    $$('#t4body tr').forEach((t,i)=>t.classList.toggle('hl',i===sel));
+    const r=T4[sel];
+    $('#t4Title').textContent=r.n;
+    $('#t4Desc').textContent=r.d;
+    $('#t4PPV').textContent= r.ppv<0.01? fmtP2(r.ppv) : fmtP(r.ppv);
+    $('#t4PPV').style.color=r.ppv<0.5?'var(--false)':'var(--true)';
+    const c=$('#t4Canvas');const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const cols=20,rows=5,pad=10;
+    const cw=(w-2*pad)/cols, ch=(h-2*pad)/rows;
+    const nTrue=Math.round(100*r.ppv);
+    for(let i=0;i<100;i++){
+      const x=pad+(i%cols)*cw+cw/2, y=pad+Math.floor(i/cols)*ch+ch/2;
+      const isT=i<nTrue;
+      ctx.beginPath();ctx.arc(x,y,Math.min(cw,ch)*0.32,0,7);
+      ctx.fillStyle=isT?'rgba(46,230,168,.95)':'rgba(255,92,122,.85)';
+      if(isT){ctx.shadowBlur=8;ctx.shadowColor='rgba(46,230,168,.7)';}
+      ctx.fill();ctx.shadowBlur=0;
+    }
+  }
+  show();
+  // Balkenvergleich
+  Plotly.newPlot('t4Plot',[{
+    x:T4.map((r,i)=>'#'+(i+1)),
+    y:T4.map(r=>r.ppv),
+    type:'bar',
+    marker:{color:T4.map(r=>r.ppv>=0.5?'#2ee6a8':r.ppv>=0.2?'#ffc658':'#ff5c7a'),
+            line:{color:'rgba(255,255,255,.15)',width:1}},
+    text:T4.map(r=>r.ppv<0.01? r.ppv.toFixed(4).replace('.',','):fmtN(r.ppv,2)),
+    textposition:'outside', textfont:{size:10.5,color:'#cfdcff'},
+    hovertext:T4.map(r=>r.n), hovertemplate:'%{hovertext}<br>PPV = %{y:.4f}<extra></extra>'
+  }],L({
+    yaxis:{title:'PPV',range:[0,1],type:'linear'},
+    xaxis:{title:'Situation aus Tabelle 4'},
+    shapes:[{type:'line',x0:-0.5,x1:8.5,y0:0.5,y1:0.5,line:{color:'rgba(255,255,255,.35)',dash:'dash',width:1.4}}],
+    annotations:[{x:8.3,y:0.54,text:'eher wahr als falsch',showarrow:false,font:{size:10,color:'#9aa6c4'},xanchor:'right'}]
+  }),PCONF);
+})();
+
+/* =================================================================
+   BOX 1 : SCHIZOPHRENIE-GWAS
+   ================================================================= */
+(function(){
+  const R=1e-4, pow=0.6, a=0.05;
+  const p0=R/(R+1);
+  const p1=PPV_basic(R,pow,a);                 // ≈12e-4
+  const p2=PPV_bias(R,pow,a,0.10);             // ≈4.4e-4
+  const p3=PPV_teams(R,pow,a,10);              // ≈1.5e-4
+  const steps=[
+    {l:'Vorher-Wahrscheinlichkeit',
+     v:p0, sub:'R/(R+1) = 10⁻⁴',
+     cap:'100 000 Polymorphismen werden getestet. Rot = fast alle sind irrelevant, grün = die ~10 echten.',
+     t:`<h3 style="margin-top:4px">Schritt 1 — Der Aufbau</h3>
+        <p>Ein Team führt eine genomweite Assoziationsstudie durch und testet, ob einer von
+        <strong>100 000</strong> Genpolymorphismen mit der Anfälligkeit für Schizophrenie zusammenhängt.</p>
+        <p>Aus dem, was man über die Erblichkeit weiß, ist zu erwarten, dass etwa <strong>zehn</strong> davon
+        tatsächlich assoziiert sind — mit Odds Ratios um 1,3.</p>
+        <p class="mini">Also: R = 10 / 100 000 = 10⁻⁴. Die Vorab-Wahrscheinlichkeit, dass ein beliebiger
+        Polymorphismus wirklich assoziiert ist, beträgt ebenfalls R/(R+1) = 10⁻⁴ — also 1 zu 10 000.</p>`,
+     mode:'grid'},
+    {l:'Nachher-Wahrscheinlichkeit',
+     v:p1, sub:'12 × 10⁻⁴ — ein 12-facher Anstieg',
+     cap:'Die Studie hat 60 % Power bei α = 0,05. Von den wahren Treffern werden 60 % gefunden — aber 5 % von 100 000 Nicht-Treffern feuern ebenfalls.',
+     t:`<h3 style="margin-top:4px">Schritt 2 — Ein signifikanter Fund</h3>
+        <p>Die Studie hat <strong>60 % Power</strong>, eine Assoziation mit OR 1,3 bei α = 0,05 zu finden.
+        Jetzt wird ein Zusammenhang gefunden, dessen p-Wert knapp die 0,05-Schwelle unterschreitet.</p>
+        <p>Die Nachher-Wahrscheinlichkeit steigt um etwa das <strong>Zwölffache</strong> gegenüber vorher.</p>
+        <p class="mini">Klingt nach viel. Aber zwölfmal fast nichts ist immer noch fast nichts:
+        12 × 10⁻⁴ = 0,12 %. Der Grund: 5 % von 99 990 falschen Hypothesen sind rund
+        <strong>5 000 Fehlalarme</strong>, denen nur <strong>6</strong> echte Treffer gegenüberstehen.</p>`,
+     mode:'counts'},
+    {l:'Nachher-Wahrscheinlichkeit',
+     v:p2, sub:'4,4 × 10⁻⁴ — mit Bias u = 0,10',
+     cap:'Bias u = 0,10: 10 % der Analysen, die eigentlich kein Ergebnis waren, werden trotzdem als Ergebnis berichtet.',
+     t:`<h3 style="margin-top:4px">Schritt 3 — Jetzt kommt der Bias</h3>
+        <p>Nehmen wir an, die Forscher manipulieren Design, Analysen und Berichterstattung so,
+        dass mehr Beziehungen die 0,05-Schwelle überschreiten, als es bei perfekt eingehaltenem
+        Studienplan der Fall gewesen wäre.</p>
+        <p class="mini">Konkrete Wege laut Paper: zufälliges Ein- oder Ausschließen bestimmter Patienten
+        oder Kontrollen, nachträgliche Subgruppenanalysen, Untersuchung genetischer Kontraste, die
+        ursprünglich gar nicht vorgesehen waren, Änderungen der Krankheits- oder Kontrolldefinition,
+        und diverse Kombinationen selektiver oder verzerrter Ergebnisdarstellung.</p>
+        <p class="mini">Ioannidis' bissige Anmerkung: Kommerzielle „Data-Mining“-Pakete sind sogar
+        <em>stolz</em> auf ihre Fähigkeit, durch Datenbaggerei signifikante Ergebnisse zu liefern.</p>
+        <p>Bei <strong>u = 0,10</strong> fällt die Wahrscheinlichkeit, dass der Fund wahr ist, auf <strong>4,4 × 10⁻⁴</strong>.</p>`,
+     mode:'bias'},
+    {l:'Nachher-Wahrscheinlichkeit',
+     v:p3, sub:'1,5 × 10⁻⁴ — mit 10 Teams, ganz ohne Bias',
+     cap:'Zehn Teams weltweit. Es genügt, dass eines davon einen formal signifikanten Zusammenhang findet.',
+     t:`<h3 style="margin-top:4px">Schritt 4 — Zehn Teams weltweit</h3>
+        <p>Und jetzt der Hammer: <strong>Auch ohne jeden Bias</strong> — wenn zehn unabhängige Teams weltweit ähnliche Experimente
+        durchführen und <em>eines</em> davon eine formal signifikante Assoziation findet, dann beträgt
+        die Wahrscheinlichkeit, dass dieser Fund wahr ist, nur noch <strong>1,5 × 10⁻⁴</strong>.</p>
+        <p class="mini">Der Grund: Mit zehn Teams steigt die Chance, dass <em>irgendeines</em> bei einer
+        nicht existierenden Assoziation einen Fehlalarm produziert, von 5 % auf
+        1 − 0,95¹⁰ = <strong>40 %</strong>. Die Chance, die echte Assoziation zu entdecken, steigt dagegen
+        nur von 60 % auf 1 − 0,4¹⁰ ≈ 99,99 % — sie war ja schon vorher hoch und kann nicht über 100 % wachsen.</p>
+        <p style="color:#e4ebfc;font-size:15.5px">Ioannidis’ Schlusssatz: „kaum höher als die Wahrscheinlichkeit,
+        die wir hatten, <em>bevor</em> diese ganze aufwendige Forschung überhaupt unternommen wurde.“</p>`,
+     mode:'teams'}
+  ];
+
+  let i=0;
+  const nav=$('#boxNav');
+  steps.forEach((s,k)=>{
+    const d=document.createElement('div');
+    d.className='step-dot';d.textContent=k+1;
+    d.addEventListener('click',()=>{i=k;render();});
+    nav.appendChild(d);
+  });
+
+  const c=$('#boxCanvas');
+  function drawGrid(mode){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const COLS=100,ROWS=70,N=COLS*ROWS; // 7000 Punkte repräsentieren 100 000
+    const pad=8;
+    const cw=(w-2*pad)/COLS, ch=(h-2*pad)/ROWS;
+
+    if(mode==='grid'){
+      // fast alles grau, ~0.7 Punkte wahr → wir markieren 1 Punkt deutlich
+      for(let k=0;k<N;k++){
+        const x=pad+(k%COLS)*cw, y=pad+Math.floor(k/COLS)*ch;
+        ctx.fillStyle='rgba(42,52,84,.8)';
+        ctx.fillRect(x,y,Math.max(0.7,cw-0.5),Math.max(0.7,ch-0.5));
+      }
+      // 10 echte von 100 000 → bei 7000 gezeichneten ≈ 0.7; wir zeigen symbolisch 1
+      const idx=[1234];
+      idx.forEach(k=>{
+        const x=pad+(k%COLS)*cw, y=pad+Math.floor(k/COLS)*ch;
+        ctx.fillStyle='rgba(46,230,168,1)';
+        ctx.shadowBlur=14;ctx.shadowColor='rgba(46,230,168,.9)';
+        ctx.fillRect(x-1.5,y-1.5,cw+2.5,ch+2.5);ctx.shadowBlur=0;
+      });
+      ctx.fillStyle='#9aa6c4';ctx.font='11px Inter';
+      ctx.fillText('100 000 Polymorphismen · ~10 davon echt assoziiert (grün)',pad,h-3);
+    }
+    else if(mode==='counts'){
+      // Balken: 6 wahre Funde vs ~5000 Fehlalarme
+      const padL=50,padR=20,padT=24,padB=40;
+      const iw=w-padL-padR, ih=h-padT-padB;
+      const vals=[6, 4999.5];
+      const labs=['wahre Funde','Fehlalarme'];
+      const cols=['#2ee6a8','#ff5c7a'];
+      const mx=5200;
+      vals.forEach((v,j)=>{
+        const bw=iw/2*0.5;
+        const x=padL+ (j+0.5)*(iw/2) - bw/2;
+        const bh=ih*(v/mx);
+        ctx.fillStyle=cols[j];
+        ctx.shadowBlur=14;ctx.shadowColor=cols[j]+'99';
+        ctx.fillRect(x,padT+ih-bh,bw,bh);ctx.shadowBlur=0;
+        ctx.fillStyle='#e8ecf7';ctx.font='bold 13px JetBrains Mono';
+        ctx.textAlign='center';
+        ctx.fillText(Math.round(v).toLocaleString('de'),x+bw/2,padT+ih-bh-8);
+        ctx.fillStyle='#9aa6c4';ctx.font='11.5px Inter';
+        ctx.fillText(labs[j],x+bw/2,padT+ih+18);
+        ctx.textAlign='left';
+      });
+      ctx.strokeStyle='rgba(255,255,255,.16)';
+      ctx.beginPath();ctx.moveTo(padL,padT+ih);ctx.lineTo(w-padR,padT+ih);ctx.stroke();
+      ctx.fillStyle='#66728f';ctx.font='10.5px Inter';
+      ctx.fillText('0,6 % der signifikanten Funde sind echt → PPV = 12 × 10⁻⁴',padL,padT-8);
+    }
+    else if(mode==='bias'){
+      const padL=50,padR=20,padT=24,padB=40;
+      const iw=w-padL-padR, ih=h-padT-padB;
+      // ohne / mit Bias
+      const sets=[{t:'ohne Bias',tp:6,fp:5000},{t:'mit Bias u=0,10',tp:6.4,fp:14495}];
+      const mx=15000;
+      sets.forEach((s,j)=>{
+        const bw=iw/2*0.42;
+        const x=padL+(j+0.5)*(iw/2)-bw/2;
+        const hT=ih*(s.tp/mx), hF=ih*(s.fp/mx);
+        ctx.fillStyle='rgba(255,92,122,.85)';
+        ctx.fillRect(x,padT+ih-hF-hT,bw,hF);
+        ctx.fillStyle='#2ee6a8';
+        ctx.shadowBlur=10;ctx.shadowColor='rgba(46,230,168,.8)';
+        ctx.fillRect(x,padT+ih-hT,bw,Math.max(2,hT));ctx.shadowBlur=0;
+        ctx.fillStyle='#9aa6c4';ctx.font='11.5px Inter';ctx.textAlign='center';
+        ctx.fillText(s.t,x+bw/2,padT+ih+18);
+        ctx.fillStyle='#ff5c7a';ctx.font='bold 12px JetBrains Mono';
+        ctx.fillText(Math.round(s.fp).toLocaleString('de'),x+bw/2,padT+ih-hF-hT-8);
+        ctx.textAlign='left';
+      });
+      ctx.strokeStyle='rgba(255,255,255,.16)';
+      ctx.beginPath();ctx.moveTo(padL,padT+ih);ctx.lineTo(w-padR,padT+ih);ctx.stroke();
+      ctx.fillStyle='#ff8a3d';ctx.font='10.5px Inter';
+      ctx.fillText('Bias schafft zusätzliche „Funde“ aus eigentlich negativen Analysen',padL,padT-8);
+    }
+    else if(mode==='teams'){
+      const pad2=20;
+      const n=10;
+      const cols=5,rows=2;
+      const cw2=(w-2*pad2)/cols, ch2=(h-2*pad2-30)/rows;
+      for(let k=0;k<n;k++){
+        const x=pad2+(k%cols)*cw2+cw2/2, y=pad2+Math.floor(k/cols)*ch2+ch2/2;
+        const r=Math.min(cw2,ch2)*0.3;
+        const sig = (k===3);
+        ctx.beginPath();ctx.arc(x,y,r,0,7);
+        ctx.fillStyle=sig?'rgba(255,92,122,.92)':'rgba(110,168,255,.2)';
+        if(sig){ctx.shadowBlur=18;ctx.shadowColor='rgba(255,92,122,.85)';}
+        ctx.fill();ctx.shadowBlur=0;
+        ctx.strokeStyle='rgba(255,255,255,.14)';ctx.stroke();
+        ctx.fillStyle=sig?'#2b0710':'rgba(200,214,245,.55)';
+        ctx.font='bold 11px JetBrains Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('T'+(k+1),x,y);ctx.textAlign='left';ctx.textBaseline='alphabetic';
+      }
+      ctx.fillStyle='#ff5c7a';ctx.font='12px Inter';ctx.textAlign='center';
+      ctx.fillText('Team 4 meldet „signifikant!“ → die Entdeckung ist in der Welt',w/2,h-20);
+      ctx.fillStyle='#9aa6c4';ctx.font='11px Inter';
+      ctx.fillText('P(mindestens ein Fehlalarm) = 1 − 0,95¹⁰ = 40 %',w/2,h-5);
+      ctx.textAlign='left';
+    }
+  }
+
+  function render(){
+    $$('#boxNav .step-dot').forEach((d,k)=>{
+      d.classList.toggle('on',k===i);d.classList.toggle('done',k<i);
+    });
+    const s=steps[i];
+    $('#boxText').innerHTML=s.t;
+    $('#boxLbl').textContent=s.l;
+    $('#boxVal').textContent = s.v.toExponential(1).replace('e-4',' × 10⁻⁴').replace('.',',');
+    $('#boxVal').style.color = i===0? 'var(--txt-dim)' : i===1? 'var(--warn)':'var(--false)';
+    $('#boxSub').textContent=s.sub;
+    $('#boxCap').textContent=s.cap;
+    drawGrid(s.mode);
+    $('#boxPrev').disabled=i===0;
+    $('#boxNext').textContent=i===steps.length-1?'fertig ✓':'weiter →';
+    plotJourney(i);
+  }
+  function plotJourney(upto){
+    const labels=['vorher','signifikanter<br>Fund','+ Bias<br>u=0,10','+ 10 Teams'];
+    const vals=[p0,p1,p2,p3];
+    const cols=['#7f8db3','#ffc658','#ff8a3d','#ff5c7a'];
+    Plotly.react('boxPlot',[{
+      x:labels, y:vals, type:'scatter', mode:'lines+markers+text',
+      line:{color:'rgba(255,255,255,.25)',width:2},
+      marker:{size:vals.map((v,k)=>k<=upto?18:10),
+              color:vals.map((v,k)=>k<=upto?cols[k]:'rgba(110,168,255,.2)'),
+              line:{color:'#0a0e1a',width:2}},
+      text:vals.map(v=>(v*1e4).toFixed(1).replace('.',',')+' × 10⁻⁴'),
+      textposition:'top center', textfont:{size:11,color:'#cfdcff'},
+      hovertemplate:'%{x}<br>P = %{y:.2e}<extra></extra>'
+    }],L({
+      yaxis:{title:'P(Fund ist wahr)',type:'log',range:[-4.15,-2.7],
+             tickvals:[1e-4,2e-4,5e-4,1e-3],ticktext:['1×10⁻⁴','2×10⁻⁴','5×10⁻⁴','1×10⁻³']},
+      xaxis:{title:''},
+      shapes:[{type:'line',x0:-0.5,x1:3.5,y0:Math.log10(p0),y1:Math.log10(p0),
+               line:{color:'rgba(255,255,255,.25)',dash:'dash',width:1.4}}],
+      annotations:[{x:3.4,y:Math.log10(p0*1.12),text:'Ausgangsniveau',showarrow:false,
+                    font:{size:10,color:'#9aa6c4'},xanchor:'right'}],
+      margin:{l:70,r:22,t:34,b:60}
+    }),PCONF);
+  }
+  $('#boxPrev').addEventListener('click',()=>{if(i>0){i--;render();}});
+  $('#boxNext').addEventListener('click',()=>{if(i<steps.length-1){i++;render();}});
+  render();
+})();
+
+/* =================================================================
+   NULLFELD
+   ================================================================= */
+(function(){
+  function upd(){
+    const n=+$('#nfN').value, bias=+$('#nfB').value, sd=+$('#nfS').value;
+    const real=$('#nfReal').checked;
+    $('#nfNv').textContent=n;
+    $('#nfBv').textContent=fmtN(bias,2);
+    $('#nfSv').textContent=fmtN(sd,2);
+    const pts=[], names=[], cols=[], lo=[], hi=[];
+    let sumLog=0, cnt=0, mn=99, mx=0;
+    for(let i=0;i<n;i++){
+      const isReal = real && i<Math.round(n*0.08);
+      const trueLog = isReal? 0.35 : 0;
+      const obsLog = trueLog + bias + randn()*sd;
+      const rr=Math.exp(obsLog);
+      // nur "signifikante" werden publiziert: |z|>1.96
+      const z=obsLog/sd;
+      if(Math.abs(z)<1.3) continue;
+      pts.push(rr); names.push('Nährstoff '+(i+1));
+      cols.push(isReal?'#2ee6a8':(rr>1?'#ff5c7a':'#6ea8ff'));
+      lo.push(Math.exp(obsLog-1.96*sd)); hi.push(Math.exp(obsLog+1.96*sd));
+      sumLog+=obsLog; cnt++;
+      mn=Math.min(mn,rr); mx=Math.max(mx,rr);
+    }
+    $('#nfRange').textContent = cnt? fmtN(mn,2)+'–'+fmtN(mx,2) : '—';
+    $('#nfEst').textContent = cnt? fmtN(Math.exp(sumLog/cnt),2) : '—';
+
+    Plotly.react('nullPlot',[{
+      x:pts, y:pts.map((_,k)=>k),
+      type:'scatter', mode:'markers',
+      error_x:{type:'data', symmetric:false,
+               array:pts.map((v,k)=>hi[k]-v), arrayminus:pts.map((v,k)=>v-lo[k]),
+               color:'rgba(255,255,255,.18)', thickness:1.2, width:0},
+      marker:{size:8,color:cols,line:{color:'rgba(0,0,0,.4)',width:1}},
+      text:names, hovertemplate:'%{text}<br>RR = %{x:.2f}<extra></extra>'
+    }],L({
+      xaxis:{title:'berichtetes relatives Risiko (log)',type:'log',
+             tickvals:[0.7,0.85,1,1.2,1.4,1.7,2],ticktext:['0,7','0,85','1,0','1,2','1,4','1,7','2,0']},
+      yaxis:{title:'publizierte Studien',showticklabels:false},
+      shapes:[{type:'line',x0:1,x1:1,y0:-1,y1:pts.length,
+               line:{color:'rgba(255,255,255,.45)',dash:'dash',width:1.6}},
+              {type:'line',x0:Math.exp(bias),x1:Math.exp(bias),y0:-1,y1:pts.length,
+               line:{color:'#ff8a3d',width:1.6}}],
+      annotations:[{x:Math.log10(1),y:pts.length,text:'kein Effekt',showarrow:false,
+                    font:{size:10,color:'#9aa6c4'},yanchor:'bottom'},
+                   {x:Math.log10(Math.exp(bias)),y:0,text:'Netto-Bias',showarrow:false,
+                    font:{size:10,color:'#ff8a3d'},yanchor:'top'}],
+      showlegend:false
+    }),PCONF);
+  }
+  ['nfN','nfB','nfS'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  $('#nfReal').addEventListener('change',upd);
+  $('#nfRoll').addEventListener('click',upd);
+  upd();
+})();
+
+/* =================================================================
+   GESAMT-RECHNER
+   ================================================================= */
+(function(){
+  const c=$('#allCanvas');
+  function upd(){
+    const R=Math.pow(10,+$('#allR').value);
+    const pow=+$('#allP').value, u=+$('#allU').value, n=+$('#allN').value, a=+$('#allA').value;
+    $('#allRv').textContent = R>=1? fmtN(R,2)+' : 1' : '1 : '+Math.round(1/R).toLocaleString('de');
+    $('#allPv').textContent=fmtN(pow,2);
+    $('#allUv').textContent=fmtN(u,2);
+    $('#allNv').textContent=n;
+    $('#allAv').textContent=a<0.001? a.toExponential(1): fmtN(a,3);
+    const p=PPV_all(R,pow,a,u,n);
+    $('#allPPV').textContent=fmtP2(p);
+    $('#allPPV').style.color = p>=0.7?'var(--true)': p>=0.5?'#9ae6b4': p>=0.2?'var(--warn)':'var(--false)';
+    let v;
+    if(p>=0.85) v='<span style="color:var(--true)">Sehr verlässlich — Goldstandard-Niveau.</span>';
+    else if(p>=0.5) v='<span style="color:#9ae6b4">Eher wahr als falsch. Gerade so.</span>';
+    else if(p>=0.2) v='<span style="color:var(--warn)">Mehrheitlich falsch. Replikation zwingend.</span>';
+    else if(p>=0.01) v='<span style="color:var(--false)">Überwiegend Rauschen.</span>';
+    else v='<span style="color:var(--false)">Praktisch wertlos ohne Replikation.</span>';
+    $('#allVerdict').innerHTML=v;
+    draw(p);
+    waterfall(R,pow,a,u,n);
+  }
+  function draw(p){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const COLS=50,ROWS=20,N=1000;
+    const pad=10;
+    const cw=(w-2*pad)/COLS, ch=(h-2*pad-14)/ROWS;
+    const nT=Math.round(N*p);
+    for(let i=0;i<N;i++){
+      const x=pad+(i%COLS)*cw+cw/2, y=pad+Math.floor(i/COLS)*ch+ch/2;
+      const isT=i<nT;
+      ctx.beginPath();ctx.arc(x,y,Math.min(cw,ch)*0.3,0,7);
+      ctx.fillStyle=isT?'rgba(46,230,168,.95)':'rgba(255,92,122,.8)';
+      if(isT){ctx.shadowBlur=6;ctx.shadowColor='rgba(46,230,168,.6)';}
+      ctx.fill();ctx.shadowBlur=0;
+    }
+    ctx.fillStyle='#9aa6c4';ctx.font='11px Inter';
+    ctx.fillText(`${nT} von 1000 publizierten Funden sind wahr`,pad,h-2);
+  }
+  function waterfall(R,pow,a,u,n){
+    const base=PPV_basic(1,0.8,0.05);              // Referenz: ideal
+    const s1=PPV_basic(R,0.8,0.05);
+    const s2=PPV_basic(R,pow,0.05);
+    const s3=PPV_bias(R,pow,0.05,u);
+    const s4=PPV_all(R,pow,a,u,n);
+    const labels=['Ideal<br>(R=1:1, Pow 0,8)','+ echtes R','+ echte Power','+ Bias u','+ n Teams & α'];
+    const vals=[base,s1,s2,s3,s4];
+    const cols=['#2ee6a8','#6ea8ff','#b89bff','#ff8a3d','#ff5c7a'];
+    Plotly.react('waterfall',[{
+      x:labels,y:vals,type:'bar',
+      marker:{color:cols,line:{color:'rgba(255,255,255,.14)',width:1}},
+      text:vals.map(v=>fmtP2(v)),textposition:'outside',
+      textfont:{size:10.5,color:'#cfdcff'},
+      hovertemplate:'%{x}<br>PPV = %{y:.4f}<extra></extra>'
+    }],L({
+      yaxis:{title:'PPV',range:[0,1]},
+      xaxis:{title:'',tickfont:{size:9.5}},
+      shapes:[{type:'line',x0:-0.5,x1:4.5,y0:0.5,y1:0.5,
+               line:{color:'rgba(255,255,255,.3)',dash:'dash',width:1.3}}],
+      margin:{l:58,r:22,t:34,b:62}
+    }),PCONF);
+  }
+  ['allR','allP','allU','allN','allA'].forEach(id=>$('#'+id).addEventListener('input',upd));
+  $('#allReset').addEventListener('click',()=>{
+    $('#allR').value=0;$('#allP').value=0.8;$('#allU').value=0.1;$('#allN').value=1;$('#allA').value=0.05;upd();});
+  $('#allWorst').addEventListener('click',()=>{
+    $('#allR').value=-3;$('#allP').value=0.2;$('#allU').value=0.8;$('#allN').value=20;$('#allA').value=0.05;upd();});
+  $('#allBest').addEventListener('click',()=>{
+    $('#allR').value=0.3;$('#allP').value=0.95;$('#allU').value=0.02;$('#allN').value=1;$('#allA').value=0.01;upd();});
+  upd();
+})();
+
+/* =================================================================
+   LÖSUNGEN
+   ================================================================= */
+(function(){
+  const base={R:1/10,pow:0.20,u:0.30,n:10,a:0.05};
+  const fixes=[
+    {id:'f1',t:'Größere Studien / bessere Power',d:'Power 0,20 → 0,80',
+     ap:s=>s.pow=0.80},
+    {id:'f2',t:'Gesamtheit der Evidenz statt Einzelteam',d:'n = 10 → 1 (Meta-Analyse aller Teams)',
+     ap:s=>s.n=1},
+    {id:'f3',t:'Bias senken (Protokoll, Präregistrierung)',d:'u = 0,30 → 0,05',     ap:s=>s.u=0.05},
+    {id:'f4',t:'R erhöhen: nur plausible Hypothesen testen',d:'R = 1:10 → 1:2',
+     ap:s=>s.R=1/2},
+    {id:'f5',t:'Strengeres α (Korrektur für Mehrfachtests)',d:'α = 0,05 → 0,005',
+     ap:s=>s.a=0.005}
+  ];
+  const active={};
+  fixes.forEach(f=>active[f.id]=false);
+
+  const list=$('#fixList');
+  fixes.forEach(f=>{
+    const row=document.createElement('div');
+    row.className='toggle-row';
+    row.style.cssText='padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)';
+    row.innerHTML=`<label class="switch"><input type="checkbox" id="${f.id}"><span class="slider-sw"></span></label>
+      <span style="line-height:1.4"><strong style="color:var(--txt)">${f.t}</strong><br>
+      <span class="mini" style="font-size:11px">${f.d}</span></span>`;
+    list.appendChild(row);
+    row.querySelector('input').addEventListener('change',e=>{
+      active[f.id]=e.target.checked; upd();
+    });
+  });
+
+  function state(){
+    const s=Object.assign({},base);
+    fixes.forEach(f=>{ if(active[f.id]) f.ap(s); });
+    return s;
+  }
+  function upd(){
+    const s=state();
+    const p=PPV_all(s.R,s.pow,s.a,s.u,s.n);
+    const p0=PPV_all(base.R,base.pow,base.a,base.u,base.n);
+    $('#fixPPV').textContent=fmtP2(p);
+    $('#fixPPV').style.color = p>=0.5?'var(--true)': p>=0.2?'var(--warn)':'var(--false)';
+    $('#fixFactor').innerHTML = p>p0
+      ? `Das ist das <strong>${fmtN(p/p0,1)}-fache</strong> des Ausgangswertes (${fmtP2(p0)}).`
+      : 'Noch keine Maßnahme aktiv — Ausgangslage.';
+    plot(p,p0);
+  }
+  function plot(p,p0){
+    // kumulativer Effekt: jede Maßnahme einzeln + aktuelle Kombination
+    const singles=fixes.map(f=>{
+      const s=Object.assign({},base); f.ap(s);
+      return PPV_all(s.R,s.pow,s.a,s.u,s.n);
+    });
+    const labels=['Ausgangs-<br>lage','+ Power','+ ein Team<br>(Meta)','+ wenig<br>Bias','+ höheres R','+ strenges α','AKTUELLE<br>KOMBINATION'];
+    const vals=[p0,...singles,p];
+    const cols=['#7f8db3','#6ea8ff','#b89bff','#ff8a3d','#2ee6a8','#ffc658','#ffffff'];
+    Plotly.react('fixPlot',[{
+      x:labels,y:vals,type:'bar',
+      marker:{color:cols,line:{color:'rgba(255,255,255,.14)',width:1}},
+      text:vals.map(v=>fmtP2(v)),textposition:'outside',
+      textfont:{size:10.5,color:'#cfdcff'},
+      hovertemplate:'%{x}<br>PPV = %{y:.4f}<extra></extra>'
+    }],L({
+      yaxis:{title:'PPV',range:[0,1]},
+      xaxis:{title:'',tickfont:{size:9}},
+      shapes:[{type:'line',x0:-0.5,x1:6.5,y0:0.5,y1:0.5,
+               line:{color:'rgba(255,255,255,.35)',dash:'dash',width:1.4}}],
+      annotations:[{x:6.4,y:0.545,text:'eher wahr als falsch',showarrow:false,
+                    font:{size:10,color:'#9aa6c4'},xanchor:'right'}],
+      margin:{l:58,r:22,t:30,b:64}
+    }),PCONF);
+  }
+  upd();
+})();
+
+/* =================================================================
+   RESIZE-HANDLING FÜR ALLE CANVAS/PLOTS
+   ================================================================= */
+let resizeTimer=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{
+    // Slider-Events erneut auslösen → alles zeichnet neu
+    ['coinN','dEff','pwN','byP','t1R','hmA','forkK','bsU','tmN','nfN','allR']
+      .forEach(id=>{const el=$('#'+id); if(el) el.dispatchEvent(new Event('input'));});
+    ['pwPlot','hmPlot','biasPlot','teamPlot','t4Plot','boxPlot','nullPlot','waterfall','fixPlot']
+      .forEach(id=>{const el=document.getElementById(id); if(el&&el.data) Plotly.Plots.resize(el);});
+  },180);
+});
+
+/* Initiales Re-Render nach Font-Load, damit Canvas-Breiten stimmen */
+window.addEventListener('load',()=>{
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),150);
+});
+</script>
+
+</body>
+</html>
