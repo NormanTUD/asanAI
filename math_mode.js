@@ -2277,8 +2277,8 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 function _model_to_latex_finalize (str, has_any_skip_connection) {
 	if (has_any_skip_connection) {
 		str += "<h3>Skip Connections:</h3>\n";
-		str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
-		str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the input dimensions to the output dimensions if needed. If dimensions already match, the identity is used.</p>\n";
+		str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(\\dots) + W_{\\text{skip}} \\cdot h_{i-n} \\quad (n = \\text{layers skipped})</div><br>\n";
+		str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the source dimensions to the output dimensions if needed (identity if they already match), and <span class='temml_me'>n</span> is the number of layers the skip spans (default 1, so the source is <span class='temml_me'>h_{i-1}</span>).</p>\n";
 	}
 
 	str += get_optimizer_latex_equations();
@@ -2406,31 +2406,37 @@ function get_activation_layer_names() {
 }
 
 function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors) {
-	if (layer_idx === 0) {
+	var skip_info = get_skip_connection_info(layer_idx);
+	var skip_n = (skip_info && skip_info.skip_count) || 1;
+
+	// The skip source is the tensor feeding into layer (layer_idx - skip_n + 1),
+	// i.e. the output of layer (layer_idx - skip_n). For skip_n=1 this is the
+	// classic immediate-previous layer; a larger skip_n reaches further back.
+	var source_idx = layer_idx - skip_n;
+
+	if (source_idx < 0) {
 		return array_to_latex(input_layer, "Input");
 	}
 
-	var prev_idx = layer_idx - 1;
+	if (source_idx < layer_data.length) {
+		var source_data = layer_data[source_idx];
 
-	if (prev_idx >= 0 && prev_idx < layer_data.length) {
-		var prev_data = layer_data[prev_idx];
-
-		if (prev_data.kernel && prev_data.kernel.length) {
-			const prev_kernel_data = JSON.parse(JSON.stringify(prev_data.kernel))
-			var prev_kernel = replace_non_numbers_with_matching_latex(prev_kernel_data);
-			prev_kernel = array_to_fixed(prev_kernel, get_dec_points_math_mode());
-			var kernel_shape = get_shape_from_array(prev_kernel);
+		if (source_data.kernel && source_data.kernel.length) {
+			const source_kernel_data = JSON.parse(JSON.stringify(source_data.kernel))
+			var source_kernel = replace_non_numbers_with_matching_latex(source_kernel_data);
+			source_kernel = array_to_fixed(source_kernel, get_dec_points_math_mode());
+			var kernel_shape = get_shape_from_array(source_kernel);
 			var shape_str = kernel_shape.join(" \\times ");
 
 			var result_str = "\\underbrace{";
-			result_str += "h_" + prev_idx;
+			result_str += "h_" + source_idx;
 			result_str += "}_{\\text{Shape: } " + shape_str + "}";
 
 			return result_str;
 		}
 	}
 
-	return _get_h(Math.max(0, layer_idx - 1));
+	return _get_h(Math.max(0, source_idx));
 }
 
 function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {

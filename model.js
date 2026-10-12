@@ -1063,6 +1063,7 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 	}
 
 	var currentOutput = inputLayer;
+	var tensor_history = [inputLayer]; // tensor_history[k] = tensor feeding into layer k
 
 	for (let model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
 		var type = model_structure[model_structure_idx]["type"];
@@ -1077,7 +1078,6 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 
 		try {
 			var skip_info = get_skip_connection_info(model_structure_idx);
-			var input_before_layer = currentOutput; // Save input before this layer
 
 			var result = await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid);
 
@@ -1091,9 +1091,15 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 			}
 
 			// === SKIP CONNECTION LOGIC ===
+			// The skip may span N layers: its source is the tensor that feeds
+			// into layer (i - N + 1). N=1 is the classic single-layer skip
+			// (source = input of this layer).
 			if (skip_info.enabled && !skip_connection_excluded_types.includes(type)) {
 				try {
-					result = apply_skip_connection(input_before_layer, result, skip_info.strength, type, model_structure_idx);
+					var skip_n = skip_info.skip_count || 1;
+					var source_idx = Math.max(0, model_structure_idx - skip_n + 1);
+					var skip_source = tensor_history[source_idx];
+					result = apply_skip_connection(skip_source, result, skip_info.strength, type, model_structure_idx);
 				} catch (skip_err) {
 					var skip_msg = skip_err.message || skip_err;
 					wrn(`[_add_layers_to_model] Skip connection failed at layer ${model_structure_idx}: ${skip_msg}. Continuing without skip.`);
@@ -1101,6 +1107,7 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 			}
 
 			currentOutput = result;
+			tensor_history.push(currentOutput);
 		} catch (e) {
 			var msg = "" + e;
 			msg = msg.replace(/^(Error:\s*)+/, "Error: ");

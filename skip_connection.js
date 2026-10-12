@@ -96,10 +96,12 @@ function toggle_skip_connection(layer_nr, elem) {
 
 	var $layer_setting = $(elem).closest(".layer_setting");
 	var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
+	var $count_row = $layer_setting.find(".skip_connection_count_tr");
 	var $init_option_rows = $layer_setting.find(".skip_connection_initializer_option_tr");
 
 	if (enabled) {
 		$init_row.show();
+		$count_row.show();
 		$init_option_rows.show();
 
 		// If no sub-options exist yet, insert them with proper advanced section class
@@ -122,6 +124,7 @@ function toggle_skip_connection(layer_nr, elem) {
 		}
 	} else {
 		$init_row.hide();
+		$count_row.hide();
 		$init_option_rows.hide();
 	}
 
@@ -221,8 +224,20 @@ function add_skip_connection_option(type, nr) {
 	str += "</td>";
 	str += "</tr>";
 
-	// Initializer selector row (hidden when skip is disabled)
+	// Rows hidden when skip is disabled
 	var init_display = checked_attr ? "" : "display:none;";
+
+	// Layers-to-skip count (how many layers the skip connection spans)
+	var current_skip_count = (skip_connection_settings[nr] && skip_connection_settings[nr].skip_count) ? skip_connection_settings[nr].skip_count : 1;
+	var max_skip_count = nr + 1;
+	str += "<tr class='skip_connection_count_tr' style='" + init_display + "'>";
+	str += "<td><span class='TRANSLATEME_skip_layers_count'>Layers to skip</span>:</td>";
+	str += "<td>";
+	str += "<input class='input_field skip_connection_count' type='number' value='" + current_skip_count + "' min='1' max='" + max_skip_count + "' onchange='update_skip_connection_count(find_layer_number_by_element(this), this)' />";
+	str += "</td>";
+	str += "</tr>";
+
+	// Initializer selector row (hidden when skip is disabled)
 	str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
 	str += "<td>Skip Initializer:</td>";
 	str += "<td>";
@@ -251,15 +266,41 @@ function add_skip_connection_option(type, nr) {
 
 function get_skip_connection_info(layer_nr) {
     if (!skip_connection_settings[layer_nr]) {
-        return { enabled: false, strength: 1.0 };
+        return { enabled: false, strength: 1.0, skip_count: 1 };
     }
 
     var strength = _compute_skip_strength_from_model(layer_nr);
+    var skip_count = skip_connection_settings[layer_nr].skip_count;
+    if (typeof skip_count !== "number" || isNaN(skip_count) || skip_count < 1) {
+        skip_count = 1;
+    }
 
     return {
         enabled: skip_connection_settings[layer_nr].enabled,
-        strength: strength
+        strength: strength,
+        skip_count: skip_count
     };
+}
+
+function update_skip_connection_count(layer_nr, elem) {
+	if (layer_nr === null || layer_nr === undefined) return;
+
+	var val = parseInt($(elem).val(), 10);
+	if (isNaN(val) || val < 1) val = 1;
+
+	var max_count = layer_nr + 1;
+	if (val > max_count) val = max_count;
+
+	if (!skip_connection_settings[layer_nr]) {
+		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
+	}
+
+	skip_connection_settings[layer_nr].skip_count = val;
+
+	// Force model recreation
+	model_config_hash = null;
+
+	updated_page(); // await not possible here
 }
 
 function build_skip_connection_html(type, nr) {

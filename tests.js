@@ -1937,6 +1937,143 @@ async function test_different_layer_types_with_skip_connection() {
 	return true;
 }
 
+async function test_skip_connection_multi_layer() {
+	log_test("Test skip connection spanning multiple layers");
+
+	await set_dataset_and_wait("and_xor");
+	await set_model_dataset("and_xor");
+	await _set_initializers();
+	await delay(3000);
+
+	// Reset any leftover skip settings from previous tests
+	for (var rk in skip_connection_settings) {
+		skip_connection_settings[rk] = { enabled: false, initializer: "glorotUniform", initializer_params: {}, skip_count: 1 };
+	}
+	model_config_hash = null;
+	await updated_page();
+	await delay(1000);
+
+	var num_layers = model.layers.length;
+	if (num_layers < 2) {
+		console.error("test_skip_connection_multi_layer: need >= 2 layers, got " + num_layers);
+		return false;
+	}
+	var target = num_layers - 1;
+	var old_num_errs = num_errs;
+	var old_num_wrns = num_wrns;
+
+	// Resolve the source layer of the skip on layer `tgt`. Returns the visible
+	// index of the source layer, or -1 when the source is the model input.
+	function resolveSkipSourcePosition(tgt) {
+		var all_layers = model._allLayers || model.layers;
+		var skip_add = null;
+		for (var i = 0; i < all_layers.length; i++) {
+			var name = all_layers[i].name || "";
+			var m = name.match(/skip_add_(\d+)_/);
+			if (m && parseInt(m[1], 10) === tgt) { skip_add = all_layers[i]; break; }
+		}
+		if (!skip_add) return null;
+		var inb = skip_add.inboundNodes || skip_add._inboundNodes;
+		if (!inb || !inb.length) return null;
+		var inL = inb[0].inboundLayers || [];
+		var candidate = null;
+		for (var x = 0; x < inL.length; x++) {
+			if (inL[x] === model.layers[tgt]) continue; // skip the main layer
+			candidate = inL[x];
+		}
+		if (!candidate) return null;
+		// If the source is a projection layer, follow it to the real source.
+		if ((candidate.name || "").indexOf("skip_proj_") !== -1) {
+			var pinb = candidate.inboundNodes || candidate._inboundNodes;
+			if (pinb && pinb.length) {
+				var pl = pinb[0].inboundLayers || [];
+				if (pl.length) candidate = pl[0];
+			}
+		}
+		for (var v = 0; v < model.layers.length; v++) {
+			if (model.layers[v] === candidate) return v;
+		}
+		return -1; // not a visible layer -> the model input
+	}
+
+	var cases = [
+		{ skip_n: 1, expected: target - 1 }
+	];
+	if (target >= 2) cases.push({ skip_n: 2, expected: target - 2 });
+	cases.push({ skip_n: target + 1, expected: -1 });
+
+	for (var c = 0; c < cases.length; c++) {
+		var cs = cases[c];
+		skip_connection_settings[target] = { enabled: true, initializer: "glorotUniform", initializer_params: {}, skip_count: cs.skip_n };
+		model_config_hash = null;
+		await updated_page();
+		await delay(1000);
+
+		var pos = resolveSkipSourcePosition(target);
+		if (pos !== cs.expected) {
+			console.error("test_skip_connection_multi_layer: skip source mismatch for skip_n=" + cs.skip_n + " -> expected layer " + cs.expected + " but got " + pos);
+			return false;
+		}
+	}
+
+	// Math mode: the skip input must reference h_{target - skip_n}
+	var math_ok = true;
+	if (target >= 2) {
+		skip_connection_settings[target] = { enabled: true, initializer: "glorotUniform", initializer_params: {}, skip_count: 2 };
+		model_config_hash = null;
+		await updated_page();
+		await delay(1000);
+
+		var input_shape = get_first_layer_input_shape();
+		var input_layer = get_input_layer(input_shape);
+		var layer_data = get_layer_data();
+		var skip_input_latex = _get_skip_input_full_latex(target, input_layer, layer_data, null);
+		math_ok = skip_input_latex && skip_input_latex.indexOf("h_" + (target - 2)) !== -1;
+		if (!math_ok) {
+			console.error("test_skip_connection_multi_layer: math mode skip input does not reference h_" + (target - 2) + ": " + skip_input_latex);
+		}
+	}
+
+	// GUI: the "layers to skip" number input updates the setting when changed
+	var gui_ok = true;
+	var $count_input = $(".layer_setting").eq(target).find(".skip_connection_count");
+	if ($count_input.length === 0) {
+		gui_ok = false;
+		console.error("test_skip_connection_multi_layer: .skip_connection_count input not found for layer " + target);
+	} else {
+		$count_input.val(2).trigger("change");
+		await delay(500);
+		if (skip_connection_settings[target].skip_count !== 2) {
+			gui_ok = false;
+			console.error("test_skip_connection_multi_layer: GUI count input did not update skip_connection_settings");
+		}
+	}
+
+	if (num_errs > old_num_errs || num_wrns > old_num_wrns) {
+		console.error("test_skip_connection_multi_layer: new errors/warnings detected");
+		return false;
+	}
+
+	// Training works with a multi-layer skip enabled
+	skip_connection_settings[target] = { enabled: true, initializer: "glorotUniform", initializer_params: {}, skip_count: 2 };
+	model_config_hash = null;
+	await updated_page();
+	await delay(1000);
+	set_epochs(1);
+	const ret = await train_neural_network();
+	var train_ok = is_valid_ret_object(ret, 1);
+
+	// Cleanup: disable all skip connections
+	for (var ck in skip_connection_settings) {
+		skip_connection_settings[ck] = { enabled: false, initializer: "glorotUniform", initializer_params: {}, skip_count: 1 };
+	}
+	model_config_hash = null;
+	await updated_page();
+	await delay(1000);
+
+	return math_ok && gui_ok && train_ok;
+}
+
 async function test_different_layer_types() {
 	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
@@ -4823,6 +4960,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
 		test_equal("test_different_layer_types_with_skip_connection()", await test_different_layer_types_with_skip_connection(), true);
+		test_equal("test_skip_connection_multi_layer()", await test_skip_connection_multi_layer(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
 		test_equal("test_math_history()", await test_math_history(), true);

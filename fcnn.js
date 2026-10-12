@@ -7,6 +7,7 @@ var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 var fcnn_input_layer_offset = 0;
+var FCNN_INPUT_LAYER_MAX_NEURONS = 64;
 
 function _compute_histogram_bins(weightData, weightStats, numBins) {
 	var bins = new Array(numBins).fill(0);
@@ -208,13 +209,19 @@ function get_fcnn_data() {
 	if (show_input_layer) {
 		var input_info = _fcnn_input_layer_info();
 		if (input_info) {
-			units.unshift(input_info.dim);
-			names.unshift(input_info.name);
+			var input_vis_dim = Math.min(input_info.dim, FCNN_INPUT_LAYER_MAX_NEURONS);
+			var input_label = input_info.name;
+			if (input_info.dim > input_vis_dim) {
+				input_label += " (" + input_info.dim + ")";
+			}
+			units.unshift(input_vis_dim);
+			names.unshift(input_label);
 			meta_infos.unshift({
 				layer_type: "InputLayer",
 				nr: -1,
 				input_shape: input_info.shape,
 				output_shape: input_info.shape,
+				full_dim: input_info.dim,
 				kernel_size_x: undefined,
 				kernel_size_y: undefined
 			});
@@ -1498,6 +1505,19 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
 
 		var convLike = (currNeurons > 512 || nextNeurons > 512);
 		var estimateCount = currNeurons * nextNeurons;
+		var isInputLayerConn = !!(meta_infos[layer_nr] && meta_infos[layer_nr].layer_type === "InputLayer");
+
+		if (isInputLayerConn) {
+			// The input layer is fully connected to the first layer. Draw the full
+			// mesh of unweighted lines so it reads as "fully connected" (the conv-like
+			// block fill used for wide layers would hide the individual connections).
+			if (estimateCount > 300000) {
+				_draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.1);
+			} else {
+				_draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, null, _weight_stats, _weight_data_sample);
+			}
+			return;
+		}
 
 		if (convLike) {
 			_draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.1);
@@ -2411,30 +2431,30 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 
 	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
 		if (layer_idx < fcnn_input_layer_offset) continue;
-		var skip_info = get_skip_connection_info(layer_idx - fcnn_input_layer_offset);
+		var model_idx = layer_idx - fcnn_input_layer_offset;
+		var skip_info = get_skip_connection_info(model_idx);
 		if (!skip_info.enabled) continue;
 
-		// Skip connection goes from input of this layer to output of this layer
-		// Visually: draw an arc/curve from the left side of this layer to the right side
-		var layerX = (layer_idx + 1) * layerSpacing;
+		var skip_n = skip_info.skip_count || 1;
 
-		// Get the previous layer's X position (input to this layer)
-		var prevLayerX = layer_idx * layerSpacing;
-		if (layer_idx === 0 && fcnn_input_layer_offset === 0) {
-			prevLayerX = layerSpacing * 0.3; // Before first layer
-		}
+		// The skip spans from the input of layer (model_idx - skip_n + 1) to the
+		// output of layer model_idx. Convert the source to a drawing index.
+		var source_model_idx = Math.max(0, model_idx - skip_n + 1);
+		var source_draw_idx = source_model_idx + fcnn_input_layer_offset;
+
+		// Destination (output) and source (input) layer center X positions
+		var layerX = (layer_idx + 1) * layerSpacing;
+		var sourceX = (source_draw_idx + 1) * layerSpacing;
 
 		var numNeurons = layers[layer_idx];
 		var meta_info = meta_infos[layer_idx] || {};
 		var layer_type = meta_info.layer_type || "";
-		var isConv2d = layer_type.toLowerCase().includes("conv2d");
 		var isOutputLayer = (layer_idx === layers.length - 1);
 
 		var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
 
-		// Calculate top and bottom of the layer
+		// Calculate top of the destination layer
 		var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
-		var bottomY = layerY + ((numNeurons - 1) / 2) * verticalSpacing + 15;
 
 		// Draw the skip connection arc
 		var strength = skip_info.strength;
@@ -2446,14 +2466,18 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.lineWidth = lineWidth;
 		ctx.setLineDash([6, 4]);
 
-		// Draw arc above the layer
-		var arcHeight = 25 + strength * 15;
-		var startX = layerX - maxRadius - 5;
+		// Arc from the left edge of the source layer to the right edge of the
+		// destination layer, arching over the layers in between. The arc grows
+		// taller with the number of spanned layers so it stays above them.
+		var span = layer_idx - source_draw_idx;
+		var arcHeight = 25 + strength * 15 + span * 18;
+		var startX = sourceX - maxRadius - 5;
 		var endX = layerX + maxRadius + 5;
+		var midX = (startX + endX) / 2;
 
 		ctx.beginPath();
 		ctx.moveTo(startX, topY);
-		ctx.quadraticCurveTo(layerX, topY - arcHeight, endX, topY);
+		ctx.quadraticCurveTo(midX, topY - arcHeight, endX, topY);
 		ctx.stroke();
 
 		// Draw small "+" symbol at the connection point
@@ -2463,10 +2487,11 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.textAlign = "center";
 		ctx.fillText("+", endX + 10, topY - 2);
 
-		// Draw strength label
+		// Draw label (with the number of spanned layers when > 1)
 		ctx.font = (font_size - 2) + "px Arial";
 		ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
-		ctx.fillText(language[lang]["skip_connection"], layerX, topY - arcHeight - 5);
+		var skip_label = language[lang]["skip_connection"] + (skip_n > 1 ? " (" + skip_n + ")" : "");
+		ctx.fillText(skip_label, midX, topY - arcHeight - 5);
 
 		ctx.restore();
 
@@ -2479,7 +2504,8 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 			h: arcHeight + 20,
 			layer_idx: layer_idx,
 			strength: strength,
-			layer_type: layer_type
+			layer_type: layer_type,
+			skip_count: skip_n
 		};
 
 		// Register hit region for tooltip
@@ -2496,9 +2522,15 @@ function _build_skip_connection_tooltip_html(region) {
 		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
 	};
 
+	var skip_n = region.skip_count || 1;
 	parts.push(row("Layer", region.layer_idx));
 	parts.push(row("Layer Type", region.layer_type || "Unknown"));
-	parts.push(row("Operation", "output = f(x) + W·x"));
+	parts.push(row("Span", skip_n + (skip_n > 1 ? " layers" : " layer")));
+	if (skip_n > 1) {
+		parts.push(row("Operation", "output = f(…) + W·h<sub>" + (region.layer_idx - skip_n) + "</sub>"));
+	} else {
+		parts.push(row("Operation", "output = f(x) + W·x"));
+	}
 	parts.push(row("Projection", "1×1 Conv / Dense (learned)"));
 	parts.push(row("Info", "Strength is computed from weight norms (skip / (skip + main))"));
 
