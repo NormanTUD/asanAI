@@ -17775,17 +17775,17 @@ window.bibData = {
 		alternativetitle: "The Fugger news market (Augsburg)"
 	},
 	"habermaspublicsphere": {
-		title: "The Structural Transformation of the Public Sphere",
+		title: "Strukturwandel der Öffentlichkeit (The Structural Transformation of the Public Sphere)",
 		author: "Jürgen Habermas",
 		year: 1962,
-		url: "https://en.wikipedia.org/wiki/The_Structural_Transformation_of_the_Public_Sphere",
+		url: "https://archive.org/details/strukturwandelde0000habe",
 		alternativetitle: "Habermas, Strukturwandel der Öffentlichen (1962)"
 	},
 	"encyclopedie": {
 		title: "Encyclopédie, ou dictionnaire raisonné des sciences, des arts et des métiers",
 		author: "Denis Diderot & Jean le Rond d'Alembert",
 		year: "1751–1772",
-		url: "https://en.wikipedia.org/wiki/Encyclop%C3%A9die",
+		url: "https://enccre.academie-sciences.fr/encyclopedie/",
 		alternativetitle: "The Encyclopédie (1751–1772)"
 	},
 	"etymologiae": {
@@ -17820,7 +17820,7 @@ window.bibData = {
 		title: "Traité de Documentation (Treatise on Documentation)",
 		author: "Paul Otlet",
 		year: 1934,
-		url: "https://en.wikipedia.org/wiki/Trait%C3%A9_de_Documentation",
+		url: "https://archive.org/details/OtletTraitDocumentationUgent",
 		alternativetitle: "Otlet, Traité de Documentation (1934)"
 	},
 	"catalogingtheworld": {

@@ -51,4 +51,4 @@ Uncaught TypeError: can't access property "textContent", document.getElementById
 
 [x] verschiebe den ordner atlas nach atlas_data oder so so dass es nicht mehr mit atlas.php/atlas verwechselt wird, benenne das auch in den dateien, pfaden, agents.md usw um
 
-[ ] always cite original publications when you can, add them to literature.js and link where you got infos from. read them thoroughly.
+[x] always cite original publications when you can, add them to literature.js and link where you got infos from. read them thoroughly.

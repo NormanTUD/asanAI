@@ -32,7 +32,7 @@ This is the *Relation*, the German newssheet — and it is the first place we ca
 <div class="md">
 ## The coffee-house public sphere
 
-A commodity needs a **public**. In the seventeenth and eighteenth centuries the venue was the coffee house. The sociologist \citeauthor{habermaspublicsphere} (\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere** — a space that was physically a coffee house in Britain, a salon in France, a reading society in Germany, where private individuals gathered to talk about *printed matter* as a shared reality \cite[the coffee-house public sphere, Wikipedia]{habermaspublicsphere}.
+A commodity needs a **public**. In the seventeenth and eighteenth centuries the venue was the coffee house. The sociologist \citeauthor{habermaspublicsphere} (\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere** — a space that was physically a coffee house in Britain, a salon in France, a reading society in Germany, where private individuals gathered to talk about *printed matter* as a shared reality \cite[the coffee-house public sphere, Habermas]{habermaspublicsphere}.
 
 Notice what is new. The authority is not in any single person's rank, title, or lineage. It is in the **forum**: you argued a point, but you argued it to a public that had *read the same paper*. Information stopped being a private possession in the head of the Fugger banker and became the raw material of a collective, argument-generating public. The news sheet (the commodity) and the coffee house (the venue) are two halves of the same invention: a way for a *society* to share and contest what it knows.
 
@@ -52,9 +52,9 @@ It is a fitting accident of history, then, that the Catholic Church has come to 
 <div class="md">
 ## The Encyclopédie: compiling everything at once
 
-If the coffee house was where information was *discussed*, the Encyclopédie was the great eighteenth-century attempt to **collect** it. Between 1751 and 1772, \citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls "a kind of precursor to the hyperlink" \cite[the Encyclopédie, Wikipedia]{encyclopedie}.
+If the coffee house was where information was *discussed*, the Encyclopédie was the great eighteenth-century attempt to **collect** it. Between 1751 and 1772, \citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls "a kind of precursor to the hyperlink" \cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.
 
-The ambition was not merely to *store* knowledge but to *connect* it — and in doing so, to change how people thought. This is the **corpus** in its first systematic form: a body of text, organized and internally linked, large enough that it becomes an object in its own right. You can now point at "the Encyclopédie" the way you later point at "the web" — as a single, structured, interlinked thing. Two centuries after Diderot, that object has a new name: the *training corpus* \cite[the Encyclopédie, Wikipedia]{encyclopedie}.
+The ambition was not merely to *store* knowledge but to *connect* it — and in doing so, to change how people thought. This is the **corpus** in its first systematic form: a body of text, organized and internally linked, large enough that it becomes an object in its own right. You can now point at "the Encyclopédie" the way you later point at "the web" — as a single, structured, interlinked thing. Two centuries after Diderot, that object has a new name: the *training corpus* \cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.
 
 <figure>
 	<img style="max-width: 360px; width: 100%; height: auto; display: block; margin: 0 auto;" src="encyclopedie_title.jpg" alt="Title page of the Encyclopédie" />
