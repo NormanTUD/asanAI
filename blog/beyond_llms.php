@@ -713,6 +713,16 @@ Machine learning models are *correlational*: they predict $Y$ from $X$ given tha
 </div>
 
 <div class="md">
+### The long history of the word *cause*
+
+Before there was a do-calculus, there was a *word*, and the word fought a two-hundred-year civil war. The first modern attack came from **David Hume**. He took the concept of causation apart and found no *imprint* of it in experience: you never observe a "necessary connection" between cause and effect; you only observe that one event is *constantly conjoined* with another, until the mind, by **habit**, comes to *expect* the second when it sees the first \cite[Hume, *A Treatise of Human Nature* (1739)]{hume_treatise}. On Hume's reading, "A causes B" is not a fact about the world but a description of a *regularity* plus a *felt expectation* — and that is almost exactly what a correlational model has. This is the philosophical root of the "correlation is not causation" line you will keep hearing.
+
+Two centuries later, **Immanuel Kant** answered the attack from the opposite direction: causality is not *learned* from experience at all, but is an **a priori category of the understanding** — one of the forms the mind *imposes* on experience in order to make it intelligible, a law the mind brings to the data, not one read off it \cite[Kant, *Critique of Pure Reason* (1781)]{kant_critique_pure_reason}. Between Hume and Kant the concept was torn between "it is a regularity we expect" and "it is a rule we impose."
+
+The modern resolution — the one this course relies on — came from **Pearl**, who broke the impasse by *changing the question*. Causality is neither mere regularity (Hume) nor a mental category (Kant); it is a **structure**: a directed graph of interventions, where a cause is something you can *do* and an effect is what changes as a result \cite[Pearl, *Causality* (2009)]{pearl2009book}. The next section is that structure, made formal: the Bayesian network and the do-calculus that compute "what would happen if you intervened." The LLM's correlational blindness — its inability to distinguish "these co-occur" from "one produces the other" — is not a bug to be patched but the *absence* of the very thing Hume, Kant, and Pearl spent two centuries defining.
+</div>
+
+<div class="md">
 ### The causal graph
 
 The mathematical foundation is the **causal Bayesian network** \cite{pearl1985bn, pearl1995book, pearl2009book}, a directed acyclic graph where each edge $X \to Y$ means "$X$ is a direct cause of $Y$". The do-calculus \cite{pearl1995do} is the algebraic engine for computing interventional distributions $p(Y \mid \mathrm{do}(X))$ from the joint distribution $p(V)$ of the graph. **Counterfactual reasoning** \cite{lewis1973counterfactuals} extends the framework to questions of the form "what would have happened to $Y$ if $X$ had been $x'$ instead of $x$?".
