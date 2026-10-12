@@ -9,7 +9,7 @@ function update_skip_connection_initializer(layer_nr, elem) {
 	var val = $(elem).val();
 
 	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false, initializer: val, initializer_params: {} };
+		skip_connection_settings[layer_nr] = { enabled: false, initializer: val, initializer_params: {}, skip_count: 1 };
 	}
 
 	skip_connection_settings[layer_nr].initializer = val;
@@ -23,6 +23,11 @@ function update_skip_connection_initializer(layer_nr, elem) {
 		}
 	}
 	skip_connection_settings[layer_nr].initializer_params = default_params;
+
+	// Ensure skip_count exists
+	if (typeof skip_connection_settings[layer_nr].skip_count !== "number" || skip_connection_settings[layer_nr].skip_count < 1) {
+		skip_connection_settings[layer_nr].skip_count = 1;
+	}
 
 	// Force model recreation by invalidating the config hash
 	model_config_hash = null;
@@ -64,7 +69,7 @@ function update_skip_connection_initializer_param(layer_nr, param_name, elem) {
 	}
 
 	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
+		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {}, skip_count: 1 };
 	}
 
 	if (!skip_connection_settings[layer_nr].initializer_params) {
@@ -72,6 +77,11 @@ function update_skip_connection_initializer_param(layer_nr, param_name, elem) {
 	}
 
 	skip_connection_settings[layer_nr].initializer_params[param_name] = val;
+
+	// Ensure skip_count exists
+	if (typeof skip_connection_settings[layer_nr].skip_count !== "number" || skip_connection_settings[layer_nr].skip_count < 1) {
+		skip_connection_settings[layer_nr].skip_count = 1;
+	}
 
 	// Force model recreation by invalidating the config hash
 	model_config_hash = null;
@@ -86,10 +96,23 @@ function toggle_skip_connection(layer_nr, elem) {
 	var enabled = $(elem).is(":checked");
 
 	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
+		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {}, skip_count: 1 };
 	}
 
 	skip_connection_settings[layer_nr].enabled = enabled;
+
+	// Ensure skip_count exists and is within bounds
+	if (typeof skip_connection_settings[layer_nr].skip_count !== "number" || skip_connection_settings[layer_nr].skip_count < 1) {
+		skip_connection_settings[layer_nr].skip_count = 1;
+	}
+	var max_skip = layer_nr + 1;
+	var total_layers = get_number_of_layers();
+	if (total_layers !== null && total_layers < max_skip) {
+		max_skip = total_layers;
+	}
+	if (skip_connection_settings[layer_nr].skip_count > max_skip) {
+		skip_connection_settings[layer_nr].skip_count = max_skip;
+	}
 
 	// Force model recreation
 	model_config_hash = null;
@@ -229,7 +252,15 @@ function add_skip_connection_option(type, nr) {
 
 	// Layers-to-skip count (how many layers the skip connection spans)
 	var current_skip_count = (skip_connection_settings[nr] && skip_connection_settings[nr].skip_count) ? skip_connection_settings[nr].skip_count : 1;
-	var max_skip_count = nr + 1;
+	var total_layers = get_number_of_layers();
+	var max_skip_count = total_layers !== null ? total_layers : nr + 1;
+	if (current_skip_count > max_skip_count) {
+		current_skip_count = max_skip_count;
+	}
+	wrn("[add_skip_connection_option] nr=" + nr + " skip_count=" + current_skip_count + " max=" + max_skip_count + " settings=" + JSON.stringify(skip_connection_settings[nr] || null));
+	if (current_skip_count > max_skip_count) {
+		current_skip_count = max_skip_count;
+	}
 	str += "<tr class='skip_connection_count_tr' style='" + init_display + "'>";
 	str += "<td><span class='TRANSLATEME_skip_layers_count'>Layers to skip</span>:</td>";
 	str += "<td>";
@@ -275,6 +306,15 @@ function get_skip_connection_info(layer_nr) {
         skip_count = 1;
     }
 
+    var max_skip = layer_nr + 1;
+    var total_layers = get_number_of_layers();
+    if (total_layers !== null && total_layers < max_skip) {
+        max_skip = total_layers;
+    }
+    if (skip_count > max_skip) {
+        skip_count = max_skip;
+    }
+
     return {
         enabled: skip_connection_settings[layer_nr].enabled,
         strength: strength,
@@ -283,16 +323,21 @@ function get_skip_connection_info(layer_nr) {
 }
 
 function update_skip_connection_count(layer_nr, elem) {
-	if (layer_nr === null || layer_nr === undefined) return;
+	if (layer_nr === null || layer_nr === undefined) {
+		wrn("[update_skip_connection_count] layer_nr is null/undefined, ignoring");
+		return;
+	}
 
 	var val = parseInt($(elem).val(), 10);
+	wrn("[update_skip_connection_count] layer_nr=" + layer_nr + " raw_val=" + $(elem).val() + " parsed_val=" + val);
 	if (isNaN(val) || val < 1) val = 1;
 
-	var max_count = layer_nr + 1;
+	var total_layers = get_number_of_layers();
+	var max_count = total_layers !== null ? total_layers : layer_nr + 1;
 	if (val > max_count) val = max_count;
 
 	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
+		skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {}, skip_count: 1 };
 	}
 
 	skip_connection_settings[layer_nr].skip_count = val;
@@ -300,7 +345,34 @@ function update_skip_connection_count(layer_nr, elem) {
 	// Force model recreation
 	model_config_hash = null;
 
-	updated_page(); // await not possible here
+	// no_update_initializers=1 so update_initializers() does not re-render the
+	// layer option rows (which would re-create this input and reset its value)
+	updated_page(null, null, elem, null, 1); // await not possible here
+
+	// Guardrail: aggressively re-assert DOM value for 5 seconds after the change.
+	// Something re-renders the layer options and resets the input to 1.
+	// This interval catches it regardless of when the re-render happens.
+	var expected_val = val;
+	var guardrail_checks = 0;
+	var guardrail_interval = setInterval(function() {
+		guardrail_checks++;
+		var $input = $(".layer_setting").eq(layer_nr).find(".skip_connection_count");
+		if ($input.length) {
+			var current = parseInt($input.val(), 10);
+			if (current !== expected_val) {
+				wrn("[skip_count_guardrail] check#" + guardrail_checks + " layer=" + layer_nr + " DOM=" + current + " expected=" + expected_val + " settings=" + JSON.stringify(skip_connection_settings[layer_nr] || null));
+				$input.val(expected_val);
+				if (skip_connection_settings[layer_nr]) {
+					skip_connection_settings[layer_nr].skip_count = expected_val;
+				}
+			}
+		} else {
+			wrn("[skip_count_guardrail] check#" + guardrail_checks + " layer=" + layer_nr + " input not found in DOM");
+		}
+		if (guardrail_checks >= 50) {
+			clearInterval(guardrail_interval);
+		}
+	}, 100);
 }
 
 function build_skip_connection_html(type, nr) {

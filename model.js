@@ -1097,6 +1097,9 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 			if (skip_info.enabled && !skip_connection_excluded_types.includes(type)) {
 				try {
 					var skip_n = skip_info.skip_count || 1;
+					if (skip_n > model_structure_idx + 1) {
+						skip_n = model_structure_idx + 1;
+					}
 					var source_idx = Math.max(0, model_structure_idx - skip_n + 1);
 					var skip_source = tensor_history[source_idx];
 					result = apply_skip_connection(skip_source, result, skip_info.strength, type, model_structure_idx);
