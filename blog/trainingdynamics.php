@@ -50,8 +50,8 @@ That is the **Chinchilla** result, and it is the reason the field moved, in the 
             <span id="td-n-val" style="font-family: monospace;">1B</span>
 
             <label style="margin-top: 10px; display: block;"><b>Training tokens $D$: </b></label>
-            <input type="range" id="td-d" min="8" max="15" step="0.25" value="12" style="width: 100%;">
-            <span id="td-d-val" style="font-family: monospace;">1T</span>
+            <input type="range" id="td-d" min="8" max="15" step="0.25" value="10" style="width: 100%;">
+            <span id="td-d-val" style="font-family: monospace;">10B</span>
 
             <label style="margin-top: 10px; display: block;"><b>Batch size: </b></label>
             <input type="range" id="td-batch" min="8" max="16" step="0.5" value="12" style="width: 100%;">
