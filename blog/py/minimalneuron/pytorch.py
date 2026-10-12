@@ -1,31 +1,42 @@
-import numpy as np
-import tensorflow as tf
+"""
+The minimal network, in PyTorch.
 
-# --- THE DATA ---
-# Inputs: [X1, X2], Outputs: [Y]
-X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=np.float32)
-Y = np.array([[0], [1], [1], [0]], dtype=np.float32) # XOR Logic
+A two-layer network that learns XOR. A single neuron cannot learn XOR (its
+decision boundary is a straight line), but two layers with a nonlinearity in
+between can -- which is exactly why the "From Scratch" tab's single neuron
+fits a straight line while this one needs a hidden layer.
 
-def build_tf_nn(layers=1):
-    if layers == 1:
-        # Simple Linear Model / Perceptron
-        model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=1, input_shape=(2,), activation="sigmoid")
-        ])
-    else:
-        # 2-Layered Neural Network
-        model = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=4, input_shape=(2,), activation="relu"), # Hidden
-            tf.keras.layers.Dense(units=1, activation="sigmoid")                # Output
-        ])
-    
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-    return model
+Run it (needs torch installed):
+    python3 pytorch.py
+"""
 
-# Train and Test
-tf_model = build_tf_nn(layers=2)
-tf_model.fit(X, Y, epochs=500)
-print(f"TF Prediction for [0,0]: {tf_model.predict(np.array([[0,0]]))}")
-print(f"TF Prediction for [0,1]: {tf_model.predict(np.array([[0,1]]))}")
-print(f"TF Prediction for [1,0]: {tf_model.predict(np.array([[1,0]]))}")
-print(f"TF Prediction for [1,1]: {tf_model.predict(np.array([[1,0]]))}")
+import torch
+import torch.nn as nn
+
+# --- THE DATA: the four corners of the XOR rule ---
+X = torch.tensor([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=torch.float32)
+Y = torch.tensor([[0], [1], [1], [0]], dtype=torch.float32)
+
+model = nn.Sequential(
+    nn.Linear(2, 4),
+    nn.ReLU(),
+    nn.Linear(4, 1),
+    nn.Sigmoid(),
+)
+loss_fn = nn.BCELoss()
+opt = torch.optim.Adam(model.parameters(), lr=0.05)
+
+for epoch in range(500):
+    loss = loss_fn(model(X), Y)
+    opt.zero_grad()
+    loss.backward()
+    opt.step()
+    if (epoch + 1) % 100 == 0:
+        print(f"  epoch {epoch + 1:4d}:  loss = {loss.item():.4f}")
+
+model.eval()
+with torch.no_grad():
+    preds = model(X).squeeze(1)
+print("\nXOR predictions:")
+for x, target, pred in zip(X.tolist(), Y.squeeze(1).tolist(), preds.tolist()):
+    print(f"  {x} -> {pred:.4f}   (target {int(target)})")
