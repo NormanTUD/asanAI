@@ -1701,6 +1701,7 @@ function _sync_mobile_settings_panel() {
 	_sync_mobile_check('mobile_show_bars_instead_of_numbers', 'show_bars_instead_of_numbers');
 	_sync_mobile_check('mobile_visualize_images_in_grid', 'visualize_images_in_grid');
 	_sync_mobile_check('mobile_show_raw_data', 'show_raw_data');
+	_sync_mobile_check('mobile_show_input_layer_fcnn', 'show_input_layer_fcnn');
 
 	_render_mobile_optimizer_params();
 }

@@ -699,6 +699,12 @@
 						</div>
 					</div>
 					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_show_input_layer"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_show_input_layer_fcnn" onchange="$('#show_input_layer_fcnn').prop('checked', this.checked); force_restart_fcnn();">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_batch_plot_minimum_time"></span> (s)</span>
 						<div class="mobile-panel-control">
 							<input type="number" id="mobile_min_time_between_batch_plots" value="5" min="0" onchange="$('#min_time_between_batch_plots').val(this.value).trigger('change');">

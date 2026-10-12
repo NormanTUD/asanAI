@@ -474,6 +474,10 @@
 							<td><input class="show_data" type='number' value="32" min=0 id="max_neurons_fcnn" style="width: 55px"></td>
 						</tr>
 						<tr>
+							<td><span class="TRANSLATEME_show_input_layer"></span>?</td>
+							<td><input type='checkbox' id="show_input_layer_fcnn" onchange="force_restart_fcnn()"></td>
+						</tr>
+						<tr>
 							<td><span class="TRANSLATEME_batch_plot_minimum_time"></span> (s)</td>
 							<td><input class="show_data" type='number' value="5" min=0 id="min_time_between_batch_plots" style="width: 55px"></td>
 						</tr>

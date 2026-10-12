@@ -6,6 +6,7 @@ var _fcnn_tooltip_el = null;
 var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
+var fcnn_input_layer_offset = 0;
 
 function _compute_histogram_bins(weightData, weightStats, numBins) {
 	var bins = new Array(numBins).fill(0);
@@ -199,7 +200,55 @@ function get_fcnn_data() {
 		meta_infos.push(_get_layer_meta_info(layer_idx, class_name, start_layer));
 	}
 
+	var show_input_layer = false;
+	try {
+		show_input_layer = $("#show_input_layer_fcnn").is(":checked");
+	} catch (e) {}
+
+	if (show_input_layer) {
+		var input_info = _fcnn_input_layer_info();
+		if (input_info) {
+			units.unshift(input_info.dim);
+			names.unshift(input_info.name);
+			meta_infos.unshift({
+				layer_type: "InputLayer",
+				nr: -1,
+				input_shape: input_info.shape,
+				output_shape: input_info.shape,
+				kernel_size_x: undefined,
+				kernel_size_y: undefined
+			});
+		}
+	}
+
 	return [names, units, meta_infos];
+}
+
+function _fcnn_input_layer_info() {
+	var shape = null;
+	try {
+		if (model && model.input && Array.isArray(model.input.shape)) {
+			shape = model.input.shape;
+		} else if (model && model.layers && model.layers.length && model.layers[0].input) {
+			shape = model.layers[0].input.shape;
+		}
+	} catch (e) {}
+	if (!Array.isArray(shape) || shape.length === 0) return null;
+
+	var dim = 1;
+	for (var i = 0; i < shape.length; i++) {
+		if (typeof shape[i] === "number" && !isNaN(shape[i])) {
+			dim *= shape[i];
+		}
+	}
+	if (!Number.isFinite(dim) || dim < 1) return null;
+
+	var name = "Input layer";
+	try {
+		if (language && language[lang]) name = language[lang]["input_layer"];
+	} catch (e) {}
+
+	return { dim: dim, shape: shape, name: name };
 }
 
 function _setup_fcnn_canvas() {
@@ -409,7 +458,7 @@ function annotate_output_neurons(canvasWidth, ctx, layerId, numNeurons, j, font_
 		return ctx;
 	}
 
-	if (layerId == nr_layers - 1 && get_last_layer_activation_function() == "softmax") {
+	if ((layerId - fcnn_input_layer_offset) == nr_layers - 1 && get_last_layer_activation_function() == "softmax") {
 		if (labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
 			ctx.beginPath();
 			ctx.font = font_size + "px Arial";
@@ -1295,6 +1344,8 @@ async function draw_fcnn(...args) {
 
 	var [layers, _labels, meta_infos] = args;
 
+	fcnn_input_layer_offset = (meta_infos && Array.isArray(meta_infos) && meta_infos[0] && meta_infos[0].layer_type === "InputLayer") ? 1 : 0;
+
 	// === GUARDRAIL: Validate layers ===
 	if (!Array.isArray(layers) || layers.length === 0) {
 		console.warn("[draw_fcnn] Empty or invalid layers array");
@@ -1579,8 +1630,8 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
 }
 
 function _get_flatten_layer_output(layer_idx) {
-	if (!proper_layer_states_saved() || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return null;
-	var this_layer_states = layer_states_saved[`${layer_idx}`];
+	if (!proper_layer_states_saved() || !layer_states_saved || !layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]) return null;
+	var this_layer_states = layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`];
 	if (!this_layer_states["output"]) return null;
 
 	var output = this_layer_states["output"];
@@ -1645,7 +1696,7 @@ function _try_draw_first_layer_input_image(ctx, layer_idx, font_size) {
 		!Array.isArray(layer_states_saved["0"]["input"]) ||
 		get_shape_from_array(layer_states_saved["0"]["input"]).length !== 4 ||
 		get_shape_from_array(layer_states_saved["0"]["input"])[3] !== 3 ||
-		layer_idx !== 0
+		layer_idx !== fcnn_input_layer_offset
 	) {
 		return { ctx, n: undefined, m: undefined, minVal: undefined, maxVal: undefined };
 	}
@@ -1740,11 +1791,11 @@ function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layer
 }
 
 function _compute_layer_stats_for_neurons(shapeType, hasProperStates, layer_idx) {
-	if (shapeType !== "circle" || !hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) {
+	if (shapeType !== "circle" || !hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]) {
 		return null;
 	}
 	try {
-		var layer_flat_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+		var layer_flat_output = flatten(layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]["output"][0]);
 		if (layer_flat_output && layer_flat_output.length > 0) {
 			return _compute_stats(layer_flat_output);
 		}
@@ -1753,10 +1804,10 @@ function _compute_layer_stats_for_neurons(shapeType, hasProperStates, layer_idx)
 }
 
 function _check_conv2d_has_visualization(numNeurons, hasProperStates, layer_idx) {
-	if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return false;
-	if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length !== 4) return false;
+	if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]) return false;
+	if (get_shape_from_array(layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]["output"]).length !== 4) return false;
 
-	var tmp_all = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+	var tmp_all = transform_array_whd_dwh(layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]["output"][0]);
 	for (var j = 0; j < numNeurons; j++) {
 		var flat = tmp_all[j] ? flatten(tmp_all[j]) : [];
 		if (flat.length && Math.min(...flat) !== Math.max(...flat)) {
@@ -1770,8 +1821,8 @@ function _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, 
 	var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
 	var this_layer_output = null;
 
-	if (hasProperStates && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-		this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+	if (hasProperStates && layer_states_saved && layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]) {
+		this_layer_output = flatten(layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]["output"][0]);
 	}
 
 	var availableSpace = verticalSpacing / 2 - 2;
@@ -1810,7 +1861,7 @@ function _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, 
 function _get_neuron_label(layer_idx, j) {
 	try {
 		var nr_layers = model?.layers?.length;
-		if (layer_idx == nr_layers - 1 && labels && Array.isArray(labels) && labels[j]) {
+		if ((layer_idx - fcnn_input_layer_offset) == nr_layers - 1 && labels && Array.isArray(labels) && labels[j]) {
 			return labels[j];
 		}
 	} catch (e) {}
@@ -1867,9 +1918,9 @@ function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY
 }
 
 function _get_conv2d_channel_output(hasProperStates, layer_idx, j) {
-	if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return null;
-	if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length !== 4) return null;
-	var transformed = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+	if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]) return null;
+	if (get_shape_from_array(layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]["output"]).length !== 4) return null;
+	var transformed = transform_array_whd_dwh(layer_states_saved[`${layer_idx - fcnn_input_layer_offset}`]["output"][0]);
 	return transformed[j] || null;
 }
 
@@ -2359,7 +2410,8 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 	var layerY = canvasHeight / 2;
 
 	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-		var skip_info = get_skip_connection_info(layer_idx);
+		if (layer_idx < fcnn_input_layer_offset) continue;
+		var skip_info = get_skip_connection_info(layer_idx - fcnn_input_layer_offset);
 		if (!skip_info.enabled) continue;
 
 		// Skip connection goes from input of this layer to output of this layer
@@ -2368,7 +2420,7 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 
 		// Get the previous layer's X position (input to this layer)
 		var prevLayerX = layer_idx * layerSpacing;
-		if (layer_idx === 0) {
+		if (layer_idx === 0 && fcnn_input_layer_offset === 0) {
 			prevLayerX = layerSpacing * 0.3; // Before first layer
 		}
 
