@@ -98,7 +98,7 @@ function renderFourierAlgorithm(container, options = {}) {
 
     // Global config bar
     const configBar = document.createElement('div');
-    configBar.style.cssText = 'display:flex; align-items:center; gap:12px; padding:10px 16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:12px; flex-wrap:wrap;';
+    configBar.style.cssText = `display:flex; align-items:center; gap:12px; padding:10px 16px; background:${themeColor('#f8fafc')}; border:1px solid ${themeColor('#e2e8f0')}; border-radius:10px; margin-bottom:12px; flex-wrap:wrap;`;
     configBar.innerHTML = `
         <label style="font-size:0.85em; font-weight:600;">a: <input type="number" id="cfg-a" min="0" max="200" value="${a}" style="width:50px; padding:3px 6px; border:1px solid #cbd5e1; border-radius:4px;"></label>
         <label style="font-size:0.85em; font-weight:600;">b: <input type="number" id="cfg-b" min="0" max="200" value="${b}" style="width:50px; padding:3px 6px; border:1px solid #cbd5e1; border-radius:4px;"></label>
@@ -1249,8 +1249,8 @@ function renderICLExecution(container, options = {}) {
         const title = document.createElement('div');
         title.style.cssText = 'text-align:center; margin-bottom:20px;';
         title.innerHTML = `
-            <h3 style="color:#1e293b; margin:0 0 8px 0;">In-Context Algorithm Execution</h3>
-            <p style="color:#64748b; margin:0; font-size:0.9em;">The algorithm exists <strong>only in the prompt</strong>. Watch how the LLM traces through it token by token.</p>
+            <h3 style="color:${themeColor('#1e293b')}; margin:0 0 8px 0;">In-Context Algorithm Execution</h3>
+            <p style="color:${themeColor('#64748b')}; margin:0; font-size:0.9em;">The algorithm exists <strong>only in the prompt</strong>. Watch how the LLM traces through it token by token.</p>
         `;
         root.appendChild(title);
 
@@ -1276,7 +1276,7 @@ function renderICLExecution(container, options = {}) {
 
         // Right: inputs and controls
         const rightPanel = document.createElement('div');
-        rightPanel.style.cssText = 'background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px;';
+        rightPanel.style.cssText = `background:${themeColor('#f8fafc')}; border:1px solid ${themeColor('#e2e8f0')}; border-radius:10px; padding:15px;`;
         rightPanel.innerHTML = `
             <label style="font-size:0.8em; color:${themeColor('#64748b')}; font-weight:600;">FUNCTION CALL:</label>
             <div style="margin:10px 0; font-family:monospace; font-size:1.1em; color:${themeColor('#1e293b')}; background:${themeColor('#fff')}; padding:10px; border-radius:6px; border:1px solid ${themeColor('#e2e8f0')};">
@@ -1602,8 +1602,8 @@ function renderAlgorithmicPrompting(container, options = {}) {
         const header = document.createElement('div');
         header.style.cssText = 'text-align:center; margin-bottom:20px;';
         header.innerHTML = `
-            <h3 style="color:#1e293b; margin:0 0 8px 0;">🎯 Algorithmic Prompting: Teaching LLMs to Execute Algorithms</h3>
-            <p style="color:#64748b; margin:0; font-size:0.9em;">
+            <h3 style="color:${themeColor('#1e293b')}; margin:0 0 8px 0;">🎯 Algorithmic Prompting: Teaching LLMs to Execute Algorithms</h3>
+            <p style="color:${themeColor('#64748b')}; margin:0; font-size:0.9em;">
                 Based on <em>Teaching Algorithmic Reasoning via In-context Learning</em> (Zhou et al., 2022)
             </p>
         `;
@@ -1611,7 +1611,7 @@ function renderAlgorithmicPrompting(container, options = {}) {
 
         // Tab navigation
         const tabs = document.createElement('div');
-        tabs.style.cssText = 'display:flex; gap:4px; margin-bottom:20px; background:#f1f5f9; padding:4px; border-radius:10px;';
+        tabs.style.cssText = `display:flex; gap:4px; margin-bottom:20px; background:${themeColor('#f1f5f9')}; padding:4px; border-radius:10px;`;
         const tabDefs = [
             { id: 'ambiguity', label: '1. The Ambiguity Problem', icon: '❓' },
             { id: 'specificity', label: '2. Specificity Spectrum', icon: '📊' },
@@ -1623,8 +1623,8 @@ function renderAlgorithmicPrompting(container, options = {}) {
             btn.style.cssText = `
                 flex:1; padding:10px 12px; border:none; border-radius:8px; cursor:pointer;
                 font-size:0.82em; font-weight:600; transition:all 0.2s;
-                background:${currentView === tab.id ? '#fff' : 'transparent'};
-                color:${currentView === tab.id ? '#1e293b' : '#64748b'};
+                background:${currentView === tab.id ? themeColor('#fff') : 'transparent'};
+                color:${currentView === tab.id ? themeColor('#1e293b') : themeColor('#64748b')};
                 box-shadow:${currentView === tab.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'};
             `;
             btn.textContent = `${tab.icon} ${tab.label}`;
@@ -1650,8 +1650,8 @@ function renderAlgorithmicPrompting(container, options = {}) {
     function renderAmbiguity(container) {
         container.innerHTML = `
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
-                <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:12px; padding:20px;">
-                    <h4 style="margin:0 0 12px 0; color:#991b1b;">❌ Few-Shot Prompt (Ambiguous)</h4>
+                <div style="background:${themeColor('#fef2f2')}; border:1px solid ${themeColor('#fecaca')}; border-radius:12px; padding:20px;">
+                    <h4 style="margin:0 0 12px 0; color:${themeColor('#991b1b')};">❌ Few-Shot Prompt (Ambiguous)</h4>
                     <pre style="background:#1e293b; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
 Step 1: 8+7=15, write 5, carry 1
 Step 2: 2+6+1=9, write 9, carry 0
@@ -1664,13 +1664,13 @@ Step 2: 4+2+0=6, write 6
 Answer: 68
 
 Q: 789 + 456 = ?</pre>
-                    <div style="margin-top:12px; padding:10px; background:#fff; border-radius:6px; border:1px solid #fecaca;">
-                        <p style="margin:0 0 8px 0; font-size:0.85em; font-weight:600; color:#991b1b;">Multiple rules are consistent:</p>
+                    <div style="margin-top:12px; padding:10px; background:${themeColor('#fff')}; border-radius:6px; border:1px solid ${themeColor('#fecaca')};">
+                        <p style="margin:0 0 8px 0; font-size:0.85em; font-weight:600; color:${themeColor('#991b1b')};">Multiple rules are consistent:</p>
                         <div id="ambiguity-rules"></div>
                     </div>
                 </div>
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px;">
-                    <h4 style="margin:0 0 12px 0; color:#166534;">✅ Algorithmic Prompt (Unambiguous)</h4>
+                <div style="background:${themeColor('#f0fdf4')}; border:1px solid ${themeColor('#bbf7d0')}; border-radius:12px; padding:20px;">
+                    <h4 style="margin:0 0 12px 0; color:${themeColor('#166534')};">✅ Algorithmic Prompt (Unambiguous)</h4>
                     <pre style="background:#1e293b; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
 FN[3]=8. SN[3]=7. C[3]=0.
   Compute: 8+7+0=15.
@@ -1687,9 +1687,9 @@ FN[1]=1. SN[1]=3. C[1]=0.
 Answer: 495
 
 Q: 789 + 456 = ?</pre>
-                    <div style="margin-top:12px; padding:10px; background:#fff; border-radius:6px; border:1px solid #bbf7d0;">
-                        <p style="margin:0 0 8px 0; font-size:0.85em; font-weight:600; color:#166534;">Only ONE rule is consistent:</p>
-                        <div style="font-size:0.85em; color:#166534; font-family:monospace;">
+                    <div style="margin-top:12px; padding:10px; background:${themeColor('#fff')}; border-radius:6px; border:1px solid ${themeColor('#bbf7d0')};">
+                        <p style="margin:0 0 8px 0; font-size:0.85em; font-weight:600; color:${themeColor('#166534')};">Only ONE rule is consistent:</p>
+                        <div style="font-size:0.85em; color:${themeColor('#166534')}; font-family:monospace;">
                             carry = 1 iff sum ≥ 10<br>
                             digit = sum % 10<br>
                             (fully specified, no ambiguity)
@@ -1698,9 +1698,9 @@ Q: 789 + 456 = ?</pre>
                 </div>
             </div>
 
-            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:20px; margin-bottom:20px;">
-                <h4 style="margin:0 0 12px 0; color:#1e40af;">Interactive: How Many Rules Fit the Examples?</h4>
-                <p style="margin:0 0 12px 0; font-size:0.88em; color:#334155;">
+            <div style="background:${themeColor('#eff6ff')}; border:1px solid ${themeColor('#bfdbfe')}; border-radius:12px; padding:20px; margin-bottom:20px;">
+                <h4 style="margin:0 0 12px 0; color:${themeColor('#1e40af')};">Interactive: How Many Rules Fit the Examples?</h4>
+                <p style="margin:0 0 12px 0; font-size:0.88em; color:${themeColor('#334155')};">
                     Click "Add Example" to see how ambiguity decreases as you provide more detailed examples.
                     With few-shot prompting, even many examples leave room for wrong rules.
                 </p>
@@ -2494,8 +2494,10 @@ document.addEventListener('DOMContentLoaded', function() {
             try { renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 }); } catch (e) { /* ignore */ }
             const c = document.getElementById('algorithmic-prompting-container');
             if (c) { try { renderAlgorithmicPrompting(c); } catch (e) { /* ignore */ } }
-            const w = document.getElementById('wave-interference-container');
-            if (w) { try { renderWaveInterference(w); } catch (e) { /* ignore */ } }
+            const wc = document.getElementById('wave-interference-container');
+            if (wc) { try { renderWaveInterference(wc); } catch (e) { /* ignore */ } }
+            const ic = document.getElementById('icl-execution-container');
+            if (ic) { try { renderICLExecution(ic); } catch (e) { /* ignore */ } }
         });
     }
 
