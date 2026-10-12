@@ -2466,11 +2466,11 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.lineWidth = lineWidth;
 		ctx.setLineDash([6, 4]);
 
-		// Arc from the source layer to the target layer
+		// Arc from the right edge of the source to the left edge of the target
 		var span = target_draw_idx - layer_idx;
 		var arcHeight = 25 + strength * 15 + span * 18;
-		var startX = sourceX - maxRadius - 5;
-		var endX = targetX + maxRadius + 5;
+		var startX = sourceX + maxRadius + 5;
+		var endX = targetX - maxRadius - 5;
 		var midX = (startX + endX) / 2;
 
 		ctx.beginPath();
@@ -2478,12 +2478,12 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		ctx.quadraticCurveTo(midX, topY - arcHeight, endX, topY);
 		ctx.stroke();
 
-		// Draw small "+" symbol at the connection point
+		// Draw small "+" symbol at the connection point (left of target)
 		ctx.setLineDash([]);
 		ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
 		ctx.font = "bold " + (font_size + 2) + "px Arial";
 		ctx.textAlign = "center";
-		ctx.fillText("+", endX + 10, topY - 2);
+		ctx.fillText("+", endX - 10, topY - 2);
 
 		// Draw label (with the number of spanned layers when > 1)
 		ctx.font = (font_size - 2) + "px Arial";
@@ -2496,9 +2496,9 @@ function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHei
 		const this_region = {
 			type: "skip_connection",
 			shape: "rect",
-			x: startX,
+			x: startX - 10,
 			y: topY - arcHeight - 15,
-			w: endX - startX + 20,
+			w: endX - startX + 30,
 			h: arcHeight + 20,
 			layer_idx: target_draw_idx,
 			strength: strength,
