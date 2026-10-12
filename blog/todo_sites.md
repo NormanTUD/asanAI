@@ -45,6 +45,10 @@ Uncaught TypeError: can't access property "textContent", document.getElementById
 
 promptengineering: die fonts im plot bei "# Prompt Injection Defense" sind auf dem hellen grünen oder roten background schwer lesbar
 
+finetuninglab: "$$ \mathcal{L}_{\text{SFT}}(\theta) = -\sum_{(x, y) \in \mathcal{D}} \sum_{t=1}^{|y|} \log \pi_\theta(y_t \mid x, y_{data=”” sources:=”” =”” human-written=”” (highest=”” quality):=”” openai’s=”” early=”” instructgpt=”” used=”” ~13k=”” human-written=”” examples.=”” distilled=”” from=”” stronger=”” models=”” (scalable):=”” self-instruct,=”” wizardlm,=”” alpaca.=”” use=”” gpt-4=”” to=”” generate=”” 100k–1m=”” synthetic=”” (cheap,=”” controllable):=”” constitutional=”” ai,=”” evol-instruct,=”” magpie.=”” a=”” typical=”” 2025=”” sft=”” dataset:=”” llama=”” 3=”” ~10m=”” key=”” insights:=”” quality=””> quantity*: 10K carefully curated examples beat 1M noisy ones." diese formel rendert nicht
 
+und "# Practical Fine-Tuning Recipe"  ist kein codeblock so richtig, schaue wie andere code blocks das machen, speicher den code in den ordner py.
+
+verschiebe den ordner atlas nach atlas_data oder so so dass es nicht mehr mit atlas.php/atlas verwechselt wird, benenne das auch in den dateien, pfaden, agents.md usw um
 
 always cite original publications when you can, add them to literature.js and link where you got infos from. read them thoroughly.
