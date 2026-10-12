@@ -2,13 +2,14 @@
 <!--
 COURSE_METADATA:
 title: Retrieval-Augmented Generation: Giving LLMs a Search Engine
-description: Giving LLMs a search engine, chunking, embedding, and the RAG pipeline.
+description: The RAG pipeline — chunking, embedding, vector search, generation — plus the parts the happy path hides: chunking strategies, hybrid BM25 + dense search, cross-encoder reranking, contextual retrieval, and the honest reasons RAG underperforms.
 icon: &#128270;
 part: 5
 order: 3
 color: rose
-topics: inference, language, programming, architecture
+topics: inference, language, programming, architecture, data
 tags: code-heavy
+math: 40
 -->
 
 <div class="smart-quote" data-cite="alankayfuture">
@@ -186,6 +187,96 @@ In practice, **RAG + long context** work together: RAG retrieves the top 10–20
 - **No reasoning over absence.** RAG can't tell you “this information doesn't exist in the database.” It will retrieve the *closest* thing, which may be irrelevant.
 - **Latency.** The retrieval step adds ~50–200 ms per query.
 
+</div>
+
+<div class="md">
+## Retrieval, in Depth
+
+The happy path — embed the corpus, retrieve the nearest chunks, hand them to the model — is what the sections above walk (see also [Semantic search](vectorsearch.php)). This deeper half is what happens in practice, and it is mostly about the parts the happy path hides — **how you cut the corpus into chunks** (the single highest-leverage, least-discussed knob), **how you combine keyword and semantic search**, **how you rerank** with a second, more expensive model, and — the half the demos never show — **why retrieval-augmented generation so often underperforms** and how to find out whether *your* failure is in the retrieval or the generation.
+</div>
+
+<div class="md">
+### Chunking is a decision, not a default
+
+Before anything is embedded, the corpus must be **chunked** — cut into pieces, because the model will be asked to answer from a *few* of them, not the whole. The chunk is the **unit of retrieval**: it is the granularity at which "relevant" is decided and at which context is *spent*. And its size and boundaries are the highest-leverage choice in the whole pipeline, because they set two opposing costs at once.
+
+The standard cuts, and what each optimizes:
+
+* **Fixed-size** — split by character/token count (say, 400 tokens, 50 overlap). Cheap and uniform, but it cuts in the middle of sentences, definitions, and code blocks, so a chunk can contain half of a thought and the other half of a *different* one.
+* **Recursive / structural** — split on document structure first (headings, paragraphs, code fences, list items), then fall back to a size limit only when a section is too big. Respects the document's own boundaries, which is usually what "a relevant unit" actually means.
+* **Semantic** — split where the *topic* changes (a drop in embedding similarity between consecutive sentences). Better at keeping a chunk coherent, but more expensive and more fragile to fit.
+
+The trade is **recall versus context-dilution**, and it is the whole game. A chunk that is *too small* splits a relevant answer across two chunks, so retrieving one gives you a partial, misleading piece (low recall of the *complete* answer). A chunk that is *too big* pulls in a lot of irrelevant text along with the relevant bit, so the model's attention is *diluted* across a context full of noise (you retrieve the answer, but drowned in context). There is no universal right size — it depends on the document and the question — which is why it is a *decision* you tune per corpus, not a number you copy from a template.
+
+> The chunk is the atom of the system. Get the atom wrong and no amount of better embedding, better fusion, or better model fixes it: you are asking the model to reconstruct a thought from the fragments of its neighbor.
+</div>
+
+<div class="md">
+### Hybrid search: BM25 and dense are different questions
+
+[Dense](vectorsearch.php) retrieval asks "which chunks are *semantically close* to this query?" — great for **paraphrase** (the query "how do I undo my last commit" matches "reverting a commit" even though no word is shared). But it is weak on **exact, rare terms**: a product ID, an error code, a proper noun, a specific API flag. Those are the things a *lexical* retriever — **BM25** \cite[Wikipedia, Okapi BM25]{bm25} — is built for: it scores by term match, weighted by how rare the term is across the corpus, and it does not care whether the query and the document *mean* the same thing, only whether they *share* the right words.
+
+A query that is half paraphrase and half exact term ("how do I configure `max_tokens` for the gpt-4o model?") is answered best by *both* at once — the dense side finds "how do I configure", the lexical side finds "`max_tokens`" and "gpt-4o". **Hybrid search** retrieves with both and **fuses** the two ranked lists. The standard fusion is **reciprocal rank fusion (RRF)**: for each document, sum over the two lists a score that depends only on its *rank* in that list,
+
+<div>
+$$ \text{RRF}(d) = \sum_{r \in \{\text{bm25, dense}\}} \frac{1}{k + \text{rank}_r(d)} $$
+</div>
+
+with $k$ a constant (commonly 60). RRF is attractive because it needs no calibrated scores — it uses only *rank* — and it is robust: a document that is rank 3 in BM25 and rank 1 in dense fuses to a top result even if the two scoring functions are on totally different scales. This is why hybrid retrieval is now the default production pattern rather than an experiment, and why the [BEIR](beir2021) benchmark exists — to show that the "best" retriever depends on the task, and that fusing lexical and dense usually beats either alone \cite[Thakur et al., BEIR (2021)]{beir2021}.
+
+<figure>
+	<svg viewBox="0 0 560 150" role="img" aria-label="A two-stage retrieval funnel: BM25 and dense recall fuse via RRF, then a cross-encoder rescues the top few" style="width:100%; height:auto; max-width:560px; display:block; margin:0 auto;">
+		<defs><marker id="moearrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--mn-text-secondary)"/></marker></defs>
+		<rect x="20" y="12" width="120" height="34" rx="8" fill="var(--mn-bg-subtle)" stroke="var(--mn-border)"/>
+		<text x="80" y="34" text-anchor="middle" font-size="12" fill="var(--mn-text)">BM25 recall</text>
+		<text x="80" y="58" text-anchor="middle" font-size="10" fill="var(--mn-text-secondary)">top-50, cheap, lexical</text>
+		<rect x="20" y="98" width="120" height="34" rx="8" fill="var(--mn-bg-subtle)" stroke="var(--mn-border)"/>
+		<text x="80" y="120" text-anchor="middle" font-size="12" fill="var(--mn-text)">dense recall</text>
+		<text x="80" y="144" text-anchor="middle" font-size="10" fill="var(--mn-text-secondary)">top-50, cheap, semantic</text>
+		<rect x="220" y="55" width="120" height="40" rx="8" fill="var(--mn-bg-subtle)" stroke="var(--mn-accent)"/>
+		<text x="280" y="79" text-anchor="middle" font-size="12" fill="var(--mn-text)">RRF fuse</text>
+		<line x1="140" y1="29" x2="218" y2="70" stroke="var(--mn-text-secondary)" stroke-width="1.5"/>
+		<line x1="140" y1="115" x2="218" y2="80" stroke="var(--mn-text-secondary)" stroke-width="1.5"/>
+		<rect x="400" y="55" width="140" height="40" rx="8" fill="var(--mn-bg-subtle)" stroke="var(--mn-accent)"/>
+		<text x="470" y="73" text-anchor="middle" font-size="12" fill="var(--mn-text)">cross-encoder</text>
+		<text x="470" y="90" text-anchor="middle" font-size="10" fill="var(--mn-text-secondary)">rescore, keep top-5</text>
+		<line x1="340" y1="75" x2="398" y2="75" stroke="var(--mn-accent)" stroke-width="1.5" marker-end="url(#moearrow)"/>
+		<text x="370" y="67" text-anchor="middle" font-size="10" fill="var(--mn-text-secondary)">~60 docs</text>
+		<text x="470" y="120" text-anchor="middle" font-size="10" fill="var(--mn-text-secondary)">expensive but precise</text>
+	</svg>
+	<figcaption class="md">The two-stage funnel. Cheap recall (BM25 + dense, fused by RRF) gathers a broad candidate set; an expensive cross-encoder then reads each (query, doc) pair and keeps only the best. You cannot run the cross-encoder first — it is too slow over the whole corpus.</figcaption>
+</figure>
+</div>
+
+<div class="md">
+### Reranking: the expensive second look
+
+Dense and BM25 are **first-stage** retrievers: they are cheap, so they can score *all* of the corpus, but they do so *coarsely* — a dense model scores the query and a document *separately* (two encodings, one distance), so it never actually reads them together. A **cross-encoder** is the **second-stage** reranker: it takes the query *and* a candidate document as a single input, runs them through a transformer *jointly*, and outputs a relevance score for that pair. Because it reads the pair, it is far more precise — it can tell that a chunk *mentions* the topic but does not *answer* the question, which a first-stage similarity cannot.
+
+But a cross-encoder is $O(N)$ — one expensive forward pass per candidate — so it is **impossible as a first stage** (you would run it over the whole corpus). That is the entire logic of the two-stage design: cheap recall gathers maybe 50–100 candidates (broad, possibly wrong), and the cross-encoder rescues the *top few* (narrow, precise). You spend the expensive computation only where it matters, on the shortlist. The funnel shape — wide and cheap, then narrow and expensive — is the same shape as a search engine, a recruiting pipeline, and a courtroom; retrieval borrowed it because the arithmetic forced it.
+</div>
+
+<div class="md">
+### Contextual retrieval: fix the chunk at index time
+
+A recurring failure is that a chunk, *out of context*, is not retrievable. A paragraph that says "the failure mode was severe" is a great answer — but if the word "failure" never appears in the query, no retriever finds it, because the chunk, standing alone, does not say what it is *about*. **Contextual retrieval** \cite[Ford, Anthropic (2024)]{contextualretrieval2024} addresses this at **index time**: before embedding a chunk, prepend a short piece of LLM-written context that orients the chunk ("this paragraph is from a post-mortem about the checkout service's 2024-03-14 incident, and it describes the failure mode"), so the *enriched* chunk is what gets embedded and retrieved. Reported to cut the retrieval-failure rate by roughly half \cite[Ford, Anthropic (2024)]{contextualretrieval2024}.
+
+The idea generalizes: retrieval quality is set at **index time** as much as query time, and you can spend LLM compute at index time — once, per chunk — to make each chunk self-sufficient. It is the retrieval analog of doing the hard work up front.
+</div>
+
+<div class="md">
+### Why RAG underperforms: the honest half
+
+None of the above is a substitute for the fact that RAG *fails*, and the failure modes are structural \cite[Gao et al., 2023]{ragsurvey2023}:
+
+* **Retrieval errors propagate.** The model answers from what it is *given*. If the retrieval misses the right chunk — because the chunk is small, out-of-context, or a rare-term case the dense side lost — the model is handed a partial or wrong context and then *confidently* answers from it. The error is in the retrieval, but it looks like a model failure. This is why you must be able to tell the two apart (see the [Evaluation](evaluation.php) chapter, including its section on building your own eval): a "bad answer" whose retrieved context was actually *wrong or incomplete* is a retrieval bug, not a model bug.
+* **Lost in the middle.** Even when the right chunk *is* retrieved, it may not be *used*. \cite[Liu et al., 2023]{liu2023lostmiddle} showed that models use the **start and end** of a long context best and use the **middle** worst — a "U-shaped" attention over the given context. So a relevant chunk buried in the middle of a long retrieved context is retrieved but *ignored*. This is a model property, not a retrieval one, and it is why *how many* chunks you stuff in, and *in what order*, matters as much as *which* chunks.
+* **Context pollution.** The chunks you retrieve are *assumed* relevant; some are not. A retrieved-but-wrong chunk does not just fail to help — it *steers* the answer, because the model is told "here is your context" and integrates what it is given. Retrieval that is slightly wrong is worse than no retrieval at all, in the sense that it adds *confident* noise to the context the model is asked to rely on.
+
+The through-line: RAG is not a feature you add; it is a **pipeline with two failure points** (retrieval and integration), and each has its own diagnosis. "Just add RAG" is not a free lunch because the two halves fail independently, and the second hides the first — a confidently wrong answer from a *good* model over a *bad* context is the hardest failure to see, because everything in the model looks fine.
+</div>
+
+<div class="md">
 ## Summary
 
 | Question | Answer |

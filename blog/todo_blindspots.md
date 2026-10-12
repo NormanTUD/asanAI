@@ -17,7 +17,7 @@ Statuses: `[ ]` pending · `[~]` in progress · `[x]` done (validators green) ·
 | 4 | Tokenizer pathologies | `tokenizerlab` + the Strawberry demo | **New lesson** | `tokenizer_pathologies.php`, Part 4, order 19 |
 | 5 | Evaluation as a discipline | `evaluation.php` (benchmarks; "build your own eval" in 6 lines) | **New lesson** | `building_evals.php`, Part 5, order 20 |
 | 6 | The economic layer | absent | **New lesson** | `ai_economics.php`, Part 5, order 21 |
-| 7 | Retrieval depth (beyond "RAG works") | `rag.php`, `vectorsearch.php` | **New lesson** | `retrieval_deep_dive.php`, Part 5, order 22 |
+| 7 | Retrieval depth (beyond "RAG works") | `rag.php`, `vectorsearch.php` | **Merged into `rag.php`** | § "Retrieval, in Depth" in `rag.php` (Part 5, order 3) |
 | 8 | Model → System | `agents.php`, `production_serving.php` | **New lesson** | `from_model_to_product.php`, Part 5, order 23 |
 
 These close the gap between Part 4 (architecture) and Part 5 (making AI useful) and
@@ -220,8 +220,8 @@ give the "engineering craft" half of the course a through-line it currently lack
 - **Interactive (required).** a "price your training run" calculator: pick $N$, $D$,
   GPU type → FLOPs → hours → $; and a "price your tokens" one for inference + caching.
 
-### T7 — Retrieval beyond "RAG works" (NEW LESSON `retrieval_deep_dive.php`)
-`[ ]`
+### T7 — Retrieval beyond "RAG works" (merged into `rag.php`)
+`[x]`
 - **Gap.** `rag.php` and `vectorsearch.php` cover the happy path. Missing: chunking as
   a *decision*, **hybrid search (BM25 + dense) implemented**, **reranking** (cross-
   encoders) in detail, **contextual retrieval** (Anthropic 2024), and — importantly —
@@ -245,8 +245,9 @@ give the "engineering craft" half of the course a through-line it currently lack
     models use the start and end of a long context best, and forget the middle);
     **context pollution** (the retrieved-but-wrong chunk steers the answer). These are
     why "just add RAG" is not a free lunch.
-- **Home.** New lesson `retrieval_deep_dive.php`, Part 5, order 22 — the deep dive
-  behind [RAG](rag) and [Semantic search](vectorsearch).
+- **Home.** Merged into `rag.php` as § "Retrieval, in Depth" (Part 5, order 3),
+  between "Limitations & Failure Modes" and "Summary"; `retrieval_deep_dive.php`
+  deleted. The deep dive behind [RAG](rag) and [Semantic search](vectorsearch).
 - **Sources to verify.** BM25 (`robertson2009bm25` exists); Reciprocal Rank Fusion;
   cross-encoders (Nogueira et al., "The Role of Pre-trained Linguistic Representations"
   / MonoT5); **Anthropic "Contextual Retrieval" (2024)** — verify the stable URL
