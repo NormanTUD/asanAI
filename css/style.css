@@ -1910,6 +1910,11 @@ input, select {
 	to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes csv_block_quick_fade {
+	from { opacity: 0.4; }
+	to   { opacity: 1; }
+}
+
 .csv_section {
 	background: rgba(120, 120, 120, 0.07);
 	border: 1px solid rgba(120, 120, 120, 0.15);
@@ -1953,12 +1958,6 @@ input, select {
 	transition: opacity 0.18s ease;
 }
 
-.csv_tensor_block + .csv_tensor_block {
-	margin-top: 10px;
-	border-top: 1px dashed rgba(120, 120, 120, 0.18);
-	padding-top: 12px;
-}
-
 .csv_tensor_block_one_hot {
 	border-top: 1px dashed rgba(120, 120, 120, 0.18);
 	margin-top: 12px;
@@ -1973,10 +1972,6 @@ input, select {
 	margin: 0 0 8px 0;
 }
 
-.csv_tensor_block + .csv_tensor_block .csv_tensor_label {
-	margin-top: 0;
-}
-
 .csv_tensor_label_name {
 	font-size: 0.75em;
 	font-weight: 700;
@@ -1985,21 +1980,12 @@ input, select {
 	opacity: 0.7;
 }
 
-.csv_tensor_label_shape {
-	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-	font-size: 0.78em;
-	padding: 1px 7px;
-	background: rgba(120, 120, 120, 0.14);
-	border-radius: 9px;
-	opacity: 0.85;
-}
-
 .xy_matrix {
 	text-align: center;
 	overflow-x: auto;
 	overflow-y: hidden;
-	padding: 4px 0 2px 0;
-	min-height: 38px;
+	padding: 10px 4px;
+	min-height: 44px;
 	scrollbar-width: thin;
 }
 
@@ -2013,7 +1999,14 @@ input, select {
 }
 
 .xy_matrix math {
-	font-size: 1.02em;
+	font-size: 1.05em;
+}
+
+.xy_matrix mfrac,
+.xy_matrix munder,
+.xy_matrix msub,
+.xy_matrix msup {
+	transition: none;
 }
 
 .xy_matrix_fallback {

@@ -1173,7 +1173,7 @@ function array_size (ar) {
 
 function _shape_desc_for_label(ar, desc) {
 	if (!desc || typeof desc !== "string") return desc;
-	if (desc !== "Input" && desc !== "Bias") return desc;
+	if (desc !== "Input" && desc !== "Output" && desc !== "Bias") return desc;
 	if (!Array.isArray(ar) || ar.length === 0) return desc;
 	var shape;
 	try {

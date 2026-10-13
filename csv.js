@@ -64,118 +64,117 @@ async function _show_csv_file(disabled_show_head_data=false) {
 
 	var head = data["head"];
 
-	reset_csv_stuff();
+	var panel_was_visible = _is_csv_panel_visible();
+	var will_have_data = head.length > 1 && data.data.length >= 1;
 
-	if (head.length > 1 && data.data.length >= 1) {
-		var header_csv_selection = get_csv_header_selections();
-
-		var has_x_and_y = has_x_and_y_in_csv_headers(header_csv_selection);
-		if(has_x_and_y || header_csv_selection.length == 0) {
-			if (!disabled_show_head_data) {
-				show_head_data(head);
-			}
-
-			var parsed_data = await get_x_y_from_csv();
-
-			if(typeof parsed_data == "string" && parsed_data == "incomplete") {
-				return;
-			}
-
-			set_activation_function_to_linear_when_y_not_between_0_and_1(parsed_data);
-
-			var new_input_shape = parsed_data.x.shape.slice(1);
-			await set_input_shape("[" + new_input_shape.toString() + "]");
-			var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
-			if(auto_adjust) {
-				if (!parsed_data.is_one_hot_encoded && parsed_data.number_of_categories) {
-					auto_adjust_number_of_neurons(parsed_data.number_of_categories);
-				}
-			}
-
-			csv_allow_training = true;
-
-			var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
-			if (is_same) {
-				if (auto_adjust) {
-					await updated_page(null, null, null, 1);
-				}
-			}
-
-			var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 5, "Input");
-			var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 5, "Output");
-
-			if(!x_str || x_str && x_str.includes("error_msg") && old_x_str) {
-				x_str = old_x_str;
-			}
-
-			if(!y_str || y_str && y_str.includes("error_msg") && old_y_str) {
-				y_str = old_y_str;
-			}
-
-			old_x_str = x_str;
-			old_y_str = y_str;
-
-			if (parsed_data.x.dtype == "string") {
-				csv_allow_training = false;
-			}
-
-			if (parsed_data.y.dtype == "string") {
-				csv_allow_training = false;
-			}
-
-			if (csv_allow_training) {
-				await hide_error();
-			}
-
-			var x_shape_str = parsed_data.x.shape.join(" × ");
-			var y_shape_str = parsed_data.y.shape.join(" × ");
-
-			var x_html = _render_latex_to_html(x_str) || _latex_fallback_html(x_str);
-			var y_html = _render_latex_to_html(y_str) || _latex_fallback_html(y_str);
-
-			var shape_preview =
-				"<div class='csv_tensor_block'>" +
-					"<div class='csv_tensor_label'>" +
-						"<span class='csv_tensor_label_name'>" + trm("csv_tensor_input") + "</span>" +
-						"<span class='csv_tensor_label_shape'>[" + x_shape_str + "]</span>" +
-					"</div>" +
-					"<div class='xy_matrix'>" + x_html + "</div>" +
-				"</div>" +
-				"<div class='csv_tensor_block'>" +
-					"<div class='csv_tensor_label'>" +
-						"<span class='csv_tensor_label_name'>" + trm("csv_tensor_output") + "</span>" +
-						"<span class='csv_tensor_label_shape'>[" + y_shape_str + "]</span>" +
-					"</div>" +
-					"<div class='xy_matrix'>" + y_html + "</div>" +
-				"</div>";
-
-			shape_preview = auto_one_hot_shape_preview(shape_preview, parsed_data);
-
-			$("#x_y_shape_preview").html(shape_preview);
-			$(".hide_when_no_csv").show();
-			_retrigger_csv_reveal();
-		} else {
-			log(language[lang]["csv_headers_must_have_x_and_y_values"]);
-
-			$("#csv_header_overview").html("");
-			csv_allow_training = false;
-
-			$($(".header_select")[0]).val("X");
-			$($(".header_select")[1]).val("Y").trigger("change");
-
-			await show_csv_file();
-		}
-	} else {
+	if (!will_have_data) {
+		$("#x_y_shape_preview").html("");
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
+		if (panel_was_visible) {
+			$(".hide_when_no_csv").hide();
+		}
+		return;
+	}
+
+	var header_csv_selection = get_csv_header_selections();
+
+	var has_x_and_y = has_x_and_y_in_csv_headers(header_csv_selection);
+	if(has_x_and_y || header_csv_selection.length == 0) {
+		if (!disabled_show_head_data) {
+			show_head_data(head);
+		}
+
+		var parsed_data = await get_x_y_from_csv();
+
+		if(typeof parsed_data == "string" && parsed_data == "incomplete") {
+			return;
+		}
+
+		set_activation_function_to_linear_when_y_not_between_0_and_1(parsed_data);
+
+		var new_input_shape = parsed_data.x.shape.slice(1);
+		await set_input_shape("[" + new_input_shape.toString() + "]");
+		var auto_adjust = $("#csv_auto_adjust_number_of_neurons").is(":checked");
+		if(auto_adjust) {
+			if (!parsed_data.is_one_hot_encoded && parsed_data.number_of_categories) {
+				auto_adjust_number_of_neurons(parsed_data.number_of_categories);
+			}
+		}
+
+		csv_allow_training = true;
+
+		var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
+		if (is_same) {
+			if (auto_adjust) {
+				await updated_page(null, null, null, 1);
+			}
+		}
+
+		var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 5, "Input");
+		var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 5, "Output");
+
+		if(!x_str || x_str && x_str.includes("error_msg") && old_x_str) {
+			x_str = old_x_str;
+		}
+
+		if(!y_str || y_str && y_str.includes("error_msg") && old_y_str) {
+			y_str = old_y_str;
+		}
+
+		old_x_str = x_str;
+		old_y_str = y_str;
+
+		if (parsed_data.x.dtype == "string") {
+			csv_allow_training = false;
+		}
+
+		if (parsed_data.y.dtype == "string") {
+			csv_allow_training = false;
+		}
+
+		if (csv_allow_training) {
+			await hide_error();
+		}
+
+		var combined_latex = x_str + " \\longrightarrow " + y_str;
+		var combined_html = _render_latex_to_html(combined_latex, true) || _latex_fallback_html(combined_latex);
+
+		var shape_preview = "<div class='xy_matrix'>" + combined_html + "</div>";
+
+		shape_preview = auto_one_hot_shape_preview(shape_preview, parsed_data);
+
+		$("#x_y_shape_preview").html(shape_preview);
+		if (!panel_was_visible) {
+			$(".hide_when_no_csv").show();
+		}
+		_retrigger_csv_reveal(!panel_was_visible);
+	} else {
+		log(language[lang]["csv_headers_must_have_x_and_y_values"]);
+
+		$("#csv_header_overview").html("");
+		csv_allow_training = false;
+
+		$($(".header_select")[0]).val("X");
+		$($(".header_select")[1]).val("Y").trigger("change");
+
+		await show_csv_file();
 	}
 }
 
-function _render_latex_to_html(latex_str) {
+function _is_csv_panel_visible() {
+	var td = document.querySelector(".csv_right_table_td");
+	if (!td) return false;
+	return td.offsetParent !== null;
+}
+
+function _render_latex_to_html(latex_str, display_mode) {
 	if (typeof temml === "undefined" || !temml.renderToString) return null;
 	if (!latex_str || typeof latex_str !== "string") return null;
 	try {
-		var out = temml.renderToString(latex_str, { annotate: true });
+		var opts = { annotate: true };
+		if (display_mode) opts.displayMode = true;
+		var out = temml.renderToString(latex_str, opts);
 		out = out.replace(/<annotation[\s\S]*?<\/annotation>/g, "");
 		return out;
 	} catch (e) {
@@ -191,19 +190,32 @@ function _latex_fallback_html(latex_str) {
 	return "<span class='xy_matrix_fallback'>" + safe + "</span>";
 }
 
-function _retrigger_csv_reveal() {
+function _retrigger_csv_reveal(is_first_reveal) {
 	var panel = document.querySelector(".csv_right_panel");
 	if (!panel) return;
-	panel.classList.remove("csv_right_panel_reveal");
-	void panel.offsetWidth;
-	panel.classList.add("csv_right_panel_reveal");
 
-	var blocks = panel.querySelectorAll(".csv_tensor_block");
-	for (var i = 0; i < blocks.length; i++) {
-		var block = blocks[i];
-		block.style.animation = "none";
-		void block.offsetWidth;
-		block.style.animation = "csv_block_fade_in 0.32s cubic-bezier(0.22, 1, 0.36, 1) " + (i * 0.05) + "s both";
+	if (is_first_reveal) {
+		panel.classList.remove("csv_right_panel_reveal");
+		void panel.offsetWidth;
+		panel.classList.add("csv_right_panel_reveal");
+	}
+
+	var matrix = panel.querySelector(".xy_matrix");
+	if (matrix) {
+		matrix.style.animation = "none";
+		void matrix.offsetWidth;
+		if (is_first_reveal) {
+			matrix.style.animation = "csv_block_fade_in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both";
+		} else {
+			matrix.style.animation = "csv_block_quick_fade 0.18s ease-out both";
+		}
+	}
+
+	var one_hot = panel.querySelector(".csv_tensor_block_one_hot");
+	if (one_hot) {
+		one_hot.style.animation = "none";
+		void one_hot.offsetWidth;
+		one_hot.style.animation = "csv_block_quick_fade 0.18s ease-out both";
 	}
 }
 
@@ -274,11 +286,6 @@ function has_x_and_y_in_csv_headers (headers = get_csv_header_selections()) {
 	}
 
 	return false;
-}
-
-function reset_csv_stuff () {
-	$("#x_y_shape_preview").html("");
-	$(".hide_when_no_csv").hide();
 }
 
 function set_activation_function_to_linear_when_y_not_between_0_and_1 (parsed_data) {
