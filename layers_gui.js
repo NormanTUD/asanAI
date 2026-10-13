@@ -87,7 +87,7 @@ function build_single_option_html(item, type, nr) {
 // Checks if an option name matches one of the known initializer patterns
 // ─────────────────────────────────────────────────────────────────────────────
 
-const KNOWN_INITIALIZER_OPTIONS = [
+var KNOWN_INITIALIZER_OPTIONS = [
 	"kernel_initializer",
 	"bias_initializer",
 	"beta_initializer",
