@@ -1,6 +1,18 @@
 "use strict";
 
-function _temml() {
+var lastCall = 0;
+
+function _temml(force = 1) {
+	const now = Date.now();
+
+	// Wenn force nicht gesetzt ist und der letzte Aufruf weniger als 2 Sekunden her ist
+	if (!force && (now - lastCall < 2000)) {
+		return;
+	}
+
+	// Aktualisiere den Zeitpunkt des aktuellen Aufrufs
+	lastCall = now;
+
 	try {
 		const elements = $(".temml_me").toArray().filter(e =>
 			e.textContent.trim() &&

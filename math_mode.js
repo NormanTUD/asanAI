@@ -369,10 +369,7 @@ function write_optimizer_to_math_tab() {
 
 
 		var values = {};
-		dbg("getting model.optimizer keys");
 		var _keys = Object.keys(model.optimizer);
-		dbg("got model.optimizer keys");
-		console.trace();
 
 		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
 			var _key = _keys[key_idx];
