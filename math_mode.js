@@ -992,7 +992,7 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 
 	str += "\n\\end{pmatrix}}";
 	if (desc) {
-		str += "_{\\mathrm{" + desc + "}}\n";
+		str += "_{\\mathrm{" + _shape_desc_for_label(original_array, desc) + "}}\n";
 	}
 
 	return str;
@@ -1020,7 +1020,7 @@ function array_to_latex (_array, desc = false, newline_instead_of_ampersand = fa
 				}
 				return typeof row === "number" ? row.toFixed(dp) : row;
 			});
-			var result = "\\underbrace{\\begin{pmatrix}\n" + formattedRows.join("\\\\\n") + "\n\\end{pmatrix}}_{\\mathrm{Input}}\n";
+			var result = "\\underbrace{\\begin{pmatrix}\n" + formattedRows.join("\\\\\n") + "\n\\end{pmatrix}}_{\\mathrm{" + _shape_desc_for_label(_array, "Input") + "}}\n";
 			return result;
 		}
 	}
@@ -1050,7 +1050,7 @@ function array_to_latex (_array, desc = false, newline_instead_of_ampersand = fa
 
 	str += "\n\\end{pmatrix}}";
 	if(desc) {
-		str += "_{\\mathrm{" + desc + "}}\n";
+		str += "_{\\mathrm{" + _shape_desc_for_label(_array, desc) + "}}\n";
 	}
 
 	return str;
@@ -1167,6 +1167,27 @@ function array_size (ar) {
 	return res;
 }
 
+// For the "Input" and "Bias" underbrace labels, append the array's shape as a
+// superscript so the dimensions are visible at a glance — same pattern the
+// kernel desc already uses ("Weight matrix^{2 × 3}"). Returns the desc string
+// unchanged for any other label.
+function _shape_desc_for_label(ar, desc) {
+	if (!desc || typeof desc !== "string") return desc;
+	if (desc !== "Input" && desc !== "Bias") return desc;
+	if (!Array.isArray(ar) || ar.length === 0) return desc;
+	var shape;
+	try {
+		if (typeof get_shape_from_array === "function") {
+			shape = get_shape_from_array(ar);
+		} else {
+			shape = array_size(ar);
+		}
+	} catch (e) { return desc; }
+	if (!Array.isArray(shape) || shape.length === 0) return desc;
+	var shape_str = shape.join(" \\times ");
+	return "\\text{" + desc + "}^{" + shape_str + "}";
+}
+
 function get_layer_output_shape_as_string (layer_idx) {
 	assert(typeof(layer_idx) == "number", layer_idx + " is not a number");
 
@@ -1220,7 +1241,9 @@ function _get_h_matrix_values (layer_idx) {
 		// h_N is rendered inline next to the kernel/input/bias — keep it small.
 		// Without this cap, a 32-sample training batch renders a 32-row pmatrix
 		// next to every formula and blows up both the LaTeX size and TEMML's parse tree.
-		var maxVals = Math.min(8, (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8);
+		// Capped tight (4) because h_N sits inside the layer equation on the LEFT
+		// side of `=`, so it dominates vertical space.
+		var maxVals = Math.min(4, (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8);
 		var vals = "";
 		if (typeof comp === "number") {
 			vals = isFinite(comp) ? comp.toFixed(dp) : "?";
@@ -1319,7 +1342,17 @@ function _get_h (layer_idx) {
 	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
 		var matrix = _get_h_matrix_values(layer_idx);
 		if (matrix) {
-			return "\\underbrace{" + matrix + "}_{h_" + layer_idx + "}";
+			var h_desc = "h_" + layer_idx;
+			try {
+				var shape_str = get_layer_output_shape_as_string(layer_idx);
+				if (shape_str) {
+					var pretty = shape_str.replace(/^\[|\]$/g, "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+					if (pretty.length > 0) {
+						h_desc += "^{" + pretty.join(" \\times ") + "}";
+					}
+				}
+			} catch(eShape) {}
+			return "\\underbrace{" + matrix + "}_{" + h_desc + "}";
 		}
 	}
 	return _get_h_symbol(layer_idx);
