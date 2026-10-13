@@ -272,20 +272,44 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 	}
 
 	if (latex) {
-		try { $("#math_tab_code").empty(); } catch(e) {}
 		if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
 			var _rd_notice = otrans("real_data_mode_notice", "Real-data mode: only the first sample of the last training batch is shown; values are truncated with dots when the original is larger.");
 			latex = "<div class='math-real-data-notice' style='margin:6px 0 10px 0;padding:6px 10px;background:#f6f8fa;border-left:3px solid #888;font-size:90%;opacity:0.85;'>" + _rd_notice + "</div>\n" + latex;
 		}
+
+		// A render replaces the whole #math_tab_code DOM, re-runs _temml() and
+		// rebuilds the optimizer variables. When the LaTeX is byte-identical to
+		// what is already on screen, that work is pure layout thrash — _temml()
+		// alone queries :visible for every formula — and on large single-layer
+		// pages it can stall the browser. The tab becoming visible is handled by
+		// write_model_to_latex_to_page()/the IntersectionObserver, so we don't
+		// need to force a re-render here just because the tab is visible.
+		var _render_xpath = null;
+		var _render_md5 = null;
+		var math_tab_code_elem = document.getElementById("math_tab_code");
+		if (math_tab_code_elem && !force) {
+			try {
+				_render_xpath = get_element_xpath(math_tab_code_elem);
+				_render_md5 = await md5(latex);
+				if (_render_md5 === math_items_hashes[_render_xpath] && math_tab_code_elem.childNodes.length > 0) {
+					return;
+				}
+			} catch (eMd5) {
+				_render_xpath = null;
+				_render_md5 = null;
+			}
+		}
+
+		try { $("#math_tab_code").empty(); } catch(e) {}
 		$("#math_tab_code").html(latex);
 
 		try {
-			var math_tab_code_elem = document.getElementById("math_tab_code");
-			var xpath = get_element_xpath(math_tab_code_elem);
-			var new_md5 = await md5(latex);
+			math_tab_code_elem = document.getElementById("math_tab_code");
+			var xpath = _render_xpath || get_element_xpath(math_tab_code_elem);
+			var new_md5 = _render_md5 || await md5(latex);
 			var old_md5 = math_items_hashes[xpath];
 
-			if (new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
+			if (new_md5 != old_md5 || force) {
 				try {
 					_temml();
 				} catch (e) {
@@ -702,6 +726,32 @@ function array_to_ellipsis_latex (x, limit, underbrace_text="") {
 	}
 }
 
+// The optimizer exposes accumulatedFirstMoment / accumulatedSecondMoment as
+// arrays holding one tensor per trainable variable. wo2mt_build_output_string
+// only ever displays at most 5 values per dimension, so syncing (and then
+// recursively copying) the whole — potentially huge — tensor is wasted work
+// that can stall the math tab on a large single layer. Slice a small preview
+// before the GPU->CPU read. Must be called inside a tidy() scope: the slice
+// tensor is disposed there.
+function wo2mt_preview_tensor (t, max_dim) {
+	try {
+		if (!t || t.isDisposed || !t.shape) {
+			return null;
+		}
+
+		if (t.size <= Math.pow(max_dim, t.shape.length)) {
+			return array_sync(t, true, true);
+		}
+
+		var begin = t.shape.map(function () { return 0; });
+		var size = t.shape.map(function (d) { return Math.min(d, max_dim); });
+		var sliced = t.slice(begin, size);
+		return array_sync(sliced, true, true);
+	} catch (e) {
+		try { return array_sync(t, true, true); } catch (e2) { return null; }
+	}
+}
+
 function get_values_for_optimizer_array_from_array(values, _val, _key) {
 	for (var j = 0; j < _val.length; j++) {
 		if (j == 0) {
@@ -715,9 +765,11 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 					// skip_tracking=true: optimizer variable tensors are
 					// persistent and would otherwise accumulate one entry
 					// per variable per watchdog tick in _custom_tensors.
-					var _this_res = tidy(() => { return array_sync(variable_val, true, true); });
+					var _this_res = tidy(() => { return wo2mt_preview_tensor(variable_val, 5); });
 
-					values[_key][j] = _this_res;
+					if (_this_res !== null) {
+						values[_key][j] = _this_res;
+					}
 				} catch (_err) {
 					dbg("array_sync failed for j=" + j + " variable=" + variable_val + " error=" + _err);
 				}
