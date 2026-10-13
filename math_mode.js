@@ -231,7 +231,7 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 	if (latex && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
 		try {
 			latex = _math_replace_h_with_real_data(latex);
-		} catch(e) { console.warn("replace_h:", e); }
+		} catch(e) { dbg("replace_h:", e); }
 	}
 
 	if (latex) {
@@ -1328,7 +1328,7 @@ function _get_h_matrix_values (layer_idx) {
 			vals = "";
 		}
 		return vals || null;
-	} catch(e) { console.warn("_get_h_matrix_values:", e); }
+	} catch(e) { dbg("_get_h_matrix_values:", e); }
 	return null;
 }
 
@@ -1413,7 +1413,7 @@ function _populate_real_data_cache() {
 		} else {
 			_math_warn_once("math_cache_empty", "math mode: real-data cache could not be populated — predictions require input data; load data, predict, or pin an input");
 		}
-	} catch(e) { console.warn("_populate_real_data_cache:", e); }
+	} catch(e) { dbg("_populate_real_data_cache:", e); }
 }
 
 
@@ -1942,7 +1942,7 @@ function get_input_layer(input_shape) {
 	}
 
 	if (!values || !Array.isArray(values) || values.length === 0) {
-		console.warn("get_input_layer: no data found from any source");
+		dbg("get_input_layer: no data found from any source");
 		return input_layer;
 	}
 
@@ -2028,13 +2028,13 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 function _render_skip_connection_interactive(container_id, layer_idx, gui_layer_idx, input_layer, layer_data, colors, this_layer_type) {
 	var container = document.getElementById(container_id);
 	if (!container) {
-		console.warn("[_render_skip_connection_interactive] Container not found:", container_id);
+		dbg("[_render_skip_connection_interactive] Container not found:", container_id);
 		return;
 	}
 
 	var all_layers = _get_all_model_layers();
 	if (!all_layers) {
-		console.warn("[_render_skip_connection_interactive] _get_all_model_layers() returned null");
+		dbg("[_render_skip_connection_interactive] _get_all_model_layers() returned null");
 		_render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
 		return;
 	}
@@ -2220,7 +2220,7 @@ function _math_apply_weight_change_from_layer_data(layer_idx, weight_type, new_d
 			new_bias.dispose();
 		}
 	} catch (e) {
-		console.warn("[_math_apply_weight_change_from_layer_data] Error:", e);
+		dbg("[_math_apply_weight_change_from_layer_data] Error:", e);
 	}
 }
 
@@ -2395,7 +2395,7 @@ function _math_apply_skip_weight_change(skip_proj_layer, row, col, new_value) {
 		// Dispose the temporary tensor
 		new_tensor.dispose();
 	} catch (e) {
-		console.warn("[_math_apply_skip_weight_change] Error setting skip weights:", e);
+		dbg("[_math_apply_skip_weight_change] Error setting skip weights:", e);
 	}
 }
 
@@ -2425,7 +2425,7 @@ function _math_apply_skip_weight_change_1d(skip_proj_layer, idx, new_value) {
 		skip_proj_layer.setWeights(new_weights);
 		new_tensor.dispose();
 	} catch (e) {
-		console.warn("[_math_apply_skip_weight_change_1d] Error setting skip weights:", e);
+		dbg("[_math_apply_skip_weight_change_1d] Error setting skip weights:", e);
 	}
 }
 
@@ -2551,7 +2551,7 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 			} else {
 				var _fallback = _sym_only + " = \\mathrm{f}(\\cdot)";
 				str += "<div class='temml_me' data-eq-part='computation'>" + _fallback + "</div>";
-				console.warn("math_mode: unbalanced LaTeX for layer " + layer_idx + ", using fallback. sym_valid=" + _sym_valid + " comp_valid=" + _comp_valid + " rm_valid=" + _rm_valid);
+				dbg("math_mode: unbalanced LaTeX for layer " + layer_idx + ", using fallback. sym_valid=" + _sym_valid + " comp_valid=" + _comp_valid + " rm_valid=" + _rm_valid);
 			}
 			str += "<br>";
 		}
@@ -2639,7 +2639,7 @@ function model_to_latex() {
 				built.str = built.str.replace(/\\begin\{pmatrix\}\s*x\s*\\end\{pmatrix\}/g, matrix);
 				str = str.substring(0, _prefix_len) + built.str;
 			}
-		} catch(e4) { console.warn("approach 4:", e4); }
+		} catch(e4) { dbg("approach 4:", e4); }
 	}
 
 	prev_layer_data = layer_data;
@@ -2688,7 +2688,7 @@ function _dispatch_interactive_inject(type, container_id, layer_idx, layer_data,
 	if (handlers[type]) {
 		handlers[type]();
 	} else {
-		console.warn("[_dispatch_interactive_inject] No handler for interactive type:", type);
+		dbg("[_dispatch_interactive_inject] No handler for interactive type:", type);
 	}
 }
 
@@ -4497,7 +4497,7 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 		try { inp.dispose(); } catch(e) {}
 		try { outTensor.dispose(); } catch(e) {}
 		return res;
-	} catch(e) { console.warn("_get_intermediate_activation:", e.message || e); }
+	} catch(e) { dbg("_get_intermediate_activation:", e.message || e); }
 	return null;
 }
 
@@ -4558,7 +4558,7 @@ function _get_input_sample_for_prediction(requested) {
 				return { first: first, index: idx, source: src.name };
 			}
 		}
-	} catch(e) { console.warn("_get_input_sample_for_prediction:", e); }
+	} catch(e) { dbg("_get_input_sample_for_prediction:", e); }
 	return null;
 }
 
@@ -4568,7 +4568,7 @@ var _math_warned_keys = {};
 function _math_warn_once(key, msg) {
 	if (_math_warned_keys[key]) return;
 	_math_warned_keys[key] = true;
-	try { console.warn(msg); } catch(e) {}
+	try { dbg(msg); } catch(e) {}
 }
 
 /**
@@ -4685,13 +4685,13 @@ function _manual_forward_pass_dense(sampleIndex) {
 			currentVec = outVec;
 		}
 		return results;
-	} catch(e) { console.warn("_manual_forward_pass_dense:", e); return null; }
+	} catch(e) { dbg("_manual_forward_pass_dense:", e); return null; }
 }
 
 
 function populate_neuron_outputs_from_current() {
 	try {
-		if (!model) { console.warn("populate_neuron_outputs: no model"); return; }
+		if (!model) { dbg("populate_neuron_outputs: no model"); return; }
 		reset_neuron_outputs();
 		var x_src = _get_input_sample_for_prediction(0);
 		if (!x_src) {
@@ -4773,7 +4773,7 @@ function populate_neuron_outputs_from_current() {
 		try { inp.dispose(); } catch(e) {}
 		if (functionalChain) { try { functionalChain.dispose(); } catch(e) {} }
 		console.log("populate_neuron_outputs: done, layers populated:", count, "(source:", x_src.source, ")");
-	} catch(e) { console.warn("populate_neuron_outputs error:", e); }
+	} catch(e) { dbg("populate_neuron_outputs error:", e); }
 }
 
 
@@ -4821,7 +4821,7 @@ function _math_pre_render_real_data_fix(latex) {
 
 
 		return latex;
-	} catch(e) { console.warn("pre_render:", e); return latex; }
+	} catch(e) { dbg("pre_render:", e); return latex; }
 }
 
 /**
@@ -5027,7 +5027,7 @@ function _math_dom_fix_real_data() {
 				}
 			}
 		}
-	} catch(e) { console.warn("dom_fix:", e); }
+	} catch(e) { dbg("dom_fix:", e); }
 }
 
 
