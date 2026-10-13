@@ -5,7 +5,7 @@
 // Everything else is hidden behind an "Advanced" toggle.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BASIC_OPTIONS = new Set([
+var BASIC_OPTIONS = new Set([
 	"activation",
 	"units",
 	"filters",
