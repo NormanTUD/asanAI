@@ -4821,6 +4821,18 @@ function _math_dom_fix_real_data() {
 		var layer_scope = container.querySelectorAll(".temml_me[data-eq-part='computation']");
 		if (!layer_scope.length) return;
 
+		// The input <mi>x</mi> lives inside a matrix structure (<mtable> for
+		// pmatrix/bmatrix/matrix, <mfrac> for fractions, <mpadded> for some
+		// inline matrices). An <mi>x</mi> sitting in a plain <mrow> is part of
+		// some word like "softmax" / "maxout" / "index" and must NOT be replaced.
+		function isInputXNode(node) {
+			if (!node) return false;
+			var mi = (node.nodeType === 3) ? node.parentElement : node;
+			if (!mi) return false;
+			if (mi.tagName !== "MI" || mi.textContent.trim() !== "x") return false;
+			return !!mi.closest("mtable, mfrac, mpadded");
+		}
+
 		// Find all text nodes containing just "x" — but ONLY inside layer equations,
 		// so the activation-function "relu(x)" / optimizer "\partial x" are untouched.
 		var textNodes = [];
@@ -4829,7 +4841,7 @@ function _math_dom_fix_real_data() {
 			var walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, null, false);
 			var node;
 			while (node = walker.nextNode()) {
-				if (node.textContent === "x" || node.textContent.trim() === "x") {
+				if ((node.textContent === "x" || node.textContent.trim() === "x") && isInputXNode(node)) {
 					textNodes.push(node);
 				}
 			}
@@ -4861,6 +4873,7 @@ function _math_dom_fix_real_data() {
 			for (var mi = 0; mi < miElements.length; mi++) {
 				var mie = miElements[mi];
 				if (mie.textContent === "x" || mie.textContent.trim() === "x") {
+					if (!isInputXNode(mie)) continue;
 					var par = mie;
 					var nearInput = false;
 					for (var qi = 0; qi < 20 && par; qi++) {
@@ -4885,7 +4898,7 @@ function _math_dom_fix_real_data() {
 				var w = document.createTreeWalker(td, NodeFilter.SHOW_TEXT, null, false);
 				var n;
 				while (n = w.nextNode()) {
-					if (n.textContent === "x") {
+					if (n.textContent === "x" && isInputXNode(n)) {
 						n.textContent = formatted.split(" ").slice(0, 8).join(" ");
 						break;
 					}
@@ -4906,7 +4919,7 @@ function _math_dom_fix_real_data() {
 			var node2;
 			var replaced = false;
 			while (!replaced && (node2 = walker2.nextNode())) {
-				if (node2 && node2.textContent && node2.textContent.trim() === "x") {
+				if (node2 && node2.textContent && node2.textContent.trim() === "x" && isInputXNode(node2)) {
 					node2.textContent = formatted.split(" ").slice(0, 8).join(" ");
 					replaced = true;
 				}
@@ -4919,7 +4932,7 @@ function _math_dom_fix_real_data() {
 			for (var pi = 0; pi < pmatrix.length; pi++) {
 				var pe = pmatrix[pi];
 				// Check if this element's content is just "x" and is near Input label
-				if (pe.textContent === "x" && pe.children.length <= 1) {
+				if (pe.textContent === "x" && pe.children.length <= 1 && isInputXNode(pe)) {
 					var par = pe;
 					var nearInput = false;
 					for (var qi = 0; qi < 20 && par; qi++) {
@@ -4984,6 +4997,17 @@ function _math_dom_fix_real_data() {
 		var layer_scope = container.querySelectorAll(".temml_me[data-eq-part='computation']");
 		if (!layer_scope.length) return;
 
+		// Same matrix-only restriction as _math_dom_fix_real_data: an <mi>x</mi>
+		// inside a plain <mrow> is part of a word like "softmax" / "maxout" /
+		// "index" and must not be replaced. Only the input <mi>x</mi>, which
+		// lives inside <mtable> / <mfrac> / <mpadded>, counts.
+		function _obsIsInputX(node) {
+			if (!node) return false;
+			var mi = (node.nodeType === 3) ? node.parentElement : node;
+			if (!mi || mi.tagName !== "MI" || mi.textContent.trim() !== "x") return false;
+			return !!mi.closest("mtable, mfrac, mpadded");
+		}
+
 		// Find all text nodes with just "x" (layer equation scope only — same
 		// restriction as _math_dom_fix_real_data so the activation-function /
 		// optimizer "x" is never touched).
@@ -4992,7 +5016,7 @@ function _math_dom_fix_real_data() {
 			var walker = document.createTreeWalker(layer_scope[li], NodeFilter.SHOW_TEXT, null, false);
 			var node;
 			while (node = walker.nextNode()) {
-				if (node.textContent === "x") {
+				if (node.textContent === "x" && _obsIsInputX(node)) {
 					textNodes.push(node);
 				}
 			}
