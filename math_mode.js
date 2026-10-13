@@ -337,10 +337,6 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 				await write_error(e, null, null);
 			}
 		}
-
-		const throttledFn = throttle(write_optimizer_to_math_tab, 1000);
-
-		setInterval(throttledFn, 100);
 	}
 }
 
@@ -371,9 +367,12 @@ function write_optimizer_to_math_tab() {
 			return;
 		}
 
-		return;
+
 		var values = {};
+		dbg("getting model.optimizer keys");
 		var _keys = Object.keys(model.optimizer);
+		dbg("got model.optimizer keys");
+		console.trace();
 
 		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
 			var _key = _keys[key_idx];
@@ -5331,3 +5330,6 @@ function _math_dom_fix_real_data() {
 	// Also try periodically
 	setInterval(tryReplace, 1000);
 })();
+
+var throttledFn = throttle(write_optimizer_to_math_tab, 1000);
+setInterval(throttledFn, 1000);
