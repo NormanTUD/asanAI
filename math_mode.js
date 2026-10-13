@@ -236,6 +236,10 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 
 	if (latex) {
 		try { $("#math_tab_code").empty(); } catch(e) {}
+		if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+			var _rd_notice = otrans("real_data_mode_notice", "Real-data mode: only the first sample of the last training batch is shown; values are truncated with dots when the original is larger.");
+			latex = "<div class='math-real-data-notice' style='margin:6px 0 10px 0;padding:6px 10px;background:#f6f8fa;border-left:3px solid #888;font-size:90%;opacity:0.85;'>" + _rd_notice + "</div>\n" + latex;
+		}
 		$("#math_tab_code").html(latex);
 
 		try {
