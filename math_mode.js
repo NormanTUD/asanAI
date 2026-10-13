@@ -190,6 +190,28 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 	// Attach scroll listener on first render
 	_math_attach_scroll_listener();
 
+	// === POPULATE REAL-DATA CACHES BEFORE GENERATING LATEX ===
+	// model_to_latex() calls _get_h(N) for every N >= 1's right-hand side,
+	// so the caches must be ready before the first render — otherwise the
+	// deeper layers render with the symbolic h_N while the first row already
+	// shows real values.
+	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
+		try {
+			if (typeof populate_neuron_outputs_from_current === "function") {
+				var no = (typeof neuron_outputs !== "undefined") ? neuron_outputs : {};
+				var hasAny = false;
+				for (var k in no) { if (no[k] && no[k].output && no[k].output.length > 0) { hasAny = true; break; } }
+				if (!hasAny) { populate_neuron_outputs_from_current(); }
+			}
+			if (window._real_data_cache && Object.keys(window._real_data_cache).length === 0) {
+				if (typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); }
+			}
+			if (window._manual_cache && Object.keys(window._manual_cache).length === 0) {
+				if (typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); }
+			}
+		} catch(e) {}
+	}
+
 	var latex = model_to_latex();
 
 	// Guardrail: Pre-render LaTeX fix for real data x replacement
@@ -210,21 +232,6 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 		try {
 			latex = _math_replace_h_with_real_data(latex);
 		} catch(e) { console.warn("replace_h:", e); }
-	}
-
-	// === AGGRESSIVE CACHE POPULATION ===
-	if (latex && typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
-		try {
-			if (window._real_data_cache && Object.keys(window._real_data_cache).length === 0) {
-				if (typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); }
-			}
-			if (typeof populate_neuron_outputs_from_current === "function") {
-				var no = (typeof neuron_outputs !== "undefined") ? neuron_outputs : {};
-				var hasAny = false;
-				for (var k in no) { if (no[k] && no[k].output && no[k].output.length > 0) { hasAny = true; break; } }
-				if (!hasAny) { populate_neuron_outputs_from_current(); }
-			}
-		} catch(e) {}
 	}
 
 	if (latex) {
@@ -1185,16 +1192,19 @@ function _get_h_matrix_values (layer_idx) {
 			if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
 		}
 		// Strategy 2: _real_data_cache
-		if (!comp && window._real_data_cache && window._real_data_cache[layer_idx]) {
+		if (!_has_numbers(comp) && window._real_data_cache && window._real_data_cache[layer_idx]) {
 			comp = window._real_data_cache[layer_idx];
 		}
 		// Strategy 3: manual forward pass (most reliable for Dense-only models)
-		if (!comp && window._manual_cache && window._manual_cache[layer_idx]) {
+		if (!_has_numbers(comp) && window._manual_cache && window._manual_cache[layer_idx]) {
 			comp = window._manual_cache[layer_idx];
 		}
-		// Strategy 4: on-demand sub-model predict
-		if (!comp) comp = _get_intermediate_activation(layer_idx);
-		if (comp === null || comp === undefined) return null;
+		// Strategy 4: on-demand sub-model predict (now works for Sequential too)
+		if (!_has_numbers(comp)) comp = _get_intermediate_activation(layer_idx);
+		if (!_has_numbers(comp)) {
+			_math_warn_once("math_h_no_data_L" + layer_idx, "math mode: no real activation available for layer " + layer_idx + " — h_" + layer_idx + " will show as a symbol");
+			return null;
+		}
 		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
 		var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
 		var vals = "";
@@ -1203,42 +1213,67 @@ function _get_h_matrix_values (layer_idx) {
 			vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
 		} else if (Array.isArray(comp) && comp.length > 0) {
 			if (Array.isArray(comp[0]) && Array.isArray(comp[0][0])) {
+				// 3D: flatten to 1D with truncation + trailing dots
 				var flat3d = [];
-				for (var fi = 0; fi < comp.length && flat3d.length < maxVals; fi++) {
+				var total3d = 0;
+				for (var fi = 0; fi < comp.length; fi++) {
 					if (Array.isArray(comp[fi])) {
-						for (var fj = 0; fj < comp[fi].length && flat3d.length < maxVals; fj++) {
+						for (var fj = 0; fj < comp[fi].length; fj++) {
 							if (Array.isArray(comp[fi][fj])) {
-								for (var fk = 0; fk < comp[fi][fj].length && flat3d.length < maxVals; fk++) {
-									flat3d.push(comp[fi][fj][fk]);
+								for (var fk = 0; fk < comp[fi][fj].length; fk++) {
+									total3d++;
+									if (flat3d.length < maxVals) flat3d.push(comp[fi][fj][fk]);
 								}
 							} else {
-								flat3d.push(comp[fi][fj]);
+								total3d++;
+								if (flat3d.length < maxVals) flat3d.push(comp[fi][fj]);
 							}
 						}
 					}
 				}
-				vals = flat3d.slice(0, maxVals).map(function(v) {
+				var suffix3d = total3d > maxVals ? " \\cdots" : "";
+				vals = flat3d.map(function(v) {
 					if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
 					return Number(v).toFixed(dp);
-				}).join(" & ");
+				}).join(" & ") + suffix3d;
 				vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
 			} else if (Array.isArray(comp[0])) {
-				var rows2 = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
+				// 2D: truncate rows and cols to maxVals with dots when needed
+				var totalRows = comp.length;
+				var totalCols = (Array.isArray(comp[0]) ? comp[0].length : 1);
+				var showRows = Math.min(totalRows, maxVals);
+				var showCols = Math.min(totalCols, maxVals);
+				var rows2 = [];
+				for (var ri = 0; ri < showRows; ri++) {
+					var r = comp[ri];
 					if (Array.isArray(r)) {
-						return r.slice(0, Math.min(r.length, 3)).map(function(v) {
+						var rowStrs = r.slice(0, showCols).map(function(v) {
 							if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
 							return Number(v).toFixed(dp);
-						}).join(" & ");
+						});
+						if (totalCols > showCols) rowStrs.push("\\cdots");
+						rows2.push(rowStrs.join(" & "));
+					} else {
+						rows2.push("?");
 					}
-					return "?";
-				});
+				}
+				if (totalRows > showRows) {
+					var vdots = [];
+					for (var vc = 0; vc < showCols; vc++) vdots.push("\\vdots");
+					if (totalCols > showCols) vdots.push("\\ddots");
+					rows2.push(vdots.join(" & "));
+				}
 				vals = "\\begin{pmatrix}" + rows2.join(" \\\\ ") + "\\end{pmatrix}";
 			} else {
-				vals = comp.slice(0, maxVals).map(function(v) {
+				// 1D: truncate to maxVals with trailing dots when needed
+				var total1d = comp.length;
+				var show1d = Math.min(total1d, maxVals);
+				var vals1d = comp.slice(0, show1d).map(function(v) {
 					if (typeof v !== "number" || isNaN(v) || !isFinite(v)) return "?";
 					return Number(v).toFixed(dp);
-				}).join(" & ");
-				vals = "\\begin{pmatrix}" + vals + "\\end{pmatrix}";
+				});
+				if (total1d > show1d) vals1d.push("\\cdots");
+				vals = "\\begin{pmatrix}" + vals1d.join(" & ") + "\\end{pmatrix}";
 			}
 		} else {
 			vals = "";
@@ -1246,6 +1281,24 @@ function _get_h_matrix_values (layer_idx) {
 		return vals || null;
 	} catch(e) { console.warn("_get_h_matrix_values:", e); }
 	return null;
+}
+
+// Returns true if `comp` looks like real numeric data we can render.
+// Treats null/undefined/"null"/empty arrays as "no data". Handles scalars,
+// 1D, 2D and 3D arrays — anything deeper is treated as no-data and lets the
+// fallback chain try the next strategy.
+function _has_numbers(comp) {
+	if (comp === null || comp === undefined) return false;
+	if (typeof comp === "number") return isFinite(comp);
+	if (!Array.isArray(comp)) return false;
+	if (comp.length === 0) return false;
+	function anyNum(a) {
+		if (typeof a === "number") return isFinite(a);
+		if (!Array.isArray(a)) return false;
+		for (var i = 0; i < a.length; i++) { if (anyNum(a[i])) return true; }
+		return false;
+	}
+	return anyNum(comp);
 }
 
 function _get_h (layer_idx) {
@@ -1281,15 +1334,20 @@ function _populate_real_data_cache() {
 			for (var mi = 0; mi < manualResults.length; mi++) {
 				window._manual_cache[mi] = manualResults[mi];
 			}
+		} else {
+			window._manual_cache = {};
 		}
-		// Sub-model predict for each layer
+		// Sub-model predict for each layer (Sequential fallback in _get_intermediate_activation chains layers)
 		for (var i = 0; i < model.layers.length; i++) {
 			var vals = _get_intermediate_activation(i);
 			if (vals) cache[i] = vals;
 		}
 		window._real_data_cache = cache;
-		if (Object.keys(cache).length > 0 || (window._manual_cache && Object.keys(window._manual_cache).length > 0)) {
+		var total = Object.keys(cache).length + (window._manual_cache ? Object.keys(window._manual_cache).length : 0);
+		if (total > 0) {
 			console.log("_populate_real_data_cache: populated", Object.keys(cache).length, "submodel +", window._manual_cache ? Object.keys(window._manual_cache).length : 0, "manual");
+		} else {
+			_math_warn_once("math_cache_empty", "math mode: real-data cache could not be populated — predictions require input data; load data, predict, or pin an input");
 		}
 	} catch(e) { console.warn("_populate_real_data_cache:", e); }
 }
@@ -2369,6 +2427,17 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 				while (_comp_part.length > 0 && (_comp_part[0] === " " || _comp_part[0] === "=")) { _comp_part = _comp_part.substring(1); }
 			}
 			var _rm_split = _get_result_matrix(layer_idx);
+			// single_layer_to_latex appends " = result" to layer_str so legacy
+			// callers still get a single self-contained equation. The split
+			// renderer below already shows the result in its own div, so strip
+			// that trailing segment from the computation part to avoid showing
+			// it twice (which also keeps the braces balanced per div).
+			if (_rm_split) {
+				var rm_marker = " = " + _rm_split;
+				if (_comp_part.length >= rm_marker.length && _comp_part.lastIndexOf(rm_marker) === _comp_part.length - rm_marker.length) {
+					_comp_part = _comp_part.substring(0, _comp_part.length - rm_marker.length);
+				}
+			}
 			var _sym_valid = _latex_is_balanced(_sym_only);
 			var _comp_valid = _latex_is_balanced(_sym_only + " = " + _comp_part);
 			var _rm_valid = (!_rm_split) || _latex_is_balanced(_rm_split);
@@ -2560,25 +2629,11 @@ function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors, 
 				return (typeof v === "number" && isFinite(v)) ? v.toFixed(dp) : "?";
 			}).join(" & ");
 			var shape_hint = real_vals.length > maxV ? " \\cdots " : "";
-			return "\\begin{pmatrix}" + display + shape_hint + "\\end{pmatrix}";
+			return "\\underbrace{\\begin{pmatrix}" + display + shape_hint + "\\end{pmatrix}}_{h_" + source_idx + "}";
 		}
 	}
 
-	if (source_idx < layer_data.length) {
-		var source_data = layer_data[source_idx];
-
-		if (source_data.kernel && source_data.kernel.length) {
-			const source_kernel_data = JSON.parse(JSON.stringify(source_data.kernel))
-			var source_kernel = replace_non_numbers_with_matching_latex(source_kernel_data);
-			source_kernel = array_to_fixed(source_kernel, get_dec_points_math_mode());
-			var kernel_shape = get_shape_from_array(source_kernel);
-			var shape_str = kernel_shape.join(" \\times ");
-
-			var result_str = "h_" + source_idx + "^{\\mathrm{" + shape_str + "}}";
-			return result_str;
-		}
-	}
-
+	// Symbolic fallback: h_N with the layer's *output* shape (not the kernel shape)
 	return _get_h(Math.max(0, source_idx));
 }
 
@@ -2594,6 +2649,16 @@ function _get_skip_source_real_values(source_idx) {
 						if (Array.isArray(flat) && flat.length > 0) return flat;
 					}
 				}
+			}
+		}
+		if (window._manual_cache && Array.isArray(window._manual_cache[source_idx]) && window._manual_cache[source_idx].length > 0) {
+			var mv = window._manual_cache[source_idx];
+			return Array.isArray(mv[0]) ? mv[0] : mv;
+		}
+		if (typeof _get_intermediate_activation === "function") {
+			var comp = _get_intermediate_activation(source_idx);
+			if (comp && Array.isArray(comp) && comp.length > 0) {
+				return Array.isArray(comp[0]) ? comp[0] : comp;
 			}
 		}
 	} catch (e) {}
@@ -2707,11 +2772,19 @@ function _build_layer_equation_split(layer_idx, layer_data, colors, y_layer, inp
 		comp = comp.substring(sym.length);
 		while (comp.length > 0 && (comp[0] === " " || comp[0] === "=")) { comp = comp.substring(1); }
 	}
+	// single_layer_to_latex appends " = result" to layer_str — strip it so the
+	// separate result div below is the only place that segment appears.
+	var _rm = _get_result_matrix(layer_idx);
+	if (_rm) {
+		var rm_marker = " = " + _rm;
+		if (comp.length >= rm_marker.length && comp.lastIndexOf(rm_marker) === comp.length - rm_marker.length) {
+			comp = comp.substring(0, comp.length - rm_marker.length);
+		}
+	}
 
 	var html = "";
 	html += "<div class='temml_me' data-eq-part='symbol'>" + sym + "</div>";
 	html += "<div class='temml_me' data-eq-part='computation'>" + sym + " = " + comp + "</div>";
-	var _rm = _get_result_matrix(layer_idx);
 	if (_rm) {
 		html += "<div class='temml_me' data-eq-part='result'> = " + _rm + "</div>";
 	}
@@ -3581,37 +3654,15 @@ function get_layer_activation_name(layer_idx) {
 
 function get_right_side(layer_idx, input_layer) {
 	if (layer_idx === 0) {
-		// Guardrail 2A: Always include "Input" label for first layer
+		// The first layer's right-hand side is the network input.
 		return array_to_latex(input_layer, "Input");
 	}
 
-	// Guardrail 2B: When showing real data, try to get actual previous layer output
-	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
-		try {
-			var comp = null;
-			if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx - 1] && neuron_outputs[layer_idx - 1].output) {
-				var oo = neuron_outputs[layer_idx - 1].output;
-				if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
-			}
-			if (!comp) comp = _get_intermediate_activation(layer_idx - 1);
-			if (comp && Array.isArray(comp) && comp.length > 0) {
-				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
-				var sliced;
-				if (!Array.isArray(comp[0])) {
-					sliced = [comp.slice(0, Math.min(comp.length, 8)).map(function(v) { return Number(v).toFixed(dp); })];
-				} else {
-					sliced = comp.slice(0, Math.min(comp.length, 3)).map(function(r) {
-						return Array.isArray(r) ? r.slice(0, Math.min(r.length, 3)).map(function(v) { return Number(v).toFixed(dp); }) : [Number(r).toFixed(dp)];
-					});
-				}
-				// Guardrail 2C: Always include "Input" label even with real data
-				return array_to_latex(sliced, "Input");
-			}
-		} catch(e) { console.warn("get_right_side:", e); }
-	}
-
-	// Guardrail 2D: Fallback to symbolic h
-	return _get_h(Math.max(0, layer_idx - 1));
+	// For every deeper layer the right-hand side is the *previous layer's output*,
+	// i.e. h_{layer_idx-1}. _get_h already prefers the real activation matrix and
+	// falls back to the symbolic h_n when data is unavailable, and it labels the
+	// value correctly (h_N, not "Input").
+	return _get_h(layer_idx - 1);
 }
 
 function wrap_with_activation_function (layer_idx, layer_str) {
@@ -4260,21 +4311,13 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 function _get_intermediate_activation(layer_idx, sampleIndex) {
 	if (!model) return null;
 	try {
-		var x_data = null;
-		if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
-			x_data = xy_data_global.x;
+		var x_src = _get_input_sample_for_prediction(sampleIndex);
+		if (!x_src) {
+			_math_warn_once("math_no_input_for_activations", "math mode: no input data found in any source — real-data h_N will fall back to symbols");
+			return null;
 		}
-		if (!x_data) return null;
-		var x_arr = null;
-		if (typeof x_data.arraySync === "function") {
-			try { x_arr = x_data.arraySync(); } catch(e) { return null; }
-		} else if (Array.isArray(x_data)) {
-			x_arr = x_data;
-		}
-		if (!x_arr || !Array.isArray(x_arr) || x_arr.length === 0) return null;
-		sampleIndex = sampleIndex || 0;
-		if (sampleIndex >= x_arr.length) sampleIndex = 0;
-		var first = x_arr[sampleIndex];
+		var first = x_src.first;
+		sampleIndex = x_src.index;
 		if (layer_idx >= model.layers.length) layer_idx = model.layers.length - 1;
 
 		// Build input tensor matching model input shape
@@ -4303,18 +4346,41 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 			try { inp = tf.tensor(first).expandDims(0); } catch(e2) { return null; }
 		}
 
-		// Sub-model predict (robust for functional-API models)
+		// Strategy A: sub-model predict (robust for functional-API models)
 		var targetLayer = model.layers[layer_idx];
 		var outTensor = null;
 		try {
 			if (targetLayer.output && model.inputs) {
-				var sm = tf.model({ inputs: model.inputs, outputs: targetLayer.output });
-				outTensor = sm.predict(inp);
-				try { sm.dispose && sm.dispose(); } catch(e) {}
+				if (!targetLayer.__math_submodel) {
+					targetLayer.__math_submodel = tf.model({ inputs: model.inputs, outputs: targetLayer.output });
+				}
+				outTensor = targetLayer.__math_submodel.predict(inp);
 			}
 		} catch(eSub) { outTensor = null; }
+
+		// Strategy B: chain layers one-by-one (works for Sequential models where
+		// model.inputs is undefined and direct apply() only fits layer 0).
 		if (outTensor == null) {
+			try {
+				var chained = inp;
+				for (var ci = 0; ci <= layer_idx && ci < model.layers.length; ci++) {
+					var step = model.layers[ci].apply(chained);
+					if (ci > 0) { try { chained.dispose(); } catch(e) {} }
+					chained = step;
+				}
+				outTensor = chained;
+			} catch(eChain) { outTensor = null; }
+		}
+
+		// Strategy C: direct apply on layer 0 only (fallback for stale models).
+		if (outTensor == null && layer_idx === 0) {
 			try { outTensor = targetLayer.apply(inp); } catch(eApp) { try { inp.dispose(); } catch(e) {} return null; }
+		}
+
+		if (outTensor == null) {
+			try { inp.dispose(); } catch(e) {}
+			_math_warn_once("math_activations_failed_L" + layer_idx, "math mode: could not compute intermediate activation for layer " + layer_idx);
+			return null;
 		}
 
 		var arr = outTensor.arraySync();
@@ -4326,6 +4392,76 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 	return null;
 }
 
+// Returns {first: <first sample>, index: <sample index>} from whichever data
+// source currently has data — pinned, last predict, xy_data_global, …
+// `requested` is the preferred sample index (0 if unspecified).
+// Mirrors the source order in get_input_layer so the caches always agree
+// with what the user sees rendered in the formula.
+function _get_input_sample_for_prediction(requested) {
+	try {
+		var sources = [];
+		if (typeof window !== "undefined") {
+			if (window._pinned_input && Array.isArray(window._pinned_input) && window._pinned_input.length > 0) {
+				sources.push({ name: "pinned", data: [window._pinned_input] });
+			}
+			if (window._last_input_flat && Array.isArray(window._last_input_flat) && window._last_input_flat.length > 0) {
+				sources.push({ name: "last_input_flat", data: [window._last_input_flat] });
+			}
+			if (Array.isArray(window._last_predict_input_arr) && window._last_predict_input_arr.length > 0) {
+				sources.push({ name: "last_predict", data: window._last_predict_input_arr });
+			}
+		}
+		if (typeof neuron_outputs !== "undefined" && neuron_outputs[0] && Array.isArray(neuron_outputs[0].input)) {
+			var inp0 = neuron_outputs[0].input;
+			for (var i = inp0.length - 1; i >= 0; i--) {
+				var c = inp0[i];
+				if (Array.isArray(c) && c.length > 0) {
+					var flat = c[0];
+					if (Array.isArray(flat) && flat.length > 0) {
+						sources.push({ name: "neuron_outputs_in", data: [flat] });
+						break;
+					}
+				}
+			}
+		}
+		if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
+			var xt = xy_data_global.x;
+			var arr = null;
+			try {
+				if (xt && typeof xt.arraySync === "function" && (typeof xt.isDisposed === "undefined" || !xt.isDisposed)) {
+					arr = xt.arraySync();
+				} else if (Array.isArray(xt)) {
+					arr = xt;
+				}
+			} catch(e) {}
+			if (Array.isArray(arr) && arr.length > 0) {
+				sources.push({ name: "xy_data_global", data: arr });
+			}
+		}
+
+		for (var s = 0; s < sources.length; s++) {
+			var src = sources[s];
+			if (!Array.isArray(src.data) || src.data.length === 0) continue;
+			var idx = requested;
+			if (typeof idx !== "number" || idx < 0 || idx >= src.data.length) idx = 0;
+			var first = src.data[idx];
+			if (first !== undefined && first !== null) {
+				return { first: first, index: idx, source: src.name };
+			}
+		}
+	} catch(e) { console.warn("_get_input_sample_for_prediction:", e); }
+	return null;
+}
+
+// Issue a warning at most once per unique key, so debug runs don't drown in
+// noise if multiple layers hit the same fallback path.
+var _math_warned_keys = {};
+function _math_warn_once(key, msg) {
+	if (_math_warned_keys[key]) return;
+	_math_warned_keys[key] = true;
+	try { console.warn(msg); } catch(e) {}
+}
+
 /**
  * MANUAL FORWARD PASS for Dense-only models — bypasses model's graph entirely.
  * Most reliable approach: compute output = activation(W * x + b) using raw weights.
@@ -4335,15 +4471,12 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 function _manual_forward_pass_dense(sampleIndex) {
 	if (!model || !model.layers || !Array.isArray(model.layers)) return null;
 	try {
-		var x_data = (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) ? xy_data_global.x : null;
-		if (!x_data) return null;
-		var x_arr = null;
-		if (typeof x_data.arraySync === "function") { try { x_arr = x_data.arraySync(); } catch(e) {} }
-		else if (Array.isArray(x_data)) x_arr = x_data;
-		if (!x_arr || !Array.isArray(x_arr) || x_arr.length === 0) return null;
-		sampleIndex = sampleIndex || 0;
-		if (sampleIndex >= x_arr.length) sampleIndex = 0;
-		var first = x_arr[sampleIndex];
+		var x_src = _get_input_sample_for_prediction(sampleIndex);
+		if (!x_src) {
+			_math_warn_once("math_manual_no_input", "math mode: _manual_forward_pass_dense has no input data in any source — h_N for layers > 0 will fall back to symbols");
+			return null;
+		}
+		var first = x_src.first;
 
 		// Flatten input to 1D
 		var inputVec = [];
@@ -4451,21 +4584,12 @@ function populate_neuron_outputs_from_current() {
 	try {
 		if (!model) { console.warn("populate_neuron_outputs: no model"); return; }
 		reset_neuron_outputs();
-		if (typeof xy_data_global === "undefined" || !xy_data_global || !xy_data_global.x) {
-			console.warn("populate_neuron_outputs: no xy_data_global.x");
+		var x_src = _get_input_sample_for_prediction(0);
+		if (!x_src) {
+			_math_warn_once("math_populate_no_input", "math mode: populate_neuron_outputs found no input data in any source — h_N for layers > 0 will fall back to symbols");
 			return;
 		}
-		var x_data = xy_data_global.x;
-		var x_arr = null;
-		if (typeof x_data.arraySync === "function") {
-			try { x_arr = x_data.arraySync(); } catch(e) {}
-		} else if (Array.isArray(x_data)) {
-			x_arr = x_data;
-		} else if (x_data.data) {
-			try { x_arr = x_data.data.arraySync ? x_data.data.arraySync() : null; } catch(e) {}
-		}
-		if (!x_arr || !Array.isArray(x_arr) || x_arr.length === 0) return;
-		var first = x_arr[0];
+		var first = x_src.first;
 
 		// --- Sub-model approach (robust for functional-API models) ---
 		var modelInputShape = null;
@@ -4494,32 +4618,52 @@ function populate_neuron_outputs_from_current() {
 		}
 
 		var count = 0;
+		var functionalChain = null; // for Sequential fallback
 		for (var i = 0; i < model.layers.length; i++) {
 			var layer = model.layers[i];
 			var outTensor = null;
 			try {
-				// Try sub-model predict (most reliable)
 				if (layer.output && model.inputs) {
-					var sm = tf.model({ inputs: model.inputs, outputs: layer.output });
-					outTensor = sm.predict(inp);
-					try { sm.dispose && sm.dispose(); } catch(e) {}
+					if (!layer.__math_submodel) {
+						layer.__math_submodel = tf.model({ inputs: model.inputs, outputs: layer.output });
+					}
+					outTensor = layer.__math_submodel.predict(inp);
 				}
 			} catch(eSub) {
 				outTensor = null;
 			}
+			// Sequential fallback: chain layers one by one so layer N+1 gets
+			// layer N's output as input (rather than the original input).
 			if (outTensor == null) {
-				// Fallback: direct apply
+				try {
+					var chained = (functionalChain || inp);
+					for (var ci = (functionalChain ? 1 : 0); ci <= i && ci < model.layers.length; ci++) {
+						var step = model.layers[ci].apply(chained);
+						if (ci > 0) { try { chained.dispose(); } catch(e) {} }
+						chained = step;
+					}
+					outTensor = chained;
+					functionalChain = chained;
+				} catch(eChain) { outTensor = null; }
+			}
+			// Last-resort fallback for layer 0 only.
+			if (outTensor == null && i === 0) {
 				try { outTensor = layer.apply(inp); } catch(eApp) { break; }
+			}
+			if (outTensor == null) {
+				_math_warn_once("math_populate_break_L" + i, "math mode: could not populate neuron_outputs[" + i + "] — deeper layers will use _manual_cache");
+				break;
 			}
 			try {
 				var outArr = outTensor.arraySync();
 				neuron_outputs[i] = { input: null, output: [outArr[0]] };
 				count++;
 			} catch(eSync) { break; }
-			finally { try { if (outTensor && outTensor.dispose) outTensor.dispose(); } catch(e) {} }
+			finally { try { if (outTensor && outTensor.dispose && (!functionalChain || outTensor !== functionalChain)) outTensor.dispose(); } catch(e) {} }
 		}
 		try { inp.dispose(); } catch(e) {}
-		console.log("populate_neuron_outputs: done, layers populated:", count);
+		if (functionalChain) { try { functionalChain.dispose(); } catch(e) {} }
+		console.log("populate_neuron_outputs: done, layers populated:", count, "(source:", x_src.source, ")");
 	} catch(e) { console.warn("populate_neuron_outputs error:", e); }
 }
 
