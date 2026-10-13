@@ -4922,8 +4922,20 @@ function _math_replace_h_with_real_data(latex) {
 	if (!latex || typeof latex !== "string") return latex;
 	if (typeof _math_show_real_data === "undefined" || !_math_show_real_data) return latex;
 
-	// For each layer index N, check if we have real data
-	for (var N = 0; N < 20; N++) {
+	// Only iterate over layers that actually exist in the model — the old
+	// 0..20 loop ran _get_h_matrix_values() (which triggers a TF.js forward
+	// pass via _get_intermediate_activation) once per missing layer too,
+	// turning "show real data on the math tab" into a noticeable hang after
+	// a model/data swap, especially for wider models.
+	var maxLayers = 0;
+	try {
+		if (typeof model !== "undefined" && model && Array.isArray(model.layers)) {
+			maxLayers = model.layers.length;
+		}
+	} catch(e) {}
+	if (maxLayers <= 0) maxLayers = 1;
+
+	for (var N = 0; N < maxLayers; N++) {
 		var matrix = _get_h_matrix_values(N);
 		if (!matrix) continue;
 		// Replace h_N^{\mathrm{[shape]}} with \underbrace{matrix}_{h_N}
