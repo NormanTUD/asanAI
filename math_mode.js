@@ -293,6 +293,10 @@ function write_optimizer_to_math_tab() {
 			return;
 		}
 
+		// Snapshot the dict size so we can clean up only the entries we add
+		// (without disturbing tensors tracked from other code paths).
+		var _prev_tensor_count = (typeof _custom_tensors === "object" && _custom_tensors) ? Object.keys(_custom_tensors).length : 0;
+
 		var values = {};
 		var _keys = Object.keys(model.optimizer);
 
@@ -314,9 +318,19 @@ function write_optimizer_to_math_tab() {
 			hide_and_reset_optimizer_variables();
 		}
 
-		// Sweep any tensors we just registered via array_sync() (optimizer
-		// slots can be reallocated every training step, so their ids change
-		// each call and would otherwise stay in _custom_tensors forever).
+		// Sweep any tensors we just registered via array_sync() — optimizer
+		// slots can be reallocated every training step (new tensor ids), so
+		// the tracking dict would otherwise grow unboundedly. We trim only
+		// the entries added during this call to avoid disturbing tensors
+		// tracked from other code paths.
+		if (typeof _custom_tensors === "object" && _custom_tensors) {
+			var _all_keys = Object.keys(_custom_tensors);
+			if (_all_keys.length > _prev_tensor_count) {
+				for (var tk = _prev_tensor_count; tk < _all_keys.length; tk++) {
+					delete _custom_tensors[_all_keys[tk]];
+				}
+			}
+		}
 		if (typeof _clean_custom_tensors === "function") {
 			_clean_custom_tensors();
 		}

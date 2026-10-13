@@ -1988,6 +1988,15 @@ input:focus, textarea:focus, select:focus {
 	user-select: none;
 }
 
+/* TEMML stores the pristine LaTeX source in <annotation encoding="application/x-tex">.
+   That is metadata, never visible content. Firefox hides it via the MathML
+   semantics rule, but Chromium (MathML Core) treats unknown MathML elements as
+   renderable and prints the raw source next to the equation. Hide it in every
+   browser so it never escapes the <math> element as visible text. */
+math annotation {
+	display: none !important;
+}
+
 /* Wide equations (matrices, optimizer algorithms) must not stretch or
    horizontally scroll the whole math tab: each equation scrolls
    horizontally inside its own full-width box instead. */
