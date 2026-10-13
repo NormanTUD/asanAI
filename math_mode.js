@@ -1221,7 +1221,19 @@ function _get_h_matrix_values (layer_idx) {
 		// Strategy 1: neuron_outputs (from training)
 		if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx] && neuron_outputs[layer_idx].output) {
 			var oo = neuron_outputs[layer_idx].output;
-			if (Array.isArray(oo) && oo.length > 0) comp = oo[oo.length - 1];
+			if (Array.isArray(oo) && oo.length > 0) {
+				var lastBatch = oo[oo.length - 1];
+				// explain.js pushes the whole batch output (batch × output) into
+				// neuron_outputs[i].output; we want a single sample, not all of
+				// them — otherwise the LEFT-side matrix renders one row per
+				// training sample (e.g. 8 rows for batch 8) and the equation
+				// dwarfs everything else.
+				if (Array.isArray(lastBatch) && lastBatch.length > 0 && Array.isArray(lastBatch[0])) {
+					comp = lastBatch[0];
+				} else {
+					comp = lastBatch;
+				}
+			}
 		}
 		// Strategy 2: _real_data_cache
 		if (!_has_numbers(comp) && window._real_data_cache && window._real_data_cache[layer_idx]) {
@@ -1342,17 +1354,22 @@ function _get_h (layer_idx) {
 	if (typeof _math_show_real_data !== "undefined" && _math_show_real_data) {
 		var matrix = _get_h_matrix_values(layer_idx);
 		if (matrix) {
-			var h_desc = "h_" + layer_idx;
+			var shape_str = "";
 			try {
-				var shape_str = get_layer_output_shape_as_string(layer_idx);
-				if (shape_str) {
-					var pretty = shape_str.replace(/^\[|\]$/g, "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+				var raw_shape = get_layer_output_shape_as_string(layer_idx);
+				if (raw_shape) {
+					var pretty = raw_shape.replace(/^\[|\]$/g, "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
 					if (pretty.length > 0) {
-						h_desc += "^{" + pretty.join(" \\times ") + "}";
+						shape_str = "^{" + pretty.join(" \\times ") + "}";
 					}
 				}
 			} catch(eShape) {}
-			return "\\underbrace{" + matrix + "}_{" + h_desc + "}";
+			var is_last = (typeof model !== "undefined" && model && Array.isArray(model.layers) && layer_idx === model.layers.length - 1);
+			var label_base = is_last
+				? otrans("result", "Ergebnis")
+				: otrans("intermediate_result", "Zwischenergebnis");
+			var desc_text = is_last ? label_base : (label_base + " " + (layer_idx + 1));
+			return "\\underbrace{" + matrix + "}_{\\mathrm{" + desc_text + "}" + shape_str + "}";
 		}
 	}
 	return _get_h_symbol(layer_idx);
@@ -2444,8 +2461,24 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 			var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
 			var result_mx = _get_result_matrix(layer_idx);
 			// Inline the result matrix at the beginning of the label div so
-			// it never slips to a separate line below the formula.
-			var _result_prefix = result_mx ? (result_mx + " = ") : "";
+			// it never slips to a separate line below the formula. When in
+			// real-data mode use _get_h so the LHS carries a numbered
+			// "Intermediate result N" / "Result" desc with shape; otherwise
+			// fall back to the bare matrix prefix.
+			var _show_real_int = (typeof _math_show_real_data !== "undefined" && _math_show_real_data);
+			var _result_prefix = "";
+			if (result_mx) {
+				if (_show_real_int) {
+					var _h_full_int = _get_h(layer_idx);
+					if (_h_full_int && _latex_is_balanced(_h_full_int)) {
+						_result_prefix = _h_full_int + " = ";
+					} else {
+						_result_prefix = result_mx + " = ";
+					}
+				} else {
+					_result_prefix = result_mx + " = ";
+				}
+			}
 			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _result_prefix + _get_h_symbol(layer_idx) + " = </div>";
 			str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div>";
 
@@ -2496,9 +2529,22 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 				// matrix, that matrix IS h_N, so the explicit h_N placeholder
 				// would render as a redundant duplicate. Drop it in that case.
 				var _show_real = (typeof _math_show_real_data !== "undefined" && _math_show_real_data);
-				var _prefix = _rm_split ? (_rm_split + " = ") : "";
+				// Use the full _get_h (matrix + numbered "Intermediate result N" /
+				// "Result" desc with shape) as the LHS so the rendered output
+				// carries a labeled underbrace instead of a bare pmatrix.
+				var _prefix = "";
+				if (_rm_split && _show_real) {
+					var _h_full = _get_h(layer_idx);
+					if (_h_full && _latex_is_balanced(_h_full)) {
+						_prefix = _h_full + " = ";
+					} else {
+						_prefix = _rm_split + " = ";
+					}
+				} else if (_rm_split) {
+					_prefix = _rm_split + " = ";
+				}
 				var _lhs = "";
-				if (!_rm_split || !_show_real) {
+				if (!_prefix) {
 					_lhs = _sym_only + " = ";
 				}
 				str += "<div class='temml_me' data-eq-part='computation'>" + _prefix + _lhs + _comp_part + "</div>";

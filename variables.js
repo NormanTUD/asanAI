@@ -1982,6 +1982,35 @@ function toggle_math_pin_input() {
 	write_model_to_latex_to_page(1); // await not possible
 }
 
+function _real_data_cache_has_data() {
+	if (!window._real_data_cache) return false;
+	for (var k in window._real_data_cache) {
+		if (window._real_data_cache[k]) return true;
+	}
+	return false;
+}
+
+function _real_data_watchdog_tick() {
+	var attempts = (window._real_data_watchdog_attempts || 0) + 1;
+	window._real_data_watchdog_attempts = attempts;
+	try {
+		var hasData = _real_data_cache_has_data();
+		if (!hasData && typeof _populate_real_data_cache === "function") {
+			_populate_real_data_cache();
+		}
+		if (hasData || attempts >= 10) {
+			clearInterval(window._real_data_watchdog);
+			window._real_data_watchdog = null;
+			window._real_data_watchdog_attempts = 0;
+			try { write_model_to_latex_to_page(1); } catch(e) {}
+		}
+	} catch(e) {
+		clearInterval(window._real_data_watchdog);
+		window._real_data_watchdog = null;
+		window._real_data_watchdog_attempts = 0;
+	}
+}
+
 function toggle_math_show_real_data() {
 	// Driven by a checkbox (math_show_real_data_checkbox). When the checkbox
 	// exists the new state comes from its `.checked` value; when called without
@@ -2001,20 +2030,8 @@ function toggle_math_show_real_data() {
 	// Watchdog: keep trying to populate for 5 seconds
 	if (_math_show_real_data) {
 		if (window._real_data_watchdog) { try { clearInterval(window._real_data_watchdog); } catch(e){} }
-		var attempts = 0;
-		window._real_data_watchdog = setInterval(function() {
-			attempts++;
-			try {
-				var hasData = false;
-				if (window._real_data_cache) { for (var k in window._real_data_cache) { if (window._real_data_cache[k]) { hasData = true; break; } } }
-				if (!hasData && typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); }
-				if (hasData || attempts >= 10) {
-					clearInterval(window._real_data_watchdog);
-					window._real_data_watchdog = null;
-					try { write_model_to_latex_to_page(1); } catch(e) {}
-				}
-			} catch(e) { clearInterval(window._real_data_watchdog); window._real_data_watchdog = null; }
-		}, 500);
+		window._real_data_watchdog_attempts = 0;
+		window._real_data_watchdog = setInterval(_real_data_watchdog_tick, 500);
 	}
 	write_model_to_latex_to_page(1); // await not possible, force
 }
