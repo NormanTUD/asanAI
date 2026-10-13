@@ -369,8 +369,6 @@ function write_optimizer_to_math_tab() {
 			wo2mt_collect_value_for_key(values, _key, model.optimizer[_key]);
 		}
 
-		return;
-
 		var str = wo2mt_build_output_string(values);
 
 		if (str) {
