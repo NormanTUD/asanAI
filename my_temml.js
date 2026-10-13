@@ -88,6 +88,13 @@ function render_temml_quick(e) {
 			temml_options.trust = (context) => context.command === "\\class";
 		}
 		temml.render(latex, tmp, temml_options);
+		// TEMML emits a <semantics><annotation encoding="application/x-tex">
+		// carrying the pristine LaTeX for accessibility. Firefox hides it via
+		// the MathML semantics rule; Chromium (MathML Core) treats it as
+		// renderable text and prints the raw source next to the equation.
+		// The pristine source is preserved in data-latex below; drop the
+		// annotation here so no browser can ever leak it as visible text.
+		tmp.querySelectorAll("annotation").forEach(a => a.remove());
 		e.innerHTML = tmp.innerHTML;
 		e.dataset.rendered = "1";
 		e.dataset.latex = latex;

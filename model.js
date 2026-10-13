@@ -2004,7 +2004,10 @@ function get_weights_as_string(m = model) {
                     if (!weights[weight_idx].isDisposed) {
                         // Stringify each weight tensor immediately,
                         // so the nested array can be GC'd right after.
-                        parts[weight_idx] = JSON.stringify(array_sync(weights[weight_idx]));
+                        // skip_tracking=true: model weights are persistent
+                        // and would otherwise accumulate one entry per
+                        // weight per plot tick in _custom_tensors.
+                        parts[weight_idx] = JSON.stringify(array_sync(weights[weight_idx], false, true));
                     } else {
                         wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
                         parts[weight_idx] = "null";

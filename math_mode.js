@@ -293,10 +293,6 @@ function write_optimizer_to_math_tab() {
 			return;
 		}
 
-		// Snapshot the dict size so we can clean up only the entries we add
-		// (without disturbing tensors tracked from other code paths).
-		var _prev_tensor_count = (typeof _custom_tensors === "object" && _custom_tensors) ? Object.keys(_custom_tensors).length : 0;
-
 		var values = {};
 		var _keys = Object.keys(model.optimizer);
 
@@ -318,19 +314,7 @@ function write_optimizer_to_math_tab() {
 			hide_and_reset_optimizer_variables();
 		}
 
-		// Sweep any tensors we just registered via array_sync() — optimizer
-		// slots can be reallocated every training step (new tensor ids), so
-		// the tracking dict would otherwise grow unboundedly. We trim only
-		// the entries added during this call to avoid disturbing tensors
-		// tracked from other code paths.
-		if (typeof _custom_tensors === "object" && _custom_tensors) {
-			var _all_keys = Object.keys(_custom_tensors);
-			if (_all_keys.length > _prev_tensor_count) {
-				for (var tk = _prev_tensor_count; tk < _all_keys.length; tk++) {
-					delete _custom_tensors[_all_keys[tk]];
-				}
-			}
-		}
+		// Reclaim any disposed entries that accumulated from other paths.
 		if (typeof _clean_custom_tensors === "function") {
 			_clean_custom_tensors();
 		}
@@ -566,7 +550,10 @@ function wo2mt_process_tensor_like(values, key, raw_val) {
 	}
 
 	tf.engine().startScope();
-	values[key] = array_sync(raw_val, true);
+	// skip_tracking=true: optimizer state tensors are persistent (only
+	// disposed when the model is recompiled) and would otherwise
+	// accumulate in _custom_tensors every watchdog tick.
+	values[key] = array_sync(raw_val, true, true);
 	tf.engine().endScope();
 }
 
@@ -684,7 +671,10 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 			var variable_val = _val[j].variable;
 			if (typeof variable_val !== 'undefined' && variable_val !== null && !variable_val.isDisposedInternal) {
 				try {
-					var _this_res = tidy(() => { return array_sync(variable_val, true); });
+					// skip_tracking=true: optimizer variable tensors are
+					// persistent and would otherwise accumulate one entry
+					// per variable per watchdog tick in _custom_tensors.
+					var _this_res = tidy(() => { return array_sync(variable_val, true, true); });
 
 					values[_key][j] = _this_res;
 				} catch (_err) {
@@ -1002,7 +992,7 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 
 	str += "\n\\end{pmatrix}}";
 	if (desc) {
-		str += "_{\\mathrm{" + _sanitize_mathrm_desc(desc) + "}}\n";
+		str += "_{\\mathrm{" + desc + "}}\n";
 	}
 
 	return str;
@@ -1060,7 +1050,7 @@ function array_to_latex (_array, desc = false, newline_instead_of_ampersand = fa
 
 	str += "\n\\end{pmatrix}}";
 	if(desc) {
-		str += "_{\\mathrm{" + _sanitize_mathrm_desc(desc) + "}}\n";
+		str += "_{\\mathrm{" + desc + "}}\n";
 	}
 
 	return str;
@@ -1160,18 +1150,6 @@ function replace_non_numbers_with_matching_latex (ar) {
 	ar = replaceScientificNotationRecursive(ar);
 
 	return ar;
-}
-
-// Strip \text{...} wrapping from a subscript description before it goes inside
-// \mathrm{...}. \mathrm already styles its content in upright roman, and a
-// nested \text inside \mathrm is fragile — the { ... }^{...} exponent on the
-// text-mode group can confuse downstream renders (e.g. temml + post-processing
-// sanitize passes), and the global sanitizer below turns the inner \text{...}
-// into a second \mathrm{...}, producing \mathrm{\mathrm{...}} which can leave
-// raw LaTeX in the rendered math tab.
-function _sanitize_mathrm_desc(desc) {
-	if (typeof desc !== "string") return desc;
-	return desc.replace(/\\text\{([^{}]*)\}/g, "$1");
 }
 
 function array_size (ar) {
