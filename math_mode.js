@@ -338,8 +338,21 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 			}
 		}
 
-		write_optimizer_to_math_tab();
+		const throttledFn = throttle(write_optimizer_to_math_tab, 1000);
+
+		setInterval(throttledFn, 100);
 	}
+}
+
+function throttle(fn, limit = 1000) {
+	let lastCall = 0;
+	return function(...args) {
+		const now = Date.now();
+		if (now - lastCall >= limit) {
+			lastCall = now;
+			fn.apply(this, args);
+		}
+	};
 }
 
 // ============================================================
@@ -358,6 +371,7 @@ function write_optimizer_to_math_tab() {
 			return;
 		}
 
+		return;
 		var values = {};
 		var _keys = Object.keys(model.optimizer);
 
