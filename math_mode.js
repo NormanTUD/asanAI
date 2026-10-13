@@ -384,7 +384,7 @@ function write_optimizer_to_math_tab() {
 		if (str) {
 			$("#optimizer_variables_header").show();
 			$("#optimizer_variables_div").html(str).show();
-			_temml();
+			_temml(0);
 		} else {
 			hide_and_reset_optimizer_variables();
 		}
