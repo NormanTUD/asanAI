@@ -163,6 +163,8 @@
 		_js("loader-network.js");
 		_js("main.js");
 
+		_js("fn_profiler.js");
+
 		_js("libs/plotly-latest.min.js");
 
 		_js("libs/pyodide.js");
