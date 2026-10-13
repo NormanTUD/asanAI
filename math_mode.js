@@ -1360,7 +1360,7 @@ function _get_h (layer_idx) {
 				if (raw_shape) {
 					var pretty = raw_shape.replace(/^\[|\]$/g, "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
 					if (pretty.length > 0) {
-						shape_str = "^{" + pretty.join(" \\times ") + "}";
+						shape_str = " [" + pretty.join(" \\times ") + "]";
 					}
 				}
 			} catch(eShape) {}
@@ -1369,7 +1369,7 @@ function _get_h (layer_idx) {
 				? otrans("result", "Ergebnis")
 				: otrans("intermediate_result", "Zwischenergebnis");
 			var desc_text = is_last ? label_base : (label_base + " " + (layer_idx + 1));
-			return "\\underbrace{" + matrix + "}_{\\text{" + desc_text + "}" + shape_str + "}";
+			return "\\underbrace{" + matrix + "}_{\\text{" + desc_text + shape_str + "}}";
 		}
 	}
 	return _get_h_symbol(layer_idx);
