@@ -1882,6 +1882,188 @@ input, select {
 	vertical-align: baseline;
 }
 
+.csv_right_table_td {
+	vertical-align: top;
+	width: 50%;
+	min-width: 320px;
+}
+
+.csv_right_panel {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	min-width: 280px;
+	padding-left: 18px;
+}
+
+.csv_right_panel.csv_right_panel_reveal {
+	animation: csv_panel_fade_in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes csv_panel_fade_in {
+	from { opacity: 0; transform: translateY(-4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes csv_block_fade_in {
+	from { opacity: 0; transform: translateY(-3px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.csv_section {
+	background: rgba(120, 120, 120, 0.07);
+	border: 1px solid rgba(120, 120, 120, 0.15);
+	border-radius: 8px;
+	padding: 14px 18px;
+	transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.csv_section:hover {
+	background: rgba(120, 120, 120, 0.10);
+	border-color: rgba(120, 120, 120, 0.22);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.csv_section_header {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
+	margin-bottom: 10px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(120, 120, 120, 0.15);
+}
+
+.csv_section_title {
+	font-size: 0.78em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	opacity: 0.78;
+}
+
+.csv_section_hint {
+	font-size: 0.72em;
+	opacity: 0.55;
+	font-style: italic;
+}
+
+.csv_tensor_block {
+	padding: 4px 0 6px 0;
+	transition: opacity 0.18s ease;
+}
+
+.csv_tensor_block + .csv_tensor_block {
+	margin-top: 10px;
+	border-top: 1px dashed rgba(120, 120, 120, 0.18);
+	padding-top: 12px;
+}
+
+.csv_tensor_block_one_hot {
+	border-top: 1px dashed rgba(120, 120, 120, 0.18);
+	margin-top: 12px;
+	padding-top: 12px;
+}
+
+.csv_tensor_label {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
+	margin: 0 0 8px 0;
+}
+
+.csv_tensor_block + .csv_tensor_block .csv_tensor_label {
+	margin-top: 0;
+}
+
+.csv_tensor_label_name {
+	font-size: 0.75em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	opacity: 0.7;
+}
+
+.csv_tensor_label_shape {
+	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	font-size: 0.78em;
+	padding: 1px 7px;
+	background: rgba(120, 120, 120, 0.14);
+	border-radius: 9px;
+	opacity: 0.85;
+}
+
+.xy_matrix {
+	text-align: center;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 4px 0 2px 0;
+	min-height: 38px;
+	scrollbar-width: thin;
+}
+
+.xy_matrix::-webkit-scrollbar {
+	height: 6px;
+}
+
+.xy_matrix::-webkit-scrollbar-thumb {
+	background: rgba(120, 120, 120, 0.3);
+	border-radius: 3px;
+}
+
+.xy_matrix math {
+	font-size: 1.02em;
+}
+
+.xy_matrix_fallback {
+	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	font-size: 0.95em;
+	padding: 6px 10px;
+	background: rgba(120, 120, 120, 0.10);
+	border-radius: 4px;
+	display: inline-block;
+	opacity: 0.85;
+}
+
+.xy_one_hot_row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 4px;
+}
+
+.xy_one_hot_chip {
+	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	font-size: 0.82em;
+	padding: 3px 8px;
+	background: rgba(120, 120, 120, 0.14);
+	border: 1px solid rgba(120, 120, 120, 0.10);
+	border-radius: 4px;
+	opacity: 0.92;
+}
+
+.csv_section_header_overview .header_container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.csv_section_header_overview .header_item {
+	padding: 4px 0;
+}
+
+.csv_section_header_overview .header_name {
+	margin: 0 0 4px 0 !important;
+	font-size: 0.92em;
+}
+
+.csv_section_header_overview hr {
+	margin: 4px 0 !important;
+	border: 0;
+	border-top: 1px solid rgba(120, 120, 120, 0.15) !important;
+}
+
 #custom_csv_settings_table {
 	width: 100%;
 	border-collapse: collapse;

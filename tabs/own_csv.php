@@ -93,11 +93,23 @@
 				<span id="csv_parse_errors"></span>
 				<textarea id="csv_file" style="width: 98%; height: 400px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
 			</td>
-			<td class="hide_when_no_csv custom_csv_table_td" style="display: none">
-				<div id="csv_header_overview"></div>
-			</td>
-			<td class="hide_when_no_csv custom_csv_table_td" style="display: none">
-				<div id="x_y_shape_preview"></div>
+			<td class="hide_when_no_csv custom_csv_table_td csv_right_table_td" style="display: none">
+				<div class="csv_right_panel">
+					<div class="csv_section csv_section_header_overview">
+						<div class="csv_section_header">
+							<span class="csv_section_title TRANSLATEME_csv_section_columns"></span>
+							<span class="csv_section_hint TRANSLATEME_csv_section_columns_hint"></span>
+						</div>
+						<div id="csv_header_overview"></div>
+					</div>
+					<div class="csv_section csv_section_shape">
+						<div class="csv_section_header">
+							<span class="csv_section_title TRANSLATEME_csv_section_tensors"></span>
+							<span class="csv_section_hint TRANSLATEME_csv_section_tensors_hint"></span>
+						</div>
+						<div id="x_y_shape_preview"></div>
+					</div>
+				</div>
 			</td>
 		</tr>
 	</table>

@@ -92,9 +92,6 @@ async function _show_csv_file(disabled_show_head_data=false) {
 				}
 			}
 
-			var shape_preview = "X-shape: [" + parsed_data.x.shape.join(", ") + "]<br>Y-shape: [" + parsed_data.y.shape.join(", ") + "]";
-
-			var shape_preview_color = "<div>";
 			csv_allow_training = true;
 
 			var is_same = output_shape_is_same(parsed_data.y.shape, $("#outputShape").val());
@@ -103,8 +100,6 @@ async function _show_csv_file(disabled_show_head_data=false) {
 					await updated_page(null, null, null, 1);
 				}
 			}
-
-			shape_preview = shape_preview_color + shape_preview + "</div>";
 
 			var x_str = array_to_ellipsis_latex(parsed_data.latex_array_x, 5, "Input");
 			var y_str = array_to_ellipsis_latex(parsed_data.latex_array_y, 5, "Output");
@@ -120,13 +115,9 @@ async function _show_csv_file(disabled_show_head_data=false) {
 			old_x_str = x_str;
 			old_y_str = y_str;
 
-			shape_preview += "<br><div class='temml_me'>" + x_str + "</div>";
-
 			if (parsed_data.x.dtype == "string") {
 				csv_allow_training = false;
 			}
-
-			shape_preview += "<br><br><div class='temml_me'>" + y_str + "</div>";
 
 			if (parsed_data.y.dtype == "string") {
 				csv_allow_training = false;
@@ -136,10 +127,33 @@ async function _show_csv_file(disabled_show_head_data=false) {
 				await hide_error();
 			}
 
-			shape_preview = auto_one_hot_shape_preview(shape_preview);
+			var x_shape_str = parsed_data.x.shape.join(" × ");
+			var y_shape_str = parsed_data.y.shape.join(" × ");
+
+			var x_html = _render_latex_to_html(x_str) || _latex_fallback_html(x_str);
+			var y_html = _render_latex_to_html(y_str) || _latex_fallback_html(y_str);
+
+			var shape_preview =
+				"<div class='csv_tensor_block'>" +
+					"<div class='csv_tensor_label'>" +
+						"<span class='csv_tensor_label_name'>" + trm("csv_tensor_input") + "</span>" +
+						"<span class='csv_tensor_label_shape'>[" + x_shape_str + "]</span>" +
+					"</div>" +
+					"<div class='xy_matrix'>" + x_html + "</div>" +
+				"</div>" +
+				"<div class='csv_tensor_block'>" +
+					"<div class='csv_tensor_label'>" +
+						"<span class='csv_tensor_label_name'>" + trm("csv_tensor_output") + "</span>" +
+						"<span class='csv_tensor_label_shape'>[" + y_shape_str + "]</span>" +
+					"</div>" +
+					"<div class='xy_matrix'>" + y_html + "</div>" +
+				"</div>";
+
+			shape_preview = auto_one_hot_shape_preview(shape_preview, parsed_data);
 
 			$("#x_y_shape_preview").html(shape_preview);
 			$(".hide_when_no_csv").show();
+			_retrigger_csv_reveal();
 		} else {
 			log(language[lang]["csv_headers_must_have_x_and_y_values"]);
 
@@ -154,6 +168,42 @@ async function _show_csv_file(disabled_show_head_data=false) {
 	} else {
 		$("#csv_header_overview").html("");
 		csv_allow_training = false;
+	}
+}
+
+function _render_latex_to_html(latex_str) {
+	if (typeof temml === "undefined" || !temml.renderToString) return null;
+	if (!latex_str || typeof latex_str !== "string") return null;
+	try {
+		var out = temml.renderToString(latex_str, { annotate: true });
+		out = out.replace(/<annotation[\s\S]*?<\/annotation>/g, "");
+		return out;
+	} catch (e) {
+		wrn("[csv] temml.renderToString failed:", e);
+		return null;
+	}
+}
+
+function _latex_fallback_html(latex_str) {
+	var safe = String(latex_str || "").replace(/[&<>]/g, function(c) {
+		return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c];
+	});
+	return "<span class='xy_matrix_fallback'>" + safe + "</span>";
+}
+
+function _retrigger_csv_reveal() {
+	var panel = document.querySelector(".csv_right_panel");
+	if (!panel) return;
+	panel.classList.remove("csv_right_panel_reveal");
+	void panel.offsetWidth;
+	panel.classList.add("csv_right_panel_reveal");
+
+	var blocks = panel.querySelectorAll(".csv_tensor_block");
+	for (var i = 0; i < blocks.length; i++) {
+		var block = blocks[i];
+		block.style.animation = "none";
+		void block.offsetWidth;
+		block.style.animation = "csv_block_fade_in 0.32s cubic-bezier(0.22, 1, 0.36, 1) " + (i * 0.05) + "s both";
 	}
 }
 
@@ -244,13 +294,23 @@ function set_activation_function_to_linear_when_y_not_between_0_and_1 (parsed_da
 	}
 }
 
-function auto_one_hot_shape_preview (shape_preview) {
+function auto_one_hot_shape_preview (shape_preview, parsed_data) {
 	if($("#auto_one_hot_y").is(":checked")) {
 		if(labels.length) {
-			shape_preview += "Generated encodings:<br>";
+			var chips = "<div class='xy_one_hot_row'>";
 			for (var label_idx = 0; label_idx < labels.length; label_idx++) {
-				shape_preview += labels[label_idx] + ": " + get_generated_encoding(label_idx, labels.length) + "<br>";
+				chips += "<span class='xy_one_hot_chip'>" + labels[label_idx] + " → " + get_generated_encoding(label_idx, labels.length) + "</span>";
 			}
+			chips += "</div>";
+
+			shape_preview +=
+				"<div class='csv_tensor_block csv_tensor_block_one_hot'>" +
+					"<div class='csv_tensor_label'>" +
+						"<span class='csv_tensor_label_name'>" + trm("csv_tensor_generated_encodings") + "</span>" +
+					"</div>" +
+					chips +
+				"</div>";
+
 			l(language[lang]["generated_encodings"]);
 		} else {
 			l(language[lang]["auto_generating_enables_but_no_labels_given"]);
