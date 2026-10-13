@@ -1439,6 +1439,12 @@ function reset_math_caches() {
 	try { if (typeof reset_neuron_outputs === "function") reset_neuron_outputs(); else if (typeof neuron_outputs !== "undefined") neuron_outputs = {}; } catch(e) {}
 	try { window._real_data_cache = {}; } catch(e) {}
 	try { window._manual_cache = {}; } catch(e) {}
+	// Last-prediction input caches also go stale on a model swap — the new
+	// model may want a different number of features, so re-use would render
+	// an input matrix that no longer fits the layer's inputShape.
+	try { window._last_predict_input_arr = null; } catch(e) {}
+	try { window._last_input_flat = null; } catch(e) {}
+	try { window._pinned_input = null; } catch(e) {}
 }
 
 function _populate_real_data_cache() {
@@ -2001,6 +2007,19 @@ function get_input_layer(input_shape) {
 		dbg("get_input_layer: no data found from any source");
 		return input_layer;
 	}
+
+	// Validate against current model's expected input width — otherwise the
+	// rendered Input matrix won't match the layer's inputShape.
+	try {
+		if (typeof model !== "undefined" && model && model.layers && model.layers[0] && model.layers[0].input && Array.isArray(model.layers[0].input.shape)) {
+			var s = model.layers[0].input.shape;
+			var expected = s[s.length - 1];
+			if (typeof expected === "number" && expected > 0 && values.length !== expected) {
+				try { if (window.console && window.console.debug) window.console.debug("math get_input_layer: source", source, "width", values.length, "disagrees with expected", expected, "— discarding"); } catch(e) {}
+				return [["x"]];
+			}
+		}
+	} catch(eShape) {}
 
 	console.log("get_input_layer: using source:", source, "values length:", values.length);
 
@@ -4604,15 +4623,29 @@ function _get_input_sample_for_prediction(requested) {
 			}
 		}
 
+		// The number of features the current model actually expects. If a
+		// candidate sample doesn't match, skip it — otherwise we'd render an
+		// Input matrix whose width disagrees with the layer's inputShape.
+		var expected_features = null;
+		try {
+			if (typeof model !== "undefined" && model && model.layers && model.layers[0] && model.layers[0].input && Array.isArray(model.layers[0].input.shape)) {
+				var s = model.layers[0].input.shape;
+				expected_features = s[s.length - 1];
+			}
+		} catch(eShape) {}
+
 		for (var s = 0; s < sources.length; s++) {
 			var src = sources[s];
 			if (!Array.isArray(src.data) || src.data.length === 0) continue;
 			var idx = requested;
 			if (typeof idx !== "number" || idx < 0 || idx >= src.data.length) idx = 0;
 			var first = src.data[idx];
-			if (first !== undefined && first !== null) {
-				return { first: first, index: idx, source: src.name };
+			if (first === undefined || first === null) continue;
+			if (typeof expected_features === "number" && expected_features > 0 && Array.isArray(first) && first.length !== expected_features) {
+				try { if (window.console && window.console.debug) window.console.debug("math input: skipping source", src.name, "width", first.length, "vs expected", expected_features); } catch(e) {}
+				continue;
 			}
+			return { first: first, index: idx, source: src.name };
 		}
 	} catch(e) { dbg("_get_input_sample_for_prediction:", e); }
 	return null;
