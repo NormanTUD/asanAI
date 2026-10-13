@@ -1302,6 +1302,9 @@ function _mvt_describe_tag(tag) {
 	return tag.kind;
 }
 
+var _mvt_last_x = -1;
+var _mvt_last_y = -1;
+
 function _mvt_position(ev) {
 	if (!_mvt_tooltip) {
 		return;
@@ -1324,6 +1327,10 @@ function _mvt_position(ev) {
 	if (y < 8) {
 		y = 8;
 	}
+
+	if (x === _mvt_last_x && y === _mvt_last_y) return;
+	_mvt_last_x = x;
+	_mvt_last_y = y;
 
 	_mvt_tooltip.style.left = x + "px";
 	_mvt_tooltip.style.top = y + "px";
@@ -1676,11 +1683,22 @@ function _mvt_on_over(ev) {
 	_mvt_append_pooled_info(tag, hover_id);
 }
 
+var _mvt_move_ev = null;
+var _mvt_move_raf = null;
+
 function _mvt_on_move(ev) {
 	if (!_mvt_tooltip || _mvt_tooltip.style.display === "none") {
 		return;
 	}
-	_mvt_position(ev);
+	_mvt_move_ev = ev;
+	if (_mvt_move_raf !== null) return;
+	_mvt_move_raf = requestAnimationFrame(function() {
+		_mvt_move_raf = null;
+		var ev = _mvt_move_ev;
+		if (!ev) return;
+		_mvt_move_ev = null;
+		_mvt_position(ev);
+	});
 }
 
 function _mvt_init() {

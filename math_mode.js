@@ -66,14 +66,23 @@ function _math_find_scroll_parent(el) {
 // is_math_tab_visible — unchanged from original
 // ============================================================
 
+var _math_visibility_cache = { visible: false, ts: 0 };
+
+window.addEventListener("resize", function() { _math_visibility_cache.ts = 0; });
+document.addEventListener("visibilitychange", function() { _math_visibility_cache.ts = 0; });
+
 function is_math_tab_visible() {
 	var el = document.querySelector('#math_tab_code');
 	if (!el) return false;
 	var parent = el.parentElement;
 	if (!parent) return false;
+	var now = Date.now();
+	if (now - _math_visibility_cache.ts < 250) {
+		return _math_visibility_cache.visible;
+	}
 	var style = window.getComputedStyle(parent);
 	var rect = parent.getBoundingClientRect();
-	return (
+	var visible = (
 		rect.width > 0 &&
 		rect.height > 0 &&
 		rect.bottom > 0 &&
@@ -81,6 +90,8 @@ function is_math_tab_visible() {
 		style.visibility !== 'hidden' &&
 		style.display !== 'none'
 	);
+	_math_visibility_cache = { visible: visible, ts: now };
+	return visible;
 }
 
 // ============================================================
