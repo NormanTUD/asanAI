@@ -1218,6 +1218,43 @@ function _get_h_symbol (layer_idx) {
 function _get_h_matrix_values (layer_idx) {
 	try {
 		var comp = null;
+		var expected_shape_str = "";
+		try { expected_shape_str = get_layer_output_shape_as_string(layer_idx); } catch(eShape0) {}
+
+		var expected_dims = null;
+		try {
+			if (expected_shape_str && expected_shape_str.indexOf("[") === 0) {
+				expected_dims = expected_shape_str.replace(/^\[|\]$/g, "").split(",").map(function(s) { return parseInt(s.trim(), 10); }).filter(function(n) { return !isNaN(n); });
+			}
+		} catch(eShapeParse) {}
+
+		// When the active model swaps, the old caches can hold arrays with a
+		// shape that no longer matches the current layer's outputShape. Treat
+		// that as "no data" so we fall through to a fresh prediction instead
+		// of rendering stale values from the previous model.
+		function _comp_matches_expected_shape(c, expected) {
+			try {
+				if (!c) return true;
+				if (!expected || !Array.isArray(expected) || expected.length === 0) return true;
+				var actual = null;
+				try {
+					if (typeof get_shape_from_array === "function") actual = get_shape_from_array(c);
+					else actual = array_size(c);
+				} catch(e) { return true; }
+				if (!Array.isArray(actual) || actual.length === 0) return true;
+				var expected_total = 1;
+				for (var i = 0; i < expected.length; i++) {
+					var d = expected[i];
+					expected_total *= (typeof d === "number" && d > 0) ? d : 1;
+				}
+				var actual_total = 1;
+				for (var j = 0; j < actual.length; j++) {
+					var d2 = actual[j];
+					actual_total *= (typeof d2 === "number" && d2 > 0) ? d2 : 1;
+				}
+				return expected_total === actual_total;
+			} catch(e) { return true; }
+		}
 		// Strategy 1: neuron_outputs (from training)
 		if (typeof neuron_outputs !== "undefined" && neuron_outputs[layer_idx] && neuron_outputs[layer_idx].output) {
 			var oo = neuron_outputs[layer_idx].output;
@@ -1237,11 +1274,21 @@ function _get_h_matrix_values (layer_idx) {
 		}
 		// Strategy 2: _real_data_cache
 		if (!_has_numbers(comp) && window._real_data_cache && window._real_data_cache[layer_idx]) {
-			comp = window._real_data_cache[layer_idx];
+			var _c2 = window._real_data_cache[layer_idx];
+			if (_comp_matches_expected_shape(_c2, expected_dims)) {
+				comp = _c2;
+			} else {
+				try { delete window._real_data_cache[layer_idx]; } catch(e) {}
+			}
 		}
 		// Strategy 3: manual forward pass (most reliable for Dense-only models)
 		if (!_has_numbers(comp) && window._manual_cache && window._manual_cache[layer_idx]) {
-			comp = window._manual_cache[layer_idx];
+			var _c3 = window._manual_cache[layer_idx];
+			if (_comp_matches_expected_shape(_c3, expected_dims)) {
+				comp = _c3;
+			} else {
+				try { delete window._manual_cache[layer_idx]; } catch(e) {}
+			}
 		}
 		// Strategy 4: on-demand sub-model predict (now works for Sequential too)
 		if (!_has_numbers(comp)) comp = _get_intermediate_activation(layer_idx);
@@ -1384,6 +1431,15 @@ function _get_result_matrix (layer_idx) {
 
 // --- Real-data cache (survives across renders) ---
 window._real_data_cache = window._real_data_cache || {};
+
+// Invalidate every math-mode cache when the model is being swapped out —
+// otherwise an old model's values leak into the new model's equations and
+// the rendered matrices no longer match the current layer shapes.
+function reset_math_caches() {
+	try { if (typeof reset_neuron_outputs === "function") reset_neuron_outputs(); else if (typeof neuron_outputs !== "undefined") neuron_outputs = {}; } catch(e) {}
+	try { window._real_data_cache = {}; } catch(e) {}
+	try { window._manual_cache = {}; } catch(e) {}
+}
 
 function _populate_real_data_cache() {
 	try {

@@ -81,6 +81,12 @@ async function dispose_model_before_creating_a_new_one() {
 
 		err(e);
 	}
+
+	try {
+		if (typeof reset_math_caches === "function") {
+			reset_math_caches();
+		}
+	} catch(e) {}
 }
 
 async function dispose_model_data_tensors() {
