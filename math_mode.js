@@ -1439,12 +1439,6 @@ function reset_math_caches() {
 	try { if (typeof reset_neuron_outputs === "function") reset_neuron_outputs(); else if (typeof neuron_outputs !== "undefined") neuron_outputs = {}; } catch(e) {}
 	try { window._real_data_cache = {}; } catch(e) {}
 	try { window._manual_cache = {}; } catch(e) {}
-	// Last-prediction input caches also go stale on a model swap — the new
-	// model may want a different number of features, so re-use would render
-	// an input matrix that no longer fits the layer's inputShape.
-	try { window._last_predict_input_arr = null; } catch(e) {}
-	try { window._last_input_flat = null; } catch(e) {}
-	try { window._pinned_input = null; } catch(e) {}
 }
 
 function _populate_real_data_cache() {
