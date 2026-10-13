@@ -1208,7 +1208,8 @@ function get_layer_output_shape_as_string (layer_idx) {
 
 function _get_h_symbol (layer_idx) {
 	var shape_str = get_layer_output_shape_as_string(layer_idx);
-	return "h_" + layer_idx + "^{\\mathrm{" + shape_str + "}}";
+	if (!shape_str) return "h_" + layer_idx;
+	return "h_" + layer_idx + "\\;" + shape_str;
 }
 
 function _get_h_matrix_values (layer_idx) {
