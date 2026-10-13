@@ -1206,7 +1206,10 @@ function _get_h_matrix_values (layer_idx) {
 			return null;
 		}
 		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
-		var maxVals = (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8;
+		// h_N is rendered inline next to the kernel/input/bias — keep it small.
+		// Without this cap, a 32-sample training batch renders a 32-row pmatrix
+		// next to every formula and blows up both the LaTeX size and TEMML's parse tree.
+		var maxVals = Math.min(8, (typeof get_max_nr_cols_rows === "function") ? get_max_nr_cols_rows() : 8);
 		var vals = "";
 		if (typeof comp === "number") {
 			vals = isFinite(comp) ? comp.toFixed(dp) : "?";
@@ -2396,11 +2399,11 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 		if (interactive_info) {
 			var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
 			var result_mx = _get_result_matrix(layer_idx);
-			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h_symbol(layer_idx) + " = </div>";
+			// Inline the result matrix at the beginning of the label div so
+			// it never slips to a separate line below the formula.
+			var _result_prefix = result_mx ? (result_mx + " = ") : "";
+			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _result_prefix + _get_h_symbol(layer_idx) + " = </div>";
 			str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div>";
-			if (result_mx) {
-				str += "<div class='temml_me'> = " + result_mx + " </div>";
-			}
 
 			var has_skip_in_marker = layer_str.indexOf("%%SKIP_ENABLED_") !== -1;
 			var skip_container_id = "math_skip_" + interactive_info.type + "_L" + layer_idx;
@@ -2442,10 +2445,19 @@ function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer)
 			var _comp_valid = _latex_is_balanced(_sym_only + " = " + _comp_part);
 			var _rm_valid = (!_rm_split) || _latex_is_balanced(_rm_split);
 			if (_sym_valid && _comp_valid && _rm_valid) {
-				str += "<div class='temml_me' data-eq-part='computation'>" + _sym_only + " = " + _comp_part + "</div>";
-				if (_rm_split) {
-					str += "<div class='temml_me' data-eq-part='result'> = " + _rm_split + "</div>";
+				// Render the result matrix inline at the BEGINNING of the formula
+				// line (not in its own div). In real-data mode the LHS symbol is
+				// later replaced by the layer's h_N matrix via
+				// _math_replace_h_with_real_data — when we also have a result
+				// matrix, that matrix IS h_N, so the explicit h_N placeholder
+				// would render as a redundant duplicate. Drop it in that case.
+				var _show_real = (typeof _math_show_real_data !== "undefined" && _math_show_real_data);
+				var _prefix = _rm_split ? (_rm_split + " = ") : "";
+				var _lhs = "";
+				if (!_rm_split || !_show_real) {
+					_lhs = _sym_only + " = ";
 				}
+				str += "<div class='temml_me' data-eq-part='computation'>" + _prefix + _lhs + _comp_part + "</div>";
 			} else {
 				var _fallback = _sym_only + " = \\mathrm{f}(\\cdot)";
 				str += "<div class='temml_me' data-eq-part='computation'>" + _fallback + "</div>";
@@ -4381,7 +4393,7 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 
 		if (outTensor == null) {
 			try { inp.dispose(); } catch(e) {}
-			if (chained) { try { chained.dispose(); } catch(e) {} // free the partial chain
+			if (chained) { try { chained.dispose(); } catch(e) {} } // free the partial chain
 			_math_warn_once("math_activations_failed_L" + layer_idx, "math mode: could not compute intermediate activation for layer " + layer_idx);
 			return null;
 		}
