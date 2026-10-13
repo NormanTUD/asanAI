@@ -70,6 +70,7 @@ async function _show_csv_file(disabled_show_head_data=false) {
 	if (!will_have_data) {
 		$("#x_y_shape_preview").html("");
 		$("#csv_header_overview").html("");
+		_last_csv_head_signature = null;
 		csv_allow_training = false;
 		if (panel_was_visible) {
 			$(".hide_when_no_csv").hide();
@@ -219,7 +220,22 @@ function _retrigger_csv_reveal(is_first_reveal) {
 	}
 }
 
+var _last_csv_head_signature = null;
+
+function _head_signature(head) {
+	var sig = String(head.length);
+	for (var i = 0; i < head.length; i++) {
+		sig += "|" + head[i];
+	}
+	return sig;
+}
+
 function show_head_data(head) {
+	if (_last_csv_head_signature === _head_signature(head)) {
+		return;
+	}
+	_last_csv_head_signature = _head_signature(head);
+
 	var previous_values = [];
 	$(".header_select").each((x, y) => { previous_values.push($(y).val()); });
 
