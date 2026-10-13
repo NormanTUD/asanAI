@@ -1167,10 +1167,9 @@ function array_size (ar) {
 	return res;
 }
 
-// For the "Input" and "Bias" underbrace labels, append the array's shape as a
-// superscript so the dimensions are visible at a glance — same pattern the
-// kernel desc already uses ("Weight matrix^{2 × 3}"). Returns the desc string
-// unchanged for any other label.
+// For the "Input" and "Bias" underbrace labels, append the array's shape in
+// brackets inside the desc so dimensions are visible without looking like a
+// power. Returns the desc string unchanged for any other label.
 function _shape_desc_for_label(ar, desc) {
 	if (!desc || typeof desc !== "string") return desc;
 	if (desc !== "Input" && desc !== "Bias") return desc;
@@ -1185,7 +1184,7 @@ function _shape_desc_for_label(ar, desc) {
 	} catch (e) { return desc; }
 	if (!Array.isArray(shape) || shape.length === 0) return desc;
 	var shape_str = shape.join(" \\times ");
-	return "\\text{" + desc + "}^{" + shape_str + "}";
+	return "\\text{" + desc + " [" + shape_str + "]}";
 }
 
 function get_layer_output_shape_as_string (layer_idx) {
@@ -3582,7 +3581,7 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 	if(layer_has_bias) {
 		str += " + \\text{bias}(k)";
 		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
-		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true), 0, false, 33, { kind: "bias", layer: layer_idx });
+		layer_bias_string += `\\text{Bias [${bias_shape.join(", ")}]} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true), 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	str += " \\\\";
@@ -3649,7 +3648,7 @@ function _get_conv2d_latex_static(layer_idx, _af, layer_has_bias) {
 				let synced_bias = tidy(() => { return array_sync(bias_val, true); });
 				if (synced_bias) {
 					var bias_shape = get_shape_from_array(synced_bias);
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias, 0, false, 33, { kind: "bias", layer: layer_idx });
+					layer_bias_string += `\\text{Bias [${bias_shape.join(", ")}]} = ` + array_to_latex_matrix(synced_bias, 0, false, 33, { kind: "bias", layer: layer_idx });
 				}
 			} else {
 				show_could_not_get_msg("bias");
@@ -3723,7 +3722,7 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 	if(layer_has_bias) {
 		str += " + \\text{bias}(k)";
 		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
-		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true), 0, false, 33, { kind: "bias", layer: layer_idx });
+		layer_bias_string += `\\text{Bias [${bias_shape.join(", ")}]} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true), 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	str += " \\\\";
@@ -3836,7 +3835,7 @@ function _get_dense_latex_static(layer_idx, layer_data, colors, input_layer) {
 	try {
 		var this_layer_data_kernel = layer_data[layer_idx].kernel;
 		if (this_layer_data_kernel.length) {
-			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
+			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + " [" + array_size(this_layer_data_kernel).join(" \\times ") + "]}";
 			this_layer_data_kernel = replace_non_numbers_with_matching_latex(this_layer_data_kernel);
 			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel, 0, get_max_nr_cols_rows(), { kind: "kernel", layer: layer_idx });
 			var right_side = get_right_side(layer_idx, input_layer);
