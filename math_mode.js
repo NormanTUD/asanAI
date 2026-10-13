@@ -4360,25 +4360,28 @@ function _get_intermediate_activation(layer_idx, sampleIndex) {
 
 		// Strategy B: chain layers one-by-one (works for Sequential models where
 		// model.inputs is undefined and direct apply() only fits layer 0).
+		var chained = null;
 		if (outTensor == null) {
 			try {
-				var chained = inp;
+				chained = inp;
 				for (var ci = 0; ci <= layer_idx && ci < model.layers.length; ci++) {
 					var step = model.layers[ci].apply(chained);
 					if (ci > 0) { try { chained.dispose(); } catch(e) {} }
 					chained = step;
 				}
 				outTensor = chained;
+				chained = null; // ownership transferred to outTensor
 			} catch(eChain) { outTensor = null; }
 		}
 
 		// Strategy C: direct apply on layer 0 only (fallback for stale models).
 		if (outTensor == null && layer_idx === 0) {
-			try { outTensor = targetLayer.apply(inp); } catch(eApp) { try { inp.dispose(); } catch(e) {} return null; }
+			try { outTensor = targetLayer.apply(inp); } catch(eApp) { try { inp.dispose(); } catch(e) {} if (chained) { try { chained.dispose(); } catch(e) {} } return null; }
 		}
 
 		if (outTensor == null) {
 			try { inp.dispose(); } catch(e) {}
+			if (chained) { try { chained.dispose(); } catch(e) {} // free the partial chain
 			_math_warn_once("math_activations_failed_L" + layer_idx, "math mode: could not compute intermediate activation for layer " + layer_idx);
 			return null;
 		}
