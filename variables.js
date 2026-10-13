@@ -2002,7 +2002,7 @@ function _real_data_watchdog_tick() {
 			clearInterval(window._real_data_watchdog);
 			window._real_data_watchdog = null;
 			window._real_data_watchdog_attempts = 0;
-			try { write_model_to_latex_to_page(1); } catch(e) {}
+			try { write_model_to_latex_to_page(1); } catch(e) {} // await not possible here
 		}
 	} catch(e) {
 		clearInterval(window._real_data_watchdog);
