@@ -2551,10 +2551,14 @@ function model_to_latex() {
 				var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;
 				var formatted = values.slice(0, 8).map(function(v) { return Number(v).toFixed(dp); }).join(" & ");
 				var matrix = "\\begin{pmatrix}" + formatted + "\\end{pmatrix}";
+				// Split off the prefix that was in str BEFORE built.str was appended,
+				// then splice the (possibly shorter or longer) replaced built.str back
+				// in. The previous version used built.str.length after the replace as
+				// the substring offset, which leaks the tail of the old built.str into
+				// the page when the replacement is shorter than the original "x".
+				var _prefix_len = str.length - built.str.length;
 				built.str = built.str.replace(/\\begin\{pmatrix\}\s*x\s*\\end\{pmatrix\}/g, matrix);
-				str = built.str + str.substring(built.str.length);
-				// Actually rebuild str
-				str = str.substring(0, str.indexOf(built.str)) + built.str + str.substring(str.indexOf(built.str) + built.str.length);
+				str = str.substring(0, _prefix_len) + built.str;
 			}
 		} catch(e4) { console.warn("approach 4:", e4); }
 	}
@@ -4808,17 +4812,26 @@ function _math_dom_fix_real_data() {
 			return Number(v).toFixed(dp);
 		}).join(" ");
 
-		// APPROACH 3A: Find all MathML elements and replace standalone "x" in Input context
-		var container = document.getElementById("math_tab_code");
+		// APPROACH 3A: Find all MathML elements and replace standalone "x" in Input context.
+		// Scope to the layer computation divs only — activation function equations
+		// (relu(x)), model-shape labels, and the optimizer section all contain "x"
+		// or "Input" strings that the ancestor-walk used to incorrectly match.
+		var container = document.querySelector("#math_tab_code");
 		if (!container) return;
+		var layer_scope = container.querySelectorAll(".temml_me[data-eq-part='computation']");
+		if (!layer_scope.length) return;
 
-		// Find all text nodes containing just "x"
-		var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+		// Find all text nodes containing just "x" — but ONLY inside layer equations,
+		// so the activation-function "relu(x)" / optimizer "\partial x" are untouched.
 		var textNodes = [];
-		var node;
-		while (node = walker.nextNode()) {
-			if (node.textContent === "x" || node.textContent.trim() === "x") {
-				textNodes.push(node);
+		for (var li = 0; li < layer_scope.length; li++) {
+			var scope = layer_scope[li];
+			var walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, null, false);
+			var node;
+			while (node = walker.nextNode()) {
+				if (node.textContent === "x" || node.textContent.trim() === "x") {
+					textNodes.push(node);
+				}
 			}
 		}
 
@@ -4843,29 +4856,30 @@ function _math_dom_fix_real_data() {
 		}
 
 		// APPROACH 12: Also check for specific math structures
-		var miElements = container.querySelectorAll("mi, mo, mn, mtext");
-		for (var mi = 0; mi < miElements.length; mi++) {
-			var mie = miElements[mi];
-			if (mie.textContent === "x" || mie.textContent.trim() === "x") {
-				var par = mie;
-				var nearInput = false;
-				for (var qi = 0; qi < 20 && par; qi++) {
-					if ((par.textContent || "").indexOf("Input") >= 0) {
-						nearInput = true;
-						break;
+		for (var li2 = 0; li2 < layer_scope.length; li2++) {
+			var miElements = layer_scope[li2].querySelectorAll("mi, mo, mn, mtext");
+			for (var mi = 0; mi < miElements.length; mi++) {
+				var mie = miElements[mi];
+				if (mie.textContent === "x" || mie.textContent.trim() === "x") {
+					var par = mie;
+					var nearInput = false;
+					for (var qi = 0; qi < 20 && par; qi++) {
+						if ((par.textContent || "").indexOf("Input") >= 0) {
+							nearInput = true;
+							break;
+						}
+						par = par.parentElement;
 					}
-					par = par.parentElement;
-				}
-				if (nearInput) {
-					mie.textContent = formatted.split(" ").slice(0, 8).join(" ");
+					if (nearInput) {
+						mie.textContent = formatted.split(" ").slice(0, 8).join(" ");
+					}
 				}
 			}
 		}
 
-		// APPROACH 13: Direct text node replacement in all .temml_me
-		var temmlDivs = container.querySelectorAll(".temml_me");
-		for (var tdi = 0; tdi < temmlDivs.length; tdi++) {
-			var td = temmlDivs[tdi];
+		// APPROACH 13: Direct text node replacement in all layer equation divs
+		for (var tdi = 0; tdi < layer_scope.length; tdi++) {
+			var td = layer_scope[tdi];
 			if (td.textContent.indexOf("Input") >= 0 && td.textContent.indexOf("x") >= 0) {
 				// This temml_me has both x and Input - replace x in text nodes
 				var w = document.createTreeWalker(td, NodeFilter.SHOW_TEXT, null, false);
@@ -4879,13 +4893,11 @@ function _math_dom_fix_real_data() {
 			}
 		}
 
-		// APPROACH 14-20: Brute-force replacement of ALL x in math
-		// Find the first .temml_me that contains "x" and replace it
+		// APPROACH 14-20: Brute-force replacement of ALL x in math (layer scope only)
 		var firstXDiv = null;
-		var allTemml = container.querySelectorAll(".temml_me");
-		for (var ati = 0; ati < allTemml.length; ati++) {
-			if (allTemml[ati].textContent.indexOf("x") >= 0 && allTemml[ati].textContent.indexOf("Input") >= 0) {
-				firstXDiv = allTemml[ati];
+		for (var ati = 0; ati < layer_scope.length; ati++) {
+			if (layer_scope[ati].textContent.indexOf("x") >= 0 && layer_scope[ati].textContent.indexOf("Input") >= 0) {
+				firstXDiv = layer_scope[ati];
 				break;
 			}
 		}
@@ -4901,23 +4913,25 @@ function _math_dom_fix_real_data() {
 			}
 		}
 
-		// APPROACH 6: Direct innerHTML regex on the rendered output
-		var pmatrix = document.querySelectorAll("#math_tab_code .temml_me mfrac, #math_tab_code .temml_me mpadded, #math_tab_code .temml_me mrow");
-		for (var pi = 0; pi < pmatrix.length; pi++) {
-			var pe = pmatrix[pi];
-			// Check if this element's content is just "x" and is near Input label
-			if (pe.textContent === "x" && pe.children.length <= 1) {
-				var par = pe;
-				var nearInput = false;
-				for (var qi = 0; qi < 20 && par; qi++) {
-					if ((par.textContent || "").indexOf("Input") >= 0) {
-						nearInput = true;
-						break;
+		// APPROACH 6: Direct innerHTML regex on the rendered output (layer scope only)
+		for (var li3 = 0; li3 < layer_scope.length; li3++) {
+			var pmatrix = layer_scope[li3].querySelectorAll("mfrac, mpadded, mrow");
+			for (var pi = 0; pi < pmatrix.length; pi++) {
+				var pe = pmatrix[pi];
+				// Check if this element's content is just "x" and is near Input label
+				if (pe.textContent === "x" && pe.children.length <= 1) {
+					var par = pe;
+					var nearInput = false;
+					for (var qi = 0; qi < 20 && par; qi++) {
+						if ((par.textContent || "").indexOf("Input") >= 0) {
+							nearInput = true;
+							break;
+						}
+						par = par.parentElement;
 					}
-					par = par.parentElement;
-				}
-				if (nearInput) {
-					pe.textContent = formatted;
+					if (nearInput) {
+						pe.textContent = formatted;
+					}
 				}
 			}
 		}
@@ -4967,14 +4981,20 @@ function _math_dom_fix_real_data() {
 
 		var container = document.getElementById("math_tab_code");
 		if (!container) return;
+		var layer_scope = container.querySelectorAll(".temml_me[data-eq-part='computation']");
+		if (!layer_scope.length) return;
 
-		// Find all text nodes with just "x"
-		var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+		// Find all text nodes with just "x" (layer equation scope only — same
+		// restriction as _math_dom_fix_real_data so the activation-function /
+		// optimizer "x" is never touched).
 		var textNodes = [];
-		var node;
-		while (node = walker.nextNode()) {
-			if (node.textContent === "x") {
-				textNodes.push(node);
+		for (var li = 0; li < layer_scope.length; li++) {
+			var walker = document.createTreeWalker(layer_scope[li], NodeFilter.SHOW_TEXT, null, false);
+			var node;
+			while (node = walker.nextNode()) {
+				if (node.textContent === "x") {
+					textNodes.push(node);
+				}
 			}
 		}
 		for (var ti = 0; ti < textNodes.length; ti++) {

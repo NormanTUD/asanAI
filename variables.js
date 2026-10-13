@@ -1983,7 +1983,19 @@ function toggle_math_pin_input() {
 }
 
 function toggle_math_show_real_data() {
-	_math_show_real_data = !_math_show_real_data;
+	// Driven by a checkbox (math_show_real_data_checkbox). When the checkbox
+	// exists the new state comes from its `.checked` value; when called without
+	// a checkbox (e.g. from the test suite) fall back to a local toggle so the
+	// old API keeps working. The pin-input button only makes sense while real
+	// data is being shown, so it follows the new state.
+	var _checkbox = document.getElementById("math_show_real_data_checkbox");
+	if (_checkbox) {
+		_math_show_real_data = !!_checkbox.checked;
+	} else {
+		_math_show_real_data = !_math_show_real_data;
+	}
+	var _pin_btn = document.getElementById("math_pin_input_btn");
+	if (_pin_btn) { _pin_btn.style.display = _math_show_real_data ? "" : "none"; }
 	try { console.log("toggle_math_show_real_data:", _math_show_real_data); if (_math_show_real_data && typeof populate_neuron_outputs_from_current === "function") { populate_neuron_outputs_from_current(); } } catch(e){console.warn(e);}
 	try { if (_math_show_real_data && typeof _populate_real_data_cache === "function") { _populate_real_data_cache(); } } catch(e){console.warn(e);}
 	// Watchdog: keep trying to populate for 5 seconds
