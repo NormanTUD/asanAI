@@ -1246,7 +1246,7 @@ function _get_h_matrix_values (layer_idx) {
 		// Strategy 4: on-demand sub-model predict (now works for Sequential too)
 		if (!_has_numbers(comp)) comp = _get_intermediate_activation(layer_idx);
 		if (!_has_numbers(comp)) {
-			_math_warn_once("math_h_no_data_L" + layer_idx, "math mode: no real activation available for layer " + layer_idx + " — h_" + layer_idx + " will show as a symbol");
+			dbg("math_h_no_data_L" + layer_idx, "math mode: no real activation available for layer " + layer_idx + " — h_" + layer_idx + " will show as a symbol");
 			return null;
 		}
 		var dp = (typeof get_dec_points_math_mode === "function") ? get_dec_points_math_mode() : 4;

@@ -1973,9 +1973,9 @@ function toggle_math_pin_input() {
 		}
 		if (values) {
 			window._pinned_input = values;
-			console.log("Pinned input:", values);
+			dbg("Pinned input:", values);
 		} else {
-			console.warn("No input data to pin. Predict first.");
+			dbg("No input data to pin. Predict first.");
 			return;
 		}
 	}
