@@ -1083,6 +1083,7 @@ async function _predict_validate_and_get_data(item, pred_tab) {
 
 	if (should_abort_predict(predict_data)) {
 		dbg("[predict] predict_data is already disposed!");
+		try { await dispose(predict_data); } catch (e) {}
 		hide_predict_spinner("#" + pred_tab);
 		return {aborted: true};
 	}
@@ -1130,7 +1131,7 @@ async function _predict_run_prediction(predict_data, mi, pred_tab) {
 
 		predict_data = await prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
 
-		if(predict_data["isDisposedInternal"]) {
+		if(!predict_data || predict_data["isDisposedInternal"]) {
 			dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
 			hide_predict_spinner("#" + pred_tab);
 			return {aborted: true};
@@ -1151,6 +1152,14 @@ async function _predict_run_prediction(predict_data, mi, pred_tab) {
 async function predict(item) {
 	const pred_tab = "prediction";
 
+	// Guardrail: never run two predict() passes at once. Overlapping passes are
+	// what hand each other already-disposed tensors.
+	if (_predict_full_running) {
+		dbg("[predict] overlapping predict call ignored");
+		return;
+	}
+	_predict_full_running = true;
+
 	reset_predict_error_and_predict_tab(pred_tab);
 
 	show_predict_spinner("#" + pred_tab);
@@ -1165,6 +1174,7 @@ async function predict(item) {
 	try {
 		var validated = await _predict_validate_and_get_data(item, pred_tab);
 		if(validated.aborted) {
+			_predict_full_running = false;
 			return validated.error || undefined;
 		}
 
@@ -1174,6 +1184,7 @@ async function predict(item) {
 
 		var pred_result = await _predict_run_prediction(predict_data, mi, pred_tab);
 		if(pred_result.aborted) {
+			_predict_full_running = false;
 			return;
 		}
 
@@ -1195,6 +1206,10 @@ async function predict(item) {
 		ok = 0;
 	}
 
+	// Release the re-entrancy lock before cleanup, so a throwing dispose() can
+	// never leave predict() permanently locked out.
+	_predict_full_running = false;
+
 	hide_predict_spinner("#" + pred_tab);
 
 	allow_editable_labels(); // await not useful here
@@ -1203,9 +1218,15 @@ async function predict(item) {
 
 	await dispose(predict_data);
 
-	await force_restart_fcnn();
+	// Guardrail: don't kick the FCNN redraw while the math tab is rendering or
+	// an update is still queued — it re-enters the prediction path.
+	if (!_write_latex_running && !waiting_updated_page_uuids.length) {
+		await force_restart_fcnn();
+	}
 
 	TopologicalAnalyzer.update();
+
+	_predict_full_running = false;
 
 	return str;
 }
@@ -2358,6 +2379,21 @@ function run_pending_prediction() {
 }
 
 async function predict_handdrawn() {
+	// Guardrail: while the data origin / model is being swapped, defer instead
+	// of predicting against a half-rebuilt graph. Capped so we can't loop.
+	if (typeof currently_running_change_data_origin !== "undefined" && currently_running_change_data_origin) {
+		_predict_defer_retries++;
+		if (_predict_defer_retries > _PREDICT_DEFER_MAX) {
+			_predict_defer_retries = 0;
+			dbg("[predict_handdrawn] giving up deferring while data origin changes");
+			return;
+		}
+		var _deferred_args = Array.prototype.slice.call(arguments);
+		setTimeout(function() { predict_handdrawn.apply(null, _deferred_args); }, 80);
+		return;
+	}
+	_predict_defer_retries = 0;
+
 	_predict_pending_args = arguments;
 	if (is_canvas_visible()) {
 		run_pending_prediction();
@@ -2480,7 +2516,9 @@ async function _predict_handdrawn_internal () {
 
 	allow_editable_labels(); // await not useful here
 
-	await force_restart_fcnn();
+	if (!_write_latex_running) {
+		await force_restart_fcnn();
+	}
 }
 
 async function dispose_predict_data_if_not_needed_anymore(predict_data) {

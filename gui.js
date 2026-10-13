@@ -2430,7 +2430,7 @@ function _model_is_ok_check_status () {
 		}
 
 		const nr_of_layers_in_gui = $("#layers_container").find("li").length;
-		const nr_of_layers_in_model = model?.layers?.length;
+		const nr_of_layers_in_model = _count_model_layers_visible_in_gui();
 
 		if(!model) {
 			color = red;
@@ -2467,11 +2467,72 @@ function _model_is_ok_alignment_check (_content, green) {
 			if(finished_loading) {
 				dbg(`${language[lang]["desc_boxes_and_layers_different_length"]}: ${last_layer_setting_end_y}/${last_description_end_y}`);
 			}
-			write_descriptions(); // await not possible
+			_maybe_refresh_descriptions_for_alignment();
 		}
 	}
 
 	return _content;
+}
+
+// Guardrail wrapper: model_is_ok() can be called from the prediction path on
+// every render, and the auto-fix used to call write_descriptions() directly.
+// While the model/GUI are mid-update that never converges and fires the layout
+// rebuild in a loop. Defer, throttle, and skip while an update is in flight.
+function _maybe_refresh_descriptions_for_alignment () {
+	if (typeof finished_loading !== "undefined" && !finished_loading) return;
+	if (_model_is_ok_running) return;
+	if (waiting_updated_page_uuids.length) return;
+
+	var now = Date.now();
+	if (now - _model_is_ok_align_fix_last < _model_is_ok_align_fix_min_interval_ms) return;
+	_model_is_ok_align_fix_last = now;
+	_model_is_ok_running = true;
+
+	setTimeout(function() {
+		try {
+			write_descriptions(); // await not possible
+		} catch (e) {
+			dbg("[_model_is_ok_alignment_check] write_descriptions failed: " + e);
+		} finally {
+			_model_is_ok_running = false;
+		}
+	}, 0);
+}
+
+// Guardrail: model.layers now also contains internal layers that the GUI does
+// not show (skip_proj_/skip_add_/skip_scale_ projections, and input layers),
+// so the raw count no longer matches the number of GUI layer rows and
+// model_is_ok() was permanently red for skip-connection models.
+function _count_model_layers_visible_in_gui () {
+	try {
+		if (!model || !Array.isArray(model.layers)) return 0;
+
+		var internal_names = ["skip_proj_", "skip_add_", "skip_scale_"];
+		var n = 0;
+		for (var i = 0; i < model.layers.length; i++) {
+			var layer = model.layers[i];
+			var name = (layer && layer.name) ? ("" + layer.name) : "";
+
+			var is_internal = false;
+			for (var j = 0; j < internal_names.length; j++) {
+				if (name.indexOf(internal_names[j]) >= 0) { is_internal = true; break; }
+			}
+			if (is_internal) continue;
+
+			var cls = "";
+			try { cls = (layer && typeof layer.getClassName === "function") ? layer.getClassName() : ((layer && layer.constructor) ? layer.constructor.name : ""); } catch (e) {}
+			if (("" + cls).toLowerCase().indexOf("input") >= 0) continue;
+
+			n++;
+		}
+
+		// If nothing matched (e.g. unexpected class names), fall back to the
+		// raw length so we never report 0 for a model that has layers.
+		if (n === 0 && model.layers.length > 0) return model.layers.length;
+		return n;
+	} catch (e) {
+		return (model && model.layers && model.layers.length) ? model.layers.length : 0;
+	}
 }
 
 function model_is_ok () {
@@ -2556,6 +2617,10 @@ function add_model_is_trained_symbol_to_content (_content, color, green) {
 
 function add_waiting_symbol_to_content(_content) {
 	const body = document.body;
+
+	if (typeof _prune_stale_updated_page_uuids === "function") {
+		_prune_stale_updated_page_uuids();
+	}
 
 	if (waiting_updated_page_uuids.length) {
 		_content += "&#9201;";

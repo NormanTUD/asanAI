@@ -13,33 +13,30 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 
 	try {
 		waiting_updated_page_uuids.push(updated_page_uuid);
+		waiting_updated_page_uuid_ts[updated_page_uuid] = Date.now();
+		_prune_stale_updated_page_uuids();
 
+		var _fifo_wait_started = Date.now();
 		while (waiting_updated_page_uuids && waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
+			_prune_stale_updated_page_uuids();
+			if (Date.now() - _fifo_wait_started > UPDATED_PAGE_FIFO_TIMEOUT_MS) {
+				dbg("[updated_page] FIFO wait timed out; proceeding to avoid a stuck page");
+				break;
+			}
 			await delay(10);
 		}
 
 		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers);
-
-		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
-
-		if (index !== -1) {
-			waiting_updated_page_uuids.splice(index, 1);
-		} else {
-			wrn("Could not find index of " + updated_page_uuid);
-		}
 	} catch (e) {
 		var original_e = e;
-		let index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
-
-		if (index !== -1) {
-			waiting_updated_page_uuids.splice(index, 1);
-		} else {
-			err("Could not find index of " + updated_page_uuid);
-		}
 
 		await handle_page_update_error(e, last_good, original_e);
 
 		return false;
+	} finally {
+		// Guardrail: always release our FIFO token (even on early return/throw),
+		// otherwise a single failed update leaves the whole page at cursor "wait".
+		_remove_updated_page_uuid(updated_page_uuid);
 	}
 
 	if(!ret) {
@@ -238,6 +235,10 @@ async function wait_for_updated_page_if_page_finished_loading (x) {
 async function wait_for_updated_page(seconds) {
 	let waited = 0;
 	while (waiting_updated_page_uuids.length) {
+		_prune_stale_updated_page_uuids();
+		if (!waiting_updated_page_uuids.length) {
+			break;
+		}
 		if (waited % 2000 === 0 && waited > 0) {
 			dbg("Still waiting for updated page... waited " + (waited / 1000) + " seconds so far");
 		}

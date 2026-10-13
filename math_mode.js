@@ -129,6 +129,32 @@ function run_pending_latex_write() {
 	if (!_write_latex_pending_args) return;
 	if (!is_math_tab_visible()) return;
 
+	// Guardrail: if more than our own update is queued, another update is still
+	// running — defer so we don't render a half-built model.
+	if (waiting_updated_page_uuids.length > 1) {
+		if (!_write_latex_defer_pending) {
+			_write_latex_defer_pending = true;
+			setTimeout(function() { _write_latex_defer_pending = false; run_pending_latex_write(); }, _write_latex_min_interval_ms);
+		}
+		return;
+	}
+
+	// Guardrail: a render can re-arm itself (or be re-armed by the 500 ms poll)
+	// and loop forever while the model is mid-update. Cap consecutive rapid
+	// renders; the counter resets once the chain has been idle for a moment.
+	var _now_render = Date.now();
+	if (_now_render - _write_latex_last_render_time > 1000) {
+		_write_latex_chain_count = 0;
+	}
+	_write_latex_chain_count++;
+	if (_write_latex_chain_count > _WRITE_LATEX_CHAIN_MAX) {
+		dbg("[math_mode] latex render chain capped at " + _WRITE_LATEX_CHAIN_MAX + "; dropping pending render");
+		_write_latex_pending_args = null;
+		setTimeout(function() { _write_latex_chain_count = 0; }, 1000);
+		return;
+	}
+	_write_latex_last_render_time = _now_render;
+
 	// During training: if user has scrolled down, DON'T render.
 	// The content will update next time user scrolls back to top,
 	// or when training stops.

@@ -1610,6 +1610,11 @@ var is_repairing_output_shape = false;
 var last_model_ok_status = "";
 var currently_generating_images = false;
 
+// Guardrails against model_is_ok <-> write_descriptions re-entrancy.
+var _model_is_ok_running = false;
+var _model_is_ok_align_fix_last = 0;
+var _model_is_ok_align_fix_min_interval_ms = 1500;
+
 var is_dark_mode = false;
 
 var last_status_hash_text_prediction = "";
@@ -1636,6 +1641,46 @@ var original_labels = [];
 var call_time = Date.now();
 
 var waiting_updated_page_uuids = [];
+var waiting_updated_page_uuid_ts = {};
+var UPDATED_PAGE_FIFO_TIMEOUT_MS = 30000;
+var UPDATED_PAGE_FIFO_MAX = 50;
+
+// Guardrail: the updated_page FIFO can get stuck forever if one caller never
+// removes its uuid (e.g. an awaited promise never settles). That keeps
+// document.body.cursor at "wait" and starves every later update. Drop entries
+// that are older than UPDATED_PAGE_FIFO_TIMEOUT_MS (or unknown) from the head,
+// cap the queue, and reset the wait cursor when it finally drains.
+function _prune_stale_updated_page_uuids() {
+	var now = Date.now();
+	while (waiting_updated_page_uuids.length) {
+		var head = waiting_updated_page_uuids[0];
+		var ts = waiting_updated_page_uuid_ts[head];
+		if (typeof ts === "number" && (now - ts) < UPDATED_PAGE_FIFO_TIMEOUT_MS) {
+			break;
+		}
+		waiting_updated_page_uuids.shift();
+		delete waiting_updated_page_uuid_ts[head];
+		dbg("[updated_page] dropped stale FIFO entry after " + (typeof ts === "number" ? (now - ts) : "?") + " ms");
+	}
+	while (waiting_updated_page_uuids.length > UPDATED_PAGE_FIFO_MAX) {
+		var oldest = waiting_updated_page_uuids.pop();
+		delete waiting_updated_page_uuid_ts[oldest];
+	}
+	if (!waiting_updated_page_uuids.length) {
+		try { document.body.style.cursor = "default"; } catch (e) {}
+	}
+}
+
+function _remove_updated_page_uuid (uuid) {
+	var index = waiting_updated_page_uuids.indexOf(uuid);
+	if (index !== -1) {
+		waiting_updated_page_uuids.splice(index, 1);
+	}
+	delete waiting_updated_page_uuid_ts[uuid];
+	if (!waiting_updated_page_uuids.length) {
+		try { document.body.style.cursor = "default"; } catch (e) {}
+	}
+}
 
 var shift_pressed = false;
 
@@ -1911,11 +1956,19 @@ var last_mouse_y = 0;
 var _predict_pending_args = null;
 var _predict_visibility_observer = null;
 var _predict_running = false;
+var _predict_full_running = false;
+var _predict_defer_retries = 0;
+var _PREDICT_DEFER_MAX = 20;
 
 var _write_latex_pending_args = null;
 var _write_latex_running = false;
 var _write_latex_visibility_observer = null;
 var _write_latex_poll_timer = null;
+var _write_latex_chain_count = 0;
+var _write_latex_last_render_time = 0;
+var _write_latex_min_interval_ms = 100;
+var _WRITE_LATEX_CHAIN_MAX = 8;
+var _write_latex_defer_pending = false;
 
 var restart_fcnn_timeout = null;
 var restart_fcnn_pending_visible = false;
