@@ -144,12 +144,18 @@ function _register_tensors (...args) {
 	if(debug) {
 		for (var args_idx = 0; args_idx < args.length; args_idx++) {
 			if(is_tf_tensor(args[args_idx])) {
-				(() => { _custom_tensors["" + args[args_idx].id] = [get_stack_trace(), args[args_idx], tensor_print_to_string(args[args_idx])]; })();
-				//_clean_custom_tensors();
+				_custom_tensors["" + args[args_idx].id] = [get_stack_trace(), args[args_idx], tensor_print_to_string(args[args_idx])];
 			}
 		}
 
-		//_clean_custom_tensors();
+		// Rate-limited cleanup: only sweep disposed entries when the dict
+		// grows beyond a threshold. Without this, repeated math-mode renders
+		// (e.g. toggling "show real data", or write_optimizer_to_math_tab
+		// polling the optimizer slots) accumulate every newly-created tensor
+		// and never let it go.
+		if (Object.keys(_custom_tensors).length > 200) {
+			_clean_custom_tensors();
+		}
 	}
 }
 

@@ -313,6 +313,13 @@ function write_optimizer_to_math_tab() {
 		} else {
 			hide_and_reset_optimizer_variables();
 		}
+
+		// Sweep any tensors we just registered via array_sync() (optimizer
+		// slots can be reallocated every training step, so their ids change
+		// each call and would otherwise stay in _custom_tensors forever).
+		if (typeof _clean_custom_tensors === "function") {
+			_clean_custom_tensors();
+		}
 	} catch (e) {
 		hide_and_reset_optimizer_variables();
 		dbg(e);
@@ -981,7 +988,7 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 
 	str += "\n\\end{pmatrix}}";
 	if (desc) {
-		str += "_{\\mathrm{" + desc + "}}\n";
+		str += "_{\\mathrm{" + _sanitize_mathrm_desc(desc) + "}}\n";
 	}
 
 	return str;
@@ -1039,7 +1046,7 @@ function array_to_latex (_array, desc = false, newline_instead_of_ampersand = fa
 
 	str += "\n\\end{pmatrix}}";
 	if(desc) {
-		str += "_{\\mathrm{" + desc + "}}\n";
+		str += "_{\\mathrm{" + _sanitize_mathrm_desc(desc) + "}}\n";
 	}
 
 	return str;
@@ -1139,6 +1146,18 @@ function replace_non_numbers_with_matching_latex (ar) {
 	ar = replaceScientificNotationRecursive(ar);
 
 	return ar;
+}
+
+// Strip \text{...} wrapping from a subscript description before it goes inside
+// \mathrm{...}. \mathrm already styles its content in upright roman, and a
+// nested \text inside \mathrm is fragile — the { ... }^{...} exponent on the
+// text-mode group can confuse downstream renders (e.g. temml + post-processing
+// sanitize passes), and the global sanitizer below turns the inner \text{...}
+// into a second \mathrm{...}, producing \mathrm{\mathrm{...}} which can leave
+// raw LaTeX in the rendered math tab.
+function _sanitize_mathrm_desc(desc) {
+	if (typeof desc !== "string") return desc;
+	return desc.replace(/\\text\{([^{}]*)\}/g, "$1");
 }
 
 function array_size (ar) {
