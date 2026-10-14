@@ -659,18 +659,7 @@ A single neural element is, algebraically, a linear equation. Give the element i
 $$ w_1 x_1 + w_2 x_2 + w_3 x_3 = t $$
 </div>
 
-In algebra, such an equation defines a **plane** — a linear boundary — in the three-dimensional space of possible inputs: every input vector on one side of the plane makes the element fire, every vector on the other side leaves it silent. Training a perceptron is nothing more than moving and rotating that plane until the inputs that should fire and the inputs that should not end up on opposite sides. Changing the weights *rotates* the plane; changing the threshold *slides* it sideways, parallel to itself. Every step of the learning rule is a small rotation or slide of that plane, and the plot below makes the process visible. In more than three dimensions the same object is called a **hyperplane**: impossible to draw, mathematically identical, which is why a network trained on 784 pixel inputs is doing exactly this, just 784 dimensions at a time (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
-
-<div id="plot-separating-plane" class="plot-container" style="height:440px;"></div>
-
-<div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; align-items:center; margin-top:6px; font-size:0.85em;">
-	<label>w₁ <input type="range" id="plane-w1" min="-2" max="2" step="0.25" value="1"></label>
-	<label>w₂ <input type="range" id="plane-w2" min="-2" max="2" step="0.25" value="1"></label>
-	<label>w₃ <input type="range" id="plane-w3" min="-2" max="2" step="0.25" value="1"></label>
-	<label>t <input type="range" id="plane-t" min="0.25" max="2.75" step="0.25" value="1.5"></label>
-</div>
-
-<p style="text-align:center; font-size:0.9em; color:#666; margin-top:10px;">A separating plane in three-dimensional binary input space. The green corners (weighted sum ≥ t) make the element fire; the red corners (weighted sum &lt; t) do not. Dragging the sliders is “training” itself: the plane rotates and slides until both classes sit on the right side.</p>
+In algebra, such an equation defines a **plane** — a linear boundary — in the three-dimensional space of possible inputs: every input vector on one side of the plane makes the element fire, every vector on the other side leaves it silent. Training a perceptron is nothing more than moving and rotating that plane until the inputs that should fire and the inputs that should not end up on opposite sides. Changing the weights *rotates* the plane; changing the threshold *slides* it sideways, parallel to itself. Every step of the learning rule is a small rotation or slide of that plane. In more than three dimensions the same object is called a **hyperplane**: impossible to draw, mathematically identical, which is why a network trained on 784 pixel inputs is doing exactly this, just 784 dimensions at a time (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="Who got there first, and who made it rigorous">
@@ -784,9 +773,9 @@ $$ f_\text{XOR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef
 
 Minsky and Papert demonstrated that while a single-layer perceptron can draw a line to separate the results of an OR gate, it is mathematically impossible to do so for XOR because the “True” and “False” results are not **linearly separable**.
 
-<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px;">
-    <div id="plot-or-gate" style="flex: 1 1 280px; max-width: min(400px, 100%); aspect-ratio: 1; border:1px solid #eee; border-radius: 8px;"></div>
-    <div id="plot-xor-gate" style="flex: 1 1 280px; max-width: min(400px, 100%); aspect-ratio: 1; border:1px solid #eee; border-radius: 8px;"></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 20px auto;">
+    <div id="plot-or-gate"></div>
+    <div id="plot-xor-gate"></div>
 </div>
 
 Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear activation functions would be able to solve this problem, there was no way to efficiently train those until in \citeyear{rumelhart1986} Rumelhart et al. popularized \citealternativetitle{rumelhart1986}, which reignited interest in connectionist models and paved the way for modern deep learning.
