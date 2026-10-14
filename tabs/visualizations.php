@@ -47,7 +47,10 @@
 			</tr>
 		</table>
 		<button onclick="toggle_math_interactive_mode()" class="TRANSLATEME_toggle_editable_math_mode"></button>
-		<input type="checkbox" id="math_show_real_data_checkbox" onchange="toggle_math_show_real_data()" class="TRANSLATEME_show_real_data" data-tr-title="show_real_data">
+		<label>
+			<input type="checkbox" id="math_show_real_data_checkbox" onchange="toggle_math_show_real_data()" data-tr-title="show_real_data">
+			<span class="TRANSLATEME_show_real_data">Show real data</span>
+		</label>
 		<button onclick="toggle_math_pin_input()" id="math_pin_input_btn" class="TRANSLATEME_pin_current_x" style="display: none">Pin current x</button>
 
 		<div class="typeset_me" id="math_history_slider"></div>
