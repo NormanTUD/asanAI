@@ -110,6 +110,14 @@ html {
 	background-repeat: no-repeat;
 	font-size: 14px;
 	font-family: sans-serif;
+	/* With a 1-layer model the page content height sits right at the viewport
+	   boundary, so the vertical scrollbar toggles on every layout pass:
+	   scrollbar on -> width shrinks -> content reflows -> height crosses the
+	   boundary -> scrollbar off -> width grows -> reflow -> ... an endless
+	   "Update the rendering Layout" (RefreshDriver tick) reflow loop. Reserving
+	   the scrollbar's gutter keeps the content width constant, so the scrollbar
+	   state can no longer change the layout. */
+	scrollbar-gutter: stable;
 }
 
 .less_transparent_glass_box {
