@@ -3187,7 +3187,7 @@ Math.sin(v);
       const cx0 = k===0? half*0.5 : half+half*0.5;
       for(let i=0;i<70;i++){
         const th=Math.sin(i*7.3+seed+k*3.1)*TAU, rr=sizes[k]*(0.4+0.5*Math.abs(Math.cos(i*3.7+seed)));
-        ctx.beginPath(); ctx.arc(cx0+rr*Math.cos(th), hy+rr*Math.sin(th)*0.5,1.5,        ctx.fillStyle=hex2rgba(k===0?C.acc:C.acc2,0.55); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx0+rr*Math.cos(th), hy+rr*Math.sin(th)*0.5,1.5,0,Math.PI*2); ctx.fillStyle=hex2rgba(k===0?C.acc:C.acc2,0.55); ctx.fill();
       }
       mono(ctx,lb,cx0,hy+52,k===0?C.acc:C.acc2,10.5,'center');
     });
@@ -4023,7 +4023,7 @@ Math.sin(v);
       `<code>s₀ⁿX₀</code> of X_n to the discrete space <code>π₀(s₀ⁿX₀)</code>."<br>`+
       `<span class="ok">Ergebnis:</span> Das Resultat ist <b>immer</b> eine Segal-Prä-Kategorie — `+
       `Grad 0 ist diskret.<br>`+
-      `<span style="color:var(--accent3)">Verwendung:</span> Die Reedy-Erzeuger-Kofaserung      `<code>( ˙Δ[m]×Δ[n]ᵗ ∪ Δ[m]× ˙Δ[n]ᵗ)ʳ → (Δ[m]×Δ[n]ᵗ)ʳ</code> bilden die Menge <b>I_c</b> — `+
+      `<span style="color:var(--accent3)">Verwendung:</span> Die Reedy-Erzeuger-Kofaserung <code>( ˙Δ[m]×Δ[n]ᵗ ∪ Δ[m]× ˙Δ[n]ᵗ)ʳ → (Δ[m]×Δ[n]ᵗ)ʳ</code> bilden die Menge <b>I_c</b> — `+
       `die Erzeuger-Kofaserungen von <b>SeCat_c</b> (Thm. 5.1).<br>`+
       `<span style="color:var(--accent5)">Grenze der Methode:</span> Bei <code>˙Δ[1]×Δ[n]ᵗ → Δ[1]×Δ[n]ᵗ</code> `+
       `(projektive Erzeuger) reduziert die Quelle auf <b>2(n+1)</b> Punkte in Grad 0, das Ziel aber auf <b>n+1</b>. `+
