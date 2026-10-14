@@ -965,6 +965,18 @@ function auto_adjust_number_of_neurons(n) {
 	}
 }
 
+// last_shape_layer_warning runs on a 1 s interval. Blindly calling
+// $("#last_layer_shape_warning").html("") every tick — even when the content is
+// already empty — invalidates the DOM and forces a reflow of the (expensive,
+// especially 1-layer) page layout. Only write when the content actually
+// changes.
+function _set_last_layer_shape_warning_html (html) {
+	var el = document.getElementById("last_layer_shape_warning");
+	if (el && (el.innerHTML || "") !== html) {
+		el.innerHTML = html;
+	}
+}
+
 async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
 		if (!model) {
@@ -974,13 +986,13 @@ async function last_shape_layer_warning() {
 
 		if (model.outputShape.length == 2) {
 			delete_custom_drawing_layer();
-			$("#last_layer_shape_warning").html("");
+			_set_last_layer_shape_warning_html("");
 		} else {
 			if (model.outputShape.length != 4) {
 				var n = $(".own_image_label").length;
-				$("#last_layer_shape_warning").html("<h3>" + language[lang]["last_layer_shape_warning"].replace("{n}", n) + "</h3>");
+				_set_last_layer_shape_warning_html("<h3>" + language[lang]["last_layer_shape_warning"].replace("{n}", n) + "</h3>");
 			} else {
-				$("#last_layer_shape_warning").html("");
+				_set_last_layer_shape_warning_html("");
 
 				await ensure_custom_image_layers();
 
@@ -992,7 +1004,7 @@ async function last_shape_layer_warning() {
 			}
 		}
 	} else {
-		$("#last_layer_shape_warning").html("");
+		_set_last_layer_shape_warning_html("");
 	}
 
 	set_is_classification();

@@ -1,5 +1,10 @@
 "use strict";
 
+// label_debugger_icon_ok() runs on a 300 ms interval. Remember the last written
+// state so we only touch the DOM (and thus only force a page-layout reflow) when
+// the icon's desired content actually changes.
+var _label_debugger_icon_state = null;
+
 async function reset_labels () {
 	await set_labels([], 1);
 }
@@ -226,31 +231,38 @@ function label_debugger_icon_ok() {
 	try {
 		let icon = $("#label_debugger_icon");
 
-		if (!model_meta || is_setting_config) {
-			return icon.html("").hide();
+		var html = "";
+		var show = false;
+
+		if (model_meta && !is_setting_config &&
+		    model_meta.last_layer_activation === "softmax" &&
+		    !labels.length) {
+			let is_dense_softmax =
+				Array.isArray(model_meta.last_layer_shape) &&
+				model_meta.last_layer_shape.length === 2 &&
+				typeof model_meta.last_layer_name === "string" &&
+				model_meta.last_layer_name.startsWith("dense");
+
+			if (is_dense_softmax) {
+				html = "<span style='background-color: orange; color: black;'>" + language[lang]["no_labels"] + "</span>";
+				show = true;
+			}
 		}
 
-		if (model_meta.last_layer_activation !== "softmax") {
-			return icon.html("").hide();
-		}
+		// 300 ms interval: only write the DOM when the desired state changed,
+		// so we don't force a reflow of the page layout every tick.
+		var state = show ? html : "__hidden__";
+		if (state === _label_debugger_icon_state) return;
+		_label_debugger_icon_state = state;
 
-		if (labels.length) {
-			return icon.html("").hide();
-		}
-
-		let is_dense_softmax =
-			Array.isArray(model_meta.last_layer_shape) &&
-			model_meta.last_layer_shape.length === 2 &&
-			typeof model_meta.last_layer_name === "string" &&
-			model_meta.last_layer_name.startsWith("dense");
-
-		if (is_dense_softmax) {
-			icon.html("<span style='background-color: orange; color: black;'>" + language[lang]["no_labels"] + "</span>").show();
+		if (show) {
+			icon.html(html).show();
 		} else {
 			icon.html("").hide();
 		}
 	} catch (e) {
 		err(e?.message || e);
+		_label_debugger_icon_state = "__error__";
 		$("#label_debugger_icon").html("").hide();
 	}
 }
