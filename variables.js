@@ -1970,6 +1970,14 @@ var _write_latex_min_interval_ms = 100;
 var _WRITE_LATEX_CHAIN_MAX = 8;
 var _write_latex_defer_pending = false;
 
+// Circuit breaker: if the event loop keeps stalling (layout flush storm or a
+// stuck update), the periodic layout readers (model_is_ok, check_number_values,
+// _temml, write_descriptions, ...) re-trigger forced layout flushes faster
+// than the browser can drain — a permanent "hang". The watchdog (main.js)
+// sets this timestamp when the loop looks stalled; every periodic reader
+// skips its work until then so the browser can catch up.
+var _layout_stall_suspend_until = 0;
+
 var restart_fcnn_timeout = null;
 var restart_fcnn_pending_visible = false;
 

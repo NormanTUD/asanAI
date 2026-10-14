@@ -1305,6 +1305,24 @@ function _mvt_describe_tag(tag) {
 var _mvt_last_x = -1;
 var _mvt_last_y = -1;
 
+// The tooltip's size only changes when its content changes. Measuring it
+// with getBoundingClientRect() on every mousemove frame forces a full layout
+// flush per frame; while the math tab's layout is expensive (1-layer model)
+// that per-frame read/write cycle alone keeps the browser in a permanent
+// flush loop. Cache the size; refresh it only when the tooltip's content
+// changes (innerHTML is rewritten on every hover target change).
+var _mvt_size_cache = { w: 0, h: 0, html: null };
+
+function _mvt_get_size() {
+	if (!_mvt_tooltip) return { w: 0, h: 0 };
+	var html = _mvt_tooltip.innerHTML;
+	if (html !== _mvt_size_cache.html) {
+		var rect = _mvt_tooltip.getBoundingClientRect();
+		_mvt_size_cache = { w: rect.width, h: rect.height, html: html };
+	}
+	return { w: _mvt_size_cache.w, h: _mvt_size_cache.h };
+}
+
 function _mvt_position(ev) {
 	if (!_mvt_tooltip) {
 		return;
@@ -1314,12 +1332,12 @@ function _mvt_position(ev) {
 	var x = ev.clientX + pad;
 	var y = ev.clientY + pad;
 
-	var rect = _mvt_tooltip.getBoundingClientRect();
-	if (x + rect.width > window.innerWidth - 8) {
-		x = ev.clientX - rect.width - pad;
+	var size = _mvt_get_size();
+	if (x + size.w > window.innerWidth - 8) {
+		x = ev.clientX - size.w - pad;
 	}
-	if (y + rect.height > window.innerHeight - 8) {
-		y = ev.clientY - rect.height - pad;
+	if (y + size.h > window.innerHeight - 8) {
+		y = ev.clientY - size.h - pad;
 	}
 	if (x < 8) {
 		x = 8;

@@ -50,11 +50,18 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 		}
 	}
 
-	try {
-		_temml();
-	} catch (e) {
-		wrn(e);
-	}
+	// Defer to a clean task: the rest of updated_page() (restart_fcnn,
+	// write_optimizer_to_math_tab, write_descriptions, plot_model_plot, ...)
+	// still mutates the layout. Typesetting synchronously here forced a full
+	// layout flush while the page was still dirty — with a 1-layer model that
+	// flush never drained and the browser stalled.
+	setTimeout(function() {
+		try {
+			_temml();
+		} catch (e) {
+			wrn(e);
+		}
+	}, 0);
 
 	last_updated_page = Date.now();
 

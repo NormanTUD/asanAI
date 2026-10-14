@@ -1,9 +1,29 @@
 "use strict";
 
+// $("input").css("background-color") is a getComputedStyle read — a forced
+// style/layout resolution every 500 ms. It only changes with the theme, so
+// cache it.
+var _default_bg_color_cache = { color: null, ts: 0 };
+
+function _get_default_input_bg_color() {
+	var now = Date.now();
+	if (_default_bg_color_cache.color === null || now - _default_bg_color_cache.ts > 5000) {
+		_default_bg_color_cache.color = $("input").css("background-color");
+		_default_bg_color_cache.ts = now;
+	}
+	return _default_bg_color_cache.color;
+}
+
 function check_number_values() {
+	// Circuit breaker: this passes touch every number field's style every
+	// 500 ms — skip it entirely while the event loop is stalled.
+	if (typeof _layout_stall_suspend_until !== "undefined" && Date.now() < _layout_stall_suspend_until) {
+		return;
+	}
+
 	var all_fields = document.querySelectorAll('input[type="number"]:not(.no_red_bg_when_empty)');
 
-	var default_bg_color = $("input").css("background-color");
+	var default_bg_color = _get_default_input_bg_color();
 
 	var missing_values = 0;
 

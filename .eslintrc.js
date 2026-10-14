@@ -28,6 +28,7 @@ module.exports = {
 		"_write_latex_min_interval_ms": "writable",
 		"_WRITE_LATEX_CHAIN_MAX": "writable",
 		"_write_latex_defer_pending": "writable",
+		"_layout_stall_suspend_until": "writable",
 		"_predict_full_running": "writable",
 		"_predict_defer_retries": "writable",
 		"_PREDICT_DEFER_MAX": "writable",

@@ -188,6 +188,18 @@ function morph_update(elem, box) {
 		elem.appendTo(container);
 	}
 
+	// write_descriptions() is forced from several places right after every
+	// updated_page(). Re-writing identical top/left/height invalidates the
+	// layout each time; skip the write when nothing moved.
+	var cur = elem.attr("style") || "";
+	if (
+		new RegExp("top:\\s*" + box.top + "px").test(cur) &&
+		new RegExp("left:\\s*" + box.left + "px").test(cur) &&
+		new RegExp("height:\\s*" + box.height + "px").test(cur)
+	) {
+		return;
+	}
+
 	elem.css({
 		top: box.top + "px",
 		left: box.left + "px",

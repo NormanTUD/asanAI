@@ -2457,9 +2457,22 @@ function _model_is_ok_check_status () {
 	return {color: color, msg: msg, green: green, red: red, orange: orange};
 }
 
+// model_is_ok() runs 3.3x/second. Each offset() read below forces a layout
+// flush; with a fresh 1-layer math render the page's layout is expensive
+// enough that 3 forced flushes/second kept the flush queue permanently busy.
+// The values only change when layers/descriptions are re-laid-out (which
+// already re-checks alignment), so a 1 s cache is safe.
+var _alignment_y_cache = { d: -1, l: -1, ts: 0 };
+
 function _model_is_ok_alignment_check (_content, green) {
-	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
-	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
+	var now = Date.now();
+	if (now - _alignment_y_cache.ts > 1000) {
+		_alignment_y_cache.d = parse_int(get_last_description_of_layers_end_y());
+		_alignment_y_cache.l = parse_int(get_last_layer_setting_end_y());
+		_alignment_y_cache.ts = now;
+	}
+	var last_description_end_y = _alignment_y_cache.d;
+	var last_layer_setting_end_y = _alignment_y_cache.l;
 
 	if(last_description_end_y != 0) {
 		if(Math.abs(last_description_end_y - last_layer_setting_end_y) > 3) {
@@ -2537,6 +2550,12 @@ function _count_model_layers_visible_in_gui () {
 
 function model_is_ok () {
 	if(!model_is_ok_icon || !finished_loading) {
+		return;
+	}
+
+	// Circuit breaker: skip the offset()/cursor work while the event loop is
+	// stalled — every forced layout read here re-arms the flush storm.
+	if (typeof _layout_stall_suspend_until !== "undefined" && Date.now() < _layout_stall_suspend_until) {
 		return;
 	}
 

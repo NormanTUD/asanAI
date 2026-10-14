@@ -1,6 +1,23 @@
 // Kamera-Cache global
 window.__tfjs_weights_plot_cameras = window.__tfjs_weights_plot_cameras || new Map();
 
+// ResizeObservers created by visualize_model_weights observe #right_side, which
+// resizes on EVERY tab re-render. A stale RO (left over from a render done while
+// the weight-surfaces tab was hidden) fires on each #right_side resize and reads
+// right.clientWidth — a forced page-wide layout flush — re-arming the flush that
+// never drains with a 1-layer model. Track every RO so we can disconnect it, and
+// gate the callback on a visibility flag so a hidden tab is a true no-op (no
+// layout read at all).
+window.__tfjs_weights_resizers = window.__tfjs_weights_resizers || [];
+window.__weight_surfaces_visible = false;
+
+function destroy_weight_surfaces_resizers() {
+	(window.__tfjs_weights_resizers || []).forEach(function(ro) {
+		try { ro.disconnect(); } catch (e) {}
+	});
+	window.__tfjs_weights_resizers = [];
+}
+
 var visualize_model_weights = async function(container_or_id, options = {}, force = false) {
 	const opts = Object.assign({
 		max_slices: 8,
@@ -22,7 +39,17 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	if (container_or_id) {
 		try {
-			if (!$("#" + container_or_id).is(":visible") && !force) {
+			// For the weight-surfaces tab, reuse the visibility flag maintained by
+			// create_weight_surfaces() and the tabs activate/deactivate events, so
+			// we don't force a second layout read on every updated_page().
+			var _container_visible;
+			if (container_or_id === "weight_surfaces_content" &&
+			    typeof window.__weight_surfaces_visible !== "undefined") {
+				_container_visible = window.__weight_surfaces_visible;
+			} else {
+				_container_visible = $("#" + container_or_id).is(":visible");
+			}
+			if (!_container_visible && !force) {
 				return;
 			}
 		} catch (e) {}
@@ -278,11 +305,20 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 			try {
 				const ro = new ResizeObserver(() => {
+					// The RO observes #right_side, which resizes on every tab
+					// re-render. When the weight-surfaces tab is hidden, do
+					// NOTHING — not even a layout read. Reading
+					// right.clientWidth here forces a page-wide layout flush on
+					// every #right_side resize, which never drains with a
+					// 1-layer model. The flag is set by the tabs
+					// activate/deactivate events and by create_weight_surfaces.
+					if (!window.__weight_surfaces_visible) return;
 					const newWidth = right ? right.clientWidth * opts.container_width_pct : 640;
 					wrapper.style.width = newWidth + 'px';
 					safe_plotly_resize(plotDiv);
 				});
 				ro.observe(right || document.body);
+				window.__tfjs_weights_resizers.push(ro);
 			} catch (e) {}
 
 			wrapper.appendChild(plotDiv);
@@ -1009,8 +1045,16 @@ function get_model_structure_string() {
 
 function create_weight_surfaces(force = false) {
 	try {
+		// Keep the RO visibility flag in sync. #weight_surfaces is the jQuery UI
+		// tab panel: :visible is true only while this tab is the active one.
+		window.__weight_surfaces_visible = $("#weight_surfaces").is(":visible");
+
 		const current_model_structure_string = get_model_structure_string();
 		if (force || current_model_structure_string != last_model_structure_string) {
+			// The container is about to be wiped, so any ROs observing the old
+			// plot wrappers are stale — disconnect them before they can fire on
+			// the next #right_side resize.
+			destroy_weight_surfaces_resizers();
 			$("#weight_surfaces_content").html("");
 		}
 

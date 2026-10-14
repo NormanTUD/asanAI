@@ -169,6 +169,10 @@ function init_tabs () {
 				load_cnn3d_lazily();
 			}
 
+			if (ui.newPanel.attr("id") == "weight_surfaces") {
+				window.__weight_surfaces_visible = true;
+			}
+
 			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
 				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
 			}
@@ -190,6 +194,13 @@ function init_tabs () {
 		deactivate: function (event, ui) {
 			if (ui.panel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
 				WeightAnalysis.stopAutoRefresh();
+			}
+
+			// Leaving the weight-surfaces tab: stop its #right_side ResizeObservers
+			// from firing (and forcing layout flushes) while the tab is hidden.
+			if (ui.panel.attr("id") == "weight_surfaces") {
+				window.__weight_surfaces_visible = false;
+				if (typeof destroy_weight_surfaces_resizers === "function") destroy_weight_surfaces_resizers();
 			}
 		},
 		hide: { effect: "fade", duration: 0 },
@@ -664,14 +675,44 @@ function set_write_model_summary_interval () {
 	}
 }
 
+// Circuit-breaker watchdog: measures the real delta between ticks. If the
+// main thread repeatedly takes >3 s for a 1 s tick, something (layout flush
+// storm, stuck update) is starving the event loop — suspend the periodic
+// layout readers for 10 s so the browser can drain the queue.
+var _layout_stall_last_tick = 0;
+var _layout_stall_slow_count = 0;
+
+function _layout_stall_watchdog() {
+	var now = Date.now();
+	if (_layout_stall_last_tick) {
+		var delta = now - _layout_stall_last_tick;
+		if (delta > 3000) {
+			_layout_stall_slow_count++;
+			if (_layout_stall_slow_count >= 2) {
+				_layout_stall_suspend_until = now + 10000;
+				_layout_stall_slow_count = 0;
+				dbg("[layout_stall_watchdog] event loop stalled " + delta + " ms; suspending periodic layout readers for 10 s");
+			}
+		} else {
+			_layout_stall_slow_count = 0;
+		}
+	}
+	_layout_stall_last_tick = now;
+}
+
 function set_auto_intervals () {
 	set_check_number_vales_interval();
 	set_write_model_summary_interval();
 	set_last_layer_shape_test_interval();
 
+	setInterval(_layout_stall_watchdog, 1000);
 	setInterval(model_is_ok, 300);
 	setInterval(label_debugger_icon_ok, 300);
-	setInterval(_temml, 500);
+	// Pass force=0 so the 2 s rate gate inside _temml() applies. Calling it
+	// bare (force defaults to 1) bypassed the gate and forced a :visible
+	// layout flush over every formula 2x/second. Skip entirely while the
+	// event loop is stalling.
+	setInterval(function() { if (Date.now() < _layout_stall_suspend_until) return; _temml(0); }, 500);
 	// _clean_custom_tensors disposes tensors that an in-flight predict/fit may
 	// still reference. Skip while training is active.
 	setInterval(function () {
@@ -679,20 +720,23 @@ function set_auto_intervals () {
 		_clean_custom_tensors();
 	}, 800);
 	// force_restart_fcnn reads model.layers and can race with an in-flight
-	// fit(); skip while training is active.
+	// fit(); skip while training is active. The :visible check inside forces
+	// a layout flush, so skip it while the event loop is stalling too.
 	setInterval(function () {
 		if (typeof started_training !== "undefined" && started_training) return;
+		if (Date.now() < _layout_stall_suspend_until) return;
 		force_restart_fcnn(); // await not possible
 	}, 500);
 	// repredict_if_not_image_but_image_is_shown triggers model.predict() and
 	// shares the GPU queue with the training fit(); skip while training.
 	setInterval(function () {
 		if (typeof started_training !== "undefined" && started_training) return;
+		if (Date.now() < _layout_stall_suspend_until) return;
 		repredict_if_not_image_but_image_is_shown(); // await not possible
 	}, 200);
-	setInterval(trigger_plot, 500);
-	setInterval(write_descriptions, 500);
-	setInterval(show_layer_description_when_layer_is_visible, 500);
+	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; trigger_plot(); }, 500);
+	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; write_descriptions(); }, 500);
+	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; show_layer_description_when_layer_is_visible(); }, 500);
 }
 
 async function try_to_set_backend() {

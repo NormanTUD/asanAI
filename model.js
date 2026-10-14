@@ -116,7 +116,16 @@ async function dispose_model_tensors() {
 async function _create_model () {
 	var _create_model_uuid = uuidv4();
 
+	// Bounded wait: a leaked queue entry (see the has_missing_values early
+	// return below) must never block model creation forever — that stalled
+	// every later compile_model()/updated_page() and froze the page.
+	var _wait_start = Date.now();
 	while (create_model_queue.length) {
+		if (Date.now() - _wait_start > 15000) {
+			err("[_create_model] create_model_queue did not drain within 15 s; clearing it to avoid a permanent stall");
+			create_model_queue = [];
+			break;
+		}
 		await delay(50);
 	}
 
@@ -124,6 +133,7 @@ async function _create_model () {
 
 	if(has_missing_values) {
 		l(language[lang]["not_creating_model_because_values_are_missing"]);
+		create_model_queue = create_model_queue.filter(function(ee) { return ee !== _create_model_uuid; });
 		return model;
 	}
 
@@ -316,7 +326,15 @@ async function _compile_model_do_compile(new_model_config_hash) {
 		return false;
 	}
 
+	// Bounded wait: if a concurrent _create_model() leaks its queue entry the
+	// old unbounded loop ran forever and updated_page() never finished — the
+	// page stayed on the wait cursor and looked hung.
+	var _compile_wait_start = Date.now();
 	while (create_model_queue.length || !model) {
+		if (Date.now() - _compile_wait_start > 15000) {
+			err("[_compile_model_do_compile] waited 15 s for create_model_queue/model; aborting compile to avoid a permanent stall");
+			return false;
+		}
 		await delay(10);
 	}
 

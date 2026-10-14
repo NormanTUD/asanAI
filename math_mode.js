@@ -113,8 +113,22 @@ function ensure_math_tab_visibility_watch() {
 
 	if (!_write_latex_poll_timer) {
 		_write_latex_poll_timer = setInterval(function() {
-			if (is_math_tab_visible()) run_pending_latex_write();
+			// Pending check first: is_math_tab_visible() forces a layout flush
+			// (getComputedStyle + getBoundingClientRect). With a stale watch this
+			// ran 2x/second forever, even with nothing to render.
+			if (_write_latex_pending_args && is_math_tab_visible()) run_pending_latex_write();
 		}, 500);
+	}
+}
+
+function stop_math_tab_visibility_watch() {
+	if (_write_latex_poll_timer) {
+		clearInterval(_write_latex_poll_timer);
+		_write_latex_poll_timer = null;
+	}
+	if (_write_latex_visibility_observer) {
+		_write_latex_visibility_observer.disconnect();
+		_write_latex_visibility_observer = null;
 	}
 }
 
@@ -183,6 +197,11 @@ function run_pending_latex_write() {
 
 	var args = _write_latex_pending_args;
 	_write_latex_pending_args = null;
+
+	// The tab is visible right now; the watch only exists to catch the
+	// hidden->visible transition, so it is no longer needed. Leaving the
+	// poll timer running would force a layout flush every 500 ms forever.
+	stop_math_tab_visibility_watch();
 
 	Promise.resolve(_write_model_to_latex_to_page_internal.apply(null, args))
 		.catch(function(e) {
@@ -300,7 +319,8 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 			}
 		}
 
-		try { $("#math_tab_code").empty(); } catch(e) {}
+		// .html() already replaces the children; an explicit .empty() before it
+		// only doubles the layout invalidation of the math DOM.
 		$("#math_tab_code").html(latex);
 
 		try {
@@ -310,17 +330,33 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 			var old_md5 = math_items_hashes[xpath];
 
 			if (new_md5 != old_md5 || force) {
-				try {
-					_temml();
-				} catch (e) {
-					if (!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
-						void(0); info("" + e);
-					} else if (("" + e).includes("too many function arguments")) {
-						void(0); err("TEMML: " + e);
-					} else {
-						throw new Error(e);
+				// Typeset in a clean task. At this point the page layout is
+				// still dirty from the updated_page() that triggered this
+				// render (model rebuild, layer row removal, ...). Typesetting
+				// synchronously forces a full layout flush of the fresh MathML
+				// on top of that; with a 1-layer model the resulting flush
+				// never drains and the browser stalls on this line.
+				setTimeout(function() {
+					try {
+						try {
+							_temml();
+						} catch (e) {
+							if (!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
+								void(0); info("" + e);
+							} else if (("" + e).includes("too many function arguments")) {
+								void(0); err("TEMML: " + e);
+							} else {
+								throw new Error(e);
+							}
+						}
+					} catch (e) {
+						if (("" + e).includes("can't assign to property")) {
+							wrn(language[lang]["failed_temml"], e);
+						} else {
+							void write_error(e, null, null);
+						}
 					}
-				}
+				}, 0);
 				math_items_hashes[xpath] = new_md5;
 			}
 
@@ -382,9 +418,17 @@ function write_optimizer_to_math_tab() {
 		var str = wo2mt_build_output_string(values);
 
 		if (str) {
-			$("#optimizer_variables_header").show();
-			$("#optimizer_variables_div").html(str).show();
-			_temml();
+			var $opt_div = $("#optimizer_variables_div");
+			// This runs every second AND from updated_page(). Rewriting
+			// byte-identical HTML into the math tab (plus the forced _temml()
+			// that follows) is pure layout invalidation of the math DOM; with a
+			// 1-layer model that keeps the layout flush queue permanently busy.
+			// Only write when the content actually changed.
+			if ($opt_div.html() !== str) {
+				$("#optimizer_variables_header").show();
+				$opt_div.html(str).show();
+				_temml();
+			}
 		} else {
 			hide_and_reset_optimizer_variables();
 		}
