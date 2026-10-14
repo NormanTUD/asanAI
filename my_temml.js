@@ -2,6 +2,19 @@
 
 var lastCall = 0;
 
+// display:none check WITHOUT a layout flush: getComputedStyle(node).display
+// only forces a style recalc, whereas offsetWidth / getClientRects (what
+// jQuery's :visible uses) force a full layout pass.
+function _temml_element_is_shown(el) {
+	for (var node = el; node && node.nodeType === 1; node = node.parentNode) {
+		if (getComputedStyle(node).display === "none") {
+			return false;
+		}
+		if (node === document.body) break;
+	}
+	return true;
+}
+
 function _temml(force = 1) {
 	const now = Date.now();
 
@@ -14,16 +27,23 @@ function _temml(force = 1) {
 	lastCall = now;
 
 	try {
-		// Order matters: dataset checks are cheap property reads, while
-		// $(e).is(":visible") forces a layout flush. In steady state every
-		// .temml_me carries dataset.rendered, so the loop must bail before
-		// ever touching the layout — otherwise _temml (periodic + forced
-		// calls) keeps the page in a permanent flush loop.
+		// Order matters: dataset checks are cheap property reads and must come
+		// first so the loop bails before any DOM query on the common (already
+		// rendered) case.
+		//
+		// The old filter used $(e).is(":visible"), which reads offsetWidth and
+		// therefore forces a PAGE-WIDE layout flush. With a 1-layer model that
+		// flush never drains (the freshly typeset MathML + the float-based page
+		// layout re-arm each other), so _temml pinned the main thread inside
+		// the filter forever. Visibility is now decided by walking up the tree
+		// and reading getComputedStyle(el).display — a style recalc only, never
+		// a layout flush. (render_temml_quick typesets into a detached temp
+		// span, so TEMML itself does not need the target to be visible.)
 		const elements = $(".temml_me").toArray().filter(e =>
 			!e.dataset.rendered &&
 			!e.dataset.temml_skip &&
 			e.textContent.trim() &&
-			$(e).is(":visible")
+			_temml_element_is_shown(e)
 		);
 
 		if (!elements.length) return;
