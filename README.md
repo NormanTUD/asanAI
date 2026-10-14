@@ -283,8 +283,6 @@ asanAI uses many different libraries under the hood.
 
 - [GNOME Desktop Icon Pack](https://commons.wikimedia.org/wiki/GNOME_Desktop_icons)
 
-- [Aurora Background Easter Egg](https://codepen.io/rawcreative/pen/kabgzJ)
-
 - [comment]: <> (EndSources)
 
 </details>
