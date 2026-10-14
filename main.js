@@ -735,7 +735,7 @@ function set_auto_intervals () {
 		repredict_if_not_image_but_image_is_shown(); // await not possible
 	}, 200);
 	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; trigger_plot(); }, 500);
-	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; write_descriptions(); }, 500);
+	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; write_descriptions(); }, 500); // await not possible here
 	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; show_layer_description_when_layer_is_visible(); }, 500);
 }
 

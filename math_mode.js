@@ -353,7 +353,7 @@ async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = fa
 						if (("" + e).includes("can't assign to property")) {
 							wrn(language[lang]["failed_temml"], e);
 						} else {
-							void write_error(e, null, null);
+							void write_error(e, null, null); // await not possible here
 						}
 					}
 				}, 0);
