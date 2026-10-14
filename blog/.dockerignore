@@ -1,0 +1,18 @@
+# Not needed when serving the blog (research / staging / test suites).
+tests
+todo
+coq
+nanoGPT
+lndw*
+llm_interpretability_papers
+darkmode-ci
+
+# Docker tooling itself — never baked into the image.
+docker.sh
+Dockerfile
+docker-compose.yml
+.env
+
+# Local-only scratch.
+*.log
+*.tmp
