@@ -31,14 +31,21 @@ function check_number_values() {
 		var field = all_fields[i];
 		var val = field.value;
 
+		// Style writes are only issued when the value actually changes.
+		// Blindly re-writing the same inline background on every field every
+		// 500 ms kept the document style/layout permanently invalidated, so
+		// every layout read elsewhere (e.g. _temml's :visible check)
+		// triggered a full, expensive page-wide layout flush.
 		if (val !== "" && !is_numeric(val)) {
-			if (!field.classList.contains("no_red_on_error")) {
+			if (!field.classList.contains("no_red_on_error") && field.style.backgroundColor !== "red") {
 				field.style.backgroundColor = "red";
 			}
 			missing_values++;
 		} else if (val !== "") {
 			val = parse_float(val);
-			field.style.backgroundColor = default_bg_color;
+			if (field.style.backgroundColor !== default_bg_color) {
+				field.style.backgroundColor = default_bg_color;
+			}
 
 			var max_attr = field.getAttribute("max");
 			var min_attr = field.getAttribute("min");
@@ -59,7 +66,7 @@ function check_number_values() {
 				}
 			}
 		} else { // val === ""
-			if (field !== document.activeElement && !field.classList.contains("no_red_on_error")) {
+			if (field !== document.activeElement && !field.classList.contains("no_red_on_error") && field.style.backgroundColor !== "red") {
 				field.style.backgroundColor = "red";
 			}
 		}
@@ -150,8 +157,7 @@ function check_if_val_is_integer (classname, name) {
 
 	var missing_values = 0;
 
-	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = $("input").css("background-color");
+	var default_bg_color = _get_default_input_bg_color();
 
 	const all_layer_settings = $(".layer_setting");
 
@@ -171,11 +177,15 @@ function check_if_val_is_integer (classname, name) {
 			const err_msg = `${name} is not an integer`;
 
 			if(!isIntegerLike(this_val)) {
-				this_element.css("background-color", "red");
+				if (this_element[0].style.backgroundColor !== "red") {
+					this_element.css("background-color", "red");
+				}
 				missing_values++;
 				layer_warning_container(layer_idx, err_msg);
 			} else {
-				this_element.css("background-color", default_bg_color);
+				if (this_element[0].style.backgroundColor !== default_bg_color) {
+					this_element.css("background-color", default_bg_color);
+				}
 				remove_layer_warning(layer_idx, err_msg);
 			}
 		}
@@ -189,8 +199,7 @@ function check_if_val_is_float_or_integer (classname, name) {
 
 	var missing_values = 0;
 
-	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = $("input").css("background-color");
+	var default_bg_color = _get_default_input_bg_color();
 
 	const all_layer_settings = $(".layer_setting");
 
@@ -210,11 +219,15 @@ function check_if_val_is_float_or_integer (classname, name) {
 			const err_msg = `${name} is not an integer`;
 
 			if(!looks_like_number(this_val)) {
-				this_element.css("background-color", "red");
+				if (this_element[0].style.backgroundColor !== "red") {
+					this_element.css("background-color", "red");
+				}
 				missing_values++;
 				layer_warning_container(layer_idx, err_msg);
 			} else {
-				this_element.css("background-color", default_bg_color);
+				if (this_element[0].style.backgroundColor !== default_bg_color) {
+					this_element.css("background-color", default_bg_color);
+				}
 				remove_layer_warning(layer_idx, err_msg);
 			}
 		}
@@ -228,8 +241,7 @@ function check_all_comma_seperated(classname, name) {
 
 	var missing_values = 0;
 
-	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = $("input").css("background-color");
+	var default_bg_color = _get_default_input_bg_color();
 
 	const all_layer_settings = $(".layer_setting");
 
@@ -252,11 +264,15 @@ function check_all_comma_seperated(classname, name) {
 
 			if(value_count) {
 				if (value_count !== number_of_required_values) {
-					this_element.css("background-color", "red");
+					if (this_element[0].style.backgroundColor !== "red") {
+						this_element.css("background-color", "red");
+					}
 					missing_values++;
 					layer_warning_container(layer_idx, err_msg);
 				} else {
-					this_element.css("background-color", default_bg_color);
+					if (this_element[0].style.backgroundColor !== default_bg_color) {
+						this_element.css("background-color", default_bg_color);
+					}
 					remove_layer_warning(layer_idx, err_msg);
 				}
 			} else {
@@ -278,7 +294,7 @@ function check_all_sizes() {
 
 function check_all_target_shapes() {
 	var missing_values = 0;
-	var default_bg_color = $("input").css("background-color");
+	var default_bg_color = _get_default_input_bg_color();
 	var all_layer_settings = $(".layer_setting");
 
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
@@ -311,7 +327,9 @@ function validate_target_shape(layer_idx, input_element, default_bg_color) {
 	var parsed_shape = parse_target_shape_value(this_target_shape_val);
 
 	if (parsed_shape === null) {
-		input_element.css("background-color", "red");
+		if (input_element[0].style.backgroundColor !== "red") {
+			input_element.css("background-color", "red");
+		}
 		layer_warning_container(layer_idx, err_msg_base);
 		return false;
 	}
@@ -323,15 +341,19 @@ function validate_target_shape(layer_idx, input_element, default_bg_color) {
 	var expected_product = get_model_input_product(layer_idx);
 
 	if (expected_product !== null && target_product !== expected_product) {
-		var err_msg_product = "Target shape product (" + target_product + 
-			") does not match model input shape product (" + 
+		var err_msg_product = "Target shape product (" + target_product +
+			") does not match model input shape product (" +
 			expected_product + ")";
-		input_element.css("background-color", "red");
+		if (input_element[0].style.backgroundColor !== "red") {
+			input_element.css("background-color", "red");
+		}
 		layer_warning_container(layer_idx, err_msg_product);
 		return false;
 	}
 
-	input_element.css("background-color", default_bg_color);
+	if (input_element[0].style.backgroundColor !== default_bg_color) {
+		input_element.css("background-color", default_bg_color);
+	}
 	remove_layer_warning(layer_idx, err_msg_base);
 	remove_layer_warning(layer_idx, "Target shape product");
 	return true;

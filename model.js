@@ -1303,6 +1303,7 @@ function handle_create_model_error (e) {
 }
 
 function remove_layer_warning(layer_idx, msg) {
+	var something_changed = false;
 	try {
 		var container = $($(".warning_container")[layer_idx]);
 		if (container.length === 0) {
@@ -1332,14 +1333,24 @@ function remove_layer_warning(layer_idx, msg) {
 			}
 		});
 
+		if (removed) {
+			something_changed = true;
+		}
+
 		if (list.find("li").length === 0) {
 			container.html("").hide();
+			something_changed = true;
 		}
 	} catch (e) {
 		console.error("Error in remove_layer_warning:", e);
 	}
 
-	write_descriptions(1); // await not needed here
+	// write_descriptions(1) bypasses the hash gate and forces layout reads
+	// (offset().top); this function runs from every check_if_val_is_* pass
+	// several times per second, so only re-layout when something changed.
+	if (something_changed) {
+		write_descriptions(1); // await not needed here
+	}
 }
 
 function hide_warning_container () {

@@ -14,9 +14,15 @@ function _temml(force = 1) {
 	lastCall = now;
 
 	try {
+		// Order matters: dataset checks are cheap property reads, while
+		// $(e).is(":visible") forces a layout flush. In steady state every
+		// .temml_me carries dataset.rendered, so the loop must bail before
+		// ever touching the layout — otherwise _temml (periodic + forced
+		// calls) keeps the page in a permanent flush loop.
 		const elements = $(".temml_me").toArray().filter(e =>
-			e.textContent.trim() &&
 			!e.dataset.rendered &&
+			!e.dataset.temml_skip &&
+			e.textContent.trim() &&
 			$(e).is(":visible")
 		);
 
@@ -90,6 +96,10 @@ function render_temml_quick(e) {
 	if (!latex) return;
 
 	if (e.querySelector && e.querySelector('.math-ed-num')) {
+		// Editable weight spans are injected AFTER typesetting; re-rendering
+		// this element would destroy them. Mark it done so the _temml filter
+		// stops treating it as a pending candidate on every call.
+		e.dataset.rendered = "1";
 		return;
 	}
 
@@ -115,9 +125,25 @@ function render_temml_quick(e) {
 			create_centered_window_with_text(latex, e.querySelector("math"));
 		});
 	} catch (err) {
-		wrn("temml error:", err);
-		wrn(`latex:\n>>>>\n${latex}\n<<<<\n`);
-		wrn(get_stack_trace(1));
+		const fails = (parseInt(e.dataset.temml_fails || "0", 10) || 0) + 1;
+		e.dataset.temml_fails = fails;
+		if (fails >= 2) {
+			// Persistent failure: stop retrying. Each retry re-parsed the
+			// string, fired wrn() (num_wrns) and re-forced a layout flush,
+			// pinning the page in a permanent stall. Show a fallback instead
+			// of the raw LaTeX.
+			e.dataset.temml_skip = "1";
+			const span = document.createElement("span");
+			span.style.color = "#e94560";
+			span.style.fontSize = "0.85em";
+			span.textContent = "ParseError: " + err.message;
+			e.innerHTML = "";
+			e.appendChild(span);
+		} else {
+			wrn("temml error:", err);
+			wrn(`latex:\n>>>>\n${latex}\n<<<<\n`);
+			wrn(get_stack_trace(1));
+		}
 	}
 }
 
