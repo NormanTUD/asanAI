@@ -189,14 +189,14 @@ function _resync_layer_data(layer_idx, layer_data) {
 			if (wval.shape.length === 2) {
 				// Dense layer: reshape flat array into a 2D matrix
 				fresh_layer[wname] = _reshape_flat_to_matrix(fresh_layer[wname], wval.shape);
-			} else if (wval.shape.length === 4) {
+			//} else if (wval.shape.length === 4) {
 				// Conv2D layer: store flat — shape is the source of truth from the tensor
 				// (consistent with _resync_conv2d_layer_data behavior)
 				// fresh_layer[wname] stays as a flat array
-			} else if (wval.shape.length === 1) {
+			//} else if (wval.shape.length === 1) {
 				// 1D kernel (e.g., depthwise or pointwise): keep as flat array
 				// fresh_layer[wname] stays as a flat array
-			} else if (wval.shape.length === 3) {
+			//} else if (wval.shape.length === 3) {
 				// Conv1D kernel [kW, inC, outC]: store flat — shape from tensor
 				// fresh_layer[wname] stays as a flat array
 			}
