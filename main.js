@@ -405,6 +405,7 @@ async function init_page_contents (chosen_dataset=false) {
 		if(chosen_dataset) {
 			$("#dataset").val(chosen_dataset).trigger("change");
 		} else {
+			set_architecture_from_url();
 			await set_config();
 		}
 
@@ -733,6 +734,22 @@ function set_values_from_url () {
 
 	if(urlParams.get("data_source")) {
 		$("#data_origin").val(urlParams.get("data_source")).trigger("change");
+	}
+}
+
+function set_architecture_from_url () {
+	var urlParams = new URLSearchParams(window.location.search);
+	var architecture = urlParams.get("architecture");
+	if (architecture && traindata_struct[architecture]) {
+		// Mark the option with the `selected` content attribute as well, so the
+		// pageshow handler (which resets every select to its `selected` option or
+		// index 0) keeps this choice instead of falling back to the first option.
+		$("#dataset option[value='" + architecture + "']").attr("selected", "selected");
+		$("#dataset").val(architecture);
+		// Re-derive the per-model dataset override (#model_dataset) from the new
+		// choice; otherwise it keeps the default dataset's weight-file and the
+		// data loader fetches from the wrong directory.
+		init_weight_file_list();
 	}
 }
 

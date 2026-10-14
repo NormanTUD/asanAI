@@ -211,7 +211,11 @@ async function set_stuff_from_predefined_config (index, config) {
 
 		set_metric_loss_and_optimizer_from_config(config);
 
-		$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
+		// Only trigger when the field has a value: for non-image datasets the
+		// height field stays empty and firing change on it would error out.
+		if ($("#height").val() !== "") {
+			$("#height").trigger("change"); // quickfix for compiling changes only now instead of many times earlier on each trigger.change
+		}
 
 		set_special_optimizer_stuff_from_config(config);
 	}
