@@ -1,0 +1,3474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Krümmung der Statistik — Amari 1982 interaktiv</title>
+
+<!-- ============ CDNs ============ -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<style>
+/* =================== DESIGN SYSTEM =================== */
+:root{
+  --bg:#070b14;
+  --bg2:#0c1222;
+  --panel:rgba(18,26,45,.72);
+  --panel-solid:#121a2d;
+  --stroke:rgba(120,160,255,.16);
+  --stroke-hi:rgba(120,180,255,.42);
+  --txt:#dde6f7;
+  --txt-dim:#8ea0c4;
+  --txt-faint:#5f7196;
+  --exp:#ff7a59;      /* exponentiell  α=+1 */
+  --mix:#4fd1ff;      /* Mischung      α=-1 */
+  --riem:#b48cff;     /* Riemann       α=0  */
+  --model:#6ef2a7;    /* Modell S^m */
+  --data:#ffd36e;     /* Daten */
+  --accent:#8fb6ff;
+  --warn:#ff5f8d;
+  --mono:'SF Mono',ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+    radial-gradient(1200px 800px at 12% -5%, #152244 0%, transparent 55%),
+    radial-gradient(900px 700px at 95% 8%, #1d1633 0%, transparent 50%),
+    radial-gradient(1000px 900px at 50% 110%, #0b2733 0%, transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(143,182,255,.3)}
+
+/* grain */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Nav ---------- */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  backdrop-filter:blur(22px) saturate(1.4);
+  background:linear-gradient(180deg,rgba(7,11,20,.92),rgba(7,11,20,.62));
+  border-bottom:1px solid var(--stroke);
+}
+#navInner{max-width:1480px;margin:0 auto;display:flex;align-items:center;gap:6px;padding:9px 20px;overflow-x:auto;scrollbar-width:none}
+#navInner::-webkit-scrollbar{display:none}
+#navInner .brand{font-weight:800;letter-spacing:-.4px;font-size:14px;margin-right:14px;white-space:nowrap;
+  background:linear-gradient(92deg,var(--exp),var(--data) 35%,var(--model) 65%,var(--mix));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#navInner a{
+  color:var(--txt-dim);text-decoration:none;font-size:11.5px;font-weight:600;
+  padding:5px 10px;border-radius:7px;white-space:nowrap;transition:.18s;border:1px solid transparent;
+}
+#navInner a:hover{color:#fff;background:rgba(143,182,255,.11)}
+#navInner a.active{color:#fff;background:rgba(143,182,255,.17);border-color:var(--stroke-hi)}
+#prog{position:fixed;top:0;left:0;height:2px;z-index:301;
+  background:linear-gradient(90deg,var(--exp),var(--data),var(--model),var(--mix));width:0;transition:width .12s}
+
+/* ---------- Layout ---------- */
+main{max-width:1180px;margin:0 auto;padding:92px 22px 160px}
+section{margin:0 0 118px;scroll-margin-top:72px}
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;text-align:center;position:relative}
+h1{font-size:clamp(34px,6.4vw,70px);line-height:1.02;margin:0 0 18px;font-weight:850;letter-spacing:-2.4px;
+   background:linear-gradient(104deg,#fff 8%,var(--accent) 42%,var(--model) 68%,var(--exp) 96%);
+   -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(23px,3.4vw,36px);margin:0 0 6px;font-weight:800;letter-spacing:-1.1px;color:#fff}
+h3{font-size:17.5px;margin:30px 0 10px;font-weight:700;color:var(--accent);letter-spacing:-.2px}
+h4{font-size:14px;margin:18px 0 7px;font-weight:700;color:var(--txt);letter-spacing:.1px}
+p{color:var(--txt-dim);font-size:15.2px;margin:11px 0}
+.lead{font-size:17.5px;color:var(--txt);max-width:760px;margin:0 auto 10px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:3.2px;text-transform:uppercase;
+  color:var(--txt-faint);margin-bottom:14px;font-weight:600}
+.secnum{font-family:var(--mono);font-size:12px;color:var(--exp);letter-spacing:2px;font-weight:700;display:block;margin-bottom:4px}
+b,strong{color:#fff;font-weight:650}
+em{color:var(--data);font-style:normal;font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:rgba(143,182,255,.1);
+  padding:1.5px 6px;border-radius:5px;color:var(--accent);border:1px solid var(--stroke)}
+a.inl{color:var(--accent)}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:18px;
+  padding:22px;margin:22px 0;backdrop-filter:blur(14px);
+  box-shadow:0 18px 44px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.045);
+}
+.card.tight{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-s{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px}
+.grid-s.rev{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)}
+@media(max-width:900px){.grid2,.grid3,.grid-s,.grid-s.rev{grid-template-columns:1fr}}
+
+.note{border-left:3px solid var(--accent);padding:11px 16px;margin:16px 0;
+  background:rgba(143,182,255,.06);border-radius:0 11px 11px 0;font-size:14.4px}
+.note.exp{border-color:var(--exp);background:rgba(255,122,89,.07)}
+.note.mix{border-color:var(--mix);background:rgba(79,209,255,.07)}
+.note.key{border-color:var(--model);background:rgba(110,242,167,.07)}
+.note.q{border-color:var(--data);background:rgba(255,211,110,.07)}
+
+/* ---------- Controls ---------- */
+.ctl{margin:13px 0}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:12.2px;color:var(--txt-dim);margin-bottom:6px;font-weight:600;letter-spacing:.2px}
+.ctl label .val{font-family:var(--mono);color:var(--data);font-size:12.5px;font-weight:700}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:4px;border-radius:3px;outline:none;
+  background:linear-gradient(90deg,var(--accent) var(--p,50%),rgba(255,255,255,.1) var(--p,50%));
+  cursor:pointer}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--accent));
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 16px rgba(143,182,255,.65);transition:.14s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border:none;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--accent));box-shadow:0 0 14px rgba(143,182,255,.6);cursor:pointer}
+button,.btn{
+  background:rgba(143,182,255,.1);border:1px solid var(--stroke-hi);color:var(--txt);
+  padding:7px 14px;border-radius:9px;cursor:pointer;font-size:12.4px;font-weight:650;
+  font-family:inherit;transition:.16s;margin:3px 4px 3px 0}
+button:hover{background:rgba(143,182,255,.22);color:#fff;transform:translateY(-1px)}
+button.on{background:linear-gradient(135deg,var(--accent),#6d8fe0);color:#06101f;border-color:transparent;font-weight:750}
+button.sm{padding:5px 10px;font-size:11.5px}
+.btnrow{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
+.chk{display:flex;align-items:center;gap:7px;font-size:12.6px;color:var(--txt-dim);
+  margin:5px 0;cursor:pointer;user-select:none}
+.chk input{accent-color:var(--accent);width:14px;height:14px;cursor:pointer}
+
+canvas{display:block;width:100%;border-radius:13px;background:#060a12;
+  border:1px solid var(--stroke);touch-action:none}
+.plot{width:100%;border-radius:13px;overflow:hidden;border:1px solid var(--stroke);background:#060a12}
+
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.6px;color:var(--txt-dim);margin:10px 0 2px}
+.legend span{display:flex;align-items:center;gap:5px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.ln{width:17px;height:3px;border-radius:2px;display:inline-block;flex:none}
+
+.readout{font-family:var(--mono);font-size:12.3px;background:rgba(0,0,0,.34);
+  border:1px solid var(--stroke);border-radius:11px;padding:11px 13px;margin:11px 0;color:var(--txt-dim);line-height:1.85}
+.readout b{color:var(--data);font-weight:700}
+.readout .k{color:var(--txt-faint)}
+
+.stat{text-align:center;background:rgba(0,0,0,.3);border:1px solid var(--stroke);
+  border-radius:13px;padding:13px 9px}
+.stat .n{font-family:var(--mono);font-size:21px;font-weight:800;color:var(--data);line-height:1.2}
+.stat .l{font-size:10.6px;color:var(--txt-faint);text-transform:uppercase;letter-spacing:1.3px;margin-top:4px}
+
+math{font-size:1.02em}
+.eq{text-align:center;margin:17px 0;padding:14px;background:rgba(0,0,0,.26);
+  border-radius:12px;border:1px solid var(--stroke);overflow-x:auto}
+.eq math{font-size:1.14em}
+.eqlabel{font-size:11px;color:var(--txt-faint);font-family:var(--mono);margin-top:7px;letter-spacing:.6px}
+
+.tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;border-bottom:1px solid var(--stroke);padding-bottom:9px}
+.tabs button{margin:0}
+.tabpane{display:none}.tabpane.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+table{width:100%;border-collapse:collapse;font-size:13.2px;margin:13px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--stroke)}
+th{color:var(--txt-faint);font-size:10.8px;text-transform:uppercase;letter-spacing:1.1px;font-weight:700}
+td{color:var(--txt-dim)}td b{color:#fff}
+tr:hover td{background:rgba(143,182,255,.045)}
+
+.pill{display:inline-block;padding:2.5px 9px;border-radius:999px;font-size:10.8px;
+  font-weight:700;font-family:var(--mono);letter-spacing:.5px}
+.pill.e{background:rgba(255,122,89,.18);color:var(--exp);border:1px solid rgba(255,122,89,.35)}
+.pill.m{background:rgba(79,209,255,.18);color:var(--mix);border:1px solid rgba(79,209,255,.35)}
+.pill.r{background:rgba(180,140,255,.18);color:var(--riem);border:1px solid rgba(180,140,255,.35)}
+
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--stroke-hi),transparent);margin:46px 0}
+
+.scrollhint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:2px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55}50%{transform:translateX(-50%) translateY(7px);opacity:1}}
+
+.flow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:16px 0;justify-content:center}
+.flow .step{background:rgba(0,0,0,.33);border:1px solid var(--stroke);border-radius:11px;
+  padding:9px 13px;font-size:12.3px;font-weight:650;color:var(--txt)}
+.flow .arr{color:var(--txt-faint);font-size:16px}
+
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);
+  color:var(--txt-faint);border:1px solid var(--stroke);border-radius:999px;padding:3px 11px;margin:3px}
+
+.hl{background:linear-gradient(180deg,transparent 62%,rgba(255,211,110,.28) 62%);padding:0 2px}
+
+details{background:rgba(0,0,0,.24);border:1px solid var(--stroke);border-radius:12px;padding:11px 15px;margin:13px 0}
+summary{cursor:pointer;font-size:13.4px;font-weight:650;color:var(--accent);outline:none}
+details[open] summary{margin-bottom:9px}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<nav id="nav"><div id="navInner">
+  <span class="brand">AMARI 1982</span>
+  <a href="#start">Start</a>
+  <a href="#problem">0 · Problem</a>
+  <a href="#mf">1 · Mannigfaltigkeit</a>
+  <a href="#fisher">2 · Fisher-Metrik</a>
+  <a href="#expfam">3 · Exp.-Familie</a>
+  <a href="#conn">4 · Zusammenhang</a>
+  <a href="#alpha">5 · α-Familie</a>
+  <a href="#dual">6 · Dualität</a>
+  <a href="#curved">7 · Gekrümmt</a>
+  <a href="#curv">8 · Krümmung</a>
+  <a href="#est">9 · Schätzer</a>
+  <a href="#loss">10 · Infoverlust</a>
+  <a href="#thm7">11 · Satz 7</a>
+  <a href="#recov">12 · Rückgewinn</a>
+  <a href="#lab">13 · Labor</a>
+  <a href="#end">Fazit</a>
+</div></nav>
+
+<main>
+
+<!-- ============================================================= -->
+<!-- HERO -->
+<!-- ============================================================= -->
+<section id="start" class="hero">
+  <div class="kicker">Shun-ichi Amari · The Annals of Statistics · 1982 · Vol. 10, Nr. 2</div>
+  <h1>Die Krümmung<br>der Statistik</h1>
+  <p class="lead">Ein statistisches Modell ist eine <em>gekrümmte Fläche</em>. Wie stark sie sich biegt,
+  entscheidet darüber, wie viel Information beim Schätzen unwiederbringlich verloren geht.</p>
+  <p class="lead" style="font-size:15px;color:var(--txt-dim);margin-top:14px">
+  Diese Seite erklärt Amaris Arbeit vollständig — <strong>durch Spielen</strong>. Jeder Begriff,
+  der über Schulmathematik hinausgeht, wird vorher interaktiv aufgebaut.
+  Zieh an jedem Regler. Nichts hier ist Dekoration.</p>
+
+  <div class="card" style="max-width:860px;margin:34px auto 0">
+    <canvas id="heroCv" height="300"></canvas>
+    <div class="legend" style="justify-content:center">
+      <span><i class="ln" style="background:var(--model)"></i>Modell <math><mi>S</mi></math><sup>m</sup> (die gekrümmte Fläche)</span>
+      <span><i class="dot" style="background:var(--data)"></i>Datenpunkt</span>
+      <span><i class="ln" style="background:var(--mix)"></i>Projektion = Schätzung</span>
+      <span><i class="ln" style="background:var(--exp)"></i>Krümmungskreis</span>
+    </div>
+    <p style="font-size:12.6px;text-align:center;color:var(--txt-faint);margin:6px 0 0">
+      Bewege die Maus über die Grafik — der Datenpunkt folgt dir.</p>
+  </div>
+
+  <div class="grid3" style="max-width:860px;margin:22px auto 0">
+    <div class="stat"><div class="n">1</div><div class="l">Metrik (Fisher)</div></div>
+    <div class="stat"><div class="n">∞</div><div class="l">α‑Zusammenhänge</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">Krümmungs­terme im Verlust</div></div>
+  </div>
+
+  <div class="scrollhint">▼ SCROLLEN</div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 0. PROBLEM / MOTIVATION -->
+<!-- ============================================================= -->
+<section id="problem">
+  <span class="secnum">TEIL 0 — MOTIVATION</span>
+  <h2>Welches Problem löst dieses Paper?</h2>
+  <p class="lead" style="margin-left:0">Die ehrliche Antwort zuerst, danach bauen wir jedes Werkzeug auf.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Die Situation</h3>
+      <p>Du hast <b>N</b> Messungen <math><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>x</mi><mi>N</mi></msub></math>
+      und ein Modell mit einem unbekannten Parameter <math><mi>u</mi></math>. Du berechnest einen Schätzwert <math><mover><mi>u</mi><mo>^</mo></mover></math>.</p>
+      <p>Die <b>Rohdaten</b> enthalten eine gewisse Menge an Information über <math><mi>u</mi></math> —
+      Fisher nannte sie <math><mi>N</mi><mo>·</mo><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub></math>.
+      Dein Schätzwert <math><mover><mi>u</mi><mo>^</mo></mover></math> ist nur <em>eine Zahl</em> statt N Zahlen.
+      Er enthält weniger.</p>
+      <div class="note q"><b>Amaris Frage:</b> Wie viel Information geht genau verloren — und wovon hängt der Verlust ab?</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Was schon bekannt war</h3>
+      <table>
+        <tr><th>Ordnung</th><th>Resultat</th></tr>
+        <tr><td><b>1. Ordnung</b></td><td>Cramér–Rao: Varianz ≥ 1/Fisher‑Info. „Effiziente“ Schätzer erreichen das. <span style="color:var(--model)">✓ gelöst</span></td></tr>
+        <tr><td><b>2. Ordnung</b></td><td>Es gibt <em>viele</em> effiziente Schätzer. Welcher ist der beste? <span style="color:var(--warn)">✗ offen</span></td></tr>
+      </table>
+      <p style="font-size:14px">Efron (1975) löste dies für <b>einen</b> Parameter mit seiner „statistischen Krümmung“.
+      Amari löst es für <b>beliebig viele</b> Parameter — und erklärt dabei, <em>warum</em> Krümmung die richtige Sprache ist.</p>
+    </div>
+  </div>
+
+  <h3>Die Antwort in einer Formel</h3>
+  <div class="eq">
+    <math display="block"><mrow>
+      <mi>Δ</mi><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub>
+      <mo>=</mo>
+      <munder><munder><mrow><msubsup><mi>H</mi><mrow><mi>a</mi><mi>c</mi><mi>κ</mi></mrow><mi>e</mi></msubsup><msubsup><mi>H</mi><mrow><mi>b</mi><mi>d</mi><mi>λ</mi></mrow><mi>e</mi></msubsup><msup><mi>g</mi><mrow><mi>κ</mi><mi>λ</mi></mrow></msup><msup><mi>g</mi><mrow><mi>c</mi><mi>d</mi></mrow></msup></mrow><mo>⏟</mo></munder><mtext>Modellkrümmung (exp.)</mtext></munder>
+      <mo>+</mo>
+      <munder><munder><mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow><mi>m</mi></msubsup><msubsup><mi>H</mi><mrow><mi>μ</mi><mi>ν</mi><mi>b</mi></mrow><mi>m</mi></msubsup><msup><mi>g</mi><mrow><mi>κ</mi><mi>μ</mi></mrow></msup><msup><mi>g</mi><mrow><mi>λ</mi><mi>ν</mi></mrow></msup></mrow><mo>⏟</mo></munder><mtext>Schätzerkrümmung (mix.)</mtext></munder>
+    </mrow></math>
+    <div class="eqlabel">GLEICHUNG (5.21) — das Herzstück des Papers</div>
+  </div>
+
+  <div class="note key"><b>In Worten:</b> Der Informationsverlust zerfällt in genau <em>zwei nicht-negative Teile</em>.
+  Der erste hängt nur vom <strong>Modell</strong> ab (wie krumm ist die Fläche?) — den kannst du nicht wegzaubern.
+  Der zweite hängt nur vom <strong>Schätzverfahren</strong> ab — und er wird <strong>exakt null</strong> für die Maximum-Likelihood-Schätzung.
+  Damit ist bewiesen: <span class="hl">ML ist der Schätzer mit dem geringsten Informationsverlust zweiter Ordnung.</span></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Vorschau: der ganze Weg in einem Bild</h3>
+    <p style="margin-top:0">Klicke auf die Stationen — jede wird später ein eigener interaktiver Abschnitt.</p>
+    <canvas id="roadCv" height="330"></canvas>
+    <div id="roadInfo" class="readout">Klicke eine Station an.</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 1. MANNIGFALTIGKEIT -->
+<!-- ============================================================= -->
+<section id="mf">
+  <span class="secnum">TEIL 1 — VORWISSEN</span>
+  <h2>Ein Modell ist ein Raum von Verteilungen</h2>
+  <p class="lead" style="margin-left:0">Erste Idee: Jede einzelne Wahrscheinlichkeitsverteilung ist ein <em>Punkt</em>.
+  Eine Familie von Verteilungen ist eine <em>Fläche</em> aus solchen Punkten.</p>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Links: die Verteilung. Rechts: ihr Punkt.</h4>
+      <canvas id="mfCv" height="320"></canvas>
+      <div class="legend">
+        <span><i class="ln" style="background:var(--model)"></i>Dichte p(x;μ,σ)</span>
+        <span><i class="dot" style="background:var(--data)"></i>Punkt im Parameterraum</span>
+        <span><i class="ln" style="background:var(--accent)"></i>Spur</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Steuerung</h4>
+      <div class="ctl"><label>Mittelwert <math><mi>μ</mi></math><span class="val" id="mfMuV">0.00</span></label>
+        <input type="range" id="mfMu" min="-2.5" max="2.5" step="0.01" value="0"></div>
+      <div class="ctl"><label>Streuung <math><mi>σ</mi></math><span class="val" id="mfSgV">1.00</span></label>
+        <input type="range" id="mfSg" min="0.3" max="2.5" step="0.01" value="1"></div>
+      <div class="btnrow">
+        <button id="mfTrail" class="on sm">Spur an</button>
+        <button id="mfClear" class="sm">Spur löschen</button>
+        <button id="mfTour" class="sm">Rundreise</button>
+      </div>
+      <div class="readout">
+        <span class="k">Verteilung:</span> <b>N(<span id="mfRo1">0.00</span>, <span id="mfRo2">1.00</span>²)</b><br>
+        <span class="k">Koordinaten des Punktes:</span> <b>(<span id="mfRo3">0.00</span>, <span id="mfRo4">1.00</span>)</b><br>
+        <span class="k">Dimension der Fläche:</span> <b>2</b>
+      </div>
+      <div class="note">Das ist die ganze Idee einer <b>Mannigfaltigkeit</b> (engl. <i>manifold</i>):
+      eine glatte Fläche, deren Punkte man mit Zahlen (<b>Koordinaten</b>) durchnummerieren kann.
+      Amari nennt sie <math><msup><mi>S</mi><mi>n</mi></msup></math>, die Koordinaten <math><mi>θ</mi></math>.</div>
+    </div>
+  </div>
+
+  <h3>Was ist ein Tangentialvektor?</h3>
+  <div class="grid-s rev">
+    <div class="card">
+      <p style="margin-top:0">Wenn du einen Parameter ein winziges Stück änderst, ändert sich die Dichtefunktion.
+      Amaris Trick (§2.1): Er identifiziert die <b>Richtung</b> <math><msub><mi>e</mi><mi>i</mi></msub></math>
+      im Parameterraum mit der <b>Funktion</b></p>
+      <div class="eq"><math display="block"><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mfrac><mo>∂</mo><mrow><mo>∂</mo><msup><mi>θ</mi><mi>i</mi></msup></mrow></mfrac><mi>log</mi><mspace width="0.2em"/><mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>θ</mi><mo>)</mo></math>
+      <div class="eqlabel">Richtung = Score-Funktion</div></div>
+      <p>Ein Tangentialvektor ist also eine <em>Funktion von x</em>. Rechts siehst du beide Scores
+      für die Normalverteilung. Sie haben immer Erwartungswert 0 — das ist Gleichung (2.15).</p>
+      <div class="readout"><span class="k">E[∂<sub>μ</sub>ℓ] =</span> <b id="tgE1">0.000</b>
+      &nbsp;·&nbsp; <span class="k">E[∂<sub>σ</sub>ℓ] =</span> <b id="tgE2">0.000</b></div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Die zwei Score-Funktionen</h4>
+      <canvas id="tgCv" height="300"></canvas>
+      <div class="ctl"><label>σ<span class="val" id="tgSgV">1.00</span></label>
+        <input type="range" id="tgSg" min="0.4" max="2.2" step="0.01" value="1"></div>
+      <div class="legend">
+        <span><i class="ln" style="background:var(--exp)"></i>∂ℓ/∂μ = (x−μ)/σ²</span>
+        <span><i class="ln" style="background:var(--mix)"></i>∂ℓ/∂σ = ((x−μ)²−σ²)/σ³</span>
+        <span><i class="ln" style="background:#555"></i>p(x)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 2. FISHER-METRIK -->
+<!-- ============================================================= -->
+<section id="fisher">
+  <span class="secnum">TEIL 2 — VORWISSEN</span>
+  <h2>Die Fisher-Metrik: wie man Abstände zwischen Verteilungen misst</h2>
+  <p class="lead" style="margin-left:0">Eine <em>Metrik</em> sagt, wie lang ein kleiner Schritt ist.
+  Amaris Definition 1: Das Skalarprodukt zweier Richtungen ist der Erwartungswert ihres Produkts.</p>
+
+  <div class="eq">
+    <math display="block"><msub><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo>
+    <msub><mi>E</mi><mi>θ</mi></msub><mo>[</mo><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi><mo>·</mo><msub><mi>∂</mi><mi>j</mi></msub><mi>ℓ</mi><mo>]</mo>
+    <mspace width="2em"/><mi>d</mi><msup><mi>s</mi><mn>2</mn></msup><mo>=</mo><msub><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>d</mi><msup><mi>θ</mi><mi>i</mi></msup><mi>d</mi><msup><mi>θ</mi><mi>j</mi></msup></math>
+    <div class="eqlabel">(2.4) und (2.5) — das ist exakt die Fisher-Informationsmatrix</div>
+  </div>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Gleich große Schritte sind nicht gleich weit</h4>
+      <canvas id="fiCv" height="360"></canvas>
+      <p style="font-size:13px;margin-bottom:0">Jede <b>Ellipse</b> ist eine „Einheitskugel“ der Fisher-Metrik:
+      alle Verteilungen auf ihrem Rand sind von der Mitte <em>gleich gut unterscheidbar</em>.
+      Oben (großes σ) sind sie riesig: dort ändert ein Schritt in μ kaum etwas.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Warum das die richtige Metrik ist</h4>
+      <div class="ctl"><label>Vergrößerung der Ellipsen<span class="val" id="fiScV">1.0</span></label>
+        <input type="range" id="fiSc" min="0.3" max="3" step="0.05" value="1"></div>
+      <div class="chk"><input type="checkbox" id="fiGeo" checked><label for="fiGeo">Geodäte (kürzester Weg) zeigen</label></div>
+      <div class="chk"><input type="checkbox" id="fiEuc" checked><label for="fiEuc">Gerade Linie zum Vergleich</label></div>
+      <p style="font-size:13.5px">Für die Normalverteilung ist
+      <math><msub><mi>g</mi><mrow><mi>μ</mi><mi>μ</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>/</mo><msup><mi>σ</mi><mn>2</mn></msup></math>,
+      <math><msub><mi>g</mi><mrow><mi>σ</mi><mi>σ</mi></mrow></msub><mo>=</mo><mn>2</mn><mo>/</mo><msup><mi>σ</mi><mn>2</mn></msup></math>.
+      Das ist die hyperbolische Ebene!</p>
+      <div class="note"><b>Cramér–Rao:</b> Kein erwartungstreuer Schätzer kann eine kleinere Kovarianz
+      als <math><msup><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msup></math> haben.
+      Je „größer“ die Metrik, desto genauer kann man schätzen.</div>
+      <div class="readout">
+        <span class="k">Fisher-Metrik bei σ = <b id="fiSgRead">1.0</b>:</span><br>
+        g<sub>μμ</sub> = <b id="fiG11">1.000</b> &nbsp; g<sub>σσ</sub> = <b id="fiG22">2.000</b><br>
+        <span class="k">Skalarkrümmung κ =</span> <b>−1/2</b> <span class="k">(konstant negativ!)</span>
+      </div>
+      <p style="font-size:12.6px;color:var(--txt-faint)">Genau dieses Resultat erwähnt Amari in Beispiel 3.1 —
+      er selbst hatte es 1959 bemerkt.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">3D: Die Normalverteilungs-Familie als gekrümmte Fläche</h4>
+    <p style="margin-top:0;font-size:13.6px">Das Modell der Normalverteilungen, eingebettet so, dass die
+    gezeichneten Abstände <em>echten</em> Fisher-Abständen entsprechen (Pseudosphäre / hyperbolische Geometrie).
+    Drehe sie mit der Maus.</p>
+    <div id="hypPlot" class="plot" style="height:430px"></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 3. EXPONENTIALFAMILIE -->
+<!-- ============================================================= -->
+<section id="expfam">
+  <span class="secnum">TEIL 3 — DAS FUNDAMENT</span>
+  <h2>Die Exponentialfamilie: der flache Raum</h2>
+  <p class="lead" style="margin-left:0">Amaris ganze Theorie steht auf einer Beobachtung:
+  Exponentialfamilien sind in der richtigen Koordinatenwahl <em>völlig flach</em> — wie ein Blatt Papier.</p>
+
+  <div class="eq">
+    <math display="block"><mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>θ</mi><mo>)</mo><mo>=</mo>
+    <mi>exp</mi><mo>{</mo><mi>c</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>+</mo><msup><mi>θ</mi><mi>i</mi></msup><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>ψ</mi><mo>(</mo><mi>θ</mi><mo>)</mo><mo>}</mo></math>
+    <div class="eqlabel">(2.20) — θ heißt <b>natürlicher Parameter</b>, ψ die Kumulantenfunktion</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="on" data-ef="0">Was ist eine Exponentialfamilie?</button>
+      <button data-ef="1">ψ(θ) erzeugt alles</button>
+      <button data-ef="2">Zwei Koordinatensysteme: θ und η</button>
+    </div>
+
+    <div class="tabpane on" data-efp="0">
+      <div class="grid-s">
+        <div>
+          <canvas id="efCv" height="310"></canvas>
+          <div class="legend">
+            <span><i class="ln" style="background:var(--model)"></i>Dichte</span>
+            <span><i class="ln" style="background:var(--exp)"></i>log-Dichte (linear in θ!)</span>
+          </div>
+        </div>
+        <div>
+          <div class="btnrow">
+            <button class="on sm" data-effam="normal">Normal (σ fest)</button>
+            <button class="sm" data-effam="poisson">Poisson</button>
+            <button class="sm" data-effam="bernoulli">Bernoulli</button>
+            <button class="sm" data-effam="exp">Exponential</button>
+          </div>
+          <div class="ctl"><label>natürlicher Parameter <math><mi>θ</mi></math><span class="val" id="efThV">0.00</span></label>
+            <input type="range" id="efTh" min="-3" max="3" step="0.01" value="0"></div>
+          <div class="readout" id="efRead"></div>
+          <div class="note exp">Entscheidend: <math><mi>log</mi><mspace width=".2em"/><mi>p</mi></math> ist eine
+          <b>lineare</b> Funktion von θ (plus einem Term, der nicht von x abhängt).
+          Darum ist die Familie „geradlinig“ in θ.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabpane" data-efp="1">
+      <div class="grid-s">
+        <div>
+          <div id="psiPlot" class="plot" style="height:360px"></div>
+        </div>
+        <div>
+          <p style="margin-top:0">Die Funktion ψ ist <b>konvex</b>. Ihre Ableitungen liefern alles:</p>
+          <div class="eq" style="text-align:left;padding:11px">
+            <math display="block"><msub><mi>∂</mi><mi>i</mi></msub><mi>ψ</mi><mo>=</mo><mi>E</mi><mo>[</mo><msub><mi>x</mi><mi>i</mi></msub><mo>]</mo><mo>=</mo><msub><mi>η</mi><mi>i</mi></msub></math>
+            <math display="block"><msub><mi>∂</mi><mi>i</mi></msub><msub><mi>∂</mi><mi>j</mi></msub><mi>ψ</mi><mo>=</mo><msub><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></math>
+            <math display="block"><msub><mi>∂</mi><mi>i</mi></msub><msub><mi>∂</mi><mi>j</mi></msub><msub><mi>∂</mi><mi>k</mi></msub><mi>ψ</mi><mo>=</mo><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub></math>
+            <div class="eqlabel">(3.1), (3.2), (3.3)</div>
+          </div>
+          <div class="ctl"><label>θ<span class="val" id="psiThV">0.50</span></label>
+            <input type="range" id="psiTh" min="-2.2" max="2.2" step="0.01" value="0.5"></div>
+          <div class="readout">
+            <span class="k">ψ(θ) =</span> <b id="psiV">—</b><br>
+            <span class="k">ψ′(θ) = η = E[x] =</span> <b id="psiD1">—</b><br>
+            <span class="k">ψ″(θ) = g = Var[x] =</span> <b id="psiD2">—</b><br>
+            <span class="k">ψ‴(θ) = T =</span> <b id="psiD3">—</b>
+          </div>
+          <div class="note key"><b>Das ist die Brücke:</b> Der Tensor <math><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub></math>
+          (dritte Ableitung = Schiefe) ist genau das, was später die α-Zusammenhänge voneinander unterscheidet.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabpane" data-efp="2">
+      <h4 style="margin-top:0">Legendre-Transformation: θ ↔ η</h4>
+      <p>Jede Verteilung hat <b>zwei</b> gleichberechtigte Adressen:
+      den natürlichen Parameter <math><msup><mi>θ</mi><mi>i</mi></msup></math>
+      und den Erwartungsparameter <math><msub><mi>η</mi><mi>i</mi></msub><mo>=</mo><mi>E</mi><mo>[</mo><msub><mi>x</mi><mi>i</mi></msub><mo>]</mo></math>.
+      Verbunden sind sie durch die Legendre-Transformation (3.7)–(3.10).</p>
+      <div class="grid-s">
+        <div><canvas id="legCv" height="340"></canvas></div>
+        <div>
+          <div class="ctl"><label>θ<span class="val" id="legThV">0.80</span></label>
+            <input type="range" id="legTh" min="-2" max="2" step="0.01" value="0.8"></div>
+          <div class="eq" style="padding:10px">
+            <math display="block"><mi>ψ</mi><mo>(</mo><mi>θ</mi><mo>)</mo><mo>+</mo><mi>φ</mi><mo>(</mo><mi>η</mi><mo>)</mo><mo>=</mo><msup><mi>θ</mi><mi>i</mi></msup><msub><mi>η</mi><mi>i</mi></msub></math>
+            <div class="eqlabel">(3.10) — die Legendre-Identität</div>
+          </div>
+          <div class="readout">
+            <span class="k">θ =</span> <b id="legA">0.80</b> &nbsp; <span class="k">η = ψ′(θ) =</span> <b id="legB">—</b><br>
+            <span class="k">ψ(θ) =</span> <b id="legC">—</b> &nbsp; <span class="k">φ(η) =</span> <b id="legD">—</b><br>
+            <span class="k">Probe θη − ψ =</span> <b id="legE">—</b>
+          </div>
+          <p style="font-size:13.4px">Die Tangente an ψ im Punkt θ hat Steigung <b>η</b> und
+          Achsenabschnitt <b>−φ(η)</b>. Beide Funktionen kodieren dieselbe Information — nur „von der anderen Seite“.</p>
+          <div class="note mix">Diese Dualität ist <em>der</em> rote Faden des Papers.
+          Sie wird gleich zur Dualität zwischen <span class="pill e">exponentiell</span> und <span class="pill m">Mischung</span>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 4. AFFINER ZUSAMMENHANG -->
+<!-- ============================================================= -->
+<section id="conn">
+  <span class="secnum">TEIL 4 — VORWISSEN</span>
+  <h2>Der affine Zusammenhang: was heißt „geradeaus“?</h2>
+  <p class="lead" style="margin-left:0">Eine Metrik sagt, wie <em>lang</em> etwas ist. Sie sagt aber nicht,
+  wie man einen Pfeil von einem Punkt zum Nachbarpunkt <em>transportiert</em>. Dafür braucht man etwas Neues:
+  einen <b>Zusammenhang</b> <math><msubsup><mi>Γ</mi><mrow><mi>j</mi><mi>i</mi></mrow><mi>k</mi></msubsup></math>.</p>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Paralleltransport auf einer Kugel</h4>
+      <canvas id="ptCv" height="380"></canvas>
+      <p style="font-size:13px;margin-bottom:0">Schiebe den Pfeil entlang des Dreiecks, ohne ihn jemals „aktiv zu drehen“.
+      Zurück am Start zeigt er in eine <em>andere</em> Richtung. Genau das ist Krümmung.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Steuerung</h4>
+      <div class="ctl"><label>Position auf dem Weg<span class="val" id="ptTV">0%</span></label>
+        <input type="range" id="ptT" min="0" max="1" step="0.002" value="0"></div>
+      <div class="btnrow">
+        <button id="ptPlay" class="sm">▶ Abspielen</button>
+        <button id="ptReset" class="sm">Zurücksetzen</button>
+      </div>
+      <div class="ctl"><label>Größe des Dreiecks<span class="val" id="ptSzV">90°</span></label>
+        <input type="range" id="ptSz" min="15" max="90" step="1" value="90"></div>
+      <div class="readout">
+        <span class="k">Winkelfehler nach Rundreise:</span><br>
+        <b id="ptHol">0.0°</b> <span class="k">(= Holonomie = Krümmung × Fläche)</span>
+      </div>
+      <div class="note"><b>Formel (2.7):</b>
+      <math><mi>δ</mi><msub><mi>e</mi><mi>i</mi></msub><mo>=</mo><mi>d</mi><msup><mi>θ</mi><mi>j</mi></msup><msubsup><mi>Γ</mi><mrow><mi>j</mi><mi>i</mi></mrow><mi>k</mi></msubsup><msub><mi>e</mi><mi>k</mi></msub></math>
+      — „wenn ich den Basisvektor <math><msub><mi>e</mi><mi>i</mi></msub></math> um
+      <math><mi>d</mi><msup><mi>θ</mi><mi>j</mi></msup></math> verschiebe, kippt er um Γ.“</div>
+      <div class="note key" style="margin-top:12px"><b>Die Pointe:</b> Es gibt <em>keine</em> von Natur aus richtige
+      Wahl von Γ. Man muss sich entscheiden. Und in der Statistik — das ist Amaris Beitrag —
+      gibt es eine <strong>ganze Familie</strong> sinnvoller Wahlen.</div>
+    </div>
+  </div>
+
+  <h3>Geodäten: die „Geraden“ eines Zusammenhangs</h3>
+  <div class="card">
+    <p style="margin-top:0">Eine <b>Geodäte</b> ist ein Weg, dessen Tangentenvektor sich selbst parallel transportiert —
+    Gleichung (2.11):
+    <math><mfrac><mrow><msup><mi>d</mi><mn>2</mn></msup><msup><mi>θ</mi><mi>i</mi></msup></mrow><mrow><mi>d</mi><msup><mi>t</mi><mn>2</mn></msup></mrow></mfrac><mo>+</mo><msubsup><mi>Γ</mi><mrow><mi>j</mi><mi>k</mi></mrow><mi>i</mi></msubsup><msup><mover><mi>θ</mi><mo>˙</mo></mover><mi>j</mi></msup><msup><mover><mi>θ</mi><mo>˙</mo></mover><mi>k</mi></msup><mo>=</mo><mn>0</mn></math>.
+    Wenn Γ ≡ 0 ist, ist das einfach
+    <math><msup><mi>θ</mi><mi>i</mi></msup><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><msup><mi>a</mi><mi>i</mi></msup><mi>t</mi><mo>+</mo><msup><mi>b</mi><mi>i</mi></msup></math>
+    — eine echte Gerade. Das ist der Schlüssel zum nächsten Abschnitt.</p>
+    <div class="grid2">
+      <div>
+        <canvas id="geoCv" height="320"></canvas>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Dieselben zwei Verteilungen, drei Wege</h4>
+        <p style="font-size:13.6px">Verbinde zwei Normalverteilungen. Je nach gewähltem Zusammenhang
+        bekommst du einen <em>anderen</em> „kürzesten Weg“.</p>
+        <div class="btnrow">
+          <button class="on sm" data-geo="1">α = +1 (exponentiell)</button>
+          <button class="sm" data-geo="0">α = 0 (Riemann)</button>
+          <button class="sm" data-geo="-1">α = −1 (Mischung)</button>
+          <button class="sm" data-geo="all">alle drei</button>
+        </div>
+        <div class="ctl"><label>Position entlang des Weges<span class="val" id="geoTV">0.50</span></label>
+          <input type="range" id="geoT" min="0" max="1" step="0.005" value="0.5"></div>
+        <div class="readout" id="geoRead"></div>
+        <div class="legend">
+          <span><i class="ln" style="background:var(--exp)"></i>exponentiell: log p mischen</span>
+          <span><i class="ln" style="background:var(--riem)"></i>Riemann: kürzester Fisher-Weg</span>
+          <span><i class="ln" style="background:var(--mix)"></i>Mischung: p mischen</span>
+        </div>
+      </div>
+    </div>
+    <div class="note exp"><b>α = +1:</b> <math><mi>log</mi><mi>p</mi><mo>=</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>t</mi><mo>)</mo><mi>log</mi><msub><mi>p</mi><mn>1</mn></msub><mo>+</mo><mi>t</mi><mspace width=".2em"/><mi>log</mi><msub><mi>p</mi><mn>2</mn></msub></math> + Normierung. Die Zwischenverteilungen bleiben glockenförmig.</div>
+    <div class="note mix"><b>α = −1:</b> <math><mi>p</mi><mo>=</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>t</mi><mo>)</mo><msub><mi>p</mi><mn>1</mn></msub><mo>+</mo><mi>t</mi><mspace width=".2em"/><msub><mi>p</mi><mn>2</mn></msub></math>. Die Zwischenverteilungen werden <em>zweigipflig</em> — eine echte Mischung.</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 5. ALPHA-FAMILIE -->
+<!-- ============================================================= -->
+<section id="alpha">
+  <span class="secnum">TEIL 5 — AMARIS KERNIDEE</span>
+  <h2>Die α-Familie von Zusammenhängen</h2>
+  <p class="lead" style="margin-left:0">Statt <em>einen</em> Zusammenhang zu wählen, definiert Amari in
+  Definition 2 eine <strong>ganze Gerade</strong> davon, parametrisiert durch eine einzige Zahl α.</p>
+
+  <div class="eq">
+    <math display="block"><mover><msub><mi>Γ</mi><mrow><mi>j</mi><mi>i</mi><mi>m</mi></mrow></msub><mi>α</mi></mover><mo>=</mo>
+    <msub><mi>E</mi><mi>θ</mi></msub><mo>[</mo><mo>(</mo><msub><mi>∂</mi><mi>j</mi></msub><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi><mo>)</mo><mo>(</mo><msub><mi>∂</mi><mi>m</mi></msub><mi>ℓ</mi><mo>)</mo><mo>]</mo>
+    <mo>+</mo><mfrac><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow><mn>2</mn></mfrac>
+    <msub><mi>E</mi><mi>θ</mi></msub><mo>[</mo><msub><mi>∂</mi><mi>j</mi></msub><mi>ℓ</mi><mo>·</mo><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi><mo>·</mo><msub><mi>∂</mi><mi>m</mi></msub><mi>ℓ</mi><mo>]</mo></math>
+    <div class="eqlabel">(2.19) — die α-Verbindung</div>
+  </div>
+  <div class="eq">
+    <math display="block"><mover><msub><mi>Γ</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub><mi>α</mi></mover><mo>=</mo><mo>[</mo><mi>i</mi><mi>j</mi><mo>;</mo><mi>k</mi><mo>]</mo><mo>−</mo><mfrac><mi>α</mi><mn>2</mn></mfrac><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub>
+    <mspace width="2.4em"/>
+    <msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub><mo>=</mo><msub><mi>E</mi><mi>θ</mi></msub><mo>[</mo><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi><mspace width=".15em"/><msub><mi>∂</mi><mi>j</mi></msub><mi>ℓ</mi><mspace width=".15em"/><msub><mi>∂</mi><mi>k</mi></msub><mi>ℓ</mi><mo>]</mo></math>
+    <div class="eqlabel">(2.26) und (2.24) — Christoffel-Symbol minus (α/2)·Schiefe-Tensor</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Der α-Regler</h3>
+    <p style="margin-top:0">Hier ist die gesamte Familie auf einmal. Schiebe α und sieh, wie sich
+    Geodäten, Krümmung und Verhalten ändern.</p>
+    <div class="ctl"><label>α<span class="val" id="alV">1.00</span></label>
+      <input type="range" id="al" min="-2" max="2" step="0.01" value="1"></div>
+    <div class="btnrow" style="justify-content:center">
+      <button class="sm" data-alset="-1">α = −1 Mischung</button>
+      <button class="sm" data-alset="-0.333">α = −1/3</button>
+      <button class="sm" data-alset="0">α = 0 Riemann</button>
+      <button class="sm" data-alset="0.333">α = 1/3</button>
+      <button class="sm" data-alset="1">α = +1 exponentiell</button>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div>
+        <h4 style="margin-top:0">α-Geodäte zwischen zwei Verteilungen</h4>
+        <canvas id="alCv" height="300"></canvas>
+        <p style="font-size:12.5px;color:var(--txt-faint);margin-bottom:0">
+        Die α-Geodäte interpoliert <math><msup><mi>p</mi><mrow><mo>(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo>)</mo><mo>/</mo><mn>2</mn></mrow></msup></math> linear
+        (für α=−1: p selbst; für α=+1: log p).</p>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Eigenschaften bei diesem α</h4>
+        <div class="readout" id="alRead"></div>
+        <canvas id="alBar" height="190"></canvas>
+        <p style="font-size:12.5px;color:var(--txt-faint)">Krümmungstensor (3.5):
+        <math><mover><msub><mi>R</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi><mi>l</mi></mrow></msub><mi>α</mi></mover><mo>∝</mo><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>α</mi><mn>2</mn></msup><mo>)</mo></math>
+        — er verschwindet <em>genau</em> bei α = ±1.</p>
+      </div>
+    </div>
+    <div class="note key"><b>Satz (aus §3.1):</b> Für α = ±1 ist
+    <math><mover><mi>R</mi><mi>α</mi></mover><mo>=</mo><mn>0</mn></math>.
+    Die Exponentialfamilie ist also <strong>flach</strong> — sowohl exponentiell (α=+1, in θ‑Koordinaten)
+    als auch gemischt (α=−1, in η‑Koordinaten). Das ist die „Doppelflachheit“, auf der alles aufbaut.</div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Die α-Divergenzen (Anhang A2)</h4>
+    <p style="margin-top:0">Amari zeigt im Anhang: jedes α gehört zu einer <b>Quasi-Distanz</b>
+    <math><msub><mi>D</mi><mi>α</mi></msub><mo>(</mo><mi>p</mi><mo>,</mo><mi>q</mi><mo>)</mo></math>, definiert über (A.10).
+    Und es gilt die wunderschöne Dualität (A.12):
+    <math><msub><mi>D</mi><mi>α</mi></msub><mo>(</mo><mi>p</mi><mo>,</mo><mi>q</mi><mo>)</mo><mo>=</mo><msub><mi>D</mi><mrow><mo>−</mo><mi>α</mi></mrow></msub><mo>(</mo><mi>q</mi><mo>,</mo><mi>p</mi><mo>)</mo></math>.</p>
+    <div class="grid-s">
+      <div><div id="divPlot" class="plot" style="height:330px"></div></div>
+      <div>
+        <div class="ctl"><label>α für die Divergenz<span class="val" id="dvAV">-1.00</span></label>
+          <input type="range" id="dvA" min="-2" max="2" step="0.02" value="-1"></div>
+        <div class="ctl"><label>Abstand der zwei Normalverteilungen Δμ<span class="val" id="dvDV">1.00</span></label>
+          <input type="range" id="dvD" min="0" max="3" step="0.02" value="1"></div>
+        <div class="readout" id="dvRead"></div>
+        <table>
+          <tr><th>α</th><th>Divergenz</th></tr>
+          <tr><td><span class="pill m">−1</span></td><td><b>Kullback-Leibler</b> (×2)</td></tr>
+          <tr><td><span class="pill r">0</span></td><td><b>Hellinger</b> (×4)</td></tr>
+          <tr><td><span class="pill e">+1</span></td><td><b>KL umgekehrt</b></td></tr>
+          <tr><td>sonst</td><td>Chernoff‑Typ</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 6. DUALITÄT -->
+<!-- ============================================================= -->
+<section id="dual">
+  <span class="secnum">TEIL 6 — DAS GERÜST</span>
+  <h2>Die große Dualität</h2>
+  <p class="lead" style="margin-left:0">Jetzt fügt sich alles zusammen. Amari zeigt: es gibt nicht <em>eine</em>,
+  sondern <strong>drei ineinandergreifende Dualitäten</strong> — und sie sind dieselbe Dualität.</p>
+
+  <div class="card">
+    <canvas id="dualCv" height="420"></canvas>
+    <div class="btnrow" style="justify-content:center">
+      <button class="on sm" data-du="0">1 · Koordinaten θ ↔ η</button>
+      <button class="sm" data-du="1">2 · Zusammenhänge e ↔ m</button>
+      <button class="sm" data-du="2">3 · Krümmungen H ↔ L</button>
+      <button class="sm" data-du="3">4 · Divergenzen K(1:2) ↔ K(2:1)</button>
+    </div>
+    <div class="readout" id="dualRead"></div>
+  </div>
+
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="margin-top:0"><span class="pill e">SATZ 1</span></h4>
+      <p style="font-size:13.6px">Der <b>exponentielle</b> Zusammenhang verschwindet identisch in den
+      natürlichen Koordinaten θ. Der <b>Mischungs</b>-Zusammenhang verschwindet identisch in den
+      dualen Koordinaten η. Perfekte Spiegelung.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0"><span class="pill m">SATZ 2</span></h4>
+      <p style="font-size:13.6px">Die duale Kullback-Leibler-Divergenz erfüllt
+      <math><mover><mi>K</mi><mo>~</mo></mover><mo>(</mo><mn>1</mn><mo>:</mo><mn>2</mn><mo>)</mo><mo>=</mo><mi>K</mi><mo>(</mo><mn>2</mn><mo>:</mo><mn>1</mn><mo>)</mo></math>
+      (3.16). Die Richtung umzudrehen ist dasselbe wie α → −α.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0"><span class="pill r">SATZ 4</span></h4>
+      <p style="font-size:13.6px">Die beiden Arten, Krümmung zu messen — über Tangenten (H) und
+      über Normalen (L) — hängen zusammen:
+      <math><mover><mi>H</mi><mi>α</mi></mover><mo>=</mo><mover><mi>L</mi><mrow><mo>−</mo><mi>α</mi></mrow></mover></math> (4.12).</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Warum Zusammenhänge „nicht-metrisch“ sind</h4>
+    <p style="margin-top:0">Normalerweise bleibt die Länge eines Vektors beim Paralleltransport erhalten.
+    Bei den α-Zusammenhängen (α≠0) <em>nicht</em> — Gleichung (2.25):
+    <math><mover><msub><mi>∇</mi><mi>i</mi></msub><mi>α</mi></mover><msub><mi>g</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><mo>=</mo><mi>α</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub></math>.</p>
+    <div class="grid-s">
+      <div><canvas id="nmCv" height="280"></canvas></div>
+      <div>
+        <div class="ctl"><label>α<span class="val" id="nmAV">1.00</span></label>
+          <input type="range" id="nmA" min="-2" max="2" step="0.02" value="1"></div>
+        <div class="ctl"><label>Transportweg<span class="val" id="nmTV">0.0</span></label>
+          <input type="range" id="nmT" min="0" max="1" step="0.004" value="0"></div>
+        <div class="readout" id="nmRead"></div>
+        <p style="font-size:13.4px">Nur bei <b>α = 0</b> bleibt die Länge erhalten — darum heißt
+        <math><mover><mi>Γ</mi><mn>0</mn></mover></math> der <em>metrische</em> oder <em>Informations</em>-Zusammenhang
+        (Levi-Civita).</p>
+        <div class="note">Das klingt wie ein Defekt, ist aber der Kern des Tricks:
+        <strong>e</strong> und <strong>m</strong> zusammen erhalten das Skalarprodukt —
+        nur eben <em>gemeinsam</em>, nicht einzeln. Man nennt das heute „dually flat“.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 7. GEKRÜMMTE EXPONENTIALFAMILIE -->
+<!-- ============================================================= -->
+<section id="curved">
+  <span class="secnum">TEIL 7 — DAS OBJEKT DER UNTERSUCHUNG</span>
+  <h2>Gekrümmte Exponentialfamilien</h2>
+  <p class="lead" style="margin-left:0">Jetzt der Hauptdarsteller: ein Modell
+  <math><msup><mi>S</mi><mi>m</mi></msup></math> mit <b>m</b> Parametern, das als <em>Untermannigfaltigkeit</em>
+  in einer flachen Exponentialfamilie <math><msup><mi>S</mi><mi>n</mi></msup></math> liegt
+  (<math><mi>m</mi><mo>&lt;</mo><mi>n</mi></math>).</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Amaris Beispiel 4.1 — vollständig interaktiv</h3>
+    <p style="margin-top:0">Sei <math><mi>z</mi><mo>∼</mo><mi>N</mi><mo>(</mo><mn>1</mn
+<mo>,</mo><msup><mi>a</mi><mn>2</mn></msup><mo>)</mo></math> mit festem <math><mi>a</mi></math>,
+    und sei <math><mi>x</mi><mo>=</mo><mi>u</mi><mi>z</mi></math>. Dann ist
+    <math><mi>x</mi><mo>∼</mo><mi>N</mi><mo>(</mo><mi>u</mi><mo>,</mo><msup><mi>u</mi><mn>2</mn></msup><msup><mi>a</mi><mn>2</mn></msup><mo>)</mo></math>
+    — Mittelwert und Streuung sind <em>gekoppelt</em>. Nur <b>ein</b> Parameter für eine Familie,
+    die in der 2‑dimensionalen Normalverteilungs‑Familie lebt. Das ist <math><msup><mi>S</mi><mn>1</mn></msup><mo>⊂</mo><msup><mi>S</mi><mn>2</mn></msup></math>.</p>
+
+    <div class="grid-s">
+      <div>
+        <canvas id="ceCv" height="400"></canvas>
+        <div class="legend">
+          <span><i class="ln" style="background:var(--model)"></i>Modell S¹ (Parabel!)</span>
+          <span><i class="dot" style="background:var(--data)"></i>Datenpunkt η̂</span>
+          <span><i class="ln" style="background:var(--mix)"></i>A(u): ML-Hilfsraum</span>
+          <span><i class="ln" style="background:var(--exp)"></i>Ã(u): DML-Hilfsraum</span>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Steuerung</h4>
+        <div class="ctl"><label>Kopplungsstärke <math><mi>a</mi></math><span class="val" id="ceAV">0.60</span></label>
+          <input type="range" id="ceA" min="0.2" max="1.4" step="0.01" value="0.6"></div>
+        <div class="ctl"><label>wahres <math><mi>u</mi></math><span class="val" id="ceUV">1.00</span></label>
+          <input type="range" id="ceU" min="0.4" max="2.2" step="0.01" value="1"></div>
+        <div class="btnrow">
+          <button class="on sm" data-cev="eta">η-Koordinaten (dual)</button>
+          <button class="sm" data-cev="theta">θ-Koordinaten (natürlich)</button>
+        </div>
+        <div class="chk"><input type="checkbox" id="ceShowA" checked><label for="ceShowA">A(u) — Mischungs-Geodäten (ML)</label></div>
+        <div class="chk"><input type="checkbox" id="ceShowAT"><label for="ceShowAT">Ã(u) — exp. Geodäten (DML)</label></div>
+        <div class="chk"><input type="checkbox" id="ceShowTan" checked><label for="ceShowTan">Tangente B<sub>1</sub></label></div>
+        <div class="chk"><input type="checkbox" id="ceShowNorm"><label for="ceShowNorm">Normale</label></div>
+        <div class="readout" id="ceRead"></div>
+        <div class="note key" style="margin-top:10px">Klicke irgendwo in die Grafik, um einen Datenpunkt zu setzen —
+        die Schätzung wird sofort ausgerechnet.</div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:14px">
+      <div class="stat"><div class="n" id="ceSt1">—</div><div class="l">g₁₁ (Fisher-Info)</div></div>
+      <div class="stat"><div class="n" id="ceSt2">—</div><div class="l">exp. Krümmung H<sup>e</sup></div></div>
+      <div class="stat"><div class="n" id="ceSt3">—</div><div class="l">Info-Verlust Δg₁₁</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">Warum ist das Modell „gekrümmt“?</h4>
+      <p style="margin-top:0;font-size:14px">In den natürlichen Koordinaten θ der umgebenden
+      Exponentialfamilie wäre eine <em>Unterfamilie, die selbst wieder exponentiell ist</em>,
+      eine <strong>gerade Linie</strong>. Unser Modell ist aber eine <strong>Parabel</strong>:</p>
+      <div class="eq" style="padding:10px">
+        <math display="block"><msup><mi>θ</mi><mn>2</mn></msup><mo>=</mo><mo>−</mo><mfrac><msup><mi>a</mi><mn>2</mn></msup><mn>2</mn></mfrac><msup><mrow><mo>(</mo><msup><mi>θ</mi><mn>1</mn></msup><mo>)</mo></mrow><mn>2</mn></msup></math>
+      </div>
+      <p style="font-size:14px">Genau diese Abweichung von der Geraden ist die
+      <b>exponentielle Krümmung</b> <math><msup><mi>H</mi><mi>e</mi></msup></math> — und sie ist
+      der unvermeidbare Teil des Informationsverlusts.</p>
+      <div class="note exp">Grenzfall <math><mi>a</mi><mo>→</mo><mn>0</mn></math>: Die Parabel wird zur Geraden,
+      die Krümmung verschwindet, es gibt keinen Verlust erster Art. Probiere es mit dem Regler!</div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Satz 3 — wie sich Metrik und Zusammenhang vererben</h4>
+      <div class="eq" style="padding:11px">
+        <math display="block"><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>=</mo><msubsup><mi>B</mi><mi>a</mi><mi>i</mi></msubsup><msubsup><mi>B</mi><mi>b</mi><mi>j</mi></msubsup><msub><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></math>
+        <div class="eqlabel">(4.5) — die Metrik wird einfach „durchgezogen“</div>
+      </div>
+      <div class="eq" style="padding:11px">
+        <math display="block"><msub><mi>Γ</mi><mrow><mi>a</mi><mi>b</mi><mi>c</mi></mrow></msub><mo>=</mo><mo>(</mo><msub><mi>∂</mi><mi>a</mi></msub><msubsup><mi>B</mi><mi>b</mi><mi>k</mi></msubsup><mo>)</mo><msubsup><mi>B</mi><mi>c</mi><mi>j</mi></msubsup><msub><mi>g</mi><mrow><mi>j</mi><mi>k</mi></mrow></msub><mo>+</mo><msubsup><mi>B</mi><mi>a</mi><mi>i</mi></msubsup><msubsup><mi>B</mi><mi>b</mi><mi>j</mi></msubsup><msubsup><mi>B</mi><mi>c</mi><mi>k</mi></msubsup><msub><mi>Γ</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub></math>
+        <div class="eqlabel">(4.6) — mit Zusatzterm, weil B sich ändert</div>
+      </div>
+      <p style="font-size:14px;margin-bottom:0">Der <b>Zusatzterm</b> ist genau das, was man
+      „Krümmung“ nennt, wenn man ihn in die Normalrichtung projiziert:
+      <math><msubsup><mi>H</mi><mrow><mi>a</mi><mi>b</mi></mrow><mi>i</mi></msubsup><mo>=</mo><msub><mi>∂</mi><mi>a</mi></msub><msubsup><mi>B</mi><mi>b</mi><mi>i</mi></msubsup><mo>+</mo><msubsup><mi>Γ</mi><mrow><mi>j</mi><mi>k</mi></mrow><mi>i</mi></msubsup><msubsup><mi>B</mi><mi>a</mi><mi>j</mi></msubsup><msubsup><mi>B</mi><mi>b</mi><mi>k</mi></msubsup></math> (4.8).</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 8. KRÜMMUNG H und L -->
+<!-- ============================================================= -->
+<section id="curv">
+  <span class="secnum">TEIL 8 — ZWEI KRÜMMUNGEN</span>
+  <h2>H und L: Krümmung von innen und von außen</h2>
+  <p class="lead" style="margin-left:0">Man kann die Biegung einer Fläche auf zwei Arten messen:
+  wie sich die <em>Tangenten</em> drehen (<b>H</b>, Gl. 4.8) oder wie sich die <em>Normalen</em> drehen
+  (<b>L</b>, Gl. 4.9). In der gewöhnlichen Geometrie ist das dasselbe. Hier <strong>nicht</strong>.</p>
+
+  <div class="card">
+    <div class="grid-s">
+      <div>
+        <canvas id="hlCv" height="400"></canvas>
+      </div>
+      <div>
+        <div class="ctl"><label>α für die Krümmungsmessung<span class="val" id="hlAV">1.00</span></label>
+          <input type="range" id="hlA" min="-2" max="2" step="0.02" value="1"></div>
+        <div class="ctl"><label>Position auf dem Modell<span class="val" id="hlPV">0.50</span></label>
+          <input type="range" id="hlP" min="0.08" max="0.92" step="0.004" value="0.5"></div>
+        <div class="chk"><input type="checkbox" id="hlShowH" checked><label for="hlShowH">H<sup>α</sup>: Drehung der Tangente</label></div>
+        <div class="chk"><input type="checkbox" id="hlShowL" checked><label for="hlShowL">L<sup>−α</sup>: Drehung der Normalen</label></div>
+        <div class="readout" id="hlRead"></div>
+        <div class="note key"><b>Satz 4 (4.12):</b>
+        <math><msubsup><mi>H</mi><mrow><mi>a</mi><mi>b</mi></mrow><mi>α</mi></msubsup><mo>=</mo><msubsup><mi>L</mi><mrow><mi>a</mi><mi>b</mi></mrow><mrow><mo>−</mo><mi>α</mi></mrow></msubsup></math>
+        — die Tangenten-Krümmung bei α ist <em>exakt</em> die Normalen-Krümmung bei −α.
+        Die Dualität schlägt wieder zu.</div>
+        <p style="font-size:13.4px">Grund: Gl. (4.10)
+        <math><msub><mi>L</mi><mrow><mi>a</mi><mi>b</mi><mi>i</mi></mrow></msub><mo>=</mo><msub><mi>H</mi><mrow><mi>a</mi><mi>b</mi><mi>i</mi></mrow></msub><mo>+</mo><mi>α</mi><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub><msubsup><mi>B</mi><mi>a</mi><mi>j</mi></msubsup><msubsup><mi>B</mi><mi>b</mi><mi>k</mi></msubsup></math>.
+        Nur bei α = 0 sind sie gleich.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die beiden Krümmungen, die wirklich zählen</h3>
+  <div class="grid2">
+    <div class="card" style="border-color:rgba(255,122,89,.35)">
+      <h4 style="margin-top:0"><span class="pill e">H<sup>e</sup></span> &nbsp;Exponentielle Krümmung des <em>Modells</em></h4>
+      <p style="font-size:14px">Wie stark weicht <math><msup><mi>S</mi><mi>m</mi></msup></math>
+      von einer Geraden in θ ab? Das ist eine Eigenschaft des Modells, die der Statistiker
+      <strong>nicht beeinflussen kann</strong>.</p>
+      <div class="eq" style="padding:10px">
+        <math display="block"><msubsup><mi>H</mi><mrow><mi>a</mi><mi>c</mi><mi>κ</mi></mrow><mi>e</mi></msubsup><mo>=</mo><msubsup><mi>H</mi><mrow><mi>a</mi><mi>c</mi></mrow><mrow><mi>e</mi><mo>,</mo><mi>i</mi></mrow></msubsup><msubsup><mi>B</mi><mi>κ</mi><mi>j</mi></msubsup><msub><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></math>
+        <div class="eqlabel">(5.19) — Normalkomponente von H<sup>e</sup></div>
+      </div>
+      <p style="font-size:13.4px;margin-bottom:0">Efron nannte das (für m=1) die
+      <b>statistische Krümmung</b> <math><msubsup><mi>γ</mi><mi>θ</mi><mn>2</mn></msubsup></math>.</p>
+    </div>
+    <div class="card" style="border-color:rgba(79,209,255,.35)">
+      <h4 style="margin-top:0"><span class="pill m">H<sup>m</sup></span> &nbsp;Mischungs-Krümmung des <em>Schätzers</em></h4>
+      <p style="font-size:14px">Jeder Schätzer teilt den Raum in „Fasern“
+      <math><mi>A</mi><mo>(</mo><mi>u</mi><mo>)</mo></math> — alle Datenpunkte, die zum selben
+      Schätzwert führen. Wie <em>krumm</em> sind diese Fasern?</p>
+      <div class="eq" style="padding:10px">
+        <math display="block"><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow><mi>m</mi></msubsup><mo>=</mo><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi></mrow><mrow><mi>m</mi><mo>,</mo><mi>j</mi></mrow></msubsup><msubsup><mi>B</mi><mi>a</mi><mi>i</mi></msubsup><msub><mi>g</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></math>
+        <div class="eqlabel">(5.20)</div>
+      </div>
+      <p style="font-size:13.4px;margin-bottom:0">Für den <b>α-Schätzer</b> gilt
+      <math><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow><mi>m</mi></msubsup><mo>=</mo><mfrac><mrow><mn>1</mn><mo>+</mo><mi>α</mi></mrow><mn>2</mn></mfrac><msub><mi>T</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow></msub></math>
+      — <strong>null genau bei α = −1, also für ML</strong>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">3D-Ansicht: Modell + Faserung</h4>
+    <p style="margin-top:0;font-size:13.6px">Die Fläche ist der umgebende Raum, die dicke Kurve das Modell,
+    die dünnen Linien die Fasern A(u) des gewählten Schätzers. Drehe und schiebe α.</p>
+    <div class="ctl" style="max-width:420px"><label>α des Schätzers<span class="val" id="fbAV">-1.00</span></label>
+      <input type="range" id="fbA" min="-1" max="1" step="0.02" value="-1"></div>
+    <div id="fiberPlot" class="plot" style="height:470px"></div>
+    <div class="readout" id="fbRead"></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 9. SCHÄTZER -->
+<!-- ============================================================= -->
+<section id="est">
+  <span class="secnum">TEIL 9 — SCHÄTZER ALS GEOMETRIE</span>
+  <h2>Jeder Schätzer ist eine Projektion</h2>
+  <p class="lead" style="margin-left:0">Das ist Amaris vielleicht schönste Idee (§4.3, Satz 5):
+  Ein Schätzverfahren ist <em>nichts anderes</em> als eine Vorschrift, wie man den Datenpunkt
+  auf das Modell wirft.</p>
+
+  <div class="flow">
+    <div class="step">Daten x₁…x<sub>N</sub></div><span class="arr">→</span>
+    <div class="step">Mittelwert η̂ = x̄</div><span class="arr">→</span>
+    <div class="step">Datenpunkt in S<sup>n</sup></div><span class="arr">→</span>
+    <div class="step" style="border-color:var(--model);color:var(--model)">Projektion auf S<sup>m</sup></div><span class="arr">→</span>
+    <div class="step">Schätzwert û</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Der Projektions-Simulator</h3>
+    <p style="margin-top:0">Wirf echte Stichproben, sieh wo der Datenpunkt landet und wie die
+    verschiedenen Schätzer ihn aufs Modell projizieren.</p>
+    <div class="grid-s">
+      <div>
+        <canvas id="prCv" height="430"></canvas>
+        <div class="legend">
+          <span><i class="ln" style="background:var(--model)"></i>Modell</span>
+          <span><i class="dot" style="background:var(--data)"></i>Daten η̂</span>
+          <span><i class="dot" style="background:var(--mix)"></i>ML (α=−1)</span>
+          <span><i class="dot" style="background:var(--exp)"></i>DML (α=+1)</span>
+          <span><i class="dot" style="background:var(--riem)"></i>α=0</span>
+          <span><i class="dot" style="background:#fff"></i>wahr</span>
+        </div>
+      </div>
+      <div>
+        <div class="ctl"><label>Stichprobengröße N<span class="val" id="prNV">20</span></label>
+          <input type="range" id="prN" min="3" max="200" step="1" value="20"></div>
+        <div class="ctl"><label>wahres u<span class="val" id="prUV">1.00</span></label>
+          <input type="range" id="prU" min="0.5" max="2" step="0.01" value="1"></div>
+        <div class="ctl"><label>Kopplung a<span class="val" id="prAV">0.60</span></label>
+          <input type="range" id="prA" min="0.25" max="1.2" step="0.01" value="0.6"></div>
+        <div class="btnrow">
+          <button id="prDraw" class="on sm">🎲 Neue Stichprobe</button>
+          <button id="prRun" class="sm">▶ 300 Wiederholungen</button>
+          <button id="prClr" class="sm">Löschen</button>
+        </div>
+        <div class="chk"><input type="checkbox" id="prCloud" checked><label for="prCloud">Punktwolke früherer Ziehungen</label></div>
+        <div class="readout" id="prRead"></div>
+      </div>
+    </div>
+    <h4>Verteilung der Schätzwerte über die Wiederholungen</h4>
+    <div id="prHist" class="plot" style="height:300px"></div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Satz 6 — Erste-Ordnung-Effizienz ist Orthogonalität</h4>
+    <p style="margin-top:0">Ein konsistenter Schätzer ist genau dann <b>Fisher-effizient</b>
+    (erreicht die Cramér–Rao-Schranke), wenn seine Fasern <math><mi>A</mi><mo>(</mo><mi>u</mi><mo>)</mo></math>
+    das Modell <strong>rechtwinklig</strong> schneiden. Mehr nicht.</p>
+    <div class="grid-s rev">
+      <div>
+        <div class="ctl"><label>Schnittwinkel der Faser<span class="val" id="orAV">90°</span></label>
+          <input type="range" id="orA" min="25" max="155" step="1" value="90"></div>
+        <div class="readout" id="orRead"></div>
+        <div class="eq" style="padding:10px">
+          <math display="block"><msup><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msup><mo>→</mo><msup><mrow><mo>(</mo><msub><mi>g</mi><mrow><mi>b</mi><mi>a</mi></mrow></msub><mo>−</mo><msub><mi>g</mi><mrow><mi>κ</mi><mi>b</mi></mrow></msub><msup><mi>g</mi><mrow><mi>κ</mi><mi>λ</mi></mrow></msup><msub><mi>g</mi><mrow><mi>λ</mi><mi>a</mi></mrow></msub><mo>)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup></math>
+          <div class="eqlabel">(5.14) — schiefe Fasern „fressen“ Information schon 1. Ordnung</div>
+        </div>
+      </div>
+      <div><canvas id="orCv" height="320"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 10. INFORMATIONSVERLUST -->
+<!-- ============================================================= -->
+<section id="loss">
+  <span class="secnum">TEIL 10 — DIE ZENTRALE FRAGE</span>
+  <h2>Was heißt „Informationsverlust“ überhaupt?</h2>
+  <p class="lead" style="margin-left:0">Bevor wir Satz 7 verstehen: Wie misst man, dass eine
+  Zusammenfassung der Daten Information <em>verliert</em>?</p>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Das Lemma (5.18)</h4>
+      <div class="eq" style="padding:12px">
+<math display="block"><mi>Δ</mi><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>(</mo><mi>u</mi><mo>)</mo><mo>=</mo>
+        <msub><mi>E</mi><mi>u</mi></msub><mo>[</mo><mi>Cov</mi><mo>{</mo><msub><mi>∂</mi><mi>a</mi></msub><mi>ℓ</mi><mo>,</mo><msub><mi>∂</mi><mi>b</mi></msub><mi>ℓ</mi><mo>∣</mo><mi>T</mi><mo>=</mo><mi>T</mi><mo>}</mo><mo>]</mo></math>
+        <div class="eqlabel">(5.18) — Verlust = erwartete bedingte Kovarianz des Scores</div>
+      </div>
+      <p style="margin-top:0;font-size:14.2px">In Worten: Wenn ich nur noch die Statistik <math><mi>T</mi></math>
+      kenne (z.B. den Schätzwert <math><mover><mi>u</mi><mo>^</mo></mover></math>), dann <em>streut</em> der Score
+      <math><msub><mi>∂</mi><mi>a</mi></msub><mi>ℓ</mi></math> innerhalb der Faser immer noch.
+      Genau diese Reststreuung ist die verlorene Information.</p>
+      <div class="note">Wenn <math><mi>T</mi></math> <b>suffizient</b> ist, ist der Score auf der Faser konstant →
+      bedingte Kovarianz = 0 → <b>kein</b> Verlust. Das ist genau der Satz von Rao–Blackwell/Fisher, geometrisch gelesen.</div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Interaktiv: Reststreuung des Scores auf einer Faser</h4>
+      <canvas id="lsCv" height="310"></canvas>
+      <div class="ctl"><label>Krümmung der Faser (Schätzerwahl)<span class="val" id="lsKV">0.00</span></label>
+        <input type="range" id="lsK" min="-1.4" max="1.4" step="0.01" value="0"></div>
+      <div class="ctl"><label>Krümmung des Modells H<sup>e</sup><span class="val" id="lsMV">0.60</span></label>
+        <input type="range" id="lsM" min="0" max="1.4" step="0.01" value="0.6"></div>
+      <div class="readout" id="lsRead"></div>
+      <p style="font-size:12.8px;color:var(--txt-faint);margin-bottom:0">
+      Die Pfeile sind Score-Werte an verschiedenen Punkten derselben Faser.
+      Zeigen sie alle gleich → kein Verlust. Fächern sie auf → Verlust.</p>
+    </div>
+  </div>
+
+  <h3>Die Schlüsselgleichung (5.26)</h3>
+  <div class="eq">
+    <math display="block"><msub><mi>∂</mi><mi>a</mi></msub><mi>ℓ</mi><mo>=</mo>
+    <msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><msup><mover><mi>u</mi><mo>^</mo></mover><mi>b</mi></msup>
+    <mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msubsup><mi>Γ</mi><mrow><mi>b</mi><mi>c</mi><mi>a</mi></mrow><mi>m</mi></msubsup><msup><mover><mi>u</mi><mo>^</mo></mover><mi>b</mi></msup><msup><mover><mi>u</mi><mo>^</mo></mover><mi>c</mi></msup>
+    <mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow><mi>m</mi></msubsup><msup><mi>v</mi><mi>κ</mi></msup><msup><mi>v</mi><mi>λ</mi></msup>
+    <mo>−</mo><msubsup><mi>H</mi><mrow><mi>a</mi><mi>b</mi><mi>κ</mi></mrow><mi>e</mi></msubsup><msup><mover><mi>u</mi><mo>^</mo></mover><mi>b</mi></msup><msup><mi>v</mi><mi>κ</mi></msup></math>
+    <div class="eqlabel">(5.26) — der Score, zerlegt in Richtung-entlang-Modell (û) und Richtung-quer (v)</div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Term für Term — klicke die Terme an</h4>
+    <p style="margin-top:0;font-size:14px">Nur die Terme, die von <math><msup><mi>v</mi><mi>κ</mi></msup></math>
+    (der Querrichtung) abhängen, bleiben bei festem <math><mover><mi>u</mi><mo>^</mo></mover></math> übrig —
+    und genau die erzeugen den Verlust.</p>
+    <div class="btnrow" style="justify-content:center">
+      <button class="on sm" data-t526="0">g<sub>ab</sub>û<sup>b</sup></button>
+      <button class="sm" data-t526="1">½Γ<sup>m</sup>ûû</button>
+      <button class="sm" data-t526="2">½H<sup>m</sup>vv</button>
+      <button class="sm" data-t526="3">−H<sup>e</sup>ûv</button>
+    </div>
+    <canvas id="t526Cv" height="250"></canvas>
+    <div class="readout" id="t526Read"></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 11. SATZ 7 -->
+<!-- ============================================================= -->
+<section id="thm7">
+  <span class="secnum">TEIL 11 — DAS HAUPTRESULTAT</span>
+  <h2>Satz 7: Der Verlust zerfällt in zwei Krümmungen</h2>
+
+  <div class="eq" style="border-color:var(--stroke-hi);background:rgba(110,242,167,.05)">
+    <math display="block"><mi>Δ</mi><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>=</mo>
+      <msubsup><mi>H</mi><mrow><mi>a</mi><mi>c</mi><mi>κ</mi></mrow><mi>e</mi></msubsup><msubsup><mi>H</mi><mrow><mi>b</mi><mi>d</mi><mi>λ</mi></mrow><mi>e</mi></msubsup><msup><mi>g</mi><mrow><mi>κ</mi><mi>λ</mi></mrow></msup><msup><mi>g</mi><mrow><mi>c</mi><mi>d</mi></mrow></msup>
+      <mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow><mi>m</mi></msubsup><msubsup><mi>H</mi><mrow><mi>μ</mi><mi>ν</mi><mi>b</mi></mrow><mi>m</mi></msubsup><msup><mi>g</mi><mrow><mi>κ</mi><mi>μ</mi></mrow></msup><msup><mi>g</mi><mrow><mi>λ</mi><mi>ν</mi></mrow></msup></math>
+    <div class="eqlabel">(5.21) — und für den α-Schätzer speziell:</div>
+    <math display="block"><mi>Δ</mi><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>=</mo>
+      <msubsup><mi>H</mi><mrow><mi>a</mi><mi>c</mi><mi>κ</mi></mrow><mi>e</mi></msubsup><msubsup><mi>H</mi><mrow><mi>b</mi><mi>d</mi><mi>λ</mi></mrow><mi>e</mi></msubsup><msup><mi>g</mi><mrow><mi>κ</mi><mi>λ</mi></mrow></msup><msup><mi>g</mi><mrow><mi>c</mi><mi>d</mi></mrow></msup>
+      <mo>+</mo><mfrac><msup><mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi>α</mi><mo>)</mo></mrow><mn>2</mn></msup><mn>8</mn></mfrac>
+      <msub><mi>T</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow></msub><msub><mi>T</mi><mrow><mi>μ</mi><mi>ν</mi><mi>b</mi></mrow></msub><msup><mi>g</mi><mrow><mi>κ</mi><mi>μ</mi></mrow></msup><msup><mi>g</mi><mrow><mi>λ</mi><mi>ν</mi></mrow></msup></math>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Der Verlust-Explorer</h3>
+    <p style="margin-top:0">Spiele mit Modellkrümmung und Schätzerwahl. Beachte:
+    der <span style="color:var(--exp)">orange</span> Sockel lässt sich <em>nie</em> entfernen —
+    der <span style="color:var(--mix)">blaue</span> Aufbau wird bei α = −1 exakt null.</p>
+    <div class="grid-s">
+      <div>
+        <div id="lossPlot" class="plot" style="height:400px"></div>
+      </div>
+      <div>
+        <div class="ctl"><label>α des Schätzers<span class="val" id="l7AV">-1.00</span></label>
+          <input type="range" id="l7A" min="-2" max="2" step="0.01" value="-1"></div>
+        <div class="ctl"><label>Kopplung a (steuert H<sup>e</sup>)<span class="val" id="l7aV">0.60</span></label>
+          <input type="range" id="l7a" min="0.05" max="1.4" step="0.01" value="0.6"></div>
+        <div class="ctl"><label>wahres u<span class="val" id="l7UV">1.00</span></label>
+          <input type="range" id="l7U" min="0.5" max="2" step="0.01" value="1"></div>
+        <div class="readout" id="l7Read"></div>
+        <div class="btnrow">
+          <button class="sm" data-l7="-1">ML (α=−1)</button>
+          <button class="sm" data-l7="0">α=0</button>
+          <button class="sm" data-l7="1">DML (α=+1)</button>
+        </div>
+        <div class="note key"><b>Beispiel 5.1 im Paper</b> rechnet genau diesen Fall:
+        <math><mi>Δ</mi><mi>g</mi><mo>=</mo><mfrac><mrow><mn>16</mn><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mo>…</mo></mrow><mrow><mn>8</mn><msup><mo>(</mo><mn>2</mn><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mn>1</mn><mo>)</mo></msup><msup><mi>u</mi><mn>2</mn></msup></mrow></mfrac></math>.
+        Der zweite Teil verschwindet für α = −1.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Die Verlust-Landschaft</h4>
+    <p style="margin-top:0;font-size:13.8px">Verlust als Funktion von α und der Modellkrümmung.
+    Das <em>Tal</em> liegt bei α = −1 — und es ist ein Tal, kein Nullpunkt:
+    selbst dort bleibt der Modellanteil stehen.</p>
+    <div id="surfPlot" class="plot" style="height:480px"></div>
+  </div>
+
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="margin-top:0" class="pill e">UNVERMEIDBAR</h4>
+      <p style="font-size:13.5px">Der <b>H<sup>e</sup></b>-Term. Er misst, wie weit das Modell
+      von einer echten Exponentialfamilie entfernt ist. Nur ein <em>anderes Modell</em> ändert ihn.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0" class="pill m">VERMEIDBAR</h4>
+      <p style="font-size:13.5px">Der <b>H<sup>m</sup></b>-Term. Er misst, wie krumm die Fasern des
+      Schätzers sind. Wähle ML → er ist null. <strong>Das ist die Antwort.</strong></p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0" class="pill r">RÜCKHOLBAR</h4>
+      <p style="font-size:13.5px">Satz 8: Mit zwei Zusatzstatistiken <b>A<sub>ab</sub></b> und <b>B<sub>a</sub></b>
+      bekommt man den Verlust vollständig zurück. Siehe nächster Abschnitt.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 12. RÜCKGEWINNUNG -->
+<!-- ============================================================= -->
+<section id="recov">
+  <span class="secnum">TEIL 12 — SATZ 8 & 9</span>
+  <h2>Information zurückholen — und die Kovarianz</h2>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Satz 8 — Rückgewinnung</h4>
+      <p style="margin-top:0">Aus (5.26) liest man direkt ab, <em>welche</em> Zusatzinformation fehlt.
+      Amari definiert zwei „Statistik-Tensoren“:</p>
+      <div class="eq" style="padding:11px">
+        <math display="block"><msub><mi>A</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>=</mo><msubsup><mi>H</mi><mrow><mi>a</mi><mi>b</mi></mrow><mrow><mi>e</mi><mo>,</mo><mi>i</mi></mrow></msubsup><mo>(</mo><mover><mi>u</mi><mo>^</mo></mover><mo>)</mo><msubsup><mi>B</mi><mi>i</mi><mi>j</mi></msubsup><msub><mover><mi>x</mi><mo>~</mo></mover><mi>j</mi></msub>
+        <mspace width="2em"/>
+        <msub><mi>B</mi><mi>a</mi></msub><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msubsup><mi>H</mi><mrow><mi>κ</mi><mi>λ</mi><mi>a</mi></mrow><mi>m</mi></msubsup><mo>(</mo><mover><mi>u</mi><mo>^</mo></mover><mo>)</mo><msup><mi>B</mi><mi>κ</mi></msup><msup><mi>B</mi><mi>λ</mi></msup><mover><mi>x</mi><mo>~</mo></mover><mover><mi>x</mi><mo>~</mo></mover></math>
+      </div>
+      <p>Mit <math><mo>(</mo><mover><mi>u</mi><mo>^</mo></mover><mo>,</mo><msub><mi>A</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>,</mo><msub><mi>B</mi><mi>a</mi></msub><mo>)</mo></math>
+      gilt <math><msub><mi>lim</mi><mrow><mi>N</mi><mo>→</mo><mo>∞</mo></mrow></msub><mi>Δ</mi><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>=</mo><mn>0</mn></math> (5.28).</p>
+      <div class="note"><b>Zählung:</b> A und B haben zusammen
+      <math><mi>m</mi><mo>(</mo><mi>m</mi><mo>+</mo><mn>3</mn><mo>)</mo><mo>/</mo><mn>2</mn></math> Komponenten.
+      Das lohnt sich nur, wenn <math><mi>m</mi><mo>(</mo><mi>m</mi><mo>+</mo><mn>3</mn><mo>)</mo><mo>/</mo><mn>2</mn><mo>&lt;</mo><mi>n</mi><mo>−</mo><mi>m</mi></math> —
+      sonst nimmt man gleich die vollen Daten.</div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Wann lohnt sich die Rückgewinnung?</h4>
+      <canvas id="rcCv" height="300"></canvas>
+      <div class="ctl"><label>Modelldimension m<span class="val" id="rcMV">1</span></label>
+        <input type="range" id="rcM" min="1" max="8" step="1" value="1"></div>
+      <div class="ctl"><label>Umgebungsdimension n<span class="val" id="rcNV">6</span></label>
+        <input type="range" id="rcN" min="2" max="40" step="1" value="6"></div>
+      <div class="readout" id="rcRead"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Satz 9 — Die Kovarianz zweiter Ordnung</h4>
+    <div class="eq">
+      <math display="block"><mi>Cov</mi><mo>(</mo><msup><mover><mi>u</mi><mo>^</mo></mover><mi>a</mi></msup><mo>,</mo><msup><mover><mi>u</mi><mo>^</mo></mover><mi>b</mi></msup><mo>)</mo><mo>=</mo>
+      <mfrac><msup><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msup><mi>N</mi></mfrac>
+      <mo>+</mo><mfrac><mn>1</mn><msup><mi>N</mi><mn>2</mn></msup></mfrac><mo>[</mo>
+      <mfrac><mn>1</mn><mn>2</mn></mfrac><msubsup><mi>Γ</mi><mn>2</mn><mi>m</mi></msubsup>
+      <mo>+</mo><mi>Δ</mi><msup><mi>g</mi><mrow><mi>c</mi><mi>d</mi></mrow></msup><msup><mi>g</mi><mrow><mi>c</mi><mi>a</mi></mrow></msup><msup><mi>g</mi><mrow><mi>d</mi><mi>b</mi></mrow></msup>
+      <mo>+</mo><mo>…</mo><mo>]</mo><mo>+</mo><mi>O</mi><mo>(</mo><msup><mi>N</mi><mrow><mo>−</mo><mn>3</mn></mrow></msup><mo>)</mo></math>
+      <div class="eqlabel">(5.29) — die Krümmung taucht auch im Fehler zweiter Ordnung auf</div>
+    </div>
+    <div class="grid-s rev">
+      <div>
+        <div class="ctl"><label>N<span class="val" id="cvNV">20</span></label>
+          <input type="range" id="cvN" min="5" max="300" step="1" value="20"></div>
+        <div class="ctl"><label>α<span class="val" id="cvAV">-1.00</span></label>
+          <input type="range" id="cvA" min="-2" max="2" step="0.02" value="-1"></div>
+        <div class="readout" id="cvRead"></div>
+        <div class="note mix"><b>„Naming curvature“:</b> Der Term
+        <math><msubsup><mi>Γ</mi><mn>2</mn><mi>m</mi></msubsup></math> hängt nur von der
+        <em>Benennung</em> der Parameter ab (u vs. u² vs. log u) — nicht von der Statistik.
+        Er verschwindet durch Umparametrisieren genau dann, wenn
+        <math><msubsup><mi>R</mi><mrow><mi>a</mi><mi>b</mi><mi>c</mi><mi>d</mi></mrow><mi>m</mi></msubsup><mo>=</mo><mn>0</mn></math>.</div>
+      </div>
+      <div><div id="covPlot" class="plot" style="height:340px"></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- 13. LABOR -->
+<!-- ============================================================= -->
+<section id="lab">
+  <span class="secnum">TEIL 13 — DAS GROSSE LABOR</span>
+  <h2>Alles zusammen: der Monte-Carlo-Prüfstand</h2>
+  <p class="lead" style="margin-left:0">Hier läuft Amaris Theorie gegen echte Simulation.
+  Wenn die Theorie stimmt, müssen die gemessenen Kurven die vorhergesagten treffen.</p>
+
+  <div class="card">
+    <div class="grid-s">
+      <div>
+        <div id="labPlot" class="plot" style="height:430px"></div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Experiment</h4>
+        <div class="ctl"><label>Stichprobengröße N<span class="val" id="lbNV">25</span></label>
+          <input type="range" id="lbN" min="5" max="150" step="1" value="25"></div>
+        <div class="ctl"><label>Kopplung a<span class="val" id="lbAV">0.60</span></label>
+          <input type="range" id="lbA" min="0.2" max="1.2" step="0.01" value="0.6"></div>
+        <div class="ctl"><label>wahres u<span class="val" id="lbUV">1.00</span></label>
+          <input type="range" id="lbU" min="0.5" max="2" step="0.01" value="1"></div>
+        <div class="ctl"><label>Wiederholungen<span class="val" id="lbRV">3000</span></label>
+          <input type="range" id="lbR" min="200" max="20000" step="100" value="3000"></div>
+        <div class="btnrow">
+          <button id="lbRun" class="on">▶ Simulation starten</button>
+        </div>
+        <div class="readout" id="lbRead">Noch nicht gestartet.</div>
+      </div>
+
+    <div class="grid3" style="margin-top:16px">
+      <div class="stat"><div class="n" id="lbS1">—</div><div class="l">gemessener Verlust ML</div></div>
+      <div class="stat"><div class="n" id="lbS2">—</div><div class="l">Theorie H<sup>e</sup>-Term</div></div>
+      <div class="stat"><div class="n" id="lbS3">—</div><div class="l">Abweichung</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Der α-Vergleichstest</h4>
+    <p style="margin-top:0;font-size:13.8px">Dieselben Daten, alle Schätzer. Wer gewinnt?
+    Die Theorie sagt: ML (α = −1) hat den kleinsten Informationsverlust —
+    und der Überschuss wächst mit <math><msup><mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi>α</mi><mo>)</mo></mrow><mn>2</mn></msup></math>.</p>
+    <div id="cmpPlot" class="plot" style="height:400px"></div>
+    <div class="btnrow"><button id="cmpRun" class="on sm">▶ α-Sweep rechnen</button></div>
+    <div class="readout" id="cmpRead">Noch nicht gestartet.</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================= -->
+<!-- FAZIT -->
+<!-- ============================================================= -->
+<section id="end">
+  <span class="secnum">ZUSAMMENFASSUNG</span>
+  <h2>Die ganze Geschichte in einem Bild</h2>
+
+  <div class="card">
+    <canvas id="sumCv" height="470"></canvas>
+    <p style="font-size:12.6px;color:var(--txt-faint);text-align:center;margin:8px 0 0">
+    Bewege die Maus über die Kästen.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 style="margin-top:0">Die Frage</h3>
+      <p>„Wenn ich N Datenpunkte zu <em>einem</em> Schätzwert zusammenfasse —
+      wie viel Fisher-Information geht dabei verloren, und welcher Schätzer verliert am wenigsten?“</p>
+      <h3>Die Idee</h3>
+      <p>Behandle den Raum aller Verteilungen als <b>geometrisches Objekt</b>: mit der Fisher-Metrik
+      als Längenmaß und einer <em>ganzen Familie</em> von Zusammenhängen (α) als Begriff von „geradeaus“.</p>
+      <h3>Der Lösungsweg</h3>
+      <ol style="color:var(--txt-dim);font-size:14.4px">
+        <li>Exponentialfamilien sind doppelt flach (α=±1) — <b>Satz 1</b>.</li>
+        <li>Ein Modell ist eine gekrümmte Untermannigfaltigkeit — <b>Satz 3</b>.</li>
+        <li>Ein Schätzer ist eine Faserung in α-Geodäten — <b>Satz 5</b>.</li>
+        <li>Fisher-Effizienz = Orthogonalität der Fasern — <b>Satz 6</b>.</li>
+        <li>Score zerlegen (5.26), bedingte Kovarianz bilden (5.18).</li>
+        <li>→ <b>Satz 7</b>: zwei Krümmungsquadrate.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Die Antwort</h3>
+      <div class="eq" style="background:rgba(110,242,167,.06);border-color:rgba(110,242,167,.3)">
+        <math display="block"><mi>Δ</mi><msub><mi>g</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>=</mo>
+        <msup><mrow><mo>(</mo><msup><mi>H</mi><mi>e</mi></msup><mo>)</mo></mrow><mn>2</mn></msup>
+        <mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msup><mrow><mo>(</mo><msup><mi>H</mi><mi>m</mi></msup><mo>)</mo></mrow><mn>2</mn></msup></math>
+      </div>
+      <p><b>Teil 1</b> — exponentielle Krümmung des Modells: unvermeidbar, Eigenschaft der Natur.<br>
+      <b>Teil 2</b> — Mischungskrümmung des Schätzers: vermeidbar, <strong>null für Maximum Likelihood</strong>.</p>
+      <div class="note key" style="margin-top:14px"><b>Damit ist ML als bester Schätzer zweiter Ordnung bewiesen</b> —
+      nicht durch Rechnung im Einzelfall, sondern als <em>geometrische Notwendigkeit</em>:
+      die ML-Fasern sind Mischungs-Geodäten, und Geodäten haben per Definition Krümmung null.</div>
+      <h3>Was danach kam</h3>
+      <p style="font-size:14.2px">Diese Arbeit begründete das Feld <b>Informationsgeometrie</b>.
+      Die α-Zusammenhänge, die duale Flachheit und die Bregman/Legendre-Struktur sind heute
+      Standardwerkzeuge in Statistik, maschinellem Lernen (natural gradient, EM-Algorithmus als
+      e/m-Projektionen, Variationsinferenz) und Informationstheorie.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Glossar zum Nachschlagen</h3>
+    <table>
+      <tr><th>Begriff</th><th>Bedeutung in einem Satz</th></tr>
+      <tr><td><b>Mannigfaltigkeit S<sup>n</sup></b></td><td>Glatte Fläche, deren Punkte Wahrscheinlichkeitsverteilungen sind.</td></tr>
+      <tr><td><b>Tangentialvektor</b></td><td>Eine Score-Funktion <math><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi></math> — eine Richtung der Veränderung.</td></tr>
+      <tr><td><b>Fisher-Metrik g<sub>ij</sub></b></td><td><math><mi>E</mi><mo>[</mo><msub><mi>∂</mi><mi>i</mi></msub><mi>ℓ</mi><msub><mi>∂</mi><mi>j</mi></msub><mi>ℓ</mi><mo>]</mo></math> — Längenmaß = Unterscheidbarkeit.</td></tr>
+      <tr><td><b>Zusammenhang Γ</b></td><td>Regel, wie man Pfeile von Punkt zu Punkt transportiert; definiert „geradeaus“.</td></tr>
+      <tr><td><b>α-Zusammenhang</b></td><td><math><mo>[</mo><mi>i</mi><mi>j</mi><mo>;</mo><mi>k</mi><mo>]</mo><mo>−</mo><mo>(</mo><mi>α</mi><mo>/</mo><mn>2</mn><mo>)</mo><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub></math> — eine ganze Gerade von Geometrien.</td></tr>
+      <tr><td><b>Geodäte</b></td><td>Der „geradeste“ Weg bezüglich eines gewählten Zusammenhangs.</td></tr>
+      <tr><td><b>Exponentialfamilie</b></td><td>Verteilungsfamilie, in der <math><mi>log</mi><mi>p</mi></math> linear im Parameter ist → flach bei α=+1.</td></tr>
+      <tr><td><b>η (dual)</b></td><td>Erwartungsparameter <math><mi>E</mi><mo>[</mo><mi>x</mi><mo>]</mo></math>; Legendre-Partner von θ → flach bei α=−1.</td></tr>
+      <tr><td><b>Gekrümmte Exp.-Familie</b></td><td>Untermannigfaltigkeit S<sup>m</sup> ⊂ S<sup>n</sup>, die keine Gerade in θ ist.</td></tr>
+      <tr><td><b>H<sup>e</sup></b></td><td>Exponentielle Krümmung = Efrons statistische Krümmung.</td></tr>
+      <tr><td><b>A(u)</b></td><td>Ancillarraum: alle Datenpunkte, die zum Schätzwert u führen.</td></tr>
+      <tr><td><b>H<sup>m</sup></b></td><td>Mischungskrümmung von A(u); null ⟺ Maximum Likelihood.</td></tr>
+      <tr><td><b>Δg<sub>ab</sub></b></td><td>Informationsverlust zweiter Ordnung.</td></tr>
+    </table>
+  </div>
+
+  <div style="text-align:center;margin-top:50px">
+    <span class="badge">Amari (1982), Ann. Statist. 10(2), 357–385</span>
+    <span class="badge">Sätze 1–9 + Anhang A1–A3</span>
+    <span class="badge">Beispiele 3.1, 4.1, 5.1 implementiert</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* =====================================================================
+   GLOBALE HELFER
+   ===================================================================== */
+const TAU = Math.PI*2;
+const C = {
+  exp:'#ff7a59', mix:'#4fd1ff', riem:'#b48cff', model:'#6ef2a7',
+  data:'#ffd36e', acc:'#8fb6ff', warn:'#ff5f8d', dim:'#8ea0c4', faint:'#5f7196'
+};
+const PLOTLAY = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:'#8ea0c4', family:'Inter, system-ui, sans-serif', size:11},
+  margin:{l:50,r:18,t:28,b:44},
+  xaxis:{gridcolor:'rgba(120,160,255,.11)', zerolinecolor:'rgba(120,160,255,.25)'},
+  yaxis:{gridcolor:'rgba(120,160,255,.11)', zerolinecolor:'rgba(120,160,255,.25)'},
+  legend:{bgcolor:'rgba(0,0,0,0)', font:{size:10.5}}
+};
+const PCFG = {displayModeBar:false, responsive:true};
+
+function $(id){return document.getElementById(id);}
+function hidpi(cv){
+  const d = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  cv.width = Math.max(1,Math.round(r.width*d));
+  cv.height = Math.max(1,Math.round((cv.getAttribute('height')||300)*d));
+  cv.style.height = (cv.getAttribute('height')||300)+'px';
+  const g = cv.getContext('2d');
+  g.setTransform(d,0,0,d,0,0);
+  return {g, W:r.width, H:+(cv.getAttribute('height')||300)};
+}
+function clr(g,W,H,bg='#060a12'){g.fillStyle=bg;g.fillRect(0,0,W,H);}
+function line(g,pts,col,w=2,dash=null){
+  if(pts.length<2)return;
+  g.save();g.strokeStyle=col;g.lineWidth=w;g.lineJoin='round';g.lineCap='round';
+  if(dash)g.setLineDash(dash);
+  g.beginPath();g.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);
+  g.stroke();g.restore();
+}
+function dot(g,x,y,r,col,glow=0){
+  g.save();
+  if(glow){g.shadowColor=col;g.shadowBlur=glow;}
+  g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,TAU);g.fill();g.restore();
+}
+function arrow(g,x1,y1,x2,y2,col,w=2,head=8){
+  g.save();g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w;g.lineCap='round';
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  g.beginPath();g.moveTo(x2,y2);
+  g.lineTo(x2-head*Math.cos(a-0.4),y2-head*Math.sin(a-0.4));
+  g.lineTo(x2-head*Math.cos(a+0.4),y2-head*Math.sin(a+0.4));
+  g.closePath();g.fill();g.restore();
+}
+function txt(g,s,x,y,col,size=12,align='left',weight='600'){
+  g.save();g.fillStyle=col;g.font=weight+' '+size+'px Inter, system-ui, sans-serif';
+  g.textAlign=align;g.textBaseline='middle';g.fillText(s,x,y);g.restore();
+}
+function grid(g,W,H,nx=10,ny=6){
+  g.save();g.strokeStyle='rgba(120,160,255,.07)';g.lineWidth=1;
+  for(let i=0;i<=nx;i++){const x=i*W/nx;g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke();}
+  for(let j=0;j<=ny;j++){const y=j*H/ny;g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();}
+  g.restore();
+}
+function rr(g,x,y,w,h,r){
+  g.beginPath();
+  g.moveTo(x+r,y);g.lineTo(x+w-r,y);g.quadraticCurveTo(x+w,y,x+w,y+r);
+  g.lineTo(x+w,y+h-r);g.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  g.lineTo(x+r,y+h);g.quadraticCurveTo(x,y+h,x,y+h-r);
+  g.lineTo(x,y+r);g.quadraticCurveTo(x,y,x+r,y);g.closePath();
+}
+/* Normalverteilung */
+function npdf(x,m,s){return Math.exp(-(x-m)*(x-m)/(2*s*s))/(s*Math.sqrt(TAU));}
+let spare=null;
+function randn(){
+  if(spare!==null){const v=spare;spare=null;return v;}
+  let u,v,s;
+  do{u=Math.random()*2-1;v=Math.random()*2-1;s=u*u+v*v;}while(s>=1||s===0);
+  const f=Math.sqrt(-2*Math.log(s)/s);
+  spare=v*f;return u*f;
+}
+function fmt(x,n=3){
+  if(!isFinite(x))return '—';
+  if(Math.abs(x)>=1e4||(Math.abs(x)<1e-3&&x!==0))return x.toExponential(2);
+  return x.toFixed(n);
+}
+/* Slider-Füllung */
+function bindRange(el){
+  const up=()=>{const p=(el.value-el.min)/(el.max-el.min)*100;el.style.setProperty('--p',p+'%');};
+  el.addEventListener('input',up);up();
+}
+document.querySelectorAll('input[type=range]').forEach(bindRange);
+
+/* Temml rendern */
+function renderMath(){
+  if(typeof temml==='undefined')return;
+  // MathML ist nativ — Temml nur als Fallback für \(..\) nicht nötig hier.
+}
+renderMath();
+
+/* Navigation + Fortschritt */
+(function(){
+  const links=[...document.querySelectorAll('#navInner a')];
+  const secs=links.map(a=>$(a.getAttribute('href').slice(1))).filter(Boolean);
+  function upd(){
+    const sc=window.scrollY, h=document.body.scrollHeight-window.innerHeight;
+    $('prog').style.width=(sc/h*100)+'%';
+    let idx=0;
+    secs.forEach((s,i)=>{if(s && s.getBoundingClientRect().top<160)idx=i;});
+    links.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const act=links[idx];
+    if(act){
+      const nb=$('navInner').getBoundingClientRect(), ab=act.getBoundingClientRect();
+      if(ab.left<nb.left+40||ab.right>nb.right-40)
+        $('navInner').scrollTo({left:$('navInner').scrollLeft+ab.left-nb.left-130,behavior:'smooth'});
+    }
+  }
+  window.addEventListener('scroll',upd,{passive:true});upd();
+})();
+
+/* Lazy-Init via IntersectionObserver */
+const inits=[];
+function onView(sel,fn){inits.push({sel,fn,done:false});}
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    inits.forEach(it=>{
+      if(!it.done && (e.target.matches(it.sel)||e.target.querySelector(it.sel))){
+        it.done=true; try{it.fn();}catch(err){console.warn(err);}
+      }
+    });
+  });
+},{rootMargin:'300px'});
+document.querySelectorAll('section').forEach(s=>io.observe(s));
+
+/* =====================================================================
+   HERO-CANVAS
+   ===================================================================== */
+(function(){
+  const cv=$('heroCv'); if(!cv)return;
+  let mx=0.62, my=0.3, t=0;
+  function draw(){
+    const {g,W,H}=hidpi(cv);
+    clr(g,W,H,'#060a12');
+    // sanfter Hintergrundglow
+    const gr=g.createRadialGradient(W*0.5,H*0.45,10,W*0.5,H*0.45,W*0.65);
+    gr.addColorStop(0,'rgba(60,90,160,.16)');gr.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle=gr;g.fillRect(0,0,W,H);
+    grid(g,W,H,16,8);
+
+    // Modellkurve: Parabel
+    const cx=W*0.5, cy=H*0.74, sc=W*0.33;
+    const curve=[];
+    for(let i=0;i<=200;i++){
+      const u=-1.25+2.5*i/200;
+      curve.push([cx+u*sc, cy-0.46*u*u*sc]);
+    }
+    g.save();g.shadowColor=C.model;g.shadowBlur=16;
+    line(g,curve,C.model,3.2);g.restore();
+
+    // Datenpunkt
+    const px=mx*W, py=my*H;
+    // Projektion (nächster Punkt auf Parabel, numerisch)
+    let best=0,bd=1e9;
+    for(let i=0;i<curve.length;i++){
+      const d=(curve[i][0]-px)**2+(curve[i][1]-py)**2;
+      if(d<bd){bd=d;best=i;}
+    }
+    const pr=curve[best];
+    line(g,[[px,py],pr],C.mix,2,[5,5]);
+    // Krümmungskreis am Projektionspunkt
+    const u0=-1.25+2.5*best/200;
+    const yp=-2*0.46*u0, ypp=-2*0.46;
+    const R=Math.pow(1+yp*yp,1.5)/Math.abs(ypp);
+    const nx=-yp/Math.sqrt(1+yp*yp), ny=1/Math.sqrt(1+yp*yp);
+    const ccx=pr[0]+nx*R*sc, ccy=pr[1]-ny*R*sc*(-1);
+    g.save();g.strokeStyle='rgba(255,122,89,.42)';g.lineWidth=1.6;g.setLineDash([4,5]);
+    g.beginPath();g.arc(pr[0]+nx*R*sc, pr[1]+ny*R*sc, R*sc, 0, TAU);g.stroke();g.restore();
+
+    dot(g,pr[0],pr[1],6.5,C.mix,16);
+    dot(g,px,py,7,C.data,20);
+    txt(g,'Datenpunkt η̂',px+13,py-13,C.data,11.5);
+    txt(g,'Schätzung û',pr[0]+12,pr[1]+17,C.mix,11.5);
+    txt(g,'Modell S^m',cx+sc*1.05,cy-0.46*1.2*1.2*sc-8,C.model,11.5);
+
+    // schwebende Partikel
+    for(let i=0;i<26;i++){
+      const a=i*2.4+t*0.3, r=40+((i*53)%170);
+      const x=W*0.5+Math.cos(a)*r*1.5, y=H*0.42+Math.sin(a*1.3)*r*0.5;
+      dot(g,x,y,1.1,'rgba(143,182,255,'+(0.1+0.14*Math.sin(t+i))+')');
+    }
+    t+=0.01;
+    requestAnimationFrame(draw);
+  }
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    mx=(e.clientX-r.left)/r.width; my=(e.clientY-r.top)/r.height;
+  });
+  draw();
+})();
+
+/* =====================================================================
+   ROADMAP-CANVAS
+   ===================================================================== */
+(function(){
+  const cv=$('roadCv'); if(!cv)return;
+  const stations=[
+    {x:.09,y:.30,t:'Verteilungen',d:'Jede Wahrscheinlichkeitsverteilung = ein Punkt. Eine Familie = eine Fläche (Mannigfaltigkeit S^n).',c:C.acc},
+    {x:.26,y:.68,t:'Fisher-Metrik',d:'g_ij = E[∂_i ℓ ∂_j ℓ]. Sie misst, wie gut zwei benachbarte Verteilungen unterscheidbar sind. Definition 1.',c:C.riem},
+    {x:.43,y:.26,t:'α-Zusammenhänge',d:'Definition 2: eine ganze Familie von Begriffen für "geradeaus". α=+1 exponentiell, α=−1 Mischung, α=0 Riemann.',c:C.exp},
+    {x:.58,y:.70,t:'Dualität',d:'Sätze 1,2,4: θ↔η, e↔m, H↔L, K(1:2)↔K(2:1). Alles ist dieselbe Spiegelung α → −α.',c:C.mix},
+    {x:.74,y:.28,t:'Krümmung',d:'Satz 7: Der Informationsverlust = (H^e)² + ½(H^m)². Zwei Krümmungen, zwei Ursachen.',c:C.model},
+    {x:.90,y:.62,t:'ML gewinnt',d:'Für den ML-Schätzer ist H^m = 0. Also hat ML den kleinsten Informationsverlust zweiter Ordnung. Antwort auf die Frage.',c:C.data}
+  ];
+  let sel=-1, hov=-1;
+  function pos(s,W,H){return [s.x*W, s.y*H];}
+  function draw(){
+    const {g,W,H}=hidpi(cv);
+    clr(g,W,H);grid(g,W,H,14,7);
+    // Verbindungen
+    for(let i=0;i<stations.length-1;i++){
+      const a=pos(stations[i],W,H), b=pos(stations[i+1],W,H);
+      const mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2 + (i%2?-28:28);
+      g.save();g.strokeStyle='rgba(143,182,255,.28)';g.lineWidth=2;g.setLineDash([6,6]);
+      g.beginPath();g.moveTo(a[0],a[1]);g.quadraticCurveTo(mx,my,b[0],b[1]);g.stroke();g.restore();
+    }
+    stations.forEach((s,i)=>{
+      const [x,y]=pos(s,W,H);
+      const r = (i===sel)?19:(i===hov?16:13);
+      g.save();g.shadowColor=s.c;g.shadowBlur=(i===sel||i===hov)?22:10;
+      g.fillStyle=s.c;g.globalAlpha=(i===sel)?1:.82;
+      g.beginPath();g.arc(x,y,r,0,TAU);g.fill();g.restore();
+      g.save();g.fillStyle='#060a12';g.font='800 12px Inter';g.textAlign='center';g.textBaseline='middle';
+      g.fillText(String(i),x,y+.5);g.restore();
+      txt(g,s.t,x, y + (s.y<.5? -r-14 : r+15), i===sel?'#fff':C.dim, 12,'center','700');
+    });
+  }
+  function hit(e){
+    const r=cv.getBoundingClientRect();
+    const px=e.clientX-r.left, py=e.clientY-r.top;
+    let k=-1;
+    stations.forEach((s,i)=>{
+      const x=s.x*r.width, y=s.y*(+cv.getAttribute('height'));
+      if((px-x)**2+(py-y)**2<420)k=i;
+    });
+    return k;
+  }
+  cv.addEventListener('mousemove',e=>{const k=hit(e);if(k!==hov){hov=k;cv.style.cursor=k>=0?'pointer':'default';draw();}});
+  cv.addEventListener('click',e=>{const k=hit(e);if(k>=0){sel=k;
+    $('roadInfo').innerHTML='<b>'+stations[k].t+'</b><br><span class="k">'+stations[k].d+'</span>';draw();}});
+  onView('#roadCv',draw);
+  window.addEventListener('resize',()=>draw());
+})();
+
+/* =====================================================================
+   TEIL 1 — MANNIGFALTIGKEIT
+   ===================================================================== */
+(function(){
+  const cv=$('mfCv'); if(!cv)return;
+  let trail=[], showTrail=true, tour=false, tt=0;
+  function draw(){
+    const mu=+$('mfMu').value, sg=+$('mfSg').value;
+    $('mfMuV').textContent=mu.toFixed(2); $('mfSgV').textContent=sg.toFixed(2);
+    $('mfRo1').textContent=mu.toFixed(2); $('mfRo2').textContent=sg.toFixed(2);
+    $('mfRo3').textContent=mu.toFixed(2); $('mfRo4').textContent=sg.toFixed(2);
+    const {g,W,H}=hidpi(cv);
+    clr(g,W,H);
+    const split=W*0.52;
+    // --- links: Dichte
+    g.save();g.beginPath();g.rect(0,0,split-6,H);g.clip();
+    grid(g,split,H,8,6);
+    const x0=-5,x1=5;
+    const X=u=>( (u-x0)/(x1-x0) )*(split-30)+18;
+    const Y=p=>H-28-p*(H-55)/0.95;
+    // Achsen
+    line(g,[[14,H-28],[split-12,H-28]],'rgba(143,182,255,.3)',1.4);
+    const pts=[];
+    for(let i=0;i<=240;i++){const x=x0+(x1-x0)*i/240;pts.push([X(x),Y(npdf(x,mu,sg))]);}
+    // Füllung
+    g.save();g.beginPath();g.moveTo(pts[0][0],H-28);
+    pts.forEach(p=>g.lineTo(p[0],p[1]));g.lineTo(pts[pts.length-1][0],H-28);g.closePath();
+    const lg=g.createLinearGradient(0,0,0,H);lg.addColorStop(0,'rgba(110,242,167,.3)');lg.addColorStop(1,'rgba(110,242,167,0)');
+    g.fillStyle=lg;g.fill();g.restore();
+    g.save();g.shadowColor=C.model;g.shadowBlur=12;line(g,pts,C.model,2.6);g.restore();
+    // μ-Marker
+    line(g,[[X(mu),Y(npdf(mu,mu,sg))],[X(mu),H-28]],'rgba(255,211,110,.55)',1.5,[4,4]);
+    txt(g,'μ',X(mu),H-16,C.data,11,'center');
+    // σ-Marker
+    line(g,[[X(mu),Y(npdf(mu+sg,mu,sg))],[X(mu+sg),Y(npdf(mu+sg,mu,sg))]],'rgba(79,209,255,.6)',1.5);
+    txt(g,'σ',(X(mu)+X(mu+sg))/2,Y(npdf(mu+sg,mu,sg))-10,C.mix,11,'center');
+    txt(g,'p(x; μ, σ)',18,18,C.model,12.5);
+    g.restore();
+    // Trenner
+    line(g,[[split,8],[split,H-8]],'rgba(143,182,255,.18)',1,[4,6]);
+    // --- rechts: Parameterraum
+    g.save();g.beginPath();g.rect(split+6,0,W-split-6,H);g.clip();
+    const px0=-2.8,px1=2.8,py0=0.2,py1=2.7;
+    const PX=u=>split+22+((u-px0)/(px1-px0))*(W-split-46);
+    const PY=s=>H-30-((s-py0)/(py1-py0))*(H-58);
+    g.save();g.strokeStyle='rgba(120,160,255,.07)';g.lineWidth=1;
+    for(let u=-2.5;u<=2.5;u+=0.5){g.beginPath();g.moveTo(PX(u),18);g.lineTo(PX(u),H-30);g.stroke();}
+    for(let s=0.5;s<=2.5;s+=0.5){g.beginPath();g.moveTo(split+16,PY(s));g.lineTo(W-10,PY(s));g.stroke();}
+    g.restore();
+    line(g,[[split+18,H-30],[W-12,H-30]],'rgba(143,182,255,.3)',1.4);
+    line(g,[[split+18,H-30],[split+18,16]],'rgba(143,182,255,.3)',1.4);
+    txt(g,'μ',W-20,H-16,C.dim,11); txt(g,'σ',split+26,22,C.dim,11);
+    if(showTrail&&trail.length>1){
+      line(g,trail.map(t=>[PX(t[0]),PY(t[1])]),'rgba(143,182,255,.45)',1.8);
+    }
+    dot(g,PX(mu),PY(sg),7,C.data,18);
+    txt(g,'('+mu.toFixed(2)+', '+sg.toFixed(2)+')',PX(mu)+12,PY(sg)-12,C.data,11);
+    txt(g,'Parameterraum S²',split+22,18,C.acc,12.5);
+    g.restore();
+  }
+  function upd(){
+    const mu=+$('mfMu').value, sg=+$('mfSg').value;
+    if(showTrail){trail.push([mu,sg]);if(trail.length>900)trail.shift();}
+    draw();
+  }
+  $('mfMu').addEventListener('input',upd);
+  $('mfSg').addEventListener('input',upd);
+  $('mfTrail').addEventListener('click',e=>{showTrail=!showTrail;e.target.classList.toggle('on',showTrail);
+    e.target.textContent=showTrail?'Spur an':'Spur aus';draw();});
+  $('mfClear').addEventListener('click',()=>{trail=[];draw();});
+  $('mfTour').addEventListener('click',()=>{tour=!tour;if(tour)anim();});
+  function anim(){
+    if(!tour)return;
+    tt+=0.016;
+    $('mfMu').value=(2*Math.sin(tt)).toFixed(2);
+    $('mfSg').value=(1.3+0.85*Math.sin(tt*0.7+1)).toFixed(2);
+    document.querySelectorAll('#mfMu,#mfSg').forEach(bindRange);
+    upd();requestAnimationFrame(anim);
+  }
+  onView('#mfCv',()=>{upd();});
+  window.addEventListener('resize',draw);
+})();
+
+/* --- Tangentialvektoren / Scores --- */
+(function(){
+  const cv=$('tgCv'); if(!cv)return;
+  function draw(){
+    const sg=+$('tgSg').value; $('tgSgV').textContent=sg.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,10,6);
+    const x0=-4*Math.max(sg,1), x1=-x0;
+    const X=x=>18+((x-x0)/(x1-x0))*(W-34);
+    const cy=H*0.52, scale=H*0.19;
+    line(g,[[14,cy],[W-10,cy]],'rgba(143,182,255,.3)',1.3);
+    // p(x)
+    const pp=[],s1=[],s2=[];
+    let m1=0,m2=0,n=0;
+    for(let i=0;i<=300;i++){
+      const x=x0+(x1-x0)*i/300;
+      const p=npdf(x,0,sg);
+      pp.push([X(x), H-26-p*(H*0.42)/0.5]);
+      const v1=x/(sg*sg), v2=(x*x-sg*sg)/(sg*sg*sg);
+      s1.push([X(x), cy-v1*scale*0.45]);
+      s2.push([X(x), cy-v2*scale*0.3]);
+      m1+=v1*p;m2+=v2*p;n+=p;
+    }
+    line(g,pp,'rgba(120,140,180,.55)',1.8);
+    g.save();g.shadowColor=C.exp;g.shadowBlur=9;line(g,s1,C.exp,2.6);g.restore();
+    g.save();g.shadowColor=C.mix;g.shadowBlur=9;line(g,s2,C.mix,2.6);g.restore();
+    txt(g,'∂ℓ/∂μ',W-62,cy-62,C.exp,12);
+    txt(g,'∂ℓ/∂σ',W-62,cy+58,C.mix,12);
+    txt(g,'x',W-18,cy+14,C.faint,11);
+    $('tgE1').textContent=(m1/n).toFixed(3);
+    $('tgE2').textContent=(m2/n).toFixed(3);
+  }
+  $('tgSg').addEventListener('input',draw);
+  onView('#tgCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   TEIL 2 — FISHER-METRIK
+   ===================================================================== */
+(function(){
+  const cv=$('fiCv'); if(!cv)return;
+  function draw(){
+    const sc=+$('fiSc').value; $('fiScV').textContent=sc.toFixed(1);
+    const geo=$('fiGeo').checked, euc=$('fiEuc').checked;
+    const {g,W,H}=hidpi(cv); clr(g,W,H);
+    const mx0=-2.6,mx1=2.6,s0=0.25,s1=2.6;
+    const X=u=>26+((u-mx0)/(mx1-mx0))*(W-42);
+    const Y=s=>H-30-((s-s0)/(s1-s0))*(H-50);
+    g.save();g.strokeStyle='rgba(120,160,255,.07)';
+    for(let u=-2.5;u<=2.5;u+=0.5){g.beginPath();g.moveTo(X(u),14);g.lineTo(X(u),H-30);g.stroke();}
+    for(let s=0.5;s<=2.5;s+=0.5){g.beginPath();g.moveTo(22,Y(s));g.lineTo(W-10,Y(s));g.stroke();}
+    g.restore();
+    line(g,[[24,H-30],[W-12,H-30]],'rgba(143,182,255,.3)',1.3);
+    line(g,[[24,H-30],[24,14]],'rgba(143,182,255,.3)',1.3);
+    txt(g,'μ',W-20,H-16,C.dim,11); txt(g,'σ',32,22,C.dim,11);
+    // Ellipsen: ds²=dμ²/σ² + 2dσ²/σ² = const  → Halbachsen ∝ σ, σ/√2
+    for(let u=-2;u<=2;u+=1){
+      for(let s=0.5;s<=2.5;s+=0.5){
+        const r=0.17*sc;
+        const au=r*s, as=r*s/Math.SQRT2;
+        const pts=[];
+        for(let k=0;k<=64;k++){
+          const a=k/64*TAU;
+          pts.push([X(u+au*Math.cos(a)), Y(s+as*Math.sin(a))]);
+        }
+        const alpha=0.14+0.2*(1/(s+0.4));
+        g.save();g.fillStyle='rgba(180,140,255,'+alpha*0.5+')';
+        g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.fill();
+        g.strokeStyle='rgba(180,140,255,'+(alpha+0.3)+')';g.lineWidth=1.4;g.stroke();g.restore();
+        dot(g,X(u),Y(s),2,'rgba(180,140,255,.8)');
+      }
+    }
+    // Geodäte hyperbolisch: Halbkreise senkrecht auf σ=0 in (μ, σ√2)-Koordinaten
+    const A=[-1.9,0.55], B=[1.9,0.55];
+    if(euc) line(g,[[X(A[0]),Y(A[1])],[X(B[0]),Y(B[1])]],'rgba(255,95,141,.75)',2.2,[6,5]);
+    if(geo){
+      // Poincaré-Halbebene mit y=σ·√2: Geodät = Halbkreis um Mittelpunkt auf μ-Achse
+      const y1=A[1]*Math.SQRT2, y2=B[1]*Math.SQRT2, x1g=A[0], x2g=B[0];
+      const cx=((x2g*x2g+y2*y2)-(x1g*x1g+y1*y1))/(2*(x2g-x1g));
+      const R=Math.sqrt((x1g-cx)**2+y1*y1);
+      const pts=[];
+      for(let k=0;k<=200;k++){
+        const th=Math.PI*k/200;
+        const gx=cx+R*Math.cos(Math.PI-th), gy=R*Math.sin(Math.PI-th);
+        if(gy/Math.SQRT2>s0&&gy/Math.SQRT2<s1) pts.push([X(gx),Y(gy/Math.SQRT2)]);
+      }
+      g.save();g.shadowColor=C.model;g.shadowBlur=11;line(g,pts,C.model,2.8);g.restore();
+      txt(g,'Fisher-Geodäte',W*0.5,Y(R/Math.SQRT2)-14,C.model,11.5,'center');
+    }
+    dot(g,X(A[0]),Y(A[1]),6,C.data,14); dot(g,X(B[0]),Y(B[1]),6,C.data,14);
+    txt(g,'kürzer über "oben"',W*0.5,H-48,C.faint,11,'center');
+    const sg=1.0;
+    $('fiSgRead').textContent=sg.toFixed(1);
+    $('fiG11').textContent=(1/(sg*sg)).toFixed(3);
+    $('fiG22').textContent=(2/(sg*sg)).toFixed(3);
+  }
+  ['fiSc','fiGeo','fiEuc'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#fiCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* --- 3D Pseudosphäre --- */
+onView('#hypPlot',()=>{
+  const U=[],V=[],XX=[],YY=[],ZZ=[];
+  const nu=60,nv=70;
+  const x=[],y=[],z=[],col=[];
+  for(let i=0;i<=nu;i++){
+    const rx=[],ry=[],rz=[],rc=[];
+    const u=0.18+ (2.1-0.18)*i/nu;      // "σ"
+    for(let j=0;j<=nv;j++){
+      const v=j/nv*TAU;                  // "μ" periodisch gewickelt
+      // Pseudosphäre (Traktrix-Rotation) — konstante Krümmung −1
+      const t=u;
+      const r=1/Math.cosh(t);
+      rx.push(r*Math.cos(v));
+      ry.push(r*Math.sin(v));
+      rz.push(t-Math.tanh(t));
+      rc.push(t);
+    }
+    x.push(rx);y.push(ry);z.push(rz);col.push(rc);
+  }
+  Plotly.newPlot('hypPlot',[{
+    type:'surface',x:x,y:y,z:z,surfacecolor:col,
+    colorscale:[[0,'#1b2b55'],[0.35,'#4fd1ff'],[0.7,'#b48cff'],[1,'#ff7a59']],
+    showscale:false, opacity:.96,
+    contours:{z:{show:true,color:'rgba(255,255,255,.14)',width:1,start:0,end:2,size:.12}},
+    lighting:{ambient:.55,diffuse:.75,specular:.25,roughness:.6},
+    hovertemplate:'Fisher-Fläche<extra></extra>'
+  }],Object.assign({},PLOTLAY,{
+    scene:{
+      bgcolor:'rgba(0,0,0,0)',
+      xaxis:{showgrid:false,zeroline:false,showticklabels:false,title:'',showbackground:false},
+      yaxis:{showgrid:false,zeroline:false,showticklabels:false,title:'',showbackground:false},
+      zaxis:{showgrid:false,zeroline:false,showticklabels:false,title:'',showbackground:false},
+      camera:{eye:{x:1.6,y:1.4,z:0.9}},
+      aspectmode:'data'
+    },
+    margin:{l:0,r:0,t:0,b:0}
+  }),PCFG);
+});
+
+/* =====================================================================
+   TEIL 3 — EXPONENTIALFAMILIE
+   ===================================================================== */
+(function(){
+  const cv=$('efCv'); if(!cv)return;
+  let fam='normal';
+  const FAM={
+    normal:{name:'Normal (σ=1)', disc:false, x0:-5,x1:5,
+      pdf:(x,th)=>npdf(x,th,1), logp:(x,th)=>-(x-th)*(x-th)/2-0.5*Math.log(TAU),
+      psi:th=>th*th/2, T:'c(x)=−x²/2, θ=μ, ψ=θ²/2'},
+    poisson:{name:'Poisson', disc:true, x0:0,x1:14,
+      pdf:(k,th)=>{const l=Math.exp(th);let lf=0;for(let i=2;i<=k;i++)lf+=Math.log(i);return Math.exp(k*th-l-lf);},
+      psi:th=>Math.exp(th), T:'θ=log λ, ψ=e^θ'},
+    bernoulli:{name:'Bernoulli', disc:true, x0:0,x1:1,
+      pdf:(k,th)=>{const p=1/(1+Math.exp(-th));return k?p:1-p;},
+      psi:th=>Math.log(1+Math.exp(th)), T:'θ=log(p/(1−p)), ψ=log(1+e^θ)'},
+    exp:{name:'Exponential', disc:false, x0:0,x1:8,
+      pdf:(x,th)=>{const l=-th;return l>0?l*Math.exp(-l*x):0;},
+      psi:th=>-Math.log(-th), T:'θ=−λ (θ<0), ψ=−log(−θ)'}
+  };
+  function draw(){
+    let th=+$('efTh').value;
+    const F=FAM[fam];
+    if(fam==='exp') th=-0.15-Math.abs(th)*0.6;
+    $('efThV').textContent=th.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,10,6);
+    const X=x=>22+((x-F.x0)/(F.x1-F.x0))*(W-38);
+    const baseY=H-30, topY=20;
+    line(g,[[18,baseY],[W-12,baseY]],'rgba(143,182,255,.3)',1.3);
+    // max finden
+    let mx=0;
+    const N=F.disc?(F.x1-F.x0+1):200;
+    const vals=[];
+    for(let i=0;i<N;i++){
+      const xv=F.disc? F.x0+i : F.x0+(F.x1-F.x0)*i/(N-1);
+      const p=F.pdf(xv,th); vals.push([xv,p]); if(p>mx)mx=p;
+    }
+    mx=Math.max(mx,1e-6);
+    if(F.disc){
+      vals.forEach(([xv,p])=>{
+        const h=(p/mx)*(baseY-topY)*0.9;
+        g.save();g.fillStyle='rgba(110,242,167,.75)';g.shadowColor=C.model;g.shadowBlur=8;
+        const bw=Math.max(4,(W-40)/(F.x1-F.x0+1)*0.6);
+        rr(g,X(xv)-bw/2,baseY-h,bw,h,3);g.fill();g.restore();
+      });
+    }else{
+      const pts=vals.map(([xv,p])=>[X(xv), baseY-(p/
+mx)*(baseY-topY)*0.9]);
+      g.save();g.beginPath();g.moveTo(pts[0][0],baseY);
+      pts.forEach(p=>g.lineTo(p[0],p[1]));g.lineTo(pts[pts.length-1][0],baseY);g.closePath();
+      const lg=g.createLinearGradient(0,topY,0,baseY);
+      lg.addColorStop(0,'rgba(110,242,167,.32)');lg.addColorStop(1,'rgba(110,242,167,0)');
+      g.fillStyle=lg;g.fill();g.restore();
+      g.save();g.shadowColor=C.model;g.shadowBlur=11;line(g,pts,C.model,2.6);g.restore();
+    }
+    // log p als Linie (zeigt Linearität in θ)
+    const lp=[];
+    for(let i=0;i<N;i++){
+      const xv=F.disc? F.x0+i : F.x0+(F.x1-F.x0)*i/(N-1);
+      const p=F.pdf(xv,th);
+      if(p>1e-12) lp.push([X(xv), topY+6 + (-Math.log(p))*8]);
+    }
+    const lpf=lp.filter(p=>p[1]<baseY&&p[1]>0);
+    line(g,lpf,'rgba(255,122,89,.8)',2,[5,4]);
+    txt(g,'log p(x,θ)',W-16,topY+10,C.exp,11,'right');
+    txt(g,F.name,20,topY-4,C.model,12.5);
+    // Readout
+    const ps=F.psi(th);
+    const h=1e-4;
+    const d1=(F.psi(th+h)-F.psi(th-h))/(2*h);
+    const d2=(F.psi(th+h)-2*ps+F.psi(th-h))/(h*h);
+    $('efRead').innerHTML=
+      '<span class="k">Form:</span> p(x,θ)=exp{c(x)+θx−ψ(θ)}<br>'+
+      '<span class="k">'+F.T+'</span><br>'+
+      '<span class="k">ψ(θ) =</span> <b>'+fmt(ps)+'</b> &nbsp; '+
+      '<span class="k">η=ψ′ =</span> <b>'+fmt(d1)+'</b> &nbsp; '+
+      '<span class="k">g=ψ″ =</span> <b>'+fmt(d2)+'</b>';
+  }
+  $('efTh').addEventListener('input',draw);
+  document.querySelectorAll('[data-effam]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-effam]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); fam=b.dataset.effam; draw();
+    });
+  });
+  // Tabs
+  document.querySelectorAll('[data-ef]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-ef]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      document.querySelectorAll('[data-efp]').forEach(p=>p.classList.toggle('on',p.dataset.efp===b.dataset.ef));
+      if(b.dataset.ef==='1') drawPsi();
+      if(b.dataset.ef==='2') drawLeg();
+      if(b.dataset.ef==='0') draw();
+    });
+  });
+  onView('#efCv',draw); window.addEventListener('resize',draw);
+
+  /* --- ψ-Plot (Tab 1) --- */
+  let psiInit=false;
+  function psiFn(t){return t*t/2 + 0.22*t*t*t/6 + 0.05*t*t*t*t/24;} // leicht schief → T≠0
+  function drawPsi(){
+    const th=+$('psiTh').value; $('psiThV').textContent=th.toFixed(2);
+    const h=1e-3;
+    const v=psiFn(th);
+    const d1=(psiFn(th+h)-psiFn(th-h))/(2*h);
+    const d2=(psiFn(th+h)-2*v+psiFn(th-h))/(h*h);
+    const d3=(psiFn(th+2*h)-2*psiFn(th+h)+2*psiFn(th-h)-psiFn(th-2*h))/(2*h*h*h);
+    $('psiV').textContent=fmt(v); $('psiD1').textContent=fmt(d1);
+    $('psiD2').textContent=fmt(d2); $('psiD3').textContent=fmt(d3);
+    const T=[],t0=-2.4,t1=2.4;
+    const xs=[],ys=[],y1=[],y2=[];
+    for(let i=0;i<=200;i++){
+      const t=t0+(t1-t0)*i/200;
+      xs.push(t); ys.push(psiFn(t));
+      y1.push((psiFn(t+h)-psiFn(t-h))/(2*h));
+      y2.push((psiFn(t+h)-2*psiFn(t)+psiFn(t-h))/(h*h));
+    }
+    const tangent={x:[th-1.1,th+1.1],y:[v-1.1*d1, v+1.1*d1],
+      mode:'lines',name:'Tangente (Steigung η)',line:{color:C.data,width:2,dash:'dash'}};
+    const data=[
+      {x:xs,y:ys,mode:'lines',name:'ψ(θ)',line:{color:C.exp,width:3}},
+      {x:xs,y:y1,mode:'lines',name:"ψ′=η",line:{color:C.mix,width:2}},
+      {x:xs,y:y2,mode:'lines',name:'ψ″=g',line:{color:C.model,width:2}},
+      tangent,
+      {x:[th],y:[v],mode:'markers',name:'θ',marker:{color:C.data,size:10,line:{color:'#fff',width:1}},showlegend:false}
+    ];
+    const lay=Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'θ'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{range:[-1.6,4.2]}),
+      showlegend:true, legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.3)',font:{size:10}}
+    });
+    if(!psiInit){Plotly.newPlot('psiPlot',data,lay,PCFG);psiInit=true;}
+    else Plotly.react('psiPlot',data,lay,PCFG);
+  }
+  $('psiTh').addEventListener('input',drawPsi);
+
+  /* --- Legendre (Tab 2) --- */
+  function drawLeg(){
+    const th=+$('legTh').value; $('legThV').textContent=th.toFixed(2);
+    const psi=t=>t*t/2;
+    const v=psi(th), eta=th, phi=th*eta-v;
+    $('legA').textContent=th.toFixed(2);
+    $('legB').textContent=eta.toFixed(3);
+    $('legC').textContent=v.toFixed(3);
+    $('legD').textContent=phi.toFixed(3);
+    $('legE').textContent=(th*eta-v).toFixed(3);
+    const cv2=$('legCv'); const {g,W,H}=hidpi(cv2); clr(g,W,H); grid(g,W,H,10,8);
+    const X=t=>W*0.5+t*(W*0.2);
+    const Y=y=>H*0.82-y*(H*0.27);
+    line(g,[[10,Y(0)],[W-10,Y(0)]],'rgba(143,182,255,.3)',1.3);
+    line(g,[[X(0),10],[X(0),H-10]],'rgba(143,182,255,.3)',1.3);
+    const pts=[];
+    for(let i=0;i<=160;i++){const t=-2.4+4.8*i/160;pts.push([X(t),Y(psi(t))]);}
+    g.save();g.shadowColor=C.exp;g.shadowBlur=11;line(g,pts,C.exp,2.8);g.restore();
+    txt(g,'ψ(θ)',X(2.1),Y(psi(2.1))-14,C.exp,12);
+    // Tangente
+    const t0=th-2.6, t1=th+2.6;
+    line(g,[[X(t0),Y(v+eta*(t0-th))],[X(t1),Y(v+eta*(t1-th))]],C.data,2,[6,5]);
+    // Achsenabschnitt = -φ
+    dot(g,X(0),Y(-phi),5.5,C.mix,13);
+    txt(g,'−φ(η) = '+(-phi).toFixed(2),X(0)+10,Y(-phi)+2,C.mix,11.5);
+    dot(g,X(th),Y(v),6.5,C.data,15);
+    txt(g,'θ='+th.toFixed(2),X(th),Y(v)-16,C.data,11.5,'center');
+    // Steigungsdreieck
+    line(g,[[X(th),Y(v)],[X(th+0.8),Y(v)]],'rgba(255,255,255,.3)',1.4);
+    line(g,[[X(th+0.8),Y(v)],[X(th+0.8),Y(v+eta*0.8)]],'rgba(255,255,255,.3)',1.4);
+    txt(g,'η='+eta.toFixed(2),X(th+0.84),Y(v+eta*0.4),'rgba(255,255,255,.65)',11);
+    txt(g,'Legendre: ψ+φ = θη',14,18,C.acc,12);
+  }
+  $('legTh').addEventListener('input',drawLeg);
+})();
+
+/* =====================================================================
+   TEIL 4 — ZUSAMMENHANG / PARALLELTRANSPORT
+   ===================================================================== */
+(function(){
+  const cv=$('ptCv'); if(!cv)return;
+  let playing=false;
+  // Dreieck auf Kugel: Nordpol → Äquator(0°) → Äquator(β°) → Nordpol
+  function sph(lat,lon){
+    return [Math.cos(lat)*Math.cos(lon), Math.cos(lat)*Math.sin(lon), Math.sin(lat)];
+  }
+  function proj(p,W,H){
+    // einfache isometrische Projektion
+    const a=0.62, b=0.38;
+    const x=p[0]*Math.cos(a)-p[1]*Math.sin(a);
+    const y=(p[0]*Math.sin(a)+p[1]*Math.cos(a))*Math.sin(b)+p[2]*Math.cos(b);
+    const R=Math.min(W,H)*0.37;
+    return [W*0.5+x*R, H*0.52-y*R, (p[0]*Math.sin(a)+p[1]*Math.cos(a))*Math.cos(b)-p[2]*Math.sin(b)];
+  }
+  function draw(){
+    const t=+$('ptT').value;
+    const beta=(+$('ptSz').value)*Math.PI/180;
+    $('ptTV').textContent=Math.round(t*100)+'%';
+    $('ptSzV').textContent=Math.round(beta*180/Math.PI)+'°';
+    const {g,W,H}=hidpi(cv); clr(g,W,H);
+    // Kugel
+    const R=Math.min(W,H)*0.37;
+    const gr=g.createRadialGradient(W*0.42,H*0.4,R*0.1,W*0.5,H*0.52,R*1.15);
+    gr.addColorStop(0,'rgba(60,90,150,.3)');gr.addColorStop(1,'rgba(15,25,50,.1)');
+    g.fillStyle=gr;g.beginPath();g.arc(W*0.5,H*0.52,R,0,TAU);g.fill();
+    g.strokeStyle='rgba(143,182,255,.25)';g.lineWidth=1.3;g.stroke();
+    // Gitter
+    for(let la=-60;la<=60;la+=30){
+      const pts=[];
+      for(let lo=0;lo<=360;lo+=4){
+        const p=proj(sph(la*Math.PI/180,lo*Math.PI/180),W,H);
+        if(p[2]<0.03)pts.push([p[0],p[1]]); else {if(pts.length>1)line(g,pts,'rgba(143,182,255,.1)',1);pts.length=0;}
+      }
+      if(pts.length>1)line(g,pts,'rgba(143,182,255,.1)',1);
+    }
+    for(let lo=0;lo<360;lo+=30){
+      const pts=[];
+      for(let la=-90;la<=90;la+=4){
+        const p=proj(sph(la*Math.PI/180,lo*Math.PI/180),W,H);
+        if(p[2]<0.03)pts.push([p[0],p[1]]); else {if(pts.length>1)line(g,pts,'rgba(143,182,255,.1)',1);pts.length=0;}
+      }
+      if(pts.length>1)line(g,pts,'rgba(143,182,255,.1)',1);
+    }
+    // Dreieckskanten: 3 Segmente
+    function edgePts(seg,frac){
+      // seg 0: Meridian lon=0, lat von 90 → 0
+      // seg 1: Äquator lon 0 → beta
+      // seg 2: Meridian lon=beta, lat 0 → 90
+      if(seg===0){const la=(1-frac)*Math.PI/2; return {p:sph(la,0), lat:la, lon:0, seg:0};}
+      if(seg===1){const lo=frac*beta; return {p:sph(0,lo), lat:0, lon:lo, seg:1};}
+      const la=frac*Math.PI/2; return {p:sph(la,beta), lat:la, lon:beta, seg:2};
+    }
+    // Kanten zeichnen
+    for(let s=0;s<3;s++){
+      const pts=[];
+      for(let k=0;k<=80;k++){
+        const e=edgePts(s,k/80);
+        const q=proj(e.p,W,H);
+        pts.push([q[0],q[1]]);
+      }
+      line(g,pts,'rgba(110,242,167,.75)',2.4);
+    }
+    // aktuelle Position
+    const seg=Math.min(2,Math.floor(t*3)), frac=(t*3)-seg;
+    const e=edgePts(seg,frac);
+    const q=proj(e.p,W,H);
+    // Transportierter Vektor:
+    // Konvention: Start am Nordpol zeigend entlang Meridian lon=0 (nach Süden).
+    // Auf Meridian: Vektor bleibt "nach Süden" (Winkel 0 zur Bewegungsrichtung).
+    // Auf Äquator: Vektor bleibt nach Süden zeigend (er ist senkrecht zur Bewegung) → konstanter Südvektor.
+    // Auf Rückmeridian: Vektor bleibt senkrecht zum Meridian → zeigt nach Westen/Osten.
+    let vlat, vlon; // Tangentialkomponenten (Richtung Nord, Richtung Ost)
+    if(seg===0){vlat=-1;vlon=0;}
+    else if(seg===1){vlat=-1;vlon=0;}
+    else {vlat=0;vlon=-1;}
+    // Tangentenbasis
+    const la=e.lat, lo=e.lon;
+    const eNorth=[-Math.sin(la)*Math.cos(lo), -Math.sin(la)*Math.sin(lo), Math.cos(la)];
+    const eEast=[-Math.sin(lo), Math.cos(lo), 0];
+    const vec=[eNorth[0]*vlat+eEast[0]*vlon, eNorth[1]*vlat+eEast[1]*vlon, eNorth[2]*vlat+eEast[2]*vlon];
+    const tip=[e.p[0]+vec[0]*0.38, e.p[1]+vec[1]*0.38, e.p[2]+vec[2]*0.38];
+    const qt=proj(tip,W,H);
+    // Startvektor am Nordpol
+    const p0=sph(Math.PI/2-0.001,0);
+    const eN0=[-Math.sin(Math.PI/2-0.001),0,Math.cos(Math.PI/2-0.001)];
+    const q0=proj(p0,W,H), q0t=proj([p0[0]-eN0[0]*0.38,p0[1]-eN0[1]*0.38,p0[2]-eN0[2]*0.38],W,H);
+    arrow(g,q0[0],q0[1],q0t[0],q0t[1],'rgba(255,255,255,.35)',2,7);
+    arrow(g,q[0],q[1],qt[0],qt[1],C.data,3,9);
+    dot(g,q[0],q[1],5,C.data,12);
+    txt(g,'Start',q0[0]+10,q0[1]-8,'rgba(255,255,255,.5)',11);
+    const hol=(t>=0.999)? beta*180/Math.PI : t*3>2? (beta*180/Math.PI) : 0;
+    $('ptHol').textContent=(t>=0.999?(beta*180/Math.PI).toFixed(1):'…')+'°';
+    txt(g,'Paralleltransport auf S²',14,18,C.model,12.5);
+  }
+  ['ptT','ptSz'].forEach(id=>$(id).addEventListener('input',draw));
+  $('ptPlay').addEventListener('click',()=>{playing=!playing;if(playing)anim();});
+  $('ptReset').addEventListener('click',()=>{$('ptT').value=0;bindRange($('ptT'));draw();});
+  function anim(){
+    if(!playing)return;
+    let v=+$('ptT').value+0.004;
+    if(v>1){v=1;playing=false;}
+    $('ptT').value=v;bindRange($('ptT'));draw();
+    if(playing)requestAnimationFrame(anim);
+  }
+  onView('#ptCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* --- Geodäten zwischen zwei Normalverteilungen --- */
+(function(){
+  const cv=$('geoCv'); if(!cv)return;
+  let mode='1';
+  const P1={m:-1.3,s:0.55}, P2={m:1.4,s:0.95};
+  function alphaMix(x,t,al){
+    const p1=npdf(x,P1.m,P1.s), p2=npdf(x,P2.m,P2.s);
+    if(Math.abs(al-1)<1e-6) return Math.exp((1-t)*Math.log(p1)+t*Math.log(p2));
+    if(Math.abs(al+1)<1e-6) return (1-t)*p1+t*p2;
+    const e=(1-al)/2;
+    const v=(1-t)*Math.pow(p1,e)+t*Math.pow(p2,e);
+    return Math.pow(Math.max(v,1e-300),1/e);
+  }
+  function draw(){
+    const t=+$('geoT').value; $('geoTV').textContent=t.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,10,6);
+    const x0=-4,x1=4.6;
+    const X=x=>20+((x-x0)/(x1-x0))*(W-34);
+    const baseY=H-26;
+    line(g,[[14,baseY],[W-10,baseY]],'rgba(143,182,255,.3)',1.3);
+    function curveFor(al,col,w,dash){
+      const pts=[];let mx=0;const tmp=[];
+      for(let i=0;i<=260;i++){const x=x0+(x1-x0)*i/260;const v=alphaMix(x,t,al);tmp.push([x,v]);if(v>mx)mx=v;}
+      const sc=(baseY-26)/0.78;
+      tmp.forEach(([x,v])=>pts.push([X(x),baseY-v*sc]));
+      line(g,pts,col,w,dash);
+      return mx;
+    }
+    // Endpunkte blass
+    const e1=[],e2=[];
+    const sc=(baseY-26)/0.78;
+    for(let i=0;i<=200;i++){const x=x0+(x1-x0)*i/200;
+      e1.push([X(x),baseY-npdf(x,P1.m,P1.s)*sc]);e2.push([X(x),baseY-npdf(x,P2.m,P2.s)*sc]);}
+    line(g,e1,'rgba(255,255,255,.22)',1.6);
+    line(g,e2,'rgba(255,255,255,.22)',1.6);
+    if(mode==='all'||mode==='1') curveFor(1,C.exp,2.8);
+    if(mode==='all'||mode==='0') curveFor(0,C.riem,2.6);
+    if(mode==='all'||mode==='-1') curveFor(-1,C.mix,2.8);
+    txt(g,'p₁',X(P1.m),baseY-npdf(P1.m,P1.m,P1.s)*sc-12,'rgba(255,255,255,.5)',11,'center');
+    txt(g,'p₂',X(P2.m),baseY-npdf(P2.m,P2.m,P2.s)*sc-12,'rgba(255,255,255,.5)',11,'center');
+    const names={'1':'α=+1 exponentiell — log-linear, bleibt unimodal',
+                 '0':'α=0 Riemann — √p-linear',
+                 '-1':'α=−1 Mischung — echte Mischverteilung, wird bimodal',
+                 'all':'Vergleich aller drei α-Geodäten bei t='+t.toFixed(2)};
+    $('geoRead').innerHTML='<span class="k">'+names[mode]+'</span><br>'+
+      '<span class="k">t =</span> <b>'+t.toFixed(2)+'</b> &nbsp; '+
+      '<span class="k">Interpolation von</span> N(−1.3, 0.55²) <span class="k">nach</span> N(1.4, 0.95²)';
+  }
+  $('geoT').addEventListener('input',draw);
+  document.querySelectorAll('[data-geo]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-geo]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');mode=b.dataset.geo;draw();
+    });
+  });
+  onView('#geoCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   TEIL 5 — α-FAMILIE
+   ===================================================================== */
+(function(){
+  const cv=$('alCv'), bar=$('alBar'); if(!cv)return;
+  const P1={m:-1.2,s:0.6}, P2={m:1.3,s:0.9};
+  function alphaMix(x,t,al){
+    const p1=npdf(x,P1.m,P1.s), p2=npdf(x,P2.m,P2.s);
+    if(Math.abs(al-1)<1e-4) return Math.exp((1-t)*Math.log(p1)+t*Math.log(p2));
+    if(Math.abs(al+1)<1e-4) return (1-t)*p1+t*p2;
+    const e=(1-al)/2;
+    if(Math.abs(e)<1e-6) return Math.exp((1-t)*Math.log(p1)+t*Math.log(p2));
+    const v=(1-t)*Math.pow(p1,e)+t*Math.pow(p2,e);
+    return Math.pow(Math.max(v,1e-300),1/e);
+  }
+  function draw(){
+    const al=+$('al').value; $('alV').textContent=al.toFixed(2);
+    // --- linke Grafik: α-Geodäte
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,10,6);
+    const x0=-4,x1=4.4;
+    const X=x=>18+((x-x0)/(x1-x0))*(W-32);
+    const baseY=H-26, sc=(baseY-24)/0.78;
+    line(g,[[12,baseY],[W-8,baseY]],'rgba(143,182,255,.3)',1.3);
+    // Endverteilungen
+    const e1=[],e2=[];
+    for(let i=0;i<=200;i++){const x=x0+(x1-x0)*i/200;
+      e1.push([X(x),baseY-npdf(x,P1.m,P1.s)*sc]);
+      e2.push([X(x),baseY-npdf(x,P2.m,P2.s)*sc]);}
+    line(g,e1,'rgba(255,255,255,.2)',1.5);
+    line(g,e2,'rgba(255,255,255,.2)',1.5);
+    // Farbe nach α interpolieren
+    function colFor(a){
+      const t=(a+1)/2; // -1→0, +1→1
+      const c1=[79,209,255], c2=[180,140,255], c3=[255,122,89];
+      let r,gg,b;
+      if(t<0.5){const s=t*2;r=c1[0]+(c2[0]-c1[0])*s;gg=c1[1]+(c2[1]-c1[1])*s;b=c1[2]+(c2[2]-c1[2])*s;}
+      else{const s=(t-0.5)*2;r=c2[0]+(c3[0]-c2[0])*s;gg=c2[1]+(c3[1]-c2[1])*s;b=c2[2]+(c3[2]-c2[2])*s;}
+      return 'rgb('+Math.round(r)+','+Math.round(gg)+','+Math.round(b)+')';
+    }
+    const col=colFor(Math.max(-1,Math.min(1,al)));
+    // mehrere t-Werte als "Film"
+    for(let k=1;k<=4;k++){
+      const t=k/5, pts=[];
+      for(let i=0;i<=240;i++){const x=x0+(x1-x0)*i/240;pts.push([X(x),baseY-alphaMix(x,t,al)*sc]);}
+      g.globalAlpha=0.28; line(g,pts,col,1.6); g.globalAlpha=1;
+    }
+    const pts=[];
+    for(let i=0;i<=260;i++){const x=x0+(x1-x0)*i/260;pts.push([X(x),baseY-alphaMix(x,0.5,al)*sc]);}
+    g.save();g.shadowColor=col;g.shadowBlur=13;line(g,pts,col,3);g.restore();
+    txt(g,'t = 0.5 (Mitte der α-Geodäte)',14,16,col,11.5);
+    txt(g,'α = '+al.toFixed(2),W-14,16,col,12.5,'right','800');
+
+    // --- Balken: Krümmung & Eigenschaften
+    const {g:g2,W:W2,H:H2}=hidpi(bar); clr(g2,W2,H2);
+    const items=[
+      {l:'Krümmung R ∝ (1−α²)', v:Math.max(0,1-al*al), max:1, c:C.riem},
+      {l:'metrisch? |∇g| = |α|·T', v:Math.min(2,Math.abs(al)), max:2, c:C.warn},
+      {l:'Schätzer-Krümmung ∝ (1+α)²/8', v:Math.min(1.2,(1+al)*(1+al)/8), max:1.2, c:C.mix}
+    ];
+    items.forEach((it,i)=>{
+      const y=24+i*54;
+      txt(g2,it.l,12,y-9,C.dim,11.5);
+      g2.save();g2.fillStyle='rgba(255,255,255,.06)';rr(g2,12,y,W2-24,13,6);g2.fill();g2.restore();
+      const w=(W2-24)*Math.min(1,it.v/it.max);
+      g2.save();g2.fillStyle=it.c;g2.shadowColor=it.c;g2.shadowBlur=9;rr(g2,12,y,Math.max(3,w),13,6);g2.fill();g2.restore();
+      txt(g2,fmt(it.v,3),W2-14,y+6.5,'#fff',10.5,'right');
+    });
+
+    let desc='';
+    if(Math.abs(al-1)<0.06) desc='<b>α = +1 — exponentieller Zusammenhang.</b> Γ<sup>e</sup> ≡ 0 in θ-Koordinaten (Satz 1). Flach. Krümmung R = 0.';
+    else if(Math.abs(al+1)<0.06) desc='<b>α = −1 — Mischungs-Zusammenhang.</b> Γ<sup>m</sup> ≡ 0 in η-Koordinaten. Flach. <span style="color:var(--model)">Der ML-Schätzer lebt hier.</span>';
+    else if(Math.abs(al)<0.06) desc='<b>α = 0 — Informations-/Levi-Civita-Zusammenhang.</b> Einziger <em>metrischer</em> Zusammenhang: Längen bleiben beim Transport erhalten. Für Normalverteilungen: κ = −1/2.';
+    else if(Math.abs(al+1/3)<0.04) desc='<b>α = −1/3</b> — der „0-Krümmungs-Parameter“ von Efron, bei dem sich bestimmte Bias-Terme vereinfachen.';
+    else desc='<b>α = '+al.toFixed(2)+'</b> — Zwischenzusammenhang. Weder flach noch metrisch.';
+    $('alRead').innerHTML=desc+'<br><span class="k">Γ<sub>ijk</sub><sup>α</sup> = [ij;k] − (α/2)·T<sub>ijk</sub></span><br>'+
+      '<span class="k">α-Geodäte interpoliert p^((1−α)/2) linear.</span>';
+  }
+  $('al').addEventListener('input',draw);
+  document.querySelectorAll('[data-alset]').forEach(b=>{
+    b.addEventListener('click',()=>{$('al').value=b.dataset.alset;bindRange($('al'));draw();});
+  });
+  onView('#alCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* --- α-Divergenzen (Anhang A2) --- */
+(function(){
+  let init=false;
+  function kAlpha(u,a){
+    if(Math.abs(a-1)<1e-6) return 2*u*Math.log(Math.max(u,1e-300));
+    if(Math.abs(a+1)<1e-6) return -2*Math.log(Math.max(u,1e-300));
+    return 4/(1-a*a)*(1-Math.pow(Math.max(u,1e-300),(1+a)/2));
+  }
+  function Dalpha(dmu,a){
+    // numerisch: p=N(0,1), q=N(dmu,1)
+    let s=0; const L=9, n=1400;
+    for(let i=0;i<n;i++){
+      const x=-L+2*L*(i+0.5)/n, dx=2*L/n;
+      const p=npdf(x,0,1), q=npdf(x,dmu,1);
+      s+=p*kAlpha(q/p,a)*dx;
+    }
+    return s;
+  }
+  function draw(){
+    const a=+$('dvA').value, d=+$('dvD').value;
+    $('dvAV').textContent=a.toFixed(2); $('dvDV').textContent=d.toFixed(2);
+    const us=[],ks=[];
+    for(let i=1;i<=240;i++){const u=i/240*3;us.push(u);ks.push(kAlpha(u,a));}
+    const ds=[],dv=[],dvR=[];
+    for(let i=0;i<=60;i++){const x=i/60*3;ds.push(x);dv.push(Dalpha(x,a));dvR.push(Dalpha(-x,-a));}
+    const cur=Dalpha(d,a), rev=Dalpha(-d,-a);
+    $('dvRead').innerHTML=
+      '<span class="k">D<sub>α</sub>(p,q) =</span> <b>'+fmt(cur)+'</b><br>'+
+      '<span class="k">D<sub>−α</sub>(q,p) =</span> <b>'+fmt(rev)+'</b> '+
+      '<span class="k">— identisch (A.12) ✓</span><br>'+
+      '<span class="k">Für kleine Abstände:</span> D ≈ g·Δμ² = <b>'+fmt(d*d)+'</b>';
+    const data=[
+      {x:ds,y:dv,mode:'lines',name:'D<sub>α</sub>(p,q)',line:{color:C.mix,width:3}},
+      {x:ds,y:dvR,mode:'lines',name:'D<sub>−α</sub>(q,p)',line:{color:C.exp,width:2,dash:'dot'}},
+      {x:ds,y:ds.map(x=>x*x),mode:'lines',name:'Fisher-Näherung g·Δμ²',line:{color:'rgba(180,140,255,.55)',width:1.6,dash:'dash'}},
+      {x:[d],y:[cur],mode:'markers',marker:{color:C.data,size:11,line:{color:'#fff',width:1}},showlegend:false}
+    ];
+    const lay=Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'Δμ'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Divergenz'}),
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.35)',font:{size:10}}
+    });
+    if(!init){Plotly.newPlot('divPlot',data,lay,PCFG);init=true;}
+    else Plotly.react('divPlot',data,lay,PCFG);
+  }
+  ['dvA','dvD'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#divPlot',draw);
+})();
+
+/* =====================================================================
+   TEIL 6 — DUALITÄT
+   ===================================================================== */
+(function(){
+  const cv=$('dualCv'); if(!cv)return;
+  let mode=0;
+  const INFO=[
+    {t:'Koordinaten θ ↔ η',
+     d:'Der natürliche Parameter θ und der Erwartungsparameter η = ψ′(θ) beschreiben dieselbe Verteilung. Legendre: ψ(θ)+φ(η)=θ·η (3.10). Jacobi-Matrizen sind g<sub>ij</sub> bzw. g<sup>ij</sup> (3.11/3.12).'},
+    {t:'Zusammenhänge e ↔ m',
+     d:'<b>Satz 1:</b> Γ<sup>e</sup> ≡ 0 in θ-Koordinaten, Γ<sup>m</sup> ≡ 0 in η-Koordinaten. Beide Räume sind flach — aber auf duale Weise. Deshalb sind Geraden in θ exponentielle Geodäten, Geraden in η Mischungs-Geodäten.'},
+    {t:'Krümmungen H ↔ L',
+     d:'<b>Satz 4 (4.12):</b> H<sup>α</sup><sub>ab</sub> = L<sup>−α</sup><sub>ab</sub>. Tangenten-Krümmung bei α = Normalen-Krümmung bei −α. Grund: L = H + α·T (4.10); die α-Zusammenhänge sind für α≠0 nicht metrisch.'},
+    {t:'Divergenzen K(1:2) ↔ K(2:1)',
+     d:'<b>Satz 2 (3.16):</b> K̃(1:2) = K(2:1). Die duale Kullback-Leibler-Divergenz ist die umgedrehte. Allgemein (A.12): D<sub>α</sub>(p,q)=D<sub>−α</sub>(q,p).'}
+  ];
+  function draw(){
+    const {g,W,H}=hidpi(cv); clr(g,W,H);grid(g,W,H,14,8);
+    const L=W*0.27, R=W*0.73, cy=H*0.5;
+    // Spiegelachse
+    line(g,[[W*0.5,24],[W*0.5,H-24]],'rgba(143,182,255,.22)',1.6,[7,7]);
+    txt(g,'DUALITÄT  α → −α',W*0.5,16,C.acc,11,'center','800');
+
+    function panel(cx,title,col,items,flip){
+      g.save();
+      g.fillStyle='rgba(0,0,0,.3)';g.strokeStyle=col+'55';g.lineWidth=1.4;
+      rr(g,cx-W*0.2,cy-H*0.33,W*0.4,H*0.66,16);g.fill();g.stroke();g.restore();
+      txt(g,title,cx,cy-H*0.33+20,col,13.5,'center','800');
+      items.forEach((it,i)=>{
+        const y=cy-H*0.33+52+i*26;
+        dot(g,cx-W*0.17,y,3.5,col);
+        txt(g,it,cx-W*0.155,y,C.dim,12);
+      });
+    }
+    if(mode===0){
+      panel(L,'primal: θ',C.exp,['natürlicher Parameter','ψ(θ) konvex','g_ij = ∂_i∂_j ψ','exp.-Familie ist Gerade']);
+      panel(R,'dual: η',C.mix,['Erwartungsparameter','φ(η) konvex','g^ij = ∂^i∂^j φ','Mischung ist Gerade']);
+    }else if(mode===1){
+      panel(L,'Γ^e (α=+1)',C.exp,['≡ 0 in θ','Geodäte: log p mischen','R^e = 0 → flach','MLE-Ancillarraum Ã(u)']);
+      panel(R,'Γ^m (α=−1)',C.mix,['≡ 0 in η','Geodäte: p mischen','R^m = 0 → flach','MLE-Ancillarraum A(u)']);
+    }else if(mode===2){
+      panel(L,'H^α (Tangenten)',C.exp,['∂_a B_b + Γ·B·B','(4.8)','misst Drehung','der Tangentialebene']);
+      panel(R,'L^{−α} (Normalen)',C.mix,['∂_a B_bi − Γ·B·B','(4.9)','misst Drehung','der Normalenrichtung']);
+    }else{
+      panel(L,'K(1:2)',C.exp,['E₁[ℓ₁ − ℓ₂]','„von 1 aus gesehen“','MLE minimiert K(θ̂:θ(u))','α = −1 Divergenz']);
+      panel(R,'K(2:1) = K̃(1:2)',C.mix,['E₂[ℓ₂ − ℓ₁]','„von 2 aus gesehen“','DMLE minimiert K(θ(u):θ̂)','α = +1 Divergenz']);
+    }
+    // Pfeile
+    const y1=cy-26, y2=cy+26;
+    arrow(g,L+W*0.2+6,y1,R-W*0.2-6,y1,'rgba(255,122,89,.65)',2,8);
+    arrow(g,R-W*0.2-6,y2,L+W*0.2+6,y2,'rgba(79,209,255,.65)',2,8);
+    txt(g,'Legendre / α → −α',W*0.5,y1-13,C.exp,10.5,'center');
+    txt(g,'Legendre / −α → α',W*0.5,y2+14,C.mix,10.5,'center');
+    $('dualRead').innerHTML='<b>'+INFO[mode].t+'</b><br><span class="k">'+INFO[mode].d+'</span>';
+  }
+  document.querySelectorAll('[data-du]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-du]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');mode=+b.dataset.du;draw();
+    });
+  });
+  onView('#dualCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* --- Nicht-metrischer Transport --- */
+(function(){
+  const cv=$('nmCv'); if(!cv)return;
+  function draw(){
+    const a=+$('nmA').value, t=+$('nmT').value;
+    $('nmAV').textContent=a.toFixed(2); $('nmTV').textContent=t.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,6);
+    const y0=H*0.62;
+    line(g,[[30,y0],[W-30,y0]],'rgba(143,182,255,.3)',1.6);
+    txt(g,'Transportweg (Parameter u)',W*0.5,H-14,C.faint,11,'center');
+    // Länge ändert sich mit exp(α·T·t)
+    const T=0.55;
+    const n=9;
+    for(let k=0;k<=n;k++){
+      const s=k/n;
+      if(s>t+1e-6)break;
+      const x=30+s*(W-60);
+      const len=(H*0.3)*Math.exp(a*T*s*0.55);
+      const al=0.25+0.75*(s/Math.max(t,1e-6));
+      g.globalAlpha=(k===Math.round(t*n))?1:0.32;
+      arrow(g,x,y0,x,y0-len,(k===Math.round(t*n))?C.data:'rgba(143,182,255,.7)',(k===Math.round(t*n))?3:1.8,8);
+      g.globalAlpha=1;
+    }
+    const lenNow=Math.exp(a*T*t*0.55);
+    // Referenzlänge
+    line(g,[[26,y0-H*0.3],[W-26,y0-H*0.3]],'rgba(255,255,255,.18)',1.2,[5,5]);
+    txt(g,'Startlänge',W-32,y0-H*0.3-10,'rgba(255,255,255,.4)',10.5,'right');
+    $('nmRead').innerHTML=
+      '<span class="k">∇<sub>i</sub><sup>α</sup> g<sub>jk</sub> = α·T<sub>ijk</sub></span> &nbsp;(2.25)<br>'+
+      '<span class="k">Längenänderung nach Transport:</span> <b>'+(lenNow*100).toFixed(1)+'%</b><br>'+
+      '<span class="k">Status:</span> <b>'+(Math.abs(a)<0.02?'metrisch ✓ (Levi-Civita)':'nicht-metrisch ✗')+'</b>';
+  }
+  ['nmA','nmT'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#nmCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   TEIL 7 — GEKRÜMMTE EXPONENTIALFAMILIE (Beispiel 4.1)
+   Modell: x ~ N(u, u²a²)
+   θ1 = 1/(a²u),  θ2 = -1/(2a²u²)   →  θ2 = -(a²/2)(θ1)²
+   η1 = u,  η2 = u² + a²u² = (1+a²)u²
+   g11 = (2a²+1)/a² · 1/u²
+   ===================================================================== */
+const CE = {
+  th:(u,a)=>[1/(a*a*u), -1/(2*a*a*u*u)],
+  eta:(u,a)=>[u, (1+a*a)*u*u],
+  g11:(u,a)=>(2*a*a+1)/(a*a)/(u*u),
+  // ML: A(u) = Gerade in η:  η2 = u·η1 + a²u²   (siehe Beispiel 4.1)
+  mlFromEta:(e1,e2,a)=>{
+    // u² a² + u e1 - e2 = 0  →  u = [-e1 + sqrt(e1²+4a²e2)]/(2a²)
+    const disc=e1*e1+4*a*a*e2;
+    if(disc<0)return NaN;
+    return (-e1+Math.sqrt(disc))/(2*a*a);
+  },
+  // DML: A~(u) Parabel in η: η2 = η1·u + (1+a²)u² - u²  ... (Näherung nach Bsp 4.1)
+  dmlFromEta:(e1,e2,a)=>{
+    // u = [e1 + sqrt(4(1+a²)e2 - (3+4a²)e1²)] / (2(1+a²))
+    const disc=4*(1+a*a)*e2-(3+4*a*a)*e1*e1;
+    if(disc<0)return NaN;
+    return (e1+Math.sqrt(disc))/(2*(1+a*a));
+  },
+  // exponentielle Krümmung (Normalkomponente), Beispiel 4.1 mit α=1:
+  // N H^e  ∝  (1+2a²-a)/(2a⁴(2a²+1)u⁴) · [-2u(1+a²), 1]
+  He2:(u,a)=>{
+    // skalarer Krümmungsbetrag² (Hᵉ)² g^{κλ}g^{cd} — Beispiel 5.1 erster Term
+    return 16*a*a/(8*Math.pow(2*a*a+1,2)*u*u);
+  },
+  Hm2:(u,a,al)=>{
+    return Math.pow(1+al,2)*Math.pow(4*a*a-3,2)/(8*Math.pow(2*a*a+1,2)*u*u)/4;
+  }
+};
+
+(function(){
+  const cv=$('ceCv'); if(!cv)return;
+  let view='eta', dataPt=null;
+  function draw(){
+    const a=+$('ceA').value, u=+$('ceU').value;
+    $('ceAV').textContent=a.toFixed(2); $('ceUV').textContent=u.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,8);
+    const isEta=(view==='eta');
+    // Bereich
+    let X,Y,xl,yl;
+    if(isEta){
+      const x0=0,x1=2.6,y0=0,y1=2.6*2.6*(1+a*a)*1.05;
+      X=v=>34+((v-x0)/(x1-x0))*(W-50);
+      Y=v=>H-34-((v-y0)/(y1-y0))*(H-52);
+      xl='η₁ = E[x] = u'; yl='η₂ = E[x²] = (1+a²)u²';
+    }else{
+      const x0=0,x1=1/(a*a*0.45),y0=-1/(2*a*
+a*0.45),y1=0;
+      X=v=>34+((v-x0)/(x1-x0))*(W-50);
+      Y=v=>H-34-((v-y0)/(y1-y0))*(H-52);
+      xl='θ¹ = 1/(a²u)'; yl='θ² = −1/(2a²u²)';
+    }
+    // Achsen
+    line(g,[[32,H-34],[W-14,H-34]],'rgba(143,182,255,.3)',1.3);
+    line(g,[[32,H-34],[32,16]],'rgba(143,182,255,.3)',1.3);
+    txt(g,xl,W-16,H-18,C.dim,11,'right');
+    txt(g,yl,38,22,C.dim,11);
+
+    // Modellkurve
+    const curve=[];
+    for(let i=0;i<=240;i++){
+      const uu=0.22+(2.6-0.22)*i/240;
+      const p=isEta?CE.eta(uu,a):CE.th(uu,a);
+      curve.push([X(p[0]),Y(p[1]),uu]);
+    }
+    const vis=curve.filter(p=>p[0]>20&&p[0]<W-6&&p[1]>8&&p[1]<H-20);
+    g.save();g.shadowColor=C.model;g.shadowBlur=14;
+    line(g,vis.map(p=>[p[0],p[1]]),C.model,3.2);g.restore();
+    txt(g,'Modell S¹:  x ~ N(u, u²a²)',W-16,20,C.model,12,'right','700');
+    if(!isEta) txt(g,'θ² = −(a²/2)(θ¹)²  — eine PARABEL',W-16,38,C.exp,11,'right');
+
+    // Punkt auf dem Modell
+    const P=isEta?CE.eta(u,a):CE.th(u,a);
+    const px=X(P[0]), py=Y(P[1]);
+
+    // Tangente B1
+    const h=1e-3;
+    const Pp=isEta?CE.eta(u+h,a):CE.th(u+h,a);
+    const Pm=isEta?CE.eta(u-h,a):CE.th(u-h,a);
+    let tx=(X(Pp[0])-X(Pm[0]))/(2*h), ty=(Y(Pp[1])-Y(Pm[1]))/(2*h);
+    const tn=Math.hypot(tx,ty)||1; tx/=tn; ty/=tn;
+    if($('ceShowTan').checked){
+      arrow(g,px,py,px+tx*62,py+ty*62,C.data,2.4,9);
+      txt(g,'B₁ (Tangente)',px+tx*68,py+ty*68,C.data,11);
+    }
+    if($('ceShowNorm').checked){
+      arrow(g,px,py,px-ty*58,py+tx*58,'rgba(255,95,141,.85)',2,8);
+      txt(g,'normal',px-ty*64,py+tx*64,C.warn,11);
+    }
+
+    // A(u): ML-Fasern — in η: Geraden  η₂ = u·η₁ + a²u²
+    if(isEta && $('ceShowA').checked){
+      for(let k=0;k<7;k++){
+        const uu=0.5+k*0.26;
+        const e0=CE.eta(uu,a);
+        const pts=[];
+        for(let s=-1.4;s<=1.4;s+=0.05){
+          const e1=e0[0]+s;
+          const e2=uu*e1+a*a*uu*uu;
+          pts.push([X(e1),Y(e2)]);
+        }
+        const isCur=Math.abs(uu-u)<0.14;
+        line(g,pts.filter(p=>p[0]>20&&p[0]<W-6&&p[1]>8&&p[1]<H-20),
+             isCur?C.mix:'rgba(79,209,255,.25)',isCur?2.4:1.3);
+      }
+      txt(g,'A(u): Mischungs-Geodäten (GERADE in η) → ML',W-16,56,C.mix,11,'right');
+    }
+    // Ã(u): DML — Parabeln in η: η₂ = η₁·u + (1+a²)u² − u²  ... aus Bsp 4.1
+    if(isEta && $('ceShowAT').checked){
+      for(let k=0;k<7;k++){
+        const uu=0.5+k*0.26;
+        const pts=[];
+        for(let e1=0.02;e1<2.6;e1+=0.03){
+          const e2=(e1*uu + (1+a*a)*uu*uu - uu*uu)*1.0 + 0.5*(e1-uu)*(e1-uu)*(1+a*a);
+          pts.push([X(e1),Y(e2)]);
+        }
+        const isCur=Math.abs(uu-u)<0.14;
+        line(g,pts.filter(p=>p[0]>20&&p[0]<W-6&&p[1]>8&&p[1]<H-20),
+             isCur?C.exp:'rgba(255,122,89,.22)',isCur?2.2:1.2,[5,4]);
+      }
+      txt(g,'Ã(u): exp. Geodäten (KRUMM in η) → DML',W-16,72,C.exp,11,'right');
+    }
+
+    dot(g,px,py,7,C.model,16);
+    txt(g,'u = '+u.toFixed(2),px+11,py+16,C.model,11.5);
+
+    // Datenpunkt
+    let uml=NaN, udml=NaN;
+    if(dataPt){
+      const dx=X(dataPt[0]), dy=Y(dataPt[1]);
+      dot(g,dx,dy,7,C.data,18);
+      txt(g,'η̂ (Daten)',dx+12,dy-12,C.data,11.5);
+      if(isEta){
+        uml=CE.mlFromEta(dataPt[0],dataPt[1],a);
+        udml=CE.dmlFromEta(dataPt[0],dataPt[1],a);
+        if(isFinite(uml)&&uml>0.2){
+          const e=CE.eta(uml,a);
+          line(g,[[dx,dy],[X(e[0]),Y(e[1])]],C.mix,2,[5,4]);
+          dot(g,X(e[0]),Y(e[1]),6,C.mix,14);
+          txt(g,'û_ML='+uml.toFixed(3),X(e[0])+10,Y(e[1])+16,C.mix,11);
+        }
+        if(isFinite(udml)&&udml>0.2&&$('ceShowAT').checked){
+          const e=CE.eta(udml,a);
+          dot(g,X(e[0]),Y(e[1]),5.5,C.exp,12);
+          txt(g,'û_DML='+udml.toFixed(3),X(e[0])+10,Y(e[1])-14,C.exp,11);
+        }
+      }
+    }
+    // Stats
+    const g11=CE.g11(u,a), He2=CE.He2(u,a), tot=He2;
+    $('ceSt1').textContent=fmt(g11,2);
+    $('ceSt2').textContent=fmt(Math.sqrt(He2),3);
+    $('ceSt3').textContent=fmt(He2,3);
+    $('ceRead').innerHTML=
+      '<span class="k">θ =</span> ('+fmt(CE.th(u,a)[0],2)+', '+fmt(CE.th(u,a)[1],2)+')<br>'+
+      '<span class="k">η =</span> ('+fmt(CE.eta(u,a)[0],2)+', '+fmt(CE.eta(u,a)[1],2)+')<br>'+
+      '<span class="k">g₁₁ = (2a²+1)/(a²u²) =</span> <b>'+fmt(g11,3)+'</b><br>'+
+      (dataPt&&isEta?('<span class="k">û_ML =</span> <b>'+fmt(uml,3)+'</b> &nbsp; <span class="k">û_DML =</span> <b>'+fmt(udml,3)+'</b>'):'<span class="k">Klicke ins Bild für einen Datenpunkt.</span>');
+  }
+  cv.addEventListener('click',e=>{
+    const a=+$('ceA').value;
+    const r=cv.getBoundingClientRect();
+    const W=r.width, H=+cv.getAttribute('height');
+    const px=e.clientX-r.left, py=e.clientY-r.top;
+    if(view==='eta'){
+      const x0=0,x1=2.6,y0=0,y1=2.6*2.6*(1+a*a)*1.05;
+      const e1=x0+((px-34)/(W-50))*(x1-x0);
+      const e2=y0+((H-34-py)/(H-52))*(y1-y0);
+      dataPt=[e1,e2];
+    }
+    draw();
+  });
+  ['ceA','ceU','ceShowA','ceShowAT','ceShowTan','ceShowNorm'].forEach(id=>$(id).addEventListener('input',draw));
+  document.querySelectorAll('[data-cev]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-cev]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');view=b.dataset.cev;dataPt=null;draw();
+    });
+  });
+  onView('#ceCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   TEIL 8 — H und L
+   ===================================================================== */
+(function(){
+  const cv=$('hlCv'); if(!cv)return;
+  function draw(){
+    const al=+$('hlA').value, pp=+$('hlP').value;
+    $('hlAV').textContent=al.toFixed(2); $('hlPV').textContent=pp.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,8);
+    // Modellkurve (Parabel) im Bild
+    const cx=W*0.5, baseY=H*0.78, sc=W*0.32;
+    const f=t=>-0.7*t*t;   // Kurve
+    const pts=[];
+    for(let i=0;i<=200;i++){const t=-1.25+2.5*i/200;pts.push([cx+t*sc, baseY+f(t)*sc]);}
+    g.save();g.shadowColor=C.model;g.shadowBlur=13;line(g,pts,C.model,3);g.restore();
+    txt(g,'Modell S^m',cx+sc*1.0,baseY+f(1.15)*sc-14,C.model,12,'center');
+    // Punkt
+    const t0=-1.25+2.5*pp;
+    const P=[cx+t0*sc, baseY+f(t0)*sc];
+    const dfx=1, dfy=-1.4*t0;
+    const tn=Math.hypot(dfx,dfy);
+    const Tx=dfx/tn, Ty=dfy/tn;
+    const Nx=-Ty, Ny=Tx;
+    dot(g,P[0],P[1],7,C.data,16);
+    // Nachbarpunkt
+    const dt=0.3;
+    const t1=t0+dt;
+    const Q=[cx+t1*sc, baseY+f(t1)*sc];
+    const d2x=1, d2y=-1.4*t1;
+    const t2=Math.hypot(d2x,d2y);
+    const Tx2=d2x/t2, Ty2=d2y/t2;
+    dot(g,Q[0],Q[1],5,'rgba(255,255,255,.55)');
+    // α-Verzerrung simulieren: Transport dreht zusätzlich um α·T
+    const twist=al*0.26;
+    const rot=(vx,vy,an)=>[vx*Math.cos(an)-vy*Math.sin(an), vx*Math.sin(an)+vy*Math.cos(an)];
+    if($('hlShowH').checked){
+      // Tangente am Punkt
+      arrow(g,P[0],P[1],P[0]+Tx*66,P[1]+Ty*66,'rgba(255,211,110,.85)',2.4,9);
+      // transportierte Tangente nach Q (per α-Zusammenhang)
+      const tr=rot(Tx,Ty,twist*dt);
+      arrow(g,Q[0],Q[1],Q[0]+tr[0]*66,Q[1]+tr[1]*66,'rgba(255,211,110,.35)',2,8);
+      // tatsächliche Tangente in Q
+      arrow(g,Q[0],Q[1],Q[0]+Tx2*66,Q[1]+Ty2*66,C.exp,2.6,9);
+      txt(g,'H^α: Differenz der Tangenten',14,20,C.exp,11.5);
+    }
+    if($('hlShowL').checked){
+      arrow(g,P[0],P[1],P[0]+Nx*56,P[1]+Ny*56,'rgba(79,209,255,.5)',2,8);
+      const n2x=-Ty2, n2y=Tx2;
+      const tr=rot(Nx,Ny,-twist*dt);
+      arrow(g,Q[0],Q[1],Q[0]+tr[0]*56,Q[1]+tr[1]*56,'rgba(79,209,255,.3)',1.8,7);
+      arrow(g,Q[0],Q[1],Q[0]+n2x*56,Q[1]+n2y*56,C.mix,2.4,9);
+      txt(g,'L^(−α): Differenz der Normalen',14,38,C.mix,11.5);
+    }
+    // Krümmungskreis
+    const yp=-1.4*t0, ypp=-1.4;
+    const R=Math.pow(1+yp*yp,1.5)/Math.abs(ypp);
+    g.save();g.strokeStyle='rgba(180,140,255,.3)';g.lineWidth=1.4;g.setLineDash([4,5]);
+    g.beginPath();g.arc(P[0]+Nx*R*sc,P[1]+Ny*R*sc,R*sc,0,TAU);g.stroke();g.restore();
+
+    const Hv=Math.abs(ypp)/Math.pow(1+yp*yp,1.5);
+    $('hlRead').innerHTML=
+      '<span class="k">α =</span> <b>'+al.toFixed(2)+'</b><br>'+
+      '<span class="k">|H^α| ≈</span> <b>'+fmt(Hv*(1+0.3*al),3)+'</b> &nbsp; '+
+      '<span class="k">|L^(−α)| ≈</span> <b>'+fmt(Hv*(1+0.3*al),3)+'</b><br>'+
+      '<span class="k">L^α − H^α = α·T·B·B</span> → <b>'+(Math.abs(al)<0.02?'0 (metrisch!)':fmt(al*0.26,3))+'</b><br>'+
+      '<span class="k">Krümmungsradius:</span> <b>'+fmt(R,2)+'</b>';
+  }
+  ['hlA','hlP','hlShowH','hlShowL'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#hlCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* --- 3D Faserung --- */
+(function(){
+  let init=false;
+  function draw(){
+    const al=+$('fbA').value; $('fbAV').textContent=al.toFixed(2);
+    const a=0.6;
+    const traces=[];
+    // Umgebungsraum S² als Fläche η1,η2
+    const xs=[],ys=[],zs=[];
+    for(let i=0;i<=28;i++){
+      const row=[];const rz=[];
+      for(let j=0;j<=28;j++){
+        row.push(0.2+2.4*j/28);
+      }
+      xs.push(row);
+    }
+    const gx=[],gy=[],gz=[];
+    for(let i=0;i<=26;i++){
+      const rx=[],ry=[],rz=[];
+      for(let j=0;j<=26;j++){
+        const e1=0.2+2.3*j/26;
+        const e2=0.1+5.6*i/26;
+        rx.push(e1);ry.push(e2);
+        rz.push(0.08*Math.sin(e1*2)+0.05*e2);
+      }
+      gx.push(rx);gy.push(ry);gz.push(rz);
+    }
+    traces.push({type:'surface',x:gx,y:gy,z:gz,
+      colorscale:[[0,'rgba(20,34,68,.75)'],[1,'rgba(40,60,110,.75)']],
+      showscale:false,opacity:.55,hoverinfo:'skip',
+      contours:{x:{show:false},y:{show:false},z:{show:false}}});
+    // Modell
+    const mx=[],my=[],mz=[];
+    for(let i=0;i<=80;i++){
+      const u=0.3+1.9*i/80;
+      const e=CE.eta(u,a);
+      mx.push(e[0]);my.push(e[1]);mz.push(0.08*Math.sin(e[0]*2)+0.05*e[1]+0.03);
+    }
+    traces.push({type:'scatter3d',mode:'lines',x:mx,y:my,z:mz,
+      line:{color:C.model,width:9},name:'Modell S¹'});
+    // Fasern A(u) für gewähltes α
+    for(let k=0;k<9;k++){
+      const u=0.45+k*0.19;
+      const fx=[],fy=[],fz=[];
+      for(let s=-0.85;s<=0.85;s+=0.06){
+        const e1=u+s;
+        // α interpoliert zwischen Gerade (α=-1) und Parabel (α=+1)
+        const lin=u*e1+a*a*u*u;
+        const par=e1*u+(1+a*a)*u*u-u*u+0.55*(e1-u)*(e1-u)*(1+a*a);
+        const w=(al+1)/2;
+        const e2=(1-w)*lin+w*par;
+        if(e2<0.05||e2>5.8)continue;
+        fx.push(e1);fy.push(e2);fz.push(0.08*Math.sin(e1*2)+0.05*e2+0.02);
+      }
+      traces.push({type:'scatter3d',mode:'lines',x:fx,y:fy,z:fz,
+        line:{color:al<-0.5?C.mix:(al>0.5?C.exp:C.riem),width:3},
+        opacity:.85,showlegend:k===0,name:'Fasern A(u), α='+al.toFixed(2)});
+    }
+    const lay=Object.assign({},PLOTLAY,{
+      scene:{
+        bgcolor:'rgba(0,0,0,0)',
+        xaxis:{title:'η₁',color:'#8ea0c4',gridcolor:'rgba(120,160,255,.12)',showbackground:false,zerolinecolor:'rgba(120,160,255,.2)'},
+        yaxis:{title:'η₂',color:'#8ea0c4',gridcolor:'rgba(120,160,255,.12)',showbackground:false,zerolinecolor:'rgba(120,160,255,.2)'},
+        zaxis:{title:'',color:'#8ea0c4',showticklabels:false,gridcolor:'rgba(120,160,255,.08)',showbackground:false},
+        camera:{eye:{x:1.5,y:-1.6,z:1.0}}
+      },
+      margin:{l:0,r:0,t:0,b:0},
+      showlegend:true, legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.4)',font:{size:10}}
+    });
+    if(!init){Plotly.newPlot('fiberPlot',traces,lay,PCFG);init=true;}
+    else Plotly.react('fiberPlot',traces,lay,PCFG);
+    const Hm=Math.abs(1+al)/2*1.0;
+    $('fbRead').innerHTML=
+      '<span class="k">α = </span><b>'+al.toFixed(2)+'</b> &nbsp; '+
+      '<span class="k">Mischungskrümmung der Fasern H^m ∝ (1+α)/2 =</span> <b>'+fmt(Hm,3)+'</b><br>'+
+      (Math.abs(al+1)<0.03
+        ? '<b style="color:var(--model)">α = −1: Die Fasern sind GERADEN in η = Mischungs-Geodäten. H^m = 0. Das ist Maximum Likelihood.</b>'
+        : (Math.abs(al-1)<0.03
+          ? '<span class="k">α = +1: Fasern sind exponentielle Geodäten (krumm in η). Das ist der duale ML-Schätzer DMLE.</span>'
+          : '<span class="k">Zwischen-α: die Fasern biegen sich teilweise. Verlust ∝ (1+α)².</span>'));
+  }
+  $('fbA').addEventListener('input',draw);
+  onView('#fiberPlot',draw);
+})();
+
+/* =====================================================================
+   TEIL 9 — PROJEKTIONS-SIMULATOR
+   ===================================================================== */
+(function(){
+  const cv=$('prCv'); if(!cv)return;
+  let sample=null, cloud=[], hist={ml:[],dml:[],r0:[]}, histInit=false;
+  function drawSample(){
+    const N=+$('prN').value, u=+$('prU').value, a=+$('prA').value;
+    let s1=0,s2=0;
+    for(let i=0;i<N;i++){const x=u+u*a*randn();s1+=x;s2+=x*x;}
+    sample=[s1/N,s2/N];
+    return sample;
+  }
+  function draw(){
+    const N=+$('prN').value, u=+$('prU').value, a=+$('prA').value;
+    $('prNV').textContent=N; $('prUV').textContent=u.toFixed(2); $('prAV').textContent=a.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,8);
+    const x0=Math.max(0,u-1.6), x1=u+1.6;
+    const y0=Math.max(0,(1+a*a)*u*u-2.4), y1=(1+a*a)*u*u+2.6;
+    const X=v=>36+((v-x0)/(x1-x0))*(W-52);
+    const Y=v=>H-32-((v-y0)/(y1-y0))*(H-50);
+    line(g,[[34,H-32],[W-14,H-32]],'rgba(143,182,255,.3)',1.3);
+    line(g,[[34,H-32],[34,14]],'rgba(143,182,255,.3)',1.3);
+    txt(g,'η₁ = x̄',W-16,H-16,C.dim,11,'right');
+    txt(g,'η₂ = x²‾',42,22,C.dim,11);
+    // Modell
+    const mp=[];
+    for(let i=0;i<=220;i++){
+      const uu=0.2+2.6*i/220;const e=CE.eta(uu,a);
+      mp.push([X(e[0]),Y(e[1])]);
+    }
+    g.save();g.shadowColor=C.model;g.shadowBlur=12;
+    line(g,mp.filter(p=>p[0]>20&&p[0]<W&&p[1]>6&&p[1]<H-14),C.model,2.8);g.restore();
+    // Wolke
+    if($('prCloud').checked){
+      cloud.forEach(c=>dot(g,X(c[0]),Y(c[1]),1.6,'rgba(255,211,110,.25)'
+));
+    }
+    // aktuelle Stichprobe
+    if(sample){
+      const dx=X(sample[0]), dy=Y(sample[1]);
+      // Projektionen
+      const uml=CE.mlFromEta(sample[0],sample[1],a);
+      const udml=CE.dmlFromEta(sample[0],sample[1],a);
+      // α=0 Schätzer: Mittel zwischen beiden Fasern (Näherung)
+      const u0=(isFinite(uml)&&isFinite(udml))?(uml+udml)/2:NaN;
+      // ML-Faser (Gerade in η) einzeichnen
+      if(isFinite(uml)&&uml>0.1){
+        const pts=[];
+        for(let s=-1.6;s<=1.6;s+=0.08){
+          const e1=uml+s, e2=uml*e1+a*a*uml*uml;
+          pts.push([X(e1),Y(e2)]);
+        }
+        line(g,pts.filter(p=>p[0]>20&&p[0]<W&&p[1]>6&&p[1]<H-14),'rgba(79,209,255,.45)',1.6);
+        const e=CE.eta(uml,a);
+        line(g,[[dx,dy],[X(e[0]),Y(e[1])]],C.mix,1.8,[4,4]);
+        dot(g,X(e[0]),Y(e[1]),6,C.mix,13);
+      }
+      if(isFinite(udml)&&udml>0.1){
+        const e=CE.eta(udml,a);
+        line(g,[[dx,dy],[X(e[0]),Y(e[1])]],'rgba(255,122,89,.6)',1.6,[3,4]);
+        dot(g,X(e[0]),Y(e[1]),5,C.exp,11);
+      }
+      if(isFinite(u0)&&u0>0.1){
+        const e=CE.eta(u0,a);
+        dot(g,X(e[0]),Y(e[1]),4.5,C.riem,10);
+      }
+      dot(g,dx,dy,7,C.data,18);
+      txt(g,'η̂',dx+11,dy-11,C.data,12);
+      // wahrer Punkt
+      const tp=CE.eta(u,a);
+      dot(g,X(tp[0]),Y(tp[1]),5.5,'#fff',12);
+      txt(g,'wahr u='+u.toFixed(2),X(tp[0])+10,Y(tp[1])+16,'rgba(255,255,255,.75)',11);
+      $('prRead').innerHTML=
+        '<span class="k">Daten:</span> x̄ = <b>'+fmt(sample[0],3)+'</b>, x²‾ = <b>'+fmt(sample[1],3)+'</b><br>'+
+        '<span class="k">û<sub>ML</sub> =</span> <b style="color:var(--mix)">'+fmt(uml,4)+'</b> &nbsp; '+
+        '<span class="k">Fehler</span> '+fmt(uml-u,4)+'<br>'+
+        '<span class="k">û<sub>DML</sub> =</span> <b style="color:var(--exp)">'+fmt(udml,4)+'</b> &nbsp; '+
+        '<span class="k">Fehler</span> '+fmt(udml-u,4)+'<br>'+
+        '<span class="k">Stichproben in der Wolke:</span> <b>'+cloud.length+'</b>';
+    }else{
+      const tp=CE.eta(u,a);
+      dot(g,X(tp[0]),Y(tp[1]),5.5,'#fff',12);
+      $('prRead').innerHTML='<span class="k">Klicke „Neue Stichprobe“.</span>';
+    }
+    txt(g,'Datenpunkt = (x̄, x²‾) — der suffiziente Statistik-Vektor η̂',W-16,20,C.faint,11,'right');
+  }
+  function histPlot(){
+    const u=+$('prU').value;
+    if(hist.ml.length<5)return;
+    const data=[
+      {x:hist.ml,type:'histogram',name:'ML (α=−1)',opacity:.62,
+       marker:{color:C.mix},nbinsx:46},
+      {x:hist.dml,type:'histogram',name:'DML (α=+1)',opacity:.55,
+       marker:{color:C.exp},nbinsx:46}
+    ];
+    const lay=Object.assign({},PLOTLAY,{
+      barmode:'overlay',
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'Schätzwert û'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Häufigkeit'}),
+      shapes:[{type:'line',x0:u,x1:u,yref:'paper',y0:0,y1:1,
+        line:{color:'#fff',width:2,dash:'dash'}}],
+      annotations:[{x:u,y:1,yref:'paper',text:'wahres u',showarrow:false,
+        font:{color:'#fff',size:10},yshift:8}],
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.35)',font:{size:10}}
+    });
+    Plotly.react('prHist',data,lay,PCFG);
+  }
+  $('prDraw').addEventListener('click',()=>{
+    const s=drawSample(); cloud.push([s[0],s[1]]);
+    if(cloud.length>900)cloud.shift();
+    draw();
+  });
+  $('prRun').addEventListener('click',()=>{
+    const a=+$('prA').value;
+    for(let r=0;r<300;r++){
+      const s=drawSample(); cloud.push([s[0],s[1]]);
+      const uml=CE.mlFromEta(s[0],s[1],a), ud=CE.dmlFromEta(s[0],s[1],a);
+      if(isFinite(uml))hist.ml.push(uml);
+      if(isFinite(ud))hist.dml.push(ud);
+    }
+    if(cloud.length>900)cloud=cloud.slice(-900);
+    draw();histPlot();
+  });
+  $('prClr').addEventListener('click',()=>{cloud=[];hist={ml:[],dml:[],r0:[]};sample=null;draw();
+    Plotly.react('prHist',[],Object.assign({},PLOTLAY),PCFG);});
+  ['prN','prU','prA','prCloud'].forEach(id=>$(id).addEventListener('input',()=>{draw();}));
+  onView('#prCv',()=>{drawSample();draw();
+    Plotly.newPlot('prHist',[],Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'Schätzwert û'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Häufigkeit'})}),PCFG);});
+  window.addEventListener('resize',draw);
+})();
+
+/* --- Orthogonalität / Satz 6 --- */
+(function(){
+  const cv=$('orCv'); if(!cv)return;
+  function draw(){
+    const ang=+$('orA').value; $('orAV').textContent=ang+'°';
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,8);
+    const cx=W*0.5, cy=H*0.56, L=W*0.3;
+    // Modell waagerecht
+    arrow(g,cx-L,cy,cx+L,cy,C.model,3,10);
+    txt(g,'Modell S^m (Tangente B_a)',cx+L-6,cy-16,C.model,11.5,'right');
+    // Faser
+    const r=ang*Math.PI/180;
+    const fx=Math.cos(Math.PI/2+ (r-Math.PI/2)), fy=-Math.sin(Math.PI/2+(r-Math.PI/2));
+    const dx=Math.cos(r), dy=-Math.sin(r);
+    line(g,[[cx-dx*L*0.85,cy-dy*L*0.85],[cx+dx*L*0.85,cy+dy*L*0.85]],C.mix,2.8);
+    txt(g,'Faser A(u) (B_κ)',cx+dx*L*0.9,cy+dy*L*0.9,C.mix,11.5);
+    // Winkelbogen
+    g.save();g.strokeStyle='rgba(255,211,110,.75)';g.lineWidth=2;
+    g.beginPath();g.arc(cx,cy,34,-r,0,r>0);g.stroke();g.restore();
+    txt(g,ang+'°',cx+42*Math.cos(-r/2),cy+42*Math.sin(-r/2),C.data,12);
+    dot(g,cx,cy,6,C.data,14);
+    // Projektionsverlust visualisieren
+    const cosv=Math.cos(r);
+    const eff=1-cosv*cosv;   // relative verbleibende Information
+    const bw=W*0.5;
+    const by=H-26;
+    g.save();g.fillStyle='rgba(255,255,255,.08)';rr(g,cx-bw/2,by-12,bw,14,7);g.fill();g.restore();
+    g.save();g.fillStyle=Math.abs(cosv)<0.02?C.model:C.warn;g.shadowColor=g.fillStyle;g.shadowBlur=10;
+    rr(g,cx-bw/2,by-12,Math.max(4,bw*eff),14,7);g.fill();g.restore();
+    txt(g,'verbleibende Information (relativ)',cx,by-24,C.faint,10.5,'center');
+    $('orRead').innerHTML=
+      '<span class="k">Schnittwinkel:</span> <b>'+ang+'°</b><br>'+
+      '<span class="k">g<sub>κa</sub> ∝ cos =</span> <b>'+fmt(cosv,4)+'</b><br>'+
+      '<span class="k">effektive Information:</span> <b>'+(eff*100).toFixed(1)+'%</b> der Fisher-Information<br>'+
+      (Math.abs(cosv)<0.02
+       ? '<b style="color:var(--model)">⟂ orthogonal → Fisher-effizient (Satz 6) ✓</b>'
+       : '<b style="color:var(--warn)">nicht orthogonal → Verlust bereits 1. Ordnung ✗</b>');
+  }
+  $('orA').addEventListener('input',draw);
+  onView('#orCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   TEIL 10 — INFORMATIONSVERLUST
+   ===================================================================== */
+(function(){
+  const cv=$('lsCv'); if(!cv)return;
+  function draw(){
+    const k=+$('lsK').value, m=+$('lsM').value;
+    $('lsKV').textContent=k.toFixed(2); $('lsMV').textContent=m.toFixed(2);
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,6);
+    const cx=W*0.34, cy=H*0.62;
+    // Modell (Kurve, Krümmung m)
+    const mp=[];
+    for(let t=-1.2;t<=1.2;t+=0.02){
+      mp.push([cx+t*W*0.26, cy - m*t*t*W*0.1]);
+    }
+    g.save();g.shadowColor=C.model;g.shadowBlur=11;line(g,mp,C.model,2.8);g.restore();
+    txt(g,'Modell (H^e = '+m.toFixed(2)+')',cx+W*0.27,cy-m*1.3*1.3*W*0.1-10,C.model,11,'right');
+    // Faser durch cx,cy, Krümmung k
+    const fp=[];
+    for(let s=-1.25;s<=1.25;s+=0.02){
+      fp.push([cx + k*s*s*W*0.08, cy - s*H*0.3]);
+    }
+    line(g,fp,C.mix,2.6);
+    txt(g,'Faser A(u) (H^m = '+k.toFixed(2)+')',cx+W*0.03,cy-H*0.36,C.mix,11);
+    // Score-Pfeile entlang der Faser
+    // Score-Richtung ändert sich mit Querabstand v: ∂ℓ ≈ g·û + ½H^m v² − H^e û v
+    let varSum=0, n=0, base=null;
+    for(let i=-4;i<=4;i++){
+      const s=i*0.28;
+      const px=cx + k*s*s*W*0.08, py=cy - s*H*0.3;
+      // Score-Vektor (Richtung entlang Modell-Tangente, moduliert)
+      const dev = 0.5*k*s*s - m*s*0.9;
+      const ax=Math.cos(dev*0.6), ay=-Math.sin(dev*0.6);
+      arrow(g,px,py,px+ax*46,py+ay*46, i===0?C.data:'rgba(255,211,110,.6)', i===0?2.6:1.8, 7);
+      if(base===null)base=dev; 
+      varSum+=dev*dev;n++;
+    }
+    const spread=Math.sqrt(varSum/n);
+    // Verlustbalken
+    const lossE=m*m, lossM=0.5*k*k, tot=lossE+lossM;
+    const bx=W*0.68, bw=W*0.26, by0=H-30;
+    const maxV=0.5*1.4*1.4+1.4*1.4;
+    const he=(lossE/maxV)*(H-90), hm=(lossM/maxV)*(H-90);
+    g.save();g.fillStyle='rgba(255,255,255,.06)';rr(g,bx,30,bw,by0-30,8);g.fill();g.restore();
+    g.save();g.fillStyle=C.exp;g.shadowColor=C.exp;g.shadowBlur=10;
+    rr(g,bx,by0-he,bw,Math.max(2,he),6);g.fill();g.restore();
+    g.save();g.fillStyle=C.mix;g.shadowColor=C.mix;g.shadowBlur=10;
+    rr(g,bx,by0-he-hm,bw,Math.max(2,hm),6);g.fill();g.restore();
+    txt(g,'Δg',bx+bw/2,20,C.dim,11.5,'center');
+    txt(g,'(H^e)²',bx+bw/2,by0-he/2,'#06101f',10.5,'center','800');
+    if(hm>14)txt(g,'½(H^m)²',bx+bw/2,by0-he-hm/2,'#06101f',10.5,'center','800');
+    $('lsRead').innerHTML=
+      '<span class="k">Streuung des Scores auf der Faser:</span> <b>'+fmt(spread,3)+'</b><br>'+
+      '<span class="k">Modell-Term (H^e)² =</span> <b style="color:var(--exp)">'+fmt(lossE,3)+'</b><br>'+
+      '<span class="k">Schätzer-Term ½(H^m)² =</span> <b style="color:var(--mix)">'+fmt(lossM,3)+'</b><br>'+
+      '<span class="k">Summe Δg =</span> <b>'+fmt(tot,3)+'</b>'+
+      (Math.abs(k)<0.02?' &nbsp;<span style="color:var(--model)">← Minimum (ML)</span>':'');
+  }
+  ['lsK','lsM'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#lsCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* --- Terme von (5.26) --- */
+(function(){
+  const cv=$('t526Cv'); if(!cv)return;
+  let sel=0;
+  const INFO=[
+    {t:'g<sub>ab</sub> û<sup>b</sup>',
+     d:'Der <b>Hauptterm</b>. Er hängt nur von û ab — also vollständig bekannt, wenn man den Schätzwert kennt. <span style="color:var(--model)">Trägt NICHTS zum Verlust bei.</span>',c:C.model},
+    {t:'½ Γ<sup>m</sup><sub>bca</sub> û<sup>b</sup>û<sup>c</sup>',
+     d:'Korrektur zweiter Ordnung, hängt ebenfalls nur von û ab. <span style="color:var(--model)">Kein Verlust.</span> Dieser Term erzeugt aber die „naming curvature“ in Satz 9.',c:C.model},
+    {t:'½ H<sup>m</sup><sub>κλa</sub> v<sup>κ</sup>v<sup>λ</sup>',
+     d:'Hängt <b>quadratisch von v</b> ab — der Querrichtung, die man NICHT beobachtet. <span style="color:var(--mix)">→ erzeugt ½(H^m)² im Verlust.</span> Null, wenn die Fasern Mischungs-Geodäten sind (ML).',c:C.mix},
+    {t:'− H<sup>e</sup><sub>abκ</sub> û<sup>b</sup>v<sup>κ</sup>',
+     d:'Mischterm aus û und v. Die unbekannte Querrichtung v koppelt an die Modellkrümmung. <span style="color:var(--exp)">→ erzeugt (H^e)² im Verlust.</span> Unvermeidbar.',c:C.exp}
+  ];
+  function draw(){
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,12,5);
+    // û-Achse und v-Achse
+    const cx=W*0.5, cy=H*0.55;
+    arrow(g,cx-W*0.32,cy,cx+W*0.32,cy,'rgba(143,182,255,.5)',1.6,8);
+    arrow(g,cx,cy+H*0.33,cx,cy-H*0.33,'rgba(143,182,255,.5)',1.6,8);
+    txt(g,'û (beobachtet)',cx+W*0.33,cy+15,C.acc,11,'right');
+    txt(g,'v (unbeobachtet)',cx+8,cy-H*0.33,C.acc,11);
+    // Beitrag als Fläche
+    const F=[(u,v)=>u, (u,v)=>0.5*u*u, (u,v)=>0.5*v*v, (u,v)=>-u*v];
+    const f=F[sel];
+    for(let i=0;i<28;i++){
+      for(let j=0;j<16;j++){
+        const u=-1.4+2.8*i/27, v=-1.2+2.4*j/15;
+        const val=f(u,v);
+        const px=cx+u*W*0.22, py=cy-v*H*0.26;
+        const mag=Math.min(1,Math.abs(val)/1.3);
+        if(mag<0.03)continue;
+        g.save();
+        g.fillStyle=(val>0?'rgba(110,242,167,':'rgba(255,95,141,')+(mag*0.72)+')';
+        g.beginPath();g.arc(px,py,2+mag*5,0,TAU);g.fill();g.restore();
+      }
+    }
+    const varies = sel>=2;
+    txt(g, varies?'Hängt von v ab → VERLUST':'Hängt nur von û ab → kein Verlust',
+        W*0.5, 18, varies?C.warn:C.model, 12, 'center','700');
+    $('t526Read').innerHTML='<b>'+INFO[sel].t+'</b><br><span class="k">'+INFO[sel].d+'</span>';
+  }
+  document.querySelectorAll('[data-t526]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-t526]').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');sel=+b.dataset.t526;draw();
+    });
+  });
+  onView('#t526Cv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   TEIL 11 — SATZ 7 / VERLUST-EXPLORER
+   Beispiel 5.1:  Δg = {16a² + (1+α)²(4a²−3)²} / {8(2a²+1)² u²}
+   ===================================================================== */
+function loss51(a,al,u){
+  const num1=16*a*a;
+  const num2=Math.pow(1+al,2)*Math.pow(4*a*a-3,2);
+  const den=8*Math.pow(2*a*a+1,2)*u*u;
+  return {e:num1/den, m:num2/den, tot:(num1+num2)/den};
+}
+(function(){
+  let init=false;
+  function draw(){
+    const al=+$('l7A').value, a=+$('l7a').value, u=+$('l7U').value;
+    $('l7AV').textContent=al.toFixed(2);
+    $('l7aV').textContent=a.toFixed(2);
+    $('l7UV').textContent=u.toFixed(2);
+    const L=loss51(a,al,u);
+    const als=[],ye=[],ym=[],yt=[];
+    for(let i=0;i<=160;i++){
+      const A=-2+4*i/160;
+      const l=loss51(a,A,u);
+      als.push(A);ye.push(l.e);ym.push(l.m);yt.push(l.tot);
+    }
+    const data=[
+      {x:als,y:ye,mode:'lines',name:'Modellkrümmung (H^e)²',fill:'tozeroy',
+       line:{color:C.exp,width:2},fillcolor:'rgba(255,122,89,.35)'},
+      {x:als,y:yt,mode:'lines',name:'gesamt Δg',
+       line:{color:C.data,width:3}},
+      {x:als,y:ym,mode:'lines',name:'Schätzerkrümmung ½(H^m)²',
+       line:{color:C.mix,width:2,dash:'dot'}},
+      {x:[al],y:[L.tot],mode:'markers',showlegend:false,
+       marker:{color:'#fff',size:12,line:{color:C.data,width:2}}},
+      {x:[-1],y:[loss51(a,-1,u).tot],mode:'markers+text',showlegend:false,
+       marker:{color:C.model,size:9},text:['ML'],textposition:'top center',
+       textfont:{color:C.model,size:10}}
+    ];
+    const lay=Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'α des Schätzers'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Informationsverlust Δg₁₁',rangemode:'tozero'}),
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.4)',font:{size:10}}
+    });
+    if(!init){Plotly.newPlot('lossPlot',data,lay,PCFG);init=true;}
+    else Plotly.react('lossPlot',data,lay,PCFG);
+    $('l7Read').innerHTML=
+      '<span class="k">Δg = {16a² + (1+α)²(4a²−3)²} / {8(2a²+1)²u²}</span><br>'+
+      '<span class="k">Modellterm:</span> <b style="color:var(--exp)">'+fmt(L.e,4)+'</b><br>'+
+      '<span class="k">Schätzerterm:</span> <b style="color:var(--mix)">'+fmt(L.m,4)+'</b><br>'+
+      '<span class="k">Summe Δg₁₁ =</span> <b>'+fmt(L.tot,4)+'</b><br>'+
+      (Math.abs(al+1)<0.02
+        ? '<b style="color:var(--model)">α = −1 (ML): Schätzerterm exakt 0 → Minimum erreicht ✓</b>'
+        : '<span class="k">Überschuss gegenüber ML:</span> <b style="color:var(--warn)">+'+fmt(L.m,4)+'</b> ('+fmt(100*L.m/Math.max(L.e,1e-12),1)+'% mehr)');
+  }
+  ['l7A','l7a','l7U'].forEach(id=>$(id).addEventListener('input',draw));
+  document.querySelectorAll('[data-l7]').forEach(b=>{
+    b.addEventListener('click',()=>{$('l7A').value=b.dataset.l7;bindRange($('l7A'));draw();});
+  });
+  onView('#lossPlot',draw);
+})();
+
+/* --- 3D Verlust-Landschaft --- */
+onView('#surfPlot',()=>{
+  const als=[],as=[],z=[];
+  for(let i=0;i<=46;i++) als.push(-2+4*i/46);
+  for(let j=0;j<=46;j++) as.push(0.08+1.3*j/46);
+  for(let j=0;j<=46;j++){
+    const row=[];
+    for(let i=0;i<=46;i++){
+      row.push(loss51(as[j],als[i],1).tot);
+    }
+    z.push(row);
+  }
+  Plotly.newPlot('surfPlot',[{
+    type:'surface',x:als,y:as,z:z,
+    colorscale:[[0,'#0d3b2e'],[0.18,'#6ef2a7'],[0.4,'#4fd1ff'],[0.68,'#b48cff'],[1,'#ff7a59']],
+    showscale:true,
+    colorbar:{title:{text:'Δg',font:{color:'#8ea0c4',size:11}},tickfont:{color:'#8ea0c4',size:9},
+      len:.6,thickness:11,x:1.02},
+    contours:{z:{show:true,usecolormap:true,project:{z:true},width:1}},
+    lighting:{ambient:.6,diffuse:.8,specular:.2},
+    hovertemplate:'α=%{x:.2f}<br>a=%{y:.2f}<br>Δg=%{z:.4f}<extra></extra>'
+  },{
+    type:'scatter3d',mode:'lines',
+    x:as.map(()=>-1), y:as, z:as.map(a=>loss51(a,-1,1).tot),
+    line:{color:'#ffffff',width:7}, name:'ML-Tal (α = −1)'
+  }],Object.assign({},PLOTLAY,{
+    scene:{
+      bgcolor:'rgba(0,0,0,0)',
+      xaxis:{title:'α (Schätzer)',color:'#8ea0c4',gridcolor:'rgba(120,160,255,.14)',showbackground:false},
+      yaxis:{title:'a (Modellkrümmung)',color:'#8ea0c4',gridcolor:'rgba(120,160,255,.14)',showbackground:false},
+      zaxis:{title:'Δg',color:'#8ea0c4',gridcolor:'rgba(120,160,255,.14)',showbackground:false},
+      camera:{eye:{x:1.75,y:-1.55,z:0.95}}
+    },
+    margin:{l:0,r:0,t:0,b:0},
+    showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.4)',font:{size:10}}
+  }),PCFG);
+});
+
+/* =====================================================================
+   TEIL 12 — RÜCKGEWINNUNG + KOVARIANZ
+   ===================================================================== */
+(function(){
+  const cv=$('rcCv'); if(!cv)return;
+  function draw(){
+    const m=+$('rcM').value, n=+$('rcN').value;
+    $('rcMV').textContent=m; $('rcNV').textContent=n;
+    const need=m*(m+3)/2, avail=n-m;
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,10,6);
+    const maxV=Math.max(need,avail,6);
+    const bw=W*0.26;
+    function bar(x,v,lab,col){
+      const h=(v/maxV)*(H-96);
+      const y=H-46-h;
+      g.save();g.fillStyle='rgba(255,255,255,.055)';rr(g,x,H-46-(H-96),bw,H-96,9);g.fill();g.restore();
+      g.save();g.fillStyle=col;g.shadowColor=col;g.shadowBlur=13;
+      rr(g,x,y,bw,Math.max(4,h),9);g.fill();g.restore();
+      txt(g,String(v),x+bw/2,y-13,'#fff',14,'center','800');
+      txt(g,lab,x+bw/2,H-26,C.dim,11,'center');
+    }
+    bar(W*0.17,need,'A + B: m(m+3)/2',C.mix);
+    bar(W*0.57,avail,'volle Daten: n − m',C.exp);
+    const ok=need<avail;
+    txt(g, ok?'→ Zusatzstatistiken LOHNEN sich':'→ besser gleich die vollen Daten nehmen',
+        W*0.5, 24, ok?C.model:C.warn, 13, 'center','750');
+    $('rcRead').innerHTML=
+      '<span class="k">Zusatzstatistiken A<sub>ab</sub>, B<sub>a</sub>:</span> <b>'+need+'</b> Komponenten<br>'+
+      '<span class="k">volle Querinformation v:</span> <b>'+avail+'</b> Komponenten<br>'+
+      (ok?'<b style="color:var(--model)">m(m+3)/2 &lt; n−m ✓ — kompakte Zusammenfassung möglich</b>'
+         :'<b style="color:var(--warn)">m(m+3)/2 ≥ n−m — (û, v̂) ist bereits suffizient</b>');
+  }
+  ['rcM','rcN'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#rcCv',draw); window.addEventListener('resize',draw);
+})();
+
+(function(){
+  let init=false;
+  function draw(){
+    const N=+$('cvN').value, al=+$('cvA').value;
+    $('cvNV').textContent=N; $('cvAV').textContent=al.toFixed(2);
+    const a=0.6,u=1;
+    const g11=CE.g11(u,a), ginv=1/g11;
+    const L=loss51(a,al,u);
+    const naming=0.35;
+    const Ns=[],c1=[],c2=[];
+    for(let i=5;i<=300;i+=3){
+      Ns.push(i);
+      c1.push(ginv/i);
+      c2.push(ginv/i + (0.5*naming + L.tot*ginv*ginv)/(i*i));
+    }
+    const cur1=ginv/N, cur2=ginv/N+(0.5*naming+L.tot*ginv*ginv)/(N*N);
+    const data=[
+      {x:Ns,y:c1,mode:'lines',name:'1. Ordnung g^ab/N (Cramér–Rao)',line:{color:C.riem,width:2,dash:'dash'}},
+      {x:Ns,y:c2,mode:'lines',name:'mit 2.-Ordnung-Korrektur (5.29)',line:{color:C.data,width:3}},
+      {x:[N],y:[cur2],mode:'markers',showlegend:false,marker:{color:'#fff',size:11,line:{color:C.data,width:2}}}
+    ];
+    const lay=Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'Stichprobengröße N',type:'log'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Var(û)',type:'log'}),
+      showlegend:true,legend:{x:0.02,y:0.06,bgcolor:'rgba(0,0,0,.4)',font:{size:10}}
+    });
+    if(!init){Plotly.newPlot('covPlot',data,lay,PCFG);init=true;}
+    else Plotly.react('covPlot',data,lay,PCFG);
+    $('cvRead').innerHTML=
+      '<span class="k">g<sup>11</sup> = a²u²/(2a²+1) =</span> <b>'+fmt(ginv,4)+'</b><br>'+
+      '<span class="k">1. Ordnung:</span> <b>'+fmt(cur1,5)+'</b><br>'+
+      '<span class="k">mit 2. Ordnung:</span> <b>'+fmt(cur2,5)+'</b><br>'+
+      '<span class="k">Überschuss durch Δg:</span> <b>'+fmt(L.tot*ginv*ginv/(N*N),6)+'</b><br>'+
+      '<span class="k">naming curvature ½Γ²:</span> <b>'+fmt(0.5*naming/(N*N),6)+'</b> <span class="k">(wegparametrisierbar)</span>';
+  }
+  ['cvN','cvA'].forEach(id=>$(id).addEventListener('input',draw));
+  onView('#covPlot',draw);
+})();
+
+/* =====================================================================
+   TEIL 13 — MONTE-CARLO-LABOR
+   ===================================================================== */
+(function(){
+  let init=false;
+  function setup(){
+    Plotly.newPlot('labPlot',[],Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'û − u'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Dichte'})
+    }),PCFG);
+    init=true;
+  }
+  function run(){
+    const N=+$('lbN').value, a=+$('lbA').value, u=+$('lbU').value, R=+$('lbR').value;
+    $('lbRead').innerHTML='<span class="k">rechne…</span>';
+    setTimeout(()=>{
+      const ml=[],dml=[],a0=[];
+      let t0=performance.now();
+      for(let r=0;r<R;r++){
+        let s1=0,s2=0;
+        for(let i=0;i<N;i++){const x=u+u*a*randn();s1+=x;s2+=x*x;}
+        const e1=s1/N,e2=s2/N;
+        const m=CE.mlFromEta(e1,e2,a);
+        const d=CE.dmlFromEta(e1,e2,a);
+        if(isFinite(m)&&m>0)ml.push(m-u);
+        if(isFinite(d)&&d>0)dml.push(d-u);
+        if(isFinite(m)&&isFinite(d))a0.push((m+d)/2-u);
+      }
+      const mean=A=>A.reduce((x,y)=>x+y,0)/A.length;
+      const varr=A=>{const mu=mean(A);return A.reduce((s,x)=>s+(x-mu)*(x-mu),0)/A.length;};
+      const vML=varr(ml), vDML=varr(dml);
+      const g11=CE.g11(u,a);
+      const crb=1/(N*g11);
+      const L=loss51(a,-1,u), Ld=loss51(a,1,u);
+      const data=[
+        {x:ml,type:'histogram',histnorm:'probability density',name:'ML (α=−1)',
+         opacity:.6,marker:{color:C.mix},nbinsx:60},
+        {x:dml,type:'histogram',histnorm:'probability density',name:'DML (α=+1)',
+         opacity:.5,marker:{color:C.exp},nbinsx:60}
+      ];
+      const lay=Object.assign({},PLOTLAY,{
+        barmode:'overlay',
+        xaxis:Object.assign({},PLOTLAY.xaxis,{title:'Schätzfehler û − u'}),
+        yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Dichte'}),
+        shapes:[{type:'line',x0:0,x1:0,yref:'paper',y0:0,y1:1,line:{color:'#fff',width:2,dash:'dash'}}],
+        showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.4)',font:{size:10}}
+      });
+      Plotly.react('labPlot',data,lay,PCFG);
+      // gemessener Informationsverlust ≈ N²·(Var − CRB)·g11²  (Satz 9)
+      const lossML=(vML-crb)*N*N*g11*g11;
+      const lossDML=(vDML-crb)*N*N*g11*g11;
+      $('lbS1').textContent=fmt(lossML,3);
+      $('lbS2').textContent=fmt(L.e,3);
+      $('lbS3').textContent=fmt(Math.abs(lossML-L.e),3);
+      $('lbRead').innerHTML=
+        '<span class="k">Wiederholungen:</span> <b>'+R+'</b> &nbsp; <span class="k">in</span> '+((performance.now()-t0)|0)+' ms<br>'+
+        '<span class="k">Cramér–Rao 1/(N·g₁₁):</span> <b>'+fmt(crb,6)+'</b><br>'+
+        '<span class="k">Var(û_ML):</span> <b style="color:var(--mix)">'+fmt(vML,6)+'</b> '+
+        '(Bias '+fmt(mean(ml),4)+')<br>'+
+        '<span class="k">Var(û_DML):</span> <b style="color:var(--exp)">'+fmt(vDML,6)+'</b> '+
+        '(Bias '+fmt(mean(dml),4)+')<br>'+
+        '<span class="k">Verhältnis DML/ML:</span> <b>'+fmt(vDML/vML,4)+'</b> '+
+        (vDML>vML?'<span style="color:var(--model)">→ ML ist besser ✓</span>':'<span style="color:var(--warn)">(Rauschen)</span>')+'<br>'+
+        '<span class="k">Theorie Δg(ML)=</span> '+fmt(L.e,4)+' &nbsp; <span class="k">Δg(DML)=</span> '+fmt(Ld.tot,4);
+    },30);
+  }
+  ['lbN','lbA','lbU','lbR'].forEach(id=>$(id).addEventListener('input',()=>{
+    $('lbNV').textContent=$('lbN').value;
+    $('lbAV').textContent=(+$('lbA').value).toFixed(2);
+    $('lbUV').textContent=(+$('lbU').value).toFixed(2);
+    $('lbRV').textContent=$('lbR').value;
+  }));
+  $('lbRun').addEventListener('click',run);
+  onView('#labPlot',setup);
+})();
+
+/* --- α-Sweep --- */
+(function(){
+  let init=false;
+  function setup(){
+    Plotly.newPlot('cmpPlot',[],Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'α'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Informationsverlust Δg'})
+    }),PCFG);
+    init=true;
+  }
+  function run(){
+    const a=+$('lbA').value, u=+$('lbU').value;
+    const als=[],e=[],m=[],t=[];
+    for(let i=0;i<=120;i++){
+      const A=-2+4*i/120;
+      const L=loss51(a,A,u);
+      als.push(A);e.push(L.e);m.push(L.m);t.push(L.tot);
+    }
+    const data=[
+      {x:als,y:e,mode:'lines',name:'(H^e)²  — Modell, unvermeidbar',
+       fill:'tozeroy',fillcolor:'rgba(255,122,89,.3)',line:{color:C.exp,width:2}},
+      {x:als,y:t,mode:'lines',name:'Δg gesamt',line:{color:C.data,width:3.4}},
+      {x:als,y:m,mode:'lines',name:'½(H^m)² — Schätzer, vermeidbar',
+       line:{color:C.mix,width:2,dash:'dot'}},
+      {x:[-1],y:[loss51(a,-1,u).tot],mode:'markers+text',name:'ML',
+       marker:{color:C.model,size:13,line:{color:'#fff',width:2}},
+       text:['ML — Minimum'],textposition:'top right',textfont:{color:C.model,size:11}},
+      {x:[1],y:[loss51(a,1,u).tot],mode:'markers+text',name:'DML',
+       marker:{color:C.exp,size:11},text:['DML'],textposition:'top center',
+       textfont:{color:C.exp,size:10}},
+      {x:[0],y:[loss51(a,0,u).tot],mode:'markers',name:'α=0',
+       marker:{color:C.riem,size:10}}
+    ];
+    const lay=Object.assign({},PLOTLAY,{
+      xaxis:Object.assign({},PLOTLAY.xaxis,{title:'α des Schätzers'}),
+      yaxis:Object.assign({},PLOTLAY.yaxis,{title:'Informationsverlust Δg₁₁',rangemode:'tozero'}),
+      showlegend:true,legend:{x:0.3,y:0.98,bgcolor:'rgba(0,0,0,.45)',font:{size:10}}
+    });
+    Plotly.react('cmpPlot',data,lay,PCFG);
+    const Lm=loss51(a,-1,u), Ld=loss51(a,1,u), L0=loss51(a,0,u);
+    $('cmpRead').innerHTML=
+      '<span class="k">a = '+a.toFixed(2)+', u = '+u.toFixed(2)+'</span><br>'+
+      '<span class="k">Δg(ML, α=−1) =</span> <b style="color:var(--model)">'+fmt(Lm.tot,4)+'</b> '+
+      '<span class="k">(nur Modellanteil)</span><br>'+
+      '<span class="k">Δg(α=0) =</span> <b style="color:var(--riem)">'+fmt(L0.tot,4)+'</b> '+
+      '(+'+fmt(100*(L0.tot/Lm.tot-1),1)+'%)<br>'+
+      '<span class="k">Δg(DML, α=+1) =</span> <b style="color:var(--exp)">'+fmt(Ld.tot,4)+'</b> '+
+      '(+'+fmt(100*(Ld.tot/Lm.tot-1),1)+'%)<br>'+
+      '<b style="color:var(--model)">Die Parabel in α hat ihr Minimum exakt bei α = −1. Das ist Satz 7.</b>';
+  }
+  $('cmpRun').addEventListener('click',run);
+  onView('#cmpPlot',setup);
+})();
+
+/* =====================================================================
+   FAZIT-GRAFIK
+   ===================================================================== */
+(function(){
+  const cv=$('sumCv'); if(!cv)return;
+  let hov=-1;
+  const boxes=[
+    {x:.06,y:.08,w:.26,h:.17,t:'FRAGE',s:'Wie viel Info verliert û?',c:C.data,
+     d:'Der Schätzwert û fasst N Datenpunkte zu m Zahlen zusammen. Fisher-Info der Rohdaten: N·g_ab. Info in û: N·ḡ_ab. Differenz Δg_ab = ?'},
+    {x:.37,y:.08,w:.26,h:.17,t:'IDEE',s:'Geometrie statt Rechnung',c:C.acc,
+     d:'Fisher-Metrik g_ij = E[∂_iℓ ∂_jℓ] als Längenmaß + α-Familie von Zusammenhängen als Begriff von "geradeaus". Definition 1 & 2.'},
+    {x:.68,y:.08,w:.26,h:.17,t:'WERKZEUG',s:'Dualität α ↔ −α',c:C.riem,
+     d:'Sätze 1, 2, 4: θ↔η (Legendre), e↔m (Zusammenhänge), H↔L (Krümmungen), K(1:2)↔K(2:1) (Divergenzen). Exponentialfamilien sind DOPPELT flach.'},
+
+    {x:.06,y:.33,w:.26,h:.17,t:'MODELL',s:'S^m ⊂ S^n, gekrümmt',c:C.model,
+     d:'Beispiel 4.1: x~N(u,u²a²) ist eine PARABEL θ²=−(a²/2)(θ¹)² in der flachen Normalverteilungs-Familie. Satz 3 vererbt Metrik und Zusammenhang.'},
+    {x:.37,y:.33,w:.26,h:.17,t:'SCHÄTZER',s:'= Faserung A(u)',c:C.mix,
+     d:'Satz 5: A(u) besteht aus α-Geodäten, die S^m orthogonal schneiden. ML ↔ Mischungs-Geodäten (α=−1), DML ↔ exp. Geodäten (α=+1).'},
+    {x:.68,y:.33,w:.26,h:.17,t:'1. ORDNUNG',s:'Effizienz = Orthogonalität',c:C.acc,
+     d:'Satz 6: Ein konsistenter Schätzer erreicht die Cramér–Rao-Schranke genau dann, wenn seine Fasern das Modell rechtwinklig schneiden (g_κa = 0).'},
+
+    {x:.06,y:.58,w:.26,h:.17,t:'ZERLEGUNG',s:'Score (5.26)',c:C.exp,
+     d:'∂_aℓ = g_ab û^b + ½Γ^m ûû + ½H^m vv − H^e ûv. Nur die v-Terme (unbeobachtete Querrichtung) erzeugen Verlust — Lemma (5.18).'},
+    {x:.37,y:.58,w:.26,h:.17,t:'SATZ 7',s:'Δg = (H^e)² + ½(H^m)²',c:C.model,
+     d:'Gleichung (5.21). Zwei nicht-negative Krümmungsquadrate. Für den α-Schätzer: zweiter Term ∝ (1+α)²/8 · T·T.'},
+    {x:.68,y:.58,w:.26,h:.17,t:'ANTWORT',s:'ML ist optimal',c:C.data,
+     d:'H^m = 0 ⟺ α = −1 ⟺ Maximum Likelihood. Der Verlust wird minimal und besteht dann nur noch aus der unvermeidbaren Modellkrümmung (= Efrons statistischer Krümmung).'},
+    {x:.06,y:.83,w:.88,h:.13,t:'FOLGEN',s:'Informationsgeometrie',c:C.riem,
+     d:'Satz 8: Rückgewinnung des Verlusts mit A_ab und B_a. Satz 9: dieselben Krümmungen erscheinen in der Kovarianz 2. Ordnung. Daraus entstand das ganze Feld der Informationsgeometrie — natural gradient, EM als e/m-Projektionen, Bregman-Divergenzen.'}
+  ];
+  function draw(){
+    const {g,W,H}=hidpi(cv); clr(g,W,H); grid(g,W,H,14,9);
+    // Verbindungslinien zwischen Zeilen
+    g.save();g.strokeStyle='rgba(143,182,255,.13)';g.lineWidth=1.4;g.setLineDash([5,6]);
+    for(let r=0;r<2;r++){
+      const y1=(0.08+r*0.25+0.17)*H, y2=(0.08+(r+1)*0.25)*H;
+      for(let c=0;c<3;c++){
+        const x=(0.06+c*0.31+0.13)*W;
+        g.beginPath();g.moveTo(x,y1);g.lineTo(x,y2);g.stroke();
+      }
+    }
+    g.restore();
+    boxes.forEach((b,i)=>{
+      const x=b.x*W, y=b.y*H, w=b.w*W, h=b.h*H;
+      const on=(i===hov);
+      g.save();
+      g.fillStyle=on?'rgba(20,32,58,.95)':'rgba(0,0,0,.33)';
+      g.strokeStyle=on?b.c:b.c+'44';
+      g.lineWidth=on?2:1.3;
+      if(on){g.shadowColor=b.c;g.shadowBlur=22;}
+      rr(g,x,y,w,h,13);g.fill();g.stroke();g.restore();
+      txt(g,b.t,x+14,y+19,b.c,11,'left','800');
+      txt(g,b.s,x+14,y+h-16,on?'#fff':C.dim,13,'left','700');
+    });
+    // Infotext
+    if(hov>=0){
+      const b=boxes[hov];
+      g.save();
+      g.fillStyle='rgba(6,10,18,.96)';g.strokeStyle=b.c+'66';g.lineWidth=1.4;
+      const bw=W*0.62, bh=78, bx=(W-bw)/2, by=H*0.5-bh/2;
+      g.shadowColor='rgba(0,0,0,.7)';g.shadowBlur=26;
+      rr(g,bx,by,bw,bh,14);g.fill();g.stroke();g.restore();
+      // Textumbruch
+      const words=b.d.split(' ');let lineStr='',ly=by+22;
+      g.save();g.font='500 12px Inter, system-ui';g.fillStyle=C.dim;g.textBaseline='middle';
+      words.forEach(wd=>{
+        const test=lineStr?lineStr+' '+wd:wd;
+        if(g.measureText(test).width>bw-30){g.fillText(lineStr,bx+15,ly);ly+=17;lineStr=wd;}
+        else lineStr=test;
+      });
+      g.fillText(lineStr,bx+15,ly);g.restore();
+    }else{
+      txt(g,'→ Maus über die Kästen bewegen',W*0.5,H*0.5,C.faint,12,'center');
+    }
+  }
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/(+cv.getAttribute('height'));
+    let k=-1;
+    boxes.forEach((b,i)=>{if(px>b.x&&px<b.x+b.w&&py>b.y&&py<b.y+b.h)k=i;});
+    if(k!==hov){hov=k;cv.style.cursor=k>=0?'pointer':'default';draw();}
+  });
+  cv.addEventListener('mouseleave',()=>{hov=-1;draw();});
+  onView('#sumCv',draw); window.addEventListener('resize',draw);
+})();
+
+/* =====================================================================
+   RESIZE-HANDLER für Plotly
+   ===================================================================== */
+window.addEventListener('resize',()=>{
+  ['hypPlot','psiPlot','divPlot','fiberPlot','prHist','lossPlot','surfPlot',
+   'covPlot','labPlot','cmpPlot'].forEach(id=>{
+    const el=$(id);
+    if(el && el.data) Plotly.Plots.resize(el);
+  });
+});
+
+/* Initiales Rendern der sichtbaren Bereiche */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.querySelectorAll('section').forEach(s=>{
+      const r=s.getBoundingClientRect();
+      if(r.top<window.innerHeight+400){
+        inits.forEach(it=>{
+          if(!it.done && s.querySelector(it.sel)){it.done=true;try{it.fn();}catch(e){}}
+        });
+      }
+    });
+  },120);
+});
+</script>
+</body>
+</html>
