@@ -1652,7 +1652,8 @@ const pTwoSided=t=>2*(1-normcdf(Math.abs(t)));
 function setup(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
-  const h=parseInt(cv.getAttribute('height'))||300;
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'))||300;
+  const h=cv.dataset.lh|0;
   cv.width=Math.max(1,r.width*dpr);cv.height=h*dpr;
   cv.style.height=h+'px';
   const ctx=cv.getContext('2d');

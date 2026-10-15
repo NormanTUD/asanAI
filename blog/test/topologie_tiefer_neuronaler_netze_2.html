@@ -1296,12 +1296,13 @@ function gauss(r){let u=0,v=0;while(u===0)u=r();while(v===0)v=r();
 function fitCanvas(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
+  if(!cv.dataset.lh) cv.dataset.lh=+(cv.getAttribute('height')||300);
   cv.width=Math.max(1,Math.round(r.width*dpr));
-  cv.height=Math.max(1,Math.round((cv.getAttribute('height')||300)*dpr));
-  cv.style.height=(cv.getAttribute('height')||300)+'px';
+  cv.height=Math.max(1,Math.round(cv.dataset.lh*dpr));
+  cv.style.height=cv.dataset.lh+'px';
   const ctx=cv.getContext('2d');
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  return {ctx,W:r.width,H:+(cv.getAttribute('height')||300)};
+  return {ctx,W:r.width,H:cv.dataset.lh|0};
 }
 
 const PLOTLY_LAYOUT={

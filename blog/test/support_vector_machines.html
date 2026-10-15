@@ -232,8 +232,9 @@
 /* ============ Utilities ============ */
 const $=id=>document.getElementById(id);
 function fit(cv){const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
-  cv.width=r.width*d;cv.height=parseInt(cv.getAttribute('height'))*d;
-  cv.style.height=cv.getAttribute('height')+'px';
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'));
+  cv.width=r.width*d;cv.height=cv.dataset.lh*d;
+  cv.style.height=cv.dataset.lh+'px';
   const g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);return g;}
 function grid(g,W,H){
   g.clearRect(0,0,W,H);

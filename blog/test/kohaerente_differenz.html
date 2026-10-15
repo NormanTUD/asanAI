@@ -702,7 +702,8 @@ const distC = document.getElementById('distCanvas');
 const distX = distC.getContext('2d');
 function fitCanvas(c) {
   const w = c.clientWidth;
-  const h = parseInt(c.getAttribute('height')) || 320;
+  if(!c.dataset.lh) c.dataset.lh = parseInt(c.getAttribute('height')) || 320;
+  const h = c.dataset.lh|0;
   const dpr = devicePixelRatio;
   const pw = Math.min(w * dpr, 8192);
   const ph = Math.min(h * dpr, 8192);

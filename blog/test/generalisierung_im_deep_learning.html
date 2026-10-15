@@ -1800,7 +1800,8 @@ function gauss(rng){
 /* HiDPI canvas setup */
 function setupCanvas(cv){
   const dpr = window.devicePixelRatio || 1;
-  const w = cv.clientWidth, h = parseInt(cv.getAttribute('height'));
+  if(!cv.dataset.lh) cv.dataset.lh = parseInt(cv.getAttribute('height'));
+  const w = cv.clientWidth, h = +cv.dataset.lh;
   cv.width = w*dpr; cv.height = h*dpr;
   cv.style.height = h+'px';
   const ctx = cv.getContext('2d');

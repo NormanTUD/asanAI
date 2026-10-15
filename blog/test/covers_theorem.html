@@ -1535,10 +1535,11 @@ function setupCanvas(id){
   function resize(){
     const r=c.getBoundingClientRect();
     const dpr=Math.min(2,devicePixelRatio||1);
-    c.width=r.width*dpr; c.height=(+c.getAttribute('height'))*dpr;
-    c.style.height=c.getAttribute('height')+'px';
+    if(!c.dataset.lh) c.dataset.lh=+c.getAttribute('height');
+    c.width=r.width*dpr; c.height=(+c.dataset.lh)*dpr;
+    c.style.height=c.dataset.lh+'px';
     g.setTransform(dpr,0,0,dpr,0,0);
-    c._w=r.width; c._h=+c.getAttribute('height');
+    c._w=r.width; c._h=+c.dataset.lh;
   }
   resize(); addEventListener('resize',()=>{resize();if(c._redraw)c._redraw();});
   return {c,g};

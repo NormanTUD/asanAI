@@ -1649,8 +1649,9 @@ const TAU = Math.PI * 2;
 function setupCanvas(canvas) {
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  const w = canvas.getAttribute('width') || rect.width;
-  const h = canvas.getAttribute('height') || rect.height;
+  if(!canvas.dataset.lw) canvas.dataset.lw = canvas.getAttribute('width') || rect.width;
+  if(!canvas.dataset.lh) canvas.dataset.lh = canvas.getAttribute('height') || rect.height;
+  const w = +canvas.dataset.lw, h = +canvas.dataset.lh;
   canvas.width = w * dpr;
   canvas.height = h * dpr;
   canvas.style.width = w + 'px';

@@ -1203,7 +1203,9 @@ const C={acc:'#5eead4',acc2:'#818cf8',acc3:'#f472b6',warn:'#fbbf24',bad:'#fb7185
 
 function dpi(cv){
   const r=window.devicePixelRatio||1;
-  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'))||300;
+  const w=cv.clientWidth;
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'))||300;
+  const h=+cv.dataset.lh;
   cv.width=w*r; cv.height=h*r;
   cv.style.height=h+'px';
   const x=cv.getContext('2d');
@@ -1549,7 +1551,7 @@ wireTabs('#liveTabs');
   cv.addEventListener('click',e=>{
     const r=cv.getBoundingClientRect();
     const mx=e.clientX-r.left,my=e.clientY-r.top;
-    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const w=cv.clientWidth,h=cv.clientHeight;
     const hit=nodes.find(n=>Math.hypot(n.x*w-mx,n.y*h-my)<26);
     if(!hit){sel=null;draw();return;}
     if(sel===null){sel=hit.id;}
@@ -3114,7 +3116,7 @@ const CHANGES=[
   function hit(e){
     const r=cv.getBoundingClientRect();
     const mx=e.clientX-r.left,my=e.clientY-r.top;
-    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const w=cv.clientWidth,h=cv.clientHeight;
     return N.find(n=>Math.hypot(n.x*w-mx,n.y*h-my)<n.r/2.6);
   }
   cv.onmousemove=e=>{const n=hit(e);const id=n?n.id:null;

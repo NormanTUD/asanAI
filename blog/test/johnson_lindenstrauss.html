@@ -466,12 +466,13 @@ const TAU = Math.PI*2;
 function fit(c){
   const r = c.getBoundingClientRect();
   const dpr = Math.min(devicePixelRatio||1, 2);
+  if(!c.dataset.lh) c.dataset.lh = +(c.getAttribute('height')||300);
   c.width = Math.max(1, r.width*dpr);
-  c.height = Math.max(1, (c.getAttribute('height')||300)*dpr);
-  c.style.height = (c.getAttribute('height')||300)+'px';
+  c.height = Math.max(1, c.dataset.lh*dpr);
+  c.style.height = c.dataset.lh+'px';
   const x = c.getContext('2d');
   x.setTransform(dpr,0,0,dpr,0,0);
-  return {x, w:r.width, h:+(c.getAttribute('height')||300)};
+  return {x, w:r.width, h:c.dataset.lh|0};
 }
 let _g=0, _gp=0;
 function gauss(){ // Box-Muller

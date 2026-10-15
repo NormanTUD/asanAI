@@ -1725,7 +1725,8 @@ const DPR   = Math.min(window.devicePixelRatio||1, 2);
 
 function fit(cv){
   const r = cv.getBoundingClientRect();
-  const h = cv.getAttribute('height')|0;
+  if(!cv.dataset.lh) cv.dataset.lh = cv.getAttribute('height')|0;
+  const h = +cv.dataset.lh;
   cv.width  = Math.max(1, r.width*DPR);
   cv.height = Math.max(1, h*DPR);
   cv.style.height = h+'px';
@@ -3702,7 +3703,7 @@ function tex(el, s, display=true){
   // --- interaction ---
   function toCanvas(e){
     const r=cv.getBoundingClientRect();
-    return {x:(e.clientX??e.touches?.[0].clientX)-r.left,(y=0),...{y:(e.clientY??e.touches?.[0].clientY)-r.top}};
+    return {x:(e.clientX??e.touches?.[0].clientX)-r.left, y:(e.clientY??e.touches?.[0].clientY)-r.top};
   }
   cv.addEventListener('contextmenu',e=>e.preventDefault());
   cv.addEventListener('mousedown',e=>{

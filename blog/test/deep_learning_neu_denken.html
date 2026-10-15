@@ -1704,7 +1704,8 @@ function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.rand
 function setupCanvas(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
-  const h=cv.getAttribute('height')?+cv.getAttribute('height'):260;
+  if(!cv.dataset.lh) cv.dataset.lh=cv.getAttribute('height')?+cv.getAttribute('height'):260;
+  const h=+cv.dataset.lh;
   cv.width=Math.max(1,Math.floor(r.width*dpr));
   cv.height=Math.floor(h*dpr);
   cv.style.height=h+'px';

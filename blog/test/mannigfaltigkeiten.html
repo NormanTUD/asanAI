@@ -2033,7 +2033,9 @@ function fmt(v,n=3){return (typeof v==='number'&&isFinite(v))?v.toFixed(n):'—'
 
 function setupHiDPI(cv){
   const r=window.devicePixelRatio||1;
-  const w=cv.clientWidth||600, h=parseInt(cv.getAttribute('height'))||300;
+  const w=cv.clientWidth||600;
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'))||300;
+  const h=cv.dataset.lh|0;
   cv.width=w*r; cv.height=h*r;
   const g=cv.getContext('2d'); g.setTransform(r,0,0,r,0,0);
   cv._w=w; cv._h=h;

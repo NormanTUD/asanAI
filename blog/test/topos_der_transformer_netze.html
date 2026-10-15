@@ -1740,7 +1740,8 @@ function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 function fit(cv){
   const dpr = Math.min(window.devicePixelRatio||1, 2);
   const r = cv.getBoundingClientRect();
-  const h = parseInt(cv.getAttribute('height'))||300;
+  if(!cv.dataset.lh) cv.dataset.lh = parseInt(cv.getAttribute('height'))||300;
+  const h = cv.dataset.lh|0;
   cv.width = Math.max(1,Math.round(r.width*dpr));
   cv.height = Math.round(h*dpr);
   cv.style.height = h+'px';

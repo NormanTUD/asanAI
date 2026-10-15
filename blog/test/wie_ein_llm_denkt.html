@@ -771,7 +771,8 @@ const C = {
 const PAL = ['#5eead4','#818cf8','#fbbf24','#fb7185','#4ade80','#38bdf8','#f472b6','#a78bfa','#fb923c','#34d399'];
 
 function fit(cv){
-  const w = cv.clientWidth, h = parseInt(cv.getAttribute('height'));
+  if(!cv.dataset.lh) cv.dataset.lh = parseInt(cv.getAttribute('height'));
+  const w = cv.clientWidth, h = +cv.dataset.lh;
   cv.width = Math.round(w*DPR); cv.height = Math.round(h*DPR);
   const ctx = cv.getContext('2d');
   ctx.setTransform(DPR,0,0,DPR,0,0);
