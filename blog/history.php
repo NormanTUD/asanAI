@@ -448,11 +448,6 @@ Ashby kept a private notebook of ideas for 44 years — 25 volumes, 7,189 pages,
 
 ### Gregory Bateson: information as difference
 
-<figure>
-	<img style="width: 100%; max-width: 460px;" src="bateson.jpg" alt="Margaret Mead and Gregory Bateson" />
-	<figcaption class="md">\citealternativetitle{batesonphoto}</figcaption>
-</figure>
-
 The anthropologist \citeauthor{batesonesteps1972} dragged the social and behavioural sciences into the group and rewired its vocabulary. For him a unit of information is simply "the difference which makes a difference", and a system learns when the *pattern* of differences around it changes \cite{batesonesteps1972}. With Jackson, Haley and Weakland he worked out the **double bind** — contradictory messages at different logical levels, with no way to step out — originally to explain schizophrenia \cite{batesondoublebind1956}. In the 1970s he turned the lens onto the observer, founding **second-order cybernetics**, "the cybernetics of cybernetics" \cite{batesonesteps1972}.
 
 <div class="optional md" data-headline="A war fought in patterns">
