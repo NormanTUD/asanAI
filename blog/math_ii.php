@@ -1208,7 +1208,7 @@ This is the meaning of "tensor" throughout the rest of this course. It is the me
 
 #### A different word in mathematics
 
-The same word — *tensor* — has a stricter meaning in mathematics and physics. There, a tensor is *an element of a tensor product of vector spaces*. This is the object used in general relativity, electromagnetism, and continuum mechanics. Its properties are fixed by *transformation rules*, not just by its numerical entries. The two meanings are connected historically — the ML usage borrowed the name because the underlying data structures share algebraic properties with the mathematical objects — but they are not the same definition.
+The same word — *tensor* — has a stricter meaning in mathematics and physics. There, a tensor is *an element of a tensor product of vector spaces*, the object used in general relativity, electromagnetism, and continuum mechanics. Its identity is fixed by **transformation rules**: how its components change under a change of coordinates is part of what the object *is*, not a property the array enforces. A numpy array of numbers does not, by virtue of being a numpy array, satisfy the geometric axioms of a tensor — the array can store a tensor's components, but nothing in the array itself guarantees that those components transform correctly under a change of basis. That constraint lives in the math the array is being used to represent, not in the array. The two meanings are connected historically — the ML usage borrowed the name because the underlying data structures share algebraic properties with the mathematical objects — but they are not the same definition.
 
 If you go on to read physics or differential geometry, you will encounter:
 
