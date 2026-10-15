@@ -2,23 +2,48 @@
 <html>
 <head><title>Lightbox test</title></head>
 <body>
-<iframe src="http://localhost/asanai/blog/untold_history" style="width:1200px;height:900px;border:0"></iframe>
+<iframe id="f" src="http://localhost/asanai/blog/untold_history" style="width:1200px;height:900px;border:0"></iframe>
 <script>
 window.addEventListener('load', function() {
+  const iframe = document.getElementById('f');
   setTimeout(function() {
-    const iframe = document.querySelector('iframe');
-    const img = iframe.contentDocument.querySelector('img');
-    if (img) {
+    try {
+      const doc = iframe.contentDocument;
+      const win = iframe.contentWindow;
+      const img = doc.querySelector('.md img');
       img.click();
       setTimeout(function() {
-        const lb = iframe.contentDocument.getElementById('cl-lb');
+        const lb = doc.getElementById('cl-lb');
         const cap = lb.querySelector('figcaption');
-        document.title = 'CAP:' + (cap ? cap.textContent.substring(0,40) : 'NO CAP') + '|DISP:' + (cap ? cap.style.display : '?') + '|POS:' + (cap ? cap.style.position : '?') + '|BOT:' + (cap ? cap.style.bottom : '?');
+        const cs = win.getComputedStyle(cap);
+        const rect = cap.getBoundingClientRect();
+        const lines = [
+          'text: ' + (cap.textContent || '').substring(0,80).replace(/\n/g,' '),
+          'display: ' + cs.display,
+          'position: ' + cs.position,
+          'bottom: ' + cs.bottom,
+          'color: ' + cs.color,
+          'fontSize: ' + cs.fontSize,
+          'visibility: ' + cs.visibility,
+          'opacity: ' + cs.opacity,
+          'zIndex: ' + cs.zIndex,
+          'rect top=' + rect.top + ' bot=' + rect.bottom + ' left=' + rect.left + ' right=' + rect.right,
+          'viewport=' + win.innerWidth + 'x' + win.innerHeight,
+          'inViewport=' + (rect.top < win.innerHeight && rect.bottom > 0)
+        ];
+        document.title = 'LB: ' + lines.join(' | ');
+        const pre = document.createElement('pre');
+        pre.textContent = lines.join('\n');
+        pre.style.cssText = 'font:13px monospace;background:#fff;color:#000;padding:10px;white-space:pre-wrap;border:2px solid red;position:fixed;top:910px;left:0;z-index:99999';
+        document.body.appendChild(pre);
       }, 1500);
-    } else {
-      document.title = 'NO IMG';
+    } catch(e) {
+      const pre = document.createElement('pre');
+      pre.textContent = 'ERR: ' + e.message;
+      pre.style.cssText = 'font:14px monospace;background:#fff;color:red;padding:10px;border:2px solid red;position:fixed;top:910px;left:0;z-index:99999';
+      document.body.appendChild(pre);
     }
-  }, 2000);
+  }, 3500);
 });
 </script>
 </body>
