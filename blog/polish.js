@@ -695,12 +695,88 @@
 			} else {
 				cap.textContent = capHtml || '';
 			}
-			cap.style.display = capHtml ? '' : 'none';
+			/* Force every caption style via inline + !important so NO page
+			   CSS rule (e.g. html.dark figcaption { color: muted })
+			   can hide or recolour the text. position:fixed anchors the
+			   caption to the viewport so flex/scroll/transform ancestors
+			   can't push it off-screen. The translucent background makes
+			   the text readable on top of any image. */
+			cap.style.cssText = '';
+			cap.style.setProperty('display', capHtml ? 'block' : 'none', 'important');
+			cap.style.setProperty('position', 'fixed', 'important');
+			cap.style.setProperty('left', '0', 'important');
+			cap.style.setProperty('right', '0', 'important');
+			cap.style.setProperty('bottom', '0', 'important');
+			cap.style.setProperty('max-height', window.innerWidth < 600 ? '40vh' : '32vh', 'important');
+			cap.style.setProperty('overflow-y', 'auto', 'important');
+			cap.style.setProperty('padding', window.innerWidth < 600 ? '10px 14px' : '14px 24px', 'important');
+			cap.style.setProperty('box-sizing', 'border-box', 'important');
+			cap.style.setProperty('background', 'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.65) 70%, rgba(0,0,0,0) 100%)', 'important');
+			cap.style.setProperty('color', '#ffffff', 'important');
+			cap.style.setProperty('text-align', 'center', 'important');
+			cap.style.setProperty('font-size', window.innerWidth < 600 ? '.82em' : '.92em', 'important');
+			cap.style.setProperty('font-style', 'italic', 'important');
+			cap.style.setProperty('line-height', '1.5', 'important');
+			cap.style.setProperty('z-index', '2147483647', 'important');
+			cap.style.setProperty('width', '100%', 'important');
+			cap.style.setProperty('pointer-events', 'auto', 'important');
+			cap.style.setProperty('visibility', 'visible', 'important');
+			cap.style.setProperty('opacity', '1', 'important');
 			prevBtn.disabled = i <= 0;
 			nextBtn.disabled = i >= gallery.length - 1;
 			prevBtn.style.display = gallery.length > 1 ? '' : 'none';
 			nextBtn.style.display = gallery.length > 1 ? '' : 'none';
+			/* Size the image to the safe area (see fitLightboxImage below).
+			   If the image is already cached, complete is true and the load
+			   event won't fire — fit it now. Otherwise the load handler
+			   installed once below will fit it as soon as it arrives. */
+			if (img.complete && img.naturalWidth > 0) {
+				fitLightboxImage();
+			}
 		}
+
+		/* Compute exact pixel dimensions that fit the image into the safe
+		   area between arrows, X and caption. Aspect ratio is preserved.
+		   Called on image load, after navigation (cached case), and on
+		   window resize so the layout always tracks the viewport. */
+		function fitLightboxImage() {
+			if (!img.naturalWidth || !img.naturalHeight) return;
+			const vw = window.innerWidth;
+			const vh = window.innerHeight;
+			const isMobile = vw < 600;
+			/* Reserve space at the bottom for the fixed-positioned caption.
+			   (set in loadFromIdx via inline styles; we mirror the same
+			   numbers here so the image never underlaps the caption band.) */
+			const topM = 56;
+			const bottomM = isMobile ? 160 : 180;
+			const sideM = isMobile ? 52 : 90;
+			const maxW = Math.max(100, vw - sideM * 2);
+			const maxH = Math.max(100, vh - topM - bottomM);
+			const ratio = img.naturalWidth / img.naturalHeight;
+			let w, h;
+			if (ratio > maxW / maxH) {
+				w = Math.min(maxW, img.naturalWidth);
+				h = w / ratio;
+			} else {
+				h = Math.min(maxH, img.naturalHeight);
+				w = h * ratio;
+			}
+			img.style.width = w + 'px';
+			img.style.height = h + 'px';
+			img.style.maxWidth = 'none';
+			img.style.maxHeight = 'none';
+			/* keep caption in sync with viewport (mobile vs desktop) */
+			cap.style.setProperty('max-height', isMobile ? '40vh' : '32vh', 'important');
+			cap.style.setProperty('padding', isMobile ? '10px 14px' : '14px 24px', 'important');
+			cap.style.setProperty('font-size', isMobile ? '.82em' : '.92em', 'important');
+		}
+		img.addEventListener('load', fitLightboxImage);
+		let _lbResizeTimer = null;
+		window.addEventListener('resize', function () {
+			if (lb.hidden) return;
+			if (_lbResizeTimer) clearTimeout(_lbResizeTimer);
+			_lbResizeTimer = setTimeout(fitLightboxImage, 50);
+		});
 
 		function collectGallery(root) {
 			return Array.from(root.querySelectorAll('img')).filter(function (im) {

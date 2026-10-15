@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Lightbox test</title></head>
+<body>
+<iframe src="http://localhost/asanai/blog/untold_history" style="width:1200px;height:900px;border:0"></iframe>
+<script>
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    const iframe = document.querySelector('iframe');
+    const img = iframe.contentDocument.querySelector('img');
+    if (img) {
+      img.click();
+      setTimeout(function() {
+        const lb = iframe.contentDocument.getElementById('cl-lb');
+        const cap = lb.querySelector('figcaption');
+        document.title = 'CAP:' + (cap ? cap.textContent.substring(0,40) : 'NO CAP') + '|DISP:' + (cap ? cap.style.display : '?') + '|POS:' + (cap ? cap.style.position : '?') + '|BOT:' + (cap ? cap.style.bottom : '?');
+      }, 1500);
+    } else {
+      document.title = 'NO IMG';
+    }
+  }, 2000);
+});
+</script>
+</body>
+</html>
