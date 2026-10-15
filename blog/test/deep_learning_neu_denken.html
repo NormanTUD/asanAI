@@ -3043,8 +3043,6 @@ function k8draw(){
     <p class="mini" style="margin:0">${C8TEXT[K8.step].h}</p>`;
   renderMath();
   const cv=$('#c8canvas');if(!cv)return;
-  const {ctx,W,H}=setupCanvas
-  const cv=$('#c8canvas');if(!cv)return;
   const {ctx,W,H}=setupCanvas(cv);
   ctx.clearRect(0,0,W,H);
   const L=46,R=W-16,T=18,B=H-30;
