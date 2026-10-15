@@ -697,24 +697,27 @@
 			}
 			/* Force every caption style via inline + !important so NO page
 			   CSS rule (e.g. html.dark figcaption { color: muted })
-			   can hide or recolour the text. position:fixed anchors the
-			   caption to the viewport so flex/scroll/transform ancestors
-			   can't push it off-screen. The translucent background makes
-			   the text readable on top of any image. */
+			   can hide or recolour the text. position:fixed + explicit
+			   pixel bottom anchors it to the viewport. Translucent
+			   gradient background keeps text readable on any image. */
 			cap.style.cssText = '';
+			const isMobile0 = window.innerWidth < 600;
+			const vh0 = window.innerHeight;
+			const capMaxH = isMobile0 ? 160 : 200;
+			const capBottom = isMobile0 ? 16 : 24;
 			cap.style.setProperty('display', capHtml ? 'block' : 'none', 'important');
 			cap.style.setProperty('position', 'fixed', 'important');
 			cap.style.setProperty('left', '0', 'important');
 			cap.style.setProperty('right', '0', 'important');
-			cap.style.setProperty('bottom', '0', 'important');
-			cap.style.setProperty('max-height', window.innerWidth < 600 ? '40vh' : '32vh', 'important');
+			cap.style.setProperty('bottom', capBottom + 'px', 'important');
+			cap.style.setProperty('max-height', capMaxH + 'px', 'important');
 			cap.style.setProperty('overflow-y', 'auto', 'important');
-			cap.style.setProperty('padding', window.innerWidth < 600 ? '10px 14px' : '14px 24px', 'important');
+			cap.style.setProperty('padding', isMobile0 ? '10px 14px' : '14px 24px', 'important');
 			cap.style.setProperty('box-sizing', 'border-box', 'important');
-			cap.style.setProperty('background', 'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.65) 70%, rgba(0,0,0,0) 100%)', 'important');
+			cap.style.setProperty('background', 'linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.65) 70%, rgba(0,0,0,0) 100%)', 'important');
 			cap.style.setProperty('color', '#ffffff', 'important');
 			cap.style.setProperty('text-align', 'center', 'important');
-			cap.style.setProperty('font-size', window.innerWidth < 600 ? '.82em' : '.92em', 'important');
+			cap.style.setProperty('font-size', isMobile0 ? '.82em' : '.92em', 'important');
 			cap.style.setProperty('font-style', 'italic', 'important');
 			cap.style.setProperty('line-height', '1.5', 'important');
 			cap.style.setProperty('z-index', '2147483647', 'important');
@@ -745,10 +748,9 @@
 			const vh = window.innerHeight;
 			const isMobile = vw < 600;
 			/* Reserve space at the bottom for the fixed-positioned caption.
-			   (set in loadFromIdx via inline styles; we mirror the same
-			   numbers here so the image never underlaps the caption band.) */
+			   (Numbers mirror the inline styles set in loadFromIdx.) */
 			const topM = 56;
-			const bottomM = isMobile ? 160 : 180;
+			const bottomM = isMobile ? 184 : 240;
 			const sideM = isMobile ? 52 : 90;
 			const maxW = Math.max(100, vw - sideM * 2);
 			const maxH = Math.max(100, vh - topM - bottomM);
@@ -765,8 +767,9 @@
 			img.style.height = h + 'px';
 			img.style.maxWidth = 'none';
 			img.style.maxHeight = 'none';
-			/* keep caption in sync with viewport (mobile vs desktop) */
-			cap.style.setProperty('max-height', isMobile ? '40vh' : '32vh', 'important');
+			/* keep caption in sync with viewport */
+			cap.style.setProperty('bottom', (isMobile ? 16 : 24) + 'px', 'important');
+			cap.style.setProperty('max-height', (isMobile ? 160 : 200) + 'px', 'important');
 			cap.style.setProperty('padding', isMobile ? '10px 14px' : '14px 24px', 'important');
 			cap.style.setProperty('font-size', isMobile ? '.82em' : '.92em', 'important');
 		}

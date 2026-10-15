@@ -8944,19 +8944,23 @@ html.dark .cl-cite-tip {
 }
 
 /* ── 11.7. Image lightbox ──
-   Layout: container is a flexbox that centers the image vertically
-   and horizontally. Padding leaves room only for the arrows + X;
-   the caption is fixed-positioned at the bottom by polish.js (with
-   every style set inline + !important so external CSS like
-   `html.dark figcaption { color: muted }` cannot hide it).            */
+   Container is position:fixed with explicit width/height (NOT inset:0
+   — backdrop-filter + inset:0 was making the container stretch beyond
+   the viewport in some browsers). Padding leaves room for arrows, X,
+   and the caption band. Caption is position:fixed at the bottom by
+   polish.js via inline !important styles.                            */
 #cl-lb {
 	position: fixed;
-	inset: 0;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
 	z-index: 9800;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 56px 90px 180px;
+	padding: 56px 90px 240px;
+	box-sizing: border-box;
 	background: rgba(8, 12, 24, .82);
 	backdrop-filter: blur(6px);
 	opacity: 0;
@@ -8973,8 +8977,7 @@ html.dark .cl-cite-tip {
 }
 /* Caption is fully styled by polish.js (inline + !important) — this
    rule is just a baseline so the element isn't invisible before JS
-   runs. The half-transparent gradient + z-index 2147483647 inline
-   overrides here win because they have higher specificity with !important. */
+   runs. */
 #cl-lb figcaption {
 	display: none;
 }
