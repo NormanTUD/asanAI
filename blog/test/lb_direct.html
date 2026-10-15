@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html><head><title>Diag</title></head><body>
+<div id="result" style="font:14px monospace;background:yellow;color:black;padding:10px;white-space:pre-wrap;position:fixed;top:0;left:0;z-index:99999;width:100%"></div>
+<iframe id="f" src="http://localhost/asanai/blog/untold_history" style="width:1200px;height:850px;border:0;margin-top:80px"></iframe>
+<script>
+function go() {
+  const iframe = document.getElementById('f');
+  const doc = iframe.contentDocument;
+  const win = iframe.contentWindow;
+  try {
+    const img = doc.querySelector('.md img');
+    if (!img) { document.getElementById('result').textContent = 'NO IMG'; return; }
+    img.click();
+    setTimeout(function() {
+      try {
+        const lb = doc.getElementById('cl-lb');
+        if (!lb) { document.getElementById('result').textContent = 'NO LB'; return; }
+        const cap = lb.querySelector('figcaption');
+        if (!cap) { document.getElementById('result').textContent = 'NO CAP'; return; }
+        const cs = win.getComputedStyle(cap);
+        const rect = cap.getBoundingClientRect();
+        document.getElementById('result').textContent =
+          'TEXT: ' + (cap.textContent||'').substring(0,60).replace(/\n/g,' ') + ' || ' +
+          'display=' + cs.display + ' pos=' + cs.position + ' bot=' + cs.bottom +
+          ' col=' + cs.color + ' fs=' + cs.fontSize + ' vis=' + cs.visibility +
+          ' op=' + cs.opacity + ' z=' + cs.zIndex + ' h=' + cs.height +
+          ' rectT=' + Math.round(rect.top) + ' rectB=' + Math.round(rect.bottom) +
+          ' vp=' + win.innerHeight + ' vis=' + (rect.top < win.innerHeight && rect.bottom > 0);
+      } catch(e2) { document.getElementById('result').textContent = 'ERR2: ' + e2.message; }
+    }, 2000);
+  } catch(e) { document.getElementById('result').textContent = 'ERR1: ' + e.message; }
+}
+window.addEventListener('load', function() { setTimeout(go, 4000); });
+</script>
+</body></html>

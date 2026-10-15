@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html><head><title>Diag</title></head><body>
+<iframe id="f" src="http://localhost/asanai/blog/untold_history" style="width:1200px;height:850px;border:0"></iframe>
+<div id="result" style="font:14px monospace;background:yellow;color:black;padding:10px;white-space:pre-wrap"></div>
+<script>
+function go() {
+  const iframe = document.getElementById('f');
+  const doc = iframe.contentDocument;
+  const win = iframe.contentWindow;
+  try {
+    const img = doc.querySelector('.md img');
+    if (!img) { document.getElementById('result').textContent = 'NO IMG'; return; }
+    img.click();
+    setTimeout(function() {
+      try {
+        const lb = doc.getElementById('cl-lb');
+        if (!lb) { document.getElementById('result').textContent = 'NO LB'; return; }
+        const cap = lb.querySelector('figcaption');
+        if (!cap) { document.getElementById('result').textContent = 'NO CAP'; return; }
+        const cs = win.getComputedStyle(cap);
+        const rect = cap.getBoundingClientRect();
+        document.getElementById('result').textContent =
+          'TEXT: ' + (cap.textContent||'').substring(0,60).replace(/\n/g,' ') + '\n' +
+          'display=' + cs.display + '\n' +
+          'position=' + cs.position + '\n' +
+          'bottom=' + cs.bottom + ' left=' + cs.left + ' right=' + cs.right + '\n' +
+          'width=' + cs.width + ' height=' + cs.height + '\n' +
+          'color=' + cs.color + '\n' +
+          'fontSize=' + cs.fontSize + '\n' +
+          'visibility=' + cs.visibility + '\n' +
+          'opacity=' + cs.opacity + '\n' +
+          'zIndex=' + cs.zIndex + '\n' +
+          'bg=' + cs.background.substring(0,40) + '\n' +
+          'rect top=' + rect.top + ' bot=' + rect.bottom + '\n' +
+          'viewport=' + win.innerWidth + 'x' + win.innerHeight + '\n' +
+          'visible=' + (rect.top < win.innerHeight && rect.bottom > 0);
+      } catch(e2) { document.getElementById('result').textContent = 'ERR2: ' + e2.message; }
+    }, 2000);
+  } catch(e) { document.getElementById('result').textContent = 'ERR1: ' + e.message; }
+}
+window.addEventListener('load', function() { setTimeout(go, 3000); });
+</script>
+</body></html>
