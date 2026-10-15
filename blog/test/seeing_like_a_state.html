@@ -2118,8 +2118,11 @@ const COL={acc:'#52d1a4',acc2:'#f0a848',acc3:'#7aa2f7',acc4:'#e06c9f',acc5:'#b48
 
 function hidpi(cv){
   const r=window.devicePixelRatio||1;
-  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'))||300;
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'))||300;
+  const h=parseInt(cv.dataset.lh,10);
+  const w=cv.clientWidth;
   cv.width=w*r; cv.height=h*r;
+  cv.style.height=h+'px';
   const ctx=cv.getContext('2d'); ctx.setTransform(r,0,0,r,0,0);
   return {ctx,w,h};
 }

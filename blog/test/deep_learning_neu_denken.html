@@ -2477,7 +2477,6 @@ function k5draw(){
       const degEff = K5.mode==='es' ? Math.max(1,Math.round(lerp(1,12,t))) : 11;
       const c=polyFit(xs,ys,Math.min(degEff,13),lam);
       ctx.strokeStyle='rgba(130,160,255,.07)';
-      for(let i=0;i<=6;i++){ctx      ctx.strokeStyle='rgba(130,160,255,.07)';
       for(let i=0;i<=6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
       /* Referenz: unregularisierter Fit */
       const cRef=polyFit(xs,ys,Math.min(11,13),1e-9);
