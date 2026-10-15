@@ -27,6 +27,7 @@
    body text, headings, and sidenotes so the blog matches
    colah.github.io's distinctive LaTeX-flavoured look.
    ════════════════════════════════════════════════════════════ */
+/*
 @font-face {
 	font-family: 'CMS';
 	src: url('fonts/cmunrm.woff') format('woff');
@@ -56,8 +57,6 @@
 	font-display: swap;
 }
 
-/* CMSS — Computer Modern Sans-Slanted (used for blockquotes
-   and info captions, matching colah's convention) */
 @font-face {
 	font-family: 'CMSS';
 	src: url('fonts/cmunsl.woff') format('woff');
@@ -72,6 +71,7 @@
 	font-style: normal;
 	font-display: swap;
 }
+*/
 
 /* ════════════════════════════════════════════════════════════
    FOURIER / UTOPIA — "Lingua Franca", a Utopia (Robert
@@ -8943,16 +8943,20 @@ html.dark .cl-cite-tip {
 	box-shadow: 0 12px 36px rgba(0,0,0,.5);
 }
 
-/* ── 11.7. Image lightbox ── */
+/* ── 11.7. Image lightbox ──
+   Layout: container is a flexbox that centers the image vertically
+   and horizontally. Padding leaves room only for the arrows + X;
+   the caption is fixed-positioned at the bottom by polish.js (with
+   every style set inline + !important so external CSS like
+   `html.dark figcaption { color: muted }` cannot hide it).            */
 #cl-lb {
 	position: fixed;
 	inset: 0;
 	z-index: 9800;
-	display: grid;
-	grid-template-rows: 1fr auto;
-	justify-items: center;
-	gap: 16px;
-	padding: 64px 40px 88px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 56px 90px 180px;
 	background: rgba(8, 12, 24, .82);
 	backdrop-filter: blur(6px);
 	opacity: 0;
@@ -8961,28 +8965,18 @@ html.dark .cl-cite-tip {
 #cl-lb.is-visible { opacity: 1; }
 #cl-lb[hidden] { display: none; }
 #cl-lb img {
-	max-width: 92vw;
-	max-height: 100%;
-	min-height: 0;
-	object-fit: contain;
+	/* size set by polish.js; this is the brief fallback before it runs */
+	max-width: 90vw;
+	max-height: 70vh;
 	border-radius: 4px;
-	box-shadow: 0 24px 60px rgba(0,0,0,.5);
-	align-self: center;
+	box-shadow: 0 4px 16px rgba(0,0,0,.5);
 }
+/* Caption is fully styled by polish.js (inline + !important) — this
+   rule is just a baseline so the element isn't invisible before JS
+   runs. The half-transparent gradient + z-index 2147483647 inline
+   overrides here win because they have higher specificity with !important. */
 #cl-lb figcaption {
-	max-height: 220px;
-	min-height: 0;
-	overflow-y: auto;
-	color: rgba(255,255,255,.7);
-	font-size: .85em;
-	font-style: italic;
-	text-align: center;
-	margin: 0;
-	padding: 0 4px;
-	border: none;
-	line-height: 1.5;
-	justify-self: stretch;
-	align-self: end;
+	display: none;
 }
 .cl-lb-x {
 	position: absolute;
