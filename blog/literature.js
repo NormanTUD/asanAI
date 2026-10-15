@@ -18612,5 +18612,275 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2026,
 		alternativetitle: "Unix (Wikipedia)"
+	},
+
+	/* Primary sources used by untold_history.php */
+
+	/* V. Gordon Childe — Man Makes Himself (1936) — the original
+	 * text in which Childe frames prehistory as a series of "revolutions"
+	 * measured against the population curve (Stone → Bronze → Iron Age),
+	 * the conceptual foundation for his later coinage of "Neolithic
+	 * Revolution" (1950) and "Urban Revolution" (1950). */
+	"childe1936man": {
+		url: "https://archive.org/details/ManMakesHimself",
+		title: "Man Makes Himself",
+		author: "V. Gordon Childe",
+		year: 1936,
+		alternativetitle: "Childe, Man Makes Himself (1936)"
+	},
+	"childe1936man_txt": {
+		url: "https://archive.org/stream/ManMakesHimself/ManMakesHimself_djvu.txt",
+		title: "Man Makes Himself (full text, djvu OCR)",
+		author: "V. Gordon Childe",
+		year: 1936,
+		alternativetitle: "Childe 1936 (OCR text)"
+	},
+
+	/* Denise Schmandt-Besserat — original primary publications */
+	"schmandtbesserat1978": {
+		url: "https://www.scientificamerican.com/article/the-earliest-precursor-of-writing/",
+		title: "The Earliest Precursor of Writing",
+		author: "Denise Schmandt-Besserat",
+		year: 1978,
+		alternativetitle: "Schmandt-Besserat, Scientific American 238(6) (1978)"
+	},
+	"schmandtbesserat1996": {
+		url: "https://utpress.utexas.edu/9780292762496/how-writing-came-about/",
+		title: "How Writing Came About",
+		author: "Denise Schmandt-Besserat",
+		year: 1996,
+		alternativetitle: "Schmandt-Besserat 1996"
+	},
+
+	/* Mellaart 1967 — the original Çatalhöyük excavation report */
+	"mellaart1967catal": {
+		url: "https://archive.org/details/catalhuyukneolit0000mell",
+		title: "Çatal Hüyük: A Neolithic Town in Anatolia",
+		author: "James Mellaart",
+		year: 1967,
+		alternativetitle: "Mellaart, Çatal Hüyük (1967)"
+	},
+	/* Hodder, Çatalhöyük excavation director since 1993 */
+	"hodder2006leopard": {
+		url: "https://www.worldcat.org/title/887488454",
+		title: "The Leopard's Tale: Revealing the Mysteries of Çatalhöyük",
+		author: "Ian Hodder",
+		year: 2006,
+		alternativetitle: "Hodder, Leopard's Tale (2006)"
+	},
+
+	/* Kathleen Kenyon — original Jericho excavation */
+	"kenyon1957digging": {
+		url: "https://archive.org/details/diggingupjericho0000keny",
+		title: "Digging Up Jericho",
+		author: "Kathleen M. Kenyon",
+		year: 1957,
+		alternativetitle: "Kenyon, Digging Up Jericho (1957)"
+	},
+
+	/* Martha Roth — Code of Hammurabi translation (1997) */
+	"roth1997lawcollections": {
+		url: "https://oi.uchicago.edu/sites/default/files/uploads/shared/docs/saoc22.pdf",
+		title: "Law Collections from Mesopotamia and Asia Minor (Scholars Press / Oriental Institute)",
+		author: "Martha T. Roth, with Harry A. Hoffner Jr.",
+		year: 1997,
+		alternativetitle: "Roth, Law Collections from Mesopotamia (1997)"
+	},
+	/* Scheil's editio princeps of the Code */
+	"scheil1902code": {
+		url: "https://archive.org/details/memoiresdelegatio07unkngoog",
+		title: "Code de Hammurabi (editio princeps, Mémoires de la Délégation en Perse IV)",
+		author: "Jean-Vincent Scheil",
+		year: 1902,
+		alternativetitle: "Scheil, Code de Hammurabi (1902)"
+	},
+
+	/* Library of Alexandria — primary sources */
+	"elabbadi1990life": {
+		url: "https://oi.uchicago.edu/sites/default/files/uploads/shared/docs/saoc28.pdf",
+		title: "The Life and Fate of the Ancient Library of Alexandria",
+		author: "Mostafa El-Abbadi",
+		year: 1990,
+		alternativetitle: "El-Abbadi, Life and Fate of the Library (1990)"
+	},
+	"canfora1990vanished": {
+		url: "https://www.hup.harvard.edu/books/the-vanished-library",
+		title: "The Vanished Library: A Wonder of the Ancient World",
+		author: "Luciano Canfora",
+		year: 1990,
+		alternativetitle: "Canfora, Vanished Library (1990)"
+	},
+
+	/* Programming language primary sources */
+	/* Menabrea / Lovelace 1843 — the original "Sketch of the Analytical Engine"
+	 * with Lovelace's famous notes including Note G (the Bernoulli-number
+	 * algorithm traditionally considered the first published computer program). */
+	"menabrea_lovelace1843": {
+		url: "https://www.fourmilab.ch/babbage/sketch.html",
+		title: "Sketch of the Analytical Engine Invented by Charles Babbage — with notes by the translator Ada Augusta, Countess of Lovelace",
+		author: "L. F. Menabrea; translated and annotated by Ada A. Lovelace",
+		year: 1843,
+		alternativetitle: "Menabrea & Lovelace (1843)"
+	},
+
+	/* Backus et al. 1957 — original FORTRAN reference manual */
+	"backus1957fortran": {
+		url: "https://archive.computerhistory.org/resources/text/Fortran/102649787.05.01.acc.pdf",
+		title: "The FORTRAN Automatic Coding System for the IBM 704 (Programmer's Reference Manual)",
+		author: "J. W. Backus and the FORTRAN working committee",
+		year: 1957,
+		alternativetitle: "Backus et al., FORTRAN (1957)"
+	},
+	/* Backus's HOPL-I paper on FORTRAN history */
+	"backus1978history": {
+		url: "https://dl.acm.org/doi/10.1145/359576.359579",
+		title: "The History of FORTRAN I, II, and III (HOPL-I proceedings)",
+		author: "John Backus",
+		year: 1978,
+		alternativetitle: "Backus, History of FORTRAN I, II, III (HOPL-I 1978)"
+	},
+
+	/* McCarthy 1960 — original LISP paper */
+	"mccarthy1960lisp": {
+		url: "https://www-formal.stanford.edu/jmc/recursive.html",
+		title: "Recursive Functions of Symbolic Expressions and Their Computation by Machine (Part I)",
+		author: "John McCarthy",
+		year: 1960,
+		alternativetitle: "McCarthy, Recursive Functions of Symbolic Expressions (1960)"
+	},
+	/* McCarthy 1978 HOPL-I paper on LISP history */
+	"mccarthy1978history": {
+		url: "https://dl.acm.org/doi/10.1145/359576.359577",
+		title: "History of LISP (HOPL-I proceedings)",
+		author: "John McCarthy",
+		year: 1978,
+		alternativetitle: "McCarthy, History of LISP (HOPL-I 1978)"
+	},
+
+	/* Naur (editor) 1963 — Revised ALGOL 60 report */
+	"naur1963algol": {
+		url: "https://www.masswerk.at/algol60/report.htm",
+		title: "Revised Report on the Algorithmic Language ALGOL 60",
+		author: "Peter Naur (editor)",
+		year: 1963,
+		alternativetitle: "Naur (ed.), Revised ALGOL 60 Report (1963)"
+	},
+
+	/* Sammet 1969 — foundational history of programming languages */
+	"sammet1969programming": {
+		url: "https://archive.org/details/programminglanguage0000samm",
+		title: "Programming Languages: History and Fundamentals",
+		author: "Jean E. Sammet",
+		year: 1969,
+		alternativetitle: "Sammet, Programming Languages (1969)"
+	},
+
+	/* Wexelblat 1981 — HOPL-I conference proceedings */
+	"wexelblat1981hopl": {
+		url: "https://dl.acm.org/doi/10.1145/800025.808805",
+		title: "History of Programming Languages (HOPL-I proceedings, ACM Monograph)",
+		author: "Richard L. Wexelblat (editor)",
+		year: 1981,
+		alternativetitle: "Wexelblat (ed.), HOPL-I (1981)"
+	},
+
+	/* Ritchie 1993 — C language history */
+	"ritchie1993c": {
+		url: "https://web.archive.org/web/2024/https://www.bell-labs.com/usr/dmr/www/chist.html",
+		title: "The Development of the C Language",
+		author: "Dennis M. Ritchie",
+		year: 1993,
+		alternativetitle: "Ritchie, Development of C (HOPL-II 1993)"
+	},
+
+	/* Stroustrup 1993 — C++ history */
+	"stroustrup1993cpp": {
+		url: "https://www.stroustrup.com/hopl2.pdf",
+		title: "A History of C++: 1979–1991 (HOPL-II proceedings)",
+		author: "Bjarne Stroustrup",
+		year: 1993,
+		alternativetitle: "Stroustrup, History of C++ (HOPL-II 1993)"
+	},
+
+	/* Dijkstra 1968 — Go To Statement Considered Harmful */
+	"dijkstra1968goto": {
+		url: "https://www.cs.utexas.edu/~EWD/transcriptions/EWD02xx/EWD215.html",
+		title: "Go To Statement Considered Harmful (EWD215)",
+		author: "Edsger W. Dijkstra",
+		year: 1968,
+		alternativetitle: "Dijkstra, Go To Statement Considered Harmful (1968)"
+	},
+
+	/* Wirth 1971 — Stepwise refinement (Communications of the ACM) */
+	"wirth1971stepwise": {
+		url: "https://web.archive.org/web/2024/https://dl.acm.org/doi/10.1145/362575.362577",
+		title: "Program Development by Stepwise Refinement",
+		author: "Niklaus Wirth",
+		year: 1971,
+		alternativetitle: "Wirth, Stepwise Refinement (1971)"
+	},
+
+	/* Wirth 1974 — On the Design of Programming Languages */
+	"wirth1974design": {
+		url: "https://web.archive.org/web/2024/https://dl.acm.org/doi/10.1145/361002.361015",
+		title: "On the Design of Programming Languages (IFIP Congress)",
+		author: "Niklaus Wirth",
+		year: 1974,
+		alternativetitle: "Wirth, Design of Programming Languages (1974)"
+	},
+
+	/* Knuth 1972 — Ancient Babylonian Algorithms (Communications of the ACM) */
+	"knuth1972babylonian": {
+		url: "https://web.archive.org/web/2024/https://dl.acm.org/doi/abs/10.1145/356586.356588",
+		title: "Ancient Babylonian Algorithms",
+		author: "Donald E. Knuth",
+		year: 1972,
+		alternativetitle: "Knuth, Ancient Babylonian Algorithms (1972)"
+	},
+
+	/* Goldberg & Robson 1983 — Smalltalk (book reference; full PDF
+	 * originally from Xerox PARC, hosted at various mirrors) */
+	"goldberg1983smalltalk": {
+		url: "https://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf",
+		title: "Smalltalk-80: The Language and its Implementation (Blue Book)",
+		author: "Adele Goldberg, David Robson",
+		year: 1983,
+		alternativetitle: "Goldberg & Robson, Smalltalk-80 (1983)"
+	},
+
+	/* Dahl & Nygaard — Simula's class and subclass concept */
+	"dahl1966simula": {
+		url: "https://www.dna.fi/dl_files/Bibliography/B.2.1.pdf",
+		title: "Classes and Subclasses (from the Simula history bibliography)",
+		author: "Ole-Johan Dahl, Kristen Nygaard",
+		year: 1966,
+		alternativetitle: "Dahl & Nygaard, Classes and Subclasses (1966)"
+	},
+
+	/* Zohary & Hopf 1988 (revised 1993, 2000, 2012) — founder crops */
+	"zoharyhopf2000domestication": {
+		url: "https://web.archive.org/web/2024/https://www.researchgate.net/publication/271807071_The_mode_of_domestication_of_the_founder_crops_of_Southwest_Asian_agriculture",
+		title: "The Mode of Domestication of the Founder Crops of Southwest Asian Agriculture (in Domestication of Plants in the Old World, 3rd ed.)",
+		author: "Daniel Zohary, Maria Hopf, Ehud Weiss",
+		year: 2012,
+		alternativetitle: "Zohary, Hopf & Weiss, Domestication of Plants in the Old World (2012)"
+	},
+
+	/* van Rossum 2009 — Python tutorial */
+	"vanrossum2009tutorial": {
+		url: "https://docs.python.org/3/tutorial/index.html",
+		title: "The Python Tutorial",
+		author: "Guido van Rossum, Python Software Foundation",
+		year: 2009,
+		alternativetitle: "Python Tutorial (van Rossum, 2009)"
+	},
+
+	/* Childe 1950 — The Urban Revolution (the original coinage) */
+	"childe1950urban": {
+		url: "https://oi.uchicago.edu/sites/default/files/uploads/shared/docs/saoc17.pdf",
+		title: "The Urban Revolution (Town Planning Review 21)",
+		author: "V. Gordon Childe",
+		year: 1950,
+		alternativetitle: "Childe, The Urban Revolution (1950)"
 	}
 };
