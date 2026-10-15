@@ -144,7 +144,7 @@ $$
 
 By proving that truth could be derived through the mechanical application of formal rules, Aristotle provided the blueprint for everything from medieval scholasticism to modern computation.
 
-This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra.\sidenote{The very word *mathematics* comes from the Greek *μάθημα* (mathema), "that which is learned", and was coined by the Pythagoreans — the first school to study the subject *for its own sake*, not for surveying or taxes \cite{historyofmath_wikipedia}.}
+This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra. The very word *mathematics* comes from the Greek *μάθημα* (mathema), "that which is learned", and was coined by the Pythagoreans — the first school to study the subject *for its own sake*, not for surveying or taxes \cite{historyofmath_wikipedia}.
 </div>
 
 <div class="md">
