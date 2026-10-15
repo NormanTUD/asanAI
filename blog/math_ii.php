@@ -1100,7 +1100,7 @@ A *vector space over $k$* is a set $V$ together with two operations — vector a
 
 You don't need to memorise the eight axioms. What you need to remember is:
 
-1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The set of pixel brightnesses $\{0, 1, \ldots, 255\}$ is *not* a field (no negatives, no quotients), so it cannot serve as the base field $k$; the individual values are of course real numbers, used as coordinates.
+1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The set of pixel brightnesses $\{0, 1, \ldots, 255\}$ is *not* a field (no negatives, no quotients), so it cannot serve as the base field $k$. Pixel brightnesses are, strictly speaking, *discrete integers* — a bounded subset of $\mathbb{Z}$, not real numbers in the $\epsilon$–$\delta$ sense. Programmers routinely store them as integers or cast them to floats when they need to do arithmetic; that is a pragmatic shortcut, not a statement that the value lives in $\mathbb{R}$.
 2. **A vector is not a "list of numbers".** A vector is an *element* of a vector space. The list-of-numbers representation only appears once you pick a basis — that is, once you choose how to measure vectors. The vector itself exists without that choice. (This is why we can rotate, stretch, or translate an embedding space in later chapters without changing the meaning of "vector".)
 3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them (\cite[Axler, Linear Algebra Done Right, §2B, p. 39]{axler2024linearalgebra}). This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
 
@@ -1115,7 +1115,7 @@ A **scalar** is a single number from the base field — in this course, almost a
 
 $$ s \in \mathbb{R} \qquad \text{Example: } s = 2.5 $$
 
-A note on terminology: in machine learning, you will often see "scalar" used more loosely to mean "a single number of any kind" — for example a pixel brightness in $\{0, 1, \ldots, 255\}$. That is fine as a casual usage, but strictly speaking the *set* $\{0, 1, \ldots, 255\}$ is not a field (no negatives, no quotients), so it cannot be the base field; each individual brightness value is just a real number. The two meanings rarely cause problems in practice; just be aware they exist.
+A note on terminology: in machine learning, you will often see "scalar" used more loosely to mean "a single number of any kind" — for example a pixel brightness in $\{0, 1, \ldots, 255\}$. That is fine as a casual usage, but strictly speaking that *set* is not a field (no negatives, no quotients), so it cannot be the base field $k$ of a vector space. The values are *discrete integers* (a subset of $\mathbb{Z}$), not real numbers in the strict mathematical sense; storing them as floats or treating them as elements of $\mathbb{R}$ is a computational convention that lets you run arithmetic on them, not a statement about what kind of object they are. The two meanings rarely cause problems in practice; just be aware they exist.
 
 ### Vectors
 
