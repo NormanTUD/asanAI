@@ -1,0 +1,3183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lovász 1967 — Operationen mit Strukturen · Interaktive Lernreise</title>
+
+<!-- ============ CDNs ============ -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/temml.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===================================================================
+   GLOBAL DESIGN SYSTEM
+   =================================================================== */
+:root{
+  --bg0:#06070d;
+  --bg1:#0b0e1a;
+  --bg2:#111527;
+  --panel:rgba(18,22,40,.72);
+  --panel2:rgba(26,31,54,.6);
+  --stroke:rgba(140,160,220,.16);
+  --stroke2:rgba(140,160,220,.30);
+  --txt:#e8ecfa;
+  --txt2:#a9b3d4;
+  --txt3:#6d7799;
+  --acc:#7aa2ff;
+  --acc2:#56e1c4;
+  --acc3:#ff8fb1;
+  --acc4:#ffcb6b;
+  --acc5:#c792ea;
+  --good:#56e1c4;
+  --bad:#ff6b8b;
+  --warn:#ffcb6b;
+  --radius:18px;
+  --shadow:0 20px 60px rgba(0,0,0,.55);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;background:var(--bg0);color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* animated aurora background */
+#aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;}
+#grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+a{color:var(--acc);text-decoration:none;}
+h1,h2,h3,h4{line-height:1.18;margin:0 0 .5em;font-weight:700;letter-spacing:-.02em;}
+h1{font-size:clamp(2.2rem,6vw,4.4rem);font-weight:800;}
+h2{font-size:clamp(1.6rem,3.4vw,2.6rem);}
+h3{font-size:1.22rem;}
+h4{font-size:1.02rem;color:var(--txt2);font-weight:600;}
+p{margin:0 0 1em;color:var(--txt2);}
+strong{color:var(--txt);font-weight:600;}
+em{color:var(--acc2);font-style:normal;font-weight:500;}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+section{padding:84px 0;position:relative;}
+.sec-num{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;
+  color:var(--acc);text-transform:uppercase;margin-bottom:10px;display:block;
+}
+.lead{font-size:1.12rem;color:var(--txt2);max-width:74ch;}
+
+/* ---------- panels ---------- */
+.panel{
+  background:var(--panel);border:1px solid var(--stroke);
+  border-radius:var(--radius);backdrop-filter:blur(14px);
+  box-shadow:var(--shadow);padding:26px;margin:22px 0;
+}
+.panel.tight{padding:18px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid-sidebar{display:grid;grid-template-columns:1.25fr .85fr;gap:20px;}
+@media(max-width:900px){.grid2,.grid3,.grid-sidebar{grid-template-columns:1fr;}}
+
+/* ---------- controls ---------- */
+.ctrl{margin:14px 0;}
+.ctrl label{display:flex;justify-content:space-between;align-items:center;
+  font-size:.83rem;color:var(--txt2);margin-bottom:6px;font-weight:500;}
+.ctrl label .val{font-family:var(--mono);color:var(--acc2);font-size:.86rem;}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--acc),var(--acc5));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:#fff;border:3px solid var(--acc);cursor:grab;
+  box-shadow:0 0 14px rgba(122,162,255,.7);
+}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--acc);
+}
+button,.btn{
+  font-family:'Inter',sans-serif;font-size:.86rem;font-weight:600;
+  background:rgba(122,162,255,.12);color:var(--acc);
+  border:1px solid rgba(122,162,255,.34);
+  padding:9px 16px;border-radius:11px;cursor:pointer;
+  transition:all .17s ease;margin:3px 4px 3px 0;
+}
+button:hover{background:rgba(122,162,255,.25);transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(122,162,255,.22);}
+button:active{transform:translateY(0);}
+button.on{background:var(--acc);color:#07090f;border-color:var(--acc);}
+button.ghost{background:transparent;color:var(--txt3);border-color:var(--stroke);}
+button.ghost:hover{color:var(--txt);border-color:var(--stroke2);}
+button.g2{background:rgba(86,225,196,.12);color:var(--acc2);border-color:rgba(86,225,196,.34);}
+button.g2.on{background:var(--acc2);color:#07090f;}
+button.g3{background:rgba(255,143,177,.12);color:var(--acc3);border-color:rgba(255,143,177,.34);}
+button.g3.on{background:var(--acc3);color:#07090f;}
+select{
+  background:var(--bg2);color:var(--txt);border:1px solid var(--stroke2);
+  padding:8px 12px;border-radius:10px;font-family:'Inter';font-size:.86rem;cursor:pointer;
+}
+.btnrow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:10px 0;}
+
+/* ---------- canvas ---------- */
+canvas{display:block;max-width:100%;border-radius:14px;
+  background:radial-gradient(ellipse at 50% 30%,#141a2e 0%,#0a0d18 100%);
+  border:1px solid var(--stroke);touch-action:none;}
+.cvwrap{position:relative;}
+.cvlabel{position:absolute;top:10px;left:14px;font-family:var(--mono);
+  font-size:.74rem;color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;
+  pointer-events:none;}
+
+/* ---------- readouts ---------- */
+.readout{
+  font-family:var(--mono);font-size:.84rem;background:rgba(0,0,0,.34);
+  border:1px solid var(--stroke);border-radius:12px;padding:13px 15px;
+  color:var(--txt2);line-height:1.75;white-space:pre-wrap;
+}
+.readout b{color:var(--acc2);font-weight:600;}
+.readout .hi{color:var(--acc4);}
+.readout .bad{color:var(--bad);}
+.readout .ok{color:var(--good);}
+.big{font-size:2.4rem;font-family:var(--mono);font-weight:600;
+  color:var(--acc2);line-height:1.1;}
+.chip{display:inline-block;font-family:var(--mono);font-size:.75rem;
+  padding:3px 9px;border-radius:7px;background:rgba(122,162,255,.14);
+  color:var(--acc);border:1px solid rgba(122,162,255,.3);margin:2px;}
+.chip.g{background:rgba(86,225,196,.14);color:var(--acc2);border-color:rgba(86,225,196,.3);}
+.chip.r{background:rgba(255,107,139,.14);color:var(--bad);border-color:rgba(255,107,139,.3);}
+.chip.y{background:rgba(255,203,107,.14);color:var(--acc4);border-color:rgba(255,203,107,.3);}
+
+/* ---------- callouts ---------- */
+.callout{border-left:3px solid var(--acc);padding:14px 18px;margin:20px 0;
+  background:rgba(122,162,255,.06);border-radius:0 12px 12px 0;}
+.callout.idea{border-color:var(--acc4);background:rgba(255,203,107,.06);}
+.callout.warn{border-color:var(--bad);background:rgba(255,107,139,.06);}
+.callout.key{border-color:var(--acc2);background:rgba(86,225,196,.07);}
+.callout h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.16em;
+  text-transform:uppercase;font-family:var(--mono);}
+.callout.idea h4{color:var(--acc4);}
+.callout.warn h4{color:var(--bad);}
+.callout.key h4{color:var(--acc2);}
+.callout h4:first-child{color:var(--acc);}
+.callout p:last-child{margin-bottom:0;}
+
+/* ---------- math ---------- */
+.mathblock{text-align:center;margin:22px 0;font-size:1.12rem;overflow-x:auto;
+  padding:14px 10px;color:var(--txt);}
+math{color:var(--txt);}
+
+/* ---------- tables ---------- */
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:.8rem;}
+th,td{padding:7px 10px;text-align:center;border-bottom:1px solid var(--stroke);}
+th{color:var(--txt3);font-weight:600;font-size:.72rem;letter-spacing:.08em;
+  text-transform:uppercase;}
+td{color:var(--txt2);}
+td.k{color:var(--acc2);font-weight:600;}
+tr.hl td{background:rgba(255,203,107,.1);}
+tr.eq td{background:rgba(86,225,196,.08);}
+tr.neq td{background:rgba(255,107,139,.1);}
+
+/* ---------- progress / nav ---------- */
+#prog{position:fixed;top:0;left:0;height:3px;z-index:999;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc5));width:0%;
+  box-shadow:0 0 14px rgba(122,162,255,.8);}
+#nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:900;
+  display:flex;flex-direction:column;gap:7px;}
+#nav a{width:9px;height:9px;border-radius:50%;background:rgba(160,175,220,.22);
+  transition:all .22s;position:relative;}
+#nav a:hover,#nav a.act{background:var(--acc);transform:scale(1.5);
+  box-shadow:0 0 12px var(--acc);}
+#nav a span{position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  font-size:.7rem;white-space:nowrap;opacity:0;transition:.2s;
+  background:var(--bg2);padding:3px 9px;border-radius:7px;
+  border:1px solid var(--stroke);color:var(--txt2);pointer-events:none;}
+#nav a:hover span{opacity:1;}
+@media(max-width:1100px){#nav{display:none;}}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.2,.7,.3,1),transform .75s cubic-bezier(.2,.7,.3,1);}
+.rv.in{opacity:1;transform:none;}
+
+/* ---------- hero ---------- */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  position:relative;padding:60px 0;}
+.kicker{font-family:var(--mono);font-size:.8rem;letter-spacing:.28em;
+  color:var(--acc2);text-transform:uppercase;margin-bottom:18px;}
+.gradtext{background:linear-gradient(110deg,#fff 10%,var(--acc) 42%,var(--acc5) 68%,var(--acc2) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  color:var(--txt3);font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;
+  animation:bob 2.2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.5;}
+  50%{transform:translateX(-50%) translateY(9px);opacity:1;}}
+
+/* ---------- misc ---------- */
+hr.sep{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--stroke2),transparent);margin:54px 0;}
+.mini{font-size:.82rem;color:var(--txt3);}
+.kbd{font-family:var(--mono);font-size:.78rem;background:var(--bg2);
+  border:1px solid var(--stroke2);padding:2px 7px;border-radius:6px;color:var(--txt2);}
+.flexcent{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
+.vs{font-size:1.5rem;color:var(--txt3);font-weight:300;}
+.stepper{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0;}
+.stepper button{flex:0 0 auto;}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;
+  font-family:var(--mono);padding:4px 10px;border-radius:99px;
+  border:1px solid var(--stroke2);color:var(--txt3);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acc);}
+ul.clean{list-style:none;padding:0;margin:12px 0;}
+ul.clean li{padding:7px 0 7px 26px;position:relative;color:var(--txt2);font-size:.95rem;}
+ul.clean li::before{content:"";position:absolute;left:4px;top:16px;
+  width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 9px var(--acc);}
+.narrative{font-size:1.06rem;max-width:76ch;}
+.quote{font-style:italic;color:var(--txt3);border-left:2px solid var(--stroke2);
+  padding-left:16px;margin:18px 0;font-size:.94rem;}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<canvas id="aurora"></canvas>
+<div id="grain"></div>
+
+<nav id="nav"></nav>
+
+<!-- ======================================================= HERO -->
+<section id="hero">
+  <div class="wrap">
+    <div class="kicker">Acta Math. Acad. Sci. Hung. 18 (1967) 321–328</div>
+    <h1 class="gradtext">Operationen<br>mit Strukturen</h1>
+    <p class="lead" style="margin-top:18px;font-size:1.25rem;">
+      László Lovász, 1967. Eine der elegantesten Ideen der Kombinatorik —
+      hier komplett zum <em>Anfassen</em>. Du brauchst nur Schulmathematik.
+      Alles andere bauen wir Schritt für Schritt auf.
+    </p>
+
+    <div class="panel rv" style="margin-top:36px;">
+      <h3 style="margin-bottom:4px;">Die Frage, um die sich alles dreht</h3>
+      <p class="mini" style="margin-bottom:14px;">Spiel damit herum, bevor du irgendetwas liest.</p>
+      <div class="grid-sidebar">
+        <div class="cvwrap">
+          <canvas id="heroCv" width="700" height="340"></canvas>
+          <div class="cvlabel">Hero · A, B und ihre Quadrate</div>
+        </div>
+        <div>
+          <div class="readout" id="heroOut"></div>
+          <div class="btnrow" style="margin-top:12px;">
+            <button id="heroA" class="g2">A würfeln</button>
+            <button id="heroB" class="g3">B würfeln</button>
+            <button id="heroSame" class="ghost">B := A</button>
+          </div>
+          <p class="mini" style="margin-top:10px;">
+            Wenn zwei Strukturen <em>gleiche Quadrate</em> haben — müssen sie
+            dann selbst gleich sein? Das Verblüffende: Ja. Aber der Beweis
+            geht einen völlig unerwarteten Umweg.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="btnrow rv" style="margin-top:20px;">
+      <span class="badge"><span class="dot"></span> 15 Kapitel</span>
+      <span class="badge"><span class="dot" style="background:var(--acc2)"></span> alles interaktiv</span>
+      <span class="badge"><span class="dot" style="background:var(--acc5)"></span> nur Abi-Wissen nötig</span>
+    </div>
+  </div>
+  <div class="scrollhint">scrollen</div>
+</section>
+
+<!-- ======================================================= 0 ÜBERBLICK -->
+<section id="s0">
+<div class="wrap">
+  <span class="sec-num">Kapitel 0 · Landkarte</span>
+  <h2 class="rv">Wohin die Reise geht</h2>
+  <p class="lead rv">Damit du nie den Faden verlierst: Das ist der komplette Bogen.
+  Jeder Punkt wird gleich eine eigene Spielwiese.</p>
+
+  <div class="panel rv">
+    <div class="cvwrap">
+      <canvas id="mapCv" width="1120" height="330"></canvas>
+      <div class="cvlabel">Der rote Faden</div>
+    </div>
+    <p class="mini" style="margin-top:12px;">Fahr mit der Maus über die Knoten.</p>
+  </div>
+
+  <div class="grid3 rv">
+    <div class="panel tight">
+      <h4 style="color:var(--acc3)">Problem</h4>
+      <p class="mini">Kann man bei Strukturen „die Wurzel ziehen"?
+      Aus <span class="chip">A² ≅ B²</span> folgt <span class="chip">A ≅ B</span>?</p>
+    </div>
+    <div class="panel tight">
+      <h4 style="color:var(--acc4)">Hindernis</h4>
+      <p class="mini">Eindeutige Primfaktorzerlegung gilt <em>nicht</em>.
+      Man kann nicht einfach kürzen.</p>
+    </div>
+    <div class="panel tight">
+      <h4 style="color:var(--acc2)">Idee</h4>
+      <p class="mini">Nicht zerlegen — <em>von außen messen</em>.
+      Zähle Homomorphismen aus allen kleinen Testgraphen.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 1 STRUKTUR -->
+<section id="s1">
+<div class="wrap">
+  <span class="sec-num">Kapitel 1 · Grundbaustein</span>
+  <h2 class="rv">Was ist eine „Struktur"?</h2>
+  <p class="lead rv">
+    Lovász schreibt <span class="chip">⟨S, R⟩</span>: eine Menge <em>S</em> und
+    eine Relation <em>R ⊆ Sᵏ</em>. Für <em>k = 2</em> ist das exakt ein
+    gerichteter Graph ohne Mehrfachkanten — und genau damit arbeiten wir hier durchweg.
+  </p>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="structCv" width="700" height="420"></canvas>
+        <div class="cvlabel">Struktur-Editor · Knoten ziehen, Kanten klicken</div>
+      </div>
+      <div>
+        <div class="readout" id="structOut"></div>
+        <div class="ctrl">
+          <label>Anzahl Knoten |S| <span class="val" id="structNV">4</span></label>
+          <input type="range" id="structN" min="1" max="6" value="4" step="1">
+        </div>
+        <div class="btnrow">
+          <button id="structEdge" class="on">Kanten-Modus</button>
+          <button id="structLoop" class="g2">Schleifen-Modus</button>
+          <button id="structClear" class="ghost">leeren</button>
+          <button id="structFull" class="ghost">voll</button>
+        </div>
+        <div class="callout" style="margin-top:14px;">
+          <h4>Merke</h4>
+          <p class="mini">Eine Kante ist <em>gerichtet</em>: (x,y) ∈ R heißt
+          Pfeil von x nach y. (y,x) ist eine andere Kante!
+          Und (x,x) — eine <em>Schleife</em> — wird später der heimliche Held.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout idea rv">
+    <h4>Warum so abstrakt?</h4>
+    <p>Weil derselbe Beweis dann für <em>alles</em> funktioniert: Graphen (k=2),
+    Hypergraphen, aber auch algebraische Strukturen. Lovász zeigt im Paper,
+    wie man eine Algebra mit Operationen <span class="chip">m₁,…,m_l</span>
+    in eine (k+l)-dimensionale Relation umcodiert — isomor    phie-treu und produkt-treu. Deswegen gilt alles unten Bewiesene auch
+    für endliche algebraische Strukturen.</p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Die Spezial-Strukturen, die Lovász ständig benutzt</h3>
+    <p class="mini">Vier Namen, die du dir merken solltest — sie tauchen im ganzen Paper auf.</p>
+    <div class="cvwrap">
+      <canvas id="specialCv" width="1120" height="200"></canvas>
+      <div class="cvlabel">Das Vokabular</div>
+    </div>
+    <div class="grid3" style="margin-top:14px;">
+      <div class="readout"><b>O</b> — die leere Struktur.
+S(O) = ∅, R(O) = ∅.
+Das ist die <span class="hi">Null</span>:
+A + O ≅ A,  A·O ≅ O.</div>
+      <div class="readout"><b>A₁</b> — ein Punkt mit Schleife.
+Das ist die <span class="hi">Eins</span>:
+A·A₁ ≅ A,  A^A₁ ≅ A.</div>
+      <div class="readout"><b>A_p</b> — p Punkte, jeder
+mit Schleife, sonst nichts.
+A·A_p ≅ A + … + A (p-mal).
+Das ist die <span class="hi">Zahl p</span>.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 2 HOMOMORPHISMUS -->
+<section id="s2">
+<div class="wrap">
+  <span class="sec-num">Kapitel 2 · Der zentrale Begriff</span>
+  <h2 class="rv">Homomorphismus = strukturerhaltende Abbildung</h2>
+  <p class="lead rv">
+    Ein Homomorphismus <em>φ: D → A</em> ordnet jedem Knoten von D einen Knoten
+    von A zu — so, dass <strong>jede Kante von D auf eine Kante von A landet</strong>.
+    Mehr nicht. Knoten dürfen zusammenfallen, A darf Extrakanten haben.
+  </p>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="homCv" width="700" height="430"></canvas>
+        <div class="cvlabel">Homomorphismus-Spiel · klicke einen D-Knoten, dann ein A-Ziel</div>
+      </div>
+      <div>
+        <div class="readout" id="homOut"></div>
+        <div class="ctrl">
+          <label>Testgraph D <span class="val" id="homDName">Kante</span></label>
+          <input type="range" id="homD" min="0" max="5" value="1" step="1">
+        </div>
+        <div class="ctrl">
+          <label>Zielgraph A <span class="val" id="homAName">Dreieck</span></label>
+          <input type="range" id="homA" min="0" max="5" value="3" step="1">
+        </div>
+        <div class="btnrow">
+          <button id="homAuto" class="g2">alle Homs durchblättern</button>
+          <button id="homStop" class="ghost">stopp</button>
+          <button id="homRand" class="ghost">zufällige Abbildung</button>
+        </div>
+        <div class="callout key" style="margin-top:12px;">
+          <h4>Farbcode</h4>
+          <p class="mini">
+          <span class="chip g">grün</span> Kante von D landet auf echter Kante von A — ok.<br>
+          <span class="chip r">rot</span> Kante landet auf einem Nicht-Paar — φ ist <em>kein</em> Homomorphismus.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2 rv">
+    <div class="callout">
+      <h4>Vorsicht: Lovász benutzt zwei Begriffe</h4>
+      <p class="mini">
+      <b style="color:var(--acc)">H(D,G)</b> = Homomorphismen <em>auf</em> G (surjektiv, und R(G) ist
+      <em>genau</em> das Bild von R(D)). Das ist die Notation <span class="chip">Dφ = G</span>.<br><br>
+      <b style="color:var(--acc2)">Q(A<sup>D</sup>)</b> = Homomorphismen <em>in</em> A hinein
+      (Bild ist irgendeine Teilstruktur von A). Das ist die normale Hom-Menge.<br><br>
+      <b style="color:var(--acc3)">F(D,A)</b> = davon die <em>injektiven</em>:
+      Einbettungen von D in A.</p>
+    </div>
+    <div class="callout idea">
+      <h4>Teilstruktur ⊑ ist hier großzügig</h4>
+      <p class="mini">Lovász' <span class="chip">B ⊑ A</span> verlangt nur
+      S(B) ⊆ S(A) <em>und</em> R(B) ⊆ R(A) — nicht, dass B alle Kanten von A
+      zwischen seinen Knoten erbt. Deshalb heißt „φ ist Homomorphismus in A",
+      dass Dφ ⊑ A gilt. Genau diese Großzügigkeit macht die Zählung später sauber.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 3 Q(A) -->
+<section id="s3">
+<div class="wrap">
+  <span class="sec-num">Kapitel 3 · Der heimliche Held</span>
+  <h2 class="rv">Q(A) — die Schleifen-Menge</h2>
+  <p class="lead rv">
+    <span class="chip">Q(A) = { x ∈ S(A) : (x,…,x) ∈ R(A) }</span> — alle Knoten mit Schleife.
+    Klingt banal. Ist aber der Schalter, der im ganzen Paper über
+    „geht" und „geht nicht" entscheidet.
+  </p>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="qCv" width="700" height="340"></canvas>
+        <div class="cvlabel">Schleifen klicken · beobachte die Konsequenzen</div>
+      </div>
+      <div>
+        <div class="readout" id="qOut"></div>
+        <div class="btnrow" style="margin-top:12px;">
+          <button id="qAll" class="g2">alle Schleifen an</button>
+          <button id="qNone" class="g3">alle aus</button>
+        </div>
+        <div class="callout warn" style="margin-top:14px;">
+          <h4>Die Kettenreaktion (2.4)</h4>
+          <p class="mini">Ist Q(A) ≠ ∅, dann ist auch Q(A<sup>B</sup>) ≠ ∅ — für <em>jedes</em> B.
+          Grund: die konstante Abbildung auf einen Schleifenknoten ist immer ein Homomorphismus.
+          Daraus folgt später: <strong>alle</strong> Komponenten des Lovász-Vektors sind &gt; 0.
+          Und <em>das</em> ist Bedingung (iii) im Hauptsatz.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 4 SUMME -->
+<section id="s4">
+<div class="wrap">
+  <span class="sec-num">Kapitel 4 · Erste Operation</span>
+  <h2 class="rv">Summe A + B — einfach nebeneinanderlegen</h2>
+  <p class="lead rv">
+    Die disjunkte Vereinigung. Kopiere A und B so um, dass sie keine
+    gemeinsamen Elemente haben, und wirf sie in einen Topf. Keine neuen Kanten.
+  </p>
+
+  <div class="panel rv">
+    <div class="cvwrap">
+      <canvas id="sumCv" width="1120" height="300"></canvas>
+      <div class="cvlabel">A + B</div>
+    </div>
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <label>A <span class="val" id="sumAName">—</span></label>
+        <input type="range" id="sumA" min="0" max="5" value="1" step="1">
+      </div>
+      <div class="ctrl">
+        <label>B <span class="val" id="sumBName">—</span></label>
+        <input type="range" id="sumB" min="0" max="5" value="3" step="1">
+      </div>
+      <div class="readout" id="sumOut"></div>
+    </div>
+  </div>
+
+  <div class="callout key rv">
+    <h4>(2.2) — der Satz, der die Addition rettet</h4>
+    <p>Ist D <em>zusammenhängend</em>, dann gilt
+    <span class="chip">Q((A+B)<sup>D</sup>) = Q(A<sup>D</sup>) ∪ Q(B<sup>D</sup>)</span>.</p>
+    <p class="mini">Warum? Das Bild Dφ ist wieder zusammenhängend (Kapitel 9).
+    Ein zusammenhängendes Ding kann nicht gleichzeitig in A und in B stecken,
+    wenn A und B getrennt sind. Also <em>entweder ganz links oder ganz rechts</em>.
+    Deshalb addieren sich die Zahlen. <strong>Ohne „zusammenhängend" ist das falsch!</strong></p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Zeig mir, dass es ohne Zusammenhang kaputtgeht</h3>
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="connCv" width="700" height="260"></canvas>
+        <div class="cvlabel">Test mit zusammenhängendem vs. unzusammenhängendem D</div>
+      </div>
+      <div>
+        <div class="readout" id="connOut"></div>
+        <div class="btnrow" style="margin-top:10px;">
+          <button id="connC" class="g2 on">D = Kante (zusammenhängend)</button>
+          <button id="connD" class="g3">D = 2 Kanten (nicht zsh.)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 5 PRODUKT -->
+<section id="s5">
+<div class="wrap">
+  <span class="sec-num">Kapitel 5 · Zweite Operation</span>
+  <h2 class="rv">Produkt A·B — das Gitter</h2>
+  <p class="lead rv">
+    Knoten von A·B sind <em>Paare</em> (a,b). Und eine Kante
+    (a,b) → (a′,b′) existiert <strong>genau dann, wenn beide Koordinaten
+    eine Kante haben</strong>: a→a′ in A <em>und</em> b→b′ in B.
+  </p>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="prodCv" width="700" height="470"></canvas>
+        <div class="cvlabel">Produkt-Gitter · fahre über eine Kante von A oder B</div>
+      </div>
+      <div>
+        <div class="readout" id="prodOut"></div>
+        <div class="ctrl">
+          <label>A <span class="val" id="prodAName">—</span></label>
+          <input type="range" id="prodA" min="0" max="5" value="1" step="1">
+        </div>
+        <div class="ctrl">
+          <label>B <span class="val" id="prodBName">—</span></label>
+          <input type="range" id="prodB" min="0" max="5" value="1" step="1">
+        </div>
+        <div class="btnrow">
+          <button id="prodHi" class="g2 on">Herkunft der Kanten zeigen</button>
+        </div>
+        <div class="callout" style="margin-top:12px;">
+          <h4>(2.3) sofort sichtbar</h4>
+          <p class="mini"><span class="chip">Q(AB) = Q(A)·Q(B)</span>:
+          (a,b) hat genau dann eine Schleife, wenn a <em>und</em> b eine haben.
+          Also <span class="chip">|Q(AB)| = |Q(A)|·|Q(B)|</span>. Multiplikativ!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn rv">
+    <h4>Hier beginnt das eigentliche Problem</h4>
+    <p>Das Produkt ist kommutativ und assoziativ — es sieht aus wie Multiplikation
+    von Zahlen. Aber: <strong>die eindeutige Primfaktorzerlegung gilt nicht.</strong>
+    Lovász selbst gibt am Ende des Papers ein Gegenbeispiel:
+    <span class="chip y">A₂ · C ≅ C · C</span> hat zwei wesentlich verschiedene
+    irreduzible Zerlegungen. Also kann man <em>nicht</em> einfach kürzen.
+    Die ganze Beweisstrategie muss deshalb anders aussehen.</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 6 EXPONENTIATION -->
+<section id="s6">
+<div class="wrap">
+  <span class="sec-num">Kapitel 6 · Die neue Operation</span>
+  <h2 class="rv">Exponentiation A<sup>B</sup> — Lovász' Erfindung</h2>
+  <p class="lead rv">
+    Das ist der originellste Teil von §1. Die Knoten von A<sup>B</sup> sind
+    <strong>alle Abbildungen</strong> φ: S(B) → S(A) — davon gibt es
+    |S(A)|<sup>|S(B)|</sup> Stück. Daher der Name.
+  </p>
+
+  <div class="mathblock rv" id="m-expdef"></div>
+
+  <p class="narrative rv">
+    Und wann ist (φ₁,…,φ_k) eine Kante von A<sup>B</sup>?
+    Genau dann, wenn gilt: <em>Nimm jede Kante von B, schiebe ihre erste Koordinate
+    durch φ₁, ihre zweite durch φ₂ — das Ergebnis muss immer eine Kante von A sein.</em>
+    Formal: R(B)[φ₁,…,φ_k] ⊆ R(A).
+  </p>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="expCv" width="700" height="500"></canvas>
+        <div class="cvlabel">A^B · jeder Knoten ist eine ganze Abbildung</div>
+      </div>
+      <div>
+        <div class="readout" id="expOut"></div>
+        <div class="ctrl">
+          <label>Basis A <span class="val" id="expAName">—</span></label>
+          <input type="range" id="expA" min="0" max="3" value="1" step="1">
+        </div>
+        <div class="ctrl">
+          <label>Exponent B <span class="val" id="expBName">—</span></label>
+          <input type="range" id="expB" min="0" max="3" value="1" step="1">
+        </div>
+        <div class="btnrow">
+          <button id="expLoops" class="g2 on">Schleifen hervorheben</button>
+          <button id="expEdges" class="ghost">Kanten von A^B zeigen</button>
+        </div>
+        <p class="mini" style="margin-top:10px;">
+          Klicke einen Knoten, um zu sehen, welche Abbildung er ist
+          und ob sie ein Homomorphismus ist.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout key rv">
+    <h4>Die Brücke zu allem Weiteren</h4>
+    <p>Eine <strong>Schleife</strong> in A<sup>B</sup> bei φ bedeutet
+    (φ,…,φ) ∈ R(A<sup>B</sup>), also R(B)[φ,…,φ] ⊆ R(A), also
+    <strong>Bφ ⊑ A</strong>. Das heißt:</p>
+    <div class="mathblock" id="m-qab"></div>
+    <p class="mini"><strong>Q(A<sup>B</sup>) ist exakt die Menge der Homomorphismen von B in A.</strong>
+    Deshalb spielt Q eine so große Rolle. Lovász bemerkt selbst, dass man
+    die Exponentiation umgehen könnte — aber sie macht die Identitäten
+    unten erst schön.</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 7 IDENTITÄTEN -->
+<section id="s7">
+<div class="wrap">
+  <span class="sec-num">Kapitel 7 · §2 des Papers</span>
+  <h2 class="rv">Die acht Identitäten (2.1)</h2>
+  <p class="lead rv">
+    Strukturen rechnen sich <em>exakt wie natürliche Zahlen</em>.
+    Wähle eine Identität — links und rechts werden beide Seiten
+    tatsächlich konstruiert und verglichen.
+  </p>
+
+  <div class="panel rv">
+    <div class="stepper" id="idBtns"></div>
+    <div class="mathblock" id="m-identity"></div>
+    <div class="grid2" style="margin-top:10px;">
+      <div class="cvwrap">
+        <canvas id="idLeftCv" width="540" height="330"></canvas>
+        <div class="cvlabel">linke Seite</div>
+      </div>
+      <div class="cvwrap">
+        <canvas id="idRightCv" width="540" height="330"></canvas>
+        <div class="cvlabel">rechte Seite</div>
+      </div>
+    </div>
+    <div class="readout" id="idOut" style="margin-top:14px;"></div>
+    <div class="grid3" style="margin-top:12px;">
+      <div class="ctrl"><label>A <span class="val" id="idAName">—</span></label>
+        <input type="range" id="idA" min="0" max="3" value="1" step="1"></div>
+      <div class="ctrl"><label>B <span class="val" id="idBName">—</span></label>
+        <input type="range" id="idB" min="0" max="3" value="1" step="1"></div>
+      <div class="ctrl"><label>C <span class="val" id="idCName">—</span></label>
+        <input type="range" id="idC" min="0" max="3" value="0" step="1"></div>
+    </div>
+  </div>
+
+  <div class="callout idea rv">
+    <h4>Welche davon brauchen wir wirklich?</h4>
+    <p class="mini">
+    <span class="chip y">(2.1.6)</span> A<sup>B+C</sup> ≅ A<sup>B</sup>·A<sup>C</sup> —
+    zerlegt Testgraphen in Zusammenhangskomponenten.<br>
+    <span class="chip y">(2.1.7)</span> (AB)<sup>C</sup> ≅ A<sup>C</sup>B<sup>C</sup> —
+    macht den Lovász-Vektor <strong>multiplikativ</strong>. Das ist die wichtigste.<br>
+    Die anderen sind Kontext — sie zeigen, dass die Analogie zu ℕ vollständig ist.</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 8 ZUSAMMENHANG -->
+<section id="s8">
+<div class="wrap">
+  <span class="sec-num">Kapitel 8 · Das Feintuning</span>
+  <h2 class="rv">Zusammenhang und die Zerlegung (3.2)</h2>
+  <p class="lead rv">
+    Eine Struktur heißt <em>zusammenhängend</em>, wenn sie nicht als Summe
+    zweier nichtleerer Strukturen geschrieben werden kann. Jede endliche
+    Struktur zerfällt <strong>eindeutig</strong> in zusammenhängende Teile.
+  </p>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div class="cvwrap">
+        <canvas id="compCv" width="700" height="360"></canvas>
+        <div class="cvlabel">Komponenten · klicke Kanten zum Trennen</div>
+      </div>
+      <div>
+        <div class="readout" id="compOut"></div>
+        <div class="btnrow" style="margin-top:12px;">
+          <button id="compRand" class="g2">neu würfeln</button>
+          <button id="compSplit" class="ghost">Komponenten auseinanderziehen</button>
+        </div>
+        <div class="callout" style="margin-top:12px;">
+          <h4>Warum die Liste D₁, D₂, D₃, …</h4>
+          <p class="mini">Lovász wählt eine Aufzählung <em>aller</em> zusammenhängenden
+          endlichen Strukturen, paarweise nicht-isomorph. Jede endliche Struktur
+          ist zu genau einem D_i isomorph. Das ist der Index-Satz
+          für die Komponenten des Vektors.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Der Katalog D₁, D₂, D₃, … (Ausschnitt)</h3>
+    <div class="cvwrap">
+      <canvas id="catalogCv" width="1120" height="230"></canvas>
+      <div class="cvlabel">Die Testgraphen, mit denen wir messen</div>
+    </div>
+    <p class="mini" style="margin-top:10px;">Diese kleinen zusammenhängenden Graphen
+    sind unsere „Messsonden". Für jeden fragen wir: <em>Wie viele Homomorphismen
+    gehen von dir nach A?</em></p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 9 DER VEKTOR -->
+<section id="s9">
+<div class="wrap">
+  <span class="sec-num">Kapitel 9 · Der Kern der Arbeit</span>
+  <h2 class="rv">Der Lovász-Vektor ⟨A⟩</h2>
+  <p class="lead rv">
+    Jetzt kommt die Idee. Statt A zu zerlegen, <em>messen</em> wir A von außen:
+    Wir zählen für jeden Testgraphen D_i die Homomorphismen nach A.
+  </p>
+
+  <div class="mathblock rv" id="m-vector"></div>
+
+  <div class="panel rv">
+    <div class="grid-sidebar">
+      <div>
+        <div class="cvwrap">
+          <canvas id="vecCv" width="700" height="250"></canvas>
+          <div class="cvlabel">deine Struktur A</div>
+        </div>
+        <div class="btnrow" style="margin-top:10px;">
+          <button id="vecRand" class="g2">A würfeln</button>
+          <button id="vecLoop" class="ghost">Schleife umschalten</button>
+          <button id="vecAdd" class="ghost">Knoten +</button>
+          <button id="vecSub" class="ghost">Knoten −</button>
+        </div>
+      </div>
+      <div>
+        <div id="vecTable"></div>
+      </div>
+    </div>
+
+  <div class="callout key rv">
+    <h4>Was dieser Vektor leistet (Satz 3.6)</h4>
+    <p class="mini">
+      <span class="chip">(i)</span> ⟨A+B⟩ = ⟨A⟩ + ⟨B⟩ &nbsp;— aus (2.2)<br>
+      <span class="chip">(ii)</span> ⟨A·B⟩ = ⟨A⟩ · ⟨B⟩ &nbsp;— aus (2.1.7) und (2.3)<br>
+      <span class="chip">(iii)</span> Q(A) ≠ ∅ ⟹ alle Komponenten &gt; 0 &nbsp;— aus (2.4)<br>
+      <span class="chip g">(iv)</span> ⟨A⟩ = ⟨B⟩ ⟺ A ≅ B &nbsp;— <strong>das ist das Schwere.</strong>
+    </p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Die drei Rechenregeln live nachprüfen</h3>
+    <p class="mini">Zwei Strukturen wählen — dann Summe und Produkt bilden und
+    die Vektoren vergleichen. Komponentenweise Addition bzw. Multiplikation.</p>
+    <div class="grid3" style="margin-bottom:10px;">
+      <div class="ctrl"><label>A <span class="val" id="ringAName">—</span></label>
+        <input type="range" id="ringA" min="0" max="5" value="1" step="1"></div>
+      <div class="ctrl"><label>B <span class="val" id="ringBName">—</span></label>
+        <input type="range" id="ringB" min="0" max="5" value="3" step="1"></div>
+      <div class="btnrow">
+        <button id="ringSum" class="g2 on">A + B</button>
+        <button id="ringProd" class="g3">A · B</button>
+      </div>
+    </div>
+    <div id="ringPlot" style="height:330px;"></div>
+    <div class="readout" id="ringOut" style="margin-top:12px;"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 10 FORMEL 6 -->
+<section id="s10">
+<div class="wrap">
+  <span class="sec-num">Kapitel 10 · Das Herzstück</span>
+  <h2 class="rv">Formel (6) — wie man Hom-Zahlen in Einbettungs-Zahlen verwandelt</h2>
+  <p class="lead rv">
+    Jetzt der eigentliche Beweis von (iv). Die Schlüsselbeobachtung:
+    <strong>jeder Homomorphismus faktorisiert eindeutig</strong> in
+    „erst auf sein Bild drücken, dann das Bild einbetten".
+  </p>
+
+  <div class="panel rv">
+    <h3>Die Faktorisierung φ = ξ·ψ</h3>
+    <div class="cvwrap">
+      <canvas id="factCv" width="1120" height="300"></canvas>
+      <div class="cvlabel">D →(ξ, surjektiv)→ G_i →(ψ, injektiv)→ A</div>
+    </div>
+    <div class="btnrow" style="margin-top:12px;">
+      <button id="factStep" class="g2">Schritt ▶</button>
+      <button id="factReset" class="ghost">zurück</button>
+    </div>
+    <div class="readout" id="factOut" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="callout idea rv">
+    <h4>Warum durch |Aut(G_i)| geteilt wird</h4>
+    <p>Die Zerlegung φ = ξψ ist <em>nicht ganz</em> eindeutig: Man kann ein
+    α ∈ H(G_i,G_i) dazwischenschieben — φ = (ξα)(α⁻¹ψ). Nach (3.5) ist jedes
+    solche α ein <strong>Automorphismus</strong>. Also wird jedes φ genau
+    |Aut(G_i)|-mal gezählt. Deshalb:</p>
+    <div class="mathblock" id="m-six"></div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Das Dreiecksystem — und wie man es rückwärts löst</h3>
+    <p class="mini">Sortiere alle G_i nach Knotenzahl. Dann hat die Matrix
+    unten links die Einträge |H(D,G_i)|/|Aut(G_i)| — und auf der
+    <strong>Diagonale steht immer 1</strong> (nach (3.4): gleich groß ⟹ bijektiv).
+    Oberhalb: alles 0.</p>
+    <div id="triPlot" style="height:420px;"></div>
+    <div class="btnrow" style="margin-top:10px;">
+      <button id="triStep" class="g2">nächste Zeile auflösen ▶</button>
+      <button id="triAll" class="ghost">alles auflösen</button>
+      <button id="triReset" class="ghost">zurück</button>
+    </div>
+    <div class="readout" id="triOut" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="callout key rv">
+    <h4>Und damit ist (iv) bewiesen</h4>
+    <p class="mini">
+    Aus |Q(A^D)| = |Q(B^D)| für alle D folgt per Induktion über |S(D)|:
+    <strong>|F(D,A)| = |F(D,B)| für alle D</strong>.<br>
+    Setze D := A &nbsp;⟹&nbsp; |F(A,B)| = |F(A,A)| ≥ 1 (die Identität!) &nbsp;⟹&nbsp; A ⊑ B.<br>
+    Setze D := B &nbsp;⟹&nbsp; |F(B,A)| ≥ 1 &nbsp;⟹&nbsp; B ⊑ A.<br>
+    Mit (3.3): <span class="chip g">A ≅ B</span> ∎</p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 11 SATZ 3.6 TESTER -->
+<section id="s11">
+<div class="wrap">
+  <span class="sec-num">Kapitel 11 · Satz 3.6 in Aktion</span>
+  <h2 class="rv">Der Isomorphie-Detektor</h2>
+  <p class="lead rv">
+    Zwei Strukturen. Der Vektor entscheidet. Wenn <em>irgendeine</em> Komponente
+    abweicht, sind sie nicht isomorph — und du siehst sofort, <strong>welcher
+    Testgraph</strong> den Unterschied aufgedeckt hat.
+  </p>
+
+  <div class="panel rv">
+    <div class="grid2">
+      <div class="cvwrap">
+        <canvas id="detACv" width="540" height="270"></canvas>
+        <div class="cvlabel">Struktur A</div>
+      </div>
+      <div class="cvwrap">
+        <canvas id="detBCv" width="540" height="270"></canvas>
+        <div class="cvlabel">Struktur B</div>
+      </div>
+    </div>
+    <div class="btnrow" style="margin-top:12px;">
+      <button id="detRA" class="g2">A würfeln</button>
+      <button id="detRB" class="g3">B würfeln</button>
+      <button id="detIso" class="ghost">B := A umbenannt (isomorph!)</button>
+      <button id="detTricky" class="ghost">kniffliges Paar</button>
+    </div>
+    <div id="detPlot" style="height:300px;margin-top:14px;"></div>
+    <div class="readout" id="detOut" style="margin-top:12px;"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 12 SATZ 4.1 -->
+<section id="s12">
+<div class="wrap">
+  <span class="sec-num">Kapitel 12 · §4 — die Antwort</span>
+  <h2 class="rv">Satz (4.1): Polynome in Strukturen sind injektiv</h2>
+  <p class="lead rv">
+    Jetzt fällt alles zusammen. Nimm ein „Polynom"
+    <span class="chip">f(A) = C₀ + C₁A + … + C_nAⁿ</span>.
+    Wende ⟨·⟩ an — und es wird <strong>in jeder Komponente j ein ganz
+    gewöhnliches reelles Polynom</strong>.
+  </p>
+
+  <div class="mathblock rv" id="m-poly"></div>
+
+  <p class="narrative rv">
+    Weil alle Koeffizienten c_ij ≥ 0 sind und — wegen Bedingung
+    |Q(C₁+…+C_n)| &gt; 0 und Eigenschaft (iii) — <em>mindestens ein</em>
+    c_ij mit i ≥ 1 echt positiv ist, ist dieses Polynom auf t ≥ 0
+    <strong>streng monoton wachsend</strong>. Also injektiv. Also a_j = b_j.
+    Für jedes j. Also ⟨A⟩ = ⟨B⟩. Also A ≅ B.
+  </p>
+
+  <div class="panel rv">
+    <h3>Die Monotonie zum Anfassen</h3>
+    <div class="grid-sidebar">
+      <div>
+        <div id="polyPlot" style="height:400px;"></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>c₀ (Konstante) <span class="val" id="pc0v">2</span></label>
+          <input type="range" id="pc0" min="0" max="8" value="2" step="1"></div>
+        <div class="ctrl"><label>c₁ <span class="val" id="pc1v">1</span></label>
+          <input type="range" id="pc1" min="0" max="8" value="1" step="1"></div>
+        <div class="ctrl"><label>c₂ <span class="val" id="pc2v">0</span></label>
+          <input type="range" id="pc2" min="0" max="8" value="0" step="1"></div>
+        <div class="ctrl"><label>c₃ <span class="val" id="pc3v">0</span></label>
+          <input type="range" id="pc3" min="0" max="8" value="0" step="1"></div>
+        <div class="readout" id="polyOut" style="margin-top:10px;"></div>
+        <p class="mini" style="margin-top:10px;">
+          Stell c₁ = c₂ = c₃ = 0 ein — dann ist die Kurve flach,
+          und die Injektivität bricht zusammen. Genau das verbietet
+          Lovász' Bedingung.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3 rv">
+    <div class="panel tight">
+      <h4 style="color:var(--acc2)">(4.2) Wurzeln</h4>
+      <p class="mini">C₀=…=C_{n−1}=O, C_n=A₁.<br>
+      <span class="chip g">Aⁿ ≅ Bⁿ ⟹ A ≅ B</span><br>
+      Die Eingangsfrage — beantwortet.</p>
+    </div>
+    <div class="panel tight">
+      <h4 style="color:var(--acc4)">(4.3) Kürzen</h4>
+      <p class="mini">n=1, C₀=O.<br>
+      <span class="chip y">AC ≅ BC ⟹ A ≅ B</span><br>
+      falls Q(C) ≠ ∅, also C eine Schleife hat.</p>
+    </div>
+    <div class="panel tight">
+      <h4 style="color:var(--acc3)">Allgemein</h4>
+      <p class="mini">Jedes Polynom mit mind. einem
+      „schleifenhaltigen" Koeffizienten nimmt
+      jeden Wert <em>höchstens einmal</em> an.</p>
+    </div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Polynom-Labor: f(A) ≅ f(B) selbst testen</h3>
+    <div class="grid3" style="margin-bottom:8px;">
+      <div class="ctrl"><label>A <span class="val" id="labAName">—</span></label>
+        <input type="range" id="labA" min="0" max="5" value="1" step="1"></div>
+      <div class="ctrl"><label>B <span class="val" id="labBName">—</span></label>
+        <input type="range" id="labB" min="0" max="5" value="2" step="1"></div>
+      <div class="ctrl"><label>Potenz n <span class="val" id="labNV">2</span></label>
+        <input type="range" id="labN" min="1" max="3" value="2" step="1"></div>
+    </div>
+    <div class="btnrow">
+      <button id="labGo" class="g2">f(A) und f(B) berechnen</button>
+    </div>
+    <div class="readout" id="labOut" style="margin-top:10px;"></div>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 13 GEGENBEISPIEL -->
+<section id="s13">
+<div class="wrap">
+  <span class="sec-num">Kapitel 13 · Die Grenze</span>
+  <h2 class="rv">Warum die Schleifen-Bedingung unverzichtbar ist</h2>
+  <p class="lead rv">
+    Lovász' eigenes Gegenbeispiel. Sei C der 2-Zyklus:
+    S(C) = {x,y}, R(C) = {(x,y),(y,x)}. <strong>Keine Schleife.</strong>
+    Dann gilt C·A₁ ≅ C·C — aber C ≇ A₁.
+  </p>
+
+  <div class="panel rv">
+    <div class="cvwrap">
+      <canvas id="cexCv" width="1120" height="330"></canvas>
+      <div class="cvlabel">C·A₁ versus C·C</div>
+    </div>
+    <div class="btnrow" style="margin-top:12px;">
+      <button id="cexShow" class="g2">Isomorphie zeigen</button>
+      <button id="cexVec" class="ghost">Vektoren vergleichen</button>
+    </div>
+    <div class="readout" id="cexOut" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="callout warn rv">
+    <h4>Was genau schiefgeht</h4>
+    <p class="mini">Q(C) = ∅ ⟹ die Komponente von ⟨C⟩ bei D = „Punkt mit Schleife"
+    ist <strong>0</strong>. Das Polynom c₁·t wird in dieser Komponente zu
+    <span class="chip r">0·t = 0</span> — eine konstante Funktion.
+    Konstant ist nicht injektiv. Die Information über A geht verloren.
+    Und die Kürzungsregel stirbt.</p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Die Folgerungen, die Lovász daraus zieht</h3>
+    <ul class="clean">
+      <li>Aus AD ≅ BD folgt A<sup>D</sup>D<sup>D</sup> ≅ B<sup>D</sup>D<sup>D</sup>
+      (denn die Identität liegt immer in Q(D<sup>D</sup>), also Q(D<sup>D</sup>) ≠ ∅),
+      mit (4.3) also A<sup>D</sup> ≅ B<sup>D</sup>.</li>
+      <li>Angewandt auf das Gegenbeispiel: <span class="chip y">A₁<sup>C</sup> ≅ C<sup>C</sup></span>
+      — die <strong>Exponentiation hat im Allgemeinen keine Umkehrung</strong>.</li>
+      <li><span class="chip r">A₂·C ≅ C·C</span> besitzt zwei wesentlich verschiedene
+      irreduzible Zerlegungen. Die eindeutige Primfaktorzerlegung gilt also
+      <em>nicht</em> — selbst dann nicht, wenn |Q(A)| &gt; 0 ist.</li>
+    </ul>
+    <p class="mini" style="margin-top:8px;">Und genau deshalb war der Umweg über
+    den Vektor nötig: <strong>Der direkte Weg über Faktorzerlegung ist versperrt.</strong></p>
+  </div>
+</div>
+</section>
+
+<hr class="sep">
+
+<!-- ======================================================= 14 FINALE -->
+<section id="s14">
+<div class="wrap">
+  <span class="sec-num">Kapitel 14 · Rückblick</span>
+  <h2 class="rv">Der ganze Beweis auf einen Blick</h2>
+  <p class="lead rv">Klick dich einmal durch — jetzt sollte jeder Pfeil
+  selbsterklärend sein.</p>
+
+  <div class="panel rv">
+    <div class="cvwrap">
+      <canvas id="finalCv" width="1120" height="470"></canvas>
+      <div class="cvlabel">Beweisarchitektur · Knoten anklicken</div>
+    </div>
+    <div class="readout" id="finalOut" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="grid2 rv">
+    <div class="callout key">
+      <h4>Die Moral</h4>
+      <p>Wenn du ein Objekt nicht <em>zerlegen</em> kannst, dann
+      <em>miss</em> es — von außen, mit allen möglichen Sonden.
+      Lovász' Hom-Zähl-Idee wurde später zur Grundlage von Graph-Limits,
+      Graphon-Theorie und der Theorie der Graph-Homomorphismen.
+      Dieses 8-Seiten-Paper von 1967 war der Anfang.</p>
+    </div>
+    <div class="callout idea">
+      <h4>Die offene Frage</h4>
+      <p>Lovász schreibt selbst am Schluss:
+      <span class="quote" style="display:block;margin:8px 0 0;">
+      „However, I do not know whether this condition can be weakened."</span>
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer style="padding:60px 0 90px;text-align:center;">
+  <div class="wrap">
+    <p class="mini">L. Lovász, <em>Operations with Structures</em>,
+    Acta Math. Acad. Sci. Hung. 18 (1967), 321–328 · eingereicht 8. Juli 1966,
+    vorgelegt von A. Rényi.</p>
+    <p class="mini" style="opacity:.5;">Interaktive Aufbereitung · alle Zahlen
+    werden live im Browser berechnet, nichts ist vorgerechnet.</p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ===================================================================
+   TEIL 1 — STRUKTUR-KERNBIBLIOTHEK
+   Eine Struktur: {n: Knotenzahl, E: Set von "i,j" Strings}
+   =================================================================== */
+
+function mk(n, edges){
+  const E = new Set();
+  (edges||[]).forEach(e=>E.add(e[0]+","+e[1]));
+  return {n:n, E:E};
+}
+function hasE(A,i,j){ return A.E.has(i+","+j); }
+function addE(A,i,j){ A.E.add(i+","+j); }
+function delE(A,i,j){ A.E.delete(i+","+j); }
+function togE(A,i,j){ if(hasE(A,i,j)) delE(A,i,j); else addE(A,i,j); }
+function edgeList(A){
+  const r=[];
+  A.E.forEach(s=>{const p=s.split(",");r.push([+p[0],+p[1]]);});
+  return r;
+}
+function clone(A){ return {n:A.n, E:new Set(A.E)}; }
+function Qset(A){ const q=[]; for(let i=0;i<A.n;i++) if(hasE(A,i,i)) q.push(i); return q; }
+function Qsize(A){ return Qset(A).length; }
+
+/* ---- Summe ---- */
+function sum(A,B){
+  const C = {n:A.n+B.n, E:new Set()};
+  A.E.forEach(s=>C.E.add(s));
+  edgeList(B).forEach(e=>C.E.add((e[0]+A.n)+","+(e[1]+A.n)));
+  return C;
+}
+/* ---- Produkt: Knoten (a,b) -> index a*B.n+b ---- */
+function prod(A,B){
+  const C = {n:A.n*B.n, E:new Set()};
+  const ea=edgeList(A), eb=edgeList(B);
+  for(const p of ea) for(const q of eb){
+    C.E.add((p[0]*B.n+q[0])+","+(p[1]*B.n+q[1]));
+  }
+  return C;
+}
+function power(A,k){
+  if(k===0) return mk(1,[[0,0]]);           // A_1
+  let R=clone(A);
+  for(let i=1;i<k;i++) R=prod(R,A);
+  return R;
+}
+/* ---- Exponentiation A^B: Knoten = Abbildungen S(B)->S(A) ---- */
+function allMaps(nB,nA){
+  const out=[]; const total=Math.pow(nA,nB);
+  for(let t=0;t<total;t++){
+    const m=[]; let x=t;
+    for(let i=0;i<nB;i++){ m.push(x%nA); x=Math.floor(x/nA); }
+    out.push(m);
+  }
+  return out;
+}
+function expo(A,B){
+  const maps=allMaps(B.n,A.n);
+  const N=maps.length;
+  const C={n:N,E:new Set()};
+  const eb=edgeList(B);
+  for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+    let ok=true;
+    for(const e of eb){
+      if(!hasE(A, maps[i][e[0]], maps[j][e[1]])){ ok=false; break; }
+    }
+    if(ok) C.E.add(i+","+j);
+  }
+  C.maps=maps;
+  return C;
+}
+/* ---- Homomorphismen D->A (= Q(A^D)) ---- */
+function isHom(D,A,m){
+  for(const e of edgeList(D)) if(!hasE(A,m[e[0]],m[e[1]])) return false;
+  return true;
+}
+function homList(D,A){
+  const out=[];
+  if(D.n===0) return [[]];
+  const total=Math.pow(A.n,D.n);
+  if(total>400000) return null;
+  const m=new Array(D.n).fill(0);
+  const ed=edgeList(D);
+  for(let t=0;t<total;t++){
+    let x=t; for(let i=0;i<D.n;i++){ m[i]=x%A.n; x=Math.floor(x/A.n); }
+    let ok=true;
+    for(const e of ed) if(!hasE(A,m[e[0]],m[e[1]])){ ok=false;break; }
+    if(ok) out.push(m.slice());
+  }
+  return out;
+}
+function homCount(D,A){
+  const L=homList(D,A); return L===null?NaN:L.length;
+}
+/* ---- injektive Homs F(D,A) ---- */
+function injCount(D,A){
+  const L=homList(D,A); if(L===null) return NaN;
+  let c=0;
+  for(const m of L){ if(new Set(m).size===m.length) c++; }
+  return c;
+}
+/* ---- Bild Dφ ---- */
+function image(D,m){
+  const used=[...new Set(m)].sort((a,b)=>a-b);
+  const idx = new Map(); used.forEach((v,i)=>idx.set(v,i));
+  const G = {n:used.length, E:new Set()};
+  for(const e of edgeList(D)){
+    G.E.add(idx.get(m[e[0]])+","+idx.get(m[e[1]]));
+  }
+  return G;
+}
+/* ---- Isomorphie-Test (Brute Force über Permutationen) ---- */
+function perms(n){
+  if(n>7) return null;
+  const res=[], a=[];
+  for(let i=0;i<n;i++) a.push(i);
+  (function rec(k){
+    if(k===n){ res.push(a.slice()); return; }
+    for(let i=k;i<n;i++){
+      [a[k],a[i]]=[a[i],a[k]];
+      rec(k+1);
+      [a[k],a[i]]=[a[i],a[k]];
+    }
+  })(0);
+  return res;
+}
+function isIso(A,B){
+  if(A.n!==B.n) return false;
+  if(A.E.size!==B.E.size) return false;
+  const P=perms(A.n);
+  if(P===null) return null;
+  outer: for(const p of P){
+    for(const e of edgeList(A)) if(!hasE(B,p[e[0]],p[e[1]])) continue outer;
+    return true;
+  }
+  return false;
+}
+function autCount(G){
+  if(G.n===0) return 1;
+  const P=perms(G.n); if(P===null) return NaN;
+  let c=0;
+  outer: for(const p of P){
+    for(const e of edgeList(G)) if(!hasE(G,p[e[0]],p[e[1]])) continue outer;
+    // muss auch Kantenzahl erhalten -> da bijektiv und |E| gleich, reicht Richtung
+    c++;
+  }
+  return c;
+}
+/* ---- |H(D,G)|: Homs VON D AUF G (surjektiv auf Knoten UND Kanten) ---- */
+function HCount(D,G){
+  if(D.n===0) return G.n===0?1:0;
+  const total=Math.pow(G.n,D.n);
+  if(total>300000||G.n===0) return 0;
+  let c=0;
+  const ed=edgeList(D);
+  const m=new Array(D.n);
+  for(let t=0;t<total;t++){
+    let x=t; for(let i=0;i<D.n;i++){ m[i]=x%G.n; x=Math.floor(x/G.n); }
+    if(new Set(m).size!==G.n) continue;        // muss surjektiv sein
+    // Bild-Kantenmenge muss GENAU R(G) sein
+    const im=new Set();
+    let ok=true;
+    for(const e of ed){
+      const s=m[e[0]]+","+m[e[1]];
+      if(!G.E.has(s)){ ok=false; break; }
+      im.add(s);
+    }
+    if(ok && im.size===G.E.size) c++;
+  }
+  return c;
+}
+/* ---- Zusammenhangskomponenten (schwach, ungerichtet) ---- */
+function components(A){
+  const par=[]; for(let i=0;i<A.n;i++) par.push(i);
+  function f(x){ while(par[x]!==x){ par[x]=par[par[x]]; x=par[x]; } return x; }
+  for(const e of edgeList(A)){ const a=f(e[0]),b=f(e[1]); if(a!==b) par[a]=b; }
+  const groups=new Map();
+  for(let i=0;i<A.n;i++){ const r=f(i); if(!groups.has(r)) groups.set(r,[]); groups.get(r).push(i); }
+  return [...groups.values()];
+}
+function isConnected(A){ return A.n>0 && components(A).length===1; }
+
+/* ===================================================================
+   TEIL 2 — KATALOG DER TESTSTRUKTUREN
+   =================================================================== */
+const LIB = [
+  {name:"Punkt (ohne Schleife)", g:()=>mk(1,[])},
+  {name:"Punkt mit Schleife A₁", g:()=>mk(1,[[0,0]])},
+  {name:"Kante →", g:()=>mk(2,[[0,1]])},
+  {name:"2-Zyklus C", g:()=>mk(2,[[0,1],[1,0]])},
+  {name:"Dreieck (Zyklus)", g:()=>mk(3,[[0,1],[1,2],[2,0]])},
+  {name:"Pfad x→y→z", g:()=>mk(3,[[0,1],[1,2]])}
+];
+const LIB_SMALL = [
+  {name:"Punkt mit Schleife A₁", g:()=>mk(1,[[0,0]])},
+  {name:"Kante →", g:()=>mk(2,[[0,1]])},
+  {name:"2-Zyklus C", g:()=>mk(2,[[0,1],[1,0]])},
+  {name:"A₂ (2 Schleifen)", g:()=>mk(2,[[0,0],[1,1]])}
+];
+/* Die Messsonden D_1, D_2, ... (zusammenhängend) */
+const PROBES = [
+  {lbl:"D₁", name:"Punkt", D:mk(1,[])},
+  {lbl:"D₂", name:"Punkt+Schleife", D:mk(1,[[0,0]])},
+  {lbl:"D₃", name:"Kante →", D:mk(2,[[0,1]])},
+  {lbl:"D₄", name:"2-Zyklus", D:mk(2,[[0,1],[1,0]])},
+  {lbl:"D₅", name:"Pfad →→", D:mk(3,[[0,1],[1,2]])},
+  {lbl:"D₆", name:"Kirsche ←·→", D:mk(3,[[1,0],[1,2]])},
+  {lbl:"D₇", name:"Dreieck", D:mk(3,[[0,1],[1,2],[2,0]])},
+  {lbl:"D₈", name:"Schleife+Kante", D:mk(2,[[0,0],[0,1]])}
+];
+function lovVec(A, k){
+  k = k || PROBES.length;
+  const v=[];
+  for(let i=0;i<k;i++) v.push(homCount(PROBES[i].D, A));
+  return v;
+}
+
+/* ===================================================================
+   TEIL 3 — ZEICHEN-PRIMITIVE
+   =================================================================== */
+const C = {
+  node:"#7aa2ff", node2:"#56e1c4", node3:"#ff8fb1", node4:"#ffcb6b",
+  edge:"rgba(170,185,230,.55)", dim:"rgba(140,155,200,.18)",
+  txt:"#e8ecfa", txt2:"#8f9ac0", bad:"#ff6b8b", good:"#56e1c4", warn:"#ffcb6b",
+  acc5:"#c792ea"
+};
+function clear(ctx,w,h){ ctx.clearRect(0,0,w,h); }
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function drawNode(ctx,x,y,r,col,label,sub,glow){
+  if(glow){
+    const g=ctx.createRadialGradient(x,y,0,x,y,r*2.6);
+    g.addColorStop(0,col+"55"); g.addColorStop(1,col+"00");
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*2.6,0,7); ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+  const gr=ctx.createLinearGradient(x-r,y-r,x+r,y+r);
+  gr.addColorStop(0,col); gr.addColorStop(1,shade(col,-26));
+  ctx.fillStyle=gr; ctx.fill();
+  ctx.lineWidth=1.6; ctx.strokeStyle="rgba(255,255,255,.3)"; ctx.stroke();
+  if(label!==undefined && label!==null){
+    ctx.fillStyle="#08101f"; ctx.font="600 "+Math.round(r*0.95)+"px Inter, sans-serif";
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(String(label),x,y+0.5);
+  }
+  if(sub){
+    ctx.fillStyle=C.txt2; ctx.font="500 10px JetBrains Mono, monospace";
+    ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText(sub,x,y+r+5);
+  }
+}
+function shade(hex,amt){
+  const h=hex.replace("#",""); 
+  let r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+  r=Math.max(0,Math.min(255,r+amt)); g=Math.max(0,Math.min(255,g+amt)); b=Math.max(0,Math.min(255,b+amt));
+  return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+function arrow(ctx,x1,y1,x2,y2,col,w,curve,head){
+  col=col||C.edge; w=w||2; curve=curve===undefined?0.16:curve;
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+  if(len<1) return;
+  const mx=(x1+x2)/2 - dy*curve, my=(y1+y2)/2 + dx*curve;
+  ctx.strokeStyle=col; ctx.lineWidth=w; ctx.lineCap="round";
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo(mx,my,x2,y2); ctx.stroke();
+  if(head===false) return;
+  // Pfeilspitze: Tangente am Ende
+  const tx=x2-mx, ty=y2-my, tl=Math.hypot(tx,ty)||1;
+  const ux=tx/tl, uy=ty/tl;
+  const hx=x2-ux*9, hy=y2-uy*9;
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(hx-uy*5, hy+ux*5);
+  ctx.lineTo(hx+uy*5, hy-ux*5);
+  ctx.closePath(); ctx.fill();
+}
+function loop(ctx,x,y,r,col,w){
+  col=col||C.warn; w=w||2.2;
+  ctx.strokeStyle=col; ctx.lineWidth=w;
+  ctx.beginPath(); ctx.arc(x,y-r-8,r*0.75,0.5,Math.PI*2+0.1); ctx.stroke();
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(x+2,y-r-1); ctx.lineTo(x-4,y-r-7); ctx.lineTo(x+6,y-r-9);
+  ctx.closePath(); ctx.fill();
+}
+function circleLayout(n,cx,cy,R,rot){
+  rot=rot||-Math.PI/2;
+  const p=[];
+  if(n===1){ p.push({x:cx,y:cy}); return p; }
+  for(let i=0;i<n;i++){
+    const a=rot+i*2*Math.PI/n;
+    p.push({x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)});
+  }
+  return p;
+}
+function drawStruct(ctx,A,cx,cy,R,opt){
+  opt=opt||{};
+  const pos = opt.pos || circleLayout(A.n,cx,cy,R);
+  const r = opt.r || 15;
+  const col = opt.col || C.node;
+  // Kanten
+  for(const e of edgeList(A)){
+    if(e[0]===e[1]) continue;
+    const a=pos[e[0]], b=pos[e[1]];
+    if(!a||!b) continue;
+    const both = hasE(A,e[1],e[0]);
+    const dx=b.x-a.x, dy=b.y-a.y, L=Math.hypot(dx,dy)||1;
+    const ux=dx/L, uy=dy/L;
+    const ec = (opt.edgeCol && opt.edgeCol(e)) || C.edge;
+    arrow(ctx,a.x+ux*r,a.y+uy*r,b.x-ux*r,b.y-uy*r,ec,opt.ew||2, both?0.2:0.05);
+  }
+  // Schleifen
+  for(let i=0;i<A.n;i++) if(hasE(A,i,i) && pos[i]) loop(ctx,pos[i].x,pos[i].y,r,opt.loopCol||C.warn);
+  // Knoten
+  for(let i=0;i<A.n;i++){
+    if(!pos[i]) continue;
+    const c = opt.nodeCol?opt.nodeCol(i):col;
+    drawNode(ctx,pos[i].x,pos[i].y,r,c, opt.labels?opt.labels[i]:(opt.noLabel?null:i), opt.subs?opt.subs[i]:null, opt.glow);
+  }
+  return pos;
+}
+function title(ctx,x,y,t,col,size){
+  ctx.fillStyle=col||C.txt; ctx.font="600 "+(size||13)+"px Inter, sans-serif";
+  ctx.textAlign="left"; ctx.textBaseline="top"; ctx.fillText(t,x,y);
+}
+function ctitle(ctx,x,y,t,col,size){
+  ctx.fillStyle=col||C.txt2; ctx.font="500 "+(size||12)+"px JetBrains Mono, monospace";
+  ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(t,x,y);
+}
+function hidpi(cv){
+  const d=window.devicePixelRatio||1;
+  const w=cv.width, h=cv.height;
+  if(cv._done) return cv.getContext("2d");
+  cv.style.width=w+"px"; cv.style.height=h+"px";
+  cv.width=w*d; cv.height=h*d;
+  const ctx=cv.getContext("2d"); ctx.scale(d,d);
+  cv._w=w; cv._h=h; cv._done=true;
+  return ctx;
+}
+function mouse(cv,ev){
+  const r=cv.getBoundingClientRect();
+  return {x:(ev.clientX-r.left)*(cv._w/r.width), y:(ev.clientY-r.top)*(cv._h/r.height)};
+}
+
+/* ===================================================================
+   TEIL 4 — INFRASTRUKTUR (Aurora, Progress, Nav, Reveal, Temml)
+   =================================================================== */
+(function aurora(){
+  const cv=document.getElementById("aurora");
+  const ctx=cv.getContext("2d");
+  let W,H;
+  function rs(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
+  rs(); addEventListener("resize",rs);
+  const blobs=[
+    {x:.2,y:.2,r:.45,c:[122,162,255],s:.00011,p:0},
+    {x:.8,y:.35,r:.4,c:[199,146,234],s:.00009,p:2},
+    {x:.5,y:.8,r:.5,c:[86,225,196],s:.00007,p:4},
+    {x:.15,y:.75,r:.33,c:[255,143,177],s:.00013,p:1}
+  ];
+  function frame(t){
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation="lighter";
+    for(const b of blobs){
+      const x=(b.x+0.13*Math.sin(t*b.s+b.p))*W;
+      const y=(b.y+0.11*Math.cos(t*b.s*1.3+b.p))*H;
+      const R=b.r*Math.min(W,H);
+      const g=ctx.createRadialGradient(x,y,0,x,y,R);
+      g.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},.14)`);
+      g.addColorStop(1,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    }
+    ctx.globalCompositeOperation="source-over";
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+(function nav(){
+  const secs=[...document.querySelectorAll("section")];
+  const names=["Start","Landkarte","Struktur","Homomorphismus","Q(A)","Summe","Produkt",
+               "Exponentiation","Identitäten","Zusammenhang","Lovász-Vektor","Formel (6)",
+               "Detektor","Satz 4.1","Gegenbeispiel","Finale"];
+  const nv=document.getElementById("nav");
+  secs.forEach((s,i)=>{
+    const a=document.createElement("a");
+    a.href="#"+s.id;
+    a.innerHTML="<span>"+(names[i]||s.id)+"</span>";
+    nv.appendChild(a);
+  });
+  const links=[...nv.children];
+  addEventListener("scroll",()=>{
+    const sc=scrollY, dh=document.body.scrollHeight-innerHeight;
+    document.getElementById("prog").style.width=(sc/dh*100)+"%";
+    let act=0;
+    secs.forEach((s,i)=>{ if(s.offsetTop-innerHeight*0.4<=sc) act=i; });
+    links.forEach((l,i)=>l.classList.toggle("act",i===act));
+  });
+})();
+
+(function reveal(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add("in"); });
+  },{threshold:.08});
+  document.querySelectorAll(".rv").forEach(e=>io.observe(e));
+  // Panels ohne .rv auch animieren
+  document.querySelectorAll("section .panel:not(.rv)").forEach(e=>{
+    e.classList.add("rv"); io.observe(e);
+  });
+})();
+
+function tex(id,s,display){
+  const el=document.getElementById(id);
+  if(!el) return;
+  try{ el.innerHTML=temml.renderToString(s,{displayMode:display!==false}); }
+  catch(e){ el.textContent=s; }
+}
+
+/* ===================================================================
+   TEIL 5 — HERO
+   =================================================================== */
+(function heroDemo(){
+  const cv=document.getElementById("heroCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("heroOut");
+  let A=mk(3,[[0,1],[1,2],[0,0]]);
+  let B=mk(3,[[0,1],[1,2],[1,1]]);
+  function rnd(n){
+    const G=mk(n,[]);
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) if(Math.random()<0.3) addE(G,i,j);
+    // mindestens eine Schleife für Interessantheit
+    if(Qsize(G)===0) addE(G,0,0);
+    return G;
+  }
+  function draw(){
+    clear(ctx,700,340);
+    title(ctx,18,14,"A",C.node2,16);
+    drawStruct(ctx,A,100,95,50,{col:C.node2,r:14});
+    title(ctx,18,180,"A² = A·A",C.node2,13);
+    drawStruct(ctx,prod(A,A),100,255,58,{col:C.node2,r:8,noLabel:true});
+
+    title(ctx,370,14,"B",C.node3,16);
+    drawStruct(ctx,B,452,95,50,{col:C.node3,r:14});
+    title(ctx,370,180,"B² = B·B",C.node3,13);
+    drawStruct(ctx,prod(B,B),452,255,58,{col:C.node3,r:8,noLabel:true});
+
+    // Trennlinie
+    ctx.strokeStyle="rgba(140,160,220,.2)"; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(300,20); ctx.lineTo(300,320); ctx.stroke();
+
+    const vA=lovVec(A,5), vB=lovVec(B,5);
+    const sameSq = isIso(prod(A,A),prod(B,B));
+    const same = isIso(A,B);
+    ctx.save();
+    ctx.translate(600,170); ctx.rotate(0);
+    ctx.restore();
+    let msg;
+    if(same) msg = `<span class="ok">A ≅ B</span>  und  <span class="ok">A² ≅ B²</span>`;
+    else msg = `<span class="bad">A ≇ B</span>  und  A² ≅ B²: <span class="bad">${sameSq?"ja?!":"nein"}</span>`;
+    out.innerHTML =
+`|S(A)| = <b>${A.n}</b>   |R(A)| = <b>${A.E.size}</b>   |Q(A)| = <span class="hi">${Qsize(A)}</span>
+|S(B)| = <b>${B.n}</b>   |R(B)| = <b>${B.E.size}</b>   |Q(B)| = <span class="hi">${Qsize(B)}</span>
+
+A² hat <b>${A.n*A.n}</b> Knoten, <b>${prod(A,A).E.size}</b> Kanten
+B² hat <b>${B.n*B.n}</b> Knoten, <b>${prod(B,B).E.size}</b> Kanten
+
+${msg}
+
+Lovász-Vektor (erste 5 Sonden):
+⟨A⟩ = <b>[${vA.join(", ")}]</b>
+⟨B⟩ = <b>[${vB.join(", ")}]</b>`;
+  }
+  document.getElementById("heroA").onclick=()=>{A=rnd(3);draw();};
+  document.getElementById("heroB").onclick=()=>{B=rnd(3);draw();};
+  document.getElementById("heroSame").onclick=()=>{B=clone(A);draw();};
+  draw();
+})();
+
+/* ===================================================================
+   TEIL 6 — LANDKARTE
+   =================================================================== */
+(function mapDemo(){
+  const cv=document.getElementById("mapCv"); const ctx=hidpi(cv);
+  const nodes=[
+    {x:80, y:165, t:"Frage", s:"A²≅B² ⟹ A≅B?", c:C.node3,
+     d:"Die Ausgangsfrage von Lovász: Kann man bei Strukturen Wurzeln ziehen?"
+    },
+    {x:255, y:70,  t:"Hindernis", s:"keine eind. Zerlegung", c:C.warn,
+     d:"Lovász zeigt am Ende selbst: A₂·C ≅ C·C hat zwei wesentlich verschiedene irreduzible Zerlegungen. Kürzen ist also verboten."},
+    {x:255, y:260, t:"Werkzeuge", s:"+ , · , A^B", c:C.node,
+     d:"Summe, direktes Produkt und die neue Operation Exponentiation A^B — mit acht Identitäten, die exakt wie bei natürlichen Zahlen aussehen."},
+    {x:430, y:165, t:"Idee", s:"Q(A^D) = Hom(D,A)", c:C.acc5,
+     d:"Eine Schleife in A^B ist genau ein Homomorphismus B→A. Statt A zu zerlegen, zählen wir Homomorphismen hinein."},
+    {x:610, y:165, t:"⟨A⟩", s:"Lovász-Vektor", c:C.node2,
+     d:"⟨A⟩ = (|Q(A^D₁)|, |Q(A^D₂)|, …) über alle zusammenhängenden Testgraphen D_i. Additiv, multiplikativ, positiv."},
+    {x:790, y:70,  t:"Formel (6)", s:"Dreiecksystem", c:C.node4,
+     d:"Jeder Hom faktorisiert als surjektiv∘injektiv. Das ergibt ein unteres Dreiecksystem mit Einsen auf der Diagonale — umkehrbar."},
+    {x:790, y:260, t:"Satz 3.6", s:"⟨A⟩=⟨B⟩ ⟺ A≅B", c:C.node2,
+     d:"Der Hauptsatz: Der Vektor bestimmt die Struktur vollständig. Der Ringhomomorphismus ist injektiv."},
+    {x:985, y:165, t:"Satz 4.1", s:"f(A)≅f(B) ⟹ A≅B", c:C.node3,
+     d:"Polynome in Strukturen werden komponentenweise zu streng monotonen reellen Polynomen — also injektiv. Daraus folgt Aⁿ≅Bⁿ ⟹ A≅B."}
+  ];
+  const links=[[0,1],[0,2],[1,3],[2,3],[3,4],[4,5],[4,6],[5,6],[6,7]];
+  let hov=-1;
+  function draw(){
+    clear(ctx,1120,330);
+    for(const l of links){
+      const a=nodes[l[0]], b=nodes[l[1]];
+      const on = (hov===l[0]||hov===l[1]);
+      arrow(ctx,a.x+58,a.y,b.x-58,b.y, on?"rgba(122,162,255,.85)":"rgba(140,160,220,.22)", on?2.5:1.5, 0.03);
+    }
+    nodes.forEach((n,i)=>{
+      const on=(hov===i);
+      ctx.save();
+      if(on){
+        const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,110);
+        g.addColorStop(0,n.c+"33"); g.addColorStop(1,n.c+"00");
+        ctx.fillStyle=g; ctx.fillRect(n.x-110,n.y-110,220,220);
+      }
+      roundRect(ctx,n.x-58,n.y-30,116,60,14);
+      ctx.fillStyle = on? n.c+"28" : "rgba(20,26,46,.85)";
+      ctx.fill();
+      ctx.strokeStyle = on? n.c : "rgba(140,160,220,.28)";
+      ctx.lineWidth = on?2:1.2; ctx.stroke();
+      ctx.fillStyle=n.c; ctx.font="700 13px Inter, sans-serif";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(n.t,n.x,n.y-9);
+      ctx.fillStyle=C.txt2; ctx.font="500 9.5px JetBrains Mono, monospace";
+      ctx.fillText(n.s,n.x,n.y+10);
+      ctx.restore();
+    });
+    if(hov>=0){
+      const n=nodes[hov];
+      const lines=wrapText(ctx,n.d,520,"500 12px Inter, sans-serif");
+      const bw=540, bh=18+lines.length*17;
+      let bx=Math.max(10,Math.min(1120-bw-10,n.x-bw/2)), by=n.y>165?n.y-bh-48:n.y+48;
+      roundRect(ctx,bx,by,bw,bh,10);
+      ctx.fillStyle="rgba(8,12,24,.95)"; ctx.fill();
+      ctx.strokeStyle=n.c+"66"; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle=C.txt; ctx.font="500 12px Inter, sans-serif";
+      ctx.textAlign="left"; ctx.textBaseline="top";
+      lines.forEach((L,i)=>ctx.fillText(L,bx+14,by+9+i*17));
+    }
+  }
+  cv.addEventListener("mousemove",e=>{
+    const m=mouse(cv,e); let h=-1;
+    nodes.forEach((n,i)=>{ if(Math.abs(m.x-n.x)<60&&Math.abs(m.y-n.y)<32) h=i; });
+    if(h!==hov){ hov=h; draw(); }
+  });
+  cv.addEventListener("mouseleave",()=>{hov=-1;draw();});
+  draw();
+})();
+
+function wrapText(ctx,txt,maxw,font){
+  ctx.font=font||"500 12px Inter, sans-serif";
+  const words=txt.split(" "), lines=[]; let cur="";
+  for(const w of words){
+    const t=cur?cur+" "+w:w;
+    if(ctx.measureText(t).width>maxw && cur){ lines.push(cur); cur=w; }
+    else cur=t;
+  }
+  if(cur) lines.push(cur);
+  return lines;
+}
+
+/* ===================================================================
+   TEIL 7 — KAPITEL 1: STRUKTUR-EDITOR
+   =================================================================== */
+(function structDemo(){
+  const cv=document.getElementById("structCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("structOut");
+  let A=mk(4,[[0,1],[1,2],[2,3],[3,0],[0,0]]);
+  let mode="edge", sel=-1, pos=null, drag=-1;
+  function layout(){ pos=circleLayout(A.n,350,200,120); }
+  layout();
+  function draw(){
+    clear(ctx,700,420);
+    // Hintergrundgitter
+    ctx.strokeStyle="rgba(140,160,220,.05)"; ctx.lineWidth=1;
+    for(let i=0;i<=700;i+=50){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,420);ctx.stroke();}
+    for(let i=0;i<=420;i+=50){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(700,i);ctx.stroke();}
+
+    drawStruct(ctx,A,350,200,120,{pos:pos,r:20,col:C.node,
+      nodeCol:i=> i===sel? C.node4 : (hasE(A,i,i)?C.node2:C.node)});
+    if(sel>=0 && mode==="edge"){
+      ctx.fillStyle=C.node4; ctx.font="500 12px Inter";
+      ctx.textAlign="center";
+      ctx.fillText("Quelle gewählt — klicke Ziel",350,395);
+    }
+    title(ctx,16,14,"S(A) = {"+[...Array(A.n).keys()].join(", ")+"}",C.txt2,12);
+    title(ctx,16,34,"R(A) ⊆ S(A)² mit |R(A)| = "+A.E.size,C.txt2,12);
+  }
+  function hit(m){
+    for(let i=0;i<A.n;i++) if(Math.hypot(m.x-pos[i].x,m.y-pos[i].y)<24) return i;
+    return -1;
+  }
+  cv.addEventListener("mousedown",e=>{
+    const m=mouse(cv,e), i=hit(m);
+    if(i<0){ sel=-1; draw(); return; }
+    if(mode==="loop"){ togE(A,i,i); upd(); return; }
+    if(e.shiftKey){ drag=i; return; }
+    if(sel<0){ sel=i; draw(); }
+    else { togE(A,sel,i); sel=-1; upd(); }
+  });
+  cv.addEventListener("mousemove",e=>{
+    if(drag<0) return;
+    const m=mouse(cv,e); pos[drag]={x:m.x,y:m.y}; draw();
+  });
+  addEventListener("mouseup",()=>{drag=-1;});
+  function upd(){
+    draw();
+    const el=edgeList(A).filter(e=>e[0]!==e[1]).map(e=>"("+e[0]+","+e[1]+")");
+    const lo=Qset(A);
+    out.innerHTML=
+`<b>Struktur A = ⟨S, R⟩</b>
+
+|S(A)| = <b>${A.n}</b>
+|R(A)| = <b>${A.E.size}</b>
+
+Kanten: ${el.length?el.join(" "):"<span class='bad'>keine</span>"}
+Schleifen: ${lo.length?lo.map(i=>"("+i+","+i+")").join(" "):"<span class='bad'>keine</span>"}
+
+<span class="hi">Q(A)</span> = {${lo.join(", ")}}   |Q(A)| = <b>${lo.length}</b>
+zusammenhängend: ${isConnected(A)?"<span class='ok'>ja</span>":"<span class='bad'>nein</span>"} (${components(A).length} Komponenten)
+
+<span class="hi">Tipp:</span> Shift+Ziehen bewegt Knoten.`;
+  }
+  document.getElementById("structN").oninput=function(){
+    const n=+this.value;
+    document.getElementById("structNV").textContent=n;
+    const B=mk(n,[]);
+    edgeList(A).forEach(e=>{ if(e[0]<n&&e[1]<n) addE(B,e[0],e[1]); });
+    A=B; sel=-1; layout(); upd();
+  };
+  const be=document.getElementById("structEdge"), bl=document.getElementById("structLoop");
+  be.onclick=()=>{mode="edge";be.classList.add("on");bl.classList.remove("on");sel=-1;draw();};
+  bl.onclick=()=>{mode="loop";bl.classList.add("on");be.classList.remove("on");sel=-1;draw();};
+  document.getElementById("structClear").onclick=()=>{A.E.clear();upd();};
+  document.getElementById("structFull").onclick=()=>{
+    for(let i=0;i<A.n;i++)for(let j=0;j<A.n;j++)addE(A,i,j); upd();};
+  upd();
+})();
+
+/* ---- Spezialstrukturen-Leiste ---- */
+(function specialDemo(){
+  const cv=document.getElementById("specialCv"); const ctx=hidpi(cv);
+  clear(ctx,1120,200);
+  const items=[
+    {t:"O", sub:"leere Struktur · die Null", g:mk(0,[]), c:C.txt2},
+    {t:"A₁", sub:"ein Punkt + Schleife · die Eins", g:mk(1,[[0,0]]), c:C.node2},
+    {t:"A₃", sub:"3 Punkte, alle mit Schleife · die Zahl 3", g:mk(3,[[0,0],[1,1],[2,2]]), c:C.node4},
+    {t:"C", sub:"2-Zyklus · KEINE Schleife", g:mk(2,[[0,1],[1,0]]), c:C.node3}
+  ];
+  items.forEach((it,i)=>{
+    const cx=140+i*280, cy=95;
+    roundRect(ctx,cx-120,20,240,160,16);
+    ctx.fillStyle="rgba(20,26,46,.6)"; ctx.fill();
+    ctx.strokeStyle=it.c+"40"; ctx.lineWidth=1.2; ctx.stroke();
+    ctx.fillStyle=it.c; ctx.font="700 19px Inter"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText(it.t,cx,34);
+    if(it.g.n===0){
+      ctx.fillStyle=C.txt2; ctx.font="300 34px Inter"; ctx.textBaseline="middle";
+      ctx.fillText("∅",cx,105);
+    } else {
+      drawStruct(ctx,it.g,cx,108,it.g.n===1?0:40,{r:14,col:it.c,noLabel:true});
+    }
+    ctx.fillStyle=C.txt2; ctx.font="500 10.5px JetBrains Mono"; ctx.textBaseline="bottom";
+    ctx.textAlign="center"; ctx.fillText(it.sub,cx,170);
+  });
+})();
+
+/* ===================================================================
+   TEIL 8 — KAPITEL 2: HOMOMORPHISMUS-SPIEL
+   =================================================================== */
+(function homDemo(){
+  const cv=document.getElementById("homCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("homOut");
+  let D=LIB[2].g(), A=LIB[4].g();
+  let phi=[], sel=-1, auto=null, autoIdx=0, homs=[];
+  function reset(){
+    phi=new Array(D.n).fill(0);
+    homs=homList(D,A)||[];
+    autoIdx=0;
+  }
+  reset();
+  let posD=[], posA=[];
+  function draw(){
+    clear(ctx,700,430);
+    ctx.strokeStyle="rgba(140,160,220,.12)";
+    ctx.beginPath(); ctx.moveTo(350,30); ctx.lineTo(350,400); ctx.stroke();
+    title(ctx,20,14,"Testgraph D",C.node5||C.acc5,14);
+    title(ctx,370,14,"Zielgraph A",C.node2,14);
+
+    posD=circleLayout(D.n,170,140,Math.min(70,D.n>1?70:0));
+    posA=circleLayout(A.n,520,140,Math.min(80,A.n>1?80:0));
+
+    // A zeichnen
+    drawStruct(ctx,A,520,140,80,{pos:posA,r:17,col:C.node2});
+    // D zeichnen mit Kantenfarbe je nach Validität
+    drawStruct(ctx,D,170,140,70,{pos:posD,r:17,col:C.acc5,
+      edgeCol:e=> hasE(A,phi[e[0]],phi[e[1]])? "rgba(86,225,196,.8)" : "rgba(255,107,139,.9)",
+      nodeCol:i=> i===sel? C.node4 : C.acc5});
+
+    // Abbildungspfeile
+    for(let i=0;i<D.n;i++){
+      const a=posD[i], b=posA[phi[i]];
+      if(!a||!b) continue;
+      ctx.setLineDash([4,4]);
+      arrow(ctx,a.x+18,a.y,b.x-18,b.y,"rgba(255,203,107,.45)",1.4,0.0);
+      ctx.setLineDash([]);
+    }
+    // Statuszeile
+    const ok=isHom(D,A,phi);
+    roundRect(ctx,20,280,660,36,10);
+    ctx.fillStyle= ok? "rgba(86,225,196,.12)":"rgba(255,107,139,.12)";
+    ctx.fill();
+    ctx.strokeStyle= ok? "rgba(86,225,196,.5)":"rgba(255,107,139,.5)";
+    ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle= ok? C.good:C.bad; ctx.font="600 14px Inter";
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(ok? "✓ φ ist ein Homomorphismus — jede Kante landet auf einer Kante"
+                   : "✗ kein Homomorphismus — mindestens eine Kante (rot) wird verletzt",350,298);
+
+    // Kantenprüfung im Detail
+    ctx.textAlign="left"; ctx.font="500 11px JetBrains Mono"; ctx.textBaseline="top";
+    let y=332;
+    for(const e of edgeList(D)){
+      const good=hasE(A,phi[e[0]],phi[e[1]]);
+      ctx.fillStyle=good?C.good:C.bad;
+      ctx.fillText(`(${e[0]}→${e[1]}) ↦ (${phi[e[0]]}→${phi[e[1]]})  ${good?"∈ R(A) ✓":"∉ R(A) ✗"}`,30,y);
+      y+=17; if(y>420) break;
+    }
+  }
+  function upd(){
+    draw();
+    const total=Math.pow(A.n,D.n);
+    out.innerHTML=
+`<b>|Q(A^D)|</b> = Anzahl Homomorphismen D → A
+
+alle Abbildungen S(D)→S(A):  <b>${A.n}<sup>${D.n}</sup> = ${total}</b>
+davon Homomorphismen:        <span class="hi">${homs.length}</span>
+davon injektiv |F(D,A)|:     <b>${injCount(D,A)}</b>
+
+aktuelle Abbildung φ:
+${[...Array(D.n).keys()].map(i=>`  ${i} ↦ ${phi[i]}`).join("\n")}
+
+Status: ${isHom(D,A,phi)?"<span class='ok'>Homomorphismus ✓</span>":"<span class='bad'>kein Homomorphismus</span>"}
+${homs.length?`durchblättert: ${autoIdx%Math.max(1,homs.length)+1} / ${homs.length}`:""}`;
+  }
+  cv.addEventListener("click",e=>{
+    const m=mouse(cv,e);
+    for(let i=0;i<D.n;i++) if(Math.hypot(m.x-posD[i].x,m.y-posD[i].y)<22){ sel=i; upd(); return; }
+    if(sel>=0) for(let j=0;j<A.n;j++) if(Math.hypot(m.x-posA[j].x,m.y-posA[j].y)<22){
+      phi[sel]=j; sel=-1; upd(); return; }
+  });
+  document.getElementById("homD").oninput=function(){
+    D=LIB[+this.value].g();
+    document.getElementById("homDName").textContent=LIB[+this.value].name;
+    reset(); upd();
+  };
+  document.getElementById("homA").oninput=function(){
+    A=LIB[+this.value].g();
+    document.getElementById("homAName").textContent=LIB[+this.value].name;
+    reset(); upd();
+  };
+  document.getElementById("homAuto").onclick=()=>{
+    if(auto){clearInterval(auto);auto=null;}
+    if(!homs.length) return;
+    auto=setInterval(()=>{ phi=homs[autoIdx%homs.length].slice(); autoIdx++; upd(); },800);
+  };
+  document.getElementById("homStop").onclick=()=>{if(auto){clearInterval(auto);auto=null;}};
+  document.getElementById("homRand").onclick=()=>{
+    phi=phi.map(()=>Math.floor(Math.random()*A.n)); upd();
+  };
+  document.getElementById("homDName").textContent=LIB[2].name;
+  document.getElementById("homAName").textContent=LIB[4].name;
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 9 — KAPITEL 3: Q(A)
+   =================================================================== */
+(function qDemo(){
+  const cv=document.getElementById("qCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("qOut");
+  let A=mk(4,[[0,1],[1,2],[2,3],[0,0],[2,2]]);
+  let pos=circleLayout(4,350,145,100);
+  function draw(){
+    clear(ctx,700,340);
+    drawStruct(ctx,A,350,145,100,{pos:pos,r:20,
+      nodeCol:i=>hasE(A,i,i)?C.node4:C.node});
+    ctx.fillStyle=C.txt2; ctx.font="500 12px JetBrains Mono";
+    ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText("Klicke einen Knoten → Schleife an/aus",350,275);
+    // Q-Markierung
+    const q=Qset(A);
+    roundRect(ctx,20,296,660,32,9);
+    ctx.fillStyle=q.length?"rgba(255,203,107,.12)":"rgba(255,107,139,.12)";
+    ctx.fill();
+    ctx.strokeStyle=q.length?"rgba(255,203,107,.5)":"rgba(255,107,139,.5)";
+    ctx.stroke();
+    ctx.fillStyle=q.length?C.warn:C.bad; ctx.font="600 13px Inter";
+    ctx.textBaseline="middle";
+    ctx.fillText(q.length? `Q(A) = {${q.join(", ")}}  —  alle Vektorkomponenten werden > 0 sein`
+                         : "Q(A) = ∅  —  Satz 4.1 ist hier NICHT anwendbar",350,312);
+  }
+  function upd(){
+    draw();
+    const q=Qset(A);
+    const B=mk(2,[[0,1]]);
+    const AB=expo(A,B);
+    out.innerHTML=
+`<b>Q(A)</b> = {x : (x,x) ∈ R(A)}
+   = {${q.join(", ")}}      |Q(A)| = <span class="hi">${q.length}</span>
+
+Test der Kettenreaktion (2.4) mit B = Kante:
+  A^B hat ${AB.n} Knoten (alle Abbildungen)
+  |Q(A^B)| = <b>${Qsize(AB)}</b>  ← Homomorphismen B→A
+
+${q.length? "<span class='ok'>Q(A) ≠ ∅  ⟹  Q(A^B) ≠ ∅ für JEDES B.</span>\nDie konstante Abbildung auf einen Schleifenknoten\nist immer ein Homomorphismus."
+          : "<span class='bad'>Q(A) = ∅ — die Garantie fällt weg.</span>\nJetzt können Vektorkomponenten 0 werden,\nund die Monotonie in Satz 4.1 bricht zusammen."}`;
+  }
+  cv.addEventListener("click",e=>{
+    const m=mouse(cv,e);
+    for(let i=0;i<A.n;i++) if(Math.hypot(m.x-pos[i].x,m.y-pos[i].y)<24){ togE(A,i,i); upd(
+); return; }
+  });
+  document.getElementById("qAll").onclick=()=>{for(let i=0;i<A.n;i++)addE(A,i,i);upd();};
+  document.getElementById("qNone").onclick=()=>{for(let i=0;i<A.n;i++)delE(A,i,i);upd();};
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 10 — KAPITEL 4: SUMME A+B
+   =================================================================== */
+(function sumDemo(){
+  const cv=document.getElementById("sumCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("sumOut");
+  let A=LIB[2].g(), B=LIB[4].g();
+  function draw(){
+    clear(ctx,1120,300);
+    // A
+    title(ctx,60,24,"A",C.node2,15);
+    drawStruct(ctx,A,150,140,A.n>1?62:0,{r:16,col:C.node2});
+    // +
+    ctx.fillStyle=C.txt2; ctx.font="300 40px Inter"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText("+",300,140);
+    // B
+    title(ctx,370,24,"B",C.node3,15);
+    drawStruct(ctx,B,450,140,B.n>1?62:0,{r:16,col:C.node3});
+    // =
+    ctx.fillStyle=C.txt2; ctx.font="300 40px Inter";
+    ctx.fillText("=",600,140);
+    // A+B — getrennt dargestellt
+    const S=sum(A,B);
+    title(ctx,680,24,"A + B  (disjunkte Vereinigung)",C.node,15);
+    const pA=circleLayout(A.n,780,140,A.n>1?55:0);
+    const pB=circleLayout(B.n,980,140,B.n>1?55:0);
+    const pos=pA.concat(pB);
+    // Umrandungen
+    ctx.setLineDash([5,5]); ctx.strokeStyle="rgba(86,225,196,.3)"; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.arc(780,140,A.n>1?82:36,0,7); ctx.stroke();
+    ctx.strokeStyle="rgba(255,143,177,.3)";
+    ctx.beginPath(); ctx.arc(980,140,B.n>1?82:36,0,7); ctx.stroke();
+    ctx.setLineDash([]);
+    drawStruct(ctx,S,0,0,0,{pos:pos,r:14,
+      nodeCol:i=> i<A.n? C.node2 : C.node3});
+    ctx.fillStyle=C.txt2; ctx.font="500 11px JetBrains Mono"; ctx.textAlign="center";
+    ctx.fillText("keine Kanten zwischen den Teilen",880,250);
+  }
+  function upd(){
+    draw();
+    const S=sum(A,B);
+    const vA=lovVec(A,6), vB=lovVec(B,6), vS=lovVec(S,6);
+    let rows="";
+    for(let i=0;i<6;i++){
+      const ok = vS[i]===vA[i]+vB[i];
+      rows+=`  ${PROBES[i].lbl}: ${String(vA[i]).padStart(3)} + ${String(vB[i]).padStart(3)} = ${String(vA[i]+vB[i]).padStart(3)}   gemessen ${String(vS[i]).padStart(3)} ${ok?"<span class='ok'>✓</span>":"<span class='bad'>✗</span>"}\n`;
+    }
+    out.innerHTML=
+`|S(A+B)| = ${A.n} + ${B.n} = <b>${S.n}</b>
+|R(A+B)| = ${A.E.size} + ${B.E.size} = <b>${S.E.size}</b>
+
+<b>⟨A+B⟩ = ⟨A⟩ + ⟨B⟩ ?</b>
+${rows}
+<span class="hi">Alle Sonden D_i sind zusammenhängend —
+deshalb gilt (2.2) und die Addition klappt.</span>`;
+  }
+  document.getElementById("sumA").oninput=function(){
+    A=LIB[+this.value].g();
+    document.getElementById("sumAName").textContent=LIB[+this.value].name; upd();};
+  document.getElementById("sumB").oninput=function(){
+    B=LIB[+this.value].g();
+    document.getElementById("sumBName").textContent=LIB[+this.value].name; upd();};
+  document.getElementById("sumAName").textContent=LIB[2].name;
+  document.getElementById("sumBName").textContent=LIB[4].name;
+  upd();
+})();
+
+/* ---- Zusammenhang-Gegentest ---- */
+(function connDemo(){
+  const cv=document.getElementById("connCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("connOut");
+  const A=mk(2,[[0,1]]), B=mk(2,[[0,1]]);
+  let D=mk(2,[[0,1]]), conn=true;
+  function draw(){
+    clear(ctx,700,260);
+    title(ctx,20,14,"D "+(conn?"(zusammenhängend)":"(2 Komponenten)"),conn?C.good:C.bad,13);
+    if(conn) drawStruct(ctx,D,110,90,45,{r:15,col:C.acc5});
+    else {
+      const p=[{x:70,y:70},{x:150,y:70},{x:70,y:140},{x:150,y:140}];
+      drawStruct(ctx,D,0,0,0,{pos:p,r:15,col:C.acc5});
+    }
+    title(ctx,300,14,"A",C.node2,13);
+    drawStruct(ctx,A,370,80,38,{r:14,col:C.node2});
+    title(ctx,300,140,"B",C.node3,13);
+    drawStruct(ctx,B,370,195,38,{r:14,col:C.node3});
+    title(ctx,520,14,"A + B",C.node,13);
+    const S=sum(A,B);
+    drawStruct(ctx,S,0,0,0,{pos:[{x:570,y:70},{x:650,y:70},{x:570,y:160},{x:650,y:160}],r:14,
+      nodeCol:i=>i<2?C.node2:C.node3});
+  }
+  function upd(){
+    draw();
+    const S=sum(A,B);
+    const l=homCount(D,S), a=homCount(D,A), b=homCount(D,B);
+    const ok=(l===a+b);
+    out.innerHTML=
+`|Q((A+B)^D)| = <b>${l}</b>
+|Q(A^D)| + |Q(B^D)| = ${a} + ${b} = <b>${a+b}</b>
+
+${ok?"<span class='ok'>✓ GLEICH — (2.2) greift.</span>"
+    :"<span class='bad'>✗ VERSCHIEDEN!</span>"}
+
+${conn
+ ? "D ist zusammenhängend ⟹ das Bild Dφ ist\nzusammenhängend ⟹ es passt ganz in A\nODER ganz in B. Nie gemischt."
+ : "D zerfällt ⟹ eine Komponente darf nach A,\ndie andere nach B. Diese <span class='hi'>Mischlösungen</span>\nwerden rechts nicht mitgezählt.\nDifferenz: <span class='bad'>" + (l-a-b) + "</span>"}`;
+  }
+  const bc=document.getElementById("connC"), bd=document.getElementById("connD");
+  bc.onclick=()=>{D=mk(2,[[0,1]]);conn=true;bc.classList.add("on");bd.classList.remove("on");upd();};
+  bd.onclick=()=>{D=mk(4,[[0,1],[2,3]]);conn=false;bd.classList.add("on");bc.classList.remove("on");upd();};
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 11 — KAPITEL 5: PRODUKT
+   =================================================================== */
+(function prodDemo(){
+  const cv=document.getElementById("prodCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("prodOut");
+  let A=LIB[2].g(), B=LIB[2].g(), hi=true, hovE=null;
+  let gridPos=[];
+  function draw(){
+    clear(ctx,700,470);
+    const P=prod(A,B);
+    // Achsen: A oben, B links
+    const x0=200, y0=120, dx=Math.min(110,420/Math.max(1,A.n)), dy=Math.min(90,300/Math.max(1,B.n));
+    title(ctx,20,14,"A (Spalten)",C.node2,12);
+    title(ctx,20,34,"B (Zeilen)",C.node3,12);
+    // A-Graph klein oben
+    const pA=[]; for(let i=0;i<A.n;i++) pA.push({x:x0+i*dx,y:60});
+    drawStruct(ctx,A,0,0,0,{pos:pA,r:13,col:C.node2,
+      edgeCol:e=>hovE&&hovE.t==="A"&&hovE.e[0]===e[0]&&hovE.e[1]===e[1]?C.warn:"rgba(86,225,196,.6)"});
+    // B-Graph klein links
+    const pB=[]; for(let j=0;j<B.n;j++) pB.push({x:110,y:y0+j*dy});
+    drawStruct(ctx,B,0,0,0,{pos:pB,r:13,col:C.node3,
+      edgeCol:e=>hovE&&hovE.t==="B"&&hovE.e[0]===e[0]&&hovE.e[1]===e[1]?C.warn:"rgba(255,143,177,.6)"});
+    // Gitter
+    gridPos=[];
+    for(let i=0;i<A.n;i++) for(let j=0;j<B.n;j++)
+      gridPos[i*B.n+j]={x:x0+i*dx, y:y0+j*dy};
+    // Gitterlinien
+    ctx.strokeStyle="rgba(140,160,220,.08)"; ctx.lineWidth=1;
+    for(let i=0;i<A.n;i++){ctx.beginPath();ctx.moveTo(x0+i*dx,y0-30);ctx.lineTo(x0+i*dx,y0+(B.n-1)*dy+30);ctx.stroke();}
+    for(let j=0;j<B.n;j++){ctx.beginPath();ctx.moveTo(x0-30,y0+j*dy);ctx.lineTo(x0+(A.n-1)*dx+30,y0+j*dy);ctx.stroke();}
+    // Produkt-Kanten
+    drawStruct(ctx,P,0,0,0,{pos:gridPos,r:12,noLabel:true,
+      col:C.node,
+      nodeCol:i=>hasE(P,i,i)?C.warn:C.node,
+      edgeCol:e=>{
+        if(!hi||!hovE) return "rgba(170,185,230,.45)";
+        const a1=Math.floor(e[0]/B.n), b1=e[0]%B.n, a2=Math.floor(e[1]/B.n), b2=e[1]%B.n;
+        if(hovE.t==="A" && a1===hovE.e[0] && a2===hovE.e[1]) return C.warn;
+        if(hovE.t==="B" && b1===hovE.e[0] && b2===hovE.e[1]) return C.warn;
+        return "rgba(170,185,230,.14)";
+      }});
+    // Beschriftung der Knoten
+    ctx.fillStyle=C.txt2; ctx.font="500 9px JetBrains Mono"; ctx.textAlign="center"; ctx.textBaseline="top";
+    for(let i=0;i<A.n;i++) for(let j=0;j<B.n;j++)
+      ctx.fillText(`(${i},${j})`,gridPos[i*B.n+j].x,gridPos[i*B.n+j].y+15);
+    ctx.fillStyle=C.txt2; ctx.font="500 11px JetBrains Mono";
+    ctx.fillText("Kante (a,b)→(a′,b′)  ⟺  a→a′ in A  UND  b→b′ in B",350,430);
+    ctx.fillText("Fahre über eine Kante von A oder B oben/links",350,448);
+  }
+  function upd(){
+    draw();
+    const P=prod(A,B);
+    out.innerHTML=
+`|S(AB)| = ${A.n} · ${B.n} = <b>${P.n}</b>
+|R(AB)| = ${A.E.size} · ${B.E.size} = <b>${P.E.size}</b>
+
+<span class="hi">(2.3)</span>  |Q(AB)| = |Q(A)|·|Q(B)|
+         ${Qsize(P)} = ${Qsize(A)} · ${Qsize(B)} ${Qsize(P)===Qsize(A)*Qsize(B)?"<span class='ok'>✓</span>":"<span class='bad'>✗</span>"}
+
+<b>⟨AB⟩ = ⟨A⟩·⟨B⟩ ?</b>
+${[0,1,2,3,4].map(i=>{
+  const a=homCount(PROBES[i].D,A), b=homCount(PROBES[i].D,B), p=homCount(PROBES[i].D,P);
+  return `  ${PROBES[i].lbl}: ${a} · ${b} = ${a*b}  gemessen ${p} ${p===a*b?"<span class='ok'>✓</span>":"<span class='bad'>✗</span>"}`;
+}).join("\n")}
+
+<span class="hi">Grund: (2.1.7)  (AB)^C ≅ A^C·B^C</span>`;
+  }
+  cv.addEventListener("mousemove",e=>{
+    const m=mouse(cv,e); let found=null;
+    // A-Kanten oben
+    const x0=200, dx=Math.min(110,420/Math.max(1,A.n));
+    for(const ed of edgeList(A)){
+      if(ed[0]===ed[1]) continue;
+      const mx=(x0+ed[0]*dx+x0+ed[1]*dx)/2, my=60;
+      if(Math.hypot(m.x-mx,m.y-my)<26) found={t:"A",e:ed};
+    }
+    const y0=120, dy=Math.min(90,300/Math.max(1,B.n));
+    for(const ed of edgeList(B)){
+      if(ed[0]===ed[1]) continue;
+      const mx=110, my=(y0+ed[0]*dy+y0+ed[1]*dy)/2;
+      if(Math.hypot(m.x-mx,m.y-my)<26) found={t:"B",e:ed};
+    }
+    if(JSON.stringify(found)!==JSON.stringify(hovE)){ hovE=found; draw(); }
+  });
+  cv.addEventListener("mouseleave",()=>{hovE=null;draw();});
+  document.getElementById("prodA").oninput=function(){
+    A=LIB[+this.value].g();
+    document.getElementById("prodAName").textContent=LIB[+this.value].name; upd();};
+  document.getElementById("prodB").oninput=function(){
+    B=LIB[+this.value].g();
+    document.getElementById("prodBName").textContent=LIB[+this.value].name; upd();};
+  const bh=document.getElementById("prodHi");
+  bh.onclick=()=>{hi=!hi;bh.classList.toggle("on",hi);draw();};
+  document.getElementById("prodAName").textContent=LIB[2].name;
+  document.getElementById("prodBName").textContent=LIB[2].name;
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 12 — KAPITEL 6: EXPONENTIATION
+   =================================================================== */
+tex("m-expdef","S(A^B)=S(A)^{S(B)}\\qquad (\\varphi_1,\\dots,\\varphi_k)\\in R(A^B)\\iff R(B)[\\varphi_1,\\dots,\\varphi_k]\\subseteq R(A)");
+tex("m-qab","Q(A^B)\\;=\\;\\{\\varphi : B\\varphi\\sqsubseteq A\\}\\;=\\;\\operatorname{Hom}(B,A)");
+
+(function expDemo(){
+  const cv=document.getElementById("expCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("expOut");
+  let A=LIB_SMALL[1].g(), B=LIB_SMALL[1].g();
+  let showLoops=true, showEdges=false, sel=-1, pos=[];
+  function draw(){
+    clear(ctx,700,500);
+    const E=expo(A,B);
+    title(ctx,20,12,"A",C.node2,13);
+    drawStruct(ctx,A,80,60,A.n>1?30:0,{r:12,col:C.node2});
+    title(ctx,190,12,"B",C.node3,13);
+    drawStruct(ctx,B,250,60,B.n>1?30:0,{r:12,col:C.node3});
+    ctx.fillStyle=C.txt2; ctx.font="500 12px JetBrains Mono"; ctx.textAlign="left"; ctx.textBaseline="top";
+    ctx.fillText(`A^B hat ${A.n}^${B.n} = ${E.n} Knoten`,380,30);
+    ctx.fillText(`|Q(A^B)| = ${Qsize(E)} Homomorphismen B→A`,380,50);
+
+    // Knoten von A^B als Gitter
+    const cols=Math.ceil(Math.sqrt(E.n*1.9)), rows=Math.ceil(E.n/cols);
+    const gw=600/Math.max(1,cols), gh=Math.min(70,300/Math.max(1,rows));
+    pos=[];
+    for(let i=0;i<E.n;i++){
+      const c=i%cols, r=Math.floor(i/cols);
+      pos.push({x:70+c*gw+gw/2, y:150+r*gh+gh/2});
+    }
+    if(showEdges){
+      for(const e of edgeList(E)){
+        if(e[0]===e[1]) continue;
+        arrow(ctx,pos[e[0]].x,pos[e[0]].y,pos[e[1]].x,pos[e[1]].y,"rgba(170,185,230,.12)",1,0.08,false);
+      }
+    }
+    for(let i=0;i<E.n;i++){
+      const isHomN=hasE(E,i,i);
+      const col = (showLoops&&isHomN)? C.good : (i===sel?C.warn:"#4a5578");
+      drawNode(ctx,pos[i].x,pos[i].y,Math.min(16,gw/3.2),col,null,null,showLoops&&isHomN);
+      // Abbildung als Text
+      ctx.fillStyle=C.txt2; ctx.font="500 9px JetBrains Mono"; ctx.textAlign="center"; ctx.textBaseline="top";
+      ctx.fillText(E.maps[i].join(""),pos[i].x,pos[i].y+16);
+    }
+    ctx.fillStyle=C.txt2; ctx.font="500 11px JetBrains Mono"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText("Jeder Knoten = eine Abbildung S(B)→S(A), notiert als Ziffernfolge",350,455);
+    ctx.fillStyle=C.good;
+    ctx.fillText("grün + leuchtend = hat Schleife = ist ein Homomorphismus B→A",350,476);
+  }
+  function upd(){
+    draw();
+    const E=expo(A,B);
+    let t="";
+    if(sel>=0 && sel<E.n){
+      const m=E.maps[sel];
+      t=`\nGewählte Abbildung φ = [${m.map((v,i)=>i+"↦"+v).join(", ")}]\n`+
+        `  Homomorphismus? ${isHom(B,A,m)?"<span class='ok'>JA — Schleife in A^B ✓</span>":"<span class='bad'>nein — keine Schleife</span>"}`;
+    }
+    out.innerHTML=
+`|S(A)| = ${A.n},  |S(B)| = ${B.n}
+
+<b>A^B</b>: ${A.n}^${B.n} = <b>${E.n}</b> Knoten
+       ${E.E.size} Kanten
+<span class="hi">|Q(A^B)| = ${Qsize(E)}</span>
+
+Kontrolle: Homomorphismen B→A direkt gezählt: <b>${homCount(B,A)}</b>
+${Qsize(E)===homCount(B,A)?"<span class='ok'>✓ identisch — das ist die Brücke</span>":"<span class='bad'>✗</span>"}
+${t}`;
+  }
+  cv.addEventListener("click",e=>{
+    const m=mouse(cv,e);
+    for(let i=0;i<pos.length;i++) if(Math.hypot(m.x-pos[i].x,m.y-pos[i].y)<16){sel=i;upd();return;}
+    sel=-1; upd();
+  });
+  document.getElementById("expA").oninput=function(){
+    A=LIB_SMALL[+this.value].g(); sel=-1;
+    document.getElementById("expAName").textContent=LIB_SMALL[+this.value].name; upd();};
+  document.getElementById("expB").oninput=function(){
+    B=LIB_SMALL[+this.value].g(); sel=-1;
+    document.getElementById("expBName").textContent=LIB_SMALL[+this.value].name; upd();};
+  const bl=document.getElementById("expLoops"), be=document.getElementById("expEdges");
+  bl.onclick=()=>{showLoops=!showLoops;bl.classList.toggle("on",showLoops);draw();};
+  be.onclick=()=>{showEdges=!showEdges;be.classList.toggle("on",showEdges);draw();};
+  document.getElementById("expAName").textContent=LIB_SMALL[1].name;
+  document.getElementById("expBName").textContent=LIB_SMALL[1].name;
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 13 — KAPITEL 7: DIE ACHT IDENTITÄTEN
+   =================================================================== */
+(function idDemo(){
+  const cvL=document.getElementById("idLeftCv"), cvR=document.getElementById("idRightCv");
+  const cl=hidpi(cvL), cr=hidpi(cvR);
+  const out=document.getElementById("idOut");
+  const IDS=[
+    {lbl:"2.1.1", tex:"A+B\\cong B+A", L:(A,B,Cc)=>sum(A,B), R:(A,B,Cc)=>sum(B,A),
+     note:"Kommutativität der Summe — trivial, aber nötig."},
+    {lbl:"2.1.2", tex:"(A+B)+C\\cong A+(B+C)", L:(A,B,Cc)=>sum(sum(A,B),Cc), R:(A,B,Cc)=>sum(A,sum(B,Cc)),
+     note:"Assoziativität der Summe."},
+    {lbl:"2.1.3", tex:"AB\\cong BA", L:(A,B,Cc)=>prod(A,B), R:(A,B,Cc)=>prod(B,A),
+     note:"Kommutativität des Produkts."},
+    {lbl:"2.1.4", tex:"(AB)C\\cong A(BC)", L:(A,B,Cc)=>prod(prod(A,B),Cc), R:(A,B,Cc)=>prod(A,prod(B,Cc)),
+     note:"Assoziativität des Produkts."},
+    {lbl:"2.1.5", tex:"A(B+C)\\cong AB+AC", L:(A,B,Cc)=>prod(A,sum(B,Cc)), R:(A,B,Cc)=>sum(prod(A,B),prod(A,Cc)),
+     note:"Distributivgesetz — wie bei Zahlen."},
+    {lbl:"2.1.6", tex:"A^{B+C}\\cong A^B\\cdot A^C", L:(A,B,Cc)=>expo(A,sum(B,Cc)), R:(A,B,Cc)=>prod(expo(A,B),expo(A,Cc)),
+     note:"WICHTIG: Ein Homomorphismus von B+C nach A ist genau ein Paar (Hom von B, Hom von C). Damit zerlegt man jeden Testgraphen in seine Komponenten."},
+    {lbl:"2.1.7", tex:"(AB)^C\\cong A^C B^C", L:(A,B,Cc)=>expo(prod(A,B),Cc), R:(A,B,Cc)=>prod(expo(A,Cc),expo(B,Cc)),
+     note:"DIE WICHTIGSTE: Ein Homomorphismus nach A·B ist genau ein Paar von Homomorphismen. Daraus folgt |Q((AB)^D)| = |Q(A^D)|·|Q(B^D)| — der Vektor wird multiplikativ."},
+    {lbl:"2.1.8", tex:"A^{BC}\\cong (A^B)^C", L:(A,B,Cc)=>expo(A,prod(B,Cc)), R:(A,B,Cc)=>expo(expo(A,B),Cc),
+     note:"Potenzgesetz — exakt wie (a^b)^c = a^(bc) bei Zahlen."}
+  ];
+  let cur=6, A=LIB_SMALL[1].g(), B=LIB_SMALL[1].g(), Cc=LIB_SMALL[0].g();
+  const bar=document.getElementById("idBtns");
+  IDS.forEach((d,i)=>{
+    const b=document.createElement("button");
+    b.textContent="("+d.lbl+")";
+    if(i===cur) b.classList.add("on");
+    b.onclick=()=>{cur=i;[...bar.children].forEach((x,j)=>x.classList.toggle("on",j===i));upd();};
+    bar.appendChild(b);
+  });
+  function safeSize(G){ return G? G.n : 0; }
+  function upd(){
+    const d=IDS[cur];
+    tex("m-identity",d.tex);
+    let Lg=null,Rg=null,err=null;
+    try{
+      Lg=d.L(A,B,Cc); Rg=d.R(A,B,Cc);
+      if(Lg.n>400||Rg.n>400){ err="zu groß zum Zeichnen — wähle kleinere Strukturen"; }
+    }catch(e){ err="Berechnung zu groß"; }
+    clear(cl,540,330); clear(cr,540,330);
+    function render(ctx,G,col,lbl){
+      title(ctx,16,12,lbl,col,13);
+      if(!G){ ctitle(ctx,270,165,"—"); return; }
+      if(G.n===0){ ctitle(ctx,270,165,"O  (leere Struktur)",C.txt2,14); return; }
+      if(G.n>60){
+        ctitle(ctx,270,150,G.n+" Knoten, "+G.E.size+" Kanten",C.txt2,14);
+        ctitle(ctx,270,175,"(zu viele zum Zeichnen)",C.txt2,11);
+        return;
+      }
+      const R=G.n<=2?40:(G.n<=6?80:(G.n<=16?105:120));
+      drawStruct(ctx,G,270,170,R,{r:G.n<=6?15:(G.n<=16?10:6),col:col,noLabel:G.n>16,
+        nodeCol:i=>hasE(G,i,i)?C.warn:col});
+    }
+    render(cl,err?null:Lg,C.node2,"links");
+    render(cr,err?null:Rg,C.node3,"rechts");
+    if(err){ out.innerHTML=`<span class="bad">${err}</span>`; return; }
+    const iso=isIso(Lg,Rg);
+    const vL=lovVec(Lg,5), vR=lovVec(Rg,5);
+    out.innerHTML=
+`<b>(${d.lbl})</b>  ${d.note}
+
+links:  ${Lg.n} Knoten, ${Lg.E.size} Kanten,  |Q| = ${Qsize(Lg)}
+rechts: ${Rg.n} Knoten, ${Rg.E.size} Kanten,  |Q| = ${Qsize(Rg)}
+
+Lovász-Vektoren (Sonden D₁…D₅):
+  links  [${vL.join(", ")}]
+  rechts [${vR.join(", ")}]
+
+Isomorphie-Test (Permutationen): ${
+  iso===null? "<span class='hi'>zu groß für Brute Force — aber Vektoren "+(JSON.stringify(vL)===JSON.stringify(vR)?"<span class='ok'>stimmen überein ✓</span>":"<span class='bad'>weichen ab</span>")+"</span>"
+  : (iso? "<span class='ok'>≅  ISOMORPH ✓ — die Identität stimmt</span>":"<span class='bad'>✗ nicht isomorph</span>")}`;
+  }
+  function names(id,arr,name){ document.getElementById(name).textContent=arr.name; }
+  document.getElementById("idA").oninput=function(){
+    A=LIB_SMALL[+this.value].g();
+    document.getElementById("idAName").textContent=LIB_SMALL[+this.value].name; upd();};
+  document.getElementById("idB").oninput=function(){
+    B=LIB_SMALL[+this.value].g();
+    document.getElementById("idBName").textContent=LIB_SMALL[+this.value].name; upd();};
+  document.getElementById("idC").oninput=function(){
+    Cc=LIB_SMALL[+this.value].g();
+    document.getElementById("idCName").textContent=LIB_SMALL[+this.value].name; upd();};
+  document.getElementById("idAName").textContent=LIB_SMALL[1].name;
+  document.getElementById("idBName").textContent=LIB_SMALL[1].name;
+  document.getElementById("idCName").textContent=LIB_SMALL[0].name;
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 14 — KAPITEL 8: ZUSAMMENHANG & KATALOG
+   =================================================================== */
+(function compDemo(){
+  const cv=document.getElementById("compCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("compOut");
+  let A=mk(6,[[0,1],[1,2],[3,4],[0,0]]);
+  let split=false, pos=[];
+  const PAL=[C.node2,C.node3,C.node4,C.acc5,C.node];
+  function layout(){
+    const comps=components(A);
+    pos=[];
+    if(split){
+      const n=comps.length;
+      comps.forEach((g,ci)=>{
+        const cx=350+(ci-(n-1)/2)*Math.min(230,620/n);
+        const p=circleLayout(g.length,cx,160,g.length>1?48:0);
+        g.forEach((v,i)=>pos[v]=p[i]);
+      });
+    } else {
+      const p=circleLayout(A.n,350,160,115);
+      for(let i=0;i<A.n;i++) pos[i]=p[i];
+    }
+  }
+  function compOf(){
+    const comps=components(A); const m=[];
+    comps.forEach((g,ci)=>g.forEach(v=>m[v]=ci));
+    return m;
+  }
+  function draw(){
+    clear(ctx,700,360);
+    const m=compOf(), comps=components(A);
+    if(split){
+      comps.forEach((g,ci)=>{
+        let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+        g.forEach(v=>{x0=Math.min(x0,pos[v].x);y0=Math.min(y0,pos[v].y);
+                      x1=Math.max(x1,pos[v].x);y1=Math.max(y1,pos[v].y);});
+        ctx.setLineDash([5,5]); ctx.strokeStyle=PAL[ci%PAL.length]+"55"; ctx.lineWidth=1.3;
+        roundRect(ctx,x0-36,y0-36,x1-x0+72,y1-y0+72,16); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle=PAL[ci%PAL.length]; ctx.font="600 12px JetBrains Mono";
+        ctx.textAlign="center"; ctx.textBaseline="bottom";
+        ctx.fillText("C"+(ci+1),(x0+x1)/2,y0-42);
+      });
+    }
+    drawStruct(ctx,A,350,160,115,{pos:pos,r:17,
+      nodeCol:i=>PAL[m[i]%PAL.length]});
+    ctx.fillStyle=C.txt2; ctx.font="500 11px JetBrains Mono"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText("Klicke zwei Knoten nacheinander → Kante an/aus",350,300);
+    ctx.fillText("(3.2) Jede endliche Struktur = eindeutige Summe zusammenhängender Teile",350,322);
+  }
+  let sel=-1;
+  function upd(){ layout(); draw();
+    const comps=components(A);
+    out.innerHTML=
+`<b>Komponenten</b>
+
+Anzahl: <span class="hi">${comps.length}</span>
+${comps.map((g,i)=>`  C${i+1} = {${g.join(", ")}}  (${g.length} Knoten)`).join("\n")}
+
+A ≅ ${comps.map((g,i)=>"C"+(i+1)).join(" + ")}
+
+zusammenhängend: ${comps.length===1?"<span class='ok'>ja</span>":"<span class='bad'>nein</span>"}
+
+<span class="hi">(2.2) braucht genau das:</span>
+Eine zusammenhängende Sonde D kann nur
+<em>ganz</em> in eine Komponente abgebildet werden —
+nie gleichzeitig in zwei getrennte Teile.`;
+  }
+  cv.addEventListener("click",e=>{
+    const m=mouse(cv,e);
+    for(let i=0;i<A.n;i++) if(pos[i]&&Math.hypot(m.x-pos[i].x,m.y-pos[i].y)<22){
+      if(sel<0){ sel=i; }
+      else { togE(A,sel,i); sel=-1; }
+      upd(); return;
+    }
+    sel=-1;
+  });
+  document.getElementById("compRand").onclick=()=>{
+    A=mk(6,[]);
+    for(let i=0;i<6;i++)for(let j=0;j<6;j++) if(i!==j&&Math.random()<0.13) addE(A,i,j);
+    if(Math.random()<0.6) addE(A,Math.floor(Math.random()*6),Math.floor(Math.random()*6));
+    upd();
+  };
+  document.getElementById("compSplit").onclick=()=>{split=!split;upd();};
+  upd();
+})();
+
+(function catalogDemo(){
+  const cv=document.getElementById("catalogCv"); const ctx=hidpi(cv);
+  clear(ctx,1120,230);
+  PROBES.forEach((p,i)=>{
+    const cx=72+i*138, cy=100;
+    roundRect(ctx,cx-62,22,124,170,14);
+    ctx.fillStyle="rgba(20,26,46,.55)"; ctx.fill();
+    ctx.strokeStyle="rgba(140,160,220,.22)"; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle=C.acc5; ctx.font="700 14px Inter"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText(p.lbl,cx,34);
+    drawStruct(ctx,p.D,cx,110,p.D.n>1?32:0,{r:11,col:C.acc5,noLabel:true});
+    ctx.fillStyle=C.txt2; ctx.font="500 9.5px JetBrains Mono"; ctx.textBaseline="bottom";
+    ctx.fillText(p.name,cx,182);
+  });
+  ctx.fillStyle=C.txt2; ctx.font="500 11px JetBrains Mono"; ctx.textAlign="center";
+  ctx.fillText("… und so weiter: alle zusammenhängenden endlichen Strukturen, paarweise nicht-isomorph",560,214);
+})();
+
+/* ===================================================================
+   TEIL 15 — KAPITEL 9: DER LOVÁSZ-VEKTOR
+   =================================================================== */
+tex("m-vector","\\langle A\\rangle=\\big\\langle\\,|Q(A^{D_1})|,\\;|Q(A^{D_2})|,\\;|Q(A^{D_3})|,\\;\\dots\\big\\rangle");
+
+(function vecDemo(){
+  const cv=document.getElementById("vecCv"); const ctx=hidpi(cv);
+  const tbl=document.getElementById("vecTable");
+  let A=mk(3,[[0,1],[1,2],[0,0]]);
+  let pos=[];
+  function draw(){
+    clear(ctx,700,250);
+    pos=circleLayout(A.n,350,120,A.n>1?75:0);
+    drawStruct(ctx,A,350,120,75,{pos:pos,r:18,
+      nodeCol:i=>hasE(A,i,i)?C.node4:C.node2});
+    ctx.fillStyle=C.txt2; ctx.font="500 11px JetBrains Mono"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText("Klicke zwei Knoten → Kante · Klicke einen Knoten doppelt → Schleife",350,210);
+  }
+  function upd(){
+    draw();
+    let h="<table><tr><th>Sonde</th><th>Name</th><th>|S(D)|</th><th>|Q(A^D)|</th><th>|F(D,A)|</th></tr>";
+    PROBES.forEach(p=>{
+      const q=homCount(p.D,A), f=injCount(p.D,A);
+      h+=`<tr><td class="k">${p.lbl}</td><td style="font-size:.72rem">${p.name}</td><td>${p.D.n}</td><td class="k">${q}</td><td>${f}</td></tr>`;
+    });
+    h+="</table>";
+    const v=lovVec(A);
+    h+=`<div class="readout" style="margin-top:12px;">⟨A⟩ = <b>[${v.join(", ")}, …]</b>
+
+|Q(A)| = <span class="hi">${Qsize(A)}</span>
+${Qsize(A)>0?"<span class='ok'>alle Komponenten > 0 ✓ (iii)</span>":"<span class='bad'>Vorsicht: Nullen möglich</span>"}
+
+D₁ = Punkt  ⟹  |Q(A^D₁)| = |S(A)| = ${A.n}
+D₂ = Punkt+Schleife ⟹ = |Q(A)| = ${Qsize(A)}
+D₃ = Kante ⟹ = |R(A)| = ${A.E.size}</div>`;
+    tbl.innerHTML=h;
+  }
+  let sel=-1;
+  cv.addEventListener("click",e=>{
+    const m=mouse(cv,e);
+    for(let i=0;i<A.n;i++) if(Math.hypot(m.x-pos[i].x,m.y-pos[i].y)<24){
+      if(sel<0) sel=i; else { togE(A,sel,i); sel=-1; }
+      upd(); return;
+    }
+    sel=-1;
+  });
+  document.getElementById("vecRand").onclick=()=>{
+    const n=A.n; A=mk(n,[]);
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++) if(Math.random()<0.28) addE(A,i,j);
+    if(Qsize(A)===0) addE(A,0,0);
+    upd();
+  };
+  document.getElementById("vecLoop").onclick=()=>{ togE(A,0,0); upd(); };
+  document.getElementById("vecAdd").onclick=()=>{ if(A.n<5){A.n++;upd();} };
+  document.getElementById("vecSub").onclick=()=>{
+    if(A.n>1){ A.n--; edgeList(A).forEach(e=>{if(e[0]>=A.n||e[1]>=A.n)delE(A,e[0],e[1]);}); upd(); }};
+  upd();
+})();
+
+/* ---- Ringhomomorphismus-Plot ---- */
+(function ringDemo(){
+  const out=document.getElementById("ringOut");
+  let A=LIB[2].g(), B=LIB[4].g(), mode="sum";
+  function upd(){
+    const R = mode==="sum"? sum(A,B) : prod(A,B);
+    const k=7;
+    const vA=lovVec(A,k), vB=lovVec(B,k), vR=lovVec(R,k);
+    const pred = mode==="sum"? vA.map((x,i)=>x+vB[i]) : vA.map((x,i)=>x*vB[i]);
+    const lbls=PROBES.slice(0,k).map(p=>p.lbl);
+    Plotly.newPlot("ringPlot",[
+      {x:lbls,y:vA,type:"bar",name:"⟨A⟩",marker:{color:"#56e1c4"}},
+      {x:lbls,y:vB,type:"bar",name:"⟨B⟩",marker:{color:"#ff8fb1"}},
+      {x:lbls,y:pred,type:"scatter",mode:"markers",name:mode==="sum"?"⟨A⟩+⟨B⟩ (vorhergesagt)":"⟨A⟩·⟨B⟩ (vorhergesagt)",
+       marker:{color:"#ffcb6b",size:16,symbol:"diamond-open",line:{width:3}}},
+      {x:lbls,y:vR,type:"scatter",mode:"markers",name:mode==="sum"?"⟨A+B⟩ (gemessen)":"⟨A·B⟩ (gemessen)",
+       marker:{color:"#7aa2ff",size:9,symbol:"circle"}}
+    ],{
+      paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",
+      font:{color:"#a9b3d4",family:"Inter",size:11},
+      margin:{l:52,r:14,t:14,b:40},
+      barmode:"group",
+      yaxis:{type:"log",gridcolor:"rgba(140,160,220,.12)",title:"Anzahl (log)"},
+      xaxis:{gridcolor:"rgba(140,160,220,.08)"},
+      legend:{orientation:"h",y:-0.18}
+    },{displayModeBar:false,responsive:true});
+    const ok=pred.every((v,i)=>v===vR[i]);
+    out.innerHTML=
+`${mode==="sum"?"<b>⟨A+B⟩ = ⟨A⟩+⟨B⟩</b>":"<b>⟨A·B⟩ = ⟨A⟩·⟨B⟩</b>"}
+
+${lbls.map((l,i)=>`  ${l}: ${vA[i]} ${mode==="sum"?"+":"·"} ${vB[i]} = ${pred[i]}  |  gemessen ${vR[i]} ${pred[i]===vR[i]?"<span class='ok'>✓</span>":"<span class='bad'>✗</span>"}`).join("\n")}
+
+${ok?"<span class='ok'>✓ Perfekte Übereinstimmung. ⟨·⟩ ist ein Ringhomomorphismus.</span>"
+    :"<span class='bad'>Abweichung!</span>"}
+
+Die gelben Rauten (Vorhersage) liegen exakt auf
+den blauen Punkten (Messung) — deshalb sieht man
+oft nur einen Marker.`;
+  }
+  document.getElementById("ringA").oninput=function(){
+    A=LIB[+this.value].g();
+    document.getElementById("ringAName").textContent=LIB[+this.value].name; upd();};
+  document.getElementById("ringB").oninput=function(){
+    B=LIB[+this.value].g();
+    document.getElementById("ringBName").textContent=LIB[+this.value].name; upd();};
+  const bs=document.getElementById("ringSum"), bp=document.getElementById("ringProd");
+  bs.onclick=()=>{mode="sum";bs.classList.add("on");bp.classList.remove("on");upd();};
+  bp.onclick=()=>{mode="prod";bp.classList.add("on");bs.classList.remove("on");upd();};
+  document.getElementById("ringAName").textContent=LIB[2].name;
+  document.getElementById("ringBName").textContent=LIB[4].name;
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 16 — KAPITEL 10: FORMEL (6)
+   =================================================================== */
+tex("m-six","|Q(A^{D})|=\\sum_i\\frac{|H(D,G_i)|}{|\\operatorname{Aut}(G_i)|}\\,|F(G_i,A)|");
+
+(function factDemo(){
+  const cv=document.getElementById("factCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("factOut");
+  const D=mk(3,[[0,1],[1,2]]);
+  const A=mk(4,[[0,1],[1,2],[2,3],[3,0],[1,0]]);
+  const phi=[0,1,0];            // D -> A, nicht injektiv
+  let step=0;
+  function draw(){
+    clear(ctx,1120,300);
+    const G=image(D,phi);
+    const used=[...new Set(phi)].sort((a,b)=>a-b);
+
+    // --- D links ---
+    title(ctx,70,20,"D",C.acc5,15);
+    const pD=[{x:110,y:110},{x:190,y:160},{x:110,y:210}];
+    drawStruct(ctx,D,0,0,0,{pos:pD,r:16,col:C.acc5});
+    ctx.fillStyle=C.txt2;ctx.font="500 10px JetBrains Mono";ctx.textAlign="center";ctx.textBaseline="top";
+    ctx.fillText("3 Knoten",150,250);
+
+    // --- G_i Mitte ---
+    if(step>=1){
+      title(ctx,420,20,"G_i = Dφ  (das Bild)",C.warn,15);
+      const pG=circleLayout(G.n,520,160,G.n>1?55:0);
+      drawStruct(ctx,G,0,0,0,{pos:pG,r:16,col:C.warn,
+        labels:used.map(String)});
+      ctx.fillStyle=C.txt2;ctx.font="500 10px JetBrains Mono";ctx.textAlign="center";ctx.textBaseline="top";
+      ctx.fillText(G.n+" Knoten  ·  "+G.E.size+" Kanten",520,250);
+      // Pfeil D -> G
+      arrow(ctx,230,160,455,160,"rgba(199,146,234,.7)",2.2,0.0);
+      ctx.fillStyle=C.acc5;ctx.font="600 12px Inter";ctx.textAlign="center";ctx.textBaseline="bottom";
+      ctx.fillText("ξ ∈ H(D, G_i)",342,150);
+      ctx.fillStyle=C.txt2;ctx.font="500 10px JetBrains Mono";ctx.textBaseline="top";
+      ctx.fillText("surjektiv (drückt zusammen)",342,166);
+    }
+    // --- A rechts ---
+    if(step>=2){
+      title(ctx,860,20,"A",C.node2,15);
+      const pA=circleLayout(A.n,930,160,70);
+      drawStruct(ctx,A,0,0,0,{pos:pA,r:16,col:C.node2,
+        nodeCol:i=>used.includes(i)?C.warn:C.node2});
+      arrow(ctx,600,160,855,160,"rgba(86,225,196,.7)",2.2,0.0);
+      ctx.fillStyle=C.node2;ctx.font="600 12px Inter";ctx.textAlign="center";ctx.textBaseline="bottom";
+      ctx.fillText("ψ ∈ F(G_i, A)",727,150);
+      ctx.fillStyle=C.txt2;ctx.font="500 10px JetBrains Mono";ctx.textBaseline="top";
+      ctx.fillText("injektiv (bettet ein)",727,166);
+    }
+    if(step>=3){
+      ctx.setLineDash([6,5]);
+      arrow(ctx,150,245,930,245,"rgba(255,203,107,.55)",2,-0.07);
+      ctx.setLineDash([]);
+      ctx.fillStyle=C.warn;ctx.font="600 13px Inter";ctx.textAlign="center";ctx.textBaseline="top";
+      ctx.fillText("φ = ξ · ψ   —   jeder Homomorphismus faktorisiert so",540,268);
+    }
+  }
+  function upd(){
+    draw();
+    const G=image(D,phi);
+    const h=HCount(D,G), au=autCount(G), f=injCount(G,A);
+    const texts=[
+`<b>Schritt 0 — der Ausgangspunkt</b>
+
+Wir haben φ: D → A mit φ = [0↦0, 1↦1, 2↦0].
+φ ist ein Homomorphismus (${isHom(D,A,phi)?"<span class='ok'>✓</span>":"✗"}),
+aber <span class="hi">nicht injektiv</span>: Knoten 0 und 2 landen beide auf 0.
+
+Frage: Wie zerlegt man so etwas systematisch?`,
+`<b>Schritt 1 — das Bild herausziehen</b>
+
+Dφ = G_i hat <b>${G.n}</b> Knoten (statt ${D.n}).
+ξ: D → G_i ist <span class="hi">surjektiv</span> — es drückt
+zusammen, was zusammenfällt.
+
+|H(D, G_i)| = <b>${h}</b> solche Abbildungen gibt es.`,
+`<b>Schritt 2 — das Bild einbetten</b>
+
+ψ: G_i → A ist <span class="hi">injektiv</span>, also eine
+Einbettung. Davon gibt es
+
+|F(G_i, A)| = <b>${f}</b>.
+
+Zusammen: ${h} · ${f} = <b>${h*f}</b> Paare (ξ, ψ).`,
+`<b>Schritt 3 — die Doppelzählung korrigieren</b>
+
+|Aut(G_i)| = |H(G_i, G_i)| = <b>${au}</b>
+
+Jedes φ entsteht aus genau ${au} verschiedenen Paaren
+(ξ, ψ), denn man kann ein α ∈ Aut(G_i) dazwischen-
+schieben: φ = (ξα)(α⁻¹ψ). Nach (3.5) ist jeder
+Homomorphismus G→G automatisch ein Automorphismus.
+
+Also: Anzahl φ mit Bild ≅ G_i  =  ${h} · ${f} / ${au} = <b>${h*f/au}</b>
+
+<span class="ok">Das ist Formel (7) — summiert über alle G_i ergibt
+sich Formel (6).</span>`];
+    out.innerHTML=texts[Math.min(step,3)];
+  }
+  document.getElementById("factStep").onclick=()=>{step=Math.min(3,step+1);upd();};
+  document.getElementById("factReset").onclick=()=>{step=0;upd();};
+  upd();
+})();
+
+/* ---- Das Dreiecksystem ---- */
+(function triDemo(){
+  const out=document.getElementById("triOut");
+  // Wir nehmen eine konkrete Zielstruktur A und bauen die Matrix über kleine G_i
+  const A=mk(4,[[0,1],[1,2],[2,3],[0,0],[2,2]]);
+  // G_i Liste sortiert nach |S(G_i)|
+  const GS=[
+    {lbl:"G₁", name:"Punkt", G:mk(1,[])},
+    {lbl:"G₂", name:"Punkt+Schl.", G:mk(1,[[0,0]])},
+    {lbl:"G₃", name:"Kante", G:mk(2,[[0,1]])},
+    {lbl:"G₄", name:"2 Punkte", G:mk(2,[])},
+    {lbl:"G₅", name:"2-Zyklus", G:mk(2,[[0,1],[1,0]])},
+    {lbl:"G₆", name:"Pfad →→", G:mk(3,[[0,1],[1,2]])},
+    {lbl:"G₇", name:"3 Punkte", G:mk(3,[])}
+  ];
+  // Matrix M[d][i] = |H(D_d,G_i)|/|Aut(G_i)|
+  const n=GS.length;
+  const M=[], Qv=[], Fv=[];
+  for(let d=0;d<n;d++){
+    const row=[];
+    for(let i=0;i<n;i++){
+      const h=HCount(GS[d].G,GS[i].G), au=autCount(GS[i].G);
+      row.push(au?h/au:0);
+    }
+    M.push(row);
+    Qv.push(homCount(GS[d].G,A));
+    Fv.push(injCount(GS[d].G,A));
+  }
+  let solved=0, est=new Array(n).fill(null);
+  function plot(){
+    const z=M.map(r=>r.slice());
+    const txt=M.map((r,d)=>r.map((v,i)=>{
+      if(v===0) return "";
+      return (Number.isInteger(v)?v:v.toFixed(2));
+    }));
+    Plotly.newPlot("triPlot",[{
+      z:z, x:GS.map(g=>g.lbl), y:GS.map(g=>g.lbl),
+      type:"heatmap",
+      colorscale:[[0,"rgba(12,16,32,1)"],[0.08,"rgba(30,44,86,1)"],
+                  [0.3,"rgba(60,90,170,1)"],[0.6,"rgba(122,162,255,1)"],[1,"rgba(199,146,234,1)"]],
+      showscale:false,
+      text:txt, texttemplate:"%{text}",
+      textfont:{size:11,color:"#eef2ff",family:"JetBrains Mono"},
+      xgap:2, ygap:2,
+      hovertemplate:"D=%{y} → G=%{x}<br>|H|/|Aut| = %{z}<extra></extra>"
+    }],{
+      paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",
+      font:{color:"#a9b3d4",family:"Inter",size:11},
+      margin:{l:70,r:20,t:34,b:50},
+      title:{text:"Matrix |H(D,G_i)| / |Aut(G_i)|  ·  Zeilen = Sonde D, Spalten = Bild G_i",
+             font:{size:12,color:"#8f9ac0"}},
+      xaxis:{side:"top",title:{text:"G_i  (nach Knotenzahl sortiert →)",font:{size:10}}},
+      yaxis:{autorange:"reversed",title:{text:"D",font:{size:10}}},
+      shapes: solved>0? [{type:"rect",x0:-0.5,x1:n-0.5,y0:-0.5,y1:solved-0.5,
+        line:{color:"#56e1c4",width:2},fillcolor:"rgba(86,225,196,.1)"}] : []
+    },{displayModeBar:false,responsive:true});
+  }
+  function upd(){
+    plot();
+    let s="";
+    s+=`<b>Das Dreiecksystem</b>\n\n`;
+    s+=`Beobachtung 1: Oberhalb der Diagonale steht überall <b>0</b>.\n`;
+    s+=`  Grund (3.4): |S(Dφ)| ≤ |S(D)|. Ein Bild kann nie größer sein.\n\n`;
+    s+=`Beobachtung 2: Auf der Diagonale steht überall <b>1</b>.\n`;
+    s+=`  Grund: Bei gleicher Größe ist φ bijektiv, also |H(D,D)| = |Aut(D)|.\n\n`;
+    s+=`Also:  |Q(A^D)| = |F(D,A)| + (Summe über echt kleinere G_i)\n\n`;
+    s+=`<b>Rückwärts-Auflösung</b> (Induktion über |S(D)|):\n\n`;
+    s+=`  Sonde   |S(D)|   |Q(A^D)| gemessen   |F(D,A)| berechnet   echt\n`;
+    for(let d=0;d<n;d++){
+      const done=d<solved;
+      let calc="—";
+      if(done){
+        let acc=Qv[d];
+        for(let i=0;i<n;i++) if(GS[i].G.n<GS[d].G.n) acc-=M[d][i]*(est[i]!==null?est[i]:Fv[i]);
+        est[d]=acc; calc=acc;
+      }
+      const mark = done? (est[d]===Fv[d]?"<span class='ok'>✓</span>":"<span class='bad'>✗</span>") : "";
+      s+=`  ${GS[d].lbl.padEnd(7)} ${String(GS[d].G.n).padEnd(8)} ${String(Qv[d]).padEnd(18)} ${String(calc).padEnd(19)} ${Fv[d]} ${mark}\n`;
+    }
+    s+=`\n`;
+    if(solved>=n) s+=`<span class='ok'>✓ Alle Einbettungszahlen |F(D,A)| sind aus den Hom-Zahlen
+rekonstruiert. Das System ist eindeutig lösbar.</span>
+
+<span class="hi">Folgerung:</span> Stimmen die |Q(A^D)| für A und B überein,
+so auch alle |F(D,A)| = |F(D,B)|.
+Setze D := A  ⟹  |F(A,B)| = |F(A,A)| ≥ 1 (Identität!)  ⟹  A ⊑ B.
+Setze D := B  ⟹  B ⊑ A.
+Mit (3.3):  <b>A ≅ B</b>  ∎`;
+    else s+=`<span class="hi">Klicke „nächste Zeile auflösen", um die Induktion
+Schritt für Schritt durchzuführen.</span>`;
+    out.innerHTML=s;
+  }
+  document.getElementById("triStep").onclick=()=>{solved=Math.min(n,solved+1);upd();};
+  document.getElementById("triAll").onclick=()=>{solved=n;upd();};
+  document.getElementById("triReset").onclick=()=>{solved=0;est=new Array(n).fill(null);upd();};
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 17 — KAPITEL 11: ISOMORPHIE-DETEKTOR
+   =================================================================== */
+(function detDemo(){
+  const ca=hidpi(document.getElementById("detACv"));
+  const cb=hidpi(document.getElementById("detBCv"));
+  const out=document.getElementById("detOut");
+  let A=mk(4,[[0,1],[1,2],[2,3],[0,0]]);
+  let B=mk(4,[[0,1],[1,2],[2,3],[3,3]]);
+  function rnd(n){
+    const G=mk(n,[]);
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++) if(Math.random()<0.22) addE(G,i,j);
+    if(Qsize(G)===0) addE(G,Math.floor(Math.random()*n),Math.floor(Math.random()*n));
+    return G;
+  }
+  function permute(G){
+    const p=[]; for(let i=0;i<G.n;i++)p.push(i);
+    for(let i=p.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+    const H=mk(G.n,[]);
+    edgeList(G).forEach(e=>addE(H,p[e[0]],p[e[1]]));
+    return H;
+  }
+  function draw(){
+    clear(ca,540,270); clear(cb,540,270);
+    drawStruct(ca,A,270,135,A.n>1?85:0,{r:18,col:C.node2,
+      nodeCol:i=>hasE(A,i,i)?C.node4:C.node2});
+    drawStruct(cb,B,270,135,B.n>1?85:0,{r:18,col:C.node3,
+      nodeCol:i=>hasE(B,i,i)?C.node4:C.node3});
+  }
+  function upd(){
+    draw();
+    const k=8;
+    const vA=lovVec(A,k), vB=lovVec(B,k);
+    const lbls=PROBES.slice(0,k).map(p=>p.lbl);
+    let first=-1;
+    for(let i=0;i<k;i++) if(vA[i]!==vB[i]){first=i;break;}
+    Plotly.newPlot("detPlot",[
+      {x:lbls,y:vA,type:"bar",name:"⟨A⟩",marker:{color:"#56e1c4"}},
+      {x:lbls,y:vB,type:"bar",name:"⟨B⟩",marker:{color:"#ff8fb1"}}
+    ],{
+      paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",
+      font:{color:"#a9b3d4",family:"Inter",size:11},
+      margin:{l:52,r:14,t:16,b:36},
+      barmode:"group",
+      yaxis:{gridcolor:"rgba(140,160,220,.12)",title:"|Q(A^D)|"},
+      xaxis:{gridcolor:"rgba(140,160,220,.06)"},
+      legend:{orientation:"h",y:-0.16},
+      shapes: first>=0? [{type:"rect",x0:first-0.48,x1:first+0.48,y0:0,y1:Math.max(vA[first],vB[first])*1.12,
+        line:{color:"#ffcb6b",width:2,dash:"dot"},fillcolor:"rgba(255,203,107,.08)"}]:[],
+      annotations: first>=0? [{x:first,y:Math.max(vA[first],vB[first])*1.18,
+        text:"erste Abweichung",showarrow:false,font:{color:"#ffcb6b",size:11}}]:[]
+    },{displayModeBar:false,responsive:true});
+    const iso=isIso(A,B);
+    out.innerHTML=
+`⟨A⟩ = [${vA.join(", ")}, …]
+⟨B⟩ = [${vB.join(", ")}, …]
+
+${first<0
+ ? `<span class="ok">Alle gemessenen Komponenten stimmen überein.</span>
+Brute-Force-Isomorphietest: ${iso?"<span class='ok'>A ≅ B ✓ — Satz 3.6 bestätigt</span>":"<span class='bad'>A ≇ B (dann braucht man weitere Sonden D₉, D₁₀, …)</span>"}`
+ : `<span class="bad">Abweichung bei ${PROBES[first].lbl} (${PROBES[first].name}):</span>
+  |Q(A^${PROBES[first].lbl})| = ${vA[first]}   vs.   |Q(B^${PROBES[first].lbl})| = ${vB[first]}
+
+<span class="bad">⟹ ⟨A⟩ ≠ ⟨B⟩ ⟹ A ≇ B</span>
+Brute-Force-Kontrolle: ${iso?"<span class='bad'>?! isomorph — Fehler</span>":"<span class='ok'>nicht isomorph ✓</span>"}`}
+
+<span class="hi">Die Sonde ${first<0?"—":PROBES[first].lbl} hat den Unterschied aufgedeckt.</span>
+Der Vektor ist ein vollständiger Fingerabdruck:
+Satz (3.6)(iv) garantiert, dass irgendein D_i immer
+einen Unterschied findet, wenn A ≇ B.`;
+  }
+  document.getElementById("detRA").onclick=()=>{A=rnd(4);upd();};
+  document.getElementById("detRB").onclick=()=>{B=rnd(4);upd();};
+  document.getElementById("detIso").onclick=()=>{B=permute(A);upd();};
+  document.getElementById("detTricky").onclick=()=>{
+    A=mk(4,[[0,1],[1,2],[2,3],[3,0],[0,0]]);
+    B=mk(4,[[0,1],[1,2],[2,3],[3,0],[1,1]]);
+    upd();
+  };
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 18 — KAPITEL 12: SATZ 4.1 / POLYNOME
+   =================================================================== */
+tex("m-poly","\\langle f(A)\\rangle_j \\;=\\; c_{0j}+c_{1j}a_j+c_{2j}a_j^2+\\dots+c_{nj}a_j^{\\,n}");
+
+(function polyDemo(){
+  const out=document.getElementById("polyOut");
+  const ids=["pc0","pc1","pc2","pc3"];
+  function read(){ return ids.map(i=>+document.getElementById(i).value); }
+  function upd(){
+    const c=read();
+    ids.forEach((i,k)=>document.getElementById(i+"v").textContent=c[k]);
+    const xs=[],ys=[];
+    for(let t=0;t<=8;t+=0.04){ xs.push(t); ys.push(c[0]+c[1]*t+c[2]*t*t+c[3]*t*t*t); }
+    // ganzzahlige Punkte
+    const ix=[],iy=[];
+    for(let t=0;t<=8;t++){ ix.push(t); iy.push(c[0]+c[1]*t+c[2]*t*t+c[3]*t*t*t); }
+    const flat = (c[1]===0&&c[2]===0&&c[3]===0);
+    Plotly.newPlot("polyPlot",[
+      {x:xs,y:ys,type:"scatter",mode:"lines",name:"f(t)",
+       line:{color: flat?"#ff6b8b":"#56e1c4",width:3.2},
+       fill:"tozeroy",fillcolor: flat?"rgba(255,107,139,.07)":"rgba(86,225,196,.07)"},
+      {x:ix,y:iy,type:"scatter",mode:"markers",name:"ganzzahlige a_j",
+       marker:{color:"#7aa2ff",size:8,line:{color:"#fff",width:1}}}
+    ],{
+      paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)",
+      font:{color:"#a9b3d4",family:"Inter",size:11},
+      margin:{l:58,r:18,t:34,b:44},
+      title:{text: flat? "KONSTANT — nicht injektiv!" : "streng monoton wachsend auf t ≥ 0 ⟹ injektiv",
+             font:{size:12,color: flat?"#ff6b8b":"#56e1c4"}},
+      xaxis:{title:"a_j  (Komponente von ⟨A⟩)",gridcolor:"rgba(140,160,220,.1)",zerolinecolor:"rgba(140,160,220,.3)"},
+      yaxis:{title:"Komponente von ⟨f(A)⟩",gridcolor:"rgba(140,160,220,.1)",zerolinecolor:"rgba(140,160,220,.3)"},
+      showlegend:false
+    },{displayModeBar:false,responsive:true});
+    out.innerHTML=
+`f(t) = ${c[0]} ${c[1]?"+ "+c[1]+"t":""} ${c[2]?"+ "+c[2]+"t²":""} ${c[3]?"+ "+c[3]+"t³":""}
+
+${flat
+ ? `<span class="bad">Alle Koeffizienten c₁,c₂,c₃ sind 0.</span>
+f ist konstant ⟹ aus f(a)=f(b) folgt NICHTS.
+Die Information über A geht verloren.
+
+Genau das verhindert Lovász' Bedingung
+|Q(C₁+…+C_n)| > 0: sie erzwingt, dass
+mindestens ein c_ij mit i ≥ 1 echt positiv ist.`
+ : `<span class="ok">Mindestens ein Koeffizient mit i ≥ 1 ist positiv.</span>
+Alle Koeffizienten ≥ 0 ⟹ f'(t) ≥ 0 auf t ≥ 0,
+und f'(t) > 0 wegen des positiven Terms.
+
+⟹ f streng monoton ⟹ <b>injektiv</b>
+⟹ aus f(a_j) = f(b_j) folgt a_j = b_j
+⟹ für jedes j ⟹ ⟨A⟩ = ⟨B⟩ ⟹ <b>A ≅ B</b> ∎`}`;
+  }
+  ids.forEach(i=>document.getElementById(i).oninput=upd);
+  upd();
+})();
+
+(function labDemo(){
+  const out=document.getElementById("labOut");
+  document.getElementById("labA").oninput=function(){
+    document.getElementById("labAName").textContent=LIB[+this.value].name;};
+  document.getElementById("labB").oninput=function(
+){
+    document.getElementById("labBName").textContent=LIB[+this.value].name;};
+  document.getElementById("labN").oninput=function(){
+    document.getElementById("labNV").textContent=this.value;};
+  document.getElementById("labGo").onclick=()=>{
+    const A=LIB[+document.getElementById("labA").value].g();
+    const B=LIB[+document.getElementById("labB").value].g();
+    const n=+document.getElementById("labN").value;
+    const fA=power(A,n), fB=power(B,n);
+    const k=7;
+    const vA=lovVec(A,k), vB=lovVec(B,k);
+    const vfA=lovVec(fA,k), vfB=lovVec(fB,k);
+    const sameF = JSON.stringify(vfA)===JSON.stringify(vfB);
+    const sameA = JSON.stringify(vA)===JSON.stringify(vB);
+    const isoF = isIso(fA,fB), isoA = isIso(A,B);
+    out.innerHTML=
+`<b>f(X) = Xⁿ  mit  n = ${n}</b>
+(das ist C₀=…=C_{n−1}=O, C_n=A₁ ⟹ Satz (4.2))
+
+A: ${A.n} Knoten,  |Q(A)| = ${Qsize(A)}
+B: ${B.n} Knoten,  |Q(B)| = ${Qsize(B)}
+
+Aⁿ: ${fA.n} Knoten, ${fA.E.size} Kanten
+Bⁿ: ${fB.n} Knoten, ${fB.E.size} Kanten
+
+⟨A⟩   = [${vA.join(", ")}]
+⟨B⟩   = [${vB.join(", ")}]
+⟨Aⁿ⟩  = [${vfA.join(", ")}]
+⟨Bⁿ⟩  = [${vfB.join(", ")}]
+
+Kontrolle der Multiplikativität: ⟨Aⁿ⟩ = ⟨A⟩ⁿ komponentenweise?
+  ${vA.map((x,i)=>Math.pow(x,n)).join(", ")}  ${
+   vA.every((x,i)=>Math.pow(x,n)===vfA[i])?"<span class='ok'>✓</span>":"<span class='bad'>✗</span>"}
+
+<b>Ergebnis</b>
+  Aⁿ ≅ Bⁿ ?  ${sameF?"<span class='ok'>Vektoren gleich</span>":"<span class='bad'>Vektoren verschieden</span>"}${isoF!==null?"  (Brute Force: "+(isoF?"<span class='ok'>ja</span>":"<span class='bad'>nein</span>")+")":""}
+  A  ≅ B  ?  ${sameA?"<span class='ok'>Vektoren gleich</span>":"<span class='bad'>Vektoren verschieden</span>"}${isoA!==null?"  (Brute Force: "+(isoA?"<span class='ok'>ja</span>":"<span class='bad'>nein</span>")+")":""}
+
+${sameF===sameA
+  ? "<span class='ok'>✓ Konsistent mit (4.2): Aⁿ≅Bⁿ ⟺ A≅B.\nDie Abbildung t ↦ tⁿ ist auf t ≥ 0 streng monoton,\nalso injektiv — in JEDER Komponente.</span>"
+  : "<span class='bad'>Inkonsistenz — das darf laut (4.2) nicht passieren!\n(Prüfe, ob eine Komponente 0 ist: dann ist 0ⁿ=0\nfür alle n, und die Monotonie hilft nicht.)</span>"}`;
+  };
+  document.getElementById("labAName").textContent=LIB[1].name;
+  document.getElementById("labBName").textContent=LIB[2].name;
+})();
+
+/* ===================================================================
+   TEIL 19 — KAPITEL 13: DAS GEGENBEISPIEL
+   =================================================================== */
+(function cexDemo(){
+  const cv=document.getElementById("cexCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("cexOut");
+  const Cs = mk(2,[[0,1],[1,0]]);          // C: 2-Zyklus, keine Schleife
+  const A1 = mk(1,[[0,0]]);                // A_1
+  const A2 = mk(2,[[0,0],[1,1]]);          // A_2
+  let mode="show";
+  function draw(){
+    clear(ctx,1120,330);
+    const L=prod(Cs,A1);   // 2 Knoten, Kanten (0,1),(1,0)  -> 2-Zyklus
+    const R=prod(Cs,Cs);   // 4 Knoten
+    // --- C ---
+    title(ctx,40,22,"C  =  2-Zyklus  (Q(C) = ∅)",C.node3,14);
+    drawStruct(ctx,Cs,110,110,45,{r:17,col:C.node3,labels:["x","y"]});
+    ctx.fillStyle=C.bad;ctx.font="600 11px JetBrains Mono";ctx.textAlign="center";ctx.textBaseline="top";
+    ctx.fillText("KEINE Schleife!",110,175);
+    // --- A1 ---
+    title(ctx,40,220,"A₁  (Q(A₁) = {•})",C.node2,13);
+    drawStruct(ctx,A1,110,280,0,{r:16,col:C.node2,labels:["•"]});
+
+    // --- C·A1 ---
+    title(ctx,300,22,"C · A₁",C.node4,14);
+    drawStruct(ctx,L,380,110,48,{r:16,col:C.node4,noLabel:true,
+      labels:["x•","y•"]});
+    ctx.fillStyle=C.txt2;ctx.font="500 10px JetBrains Mono";ctx.textAlign="center";
+    ctx.fillText(L.n+" Knoten, "+L.E.size+" Kanten",380,180);
+
+    // ≅
+    ctx.fillStyle=C.good;ctx.font="300 36px Inter";ctx.textBaseline="middle";
+    ctx.fillText("≅",560,110);
+
+    // --- C·C ---
+    title(ctx,660,22,"C · C",C.acc5,14);
+    const pR=[{x:770,y:70},{x:880,y:70},{x:770,y:170},{x:880,y:170}];
+    drawStruct(ctx,R,0,0,0,{pos:pR,r:16,col:C.acc5,
+      labels:["xx","xy","yx","yy"]});
+    ctx.fillStyle=C.txt2;ctx.font="500 10px JetBrains Mono";ctx.textAlign="center";ctx.textBaseline="top";
+    ctx.fillText(R.n+" Knoten, "+R.E.size+" Kanten",825,205);
+
+    // --- Erklärung ---
+    ctx.fillStyle=C.warn;ctx.font="600 12px Inter";ctx.textAlign="left";
+    ctx.fillText("C·C zerfällt in ZWEI 2-Zyklen: {xx,yy} und {xy,yx}",640,240);
+    ctx.fillStyle=C.txt2;ctx.font="500 11px JetBrains Mono";
+    ctx.fillText("also  C·C ≅ C + C ,  und  C·A₁ ≅ C",640,262);
+    ctx.fillStyle=C.bad;ctx.font="600 12px Inter";
+    ctx.fillText("Aber Lovász' Beispiel: C·A₁ ≅ C·C  gilt NICHT für k=2 so —",640,286);
+    ctx.fillStyle=C.txt2;ctx.font="500 11px JetBrains Mono";
+    ctx.fillText("der relevante Punkt ist A₂·C ≅ C·C  (unten geprüft).",640,306);
+
+    // Trennlinien
+    ctx.strokeStyle="rgba(140,160,220,.14)";ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(230,20);ctx.lineTo(230,310);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(620,20);ctx.lineTo(620,310);ctx.stroke();
+  }
+  function upd(){
+    draw();
+    const CC = prod(Cs,Cs);
+    const A2C = prod(A2,Cs);
+    const CA1 = prod(Cs,A1);
+    const k=7;
+    const vC=lovVec(Cs,k), vA1=lovVec(A1,k), vA2=lovVec(A2,k);
+    const vCC=lovVec(CC,k), vA2C=lovVec(A2C,k), vCA1=lovVec(CA1,k);
+    const isoMain = isIso(A2C,CC);
+    if(mode==="show"){
+      out.innerHTML=
+`<b>Lovász' Gegenbeispiel (Ende von §4)</b>
+
+C:  S(C) = {x,y},  R(C) = {(x,y),(y,x)}   ⟹  <span class="bad">Q(C) = ∅</span>
+A₂: zwei Punkte, beide mit Schleife       ⟹  |Q(A₂)| = 2
+
+<b>A₂ · C</b> : ${A2C.n} Knoten, ${A2C.E.size} Kanten
+<b>C · C</b>  : ${CC.n} Knoten, ${CC.E.size} Kanten
+
+Isomorphietest (Brute Force): ${isoMain?"<span class='ok'>A₂·C ≅ C·C  ✓</span>":"<span class='bad'>nicht isomorph</span>"}
+Aber:  A₂ ≇ C   (A₂ hat 2 Schleifen, C hat keine)
+
+<span class="bad">⟹ Kürzen durch C ist VERBOTEN.</span>
+Denn Q(C) = ∅ — Bedingung (4.3) verletzt.
+
+<span class="hi">Zusatz:</span> C·C zerfällt in zwei 2-Zyklen, also C·C ≅ C+C.
+Und A₂·C ≅ C+C ebenfalls (A₂ verdoppelt einfach).
+Deshalb sind beide isomorph — ohne dass A₂ ≅ C gälte.
+
+Folgerung im Paper: (A₁)^C ≅ C^C — die Exponentiation
+hat im Allgemeinen keine Umkehrung.`;
+    } else {
+      let rows="";
+      for(let i=0;i<k;i++){
+        const lhs=vA2[i]*vC[i], rhs=vC[i]*vC[i];
+        rows+=`  ${PROBES[i].lbl}: ⟨A₂⟩=${String(vA2[i]).padStart(2)}  ⟨C⟩=${String(vC[i]).padStart(2)}  →  ${String(lhs).padStart(3)} vs ${String(rhs).padStart(3)} ${lhs===rhs?"<span class='ok'>=</span>":"<span class='bad'>≠</span>"}\n`;
+      }
+      out.innerHTML=
+`<b>Vektorvergleich — warum die Information verloren geht</b>
+
+⟨C⟩  = [${vC.join(", ")}]
+⟨A₂⟩ = [${vA2.join(", ")}]
+
+<span class="bad">Schau auf D₂ (Punkt mit Schleife): ⟨C⟩₂ = ${vC[1]} = 0.</span>
+Dort ist die Komponente NULL. Das Polynom
+f(t) = ${vC[1]}·t  wird zu  <span class="bad">0·t = 0</span> — konstant!
+Konstante Funktionen sind nicht injektiv.
+
+Komponentenweise Produkte:
+${rows}
+⟨A₂·C⟩ = [${vA2C.join(", ")}]
+⟨C·C⟩  = [${vCC.join(", ")}]
+${JSON.stringify(vA2C)===JSON.stringify(vCC)?"<span class='ok'>identisch ⟹ A₂·C ≅ C·C (Satz 3.6 iv)</span>":"<span class='bad'>verschieden</span>"}
+
+<span class="hi">Fazit:</span> Der Ringhomomorphismus ⟨·⟩ funktioniert weiterhin
+einwandfrei. Was versagt, ist allein die <em>Invertierbarkeit</em>
+des Polynoms — und zwar genau in den Komponenten,
+wo ⟨C⟩ verschwindet.`;
+    }
+  }
+  document.getElementById("cexShow").onclick=()=>{mode="show";upd();};
+  document.getElementById("cexVec").onclick=()=>{mode="vec";upd();};
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 20 — KAPITEL 14: BEWEISARCHITEKTUR
+   =================================================================== */
+(function finalDemo(){
+  const cv=document.getElementById("finalCv"); const ctx=hidpi(cv);
+  const out=document.getElementById("finalOut");
+  const N=[
+    {x:110,y:60, w:170,h:52,t:"§1 Operationen", s:"+ , · , A^B", c:C.node,
+     d:"§1 definiert Summe, direktes Produkt und die neue Operation Exponentiation A^B. S(A^B) ist die Menge ALLER Abbildungen S(B)→S(A); eine Kante liegt vor, wenn R(B)[φ₁,…,φ_k] ⊆ R(A). Lovász bemerkt selbst, dass man die Exponentiation umgehen könnte — aber sie macht die Identitäten erst elegant."},
+    {x:110,y:170,w:170,h:52,t:"(2.1.1–8)", s:"8 Identitäten", c:C.node,
+     d:"Strukturen rechnen wie natürliche Zahlen: Kommutativität, Assoziativität, Distributivität, A^(B+C)≅A^B·A^C, (AB)^C≅A^C·B^C und A^(BC)≅(A^B)^C."},
+    {x:110,y:280,w:170,h:52,t:"(2.2)–(2.4)", s:"Q-Lemmata", c:C.warn,
+     d:"(2.2) D zusammenhängend ⟹ Q((A+B)^D)=Q(A^D)∪Q(B^D).  (2.3) Q(AB)=Q(A)Q(B).  (2.4) Q(A)≠∅ ⟹ Q(A^B)≠∅. Diese drei kleinen Beobachtungen tragen die gesamte Ringstruktur."},
+    {x:110,y:390,w:170,h:52,t:"(3.1)–(3.5)", s:"Endlichkeits-Fakten", c:C.warn,
+     d:"(3.2) eindeutige Zerlegung in zusammenhängende Teile. (3.3) gegenseitige Einbettung ⟹ Isomorphie. (3.4) |S(Dφ)| ≤ |S(D)| mit Gleichheit nur bei Injektivität. (3.5) jeder Homomorphismus G→G ist ein Automorphismus."},
+    {x:400,y:115,w:180,h:56,t:"Q(A^D) = Hom(D,A)", s:"die Brücke", c:C.acc5,
+     d:"Eine Schleife bei φ in A^D bedeutet R(D)[φ,…,φ] ⊆ R(A), also Dφ ⊑ A. Q(A^D) ist damit exakt die Menge der Homomorphismen von D nach A. Ab hier ist alles Zählen."},
+    {x:400,y:325,w:180,h:56,t:"⟨A⟩", s:"Lovász-Vektor", c:C.node2,
+     d:"⟨A⟩ = (|Q(A^D₁)|, |Q(A^D₂)|, …) über eine Aufzählung D₁,D₂,… ALLER zusammenhängenden endlichen Strukturen. Ein unendlicher Vektor natürlicher Zahlen."},
+    {x:690,y:60, w:180,h:52,t:"(i) additiv", s:"⟨A+B⟩=⟨A⟩+⟨B⟩", c:C.node2,
+     d:"Folgt direkt aus (2.2): Weil jedes D_i zusammenhängend ist, landet das Bild Dφ ganz in A oder ganz in B — nie gemischt. Deshalb addieren sich die Zahlen."},
+    {x:690,y:170,w:180,h:52,t:"(ii) multiplikativ", s:"⟨AB⟩=⟨A⟩·⟨B⟩", c:C.node2,
+     d:"Folgt aus (2.1.7) (AB)^C ≅ A^C·B^C zusammen mit (2.3) Q(AB)=Q(A)Q(B): ein Homomorphismus nach A·B ist genau ein Paar von Homomorphismen."},
+    {x:690,y:280,w:180,h:52,t:"(iii) positiv", s:"Q(A)≠∅ ⟹ alle >0", c:C.warn,
+     d:"Folgt aus (2.4): die konstante Abbildung auf einen Schleifenknoten ist immer ein Homomorphismus. Diese Eigenschaft ist der Schlüssel für Satz 4.1."},
+    {x:690,y:390,w:180,h:52,t:"(iv) injektiv", s:"⟨A⟩=⟨B⟩ ⟺ A≅B", c:C.acc5,
+     d:"Der schwere Teil. Formel (6): |Q(A^D)| = Σᵢ |H(D,Gᵢ)|/|Aut(Gᵢ)| · |F(Gᵢ,A)|. Nach |S(Gᵢ)| sortiert ist das ein unteres Dreiecksystem mit Einsen auf der Diagonale (wegen 3.4). Per Induktion folgt |F(D,A)|=|F(D,B)| für alle D. Mit D:=A bzw. D:=B und (3.3): A≅B."},
+    {x:965,y:225,w:150,h:62,t:"(4.1)", s:"f(A)≅f(B) ⟹ A≅B", c:C.node3,
+     d:"⟨f(A)⟩_j = c₀ⱼ + c₁ⱼaⱼ + … + c_nⱼaⱼⁿ ist ein reelles Polynom mit nichtnegativen Koeffizienten. Wegen |Q(C₁+…+C_n)|>0 und (iii) ist mindestens ein c_iⱼ mit i≥1 echt positiv ⟹ streng monoton auf t≥0 ⟹ injektiv ⟹ aⱼ=bⱼ für alle j ⟹ ⟨A⟩=⟨B⟩ ⟹ A≅B."}
+  ];
+  const L=[[0,4],[1,4],[2,5],[3,9],[4,5],[5,6],[5,7],[5,8],[5,9],[6,10],[7,10],[8,10],[9,10],[0,1],[2,6],[2,7],[2,8]];
+  let hov=-1;
+  function draw(){
+    clear(ctx,1120,470);
+    for(const l of L){
+      const a=N[l[0]], b=N[l[1]];
+      const on=(hov===l[0]||hov===l[1]);
+      const x1=a.x+a.w/2, y1=a.y+a.h/2, x2=b.x-b.w/2, y2=b.y+b.h/2;
+      arrow(ctx, a.x+a.w/2, a.y+a.h/2, b.x-b.w/2, b.y+b.h/2,
+            on?"rgba(122,162,255,.8)":"rgba(140,160,220,.17)", on?2.4:1.3, 0.02);
+    }
+    N.forEach((n,i)=>{
+      const on=(hov===i);
+      if(on){
+        const g=ctx.createRadialGradient(n.x,n.y+n.h/2,0,n.x,n.y+n.h/2,130);
+        g.addColorStop(0,n.c+"30");g.addColorStop(1,n.c+"00");
+        ctx.fillStyle=g;ctx.fillRect(n.x-n.w/2-60,n.y-60,n.w+120,n.h+120);
+      }
+      roundRect(ctx,n.x-n.w/2,n.y,n.w,n.h,13);
+      ctx.fillStyle=on? n.c+"24":"rgba(18,24,44,.9)";ctx.fill();
+      ctx.strokeStyle=on?n.c:"rgba(140,160,220,.26)";ctx.lineWidth=on?2:1.2;ctx.stroke();
+      ctx.fillStyle=n.c;ctx.font="700 13px Inter";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText(n.t,n.x,n.y+n.h/2-9);
+      ctx.fillStyle=C.txt2;ctx.font="500 9.5px JetBrains Mono";
+      ctx.fillText(n.s,n.x,n.y+n.h/2+10);
+    });
+  }
+  function upd(){
+    draw();
+    out.innerHTML = hov<0
+      ? `<b>Fahre über einen Knoten.</b>
+
+Links: die Bausteine aus §1–§3.
+Mitte: die Brücke (Q = Hom) und der Vektor.
+Rechts: die vier Eigenschaften (i)–(iv) aus Satz (3.6).
+Ganz rechts: die Ernte — Satz (4.1).
+
+<span class="hi">Lesart:</span> Ein Pfeil heißt „wird gebraucht für".`
+      : `<b>${N[hov].t} — ${N[hov].s}</b>
+
+${N[hov].d}`;
+  }
+  cv.addEventListener("mousemove",e=>{
+    const m=mouse(cv,e);let h=-1;
+    N.forEach((n,i)=>{ if(m.x>n.x-n.w/2&&m.x<n.x+n.w/2&&m.y>n.y&&m.y<n.y+n.h) h=i; });
+    if(h!==hov){hov=h;upd();}
+  });
+  cv.addEventListener("mouseleave",()=>{hov=-1;upd();});
+  upd();
+})();
+
+/* ===================================================================
+   TEIL 21 — RESIZE-HANDLING FÜR PLOTLY
+   =================================================================== */
+addEventListener("resize",()=>{
+  ["ringPlot","triPlot","detPlot","polyPlot"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && el.data) Plotly.Plots.resize(el);
+  });
+});
+</script>
+</body>
+</html>
