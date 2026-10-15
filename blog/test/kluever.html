@@ -1,440 +1,3236 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Geometrische Visuelle Halluzinationen – Interaktiv</title>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Von Klüvers Formkonstanten zu Ermentrout &amp; Cowans Mathematik der Halluzinationen</title>
+
+<!-- ============ CDNs ============ -->
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.27.0/plotly.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.23/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.23/dist/temml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', sans-serif; background: #0a0a1a; color: #e0e0e0; overflow-x: hidden; }
-h1, h2, h3 { color: #8af; }
-.section { padding: 30px; max-width: 1200px; margin: auto; border-bottom: 1px solid #222; }
-.controls { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin: 15px 0; }
-.controls label { font-size: 14px; }
-.controls input[type=range] { width: 200px; }
-.controls select { padding: 5px; background: #1a1a2e; color: #fff; border: 1px solid #444; }
-canvas { display: block; margin: 15px auto; border: 1px solid #333; border-radius: 8px; }
-.info-box { background: #111; border-left: 4px solid #8af; padding: 15px; margin: 15px 0; border-radius: 4px; font-size: 14px; line-height: 1.6; }
-.timeline { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
-.timeline-item { background: #1a1a2e; border: 1px solid #333; border-radius: 8px; padding: 12px; flex: 1; min-width: 200px; }
-.timeline-item h4 { color: #f8a; margin-bottom: 5px; }
-.tab-container { display: flex; gap: 5px; margin-bottom: 15px; }
-.tab { padding: 10px 20px; background: #1a1a2e; border: 1px solid #333; border-radius: 8px 8px 0 0; cursor: pointer; }
-.tab.active { background: #2a2a4e; border-bottom-color: #2a2a4e; color: #8af; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-#plotly-dispersion { width: 100%; height: 350px; }
+:root{
+  --bg:#07070c;
+  --bg2:#0d0d16;
+  --panel:rgba(20,20,34,0.72);
+  --panel-solid:#14141f;
+  --line:rgba(140,140,200,0.16);
+  --line-strong:rgba(160,160,230,0.33);
+  --fg:#e8e8f4;
+  --fg-dim:#a9a9c4;
+  --fg-faint:#7a7a96;
+  --acc:#ff6b9d;
+  --acc2:#5ee7d4;
+  --acc3:#ffcf5c;
+  --acc4:#8b7bff;
+  --acc5:#59c2ff;
+  --shadow:0 18px 60px -22px rgba(0,0,0,.95);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+    radial-gradient(1200px 800px at 15% -5%, rgba(139,123,255,.13), transparent 60%),
+    radial-gradient(1000px 700px at 90% 8%, rgba(94,231,212,.09), transparent 55%),
+    radial-gradient(900px 900px at 50% 110%, rgba(255,107,157,.10), transparent 60%),
+    var(--bg);
+  color:var(--fg);
+  font-family:'Spectral',Georgia,serif;
+  font-size:17px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,.ui{font-family:'Inter',system-ui,sans-serif}
+code,.mono{font-family:'JetBrains Mono',monospace}
+
+/* ---------- Progress bar ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--acc4),var(--acc),var(--acc3),var(--acc2));
+  z-index:9999;box-shadow:0 0 18px rgba(255,107,157,.6);transition:width .1s linear}
+
+/* ---------- Nav ---------- */
+nav#toc{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  background:rgba(7,7,12,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  display:flex;gap:2px;align-items:center;
+  padding:6px 10px;overflow-x:auto;scrollbar-width:thin;
+}
+nav#toc .brand{font-family:'Inter';font-weight:700;font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--acc);padding:6px 12px 6px 4px;white-space:nowrap;
+  border-right:1px solid var(--line);margin-right:6px}
+nav#toc a{
+  font-family:'Inter';font-size:12px;font-weight:500;color:var(--fg-dim);
+  text-decoration:none;padding:7px 11px;border-radius:8px;white-space:nowrap;transition:.18s;
+}
+nav#toc a:hover{color:var(--fg);background:rgba(139,123,255,.16)}
+nav#toc a.active{color:#07070c;background:var(--acc2);font-weight:600}
+
+/* ---------- Layout ---------- */
+main{max-width:1180px;margin:0 auto;padding:78px 22px 160px}
+section{margin:0 0 110px;scroll-margin-top:66px}
+.lead{font-size:20px;line-height:1.8;color:#dadaf0}
+p{margin:0 0 1.05em}
+
+h1{font-family:'Inter';font-weight:700;font-size:clamp(34px,6vw,62px);line-height:1.06;
+  letter-spacing:-.025em;margin:0 0 18px;
+  background:linear-gradient(104deg,#fff 10%,var(--acc) 40%,var(--acc4) 66%,var(--acc2) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-family:'Inter';font-weight:650;font-size:clamp(24px,3.4vw,36px);letter-spacing:-.02em;
+  margin:0 0 6px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h2 .num{font-size:13px;font-weight:700;letter-spacing:.2em;color:var(--acc3);
+  font-family:'JetBrains Mono';opacity:.95}
+h3{font-family:'Inter';font-weight:600;font-size:20px;margin:34px 0 10px;color:#f2f2ff}
+h4{font-family:'Inter';font-weight:600;font-size:15px;margin:20px 0 6px;color:var(--acc2);
+  letter-spacing:.03em;text-transform:uppercase;font-size:12.5px}
+.sub{color:var(--fg-faint);font-family:'Inter';font-size:14px;margin:0 0 26px;font-style:italic}
+
+hr.rule{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent);margin:46px 0}
+
+/* ---------- Cards / panels ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(8px);margin:22px 0;
+}
+.card.tight{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-side{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.grid-side.rev{grid-template-columns:300px minmax(0,1fr)}
+@media(max-width:900px){.grid2,.grid3,.grid-side,.grid-side.rev{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:12px 0}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:'Inter';font-size:12.5px;font-weight:500;color:var(--fg-dim);margin-bottom:5px}
+.ctrl label .val{font-family:'JetBrains Mono';font-size:12px;color:var(--acc3);font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--acc4),var(--acc));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#fff;
+  border:2px solid var(--acc);box-shadow:0 0 12px rgba(255,107,157,.7);cursor:pointer;transition:.14s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.22)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#fff;
+  border:2px solid var(--acc);cursor:pointer}
+select,input[type=number]{
+  background:#101020;color:var(--fg);border:1px solid var(--line-strong);border-radius:8px;
+  padding:6px 9px;font-family:'Inter';font-size:13px;width:100%}
+.btnrow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+button.b{
+  font-family:'Inter';font-size:12.5px;font-weight:600;letter-spacing:.02em;
+  background:rgba(139,123,255,.14);color:var(--fg);border:1px solid var(--line-strong);
+  border-radius:9px;padding:7px 13px;cursor:pointer;transition:.16s}
+button.b:hover{background:rgba(139,123,255,.3);border-color:var(--acc4);transform:translateY(-1px)}
+button.b.on{background:var(--acc2);color:#07070c;border-color:var(--acc2);font-weight:700}
+button.b.acc{background:rgba(255,107,157,.18);border-color:rgba(255,107,157,.5)}
+button.b.acc.on{background:var(--acc);color:#07070c}
+.chk{display:flex;align-items:center;gap:8px;font-family:'Inter';font-size:13px;color:var(--fg-dim);margin:7px 0;cursor:pointer}
+.chk input{accent-color:var(--acc2);width:15px;height:15px;cursor:pointer}
+
+/* ---------- Canvas ---------- */
+canvas{display:block;max-width:100%;border-radius:12px;background:#000;
+  border:1px solid var(--line);box-shadow:inset 0 0 50px rgba(0,0,0,.8)}
+.cv-wrap{position:relative;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:14px}
+.cv-label{position:absolute;top:8px;left:12px;font-family:'Inter';font-size:11px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);pointer-events:none;
+  text-shadow:0 1px 6px #000}
+.cv-cap{font-family:'Inter';font-size:12px;color:var(--fg-faint);text-align:center;margin-top:7px}
+.plot{width:100%;height:330px}
+
+/* ---------- Callouts ---------- */
+.note{border-left:3px solid var(--acc2);background:rgba(94,231,212,.055);
+  padding:13px 17px;border-radius:0 11px 11px 0;margin:18px 0;font-size:15.5px;color:#cfe9e4}
+.note.q{border-color:var(--acc3);background:rgba(255,207,92,.06);color:#efe0bd}
+.note.k{border-color:var(--acc);background:rgba(255,107,157,.065);color:#f3d4e0}
+.note.m{border-color:var(--acc4);background:rgba(139,123,255,.07);color:#ddd8ff}
+.quote{font-style:italic;color:#c6c6e2;border-left:2px solid var(--line-strong);
+  padding-left:16px;margin:16px 0;font-size:15.5px}
+.quote cite{display:block;font-style:normal;font-family:'Inter';font-size:12px;
+  color:var(--fg-faint);margin-top:6px;letter-spacing:.04em}
+
+/* ---------- Tables ---------- */
+table.t{width:100%;border-collapse:collapse;font-family:'Inter';font-size:13px;margin:14px 0}
+table.t th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line-strong);
+  color:var(--acc2);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em}
+table.t td{padding:8px 10px;border-bottom:1px solid rgba(140,140,200,.09);color:var(--fg-dim)}
+table.t tr:hover td{background:rgba(139,123,255,.05);color:var(--fg)}
+
+/* ---------- Badges / pills ---------- */
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:11px;padding:2px 8px;
+  border-radius:20px;border:1px solid var(--line-strong);color:var(--fg-dim);margin:0 4px 4px 0}
+.pill.a{border-color:var(--acc);color:var(--acc)}
+.pill.b{border-color:var(--acc2);color:var(--acc2)}
+.pill.c{border-color:var(--acc3);color:var(--acc3)}
+.pill.d{border-color:var(--acc4);color:var(--acc4)}
+
+/* ---------- Math ---------- */
+.mathblock{background:rgba(10,10,20,.66);border:1px solid var(--line);border-radius:11px;
+  padding:14px 18px;margin:14px 0;overflow-x:auto;text-align:center}
+.mathblock math{font-size:1.06em}
+math{color:#eceaff}
+
+/* ---------- Step flow ---------- */
+.flow{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin:20px 0}
+.flow .st{flex:1 1 150px;background:rgba(20,20,36,.6);border:1px solid var(--line);
+  border-radius:12px;padding:13px;position:relative}
+.flow .st .n{font-family:'JetBrains Mono';font-size:10.5px;color:var(--acc3);letter-spacing:.14em}
+.flow .st h5{font-family:'Inter';font-size:13.5px;margin:4px 0 5px;color:#fff;font-weight:600}
+.flow .st p{font-size:12.8px;line-height:1.55;color:var(--fg-faint);margin:0;font-family:'Inter'}
+
+/* legend swatches */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:'Inter';font-size:12px;color:var(--fg-dim);margin:8px 0}
+.legend span.sw{display:inline-block;width:13px;height:13px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+
+.tag{font-family:'Inter';font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--acc3);display:block;margin-bottom:5px}
+
+.hero{text-align:center;padding:40px 0 10px}
+.hero canvas{margin:22px auto 0}
+footer{border-top:1px solid var(--line);padding-top:26px;color:var(--fg-faint);
+  font-family:'Inter';font-size:13px}
+a{color:var(--acc2)}
+.small{font-size:13px;color:var(--fg-faint);font-family:'Inter'}
+.kbd{font-family:'JetBrains Mono';font-size:11px;background:#1a1a2c;border:1px solid var(--line-strong);
+  border-radius:5px;padding:1px 6px;color:var(--acc3)}
 </style>
 </head>
 <body>
+<div id="progress"></div>
 
-<div class="section">
-<h1>🌀 Geometrische Visuelle Halluzinationen</h1>
-<p style="margin-top:10px; color:#aaa;">Interaktive Erklärung: Wie entstehen die Muster, warum sehen wir sie, und wer hat das beschrieben?</p>
-</div>
+<nav id="toc">
+  <span class="brand">Formkonstanten</span>
+  <a href="#s0">Start</a>
+  <a href="#s1">1 · Phänomen</a>
+  <a href="#s2">2 · Klüver</a>
+  <a href="#s3">3 · Frage</a>
+  <a href="#s4">4 · Retina→Cortex</a>
+  <a href="#s5">5 · Übersetzung</a>
+  <a href="#s6">6 · Werkzeug: Wellen</a>
+  <a href="#s7">7 · Werkzeug: Faltung</a>
+  <a href="#s8">8 · Das Netz</a>
+  <a href="#s9">9 · Instabilität</a>
+  <a href="#s10">10 · Dispersion</a>
+  <a href="#s11">11 · Gitter</a>
+  <a href="#s12">12 · Bifurkation</a>
+  <a href="#s13">13 · Auswahl</a>
+  <a href="#s14">14 · Labor</a>
+  <a href="#s15">15 · Antwort</a>
+  <a href="#s16">16 · Grenzen</a>
+</nav>
 
-<!-- SECTION 1: History -->
-<div class="section">
-<h2>📜 Geschichte & Forscher</h2>
-<div class="timeline">
-<div class="timeline-item">
-<h4>1920er – Heinrich Klüver</h4>
-<p>Klassifizierte Halluzinationsmuster unter Meskalin in 4 "Formkonstanten": Tunnel/Trichter, Spiralen, Gitter/Waben, Spinnweben.</p>
-</div>
-<div class="timeline-item">
-<h4>1952 – Alan Turing</h4>
-<p>Beschrieb Musterbildung durch Reaktions-Diffusion (Aktivator-Inhibitor). Erklärt Tierfellmuster – Grundlage für spätere Cortex-Modelle.</p>
-</div>
-<div class="timeline-item">
-<h4>1979 – Ermentrout & Cowan</h4>
-<p>Erstes mathematisches Modell: Neuronale Aktivität in V1 erzeugt periodische Muster durch Turing-Instabilität. Bifurkationstheorie + Gruppentheorie.</p>
-</div>
-<div class="timeline-item">
-<h4>2001 – Bressloff, Cowan, Golubitsky et al.</h4>
-<p>Erweiterten das Modell um Orientierungsselektivität und euklidische Symmetrie (Shift-Twist). Alle Klüver-Formkonstanten erklärt.</p>
-</div>
-<div class="timeline-item">
-<h4>2018 – Goldenfeld (stochastischer Turing)</h4>
-<p>Erklärte, warum wir NICHT ständig halluzinieren: Spärliche inhibitorische Verbindungen unterdrücken spontane Muster. Drogen stören diesen Filter.</p>
-</div>
-</div>
-</div>
+<main>
 
-<!-- SECTION 2: Retino-Cortical Map -->
-<div class="section">
-<h2>🗺️ Die Retino-Kortikale Abbildung</h2>
-<div class="info-box">
-<p><strong>Kernidee:</strong> Das Gesichtsfeld wird über eine logarithmische Abbildung auf V1 projiziert:<br>
-<code>x = ln(r), y = θ</code><br>
-Kreise → vertikale Linien, Strahlen → horizontale Linien, Spiralen → schräge Linien in V1.<br>
-<strong>Konsequenz:</strong> Streifen neuronaler Aktivität in V1 erscheinen als Spiralen, Tunnel oder Gitter im Gesichtsfeld!</p>
-</div>
+<!-- ============================================================= 0 ========= -->
+<section id="s0" class="hero">
+  <h1>Warum sieht jeder dieselben vier Muster?</h1>
+  <p class="lead" style="max-width:800px;margin:0 auto 10px">
+    1926 katalogisiert Heinrich Klüver, was Menschen unter Meskalin sehen — und findet
+    <em>vier wiederkehrende geometrische Formen</em>. 1979 zeigen Bard&nbsp;Ermentrout und Jack&nbsp;Cowan:
+    Diese vier Formen sind exakt das, was ein Blatt aus erregenden und hemmenden Nervenzellen
+    <em>von selbst</em> produziert, wenn man es ein kleines bisschen zu erregbar macht.
+  </p>
+  <p class="sub">Eine interaktive Rekonstruktion. Schieben, klicken, zeichnen — lesen nur so viel wie nötig.</p>
+  <div class="cv-wrap">
+    <canvas id="heroCv" width="900" height="320"></canvas>
+  </div>
+  <div class="cv-cap">Links: Aktivität auf dem Cortex. Rechts: was das Auge daraus „sieht“. Live.</div>
+  <div class="btnrow" style="justify-content:center">
+    <button class="b on" data-hero="roll">Tunnel</button>
+    <button class="b" data-hero="funnel">Trichter</button>
+    <button class="b" data-hero="spiral">Spirale</button>
+    <button class="b" data-hero="hex">Wabe</button>
+    <button class="b" data-hero="sq">Gitter</button>
+    <button class="b acc" data-hero="noise">Rauschen → Muster</button>
+  </div>
+</section>
 
-<div class="controls">
-<label>Muster in V1: </label>
-<select id="v1-pattern">
-<option value="horizontal">Horizontale Streifen → Trichter/Tunnel</option>
-<option value="vertical">Vertikale Streifen → Ringe</option>
-<option value="diagonal">Diagonale Streifen → Spiralen</option>
-<option value="hexagonal">Hexagonal → Waben/Gitter</option>
-</select>
-<label>Wellenzahl q:</label>
-<input type="range" id="q-slider" min="2" max="20" value="8">
-<span id="q-val">8</span>
-</div>
+<hr class="rule">
 
-<div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
-<div>
-<h3 style="text-align:center;">V1 (Cortex)</h3>
-<canvas id="canvas-v1" width="350" height="350"></canvas>
-</div>
-<div>
-<h3 style="text-align:center;">Gesichtsfeld (was man "sieht")</h3>
-<canvas id="canvas-vf" width="350" height="350"></canvas>
-</div>
-</div>
-</div>
+<!-- ============================================================= 1 ========= -->
+<section id="s1">
+  <h2><span class="num">01</span> Das Phänomen: was Menschen tatsächlich berichten</h2>
+  <p class="sub">Klüver 1928 / 1942 — die Rohdaten, bevor es Mathematik gab.</p>
 
-<!-- SECTION 3: Turing Mechanism -->
-<div class="section">
-<h2>⚡ Turing-Mechanismus im Cortex</h2>
-<div class="info-box">
-<p><strong>Analogie:</strong> Exzitatorische Neuronen = Aktivator (kurzreichweitig), Inhibitorische Neuronen = Inhibitor (langreichweitig).<br>
-Wenn ein Parameter (z.B. Drogeneffekt) den Ruhezustand destabilisiert, wachsen periodische Muster spontan an.<br>
-Die <strong>Dispersionsrelation</strong> λ(q) = -1 + μ·ŵ(q) bestimmt, welche Wellenlänge zuerst instabil wird.</p>
-</div>
+  <p>Beginnen wir nicht mit Gleichungen, sondern mit Protokollen. Klüver sammelt über Jahre
+  Selbstbeobachtungen von Ärzten, Studenten, sich selbst — unter Meskalin (dem Wirkstoff des
+  Peyote-Kaktus). Die Berichte sind von einer bemerkenswerten Qualität: präzise, nüchtern,
+  oft von Medizinern verfasst.</p>
 
-<div class="controls">
-<label>Erregbarkeit μ:</label>
-<input type="range" id="mu-slider" min="50" max="150" value="80" step="1">
-<span id="mu-val">0.80</span>
-<label style="margin-left:20px;">Inhibitions-Reichweite:</label>
-<input type="range" id="sigma-slider" min="15" max="50" value="30" step="1">
-<span id="sigma-val">3.0</span>
-</div>
-<div id="plotly-dispersion"></div>
-</div>
+  <div class="quote">
+    „Unmittelbar vor meinen Augen eine riesige Zahl von Ringen, wie aus feinstem Stahldraht,
+    alle ständig im Uhrzeigersinn rotierend; konzentrisch angeordnet, der innerste unendlich klein,
+    fast punktförmig … bis das Ganze die Form eines tiefen <strong>Trichters</strong> aus Drahtringen annimmt.“
+    <cite>Proband von Knauer &amp; Maloney, 0,2&nbsp;g Meskalinsulfat subkutan</cite>
+  </div>
+  <div class="quote">
+    „Sechseckige kleine <strong>Waben</strong> hingen von der Decke herab …“ · „Streifen, die eine Art
+    <strong>Flechtwerk</strong> bildeten …“ · „im Gesicht von B. sah ich ein <strong>Gitter</strong> aus gelb-grünlichen Streifen.“
+    <cite>Beringer, Heidelberger Protokolle 1927</cite>
+  </div>
+  <div class="quote">
+    „Bei rhythmischem Pfeifen erscheint eine braune <strong>Spirale</strong>, ein breites Band, das wie
+    verrückt um seine vertikale Achse rotiert.“
+    <cite>Beringer-Proband</cite>
+  </div>
 
-<!-- SECTION 4: Pattern Formation Simulation -->
-<div class="section">
-<h2>🧪 Musterbildung live simulieren</h2>
-<div class="info-box">
-<p>Klicke "Start", um zu sehen, wie aus Rauschen ein Muster entsteht (vereinfachtes Wilson-Cowan-Modell auf einem 2D-Gitter).</p>
-</div>
-<div class="controls">
-<button id="sim-start" style="padding:10px 20px; background:#2a6; color:#fff; border:none; border-radius:5px; cursor:pointer;">▶ Start</button>
-<button id="sim-reset" style="padding:10px 20px; background:#a33; color:#fff; border:none; border-radius:5px; cursor:pointer;">↺ Reset</button>
-<label>Geschwindigkeit:</label>
-<input type="range" id="speed-slider" min="1" max="20" value="10">
-</div>
-<canvas id="canvas-sim" width="400" height="400"></canvas>
-</div>
+  <h3>Das Verblüffende: die Berichte stimmen überein</h3>
+  <p>Klüver bemerkt etwas, das vor ihm niemand systematisch festgehalten hat. Die Probanden
+  betonen zwar alle, die Visionen seien <em>„unbeschreiblich“</em> — aber genau <em>dort</em>, wo sie es
+  dennoch versuchen, benutzen völlig unabhängige Menschen dieselben Wörter.</p>
 
-<!-- SECTION 5: Planforms -->
-<div class="section">
-<h2>🔷 Planformen & Formkonstanten</h2>
-<div class="info-box">
-<p><strong>Planformen</strong> sind die stabilen Muster, die bei der Bifurkation entstehen. Sie werden durch die axialen Untergruppen der euklidischen Gruppe E(2) bestimmt.<br>
-Auf quadratischen, rhombischen und hexagonalen Gittern ergeben sich Rollen (Streifen), Quadrate, Hexagone, Dreiecke etc.</p>
-</div>
+  <div class="card">
+    <span class="tag">Interaktiv · Konkordanz der Protokolle</span>
+    <p class="small" style="margin-bottom:10px">Klicke auf einen Probanden, um seine Begriffe hervorzuheben.
+    Beobachte, wie die Wortwolken überlappen.</p>
+    <div class="btnrow" id="subjBtns"></div>
+    <div id="wordCloud" style="min-height:150px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start"></div>
+  </div>
 
-<div class="tab-container">
-<div class="tab active" data-tab="rolls">Rollen (Streifen)</div>
-<div class="tab" data-tab="squares">Quadrate</div>
-<div class="tab" data-tab="hexagons">Hexagone</div>
-</div>
+  <div class="note k">
+    <strong>Klüvers Schluss (1928, S.&nbsp;22):</strong> „Wir können sie <em>Formkonstanten</em> nennen —
+    im Sinne, dass eine bestimmte Zahl von ihnen in nahezu allen Meskalinvisionen auftritt und dass
+    viele ‚atypische‘ Visionen bei genauer Prüfung nichts anderes als Variationen dieser Formkonstanten sind.“
+  </div>
+</section>
 
-<div class="tab-content active" id="tab-rolls">
-<canvas id="canvas-rolls" width="300" height="300"></canvas>
-<p>→ Im Gesichtsfeld: <strong>Spiralen, Tunnel, Trichter</strong> (Klüver I, II, IV)</p>
-</div>
-<div class="tab-content" id="tab-squares">
-<canvas id="canvas-squares" width="300" height="300"></canvas>
-<p>→ Im Gesichtsfeld: <strong>Schachbrett-artige Gitter</strong> (Klüver III)</p>
-</div>
-<div class="tab-content" id="tab-hexagons">
-<canvas id="canvas-hexagons" width="300" height="300"></canvas>
-<p>→ Im Gesichtsfeld: <strong>Waben, Dreiecke</strong> (Klüver III)</p>
-</div>
-</div>
+<hr class="rule">
 
-<div class="section">
-<h2>📚 Quellen</h2>
-<div class="info-box">
-<ul style="list-style:disc; padding-left:20px; line-height:2;">
-<li>Klüver, H. (1966). <em>Mescal and Mechanisms of Hallucinations</em>. Univ. of Chicago Press.</li>
-<li>Ermentrout, G.B. & Cowan, J.D. (1979). <em>A Mathematical Theory of Visual Hallucination Patterns</em>. Biol. Cybernetics 34, 137–150.</li>
-<li>Bressloff, P.C. et al. (2001). <em>Geometric Visual Hallucinations, Euclidean Symmetry, and the Functional Architecture of Striate Cortex</em>. Phil. Trans. Roy. Soc. B, 356, 299–330.</li>
-<li>Bressloff, P.C. et al. (2002). <em>What Geometric Visual Hallucinations Tell Us about the Visual Cortex</em>. Neural Computation 14, 473–491.</li>
-<li>Ouellette, J. (2018). <em>A Math Theory for Why People Hallucinate</em>. Quanta Magazine.</li>
-<li>Faye, G. (2017). <em>Pattern formation in the visual cortex</em>. CIRM Lecture Notes.</li>
-</ul>
-</div>
-</div>
+<!-- ============================================================= 2 ========= -->
+<section id="s2">
+  <h2><span class="num">02</span> Klüvers vier Formkonstanten</h2>
+  <p class="sub">Der Katalog — und wie er aussieht.</p>
+
+  <p>Klüver destilliert aus hunderten Protokollen vier Grundformen. In seiner Formulierung von 1942:</p>
+
+  <div class="card">
+    <table class="t">
+      <tr><th style="width:34px">#</th><th>Klüvers Bezeichnungen</th><th>Charakter</th></tr>
+      <tr><td><span class="pill a">a</span></td><td>Gitter, Flechtwerk, Filigran, Wabe, Schachbrett</td><td>lokal · sich wiederholend</td></tr>
+      <tr><td><span class="pill b">b</span></td><td>Spinnennetz (Cobweb)</td><td>lokal · verzerrt-radial</td></tr>
+      <tr><td><span class="pill c">c</span></td><td>Tunnel, Trichter, Allee, Kegel, Gefäß</td><td>global · zentriert</td></tr>
+      <tr><td><span class="pill d">d</span></td><td>Spirale</td><td>global · gedreht</td></tr>
+    </table>
+    <p class="small">Dazu zwei Zusatzbeobachtungen Klüvers: (1) die Formen werden <em>wiederholt, kombiniert,
+    zu ornamentalen Mustern und Mosaiken ausgearbeitet</em>; (2) die Bausteine dieser Formen haben
+    selbst wieder <em>geometrische Ränder</em> — Geometrie in Geometrie.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Der Formkonstanten-Generator</span>
+    <p class="small" style="margin-bottom:10px">Wähle eine Formkonstante. Drehe an den Reglern und sieh,
+    wie <em>eine</em> Familie von Mustern alle Varianten erzeugt, die Klüvers Probanden beschrieben haben.</p>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="fcCv" width="520" height="520"></canvas>
+        <div class="cv-label" id="fcLabel">Gitter</div></div>
+      <div>
+        <div class="btnrow" id="fcBtns">
+          <button class="b on" data-fc="lattice">a · Gitter</button>
+          <button class="b" data-fc="honey">a · Wabe</button>
+          <button class="b" data-fc="chess">a · Schachbrett</button>
+          <button class="b" data-fc="cobweb">b · Spinnennetz</button>
+          <button class="b" data-fc="tunnel">c · Tunnel</button>
+          <button class="b" data-fc="funnel">c · Trichter</button>
+          <button class="b" data-fc="spiral">d · Spirale</button>
+        </div>
+        <div class="ctrl"><label>Feinheit <span class="val" id="fcFv">12</span></label>
+          <input type="range" id="fcF" min="3" max="34" value="12"></div>
+        <div class="ctrl"><label>Kontrast <span class="val" id="fcCv2">1.4</span></label>
+          <input type="range" id="fcC" min="0.4" max="4" step="0.05" value="1.4"></div>
+        <div class="ctrl"><label>Rotation <span class="val" id="fcRv">0°</span></label>
+          <input type="range" id="fcR" min="0" max="180" value="0"></div>
+        <div class="ctrl"><label>Farbe <span class="val" id="fcHv">Psychedelisch</span></label>
+          <input type="range" id="fcH" min="0" max="3" value="0"></div>
+        <label class="chk"><input type="checkbox" id="fcAnim" checked> Bewegung (Klüver: „motion per se“)</label>
+        <p class="small" style="margin-top:12px">Beachte: Spirale, Tunnel und Trichter sind
+        <strong>dasselbe Muster</strong> in unterschiedlicher Drehung. Das ist kein Zufall — es ist der
+        Schlüssel zum ganzen Paper. Wir kommen in Abschnitt 5 darauf zurück.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Was ist hier eigentlich merkwürdig?</strong> Wäre eine Halluzination „nur Rauschen“, dürfte
+    sie <em>irgendwie</em> aussehen. Aber vier Formen, immer wieder, über Jahrzehnte, Kontinente, Substanzen
+    (Meskalin, LSD, Migräne, Fieber, Flickerlicht, Druck aufs Auge, Unterzucker) hinweg. Eine so starke
+    Regelmäßigkeit <em>verlangt</em> nach einer Erklärung aus der Struktur des Systems selbst.
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 3 ========= -->
+<section id="s3">
+  <h2><span class="num">03</span> Die Frage, die Ermentrout &amp; Cowan stellen</h2>
+  <p class="sub">1979 — von der Phänomenologie zur Mathematik.</p>
+
+  <p>Klüver <em>beschreibt</em>. Ermentrout &amp; Cowan <em>erklären</em>. Ihre Leitfrage lautet, in
+  ihren eigenen Worten frei übersetzt:</p>
+
+  <div class="note q">
+    <strong>Die Frage:</strong> Kann ein einfaches, gleichmäßig gebautes Blatt aus erregenden und
+    hemmenden Nervenzellen — ohne jede eingebaute Vorlage für „Spirale“ oder „Wabe“ — von sich aus
+    räumliche Aktivitätsmuster erzeugen, wenn man seine Erregbarkeit leicht erhöht? Und sind diese
+    Muster genau Klüvers vier Formkonstanten?
+  </div>
+
+  <h3>Erst muss ein Konkurrent ausgeschlossen werden: das Auge</h3>
+  <p>Eine naheliegende Erklärung: Die Muster entstehen <em>im Auge</em>. Blutgefäßnetz → Spinnennetz,
+  Zellmosaik → Wabe. Diese „periphere Theorie“ (Marshall 1937, Hoppe 1887) hat sich hartnäckig gehalten.</p>
+
+  <div class="card tight">
+    <span class="tag">Interaktiv · Das Beweismittel-Tableau</span>
+    <p class="small">Klicke jede Evidenz an. Der Balken zeigt, wohin sie zeigt.</p>
+    <div id="evList"></div>
+    <div style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;font-family:'Inter';font-size:11px;color:var(--fg-faint);margin-bottom:4px">
+        <span>peripher (Auge)</span><span>zentral (Cortex)</span></div>
+      <div style="height:14px;border-radius:7px;background:#14141f;border:1px solid var(--line);position:relative;overflow:hidden">
+        <div id="evBar" style="position:absolute;top:0;bottom:0;left:50%;width:0%;background:linear-gradient(90deg,var(--acc4),var(--acc2));transition:.4s"></div>
+        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line-strong)"></div>
+      </div>
+      <p class="small" id="evVerdict" style="margin-top:8px">Noch keine Evidenz gewählt.</p>
+    </div>
+  </div>
+
+  <div class="note k">
+    <strong>Schluss:</strong> Der Ursprung ist <em>kortikal</em>, nicht peripher. Damit wird die Frage
+    konkret: Was macht ein Stück Großhirnrinde, wenn man es übererregbar macht?
+  </div>
+
+  <h3>Die Arbeitshypothese</h3>
+  <div class="flow">
+    <div class="st"><div class="n">URSACHE</div><h5>Enthemmung</h5>
+      <p>LSD hemmt die Raphe-Kerne. Diese senden normalerweise hemmende Serotonin-Fasern zum Cortex.
+      Hemmung der Hemmung = mehr Erregung.</p></div>
+    <div class="st"><div class="n">ZUSTAND</div><h5>Erregbarkeit ↑</h5>
+      <p>Der Cortex wird empfindlicher. EEG zeigt Aufmerksamkeits-ähnliche Muster mit
+      eingestreuter Hypersynchronie.</p></div>
+    <div class="st"><div class="n">ÜBERGANG</div><h5>Ruhezustand kippt</h5>
+      <p>Ab einem kritischen Punkt ist „alles gleichmäßig ruhig“ nicht mehr stabil. Die kleinste
+      Störung wächst.</p></div>
+    <div class="st"><div class="n">ERGEBNIS</div><h5>Räumliches Muster</h5>
+      <p>Das System landet in einem neuen Zustand: periodisch gestreifte oder gefleckte
+      Aktivität auf dem Cortex.</p></div>
+    <div class="st"><div class="n">WAHRNEHMUNG</div><h5>Formkonstante</h5>
+      <p>Das Gehirn „liest“ dieses Muster als Bild im Sehfeld — und zwar verzerrt durch die
+      Retina→Cortex-Abbildung.</p></div>
+  </div>
+
+  <p>Die letzten beiden Schritte sind der eigentliche Clou und brauchen etwas Vorbereitung.
+  Wir bauen sie jetzt Stück für Stück auf.</p>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 4 ========= -->
+<section id="s4">
+  <h2><span class="num">04</span> Werkzeug I: Die Landkarte vom Auge zum Cortex</h2>
+  <p class="sub">Warum eine gerade Linie im Gehirn eine Spirale im Sehfeld ist.</p>
+
+  <p>Das ist der schönste Teil des Papers, und er braucht keine höhere Mathematik — nur eine Idee.</p>
+
+  <h4>Zwei Symmetrien, die nicht zusammenpassen</h4>
+  <p>Die Netzhaut ist <strong>radialsymmetrisch</strong>: Es gibt einen Mittelpunkt (die Fovea, die
+  Stelle des schärfsten Sehens), und alles ordnet sich in Ringen und Strahlen darum an. Man beschreibt
+  Punkte dort am besten durch <em>Polarkoordinaten</em>: einen Abstand <em>r</em> vom Zentrum und einen
+  Winkel <em>θ</em>.</p>
+  <p>Der visuelle Cortex dagegen ist ein <strong>flaches Blatt</strong>, grob gleichförmig in alle
+  Richtungen, beschrieben durch gewöhnliche Rechteckkoordinaten <em>x</em> und <em>y</em>.</p>
+
+  <div class="note m">
+    Wie bildet man einen Kreis auf ein Rechteck ab? Man muss den Kreis „aufschneiden und abrollen“.
+    Genau das tut das Gehirn. Mathematisch heißt die Abbildung <strong>komplexer Logarithmus</strong>.
+  </div>
+
+  <div class="mathblock" id="m_logmap"></div>
+  <p class="small" style="text-align:center;margin-top:-6px">Radius → <em>x</em>-Position (logarithmisch gestaucht).
+  Winkel → <em>y</em>-Position (linear abgerollt).</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die retino-kortikale Abbildung</span>
+    <p class="small" style="margin-bottom:10px">Zeichne links mit der Maus ins Sehfeld. Rechts erscheint
+    sofort, was der Cortex daraus macht. Oder wähle eine Vorlage.</p>
+    <div class="cv-wrap">
+      <div style="position:relative"><canvas id="retCv" width="400" height="400"></canvas>
+        <div class="cv-label">Netzhaut / Sehfeld</div></div>
+      <div style="font-size:30px;color:var(--acc3);font-family:'Inter'">→</div>
+      <div style="position:relative"><canvas id="corCv" width="400" height="400"></canvas>
+        <div class="cv-label">Visueller Cortex</div></div>
+    </div>
+    <div class="btnrow" style="justify-content:center;margin-top:14px">
+      <button class="b" data-map="clear">Löschen</button>
+      <button class="b acc on" data-map="free">Freihand</button>
+      <button class="b" data-map="rings">Konzentrische Ringe</button>
+      <button class="b" data-map="rays">Strahlen</button>
+      <button class="b" data-map="spiral">Spirale</button>
+      <button class="b" data-map="grid">Polares Gitter</button>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="note" style="margin:0;font-size:14px"><strong>Ringe → senkrechte Streifen.</strong>
+        Ein Kreis hat konstanten Radius, also konstantes <em>x</em>.</div>
+      <div class="note q" style="margin:0;font-size:14px"><strong>Strahlen → waagrechte Streifen.</strong>
+        Ein Strahl hat konstanten Winkel, also konstantes <em>y</em>.</div>
+      <div class="note k" style="margin:0;font-size:14px"><strong>Spirale → schräge Streifen.</strong>
+        Winkel wächst mit Radius ⇒ Gerade mit Steigung.</div>
+    </div>
+  </div>
+
+  <h3>Und jetzt rückwärts — das ist der Trick</h3>
+  <p>Ermentrout &amp; Cowan drehen die Frage um. Nicht: „Wie sieht ein Sehfeld-Muster im Cortex aus?“
+  Sondern: <strong>„Wenn der Cortex schlichte parallele Streifen macht — was sieht man dann?“</strong></p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Der Rückwärts-Projektor</span>
+    <p class="small" style="margin-bottom:10px">Links: einfache Streifen im Cortex. Rechts: das zugehörige
+    Seherlebnis. Drehe nur <em>einen</em> Regler — den Winkel der Streifen.</p>
+    <div class="cv-wrap">
+      <div style="position:relative"><canvas id="rollCv" width="400" height="400"></canvas>
+        <div class="cv-label">Cortex: Streifen („Rollen“)</div></div>
+      <div style="font-size:30px;color:var(--acc3);font-family:'Inter'">→</div>
+      <div style="position:relative"><canvas id="percCv" width="400" height="400"></canvas>
+        <div class="cv-label">Wahrnehmung</div></div>
+    </div>
+    <div style="max-width:620px;margin:16px auto 0">
+      <div class="ctrl"><label>Streifenwinkel im Cortex <span class="val" id="rollAv">90° (senkrecht)</span></label>
+        <input type="range" id="rollA" min="0" max="180" value="90"></div>
+      <div class="ctrl"><label>Streifenbreite <span class="val" id="rollWv">8</span></label>
+        <input type="range" id="rollW" min="2" max="22" value="8"></div>
+      <div class="btnrow" style="justify-content:center">
+        <button class="b" data-roll="90">Tunnel</button>
+        <button class="b" data-roll="0">Trichter</button>
+        <button class="b" data-roll="38">Spirale ↻</button>
+        <button class="b" data-roll="142">Spirale ↺</button>
+      </div>
+      <p class="note k" id="rollVerdict" style="margin-top:12px">…</p>
+    </div>
+  </div>
+
+  <div class="note m">
+    <strong>Das ist eine echte Entdeckung.</strong> Tunnel, Trichter und Spirale sind <em>nicht</em> drei
+    verschiedene Phänomene. Sie sind <strong>ein einziges</strong> Muster — gerade Streifen im Cortex —
+    unter drei Winkeln. Klüvers Kategorien (c) und (d) kollabieren zu einer. Die Mathematik hat die
+    Phänomenologie vereinfacht.
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 5 ========= -->
+<section id="s5">
+  <h2><span class="num">05</span> Die Übersetzung: vier Formen, zwei Mustertypen</h2>
+  <p class="sub">Was Ermentrout &amp; Cowan eigentlich erklären müssen.</p>
+
+  <p>Nach der Koordinaten-Übersetzung schrumpft die Aufgabe dramatisch. Alle vier Formkonstanten
+  werden im Cortex zu <strong>doppelt-periodischen Mustern in der Ebene</strong> — Mustern, die sich
+  in zwei unabhängigen Richtungen wiederholen.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die große Übersetzungstafel</span>
+    <p class="small">Klicke eine Formkonstante an.</p>
+    <div class="btnrow" id="transBtns"></div>
+    <div class="cv-wrap" style="margin-top:14px">
+      <div style="position:relative"><canvas id="tPerc" width="330" height="330"></canvas>
+        <div class="cv-label">Was man sieht</div></div>
+      <div style="font-size:26px;color:var(--acc3)">→</div>
+      <div style="position:relative"><canvas id="tCort" width="330" height="330"></canvas>
+        <div class="cv-label">Cortex-Aktivität</div></div>
+      <div style="min-width:200px">
+        <h4 style="margin-top:0">Diagnose</h4>
+        <p class="small" id="tDiag" style="font-size:14px;line-height:1.6"></p>
+        <div id="tPills"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="tag">Typ 1</span>
+      <h3 style="margin-top:0">„Rollen“ (rolls)</h3>
+      <p class="small">Streifen. Periodisch in <em>einer</em> Richtung, konstant entlang der anderen.
+      Erzeugt: <strong>Tunnel, Trichter, Spirale</strong>.</p>
+      <div class="cv-wrap"><canvas id="typeRoll" width="300" height="160"></canvas></div>
+    </div>
+    <div class="card">
+      <span class="tag">Typ 2</span>
+      <h3 style="margin-top:0">„Zellen“ (cells)</h3>
+      <p class="small">Flecken auf einem Gitter. Periodisch in <em>zwei</em> Richtungen.
+      Erzeugt: <strong>Gitter, Wabe, Schachbrett, Spinnennetz</strong>.</p>
+      <div class="cv-wrap"><canvas id="typeCell" width="300" height="160"></canvas></div>
+    </div>
+  </div>
+
+  <div class="note q">
+    <strong>Die neue, präzise Frage:</strong> Erzeugt ein Netz aus erregenden und hemmenden Neuronen
+    spontan Streifen und Flecken, wenn der Ruhezustand instabil wird? Und <em>welche</em> von beiden,
+    unter welchen Bedingungen?
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 6 ========= -->
+<section id="s6">
+  <h2><span class="num">06</span> Werkzeug II: Wellen und Wellenzahlen</h2>
+  <p class="sub">Alles, was man über Sinus wissen muss — und sonst nichts.</p>
+
+  <p>Alle folgenden Muster bauen auf <em>ebenen Wellen</em> auf. Das sind Sinuswellen in 2D.
+  Eine ebene Welle wird vollständig durch einen Pfeil beschrieben, den <strong>Wellenvektor</strong>
+  <strong>k</strong> = (k₁, k₂).</p>
+
+  <div class="mathblock" id="m_wave"></div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Ebene Wellen zum Anfassen</span>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="waveCv" width="480" height="340"></canvas></div>
+      <div>
+        <div class="ctrl"><label>Richtung des Pfeils <span class="val" id="wAv">0°</span></label>
+          <input type="range" id="wA" min="0" max="359" value="0"></div>
+        <div class="ctrl"><label>Länge des Pfeils |k| <span class="val" id="wKv">6</span></label>
+          <input type="range" id="wK" min="1" max="20" value="6"></div>
+        <div class="ctrl"><label>Phase (Verschiebung) <span class="val" id="wPv">0°</span></label>
+          <input type="range" id="wP" min="0" max="359" value="0"></div>
+        <ul class="small" style="padding-left:18px;line-height:1.7">
+          <li>Der Pfeil zeigt <strong>senkrecht</strong> zu den Streifen.</li>
+          <li>Je <strong>länger</strong> der Pfeil, desto <strong>enger</strong> die Streifen.</li>
+          <li>Die Phase schiebt das Muster nur hin und her — Form bleibt gleich.</li>
+          <li>Entscheidend ist nur die <strong>Länge</strong> ω = |k|, nicht die Richtung.
+            Das liegt daran, dass das Netz in alle Richtungen gleich verschaltet ist.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>Wellen addieren sich — und bauen alles</h3>
+  <p>Jedes doppelt-periodische Muster entsteht durch Addition weniger ebener Wellen. Das ist der
+  gesamte mathematische Trick hinter den Formkonstanten.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Wellen-Baukasten</span>
+    <p class="small" style="margin-bottom:10px">Addiere 1, 2 oder 3 Wellen <em>gleicher Länge</em>,
+    aber unterschiedlicher Richtung. Beobachte, welche Muster entstehen.</p>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="sumCv" width="480" height="480"></canvas></div>
+      <div>
+        <div class="btnrow">
+          <button class="b on" data-sum="1">1 Welle</button>
+          <button class="b" data-sum="2">2 Wellen</button>
+          <button class="b" data-sum="3">3 Wellen</button>
+        </div>
+        <div class="ctrl"><label>Winkel zwischen Welle 1 &amp; 2 <span class="val" id="sAv">90°</span></label>
+          <input type="range" id="sA" min="20" max="160" value="90"></div>
+        <div class="ctrl"><label>Amplitude Welle 2 <span class="val" id="sB2v">1.0</span></label>
+          <input type="range" id="sB2" min="0" max="1" step="0.02" value="1"></div>
+        <div class="ctrl"><label>Phase Welle 2 <span class="val" id="sP2v">0°</span></label>
+          <input type="range" id="sP2" min="0" max="359" value="0"></div>
+        <div class="ctrl"><label>Phase Welle 3 <span class="val" id="sP3v">0°</span></label>
+          <input type="range" id="sP3" min="0" max="359" value="0"></div>
+        <p class="small" id="sumDiag" style="margin-top:10px"></p>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:#ff6b9d"></span>1 Welle = <strong>Rollen</strong> (Streifen)</span>
+      <span><span class="sw" style="background:#5ee7d4"></span>2 Wellen = <strong>Quadrate/Rauten</strong></span>
+      <span><span class="sw" style="background:#ffcf5c"></span>3 Wellen @ 60° = <strong>Hexagone</strong></span>
+    </div>
+  </div>
+
+  <div class="note m">
+    <strong>Das ist schon fast das ganze Ergebnis des Papers.</strong> Ermentrout &amp; Cowan zeigen:
+    Das Nervennetz wählt bei der Instabilität eine <em>Wellenlänge</em> aus (eine Pfeillänge ω₀) — aber
+    <em>keine Richtung</em>. Übrig bleiben genau diese drei Möglichkeiten, Wellen gleicher Länge zu
+    kombinieren: 1, 2 oder 3. Und genau die ergeben Klüvers Formkonstanten.
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 7 ========= -->
+<section id="s7">
+  <h2><span class="num">07</span> Werkzeug III: Faltung — „jeder beeinflusst seine Nachbarn“</h2>
+  <p class="sub">Die einzige „schwierige“ Operation im Paper. Sie ist eigentlich sehr einfach.</p>
+
+  <p>Im Cortex wirkt eine Nervenzelle nicht nur auf sich selbst, sondern auf ihre Umgebung — und
+  zwar umso schwächer, je weiter weg. Diese Abstandsabhängigkeit heißt <strong>Verbindungsfunktion</strong>
+  <em>w(r)</em>. Ermentrout &amp; Cowan machen drei Annahmen, die in Alltagssprache lauten:</p>
+
+  <div class="grid3">
+    <div class="card tight"><h4>① Positiv</h4><p class="small" style="margin:0">
+      <em>w(r) &gt; 0</em> — jede Verbindung existiert mit einer gewissen Wahrscheinlichkeit. Nichts Negatives.</p></div>
+    <div class="card tight"><h4>② Normiert</h4><p class="small" style="margin:0">
+      Die Summe über alle Abstände ist 1 — die Gesamtstärke wird nur <em>verteilt</em>, nicht erzeugt.</p></div>
+    <div class="card tight"><h4>③ Isotrop</h4><p class="small" style="margin:0">
+      Nur der Abstand zählt, nicht die Richtung. Der Cortex sieht „in alle Richtungen gleich aus“.</p></div>
+  </div>
+
+  <p>Punkt ③ ist der Schlüssel zur ganzen Mathematik. Er bedeutet: Das System hat keine Vorliebe für
+  waagrecht, senkrecht oder schräg. Alle Richtungen sind gleichberechtigt. Deshalb ist auch die
+  Lösungsmenge so groß und symmetrisch — und deshalb braucht man später Gruppentheorie, um Ordnung
+  hineinzubringen.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Faltung zum Mitmachen</span>
+    <p class="small" style="margin-bottom:10px">Oben: ein Aktivitätsmuster. Unten: wie es nach der
+    „Verschmierung“ durch die Verbindungsfunktion aussieht. Verändere die Reichweite σ.</p>
+    <div class="grid-side">
+      <div>
+        <canvas id="convCv" width="620" height="300"></canvas>
+        <div class="cv-cap">Oben Original · Mitte Verbindungsfunktion (Kernel) · Unten Ergebnis der Faltung</div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Reichweite σ <span class="val" id="cvSv">14</span></label>
+          <input type="range" id="cvS" min="2" max="60" value="14"></div>
+        <div class="btnrow">
+          <button class="b on" data-conv="spike">Einzelimpuls</button>
+          <button class="b" data-conv="two">Zwei Impulse</button>
+          <button class="b" data-conv="wave">Welle</button>
+          <button class="b" data-conv="rnd">Rauschen</button>
+        </div>
+        <p class="small">Beobachte bei „Welle“: Die Faltung <strong>dämpft</strong> die Welle, ändert
+        aber nie ihre Form oder Position. Sie wird nur <em>kleiner</em>. Das ist die zentrale
+        Eigenschaft.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die entscheidende Beobachtung: wie stark wird gedämpft?</h3>
+  <p>Je <strong>enger</strong> die Streifen (je größer ω), desto <strong>stärker</strong> dämpft die
+  Faltung. Denn enge Streifen mitteln sich im Verschmieren fast weg, breite Streifen überleben.
+  Die Dämpfung als Funktion von ω heißt <strong>ŵ(ω)</strong> (Fouriertransformierte) und ist einfach
+  eine fallende Kurve.</p>
+
+  <div class="mathblock" id="m_wkernel"></div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Dämpfungskurve ŵ(ω)</span>
+    <div class="grid-side rev">
+      <div>
+        <div class="ctrl"><label>Reichweite σ <span class="val" id="wtSv">1.0</span></label>
+          <input type="range" id="wtS" min="0.3" max="3" step="0.05" value="1"></div>
+        <div class="btnrow">
+          <button class="b on" data-wt="gauss">Gauß</button>
+          <button class="b" data-wt="exp">Exponential</button>
+        </div>
+        <p class="small">Links: Verbindungsfunktion im Raum. Rechts: wie stark Wellen der Länge ω
+        überleben. Große Reichweite ⇒ nur sehr breite Streifen überleben.</p>
+      </div>
+      <div><div id="wtPlot" class="plot"></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 8 ========= -->
+<section id="s8">
+  <h2><span class="num">08</span> Das Modell: zwei Zellsorten, vier Verbindungen</h2>
+  <p class="sub">Die Gleichungen — aber als Bild, nicht als Formel.</p>
+
+  <p>Jetzt bauen wir das Modell. Ermentrout &amp; Cowan nehmen ein <em>Blatt</em> (eine Ebene) mit
+  zwei überlagerten Populationen:</p>
+
+  <div class="grid2">
+    <div class="card"><span class="tag">Population E</span>
+      <h3 style="margin-top:0;color:var(--acc)">Erregende Neuronen</h3>
+      <p class="small">Machen andere Zellen aktiver. In der Grafik rot.</p></div>
+    <div class="card"><span class="tag">Population I</span>
+      <h3 style="margin-top:0;color:var(--acc5)">Hemmende Neuronen</h3>
+      <p class="small">Machen andere Zellen ruhiger. In der Grafik blau.</p></div>
+  </div>
+
+  <p>Zwischen ihnen gibt es vier Wege: E→E, E→I, I→E, I→I. Jeder hat eine Stärke α und eine
+  Reichweite σ.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die Verdrahtung</span>
+    <p class="small" style="margin-bottom:10px">Fahre über die Pfeile. Verändere die Reichweiten —
+    sieh, wie sich das „Mexikanerhut“-Profil bildet.</p>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="wiringCv" width="520" height="330"></canvas></div>
+      <div>
+        <div class="ctrl"><label>σ<sub>ee</sub> Reichweite E→E <span class="val" id="wee">1.0</span></label>
+          <input type="range" id="sEE" min="0.3" max="3" step="0.05" value="1"></div>
+        <div class="ctrl"><label>σ<sub>ie</sub> Reichweite I→E <span class="val" id="wie">2.2</span></label>
+          <input type="range" id="sIE" min="0.3" max="4" step="0.05" value="2.2"></div>
+        <div class="ctrl"><label>α<sub>ee</sub> Stärke E→E <span class="val" id="aee">1.0</span></label>
+          <input type="range" id="aEE" min="0" max="3" step="0.05" value="1"></div>
+        <div class="ctrl"><label>α<sub>ie</sub> Stärke I→E <span class="val" id="aie">1.5</span></label>
+          <input type="range" id="aIE" min="0" max="3" step="0.05" value="1.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Der „Mexikanerhut“: nah erregend, fern hemmend</h3>
+  <p>Wenn die Hemmung <em>weiter reicht</em> als die Erregung, entsteht ein Profil, das in der Mitte
+  positiv und am Rand negativ ist. Ein Reiz verstärkt also seine unmittelbare Umgebung und
+  unterdrückt den weiteren Ring. Genau das nennen Ermentrout &amp; Cowan
+  „<em>starke laterale Wechselwirkungen vom negativen Rückkopplungstyp</em>“.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Mexikanerhut</span>
+    <div id="hatPlot" class="plot" style="height:300px"></div>
+    <p class="small" id="hatDiag"></p>
+  </div>
+
+  <div class="note k">
+    <strong>Warum ist das wichtig?</strong> Lemma 4.1 im Paper sagt präzise: Nur wenn diese
+    Mexikanerhut-Bedingung erfüllt ist, entsteht ein Muster mit <em>endlicher</em> Wellenlänge.
+    Sonst würde das ganze Blatt gleichmäßig aktiv (ω₀ = 0) — und man sähe nur ein
+    gleichförmiges Leuchten, keine Geometrie.
+  </div>
+
+  <h3>Die Übertragungskurve S(V)</h3>
+  <p>Jede Zelle wandelt ihr Membranpotential in eine Feuerrate um — nicht linear, sondern mit einer
+  S-förmigen Kurve: unterhalb der Schwelle passiert nichts, oberhalb steigt es an, und ganz oben
+  sättigt es (eine Zelle kann nicht unendlich schnell feuern).</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die Sigmoide</span>
+    <div class="grid-side rev">
+      <div>
+        <div class="ctrl"><label>Steilheit <span class="val" id="sgV">2.0</span></label>
+          <input type="range" id="sgSlope" min="0.4" max="7" step="0.1" value="2"></div>
+        <div class="ctrl"><label>Schwelle <span class="val" id="sgTv">0.0</span></label>
+          <input type="range" id="sgT" min="-2" max="2" step="0.05" value="0"></div>
+        <p class="small">Der Wendepunkt ist die <strong>Schwelle</strong>. Die Steigung <em>dort</em>
+        (S′(0)) bestimmt, wie leicht das System instabil wird — das ist genau die Größe, die durch
+        Enthemmung (LSD) erhöht wird.</p>
+        <p class="small" id="sgInfo"></p>
+      </div>
+      <div><div id="sigPlot" class="plot" style="height:280px"></div></div>
+    </div>
+  </div>
+
+  <p>Mit diesen Zutaten lautet die Feldgleichung des Papers — und man kann sie jetzt einfach lesen:</p>
+
+  <div class="mathblock" id="m_field"></div>
+  <p class="small" style="text-align:center;margin-top:-8px">
+    „Die Änderung der Aktivität = minus die bisherige Aktivität (Abklingen)
+    + was die Umgebung über E und I hineinschickt, durch die Sigmoide gedreht.“</p>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 9 ========= -->
+<section id="s9">
+  <h2><span class="num">09</span> Der Ruhezustand und seine Instabilität</h2>
+  <p class="sub">Wann wird „alles ruhig“ unhaltbar?</p>
+
+  <p>Es gibt immer eine triviale Lösung: <em>E = I = 0</em>, überall gleich, nichts passiert.
+  Das ist der normale Wachzustand. Die Frage ist: Ist er <strong>stabil</strong>?</p>
+
+  <div class="note">
+    <strong>Stabilität, anschaulich:</strong> Stoße das System ein bisschen an. Kehrt es zurück →
+    stabil. Wächst die Störung → instabil. Das Besondere hier: Das System kann gegen manche
+    Störungen stabil sein und gegen andere nicht — je nach deren <em>Wellenlänge</em>.
+  </div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Kugel-im-Tal-Analogie</span>
+    <p class="small" style="margin-bottom:8px">Ziehe den Regler λ (Erregbarkeit). Klicke in die
+    Landschaft, um die Kugel zu stoßen.</p>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="ballCv" width="560" height="260"></canvas></div>
+      <div>
+        <div class="ctrl"><label>Erregbarkeit λ <span class="val" id="blV">0.80</span></label>
+          <input type="range" id="blL" min="0.4" max="1.6" step="0.01" value="0.8"></div>
+        <p class="small" id="blDiag"></p>
+        <p class="small">Bei λ &lt; λ₀ ist der Ruhezustand eine Mulde. Bei λ &gt; λ₀ wird er zur
+        Kuppe — und zwei neue Mulden entstehen daneben: die <em>Musterzustände</em>.
+        Dieser Umschlag heißt <strong>Bifurkation</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Linearisierung: was passiert mit einer winzigen Welle?</h3>
+  <p>Man setzt eine kleine Welle als Störung an und fragt: Wächst sie oder schrumpft sie? Weil das
+  Netz isotrop ist, hängt die Antwort nur von der <em>Länge</em> ω des Wellenvektors ab, nicht von
+  seiner Richtung. Das Ergebnis ist eine 2×2-Matrix, deren größter Eigenwert ν das Wachstum angibt.</p>
+
+  <div class="mathblock" id="m_H"></div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Wachstum einer einzelnen Welle</span>
+    <div class="grid-side">
+      <div><canvas id="growCv" width="560" height="260"></canvas>
+        <div class="cv-cap">Links: Störungsmuster zu Beginn. Rechts: nach einiger Zeit.</div></div>
+      <div>
+        <div class="ctrl"><label>Wellenzahl ω <span class="val" id="gwWv">3.0</span></label>
+          <input type="range" id="gwW" min="0.3" max="10" step="0.05" value="3"></div>
+        <div class="ctrl"><label>Erregbarkeit λ <span class="val" id="gwLv">0.90</span></label>
+          <input type="range" id="gwL" min="0.5" max="1.5" step="0.005" value="0.9"></div>
+        <div class="btnrow"><button class="b acc" id="gwRun">▶︎ Zeit laufen lassen</button>
+          <button class="b" id="gwReset">Zurücksetzen</button></div>
+        <p class="small" id="gwDiag"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 10 ======== -->
+<section id="s10">
+  <h2><span class="num">10</span> Die Dispersionskurve — das Herzstück</h2>
+  <p class="sub">Abbildung 4 und 5 des Papers, zum Anfassen.</p>
+
+  <p>Trägt man die Wachstumsrate ν über der Wellenzahl ω auf, erhält man die
+  <strong>Dispersionskurve</strong>. Sie beantwortet die Frage: „Welche Musterfeinheit wächst am
+  schnellsten?“</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Dispersionskurve &amp; Musterauswahl</span>
+    <div class="grid-side">
+      <div><div id="dispPlot" class="plot" style="height:360px"></div></div>
+      <div>
+        <div class="ctrl"><label>Erregbarkeit λ <span class="val" id="dpLv">1.00</span></label>
+          <input type="range" id="dpL" min="0.6" max="1.45" step="0.005" value="1"></div>
+        <div class="ctrl"><label>σ<sub>ie</sub> (Hemmweite) <span class="val" id="dpSv">2.20</span></label>
+          <input type="range" id="dpS" min="1.1" max="4" step="0.02" value="2.2"></div>
+        <div class="ctrl"><label>α<sub>ie</sub> (Hemmstärke) <span class="val" id="dpAv">1.50</span></label>
+          <input type="range" id="dpA" min="0.5" max="3" step="0.02" value="1.5"></div>
+        <div class="btnrow">
+          <button class="b" data-dp="sub">unterkritisch</button>
+          <button class="b on" data-dp="crit">genau kritisch</button>
+          <button class="b" data-dp="super">überkritisch</button>
+        </div>
+        <p class="small" id="dpDiag"></p>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:#8b7bff"></span>ν(ω) Wachstumsrate</span>
+      <span><span class="sw" style="background:#ff6b9d"></span>ω₀ bevorzugte Wellenzahl</span>
+      <span><span class="sw" style="background:#5ee7d4"></span>Null-Linie</span>
+    </div>
+  </div>
+
+  <h3>Das resultierende Muster live</h3>
+  <p>Und so sieht das aus, wenn man aus Rauschen startet und nur die Wellen um ω₀ überleben lässt:</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Rauschen wird Muster</span>
+    <div class="cv-wrap">
+      <div style="position:relative"><canvas id="noiseCv" width="330" height="330"></canvas>
+        <div class="cv-label">Start: zufälliges Rauschen</div></div>
+      <div style="font-size:26px;color:var(--acc3)">→</div>
+      <div style="position:relative"><canvas id="filtCv" width="330" height="330"></canvas>
+        <div class="cv-label">Nach Filterung bei ω₀</div></div>
+      <div style="font-size:26px;color:var(--acc3)">→</div>
+      <div style="position:relative"><canvas id="filtPerc" width="330" height="330"></canvas>
+        <div class="cv-label">Wahrnehmung</div></div>
+    </div>
+    <div style="max-width:620px;margin:14px auto 0">
+      <div class="ctrl"><label>ω₀ (bevorzugte Wellenzahl) <span class="val" id="nfWv">7</span></label>
+        <input type="range" id="nfW" min="3" max="20" value="7"></div>
+      <div class="ctrl"><label>Bandbreite (Schärfe der Auswahl) <span class="val" id="nfBv">1.2</span></label>
+        <input type="range" id="nfB" min="0.3" max="5" step="0.05" value="1.2"></div>
+      <div class="btnrow" style="justify-content:center">
+        <button class="b acc" id="nfNew">Neues Rauschen</button>
+      </div>
+      <p class="note" style="font-size:14px">Schmale Bandbreite ⇒ saubere, fast periodische Muster.
+      Breite Bandbreite ⇒ unordentliches „Schlangengewimmel“. Das Gehirn im kritischen Zustand
+      arbeitet mit sehr schmaler Bandbreite — deshalb sind die Formkonstanten so regelmäßig.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 11 ======== -->
+<section id="s11">
+  <h2><span class="num">11</span> Unendlich viele Lösungen — und wie man sie bändigt</h2>
+  <p class="sub">Doppelt-periodische Funktionen, Gitter, Symmetriegruppen.</p>
+
+  <div class="note q">
+    <strong>Das Problem:</strong> Am kritischen Punkt wachsen <em>alle</em> Wellen mit |k| = ω₀ gleich
+    schnell — und davon gibt es unendlich viele (jede Richtung!). Der „Kern“ des linearisierten
+    Operators ist unendlichdimensional. Man kann nicht rechnen.
+  </div>
+  <div class="note">
+    <strong>Der Trick:</strong> Ermentrout &amp; Cowan beschränken sich auf Lösungen, die sich in zwei
+    Richtungen periodisch wiederholen (<em>doppelt-periodisch</em>). Das ist keine große Einschränkung
+    — alle Formkonstanten sind so. Dadurch bleiben nur <em>endlich viele</em> Wellenrichtungen übrig.
+  </div>
+
+  <h3>Was ist ein Gitter?</h3>
+  <p>Man wählt zwei Grundvektoren <strong>ω₁</strong> und <strong>ω₂</strong>, beide mit Länge ω₀
+  (der kritischen Wellenzahl). Der Winkel θ zwischen ihnen bestimmt alles. Es gibt genau drei Fälle:</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die drei Gittertypen (Abb. 6 des Papers)</span>
+    <p class="small" style="margin-bottom:10px">Drehe den Winkel θ. Beobachte: bei 60° und 90° wird
+    die Symmetrie plötzlich viel reicher. Das ist der ganze Grund, warum es genau drei Fälle gibt.</p>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="latCv" width="520" height="430"></canvas></div>
+      <div>
+        <div class="ctrl"><label>Winkel θ zwischen ω₁ und ω₂ <span class="val" id="latTv">60°</span></label>
+          <input type="range" id="latT" min="20" max="90" value="60"></div>
+        <div class="btnrow">
+          <button class="b on" data-lat="60">Hexagonal (60°)</button>
+          <button class="b" data-lat="90">Quadratisch (90°)</button>
+          <button class="b" data-lat="47">Rhombisch (sonst)</button>
+        </div>
+        <table class="t" id="latTable">
+          <tr><th>Gitter</th><th>θ</th><th>Symmetriegruppe</th><th>Kern-Dim.</th></tr>
+          <tr data-r="hex"><td>Hexagonal Λ₆</td><td>60°</td><td>D₆ (12 Elemente)</td><td>6</td></tr>
+          <tr data-r="sq"><td>Quadratisch Λ₄</td><td>90°</td><td>D₄ (8 Elemente)</td><td>4</td></tr>
+          <tr data-r="rh"><td>Rhombisch Λ₂</td><td>sonst</td><td>D₂ (4 Elemente)</td><td>4</td></tr>
+        </table>
+        <p class="small" id="latDiag"></p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Symmetriegruppen — anschaulich</h3>
+  <p>Eine „Symmetriegruppe“ ist einfach die Liste aller Drehungen und Spiegelungen, die eine Figur
+  auf sich selbst abbilden. Ein Sechseck hat 12 davon, ein Quadrat 8, ein Rechteck 4.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Symmetrieoperationen zum Durchklicken</span>
+    <div class="grid-side rev">
+      <div>
+        <div class="btnrow">
+          <button class="b on" data-sym="hex">Sechseck D₆</button>
+          <button class="b" data-sym="sq">Quadrat D₄</button>
+          <button class="b" data-sym="rh">Rhombus D₂</button>
+        </div>
+        <p class="small">Klicke eine Operation an. Das Objekt bewegt sich — und landet
+        wieder auf sich selbst.</p>
+        <div class="btnrow" id="symOps"></div>
+        <p class="small" id="symDiag"></p>
+      </div>
+      <div class="cv-wrap"><canvas id="symCv" width="400" height="400"></canvas></div>
+    </div>
+  </div>
+
+  <div class="note m">
+    <strong>Wozu der ganze Aufwand?</strong> Weil das Gleichungssystem sonst nicht lösbar wäre.
+    Die Symmetrie zwingt der Gleichung eine Form auf: Ermentrout &amp; Cowan müssen nur <em>eine</em>
+    der sechs Gleichungen berechnen — die anderen fünf folgen durch Vertauschen der Variablen.
+    Gruppentheorie ist hier reines Arbeitssparwerkzeug.
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 12 ======== -->
+<section id="s12">
+  <h2><span class="num">12</span> Bifurkation: wie neue Lösungen entstehen</h2>
+  <p class="sub">Von der unendlichdimensionalen Gleichung zu drei Zahlen.</p>
+
+  <p>Die Kernfrage der Verzweigungstheorie: Wenn der Ruhezustand instabil wird — welche
+  <em>Amplituden</em> nehmen die Wellen an? Nach der Lyapunov-Schmidt-Reduktion (einem Verfahren,
+  das das unendlichdimensionale Problem auf wenige Zahlen eindampft) bleiben Gleichungen dieser Form:</p>
+
+  <div class="mathblock" id="m_bif"></div>
+
+  <p>Das sieht komplizierter aus als es ist. Jede Zeile sagt: <em>„Amplitude y mal (Antrieb ν plus
+  Selbsthemmung a·y² plus Fremdhemmung b·anderes²) = 0.“</em> Entweder ist die Amplitude null,
+  oder die Klammer ist null.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die Verzweigungsgleichungen lösen</span>
+    <div class="grid-side">
+      <div><div id="bifPlot" class="plot" style="height:380px"></div></div>
+      <div>
+        <div class="ctrl"><label>a (Selbst-Sättigung) <span class="val" id="bfAv">-1.00</span></label>
+          <input type="range" id="bfA" min="-2" max="-0.1" step="0.01" value="-1"></div>
+        <div class="ctrl"><label>b (Kreuz-Sättigung) <span class="val" id="bfBv">-1.80</span></label>
+          <input type="range" id="bfB" min="-3" max="-0.1" step="0.01" value="-1.8"></div>
+        <div class="btnrow">
+          <button class="b on" data-bf="sq">Quadratisches Gitter</button>
+          <button class="b" data-bf="hex">Hexagonales Gitter</button>
+        </div>
+        <p class="small" id="bfDiag"></p>
+        <table class="t" id="bfTable"></table>
+      </div>
+    </div>
+    <p class="small">Durchgezogen = <strong>stabil</strong> (wird beobachtet). Gestrichelt =
+    instabil (existiert mathematisch, wird nie gesehen).</p>
+  </div>
+
+  <h3>Superkritisch vs. subkritisch</h3>
+  <div class="card">
+    <span class="tag">Interaktiv · Zwei Arten von Verzweigung</span>
+    <div class="grid-side rev">
+      <div>
+        <div class="btnrow">
+          <button class="b on" data-sc="super">ν &gt; 0 superkritisch</button>
+          <button class="b" data-sc="sub">ν &lt; 0 subkritisch</button>
+        </div>
+        <p class="small" id="scDiag"></p>
+        <p class="small">Superkritisch: Das Muster wächst <em>sanft</em> aus dem Nichts, Amplitude
+        ∝ √(λ−λ₀). Subkritisch: Es springt <em>plötzlich</em> auf große Amplitude — und kann
+        auch noch unterhalb der Schwelle bestehen bleiben (Hysterese). Das erklärt, warum eine
+        Halluzination nicht sofort verschwindet, wenn die Ursache abklingt.</p>
+      </div>
+      <div><div id="scPlot" class="plot" style="height:290px"></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 13 ======== -->
+<section id="s13">
+  <h2><span class="num">13</span> Stabilität und Auswahl: welche Form gewinnt?</h2>
+  <p class="sub">Das Auswahl-Diagramm (Abb. 11 des Papers) — interaktiv.</p>
+
+  <p>Mehrere Muster können gleichzeitig <em>existieren</em>. Aber nur die <strong>stabilen</strong>
+  werden gesehen. Die Bedingungen aus Lemma 7.1 sind erstaunlich einfach:</p>
+
+  <div class="grid2">
+    <div class="card tight"><h4>Quadrate / Rechtecke</h4>
+      <p class="small mono" style="margin:0">Rollen stabil: b &lt; a &lt; 0<br>
+      Quadrate stabil: a+b &lt; 0 &nbsp;und&nbsp; a−b &lt; 0</p></div>
+    <div class="card tight"><h4>Hexagone</h4>
+      <p class="small mono" style="margin:0">Rollen stabil: b &lt; a &lt; 0<br>
+      Hexagone stabil: a &lt; b &nbsp;und&nbsp; 2b+a &lt; 0</p></div>
+  </div>
+
+  <p>Aber a und b hängen selbst vom Gitter ab. Sattinger zeigt: es gibt eine
+  <strong>Gitterfunktion</strong> q(θ) mit a = 3q(0), b = 6q(θ). Im einfachsten Fall
+  q(θ) = A·cos2θ + B. Damit entsteht ein zweidimensionales Auswahldiagramm in A und B.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Das Auswahldiagramm (Abb. 11)</span>
+    <p class="small" style="margin-bottom:10px">Klicke in das Diagramm oder ziehe den Punkt.
+    Rechts siehst du sofort, welches Muster — und welche Formkonstante — dabei herauskommt.</p>
+    <div class="grid-side">
+      <div class="cv-wrap"><canvas id="selCv" width="520" height="440"></canvas></div>
+      <div>
+        <div class="cv-wrap"><canvas id="selPat" width="250" height="250"></canvas></div>
+        <h4 style="margin-top:14px">Diagnose</h4>
+        <p class="small" id="selDiag" style="font-size:14px;line-height:1.6"></p>
+        <div id="selPills"></div>
+        <div class="ctrl" style="margin-top:12px"><label>A <span class="val" id="selAv">1.0</span></label>
+          <input type="range" id="selA" min="-2" max="2" step="0.02" value="1"></div>
+        <div class="ctrl"><label>B <span class="val" id="selBv">1.0</span></label>
+          <input type="range" id="selB" min="-2" max="3" step="0.02" value="1"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="sw" style="background:rgba(255,207,92,.6)"></span>Hexagone + Quadrate + θ-Rechtecke koexistieren</span>
+      <span><span class="sw" style="background:rgba(94,231,212,.5)"></span>nur Quadrate + θ-Rechtecke</span>
+      <span><span class="sw" style="background:rgba(255,107,157,.5)"></span>Rollen → globale Formkonstanten</span>
+      <span><span class="sw" style="background:rgba(139,123,255,.5)"></span>nur θ-Rechtecke</span>
+    </div>
+  </div>
+
+  <div class="note k">
+    <strong>Das Schlüsselzitat des Papers:</strong> „Wir können uns vorstellen, dass in Bereichen
+    der Koexistenz äußere Reize und Anfangsbedingungen eine wichtige Rolle bei der Musterauswahl
+    spielen. Wenn sich bestimmte physiologische Parameter ändern — z.B. Erregbarkeit oder Schwellen —
+    können wir <em>langsame Übergänge</em> zwischen einer Vielzahl ‚zellulärer‘ Muster wie
+    Spinnennetzen und Waben zu Spiralen und Zielscheiben erwarten.“
+  </div>
+
+  <h3>Der Kaleidoskop-Effekt</h3>
+  <p>Genau das beschreiben Klüvers Probanden: Die Formen bleiben nicht stehen, sondern verwandeln
+  sich langsam ineinander. Im Modell entspricht das einer langsamen Wanderung durch das
+  Auswahldiagramm.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Langsame Parameterdrift = Kaleidoskop</span>
+    <div class="cv-wrap">
+      <div style="position:relative"><canvas id="kalCort" width="330" height="330"></canvas>
+        <div class="cv-label">Cortex</div></div>
+      <div style="font-size:26px;color:var(--acc3)">→</div>
+      <div style="position:relative"><canvas id="kalPerc" width="330" height="330"></canvas>
+        <div class="cv-label">Wahrnehmung</div></div>
+    </div>
+    <div style="max-width:560px;margin:14px auto 0">
+      <div class="btnrow" style="justify-content:center">
+        <button class="b acc on" id="kalRun">⏸ Pause</button>
+        <button class="b" id="kalStep">Ein Schritt</button>
+      </div>
+      <div class="ctrl"><label>Driftgeschwindigkeit <span class="val" id="kalSv">1.0×</span></label>
+        <input type="range" id="kalS" min="0.1" max="4" step="0.05" value="1"></div>
+      <p class="small" id="kalDiag" style="text-align:center"></p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 14 ======== -->
+<section id="s14">
+  <h2><span class="num">14</span> Das große Labor</h2>
+  <p class="sub">Alles zusammen. Ein echtes Simulations-Spielzeug.</p>
+
+  <p>Jetzt sind alle Bausteine da. Hier läuft die vollständige Logik: Parameter → Dispersionskurve →
+  ausgewähltes Muster → Cortex-Aktivität → Wahrnehmung. Ändere irgendetwas und beobachte, wie es
+  sich durch die gesamte Kette fortpflanzt.</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Vollständiges Hallucination-Lab</span>
+    <div class="grid-side">
+      <div>
+        <div class="cv-wrap" style="gap:10px">
+          <div style="position:relative"><canvas id="labCort" width="300" height="300"></canvas>
+            <div class="cv-label">Cortex E(x,y)</div></div>
+          <div style="position:relative"><canvas id="labPerc" width="300" height="300"></canvas>
+            <div class="cv-label">Sehfeld</div></div>
+        </div>
+        <div id="labDisp" class="plot" style="height:220px;margin-top:12px"></div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Physiologie</h4>
+        <div class="ctrl"><label>λ Erregbarkeit <span class="val" id="lbLv">1.05</span></label>
+          <input type="range" id="lbL" min="0.7" max="1.5" step="0.005" value="1.05"></div>
+        <div class="ctrl"><label>σ<sub>ie</sub> Hemmweite <span class="val" id="lbSv">2.20</span></label>
+          <input type="range" id="lbS" min="1.1" max="4" step="0.02" value="2.2"></div>
+        <div class="ctrl"><label>α<sub>ie</sub> Hemmstärke <span class="val" id="lbAv">1.50</span></label>
+          <input type="range" id="lbA" min="0.5" max="3" step="0.02" value="1.5"></div>
+
+        <h4>Mustertyp (Gitter)</h4>
+        <div class="btnrow">
+          <button class="b acc on" data-lb="roll">Rollen</button>
+          <button class="b" data-lb="sq">Quadrate</button>
+          <button class="b" data-lb="hex">Hexagone</button>
+          <button class="b" data-lb="rh">Rhomben</button>
+        </div>
+        <div class="ctrl"><label>Orientierung im Cortex <span class="val" id="lbOv">90°</span></label>
+          <input type="range" id="lbO" min="0" max="180" value="90"></div>
+        <div class="ctrl"><label>Phasen θ₁,θ₂,θ₃ <span class="val" id="lbPv">0°</span></label>
+          <input type="range" id="lbP" min="0" max="359" value="0"></div>
+        <div class="ctrl"><label>Amplitude ε <span class="val" id="lbEv">1.00</span></label>
+          <input type="range" id="lbE" min="0.1" max="2" step="0.02" value="1"></div>
+
+        <h4>Darstellung</h4>
+        <label class="chk"><input type="checkbox" id="lbCont"> Höhenlinien zeigen</label>
+        <label class="chk"><input type="checkbox" id="lbBin"> Nur positive Bereiche (schattiert)</label>
+        <label class="chk"><input type="checkbox" id="lbAnim"> Langsame Bewegung</label>
+        <div class="ctrl"><label>Farbschema <span class="val" id="lbCv">Neon</span></label>
+          <input type="range" id="lbC" min="0" max="3" value="0"></div>
+
+        <p class="note" style="font-size:13.5px" id="lbDiag"></p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Probiere diese Rezepte</h3>
+  <div class="grid3">
+    <div class="card tight"><h4 style="color:var(--acc)">Tunnel</h4>
+      <p class="small">Rollen, Orientierung 90°. Konzentrische Ringe erscheinen im Sehfeld.</p>
+      <button class="b" data-recipe="tunnel">Einstellen</button></div>
+    <div class="card tight"><h4 style="color:var(--acc3)">Spirale</h4>
+      <p class="small">Rollen, Orientierung ≈ 40°. Schräge Streifen → Spirale.</p>
+      <button class="b" data-recipe="spiral">Einstellen</button></div>
+    <div class="card tight"><h4 style="color:var(--acc2)">Wabe</h4>
+      <p class="small">Hexagone, Phasen 0°. Klüvers Honeycomb.</p>
+      <button class="b" data-recipe="honey">Einstellen</button></div>
+    <div class="card tight"><h4 style="color:var(--acc4)">Schachbrett</h4>
+      <p class="small">Quadrate, Phasen 0°. Klüvers chessboard.</p>
+      <button class="b" data-recipe="chess">Einstellen</button></div>
+    <div class="card tight"><h4 style="color:var(--acc5)">Spinnennetz</h4>
+      <p class="small">Rhomben nahe der Fovea — verzerrtes Gitter.</p>
+      <button class="b" data-recipe="cobweb">Einstellen</button></div>
+    <div class="card tight"><h4 style="color:#ff9f6b">Unterkritisch</h4>
+      <p class="small">λ = 0,80. Nichts passiert — normaler Wachzustand.</p>
+      <button class="b" data-recipe="rest">Einstellen</button></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 15 ======== -->
+<section id="s15">
+  <h2><span class="num">15</span> Die Antwort auf die Frage</h2>
+  <p class="sub">Was haben Ermentrout &amp; Cowan tatsächlich gezeigt?</p>
+
+  <div class="note k" style="font-size:17px;line-height:1.75">
+    <strong>Ihre Antwort (Diskussion, §8):</strong> Ein neuronales Netz aus einem räumlich
+    gleichförmigen, zweidimensionalen Blatt mit erregenden <em>und</em> hemmenden Neuronen, dessen
+    Verbindungen radial isotrop sind und in dem laterale Wechselwirkungen vom negativen
+    Rückkopplungstyp dominieren, kann <strong>spontan</strong> eine Vielfalt doppelt-periodischer
+    räumlicher Muster neuronaler Aktivität erzeugen. Nimmt man an, dass diese Muster
+    wahrgenommenen retinalen Objekten entsprechen, dann sind die doppelt-periodischen Muster
+    <strong>identisch mit den vier Formkonstanten</strong> der Halluzinationen.
+  </div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Die Schlussbilanz</span>
+    <p class="small" style="margin-bottom:10px">Klicke jeden Schritt an, um den vollständigen
+    Erklärungsbogen abzufahren — vom Molekül bis zum Erlebnis.</p>
+    <div id="chainSteps"></div>
+    <div class="cv-wrap" style="margin-top:14px"><canvas id="chainCv" width="760" height="230"></canvas></div>
+    <p class="small" id="chainDiag" style="text-align:center;min-height:42px"></p>
+  </div>
+
+  <h3>Die drei wirklichen Entdeckungen</h3>
+  <div class="grid3">
+    <div class="card">
+      <span class="tag">Entdeckung 1</span>
+      <h4 style="color:var(--acc)">Vier werden zwei</h4>
+      <p class="small">Die retino-kortikale Abbildung zeigt: Tunnel, Trichter und Spirale sind
+      <em>ein</em> Muster (Rollen) unter drei Winkeln. Gitter, Wabe, Schachbrett, Spinnennetz
+      sind <em>ein</em> Mustertyp (Zellen). Klüvers Katalog vereinfacht sich radikal.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Entdeckung 2</span>
+      <h4 style="color:var(--acc2)">Keine Vorlage nötig</h4>
+      <p class="small">Das Netz enthält keinerlei gespeicherte Form. Die Geometrie entsteht
+      <em>allein</em> aus Symmetrie + Instabilität. Deshalb sehen alle Menschen dasselbe:
+      sie teilen die Bauweise, nicht den Inhalt.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Entdeckung 3</span>
+      <h4 style="color:var(--acc3)">Auswahl ist dynamisch</h4>
+      <p class="small">Welche Form man sieht, ist <em>keine</em> Frage einzelner Parameter allein.
+      Sie wird durch <strong>Stabilität</strong> entschieden — und damit durch Dynamik. Deshalb
+      brauchten Ermentrout &amp; Cowan Verzweigungs- und Gruppentheorie, und deshalb
+      verwandeln sich die Formen langsam ineinander.</p>
+    </div>
+  </div>
+
+  <h3>Vergleich: Was behauptet jedes Paper?</h3>
+  <div class="card">
+    <table class="t">
+      <tr><th>Quelle</th><th>Leistung</th><th>Grenze</th></tr>
+      <tr><td><strong>Klüver 1928</strong> — „Mescal“</td>
+        <td>Entdeckt, dass die Visionen <em>nicht beliebig</em> sind. Definiert die Formkonstanten.
+        Beschreibt Bewegung, Symmetrie, Lokalisation, das <em>presque&nbsp;vu</em>, das „dual system“.</td>
+        <td>Rein phänomenologisch. Kein Mechanismus. Offene Frage: „Warum diese Formen?“</td></tr>
+      <tr><td><strong>Klüver 1942</strong> — „Mechanisms of Hallucinations“</td>
+        <td>Zeigt, dass dieselben Konstanten auch bei Migräne, Fieber, Flicker, Unterzucker,
+        hypnagogen Bildern auftreten. Drei Ebenen: Formkonstanten · Polyopie/Größenänderung ·
+        raumzeitliche Veränderungen. Schließt rein periphere Theorien aus.</td>
+        <td>Nennt die Bedingungen, nicht die erzeugende Dynamik. Sucht „fundamentale Mechanismen“,
+        kann sie aber nicht angeben.</td></tr>
+      <tr><td><strong>Ermentrout &amp; Cowan 1979</strong></td>
+        <td>Liefert den Mechanismus: Symmetrie + Instabilität + Bifurkation.
+        Reduziert vier Formen auf zwei Mustertypen. Erklärt, warum die Formen universell,
+        kontextfrei und wandelbar sind.</td>
+        <td>Setzt perfekte Isotropie voraus — die der echte Cortex nicht hat (siehe Abschnitt 16).
+        Erklärt nur die <em>frühen</em>, einfachen Stadien.</td></tr>
+    </table>
+  </div>
+
+  <div class="note m" style="font-size:16px">
+    <strong>Der Bogen in einem Satz:</strong> Klüver fragte <em>„Was sieht man?“</em> und fand vier Formen.
+    Ermentrout &amp; Cowan fragten <em>„Was muss ein symmetrisches Nervennetz tun, wenn es instabil wird?“</em>
+    — und bekamen dieselben vier Formen heraus. Die Übereinstimmung ist die Pointe.
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============================================================= 16 ======== -->
+<section id="s16">
+  <h2><span class="num">16</span> Grenzen, Ehrlichkeit, offene Fragen</h2>
+  <p class="sub">Was die Autoren selbst einräumen — und was danach kam.</p>
+
+  <p>Das Paper endet bemerkenswert selbstkritisch. Drei Einschränkungen nennen die Autoren
+  ausdrücklich:</p>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Was passiert ohne perfekte Isotropie?</span>
+    <p class="small" style="margin-bottom:10px">Der echte Cortex ist <em>nicht</em> richtungsneutral:
+    Orientierungssäulen bevorzugen bestimmte Richtungen. Schiebe den Regler und sieh, was mit der
+    Musterauswahl passiert.</p>
+    <div class="grid-side">
+      <div class="cv-wrap">
+        <div style="position:relative"><canvas id="anisoCv" width="300" height="300"></canvas>
+          <div class="cv-label">Cortex</div></div>
+        <div style="position:relative"><canvas id="anisoPerc" width="300" height="300"></canvas>
+          <div class="cv-label">Wahrnehmung</div></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Anisotropie (Richtungsvorliebe) <span class="val" id="anV">0 %</span></label>
+          <input type="range" id="anA" min="0" max="100" value="0"></div>
+        <div id="anisoPlot" class="plot" style="height:170px"></div>
+        <p class="small" id="anDiag"></p>
+        <p class="note k" style="font-size:13.5px">Zitat aus §8: „In Wirklichkeit ist die kortikale
+        Konnektivität weit von Isotropie entfernt, und unsere Analyse muss als <em>heuristisch</em>
+        betrachtet werden … Es ist sogar möglich, dass das einzige Element in O(2), das mit G
+        kommutiert, die Identität ist. In einem solchen Fall lässt sich zeigen, dass nur
+        kleinamplitudige <strong>Rollen</strong> auftreten und es <strong>keine zellulären
+        Formkonstanten</strong> gibt.“</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card tight"><h4>Einschränkung 1</h4>
+      <p class="small" style="margin:0">Die Annahme doppelt-periodischer Lösungen ist
+      <em>ad hoc</em>. Sie macht das Problem rechenbar, ist aber nicht aus der Biologie abgeleitet.</p></div>
+    <div class="card tight"><h4>Einschränkung 2</h4>
+      <p class="small" style="margin:0">Enthemmung der Raphe-Kerne allein reicht nicht
+      aus, um beim Menschen Halluzinationen auszulösen (Pieri et al. 1978). Es muss weitere
+      Einflüsse geben — unbekannt.</p></div>
+    <div class="card tight"><h4>Einschränkung 3</h4>
+      <p class="small" style="margin:0">Nur die <em>frühen</em> Stadien sind erfasst. Später wird
+      mehr kortikale Maschinerie beteiligt; komplexe, kontextabhängige Bilder entstehen.</p></div>
+  </div>
+
+  <h3>Was das Modell trotzdem leistet</h3>
+  <div class="note">
+    Aus §8, letzter Absatz: „Unsere Ergebnisse zeigen, dass es wahrscheinlich <strong>unnötig</strong> ist,
+    irgendeine komplizierte Verarbeitung heranzuziehen, um die Allgegenwart einfacher Mosaike und
+    geometrischer Muster zu erklären.“ Das ist das eigentliche wissenschaftliche Argument:
+    <em>Sparsamkeit</em>. Man braucht keine gespeicherten Bilder, keine Archetypen, keine
+    Augenstrukturen — nur Symmetrie und Instabilität.
+  </div>
+
+  <div class="card">
+    <span class="tag">Interaktiv · Selbsttest</span>
+    <p class="small" style="margin-bottom:10px">Sechs Fragen. Klicke die Antwort, die du für richtig hältst.</p>
+    <div id="quiz"></div>
+    <p class="small" id="quizScore" style="margin-top:12px"></p>
+  </div>
+
+  <div class="note q" style="font-size:16px;margin-top:30px">
+    <strong>Zum Schluss, Klüver 1928, letzte Seite:</strong> „Der Anthropologe, der den Ursprung und die
+    Varianten von ‚Visionen‘ in verschiedenen Regionen oder die ornamentale Kunst verschiedener
+    Stämme untersucht, wird am Vorhandensein gewisser <em>überindividueller Formkonstanten</em>
+    höchst interessiert sein.“ — Fünfzig Jahre später wissen wir, woher die Überindividualität kommt:
+    Wir alle tragen dasselbe symmetrische Blatt im Hinterkopf.
+  </div>
+</section>
+
+<footer>
+  <p><strong>Quellen dieser Darstellung:</strong><br>
+  G. B. Ermentrout &amp; J. D. Cowan, <em>A Mathematical Theory of Visual Hallucination Patterns</em>,
+  Biol. Cybernetics 34, 137–150 (1979).<br>
+  H. Klüver, <em>Mescal: The ‚Divine‘ Plant and Its Psychological Effects</em> (1928).<br>
+  H. Klüver, <em>Mechanisms of Hallucinations</em> (1942), in: Studies in Personality.</p>
+  <p class="small">Alle Simulationen sind vereinfachte, qualitativ korrekte Rekonstruktionen —
+  gedacht zum Verstehen, nicht zum Publizieren. Mathematisch wurde nichts über Abiturniveau
+  vorausgesetzt: Sinus, Exponentialfunktion, Logarithmus, Ableitung, Polarkoordinaten.</p>
+</footer>
+
+</main>
 
 <script>
-// === RETINO-CORTICAL MAP ===
-const canvasV1 = document.getElementById('canvas-v1');
-const ctxV1 = canvasV1.getContext('2d');
-const canvasVF = document.getElementById('canvas-vf');
-const ctxVF = canvasVF.getContext('2d');
+/* =================================================================
+   GLOBALE HILFSFUNKTIONEN
+   ================================================================= */
+const TAU = Math.PI*2;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const $=id=>document.getElementById(id);
 
-function drawPatterns() {
-    const pattern = document.getElementById('v1-pattern').value;
-    const q = parseInt(document.getElementById('q-slider').value);
-    document.getElementById('q-val').textContent = q;
-    
-    const w = canvasV1.width, h = canvasV1.height;
-    
-    // Draw V1
-    const imgV1 = ctxV1.createImageData(w, h);
-    for (let py = 0; py < h; py++) {
-        for (let px = 0; px < w; px++) {
-            let x = (px / w) * 2 * Math.PI;
-            let y = (py / h) * 2 * Math.PI;
-            let val = 0;
-            if (pattern === 'horizontal') val = Math.cos(q * y);
-            else if (pattern === 'vertical') val = Math.cos(q * x);
-            else if (pattern === 'diagonal') val = Math.cos(q * (x + y) / 1.414);
-            else if (pattern === 'hexagonal') {
-                val = Math.cos(q * x) + Math.cos(q * (-0.5*x + 0.866*y)) + Math.cos(q * (-0.5*x - 0.866*y));
-                val /= 3;
-            }
-            let c = Math.floor((val + 1) * 127);
-            let idx = (py * w + px) * 4;
-            imgV1.data[idx] = c * 0.5;
-            imgV1.data[idx+1] = c;
-            imgV1.data[idx+2] = 255 - c * 0.5;
-            imgV1.data[idx+3] = 255;
+/* ---------- Farbpaletten ---------- */
+const PAL = {
+  neon:   t=>{ // -1..1
+    const x=clamp((t+1)/2,0,1);
+    if(x<0.5){const u=x*2;return [Math.round(10+u*40), Math.round(10+u*60), Math.round(40+u*150)];}
+    const u=(x-0.5)*2;return [Math.round(50+u*205), Math.round(70+u*60), Math.round(190-u*80)];
+  },
+  fire: t=>{const x=clamp((t+1)/2,0,1);
+    return [Math.round(255*Math.min(1,x*2.2)), Math.round(255*clamp(x*1.6-0.35,0,1)), Math.round(255*clamp(x*2.6-1.6,0,1))];},
+  ice: t=>{const x=clamp((t+1)/2,0,1);
+    return [Math.round(255*clamp(x*2.2-1.1,0,1)), Math.round(255*clamp(x*1.5-0.1,0,1)), Math.round(60+195*Math.min(1,x*1.5))];},
+  mono: t=>{const x=clamp((t+1)/2,0,1);const v=Math.round(255*x);return [v,v,v];}
+};
+const PALNAMES=['neon','fire','ice','mono'];
+const PALLABEL=['Neon','Feuer','Eis','Grau'];
+
+/* ---------- Temml helper ---------- */
+function mathInto(id, tex, display=true){
+  const el=$(id); if(!el) return;
+  try{ el.innerHTML = temml.renderToString(tex, {displayMode:display}); }
+  catch(e){ el.textContent = tex; }
+}
+
+/* ---------- Scroll progress + nav ---------- */
+(function(){
+  const bar=$('progress'), links=[...document.querySelectorAll('#toc a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll(){
+    const h=document.documentElement.scrollHeight-innerHeight;
+    bar.style.width=(scrollY/Math.max(1,h)*100)+'%';
+    let cur=0;
+    secs.forEach((s,i)=>{ if(s.getBoundingClientRect().top<140) cur=i; });
+    links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+  }
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+})();
+
+/* ---------- generic button-group helper ---------- */
+function group(selector, cb){
+  const btns=[...document.querySelectorAll(selector)];
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    cb(b.dataset, b);
+  }));
+  return btns;
+}
+
+/* =================================================================
+   RETINO-CORTICAL MAP  (zentral, überall benutzt)
+   Vorwärts:  (r,θ) → (x,y)   x = a·ln(r/r0),  y = b·θ
+   Rückwärts: (x,y) → (r,θ)
+   ================================================================= */
+const MAP = {
+  a: 1.0, b: 1.0, r0: 0.045,
+  // Gegeben normalisierte Sehfeld-Koordinaten (u,v in [-1,1]) → Cortex (cx,cy in [-1,1])
+  toCortex(u,v){
+    const r=Math.hypot(u,v), th=Math.atan2(v,u);
+    const rr=Math.max(r,this.r0);
+    const x = Math.log(rr/this.r0)/Math.log(1/this.r0); // 0..1
+    const y = th/Math.PI;                               // -1..1
+    return [x*2-1, y];
+  },
+  // Cortex (cx,cy in [-1,1]) → Sehfeld
+  toRetina(cx,cy){
+    const x=(cx+1)/2;
+    const r=this.r0*Math.pow(1/this.r0, x);
+    const th=cy*Math.PI;
+    return [r*Math.cos(th), r*Math.sin(th)];
+  }
+};
+
+/* =================================================================
+   PATTERN-FUNKTIONEN im Cortex
+   ================================================================= */
+function patRolls(x,y,k,ang,ph){
+  const c=Math.cos(ang), s=Math.sin(ang);
+  return Math.cos(k*(x*c+y*s)+ph);
+}
+function patSquare(x,y,k,ang,p1,p2){
+  const c=Math.cos(ang), s=Math.sin(ang);
+  const u=x*c+y*s, v=-x*s+y*c;
+  return 0.5*(Math.cos(k*u+p1)+Math.cos(k*v+p2));
+}
+function patRhomb(x,y,k,ang,theta,p1,p2){
+  const c=Math.cos(ang), s=Math.sin(ang);
+  const u=x*c+y*s, v=-x*s+y*c;
+  const c2=Math.cos(theta), s2=Math.sin(theta);
+  return 0.5*(Math.cos(k*u+p1)+Math.cos(k*(u*c2+v*s2)+p2));
+}
+function patHex(x,y,k,ang,p1,p2,p3){
+  const c=Math.cos(ang), s=Math.sin(ang);
+  const u=x*c+y*s, v=-x*s+y*c;
+  const a1=0, a2=TAU/3, a3=2*TAU/3;
+  return (Math.cos(k*(u*Math.cos(a1)+v*Math.sin(a1))+p1)
+        + Math.cos(k*(u*Math.cos(a2)+v*Math.sin(a2))+p2)
+        + Math.cos(k*(u*Math.cos(a3)+v*Math.sin(a3))+p3))/3;
+}
+
+/* Render eine Cortex-Funktion f(x,y)∈[-1,1] auf Canvas (Cortex-Ansicht) */
+function renderCortex(ctx,W,H,f,pal,opts={}){
+  const img=ctx.createImageData(W,H), d=img.data;
+  const binar = opts.binary, cont=opts.contour;
+  for(let j=0;j<H;j++){
+    const y=(j/H)*2-1;
+    for(let i=0;i<W;i++){
+      const x=(i/W)*2-1;
+      let v=f(x,y);
+      if(binar) v = v>0 ? 0.85 : -0.85;
+      let [r,g,b]=pal(v);
+      if(cont){
+        const lv=Math.abs(((v+1)*4)%1-0.5);
+        if(lv<0.06){r=255;g=255;b=255;}
+      }
+      const o=(j*W+i)*4; d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+}
+
+/* Render Wahrnehmung: für jeden Sehfeld-Pixel Cortex-Koordinate berechnen */
+function renderPercept(ctx,W,H,f,pal,opts={}){
+  const img=ctx.createImageData(W,H), d=img.data;
+  const binar=opts.binary;
+  const cx=W/2, cy=H/2, R=Math.min(W,H)/2;
+  for(let j=0;j<H;j++){
+    for(let i=0;i<W;i++){
+      const u=(i-cx)/R, v=(j-cy)/R;
+      const rad=Math.hypot(u,v);
+      const o=(j*W+i)*4;
+      if(rad>1){ d[o]=4;d[o+1]=4;d[o+2]=10;d[o+3]=255; continue; }
+      const [X,Y]=MAP.toCortex(u,v);
+      let val=f(X,Y);
+      if(binar) val = val>0?0.85:-0.85;
+      // Vignette zur Mitte hin (Fovea-Betonung)
+      const fade = 1 - Math.pow(rad,6)*0.55;
+      let [r,g,b]=pal(val*fade);
+      d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+}
+
+/* =================================================================
+   SECTION 0 — HERO
+   ================================================================= */
+(function(){
+  const cv=$('heroCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height, half=W/2;
+  const cL=document.createElement('canvas'); cL.width=half;cL.height=H;
+  const cR=document.createElement('canvas'); cR.width=half;cR.height=H;
+  const gL=cL.getContext('2d'), gR=cR.getContext('2d');
+  let mode='roll', t=0;
+  let noiseField=null;
+
+  function makeNoise(){
+    const N=96; const arr=new Float32Array(N*N);
+    const raw=new Float32Array(N*N);
+    for(let i=0;i<N*N;i++) raw[i]=Math.random()*2-1;
+    // bandpass-ish: smooth then subtract broader smooth
+    function blur(src,rad){
+      const out=new Float32Array(N*N);
+      for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+        let s=0,c=0;
+        for(let dj=-rad;dj<=rad;dj++)for(let di=-rad;di<=rad;di++){
+          const jj=(j+dj+N)%N, ii=(i+di+N)%N; s+=src[jj*N+ii];c++;
         }
+        out[j*N+i]=s/c;
+      }
+      return out;
     }
-    ctxV1.putImageData(imgV1, 0, 0);
-    
-    // Draw Visual Field (inverse log-polar)
-    const imgVF = ctxVF.createImageData(w, h);
-    const cx = w/2, cy = h/2;
-    for (let py = 0; py < h; py++) {
-        for (let px = 0; px < w; px++) {
-            let dx = px - cx, dy = py - cy;
-            let r = Math.sqrt(dx*dx + dy*dy);
-            let theta = Math.atan2(dy, dx);
-            if (r < 5 || r > cx - 5) { 
-                let idx = (py * w + px) * 4;
-                imgVF.data[idx] = imgVF.data[idx+1] = imgVF.data[idx+2] = 10;
-                imgVF.data[idx+3] = 255;
-                continue; 
-            }
-            // cortical coords
-            let cortX = Math.log(r / 10) * 2;
-            let cortY = (theta + Math.PI) / (2 * Math.PI) * 2 * Math.PI;
-            
-            let val = 0;
-            if (pattern === 'horizontal') val = Math.cos(q * cortY);
-            else if (pattern === 'vertical') val = Math.cos(q * cortX);
-            else if (pattern === 'diagonal') val = Math.cos(q * (cortX + cortY) / 1.414);
-            else if (pattern === 'hexagonal') {
-                val = Math.cos(q * cortX) + Math.cos(q * (-0.5*cortX + 0.866*cortY)) + Math.cos(q * (-0.5*cortX - 0.866*cortY));
-                val /= 3;
-            }
-            let c = Math.floor((val + 1) * 127);
-            let idx = (py * w + px) * 4;
-            imgVF.data[idx] = c * 0.5;
-            imgVF.data[idx+1] = c;
-            imgVF.data[idx+2] = 255 - c * 0.5;
-            imgVF.data[idx+3] = 255;
-        }
+    const a=blur(raw,2), b=blur(raw,6);
+    for(let i=0;i<N*N;i++) arr[i]=(a[i]-b[i])*7;
+    return {N,arr};
+  }
+  function sampleNoise(nf,x,y){
+    const N=nf.N;
+    let i=Math.floor(((x+1)/2)*N)%N, j=Math.floor(((y+1)/2)*N)%N;
+    if(i<0)i+=N; if(j<0)j+=N;
+    return clamp(nf.arr[j*N+i],-1,1);
+  }
+
+  function field(){
+    const k=11;
+    switch(mode){
+      case 'roll':   return (x,y)=>patRolls(x,y,k,Math.PI/2,t*0.6);
+      case 'funnel': return (x,y)=>patRolls(x,y,k,0,t*0.6);
+      case 'spiral': return (x,y)=>patRolls(x,y,k,0.66,t*0.9);
+      case 'hex':    return (x,y)=>patHex(x,y,k*0.8,t*0.07,t*0.4,0,0);
+      case 'sq':     return (x,y)=>patSquare(x,y,k*0.8,t*0.05,t*0.4,0);
+      case 'noise':  { if(!noiseField)noiseField=makeNoise();
+                       return (x,y)=>sampleNoise(noiseField, x+Math.sin(t*0.2)*0.02, y); }
     }
-    ctxVF.putImageData(imgVF, 0, 0);
-}
+  }
+  function draw(){
+    t+=0.016;
+    const f=field();
+    renderCortex(gL,half,H,f,PAL.neon,{});
+    renderPercept(gR,half,H,f,PAL.neon,{});
+    ctx.drawImage(cL,0,0); ctx.drawImage(cR,half,0);
+    ctx.strokeStyle='rgba(160,160,230,.3)'; ctx.beginPath();
+    ctx.moveTo(half,0);ctx.lineTo(half,H);ctx.stroke();
+    requestAnimationFrame(draw);
+  }
+  group('[data-hero]', ds=>{ mode=ds.hero; if(mode==='noise') noiseField=makeNoise(); });
+  draw();
+})();
 
-document.getElementById('v1-pattern').addEventListener('change', drawPatterns);
-document.getElementById('q-slider').addEventListener('input', drawPatterns);
-drawPatterns();
-
-// === DISPERSION RELATION ===
-function drawDispersion() {
-    const mu = parseInt(document.getElementById('mu-slider').value) / 100;
-    const sigma_i = parseInt(document.getElementById('sigma-slider').value) / 10;
-    document.getElementById('mu-val').textContent = mu.toFixed(2);
-    document.getElementById('sigma-val').textContent = sigma_i.toFixed(1);
-    
-    const sigma_e = 1.0;
-    const qs = [];
-    const lambdas = [];
-    
-    for (let i = 0; i <= 100; i++) {
-        let q = i * 0.1;
-        qs.push(q);
-        // Mexican hat in Fourier: w_hat(q) = exp(-sigma_e^2 * q^2 / 2) - A * exp(-sigma_i^2 * q^2 / 2)
-        let w_hat = Math.exp(-sigma_e*sigma_e*q*q/2) - 0.8 * Math.exp(-sigma_i*sigma_i*q*q/2);
-        let lambda = -1 + mu * 5 * w_hat;
-        lambdas.push(lambda);
-    }
-    
-    Plotly.newPlot('plotly-dispersion', [
-        { x: qs, y: lambdas, type: 'scatter', mode: 'lines', line: { color: '#8af', width: 3 }, name: 'λ(q)' },
-        { x: [0, 10], y: [0, 0], type: 'scatter', mode: 'lines', line: { color: '#f88', width: 1, dash: 'dash' }, name: 'Stabilitätsgrenze' }
-    ], {
-        title: { text: 'Dispersionsrelation λ(q) = -1 + μ·ŵ(q)', font: { color: '#8af' } },
-        xaxis: { title: 'Wellenzahl q', color: '#aaa', gridcolor: '#222' },
-        yaxis: { title: 'Wachstumsrate λ', color: '#aaa', gridcolor: '#222', range: [-1.5, 1] },
-        paper_bgcolor: '#0a0a1a',
-        plot_bgcolor: '#0a0a1a',
-        font: { color: '#ccc' },
-        annotations: [{
-            x: qs[lambdas.indexOf(Math.max(...lambdas))],
-            y: Math.max(...lambdas),
-            text: Math.max(...lambdas) > 0 ? '⚠️ INSTABIL! Muster wächst!' : 'stabil',
-            showarrow: true, arrowcolor: '#ff0', font: { color: '#ff0' }
-        }]
-    }, { responsive: true });
-}
-
-document.getElementById('mu-slider').addEventListener('input', drawDispersion);
-document.getElementById('sigma-slider').addEventListener('input', drawDispersion);
-drawDispersion();
-
-// === SIMULATION ===
-const canvasSim = document.getElementById('canvas-sim');
-const ctxSim = canvasSim.getContext('2d');
-const N = 100;
-let grid = new Float32Array(N * N);
-let gridNew = new Float32Array(N * N);
-let simRunning = false;
-let simInterval = null;
-
-function initGrid() {
-    for (let i = 0; i < N*N; i++) grid[i] = (Math.random() - 0.5) * 0.1;
-}
-
-function simStep() {
-    const speed = parseInt(document.getElementById('speed-slider').value);
-    for (let s = 0; s < speed; s++) {
-        for (let y = 0; y < N; y++) {
-            for (let x = 0; x < N; x++) {
-                let sum_e = 0, sum_i = 0;
-                // Short-range excitation
-                for (let dy = -2; dy <= 2; dy++) {
-                    for (let dx = -2; dx <= 2; dx++) {
-                        let nx = (x+dx+N)%N, ny = (y+dy+N)%N;
-                        let d = Math.sqrt(dx*dx+dy*dy);
-                        if (d < 2.5) sum_e += grid[ny*N+nx] * Math.exp(-d*d/1.5);
-                    }
-                }
-                // Long-range inhibition
-                for (let dy = -6; dy <= 6; dy++) {
-                    for (let dx = -6; dx <= 6; dx++) {
-                        let nx = (x+dx+N)%N, ny = (y+dy+N)%N;
-                        let d = Math.sqrt(dx*dx+dy*dy);
-                        if (d < 6.5 && d > 1.5) sum_i += grid[ny*N+nx] * Math.exp(-d*d/12);
-                    }
-                }
-                let a = grid[y*N+x];
-                let da = -a + Math.tanh(2.5 * (sum_e * 0.3 - sum_i * 0.15));
-                gridNew[y*N+x] = a + da * 0.1;
-            }
-        }
-        [grid, gridNew] = [gridNew, grid];
-    }
-    drawSim();
-}
-
-function drawSim() {
-    const img = ctxSim.createImageData(canvasSim.width, canvasSim.height);
-    const scale = canvasSim.width / N;
-    for (let y = 0; y < N; y++) {
-        for (let x = 0; x < N; x++) {
-            let val = grid[y*N+x];
-            let c = Math.floor((Math.tanh(val*3) + 1) * 127);
-            for (let sy = 0; sy < scale; sy++) {
-                for (let sx = 0; sx < scale; sx++) {
-                    let px = Math.floor(x*scale+sx), py = Math.floor(y*scale+sy);
-                    if (px < canvasSim.width && py < canvasSim.height) {
-                        let idx = (py * canvasSim.width + px) * 4;
-                        img.data[idx] = c < 128 ? 0 : (c-128)*2;
-                        img.data[idx+1] = c;
-                        img.data[idx+2] = c < 128 ? 255-c*2 : 0;
-                        img.data[idx+3] = 255;
-                    }
-                }
-            }
-        }
-    }
-    ctxSim.putImageData(img, 0, 0);
-}
-
-document.getElementById('sim-start').addEventListener('click', () => {
-    if (!simRunning) {
-        simRunning = true;
-        simInterval = setInterval(simStep, 50);
-        document.getElementById('sim-start').textContent = '⏸ Pause';
-    } else {
-        simRunning = false;
-        clearInterval(simInterval);
-        document.getElementById('sim-start').textContent = '▶ Start';
-    }
-});
-
-document.getElementById('sim-reset').addEventListener('click', () => {
-    simRunning = false;
-    clearInterval(simInterval);
-    document.getElementById('sim-start').textContent = '▶ Start';
-    initGrid();
-    drawSim();
-});
-
-initGrid();
-drawSim();
-
-// === PLANFORMS ===
-function drawPlanform(canvasId, type) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width, h = canvas.height;
-    const img = ctx.createImageData(w, h);
-    const q = 6;
-    
-    for (let py = 0; py < h; py++) {
-        for (let px = 0; px < w; px++) {
-            let x = (px / w) * 4 * Math.PI;
-            let y = (py / h) * 4 * Math.PI;
-            let val = 0;
-            
-            if (type === 'rolls') {
-                val = Math.cos(q * x);
-            } else if (type === 'squares') {
-                val = Math.cos(q * x) + Math.cos(q * y);
-                val /= 2;
-            } else if (type === 'hexagons') {
-                val = Math.cos(q * x) + Math.cos(q * (-0.5*x + 0.866*y)) + Math.cos(q * (-0.5*x - 0.866*y));
-                val /= 3;
-            }
-            
-            let c = Math.floor((val + 1) * 127);
-            let idx = (py * w + px) * 4;
-            img.data[idx] = 255 - c;
-            img.data[idx+1] = c * 0.7;
-            img.data[idx+2] = c;
-            img.data[idx+3] = 255;
-        }
-    }
-    ctx.putImageData(img, 0, 0);
-}
-
-drawPlanform('canvas-rolls', 'rolls');
-drawPlanform('canvas-squares', 'squares');
-drawPlanform('canvas-hexagons', 'hexagons');
-
-// Tabs
-document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+/* =================================================================
+   SECTION 1 — Wortwolke Probanden
+   ================================================================= */
+(function(){
+  const SUBJ=[
+    {n:'Knauer & Maloney (1913)', w:['Ringe','konzentrisch','rotierend','Trichter','Kegel','Mosaik','Kuppel','Rhomboide','Spirale']},
+    {n:'Weir Mitchell (1896)', w:['Sterne','Zickzack','Farbfelder','gotischer Turm','Edelsteine','Wellen','Spirale']},
+    {n:'Havelock Ellis (1897)', w:['Kaleidoskop','symmetrisch','Arabesken','Juwelenfelder','Gewölbe','rotierendes Gefäß','Netz']},
+    {n:'Beringer-Protokolle (1927)', w:['Wabe','sechseckig','Flechtwerk','Gitter','Filigran','Spinnennetz','Schachbrett','Spirale','Tunnel','Korridor','Kuppel','Ornament']},
+    {n:'Klüver selbst (1926)', w:['Räder','Sterne','Fäden zum Zentrum','Spinnennetz','Schrauben','Kegel','Arabesken','Symmetrie','„motion per se“']},
+    {n:'Fieberdelir (Wolff & Curran)', w:['Spirale','Wirbel','kristalline Muster','Kaleidoskop']},
+    {n:'Migräne (Klien 1917)', w:['sechseckiges Netz','Gitter']},
+    {n:'Flickerlicht (Haack 1927)', w:['sechseckige Muster','Kegel','Bewegung']},
+    {n:'König 1884 (beim Aufwachen)', w:['Wabe','sechseckig','ganzes Sehfeld gefüllt']},
+    {n:'Unterzucker (Weil 1938)', w:['Wabe','sechseckig','Königs Muster']}
+  ];
+  const btnBox=$('subjBtns'), cloud=$('wordCloud');
+  if(!btnBox) return;
+  // Alle Wörter sammeln + Häufigkeit
+  const freq={};
+  SUBJ.forEach(s=>s.w.forEach(w=>freq[w]=(freq[w]||0)+1));
+  const all=Object.keys(freq).sort((a,b)=>freq[b]-freq[a]);
+  let active=-1;
+  function render(){
+    cloud.innerHTML='';
+    all.forEach(w=>{
+      const f=freq[w];
+      const el=document.createElement('span');
+      const size=12+Math.min(f,6)*3.4;
+      const on = active>=0 && SUBJ[active].w.includes(w);
+      el.textContent=w;
+      el.style.cssText=`font-family:Inter;font-size:${size}px;font-weight:${f>1?600:400};
+        padding:4px 10px;border-radius:20px;transition:.25s;
+        border:1px solid ${on?'var(--acc2)':'rgba(140,140,200,.18)'};
+        color:${on?'#07070c':(f>2?'var(--acc3)':(f>1?'var(--fg)':'var(--fg-faint)'))};
+        background:${on?'var(--acc2)':(f>2?'rgba(255,207,92,.08)':'transparent')};`;
+      el.title = f+'× genannt';
+      cloud.appendChild(el);
     });
-});
-</script>
+  }
+  SUBJ.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.className='b'; b.textContent=s.n;
+    b.addEventListener('click',()=>{
+      active = active===i ? -1 : i;
+      [...btnBox.children].forEach((x,j)=>x.classList.toggle('on',j===active));
+      render();
+    });
+    btnBox.appendChild(b);
+  });
+  render();
+})();
 
+/* =================================================================
+   SECTION 2 — Formkonstanten-Generator
+   ================================================================= */
+(function(){
+  const cv=$('fcCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let mode='lattice', t=0;
+  const LBL={lattice:'Gitter',honey:'Wabe',chess:'Schachbrett',cobweb:'Spinnennetz',
+             tunnel:'Tunnel',funnel:'Trichter',spiral:'Spirale'};
+  const P={f:12,c:1.4,r:0,h:0,anim:true};
+  const pals=[
+    v=>{const x=clamp((v+1)/2,0,1);
+        return [Math.round(255*clamp(Math.sin(x*3.5)*1.3,0,1)),
+                Math.round(255*clamp(Math.sin(x*3.5+2.1)*1.2,0,1)),
+                Math.round(255*clamp(Math.sin(x*3.5+4.2)*1.2,0,1))];},
+    PAL.fire, PAL.ice, PAL.mono
+  ];
+  function val(u,v,T){ // u,v in [-1,1]
+    const a=P.r*Math.PI/180;
+    const c=Math.cos(a),s=Math.sin(a);
+    const x=u*c+v*s, y=-u*s+v*c;
+    const k=P.f;
+    const r=Math.hypot(u,v)+1e-6, th=Math.atan2(v,u);
+    switch(mode){
+      case 'lattice': return 0.5*(Math.cos(k*x*3+T)+Math.cos(k*y*3+T*0.7));
+      case 'chess': return Math.sign(Math.cos(k*x*3)*Math.cos(k*y*3))*0.9;
+      case 'honey': {
+        const a1=0,a2=TAU/3,a3=2*TAU/3, kk=k*2.6;
+        return (Math.cos(kk*(x*Math.cos(a1)+y*Math.sin(a1))+T)
+              + Math.cos(kk*(x*Math.cos(a2)+y*Math.sin(a2))+T)
+              + Math.cos(kk*(x*Math.cos(a3)+y*Math.sin(a3))+T))/2.2;
+      }
+      case 'cobweb': {
+        // radial + angular, aber logarithmisch im Radius (das macht das "Netz")
+        const lr=Math.log(Math.max(r,0.03));
+        return 0.5*(Math.cos(k*lr*1.6+T)+Math.cos(k*th*0.9+T*0.4));
+      }
+      case 'tunnel': { const lr=Math.log(Math.max(r,0.03)); return Math.cos(k*lr*1.9+T*1.6); }
+      case 'funnel': return Math.cos(k*th*0.85+T*1.1);
+      case 'spiral': { const lr=Math.log(Math.max(r,0.03));
+                       return Math.cos(k*(lr*1.5+th*0.85)+T*1.3); }
+    }
+    return 0;
+  }
+  function draw(){
+    if(P.anim) t+=0.018;
+    const img=ctx.createImageData(W,H), d=img.data;
+    const pal=pals[P.h];
+    const cx=W/2,cy=H/2,R=Math.min(W,H)/2;
+    for(let j=0;j<H;j++){
+      for(let i=0;i<W;i++){
+        const u=(i-cx)/R, v=(j-cy)/R;
+        const o=(j*W+i)*4;
+        const rad=Math.hypot(u,v);
+        if(rad>1.0){ d[o]=5;d[o+1]=5;d[o+2]=12;d[o+3]=255; continue; }
+        let s=val(u,v,t);
+        s=Math.tanh(s*P.c);
+        const fade=1-Math.pow(rad,8)*0.6;
+        const [r,g,b]=pal(s*fade);
+        d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+    requestAnimationFrame(draw);
+  }
+  group('[data-fc]', ds=>{ mode=ds.fc; $('fcLabel').textContent=LBL[mode]; });
+  const bind=(id,lab,key,fmt)=>{ const el=$(id);
+    el.addEventListener('input',()=>{ P[key]=+el.value; $(lab).textContent=fmt?fmt(+el.value):el.value;});};
+  bind('fcF','fcFv','f'); bind('fcC','fcCv2','c',v=>v.toFixed(2));
+  bind('fcR','fcRv','r',v=>v+'°');
+  $('fcH').addEventListener('input',e=>{P.h=+e.target.value;
+    $('fcHv').textContent=['Psychedelisch','Feuer','Eis','Grau'][P.h];});
+  $('fcAnim').addEventListener('change',e=>P.anim=e.target.checked);
+  draw();
+})();
+
+/* =================================================================
+   SECTION 3 — Evidenz-Tableau
+   ================================================================= */
+(function(){
+  const EV=[
+    {t:'Halluzinationen in völliger Dunkelheit (Siegel 1977)', v:+2,
+     x:'Ohne Licht kann kein Augengewebe beleuchtet werden — dennoch erscheinen die Formen.'},
+    {t:'LSD bei 13 von 16 blinden Probanden (Krill 1963)', v:+3,
+     x:'Manche Probanden hatten gar keine Augen mehr (enukleiert). Das Erlebnis muss höher entstehen.'},
+    {t:'Reizung des Temporallappens erzeugt Visionen (Penfield & Perot 1963)', v:+2,
+     x:'Direkte elektrische Reizung der Hirnrinde ruft visuelle Erlebnisse hervor.'},
+    {t:'Dieselben Formen bei Migräne, Fieber, Flicker, Unterzucker (Klüver 1942)', v:+2,
+     x:'Völlig verschiedene Ursachen, gleiche Formen ⇒ gemeinsame zentrale Endstrecke.'},
+    {t:'Blutgefäßnetz der Netzhaut sieht aus wie ein Spinnennetz (Marshall 1937)', v:-2,
+     x:'Oberflächliche Ähnlichkeit — aber erklärt weder Spiralen noch Tunnel noch die Bewegung.'},
+    {t:'Entoptische Phänomene (Purkinje) zeigen ähnliche Muster', v:-1,
+     x:'Richtig, aber sie sind flüchtig und nicht formkonstant; Klüver schließt sie als Hauptursache aus.'},
+    {t:'Muster krümmen sich zur Sehfeldmitte hin (Siegel 1977)', v:+3,
+     x:'Genau das sagt die retino-kortikale Abbildung voraus — Abschnitt 4.'},
+    {t:'Mescalin in Hinterhauptsrinde nicht angereichert (Veit & Vogt 1934)', v:+1,
+     x:'Die Wirkung ist also nicht „im Auge lokalisiert“, sondern systemisch-kortikal.'}
+  ];
+  const box=$('evList'), bar=$('evBar'), verd=$('evVerdict');
+  if(!box) return;
+  const state=new Array(EV.length).fill(false);
+  EV.forEach((e,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='padding:9px 12px;margin:5px 0;border-radius:9px;cursor:pointer;transition:.2s;'+
+      'border:1px solid rgba(140,140,200,.14);font-family:Inter;font-size:13.5px;color:var(--fg-dim)';
+    row.innerHTML=`<strong style="color:#fff">${e.t}</strong>
+      <div style="font-size:12.5px;margin-top:3px;opacity:.75">${e.x}</div>`;
+    row.addEventListener('click',()=>{
+      state[i]=!state[i];
+      row.style.borderColor = state[i] ? (e.v>0?'var(--acc2)':'var(--acc4)') : 'rgba(140,140,200,.14)';
+      row.style.background  = state[i] ? (e.v>0?'rgba(94,231,212,.07)':'rgba(139,123,255,.08)') : 'transparent';
+      upd();
+    });
+    box.appendChild(row);
+  });
+  function upd(){
+    let s=0,n=0;
+    EV.forEach((e,i)=>{ if(state[i]){ s+=e.v; n++; } });
+    if(n===0){ bar.style.width='0%'; bar.style.left='50%';
+      verd.textContent='Noch keine Evidenz gewählt.'; return; }
+    const maxPos=EV.filter(e=>e.v>0).reduce((a,e)=>a+e.v,0);
+    const maxNeg=Math.abs(EV.filter(e=>e.v<0).reduce((a,e)=>a+e.v,0));
+    if(s>=0){ bar.style.left='50%'; bar.style.width=(s/maxPos*50)+'%'; }
+    else { const w=Math.abs(s)/maxNeg*50; bar.style.left=(50-w)+'%'; bar.style.width=w+'%'; }
+    verd.innerHTML = s>3
+      ? '<strong style="color:var(--acc2)">Deutlich zentral.</strong> Die Peripherie-Theorie kann diese Befunde nicht erklären.'
+      : s>0 ? 'Tendenz: zentral.' 
+      : s===0 ? 'Ausgeglichen — wähle mehr Belege.'
+      : '<strong style="color:var(--acc4)">Tendenz peripher</strong> — aber nur, wenn man die entscheidenden Befunde weglässt.';
+  }
+})();
+
+/* =================================================================
+   SECTION 4 — Retino-kortikale Abbildung
+   ================================================================= */
+(function(){
+  const rc=$('retCv'), cc=$('corCv'); if(!rc) return;
+  const rg=rc.getContext('2d'), cg=cc.getContext('2d');
+  const W=rc.width,H=rc.height, R=W/2;
+  // Punktliste in Sehfeldkoordinaten
+  let pts=[]; // {u,v,hue}
+  let hue=0;
+  function clear(){ pts=[]; redraw(); }
+  function addPt(u,v){ pts.push({u,v,h:hue}); hue=(hue+1.4)%360; }
+  function redraw(){
+    // Retina
+    rg.fillStyle='#05050c'; rg.fillRect(0,0,W,H);
+    // Hintergrund-Polarnetz
+    rg.strokeStyle='rgba(140,140,200,.14)'; rg.lineWidth=1;
+    for(let k=1;k<=5;k++){ rg.beginPath(); rg.arc(W/2,H/2,R*k/5,0,TAU); rg.stroke(); }
+    for(let a=0;a<12;a++){ rg.beginPath(); rg.moveTo(W/2,H/2);
+      rg.lineTo(W/2+R*Math.cos(a*TAU/12),H/2+R*Math.sin(a*TAU/12)); rg.stroke(); }
+    rg.fillStyle='rgba(255,207,92,.8)'; rg.beginPath(); rg.arc(W/2,H/2,3.5,0,TAU); rg.fill();
+    // Cortex
+    cg.fillStyle='#05050c'; cg.fillRect(0,0,W,H);
+    cg.strokeStyle='rgba(140,140,200,.14)';
+    for(let k=0;k<=8;k++){ cg.beginPath(); cg.moveTo(k*W/8,0); cg.lineTo(k*W/8,H); cg.stroke();
+      cg.beginPath(); cg.moveTo(0,k*H/8); cg.lineTo(W,k*H/8); cg.stroke(); }
+    // Achsenbeschriftung
+    cg.font='10px Inter'; cg.fillStyle='rgba(169,169,196,.7)';
+    cg.fillText('← Fovea', 6, H-8); cg.fillText('Peripherie →', W-82, H-8);
+    cg.save(); cg.translate(10,H/2); cg.rotate(-Math.PI/2);
+    cg.fillText('Winkel θ', -22, 0); cg.restore();
+    // Punkte
+    pts.forEach(p=>{
+      const px=W/2+p.u*R, py=H/2+p.v*R;
+      rg.fillStyle=`hsl(${p.h},85%,62%)`;
+      rg.beginPath(); rg.arc(px,py,2.6,0,TAU); rg.fill();
+      const [X,Y]=MAP.toCortex(p.u,p.v);
+      const qx=(X+1)/2*W, qy=(Y+1)/2*H;
+      cg.fillStyle=`hsl(${p.h},85%,62%)`;
+      cg.beginPath(); cg.arc(qx,qy,2.6,0,TAU); cg.fill();
+    });
+  }
+  // Freihand
+  let drawing=false, freeMode=true;
+  function pos(e){
+    const r=rc.getBoundingClientRect();
+    const sx=W/r.width, sy=H/r.height;
+    const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+    const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+    return [ (cx*sx-W/2)/R, (cy*sy-H/2)/R ];
+  }
+  rc.addEventListener('mousedown',e=>{ if(!freeMode)return; drawing=true; const[u,v]=pos(e); addPt(u,v); redraw();});
+  rc.addEventListener('mousemove',e=>{ if(drawing){const[u,v]=pos(e); addPt(u,v); redraw();}});
+  addEventListener('mouseup',()=>drawing=false);
+  rc.addEventListener('touchstart',e=>{e.preventDefault(); if(!freeMode)return; drawing=true;const[u,v]=pos(e);addPt(u,v);redraw();},{passive:false});
+  rc.addEventListener('touchmove',e=>{e.preventDefault(); if(drawing){const[u,v]=pos(e);addPt(u,v);redraw();}},{passive:false});
+  addEventListener('touchend',()=>drawing=false);
+
+  function preset(kind){
+    pts=[]; hue=0;
+    const N=900;
+    if(kind==='rings'){
+      for(let k=1;k<=6;k++){ const rr=0.09*Math.pow(1.52,k);
+        for(let i=0;i<160;i++){ const a=i/160*TAU; hue=k*42; pts.push({u:rr*Math.cos(a),v:rr*Math.sin(a),h:hue}); } }
+    } else if(kind==='rays'){
+      for(let k=0;k<10;k++){ const a=k/10*TAU;
+        for(let i=0;i<90;i++){ const rr=0.05+i/90*0.92; hue=k*36;
+          pts.push({u:rr*Math.cos(a),v:rr*Math.sin(a),h:hue}); } }
+    } else if(kind==='spiral'){
+      for(let s=0;s<4;s++){
+        for(let i=0;i<260;i++){ const tt=i/260;
+          const rr=0.045*Math.pow(1/0.045,tt);
+          const a=Math.log(rr/0.045)*1.25 + s*TAU/4;
+          hue=(s*90+tt*60)%360;
+          pts.push({u:rr*Math.cos(a),v:rr*Math.sin(a),h:hue}); } }
+    } else if(kind==='grid'){
+      for(let k=1;k<=6;k++){ const rr=0.09*Math.pow(1.52,k);
+        for(let i=0;i<140;i++){ const a=i/140*TAU; pts.push({u:rr*Math.cos(a),v:rr*Math.sin(a),h:170}); } }
+      for(let k=0;k<12;k++){ const a=k/12*TAU;
+        for(let i=0;i<80;i++){ const rr=0.05+i/80*0.92; pts.push({u:rr*Math.cos(a),v:rr*Math.sin(a),h:330}); } }
+    }
+    redraw();
+  }
+  group('[data-map]', ds=>{
+    freeMode = ds.map==='free';
+    if(ds.map==='clear') clear();
+    else if(ds.map!=='free') preset(ds.map);
+    else redraw();
+  });
+  redraw();
+})();
+
+/* ---- 4b Rückwärts-Projektor ---- */
+(function(){
+  const rc=$('rollCv'), pc=$('percCv'); if(!rc) return;
+  const rg=rc.getContext('2d'), pg=pc.getContext('2d');
+  const W=rc.width,H=rc.height;
+  let ang=90, wid=8;
+  function f(x,y){ const a=ang*Math.PI/180;
+    return Math.cos(wid*(x*Math.cos(a)+y*Math.sin(a))*1.6); }
+  function draw(){
+    renderCortex(rg,W,H,f,PAL.neon,{});
+    renderPercept(pg,W,H,f,PAL.neon,{});
+    // Verdict
+    let txt;
+    if(ang>80&&ang<100) txt='<strong>Senkrechte Streifen im Cortex → Tunnel.</strong> Konzentrische Ringe im Sehfeld. Klüver: „tunnel, funnel, cone, vessel“.';
+    else if(ang<12||ang>168) txt='<strong>Waagrechte Streifen im Cortex → Trichter.</strong> Strahlen vom Zentrum nach außen.';
+    else txt='<strong>Schräge Streifen im Cortex → Spirale.</strong> Je schräger, desto enger gedreht. Klüvers vierte Formkonstante.';
+    $('rollVerdict').innerHTML=txt;
+  }
+  $('rollA').addEventListener('input',e=>{ ang=+e.target.value;
+    $('rollAv').textContent=ang+'° '+(ang>80&&ang<100?'(senkrecht)':(ang<12||ang>168?'(waagrecht)':'(schräg)')); draw();});
+  $('rollW').addEventListener('input',e=>{ wid=+e.target.value; $('rollWv').textContent=wid; draw();});
+  document.querySelectorAll('[data-roll]').forEach(b=>b.addEventListener('click',()=>{
+    ang=+b.dataset.roll; $('rollA').value=ang;
+    $('rollAv').textContent=ang+'° '+(ang>80&&ang<100?'(senkrecht)':(ang<12||ang>168?'(waagrecht)':'(schräg)'));
+    draw();
+  }));
+  draw();
+})();
+
+/* =================================================================
+   SECTION 5 — Übersetzungstafel + Typ-Canvases
+   ================================================================= */
+(function(){
+  const TR=[
+    {id:'tunnel',n:'c · Tunnel',f:(x,y)=>Math.cos(11*x),
+     d:'Konzentrische Ringe im Sehfeld. Im Cortex: <strong>senkrechte Rollen</strong> — eine einzige ebene Welle in x-Richtung.',
+     p:['Rollen','1 Welle','global']},
+    {id:'funnel',n:'c · Trichter',f:(x,y)=>Math.cos(11*y),
+     d:'Strahlen vom Zentrum. Im Cortex: <strong>waagrechte Rollen</strong> — dieselbe Welle, nur um 90° gedreht.',
+     p:['Rollen','1 Welle','global']},
+    {id:'spiral',n:'d · Spirale',f:(x,y)=>Math.cos(9*(x*0.78+y*0.63)),
+     d:'Im Cortex: <strong>schräge Rollen</strong>. Ermentrout &amp; Cowan: Tunnel und Trichter sind nur die <em>entarteten Fälle</em> der Spirale (Steigung ∞ bzw. 0).',
+     p:['Rollen','1 Welle','global']},
+    {id:'honey',n:'a · Wabe',f:(x,y)=>patHex(x,y,9,0,0,0,0),
+     d:'Sechseckiges Mosaik. Im Cortex: <strong>hexagonales Gitter</strong> aus drei Wellen im 60°-Winkel. Bleibt unter der Abbildung fast unverändert — nur zur Mitte hin gekrümmt.',
+     p:['Zellen','3 Wellen','lokal']},
+    {id:'chess',n:'a · Schachbrett',f:(x,y)=>patSquare(x,y,9,0,0,0),
+     d:'Im Cortex: <strong>quadratisches Gitter</strong> aus zwei senkrecht stehenden Wellen.',
+     p:['Zellen','2 Wellen','lokal']},
+    {id:'cobweb',n:'b · Spinnennetz',f:(x,y)=>patRhomb(x,y,8,0,1.0,0,0),
+     d:'Nahe der Fovea. Im Cortex: <strong>rhombisches Gitter</strong>. Klüver bemerkte bereits: Spinnennetze liegen <em>zentral</em>, Gitter <em>peripher</em> — genau das sagt die Abbildung voraus.',
+     p:['Zellen','2 Wellen','lokal','fovea-nah']}
+  ];
+  const box=$('transBtns'); if(!box) return;
+  const pc=$('tPerc').getContext('2d'), cc=$('tCort').getContext('2d');
+  const W=330;
+  function show(i){
+    const t=TR[i];
+    renderCortex(cc,W,W,t.f,PAL.neon,{});
+    renderPercept(pc,W,W,t.f,PAL.neon,{});
+    $('tDiag').innerHTML=t.d;
+    $('tPills').innerHTML=t.p.map((p,k)=>`<span class="pill ${'abcd'[k%4]}">${p}</span>`).join('');
+  }
+  TR.forEach((t,i)=>{
+    const b=document.createElement('button'); b.className='b'+(i===0?' on':'');
+    b.textContent=t.n;
+    b.addEventListener('click',()=>{
+      [...box.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); show(i);
+    });
+    box.appendChild(b);
+  });
+  show(0);
+
+  // Typ-Mini-Canvases
+  const tr=$('typeRoll').getContext('2d'), tc=$('typeCell').getContext('2d');
+  renderCortex(tr,300,160,(x,y)=>Math.cos(9*x),PAL.fire,{});
+  renderCortex(tc,300,160,(x,y)=>patHex(x,y,8,0,0,0,0),PAL.ice,{});
+})();
+
+/* =================================================================
+   SECTION 6 — Ebene Wellen + Summen
+   ================================================================= */
+mathInto('m_logmap','x=\\ln\\!\\left(\\frac{r}{r_0}\\right),\\qquad y=\\theta');
+mathInto('m_wave','A(x,y)=\\cos\\!\\big(k_1x+k_2y+\\varphi\\big)\\quad\\text{mit}\\quad \\omega=\\sqrt{k_1^2+k_2^2}');
+mathInto('m_wkernel','\\hat{w}(\\omega)=\\int\\!\\!\\int w(r)\\,e^{i(k_1x+k_2y)}\\,dx\\,dy \\;=\\; e^{-\\omega^2\\sigma^2/4}\\;\\;(\\text{Gauß})');
+mathInto('m_field','\\frac{\\partial E}{\\partial t}=-E+S_e\\big(\\alpha_{ee}\\lambda\\,w_{ee}*E-\\alpha_{ie}\\,w_{ie}*I\\big)');
+mathInto('m_H','H(\\lambda,\\omega^2)=\\begin{pmatrix}-1+S_e\'(0)\\alpha_{ee}\\lambda\\hat w_{ee} & -S_e\'(0)\\alpha_{ie}\\hat w_{ie}\\\\ S_i\'(0)\\alpha_{ei}\\lambda\\hat w_{ei} & -1-S_i\'(0)\\alpha_{ii}\\hat w_{ii}\\end{pmatrix}');
+mathInto('m_bif','\\begin{aligned} y_1\\big(\\nu+a\\,y_1^2+b\\,y_2^2\\big)&=0\\\\ y_2\\big(\\nu+a\\,y_2^2+b\\,y_1^2\\big)&=0\\end{aligned}');
+
+(function(){
+  const cv=$('waveCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const P={a:0,k:6,p:0};
+  function draw(){
+    const img=ctx.createImageData(W,H),d=img.data;
+    const ang=P.a*Math.PI/180, ph=P.p*Math.PI/180;
+    const k1=P.k*Math.cos(ang), k2=P.k*Math.sin(ang);
+    for(let j=0;j<H;j++){ const y=(j/H)*2-1;
+      for(let i=0;i<W;i++){ const x=(i/W)*2-1;
+        const v=Math.cos(k1*x+k2*y+ph);
+        const [r,g,b]=PAL.neon(v);
+        const o=(j*W+i)*4; d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+      }}
+    ctx.putImageData(img,0,0);
+    // Pfeil zeichnen
+    const cx=W/2, cy=H/2, L=P.k*8+12;
+    ctx.save();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.shadowColor='#000'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    const ex=cx+L*Math.cos(ang), ey=cy+L*Math.sin(ang);
+    ctx.lineTo(ex,ey); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ex,ey);
+    ctx.lineTo(ex-10*Math.cos(ang-0.4), ey-10*Math.sin(ang-0.4));
+    ctx.lineTo(ex-10*Math.cos(ang+0.4), ey-10*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fillStyle='#fff'; ctx.fill();
+    ctx.font='bold 13px Inter'; ctx.fillStyle='#fff';
+    ctx.fillText('k', ex+8, ey+4);
+    ctx.restore();
+  }
+  $('wA').addEventListener('input',e=>{P.a=+e.target.value;$('wAv').textContent=P.a+'°';draw();});
+  $('wK').addEventListener('input',e=>{P.k=+e.target.value;$('wKv').textContent=P.k;draw();});
+  $('wP').addEventListener('input',e=>{P.p=+e.target.value;$('wPv').textContent=P.p+'°';draw();});
+  draw();
+})();
+
+(function(){
+  const cv=$('sumCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const P={n:1,a:90,b2:1,p2:0,p3:0};
+  function draw(){
+    const img=ctx.createImageData(W,H),d=img.data;
+    const k=9, th=P.a*Math.PI/180;
+    const p2=P.p2*Math.PI/180, p3=P.p3*Math.PI/180;
+    for(let j=0;j<H;j++){ const y=(j/H)*2-1;
+      for(let i=0;i<W;i++){ const x=(i/W)*2-1;
+        let v=Math.cos(k*x);
+        if(P.n>=2) v+=P.b2*Math.cos(k*(x*Math.cos(th)+y*Math.sin(th))+p2);
+        if(P.n>=3){ const t3=2*TAU/3;
+          // bei 3 Wellen: fester 120°-Abstand (hexagonal)
+          v = Math.cos(k*x)
+            + Math.cos(k*(x*Math.cos(TAU/3)+y*Math.sin(TAU/3))+p2)
+            + Math.cos(k*(x*Math.cos(2*TAU/3)+y*Math.sin(2*TAU/3))+p3);
+          v/=1.6;
+        }
+        v/= (P.n===2? (1+P.b2):1);
+        const [r,g,b]=PAL.neon(Math.tanh(v*1.6));
+        const o=(j*W+i)*4; d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+      }}
+    ctx.putImageData(img,0,0);
+    // Wellenvektoren oben links
+    ctx.save(); ctx.translate(62,62);
+    ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.beginPath(); ctx.arc(0,0,40,0,TAU); ctx.stroke();
+    const cols=['#ff6b9d','#5ee7d4','#ffcf5c'];
+    const angs = P.n===3 ? [0,TAU/3,2*TAU/3] : (P.n===2?[0,th]:[0]);
+    angs.forEach((a,i)=>{
+      ctx.strokeStyle=cols[i]; ctx.lineWidth=2.5; ctx.beginPath();
+      ctx.moveTo(0,0); ctx.lineTo(40*Math.cos(a),40*Math.sin(a)); ctx.stroke();
+      ctx.fillStyle=cols[i]; ctx.beginPath();
+      ctx.arc(40*Math.cos(a),40*Math.sin(a),3.5,0,TAU); ctx.fill();
+    });
+    ctx.restore();
+    let txt;
+    if(P.n===1) txt='<strong style="color:var(--acc)">Rollen.</strong> Eine Welle = Streifen. Ergibt Tunnel/Trichter/Spirale.';
+    else if(P.n===2) txt = Math.abs(P.a-90)<6
+      ? '<strong style="color:var(--acc2)">Quadratisches Gitter.</strong> Zwei Wellen im rechten Winkel = Schachbrett.'
+      : '<strong style="color:var(--acc2)">Rhombisches Gitter.</strong> Zwei Wellen im schrägen Winkel = Spinnennetz-artig.';
+    else txt='<strong style="color:var(--acc3)">Hexagonales Gitter.</strong> Drei Wellen im 60°-Abstand = Wabe. Spiele mit den Phasen — die Wabe bleibt hexagonal!';
+    $('sumDiag').innerHTML=txt;
+  }
+  group('[data-sum]', ds=>{P.n=+ds.sum; draw();});
+  $('sA').addEventListener('input',e=>{P.a=+e.target.value;$('sAv').textContent=P.a+'°';draw();});
+  $('sB2').addEventListener('input',e=>{P.b2=+e.target.value;$('sB2v').textContent=P.b2.toFixed(2);draw();});
+  $('sP2').addEventListener('input',e=>{P.p2=+e.target.value;$('sP2v').textContent=P.p2+'°';draw();});
+  $('sP3').addEventListener('input',e=>{P.p3=+e.target.value;$('sP3v').textContent=P.p3+'°';draw();});
+  draw();
+})();
+
+/* =================================================================
+   SECTION 7 — Faltung + Dämpfungskurve
+   ================================================================= */
+(function(){
+  const cv=$('convCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height, N=300;
+  let sig=14, kind='spike';
+  let sig0=null;
+  function makeSignal(){
+    const a=new Float32Array(N);
+    if(kind==='spike'){ a[Math.floor(N/2)]=1; }
+    else if(kind==='two'){ a[Math.floor(N*0.35)]=1; a[Math.floor(N*0.65)]=1; }
+    else if(kind==='wave'){ for(let i=0;i<N;i++) a[i]=0.5+0.5*Math.cos(i/N*TAU*6); }
+    else { for(let i=0;i<N;i++) a[i]=Math.random(); }
+    return a;
+  }
+  function kernel(s){
+    const K=new Float32Array(N); let sum=0;
+    for(let i=0;i<N;i++){ const d=i-N/2; const v=Math.exp(-d*d/(2*s*s)); K[i]=v; sum+=v; }
+    for(let i=0;i<N;i++) K[i]/=sum;
+    return K;
+  }
+  function conv(a,K){
+    const out=new Float32Array(N);
+    for(let i=0;i<N;i++){ let s=0;
+      for(let j=0;j<N;j++){ const idx=i-(j-N/2); if(idx>=0&&idx<N) s+=a[idx]*K[j]; }
+      out[i]=s; }
+    return out;
+  }
+  function plotRow(arr,y0,h,col,norm){
+    const mx = norm || Math.max(...arr, 1e-6);
+    ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const x=i/(N-1)*(W-40)+20;
+      const y=y0+h-(arr[i]/mx)*h;
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='rgba(140,140,200,.15)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(20,y0+h); ctx.lineTo(W-20,y0+h); ctx.stroke();
+  }
+  function draw(){
+    if(!sig0) sig0=makeSignal();
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const K=kernel(sig), out=conv(sig0,K);
+    plotRow(sig0,10,70,'#ff6b9d');
+    plotRow(K,100,70,'#ffcf5c');
+    plotRow(out,195,80,'#5ee7d4', Math.max(...sig0,1e-6));
+    ctx.font='11px Inter'; ctx.fillStyle='rgba(169,169,196,.8)';
+    ctx.fillText('Eingang',24,22); ctx.fillText('Kernel w(r)',24,112);
+    ctx.fillText('Faltung w ∗ E',24,207);
+  }
+  $('cvS').addEventListener('input',e=>{sig=+e.target.value;$('cvSv').textContent=sig;draw();});
+  group('[data-conv]', ds=>{kind=ds.conv; sig0=makeSignal(); draw();});
+  draw();
+})();
+
+(function(){
+  if(typeof Plotly==='undefined') return;
+  let sg=1, kind='gauss';
+  function upd(){
+    const r=[],wr=[],om=[],wh=[];
+    for(let i=0;i<=200;i++){
+      const x=-6+i*12/200; r.push(x);
+      wr.push(kind==='gauss'? Math.exp(-x*x/(2*sg*sg))/(sg*Math.sqrt(TAU))
+                            : Math.exp(-Math.abs(x)/sg)/(2*sg));
+    }
+    for(let i=0;i<=200;i++){
+      const w=i*8/200; om.push(w);
+      wh.push(kind==='gauss'? Math.exp(-w*w*sg*sg/2) : 1/(1+w*w*sg*sg));
+    }
+    Plotly.react('wtPlot',[
+      {x:r,y:wr,type:'scatter',mode:'lines',name:'w(r) im Raum',
+       line:{color:'#ff6b9d',width:3},xaxis:'x',yaxis:'y'},
+      {x:om,y:wh,type:'scatter',mode:'lines',name:'ŵ(ω) Dämpfung',
+       line:{color:'#5ee7d4',width:3},xaxis:'x2',yaxis:'y2'}
+    ],{
+      grid:{rows:1,columns:2,pattern:'independent'},
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.5)',
+      font:{color:'#a9a9c4',family:'Inter',size:11},
+      margin:{l:40,r:14,t:28,b:40},showlegend:false,
+      xaxis:{title:'Abstand r',gridcolor:'rgba(140,140,200,.12)',zerolinecolor:'rgba(140,140,200,.25)'},
+      yaxis:{title:'w(r)',gridcolor:'rgba(140,140,200,.12)'},
+      xaxis2:{title:'Wellenzahl ω',gridcolor:'rgba(140,140,200,.12)'},
+      yaxis2:{title:'ŵ(ω)',gridcolor:'rgba(140,140,200,.12)',range:[0,1.05]},
+      annotations:[
+        {text:'Raum',x:0.18,y:1.12,xref:'paper',yref:'paper',showarrow:false,font:{color:'#ff6b9d',size:11}},
+        {text:'Wellenzahl-Antwort',x:0.82,y:1.12,xref:'paper',yref:'paper',showarrow:false,font:{color:'#5ee7d4',size:11}}
+      ]
+    },{displayModeBar:false,responsive:true});
+  }
+  $('wtS').addEventListener('input',e=>{sg=+e.target.value;$('wtSv').textContent=sg.toFixed(2);upd();});
+  group('[data-wt]', ds=>{kind=ds.wt; upd();});
+  upd();
+})();
+
+/* =================================================================
+   SECTION 8 — Verdrahtung, Mexikanerhut, Sigmoide
+   ================================================================= */
+const MODEL = {
+  sEE:1.0, sIE:2.2, sEI:1.0, sII:2.0,
+  aEE:1.0, aIE:1.5, aEI:1.2, aII:0.8,
+  Se:1.0, Si:1.0,
+  what(s,w){ return Math.exp(-w*w*s*s/2); },
+  // 2x2 Matrix-Einträge
+  H(lam,w){
+    const a = -1 + this.Se*this.aEE*lam*this.what(this.sEE,w);
+    const b = -this.Se*this.aIE*this.what(this.sIE,w);
+    const c =  this.Si*this.aEI*lam*this.what(this.sEI,w);
+    const d = -1 - this.Si*this.aII*this.what(this.sII,w);
+    return [a,b,c,d];
+  },
+  nu(lam,w){
+    const [a,b,c,d]=this.H(lam,w);
+    const tr=a+d, det=a*d-b*c;
+    const disc=tr*tr/4-det;
+    if(disc>=0) return tr/2+Math.sqrt(disc);
+    return tr/2; // Realteil
+  },
+  hat(r){ // Mexikanerhut-Profil
+    const g=(s)=>Math.exp(-r*r/(2*s*s))/(s*Math.sqrt(TAU));
+    return this.aEE*g(this.sEE) - this.aIE*g(this.sIE);
+  }
+};
+
+(function(){
+  const cv=$('wiringCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  function draw(){
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const ex=W*0.3, ey=H*0.35, ix=W*0.7, iy=H*0.68;
+    // Verbindungen
+    function arc(x1,y1,x2,y2,col,lw,lbl,bend){
+      ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath();
+      const mx=(x1+x2)/2+bend, my=(y1+y2)/2-Math.abs(bend)*0.4;
+      ctx.moveTo(x1,y1); ctx.quadraticCurveTo(mx,my,x2,y2); ctx.stroke();
+      // Pfeilkopf
+      const ang=Math.atan2(y2-my,x2-mx);
+      ctx.beginPath(); ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-12*Math.cos(ang-0.35),y2-12*Math.sin(ang-0.35));
+      ctx.lineTo(x2-12*Math.cos(ang+0.35),y2-12*Math.sin(ang+0.35));
+      ctx.closePath(); ctx.fillStyle=col; ctx.fill();
+      ctx.font='11px Inter'; ctx.fillStyle=col;
+      ctx.fillText(lbl,mx-10,my-6);
+    }
+    function selfLoop(x,y,col,lbl,up){
+      ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.beginPath();
+      ctx.arc(x,y+(up?-48:48),26,0,TAU); ctx.stroke();
+      ctx.font='11px Inter'; ctx.fillStyle=col;
+      ctx.fillText(lbl,x+30,y+(up?-48:48));
+    }
+    selfLoop(ex,ey,'#ff6b9d','α_ee · E→E',true);
+    selfLoop(ix,iy,'#59c2ff','α_ii · I→I',false);
+    arc(ex+34,ey+10,ix-34,iy-14,'#ff9f6b',2.5,'α_ei · E→I',40);
+    arc(ix-34,iy-24,ex+30,ey+24,'#8b7bff',2.5,'α_ie · I→E',-40);
+    // Knoten
+    function node(x,y,col,lbl,sub){
+      const g=ctx.createRadialGradient(x-8,y-8,2,x,y,34);
+      g.addColorStop(0,'#fff'); g.addColorStop(.25,col); g.addColorStop(1,'#10101c');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,30,0,TAU); ctx.fill();
+      ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='#07070c'; ctx.font='bold 20px Inter'; ctx.textAlign='center';
+      ctx.fillText(lbl,x,y+7); ctx.textAlign='left';
+      ctx.fillStyle=col; ctx.font='11px Inter'; ctx.fillText(sub,x-26,y+48);
+    }
+    node(ex,ey,'#ff6b9d','E','erregend');
+    node(ix,iy,'#59c2ff','I','hemmend');
+    // Reichweiten als Kreise
+    ctx.setLineDash([3,4]);
+    ctx.strokeStyle='rgba(255,107,157,.35)'; ctx.beginPath();
+    ctx.arc(ex,ey,MODEL.sEE*32,0,TAU); ctx.stroke();
+    ctx.strokeStyle='rgba(89,194,255,.35)'; ctx.beginPath();
+    ctx.arc(ix,iy,MODEL.sIE*32,0,TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font='10px Inter'; ctx.fillStyle='rgba(169,169,196,.65)';
+    ctx.fillText('gestrichelt: Reichweite σ', 14, H-12);
+  }
+  function syncAll(){ draw(); updHat(); updDisp&&updDisp(); }
+  const b2=(id,lab,key)=>{ const el=$(id);
+    el.addEventListener('input',()=>{ MODEL[key]=+el.value; $(lab).textContent=(+el.value).toFixed(2);
+      draw(); updHat(); });};
+  b2('sEE','wee','sEE'); b2('sIE','wie','sIE'); b2('aEE','aee','aEE'); b2('aIE','aie','aIE');
+  draw();
+
+  // Mexikanerhut-Plot
+  window.updHat=function(){
+    if(typeof Plotly==='undefined') return;
+    const r=[],h=[],e=[],i2=[];
+    for(let k=-80;k<=80;k++){
+      const x=k*0.08; r.push(x);
+      const ge=Math.exp(-x*x/(2*MODEL.sEE*MODEL.sEE))/(MODEL.sEE*Math.sqrt(TAU));
+      const gi=Math.exp(-x*x/(2*MODEL.sIE*MODEL.sIE))/(MODEL.sIE*Math.sqrt(TAU));
+      e.push(MODEL.aEE*ge); i2.push(-MODEL.aIE*gi);
+      h.push(MODEL.aEE*ge-MODEL.aIE*gi);
+    }
+    Plotly.react('hatPlot',[
+      {x:r,y:e,type:'scatter',mode:'lines',name:'Erregung E→E',
+       line:{color:'#ff6b9d',width:2,dash:'dot'}},
+      {x:r,y:i2,type:'scatter',mode:'lines',name:'Hemmung I→E',
+       line:{color:'#59c2ff',width:2,dash:'dot'}},
+      {x:r,y:h,type:'scatter',mode:'lines',name:'Summe (Mexikanerhut)',
+       line:{color:'#ffcf5c',width:3.5},fill:'tozeroy',fillcolor:'rgba(255,207,92,.12)'}
+    ],{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.5)',
+      font:{color:'#a9a9c4',family:'Inter',size:11},
+      margin:{l:48,r:14,t:16,b:40},
+      legend:{orientation:'h',y:1.16,font:{size:10}},
+      xaxis:{title:'Abstand r vom Zentrum',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(140,140,200,.3)'},
+      yaxis:{title:'Wirkung',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(140,140,200,.3)'}
+    },{displayModeBar:false,responsive:true});
+    const ok = MODEL.sIE>MODEL.sEE && MODEL.aIE>0;
+    const center = MODEL.aEE/(MODEL.sEE*Math.sqrt(TAU)) - MODEL.aIE/(MODEL.sIE*Math.sqrt(TAU));
+    $('hatDiag').innerHTML = (ok&&center>0)
+      ? '<strong style="color:var(--acc2)">✓ Mexikanerhut vorhanden.</strong> Nah erregend, fern hemmend. Lemma 4.1 erfüllt — ein Muster mit endlicher Wellenlänge ist möglich.'
+      : (center<=0
+        ? '<strong style="color:var(--acc3)">⚠ Hemmung dominiert überall.</strong> Nichts wächst — das Blatt bleibt ruhig.'
+        : '<strong style="color:var(--acc3)">⚠ Kein Hut.</strong> Die Hemmung reicht nicht weiter als die Erregung. Folge: ω₀ = 0, das ganze Blatt leuchtet gleichmäßig — keine Geometrie.');
+  };
+  updHat();
+})();
+
+/* ---- Sigmoide ---- */
+(function(){
+  if(typeof Plotly==='undefined') return;
+  let slope=2, thr=0;
+  function S(v){ return Math.tanh((v-thr)*slope); }
+  function upd(){
+    const x=[],y=[],d=[];
+    for(let i=-100;i<=100;i++){ const v=i*0.04; x.push(v); y.push(S(v));
+      d.push(slope*(1-Math.pow(Math.tanh((v-thr)*slope),2))); }
+    Plotly.react('sigPlot',[
+      {x,y,type:'scatter',mode:'lines',name:'S(V) Feuerrate',line:{color:'#ff6b9d',width:3.5}},
+      {x,y:d,type:'scatter',mode:'lines',name:"S'(V) Steigung",
+       line:{color:'#5ee7d4',width:2,dash:'dot'}},
+      {x:[thr],y:[0],type:'scatter',mode:'markers',name:'Schwelle',
+       marker:{color:'#ffcf5c',size:11,symbol:'diamond'}}
+    ],{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.5)',
+      font:{color:'#a9a9c4',family:'Inter',size:11},
+      margin:{l:44,r:14,t:16,b:40},
+      legend:{orientation:'h',y:1.18,font:{size:10}},
+      xaxis:{title:'Membranpotential V',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(140,140,200,.3)'},
+      yaxis:{title:'Feuerrate',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(140,140,200,.3)'}
+    },{displayModeBar:false,responsive:true});
+    MODEL.Se=slope; MODEL.Si=slope;
+    $('sgInfo').innerHTML = `S′(0) = <strong style="color:var(--acc3)">${slope.toFixed(2)}</strong>. `+
+      (slope>3?'Sehr steil ⇒ das System reagiert heftig und wird leicht instabil — wie unter LSD.'
+             :'Flach ⇒ das System bleibt gutmütig und stabil.');
+    if(window.updDisp) window.updDisp();
+  }
+  $('sgSlope').addEventListener('input',e=>{slope=+e.target.value;$('sgV').textContent=slope.toFixed(1);upd();});
+  $('sgT').addEventListener('input',e=>{thr=+e.target.value;$('sgTv').textContent=thr.toFixed(2);upd();});
+  upd();
+})();
+
+/* =================================================================
+   SECTION 9 — Kugel im Tal + Wellenwachstum
+   ================================================================= */
+(function(){
+  const cv=$('ballCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let lam=0.8, bx=0, bv=0, t=0;
+  function pot(x){ // Landschaft
+    const mu = lam-1; // mu<0 stabil
+    return -mu*x*x/2 + x*x*x*x/4;
+  }
+  function force(x){ const mu=lam-1; return mu*x - x*x*x; }
+  function draw(){
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const scale=110, cx=W/2, cy=H*0.68;
+    ctx.strokeStyle='rgba(139,123,255,.75)'; ctx.lineWidth=3; ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const x=-1.8+i*3.6/200; const px=cx+x*scale, py=cy-pot(x)*110;
+      i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+    }
+    ctx.stroke();
+    // Kugel
+    bv += force(bx)*0.02 - bv*0.09;
+    bx += bv*0.02;
+    const px=cx+bx*scale, py=cy-pot(bx)*110-9;
+    const g=ctx.createRadialGradient(px-4,py-4,1,px,py,12);
+    g.addColorStop(0,'#fff'); g.addColorStop(1,'#ff6b9d');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,10,0,TAU); ctx.fill();
+    ctx.shadowColor='#ff6b9d'; ctx.shadowBlur=18; ctx.fill(); ctx.shadowBlur=0;
+    // Markierung Ruhezustand
+    ctx.strokeStyle='rgba(255,207,92,.5)'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx,30); ctx.lineTo(cx,H-10); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font='11px Inter'; ctx.fillStyle='rgba(255,207,92,.8)';
+    ctx.fillText('Ruhezustand E=I=0', cx+7, 42);
+    ctx.fillStyle='rgba(169,169,196,.8)';
+    ctx.fillText('Amplitude des Musters →', W-170, H-8);
+    requestAnimationFrame(draw);
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    bx=((e.clientX-r.left)*(W/r.width)-W/2)/110; bv=0;
+  });
+  $('blL').addEventListener('input',e=>{
+    lam=+e.target.value; $('blV').textContent=lam.toFixed(2);
+    $('blDiag').innerHTML = lam<1
+      ? '<strong style="color:var(--acc2)">λ &lt; λ₀: Ruhezustand stabil.</strong> Eine Mulde — jede Störung rollt zurück. Normaler Wachzustand.'
+      : '<strong style="color:var(--acc)">λ &gt; λ₀: Ruhezustand instabil!</strong> Aus der Mulde wurde eine Kuppe. Die Kugel rollt in eine der beiden neuen Mulden — ein <em>Muster</em> entsteht.';
+  });
+  $('blDiag').innerHTML='<strong style="color:var(--acc2)">λ &lt; λ₀: Ruhezustand stabil.</strong> Eine Mulde — jede Störung rollt zurück.';
+  draw();
+})();
+
+(function(){
+  const cv=$('growCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height, half=W/2;
+  let om=3, lam=0.9, time=0, running=false;
+  function nu(){ return MODEL.nu(lam,om); }
+  function draw(){
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const amp0=0.18, amp=clamp(amp0*Math.exp(nu()*time),0,1.3);
+    function panel(x0,a,lbl){
+      const img=ctx.createImageData(half-14,H-30);
+      const w=half-14,h=H-30, d=img.data;
+      for(let j=0;j<h;j++)for(let i=0;i<w;i++){
+        const xx=(i/w)*2-1;
+        const v=clamp(Math.tanh(a*Math.cos(om*xx*4)*2.2),-1,1);
+        const [r,g,b]=PAL.neon(v);
+        const o=(j*w+i)*4; d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+      }
+      ctx.putImageData(img,x0,22);
+      ctx.font='11px Inter'; ctx.fillStyle='rgba(169,169,196,.85)'; ctx.fillText(lbl,x0,16);
+    }
+    panel(8,amp0,'t = 0  (kleine Störung)');
+    panel(half+6,amp,'t = '+time.toFixed(1)+'  (Amplitude '+amp.toFixed(3)+')');
+    if(running){ time+=0.035; if(time>7) running=false; }
+    requestAnimationFrame(draw);
+  }
+  function info(){
+    const n=nu();
+    $('gwDiag').innerHTML = n>0.001
+      ? `ν = <strong style="color:var(--acc)">+${n.toFixed(3)}</strong> → die Welle <strong>wächst</strong> exponentiell. Diese Wellenzahl wird instabil.`
+      : n<-0.001
+      ? `ν = <strong style="color:var(--acc2)">${n.toFixed(3)}</strong> → die Welle <strong>stirbt ab</strong>. Diese Wellenzahl ist stabil.`
+      : `ν ≈ <strong style="color:var(--acc3)">0</strong> → genau an der Grenze. Kritischer Punkt!`;
+  }
+  $('gwW').addEventListener('input',e=>{om=+e.target.value;$('gwWv').textContent=om.toFixed(2);info();});
+  $('gwL').addEventListener('input',e=>{lam=+e.target.value;$('gwLv').textContent=lam.toFixed(3);info();});
+  $('gwRun').addEventListener('click',()=>{running=true;});
+  $('gwReset').addEventListener('click',()=>{time=0;running=false;});
+  info(); draw();
+})();
+
+/* =================================================================
+   SECTION 10 — Dispersionskurve + Rauschfilter
+   ================================================================= */
+(function(){
+  if(typeof Plotly==='undefined') return;
+  let lam=1.0;
+  function findOm0(){
+    let best=0,bv=-1e9;
+    for(let i=1;i<=400;i++){ const w=i*0.03; const v=MODEL.nu(lam,w);
+      if(v>bv){bv=v;best=w;} }
+    return {w:best,v:bv};
+  }
+  window.updDisp=function(){
+    const om=[],nv=[];
+    for(let i=0;i<=400;i++){ const w=i*0.03; om.push(w); nv.push(MODEL.nu(lam,w)); }
+    const {w:w0,v:v0}=findOm0();
+    Plotly.react('dispPlot',[
+      {x:om,y:nv,type:'scatter',mode:'lines',name:'ν(ω)',
+       line:{color:'#8b7bff',width:3.5},fill:'tozeroy',fillcolor:'rgba(139,123,255,.1)'},
+      {x:om,y:om.map(()=>0),type:'scatter',mode:'lines',name:'0',
+       line:{color:'#5ee7d4',width:1.4,dash:'dash'},hoverinfo:'skip'},
+      {x:[w0],y:[v0],type:'scatter',mode:'markers+text',name:'ω₀',
+       marker:{color:'#ff6b9d',size:13,symbol:'circle',line:{color:'#fff',width:2}},
+       text:['ω₀='+w0.toFixed(2)],textposition:'top center',
+       textfont:{color:'#ff6b9d',size:11}}
+    ],{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.5)',
+      font:{color:'#a9a9c4',family:'Inter',size:11},
+      margin:{l:52,r:16,t:16,b:44},showlegend:false,
+      xaxis:{title:'Wellenzahl ω (Musterfeinheit →)',gridcolor:'rgba(140,140,200,.12)'},
+      yaxis:{title:'Wachstumsrate ν',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(94,231,212,.4)',range:[Math.min(-0.5,v0-0.6),Math.max(0.3,v0+0.25)]}
+    },{displayModeBar:false,responsive:true});
+    $('dpDiag').innerHTML = v0>0.004
+      ? `<strong style="color:var(--acc)">Überkritisch.</strong> Ein ganzes Band von Wellenzahlen um ω₀ = ${w0.toFixed(2)} wächst. Muster entsteht, Wellenlänge ≈ ${(TAU/w0).toFixed(2)}.`
+      : v0>-0.004
+      ? `<strong style="color:var(--acc3)">Genau kritisch (λ₀).</strong> Nur ω₀ = ${w0.toFixed(2)} ist marginal. Hier beginnt die Bifurkation — exakt der Punkt, den Ermentrout &amp; Cowan analysieren.`
+      : `<strong style="color:var(--acc2)">Unterkritisch.</strong> Alle Wellen schrumpfen. Ruhezustand stabil — kein Muster, keine Halluzination.`;
+    // Verknüpfung zum Rauschfilter
+    if(window.setNF) window.setNF(Math.max(3,Math.round(w0*2.6)));
+  };
+  $('dpL').addEventListener('input',e=>{lam=+e.target.value;$('dpLv').textContent=lam.toFixed(3);updDisp();});
+  $('dpS').addEventListener('input',e=>{MODEL.sIE=+e.target.value;$('dpSv').textContent=MODEL.sIE.toFixed(2);
+    $('sIE').value=MODEL.sIE; $('wie').textContent=MODEL.sIE.toFixed(2); updHat&&updHat(); updDisp();});
+  $('dpA').addEventListener('input',e=>{MODEL.aIE=+e.target.value;$('dpAv').textContent=MODEL.aIE.toFixed(2);
+    $('aIE').value=MODEL.aIE; $('aie').textContent=MODEL.aIE.toFixed(2); updHat&&updHat(); updDisp();});
+  group('[data-dp]', ds=>{
+    lam = ds.dp==='sub'?0.84 : ds.dp==='crit'?1.0 : 1.18;
+    $('dpL').value=lam; $('dpLv').textContent=lam.toFixed(3); updDisp();
+  });
+  updDisp();
+})();
+
+(function(){
+  const nc=$('noiseCv'), fc=$('filtCv'), pc=$('filtPerc'); if(!nc) return;
+  const ng=nc.getContext('2d'), fg=fc.getContext('2d'), pg=pc.getContext('2d');
+  const N=96; let w0=7, bw=1.2;
+  let field=null, filt=null;
+
+  function mkNoise(){
+    const a=new Float32Array(N*N);
+    for(let i=0;i<N*N;i++) a[i]=Math.random()*2-1;
+    return a;
+  }
+  /* Einfache DFT-Bandpassfilterung (N=96, brute force aber ok einmalig) */
+  function bandpass(src){
+    // Wir nutzen eine Näherung: Summe weniger zufälliger ebener Wellen |k|≈w0
+    const out=new Float32Array(N*N);
+    const M=40;
+    for(let m=0;m<M;m++){
+      const ang=Math.random()*TAU;
+      const r=w0+(Math.random()*2-1)*bw;
+      const ph=Math.random()*TAU;
+      const amp=1/Math.sqrt(M);
+      const k1=r*Math.cos(ang), k2=r*Math.sin(ang);
+      for(let j=0;j<N;j++){ const y=(j/N)*2-1;
+        for(let i=0;i<N;i++){ const x=(i/N)*2-1;
+          out[j*N+i]+=amp*Math.cos(k1*x*3+k2*y*3+ph);
+        }}
+    }
+    let mx=0; for(let i=0;i<N*N;i++) mx=Math.max(mx,Math.abs(out[i]));
+    for(let i=0;i<N*N;i++) out[i]/= (mx||1);
+    return out;
+  }
+  function sample(arr,x,y){
+    let i=Math.floor(((x+1)/2)*N), j=Math.floor(((y+1)/2)*N);
+    i=((i%N)+N)%N; j=((j%N)+N)%N;
+    return arr[j*N+i];
+  }
+  function render(){
+    if(!field) field=mkNoise();
+    filt=bandpass(field);
+    renderCortex(ng,330,330,(x,y)=>sample(field,x,y)*0.9,PAL.mono,{});
+    renderCortex(fg,330,330,(x,y)=>Math.tanh(sample(filt,x,y)*1.8),PAL.neon,{});
+    renderPercept(pg,330,330,(x,y)=>Math.tanh(sample(filt,x,y)*1.8),PAL.neon,{});
+  }
+  window.setNF=function(w){
+    if(Math.abs(w-w0)<0.4) return;
+    w0=clamp(w,3,20); $('nfW').value=Math.round(w0); $('nfWv').textContent=Math.round(w0);
+    render();
+  };
+  $('nfW').addEventListener('input',e=>{w0=+e.target.value;$('nfWv').textContent=w0;render();});
+  $('nfB').addEventListener('input',e=>{bw=+e.target.value;$('nfBv').textContent=bw.toFixed(2);render();});
+  $('nfNew').addEventListener('click',()=>{field=mkNoise();render();});
+  render();
+})();
+
+/* =================================================================
+   SECTION 11 — Gitter + Symmetriegruppen
+   ================================================================= */
+(function(){
+  const cv=$('latCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let th=60;
+  function draw(){
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const t=th*Math.PI/180;
+    const cx=W*0.33, cy=H*0.56, L=66;
+    const w1=[L,0], w2=[L*Math.cos(t),-L*Math.sin(t)];
+    // Gitterpunkte
+    ctx.fillStyle='rgba(139,123,255,.5)';
+    for(let i=-4;i<=4;i++)for(let j=-4;j<=4;j++){
+      const x=cx+i*w1[0]+j*w2[0], y=cy+i*w1[1]+j*w2[1];
+      if(x<4||x>W*0.66||y<4||y>H-4) continue;
+      ctx.beginPath(); ctx.arc(x,y,3,0,TAU); ctx.fill();
+    }
+    // Einheitszelle
+    ctx.fillStyle='rgba(255,207,92,.1)'; ctx.strokeStyle='rgba(255,207,92,.6)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+w1[0],cy+w1[1]);
+    ctx.lineTo(cx+w1[0]+w2[0],cy+w1[1]+w2[1]);
+    ctx.lineTo(cx+w2[0],cy+w2[1]); ctx.closePath(); ctx.fill(); ctx.stroke();
+    // Basisvektoren
+    function arrow(v,col,lbl){
+      ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath();
+      ctx.moveTo(cx,cy); ctx.lineTo(cx+v[0],cy+v[1]); ctx.stroke();
+      const a=Math.atan2(v[1],v[0]);
+      ctx.beginPath(); ctx.moveTo(cx+v[0],cy+v[1]);
+      ctx.lineTo(cx+v[0]-11*Math.cos(a-.4),cy+v[1]-11*Math.sin(a-.4));
+      ctx.lineTo(cx+v[0]-11*Math.cos(a+.4),cy+v[1]-11*Math.sin(a+.4));
+      ctx.closePath(); ctx.fillStyle=col; ctx.fill();
+      ctx.font='bold 13px Inter'; ctx.fillText(lbl,cx+v[0]*1.14,cy+v[1]*1.14+4);
+    }
+    arrow(w1,'#ff6b9d','ω₁'); arrow(w2,'#5ee7d4','ω₂');
+    // Winkelbogen
+    ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,30,-t,0); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='12px Inter';
+    ctx.fillText(th+'°', cx+36*Math.cos(-t/2), cy+36*Math.sin(-t/2)+4);
+    // Resultierendes Muster rechts
+    const px=W*0.70, py=30, pw=W*0.28, ph=W*0.28;
+    const img=ctx.createImageData(Math.floor(pw),Math.floor(ph));
+    const d=img.data, PW=Math.floor(pw), PH=Math.floor(ph);
+    for(let j=0;j<PH;j++)for(let i=0;i<PW;i++){
+      const x=(i/PW)*2-1, y=(j/PH)*2-1;
+      const k=9;
+      let v;
+      if(Math.abs(th-60)<2) v=patHex(x,y,k,0,0,0,0);
+      else v=0.5*(Math.cos(k*x)+Math.cos(k*(x*Math.cos(t)+y*Math.sin(t))));
+      const [r,g,b]=PAL.neon(Math.tanh(v*1.8));
+      const o=(j*PW+i)*4; d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255;
+    }
+    ctx.putImageData(img,Math.floor(px),Math.floor(py));
+    ctx.font='11px Inter'; ctx.fillStyle='rgba(169,169,196,.8)';
+    ctx.fillText('resultierendes Muster',px,py-7);
+    // Diagnose
+    let txt,row;
+    if(Math.abs(th-60)<2){ txt='<strong style="color:var(--acc3)">Hexagonal.</strong> Der reichste Fall: 12 Symmetrieelemente, 6-dimensionaler Kern. Erzeugt Klüvers <em>Wabe</em>.'; row='hex'; }
+    else if(Math.abs(th-90)<2){ txt='<strong style="color:var(--acc2)">Quadratisch.</strong> 8 Symmetrieelemente, 4-dimensionaler Kern. Erzeugt <em>Schachbrett</em>.'; row='sq'; }
+    else { txt='<strong style="color:var(--acc4)">Rhombisch.</strong> Nur 4 Symmetrieelemente. Erzeugt <em>Spinnennetz</em>-artige, schräg verzerrte Gitter.'; row='rh'; }
+    $('latDiag').innerHTML=txt;
+    [...document.querySelectorAll('#latTable tr[data-r]')].forEach(tr=>{
+      tr.style.background = tr.dataset.r===row ? 'rgba(255,207,92,.12)' : 'transparent';
+      tr.style.color = tr.dataset.r===row ? '#fff' : '';
+    });
+  }
+  $('latT').addEventListener('input',e=>{th=+e.target.value;$('latTv').textContent=th+'°';draw();});
+  group('[data-lat]', ds=>{th=+ds.lat;$('latT').value=th;$('latTv').textContent=th+'°';draw();});
+  draw();
+})();
+
+(function(){
+  const cv=$('symCv'); if(!cv) return; const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let shape='hex', rot=0, flip=false, target=0, tflip=false, anim=0;
+  const OPS={
+    hex:[{n:'Identität e',r:0,f:false},{n:'60° ↻',r:60,f:false},{n:'120° ↻',r:120,f:false},
+         {n:'180°',r:180,f:false},{n:'240°',r:240,f:false},{n:'300°',r:300,f:false},
+         {n:'Spiegel β',r:0,f:true},{n:'αβ',r:60,f:true},{n:'α²β',r:120,f:true},
+         {n:'α³β',r:180,f:true},{n:'α⁴β',r:240,f:true},{n:'α⁵β',r:300,f:true}],
+    sq:[{n:'Identität e',r:0,f:false},{n:'90° ↻',r:90,f:false},{n:'180°',r:180,f:false},
+        {n:'270°',r:270,f:false},{n:'Spiegel β',r:0,f:true},{n:'αβ',r:90,f:true},
+        {n:'α²β',r:180,f:true},{n:'α³β',r:270,f:true}],
+    rh:[{n:'Identität e',r:0,f:false},{n:'180°',r:180,f:false},
+        {n:'Spiegel β',r:0,f:true},{n:'αβ',r:180,f:true}]
+  };
+  const N={hex:6,sq:4,rh:2};
+  function buildOps(){
+    const box=$('symOps'); box.innerHTML='';
+    OPS[shape].forEach((o,i)=>{
+      const b=document.createElement('button'); b.className='b'; b.textContent=o.n;
+      b.addEventListener('click',()=>{
+        [...box.children].forEach(x=>x.classList.remove('on')); b.classList.add('on');
+        target=o.r; tflip=o.f; anim=0;
+        $('symDiag').innerHTML=`Operation <strong style="color:var(--acc3)">${o.n}</strong>: `+
+          (o.f?'Drehung um '+o.r+'° <em>und</em> Spiegelung':'Drehung um '+o.r+'°')+
+          ' — die Figur deckt sich wieder mit sich selbst.';
+      });
+      box.appendChild(b);
+    });
+    $('symDiag').innerHTML=`Gruppe hat <strong>${OPS[shape].length}</strong> Elemente.`;
+  }
+  function draw(){
+    anim=lerp(anim,1,0.12);
+    rot=lerp(rot,target,0.14);
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const cx=W/2, cy=H/2, R=120, n=N[shape];
+    // Spiegelachsen
+    ctx.strokeStyle='rgba(140,140,200,.17)'; ctx.setLineDash([4,5]); ctx.lineWidth=1;
+    for(let i=0;i<n;i++){ const a=i*Math.PI/n;
+      ctx.beginPath(); ctx.moveTo(cx-R*1.35*Math.cos(a),cy-R*1.35*Math.sin(a));
+      ctx.lineTo(cx+R*1.35*Math.cos(a),cy+R*1.35*Math.sin(a)); ctx.stroke(); }
+    ctx.setLineDash([]);
+    ctx.save(); ctx.translate(cx,cy);
+    ctx.rotate(rot*Math.PI/180);
+    if(tflip) ctx.scale(1,-1);
+    // Polygon
+    const sides = shape==='hex'?6:(shape==='sq'?4:4);
+    ctx.beginPath();
+    for(let i=0;i<sides;i++){
+      let a,rr=R;
+      if(shape==='rh'){ a=i*TAU/4; rr = (i%2===0)?R:R*0.6; }
+      else a=i*TAU/sides - Math.PI/2;
+      const x=rr*Math.cos(a), y=rr*Math.sin(a);
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.closePath();
+    const g=ctx.createLinearGradient(-R,-R,R,R);
+    g.addColorStop(0,'rgba(255,107,157,.3)'); g.addColorStop(1,'rgba(94,231,212,.25)');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2.5; ctx.stroke();
+    // Nummerierte Ecken
+    for(let i=0;i<sides;i++){
+      let a,rr=R;
+      if(shape==='rh'){ a=i*TAU/4; rr=(i%2===0)?R:R*0.6; }
+      else a=i*TAU/sides - Math.PI/2;
+      const x=rr*Math.cos(a), y=rr*Math.sin(a);
+      ctx.fillStyle=['#ff6b9d','#5ee7d4','#ffcf5c','#8b7bff','#59c2ff','#ff9f6b'][i];
+      ctx.beginPath(); ctx.arc(x,y,11,0,TAU); ctx.fill();
+      ctx.save(); if(tflip) ctx.scale(1,-1);
+      ctx.fillStyle='#07070c'; ctx.font='bold 13px Inter'; ctx.textAlign='center';
+      ctx.fillText(i+1, x, (tflip?-y:y)+5); ctx.restore(); ctx.textAlign='left';
+    }
+    ctx.restore();
+    requestAnimationFrame(draw);
+  }
+  group('[data-sym]', ds=>{shape=ds.sym; target=0;tflip=false;rot=0; buildOps();});
+  buildOps(); draw();
+})();
+
+/* =================================================================
+   SECTION 12 — Bifurkationsdiagramme
+   ================================================================= */
+(function(){
+  if(typeof Plotly==='undefined') return;
+  let a=-1, b=-1.8, lat='sq';
+  function branches(){
+    const nus=[]; for(let i=-60;i<=60;i++) nus.push(i*0.02);
+    const out=[];
+    // Rollen: y1²=-nu/a
+    const rollX=[],rollY=[],rollS=[];
+    nus.forEach(v=>{ const s=-v/a; if(s>0){rollX.push(v);rollY.push(Math.sqrt(s));} });
+    const rollStable = (b<a && a<0);
+    out.push({x:rollX,y:rollY,type:'scatter',mode:'lines',name:'Rollen',
+      line:{color:'#ff6b9d',width:3.5,dash:rollStable?'solid':'dash'}});
+    out.push({x:rollX,y:rollY.map(v=>-v),type:'scatter',mode:'lines',showlegend:false,
+      line:{color:'#ff6b9d',width:3.5,dash:rollStable?'solid':'dash'}});
+    if(lat==='sq'){
+      const sqX=[],sqY=[];
+      nus.forEach(v=>{ const s=-v/(a+b); if(s>0){sqX.push(v);sqY.push(Math.sqrt(s));} });
+      const stable = (a+b<0 && a-b<0);
+      out.push({x:sqX,y:sqY,type:'scatter',mode:'lines',name:'Quadrate',
+        line:{color:'#5ee7d4',width:3.5,dash:stable?'solid':'dash'}});
+    } else {
+      const hxX=[],hxY=[];
+      nus.forEach(v=>{ const s=-v/(2*b+a); if(s>0){hxX.push(v);hxY.push(Math.sqrt(s));} });
+      const stable=(a<b && 2*b+a<0);
+      out.push({x:hxX,y:hxY,type:'scatter',mode:'lines',name:'Hexagone',
+        line:{color:'#ffcf5c',width:3.5,dash:stable?'solid':'dash'}});
+    }
+    out.push({x:[-1.2,1.2],y:[0,0],type:'scatter',mode:'lines',name:'Ruhezustand',
+      line:{color:'#8b7bff',width:2.5}});
+    return out;
+  }
+  function upd(){
+    Plotly.react('bifPlot', branches(), {
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.5)',
+      font:{color:'#a9a9c4',family:'Inter',size:11},
+      margin:{l:52,r:16,t:16,b:46},
+      legend:{orientation:'h',y:1.14,font:{size:10}},
+      xaxis:{title:'ν  (Abstand vom kritischen Punkt)',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(140,140,200,.35)',range:[-1.2,1.2]},
+      yaxis:{title:'Amplitude y',gridcolor:'rgba(140,140,200,.12)',
+             zerolinecolor:'rgba(140,140,200,.35)',range:[-1.6,1.6]}
+    },{displayModeBar:false,responsive:true});
+    // Tabelle
+    const rows=[['Lösung','Existiert wenn','Stabil wenn','Formkonstante']];
+    if(lat==='sq'){
+      rows.push(['y₂=0 (Rollen)','ν/a &lt; 0','b &lt; a &lt; 0','Tunnel · Trichter · Spirale']);
+      rows.push(['y₁=y₂ (Quadrate)','ν/(a+b) &lt; 0','a+b&lt;0 und a−b&lt;0','Schachbrett · Gitter']);
+    } else {
+      rows.push(['nur y₁ (Rollen)','ν/a &lt; 0','b &lt; a &lt; 0','Tunnel · Trichter · Spirale']);
+      rows.push(['y₁=y₂=y₃ (Hexagone)','ν/(2b+a) &lt; 0','a&lt;b und 2b+a&lt;0','Wabe']);
+    }
+    $('bfTable').innerHTML = rows.map((r,i)=> i===0
+      ? '<tr>'+r.map(c=>`<th>${c}</th>`).join('')+'</tr>'
+      : '<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('');
+    // Diagnose
+    const rollS=(b<a&&a<0);
+    let other, name;
+    if(lat==='sq'){ other=(a+b<0&&a-b<0); name='Quadrate'; }
+    else { other=(a<b&&2*b+a<0); name='Hexagone'; }
+    $('bfDiag').innerHTML =
+      (rollS&&other) ? `<strong style="color:var(--acc3)">Beide stabil.</strong> Rollen und ${name} koexistieren — Anfangsbedingungen entscheiden. Genau die Situation, die Klüvers wechselnde Formen erklärt.`
+      : rollS ? '<strong style="color:var(--acc)">Nur Rollen stabil.</strong> Man sieht Tunnel, Trichter, Spiralen — keine zellulären Muster.'
+      : other ? `<strong style="color:var(--acc2)">Nur ${name} stabil.</strong> Man sieht Gitter/Waben — keine globalen Formen.`
+      : '<strong style="color:var(--acc4)">Nichts stabil.</strong> Keine kleinamplitudigen Lösungen; man müsste höhere Ordnungen betrachten.';
+  }
+  $('bfA').addEventListener('input',e=>{a=+e.target.value;$('bfAv').textContent=a.toFixed(2);upd();});
+  $('bfB').addEventListener('input',e=>{b=+e.target.value;$('bfBv').textContent=b.toFixed(2);upd();});
+  group('[data-bf]', ds=>{lat=ds.bf; upd();});
+  upd();
+})();
+
+(function(){
+  if(typeof Plotly==='undefined') return;
+  let kind='super';
+  function upd(){
+    const x=[],y1=[],y2=[];
+    for(let i=-100;i<=100;i++){ const l=i*0.012; x.push(l);
+      if(kind==='super'){ y1.push(l>0?Math.sqrt(l):null); y2.push(l>0?-Math.sqrt(l):null); }
+      else { y1.push(l<0?Math.sqrt(-l):null); y2.push(l<0?-Math.sqrt(-l):null); }
+    }
+    const traces=[
+      {x,y:y1,type:'scatter',mode:'lines',name:'Muster-Ast',
+       line:{color:kind==='super'?'#5ee7d4':'#ff6b9d',width:3.5,dash:kind==='super'?'solid':'dash'}},
+      {x,y:y2,type:'scatter',mode:'lines',showlegend:false,
+       line:{color:kind==='super'?'#5ee7d4':'#ff6b9d',width:3.5,dash:kind==='super'?'solid':'dash'}},
+      {x:[-1.25,0],y:[0,0],type:'scatter',mode:'lines',name:'Ruhe stabil',
+       line:{color:'#8b7bff',width:3}},
+      {x:[0,1.25],y:[0,0],type:'scatter',mode:'lines',name:'Ruhe instabil',
+       line:{color:'#8b7bff',width:3,dash:'dot'}}
+    ];
+    Plotly.react('scPlot',traces,{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.5)',
+      font:{color:'#a9a9c4',family:'Inter',size:11},
+      margin:{l:50,r:14,t:16,b:44},
+      legend:{orientation:'h',y:1.16,font:{size:10}},
+      xaxis:{title:'λ − λ₀',gridcolor:'rgba(140,140,200,.12)',zerolinecolor:'rgba(140,140,200,.35)'},
+      yaxis:{title:'Amplitude',gridcolor:'rgba(140,140,200,.12)',zerolinecolor:'rgba(140,140,200,.35)'}
+    },{displayModeBar:false,responsive:true});
+    $('scDiag').innerHTML = kind==='super'
+      ? '<strong style="color:var(--acc2)">Superkritisch (ν &gt; 0).</strong> Jenseits von λ₀ wächst das Muster stetig aus dem Nichts. Sanfter Übergang. Der häufigere Fall.'
+      : '<strong style="color:var(--acc)">Subkritisch (ν &lt; 0).</strong> Der Musterast existiert <em>unterhalb</em> λ₀ und ist dort instabil. Folge: springender Übergang, Hysterese, Nachwirkung.';
+  }
+  group('[data-sc]', ds=>{kind=ds.sc; upd();});
+  upd();
+})();
+
+/* =================================================================
+   SECTION 13 — Auswahldiagramm + Kaleidoskop
+   ================================================================= */
+(function(){
+  const cv=$('selCv'), pc=$('selPat'); if(!cv) return;
+  const ctx=cv.getContext('2d'), pg=pc.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let A=1, B=1;
+  const X0=70,Y0=H-60,SX=(W-110)/4,SY=(H-100)/5; // A von -2..2, B von -2..3
+  const toPix=(a,b)=>[X0+(a+2)*SX, Y0-(b+2)*SY];
+  const toVal=(px,py)=>[ (px-X0)/SX-2, (Y0-py)/SY-2 ];
+
+  /* Klassifikation nach Theorem 7.3 (Sattinger) */
+  function classify(A,B){
+    // q(θ)=A cos2θ + B ;  a=3q(0)=3(A+B) ; b(θ)=6q(θ)=6(A cos2θ + B)
+    // Grenzlinien: B=A/3, B=2A, B=3A, A+B=0, B=A(1-2cos2θ)/3
+    const a=3*(A+B);
+    const bHex=6*(A*Math.cos(2*TAU/6*0+0)+B); // θ=60° → cos120°=-0.5
+    const b60=6*(A*(-0.5)+B);
+    const b90=6*(A*(-1)+B);
+    if(a>=0) return {k:'none',t:'Keine kleinamplitudigen stabilen Lösungen (a ≥ 0). Höhere Ordnungen nötig.'};
+    const hexStable = (a<b60 && 2*b60+a<0);
+    const sqStable  = (a+b90<0 && a-b90<0);
+    const rollStable= (b60<a && a<0) || (b90<a && a<0);
+    if(hexStable&&sqStable) return {k:'hexsq',t:'<strong style="color:var(--acc3)">Hexagone + Quadrate + θ-Rechtecke koexistieren.</strong> Anfangsbedingungen und äußere Reize entscheiden. → <em>Wabe, Schachbrett, Spinnennetz</em> wechseln sich ab.'};
+    if(hexStable) return {k:'hex',t:'<strong style="color:var(--acc3)">Hexagone stabil.</strong> → Klüvers <em>Wabe</em> (honeycomb).'};
+    if(sqStable) return {k:'sq',t:'<strong style="color:var(--acc2)">Quadrate + θ-Rechtecke stabil.</strong> → <em>Schachbrett</em> und <em>Spinnennetz</em>.'};
+    if(rollStable) return {k:'roll',t:'<strong style="color:var(--acc)">Rollen stabil.</strong> → <em>globale</em> Formkonstanten: Tunnel, Trichter, Spirale.'};
+    return {k:'rh',t:'<strong style="color:var(--acc4)">Nur θ-Rechtecke (rhombisch).</strong> → verzerrte Gitter, <em>Spinnennetz</em>-artig.'};
+  }
+
+  function drawDiagram(){
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    // Regionen pixelweise (grob)
+    const step=3;
+    for(let py=20;py<Y0;py+=step){
+      for(let px=X0;px<W-30;px+=step){
+        const [a,b]=toVal(px,py);
+        const c=classify(a,b);
+        let col=null;
+        if(c.k==='hexsq') col='rgba(255,207,92,.25)';
+        else if(c.k==='hex') col='rgba(255,207,92,.16)';
+        else if(c.k==='sq') col='rgba(94,231,212,.18)';
+        else if(c.k==='roll') col='rgba(255,107,157,.20)';
+        else if(c.k==='rh') col='rgba(139,123,255,.18)';
+        if(col){ ctx.fillStyle=col; ctx.fillRect(px,py,step,step); }
+      }
+    }
+    // Achsen
+    ctx.strokeStyle='rgba(160,160,230,.5)'; ctx.lineWidth=1.3;
+    const [ox,oy]=toPix(0,0);
+    ctx.beginPath(); ctx.moveTo(X0,oy); ctx.lineTo(W-26,oy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ox,18); ctx.lineTo(ox,Y0+6); ctx.stroke();
+    ctx.font='11px Inter'; ctx.fillStyle='rgba(169,169,196,.9)';
+    ctx.fillText('A →',W-48,oy-8); ctx.fillText('B ↑',ox+8,26);
+    // Grenzlinien
+    function line(f,col,lbl){
+      ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.setLineDash([5,4]); ctx.beginPath();
+      let first=true;
+      for(let a=-2;a<=2;a+=0.02){
+        const b=f(a); if(b<-2||b>3) {first=true;continue;}
+        const [x,y]=toPix(a,b);
+        first?(ctx.moveTo(x,y),first=false):ctx.lineTo(x,y);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+      const [lx,ly]=toPix(1.5,f(1.5));
+      if(f(1.5)>-2&&f(1.5)<3){ ctx.fillStyle=col; ctx.font='10px JetBrains Mono'; ctx.fillText(lbl,lx+4,ly-3); }
+    }
+    line(a=>a/3,'#ffcf5c','B=A/3');
+    line(a=>2*a,'#5ee7d4','B=2A');
+    line(a=>3*a,'#8b7bff','B=3A');
+    line(a=>-a,'#ff6b9d','A+B=0');
+    // Punkt
+    const [px,py]=toPix(A,B);
+    ctx.beginPath(); ctx.arc(px,py,8,0,TAU);
+    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.strokeStyle='#ff6b9d'; ctx.lineWidth=3; ctx.stroke();
+    ctx.shadowColor='#ff6b9d'; ctx.shadowBlur=20; ctx.fill(); ctx.shadowBlur=0;
+    ctx.font='11px JetBrains Mono'; ctx.fillStyle='#fff';
+    ctx.fillText(`A=${A.toFixed(2)}  B=${B.toFixed(2)}`, px+13, py-9);
+  }
+  function drawPattern(){
+    const c=classify(A,B);
+    let f;
+    if(c.k==='hex'||c.k==='hexsq') f=(x,y)=>patHex(x,y,9,0,0,0,0);
+    else if(c.k==='sq') f=(x,y)=>patSquare(x,y,9,0,0,0);
+    else if(c.k==='roll') f=(x,y)=>Math.cos(9*x);
+    else if(c.k==='rh') f=(x,y)=>patRhomb(x,y,8,0,1.0,0,0);
+    else f=(x,y)=>0;
+    renderCortex(pg,250,250,(x,y)=>Math.tanh(f(x,y)*1.7),PAL.neon,{});
+    $('selDiag').innerHTML=c.t;
+    const pills = {hexsq:['Hexagone','Quadrate','θ-Rechtecke'],hex:['Hexagone','Wabe'],
+      sq:['Quadrate','Schachbrett'],roll:['Rollen','Tunnel','Spirale'],
+      rh:['Rhomben','Spinnennetz'],none:['instabil']}[c.k];
+    $('selPills').innerHTML=pills.map((p,i)=>`<span class="pill ${'abcd'[i%4]}">${p}</span>`).join('');
+  }
+  function upd(){ drawDiagram(); drawPattern(); }
+  cv.addEventListener('mousedown',e=>{
+    const r=cv.getBoundingClientRect();
+    const px=(e.clientX-r.left)*(W/r.width), py=(e.clientY-r.top)*(H/r.height);
+    const [a,b]=toVal(px,py);
+    A=clamp(a,-2,2); B=clamp(b,-2,3);
+    $('selA').value=A; $('selAv').textContent=A.toFixed(2);
+    $('selB').value=B; $('selBv').textContent=B.toFixed(2);
+    upd();
+  });
+  $('selA').addEventListener('input',e=>{A=+e.target.value;$('selAv').textContent=A.toFixed(2);upd();});
+  $('selB').addEventListener('input',e=>{B=+e.target.value;$('selBv').textContent=B.toFixed(2);upd();});
+  upd();
+})();
+
+/* ---- Kaleidoskop ---- */
+(function(){
+  const kc=$('kalCort'), kp=$('kalPerc'); if(!kc) return;
+  const cg=kc.getContext('2d'), pg=kp.getContext('2d');
+  let t=0, running=true, speed=1;
+  const PHASES=[
+    {n:'Hexagone → Wabe',f:(x,y,t)=>patHex(x,y,9,t*0.05,t*0.5,0,0)},
+    {n:'Quadrate → Schachbrett',f:(x,y,t)=>patSquare(x,y,9,t*0.04,t*0.5,0)},
+    {n:'Rhomben → Spinnennetz',f:(x,y,t)=>patRhomb(x,y,8,t*0.03,1.0+0.3*Math.sin(t*0.1),t*0.4,0)},
+    {n:'Rollen senkrecht → Tunnel',f:(x,y,t)=>Math.cos(10*x+t*0.8)},
+    {n:'Rollen schräg → Spirale',f:(x,y,t)=>Math.cos(9*(x*0.78+y*0.63)+t)},
+    {n:'Rollen waagrecht → Trichter',f:(x,y,t)=>Math.cos(10*y+t*0.8)}
+  ];
+  function draw(){
+    if(running) t+=0.016*speed;
+    const period=7;
+    const idx=Math.floor((t/period)%PHASES.length);
+    const nxt=(idx+1)%PHASES.length;
+    const frac=((t/period)%1);
+    const blend=clamp((frac-0.75)*4,0,1);
+    const A=PHASES[idx].f, Bf=PHASES[nxt].f;
+    const f=(x,y)=>lerp(A(x,y,t),Bf(x,y,t),blend);
+    renderCortex(cg,330,330,(x,y)=>Math.tanh(f(x,y)*1.7),PAL.neon,{});
+    renderPercept(pg,330,330,(x,y)=>Math.tanh(f(x,y)*1.7),PAL.neon,{});
+    $('kalDiag').innerHTML = blend>0.05
+      ? `<strong style="color:var(--acc3)">Übergang:</strong> ${PHASES[idx].n} → ${PHASES[nxt].n}`
+      : `<strong style="color:var(--acc2)">${PHASES[idx].n}</strong>`;
+    requestAnimationFrame(draw);
+  }
+  $('kalRun').addEventListener('click',e=>{running=!running;
+    e.target.textContent=running?'⏸ Pause':'▶︎ Weiter';});
+  $('kalStep').addEventListener('click',()=>{t+=1.2;});
+  $('kalS').addEventListener('input',e=>{speed=+e.target.value;$('kalSv').textContent=speed.toFixed(2)+'×';});
+  draw();
+})();
+
+/* =================================================================
+   SECTION 14 — Das grosse Labor
+   ================================================================= */
+(function(){
+  const lc=$('labCort'), lp=$('labPerc'); if(!lc) return;
+  const cg=lc.getContext('2d'), pg=lp.getContext('2d');
+  const P={lam:1.05,sIE:2.2,aIE:1.5,type:'roll',ori:90,ph:0,eps:1,
+           cont:false,bin:false,anim:false,pal:0};
+  let t=0;
+  function k0(){
+    const M={...MODEL, sIE:P.sIE, aIE:P.aIE};
+    let best=1,bv=-1e9;
+    for(let i=1;i<=300;i++){ const w=i*0.04;
+      const v=MODEL.nu.call(M,P.lam,w); if(v>bv){bv=v;best=w;} }
+    return {w:best,v:bv};
+  }
+  function field(w0){
+    const k=clamp(w0*2.2,3,22);
+    const a=P.ori*Math.PI/180;
+    const p=P.ph*Math.PI/180 + (P.anim?t*0.5:0);
+    switch(P.type){
+      case 'roll': return (x,y)=>P.eps*patRolls(x,y,k,a,p);
+      case 'sq':   return (x,y)=>P.eps*patSquare(x,y,k,a,p,p*0.7);
+      case 'hex':  return (x,y)=>P.eps*patHex(x,y,k,a,p,p*0.7,p*0.4)*1.4;
+      case 'rh':   return (x,y)=>P.eps*patRhomb(x,y,k,a,1.0,p,p*0.6);
+    }
+  }
+  function draw(){
+    if(P.anim) t+=0.016;
+    const {w:w0,v:v0}=k0();
+    const pal=PAL[PALNAMES[P.pal]];
+    const f0=field(w0);
+    const f=(x,y)=>Math.tanh(f0(x,y)*1.8);
+    renderCortex(cg,300,300,f,pal,{contour:P.cont,binary:P.bin});
+    renderPercept(pg,300,300,f,pal,{binary:P.bin});
+    if(typeof Plotly!=='undefined'){
+      const M={...MODEL,sIE:P.sIE,aIE:P.aIE};
+      const om=[],nv=[];
+      for(let i=0;i<=200;i++){const w=i*0.06;om.push(w);nv.push(MODEL.nu.call(M,P.lam,w));}
+      Plotly.react('labDisp',[
+        {x:om,y:nv,type:'scatter',mode:'lines',line:{color:'#8b7bff',width:2.5},
+         fill:'tozeroy',fillcolor:'rgba(139,123,255,.1)'},
+        {x:om,y:om.map(()=>0),type:'scatter',mode:'lines',
+         line:{color:'#5ee7d4',width:1,dash:'dash'},hoverinfo:'skip'},
+        {x:[w0],y:[v0],type:'scatter',mode:'markers',
+         marker:{color:'#ff6b9d',size:10,line:{color:'#fff',width:2}}}
+      ],{paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.4)',
+        font:{color:'#a9a9c4',family:'Inter',size:10},
+        margin:{l:44,r:10,t:8,b:34},showlegend:false,
+        xaxis:{title:'ω',gridcolor:'rgba(140,140,200,.1)'},
+        yaxis:{title:'ν',gridcolor:'rgba(140,140,200,.1)'}},
+        {displayModeBar:false,responsive:true});
+    }
+    const names={roll:'Rollen',sq:'Quadrate',hex:'Hexagone',rh:'Rhomben'};
+    const perc = P.type==='roll'
+      ? (P.ori>80&&P.ori<100?'Tunnel (konzentrische Ringe)'
+        :(P.ori<12||P.ori>168?'Trichter (Strahlen)':'Spirale'))
+      : P.type==='hex'?'Wabe / Honeycomb'
+      : P.type==='sq'?'Schachbrett / Gitter':'Spinnennetz-artiges Gitter';
+    $('lbDiag').innerHTML = v0>0.003
+      ? `<strong style="color:var(--acc2)">Aktiv.</strong> ω₀=${w0.toFixed(2)}, ν=${v0.toFixed(3)}.
+         Muster: <strong>${names[P.type]}</strong> → Wahrnehmung: <strong style="color:var(--acc3)">${perc}</strong>.`
+      : `<strong style="color:var(--acc4)">Unterkritisch (ν=${v0.toFixed(3)}).</strong>
+         Im echten Modell entstünde <em>kein</em> Muster — hier wird es nur zur Anschauung gezeichnet.`;
+    requestAnimationFrame(draw);
+  }
+  const bindL=(id,lab,key,fmt)=>{ const el=$(id); if(!el)return;
+    el.addEventListener('input',()=>{P[key]=+el.value;$(lab).textContent=fmt?fmt(+el.value):el.value;});};
+  bindL('lbL','lbLv','lam',v=>v.toFixed(3));
+  bindL('lbS','lbSv','sIE',v=>v.toFixed(2));
+  bindL('lbA','lbAv','aIE',v=>v.toFixed(2));
+  bindL('lbO','lbOv','ori',v=>v+'°');
+  bindL('lbP','lbPv','ph',v=>v+'°');
+  bindL('lbE','lbEv','eps',v=>v.toFixed(2));
+  $('lbC').addEventListener('input',e=>{P.pal=+e.target.value;$('lbCv').textContent=PALLABEL[P.pal];});
+  $('lbCont').addEventListener('change',e=>P.cont=e.target.checked);
+  $('lbBin').addEventListener('change',e=>P.bin=e.target.checked);
+  $('lbAnim').addEventListener('change',e=>P.anim=e.target.checked);
+  group('[data-lb]', ds=>{P.type=ds.lb;});
+  // Rezepte
+  const REC={
+    tunnel:{type:'roll',ori:90,ph:0,lam:1.1,eps:1},
+    spiral:{type:'roll',ori:40,ph:0,lam:1.1,eps:1},
+    honey:{type:'hex',ori:0,ph:0,lam:1.1,eps:1},
+    chess:{type:'sq',ori:0,ph:0,lam:1.1,eps:1},
+    cobweb:{type:'rh',ori:20,ph:0,lam:1.08,eps:1},
+    rest:{type:'roll',ori:90,ph:0,lam:0.80,eps:0.2}
+  };
+  document.querySelectorAll('[data-recipe]').forEach(b=>b.addEventListener('click',()=>{
+    const r=REC[b.dataset.recipe]; if(!r)return;
+    Object.assign(P,r);
+    $('lbL').value=P.lam; $('lbLv').textContent=P.lam.toFixed(3);
+    $('lbO').value=P.ori; $('lbOv').textContent=P.ori+'°';
+    $('lbP').value=P.ph;  $('lbPv').textContent=P.ph+'°';
+    $('lbE').value=P.eps; $('lbEv').textContent=P.eps.toFixed(2);
+    document.querySelectorAll('[data-lb]').forEach(x=>
+      x.classList.toggle('on', x.dataset.lb===P.type));
+    document.getElementById('s14').scrollIntoView({behavior:'smooth',block:'start'});
+  }));
+  draw();
+})();
+
+/* =================================================================
+   SECTION 15 — Erklärungskette
+   ================================================================= */
+(function(){
+  const CH=[
+    {n:'Molekül',c:'#ff6b9d',d:'LSD/Meskalin bindet an Serotonin-Rezeptoren. LSD hemmt die Neurone der Raphe-Kerne (Aghajanian 1970).'},
+    {n:'Enthemmung',c:'#ff9f6b',d:'Die Raphe-Kerne senden normalerweise hemmende serotonerge Fasern zum Cortex (Fuxe 1965). Weniger Raphe = weniger Hemmung = mehr Erregung.'},
+    {n:'λ steigt',c:'#ffcf5c',d:'Im Modell: der Erregbarkeitsparameter λ wächst. α_ee und α_ei werden mit λ multipliziert.'},
+    {n:'Ruhezustand kippt',c:'#5ee7d4',d:'Bei λ = λ₀ wird E=I=0 instabil. Der größte Eigenwert ν der Matrix H wird null — und zwar zuerst bei ω₀ ≠ 0.'},
+    {n:'ω₀ wird gewählt',c:'#59c2ff',d:'Der Mexikanerhut (Lemma 4.1) sorgt dafür, dass ω₀ endlich ist. Eine ganz bestimmte Musterfeinheit wächst am schnellsten.'},
+    {n:'Gitter + Symmetrie',c:'#8b7bff',d:'Doppelt-periodische Beschränkung ⇒ endlicher Kern. Drei Gittertypen: hexagonal (D₆), quadratisch (D₄), rhombisch (D₂).'},
+    {n:'Bifurkation',c:'#c77bff',d:'Lyapunov-Schmidt ⇒ Amplitudengleichungen y(ν+ay²+by²)=0. Stabilität entscheidet, welche Lösung real wird.'},
+    {n:'Cortex-Muster',c:'#ff6bd6',d:'Resultat: Rollen (Streifen) oder Zellen (Hexagone/Quadrate/Rhomben) im Cortex-Blatt.'},
+    {n:'Formkonstante',c:'#ff6b9d',d:'Die retino-kortikale Abbildung (komplexer Logarithmus) übersetzt zurück: Rollen → Tunnel/Trichter/Spirale. Zellen → Wabe/Gitter/Schachbrett/Spinnennetz.'}
+  ];
+  const box=$('chainSteps'); if(!box) return;
+  const cv=$('chainCv'), ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let active=-1;
+  CH.forEach((c,i)=>{
+    const b=document.createElement('button'); b.className='b'; b.textContent=(i+1)+' · '+c.n;
+    b.style.borderColor=c.c+'55';
+    b.addEventListener('click',()=>{
+      active=i;
+      [...box.children].forEach((x,j)=>x.classList.toggle('on',j===i));
+      $('chainDiag').innerHTML=`<strong style="color:${c.c}">${c.n}:</strong> ${c.d}`;
+      draw();
+    });
+    box.appendChild(b);
+  });
+  box.className='btnrow';
+  function draw(){
+    ctx.fillStyle='#05050c'; ctx.fillRect(0,0,W,H);
+    const n=CH.length, pad=38, gap=(W-2*pad)/(n-1);
+    // Verbindungslinie
+    ctx.strokeStyle='rgba(140,140,200,.25)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(pad,H/2); ctx.lineTo(W-pad,H/2); ctx.stroke();
+    CH.forEach((c,i)=>{
+      const x=pad+i*gap, y=H/2;
+      const on = i===active, done = active>=0 && i<=active;
+      // Glow
+      if(on){ ctx.shadowColor=c.c; ctx.shadowBlur=26; }
+      const g=ctx.createRadialGradient(x-4,y-4,1,x,y,on?22:14);
+      g.addColorStop(0,'#fff'); g.addColorStop(.5,c.c);
+      g.addColorStop(1, done?c.c:'#1a1a2a');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,on?20:13,0,TAU); ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.strokeStyle=done?c.c:'rgba(140,140,200,.3)'; ctx.lineWidth=2; ctx.stroke();
+      // Nummer
+      ctx.fillStyle='#07070c'; ctx.font='bold 12px Inter'; ctx.textAlign='center';
+      ctx.fillText(i+1,x,y+4);
+      // Label
+      ctx.fillStyle= on? '#fff' : 'rgba(169,169,196,.75)';
+      ctx.font=(on?'bold ':'')+'10.5px Inter';
+      const lbl=c.n;
+      ctx.save(); ctx.translate(x, i%2===0 ? y-34 : y+44);
+      ctx.rotate(-0.33); ctx.fillText(lbl,0,0); ctx.restore();
+      ctx.textAlign='left';
+      // Pfeil zum nächsten
+      if(i<n-1 && done && active>i){
+        ctx.strokeStyle=c.c; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.moveTo(x+16,y); ctx.lineTo(x+gap-16,y); ctx.stroke();
+      }
+    });
+  }
+  $('chainDiag').innerHTML='Klicke einen Schritt an.';
+  draw();
+})();
+
+/* =================================================================
+   SECTION 16 — Anisotropie + Quiz
+   ================================================================= */
+(function(){
+  const ac=$('anisoCv'), ap=$('anisoPerc'); if(!ac) return;
+  const cg=ac.getContext('2d'), pg=ap.getContext('2d');
+  let an=0;
+  function draw(){
+    const a=an/100;
+    // Mit steigender Anisotropie: Hexagone zerfallen zu Rollen
+    const f=(x,y)=>{
+      const hex=patHex(x,y,9,0,0,0,0)*1.5;
+      const roll=Math.cos(9*x);
+      return Math.tanh(lerp(hex,roll,a)*1.7);
+    };
+    renderCortex(cg,300,300,f,PAL.neon,{});
+    renderPercept(pg,300,300,f,PAL.neon,{});
+    if(typeof Plotly!=='undefined'){
+      const th=[],amp=[];
+      for(let i=0;i<=180;i+=2){ th.push(i);
+        // Richtungsabhängige Verstärkung
+        amp.push(1 + a*0.9*Math.cos(2*(i-0)*Math.PI/180));
+      }
+      Plotly.react('anisoPlot',[
+        {x:th,y:amp,type:'scatter',mode:'lines',
+         line:{color:'#ff6b9d',width:3},fill:'tozeroy',fillcolor:'rgba(255,107,157,.12)'}
+      ],{paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(10,10,22,.4)',
+        font:{color:'#a9a9c4',family:'Inter',size:10},
+        margin:{l:40,r:10,t:8,b:32},showlegend:false,
+        xaxis:{title:'Richtung der Welle (°)',gridcolor:'rgba(140,140,200,.1)'},
+        yaxis:{title:'Verstärkung',gridcolor:'rgba(140,140,200,.1)',range:[0,2.1]}},
+        {displayModeBar:false,responsive:true});
+    }
+    $('anDiag').innerHTML = a<0.08
+      ? '<strong style="color:var(--acc2)">Perfekt isotrop.</strong> Alle Richtungen gleichberechtigt — Hexagone, Quadrate und Rollen sind alle möglich. Das ist die Annahme des Papers.'
+      : a<0.6
+      ? '<strong style="color:var(--acc3)">Leichte Richtungsvorliebe.</strong> Die zellulären Muster verzerren sich. Der Übergang beginnt.'
+      : '<strong style="color:var(--acc)">Starke Anisotropie.</strong> Nur noch <em>Rollen</em> bleiben übrig — es gäbe dann <strong>keine</strong> Waben, keine Schachbretter, nur Tunnel und Spiralen. Genau das räumen Ermentrout &amp; Cowan als Möglichkeit ein.';
+  }
+  $('anA').addEventListener('input',e=>{an=+e.target.value;$('anV').textContent=an+' %';draw();});
+  draw();
+})();
+
+(function(){
+  const Q=[
+    {q:'Warum sind Tunnel, Trichter und Spirale <em>dasselbe</em> Muster?',
+     a:['Weil sie alle rund sind','Weil im Cortex alle drei gerade Streifen sind — nur unter verschiedenen Winkeln','Weil sie durch dieselbe Droge entstehen','Weil das Auge sie verwechselt'],
+     c:1, x:'Die retino-kortikale Abbildung (komplexer Logarithmus) verwandelt gerade Streifen je nach Winkel in Ringe, Strahlen oder Spiralen.'},
+    {q:'Wozu dient die Mexikanerhut-Bedingung (Lemma 4.1)?',
+     a:['Sie sorgt dafür, dass das Muster eine <em>endliche</em> Wellenlänge hat','Sie verhindert Halluzinationen','Sie beschreibt die Form der Wabe','Sie misst die Erregbarkeit'],
+     c:0, x:'Ohne weiter reichende Hemmung wäre ω₀ = 0 — das ganze Blatt würde gleichmäßig leuchten, ohne Geometrie.'},
+    {q:'Warum beschränkt man sich auf doppelt-periodische Lösungen?',
+     a:['Weil es realistischer ist','Weil der Kern sonst unendlichdimensional wäre und man nicht rechnen könnte','Weil Klüver das so vorgeschlagen hat','Weil der Cortex quadratisch ist'],
+     c:1, x:'Am kritischen Punkt wachsen alle Wellen mit |k| = ω₀ gleich schnell — unendlich viele Richtungen. Die Periodizitäts-Annahme macht den Kern endlich.'},
+    {q:'Welche Gittersymmetrie erzeugt Klüvers Wabe?',
+     a:['quadratisch (D₄)','rhombisch (D₂)','hexagonal (D₆), 3 Wellen im 60°-Abstand','gar keine'],
+     c:2, x:'Drei ebene Wellen gleicher Länge im 60°-Winkel ergeben das hexagonale Muster — Klüvers honeycomb.'},
+    {q:'Was entscheidet letztlich, welche Form man sieht?',
+     a:['Die Dosis der Droge','Die Stabilität der Lösung im Bifurkationsdiagramm','Die Persönlichkeit des Probanden','Die Augenfarbe'],
+     c:1, x:'Mehrere Lösungen können existieren; nur stabile werden beobachtet. Bei Koexistenz entscheiden Anfangsbedingungen und äußere Reize.'},
+    {q:'Was wäre die Folge, wenn der Cortex stark anisotrop wäre?',
+     a:['Mehr Formen','Nur noch Rollen — keine zellulären Formkonstanten','Gar keine Muster','Schnellere Muster'],
+     c:1, x:'Das räumen die Autoren in §8 selbst ein: „…only small amplitude rolls obtain, and there are no cellular form constants.“'}
+  ];
+  const box=$('quiz'); if(!box) return;
+  let score=0, answered=0;
+  Q.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText='margin:14px 0;padding:13px;border-radius:11px;border:1px solid var(--line);background:rgba(20,20,36,.4)';
+    d.innerHTML=`<div style="font-family:Inter;font-size:14px;font-weight:600;color:#fff;margin-bottom:8px">${i+1}. ${q.q}</div>`;
+    const opts=document.createElement('div');
+    opts.style.cssText='display:flex;flex-direction:column;gap:5px';
+    let done=false;
+    q.a.forEach((a,j)=>{
+      const b=document.createElement('button');
+      b.className='b'; b.style.textAlign='left'; b.innerHTML=a;
+      b.addEventListener('click',()=>{
+        if(done) return; done=true; answered++;
+        if(j===q.c){ b.style.background='rgba(94,231,212,.3)'; b.style.borderColor='var(--acc2)'; score++; }
+        else { b.style.background='rgba(255,107,157,.22)'; b.style.borderColor='var(--acc)';
+          opts.children[q.c].style.background='rgba(94,231,212,.3)';
+          opts.children[q.c].style.borderColor='var(--acc2)'; }
+        const ex=document.createElement('div');
+        ex.className='small'; ex.style.marginTop='8px'; ex.innerHTML='→ '+q.x;
+        d.appendChild(ex);
+        $('quizScore').innerHTML=`Punktzahl: <strong style="color:var(--acc3)">${score} / ${answered}</strong>`
+          + (answered===Q.length ? (score>=5?' — <strong style="color:var(--acc2)">Du hast das Paper verstanden.</strong>':' — schau dir die markierten Abschnitte nochmal an.') : '');
+      });
+      opts.appendChild(b);
+    });
+    d.appendChild(opts); box.appendChild(d);
+  });
+  $('quizScore').innerHTML='Noch keine Frage beantwortet.';
+})();
+
+/* =================================================================
+   RESIZE-HANDLING für Plotly
+   ================================================================= */
+let rt=null;
+addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{
+    if(typeof Plotly==='undefined') return;
+    ['wtPlot','hatPlot','sigPlot','dispPlot','bifPlot','scPlot','labDisp','anisoPlot']
+      .forEach(id=>{ const el=$(id); if(el && el.data) Plotly.Plots.resize(el); });
+  },180);
+});
+
+/* =================================================================
+   Initiale Synchronisation aller gekoppelten Module
+   ================================================================= */
+setTimeout(()=>{
+  if(window.updHat) window.updHat();
+  if(window.updDisp) window.updDisp();
+},120);
+</script>
 </body>
 </html>
