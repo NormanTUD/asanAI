@@ -328,8 +328,6 @@ What they already contain is a move that would run for forty thousand more years
 **From a Body to a Face: 26,000–14,000 Years Ago.** The Venus figurines are schematic; the first *recognisable* faces came later. The carved-ivory **head from Dolní Věstonice** (Czech Republic, about 26,000 years old) is among the earliest realistic human faces, and it appears to model a specific elderly woman whose buried skull shows the same one-sided distortion as the carving \cite{dolnivestonice}. A little later, the engraved slabs of **La Marche** (France, Magdalenian, about 14,000–15,000 years ago) carry over a hundred human figures, each with a distinct face, robes and even boots \cite{lamarchecave}, so individualised that they were long disputed.
 
 \marginfig{dolni_vestonice_head.jpg}{The ivory head from Dolní Věstonice, Czech Republic (about 26,000 years old), one of the oldest known realistic human faces; the carving matches the skull of a buried elderly woman found at the site. [Photo: Zde, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg)}
-
-\marginfig{la_marche_engraving.jpg}{An engraved human figure from the limestone slabs of La Marche, Lussac-les-Châteaux, France (Magdalenian, about 14,000 to 15,000 years old), one of over a hundred individualised faces. [Photo: Znorz, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:La_Marche_Cave_Painting.jpg)}
 </div>
 
 <div class="md" data-depth="60">
