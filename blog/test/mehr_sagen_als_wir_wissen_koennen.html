@@ -1916,7 +1916,8 @@ function setupCanvas(id){
   const dpr = window.devicePixelRatio || 1;
   const rect = cv.getBoundingClientRect();
   const w = rect.width || cv.parentElement.clientWidth || 600;
-  const h = parseInt(cv.getAttribute('height')) || 300;
+  if(!cv.dataset.lh) cv.dataset.lh = parseInt(cv.getAttribute('height')) || 300;
+  const h = parseInt(cv.dataset.lh,10);
   cv.width = Math.round(w*dpr);
   cv.height = Math.round(h*dpr);
   cv.style.height = h+'px';
