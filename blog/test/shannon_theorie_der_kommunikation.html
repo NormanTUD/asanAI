@@ -1238,7 +1238,7 @@ footer{border-top:1px solid var(--stroke);padding:40px 20px;text-align:center;co
   </p>
 
   <div class="card">
-    <canvas id="e2eCv" height="330"></canvas>
+    <canvas id="e2Cv" height="330"></canvas>
     <div class="grid g3" style="margin-top:16px">
       <div>
         <div class="ctrl">
@@ -1354,7 +1354,8 @@ function prep(cv){
   const dpr=window.devicePixelRatio||1;
   const r=cv.getBoundingClientRect();
   const w=Math.max(1,Math.round(r.width));
-  const h=parseInt(cv.getAttribute('height'))||200;
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'))||200;
+  const h=parseInt(cv.dataset.lh,10);
   if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){
     cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
     cv.style.height=h+'px';
@@ -2151,8 +2152,6 @@ $('redNew').onclick=()=>{ redIdx=(redIdx+1)%SATZE.length; redShowing=false; redD
    KAPITEL 4 · ENTROPIE
    ═══════════════════════════════════════════════════════════════════ */
 /* Axiom 3 — Fig. 6 */
-function axDraw(){
-  const p1=+$('axP1').value, r
 function axDraw(){
   const p1=+$('axP1').value, r2=+$('axP2').value;
   $('axP1_v').textContent=fmt(p1,3);
@@ -3121,7 +3120,7 @@ function cdUpdate(){
     if(f===1){ return Math.exp(-x*x/(2*s*s))/(s*Math.sqrt(2*Math.PI)); }
     if(f===2){ const b=s/Math.SQRT2; return Math.exp(-Math.abs(x)/b)/(2*b); }
     const m=s*0.86, sd=s*0.5;
-    return 0.5*(Math.exp(-(x-m)**2/(2*sd*sd))+Math.exp(-(x+m)**2/(2*sd*sd)))/(sd*Math.sqrt(2*Math.PI));
+    return 0.5*(Math.exp(-((x-m)**2)/(2*sd*sd))+Math.exp(-((x+m)**2)/(2*sd*sd)))/(sd*Math.sqrt(2*Math.PI));
   };
   let hh=0;
   for(let i=0;i<=N;i++){ const x=X0+i*dx; const p=pdf(x); xs.push(x); ys.push(p); if(p>1e-12) hh-=p*L2(p)*dx; }
@@ -3272,8 +3271,6 @@ function e2Draw(){
     {x:0.73,w:0.13,t:'DECODER',s:'Mehrheit',c:A2},
     {x:0.89,w:0.09,t:'ZIEL',s:'',c:A3}
   ];
-  const Y=h*0.22, HH=h*0.24;
-  stages.for
   const Y=h*0.22, HH=h*0.24;
   stages.forEach((s,i)=>{
     const X=s.x*w, W_=s.w*w;
