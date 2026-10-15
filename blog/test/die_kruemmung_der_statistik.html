@@ -1142,7 +1142,7 @@ details[open] summary{margin-bottom:9px}
           <button class="sm" data-l7="1">DML (α=+1)</button>
         </div>
         <div class="note key"><b>Beispiel 5.1 im Paper</b> rechnet genau diesen Fall:
-        <math><mi>Δ</mi><mi>g</mi><mo>=</mo><mfrac><mrow><mn>16</mn><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mo>…</mo></mrow><mrow><mn>8</mn><msup><mo>(</mo><mn>2</mn><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mn>1</mn><mo>)</mo></msup><msup><mi>u</mi><mn>2</mn></msup></mrow></mfrac></math>.
+        <math><mi>Δ</mi><mi>g</mi><mo>=</mo><mfrac><mrow><mn>16</mn><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mo>…</mo></mrow><mrow><mn>8</mn><msup><mrow><mo>(</mo><mn>2</mn><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><mn>1</mn><mo>)</mo></mrow><mn>2</mn></msup><msup><mi>u</mi><mn>2</mn></msup></mrow></mfrac></math>.
         Der zweite Teil verschwindet für α = −1.</div>
       </div>
     </div>
@@ -1396,12 +1396,13 @@ function $(id){return document.getElementById(id);}
 function hidpi(cv){
   const d = window.devicePixelRatio||1;
   const r = cv.getBoundingClientRect();
+  if(!cv.dataset.lh) cv.dataset.lh=+(cv.getAttribute('height')||300);
   cv.width = Math.max(1,Math.round(r.width*d));
-  cv.height = Math.max(1,Math.round((cv.getAttribute('height')||300)*d));
-  cv.style.height = (cv.getAttribute('height')||300)+'px';
+  cv.height = Math.max(1,Math.round(cv.dataset.lh*d));
+  cv.style.height = cv.dataset.lh+'px';
   const g = cv.getContext('2d');
   g.setTransform(d,0,0,d,0,0);
-  return {g, W:r.width, H:+(cv.getAttribute('height')||300)};
+  return {g, W:r.width, H:cv.dataset.lh|0};
 }
 function clr(g,W,H,bg='#060a12'){g.fillStyle=bg;g.fillRect(0,0,W,H);}
 function line(g,pts,col,w=2,dash=null){
@@ -1614,7 +1615,7 @@ document.querySelectorAll('section').forEach(s=>io.observe(s));
     const px=e.clientX-r.left, py=e.clientY-r.top;
     let k=-1;
     stations.forEach((s,i)=>{
-      const x=s.x*r.width, y=s.y*(+cv.getAttribute('height'));
+      const x=s.x*r.width, y=s.y*cv.clientHeight;
       if((px-x)**2+(py-y)**2<420)k=i;
     });
     return k;
@@ -2591,7 +2592,7 @@ a*0.45),y1=0;
   cv.addEventListener('click',e=>{
     const a=+$('ceA').value;
     const r=cv.getBoundingClientRect();
-    const W=r.width, H=+cv.getAttribute('height');
+    const W=r.width, H=cv.clientHeight;
     const px=e.clientX-r.left, py=e.clientY-r.top;
     if(view==='eta'){
       const x0=0,x1=2.6,y0=0,y1=2.6*2.6*(1+a*a)*1.05;
@@ -3436,7 +3437,7 @@ onView('#surfPlot',()=>{
   }
   cv.addEventListener('mousemove',e=>{
     const r=cv.getBoundingClientRect();
-    const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/(+cv.getAttribute('height'));
+    const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/cv.clientHeight;
     let k=-1;
     boxes.forEach((b,i)=>{if(px>b.x&&px<b.x+b.w&&py>b.y&&py<b.y+b.h)k=i;});
     if(k!==hov){hov=k;cv.style.cursor=k>=0?'pointer':'default';draw();}
