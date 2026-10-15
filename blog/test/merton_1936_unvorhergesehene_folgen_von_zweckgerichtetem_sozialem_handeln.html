@@ -1762,7 +1762,7 @@ window.addEventListener('load',()=>{setTimeout(renderMath,120);});
 
     // histogram
     if(window.Plotly&&$('#w1hist')){
-      Plotly.react('#w1hist',[{
+      Plotly.react('w1hist',[{
         x:vals,type:'histogram',marker:{color:sig>0?'rgba(155,123,255,.7)':'rgba(240,180,41,.8)',
           line:{color:'rgba(155,123,255,.95)',width:1}},nbinsx:36
       }],L({height:200,margin:{l:44,r:14,t:10,b:32},
@@ -2404,11 +2404,11 @@ window.addEventListener('load',()=>{setTimeout(renderMath,120);});
       annotations:[{x:1926.5,y:1,yref:'paper',text:'Prohibition',showarrow:false,
         font:{size:10,color:'#f0b429'},yanchor:'bottom'}],
       legend:{...PLOT_LAYOUT.legend,orientation:'h',y:-0.22}});
-    Plotly.react('#ciplot',traces,lay,PCFG);
+    Plotly.react('ciplot',traces,lay,PCFG);
 
     const sA=A.reduce((a,b)=>a+b,0),sB=B.reduce((a,b)=>a+b,0),sC=Cc.reduce((a,b)=>a+b,0);
     const T=sA+sB+sC||1;
-    Plotly.react('#cibar',[{
+    Plotly.react('cibar',[{
       x:[sA/T*100,sB/T*100,sC/T*100],y:['Prohibition','Urbanisierung','Krise'],
       type:'bar',orientation:'h',
       marker:{color:[C.gold,C.cyan,C.rose]},
@@ -3283,7 +3283,7 @@ window.addEventListener('load',()=>{setTimeout(renderMath,120);});
     const now=model(red,yrs), ref=model(0,yrs);
     const labels=[];for(let g=0;g<G;g++)labels.push((g*5)+'–'+(g*5+4));
 
-    Plotly.react('#bcpyr',[
+    Plotly.react('bcpyr',[
       {x:ref.map(v=>-v),y:labels,type:'bar',orientation:'h',name:'ohne Geburtenkontrolle',
        marker:{color:'rgba(140,170,255,.28)'},hovertemplate:'%{y}: %{customdata:.0f}<extra></extra>',
        customdata:ref},
@@ -3311,7 +3311,7 @@ window.addEventListener('load',()=>{setTimeout(renderMath,120);});
       oldDep.push(100*old/Math.max(work,1));
       only.push(100*clamp(Math.pow(red*phase,1.35)*0.92,0,0.95));
     }
-    Plotly.react('#bcside',[
+    Plotly.react('bcside',[
       {x:T,y:budget,name:'① BEABSICHTIGT: Budget je Kopf',line:{color:C.green,width:3}},
       {x:T,y:sibs.map(v=>v*38),name:'② Geschwisterzahl (skaliert)',line:{color:C.rose,width:2}},
       {x:T,y:oldDep,name:'③ Altenquotient',line:{color:C.violet,width:2}},
@@ -3370,7 +3370,7 @@ window.addEventListener('load',()=>{setTimeout(renderMath,120);});
     $('#we4v').textContent=(+W4.value/100).toFixed(2);
     const N=200, S=sim(A0,p,c,i,N);
 
-    Plotly.react('#weplot',[
+    Plotly.react('weplot',[
       {x:S.t,y:S.a,name:'Askese A',line:{color:C.gold,width:3},fill:'tozeroy',
        fillcolor:'rgba(240,180,41,.10)'},
       {x:S.t,y:S.wv,name:'Reichtum W',line:{color:C.cyan,width:3},fill:'tozeroy',
@@ -3637,7 +3637,7 @@ window.addEventListener('load',()=>{setTimeout(renderMath,120);});
     if(SC.checked)tr.push({x:T,y:comet,name:'Halleys Komet (unbeeindruckt)',
       line:{color:'rgba(140,170,255,.5)',width:1.6,dash:'dot'}});
 
-    Plotly.react('#spplot',tr,L({height:330,
+    Plotly.react('spplot',tr,L({height:330,
       
       title:{text:'Die selbstmörderische Prophezeiung',font:{size:12,color:'#9eabc8'}},
       xaxis:{...PLOT_LAYOUT.xaxis,title:{text:'Jahr',font:{size:10}}},
@@ -3807,7 +3807,7 @@ const MERTON=(function(){
     $('#Mk3').style.color=S.reversal>0.5?C.violet:C.dim;
 
     if(window.Plotly&&$('#Mflow')){
-      Plotly.react('#Mflow',[
+      Plotly.react('Mflow',[
         {x:S.series.t,y:S.series.intended,name:'beabsichtigte Wirkung',
          line:{color:C.green,width:3},fill:'tozeroy',fillcolor:'rgba(74,222,128,.10)'},
         {x:S.series.t,y:S.series.unintended,name:'unvorhergesehene Folgen',
@@ -3885,7 +3885,7 @@ const MERTON=(function(){
     const tgt=[1,2,3,4,5,6, 7,8, 8,6, 7,8, 9,8, 10,7];
     const val=[w1,w2,w3,w4,w5,direct*2.2,
       w1*0.62,w1*0.38, w2*0.72,w2*0.28, w3*0.45,w3*0.55, w4*0.7,w4*0.3, w5*0.75,w5*0.25];
-    Plotly.react('#Msankey',[{
+    Plotly.react('Msankey',[{
       type:'sankey',orientation:'h',
       node:{pad:17,thickness:16,line:{color:'rgba(140,170,255,.25)',width:1},
         label:labels,color:colors},
@@ -4003,7 +4003,7 @@ MERTON.init();
         hovertemplate:'<b>%{text}</b><br>'+AX[ax]+': %{x:.2f}<br>'+AX[ay]+': %{y:.2f}<extra></extra>'
       };
     });
-    Plotly.react('#Mtypo',traces,L({height:430,
+    Plotly.react('Mtypo',traces,L({height:430,
       title:{text:'Typologie sozialen Handelns nach Faktorprofil',font:{size:12,color:'#9eabc8'}},
       xaxis:{...PLOT_LAYOUT.xaxis,title:{text:AX[ax],font:{size:11}},range:[-0.05,1.08]},
       yaxis:{...PLOT_LAYOUT.yaxis,title:{text:AX[ay],font:{size:11}},range:[-0.05,1.08]},
@@ -4067,7 +4067,7 @@ MERTON.init();
     const p=P[+SEL.value];
     const vals=[...p.v,p.v[0]];
     const labs=[...AX,AX[0]];
-    Plotly.react('#p11radar',[{
+    Plotly.react('p11radar',[{
       type:'scatterpolar',r:vals,theta:labs,fill:'toself',
       name:p.n,line:{color:C.gold,width:2.6},fillcolor:'rgba(240,180,41,.18)',
       marker:{size:7,color:C.goldS}
