@@ -1986,14 +1986,18 @@ function setupCanvas(cv){
 const canvasRegistry = [];
 function registerCanvas(cv, drawFn){
   const obj = { cv, drawFn, ctx:null, W:0, H:0 };
-  function resize(){
+  function setup(){
     const s = setupCanvas(cv);
     obj.ctx = s.ctx; obj.W = s.W; obj.H = s.H;
+  }
+  function resize(){
+    setup();
     drawFn(obj.ctx, obj.W, obj.H);
   }
   obj.resize = resize;
   canvasRegistry.push(obj);
-  resize();
+  setup();
+  queueMicrotask(resize);
   return obj;
 }
 let resizeTimer;
@@ -3474,7 +3478,6 @@ tex($('#mathHyper'),
 (function(){
   const cv=$('#scanCanvas'); if(!cv) return;
   let lines=48, speed=1, noise=0, running=false, cur=0, tv=false, t0=0, dots=0;
-  const C=registerCanvas(cv,draw);
   const SRC = [];
   function buildSource(){
     SRC.length=0;
@@ -3497,6 +3500,7 @@ tex($('#mathHyper'),
     }
   }
   buildSource();
+  const C=registerCanvas(cv,draw);
 
   function draw(ctx,W,H){
     ctx.clearRect(0,0,W,H);
@@ -3587,7 +3591,6 @@ tex($('#mathVoder'), '\\text{Vocoder (Sprache}\\to\\text{Tasten)}\\;+\\;\\text{S
 (function(){
   const cv=$('#voderCanvas'); if(!cv) return;
   let pulse=-1, t=0, phon=55;
-  const C=registerCanvas(cv,draw);
   const STAGES=[
     {l:'Stimme',       c:COL.amber},
     {l:'Mikrofon',     c:COL.cyan},
@@ -3596,6 +3599,7 @@ tex($('#mathVoder'), '\\text{Vocoder (Sprache}\\to\\text{Tasten)}\\;+\\;\\text{S
     {l:'Stenotype',    c:COL.violet},
     {l:'Text',         c:COL.green}
   ];
+  const C=registerCanvas(cv,draw);
   function draw(ctx,W,H){
     ctx.clearRect(0,0,W,H);
     t+=0.02;
