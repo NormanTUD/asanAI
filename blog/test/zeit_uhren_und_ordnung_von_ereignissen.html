@@ -1537,8 +1537,11 @@ const COL={P:'#5ad1ff',Q:'#ff8bd0',R:'#9dff8b',S:'#ffd166',acc:'#7c6cff',acc2:'#
 const PCOL=[COL.P,COL.Q,COL.R,COL.S];
 
 function dpi(cv){
-  const r=window.devicePixelRatio||1, w=cv.clientWidth, h=parseInt(cv.getAttribute('height'))||300;
+  const r=window.devicePixelRatio||1, w=cv.clientWidth;
+  if(!cv.dataset.lh) cv.dataset.lh=parseInt(cv.getAttribute('height'))||cv.clientHeight||300;
+  const h=cv.dataset.lh|0;
   cv.width=w*r; cv.height=h*r;
+  cv.style.height=h+'px';
   const ctx=cv.getContext('2d'); ctx.setTransform(r,0,0,r,0,0);
   return {ctx,w,h};
 }
@@ -1848,7 +1851,7 @@ function renderMath(){
       }</div>`;
   }
   cv.addEventListener('click',e=>{
-    const r=cv.getBoundingClientRect(), {pad,cs}=cellGeom(cv.clientWidth,parseInt(cv.getAttribute('height')));
+    const r=cv.getBoundingClientRect(), {pad,cs}=cellGeom(cv.clientWidth,cv.clientHeight);
     const j=Math.floor((e.clientX-r.left-pad)/cs), i=Math.floor((e.clientY-r.top-pad)/cs);
     if(i>=0&&i<N&&j>=0&&j<N){ M[i][j]^=1; draw(); }
   });
@@ -1928,7 +1931,7 @@ function renderMath(){
   }
   cv.addEventListener('click',e=>{
     const r=cv.getBoundingClientRect(),S=SETS[cur],pad=38;
-    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const w=cv.clientWidth,h=cv.clientHeight;
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     let best=-1,bd=1e9;
     S.nodes.forEach((n,i)=>{const d=Math.hypot(pad+n.x*(w-2*pad)-mx,pad+n.y*(h-2*pad)-my); if(d<bd){bd=d;best=i;}});
@@ -2046,7 +2049,7 @@ function renderMath(){
       : `<b>Nicht stark zusammenhängend!</b> Manche Prozesse sind unerreichbar. Lamports Theorem gilt hier gar nicht — die Uhren können beliebig weit auseinanderlaufen.`;
   }
   cv.addEventListener('click',e=>{
-    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=cv.clientHeight;
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     let best=-1,bd=1e9;
     for(let i=0;i<N;i++){const p=pos(i,w,h),d=Math.hypot(p.x-mx,p.y-my); if(d<bd){bd=d;best=i;}}
@@ -2332,7 +2335,7 @@ let HBsel=null;
     const path=[];let c=b;while(c!==-1){path.unshift(c);c=prev[c];}return path;
   }
   cv.addEventListener('click',e=>{
-    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=cv.clientHeight;
     const {xs,Y}=geom(w,h);
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     let best=-1,bd=1e9;
@@ -2787,7 +2790,7 @@ let SIM={np:3,events:[],msgs:[]};
     return bd<22? best:null;
   }
   cv.addEventListener('pointerdown',e=>{
-    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=cv.clientHeight;
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     const i=hit(mx,my,w,h);
     if(i!==null){ drag={from:i,x0:mx,y0:my,x1:mx,y1:my}; }
@@ -2803,7 +2806,7 @@ let SIM={np:3,events:[],msgs:[]};
   });
   cv.addEventListener('pointerup',e=>{
     if(!drag)return;
-    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const w=cv.clientWidth,h=cv.clientHeight;
     const j=hit(drag.x1,drag.y1,w,h);
     if(j!==null&&j!==drag.from){
       const A=SIM.events[drag.from],B=SIM.events[j];
@@ -3758,7 +3761,7 @@ let SIM={np:3,events:[],msgs:[]};
     txt(ctx,'Klicke eine Station',w/2,h-10,{align:'center',size:11,col:'rgba(255,255,255,.35)'});
   }
   cv.addEventListener('click',e=>{
-    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=cv.clientHeight;
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     let best=-1,bd=1e9;
     ST.forEach((s,i)=>{const d=Math.hypot(40+s.x*(w-80)-mx,36+s.y*(h-90)-my);if(d<bd){bd=d;best=i;}});
@@ -3814,7 +3817,7 @@ let SIM={np:3,events:[],msgs:[]};
     });
   }
   cv.addEventListener('click',e=>{
-    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=cv.clientHeight;
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     const cols=2, rows=Math.ceil(P.length/cols);
     const gw=(w-24)/cols-10, gh=(h-20)/rows-8;
@@ -3881,7 +3884,7 @@ let SIM={np:3,events:[],msgs:[]};
     });
   }
   cv.addEventListener('mousemove',e=>{
-    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const r=cv.getBoundingClientRect(),w=cv.clientWidth,h=cv.clientHeight;
     const mx=e.clientX-r.left,my=e.clientY-r.top;
     let best=null,bd=1e9;
     N.forEach((n,i)=>{const p=pos(n,w,h),d=Math.hypot(p.x-mx,p.y-my);if(d<bd){bd=d;best=i;}});
