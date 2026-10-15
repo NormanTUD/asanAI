@@ -1572,7 +1572,13 @@ $$
 \frac{\partial L_{\text{CE}}}{\partial z_i} = \hat{y}_i - y_i
 $$
 
-i.e. the gradient is just “predicted minus actual”, the reason softmax + cross-entropy is the canonical pairing.
+where $z_i$ are the **pre-softmax logits** and $\hat{y}_i = \text{softmax}(\vec{z})_i$. This is the derivative of the **composed** softmax-then-cross-entropy pipeline with respect to the logits — *not* the derivative of cross-entropy by itself. The softmax Jacobian is $\partial \hat{y}_i / \partial z_j = \hat{y}_i(\delta_{ij} - \hat{y}_j)$ and cross-entropy alone gives $\partial L / \partial \hat{y}_i = -y_i / \hat{y}_i$; applying the chain rule,
+
+$$
+\frac{\partial L}{\partial z_j} \;=\; \sum_i \frac{\partial L}{\partial \hat{y}_i} \cdot \frac{\partial \hat{y}_i}{\partial z_j} \;=\; \sum_i \left(-\frac{y_i}{\hat{y}_i}\right) \hat{y}_i(\delta_{ij} - \hat{y}_j) \;=\; \hat{y}_j - y_j.
+$$
+
+The $\hat{y}_i$ factors from the softmax Jacobian cancel the $1/\hat{y}_i$ factors from the cross-entropy gradient, leaving the remarkably simple "predicted minus actual" — which is precisely why softmax + cross-entropy is the canonical pairing.
 </div>
 
 <script>

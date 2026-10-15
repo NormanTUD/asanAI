@@ -396,9 +396,11 @@ By using “Log Tables,” an astronomer could look up the logarithms of two gia
 </div>
 
 <div class="optional md" data-headline="How is the Logarithm calculated today?" data-mathlevel="55" data-optionaltitle="How is the Logarithm calculated today?">
-Modern computers calculate logarithms using infinite series. One of the most fundamental is the \citealternativetitle{mercator1668} (p. 32f) for the natural logarithm ($\ln$):
+Historically, one of the most fundamental tools is the **Mercator series** \citealternativetitle{mercator1668} (p. 32f) for the natural logarithm ($\ln$):
 
 $$\ln(1+x) = \sum_{n=1}^{\infty} \underbrace{(-1)^{n+1}}_\text{alternating sign}\, \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
+
+This is the series that taught mathematicians to think of $\ln$ as a limit of polynomials. Modern floating-point units, however, do not evaluate it term-by-term in the hot path — the alternating series converges slowly and accumulates rounding error badly. Instead, math libraries reduce the problem to a small interval (e.g., $\ln(x) = \ln(x/2^k) + k\ln 2$), then approximate on that interval with a **rational function** (a Padé / Remez minimax polynomial), a **CORDIC** iteration in hardware, or a short **table lookup with interpolation**. The Mercator series is the historical and didactic root; the polynomial a CPU actually evaluates on a single call is much shorter, of higher degree, and tuned for the working interval.
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="The change of base">
