@@ -3538,7 +3538,7 @@ function k10draw(){
   function bar(x,hFrac,col,label,sub){
     const h=(base-topY)*hFrac;
     const g=ctx.createLinearGradient(0,base-h,0,base);
-    g.addColorStop(0,col);g.addColorStop(1,col.replace('rgb','rgba').replace(')',',.25)'));
+    g.addColorStop(0,col);g.addColorStop(1,col.replace(/,\s*[\d.]+\)\s*$/, ',.25)'));
     ctx.fillStyle=col;ctx.globalAlpha=.75;
     ctx.beginPath();ctx.roundRect(x,base-h,bw*0.66,h,8);ctx.fill();
     ctx.globalAlpha=1;

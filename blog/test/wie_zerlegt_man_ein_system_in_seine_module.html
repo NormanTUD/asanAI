@@ -2749,7 +2749,7 @@ const CHANGES=[
       $('#ruleCaption').innerHTML='Format als Schnittstelle = „extremely costly".';
     }
     else if(kind==='char'){
-      const orders=[['A','B','C','…','Z'],['a','ä','b','c','…'],['0x41','0xC1','…','',''ature'.slice(0,0)]];
+      const orders=[['A','B','C','…','Z'],['a','ä','b','c','…'],['0x41','0xC1','…','','']];
       txt(x,'Dieselben Daten, drei Ordnungen',w/2,18,{size:10.5,align:'center',col:C.dim});
       const labels=['ASCII / englisch','DIN / deutsch','EBCDIC'];
       const cols=[C.acc,C.acc2,C.acc3];
@@ -2880,8 +2880,6 @@ const CHANGES=[
      d:'Jedes Modul versteckt brav ein Geheimnis, aber A braucht B und B braucht A. Änderungen bleiben lokal — doch man kann nichts einzeln starten und nichts „prunen". „‚level\' would not have much meaning in the system."',
      c:C.acc2}
   ];
-  function draw(){
-    const {x,
   function draw(){
     const {x,w,h}=dpi(cv);
     x.clearRect(0,0,w,h);
