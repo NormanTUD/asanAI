@@ -8948,12 +8948,11 @@ html.dark .cl-cite-tip {
 	position: fixed;
 	inset: 0;
 	z-index: 9800;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	gap: 14px;
-	padding: 64px 40px 56px;
+	display: grid;
+	grid-template-rows: 1fr auto;
+	justify-items: center;
+	gap: 16px;
+	padding: 64px 40px 88px;
 	background: rgba(8, 12, 24, .82);
 	backdrop-filter: blur(6px);
 	opacity: 0;
@@ -8963,26 +8962,27 @@ html.dark .cl-cite-tip {
 #cl-lb[hidden] { display: none; }
 #cl-lb img {
 	max-width: 92vw;
-	max-height: calc(100vh - 260px);
+	max-height: 100%;
+	min-height: 0;
 	object-fit: contain;
 	border-radius: 4px;
 	box-shadow: 0 24px 60px rgba(0,0,0,.5);
-	flex-shrink: 1;
-	min-height: 0;
+	align-self: center;
 }
 #cl-lb figcaption {
-	max-width: 80ch;
-	max-height: 200px;
+	max-height: 220px;
+	min-height: 0;
 	overflow-y: auto;
 	color: rgba(255,255,255,.7);
 	font-size: .85em;
 	font-style: italic;
 	text-align: center;
 	margin: 0;
-	padding: 4px 14px 8px;
+	padding: 0 4px;
 	border: none;
 	line-height: 1.5;
-	flex-shrink: 0;
+	justify-self: stretch;
+	align-self: end;
 }
 .cl-lb-x {
 	position: absolute;
@@ -8990,7 +8990,7 @@ html.dark .cl-cite-tip {
 	right: 18px;
 	width: 32px;
 	height: 32px;
-	border-radius: 50%;
+	border-radius: 6px;
 	border: 1px solid rgba(255, 90, 90, .6);
 	background: rgba(220, 38, 38, .35);
 	color: #fca5a5;
@@ -9054,6 +9054,7 @@ body:has(#cl-lb.is-visible) #theme-toggle,
 body:has(#cl-lb.is-visible) #search-trigger,
 body:has(#cl-lb.is-visible) #topics-toggle,
 body:has(#cl-lb.is-visible) #drawer-toggle,
+body:has(#cl-lb.is-visible) #reader-toggle,
 body:has(#cl-lb.is-visible) #cl-top,
 body:has(#cl-lb.is-visible) #cl-mini-toc,
 body:has(#cl-lb.is-visible) #reading-progress {
