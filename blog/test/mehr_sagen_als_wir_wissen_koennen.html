@@ -5188,7 +5188,6 @@ function cpReset(){ cpIdx=0; cpScore=0; cpDone=0; drawCP();
     `<span class="tag">Spielregel</span>Jones &amp; Nisbett (1972) unterscheiden scharf:
      Zu <b>Inhalten</b> hast du privilegierten Zugang. Zu <b>Prozessen</b> nicht.
      Sortiere die Karten — du siehst sofort, ob du richtig lagst.`; }
-function cpNext(){ cp
 function cpNext(){
   cpIdx = (cpIdx+1) % CP_CARDS.length;
   drawCP();
@@ -5502,8 +5501,6 @@ const FINAL_STEPS = [
    m:`Nur ein Drittel nennt den echten Hinweis. Bietet man einen <b>nutzlosen Köder-Hinweis</b>
       an, greifen <b>alle</b> ihn — und bestreiten den echten. Damit ist auch das
       „ehrliche Drittel" entwertet.`},
-  {t:'Indiz 5 — Latané & Darley',
-   m:`Der Byst
   {t:'Indiz 5 — Latané & Darley',
    m:`Der Bystander-Effekt ist riesig und robust. <b>Niemand</b> gibt zu, davon betroffen
       zu sein — „subtil, direkt, taktvoll, unverblümt" gefragt, immer dieselbe Antwort.
