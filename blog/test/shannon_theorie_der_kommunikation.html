@@ -1,0 +1,3398 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shannon 1948 — Eine mathematische Theorie der Kommunikation · Interaktiv</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&display=swap" rel="stylesheet">
+
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<!-- Plotly -->
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0b1020;
+  --panel:rgba(255,255,255,.045);
+  --panel2:rgba(255,255,255,.08);
+  --stroke:rgba(255,255,255,.12);
+  --text:#e8ecf8;
+  --muted:#9aa7c7;
+  --accent:#5ad1ff;
+  --accent2:#ff7ad9;
+  --accent3:#9dff6e;
+  --warn:#ffcf5a;
+  --red:#ff6b6b;
+  --shadow:0 20px 60px rgba(0,0,0,.55);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 800px at 12% -10%, #1b2a56 0%, transparent 60%),
+    radial-gradient(900px 700px at 100% 0%, #3a1150 0%, transparent 55%),
+    radial-gradient(900px 900px at 50% 120%, #06303a 0%, transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(circle at 50% 30%, black 10%, transparent 75%);
+}
+a{color:var(--accent)}
+
+/* ---------- Progress bar ---------- */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0%;z-index:200;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  box-shadow:0 0 14px rgba(90,209,255,.8);
+  transition:width .12s linear;
+}
+
+/* ---------- Nav ---------- */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  backdrop-filter:blur(16px);
+  background:rgba(7,10,18,.62);
+  border-bottom:1px solid var(--stroke);
+}
+#navInner{max-width:1240px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#navBrand{font-family:Fraunces,serif;font-weight:800;letter-spacing:.3px;font-size:16px;white-space:nowrap}
+#navBrand span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+#navLinks{display:flex;gap:4px;flex-wrap:wrap;font-size:12.5px}
+#navLinks button{
+  background:transparent;border:1px solid transparent;color:var(--muted);
+  padding:5px 10px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:12.5px;transition:.18s;
+}
+#navLinks button:hover{color:var(--text);background:var(--panel)}
+#navLinks button.active{color:#071018;background:linear-gradient(90deg,var(--accent),#8fe8ff);border-color:transparent;font-weight:600}
+
+/* ---------- Layout ---------- */
+main{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:92px 20px 140px}
+section{margin:0 0 110px;scroll-margin-top:90px}
+.hero{min-height:84vh;display:flex;flex-direction:column;justify-content:center;gap:22px}
+h1{font-family:Fraunces,serif;font-size:clamp(34px,6vw,70px);line-height:1.02;margin:0;font-weight:800;letter-spacing:-1.5px}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--accent) 0%,var(--accent2) 55%,var(--accent3) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-family:Fraunces,serif;font-size:clamp(25px,3.4vw,40px);margin:0 0 6px;font-weight:700;letter-spacing:-.6px}
+h3{font-size:18px;margin:26px 0 8px;font-weight:650;color:#dbe6ff}
+h4{font-size:14.5px;margin:16px 0 6px;font-weight:650;color:#c8d6ff;letter-spacing:.2px}
+p{color:#c9d4ee;max-width:78ch}
+.lede{font-size:clamp(16px,1.6vw,19.5px);color:#cfe0ff;max-width:72ch}
+.muted{color:var(--muted);font-size:14px}
+.tiny{font-size:12.5px;color:var(--muted)}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11.5px;letter-spacing:2.4px;text-transform:uppercase;color:var(--accent);
+  border:1px solid rgba(90,209,255,.3);padding:5px 12px;border-radius:999px;background:rgba(90,209,255,.07);
+  font-weight:600;
+}
+.kicker.k2{color:var(--accent2);border-color:rgba(255,122,217,.3);background:rgba(255,122,217,.07)}
+.kicker.k3{color:var(--accent3);border-color:rgba(157,255,110,.3);background:rgba(157,255,110,.07)}
+.kicker.k4{color:var(--warn);border-color:rgba(255,207,90,.3);background:rgba(255,207,90,.07)}
+
+/* ---------- Cards ---------- */
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.022));
+  border:1px solid var(--stroke);border-radius:var(--radius);
+  padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(10px);
+}
+.card.tight{padding:16px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g12{grid-template-columns:1.2fr .9fr}
+.g21{grid-template-columns:1fr 1.25fr}
+@media(max-width:940px){.g2,.g3,.g12,.g21{grid-template-columns:1fr}}
+
+.note{
+  border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 12px 12px 0;
+  background:rgba(90,209,255,.07);font-size:14.5px;color:#d6e6ff;
+}
+.note.pink{border-color:var(--accent2);background:rgba(255,122,217,.07)}
+.note.green{border-color:var(--accent3);background:rgba(157,255,110,.07)}
+.note.gold{border-color:var(--warn);background:rgba(255,207,90,.07)}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:12px 0}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);margin-bottom:5px;gap:10px}
+.ctrl label b{color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),rgba(255,255,255,.14));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;border:3px solid var(--accent);cursor:pointer;box-shadow:0 0 12px rgba(90,209,255,.75);
+}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:pointer}
+button.btn{
+  background:linear-gradient(135deg,rgba(90,209,255,.2),rgba(255,122,217,.14));
+  border:1px solid var(--stroke);color:var(--text);padding:8px 15px;border-radius:11px;
+  cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:550;transition:.18s;
+}
+button.btn:hover{transform:translateY(-1px);border-color:var(--accent);box-shadow:0 6px 20px rgba(90,209,255,.22)}
+button.btn:active{transform:translateY(0)}
+button.btn.sm{padding:5px 11px;font-size:12.5px;border-radius:9px}
+button.btn.on{background:linear-gradient(135deg,var(--accent),#7fe3ff);color:#06121b;font-weight:700;border-color:transparent}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select{
+  background:#121a2e;color:var(--text);border:1px solid var(--stroke);border-radius:9px;padding:6px 10px;font-family:inherit;font-size:13px;
+}
+canvas{display:block;width:100%;border-radius:13px;background:rgba(3,6,14,.55);border:1px solid var(--stroke)}
+.plot{width:100%;height:300px}
+.mono{font-family:'JetBrains Mono',monospace}
+.big{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;color:var(--accent)}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-top:12px}
+.stat{background:rgba(255,255,255,.05);border:1px solid var(--stroke);border-radius:12px;padding:10px 12px}
+.stat .k{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:600;color:var(--accent);margin-top:2px}
+.stat.p .v{color:var(--accent2)} .stat.g .v{color:var(--accent3)} .stat.w .v{color:var(--warn)} .stat.r .v{color:var(--red)}
+
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;background:var(--panel2);border:1px solid var(--stroke);color:var(--muted);font-family:'JetBrains Mono',monospace}
+.sep{height:1px;background:linear-gradient(90deg,transparent,var(--stroke),transparent);margin:34px 0}
+.formula{background:rgba(0,0,0,.3);border:1px solid var(--stroke);border-radius:12px;padding:12px 16px;margin:12px 0;overflow-x:auto;text-align:center}
+math{font-size:1.07em}
+.codebox{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:rgba(0,0,0,.36);border:1px solid var(--stroke);border-radius:11px;padding:11px 13px;white-space:pre-wrap;word-break:break-word;color:#bcd0f5;line-height:1.5}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--stroke);text-align:left}
+th{color:var(--muted);font-weight:600;font-size:11.5px;letter-spacing:.8px;text-transform:uppercase}
+td.mono{font-family:'JetBrains Mono',monospace;color:var(--accent)}
+
+.step{display:flex;gap:14px;align-items:flex-start;margin:16px 0}
+.stepn{
+  flex:0 0 32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#07101c;font-weight:800;font-size:14px;
+}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.2,.7,.3,1),transform .75s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{background:var(--panel);border:1px solid var(--stroke);color:var(--muted);padding:6px 13px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:13px;transition:.16s}
+.tabs button.on{background:linear-gradient(135deg,var(--accent),#86e4ff);color:#061019;font-weight:700;border-color:transparent}
+.hidden{display:none !important}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-top:18px}
+.rm{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:14px;padding:14px;cursor:pointer;transition:.2s}
+.rm:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 32px rgba(90,209,255,.16)}
+.rm .n{font-family:'JetBrains Mono',monospace;color:var(--accent2);font-size:12px}
+.rm .t{font-weight:650;margin:4px 0 3px;font-size:14.5px}
+.rm .d{font-size:12.5px;color:var(--muted);line-height:1.45}
+
+footer{border-top:1px solid var(--stroke);padding:40px 20px;text-align:center;color:var(--muted);font-size:13px}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#070a12}
+::-webkit-scrollbar-thumb{background:#243154;border-radius:9px;border:2px solid #070a12}
+::-webkit-scrollbar-thumb:hover{background:#34477a}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav id="nav"><div id="navInner">
+  <div id="navBrand">SHANNON <span>1948</span></div>
+  <div id="navLinks"></div>
+</div></nav>
+
+<main>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<section id="hero" class="hero">
+  <span class="kicker">C. E. Shannon · Bell System Technical Journal · Juli &amp; Oktober 1948</span>
+  <h1>Was ist <em>Information</em>,<br>und wie viel davon<br>passt durch ein Kabel?</h1>
+  <p class="lede">
+    Claude Shannon stellte 1948 eine Frage, die vorher niemand sauber stellen konnte: <b>Wie misst man Information in Zahlen?</b>
+    Seine Antwort — die <b>Entropie</b> — und die zwei Sätze, die daraus folgen, sind der Grund, warum ZIP-Dateien, Handynetze,
+    DVDs, Deep Space-Sonden und das ganze Internet funktionieren.
+  </p>
+  <p class="lede">
+    Diese Seite ist das Paper — aber zum <b>Anfassen</b>. Jeder Begriff ist ein Regler. Jeder Satz ist eine Simulation.
+    Du brauchst nur Abiturmathematik: Logarithmus, Wahrscheinlichkeit, Mittelwert.
+  </p>
+
+  <div class="card" style="margin-top:8px">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div>
+        <div class="kicker k3" style="margin-bottom:8px">Aufwärmen — 20 Sekunden</div>
+        <h3 style="margin-top:0">Das Ratespiel</h3>
+        <p class="tiny" style="max-width:52ch;margin:0">
+          Ich denke mir eine von N Zahlen aus. Du darfst nur Ja/Nein-Fragen stellen.
+          Wie viele Fragen brauchst du mindestens? Ziehe am Regler und schau zu, wie der Suchbaum wächst.
+        </p>
+      </div>
+      <div style="text-align:right">
+        <div class="tiny">Minimale Fragenzahl</div>
+        <div class="big" id="warmQ">3</div>
+        <div class="tiny mono" id="warmF">log₂(8) = 3 bit</div>
+      </div>
+    </div>
+    <div class="ctrl" style="margin-top:14px">
+      <label>Anzahl Möglichkeiten N <b id="warmNv">8</b></label>
+      <input type="range" id="warmN" min="2" max="64" step="1" value="8">
+    </div>
+    <canvas id="warmCv" height="200"></canvas>
+    <div class="note green" style="margin-top:12px">
+      <b>Das ist schon die ganze Grundidee.</b> Information = Anzahl der Ja/Nein-Fragen = <span class="mono">log₂(N)</span> <b>bit</b>.
+      Doppelt so viele Möglichkeiten ⇒ genau <b>eine</b> Frage mehr. Deshalb der Logarithmus.
+    </div>
+  </div>
+
+  <div class="roadmap" id="roadmap"></div>
+</section>
+
+<!-- ══════════════════════════ 0 · WERKZEUGKASTEN ══════════════════════════ -->
+<section id="tools" class="reveal">
+  <span class="kicker k4">Kapitel 0 · Voraussetzungen</span>
+  <h2>Der Werkzeugkasten</h2>
+  <p class="lede">Alles, was über Schulmathematik hinausgeht, wird hier in vier interaktiven Bausteinen erledigt. Danach ist nichts mehr fremd.</p>
+
+  <div class="tabs" id="toolTabs">
+    <button class="on" data-t="t1">① Logarithmus &amp; bit</button>
+    <button data-t="t2">② Zufall &amp; Erwartungswert</button>
+    <button data-t="t3">③ Markow-Ketten</button>
+    <button data-t="t4">④ Typische Folgen (Gesetz der großen Zahlen)</button>
+  </div>
+
+  <!-- Tool 1 -->
+  <div id="t1" class="toolpane">
+    <div class="grid g2">
+      <div class="card">
+        <h3 style="margin-top:0">Warum ausgerechnet der Logarithmus?</h3>
+        <p>Shannon begründet es in der Einleitung mit drei Argumenten. Das stärkste: <b>Information soll sich addieren</b>.
+          Zwei Festplatten sollen doppelt so viel speichern wie eine — nicht „quadratisch mehr".</p>
+        <div class="formula" id="f_log"></div>
+        <div class="ctrl">
+          <label>Anzahl Schalter / Relais n <b id="relN_v">3</b></label>
+          <input type="range" id="relN" min="1" max="10" step="1" value="3">
+        </div>
+        <div class="statgrid">
+          <div class="stat"><div class="k">Zustände 2ⁿ</div><div class="v" id="relStates">8</div></div>
+          <div class="stat g"><div class="k">log₂ davon</div><div class="v" id="relBits">3 bit</div></div>
+          <div class="stat p"><div class="k">in Dezimalziffern</div><div class="v" id="relDec">0.90</div></div>
+        </div>
+        <p class="tiny" style="margin-top:12px">Shannon: „Eine Dezimalziffer sind etwa 3⅓ bit." Der Basiswechsel ist nur eine Multiplikation:
+          <span class="mono">log₂M = log₁₀M / log₁₀2 ≈ 3.32·log₁₀M</span>.</p>
+      </div>
+      <div class="card">
+        <h4 style="margin-top:0">Links: lineares Wachstum der Zustände. Rechts: der Logarithmus macht daraus eine Gerade.</h4>
+        <canvas id="logCv" height="300"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--accent2)"></i>Zustände 2ⁿ (explodiert)</span>
+          <span><i style="background:var(--accent3)"></i>Information log₂(2ⁿ)=n (brav linear)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 2 -->
+  <div id="t2" class="toolpane hidden">
+    <div class="grid g2">
+      <div class="card">
+        <h3 style="margin-top:0">Überraschung = <span class="mono">−log₂ p</span></h3>
+        <p>Ein Ereignis mit Wahrscheinlichkeit <span class="mono">p</span> überrascht dich umso mehr, je kleiner <span class="mono">p</span> ist.
+          Shannons Maß für diese Überraschung ist der <b>Informationsgehalt</b>:</p>
+        <div class="formula" id="f_surp"></div>
+        <div class="ctrl">
+          <label>Wahrscheinlichkeit p <b id="surP_v">0.50</b></label>
+          <input type="range" id="surP" min="0.01" max="1" step="0.01" value="0.5">
+        </div>
+        <div class="statgrid">
+          <div class="stat"><div class="k">Überraschung</div><div class="v"
+        <div class="statgrid">
+          <div class="stat"><div class="k">Überraschung</div><div class="v" id="surI">1.00</div></div>
+          <div class="stat p"><div class="k">in Worten</div><div class="v" id="surW" style="font-size:13px">Münzwurf</div></div>
+          <div class="stat g"><div class="k">entspricht N=</div><div class="v" id="surN">2</div></div>
+        </div>
+        <div class="note" style="margin-top:14px">
+          <b>Merke:</b> <span class="mono">p = 1</span> ⇒ 0 bit (nichts Neues). <span class="mono">p = 1/2</span> ⇒ 1 bit.
+          <span class="mono">p = 1/1024</span> ⇒ 10 bit. Seltene Dinge tragen viel Information.
+        </div>
+      </div>
+      <div class="card">
+        <h4 style="margin-top:0">Die Überraschungskurve −log₂p</h4>
+        <div id="surPlot" class="plot"></div>
+        <h4>Erwartungswert = gewichteter Mittelwert</h4>
+        <p class="tiny" style="margin:0">
+          Wenn du <b>viele</b> Zeichen beobachtest, zählt nicht die Überraschung eines einzelnen, sondern der
+          <b>Durchschnitt</b> — jedes Ereignis mit seiner eigenen Wahrscheinlichkeit gewichtet.
+          Genau das ist die Entropie. Das Balkendiagramm unten zeigt: Höhe = Überraschung, Breite = Wahrscheinlichkeit,
+          <b>Fläche = Beitrag zur Entropie</b>.
+        </p>
+        <canvas id="expCv" height="190" style="margin-top:10px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 3 -->
+  <div id="t3" class="toolpane hidden">
+    <div class="grid g21">
+      <div class="card">
+        <h3 style="margin-top:0">Eine Quelle mit Gedächtnis</h3>
+        <p>Shannon modelliert jede Informationsquelle als <b>Markow-Kette</b>: endlich viele Zustände, und aus jedem Zustand
+          führen Pfeile mit Wahrscheinlichkeiten zu neuen Zuständen. Bei jedem Übergang wird ein Buchstabe ausgegeben.</p>
+        <p>Das ist genau das Modell von Abschnitt 4 des Papers — Shannons Figuren 3, 4 und 5.</p>
+        <div class="row">
+          <button class="btn sm on" data-mk="0">Fig.&nbsp;3 — gedächtnislos</button>
+          <button class="btn sm" data-mk="1">Fig.&nbsp;4 — Digramme (A,B,C)</button>
+          <button class="btn sm" data-mk="2">Fig.&nbsp;2 — Telegraf</button>
+        </div>
+        <div class="ctrl">
+          <label>Geschwindigkeit <b id="mkSpd_v">6/s</b></label>
+          <input type="range" id="mkSpd" min="1" max="20" step="1" value="6">
+        </div>
+        <div class="row">
+          <button class="btn" id="mkPlay">▶ Start</button>
+          <button class="btn" id="mkStep">Schritt</button>
+          <button class="btn" id="mkReset">Reset</button>
+        </div>
+        <h4>Erzeugter Text</h4>
+        <div class="codebox" id="mkOut" style="min-height:62px">—</div>
+        <h4>Gleichgewichtsverteilung P<sub>i</sub></h4>
+        <p class="tiny" style="margin:0 0 6px">Lässt man die Kette lange laufen, pendelt sich die Häufigkeit der Zustände auf feste Werte ein:
+          <span class="mono">P<sub>j</sub> = Σ<sub>i</sub> P<sub>i</sub>·p<sub>i</sub>(j)</span>. Die Balken zeigen beobachtet (hell) vs. theoretisch (Linie).</p>
+        <canvas id="mkEq" height="120"></canvas>
+      </div>
+      <div class="card">
+        <h4 style="margin-top:0">Der Zustandsgraph</h4>
+        <canvas id="mkCv" height="340"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>aktueller Zustand</span>
+          <span><i style="background:var(--accent2)"></i>letzter Übergang</span>
+          <span><i style="background:rgba(255,255,255,.3)"></i>mögliche Übergänge (Dicke ≈ Wahrscheinlichkeit)</span>
+        </div>
+        <div class="note green" style="margin-top:12px" id="mkNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 4 -->
+  <div id="t4" class="toolpane hidden">
+    <div class="grid g2">
+      <div class="card">
+        <h3 style="margin-top:0">Die „typischen" Folgen</h3>
+        <p>Das ist der heimliche Motor des ganzen Papers (Shannons <b>Theorem 3</b> und <b>4</b>).
+          Wirf eine verfälschte Münze (p für „1") N-mal. Es gibt <span class="mono">2<sup>N</sup></span> mögliche Folgen —
+          aber fast alle Wahrscheinlichkeit sitzt in nur etwa <span class="mono">2<sup>N·H</sup></span> davon.</p>
+        <div class="ctrl">
+          <label>p(1) <b id="typP_v">0.30</b></label>
+          <input type="range" id="typP" min="0.02" max="0.98" step="0.01" value="0.3">
+        </div>
+        <div class="ctrl">
+          <label>Länge N <b id="typN_v">20</b></label>
+          <input type="range" id="typN" min="4" max="60" step="1" value="20">
+        </div>
+        <div class="statgrid">
+          <div class="stat"><div class="k">H(p)</div><div class="v" id="typH">0.881</div></div>
+          <div class="stat p"><div class="k">alle Folgen 2^N</div><div class="v" id="typAll">1.0e6</div></div>
+          <div class="stat g"><div class="k">typische 2^NH</div><div class="v" id="typTyp">1.1e5</div></div>
+          <div class="stat w"><div class="k">Anteil</div><div class="v" id="typFrac">10.4%</div></div>
+        </div>
+        <div class="note gold" style="margin-top:14px">
+          <b>Shannons Trick:</b> Statt alle <span class="mono">2<sup>N</sup></span> Folgen zu codieren, codiere nur die
+          <span class="mono">2<sup>NH</sup></span> typischen. Das kostet <span class="mono">N·H</span> statt <span class="mono">N</span> bit —
+          und der Fehler geht gegen null. <b>Das ist die Kompression.</b>
+        </div>
+      </div>
+      <div class="card">
+        <h4 style="margin-top:0">Verteilung der „Einsen" — die Spitze wird immer schärfer</h4>
+        <div id="typPlot" class="plot"></div>
+        <h4>1000 gewürfelte Folgen, sortiert nach log₂(1/p)/N</h4>
+        <canvas id="typCv" height="150"></canvas>
+        <p class="tiny" style="margin-top:8px">Die Punkte drängen sich bei großem N immer enger um <span class="mono">H</span>.
+          Das ist exakt Theorem 3: <span class="mono">|−log p / N − H| &lt; δ</span> für fast alle Folgen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 1 · DAS PROBLEM ══════════════════════════ -->
+<section id="problem" class="reveal">
+  <span class="kicker k2">Kapitel 1 · Motivation</span>
+  <h2>Welches Problem löst Shannon eigentlich?</h2>
+
+  <div class="grid g12">
+    <div>
+      <p class="lede">
+        1948 war die Nachrichtentechnik ein Flickenteppich: Telegrafie, Telefonie, AM, FM, PCM, PPM — jedes System hatte
+        eigene Faustregeln. Man wusste: <i>mehr Bandbreite kann man gegen weniger Rauschen eintauschen.</i>
+        Aber <b>wie viel genau?</b> Niemand konnte es sagen, weil niemand „Information" messen konnte.
+      </p>
+      <div class="note pink">
+        <b>Shannons Kernsatz (S. 1 des Papers):</b> „Das fundamentale Problem der Kommunikation besteht darin,
+        an einem Punkt eine Nachricht exakt oder näherungsweise zu reproduzieren, die an einem anderen Punkt ausgewählt wurde."
+        <br><br>
+        <b>Und der radikale Schnitt:</b> „Häufig haben Nachrichten eine <i>Bedeutung</i> … Diese semantischen Aspekte
+        sind für das ingenieurtechnische Problem <b>irrelevant</b>."
+      </div>
+      <p>
+        Das war die entscheidende Abstraktion: Information hat nichts mit Sinn zu tun, sondern mit <b>Auswahl</b>.
+        Eine Nachricht ist eine aus vielen möglichen. Je mehr Möglichkeiten vorher offen waren, desto mehr Information
+        steckt in der getroffenen Wahl.
+      </p>
+      <h3>Die drei konkreten Fragen</h3>
+      <div class="step"><div class="stepn">1</div><div>
+        <b>Wie viel Information produziert eine Quelle?</b> → Antwort: die <b>Entropie H</b>.
+      </div></div>
+      <div class="step"><div class="stepn">2</div><div>
+        <b>Wie viel passt durch einen (störungsfreien) Kanal?</b> → Antwort: die <b>Kapazität C</b>, und man kann
+        <span class="mono">C/H</span> Symbole pro Sekunde schicken — nicht mehr. (Satz 9)
+      </div></div>
+      <div class="step"><div class="stepn">3</div><div>
+        <b>Und wenn der Kanal rauscht?</b> → Antwort: man kann <i>immer noch</i> mit <b>beliebig kleiner Fehlerrate</b>
+        bis zur Rate C senden. (Satz 11) — Das war die Sensation.
+      </div></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Shannons Figur 1 — das Schema jeder Kommunikation</h3>
+      <canvas id="sysCv" height="300"></canvas>
+      <div class="row" style="margin-top:10px">
+        <button class="btn sm" id="sysPlay">▶ Nachricht senden</button>
+        <button class="btn sm" id="sysNoise">Rauschen an/aus</button>
+      </div>
+      <div class="ctrl">
+        <label>Rauschstärke <b id="sysN_v">0.10</b></label>
+        <input type="range" id="sysN" min="0" max="0.5" step="0.01" value="0.1">
+      </div>
+      <div class="codebox" id="sysLog">Bereit.</div>
+      <p class="tiny" style="margin-top:10px">
+        <b>Quelle → Sender → Kanal (+Rauschen) → Empfänger → Ziel.</b><br>
+        Diese fünf Kästen sind so universell, dass sie heute in jedem Lehrbuch stehen — von der Glasfaser bis zur DNA.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 2 · KAPAZITÄT ══════════════════════════ -->
+<section id="capacity" class="reveal">
+  <span class="kicker">Kapitel 2 · Teil I, §1</span>
+  <h2>Was ein Kanal aushält: die Kapazität C</h2>
+  <p class="lede">
+    Shannon beginnt nicht mit Information, sondern mit dem <b>Gefäß</b>: Wie viele verschiedene Signale der Dauer T
+    kann ein Kanal überhaupt unterscheidbar übertragen?
+  </p>
+
+  <div class="formula" id="f_cap"></div>
+  <p class="muted" style="margin-top:-6px">N(T) = Anzahl erlaubter Signale der Dauer T. Der Logarithmus wächst linear mit T — die Steigung ist C.</p>
+
+  <div class="grid g21">
+    <div class="card">
+      <h3 style="margin-top:0">Der Telegrafenkanal (Shannons eigenes Beispiel)</h3>
+      <p class="tiny">Vier Symbole mit unterschiedlicher Dauer, dazu die Regel: <b>zwei Pausen dürfen nicht aufeinanderfolgen</b>.</p>
+      <table>
+        <tr><th>Symbol</th><th>Dauer</th><th>Bedeutung</th></tr>
+        <tr><td>Punkt ·</td><td class="mono">2</td><td>1 Einheit zu, 1 auf</td></tr>
+        <tr><td>Strich —</td><td class="mono">4</td><td>3 Einheiten zu, 1 auf</td></tr>
+        <tr><td>Buchstabenpause</td><td class="mono">3</td><td>3 Einheiten offen</td></tr>
+        <tr><td>Wortpause</td><td class="mono">6</td><td>6 Einheiten offen</td></tr>
+      </table>
+      <h4>Die Zählrekursion</h4>
+      <div class="formula" id="f_rec"></div>
+      <p class="tiny">Jede Folge der Länge t endet mit einem der erlaubten Symbole. Zählt man nach dem letzten (bzw. vorletzten)
+        Symbol, bekommt man diese Rekursion — exakt wie bei Fibonacci, nur mit mehr Termen.</p>
+      <div class="ctrl">
+        <label>Zeitdauer T <b id="capT_v">20</b></label>
+        <input type="range" id="capT" min="2" max="60" step="1" value="20">
+      </div>
+      <div class="statgrid">
+        <div class="stat"><div class="k">N(T)</div><div class="v" id="capN">—</div></div>
+        <div class="stat g"><div class="k">log₂N(T)/T</div><div class="v" id="capRate">—</div></div>
+        <div class="stat p"><div class="k">Grenzwert C</div><div class="v">0.5390</div></div>
+      </div>
+      <div class="note" style="margin-top:12px">
+        <b>Shannons Ergebnis:</b> C = 0.539 bit pro Zeiteinheit. Die Wurzel von
+        <span class="mono">1 = μ²+μ⁴+μ⁵+μ⁷+μ⁸+μ¹⁰</span> liefert <span class="mono">C = −log₂μ₀</span>.
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0">log₂N(T) wächst linear — die Steigung ist C</h4>
+      <div id="capPlot" class="plot" style="height:330px"></div>
+      <h4>Die charakteristische Gleichung</h4>
+      <p class="tiny" style="margin:0 0 8px">Suche die Wurzel von <span class="mono">f(X) = X<sup>−2</sup>+X<sup>−4</sup>+X<sup>−5</sup>+X<sup>−7</sup>+X<sup>−8</sup>+X<sup>−10</sup> − 1 = 0</span>.
+        Dann ist <span class="mono">C = log₂X₀</span>. Zieh den Regler bis die Kurve die Null trifft.</p>
+      <div class="ctrl">
+        <label>X <b id="capX_v">1.400</b></label>
+        <input type="range" id="capX" min="1.05" max="1.9" step="0.001" value="1.4">
+      </div>
+      <canvas id="capRootCv" height="150"></canvas>
+      <div class="statgrid">
+        <div class="stat w"><div class="k">f(X)</div><div class="v" id="capFX">—</div></div>
+        <div class="stat g"><div class="k">log₂X</div><div class="v" id="capLogX">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note green" style="margin-top:20px">
+    <b>Teletype-Spezialfall:</b> 32 gleichlange Symbole, alle Folgen erlaubt ⇒ jedes Symbol trägt
+    <span class="mono">log₂32 = 5 bit</span>. Bei n Symbolen/Sekunde: <b>C = 5n bit/s</b>. Das ist die einfachste Form von Satz 1.
+  </div>
+</section>
+
+<!-- ══════════════════════════ 3 · QUELLE & SPRACHE ══════════════════════════ -->
+<section id="source" class="reveal">
+  <span class="kicker k2">Kapitel 3 · Teil I, §2–§4</span>
+  <h2>Die Quelle: Sprache ist ein Würfelspiel mit Gedächtnis</h2>
+  <p class="lede">
+    Shannons zweite große Idee: Eine Informationsquelle ist ein <b>stochastischer Prozess</b>. Englisch, Deutsch, Musik,
+    Bilder — alles folgt Statistiken. Und <b>genau diese Statistik ist Geld wert</b>, denn sie erlaubt Kompression.
+  </p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Shannons Näherungsreihe an die Sprache (§3)</h3>
+    <p>Er hat das 1948 <i>von Hand</i> gemacht: Buch aufschlagen, Buchstaben suchen, nächsten notieren, Seite wechseln.
+      Hier macht es der Browser aus einem deutschen Textkorpus.</p>
+    <div class="tabs" id="apxTabs">
+      <button class="on" data-o="0">0. Ordnung — alles gleich</button>
+      <button data-o="1">1. Ordnung — Buchstabenhäufigkeit</button>
+      <button data-o="2">2. Ordnung — Digramme</button>
+      <button data-o="3">3. Ordnung — Trigramme</button>
+      <button data-o="4">4. Ordnung — Tetragramme</button>
+      <button data-o="5">Wörter — 1. Ordnung</button>
+      <button data-o="6">Wörter — 2. Ordnung</button>
+    </div>
+    <div class="codebox" id="apxOut" style="min-height:120px;font-size:14px;letter-spacing:.5px"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="apxGen">↻ Neu würfeln</button>
+      <span class="pill" id="apxInfo"></span>
+    </div>
+    <div class="note" style="margin-top:14px" id="apxNote"></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card">
+      <h3 style="margin-top:0">F<sub>N</sub> und G<sub>N</sub>: Entropie sinkt mit jedem Kontext</h3>
+      <p class="tiny">Shannons <b>Sätze 5 &amp; 6</b>: <span class="mono">G<sub>N</sub></span> = Entropie pro Zeichen von N-Blöcken,
+        <span class="mono">F<sub>N</sub></span> = Entropie des nächsten Zeichens bei N−1 bekannten.
+        Beide fallen monoton und streben gegen das wahre H.</p>
+      <div id="fnPlot" class="plot" style="height:300px"></div>
+      <div class="note gold" style="margin-top:10px">
+        <b>Redundanz.</b> Maximale Entropie bei 27 Zeichen: <span class="mono">log₂27 = 4.75 bit</span>.
+        Echtes Englisch liegt bei ca. <span class="mono">2.3 bit</span> (8-Buchstaben-Kontext) ⇒
+        <b>Redundanz ≈ 50 %</b>. „Die Hälfte dessen, was wir schreiben, ist durch die Sprachstruktur bestimmt."
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Redundanz zum Anfassen: Kreuzworträtsel &amp; Lückentext</h3>
+      <p class="tiny">Shannon: Bei 0 % Redundanz wäre <i>jede</i> Buchstabenmatrix ein gültiges Kreuzworträtsel.
+        Bei zu hoher Redundanz gäbe es gar keine. Bei ~50 % sind große 2D-Rätsel gerade so möglich —
+        bei 33 % sogar <b>dreidimensionale</b>.</p>
+      <div class="ctrl">
+        <label>Anteil gelöschter Buchstaben <b id="redD_v">30%</b></label>
+        <input type="range" id="redD" min="0" max="80" step="5" value="30">
+      </div>
+      <div class="codebox" id="redOut" style="min-height:90px;font-size:14px;letter-spacing:1px"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn sm" id="redShow">Original zeigen</button>
+        <button class="btn sm" id="redNew">Anderer Satz</button>
+      </div>
+      <p class="tiny" style="margin-top:12px">Kannst du es noch lesen? Shannon berichtet: Wenn man 50 % löschen kann und
+        Menschen es trotzdem rekonstruieren, <b>muss</b> die Redundanz über 50 % liegen. Das war eine seiner drei
+        unabhängigen Messmethoden.</p>
+      <h4>Redundanz ⇒ Kompressionspotenzial</h4>
+      <canvas id="redCv" height="110"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 4 · ENTROPIE ══════════════════════════ -->
+<section id="entropy" class="reveal">
+  <span class="kicker k3">Kapitel 4 · Teil I, §6 — Das Herzstück</span>
+  <h2>Entropie: das eine Maß, das alles möglich macht</h2>
+
+  <div class="grid g12">
+    <div>
+      <p class="lede">Shannon fragt: Gibt es ein Maß <span class="mono">H(p₁,…,p<sub>n</sub>)</span> für „wie viel Auswahl /
+        wie viel Unsicherheit" steckt in dieser Verteilung? Er fordert nur <b>drei</b> Eigenschaften — und zeigt dann,
+        dass es <b>genau eine</b> Formel gibt, die sie erfüllt.</p>
+
+      <h3>Die drei Axiome</h3>
+      <div class="step"><div class="stepn">1</div><div><b>Stetigkeit.</b> H soll stetig in den p<sub>i</sub> sein.
+        Kleine Änderung der Wahrsche
+        <div class="step"><div class="stepn">1</div><div><b>Stetigkeit.</b> H soll stetig in den p<sub>i</sub> sein.
+          Kleine Änderung der Wahrscheinlichkeiten ⇒ kleine Änderung der Unsicherheit. Keine Sprünge.</div></div>
+        <div class="step"><div class="stepn">2</div><div><b>Monotonie bei Gleichverteilung.</b> Wenn alle p<sub>i</sub> = 1/n sind,
+          soll H mit n <i>wachsen</i>. Mehr gleichwahrscheinliche Möglichkeiten = mehr Auswahl.</div></div>
+        <div class="step"><div class="stepn">3</div><div><b>Zerlegbarkeit (das entscheidende Axiom).</b> Zerlegt man eine Wahl in
+          zwei aufeinanderfolgende Wahlen, muss H die <i>gewichtete Summe</i> der Teil-Unsicherheiten sein.
+          Shannons eigenes Beispiel (Fig. 6) steht rechts — spiel damit.</div></div>
+
+        <div class="note green">
+          <b>Theorem 2.</b> Das einzige H, das diese drei Bedingungen erfüllt, ist
+          <span class="mono">H = −K·Σ p<sub>i</sub> log p<sub>i</sub></span>. Mit K=1 und log₂ misst man in bit.
+          <br>Keine Wahl, keine Willkür — <b>die Formel ist erzwungen.</b>
+        </div>
+        <div class="formula" id="f_H"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Axiom 3 live: Shannons Figur 6</h3>
+        <p class="tiny" style="margin:0 0 10px">Links eine Wahl aus drei Dingen. Rechts dieselbe Wahl, aber in zwei Stufen zerlegt.
+          Die Endwahrscheinlichkeiten sind identisch — also <b>muss</b> auch H identisch sein. Verschiebe die Regler: beide Seiten bleiben immer gleich.</p>
+        <canvas id="axCv" height="250"></canvas>
+        <div class="ctrl">
+          <label>p₁ (Zweig A) <b id="axP1_v">0.500</b></label>
+          <input type="range" id="axP1" min="0.05" max="0.9" step="0.01" value="0.5">
+        </div>
+        <div class="ctrl">
+          <label>Aufteilung des Rests (p₂ : p₃) <b id="axP2_v">0.667</b></label>
+          <input type="range" id="axP2" min="0.05" max="0.95" step="0.01" value="0.6667">
+        </div>
+        <div class="statgrid">
+          <div class="stat"><div class="k">H links (direkt)</div><div class="v" id="axHL">1.459</div></div>
+          <div class="stat g"><div class="k">H rechts (zerlegt)</div><div class="v" id="axHR">1.459</div></div>
+          <div class="stat p"><div class="k">Differenz</div><div class="v" id="axHD">0.000</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h3>Die Entropie-Werkbank</h3>
+  <p>Hier kannst du die Verteilung selbst formen und zusehen, was mit H passiert. Alle Eigenschaften, die Shannon
+    in §6 auflistet (1.–6.), werden hier sichtbar.</p>
+
+  <div class="grid g21">
+    <div class="card">
+      <h4 style="margin-top:0">Verteilung formen</h4>
+      <div class="ctrl">
+        <label>Anzahl Symbole n <b id="ebN_v">5</b></label>
+        <input type="range" id="ebN" min="2" max="10" step="1" value="5">
+      </div>
+      <div id="ebSliders"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn sm" id="ebUni">Gleichverteilung (H max)</button>
+        <button class="btn sm" id="ebDet">Sicher (H = 0)</button>
+        <button class="btn sm" id="ebRnd">Zufällig</button>
+        <button class="btn sm" id="ebSmooth">↔ Ausgleichen (Eigenschaft 4)</button>
+      </div>
+      <div class="statgrid">
+        <div class="stat"><div class="k">H</div><div class="v" id="ebH">2.322</div></div>
+        <div class="stat w"><div class="k">H max = log₂n</div><div class="v" id="ebHm">2.322</div></div>
+        <div class="stat g"><div class="k">rel. Entropie</div><div class="v" id="ebRel">100%</div></div>
+        <div class="stat r"><div class="k">Redundanz</div><div class="v" id="ebRed">0%</div></div>
+      </div>
+      <div class="note" style="margin-top:14px" id="ebNote"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Beitrag jedes Symbols: Fläche = p·log₂(1/p)</h4>
+      <canvas id="ebCv" height="230"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Breite = p<sub>i</sub></span>
+        <span><i style="background:var(--accent2)"></i>Höhe = −log₂p<sub>i</sub></span>
+        <span><i style="background:var(--accent3)"></i>Gesamtfläche = H</span>
+      </div>
+      <h4>Der Klassiker: H(p) für zwei Möglichkeiten (Shannons Figur 7)</h4>
+      <div id="binPlot" class="plot" style="height:250px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 5 · BEDINGTE ENTROPIE ══════════════════════════ -->
+<section id="joint" class="reveal">
+  <span class="kicker k3">Kapitel 5 · §6, Eigenschaften 3–6</span>
+  <h2>Zwei Variablen: Verbund-, bedingte Entropie und die Information dazwischen</h2>
+  <p class="lede">
+    Shannon braucht für den verrauschten Kanal mehr als ein einzelnes H. Er braucht die Buchhaltung von
+    <b>Eingang x</b> und <b>Ausgang y</b>. Das Venn-Diagramm unten ist die komplette Buchhaltung.
+  </p>
+
+  <div class="grid g21">
+    <div class="card">
+      <h3 style="margin-top:0">Das Informationsdiagramm</h3>
+      <canvas id="venCv" height="300"></canvas>
+      <div class="legend">
+        <span><i style="background:rgba(90,209,255,.5)"></i>H(x) — Unsicherheit über das Gesendete</span>
+        <span><i style="background:rgba(255,122,217,.5)"></i>H(y) — Unsicherheit über das Empfangene</span>
+        <span><i style="background:rgba(157,255,110,.75)"></i>R = übertragene Information</span>
+      </div>
+      <div class="formula" id="f_joint"></div>
+      <div class="formula" id="f_rate"></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Verbundwahrscheinlichkeit p(i,j) einstellen</h3>
+      <p class="tiny">Ein Kanal mit 2 Eingängen und 2 Ausgängen. Links: wie oft wird 0 gesendet.
+        Rechts: wie stark verfälscht das Rauschen.</p>
+      <div class="ctrl">
+        <label>p(Eingang = 0) <b id="jvP_v">0.50</b></label>
+        <input type="range" id="jvP" min="0.02" max="0.98" step="0.01" value="0.5">
+      </div>
+      <div class="ctrl">
+        <label>Fehlerwahrscheinlichkeit ε <b id="jvE_v">0.10</b></label>
+        <input type="range" id="jvE" min="0" max="0.5" step="0.005" value="0.1">
+      </div>
+      <canvas id="jvMat" height="150"></canvas>
+      <div class="statgrid">
+        <div class="stat"><div class="k">H(x)</div><div class="v" id="jvHx">1.000</div></div>
+        <div class="stat p"><div class="k">H(y)</div><div class="v" id="jvHy">1.000</div></div>
+        <div class="stat w"><div class="k">H(x,y)</div><div class="v" id="jvHxy">1.469</div></div>
+        <div class="stat r"><div class="k">H<sub>y</sub>(x) Äquivokation</div><div class="v" id="jvEq">0.469</div></div>
+        <div class="stat g"><div class="k">R = H(x)−H<sub>y</sub>(x)</div><div class="v" id="jvR">0.531</div></div>
+      </div>
+      <div class="note green" style="margin-top:14px">
+        <b>Äquivokation</b> = „was der Empfänger nach dem Empfang noch <i>nicht</i> über das Gesendete weiß."
+        Das ist Shannons geniale Korrektur: man zieht nicht die Fehlerzahl ab, sondern die <b>verbleibende Unsicherheit</b>.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Warum „990 bit/s" falsch ist — Shannons Rechnung aus §12</h3>
+    <div class="grid g3">
+      <div>
+        <h4>Die Situation</h4>
+        <p class="tiny">1000 bit/s werden gesendet, 1 % kommt falsch an. Naiv: 1000 − 10 = 990 bit/s?</p>
+        <div class="codebox" id="eqA"></div>
+      </div>
+      <div>
+        <h4>Shannons Antwort</h4>
+        <p class="tiny">Äquivokation = H(0.01) = 0.081 bit/Symbol. Rate = 1000 − 81 = <b>919 bit/s</b>.</p>
+        <div class="codebox" id="eqB"></div>
+      </div>
+      <div>
+        <h4>Der Härtetest</h4>
+        <p class="tiny">Rauschen so stark, dass Ausgang unabhängig vom Eingang ist. Naiv: „500 bit/s richtig!" —
+          tatsächlich <b>0 bit/s</b>. Eine Münze am Empfänger wäre genauso gut.</p>
+        <div class="codebox" id="eqC"></div>
+      </div>
+    </div>
+    <div class="ctrl" style="margin-top:14px">
+      <label>Fehlerrate p <b id="eqP_v">0.010</b></label>
+      <input type="range" id="eqP" min="0" max="0.5" step="0.001" value="0.01">
+    </div>
+    <div id="eqPlot" class="plot" style="height:270px"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 6 · SATZ 9 / KOMPRESSION ══════════════════════════ -->
+<section id="coding" class="reveal">
+  <span class="kicker k4">Kapitel 6 · §9 — Der erste Hauptsatz</span>
+  <h2>Satz 9: Kompression bis zur Entropie — und keinen Deut weiter</h2>
+
+  <div class="note gold" style="font-size:16px">
+    <b>Theorem 9.</b> Eine Quelle habe Entropie H (bit/Symbol), ein Kanal Kapazität C (bit/s). Dann kann man
+    mit geeigneter Codierung im Mittel <b>C/H − ε</b> Symbole pro Sekunde übertragen, mit beliebig kleinem ε.
+    <b>Mehr als C/H ist unmöglich.</b>
+  </div>
+
+  <p class="lede">Das ist die Geburtsurkunde der <b>Datenkompression</b>. Shannon gibt im Beweis sogar ein konkretes
+    Verfahren an (das „Shannon-Fano"-Verfahren). Bauen wir es.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">Shannons eigenes Beispiel aus §10</h3>
+      <p class="tiny">Quelle A,B,C,D mit Wahrscheinlichkeiten ½, ¼, ⅛, ⅛. Entropie H = 7/4 bit.
+        Der angegebene Code erreicht <b>exakt</b> 1.75 bit/Symbol.</p>
+      <table id="shTab"></table>
+      <div class="statgrid">
+        <div class="stat"><div class="k">H</div><div class="v">1.750</div></div>
+        <div class="stat g"><div class="k">Ø Codelänge</div><div class="v">1.750</div></div>
+        <div class="stat w"><div class="k">H max = log₂4</div><div class="v">2.000</div></div>
+        <div class="stat r"><div class="k">Kompression</div><div class="v">87.5%</div></div>
+      </div>
+      <div class="note" style="margin-top:12px">
+        <b>Präfixfrei:</b> Kein Codewort ist Anfang eines anderen. Darum braucht man keine Trennzeichen —
+        der Decoder weiß immer, wann ein Symbol zu Ende ist.
+      </div>
+      <h4>Decodier-Spiel</h4>
+      <p class="tiny" style="margin:0 0 8px">Klicke Bits an und sieh zu, wie der Decoder den Baum hinabläuft.</p>
+      <div class="row">
+        <button class="btn sm" id="dc0">0</button>
+        <button class="btn sm" id="dc1">1</button>
+        <button class="btn sm" id="dcR">Reset</button>
+      </div>
+      <div class="codebox" id="dcOut" style="margin-top:10px">Bits: — <br>Decodiert: —</div>
+      <canvas id="dcCv" height="190" style="margin-top:10px"></canvas>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Shannon-Fano-Codierer — selber bauen</h3>
+      <p class="tiny">Stelle Wahrscheinlichkeiten ein. Der Code wird nach Shannons Vorschrift gebaut:
+        <span class="mono">m<sub>s</sub> = ⌈log₂(1/p<sub>s</sub>)⌉</span>, Codewort = Binärentwicklung der kumulierten Wahrscheinlichkeit P<sub>s</sub>.</p>
+      <div id="sfSliders"></div>
+      <div class="row">
+        <button class="btn sm" id="sfSkew">Sehr schief</button>
+        <button class="btn sm" id="sfFlat">Gleichverteilt</button>
+        <button class="btn sm" id="sfEng">Deutsche Buchstaben</button>
+      </div>
+      <table id="sfTab" style="margin-top:12px"></table>
+      <div class="statgrid">
+        <div class="stat"><div class="k">H (untere Grenze)</div><div class="v" id="sfH">—</div></div>
+        <div class="stat g"><div class="k">Ø Länge L</div><div class="v" id="sfL">—</div></div>
+        <div class="stat w"><div class="k">Overhead L−H</div><div class="v" id="sfO">—</div></div>
+        <div class="stat p"><div class="k">Effizienz H/L</div><div class="v" id="sfE">—</div></div>
+      </div>
+      <div class="note green" style="margin-top:12px">
+        Shannon beweist: <span class="mono">G<sub>N</sub> ≤ L &lt; G<sub>N</sub> + 1/N</span>.
+        Codiert man <b>Blöcke</b> der Länge N statt einzelner Symbole, schrumpft der Overhead wie 1/N gegen null.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Blockcodierung: wie der Overhead verschwindet</h3>
+    <div class="grid g21">
+      <div>
+        <p class="tiny">Quelle: zwei Symbole mit p und 1−p. Einzelsymbol-Codierung kostet immer 1 bit — egal wie schief p ist.
+          Erst Blöcke bringen den Gewinn. Zieh die Regler.</p>
+        <div class="ctrl">
+          <label>p <b id="blP_v">0.90</b></label>
+          <input type="range" id="blP" min="0.5" max="0.99" step="0.01" value="0.9">
+        </div>
+        <div class="ctrl">
+          <label>Blocklänge N <b id="blN_v">3</b></label>
+          <input type="range" id="blN" min="1" max="12" step="1" value="3">
+        </div>
+        <div class="statgrid">
+          <div class="stat"><div class="k">H</div><div class="v" id="blH">—</div></div>
+          <div class="stat g"><div class="k">bit/Symbol</div><div class="v" id="blL">—</div></div>
+          <div class="stat w"><div class="k">Überschuss</div><div class="v" id="blX">—</div></div>
+          <div class="stat p"><div class="k">Blöcke 2^N</div><div class="v" id="blB">—</div></div>
+        </div>
+      </div>
+      <div>
+        <div id="blPlot" class="plot" style="height:300px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Live-Kompressor: Text → Bits</h3>
+    <p class="tiny">Tippe etwas. Der Codierer baut aus der Buchstabenstatistik deines Textes einen Shannon-Fano-Code
+      und zeigt den echten Bitstrom. Vergleiche mit 8 bit/Zeichen (ASCII).</p>
+    <textarea id="lcIn" style="width:100%;min-height:80px;background:#0d1426;color:var(--text);border:1px solid var(--stroke);border-radius:11px;padding:11px;font-family:inherit;font-size:14px" spellcheck="false">die entropie ist das mass der information und die information ist das mass der ueberraschung</textarea>
+    <div class="statgrid">
+      <div class="stat"><div class="k">Zeichen</div><div class="v" id="lcN">—</div></div>
+      <div class="stat w"><div class="k">ASCII bit</div><div class="v" id="lcA">—</div></div>
+      <div class="stat g"><div class="k">codiert bit</div><div class="v" id="lcC">—</div></div>
+      <div class="stat p"><div class="k">H des Textes</div><div class="v" id="lcH">—</div></div>
+      <div class="stat r"><div class="k">Ersparnis</div><div class="v" id="lcS">—</div></div>
+    </div>
+    <h4>Bitstrom (Anfang)</h4>
+    <div class="codebox" id="lcBits" style="max-height:110px;overflow:auto"></div>
+    <h4>Codetabelle</h4>
+    <div class="codebox" id="lcTab" style="max-height:150px;overflow:auto"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 7 · RAUSCHEN ══════════════════════════ -->
+<section id="noise" class="reveal">
+  <span class="kicker k2">Kapitel 7 · Teil II, §11–§13 — Der zweite Hauptsatz</span>
+  <h2>Der verrauschte Kanal: Shannons Paukenschlag</h2>
+
+  <p class="lede">
+    Vor 1948 glaubte jeder Ingenieur: Will man die Fehlerrate gegen null drücken, muss man die Nachricht immer
+    öfter wiederholen — die <b>Rate geht dann ebenfalls gegen null</b>. Shannon zeigt: <b>Das ist falsch.</b>
+  </p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">Erst mal: die naive Methode (Wiederholung)</h3>
+      <p class="tiny">Jedes Bit k-mal senden, Mehrheitsentscheid. Funktioniert — aber die Rate stirbt.</p>
+      <div class="ctrl">
+        <label>Kanalfehler ε <b id="rpE_v">0.10</b></label>
+        <input type="range" id="rpE" min="0.005" max="0.45" step="0.005" value="0.1">
+      </div>
+      <div class="ctrl">
+        <label>Wiederholungen k (ungerade) <b id="rpK_v">3</b></label>
+        <input type="range" id="rpK" min="1" max="31" step="2" value="3">
+      </div>
+      <div class="statgrid">
+        <div class="stat r"><div class="k">Restfehler</div><div class="v" id="rpErr">—</div></div>
+        <div class="stat w"><div class="k">Rate</div><div class="v" id="rpRate">—</div></div>
+        <div class="stat g"><div class="k">Kapazität C</div><div class="v" id="rpC">—</div></div>
+      </div>
+      <div id="rpPlot" class="plot" style="height:240px"></div>
+      <div class="note pink" style="margin-top:12px">
+        Die Wiederholungs-Kurve kriecht zur Null-Rate, während der Fehler fällt. Shannon beweist:
+        es gibt Codes, die bei Rate <b>C</b> bleiben und <b>trotzdem</b> fehlerfrei werden.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Die Kapazität des binären symmetrischen Kanals</h3>
+      <div class="formula" id="f_bsc"></div>
+      <canvas id="bscCv" height="170"></canvas>
+      <div id="capCurve" class="plot" style="height:260px"></div>
+      <div class="note" style="margin-top:10px">
+        <b>Kurios:</b> Bei ε = 0.5 ist C = 0 (nichts geht durch). Bei ε = 1 ist C wieder = 1 —
+        denn ein Kanal, der <i>immer</i> umkippt, ist perfekt vorhersagbar: einfach alles invertieren.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Shannons Beweisbild (Figur 10): Kugelpackung im Nachrichtenraum</h3>
+    <div class="grid g21">
+      <div>
+        <p>Der Beweis von Satz 11 ist eine der elegantesten Ideen der Mathematik — und er ist <b>nicht konstruktiv</b>.
+          Shannon zeigt nicht <i>einen</i> guten Code; er zeigt, dass ein <b>zufällig gewürfelter</b> Code im Mittel gut ist.
+          Und wenn der Durchschnitt gut ist, muss mindestens ein Exemplar gut sein.</p>
+        <div class="step"><div class="stepn">1</div><div>Es gibt etwa <span class="mono">2<sup>T·H(x)</sup></span> wahrscheinliche
+          <b>Eingangs</b>folgen der Dauer T — die „typischen Sendesignale".</div></div>
+        <div class="step"><div class="stepn">2</div><div>Es gibt etwa <span class="mono">2<sup>T·H(y)</sup></span> wahrscheinliche
+          <b>Ausgangs</b>folgen — das, was beim Empfänger ankommen kann.</div></div>
+        <div class="step"><div class="stepn">3</div><div>Zu jedem empfangenen y gibt es etwa <span class="mono">2<sup>T·H<sub>y</sub>(x)</sup></span>
+          Eingänge, die es plausibel verursacht haben könnten — <b>der Fächer der Verdächtigen</b>.</div></div>
+        <div class="step"><div class="stepn">4</div><div>Wir wählen zufällig <span class="mono">2<sup>T·R</sup></span> Codewörter aus den
+          Eingangsfolgen. Ein Fehler passiert nur, wenn <b>noch ein zweites Codewort</b> zufällig im Fächer landet.</div></div>
+        <div class="step"><div class="stepn">5</div><div>Wahrscheinlichkeit dafür ≈ Fächergröße × Dichte =
+          <span class="mono">2<sup>T·H<sub>y</sub>(x)</sup> · 2<sup>T(R−H(x))</sup> = 2<sup>−T·η</sup></span> mit
+          <span class="mono">η &gt; 0</span>, sobald <span class="mono">R &lt; H(x) − H<sub>y</sub>(x) = C</span>.
+          <b>Geht exponentiell gegen null.</b></div></div>
+        <div class="note green">
+          <b>Die Pointe:</b> Solange R &lt; C, haben die Fächer genug Platz nebeneinander. Bei R &gt; C überlappen sie
+          zwangsläufig — und Fehler werden unvermeidlich. Die Grenze ist <b>scharf</b>.
+        </div>
+      </div>
+      <div>
+        <canvas id="sphCv" height="420"></canvas>
+        <div class="ctrl">
+          <label>Rate R (Anzahl Codewörter) <b id="sphR_v">0.40</b></label>
+          <input type="range" id="sphR" min="0.05" max="1" step="0.01" value="0.4">
+        </div>
+        <div class="ctrl">
+          <label>Rauschen (Fächergröße H<sub>y</sub>(x)) <b id="sphN_v">0.25</b></label>
+          <input type="range" id="sphN" min="0.02" max="0.6" step="0.01" value="0.25">
+        </div>
+        <div class="statgrid">
+          <div class="stat g"><div class="k">Kapazität C</div><div class="v" id="sphC">0.750</div></div>
+          <div class="stat"><div class="k">Rate R</div><div class="v" id="sphRs">0.400</div></div>
+          <div class="stat r"><div class="k">Überlappungen</div><div class="v" id="sphOv">0</div></div>
+          <div class="stat w"><div class="k">Status</div><div class="v" id="sphSt" style="font-size:13px">OK</div></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn sm" id="sphShuf">↻ Neuer Zufallscode</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Satz 11 in einem Bild: Shannons Figur 9</h3>
+    <div class="grid g2">
+      <div>
+        <p>Die Äquivokation als Funktion der Senderate. Unterhalb von C: Äquivokation kann auf <b>null</b> gedrückt werden.
+          Oberhalb: Die Natur kassiert gnadenlos genau den Überschuss <span class="mono">H(x) − C</span>.</p>
+        <div class="ctrl">
+          <label>Kapazität C <b id="f9C_v">0.60</b></label>
+          <input type="range" id="f9C" min="0.1" max="1" step="0.01" value="0.6">
+        </div>
+        <div class="ctrl">
+          <label>Gewählte Senderate H(x) <b id="f9H_v">0.40</b></label>
+          <input type="range" id="f9H" min="0.05" max="1.5" step="0.01" value="0.4">
+        </div>
+        <div class="statgrid">
+          <div class="stat r"><div class="k">min. Äquivokation</div><div class="v" id="f9E">0.000</div></div>
+          <div class="stat g"><div class="k">nutzbare Rate</div><div class="v" id="f9R">0.400</div></div>
+          <div class="stat w"><div class="k">Zone</div><div class="v" id="f9Z" style="font-size:12.5px">erreichbar</div></div>
+        </div>
+      </div>
+      <div><canvas id="f9Cv" height="280"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">§17: Shannons perfekter Code — der (7,4)-Hamming-Code</h3>
+    <p>Shannon führt im Paper ein konkretes Beispiel vor, das die Kapazität <b>exakt</b> erreicht:
+      Blöcke von 7 bit, in denen höchstens ein Bit kippt. Alle 8 Fälle (kein Fehler, oder Fehler an Position 1–7)
+      gleich wahrscheinlich. Kapazität: <span class="mono">C = (7 − log₂8)/7 = 4/7 bit/Symbol</span> — und der Code
+      überträgt exakt 4 Nutzbits pro 7 Kanalbits.</p>
+    <div class="grid g21">
+      <div>
+        <h4>Nutzbits setzen (X₃, X₅, X₆, X₇)</h4>
+        <div class="row" id="hamBits"></div>
+        <h4>Prüfbits werden automatisch berechnet</h4>
+        <div class="codebox" id="hamCalc"></div>
+        <h4>Fehler einbauen — klicke ein Bit im Codewort an</h4>
+        <div class="row" id="hamErr"></div>
+        <div class="codebox" id="hamSynd" style="margin-top:10px"></div>
+        <div class="note green" style="margin-top:12px">
+          Die drei Paritäten α, β, γ bilden eine Binärzahl — und diese Zahl ist <b>exakt die Position des Fehlers</b>.
+          0 bedeutet: kein Fehler. Ein einziges Bit umdrehen, fertig. Magie aus reiner Arithmetik.
+        </div>
+      </div>
+      <div>
+        <canvas id="hamCv" height="380"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>Nutzbit</span>
+          <span><i style="background:var(--warn)"></i>Prüfbit</span>
+          <span><i style="background:var(--red)"></i>gekipptes Bit</span>
+          <span><i style="background:var(--accent3)"></i>erkannte Position</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 8 · BEISPIELKANÄLE ══════════════════════════ -->
+<section id="channels" class="reveal">
+  <span class="kicker k4">Kapitel 8 · §15–§16</span>
+  <h2>Kapazität ausrechnen: Shannons Beispielkanäle</h2>
+  <p class="lede">
+    <span class="mono">C = max<sub>p(x)</sub> [H(x) − H<sub>y</sub>(x)]</span> — das Maximum über <i>alle</i> Eingangsverteilungen.
+    Shannon rechnet mehrere Fälle durch. Hier kannst du selbst nach dem Maximum suchen.
+  </p>
+
+  <div class="grid g21">
+    <div class="card">
+      <h3 style="margin-top:0">Fig. 11 — der 3-Symbol-Kanal</h3>
+      <p class="tiny">Symbol 1 kommt immer sauber an. Symbole 2 und 3 werden mit Wahrscheinlichkeit q verwechselt.
+        Welche Verteilung P/Q holt das Maximum raus?</p>
+      <div class="ctrl">
+        <label>p (korrekte Übertragung von 2/3) <b id="c3P_v">0.80</b></label>
+        <input type="range" id="c3P" min="0.5" max="1" step="0.005" value="0.8">
+      </div>
+      <div class="ctrl">
+        <label>P (Wahrsch. für Symbol 1) <b id="c3Q_v">0.333</b></label>
+        <input type="range" id="c3Q" min="0.02" max="0.96" step="0.005" value="0.3333">
+      </div>
+      <div class="statgrid">
+        <div class="stat"><div class="k">aktuelle Rate</div><div class="v" id="c3R">—</div></div>
+        <div class="stat g"><div class="k">C (Optimum)</div><div class="v" id="c3C">—</div></div>
+        <div class="stat p"><div class="k">optimales P</div><div class="v" id="c3Po">—</div></div>
+        <div class="stat w"><div class="k">γ = e<sup>α</sup></div><div class="v" id="c3G">—</div></div>
+      </div>
+      <div class="note" style="margin-top:12px">
+        Shannons Lösung: <span class="mono">P = γ/(γ+2)</span>, <span class="mono">C = log₂((γ+2)/γ)</span>
+        mit <span class="mono">γ = 2<sup>α</sup></span>, <span class="mono">α = −[p log p + q log q]</span>.
+        Bei p=1: C = log₂3. Bei p=½: C = log₂2 = 1.
+      </div>
+      <canvas id="c3Cv" height="180" style="margin-top:12px"></canvas>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Die Suche nach dem Maximum</h3>
+      <div id="c3Plot" class="plot" style="height:300px"></div>
+      <h4>Fig. 12 — symmetrische Kanäle (Formel ohne Rechnen)</h4>
+      <p class="tiny">Wenn jedes Eingangssymbol dieselbe Menge an Übergangswahrscheinlichkeiten hat und jedes Ausgangssymbol auch,
+        dann gilt direkt: <span class="mono">C = log₂m + Σ pᵢ log₂ pᵢ</span>.</p>
+      <table id="fig12Tab"></table>
+      <h4>Mehrere getrennte Gruppen (§16, Ende)</h4>
+      <p class="tiny">Zerfällt der Kanal in Gruppen, die nie verwechselt werden, gilt
+        <span class="mono">C = log₂ Σ 2<sup>C<sub>n</sub></sup></span>, und Gruppe n bekommt den Anteil
+        <span class="mono">P<sub>n</sub> = 2<sup>C<sub>n</sub></sup>/Σ2<sup>C<sub>n</sub></sup></span>.</p>
+      <div class="ctrl">
+        <label>C₁ <b id="grA_v">1.00</b></label>
+        <input type="range" id="grA" min="0" max="3" step="0.05" value="1">
+      </div>
+      <div class="ctrl">
+        <label>C₂ <b id="grB_v">2.00</b></label>
+        <input type="range" id="grB" min="0" max="3" step="0.05" value="2">
+      </div>
+      <canvas id="grCv" height="110"></canvas>
+      <div class="statgrid">
+        <div class="stat g"><div class="k">C gesamt</div><div class="v" id="grC">—</div></div>
+        <div class="stat"><div class="k">P₁ : P₂</div><div class="v" id="grP" style="font-size:14px">—</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 9 · KONTINUIERLICH ══════════════════════════ -->
+<section id="continuous" class="reveal">
+  <span class="kicker k2">Kapitel 9 · Teil III–V</span>
+  <h2>Der Sprung ins Kontinuierliche: die berühmteste Formel</h2>
+  <p class="lede">
+    Teil III–V des Papers überträgt alles auf <b>kontinuierliche</b> Signale — Sprache, Radio, Fernsehen.
+    Am Ende steht die eine Formel, die heute auf jedem Datenblatt steht.
+  </p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">Satz 13 — Abtasttheorem</h3>
+      <p>Ein Signal mit Bandbreite W ist <b>vollständig</b> durch 2W Abtastwerte pro Sekunde bestimmt.
+        Zwischen den Punkten gibt es nur eine einzige bandbegrenzte Kurve. Aus unendlich vielen Freiheitsgraden
+        werden plötzlich <b>2TW Zahlen</b>.</p>
+      <div class="ctrl">
+        <label>Abtastrate (× Nyquist) <b id="smpR_v">1.00</b></label>
+        <input type="range" id="smpR" min="0.3" max="3" step="0.05" value="1">
+      </div>
+      <canvas id="smpCv" height="230"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent2)"></i>Originalsignal</span>
+        <span><i style="background:var(--accent3)"></i>Abtastpunkte</span>
+        <span><i style="background:var(--accent)"></i>Rekonstruktion mit sinc</span>
+      </div>
+      <div class="note" id="smpNote" style="margin-top:12px"></div>
+      <h4>Die sinc-Bausteine</h4>
+      <canvas id="sincCv" height="150"></canvas>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Satz 20/21 — Entropie im Kontinuum</h3>
+      <p class="tiny">Für eine kontinuierliche Verteilung ist <span class="mono">H = −∫p(x)log p(x)dx</span>.
+        Shannons Satz 5 in §20: Bei fester Varianz σ² hat die <b>Gaußverteilung die größte Entropie</b>.
+        Zieh an der Form und schau zu, wie H immer kleiner wird als beim Gauß.</p>
+      <div class="ctrl">
+        <label>Verteilungsform <b id="cdF_v">Gauß</b></label>
+        <input type="range" id="cdF" min="0" max="3" step="1" value="1">
+      </div>
+      <div class="ctrl">
+        <label>Standardabweichung σ <b id="cdS_v">1.00</b></label>
+        <input type="range" id="cdS" min="0.3" max="2.5" step="0.05" value="1">
+      </div>
+      <div id="cdPlot" class="plot" style="height:230px"></div>
+      <div class="statgrid">
+        <div class="stat"><div class="k">H dieser Verteilung</div><div class="v" id="cdH">—</div></div>
+        <div class="stat g"><div class="k">H Gauß (Maximum)</div><div class="v" id="cdHg">—</div></div>
+        <div class="stat w"><div class="k">Entropie-Leistung N₁</div><div class="v" id="cdN">—</div></div>
+      </div>
+      <div class="note green" style="margin-top:12px">
+        <span class="mono">H<sub>Gauß</sub> = log₂(√(2πe)·σ)</span>. Deshalb ist weißes Rauschen das „schlimmste" Rauschen —
+        und gleichzeitig das <b>beste Sendesignal</b>: Es hat bei gegebener Leistung die maximale Entropie.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Satz 17 — die Shannon-Hartley-Formel</h3>
+    <div class="formula" id="f_sh"></div>
+    <p>Das ist das Endergebnis des ganzen Papers für den praktisch wichtigsten Fall:
+      ein Kanal der Bandbreite W mit weißem Rauschen der Leistung N, Sendeleistung begrenzt auf P.</p>
+    <div class="grid g21">
+      <div>
+        <div class="ctrl">
+          <label>Bandbreite W <b id="shW_v">3000 Hz</b></label>
+          <input type="range" id="shW" min="300" max="20000" step="100" value="3000">
+        </div>
+        <div class="ctrl">
+          <label>Signal-Rausch-Verhältnis P/N <b id="shS_v">30 dB</b></label>
+          <input type="range" id="shS" min="-10" max="60" step="0.5" value="30">
+        </div>
+        <div class="statgrid">
+          <div class="stat g"><div class="k">Kapazität C</div><div class="v" id="shC">—</div></div>
+          <div class="stat"><div class="k">bit pro Symbol</div><div class="v" id="shB">—</div></div>
+          <div class="stat p"><div class="k">P/N linear</div><div class="v" id="shL">—</div></div>
+        </div>
+        <h4>Der Tauschhandel: Bandbreite ⇄ Leistung</h4>
+        <p class="tiny">Genau die Frage aus Shannons Einleitung! Verdoppelte Bandbreite verdoppelt C linear.
+          Verdoppelte Leistung bringt nur <b>+1 bit pro Symbol</b> — logarithmisch. Darum ist Bandbreite so wertvoll.</p>
+        <div class="note gold">
+          <b>Beispiele:</b> Telefon (W=3.1 kHz, 30 dB) ≈ 31 kbit/s. Daher endeten Modems bei ~56 kbit/s.<br>
+          WLAN (W=20 MHz, 25 dB) ≈ 166 Mbit/s.<br>
+          Voyager 1 (sehr kleines P/N) — nur möglich, weil Shannon-nahe Codes existieren.
+        </div>
+      </div>
+      <div>
+        <div id="shPlot" class="plot" style="height:320px"></div>
+        <canvas id="shCv" height="160" style="margin-top:12px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Teil V, Satz 22 — Rate-Distortion: „gut genug" statt „perfekt"</h3>
+    <div class="grid g2">
+      <div>
+        <p>Ein kontinuierliches Signal exakt zu übertragen bräuchte <b>unendliche</b> Kapazität — jede reelle Zahl hat
+          unendlich viele Nachkommastellen. Shannon löst das elegant: Wir wollen gar keine Perfektion, sondern
+          eine <b>Toleranz</b>. Wie viele bit braucht man für eine erlaubte mittlere Abweichung N?</p>
+        <div class="formula" id="f_rd"></div>
+        <p class="tiny">Das ist die Geburtsstunde von MP3, JPEG und H.264: <b>verlustbehaftete</b> Kompression mit
+          mathematisch sauber definierter Qualitätsgrenze.</p>
+        <div class="ctrl">
+          <label>Zugelassener Fehler N (als Anteil von Q) <b id="rdN_v">0.100</b></label>
+          <input type="range" id="rdN" min="0.001" max="1" step="0.001" value="0.1">
+        </div>
+        <div class="statgrid">
+          <div class="stat g"><div class="k">Rate R</div><div class="v" id="rdR">—</div></div>
+          <div class="stat"><div class="k">SNR</div><div class="v" id="rdS">—</div></div>
+          <div class="stat w"><div class="k">Ersparnis vs. 16 bit</div><div class="v" id="rdX">—</div></div>
+        </div>
+      </div>
+      <div>
+        <div id="rdPlot" class="plot" style="height:240px"></div>
+        <h4>Quantisierung live</h4>
+        <canvas id="rdCv" height="170"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 10 · GESAMTBILD ══════════════════════════ -->
+<section id="whole" class="reveal">
+  <span class="kicker k3">Kapitel 10 · Synthese</span>
+  <h2>Alles zusammen: ein Ende-zu-Ende-System</h2>
+  <p class="lede">
+    Jetzt läuft die ganze Theorie in einer einzigen Maschine: Quelle mit Statistik → Quellcodierung (Satz 9) →
+    Kanalcodierung (Satz 11) → verrauschter Kanal → Decodierung → Ziel.
+    Dreh die Regler und sieh, wo es bricht.
+  </p>
+
+  <div class="card">
+    <canvas id="e2eCv" height="330"></canvas>
+    <div class="grid g3" style="margin-top:16px">
+      <div>
+        <div class="ctrl">
+          <label>Quellenschiefe p <b id="e2P_v">0.85</b></label>
+          <input type="range" id="e2P" min="0.5" max="0.99" step="0.01" value="0.85">
+        </div>
+        <div class="ctrl">
+          <label>Kanalfehler ε <b id="e2E_v">0.05</b></label>
+          <input type="range" id="e2E" min="0" max="0.45" step="0.005" value="0.05">
+        </div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <label>Quellcodierung (Kompression) <b id="e2SC_v">an</b></label>
+          <input type="range" id="e2SC" min="0" max="1" step="1" value="1">
+        </div>
+        <div class="ctrl">
+          <label>Kanalcodierung (Redundanz r) <b id="e2CC_v">3</b></label>
+          <input type="range" id="e2CC" min="1" max="9" step="2" value="3">
+        </div>
+      </div>
+      <div>
+        <div class="statgrid">
+          <div class="stat"><div class="k">H Quelle</div><div class="v" id="e2H">—</div></div>
+          <div class="stat g"><div class="k">C Kanal</div><div class="v" id="e2C">—</div></div>
+          <div class="stat p"><div class="k">Nettorate</div><div class="v" id="e2R">—</div></div>
+          <div class="stat r"><div class="k">Fehlerrate</div><div class="v" id="e2Err">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note" id="e2Note" style="margin-top:14px"></div>
+    <div class="row" style="margin-top:12px">
+      
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="e2Play">▶ Simulation starten</button>
+      <button class="btn sm" id="e2Opt">⚡ Shannon-Optimum einstellen</button>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card">
+      <h3 style="margin-top:0">Die Antwort auf Shannons Frage</h3>
+      <p>Shannon fragte 1948: <i>Wie tauscht man Bandbreite gegen Rauschabstand?</i> Seine Antwort, in einer Zeile:</p>
+      <div class="formula" id="f_final"></div>
+      <p>Und die drei Sätze, die das Fundament bilden:</p>
+      <table>
+        <tr><th>Satz</th><th>Aussage</th><th>Heute</th></tr>
+        <tr><td class="mono">T2</td><td>H = −Σp log p ist das <i>einzige</i> Maß</td><td>Entropie überall</td></tr>
+        <tr><td class="mono">T9</td><td>Kompression bis H, nicht weiter</td><td>ZIP, FLAC, PNG</td></tr>
+        <tr><td class="mono">T11</td><td>Fehlerfrei bis Rate C</td><td>LDPC, Turbo, Polar</td></tr>
+        <tr><td class="mono">T13</td><td>2W Abtastwerte genügen</td><td>CD, PCM, ADC</td></tr>
+        <tr><td class="mono">T17</td><td>C = W·log₂(1+P/N)</td><td>WLAN, 5G, DSL</td></tr>
+        <tr><td class="mono">T22</td><td>Rate bei Toleranz N</td><td>MP3, JPEG, H.265</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Wie nah ist die Technik heute an Shannon?</h3>
+      <p class="tiny">Es dauerte <b>45 Jahre</b>, bis man Codes fand, die Shannons Grenze fast erreichen.
+        Die y-Achse zeigt, wie viel Energie pro Bit nötig ist — Shannons absolutes Minimum liegt bei −1.59 dB.</p>
+      <div id="histPlot" class="plot" style="height:300px"></div>
+      <div class="note green" style="margin-top:12px">
+        <b>Die Shannon-Grenze</b> <span class="mono">E<sub>b</sub>/N₀ ≥ ln2 = −1.59 dB</span> ist eine Naturkonstante
+        der Kommunikation — so unverrückbar wie die Lichtgeschwindigkeit.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3 style="margin-top:0">Zum Schluss: Shannons eigene Worte</h3>
+    <div class="grid g2">
+      <div class="note">
+        „Das fundamentale Problem der Kommunikation besteht darin, an einem Punkt exakt oder näherungsweise
+        eine Nachricht zu reproduzieren, die an einem anderen Punkt ausgewählt wurde."
+        <br><span class="tiny">— Einleitung, S. 1</span>
+      </div>
+      <div class="note pink">
+        „Es mag überraschen, dass wir für einen verrauschten Kanal eine definite Kapazität C definieren,
+        da wir ja niemals sichere Information senden können. … Die Natur verlangt Bezahlung in Form von genau
+        so viel Unsicherheit."
+        <br><span class="tiny">— §13, vor Theorem 11</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="max-width:700px;margin:0 auto">
+    <b style="color:var(--text)">C. E. Shannon, „A Mathematical Theory of Communication"</b><br>
+    Bell System Technical Journal, Vol. 27, S. 379–423 &amp; 623–656, Juli / Oktober 1948.<br><br>
+    <span class="tiny">Interaktive Aufbereitung · alle Simulationen laufen live im Browser ·
+    kein Vorwissen über Abiturmathematik hinaus nötig</span>
+  </div>
+</footer>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBALE HILFSFUNKTIONEN
+   ═══════════════════════════════════════════════════════════════════ */
+const $=id=>document.getElementById(id);
+const L2=x=>Math.log(x)/Math.LN2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(x,n=3)=>Number(x).toFixed(n);
+const CSS=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+const A=CSS('--accent'), A2=CSS('--accent2'), A3=CSS('--accent3'), W_=CSS('--warn'), R_=CSS('--red'), MU=CSS('--muted');
+
+function Hbin(p){ if(p<=0||p>=1) return 0; return -(p*L2(p)+(1-p)*L2(1-p)); }
+function Hvec(ps){ let h=0; for(const p of ps) if(p>0) h-=p*L2(p); return h; }
+
+/* Canvas mit DPI-Skalierung vorbereiten */
+function prep(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  const w=Math.max(1,Math.round(r.width));
+  const h=parseInt(cv.getAttribute('height'))||200;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){
+    cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+    cv.style.height=h+'px';
+  }
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  return {ctx,w,h};
+}
+function rr(ctx,x,y,w,h,r){
+  r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=2,head=9){
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.4),y2-head*Math.sin(a-0.4));
+  ctx.lineTo(x2-head*Math.cos(a+0.4),y2-head*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function grad(ctx,x,y,w,h,c1,c2){
+  const g=ctx.createLinearGradient(x,y+h,x,y); g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
+}
+/* Plotly-Standardlayout */
+const PL={
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.18)',
+  font:{color:'#c3d0ec',family:'Inter,sans-serif',size:11.5},
+  margin:{l:52,r:18,t:16,b:44},
+  xaxis:{gridcolor:'rgba(255,255,255,.08)',zerolinecolor:'rgba(255,255,255,.18)'},
+  yaxis:{gridcolor:'rgba(255,255,255,.08)',zerolinecolor:'rgba(255,255,255,.18)'},
+  showlegend:true,
+  legend:{bgcolor:'rgba(0,0,0,.3)',bordercolor:'rgba(255,255,255,.1)',borderwidth:1,font:{size:10.5}},
+  hovermode:'closest'
+};
+const PC={displayModeBar:false,responsive:true};
+function lay(ex){ return Object.assign(JSON.parse(JSON.stringify(PL)),ex||{}); }
+
+/* LaTeX rendern */
+function tex(id,s,disp=true){
+  const el=$(id); if(!el) return;
+  try{ temml.render(s,el,{displayMode:disp}); }catch(e){ el.textContent=s; }
+}
+
+/* Deterministischer PRNG für reproduzierbare Demos */
+function mulberry(a){ return function(){ a|=0;a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION / SCROLL / REVEAL
+   ═══════════════════════════════════════════════════════════════════ */
+const SECTIONS=[
+  ['hero','Start'],['tools','0 · Werkzeuge'],['problem','1 · Problem'],['capacity','2 · Kapazität'],
+  ['source','3 · Quelle'],['entropy','4 · Entropie'],['joint','5 · Zwei Variablen'],
+  ['coding','6 · Satz 9'],['noise','7 · Rauschen'],['channels','8 · Kanäle'],
+  ['continuous','9 · Kontinuum'],['whole','10 · Synthese']
+];
+(function buildNav(){
+  const nl=$('navLinks');
+  SECTIONS.forEach(([id,label])=>{
+    const b=document.createElement('button'); b.textContent=label; b.dataset.s=id;
+    b.onclick=()=>$(id).scrollIntoView({behavior:'smooth',block:'start'});
+    nl.appendChild(b);
+  });
+})();
+(function buildRoadmap(){
+  const rmData=[
+    ['01','Das Problem','Information messen — ohne Bedeutung','problem'],
+    ['02','Die Kapazität','Wie viel passt durch den Kanal?','capacity'],
+    ['03','Die Quelle','Sprache als Würfelspiel','source'],
+    ['04','Die Entropie','Die einzig mögliche Formel','entropy'],
+    ['05','Satz 9','Kompression bis zur Grenze','coding'],
+    ['06','Satz 11','Fehlerfrei trotz Rauschen','noise'],
+    ['07','C = W log(1+P/N)','Die berühmteste Formel','continuous'],
+    ['08','Synthese','Alles in einer Maschine','whole']
+  ];
+  const c=$('roadmap');
+  rmData.forEach(([n,t,d,target])=>{
+    const el=document.createElement('div'); el.className='rm';
+    el.innerHTML=`<div class="n">${n}</div><div class="t">${t}</div><div class="d">${d}</div>`;
+    el.onclick=()=>$(target).scrollIntoView({behavior:'smooth'});
+    c.appendChild(el);
+  });
+})();
+window.addEventListener('scroll',()=>{
+  const sc=window.scrollY, tot=document.body.scrollHeight-window.innerHeight;
+  $('progress').style.width=(100*sc/Math.max(1,tot))+'%';
+  let cur=SECTIONS[0][0];
+  for(const [id] of SECTIONS){ const e=$(id); if(e && e.getBoundingClientRect().top<=160) cur=id; }
+  document.querySelectorAll('#navLinks button').forEach(b=>b.classList.toggle('active',b.dataset.s===cur));
+},{passive:true});
+const obs=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }),{threshold:.07});
+document.querySelectorAll('.reveal').forEach(e=>obs.observe(e));
+
+/* ═══════════════════════════════════════════════════════════════════
+   FORMELN
+   ═══════════════════════════════════════════════════════════════════ */
+tex('f_log','\\text{Information} = \\log_2 N \\quad\\Longrightarrow\\quad \\log_2(N_1\\cdot N_2)=\\log_2 N_1+\\log_2 N_2');
+tex('f_surp','I(p) = \\log_2\\frac{1}{p} = -\\log_2 p \\qquad[\\text{bit}]');
+tex('f_cap','C=\\lim_{T\\to\\infty}\\frac{\\log_2 N(T)}{T}');
+tex('f_rec','N(t)=N(t\\!-\\!2)+N(t\\!-\\!4)+N(t\\!-\\!5)+N(t\\!-\\!7)+N(t\\!-\\!8)+N(t\\!-\\!10)');
+tex('f_H','H=-K\\sum_{i=1}^{n}p_i\\log p_i\\qquad\\text{(Theorem 2)}');
+tex('f_joint','H(x,y)=H(x)+H_x(y)=H(y)+H_y(x)');
+tex('f_rate','R=H(x)-H_y(x)=H(y)-H_x(y)=H(x)+H(y)-H(x,y)');
+tex('f_bsc','C=1-H(\\varepsilon)=1+\\varepsilon\\log_2\\varepsilon+(1-\\varepsilon)\\log_2(1-\\varepsilon)');
+tex('f_sh','C = W\\,\\log_2\\!\\left(1+\\frac{P}{N}\\right)\\quad[\\text{bit/s}]');
+tex('f_rd','R = W_1\\log_2\\frac{Q}{N}\\qquad\\text{(Theorem 22)}');
+tex('f_final','C = W\\log_2\\!\\left(1+\\frac{P}{N}\\right)');
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO · RATESPIEL
+   ═══════════════════════════════════════════════════════════════════ */
+function drawWarm(){
+  const N=+$('warmN').value;
+  $('warmNv').textContent=N;
+  const q=Math.ceil(L2(N));
+  $('warmQ').textContent=q;
+  $('warmF').textContent=`log₂(${N}) = ${fmt(L2(N),2)} bit`;
+  const {ctx,w,h}=prep($('warmCv'));
+  const depth=Math.min(q,6);
+  const top=22, bot=h-24, dy=(bot-top)/Math.max(1,depth);
+  // Baum zeichnen
+  for(let d=0; d<depth; d++){
+    const n1=Math.pow(2,d), n2=Math.pow(2,d+1);
+    const y1=top+d*dy, y2=top+(d+1)*dy;
+    for(let i=0;i<n2;i++){
+      const px=w*(Math.floor(i/2)+0.5)/n1;
+      const cx=w*(i+0.5)/n2;
+      if(cx> w) continue;
+      const alpha=0.25+0.55*(1-d/depth);
+      ctx.strokeStyle=`rgba(90,209,255,${alpha})`;
+      ctx.lineWidth=Math.max(0.6,2.4-d*0.35);
+      ctx.beginPath(); ctx.moveTo(px,y1+5); ctx.lineTo(cx,y2-5); ctx.stroke();
+    }
+  }
+  for(let d=0; d<=depth; d++){
+    const n=Math.pow(2,d), y=top+d*dy;
+    for(let i=0;i<n;i++){
+      const x=w*(i+0.5)/n;
+      const active=i<Math.min(n,N);
+      ctx.fillStyle=active?(d===depth?A3:A):'rgba(255,255,255,.12)';
+      ctx.beginPath(); ctx.arc(x,y,Math.max(1.8,5-d*0.5),0,7); ctx.fill();
+    }
+    if(d<depth){
+      ctx.fillStyle=MU; ctx.font='10.5px JetBrains Mono'; ctx.textAlign='left';
+      ctx.fillText(`Frage ${d+1}`,6,y+dy/2+3);
+    }
+  }
+  ctx.fillStyle=A3; ctx.font='600 12px Inter'; ctx.textAlign='right';
+  ctx.fillText(`${Math.min(Math.pow(2,depth),N)} Blätter`,w-8,bot+16);
+}
+$('warmN').oninput=drawWarm;
+
+/* ═══════════════════════════════════════════════════════════════════
+   TOOL-TABS
+   ═══════════════════════════════════════════════════════════════════ */
+$('toolTabs').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#toolTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  ['t1','t2','t3','t4'].forEach(t=>$(t).classList.toggle('hidden',t!==b.dataset.t));
+  setTimeout(redrawAll,40);
+});
+
+/* ───── Tool 1: Logarithmus ───── */
+function tool1(){
+  const n=+$('relN').value;
+  $('relN_v').textContent=n;
+  const st=Math.pow(2,n);
+  $('relStates').textContent=st.toLocaleString('de');
+  $('relBits').textContent=n+' bit';
+  $('relDec').textContent=fmt(n/L2(10),2);
+  const {ctx,w,h}=prep($('logCv'));
+  const PAD=42, X0=PAD, X1=w-14, Y0=h-30, Y1=18;
+  const NMAX=10;
+  const px=i=>X0+(X1-X0)*i/NMAX;
+  const pyS=v=>Y0-(Y0-Y1)*v/1024;
+  const pyB=v=>Y0-(Y0-Y1)*v/NMAX;
+  // Achsen
+  ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(X0,Y1); ctx.lineTo(X0,Y0); ctx.lineTo(X1,Y0); ctx.stroke();
+  for(let i=0;i<=NMAX;i+=2){
+    ctx.strokeStyle='rgba(255,255,255,.05)';
+    ctx.beginPath(); ctx.moveTo(px(i),Y0); ctx.lineTo(px(i),Y1); ctx.stroke();
+    ctx.fillStyle=MU; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText(i,px(i),Y0+14);
+  }
+  // Zustände
+  ctx.strokeStyle=A2; ctx.lineWidth=2.4; ctx.beginPath();
+  for(let i=0;i<=NMAX;i+=0.1){ const v=Math.pow(2,i); const y=pyS(Math.min(v,1024)); i===0?ctx.moveTo(px(i),y):ctx.lineTo(px(i),y); }
+  ctx.stroke();
+  // Information
+  ctx.strokeStyle=A3; ctx.lineWidth=2.4; ctx.beginPath();
+  ctx.moveTo(px(0),pyB(0)); ctx.lineTo(px(NMAX),pyB(NMAX)); ctx.stroke();
+  // Marker
+  ctx.fillStyle=A2; ctx.beginPath(); ctx.arc(px(n),pyS(Math.min(st,1024)),5,0,7); ctx.fill();
+  ctx.fillStyle=A3; ctx.beginPath(); ctx.arc(px(n),pyB(n),5,0,7); ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.22)'; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(px(n),Y0); ctx.lineTo(px(n),Y1); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#fff'; ctx.font='600 11px JetBrains Mono'; ctx.textAlign='left';
+  ctx.fillText(`${st}`,px(n)+8,pyS(Math.min(st,1024))-6);
+  ctx.fillText(`${n} bit`,px(n)+8,pyB(n)-6);
+  ctx.fillStyle=MU; ctx.font='10px Inter'; ctx.textAlign='center';
+  ctx.fillText('Anzahl Relais n',(X0+X1)/2,h-6);
+}
+$('relN').oninput=tool1;
+
+/* ───── Tool 2: Überraschung ───── */
+function tool2(){
+  const p=+$('surP').value;
+  $('surP_v').textContent=fmt(p,2);
+  const I=-L2(p);
+  $('surI').textContent=fmt(I,2)+' bit';
+  $('surN').textContent=fmt(1/p,1);
+  const words=[[0.99,'völlig banal'],[0.6,'erwartbar'],[0.4,'Münzwurf'],[0.1,'ungewöhnlich'],[0.02,'überraschend'],[0,'Sensation']];
+  let wtxt='—'; for(const [th,t] of words){ if(p>=th){ wtxt=t; break; } }
+  $('surW').textContent=wtxt;
+  // Kurve
+  const xs=[],ys=[];
+  for(let q=0.005;q<=1.0001;q+=0.005){ xs.push(q); ys.push(-L2(q)); }
+  Plotly.react('surPlot',[
+    {x:xs,y:ys,type:'scatter',mode:'lines',line:{color:A,width:3},name:'−log₂p'},
+    {x:[p],y:[I],type:'scatter',mode:'markers',marker:{color:A2,size:13,line:{color:'#fff',width:2}},name:'aktuell'}
+  ],lay({xaxis:{title:'Wahrscheinlichkeit p',range:[0,1],gridcolor:'rgba(255,255,255,.08)'},
+        yaxis:{title:'bit',range:[0,7.6],gridcolor:'rgba(255,255,255,.08)'},
+        margin:{l:50,r:14,t:10,b:42},showlegend:false}),PC);
+  drawExp(p);
+}
+function drawExp(p){
+  const {ctx,w,h}=prep($('expCv'));
+  // Verteilung: p und 1-p als zwei Rechtecke, Fläche = Beitrag
+  const ps=[p,1-p].filter(v=>v>0.0001);
+  const H=Hvec(ps);
+  const PADL=36, PADB=26, PADT=16;
+  const maxI=Math.max(4, -L2(Math.min(...ps)));
+  let x=PADL;
+  const W=w-PADL-10, Hh=h-PADB-PADT;
+  const cols=[A,A2];
+  ps.forEach((q,i)=>{
+    const bw=W*q, bh=Hh*(-L2(q))/maxI;
+    ctx.fillStyle=grad(ctx,x,h-PADB-bh,bw,bh,cols[i]+'22',cols[i]+'cc');
+    ctx.fillRect(x,h-PADB-bh,bw,bh);
+    ctx.strokeStyle=cols[i]; ctx.lineWidth=1.4;
+    ctx.strokeRect(x,h-PADB-bh,bw,bh);
+    ctx.fillStyle='#fff'; ctx.font='600 11px JetBrains Mono'; ctx.textAlign='center';
+    if(bw>44) ctx.fillText(`${fmt(q,2)} × ${fmt(-L2(q),2)}`,x+bw/2,h-PADB-bh-6);
+    x+=bw;
+  });
+  // Achsen
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(PADL,PADT); ctx.lineTo(PADL,h-PADB); ctx.lineTo(w-10,h-PADB); ctx.stroke();
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.textAlign='left';
+  ctx.fillText('Wahrscheinlichkeit →',PADL+2,h-8);
+  ctx.save(); ctx.translate(13,h/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center';
+  ctx.fillText('Überraschung (bit)',0,0); ctx.restore();
+  ctx.fillStyle=A3; ctx.font='700 14px JetBrains Mono'; ctx.textAlign='right';
+  ctx.fillText(`H = ${fmt(H,3)} bit`,w-14,PADT+12);
+}
+$('surP').oninput=tool2;
+
+/* ───── Tool 3: Markow-Ketten ───── */
+const MARKOV=[
+  { // Fig 3 — gedächtnislos
+    name:'Fig. 3 — gedächtnislos (Beispiel B)',
+    note:'<b>Ein einziger Zustand.</b> Die Buchstaben A–E werden unabhängig mit Wahrscheinlichkeiten .4, .1, .2, .2, .1 gezogen. Kein Gedächtnis: der nächste Buchstabe weiß nichts vom letzten. Entropie = H(.4,.1,.2,.2,.1) = 2.12 bit.',
+    states:['•'],
+    pos:[[0.5,0.5]],
+    trans:[[{to:0,p:0.4,sym:'A'},{to:0,p:0.1,sym:'B'},{to:0,p:0.2,sym:'C'},{to:0,p:0.2,sym:'D'},{to:0,p:0.1,sym:'E'}]]
+  },
+  { // Fig 4 — Digramme A,B,C
+    name:'Fig. 4 — Digramme (Beispiel C)',
+    note:'<b>Drei Zustände = drei Buchstaben.</b> Shannons Tabelle aus §2: Nach A folgt B mit 4/5, C mit 1/5. Nach B folgt A oder B je 1/2. Nach C: A 1/2, B 2/5, C 1/10. Gleichgewicht: P(A)=9/27, P(B)=16/27, P(C)=2/27.',
+    states:['A','B','C'],
+    pos:[[0.5,0.18],[0.17,0.78],[0.83,0.78]],
+    trans:[
+      [{to:1,p:0.8,sym:'B'},{to:2,p:0.2,sym:'C'}],
+      [{to:0,p:0.5,sym:'A'},{to:1,p:0.5,sym:'B'}],
+      [{to:0,p:0.5,sym:'A'},{to:1,p:0.4,sym:'B'},{to:2,p:0.1,sym:'C'}]
+    ]
+  },
+  { // Fig 2 — Telegraf
+    name:'Fig. 2 — Telegrafen-Einschränkung',
+    note:'<b>Zwei Zustände:</b> „gerade Pause gesendet" und „gerade Symbol gesendet". Regel: Nach einer Pause darf keine zweite Pause kommen. Genau dieser Graph liefert über die Determinantengleichung die Kapazität C = 0.539.',
+    states:['nach Pause','nach Zeichen'],
+    pos:[[0.26,0.5],[0.74,0.5]],
+    trans:[
+      [{to:1,p:0.5,sym:'·'},{to:1,p:0.5,sym:'—'}],
+      [{to:1,p:0.3,sym:'·'},{to:1,p:0.3,sym:'—'},{to:0,p:0.25,sym:'␣'},{to:0,p:0.15,sym:'␣␣'}]
+    ]
+  }
+];
+let mkIdx=1, mkState=0, mkOut=[], mkCount=[], mkLast=null, mkTimer=null;
+function mkInit(){
+  const M=MARKOV[mkIdx];
+  mkState=0; mkOut=[]; mkCount=M.states.map(()=>0); mkCount[0]=1; mkLast=null;
+  $('mkNote').innerHTML=M.note;
+  $('mkOut').textContent='—';
+  mkDraw(); mkEqDraw();
+}
+function mkStep(){
+  const M=MARKOV[mkIdx];
+  const tr=M.trans[mkState];
+  let r=Math.random(), acc=0, chosen=tr[tr.length-1];
+  for(const t of tr){ acc+=t.p; if(r<=acc){ chosen=t; break; } }
+  mkLast={from:mkState,to:chosen.to,sym:chosen.sym};
+  mkState=chosen.to; mkCount[mkState]++;
+  mkOut.push(chosen.sym);
+  if(mkOut.length>220) mkOut.shift();
+  $('mkOut').textContent=mkOut.join('');
+  mkDraw(); mkEqDraw();
+}
+function mkEquilibrium(){
+  const M=MARKOV[mkIdx], n=M.states.length;
+  let P=new Array(n).fill(1/n);
+  for(let it=0;it<800;it++){
+    const Q=new Array(n).fill(0);
+    for(let i=0;i<n;i++) for(const t of M.trans[i]) Q[t.to]+=P[i]*t.p;
+    P=Q;
+  }
+  return P;
+}
+function mkDraw(){
+  const {ctx,w,h}=prep($('mkCv'));
+  const M=MARKOV[mkIdx];
+  const R=Math.min(w,h)*0.085+6;
+  const pts=M.pos.map(([a,b])=>[a*w,b*h]);
+  // Kanten
+  M.trans.forEach((trs,i)=>{
+    trs.forEach(t=>{
+      const [x1,y1]=pts[i], [x2,y2]=pts[t.to];
+      const isLast=mkLast && mkLast.from===i && mkLast.to===t.to && mkLast.sym===t.sym;
+      const col=isLast?A2:'rgba(255,255,255,.26)';
+      ctx.lineWidth=isLast?3.4:0.8+t.p*4;
+      if(i===t.to){ // Schleife
+        const ang=Math.atan2(y1-h/2,x1-w/2)||-Math.PI/2;
+        const cx=x1+Math.cos(ang)*(R+26), cy=y1+Math.sin(ang)*(R+26);
+        ctx.strokeStyle=col;
+        ctx.beginPath(); ctx.arc(cx,cy,R*0.72,0,7); ctx.stroke();
+        ctx.fillStyle=isLast?A2:MU; ctx.font=(isLast?'700 ':'')+'11.5px JetBrains Mono'; ctx.textAlign='center';
+        const off=M.trans[i].indexOf(t);
+        ctx.fillText(`${t.sym} ${fmt(t.p,2)}`,cx+Math.cos(ang)*(R*0.9),cy+Math.sin(ang)*(R*0.9)+off*13-((trs.length-1)*6.5));
+      } else {
+        const dx=x2-x1, dy=y2-y1, d=Math.hypot(dx,dy);
+        const ux=dx/d, uy=dy/d;
+        const px=-uy, py=ux;
+        const bend=18;
+        const mx=(x1+x2)/2+px*bend, my=(y1+y2)/2+py*bend;
+        ctx.strokeStyle=col;
+        ctx.beginPath(); ctx.moveTo(x1+ux*R,y1+uy*R);
+        ctx.quadraticCurveTo(mx,my,x2-ux*R,y2-uy*R); ctx.stroke();
+        // Pfeilspitze
+        const ex=x2-ux*R, ey=y2-uy*R;
+        const a=Math.atan2(ey-my,ex-mx);
+        ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(ex,ey);
+        ctx.lineTo(ex-9*Math.cos(a-0.4),ey-9*Math.sin(a-0.4));
+        ctx.lineTo(ex-9*Math.cos(a+0.4),ey-9*Math.sin(a+0.4)); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=isLast?A2:MU; ctx.font=(isLast?'700 ':'')+'11.5px JetBrains Mono'; ctx.textAlign='center';
+        ctx.fillText(`${t.sym} ${fmt(t.p,2)}`,mx+px*9,my+py*9+4);
+      }
+    });
+  });
+  // Knoten
+  pts.forEach(([x,y],i)=>{
+    const act=i===mkState;
+    ctx.fillStyle=act?grad(ctx,x-R,y-R,2*R,2*R,'#1a4a66',A):'rgba(255,255,255,.08)';
+    ctx.beginPath(); ctx.arc(x,y,R,0,7); ctx.fill();
+    ctx.strokeStyle=act?A:'rgba(255,255,255,.26)'; ctx.lineWidth=act?3:1.4;
+    ctx.beginPath(); ctx.arc(x,y,R,0,7); ctx.stroke();
+    if(act){ ctx.strokeStyle='rgba(90,209,255,.3)'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.arc(x,y,R+7,0,7); ctx.stroke(); }
+    ctx.fillStyle=act?'#fff':'#b9c6e6'; ctx.font='700 13px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(M.states[i],x,y);
+    ctx.textBaseline='alphabetic';
+  });
+}
+function mkEqDraw(){
+  const {ctx,w,h}=prep($('mkEq'));
+  const M=MARKOV[mkIdx], n=M.states.length;
+  const tot=mkCount.reduce((a,b)=>a+b,0)||1;
+  const P=mkEquilibrium();
+  const bw=Math.min(72,(w-30)/n-12), gap=((w-24)-n*bw)/(n+1);
+  for(let i=0;i<n;i++){
+    const x=gap+i*(bw+gap)+12;
+    const obs=mkCount[i]/tot;
+    const bh=(h-34)*obs;
+    ctx.fillStyle=grad(ctx,x,h-20-bh,bw,bh,'rgba(90,209,255,.15)','rgba(90,209,255,.75)');
+    ctx.fillRect(x,h-20-bh,bw,bh);
+    const th=(h-34)*P[i];
+    ctx.strokeStyle=A3; ctx.lineWidth=2.2;
+    ctx.beginPath(); ctx.moveTo(x-4,h-20-th); ctx.lineTo(x+bw+4,h-20-th); ctx.stroke();
+    ctx.fillStyle=MU; ctx.font='10.5px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText(M.states[i],x+bw/2,h-6);
+    ctx.fillStyle='#fff'; ctx.font='600 10.5px JetBrains Mono';
+    ctx.fillText(fmt(obs,2),x+bw/2,h-24-bh);
+  }
+  ctx.fillStyle=A3; ctx.font='10.5px Inter'; ctx.textAlign='right';
+  ctx.fillText('— theoretisch',w-6,13);
+}
+document.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-mk]').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); mkIdx=+b.dataset.mk; mkInit();
+});
+$('mkStep').onclick=mkStep;
+$('mkReset').onclick=mkInit;
+$('mkSpd').oninput=()=>{ $('mkSpd_v').textContent=$('mkSpd').value+'/s'; if(mkTimer){ clearInterval(mkTimer); mkTimer=setInterval(mkStep,1000/+$('mkSpd').value); } };
+$('mkPlay').onclick=function(){
+  if(mkTimer){ clearInterval(mkTimer); mkTimer=null; this.textContent='▶ Start'; this.classList.remove('on'); }
+  else { mkTimer=setInterval(mkStep,1000/+$('mkSpd').value); this.textContent='⏸ Pause'; this.classList.add('on'); }
+};
+
+/* ───── Tool 4: Typische Folgen ───── */
+function binomLogPMF(N,k,p){
+  // log2 C(N,k) p^k (1-p)^(N-k)
+  let lc=0;
+  for(let i=1;i<=k;i++) lc+=L2(N-k+i)-L2(i);
+  return lc + (k>0? k*L2(p):0) + ((N-k)>0? (N-k)*L2(1-p):0);
+}
+function tool4(){
+  const p=+$('typP').value, N=+$('typN').value;
+  $('typP_v').textContent=fmt(p,2); $('typN_v').textContent=N;
+  const H=Hbin(p);
+  $('typH').textContent=fmt(H,3);
+  const all=Math.pow(2,N), typ=Math.pow(2,N*H);
+  const ef=v=>v>1e6? v.toExponential(1).replace('e+','e') : Math.round(v).toLocaleString('de');
+  $('typAll').textContent=ef(all);
+  $('typTyp').textContent=ef(typ);
+  $('typFrac').textContent=(100*Math.pow(2,-N*(1-H))).toFixed(N*(1-H)>6?4:2)+'%';
+  // Binomialverteilung
+  const xs=[],ys=[];
+  for(let k=0;k<=N;k++){ xs.push(k/N); ys.push(Math.pow(2,binomLogPMF(N,k,p))); }
+  Plotly.react('typPlot',[
+    {x:xs,y:ys,type:'bar',marker:{color:ys.map((_,i)=>Math.abs(i/N-p)<1.5/Math.sqrt(N)?A3:'rgba(90,209,255,.45)')},name:'P(Anteil Einsen)'},
+  ],lay({xaxis:{title:'Anteil Einsen k/N',range:[0,1]},yaxis:{title:'Wahrscheinlichkeit'},
+    shapes:[{type:'line',x0:p,x1:p,y0:0,y1:Math.max(...ys)*1.05,line:{color:A2,width:2,dash:'dash'}}],
+    showlegend:false,margin:{l:54,r:14,t:10,b:42}}),PC);
+  // Punktwolke
+  const {ctx,w,h}=prep($('typCv'));
+  const rnd=mulberry(12345+Math.round(p*1000)+N*7);
+  const PADL=44, PADR=12;
+  const maxX=Math.max(1.05, H+0.6), minX=Math.max(0,H-0.6);
+  const px=v=>PADL+(w-PADL-PADR)*(v-minX)/(maxX-minX);
+  // Achse
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(PADL,h-24); ctx.lineTo(w-PADR,h-24); ctx.stroke();
+  for(let t=0;t<=1;t+=0.25){
+    const v=minX+(maxX-minX)*t;
+    ctx.strokeStyle='rgba(255,255,255,.06)';
+    ctx.beginPath(); ctx.moveTo(px(v),12); ctx.lineTo(px(v),h-24); ctx.stroke();
+    ctx.fillStyle=MU; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText(fmt(v,2),px(v),h-10);
+  }
+  for(let s=0;s<1000;s++){
+    let k=0; for(let i=0;i<N;i++) if(rnd()<p) k++;
+    const lp=-binomLogPMF(N,k,p)/N + (L2(binomial(N,k))/N); // -log p(folge)/N
+    const val=(k*(-L2(p))+(N-k)*(-L2(1-p)))/N;
+    const x=px(val), y=14+(h-42)*rnd();
+    const near=Math.abs(val-H)<0.12;
+    ctx.fillStyle=near?'rgba(157,255,110,.55)':'rgba(90,209,255,.3)';
+    ctx.beginPath(); ctx.arc(x,y,1.9,0,7); ctx.fill();
+  }
+  ctx.strokeStyle=A2; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(px(H),10); ctx.lineTo(px(H),h-24); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=A2; ctx.font='700 11px JetBrains Mono'; ctx.textAlign='left';
+  ctx.fillText(`H = ${fmt(H,3)}`,px(H)+6,20);
+}
+function binomial(n,k){ let r=1; for(let i=1;i<=k;i++) r=r*(n-k+i)/i; return r; }
+$('typP').oninput=tool4; $('typN').oninput=tool4;
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 1 · KOMMUNIKATIONSSYSTEM (Fig. 1)
+   ═══════════════════════════════════════════════════════════════════ */
+let sysAnim=null, sysT=0, sysNoiseOn=true, sysMsg='1011001', sysRecv='';
+function sysDraw(){
+  const {ctx,w,h}=prep($('sysCv'));
+  const boxes=[
+    {x:0.04,y:0.30,w:0.155,h:0.20,t:'QUELLE',c:A3},
+    {x:0.235,y:0.30,w:0.165,h:0.20,t:'SENDER',c:A},
+    {x:0.44,y:0.30,w:0.12,h:0.20,t:'KANAL',c:A},
+    {x:0.60,y:0.30,w:0.165,h:0.20,t:'EMPFÄNGER',c:A},
+    {x:0.805,y:0.30,w:0.155,h:0.20,t:'ZIEL',c:A3},
+    {x:0.44,y:0.72,w:0.12,h:0.17,t:'RAUSCHEN',c:R_}
+  ];
+  const labels=['Nachricht','Signal','empf. Signal','Nachricht'];
+  // Pfeile
+  for(let i=0;i<5;i++){
+    if(i===5) break;
+    if(i<4){
+      const a=boxes[i], b=boxes[i+1];
+      const x1=(a.x+a.w)*w, x2=b.x*w, y=(a.y+a.h/2)*h;
+      arrow(ctx,x1+3,y,x2-4,y,'rgba(255,255,255,.3)',1.8,8);
+      ctx.fillStyle=MU; ctx.font='10px Inter'; ctx.textAlign='center';
+      ctx.fillText(labels[i],(x1+x2)/2,y-9);
+    }
+  }
+  // Rausch-Pfeil
+  const nb=boxes[5], ch=boxes[2];
+  arrow(ctx,(nb.x+nb.w/2)*w,nb.y*h-2,(ch.x+ch.w/2)*w,(ch.y+ch.h)*h+5,sysNoiseOn?R_:'rgba(255,255,255,.14)',2,8);
+  // Boxen
+  boxes.forEach((b,i)=>{
+    const X=b.x*w, Y=b.y*h, W=b.w*w, Hh=b.h*h;
+    const dim=(i===5&&!sysNoiseOn);
+    ctx.fillStyle=dim?'rgba(255,255,255,.03)':grad(ctx,X,Y,W,Hh,'rgba(255,255,255,.03)','rgba(255,255,255,.1)');
+    rr(ctx,X,Y,W,Hh,10); ctx.fill();
+    ctx.strokeStyle=dim?'rgba(255,255,255,.12)':b.c; ctx.lineWidth=1.7; ctx.stroke();
+    ctx.fillStyle=dim?'rgba(255,255,255,.3)':'#fff';
+    ctx.font='700 11.5px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(b.t,X+W/2,Y+Hh/2);
+    ctx.textBaseline='alphabetic';
+  });
+  // Animierte Bits
+  if(sysT>0){
+    const path=[0.195,0.235,0.40,0.44,0.56,0.60,0.765,0.805];
+    const yline=0.40*h;
+    for(let i=0;i<sysMsg.length;i++){
+      const t=sysT-i*0.055;
+      if(t<0||t>1) continue;
+      const x=(0.14+0.72*t)*w;
+      const inChannel=t>0.42&&t<0.56;
+      const flipped=sysNoiseOn && sysFlips[i] && t>0.49;
+      const bit=flipped? (sysMsg[i]==='1'?'0':'1') : sysMsg[i];
+      ctx.fillStyle=flipped?R_:(bit==='1'?A3:A);
+      ctx.beginPath(); ctx.arc(x,yline,7,0,7); ctx.fill();
+      ctx.fillStyle='#06121c'; ctx.font='700 10px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(bit,x,yline);
+      ctx.textBaseline='alphabetic';
+      if(sysNoiseOn && inChannel){
+        ctx.strokeStyle='rgba(255,107,107,.45)'; ctx.lineWidth=1;
+        for(let k=0;k<4;k++){
+          ctx.beginPath();
+          ctx.moveTo(x,yline+10);
+          ctx.lineTo(x+(Math.random()-0.5)*18,yline+22+k*5);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+  // Rauschwellen
+  if(sysNoiseOn){
+    ctx.strokeStyle='rgba(255,107,107,.3)'; ctx.lineWidth=1.2;
+    ctx.beginPath();
+    const ny=(nb.y+nb.h/2)*h;
+    for(let x=nb.x*w+8;x<(nb.x+nb.w)*w-8;x+=2){
+      const v=ny+Math.sin(x*0.35+sysPhase)*5*Math.random();
+      x===nb.x*w+8?ctx.moveTo(x,v):ctx.lineTo(x,v);
+    }
+    ctx.stroke();
+  }
+}
+let sysFlips=[], sysPhase=0;
+function sysRun(){
+  const eps=+$('sysN').value;
+  sysMsg=Array.from({length:7},()=>Math.random()<0.5?'0':'1').join('');
+  sysFlips=Array.from({length:7},()=>sysNoiseOn && Math.random()<eps);
+  sysRecv=sysMsg.split('').map((b,i)=>sysFlips[i]?(b==='1'?'0':'1'):b).join('');
+  sysT=0;
+  if(sysAnim) cancelAnimationFrame(sysAnim);
+  const step=()=>{
+    sysT+=0.009; sysPhase+=0.3; sysDraw();
+    if(sysT<1.5) sysAnim=requestAnimationFrame(step);
+    else {
+      const errs=sysFlips.filter(Boolean).length;
+      $('sysLog').textContent =
+        `Gesendet:  ${sysMsg}\nEmpfangen: ${sysRecv}\n`+
+        `Fehler: ${errs} von 7   ·   Äquivokation H(ε)=${fmt(Hbin(Math.max(1e-9,+$('sysN').value)),3)} bit/Symbol\n`+
+        `⇒ tatsächlich übertragen: ${fmt(7*(1-Hbin(Math.max(1e-9,+$('sysN').value))),2)} bit statt 7 bit`;
+    }
+  };
+  step();
+}
+$('sysPlay').onclick=sysRun;
+$('sysNoise').onclick=function(){ sysNoiseOn=!sysNoiseOn; this.classList.toggle('on',sysNoiseOn); sysDraw(); };
+$('sysN').oninput=()=>{ $('sysN_v').textContent=fmt(+$('sysN').value,2); };
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 2 · KAPAZITÄT
+   ═══════════════════════════════════════════════════════════════════ */
+const TELE=[2,4,5,7,8,10];
+function telegraphN(T){
+  const N=new Array(T+1).fill(0); N[0]=1;
+  for(let t=1;t<=T;t++){ let s=0; for(const d of TELE) if(t-d>=0) s+=N[t-d]; N[t]=s; }
+  return N;
+}
+function capUpdate(){
+  const T=+$('capT').value;
+  $('capT_v').textContent=T;
+  const N=telegraphN(60);
+  const v=N[T];
+  $('capN').textContent = v>1e6? v.toExponential(2).replace('e+','e') : v.toLocaleString('de');
+  $('capRate').textContent = v>0? fmt(L2(v)/T,4):'—';
+  // Plot
+  const xs=[],ys=[],lin=[];
+  for(let t=2;t<=60;t++){ if(N[t]>0){ xs.push(t); ys.push(L2(N[t])); lin.push(0.5390*t); } }
+  Plotly.react('capPlot',[
+    {x:xs,y:ys,type:'scatter',mode:'lines+markers',line:{color:A,width:2.6},marker:{size:4},name:'log₂N(T)'},
+    {x:xs,y:lin,type:'scatter',mode:'lines',line:{color:A3,width:2,dash:'dash'},name:'C·T = 0.539·T'},
+    {x:[T],y:[L2(Math.max(1,v))],type:'scatter',mode:'markers',marker:{color:A2,size:13,line:{color:'#fff',width:2}},name:'aktuell'}
+  ],lay({xaxis:{title:'Dauer T'},yaxis:{title:'log₂ N(T)  [bit]'},margin:{l:54,r:14,t:10,b:42}}),PC);
+}
+function capRoot(){
+  const X=+$('capX').value;
+  $('capX_v').textContent=fmt(X,3);
+  const f=x=>TELE.reduce((a,d)=>a+Math.pow(x,-d),0)-1;
+  $('capFX').textContent=fmt(f(X),4);
+  $('capLogX').textContent=fmt(L2(X),4);
+  const {ctx,w,h}=prep($('capRootCv'));
+  const X0=1.05,X1=1.9, PADL=44, PADR=12, PADT=12, PADB=24;
+  const fmin=-0.7, fmax=1.4;
+  const px=v=>PADL+(w-PADL-PADR)*(v-X0)/(X1-X0);
+  const py=v=>PADT+(h-PADT-PADB)*(fmax-v)/(fmax-fmin);
+  // Nulllinie
+  ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(PADL,py(0)); ctx.lineTo(w-PADR,py(0)); ctx.stroke(); ctx.setLineDash([]);
+  // Kurve
+  ctx.strokeStyle=A; ctx.lineWidth=2.6; ctx.beginPath();
+  let first=true;
+  for(let x=X0;x<=X1;x+=0.004){ const y=clamp(f(x),fmin,fmax); const Y=py(y); first?(ctx.moveTo(px(x),Y),first=false):ctx.lineTo(px(x),Y); }
+  ctx.stroke();
+  // Marker
+  const fv=clamp(f(X),fmin,fmax);
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(px(X),PADT); ctx.lineTo(px(X),h-PADB); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=Math.abs(f(X))<0.01?A3:A2;
+  ctx.beginPath(); ctx.arc(px(X),py(fv),6,0,7); ctx.fill();
+  // echte Wurzel
+  let lo=1.05,hi=1.9; for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(f(m)>0) lo=m; else hi=m; }
+  ctx.strokeStyle=A3; ctx.lineWidth=1.6; ctx.setLineDash([2,3]);
+  ctx.beginPath(); ctx.moveTo(px(lo),PADT); ctx.lineTo(px(lo),h-PADB); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=A3; ctx.font='700 10.5px JetBrains Mono'; ctx.textAlign='left';
+  ctx.fillText(`X₀=${fmt(lo,4)}`,px(lo)+5,PADT+11);
+  ctx.fillStyle=MU; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+  for(let x=1.1;x<=1.9;x+=0.2) ctx.fillText(fmt(x,1),px(x),h-8);
+  ctx.textAlign='left'; ctx.fillText('f(X)',6,py(0)-5);
+}
+$('capT').oninput=capUpdate;
+$('capX').oninput=capRoot;
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 3 · QUELLE · SPRACHNÄHERUNGEN
+   ═══════════════════════════════════════════════════════════════════ */
+const KORPUS=(`der mensch ist ein wesen das information verarbeitet und weitergibt die sprache ist das
+wichtigste werkzeug dafuer sie besteht aus zeichen die nach regeln kombiniert werden jedes zeichen traegt
+einen teil der bedeutung aber nicht jedes zeichen ist gleich wahrscheinlich manche buchstaben kommen sehr
+haeufig vor andere nur selten diese ungleichheit ist der schluessel zur kompression denn haeufige zeichen
+koennen mit kurzen codes dargestellt werden und seltene mit langen die mittlere laenge eines solchen codes
+kann niemals kleiner sein als die entropie der quelle das ist der kern der theorie von claude shannon
+er zeigte dass information nichts mit bedeutung zu tun hat sondern nur mit auswahl aus einer menge von
+moeglichkeiten je mehr moeglichkeiten offen waren desto mehr information steckt in der getroffenen wahl
+ein kanal kann nur eine begrenzte menge an information pro sekunde uebertragen diese grenze nennt man
+kapazitaet selbst wenn der kanal rauscht gibt es codes die beliebig zuverlaessig arbeiten solange die rate
+unter der kapazitaet bleibt das war die ueberraschende entdeckung die niemand erwartet hatte denn vorher
+glaubte man man muesse die nachricht immer oefter wiederholen um fehler zu vermeiden und damit wuerde die
+rate gegen null gehen shannon bewies das gegenteil mit einem zufaelligen code der im mittel gut ist und
+damit muss mindestens ein einzelner code gut sein die sprache selbst hat eine redundanz von etwa fuenfzig
+prozent man kann die haelfte der buchstaben loeschen und der text bleibt lesbar diese redundanz schuetzt
+vor fehlern beim lesen und hoeren und sie ist der grund warum kreuzwortraetsel ueberhaupt funktionieren`)
+.replace(/\s+/g,' ').trim();
+
+const APXNOTES=[
+ 'Shannons Stufe 1: <b>alle 27 Zeichen gleich wahrscheinlich</b>, unabhängig. Entropie = log₂27 = 4.75 bit/Zeichen. Sieht aus wie Kauderwelsch — genau das ist „maximale Information pro Zeichen".',
+ 'Stufe 2: <b>Buchstabenhäufigkeiten</b> wie im Deutschen. E und N sind häufig, Q und X selten. Entropie sinkt auf ca. 4.1 bit. Erste Ähnlichkeit mit Sprache — die Vokal-Konsonant-Mischung stimmt schon.',
+ 'Stufe 3: <b>Digramme</b>. Nach Q kommt fast immer U, nach C oft H. Jetzt entstehen aussprechbare Silben. Entropie ca. 3.5 bit.',
+ 'Stufe 4: <b>Trigramme</b>. Echte deutsche Wortfragmente erscheinen. Shannon: „Die Ähnlichkeit nimmt bei jedem Schritt deutlich zu." Entropie ca. 3.0 bit.',
+ 'Stufe 5: <b>Tetragramme</b>. Viele echte Wörter entstehen von selbst, obwohl das Modell nichts von Wörtern weiß! Entropie ca. 2.6 bit.',
+ 'Stufe 6: <b>Wörter, unabhängig gezogen</b>. Shannon springt hier zu Worteinheiten. Jedes Wort ist korrekt, die Reihenfolge ist Zufall.',
+ 'Stufe 7: <b>Wort-Digramme</b>. Shannons berühmtes Beispiel: „THE HEAD AND IN FRONTAL ATTACK ON AN ENGLISH WRITER THAT THE CHARACTER OF THIS POINT IS…" — grammatisch erstaunlich plausibel. „Ein hinreichend komplexer stochastischer Prozess gibt eine befriedigende Darstellung einer diskreten Quelle."'
+];
+function buildNgram(text,n){
+  const m=new Map();
+  for(let i=0;i+n<=text.length;i++){
+    const key=text.slice(i,i+n-1), nx=text[i+n-1];
+    if(!m.has(key)) m.set(key,[]);
+    m.get(key).push(nx);
+  }
+  return m;
+}
+const NG={};
+[2,3,4,5].forEach(n=>NG[n]=buildNgram(KORPUS,n));
+const WORDS=KORPUS.split(' ');
+const WG=new Map();
+for(let i=0;i<WORDS.length-1;i++){
+  const k=WORDS[i]; if(!WG.has(k)) WG.set(k,[]); WG.get(k).push(WORDS[i+1]);
+}
+const ALPH='abcdefghijklmnopqrstuvwxyz '.split('');
+const FREQ=(()=>{ const c={}; for(const ch of KORPUS) c[ch]=(c[ch]||0)+1; return c; })();
+let apxOrder=0;
+function apxGen(){
+  let out='';
+  if(apxOrder===0){
+    for(let i=0;i<210;i++) out+=ALPH[Math.floor(Math.random()*ALPH.length)];
+  } else if(apxOrder===1){
+    const pool=[]; for(const ch in FREQ) for(let i=0;i<FREQ[ch];i++) pool.push(ch);
+    for(let i=0;i<210;i++) out+=pool[Math.floor(Math.random()*pool.length)];
+  } else if(apxOrder<=4){
+    const n=apxOrder, m=NG[n];
+    const keys=[...m.keys()];
+    let cur=keys[Math.floor(Math.random()*keys.length)];
+    out=cur;
+    for(let i=0;i<210;i++){
+      const nxs=m.get(cur);
+      if(!nxs){ cur=keys[Math.floor(Math.random()*keys.length)]; out+=' '+cur; continue; }
+      const c=nxs[Math.floor(Math.random()*nxs.length)];
+      out+=c; cur=(cur+c).slice(-(n-1));
+    }
+  } else if(apxOrder===5){
+    for(let i=0;i<34;i++) out+=WORDS[Math.floor(Math.random()*WORDS.length)]+' ';
+  } else {
+    let cur=WORDS[Math.floor(Math.random()*WORDS.length)];
+    out=cur+' ';
+    for(let i=0;i<33;i++){
+      const nx=WG.get(cur);
+      cur = nx? nx[Math.floor(Math.random()*nx.length)] : WORDS[Math.floor(Math.random()*WORDS.length)];
+      out+=cur+' ';
+    }
+  }
+  $('apxOut').textContent=out.toUpperCase();
+  const est=[4.755,4.12,3.52,3.00,2.58,2.40,2.05][apxOrder];
+  $('apxInfo').textContent=`≈ ${est} bit/Zeichen`;
+  $('apxNote').innerHTML=APXNOTES[apxOrder];
+  fnPlot();
+}
+$('apxTabs').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#apxTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  apxOrder=+b.dataset.o; apxGen();
+});
+$('apxGen').onclick=apxGen;
+
+function fnPlot(){
+  const Ns=[1,2,3,4,5,6,7,8];
+  const Gn=[4.14,3.56,3.30,3.10,2.95,2.82,2.70,2.60];
+  const Fn=[4.14,3.56,3.30,2.80,2.60,2.45,2.35,2.30];
+  const Hl=Ns.map(()=>2.30), Mx=Ns.map(()=>4.755);
+  Plotly.react('fnPlot',[
+    {x:Ns,y:Mx,type:'scatter',mode:'lines',line:{color:W_,width:2,dash:'dot'},name:'log₂27 = 4.75 (max)'},
+    {x:Ns,y:Gn,type:'scatter',mode:'lines+markers',line:{color:A,width:2.6},marker:{size:7},name:'Gₙ (Blockentropie/N)'},
+    {x:Ns,y:Fn,type:'scatter',mode:'lines+markers',line:{color:A2,width:2.6},marker:{size:7},name:'Fₙ (bedingte Entropie)'},
+    {x:Ns,y:Hl,type:'scatter',mode:'lines',line:{color:A3,width:2,dash:'dash'},name:'H ≈ 2.3 (Grenzwert)'}
+  ],lay({xaxis:{title:'N  (Kontextlänge in Zeichen)'},yaxis:{title:'bit pro Zeichen',range:[1.8,5.1]},
+    margin:{l:54,r:14,t:10,b:42},legend:{x:0.52,y:0.98,bgcolor:'rgba(0,0,0,.45)'}}),PC);
+}
+
+/* ───── Redundanz / Lückentext ───── */
+const SATZE=[
+ 'die entropie misst die mittlere ueberraschung einer quelle',
+ 'ein kanal kann nur begrenzt viel information pro sekunde tragen',
+ 'redundanz der sprache schuetzt uns vor uebertragungsfehlern',
+ 'shannon zeigte dass fehlerfreie uebertragung moeglich bleibt',
+ 'kompression endet genau dort wo die entropie beginnt'
+];
+let redIdx=0, redShowing=false;
+function redDraw(){
+  const d=+$('redD').value/100;
+  $('redD_v').textContent=Math.round(d*100)+'%';
+  const s=SATZE[redIdx];
+  let out='';
+  const rnd=mulberry(777+redIdx);
+  for(const ch of s){
+    if(ch===' ') out+='  ';
+    else if(!redShowing && rnd()<d) out+='_ ';
+    else out+=ch.toUpperCase()+' ';
+  }
+  $('redOut').textContent=out;
+  // Balken
+  const {ctx,w,h}=prep($('redCv'));
+  const Hmax=4.755, Hreal=2.3;
+  const red=1-Hreal/Hmax;
+  const bw=w-24;
+  ctx.fillStyle='rgba(255,255,255,.08)'; rr(ctx,12,24,bw,26,8); ctx.fill();
+  ctx.fillStyle=grad(ctx,12,24,bw*(Hreal/Hmax),26,'rgba(90,209,255,.4)',A);
+  rr(ctx,12,24,bw*(Hreal/Hmax),26,8); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='600 11.5px Inter'; ctx.textAlign='left';
+  ctx.fillText('echte Information  H ≈ 2.3 bit',18,41);
+  ctx.textAlign='right'; ctx.fillStyle=R_;
+  ctx.fillText(`Redundanz ${Math.round(red*100)} %`,w-18,41);
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.textAlign='left';
+  ctx.fillText('Gesamtkapazität je Zeichen: log₂27 = 4.75 bit',12,18);
+  // Markierung Lösch-Level
+  const x=12+bw*d;
+  ctx.strokeStyle=W_; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(x,20); ctx.lineTo(x,58); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=W_; ctx.font='700 10.5px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText(`${Math.round(d*100)}% gelöscht`,clamp(x,52,w-52),72);
+  ctx.fillStyle=d>0.5?R_:A3; ctx.font='11px Inter';
+  ctx.fillText(d>0.5?'über der Redundanz — Rekonstruktion wird unmöglich':'noch rekonstruierbar — Redundanz reicht aus',w/2,92);
+}
+$('redD').oninput=()=>{ redShowing=false; redDraw(); };
+$('redShow').onclick=()=>{ redShowing=!redShowing; redDraw(); };
+$('redNew').onclick=()=>{ redIdx=(redIdx+1)%SATZE.length; redShowing=false; redDraw(); };
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 4 · ENTROPIE
+   ═══════════════════════════════════════════════════════════════════ */
+/* Axiom 3 — Fig. 6 */
+function axDraw(){
+  const p1=+$('axP1').value, r
+function axDraw(){
+  const p1=+$('axP1').value, r2=+$('axP2').value;
+  $('axP1_v').textContent=fmt(p1,3);
+  $('axP2_v').textContent=fmt(r2,3);
+  const rest=1-p1;
+  const p2=rest*r2, p3=rest*(1-r2);
+  const HL=Hvec([p1,p2,p3]);
+  const HR=Hvec([p1,rest]) + rest*Hvec([r2,1-r2]);
+  $('axHL').textContent=fmt(HL,3);
+  $('axHR').textContent=fmt(HR,3);
+  $('axHD').textContent=fmt(Math.abs(HL-HR),6);
+
+  const {ctx,w,h}=prep($('axCv'));
+  const half=w/2;
+  const drawNode=(x,y,r,col)=>{ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); };
+  const lbl=(x,y,t,col,sz=11)=>{ ctx.fillStyle=col; ctx.font=`600 ${sz}px JetBrains Mono`; ctx.textAlign='center'; ctx.fillText(t,x,y); };
+
+  // ---- LINKS: direkte Dreifachwahl ----
+  ctx.fillStyle=MU; ctx.font='600 11.5px Inter'; ctx.textAlign='center';
+  ctx.fillText('direkt: eine Wahl aus 3',half/2,16);
+  const LX=half/2, LY=42;
+  drawNode(LX,LY,7,A);
+  const endsL=[[half*0.16,h-54],[half*0.5,h-54],[half*0.84,h-54]];
+  const probs=[p1,p2,p3], cols=[A3,A2,W_], names=['A','B','C'];
+  endsL.forEach(([x,y],i)=>{
+    ctx.strokeStyle=cols[i]; ctx.lineWidth=1+probs[i]*7;
+    ctx.beginPath(); ctx.moveTo(LX,LY+7); ctx.lineTo(x,y-9); ctx.stroke();
+    drawNode(x,y,9,cols[i]);
+    ctx.fillStyle='#06121c'; ctx.font='700 11px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(names[i],x,y); ctx.textBaseline='alphabetic';
+    lbl((LX+x)/2+ (i===0?-16:i===2?16:14),(LY+y)/2,fmt(probs[i],3),cols[i],10.5);
+    lbl(x,y+22,fmt(probs[i],3),MU,10);
+  });
+  ctx.fillStyle=A; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText(`H = ${fmt(HL,3)} bit`,LX,h-14);
+
+  // Trennlinie
+  ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(half,10); ctx.lineTo(half,h-10); ctx.stroke();
+
+  // ---- RECHTS: zwei Stufen ----
+  ctx.fillStyle=MU; ctx.font='600 11.5px Inter'; ctx.textAlign='center';
+  ctx.fillText('zerlegt: zwei Wahlen nacheinander',half+half/2,16);
+  const RX=half+half/2, RY=42;
+  drawNode(RX,RY,7,A);
+  const midY=(RY+(h-54))/2;
+  const leftX=half+half*0.18, rightX=half+half*0.68;
+  // Stufe 1
+  ctx.strokeStyle=A3; ctx.lineWidth=1+p1*7;
+  ctx.beginPath(); ctx.moveTo(RX,RY+7); ctx.lineTo(leftX,h-63); ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1+rest*7;
+  ctx.beginPath(); ctx.moveTo(RX,RY+7); ctx.lineTo(rightX,midY-6); ctx.stroke();
+  lbl((RX+leftX)/2-16,(RY+h-63)/2,fmt(p1,3),A3,10.5);
+  lbl((RX+rightX)/2+18,(RY+midY)/2,fmt(rest,3),MU,10.5);
+  // Zwischenknoten
+  drawNode(rightX,midY,6,'rgba(255,255,255,.55)');
+  // Stufe 2
+  const e2=[[half+half*0.52,h-54],[half+half*0.86,h-54]];
+  [p2,p3].forEach((pp,i)=>{
+    const col=[A2,W_][i], cond=[r2,1-r2][i];
+    ctx.strokeStyle=col; ctx.lineWidth=1+cond*5;
+    ctx.beginPath(); ctx.moveTo(rightX,midY+6); ctx.lineTo(e2[i][0],e2[i][1]-9); ctx.stroke();
+    drawNode(e2[i][0],e2[i][1],9,col);
+    ctx.fillStyle='#06121c'; ctx.font='700 11px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(['B','C'][i],e2[i][0],e2[i][1]); ctx.textBaseline='alphabetic';
+    lbl((rightX+e2[i][0])/2+(i===0?-14:14),(midY+e2[i][1])/2,fmt(cond,2),col,10);
+    lbl(e2[i][0],e2[i][1]+22,fmt(pp,3),MU,10);
+  });
+  drawNode(leftX,h-54,9,A3);
+  ctx.fillStyle='#06121c'; ctx.font='700 11px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('A',leftX,h-54); ctx.textBaseline='alphabetic';
+  lbl(leftX,h-32,fmt(p1,3),MU,10);
+  ctx.fillStyle=A3; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText(`H = ${fmt(HR,3)} bit`,RX,h-14);
+}
+$('axP1').oninput=axDraw; $('axP2').oninput=axDraw;
+
+/* ───── Entropie-Werkbank ───── */
+let ebP=[0.2,0.2,0.2,0.2,0.2];
+function ebBuild(){
+  const n=+$('ebN').value;
+  $('ebN_v').textContent=n;
+  if(ebP.length!==n){ ebP=new Array(n).fill(1/n); }
+  const c=$('ebSliders'); c.innerHTML='';
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div'); d.className='ctrl';
+    d.innerHTML=`<label>p<sub>${i+1}</sub> <b id="ebv${i}">${fmt(ebP[i],3)}</b></label>
+      <input type="range" id="ebs${i}" min="0.001" max="1" step="0.001" value="${ebP[i]}">`;
+    c.appendChild(d);
+    d.querySelector('input').oninput=e=>{ ebP[i]=+e.target.value; ebDraw(false); };
+  }
+  ebDraw();
+}
+function ebNorm(){ const s=ebP.reduce((a,b)=>a+b,0); return ebP.map(v=>v/s); }
+function ebDraw(sync=true){
+  const n=ebP.length, P=ebNorm();
+  P.forEach((v,i)=>{ const e=$('ebv'+i); if(e) e.textContent=fmt(v,3); });
+  const H=Hvec(P), Hm=L2(n);
+  $('ebH').textContent=fmt(H,3);
+  $('ebHm').textContent=fmt(Hm,3);
+  $('ebRel').textContent=Math.round(100*H/Hm)+'%';
+  $('ebRed').textContent=Math.round(100*(1-H/Hm))+'%';
+  // Hinweistext
+  let note='';
+  const mx=Math.max(...P), mn=Math.min(...P);
+  if(Math.abs(H-Hm)<0.003) note='<b>Eigenschaft 2:</b> Maximum erreicht. Alle p<sub>i</sub> gleich ⇒ H = log₂n. Maximale Unsicherheit, keine Redundanz, keine Kompression möglich.';
+  else if(H<0.08) note='<b>Eigenschaft 1:</b> H ≈ 0. Ein Symbol hat fast Wahrscheinlichkeit 1 — wir sind uns des Ausgangs sicher, es entsteht keine Information. Ein Kanal wird gar nicht gebraucht.';
+  else if(mx/mn>8) note='<b>Starke Schieflage.</b> Wenige Symbole dominieren ⇒ H sinkt deutlich unter log₂n. Genau diese Lücke ist der Spielraum für Kompression (Satz 9).';
+  else note='<b>Eigenschaft 4:</b> Jede Angleichung der Wahrscheinlichkeiten erhöht H. Drücke „Ausgleichen" und beobachte, wie H monoton zum Maximum kriecht.';
+  $('ebNote').innerHTML=note;
+  // Canvas: Fläche = H
+  const {ctx,w,h}=prep($('ebCv'));
+  const PADL=44, PADR=12, PADT=14, PADB=28;
+  const maxI=Math.max(3,-L2(Math.min(...P)));
+  const CW=w-PADL-PADR, CH=h-PADT-PADB;
+  let x=PADL;
+  const pal=[A,A2,A3,W_,R_,'#8f7dff','#5affd1','#ffa76b','#c2ff5a','#ff5ab0'];
+  P.forEach((q,i)=>{
+    const bw=CW*q, bh=CH*(-L2(q))/maxI;
+    const col=pal[i%pal.length];
+    ctx.fillStyle=grad(ctx,x,h-PADB-bh,bw,bh,col+'1f',col+'bb');
+    ctx.fillRect(x,h-PADB-bh,bw,bh);
+    ctx.strokeStyle=col; ctx.lineWidth=1.3; ctx.strokeRect(x,h-PADB-bh,bw,bh);
+    if(bw>26){
+      ctx.fillStyle='#fff'; ctx.font='600 10px JetBrains Mono'; ctx.textAlign='center';
+      ctx.fillText(i+1,x+bw/2,h-PADB+13);
+      if(bh>30) ctx.fillText(fmt(q*-L2(q),2),x+bw/2,h-PADB-bh/2);
+    }
+    x+=bw;
+  });
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(PADL,PADT); ctx.lineTo(PADL,h-PADB); ctx.lineTo(w-PADR,h-PADB); ctx.stroke();
+  ctx.fillStyle=A3; ctx.font='700 14px JetBrains Mono'; ctx.textAlign='right';
+  ctx.fillText(`Gesamtfläche H = ${fmt(H,3)} bit`,w-PADR-4,PADT+13);
+  ctx.save(); ctx.translate(13,h/2); ctx.rotate(-Math.PI/2);
+  ctx.fillStyle=MU; ctx.font='10px Inter'; ctx.textAlign='center'; ctx.fillText('−log₂ pᵢ  (bit)',0,0); ctx.restore();
+  if(sync) ebSliderSync();
+  binPlot();
+}
+function ebSliderSync(){ ebP.forEach((v,i)=>{ const s=$('ebs'+i); if(s) s.value=v; }); }
+$('ebN').oninput=()=>{ const n=+$('ebN').value; ebP=new Array(n).fill(1/n); ebBuild(); };
+$('ebUni').onclick=()=>{ ebP=ebP.map(()=>1/ebP.length); ebBuild(); };
+$('ebDet').onclick=()=>{ ebP=ebP.map((_,i)=>i===0?0.997:0.003/(ebP.length-1)); ebBuild(); };
+$('ebRnd').onclick=()=>{ ebP=ebP.map(()=>0.02+Math.random()); ebBuild(); };
+$('ebSmooth').onclick=()=>{
+  // Shannons "Mittelungsoperation" aus Eigenschaft 4
+  const n=ebP.length, P=ebNorm(), Q=new Array(n).fill(0);
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++) Q[i]+= (i===j?0.72:0.28/(n-1))*P[j];
+  ebP=Q; ebBuild();
+};
+function binPlot(){
+  const xs=[],ys=[];
+  for(let p=0;p<=1.0001;p+=0.004){ xs.push(p); ys.push(Hbin(p)); }
+  const cur = ebP.length===2? ebNorm()[0] : null;
+  const tr=[{x:xs,y:ys,type:'scatter',mode:'lines',line:{color:A,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.1)',name:'H(p)'}];
+  if(cur!==null) tr.push({x:[cur],y:[Hbin(cur)],type:'scatter',mode:'markers',marker:{color:A2,size:13,line:{color:'#fff',width:2}},name:'aktuell'});
+  Plotly.react('binPlot',tr,lay({xaxis:{title:'p',range:[0,1]},yaxis:{title:'H  [bit]',range:[0,1.08]},
+    showlegend:false,margin:{l:50,r:14,t:10,b:42},
+    annotations:[{x:0.5,y:1.0,text:'Maximum bei p=½ ⇒ H=1 bit',showarrow:true,arrowcolor:A3,ax:0,ay:-26,font:{color:A3,size:10.5}}]}),PC);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 5 · VERBUND & BEDINGTE ENTROPIE
+   ═══════════════════════════════════════════════════════════════════ */
+function jvCalc(){
+  const p=+$('jvP').value, e=+$('jvE').value;
+  const J=[[p*(1-e), p*e],[(1-p)*e,(1-p)*(1-e)]];
+  const px=[p,1-p];
+  const py=[J[0][0]+J[1][0], J[0][1]+J[1][1]];
+  const Hx=Hvec(px), Hy=Hvec(py);
+  const Hxy=Hvec([J[0][0],J[0][1],J[1][0],J[1][1]]);
+  const Heq=Hxy-Hy;       // H_y(x)
+  const R=Hx-Heq;
+  return {p,e,J,px,py,Hx,Hy,Hxy,Heq,R};
+}
+function jvUpdate(){
+  const d=jvCalc();
+  $('jvP_v').textContent=fmt(d.p,2); $('jvE_v').textContent=fmt(d.e,3);
+  $('jvHx').textContent=fmt(d.Hx,3);
+  $('jvHy').textContent=fmt(d.Hy,3);
+  $('jvHxy').textContent=fmt(d.Hxy,3);
+  $('jvEq').textContent=fmt(d.Heq,3);
+  $('jvR').textContent=fmt(Math.max(0,d.R),3);
+  // Matrix
+  const {ctx,w,h}=prep($('jvMat'));
+  const cell=Math.min((w-110)/2,(h-52)/2);
+  const ox=78, oy=28;
+  const lab=['0','1'];
+  ctx.fillStyle=MU; ctx.font='600 11px Inter'; ctx.textAlign='center';
+  ctx.fillText('empfangen y',ox+cell,14);
+  ctx.save(); ctx.translate(16,oy+cell); ctx.rotate(-Math.PI/2); ctx.fillText('gesendet x',0,0); ctx.restore();
+  for(let i=0;i<2;i++) for(let j=0;j<2;j++){
+    const v=d.J[i][j], X=ox+j*cell, Y=oy+i*cell;
+    const corr=(i===j);
+    ctx.fillStyle=corr?`rgba(157,255,110,${0.15+0.7*v})`:`rgba(255,107,107,${0.15+0.7*v})`;
+    rr(ctx,X+2,Y+2,cell-4,cell-4,7); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(fmt(v,3),X+cell/2,Y+cell/2);
+    ctx.textBaseline='alphabetic';
+  }
+  ctx.fillStyle=MU; ctx.font='600 12px JetBrains Mono'; ctx.textAlign='center';
+  for(let j=0;j<2;j++) ctx.fillText(lab[j],ox+j*cell+cell/2,oy-5);
+  ctx.textAlign='right';
+  for(let i=0;i<2;i++) ctx.fillText(lab[i],ox-6,oy+i*cell+cell/2+4);
+  venDraw(d);
+}
+function venDraw(d){
+  const {ctx,w,h}=prep($('venCv'));
+  const R=Math.min(w*0.26,h*0.36);
+  const overlap=clamp(d.R/Math.max(d.Hx,d.Hy,0.001),0,1);
+  const sep=R*2*(1-overlap*0.92);
+  const cx=w/2, cy=h/2-6;
+  const c1=cx-sep/2, c2=cx+sep/2;
+  // Kreise
+  ctx.globalCompositeOperation='lighter';
+  ctx.fillStyle='rgba(90,209,255,.32)'; ctx.beginPath(); ctx.arc(c1,cy,R,0,7); ctx.fill();
+  ctx.fillStyle='rgba(255,122,217,.32)'; ctx.beginPath(); ctx.arc(c2,cy,R,0,7); ctx.fill();
+  ctx.globalCompositeOperation='source-over';
+  // Schnitt grün hervorheben
+  ctx.save();
+  ctx.beginPath(); ctx.arc(c1,cy,R,0,7); ctx.clip();
+  ctx.beginPath(); ctx.arc(c2,cy,R,0,7); ctx.clip();
+  ctx.fillStyle='rgba(157,255,110,.42)'; ctx.fillRect(0,0,w,h);
+  ctx.restore();
+  ctx.strokeStyle=A; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(c1,cy,R,0,7); ctx.stroke();
+  ctx.strokeStyle=A2; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(c2,cy,R,0,7); ctx.stroke();
+  // Labels
+  ctx.textAlign='center';
+  ctx.fillStyle=A; ctx.font='700 12.5px Inter';
+  ctx.fillText('H(x)',c1-R*0.42,cy-R*0.08);
+  ctx.font='600 11.5px JetBrains Mono'; ctx.fillText(fmt(d.Hx,3),c1-R*0.42,cy+10);
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.fillText('H_y(x)',c1-R*0.42,cy+26);
+  ctx.font='10.5px JetBrains Mono'; ctx.fillText(fmt(d.Heq,3),c1-R*0.42,cy+39);
+
+  ctx.fillStyle=A2; ctx.font='700 12.5px Inter';
+  ctx.fillText('H(y)',c2+R*0.42,cy-R*0.08);
+  ctx.font='600 11.5px JetBrains Mono'; ctx.fillText(fmt(d.Hy,3),c2+R*0.42,cy+10);
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.fillText('H_x(y)',c2+R*0.42,cy+26);
+  ctx.font='10.5px JetBrains Mono'; ctx.fillText(fmt(Math.max(0,d.Hxy-d.Hx),3),c2+R*0.42,cy+39);
+
+  ctx.fillStyle='#eafff0'; ctx.font='800 13px Inter';
+  ctx.fillText('R',cx,cy-6);
+  ctx.font='700 12px JetBrains Mono'; ctx.fillStyle=A3;
+  ctx.fillText(fmt(Math.max(0,d.R),3),cx,cy+11);
+  ctx.fillStyle=MU; ctx.font='10px Inter';
+  ctx.fillText('übertragen',cx,cy+26);
+  // Gesamt
+  ctx.fillStyle=MU; ctx.font='11px Inter'; ctx.textAlign='center';
+  ctx.fillText(`Gesamtfläche beider Kreise = H(x,y) = ${fmt(d.Hxy,3)} bit`,w/2,h-8);
+}
+$('jvP').oninput=jvUpdate; $('jvE').oninput=jvUpdate;
+
+/* Äquivokationsrechnung §12 */
+function eqUpdate(){
+  const p=+$('eqP').value;
+  $('eqP_v').textContent=fmt(p,3);
+  const H=Hbin(p);
+  const rate=1000*(1-H);
+  $('eqA').textContent=
+`gesendet:   1000 bit/s
+Fehlerrate: ${(p*100).toFixed(1)} %
+naiv:       1000 − ${Math.round(p*1000)} = ${Math.round(1000-p*1000)} bit/s
+→ FALSCH: ignoriert, dass der
+  Empfänger nicht WEISS, wo
+  die Fehler sitzen.`;
+  $('eqB').textContent=
+`Äquivokation H_y(x)
+ = H(${fmt(p,3)})
+ = −[p·log₂p + (1−p)·log₂(1−p)]
+ = ${fmt(H,4)} bit/Symbol
+ = ${fmt(H*1000,1)} bit/s
+
+R = 1000 − ${fmt(H*1000,1)}
+  = ${fmt(rate,1)} bit/s`;
+  const H5=Hbin(0.5);
+  $('eqC').textContent=
+`p = 0.5  (reiner Zufall)
+H_y(x) = H(0.5) = 1.000 bit
+R = 1000 − 1000 = 0 bit/s
+
+„Genauso gut könnte man den
+ Kanal weglassen und am
+ Empfänger eine Münze werfen."
+            — Shannon, §12`;
+  // Plot
+  const xs=[],naiv=[],echt=[];
+  for(let q=0;q<=0.5001;q+=0.0025){ xs.push(q); naiv.push(1000*(1-q)); echt.push(1000*(1-Hbin(q))); }
+  Plotly.react('eqPlot',[
+    {x:xs,y:naiv,type:'scatter',mode:'lines',line:{color:R_,width:2.4,dash:'dash'},name:'naiv: 1000·(1−p)  ✗'},
+    {x:xs,y:echt,type:'scatter',mode:'lines',line:{color:A3,width:3.2},fill:'tozeroy',fillcolor:'rgba(157,255,110,.1)',name:'Shannon: 1000·(1−H(p))  ✓'},
+    {x:[p],y:[rate],type:'scatter',mode:'markers',marker:{color:A2,size:14,line:{color:'#fff',width:2}},name:'aktuell'},
+    {x:[p],y:[1000*(1-p)],type:'scatter',mode:'markers',marker:{color:R_,size:10,symbol:'x'},name:'naiver Wert'}
+  ],lay({xaxis:{title:'Fehlerwahrscheinlichkeit p',range:[0,0.5]},
+    yaxis:{title:'tatsächliche Rate [bit/s]',range:[0,1050]},
+    margin:{l:62,r:14,t:10,b:44},legend:{x:0.03,y:0.12,bgcolor:'rgba(0,0,0,.5)'}}),PC);
+}
+$('eqP').oninput=eqUpdate;
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 6 · SATZ 9 · CODIERUNG
+   ═══════════════════════════════════════════════════════════════════ */
+/* Shannons Beispieltabelle §10 */
+(function shTab(){
+  const rows=[['A','1/2','0','1'],['B','1/4','10','2'],['C','1/8','110','3'],['D','1/8','111','3']];
+  let html='<tr><th>Symbol</th><th>p</th><th>Code</th><th>Länge</th><th>p·Länge</th></tr>';
+  const pv=[0.5,0.25,0.125,0.125];
+  rows.forEach((r,i)=>{
+    html+=`<tr><td><b>${r[0]}</b></td><td class="mono">${r[1]}</td><td class="mono" style="color:var(--accent3)">${r[2]}</td><td class="mono">${r[3]}</td><td class="mono">${fmt(pv[i]*+r[3],3)}</td></tr>`;
+  });
+  html+='<tr><td colspan="4" style="text-align:right;color:var(--muted)">Summe = mittlere Codelänge</td><td class="mono" style="color:var(--accent3)"><b>1.750</b></td></tr>';
+  $('shTab').innerHTML=html;
+})();
+/* Decodier-Spiel */
+const SHCODE={'0':'A','10':'B','110':'C','111':'D'};
+let dcBits='', dcText='';
+function dcDraw(){
+  $('dcOut').innerHTML=`Bits: <span style="color:var(--accent)">${dcBits||'—'}</span><br>Decodiert: <span style="color:var(--accent3);font-weight:600">${dcText||'—'}</span>`;
+  const {ctx,w,h}=prep($('dcCv'));
+  // Baum: Wurzel oben, 0 links (=A), 1 rechts
+  const nodes=[
+    {x:0.5,y:0.12,lbl:''},    // root
+    {x:0.22,y:0.46,lbl:'A'},  // 0
+    {x:0.72,y:0.46,lbl:''},   // 1
+    {x:0.52,y:0.74,lbl:'B'},  // 10
+    {x:0.9,y:0.74,lbl:''},    // 11
+    {x:0.78,y:0.95,lbl:'C'},  // 110
+    {x:0.99,y:0.95,lbl:'D'}   // 111
+  ];
+  const edges=[[0,1,'0'],[0,2,'1'],[2,3,'0'],[2,4,'1'],[4,5,'0'],[4,6,'1']];
+  // aktuellen Pfad bestimmen
+  let cur=0, path=[0];
+  for(const b of dcBits){
+    const e=edges.find(([f,t,l])=>f===cur&&l===b);
+    if(!e) break;
+    cur=e[1]; path.push(cur);
+  }
+  edges.forEach(([f,t,l])=>{
+    const onPath=path.includes(f)&&path.includes(t)&&path.indexOf(t)===path.indexOf(f)+1;
+    ctx.strokeStyle=onPath?A2:'rgba(255,255,255,.22)';
+    ctx.lineWidth=onPath?3.2:1.3;
+    ctx.beginPath(); ctx.moveTo(nodes[f].x*w,nodes[f].y*h+9); ctx.lineTo(nodes[t].x*w,nodes[t].y*h-9); ctx.stroke();
+    ctx.fillStyle=onPath?A2:MU; ctx.font=(onPath?'700 ':'')+'11px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText(l,(nodes[f].x+nodes[t].x)/2*w+(l==='0'?-9:9),(nodes[f].y+nodes[t].y)/2*h+4);
+  });
+  nodes.forEach((n,i)=>{
+    const leaf=n.lbl!=='';
+    const act=i===cur;
+    ctx.fillStyle=act?A2:(leaf?'rgba(157,255,110,.72)':'rgba(255,255,255,.2)');
+    ctx.beginPath(); ctx.arc(n.x*w,n.y*h,leaf?11:7,0,7); ctx.fill();
+    if(act){ ctx.strokeStyle=A2; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(n.x*w,n.y*h,leaf?15:11,0,7); ctx.stroke(); }
+    if(leaf){ ctx.fillStyle='#06121c'; ctx.font='700 12px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(n.lbl,n.x*w,n.y*h); ctx.textBaseline='alphabetic'; }
+  });
+}
+function dcPush(b){
+  dcBits+=b;
+  if(SHCODE[dcBits]){ dcText+=SHCODE[dcBits]; dcBits=''; }
+  if(dcBits.length>3) dcBits='';
+  dcDraw();
+}
+$('dc0').onclick=()=>dcPush('0');
+$('dc1').onclick=()=>dcPush('1');
+$('dcR').onclick=()=>{ dcBits=''; dcText=''; dcDraw(); };
+
+/* Shannon-Fano-Codierer */
+let sfP=[0.4,0.25,0.15,0.1,0.06,0.04];
+function sfBuild(){
+  const c=$('sfSliders'); c.innerHTML='';
+  sfP.forEach((v,i)=>{
+    const d=document.createElement('div'); d.className='ctrl';
+    d.innerHTML=`<label>p(${String.fromCharCode(65+i)}) <b id="sfv${i}">${fmt(v,3)}</b></label>
+      <input type="range" id="sfs${i}" min="0.005" max="1" step="0.005" value="${v}">`;
+    c.appendChild(d);
+    d.querySelector('input').oninput=e=>{ sfP[i]=+e.target.value; sfCalc(); };
+  });
+  sfCalc();
+}
+function shannonFano(ps){
+  const idx=ps.map((p,i)=>({p,i})).sort((a,b)=>b.p-a.p);
+  let cum=0; const out=[];
+  for(const {p,i} of idx){
+    const m=Math.max(1,Math.ceil(L2(1/p)));
+    // Binärentwicklung von cum auf m Stellen
+    let x=cum, code='';
+    for(let k=0;k<m;k++){ x*=2; const b=Math.floor(x); code+=b; x-=b; }
+    out.push({sym:String.fromCharCode(65+i),p,m,code});
+    cum+=p;
+  }
+  return out;
+}
+function sfCalc(){
+  const s=sfP.reduce((a,b)=>a+b,0);
+  const P=sfP.map(v=>v/s);
+  P.forEach((v,i)=>{ const e=$('sfv'+i); if(e) e.textContent=fmt(v,3); });
+  const code=shannonFano(P);
+  const H=Hvec(P);
+  const Lm=code.reduce((a,c)=>a+c.p*c.m,0);
+  let html='<tr><th>Sym</th><th>p</th><th>⌈log₂1/p⌉</th><th>Codewort</th></tr>';
+  code.forEach(c=>{
+    html+=`<tr><td><b>${c.sym}</b></td><td class="mono">${fmt(c.p,3)}</td><td class="mono">${c.m}</td><td class="mono" style="color:var(--accent3)">${c.code}</td></tr>`;
+  });
+  $('sfTab').innerHTML=html;
+  $('sfH').textContent=fmt(H,3);
+  $('sfL').textContent=fmt(Lm,3);
+  $('sfO').textContent=fmt(Lm-H,3);
+  $('sfE').textContent=Math.round(100*H/Lm)+'%';
+}
+$('sfSkew').onclick=()=>{ sfP=[0.6,0.2,0.1,0.05,0.03,0.02]; sfBuild(); };
+$('sfFlat').onclick=()=>{ sfP=new Array(6).fill(1/6); sfBuild(); };
+$('sfEng').onclick=()=>{ sfP=[0.174,0.097,0.077,0.071,0.065,0.051]; sfBuild(); };
+
+/* Blockcodierung */
+function blUpdate(){
+  const p=+$('blP').value, N=+$('blN').value;
+  $('blP_v').textContent=fmt(p,2); $('blN_v').textContent=N;
+  const H=Hbin(p);
+  $('blH').textContent=fmt(H,3);
+  // Shannon-Fano auf alle 2^N Blöcke
+  function blockL(n){
+    const probs=[];
+    for(let k=0;k<=n;k++){
+      const c=binomial(n,k);
+      const pr=Math.pow(p,n-k)*Math.pow(1-p,k);
+      probs.push({c,pr});
+    }
+    let L=0;
+    for(const {c,pr} of probs){
+      if(pr<=0) continue;
+      const m=Math.max(1,Math.ceil(L2(1/pr)));
+      L+=c*pr*m;
+    }
+    return L/n;
+  }
+  const L=blockL(N);
+  $('blL').textContent=fmt(L,3);
+  $('blX').textContent=fmt(L-H,3);
+  $('blB').textContent=Math.pow(2,N).toLocaleString('de');
+  const xs=[],ys=[],hl=[],bound=[];
+  for(let n=1;n<=12;n++){ xs.push(n); ys.push(blockL(n)); hl.push(H); bound.push(H+1/n); }
+  Plotly.react('blPlot',[
+    {x:xs,y:bound,type:'scatter',mode:'lines',line:{color:W_,width:1.8,dash:'dot'},name:'Shannons Schranke H+1/N'},
+    {x:xs,y:ys,type:'scatter',mode:'lines+markers',line:{color:A,width:3},marker:{size:7},name:'erreichte bit/Symbol'},
+    {x:xs,y:hl,type:'scatter',mode:'lines',line:{color:A3,width:2.4,dash:'dash'},name:`H = ${fmt(H,3)} (Grenze)`},
+    {x:[N],y:[L],type:'scatter',mode:'markers',marker:{color:A2,size:14,line:{color:'#fff',width:2}},name:'aktuell'}
+  ],lay({xaxis:{title:'Blocklänge N'},yaxis:{title:'bit pro Quellsymbol'},
+    margin:{l:56,r:14,t:10,b:42},legend:{x:0.4,y:0.98,bgcolor:'rgba(0,0,0,.5)'}}),PC);
+}
+$('blP').oninput=blUpdate; $('blN').oninput=blUpdate;
+
+/* Live-Kompressor */
+function lcUpdate(){
+  const txt=$('lcIn').value;
+  const n=txt.length;
+  if(n===0){ $('lcN').textContent='0'; return; }
+  const cnt={}; for(const ch of txt) cnt[ch]=(cnt[ch]||0)+1;
+  const syms=Object.keys(cnt);
+  const P=syms.map(s=>cnt[s]/n);
+  const H=Hvec(P);
+  // Shannon-Fano
+  const order=syms.map((s,i)=>({s,p:P[i]})).sort((a,b)=>b.p-a.p);
+  let cum=0; const map={};
+  for(const {s,p} of order){
+    const m=Math.max(1,Math.ceil(L2(1/p)));
+    let x=cum, code='';
+    for(let k=0;k<m;k++){ x*=2; const b=Math.floor(x); code+=b; x-=b; }
+    map[s]=code; cum+=p;
+  }
+  let bits=''; for(const ch of txt) bits+=map[ch];
+  $('lcN').textContent=n;
+  $('lcA').textContent=(n*8).toLocaleString('de');
+  $('lcC').textContent=bits.length.toLocaleString('de');
+  $('lcH').textContent=fmt(H,3);
+  $('lcS').textContent=Math.round(100*(1-bits.length/(n*8)))+'%';
+  $('lcBits').textContent=bits.slice(0,520)+(bits.length>520?' …':'');
+  $('lcTab').textContent=order.map(({s,p})=>
+    `'${s===' '?'␣':s}'  p=${fmt(p,4)}  →  ${map[s]}`).join('\n');
+}
+$('lcIn').oninput=lcUpdate;
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 7 · RAUSCHEN
+   ═══════════════════════════════════════════════════════════════════ */
+function repErr(e,k){
+  // Fehlerwahrscheinlichkeit bei Mehrheitsentscheid über k Wiederholungen
+  let s=0;
+  for(let i=Math.floor(k/2)+1;i<=k;i++) s+=binomial(k,i)*Math.pow(e,i)*Math.pow(1-e,k-i);
+  return s;
+}
+function rpUpdate(){
+  const e=+$('rpE').value, k=+$('rpK').value;
+  $('rpE_v').textContent=fmt(e,3); $('rpK_v').textContent=k;
+  const err=repErr(e,k);
+  $('rpErr').textContent=err<1e-4?err.toExponential(1):fmt(err,4);
+  $('rpRate').textContent=fmt(1/k,3);
+  $('rpC').textContent=fmt(1-Hbin(e),3);
+  const ks=[],errs=[],rates=[];
+  for(let kk=1;kk<=31;kk+=2){ ks.push(1/kk); errs.push(Math.max(1e-10,repErr(e,kk))); rates.push(kk); }
+  Plotly.react('rpPlot',[
+    {x:ks,y:errs,type:'scatter',mode:'lines+markers',line:{color:R_,width:2.6},marker:{size:6},
+     name:'Wiederholungscode',text:rates.map(r=>'k='+r),hovertemplate:'%{text}<br>Rate %{x:.3f}<br>Fehler %{y:.2e}'},
+    {x:[1/k],y:[Math.max(1e-10,err)],type:'scatter',mode:'markers',marker:{color:A2,size:14,line:{color:'#fff',width:2}},name:'aktuell'},
+    {x:[1-Hbin(e),1-Hbin(e)],y:[1e-10,0.5],type:'scatter',mode:'lines',line:{color:A3,width:3},name:`Shannon-Grenze C=${fmt(1-Hbin(e),3)}`}
+  ],lay({xaxis:{title:'Rate [Nutzbit / Kanalbit]',range:[0,1.02]},
+    yaxis:{title:'Restfehlerrate',type:'log',exponentformat:'e'},
+    margin:{l:62,r:14,t:10,b:42},legend:{x:0.3,y:0.3,bgcolor:'rgba(0,0,0,.5)'}}),PC);
+  bscDraw(e);
+  capCurve(e);
+}
+function bscDraw(e){
+  const {ctx,w,h}=prep($('bscCv'));
+  const lx=w*0.26, rx=w*0.74;
+  const ys=[h*0.3,h*0.72];
+  const pairs=[[0,0,1-e,A3],[0,1,e,R_],[1,0,e,R_],[1,1,1-e,A3]];
+  pairs.forEach(([i,j,p,col])=>{
+    ctx.strokeStyle=col; ctx.globalAlpha=0.25+0.7*p; ctx.lineWidth=1+p*5;
+    ctx.beginPath(); ctx.moveTo(lx+14,ys[i]); ctx.lineTo(rx-14,ys[j]); ctx.stroke();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=col; ctx.font='600 10.5px JetBrains Mono'; ctx.textAlign='center';
+    const t=(i===j)?0.25:0.55;
+    ctx.fillText(fmt(p,3),lx+14+(rx-lx-28)*t,ys[i]+(ys[j]-ys[i])*t-5);
+  });
+  ['0','1'].forEach((lab,i)=>{
+    [lx,rx].forEach((x,s)=>{
+      ctx.fillStyle=s===0?'rgba(90,209,255,.2)':'rgba(255,122,217,.2)';
+      ctx.beginPath(); ctx.arc(x,ys[i],13,0,7); ctx.fill();
+      ctx.strokeStyle=s===0?A:A2; ctx.lineWidth=1.8; ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(lab,x,ys[i]); ctx.textBaseline='alphabetic';
+    });
+  });
+  ctx.fillStyle=MU; ctx.font='600 11px Inter'; ctx.textAlign='center';
+  ctx.fillText('gesendet',lx,h*0.14);
+  ctx.fillText('empfangen',rx,h*0.14);
+  ctx.fillStyle=A3; ctx.font='700 13px JetBrains Mono';
+  ctx.fillText(`C = 1 − H(${fmt(e,3)}) = ${fmt(1-Hbin(e),4)} bit`,w/2,h-6);
+}
+function capCurve(e){
+  const xs=[],ys=[];
+  for(let q=0;q<=1.0001;q+=0.004){ xs.push(q); ys.push(1-Hbin(q)); }
+  Plotly.react('capCurve',[
+    {x:xs,y:ys,type:'scatter',mode:'lines',line:{color:A3,width:3},fill:'tozeroy',fillcolor:'rgba(157,255,110,.1)',name:'C(ε)'},
+    {x:[e],y:[1-Hbin(e)],type:'scatter',mode:'markers',marker:{color:A2,size:13,line:{color:'#fff',width:2}},name:'aktuell'}
+  ],lay({xaxis:{title:'Fehlerwahrscheinlichkeit ε',range:[0,1]},
+    yaxis:{title:'Kapazität C [bit/Symbol]',range:[0,1.05]},showlegend:false,
+    margin:{l:56,r:14,t:10,b:42},
+    annotations:[{x:0.5,y:0.02,text:'C=0 bei ε=½',showarrow:true,arrowcolor:R_,ay:-34,font:{color:R_,size:10.5}}]}),PC);
+}
+$('rpE').oninput=rpUpdate; $('rpK').oninput=rpUpdate;
+
+/* Kugelpackung (Fig. 10) */
+let sphSeed=4242;
+function sphDraw(){
+  const R=+$('sphR').value, Nz=+$('sphN').value;
+  $('sphR_v').textContent=fmt(R,2); $('sphN_v').textContent=fmt(Nz,2);
+  const C=1-Nz;
+  $('sphC').textContent=fmt(C,3);
+  $('sphRs').textContent=fmt(R,3);
+  const {ctx,w,h}=prep($('sphCv'));
+  const rnd=mulberry(sphSeed);
+  const M=Math.max(2,Math.round(Math.pow(2,R*9)));
+  const rad=Math.max(6,Nz*w*0.30);
+  // Punkte streuen
+  const pts=[];
+  const PAD=rad+8;
+  for(let i=0;i<Math.min(M,160);i++){
+    pts.push([PAD+(w-2*PAD)*rnd(), PAD+(h-2*PAD)*rnd()]);
+  }
+  // Überlappungen zählen
+  let ov=0;
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+    const d=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);
+    if(d<2*rad) ov++;
+  }
+  // Hintergrund „Signalraum"
+  ctx.fillStyle='rgba(255,255,255,.025)';
+  rr(ctx,4,4,w-8,h-8,14); ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=1; ctx.stroke();
+  // Fächer (Rauschkugeln)
+  pts.forEach(([x,y],i)=>{
+    ctx.fillStyle='rgba(255,122,217,.10)';
+    ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(255,122,217,.35)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.stroke();
+  });
+  // Überlappende rot markieren
+  const bad=new Set();
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+    const d=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);
+    if(d<2*rad){ bad.add(i); bad.add(j); }
+  }
+  bad.forEach(i=>{
+    const [x,y]=pts[i];
+    ctx.fillStyle='rgba(255,107,107,.16)';
+    ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(255,107,107,.6)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.stroke();
+  });
+  // Codewörter
+  pts.forEach(([x,y],i)=>{
+    ctx.fillStyle=bad.has(i)?R_:A3;
+    ctx.beginPath(); ctx.arc(x,y,3.6,0,7); ctx.fill();
+  });
+  $('sphOv').textContent=bad.size;
+  const ok=R<C;
+  $('sphSt').textContent=ok?'R < C ✓':'R > C ✗';
+  $('sphSt').style.color=ok?A3:R_;
+  // Beschriftung
+  ctx.fillStyle=MU; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText(`${M} Codewörter  ·  Fächerradius ∝ 2^(T·H_y(x))`,14,20);
+  ctx.textAlign='right';
+  ctx.fillStyle=ok?A3:R_; ctx.font='700 12px JetBrains Mono';
+  ctx.fillText(ok?`R=${fmt(R,2)} < C=${fmt(C,2)} — Fächer passen nebeneinander`
+                 :`R=${fmt(R,2)} > C=${fmt(C,2)} — Fächer überlappen, Fehler unvermeidbar`,w-14,h-12);
+}
+$('sphR').oninput=sphDraw; $('sphN').oninput=sphDraw;
+$('sphShuf').onclick=()=>{ sphSeed=Math.floor(Math.random()*99999); sphDraw(); };
+
+/* Figur 9 */
+function f9Draw(){
+  const C=+$('f9C').value, Hx=+$('f9H').value;
+  $('f9C_v').textContent=fmt(C,2); $('f9H_v').textContent=fmt(Hx,2);
+  const eq=Math.max(0,Hx-C);
+  $('f9E').textContent=fmt(eq,3);
+  $('f9R').textContent=fmt(Math.min(Hx,C),3);
+  $('f9Z').textContent=Hx<=C?'erreichbar':'Natur kassiert';
+  $('f9Z').style.color=Hx<=C?A3:R_;
+  const {ctx,w,h}=prep($('f9Cv'));
+  const PADL=52,PADR=18,PADT=18,PADB=36;
+  const XM=1.5, YM=1.0;
+  const px=v=>PADL+(w-PADL-PADR)*v/XM;
+  const py=v=>h-PADB-(h-PADT-PADB)*v/YM;
+  // Schattierter unerreichbarer Bereich (unter der Linie)
+  ctx.fillStyle='rgba(255,107,107,.07)';
+  ctx.beginPath();
+  ctx.moveTo(px(0),py(0)); ctx.lineTo(px(XM),py(0)); ctx.lineTo(px(XM),py(Math.max(0,XM-C)));
+  ctx.lineTo(px(C),py(0)); ctx.closePath(); ctx.fill();
+  // erreichbare Region oberhalb
+  ctx.fillStyle='rgba(157,255,110,.07)';
+  ctx.beginPath();
+  ctx.moveTo(px(0),py(0)); ctx.lineTo(px(C),py(0)); ctx.lineTo(px(XM),py(Math.max(0,XM-C)));
+  ctx.lineTo(px(XM),py(YM)); ctx.lineTo(px(0),py(YM)); ctx.closePath(); ctx.fill();
+  // Achsen
+  ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(PADL,PADT); ctx.lineTo(PADL,h-PADB); ctx.lineTo(w-PADR,h-PADB); ctx.stroke();
+  // Grenzlinie
+  ctx.strokeStyle=A3; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(px(0),py(0)); ctx.lineTo(px(C),py(0));
+  ctx.lineTo(px(XM),py(Math.min(YM,XM-C))); ctx.stroke();
+  // Marker
+  ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(px(Hx),h-PADB); ctx.lineTo(px(Hx),PADT); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=A2; ctx.beginPath(); ctx.arc(px(Hx),py(Math.min(YM,eq)),7,0,7); ctx.fill();
+  // C-Markierung
+  ctx.strokeStyle=A; ctx.lineWidth=1.6; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(px(C),h-PADB); ctx.lineTo(px(C),PADT+10); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=A; ctx.font='700 11.5px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText('C',px(C),PADT+6);
+  ctx.fillStyle=MU; ctx.font='11px Inter';
+  ctx.fillText('H(x)  — Rate in den Kanal hinein',(PADL+w-PADR)/2,h-10);
+  ctx.save(); ctx.translate(16,(PADT+h-PADB)/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center';
+  ctx.fillText('Äquivokation H_y(x)',0,0); ctx.restore();
+  ctx.fillStyle=A3; ctx.font='600 11px Inter'; ctx.textAlign='left';
+  ctx.fillText('erreichbar',px(0.1),py(0.72));
+  ctx.fillStyle=R_; ctx.textAlign='right';
+  ctx.fillText('unmöglich',px(XM)-6,py(0.06));
+  ctx.fillStyle=MU; ctx.font='10.5px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText('Steigung 1',px(C+(XM-C)*0.55)+28,py((XM-C)*0.55)-8);
+}
+$('f9C').oninput=f9Draw; $('f9H').oninput=f9Draw;
+
+/* Hamming (7,4) */
+let hamX=[0,0,1,0,1,1,0]; // X1..X7 (Index 0..6)
+let hamFlip=-1;
+function hamCompute(){
+  // Nutzbits: X3,X5,X6,X7 → Index 2,4,5,6
+  const X=hamX.slice();
+  // X4 (idx3): α = X4+X5+X6+X7 gerade
+  X[3]=(X[4]+X[5]+X[6])%2;
+  // X2 (idx1): β = X2+X3+X6+X7 gerade
+  X[1]=(X[2]+X[5]+X[6])%2;
+  // X1 (idx0): γ = X1+X3+X5+X7 gerade
+  X[0]=(X[2]+X[4]+X[6])%2;
+  return X;
+}
+function hamUpdate(){
+  const X=hamCompute();
+  hamX=X.slice();
+  const R=X.slice();
+  if(hamFlip>=0) R[hamFlip]=1-R[hamFlip];
+  const a=(R[3]+R[4]+R[5]+R[6])%2;
+  const b=(R[1]+R[2]+R[5]+R[6])%2;
+  const g=(R[0]+R[2]+R[4]+R[6])%2;
+  const pos=a*4+b*2+g;
+  $('hamCalc').textContent=
+`Codewort X₁..X₇ = ${X.join(' ')}
+   X₄ = X₅⊕X₆⊕X₇ = ${X[3]}   (Prüfbit α)
+   X₂ = X₃⊕X₆⊕X₇ = ${X[1]}   (Prüfbit β)
+   X₁ = X₃⊕X₅⊕X₇ = ${X[0]}   (Prüfbit γ)
+Nutzbits (X₃,X₅,X₆,X₇) = ${X[2]}${X[4]}${X[5]}${X[6]}   →  4 bit in 7 Kanalbits
+Rate = 4/7 = ${fmt(4/7,4)} = C  ✓ exakt an der Kapazitätsgrenze`;
+  $('hamSynd').textContent=
+`Empfangen:  ${R.join(' ')}
+α = X₄⊕X₅⊕X₆⊕X₇ = ${a}
+β = X₂⊕X₃⊕X₆⊕X₇ = ${b}
+γ = X₁⊕X₃⊕X₅⊕X₇ = ${g}
+Syndrom αβγ = ${a}${b}${g} (binär) = ${pos}
+${pos===0?'→ kein Fehler erkannt.':'→ Bit X'+pos+' ist gekippt. Umdrehen — fertig.'}`;
+  hamDraw(X,R,pos);
+  // Buttons neu zeichnen
+  const hb=$('hamBits'); hb.innerHTML='';
+  [2,4,5,6].forEach(i=>{
+    const b=document.createElement('button');
+    b.className='btn sm'+(hamX[i]?' on':'');
+    b.textContent=`X${i+1} = ${hamX[i]}`;
+    b.onclick=()=>{ hamX[i]=1-hamX[i]; hamUpdate(); };
+    hb.appendChild(b);
+  });
+  const he=$('hamErr'); he.innerHTML='';
+  for(let i=0;i<7;i++){
+    const b=document.createElement('button');
+    b.className='btn sm'+(hamFlip===i?' on':'');
+    b.textContent='X'+(i+1);
+    b.onclick=()=>{ hamFlip=(hamFlip===i?-1:i); hamUpdate(); };
+    he.appendChild(b);
+  }
+  const bn=document.createElement('button');
+  bn.className='btn sm'+(hamFlip<0?' on':''); bn.textContent='kein Fehler';
+  bn.onclick=()=>{ hamFlip=-1; hamUpdate(); };
+  he.appendChild(bn);
+}
+function hamDraw(X,R,pos){
+  const {ctx,w,h}=prep($('hamCv'));
+  // Venn-artige Darstellung der 3 Paritätskreise (klassisches Hamming-Diagramm)
+  const cx=w/2, cy=h*0.42, rad=Math.min(w,h)*0.26;
+  const centers=[
+    [cx, cy-rad*0.55],          // α
+    [cx-rad*0.6, cy+rad*0.42],  // β
+    [cx+rad*0.6, cy+rad*0.42]   // γ
+  ];
+  const colsC=[A,A2,A3];
+  const names=['α','β','γ'];
+  centers.forEach(([x,y],i)=>{
+    ctx.fillStyle=colsC[i]+'14';
+    ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.fill();
+    ctx.strokeStyle=colsC[i]+'88'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.stroke();
+    ctx.fillStyle=colsC[i]; ctx.font='700 13px JetBrains Mono'; ctx.textAlign='center';
+    const ang=[-Math.PI/2,Math.PI*0.78,Math.PI*0.22][i];
+    ctx.fillText(names[i],x+Math.cos(ang)*(rad+16),y+Math.sin(ang)*(rad+16)+4);
+  });
+  // Positionen der 7 Bits im Venn-Diagramm
+  // X7 = Mitte (alle 3), X4=nur α, X2=nur β, X1=nur γ
+  // X6 = α∩β, X5 = α∩γ, X3 = β∩γ
+  const P={
+    6:[cx,cy+rad*0.06],                         // X7
+    3:[cx,cy-rad*0.95],                         // X4 nur α
+    1:[cx-rad*1.0,cy+rad*0.86],                 // X2 nur β
+    0:[cx+rad*1.0,cy+rad*0.86],                 // X1 nur γ
+    5:[cx-rad*0.52,cy-rad*0.18],                // X6 α∩β
+    4:[cx+rad*0.52,cy-rad*0.18],                // X5 α∩γ
+    2:[cx,cy+rad*0.82]                          // X3 β∩γ
+  };
+  const isData=i=>[2,4,5,6].includes(i);
+  for(let i=0;i<7;i++){
+    const [x,y]=P[i];
+    const flipped=(R[i]!==X[i]);
+    const detected=(pos===i+1);
+    let col = flipped?R_ : (detected?A3 : (isData(i)?A:W_));
+    ctx.fillStyle=col;
+    ctx.beginPath(); ctx.arc(x,y,16,0,7); ctx.fill();
+    if(detected){ ctx.strokeStyle=A3; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(x,y,21,0,7); ctx.stroke(); }
+    ctx.fillStyle='#06121c'; ctx.font='700 14px JetBrains Mono';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(R[i],x,y-1);
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle=col; ctx.font='600 10.5px JetBrains Mono';
+    ctx.fillText('X'+(i+1),x,y+29);
+  }
+  ctx.fillStyle=pos===0?A3:R_; ctx.font='700 14px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText(pos===0?'Syndrom = 000 → alles korrekt':`Syndrom = ${pos.toString(2).padStart(3,'0')} → Fehler bei X${pos}`,w/2,h-12);
+  ctx.fillStyle=MU; ctx.font='10.5px Inter';
+  ctx.fillText('Jeder Kreis muss eine gerade Anzahl Einsen enthalten',w/2,h-30);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 8 · BEISPIELKANÄLE
+   ═══════════════════════════════════════════════════════════════════ */
+function c3Update(){
+  const p=+$('c3P').value, P=+$('c3Q').value;
+  $('c3P_v').textContent=fmt(p,3); $('c3Q_v').textContent=fmt(P,3);
+  const q=1-p;
+  const alpha=(p>0&&q>0)?-(p*L2(p)+q*L2(q)):0;
+  const gamma=Math.pow(2,alpha);
+  const Popt=gamma/(gamma+2), C=L2((gamma+2)/gamma);
+  const rate=Pr=>{
+    const Q=(1-Pr)/2;
+    if(Pr<=0||Q<=0) return 0;
+    // H(x)
+    const Hx=-(Pr*L2(Pr)+2*Q*L2(Q));
+    const Hyx=2*Q*alpha;
+    return Hx-Hyx;
+  };
+  $('c3R').textContent=fmt(rate(P),4);
+  $('c3C').textContent=fmt(C,4);
+  $('c3Po').textContent=fmt(Popt,4);
+  $('c3G').textContent=fmt(gamma,4);
+  // Plot
+  const xs=[],ys=[];
+  for(let Pr=0.01;Pr<=0.985;Pr+=0.005){ xs.push(Pr); ys.push(rate(Pr)); }
+  Plotly.react('c3Plot',[
+    {x:xs,y:ys,type:'scatter',mode:'lines',line:{color:A,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.1)',name:'Rate R(P)'},
+    {x:[Popt],y:[C],type:'scatter',mode:'markers',marker:{color:A3,size:14,symbol:'star',line:{color:'#fff',width:1}},name:`Optimum C=${fmt(C,3)}`},
+    {x:[P],y:[rate(P)],type:'scatter',mode:'markers',marker:{color:A2,size:12,line:{color:'#fff',width:2}},name:'deine Wahl'}
+  ],lay({xaxis:{title:'P = Wahrscheinlichkeit für Symbol 1'},yaxis:{title:'Rate [bit/Symbol]',range:[0,1.65]},
+    margin:{l:56,r:14,t:10,b:42},legend:{x:0.02,y:0.16,bgcolor:'rgba(0,0,0,.5)'},
+    shapes:[{type:'line',x0:0,x1:1,y0:L2(3),y1:L2(3),line:{color:W_,width:1.4,dash:'dot'}}],
+    annotations:[{x:0.85,y:L2(3),text:'log₂3 (rauschfrei)',showarrow:false,font:{color:W_,size:10},yshift:9}]}),PC);
+  // Kanaldiagramm
+  const {ctx,w,h}=prep($('c3Cv'));
+  const lx=w*0.3, rx=w*0.7;
+  const ys3=[h*0.22,h*0.52,h*0.82];
+  const lines=[[0,0,1,A3],[1,1,p,A3],[1,2,q,R_],[2,2,p,A3],[2,1,q,R_]];
+  lines.forEach(([i,j,pp,col])=>{
+    ctx.strokeStyle=col; ctx.globalAlpha=0.25+0.7*pp; ctx.lineWidth=1+pp*4.5;
+    ctx.beginPath(); ctx.moveTo(lx+13,ys3[i]); ctx.lineTo(rx-13,ys3[j]); ctx.stroke();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=col; ctx.font='600 10px JetBrains Mono'; ctx.textAlign='center';
+    const t=(i===j)?0.3:0.6;
+    ctx.fillText(fmt(pp,2),lx+13+(rx-lx-26)*t,ys3[i]+(ys3[j]-ys3[i])*t-4);
+  });
+  ['1','2','3'].forEach((lab,i)=>{
+    [lx,rx].forEach((x,s)=>{
+      ctx.fillStyle=s===0?'rgba(90,209,255,.18)':'rgba(255,122,217,.18)';
+      ctx.beginPath(); ctx.arc(x,ys3[i],12,0,7); ctx.fill();
+      ctx.strokeStyle=s===0?A:A2; ctx.lineWidth=1.6; ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.font='700 12px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(lab,x,ys3[i]); ctx.textBaseline='alphabetic';
+    });
+  });
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.textAlign='center';
+  ctx.fillText('gesendet',lx,h*0.1); ctx.fillText('empfangen',rx,h*0.1);
+}
+$('c3P').oninput=c3Update; $('c3Q').oninput=c3Update;
+
+(function fig12(){
+  const rows=[
+    ['a','je ½ auf 2 von 4 Ausgängen','log₂4 − log₂2','1.000'],
+    ['b','⅓,⅓,⅙,⅙','log₂4 − ⅔log₂3 − ⅓log₂6','0.1258'],
+    ['c','½,⅓,⅙','log₂3 − ½log₂2 − ⅓log₂3 − ⅙log₂6','0.1258']
+  ];
+  let html='<tr><th>Fig. 12</th><th>Übergänge</th><th>C = log₂m + Σpᵢlog₂pᵢ</th><th>C [bit]</th></tr>';
+  rows.forEach(r=>{ html+=`<tr><td class="mono">${r[0]}</td><td>${r[1]}</td><td class="mono" style="font-size:11.5px">${r[2]}</td><td class="mono" style="color:var(--accent3)">${r[3]}</td></tr>`; });
+  $('fig12Tab').innerHTML=html;
+})();
+
+function grUpdate(){
+  const c1=+$('grA').value, c2=+$('grB').value;
+  $('grA_v').textContent=fmt(c1,2); $('grB_v').textContent=fmt(c2,2);
+  const s=Math.pow(2,c1)+Math.pow(2,c2);
+  const C=L2(s);
+  const P1=Math.pow(2,c1)/s, P2=Math.pow(2,c2)/s;
+  $('grC').textContent=fmt(C,3);
+  $('grP').textContent=`${fmt(P1,3)} : ${fmt(P2,3)}`;
+  const {ctx,w,h}=prep($('grCv'));
+  const bw=w-24;
+  ctx.fillStyle='rgba(255,255,255,.07)'; rr(ctx,12,30,bw,30,9); ctx.fill();
+  const w1=bw*P1;
+  ctx.fillStyle=grad(ctx,12,30,w1,30,'rgba(90,209,255,.35)',A);
+  rr(ctx,12,30,w1,30,9); ctx.fill();
+  ctx.fillStyle=grad(ctx,12+w1,30,bw-w1,30,'rgba(255,122,217,.35)',A2);
+  rr(ctx,12+w1,30,bw-w1,30,9); ctx.fill();
+  ctx.fillStyle='#061018'; ctx.font='700 11.5px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(w1>60) ctx.fillText(`Gruppe 1 · P₁=${fmt(P1,3)}`,12+w1/2,45);
+  if(bw-w1>60) ctx.fillText(`Gruppe 2 · P₂=${fmt(P2,3)}`,12+w1+(bw-w1)/2,45);
+  ctx.textBaseline='alphabetic';
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.textAlign='left';
+  ctx.fillText('Wahrscheinlichkeitsmasse auf die Gruppen verteilt:',12,20);
+  ctx.fillStyle=A3; ctx.font='700 12px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText(`C = log₂(2^${fmt(c1,2)} + 2^${fmt(c2,2)}) = ${fmt(C,3)} bit`,w/2,h-8);
+}
+$('grA').oninput=grUpdate; $('grB').oninput=grUpdate;
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 9 · KONTINUIERLICH
+   ═══════════════════════════════════════════════════════════════════ */
+/* Abtasttheorem */
+function sincf(x){ return Math.abs(x)<1e-9?1:Math.sin(Math.PI*x)/(Math.PI*x); }
+function smpDraw(){
+  const r=+$('smpR').value;
+  $('smpR_v').textContent=fmt(r,2);
+  const {ctx,w,h}=prep($('smpCv'));
+  const W_band=3;  // Signal enthält Frequenzen bis 3
+  const T=2;       // Zeitfenster 0..2
+  const fs=2*W_band*r;  // Abtastrate
+  const sig=t=>0.55*Math.sin(2*Math.PI*1.0*t)+0.35*Math.sin(2*Math.PI*2.0*t+1.1)+0.28*Math.sin(2*Math.PI*3.0*t+0.4);
+  const PADL=34,PADR=12,PADT=16,PADB=26;
+  const px=t=>PADL+(w-PADL-PADR)*t/T;
+  const py=v=>PADT+(h-PADT-PADB)*(1.25-v)/2.5;
+  // Achse
+  ctx.strokeStyle='rgba(255,255,255,.14)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(PADL,py(0)); ctx.lineTo(w-PADR,py(0)); ctx.stroke();
+  // Originalsignal
+  ctx.strokeStyle=A2; ctx.lineWidth=2.4; ctx.beginPath();
+  for(let t=0;t<=T;t+=0.002){ const y=py(sig(t)); t===0?ctx.moveTo(px(t),y):ctx.lineTo(px(t),y); }
+  ctx.stroke();
+  // Abtastpunkte
+  const samples=[];
+  for(let n=0;n*(1/fs)<=T+1e-9;n++){ const t=n/fs; samples.push([t,sig(t)]); }
+  // Rekonstruktion mit sinc
+  ctx.strokeStyle=A; ctx.lineWidth=2; ctx.setLineDash([5,3]); ctx.beginPath();
+  for(let t=0;t<=T;t+=0.004){
+    let v=0;
+    for(const [ts,vs] of samples) v+=vs*sincf((t-ts)*fs);
+    const y=py(clamp(v,-1.25,1.25));
+    t===0?ctx.moveTo(px(t),y):ctx.lineTo(px(t),y);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  // Punkte
+  samples.forEach(([t,v])=>{
+    ctx.strokeStyle='rgba(157,255,110,.35)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px(t),py(0)); ctx.lineTo(px(t),py(v)); ctx.stroke();
+    ctx.fillStyle=A3; ctx.beginPath(); ctx.arc(px(t),py(v),4,0,7); ctx.fill();
+  });
+  ctx.fillStyle=MU; ctx.font='10.5px JetBrains Mono'; ctx.textAlign='left';
+  ctx.fillText(`${samples.length} Abtastwerte · f_s = ${fmt(fs,2)} (Nyquist = ${2*W_band})`,PADL+2,PADT+10);
+  const ok=r>=1;
+  $('smpNote').innerHTML = ok
+   ? `<b>Satz 13 erfüllt.</b> f<sub>s</sub> ≥ 2W: Die gestrichelte Rekonstruktion deckt das Original exakt. Ein Signal der Bandbreite W und Dauer T braucht nur <b>2TW Zahlen</b> — aus unendlich vielen Freiheitsgraden wird ein endlichdimensionaler Raum. Das ist die Brücke von Teil I zu Teil III.`
+   : `<b>Unterabtastung (Aliasing!).</b> f<sub>s</sub> &lt; 2W: Die Rekonstruktion weicht sichtbar ab. Hohe Frequenzen werden als falsche tiefe Frequenzen „verkleidet" — Information ist unwiederbringlich verloren.`;
+  sincDraw();
+}
+function sincDraw(){
+  const {ctx,w,h}=prep($('sincCv'));
+  const PADL=24,PADR=12,PADT=12,PADB=22;
+  const X0=-3.2,X1=3.2;
+  const px=v=>PADL+(w-PADL-PADR)*(v-X0)/(X1-X0);
+  const py=v=>PADT+(h-PADT-PADB)*(1.25-v)/1.65;
+  ctx.strokeStyle='rgba(255,255,255,.14)';
+  ctx.beginPath(); ctx.moveTo(PADL,py(0)); ctx.lineTo(w-PADR,py(0)); ctx.stroke();
+  const cols=[A2,A,A3,W_,R_];
+  for(let k=-2;k<=2;k++){
+    ctx.strokeStyle=cols[k+2]; ctx.globalAlpha=k===0?1:0.55; ctx.lineWidth=k===0?2.6:1.5;
+    ctx.beginPath();
+    for(let x=X0;x<=X1;x+=0.01){ const y=py(sincf(x-k)); x===X0?ctx.moveTo(px(x),y):ctx.lineTo(px(x),y); }
+    ctx.stroke(); ctx.globalAlpha=1;
+    ctx.fillStyle=cols[k+2]; ctx.beginPath(); ctx.arc(px(k),py(1),3.5,0,7); ctx.fill();
+  }
+  ctx.fillStyle=MU; ctx.font='10.5px Inter'; ctx.textAlign='center';
+  ctx.fillText('sin(πx)/(πx) — jeder Baustein ist 1 an seinem Punkt und 0 an allen anderen',w/2,h-6);
+}
+$('smpR').oninput=smpDraw;
+
+/* Kontinuierliche Entropie */
+const DISTNAMES=['Gleichverteilung','Gauß','Laplace','Zweigipflig'];
+function cdUpdate(){
+  const f=+$('cdF').value, s=+$('cdS').value;
+  $('cdF_v').textContent=DISTNAMES[f];
+  $('cdS_v').textContent=fmt(s,2);
+  const xs=[],ys=[];
+  let H;
+  const N=600, X0=-6, X1=6, dx=(X1-X0)/N;
+  const pdf=x=>{
+    if(f===0){ const a=s*Math.sqrt(3); return Math.abs(x)<=a? 1/(2*a):0; }
+    if(f===1){ return Math.exp(-x*x/(2*s*s))/(s*Math.sqrt(2*Math.PI)); }
+    if(f===2){ const b=s/Math.SQRT2; return Math.exp(-Math.abs(x)/b)/(2*b); }
+    const m=s*0.86, sd=s*0.5;
+    return 0.5*(Math.exp(-(x-m)**2/(2*sd*sd))+Math.exp(-(x+m)**2/(2*sd*sd)))/(sd*Math.sqrt(2*Math.PI));
+  };
+  let hh=0;
+  for(let i=0;i<=N;i++){ const x=X0+i*dx; const p=pdf(x); xs.push(x); ys.push(p); if(p>1e-12) hh-=p*L2(p)*dx; }
+  H=hh;
+  const Hg=L2(Math.sqrt(2*Math.PI*Math.E)*s);
+  const N1=Math.pow(2,2*H)/(2*Math.PI*Math.E);
+  $('cdH').textContent=fmt(H,3);
+  $('cdHg').textContent=fmt(Hg,3);
+  $('cdN').textContent=fmt(N1,3);
+  const gauss=xs.map(x=>Math.exp(-x*x/(2*s*s))/(s*Math.sqrt(2*Math.PI)));
+  Plotly.react('cdPlot',[
+    {x:xs,y:gauss,type:'scatter',mode:'lines',line:{color:A3,width:2,dash:'dash'},name:'Gauß (max. H)'},
+    {x:xs,y:ys,type:'scatter',mode:'lines',line:{color:A,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.14)',name:DISTNAMES[f]}
+  ],lay({xaxis:{title:'x',range:[-6,6]},yaxis:{title:'p(x)'},margin:{l:54,r:14,t:10,b:42},
+    legend:{x:0.62,y:0.98,bgcolor:'rgba(0,0,0,.5)'}}),PC);
+}
+$('cdF').oninput=cdUpdate; $('cdS').oninput=cdUpdate;
+
+/* Shannon-Hartley */
+function shUpdate(){
+  const W=+$('shW').value, dB=+$('shS').value;
+  $('shW_v').textContent=W.toLocaleString('de')+' Hz';
+  $('shS_v').textContent=fmt(dB,1)+' dB';
+  const lin=Math.pow(10,dB/10);
+  const C=W*L2(1+lin);
+  $('shC').textContent = C>1e6? fmt(C/1e6,2)+' Mb/s' : C>1e3? fmt(C/1e3,1)+' kb/s' : fmt(C,0)+' b/s';
+  $('shB').textContent=fmt(L2(1+lin),2);
+  $('shL').textContent = lin>1e4? lin.toExponential(1) : fmt(lin,1);
+  // Plot: C vs W für mehrere SNR
+  const Ws=[]; for(let x=300;x<=20000;x+=200) Ws.push(x);
+  const traces=[];
+  [0,10,20,30,40].forEach((d,i)=>{
+    const l=Math.pow(10,d/10);
+    traces.push({x:Ws,y:Ws.map(ww=>ww*L2(1+l)/1000),type:'scatter',mode:'lines',
+      line:{width:d===Math.round(dB)?3:1.6,color:[R_,W_,A3,A,A2][i]},name:d+' dB',opacity:0.85});
+  });
+  traces.push({x:[W],y:[C/1000],type:'scatter',mode:'markers',marker:{color:'#fff',size:13,line:{color:A2,width:3}},name:'aktuell'});
+  Plotly.react('shPlot',traces,lay({xaxis:{title:'Bandbreite W [Hz]'},yaxis:{title:'Kapazität C [kbit/s]'},
+    margin:{l:58,r:14,t:10,b:42},legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.5)'}}),PC);
+  // Tauschhandel-Canvas
+  const {ctx,w,h}=prep($('shCv'));
+  const PADL=44,PADR=14,PADT=16,PADB=28;
+  const dmax=60;
+  const px=v=>PADL+(w-PADL-PADR)*(v+10)/(dmax+10);
+  const bmax=L2(1+Math.pow(10,dmax/10));
+  const py=v=>PADT+(h-PADT-PADB)*(1-v/bmax);
+  ctx.strokeStyle='rgba(255,255,255,.18)';
+  ctx.beginPath(); ctx.moveTo(PADL,PADT); ctx.lineTo(PADL,h-PADB); ctx.lineTo(w-PADR,h-PADB); ctx.stroke();
+  ctx.strokeStyle=A3; ctx.lineWidth=2.6; ctx.beginPath();
+  for(let d=-10;d<=dmax;d+=0.5){ const v=L2(1+Math.pow(10,d/10)); const y=py(v); d===-10?ctx.moveTo(px(d),y):ctx.lineTo(px(d),y); }
+  ctx.stroke();
+  ctx.fillStyle=A2; ctx.beginPath(); ctx.arc(px(dB),py(L2(1+lin)),6,0,7); ctx.fill();
+  ctx.fillStyle=MU; ctx.font='10px JetBrains Mono'; ctx.textAlign='center';
+  for(let d=0;d<=dmax;d+=15) ctx.fillText(d+'dB',px(d),h-10);
+  ctx.textAlign='left'; ctx.font='10.5px Inter';
+  ctx.fillText('bit/Symbol = log₂(1+P/N)  —  fast linear in dB: +6 dB ≈ +1 bit',PADL+4,PADT+10);
+}
+$('shW').oninput=shUpdate; $('shS').oninput=shUpdate;
+
+/* Rate-Distortion */
+function rdUpdate(){
+  const Nr=+$('rdN').value;
+  $('rdN_v').textContent=fmt(Nr,3);
+  const R=0.5*L2(1/Nr);     // pro Freiheitsgrad, W1=1/2
+  const Rb=Math.max(0,L2(1/Nr)/2);
+  const snr=10*Math.log10(1/Nr);
+  $('rdR').textContent=fmt(Math.max(0,Rb),3)+' b';
+  $('rdS').textContent=fmt(snr,1)+' dB';
+  $('rdX').textContent=Math.round(100*(1-Math.max(0,Rb)/16))+'%';
+  const xs=[],ys=[];
+  for(let n=0.002;n<=1;n+=0.002){ xs.push(n); ys.push(Math.max(0,L2(1/n)/2)); }
+  Plotly.react('rdPlot',[
+    {x:xs,y:ys,type:'scatter',mode:'lines',line:{color:A,width:3},fill:'tozeroy',fillcolor:'rgba(90,209,255,.12)',name:'R(N) = ½log₂(Q/N)'},
+    {x:[Nr],y:[Math.max(0,Rb)],type:'scatter',mode:'markers',marker:{color:A2,size:13,line:{color:'#fff',width:2}},name:'aktuell'}
+  ],lay({xaxis:{title:'zugelassener Fehler N (Q=1)'},yaxis:{title:'nötige Rate [bit/Freiheitsgrad]'},
+    showlegend:false,margin:{l:58,r:14,t:10,b:42}}),PC);
+  // Quantisierung
+  const {ctx,w,h}=prep($('rdCv'));
+  const levels=Math.max(2,Math.round(Math.pow(2,clamp(Rb,1,6))));
+  const PADL=30,PADR=12,PADT=14,PADB=24;
+  const T=2;
+  const px=t=>PADL+(w-PADL-PADR)*t/T;
+  const py=v=>PADT+(h-PADT-PADB)*(1.2-v)/2.4;
+  const sig=t=>0.75*Math.sin(2*Math.PI*1.2*t)+0.3*Math.sin(2*Math.PI*2.7*t+0.8);
+  // Quantisierungsstufen
+  for(let i=0;i<=levels;i++){
+    const v=-1.1+2.2*i/levels;
+    ctx.strokeStyle='rgba(255,255,255,.07)';
+    ctx.beginPath(); ctx.moveTo(PADL,py(v)); ctx.lineTo(w-PADR,py(v)); ctx.stroke();
+  }
+  // Original
+  ctx.strokeStyle=A2; ctx.lineWidth=2.2; ctx.beginPath();
+  for(let t=0;t<=T;t+=0.003){ const y=py(sig(t)); t===0?ctx.moveTo(px(t),y):ctx.lineTo(px(t),y); }
+  ctx.stroke();
+  // Quantisiert
+  const q=v=>{ const i=Math.round((v+1.1)/2.2*levels); return -1.1+2.2*clamp(i,0,levels)/levels; };
+  ctx.strokeStyle=A3; ctx.lineWidth=2; ctx.beginPath();
+  let prev=null;
+  for(let t=0;t<=T;t+=0.006){
+    const v=q(sig(t)); const y=py(v);
+    if(prev===null){ ctx.moveTo(px(t),y); }
+    else { ctx.lineTo(px(t),prev); ctx.lineTo(px(t),y); }
+    prev=y;
+  }
+  ctx.stroke();
+  ctx.fillStyle=MU; ctx.font='10.5px JetBrains Mono'; ctx.textAlign='left';
+  ctx.fillText(`${levels} Quantisierungsstufen ≈ ${fmt(Rb,2)} bit/Wert`,PADL+2,PADT+9);
+  ctx.fillStyle=A3; ctx.textAlign='right';
+  ctx.fillText('grün = übertragene Näherung',w-PADR,h-8);
+}
+$('rdN').oninput=rdUpdate;
+
+/* ═══════════════════════════════════════════════════════════════════
+   KAPITEL 10 · ENDE-ZU-ENDE
+   ═══════════════════════════════════════════════════════════════════ */
+let e2Timer=null, e2Phase=0, e2Stats={sent:0,err:0};
+function e2Update(){
+  const p=+$('e2P').value, e=+$('e2E').value, sc=+$('e2SC').value, r=+$('e2CC').value;
+  $('e2P_v').textContent=fmt(p,2);
+  $('e2E_v').textContent=fmt(e,3);
+  $('e2SC_v').textContent=sc?'an':'aus';
+  $('e2CC_v').textContent=r;
+  const H=Hbin(p), C=1-Hbin(e);
+  const srcBits = sc? H : 1;                 // bit pro Quellsymbol nach Kompression
+  const net = (1/r)/srcBits;                 // Quellsymbole pro Kanalbenutzung
+  const err = repErr(e,r);
+  $('e2H').textContent=fmt(H,3);
+  $('e2C').textContent=fmt(C,3);
+  $('e2R').textContent=fmt(net,3);
+  $('e2Err').textContent= err<1e-4? err.toExponential(1):fmt(err,4);
+  const rate=1/r;
+  let note;
+  if(rate>C) note=`<b style="color:var(--red)">Rate ${fmt(rate,3)} > C = ${fmt(C,3)}.</b> Oberhalb der Kapazität. Satz 11 sagt: die Äquivokation bleibt mindestens ${fmt(rate-C,3)} bit — zuverlässige Übertragung ist <b>prinzipiell unmöglich</b>, egal wie clever der Code.`;
+  else if(!sc) note=`<b style="color:var(--warn)">Ohne Quellcodierung.</b> Du verschenkst ${fmt(1-H,3)} bit pro Symbol (${Math.round(100*(1-H))} % Redundanz). Schalte die Kompression ein — Satz 9 erlaubt ${fmt(1/H,2)}× mehr Symbole durch denselben Kanal.`;
+  else note=`<b style="color:var(--accent3)">Alles im grünen Bereich.</b> Rate ${fmt(rate,3)} < C = ${fmt(C,3)}. Satz 9 komprimiert auf ${fmt(H,3)} bit/Symbol, Satz 11 garantiert, dass es Codes mit beliebig kleiner Fehlerrate gibt. Der Wiederholungscode hier ist nur eine grobe Näherung — echte Codes (LDPC) kämen viel näher an C.`;
+  $('e2Note').innerHTML=note;
+  e2Draw();
+}
+function e2Draw(){
+  const {ctx,w,h}=prep($('e2Cv'));
+  const p=+$('e2P').value, e=+$('e2E').value, sc=+$('e2SC').value, r=+$('e2CC').value;
+  const H=Hbin(p), C=1-Hbin(e);
+  const stages=[
+    {x:0.02,w:0.14,t:'QUELLE',s:`H = ${fmt(H,2)} bit`,c:A3},
+    {x:0.19,w:0.16,t:'QUELLCODIERER',s:sc?`÷ ${fmt(1/H,2)}`:'(aus)',c:sc?A:'rgba(255,255,255,.2)'},
+    {x:0.38,w:0.16,t:'KANALCODIERER',s:`× ${r}`,c:A2},
+    {x:0.57,w:0.13,t:'KANAL',s:`ε = ${fmt(e,3)}`,c:W_},
+    {x:0.73,w:0.13,t:'DECODER',s:'Mehrheit',c:A2},
+    {x:0.89,w:0.09,t:'ZIEL',s:'',c:A3}
+  ];
+  const Y=h*0.22, HH=h*0.24;
+  stages.for
+  const Y=h*0.22, HH=h*0.24;
+  stages.forEach((s,i)=>{
+    const X=s.x*w, W_=s.w*w;
+    ctx.fillStyle=grad(ctx,X,Y,W_,HH,'rgba(255,255,255,.03)','rgba(255,255,255,.1)');
+    rr(ctx,X,Y,W_,HH,10); ctx.fill();
+    ctx.strokeStyle=s.c; ctx.lineWidth=1.7; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='700 10.5px Inter'; ctx.textAlign='center';
+    ctx.fillText(s.t,X+W_/2,Y+HH*0.42);
+    ctx.fillStyle=s.c; ctx.font='600 10.5px JetBrains Mono';
+    ctx.fillText(s.s,X+W_/2,Y+HH*0.78);
+    if(i<stages.length-1){
+      const nb=stages[i+1];
+      arrow(ctx,X+W_+2,Y+HH/2,nb.x*w-3,Y+HH/2,'rgba(255,255,255,.3)',1.6,7);
+    }
+  });
+  // Rauschquelle
+  const chX=(0.57+0.065)*w;
+  arrow(ctx,chX,Y+HH+46,chX,Y+HH+6,R_,2,8);
+  ctx.fillStyle=R_; ctx.font='600 10.5px Inter'; ctx.textAlign='center';
+  ctx.fillText('RAUSCHEN',chX,Y+HH+62);
+
+  // Bitströme visualisieren
+  const bandY=h*0.68;
+  const rnd=mulberry(999);
+  const nb=52;
+  // 1. Quellbits (schief)
+  const srcBits=Array.from({length:nb},()=>rnd()<p?0:1);
+  const drawBand=(y,bits,label,colFn)=>{
+    const X0=0.06*w, X1=0.95*w, bw=(X1-X0)/bits.length;
+    bits.forEach((b,i)=>{
+      ctx.fillStyle=colFn(b,i);
+      ctx.fillRect(X0+i*bw,y,Math.max(1,bw-1),12);
+    });
+    ctx.fillStyle=MU; ctx.font='10px Inter'; ctx.textAlign='left';
+    ctx.fillText(label,X0,y-4);
+  };
+  drawBand(bandY, srcBits,'Quelle (schief: viele Nullen ⇒ redundant)',b=>b?A3:'rgba(157,255,110,.25)');
+  // 2. nach Kompression
+  const compLen=Math.max(4,Math.round(nb*(sc?H:1)));
+  const compBits=Array.from({length:compLen},()=>rnd()<0.5?0:1);
+  drawBand(bandY+34, compBits, sc?`komprimiert (${fmt(H,2)} bit/Symbol — fast gleichverteilt)`:'unkomprimiert (1 bit/Symbol)',b=>b?A:'rgba(90,209,255,.25)');
+  // 3. im Kanal mit Fehlern
+  const chanBits=[]; const flips=[];
+  for(let i=0;i<compLen;i++) for(let k=0;k<r;k++){ const f=rnd()<e; chanBits.push(f?1-compBits[i]:compBits[i]); flips.push(f); }
+  const show=chanBits.slice(0,Math.min(chanBits.length,110));
+  const X0=0.06*w, X1=0.95*w, bw=(X1-X0)/show.length;
+  show.forEach((b,i)=>{
+    ctx.fillStyle=flips[i]?R_:(b?A2:'rgba(255,122,217,.25)');
+    ctx.fillRect(X0+i*bw,bandY+68,Math.max(1,bw-0.6),12);
+  });
+  ctx.fillStyle=MU; ctx.font='10px Inter'; ctx.textAlign='left';
+  ctx.fillText(`Kanal: jedes Bit ${r}× wiederholt · rot = vom Rauschen gekippt`,X0,bandY+64);
+  // 4. decodiert
+  const dec=[];
+  for(let i=0;i<compLen;i++){
+    let s=0; for(let k=0;k<r;k++) s+=chanBits[i*r+k];
+    dec.push(s>r/2?1:0);
+  }
+  const errs=dec.filter((b,i)=>b!==compBits[i]).length;
+  drawBand(bandY+102, dec, `decodiert · ${errs} Restfehler von ${compLen}`,(b,i)=>dec[i]!==compBits[i]?R_:(b?A3:'rgba(157,255,110,.25)'));
+}
+$('e2P').oninput=e2Update; $('e2E').oninput=e2Update;
+$('e2SC').oninput=e2Update; $('e2CC').oninput=e2Update;
+$('e2Play').onclick=function(){
+  if(e2Timer){ clearInterval(e2Timer); e2Timer=null; this.textContent='▶ Simulation starten'; this.classList.remove('on'); }
+  else { e2Timer=setInterval(e2Draw,420); this.textContent='⏸ Pause'; this.classList.add('on'); }
+};
+$('e2Opt').onclick=()=>{
+  // Wähle r so, dass Rate knapp unter C liegt
+  const e=+$('e2E').value, C=1-Hbin(e);
+  let best=1;
+  for(let rr_=1;rr_<=9;rr_+=2){ if(1/rr_<C) { best=rr_; break; } }
+  $('e2CC').value=best; $('e2SC').value=1; e2Update();
+};
+
+/* Historie der Codes */
+function histPlot(){
+  const years=[1948,1950,1955,1960,1967,1971,1977,1993,1996,2003,2008,2016];
+  const ebn0 =[  9.6, 8.5, 7.5, 6.5, 5.1, 4.5, 3.8, 0.7, 0.4, 0.3, 0.25, 0.2];
+  const names=['Shannon-Paper','Hamming(7,4)','Reed-Muller','Faltungscodes','Viterbi','Reed-Solomon',
+               'Voyager-Code','Turbo-Codes','LDPC wiederentdeckt','DVB-S2 LDPC','WiMAX LDPC','Polar-Codes (5G)'];
+  Plotly.react('histPlot',[
+    {x:years,y:ebn0,type:'scatter',mode:'lines+markers',line:{color:A,width:2.6},marker:{size:9,color:A2,line:{color:'#fff',width:1}},
+     text:names,hovertemplate:'<b>%{text}</b><br>%{x}<br>E_b/N₀ = %{y} dB<extra></extra>',name:'erreichte Codes'},
+    {x:[1945,2020],y:[-1.59,-1.59],type:'scatter',mode:'lines',line:{color:A3,width:3,dash:'dash'},name:'Shannon-Grenze −1.59 dB'}
+  ],lay({xaxis:{title:'Jahr',range:[1945,2020]},yaxis:{title:'benötigtes E_b/N₀ [dB]',range:[-2.6,10.5]},
+    margin:{l:58,r:14,t:10,b:42},legend:{x:0.42,y:0.98,bgcolor:'rgba(0,0,0,.5)'}}),PC);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INITIALISIERUNG
+   ═══════════════════════════════════════════════════════════════════ */
+function redrawAll(){
+  drawWarm(); tool1(); tool2(); tool4();
+  mkDraw(); mkEqDraw();
+  sysDraw(); capUpdate(); capRoot();
+  fnPlot(); redDraw();
+  axDraw(); ebDraw(false);
+  jvUpdate(); eqUpdate();
+  dcDraw(); sfCalc(); blUpdate(); lcUpdate();
+  rpUpdate(); sphDraw(); f9Draw(); hamUpdate();
+  c3Update(); grUpdate();
+  smpDraw(); cdUpdate(); shUpdate(); rdUpdate();
+  e2Update(); histPlot();
+}
+function init(){
+  mkInit();
+  ebBuild();
+  sfBuild();
+  apxGen();
+  redrawAll();
+  // Startwerte in Labels
+  $('mkSpd_v').textContent=$('mkSpd').value+'/s';
+  $('sysN_v').textContent=fmt(+$('sysN').value,2);
+  sysNoiseOn=true; $('sysNoise').classList.add('on');
+}
+window.addEventListener('load',()=>{ init(); setTimeout(redrawAll,250); });
+let rsT=null;
+window.addEventListener('resize',()=>{ clearTimeout(rsT); rsT=setTimeout(redrawAll,160); });
+</script>
+</body>
+</html>
