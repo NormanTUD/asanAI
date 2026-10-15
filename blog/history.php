@@ -774,8 +774,8 @@ $$ f_\text{XOR} \begin{pmatrix} \text{\color{#ef4444}{False}} & \text{\color{#ef
 Minsky and Papert demonstrated that while a single-layer perceptron can draw a line to separate the results of an OR gate, it is mathematically impossible to do so for XOR because the “True” and “False” results are not **linearly separable**.
 
 <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 20px auto;">
-    <div id="plot-or-gate"></div>
-    <div id="plot-xor-gate"></div>
+    <div id="plot-or-gate" style="width:100%; max-width:var(--mn-col-width);"></div>
+    <div id="plot-xor-gate" style="width:100%; max-width:var(--mn-col-width);"></div>
 </div>
 
 Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear activation functions would be able to solve this problem, there was no way to efficiently train those until in \citeyear{rumelhart1986} Rumelhart et al. popularized \citealternativetitle{rumelhart1986}, which reignited interest in connectionist models and paved the way for modern deep learning.
