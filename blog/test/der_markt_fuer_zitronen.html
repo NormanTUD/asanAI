@@ -1507,6 +1507,7 @@ function axes(ctx,P,xlab,ylab){
 
 /* Zitronen-Icon */
 function drawLemon(ctx,x,y,r,col,alpha=1){
+  if(r<=0) return;
   ctx.save(); ctx.globalAlpha=alpha;
   const g=ctx.createRadialGradient(x-r*.3,y-r*.35,r*.1,x,y,r*1.25);
   g.addColorStop(0,'#fff8d0'); g.addColorStop(.45,col); g.addColorStop(1,col);
