@@ -485,14 +485,15 @@ body {
 
 	/* ── 3q. Image lightbox: tighter padding ─────────────── */
 	#cl-lb {
-		padding: 16px;
-		gap: 8px;
+		padding: 48px 14px 28px;
+		gap: 10px;
 	}
 	#cl-lb img {
-		max-height: 70vh;
+		max-height: calc(100vh - 220px);
 	}
 	#cl-lb figcaption {
 		font-size: 0.78em;
+		max-height: 160px;
 	}
 	.cl-lb-x { top: 10px; right: 12px; width: 36px; height: 36px; font-size: 20px; }
 	.cl-lb-prev,

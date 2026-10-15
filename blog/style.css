@@ -8952,8 +8952,8 @@ html.dark .cl-cite-tip {
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	gap: 12px;
-	padding: 40px;
+	gap: 14px;
+	padding: 64px 40px 56px;
 	background: rgba(8, 12, 24, .82);
 	backdrop-filter: blur(6px);
 	opacity: 0;
@@ -8963,21 +8963,26 @@ html.dark .cl-cite-tip {
 #cl-lb[hidden] { display: none; }
 #cl-lb img {
 	max-width: 92vw;
-	max-height: 80vh;
+	max-height: calc(100vh - 260px);
 	object-fit: contain;
 	border-radius: 4px;
 	box-shadow: 0 24px 60px rgba(0,0,0,.5);
+	flex-shrink: 1;
+	min-height: 0;
 }
 #cl-lb figcaption {
 	max-width: 80ch;
+	max-height: 200px;
+	overflow-y: auto;
 	color: rgba(255,255,255,.7);
 	font-size: .85em;
 	font-style: italic;
 	text-align: center;
 	margin: 0;
-	padding: 0;
+	padding: 4px 14px 8px;
 	border: none;
 	line-height: 1.5;
+	flex-shrink: 0;
 }
 .cl-lb-x {
 	position: absolute;
@@ -8986,16 +8991,21 @@ html.dark .cl-cite-tip {
 	width: 32px;
 	height: 32px;
 	border-radius: 50%;
-	border: 1px solid rgba(255,255,255,.2);
-	background: rgba(255,255,255,.06);
-	color: rgba(255,255,255,.85);
+	border: 1px solid rgba(255, 90, 90, .6);
+	background: rgba(220, 38, 38, .35);
+	color: #fca5a5;
 	font-size: 18px;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	transition: background-color .15s ease, border-color .15s ease, color .15s ease;
 }
-.cl-lb-x:hover { background: rgba(255,255,255,.15); }
+.cl-lb-x:hover {
+	background: rgba(220, 38, 38, .6);
+	border-color: rgba(255, 130, 130, .85);
+	color: #fff;
+}
 .cl-lb-prev,
 .cl-lb-next {
 	position: absolute;
@@ -9015,13 +9025,27 @@ html.dark .cl-cite-tip {
 	justify-content: center;
 	font-family: serif;
 	padding: 0 0 4px 0;
+	transition: background-color .15s ease;
 }
 .cl-lb-prev { left: 18px; }
 .cl-lb-next { right: 18px; }
 .cl-lb-prev:hover,
-.cl-lb-next:hover { background: rgba(255,255,255,.15); }
+.cl-lb-next:hover,
+.cl-lb-prev:focus,
+.cl-lb-next:focus,
+.cl-lb-prev:focus-visible,
+.cl-lb-next:focus-visible,
+.cl-lb-prev:active,
+.cl-lb-next:active {
+	background: rgba(255,255,255,.22);
+	transform: translateY(-50%);
+	outline: none;
+}
 .cl-lb-prev:disabled,
-.cl-lb-next:disabled { opacity: .25; cursor: default; }
+.cl-lb-next:disabled {
+	display: none;
+	cursor: default;
+}
 
 /* ── 11.8. Hide the floating chrome while the lightbox is open ──
    `#cl-lb` is a fixed full-screen overlay; the theme/search/topic
