@@ -2815,7 +2815,7 @@ function drawPerson(ctx,x,groundY,heightPx,col,opts={}){
     }
   }
   $('#btnAssocA').onclick=e=>{mode='a';$('#btnAssocB').classList.remove('on');e.target.classList.add('on','pink');draw();};
-  $('#btnAssocB').onclick=e=>{mode='b';$('#btnAssocA').classList.remove('on');e.target  $('#btnAssocB').onclick=e=>{mode='b';$('#btnAssocA').classList.remove('on','pink');e.target.classList.add('on');draw();};
+  $('#btnAssocB').onclick=e=>{mode='b';$('#btnAssocA').classList.remove('on','pink');e.target.classList.add('on');draw();};
   addEventListener('resize',draw); draw();
 })();
 
