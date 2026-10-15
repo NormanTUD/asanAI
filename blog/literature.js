@@ -18210,5 +18210,407 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2406.18665",
 		alternativetitle: "RouteLLM (2024)"
+	},
+
+	/* Sedentarization & the Neolithic Revolution (untold_history.php)
+	 * The transition from nomadic hunter-gatherer life to settled
+	 * agriculture, the founding of cities, the invention of writing and law,
+	 * and the bronze/iron ages. The durable substrate beneath every later
+	 * accumulation of knowledge. */
+	"neolithic_revolution_wiki": {
+		url: "https://en.wikipedia.org/wiki/Neolithic_Revolution",
+		title: "Neolithic Revolution — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Neolithic Revolution (Wikipedia)"
+	},
+	"fertile_crescent_wiki": {
+		url: "https://en.wikipedia.org/wiki/Fertile_Crescent",
+		title: "Fertile Crescent — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Fertile Crescent (Wikipedia)"
+	},
+	"history_of_agriculture_wiki": {
+		url: "https://en.wikipedia.org/wiki/History_of_agriculture",
+		title: "History of agriculture — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "History of Agriculture (Wikipedia)"
+	},
+	"domestication_wiki": {
+		url: "https://en.wikipedia.org/wiki/Domestication",
+		title: "Domestication — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Domestication (Wikipedia)"
+	},
+	"v_gordon_childe_wiki": {
+		url: "https://en.wikipedia.org/wiki/V._Gordon_Childe",
+		title: "V. Gordon Childe — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "V. Gordon Childe (Wikipedia)"
+	},
+	"catalhoyuk_wiki": {
+		url: "https://en.wikipedia.org/wiki/%C3%87atalh%C3%B6y%C3%BCk",
+		title: "Çatalhöyük — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Çatalhöyük (Wikipedia)"
+	},
+	"jericho_wiki": {
+		url: "https://en.wikipedia.org/wiki/Jericho",
+		title: "Jericho — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Jericho (Wikipedia)"
+	},
+	"urban_revolution_wiki": {
+		url: "https://en.wikipedia.org/wiki/Urban_revolution",
+		title: "Urban Revolution — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Urban Revolution (Wikipedia)"
+	},
+	"uruk_wiki": {
+		url: "https://en.wikipedia.org/wiki/Uruk",
+		title: "Uruk — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Uruk (Wikipedia)"
+	},
+	"cradle_of_civilization_wiki": {
+		url: "https://en.wikipedia.org/wiki/Cradle_of_civilization",
+		title: "Cradle of civilization — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Cradle of civilization (Wikipedia)"
+	},
+	"history_of_writing_wiki": {
+		url: "https://en.wikipedia.org/wiki/History_of_writing",
+		title: "History of writing — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "History of Writing (Wikipedia)"
+	},
+	"cuneiform_script_wiki": {
+		url: "https://en.wikipedia.org/wiki/Cuneiform",
+		title: "Cuneiform — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Cuneiform (Wikipedia)"
+	},
+	"schmandtbesserat1992": {
+		title: "From Counting to Cuneiform: The Sumerian and Related Numeration Systems",
+		author: "Denise Schmandt-Besserat",
+		year: 1992,
+		url: "https://utpress.utexas.edu/9780292762496/from-counting-to-cuneiform/"
+	},
+	"code_of_hammurabi_wiki": {
+		url: "https://en.wikipedia.org/wiki/Code_of_Hammurabi",
+		title: "Code of Hammurabi — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Code of Hammurabi (Wikipedia)"
+	},
+	"bronze_age_wiki": {
+		url: "https://en.wikipedia.org/wiki/Bronze_Age",
+		title: "Bronze Age — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Bronze Age (Wikipedia)"
+	},
+	"iron_age_wiki": {
+		url: "https://en.wikipedia.org/wiki/Iron_Age",
+		title: "Iron Age — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Iron Age (Wikipedia)"
+	},
+	"ancient_mesopotamia_wiki": {
+		url: "https://en.wikipedia.org/wiki/Ancient_Mesopotamia",
+		title: "Ancient Mesopotamia — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Ancient Mesopotamia (Wikipedia)"
+	},
+	"ancient_egypt_wiki": {
+		url: "https://en.wikipedia.org/wiki/Ancient_Egypt",
+		title: "Ancient Egypt — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Ancient Egypt (Wikipedia)"
+	},
+	"library_of_alexandria_wiki": {
+		url: "https://en.wikipedia.org/wiki/Library_of_Alexandria",
+		title: "Library of Alexandria — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Library of Alexandria (Wikipedia)"
+	},
+	"wheel_wiki": {
+		url: "https://en.wikipedia.org/wiki/Wheel",
+		title: "Wheel — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Wheel (Wikipedia)"
+	},
+	"plough_wiki": {
+		url: "https://en.wikipedia.org/wiki/Plough",
+		title: "Plough — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Plough (Wikipedia)"
+	},
+	"money_wiki": {
+		url: "https://en.wikipedia.org/wiki/Money",
+		title: "Money — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Money (Wikipedia)"
+	},
+	"coinage_wiki": {
+		url: "https://en.wikipedia.org/wiki/Coin",
+		title: "Coin — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Coin (Wikipedia)"
+	},
+
+	/* History of programming languages (untold_history.php)
+	 * The displaced prerequisites of the modern ML stack: from Babbage and
+	 * Lovelace through FORTRAN, LISP, ALGOL, C and Unix, to Java, Python
+	 * and the ML-era languages that now train and serve LLMs. */
+	"history_of_programming_languages_wiki": {
+		url: "https://en.wikipedia.org/wiki/History_of_programming_languages",
+		title: "History of programming languages — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "History of Programming Languages (Wikipedia)"
+	},
+	"ada_lovelace_wiki": {
+		url: "https://en.wikipedia.org/wiki/Ada_Lovelace",
+		title: "Ada Lovelace — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Ada Lovelace (Wikipedia)"
+	},
+	"plankalkul_wiki": {
+		url: "https://en.wikipedia.org/wiki/Plankalk%C3%BCl",
+		title: "Plankalkül — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Plankalkül (Wikipedia)"
+	},
+	"fortran_wiki": {
+		url: "https://en.wikipedia.org/wiki/Fortran",
+		title: "Fortran — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Fortran (Wikipedia)"
+	},
+	"lisp_wiki": {
+		url: "https://en.wikipedia.org/wiki/Lisp_(programming_language)",
+		title: "Lisp (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Lisp (Wikipedia)"
+	},
+	"algol_wiki": {
+		url: "https://en.wikipedia.org/wiki/ALGOL",
+		title: "ALGOL — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "ALGOL (Wikipedia)"
+	},
+	"cobol_wiki": {
+		url: "https://en.wikipedia.org/wiki/COBOL",
+		title: "COBOL — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "COBOL (Wikipedia)"
+	},
+	"basic_wiki": {
+		url: "https://en.wikipedia.org/wiki/BASIC",
+		title: "BASIC — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "BASIC (Wikipedia)"
+	},
+	"simula_wiki": {
+		url: "https://en.wikipedia.org/wiki/Simula",
+		title: "Simula — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Simula (Wikipedia)"
+	},
+	"c_programming_wiki": {
+		url: "https://en.wikipedia.org/wiki/C_(programming_language)",
+		title: "C (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "C (programming language, Wikipedia)"
+	},
+	"smalltalk_wiki": {
+		url: "https://en.wikipedia.org/wiki/Smalltalk",
+		title: "Smalltalk — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Smalltalk (Wikipedia)"
+	},
+	"pascal_wiki": {
+		url: "https://en.wikipedia.org/wiki/Pascal_(programming_language)",
+		title: "Pascal (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Pascal (Wikipedia)"
+	},
+	"prolog_wiki": {
+		url: "https://en.wikipedia.org/wiki/Prolog",
+		title: "Prolog — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Prolog (Wikipedia)"
+	},
+	"cpp_wiki": {
+		url: "https://en.wikipedia.org/wiki/C%2B%2B",
+		title: "C++ — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "C++ (Wikipedia)"
+	},
+	"java_wiki": {
+		url: "https://en.wikipedia.org/wiki/Java_(programming_language)",
+		title: "Java (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Java (Wikipedia)"
+	},
+	"javascript_wiki": {
+		url: "https://en.wikipedia.org/wiki/JavaScript",
+		title: "JavaScript — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "JavaScript (Wikipedia)"
+	},
+	"python_wiki": {
+		url: "https://en.wikipedia.org/wiki/Python_(programming_language)",
+		title: "Python (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Python (Wikipedia)"
+	},
+	"perl_wiki": {
+		url: "https://en.wikipedia.org/wiki/Perl",
+		title: "Perl — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Perl (Wikipedia)"
+	},
+	"php_wiki": {
+		url: "https://en.wikipedia.org/wiki/PHP",
+		title: "PHP — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "PHP (Wikipedia)"
+	},
+	"ruby_wiki": {
+		url: "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+		title: "Ruby (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Ruby (Wikipedia)"
+	},
+	"ada_language_wiki": {
+		url: "https://en.wikipedia.org/wiki/Ada_(programming_language)",
+		title: "Ada (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Ada (programming language, Wikipedia)"
+	},
+	"matlab_wiki": {
+		url: "https://en.wikipedia.org/wiki/MATLAB",
+		title: "MATLAB — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "MATLAB (Wikipedia)"
+	},
+	"haskell_wiki": {
+		url: "https://en.wikipedia.org/wiki/Haskell",
+		title: "Haskell — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Haskell (Wikipedia)"
+	},
+	"rust_wiki": {
+		url: "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+		title: "Rust (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Rust (Wikipedia)"
+	},
+	"go_wiki": {
+		url: "https://en.wikipedia.org/wiki/Go_(programming_language)",
+		title: "Go (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Go (Wikipedia)"
+	},
+	"julia_wiki": {
+		url: "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+		title: "Julia (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Julia (Wikipedia)"
+	},
+	"swift_wiki": {
+		url: "https://en.wikipedia.org/wiki/Swift_(programming_language)",
+		title: "Swift (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Swift (Wikipedia)"
+	},
+	"mojo_wiki": {
+		url: "https://en.wikipedia.org/wiki/Mojo_(programming_language)",
+		title: "Mojo (programming language) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Mojo (Wikipedia)"
+	},
+	"structured_programming_wiki": {
+		url: "https://en.wikipedia.org/wiki/Structured_programming",
+		title: "Structured programming — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Structured programming (Wikipedia)"
+	},
+	"oop_wiki": {
+		url: "https://en.wikipedia.org/wiki/Object-oriented_programming",
+		title: "Object-oriented programming — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Object-oriented programming (Wikipedia)"
+	},
+	"backus_naur_form_wiki": {
+		url: "https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form",
+		title: "Backus–Naur form — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Backus–Naur form (Wikipedia)"
+	},
+	"compiler_wiki": {
+		url: "https://en.wikipedia.org/wiki/Compiler",
+		title: "Compiler — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Compiler (Wikipedia)"
+	},
+	"unix_wiki": {
+		url: "https://en.wikipedia.org/wiki/Unix",
+		title: "Unix — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Unix (Wikipedia)"
 	}
 };
