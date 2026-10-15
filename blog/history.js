@@ -1,3 +1,45 @@
+const GATE_PLOTS = ['plot-or-gate', 'plot-xor-gate'];
+let _gatePlotsInit = false;
+let _gatePlotsRendered = false;
+
+function resizeGatePlots() {
+	if (!window.Plotly || !Plotly.Plots || typeof Plotly.Plots.resize !== 'function') return;
+	GATE_PLOTS.forEach(function (id) {
+		const el = document.getElementById(id);
+		if (!el || !el.data || !el.data.length || el.clientWidth <= 0) return;
+		try { Plotly.Plots.resize(el); } catch (e) { /* hidden/detached → skip */ }
+	});
+}
+
+function renderGatePlots() {
+	if (_gatePlotsRendered) return;
+	const c = document.getElementById('contents');
+	if (!c || c.clientWidth <= 0) return;
+	_gatePlotsRendered = true;
+	renderLinearSeparability();
+}
+
+function initGatePlots() {
+	if (_gatePlotsInit) return;
+	_gatePlotsInit = true;
+	const c = document.getElementById('contents');
+	if (c && typeof ResizeObserver === 'function') {
+		let lastW = -1;
+		new ResizeObserver(function () {
+			const w = c.clientWidth;
+			if (w <= 0 || w === lastW) return;
+			lastW = w;
+			renderGatePlots();
+			resizeGatePlots();
+		}).observe(c);
+	} else {
+		renderGatePlots();
+	}
+	if (document.fonts && document.fonts.ready) {
+		document.fonts.ready.then(resizeGatePlots);
+	}
+}
+
 function renderLinearSeparability() {
 	const layoutBase = {
 		xaxis: {
@@ -38,8 +80,8 @@ function renderLinearSeparability() {
 		{ x: [0, 1], y: [1, 0], mode: 'markers+text', text: ['True (1)', 'True (1)'], textposition: 'top center', marker: { size: 18, color: '#22c55e' } }
 	];
 
-	Plotly.newPlot('plot-or-gate', orData, { ...layoutBase, title: 'OR Gate: Linearly Separable' });
-	Plotly.newPlot('plot-xor-gate', xorData, {
+	const p1 = Plotly.newPlot('plot-or-gate', orData, { ...layoutBase, title: 'OR Gate: Linearly Separable' });
+	const p2 = Plotly.newPlot('plot-xor-gate', xorData, {
 		...layoutBase,
 		title: 'XOR Gate: NOT Separable',
 		annotations: [{
@@ -47,11 +89,13 @@ function renderLinearSeparability() {
 			showarrow: false, font: { color: themeColor('#475569'), size: 14 }
 		}]
 	});
+	Promise.all([p1, p2]).then(resizeGatePlots).catch(function () {});
+	return Promise.all([p1, p2]);
 }
 
 async function loadHistoryModule() {
 	updateLoadingStatus("Loading section about History...");
-	renderLinearSeparability();
+	initGatePlots();
 	return Promise.resolve();
 }
 
