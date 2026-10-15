@@ -1,0 +1,3209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parnas 1972 — Wie zerlegt man ein System in Module?</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0b1020;
+  --panel:rgba(18,24,43,.72);
+  --panel-solid:#121a2e;
+  --stroke:rgba(130,160,230,.18);
+  --stroke-strong:rgba(130,160,230,.40);
+  --txt:#e8edfb;
+  --txt-dim:#9fb0d4;
+  --txt-faint:#6b7da6;
+  --acc:#5eead4;
+  --acc2:#818cf8;
+  --acc3:#f472b6;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --good:#4ade80;
+  --radius:16px;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Ambient background ---------- */
+#bgfx{position:fixed;inset:0;z-index:-2;pointer-events:none}
+#bgGrad{
+  position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(94,234,212,.10), transparent 60%),
+    radial-gradient(1000px 700px at 85% 10%, rgba(129,140,248,.12), transparent 60%),
+    radial-gradient(900px 900px at 50% 110%, rgba(244,114,182,.08), transparent 60%),
+    linear-gradient(180deg,#070a12 0%,#080c18 50%,#06080f 100%);
+}
+
+/* ---------- Progress bar ---------- */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));
+  z-index:1000;box-shadow:0 0 18px rgba(94,234,212,.6);
+  transition:width .12s linear;
+}
+
+/* ---------- Nav ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  backdrop-filter:blur(18px) saturate(140%);
+  background:rgba(7,10,18,.78);
+  border-bottom:1px solid var(--stroke);
+}
+.navinner{
+  max-width:1280px;margin:0 auto;padding:10px 20px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.brand{font-weight:800;letter-spacing:-.02em;font-size:15px;white-space:nowrap}
+.brand span{color:var(--acc)}
+.navlinks{display:flex;gap:4px;flex-wrap:wrap;font-size:12.5px}
+.navlinks a{
+  color:var(--txt-dim);text-decoration:none;padding:5px 10px;border-radius:8px;
+  transition:.18s;white-space:nowrap;
+}
+.navlinks a:hover{color:var(--txt);background:rgba(130,160,230,.12)}
+.navlinks a.active{color:var(--acc);background:rgba(94,234,212,.10)}
+
+/* ---------- Layout ---------- */
+main{max-width:1180px;margin:0 auto;padding:0 20px 140px}
+section{padding:72px 0 10px;scroll-margin-top:80px}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:60px}
+
+h1{
+  font-size:clamp(34px,6.4vw,70px);line-height:1.04;font-weight:800;letter-spacing:-.035em;
+  background:linear-gradient(135deg,#fff 10%,#b9c6ec 45%,var(--acc) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin-bottom:18px;
+}
+h2{
+  font-size:clamp(24px,3.6vw,38px);font-weight:750;letter-spacing:-.025em;margin-bottom:12px;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+}
+h2 .num{
+  font-family:var(--mono);font-size:14px;color:var(--acc);
+  border:1px solid var(--stroke-strong);border-radius:8px;padding:3px 9px;
+  background:rgba(94,234,212,.07);font-weight:700;letter-spacing:0;
+}
+h3{font-size:19px;font-weight:650;margin:22px 0 8px;letter-spacing:-.01em}
+h4{font-size:15px;font-weight:650;margin:14px 0 6px;color:var(--txt-dim)}
+p{color:var(--txt-dim);margin-bottom:12px;max-width:78ch}
+p strong,li strong{color:var(--txt);font-weight:600}
+.lead{font-size:clamp(15px,2vw,19px);color:#c3d0ee;max-width:70ch}
+ul,ol{color:var(--txt-dim);margin:0 0 12px 22px}
+li{margin-bottom:6px}
+code{font-family:var(--mono);font-size:.88em;background:rgba(130,160,230,.13);padding:2px 6px;border-radius:5px;color:#b9e8dd}
+.kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--stroke-strong);border-radius:5px;padding:1px 6px;color:var(--txt-dim)}
+
+/* ---------- Panels ---------- */
+.panel{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);
+  padding:22px;margin:20px 0;backdrop-filter:blur(10px);
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+}
+.panel.tight{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gridSide{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px}
+.gridSideL{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px}
+@media(max-width:900px){
+  .grid2,.grid3,.gridSide,.gridSideL{grid-template-columns:1fr}
+}
+
+/* ---------- Controls ---------- */
+.ctl{margin:12px 0}
+.ctl label{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;font-weight:500;
+}
+.ctl label .val{font-family:var(--mono);color:var(--acc);font-size:12px;font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--acc2),rgba(130,160,230,.2));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;border:3px solid var(--acc2);cursor:pointer;
+  box-shadow:0 0 14px rgba(129,140,248,.7);transition:.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--acc2);cursor:pointer;
+}
+button,.btn{
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--txt);
+  background:rgba(130,160,230,.10);border:1px solid var(--stroke-strong);
+  padding:8px 14px;border-radius:10px;cursor:pointer;transition:.16s;
+}
+button:hover{background:rgba(130,160,230,.22);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.primary{background:linear-gradient(135deg,rgba(94,234,212,.22),rgba(129,140,248,.22));border-color:var(--acc)}
+button.on{background:linear-gradient(135deg,rgba(94,234,212,.3),rgba(129,140,248,.3));border-color:var(--acc);color:#fff}
+button.danger{border-color:rgba(251,113,133,.5);background:rgba(251,113,133,.12)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+select,input[type=text]{
+  font-family:inherit;font-size:13px;color:var(--txt);background:rgba(10,14,26,.9);
+  border:1px solid var(--stroke-strong);border-radius:9px;padding:7px 10px;width:100%;
+}
+textarea{
+  font-family:var(--mono);font-size:12.5px;color:var(--txt);background:rgba(6,9,18,.9);
+  border:1px solid var(--stroke-strong);border-radius:10px;padding:10px;width:100%;resize:vertical;
+  line-height:1.6;
+}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt-dim);cursor:pointer;user-select:none;margin:6px 0}
+.toggle input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer}
+
+/* ---------- Canvas ---------- */
+canvas{display:block;width:100%;border-radius:12px;background:rgba(5,8,16,.65)}
+.cvwrap{position:relative}
+
+/* ---------- Badges / callouts ---------- */
+.badge{
+  display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:700;
+  padding:3px 9px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid currentColor;
+}
+.b-acc{color:var(--acc);background:rgba(94,234,212,.08)}
+.b-acc2{color:var(--acc2);background:rgba(129,140,248,.08)}
+.b-acc3{color:var(--acc3);background:rgba(244,114,182,.08)}
+.b-warn{color:var(--warn);background:rgba(251,191,36,.08)}
+.b-bad{color:var(--bad);background:rgba(251,113,133,.08)}
+.b-good{color:var(--good);background:rgba(74,222,128,.08)}
+
+.callout{
+  border-left:3px solid var(--acc);background:rgba(94,234,212,.05);
+  padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0;
+}
+.callout.idea{border-color:var(--acc2);background:rgba(129,140,248,.06)}
+.callout.warn{border-color:var(--warn);background:rgba(251,191,36,.06)}
+.callout.quote{border-color:var(--acc3);background:rgba(244,114,182,.05);font-style:italic}
+.callout h4{margin-top:0;color:var(--txt)}
+
+.kpi{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0;
+}
+.kpi .cell{
+  background:rgba(10,14,26,.6);border:1px solid var(--stroke);border-radius:12px;padding:12px;text-align:center;
+}
+.kpi .cell .k{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--acc)}
+.kpi .cell .l{font-size:10.5px;color:var(--txt-faint);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--stroke)}
+th{color:var(--txt-faint);font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:650}
+td{color:var(--txt-dim)}
+tbody tr:hover{background:rgba(130,160,230,.05)}
+.cellOK{color:var(--good);font-weight:600}
+.cellBAD{color:var(--bad);font-weight:600}
+
+/* ---------- Step chips ---------- */
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.step{
+  font-size:12px;padding:7px 13px;border-radius:99px;border:1px solid var(--stroke);
+  color:var(--txt-faint);cursor:pointer;transition:.18s;background:rgba(10,14,26,.5);
+  font-weight:500;
+}
+.step:hover{border-color:var(--stroke-strong);color:var(--txt-dim)}
+.step.active{background:linear-gradient(135deg,rgba(94,234,212,.2),rgba(129,140,248,.2));color:#fff;border-color:var(--acc)}
+.step.done{color:var(--good);border-color:rgba(74,222,128,.35)}
+
+/* ---------- Module cards ---------- */
+.modcard{
+  background:rgba(10,14,26,.72);border:1px solid var(--stroke);border-radius:13px;
+  padding:13px 15px;transition:.2s;cursor:pointer;position:relative;overflow:hidden;
+}
+.modcard:hover{border-color:var(--stroke-strong);transform:translateY(-2px)}
+.modcard.hit{border-color:var(--bad);background:rgba(251,113,133,.10);box-shadow:0 0 0 1px rgba(251,113,133,.3)}
+.modcard.safe{border-color:rgba(74,222,128,.35)}
+.modcard .mt{font-weight:650;font-size:13.5px;margin-bottom:3px}
+.modcard .md{font-size:11.5px;color:var(--txt-faint);line-height:1.5}
+.modcard .secret{
+  font-family:var(--mono);font-size:10.5px;color:var(--acc);margin-top:6px;
+  padding-top:6px;border-top:1px dashed var(--stroke);
+}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--stroke);margin-bottom:16px;flex-wrap:wrap}
+.tab{
+  padding:9px 15px;font-size:13px;color:var(--txt-faint);cursor:pointer;
+  border-bottom:2px solid transparent;transition:.18s;font-weight:550;
+}
+.tab:hover{color:var(--txt-dim)}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tabpane{display:none}
+.tabpane.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- Code box ---------- */
+.codebox{
+  font-family:var(--mono);font-size:12px;background:rgba(4,7,14,.92);
+  border:1px solid var(--stroke);border-radius:11px;padding:14px;overflow-x:auto;
+  line-height:1.65;color:#cfe0ff;white-space:pre;
+}
+.codebox .c-kw{color:#c084fc}
+.codebox .c-fn{color:#5eead4}
+.codebox .c-st{color:#fda4af}
+.codebox .c-cm{color:#5b6b90;font-style:italic}
+.codebox .c-nm{color:#fbbf24}
+.codebox .hl{background:rgba(251,191,36,.14);display:inline-block;width:100%}
+
+/* ---------- Reveal ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- Misc ---------- */
+.scrollhint{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:var(--txt-faint);letter-spacing:.14em;text-transform:uppercase;
+  animation:bob 2.2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55}50%{transform:translateX(-50%) translateY(8px);opacity:1}}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--stroke-strong),transparent);margin:44px 0}
+.small{font-size:12px;color:var(--txt-faint)}
+.mono{font-family:var(--mono)}
+.center{text-align:center}
+.tag{font-family:var(--mono);font-size:11px;color:var(--txt-faint)}
+.hidden{display:none !important}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-faint);margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+footer{
+  border-top:1px solid var(--stroke);padding:40px 20px;text-align:center;
+  color:var(--txt-faint);font-size:12.5px;max-width:1180px;margin:60px auto 0;
+}
+</style>
+</head>
+<body>
+
+<div id="bgGrad"></div>
+<canvas id="bgfx"></canvas>
+<div id="progress"></div>
+
+<nav>
+  <div class="navinner">
+    <div class="brand">Parnas <span>1972</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================================ 0 HERO -->
+<section class="hero" id="s0">
+  <div class="badge b-acc" style="margin-bottom:18px">D. L. Parnas · Communications of the ACM · Dezember 1972</div>
+  <h1>Nach welchen Kriterien<br>zerlegt man ein System<br>in Module?</h1>
+  <p class="lead">
+    Ein Papier von 5 Seiten, das die Softwarewelt verändert hat. Es beantwortet eine Frage,
+    die klingt wie Geschmackssache — und zeigt, dass sie es nicht ist.
+    Hier lernst du sie <strong>durch Spielen</strong>: Schieberegler, Diagramme, Simulationen.
+    Kein Vorwissen außer Schulmathematik.
+  </p>
+
+  <div class="panel" style="margin-top:34px">
+    <div class="grid3">
+      <div>
+        <div class="badge b-acc3">Die Frage</div>
+        <h3 style="margin-top:10px">Wo schneidet man?</h3>
+        <p class="small">Jeder sagt „schreib modular!". Aber <em>niemand</em> sagte vorher, nach welcher Regel
+        man die Schnitte setzt. Parnas stellt genau diese Frage.</p>
+      </div>
+      <div>
+        <div class="badge b-acc2">Das Experiment</div>
+        <h3 style="margin-top:10px">Zwei Zerlegungen</h3>
+        <p class="small">Er nimmt ein winziges, konkretes Programm (einen KWIC-Index) und zerlegt es
+        auf zwei Arten. Dann misst er, was passiert, wenn sich Anforderungen ändern.</p>
+      </div>
+      <div>
+        <div class="badge b-acc">Die Antwort</div>
+        <h3 style="margin-top:10px">Information Hiding</h3>
+        <p class="small">Nicht nach Verarbeitungsschritten schneiden, sondern nach
+        <strong>Geheimnissen</strong>: Jedes Modul versteckt eine Entscheidung, die sich ändern könnte.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel tight" style="margin-top:6px">
+    <div class="small" style="line-height:1.9">
+      <strong style="color:var(--txt)">So funktioniert diese Seite:</strong>
+      Scrolle von oben nach unten. Jeder Abschnitt baut auf dem vorherigen auf.
+      Überall wo du einen <span class="badge b-acc2">Regler</span> oder
+      <span class="badge b-acc">Knopf</span> siehst: anfassen, ziehen, klicken.
+      Der Text ist absichtlich kurz — das Verständnis kommt aus den Bildern.
+    </div>
+  </div>
+
+  <div class="scrollhint">▼ Scrollen</div>
+</section>
+
+<!-- ============================================================ 1 PREREQ -->
+<section id="s1">
+  <h2><span class="num">00</span>Werkzeugkasten</h2>
+  <p class="lead">Fünf Begriffe, die über Schulmathematik hinausgehen. Jeder in einer Minute, interaktiv.
+  Danach ist im Paper kein einziges unbekanntes Wort mehr.</p>
+
+  <div class="panel">
+    <div class="tabs" id="preTabs">
+      <div class="tab active" data-pane="p1">A · Kombinatorische Explosion</div>
+      <div class="tab" data-pane="p2">B · Graph &amp; Partialordnung</div>
+      <div class="tab" data-pane="p3">C · Schnittstelle vs. Implementierung</div>
+      <div class="tab" data-pane="p4">D · Kopplung &amp; Kohäsion</div>
+      <div class="tab" data-pane="p5">E · KWIC-Index</div>
+    </div>
+
+    <!-- A -->
+    <div class="tabpane active" id="p1">
+      <div class="gridSide">
+        <div>
+          <h3>Warum Kommunikation Projekte tötet</h3>
+          <p>Wenn <strong>n</strong> Leute paarweise alles miteinander absprechen müssen, gibt es
+          <code>n·(n−1)/2</code> Gesprächskanäle. Das ist eine <em>quadratische</em> Funktion — bekannt          aus der Schule. Doppelt so viele Leute heißt <em>viermal</em> so viel Abstimmung.</p>
+          <p>Parnas' erstes versprochenes Ziel — „<em>development time should be shortened because separate
+          groups would work on each module with little need for communication</em>" — ist genau der Versuch,
+          diese Kurve zu brechen.</p>
+          <p class="small">Ziehe <strong>n</strong> und schau, wie die Kanäle explodieren. Schalte dann
+          <strong>Modularisierung</strong> ein: Die Leute werden in Teams von je <code>t</code> Personen gruppiert.
+          Innerhalb eines Teams redet jeder mit jedem; zwischen Teams redet nur je ein Vertreter —
+          <em>wenn</em> die Schnittstelle sauber ist.</p>
+          <div class="kpi" id="combKPI"></div>
+        </div>
+        <div>
+          <div class="ctl">
+            <label>Anzahl Entwickler <span class="val" id="vN">16</span></label>
+            <input type="range" id="sN" min="2" max="60" value="16">
+          </div>
+          <div class="ctl">
+            <label>Teamgröße pro Modul <span class="val" id="vT">4</span></label>
+            <input type="range" id="sT" min="1" max="12" value="4">
+          </div>
+          <label class="toggle"><input type="checkbox" id="cMod" checked> Modularisierung aktiv</label>
+          <canvas id="cvComb" height="300"></canvas>
+          <div class="legend">
+            <span><i style="background:#fb7185"></i>Kanal (unmodularisiert)</span>
+            <span><i style="background:#5eead4"></i>Kanal im Team</span>
+            <span><i style="background:#818cf8"></i>Kanal zwischen Teams</span>
+          </div>
+        </div>
+      </div>
+      <div id="plComb" style="height:280px;margin-top:14px"></div>
+    </div>
+
+    <!-- B -->
+    <div class="tabpane" id="p2">
+      <div class="gridSide">
+        <div>
+          <h3>Graph, „uses"-Relation, Partialordnung</h3>
+          <p>Ein <strong>Graph</strong> ist nur: Punkte (hier: Module) und Pfeile dazwischen.
+          Der Pfeil bedeutet bei Parnas <code>A benutzt B</code> bzw. <code>A hängt ab von B</code>.</p>
+          <p>Eine <strong>Partialordnung</strong> ist so ein Pfeilgeflecht <em>ohne Kreise</em>.
+          „Partiell" heißt: nicht jedes Paar ist vergleichbar — zwei Module können völlig unabhängig
+          nebeneinanderstehen. Genau das will man.</p>
+          <p>Gibt es einen <strong>Kreis</strong> (A braucht B, B braucht A), bricht das Konzept „Ebene"
+          zusammen: Man kann nichts mehr einzeln testen, nichts mehr abschneiden und wiederverwenden.</p>
+          <div class="callout quote">
+            „The existence of the hierarchical structure assures us that we can <em>prune</em> off the
+            upper levels of the tree and start a new tree on the old trunk."
+          </div>
+          <p class="small">Klicke Knoten an, um Pfeile zu ziehen (erst Quelle, dann Ziel).
+          Rechtsklick auf einen Pfeil löscht ihn.</p>
+          <div class="btnrow">
+            <button id="dagCycle">Kreis einbauen</button>
+            <button id="dagClean">Sauber machen</button>
+            <button id="dagPrune" class="primary">Obere Ebene abschneiden</button>
+          </div>
+        </div>
+        <div>
+          <canvas id="cvDag" height="360"></canvas>
+          <div class="panel tight" style="margin-top:10px">
+            <div id="dagStatus" class="small"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="tabpane" id="p3">
+      <div class="gridSide">
+        <div>
+          <h3>Schnittstelle ≠ Implementierung</h3>
+          <p>Die <strong>Schnittstelle</strong> ist der Vertrag: Welche Funktionen gibt es, was kommt rein,
+          was kommt raus. Die <strong>Implementierung</strong> ist, wie es drinnen gemacht wird.</p>
+          <p>Parnas' Kernbeobachtung: In Zerlegung 1 ist die Schnittstelle ein
+          <em>Speicherlayout</em> („vier Zeichen pro Wort, Index mit Startadressen") — das ist eine
+          Implementierungsentscheidung, die man allen Modulen ins Gesicht geschrieben hat.
+          In Zerlegung 2 ist die Schnittstelle <code>CHAR(r,w,c)</code> — eine Frage, keine Antwort.</p>
+          <p class="small">Drehe den Regler: Links = alles sichtbar (breite Schnittstelle),
+          rechts = nur Funktionsnamen sichtbar (schmale Schnittstelle).
+          Beobachte, wie viele Module von einer internen Änderung getroffen werden.</p>
+          <div class="kpi" id="ifaceKPI"></div>
+        </div>
+        <div>
+          <div class="ctl">
+            <label>Verborgenheit der Implementierung <span class="val" id="vHide">50%</span></label>
+            <input type="range" id="sHide" min="0" max="100" value="50">
+          </div>
+          <canvas id="cvIface" height="330"></canvas>
+          <div class="legend">
+            <span><i style="background:#fb7185"></i>durchgesickerte Annahme</span>
+            <span><i style="background:#5eead4"></i>Funktionsaufruf</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D -->
+    <div class="tabpane" id="p4">
+      <div class="gridSide">
+        <div>
+          <h3>Kopplung &amp; Kohäsion</h3>
+          <p><strong>Kopplung</strong> = wie stark Module aneinander kleben (wenige/viele geteilte Annahmen).
+          <strong>Kohäsion</strong> = wie sehr das, was <em>in</em> einem Modul steckt, zusammengehört.</p>
+          <p>Das Ziel heißt seit 1972: <span class="badge b-good">niedrige Kopplung</span>
+          <span class="badge b-good">hohe Kohäsion</span>. Parnas gibt das <em>Verfahren</em> dafür:
+          Gruppiere nach <strong>Geheimnis</strong>, nicht nach Zeitpunkt.</p>
+          <p class="small">Zieh die beiden Regler und beobachte links die Simulation:
+          Jeder Punkt ist eine Änderungsanfrage; die Balken zeigen, wie viel Arbeit sie verursacht.</p>
+          <div class="kpi" id="ccKPI"></div>
+        </div>
+        <div>
+          <div class="ctl">
+            <label>Kopplung <span class="val" id="vCoup">60%</span></label>
+            <input type="range" id="sCoup" min="0" max="100" value="60">
+          </div>
+          <div class="ctl">
+            <label>Kohäsion <span class="val" id="vCoh">40%</span></label>
+            <input type="range" id="sCoh" min="0" max="100" value="40">
+          </div>
+          <canvas id="cvCC" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- E -->
+    <div class="tabpane" id="p5">
+      <div class="gridSide">
+        <div>
+          <h3>Was ist ein KWIC-Index?</h3>
+          <p>KWIC = <em>Key Word In Context</em>. Vor Volltextsuche war das die Art, einen
+          Stichwortkatalog zu bauen. Parnas' Definition im Paper:</p>
+          <div class="callout quote">
+            „The KWIC index system accepts an ordered set of lines, each line is an ordered set of words …
+            Any line may be <em>circularly shifted</em> by repeatedly removing the first word and appending it
+            at the end of the line. The KWIC index system outputs a listing of all circular shifts of all lines
+            in alphabetical order."
+          </div>
+          <ol>
+            <li><strong>Einlesen</strong> — Zeilen aus Wörtern.</li>
+            <li><strong>Zyklisch verschieben</strong> — jedes Wort darf einmal vorne stehen.</li>
+            <li><strong>Alphabetisch sortieren</strong> — über alle Shifts aller Zeilen.</li>
+            <li><strong>Ausgeben</strong>.</li>
+          </ol>
+          <p class="small">Tippe eigene Zeilen ein und schau zu, wie die Maschine arbeitet.</p>
+          <textarea id="kwicIn" rows="4">the quick brown fox
+pack my box
+software is hard</textarea>
+          <div class="btnrow">
+            <button id="kwicStep" class="primary">▶ Schritt für Schritt</button>
+            <button id="kwicAll">Alles sofort</button>
+            <button id="kwicReset">Zurücksetzen</button>
+          </div>
+          <div class="steps" id="kwicSteps">
+            <div class="step active" data-k="0">1 · Einlesen</div>
+            <div class="step" data-k="1">2 · Shiften</div>
+            <div class="step" data-k="2">3 · Sortieren</div>
+            <div class="step" data-k="3">4 · Ausgeben</div>
+          </div>
+        </div>
+        <div>
+          <canvas id="cvKwic" height="420"></canvas>
+          <div class="small" id="kwicNote" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 2 MOTIVATION -->
+<section id="s2">
+  <h2><span class="num">01</span>Die Motivation: Ein Versprechen ohne Anleitung</h2>
+  <p class="lead">1970 stand in jedem Lehrbuch, dass man modular programmieren soll.
+  Parnas zitiert Gauthier &amp; Pont — und zeigt dann auf die Lücke.</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="badge b-acc3">Zitat aus dem Paper</div>
+      <div class="callout quote" style="margin-top:12px">
+        „A well-defined segmentation of the project effort ensures system modularity.
+        <strong>Each task forms a separate, distinct program module.</strong> … At checkout time the
+        integrity of the module is tested independently …"
+      </div>
+      <p>Klingt gut. Aber Parnas' trockener Kommentar:</p>
+      <div class="callout warn">
+        „<strong>Usually nothing is said about the criteria to be used in dividing the system into modules.</strong>"
+      </div>
+      <p>Das ist die ganze Motivation. Alle sind sich einig, <em>dass</em> man Module will.
+      Niemand sagt, <em>wie</em> man sie schneidet. Und der Satz „each task forms a module" ist
+      bereits ein verstecktes — und laut Parnas falsches — Kriterium.</p>
+    </div>
+
+    <div class="panel">
+      <div class="badge b-acc2">Die drei versprochenen Vorteile</div>
+      <p class="small" style="margin-top:12px">Klicke auf jeden, um zu sehen, woran er hängt:</p>
+      <div id="benefitList"></div>
+      <div class="panel tight" style="margin-top:12px;background:rgba(6,10,20,.6)">
+        <div id="benefitDetail" class="small"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Das Wichtigste gleich am Anfang: Was ist hier ein „Modul"?</h3>
+    <div class="gridSideL">
+      <div>
+        <div class="callout idea">
+          „In this context <strong>module is considered to be a responsibility assignment rather than a
+          subprogram</strong>."
+        </div>
+        <p class="small">Ein Modul ist bei Parnas <em>keine Datei</em> und <em>keine Funktion</em>.
+        Es ist eine <strong>Zuständigkeit</strong>: „Du bist verantwortlich für dieses eine Geheimnis."</p>
+      </div>
+      <div>
+        <canvas id="cvRespon" height="230"></canvas>
+        <div class="btnrow">
+          <button id="responToggle" class="primary">Sichtweise wechseln</button>
+          <span class="small" id="responLabel" style="align-self:center"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 3 DAS EXPERIMENT -->
+<section id="s3">
+  <h2><span class="num">02</span>Das konkrete Experiment</h2>
+  <p class="lead">Parnas nimmt bewusst ein <em>winziges</em> System — den KWIC-Index — und behandelt es,
+  „als ob es ein großes Projekt wäre". Dann baut er zwei Zerlegungen und vergleicht sie.</p>
+
+  <div class="callout">
+    <h4>Warum so klein?</h4>
+    „Such a system could be produced by a good programmer within a week or two. Consequently,
+    <strong>none of the difficulties motivating modular programming are important for this system.</strong>
+    Because it is impractical to treat a large system thoroughly, we must go through the exercise of
+    treating this problem as if it were a large project."
+    <div class="small" style="margin-top:8px;font-style:normal;color:var(--txt-faint)">
+      → Das Beispiel ist ein <em>Modell</em>, kein Anwendungsfall. Alles, was man daran sieht,
+      skaliert auf Systeme mit 500 Modulen.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die beiden Zerlegungen nebeneinander</h3>
+    <p class="small">Fahre über ein Modul, um sein <strong>Geheimnis</strong> und seine
+    <strong>Schnittstelle</strong> zu sehen. Beide Zerlegungen lösen dasselbe Problem —
+    und könnten nach dem Kompilieren sogar identischen Maschinencode ergeben.</p>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <div class="badge b-bad">Modularisierung 1 · „Flussdiagramm"</div>
+        <div id="dec1List" style="margin-top:12px;display:grid;gap:9px"></div>
+      </div>
+      <div>
+        <div class="badge b-good">Modularisierung 2 · „Information Hiding"</div>
+        <div id="dec2List" style="margin-top:12px;display:grid;gap:9px"></div>
+      </div>
+    </div>
+    <div class="panel tight" style="margin-top:14px;background:rgba(6,10,20,.6)">
+      <div id="modDetail" class="small">Zeiger über ein Modul bewegen …</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Dieselbe Maschine, zwei Schnittmuster</h3>
+    <p class="small">Parnas betont: „A system built according to decomposition 1 could conceivably be
+    <strong>identical after assembly</strong> to one built according to decomposition 2."
+    Der Unterschied liegt nicht im Laufzeitverhalten, sondern in der <em>Arbeitsaufteilung</em>
+    und den <em>Schnittstellen</em>. Schiebe den Regler, um dasselbe Objekt anders zu zerschneiden.</p>
+    <div class="ctl" style="max-width:420px">
+      <label>Schnittmuster <span class="val" id="vCut">Zerlegung 1</span></label>
+      <input type="range" id="sCut" min="0" max="100" value="0">
+    </div>
+    <canvas id="cvCut" height="380"></canvas>
+    <div class="legend">
+      <span><i style="background:#fb7185"></i>Schnitt nach Verarbeitungsschritt (Zeit)</span>
+      <span><i style="background:#5eead4"></i>Schnitt nach Geheimnis (Entscheidung)</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 4 DIE 5 ÄNDERUNGEN -->
+<section id="s4">
+  <h2><span class="num">03</span>Der Test: fünf Änderungen</h2>
+  <p class="lead">Jetzt kommt der eigentliche Versuch. Parnas listet fünf Entwurfsentscheidungen auf,
+  die „questionable and likely to change" sind — und zählt, wie viele Module jede Änderung trifft.</p>
+
+  <div class="panel">
+    <div class="gridSideL">
+      <div>
+        <h4>Änderung auswählen</h4>
+        <div id="changeList" style="display:grid;gap:8px"></div>
+        <div class="btnrow" style="margin-top:14px">
+          <button id="changeAll" class="primary">Alle fünf nacheinander</button>
+        </div>
+        <div class="panel tight" style="margin-top:12px;background:rgba(6,10,20,.6)">
+          <div id="changeText" class="small"></div>
+        </div>
+      </div>
+      <div>
+        <div class="grid2">
+          <div>
+            <div class="badge b-bad">Zerlegung 1</div>
+            <div id="impact1" style="margin-top:12px;display:grid;gap:8px"></div>
+          </div>
+          <div>
+            <div class="badge b-good">Zerlegung 2</div>
+            <div id="impact2" style="margin-top:12px;display:grid;gap:8px"></div>
+          </div>
+        </div>
+        <div class="kpi" id="changeKPI" style="margin-top:16px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die Bilanz auf einen Blick</h3>
+    <p class="small">Höhe = Anzahl betroffener Module. Das ist der ganze empirische Kern des Papers.</p>
+    <div id="plChanges" style="height:380px"></div>
+  </div>
+
+  <div class="panel">
+    <h3>Änderungskosten über die Lebenszeit</h3>
+    <p class="small">Software wird nicht einmal geschrieben, sondern jahrelang geändert.
+    Stelle ein, wie viele Änderungen pro Jahr anfallen und wie teuer ein getroffenes Modul ist —
+    und sieh, wie die beiden Kurven auseinanderlaufen.</p>
+    <div class="grid2">
+      <div>
+        <div class="ctl">
+          <label>Änderungen pro Jahr <span class="val" id="vRate">12</span></label>
+          <input type="range" id="sRate" min="1" max="60" value="12">
+        </div>
+        <div class="ctl">
+          <label>Kosten pro betroffenem Modul (Personentage) <span class="val" id="vCost">3</span></label>
+          <input type="range" id="sCost" min="1" max="20" value="3">
+        </div>
+        <div class="ctl">
+          <label>Jahre <span class="val" id="vYears">8</span></label>
+          <input type="range" id="sYears" min="1" max="20" value="8">
+        </div>
+        <div class="ctl">
+          <label>Anfangs-Mehraufwand Zerlegung 2 (Tage) <span class="val" id="vUp">25</span></label>
+          <input type="range" id="sUp" min="0" max="120" value="25">
+        </div>
+        <div class="kpi" id="lifeKPI"></div>
+      </div>
+      <div id="plLife" style="height:340px"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 5 LIVE KWIC -->
+<section id="s5">
+  <h2><span class="num">04</span>Zum Anfassen: beide Systeme live</h2>
+  <p class="lead">Hier laufen beide Zerlegungen wirklich. Du kannst eine Entwurfsentscheidung ändern
+  und sehen, welche Module rot werden — also neu geschrieben werden müssen.</p>
+
+  <div class="panel">
+    <div class="gridSideL">
+      <div>
+        <h4>Eingabezeilen</h4>
+        <textarea id="liveIn" rows="4">the quick brown fox
+pack my box
+software is hard</textarea>
+        <h4 style="margin-top:16px">Entwurfsentscheidungen drehen</h4>
+        <div class="ctl">
+          <label>Zeichen pro Speicherwort <span class="val" id="vPack">4</span></label>
+          <input type="range" id="sPack" min="1" max="8" value="4">
+        </div>
+        <label class="toggle"><input type="checkbox" id="cCore" checked> Alle Zeilen im Hauptspeicher</label>
+        <label class="toggle"><input type="checkbox" id="cIndex" checked> Shifts nur als Index (nicht materialisiert)</label>
+        <label class="toggle"><input type="checkbox" id="cSortOnce" checked> Einmal komplett sortieren</label>
+        <div class="btnrow">
+          <button id="liveRun" class="primary">▶ Ausführen</button>
+          <button id="liveReset">Standard</button>
+        </div>
+        <div class="panel tight" style="margin-top:12px;background:rgba(6,10,20,.6)">
+          <div id="liveVerdict" class="small"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tabs" id="liveTabs">
+          <div class="tab active" data-pane="lv1">Zerlegung 1 im Betrieb</div>
+          <div class="tab" data-pane="lv2">Zerlegung 2 im Betrieb</div>
+          <div class="tab" data-pane="lv3">Ausgabe</div>
+        </div>
+        <div class="tabpane active" id="lv1">
+          <canvas id="cvLive1" height="330"></canvas>
+          <div class="codebox" id="code1" style="margin-top:12px"></div>
+        </div>
+        <div class="tabpane" id="lv2">
+          <canvas id="cvLive2" height="330"></canvas>
+          <div class="codebox" id="code2" style="margin-top:12px"></div>
+        </div>
+        <div class="tabpane" id="lv3">
+          <div class="codebox" id="liveOut" style="max-height:430px;overflow:auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 6 KRITERIEN -->
+<section id="s6">
+  <h2><span class="num">05</span>Die Kriterien — die eigentliche Antwort</h2>
+  <p class="lead">Jetzt sagt Parnas, was er die ganze Zeit vorgeführt hat.
+  Zwei Sätze, die das Fach verändert haben.</p>
+
+  <div class="grid2">
+    <div class="panel" style="border-color:rgba(251,113,133,.35)">
+      <div class="badge b-bad">Kriterium 1 (das übliche)</div>
+      <h3>„Mach jeden Verarbeitungsschritt zu einem Modul"</h3>
+      <div class="callout quote" style="border-color:var(--bad);background:rgba(251,113,133,.05)">
+        „In the first decomposition the criterion used was to <strong>make each major step in the processing
+        a module</strong>. One might say that to get the first decomposition <strong>one makes a flowchart</strong>."
+      </div>
+      <p>Warum tun das alle? Weil wir es so gelernt haben: „Beginne mit einem groben Flussdiagramm
+      und arbeite dich zur Implementierung vor."</p>
+      <div class="callout warn">
+        „The flowchart was a useful abstraction for systems with on the order of
+        <strong>5,000–10,000 instructions</strong>, but as we move beyond that it does not appear to be
+        sufficient; <strong>something additional is needed</strong>."
+      </div>
+      <p class="small">Parnas sagt nicht „Flussdiagramme sind böse". Er sagt: Sie sind ein
+      <em>Maßstabsproblem</em>. Unterhalb von ~10 000 Instruktionen reicht die Abstraktion.
+      Darüber nicht mehr.</p>
+    </div>
+
+    <div class="panel" style="border-color:rgba(74,222,128,.35)">
+      <div class="badge b-good">Kriterium 2 (Parnas' Vorschlag)</div>
+      <h3>„Jedes Modul versteckt eine Entscheidung"</h3>
+      <div class="callout quote" style="border-color:var(--good);background:rgba(74,222,128,.05)">
+        „<strong>Every module in the second decomposition is characterized by its knowledge of a design
+        decision which it hides from all others.</strong> Its interface or definition was chosen to reveal
+        as little as possible about its inner workings."
+      </div>
+      <p>Und das Rezept zum Mitnehmen aus der Conclusion:</p>
+      <div class="callout" style="border-color:var(--good)">
+        „We propose instead that one <strong>begins with a list of difficult design decisions or design
+        decisions which are likely to change</strong>. Each module is then designed to hide such a decision
+        from the others."
+      </div>
+      <p class="small">Und der Satz, der erklärt, warum Module dann <em>nicht</em> wie Schritte aussehen:
+      „Since, in most cases, <strong>design decisions transcend time of execution</strong>, modules will not
+      correspond to steps in the processing."</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die Flussdiagramm-Skalierungsgrenze — selber nachziehen</h3>
+    <p class="small">Die Fläche unter einem Flussdiagramm wächst mit der Systemgröße, aber das, was ein
+    Mensch gleichzeitig im Kopf halten kann, nicht. Schiebe die Systemgröße über Parnas' Grenze von
+    5 000–10 000 Instruktionen und sieh, was passiert.</p>
+    <div class="grid2">
+      <div>
+        <div class="ctl">
+          <label>Systemgröße (Instruktionen) <span class="val" id="vSize">8.000</span></label>
+          <input type="range" id="sSize" min="500" max="500000" value="8000" step="500">
+        </div>
+        <div class="kpi" id="scaleKPI"></div>
+        <div class="panel tight" style="background:rgba(6,10,20,.6)">
+          <div id="scaleVerdict" class="small"></div>
+        </div>
+      </div>
+      <div>
+        <canvas id="cvScale" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Das Geheimnis-Labor: Baue selbst eine Zerlegung</h3>
+    <p class="small">Links stehen <strong>Entwurfsentscheidungen</strong>, die sich ändern können.
+    Ziehe jede in ein Modul. Regel von Parnas: <em>Eine Entscheidung gehört in genau ein Modul.</em>
+    Liegt eine Entscheidung in mehreren Modulen oder in keinem, zahlst du bei jeder Änderung.</p>
+    <div class="gridSideL">
+      <div>
+        <h4>Entscheidungen</h4>
+        <div id="secretPool" style="display:grid;gap:7px"></div>
+        <div class="btnrow">
+          <button id="labAuto" class="primary">Parnas' Lösung zeigen</button>
+          <button id="labBad" class="danger">Flussdiagramm-Lösung</button>
+          <button id="labClear">Leeren</button>
+        </div>
+      </div>
+      <div>
+        <div id="labModules" class="grid3"></div>
+        <div class="kpi" id="labKPI" style="margin-top:14px"></div>
+        <div class="panel tight" style="background:rgba(6,10,20,.6)">
+          <div id="labVerdict" class="small"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 7 SELBSTKRITIK -->
+<section id="s7">
+  <h2><span class="num">06</span>Parnas kritisiert sich selbst</h2>
+  <p class="lead">Der ehrlichste Abschnitt des Papers: Er findet einen <strong>Designfehler in seiner
+  eigenen</strong> guten Lösung — und nennt ihn beim Namen.</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="callout quote">
+        „While we carefully hid the method of storing or calculating the list of circular shifts,
+        <strong>we specified an order to that list</strong>. … By prescribing the order for the shifts
+        we have given more information than necessary … <strong>Our failure to do this … must clearly be
+        classified as a design error.</strong>"
+      </div>
+      <h4>Was war zu viel verraten?</h4>
+      <p>Die ursprüngliche Spezifikation von <code>Circular Shifter</code> legte fest:</p>
+      <ol>
+        <li>Shifts von Zeile <em>i</em> kommen vor denen von Zeile <em>j</em>, wenn <code>i &lt; j</code>.</li>
+        <li>Erster Shift = Originalzeile, zweiter = eine Wortrotation weiter, …</li>
+      </ol>
+      <p>Nötig gewesen wären nur drei Zusagen:</p>
+      <ul>
+        <li>alle Shifts existieren in der Tabelle,</li>
+        <li>keiner doppelt,</li>
+        <li>man kann zu jedem Shift die Originalzeile zurückfinden.</li>
+      </ul>
+      <div class="callout idea">
+        Die Folge: Ein System, in dem der Shifter die Shifts <em>schon alphabetisch</em> erzeugt,
+        <code>ALPH</code> leer ist und <code>ITH(i)</code> einfach <code>i</code> zurückgibt,
+        war <strong>ausgeschlossen</strong> — ohne Not.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Der Raum der erlaubten Implementierungen</h3>
+      <p class="small">Jede zusätzliche Zusage in der Schnittstelle schrumpft die Menge der Systeme,
+      die du bauen kannst, <em>ohne die Definition zu ändern</em>. Schalte die Zusagen an und aus.</p>
+      <label class="toggle"><input type="checkbox" id="pc1" checked> Zusage A: Alle Shifts existieren</label>
+      <label class="toggle"><input type="checkbox" id="pc2" checked> Zusage B: Keiner doppelt</label>
+      <label class="toggle"><input type="checkbox" id="pc3" checked> Zusage C: Originalzeile auffindbar</label>
+      <label class="toggle"><input type="checkbox" id="pc4"> <span style="color:var(--bad)">Zusage D: Reihenfolge nach Zeilennummer</span></label>
+      <label class="toggle"><input type="checkbox" id="pc5"> <span style="color:var(--bad)">Zusage E: Erster Shift = Originalzeile</span></label>
+      <canvas id="cvSpace" height="300"></canvas>
+      <div class="kpi" id="spaceKPI"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 8 FÜNF REGELN -->
+<section id="s8">
+  <h2><span class="num">07</span>Fünf konkrete Faustregeln</h2>
+  <p class="lead">Nach dem allgemeinen Kriterium nennt Parnas fünf <em>spezifische</em> Zerlegungen,
+  „which seem advisable". Jede ist bis heute gültig — klicke sie durch.</p>
+
+  <div class="panel">
+    <div class="steps" id="ruleSteps"></div>
+    <div class="gridSide">
+      <div>
+        <div id="ruleText"></div>
+      </div>
+      <div>
+        <canvas id="cvRule" height="300"></canvas>
+        <div class="small" id="ruleCaption" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 9 EFFIZIENZ -->
+<section id="s9">
+  <h2><span class="num">08</span>Der Preis: Effizienz</h2>
+  <p class="lead">Parnas verschweigt den Nachteil nicht. Information Hiding kostet Funktionsaufrufe —
+  und 1972 war ein Funktionsaufruf teuer.</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="callout warn">
+        „If we are not careful the second decomposition will prove to be <strong>much less efficient</strong>
+        than the first. If each of the functions is actually implemented as a procedure with an elaborate
+        calling sequence there will be a great deal of such calling due to the repeated switching between
+        modules."
+      </div>
+      <p>Warum trifft es nur Zerlegung 2? Weil dort <code>CHAR(r,w,c)</code> für
+      <em>jedes einzelne Zeichen</em> gerufen wird. Zerlegung 1 greift stattdessen direkt in den
+      geteilten Speicher — „relatively infrequent transfer of control between modules".</p>
+      <h4>Parnas' Ausweg</h4>
+      <div class="callout idea">
+        „We must implement these modules in an <strong>unusual way</strong>. In many cases the routines
+        will be best <strong>inserted into the code by an assembler</strong> … programs may be written as
+        if the functions were subroutines, but assembled by whatever implementation is appropriate."
+      </div>
+      <p class="small">Das ist — 1972 formuliert — exakt das, was heute <code>inline</code>,
+      Makro-Expansion, Link-Time-Optimization und Monomorphisierung tun. Und der Schlusssatz der
+      Conclusion zieht die Konsequenz: „we must <strong>abandon the assumption that a module is one or
+      more subroutines</strong>."</p>
+    </div>
+
+    <div class="panel">
+      <h3>Aufrufkosten simulieren</h3>
+      <p class="small">Stelle ein, wie teuer ein Funktionsaufruf relativ zu einem Speicherzugriff ist,
+      und ob der Assembler/Compiler inlinen darf.</p>
+      <div class="ctl">
+        <label>Kosten eines Aufrufs (in Speicherzugriffen) <span class="val" id="vCall">12</span></label>
+        <input type="range" id="sCall" min="0" max="40" value="12">
+      </div>
+      <div class="ctl">
+        <label>Datenmenge (Zeichen) <span class="val" id="vData">2.000</span></label>
+        <input type="range" id="sData" min="100" max="20000" value="2000" step="100">
+      </div>
+      <label class="toggle"><input type="checkbox" id="cInline"> Inlining durch Assembler erlaubt (Parnas' Vorschlag)</label>
+      <div id="plEff" style="height:280px;margin-top:10px"></div>
+      <div class="kpi" id="effKPI"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 10 HIERARCHIE -->
+<section id="s10">
+  <h2><span class="num">09</span>Hierarchie ist etwas <em>anderes</em></h2>
+  <p class="lead">Ein Abschnitt, den fast alle überlesen: Gute Zerlegung und hierarchische Struktur
+  sind <strong>zwei unabhängige</strong> Eigenschaften.</p>
+
+  <div class="callout quote">
+    „Since it is conceivable that we could have a system with the type of decomposition shown in version 1
+    (important design decisions in the interfaces) but <strong>retaining a hierarchical structure</strong>,
+    we must conclude that hierarchical structure and ‚clean' decomposition are <strong>two desirable but
+    independent properties</strong> of a system structure."
+  </div>
+
+  <div class="panel">
+    <h3>Die vier Quadranten</h3>
+    <p class="small">Schiebe den Punkt mit den Reglern durch die Ebene. Jeder Quadrant ist ein echtes
+    System, das es gibt.</p>
+    <div class="grid2">
+      <div>
+        <div class="ctl">
+          <label>Sauberkeit der Zerlegung (Information Hiding) <span class="val" id="vQx">20%</span></label>
+          <input type="range" id="sQx" min="0" max="100" value="20">
+        </div>
+        <div class="ctl">
+          <label>Hierarchie (azyklische „uses"-Relation) <span class="val" id="vQy">80%</span></label>
+          <input type="range" id="sQy" min="0" max="100" value="80">
+        </div>
+        <div class="panel tight" style="background:rgba(6,10,20,.6)">
+          <div id="quadText" class="small"></div>
+        </div>
+      </div>
+      <div>
+        <canvas id="cvQuad" height="340"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Die Ebenen in Zerlegung 2 — und das „Pruning"</h3>
+    <p class="small">Parnas rechnet die Ebenen konkret vor: Symboltabelle (Level 1, falls vorhanden),
+    Line Storage, dann Input und Circular Shifter, dann Output und Alphabetizer.
+    Der Nutzen: „we are able to <strong>cut off the upper levels</strong> and still have a usable and
+    useful product."</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cvLevels" height="360"></canvas>
+        <div class="legend">
+          <span><i style="background:#5eead4"></i>bleibt erhalten</span>
+          <span><i style="background:#334155"></i>abgeschnitten</span>
+        </div>
+      </div>
+      <div>
+        <div class="ctl">
+          <label>Schnitthöhe („prune") <span class="val" id="vPrune">keine</span></label>
+          <input type="range" id="sPrune" min="0" max="4" value="0">
+        </div>
+        <label class="toggle"><input type="checkbox" id="cSym" checked> Symboltabellen-Modul vorhanden</label>
+        <div class="panel tight" style="background:rgba(6,10,20,.6);margin-top:12px">
+          <div id="pruneText" class="small"></div>
+        </div>
+        <div class="callout quote" style="margin-top:14px">
+          „The existence of the hierarchical structure assures us that we can ‚prune' off the upper levels
+          of the tree and <strong>start a new tree on the old trunk</strong>."
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 11 COMPILER -->
+<section id="s11">
+  <h2><span class="num">10</span>Der zweite Beweis: Compiler <em>und</em> Interpreter</h2>
+  <p class="lead">Parnas' zweites Beispiel ist das stärkste Argument im ganzen Paper —
+  und wird fast nie zitiert.</p>
+
+  <div class="panel">
+    <div class="callout quote">
+      „We discovered that our decomposition was valid for a <strong>pure compiler and several varieties of
+      interpretors</strong> for the language. Although there would be deep and substantial differences in
+      the final running representations … we found that the decisions implicit in the early decomposition
+      held for all."
+    </div>
+    <p>Er baute einen Übersetzer für Markov-Algorithmen. Hätte er klassisch zerlegt
+    (<em>Syntax-Erkenner → Codegenerator → Laufzeitroutinen</em>), wäre die Zerlegung nur für den
+    Compiler gültig gewesen. Weil er nach Geheimnissen schnitt — Registerdarstellung,
+    Suchalgorithmus, Regelinterpretation — galt sie für <strong>alle</strong> Varianten.</p>
+    <p class="small">Schalte unten zwischen Compiler und Interpreter um und vergleiche, welche Module
+    überleben.</p>
+    <div class="btnrow">
+      <button class="transbtn on" data-t="0">Reiner Compiler</button>
+      <button class="transbtn" data-t="1">Interpreter</button>
+      <button class="transbtn" data-t="2">Hybrid (Bytecode)</button>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="badge b-bad">Klassische Zerlegung (nach Phasen)</div>
+        <canvas id="cvCompA" height="250"></canvas>
+      </div>
+      <div>
+        <div class="badge b-good">Parnas-Zerlegung (nach Geheimnissen)</div>
+        <canvas id="cvCompB" height="250"></canvas>
+      </div>
+    </div>
+    <div class="kpi" id="compKPI"></div>
+    <div class="panel tight" style="background:rgba(6,10,20,.6)">
+      <div id="compText" class="small"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ 12 FAZIT -->
+<section id="s12">
+  <h2><span class="num">11</span>Die Antwort auf die Titelfrage</h2>
+
+  <div class="panel" style="border-color:var(--acc)">
+    <div class="badge b-acc">Conclusion, wörtlich</div>
+    <div class="callout" style="margin-top:14px;font-size:15px">
+      „We have tried to demonstrate by these examples that it is <strong>almost always incorrect to begin
+      the decomposition of a system into modules on the basis of a flowchart</strong>. We propose instead
+      that one begins with a <strong>list of difficult design decisions or design decisions which are likely
+      to change</strong>. Each module is then designed to <strong>hide such a decision from the others</strong>.
+      Since, in most cases, design decisions transcend time of execution, modules will not correspond to
+      steps in the processing. To achieve an efficient implementation we must abandon the assumption that a
+      module is one or more subroutines, and instead allow subroutines and programs to be assembled
+      collections of code from various modules."
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Das gesamte Paper als eine Landkarte</h3>
+    <p class="small">Klicke auf einen Knoten, um zum Abschnitt zu springen. Die Pfeile zeigen den
+    Gedankengang: Frage → Experiment → Messung → Kriterium → Konsequenzen.</p>
+    <canvas id="cvMap" height="440"></canvas>
+  </div>
+
+  <div class="grid3">
+    <div class="panel">
+      <div class="badge b-acc3">Welche Probleme löst es?</div>
+      <ul class="small" style="margin-top:12px">
+        <li><strong>Managerial:</strong> Teams können früher unabhängig starten, weil Schnittstellen nur
+        Funktionsnamen und Parameter sind — keine Tabellenformate, die gemeinsam entworfen werden müssen.</li>
+        <li><strong>Flexibilität:</strong> Eine Änderung trifft ein Modul statt alle.</li>
+        <li><strong>Verständlichkeit:</strong> Man kann ein Modul allein lesen. Bei Zerlegung 1 gilt:
+        „The system will only be comprehensible as a whole."</li>
+        <li><strong>Wiederverwendung:</strong> Untere Ebenen abschneiden und neu bebauen.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="badge b-acc2">Was ist die Idee?</div>
+      <p class="small" style="margin-top:12px">Ein Modul ist <strong>keine Phase</strong> und
+      <strong>keine Subroutine</strong>, sondern eine <strong>Zuständigkeit für ein Geheimnis</strong>.
+      Die Schnittstelle ist bewusst arm an Information: „chosen to reveal as little as possible about its
+      inner workings."</p>
+      <p class="small">Daraus folgt automatisch, dass Module <em>nicht</em> wie Kästen im Flussdiagramm
+      aussehen — denn Entscheidungen überdauern die Ausführungszeit.</p>
+    </div>
+    <div class="panel">
+      <div class="badge b-acc">Was ist heute davon übrig?</div>
+      <ul class="small" style="margin-top:12px">
+        <li><code>private</code> / <code>public</code> in jeder Sprache</li>
+        <li>Abstrakte Datentypen, Klassen, Interfaces</li>
+        <li>Microservice-Grenzen entlang von Geschäftsentscheidungen</li>
+        <li>Hardware-Abstraktionsschichten</li>
+        <li>„Encapsulation", „Separation of Concerns", „Single Responsibility"</li>
+      </ul>
+      <p class="small">Alles Nachfahren von fünf Seiten aus dem Dezember 1972.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Selbsttest</h3>
+    <p class="small">Sechs Fragen. Keine Punkte, keine Anmeldung — nur ob du's verstanden hast.</p>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  D. L. Parnas, <em>On the Criteria To Be Used in Decomposing Systems into Modules</em>,
+  Communications of the ACM 15(12), Dezember 1972, S. 1053–1058.<br>
+  Interaktive Aufbereitung · alle Zitate wörtlich aus dem Originaltext.
+</footer>
+
+<script>
+/* ============================================================
+   GLOBALS & HELPERS
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=n=>n.toLocaleString('de-DE');
+const C={acc:'#5eead4',acc2:'#818cf8',acc3:'#f472b6',warn:'#fbbf24',bad:'#fb7185',good:'#4ade80',dim:'#6b7da6',txt:'#e8edfb',slate:'#334155'};
+
+function dpi(cv){
+  const r=window.devicePixelRatio||1;
+  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'))||300;
+  cv.width=w*r; cv.height=h*r;
+  cv.style.height=h+'px';
+  const x=cv.getContext('2d');
+  x.setTransform(r,0,0,r,0,0);
+  return {x,w,h};
+}
+function rr(x,a,b,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  x.beginPath();
+  x.moveTo(a+r,b);x.lineTo(a+w-r,b);x.quadraticCurveTo(a+w,b,a+w,b+r);
+  x.lineTo(a+w,b+h-r);x.quadraticCurveTo(a+w,b+h,a+w-r,b+h);
+  x.lineTo(a+r,b+h);x.quadraticCurveTo(a,b+h,a,b+h-r);
+  x.lineTo(a,b+r);x.quadraticCurveTo(a,b,a+r,b);x.closePath();
+}
+function arrow(x,x1,y1,x2,y2,col,wd=1.6,head=8){
+  x.strokeStyle=col;x.fillStyle=col;x.lineWidth=wd;
+  x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  x.beginPath();
+  x.moveTo(x2,y2);
+  x.lineTo(x2-head*Math.cos(a-.4),y2-head*Math.sin(a-.4));
+  x.lineTo(x2-head*Math.cos(a+.4),y2-head*Math.sin(a+.4));
+  x.closePath();x.fill();
+}
+function curve(x,x1,y1,x2,y2,col,wd=1.6,bend=.3){
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  const dx=x2-x1, dy=y2-y1;
+  const cx=mx-dy*bend, cy=my+dx*bend;
+  x.strokeStyle=col;x.lineWidth=wd;
+  x.beginPath();x.moveTo(x1,y1);x.quadraticCurveTo(cx,cy,x2,y2);x.stroke();
+  const a=Math.atan2(y2-cy,x2-cx);
+  x.fillStyle=col;x.beginPath();
+  x.moveTo(x2,y2);
+  x.lineTo(x2-9*Math.cos(a-.4),y2-9*Math.sin(a-.4));
+  x.lineTo(x2-9*Math.cos(a+.4),y2-9*Math.sin(a+.4));
+  x.closePath();x.fill();
+}
+function txt(x,s,px,py,{size=12,col=C.txt,align='left',baseline='middle',weight=400,font='Inter'}={}){
+  x.fillStyle=col;x.textAlign=align;x.textBaseline=baseline;
+  x.font=`${weight} ${size}px ${font==='mono'?"'JetBrains Mono',monospace":"'Inter',sans-serif"}`;
+  x.fillText(s,px,py);
+}
+const PLOTCFG={displayModeBar:false,responsive:true};
+const PLOTLAY={
+  paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:'#9fb0d4',family:'Inter,sans-serif',size:11},
+  margin:{l:52,r:18,t:28,b:42},
+  xaxis:{gridcolor:'rgba(130,160,230,.12)',zerolinecolor:'rgba(130,160,230,.22)'},
+  yaxis:{gridcolor:'rgba(130,160,230,.12)',zerolinecolor:'rgba(130,160,230,.22)'},
+  legend:{orientation:'h',y:1.16,x:0,bgcolor:'rgba(0,0,0,0)'}
+};
+
+/* ============================================================
+   NAV + PROGRESS + REVEAL
+   ============================================================ */
+const SECTIONS=[
+  ['s0','Start'],['s1','00 Werkzeuge'],['s2','01 Motivation'],['s3','02 Experiment'],
+  ['s4','03 Fünf Änderungen'],['s5','04 Live'],['s6','05 Kriterien'],['s7','06 Selbstkritik'],
+  ['s8','07 Faustregeln'],['s9','08 Effizienz'],['s10','09 Hierarchie'],['s11','10 Compiler'],
+  ['s12','11 Fazit']
+];
+$('#navlinks').innerHTML=SECTIONS.map(([id,l])=>`<a href="#${id}" data-s="${id}">${l}</a>`).join('');
+
+function onScroll(){
+  const st=window.scrollY, h=document.body.scrollHeight-window.innerHeight;
+  $('#progress').style.width=(100*st/Math.max(1,h))+'%';
+  let cur=SECTIONS[0][0];
+  for(const [id] of SECTIONS){
+    const e=document.getElementById(id);
+    if(e && e.getBoundingClientRect().top<140) cur=id;
+  }
+  $$('#navlinks a').forEach(a=>a.classList.toggle('active',a.dataset.s===cur));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+const ro=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');}});
+},{threshold:.08});
+setTimeout(()=>{
+  $$('section > .panel, section > .grid2, section > .grid3, section > .callout, section > .divider')
+    .forEach(e=>{e.classList.add('reveal');ro.observe(e);});
+},60);
+
+/* ============================================================
+   AMBIENT BACKGROUND
+   ============================================================ */
+(function bg(){
+  const cv=$('#bgfx');
+  let W,H,nodes=[];
+  function init(){
+    const r=window.devicePixelRatio||1;
+    W=cv.width=innerWidth*r;H=cv.height=innerHeight*r;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+    const n=Math.min(70,Math.floor(innerWidth/22));
+    nodes=Array.from({length:n},()=>({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*.22*r,vy:(Math.random()-.5)*.22*r,
+      r:(Math.random()*1.5+.6)*r
+    }));
+  }
+  init();addEventListener('resize',init);
+  const ctx=cv.getContext('2d');
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    const r=window.devicePixelRatio||1;
+    for(const n of nodes){
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0||n.x>W)n.vx*=-1;
+      if(n.y<0||n.y>H)n.vy*=-1;
+    }
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i],b=nodes[j];
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<150*r){
+        ctx.strokeStyle=`rgba(129,140,248,${.11*(1-d/(150*r))})`;
+        ctx.lineWidth=r;
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      }
+    }
+    for(const n of nodes){
+      ctx.fillStyle='rgba(94,234,212,.22)';
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,7);ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ============================================================
+   TAB SYSTEM (generic)
+   ============================================================ */
+function wireTabs(rootSel){
+  const root=$(rootSel);
+  if(!root)return;
+  root.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+      root.querySelectorAll('.tab').forEach(o=>o.classList.remove('active'));
+      t.classList.add('active');
+      const parent=root.parentElement;
+      parent.querySelectorAll(':scope > .tabpane').forEach(p=>p.classList.remove('active'));
+      const pane=parent.querySelector('#'+t.dataset.pane);
+      if(pane)pane.classList.add('active');
+      window.dispatchEvent(new Event('resize'));
+      redrawAll();
+    };
+  });
+}
+wireTabs('#preTabs');
+wireTabs('#liveTabs');
+
+/* ============================================================
+   A — COMBINATORIAL EXPLOSION
+   ============================================================ */
+(function combo(){
+  const cv=$('#cvComb');
+  const sN=$('#sN'),sT=$('#sT'),cMod=$('#cMod');
+
+  function stats(){
+    const n=+sN.value,t=+sT.value,mod=cMod.checked;
+    const full=n*(n-1)/2;
+    if(!mod)return{n,t,full,eff:full,teams:1,intra:full,inter:0};
+    const teams=Math.ceil(n/t);
+    let intra=0;
+    for(let i=0;i<teams;i++){
+      const sz=Math.min(t,n-i*t);
+      intra+=sz*(sz-1)/2;
+    }
+    const inter=teams*(teams-1)/2;
+    return{n,t,full,eff:intra+inter,teams,intra,inter};
+  }
+
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    const s=stats();
+    const mod=cMod.checked;
+    const n=s.n;
+    const cx=w/2,cy=h/2,R=Math.min(w,h)/2-30;
+
+    // positions
+    const pos=[];
+    if(!mod){
+      for(let i=0;i<n;i++){
+        const a=-Math.PI/2+i/n*Math.PI*2;
+        pos.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a),team:0});
+      }
+    }else{
+      const teams=s.teams;
+      for(let ti=0;ti<teams;ti++){
+        const ta=-Math.PI/2+ti/teams*Math.PI*2;
+        const tcx=cx+R*.66*Math.cos(ta), tcy=cy+R*.66*Math.sin(ta);
+        const sz=Math.min(+sT.value,n-ti*+sT.value);
+        const rr2=Math.max(14,Math.min(38,R*.33));
+        for(let k=0;k<sz;k++){
+          const a=-Math.PI/2+k/Math.max(1,sz)*Math.PI*2;
+          pos.push({x:tcx+(sz===1?0:rr2*Math.cos(a)),y:tcy+(sz===1?0:rr2*Math.sin(a)),team:ti,tcx,tcy});
+        }
+      }
+    }
+
+    x.clearRect(0,0,w,h);
+    if(!mod){
+      x.strokeStyle='rgba(251,113,133,'+clamp(2.2/Math.sqrt(n),.03,.35)+')';
+      x.lineWidth=.7;
+      for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+        x.beginPath();x.moveTo(pos[i].x,pos[i].y);x.lineTo(pos[j].x,pos[j].y);x.stroke();
+      }
+    }else{
+      x.lineWidth=.8;
+      x.strokeStyle='rgba(94,234,212,.30)';
+      for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+        if(pos[i].team===pos[j].team){
+          x.beginPath();x.moveTo(pos[i].x,pos[i].y);x.lineTo(pos[j].x,pos[j].y);x.stroke();
+        }
+      }
+      // team reps
+      const reps=[];
+      const seen=new Set();
+      pos.forEach(p=>{if(!seen.has(p.team)){seen.add(p.team);reps.push(p);}});
+      x.strokeStyle='rgba(129,140,248,.45)';x.lineWidth=1.3;
+      for(let i=0;i<reps.length;i++)for(let j=i+1;j<reps.length;j++){
+        x.beginPath();x.moveTo(reps[i].x,reps[i].y);x.lineTo(reps[j].x,reps[j].y);x.stroke();
+      }
+    }
+    pos.forEach(p=>{
+      x.fillStyle=mod?C.acc:C.bad;
+      x.beginPath();x.arc(p.x,p.y,4,0,7);x.fill();
+      x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1;x.stroke();
+    });
+
+    const kp=$('#combKPI');
+    const red=s.full>0?(100*(1-s.eff/s.full)):0;
+    kp.innerHTML=`
+      <div class="cell"><div class="k">${fmt(s.full)}</div><div class="l">Kanäle ohne Module</div></div>
+      <div class="cell"><div class="k">${fmt(s.eff)}</div><div class="l">Kanäle mit Modulen</div></div>
+      <div class="cell"><div class="k">${s.teams}</div><div class="l">Teams</div></div>
+      <div class="cell"><div class="k" style="color:${red>0?C.good:C.bad}">${red.toFixed(0)}%</div><div class="l">Einsparung</div></div>`;
+  }
+
+  function plot(){
+    const t=+sT.value;
+    const ns=[],full=[],modv=[];
+    for(let n=2;n<=60;n++){
+      ns.push(n);full.push(n*(n-1)/2);
+      const teams=Math.ceil(n/t);let intra=0;
+      for(let i=0;i<teams;i++){const sz=Math.min(t,n-i*t);intra+=sz*(sz-1)/2;}
+      modv.push(intra+teams*(teams-1)/2);
+    }
+    Plotly.react('plComb',[
+      {x:ns,y:full,name:'ohne Modularisierung  n(n−1)/2',mode:'lines',line:{color:C.bad,width:3}},
+      {x:ns,y:modv,name:`mit Modulen (Teams à ${t})`,mode:'lines',line:{color:C.acc,width:3}},
+      {x:[+sN.value],y:[+sN.value*(+sN.value-1)/2],mode:'markers',showlegend:false,
+       marker:{color:C.bad,size:11,line:{color:'#fff',width:1.5}}}
+    ],{...PLOTLAY,
+      title:{text:'Kommunikationskanäle als Funktion der Teamgröße',font:{size:12.5,color:'#c3d0ee'}},
+      xaxis:{...PLOTLAY.xaxis,title:'Anzahl Entwickler n'},
+      yaxis:{...PLOTLAY.yaxis,title:'Abstimmungskanäle'}},PLOTCFG);
+  }
+
+  function up(){
+    $('#vN').textContent=sN.value;
+    $('#vT').textContent=sT.value;
+    draw();plot();
+  }
+  [sN,sT].forEach(e=>e.oninput=up);
+  cMod.onchange=up;
+  window.__comb=up;
+  up();
+})();
+
+/* ============================================================
+   B — DAG / PARTIAL ORDER
+   ============================================================ */
+(function dag(){
+  const cv=$('#cvDag');
+  let nodes,edges,sel=null,pruned=new Set();
+  function reset(){
+    nodes=[
+      {id:'ST',  l:'Symboltabelle', x:.5, y:.88, lvl:1},
+      {id:'LS',  l:'Line Storage',  x:.5, y:.68, lvl:2},
+      {id:'IN',  l:'Input',         x:.22,y:.47, lvl:3},
+      {id:'CS',  l:'Circular Shifter',x:.72,y:.47,lvl:3},
+      {id:'AL',  l:'Alphabetizer',  x:.33,y:.24, lvl:4},
+      {id:'OU',  l:'Output',        x:.75,y:.24, lvl:4},
+      {id:'MC',  l:'Master Control',x:.5, y:.07, lvl:5}
+    ];
+    edges=[['LS','ST'],['IN','LS'],['CS','LS'],['AL','CS'],['OU','CS'],['OU','LS'],
+           ['MC','IN'],['MC','AL'],['MC','OU']];
+    pruned=new Set();sel=null;draw();
+  }
+  function hasCycle(){
+    const adj={};nodes.forEach(n=>adj[n.id]=[]);
+    edges.forEach(([a,b])=>adj[a].push(b));
+    const st={},S=1,D=2;
+    let cyc=false;
+    function dfs(u){
+      st[u]=S;
+      for(const v of adj[u]){
+        if(st[v]===S){cyc=true;return;}
+        if(!st[v])dfs(v);
+      }
+      st[u]=D;
+    }
+    nodes.forEach(n=>{if(!st[n.id])dfs(n.id);});
+    return cyc;
+  }
+  function P(n,w,h){return{x:n.x*w,y:n.y*h};}
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    // level bands
+    const lv=[...new Set(nodes.map(n=>n.lvl))].sort();
+    const cyc=hasCycle();
+    edges.forEach(([a,b])=>{
+      const na=nodes.find(n=>n.id===a),nb=nodes.find(n=>n.id===b);
+      if(!na||!nb)return;
+      const dim=pruned.has(a)||pruned.has(b);
+      const pa=P(na,w,h),pb=P(nb,w,h);
+      const ang=Math.atan2(pb.y-pa.y,pb.x-pa.x);
+      const r=26;
+      arrow(x,pa.x+r*Math.cos(ang),pa.y+r*Math.sin(ang),
+              pb.x-r*Math.cos(ang),pb.y-r*Math.sin(ang),
+              dim?'rgba(100,116,139,.3)':(cyc?'rgba(251,113,133,.6)':'rgba(129,140,248,.6)'),1.6);
+    });
+    nodes.forEach(n=>{
+      const p=P(n,w,h);
+      const dim=pruned.has(n.id);
+      x.save();
+      if(!dim){x.shadowColor='rgba(94,234,212,.35)';x.shadowBlur=14;}
+      x.fillStyle=dim?'rgba(30,41,59,.6)':(sel===n.id?'rgba(94,234,212,.22)':'rgba(18,24,43,.95)');
+      x.strokeStyle=dim?'rgba(100,116,139,.4)':(sel===n.id?C.acc:'rgba(130,160,230,.45)');
+      x.lineWidth=sel===n.id?2.2:1.4;
+      x.beginPath();x.arc(p.x,p.y,24,0,7);x.fill();x.stroke();
+      x.restore();
+      txt(x,n.l,p.x,p.y+38,{size:10.5,col:dim?'#475569':C.txt,align:'center',weight:600});
+      txt(x,'L'+n.lvl,p.x,p.y,{size:11,col:dim?'#475569':C.acc,align:'center',weight:700,font:'mono'});
+    });
+    const cycTxt=cyc
+      ? `<span class="badge b-bad">Kreis gefunden</span> Keine Partialordnung mehr. „level" hat keine Bedeutung mehr, Module lassen sich nicht einzeln testen oder herauslösen.`
+      : `<span class="badge b-good">Azyklisch</span> Gültige Partialordnung. Jedes Modul hat ein Level; obere Ebenen sind abschneidbar.`;
+    $('#dagStatus').innerHTML=cycTxt+
+      `<div style="margin-top:8px;color:var(--txt-faint)">Knoten: ${nodes.length} · Kanten: ${edges.length} · abgeschnitten: ${pruned.size}</div>`+
+      (sel?`<div style="margin-top:6px">Ausgewählt: <code>${sel}</code> — klicke ein Ziel, um „benutzt"-Pfeil zu ziehen.</div>`:'');
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left,my=e.clientY-r.top;
+    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const hit=nodes.find(n=>Math.hypot(n.x*w-mx,n.y*h-my)<26);
+    if(!hit){sel=null;draw();return;}
+    if(sel===null){sel=hit.id;}
+    else if(sel===hit.id){sel=null;}
+    else{
+      const i=edges.findIndex(([a,b])=>a===sel&&b===hit.id);
+      if(i>=0)edges.splice(i,1); else edges.push([sel,hit.id]);
+      sel=null;
+    }
+    draw();
+  });
+  $('#dagCycle').onclick=()=>{if(!edges.some(([a,b])=>a==='LS'&&b==='OU'))edges.push(['LS','OU']);draw();};
+  $('#dagClean').onclick=reset;
+  $('#dagPrune').onclick=()=>{
+    const max=Math.max(...nodes.filter(n=>!pruned.has(n.id)).map(n=>n.lvl));
+    if(max<=2){pruned=new Set();}
+    else nodes.filter(n=>n.lvl===max).forEach(n=>pruned.add(n.id));
+    draw();
+  };
+  window.__dag=draw;
+  reset();
+})();
+
+/* ============================================================
+   C — INTERFACE VS IMPLEMENTATION
+   ============================================================ */
+(function iface(){
+  const cv=$('#cvIface'),s=$('#sHide');
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    const hide=+s.value/100;
+    x.clearRect(0,0,w,h);
+    const cx=w*.28,cy=h*.5;
+    // the module
+    x.save();x.shadowColor='rgba(94,234,212,.3)';x.shadowBlur=20;
+    x.fillStyle='rgba(18,24,43,.96)';x.strokeStyle=C.acc;x.lineWidth=2;
+    rr(x,cx-85,cy-80,170,160,16);x.fill();x.stroke();x.restore();
+    txt(x,'Line Storage',cx,cy-62,{size:13,align:'center',weight:700});
+    // internals
+    const internals=['4 Zeichen/Wort','Index mit Startadressen','Trennzeichen = Wortende','Alles im Hauptspeicher'];
+    internals.forEach((t,i)=>{
+      const yy=cy-30+i*26;
+      x.globalAlpha=1;
+      txt(x,'•',cx-70,yy,{size:12,col:C.acc3});
+      txt(x,t,cx-58,yy,{size:10.5,col:'rgba(244,114,182,'+(1-hide*0.75)+')',font:'mono'});
+    });
+    // interface wall
+    const wallX=cx+85;
+    x.save();
+    const g=x.createLinearGradient(wallX,0,wallX+10,0);
+    g.addColorStop(0,`rgba(94,234,212,${.15+hide*.75})`);
+    g.addColorStop(1,'rgba(94,234,212,0)');
+    x.fillStyle=g;x.fillRect(wallX,cy-80,14,160);
+    x.strokeStyle=`rgba(94,234,212,${.3+hide*.7})`;x.lineWidth=1+hide*3;
+    x.beginPath();x.moveTo(wallX,cy-80);x.lineTo(wallX,cy+80);x.stroke();
+    x.restore();
+    txt(x,'Schnittstelle',wallX+7,cy-92,{size:10,col:C.acc,align:'center',weight:700});
+
+    // clients
+    const clients=['Input','Circular Shift','Alphabetizer','Output'];
+    const colLeak=Math.round(4*(1-hide));
+    let leaks=0;
+    clients.forEach((cl,i)=>{
+      const px=w*.80, py=h*.17+i*(h*.22);
+      x.fillStyle='rgba(18,24,43,.95)';
+      x.strokeStyle='rgba(130,160,230,.4)';x.lineWidth=1.3;
+      rr(x,px-62,py-17,124,34,9);x.fill();x.stroke();
+      txt(x,cl,px,py,{size:11.5,align:'center',weight:600});
+      // clean call
+      curve(x,wallX+14,cy+(i-1.5)*18,px-62,py,'rgba(94,234,212,.55)',1.5,.06);
+      // leaked assumptions
+      const nLeak=Math.round((1-hide)*3);
+      for(let k=0;k<nLeak;k++){
+        leaks++;
+        x.save();
+        x.setLineDash([3,4]);
+        curve(x,cx+60,cy-25+k*28,px-62,py+6-k*6,`rgba(251,113,133,${.25+(1-hide)*.45})`,1.2,.12);
+        x.restore();
+      }
+    });
+    const hidePct=Math.round(hide*100);
+    $('#vHide').textContent=hidePct+'%';
+    const affected=1+Math.round((1-hide)*4);
+    $('#ifaceKPI').innerHTML=`
+      <div class="cell"><div class="k">${leaks}</div><div class="l">durchgesickerte Annahmen</div></div>
+      <div class="cell"><div class="k" style="color:${affected>2?C.bad:C.good}">${affected}</div><div class="l">Module bei interner Änderung</div></div>
+      <div class="cell"><div class="k">${hidePct<35?'Zerl. 1':hidePct>70?'Zerl. 2':'Mischform'}</div><div class="l">entspricht</div></div>`;
+  }
+  s.oninput=draw;
+  window.__iface=draw;
+  draw();
+})();
+
+/* ============================================================
+   D — COUPLING & COHESION
+   ============================================================ */
+(function cc(){
+  const cv=$('#cvCC'),sc=$('#sCoup'),sh=$('#sCoh');
+  let seedList=Array.from({length:40},()=>Math.random());
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    const coup=+sc.value/100, coh=+sh.value/100;
+    x.clearRect(0,0,w,h);
+    $('#vCoup').textContent=sc.value+'%';
+    $('#vCoh').textContent=sh.value+'%';
+
+    const pad=34, bw=(w-pad*2)/seedList.length;
+    let total=0,worst=0;
+    seedList.forEach((r,i)=>{
+      // effort = base * (1 + coupling penalty) * (1 - cohesion benefit)
+      const eff=(0.6+r*0.8)*(1+coup*4.2)*(1-coh*0.55);
+      total+=eff;worst=Math.max(worst,eff);
+    });
+    const maxH=h-70;
+    const scale=maxH/Math.max(2.5,worst);
+    seedList.forEach((r,i)=>{
+      const eff=(0.6+r*0.8)*(1+coup*4.2)*(1-coh*0.55);
+      const bh=eff*scale;
+      const bx=pad+i*bw, by=h-36-bh;
+      const t=clamp(eff/5,0,1);
+      const col=`rgb(${Math.round(lerp(74,251,t))},${Math.round(lerp(222,113,t))},${Math.round(lerp(128,133,t))})`;
+      x.fillStyle=col;
+      rr(x,bx+1,by,Math.max(1.5,bw-2.5),bh,2);x.fill();
+    });
+    x.strokeStyle='rgba(130,160,230,.25)';x.lineWidth=1;
+    x.beginPath();x.moveTo(pad,h-36);x.lineTo(w-pad,h-36);x.stroke();
+    txt(x,'40 Änderungsanfragen über die Lebenszeit',w/2,h-18,{size:10.5,col:C.dim,align:'center'});
+    txt(x,'Aufwand',pad,18,{size:10.5,col:C.dim,weight:600});
+
+    const avg=total/seedList.length;
+    const grade = coup<.3&&coh>.65 ? ['Parnas-Ideal',C.good]
+                : coup>.65&&coh<.4 ? ['Flussdiagramm-Falle',C.bad]
+                : ['Mischform',C.warn];
+    $('#ccKPI').innerHTML=`
+      <div class="cell"><div class="k">${total.toFixed(0)}</div><div class="l">Gesamtaufwand</div></div>
+      <div class="cell"><div class="k">${avg.toFixed(2)}</div><div class="l">Ø pro Änderung</div></div>
+      <div class="cell"><div class="k" style="color:${grade[1]};font-size:14px">${grade[0]}</div><div class="l">Diagnose</div></div>`;
+  }
+  sc.oninput=draw;sh.oninput=draw;
+  window.__cc=draw;
+  draw();
+})();
+
+/* ============================================================
+   E — KWIC MACHINE
+   ============================================================ */
+function kwicShifts(lines){
+  const out=[];
+  lines.forEach((ws,li)=>{
+    for(let s=0;s<ws.length;s++){
+      out.push({line:li,shift:s,words:ws.slice(s).concat(ws.slice(0,s))});
+    }
+  });
+  return out;
+}
+function parseLines(str){
+  return str.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>l.split(/\s+/));
+}
+
+(function kwic(){
+  const cv=$('#cvKwic');
+  let stage=0, anim=0, raf=null;
+  function data(){
+    const lines=parseLines($('#kwicIn').value);
+    const sh=kwicShifts(lines);
+    const sorted=[...sh].sort((a,b)=>a.words.join(' ').localeCompare(b.words.join(' ')));
+    return {lines,sh,sorted};
+  }
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const {lines,sh,sorted}=data();
+    const fs=11.5, lh=19;
+    let y=28;
+    txt(x,['1 · EINGELESENE ZEILEN','2 · ZYKLISCHE VERSCHIEBUNGEN','3 · ALPHABETISCH SORTIERT','4 · AUSGABE'][stage],
+        16,y-10,{size:10.5,col:C.acc,weight:700,font:'mono'});
+    y+=14;
+
+    if(stage===0){
+      lines.forEach((ws,i)=>{
+        x.fillStyle='rgba(129,140,248,.10)';
+        rr(x,14,y-11,w-28,lh-3,5);x.fill();
+        txt(x,String(i+1).padStart(2,'0'),22,y,{size:10,col:C.dim,font:'mono'});
+        let px=46;
+        ws.forEach(wd=>{
+          x.fillStyle='rgba(94,234,212,.14)';
+          const tw=wd.length*6.6+10;
+          rr(x,px,y-9,tw,17,4);x.fill();
+          txt(x,wd,px+5,y,{size:fs,col:C.txt,font:'mono'});
+          px+=tw+5;
+        });
+        y+=lh+4;
+      });
+      $('#kwicNote').innerHTML=`<strong>${lines.length}</strong> Zeilen · jede Zeile ist eine geordnete Folge von Wörtern.`;
+    }
+    else if(stage===1){
+      const maxShow=Math.floor((h-y-16)/lh);
+      const show=Math.min(sh.length,Math.max(1,Math.floor(anim*sh.length)+1));
+      sh.slice(0,Math.min(maxShow,show)).forEach((s)=>{
+        const hue=s.line;
+        const cols=['rgba(94,234,212,.12)','rgba(129,140,248,.12)','rgba(244,114,182,.12)','rgba(251,191,36,.12)'];
+        x.fillStyle=cols[hue%4];
+        rr(x,14,y-11,w-28,lh-3,5);x.fill();
+        txt(x,`L${s.line+1}·${s.shift}`,22,y,{size:9.5,col:C.dim,font:'mono'});
+        txt(x,s.words.join(' '),62,y,{size:fs,col:C.txt,font:'mono'});
+        y+=lh;
+      });
+      if(sh.length>maxShow)txt(x,`… ${sh.length-maxShow} weitere`,22,y+4,{size:10,col:C.dim,font:'mono'});
+      $('#kwicNote').innerHTML=`Aus <strong>${lines.length}</strong> Zeilen werden <strong>${sh.length}</strong> Shifts (Summe der Wortzahlen). Jedes Wort darf einmal vorn stehen.`;
+    }
+    else{
+      const list=sorted;
+      const maxShow=Math.floor((h-y-16)/lh);
+      list.slice(0,maxShow).forEach((s,i)=>{
+        x.fillStyle=stage===3?'rgba(94,234,212,.10)':'rgba(130,160,230,.07)';
+        rr(x,14,y-11,w-28,lh-3,5);x.fill();
+        if(stage===3){
+          txt(x,String(i+1).padStart(3,' '),22,y,{size:9.5,col:C.acc,font:'mono'});
+          txt(x,s.words.join(' '),58,y,{size:fs,col:C.txt,font:'mono'});
+        }else{
+          txt(x,`L${s.line+1}·${s.shift}`,22,y,{size:9.5,col:C.dim,font:'mono'});
+          txt(x,s.words.join(' '),62,y,{size:fs,col:C.txt,font:'mono'});
+        }
+        y+=lh;
+      });
+      if(list.length>maxShow)txt(x,`… ${list.length-maxShow} weitere`,22,y+4,{size:10,col:C.dim,font:'mono'});
+      $('#kwicNote').innerHTML=stage===2
+        ? `Sortiert über den gesamten Text der Shifts — nicht über die Originalzeilen.`
+        : `<strong>Fertig.</strong> „outputs a listing of all circular shifts of all lines in alphabetical order."`;
+    }
+    $$('#kwicSteps .step').forEach((e,i)=>{
+      e.classList.toggle('active',i===stage);
+      e.classList.toggle('done',i<stage);
+    });
+  }
+  $('#kwicStep').onclick=()=>{
+    stage=(stage+1)%4;
+    if(stage===1){anim=0;cancelAnimationFrame(raf);
+      (function a(){anim=Math.min(1,anim+.07);draw();if(anim<1)raf=requestAnimationFrame(a);})();
+    } else draw();
+  };
+  $('#kwicAll').onclick=()=>{stage=3;anim=1;draw();};
+  $('#kwicReset').onclick=()=>{stage=0;anim=0;draw();};
+  $('#kwicIn').oninput=draw;
+  $$('#kwicSteps .step').forEach(e=>e.onclick=()=>{stage=+e.dataset.k;anim=1;draw();});
+  window.__kwic=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 01 — BENEFITS
+   ============================================================ */
+(function benefits(){
+  const B=[
+    {t:'1 · Managerial',
+     s:'Entwicklungszeit verkürzen',
+     q:'„development time should be shortened because separate groups would work on each module with little need for communication"',
+     d:'Hängt daran, dass die <strong>Schnittstelle früh und einfach</strong> feststeht. In Zerlegung 1 ist die Schnittstelle ein Tabellenformat, dessen Entwurf „a major part of the module development" ist und „a joint effort among the several development groups" erfordert — also genau <em>keine</em> unabhängige Arbeit. In Zerlegung 2 sind es nur Funktionsnamen und Parametertypen: „the independent development of modules should begin much earlier."',
+     c:'acc2'},
+    {t:'2 · Produktflexibilität',
+     s:'Änderungen lokal halten',
+     q:'„it should be possible to make drastic changes to one module without a need to change others"',
+     d:'Hängt daran, dass die <strong>wahrscheinlichen Änderungen</strong> jeweils ganz in einem Modul liegen. Genau das misst Parnas mit seinen fünf Änderungen. Ergebnis: In Zerlegung 1 trifft die Entscheidung „alle Zeilen im Kern" <em>jedes</em> Modul, in Zerlegung 2 nur eines.',
+     c:'acc3'},
+    {t:'3 · Verständlichkeit',
+     s:'Ein Modul allein lesen können',
+     q:'„it should be possible to study the system one module at a time"',
+     d:'Hängt daran, dass ein Modul <strong>keine Annahmen über andere</strong> braucht. Parnas über Zerlegung 1: „To understand the output module … it will be necessary to understand something of the alphabetizer, the circular shifter, and the input module. … <strong>The system will only be comprehensible as a whole.</strong>"',
+     c:'acc'}
+  ];
+  const list=$('#benefitList');
+  list.innerHTML=B.map((b,i)=>`
+    <div class="modcard" data-i="${i}" style="margin-top:8px">
+      <div class="mt"><span class="badge b-${b.c}">${b.t}</span></div>
+      <div class="md" style="margin-top:6px">${b.s}</div>
+    </div>`).join('');
+  function sel(i){
+    $$('#benefitList .modcard').forEach((e,k)=>e.classList.toggle('safe',k===i));
+    $('#benefitDetail').innerHTML=
+      `<div class="callout quote" style="margin:0 0 10px">${B[i].q}</div>${B[i].d}`;
+  }
+  $$('#benefitList .modcard').forEach(e=>e.onclick=()=>sel(+e.dataset.i));
+  sel(0);
+})();
+
+/* ============================================================
+   SECTION 01 — RESPONSIBILITY VS SUBPROGRAM
+   ============================================================ */
+(function respon(){
+  const cv=$('#cvRespon');
+  let mode=0;
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    if(mode===0){
+      txt(x,'Modul = Unterprogramm (die übliche Annahme)',w/2,20,{size:12,align:'center',weight:650,col:C.bad});
+      const boxes=['SUB input()','SUB shift()','SUB alph()','SUB output()'];
+      boxes.forEach((b,i)=>{
+        const bx=24+i*((w-48)/4), bw=(w-48)/4-10;
+        x.fillStyle='rgba(251,113,133,.10)';x.strokeStyle='rgba(251,113,133,.45)';x.lineWidth=1.3;
+        rr(x,bx,52,bw,h-100,10);x.fill();x.stroke();
+        txt(x,b,bx+bw/2,74,{size:10.5,align:'center',col:C.txt,font:'mono',weight:700});
+        txt(x,'Code',bx+bw/2,h-70,{size:10,align:'center',col:C.dim});
+      });
+      txt(x,'Die Grenze liegt dort, wo der Compiler eine Prozedur sieht.',w/2,h-30,
+          {size:10.5,align:'center',col:C.dim});
+    }else{
+      txt(x,'Modul = Zuständigkeit („responsibility assignment")',w/2,20,{size:12,align:'center',weight:650,col:C.good});
+      // code blocks scattered, colored by owner
+      const owners=[C.acc,C.acc2,C.acc3,C.warn];
+      const names=['Line Storage','Circular Shifter','Alphabetizer','Output'];
+      let seed=7;
+      const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+      for(let i=0;i<4;i++){
+        const bx=24+i*((w-48)/4), bw=(w-48)/4-10;
+        x.strokeStyle='rgba(130,160,230,.25)';x.lineWidth=1;x.setLineDash([3,3]);
+        rr(x,bx,52,bw,h-100,10);x.stroke();x.setLineDash([]);
+        txt(x,'SUB '+['input','shift','alph','output'][i],bx+bw/2,66,
+            {size:9.5,align:'center',col:C.dim,font:'mono'});
+        for(let k=0;k<7;k++){
+          const o=Math.floor(rnd()*4);
+          const yy=80+k*((h-160)/7);
+          x.fillStyle=owners[o].replace(')',',.75)').replace('rgb','rgba');
+          x.fillStyle=owners[o]+'';x.globalAlpha=.75;
+          rr(x,bx+8,yy,bw-16,(h-160)/7-5,3);x.fill();x.globalAlpha=1;
+        }
+      }
+      names.forEach((n,i)=>{
+        const lx=24+i*((w-48)/4);
+        x.fillStyle=owners[i];
+        rr(x,lx,h-40,10,10,2);x.fill();
+        txt(x,n,lx+15,h-35,{size:9.5,col:C.dim});
+      });
+      txt(x,'Ein Modul liefert Code an viele Stellen — die Zuständigkeit bleibt bei einer Person.',
+          w/2,h-12,{size:10,align:'center',col:C.dim});
+    }
+    $('#responLabel').innerHTML=mode===0
+      ? 'Diese Annahme muss laut Conclusion <em>aufgegeben</em> werden.'
+      : 'So sieht ein Modul bei Parnas aus.';
+  }
+  $('#responToggle').onclick=()=>{mode=1-mode;draw();};
+  window.__respon=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 02 — THE TWO DECOMPOSITIONS
+   ============================================================ */
+const DEC1=[
+  {n:'1 · Input',
+   d:'Liest die Zeilen vom Eingabemedium und legt sie im Kernspeicher ab.',
+   s:'Nichts verborgen. Es <em>veröffentlicht</em>: 4 Zeichen pro Wort gepackt, Sondertrennzeichen am Wortende, Index mit Startadressen jeder Zeile.',
+   i:'Gemeinsames Speicherformat + Index-Array'},
+  {n:'2 · Circular Shift',
+   d:'Wird nach Input aufgerufen. Erzeugt einen Index mit der Adresse des ersten Zeichens jedes Shifts.',
+   s:'Nichts verborgen. Ausgabe liegt „in core with words in pairs (original line number, starting address)" — jeder Nachbar muss dieses Paarformat kennen.',
+   i:'Array aus Paaren (Zeilennummer, Startadresse)'},
+  {n:'3 · Alphabetizing',
+   d:'Nimmt die Arrays von Modul 1 und 2 und erzeugt ein Array im selben Format, nur alphabetisch geordnet.',
+   s:'Nichts verborgen. Muss das Paarformat <em>und</em> das Zeichenpackformat kennen, um vergleichen zu können.',
+   i:'Dasselbe Paar-Array, umsortiert'},
+  {n:'4 · Output',
+   d:'Erzeugt aus den Arrays von Modul 3 und 1 die formatierte Ausgabe.',
+   s:'Nichts verborgen. Hängt an allen drei Vorgängern gleichzeitig.',
+   i:'Liest beide Arrays direkt'},
+  {n:'5 · Master Control',
+   d:'Steuert die Reihenfolge der anderen vier Module, Fehlermeldungen, Speicherverwaltung.',
+   s:'—',
+   i:'Aufrufreihenfolge'}
+];
+const DEC2=[
+  {n:'1 · Line Storage',
+   d:'Funktionen: <code>CHAR(r,w,c)</code>, <code>SETCHAR(r,w,c,d)</code>, <code>WORDS(r)</code>, <code>DELINE</code>, <code>DELWRD</code>.',
+   s:'<strong>Geheimnis:</strong> wie Zeichen, Wörter und Zeilen gespeichert sind — Packung, Kern vs. Platte, interne Verkettung. Optional steckt darin unsichtbar ein Symboltabellen-Modul.',
+   i:'Nur Funktionsnamen + Parametertypen'},
+  {n:'2 · Input',
+   d:'Liest die Originalzeilen und ruft Line Storage auf, um sie speichern zu lassen.',
+   s:'<strong>Geheimnis:</strong> das Eingabeformat.',
+   i:'Ruft nur Line-Storage-Funktionen'},
+  {n:'3 · Circular Shifter',
+   d:'<code>CSCHAR(l,w,c)</code>, <code>CSSETUP</code>. Erzeugt „the impression that we have created a line holder containing … all of the circular shifts".',
+   s:'<strong>Geheimnis:</strong> ob Shifts materialisiert, als Index gespeichert oder bei jedem Zugriff frisch berechnet werden. „circular shift might, in some circumstances, not make any table at all but calculate each character as demanded."',
+   i:'<code>CSCHAR(l,w,c)</code>, <code>CSSETUP</code>'},
+  {n:'4 · Alphabetizer',
+   d:'<code>ALPH</code> muss vor <code>ITH</code> gerufen werden. <code>ITH(i)</code> liefert den Index des Shifts, der alphabetisch an Stelle <em>i</em> steht.',
+   s:'<strong>Geheimnis:</strong> <em>wann</em> und <em>wie</em> sortiert wird. „a user could not detect when the alphabetization was actually done" — einmal komplett, verzögert, oder à la Hoares FIND.',
+   i:'<code>ALPH</code>, <code>ITH(i)</code>'},
+  {n:'5 · Output',
+   d:'Gibt die gewünschte Auflistung von Zeilen oder Shifts aus.',
+   s:'<strong>Geheimnis:</strong> das Ausgabeformat.',
+   i:'Ruft <code>CSCHAR</code> / <code>ITH</code>'},
+  {n:'6 · Master Control',
+   d:'„Similar in function to the modularization above."',
+   s:'<strong>Geheimnis:</strong> die Ablaufreihenfolge.',
+   i:'Ruft die anderen Module'}
+];
+
+(function decomp(){
+  function render(arr,target,cls){
+    $(target).innerHTML=arr.map((m,i)=>`
+      <div class="modcard ${cls}" data-d="${target}" data-i="${i}">
+        <div class="mt">${m.n}</div>
+        <div class="md">${m.d}</div>
+        <div class="secret">Schnittstelle: ${m.i}</div>
+      </div>`).join('');
+  }
+  render(DEC1,'#dec1List','');
+  render(DEC2,'#dec2List','');
+  function show(arr,i,which){
+    const m=arr[i];
+    $('#modDetail').innerHTML=`
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+        <span class="badge ${which===1?'b-bad':'b-good'}">Zerlegung ${which}</span>
+        <strong style="color:var(--txt)">${m.n}</strong>
+      </div>
+      <div style="margin-bottom:8px">${m.d}</div>
+      <div style="padding:10px;border-radius:9px;background:rgba(94,234,212,.06);border-left:2px solid var(--acc)">${m.s}</div>
+      <div style="margin-top:8px;color:var(--txt-faint)">Schnittstelle: ${m.i}</div>`;
+  }
+  $$('#dec1List .modcard').forEach(e=>{
+    e.onmouseenter=()=>show(DEC1,+e.dataset.i,1);
+    e.onclick=()=>show(DEC1,+e.dataset.i,1);
+  });
+  $$('#dec2List .modcard').forEach(e=>{
+    e.onmouseenter=()=>show(DEC2,+e.dataset.i,2);
+    e.onclick=()=>show(DEC2,+e.dataset.i,2);
+  });
+  show(DEC1,0,1);
+})();
+
+/* ============================================================
+   SECTION 02 — THE CUT MORPH
+   ============================================================ */
+(function cut(){
+  const cv=$('#cvCut'),s=$('#sCut');
+  // The "same object": a grid of code atoms.
+  // Each atom has (phase 0..3) and (secret 0..4)
+  const ATOMS=[];
+  const PHASE=['Einlesen','Shiften','Sortieren','Ausgeben'];
+  const SECRET=['Speicherformat','Eingabeformat','Shift-Darstellung','Sortierzeitpunkt','Ausgabeformat'];
+  const SECCOL=[C.acc,C.acc2,C.acc3,C.warn,'#38bdf8'];
+  let seed=12345;
+  const rnd=()=>{seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
+  for(let p=0;p<4;p++){
+    for(let k=0;k<16;k++){
+      // each phase touches several secrets
+      let sec;
+      const r=rnd();
+      if(p===0) sec = r<.45?0 : r<.9?1 : 2;
+      else if(p===1) sec = r<.5?0 : r<.95?2 : 3;
+      else if(p===2) sec = r<.35?0 : r<.6?2 : 3;
+      else sec = r<.3?0 : r<.5?2 : r<.65?3 : 4;
+      ATOMS.push({p,sec,jx:rnd(),jy:rnd()});
+    }
+  }
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    const t=+s.value/100;
+    x.clearRect(0,0,w,h);
+    $('#vCut').textContent = t<.03?'Zerlegung 1' : t>.97?'Zerlegung 2' : `Übergang ${Math.round(t*100)}%`;
+
+    const pad=56, top=64, bh=h-top-56;
+    // --- compute target positions in both layouts
+    const colsA=4, colsB=5;
+    const wA=(w-pad*2)/colsA, wB=(w-pad*2)/colsB;
+    const countA={},countB={};
+    ATOMS.forEach(a=>{countA[a.p]=(countA[a.p]||0)+1;countB[a.sec]=(countB[a.sec]||0)+1;});
+    const idxA={},idxB={};
+
+    // group frames
+    for(let i=0;i<colsA;i++){
+      const gx=pad+i*wA;
+      x.globalAlpha=1-t;
+      x.strokeStyle='rgba(251,113,133,.5)';x.lineWidth=1.6;x.setLineDash([5,4]);
+      rr(x,gx+4,top-12,wA-8,bh+24,10);x.stroke();x.setLineDash([]);
+      txt(x,PHASE[i],gx+wA/2,top-24,{size:11,align:'center',col:C.bad,weight:700});
+      x.globalAlpha=1;
+    }
+    for(let i=0;i<colsB;i++){
+      const gx=pad+i*wB;
+      x.globalAlpha=t;
+      x.strokeStyle='rgba(94,234,212,.5)';x.lineWidth=1.6;x.setLineDash([5,4]);
+      rr(x,gx+4,top-12,wB-8,bh+24,10);x.stroke();x.setLineDash([]);
+      txt(x,SECRET[i],gx+wB/2,top-24,{size:10,align:'center',col:C.acc,weight:700});
+      x.globalAlpha=1;
+    }
+
+    ATOMS.forEach(a=>{
+      idxA[a.p]=(idxA[a.p]||0);
+      idxB[a.sec]=(idxB[a.sec]||0);
+      const ia=idxA[a.p]++, ib=idxB[a.sec]++;
+      const nA=countA[a.p], nB=countB[a.sec];
+      const rowsA=Math.ceil(nA/2), rowsB=Math.ceil(nB/2);
+      const ax=pad+a.p*wA+14+(ia%2)*(wA-44)/1.4*0.6+ (ia%2)*22;
+      const ay=top+ (Math.floor(ia/2)+.5)*(bh/rowsA);
+      const bx=pad+a.sec*wB+12+(ib%2)*(wB-40)*0.45;
+      const by=top+ (Math.floor(ib/2)+.5)*(bh/rowsB);
+      const px=lerp(ax,bx,t), py=lerp(ay,by,t);
+      const sz=10;
+      // color blends from phase-color to secret-color
+      const phaseCol='rgba(251,113,133,.75)';
+      x.save();
+      x.globalAlpha=1;
+      x.fillStyle=t<.5?phaseCol:SECCOL[a.sec];
+      if(t>=.5)x.globalAlpha=.85;
+      rr(x,px-sz/2,py-sz/2,sz*1.9,sz,2.5);x.fill();
+      x.restore();
+    });
+
+    txt(x,'Dieselben Code-Atome — zweimal anders gebündelt.',w/2,h-24,
+        {size:11,align:'center',col:C.dim});
+    txt(x,t<.5?'Gebündelt nach Zeitpunkt der Ausführung':'Gebündelt nach verstecktem Geheimnis',
+        w/2,h-8,{size:10.5,align:'center',col:t<.5?C.bad:C.acc,weight:600});
+  }
+  s.oninput=draw;
+  window.__cut=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 03 — THE FIVE CHANGES
+   ============================================================ */
+const CHANGES=[
+  {t:'1 · Eingabeformat',
+   q:'„Input format."',
+   d:'Das Format der eingelesenen Datei ändert sich.',
+   m1:[1,0,0,0,0], m2:[0,1,0,0,0,0],
+   note:'„The first change is confined to one module in <strong>both</strong> decompositions." Hier ist Zerlegung 1 genauso gut — das ist ehrlicher Vergleich, kein Strohmann.'},
+  {t:'2 · Nicht alles im Kernspeicher',
+   q:'„The decision to have all lines stored in core. For large jobs it may prove inconvenient or impractical to keep all of the lines in core at any one time."',
+   d:'Bei großen Datenmengen müssen Zeilen auf die Platte ausgelagert werden.',
+   m1:[1,1,1,1,1], m2:[1,0,0,0,0,0],
+   note:'„For the first decomposition the second change would result in changes in <strong>every module!</strong>" In Zerlegung 2 weiß nur Line Storage, wo die Zeichen liegen.'},
+  {t:'3 · Zeichenpackung ändern',
+   q:'„The decision to pack the characters four to a word. … time will be saved by a character per word layout."',
+   d:'Statt 4 Zeichen pro Wort: 1 Zeichen pro Wort — oder ein anderes Format.',
+   m1:[1,1,1,1,1], m2:[1,0,0,0,0,0],
+   note:'„The same is true of the third change. In the first decomposition <strong>the format of the line storage in core must be used by all of the programs.</strong>"'},
+  {t:'4 · Shifts materialisieren statt indizieren',
+   q:'„The decision to make an index for the circular shifts rather than actually store them as such. … Alternatively, we may choose to prepare nothing during CSSETUP."',
+   d:'Die Shifts werden wirklich ausgeschrieben — oder erst bei Bedarf berechnet.',
+   m1:[0,1,1,1,0], m2:[0,0,1,0,0,0],
+   note:'„The fourth change is confined to the circular shift module in the second decomposition, but in the first decomposition <strong>the alphabetizer and the output routines will also know of the change.</strong>"'},
+  {t:'5 · Sortierstrategie ändern',
+   q:'„The decision to alphabetize the list once, rather than either (a) search for each item when needed, or (b) partially alphabetize as is done in Hoare\'s FIND."',
+   d:'Sortieraufwand über die Zeit verteilen statt in einem Rutsch.',
+   m1:[0,0,1,1,1], m2:[0,0,0,1,0,0],
+   note:'„The output module will expect the index to have been completed before it began. The alphabetizer module in the second decomposition was designed so that <strong>a user could not detect when the alphabetization was actually done.</strong>"'}
+];
+
+(function changes(){
+  let cur=0, timer=null;
+  const L=$('#changeList');
+  L.innerHTML=CHANGES.map((c,i)=>`
+    <div class="modcard" data-i="${i}"><div class="mt">${c.t}</div><div class="md">${c.d}</div></div>`).join('');
+
+  function render(i){
+    cur=i;
+    $$('#changeList .modcard').forEach((e,k)=>e.classList.toggle('safe',k===i));
+    const c=CHANGES[i];
+    $('#changeText').innerHTML=`<div class="callout quote" style="margin:0 0 10px">${c.q}</div>${c.note}`;
+    $('#impact1').innerHTML=DEC1.map((m,k)=>`
+      <div class="modcard ${c.m1[k]?'hit':'safe'}">
+        <div class="mt" style="font-size:12px">${m.n}</div>
+        <div class="md">${c.m1[k]?'<span style="color:var(--bad)">▲ muss geändert werden</span>':'<span style="color:var(--good)">✓ unberührt</span>'}</div>
+      </div>`).join('');
+    $('#impact2').innerHTML=DEC2.map((m,k)=>`
+      <div class="modcard ${c.m2[k]?'hit':'safe'}">
+        <div class="mt" style="font-size:12px">${m.n}</div>
+        <div class="md">${c.m2[k]?'<span style="color:var(--bad)">▲ muss geändert werden</span>':'<span style="color:var(--good)">✓ unberührt</span>'}</div>
+      </div>`).join('');
+    const a=c.m1.reduce((x,y)=>x+y,0), b=c.m2.reduce((x,y)=>x+y,0);
+    $('#changeKPI').innerHTML=`
+      <div class="cell"><div class="k" style="color:${C.bad}">${a} / 5</div><div class="l">Zerlegung 1</div></div>
+      <div class="cell"><div class="k" style="color:${C.good}">${b} / 6</div><div class="l">Zerlegung 2</div></div>
+      <div class="cell"><div class="k">${a===b?'gleich':(a/Math.max(1,b)).toFixed(1)+'×'}</div><div class="l">Mehraufwand</div></div>`;
+    hiBar(i);
+  }
+  $$('#changeList .modcard').forEach(e=>e.onclick=()=>{clearInterval(timer);render(+e.dataset.i);});
+  $('#changeAll').onclick=()=>{
+    clearInterval(timer);let k=0;render(0);
+    timer=setInterval(()=>{k=(k+1)%5;render(k);if(k===4)setTimeout(()=>clearInterval(timer),2600);},2400);
+  };
+
+  function plot(){
+    const names=CHANGES.map(c=>c.t.replace(/^\d+ · /,''));
+    Plotly.react('plChanges',[
+      {x:names,y:CHANGES.map(c=>c.m1.reduce((a,b)=>a+b,0)),type:'bar',name:'Zerlegung 1 (Flussdiagramm)',
+       marker:{color:C.bad,line:{color:'rgba(255,255,255,.2)',width:1}},text:CHANGES.map(c=>c.m1.reduce((a,b)=>a+b,0)),textposition:'outside',textfont:{color:C.bad}},
+      {x:names,y:CHANGES.map(c=>c.m2.reduce((a,b)=>a+b,0)),type:'bar',name:'Zerlegung 2 (Information Hiding)',
+       marker:{color:C.good,line:{color:'rgba(255,255,255,.2)',width:1}},text:CHANGES.map(c=>c.m2.reduce((a,b)=>a+b,0)),textposition:'outside',textfont:{color:C.good}}
+    ],{...PLOTLAY,barmode:'group',
+      yaxis:{...PLOTLAY.yaxis,title:'betroffene Module',range:[0,6]},
+      xaxis:{...PLOTLAY.xaxis,tickangle:-12},
+      annotations:[{x:1.5,y:5.6,text:'„would result in changes in every module!"',showarrow:false,
+        font:{color:C.bad,size:11},bgcolor:'rgba(251,113,133,.10)',borderpad:5}]},PLOTCFG);
+  }
+  function hiBar(i){
+    try{
+      Plotly.restyle('plChanges',{
+        'marker.line.width':[CHANGES.map((_,k)=>k===i?3:1),CHANGES.map((_,k)=>k===i?3:1)],
+        'marker.line.color':[CHANGES.map((_,k)=>k===i?'#fff':'rgba(255,255,255,.2)'),
+                             CHANGES.map((_,k)=>k===i?'#fff':'rgba(255,255,255,.2)')]
+      });
+    }catch(e){}
+  }
+  plot();render(1);
+  window.__changes=plot;
+
+  // Lifetime cost
+  const sR=$('#sRate'),sC=$('#sCost'),sY=$('#sYears'),sU=$('#sUp');
+  function life(){
+    const rate=+sR.value,cost=+sC.value,years=+sY.value,up=+sU.value;
+    $('#vRate').textContent=rate;$('#vCost').textContent=cost;
+    $('#vYears').textContent=years;$('#vUp').textContent=up;
+    const avg1=CHANGES.reduce((a,c)=>a+c.m1.reduce((x,y)=>x+y,0),0)/5;
+    const avg2=CHANGES.reduce((a,c)=>a+c.m2.reduce((x,y)=>x+y,0),0)/5;
+    const xs=[],y1=[],y2=[];
+    for(let t=0;t<=years;t+=.25){
+      xs.push(t);
+      y1.push(t*rate*avg1*cost);
+      y2.push(up+t*rate*avg2*cost);
+    }
+    // break-even
+    const slope1=rate*avg1*cost, slope2=rate*avg2*cost;
+    const be=slope1>slope2 ? up/(slope1-slope2) : Infinity;
+    Plotly.react('plLife',[
+      {x:xs,y:y1,name:'Zerlegung 1',mode:'lines',line:{color:C.bad,width:3},
+       fill:'tozeroy',fillcolor:'rgba(251,113,133,.07)'},
+      {x:xs,y:y2,name:'Zerlegung 2',mode:'lines',line:{color:C.good,width:3},
+       fill:'tozeroy',fillcolor:'rgba(74,222,128,.07)'},
+      ...(isFinite(be)&&be<=years?[{x:[be],y:[up+be*slope2],mode:'markers+text',showlegend:false,
+        marker:{color:C.warn,size:12,line:{color:'#fff',width:2}},
+        text:['Break-even'],textposition:'top center',textfont:{color:C.warn,size:11}}]:[])
+    ],{...PLOTLAY,
+      xaxis:{...PLOTLAY.xaxis,title:'Jahre im Betrieb'},
+      yaxis:{...PLOTLAY.yaxis,title:'kumulierte Personentage'}},PLOTCFG);
+
+    const tot1=years*slope1, tot2=up+years*slope2;
+    $('#lifeKPI').innerHTML=`
+      <div class="cell"><div class="k" style="color:${C.bad}">${fmt(Math.round(tot1))}</div><div class="l">Tage · Zerlegung 1</div></div>
+      <div class="cell"><div class="k" style="color:${C.good}">${fmt(Math.round(tot2))}</div><div class="l">Tage · Zerlegung 2</div></div>
+      <div class="cell"><div class="k">${isFinite(be)?be.toFixed(1)+' J':'—'}</div><div class="l">Break-even</div></div>
+      <div class="cell"><div class="k" style="color:${tot2<tot1?C.good:C.bad}">${tot1>0?Math.round(100*(1-tot2/tot1)):0}%</div><div class="l">Ersparnis</div></div>`;
+  }
+  [sR,sC,sY,sU].forEach(e=>e.oninput=life);
+  life();
+  window.__life=life;
+})();
+
+/* ============================================================
+   SECTION 04 — LIVE SYSTEM
+   ============================================================ */
+(function live(){
+  const cv1=$('#cvLive1'),cv2=$('#cvLive2');
+  const defaults={pack:4,core:true,index:true,sortOnce:true};
+  let state={...defaults};
+  let flow1=0,flow2=0,raf=null,running=false;
+
+  function readUI(){
+    state.pack=+$('#sPack').value;
+    state.core=$('#cCore').checked;
+    state.index=$('#cIndex').checked;
+    state.sortOnce=$('#cSortOnce').checked;
+    $('#vPack').textContent=state.pack;
+  }
+  function changed(){
+    return {
+      pack:state.pack!==defaults.pack,
+      core:state.core!==defaults.core,
+      index:state.index!==defaults.index,
+      sortOnce:state.sortOnce!==defaults.sortOnce
+    };
+  }
+  // which modules break, per decomposition
+  function impact(){
+    const ch=changed();
+    const m1=[0,0,0,0,0], m2=[0,0,0,0,0,0];
+    if(ch.pack){ m1[0]=m1[1]=m1[2]=m1[3]=m1[4]=1; m2[0]=1; }
+    if(ch.core){ m1[0]=m1[1]=m1[2]=m1[3]=m1[4]=1; m2[0]=1; }
+    if(ch.index){ m1[1]=m1[2]=m1[3]=1; m2[2]=1; }
+    if(ch.sortOnce){ m1[2]=m1[3]=m1[4]=1; m2[3]=1; }
+    return {m1,m2,ch};
+  }
+
+  function drawDecomp(cv,mods,hit,isD1,flow){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const n=mods.length;
+    const bw=Math.min(150,(w-40)/n - 8);
+    const gap=(w-40-bw*n)/Math.max(1,n-1);
+    const by=48, bh=h-130;
+
+    // shared memory bar for decomposition 1
+    if(isD1){
+      x.fillStyle='rgba(251,113,133,.10)';
+      x.strokeStyle='rgba(251,113,133,.45)';x.lineWidth=1.4;
+      rr(x,20,h-66,w-40,34,9);x.fill();x.stroke();
+      txt(x,'GETEILTER KERNSPEICHER · gepacktes Format + Index-Arrays',w/2,h-49,
+          {size:10,align:'center',col:C.bad,weight:700,font:'mono'});
+    }else{
+      x.fillStyle='rgba(94,234,212,.07)';
+      x.strokeStyle='rgba(94,234,212,.35)';x.lineWidth=1.4;
+      rr(x,20,h-66,w-40,34,9);x.fill();x.stroke();
+      txt(x,'Speicher nur über CHAR / SETCHAR erreichbar — Format unsichtbar',w/2,h-49,
+          {size:10,align:'center',col:C.acc,weight:700,font:'mono'});
+    }
+
+    
+    // module boxes
+    mods.forEach((m,i)=>{
+      const bx=20+i*(bw+gap);
+      const isHit=hit[i];
+      x.save();
+      if(isHit){x.shadowColor='rgba(251,113,133,.55)';x.shadowBlur=18;}
+      x.fillStyle=isHit?'rgba(251,113,133,.16)':'rgba(18,24,43,.95)';
+      x.strokeStyle=isHit?C.bad:(isD1?'rgba(251,113,133,.35)':'rgba(94,234,212,.45)');
+      x.lineWidth=isHit?2.2:1.4;
+      rr(x,bx,by,bw,bh,11);x.fill();x.stroke();
+      x.restore();
+      txt(x,m.name,bx+bw/2,by+20,{size:11,align:'center',weight:700,
+        col:isHit?'#ffd7dd':C.txt});
+      txt(x,m.sec,bx+bw/2,by+40,{size:9,align:'center',col:isHit?C.bad:C.dim});
+      if(isHit)txt(x,'▲ NEU SCHREIBEN',bx+bw/2,by+bh-14,{size:9,align:'center',col:C.bad,weight:700,font:'mono'});
+
+      // connection to memory
+      if(isD1){
+        x.strokeStyle='rgba(251,113,133,.45)';x.lineWidth=1.4;x.setLineDash([4,3]);
+        x.beginPath();x.moveTo(bx+bw/2,by+bh);x.lineTo(bx+bw/2,h-66);x.stroke();x.setLineDash([]);
+      }else if(i>0){
+        x.strokeStyle='rgba(94,234,212,.35)';x.lineWidth=1.2;
+        x.beginPath();x.moveTo(bx+bw/2,by+bh);x.lineTo(bx+bw/2,h-66);x.stroke();
+      }
+    });
+
+    // flowing packets
+    if(running){
+      const t=flow%1;
+      mods.forEach((m,i)=>{
+        if(i>=mods.length-1)return;
+        const x1=20+i*(bw+gap)+bw, x2=20+(i+1)*(bw+gap);
+        const seg=(t*mods.length)-i;
+        if(seg>=0&&seg<=1){
+          const px=lerp(x1,x2,seg), py=by+bh/2;
+          x.fillStyle=isD1?C.bad:C.acc;
+          x.beginPath();x.arc(px,py,4.5,0,7);x.fill();
+          x.shadowColor=isD1?C.bad:C.acc;x.shadowBlur=12;x.fill();x.shadowBlur=0;
+        }
+      });
+    }
+    txt(x,isD1?'Zerlegung 1 — Schnitt nach Verarbeitungsschritten':'Zerlegung 2 — Schnitt nach Geheimnissen',
+        w/2,22,{size:11.5,align:'center',weight:700,col:isD1?C.bad:C.acc});
+  }
+
+  const M1=[
+    {name:'Input',sec:'kennt Packformat'},
+    {name:'Circular Shift',sec:'kennt Packformat + Index'},
+    {name:'Alphabetizing',sec:'kennt beide Arrays'},
+    {name:'Output',sec:'kennt alle Formate'},
+    {name:'Master Control',sec:'Reihenfolge'}
+  ];
+  const M2=[
+    {name:'Line Storage',sec:'Geheimnis: Speicherung'},
+    {name:'Input',sec:'Geheimnis: Eingabeformat'},
+    {name:'Circular Shifter',sec:'Geheimnis: Shift-Darstellung'},
+    {name:'Alphabetizer',sec:'Geheimnis: Sortierzeitpunkt'},
+    {name:'Output',sec:'Geheimnis: Ausgabeformat'},
+    {name:'Master Ctrl',sec:'Geheimnis: Ablauf'}
+  ];
+
+  function codeFor(){
+    const p=state.pack;
+    $('#code1').innerHTML=
+`<span class="c-cm">; Zerlegung 1 — jedes Modul greift direkt zu</span>
+<span class="c-kw">INPUT:</span>   pack chars <span class="c-nm">${p}</span>/word  → CORE[], LINEIDX[]
+<span class="c-kw">SHIFT:</span>   read CORE with <span class="c-nm">${p}</span>/word  → PAIRS[(line,addr)]
+<span class="c-kw">ALPH:</span>    read CORE with <span class="c-nm">${p}</span>/word, sort PAIRS[]
+<span class="c-kw">OUTPUT:</span>  read CORE with <span class="c-nm">${p}</span>/word + PAIRS[]
+<span class="c-cm">; → die Zahl ${p} steht in VIER Modulen.</span>`;
+    $('#code2').innerHTML=
+`<span class="c-cm">; Zerlegung 2 — nur Line Storage kennt die Zahl</span>
+<span class="c-kw">LINE STORAGE:</span>
+  <span class="c-fn">CHAR</span>(r,w,c)      <span class="c-cm">; intern: ${p} Zeichen/Wort</span>
+  <span class="c-fn">SETCHAR</span>(r,w,c,d)
+  <span class="c-fn">WORDS</span>(r)
+<span class="c-kw">INPUT:</span>    call <span class="c-fn">SETCHAR</span>(...)
+<span class="c-kw">SHIFTER:</span>  <span class="c-fn">CSCHAR</span>(l,w,c) → call <span class="c-fn">CHAR</span>(...)
+<span class="c-kw">ALPH:</span>     <span class="c-fn">ALPH</span>, <span class="c-fn">ITH</span>(i)  → call <span class="c-fn">CSCHAR</span>(...)
+<span class="c-kw">OUTPUT:</span>   call <span class="c-fn">ITH</span>/<span class="c-fn">CSCHAR</span>
+<span class="c-cm">; → die Zahl ${p} steht an EINER Stelle.</span>`;
+  }
+
+  function output(){
+    const lines=parseLines($('#liveIn').value);
+    const sh=kwicShifts(lines);
+    const sorted=[...sh].sort((a,b)=>a.words.join(' ').localeCompare(b.words.join(' ')));
+    const chars=lines.reduce((a,ws)=>a+ws.join('').length,0);
+    const words=Math.ceil(chars/state.pack);
+    let s=`<span class="c-cm">; ${sorted.length} Shifts · ${chars} Zeichen · ${words} Speicherwörter (${state.pack}/Wort)</span>\n`;
+    s+=`<span class="c-cm">; Zeilen im Kern: ${state.core?'alle':'nur Fenster, Rest auf Platte'}</span>\n`;
+    s+=`<span class="c-cm">; Shifts: ${state.index?'nur Index':'materialisiert'} · Sortierung: ${state.sortOnce?'einmal komplett':'verteilt (FIND-artig)'}</span>\n\n`;
+    sorted.forEach((o,i)=>{
+      s+=`<span class="c-nm">${String(i+1).padStart(3,' ')}</span>  ${o.words.join(' ')}   <span class="c-cm">; L${o.line+1}·${o.shift}</span>\n`;
+    });
+    $('#liveOut').innerHTML=s;
+  }
+
+  function verdict(){
+    const {m1,m2,ch}=impact();
+    const a=m1.reduce((x,y)=>x+y,0), b=m2.reduce((x,y)=>x+y,0);
+    const nch=Object.values(ch).filter(Boolean).length;
+    if(nch===0){
+      $('#liveVerdict').innerHTML=`<span class="badge b-acc">Ausgangszustand</span> Verändere oben eine Entwurfsentscheidung.`;
+      return;
+    }
+    const names=[];
+    if(ch.pack)names.push('Zeichenpackung');
+    if(ch.core)names.push('Speicherung auf Platte');
+    if(ch.index)names.push('Shift-Darstellung');
+    if(ch.sortOnce)names.push('Sortierstrategie');
+    $('#liveVerdict').innerHTML=`
+      <div><strong style="color:var(--txt)">${nch} Änderung${nch>1?'en':''}:</strong> ${names.join(', ')}</div>
+      <div style="margin-top:8px;display:flex;gap:14px">
+        <span><span class="badge b-bad">Zerl. 1</span> <strong style="color:${C.bad};font-size:17px">${a}</strong>/5 Module</span>
+        <span><span class="badge b-good">Zerl. 2</span> <strong style="color:${C.good};font-size:17px">${b}</strong>/6 Module</span>
+      </div>
+      <div style="margin-top:8px;color:var(--txt-faint)">
+        ${a>b?`Das ist Parnas' Punkt: dieselbe Änderung, <strong>${(a/Math.max(1,b)).toFixed(1)}×</strong> so viel Arbeit.`
+             :'Hier sind beide gleich gut — nicht jede Änderung bestraft Zerlegung 1.'}
+      </div>`;
+  }
+
+  function redraw(){
+    const {m1,m2}=impact();
+    drawDecomp(cv1,M1,m1,true,flow1);
+    drawDecomp(cv2,M2,m2,false,flow2);
+    codeFor();verdict();output();
+  }
+  function run(){
+    running=true;flow1=flow2=0;
+    cancelAnimationFrame(raf);
+    (function a(){
+      flow1+=.006;flow2+=.006;
+      redraw();
+      if(flow1<1.05)raf=requestAnimationFrame(a);
+      else{running=false;redraw();}
+    })();
+  }
+  ['#sPack'].forEach(s=>$(s).oninput=()=>{readUI();redraw();});
+  ['#cCore','#cIndex','#cSortOnce'].forEach(s=>$(s).onchange=()=>{readUI();redraw();});
+  $('#liveIn').oninput=redraw;
+  $('#liveRun').onclick=run;
+  $('#liveReset').onclick=()=>{
+    $('#sPack').value=4;$('#cCore').checked=true;$('#cIndex').checked=true;$('#cSortOnce').checked=true;
+    readUI();redraw();
+  };
+  window.__live=redraw;
+  readUI();redraw();
+})();
+
+/* ============================================================
+   SECTION 05 — FLOWCHART SCALING LIMIT
+   ============================================================ */
+(function scale(){
+  const cv=$('#cvScale'),s=$('#sSize');
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    const size=+s.value;
+    $('#vSize').textContent=fmt(size);
+    x.clearRect(0,0,w,h);
+
+    // flowchart boxes grow with size
+    const boxes=clamp(Math.round(Math.sqrt(size)/3),4,520);
+    const cols=Math.ceil(Math.sqrt(boxes*1.5));
+    const rows=Math.ceil(boxes/cols);
+    const pad=24;
+    const bw=(w-pad*2)/cols, bh=(h-pad*2-30)/rows;
+    const over=size>10000;
+    for(let i=0;i<boxes;i++){
+      const cx2=pad+(i%cols)*bw, cy2=pad+Math.floor(i/cols)*bh;
+      const t=clamp((size-5000)/20000,0,1);
+      x.fillStyle=over?`rgba(251,113,133,${.1+t*.25})`:'rgba(94,234,212,.16)';
+      x.strokeStyle=over?'rgba(251,113,133,.4)':'rgba(94,234,212,.5)';
+      x.lineWidth=.8;
+      rr(x,cx2+1,cy2+1,Math.max(2,bw-3),Math.max(2,bh-3),Math.min(3,bw/4));
+      x.fill();if(bw>6)x.stroke();
+    }
+    // human capacity line
+    const capBoxes=clamp(Math.round(Math.sqrt(8000)/3),4,520);
+    if(boxes>capBoxes){
+      const capRows=Math.ceil(capBoxes/cols);
+      const yLine=pad+capRows*bh;
+      x.strokeStyle=C.warn;x.lineWidth=2;x.setLineDash([7,5]);
+      x.beginPath();x.moveTo(0,yLine);x.lineTo(w,yLine);x.stroke();x.setLineDash([]);
+      txt(x,'Grenze dessen, was ein Mensch überblickt (~10.000 Instruktionen)',
+          w-10,yLine-10,{size:10,col:C.warn,align:'right',weight:650});
+    }
+    txt(x,`${boxes} Flussdiagramm-Kästen`,12,h-12,{size:10.5,col:C.dim,font:'mono'});
+
+    $('#scaleKPI').innerHTML=`
+      <div class="cell"><div class="k">${fmt(boxes)}</div><div class="l">Kästen im Diagramm</div></div>
+      <div class="cell"><div class="k" style="color:${over?C.bad:C.good}">${over?'überschritten':'im Rahmen'}</div><div class="l">Parnas-Grenze</div></div>`;
+    $('#scaleVerdict').innerHTML = over
+      ? `<span class="badge b-bad">Über der Grenze</span> „The flowchart was a useful abstraction for systems with on the order of 5,000–10,000 instructions, but as we move beyond that <strong>it does not appear to be sufficient; something additional is needed.</strong>" — Das „Zusätzliche" ist das Kriterium <em>Information Hiding</em>.`
+      : `<span class="badge b-good">Unter der Grenze</span> Hier funktioniert das Flussdiagramm noch als Abstraktion. Parnas verbietet es nicht — er zeigt nur, wo es aufhört zu tragen.`;
+  }
+  s.oninput=draw;
+  window.__scale=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 05 — SECRET LAB
+   ============================================================ */
+(function lab(){
+  const DECISIONS=[
+    {id:'fmt',  t:'Zeichen 4 pro Wort packen',        correct:'ls'},
+    {id:'core', t:'Alle Zeilen im Kernspeicher',      correct:'ls'},
+    {id:'link', t:'Interne Verkettung der Zeilen',    correct:'ls'},
+    {id:'inp',  t:'Eingabeformat der Datei',          correct:'in'},
+    {id:'shf',  t:'Shifts: Index oder materialisiert',correct:'cs'},
+    {id:'ord',  t:'Zeitpunkt der Sortierung',         correct:'al'},
+    {id:'out',  t:'Ausgabeformat / Layout',           correct:'ou'},
+    {id:'seq',  t:'Reihenfolge der Verarbeitung',     correct:'mc'}
+  ];
+  const MODULES=[
+    {id:'ls',n:'Line Storage'},
+    {id:'in',n:'Input'},
+    {id:'cs',n:'Circular Shifter'},
+    {id:'al',n:'Alphabetizer'},
+    {id:'ou',n:'Output'},
+    {id:'mc',n:'Master Control'}
+  ];
+  // assignment: decisionId -> array of moduleIds
+  let asg={};
+  DECISIONS.forEach(d=>asg[d.id]=[]);
+  let picked=null;
+
+  function renderPool(){
+    $('#secretPool').innerHTML=DECISIONS.map(d=>{
+      const n=asg[d.id].length;
+      const cls = n===1?'safe' : n===0?'' : 'hit';
+      return `<div class="modcard ${cls} ${picked===d.id?'':''}" data-d="${d.id}"
+        style="${picked===d.id?'border-color:var(--acc);background:rgba(94,234,212,.12)':''}">
+        <div class="mt" style="font-size:12px">${d.t}</div>
+        <div class="md">${n===0?'<span style="color:var(--warn)">in keinem Modul</span>'
+          :n===1?'<span style="color:var(--good)">in 1 Modul ✓</span>'
+          :`<span style="color:var(--bad)">in ${n} Modulen — verteilt!</span>`}</div>
+      </div>`;}).join('');
+    $$('#secretPool .modcard').forEach(e=>e.onclick=()=>{
+      picked = picked===e.dataset.d ? null : e.dataset.d;
+      render();
+    });
+  }
+  function renderModules(){
+    $('#labModules').innerHTML=MODULES.map(m=>{
+      const held=DECISIONS.filter(d=>asg[d.id].includes(m.id));
+      const over=held.length>2;
+      return `<div class="modcard ${over?'hit':held.length?'safe':''}" data-m="${m.id}">
+        <div class="mt">${m.n}</div>
+        <div class="md" style="margin-top:6px">${held.length?held.map(d=>'· '+d.t).join('<br>'):'<em style="color:var(--txt-faint)">leer</em>'}</div>
+        ${picked?`<div class="secret" style="color:var(--acc)">${asg[picked].includes(m.id)?'▸ klicken zum Entfernen':'▸ klicken zum Hineinlegen'}</div>`:''}
+      </div>`;}).join('');
+    $$('#labModules .modcard').forEach(e=>e.onclick=()=>{
+      if(!picked)return;
+      const mid=e.dataset.m;
+      const arr=asg[picked];
+      const i=arr.indexOf(mid);
+      if(i>=0)arr.splice(i,1); else arr.push(mid);
+      render();
+    });
+  }
+  function score(){
+    let cost=0,perfect=0,spread=0,orphan=0;
+    DECISIONS.forEach(d=>{
+      const n=asg[d.id].length;
+      if(n===0){orphan++;cost+=6;}
+      else if(n===1){cost+=1;if(asg[d.id][0]===d.correct)perfect++;}
+      else {spread++;cost+=n*2;}
+    });
+    return {cost,perfect,spread,orphan};
+  }
+  function render(){
+    renderPool();renderModules();
+    const s=score();
+    $('#labKPI').innerHTML=`
+      <div class="cell"><div class="k" style="color:${s.cost<=10?C.good:s.cost<20?C.warn:C.bad}">${s.cost}</div><div class="l">Änderungskosten</div></div>
+      <div class="cell"><div class="k" style="color:${C.good}">${s.perfect}/8</div><div class="l">wie bei Parnas</div></div>
+      <div class="cell"><div class="k" style="color:${s.spread?C.bad:C.good}">${s.spread}</div><div class="l">verteilte Entscheidungen</div></div>
+      <div class="cell"><div class="k" style="color:${s.orphan?C.warn:C.good}">${s.orphan}</div><div class="l">heimatlos</div></div>`;
+    let v;
+    if(s.perfect===8&&s.spread===0)
+      v=`<span class="badge b-good">Perfekt</span> Das ist Parnas' Zerlegung 2. Jede Entscheidung hat genau einen Besitzer: „Every module is characterized by its knowledge of a design decision <strong>which it hides from all others</strong>."`;
+    else if(s.spread>2)
+      v=`<span class="badge b-bad">Flussdiagramm-Falle</span> Mehrere Entscheidungen stecken in mehreren Modulen gleichzeitig. Genau das passiert in Zerlegung 1 mit dem Speicherformat — und deshalb trifft eine Änderung dort <em>jedes</em> Modul.`;
+    else if(s.orphan>0)
+      v=`<span class="badge b-warn">Unvollständig</span> ${s.orphan} Entscheidung(en) gehören noch keinem Modul. Solche Entscheidungen landen am Ende in der <em>Schnittstelle</em> — der teuerste Platz.`;
+    else
+      v=`<span class="badge b-acc">Gültig</span> Jede Entscheidung hat genau einen Besitzer. ${8-s.perfect} liegen anders als bei Parnas — das kann sinnvoll sein, solange sie nicht verteilt sind.`;
+    $('#labVerdict').innerHTML=v;
+  }
+  $('#labAuto').onclick=()=>{DECISIONS.forEach(d=>asg[d.id]=[d.correct]);picked=null;render();};
+  $('#labBad').onclick=()=>{
+    DECISIONS.forEach(d=>asg[d.id]=[]);
+    asg.fmt=['in','cs','al','ou'];
+    asg.core=['in','cs','al','ou'];
+    asg.link=['in','cs'];
+    asg.inp=['in'];asg.shf=['cs','al','ou'];asg.ord=['al','ou'];
+    asg.out=['ou'];asg.seq=['mc'];
+    picked=null;render();
+  };
+  $('#labClear').onclick=()=>{DECISIONS.forEach(d=>asg[d.id]=[]);picked=null;render();};
+  render();
+})();
+
+/* ============================================================
+   SECTION 06 — DESIGN SPACE (self-criticism)
+   ============================================================ */
+(function space(){
+  const cv=$('#cvSpace');
+  const boxes=['pc1','pc2','pc3','pc4','pc5'].map(i=>$('#'+i));
+  // candidate implementations
+  const IMPL=[
+    {n:'Index-Tabelle, Zeilenreihenfolge', need:[1,1,1,1,1]},
+    {n:'Shifts materialisiert, Zeilenreihenfolge', need:[1,1,1,1,1]},
+    {n:'On-demand berechnet', need:[1,1,1,1,1]},
+    {n:'Shifts bereits alphabetisch, ALPH leer', need:[1,1,1,0,0]},
+    {n:'Shifts gehasht, ITH liefert Permutation', need:[1,1,1,0,0]},
+    {n:'Lazy FIND-artig, Teilordnung', need:[1,1,1,0,0]},
+    {n:'Duplikate zusammengefasst', need:[1,0,1,0,0]},
+    {n:'Shifts verteilt über Platten', need:[1,1,1,0,0]}
+  ];
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const on=boxes.map(b=>b.checked);
+    // an implementation survives if for each enabled promise, need===1
+    const alive=IMPL.map(im=>on.every((o,i)=>!o||im.need[i]===1));
+    const cx=w/2,cy=h/2-6;
+    const R=Math.min(w,h)/2-46;
+
+    // outer universe circle
+    x.strokeStyle='rgba(130,160,230,.22)';x.lineWidth=1.3;x.setLineDash([4,5]);
+    x.beginPath();x.arc(cx,cy,R,0,7);x.stroke();x.setLineDash([]);
+    txt(x,'Raum aller denkbaren Implementierungen',cx,cy-R-14,
+        {size:10.5,align:'center',col:C.dim,weight:600});
+
+    // shrinking allowed region
+    const nOn=on.filter(Boolean).length;
+    const shrink=R*(1-0.13*nOn);
+    const over=on[3]||on[4];
+    x.save();
+    x.shadowColor=over?'rgba(251,113,133,.45)':'rgba(94,234,212,.4)';x.shadowBlur=24;
+    const g=x.createRadialGradient(cx,cy,shrink*.2,cx,cy,shrink);
+    g.addColorStop(0,over?'rgba(251,113,133,.28)':'rgba(94,234,212,.24)');
+    g.addColorStop(1,over?'rgba(251,113,133,.05)':'rgba(94,234,212,.04)');
+    x.fillStyle=g;
+    x.strokeStyle=over?'rgba(251,113,133,.7)':'rgba(94,234,212,.7)';x.lineWidth=2;
+    x.beginPath();x.arc(cx,cy,shrink,0,7);x.fill();x.stroke();
+    x.restore();
+
+    // implementations as points
+    IMPL.forEach((im,i)=>{
+      const a=-Math.PI/2+i/IMPL.length*Math.PI*2;
+      const rad = alive[i] ? shrink*0.62 : R*0.84;
+      const px=cx+rad*Math.cos(a), py=cy+rad*Math.sin(a);
+      x.fillStyle=alive[i]?C.acc:'rgba(100,116,139,.55)';
+      x.beginPath();x.arc(px,py,alive[i]?6:4,0,7);x.fill();
+      if(alive[i]){x.strokeStyle='#fff';x.lineWidth=1.2;x.stroke();}
+      const ta=Math.cos(a)>0?'left':'right';
+      txt(x,im.n,px+(Math.cos(a)>0?10:-10),py,
+          {size:9,col:alive[i]?C.txt:'#475569',align:ta});
+    });
+
+    const n=alive.filter(Boolean).length;
+    $('#spaceKPI').innerHTML=`
+      <div class="cell"><div class="k" style="color:${n>5?C.good:n>3?C.warn:C.bad}">${n}/8</div><div class="l">mögliche Implementierungen</div></div>
+      <div class="cell"><div class="k">${nOn}</div><div class="l">Zusagen in der Schnittstelle</div></div>
+      <div class="cell"><div class="k" style="font-size:13px;color:${over?C.bad:C.good}">${over?'Designfehler':'minimal'}</div><div class="l">Parnas' Urteil</div></div>`;
+  }
+  boxes.forEach(b=>b.onchange=draw);
+  window.__space=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 07 — FIVE RULES
+   ============================================================ */
+(function rules(){
+  const R=[
+    {t:'1 · Datenstruktur + Zugriff = ein Modul',
+     q:'„A data structure, its internal linkings, accessing procedures and modifying procedures are part of a single module. <strong>They are not shared by many modules as is conventionally done.</strong>"',
+     d:'Die klassische Sünde: eine globale Tabelle, auf die zehn Module direkt zugreifen. Parnas verlangt: die Struktur <em>und</em> alle Zugriffs- und Änderungsprozeduren gehören in <strong>ein</strong> Modul. Das ist die direkte Vorform des abstrakten Datentyps und der Klasse.',
+     ref:'„clearly behind the design of BLISS"',
+     draw:'ds'},
+    {t:'2 · Aufrufsequenz gehört zur Routine',
+     q:'„The sequence of instructions necessary to call a given routine <strong>and the routine itself</strong> are part of the same module."',
+     d:'In Assembler gibt es keine perfekte Aufrufkonvention — sie ändert sich ständig. Wenn der Autor der Routine auch den Aufruf-Code erzeugt, kann er die Konvention jederzeit verbessern, ohne alle Aufrufer anzufassen. Heute: Compiler-ABI, Calling Conventions, Stub-Generierung.',
+     ref:'„There are no perfect general calling sequences for real machines"',
+     draw:'call'},
+    {t:'3 · Control-Block-Formate verstecken',
+     q:'„The formats of control blocks used in queues in operating systems … must be hidden within a <strong>control block module</strong>."',
+     d:'Es ist üblich, solche Formate zur Schnittstelle zu machen — und genau das wird teuer: „Because design evolution forces frequent changes on control block formats such a decision often proves <strong>extremely costly</strong>."',
+     ref:'Betriebssystem-Warteschlangen',
+     draw:'cb'},
+    {t:'4 · Zeichencodes und Sortierordnungen verstecken',
+     q:'„Character codes, alphabetic orderings, and similar data should be hidden in a module for <strong>greatest flexibility</strong>."',
+     d:'ASCII vs. EBCDIC, deutsches vs. englisches Alphabet, Groß-/Kleinschreibung. Wenn jedes Modul selbst vergleicht, ist eine Änderung der Sortierordnung ein systemweiter Umbau. Heute: Unicode-Collation, Locale-Objekte.',
+     ref:'direkt relevant für den Alphabetizer',
+     draw:'char'},
+    {t:'5 · Verarbeitungsreihenfolge verstecken',
+     q:'„The sequence in which certain items will be processed should (as far as practical) be hidden within a single module."',
+     d:'„Various changes ranging from equipment additions to unavailability of certain resources in an operating system make <strong>sequencing extremely variable</strong>." Das ist die allgemeine Form von Änderung Nr. 5 (Sortierzeitpunkt) — und der Grund, warum Master Control existiert.',
+     ref:'Scheduler, Pipelines, Nebenläufigkeit',
+     draw:'seq'}
+  ];
+  const cv=$('#cvRule');
+  let cur=0;
+  $('#ruleSteps').innerHTML=R.map((r,i)=>`<div class="step" data-i="${i}">${r.t.split(' · ')[0]} · ${r.t.split(' · ')[1]}</div>`).join('');
+
+  function drawRule(kind){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2;
+    if(kind==='ds'){
+      txt(x,'links: konventionell · rechts: Parnas',w/2,16,{size:10.5,align:'center',col:C.dim});
+      // left: shared struct
+      const lx=w*.25;
+      x.fillStyle='rgba(251,113,133,.14)';x.strokeStyle=C.bad;x.lineWidth=1.5;
+      rr(x,lx-46,cy+40,92,40,8);x.fill();x.stroke();
+      txt(x,'TABELLE',lx,cy+60,{size:10.5,align:'center',col:C.bad,weight:700,font:'mono'});
+      for(let i=0;i<4;i++){
+        const px=lx-66+i*44, py=cy-50;
+        x.fillStyle='rgba(18,24,43,.95)';x.strokeStyle='rgba(130,160,230,.4)';x.lineWidth=1.2;
+        rr(x,px-16,py-14,32,28,6);x.fill();x.stroke();
+        txt(x,'M'+(i+1),px,py,{size:9.5,align:'center',col:C.txt,font:'mono'});
+        arrow(x,px,py+14,lx+(i-1.5)*14,cy+40,'rgba(251,113,133,.6)',1.3,6);
+      }
+      txt(x,'4 Module kennen das Format',lx,cy+100,{size:10,align:'center',col:C.bad});
+      // right: encapsulated
+      const rx=w*.74;
+      x.fillStyle='rgba(94,234,212,.10)';x.strokeStyle=C.acc;x.lineWidth=1.8;
+      rr(x,rx-62,cy+16,124,70,10);x.fill();x.stroke();
+      txt(x,'MODUL',rx,cy+34,{size:10,align:'center',col:C.acc,weight:700,font:'mono'});
+      x.fillStyle='rgba(94,234,212,.2)';
+      rr(x,rx-40,cy+44,80,28,6);x.fill();
+      txt(x,'Tabelle',rx,cy+58,{size:9.5,align:'center',col:C.txt,font:'mono'});
+      for(let i=0;i<4;i++){
+        const px=rx-66+i*44, py=cy-50;
+        x.fillStyle='rgba(18,24,43,.95)';x.strokeStyle='rgba(130,160,230,.4)';x.lineWidth=1.2;
+        rr(x,px-16,py-14,32,28,6);x.fill();x.stroke();
+        txt(x,'M'+(i+1),px,py,{size:9.5,align:'center',col:C.txt,font:'mono'});
+        arrow(x,px,py+14,rx+(i-1.5)*18,cy+16,'rgba(94,234,212,.55)',1.3,6);
+      }
+      txt(x,'4 Module kennen nur GET/SET',rx,cy+104,{size:10,align:'center',col:C.acc});
+      $('#ruleCaption').innerHTML='Die Vorform des <strong>abstrakten Datentyps</strong> — 1972.';
+    }
+    else if(kind==='call'){
+      const ry=cy;
+      x.fillStyle='rgba(94,234,212,.10)';x.strokeStyle=C.acc;x.lineWidth=1.8;
+      rr(x,w*.58,ry-62,w*.34,124,11);x.fill();x.stroke();
+      txt(x,'MODUL „ROUTINE"',w*.58+w*.17,ry-44,{size:10.5,align:'center',col:C.acc,weight:700,font:'mono'});
+      x.fillStyle='rgba(94,234,212,.16)';
+      rr(x,w*.60,ry-28,w*.30,34,7);x.fill();
+      txt(x,'Routinen-Code',w*.58+w*.17,ry-11,{size:10,align:'center',col:C.txt,font:'mono'});
+      x.fillStyle='rgba(251,191,36,.18)';
+      rr(x,w*.60,ry+14,w*.30,34,7);x.fill();
+      txt(x,'Aufruf-Sequenz',w*.58+w*.17,ry+31,{size:10,align:'center',col:C.warn,font:'mono'});
+      for(let i=0;i<3;i++){
+        const py=ry-50+i*50;
+        x.fillStyle='rgba(18,24,43,.95)';x.strokeStyle='rgba(130,160,230,.4)';x.lineWidth=1.2;
+        rr(x,w*.08,py-15,86,30,7);x.fill();x.stroke();
+        txt(x,'Aufrufer '+(i+1),w*.08+43,py,{size:9.5,align:'center',col:C.txt});
+        arrow(x,w*.08+86,py,w*.58,ry+31,'rgba(251,191,36,.5)',1.3,6);
+      }
+      txt(x,'Die Konvention darf sich ändern — nur ein Modul merkt es.',w/2,h-14,
+          {size:10,align:'center',col:C.dim});
+      $('#ruleCaption').innerHTML='Heute: ABI, Calling Convention, generierte Stubs.';
+    }
+    else if(kind==='cb'){
+      // queue of control blocks
+      txt(x,'Warteschlange mit Control Blocks',w/2,18,{size:10.5,align:'center',col:C.dim});
+      const n=5;
+      for(let i=0;i<n;i++){
+        const px=w*.10+i*(w*.80/n);
+        x.fillStyle='rgba(129,140,248,.14)';x.strokeStyle='rgba(129,140,248,.5)';x.lineWidth=1.3;
+        rr(x,px,cy-24,w*.80/n-14,48,8);x.fill();x.stroke();
+        txt(x,'CB'+(i+1),px+(w*.80/n-14)/2,cy,{size:10,align:'center',col:C.acc2,font:'mono'});
+        if(i<n-1)arrow(x,px+w*.80/n-14,cy,px+w*.80/n,cy,'rgba(129,140,248,.6)',1.4,6);
+      }
+      x.strokeStyle=C.acc;x.lineWidth=2;x.setLineDash([6,4]);
+      rr(x,w*.06,cy-50,w*.88,100,12);x.stroke();x.setLineDash([]);
+      txt(x,'CONTROL BLOCK MODULE — Format liegt nur hier',w/2,cy-62,
+          {size:10.5,align:'center',col:C.acc,weight:700});
+      txt(x,'„design evolution forces frequent changes on control block formats"',
+          w/2,h-16,{size:10,align:'center',col:C.warn});
+      $('#ruleCaption').innerHTML='Format als Schnittstelle = „extremely costly".';
+    }
+    else if(kind==='char'){
+      const orders=[['A','B','C','…','Z'],['a','ä','b','c','…'],['0x41','0xC1','…','',''ature'.slice(0,0)]];
+      txt(x,'Dieselben Daten, drei Ordnungen',w/2,18,{size:10.5,align:'center',col:C.dim});
+      const labels=['ASCII / englisch','DIN / deutsch','EBCDIC'];
+      const cols=[C.acc,C.acc2,C.acc3];
+      for(let r=0;r<3;r++){
+        const py=cy-50+r*52;
+        txt(x,labels[r],w*.06,py,{size:10,col:cols[r],weight:650});
+        for(let i=0;i<5;i++){
+          const px=w*.36+i*44;
+          x.fillStyle=cols[r]+'22';
+          x.globalAlpha=.3;rr(x,px,py-14,38,28,6);x.fill();x.globalAlpha=1;
+          x.strokeStyle=cols[r];x.lineWidth=1;rr(x,px,py-14,38,28,6);x.stroke();
+          txt(x,(orders[r]&&orders[r][i])||'·',px+19,py,{size:10,align:'center',col:C.txt,font:'mono'});
+        }
+      }
+      x.strokeStyle=C.acc;x.lineWidth=2;x.setLineDash([6,4]);
+      rr(x,w*.30,cy-72,w*.64,156,12);x.stroke();x.setLineDash([]);
+      txt(x,'ein Modul entscheidet, welche gilt',w*.62,cy+96,{size:10,align:'center',col:C.acc});
+      $('#ruleCaption').innerHTML='Heute: Locale, Unicode Collation, <code>Comparator</code>.';
+    }
+    else{
+      txt(x,'Verarbeitungsreihenfolge als Geheimnis',w/2,18,{size:10.5,align:'center',col:C.dim});
+      const items=['A','B','C','D'];
+      // three alternative orders
+      const perms=[[0,1,2,3],[2,0,3,1],[3,2,1,0]];
+      perms.forEach((p,r)=>{
+        const py=cy-46+r*48;
+        x.globalAlpha=r===0?1:.45;
+        p.forEach((it,i)=>{
+          const px=w*.30+i*60;
+          x.fillStyle='rgba(94,234,212,.14)';x.strokeStyle='rgba(94,234,212,.5)';x.lineWidth=1.2;
+          rr(x,px,py-14,46,28,6);x.fill();x.stroke();
+          txt(x,items[it],px+23,py,{size:11,align:'center',col:C.txt,weight:700,font:'mono'});
+          if(i<3)arrow(x,px+46,py,px+60,py,'rgba(94,234,212,.5)',1.2,5);
+        });
+        x.globalAlpha=1;
+        txt(x,['aktuell','nach Gerätewechsel','bei Ressourcenmangel'][r],w*.05,py,
+            {size:9.5,col:r===0?C.acc:C.dim});
+      });
+      x.strokeStyle=C.acc;x.lineWidth=2;x.setLineDash([6,4]);
+      rr(x,w*.26,cy-70,w*.68,150,12);x.stroke();x.setLineDash([]);
+      txt(x,'Master Control — niemand sonst darf die Reihenfolge annehmen',
+          w/2,h-14,{size:10,align:'center',col:C.acc});
+      $('#ruleCaption').innerHTML='„sequencing extremely variable" — deshalb kapseln.';
+    }
+  }
+  function sel(i){
+    cur=i;
+    $$('#ruleSteps .step').forEach((e,k)=>e.classList.toggle('active',k===i));
+    const r=R[i];
+    $('#ruleText').innerHTML=`
+      <h3 style="margin-top:0">${r.t}</h3>
+      <div class="callout quote">${r.q}</div>
+      <p>${r.d}</p>
+      <div class="small" style="color:var(--txt-faint)">Bezug im Paper: ${r.ref}</div>`;
+    drawRule(r.draw);
+  }
+  $$('#ruleSteps .step').forEach(e=>e.onclick=()=>sel(+e.dataset.i));
+  window.__rules=()=>drawRule(R[cur].draw);
+  sel(0);
+})();
+
+/* ============================================================
+   SECTION 08 — EFFICIENCY
+   ============================================================ */
+(function eff(){
+  const sC=$('#sCall'),sD=$('#sData'),cI=$('#cInline');
+  function calc(){
+    const call=+sC.value, data=+sD.value, inl=cI.checked;
+    $('#vCall').textContent=call;
+    $('#vData').textContent=fmt(data);
+    // decomposition 1: direct memory access, ~1 unit per char, few module transfers
+    const d1 = data*1.0 + 20*call;
+    // decomposition 2: CHAR() per character, several layers deep (~2.5 calls/char)
+    const layers=2.5;
+    const d2raw = data*1.0 + data*layers*call;
+    const d2 = inl ? data*1.0 + data*layers*0.15 + 30*call*0.1 : d2raw;
+    return {d1,d2,d2raw,call,data,inl};
+  }
+  function plot(){
+    const {call,inl}=calc();
+    const xs=[],y1=[],y2=[];
+    for(let d=100;d<=20000;d+=400){
+      xs.push(d);
+      y1.push(d*1.0+20*call);
+      const raw=d*1.0+d*2.5*call;
+      y2.push(inl? d*1.0+d*2.5*0.15+30*call*0.1 : raw);
+    }
+    const cur=calc();
+    Plotly.react('plEff',[
+      {x:xs,y:y1,name:'Zerlegung 1',mode:'lines',line:{color:C.bad,width:3}},
+      {x:xs,y:y2,name:'Zerlegung 2'+(inl?' (inline)':' (echte Prozeduren)'),mode:'lines',
+       line:{color:inl?C.good:C.warn,width:3}},
+      {x:[cur.data],y:[cur.d2],mode:'markers',showlegend:false,
+       marker:{color:inl?C.good:C.warn,size:11,line:{color:'#fff',width:1.5}}}
+    ],{...PLOTLAY,
+      xaxis:{...PLOTLAY.xaxis,title:'verarbeitete Zeichen'},
+      yaxis:{...PLOTLAY.yaxis,title:'Kosten (Speicherzugriff-Äquivalente)'}},PLOTCFG);
+
+    const ratio=cur.d2/cur.d1;
+    $('#effKPI').innerHTML=`
+      <div class="cell"><div class="k" style="color:${C.bad}">${fmt(Math.round(cur.d1))}</div><div class="l">Zerlegung 1</div></div>
+      <div class="cell"><div class="k" style="color:${ratio<1.3?C.good:ratio<3?C.warn:C.bad}">${fmt(Math.round(cur.d2))}</div><div class="l">Zerlegung 2</div></div>
+      <div class="cell"><div class="k" style="color:${ratio<1.3?C.good:C.bad}">${ratio.toFixed(2)}×</div><div class="l">Faktor</div></div>
+      <div class="cell"><div class="k" style="font-size:13px">${inl?'eingebettet':'Prozeduraufruf'}</div><div class="l">Implementierung</div></div>`;
+  }
+  [sC,sD].forEach(e=>e.oninput=plot);
+  cI.onchange=plot;
+  plot();
+  window.__eff=plot;
+})();
+
+/* ============================================================
+   SECTION 09 — QUADRANTS
+   ============================================================ */
+(function quad(){
+  const cv=$('#cvQuad'),sx=$('#sQx'),sy=$('#sQy');
+  const Q=[
+    {n:'Zerlegung 1 mit Hierarchie',
+     d:'Flussdiagramm-Schnitt, aber azyklisch geschichtet. <strong>Genau der Fall, den Parnas nennt:</strong> „we could have a system with the type of decomposition shown in version 1 … but retaining a hierarchical structure". Beweist: die zwei Eigenschaften sind unabhängig.',
+     c:C.warn},
+    {n:'Zerlegung 2 — das Ziel',
+     d:'Sauber geschnitten <em>und</em> hierarchisch. Beide Vorteile: lokale Änderungen <strong>und</strong> abschneidbare obere Ebenen.',
+     c:C.good},
+    {n:'Spaghetti',
+     d:'Weder Geheimnisse noch Ordnung. Jede Änderung trifft alles, nichts lässt sich einzeln testen oder herauslösen.',
+     c:C.bad},
+    {n:'Saubere Module, zirkuläre Abhängigkeiten',
+     d:'Jedes Modul versteckt brav ein Geheimnis, aber A braucht B und B braucht A. Änderungen bleiben lokal — doch man kann nichts einzeln starten und nichts „prunen". „‚level\' would not have much meaning in the system."',
+     c:C.acc2}
+  ];
+  function draw(){
+    const {x,
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const qx=+sx.value/100, qy=+sy.value/100;
+    $('#vQx').textContent=sx.value+'%';
+    $('#vQy').textContent=sy.value+'%';
+    const pad=46;
+    const W=w-pad*1.4, H=h-pad*1.6;
+    const ox=pad, oy=pad*.6;
+
+    // quadrant fills
+    const cols=['rgba(251,191,36,.07)','rgba(74,222,128,.09)','rgba(251,113,133,.07)','rgba(129,140,248,.07)'];
+    // Q0 top-left (low clean, high hier), Q1 top-right, Q2 bottom-left, Q3 bottom-right
+    x.fillStyle=cols[0];x.fillRect(ox,oy,W/2,H/2);
+    x.fillStyle=cols[1];x.fillRect(ox+W/2,oy,W/2,H/2);
+    x.fillStyle=cols[2];x.fillRect(ox,oy+H/2,W/2,H/2);
+    x.fillStyle=cols[3];x.fillRect(ox+W/2,oy+H/2,W/2,H/2);
+
+    // axes
+    x.strokeStyle='rgba(130,160,230,.3)';x.lineWidth=1.2;
+    x.strokeRect(ox,oy,W,H);
+    x.setLineDash([4,4]);
+    x.beginPath();x.moveTo(ox+W/2,oy);x.lineTo(ox+W/2,oy+H);
+    x.moveTo(ox,oy+H/2);x.lineTo(ox+W,oy+H/2);x.stroke();x.setLineDash([]);
+
+    const labels=[
+      ['Zerlegung 1 + Hierarchie',ox+W/4,oy+22,C.warn],
+      ['Zerlegung 2 (Parnas-Ziel)',ox+3*W/4,oy+22,C.good],
+      ['Spaghetti',ox+W/4,oy+H-18,C.bad],
+      ['sauber, aber zirkulär',ox+3*W/4,oy+H-18,C.acc2]
+    ];
+    labels.forEach(([t,px,py,c])=>txt(x,t,px,py,{size:10.5,align:'center',col:c,weight:650}));
+
+    txt(x,'Information Hiding →',ox+W/2,oy+H+26,{size:10.5,align:'center',col:C.dim,weight:600});
+    x.save();x.translate(ox-16,oy+H/2);x.rotate(-Math.PI/2);
+    txt(x,'Hierarchie (azyklisch) →',0,0,{size:10.5,align:'center',col:C.dim,weight:600});
+    x.restore();
+
+    // the point
+    const px=ox+qx*W, py=oy+(1-qy)*H;
+    x.save();x.shadowColor='rgba(255,255,255,.7)';x.shadowBlur=18;
+    x.fillStyle='#fff';x.beginPath();x.arc(px,py,8,0,7);x.fill();x.restore();
+    x.strokeStyle=C.acc;x.lineWidth=2;x.beginPath();x.arc(px,py,14,0,7);x.stroke();
+
+    const qi = qy>=.5 ? (qx>=.5?1:0) : (qx>=.5?3:2);
+    const q=Q[qi];
+    $('#quadText').innerHTML=`<div style="font-weight:700;color:${q.c};margin-bottom:6px">${q.n}</div>${q.d}`;
+  }
+  sx.oninput=draw;sy.oninput=draw;
+  window.__quad=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 09 — LEVELS & PRUNING
+   ============================================================ */
+(function levels(){
+  const cv=$('#cvLevels'),sp=$('#sPrune'),cs=$('#cSym');
+  function build(){
+    const sym=cs.checked;
+    const L=[];
+    if(sym)L.push([{n:'Symbol Table',d:'funktioniert ganz allein'}]);
+    L.push([{n:'Line Storage',d:'braucht ggf. Symboltabelle'}]);
+    L.push([{n:'Input',d:'braucht Line Storage'},{n:'Circular Shifter',d:'braucht Line Storage'}]);
+    L.push([{n:'Alphabetizer',d:'braucht Circular Shifter'},{n:'Output',d:'braucht Circular Shifter'}]);
+    L.push([{n:'Master Control',d:'braucht alle'}]);
+    return L;
+  }
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const L=build();
+    const cut=+sp.value;
+    sp.max=L.length-1;
+    const keep=L.length-cut;
+    $('#vPrune').textContent = cut===0?'keine':`obere ${cut} Ebene${cut>1?'n':''}`;
+    const rowH=(h-30)/L.length;
+    L.forEach((lvl,i)=>{
+      const yy=h-24-(i+.5)*rowH;
+      const alive=i<keep;
+      // level label
+      txt(x,'Level '+(i+1),14,yy,{size:10,col:alive?C.acc:'#475569',font:'mono',weight:700});
+      lvl.forEach((m,k)=>{
+        const bw=Math.min(190,(w-110)/Math.max(2,lvl.length)-12);
+        const totalW=lvl.length*bw+(lvl.length-1)*16;
+        const bx=90+(w-110-totalW)/2+k*(bw+16);
+        x.save();
+        if(alive){x.shadowColor='rgba(94,234,212,.3)';x.shadowBlur=14;}
+        x.fillStyle=alive?'rgba(94,234,212,.12)':'rgba(30,41,59,.5)';
+        x.strokeStyle=alive?'rgba(94,234,212,.6)':'rgba(71,85,105,.5)';
+        x.lineWidth=1.5;
+        rr(x,bx,yy-rowH/2+10,bw,rowH-22,9);x.fill();x.stroke();
+        x.restore();
+        txt(x,m.n,bx+bw/2,yy-5,{size:11,align:'center',col:alive?C.txt:'#475569',weight:650});
+        txt(x,m.d,bx+bw/2,yy+11,{size:9,align:'center',col:alive?C.dim:'#3f4d66'});
+        // arrow down to previous level
+        if(i>0){
+          x.strokeStyle=alive?'rgba(129,140,248,.45)':'rgba(71,85,105,.35)';
+          x.lineWidth=1.3;
+          const ty=yy+rowH/2-10, by=yy+rowH/2+2;
+          arrow(x,bx+bw/2,ty,bx+bw/2,by+4,alive?'rgba(129,140,248,.5)':'rgba(71,85,105,.35)',1.2,6);
+        }
+      });
+    });
+    const survivors=L.slice(0,keep).flat().map(m=>m.n);
+    let t;
+    if(cut===0) t=`<span class="badge b-acc">Vollständiges System</span> Alle ${L.flat().length} Module. Die „uses"-Relation ist eine Partialordnung — deshalb lässt sich oben etwas abschneiden.`;
+    else if(keep<=0) t=`<span class="badge b-bad">Nichts übrig</span> Zu viel abgeschnitten.`;
+    else t=`<span class="badge b-good">Immer noch brauchbar</span> Übrig: <strong>${survivors.join(', ')}</strong>.<br>
+      ${survivors.includes('Line Storage')?'„the line holder could be the basis of a question answering system"':''}
+      ${survivors.length===1&&survivors[0]==='Symbol Table'?'„the symbol table can be used in other applications"':''}
+      <div style="margin-top:8px;color:var(--txt-faint)">Das ist der zweite Vorteil der Hierarchie: ein neuer Baum auf altem Stamm.</div>`;
+    $('#pruneText').innerHTML=t;
+  }
+  sp.oninput=draw;cs.onchange=()=>{sp.value=0;draw();};
+  window.__levels=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 10 — COMPILER / INTERPRETER
+   ============================================================ */
+(function comp(){
+  const cvA=$('#cvCompA'),cvB=$('#cvCompB');
+  let mode=0;
+  const CLASSIC=[
+    {n:'Syntax-Erkenner',ok:[1,1,1]},
+    {n:'Code-Generator', ok:[1,0,1]},
+    {n:'Laufzeitroutinen',ok:[1,0,1]},
+    {n:'Optimierer',     ok:[1,0,1]}
+  ];
+  const PARNAS=[
+    {n:'Register-Darstellung',ok:[1,1,1]},
+    {n:'Suchalgorithmus',     ok:[1,1,1]},
+    {n:'Regel-Interpretation',ok:[1,1,1]},
+    {n:'Zeichenkettenspeicher',ok:[1,1,1]}
+  ];
+  function drawSet(cv,set,good){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    const n=set.length;
+    const bh=(h-40)/n;
+    set.forEach((m,i)=>{
+      const alive=m.ok[mode]===1;
+      const yy=24+i*bh;
+      x.save();
+      if(alive){x.shadowColor=good?'rgba(74,222,128,.3)':'rgba(251,191,36,.25)';x.shadowBlur=12;}
+      x.fillStyle=alive?(good?'rgba(74,222,128,.12)':'rgba(251,191,36,.10)'):'rgba(30,41,59,.5)';
+      x.strokeStyle=alive?(good?'rgba(74,222,128,.6)':'rgba(251,191,36,.5)'):'rgba(100,116,139,.4)';
+      x.lineWidth=1.5;
+      rr(x,18,yy,w-36,bh-12,9);x.fill();x.stroke();
+      x.restore();
+      txt(x,m.n,32,yy+(bh-12)/2,{size:11.5,col:alive?C.txt:'#475569',weight:620});
+      txt(x,alive?'✓ unverändert gültig':'✗ muss neu entworfen werden',
+          w-32,yy+(bh-12)/2,{size:9.5,align:'right',col:alive?(good?C.good:C.warn):C.bad});
+    });
+  }
+  function update(){
+    drawSet(cvA,CLASSIC,false);
+    drawSet(cvB,PARNAS,true);
+    const a=CLASSIC.filter(m=>m.ok[mode]).length;
+    const b=PARNAS.filter(m=>m.ok[mode]).length;
+    $('#compKPI').innerHTML=`
+      <div class="cell"><div class="k" style="color:${a<4?C.bad:C.good}">${a}/4</div><div class="l">klassisch gültig</div></div>
+      <div class="cell"><div class="k" style="color:${C.good}">${b}/4</div><div class="l">Parnas gültig</div></div>
+      <div class="cell"><div class="k" style="font-size:13px">${['Compiler','Interpreter','Hybrid'][mode]}</div><div class="l">Zielvariante</div></div>`;
+    $('#compText').innerHTML = mode===0
+      ? `Beim reinen Compiler passt auch die klassische Phasen-Zerlegung — sie wurde ja genau dafür erfunden.`
+      : `<span class="badge b-bad">Bruch</span> Beim ${mode===1?'Interpreter':'Hybrid'} gibt es keinen „Code-Generator" im klassischen Sinn und keine getrennten „Laufzeitroutinen" — die Phasen-Zerlegung zerfällt.
+         Die Parnas-Zerlegung überlebt unverändert: <em>„we found that the decisions implicit in the early decomposition held for all."</em>
+         <div style="margin-top:8px">Und mehr noch: <em>„many of the routines could be used with only slight changes in any sort of translator."</em>
+         Das ist der Beleg dafür, dass „the order in time in which processing is expected to take place should <strong>not</strong> be used in making the decomposition".</div>`;
+  }
+  $$('.transbtn').forEach(b=>b.onclick=()=>{
+    $$('.transbtn').forEach(o=>o.classList.remove('on'));
+    b.classList.add('on');mode=+b.dataset.t;update();
+  });
+  window.__comp=update;
+  update();
+})();
+
+/* ============================================================
+   SECTION 11 — PAPER MAP
+   ============================================================ */
+(function map(){
+  const cv=$('#cvMap');
+  const N=[
+    {id:'q', x:.50,y:.07,t:'Frage: Nach welchen Kriterien?',s:'s2',c:C.acc3,r:92},
+    {id:'g', x:.17,y:.26,t:'3 versprochene Vorteile',s:'s2',c:C.acc2,r:76},
+    {id:'k', x:.50,y:.26,t:'KWIC-Beispiel',s:'s3',c:C.acc2,r:64},
+    {id:'d1',x:.24,y:.46,t:'Zerlegung 1\nFlussdiagramm',s:'s3',c:C.bad,r:70},
+    {id:'d2',x:.74,y:.46,t:'Zerlegung 2\nInfo Hiding',s:'s3',c:C.good,r:70},
+    {id:'ch',x:.50,y:.62,t:'5 Änderungen\nals Messung',s:'s4',c:C.warn,r:72},
+    {id:'cr',x:.50,y:.79,t:'Kriterium:\nGeheimnisse',s:'s6',c:C.acc,r:76},
+    {id:'ru',x:.14,y:.92,t:'5 Faustregeln',s:'s8',c:C.acc2,r:62},
+    {id:'ef',x:.40,y:.94,t:'Effizienz &\nInlining',s:'s9',c:C.warn,r:62},
+    {id:'hi',x:.64,y:.94,t:'Hierarchie\n≠ Zerlegung',s:'s10',c:C.acc2,r:62},
+    {id:'co',x:.88,y:.79,t:'Compiler-\nBeweis',s:'s11',c:C.acc3,r:60}
+  ];
+  const E=[['q','g'],['q','k'],['k','d1'],['k','d2'],['d1','ch'],['d2','ch'],['ch','cr'],
+           ['cr','ru'],['cr','ef'],['cr','hi'],['cr','co']];
+  let hover=null;
+  function draw(){
+    const {x,w,h}=dpi(cv);
+    x.clearRect(0,0,w,h);
+    E.forEach(([a,b])=>{
+      const na=N.find(n=>n.id===a),nb=N.find(n=>n.id===b);
+      const pa={x:na.x*w,y:na.y*h},pb={x:nb.x*w,y:nb.y*h};
+      const ang=Math.atan2(pb.y-pa.y,pb.x-pa.x);
+      const ra=na.r/2.6, rb=nb.r/2.6;
+      arrow(x,pa.x+ra*Math.cos(ang),pa.y+ra*Math.sin(ang),
+              pb.x-rb*Math.cos(ang),pb.y-rb*Math.sin(ang),
+              'rgba(130,160,230,.35)',1.4,7);
+    });
+    N.forEach(n=>{
+      const px=n.x*w,py=n.y*h;
+      const hv=hover===n.id;
+      x.save();
+      x.shadowColor=n.c;x.shadowBlur=hv?26:12;
+      x.fillStyle=hv?'rgba(255,255,255,.1)':'rgba(13,18,33,.95)';
+      x.strokeStyle=n.c;x.lineWidth=hv?2.4:1.6;
+      x.beginPath();x.arc(px,py,n.r/2.6,0,7);x.fill();x.stroke();
+      x.restore();
+      const lines=n.t.split('\n');
+      lines.forEach((l,i)=>{
+        txt(x,l,px,py+(i-(lines.length-1)/2)*12,
+            {size:9.5,align:'center',col:hv?'#fff':C.txt,weight:650});
+      });
+    });
+    txt(x,'Klicken zum Springen',w-12,h-8,{size:9.5,align:'right',col:C.dim});
+  }
+  function hit(e){
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left,my=e.clientY-r.top;
+    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    return N.find(n=>Math.hypot(n.x*w-mx,n.y*h-my)<n.r/2.6);
+  }
+  cv.onmousemove=e=>{const n=hit(e);const id=n?n.id:null;
+    if(id!==hover){hover=id;cv.style.cursor=id?'pointer':'default';draw();}};
+  cv.onmouseleave=()=>{hover=null;draw();};
+  cv.onclick=e=>{const n=hit(e);if(n)document.getElementById(n.s).scrollIntoView({behavior:'smooth'});};
+  window.__map=draw;
+  draw();
+})();
+
+/* ============================================================
+   SECTION 11 — QUIZ
+   ============================================================ */
+(function quiz(){
+  const Q=[
+    {q:'Was ist bei Parnas ein „Modul"?',
+     a:['Eine Datei mit Quellcode','Eine oder mehrere Subroutinen','Eine Zuständigkeit („responsibility assignment")','Ein Kasten im Flussdiagramm'],
+     c:2,
+     e:'„In this context <em>module</em> is considered to be a responsibility assignment rather than a subprogram." Und die Conclusion verlangt sogar ausdrücklich, die Annahme „ein Modul ist eine Subroutine" aufzugeben.'},
+    {q:'Welche Änderung trifft in Zerlegung 1 wirklich <em>jedes</em> Modul?',
+     a:['Das Eingabeformat','Die Entscheidung, alle Zeilen im Kernspeicher zu halten','Die Ausgabeformatierung','Die Reihenfolge der Modulaufrufe'],
+     c:1,
+     e:'„For the first decomposition the second change would result in changes in <strong>every module!</strong>" — dasselbe gilt für die Zeichenpackung, denn „the format of the line storage in core must be used by all of the programs."'},
+    {q:'Welche Änderung ist in <em>beiden</em> Zerlegungen auf ein Modul beschränkt?',
+     a:['Eingabeformat','Zeichenpackung','Sortierstrategie','Shift-Darstellung'],
+     c:0,
+     e:'„The first change is confined to one module in <strong>both</strong> decompositions." Parnas baut keinen Strohmann — er benennt, wo Zerlegung 1 genauso gut ist.'},
+    {q:'Was war laut Parnas sein eigener Designfehler im Circular Shifter?',
+     a:['Er hat die Shifts materialisiert statt indiziert','Er hat eine Reihenfolge der Shifts vorgeschrieben','Er hat CSSETUP vergessen','Er hat zu viele Funktionen angeboten'],
+     c:1,
+     e:'„By prescribing the order for the shifts we have given more information than necessary … Our failure to do this … must clearly be classified as a <strong>design error</strong>." Dadurch war ein System ausgeschlossen, in dem die Shifts bereits alphabetisch entstehen und <code>ITH</code> einfach sein Argument zurückgibt.'},
+    {q:'Warum sind Hierarchie und saubere Zerlegung zwei verschiedene Dinge?',
+     a:['Weil Hierarchie nur in Betriebssystemen vorkommt','Weil man Zerlegung 1 auch hierarchisch bauen könnte','Weil Information Hiding immer Hierarchie erzwingt','Weil Parnas Hierarchie ablehnt'],
+     c:1,
+     e:'„Since it is conceivable that we could have a system with the type of decomposition shown in version 1 … but retaining a hierarchical structure, we must conclude that hierarchical structure and ‚clean\' decomposition are <strong>two desirable but independent properties</strong>."'},
+    {q:'Wie löst Parnas das Effizienzproblem der zweiten Zerlegung?',
+     a:['Er akzeptiert, dass sie langsamer ist','Er reduziert die Zahl der Module','Module werden vom Assembler in den Code eingefügt statt als Prozeduren gerufen','Er benutzt schnellere Hardware'],
+     c:2,
+     e:'„In many cases the routines will be best <strong>inserted into the code by an assembler</strong> … programs may be written as if the functions were subroutines, but assembled by whatever implementation is appropriate." — heute: Inlining, Makros, LTO.'}
+  ];
+  let answered=new Array(Q.length).fill(-1);
+  function render(){
+    $('#quiz').innerHTML=Q.map((q,i)=>`
+      <div class="panel tight" style="background:rgba(6,10,20,.5);margin:12px 0">
+        <div style="font-weight:600;color:var(--txt);margin-bottom:10px">${i+1}. ${q.q}</div>
+        <div style="display:grid;gap:6px">
+          ${q.a.map((a,k)=>{
+            const chosen=answered[i]===k;
+            const reveal=answered[i]>=0;
+            let st='';
+            if(reveal&&k===q.c)st='border-color:rgba(74,222,128,.6);background:rgba(74,222,128,.10)';
+            else if(chosen)st='border-color:rgba(251,113,133,.6);background:rgba(251,113,133,.10)';
+            return `<div class="modcard" data-q="${i}" data-k="${k}" style="${st}">
+              <div class="md" style="color:var(--txt-dim);font-size:12.5px">${String.fromCharCode(65+k)}) ${a}</div></div>`;
+          }).join('')}
+        </div>
+        ${answered[i]>=0?`<div class="callout" style="margin:12px 0 0;font-size:12.5px">
+          <strong style="color:${answered[i]===q.c?C.good:C.warn}">${answered[i]===q.c?'Richtig.':'Nicht ganz.'}</strong> ${q.e}</div>`:''}
+      </div>`).join('')+
+      `<div class="kpi"><div class="cell"><div class="k">${answered.filter((a,i)=>a===Q[i].c).length}/${Q.length}</div><div class="l">richtig</div></div></div>`;
+    $$('#quiz .modcard').forEach(e=>e.onclick=()=>{
+      const i=+e.dataset.q, k=+e.dataset.k;
+      if(answered[i]>=0)return;
+      answered[i]=k;
+      render();
+    });
+  }
+  render();
+})();
+
+/* ============================================================
+   GLOBAL REDRAW (on resize / tab switch)
+   ============================================================ */
+function redrawAll(){
+  const fns=['__comb','__dag','__iface','__cc','__kwic','__respon','__cut','__changes',
+             '__life','__live','__scale','__space','__rules','__eff','__quad','__levels',
+             '__comp','__map'];
+  fns.forEach(f=>{try{window[f]&&window[f]();}catch(e){}});
+}
+let rt=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(redrawAll,140);
+});
+setTimeout(redrawAll,220);
+setTimeout(redrawAll,700);
+onScroll();
+</script>
+</body>
+</html>
